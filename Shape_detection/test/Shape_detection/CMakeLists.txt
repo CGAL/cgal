@@ -14,9 +14,8 @@ if(CGAL_FOUND)
 
   # Use Eigen.
   find_package(Eigen3 3.1.0 QUIET) # (3.1.0 or greater)
+  include(CGAL_Eigen_support)
   if(EIGEN3_FOUND)
-    include(${EIGEN3_USE_FILE})
-
     create_single_source_cgal_program(
       "test_region_growing_basic.cpp")
     create_single_source_cgal_program(
@@ -33,6 +32,21 @@ if(CGAL_FOUND)
       "test_region_growing_on_point_set_3_with_sorting.cpp")
     create_single_source_cgal_program(
       "test_region_growing_on_polygon_mesh_with_sorting.cpp")
+    create_single_source_cgal_program(
+      "test_region_growing_on_degenerated_mesh.cpp")
+    foreach(target
+        test_region_growing_basic
+        test_region_growing_on_cube
+        test_region_growing_on_point_set_2
+        test_region_growing_on_point_set_3
+        test_region_growing_on_polygon_mesh
+        test_region_growing_on_point_set_2_with_sorting
+        test_region_growing_on_point_set_3_with_sorting
+        test_region_growing_on_polygon_mesh_with_sorting
+        test_region_growing_on_degenerated_mesh)
+      target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
+    endforeach()
+
   endif()
 
   create_single_source_cgal_program(
@@ -66,6 +80,6 @@ if(CGAL_FOUND)
     "test_efficient_RANSAC_regularization.cpp")
 
 else()
-  message(WARNING 
+  message(WARNING
   "This program requires the CGAL library, and will not be compiled.")
 endif()

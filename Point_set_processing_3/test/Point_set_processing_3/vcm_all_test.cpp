@@ -24,7 +24,7 @@ std::cout << "=== test_fandisk ===\n";
   CGAL::Identity_property_map<Point> pmap;
   Covariance expected;
   int index;
-  
+
   // Reads a .xyz point set file in points[].
   std::vector<Point> points;
   std::vector<Covariance> cov;

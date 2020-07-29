@@ -64,14 +64,14 @@ int main( int argc, char **argv) {
                 help = true;
             }
         } else if ( (strcmp( "-h", argv[i]) == 0) ||
-		    (strcmp( "-help", argv[i]) == 0))
+                    (strcmp( "-help", argv[i]) == 0))
             help = true;
         else if ( n < 2 ) {
             filename[ n++] = argv[i];
         } else {
-	    ++n;
+            ++n;
             break;
-	}
+        }
     }
     if ((n > 2) || help) {
         if ( ! help)
@@ -147,7 +147,7 @@ int main( int argc, char **argv) {
         writer.write_vertex( q.x(), q.y(), q.z());
     }
     verr << "    .... done." << scanner.size_of_vertices() << " points read."
-	 << endl;
+         << endl;
 
     if ( ! *p_in) {
         cerr << argv[0] << " read error: while reading file '"<< name << "'."

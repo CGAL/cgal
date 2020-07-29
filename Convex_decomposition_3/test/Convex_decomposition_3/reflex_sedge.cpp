@@ -19,7 +19,7 @@ public:
 
   struct Vertex {
     Point_3 pnt;
-    
+
     Vertex(Point_3 p) : pnt(p) {}
     Point_3 point() {return pnt; }
   };
@@ -55,7 +55,7 @@ public:
   typedef SHalfedge* SHalfedge_handle;
 };
 
-int main() 
+int main()
 {
 
   //  CGAL_NEF_SETDTHREAD(239);
@@ -72,7 +72,7 @@ int main()
   Sphere_point dir(1,0,0);
 
   Vertex v0(Point_3(0,0,0));
-  
+
   Halfedge d0(&v0, Sphere_point( 2,  0,  0));
   Halfedge d1(&v0, Sphere_point(-5,  0,  0));
 

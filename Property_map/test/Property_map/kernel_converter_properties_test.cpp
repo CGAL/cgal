@@ -19,17 +19,17 @@ test()
 
   typedef typename boost::property_map<Mesh, CGAL::vertex_point_t >::type VPMap;
   VPMap vmap = get(CGAL::vertex_point, m);
-  
+
   CGAL::Cartesian_converter_property_map<K2::Point_3, VPMap> kcmap =CGAL::make_cartesian_converter_property_map<K2::Point_3>(vmap);
   CGAL_assertion(get(kcmap, *vertices(m).begin()) == CGAL::Point_3<K2>(2,0,0));
   put(kcmap, *vertices(m).begin(), CGAL::Point_3<K2>(0,2,3));
   CGAL_assertion(get(kcmap, *vertices(m).begin()) == CGAL::Point_3<K2>(0,2,3));
-  
+
 }
-  
+
 int main()
 {
-  
+
   typedef CGAL::Surface_mesh<Point_3> SM;
   test<SM>();
   return 0;

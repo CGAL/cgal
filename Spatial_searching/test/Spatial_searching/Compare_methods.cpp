@@ -38,20 +38,20 @@ void one_run(int NB_INPUT_POINTS,int VALUE_OF_K,int NB_NEIGH){
   if(VALUE_OF_K < NB_NEIGH || NB_NEIGH > NB_INPUT_POINTS){
     std::cout << "must have VALUE_OF_K >= NB_NEIGH and NB_NEIGH <= NB_INPUT_POINTS) " << std::endl;
     exit(EXIT_FAILURE);
-  }  
-  
+  }
+
   CGAL::Timer time;
   CGAL::Memory_sizer m;
   std::size_t ok_mem,k_mem,oi_mem,i_mem;
   double ok_time,k_time,oi_time,i_time;
-  
+
   std::cout << "Nb input points: " <<NB_INPUT_POINTS << std::endl;
   std::cout << "Value of K: " <<VALUE_OF_K << std::endl;
   std::cout << "Nb neighbor requested: " <<NB_NEIGH << std::endl;
-  
+
   Point ok_pt(0,0,0),k_pt(0,0,0),oi_pt(0,0,0),i_pt(0,0,0);
-  
-  
+
+
   time.start();
   // generator for random data points in the cube ( (-1,-1,-1), (1,1,1) )
   std::cout << "Generating points... ";
@@ -62,7 +62,7 @@ void one_run(int NB_INPUT_POINTS,int VALUE_OF_K,int NB_NEIGH){
   time.stop(); std::cout << time.time() << " "; time.reset();
   std::size_t mem_points=m.virtual_size()+m.resident_size();
   std::cout << mem_points << std::endl;
-  
+
   {
     //Orthogonal K search
     std::cout << "OK search... "; time.start();
@@ -77,8 +77,8 @@ void one_run(int NB_INPUT_POINTS,int VALUE_OF_K,int NB_NEIGH){
     }
     else
       assert(ok_it==ok_end);
-    
-    ok_mem=(m.virtual_size()+m.resident_size())-mem_points; 
+
+    ok_mem=(m.virtual_size()+m.resident_size())-mem_points;
     std::cout << ok_mem << std::endl;
   }
 
@@ -97,10 +97,10 @@ void one_run(int NB_INPUT_POINTS,int VALUE_OF_K,int NB_NEIGH){
     }
     else
       assert(k_it==k_end);
-    k_mem=(m.virtual_size()+m.resident_size())-mem_points; 
+    k_mem=(m.virtual_size()+m.resident_size())-mem_points;
     std::cout << k_mem << std::endl;
   }
-  
+
   {
     //Orthogonal incremental search
     std::cout << "OI search... "; time.start();
@@ -115,7 +115,7 @@ void one_run(int NB_INPUT_POINTS,int VALUE_OF_K,int NB_NEIGH){
     }
     else
       assert(oi_it==oi_end);
-    oi_mem=(m.virtual_size()+m.resident_size())-mem_points; 
+    oi_mem=(m.virtual_size()+m.resident_size())-mem_points;
     std::cout << oi_mem << std::endl;
   }
 
@@ -133,23 +133,23 @@ void one_run(int NB_INPUT_POINTS,int VALUE_OF_K,int NB_NEIGH){
     }
     else
       assert(i_it==i_end);
-    i_mem=(m.virtual_size()+m.resident_size())-mem_points; 
+    i_mem=(m.virtual_size()+m.resident_size())-mem_points;
     std::cout << i_mem << std::endl;
   }
-  
+
   if ( ok_pt != k_pt ) std::cout << "K different\n";
   if ( ok_pt != oi_pt ) std::cout << "OI different\n";
   if ( ok_pt != i_pt ) std::cout << "I different\n";
-  
+
   assert (ok_pt == k_pt);
   assert (ok_pt == oi_pt);
   assert (ok_pt == i_pt);
-  
+
   std::cerr << NB_INPUT_POINTS << " " << VALUE_OF_K << " " << NB_NEIGH << " ";
   std::cerr << ok_time  << " "  << ok_mem  << " ";
   std::cerr << k_time   << " "  << k_mem   << " ";
   std::cerr << oi_time  << " "  << oi_mem  << " ";
-  std::cerr << i_time   << " "  << i_mem   << "\n";  
+  std::cerr << i_time   << " "  << i_mem   << "\n";
 }
 
 
@@ -177,10 +177,10 @@ int main(int argc,char** argv) {
   {
     int NB_INPUT_POINTS = atoi(argv[1]);
     int VALUE_OF_K = atoi(argv[2]);
-    int NB_NEIGH = atoi(argv[3]);    
+    int NB_NEIGH = atoi(argv[3]);
     one_run(NB_INPUT_POINTS,VALUE_OF_K,NB_NEIGH);
   }
-  
+
   return 0;
 }
 

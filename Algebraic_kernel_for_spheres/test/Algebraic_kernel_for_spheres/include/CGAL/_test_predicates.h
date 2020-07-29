@@ -4,9 +4,9 @@
 // This file is part of CGAL (www.cgal.org).
 //
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 //
 // $URL$
@@ -36,12 +36,12 @@ void _test_solve(AK ak)
     ak.sign_at_object();
 
   //Polynomial_for_spheres_2_3
-  
+
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_sss1;
   theSolve(theConstruct_2_3(5, 5, 0, 25),
-	   theConstruct_2_3(0, 5, 0, 100),
+           theConstruct_2_3(0, 5, 0, 100),
            theConstruct_2_3(7, 5, 0, 9),
-	   std::back_inserter(res_sss1));
+           std::back_inserter(res_sss1));
   assert(res_sss1.size() == 1);
   assert(res_sss1[0].second == 2u);
   assert(res_sss1[0].first == Root_for_spheres_2_3(10, 5, 0));
@@ -50,14 +50,14 @@ void _test_solve(AK ak)
   theSolve(theConstruct_2_3(0, 5, 0, 100),
            theConstruct_2_3(20, 5, 0, 100),
            theConstruct_2_3(10, 5, 0, 25),
-	   std::back_inserter(res_sss2));
+           std::back_inserter(res_sss2));
   assert(res_sss2.size() == 0);
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_sss3;
   theSolve(theConstruct_2_3(0, 5, 0, 100),
            theConstruct_2_3(20, 5, 0, 100),
            theConstruct_2_3(10, 10, 0, 25),
-	   std::back_inserter(res_sss3));
+           std::back_inserter(res_sss3));
   assert(res_sss3.size() == 1);
   assert(res_sss3[0].second == 2u);
   assert(res_sss3[0].first == Root_for_spheres_2_3(10, 5, 0));
@@ -66,7 +66,7 @@ void _test_solve(AK ak)
   theSolve(theConstruct_2_3(0, 5, 0, 100),
            theConstruct_2_3(20, 5, 0, 100),
            theConstruct_2_3(10, 5, 5, 25),
-	   std::back_inserter(res_sss4));
+           std::back_inserter(res_sss4));
   assert(res_sss4.size() == 1);
   assert(res_sss4[0].second == 2u);
   assert(res_sss4[0].first == Root_for_spheres_2_3(10, 5, 0));
@@ -75,14 +75,14 @@ void _test_solve(AK ak)
   theSolve(theConstruct_2_3(0, 5, 0, 100),
            theConstruct_2_3(20, 5, 0, 100),
            theConstruct_2_3(10, 0, 5, 25),
-	   std::back_inserter(res_sss5));
+           std::back_inserter(res_sss5));
   assert(res_sss5.size() == 0);
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_sss6;
   theSolve(theConstruct_2_3(5, 0, 0, 100),
            theConstruct_2_3(0, 5, 0, 100),
            theConstruct_2_3(0, 0, 5, 100),
-	   std::back_inserter(res_sss6));
+           std::back_inserter(res_sss6));
   assert(res_sss6.size() == 2);
   Root_of_2 res_sss6_r1 = make_root_of_2(FT(5,3),-FT(5,3),FT(10));
   Root_of_2 res_sss6_r2 = make_root_of_2(FT(5,3),FT(5,3),FT(10));
@@ -95,20 +95,20 @@ void _test_solve(AK ak)
   theSolve(theConstruct_2_3(5, 0, 0, 25),
            theConstruct_2_3(0, 5, 0, 25),
            theConstruct_2_3(0, 0, 5, 25),
-	   std::back_inserter(res_sss_7));
+           std::back_inserter(res_sss_7));
   assert(res_sss_7.size() == 2);
   assert(res_sss_7[0].second == 1u);
   assert(res_sss_7[0].first == Root_for_spheres_2_3(0, 0, 0));
   assert(res_sss_7[1].second == 1u);
-  assert(res_sss_7[1].first == Root_for_spheres_2_3(Root_of_2(FT(10,3)), 
-                                               Root_of_2(FT(10,3)), 
+  assert(res_sss_7[1].first == Root_for_spheres_2_3(Root_of_2(FT(10,3)),
+                                               Root_of_2(FT(10,3)),
                                                Root_of_2(FT(10,3))));
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_sss_8;
   theSolve(theConstruct_2_3(0, 5, 0, 100),
            theConstruct_2_3(20, 5, 0, 100),
            theConstruct_2_3(20, 5, 0, 100),
-	   std::back_inserter(res_sss_8));
+           std::back_inserter(res_sss_8));
   assert(res_sss_8.size() == 1);
   assert(res_sss_8[0].second == 2u);
   assert(res_sss_8[0].first == Root_for_spheres_2_3(10, 5, 0));
@@ -117,17 +117,17 @@ void _test_solve(AK ak)
   theSolve(theConstruct_2_3(0, 5, 0, 100),
            theConstruct_2_3(20, 5, 0, 100),
            theConstruct_2_3(0, 5, 0, 125),
-	   std::back_inserter(res_sss9));
+           std::back_inserter(res_sss9));
   assert(res_sss9.size() == 0);
 
   //Polynomial_1_3 Polynomial_for_spheres_2_3
-  
+
   // 2 spheres and a plane
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_ssp_1;
   theSolve(theConstruct_2_3(0, 5, 0, 100),
            theConstruct_2_3(20, 5, 0, 100),
            theConstruct_1_3(0, 0, 1, 0),
-	   std::back_inserter(res_ssp_1));
+           std::back_inserter(res_ssp_1));
   assert(res_ssp_1.size() == 1);
   assert(res_ssp_1[0].second == 2u);
   assert(res_ssp_1[0].first == Root_for_spheres_2_3(10, 5, 0));
@@ -136,7 +136,7 @@ void _test_solve(AK ak)
   theSolve(theConstruct_2_3(0, 5, 0, 100),
            theConstruct_2_3(20, 5, 0, 100),
            theConstruct_1_3(1, -3, 3, 5),
-	   std::back_inserter(res_ssp_2));
+           std::back_inserter(res_ssp_2));
   assert(res_ssp_2.size() == 1);
   assert(res_ssp_2[0].second == 2u);
   assert(res_ssp_2[0].first == Root_for_spheres_2_3(10, 5, 0));
@@ -145,14 +145,14 @@ void _test_solve(AK ak)
   theSolve(theConstruct_2_3(0, 5, 0, 29),
            theConstruct_2_3(5, 0, 0, 29),
            theConstruct_1_3(0, 0, 1, 5),
-	   std::back_inserter(res_ssp_3));
+           std::back_inserter(res_ssp_3));
   assert(res_ssp_3.size() == 0);
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_ssp_4;
   theSolve(theConstruct_2_3(0, 5, 0, FT(75,2)),
            theConstruct_2_3(5, 0, 0, FT(75,2)),
            theConstruct_1_3(0, 0, 1, -5),
-	   std::back_inserter(res_ssp_4));
+           std::back_inserter(res_ssp_4));
   assert(res_ssp_4.size() == 1);
   assert(res_ssp_4[0].second == 2u);
   assert(res_ssp_4[0].first == Root_for_spheres_2_3(FT(5,2), FT(5,2), 5));
@@ -161,7 +161,7 @@ void _test_solve(AK ak)
   theSolve(theConstruct_2_3(0, 5, 0, 50),
            theConstruct_2_3(5, 0, 0, 50),
            theConstruct_1_3(0, 0, 1, -5),
-	   std::back_inserter(res_ssp_5));
+           std::back_inserter(res_ssp_5));
   assert(res_ssp_5.size() == 2);
   assert(res_ssp_5[0].second == 1u);
   assert(res_ssp_5[0].first == Root_for_spheres_2_3(0,0,5));
@@ -172,7 +172,7 @@ void _test_solve(AK ak)
   theSolve(theConstruct_2_3(5, 5, 5, 25),
            theConstruct_2_3(5, 5, 5, 25),
            theConstruct_1_3(0, 0, 1, 0),
-	   std::back_inserter(res_ssp_6));
+           std::back_inserter(res_ssp_6));
   assert(res_ssp_6.size() == 1);
   assert(res_ssp_6[0].second == 2u);
   assert(res_ssp_6[0].first == Root_for_spheres_2_3(5, 5, 0));
@@ -181,28 +181,28 @@ void _test_solve(AK ak)
   theSolve(theConstruct_2_3(5, 5, 5, 25),
            theConstruct_2_3(3, 5, 7, 100),
            theConstruct_1_3(1, 1, 1, 10),
-	   std::back_inserter(res_ssp_7));
+           std::back_inserter(res_ssp_7));
   assert(res_ssp_7.size() == 0);
-  
+
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_ssp_8;
   theSolve(theConstruct_2_3(5, 5, 5, 25),
            theConstruct_2_3(3, 5, 7, 40),
            theConstruct_1_3(1, 1, 1, -10),
-	   std::back_inserter(res_ssp_8));
+           std::back_inserter(res_ssp_8));
   assert(res_ssp_8.size() == 2);
   assert(res_ssp_8[0].second == 1u);
   assert(res_ssp_8[1].second == 1u);
   Root_of_2 res_ssp_8_x1 = make_root_of_2(FT(101,24),FT(1,24),FT(1453));
   Root_of_2 res_ssp_8_x2 = make_root_of_2(FT(101,24),-FT(1,24),FT(1453));
   Root_of_2 res_ssp_8_y1 = make_root_of_2(FT(10,3),-FT(1,12),FT(1453));
-  Root_of_2 res_ssp_8_y2 = make_root_of_2(FT(10,3),FT(1,12),FT(1453));  
+  Root_of_2 res_ssp_8_y2 = make_root_of_2(FT(10,3),FT(1,12),FT(1453));
   Root_of_2 res_ssp_8_z1 = make_root_of_2(FT(59,24),FT(1,24),FT(1453));
   Root_of_2 res_ssp_8_z2 = make_root_of_2(FT(59,24),-FT(1,24),FT(1453));
-  Root_for_spheres_2_3 res_ssp_8_sol2 = Root_for_spheres_2_3(res_ssp_8_x1, 
-                                                             res_ssp_8_y1, 
+  Root_for_spheres_2_3 res_ssp_8_sol2 = Root_for_spheres_2_3(res_ssp_8_x1,
+                                                             res_ssp_8_y1,
                                                              res_ssp_8_z1);
-  Root_for_spheres_2_3 res_ssp_8_sol1 = Root_for_spheres_2_3(res_ssp_8_x2, 
-                                                             res_ssp_8_y2, 
+  Root_for_spheres_2_3 res_ssp_8_sol1 = Root_for_spheres_2_3(res_ssp_8_x2,
+                                                             res_ssp_8_y2,
                                                              res_ssp_8_z2);
   assert(res_ssp_8[0].first == res_ssp_8_sol1);
   assert(res_ssp_8[1].first == res_ssp_8_sol2);
@@ -211,14 +211,14 @@ void _test_solve(AK ak)
   theSolve(theConstruct_2_3(5, 5, 5, 25),
            theConstruct_2_3(3, 5, 7, 100),
            theConstruct_1_3(1, 1, 1, -10),
-	   std::back_inserter(res_ssp_9));
+           std::back_inserter(res_ssp_9));
   assert(res_ssp_9.size() == 0);
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_ssp_10;
   theSolve(theConstruct_2_3(5, 0, 0, 100),
            theConstruct_2_3(0, 0, 0, 100),
            theConstruct_1_3(1, 2, 3, 100),
-	   std::back_inserter(res_ssp_10));
+           std::back_inserter(res_ssp_10));
   assert(res_ssp_10.size() == 0);
 
   // 1 sphere and 2 plane
@@ -226,14 +226,14 @@ void _test_solve(AK ak)
   theSolve(theConstruct_2_3(5, 10, 10, 5000),
            theConstruct_1_3(2, 4, 6, 50),
            theConstruct_1_3(1, 2, 3, 100),
-	   std::back_inserter(res_spp_1));
+           std::back_inserter(res_spp_1));
   assert(res_spp_1.size() == 0);
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_spp_2;
   theSolve(theConstruct_2_3(0, 0, 0, 9),
            theConstruct_1_3(1, 0, 0, -3),
            theConstruct_1_3(2, 0, 0, -6),
-	   std::back_inserter(res_spp_2));
+           std::back_inserter(res_spp_2));
   assert(res_spp_2.size() == 1);
   assert(res_spp_2[0].second == 2u);
   assert(res_spp_2[0].first == Root_for_spheres_2_3(3, 0, 0));
@@ -242,18 +242,18 @@ void _test_solve(AK ak)
   theSolve(theConstruct_2_3(0, 0, 0, 1),
            theConstruct_1_3(1, 0, 0, 0),
            theConstruct_1_3(0, 0, 1, 0),
-	   std::back_inserter(res_spp_3));
+           std::back_inserter(res_spp_3));
   assert(res_spp_3.size() == 2);
   assert(res_spp_3[0].second == 1u);
   assert(res_spp_3[0].first == Root_for_spheres_2_3(0,-1,0));
   assert(res_spp_3[1].second == 1u);
-  assert(res_spp_3[1].first == Root_for_spheres_2_3(0,1,0));		
+  assert(res_spp_3[1].first == Root_for_spheres_2_3(0,1,0));
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_spp_4;
   theSolve(theConstruct_2_3(0, 0, 0, 1),
            theConstruct_1_3(1, 1, 0, -1),
            theConstruct_1_3(1, -1, 0, 0),
-	   std::back_inserter(res_spp_4));
+           std::back_inserter(res_spp_4));
   assert(res_spp_4.size() == 2);
   assert(res_spp_4[0].second == 1u);
   assert(res_spp_4[0].first == Root_for_spheres_2_3(FT(1,2),FT(1,2),
@@ -266,7 +266,7 @@ void _test_solve(AK ak)
   theSolve(theConstruct_2_3(10, 10, 10, 25),
            theConstruct_1_3(1, 0, 0, 0),
            theConstruct_1_3(0, 1, 0, 0),
-	   std::back_inserter(res_spp_5));
+           std::back_inserter(res_spp_5));
   assert(res_spp_5.size() == 0);
 
   // 1 circle and 1 plane && 1 plane and 1 circle
@@ -274,46 +274,46 @@ void _test_solve(AK ak)
   // circle - plane
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cp_1;
   theSolve(std::make_pair(theConstruct_2_3(0,0,0,1),
-	                  theConstruct_1_3(0,1,0,0)),
-	                  theConstruct_1_3(0,1,0,10),
-	   std::back_inserter(res_cp_1));
+                          theConstruct_1_3(0,1,0,0)),
+                          theConstruct_1_3(0,1,0,10),
+           std::back_inserter(res_cp_1));
   assert(res_cp_1.size() == 0);
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cp_2;
   theSolve(std::make_pair(theConstruct_2_3(0,0,0,1),
-	                  theConstruct_1_3(0,1,0,0)),
-	                  theConstruct_1_3(1,0,0,1),
-	   std::back_inserter(res_cp_2));
+                          theConstruct_1_3(0,1,0,0)),
+                          theConstruct_1_3(1,0,0,1),
+           std::back_inserter(res_cp_2));
   assert(res_cp_2.size() == 1);
   assert(res_cp_2[0].second == 2u);
   assert(res_cp_2[0].first == Root_for_spheres_2_3(-1, 0, 0));
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cp_3;
   theSolve(std::make_pair(theConstruct_2_3(0,0,0,1),
-	                  theConstruct_1_3(0,1,0,0)),
-	                  theConstruct_1_3(1,0,0,0),
-	   std::back_inserter(res_cp_3));
+                          theConstruct_1_3(0,1,0,0)),
+                          theConstruct_1_3(1,0,0,0),
+           std::back_inserter(res_cp_3));
   assert(res_cp_3.size() == 2);
   assert(res_cp_3[0].second == 1u);
-  assert(res_cp_3[0].first == 
+  assert(res_cp_3[0].first ==
           Root_for_spheres_2_3(0, 0, -1));
   assert(res_cp_3[1].second == 1u);
-  assert(res_cp_3[1].first == 
+  assert(res_cp_3[1].first ==
           Root_for_spheres_2_3(0, 0, 1));
 
   // plane - circle
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_pc_1;
   theSolve(theConstruct_1_3(0,1,0,10),
-	       std::make_pair(theConstruct_2_3(0,0,0,1),
-			              theConstruct_1_3(0,1,0,0)),
-		   std::back_inserter(res_pc_1));
+               std::make_pair(theConstruct_2_3(0,0,0,1),
+                                      theConstruct_1_3(0,1,0,0)),
+                   std::back_inserter(res_pc_1));
   assert(res_pc_1.size() == 0);
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_pc_2;
   theSolve(theConstruct_1_3(1,0,0,1),
            std::make_pair(theConstruct_2_3(0,0,0,1),
-				          theConstruct_1_3(0,1,0,0)),
-		   std::back_inserter(res_pc_2));
+                                          theConstruct_1_3(0,1,0,0)),
+                   std::back_inserter(res_pc_2));
   assert(res_pc_2.size() == 1);
   assert(res_pc_2[0].second == 2u);
   assert(res_pc_2[0].first == Root_for_spheres_2_3(-1, 0, 0));
@@ -321,61 +321,61 @@ void _test_solve(AK ak)
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_pc_3;
   theSolve(theConstruct_1_3(1,0,0,0),
            std::make_pair(theConstruct_2_3(0,0,0,1),
-		                  theConstruct_1_3(0,1,0,0)),
-		   std::back_inserter(res_pc_3));
+                                  theConstruct_1_3(0,1,0,0)),
+                   std::back_inserter(res_pc_3));
   assert(res_pc_3.size() == 2);
   assert(res_pc_3[0].second == 1u);
-  assert(res_pc_3[0].first == 
-	          Root_for_spheres_2_3(0, 0, -1));
+  assert(res_pc_3[0].first ==
+                  Root_for_spheres_2_3(0, 0, -1));
   assert(res_pc_3[1].second == 1u);
-  assert(res_pc_3[1].first == 
-	          Root_for_spheres_2_3(0, 0, 1));
-	
-  // 1 circle and 1 sphere && 1 sphere and 1 circle	
+  assert(res_pc_3[1].first ==
+                  Root_for_spheres_2_3(0, 0, 1));
+
+  // 1 circle and 1 sphere && 1 sphere and 1 circle
 
   // circle - sphere
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cs_1;
   theSolve(std::make_pair(theConstruct_2_3(0,0,0,1),
-	                  theConstruct_1_3(0,1,0,0)),
-	                  theConstruct_2_3(2,2,2,1),
-	   std::back_inserter(res_cs_1));
+                          theConstruct_1_3(0,1,0,0)),
+                          theConstruct_2_3(2,2,2,1),
+           std::back_inserter(res_cs_1));
   assert(res_cs_1.size() == 0);
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cs_2;
   theSolve(std::make_pair(theConstruct_2_3(0,0,0,1),
-	                  theConstruct_1_3(0,1,0,0)),
-	                  theConstruct_2_3(2,0,0,1),
-	   std::back_inserter(res_cs_2));
+                          theConstruct_1_3(0,1,0,0)),
+                          theConstruct_2_3(2,0,0,1),
+           std::back_inserter(res_cs_2));
   assert(res_cs_2.size() == 1);
   assert(res_cs_2[0].second == 2u);
   assert(res_cs_2[0].first == Root_for_spheres_2_3(1, 0, 0));
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cs_3;
   theSolve(std::make_pair(theConstruct_2_3(0,0,0,1),
-	                  theConstruct_1_3(0,1,0,0)),
-	                  theConstruct_2_3(1,0,0,1),
-	   std::back_inserter(res_cs_3));
+                          theConstruct_1_3(0,1,0,0)),
+                          theConstruct_2_3(1,0,0,1),
+           std::back_inserter(res_cs_3));
   assert(res_cs_3.size() == 2);
   assert(res_cs_3[0].second == 1u);
-  assert(res_cs_3[0].first == 
+  assert(res_cs_3[0].first ==
           Root_for_spheres_2_3(FT(1,2), 0, make_root_of_2(FT(0),-FT(1,2),FT(3))));
   assert(res_cs_3[1].second == 1u);
-  assert(res_cs_3[1].first == 
+  assert(res_cs_3[1].first ==
           Root_for_spheres_2_3(FT(1,2), 0, make_root_of_2(FT(0),FT(1,2),FT(3))));
 
   // sphere - circle
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_sc_1;
   theSolve(theConstruct_2_3(2,2,2,1),
-	       std::make_pair(theConstruct_2_3(0,0,0,1),
-			              theConstruct_1_3(0,1,0,0)),
-		   std::back_inserter(res_sc_1));
+               std::make_pair(theConstruct_2_3(0,0,0,1),
+                                      theConstruct_1_3(0,1,0,0)),
+                   std::back_inserter(res_sc_1));
   assert(res_sc_1.size() == 0);
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_sc_2;
   theSolve(theConstruct_2_3(2,0,0,1),
            std::make_pair(theConstruct_2_3(0,0,0,1),
-				          theConstruct_1_3(0,1,0,0)),
-		   std::back_inserter(res_sc_2));
+                                          theConstruct_1_3(0,1,0,0)),
+                   std::back_inserter(res_sc_2));
   assert(res_sc_2.size() == 1);
   assert(res_sc_2[0].second == 2u);
   assert(res_sc_2[0].first == Root_for_spheres_2_3(1, 0, 0));
@@ -383,72 +383,72 @@ void _test_solve(AK ak)
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_sc_3;
   theSolve(theConstruct_2_3(1,0,0,1),
            std::make_pair(theConstruct_2_3(0,0,0,1),
-				          theConstruct_1_3(0,1,0,0)),
-		   std::back_inserter(res_sc_3));
+                                          theConstruct_1_3(0,1,0,0)),
+                   std::back_inserter(res_sc_3));
   assert(res_sc_3.size() == 2);
   assert(res_sc_3[0].second == 1u);
-  assert(res_sc_3[0].first == 
-	          Root_for_spheres_2_3(FT(1,2), 0, make_root_of_2(FT(0),-FT(1,2),FT(3))));
+  assert(res_sc_3[0].first ==
+                  Root_for_spheres_2_3(FT(1,2), 0, make_root_of_2(FT(0),-FT(1,2),FT(3))));
   assert(res_sc_3[1].second == 1u);
-  assert(res_sc_3[1].first == 
-	          Root_for_spheres_2_3(FT(1,2), 0, make_root_of_2(FT(0),FT(1,2),FT(3))));
-	
+  assert(res_sc_3[1].first ==
+                  Root_for_spheres_2_3(FT(1,2), 0, make_root_of_2(FT(0),FT(1,2),FT(3))));
+
   // 2 circles
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cc_1;
   theSolve(std::make_pair(theConstruct_2_3(0,0,0,1),
-	                  theConstruct_1_3(0,1,0,0)),
+                          theConstruct_1_3(0,1,0,0)),
            std::make_pair(theConstruct_2_3(3,0,0,1),
-	                  theConstruct_1_3(0,1,0,0)),
-	   std::back_inserter(res_cc_1));
+                          theConstruct_1_3(0,1,0,0)),
+           std::back_inserter(res_cc_1));
   assert(res_cc_1.size() == 0);
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cc_2;
   theSolve(std::make_pair(theConstruct_2_3(0,0,0,1),
-	                  theConstruct_1_3(0,1,0,0)),
+                          theConstruct_1_3(0,1,0,0)),
            std::make_pair(theConstruct_2_3(2,0,0,1),
-	                  theConstruct_1_3(0,1,0,0)),
-	   std::back_inserter(res_cc_2));
+                          theConstruct_1_3(0,1,0,0)),
+           std::back_inserter(res_cc_2));
   assert(res_cc_2.size() == 1);
   assert(res_cc_2[0].second == 2u);
   assert(res_cc_2[0].first == Root_for_spheres_2_3(1, 0, 0));
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cc_3;
   theSolve(std::make_pair(theConstruct_2_3(0,0,0,4),
-	                  theConstruct_1_3(0,1,0,0)),
+                          theConstruct_1_3(0,1,0,0)),
            std::make_pair(theConstruct_2_3(2,0,0,4),
-	                  theConstruct_1_3(0,1,0,0)),
-	   std::back_inserter(res_cc_3));
+                          theConstruct_1_3(0,1,0,0)),
+           std::back_inserter(res_cc_3));
   assert(res_cc_3.size() == 2);
   assert(res_cc_3[0].second == 1u);
-  assert(res_cc_3[0].first == 
+  assert(res_cc_3[0].first ==
           Root_for_spheres_2_3(1, 0, make_root_of_2(FT(0),FT(-1),FT(3))));
   assert(res_cc_3[1].second == 1u);
-  assert(res_cc_3[1].first == 
+  assert(res_cc_3[1].first ==
           Root_for_spheres_2_3(1, 0, make_root_of_2(FT(0),FT(1),FT(3))));
- 
+
   // A QUESTION: WHAT IS THE MULTIPLICITY OF A CIRCLE vs CIRCLE SOLUTION?
   // FOR NOW, IF THE NUMBER OF SOLUTION IS 1, THE MULTIPLICITY IS 2
   //          IF THE NUMBER OF SOLUTION IS 2, THE MULTIPLICITY IS 1
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cc_4;
   theSolve(std::make_pair(theConstruct_2_3(0,0,0,4),
-	                  theConstruct_1_3(0,1,0,0)),
+                          theConstruct_1_3(0,1,0,0)),
            std::make_pair(theConstruct_2_3(2,0,0,4),
-	                  theConstruct_1_3(3,5,0,-3)),
-	   std::back_inserter(res_cc_4)); 
+                          theConstruct_1_3(3,5,0,-3)),
+           std::back_inserter(res_cc_4));
   assert(res_cc_4.size() == 2);
   assert(res_cc_4[0].second == 1u);
-  assert(res_cc_4[0].first == 
+  assert(res_cc_4[0].first ==
           Root_for_spheres_2_3(1, 0, make_root_of_2(FT(0),FT(-1),FT(3))));
   assert(res_cc_4[1].second == 1u);
-  assert(res_cc_4[1].first == 
+  assert(res_cc_4[1].first ==
           Root_for_spheres_2_3(1, 0, make_root_of_2(FT(0),FT(1),FT(3))));
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cc_5;
   theSolve(std::make_pair(theConstruct_2_3(0,0,0,169),
-	                  theConstruct_1_3(0,1,0,0)),
+                          theConstruct_1_3(0,1,0,0)),
            std::make_pair(theConstruct_2_3(24,0,0,169),
-	                  theConstruct_1_3(0,1,0,0)),
-	   std::back_inserter(res_cc_5)); 
+                          theConstruct_1_3(0,1,0,0)),
+           std::back_inserter(res_cc_5));
   assert(res_cc_5.size() == 2);
   assert(res_cc_5[0].second == 1u);
   assert(res_cc_5[0].first == Root_for_spheres_2_3(12, 0, -5));
@@ -457,28 +457,28 @@ void _test_solve(AK ak)
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cc_6;
   theSolve(std::make_pair(theConstruct_2_3(0,0,0,169),
-	                  theConstruct_1_3(0,1,0,0)),
+                          theConstruct_1_3(0,1,0,0)),
            std::make_pair(theConstruct_2_3(24,0,0,169),
-	                  theConstruct_1_3(1,3,1,-17)),
-	   std::back_inserter(res_cc_6)); 
+                          theConstruct_1_3(1,3,1,-17)),
+           std::back_inserter(res_cc_6));
   assert(res_cc_6.size() == 1);
   assert(res_cc_6[0].second == 2u);
   assert(res_cc_6[0].first == Root_for_spheres_2_3(12, 0, 5));
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cc_7;
   theSolve(std::make_pair(theConstruct_2_3(0,0,0,169),
-	                  theConstruct_1_3(0,0,1,-1)),
+                          theConstruct_1_3(0,0,1,-1)),
            std::make_pair(theConstruct_2_3(0,0,0,169),
-	                  theConstruct_1_3(0,0,1,1)),
-	   std::back_inserter(res_cc_7)); 
+                          theConstruct_1_3(0,0,1,1)),
+           std::back_inserter(res_cc_7));
   assert(res_cc_7.size() == 0);
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cc_8;
   theSolve(std::make_pair(theConstruct_2_3(0,0,0,169),
-	                  theConstruct_1_3(1,1,0,-5)),
+                          theConstruct_1_3(1,1,0,-5)),
            std::make_pair(theConstruct_2_3(0,0,0,169),
-	                  theConstruct_1_3(1,-1,0,5)),
-	   std::back_inserter(res_cc_8)); 
+                          theConstruct_1_3(1,-1,0,5)),
+           std::back_inserter(res_cc_8));
   assert(res_cc_8.size() == 2);
   assert(res_cc_8[0].second == 1u);
   assert(res_cc_8[0].first == Root_for_spheres_2_3(0, 5, -12));
@@ -487,20 +487,20 @@ void _test_solve(AK ak)
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cc_9;
   theSolve(std::make_pair(theConstruct_2_3(0,0,0,169),
-	                  theConstruct_1_3(0,1,0,-13)),
+                          theConstruct_1_3(0,1,0,-13)),
            std::make_pair(theConstruct_2_3(0,0,0,169),
-	                  theConstruct_1_3(1,0,0,0)),
-	   std::back_inserter(res_cc_9)); 
+                          theConstruct_1_3(1,0,0,0)),
+           std::back_inserter(res_cc_9));
   assert(res_cc_9.size() == 1);
   assert(res_cc_9[0].second == 2u);
   assert(res_cc_9[0].first == Root_for_spheres_2_3(0, 13, 0));
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cc_10;
   theSolve(std::make_pair(theConstruct_2_3(0,0,0,169),
-	                  theConstruct_1_3(2,1,-1,-13)),
+                          theConstruct_1_3(2,1,-1,-13)),
            std::make_pair(theConstruct_2_3(0,0,0,169),
-	                  theConstruct_1_3(1,0,0,0)),
-	   std::back_inserter(res_cc_10)); 
+                          theConstruct_1_3(1,0,0,0)),
+           std::back_inserter(res_cc_10));
   assert(res_cc_10.size() == 2);
   assert(res_cc_10[0].second == 1u);
   assert(res_cc_10[0].first == Root_for_spheres_2_3(0, 0, -13));
@@ -509,113 +509,113 @@ void _test_solve(AK ak)
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cc_11;
   theSolve(std::make_pair(theConstruct_2_3(0,0,0,169),
-	                  theConstruct_1_3(2,1,0,-13)),
+                          theConstruct_1_3(2,1,0,-13)),
            std::make_pair(theConstruct_2_3(0,0,0,169),
-	                  theConstruct_1_3(1,0,0,0)),
-	   std::back_inserter(res_cc_11)); 
+                          theConstruct_1_3(1,0,0,0)),
+           std::back_inserter(res_cc_11));
   assert(res_cc_11.size() == 1);
   assert(res_cc_11[0].second == 2u);
   assert(res_cc_11[0].first == Root_for_spheres_2_3(0, 13, 0));
-  
+
   // only Polynomial_1_3
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_p12;
   theSolve(theConstruct_1_3(1, 1, 0, -5),
-	   theConstruct_1_3(1, -1, 0, 5),
+           theConstruct_1_3(1, -1, 0, 5),
            theConstruct_1_3(0, 0, 1, 0),
-	   std::back_inserter(res_p12));
+           std::back_inserter(res_p12));
   assert(res_p12.size() == 1);
   assert(res_p12[0].second == 1u);
   assert(res_p12[0].first == Root_for_spheres_2_3(0, 5, 0));
-  
+
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_p13;
   theSolve(theConstruct_1_3(0, 1, 0, -5),
-	   theConstruct_1_3(1, -1, 0, 5),
+           theConstruct_1_3(1, -1, 0, 5),
            theConstruct_1_3(0, 0, 1, 0),
-	   std::back_inserter(res_p13));
+           std::back_inserter(res_p13));
   assert(res_p13.size() == 1);
   assert(res_p13[0].second == 1u);
   assert(res_p13[0].first == Root_for_spheres_2_3(0, 5, 0));
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_p14;
   theSolve(theConstruct_1_3(1, -1, 0, 5),
-	   theConstruct_1_3(0, 1, 0, -5),
+           theConstruct_1_3(0, 1, 0, -5),
            theConstruct_1_3(0, 0, 1, 0),
-	   std::back_inserter(res_p14));
+           std::back_inserter(res_p14));
   assert(res_p14.size() == 1);
   assert(res_p14[0].second == 1u);
   assert(res_p14[0].first == Root_for_spheres_2_3(0, 5, 0));
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_p15;
   theSolve(theConstruct_1_3(1, 0, 0, 0),
-	   theConstruct_1_3(1, -1, 0, 5),
+           theConstruct_1_3(1, -1, 0, 5),
            theConstruct_1_3(0, 0, 1, 0),
-	   std::back_inserter(res_p15));
+           std::back_inserter(res_p15));
   assert(res_p15.size() == 1);
   assert(res_p15[0].second == 1u);
   assert(res_p15[0].first == Root_for_spheres_2_3(0, 5, 0));
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_p16;
   theSolve(theConstruct_1_3(1, -1, 0, 5),
-	   theConstruct_1_3(1, 0, 0, 0),
+           theConstruct_1_3(1, 0, 0, 0),
            theConstruct_1_3(0, 0, 1, 0),
-	   std::back_inserter(res_p16));
+           std::back_inserter(res_p16));
   assert(res_p16.size() == 1);
   assert(res_p16[0].second == 1u);
   assert(res_p16[0].first == Root_for_spheres_2_3(0, 5, 0));
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_p17;
   theSolve(theConstruct_1_3(0, 1, 0, -5),
-	   theConstruct_1_3(1, 0, 0, 0),
+           theConstruct_1_3(1, 0, 0, 0),
            theConstruct_1_3(0, 0, 1, 0),
-	   std::back_inserter(res_p17));
+           std::back_inserter(res_p17));
   assert(res_p17.size() == 1);
   assert(res_p17[0].second == 1u);
   assert(res_p17[0].first == Root_for_spheres_2_3(0, 5, 0));
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_p18;
   theSolve(theConstruct_1_3(1, 0, 0, 0),
-	   theConstruct_1_3(0, 1, 0, -5),
+           theConstruct_1_3(0, 1, 0, -5),
            theConstruct_1_3(0, 0, 1, 0),
-	   std::back_inserter(res_p18));
+           std::back_inserter(res_p18));
   assert(res_p18.size() == 1);
   assert(res_p18[0].second == 1u);
   assert(res_p18[0].first == Root_for_spheres_2_3(0, 5, 0));
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_p20;
   theSolve(theConstruct_1_3(1, 0, 0, 0),
-	   theConstruct_1_3(1, 0, 0, 5),
+           theConstruct_1_3(1, 0, 0, 5),
            theConstruct_1_3(0, 0, 1, 0),
-	   std::back_inserter(res_p20));
+           std::back_inserter(res_p20));
   assert(res_p20.size() == 0);
-  
+
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_p22;
   theSolve(theConstruct_1_3(0, 1, 0, -5),
-	   theConstruct_1_3(0, 1, 0, 0),
+           theConstruct_1_3(0, 1, 0, 0),
            theConstruct_1_3(0, 0, 1, 0),
-	   std::back_inserter(res_p22));
+           std::back_inserter(res_p22));
   assert(res_p22.size() == 0);
-	   
+
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_p24;
   theSolve(theConstruct_1_3(1, -1, 0, 5),
-	   theConstruct_1_3(2, -2, 0, 15),
+           theConstruct_1_3(2, -2, 0, 15),
            theConstruct_1_3(0, 0, 1, 0),
-	   std::back_inserter(res_p24));
+           std::back_inserter(res_p24));
   assert(res_p24.size() == 0);
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_p25;
   theSolve(theConstruct_1_3(1, 0, 0, -5),
-	   theConstruct_1_3(0, 1, 0, -3),
+           theConstruct_1_3(0, 1, 0, -3),
            theConstruct_1_3(0, 0, 1, -2),
-	   std::back_inserter(res_p25));
+           std::back_inserter(res_p25));
   assert(res_p25.size() == 1);
   assert(res_p25[0].second == 1u);
   assert(res_p25[0].first == Root_for_spheres_2_3(5, 3, 2));
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_p26;
   theSolve(theConstruct_1_3(3, 1, 1, -18),
-	   theConstruct_1_3(1, 2, 1, -16),
+           theConstruct_1_3(1, 2, 1, -16),
            theConstruct_1_3(1, 1, 1, -12),
-	   std::back_inserter(res_p26));
+           std::back_inserter(res_p26));
   assert(res_p26.size() == 1);
   assert(res_p26[0].second == 1u);
   assert(res_p26[0].first == Root_for_spheres_2_3(3, 4, 5));
@@ -625,7 +625,7 @@ void _test_solve(AK ak)
   std::cout << "random_seed = " << random_seed << std::endl;
   CGAL::Random theRandom(random_seed);
   int random_max = 5;
-  int random_min = -5;  
+  int random_min = -5;
 
    typedef typename AK::Polynomial_for_spheres_2_3
       Polynomial_for_spheres_2_3;
@@ -660,11 +660,11 @@ void _test_solve(AK ak)
       p2 = Polynomial_1_3(b1,b2,b3,b4);
       p3 = Polynomial_1_3(c1,c2,c3,c4);
     } while(CGAL::same_solutions<FT>(p1,p2) ||
-            CGAL::same_solutions<FT>(p1,p3) || 
+            CGAL::same_solutions<FT>(p1,p3) ||
             CGAL::same_solutions<FT>(p2,p3));
-		std::cout << a1 << " " << a2 << " " << a3 << " " << a4 << std::endl;
-		std::cout << b1 << " " << b2 << " " << b3 << " " << b4 << std::endl;
-	  std::cout << c1 << " " << c2 << " " << c3 << " " << c4 << std::endl;
+                std::cout << a1 << " " << a2 << " " << a3 << " " << a4 << std::endl;
+                std::cout << b1 << " " << b2 << " " << b3 << " " << b4 << std::endl;
+          std::cout << c1 << " " << c2 << " " << c3 << " " << c4 << std::endl;
     std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_ppp;
     theSolve(p1,p2,p3,std::back_inserter(res_ppp));
     if(res_ppp.size() != 0) {
@@ -697,27 +697,27 @@ void _test_solve(AK ak)
     } while((a4 <= 0) || (b4 <= 0) || (c4 <= 0) ||
             (s1 == s2) || (s2 == s3) || (s1 == s3));
 
-		if(CGAL::AlgebraicSphereFunctors::intersect<AK>(s1,s2)) {
+                if(CGAL::AlgebraicSphereFunctors::intersect<AK>(s1,s2)) {
       Polynomial_1_3 p1 = CGAL::AlgebraicSphereFunctors::plane_from_2_spheres<AK>(s1,s2);
-			if(CGAL::AlgebraicSphereFunctors::intersect<AK>(s2,s3)) {
-			  Polynomial_1_3 p2 = CGAL::AlgebraicSphereFunctors::plane_from_2_spheres<AK>(s2,s3); 
-			  if(CGAL::same_solutions<FT>(p1,p2)) {
-			    const FT sq_d1 = CGAL::square(p1.a()*s1.a() + p1.b()*s1.b() +
-			                           p1.c()*s1.c() + p1.d()) /
-			             (CGAL::square(p1.a()) + CGAL::square(p1.b()) + CGAL::square(p1.c()));
-					const FT r1_sqr = s1.r_sq() - sq_d1;
-	        const FT sq_d2 = CGAL::square(p2.a()*s2.a() + p2.b()*s2.b() +
-				                                p2.c()*s2.c() + p2.d()) /
-										(CGAL::square(p2.a()) + CGAL::square(p2.b()) + CGAL::square(p2.c()));
-					const FT r2_sqr = s2.r_sq() - sq_d2;
-					if(r1_sqr == r2_sqr) if(r1_sqr != 0) { --i; continue; }
+                        if(CGAL::AlgebraicSphereFunctors::intersect<AK>(s2,s3)) {
+                          Polynomial_1_3 p2 = CGAL::AlgebraicSphereFunctors::plane_from_2_spheres<AK>(s2,s3);
+                          if(CGAL::same_solutions<FT>(p1,p2)) {
+                            const FT sq_d1 = CGAL::square(p1.a()*s1.a() + p1.b()*s1.b() +
+                                                   p1.c()*s1.c() + p1.d()) /
+                                     (CGAL::square(p1.a()) + CGAL::square(p1.b()) + CGAL::square(p1.c()));
+                                        const FT r1_sqr = s1.r_sq() - sq_d1;
+                const FT sq_d2 = CGAL::square(p2.a()*s2.a() + p2.b()*s2.b() +
+                                                                p2.c()*s2.c() + p2.d()) /
+                                                                                (CGAL::square(p2.a()) + CGAL::square(p2.b()) + CGAL::square(p2.c()));
+                                        const FT r2_sqr = s2.r_sq() - sq_d2;
+                                        if(r1_sqr == r2_sqr) if(r1_sqr != 0) { --i; continue; }
         }
       }
     }
 
-		std::cout << a1 << " " << a2 << " " << a3 << " " << a4 << std::endl;
-		std::cout << b1 << " " << b2 << " " << b3 << " " << b4 << std::endl;
-		std::cout << c1 << " " << c2 << " " << c3 << " " << c4 << std::endl;
+                std::cout << a1 << " " << a2 << " " << a3 << " " << a4 << std::endl;
+                std::cout << b1 << " " << b2 << " " << b3 << " " << b4 << std::endl;
+                std::cout << c1 << " " << c2 << " " << c3 << " " << c4 << std::endl;
     std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_sss;
     theSolve(s1,s2,s3,std::back_inserter(res_sss));
     if(res_sss.size() == 1) {
@@ -738,7 +738,7 @@ void _test_solve(AK ak)
         assert(res_sss[0].first.y() < res_sss[1].first.y());
       } else {
         assert(res_sss[0].first.z() < res_sss[1].first.z());
-      } 
+      }
     }
   }
 
@@ -765,19 +765,19 @@ void _test_solve(AK ak)
       p = Polynomial_1_3(c1,c2,c3,c4);
     } while((a4 <= 0) || (b4 <= 0) || (s1 == s2) ||
             (c1 == 0 && c2 == 0 && c3 == 0));
-    
+
     if(CGAL::AlgebraicSphereFunctors::intersect<AK>(s1,s2)) {
       Polynomial_1_3 p1 = CGAL::AlgebraicSphereFunctors::plane_from_2_spheres<AK>(s1,s2);
       if(CGAL::same_solutions<FT>(p1,p)) {
         const FT sq_d1 = CGAL::square(p1.a()*s1.a() + p1.b()*s1.b() +p1.c()*s1.c() + p1.d()) /
                 (CGAL::square(p1.a()) + CGAL::square(p1.b()) + CGAL::square(p1.c()));
         const FT r1_sqr = s1.r_sq() - sq_d1;
-    	if(r1_sqr != 0) { --i; continue; }
+            if(r1_sqr != 0) { --i; continue; }
       }
     }
-        
-    
-		std::cout << a1 << " " << a2 << " " << a3 << " " << a4 << std::endl;
+
+
+                std::cout << a1 << " " << a2 << " " << a3 << " " << a4 << std::endl;
     std::cout << b1 << " " << b2 << " " << b3 << " " << b4 << std::endl;
     std::cout << c1 << " " << c2 << " " << c3 << " " << c4 << std::endl;
     std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_ssp;
@@ -800,7 +800,7 @@ void _test_solve(AK ak)
         assert(res_ssp[0].first.y() < res_ssp[1].first.y());
       } else {
         assert(res_ssp[0].first.z() < res_ssp[1].first.z());
-      } 
+      }
     }
   }
 
@@ -828,17 +828,17 @@ void _test_solve(AK ak)
     } while((a1 == 0 && a2 == 0 && a3 == 0) ||
             (b1 == 0 && b2 == 0 && b3 == 0) ||
             (c4 <= 0) || (CGAL::same_solutions<FT>(p1,p2)));
-    
+
     if(CGAL::same_solutions<FT>(p1,p2)) {
       const FT sq_d1 = CGAL::square(p1.a()*s.a() + p1.b()*s.b() +p1.c()*s.c() + p1.d()) /
               (CGAL::square(p1.a()) + CGAL::square(p1.b()) + CGAL::square(p1.c()));
       const FT r1_sqr = s.r_sq() - sq_d1;
       if(r1_sqr != 0) { --i; continue; }
     }
-    
-		std::cout << a1 << " " << a2 << " " << a3 << " " << a4 << std::endl;
-		std::cout << b1 << " " << b2 << " " << b3 << " " << b4 << std::endl;
-		std::cout << c1 << " " << c2 << " " << c3 << " " << c4 << std::endl;
+
+                std::cout << a1 << " " << a2 << " " << a3 << " " << a4 << std::endl;
+                std::cout << b1 << " " << b2 << " " << b3 << " " << b4 << std::endl;
+                std::cout << c1 << " " << c2 << " " << c3 << " " << c4 << std::endl;
     std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_spp;
     theSolve(p1,p2,s,std::back_inserter(res_spp));
     if(res_spp.size() == 1) {
@@ -859,7 +859,7 @@ void _test_solve(AK ak)
         assert(res_spp[0].first.y() < res_spp[1].first.y());
       } else {
         assert(res_spp[0].first.z() < res_spp[1].first.z());
-      } 
+      }
     }
   }
 
@@ -882,9 +882,9 @@ void _test_solve(AK ak)
       l = Polynomials_for_line_3(a1,b1,a2,b2,a3,b3);
       s = Polynomial_for_spheres_2_3(c1,c2,c3,c4);
     } while((l.degenerated()) || (c4 <= 0));
-		std::cout << a1 << " " << a2 << " " << a3 << std::endl;
-		std::cout << b1 << " " << b2 << " " << b3 << std::endl;
-		std::cout << c1 << " " << c2 << " " << c3 << std::endl;
+                std::cout << a1 << " " << a2 << " " << a3 << std::endl;
+                std::cout << b1 << " " << b2 << " " << b3 << std::endl;
+                std::cout << c1 << " " << c2 << " " << c3 << std::endl;
     std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_ls;
     theSolve(l,s,std::back_inserter(res_ls));
     if(res_ls.size() == 1) {
@@ -902,7 +902,7 @@ void _test_solve(AK ak)
         assert(res_ls[0].first.y() < res_ls[1].first.y());
       } else {
         assert(res_ls[0].first.z() < res_ls[1].first.z());
-      } 
+      }
     }
   }
 
@@ -914,43 +914,43 @@ void _test_sign_at(AK ak)
   typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
   typename AK::Sign_at theSigh_at =
     ak.sign_at_object();
-  
+
   //Polynomial_for_spheres_2_3
   typename AK::Construct_polynomial_for_spheres_2_3 theConstruct_2_3 =
     ak.construct_polynomial_for_spheres_2_3_object();
 
   assert(theSigh_at(theConstruct_2_3(5, 5, 5, 100),
-		    Root_for_spheres_2_3(-5,5,5)) == CGAL::ZERO);
+                    Root_for_spheres_2_3(-5,5,5)) == CGAL::ZERO);
   assert(theSigh_at(theConstruct_2_3(5, 5, 5, 100),
-		    Root_for_spheres_2_3(15,5,5)) == CGAL::ZERO);
+                    Root_for_spheres_2_3(15,5,5)) == CGAL::ZERO);
   assert(theSigh_at(theConstruct_2_3(5, 5, 5, 100),
-		    Root_for_spheres_2_3(5,15,5)) == CGAL::ZERO);
+                    Root_for_spheres_2_3(5,15,5)) == CGAL::ZERO);
   assert(theSigh_at(theConstruct_2_3(5, 5, 5, 100),
-		    Root_for_spheres_2_3(5,-5,5)) == CGAL::ZERO);
+                    Root_for_spheres_2_3(5,-5,5)) == CGAL::ZERO);
   assert(theSigh_at(theConstruct_2_3(5, 5, 5, 100),
-		    Root_for_spheres_2_3(5,5,-5)) == CGAL::ZERO);
+                    Root_for_spheres_2_3(5,5,-5)) == CGAL::ZERO);
   assert(theSigh_at(theConstruct_2_3(5, 5, 5, 100),
-		    Root_for_spheres_2_3(5,5,15)) == CGAL::ZERO);
-  
+                    Root_for_spheres_2_3(5,5,15)) == CGAL::ZERO);
+
   assert(theSigh_at(theConstruct_2_3(5, 5, 5, 100),
-		    Root_for_spheres_2_3(5,5,5)) == CGAL::NEGATIVE);
+                    Root_for_spheres_2_3(5,5,5)) == CGAL::NEGATIVE);
   assert(theSigh_at(theConstruct_2_3(5, 5, 5, 100),
-		    Root_for_spheres_2_3(5,16,5)) == CGAL::POSITIVE);
+                    Root_for_spheres_2_3(5,16,5)) == CGAL::POSITIVE);
   assert(theSigh_at(theConstruct_2_3(5, 5, 5, 100),
-		    Root_for_spheres_2_3(5,-6,5)) == CGAL::POSITIVE);
+                    Root_for_spheres_2_3(5,-6,5)) == CGAL::POSITIVE);
 
   //Polynomial_1_3
   typename AK::Construct_polynomial_1_3 theConstruct_1_3 =
     ak.construct_polynomial_1_3_object();
 
   assert(theSigh_at(theConstruct_1_3(1, 2, 3, 6),
-		    Root_for_spheres_2_3(-1,-1,-1)) == CGAL::ZERO);
+                    Root_for_spheres_2_3(-1,-1,-1)) == CGAL::ZERO);
   assert(theSigh_at(theConstruct_1_3(1, 2, 3, 6),
-		    Root_for_spheres_2_3(2,-1,-2)) == CGAL::ZERO);
+                    Root_for_spheres_2_3(2,-1,-2)) == CGAL::ZERO);
   assert(theSigh_at(theConstruct_1_3(1, 2, 3, 6),
-		    Root_for_spheres_2_3(1,1,1)) != CGAL::ZERO);
+                    Root_for_spheres_2_3(1,1,1)) != CGAL::ZERO);
   assert(theSigh_at(theConstruct_1_3(1, 2, 3, 6),
-		    Root_for_spheres_2_3(0,0,0)) != CGAL::ZERO);
+                    Root_for_spheres_2_3(0,0,0)) != CGAL::ZERO);
 }
 template <class AK>
 void _test_critical_points_circle( const std::pair<
@@ -1018,12 +1018,12 @@ void _test_critical_points_circle( const std::pair<
       assert(intersection_test_x_2.size() == 0);
     }
   }
- 
+
   // Y
   if(!(is_zero(c.second.a()) && is_zero(c.second.c()))) {
     ry_min = theY_critical_points(c,true);
     ry_max = theY_critical_points(c,false);
- 
+
     assert(theSigh_at(c.first, ry_min) == CGAL::ZERO);
     assert(theSigh_at(c.second, ry_min) == CGAL::ZERO);
     assert(theSigh_at(c.first, ry_max) == CGAL::ZERO);
@@ -1068,7 +1068,7 @@ void _test_critical_points_circle( const std::pair<
   if(!(is_zero(c.second.a()) && is_zero(c.second.b()))) {
     rz_min = theZ_critical_points(c,true);
     rz_max = theZ_critical_points(c,false);
-  
+
     assert(theSigh_at(c.first, rz_min) == CGAL::ZERO);
     assert(theSigh_at(c.second, rz_min) == CGAL::ZERO);
     assert(theSigh_at(c.first, rz_max) == CGAL::ZERO);
@@ -1129,25 +1129,25 @@ void _test_critical_points(AK ak)
     ak.y_critical_points_object();
   typename AK::Z_critical_points theZ_critical_points =
     ak.z_critical_points_object();
-  
+
   for(int i = 0; i < 20; i++){
     int x = theRandom.get_int(random_min,random_max);
     int y = theRandom.get_int(random_min,random_max);
     int z = theRandom.get_int(random_min,random_max);
     int r = theRandom.get_int(1,random_max);
-  
+
     assert(theX_critical_points(theConstruct_2_3(x,y,z,r*r),true)
-	   == Root_for_spheres_2_3(x - r, y, z));
+           == Root_for_spheres_2_3(x - r, y, z));
     assert(theX_critical_points(theConstruct_2_3(x,y,z,r*r),false)
-	   == Root_for_spheres_2_3(x + r, y, z));
+           == Root_for_spheres_2_3(x + r, y, z));
     assert(theY_critical_points(theConstruct_2_3(x,y,z,r*r),true)
-	   == Root_for_spheres_2_3(x, y - r, z));
+           == Root_for_spheres_2_3(x, y - r, z));
     assert(theY_critical_points(theConstruct_2_3(x,y,z,r*r),false)
-	   == Root_for_spheres_2_3(x, y + r, z));
+           == Root_for_spheres_2_3(x, y + r, z));
     assert(theZ_critical_points(theConstruct_2_3(x,y,z,r*r),true)
-	   == Root_for_spheres_2_3(x, y, z - r));
+           == Root_for_spheres_2_3(x, y, z - r));
     assert(theZ_critical_points(theConstruct_2_3(x,y,z,r*r),false)
-	   == Root_for_spheres_2_3(x, y, z + r));
+           == Root_for_spheres_2_3(x, y, z + r));
   }
 
   typedef typename AK::Polynomial_for_spheres_2_3
@@ -1167,7 +1167,7 @@ void _test_critical_points(AK ak)
                                        Polynomial_1_3(a,b,c,0));
     _test_critical_points_circle<AK>(ec);
   }
-  
+
 }
 
 template <class AK>
@@ -1184,13 +1184,13 @@ void _test_compare_Root_for_spheres(AK ak)
 
   typename AK::Compare_x theCompare_x =
     ak.compare_x_object();
-  
+
   typename AK::Compare_y theCompare_y =
     ak.compare_y_object();
- 
+
   typename AK::Compare_z theCompare_z =
     ak.compare_z_object();
-  
+
   typename AK::Compare_xy theCompare_xy =
     ak.compare_xy_object();
 
@@ -1199,10 +1199,10 @@ void _test_compare_Root_for_spheres(AK ak)
 
   for (int i = 0; i < 100; i++){
     Root_for_spheres_2_3 r1(theRandom.get_int(random_min,random_max),
-			    theRandom.get_int(random_min,random_max),
+                            theRandom.get_int(random_min,random_max),
                             theRandom.get_int(random_min,random_max));
     Root_for_spheres_2_3 r2(theRandom.get_int(random_min,random_max),
-			    theRandom.get_int(random_min,random_max),
+                            theRandom.get_int(random_min,random_max),
                             theRandom.get_int(random_min,random_max));
     if(r1.x() > r2.x()){
       assert(theCompare_x(r1, r2) == CGAL::LARGER);
@@ -1211,27 +1211,27 @@ void _test_compare_Root_for_spheres(AK ak)
     else if(r1.x() == r2.x()){
       assert(theCompare_x(r1, r2) == CGAL::EQUAL);
       if(r1.y() < r2.y()){
-	assert(theCompare_y(r1, r2) == CGAL::SMALLER);
-	assert(theCompare_xy(r1, r2) == CGAL::SMALLER);
+        assert(theCompare_y(r1, r2) == CGAL::SMALLER);
+        assert(theCompare_xy(r1, r2) == CGAL::SMALLER);
       }
       else if(r1.y() > r2.y()){
-	assert(theCompare_y(r1, r2) == CGAL::LARGER);
-	assert(theCompare_xy(r1, r2) == CGAL::LARGER);
+        assert(theCompare_y(r1, r2) == CGAL::LARGER);
+        assert(theCompare_xy(r1, r2) == CGAL::LARGER);
       }
       else {
-	assert(theCompare_y(r1, r2) == CGAL::EQUAL);
-	assert(theCompare_xy(r1, r2) == CGAL::EQUAL);
+        assert(theCompare_y(r1, r2) == CGAL::EQUAL);
+        assert(theCompare_xy(r1, r2) == CGAL::EQUAL);
         if(r1.z() < r2.z()){
-	  assert(theCompare_z(r1, r2) == CGAL::SMALLER);
-	  assert(theCompare_xyz(r1, r2) == CGAL::SMALLER);
+          assert(theCompare_z(r1, r2) == CGAL::SMALLER);
+          assert(theCompare_xyz(r1, r2) == CGAL::SMALLER);
         }
         else if(r1.z() > r2.z()){
-	  assert(theCompare_z(r1, r2) == CGAL::LARGER);
-	  assert(theCompare_xyz(r1, r2) == CGAL::LARGER);
+          assert(theCompare_z(r1, r2) == CGAL::LARGER);
+          assert(theCompare_xyz(r1, r2) == CGAL::LARGER);
         } else {
           assert(theCompare_z(r1, r2) == CGAL::EQUAL);
-	  assert(theCompare_xyz(r1, r2) == CGAL::EQUAL);
-        } 
+          assert(theCompare_xyz(r1, r2) == CGAL::EQUAL);
+        }
       }
     }
     else {

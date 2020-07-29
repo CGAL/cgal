@@ -122,7 +122,7 @@ namespace CGAL {
 
     // Init
     void init_storage()
-    {}
+    { null_dart_handle=nullptr; }
 
    /** Return if this dart is free for adimension.
      * @param dh a dart handle
@@ -142,6 +142,8 @@ namespace CGAL {
       CGAL_assertion(i <= dimension);
       return dh->mf[i]==dh;
     }
+    bool is_perforated(Dart_const_handle /*dh*/) const
+    { return false; }
 
     /// Set simultaneously all the marks of this dart to a given value.
     void set_dart_marks(Dart_const_handle ADart,
@@ -241,7 +243,7 @@ namespace CGAL {
       CGAL_assertion( ah!=nullptr );
       return ah->is_valid();
     }
-    
+
     // accessors and modifiers to the attribute ref counting given its handle
     template<unsigned int i>
     std::size_t get_attribute_ref_counting
@@ -433,6 +435,8 @@ namespace CGAL {
     }
 
   protected:
+    Dart_handle null_dart_handle; // To be compatible with combinatorial map
+
     /// Dart container.
     Dart_container mdarts;
 

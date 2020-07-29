@@ -47,10 +47,10 @@ struct Tester
   typedef typename C3t3::Facet          Facet;
   typedef typename C3t3::Edge           Edge;
   typedef typename C3t3::Vertex_handle  Vertex_handle;
-  
+
   typedef typename C3t3::Edges_in_complex_iterator      Edge_iterator;
   typedef typename C3t3::Vertices_in_complex_iterator   Vertices_iterator;
-  
+
   typedef typename C3t3::Curve_index          Curve_index;
   typedef typename C3t3::Corner_index         Corner_index;
   typedef typename C3t3::Index                Index;
@@ -105,7 +105,7 @@ struct Tester
     Edge e = *(tr.finite_edges_begin());
     const Vertex_handle& ev1 = e.first->vertex(e.second);
     const Vertex_handle& ev2 = e.first->vertex(e.third);
-    
+
     c3t3.add_to_complex(e,curve_index);
 
     std::cerr << "\tNumber of edges in c3t3: "
@@ -125,7 +125,7 @@ struct Tester
     // Remove cell from c3t3 and verify
     //-------------------------------------------------------
     std::cerr << "Remove edge from c3t3" << std::endl;
-    
+
     c3t3.remove_from_complex(ev1, ev2);
 
     std::cerr << "\tNumber of edges in c3t3: "
@@ -138,7 +138,7 @@ struct Tester
     assert(! c3t3.is_in_complex(ev1, ev2));
     assert(c3t3.curve_index(e) == Curve_index());
     assert(c3t3.curve_index(ev1, ev2) == Curve_index());
-    
+
     //-------------------------------------------------------
     // Add corner to c3t3 and verify
     //-------------------------------------------------------
@@ -158,7 +158,7 @@ struct Tester
                                                                           c3t3.vertices_in_complex_end())));
     assert(c3t3.is_in_complex(v));
     assert(c3t3.corner_index(v) == corner_index);
-    
+
     //-------------------------------------------------------
     // Remove corner from c3t3 and verify
     //-------------------------------------------------------
@@ -190,7 +190,7 @@ struct Tester
     c3t3.set_dimension(vp2,1);
     c3t3.set_dimension(vp3,1);
     c3t3.set_dimension(vp4,0);
-    
+
     std::cerr << "\tNumber of edges in c3t3: "
               << c3t3.number_of_edges_in_complex() << std::endl;
     std::cerr << "\tNumber of corners in c3t3: "
@@ -211,27 +211,27 @@ struct Tester
     v = vit;
     typename C3t3::Triangulation::Vertex& tv1 = *v;
     typename C3t3::Triangulation::Vertex& tv2 = *vit;
-    
+
     assert(   ( v == vp1 && tr.point(vit) == p1 )
            || ( v == vp4 && tr.point(vit) == p4 ) );
-    
+
     assert ( tv1.in_dimension() == tv2.in_dimension() );
     //-------------------------------------------------------
     // Check adjacencies
     //-------------------------------------------------------
     std::vector<std::pair<Vertex_handle,Curve_index> > incident_vertices;
     c3t3.adjacent_vertices_in_complex(vp1,std::back_inserter(incident_vertices));
-    
+
     assert(incident_vertices.size() == 1);
     assert(incident_vertices.front().first == vp2);
-    
+
     incident_vertices.clear();
     c3t3.adjacent_vertices_in_complex(vp3,std::back_inserter(incident_vertices));
-    
+
     assert(incident_vertices.size() == 2);
     assert(   (incident_vertices.front().first == vp2 && incident_vertices.back().first == vp4)
            || (incident_vertices.front().first == vp4 && incident_vertices.back().first == vp2));
-    
+
     //-------------------------------------------------------
     // Create c3t3_bis
     //-------------------------------------------------------
@@ -247,42 +247,42 @@ struct Tester
 
     C3t3 c3t3_bis;
     c3t3_bis.triangulation().insert(points.begin(),points.end());
-    
+
     Edge e_bis = *(c3t3_bis.triangulation().finite_edges_begin());
     c3t3_bis.add_to_complex(e_bis,curve_index_bis);
     Vertex_handle v_bis = ++c3t3_bis.triangulation().finite_vertices_begin();
     c3t3_bis.add_to_complex(v_bis,corner_index_bis);
-    
+
     std::cerr << "\tNumber of edges in c3t3_bis: "
               << c3t3_bis.number_of_edges_in_complex() << std::endl;
     std::cerr << "\tNumber of corners in c3t3_bis: "
               << c3t3_bis.number_of_vertices_in_complex() << std::endl;
     std::cout << "\tNumber of vertices in c3t3_bis triangulation: "
               << c3t3_bis.triangulation().number_of_vertices() << std::endl;
-    
+
     //-------------------------------------------------------
     // Swap c3t3 and c3t3_bis
     //-------------------------------------------------------
     std::cout << "Swap c3t3 and c3t3_bis\n";
     typedef typename C3t3::size_type size_type;
 
-    size_type c3t3_edge_nb = c3t3.number_of_edges_in_complex(); 
+    size_type c3t3_edge_nb = c3t3.number_of_edges_in_complex();
     size_type c3t3_corner_nb = c3t3.number_of_vertices_in_complex();
     size_type c3t3_vertex_nb = c3t3.triangulation().number_of_vertices();
 
-    size_type c3t3_bis_edge_nb = c3t3_bis.number_of_edges_in_complex(); 
+    size_type c3t3_bis_edge_nb = c3t3_bis.number_of_edges_in_complex();
     size_type c3t3_bis_corner_nb = c3t3_bis.number_of_vertices_in_complex();
     size_type c3t3_bis_vertex_nb = c3t3_bis.triangulation().number_of_vertices();
 
     c3t3.swap(c3t3_bis);
-    
+
     std::cerr << "\tNumber of edges in c3t3: "
               << c3t3.number_of_edges_in_complex() << std::endl;
     std::cerr << "\tNumber of corners in c3t3: "
               << c3t3.number_of_vertices_in_complex() << std::endl;
     std::cout << "\tNumber of vertices in c3t3: "
               << c3t3.triangulation().number_of_vertices() << std::endl;
-  
+
     std::cerr << "\tNumber of edges in c3t3_bis: "
               << c3t3_bis.number_of_edges_in_complex() << std::endl;
     std::cerr << "\tNumber of corners in c3t3_bis: "
@@ -297,10 +297,10 @@ struct Tester
     assert(c3t3_bis_edge_nb == c3t3.number_of_edges_in_complex());
     assert(c3t3_bis_corner_nb == c3t3.number_of_vertices_in_complex());
     assert(c3t3_bis_vertex_nb == c3t3.triangulation().number_of_vertices());
-    
+
     // reset
     c3t3.swap(c3t3_bis);
-    
+
     //-------------------------------------------------------
     // Test edge iterators
     //-------------------------------------------------------
@@ -310,24 +310,24 @@ struct Tester
     const Edge& edge_to_modify = *eit;
     c3t3.remove_from_complex(edge_to_modify);
     c3t3.add_to_complex(edge_to_modify,curve_index_bis);
-    
+
     typename C3t3::Edges_in_complex_iterator curve_eit =
       c3t3.edges_in_complex_begin(curve_index);
     typename C3t3::Edges_in_complex_iterator curve_eit_bis =
       c3t3.edges_in_complex_begin(curve_index_bis);
     typename C3t3::Edges_in_complex_iterator eend =
       c3t3.edges_in_complex_end();
-    
+
     std::cout << "\tNumber of edges of index '" << curve_index << "': "
               << std::distance(curve_eit,eend) << std::endl;
     std::cout << "\tNumber of edges of index '" << curve_index_bis << "': "
               << std::distance(curve_eit_bis,eend) << std::endl;
-    
+
     assert ( std::distance(curve_eit,eend) == 2 );
     assert ( std::distance(curve_eit_bis,eend) == 1 );
     assert ( c3t3.curve_index(*curve_eit) == curve_index );
     assert ( c3t3.curve_index(*curve_eit_bis) == curve_index_bis );
-    
+
     //-------------------------------------------------------
     // Test vertex iterators
     //-------------------------------------------------------
@@ -335,19 +335,19 @@ struct Tester
     const Vertex_handle& vertex_to_modify = c3t3.vertices_in_complex_begin();
     c3t3.remove_from_complex(vertex_to_modify);
     c3t3.add_to_complex(vertex_to_modify,corner_index_bis);
-    
+
     typename C3t3::Vertices_in_complex_iterator corner_vit =
       c3t3.vertices_in_complex_begin(corner_index);
     typename C3t3::Vertices_in_complex_iterator corner_vit_bis =
       c3t3.vertices_in_complex_begin(corner_index_bis);
     typename C3t3::Vertices_in_complex_iterator vend =
       c3t3.vertices_in_complex_end();
-    
+
     std::cout << "\tNumber of vertices of index '" << corner_index << "': "
               << std::distance(corner_vit,vend) << std::endl;
     std::cout << "\tNumber of vertices of index '" << corner_index_bis << "': "
               << std::distance(corner_vit_bis,vend) << std::endl;
-    
+
     assert ( std::distance(corner_vit,vend) == 1 );
     assert ( std::distance(corner_vit_bis,vend) == 1 );
     assert ( c3t3.corner_index(corner_vit) == corner_index );

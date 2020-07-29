@@ -144,8 +144,8 @@ public:
   //! Used to update the selection in the Geometric Objects view.
   virtual void setSelectedItem(Item_id) = 0;
   //! \brief ignore data updating.
-  //! 
-  //! This will ignore all the individual calls to `itemChanged()` until 
+  //!
+  //! This will ignore all the individual calls to `itemChanged()` until
   //! `setUpdatesEnabled()` is called whith `b` being `true`.
   //!
   virtual void setUpdatesEnabled(bool b) =0;

@@ -22,7 +22,7 @@ namespace CGAL {
     typename Surface_a,
     typename Surface_b
     >
-  class Multi_surface_3 
+  class Multi_surface_3
   {
     const Surface_a& surf_a;
     const Surface_b& surf_b;
@@ -36,8 +36,8 @@ namespace CGAL {
     {
       return surf_a;
     }
-    
-      
+
+
     const Surface_b& surface_b() const
     {
       return surf_b;
@@ -61,7 +61,7 @@ namespace CGAL {
       Oracle_a,
       Oracle_b
       > Type;
-    
+
     typedef Type type; // Boost meta-programming compatibility
   };
 } // end namespace CGAL, second occurrence.

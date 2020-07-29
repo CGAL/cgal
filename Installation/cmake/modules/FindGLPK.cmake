@@ -15,7 +15,7 @@ if (NOT GLPK_FOUND)
              )
 
     find_library(GLPK_LIBRARIES
-                 NAMES libglpk
+                 NAMES libglpk glpk
                  PATHS ENV LD_LIBRARY_PATH
                        ENV LIBRARY_PATH
                        /usr/local/lib

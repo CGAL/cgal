@@ -2,14 +2,14 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_2D_Alpha_Shapes
 \anchor I1ChapterAlphashapes2D
 \cgalAutoToc
 \author Tran Kai Frank Da
 
-\image html alphashape.png 
-\image latex alphashape.png 
+\image html alphashape.png
+\image latex alphashape.png
 
 Assume we are given a set \f$ S\f$ of points in 2D or 3D and we would like to
 have something like "the shape formed by these points". This is
@@ -81,7 +81,7 @@ easily. Furthermore, we can select an appropriate \f$ \alpha\f$-shape from a
 finite number of different \f$ \alpha\f$-shapes and corresponding
 \f$ \alpha\f$-values.
 
-\section I1_SectAlpha_Shape_2 Functionality 
+\section I1_SectAlpha_Shape_2 Functionality
 
 The class `Alpha_shape_2<Dt>` represents the family of
 \f$ \alpha\f$-shapes of points in a plane for <I>all</I> positive
@@ -116,7 +116,7 @@ the \f$ \alpha\f$-shape (no singular edges).
 The current implementation is static, that is after its construction
 points cannot be inserted or removed.
 
-\section I1_SectDtClass2D Concepts and Models 
+\section I1_SectDtClass2D Concepts and Models
 
 We currently do not specify concepts for the underlying triangulation
 type. Models that work for a basic alpha shape are the classes
@@ -219,6 +219,6 @@ results will suffer from round-off problems.
 
 \cgalExample{Alpha_shapes_2/ex_periodic_alpha_shapes_2.cpp}
 
-*/ 
+*/
 } /* namespace CGAL */
 

@@ -41,6 +41,7 @@ int main(int argc, char* argv[])
                                                 .vertex_is_constrained_map(vcmap));
 
   std::ofstream output("mesh_shape_smoothed.off");
+  output.precision(17);
   output << mesh;
 
   std::cout << "Done!" << std::endl;

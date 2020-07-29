@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -23,7 +23,7 @@ namespace CGAL {
 
 template < class GT,
            class Vb = Triangulation_ds_vertex_base_2<> >
-class Regular_triangulation_vertex_base_2 
+class Regular_triangulation_vertex_base_2
   :   public Vb
 {
   typedef typename Vb::Triangulation_data_structure     TDS;
@@ -50,7 +50,7 @@ private:
 public:
   Regular_triangulation_vertex_base_2 ()
     : Vb(), _hidden(false) {}
-  Regular_triangulation_vertex_base_2(const Weighted_point & p) 
+  Regular_triangulation_vertex_base_2(const Weighted_point & p)
     :  Vb(), _p(p), _hidden(false) {}
   Regular_triangulation_vertex_base_2(const Weighted_point & p, Face_handle f)
     : Vb(f),_p(p), _hidden(false) {}
@@ -68,8 +68,8 @@ public:
 
 template < class GT, class Vb >
 std::istream&
-operator>>(std::istream &is, 
-	   Regular_triangulation_vertex_base_2<GT, Vb> &v)
+operator>>(std::istream &is,
+           Regular_triangulation_vertex_base_2<GT, Vb> &v)
   // non combinatorial information. Default = point
 {
   return is >> static_cast<Vb&>(v) >> v.point();
@@ -77,8 +77,8 @@ operator>>(std::istream &is,
 
 template < class GT, class Vb >
 std::ostream&
-operator<<(std::ostream &os, 
-	   const Regular_triangulation_vertex_base_2<GT, Vb> &v)
+operator<<(std::ostream &os,
+           const Regular_triangulation_vertex_base_2<GT, Vb> &v)
   // non combinatorial information. Default = point
 {
   return os << static_cast<const Vb&>(v) << v.point();

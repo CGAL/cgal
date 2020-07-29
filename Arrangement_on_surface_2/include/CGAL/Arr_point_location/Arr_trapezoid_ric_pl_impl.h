@@ -24,9 +24,9 @@
 #define CGAL_TRAP_DEBUG
 
 #ifdef CGAL_TRG_DEBUG
-	#define CGAL_TRAP_PRINT_DEBUG(expr)   std::cout << expr << std::endl
+        #define CGAL_TRAP_PRINT_DEBUG(expr)   std::cout << expr << std::endl
 #else
-	#define CGAL_TRAP_PRINT_DEBUG(expr)
+        #define CGAL_TRAP_PRINT_DEBUG(expr)
 #endif
 
 namespace CGAL {
@@ -49,7 +49,7 @@ Arr_trapezoid_ric_point_location<Arrangement_2>::locate(const Point_2& p) const
   CGAL_TRAP_PRINT_DEBUG("after td.locate");
 
   // treat special case, where trapezoid is unbounded.
-  //	for then get_parent() is not defined
+  //        for then get_parent() is not defined
   if (td_lt==TD::UNBOUNDED_TRAPEZOID) {
     CGAL_TRAP_PRINT_DEBUG("UNBOUNDED_TRAPEZOID");
 

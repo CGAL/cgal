@@ -74,7 +74,6 @@ namespace internal {
     if(do_project)
     {
       tree.rebuild(faces(tmesh).first, faces(tmesh).second, tmesh);
-      tree.accelerate_distance_queries();
     }
     typename GT::Construct_translated_point_3 translate
       = gt.construct_translated_point_3_object();
@@ -105,32 +104,51 @@ namespace internal {
 *
 * @tparam VertexRange model of `Range`, holding
 *         vertices of type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`.
-*         Its iterator type is `ForwardIterator`. 
+*         Its iterator type is `ForwardIterator`.
 * @tparam TriangleMesh model of `MutableFaceGraph`.
-* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param vertices the range of vertices to be perturbed
 * @param tmesh the triangulated surface mesh
 * @param perturbation_max_size the maximal length of moves that can be applied to
 *        vertices of `tmesh`.
-* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
-*  \cgalParamEnd
-*  \cgalParamBegin{vertex_point_map} the property map with the points associated
-*    to the vertices of `tmesh`. Instance of a class model of `ReadWritePropertyMap`.
-*  \cgalParamEnd
-*  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
-*    constrained-or-not status of each vertex of `tmesh`. A constrained vertex
-*    cannot be modified at all during perturbation
-*  \cgalParamEnd
-*  \cgalParamBegin{do_project} a boolean that sets whether vertices are reprojected
-*    on the input surface after their coordinates random perturbation
-*  \cgalParamEnd
-*  \cgalParamBegin{random_seed} a non-negative integer value to seed the random
-      number generator, and make the perturbation deterministic
-*  \cgalParamEnd
+*   \cgalParamNBegin{vertex_point_map}
+*     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+*                    as key type and `%Point_3` as value type}
+*     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{vertex_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of `tmesh`}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+*                    as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no vertex is constrained}
+*     \cgalParamExtra{A constrained vertex cannot be modified at all during perturbation}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{do_project}
+*     \cgalParamDescription{indicates whether vertices are reprojected on the input surface
+*                           after their coordinates random perturbation}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{random_seed}
+*     \cgalParamDescription{a value to seed the random number generator, and make the perturbation deterministic}
+*     \cgalParamType{unsigned int}
+*     \cgalParamDefault{`unsigned int(-1)`}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 */
@@ -155,11 +173,11 @@ void random_perturbation(VertexRange vertices
 #endif
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
-  GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
+  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_property_map(vertex_point, tmesh));
+                                 get_property_map(vertex_point, tmesh));
 
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
@@ -226,4 +244,3 @@ void random_perturbation(TriangleMesh& tmesh
 #include <CGAL/enable_warnings.h>
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_RANDOM_PERTURBATION_H
-

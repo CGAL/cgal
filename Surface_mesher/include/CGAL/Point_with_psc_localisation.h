@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -37,7 +37,7 @@ public:
   Point_with_psc_localisation() : Point(), index(), dim(-1) {}
 
   Point_with_psc_localisation(const Point& p) : Point(p), index(), dim(-1) {}
-			   
+
 //   Point_with_psc_localisation(const typename Kernel::Point_3& p) : Point(p), index(0) {}
 
   Point_with_psc_localisation(const Point_with_psc_localisation& p)

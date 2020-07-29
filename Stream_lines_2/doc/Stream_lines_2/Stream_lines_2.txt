@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_2D_Placement_of_Streamlines
 \anchor chapterStream_lines_2
 \cgalAutoToc
@@ -28,7 +28,7 @@ streamlines and the spaces within the domain (middle). A final result
 is shown (right).
 \cgalFigureEnd
 
-\section Section_2D_Streamlines_Definitions Definitions 
+\section Section_2D_Streamlines_Definitions Definitions
 
 In physics, a *field* is an assignment of a quantity to every
 point in space. For example, a gravitational field assigns a
@@ -40,7 +40,7 @@ each point inside a domain (such as the magnitude and direction of the
 force at each point in a magnetic field).
 
 Streamlines are important tools for visualizing flow fields. A
-*streamline* is a curve everywhere tangent to the field. In practice, 
+*streamline* is a curve everywhere tangent to the field. In practice,
 a streamline is often represented as a polyline (series of points)
 iteratively elongated by bidirectional numerical integration started
 from a *seed point*, until it comes close to another streamline
@@ -52,7 +52,7 @@ domain with a set of tangential streamlines in accordance with a
 specified *density*, determined by the *separating distance*
 between the streamlines.
 
-\section Section_2D_Streamlines_Fundamental_notions Fundamental Notions 
+\section Section_2D_Streamlines_Fundamental_notions Fundamental Notions
 
 A streamline can be considered as the path traced by an imaginary
 massless particle dropped into a steady fluid flow described by the
@@ -94,7 +94,7 @@ Runge-Kutta second order integrator (The empty circle represents the intermediat
 This method introduces an intermediate point \f$ p'_k\f$ between \f$ p_k\f$ and \f$ p_{k+1}\f$ to increase the
 precision of the computation (see \cgalFigureRef{runge_kutta_fig}), where:
 
-\f[ 
+\f[
 \begin{array}{ccccc}
 p'_k & = & p_k & + & \frac{1}{2}hv(p_k) \\
 p_{k+1} & = & p_k & + & hv(p'_k) \\
@@ -104,7 +104,7 @@ p_{k+1} & = & p_k & + & hv(p'_k) \\
 See \cgalCite{cgal:ptvf-nrcpp-02} for further details about numerical
 integration.
 
-\section Section_2D_Streamlines_Strategy Farthest Point Seeding Strategy 
+\section Section_2D_Streamlines_Strategy Farthest Point Seeding Strategy
 
 The algorithm implemented in this package \cgalCite{cgal:mad-fpsep-05}
 consists of placing one streamline at a time by numerical integration
@@ -150,7 +150,7 @@ Our algorithm terminates when the priority queue is empty. The size of
 the biggest cavity being monotonically decreasing, our algorithm
 guarantees the domain saturation.
 
-\section Section_2D_Streamlines_Implementation Implementation 
+\section Section_2D_Streamlines_Implementation Implementation
 
 Streamlines are represented as polylines, and are obtained by
 iterative integration from the seed point. A polyline is represented as a range of points. The computation is
@@ -160,7 +160,7 @@ To implement the triangular grid, the class `Delaunay_triangulation_2` is used. 
 to store candidate seed points is taken from the Standard Template
 Library \cgalCite{cgal:sgcsi-stlpg-97}.
 
-\section Section_2D_Streamlines_Example Examples 
+\section Section_2D_Streamlines_Example Examples
 
 The first example illustrates the generation of a 2D streamline
 placement from a vector field defined on a regular grid.
@@ -169,6 +169,6 @@ The second example depicts the generation of a streamline placement from a vecto
 field defined on a triangular grid.
 \cgalExample{Stream_lines_2/stl_triangular_field.cpp}
 
-*/ 
+*/
 } /* namespace CGAL */
 

@@ -288,7 +288,7 @@ void
 Periodic_2_triangulation_hierarchy_2<PTr>::
 clear()
 {
-  for(int i = 0; i < m_maxlevel; ++i) 
+  for(int i = 0; i < m_maxlevel; ++i)
   {
       CGAL_assertion(hierarchy[i] != nullptr);
       hierarchy[i]->clear();

@@ -21,7 +21,7 @@ for f in *
 do
   if [ -d  "$f/package_info/$f" ]
 	then
-  	echo "$f " >> ./tmp.txt
+	echo "$f" >> ./tmp.txt
 	fi
 done
         LC_ALL=C sort ./tmp.txt > ./.travis/packages.txt

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>546</width>
+    <width>556</width>
     <height>317</height>
    </rect>
   </property>
@@ -50,43 +50,11 @@
      <property name="title">
       <string>Parameters</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,1,0">
-      <item row="0" column="0">
-       <widget class="QLabel" name="timeLabel">
+     <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,1,0,0">
+      <item row="1" column="3">
+       <widget class="QCheckBox" name="noBound">
         <property name="text">
-         <string>Max CPU running time (s)</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>maxTime</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QDoubleSpinBox" name="maxTime">
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="decimals">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <double>9999.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>60.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QCheckBox" name="noTimeLimit">
-        <property name="text">
-         <string>No time limit</string>
+         <string>No angle bound</string>
         </property>
        </widget>
       </item>
@@ -98,37 +66,36 @@
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
-        <property name="buddy">
-         <cstring>sliverBound</cstring>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QCheckBox" name="noTimeLimit">
+        <property name="text">
+         <string>No time limit</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QDoubleSpinBox" name="sliverBound">
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
+      <item row="0" column="0">
+       <widget class="QLabel" name="timeLabel">
+        <property name="text">
+         <string>Max CPU running time (s)</string>
         </property>
-        <property name="readOnly">
-         <bool>false</bool>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
-        <property name="decimals">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <double>180.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>8.000000000000000</double>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="DoubleEdit" name="maxTime">
+        <property name="text">
+         <string>60.0</string>
         </property>
        </widget>
       </item>
       <item row="1" column="2">
-       <widget class="QCheckBox" name="noBound">
+       <widget class="DoubleEdit" name="sliverBound">
         <property name="text">
-         <string>No angle bound</string>
+         <string>8.0</string>
         </property>
        </widget>
       </item>
@@ -180,6 +147,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header>CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

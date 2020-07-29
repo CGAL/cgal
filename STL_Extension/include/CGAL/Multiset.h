@@ -885,7 +885,7 @@ public:
 
   template <class Key, class CompareKey>
   std::pair<iterator, bool> find_lower (const Key& key,
-					const CompareKey& comp_key)
+                                        const CompareKey& comp_key)
   {
     bool    is_equal;
     Node   *nodeP = _bound (LOWER_BOUND, key, comp_key, is_equal);
@@ -963,7 +963,7 @@ public:
 
   template <class Key, class CompareKey>
   std::pair<const_iterator, bool> find_lower (const Key& key,
-					      const CompareKey& comp_key) const
+                                              const CompareKey& comp_key) const
   {
     bool          is_equal;
     const Node   *nodeP = _bound (LOWER_BOUND, key, comp_key, is_equal);
@@ -1433,7 +1433,7 @@ protected:
 #ifdef CGAL_CFG_OUTOFLINE_MEMBER_DEFINITION_BUG
   {
       CGAL_multiset_assertion (color != Node::DUMMY_BEGIN &&
-	      color != Node::DUMMY_END);
+                               color != Node::DUMMY_END);
 
       Node* new_node = node_alloc.allocate(1);
       std::allocator_traits<Node_allocator>::construct(node_alloc, new_node, beginNode);
@@ -3856,7 +3856,7 @@ void Multiset<Type, Compare, Allocator>::_remove_fixup (Node* nodeP,
         }
 
         // Color the parent black (it is now safe to color the sibling with
-	// the same color the parent used to have) and rotate left around it.
+        // the same color the parent used to have) and rotate left around it.
         siblingP->color = currParentP->color;
         currParentP->color = Node::BLACK;
         if (_is_valid (siblingP->rightP))
@@ -3921,7 +3921,7 @@ void Multiset<Type, Compare, Allocator>::_remove_fixup (Node* nodeP,
         }
 
         // Color the parent black (it is now safe to color the sibling with
-	// the same color the parent used to have) and rotate right around it.
+        // the same color the parent used to have) and rotate right around it.
         siblingP->color = currParentP->color;
         currParentP->color = Node::BLACK;
         if (_is_valid (siblingP->leftP))

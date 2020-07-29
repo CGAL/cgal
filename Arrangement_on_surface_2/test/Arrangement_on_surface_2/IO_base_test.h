@@ -1239,7 +1239,7 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
 
   // If we reached here, we have an unknown conic type:
   std::cerr << "Illegal conic type specification: " << type << "."
-	    << std::endl;
+            << std::endl;
   return false;
 }
 

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Kaspar Fischer
 
@@ -25,11 +25,11 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
     // a bunch of float/double constants that are used as tolerance in the
     // template code of the package.
-    // "The stuff we're talking about only kicks in when floating-point 
-    // arithmetic is being used, and here double is surely a reasonable 
+    // "The stuff we're talking about only kicks in when floating-point
+    // arithmetic is being used, and here double is surely a reasonable
     // default."
-    // An old code contained functions instead of the following types and 
-    // it work for exact type (for example, Gmpq) due to the fact that 
+    // An old code contained functions instead of the following types and
+    // it work for exact type (for example, Gmpq) due to the fact that
     // they are convertible to double.
     // This is indeed the least invasive fix dropint the function that were
     // defined here and cause linkage bug.
@@ -45,7 +45,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
           //   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=36912
           // g++ does not like const floating expression when -frounding-math
           // is used.
-          static double result() { 
+          static double result() {
               return 1.0e-32;
           }
       };
@@ -58,7 +58,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
           //   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=36912
           // g++ does not like const floating expression when -frounding-math
           // is used.
-          static float result() { 
+          static float result() {
               return  1.0e-14f;
           }
       };
@@ -66,27 +66,27 @@ namespace CGAL_MINIBALL_NAMESPACE {
     template <typename FT>
       struct Tol
       {
-	// That constant is embedded in an inline static function, to
-	// workaround a bug of g++>=4.1
-	//   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=36912
-	// g++ does not like const floating expression when -frounding-math
-	// is used.
-        static double result() { 
-	  return 1.0 + 1.0e-16; // 1.0e-16 = Eps_double 
-	}
+        // That constant is embedded in an inline static function, to
+        // workaround a bug of g++>=4.1
+        //   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=36912
+        // g++ does not like const floating expression when -frounding-math
+        // is used.
+        static double result() {
+          return 1.0 + 1.0e-16; // 1.0e-16 = Eps_double
+        }
       };
 
     template <>
       struct Tol<float>
       {
-	// That constant is embedded in an inline static function, to
-	// workaround a bug of g++>=4.1
-	//   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=36912
-	// g++ does not like const floating expression when -frounding-math
-	// is used.
+        // That constant is embedded in an inline static function, to
+        // workaround a bug of g++>=4.1
+        //   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=36912
+        // g++ does not like const floating expression when -frounding-math
+        // is used.
         static float result() {
-	  return 1.0f + 1.0e-7f; // 1.0e-7f = Eps_float;
-	}
+          return 1.0f + 1.0e-7f; // 1.0e-7f = Eps_float;
+        }
       };
   }
 
@@ -127,83 +127,83 @@ namespace CGAL_MINIBALL_NAMESPACE {
   class Pair : public std::pair<FT,FT> {
   private:
     typedef std::pair<FT,FT> Base;
-  
+
   public: // construction:
     Pair() : Base() {}
-  
+
     Pair(const FT& a,const FT& b) : Base(a,b) {}
-  
+
     Pair(int i) : Base(i,0) {}
-  
+
     Pair& operator=(const FT& x) {
       this->first  = x;
       this->second = 0;
       return *this;
     }
-  
+
   public:  // arithmetic and comparision:
     inline Pair operator+(const Pair& a) const {
       return Pair(this->first+a.first,this->second+a.second);
     }
-  
+
     inline Pair operator-(const Pair& a) const {
       return Pair(this->first-a.first,this->second-a.second);
     }
-  
+
     inline Pair operator-(const FT& a) const {
       return Pair(this->first-a,this->second);
     }
-  
+
     inline Pair operator*(const FT& a) const {
       return Pair(this->first*a,this->second*a);
     }
-  
+
     inline Pair operator/(const FT& a) const {
       CGAL_MINIBALL_ASSERT(a != FT(0));
       return Pair(this->first/a,this->second/a);
     }
-  
+
     inline Pair& operator+=(const Pair& p) {
       this->first  += p.first;
       this->second += p.second;
       return *this;
     }
-  
+
     inline Pair& operator-=(const Pair& p) {
       this->first  -= p.first;
       this->second -= p.second;
       return *this;
     }
-  
+
     inline bool operator!=(const Pair& p) const {
       return this->first!=p.first || this->second!=p.second;
     }
   };
-  
+
   template<typename FT>
   inline Pair<FT> operator+(const FT& a,const Pair<FT>& p) {
     return Pair<FT>(a+p.first,p.second);
   }
-  
+
   template<typename FT>
   inline Pair<FT> operator-(const FT& a,const Pair<FT>& p) {
     return Pair<FT>(a-p.first,-p.second);
   }
-  
+
   template<typename FT>
   inline bool is_neg(const FT& p,const FT&) {
     return p < 0;
   }
-  
+
   template<typename FT>
   inline bool is_neg(const Pair<FT> p,const FT& d) {
     const bool aneg = p.first<FT(0), bneg = p.second<FT(0);
-  
+
     if (aneg && bneg)
       return true;
     if (!aneg && !bneg)
       return false;
-  
+
     // So what remains are the cases (i) a<0,b>=0 and (ii) a>=0,b<0:
     //   (i)  We need to test b*sqrt(d)<-a with b,-a>=0.
     //   (ii) We need to test a<(-b)*sqrt(d) with a,-b>=0.
@@ -211,7 +211,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     const FT x = sqr(p.second)*d, y = sqr(p.first);
     return aneg? x<y : y<x;
   }
-  
+
   template<typename FT>
   inline bool is_zero(const Pair<FT> p,const FT& d) {
     if (d != FT(0))
@@ -219,7 +219,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
       // have different signs:
       if ((p.first>FT(0)) ^ (p.second<FT(0)))
         return false;
-  
+
     // Here we have either:
     //   (i)   d=0, or
     //   (ii)  a>0,b<0,d!=0, or
@@ -227,12 +227,12 @@ namespace CGAL_MINIBALL_NAMESPACE {
     // Hence both sides of (*) are either positive or negative.
     return sqr(p.first) == sqr(p.second)*d;
   }
-  
+
   template<typename FT>
   inline bool is_neg_or_zero(const FT& p, const FT&) {
     return p <= 0;
   }
-  
+
   template<typename FT>
   inline bool is_neg_or_zero(const Pair<FT> p,const FT& d) {
     return is_neg(p,d) || is_zero(p,d);

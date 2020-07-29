@@ -168,7 +168,7 @@ public:
     Point_2 operator()(const Coordinate_1& x,
                        const Arc_2& a) {
         CGAL_precondition(a.is_in_x_range(x));
-	Point_2 pt(x, a.curve(), a.arcno(x));
+        Point_2 pt(x, a.curve(), a.arcno(x));
         return pt;
     }
 
@@ -675,10 +675,10 @@ public:
         }
         else
         {
-	  std::pair<Bound,Bound> approx_pair =
-	    Curved_kernel_via_analysis_2::instance().kernel().
+          std::pair<Bound,Bound> approx_pair =
+            Curved_kernel_via_analysis_2::instance().kernel().
             approximate_relative_y_2_object()
-	    (arc.curve_end(ARR_MIN_END).xy(),4);
+            (arc.curve_end(ARR_MIN_END).xy(),4);
           y_coord = approx_pair.second + Bound(1);
 
         }
@@ -687,10 +687,10 @@ public:
       {
         if (arc.is_finite(ARR_MAX_END))
         {
-	  std::pair<Bound,Bound> approx_pair =
-	    Curved_kernel_via_analysis_2::instance().kernel().
+          std::pair<Bound,Bound> approx_pair =
+            Curved_kernel_via_analysis_2::instance().kernel().
             approximate_relative_y_2_object()
-	    (arc.curve_end(ARR_MAX_END).xy(),4);
+            (arc.curve_end(ARR_MAX_END).xy(),4);
           y_coord = approx_pair.first-Bound(1);
         }
       }
@@ -1272,7 +1272,7 @@ public:
             return false;
         }
 
-	Arc_2::simplify(cv1,cv2);
+        Arc_2::simplify(cv1,cv2);
         // distinct supporting curves implies inequality, provided the
         // coprimality condition is satisfied
         if (!cv1.curve().is_identical(cv2.curve())) {
@@ -1459,29 +1459,24 @@ public:
     OutputIterator operator()(const Arc_2& cv1, const Arc_2& cv2,
                               OutputIterator oi) const {
 
+      typedef unsigned int                              Multiplicity;
+      typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+      typedef boost::variant<Intersection_point, Arc_2> Intersection_result;
+
         CERR("\nintersect; cv1: " << cv1
              << ";\n cv2:" << cv2 << "");
 
         // if arcs overlap, just store their common part, otherwise compute
         // point-wise intersections
-        std::vector< Arc_2 > common_arcs;
-        if (cv1._trim_if_overlapped(cv2, std::back_inserter(common_arcs))) {
-            typename std::vector< Arc_2 >::const_iterator it;
-            for(it = common_arcs.begin(); it < common_arcs.end(); it++) {
-                *oi++ = CGAL::make_object(*it);
-            }
+        std::vector<Arc_2> arcs;
+        if (cv1._trim_if_overlapped(cv2, std::back_inserter(arcs))) {
+            for (const auto& item : arcs) *oi++ = Intersection_result(item);
             return oi;
         }
         // process non-ov erlapping case
-        typedef std::pair< Point_2, unsigned int > Point_and_mult;
-        typedef std::vector< Point_and_mult > Point_vector;
-        Point_vector vec;
-        typename Point_vector::const_iterator it;
+        std::vector<Intersection_point> vec;
         Arc_2::_intersection_points(cv1, cv2, std::back_inserter(vec));
-
-        for (it = vec.begin(); it != vec.end(); it++) {
-            *oi++ = CGAL::make_object(*it);
-        }
+        for (const auto& item : vec) *oi++ = Intersection_result(item);
         return oi;
     }
 
@@ -1952,8 +1947,8 @@ public:
         if(CGAL::assign(curve, obj))
             oi = (*this)(curve, oi);
         else if(CGAL::assign(nxarc, obj))
-	  std::cerr << "AU BACKE" << std::endl;
-	  //oi = std::transform(nxarc.begin(), nxarc.end(), oi,
+          std::cerr << "AU BACKE" << std::endl;
+          //oi = std::transform(nxarc.begin(), nxarc.end(), oi,
           //      std::ptr_fun(CGAL::make_object<Arc_2>));
         else // allow the remaining objects to pass through
             *oi++ = obj;
@@ -2085,44 +2080,44 @@ public:
       CGAL_precondition(loc1 == cv2.location(ce));
       // comparing ids is the same as calling is_identical() ??
       if (cv1.id() == cv2.id()) {
-	CERR("result: " << res << "\n"); // EQUAL
-	return res;
+        CERR("result: " << res << "\n"); // EQUAL
+        return res;
       }
 
       // both points lie on the left-right-identification, i.e., equalx
       // TODO this interface is NOT official
       CGAL::Object obj1 =
-	cv1.curve().asymptotic_value_of_arc(loc1, cv1.arcno());
+        cv1.curve().asymptotic_value_of_arc(loc1, cv1.arcno());
       CGAL::Object obj2 =
-	cv2.curve().asymptotic_value_of_arc(loc1, cv2.arcno());
+        cv2.curve().asymptotic_value_of_arc(loc1, cv2.arcno());
 
       typename Point_2::Curved_kernel_via_analysis_2::Curve_kernel_2::
-	Algebraic_real_1 y1, y2;
+        Algebraic_real_1 y1, y2;
       CGAL::Arr_parameter_space ps1, ps2;
 
       if (CGAL::assign(ps1, obj1)) {
-	if (CGAL::assign(ps2, obj2)) {
-	  res = CGAL::EQUAL;
-	} else {
-	  CGAL_assertion(CGAL::assign(y2, obj2));
-	  res = (ps1 == CGAL::ARR_BOTTOM_BOUNDARY ?
-		 CGAL::SMALLER : CGAL::LARGER);
-	}
+        if (CGAL::assign(ps2, obj2)) {
+          res = CGAL::EQUAL;
+        } else {
+          CGAL_assertion(CGAL::assign(y2, obj2));
+          res = (ps1 == CGAL::ARR_BOTTOM_BOUNDARY ?
+                 CGAL::SMALLER : CGAL::LARGER);
+        }
       } else {
-	CGAL_assertion_code(bool check = )
-	  CGAL::assign(y1, obj1);
-	CGAL_assertion(check);
-	if (CGAL::assign(ps2, obj2)) {
-	  res = (ps2 == CGAL::ARR_TOP_BOUNDARY ?
-		 CGAL::SMALLER : CGAL::LARGER);
-	} else {
-	  CGAL_assertion_code(bool check = )
-	    CGAL::assign(y2, obj2);
-	  CGAL_assertion(check);
+        CGAL_assertion_code(bool check = )
+          CGAL::assign(y1, obj1);
+        CGAL_assertion(check);
+        if (CGAL::assign(ps2, obj2)) {
+          res = (ps2 == CGAL::ARR_TOP_BOUNDARY ?
+                 CGAL::SMALLER : CGAL::LARGER);
+        } else {
+          CGAL_assertion_code(bool check = )
+            CGAL::assign(y2, obj2);
+          CGAL_assertion(check);
 
-	  // Remark: Is filtered
-	  res = Base::_ckva()->kernel().compare_1_object()(y1, y2);
-	}
+          // Remark: Is filtered
+          res = Base::_ckva()->kernel().compare_1_object()(y1, y2);
+        }
       }
 
       if (res != EQUAL) {
@@ -2307,10 +2302,10 @@ public:
         }
 
         CGAL::Comparison_result res = Curved_kernel_via_analysis_2::instance().
-	  kernel().compare_1_object()(
-				      cv1.curve_end_x(ce1),
-				      cv2.curve_end_x(ce2)
-				      );
+          kernel().compare_1_object()(
+                                      cv1.curve_end_x(ce1),
+                                      cv2.curve_end_x(ce2)
+                                      );
         CERR("result: " << res << "\n");
         return res;
     }
@@ -2361,7 +2356,7 @@ public:
      * \pre both curve ends are on the same boundary
      */
     result_type operator()(const Arc_2& cv1, const Arc_2& cv2,
-			   CGAL::Arr_curve_end ce) const {
+                           CGAL::Arr_curve_end ce) const {
 
         CERR("\ncompare_x_near_boundary: cv1: " << cv1 << "\n cv2: " <<
             cv2 << "; ce: " << ce << "\n");
@@ -2371,22 +2366,22 @@ public:
                                cv2.location(ce));
         CGAL_precondition(cv1.is_on_bottom_top(loc1));
         CGAL_precondition(cv1.is_on_bottom_top(loc2));
-	CGAL_precondition(cv1.compare_x_on_boundary(ce, cv2, ce) == CGAL::EQUAL);
+        CGAL_precondition(cv1.compare_x_on_boundary(ce, cv2, ce) == CGAL::EQUAL);
 
         CGAL_precondition(loc1 == loc2);
 
-	Coordinate_1 x0(cv1.curve_end_x(ce));
-	CGAL::Comparison_result res = cv1._compare_arc_numbers(
-				       cv2, CGAL::ARR_INTERIOR, x0,
-				       (ce == CGAL::ARR_MIN_END ?
-					CGAL::POSITIVE : CGAL::NEGATIVE)
-				       );
-	if ((ce == CGAL::ARR_MAX_END &&
-	     loc1 == CGAL::ARR_TOP_BOUNDARY) ||
-	    (ce == CGAL::ARR_MIN_END &&
-	     loc1 == CGAL::ARR_BOTTOM_BOUNDARY)) {
-	  res = opposite(res);
-	}
+        Coordinate_1 x0(cv1.curve_end_x(ce));
+        CGAL::Comparison_result res = cv1._compare_arc_numbers(
+                                       cv2, CGAL::ARR_INTERIOR, x0,
+                                       (ce == CGAL::ARR_MIN_END ?
+                                        CGAL::POSITIVE : CGAL::NEGATIVE)
+                                       );
+        if ((ce == CGAL::ARR_MAX_END &&
+             loc1 == CGAL::ARR_TOP_BOUNDARY) ||
+            (ce == CGAL::ARR_MIN_END &&
+             loc1 == CGAL::ARR_BOTTOM_BOUNDARY)) {
+          res = opposite(res);
+        }
         CERR("result: " << res << "\n");
         return res;
     }
@@ -2433,7 +2428,7 @@ public:
       if (xcv.is_left_to_right()) {
         return (CGAL::SMALLER);
       } else {
-	return (CGAL::LARGER);
+        return (CGAL::LARGER);
       }
       return CGAL::EQUAL;
     }

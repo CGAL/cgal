@@ -29,6 +29,7 @@ typedef unspecified_type Arrangement_2;
 typedef typename Arrangement_2::Point_2 Point_2;
 
 /*! the \f$ x\f$-monotone curve type. */
+
 typedef typename Arrangement_2::X_monotone_curve_2 X_monotone_curve_2;
 
 /*! */
@@ -155,9 +156,9 @@ Halfedge_handle insert_in_face_interior_ex(const X_monotone_curve_2& c,
  * and that `v` has no incident edges.
 */
 Halfedge_handle insert_from_vertex_ex(const X_monotone_curve_2& c,
-Halfedge_handle pred,
-Vertex_handle v,
-Comparison_result res);
+                                      Halfedge_handle pred,
+                                      Vertex_handle v,
+                                      Comparison_result res);
 
 /*! inserts the curve `c` into the arrangement, such that both `c`'s endpoints
  * correspond to existing arrangement vertices, given by `pred1->target()` and

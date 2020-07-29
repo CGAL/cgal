@@ -36,7 +36,7 @@ namespace Polygon_mesh_processing {
 /*!
 * \ingroup PMP_meshing_grp
 *
-* \short smoothes a triangulated region of a polygon mesh.
+* \short smooths a triangulated region of a polygon mesh.
 *
 * This function attempts to make the triangle angle and area distributions as uniform as possible
 * by moving (non-constrained) vertices.
@@ -52,45 +52,81 @@ namespace Polygon_mesh_processing {
 * @tparam TriangleMesh model of `MutableFaceGraph`.
 * @tparam FaceRange range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
-* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param tmesh a polygon mesh with triangulated surface patches to be smoothed.
 * @param faces the range of triangular faces defining one or several surface patches to be smoothed.
-* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below.
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*  \cgalParamBegin{use_angle_smoothing} Boolean value to indicate whether angle-based smoothing should be used.
-*    %Default is `true`.
-*  \cgalParamEnd
-*  \cgalParamBegin{use_area_smoothing} Boolean value to indicate whether area-based smoothing should be used.
-*    %Default is `true`.
-*  \cgalParamEnd
-*  \cgalParamBegin{number_of_iterations} the number of iterations for the
-*    sequence of the smoothing iterations performed (default is 1).
-*  \cgalParamEnd
-*  \cgalParamBegin{use_safety_constraints} if `true`, vertex moves that would worsen the mesh
-*    are ignored. %Default is `false`.
-*  \cgalParamEnd
-*  \cgalParamBegin{use_Delaunay_flips} if `true` (default value), area-based smoothing will be completed
-*    by a phase of Delaunay-based edge-flips to prevent the creation of elongated triangles.
-*  \cgalParamEnd
-*  \cgalParamBegin{do_project} if `true` (default value), points are projected onto the initial surface
-*   after each iteration.
-*  \cgalParamEnd
-*  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
-*    constrained-or-not status of each vertex of `tmesh`. A constrained vertex
-*    cannot be modified at all during smoothing.
-*  \cgalParamEnd
-*  \cgalParamBegin{edge_is_constrained_map} a property map, model of `ReadWritePropertyMap`, containing the
-*    constrained-or-not status of each edge of `tmesh`. A constrained edge cannot be flipped and its extremities
-*    are tagged as constrained vertices.
-*  \cgalParamEnd
-*  \cgalParamBegin{vertex_point_map} the property map, model of `ReadWritePropertyMap`, with the points
-*    associated to the vertices of `tmesh`.
-*  \cgalParamEnd
-*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
-*    Exact constructions kernels are not supported by this function.
-*  \cgalParamEnd
+*   \cgalParamNBegin{number_of_iterations}
+*     \cgalParamDescription{the number of iterations for the sequence of the smoothing iterations performed}
+*     \cgalParamType{unsigned int}
+*     \cgalParamDefault{`1`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{use_angle_smoothing}
+*     \cgalParamDescription{value to indicate whether angle-based smoothing should be used}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{use_area_smoothing}
+*     \cgalParamDescription{value to indicate whether area-based smoothing should be used}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{vertex_point_map}
+*     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+*                    as key type and `%Point_3` as value type}
+*     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+*                     must be available in `TriangleMesh`.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{use_safety_constraints}
+*     \cgalParamDescription{If `true`, vertex moves that would worsen the mesh are ignored.}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`false`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{use_Delaunay_flips}
+*     \cgalParamDescription{If `true`, area-based smoothing will be completed by a phase of
+*                           Delaunay-based edge-flips to prevent the creation of elongated triangles.}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{do_project}
+*     \cgalParamDescription{If `true`, points are projected onto the initial surface after each iteration.}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{vertex_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of `tmesh`.}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+*                    as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no vertex is constrained}
+*     \cgalParamExtra{A constrained vertex cannot be modified at all during smoothing.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{edge_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tmesh`.}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+*                    as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no edge is constrained}
+*     \cgalParamExtra{A constrained edge cannot be modified at all during smoothing.}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * @warning The third party library \link thirdpartyCeres Ceres \endlink is required
@@ -150,10 +186,9 @@ void smooth_mesh(const FaceRange& faces,
   using parameters::get_parameter;
 
   // named parameters
-  GeomTraits gt = choose_parameter(get_parameter(np, internal_np::geom_traits),
-                               GeomTraits());
+  GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits));
   VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                               get_property_map(CGAL::vertex_point, tmesh));
+                                          get_property_map(CGAL::vertex_point, tmesh));
 
   const bool use_angle_smoothing = choose_parameter(get_parameter(np, internal_np::use_angle_smoothing), true);
   bool use_area_smoothing = choose_parameter(get_parameter(np, internal_np::use_area_smoothing), true);
@@ -173,7 +208,7 @@ void smooth_mesh(const FaceRange& faces,
   const bool use_Delaunay_flips = choose_parameter(get_parameter(np, internal_np::use_Delaunay_flips), true);
 
   VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                             get(Vertex_property_tag(), tmesh));
+                                 get(Vertex_property_tag(), tmesh));
 
   // If it's the default vcmap, manually set everything to false because the dynamic pmap has no default initialization
   if((std::is_same<VCMap, Default_VCMap>::value))
@@ -183,7 +218,7 @@ void smooth_mesh(const FaceRange& faces,
   }
 
   ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                             Constant_property_map<edge_descriptor, bool>(false));
+                                 Constant_property_map<edge_descriptor, bool>(false));
 
   // a constrained edge has constrained extremities
   for(face_descriptor f : faces)
@@ -221,7 +256,6 @@ void smooth_mesh(const FaceRange& faces,
   }
 
   Tree aabb_tree(input_triangles.begin(), input_triangles.end());
-  aabb_tree.accelerate_distance_queries();
 
   // Setup the working ranges and check some preconditions
   Angle_smoother angle_smoother(tmesh, vpmap, vcmap, gt);
@@ -236,8 +270,16 @@ void smooth_mesh(const FaceRange& faces,
 
   for(unsigned int i=0; i<nb_iterations; ++i)
   {
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+    std::cout << "Iteration #" << i << std::endl;
+#endif
+
     if(use_area_smoothing)
     {
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+      std::cout << "Smooth areas..." << std::endl;
+#endif
+
       // First apply area smoothing...
       area_smoother.optimize(use_safety_constraints /*check for bad faces*/,
                              false /*apply moves as soon as they're calculated*/,
@@ -246,7 +288,7 @@ void smooth_mesh(const FaceRange& faces,
       {
         if(use_safety_constraints && does_self_intersect(tmesh))
         {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
           std::cerr << "Cannot re-project as there are self-intersections in the mesh!\n";
 #endif
           break;
@@ -262,6 +304,10 @@ void smooth_mesh(const FaceRange& faces,
     // ... then angle smoothing
     if(use_angle_smoothing)
     {
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+      std::cout << "Smooth angles..." << std::endl;
+#endif
+
       angle_smoother.optimize(use_safety_constraints /*check for bad faces*/,
                               true /*apply all moves at once*/,
                               use_safety_constraints /*check if the min angle is improved*/);
@@ -270,7 +316,7 @@ void smooth_mesh(const FaceRange& faces,
       {
         if(use_safety_constraints && does_self_intersect(tmesh))
         {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
           std::cerr << "Can't do re-projection, there are self-intersections in the mesh!\n";
 #endif
           break;

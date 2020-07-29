@@ -3,16 +3,16 @@ namespace CGAL {
 /*!
 \ingroup nt_rrational
 
-computes the rational number with the smallest denominator in the 
+computes the rational number with the smallest denominator in the
 interval `[d1,d2]`.
 
-Computes the simplest rational number in an 
-interval of two `double` values. 
+Computes the simplest rational number in an
+interval of two `double` values.
 
 \cgalHeading{Implementation}
 
-See Knuth, "Seminumerical algorithms", page 654, answer to exercise 
-4.53-39. 
+See Knuth, "Seminumerical algorithms", page 654, answer to exercise
+4.53-39.
 
 \sa `CGAL::to_rational()`
 

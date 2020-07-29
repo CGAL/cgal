@@ -51,7 +51,6 @@
  * \sa `ArrangementLandmarkTraits_2`
  * \sa `ArrangementTraits_2`
  */
-
 class ArrangementOpenBoundaryTraits_2 {
 public:
 
@@ -141,10 +140,6 @@ typedef unspecified_type Compare_x_near_limit_2;
 
 */
 Parameter_space_in_x_2 parameter_space_in_x_2_object() const;
-
-/*!
-
-*/
 Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const;
 
 /*!

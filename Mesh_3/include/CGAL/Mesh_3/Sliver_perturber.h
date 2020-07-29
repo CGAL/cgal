@@ -42,8 +42,7 @@
 #include <CGAL/Real_timer.h>
 #include <CGAL/Mesh_3/Null_perturber_visitor.h>
 #include <CGAL/Mesh_3/sliver_criteria.h>
-#include <CGAL/Has_timestamp.h>
-#include <CGAL/Hash_handles_with_or_without_timestamps.h>
+#include <CGAL/Time_stamper.h>
 
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 #include <CGAL/Mesh_3/Worksharing_data_structures.h>

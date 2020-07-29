@@ -20,9 +20,9 @@ typedef std::vector<PolygonWithHolesPtr> PolygonWithHolesPtrVector;
 
 
 int main()
-{  
-  Polygon_2 outer ;  
-  
+{
+  Polygon_2 outer ;
+
   outer.push_back( Point( 0.0, 0.0) ) ;
   outer.push_back( Point(10.0, 0.0) ) ;
   outer.push_back( Point(10.0, 4.5) ) ;
@@ -35,22 +35,22 @@ int main()
   outer.push_back( Point(10.0, 5.5) ) ;
   outer.push_back( Point(10.0,10.0) ) ;
   outer.push_back( Point( 0.0,10.0) ) ;
-  
+
   Polygon_2 hole ;
-  
+
   hole.push_back( Point(3.0,3.0) ) ;
   hole.push_back( Point(3.0,7.0) ) ;
   hole.push_back( Point(7.0,7.0) ) ;
   hole.push_back( Point(7.0,3.0) ) ;
-    
+
   PolygonWithHoles poly( outer ) ;
-  
+
   poly.add_hole( hole ) ;
-      
+
   double lOffset = 1 ;
 
   PolygonWithHolesPtrVector offset_poly_with_holes = CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(lOffset,poly);
-  
+
   print_polygons_with_holes(offset_poly_with_holes);
 
   return 0;

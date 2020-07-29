@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -20,17 +20,17 @@ namespace CGAL {
 enum Mesher_level_conflict_status {
   NO_CONFLICT = 0,
   CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED,
-  CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED 
+  CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED
 };
-  
+
 struct Null_mesher_level {
 
   template <typename Visitor>
   void refine(Visitor) {}
-  
+
   template <typename P, typename Z>
   Mesher_level_conflict_status test_point_conflict_from_superior(P, Z)
-  { 
+  {
     return NO_CONFLICT;
   }
 
@@ -40,7 +40,7 @@ struct Null_mesher_level {
   }
 
   template <typename Visitor>
-  bool try_to_insert_one_point(Visitor) 
+  bool try_to_insert_one_point(Visitor)
   {
     return false;
   }
@@ -71,7 +71,7 @@ template <
      \c Null_mesher_level. */
   class Triangulation_traits /** Traits class that defines types for the
          triangulation. */
-  > 
+  >
 class Mesher_level
 {
 public:
@@ -90,7 +90,7 @@ public:
 
 private:
   /** \name Private member functions */
-  
+
   /** Curiously recurring template pattern. */
   //@{
   Derived& derived()
@@ -219,12 +219,12 @@ public:
     return derived().test_point_conflict_from_superior_impl(p, zone);
   }
 
-  /** 
+  /**
    * Actions before inserting the point \c p in order to refine the
    * element \c e. The zone of conflicts is \c zone.
-   */  
+   */
   template <class Mesh_visitor>
-  void before_insertion(Element& e, const Point& p, Zone& zone, 
+  void before_insertion(Element& e, const Point& p, Zone& zone,
                         Mesh_visitor visitor)
   {
     visitor.before_insertion(e, p, zone);
@@ -242,7 +242,7 @@ public:
     visitor.after_insertion(vh);
   }
 
-  /** Actions after testing conflicts for point \c p and element \c e 
+  /** Actions after testing conflicts for point \c p and element \c e
    *  if no point is inserted. */
   template <class Mesh_visitor>
   void after_no_insertion(const Element& e, const Point& p, Zone& zone,
@@ -252,7 +252,7 @@ public:
     visitor.after_no_insertion(e, p, zone);
   }
 
-  /** \name MESHING PROCESS 
+  /** \name MESHING PROCESS
    *
    * The following functions use the functions that are implemented in the
    * derived classes.
@@ -265,7 +265,7 @@ public:
    */
   bool is_algorithm_done()
   {
-    return ( previous_level.is_algorithm_done() && 
+    return ( previous_level.is_algorithm_done() &&
              no_longer_element_to_refine() );
   }
 
@@ -281,7 +281,7 @@ public:
     }
   }
 
-  /** 
+  /**
    * This function takes one element from the queue, and try to refine
    * it. It returns \c true if one point has been inserted.
    * @todo Merge with try_to_refine_element().
@@ -291,7 +291,7 @@ public:
   {
     Element e = get_next_element();
 
-    const Mesher_level_conflict_status result 
+    const Mesher_level_conflict_status result
       = try_to_refine_element(e, visitor);
 
     if(result == CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED)
@@ -308,7 +308,7 @@ public:
     before_conflicts(e, p, visitor);
 
     Zone zone = conflicts_zone(p, e);
- 
+
     const Mesher_level_conflict_status result = test_point_conflict(p, zone);
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     std::cerr << "(" << p << ") ";
@@ -336,7 +336,7 @@ public:
 
       return NO_CONFLICT;
     }
-    else 
+    else
       after_no_insertion(e, p, zone, visitor);
     return result;
   }
@@ -365,7 +365,7 @@ public:
     while(! is_algorithm_done() )
     {
       if( previous_level.try_to_insert_one_point(visitor.previous_level()) )
-        return true;      
+        return true;
       if(! no_longer_element_to_refine() )
         if( process_one_element(visitor) )
           return true;
@@ -375,7 +375,7 @@ public:
 
   /**
    * Applies one step of the algorithm: tries to refine one element of
-   * previous level or one element of this level. Return \c false iff 
+   * previous level or one element of this level. Return \c false iff
    * <tt> is_algorithm_done()==true </tt>.
    */
   template <class Mesh_visitor>

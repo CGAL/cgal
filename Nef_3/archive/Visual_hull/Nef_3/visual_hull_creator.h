@@ -14,7 +14,7 @@ namespace CGAL {
 
 template <typename SNC_>
 class visual_hull_creator : public CGAL::Modifier_base<SNC_> {
-  
+
   typedef SNC_  SNC_structure;
   typedef typename SNC_structure::Kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
@@ -36,11 +36,11 @@ class visual_hull_creator : public CGAL::Modifier_base<SNC_> {
   Vertex_handle camera;
   Plane_3 cut;
   SNC_structure* sncp;
-  std::list<std::list<Point_3> > polygon_list;   
-    
+  std::list<std::list<Point_3> > polygon_list;
+
  private:
   Plane_3 find_cutoff_plane() {
-    
+
     bool compute_halfsphere[3][2];
     for(int i=0; i<6; i++)
       compute_halfsphere[i/2][i%2] = false;
@@ -49,23 +49,23 @@ class visual_hull_creator : public CGAL::Modifier_base<SNC_> {
     SM_decorator SD(&*camera);
     CGAL_forall_svertices(sv,SD) {
       if(!compute_halfsphere[0][0])
-	if(sv->point().hx()>0)
-	  compute_halfsphere[0][0] = true;
+        if(sv->point().hx()>0)
+          compute_halfsphere[0][0] = true;
       if(!compute_halfsphere[0][1])
-	if(sv->point().hx()<0)
-	  compute_halfsphere[0][1] = true;    
+        if(sv->point().hx()<0)
+          compute_halfsphere[0][1] = true;
       if(!compute_halfsphere[1][0])
-	if(sv->point().hy()>0)
-	  compute_halfsphere[1][0] = true;
+        if(sv->point().hy()>0)
+          compute_halfsphere[1][0] = true;
       if(!compute_halfsphere[1][1])
-	if(sv->point().hy()<0)
-	  compute_halfsphere[1][1] = true;    
+        if(sv->point().hy()<0)
+          compute_halfsphere[1][1] = true;
       if(!compute_halfsphere[2][0])
-	if(sv->point().hz()>0)
-	  compute_halfsphere[2][0] = true;
+        if(sv->point().hz()>0)
+          compute_halfsphere[2][0] = true;
       if(!compute_halfsphere[2][1])
-	if(sv->point().hz()<0)
-	  compute_halfsphere[2][1] = true;    
+        if(sv->point().hz()<0)
+          compute_halfsphere[2][1] = true;
     }
 
     if(!compute_halfsphere[0][1])
@@ -87,10 +87,10 @@ class visual_hull_creator : public CGAL::Modifier_base<SNC_> {
 
 
  public:
-  visual_hull_creator(Point_3 min, Point_3 max, Point_3 position, 
-		      std::list<std::list<Point_3> > p) : 
-    room_min(min), room_max(max), c_pos(position), polygon_list(p) { }
-    
+  visual_hull_creator(Point_3 pmin, Point_3 pmax, Point_3 position,
+                      std::list<std::list<Point_3> > p) :
+    room_min(pmin), room_max(pmax), c_pos(position), polygon_list(p) { }
+
     /*
   void recompute_scene() {
     std::cerr << "recompute scene" << std::endl;
@@ -102,7 +102,7 @@ class visual_hull_creator : public CGAL::Modifier_base<SNC_> {
     N_list.push_back(tmp);
   }
     */
-    
+
   void operator()(SNC_structure& snc) {
 
     sncp = &snc;
@@ -114,25 +114,25 @@ class visual_hull_creator : public CGAL::Modifier_base<SNC_> {
     typename std::list< std::list<Point_3> >::iterator li;
     for(li=polygon_list.begin(); li!=polygon_list.end(); ++li)
       if(li==polygon_list.begin()) {
-	add_outer_cycle_to_camera(li->begin(), li->end());
+        add_outer_cycle_to_camera(li->begin(), li->end());
       } else {
-	add_inner_cycle_to_camera(li->begin(), li->end());
+        add_inner_cycle_to_camera(li->begin(), li->end());
       }
-    
+
     for(li=polygon_list.begin(); li!=polygon_list.end(); ++li)
       if(li==polygon_list.begin()) {
-	create_outer_cycles_opposites(li->begin(), li->end());
+        create_outer_cycles_opposites(li->begin(), li->end());
       } else {
-	create_inner_cycles_opposites(li->begin(), li->end());
+        create_inner_cycles_opposites(li->begin(), li->end());
       }
   }
 
   template<typename Forward_iterator>
   void add_outer_cycle_to_camera(Forward_iterator begin, Forward_iterator end) {
-    
+
     SNC_constructor C(*sncp);
     std::list<Sphere_point> spoints;
-    
+
     Forward_iterator si, si_prev, si_next;
     for(si=begin;si!=end;++si) {
       spoints.push_back(Sphere_point(*si-camera->point()));
@@ -143,10 +143,10 @@ class visual_hull_creator : public CGAL::Modifier_base<SNC_> {
 
   template<typename Forward_iterator>
   void create_outer_cycles_opposites(Forward_iterator begin, Forward_iterator end) {
-    
+
     SNC_constructor C(*sncp);
     std::list<Sphere_point> spoints;
-    
+
     cut = find_cutoff_plane();
     std::list<Point_3> points_on_plane;
     Forward_iterator pi;
@@ -169,10 +169,10 @@ class visual_hull_creator : public CGAL::Modifier_base<SNC_> {
       spoints.push_back(*si_prev-*si);
       spoints.push_back(*si_next-*si);
       spoints.push_back(camera->point()-*si);
-      bool orient(CGAL::orientation(*si_prev, 
-				    *si, 
-				    *si_next,camera->point()) == CGAL::POSITIVE);
-      C.add_outer_sedge_cycle(sncp->new_vertex(*si),spoints.begin(), spoints.end(),orient); 
+      bool orient(CGAL::orientation(*si_prev,
+                                    *si,
+                                    *si_next,camera->point()) == CGAL::POSITIVE);
+      C.add_outer_sedge_cycle(sncp->new_vertex(*si),spoints.begin(), spoints.end(),orient);
       ++si_prev;
       if(si_prev==points_on_plane.end()) si_prev=points_on_plane.begin();
     }
@@ -183,7 +183,7 @@ class visual_hull_creator : public CGAL::Modifier_base<SNC_> {
 
     SNC_constructor C(*sncp);
     std::list<Sphere_point> spoints;
-    
+
     Forward_iterator si, si_prev, si_next;
     for(si=begin;si!=end;++si) {
       spoints.push_back(Sphere_point(*si-camera->point()));
@@ -197,7 +197,7 @@ class visual_hull_creator : public CGAL::Modifier_base<SNC_> {
 
     SNC_constructor C(*sncp);
     std::list<Sphere_point> spoints;
-    
+
     //    Plane_3 cut = find_cutoff_plane();
     std::list<Point_3> points_on_plane;
 
@@ -221,9 +221,9 @@ class visual_hull_creator : public CGAL::Modifier_base<SNC_> {
       spoints.push_back(*si_prev-*si);
       spoints.push_back(*si_next-*si);
       spoints.push_back(camera->point()-*si);
-      bool orient(CGAL::orientation(*si_prev, 
-				    *si, 
-				    *si_next,camera->point()) == CGAL::POSITIVE);
+      bool orient(CGAL::orientation(*si_prev,
+                                    *si,
+                                    *si_next,camera->point()) == CGAL::POSITIVE);
       C.add_inner_sedge_cycle(sncp->new_vertex(*si),spoints.begin(), spoints.end(),orient,false);
       ++si_prev;
       if(si_prev==points_on_plane.end()) si_prev=points_on_plane.begin();
@@ -232,18 +232,18 @@ class visual_hull_creator : public CGAL::Modifier_base<SNC_> {
 
   /*
   void print_off() {
-   
+
     if(result.is_simple()) {
       Polyhedron P;
       result.convert_to_Polyhedron(P);
       std::cout << P;
     } else
       std::cerr << "result is not simple" << std::endl;
-    
+
     int argc = 1;
     char* argv="Visual Hull";
     QApplication a(argc,&argv);
-    CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w = 
+    CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w =
       new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(result);
     a.setMainWidget(w);
     w->show();

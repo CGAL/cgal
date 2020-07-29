@@ -21,7 +21,7 @@ Camera_positions_list::Camera_positions_list(QWidget* parent)
   ui.setupUi(this);
   m_listView = ui.listView;
   m_listView->setModel(m_model);
-  
+
   m_listView->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
   connect(m_listView, SIGNAL(activated(QModelIndex)),
           this, SLOT(activatedRow(QModelIndex)));
@@ -64,7 +64,7 @@ void Camera_positions_list::on_downButton_pressed()
 
 void Camera_positions_list::on_minusButton_pressed()
 {
-  Q_FOREACH(QModelIndex index, 
+  Q_FOREACH(QModelIndex index,
             m_listView->selectionModel()->selectedIndexes()) {
     m_model->removeRows(index.row(), 1);
   }
@@ -92,7 +92,7 @@ void Camera_positions_list::activatedRow(QModelIndex index)
 void Camera_positions_list::on_saveButton_pressed()
 {
   QString filename =
-    QFileDialog::getSaveFileName(this, 
+    QFileDialog::getSaveFileName(this,
                                  tr("Save camera coordinates to file"),
                                  QString(),
                                  tr("(*.camera.txt)"));
@@ -113,7 +113,7 @@ void Camera_positions_list::on_saveButton_pressed()
 void Camera_positions_list::on_openButton_pressed()
 {
   QString filename =
-    QFileDialog::getOpenFileName(this, 
+    QFileDialog::getOpenFileName(this,
                                  tr("Read camera coordinates from file"),
                                  QString(),
                                  tr("(*.camera.txt)"));

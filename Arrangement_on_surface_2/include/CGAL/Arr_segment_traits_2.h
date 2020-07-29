@@ -7,9 +7,9 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Ron Wein          <wein@post.tau.ac.il>
-//                 Efi Fogel         <efif@post.tau.ac.il>
-//                 Waqar Khan        <wkhan@mpi-inf.mpg.de>
+// Author(s): Ron Wein          <wein@post.tau.ac.il>
+//            Efi Fogel         <efif@post.tau.ac.il>
+//            Waqar Khan        <wkhan@mpi-inf.mpg.de>
 
 #ifndef CGAL_ARR_SEGMENT_TRAITS_2_H
 #define CGAL_ARR_SEGMENT_TRAITS_2_H
@@ -22,21 +22,23 @@
  * The segment traits-class for the arrangement package.
  */
 
+#include <fstream>
+
+#include <boost/variant.hpp>
+
 #include <CGAL/tags.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_geometry_traits/Segment_assertions.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arr_enums.h>
-#include <fstream>
 
 namespace CGAL {
 
-template <class Kernel_ = Exact_predicates_exact_constructions_kernel>
+template <typename Kernel_ = Exact_predicates_exact_constructions_kernel>
 class Arr_segment_2;
 
-/*!
- * \class A traits class for maintaining an arrangement of segments, avoiding
+/*! \class A traits class for maintaining an arrangement of segments, avoiding
  * cascading of computations as much as possible.
  *
  * The class is derived from the parameterized kernel to extend the traits
@@ -79,17 +81,17 @@ public:
     typedef typename Kernel::Point_2               Point_2;
 
   protected:
-    Line_2    l;                // The line that supports the segment.
-    Point_2   ps;               // The source point of the segment.
-    Point_2   pt;               // The target point of the segment.
-    bool      is_pt_max;        // Is the target (lexicographically) larger
-                                // than the source.
-    bool      is_vert;          // Is this a vertical segment.
-    bool      is_degen;         // Is the segment degenerate (a single point).
+    Line_2 m_l;               // The line that supports the segment.
+    Point_2 m_ps;             // The source point of the segment.
+    Point_2 m_pt;             // The target point of the segment.
+    bool m_is_pt_max;         // Is the target (lexicographically) larger
+                              // than the source.
+    bool m_is_vert;           // Is this a vertical segment.
+    bool m_is_degen;          // Is the segment degenerate (a single point).
 
   public:
     /*! Default constructor. */
-    _Segment_cached_2() : is_vert(false), is_degen(true) {}
+    _Segment_cached_2() : m_is_vert(false), m_is_degen(true) {}
 
     /*! Constructor from a segment.
      * \param seg The segment.
@@ -97,50 +99,46 @@ public:
      */
     _Segment_cached_2(const Segment_2& seg)
     {
-      Kernel   kernel;
+      Kernel kernel;
+      auto construct_vertex = kernel.construct_vertex_2_object();
 
-      typename Kernel_::Construct_vertex_2
-        construct_vertex = kernel.construct_vertex_2_object();
+      m_ps = construct_vertex(seg, 0);
+      m_pt = construct_vertex(seg, 1);
 
-      ps = construct_vertex(seg, 0);
-      pt = construct_vertex(seg, 1);
+      Comparison_result res = kernel.compare_xy_2_object()(m_ps, m_pt);
+      m_is_degen = (res == EQUAL);
+      m_is_pt_max = (res == SMALLER);
 
-      Comparison_result  res = kernel.compare_xy_2_object()(ps, pt);
-      is_degen = (res == EQUAL);
-      is_pt_max = (res == SMALLER);
-
-      CGAL_precondition_msg (! is_degen,
+      CGAL_precondition_msg (! m_is_degen,
                              "Cannot construct a degenerate segment.");
 
-      l = kernel.construct_line_2_object()(seg);
-      is_vert = kernel.is_vertical_2_object()(seg);
+      m_l = kernel.construct_line_2_object()(seg);
+      m_is_vert = kernel.is_vertical_2_object()(seg);
     }
 
-    /*!
-     * Construct a segment from two end-points.
+    /*! Construct a segment from two end-points.
      * \param source The source point.
      * \param target The target point.
      * \param The two points must not be equal.
      */
     _Segment_cached_2(const Point_2& source, const Point_2& target) :
-      ps(source),
-      pt(target)
+      m_ps(source),
+      m_pt(target)
     {
-      Kernel   kernel;
+      Kernel kernel;
 
-      Comparison_result  res = kernel.compare_xy_2_object()(ps, pt);
-      is_degen = (res == EQUAL);
-      is_pt_max = (res == SMALLER);
+      Comparison_result res = kernel.compare_xy_2_object()(m_ps, m_pt);
+      m_is_degen = (res == EQUAL);
+      m_is_pt_max = (res == SMALLER);
 
-      CGAL_precondition_msg(! is_degen,
+      CGAL_precondition_msg(! m_is_degen,
                             "Cannot construct a degenerate segment.");
 
-      l = kernel.construct_line_2_object()(source, target);
-      is_vert = kernel.is_vertical_2_object()(l);
+      m_l = kernel.construct_line_2_object()(source, target);
+      m_is_vert = kernel.is_vertical_2_object()(m_l);
     }
 
-    /*!
-     * Construct a segment from two end-points on a supporting line.
+    /*! Construct a segment from two end-points on a supporting line.
      * \param supp_line The supporting line.
      * \param source The source point.
      * \param target The target point.
@@ -148,60 +146,56 @@ public:
      */
     _Segment_cached_2(const Line_2& supp_line,
                       const Point_2& source, const Point_2& target) :
-      l(supp_line),
-      ps(source),
-      pt(target)
+      m_l(supp_line),
+      m_ps(source),
+      m_pt(target)
     {
-      Kernel   kernel;
+      Kernel kernel;
 
-      CGAL_precondition(
-        Segment_assertions::_assert_is_point_on(source, l,
-                                                Has_exact_division()) &&
-        Segment_assertions::_assert_is_point_on(target,l,
-                                                Has_exact_division())
-        );
+      CGAL_precondition
+        (Segment_assertions::_assert_is_point_on(source, m_l,
+                                                 Has_exact_division()) &&
+         Segment_assertions::_assert_is_point_on(target, m_l,
+                                                 Has_exact_division()));
 
-      is_vert = kernel.is_vertical_2_object()(l);
+      m_is_vert = kernel.is_vertical_2_object()(m_l);
 
-      Comparison_result  res = kernel.compare_xy_2_object()(ps, pt);
-      is_degen = (res == EQUAL);
-      is_pt_max = (res == SMALLER);
+      Comparison_result res = kernel.compare_xy_2_object()(m_ps, m_pt);
+      m_is_degen = (res == EQUAL);
+      m_is_pt_max = (res == SMALLER);
 
-      CGAL_precondition_msg(! is_degen,
+      CGAL_precondition_msg(! m_is_degen,
                             "Cannot construct a degenerate segment.");
     }
 
-    /*!
-     * Assignment operator.
+    /*! Assignment operator.
      * \param seg the source segment to copy from
      * \pre The segment is not degenerate.
      */
-    const _Segment_cached_2& operator= (const Segment_2& seg)
+    const _Segment_cached_2& operator=(const Segment_2& seg)
     {
-      Kernel   kernel;
+      Kernel kernel;
+      auto construct_vertex = kernel.construct_vertex_2_object();
 
-      typename Kernel_::Construct_vertex_2
-        construct_vertex = kernel.construct_vertex_2_object();
+      m_ps = construct_vertex(seg, 0);
+      m_pt = construct_vertex(seg, 1);
 
-      ps = construct_vertex(seg, 0);
-      pt = construct_vertex(seg, 1);
+      Comparison_result res = kernel.compare_xy_2_object()(m_ps, m_pt);
+      m_is_degen = (res == EQUAL);
+      m_is_pt_max = (res == SMALLER);
 
-      Comparison_result res = kernel.compare_xy_2_object()(ps, pt);
-      is_degen = (res == EQUAL);
-      is_pt_max = (res == SMALLER);
-
-      CGAL_precondition_msg(! is_degen,
+      CGAL_precondition_msg(! m_is_degen,
                             "Cannot construct a degenerate segment.");
 
-      l = kernel.construct_line_2_object()(seg);
-      is_vert = kernel.is_vertical_2_object()(seg);
+      m_l = kernel.construct_line_2_object()(seg);
+      m_is_vert = kernel.is_vertical_2_object()(seg);
 
       return (*this);
     }
 
     /*! Obtain the (lexicographically) left endpoint.
      */
-    const Point_2& left() const { return (is_pt_max ? ps : pt); }
+    const Point_2& left() const { return (m_is_pt_max ? m_ps : m_pt); }
 
     /*! Set the (lexicographically) left endpoint.
      * \param p The point to set.
@@ -209,22 +203,19 @@ public:
      */
     void set_left(const Point_2& p)
     {
-      CGAL_precondition (! is_degen);
-      CGAL_precondition_code (
-        Kernel    kernel;
-      );
+      CGAL_precondition(! m_is_degen);
+      CGAL_precondition_code(Kernel kernel);
       CGAL_precondition
-        (Segment_assertions::_assert_is_point_on (p, l,
-                                                  Has_exact_division()) &&
-         kernel.compare_xy_2_object() (p, right()) == SMALLER);
+        (Segment_assertions::_assert_is_point_on(p, m_l, Has_exact_division()) &&
+         (kernel.compare_xy_2_object()(p, right()) == SMALLER));
 
-      if (is_pt_max) ps = p;
-      else pt = p;
+      if (m_is_pt_max) m_ps = p;
+      else m_pt = p;
     }
 
     /*! Obtain the (lexicographically) right endpoint.
      */
-    const Point_2& right() const { return (is_pt_max ? pt : ps); }
+    const Point_2& right() const { return (m_is_pt_max ? m_pt : m_ps); }
 
     /*! Set the (lexicographically) right endpoint.
      * \param p The point to set.
@@ -232,38 +223,35 @@ public:
      */
     void set_right(const Point_2& p)
     {
-      CGAL_precondition(! is_degen);
-      CGAL_precondition_code(
-        Kernel    kernel;
-      );
+      CGAL_precondition(! m_is_degen);
+      CGAL_precondition_code(Kernel kernel);
       CGAL_precondition
-        (Segment_assertions::_assert_is_point_on (p, l,
-                                                  Has_exact_division()) &&
-         kernel.compare_xy_2_object() (p, left()) == LARGER);
+        (Segment_assertions::_assert_is_point_on(p, m_l, Has_exact_division()) &&
+         (kernel.compare_xy_2_object()(p, left()) == LARGER));
 
-      if (is_pt_max) pt = p;
-      else ps = p;
+      if (m_is_pt_max) m_pt = p;
+      else m_ps = p;
     }
 
     /*! Obtain the supporting line.
      */
     const Line_2& line() const
     {
-      CGAL_precondition(! is_degen);
-      return (l);
+      CGAL_precondition(! m_is_degen);
+      return m_l;
     }
 
     /*! Determine whether the curve is vertical.
      */
     bool is_vertical() const
     {
-      CGAL_precondition(! is_degen);
-      return (is_vert);
+      CGAL_precondition(! m_is_degen);
+      return m_is_vert;
     }
 
     /*! Determine whether the curve is directed lexicographic from left to right
      */
-    bool is_directed_right() const { return (is_pt_max); }
+    bool is_directed_right() const { return (m_is_pt_max); }
 
     /*! Determine whether the given point is in the x-range of the segment.
      * \param p The query point.
@@ -271,12 +259,12 @@ public:
      */
     bool is_in_x_range(const Point_2& p) const
     {
-      Kernel                          kernel;
-      typename Kernel_::Compare_x_2   compare_x = kernel.compare_x_2_object();
-      const Comparison_result         res1 = compare_x(p, left());
+      Kernel kernel;
+      typename Kernel_::Compare_x_2 compare_x = kernel.compare_x_2_object();
+      const Comparison_result res1 = compare_x(p, left());
 
-      if (res1 == SMALLER) return (false);
-      else if (res1 == EQUAL) return (true);
+      if (res1 == SMALLER) return false;
+      else if (res1 == EQUAL) return true;
 
       const Comparison_result res2 = compare_x(p, right());
       return (res2 != LARGER);
@@ -288,14 +276,14 @@ public:
      */
     bool is_in_y_range(const Point_2& p) const
     {
-      Kernel                          kernel;
-      typename Kernel_::Compare_y_2   compare_y = kernel.compare_y_2_object();
-      const Comparison_result         res1 = compare_y (p, left());
+      Kernel kernel;
+      typename Kernel_::Compare_y_2 compare_y = kernel.compare_y_2_object();
+      const Comparison_result res1 = compare_y(p, left());
 
-      if (res1 == SMALLER) return (false);
-      else if (res1 == EQUAL) return (true);
+      if (res1 == SMALLER) return false;
+      else if (res1 == EQUAL) return true;
 
-      const Comparison_result res2 = compare_y (p, right());
+      const Comparison_result res2 = compare_y(p, right());
       return (res2 != LARGER);
     }
   };
@@ -329,23 +317,21 @@ public:
     friend class Arr_segment_traits_2<Kernel>;
 
   public:
-    /*!
-     * Compare the x-coordinates of two points.
+    /*! Compare the x-coordinates of two points.
      * \param p1 The first point.
      * \param p2 The second point.
      * \return LARGER if x(p1) > x(p2);
      *         SMALLER if x(p1) < x(p2);
      *         EQUAL if x(p1) = x(p2).
      */
-    Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
+    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     {
       const Kernel& kernel = m_traits;
-
       return (kernel.compare_x_2_object()(p1, p2));
     }
   };
 
-  /*! Get a Compare_x_2 functor object. */
+  /*! Obtain a Compare_x_2 functor object. */
   Compare_x_2 compare_x_2_object() const { return Compare_x_2(*this); }
 
   class Compare_xy_2 {
@@ -363,8 +349,7 @@ public:
     friend class Arr_segment_traits_2<Kernel>;
 
   public:
-    /*!
-     * Compare two points lexicographically: by x, then by y.
+    /*! Compare two points lexicographically: by x, then by y.
      * \param p1 The first point.
      * \param p2 The second point.
      * \return LARGER if x(p1) > x(p2), or if x(p1) = x(p2) and y(p1) > y(p2);
@@ -378,13 +363,12 @@ public:
     }
   };
 
-  /*! Get a Compare_xy_2 functor object. */
+  /*! Obtain a Compare_xy_2 functor object. */
   Compare_xy_2 compare_xy_2_object() const { return Compare_xy_2(*this); }
 
   class Construct_min_vertex_2 {
   public:
-    /*!
-     * Get the left endpoint of the x-monotone curve (segment).
+    /*! Obtain the left endpoint of the x-monotone curve (segment).
      * \param cv The curve.
      * \return The left endpoint.
      */
@@ -392,29 +376,27 @@ public:
     { return (cv.left()); }
   };
 
-  /*! Get a Construct_min_vertex_2 functor object. */
+  /*! Obtain a Construct_min_vertex_2 functor object. */
   Construct_min_vertex_2 construct_min_vertex_2_object() const
   { return Construct_min_vertex_2(); }
 
   class Construct_max_vertex_2 {
   public:
-    /*!
-     * Get the right endpoint of the x-monotone curve (segment).
+    /*! Obtain the right endpoint of the x-monotone curve (segment).
      * \param cv The curve.
      * \return The right endpoint.
      */
-    const Point_2& operator() (const X_monotone_curve_2& cv) const
+    const Point_2& operator()(const X_monotone_curve_2& cv) const
     { return (cv.right()); }
   };
 
-  /*! Get a Construct_max_vertex_2 functor object. */
+  /*! Obtain a Construct_max_vertex_2 functor object. */
   Construct_max_vertex_2 construct_max_vertex_2_object() const
   { return Construct_max_vertex_2(); }
 
   class Is_vertical_2 {
   public:
-    /*!
-     * Check whether the given x-monotone curve is a vertical segment.
+    /*! Check whether the given x-monotone curve is a vertical segment.
      * \param cv The curve.
      * \return (true) if the curve is a vertical segment; (false) otherwise.
      */
@@ -422,9 +404,8 @@ public:
     { return (cv.is_vertical()); }
   };
 
-  /*! Get an Is_vertical_2 functor object. */
-  Is_vertical_2 is_vertical_2_object () const
-  { return Is_vertical_2(); }
+  /*! Obtain an Is_vertical_2 functor object. */
+  Is_vertical_2 is_vertical_2_object () const { return Is_vertical_2(); }
 
   class Compare_y_at_x_2 {
   protected:
@@ -441,8 +422,7 @@ public:
     friend class Arr_segment_traits_2<Kernel>;
 
   public:
-    /*!
-     * Return the location of the given point with respect to the input curve.
+    /*! Return the location of the given point with respect to the input curve.
      * \param cv The curve.
      * \param p The point.
      * \pre p is in the x-range of cv.
@@ -453,26 +433,26 @@ public:
     Comparison_result operator()(const Point_2& p,
                                  const X_monotone_curve_2& cv) const
     {
-      CGAL_precondition (cv.is_in_x_range(p));
+      CGAL_precondition(cv.is_in_x_range(p));
 
       const Kernel& kernel = m_traits;
 
       if (! cv.is_vertical()) {
         // Compare p with the segment's supporting line.
-        return (kernel.compare_y_at_x_2_object()(p, cv.line()));
+        CGAL_assertion_code(auto cmp_x = kernel.compare_x_2_object());
+        CGAL_assertion(cmp_x(cv.left(), cv.right()) == SMALLER);
+        return kernel.orientation_2_object()(cv.left(), cv.right(), p);
       }
-      else {
-        // Compare with the vertical segment's end-points.
-        typename Kernel::Compare_y_2  compare_y = kernel.compare_y_2_object();
-        Comparison_result res1 = compare_y(p, cv.left());
-        Comparison_result res2 = compare_y(p, cv.right());
 
-        return (res1 == res2) ? res1 : EQUAL;
-      }
+      // Compare with the vertical segment's end-points.
+      typename Kernel::Compare_y_2 compare_y = kernel.compare_y_2_object();
+      Comparison_result res1 = compare_y(p, cv.left());
+      Comparison_result res2 = compare_y(p, cv.right());
+      return (res1 == res2) ? res1 : EQUAL;
     }
   };
 
-  /*! Get a Compare_y_at_x_2 functor object. */
+  /*! Obtain a Compare_y_at_x_2 functor object. */
   Compare_y_at_x_2 compare_y_at_x_2_object() const
   { return Compare_y_at_x_2(*this); }
 
@@ -491,8 +471,7 @@ public:
     friend class Arr_segment_traits_2<Kernel>;
 
   public:
-    /*!
-     * Compare the y value of two x-monotone curves immediately to the left
+    /*! Compare the y value of two x-monotone curves immediately to the left
      * of their intersection point.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
@@ -510,14 +489,10 @@ public:
 
       // Make sure that p lies on both curves, and that both are defined to its
       // left (so their left endpoint is lexicographically smaller than p).
-      CGAL_precondition_code(
-        typename Kernel::Compare_xy_2 compare_xy =
-          kernel.compare_xy_2_object();
-      );
+      CGAL_precondition_code(auto compare_xy = kernel.compare_xy_2_object());
 
-      CGAL_precondition(
-         (m_traits.compare_y_at_x_2_object()(p, cv1) == EQUAL) &&
-         (m_traits.compare_y_at_x_2_object()(p, cv2) == EQUAL));
+      CGAL_precondition((m_traits.compare_y_at_x_2_object()(p, cv1) == EQUAL) &&
+                        (m_traits.compare_y_at_x_2_object()(p, cv2) == EQUAL));
 
       CGAL_precondition(compare_xy(cv1.left(), p) == SMALLER &&
                         compare_xy(cv2.left(), p) == SMALLER);
@@ -531,8 +506,8 @@ public:
     }
   };
 
-  /*! Get a Compare_y_at_x_left_2 functor object. */
-  Compare_y_at_x_left_2 compare_y_at_x_left_2_object () const
+  /*! Obtain a Compare_y_at_x_left_2 functor object. */
+  Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
   { return Compare_y_at_x_left_2(*this); }
 
   class Compare_y_at_x_right_2 {
@@ -550,8 +525,7 @@ public:
     friend class Arr_segment_traits_2<Kernel>;
 
   public:
-    /*!
-     * Compare the y value of two x-monotone curves immediately to the right
+    /*! Compare the y value of two x-monotone curves immediately to the right
      * of their intersection point.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
@@ -569,14 +543,10 @@ public:
 
       // Make sure that p lies on both curves, and that both are defined to its
       // right (so their right endpoint is lexicographically larger than p).
-      CGAL_precondition_code (
-        typename Kernel::Compare_xy_2 compare_xy =
-          kernel.compare_xy_2_object();
-      );
+      CGAL_precondition_code(auto compare_xy = kernel.compare_xy_2_object());
 
-      CGAL_precondition(
-        (m_traits.compare_y_at_x_2_object()(p, cv1) == EQUAL) &&
-        (m_traits.compare_y_at_x_2_object()(p, cv2) == EQUAL));
+      CGAL_precondition((m_traits.compare_y_at_x_2_object()(p, cv1) == EQUAL) &&
+                        (m_traits.compare_y_at_x_2_object()(p, cv2) == EQUAL));
 
       CGAL_precondition(compare_xy(cv1.right(), p) == LARGER &&
                         compare_xy(cv2.right(), p) == LARGER);
@@ -588,7 +558,7 @@ public:
     }
   };
 
-  /*! Get a Compare_y_at_x_right_2 functor object. */
+  /*! Obtain a Compare_y_at_x_right_2 functor object. */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   { return Compare_y_at_x_right_2(*this); }
 
@@ -607,8 +577,8 @@ public:
     friend class Arr_segment_traits_2<Kernel>;
 
   public:
-    /*!
-     * Check if the two x-monotone curves are the same (have the same graph).
+    /*! Check whether the two x-monotone curves are the same (have the same
+     * graph).
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \return (true) if the two curves are the same; (false) otherwise.
@@ -628,14 +598,14 @@ public:
      * \param p2 The second point.
      * \return (true) if the two point are the same; (false) otherwise.
      */
-    bool operator() (const Point_2& p1, const Point_2& p2) const
+    bool operator()(const Point_2& p1, const Point_2& p2) const
     {
       const Kernel& kernel = m_traits;
       return (kernel.equal_2_object()(p1, p2));
     }
   };
 
-  /*! Get an Equal_2 functor object. */
+  /*! Obtain an Equal_2 functor object. */
   Equal_2 equal_2_object() const { return Equal_2(*this); }
   //@}
 
@@ -644,25 +614,23 @@ public:
 
   class Make_x_monotone_2 {
   public:
-    /*!
-     * Cut the given curve into x-monotone subcurves and insert them into the
+    /*! Cut the given curve into x-monotone subcurves and insert them into the
      * given output iterator. As segments are always x_monotone, only one
      * object will be contained in the iterator.
      * \param cv The curve.
-     * \param oi The output iterator, whose value-type is Object.
+     * \param oi The output iterator, whose value-type is variant<....
      * \return The past-the-end iterator.
      */
-    template<class OutputIterator>
+    template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
       // Wrap the segment with an object.
-      *oi = make_object (cv);
-      ++oi;
-      return (oi);
+      *oi++ = make_object(cv);
+      return oi;
     }
   };
 
-  /*! Get a Make_x_monotone_2 functor object. */
+  /*! Obtain a Make_x_monotone_2 functor object. */
   Make_x_monotone_2 make_x_monotone_2_object() const
   { return Make_x_monotone_2(); }
 
@@ -681,8 +649,7 @@ public:
     friend class Arr_segment_traits_2<Kernel>;
 
   public:
-    /*!
-     * Split a given x-monotone curve at a given point into two sub-curves.
+    /*! Split a given x-monotone curve at a given point into two sub-curves.
      * \param cv The curve to split
      * \param p The split point.
      * \param c1 Output: The left resulting subcurve (p is its right endpoint).
@@ -693,28 +660,24 @@ public:
                     X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
     {
       // Make sure that p lies on the interior of the curve.
-      CGAL_precondition_code (
-        const Kernel& kernel = m_traits;
-        typename Kernel::Compare_xy_2 compare_xy =
-          kernel.compare_xy_2_object();
-      );
+      CGAL_precondition_code(const Kernel& kernel = m_traits;
+                             auto compare_xy = kernel.compare_xy_2_object());
 
-      CGAL_precondition(
-        (m_traits.compare_y_at_x_2_object()(p, cv) == EQUAL) &&
-        compare_xy(cv.left(), p) == SMALLER &&
-        compare_xy(cv.right(), p) == LARGER);
+      CGAL_precondition((m_traits.compare_y_at_x_2_object()(p, cv) == EQUAL) &&
+                        compare_xy(cv.left(), p) == SMALLER &&
+                        compare_xy(cv.right(), p) == LARGER);
 
       // Perform the split.
       c1 = cv;
-      c1.set_right (p);
+      c1.set_right(p);
 
       c2 = cv;
-      c2.set_left (p);
+      c2.set_left(p);
     }
   };
 
-  /*! Get a Split_2 functor object. */
-  Split_2 split_2_object () const { return Split_2(*this); }
+  /*! Obtain a Split_2 functor object. */
+  Split_2 split_2_object() const { return Split_2(*this); }
 
   class Intersect_2 {
   protected:
@@ -731,8 +694,7 @@ public:
     friend class Arr_segment_traits_2<Kernel>;
 
   public:
-    /*!
-     * Find the intersections of the two given curves and insert them into the
+    /*! Find the intersections of the two given curves and insert them into the
      * given output iterator. As two segments may intersect only once, only a
      * single intersection will be contained in the iterator.
      * \param cv1 The first curve.
@@ -740,93 +702,90 @@ public:
      * \param oi The output iterator.
      * \return The past-the-end iterator.
      */
-    template<class OutputIterator>
-    OutputIterator operator() (const X_monotone_curve_2& cv1,
-                               const X_monotone_curve_2& cv2,
-                               OutputIterator oi) const
+    template <typename OutputIterator>
+    OutputIterator operator()(const X_monotone_curve_2& cv1,
+                              const X_monotone_curve_2& cv2,
+                              OutputIterator oi) const
     {
+      typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                        Intersection_result;
+
       // Intersect the two supporting lines.
       const Kernel& kernel = m_traits;
-      CGAL::Object obj = kernel.intersect_2_object()(cv1.line(), cv2.line());
+      auto res = kernel.intersect_2_object()(cv1.line(), cv2.line());
 
-      if (obj.is_empty()) {
-        // The supporting line are parallel lines and do not intersect:
-        return (oi);
-      }
+      // The supporting line are parallel lines and do not intersect:
+      if (! res) return oi;
 
       // Check if we have a single intersection point.
-      const Point_2  *ip = object_cast<Point_2> (&obj);
-
+      const Point_2* ip = boost::get<Point_2>(&*res);
       if (ip != nullptr) {
         // Check if the intersection point ip lies on both segments.
-        const bool    ip_on_cv1 = cv1.is_vertical() ? cv1.is_in_y_range(*ip) :
-                                                      cv1.is_in_x_range(*ip);
+        const bool ip_on_cv1 = cv1.is_vertical() ?
+          cv1.is_in_y_range(*ip) : cv1.is_in_x_range(*ip);
 
         if (ip_on_cv1) {
-          const bool  ip_on_cv2 = cv2.is_vertical() ? cv2.is_in_y_range(*ip) :
-                                                      cv2.is_in_x_range(*ip);
+          const bool ip_on_cv2 = cv2.is_vertical() ?
+            cv2.is_in_y_range(*ip) : cv2.is_in_x_range(*ip);
 
           if (ip_on_cv2) {
             // Create a pair representing the point with its multiplicity,
             // which is always 1 for line segments.
-            std::pair<Point_2, Multiplicity>   ip_mult (*ip, 1);
-            *oi = make_object (ip_mult);
-            oi++;
+            Intersection_point ip_mult(*ip, 1);
+            *oi++ = Intersection_result(ip_mult);
           }
         }
-        return (oi);
+        return oi;
       }
 
       // In this case, the two supporting lines overlap.
       // The overlapping segment is therefore [p_l,p_r], where p_l is the
       // rightmost of the two left endpoints and p_r is the leftmost of the
       // two right endpoints.
-      typename Kernel::Compare_xy_2  compare_xy = kernel.compare_xy_2_object();
-      Point_2                        p_l, p_r;
-
-      if (compare_xy (cv1.left(), cv2.left()) == SMALLER) p_l = cv2.left();
-      else p_l = cv1.left();
-
-      if (compare_xy (cv1.right(), cv2.right()) == SMALLER) p_r = cv1.right();
-      else p_r = cv2.right();
+      auto compare_xy = kernel.compare_xy_2_object();
+      Point_2 p_l = (compare_xy(cv1.left(), cv2.left()) == SMALLER) ?
+        cv2.left() : cv1.left();
+      Point_2 p_r = (compare_xy(cv1.right(), cv2.right()) == SMALLER) ?
+        cv1.right() : cv2.right();
 
       // Examine the resulting segment.
-      const Comparison_result        res = compare_xy (p_l, p_r);
+      const Comparison_result cmp_res = compare_xy(p_l, p_r);
 
-      if (res == SMALLER) {
+      if (cmp_res == SMALLER) {
         // We have discovered an overlapping segment:
         if (cv1.is_directed_right() == cv2.is_directed_right()) {
           // cv1 and cv2 have the same directions, maintain this direction
           // in the overlap segment
           if (cv1.is_directed_right()) {
-            X_monotone_curve_2  overlap_seg(cv1.line(), p_l, p_r);
-            *oi++ = make_object(overlap_seg);
+            X_monotone_curve_2 overlap_seg(cv1.line(), p_l, p_r);
+            *oi++ = Intersection_result(overlap_seg);
+            return oi;
           }
-          else {
-            X_monotone_curve_2  overlap_seg(cv1.line(), p_r, p_l);
-            *oi++ = make_object(overlap_seg);
-          }
+          X_monotone_curve_2 overlap_seg(cv1.line(), p_r, p_l);
+          *oi++ = Intersection_result(overlap_seg);
+          return oi;
         }
-        else {
-          // cv1 and cv2 have opposite directions, the overlap segment
-          // will be directed from left to right
-          X_monotone_curve_2  overlap_seg(cv1.line(), p_l, p_r);
-          *oi++ = make_object(overlap_seg);
-        }
+        // cv1 and cv2 have opposite directions, the overlap segment
+        // will be directed from left to right
+        X_monotone_curve_2 overlap_seg(cv1.line(), p_l, p_r);
+        *oi++ = Intersection_result(overlap_seg);
+        return oi;
       }
-      else if (res == EQUAL) {
+      if (cmp_res == EQUAL) {
         // The two segment have the same supporting line, but they just share
         // a common endpoint. Thus we have an intersection point, but we leave
         // the multiplicity of this point undefined.
-        std::pair<Point_2, Multiplicity> ip_mult(p_r, 0);
-        *oi++ = make_object(ip_mult);
+        Intersection_point ip_mult(p_r, 0);
+        *oi++ = Intersection_result(ip_mult);
+        return oi;
       }
 
-      return (oi);
+      return oi;
     }
   };
 
-  /*! Get an Intersect_2 functor object. */
+  /*! Obtain an Intersect_2 functor object. */
   Intersect_2 intersect_2_object() const { return Intersect_2(*this); }
 
   class Are_mergeable_2 {
@@ -844,8 +803,7 @@ public:
     friend class Arr_segment_traits_2<Kernel>;
 
   public:
-    /*!
-     * Check whether it is possible to merge two given x-monotone curves.
+    /*! Check whether it is possible to merge two given x-monotone curves.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \return (true) if the two curves are mergeable, that is, if they are
@@ -855,20 +813,20 @@ public:
     bool operator()(const X_monotone_curve_2& cv1,
                     const X_monotone_curve_2& cv2) const
     {
-      if (!m_traits.equal_2_object()(cv1.right(), cv2.left()) &&
-          !m_traits.equal_2_object()(cv2.right(), cv1.left()))
+      const Kernel& kernel = m_traits;
+      typename Kernel::Equal_2 equal = kernel.equal_2_object();
+      if (! equal(cv1.right(), cv2.left()) &&
+          ! equal(cv2.right(), cv1.left()))
         return false;
 
       // Check whether the two curves have the same supporting line.
-      const Kernel& kernel = m_traits;
-      typename Kernel::Equal_2 equal = kernel.equal_2_object();
       return (equal(cv1.line(), cv2.line()) ||
               equal(cv1.line(),
                     kernel.construct_opposite_line_2_object()(cv2.line())));
     }
   };
 
-  /*! Get an Are_mergeable_2 functor object. */
+  /*! Obtain an Are_mergeable_2 functor object. */
   Are_mergeable_2 are_mergeable_2_object() const
   { return Are_mergeable_2(*this); }
 
@@ -890,8 +848,7 @@ public:
     friend class Arr_segment_traits_2<Kernel>;
 
   public:
-    /*!
-     * Merge two given x-monotone curves into a single curve (segment).
+    /*! Merge two given x-monotone curves into a single curve (segment).
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param c Output: The merged curve.
@@ -903,25 +860,26 @@ public:
     {
       CGAL_precondition(m_traits.are_mergeable_2_object()(cv1, cv2));
 
-      Equal_2 equal = m_traits.equal_2_object();
+      const Kernel& kernel = m_traits;
+      auto equal = kernel.equal_2_object();
 
       // Check which curve extends to the right of the other.
       if (equal(cv1.right(), cv2.left())) {
         // cv2 extends cv1 to the right.
         c = cv1;
         c.set_right(cv2.right());
+        return;
       }
-      else {
-        CGAL_precondition(equal(cv2.right(), cv1.left()));
 
-        // cv1 extends cv2 to the right.
-        c = cv2;
-        c.set_right(cv1.right());
-      }
+      CGAL_precondition(equal(cv2.right(), cv1.left()));
+
+      // cv1 extends cv2 to the right.
+      c = cv2;
+      c.set_right(cv1.right());
     }
   };
 
-  /*! Get a Merge_2 functor object. */
+  /*! Obtain a Merge_2 functor object. */
   Merge_2 merge_2_object() const { return Merge_2(*this); }
   //@}
 
@@ -931,8 +889,7 @@ public:
 
   class Approximate_2 {
   public:
-    /*!
-     * Return an approximation of a point coordinate.
+    /*! Obtain an approximation of a point coordinate.
      * \param p The exact point.
      * \param i The coordinate index (either 0 or 1).
      * \pre i is either 0 or 1.
@@ -946,13 +903,12 @@ public:
     }
   };
 
-  /*! Get an Approximate_2 functor object. */
+  /*! Obtain an Approximate_2 functor object. */
   Approximate_2 approximate_2_object() const { return Approximate_2(); }
 
   class Construct_x_monotone_curve_2 {
   public:
-    /*!
-     * Return an x-monotone curve connecting the two given endpoints.
+    /*! Obtain an x-monotone curve connecting the two given endpoints.
      * \param p The first point.
      * \param q The second point.
      * \pre p and q must not be the same.
@@ -962,7 +918,7 @@ public:
     { return (X_monotone_curve_2(p, q)); }
   };
 
-  /*! Get a Construct_x_monotone_curve_2 functor object. */
+  /*! Obtain a Construct_x_monotone_curve_2 functor object. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
   { return Construct_x_monotone_curve_2(); }
   //@}
@@ -1010,41 +966,37 @@ public:
 
       // exchange src and tgt IF they do not conform with the direction
       X_monotone_curve_2 trimmed_segment;
-
       if (xcv.is_directed_right() && compare_x_2(src, tgt) == LARGER)
         trimmed_segment = X_monotone_curve_2(tgt, src);
-      else if (!xcv.is_directed_right() && compare_x_2(src, tgt) == SMALLER )
+      else if (! xcv.is_directed_right() && (compare_x_2(src, tgt) == SMALLER))
         trimmed_segment = X_monotone_curve_2(tgt, src);
       else trimmed_segment = X_monotone_curve_2(src, tgt);
-      return (trimmed_segment);
+      return trimmed_segment;
     }
   };
 
-  //get a Trim_2 functor object
+  /*! Obtain a Trim_2 functor object */
   Trim_2 trim_2_object() const { return Trim_2(*this); }
 
-  class Compare_endpoints_xy_2
-  {
+  class Compare_endpoints_xy_2 {
   public:
-    /*!
-     * Compare the endpoints of an $x$-monotone curve lexicographically.
+    /*! Compare the endpoints of an $x$-monotone curve lexicographically.
      * (assuming the curve has a designated source and target points).
      * \param cv The curve.
      * \return SMALLER if the curve is directed right;
      *         LARGER if the curve is directed left.
      */
-    Comparison_result operator() (const X_monotone_curve_2& cv) const
+    Comparison_result operator()(const X_monotone_curve_2& cv) const
     { return (cv.is_directed_right()) ? (SMALLER) : (LARGER); }
   };
 
-  /*! Get a Compare_endpoints_xy_2 functor object. */
+  /*! Obtain a Compare_endpoints_xy_2 functor object. */
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
   { return Compare_endpoints_xy_2(); }
 
   class Construct_opposite_2 {
   public:
-    /*!
-     * Construct an opposite x-monotone (with swapped source and target).
+    /*! Construct an opposite x-monotone (with swapped source and target).
      * \param cv The curve.
      * \return The opposite curve.
      */
@@ -1052,17 +1004,16 @@ public:
     { return (cv.flip()); }
   };
 
-  /*! Get a Construct_opposite_2 functor object. */
+  /*! Obtain a Construct_opposite_2 functor object. */
   Construct_opposite_2 construct_opposite_2_object() const
   { return Construct_opposite_2(); }
   //@}
 };
 
-/*!
- * \class A representation of a segment, as used by the Arr_segment_traits_2
+/*! \class A representation of a segment, as used by the Arr_segment_traits_2
  * traits-class.
  */
-template <class Kernel_>
+template <typename Kernel_>
 class Arr_segment_2 :
     public Arr_segment_traits_2<Kernel_>::_Segment_cached_2
 {
@@ -1088,7 +1039,7 @@ public:
    * \pre The two points are not the same.
    */
   Arr_segment_2(const Point_2& source, const Point_2& target) :
-    Base(source,target)
+    Base(source, target)
   {}
 
   /*! Construct a segment from a line and two end-points.
@@ -1100,7 +1051,7 @@ public:
    */
   Arr_segment_2(const Line_2& line,
                 const Point_2& source, const Point_2& target) :
-    Base(line,source,target)
+    Base(line,source, target)
   {}
 
   /*! Cast to a segment.
@@ -1108,8 +1059,8 @@ public:
   operator Segment_2() const
   {
     Kernel kernel;
-    Segment_2 seg = kernel.construct_segment_2_object()(this->ps, this->pt);
-    return (seg);
+    Segment_2 seg = kernel.construct_segment_2_object()(this->m_ps, this->m_pt);
+    return seg;
   }
 
   /*! Create a bounding box for the segment.
@@ -1117,37 +1068,37 @@ public:
   Bbox_2 bbox() const
   {
     Kernel kernel;
-    Segment_2 seg = kernel.construct_segment_2_object()(this->ps, this->pt);
-    return (kernel.construct_bbox_2_object() (seg));
+    Segment_2 seg = kernel.construct_segment_2_object()(this->m_ps, this->m_pt);
+    return (kernel.construct_bbox_2_object()(seg));
   }
 
   /*! Obtain the segment source.
    */
-  const Point_2& source() const { return (this->ps); }
+  const Point_2& source() const { return (this->m_ps); }
 
   /*! Obtain the segment target.
    */
-  const Point_2& target() const { return (this->pt); }
+  const Point_2& target() const { return (this->m_pt); }
 
   /*! Flip the segment (swap its source and target).
    */
   Arr_segment_2 flip() const
   {
-    Arr_segment_2   opp;
-    opp.l = this->l;
-    opp.ps = this->pt;
-    opp.pt = this->ps;
-    opp.is_pt_max = !(this->is_pt_max);
-    opp.is_vert = this->is_vert;
-    opp.is_degen = this->is_degen;
+    Arr_segment_2 opp;
+    opp.m_l = this->m_l;
+    opp.m_ps = this->m_pt;
+    opp.m_pt = this->m_ps;
+    opp.m_is_pt_max = !(this->m_is_pt_max);
+    opp.m_is_vert = this->m_is_vert;
+    opp.m_is_degen = this->m_is_degen;
 
-    return (opp);
+    return opp;
   }
 };
 
 /*! Exporter for the segment class used by the traits-class.
  */
-template <class Kernel, class OutputStream>
+template <typename Kernel, typename OutputStream>
 OutputStream& operator<<(OutputStream& os, const Arr_segment_2<Kernel>& seg)
 {
   os << static_cast<typename Kernel::Segment_2>(seg);
@@ -1156,13 +1107,13 @@ OutputStream& operator<<(OutputStream& os, const Arr_segment_2<Kernel>& seg)
 
 /*! Importer for the segment class used by the traits-class.
  */
-template <class Kernel, class InputStream>
+template <typename Kernel, typename InputStream>
 InputStream& operator>>(InputStream& is, Arr_segment_2<Kernel>& seg)
 {
   typename Kernel::Segment_2   kernel_seg;
   is >> kernel_seg;
   seg = kernel_seg;
-  return (is);
+  return is;
 }
 
 } //namespace CGAL

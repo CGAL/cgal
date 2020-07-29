@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
 
     // Construct the reconstruction
     Reconstruction reconstruct;
-    
+
     // Add the points.
     reconstruct.insert( points.begin(), points.end() );
 
@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
         std::cout << "Second reconstruction done." << std::endl;
         // Write the reconstruction.
         dump_reconstruction(reconstruct, "reconstruction2.off");
-      }      
+      }
     }
 
     std::cout << "Reconstructions are ready to be examinated in your favorite viewer" << std::endl;

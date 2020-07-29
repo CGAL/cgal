@@ -28,6 +28,6 @@ int main( )
 
     WalkAlongLinePointLocationStrategy pl( arr );
     CGAL::Object o = pl.locate( Point_2( 1, -1 ) );
-    
+
     return 0;
 }

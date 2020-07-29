@@ -152,10 +152,10 @@ virtual void after_create_vertex(Vertex_handle v);
  * the boundary condition of the vertex in \f$ x\f$ and `ps_y` is the boundary
  * condition of the vertex in \f$ y\f$.
  */
-virtual void before_create_boundary_vertex(const X_monotone_curve_2& cv ,
-Arr_curve_end ind ,
-Arr_parameter_space ps_x ,
-Arr_parameter_space ps_y );
+virtual void before_create_boundary_vertex(const X_monotone_curve_2& cv,
+                                           Arr_curve_end ind,
+                                           Arr_parameter_space ps_x,
+                                           Arr_parameter_space ps_y);
 
 /*! issued immediately after a new vertex `v` has been created.  Note that the
  * vertex still has no incident edges and is not connected to any other vertex.

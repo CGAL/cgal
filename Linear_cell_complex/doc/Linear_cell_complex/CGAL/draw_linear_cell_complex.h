@@ -1,5 +1,5 @@
 namespace CGAL {
-  
+
 /*!
 \ingroup PkgDrawLinearCellComplex
 

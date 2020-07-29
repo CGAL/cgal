@@ -21,7 +21,7 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/internal/Has_nested_type_Bare_point.h>
-#include <CGAL/Hash_handles_with_or_without_timestamps.h>
+#include <CGAL/Time_stamper.h>
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>

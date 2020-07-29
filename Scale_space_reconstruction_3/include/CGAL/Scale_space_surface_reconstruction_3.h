@@ -37,7 +37,7 @@ namespace CGAL
  *  connectivity of the facets back to the original point set. This
  *  latest option makes it possible to reconstruct an interpolative
  *  surface on a noisy point set.
- *  
+ *
  *  \tparam Geom_traits is the geometric traits class. It must be a
  *  model of `DelaunayTriangulationTraits_3`. It must have a
  *  `RealEmbeddable` field number type. Generally,
@@ -73,7 +73,7 @@ public:
   // Default algorithms used (same as in old API)
   typedef Scale_space_reconstruction_3::Weighted_PCA_smoother<Geom_traits> Weighted_PCA_smoother;
   typedef Scale_space_reconstruction_3::Alpha_shape_mesher<Geom_traits> Alpha_shape_mesher;
-  
+
 private:
 
   Point_vector m_points;
@@ -85,7 +85,7 @@ public:
 
   /// @{
   /// \name Initialization
-  
+
   /**
    * Empty constructor.
    */
@@ -125,7 +125,7 @@ public:
   {
     m_points.push_back (p);
   }
-  
+
   /// inserts a collection of points into the scale-space at the current scale.
   /** \tparam InputIterator is an iterator over the point collection.
    *  The value type of the iterator must be a `Point`.
@@ -151,7 +151,7 @@ public:
 
   /// @{
   /// \name Algorithms
-  
+
   /// increases the scale by a number of iterations.
   /** Each iteration the scale is increased, the points set at a higher scale
    *  is computed. At a higher scale, the points set is smoother.
@@ -232,7 +232,7 @@ public:
 
   /// gives the number of points of the surface.
   std::size_t number_of_points() const { return m_points.size(); }
-  
+
   /// gives an iterator to the first point at the current scale.
   /** \warning Changes to the scale-space do not cause an automatic update to
    *  the surface.
@@ -244,10 +244,10 @@ public:
    *  the surface.
    */
   Point_iterator points_end() { return m_points.end(); }
-  
+
   /// gives an iterator to the first point at the current scale.
   Point_const_iterator points_begin() const { return m_points.begin(); }
-  
+
   /// gives a past-the-end iterator of the points at the current scale.
   Point_const_iterator points_end() const { return m_points.end(); }
 
@@ -278,7 +278,7 @@ template <typename Geom_traits>
 std::ostream& operator<< (std::ostream& os, const CGAL::Scale_space_surface_reconstruction_3<Geom_traits>& ss)
 {
   typedef CGAL::Scale_space_surface_reconstruction_3<Geom_traits> Reconstruction;
-  
+
   os << "OFF" << std::endl
      << ss.number_of_points() << " " << ss.number_of_facets() << " 0" << std::endl;
   for (typename Reconstruction::Point_const_iterator it = ss.points_begin();

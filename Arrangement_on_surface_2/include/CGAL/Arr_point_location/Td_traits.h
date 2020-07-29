@@ -7,8 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
-// Author(s)	 : Oren Nechushtan <theoren@math.tau.ac.il>
+// Author(s): Oren Nechushtan <theoren@math.tau.ac.il>
 
 #ifndef CGAL_TD_TRAITS_H
 #define CGAL_TD_TRAITS_H
@@ -894,7 +893,7 @@ public:
 
   /* returns true if bottom halfedges of input are the same */
   inline bool is_trpz_bottom_equal(Td_map_item& left_item,
-					                         Td_map_item& right_item) const
+                                                                 Td_map_item& right_item) const
   {
     CGAL_precondition(is_active(left_item) && is_active(right_item));
     CGAL_precondition(is_td_trapezoid(left_item) && is_td_trapezoid(right_item));
@@ -914,7 +913,7 @@ public:
 
   /* returns true if top halfedges of input are the same */
   inline bool is_trpz_top_equal(Td_map_item& left_item,
-					                      Td_map_item& right_item) const
+                                                              Td_map_item& right_item) const
   {
     CGAL_precondition(is_active(left_item) && is_active(right_item));
     CGAL_precondition(is_td_trapezoid(left_item) && is_td_trapezoid(right_item));
@@ -933,7 +932,7 @@ public:
 
   /* returns true if bottom halfedges of input are the same */
   inline bool is_trapezoids_bottom_equal(const Td_active_trapezoid& left,
-					                               const Td_active_trapezoid& right) const
+                                         const Td_active_trapezoid& right) const
   {
     if (left.is_on_bottom_boundary())
       return (right.is_on_bottom_boundary());
@@ -947,7 +946,7 @@ public:
 
   /* returns true if top halfedges of input are the same */
   inline bool is_trapezoids_top_equal(const Td_active_trapezoid& left,
-					                            const Td_active_trapezoid& right) const
+                                      const Td_active_trapezoid& right) const
   {
     if (left.is_on_top_boundary())
       return (right.is_on_top_boundary());
@@ -1101,7 +1100,7 @@ public:
 
       // test top side
       if (!tr.is_on_top_boundary() &&
-	        compare_curve_end_y_at_x_2_object()(ce,tr.top()) == LARGER)
+          compare_curve_end_y_at_x_2_object()(ce,tr.top()) == LARGER)
       {
         return false;
       }

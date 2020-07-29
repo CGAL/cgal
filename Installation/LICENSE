@@ -33,6 +33,8 @@ licenses:
   (see LICENSE.LGPL).
 - OpenNL, in the directory "include/CGAL/OpenNL", is licensed under the LGPL
   (see LICENSE.LGPL).
+- ETH Zurich random forest algorithm, in the directory "CGAL/Classification/ETHZ",
+  is licensed under a MIT like license (see LICENSE.RFL).
 
 All other files that do not have an explicit copyright notice (e.g., all
 examples and some demos) are licensed under a very permissive license. The

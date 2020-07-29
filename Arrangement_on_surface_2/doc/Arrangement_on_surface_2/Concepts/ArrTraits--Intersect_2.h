@@ -17,15 +17,15 @@ public:
 /// @{
 
 /*! computes the intersections of `xc1` and `xc2` and writes them <I>in an
- * ascending lexicographic \f$ xy\f$-order</I> into the output iterator
- * `oi`. The type of a value written into `oi` must be convertible to
- * `CGAL::Object`. The value itself wraps either a value of type
- * `pair<ArrTraits::Point_2,ArrTraits::Multiplicity>` or a value of type
- * `ArrTraits::X_monotone_curve_2`. A value of of the former type represents an
- * intersection point with its multiplicity; in case the multiplicity is
- * undefined or unknown, it should be set to \f$ 0\f$). A value of the latter
- * type representing an overlapping subcurve of `xc1` and `xc2`. The operator
- * returns a past-the-end iterator for the output sequence.
+ * ascending lexicographic \f$ xy\f$-order</I> into a range begining at
+ * `oi`. The type `OutputIterator` must dereference a polymorphic object of
+ * type `boost::variant` that wraps objects of type either
+ * type `pair<ArrTraits::Point_2,ArrTraits::Multiplicity>` or
+ * `ArrTraits::X_monotone_curve_2`. An object of the former type represents an
+ * intersection point with its multiplicity (in case the multiplicity is
+ * undefined or unknown, it should be set to \f$ 0\f$). An object of the latter
+ * type represents an overlapping subcurve of `xc1` and `xc2`. The operator
+ * returns a past-the-end iterator of the destination range.
  *
  * A special case may occur when the parameter space of the surface, the
  * arrangement is embedded on, is identified on the left and right sides of the

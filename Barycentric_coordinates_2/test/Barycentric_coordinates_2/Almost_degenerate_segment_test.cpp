@@ -57,7 +57,7 @@ int main()
 
         assert(difference == zero);
 
-        if(difference != zero) 
+        if(difference != zero)
         {
             cout << endl << "Almost_degenerate_segment_test: FAILED." << endl << endl;
             exit(EXIT_FAILURE);
@@ -70,13 +70,13 @@ int main()
     assert(coordinates[12] - half == Scalar(0) && coordinates[13] - half == Scalar(0));
 
     if( coordinates[12] - half != Scalar(0) ||
-        coordinates[13] - half != Scalar(0)  ) 
+        coordinates[13] - half != Scalar(0)  )
     {
         cout << endl << "Almost_degenerate_segment_test: FAILED." << endl << endl;
         exit(EXIT_FAILURE);
     }
 
     cout << endl << "Almost_degenerate_segment_test: PASSED." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

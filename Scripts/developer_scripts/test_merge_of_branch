@@ -155,10 +155,28 @@ fi
 
 #check no file contains non-utf8 characters
 echo '.. Checking if non utf-8 characters are used...'
-txt_not_utf8=$(git ls-files -z --stage | awk -F"\t" 'BEGIN { RS="\0" }; { printf "%s\0", $2; }' | xargs -0 file -N | grep "text" | egrep -v "UTF-8|ASCII|XML|EPS|FIG|assembler source|Perl script|from flex")
+txt_not_utf8=$(git ls-files -z --stage | awk -F"\t" 'BEGIN { RS="\0" }; { printf "%s\0", $2; }' | xargs -0 file -N | grep "text" | egrep -v "UTF-8|ASCII|CSV|XML|EPS|FIG|assembler source|Perl script|from flex")
 if [ -n "${txt_not_utf8}" ]; then
   echo "The following files have non utf-8 characters:"
   echo ${txt_not_utf8}
+  exit 1
+fi
+
+#check no file contains tab characters
+echo '.. Checking if tab character is used...'
+file_with_tabs=$(git ls-files --stage | egrep '\.txt|\.h$|\.cpp|\.hpp' | awk '{print $4}' | xargs grep -P -l '\t')
+if [ -n "${file_with_tabs}" ]; then
+  echo "The following files have tabs:"
+  echo ${file_with_tabs}
+  exit 1
+fi
+
+#check no file contains trailing whitespaces characters
+echo '.. Look for trailing whitespaces...'
+files_with_trailingws=$(git ls-files --stage | egrep '\.txt|\.h$|\.cpp|\.hpp' | awk '{print $4}' | xargs grep -P -l '\s+$')
+if [ -n "${files_with_trailingws}" ]; then
+  echo "The following files have trailing whitespaces:"
+  echo ${files_with_trailingws}
   exit 1
 fi
 

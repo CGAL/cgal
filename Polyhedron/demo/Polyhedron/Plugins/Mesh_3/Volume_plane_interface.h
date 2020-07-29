@@ -15,7 +15,7 @@ using namespace CGAL::Three;
 class Volume_plane_interface : public Scene_item_rendering_helper {
 Q_OBJECT
 public:
-  Volume_plane_interface(CGAL::qglviewer::ManipulatedFrame* f) : mFrame_(f) { 
+  Volume_plane_interface(CGAL::qglviewer::ManipulatedFrame* f) : mFrame_(f) {
     connect(mFrame_, SIGNAL(manipulated()), this, SLOT(propagateManipulation()));
   }
 

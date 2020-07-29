@@ -124,7 +124,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1">
+       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0">
         <item>
          <widget class="QLabel" name="label_2">
           <property name="text">
@@ -133,31 +133,22 @@
          </widget>
         </item>
         <item>
-         <widget class="QDoubleSpinBox" name="m_epsilon_field">
-          <property name="toolTip">
-           <string>Fitting tolerance in Euclidean distance</string>
+         <widget class="DoubleEdit" name="m_epsilon_field">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <property name="decimals">
-           <number>8</number>
-          </property>
-          <property name="minimum">
-           <double>0.000001000000000</double>
-          </property>
-          <property name="maximum">
-           <double>1000000.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.001000000000000</double>
-          </property>
-          <property name="value">
-           <double>0.002000000000000</double>
+          <property name="text">
+           <string>0.002</string>
           </property>
          </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
+       <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
@@ -166,28 +157,22 @@
          </widget>
         </item>
         <item>
-         <widget class="QDoubleSpinBox" name="m_normal_tolerance_field">
-          <property name="toolTip">
-           <string>Normal angle deviation tolerance as cosine of the angle</string>
+         <widget class="DoubleEdit" name="m_normal_tolerance_field">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <property name="minimum">
-           <double>0.010000000000000</double>
-          </property>
-          <property name="maximum">
-           <double>1.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.010000000000000</double>
-          </property>
-          <property name="value">
-           <double>0.900000000000000</double>
+          <property name="text">
+           <string>0.90</string>
           </property>
          </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1">
+       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0">
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
@@ -214,7 +199,7 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,1">
+       <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,0">
         <item>
          <widget class="QLabel" name="label_4">
           <property name="text">
@@ -223,31 +208,22 @@
          </widget>
         </item>
         <item>
-         <widget class="QDoubleSpinBox" name="m_cluster_epsilon_field">
-          <property name="toolTip">
-           <string>Maximum world distance between points on a shape to be considered as connected</string>
+         <widget class="DoubleEdit" name="m_cluster_epsilon_field">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <property name="decimals">
-           <number>8</number>
-          </property>
-          <property name="minimum">
-           <double>0.000001000000000</double>
-          </property>
-          <property name="maximum">
-           <double>1000000.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.010000000000000</double>
-          </property>
-          <property name="value">
-           <double>0.020000000000000</double>
+          <property name="text">
+           <string>0.002</string>
           </property>
          </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,1">
+       <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,0">
         <item>
          <widget class="QLabel" name="label_5">
           <property name="enabled">
@@ -259,27 +235,15 @@
          </widget>
         </item>
         <item>
-         <widget class="QDoubleSpinBox" name="m_probability_field">
-          <property name="enabled">
-           <bool>false</bool>
+         <widget class="DoubleEdit" name="m_probability_field">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <property name="toolTip">
-           <string>Probability to overlook the largest primitive in one extraction iteration</string>
-          </property>
-          <property name="decimals">
-           <number>5</number>
-          </property>
-          <property name="minimum">
-           <double>0.000010000000000</double>
-          </property>
-          <property name="maximum">
-           <double>1.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.010000000000000</double>
-          </property>
-          <property name="value">
-           <double>0.050000000000000</double>
+          <property name="text">
+           <string>0.05</string>
           </property>
          </widget>
         </item>
@@ -356,6 +320,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header>CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
@@ -482,22 +453,6 @@
     </hint>
     <hint type="destinationlabel">
      <x>103</x>
-     <y>214</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ransac</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>m_probability_field</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>70</x>
-     <y>46</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>352</x>
      <y>214</y>
     </hint>
    </hints>

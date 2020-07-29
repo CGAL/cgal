@@ -99,7 +99,7 @@ radial_orient_normals(
 
       // Point's normal
       Vector_ref vec2 = get(normal_pmap, *it);
-      
+
       //         ->               ->
       // Orients vec2 parallel to vec1
       double dot = vec1 * vec2;
@@ -144,7 +144,7 @@ radial_orient_normals(
     typedef typename Kernel_traits<Point>::Kernel Kernel;
     return radial_orient_normals(
       first,beyond,
-      point_pmap, normal_pmap, 
+      point_pmap, normal_pmap,
       Kernel());
 }
 /// @endcond

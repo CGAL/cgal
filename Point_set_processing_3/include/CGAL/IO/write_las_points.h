@@ -60,8 +60,8 @@ namespace CGAL {
 
   /**
      \ingroup PkgPointSetProcessing3IOLas
-     
-     Generates a %LAS property handler to write 3D points. 
+
+     Generates a %LAS property handler to write 3D points.
 
      \sa `write_las_points_with_properties()`
 
@@ -75,7 +75,7 @@ namespace CGAL {
   }
 
   /// \cond SKIP_IN_MANUAL
-  
+
 namespace internal {
 
   namespace LAS {
@@ -116,7 +116,7 @@ namespace internal {
   { r.set_B(v); }
   inline void output_value(LASpoint& r, const unsigned short& v, LAS_property::I&)
   { r.set_I(v); }
-  
+
   template <typename ForwardIterator>
   void output_properties (LASpoint&,
                           ForwardIterator)
@@ -150,9 +150,9 @@ namespace internal {
   }
 
   } // namespace LAS
-  
+
 } // namespace internal
-  
+
 
 /// \endcond
 
@@ -207,7 +207,7 @@ bool write_las_points_with_properties (std::ostream& stream,  ///< output stream
      (points.begin(), CGAL::Property_map_to_unary_function<PointMap>(std::get<0>(point_property))),
      boost::make_transform_iterator
      (points.end(), CGAL::Property_map_to_unary_function<PointMap>(std::get<0>(point_property))));
-  
+
   LASheader header;
   header.x_scale_factor = 1e-9 * (bbox.xmax() - bbox.xmin());
   header.y_scale_factor = 1e-9 * (bbox.ymax() - bbox.ymin());
@@ -223,7 +223,7 @@ bool write_las_points_with_properties (std::ostream& stream,  ///< output stream
 
   LASwriterLAS laswriter;
   laswriter.open (stream, &header);
-  
+
   // Write positions + normals
   for(typename PointRange::const_iterator it = points.begin(); it != points.end(); it++)
   {
@@ -247,19 +247,26 @@ bool write_las_points_with_properties (std::ostream& stream,  ///< output stream
 /**
    \ingroup PkgPointSetProcessing3IOLas
    Saves the range of `points` (positions only) to a
-   .las stream. 
+   .las stream.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
    \param stream output stream.
    \param points input point range.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
    \cgalNamedParamsEnd
 
    \return true on success.
@@ -276,9 +283,9 @@ write_las_points(
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
-  
+  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+
   return write_las_points_with_properties (stream, points, make_las_point_writer(point_map));
 }
 
@@ -311,8 +318,8 @@ write_las_points(
     (stream, points,
      CGAL::parameters::point_map(point_map));
 }
-  
-// deprecated API  
+
+// deprecated API
 template < typename ForwardIterator >
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_las_points(), please update your code")
 bool

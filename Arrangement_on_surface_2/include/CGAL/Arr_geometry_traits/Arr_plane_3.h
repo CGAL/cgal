@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Efi Fogel          <efif@post.tau.ac.il>
 
@@ -53,7 +53,7 @@ private:
 
   /*! The z coefficient */
   FT m_c;
-  
+
 public:
   /*! Default Constructor */
   Arr_plane_3() : m_a(0), m_b(0), m_c(0) {}
@@ -90,7 +90,7 @@ public:
 
   /*! Obtain the z coefficient */
   const FT & c() const { return m_c; }
-  
+
   /*! Obtain the i-th coefficient of the plane
    * \param i the index of the coefficient
    * \return the i-th coefficient
@@ -125,8 +125,8 @@ public:
   {
     Kernel kernel;
     typename Kernel::Plane_3 base_plane(m_a, m_b, m_c, 0);
-    Vector_3 v1 = kernel.construct_base_vector_3_object()(base_plane, 1);    
-    Vector_3 v2 = kernel.construct_base_vector_3_object()(base_plane, 2);    
+    Vector_3 v1 = kernel.construct_base_vector_3_object()(base_plane, 1);
+    Vector_3 v2 = kernel.construct_base_vector_3_object()(base_plane, 2);
     Vector_3 v3 = kernel.construct_orthogonal_vector_3_object()(base_plane);
 
     FT denom = v2[1]*v3[0]*v1[2] - v2[0]*v3[1]*v1[2] + v3[2]*v2[0]*v1[1] +
@@ -135,7 +135,7 @@ public:
               v2[0]*v3[1]*p[2] - v3[2]*v2[0]*p[1] - v2[2]*v3[1]*p[0]) / denom;
     FT y = (v1[1]*v3[2]*p[0] - v1[1]*v3[0]*p[2] - v3[1]*p[0]*v1[2] +
             v3[1]*v1[0]*p[2] + p[1]*v3[0]*v1[2] - p[1]*v3[2]*v1[0]) / denom;
-    
+
     return Point_2(x, y);
   }
 
@@ -155,7 +155,7 @@ public:
     std::cout << "(a, b, c): " << a() << "," << b() << "," << c()
               << std::endl;
 #endif
-    
+
     if (i == 0) {
       CGAL_assertion(m_a != 0);
       FT y = p_2.x();
@@ -268,7 +268,7 @@ inline std::ostream & operator<<(std::ostream & os,
 {
   os << plane[0] << ", " << plane[1] << ", " << plane[2];
   return os;
-}  
+}
 
 } //namespace CGAL
 

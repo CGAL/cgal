@@ -13,14 +13,12 @@ find_package( CGAL QUIET COMPONENTS )
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 
 endif()
-            
+
 find_package(Eigen3 3.1.91) #(requires 3.2.0 or greater)
-if (EIGEN3_FOUND)
-  include( ${EIGEN3_USE_FILE} )
-endif()
+include(CGAL_Eigen_support)
 
 if (MSVC)
     # Turn off VC++ warning
@@ -65,11 +63,13 @@ create_single_source_cgal_program( "weighted_Minkowski_distance.cpp" )
 
 
 
-if (EIGEN3_FOUND)
+if (TARGET CGAL::Eigen_support)
 
   create_single_source_cgal_program( "fuzzy_range_query.cpp" )
+  target_link_libraries(fuzzy_range_query PUBLIC CGAL::Eigen_support)
 
   create_single_source_cgal_program( "general_neighbor_searching.cpp" )
+  target_link_libraries(general_neighbor_searching PUBLIC CGAL::Eigen_support)
 
 else()
 
@@ -77,3 +77,13 @@ else()
   message(STATUS "will not be compiled as they use CGAL::Epick_d which requires the Eigen library.")
 
 endif()
+
+find_package( TBB QUIET )
+include(CGAL_TBB_support)
+if(TARGET CGAL::TBB_support)
+  create_single_source_cgal_program( "parallel_kdtree.cpp" )
+  target_link_libraries(parallel_kdtree PUBLIC CGAL::TBB_support)
+else()
+  message(STATUS "parallel_kdtree.cpp requires TBB and will not be compiled")
+endif()
+

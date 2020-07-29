@@ -53,7 +53,7 @@ int main(int argc, char** argv)
     N = atoi(argv[1]);
     if (argc < 3)
       iters = 10;
-    else 
+    else
       iters = atoi(argv[2]);
   }
 

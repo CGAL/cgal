@@ -22,7 +22,7 @@ if( CGAL_FOUND AND MPFI_FOUND)
   create_single_source_cgal_program( "Solve_1.cpp" )
 
 else()
-  
+
     message(STATUS "This program requires the CGAL library and MPFI, and will not be compiled.")
-  
+
 endif()

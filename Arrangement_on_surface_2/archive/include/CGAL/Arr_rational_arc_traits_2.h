@@ -273,10 +273,10 @@ public:
       // of the intersection point p is odd, reverse this result.
       if (mult % 2 == 1)
       {
-	if (res == SMALLER)
-	  res = LARGER;
-	else if (res == LARGER)
-	  res = SMALLER;
+        if (res == SMALLER)
+          res = LARGER;
+        else if (res == LARGER)
+          res = SMALLER;
       }
 
       return (res);
@@ -775,7 +775,7 @@ public:
       if (cv.is_directed_right())
         return (SMALLER);
       else
-	return (LARGER);
+        return (LARGER);
     }
   };
 

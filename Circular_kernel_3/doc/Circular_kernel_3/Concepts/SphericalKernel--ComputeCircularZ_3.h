@@ -13,10 +13,10 @@ public:
 /// @{
 
 /*!
-returns the \f$ z\f$-coordinate of the point `p`. 
-*/ 
-SphericalKernel::Root_of_2 
-operator()(const SphericalKernel::Circular_arc_point_3 & p) const; 
+returns the \f$ z\f$-coordinate of the point `p`.
+*/
+SphericalKernel::Root_of_2
+operator()(const SphericalKernel::Circular_arc_point_3 & p) const;
 
 ///@}
 

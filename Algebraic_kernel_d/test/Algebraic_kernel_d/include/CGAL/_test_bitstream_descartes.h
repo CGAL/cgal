@@ -5,7 +5,7 @@
 //
 // $URL: svn+ssh://hemmer@scm.gforge.inria.fr/svn/cgal/trunk/Polynomial/include/CGAL/Polynomial.h $
 // $Id: Polynomial.h 47254 2008-12-06 21:18:27Z afabri $
-// 
+//
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Michael Kerber  <mkerber@mpi-inf.mpg.de>
@@ -35,7 +35,7 @@ namespace CGAL {
 
 namespace internal {
 
-// A simple model of the EventRefinement concept: 
+// A simple model of the EventRefinement concept:
 // Uses a vector of Algebraic reals
 template <typename AlgReal>
 class Event_refinement {
@@ -57,11 +57,11 @@ public:
 
 template<typename ArithmeticKernel>
 void test_bitstream_descartes() {
-  
+
   typedef ArithmeticKernel Arithmetic_kernel;
   typedef typename Arithmetic_kernel::Integer Integer;
   typedef typename Arithmetic_kernel::Rational Rational;
-  
+
   typedef typename CGAL::Polynomial_type_generator<Integer,1>::Type Poly_int1;
   typedef typename CGAL::Polynomial_type_generator<Integer,2>::Type Poly_int2;
   typedef CGAL::internal::Algebraic_real_d_1<Integer,Rational>
@@ -69,12 +69,12 @@ void test_bitstream_descartes() {
 
   typedef CGAL::internal::Bitstream_descartes_rndl_tree_traits
       <CGAL::internal::Bitstream_coefficient_kernel<Integer> > Traits;
-  
+
   typedef CGAL::internal::Bitstream_descartes<Traits> Bitstream_descartes;
 
   Traits traits;
 
-  
+
 
   { // Test for the classical Descartes method
     std::stringstream ss("P[15(0,59738427711)(1,300038251861)(2,-471253844514)(3,538575935875)(4,22286946912)(5,548111721525)(6,-379185895352)(7,296681325489)(8,-464256140044)(9,410194800463)(10,232977578849)(11,-376080509486)(12,521721411895)(13,-100316773723)(14,-171187873598)(15,-189253202432)]");
@@ -84,16 +84,16 @@ void test_bitstream_descartes() {
     // In Maple: f := 59738427711-189253202432*x^15-171187873598*x^14-100316773723*x^13+521721411895*x^12-376080509486*x^11+232977578849*x^10+410194800463*x^9-464256140044*x^8+296681325489*x^7-379185895352*x^6+548111721525*x^5+22286946912*x^4+538575935875*x^3-471253844514*x^2+300038251861*x
 
     // We expect 3 roots, at -1.176, -.154 and 1.168
-    
+
     CGAL::internal::Square_free_descartes_tag t;
 
     Bitstream_descartes descartes(t, f);
 
     assert(descartes.degree_of_gcd() == 0);
     assert(descartes.square_free_part() == f);
-    
+
     int n = descartes.number_of_real_roots();
-    
+
     assert(n==3);
 
     for(int i = 0; i<n;i++) {
@@ -103,10 +103,10 @@ void test_bitstream_descartes() {
 
     for(int i =0; i<n; i++) {
       while((descartes.right_bound(i)-descartes.left_bound(i))
-	    > Rational(1,10000)) 
-	{
-	  descartes.refine_interval(i);
-	}
+            > Rational(1,10000))
+        {
+          descartes.refine_interval(i);
+        }
     }
     assert(Rational(-118,100)<descartes.left_bound(0));
     assert(Rational(-117,100)>descartes.right_bound(0));
@@ -134,11 +134,11 @@ void test_bitstream_descartes() {
 #endif
 
     // We expect 3 roots, at -1.597, -.388 and 0
-    
+
     CGAL::internal::Square_free_descartes_tag t;
 
     Bitstream_descartes descartes(t, f, tree);
-    
+
     assert(descartes.degree_of_gcd() == 0);
     assert(descartes.square_free_part() == f);
 
@@ -153,10 +153,10 @@ void test_bitstream_descartes() {
 
     for(int i =0; i<n; i++) {
       while((descartes.right_bound(i)-descartes.left_bound(i))
-	    > Rational(1,10000)) 
-	{
-	  descartes.refine_interval(i);
-	}
+            > Rational(1,10000))
+        {
+          descartes.refine_interval(i);
+        }
     }
     assert(Rational(-160,100)<descartes.left_bound(0));
     assert(Rational(-159,100)>descartes.right_bound(0));
@@ -165,24 +165,24 @@ void test_bitstream_descartes() {
     assert(Rational(-1,100)<descartes.left_bound(2));
     assert(Rational(1,100)>descartes.right_bound(2));
   }
-    
+
 
 
   { // Test for the m-k-Descartes method
 
     // Polnomial with one multiple root:
-    
+
     std::stringstream ss("P[11(0,-51960)(1,158454)(2,3015726)(3,-22833405)(4,64277882)(5,-86502719)(6,58622397)(7,-260172)(8,-77833332)(9,85923423)(10,-37885401)(11,1874259)]");
     // This is a polynomial with a 4-fold root at 1/3, and 3 more roots at
     // approximate positions -1.036, -0.104, 17.764
 
-    // In Maple:g := -51960-86502719*x^5+158454*x-22833405*x^3+3015726*x^2+64277882*x^4+1874259*x^11-77833332*x^8+85923423*x^9-37885401*x^10+58622397*x^6-260172*x^7 
+    // In Maple:g := -51960-86502719*x^5+158454*x-22833405*x^3+3015726*x^2+64277882*x^4+1874259*x^11-77833332*x^8+85923423*x^9-37885401*x^10+58622397*x^6-260172*x^7
 
     Poly_int1 f;
     ss >> f;
-    
+
     CGAL::internal::M_k_descartes_tag t;
-    
+
     // We expect 4 real roots (m), and the gcd of g and g' is 3 (k)
     Bitstream_descartes descartes(t, f, 4, 3);
 
@@ -195,24 +195,24 @@ void test_bitstream_descartes() {
     }
 
     int n = descartes.number_of_real_roots();
-    
+
     assert(n==4);
 
     for(int i = 0; i<n;i++) {
       if(i!=2) {
-	assert(descartes.is_certainly_simple_root(i));
-	assert(! descartes.is_certainly_multiple_root(i));
+        assert(descartes.is_certainly_simple_root(i));
+        assert(! descartes.is_certainly_multiple_root(i));
       }
-      else{ 
-	assert(! descartes.is_certainly_simple_root(i));
+      else{
+        assert(! descartes.is_certainly_simple_root(i));
       }
     }
     for(int i =0; i<n; i++) {
       while(descartes.right_bound(i)-descartes.left_bound(i)
-	    >Rational(1,10000)) 
-	{
-	  descartes.refine_interval(i);
-	}
+            >Rational(1,10000))
+        {
+          descartes.refine_interval(i);
+        }
     }
     assert(Rational(-104,100)<descartes.left_bound(0));
     assert(Rational(-103,100)>descartes.right_bound(0));
@@ -222,7 +222,7 @@ void test_bitstream_descartes() {
     assert(Rational(34,100)>descartes.right_bound(2));
     assert(Rational(1776,100)<descartes.left_bound(3));
     assert(Rational(1777,100)>descartes.right_bound(3));
-    
+
   }
 
   { // Another test for the m-k-method
@@ -230,12 +230,12 @@ void test_bitstream_descartes() {
     // Test for the m-k-Descartes method
 
     // Polnomial with one multiple root:
-    
-    // In Maple:f := y^3 - y^2  -2*y 
+
+    // In Maple:f := y^3 - y^2  -2*y
     Poly_int1 f(0,-2,-1,1);
-    
+
     CGAL::internal::M_k_descartes_tag t;
-    
+
     // We expect 3 real roots (m), and the degree of gcd of g and g' is 0 (k)
     Bitstream_descartes descartes(t, f, 3, 0);
 
@@ -248,7 +248,7 @@ void test_bitstream_descartes() {
     }
 
     int n = descartes.number_of_real_roots();
-    
+
     assert(n==3);
 
     for(int i = 0; i<n;i++) {
@@ -256,10 +256,10 @@ void test_bitstream_descartes() {
     }
     for(int i =0; i<n; i++) {
       while(descartes.right_bound(i)-descartes.left_bound(i)
-	    >Rational(1,10000)) 
-	{
-	  descartes.refine_interval(i);
-	}
+            >Rational(1,10000))
+        {
+          descartes.refine_interval(i);
+        }
     }
     assert(Rational(-101,100)<descartes.left_bound(0));
     assert(Rational(-99,100)>descartes.right_bound(0));
@@ -267,9 +267,9 @@ void test_bitstream_descartes() {
     assert(Rational(1,1000)>descartes.right_bound(1));
     assert(Rational(199,100)<descartes.left_bound(2));
     assert(Rational(201,100)>descartes.right_bound(2));
-    
+
   }
-  
+
   { // Test for the backshear method
     typedef Event_refinement<Algebraic_real> Ev_refinement;
     Ev_refinement event_refinement;
@@ -278,13 +278,13 @@ void test_bitstream_descartes() {
     event_refinement.add(Algebraic_real(f,Rational(-2),Rational(-1)));
     event_refinement.add(Algebraic_real(f,Rational(-8,10),Rational(-5,10)));
     event_refinement.add(Algebraic_real(f,Rational(0),Rational(1)));
-    
+
     std::stringstream ss("P[14(0,75449)(1,359917)(2,299972)(3,-1003302)(4,-1857360)(5,42392)(6,2091751)(7,1825115)(8,840268)(9,-840578)(10,-2327140)(11,-1130116)(12,705936)(13,746328)(14,170368)]");
     Poly_int1 g;
     ss >> g;
-    // g = f^3*h, where h is a polynomial with 3 simple roots 
+    // g = f^3*h, where h is a polynomial with 3 simple roots
     // g := 75449+42392*x^5+359917*x-1003302*x^3+299972*x^2-1857360*x^4-1130116*x^11+840268*x^8-840578*x^9-2327140*x^10+705936*x^12+2091751*x^6+1825115*x^7+746328*x^13+170368*x^14
-    
+
     CGAL::internal::Backshear_descartes_tag t;
 
     // We expect 3 event roots, and 3 non-event roots
@@ -310,10 +310,10 @@ void test_bitstream_descartes() {
 
     for(int i =0; i<n; i++) {
       while(descartes.right_bound(i)-descartes.left_bound(i)
-	    >Rational(1,10000)) 
-	{
-	  descartes.refine_interval(i);
-	}
+            >Rational(1,10000))
+        {
+          descartes.refine_interval(i);
+        }
     }
 
     // The non-event roots are expected at -0.953, -0.685, 1.009. The events at
@@ -331,7 +331,7 @@ void test_bitstream_descartes() {
     assert(! descartes.is_certainly_multiple_root(2));
     assert(Rational(-686,1000)<descartes.left_bound(2));
     assert(Rational(-685,1000)>descartes.right_bound(2));
-    
+
     assert(! descartes.is_certainly_simple_root(3));
     assert(descartes.is_certainly_multiple_root(3));
     assert(Rational(-636,1000)<descartes.left_bound(3));
@@ -358,7 +358,7 @@ void test_bitstream_descartes() {
 
     typedef CGAL::internal::Bitstream_descartes_rndl_tree_traits
         <Bitstream_coefficient_kernel > Traits_2;
-  
+
     typedef CGAL::internal::Bitstream_descartes<Traits_2> Bitstream_descartes;
 
     typedef typename Bitstream_descartes::Bitstream_tree Bitstream_tree;
@@ -370,7 +370,7 @@ void test_bitstream_descartes() {
     AK_1 ak_1;
 
     Poly_int2 f;
-    
+
     ss >> f;
 
     Poly_int1 r = CGAL::internal::resultant(f,CGAL::differentiate(f));
@@ -390,10 +390,10 @@ void test_bitstream_descartes() {
     // The root is an "opening" x-extreme point
 
     // Refine the y-coordinate (just to make it harder...)
-    while(m_k_descartes.right_bound(0) - m_k_descartes.left_bound(0) 
+    while(m_k_descartes.right_bound(0) - m_k_descartes.left_bound(0)
            > Rational(1,100000)) {
       m_k_descartes.refine_interval(0);
-    }    
+    }
 
     // Get copy of the tree
     Bitstream_tree tree = m_k_descartes.get_tree().make_unique();
@@ -402,7 +402,7 @@ void test_bitstream_descartes() {
     // Now, find a value inside the isolating interval of alpha, on the right
     // of alpha
     Rational right_bound = alpha.high();
-    
+
     while(alpha.high()==right_bound) {
       alpha.refine();
     }
@@ -427,7 +427,7 @@ void test_bitstream_descartes() {
         assert(sq_free_descartes.right_bound(i) < m_k_descartes.right_bound(0));
 
     }
-    
+
   }
 }
 

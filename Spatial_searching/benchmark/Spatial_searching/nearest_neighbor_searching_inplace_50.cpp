@@ -24,11 +24,11 @@ public:
   typedef Point_3 value_type;
   typedef const value_type& reference;
   typedef Point key_type;
-  typedef boost::lvalue_property_map_tag category;  
+  typedef boost::lvalue_property_map_tag category;
 
   My_point_property_map(const std::vector<Point_3>& pts):points(pts){}
 
-  friend reference get(const My_point_property_map& ppmap,key_type i) 
+  friend reference get(const My_point_property_map& ppmap,key_type i)
   {return ppmap.points[i];}
 };
 typedef CGAL::Search_traits_3<Kernel> Traits_base;
@@ -36,7 +36,7 @@ typedef CGAL::Search_traits_adapter<Point,My_point_property_map,Traits_base> Tra
 
 typedef CGAL::Orthogonal_k_neighbor_search<Traits> K_neighbor_search;
 typedef K_neighbor_search::Tree       Tree;
-typedef Tree::Splitter              Splitter; 
+typedef Tree::Splitter              Splitter;
 typedef K_neighbor_search::Distance Distance;
 
 
@@ -78,7 +78,7 @@ int main() {
 
 
   // Initialize the search structure, and search all N points
-  
+
   double d = 0;
   timer.reset();
   timer.start();

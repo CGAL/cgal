@@ -25,7 +25,6 @@ void run(const FaceGraph& graph){
   // constructs the AABB tree and the internal search tree for
   // efficient distance queries.
   Tree tree( faces(graph).first, faces(graph).second, graph);
-  tree.accelerate_distance_queries();
 
   // counts #intersections with a triangle query
   Segment segment_query(p,q);

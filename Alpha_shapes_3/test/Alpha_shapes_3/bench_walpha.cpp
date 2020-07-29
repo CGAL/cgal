@@ -48,7 +48,7 @@ template <class Object>
 void fill_wp_lists(const char* file_path,std::list<Object>& Ls,double rw=0){
   double x,y,z,r;
   std::ifstream input(file_path);
- 
+
   while(input){
     input >> x;
     if (!input) break;
@@ -65,26 +65,26 @@ void make_one_run(const char* filename){
   std::list<EPICK::Weighted_point_3> lst;
   fill_wp_lists(filename,lst,1.4);
   CGAL::Timer time;
-  
+
   //---Test weighted alpha shape
 //build regular triangulation
   time.start();
   WFixed_DT T(lst.begin(),lst.end());
   time.stop();
-  std::cout << "Building regular triangulation: " << time.time() << std::endl;;  
+  std::cout << "Building regular triangulation: " << time.time() << std::endl;;
   time.reset();
-  
+
   if (lst.size()!=T.number_of_vertices())
     std::cout << lst.size()-T.number_of_vertices() << " hidden vertices.\n";
-  
+
   std::cout << "Build Fixed weighted alpha complex" << std::endl;
   time.start();
   WFixed_AS wfixed_as(T);
   time.stop();
   std::cout << "Fixed "<< time.time() << std::endl;
- 
+
   time.reset();
-  
+
 //copy triangulation for family alpha-shape
   WDT T1;
   T1.set_infinite_vertex( T1.tds().copy_tds( wfixed_as.tds(), wfixed_as.infinite_vertex() ) );
@@ -99,15 +99,15 @@ void make_one_run(const char* filename){
   //copy triangulation for family alpha-shape
   WDT_f T1f;
   T1f.set_infinite_vertex( T1f.tds().copy_tds(wfixed_as.tds(),wfixed_as.infinite_vertex()) );
-  
+
   std::cout << "Build family filtered weighted alpha complex" << std::endl;
   time.start();
   WAS_f w_asf(T1f,0,WAS_f::GENERAL);
   time.stop();
   std::cout << "Family filtered "<< time.time() << std::endl;
-  
-  
-  
+
+
+
   time.reset();
 
   std::list<EPECK::Weighted_point_3> elst;
@@ -123,15 +123,15 @@ void make_one_run(const char* filename){
   EAS ase(edt,0,EAS::GENERAL);
   time.stop();
   std::cout << "Family exact "<< time.time() << std::endl;
-  
+
 }
 
 int main(int argc, char** argv){
   if (argc==1){
     std::cerr << "Nothing was tested\n";
     return EXIT_SUCCESS;
-  }  
-  
+  }
+
   for (int i=1;i<argc;++i) make_one_run(argv[i]);
   return 0;
 }

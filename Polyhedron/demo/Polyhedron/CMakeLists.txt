@@ -54,7 +54,7 @@ list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}")
 
 # Find CGAL
 
-option( POLYHEDRON_QTSCRIPT_DEBUGGER 
+option( POLYHEDRON_QTSCRIPT_DEBUGGER
   "Activate the use of Qt Script Debugger in Polyhedron_3 demo" OFF)
 
 # Find Qt5 itself
@@ -64,7 +64,7 @@ include(${CGAL_USE_FILE})
 find_package(Qt5
              QUIET
              COMPONENTS            OpenGL Script
-             OPTIONAL_COMPONENTS   ScriptTools)
+             OPTIONAL_COMPONENTS   ScriptTools WebSockets)
 
 if(Qt5_FOUND)
 
@@ -73,9 +73,7 @@ if(Qt5_FOUND)
 endif(Qt5_FOUND)
 
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
-if (EIGEN3_FOUND)
-  include( ${EIGEN3_USE_FILE} )
-endif(EIGEN3_FOUND)
+include(CGAL_Eigen_support)
 
 find_package( METIS )
 
@@ -90,11 +88,17 @@ option(POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY
 
 if( POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY )
   find_package( TBB )
-  if( NOT TBB_FOUND )
+  include(CGAL_TBB_support)
+  if( NOT TARGET CGAL::TBB_support )
     message( STATUS "NOTICE: Intel TBB was not found. Bilateral smoothing and WLOP plugins are faster if TBB is linked." )
   endif()
 endif()
 
+#find libssh for scene sharing
+find_package(LibSSH)
+if( NOT LIBSSH_FOUND )
+  message("NOTICE : The SSH features will be disabled.")
+endif()
 
 # Activate concurrency ? (turned OFF by default)
 option(CGAL_ACTIVATE_CONCURRENT_MESH_3
@@ -106,7 +110,8 @@ if( CGAL_ACTIVATE_CONCURRENT_MESH_3 OR ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3} )
   add_definitions( -DCGAL_CONCURRENT_MESH_3 )
   if(NOT TBB_FOUND)
     find_package( TBB REQUIRED )
-    if( NOT TBB_FOUND )
+    include( CGAL_TBB_support)
+    if( NOT TARGET CGAL::TBB_support )
       message(STATUS "NOTICE: Intel TBB was not found. Mesh_3 is faster if TBB is linked.")
     endif()
   endif()
@@ -117,11 +122,9 @@ else( CGAL_ACTIVATE_CONCURRENT_MESH_3 OR ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3} )
     ON)
   if( LINK_WITH_TBB )
     find_package( TBB )
+    include( CGAL_TBB_support)
   endif( LINK_WITH_TBB )
 endif()
-
-
-
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})
@@ -131,7 +134,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   qt5_wrap_ui( statisticsUI_FILES Statistics_on_item_dialog.ui)
   qt5_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
   qt5_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
-  qt5_wrap_ui( PreferencesUI_FILES   Preferences.ui Details.ui)
+  qt5_wrap_ui( PreferencesUI_FILES   Preferences.ui Details.ui SSH_dialog.ui)
   qt5_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
   qt5_wrap_ui( ViewerUI_FILES  LightingDialog.ui)
   qt5_generate_moc( "File_loader_dialog.h" "${CMAKE_CURRENT_BINARY_DIR}/File_loader_dialog_moc.cpp" )
@@ -146,7 +149,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     NO_DEFAULT_PATH
     NO_CMAKE_FIND_ROOT_PATH
     DOC "Path to CGAL/Three/Scene_item.h")
-  
+
   if(CGAL_THREE_HEADERS_PATH)
     qt5_generate_moc( "${CGAL_THREE_HEADERS_PATH}/CGAL/Three/Viewer_interface.h"
       "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
@@ -190,10 +193,16 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     Scene_item_rendering_helper.cpp
     Scene_item_rendering_helper_moc.cpp
     Primitive_container.cpp
-    Polyhedron_demo_plugin_helper.cpp)
+    Polyhedron_demo_plugin_helper.cpp
+    CGAL_double_edit.cpp)
   target_link_libraries(demo_framework
     PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui Qt5::Script
     )
+  if(TARGET Qt5::WebSockets)
+    target_link_libraries(demo_framework PUBLIC Qt5::WebSockets)
+    message(STATUS "Qt5WebSockets was found. Using WebSockets is therefore possible.")
+  endif()
+
   cgal_add_compilation_test(demo_framework)
   # Let's define `three_EXPORT` during the compilation of `demo_framework`,
   # in addition of `demo_framework_EXPORT` (defined automatically by
@@ -243,38 +252,50 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   add_item(scene_c3t3_item Scene_c3t3_item.cpp)
   target_link_libraries(scene_c3t3_item PUBLIC scene_surface_mesh_item scene_polygon_soup_item scene_basic_objects ${TBB_LIBRARIES})
-  if(TBB_FOUND)
-    CGAL_target_use_TBB(scene_c3t3_item)
+  if(TARGET CGAL::TBB_support)
+    target_link_libraries(scene_c3t3_item PUBLIC CGAL::TBB_support)
+  endif()
+  if(COMMAND target_precompile_headers)
+    # Support for precompiled headers, for Mesh_3 (since CMake 3.16)
+    target_precompile_headers(scene_c3t3_item PUBLIC [["C3t3_type.h"]])
   endif()
   add_item(scene_transform_item Plugins/PCA/Scene_facegraph_transform_item.cpp )
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp )
   add_item(scene_image_item Scene_image_item.cpp)
   add_item(scene_surface_mesh_item Scene_surface_mesh_item.cpp)
 
+  if(TBB_FOUND)
+    target_link_libraries(scene_surface_mesh_item PUBLIC CGAL::TBB_support)
+  endif()
   # special
 
   add_item(scene_item_decorator Scene_polyhedron_item_decorator.cpp )
   target_link_libraries(scene_item_decorator PUBLIC scene_surface_mesh_item)
- 
+
   add_item(scene_k_ring_selection Plugins/PMP/Scene_facegraph_item_k_ring_selection.cpp)
   target_link_libraries(scene_k_ring_selection PUBLIC scene_surface_mesh_item)
 
   add_item(scene_selection_item Scene_polyhedron_selection_item.cpp)
   target_link_libraries(scene_selection_item PUBLIC scene_item_decorator  scene_k_ring_selection)
+ if(TBB_FOUND)
+    target_link_libraries(scene_selection_item PUBLIC CGAL::TBB_support)
+  endif()
 
   add_item(scene_shortest_path_item Plugins/Surface_mesh/Scene_polyhedron_shortest_path_item.cpp)
   target_link_libraries(scene_shortest_path_item PUBLIC scene_item_decorator scene_surface_mesh_item scene_polylines_item)
 
   add_item(scene_movable_sm_item Plugins/AABB_tree/Scene_movable_sm_item.cpp)
-  
-  if(EIGEN3_FOUND )
+
+  if(TARGET CGAL::Eigen_support )
     add_item(scene_textured_item Scene_textured_surface_mesh_item.cpp texture.cpp)
+    target_link_libraries(scene_textured_item PUBLIC CGAL::Eigen_support)
     qt5_wrap_ui( editionUI_FILES Plugins/Surface_mesh_deformation/Deform_mesh.ui )
     add_item(scene_edit_item Plugins/Surface_mesh_deformation/Scene_edit_polyhedron_item.cpp
       ${editionUI_FILES})
-    target_link_libraries(scene_edit_item PUBLIC scene_surface_mesh_item scene_k_ring_selection
+    target_link_libraries(scene_edit_item PUBLIC CGAL::Eigen_support scene_surface_mesh_item scene_k_ring_selection
       scene_basic_objects)
     add_item(scene_mcf_item Plugins/PMP/Scene_mcf_item.cpp)
+    target_link_libraries(scene_mcf_item PUBLIC CGAL::Eigen_support)
   endif()
 
   add_item(scene_implicit_function_item Scene_implicit_function_item.cpp )
@@ -285,30 +306,31 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   add_item(scene_nef_polyhedron_item Scene_nef_polyhedron_item.cpp)
   target_link_libraries(scene_nef_polyhedron_item PUBLIC scene_surface_mesh_item)
-  
+
+  add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
+  if (TARGET CGAL::Eigen_support)
+    target_link_libraries(scene_points_with_normal_item PUBLIC CGAL::Eigen_support)
+  endif()
+
   find_package(LASLIB)
-  if (LASLIB_FOUND)
-    include(${LASLIB_USE_FILE})
-    include_directories(${LASLIB_INCLUDE_DIR})
-    include_directories(${LASZIP_INCLUDE_DIR})
-    add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
+  include(CGAL_LASLIB_support)
+  if (TARGET CGAL::LASLIB_support)
+    target_link_libraries(scene_points_with_normal_item PUBLIC CGAL::LASLIB_support)
     if (MSVC)
       target_compile_definitions( scene_points_with_normal_item PUBLIC "-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS")
     endif()
-    target_link_libraries( scene_points_with_normal_item PUBLIC ${LASLIB_LIBRARIES})
-  else()
-    add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
   endif()
+
   if(TBB_FOUND)
-    CGAL_target_use_TBB(scene_points_with_normal_item)
+    target_link_libraries(scene_points_with_normal_item PUBLIC CGAL::TBB_support)
   endif()
 
   add_item(scene_polylines_item Scene_polylines_item.cpp)
   target_link_libraries(scene_polylines_item PUBLIC scene_basic_objects scene_points_with_normal_item)
-  
+
   add_item(scene_lcc_item Scene_lcc_item.cpp)
-  
-  foreach( lib 
+
+  foreach( lib
       demo_framework
       scene_basic_objects
       scene_color_ramp
@@ -322,11 +344,20 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     MainWindow.cpp
     Polyhedron_demo.cpp
     File_loader_dialog_moc.cpp
+    Use_ssh.cpp
     ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES}
-    ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} 
+    ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES}
     ${statisticsUI_FILES} ${SubViewerUI_files})
   target_link_libraries(polyhedron_demo PUBLIC
     demo_framework point_dialog Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Script)
+  if(LIBSSH_FOUND)
+    add_definitions(-DCGAL_USE_SSH)
+    target_link_libraries(polyhedron_demo PUBLIC ${LIBSSH_LIBRARIES})
+  endif() #libssh
+  if(TARGET Qt5::WebSockets)
+    add_definitions(-DCGAL_USE_WEBSOCKETS)
+    target_link_libraries(polyhedron_demo PUBLIC Qt5::WebSockets)
+  endif()
   add_executable  ( Polyhedron_3 Polyhedron_3.cpp )
   target_link_libraries( Polyhedron_3 PRIVATE polyhedron_demo )
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
@@ -375,6 +406,13 @@ add_executable  ( CGAL_PMP PMP.cpp )
 add_dependencies(CGAL_PMP PMP)
 target_link_libraries( CGAL_PMP PRIVATE polyhedron_demo )
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS CGAL_PMP )
+
+#WS Server
+if(TARGET Qt5::WebSockets)
+  add_executable  (WS_server Server_ws.cpp)
+  target_link_libraries(WS_server PUBLIC Qt5::WebSockets)
+  message(STATUS "Qt5WebSockets was found. Using WebSockets is therefore possible.")
+endif()
 #
 # Exporting
 #

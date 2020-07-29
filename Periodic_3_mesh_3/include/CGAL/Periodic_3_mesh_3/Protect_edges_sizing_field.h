@@ -40,13 +40,12 @@
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 
 #include <CGAL/enum.h>
-#include <CGAL/Has_timestamp.h>
-#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 #include <CGAL/internal/Has_member_visited.h>
 #include <CGAL/iterator.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
+#include <CGAL/Time_stamper.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 

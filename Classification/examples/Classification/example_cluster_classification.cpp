@@ -18,11 +18,7 @@
 #include <CGAL/Shape_detection/Region_growing.h>
 #include <CGAL/Real_timer.h>
 
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag   Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3                Point;
@@ -55,7 +51,7 @@ int main (int argc, char** argv)
 {
   std::string filename        = "data/b9.ply";
   std::string filename_config = "data/b9_clusters_config.gz";
-  
+
   if (argc > 1)
     filename = argv[1];
   if (argc > 2)
@@ -77,42 +73,42 @@ int main (int argc, char** argv)
   t.reset();
 
   Feature_set pointwise_features;
-  
+
   std::cerr << "Generating pointwise features" << std::endl;
   t.start();
   Feature_generator generator (pts, pts.point_map(), 5); // using 5 scales
-  
+
 #ifdef CGAL_LINKED_WITH_TBB
   pointwise_features.begin_parallel_additions();
 #endif
-  
+
   generator.generate_point_based_features (pointwise_features);
   generator.generate_normal_based_features (pointwise_features, pts.normal_map());
 
 #ifdef CGAL_LINKED_WITH_TBB
   pointwise_features.end_parallel_additions();
 #endif
-  
+
   t.stop();
   std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
 
   ///////////////////////////////////////////////////////////////////
   //! [Cluster]
-  
+
   std::cerr << "Detecting planes and creating clusters" << std::endl;
   t.start();
-  
+
   const double search_sphere_radius  = 1.0;
   const double max_distance_to_plane = 1.0;
   const double max_accepted_angle    = 25.0;
   const std::size_t min_region_size  = 10;
 
   Neighbor_query neighbor_query (
-    pts, 
-    search_sphere_radius, 
+    pts,
+    search_sphere_radius,
     pts.point_map());
   Region_type region_type (
-    pts, 
+    pts,
     max_distance_to_plane, max_accepted_angle, min_region_size,
     pts.point_map(), pts.normal_map());
   Region_growing region_growing (
@@ -122,10 +118,10 @@ int main (int argc, char** argv)
   region_growing.detect
     (boost::make_function_output_iterator
      ([&](const std::vector<std::size_t>& region) -> void {
-        
+
         // Create a new cluster.
         Classification::Cluster<Point_set, Pmap> cluster (pts, pts.point_map());
-        for (const std::size_t idx : region) 
+        for (const std::size_t idx : region)
           cluster.insert(idx);
         clusters.push_back(cluster);
       }));
@@ -137,24 +133,24 @@ int main (int argc, char** argv)
 
   //! [Cluster]
   ///////////////////////////////////////////////////////////////////
-  
+
   std::cerr << "Computing cluster features" << std::endl;
-  
+
   ///////////////////////////////////////////////////////////////////
   //! [Eigen]
-  
+
   Local_eigen_analysis eigen = Local_eigen_analysis::create_from_point_clusters (clusters);
 
   //! [Eigen]
   ///////////////////////////////////////////////////////////////////
 
   t.start();
-  
+
   ///////////////////////////////////////////////////////////////////
   //! [Features]
-  
+
   Feature_set features;
-  
+
 #ifdef CGAL_LINKED_WITH_TBB
   features.begin_parallel_additions();
 #endif
@@ -176,19 +172,19 @@ int main (int argc, char** argv)
 
   features.add<Classification::Feature::Cluster_size> (clusters);
   features.add<Classification::Feature::Cluster_vertical_extent> (clusters);
-  
+
   for (std::size_t i = 0; i < 3; ++ i)
     features.add<Classification::Feature::Eigenvalue> (clusters, eigen, (unsigned int)(i));
-  
+
 #ifdef CGAL_LINKED_WITH_TBB
   features.end_parallel_additions();
 #endif
-  
+
   //! [Features]
   ///////////////////////////////////////////////////////////////////
-  
+
   t.stop();
-  
+
   // Add types.
   Label_set labels;
   Label_handle ground     = labels.add ("ground");
@@ -196,10 +192,10 @@ int main (int argc, char** argv)
   Label_handle roof       = labels.add ("roof");
 
   std::vector<int> label_indices(clusters.size(), -1);
-  
+
   std::cerr << "Using ETHZ Random Forest Classifier" << std::endl;
   Classification::ETHZ_random_forest_classifier classifier (labels, features);
-  
+
   std::cerr << "Loading configuration" << std::endl;
   std::ifstream in_config (filename_config, std::ios_base::in | std::ios_base::binary);
   classifier.load_configuration (in_config);
@@ -209,7 +205,7 @@ int main (int argc, char** argv)
   t.start();
   Classification::classify<Concurrency_tag> (clusters, labels, classifier, label_indices);
   t.stop();
-  
+
   std::cerr << "Classification done in " << t.time() << " second(s)" << std::endl;
   return EXIT_SUCCESS;
 }

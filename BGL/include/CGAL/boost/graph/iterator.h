@@ -5,7 +5,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -30,7 +30,7 @@ namespace internal {
 
 template <typename G>
 struct Edge {
-  const G* g; 
+  const G* g;
 
   Edge()
     : g(nullptr)
@@ -51,7 +51,7 @@ struct Edge {
 
 template <typename G>
 struct Opposite_edge {
-  const G* g; 
+  const G* g;
 
   Opposite_edge()
     : g(nullptr)
@@ -72,7 +72,7 @@ struct Opposite_edge {
 
 template <typename G>
 struct Opposite_halfedge {
-  const G* g; 
+  const G* g;
 
   Opposite_halfedge()
     : g(nullptr)
@@ -93,7 +93,7 @@ struct Opposite_halfedge {
 
 template <typename G>
 struct Target {
-  const G* g; 
+  const G* g;
 
   Target()
     : g(nullptr)
@@ -114,7 +114,7 @@ struct Target {
 
 template <typename G>
 struct Source {
-  const G* g; 
+  const G* g;
 
   Source()
     : g(nullptr)
@@ -135,7 +135,7 @@ struct Source {
 
 template <typename G>
 struct Face {
-  const G* g; 
+  const G* g;
 
   Face()
     : g(nullptr)
@@ -155,7 +155,7 @@ struct Face {
 };
 template <typename G>
 struct Opposite_face {
-  const G* g; 
+  const G* g;
 
   Opposite_face()
     : g(nullptr)
@@ -179,8 +179,8 @@ struct Opposite_face {
 /**
  * \ingroup PkgBGLIterators
  * A bidirectional iterator with value type `boost::graph_traits<Graph>::%halfedge_descriptor` over all halfedges having the same vertex as source.
- * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_source_iterator` `havi` with `h = *havi;` 
- * the following holds: Either `++havi` is the past the end iterator, or `next(opposite(h,g),g) == *++havi`. 
+ * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_source_iterator` `havi` with `h = *havi;`
+ * the following holds: Either `++havi` is the past the end iterator, or `next(opposite(h,g),g) == *++havi`.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
  * \cgalModels `BidirectionalIterator`
  */
@@ -197,12 +197,12 @@ public:
   typedef const value_type&                   reference;
   typedef std::ptrdiff_t                      difference_type;
 
-private:  
+private:
   halfedge_descriptor anchor, pos;
   const Graph* g;
   int      winding;
-#endif 
-  
+#endif
+
 public:
   Halfedge_around_source_iterator()
     : anchor(), pos(), g(0)
@@ -229,7 +229,7 @@ public:
     CGAL_assertion( anchor == anchor);
     return  ( g == i.g) && ( pos == i.pos) && ( winding == i.winding);
   }
-  
+
   bool operator!=( const Self& i) const {
     return !(*this == i);
   }
@@ -277,8 +277,8 @@ public:
 /**
  * \ingroup PkgBGLIterators
  * A bidirectional iterator with value type `boost::graph_traits<Graph>::%halfedge_descriptor` over all halfedges having the same vertex as target.
- * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_target_iterator` `havi` with `h = *havi;` 
- * the following holds: Either `++havi` is the past the end iterator, or `opposite(next(h,g),g) == *++havi`. 
+ * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_target_iterator` `havi` with `h = *havi;`
+ * the following holds: Either `++havi` is the past the end iterator, or `opposite(next(h,g),g) == *++havi`.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
  * \cgalModels `BidirectionalIterator`
  */
@@ -297,12 +297,12 @@ public:
   typedef const value_type&                   reference;
   typedef std::ptrdiff_t                      difference_type;
 
-private:  
+private:
   halfedge_descriptor anchor, pos;
   const Graph* g;
   int      winding;
-#endif 
-  
+#endif
+
 public:
   Halfedge_around_target_iterator()
     : anchor(), pos(), g(0)
@@ -329,7 +329,7 @@ public:
     CGAL_assertion( anchor == anchor);
     return  ( g == i.g) && ( pos == i.pos) && ( winding == i.winding);
   }
-  
+
   bool operator!=( const Self& i) const {
     return !(*this == i);
   }
@@ -378,7 +378,7 @@ public:
 /**
  * \ingroup PkgBGLIterators
  * A bidirectional iterator  with value type `boost::graph_traits<Graph>::%halfedge_descriptor` over all halfedges incident to the same face or border.
- * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_face_iterator` `hafi` with  `h = *hafi` 
+ * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_face_iterator` `hafi` with  `h = *hafi`
  * the following holds: Either `++hafi` is the past the end iterator, or `next(h,g) == *++hafi`.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
  * \cgalModels `BidirectionalIterator`
@@ -386,7 +386,7 @@ public:
 
 template <typename Graph>
 class Halfedge_around_face_iterator {
-#ifndef DOXYGEN_RUNNING 
+#ifndef DOXYGEN_RUNNING
   typedef Halfedge_around_face_iterator Self;
 
 public:
@@ -396,9 +396,9 @@ public:
   typedef value_type*                         pointer;
   typedef value_type&                         reference;
   typedef std::ptrdiff_t                      difference_type;
-  
+
 #endif
-  
+
   Halfedge_around_face_iterator()
     : pos(), g(0)
   {}
@@ -433,7 +433,7 @@ public:
     return !(*this == i);
   }
 
-  Self& operator++() 
+  Self& operator++()
   {
     CGAL_assertion(g != nullptr);
     pos = next(pos,*g);
@@ -442,7 +442,7 @@ public:
     return *this;
   }
 
-  Self operator++(int) 
+  Self operator++(int)
   {
     CGAL_assertion(g != nullptr);
     Self tmp = *this;
@@ -450,17 +450,17 @@ public:
     return tmp;
   }
 
-  Self& operator--() 
+  Self& operator--()
   {
-    CGAL_assertion(g != nullptr); 
+    CGAL_assertion(g != nullptr);
     if ( pos == anchor)
       --winding;
-  
+
     pos = prev(pos,*g);
     return *this;
   }
 
-  Self operator--(int) 
+  Self operator--(int)
   {
     CGAL_assertion(g != nullptr);
     Self tmp = *this;
@@ -481,8 +481,8 @@ class Halfedge_around_target_circulator;
 /**
  * \ingroup PkgBGLIterators
  * A bidirectional circulator  with value type `boost::graph_traits<Graph>::%halfedge_descriptor` over all halfedges having the same vertex as source.
- * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_source_circulator` `havc` with `h = *havc;` 
- * the following holds: `next(opposite(h,g),g) == *++havc`. 
+ * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_source_circulator` `havc` with `h = *havc;`
+ * the following holds: `next(opposite(h,g),g) == *++havc`.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
  * \cgalModels `BidirectionalCirculator`
  */
@@ -525,24 +525,24 @@ public:
   // design patter: "safe bool"
   // will be replaced by explicit operator bool with C++11
   typedef void (Halfedge_around_source_circulator::*bool_type)() const;
-  
+
   void this_type_does_not_support_comparisons() const {}
-  
+
   operator bool_type() const
   {
     return (! (this->base_reference() == nullptr)) ?
       &Halfedge_around_source_circulator::this_type_does_not_support_comparisons : 0;
   }
-  
+
   bool operator== (void*) const
   {
     return this->base_reference() == nullptr;
   }
-  
+
 private:
   friend class boost::iterator_core_access;
   typename  boost::graph_traits<Graph>::halfedge_descriptor dereference() const { return opp(*this->base_reference()); }
-}; 
+};
 
 
 /**
@@ -603,14 +603,14 @@ private:
   typename  boost::graph_traits<Graph>::face_descriptor dereference() const { return fct(*this->base_reference()); }
 #endif
 
-}; 
+};
 
 
 /**
  * \ingroup PkgBGLIterators
  * A bidirectional circulator  with value type `boost::graph_traits<Graph>::%halfedge_descriptor` over all halfedges having the same vertex as target.
- * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_target_circulator` `havc` with `h = *havc;` 
- * the following holds: `opposite(next(h,g),g) == *++havc`. 
+ * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_target_circulator` `havc` with `h = *havc;`
+ * the following holds: `opposite(next(h,g),g) == *++havc`.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
  * \cgalModels `BidirectionalCirculator`
  */
@@ -631,7 +631,7 @@ public:
   typedef value_type&                         reference;
   typedef std::ptrdiff_t                      difference_type;
   typedef std::size_t                         size_type;
-#endif 
+#endif
 
   Halfedge_around_target_circulator()
     : g(0)
@@ -673,15 +673,15 @@ public:
     return g == nullptr;
   }
 
- 
-  Self& operator++() 
+
+  Self& operator++()
   {
     CGAL_assertion(g != nullptr);
     pos = opposite(next(pos,*g),*g);
     return *this;
   }
 
-  Self operator++(int) 
+  Self operator++(int)
   {
     CGAL_assertion(g != nullptr);
     Self tmp = *this;
@@ -689,14 +689,14 @@ public:
     return tmp;
   }
 
-  Self& operator--() 
+  Self& operator--()
   {
     CGAL_assertion(g != nullptr);
     pos = prev(opposite(pos,*g),*g);
     return *this;
   }
 
-  Self operator--(int) 
+  Self operator--(int)
   {
     CGAL_assertion(g != nullptr);
     Self tmp = *this;
@@ -714,7 +714,7 @@ private:
 /**
  * \ingroup PkgBGLIterators
  * A bidirectional circulator  with value type `boost::graph_traits<Graph>::%halfedge_descriptor` over all halfedges incident to the same face or border.
- * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_face_circulator` `hafc` with  `h = *hafc` 
+ * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_face_circulator` `hafc` with  `h = *hafc`
  * the following holds:  `next(h,g) == *++hafc`.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
  * \cgalModels `BidirectionalCirculator`
@@ -733,8 +733,8 @@ public:
   typedef value_type&                         reference;
   typedef std::ptrdiff_t                      difference_type;
   typedef std::size_t                         size_type;
-#endif 
-  
+#endif
+
   Halfedge_around_face_circulator()
     : pos(), g(0)
   {}
@@ -750,7 +750,7 @@ public:
 
   bool       operator == ( const Self& other) const { return  g == other.g && pos == other.pos; }
   bool       operator != ( const Self& other) const { return  g != other.g || pos != other.pos; }
- 
+
 
   // design patter: "safe bool"
   // will be replaced by explicit operator bool with C++11
@@ -769,14 +769,14 @@ public:
     return g == nullptr;
   }
 
-  Self& operator++() 
+  Self& operator++()
   {
     CGAL_assertion(g != nullptr);
     pos = next(pos,*g);
     return *this;
   }
 
-  Self operator++(int) 
+  Self operator++(int)
   {
     CGAL_assertion(g != nullptr);
     Self tmp = *this;
@@ -784,14 +784,14 @@ public:
     return tmp;
   }
 
-  Self& operator--() 
+  Self& operator--()
   {
     CGAL_assertion(g != nullptr);
     pos = prev(pos,*g);
     return *this;
   }
 
-  Self operator--(int) 
+  Self operator--(int)
   {
     CGAL_assertion(g != nullptr);
     Self tmp = *this;
@@ -806,7 +806,7 @@ private:
 };
 
 
-/**  
+/**
  * \ingroup PkgBGLIterators
  * returns an iterator range over all halfedges with vertex `source(h,g)` as source.
  */
@@ -818,7 +818,7 @@ halfedges_around_source(typename boost::graph_traits<Graph>::halfedge_descriptor
   return make_range(I(h,g), I(h,g,1));
 }
 
-/**  
+/**
  * \ingroup PkgBGLIterators
  * returns an iterator range over all halfedges with vertex `v` as source.
  */
@@ -829,9 +829,9 @@ halfedges_around_source(typename boost::graph_traits<Graph>::vertex_descriptor v
   return halfedges_around_source(opposite(halfedge(v,g),g),g);
 }
 
-/**  
+/**
  * \ingroup PkgBGLIterators
- * returns an iterator range over all halfedges with vertex `target(h,g)` as target. 
+ * returns an iterator range over all halfedges with vertex `target(h,g)` as target.
  */
 template<typename Graph>
 Iterator_range<Halfedge_around_target_iterator<Graph> >
@@ -841,9 +841,9 @@ halfedges_around_target(typename boost::graph_traits<Graph>::halfedge_descriptor
   return make_range(I(h,g), I(h,g,1));
 }
 
-/**  
+/**
  * \ingroup PkgBGLIterators
- * returns an iterator range over all halfedges with vertex `v` as target. 
+ * returns an iterator range over all halfedges with vertex `v` as target.
  */
 template<typename Graph>
 Iterator_range<Halfedge_around_target_iterator<Graph> >
@@ -852,9 +852,9 @@ halfedges_around_target(typename boost::graph_traits<Graph>::vertex_descriptor v
   return halfedges_around_target(halfedge(v,g),g);
 }
 
-/**  
+/**
  * \ingroup PkgBGLIterators
- * returns an iterator range over all halfedges incident to the same face or border as `h`. 
+ * returns an iterator range over all halfedges incident to the same face or border as `h`.
  */
 template<typename Graph>
 Iterator_range<Halfedge_around_face_iterator<Graph> >
@@ -899,7 +899,7 @@ public:
 private:
   friend class boost::iterator_core_access;
   typename  boost::graph_traits<Graph>::face_descriptor dereference() const { return fct(*this->base_reference()); }
-}; 
+};
 
 
 /**
@@ -928,7 +928,7 @@ class Face_around_face_circulator
  */
 template <typename Graph>
 class Face_around_target_iterator
-#ifndef DOXYGEN_RUNNING  
+#ifndef DOXYGEN_RUNNING
   : public boost::iterator_adaptor<
             Face_around_target_iterator<Graph>                       // Derived
              , Halfedge_around_target_iterator<Graph>                // Base
@@ -954,11 +954,11 @@ public:
 private:
   friend class boost::iterator_core_access;
   typename  boost::graph_traits<Graph>::face_descriptor dereference() const { return fct(*this->base_reference()); }
-}; 
+};
 
-/**  
+/**
  * \ingroup PkgBGLIterators
- * returns an iterator range over all faces around  vertex `target(h,g)`. 
+ * returns an iterator range over all faces around  vertex `target(h,g)`.
  */
 template<typename Graph>
 Iterator_range<Face_around_target_iterator<Graph> >
@@ -968,7 +968,7 @@ faces_around_target(typename boost::graph_traits<Graph>::halfedge_descriptor h, 
   return make_range(I(h,g), I(h,g,1));
 }
 
-/**  
+/**
  * \ingroup PkgBGLIterators
  * returns an iterator range over all edge-adjacent faces to the same face `face(h,g)`.
  */
@@ -982,7 +982,7 @@ faces_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, co
 
 template <typename Graph>
 class Vertex_around_face_circulator
-#ifndef DOXYGEN_RUNNING 
+#ifndef DOXYGEN_RUNNING
   : public boost::iterator_adaptor<
              Vertex_around_face_circulator<Graph>                    // Derived
              , Halfedge_around_face_circulator<Graph>                  // Base
@@ -1028,7 +1028,7 @@ private:
   friend class boost::iterator_core_access;
   typename  boost::graph_traits<Graph>::vertex_descriptor dereference() const { return fct(*this->base_reference()); }
 #endif
-}; 
+};
 
 /**
  * \ingroup PkgBGLIterators
@@ -1082,7 +1082,7 @@ private:
   friend class boost::iterator_core_access;
   typename  boost::graph_traits<Graph>::vertex_descriptor dereference() const { return fct(*this->base_reference()); }
 #endif
-}; 
+};
 
 
 template <typename Graph>
@@ -1110,7 +1110,7 @@ public:
 private:
   friend class boost::iterator_core_access;
   typename  boost::graph_traits<Graph>::edge_descriptor dereference() const { return fct(*this->base_reference()); }
-}; 
+};
 
 template<typename Graph>
 Iterator_range<Opposite_edge_around_face_iterator<Graph> >
@@ -1145,7 +1145,7 @@ public:
 private:
   friend class boost::iterator_core_access;
   typename  boost::graph_traits<Graph>::edge_descriptor dereference() const { return fct(*this->base_reference()); }
-}; 
+};
 
 template<typename Graph>
 Iterator_range<Edge_around_face_iterator<Graph> >
@@ -1191,7 +1191,7 @@ public:
     : Vertex_around_target_circulator::iterator_adaptor_(Halfedge_around_target_circulator<Graph>(h,g)), fct(g)
   {}
 
-#ifndef DOXYGEN_RUNNING  
+#ifndef DOXYGEN_RUNNING
   // design patter: "safe bool"
   // will be replaced by explicit operator bool with C++11
   typedef void (Vertex_around_target_circulator::*bool_type)() const;
@@ -1213,7 +1213,7 @@ private:
   friend class boost::iterator_core_access;
   typename  boost::graph_traits<Graph>::vertex_descriptor dereference() const { return fct(*this->base_reference()); }
 #endif
-}; 
+};
 
 
 
@@ -1265,7 +1265,7 @@ private:
   friend class boost::iterator_core_access;
   typename  boost::graph_traits<Graph>::vertex_descriptor dereference() const { return fct(*this->base_reference()); }
 #endif
-}; 
+};
 
 
 template <typename Graph>
@@ -1285,9 +1285,9 @@ adjacent_vertices(typename boost::graph_traits<Graph>::vertex_descriptor v, cons
   return make_range(I(halfedge(v,g),g), I(halfedge(v,g),g,1));
 }
 
-/**  
+/**
  * \ingroup PkgBGLIterators
- * returns an iterator range over all vertices adjacent to the vertex `target(h,g)`. 
+ * returns an iterator range over all vertices adjacent to the vertex `target(h,g)`.
  */
 template <typename Graph>
 Iterator_range<Vertex_around_target_iterator<Graph> >
@@ -1304,9 +1304,9 @@ vertices_around_target(typename boost::graph_traits<Graph>::vertex_descriptor v,
   typedef Vertex_around_target_iterator<Graph> I;
   return make_range(I(halfedge(v,g),g), I(halfedge(v,g),g,1));
 }
-/**  
+/**
  * \ingroup PkgBGLIterators
- * returns an iterator range over all vertices adjacent to the face `face(h,g)`. 
+ * returns an iterator range over all vertices adjacent to the face `face(h,g)`.
  */
 template <typename Graph>
 Iterator_range<Vertex_around_face_iterator<Graph> >
@@ -1333,23 +1333,23 @@ private:
 public:
   Out_edge_iterator()
   {}
-  
+
   Out_edge_iterator(halfedge_descriptor h, const Graph& g, int n = 0)
     : Out_edge_iterator::iterator_adaptor_(Halfedge_around_target_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n)), opp(g) {}
-  
+
   // design patter: "safe bool"
   // will be replaced by explicit operator bool with C++11
   typedef void (Out_edge_iterator::*bool_type)() const;
-  
+
   void this_type_does_not_support_comparisons() const {}
-  
+
   operator bool_type() const
   {
     return (! (this->base_reference() == nullptr)) ?
       &Out_edge_iterator::this_type_does_not_support_comparisons : 0;
   }
-  
-  
+
+
 private:
   friend class boost::iterator_core_access;
   typename  boost::graph_traits<Graph>::edge_descriptor dereference() const { return opp(*this->base_reference()); }
@@ -1374,7 +1374,7 @@ private:
 public:
   In_edge_iterator()
   {}
-  
+
   In_edge_iterator(halfedge_descriptor h, const Graph& g, int n = 0)
     : In_edge_iterator::iterator_adaptor_(Halfedge_around_target_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n)), fct(g)
   {}

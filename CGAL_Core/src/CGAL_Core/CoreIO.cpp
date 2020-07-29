@@ -7,7 +7,7 @@
  *
  * File: CoreIO.cpp
  *
- * Written by 
+ * Written by
  *       Zilin Du <zilin@cs.nyu.edu>
  *       Chee Yap <yap@cs.nyu.edu>
  *

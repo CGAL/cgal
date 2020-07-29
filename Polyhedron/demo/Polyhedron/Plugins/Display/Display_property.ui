@@ -110,44 +110,18 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <widget class="QDoubleSpinBox" name="minBox"/>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="maxBox">
-             <property name="value">
-              <double>2.000000000000000</double>
+            <widget class="DoubleEdit" name="minBox">
+             <property name="text">
+              <string>0.00</string>
              </property>
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0">
-             <item>
-              <spacer name="horizontalSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QPushButton" name="resetButton">
-               <property name="toolTip">
-                <string>Compute Ramp Extremas</string>
-               </property>
-               <property name="text">
-                <string>Reset</string>
-               </property>
-               <property name="autoRepeat">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
+            <widget class="DoubleEdit" name="maxBox">
+             <property name="text">
+              <string>2.00</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -223,6 +197,13 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header>CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

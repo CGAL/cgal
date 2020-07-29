@@ -750,8 +750,7 @@ detect_features(FT angle_in_degree,
   for(Polyhedron_type& p : poly)
   {
     initialize_ts(p);
-    using Mesh_3::internal::Get_face_index_pmap;
-    Get_face_index_pmap<Polyhedron_type> get_face_index_pmap(p);
+
 #ifdef CGAL_MESH_3_VERBOSE
     std::size_t poly_id = &p-&poly[0];
     std::cerr << "Polyhedron #" << poly_id << " :\n";
@@ -768,9 +767,9 @@ detect_features(FT angle_in_degree,
       , eif
       , pid_map
       , PMP::parameters::first_index(nb_of_patch_plus_one)
-      .face_index_map(get_face_index_pmap(p))
-      .vertex_incident_patches_map(vip_map)
-      .vertex_feature_degree_map(vertex_feature_degree_map));
+                        .face_index_map(get_initialized_face_index_map(p))
+                        .vertex_incident_patches_map(vip_map)
+                        .vertex_feature_degree_map(vertex_feature_degree_map));
 
     Mesh_3::internal::Is_featured_edge<Polyhedron_type> is_featured_edge(p);
 
@@ -990,7 +989,7 @@ add_featured_edges_to_graph(const Polyhedron_type& p,
     }
   }
 
-#if CGAL_MESH_3_PROTECTION_DEBUG > 1
+#if CGAL_MESH_3_PROTECTION_DEBUG & 2
   {// DEBUG
     Mesh_3::internal::dump_graph_edges("edges-graph.polylines.txt", g_copy);
   }

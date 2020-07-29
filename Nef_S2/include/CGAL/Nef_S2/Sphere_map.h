@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Seel       <seel@mpi-sb.mpg.de>
 //                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
@@ -118,11 +118,11 @@ public:
   typedef const SHalfloop*                              SHalfloop_const_iterator;
 
   typedef CGAL::Object_handle Object_handle;
-  /*{\Mtypemember a generic handle to an object of |\Mvar|. 
-  The kind of the object can be determined and the object assigned 
-  by the function:\\ 
-  |bool assign(xxx_handle& h, Object_handle o)|\\ 
-  where the function returns |true| iff the assignment of |o| to 
+  /*{\Mtypemember a generic handle to an object of |\Mvar|.
+  The kind of the object can be determined and the object assigned
+  by the function:\\
+  |bool assign(xxx_handle& h, Object_handle o)|\\
+  where the function returns |true| iff the assignment of |o| to
   |h| was valid.}*/
 
   typedef std::list<Object_handle>                     Object_list;
@@ -134,7 +134,7 @@ public:
   typedef Sphere_map*       Constructor_parameter;
   typedef const Sphere_map* Constructor_const_parameter;
 
-  class SFace_cycle_iterator : public Object_iterator 
+  class SFace_cycle_iterator : public Object_iterator
   /*{\Mtypemember a generic iterator to an object in the boundary
   of a facet. Convertible to |Object_handle|.}*/
   { typedef Object_iterator Ibase;
@@ -142,26 +142,26 @@ public:
     SFace_cycle_iterator() : Ibase() {}
     SFace_cycle_iterator(const Ibase& b) : Ibase(b) {}
 
-    bool is_svertex() const 
+    bool is_svertex() const
     { SVertex_handle v; return CGAL::assign(v,Ibase::operator*()); }
     bool is_shalfedge() const
     { SHalfedge_handle e; return CGAL::assign(e,Ibase::operator*()); }
     bool is_shalfloop() const
     { SHalfloop_handle l; return CGAL::assign(l,Ibase::operator*()); }
-    operator SVertex_handle() const 
+    operator SVertex_handle() const
     { SVertex_handle v; CGAL::assign(v,Ibase::operator*()); return v; }
-    operator SHalfedge_handle() const 
+    operator SHalfedge_handle() const
     { SHalfedge_handle e; CGAL::assign(e,Ibase::operator*()); return e; }
-    operator SHalfloop_handle() const 
+    operator SHalfloop_handle() const
     { SHalfloop_handle l=0; CGAL::assign(l,Ibase::operator*()); return l; }
 
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
-    Object_handle  operator->() const 
+    Object_handle  operator->() const
     { CGAL_error_msg("not impl."); return Object_handle(); }
   };
 
-  class SFace_cycle_const_iterator : public Object_const_iterator 
+  class SFace_cycle_const_iterator : public Object_const_iterator
   /*{\Mtypemember a generic iterator to an object in the boundary
   of a facet. Convertible to |Object_handle|.}*/
   { typedef Object_const_iterator Ibase;
@@ -169,25 +169,25 @@ public:
     SFace_cycle_const_iterator() : Ibase() {}
     SFace_cycle_const_iterator(const Ibase& b) : Ibase(b) {}
 
-    bool is_svertex() const 
+    bool is_svertex() const
     { SVertex_handle v; return CGAL::assign(v,Ibase::operator*()); }
     bool is_shalfedge() const
     { SHalfedge_handle e; return CGAL::assign(e,Ibase::operator*()); }
     bool is_shalfloop() const
     { SHalfloop_handle l; return CGAL::assign(l,Ibase::operator*()); }
-    operator SVertex_const_handle() const 
-    { SVertex_handle v; CGAL::assign(v,Ibase::operator*()); 
+    operator SVertex_const_handle() const
+    { SVertex_handle v; CGAL::assign(v,Ibase::operator*());
       return SVertex_const_handle(v); }
-    operator SHalfedge_const_handle() const 
-    { SHalfedge_handle e; CGAL::assign(e,Ibase::operator*()); 
+    operator SHalfedge_const_handle() const
+    { SHalfedge_handle e; CGAL::assign(e,Ibase::operator*());
       return SHalfedge_const_handle(e); }
-    operator SHalfloop_const_handle() const 
-    { SHalfloop_handle l=0; CGAL::assign(l,Ibase::operator*()); 
+    operator SHalfloop_const_handle() const
+    { SHalfloop_handle l=0; CGAL::assign(l,Ibase::operator*());
       return SHalfloop_const_handle(l); }
 
     operator Object_handle() const { return Ibase::operator*(); }
     const Object_handle& operator*() const { return Ibase::operator*(); }
-    Object_handle  operator->() const 
+    Object_handle  operator->() const
     { CGAL_error_msg("not impl."); return Object_handle(); }
   };
 
@@ -198,52 +198,52 @@ public:
     circulators are defined.}*/
 
   typedef CircFromIt<
-    SHalfedge_const_iterator, 
-    move_edge_around_svertex<SHalfedge_const_iterator> > 
+    SHalfedge_const_iterator,
+    move_edge_around_svertex<SHalfedge_const_iterator> >
     SHalfedge_around_svertex_const_circulator;
   /*{\Mtypemember circulating the adjacency list of an vertex |v|.}*/
-  
+
   typedef CircFromIt<
-    SHalfedge_const_iterator, 
-    move_edge_around_sface<SHalfedge_const_iterator> > 
+    SHalfedge_const_iterator,
+    move_edge_around_sface<SHalfedge_const_iterator> >
     SHalfedge_around_sface_const_circulator;
   /*{\Mtypemember circulating the face cycle of an face |f|.}*/
 
   typedef CircFromIt<
-    SHalfedge_iterator, 
-    move_edge_around_svertex<SHalfedge_iterator> > 
+    SHalfedge_iterator,
+    move_edge_around_svertex<SHalfedge_iterator> >
     SHalfedge_around_svertex_circulator;
   /*{\Mtypemember circulating the adjacency list of an vertex |v|.}*/
-  
+
   typedef CircFromIt<
-    SHalfedge_iterator, 
-    move_edge_around_sface<SHalfedge_iterator> > 
+    SHalfedge_iterator,
+    move_edge_around_sface<SHalfedge_iterator> >
     SHalfedge_around_sface_circulator;
   /*{\Mtypemember circulating the face cycle of an face |f|.}*/
-  
+
   /*{\Mcreation 3}*/
   /*{\Mtext |\Mname| is default and copy constructible. Note that copy
   construction means cloning an isomorphic structure and is thus an
   expensive operation.}*/
 
-  Sphere_map(bool = false) : boundary_item_(boost::none), 
+  Sphere_map(bool = false) : boundary_item_(boost::none),
     svertices_(), sedges_(), sfaces_(), shalfloop_() {}
 
   ~Sphere_map() { clear(); }
 
   Sphere_map(const Self& D) : boundary_item_(boost::none),
-    svertices_(D.svertices_), 
-    sedges_(D.sedges_), 
-    sfaces_(D.sfaces_), 
+    svertices_(D.svertices_),
+    sedges_(D.sedges_),
+    sfaces_(D.sfaces_),
     shalfloop_(0)
   { if ( D.shalfloop_ != 0 ) new_shalfloop_pair(*(D.shalfloop_));
-    pointer_update(D); 
+    pointer_update(D);
   }
 
-  Self& operator=(const Self& D) 
-  { if ( this == &D ) return *this; 
+  Self& operator=(const Self& D)
+  { if ( this == &D ) return *this;
     clear();
-    svertices_ = D.svertices_; 
+    svertices_ = D.svertices_;
     sfaces_ = D.sfaces_;
     sedges_ = D.sedges_;
     if ( D.shalfloop_ != 0 ) new_shalfloop_pair(*D.shalfloop_);
@@ -252,9 +252,9 @@ public:
   }
 
   void clear()
-  { 
+  {
     boundary_item_.clear(boost::none);
-    svertices_.destroy(); 
+    svertices_.destroy();
     sfaces_.destroy();
     while ( shalfedges_begin() != shalfedges_end() )
       delete_shalfedge_pair( shalfedges_begin() );
@@ -301,7 +301,7 @@ public:
   SHalfedge_const_iterator shalfedges_begin() const { return sedges_.begin();}
   SHalfedge_const_iterator shalfedges_end()   const { return sedges_.end();}
   SHalfloop_const_iterator shalfloops_begin() const { return shalfloop_; }
-  SHalfloop_const_iterator shalfloops_end()   const 
+  SHalfloop_const_iterator shalfloops_end()   const
     { return shalfloop_ != 0 ? shalfloop_+2 : shalfloop_; }
   SFace_const_iterator     sfaces_begin()     const { return sfaces_.begin();}
   SFace_const_iterator     sfaces_end()       const { return sfaces_.end();}
@@ -311,7 +311,7 @@ public:
   SHalfedge_iterator shalfedges_begin()  { return sedges_.begin();}
   SHalfedge_iterator shalfedges_end()    { return sedges_.end();}
   SHalfloop_iterator shalfloops_begin()  { return shalfloop_; }
-  SHalfloop_iterator shalfloops_end()  
+  SHalfloop_iterator shalfloops_end()
     { return shalfloop_ != 0 ? shalfloop_+2 : shalfloop_; }
   SFace_iterator     sfaces_begin()      { return sfaces_.begin();}
   SFace_iterator     sfaces_end()        { return sfaces_.end();}
@@ -326,7 +326,7 @@ public:
   { return f->sface_cycles_end(); }
 
   /*{\Mtext The list of all objects can be accessed via iterator ranges.
-  For comfortable iteration we also provide iterations macros. 
+  For comfortable iteration we also provide iterations macros.
   The iterator range access operations are of the following kind:\\
   |SVertex_iterator vertices_begin()/vertices_end()|\\
   |SHalfedge_iterator halfedges_begin()/halfedges_end()|\\
@@ -339,11 +339,11 @@ public:
   /*{\Mop returns the number of (directed edges).}*/
   Size_type number_of_sfaces() const     { return sfaces_.size();}
   /*{\Mop returns the number of facets.}*/
-  Size_type number_of_shalfloops() const 
+  Size_type number_of_shalfloops() const
   { return shalfloop_!=SHalfloop_handle() ? 2 : 0; }
   /*{\Mop returns the number of shalfloop.}*/
 
-  bool empty() const 
+  bool empty() const
   { return number_of_svertices() == 0 &&
       number_of_shalfedges() == 0 &&
       number_of_shalfloops() == 0 &&
@@ -354,12 +354,12 @@ public:
     return shalfloop_ != 0;
   }
 
-  SHalfloop_handle& shalfloop() { 
-    return shalfloop_; 
+  SHalfloop_handle& shalfloop() {
+    return shalfloop_;
   }
 
-  SHalfloop_const_handle shalfloop() const { 
-    return shalfloop_; 
+  SHalfloop_const_handle shalfloop() const {
+    return shalfloop_;
   }
 
   SVertex_alloc vertex_allocator;
@@ -395,8 +395,8 @@ public:
     face_allocator.deallocate( p, 1);
   }
 
-  SVertex_handle new_svertex(const Sphere_point& p, 
-			   Mark m = Mark())
+  SVertex_handle new_svertex(const Sphere_point& p,
+                           Mark m = Mark())
   /*{\Mop returns a new vertex at point |p| marked by |m|.}*/
   { SVertex_handle vh = new_svertex(); vh->point() = p; vh->mark() = m;
     CGAL_NEF_TRACEN("new_svertex "<<&*vh);
@@ -406,17 +406,17 @@ public:
   template <typename H>
   void make_twins(H h1, H h2) { h1->twin() = h2; h2->twin() = h1; }
 
-  SVertex_handle new_svertex() { 
-    svertices_.push_back( * get_vertex_node(SVertex())); 
-    return --svertices_end(); 
+  SVertex_handle new_svertex() {
+    svertices_.push_back( * get_vertex_node(SVertex()));
+    return --svertices_end();
   }
 
-  SFace_handle new_sface() { 
-    sfaces_.push_back( * get_face_node(SFace())); 
-    return --sfaces_end(); 
-  } 
+  SFace_handle new_sface() {
+    sfaces_.push_back( * get_face_node(SFace()));
+    return --sfaces_end();
+  }
 
-  SHalfedge_handle new_shalfedge_pair() { 
+  SHalfedge_handle new_shalfedge_pair() {
     SHalfedge* ep2 = get_halfedge_node(SHalfedge());
     SHalfedge* ep1 = get_halfedge_node(SHalfedge());
     sedges_.push_back( *ep1 );
@@ -449,24 +449,24 @@ public:
     *ph=l1; *pt=l2; make_twins(ph,pt);
     shalfloop_=ph; return ph; }
 
-  void delete_svertex(SVertex_handle h) { 
-    svertices_.erase(h); 
-    put_vertex_node(&*h); 
+  void delete_svertex(SVertex_handle h) {
+    svertices_.erase(h);
+    put_vertex_node(&*h);
   }
 
-  void delete_sface(SFace_handle h) { 
-    sfaces_.erase(h); 
+  void delete_sface(SFace_handle h) {
+    sfaces_.erase(h);
     put_face_node(&*h);
   }
 
-  void delete_shalfedge_pair(SHalfedge_handle h) { 
+  void delete_shalfedge_pair(SHalfedge_handle h) {
     SHalfedge_handle t = h->twin();
     sedges_.erase(h); sedges_.erase(t);
     put_halfedge_node(&*h);
     put_halfedge_node(&*t);
   }
 
-  void delete_shalfloop_pair() { 
+  void delete_shalfloop_pair() {
     CGAL_assertion(has_shalfloop());
     SHalfloop* ph = &*shalfloop_;
     SHalfloop* pt = &*shalfloop_->twin();
@@ -502,7 +502,7 @@ pointer_update(const Sphere_map<K, I, M>& D)
 
   SHalfedge_const_iterator ec = D.shalfedges_begin();
   SHalfedge_iterator e = shalfedges_begin();
-  for ( ; ec != D.shalfedges_end(); ++ec,++e) { 
+  for ( ; ec != D.shalfedges_end(); ++ec,++e) {
     EM[ec] = e;
     e->mark() = ec->mark();
   }
@@ -519,7 +519,7 @@ pointer_update(const Sphere_map<K, I, M>& D)
     LM[D.shalfloop_->twin()] = shalfloop_->twin();
     l = shalfloop();
     shalfloop_->mark() = D.shalfloop()->mark();
-    shalfloop_->twin()->mark() = D.shalfloop()->twin()->mark();    
+    shalfloop_->twin()->mark() = D.shalfloop()->twin()->mark();
     if( !l->is_twin() && D.shalfloop()->is_twin()) l->mark() = l->twin()->mark();
   }
 
@@ -537,7 +537,7 @@ pointer_update(const Sphere_map<K, I, M>& D)
     e->incident_sface() = FM[e->incident_sface()];
   }
   for ( ec = D.shalfedges_begin(), e = shalfedges_begin();
-	ec != D.shalfedges_end(); ++ec, ++e) {
+        ec != D.shalfedges_end(); ++ec, ++e) {
     if( !e->is_twin() && ec->is_twin()) e->mark() = e->twin()->mark();
   }
 
@@ -548,18 +548,18 @@ pointer_update(const Sphere_map<K, I, M>& D)
 
 
   for (f = sfaces_begin(); f != sfaces_end(); ++f) {
-    SFace_cycle_iterator fci; 
+    SFace_cycle_iterator fci;
     for(fci = f->boundary_entry_objects().begin();
-	fci != f->boundary_entry_objects().end(); ++fci) {
-      if ( fci.is_svertex() ) 
+        fci != f->boundary_entry_objects().end(); ++fci) {
+      if ( fci.is_svertex() )
       { v = SVertex_handle(fci);
-	*fci = make_object(VM[v]); store_sm_boundary_item(v,fci); }
-      else if ( fci.is_shalfedge() ) 
+        *fci = make_object(VM[v]); store_sm_boundary_item(v,fci); }
+      else if ( fci.is_shalfedge() )
       { e = SHalfedge_handle(fci);
-	*fci = make_object(EM[e]); store_sm_boundary_item(e,fci); }
-      else if ( fci.is_shalfloop() ) 
+        *fci = make_object(EM[e]); store_sm_boundary_item(e,fci); }
+      else if ( fci.is_shalfloop() )
       { l = SHalfloop_handle(fci);
-	*fci = make_object(LM[l]); store_sm_boundary_item(l,fci); }
+        *fci = make_object(LM[l]); store_sm_boundary_item(l,fci); }
       else CGAL_error_msg("damn wrong boundary item in face.");
     }
   }

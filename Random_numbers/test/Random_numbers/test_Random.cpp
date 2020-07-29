@@ -36,7 +36,7 @@ main()
       bool b = CGAL::get_default_random().get_bool();
         assert( ! b || b);
     }
-    
+
     // test get_int
     {
         int  l = CGAL::get_default_random().get_int( -100, 0);
@@ -65,7 +65,7 @@ main()
 
 
     }
-    
+
     // test get_double
     {
         double  l = CGAL::get_default_random().get_double( -123.45, -0.99);
@@ -82,26 +82,26 @@ main()
     // test uniform_real
     {
       double d = CGAL::get_default_random().uniform_real<double>(-10.0, 10.0);
-      assert( (d >= -10.0) && (d < 10.0) ); 
+      assert( (d >= -10.0) && (d < 10.0) );
 
       d = CGAL::get_default_random().uniform_real<double>(0.2);
-      assert( (d >= 0.2) && (d < 1.0) ); 
+      assert( (d >= 0.2) && (d < 1.0) );
 
       d = CGAL::get_default_random().uniform_real<double>();
-      assert( (d >= 0) && (d < 1) ); 
+      assert( (d >= 0) && (d < 1) );
 
       d = CGAL::get_default_random().uniform_01<double>();
-      assert( (d >= 0) && (d < 1) ); 
+      assert( (d >= 0) && (d < 1) );
     }
   {
       float d = CGAL::get_default_random().uniform_real<float>(-10.0f, 10.0f);
-      assert( (d >= -10.0f) && (d < 10.0f) ); 
+      assert( (d >= -10.0f) && (d < 10.0f) );
       d = CGAL::get_default_random().uniform_real<float>(0.2f);
-      assert( (d >= 0.2) && (d < 1.0) ); 
+      assert( (d >= 0.2) && (d < 1.0) );
       d = CGAL::get_default_random().uniform_real<float>();
-      assert( (d >= 0) && (d < 1) ); 
+      assert( (d >= 0) && (d < 1) );
       d = CGAL::get_default_random().uniform_01<float>();
-      assert( (d >= 0) && (d < 1) ); 
+      assert( (d >= 0) && (d < 1) );
   }
 
     // test get_bits
@@ -115,26 +115,26 @@ main()
           unsigned int l2 = CGAL::get_default_random().get_bits<2>();
           unsigned int l3 = CGAL::get_default_random().get_bits<3>();
           unsigned int l4 = CGAL::get_default_random().get_bits<4>();
-	  assert(l1 < 2);
-	  assert(l2 < 4);
-	  assert(l3 < 8);
-	  assert(l4 < 16);
-	  // std::cout << l1 << " " << l2 << " "
-	  //           << l3 << " " << l4 << std::endl;
-	  ++(p1[l1]);
-	  ++(p2[l2]);
-	  ++(p3[l3]);
-	  ++(p4[l4]);
-	}
-	std::cout << "Pseudo random distribution of get_bits<>():" << std::endl;
-	std::copy(p1, p1+2, std::ostream_iterator<int>(std::cout, " "));
-	std::cout << std::endl;
-	std::copy(p2, p2+4, std::ostream_iterator<int>(std::cout, " "));
-	std::cout << std::endl;
-	std::copy(p3, p3+8, std::ostream_iterator<int>(std::cout, " "));
-	std::cout << std::endl;
-	std::copy(p4, p4+16, std::ostream_iterator<int>(std::cout, " "));
-	std::cout << std::endl;
+          assert(l1 < 2);
+          assert(l2 < 4);
+          assert(l3 < 8);
+          assert(l4 < 16);
+          // std::cout << l1 << " " << l2 << " "
+          //           << l3 << " " << l4 << std::endl;
+          ++(p1[l1]);
+          ++(p2[l2]);
+          ++(p3[l3]);
+          ++(p4[l4]);
+        }
+        std::cout << "Pseudo random distribution of get_bits<>():" << std::endl;
+        std::copy(p1, p1+2, std::ostream_iterator<int>(std::cout, " "));
+        std::cout << std::endl;
+        std::copy(p2, p2+4, std::ostream_iterator<int>(std::cout, " "));
+        std::cout << std::endl;
+        std::copy(p3, p3+8, std::ostream_iterator<int>(std::cout, " "));
+        std::cout << std::endl;
+        std::copy(p4, p4+16, std::ostream_iterator<int>(std::cout, " "));
+        std::cout << std::endl;
     }
 
     // test operator()

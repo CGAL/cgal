@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Manuel Caroli
 //                 Francois Rebufat
@@ -32,16 +32,16 @@ void _test_cls_periodic_3_offset_3(const Offset &)
   assert(!o3.is_null());
   assert(o1 == o2);
   assert(o2 != o3);
-  
+
   // Operations
   o = o1+o3;
   assert(o == Offset(-2,4,2));
-  
+
   o = o1-o2;
   assert(o.is_null());
   o = o1-o3;
   assert(o == Offset(4,0,4));
-  
+
   assert(-o == Offset(-4,0,-4));
 
   o += o2;

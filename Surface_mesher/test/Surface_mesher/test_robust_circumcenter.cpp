@@ -1,6 +1,6 @@
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Mariette Yvinec
 
@@ -20,8 +20,8 @@ int main()
   for (a=0;a!=4;a++)
     for (b=0;b!=4;b++)
       for (d=0;d!=4;d++)
-	tr.insert(Point((a*b-d*a)*10 +a ,(a-b+d +5*b)*100,
-			    a*a-d*d-b));
+        tr.insert(Point((a*b-d*a)*10 +a ,(a-b+d +5*b)*100,
+                            a*a-d*d-b));
   Triangulation::Finite_cells_iterator cit=tr.finite_cells_begin();
   for(; cit != tr.finite_cells_end(); ++cit) {
     Point circum = tr.dual(cit);

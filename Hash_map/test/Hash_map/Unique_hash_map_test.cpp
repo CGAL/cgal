@@ -21,12 +21,12 @@ int main() {
     CGAL::Unique_hash_map<Iterator,int> H2(-1);
     CGAL_TEST( H1.default_value() ==  0);
     CGAL_TEST( H2.default_value() == -1);
-    H1[it1] = 2; 
+    H1[it1] = 2;
     CGAL_TEST(H1[it1]==2);
     CGAL_TEST(H2[it1]==-1);
     H1.clear();
     H2.clear(-2);
-    H2[it1] = 2; 
+    H2[it1] = 2;
     CGAL_TEST(H1[it1]==0);
     CGAL_TEST(H2[it1]==2);
     Iterator it2 = L.end();
@@ -48,7 +48,7 @@ int main() {
         CGAL_TEST( H3[j] == *j);
     }
     CGAL::Handle_hash_function hash;
-    CGAL::Unique_hash_map<Iterator,int,CGAL::Handle_hash_function> 
+    CGAL::Unique_hash_map<Iterator,int,CGAL::Handle_hash_function>
         H4( L.begin(), L.end(), 1, -1, 512, hash);
     for ( Iterator k = L.begin(); k != L.end(); ++k) {
         CGAL_TEST( H4[k] == *k);

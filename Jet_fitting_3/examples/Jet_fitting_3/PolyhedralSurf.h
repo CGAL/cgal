@@ -100,7 +100,7 @@ Facet_PM<TPoly> get_fpm(boost::vertex_attribute_t, TPoly& ) {return Facet_PM<TPo
 //----------------------------------------------------------------
  //  int ring_index;
 //   My_halfedge(): ring_index(-1) {}
-//   void setRingIndex(int i) {	ring_index = i;    }
+//   void setRingIndex(int i) {        ring_index = i;    }
 //   int getRingIndex() {return ring_index;    }
 //   void resetRingIndex() {ring_index = -1;    }
 

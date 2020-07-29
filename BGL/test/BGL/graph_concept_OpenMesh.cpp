@@ -15,7 +15,7 @@ typedef Traits::vertex_descriptor         vertex_descriptor;
 typedef Traits::face_descriptor           face_descriptor;
 //typedef Kernel::Point_3 Point_3;
 
-template<typename Graph> 
+template<typename Graph>
 void concept_check_polyhedron() {
   boost::function_requires< boost::GraphConcept<Sm> >();
 
@@ -32,10 +32,10 @@ void concept_check_polyhedron() {
   boost::function_requires< CGAL::HalfedgeListGraphConcept<Sm> >();
   boost::function_requires< CGAL::FaceGraphConcept<Sm> >();
   boost::function_requires< CGAL::FaceListGraphConcept<Sm> >();
-  
+
   boost::function_requires< CGAL::MutableHalfedgeGraphConcept<Sm> >();
   boost::function_requires< CGAL::MutableFaceGraphConcept<Sm> >();
-  
+
   // this uses some internal boost concepts, better than nothing
   boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, edge_descriptor,     boost::edge_weight_t> >();
   boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, vertex_descriptor,   boost::vertex_index_t> >();

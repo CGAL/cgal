@@ -1,6 +1,6 @@
 // Copyright (c) 2012
 // Inria Nancy - Grand Est
-// All rights reserved. 
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //

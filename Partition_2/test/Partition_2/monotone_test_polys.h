@@ -16,7 +16,7 @@ void make_monotone_w_collinear_points(Polygon_2& polygon)
    polygon.push_back(Point_2(214, 178));
    polygon.push_back(Point_2(214, 158));
    polygon.push_back(Point_2(164, 156));
-*/   
+*/
 /*
    polygon.push_back(Point_2(149,  91));
    polygon.push_back(Point_2(309,  91));

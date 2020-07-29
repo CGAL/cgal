@@ -9,7 +9,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point_3;
 
-typedef CGAL::Surface_mesh<Point_3> Mesh; 
+typedef CGAL::Surface_mesh<Point_3> Mesh;
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
@@ -18,7 +18,7 @@ int main(int argc, char** argv )
 {
   Mesh mesh;
   if (argc==2){
-    std::ifstream input(argv[1]); 
+    std::ifstream input(argv[1]);
     input >> mesh;
   } else {
     std::ifstream cactus("data/cactus.off");

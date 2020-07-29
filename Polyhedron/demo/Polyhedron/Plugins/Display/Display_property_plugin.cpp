@@ -41,8 +41,8 @@ class Scene_heat_item
     : public CGAL::Three::Scene_item_rendering_helper
 {
   Q_OBJECT
-  
-public: 
+
+public:
   Scene_heat_item(Scene_surface_mesh_item* item)
     :sm(item->face_graph()), parent(item)
   {
@@ -59,13 +59,13 @@ public:
              double dir_y,
              double dir_z) Q_DECL_OVERRIDE
   {
-    parent->select( orig_x, orig_y, orig_z, 
+    parent->select( orig_x, orig_y, orig_z,
                     dir_x, dir_y, dir_z);
   }
-  
+
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const Q_DECL_OVERRIDE
   {
-    getTriangleContainer(0)->initializeBuffers(viewer); 
+    getTriangleContainer(0)->initializeBuffers(viewer);
     getTriangleContainer(0)->setIdxSize(nb_idx);
     verts.resize(0);
     normals .resize(0);
@@ -76,7 +76,7 @@ public:
     verts.shrink_to_fit();
     normals.shrink_to_fit();
   }
-  
+
   void draw(CGAL::Three::Viewer_interface *viewer) const Q_DECL_OVERRIDE
   {
     if(!visible())
@@ -94,7 +94,7 @@ public:
       computeElements();
       initializeBuffers(viewer);
     }
-    
+
     getTriangleContainer(0)->setAlpha(1.0f);
     getTriangleContainer(0)->draw(viewer, false);
   }
@@ -102,7 +102,7 @@ public:
   {
     SMesh::Property_map<vertex_descriptor, Point_3> pprop = sm->points();
     CGAL::Bbox_3 bbox ;
-    
+
     for(vertex_descriptor vd :vertices(*sm))
     {
       bbox = bbox + pprop[vd].bbox();
@@ -122,7 +122,7 @@ public:
   virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE { return m==Gouraud; }
   virtual void invalidateOpenGLBuffers() Q_DECL_OVERRIDE
   {
-    
+
     setBuffersFilled(false);
     compute_bbox();
     getTriangleContainer(0)->reset_vbos(NOT_INSTANCED);
@@ -133,11 +133,11 @@ public:
   {
     const CGAL::qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     EPICK::Vector_3 offset = EPICK::Vector_3(v_offset.x, v_offset.y, v_offset.z);
-    
+
     EPICK::Point_3 p0,p1,p2;
     SMesh::Halfedge_around_face_circulator he(halfedge(fd, *sm), *sm);
     SMesh::Halfedge_around_face_circulator he_end = he;
-    
+
     while(next(*he, *sm) != prev(*he_end, *sm))
     {
       ++he;
@@ -158,14 +158,14 @@ public:
   {
     //Computes the normal of the facet
     EPICK::Vector_3 normal = get(*fnormals, fd);
-    
+
     //check if normal contains NaN values
     if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z())
     {
       qDebug()<<"Warning : normal is not valid. Facet not displayed";
       return;
     }
-    
+
     typedef FacetTriangulator<SMesh, EPICK, boost::graph_traits<SMesh>::vertex_descriptor> FT;
     const CGAL::qglviewer::Vec off = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     EPICK::Vector_3 offset(off.x,off.y,off.z);
@@ -186,7 +186,7 @@ public:
       idx.push_back((*im)[triangulation.v2v[ffit->vertex(2)]]);
     }
   }
-  
+
   void computeElements() const Q_DECL_OVERRIDE
   {
     typedef EPICK::Point_3 Point;
@@ -205,7 +205,7 @@ public:
     SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
         sm->property_map<vertex_descriptor, CGAL::Color >("v:color").first;
     SMesh::Property_map<vertex_descriptor, float> vdist=
-        sm->property_map<vertex_descriptor, float >("v:dist").first;    
+        sm->property_map<vertex_descriptor, float >("v:dist").first;
     typedef CGAL::Buffer_for_vao<float, unsigned int> CPF;
     verts.clear();
     normals.clear();
@@ -213,7 +213,7 @@ public:
     colors.clear();
     boost::property_map< SMesh, boost::vertex_index_t >::type
         im = get(boost::vertex_index, *sm);
-    
+
     idx.reserve(num_faces(*sm) * 3);
     for(face_descriptor fd : faces(*sm))
     {
@@ -232,7 +232,7 @@ public:
           facet_points.push_back(positions[target(hd, *sm)]);
         }
         bool is_convex = CPF::is_facet_convex(facet_points, fnormals[fd]);
-        
+
         if(is_convex && is_quad(halfedge(fd,*sm),*sm) )
         {
           halfedge_descriptor hd = halfedge(fd,*sm);
@@ -240,12 +240,12 @@ public:
           idx.push_back(source(hd, *sm));
           idx.push_back(source(next(hd, *sm), *sm));
           idx.push_back(source(next(next(hd, *sm), *sm), *sm));
-          
+
           //2nd half
           idx.push_back(source(hd, *sm));
           idx.push_back(source(next(next(hd, *sm), *sm), *sm));
           idx.push_back(source(prev(hd, *sm), *sm));
-        }    
+        }
         else if(is_convex)
         {
           triangulate_convex_facet(fd, &im);
@@ -262,8 +262,8 @@ public:
       colors.push_back((float)c.red()/255);
       colors.push_back((float)c.green()/255);
       colors.push_back((float)c.blue()/255);
-      
-      
+
+
       Point p = positions[vd] + offset;
       CPF::add_point_in_buffer(p, verts);
       EPICK::Vector_3 n = vnormals[vd];
@@ -275,7 +275,7 @@ public:
                                       static_cast<int>(idx.size()*sizeof(unsigned int)));
     getTriangleContainer(0)->allocate(Tri::Smooth_vertices, verts.data(),
                                       static_cast<int>(num_vertices(*sm)*3*sizeof(float)));
-    
+
     getTriangleContainer(0)->allocate(Tri::Smooth_normals, normals.data(),
                                       static_cast<int>(num_vertices(*sm)*3*sizeof(float)));
     getTriangleContainer(0)->allocate(Tri::VColors, colors.data(),
@@ -286,7 +286,7 @@ public:
     setBuffersFilled(true);
      QApplication::restoreOverrideCursor();
   }
-  
+
   bool isEmpty() const Q_DECL_OVERRIDE {return false;}
   SMesh *face_graph() { return sm;}
   Scene_surface_mesh_item* getParent() { return parent; }
@@ -329,7 +329,7 @@ class DisplayPropertyPlugin :
   typedef CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<SMesh, CGAL::Heat_method_3::Intrinsic_Delaunay> Heat_method_idt;
   typedef CGAL::dynamic_vertex_property_t<bool>                        Vertex_source_tag;
   typedef boost::property_map<SMesh, Vertex_source_tag>::type Vertex_source_map;
-  
+
 public:
 
   bool applicable(QAction*) const Q_DECL_OVERRIDE
@@ -413,7 +413,7 @@ public:
       {
         return;
       }
-      
+
       rm = minColor.redF();
       gm = minColor.greenF();
       bm = minColor.blueF();
@@ -443,9 +443,6 @@ public:
     connect(dock_widget->deleteButton, &QPushButton::clicked,
             this, &DisplayPropertyPlugin::delete_group);
 
-    connect(dock_widget->resetButton, &QPushButton::pressed,
-            this, &DisplayPropertyPlugin::resetRampExtremas);
-
     dock_widget->zoomToMaxButton->setEnabled(false);
     dock_widget->zoomToMinButton->setEnabled(false);
     Scene* scene_obj =static_cast<Scene*>(scene);
@@ -459,34 +456,11 @@ private Q_SLOTS:
   {
     if(dock_widget->isVisible()) { dock_widget->hide(); }
     else{
-      replaceRamp(); 
+      replaceRamp();
       dock_widget->show();
       dock_widget->raise(); }
   }
 
-  void resetRampExtremas()
-  {
-    Scene_surface_mesh_item* item =
-        qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
-    if(!item)
-      return;
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    item->face_graph()->collect_garbage();
-    bool ok;
-    switch(dock_widget->propertyBox->currentIndex())
-    {
-    case 0:
-      ok = resetAngles(item);
-      break;
-    default:
-      ok = resetScaledJacobian(item);
-      break;
-    }
-    QApplication::restoreOverrideCursor();
-    if(!ok)
-      QMessageBox::warning(mw, "Error", "You must first run colorize once to initialize the values.");
-  }
-  
   void colorize()
   {
     Scene_heat_item* h_item = nullptr;
@@ -527,11 +501,11 @@ private Q_SLOTS:
             this, [item](){
       bool does_exist;
       SMesh::Property_map<face_descriptor, double> pmap;
-      boost::tie(pmap, does_exist) = 
+      boost::tie(pmap, does_exist) =
           item->face_graph()->property_map<face_descriptor,double>("f:jacobian");
       if(does_exist)
         item->face_graph()->remove_property_map(pmap);
-      boost::tie(pmap, does_exist) = 
+      boost::tie(pmap, does_exist) =
           item->face_graph()->property_map<face_descriptor,double>("f:angle");
       if(does_exist)
         item->face_graph()->remove_property_map(pmap);
@@ -663,7 +637,7 @@ private Q_SLOTS:
     dock_widget->maxBox->setValue(jacobian_max[item].first);
     return true;
   }
-  
+
   void displayAngles(Scene_surface_mesh_item* item)
   {
     SMesh& smesh = *item->face_graph();

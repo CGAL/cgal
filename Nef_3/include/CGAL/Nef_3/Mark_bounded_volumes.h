@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Ralf Osbild <osbild@mpi-sb.mpg.de>
 
@@ -23,30 +23,30 @@ namespace CGAL {
 template<typename Decorator, typename Mark>
 class Volume_setter {
 
-  typedef typename Decorator::Vertex_handle 
+  typedef typename Decorator::Vertex_handle
                                     Vertex_handle;
-  typedef typename Decorator::Halfedge_handle 
+  typedef typename Decorator::Halfedge_handle
                                     Halfedge_handle;
-  typedef typename Decorator::Halffacet_handle 
+  typedef typename Decorator::Halffacet_handle
                                     Halffacet_handle;
-  typedef typename Decorator::SHalfedge_handle 
+  typedef typename Decorator::SHalfedge_handle
                                     SHalfedge_handle;
-  typedef typename Decorator::SHalfloop_handle 
+  typedef typename Decorator::SHalfloop_handle
                                     SHalfloop_handle;
-  typedef typename Decorator::SFace_handle 
+  typedef typename Decorator::SFace_handle
                                     SFace_handle;
   Mark m;
 
 public:
   Volume_setter(Mark m_in = true) : m(m_in) {}
-  
+
   void visit(Vertex_handle ) {}
   void visit(Halfedge_handle ) {}
   void visit(Halffacet_handle ) {}
   void visit(SHalfedge_handle ) {}
   void visit(SHalfloop_handle ) {}
   void visit(SFace_handle sf) {sf->mark() = m;}
-};    
+};
 
 template<typename Nef_3>
 class Mark_bounded_volumes : public Modifier_base<typename Nef_3::SNC_structure>
@@ -55,7 +55,7 @@ class Mark_bounded_volumes : public Modifier_base<typename Nef_3::SNC_structure>
    typedef typename SNC_structure::Infi_box      Infi_box;
    typedef typename Nef_3::SFace_handle          SFace_handle;
    typedef typename Nef_3::Volume_iterator       Volume_iterator;
-   typedef typename Nef_3::Shell_entry_iterator 
+   typedef typename Nef_3::Shell_entry_iterator
                            Shell_entry_iterator;
    typedef typename Nef_3::Mark                  Mark;
 
@@ -75,9 +75,9 @@ public:
       SNC_decorator D(snc);
       for (; vol_it != snc.volumes_end(); ++vol_it)
       {  vol_it->mark() = flag; // mark
-	Shell_entry_iterator it;
-	CGAL_forall_shells_of(it,vol_it)
-	D.visit_shell_objects(SFace_handle(it),vs);
+        Shell_entry_iterator it;
+        CGAL_forall_shells_of(it,vol_it)
+        D.visit_shell_objects(SFace_handle(it),vs);
       }
       // simplify(); // in Nef_3.delegate()
    }

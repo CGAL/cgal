@@ -42,9 +42,9 @@ int main(int argc, char** argv)
   // Create domain
   Polyhedron p;
   p.make_tetrahedron(Point(0, 0, 0),
-		     Point(1, 0, 0),
-		     Point(0, 1, 0),
-		     Point(0, 0, 1));
+                     Point(1, 0, 0),
+                     Point(0, 1, 0),
+                     Point(0, 0, 1));
 
     std::cout << "\tSeed is\t"
       << CGAL::get_default_random().get_seed() << std::endl;
@@ -65,7 +65,7 @@ int main(int argc, char** argv)
       else return 1;
     }
     std::cerr << "Reading polyline #" << polylines.size()
-	      << " with " << n << " vertices\n";
+              << " with " << n << " vertices\n";
     polyline.reserve(n);
     while( n > 0 ) {
       K::Point_3 p;

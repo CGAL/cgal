@@ -23,25 +23,6 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <widget class="QDoubleSpinBox" name="minimumAreaDoubleSpinBox">
-       <property name="decimals">
-        <number>5</number>
-       </property>
-       <property name="minimum">
-        <double>0.000010000000000</double>
-       </property>
-       <property name="maximum">
-        <double>1000000.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.010000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.010000000000000</double>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="0">
       <widget class="QLabel" name="maximumDeviationFromNormalLabel">
        <property name="text">
@@ -62,6 +43,13 @@
        </property>
        <property name="value">
         <number>30</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="DoubleEdit" name="minimumAreaDoubleSpinBox">
+       <property name="text">
+        <string>0.01</string>
        </property>
       </widget>
      </item>
@@ -92,6 +80,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header>CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

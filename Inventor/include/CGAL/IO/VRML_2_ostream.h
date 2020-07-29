@@ -1,9 +1,9 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -173,7 +173,7 @@ operator<<(VRML_2_ostream& os,
              "                        PointSet {\n"
              "                            coord Coordinate {\n"
              "                                point [ ";
-  os << CGAL::to_double(p.x()) << " " << CGAL::to_double(p.y()) 
+  os << CGAL::to_double(p.x()) << " " << CGAL::to_double(p.y())
      << " " << CGAL::to_double(p.z()) << " ]\n";
   os << Indent << "}\n";
   os << Indent << "} # PointSet\n";
@@ -211,13 +211,13 @@ operator<<(VRML_2_ostream& os,
              "                            coord Coordinate {\n"
              "                                point [ \n";
   os << Indent ;
-  os << CGAL::to_double(t[0].x()) << " " << CGAL::to_double(t[0].y()) 
+  os << CGAL::to_double(t[0].x()) << " " << CGAL::to_double(t[0].y())
      << " " << CGAL::to_double(t[0].z()) << ",\n";
   os << Indent;
-  os << CGAL::to_double(t[1].x()) << " " << CGAL::to_double(t[1].y()) 
+  os << CGAL::to_double(t[1].x()) << " " << CGAL::to_double(t[1].y())
      << " " << CGAL::to_double(t[1].z()) << ",\n";
   os << Indent;
-  os << CGAL::to_double(t[2].x()) << " " << CGAL::to_double(t[2].y()) 
+  os << CGAL::to_double(t[2].x()) << " " << CGAL::to_double(t[2].y())
      << " " << CGAL::to_double(t[2].z()) << " ]\n";
   os << Indent << "}\n" << Indent << "coordIndex [ 0 1, 1 2, 2 0 -1 ]\n";
   os << Indent << "} # IndexedLineSet\n";
@@ -254,11 +254,11 @@ operator<<(VRML_2_ostream& os,
              "                            coord Coordinate {\n"
              "                                point [ \n";
   os << Indent << CGAL::to_double(s.source().x());
-  os << " " << CGAL::to_double(s.source().y()) 
+  os << " " << CGAL::to_double(s.source().y())
      << " " << CGAL::to_double(s.source().z()) << ",\n";
   os << Indent;
   os << CGAL::to_double(s.target().x())
-     << " " << CGAL::to_double(s.target().y()) 
+     << " " << CGAL::to_double(s.target().y())
      << " " << CGAL::to_double(s.target().z()) << " ]\n";
   os << Indent << "}\n" << Indent << "coordIndex [ 0 1 -1 ]\n";
   os << Indent << "} # IndexedLineSet\n";
@@ -289,7 +289,7 @@ operator<<(VRML_2_ostream& os,
              "            children [\n"
              "              Transform {\n"
              "                translation ";
-  os <<      CGAL::to_double(s.center().x()) << " " 
+  os <<      CGAL::to_double(s.center().x()) << " "
      <<      CGAL::to_double(s.center().y()) << " "
      <<      CGAL::to_double(s.center().z()) << "\n";
   os <<      "                children Shape {\n"

@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -105,7 +105,7 @@ public:
   transform(const Aff_transformation_2 &t) const
   {
     return Line_2(t.transform(point(0)),
-		  t.transform(direction()));
+                  t.transform(direction()));
   }
 
   Line_2
@@ -250,7 +250,7 @@ insert(std::ostream& os, const Line_2<R>& l)
         return os;
     default:
         return os << "Line_2(" << l.a()
-		  << ", " << l.b() << ", " << l.c() <<')';
+                  << ", " << l.b() << ", " << l.c() <<')';
     }
 }
 
@@ -283,7 +283,7 @@ extract(std::istream& is, Line_2<R>& l)
         break;
     }
     if (is)
-	l = Line_2<R>(a, b, c);
+        l = Line_2<R>(a, b, c);
     return is;
 }
 

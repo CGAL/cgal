@@ -75,7 +75,7 @@
 // 0..1 and min_max is the range it came from.
 struct IntConverter {
   std::pair<int, int> min_max;
-  
+
   int operator()(float f) {
     float s = f * float((min_max.second - min_max.first));
     //approximate instead of just floor.
@@ -292,8 +292,14 @@ public:
 
     point_image p_im = *im_item->image()->image();
     bool ok = _writeImage(&p_im, fileinfo.filePath().toUtf8()) == 0;
-    items.pop_front();
+    if(ok)
+      items.pop_front();
     return ok;
+  }
+  bool isDefaultLoader(const Scene_item* item) const override{
+    if(qobject_cast<const Scene_image_item*>(item))
+      return true;
+    return false;
   }
   QString name() const override{ return "segmented images"; }
 
@@ -707,9 +713,9 @@ private:
     Volume_plane<y_tag> *y_item = new Volume_plane<y_tag>(img->image()->tx,img->image()->ty, img->image()->tz);
     Volume_plane<z_tag> *z_item = new Volume_plane<z_tag>(img->image()->tx,img->image()->ty, img->image()->tz);
 
-    x_item->setProperty("img",qVariantFromValue((void*)seg_img));
-    y_item->setProperty("img",qVariantFromValue((void*)seg_img));
-    z_item->setProperty("img",qVariantFromValue((void*)seg_img));
+    x_item->setProperty("img",QVariant::fromValue((void*)seg_img));
+    y_item->setProperty("img",QVariant::fromValue((void*)seg_img));
+    z_item->setProperty("img",QVariant::fromValue((void*)seg_img));
 
     x_item->setColor(QColor("red"));
     y_item->setColor(QColor("green"));
@@ -720,7 +726,7 @@ private:
       viewer->installEventFilter(y_item);
       viewer->installEventFilter(z_item);
     }
-    
+
     connect(x_item, SIGNAL(selected(CGAL::Three::Scene_item*)), this, SLOT(select_plane(CGAL::Three::Scene_item*)));
     connect(y_item, SIGNAL(selected(CGAL::Three::Scene_item*)), this, SLOT(select_plane(CGAL::Three::Scene_item*)));
     connect(z_item, SIGNAL(selected(CGAL::Three::Scene_item*)), this, SLOT(select_plane(CGAL::Three::Scene_item*)));

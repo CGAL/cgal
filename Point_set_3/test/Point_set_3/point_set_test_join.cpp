@@ -29,13 +29,13 @@ void test (bool expr, const char* msg)
 }
 
 void print_point_set (const Point_set& ps, const char* msg)
-                      
+
 {
   Point_set::Property_map<int> intensity;
   bool has_intensity;
   boost::tie (intensity, has_intensity)
     = ps.property_map<int>("intensity");
-  
+
   std::cerr << msg << std::endl;
   for (Point_set::const_iterator it = ps.begin(); it != ps.end(); ++ it)
   {
@@ -58,7 +58,7 @@ int main (int, char**)
     ps1.insert (Point (double(i), double(i), double(i)), Vector (double(i), double(i), double(i)));
 
   ps1.remove (ps1.end() - 3);
-  
+
   for (std::size_t i = 5; i < 10; ++ i)
     ps2.insert (Point (double(i), double(i), double(i)));
 
@@ -72,7 +72,7 @@ int main (int, char**)
 
   Point_set ps3;
   ps3.add_normal_map();
-    
+
   Point_set::Property_map<int> intensity;
   bool okay;
 
@@ -89,6 +89,6 @@ int main (int, char**)
   print_point_set (ps1, "PS1 with PS3 properties = ");
   ps1.insert (ps3, *it);
   print_point_set (ps1, "PS1 with PS3 properties + PS3 item copied = ");
-  
+
   return EXIT_SUCCESS;
 };

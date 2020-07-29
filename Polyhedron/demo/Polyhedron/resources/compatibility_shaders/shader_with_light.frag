@@ -3,6 +3,8 @@ varying highp vec4 color;
 varying highp vec4 fP;
 varying highp vec3 fN;
 varying highp float dist[6];
+uniform highp vec4 front_color;
+uniform highp vec4 back_color;
 uniform highp vec4 light_pos;
 uniform highp vec4 light_diff;
 uniform highp vec4 light_spec;
@@ -17,6 +19,7 @@ uniform highp float width;
 uniform highp float height;
 uniform bool comparing;
 uniform bool writing;
+uniform bool back_front_shading;
 uniform sampler2D sampler;
 uniform highp float alpha;
 
@@ -44,18 +47,30 @@ void main(void) {
     gl_FragColor = vec4(d,d,d,1.0);
   else
   {
-    highp vec4 my_color = vec4(color.xyz, 1.0);
     highp vec3 L = light_pos.xyz - fP.xyz;
     highp vec3 V = -fP.xyz;
     highp vec3 N;
-    if(fN == vec3(0.0,0.0,0.0))
-      N = vec3(0.0,0.0,0.0);
-    else
-      N = normalize(fN);
+    highp vec4 my_color = highp vec4(color.xyz, 1.0);
+    if(fN ==  vec3(0.0,0.0,0.0))
+    {
+      out_color = my_color;
+      return;
+    }
+    N = normalize(fN);
     L = normalize(L);
     V = normalize(V);
     highp vec3 R = reflect(-L, N);
     highp vec4 diffuse;
+    float dot_prod = dot(N,L);
+    
+    if(back_front_shading)
+    {
+      if (dot_prod > 0)
+        my_color = front_color;
+      else
+        my_color = back_color;
+    }
+    
     if(is_two_side == 1)
       diffuse = abs(dot(N,L)) * light_diff * color;
     else

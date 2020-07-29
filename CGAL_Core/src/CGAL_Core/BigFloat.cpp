@@ -7,7 +7,7 @@
  *
  * File: BigFloat.cpp
  * Synopsis:
- *       BigFloat numbers with error bounds 
+ *       BigFloat numbers with error bounds
  *
  *       EXACTNESS PROPERTY:
  *       ==================
@@ -18,7 +18,7 @@
  *       but this again preserves exactness.  Such exactness
  *       properties are used in our Newton iteration/Sturm Sequences.
  *
- * Written by 
+ * Written by
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>

@@ -152,7 +152,7 @@ private:
 #endif // CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
 
   bool m_view_mc; // that boolean is here even with if
-		  // CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
+                  // CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
                   // is not defined.
 
 #ifdef CGAL_USE_VTK
@@ -175,11 +175,11 @@ private:
                           const unsigned char blue);
 
   template <typename PointsOutputIterator,
-	    typename DomainsOutputIterator,
-	    typename TransformOperator>
+            typename DomainsOutputIterator,
+            typename TransformOperator>
   void search_for_connected_components(PointsOutputIterator,
-				       DomainsOutputIterator, 
-				       TransformOperator);
+                                       DomainsOutputIterator,
+                                       TransformOperator);
 
 public:
   void gl_draw_surface();
@@ -209,7 +209,7 @@ public Q_SLOTS:
   void check_can_export_off();
   void draw();
   void get_bbox(float& /*xmin*/, float& /*ymin*/, float& /*zmin*/,
-		float& /*xmax*/, float& /*ymax*/, float& /*zmax*/) {}
+                float& /*xmax*/, float& /*ymax*/, float& /*zmax*/) {}
   void close() {}
   void display_surface_mesher_result();
   void set_radius_bound(double);
@@ -227,11 +227,11 @@ private:
 };
 
 template <typename PointsOutputIterator,
-	  typename DomainsOutputIterator,
-	  typename TransformOperator>
+          typename DomainsOutputIterator,
+          typename TransformOperator>
 void Volume::search_for_connected_components(PointsOutputIterator it,
-					     DomainsOutputIterator dom_it,
-					     TransformOperator transform)
+                                             DomainsOutputIterator dom_it,
+                                             TransformOperator transform)
 {
   const std::size_t nx = m_image.xdim();
   const std::size_t ny = m_image.ydim();
@@ -258,7 +258,7 @@ void Volume::search_for_connected_components(PointsOutputIterator it,
         if(visited[i][j][k]>0)
           continue;
         const Label current_label = transform(m_image.value(i, j, k));
-	*dom_it++ = current_label;
+        *dom_it++ = current_label;
         if(current_label == Label()) {
           visited[i][j][k] = 3;
           continue;
@@ -269,7 +269,7 @@ void Volume::search_for_connected_components(PointsOutputIterator it,
         std::cerr << boost::format("Found new connected component (#%5%) "
                                    "at voxel (%1%, %2%, %3%), value=%4%, volume id=%6%\n")
           % i % j % k
-          % m_image.value(i, j, k) 
+          % m_image.value(i, j, k)
           % number_of_connected_components
           % (int)current_label;
 
@@ -369,12 +369,12 @@ void Volume::search_for_connected_components(PointsOutputIterator it,
             }
             else // end of second pass, return the last visited voxel
             {
-// 	      if(nb_voxels >= 100)
-	      {
-		*it++ = std::make_pair(m_image.point(i, j, k), (depth+1)*max_v);
-		std::cerr << boost::format("Found seed %5%, which is voxel (%1%, %2%, %3%), value=%4%\n")
-		  % i % j % k %  m_image.value(i, j, k) % m_image.point(i, j, k);
-	      }
+//               if(nb_voxels >= 100)
+              {
+                *it++ = std::make_pair(m_image.point(i, j, k), (depth+1)*max_v);
+                std::cerr << boost::format("Found seed %5%, which is voxel (%1%, %2%, %3%), value=%4%\n")
+                  % i % j % k %  m_image.value(i, j, k) % m_image.point(i, j, k);
+              }
             }
           } // end if queue.empty()
         } // end while !queue.empty() (with local indices i, j, k)

@@ -13,8 +13,8 @@ if ( CGAL_FOUND AND (CGAL_Core_FOUND OR LEDA_FOUND) )
   create_single_source_cgal_program( "p4ht2_example_insertion.cpp" )
 
 else()
-  
+
   message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

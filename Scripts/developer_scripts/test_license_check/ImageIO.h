@@ -1,6 +1,6 @@
 // Copyright (c) 2005, 2006 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
-// Copyright (c) 2007 Geometrica Project, INRIA Sophia-Antipolis (France) 
-// Copyright (c) 2008 GeometryFactory, Sophia-Antipolis (France) 
+// Copyright (c) 2007 Geometrica Project, INRIA Sophia-Antipolis (France)
+// Copyright (c) 2008 GeometryFactory, Sophia-Antipolis (France)
 // All rights reserved.
 //
 // The files in this directory are part of the ImageIO Library.

@@ -15,7 +15,7 @@
 
 #include "arr_print.h"
 
-// A property map that reads/writes the information to/from the extended 
+// A property map that reads/writes the information to/from the extended
 // face.
 template <typename Arrangement, class Type> class Extended_face_property_map {
 public:

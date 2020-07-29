@@ -28,9 +28,9 @@ int main(void)
 
   // fit plane to whole triangles
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::Dimension_tag<2>());
-  
+
   // fit line to triangle vertices
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line, CGAL::Dimension_tag<0>());
-  
+
   return 0;
 }

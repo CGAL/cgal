@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Number_Types
 \anchor Numbertype
 
@@ -32,22 +32,22 @@ floating-point standard. Since the floating-point culture has much
 more infrastructural support (hardware, language definition and
 compiler) than exact computation, it is very efficient.
 Like with all number types with finite precision representation
-which are used as approximations to the infinite ranges of 
+which are used as approximations to the infinite ranges of
 integers or real numbers, the built-in number types are inherently
 potentially inexact.
-Be aware of this if you decide to use the efficient built-in 
-number types: you have to cope with numerical problems. 
-For example, you can compute the intersection point of two lines and 
-then check whether this point lies on the two lines. 
+Be aware of this if you decide to use the efficient built-in
+number types: you have to cope with numerical problems.
+For example, you can compute the intersection point of two lines and
+then check whether this point lies on the two lines.
 With floating point arithmetic,
-roundoff errors may cause the answer of the check to be `false`. 
+roundoff errors may cause the answer of the check to be `false`.
 With the built-in integer types overflow might occur.
 
 \section Number_typesCGAL Number Types Provided by CGAL
 
 \anchor cgalnt
 
-\cgal provides several number types that can be used for 
+\cgal provides several number types that can be used for
 exact computation. These include the `Quotient` class that can
 be used to create, for example, a number type that behaves like a rational
 number when parameterized with a number type which can represent integers.
@@ -119,7 +119,7 @@ To use these classes, <span class="textsc">Gmp</span> and <span class="textsc">M
 
 \anchor ledant
 
-\leda provides number types that can be used for exact computation 
+\leda provides number types that can be used for exact computation
 with both Cartesian and homogeneous representations. If you are using
 homogeneous representation with the built-in integer types
 `short`, `int`, and `long` as ring type, exactness of
@@ -139,11 +139,11 @@ floating-point type. Rounding mode and precision (i.e.\ mantissa length) of
 The most sophisticated number type in \leda is the number type called
 `leda_real`. Like in Pascal, where the name `real` is used for
 floating-point numbers, the name `leda_real` does not describe the
-number type precisely, but intentionally. 
+number type precisely, but intentionally.
 `leda_real` is a subset of real algebraic
 numbers. Any integer is `leda_real` and `leda_real` is closed under
 the operations \f$ +,-,*,/\f$ and \f$ k\f$-th root computation. For \leda version 5.0 and
-or later `leda_real` is also able to represent real roots of polynomials. 
+or later `leda_real` is also able to represent real roots of polynomials.
 `leda_real`s guarantee that
 all comparisons between expressions involving `leda_real` produce the
 exact result.
@@ -157,13 +157,13 @@ requirements.
 
 \anchor corent
 
-In principle <span class="textsc">Core</span> \cgalCite{klpy-clp-99} provides the same set of number types as \leda. 
-The type `CORE::BigInt` represent integers and `CORE::BigRat` 
-represent rationals of arbitrary length. The number type `CORE::BigFloat` is 
+In principle <span class="textsc">Core</span> \cgalCite{klpy-clp-99} provides the same set of number types as \leda.
+The type `CORE::BigInt` represent integers and `CORE::BigRat`
+represent rationals of arbitrary length. The number type `CORE::BigFloat` is
 a variable precision floating-point type. It is also possible to interpret it as an
 interval type, since it also carries the error of a computed value.
-As for \leda, the most sophisticated number type in <span class="textsc">Core</span> is `CORE::Expr`, 
-which is in its functionality equivalent to `leda_real`. 
+As for \leda, the most sophisticated number type in <span class="textsc">Core</span> is `CORE::Expr`,
+which is in its functionality equivalent to `leda_real`.
 
 
 
@@ -197,11 +197,11 @@ To use the `Gmpfi` class, <span class="textsc">Mpfi</span> must be installed.
 \section Number_typesUser User-supplied Number Types
 
 In order to use your own number type it must be a model of the according
-algebraic structure concept, in particular you must provide a 
+algebraic structure concept, in particular you must provide a
 specialization of `Algebraic_structure_traits` and also of
-`Real_embeddable_traits` in case it is a sub ring of the real numbers. 
-If you even want to provide a related ensemble of number types you should also 
-provide specializations for `Coercion_traits` in order to 
+`Real_embeddable_traits` in case it is a sub ring of the real numbers.
+If you even want to provide a related ensemble of number types you should also
+provide specializations for `Coercion_traits` in order to
 reflect their interoperability.
 
 \section Number_typesDesign Design and Implementation History
@@ -229,6 +229,6 @@ In 2008-2010, Bernd G&auml;rtner added the `Gmpzf` class, while
 Luis Pe&ntilde;aranda and Sylvain Lazard contributed the `Gmpfi` and
 `Gmpfr` classes.
 
-*/ 
+*/
 } /* namespace CGAL */
 

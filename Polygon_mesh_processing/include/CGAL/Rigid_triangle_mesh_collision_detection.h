@@ -188,45 +188,50 @@ public:
  /*!
   * adds mesh `tm` to the set of meshes to be considered for intersection.
   *
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * \return the id of `tm` used to refer to that mesh.
   *
   * @param tm triangulated surface mesh to add
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamBegin{vertex_point_map}
-  *     the property map with the points associated to the vertices of `tm`.
-  *     If this parameter is omitted, an internal property map for
-  *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
-  *   \cgalParamEnd
-  *   \cgalParamBegin{face_index_map}
-  *      a property map containing the index of each face of `tm`. It must be initialized
-  *      and the value must be unique per face and in the range `[0, num_faces(tm)[`.
-  *   \cgalParamEnd
-  *   \cgalParamBegin{apply_per_connected_component}
-  *     if `false`, `tm` is assumed to have only one connected component, avoiding
-  *     the extraction of connected components. Default is `true`.
-  *   \cgalParamEnd
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+  *                     should be available for the vertices of `tm`.}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{face_index_map}
+  *     \cgalParamDescription{a property map associating to each face of `tm` a unique index between `0` and `num_faces(tm) - 1`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `std::size_t` as value type}
+  *     \cgalParamDefault{an automatically indexed internal map}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{apply_per_connected_component}
+  *     \cgalParamDescription{If `false`, `tm` is assumed to have only one connected component, avoiding the extraction of connected components.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`true`}
+  *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   */
   template <class NamedParameters>
   std::size_t add_mesh(const TriangleMesh& tm,
                        const NamedParameters& np)
   {
-  // handle vpm
-    using Polygon_mesh_processing::GetVertexPointMap;
-    typedef typename GetVertexPointMap<TriangleMesh,
-                                       NamedParameters>::const_type Local_vpm;
+    // handle vpm
+    typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Local_vpm;
     CGAL_USE_TYPE(Local_vpm);
+
     CGAL_assertion_code(
       static const bool same_vpm = (boost::is_same<Local_vpm,Vpm>::value); )
     CGAL_static_assertion(same_vpm);
 
     Vpm vpm =
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                          get_const_property_map(boost::vertex_point, tm) );
+                                   get_const_property_map(boost::vertex_point, tm) );
   // now add the mesh
     std::size_t id = get_id_for_new_mesh();
     CGAL_assertion( m_aabb_trees[id] == nullptr );
@@ -245,28 +250,34 @@ public:
   * adds an instance of a triangulated surface mesh using an external tree of its faces.
   * \warning The tree is not copied and the lifetime of `tree` must be longer than that of this class.
   *
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * \return the id of `tm` used to refer to that mesh.
   *
   * @param tree an AABB-tree of faces of a mesh
   * @param tm triangulated surface mesh
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamBegin{vertex_point_map}
-  *     the property map with the points associated to the vertices of `tm`.
-  *     If this parameter is omitted, an internal property map for
-  *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
-  *   \cgalParamEnd
-  *   \cgalParamBegin{face_index_map}
-  *      a property map containing the index of each face of `tm`. It must be initialized
-  *      and the value must be unique per face and in the range `[0, num_faces(tm)[`.
-  *   \cgalParamEnd
-  *   \cgalParamBegin{apply_per_connected_component}
-  *     if `false`, `tm` is assumed to have only one connected component, avoiding
-  *     the extraction of connected components. Default is `true`.
-  *   \cgalParamEnd
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+  *                     should be available for the vertices of `tm`.}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{face_index_map}
+  *     \cgalParamDescription{a property map associating to each face of `tm` a unique index between `0` and `num_faces(tm) - 1`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `std::size_t` as value type}
+  *     \cgalParamDefault{an automatically indexed internal map}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{apply_per_connected_component}
+  *     \cgalParamDescription{If `false`, `tm` is assumed to have only one connected component, avoiding the extraction of connected components}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`true`}
+  *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   */
   template <class NamedParameters>
@@ -488,26 +499,32 @@ public:
   * intended to be used before calling the `add_mesh()` overload taking an AABB-tree instead of a mesh
   * as input parameter.
   *
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tm input triangulated surface mesh
   * @param [out] points will contain one point per connected component of `tm`
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamBegin{vertex_point_map}
-  *     the property map with the points associated to the vertices of `tm`.
-  *     If this parameter is omitted, an internal property map for
-  *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
-  *   \cgalParamEnd
-  *   \cgalParamBegin{face_index_map}
-  *      a property map containing the index of each face of `tm`. It must be initialized
-  *      and the value must be unique per face and in the range `[0, num_faces(tm)[`.
-  *   \cgalParamEnd
-  *   \cgalParamBegin{apply_per_connected_component}
-  *     if `false`, `tm` is assumed to have only one connected component, avoiding
-  *     the extraction of connected components. %Default is `true`.
-  *   \cgalParamEnd
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+  *                     should be available for the vertices of `tm`.}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{face_index_map}
+  *     \cgalParamDescription{a property map associating to each face of `tm` a unique index between `0` and `num_faces(tm) - 1`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `std::size_t` as value type}
+  *     \cgalParamDefault{an automatically indexed internal map}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{apply_per_connected_component}
+  *     \cgalParamDescription{If `false`, `tm` is assumed to have only one connected component, avoiding the extraction of connected components}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`true`}
+  *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   */
   template <class NamedParameters>
@@ -517,15 +534,11 @@ public:
           std::vector<Point_3>& points,
     const NamedParameters& np)
   {
-    using Polygon_mesh_processing::GetVertexPointMap;
-    using Polygon_mesh_processing::GetFaceIndexMap;
-
     const bool maybe_several_cc =
       parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::apply_per_connected_component), true);
 
-    typedef typename GetVertexPointMap<TriangleMesh,
-                                       NamedParameters>::const_type Local_vpm;
+    typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Local_vpm;
     CGAL_USE_TYPE(Local_vpm);
 
     CGAL_assertion_code(
@@ -534,7 +547,7 @@ public:
 
     Vpm vpm =
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                          get_const_property_map(boost::vertex_point, tm) );
+                                   get_const_property_map(boost::vertex_point, tm) );
 
     if (maybe_several_cc)
     {
@@ -542,12 +555,8 @@ public:
       std::vector<std::size_t> cc_ids(num_faces(tm));
 
       // face index map
-      typedef typename GetFaceIndexMap<TriangleMesh,
-                                       NamedParameters>::type Fid_map;
-
-      Fid_map fid_map =
-        parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
-                            get_const_property_map(boost::face_index, tm));
+      typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::const_type FaceIndexMap;
+      FaceIndexMap fid_map = CGAL::get_initialized_face_index_map(tm, np);
 
       std::size_t nb_cc =
         Polygon_mesh_processing::connected_components(

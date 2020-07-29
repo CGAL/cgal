@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -26,7 +26,7 @@
 
 namespace CGAL {
 
-template < class Kernel_, 
+template < class Kernel_,
            class Container_ = std::vector<typename Kernel_::Point_2>,
            class Arr_seg_traits_ = Arr_segment_traits_2<Kernel_> >
 class Gps_segment_traits_2 : public Arr_seg_traits_
@@ -38,17 +38,17 @@ public:
 
   // Polygon_2 type is required by GeneralPolygonSetTraits Concept
   typedef CGAL::Polygon_2<Kernel_, Container_>          Polygon_2;
-  // Polygon_2 is a model of the GeneralPolygon2 concept. 
+  // Polygon_2 is a model of the GeneralPolygon2 concept.
   typedef  Polygon_2                                    General_polygon_2;
 
-  // Polygon_with_holes_2 can be a simple polygon , with holes that are 
+  // Polygon_with_holes_2 can be a simple polygon , with holes that are
   // entirely inside him , or some vertices of the polygon and its holes
   // may overlap.
-  
+
   // Polygon_with_holes_2 type required by GeneralPolygonSetTraits Concept.
-  typedef CGAL::Polygon_with_holes_2<Kernel_, Container_>    
+  typedef CGAL::Polygon_with_holes_2<Kernel_, Container_>
                                                 Polygon_with_holes_2;
-  // Polygon_with_Holes_2 is a model of the GeneralPolygonWithHoles2 concept. 
+  // Polygon_with_Holes_2 is a model of the GeneralPolygonWithHoles2 concept.
   typedef  Polygon_with_holes_2                 General_polygon_with_holes_2;
   typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;
 
@@ -59,7 +59,7 @@ public:
                                                 Hole_const_iterator;
   typedef typename Base::Point_2                Point_2;
 
- 
+
   /*!
    * A functor for constructing a polygon from a range of segments.
    */
@@ -69,7 +69,7 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits_adaptor* m_traits;
-    
+
   public:
     /*! Constructor
      * \param traits the traits (in case it has state)
@@ -77,7 +77,7 @@ public:
     Construct_polygon_2(const Self* traits) :
       m_traits(static_cast<const Traits_adaptor*>(traits))
     {}
-    
+
     template <typename XCurveIterator>
     void operator()(XCurveIterator begin, XCurveIterator end, Polygon_2& pgn)
       const
@@ -154,7 +154,7 @@ public:
   {
     return Construct_holes();
   }
-    
+
   /* A functor for constructing a General_polygon_with_holes from a
    * General_Polygon (and possibly a range of holes).
    *
@@ -187,7 +187,7 @@ public:
   {
     return Construct_general_polygon_with_holes_2();
   }
-  
+
   //functor returns true if the outer boundary is unbounded, and false otherwise.
   class Is_unbounded {
   public:

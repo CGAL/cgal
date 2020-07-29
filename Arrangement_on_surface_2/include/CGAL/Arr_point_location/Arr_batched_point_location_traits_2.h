@@ -359,7 +359,7 @@ public:
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   {
     return (Compare_y_at_x_right_2
-	    (m_base_traits->compare_y_at_x_right_2_object()));
+            (m_base_traits->compare_y_at_x_right_2_object()));
   }
 
   /*! A functor that checks whether two points and two x-monotone curves are
@@ -752,7 +752,7 @@ public:
     {
       return m_base->compare_x_near_boundary_2_object()(xcv1.base(),
                                                         xcv2.base(),
-							ce);
+                                                        ce);
     }
   };
 

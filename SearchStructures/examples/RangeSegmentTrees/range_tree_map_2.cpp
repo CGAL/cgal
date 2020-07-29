@@ -51,7 +51,7 @@ int main()
   while(current!=OutputList.end())
   {
     std::cerr << (*current).first.x()<< "-" << (*current).first.y() << " +char= "
-	 << (*current).second << std::endl;
+         << (*current).second << std::endl;
     current++;
   }
   if(Range_tree_2.range_tree_2->is_valid())

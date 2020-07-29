@@ -77,7 +77,7 @@ template <typename ActivationFunction = tensorflow::ops::Relu>
 class Neural_network_classifier
 {
   bool m_verbose;
-  
+
   const Label_set& m_labels;
   const Feature_set& m_features;
   std::vector<float> m_feature_means;
@@ -88,7 +88,7 @@ class Neural_network_classifier
   TFops::Placeholder* m_ph_gt;
 
   TFops::ReduceMean* m_loss;
-  
+
   std::vector<std::vector<float> > m_weights;
   std::vector<std::vector<float> > m_bias;
   float m_learning_rate;
@@ -100,18 +100,18 @@ class Neural_network_classifier
 #else
   std::vector<TFops::ApplyGradientDescent> m_optimizer;
 #endif
-  
+
   TF::ClientSession* m_session;
-  
+
 public:
 
   /// \cond SKIP_IN_MANUAL
   const Feature_set& features() const { return m_features; }
   /// \endcond
-  
+
   /// \name Constructor
   /// @{
-  
+
   /*!
     \brief Instantiates the classifier using the sets of `labels` and `features`.
 
@@ -121,7 +121,7 @@ public:
     : m_verbose (true), m_labels (labels), m_features (features)
     , m_root (nullptr), m_ph_ft (nullptr), m_ph_gt (nullptr), m_loss(nullptr), m_session (nullptr)
   { }
-  
+
   /// \cond SKIP_IN_MANUAL
   ~Neural_network_classifier ()
   {
@@ -164,7 +164,7 @@ public:
 #else
     m_feature_means.clear();
     m_feature_means.resize (m_features.size(), 0.f);
-    
+
     for (std::size_t i = 0; i < indices.size(); ++ i)
       for (std::size_t f = 0; f < m_features.size(); ++ f)
         m_feature_means[f] += m_features[f]->value(indices[i]);
@@ -197,11 +197,11 @@ public:
 #endif
   }
   /// \endcond
-  
+
   /// @}
 
   /// \name Training
-  
+
   /// @{
   /*!
     \brief Runs the training algorithm.
@@ -255,7 +255,7 @@ public:
       clear();
 
     std::vector<std::vector<std::size_t> > random_indices (m_labels.size());
-    
+
     std::vector<std::size_t> indices;
     std::vector<int> raw_gt;
     for (std::size_t i = 0; i < ground_truth.size(); ++ i)
@@ -276,14 +276,14 @@ public:
       if (m_verbose) std::cerr << "II - NORMALIZING FEATURES" << std::endl;
       compute_normalization_coefficients (indices);
     }
-    
+
     if (m_verbose) std::cerr << "III - TRAINING NEURAL NETWORK" << std::endl;
-    
+
     std::vector<TF::Output> operations;
     for (std::size_t i = 0; i < m_optimizer.size(); ++ i)
       operations.push_back (m_optimizer[i]);
     operations.push_back (m_layers.back());
-    
+
     std::vector<TF::Tensor> outputs;
 
     m_weights.clear();
@@ -309,12 +309,12 @@ public:
                                   << local_batch_size << std::endl;
         }
       }
-      
+
       TF::Tensor ft
-        (TF::DataTypeToEnum<float>::v(), 
+        (TF::DataTypeToEnum<float>::v(),
          TF::TensorShape {(long long)(total_batch_size), (long long)(m_features.size())});
       TF::Tensor gt
-        (TF::DataTypeToEnum<float>::v(), 
+        (TF::DataTypeToEnum<float>::v(),
          TF::TensorShape {(long long)(total_batch_size), (long long)(m_labels.size())});
 
       float* ft_data = ft.flat<float>().data();
@@ -346,7 +346,7 @@ public:
           ++ current_i;
         }
       }
-      
+
       TF_CHECK_OK (m_session->Run ({{*m_ph_ft, ft}, {*m_ph_gt, gt}}, {*m_loss}, &outputs));
 
       if ((i+1) % (number_of_iterations / 20) == 0)
@@ -391,9 +391,9 @@ public:
   void operator() (std::size_t item_index, std::vector<float>& out) const
   {
     out.resize (m_labels.size(), 0.);
-    
+
     TF::Tensor ft
-      (TF::DataTypeToEnum<float>::v(), 
+      (TF::DataTypeToEnum<float>::v(),
        TF::TensorShape {(long long)(1), (long long)(m_features.size())});
 
     float* ft_data = ft.flat<float>().data();
@@ -401,7 +401,7 @@ public:
     // Fill input tensor
     for (std::size_t f = 0; f < m_features.size(); ++ f)
       ft_data[f] = (m_features[f]->value(item_index) - m_feature_means[f]) / m_feature_sd[f];
-    
+
     std::vector<TF::Tensor> outputs;
     TF_CHECK_OK(m_session->Run({{*m_ph_ft, ft}}, {m_layers.back()}, &outputs));
 
@@ -411,14 +411,14 @@ public:
       out[i] = output_data[i];
   }
 
-  
+
   void operator() (const std::vector<std::size_t>& item_indices,
                    std::vector<std::vector<float> >& out) const
   {
     out.resize (item_indices.size(), std::vector<float>(m_labels.size(), 0.));
-    
+
     TF::Tensor ft
-      (TF::DataTypeToEnum<float>::v(), 
+      (TF::DataTypeToEnum<float>::v(),
        TF::TensorShape {(long long)(item_indices.size()), (long long)(m_features.size())});
 
     float* ft_data = ft.flat<float>().data();
@@ -428,7 +428,7 @@ public:
       for (std::size_t f = 0; f < m_features.size(); ++ f)
         ft_data[i * m_features.size() + f]
           = (m_features[f]->value(item_indices[i]) - m_feature_means[f]) / m_feature_sd[f];
-    
+
     std::vector<TF::Tensor> outputs;
     TF_CHECK_OK(m_session->Run({{*m_ph_ft, ft}}, {m_layers.back()}, &outputs));
 
@@ -439,12 +439,12 @@ public:
         out[i][l] = output_data[i * m_labels.size() + l];
   }
   /// \endcond
-  
+
   /// @}
 
   /// \name Input/Output
   /// @{
-  
+
   /*!
     \brief Saves the current configuration in the stream `output`.
 
@@ -471,7 +471,7 @@ public:
       ptr.put("learning_rate", m_learning_rate);
       tree.add_child("classification.metadata", ptr);
     }
-    
+
     for (std::size_t i = 0; i < m_features.size(); ++ i)
     {
       boost::property_tree::ptree ptr;
@@ -503,7 +503,7 @@ public:
           oss << " ";
       }
       ptr.put("weights", oss.str());
-      
+
       oss = std::ostringstream();
       oss.precision(std::numeric_limits<float>::digits10 + 2);
       for (std::size_t j = 0; j < m_bias[i].size(); ++ j)
@@ -513,10 +513,10 @@ public:
           oss << " ";
       }
       ptr.put("bias", oss.str());
-      
+
       tree.add_child("classification.layers.layer", ptr);
     }
-    
+
     // Write property tree to XML file
     boost::property_tree::write_xml(output, tree,
 #if BOOST_VERSION >= 105600
@@ -538,7 +538,7 @@ public:
   bool load_configuration (std::istream& input, bool verbose = false)
   {
     clear();
-    
+
     bool out = true;
 
     boost::property_tree::ptree tree;
@@ -584,7 +584,7 @@ public:
 
       m_feature_means.push_back(v.second.get<float>("mean"));
       m_feature_sd.push_back(v.second.get<float>("standard_deviation"));
-      
+
       ++ idx;
     }
 
@@ -607,7 +607,7 @@ public:
       }
       ++ idx;
     }
-    
+
     if (idx != nb_labels)
     {
       if (verbose)
@@ -647,10 +647,10 @@ public:
 
       if (idx != nb_layers - 1)
         hidden_layers.push_back (width);
-      
+
       ++ idx;
     }
-    
+
     if (idx != nb_layers)
     {
       if (verbose)
@@ -684,9 +684,9 @@ private:
   {
     m_root = new TF::Scope (TF::Scope::NewRootScope());
 
-    
+
     if (m_verbose) std::cerr << "I - BUILDING NEURAL NETWORK ARCHITECTURE" << std::endl;
-    
+
     // Get layers and sizes or init with default values
     std::vector<std::size_t> hl = hidden_layers;
     if (hl.empty())
@@ -694,24 +694,24 @@ private:
       hl.push_back (m_features.size());
       hl.push_back ((m_features.size() + m_labels.size()) / 2);
     }
-    
+
     if (m_verbose) std::cerr << " 1) Initializing architecture:" << std::endl
                             << "   * Layer 0: " << m_features.size() << " neuron(s) (input features)" << std::endl;
-      
+
     if (m_verbose)
       for (std::size_t i = 0; i < hl.size(); ++ i)
         std::cerr << "   * Layer " << i+1 << ": " << hl[i] << " neuron(s)" << std::endl;
-    
+
     if (m_verbose) std::cerr << "   * Layer " << hl.size() + 1 << ": "
                             << m_labels.size() << " neuron(s) (output labels)" << std::endl;
 
 
-    
+
     m_ph_ft = new TFops::Placeholder (*m_root, TF::DT_FLOAT);
     m_ph_gt = new TFops::Placeholder (*m_root, TF::DT_FLOAT);
-    
+
     if (m_verbose) std::cerr << " 2) Creating weight matrices and bias" << std::endl;
-    
+
     // create weight matrices and bias for each layer transition
     std::vector<TFops::Variable> weights;
     std::vector<TFops::Variable> bias;
@@ -761,19 +761,19 @@ private:
       else
       {
         TF::Tensor init_weight
-          (TF::DataTypeToEnum<float>::v(), 
+          (TF::DataTypeToEnum<float>::v(),
            TF::TensorShape {(long long)(size_from), (long long)(size_to)});
         float* init_weight_data = init_weight.flat<float>().data();
         std::copy_n (m_weights[i].begin(), size_from * size_to, init_weight_data);
 
         assign_weights.push_back (TFops::Assign (*m_root, weights.back(), init_weight));
       }
-      
+
       if (m_verbose) std::cerr << "   * Bias " << i << " [" << size_to << "]" << std::endl;
       bias.push_back (TFops::Variable (*m_root, { (long long)(1), size_to }, TF::DT_FLOAT));
 
       TF::Tensor init_bias
-        (TF::DataTypeToEnum<float>::v(), 
+        (TF::DataTypeToEnum<float>::v(),
          TF::TensorShape {(long long)(1), (long long)(size_to)});
       float* init_bias_data = init_bias.flat<float>().data();
       if (m_bias.empty())
@@ -781,7 +781,7 @@ private:
           init_bias_data[s] = 0.f;
       else
         std::copy_n (m_bias[i].begin(), size_to, init_bias_data);
-      
+
       assign_bias.push_back (TFops::Assign (*m_root, bias.back(), init_bias));
     }
 
@@ -790,9 +790,9 @@ private:
       if (m_verbose) std::cerr << "Error: " << m_root->status().ToString() << std::endl;
       return;
     }
-    
+
     if (m_verbose) std::cerr << " 3) Creating layers" << std::endl;
-    
+
     for (std::size_t i = 0; i < weights.size(); ++ i)
     {
       if (i == 0)
@@ -816,7 +816,7 @@ private:
     }
 
     if (m_verbose) std::cerr << " 4) Setting up loss calculation" << std::endl;
-    
+
     // loss calculation based on cross-entropy
     TFops::Maximum truncated_ypred = TFops::Maximum (*m_root, TFops::Const(*m_root, 0.0001f), m_layers.back());
     TFops::Log log_ypred = TFops::Log (*m_root, truncated_ypred);
@@ -825,7 +825,7 @@ private:
     TFops::Mul minus_sum_ygt_times_log_ypred = TFops::Mul (*m_root, TFops::Const(*m_root, -1.f), sum_ygt_times_log_ypred);
 
     m_loss = new TFops::ReduceMean (*m_root, minus_sum_ygt_times_log_ypred, {0});
-    
+
     if (!m_root->status().ok())
     {
       if (m_verbose) std::cerr << "Error: " << m_root->status().ToString() << std::endl;
@@ -833,27 +833,27 @@ private:
     }
 
     if (m_verbose) std::cerr << " 5) Setting up gradient descent" << std::endl;
-    
+
     std::vector<TF::Output> weights_and_bias;
     for (std::size_t i = 0; i < weights.size(); ++ i)
       weights_and_bias.push_back (TF::Output(weights[i]));
     for (std::size_t i = 0; i < bias.size(); ++ i)
       weights_and_bias.push_back (TF::Output(bias[i]));
-    
+
     std::vector<TF::Output> gradients;
 
     TF_CHECK_OK(TF::AddSymbolicGradients(*m_root, {*m_loss},
                                          weights_and_bias,
                                          &gradients));
-  
+
     if (!m_root->status().ok())
     {
       if (m_verbose) std::cerr << "Error: " << m_root->status().ToString() << std::endl;
       return;
     }
-  
+
     std::vector<TF::Output> assigners;
-  
+
 #ifdef CGAL_CLASSIFICATION_TENSORFLOW_USE_ADAM
     for (std::size_t i = 0; i < weights.size(); ++ i)
     {
@@ -877,7 +877,7 @@ private:
 
       TFops::Variable m (*m_root, { size_from, size_to}, TF::DT_FLOAT);
       TF::Tensor init_m
-        (TF::DataTypeToEnum<float>::v(), 
+        (TF::DataTypeToEnum<float>::v(),
          TF::TensorShape {(long long)(size_from), (long long)(size_to)});
       float* init_m_data = init_m.flat<float>().data();
       for (std::size_t s = 0; s < size_from; ++ s)
@@ -887,7 +887,7 @@ private:
 
       TFops::Variable v (*m_root, { size_from, size_to}, TF::DT_FLOAT);
       TF::Tensor init_v
-        (TF::DataTypeToEnum<float>::v(), 
+        (TF::DataTypeToEnum<float>::v(),
          TF::TensorShape {(long long)(size_from), (long long)(size_to)});
       float* init_v_data = init_v.flat<float>().data();
       for (std::size_t s = 0; s < size_from; ++ s)
@@ -908,7 +908,7 @@ private:
                                      TFops::Cast(*m_root, 1e-8, TF::DT_FLOAT),
                                      {gradients[i]}));
     }
-    
+
     for (std::size_t i = 0; i < bias.size(); ++ i)
     {
       long long size_from = 0;
@@ -922,7 +922,7 @@ private:
 
       TFops::Variable m (*m_root, { 1, size_to}, TF::DT_FLOAT);
       TF::Tensor init_m
-        (TF::DataTypeToEnum<float>::v(), 
+        (TF::DataTypeToEnum<float>::v(),
          TF::TensorShape {(long long)(1), (long long)(size_to)});
       float* init_m_data = init_m.flat<float>().data();
       for (std::size_t s = 0; s < size_to; ++ s)
@@ -931,7 +931,7 @@ private:
 
       TFops::Variable v (*m_root, { 1, size_to}, TF::DT_FLOAT);
       TF::Tensor init_v
-        (TF::DataTypeToEnum<float>::v(), 
+        (TF::DataTypeToEnum<float>::v(),
          TF::TensorShape {(long long)(1), (long long)(size_to)});
       float* init_v_data = init_v.flat<float>().data();
       for (std::size_t s = 0; s < size_to; ++ s)
@@ -951,7 +951,7 @@ private:
                                      TFops::Cast(*m_root, 1e-8, TF::DT_FLOAT),
                                      {gradients[weights.size() + i]}));
     }
-    
+
 #else
     for (std::size_t i = 0; i < weights.size(); ++ i)
       m_optimizer.push_back (TFops::ApplyGradientDescent
@@ -969,9 +969,9 @@ private:
     }
 
     if (m_verbose) std::cerr << " 6) Starting session" << std::endl;
-    
+
     TF::SessionOptions options = TF::SessionOptions();
-    
+
     options.config.mutable_gpu_options()->set_allow_growth(true);
     options.config.mutable_gpu_options()->set_per_process_gpu_memory_fraction(0.8);
     options.config.mutable_gpu_options()->set_force_gpu_compatible(true);
@@ -1014,7 +1014,7 @@ void classify (const ItemRange& input,
                ProbabilitiesRanges& probabilities)
 {
   std::cerr << "Classify with TensorFlow classifier" << std::endl;
-  
+
   output.resize(input.size());
   probabilities.resize (labels.size());
   for (std::size_t i = 0; i < probabilities.size(); ++ i)
@@ -1032,7 +1032,7 @@ void classify (const ItemRange& input,
     indices.reserve (input.size() / nb_subdivisions);
     for (std::size_t i = 0; i < input.size() / nb_subdivisions && idx < input.size(); ++ i)
       indices.push_back(idx ++);
-    
+
     std::vector<std::vector<float> > values;
     classifier (indices, values);
     for(std::size_t i = 0; i < indices.size(); ++ i)
@@ -1043,7 +1043,7 @@ void classify (const ItemRange& input,
       for (std::size_t j = 0; j < labels.size(); ++ j)
       {
         probabilities[j][indices[i]] = values[i][j];
-        
+
         if(val_class_best < values[i][j])
         {
           val_class_best = values[i][j];
@@ -1066,7 +1066,7 @@ void classify (const ItemRange& input,
                LabelIndexRange& output)
 {
   std::cerr << "Classify with TensorFlow classifier" << std::endl;
-  
+
   output.resize(input.size());
 
   const std::size_t mem_allocated = sizeof(float) * input.size() * (labels.size() + classifier.features().size());
@@ -1081,7 +1081,7 @@ void classify (const ItemRange& input,
     indices.reserve (input.size() / nb_subdivisions);
     for (std::size_t i = 0; i < input.size() / nb_subdivisions && idx < input.size(); ++ i)
       indices.push_back(idx ++);
-    
+
     std::vector<std::vector<float> > values;
     classifier (indices, values);
 
@@ -1103,7 +1103,7 @@ void classify (const ItemRange& input,
     }
   }
 }
-#endif  
+#endif
 /// \endcond
 
 }

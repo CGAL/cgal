@@ -36,10 +36,10 @@ int main(int argc, char*argv[])
   std::ofstream out((argc>2)?argv[2]:"Three_lady_copy.xyz");
   out.precision(17);
   if (!out ||
-	  !CGAL::write_xyz_points(
+          !CGAL::write_xyz_points(
             out, points))
   {
-	  return EXIT_FAILURE;
+          return EXIT_FAILURE;
   }
 
   return EXIT_SUCCESS;

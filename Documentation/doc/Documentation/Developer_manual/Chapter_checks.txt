@@ -19,7 +19,7 @@ react after the error (application processes are killed).
 Thus, the default behavior of all checks is to throw exceptions for reporting
 failures.
 
-\section secchecks_categories Categories of checks 
+\section secchecks_categories Categories of checks
 
 There are five types of checks.
 <UL>
@@ -98,7 +98,7 @@ Additionally, we provide macros `CGAL_error()` and `CGAL_error_msg(MSG_TEXT)`
 which are equivalent to always-failing assertions. However,
 they cannot be disabled.
 
-\section secchecks_using Using checks 
+\section secchecks_using Using checks
 
 The checks are implemented as preprocessor macros;
 
@@ -153,7 +153,7 @@ and `CGAL_CHECK_EXACTNESS`
 have to be supplied. However, exactness checks should only be turned on if
 the computation is done with some exact number type.
 
-\section secchecks_controlling Controlling checks at a finer granularity 
+\section secchecks_controlling Controlling checks at a finer granularity
 
 The macros and related compile-time flags described so far all operate
 on the whole library. Sometimes the user may want to have a more
@@ -169,7 +169,7 @@ reference manual.
 
 For a new package you will first have to create a suitable header file
 with all macro definitions.  This is done with the shell script
-<TT>cgal_create_assertions.sh</TT>, to be found in the 
+<TT>cgal_create_assertions.sh</TT>, to be found in the
 <TT>scripts</TT> directory.
 
 The following command will create a file <TT>optimisation_assertions.h</TT>:
@@ -232,7 +232,7 @@ recognized by both clang and g++.
 [msvc-assume]: https://msdn.microsoft.com/en-us/library/1b3fsfxw.aspx
 [builtin-unreachable]: http://clang.llvm.org/docs/LanguageExtensions.html#builtin-unreachable
 
-\section secexception_handling Exception handling 
+\section secexception_handling Exception handling
 
 Some parts of the library use exceptions, but there is no general specific
 policy concerning exception handling in \cgal.  It is nevertheless good to
@@ -246,13 +246,13 @@ uses the `CGAL_destructor_assertion` macro, should be marked with the
 `CGAL_NOEXCEPT(false)` macro. This macro provides future compatibility with
 C++11 and above, which provides the `noexcept` keyword.
 
-\section secchecks_req_and_rec Requirements and recommendations 
+\section secchecks_req_and_rec Requirements and recommendations
 
 Requirements:
 <UL>
    <LI>Write pre- and postcondition checkers for your functions wherever
          possible.
-   <LI>Use the \cgal preprocessor macros (Sections  \ref secchecks_using 
+   <LI>Use the \cgal preprocessor macros (Sections  \ref secchecks_using
          and  \ref secchecks_controlling )
          exclusively throughout your code (instead of,
          for example, the `assert` macro or the `std::abort` or

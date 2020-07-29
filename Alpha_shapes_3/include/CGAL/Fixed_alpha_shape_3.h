@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sebastien Loriot
 //
@@ -65,42 +65,42 @@ namespace internal{
       return T.geom_traits().compare_weighted_squared_radius_3_object();
     }
   };
-  
+
   //small utility to insert hidden vertices after a removal (in non-weighted case do nothing)
   template <class One_alpha,class Weighted_tag=::CGAL::Tag_true>
   struct Hidden_inserter
   {
     typedef typename One_alpha::Triangulation Dt;
-    
+
     template <class Vertex_remover>
     static void insert(One_alpha& one_alpha, Vertex_remover& remover)
     {
       typename One_alpha::Cell_handle c;
       for (typename Vertex_remover::Hidden_points_iterator
         hi = remover.hidden_points_begin();
-        hi != remover.hidden_points_end(); ++hi) 
+        hi != remover.hidden_points_end(); ++hi)
       {
         typename One_alpha::Vertex_handle hv = one_alpha.insert (*hi, c);
         if (hv != typename One_alpha::Vertex_handle()) c = hv->cell();
       }
     }
   };
-  
+
   template <class One_alpha>
   struct Hidden_inserter<One_alpha,::CGAL::Tag_false>{
     typedef typename One_alpha::Triangulation Dt;
     template <class Vertex_remover>
     static void insert(const One_alpha&,const Vertex_remover&){}
   };
-  
-  
+
+
 } //internal
 
 
 template < class Dt >
 class Fixed_alpha_shape_3 : public Dt
 {
-  // DEFINITION The class Fixed_alpha_shape_3<Dt> represents the 
+  // DEFINITION The class Fixed_alpha_shape_3<Dt> represents the
   // alpha-shape for a set of points (or a set of weighted points)
   // for a given value of alpha. The alphashape is defined  through
   // the Delaunay tetrahedralization of the points
@@ -112,19 +112,19 @@ class Fixed_alpha_shape_3 : public Dt
   // in case of weighted points) empty of other points
   // (or suborthogonal to other sites in case of weighted points)
   // with squared radius equal or less than alpha
- 
+
   // In each k-dimensional simplex of the triangulation
-  // for (k=0,1,2) 
+  // for (k=0,1,2)
   // can be classified as EXTERIOR, SINGULAR, REGULAR
   // or INTERIOR with respect to the alpha shape.
   // A $k$ simplex is REGULAR if it is on the boundary
   // of the alpha_complex and belongs to a $k+1$ simplex in the complex
   // and it is SINGULAR simplex if it is  a boundary simplex tht is not
   // included in a $k+1$ simplex of the complex.
-  
-  // Roughly, the Fixed_alpha_shape data structure computes and stores, 
+
+  // Roughly, the Fixed_alpha_shape data structure computes and stores,
   // for each simplex it classification type.
-  
+
 
   //------------------------- TYPES ------------------------------------
 
@@ -145,7 +145,7 @@ public:
   typedef Coord_type                                FT;
 
   typedef typename Dt::Point                        Point;
-  
+
   typedef typename Dt::Cell_handle                  Cell_handle;
   typedef typename Dt::Vertex_handle                Vertex_handle;
   typedef typename Dt::Facet                        Facet;
@@ -221,9 +221,9 @@ public:
   typedef Filter_iterator< Finite_facets_iterator, Exterior_simplex_test>   Alpha_shape_facets_iterator;
   typedef Filter_iterator< Finite_edges_iterator, Exterior_simplex_test>    Alpha_shape_edges_iterator;
   typedef Filter_iterator< Finite_cells_iterator, Exterior_simplex_test>    Alpha_shape_cells_iterator;
-  
- 
-  Vertex_handle 
+
+
+  Vertex_handle
   insert(const Point& p,Cell_handle start=Cell_handle())
   {
     if (this->dimension() < 3){
@@ -231,7 +231,7 @@ public:
       if (this->dimension() == 3) initialize_alpha();
       return new_v;
     }
-    
+
     //Handle only case of dimension 3 of insert_in_conflict from Triangulation_3 class.
     typename Triangulation::Locate_type lt;
     int li, lj;
@@ -251,7 +251,7 @@ public:
     // First, find the conflict region.
     std::vector<Cell_handle> cells;
     std::vector<Facet> facets_on_the_boundary_of_the_hole;
-    
+
     cells.reserve(32);
     this->find_conflicts
       (c, tester, make_triple(std::back_inserter(facets_on_the_boundary_of_the_hole),
@@ -259,7 +259,7 @@ public:
                               Emptyset_iterator()));
 
     Facet facet=*boost::prior(facets_on_the_boundary_of_the_hole.end());
-    
+
     // Remember the points that are hidden by the conflicting cells,
     // as they will be deleted during the insertion.
     this->hidden_point_visitor.process_cells_in_conflict(cells.begin(), cells.end());
@@ -269,7 +269,7 @@ public:
     //recover edges on the boundary of the hole.
     std::set<Edge,Compare_edge> hole_boundary_edges;
     const int indices[3]={1,2,3};
-    for (typename std::vector<Facet>::iterator 
+    for (typename std::vector<Facet>::iterator
       it=facets_on_the_boundary_of_the_hole.begin();
       it!=facets_on_the_boundary_of_the_hole.end();
       ++it)
@@ -333,9 +333,9 @@ public:
     int itmp1,itmp2;
     v->is_on_chull( this->is_edge(this->infinite_vertex(),v,tmp,itmp1,itmp2) );
     finalize_status_of_vertex(v);
-    
+
     //--set classification of old edges
-    for (typename std::set<Edge,Compare_edge>::iterator  
+    for (typename std::set<Edge,Compare_edge>::iterator
          eit=hole_boundary_edges.begin();eit!=hole_boundary_edges.end();++eit)
     {
       CGAL_precondition (!this->is_infinite(*eit));
@@ -345,7 +345,7 @@ public:
       CGAL_precondition(it_status!=edge_status_map.end());
       it_status->second = status;
     }
-    
+
     //--set status of old vertices + update is_on_chull
     //TODO: find a better way to do it : make an update
     std::vector<Vertex_handle> vertices;
@@ -357,21 +357,21 @@ public:
       }
       set_vertex_status(*vit);
     }
-    
+
     // Store the hidden points in their new cells.
     this->hidden_point_visitor.reinsert_vertices(v);
     return v;
   }
-  
+
   void remove (Vertex_handle vertex_to_remove)
   {
     CGAL_precondition(vertex_to_remove!=Vertex_handle());
     CGAL_precondition(vertex_to_remove!=this->infinite_vertex());
-    
+
     std::vector<Facet> link;
-    std::vector<Vertex_handle> vertices_to_update;    
+    std::vector<Vertex_handle> vertices_to_update;
     std::map<Vertex_handle,Classification_type> old_classification;
-    
+
     if (this->dimension() == 3)
     {
       //recover facet of the link: they are bounding
@@ -388,7 +388,7 @@ public:
 
       //get vertices that will need to be updated
       this->finite_adjacent_vertices(vertex_to_remove,std::back_inserter(vertices_to_update));
-      
+
       //1-erase removed edges from edge_map
       //2-store old classification of vertices and set it to SINGULAR
       for(typename std::vector<Vertex_handle>::iterator it=vertices_to_update.begin();it!=vertices_to_update.end();++it){
@@ -398,18 +398,18 @@ public:
         (*it)->set_classification_type(SINGULAR);
       }
     }
-   
+
     //Do remove the vertex from the underlying triangulation
     Dt tmp;
     typename Dt:: template Vertex_remover<Dt> remover(tmp);
     typedef typename Dt::Tr_Base Tr_Base;
     Tr_Base::remove(vertex_to_remove,remover);
-    
+
     if (this->dimension()<3){
       edge_status_map.clear();
       return;
     }
-    
+
     //recover new cells
     std::set<Cell_handle> new_cells;//cells in the hole
     std::set<Cell_handle> outer;//cells that are not in the hole
@@ -422,7 +422,7 @@ public:
         outer.insert(it->first);
       }
     }
-    
+
     while (!to_visit.empty()){
       Cell_handle cell=to_visit.front();
       to_visit.pop();
@@ -434,13 +434,13 @@ public:
           to_visit.push(candidate);
       }
     }
-    
+
     //set status of new cells
     for (typename std::set<Cell_handle>::iterator it=new_cells.begin();it!=new_cells.end();++it){
       CGAL_precondition(!this->is_infinite(*it));
       set_cell_status(*it);
     }
-    
+
     //recover new facets + link facets
     //set vertex that are on the convex hull (those on a facet incident to infinite cell)
     while (!new_cells.empty())
@@ -460,7 +460,7 @@ public:
         }
       }
     }
-    
+
     std::set<Edge,Compare_edge> new_edges;
     //1- set status of these facets
     //2- recover new edges + edges incident to link facets
@@ -471,29 +471,29 @@ public:
         new_edges.insert(Edge(it->first,(it->second+index[i])%4,(it->second+index[(i+1)%3])%4));
       }
     }
-   
+
     //set status of these edges
     for(typename std::set<Edge,Compare_edge>::iterator it=new_edges.begin();it!=new_edges.end();++it){
       Classification_type status=compute_edge_status(it->first, it->second, it->third);
       //cross links
       Vertex_handle_pair vhp = make_vertex_handle_pair( *it );
       edge_status_map[vhp]=status;
-    
+
       //update status of incident vertices
       update_vertex_status(it->first->vertex(it->second),status);
       update_vertex_status(it->first->vertex(it->third),status);
     }
-    
+
     //set final status of vertices
     for(typename std::vector<Vertex_handle>::iterator it=vertices_to_update.begin();it!=vertices_to_update.end();++it){
       //this one is working but should be more expensive
       //set_vertex_status(*it);      continue;
-      
+
       Classification_type old_status=old_classification[*it];
       Classification_type status=(*it)->get_classification_type();
-      
+
       CGAL_precondition( status!=SINGULAR ); // at least on edge is incident to that vertex
-      
+
       if (status==INTERIOR){
         if (old_status!=INTERIOR || (*it)->is_on_chull())
           (*it)->set_classification_type(REGULAR);
@@ -501,14 +501,14 @@ public:
           (*it)->set_classification_type(INTERIOR);
         continue;
       }
-      
+
       if (status==REGULAR) continue;
 
       if ( status==EXTERIOR && ( old_status==REGULAR || old_status==INTERIOR) ){ //if vertex was EXTERIOR or SINGULAR other edges are not in the alpha complex
         //check if former REGULAR vertex becomes EXTERIOR or SINGULAR
         std::list<Vertex_handle> incidentv;
         finite_adjacent_vertices(*it,back_inserter(incidentv));
-        
+
         typename std::list<Vertex_handle>::iterator vvit=incidentv.begin();
         for( ; vvit != incidentv.end(); ++vvit) {
             //TODO: We take all edges -> WE SHOULD ONLY TAKE THOSE NOT IN THE HOLE
@@ -520,22 +520,22 @@ public:
               break;
             }
         }
-        
+
         if ( vvit != incidentv.end() ) continue;
       }
-      
+
       if ( is_vertex_Gabriel((*it),Weighted_tag()) && is_gabriel_simplex_in_alpha_complex((*it)) )
         (*it)->set_classification_type(SINGULAR);
       else
         (*it)->set_classification_type(EXTERIOR);
     }
-    
+
     //Insert possible hidden points
     internal::Hidden_inserter<Fixed_alpha_shape_3<Dt>,Weighted_tag>::insert(*this,remover);
   }
-  
-  
-  
+
+
+
 private:
 
   typedef internal::Simplex_classif_predicate<Fixed_alpha_shape_3<Dt>,Weighted_tag> Simplex_classif;
@@ -548,36 +548,36 @@ private:
 
   //------------------------- CONSTRUCTORS ------------------------------
 public:
-  Fixed_alpha_shape_3(NT alpha=0):_alpha(alpha){} 
+  Fixed_alpha_shape_3(NT alpha=0):_alpha(alpha){}
 
   Fixed_alpha_shape_3(Dt& dt, NT alpha = 0):_alpha(alpha){
     Dt::swap(dt);
     if (dimension() == 3) initialize_alpha();
   }
- 
+
   // Introduces an alpha-shape `A' for the alpha-value
   // `alpha' that is initialized with the points in the range
   // from first to last
-  template < class InputIterator >  
-  Fixed_alpha_shape_3(const InputIterator& first,  
-                const InputIterator& last,  
+  template < class InputIterator >
+  Fixed_alpha_shape_3(const InputIterator& first,
+                const InputIterator& last,
                 const NT& alpha = 0): _alpha(alpha)
   {
     Dt::insert(first, last);
-    if (dimension() == 3)	  initialize_alpha();
+    if (dimension() == 3)          initialize_alpha();
   }
- 
- 
-  
+
+
+
 private :
 
-  template < class InputIterator >  
-  int make_alpha_shape(const InputIterator& first, 
-		       const InputIterator& last)
+  template < class InputIterator >
+  int make_alpha_shape(const InputIterator& first,
+                       const InputIterator& last)
   {
     clear();
     int n = Dt::insert(first, last);
-    if (dimension() == 3)	  initialize_alpha();
+    if (dimension() == 3)          initialize_alpha();
     return n;
   }
 
@@ -593,7 +593,7 @@ private :
     incident_vertices(this->infinite_vertex(),std::back_inserter(chull));
     for ( typename std::vector<Vertex_handle>::iterator it=chull.begin();it!=chull.end();++it)
       (*it)->is_on_chull(true);
-    
+
     initialize_status_of_cells();
     initialize_status_of_facets();
     initialize_status_of_edges();
@@ -603,7 +603,7 @@ private :
 private :
   // prevent default copy constructor and default assigment
   Fixed_alpha_shape_3(const Fixed_alpha_shape_3&);
-  void operator=(const Fixed_alpha_shape_3&);  
+  void operator=(const Fixed_alpha_shape_3&);
 
   static
   Vertex_handle_pair
@@ -617,14 +617,14 @@ private :
   make_vertex_handle_pair( const Edge& e) {
     return make_vertex_handle_pair(e.first->vertex(e.second),e.first->vertex(e.third));
   }
-  
+
   struct Compare_edge{
     bool operator()(const Edge& e1,const Edge& e2) const
     {
       return make_vertex_handle_pair(e1)<make_vertex_handle_pair(e2);
     }
   };
-  
+
   bool is_vertex_Gabriel(Vertex_handle,Tag_false){return true;}
   template <class Vertexhandle>
   bool is_vertex_Gabriel(Vertexhandle v,Tag_true){return is_Gabriel(v);}
@@ -633,7 +633,7 @@ private :
   void set_vertex_status(Vertex_handle v);
   inline void set_cell_status (Cell_handle c);
   Classification_type compute_edge_status( const Cell_handle&  c,int i,int j) const;
-  
+
   //---------------------------------------------------------------------
 
 public:
@@ -642,32 +642,32 @@ public:
   {
     return _alpha;
   }
-  
+
   void clear()
   {
     // clears the structure
     Dt::clear();
     edge_status_map.clear();
   }
-  
+
   //--------------------- PREDICATES -----------------------------------
 
 public:
   Classification_type  classify(const Cell_handle& s) const  {
     if (is_infinite(s)) return EXTERIOR;
-    return s->get_classification_type(); 
+    return s->get_classification_type();
   }
   Classification_type  classify(const Facet& f) const {
     if (is_infinite(f)) return EXTERIOR;
-    return f.first->get_facet_classification_type(f.second); 
+    return f.first->get_facet_classification_type(f.second);
   }
   Classification_type  classify(const Edge& e) const  {
     if (is_infinite(e)) return EXTERIOR;
-    return edge_status_map.find(make_vertex_handle_pair(e))->second; 
+    return edge_status_map.find(make_vertex_handle_pair(e))->second;
   }
   Classification_type  classify(const Vertex_handle& v) const {
     if (is_infinite(v)) return EXTERIOR;
-    return v->get_classification_type(); 
+    return v->get_classification_type();
   }
 
 
@@ -703,7 +703,7 @@ private:
 
   bool
   is_gabriel_simplex_in_alpha_complex (const Cell_handle& s, const int& i, const int& j) const  {
-    return 
+    return
       Simplex_classif::predicate(*this)(
           s->vertex(i)->point(),
           s->vertex(j)->point(),
@@ -726,7 +726,7 @@ private:
   }
 
   //---------------------------------------------------------------------
-public:  
+public:
 #ifdef CGAL_USE_GEOMVIEW
   void show_alpha_shape_faces(Geomview_stream &gv) const;
 #endif
@@ -759,8 +759,8 @@ public:
   //---------------------------------------------------------------------
   // To extract simplices given a classification type
   template<class OutputIterator>
-  OutputIterator get_alpha_shape_cells(OutputIterator it, 
-				       Classification_type type) const
+  OutputIterator get_alpha_shape_cells(OutputIterator it,
+                                       Classification_type type) const
   {
     Finite_cells_iterator cit = finite_cells_begin();
     for( ; cit != finite_cells_end() ; ++cit){
@@ -770,8 +770,8 @@ public:
   }
 
   template<class OutputIterator>
-  OutputIterator get_alpha_shape_facets(OutputIterator it, 
-					Classification_type type) const
+  OutputIterator get_alpha_shape_facets(OutputIterator it,
+                                        Classification_type type) const
   {
     Finite_facets_iterator fit = finite_facets_begin();
     for( ; fit != finite_facets_end() ; ++fit){
@@ -781,8 +781,8 @@ public:
   }
 
   template<class OutputIterator>
-  OutputIterator get_alpha_shape_edges(OutputIterator it, 
-				       Classification_type type) const
+  OutputIterator get_alpha_shape_edges(OutputIterator it,
+                                       Classification_type type) const
   {
     Finite_edges_iterator eit = finite_edges_begin();
     for( ; eit != finite_edges_end() ; ++eit){
@@ -792,8 +792,8 @@ public:
   }
 
   template<class OutputIterator>
-   OutputIterator get_alpha_shape_vertices(OutputIterator it, 
-					   Classification_type type) const
+   OutputIterator get_alpha_shape_vertices(OutputIterator it,
+                                           Classification_type type) const
   {
     Finite_vertices_iterator vit = finite_vertices_begin();
     for( ; vit != finite_vertices_end() ; ++vit){
@@ -801,7 +801,7 @@ public:
     }
     return it;
   }
-  
+
 };
 
 
@@ -824,13 +824,13 @@ const typename Fixed_alpha_shape_3<Dt>::Classification_type Fixed_alpha_shape_3<
 template <class Dt>
 void Fixed_alpha_shape_3<Dt>::set_cell_status(Cell_handle c){
   Classification_type status=is_infinite(c) ? EXTERIOR:( is_gabriel_simplex_in_alpha_complex(c) ? INTERIOR : EXTERIOR );
-  c->set_classification_type(status);  
+  c->set_classification_type(status);
 }
 
 template <class Dt>
-void 
+void
 Fixed_alpha_shape_3<Dt>::initialize_status_of_cells()
-{ 
+{
   Finite_cells_iterator cell_it, done = finite_cells_end();
   for( cell_it = finite_cells_begin(); cell_it != done; ++cell_it) {
     set_cell_status(cell_it);
@@ -850,17 +850,17 @@ set_facet_classification_type( const Facet& f) {
   int iNeigh = pNeighbor->index(pCell);
 
   unsigned nb_interior_cells=0;
-  
+
   if(!is_infinite(pCell)){
     if (pCell->get_classification_type()==INTERIOR)
       ++nb_interior_cells;
   }
-  
+
   if(!is_infinite(pNeighbor)){
     if (pNeighbor->get_classification_type()==INTERIOR)
       ++nb_interior_cells;
   }
-  
+
   Classification_type status=EXTERIOR;
   switch (nb_interior_cells){
     case 2:
@@ -872,21 +872,21 @@ set_facet_classification_type( const Facet& f) {
     default:
     {
       if ( is_Gabriel(f) ){
-        if ( is_gabriel_simplex_in_alpha_complex(f) )  status=SINGULAR;          
+        if ( is_gabriel_simplex_in_alpha_complex(f) )  status=SINGULAR;
       }
     }
-  }  
+  }
   pCell->set_facet_classification_type(i,status);
   pNeighbor->set_facet_classification_type(iNeigh,status);
 }
 
 
 template <class Dt>
-void 
+void
 Fixed_alpha_shape_3<Dt>::initialize_status_of_facets()
 {
   for(Finite_facets_iterator fit = finite_facets_begin();
-      fit != finite_facets_end(); ++fit)   
+      fit != finite_facets_end(); ++fit)
         set_facet_classification_type(*fit);
 }
 
@@ -900,7 +900,7 @@ compute_edge_status( const Cell_handle& c, int i, int j) const
   Facet_circulator fcirc, done;
   fcirc = incident_facets(c,i,j);
   done = fcirc;
-  
+
   bool is_regular=false;
   bool is_interior=true;
   do{
@@ -916,19 +916,19 @@ compute_edge_status( const Cell_handle& c, int i, int j) const
   }while(++fcirc!=done);
   if (is_interior) return INTERIOR;
   if (is_regular)  return REGULAR;
-  
+
   if ( is_Gabriel(c,i,j) ){
     if ( is_gabriel_simplex_in_alpha_complex(c,i,j) )  return SINGULAR;
-  }  
+  }
   return EXTERIOR;
 }
 
 template <class Dt>
-void 
+void
 Fixed_alpha_shape_3<Dt>::initialize_status_of_edges()
 {
-  for (Finite_edges_iterator eit = finite_edges_begin(); 
-       eit != finite_edges_end(); ++eit) 
+  for (Finite_edges_iterator eit = finite_edges_begin();
+       eit != finite_edges_end(); ++eit)
   {
     Classification_type status=compute_edge_status(eit->first, eit->second, eit->third);
     //cross links
@@ -940,11 +940,11 @@ Fixed_alpha_shape_3<Dt>::initialize_status_of_edges()
 
 //this function is only to use for update (removal/update)
 template <class Dt>
-void 
+void
 Fixed_alpha_shape_3<Dt>::set_vertex_status(Vertex_handle v){
   std::list<Vertex_handle> incidentv;
   finite_adjacent_vertices(v,back_inserter(incidentv));
-  
+
   bool is_interior=true;
   bool is_regular=false;
   typename std::list<Vertex_handle>::iterator vvit=incidentv.begin();
@@ -957,7 +957,7 @@ Fixed_alpha_shape_3<Dt>::set_vertex_status(Vertex_handle v){
         break;
       }
   }
-  
+
   Classification_type status=EXTERIOR;
   if (is_interior)
     status=v->is_on_chull() ? REGULAR : INTERIOR;
@@ -972,15 +972,15 @@ Fixed_alpha_shape_3<Dt>::set_vertex_status(Vertex_handle v){
   }
   v->set_classification_type(status);
 }
-  
+
 template <class Dt>
-void 
+void
 Fixed_alpha_shape_3<Dt>::update_vertex_status(Vertex_handle v,Classification_type edge_status){
   Classification_type status=v->get_classification_type();
   switch(status){
     case SINGULAR:
       switch(edge_status){
-        case INTERIOR: 
+        case INTERIOR:
           status=INTERIOR;
         break;
         case EXTERIOR:
@@ -993,15 +993,15 @@ Fixed_alpha_shape_3<Dt>::update_vertex_status(Vertex_handle v,Classification_typ
     break;
     case INTERIOR:
       switch(edge_status){
-        case INTERIOR: 
+        case INTERIOR:
         break;
         case EXTERIOR:
         case REGULAR:
         case SINGULAR:
           status=REGULAR;
       }
-    break;      
-    case EXTERIOR:      
+    break;
+    case EXTERIOR:
       switch(edge_status){
         case EXTERIOR:
         break;
@@ -1011,14 +1011,14 @@ Fixed_alpha_shape_3<Dt>::update_vertex_status(Vertex_handle v,Classification_typ
           status=REGULAR;
       }
     break;
-    case REGULAR:  
+    case REGULAR:
     break;
   }
   v->set_classification_type(status);
 }
 
 template <class Dt>
-void 
+void
 Fixed_alpha_shape_3<Dt>::finalize_status_of_vertex(Vertex_handle v)
 {
   Classification_type status=v->get_classification_type();
@@ -1028,21 +1028,21 @@ Fixed_alpha_shape_3<Dt>::finalize_status_of_vertex(Vertex_handle v)
   }
   if (status==INTERIOR || status==REGULAR)
     return;
-  
+
   //when dimension is 3 any vertex has at least one incident edge,
   // thus can't be SINGULAR again (because of update_vertex_status behavior)
   CGAL_assertion(v->get_classification_type()==EXTERIOR);
-  
+
   if ( is_vertex_Gabriel(v,Weighted_tag()) && is_gabriel_simplex_in_alpha_complex(v) )
     v->set_classification_type(SINGULAR);
 }
 
 template <class Dt>
-void 
+void
 Fixed_alpha_shape_3<Dt>::initialize_status_of_vertices()
 {
   #if 1 //approach avoiding extensive use of the map on 3hfli we move from 0.110983 to 0.082987
-  for( Finite_vertices_iterator vit = finite_vertices_begin(); vit != finite_vertices_end();	 ++vit) 
+  for( Finite_vertices_iterator vit = finite_vertices_begin(); vit != finite_vertices_end();         ++vit)
     vit->set_classification_type(SINGULAR);
   for (typename Edge_status_map::const_iterator eit=edge_status_map.begin();eit!=edge_status_map.end();++eit){
     Classification_type edge_status=eit->second;
@@ -1050,12 +1050,12 @@ Fixed_alpha_shape_3<Dt>::initialize_status_of_vertices()
     update_vertex_status(vhp.first,edge_status);
     update_vertex_status(vhp.second,edge_status);
   }
-  for( Finite_vertices_iterator vit = finite_vertices_begin(); vit != finite_vertices_end();	 ++vit)
+  for( Finite_vertices_iterator vit = finite_vertices_begin(); vit != finite_vertices_end();         ++vit)
     finalize_status_of_vertex(vit);
   #else
   //This method is slower because it always makes queries in the edge classification map
-  for( Finite_vertices_iterator vit = finite_vertices_begin(); 
-       vit != finite_vertices_end();	 ++vit) 
+  for( Finite_vertices_iterator vit = finite_vertices_begin();
+       vit != finite_vertices_end();         ++vit)
     set_vertex_status(vit);
   #endif
 }
@@ -1064,13 +1064,13 @@ Fixed_alpha_shape_3<Dt>::initialize_status_of_vertices()
 
 template <class Dt>
 std::ostream& operator<<(std::ostream& os,  const Fixed_alpha_shape_3<Dt>& A)
-  // Inserts the alpha shape into the stream `os' as an indexed face set. 
+  // Inserts the alpha shape into the stream `os' as an indexed face set.
   // Precondition: The insert operator must be defined for `Point'
 {
   typedef Fixed_alpha_shape_3<Dt>                  AS;
   typedef typename AS::Vertex_handle         Vertex_handle;
   typedef typename AS::Cell_handle           Cell_handle;
-  typedef typename AS::Alpha_shape_vertices_iterator 
+  typedef typename AS::Alpha_shape_vertices_iterator
                                              Alpha_shape_vertices_iterator;
   typedef typename AS::Alpha_shape_facets_iterator
                                              Alpha_shape_facets_iterator;
@@ -1103,8 +1103,8 @@ std::ostream& operator<<(std::ostream& os,  const Fixed_alpha_shape_3<Dt>& A)
     int i0 = Triangulation_utils_3::vertex_triple_index(i,0);
     int i1 = Triangulation_utils_3::vertex_triple_index(i,1);
     int i2 = Triangulation_utils_3::vertex_triple_index(i,2);
-    os << V[c->vertex(i0)] << ' ' 
-       << V[c->vertex(i1)] << ' ' 
+    os << V[c->vertex(i0)] << ' '
+       << V[c->vertex(i1)] << ' '
        << V[c->vertex(i2)] << std::endl;
   }
   return os;

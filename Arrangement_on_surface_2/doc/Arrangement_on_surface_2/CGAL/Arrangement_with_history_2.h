@@ -10,8 +10,8 @@ namespace CGAL {
  * class="textsc">Dcel</span>).  As is the case for the
  * `Arrangement_2<Traits,Dcel>`, each <span class="textsc">Dcel</span> vertex is
  * associated with a point and each edge is associated with an \f$ x\f$-monotone
- * curve whose interior is disjoint from all other edges and vertices. Each such
- * \f$ x\f$-monotone curve is a subcurve of some \f$ C \in \cal C\f$ - or may
+ * curve whose interior is disjoint from all other curves and points. Each such
+ * \f$ x\f$-monotone curve is a subcurve of some \f$ C \in \cal C\f$, or may
  * represent an overlap among several curves in \f$ \cal C\f$.
  *
  * The `Arrangement_with_history_2` class-template extends the `Arrangement_2`
@@ -150,14 +150,11 @@ template <typename Traits, typename Dcel, typename InputIterator>
 void insert(Arrangement_with_history_2<Traits,Dcel>& arr,
             InputIterator first, InputIterator last);
 
-
 /*! \ingroup PkgArrangementOnSurface2Funcs
  *
- * Removes a given curve from a given arrangement.
- *
- * The curve is specified by its handle `ch`, from the arrangement `arr`, by
- * deleting all the edges it induces. The function returns the number of deleted
- * edges.
+ * Removes a given curvespecified by its handle `ch`, from a given arrangement
+ * `arr`, deleting all the edges it induces. The function returns the number
+ * of deleted edges.
  */
 template <typename Traits, typename Dcel>
 Size remove_curve(Arrangement_with_history_2<Traits,Dcel>& arr,
@@ -171,8 +168,7 @@ Size remove_curve(Arrangement_with_history_2<Traits,Dcel>& arr,
  * arrangement. The function also constructs a consolidated set of curves that
  * induce `res`.
  *
- * \pre `res` does not refer to either `arr1` or `arr2` (that is, "self overlay"
- * is not supported).
+ * \pre `res` does not refer to either `arr1` or `arr2`.
  */
 template<typename Traits, typename Dcel1, typename Dcel2,
          typename ResDcel, typename OverlayTraits>

@@ -35,22 +35,22 @@ struct Fct
 void fct(const LCC& lcc)
 {
   vertex_range vr(vertices(lcc));
-  
+
   std::cout << "new for loop" << std::endl;
   for(vertex_descriptor vd : vr){
     std::cout << vd->point() << std::endl;
   }
-  
+
   std::cout << "boost::tie + std::for_each" << std::endl;
   vertex_iterator vb, ve;
-  
+
   boost::tie(vb,ve) = vertices_range(lcc);
   std::for_each(vb,ve, Fct());
 }
 
 int main(int argc, char** argv)
 {
-  LCC lcc;  
+  LCC lcc;
   CGAL::read_off((argc>1)?argv[1]:"cube.off", lcc);
 
   fct(lcc);

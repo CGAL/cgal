@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
   copy_mem copy_m = new int[n];
 
   //wiki markup header
-  std::cout << 
+  std::cout <<
     "{| \n"
     "! Library !! From Container !! To !! #Elements !! items/sec \n"
     "|- \n";
@@ -107,7 +107,7 @@ int main(int argc, char* argv[]) {
 
   vector2 v2(n);
   copy_mem2 copy_m2 = new non_trivial_cctor[n];
-  
+
 #ifndef CGAL_CFG_NO_CPP0X_COPY_N
   item_sec = test(v2.begin(), n, copy_m2, repeats, std_tag());
   format_output("stdlib", "vector<non_trivial_cctor>", "non_trivial_cctor*", n, item_sec);
@@ -119,7 +119,7 @@ int main(int argc, char* argv[]) {
 
   //wiki markup footer
   std::cout << "|}" << std::endl;
-  
+
 
 
   return EXIT_SUCCESS;

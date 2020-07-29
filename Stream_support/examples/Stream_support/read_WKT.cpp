@@ -19,10 +19,10 @@ int main(int argc, char* argv[])
 {
   typedef CGAL::Point_2<Kernel> Point;
   typedef std::vector<Point> MultiPoint;
-  
+
   typedef std::vector<Point> LineString;
   typedef std::vector<LineString> MultiLineString;
-  
+
   typedef CGAL::Polygon_with_holes_2<Kernel> Polygon;
   typedef std::vector<Polygon> MultiPolygon;
 
@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
     MultiLineString polylines;
     MultiPolygon polygons;
     CGAL::read_WKT(is, points,polylines,polygons);
-    
+
     for(Point p : points)
       std::cout<<p<<std::endl;
     for(LineString ls : polylines)
@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
           std::cout<<p<<std::endl;
     for(Polygon p : polygons)
       std::cout<<p<<std::endl;
-    
+
   }
   return 0;
 }

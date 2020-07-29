@@ -17,7 +17,8 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "shortest_paths_no_id.cpp" )
   create_single_source_cgal_program( "shortest_paths_with_id.cpp" )
   create_single_source_cgal_program( "shortest_paths.cpp" )
-  
+  create_single_source_cgal_program( "shortest_path_with_locate.cpp" )
+
   find_package( OpenMesh QUIET )
   if ( OpenMesh_FOUND )
     include( UseOpenMesh )
@@ -27,8 +28,8 @@ if ( CGAL_FOUND )
     message(STATUS "Examples that use OpenMesh will not be compiled.")
   endif()
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

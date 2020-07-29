@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>404</width>
+    <width>427</width>
     <height>482</height>
    </rect>
   </property>
@@ -736,7 +736,6 @@
         </widget>
        </item>
       </layout>
-      <zorder>tabWidget_2</zorder>
      </widget>
      <widget class="QWidget" name="tab_6">
       <attribute name="title">

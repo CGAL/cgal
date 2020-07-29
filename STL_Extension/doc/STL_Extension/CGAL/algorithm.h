@@ -135,12 +135,12 @@ namespace cpp98 {
 /*!
 \ingroup STLAlgos
 
-Replacement for <a href="http://en.cppreference.com/w/cpp/algorithm/random_shuffle">`std::random_shuffle()`</a> 
+Replacement for <a href="http://en.cppreference.com/w/cpp/algorithm/random_shuffle">`std::random_shuffle()`</a>
 which was deprecated in C++14, and removed by C++17.
-In the \stl it was replaced by `std::shuffle()`. 
+In the \stl it was replaced by `std::shuffle()`.
 
 \note The implementation in \cgal produces the same order on all platforms.
-*/  
+*/
 template <class RandomAccessIterator,
           class RandomGenerator>
 void
@@ -151,14 +151,14 @@ random_shuffle(RandomAccessIterator begin, RandomAccessIterator end,
 
 Replacement for <a href="http://en.cppreference.com/w/cpp/algorithm/random_shuffle">`std::random_shuffle()`</a>
 which was deprecated in C++14, and removed by C++17.
-In the \stl it was replaced by `std::shuffle()`. 
+In the \stl it was replaced by `std::shuffle()`.
 
 \note The implementation in \cgal produces the same order on all platforms.
-*/    
+*/
 template <class RandomAccessIterator>
 void
 random_shuffle(RandomAccessIterator begin, RandomAccessIterator end);
 } // namespace cpp98
-  
+
 } /* namespace CGAL */
 

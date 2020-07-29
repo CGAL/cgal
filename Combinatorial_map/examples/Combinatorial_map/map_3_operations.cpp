@@ -36,7 +36,7 @@ int main()
   path.push_back(cm.beta(dh2,2,1));
 
   CGAL_assertion( (cm.is_insertable_cell_2_in_cell_3
-		               (path.begin(),path.end())) );
+                               (path.begin(),path.end())) );
 
   Dart_handle dh3=cm.insert_cell_2_in_cell_3(path.begin(),path.end());
   CGAL_assertion( cm.is_valid() );
@@ -60,7 +60,7 @@ int main()
 
   // Display the combinatorial map characteristics.
   cm.display_characteristics(std::cout) << ", valid="
-					<< cm.is_valid() << std::endl;
+                                        << cm.is_valid() << std::endl;
 
   return EXIT_SUCCESS;
 }

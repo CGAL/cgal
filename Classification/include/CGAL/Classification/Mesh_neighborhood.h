@@ -35,7 +35,7 @@ namespace Classification {
     \brief Class that  generates models of `NeighborQuery` based on
     an input mesh.
 
-    \tparam FaceListGraph model of `FaceListGraph`. 
+    \tparam FaceListGraph model of `FaceListGraph`.
   */
 template <typename FaceListGraph>
 class Mesh_neighborhood
@@ -58,7 +58,7 @@ private:
     typedef typename std::unordered_set<face_descriptor, CGAL::Handle_hash_function> Set;
   private:
     Set* m_set;
-    
+
   public:
     Is_face_selected(Set* set = nullptr) : m_set (set) { }
 
@@ -66,13 +66,13 @@ private:
     {
       return (pm.m_set->find(k) != pm.m_set->end());
     }
-   
+
     inline friend void put (const Is_face_selected& pm, const key_type& k, const value_type&)
     {
       pm.m_set->insert(k);
     }
   };
-  
+
 public:
 
   /*!
@@ -200,7 +200,7 @@ private:
         *(output ++ ) = face(opposite(hd, m_mesh), m_mesh);
       }
   }
-  
+
   template <typename OutputIterator>
   void one_ring_neighbors (const face_descriptor& query, OutputIterator output) const
   {
@@ -223,10 +223,10 @@ private:
 
 
 };
-  
+
 
 }
-  
+
 }
 
 

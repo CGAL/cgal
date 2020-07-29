@@ -27,18 +27,18 @@ typedef CGAL::Shape_detection::Efficient_RANSAC<Traits> Efficient_ransac;
 typedef CGAL::Shape_detection::Plane<Traits>            Plane;
 
 struct Timeout_callback {
-  
+
   mutable int nb;
   mutable CGAL::Timer timer;
   const double limit;
-  
-  Timeout_callback(double limit) : 
+
+  Timeout_callback(double limit) :
   nb(0), limit(limit) {
     timer.start();
   }
-  
+
   bool operator()(double advancement) const {
-    
+
     // Avoid calling time() at every single iteration, which could
     // impact performances very badly.
     ++nb;
@@ -56,20 +56,20 @@ struct Timeout_callback {
 };
 
 int main (int argc, char** argv) {
-  
+
   std::cout << "Efficient RANSAC" << std::endl;
   const char* filename = (argc > 1) ? argv[1] : "data/cube.pwn";
 
   Pwn_vector points;
   std::ifstream stream(filename);
 
-  if (!stream || 
+  if (!stream ||
     !CGAL::read_xyz_points(
       stream,
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).
       normal_map(Normal_map()))) {
-      
+
     std::cerr << "Error: cannot read file cube.pwn!" << std::endl;
     return EXIT_FAILURE;
   }
@@ -78,10 +78,10 @@ int main (int argc, char** argv) {
   ransac.set_input(points);
   ransac.add_shape_factory<Plane>();
 
-  // Create callback that interrupts the algorithm 
+  // Create callback that interrupts the algorithm
   // if it takes more than half a second.
   Timeout_callback timeout_callback(0.5);
-  
+
   // Detect registered shapes with the default parameters.
   ransac.detect(Efficient_ransac::Parameters(), timeout_callback);
 

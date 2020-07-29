@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -19,6 +19,12 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/aff_transformation_tags.h>
 
+#ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATION_3
+#include <ostream>
+#endif
+#ifndef CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATION_3
+#include <istream>
+#endif
 namespace CGAL {
 
 template <class R_>

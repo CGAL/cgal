@@ -44,10 +44,10 @@ public:
     NodeGini() {}
     NodeGini(int depth, ParamType const* params) :
         Node< NodeGini<Splitter>, ForestParams, Splitter>(depth, params)
-    { 
+    {
     }
 
-    uint64_t gini_square_term(std::vector<uint64_t> const& frequencies) const 
+    uint64_t gini_square_term(std::vector<uint64_t> const& frequencies) const
     {
         return std::inner_product( frequencies.begin(), frequencies.end(), frequencies.begin(), uint64_t(0));
     }
@@ -75,7 +75,7 @@ public:
                   {
                     return a.first < b.first;
                   });
-                      
+
         // loop over data, update class distributions left&right
         for (size_t i_point = 1; i_point < data_points.size(); ++i_point) {
             int cls = data_points[i_point-1].second;
@@ -97,11 +97,13 @@ public:
         return std::make_pair(best_thresh, float(best_loss));
     }
 
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
     template <typename Archive>
     void serialize(Archive& ar, unsigned /* version */)
     {
         ar & boost::serialization::make_nvp("base",  boost::serialization::base_object< Node< NodeGini<Splitter>, ForestParams, Splitter > >(*this));
     }
+#endif
 };
 
 }

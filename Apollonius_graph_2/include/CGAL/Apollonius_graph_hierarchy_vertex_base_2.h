@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -43,7 +43,7 @@ public:
     : Base(), _up(), _down()
     {}
   Apollonius_graph_hierarchy_vertex_base_2(const Site_2& p,
-					   Face_handle f)
+                                           Face_handle f)
     : Base(p,f), _up(), _down()
     {}
   Apollonius_graph_hierarchy_vertex_base_2(const Site_2& p)

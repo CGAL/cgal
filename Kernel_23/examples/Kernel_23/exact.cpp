@@ -12,17 +12,17 @@ int main()
     q  = Point_2(1, 0.6);
     std::cout << (CGAL::collinear(p,q,r) ? "collinear\n" : "not collinear\n");
   }
-  
+
   {
     std::istringstream input("0 0.3   1 0.6   2 0.9");
     input >> p >> q >> r;
     std::cout << (CGAL::collinear(p,q,r) ? "collinear\n" : "not collinear\n");
   }
-  
+
   {
     q = CGAL::midpoint(p,r);
-    std::cout << (CGAL::collinear(p,q,r) ? "collinear\n" : "not collinear\n");   
+    std::cout << (CGAL::collinear(p,q,r) ? "collinear\n" : "not collinear\n");
   }
- 
+
   return 0;
 }

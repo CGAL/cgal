@@ -41,7 +41,7 @@ public:
     /*! \brief sets the data of the extended point */
     void set_data(int data) { m_data = data; }
   };
-  
+
   template <typename K, typename OldK>
   class New_construct_segment_2
   {
@@ -58,10 +58,10 @@ public:
     // Unfortunately it is needed for optimizing away copy-constructions,
     // due to current lack of delegating constructors in the C++ standard.
 
-    Rep operator()(CGAL::Return_base_tag, const Point_2 & p, 
+    Rep operator()(CGAL::Return_base_tag, const Point_2 & p,
                    const Point_2 & q) const
     { return Rep(p, q); }
-    Rep operator()(CGAL::Return_base_tag, const Point_2 & p, 
+    Rep operator()(CGAL::Return_base_tag, const Point_2 & p,
                    const Point_2 & q, int data) const
       { return Rep(p, q, data); }
 
@@ -78,7 +78,7 @@ public:
 
   Construct_segment_2 construct_segment_2_object() const
   { return Construct_segment_2(); }
-  
+
   /*! */
   template <typename Kernel2>
   struct Base { typedef My_cartesian_base<Kernel2, Kernel_base> Type; };
@@ -106,7 +106,7 @@ inline
 std::ostream & operator<<(std::ostream & o, const X_monotone_curve_2 & cv)
 {
   typedef Kernel::Construct_vertex_2 Construct_vertex_2;
-  
+
   Traits traits;
   Construct_vertex_2 construct_vertex = traits.construct_vertex_2_object();
   const Point_2 & source = construct_vertex(cv, 0);
@@ -153,6 +153,6 @@ int main()
     const X_monotone_curve_2 & cv = eit->curve();
     std::cout << cv << std::endl;
   }
-  
+
   return 0;
 }

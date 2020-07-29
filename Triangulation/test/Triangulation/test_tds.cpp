@@ -31,7 +31,7 @@ void test(const int d, const string & type)
     {
         vhs.push_back(tds.insert_increase_dimension(vhs[0]));
         ++nb_verts;
-        
+
         assert(i == tds.current_dimension());
         assert(!tds.is_vertex(Vertex_handle()));
         assert(!tds.is_full_cell(Full_cell_handle()));
@@ -91,7 +91,7 @@ void test(const int d, const string & type)
         cout << '\n' << tds.number_of_full_cells() << " full cells, ";
         cout << ' ' << nbfft << " facets.";
     }
- 
+
     // TEST File I/O
     std::ofstream fo((string("output-tds-")+type).c_str());
     if( d % 2 )

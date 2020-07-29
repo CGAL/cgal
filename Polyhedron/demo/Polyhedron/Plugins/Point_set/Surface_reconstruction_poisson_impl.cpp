@@ -25,14 +25,8 @@
 #include "SMesh_type.h"
 #include "Scene_points_with_normal_item.h"
 
-
-
 // Concurrency
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 template <typename Triangulation>
 class Marching_tets
@@ -45,9 +39,9 @@ private:
 
   typedef typename Triangulation::Cell_handle Cell_handle;
   typedef typename Triangulation::Finite_cells_iterator Finite_cells_iterator;
-  
+
   const Triangulation& m_tr;
-  
+
 public:
 
   Marching_tets (const Triangulation& tr) : m_tr (tr) { }
@@ -60,7 +54,7 @@ public:
 
     std::size_t nb_points = 0;
     std::map<Point_3, std::size_t> map_p2i;
-    
+
     for (Finite_cells_iterator cit = m_tr.finite_cells_begin();
          cit != m_tr.finite_cells_end(); ++ cit)
     {
@@ -131,17 +125,17 @@ private:
       }
     }
   }
-  
+
   bool extract_level_set_points(Cell_handle cell, const FT value, std::vector<Point_3>& points, Vector_3& direction) const
   {
     Point_3 point;
     if(level_set(cell, value, 0, 1, point, direction)) points.push_back(point);
-		if(level_set(cell, value, 0, 2, point, direction)) points.push_back(point);
-		if(level_set(cell, value, 0, 3, point, direction)) points.push_back(point);
-		if(level_set(cell, value, 1, 2, point, direction)) points.push_back(point);
-		if(level_set(cell, value, 1, 3, point, direction)) points.push_back(point);
-		if(level_set(cell, value, 2, 3, point, direction)) points.push_back(point);
-		return points.size() != 0;
+                if(level_set(cell, value, 0, 2, point, direction)) points.push_back(point);
+                if(level_set(cell, value, 0, 3, point, direction)) points.push_back(point);
+                if(level_set(cell, value, 1, 2, point, direction)) points.push_back(point);
+                if(level_set(cell, value, 1, 3, point, direction)) points.push_back(point);
+                if(level_set(cell, value, 2, 3, point, direction)) points.push_back(point);
+                return points.size() != 0;
   }
 
   bool level_set(Cell_handle cell, const FT value, const int i1, const int i2, Point_3& p, Vector_3& direction) const
@@ -219,18 +213,18 @@ SMesh* poisson_reconstruct(Point_set& points,
   // Computes implicit function
   //***************************************
 
- 
+
   std::cerr << "Computes Poisson implicit function "
             << "using " << (conjugate_gradient ? "Conjugate Gradient" : "Simplicial LDLT") << "..." << std::endl;
-              
-    
+
+
   // Creates implicit function from the point set.
   // Note: this method requires an iterator over points
   // + property maps to access each point's position and normal.
   Poisson_reconstruction_function function(points.begin_or_selection_begin(), points.end(),
                                            points.point_map(), points.normal_map());
 
-  bool ok = false;    
+  bool ok = false;
   if(conjugate_gradient)
   {
     CGAL::Eigen_solver_traits<Eigen::SimplicialCholesky<CGAL::Eigen_sparse_matrix<double>::EigenType> > solver;
@@ -257,10 +251,10 @@ SMesh* poisson_reconstruct(Point_set& points,
   task_timer.reset();
 
   SMesh* mesh = new SMesh;
-  
+
   if (marching_tets)
   {
-    
+
     std::cerr << "Marching tetrahedra..." << std::endl;
 
     std::vector<Point_3> vertices;
@@ -350,7 +344,7 @@ SMesh* poisson_reconstruct(Point_set& points,
     // Prints total reconstruction duration
     std::cerr << "Total reconstruction (implicit function + meshing): " << reconstruction_timer.time() << " seconds\n";
   }
-  
+
   //***************************************
   // Computes reconstruction error
   //***************************************
@@ -358,24 +352,23 @@ SMesh* poisson_reconstruct(Point_set& points,
   // Constructs AABB tree and computes internal KD-tree
   // data structure to accelerate distance queries
   AABB_tree tree(faces(*mesh).first, faces(*mesh).second, *mesh);
-  tree.accelerate_distance_queries();
 
   // Computes distance from each input point to reconstructed mesh
   double max_distance = DBL_MIN;
   double avg_distance = 0;
 
   std::set<typename boost::graph_traits<SMesh>::face_descriptor> faces_to_keep;
-    
+
   for (Point_set::const_iterator p=points.begin_or_selection_begin(); p!=points.end(); p++)
   {
     typename AABB_traits::Point_and_primitive_id pap = tree.closest_point_and_primitive (points.point (*p));
     double distance = std::sqrt(CGAL::squared_distance (pap.first, points.point(*p)));
-      
+
     max_distance = (std::max)(max_distance, distance);
     avg_distance += distance;
 
     typename boost::graph_traits<SMesh>::face_descriptor f = pap.second;
-    faces_to_keep.insert (f);  
+    faces_to_keep.insert (f);
   }
   avg_distance /= double(points.size());
 
@@ -387,7 +380,7 @@ SMesh* poisson_reconstruct(Point_set& points,
   {
     typename boost::graph_traits<SMesh>::face_iterator it = faces(*mesh).begin ();
     while (it != faces(*mesh).end ())
-	  {
+          {
       typename boost::graph_traits<SMesh>::face_iterator current = it ++;
 
       if (faces_to_keep.find (*current) == faces_to_keep.end ())
@@ -395,7 +388,7 @@ SMesh* poisson_reconstruct(Point_set& points,
         CGAL::Euler::remove_face(halfedge (*current, *mesh), *mesh);
       }
 
-	  }
+          }
 
   }
   return mesh;

@@ -40,7 +40,7 @@ int main ()
   Arrangement_2 arr2(&traits);
   insert(arr2, s1);
   insert(arr2, s2);
-  std::cout << traits;
+  std::cout << traits << std::endl;
 
   return 0;
 }

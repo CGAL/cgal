@@ -89,7 +89,7 @@ void find_face_from_vertices( const TDS & tds,
             face.set_full_cell(*cit);
             for( std::size_t i = 0; i <= fdim; ++i )
             {
-              face.set_index(static_cast<int>(i), 
+              face.set_index(static_cast<int>(i),
                              (*cit)->index(face_vertices[i]));
             }
             return;
@@ -120,7 +120,7 @@ int main()
 
     // The number of full cells should be twice the factorial of
     // |tds.current_dimension()+1|. Eg, 1440 for dimension 5.
-    std::cout << "Triangulation has " 
+    std::cout << "Triangulation has "
         << tds.number_of_full_cells() << " full cells";
     CGAL_assertion( tds.is_valid() );
     std::cout << " and is valid!"<<std::endl;

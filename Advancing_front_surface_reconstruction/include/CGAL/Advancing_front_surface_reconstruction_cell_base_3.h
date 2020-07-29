@@ -73,7 +73,7 @@ namespace CGAL {
     {
 #ifdef AFSR_FACET_NUMBER
       for(int i = 0; i < 4; i++){
-	_facet_number[i] = -1;
+        _facet_number[i] = -1;
       }
 #endif
     }
@@ -87,7 +87,7 @@ namespace CGAL {
     {
 #ifdef FACET_NUMBER
       for(int i = 0; i < 4; i++){
-	_facet_number[i] = -1;
+        _facet_number[i] = -1;
       }
 #endif
     }
@@ -103,7 +103,7 @@ namespace CGAL {
     {
 #ifdef AFSR_FACET_NUMBER
       for(int i = 0; i < 4; i++){
-	_facet_number[i] = -1;
+        _facet_number[i] = -1;
       }
 #endif
     }
@@ -116,9 +116,9 @@ namespace CGAL {
         delete[] _smallest_radius_facet_tab;
 #ifdef AFSR_LAZY
       if (_circumcenter != nullptr)
-	delete _circumcenter;
+        delete _circumcenter;
       if (_squared_radius != nullptr)
-	delete _squared_radius;
+        delete _squared_radius;
 #endif
     }
 
@@ -128,15 +128,15 @@ namespace CGAL {
     inline void clear()
     {
       if (_smallest_radius_facet_tab != nullptr)
-	delete[] _smallest_radius_facet_tab;
+        delete[] _smallest_radius_facet_tab;
       _smallest_radius_facet_tab = nullptr;
       selected_facet = 0;
 #ifdef AFSR_LAZY
       if (_circumcenter != nullptr)
-	delete _circumcenter;
+        delete _circumcenter;
       _circumcenter = nullptr;
       if (_squared_radius != nullptr)
-	delete _squared_radius;
+        delete _squared_radius;
       _squared_radius = nullptr;
 #endif
     }
@@ -145,18 +145,18 @@ namespace CGAL {
     inline coord_type smallest_radius(const int& i)
     {
       if (_smallest_radius_facet_tab == nullptr)
-	return -1;
+        return -1;
       return _smallest_radius_facet_tab[i];
     }
 
     inline void set_smallest_radius(const int& i, const coord_type& c)
     {
       if (_smallest_radius_facet_tab == nullptr)
-	{
-	  _smallest_radius_facet_tab = new coord_type[4];
-	  for(int i = 0; i < 4; i++)
-	    _smallest_radius_facet_tab[i] = -1;
-	}
+        {
+          _smallest_radius_facet_tab = new coord_type[4];
+          for(int i = 0; i < 4; i++)
+            _smallest_radius_facet_tab[i] = -1;
+        }
       _smallest_radius_facet_tab[i] = c;
     }
 
@@ -164,10 +164,10 @@ namespace CGAL {
     inline bool alloc_smallest_radius_tab(coord_type* ptr)
     {
       if (_smallest_radius_facet_tab==nullptr)
-	{
-	  _smallest_radius_facet_tab = ptr;
-	  return true;
-	}
+        {
+          _smallest_radius_facet_tab = ptr;
+          return true;
+        }
       return false;
     }
 

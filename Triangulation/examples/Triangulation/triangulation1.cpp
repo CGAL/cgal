@@ -6,7 +6,7 @@
        cit != t.full_cells_end(); ++cit )
     {
       if( ! t.is_infinite(cit) )
-	continue;
+        continue;
       Facet ft(cit, cit->index(t.infinite_vertex()));
       ++i;// |ft| is a facet of the convex hull
     }

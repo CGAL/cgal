@@ -51,7 +51,7 @@ public:
   /*!
    * \class Representation of a 3d triangle with cached data.
    */
-  class _Triangle_cached_3 
+  class _Triangle_cached_3
   {
   public:
 
@@ -114,7 +114,7 @@ public:
     {
       Kernel   kernel;
       CGAL_assertion(!kernel.collinear_3_object()(p1, p2, p3));
-      
+
       vertices[0] = p1;
       vertices[1] = p2;
       vertices[2] = p3;
@@ -148,7 +148,7 @@ public:
 
       CGAL_precondition(kernel.has_on_3_object() (pl, p1) &&
                         kernel.has_on_3_object() (pl, p2) &&
-                        kernel.has_on_3_object() (pl, p3));      
+                        kernel.has_on_3_object() (pl, p3));
       CGAL_precondition(!kernel.collinear_3_object()(p1, p2, p3));
 
       vertices[0] = p1;
@@ -238,7 +238,7 @@ public:
                                             self.project(vertices[1]),
                                             self.project(vertices[2]));
       is_seg = false;
-      
+
       return (*this);
     }
 
@@ -328,9 +328,9 @@ public:
   /***************************************************************************/
 
   /*!\brief
-   * Subdivide the given surface into envelope relevant xy-monotone 
+   * Subdivide the given surface into envelope relevant xy-monotone
    * parts, and insert them into the output iterator.
-   * 
+   *
    * The iterator value-type is Xy_monotone_surface_3
    */
   class Make_xy_monotone_3
@@ -354,7 +354,7 @@ public:
       if (!s.is_vertical())
         *o++ = s;
       else
-      {        
+      {
         // split a vertical triangle into one or two segments
         const Point_3 &a1 = s.vertex(0),
                        a2 = s.vertex(1),
@@ -406,7 +406,7 @@ public:
           (!m_is_lower && cr == LARGER))
         return p1;
       else
-        return p2;      
+        return p2;
     }
 
     // get the three triangle coordinates (ordered along 2d-line) and find
@@ -444,14 +444,14 @@ public:
       //
       // Putting the new points coordinates in equation (1) we get:
       //    (2)    (w3 - w1)(z2 - z1) - (z3 - z1)(w2 - w1) =
-      //           (-b*x3 + a*y3 + b*x1 - a*y1)(z2 - z1) - 
+      //           (-b*x3 + a*y3 + b*x1 - a*y1)(z2 - z1) -
       //                                 (z3 - z1)(-b*x2 + a*y2 + b*x1 - a*y1)
       //
       FT w1 = a*p1.y() - b*p1.x(),
          w2 = a*p2.y() - b*p2.x(),
          w3 = a*p3.y() - b*p3.x();
-      
-      Sign s1 = CGAL::sign((w3 - w1)*(p2.z() - p1.z()) - 
+
+      Sign s1 = CGAL::sign((w3 - w1)*(p2.z() - p1.z()) -
                            (p3.z() - p1.z())*(w2 - w1));
 
       // the points should not be collinear
@@ -461,7 +461,7 @@ public:
       // the segment
       Sign s2 = CGAL_NTS sign(w3 - w1);
       Sign s = CGAL_NTS sign(int(s1 * s2));
-                  
+
       bool use_one_segment = true;
       if ((m_is_lower  && s == NEGATIVE) ||
           (!m_is_lower && s == POSITIVE))
@@ -514,7 +514,7 @@ public:
       // the input xy-monotone surface should be either non-vertical or
       // a segment
       CGAL_assertion(s.is_xy_monotone());
-      
+
       if (!s.is_vertical())
       {
         // the projection is a triangle
@@ -531,21 +531,21 @@ public:
         X_monotone_curve_2 B(b2, b3);
         X_monotone_curve_2 C(b3, b1);
 
-        const Line_2& l1 = 
+        const Line_2& l1 =
           (A.is_directed_right()) ? A.line() : A.line().opposite();
-        const Line_2& l2 = 
+        const Line_2& l2 =
           (B.is_directed_right()) ? B.line() : B.line().opposite();
-        const Line_2& l3 = 
+        const Line_2& l3 =
           (C.is_directed_right()) ? C.line() : C.line().opposite();
 
         Oriented_side s1 = k.oriented_side_2_object()(l1, b3);
         Oriented_side s2 = k.oriented_side_2_object()(l2, b1);
         Oriented_side s3 = k.oriented_side_2_object()(l3, b2);
 
-        CGAL_assertion(s1 != ON_ORIENTED_BOUNDARY && 
+        CGAL_assertion(s1 != ON_ORIENTED_BOUNDARY &&
                        s2 != ON_ORIENTED_BOUNDARY &&
                        s3 != ON_ORIENTED_BOUNDARY);
-        
+
         *o++ = make_object(std::make_pair(A, s1));
         *o++ = make_object(std::make_pair(B, s2));
         *o++ = make_object(std::make_pair(C, s3));
@@ -556,18 +556,18 @@ public:
         // s shouldn't be a z-vertical segment
         const Point_3 &a1 = s.vertex(0),
                        a2 = s.vertex(1);
-        
+
         Point_2 b1 = parent->project(a1),
                 b2 = parent->project(a2);
         CGAL_assertion(b1 != b2);
-                
-        *o++ = make_object(std::make_pair(X_monotone_curve_2(b1, b2), 
+
+        *o++ = make_object(std::make_pair(X_monotone_curve_2(b1, b2),
                                           ON_ORIENTED_BOUNDARY));
       }
       return o;
-    }  
-  };  
-  
+    }
+  };
+
   /*! Get a Construct_projected_boundary_curves_2 functor object. */
   Construct_projected_boundary_2
   construct_projected_boundary_2_object() const
@@ -576,11 +576,11 @@ public:
   }
 
   /*!\brief
-   * Insert all the 2D projections (onto the xy-plane) of the 
+   * Insert all the 2D projections (onto the xy-plane) of the
    * intersection objects between s1 and s2 into the output iterator.
    *
    * The iterator value-type is Object. An Object may be:
-   * 1. A pair<X_monotone_curve_2,Intersection_type>, where the intersection 
+   * 1. A pair<X_monotone_curve_2,Intersection_type>, where the intersection
    * type is an enumeration that can take the values
    * {Transversal, Tangency, Unknown}.
    * 2. A Point_2 instance (in degenerate cases).
@@ -594,7 +594,7 @@ public:
     Construct_projected_intersections_2(const Self* p)
       : parent(p)
     {}
-    
+
     // insert into OutputIterator all the (2d) projections on the xy plane of
     // the intersection objects between the 2 surfaces
     // the data type of OutputIterator is Object
@@ -604,13 +604,13 @@ public:
                               OutputIterator o) const
     {
       CGAL_assertion(s1.is_xy_monotone() && s2.is_xy_monotone());
-      
+
       Kernel k;
       if (!parent->do_intersect(s1, s2))
       {
         return o;
       }
-        
+
       Object inter_obj = parent->intersection(s1,s2);
       if (inter_obj.is_empty())
       {
@@ -641,8 +641,8 @@ public:
       }
 
       return o;
-    }  
-  };  
+    }
+  };
 
   /*! Get a Construct_projected_intersections_2 functor object. */
   Construct_projected_intersections_2
@@ -652,7 +652,7 @@ public:
   }
 
   /*!\brief
-   * Check if the surface s1 is closer/equally distanced/farther 
+   * Check if the surface s1 is closer/equally distanced/farther
    * from the envelope with respect to s2 at the xy-coordinates of p/c.
    */
   class Compare_z_at_xy_3
@@ -666,21 +666,21 @@ public:
       : parent(p)
     {}
 
-    // check which of the surfaces is closer to the envelope at the xy 
+    // check which of the surfaces is closer to the envelope at the xy
     // coordinates of point
-    // (i.e. lower if computing the lower envelope, or upper if computing 
+    // (i.e. lower if computing the lower envelope, or upper if computing
     // the upper envelope)
     // precondition: the surfaces are defined in point
     Comparison_result operator()(const Point_2& p,
                                  const Xy_monotone_surface_3& surf1,
                                  const Xy_monotone_surface_3& surf2) const
-    {      
-      // we compute the points on the planes, and then compare their z 
+    {
+      // we compute the points on the planes, and then compare their z
       // coordinates
       const Plane_3& plane1 = surf1.plane();
       const Plane_3& plane2 = surf2.plane();
 
-      // if the 2 triangles have the same supporting plane, and they are not 
+      // if the 2 triangles have the same supporting plane, and they are not
       // vertical, then they have the same z coordinate over this point
       if ((plane1 == plane2 || plane1 == plane2.opposite()) &&
           !surf1.is_vertical())
@@ -690,24 +690,24 @@ public:
 
       Kernel k;
 
-      // Compute the intersetion between the vertical line and the given 
+      // Compute the intersetion between the vertical line and the given
       // surfaces
       Point_3 ip1 = parent->envelope_point_of_surface(p, surf1);
       Point_3 ip2 = parent->envelope_point_of_surface(p, surf2);
-      
+
       return k.compare_z_3_object()(ip1, ip2);
     }
 
-    // check which of the surfaces is closer to the envelope at the xy 
+    // check which of the surfaces is closer to the envelope at the xy
     // coordinates of cv
     // (i.e. lower if computing the lower envelope, or upper if computing the
     // upper envelope)
-    // precondition: the surfaces are defined in all points of cv, 
+    // precondition: the surfaces are defined in all points of cv,
     //               and the answer is the same for each of these points
     Comparison_result operator()(const X_monotone_curve_2& cv,
                                  const Xy_monotone_surface_3& surf1,
                                  const Xy_monotone_surface_3& surf2) const
-    {      
+    {
       // first try the endpoints, if cannot be sure, use the mid point
       Comparison_result res;
       res = parent->compare_z_at_xy_3_object()(cv.left(), surf1, surf2);
@@ -721,23 +721,23 @@ public:
           res = parent->compare_z_at_xy_3_object()(mid, surf1, surf2);
         }
       }
-      
+
       return res;
     }
-  
+
   };
-   
+
   /*! Get a Compare_z_at_xy_3 functor object. */
-  Compare_z_at_xy_3 
+  Compare_z_at_xy_3
   compare_z_at_xy_3_object() const
   {
     return Compare_z_at_xy_3(this);
   }
 
-  /*!\brief 
-   * Check if the surface s1 is closer/equally distanced/farther 
+  /*!\brief
+   * Check if the surface s1 is closer/equally distanced/farther
    * from the envelope with
-   * respect to s2 immediately above the curve c. 
+   * respect to s2 immediately above the curve c.
    */
   class Compare_z_at_xy_above_3
   {
@@ -749,16 +749,16 @@ public:
     Compare_z_at_xy_above_3(const Self* p)
       : parent(p)
     {}
-    
-    // check which of the surfaces is closer to the envelope on the points 
+
+    // check which of the surfaces is closer to the envelope on the points
     // above the curve cv
     // (i.e. lower if computing the lower envelope, or upper if computing the
     // upper envelope)
-    // precondition: the surfaces are defined above cv (to the left of cv, 
+    // precondition: the surfaces are defined above cv (to the left of cv,
     //               if cv is directed from min point to max point)
-    //               the choise between surf1 and surf2 for the envelope is 
-    //               the same for every point in the infinitesimal region 
-    //               above cv 
+    //               the choise between surf1 and surf2 for the envelope is
+    //               the same for every point in the infinitesimal region
+    //               above cv
     //               the surfaces are EQUAL over the curve cv
     Comparison_result
     operator()(const X_monotone_curve_2& cv,
@@ -777,15 +777,15 @@ public:
       CGAL_precondition(parent->compare_z_at_xy_3_object()
                               (cv.target(), surf1, surf2) == EQUAL);
 
-      
+
       if (parent->do_overlap(surf1, surf2))
       {
         return EQUAL;
       }
 
       // now we must have 2 different non-vertical planes:
- 	    // plane1: a1*x + b1*y + c1*z + d1 = 0  , c1 != 0
- 	    // plane2: a2*x + b2*y + c2*z + d2 = 0  , c2 != 0
+             // plane1: a1*x + b1*y + c1*z + d1 = 0  , c1 != 0
+             // plane2: a2*x + b2*y + c2*z + d2 = 0  , c2 != 0
 
       const Plane_3& plane1 = surf1.plane();
       const Plane_3& plane2 = surf2.plane();
@@ -793,9 +793,9 @@ public:
       FT a1 = plane1.a(), b1 = plane1.b(), c1 = plane1.c();
       FT a2 = plane2.a(), b2 = plane2.b(), c2 = plane2.c();
 
- 	    // our line is a3*x + b3*y + c3 = 0
- 	    // it is assumed that the planes intersect over this line
-      const Line_2& line = cv.line(); 
+             // our line is a3*x + b3*y + c3 = 0
+             // it is assumed that the planes intersect over this line
+      const Line_2& line = cv.line();
       FT a3 = line.a(), b3 = line.b(), c3 = line.c();
 
       // if the line was parallel to the y-axis (i.e x = const),
@@ -826,20 +826,20 @@ public:
       // since detA>0 we can omit it.
       //
       Sign s1 = CGAL_NTS sign((a2*a3+b2*b3)/c2-(a1*a3+b1*b3)/c1);
-      
+
       // We only need to make sure that w is in the correct direction
       // (going from down to up)
       // the original segment endpoints p1=(x1,y1) and p2=(x2,y2)
       // are transformed to (v1,w1) and (v2,w2), so we need that w2 > w1
       // (otherwise the result should be multiplied by -1)
-      
+
       const Point_2& p1 = cv.left();
       const Point_2& p2 = cv.right();
       FT x1 = p1.x(), y1 = p1.y(), x2 = p2.x(), y2 = p2.y();
 
       Sign s2 = CGAL_NTS sign(-b3*x1+a3*y1-(-b3*x2+a3*y2));
       return s1 * s2;
-    }  
+    }
   };
 
 
@@ -850,10 +850,10 @@ public:
     return Compare_z_at_xy_above_3(this);
   }
 
-  /*!\brief 
-   * Check if the surface s1 is closer/equally distanced/farther 
+  /*!\brief
+   * Check if the surface s1 is closer/equally distanced/farther
    * from the envelope with
-   * respect to s2 immediately below the curve c. 
+   * respect to s2 immediately below the curve c.
    */
   class Compare_z_at_xy_below_3
   {
@@ -865,13 +865,13 @@ public:
     Compare_z_at_xy_below_3(const Self* p)
       : parent(p)
     {}
-    
+
     Comparison_result
     operator()(const X_monotone_curve_2& cv,
                const Xy_monotone_surface_3& surf1,
                const Xy_monotone_surface_3& surf2) const
     {
-      Comparison_result left_res = 
+      Comparison_result left_res =
         parent->compare_z_at_xy_above_3_object()(cv, surf1, surf2);
       return CGAL::opposite(left_res);
 
@@ -881,7 +881,7 @@ public:
         return LARGER;
       else
         return EQUAL;*/
-    }  
+    }
   };
 
   /*! Get a Compare_z_at_xy_below_3 functor object. */
@@ -909,7 +909,7 @@ public:
 //  {
 //    return Is_vertical_3();
 //  }
-  
+
   /***************************************************************************/
 
   // public method needed for testing
@@ -919,8 +919,8 @@ public:
   {
   public:
     // checks if point is in the xy-range of surf
-    bool operator()(const Point_2& point, 
-		    const Xy_monotone_surface_3& surf) const
+    bool operator()(const Point_2& point,
+                    const Xy_monotone_surface_3& surf) const
 
     {
       Kernel k;
@@ -960,7 +960,7 @@ public:
   Segment_2 project (const Segment_3& seg) const
   {
     typedef typename Kernel::Construct_vertex_3 Construct_vertex_3;
-    
+
     Kernel              k;
     Construct_vertex_3  vertex_on = k.construct_vertex_3_object();
 
@@ -968,7 +968,7 @@ public:
     const Point_3      q1 = (vertex_on (seg, 1));
     const Point_2      p0 (q0.x(), q0.y());
     const Point_2      p1 (q1.x(), q1.y());
-    
+
     return (k.construct_segment_2_object() (p0, p1));
   }
 
@@ -976,7 +976,7 @@ public:
   {
     return Point_2(obj.x(), obj.y());
   }
-  
+
   Triangle_2 project(const Xy_monotone_surface_3& triangle_3) const
   {
     const Point_3&  end1 = triangle_3.vertex(0),
@@ -991,8 +991,8 @@ public:
 
   // triangles overlap if they lie on the same plane and intersect on it.
   // this test is only needed for non-vertical triangles
-  bool do_overlap(const Xy_monotone_surface_3& s1, 
-		              const Xy_monotone_surface_3& s2) const
+  bool do_overlap(const Xy_monotone_surface_3& s1,
+                              const Xy_monotone_surface_3& s2) const
   {
     CGAL_precondition(s1.is_xy_monotone() && !s1.is_vertical());
     CGAL_precondition(s2.is_xy_monotone() && !s2.is_vertical());
@@ -1016,7 +1016,7 @@ public:
     if (!b) return false;
 
     b = k.coplanar_3_object()(a1, b1, c1, c2);
-    return b;    
+    return b;
   }
 
   // check whethe two xy-monotone surfaces (3D-triangles or segments)
@@ -1040,11 +1040,11 @@ public:
       // in case of two segments, we don't use easy do-intersect test
       return true;
   }
-  
+
   // intersect two xy-monotone surfaces (3D-triangles or segments)
   // if the triangles overlap, the result is empty
   // the result can be a segment or a point
-  Object intersection(const Xy_monotone_surface_3& s1, 
+  Object intersection(const Xy_monotone_surface_3& s1,
                       const Xy_monotone_surface_3& s2) const
   {
     CGAL_precondition(s1.is_xy_monotone());
@@ -1063,7 +1063,7 @@ public:
       Object res = intersection_of_segments(s1, s2);
       return res;
     }
-  
+
     // if both triangles lie on the same (non-vertical) plane, they overlap
     // we don't care about overlaps, because they are not passed to the
     // algorithm anyway, so we save the costly computation
@@ -1072,12 +1072,12 @@ public:
     if  (p1 == p2 || p1 == p2.opposite())
         return Object();
 
-    // calculate intersection between a triangle and the other triangle's 
+    // calculate intersection between a triangle and the other triangle's
     // supporting plane
-    // if there is no intersection - then the triangles have no intersection 
+    // if there is no intersection - then the triangles have no intersection
     // between them.
     Object inter_obj = intersection(p1, s2);
-      
+
     if (inter_obj.is_empty())
       return Object();
 
@@ -1100,58 +1100,58 @@ public:
 
       inter_obj = intersection(p2, s1);
 
-      // if there is no intersection - then the triangles have no intersection 
+      // if there is no intersection - then the triangles have no intersection
       // between them.
       if (inter_obj.is_empty())
-      	return Object();
-      
+              return Object();
+
       if (assign_obj(inter_point, inter_obj))
       {
-      	// if the intersection is a point, which lies on the segment,
-      	// than it is the result,
-      	// otherwise, empty result
-      	 if (k.has_on_3_object()(inter_seg, inter_point))
-      	   return make_object(inter_point);
-      	 else
-      	   return Object();
+              // if the intersection is a point, which lies on the segment,
+              // than it is the result,
+              // otherwise, empty result
+               if (k.has_on_3_object()(inter_seg, inter_point))
+                 return make_object(inter_point);
+               else
+                 return Object();
       }
       else
       {
-      	// both plane-triangle intersections are segments, which are collinear,
-      	// and lie on the line which is the intersection of the two supporting
-      	// planes
+              // both plane-triangle intersections are segments, which are collinear,
+              // and lie on the line which is the intersection of the two supporting
+              // planes
         Segment_3 inter_seg2;
-      	CGAL_assertion(assign_obj(inter_seg2, inter_obj));
-      	assign_obj(inter_seg2, inter_obj);
-	
-      	Point_3 min1 = k.construct_min_vertex_3_object()(inter_seg),
-      	        max1 = k.construct_max_vertex_3_object()(inter_seg);
-      	Point_3 min2 = k.construct_min_vertex_3_object()(inter_seg2),
-      	        max2 = k.construct_max_vertex_3_object()(inter_seg2); 
+              CGAL_assertion(assign_obj(inter_seg2, inter_obj));
+              assign_obj(inter_seg2, inter_obj);
 
-       	CGAL_assertion((k.collinear_3_object()(min1, min2, max1) &&
+              Point_3 min1 = k.construct_min_vertex_3_object()(inter_seg),
+                      max1 = k.construct_max_vertex_3_object()(inter_seg);
+              Point_3 min2 = k.construct_min_vertex_3_object()(inter_seg2),
+                      max2 = k.construct_max_vertex_3_object()(inter_seg2);
+
+               CGAL_assertion((k.collinear_3_object()(min1, min2, max1) &&
                          k.collinear_3_object()(min1, max2, max1)));
 
-       	// we need to find the overlapping part, if exists
-       	Point_3 min, max;
-       	if (k.less_xyz_3_object()(min1, min2))
-       	  min = min2;
-       	else
-       	  min = min1;
-       	if (k.less_xyz_3_object()(max1, max2))
-       	  max = max1;
-       	else
-       	  max = max2;
+               // we need to find the overlapping part, if exists
+               Point_3 min, max;
+               if (k.less_xyz_3_object()(min1, min2))
+                 min = min2;
+               else
+                 min = min1;
+               if (k.less_xyz_3_object()(max1, max2))
+                 max = max1;
+               else
+                 max = max2;
 
-       	Object res;
-       	Comparison_result comp_res = k.compare_xyz_3_object()(min, max);
-       	if (comp_res == EQUAL)
-       	  res = make_object(min);
-       	else if (comp_res == SMALLER)
-       	  res = make_object(Segment_3(min, max));
-       	// else - empty result
+               Object res;
+               Comparison_result comp_res = k.compare_xyz_3_object()(min, max);
+               if (comp_res == EQUAL)
+                 res = make_object(min);
+               else if (comp_res == SMALLER)
+                 res = make_object(Segment_3(min, max));
+               // else - empty result
 
-       	return res;
+               return res;
       }
     }
   }
@@ -1212,27 +1212,27 @@ public:
             v2 = plane.to_2d(s1.vertex(1));
     Segment_2 seg1_t(v1, v2);
 
-  	Point_2 u1 = plane.to_2d(s2.vertex(0)),
+          Point_2 u1 = plane.to_2d(s2.vertex(0)),
             u2 = plane.to_2d(s2.vertex(1));
-  	Segment_2 seg2_t(u1, u2);
+          Segment_2 seg2_t(u1, u2);
 
-  	Object inter_obj = k.intersect_2_object()(seg1_t, seg2_t);
-  	Assign_2 assign_2 = k.assign_2_object();
-  	if (inter_obj.is_empty())
-  		return inter_obj;
+          Object inter_obj = k.intersect_2_object()(seg1_t, seg2_t);
+          Assign_2 assign_2 = k.assign_2_object();
+          if (inter_obj.is_empty())
+                  return inter_obj;
 
-  	Point_2 inter_point;
+          Point_2 inter_point;
     Segment_2 inter_segment;
 
     if (assign_2(inter_point, inter_obj))
-  	  return make_object(plane.to_3d(inter_point));
+            return make_object(plane.to_3d(inter_point));
     else
     {
       CGAL_assertion_code(bool b = )
       assign_2(inter_segment, inter_obj);
       CGAL_assertion(b);
-      
-      return make_object 
+
+      return make_object
         (Segment_3
          (plane.to_3d(k.construct_vertex_2_object()(inter_segment, 0)),
           plane.to_3d(k.construct_vertex_2_object()(inter_segment, 1))));
@@ -1244,8 +1244,8 @@ public:
   // and a (non degenerate) plane in 3d
   // the result object can be empty, a point, a segment or the original
   // triangle
-  Object intersection(const Plane_3& pl, 
-		                  const Xy_monotone_surface_3& tri) const
+  Object intersection(const Plane_3& pl,
+                                  const Xy_monotone_surface_3& tri) const
   {
     Kernel k;
     CGAL_precondition( tri.is_xy_monotone() );
@@ -1253,9 +1253,9 @@ public:
 
     if (tri.is_segment())
       return k.intersect_3_object()(pl, static_cast<Segment_3>(tri));
-      
+
     // first, check for all 3 vertices of tri on which side of pl they lie on
-    int points_on_plane[3];    // contains the indices of vertices that lie 
+    int points_on_plane[3];    // contains the indices of vertices that lie
                                // on pl
     int points_on_positive[3]; // contains the indices of vertices that lie on
                                // the positive side of pl
@@ -1278,7 +1278,7 @@ public:
         points_on_plane[n_points_on_plane++] = i;
     }
 
-    CGAL_assertion(n_points_on_plane + 
+    CGAL_assertion(n_points_on_plane +
             n_points_on_positive + n_points_on_negative == 3);
 
     // if all vertices of tri lie on the same size (positive/negative) of pl,
@@ -1322,7 +1322,7 @@ public:
 
       // create the resulting segment
       // (between tri[point_on_plane_idx] and inter_point)
-      return make_object(Segment_3(tri.vertex(point_on_plane_idx), 
+      return make_object(Segment_3(tri.vertex(point_on_plane_idx),
                                    inter_point));
 
     }
@@ -1368,7 +1368,7 @@ public:
     Kernel k;
     return k.compare_z_3_object()(v1, v2);
   }
-  
+
   // find the envelope point of the surface over the given point
   // precondition: the surface is defined in point
   Point_3
@@ -1429,7 +1429,7 @@ public:
     // and transform it back to plane.
     const Point_3& v1 = s.vertex(0);
     const Point_3& v2 = s.vertex(1);
-    
+
     Point_2 t1 = plane.to_2d(v1);
     Point_2 t2 = plane.to_2d(v2);
 
@@ -1461,7 +1461,7 @@ public:
   /***************************************************************************/
   // for vertical decomposition
   /***************************************************************************/
-  
+
   class Construct_vertical_2
   {
   public:
@@ -1477,7 +1477,7 @@ public:
   {
     return Construct_vertical_2();
   }
- 
+
 
   Point_2 vertical_ray_shoot_2 (const Point_2& pt,
                                 const X_monotone_curve_2& cv) const
@@ -1508,7 +1508,7 @@ public:
 
 
 /*!
- * \class A representation of a triangle, as used by the 
+ * \class A representation of a triangle, as used by the
  * Env_triangle_traits_3 traits-class.
  */
 template <class Kernel_>
@@ -1659,4 +1659,4 @@ InputStream& operator>> (InputStream& is, Env_triangle_3<Kernel>& tri)
 
 } //namespace CGAL
 
-#endif 
+#endif

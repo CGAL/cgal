@@ -11,10 +11,10 @@ int main(){
 
   typedef CGAL::Polynomial_type_generator<Int,1>::Type Poly_1;
   typedef CGAL::Polynomial_traits_d<Poly_1>            PT_1;
-  
-  //construction using shift 
+
+  //construction using shift
   Poly_1 x = PT_1::Shift()(Poly_1(1),1); // x^1
-  
+
   Poly_1 F // = (x+1)^2*(x-1)*(2x-1)=2x^4+x^3-3x^2-x+1
     =   2 * CGAL::ipower(x,4) + 1 * CGAL::ipower(x,3)
       - 3 * CGAL::ipower(x,2) - 1 * CGAL::ipower(x,1)
@@ -34,9 +34,9 @@ int main(){
   // Real root counting:
   PT_1::Principal_sturm_habicht_sequence stha;
   std::vector<Int> psc;
-  
+
   stha(F,std::back_inserter(psc));
-  
+
   int roots = CGAL::number_of_real_roots(psc.begin(),psc.end());
 
   std::cout << "The number of real roots of F is: " << roots << std::endl; // 3
@@ -46,5 +46,5 @@ int main(){
   std::cout << "The number of real roots of G is: " << roots << std::endl; // 2
 
   return 0;
-  
+
 }

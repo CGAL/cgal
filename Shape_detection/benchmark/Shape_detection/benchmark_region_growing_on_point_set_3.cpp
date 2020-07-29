@@ -38,9 +38,9 @@ using Timer  = CGAL::Timer;
 using Region = std::vector<std::size_t>;
 
 void create_input_range(
-  const std::size_t num_copies, 
-  const Input_range& input, 
-  Input_range& output, 
+  const std::size_t num_copies,
+  const Input_range& input,
+  Input_range& output,
   const bool save = false) {
 
   const Point_2 a = Point_2(-0.25147, -0.49995);
@@ -48,7 +48,7 @@ void create_input_range(
 
   output.reserve(num_copies * input.size());
   for (std::size_t i = 0; i < num_copies; ++i) {
-    
+
     const FT x1 = i * a.x();
     const FT y1 = i * a.y();
 
@@ -60,7 +60,7 @@ void create_input_range(
 
     const Vector_2 tr = Vector_2(p1, p2);
     for (const auto& item : input) {
-      
+
       const Point_3& p = item.first;
       const Vector_3& n = item.second;
 
@@ -74,24 +74,24 @@ void create_input_range(
   }
 
   if (save) {
-    const std::string path = 
+    const std::string path =
     "path_to_out_folder/";
-    const std::string fullpath = 
+    const std::string fullpath =
     path + "bench_point_set_3-" + std::to_string(num_copies) + ".xyz";
 
     std::ofstream out(fullpath);
     for (const auto& item : output)
       out << item.first << " " << item.second << std::endl;
     out.close();
-  } 
+  }
 }
 
 void benchmark_region_growing_on_point_set_3(
-  const std::size_t num_copies, 
-  const Input_range& input, 
-  const std::size_t k, 
-  const FT distance_threshold, 
-  const FT angle_threshold, 
+  const std::size_t num_copies,
+  const Input_range& input,
+  const std::size_t k,
+  const FT distance_threshold,
+  const FT angle_threshold,
   const std::size_t min_region_size) {
 
   Input_range input_range;
@@ -99,13 +99,13 @@ void benchmark_region_growing_on_point_set_3(
 
   // Create instances of the parameter classes.
   Neighbor_query neighbor_query(
-    input_range, 
+    input_range,
     k);
 
   Region_type region_type(
-    input_range, 
+    input_range,
     distance_threshold, angle_threshold, min_region_size);
-    
+
   // Create an instance of the region growing class.
   Region_growing region_growing(
     input_range, neighbor_query, region_type);
@@ -113,25 +113,34 @@ void benchmark_region_growing_on_point_set_3(
   // Run the algorithm.
   Timer timer;
   std::vector<Region> regions;
-  
+
   timer.start();
   region_growing.detect(std::back_inserter(regions));
   timer.stop();
 
-  std::cout << "Time ( " << input_range.size() <<  " points ): " 
+  std::cout << "Time ( " << input_range.size() <<  " points ): "
   << timer.time() << " seconds" << std::endl;
 }
 
 int main(int argc, char *argv[]) {
-    
+
   // Load xyz data either from a local folder or a user-provided file.
   std::ifstream in(argc > 1 ? argv[1] : "data/point_set_3.xyz");
   CGAL::set_ascii_mode(in);
 
+  if (!in) {
+    std::cout <<
+    "Error: cannot read the file point_set_3.xyz!" << std::endl;
+    std::cout <<
+    "You can either create a symlink to the data folder or provide this file by hand."
+    << std::endl << std::endl;
+    return EXIT_FAILURE;
+  }
+
   Input_range input;
   Point_3 p; Vector_3 n;
 
-  while (in >> p >> n) 
+  while (in >> p >> n)
     input.push_back(std::make_pair(p, n));
   in.close();
 
@@ -143,19 +152,19 @@ int main(int argc, char *argv[]) {
 
   // Run benchmarks.
   std::cout << std::endl;
-  
-  benchmark_region_growing_on_point_set_3(1, input, 
+
+  benchmark_region_growing_on_point_set_3(1, input,
   k, distance_threshold, angle_threshold, min_region_size);
 
-  benchmark_region_growing_on_point_set_3(2, input, 
+  benchmark_region_growing_on_point_set_3(2, input,
   k, distance_threshold, angle_threshold, min_region_size);
 
-  benchmark_region_growing_on_point_set_3(3, input, 
+  benchmark_region_growing_on_point_set_3(3, input,
   k, distance_threshold, angle_threshold, min_region_size);
 
-  benchmark_region_growing_on_point_set_3(4, input, 
+  benchmark_region_growing_on_point_set_3(4, input,
   k, distance_threshold, angle_threshold, min_region_size);
-  
+
   std::cout << std::endl << std::endl;
   return EXIT_SUCCESS;
 }

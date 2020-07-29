@@ -5,7 +5,7 @@
 #include <QColorDialog>
 
 #include <QGridLayout>
-#include <QGroupBox> 
+#include <QGroupBox>
 
 #include <QLabel>
 #include <QLineEdit>

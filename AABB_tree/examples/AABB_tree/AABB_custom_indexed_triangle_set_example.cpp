@@ -24,7 +24,7 @@ struct My_point {
         : x(_x), y(_y), z(_z) {}
 };
 
-// The triangles are stored in a flat array of indices 
+// The triangles are stored in a flat array of indices
 // referring to an array of points: three consecutive
 // indices represent a triangle.
 typedef std::vector<size_t>::const_iterator Point_index_iterator;
@@ -71,7 +71,7 @@ private:
 public:
     My_triangle_primitive() {} // default constructor needed
 
-    // the following constructor is the one that receives the iterators from the 
+    // the following constructor is the one that receives the iterators from the
     // iterator range given as input to the AABB_tree
     My_triangle_primitive(Triangle_iterator a)
         : m_it(a) {}
@@ -80,7 +80,7 @@ public:
 
     // on the fly conversion from the internal data to the CGAL types
     Datum datum() const
-    { 
+    {
         Point_index_iterator p_it = m_it.base();
         const My_point& mp = (*point_container)[*p_it];
         Point p(mp.x, mp.y, mp.z);
@@ -96,7 +96,7 @@ public:
 
     // one point which must be on the primitive
     Point reference_point() const
-    { 
+    {
         const My_point& mp = (*point_container)[*m_it];
         return Point(mp.x, mp.y, mp.z);
     }
@@ -121,16 +121,16 @@ int main()
     points.push_back(a);
     points.push_back(b);
     points.push_back(c);
-    points.push_back(d); 
+    points.push_back(d);
 
     // generates indexed triangle set
     std::vector<size_t> triangles;
-    triangles.push_back(0); triangles.push_back(1); triangles.push_back(2);  
-    triangles.push_back(0); triangles.push_back(1); triangles.push_back(3);  
-    triangles.push_back(0); triangles.push_back(3); triangles.push_back(2);  
+    triangles.push_back(0); triangles.push_back(1); triangles.push_back(2);
+    triangles.push_back(0); triangles.push_back(1); triangles.push_back(3);
+    triangles.push_back(0); triangles.push_back(3); triangles.push_back(2);
 
     // constructs AABB tree
-    Tree tree(Triangle_iterator(triangles.begin()), 
+    Tree tree(Triangle_iterator(triangles.begin()),
         Triangle_iterator(triangles.end()));
 
     // counts #intersections

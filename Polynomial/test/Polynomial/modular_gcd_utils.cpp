@@ -19,7 +19,7 @@
 //
 // ============================================================================
 
-/*! \file CGAL/Polynomial/modular_gcd_utils.C 
+/*! \file CGAL/Polynomial/modular_gcd_utils.C
   test for the function euclidean_division_obstinate
 */
 
@@ -48,11 +48,11 @@ void test_modular_gcd_utils() {
   typedef typename AT::Integer Integer;
   typedef Integer NT;
 
-  {  
+  {
     // testing integers
     Integer f, g, q, r;
-        
-    // random integers 
+
+    // random integers
     for(int l=0;l<100;l++){
       f = CGAL::internal::rand_int<Integer>(my_random.get_int(10,1000));
       g = CGAL::internal::rand_int<Integer>(my_random.get_int(10,1000));
@@ -60,23 +60,23 @@ void test_modular_gcd_utils() {
       assert(f==g*q+r);
     }
   }
-    
-  {  
+
+  {
     typedef CGAL::Polynomial<Integer> Poly;
     typedef typename CGAL::Modular_traits<Poly>::Residue_type   MPoly;
     CGAL::Residue::set_current_prime(43);
-        
+
     Poly a, b;
     MPoly mQ, mR;
 
     a = Poly(0);
     b = Poly(NT(122),NT(72));
-  
+
     MPoly ma = CGAL::modular_image(a);
     MPoly mb = CGAL::modular_image(b);
     CGAL::internal::euclidean_division_obstinate(ma, mb, mQ, mR);
     assert(ma==mb*mQ+mR);
-        
+
     // random polynomials with integer coefficients
     Poly   f, g;
     int l;
@@ -85,7 +85,7 @@ void test_modular_gcd_utils() {
     for(l=0;l<100;l++){
       f = CGAL::internal::rand_Poly_int<Integer>(my_random.get_int(10,1000),
           my_random.get_int(1,15));
-      g = CGAL::internal::rand_Poly_int<Integer>(my_random.get_int(10,1000), 
+      g = CGAL::internal::rand_Poly_int<Integer>(my_random.get_int(10,1000),
           my_random.get_int(1,10));
       CGAL::Residue::set_current_prime(4483);
       MPoly mf= CGAL::modular_image(f);
@@ -96,23 +96,23 @@ void test_modular_gcd_utils() {
     }
   }
 
-  { 
+  {
     typedef CGAL::Sqrt_extension<Integer,Integer> EXT;
     typedef CGAL::Polynomial<EXT>  Poly_Ext;
     typedef typename CGAL::Modular_traits<Poly_Ext>::Residue_type   MPoly_Ext;
     CGAL::Residue::set_current_prime(43);
-        
+
     Poly_Ext a, b;
     MPoly_Ext mQ, mR;
 
     a = Poly_Ext(0);
     b = Poly_Ext(NT(122),NT(72),NT(17));
-  
+
     MPoly_Ext ma = CGAL::modular_image(a);
     MPoly_Ext mb = CGAL::modular_image(b);
     CGAL::internal::euclidean_division_obstinate(ma, mb, mQ, mR);
     assert(ma == mb*mQ+mR);
-  
+
     // random polynomials with sqrt coefficients
     Poly_Ext   f, g;
     int l;
@@ -133,19 +133,19 @@ void test_modular_gcd_utils() {
 }
 int main(){
   // Enforce IEEE double precision and to nearest before using modular arithmetic
-  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);  
- 
-#ifdef CGAL_USE_LEDA
-  test_modular_gcd_utils<CGAL::LEDA_arithmetic_kernel>();       
-#endif // CGAL_USE_LEDA    
+  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
 
-#ifdef CGAL_USE_CORE      
+#ifdef CGAL_USE_LEDA
+  test_modular_gcd_utils<CGAL::LEDA_arithmetic_kernel>();
+#endif // CGAL_USE_LEDA
+
+#ifdef CGAL_USE_CORE
   test_modular_gcd_utils<CGAL::CORE_arithmetic_kernel>();
 #endif // Lis_HAVE_CORE
-     
+
   return 0;
 }
 
 
 // EOF
- 
+

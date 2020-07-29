@@ -22,17 +22,10 @@
 
 #include <CGAL/basic.h>
 
-#include <set>
-
-#include <boost/bind.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/mpl/identity.hpp>
-#include <boost/utility/result_of.hpp>
-
 #ifdef CGAL_LINKED_WITH_TBB
 # include <CGAL/point_generators_3.h>
 # include <tbb/parallel_for.h>
-# include <tbb/task_scheduler_init.h>
+# include <thread>
 # include <tbb/enumerable_thread_specific.h>
 # include <tbb/concurrent_vector.h>
 #endif
@@ -41,7 +34,6 @@
 #include <CGAL/Regular_triangulation_vertex_base_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/internal/Has_nested_type_Bare_point.h>
-#include <CGAL/internal/boost/function_property_map.hpp>
 
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -62,6 +54,20 @@
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
 #include <CGAL/point_generators_3.h>
 #endif
+
+#include <boost/bind.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/identity.hpp>
+#include <boost/property_map/function_property_map.hpp>
+#include <boost/utility/result_of.hpp>
+
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <set>
+#include <thread>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 
@@ -147,6 +153,7 @@ public:
   using Tr_Base::geom_traits;
 #endif
   using Tr_Base::adjacent_vertices;
+  using Tr_Base::adjacent_vertices_threadsafe;
   using Tr_Base::cw;
   using Tr_Base::ccw;
   using Tr_Base::construct_point;
@@ -193,21 +200,38 @@ public:
     CGAL_triangulation_postcondition(is_valid());
   }
 
+  Regular_triangulation_3(Regular_triangulation_3&& rt)
+    noexcept(noexcept(Tr_Base(std::move(rt))))
+    : Tr_Base(std::move(rt)), hidden_point_visitor(this)
+  {
+    CGAL_triangulation_postcondition(is_valid());
+  }
+
+  ~Regular_triangulation_3() = default;
+
   void swap(Regular_triangulation_3& tr)
   {
-    // The 'vertices' and 'hidden_points' members of 'hidden_point_visitor' should be empty
-    // as they are only filled (and cleared) during the insertion of a point.
-    // Hidden points are not stored there, but rather in cells. Thus, the only thing that must be set
-    // is the triangulation pointer.
-    Hidden_point_visitor<Concurrency_tag> new_hpv(this);
-    std::swap(hidden_point_visitor, new_hpv);
-
+    // The 'vertices' and 'hidden_points' members of
+    // 'hidden_point_visitor' should be empty as they are only filled
+    // (and cleared) during the insertion of a point.  Hidden points
+    // are not stored there, but rather in cells. Thus, the only thing
+    // that must be set is the triangulation pointer, and it is
+    // already correctly set. There is nothing to do about
+    // 'hidden_point_visitor'.
     Tr_Base::swap(tr);
   }
 
-  Regular_triangulation_3& operator=(Regular_triangulation_3 tr)
+  Regular_triangulation_3& operator=(const Regular_triangulation_3& tr)
   {
-    swap(tr);
+    Regular_triangulation_3 copy(tr);
+    copy.swap(*this);
+    return *this;
+  }
+
+  Regular_triangulation_3& operator=(Regular_triangulation_3&& tr)
+    noexcept(noexcept(Regular_triangulation_3(std::move(tr))))
+  {
+    Tr_Base::operator=(std::move(tr));
     return *this;
   }
 
@@ -258,7 +282,7 @@ private:
                                          bbox.zmin() + 0.5*zdelta);
       Random_points_on_sphere_3<Bare_point> random_point(radius);
       const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
-                                                 tbb::task_scheduler_init::default_num_threads() * 3.5);
+                                                 std::thread::hardware_concurrency() * 3.5);
       typename Gt::Construct_weighted_point_3 cwp =
           geom_traits().construct_weighted_point_3_object();
 
@@ -269,12 +293,12 @@ private:
       // Spatial sorting can only be applied to bare points, so we need an adaptor
       typedef typename Geom_traits::Construct_point_3 Construct_point_3;
       typedef typename boost::result_of<const Construct_point_3(const Weighted_point&)>::type Ret;
-      typedef CGAL::internal::boost_::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
+      typedef boost::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
       typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
 
       spatial_sort(points_on_far_sphere.begin(), points_on_far_sphere.end(),
                    Search_traits_3(
-                     CGAL::internal::boost_::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
+                     boost::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
                        geom_traits().construct_point_3_object()), geom_traits()));
 
       typename std::vector<Weighted_point>::const_iterator it_p =
@@ -341,12 +365,12 @@ public:
     // kernel creates temporaries and prevent it.
     typedef typename Geom_traits::Construct_point_3 Construct_point_3;
     typedef typename boost::result_of<const Construct_point_3(const Weighted_point&)>::type Ret;
-    typedef CGAL::internal::boost_::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
+    typedef boost::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
     typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
 
     spatial_sort(points.begin(), points.end(),
                  Search_traits_3(
-                   CGAL::internal::boost_::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
+                   boost::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
                      geom_traits().construct_point_3_object()), geom_traits()));
 
     // Parallel
@@ -412,7 +436,7 @@ public:
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 private:
-  
+
   //top stands for tuple-or-pair
   template <class Info>
   const Weighted_point& top_get_first(const std::pair<Weighted_point,Info>& pair) const { return pair.first; }
@@ -425,7 +449,7 @@ private:
 
   template <class Info>
   const Info& top_get_second(const boost::tuple<Weighted_point,Info>& tuple) const { return boost::get<1>(tuple); }
-  
+
   // Functor to go from an index of a container of Weighted_point to
   // the corresponding Bare_point
   template<class Construct_bare_point, class Container>
@@ -466,14 +490,14 @@ private:
     typedef Index_to_Bare_point<Construct_point_3,
         std::vector<Weighted_point> > Access_bare_point;
     typedef typename boost::result_of<const Construct_point_3(const Weighted_point&)>::type Ret;
-    typedef CGAL::internal::boost_::function_property_map<Access_bare_point, std::size_t, Ret> fpmap;
+    typedef boost::function_property_map<Access_bare_point, std::size_t, Ret> fpmap;
     typedef CGAL::Spatial_sort_traits_adapter_3<Gt, fpmap> Search_traits_3;
 
     Access_bare_point accessor(points, geom_traits().construct_point_3_object());
     spatial_sort(indices.begin(), indices.end(),
                  Search_traits_3(
-                   CGAL::internal::boost_::make_function_property_map<
-                   std::size_t, Ret, Access_bare_point>(accessor),
+                   boost::make_function_property_map<
+                     std::size_t, Ret, Access_bare_point>(accessor),
                    geom_traits()));
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -1387,11 +1411,6 @@ protected:
       : m_rt(rt), m_points(points), m_tls_hint(tls_hint)
     {}
 
-    // Constructor
-    Insert_point(const Insert_point& ip)
-      : m_rt(ip.m_rt), m_points(ip.m_points), m_tls_hint(ip.m_tls_hint)
-    {}
-
     // operator()
     void operator()(const tbb::blocked_range<size_t>& r) const
     {
@@ -1496,12 +1515,6 @@ protected:
                            tbb::enumerable_thread_specific<Vertex_handle>& tls_hint)
       : m_rt(rt), m_points(points), m_infos(infos), m_indices(indices),
         m_tls_hint(tls_hint)
-    {}
-
-    // Constructor
-    Insert_point_with_info(const Insert_point_with_info &ip)
-      : m_rt(ip.m_rt), m_points(ip.m_points), m_infos(ip.m_infos),
-        m_indices(ip.m_indices), m_tls_hint(ip.m_tls_hint)
     {}
 
     // operator()
@@ -1615,12 +1628,6 @@ protected:
         m_vertices_to_remove_sequentially(vertices_to_remove_sequentially)
     {}
 
-    // Constructor
-    Remove_point(const Remove_point& rp)
-      : m_rt(rp.m_rt), m_vertices(rp.m_vertices),
-        m_vertices_to_remove_sequentially(rp.m_vertices_to_remove_sequentially)
-    {}
-
     // operator()
     void operator()(const tbb::blocked_range<size_t>& r) const
     {
@@ -1711,7 +1718,7 @@ nearest_power_vertex(const Bare_point& p, Cell_handle start) const
   while(true)
   {
     Vertex_handle tmp = nearest;
-    adjacent_vertices(nearest, std::back_inserter(vs));
+    adjacent_vertices_threadsafe(nearest, std::back_inserter(vs));
     for(typename std::vector<Vertex_handle>::const_iterator
          vsit = vs.begin(); vsit != vs.end(); ++vsit)
       tmp = nearest_power_vertex(p, tmp, *vsit);

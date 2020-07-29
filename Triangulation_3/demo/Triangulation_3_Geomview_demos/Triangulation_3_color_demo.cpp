@@ -64,9 +64,9 @@ int main()
   gv << T;
 
   std::cout << "           Vertices of T with their own color" << std::endl
-	    << "           red for degree 6 (counting infinite vertex)"
-	    << std::endl
-	    << "           white otherwise" << std::endl;
+            << "           red for degree 6 (counting infinite vertex)"
+            << std::endl
+            << "           white otherwise" << std::endl;
   for (vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit)
     gv << vit->info() << vit->point();
 

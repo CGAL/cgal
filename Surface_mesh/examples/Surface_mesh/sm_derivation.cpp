@@ -27,7 +27,7 @@ namespace boost {
   struct property_map<My::Mesh, T>
     : public boost::property_map<My::Mesh::Base, T>
   {};
-  
+
 }
 
 namespace CGAL{
@@ -52,11 +52,11 @@ int main()
     }
   }
   std::cout << CGAL::Polygon_mesh_processing::bbox(mesh) << std::endl;
-  
+
   return 0;
 }
 
- 
 
 
- 
+
+

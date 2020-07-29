@@ -24,7 +24,7 @@ typedef AG2::Vertex_handle            Vertex_handle;
 int main()
 {
   std::cout << "testing the Apollonius graph class for three sites..."
-	    << std::endl;
+            << std::endl;
 
   Site_2 s1(Point_2(100,100),5), s2(Point_2(150,150),10),
     s3(Point_2(200,200),15);

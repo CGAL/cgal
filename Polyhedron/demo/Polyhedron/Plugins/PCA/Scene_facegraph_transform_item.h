@@ -23,8 +23,8 @@ typedef CGAL::Surface_mesh<Kernel::Point_3> FaceGraph;
 class SCENE_FACEGRAPH_TRANSFORM_ITEM_EXPORT Scene_facegraph_transform_item
         : public CGAL::Three::Scene_item_rendering_helper {
     Q_OBJECT
-    
-public: 
+
+public:
     Scene_facegraph_transform_item(const CGAL::qglviewer::Vec& pos, FaceGraph *sm,
                                     const QString name);
     Scene_item* clone() const{return NULL;}

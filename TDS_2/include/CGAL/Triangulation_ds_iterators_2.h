@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Mariette Yvinec
 
@@ -29,7 +29,7 @@ public:
   typedef typename Tds::Edge           Edge;
   typedef typename Tds::Face_iterator  Face_iterator;
   typedef typename Tds::Face_handle    Face_handle;
-    
+
   typedef Edge            value_type;
   typedef Edge*           pointer;
   typedef Edge&           reference;
@@ -38,7 +38,7 @@ public:
   typedef std::bidirectional_iterator_tag        iterator_category;
 
   typedef Triangulation_ds_edge_iterator_2<Tds>  Edge_iterator;
-  
+
 private:
 const Tds* _tds;
 Face_iterator pos;
@@ -58,7 +58,7 @@ public:
   Edge*     operator->() const;
   Edge&     operator*() const ;
 
-private: 
+private:
   void increment();
   void decrement();
   bool associated_edge();
@@ -70,7 +70,7 @@ private:
 template<class Tds>
 Triangulation_ds_edge_iterator_2<Tds>::
 Triangulation_ds_edge_iterator_2(const Tds * tds)
- :  _tds(tds) 
+ :  _tds(tds)
 {
   edge.second = 0;
   if (_tds->dimension()<= 0) {
@@ -86,7 +86,7 @@ Triangulation_ds_edge_iterator_2(const Tds * tds)
 template<class Tds>
 Triangulation_ds_edge_iterator_2<Tds>::
 Triangulation_ds_edge_iterator_2(const Tds * tds, int )
-  : _tds(tds) 
+  : _tds(tds)
 {
   pos = tds->faces().end();
   edge.second = 0;
@@ -145,13 +145,13 @@ Triangulation_ds_edge_iterator_2<Tds>&
 Triangulation_ds_edge_iterator_2<Tds>::
 operator++()
 {
-  //CGAL_triangulation_precondition(pos != Iterator_base() && 
-  //			       pos != _tds->faces().end());
+  //CGAL_triangulation_precondition(pos != Iterator_base() &&
+  //                               pos != _tds->faces().end());
   do     increment();
   while( pos != _tds->faces().end() && !associated_edge());
   return *this;
 }
-    
+
 
 template<class Tds>
 inline
@@ -159,14 +159,14 @@ Triangulation_ds_edge_iterator_2<Tds>&
 Triangulation_ds_edge_iterator_2<Tds>::
 operator--()
 {
-  // CGAL_triangulation_precondition(pos != Iterator_base() 
+  // CGAL_triangulation_precondition(pos != Iterator_base()
   //                          && *this != Edge_iterator(_tds));
   do      decrement();
   while ( !associated_edge() && *this != Edge_iterator(_tds) );
   return *this;
 }
 
-    
+
 template<class Tds>
 inline
 Triangulation_ds_edge_iterator_2<Tds>
@@ -177,7 +177,7 @@ operator++(int)
   ++(*this);
   return tmp;
 }
-    
+
 template<class Tds>
 inline
 Triangulation_ds_edge_iterator_2<Tds>
@@ -188,7 +188,7 @@ operator--(int)
   --(*this);
   return tmp;
 }
-    
+
 template<class Tds>
 inline
 typename Triangulation_ds_edge_iterator_2<Tds>::Edge*
@@ -203,7 +203,7 @@ template<class Tds>
 inline
 typename Triangulation_ds_edge_iterator_2<Tds>::Edge&
 Triangulation_ds_edge_iterator_2<Tds>::
-operator*() const 
+operator*() const
 {
   edge.first = pos;
   return edge;

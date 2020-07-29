@@ -201,7 +201,7 @@ public:
       const typename MeshDomain::Curve_index& curve_id =
         m_domain.curve_index(index);
       const Patches_ids& ids = patches_ids_map[curve_id];
-      
+
       if (m_domain_is_a_box && ids.size() == 2)
       {
         //we are on an edge of the box
@@ -310,7 +310,6 @@ public:
 
     m_own_ptree.reset(new Tree(triangles.begin(), triangles.end()));
     m_own_ptree->build();
-    m_own_ptree->accelerate_distance_queries();
   }
 
 private:

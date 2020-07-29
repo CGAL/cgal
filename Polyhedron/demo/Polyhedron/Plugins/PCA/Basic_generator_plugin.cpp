@@ -15,6 +15,7 @@
 #include "Scene_polylines_item.h"
 #include <CGAL/subdivision_method_3.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/Three/Three.h>
 #include "ui_Basic_generator_widget.h"
 
 class GeneratorWidget :
@@ -55,11 +56,11 @@ public :
 
 
     QMenu* menuFile = mw->findChild<QMenu*>("menuFile");
-    
+
     QMenu* menu = menuFile->findChild<QMenu*>("menuGenerateObject");
     if(!menu){
       QAction* actionLoad = mw->findChild<QAction*>("actionLoadPlugin");
-      menu = new QMenu(tr("Generate &Objet"), menuFile);
+      menu = new QMenu(tr("Generate &Object"), menuFile);
       menu->setObjectName("menuGenerateObject");
       menuFile->insertMenu(actionLoad, menu);
     }
@@ -350,8 +351,7 @@ void Basic_generator_plugin::generateCube()
 
     for(int i=0; i<8; ++i)
     {
-
-      QStringList list = point_texts[i].split(QRegExp("\\s+"), QString::SkipEmptyParts);
+      QStringList list = point_texts[i].split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
       if (list.isEmpty()) return;
       if (list.size()!=3){
         QMessageBox *msgBox = new QMessageBox;
@@ -392,7 +392,7 @@ void Basic_generator_plugin::generateCube()
   else
   {
     QString text = dock_widget->extremaEdit->text();
-    QStringList list = text.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+    QStringList list = text.split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
     if (list.isEmpty()) return;
     if (list.size()!=6){
       QMessageBox *msgBox = new QMessageBox;
@@ -443,7 +443,7 @@ void Basic_generator_plugin::generatePrism()
   bool is_closed = dock_widget->prismCheckBox->isChecked();
 
   QString text = dock_widget->prism_lineEdit->text();
-  QStringList list = text.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+  QStringList list = text.split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
   if (list.isEmpty()) return;
   if (list.size()!=3){
     QMessageBox *msgBox = new QMessageBox;
@@ -490,7 +490,7 @@ void Basic_generator_plugin::generatePyramid()
   bool is_closed = dock_widget->pyramidCheckBox->isChecked();
 
   QString text = dock_widget->pyramid_lineEdit->text();
-  QStringList list = text.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+  QStringList list = text.split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
   if (list.isEmpty()) return;
   if (list.size()!=3){
     QMessageBox *msgBox = new QMessageBox;
@@ -533,7 +533,7 @@ void Basic_generator_plugin::generateSphere()
 {
   int precision = dock_widget->SphereSpinBox->value();
   QString text = dock_widget->center_radius_lineEdit->text();
-  QStringList list = text.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+  QStringList list = text.split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
   if (list.isEmpty()) return;
   if (list.size()!=4){
     QMessageBox *msgBox = new QMessageBox;
@@ -582,8 +582,7 @@ void Basic_generator_plugin::generateTetrahedron()
 
   for(int i=0; i<4; ++i)
   {
-
-    QStringList list = point_texts[i].split(QRegExp("\\s+"), QString::SkipEmptyParts);
+    QStringList list = point_texts[i].split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
     if (list.isEmpty()) return;
     if (list.size()!=3){
       QMessageBox *msgBox = new QMessageBox;
@@ -624,7 +623,7 @@ void Basic_generator_plugin::generatePoints()
 {
   QString text = dock_widget->point_textEdit->toPlainText();
   Scene_points_with_normal_item* item = new Scene_points_with_normal_item();
-  QStringList list = text.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+  QStringList list = text.split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
   int counter = 0;
   double coord[3];
   bool ok = true;
@@ -682,7 +681,8 @@ void Basic_generator_plugin::generateLines()
   polylines.resize(polylines.size()+1);
   std::vector<Scene_polylines_item::Point_3>& polyline = *(polylines.rbegin());
   QStringList polylines_metadata;
-  QStringList list = text.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+
+  QStringList list = text.split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
   int counter = 0;
   double coord[3];
   bool ok = true;
@@ -766,7 +766,7 @@ struct Point_generator
   {
     return Point(bl.x() + i*(ur.x()-bl.x())/(w-1),
                  bl.y() + j*(ur.y()-bl.y())/(h-1),
-                 0);
+                 bl.z() + j*(ur.z()-bl.z())/(h-1));
   }
 };
 template<class Facegraph_item>
@@ -777,11 +777,12 @@ void Basic_generator_plugin::generateGrid()
 
   QString points_text;
   Point extrema[2];
-  typename boost::graph_traits<Face_graph>::vertices_size_type nb_cells[2];
+  using size_type = typename boost::graph_traits<Face_graph>::vertices_size_type;
+  size_type nb_cells[2];
   bool triangulated = dock_widget->grid_checkBox->isChecked();
   points_text= dock_widget->grid_lineEdit->text();
 
-  QStringList list = points_text.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+  QStringList list = points_text.split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
   if (list.isEmpty()) return;
   if (list.size()!=6){
     QMessageBox *msgBox = new QMessageBox;
@@ -806,8 +807,8 @@ void Basic_generator_plugin::generateGrid()
   }
   extrema[0] = Point(coords[0], coords[1], coords[2]);
   extrema[1] = Point(coords[3], coords[4], coords[5]);
-  nb_cells[0] = static_cast<std::size_t>(dock_widget->gridX_spinBox->value());
-  nb_cells[1] = static_cast<std::size_t>(dock_widget->gridY_spinBox->value());
+  nb_cells[0] = static_cast<size_type>(dock_widget->gridX_spinBox->value());
+  nb_cells[1] = static_cast<size_type>(dock_widget->gridY_spinBox->value());
 
   //nb_points = nb_cells+1
   Point_generator point_gen(nb_cells[0]+1, nb_cells[1]+1, extrema[0], extrema[1]);

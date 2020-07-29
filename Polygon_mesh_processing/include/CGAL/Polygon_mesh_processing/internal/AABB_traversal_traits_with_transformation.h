@@ -26,7 +26,6 @@
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/Box_intersection_d/Box_with_info_d.h>
 #include <CGAL/Aff_transformation_3.h>
 #include <boost/mpl/if.hpp>
 
@@ -52,9 +51,9 @@ class Traversal_traits_with_transformation_helper
 
     AK::Aff_transformation_3 a_at = c2f(at);
 
-    AK::FT xtrm[6] = { c2f(bbox.min(0)), c2f(bbox.max(0)),
-                       c2f(bbox.min(1)), c2f(bbox.max(1)),
-                       c2f(bbox.min(2)), c2f(bbox.max(2)) };
+    AK::FT xtrm[6] = { c2f((bbox.min)(0)), c2f((bbox.max)(0)),
+                       c2f((bbox.min)(1)), c2f((bbox.max)(1)),
+                       c2f((bbox.min)(2)), c2f((bbox.max)(2)) };
 
     typename AK::Point_3 ps[8];
     ps[0] = a_at( AK::Point_3(xtrm[0], xtrm[2], xtrm[4]) );
@@ -84,9 +83,9 @@ class Traversal_traits_with_transformation_helper
 
     AK::Aff_transformation_3 a_at = c2f(at);
 
-    AK::FT xtrm[6] = { c2f(bbox.min(0)), c2f(bbox.max(0)),
-                       c2f(bbox.min(1)), c2f(bbox.max(1)),
-                       c2f(bbox.min(2)), c2f(bbox.max(2)) };
+    AK::FT xtrm[6] = { c2f((bbox.min)(0)), c2f((bbox.max)(0)),
+                       c2f((bbox.min)(1)), c2f((bbox.max)(1)),
+                       c2f((bbox.min)(2)), c2f((bbox.max)(2)) };
 
     typename AK::Point_3 ps[2];
     ps[0] = a_at( AK::Point_3(xtrm[0], xtrm[2], xtrm[4]) );

@@ -24,8 +24,7 @@
 #include <CGAL/Mesh_3/Dump_c3t3.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 #include <CGAL/refine_mesh_3.h>
-
-#include <CGAL/Hash_handles_with_or_without_timestamps.h>
+#include <CGAL/Time_stamper.h>
 
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/unordered_set.hpp>

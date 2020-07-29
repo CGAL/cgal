@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     :  Michael Hemmer <hemmer@mpi-inf.mpg.de>
 //
@@ -35,33 +35,33 @@ int descartes(Polynomial& p, const Field& low,const Field& high){
     typedef typename Polynomial::NT Coefficient;
     typedef typename Fraction_traits<Field>::Numerator_type Numerator;
     typedef typename Fraction_traits<Field>::Denominator_type Denominator;
-  
+
     typename Fraction_traits<Field>::Decompose decomp;
-    //typename Algebraic_structure_traits<Field>::Simplify simplify;  
+    //typename Algebraic_structure_traits<Field>::Simplify simplify;
 
     //simplify(low);
     //simplify(high);
 
     Numerator num_high, num_low_sub_high;
     Denominator den_high, den_low_sub_high;
-   
+
     decomp(high, num_high, den_high);
     decomp(low - high, num_low_sub_high, den_low_sub_high);
-    
+
     Coefficient tmp(num_high);
     // apply Descartes' rule to count zeros of q in ]low,high[
     Polynomial transf = // q(high + (low-high)/(1+x))
       CGAL::translate_by_one(
           CGAL::reversal(
               CGAL::scale_homogeneous(
-                  CGAL::translate_homogeneous(p 
-                      ,Coefficient(num_high) 
+                  CGAL::translate_homogeneous(p
+                      ,Coefficient(num_high)
                       ,Coefficient(den_high))
-                  ,Coefficient(num_low_sub_high) 
+                  ,Coefficient(num_low_sub_high)
                   ,Coefficient(den_low_sub_high)
               )
           )
-      );    
+      );
     return sign_variations(transf);
 }
 
@@ -122,8 +122,8 @@ bool refine_zero_against(Field& low, Field& high, Polynomial p, Polynomial q) {
                     gcd_pq = Polynomial(1);
                 }
             }
-            std::cout << CGAL::to_double(low) << " " 
-                      << CGAL::to_double(high) << " " 
+            std::cout << CGAL::to_double(low) << " "
+                      << CGAL::to_double(high) << " "
                       << CGAL::degree(gcd_pq) << " "
                       << gcd_pq
                       << std::endl;
@@ -162,7 +162,7 @@ template < class Polynomial, class Field >
 static bool strong_refine_zero_against(Field& low, Field& high,
                                        Polynomial p, Polynomial q){
     std::cout << "comp has_common_root" << std::endl;
-    
+
     bool has_common_root = refine_zero_against(low,high,p,q);
 
     std::cout << "done, " << has_common_root << std::endl;

@@ -7,9 +7,9 @@ A face record in a <span class="textsc">Dcel</span> data structure. A face
 represents a region, which may have outer and inner boundaries. A boundary
 conists of a chain of incident halfedges, referred to as a Connected Component
 of the Boundary (CCB). A face may be unbounded. Otherwise, it has one or more
-outyer CCBs. A face may also be bounded by inner CCBs, and it may contain
+outer CCBs. A face may also be bounded by inner CCBs, and it may contain
 isolated vertices in its interior. A planar face may have only one outer CCBs
-and its inner CCBs are also refered to as holes.
+and its inner CCBs are refered to as holes.
 
 \sa `ArrangementDcel`
 \sa `ArrangementDcelVertex`
@@ -68,7 +68,7 @@ void assign(const Self& other);
 /// non-mutable pointers or iterators:
 /// @{
 
-/*! returns whether the face is unbounded. */
+/*! determines whether the face is unbounded. */
 bool is_unbounded() const;
 
 /*! obtains an incident halfedge along the outer boundaries of the face.  If `f`

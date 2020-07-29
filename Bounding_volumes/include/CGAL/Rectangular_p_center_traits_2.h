@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
@@ -63,7 +63,7 @@ struct I_Infinity_distance_2
   // https://cgal.geometryfactory.com/CGAL/testsuite/CGAL-4.14-I-95/Rectangular_p_center_2_Examples/TestReport_afabri_x64_Cygwin-Windows10_MSVC2017-Release-64bits.gz
   I_Infinity_distance_2()
   {}
-  
+
   I_Infinity_distance_2(const I_Infinity_distance_2&)
   {}
 
@@ -71,7 +71,7 @@ struct I_Infinity_distance_2
   {
     return *this;
   }
-  
+
   typename R::FT
   operator()(const Point_2< R >& q1, const Point_2< R >& q2) const {
     return (std::max)(CGAL_NTS abs(q1.x() - q2.x()),
@@ -86,8 +86,8 @@ struct I_Signed_infinity_distance_2
 {
   typename R::FT
   operator()(const Point_2< R >& q1, const Point_2< R >& q2) const
-  { 
-    return (std::max)(q1.x() - q2.x(), q1.y() - q2.y()); 
+  {
+    return (std::max)(q1.x() - q2.x(), q1.y() - q2.y());
   }
 };
 

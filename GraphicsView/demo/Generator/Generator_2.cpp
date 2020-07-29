@@ -21,7 +21,7 @@
 #include <CGAL/Qt/PointsGraphicsItem.h>
 #include <CGAL/Qt/utility.h>
 #include <CGAL/Qt/SegmentsGraphicsItem.h>
-  
+
 // the two base classes
 #include "ui_Generator_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -37,15 +37,15 @@ class MainWindow :
   public Ui::Generator_2
 {
   Q_OBJECT
-  
+
 private:
 
 
 
   CGAL::Qt::Converter<K> convert;
-  std::vector<Point_2> points; 
-  std::vector<Segment_2> segments; 
-  QGraphicsScene scene;  
+  std::vector<Point_2> points;
+  std::vector<Segment_2> segments;
+  QGraphicsScene scene;
 
   CGAL::Qt::PointsGraphicsItem<std::vector<Point_2> > * pgi;
   CGAL::Qt::SegmentsGraphicsItem<std::vector<Segment_2> > * sgi;
@@ -56,7 +56,7 @@ private:
   on_actionGenerate_triggered()
   {
     QRectF rect = CGAL::Qt::viewportsBbox(&scene);
-    CGAL::Qt::Converter<K> convert;  
+    CGAL::Qt::Converter<K> convert;
     Iso_rectangle_2 isor = convert(rect);
     Point_2 center = CGAL::midpoint(isor[0], isor[2]);
     Vector_2 offset = center - CGAL::ORIGIN;
@@ -67,8 +67,8 @@ private:
     G pg(radius);
     bool ok = false;
 
-  const int number_of_points = 
-      QInputDialog::getInt(this, 
+  const int number_of_points =
+      QInputDialog::getInt(this,
                                tr("Number of random points"),
                                tr("Enter number of random points"),
                                100,
@@ -126,11 +126,11 @@ MainWindow::MainWindow()
   sgi = new CGAL::Qt::SegmentsGraphicsItem<std::vector<Segment_2> >(&segments);
 
   QObject::connect(this, SIGNAL(changed()),
-		   pgi, SLOT(modelChanged()));
+                   pgi, SLOT(modelChanged()));
 
 
     QObject::connect(this, SIGNAL(changed()),
-  		   sgi, SLOT(modelChanged()));
+                     sgi, SLOT(modelChanged()));
 
   pgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   sgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -138,13 +138,13 @@ MainWindow::MainWindow()
   scene.addItem(sgi);
 
 
-  // 
+  //
   // Manual handling of actions
   //
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()),
+                   this, SLOT(close()));
 
- 
+
   //
   // Setup the scene and the view
   //
@@ -157,7 +157,7 @@ MainWindow::MainWindow()
 
   // Turn the vertical axis upside down
   this->graphicsView->scale(1, -1);
-                                                      
+
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
   this->addNavigation(this->graphicsView);
@@ -170,10 +170,10 @@ MainWindow::MainWindow()
 }
 
 
-/* 
+/*
  *  Qt Automatic Connections
  *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
- * 
+ *
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
  */
@@ -189,7 +189,7 @@ void
 MainWindow::on_actionRecenter_triggered()
 {
   this->graphicsView->setSceneRect(pgi->boundingRect());
-  this->graphicsView->fitInView(pgi->boundingRect(), Qt::KeepAspectRatio);  
+  this->graphicsView->fitInView(pgi->boundingRect(), Qt::KeepAspectRatio);
 }
 
 void
@@ -220,21 +220,21 @@ void
 MainWindow::on_actionGenerateSegments_triggered()
 {
   segments.reserve(segments.size() + 200);
-  
+
   // Prepare point generator for the horizontal segment, length 200.
   typedef  CGAL::Random_points_on_segment_2<Point_2>  Rpos_generator;
   Rpos_generator rpos( Point_2(-100,0), Point_2(100,0));
-  
+
   // Prepare point generator for random points on circle, radius 250.
   typedef  CGAL::Random_points_on_circle_2<Point_2>  Rpoc_generator;
   Rpoc_generator rpoc( 250);
-  
+
   // Create 200 segments.
   typedef CGAL::Creator_uniform_2< Point_2, Segment_2> Seg_creator;
   typedef CGAL::Join_input_iterator_2< Rpos_generator, Rpoc_generator, Seg_creator> Seg_iterator;
   Seg_iterator g( rpos, rpoc);
   std::copy_n( g, 200, std::back_inserter(segments));
-  
+
   Q_EMIT( changed());
 }
 
@@ -256,7 +256,7 @@ MainWindow::on_actionGenerateSegmentFans_triggered()
   Count_iterator t1_begin( t1);                   // Finite range.
   Count_iterator t1_end(t1, 50);
   std::copy( t1_begin, t1_end, std::back_inserter(segments));
-  
+
   // A vertical like fan.
   PG p3( Point_2( -50,-250), Point_2(  50,-250),50);
   PG p4( Point_2(-250, 250), Point_2( 250, 250),50);
@@ -281,7 +281,7 @@ MainWindow::on_actionGeneratePolytopeInDisc_triggered()
     double w = isor.xmax() - isor.xmin();
     double h = isor.ymax() - isor.ymin();
     double radius = (w<h) ? w/2 : h/2;
-    
+
     //G pg(radius);
     bool ok = false;
     const int number_of_points =
@@ -293,14 +293,14 @@ MainWindow::on_actionGeneratePolytopeInDisc_triggered()
                              (std::numeric_limits<int>::max)(),
                              1,
                              &ok);
-    
+
     if(!ok) {
         return;
     }
-    
+
     // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    
+
     segments.reserve(segments.size() + 100);
 
     CGAL::random_convex_hull_in_disc_2(number_of_points,radius,gen,std::back_inserter(points),K());
@@ -315,7 +315,7 @@ MainWindow::on_actionGeneratePolytopeInDisc_triggered()
 
     // default cursor
     QApplication::restoreOverrideCursor();
-    
+
     Q_EMIT( changed());
 }
 

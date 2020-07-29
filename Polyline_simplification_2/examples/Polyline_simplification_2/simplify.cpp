@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
       cit != ct.constraints_end();
       ++cit) {
     std::cout << "simplified polyline" << std::endl;
-    for(Points_in_constraint_iterator vit = 
+    for(Points_in_constraint_iterator vit =
           ct.points_in_constraint_begin(*cit);
         vit != ct.points_in_constraint_end(*cit);
         ++vit)

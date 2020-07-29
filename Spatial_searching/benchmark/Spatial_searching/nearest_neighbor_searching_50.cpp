@@ -47,7 +47,7 @@ int main() {
 
 
   // Initialize the search structure, and search all N points
-  
+
   double d = 0;
   timer.reset();
   timer.start();

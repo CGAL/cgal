@@ -32,10 +32,10 @@ if ( CGAL_FOUND )
   if(CGAL_Qt5_FOUND )
     target_link_libraries(draw_polyhedron PUBLIC CGAL::CGAL_Qt5)
   endif()
-  
+
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

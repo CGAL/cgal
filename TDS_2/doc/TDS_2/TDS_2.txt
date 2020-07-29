@@ -1,13 +1,13 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_2D_Triangulation_Data_Structure
 
 \cgalAutoToc
 \authors Sylvain Pion and Mariette Yvinec
 
-\section TDS_2D_Definition Definition 
+\section TDS_2D_Definition Definition
 
 A triangulation data structure is a data structure designed
 to handle the representation of a two dimensional
@@ -23,32 +23,32 @@ of the space the triangulation is embedded in.
 \subsection TDS_2ADataStructureBasedonFacesandVertices A Data Structure Based on Faces and Vertices
 
 The representation of \cgal 2D triangulations is based on faces and vertices,
-Edges are only implicitly 
+Edges are only implicitly
 represented trough the adjacency relations between two
 faces.
 
-The triangulation data structure can be seen 
+The triangulation data structure can be seen
 as a container for faces and vertices
 maintaining incidence and adjacency relations
 among them.
 
-Each triangular face gives access to its three incident vertices 
-and to its three adjacent faces. 
+Each triangular face gives access to its three incident vertices
+and to its three adjacent faces.
 Each vertex gives access to one of its incident faces
 and through that face to the circular list of its incident faces.
 
 The three vertices of a face are indexed with 0, 1 and 2.
-The neighbors of a face are also 
+The neighbors of a face are also
 indexed with 0,1,2 in such a way that the neighbor indexed by `i`
 is opposite to the vertex with the same index.
-See \cgalFigureRef{TDS_2D_Fig_neighbors1}, 
+See \cgalFigureRef{TDS_2D_Fig_neighbors1},
 the functions `ccw(i)`
 and `cw(i)` shown on this figure
 compute respectively \f$ i+1\f$ and \f$ i-1\f$ modulo 3.
 
 Each edge has two implicit representations: the edge
 of a face `f` which is opposed to the vertex indexed `i`,
-can be represented as well as an edge of the `neighbor(i)` of 
+can be represented as well as an edge of the `neighbor(i)` of
 `f`.
 
 \cgalFigureBegin{TDS_2D_Fig_neighbors1,rep_bis.png}
@@ -56,7 +56,7 @@ can be represented as well as an edge of the `neighbor(i)` of
 
 This kind or representation of simplicial complexes extends in any
 dimension. More precisely, in dimension \f$ d\f$, the data structure
-will explicitly represents cells (i. e. faces of maximal dimension) 
+will explicitly represents cells (i. e. faces of maximal dimension)
 and vertices (i. e. faces of dimension 0).
 All faces of dimension between \f$ 1\f$ and \f$ d-1\f$
 will have an implicit representation.
@@ -65,10 +65,10 @@ of dimension 2, 1 or 0.
 
 \subsection TDS_2TheSetofFacesandVertices The Set of Faces and Vertices
 
-The set of faces maintained by a 2D triangulation 
+The set of faces maintained by a 2D triangulation
 data structure is such that each edge
 is incident to two faces. In other words,
-the set of maintained faces 
+the set of maintained faces
 is topologically
 equivalent to a two-dimensional triangulated sphere.
 
@@ -76,42 +76,42 @@ This rules extends to lower dimensional triangulation data structure
 arising in degenerate cases or when the triangulations
 have less than three vertices.
 A one dimensional triangulation structure maintains a set of vertices
-and edges which forms a ring 
+and edges which forms a ring
 topologically equivalent to a \f$ 1\f$-sphere.
 
 A zero dimensional triangulation data structure
-only includes two adjacent vertices 
+only includes two adjacent vertices
 that is
 topologically equivalent to a \f$ 0\f$-sphere.
 
-\section TDS_2D_Concept The Concept of Triangulation Data Structure 
+\section TDS_2D_Concept The Concept of Triangulation Data Structure
 
 A model of `TriangulationDataStructure_2`
-can be seen has a container for the 
+can be seen has a container for the
 faces and vertices of the triangulation.
 This class is also responsible for the combinatorial
 integrity of the triangulation. This means that
-the triangulation data structure 
+the triangulation data structure
 maintains proper incidence and adjacency relations among the vertices
 and faces of a triangulation while
 combinatorial modifications
 of the triangulation are performed.
-The term combinatorial modification 
-refers to operations which do not 
+The term combinatorial modification
+refers to operations which do not
 involve any knowledge about the geometric embedding of the triangulation.
-For example, the 
+For example, the
 insertion of a new vertex in a given face, or in a given edge,
 the suppression
-of a vertex of degree three, the flip of two edge are 
+of a vertex of degree three, the flip of two edge are
 examples of combinatorial operation performed at the data structure level.
 
-The triangulation data structure 
+The triangulation data structure
 is required to provide:
 <UL>
 <LI>the types `Vertex` and `Face` for the vertices
 and faces of the triangulations
 <LI>the type `Vertex_handle` and `Face_handle`
-which are models of the concept `Handle` and 
+which are models of the concept `Handle` and
 through which the vertices and faces are accessed.
 <LI>iterators to visit all the vertices, edges and faces
 of the triangulation,
@@ -119,8 +119,8 @@ of the triangulation,
 incident to a given vertex
 </UL>
 
-The triangulation data structure is responsible 
-for the creation and removal of faces and vertices 
+The triangulation data structure is responsible
+for the creation and removal of faces and vertices
 (memory management).
 It provides function that gives the number of faces, edges and
 vertices
@@ -130,12 +130,12 @@ The triangulation data structure provides member functions
 to perform the following combinatorial transformation of the triangulation:
 
 <UL>
-<LI>flip of two adjacent faces, 
-<LI>addition of a new vertex splitting a given face 
+<LI>flip of two adjacent faces,
+<LI>addition of a new vertex splitting a given face
 see \cgalFigureRef{TDS_2D_Fig_insertion},
 <LI>addition of a new vertex splitting a given edge,
-<LI>addition of a new vertex raising by one the dimension of a degenerate - lower dimensional triangulation, 
-<LI>removal of a vertex incident to three faces, 
+<LI>addition of a new vertex raising by one the dimension of a degenerate - lower dimensional triangulation,
+<LI>removal of a vertex incident to three faces,
 <LI>removal of a vertex lowering the dimension of the triangulation
 </UL>
 
@@ -143,7 +143,7 @@ see \cgalFigureRef{TDS_2D_Fig_insertion},
 Insertion of a new vertex, splitting a face
 \cgalFigureEnd
 
-\section TDS_2D_default The Default Triangulation Data Structure 
+\section TDS_2D_default The Default Triangulation Data Structure
 
 \cgal provides the class `Triangulation_data_structure_2<Vb,Fb>`
 as a default triangulation data structure.
@@ -151,11 +151,11 @@ as a default triangulation data structure.
 \subsection TDS_2Flexibility Flexibility
 
 In order to provide flexibility, the default triangulation data
-structure is templated by two parameters 
+structure is templated by two parameters
 which stand respectively for a vertex base class and a face base
 class.
-The concept 
-`TriangulationDSVertexBase_2` and 
+The concept
+`TriangulationDSVertexBase_2` and
 `TriangulationDSFaceBase_2` describe the requirements for the
 vertex and face classes of a triangulation data structure.
 
@@ -170,9 +170,9 @@ faces,
 the vertex and face classes have to know the types
 of handles on faces and vertices provided by the triangulation data
 structure.
-Therefore, vertex and face classes need to be templated 
+Therefore, vertex and face classes need to be templated
 by the triangulation data structure. Because the triangulation
-data structure 
+data structure
 is itself templated by the vertex and face classes this induces
 a cyclic dependency.
 See \cgalFigureRef{TDS_2D_Fig_three_levels_2}.
@@ -184,7 +184,7 @@ The cyclic dependency in triangulations software design.
 \subsection TDS_2TheRebindMechanism The Rebind Mechanism
 
 The solution proposed by \cgal to resolve this cyclic dependency
-is based on a rebind mechanism similar to the mechanism used in the 
+is based on a rebind mechanism similar to the mechanism used in the
 standard allocator class std::allocator.
 The vertex and face classes plugged in the instantiation of a
 triangulation data structure are themselves instantiated with a
@@ -220,9 +220,9 @@ typedef ... Face_handle;
 
 \endcode
 
-Then, here is the vertex class with its nested 
+Then, here is the vertex class with its nested
 `Rebind_TDS` template class and its template parameter
-set by default to an an internal type faking a triangulation data 
+set by default to an an internal type faking a triangulation data
 structure.
 
 \code{.cpp}
@@ -252,24 +252,24 @@ typedef Triangulation_data_structure< Vertex_base<>, Face_base<> > TDS;
 \subsection TDS_2MakingUseoftheFlexibility Making Use of the Flexibility
 
 There are several possibilities to make use
-of the flexibility offered by 
+of the flexibility offered by
 the triangulation data structure.
 <UL>
 <LI> First, when the user needs to have,
 in vertices and faces, additional information
 which do not depend on types defined by the
-triangulated data structure, predefined classes 
+triangulated data structure, predefined classes
 `Triangulation_vertex_base_with_info_2`
 and `Triangulation_face_base_with_info_2` can be plugged in.
 Those classes have a template parameter `Info` to be instantiated
 by a user defined type. They
 store a data member of this type and gives access to it.
-<LI> Second, the user can derive 
+<LI> Second, the user can derive
 his own base classes from the default base
 classes:
 `Triangulation_ds_vertex_base_2`, and
 `Triangulation_ds_face_base_2`
-are the default base classes to be plugged in a triangulation 
+are the default base classes to be plugged in a triangulation
 data structure used alone.
 Triangulation classes requires a data structure in which
 other base classes have been plugged it. The default base classes
@@ -286,7 +286,7 @@ For example,
 
 \code{.cpp}
 template < class Gt, class Vb = CGAL::Triangulation_vertex_base_2<Gt> >
-class My_vertex_base 
+class My_vertex_base
 : public Vb
 {
 public :
@@ -303,15 +303,15 @@ public :
 \endcode
 
 <LI>Finally, the user can write his own base classes.
-If the triangulation data structure is used alone, 
+If the triangulation data structure is used alone,
 the requirements for the base classes are described by the concepts
-`TriangulationDSVertexBase_2` 
+`TriangulationDSVertexBase_2`
 and `TriangulationDSFaceBase_2`.
 If the triangulation data structure is plugged into a triangulation
 class,
 the concepts for the vertex and base classes depends on the
 triangulation class. The most basic concepts, valid for
-basic and Delaunay triangulations are `TriangulationVertexBase_2` 
+basic and Delaunay triangulations are `TriangulationVertexBase_2`
 and `TriangulationFaceBase_2`.
 </UL>
 
@@ -319,6 +319,6 @@ See Section \ref Section_2D_Triangulations_Flexibility "Flexibility"
 of the chapter on 2D triangulations
 for examples which make use of the flexibility of the triangulation data structure.
 
-*/ 
+*/
 } /* namespace CGAL */
 

@@ -13,12 +13,12 @@ typedef CGAL::Polygon_with_holes_2<Kernel>                Polygon_with_holes_2;
 
 int main (int argc, char* argv[])
 {
-  
+
   // Get the name of the input file from the command line, or use the default
   // pgn_holes.dat file if no command-line parameters are given.
   //more data files can be found under test data
-  //boundary no other connections are made.  
-  const char* filename = (argc > 1) ? argv[1] : "pgn_holes.dat";  
+  //boundary no other connections are made.
+  const char* filename = (argc > 1) ? argv[1] : "pgn_holes.dat";
   std::ifstream input_file (filename);
   if (! input_file.is_open())
   {

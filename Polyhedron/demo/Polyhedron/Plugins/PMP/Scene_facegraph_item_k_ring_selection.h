@@ -104,7 +104,7 @@ public:
   {
     init(poly_item, mw, aht, k_ring);
   }
-  
+
   void setHighLighting(bool b)
   {
     cut_highlighting = !b;
@@ -118,7 +118,7 @@ public:
     }
   }
 
-  void init(Scene_facegraph_item* poly_item, QMainWindow* mw, Active_handle::Type aht, 
+  void init(Scene_facegraph_item* poly_item, QMainWindow* mw, Active_handle::Type aht,
             int k_ring) {
     this->poly_item = poly_item;
     this->active_handle_type = aht;
@@ -131,7 +131,7 @@ public:
     cut_highlighting = false;
     is_ready_to_paint_select = true;
     is_lasso_active = false;
-    
+
     Q_FOREACH(CGAL::QGLViewer* viewer,CGAL::QGLViewer::QGLViewerPool()){
       viewer->installEventFilter(this);
       viewer->setMouseBindingDescription(Qt::Key_D, Qt::ShiftModifier, Qt::LeftButton, "(When in selection plugin) Removes the clicked primitive from the selection. ");
@@ -155,7 +155,7 @@ public Q_SLOTS:
   {
     o->installEventFilter(this);
   }
-  void vertex_has_been_selected(void* void_ptr) 
+  void vertex_has_been_selected(void* void_ptr)
   {
     if((*CGAL::QGLViewer::QGLViewerPool().begin())->property("performing_selection").toBool())
       return;
@@ -182,7 +182,7 @@ public Q_SLOTS:
     }
     updateIsTreated();
   }
-  void edge_has_been_selected(void* void_ptr) 
+  void edge_has_been_selected(void* void_ptr)
   {
     if((*CGAL::QGLViewer::QGLViewerPool().begin())->property("performing_selection").toBool())
       return;
@@ -195,7 +195,7 @@ public Q_SLOTS:
     }
     updateIsTreated();
   }
-  
+
   void paint_selection()
   {
     if(is_ready_to_paint_select)
@@ -209,7 +209,7 @@ public Q_SLOTS:
       const CGAL::qglviewer::Vec& point = camera->pointUnderPixel(paint_pos, found) - offset;
       if(found)
       {
-       CGAL::qglviewer::Vec orig; 
+       CGAL::qglviewer::Vec orig;
        CGAL::qglviewer::Vec dir;
        if(camera->type() == CGAL::qglviewer::Camera::PERSPECTIVE)
        {
@@ -219,10 +219,10 @@ public Q_SLOTS:
        else
        {
          dir = camera->viewDirection();
-         orig = CGAL::qglviewer::Vec(point.x - dir.x, 
+         orig = CGAL::qglviewer::Vec(point.x - dir.x,
                                      point.y - dir.y,
                                      point.z - dir.z);
-         
+
        }
         poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
       }
@@ -313,7 +313,7 @@ public Q_SLOTS:
       else
       {
         dir = camera->viewDirection();
-        orig = CGAL::qglviewer::Vec(center.x - dir.x, 
+        orig = CGAL::qglviewer::Vec(center.x - dir.x,
                                     center.y - dir.y,
                                     center.z - dir.z);
       }
@@ -406,10 +406,10 @@ public Q_SLOTS:
         else
         {
           dir = camera->viewDirection();
-          orig = CGAL::qglviewer::Vec(point.x - dir.x, 
+          orig = CGAL::qglviewer::Vec(point.x - dir.x,
                                       point.y - dir.y,
                                       point.z - dir.z);
-          
+
         }
         is_highlighting = true;
         poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
@@ -432,7 +432,7 @@ Q_SIGNALS:
   void selected_HL(const std::set<fg_edge_descriptor>&);
   void toogle_insert(const bool);
   void endSelection();
-  void resetIsTreated(); 
+  void resetIsTreated();
   void isCurrentlySelected(Scene_facegraph_item_k_ring_selection*);
   void clearHL();
 
@@ -590,7 +590,7 @@ protected:
         viewer->setFocus();
         return false;
       }
-      
+
       if(!is_lasso_active)
       {
         is_ready_to_paint_select = true;

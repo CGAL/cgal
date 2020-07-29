@@ -10,13 +10,13 @@ class Qt_progress_bar_callback
 {
 
 private:
-  
+
   CGAL::Real_timer timer;
   double t_start;
   mutable double t_latest;
 
   mutable std::size_t nb;
-  
+
   QProgressDialog* dialog;
 
 public:
@@ -24,7 +24,7 @@ public:
   Qt_progress_bar_callback()
   {
   }
-  
+
   Qt_progress_bar_callback(const char* title, QWidget* parent)
     : dialog (new QProgressDialog (QString(title),
                                    QString("Cancel"),
@@ -55,11 +55,11 @@ public:
     {
       dialog->setValue (int (100. * advancement));
       t_latest = t;
-      
+
       if (dialog->wasCanceled())
         return false;
     }
-    
+
     return true;
   }
 };

@@ -289,7 +289,7 @@ public:
   //curve it lies on, which is the curve that was split, and then remove
   //this curve.
   virtual void before_split_edge (Halfedge_handle e,
-				                          Vertex_handle /* v */,
+                                                          Vertex_handle /* v */,
                                   const X_monotone_curve_2&  /* cv1 */ ,
                                   const X_monotone_curve_2&  /* cv2 */ )
   {

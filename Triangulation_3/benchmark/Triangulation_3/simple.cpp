@@ -1,7 +1,7 @@
 //#define CGAL_PROFILE
 #define CGAL_USE_SSE2_FABS
 #define CGAL_USE_SSE2_MAX
-//#define CGAL_MSVC_USE_STD_FABS  // use this one with precise 
+//#define CGAL_MSVC_USE_STD_FABS  // use this one with precise
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -35,7 +35,7 @@ int main()
     N += dt.number_of_cells();
   }
   timer.stop();
-  
+
   std::cerr << N << std::endl << timer.time() << " sec" << std::endl;
   return 0;
 }

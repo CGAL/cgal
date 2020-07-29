@@ -32,6 +32,7 @@ int main(int argc, char* argv[])
       std::cerr << "Error: non-triangular face left in mesh." << std::endl;
 
   std::ofstream cube_off(outfilename);
+  cube_off.precision(17);
   cube_off << mesh;
 
   return 0;

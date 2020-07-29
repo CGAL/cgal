@@ -81,7 +81,7 @@ bool cgal_nef3_timer_on = false;
 int main(int argc, char* argv[]) {
 
   assert(argc < 8);
-  
+
   int nx = argc>1 ? std::atoi(argv[1]) : 2;
   int ny = argc>2 ? std::atoi(argv[2]) : 2;
   int nz = argc>3 ? std::atoi(argv[3]) : 2;
@@ -94,7 +94,7 @@ int main(int argc, char* argv[]) {
     t2.create_tetrahedra(nx,ny,nz);
   } else {
     tgen t2(out2,s);
-    t2.create_tetrahedra(nx,ny,nz);    
+    t2.create_tetrahedra(nx,ny,nz);
   }
   std::istringstream in2(out2.str());
   Nef_polyhedron N2;
