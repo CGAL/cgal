@@ -979,14 +979,14 @@ struct Lazy_cartesian_const_iterator_2
 public:
 
   template < typename L1>
-  decltype(auto)
+  result_type
   operator()(const L1& l1) const
   {
     return result_type(&l1);
   }
 
   template < typename L1>
-  decltype(auto)
+  result_type
   operator()(const L1& l1, int) const
   {
     return result_type(&l1,2);
@@ -1008,14 +1008,14 @@ struct Lazy_cartesian_const_iterator_3
 public:
 
   template < typename L1>
-  decltype(auto)
+  result_type
   operator()(const L1& l1) const
   {
     return result_type(&l1);
   }
 
   template < typename L1>
-  decltype(auto)
+  result_type
   operator()(const L1& l1, int) const
   {
     return result_type(&l1,3);
