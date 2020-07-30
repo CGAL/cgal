@@ -23,6 +23,7 @@
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/container/small_vector.hpp>
+#include <boost/optional.hpp>
 
 #include <limits>
 #include <queue>
@@ -86,11 +87,12 @@ void update_c3t3_facets(C3t3& c3t3,
   }
 }
 
-template<typename C3t3>
+template<typename C3t3, typename IncCellsVectorMap>
 Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
                                   C3t3& c3t3,
                                   const std::vector<typename C3t3::Vertex_handle>& vertices_around_edge,
-                                  const Flip_Criterion& criterion)
+                                  const Flip_Criterion& criterion,
+                                  IncCellsVectorMap& inc_cells)
 {
   typedef typename C3t3::Triangulation Tr;
   typedef typename C3t3::Facet         Facet;
@@ -312,6 +314,8 @@ Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
         ch->set_neighbor(v, mirror_facet.first);
       }
       ch->vertex(v)->set_cell(ch);
+
+      inc_cells[ch->vertex(v)] = boost::none;
     }
   }
 
@@ -504,28 +508,46 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   }
 }
 
-template<typename Vertex_handle, typename CellVector>
+template<typename Vertex_handle, typename CellVector, typename Cell_handle>
 bool is_edge_uv(Vertex_handle u,
                 Vertex_handle v,
-                const CellVector& cells_incident_to_u)
+                const CellVector& cells_incident_to_u,
+                Cell_handle& cell,
+                int& i,
+                int& j)
 {
   if (u == v)
     return false;
 
   for (typename CellVector::value_type c : cells_incident_to_u)
   {
-    int j;
     if (c->has_vertex(v, j))
+    {
+      cell = c;
+      i = cell->index(u);
       return true;
+    }
   }
   return false;
 }
 
-template<typename C3t3, typename CandidatesQueue>
+template<typename Vertex_handle, typename CellVector>
+bool is_edge_uv(Vertex_handle u,
+                Vertex_handle v,
+                const CellVector& cells_incident_to_u)
+{
+  typename CellVector::value_type c;
+  int i, j;
+  return is_edge_uv(u, v, cells_incident_to_u, c, i, j);
+}
+
+template<typename C3t3, typename CandidatesQueue,
+         typename IncCellsVectorMap>
 void find_best_flip_to_improve_dh(C3t3& c3t3,
                                   typename C3t3::Edge& edge,
                                   CandidatesQueue& candidates,
                                   double curr_min_dh,
+                                  IncCellsVectorMap& inc_cells,
                                   bool is_sliver_well_oriented = true,
                                   int e_id = 0)
 {
@@ -567,8 +589,13 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
     if(tr.is_infinite(vh))
       continue;
 
-    boost::container::small_vector<Cell_handle, 64> inc_vh;
-    tr.incident_cells(vh, std::back_inserter(inc_vh));
+    boost::optional<boost::container::small_vector<Cell_handle, 64>>& o_inc_vh = inc_cells[vh];
+    if (o_inc_vh == boost::none)
+    {
+      boost::container::small_vector<Cell_handle, 64> inc_vec;
+      tr.incident_cells(vh, std::back_inserter(inc_vec));
+      inc_cells[vh] = inc_vec;
+    }
 
     Facet_circulator facet_circulator = curr_fcirc;
     Facet_circulator facet_done = curr_fcirc;
@@ -586,7 +613,7 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
                                       indices(facet_circulator->second, i));
         if (curr_vertex != vh0  && curr_vertex != vh1)
         {
-          if (is_edge_uv(vh, curr_vertex, inc_vh))
+          if (is_edge_uv(vh, curr_vertex, boost::get(inc_cells[vh])))
           {
             is_edge = true;
             break;
@@ -665,10 +692,11 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   }
 }
 
-template<typename C3t3, typename Visitor>
+template<typename C3t3, typename IncCellsVectorMap, typename Visitor>
 Sliver_removal_result flip_n_to_m(C3t3& c3t3,
                                   typename C3t3::Edge& edge,
                                   typename C3t3::Vertex_handle vh,
+                                  IncCellsVectorMap& inc_cells,
                                   Visitor& visitor,
                                   bool check_validity = false)
 {
@@ -716,8 +744,13 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   facet_circulator++;
   facet_circulator++;
 
-  boost::container::small_vector<Cell_handle, 64> inc_vh;
-  tr.incident_cells(vh, std::back_inserter(inc_vh));
+  boost::optional<boost::container::small_vector<Cell_handle, 64>>& o_inc_vh = inc_cells[vh];
+  if (o_inc_vh == boost::none)
+  {
+    boost::container::small_vector<Cell_handle, 64> inc_vec;
+    tr.incident_cells(vh, std::back_inserter(inc_vec));
+    inc_cells[vh] = inc_vec;
+  }
 
   do
   {
@@ -728,7 +761,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
                                     indices(facet_circulator->second, i));
       if (curr_vertex != vh0  && curr_vertex != vh1)
       {
-        if (is_edge_uv(vh, curr_vertex, inc_vh))
+        if (is_edge_uv(vh, curr_vertex, boost::get(inc_cells[vh])))
           return NOT_FLIPPABLE;
       }
     }
@@ -895,6 +928,8 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
         ch->set_neighbor(v, facet.first);
       }
       ch->vertex(v)->set_cell(ch);
+
+      inc_cells[ch->vertex(v)] = boost::none;
     }
   }
 
@@ -961,11 +996,12 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
 }
 
 
-template<typename C3t3, typename Visitor>
+template<typename C3t3, typename IncCellsVectorMap, typename Visitor>
 Sliver_removal_result flip_n_to_m(typename C3t3::Edge& edge,
                                   C3t3& c3t3,
                                   std::vector<typename C3t3::Vertex_handle>& boundary_vertices,
                                   const Flip_Criterion& criterion,
+                                  IncCellsVectorMap& inc_cells,
                                   Visitor& visitor)
 {
   typedef typename C3t3::Vertex_handle Vertex_handle;
@@ -995,7 +1031,8 @@ Sliver_removal_result flip_n_to_m(typename C3t3::Edge& edge,
       find_best_flip_to_improve_dh(c3t3, edge, boundary_vertices[0], boundary_vertices[1],
                                    candidates, curr_min_dh);
     else
-      find_best_flip_to_improve_dh(c3t3, edge, candidates, curr_min_dh);
+      find_best_flip_to_improve_dh(c3t3, edge, candidates, curr_min_dh,
+                                   inc_cells);
 
     bool flip_performed = false;
     while (!candidates.empty() && !flip_performed)
@@ -1008,7 +1045,7 @@ Sliver_removal_result flip_n_to_m(typename C3t3::Edge& edge,
       if (curr_min_dh >= curr_cost_vpair.first)
         return NO_BEST_CONFIGURATION;
 
-      result = flip_n_to_m(c3t3, edge, curr_cost_vpair.second.first, visitor);
+      result = flip_n_to_m(c3t3, edge, curr_cost_vpair.second.first, inc_cells, visitor);
 
       if (result != NOT_FLIPPABLE)
         flip_performed = true;
@@ -1018,10 +1055,11 @@ Sliver_removal_result flip_n_to_m(typename C3t3::Edge& edge,
   return result;
 }
 
-template<typename C3t3, typename Visitor>
+template<typename C3t3, typename IncCellsVectorMap, typename Visitor>
 Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
                                      C3t3& c3t3,
                                      const Flip_Criterion& criterion,
+                                     IncCellsVectorMap& inc_cells,
                                      Visitor& visitor)
 {
   typedef typename C3t3::Triangulation        Tr;
@@ -1084,7 +1122,7 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
     {
       std::vector<Vertex_handle> vertices;
       vertices.insert(vertices.end(), vertices_around_edge.begin(), vertices_around_edge.end());
-      res = flip_3_to_2(edge, c3t3, vertices, criterion);
+      res = flip_3_to_2(edge, c3t3, vertices, criterion, inc_cells);
     }
   }
   else
@@ -1096,11 +1134,10 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
     {
       std::vector<Vertex_handle> vertices;
       vertices.insert(vertices.end(), boundary_vertices.begin(), boundary_vertices.end());
-      res = flip_n_to_m(edge, c3t3, vertices, criterion, visitor);
+      res = flip_n_to_m(edge, c3t3, vertices, criterion, inc_cells, visitor);
       //return n_to_m_flip(edge, boundary_vertices, flip_criterion);
     }
   }
-
 
   return res;
 }
@@ -1114,20 +1151,33 @@ std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
 {
   typedef typename C3t3::Triangulation Tr;
   typedef typename Tr::Cell_handle   Cell_handle;
+  typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Edge          Edge;
 
   Tr& tr = c3t3.triangulation();
 
+  std::unordered_map<Vertex_handle,
+    boost::optional<boost::container::small_vector<Cell_handle, 64> > > inc_cells;
+
   std::size_t count = 0;
   for (const VertexPair vp : edges)
   {
+    boost::optional<boost::container::small_vector<Cell_handle, 64>>&
+      o_inc_vh = inc_cells[vp.first];
+    if (o_inc_vh == boost::none)
+    {
+      boost::container::small_vector<Cell_handle, 64> inc_vec;
+      tr.incident_cells(vp.first, std::back_inserter(inc_vec));
+      inc_cells[vp.first] = inc_vec;
+    }
+
     Cell_handle ch;
     int i0, i1;
-    if (tr.is_edge(vp.first, vp.second, ch, i0, i1))
+    if (is_edge_uv(vp.first, vp.second, boost::get(inc_cells[vp.first]), ch, i0, i1))
     {
       Edge edge(ch, i0, i1);
 
-      Sliver_removal_result res = find_best_flip(edge, c3t3, criterion, visitor);
+      Sliver_removal_result res = find_best_flip(edge, c3t3, criterion, inc_cells, visitor);
       if (res == INVALID_CELL || res == INVALID_VERTEX || res == INVALID_ORIENTATION)
       {
         std::cout << "FLIP PROBLEM!!!!" << std::endl;
