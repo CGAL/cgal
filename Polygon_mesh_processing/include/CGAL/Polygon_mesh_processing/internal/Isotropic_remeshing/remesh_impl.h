@@ -478,13 +478,12 @@ namespace internal {
     // "visits all edges of the mesh
     //if an edge is longer than the given threshold `high`, the edge
     //is split at its midpoint and the two adjacent triangles are bisected (2-4 split)"
-    void split_long_edges(const double& high)
+    template<typename SizingFunction>
+    void split_long_edges(const SizingFunction& sizing)
     {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Split long edges (" << high << ")..." << std::endl;
 #endif
-      double sq_high = high*high;
-
       //collect long edges
       typedef std::pair<halfedge_descriptor, double> H_and_sql;
       std::multiset< H_and_sql, std::function<bool(H_and_sql,H_and_sql)> >
@@ -497,8 +496,8 @@ namespace internal {
       {
         if (!is_split_allowed(e))
           continue;
-        double sqlen = sqlength(e);
-        if(sqlen > sq_high)
+        double sqlen;
+        if(sizing.is_too_long(halfedge(e, mesh_), sqlen))
           long_edges.emplace(halfedge(e, mesh_), sqlen);
       }
 
@@ -528,7 +527,7 @@ namespace internal {
         Patch_id patch_id_opp = get_patch_id(face(opposite(he, mesh_), mesh_));
 
         //split edge
-        Point refinement_point = this->midpoint(he);
+        Point refinement_point = sizing.split_placement(he);
         halfedge_descriptor hnew = CGAL::Euler::split_edge(he, mesh_);
         CGAL_assertion(he == next(hnew, mesh_));
         put(ecmap_, edge(hnew, mesh_), get(ecmap_, edge(he, mesh_)) );
@@ -548,13 +547,12 @@ namespace internal {
         halfedge_added(hnew_opp, status(opposite(he, mesh_)));
 
         //check sub-edges
-        double sqlen_new = 0.25 * sqlen;
-        if (sqlen_new > sq_high)
-        {
-          //if it was more than twice the "long" threshold, insert them
-          long_edges.emplace(hnew, sqlen_new);
-          long_edges.emplace(next(hnew, mesh_), sqlen_new);
-        }
+        //if it was more than twice the "long" threshold, insert them
+        double sqlen_new;
+        if(sizing.is_too_long(hnew, sqlen_new))
+          long_edges.emplace(hnew,              sqlen_new);
+        if(sizing.is_too_long(next(hnew, mesh_), sqlen_new))
+          long_edges.insert(long_edge(next(hnew, mesh_), sqlen_new));
 
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_on_border(hnew))
@@ -573,8 +571,8 @@ namespace internal {
 
           if (snew == PATCH)
           {
-            double sql = sqlength(hnew2);
-            if (sql > sq_high)
+            double sql;
+            if(sizing.is_too_long(hnew2, sql))
               long_edges.emplace(hnew2, sql);
           }
         }
@@ -596,8 +594,8 @@ namespace internal {
 
           if (snew == PATCH)
           {
-            double sql = sqlength(hnew2);
-            if (sql > sq_high)
+            double sql;
+            if (sizing.is_too_long(hnew2, sql))
               long_edges.emplace(hnew2, sql);
           }
         }
@@ -620,8 +618,8 @@ namespace internal {
     // "collapses and thus removes all edges that are shorter than a
     // threshold `low`. [...] testing before each collapse whether the collapse
     // would produce an edge that is longer than `high`"
-    void collapse_short_edges(const double& low,
-                              const double& high,
+    template<typename SizingFunction>
+    void collapse_short_edges(const SizingFunction& sizing,
                               const bool collapse_constraints)
     {
       typedef boost::bimap<
@@ -637,14 +635,13 @@ namespace internal {
       std::cout << "Fill bimap...";
       std::cout.flush();
 #endif
-      double sq_low = low*low;
-      double sq_high = high*high;
 
       Boost_bimap short_edges;
       for(edge_descriptor e : edges(mesh_))
       {
-        double sqlen = sqlength(e);
-        if ((sqlen < sq_low) && is_collapse_allowed(e, collapse_constraints))
+        double sqlen;
+        if(  sizing.is_too_short(halfedge(e, mesh_), sqlen)
+          && is_collapse_allowed(e, collapse_constraints))
           short_edges.insert(short_edge(halfedge(e, mesh_), sqlen));
       }
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
@@ -741,7 +738,7 @@ namespace internal {
         for(halfedge_descriptor ha : halfedges_around_target(va, mesh_))
         {
           vertex_descriptor va_i = source(ha, mesh_);
-          if (sqlength(vb, va_i) > sq_high)
+          if (sizing.is_too_long(vb, va_i))
           {
             collapse_ok = false;
             break;
@@ -796,7 +793,7 @@ namespace internal {
           //fix constrained case
           CGAL_assertion((is_constrained(vkept) || is_corner(vkept) || is_on_patch_border(vkept)) ==
                          (is_va_constrained || is_vb_constrained || is_va_on_constrained_polyline || is_vb_on_constrained_polyline));
-          if (fix_degenerate_faces(vkept, short_edges, sq_low, collapse_constraints))
+          if (fix_degenerate_faces(vkept, short_edges, sizing, collapse_constraints))
           {
 #ifdef CGAL_PMP_REMESHING_DEBUG
             debug_status_map();
@@ -806,8 +803,9 @@ namespace internal {
             //insert new/remaining short edges
             for (halfedge_descriptor ht : halfedges_around_target(vkept, mesh_))
             {
-              double sqlen = sqlength(ht);
-              if ((sqlen < sq_low) && is_collapse_allowed(edge(ht, mesh_), collapse_constraints))
+              double sqlen;
+              if (sizing.is_too_short(ht, sqlen)
+                && is_collapse_allowed(edge(ht, mesh_), collapse_constraints))
                 short_edges.insert(short_edge(ht, sqlen));
             }
           }
@@ -1645,10 +1643,10 @@ private:
       // else keep current status for en and eno
     }
 
-    template<typename Bimap>
+    template<typename Bimap, typename SizingFunction>
     bool fix_degenerate_faces(const vertex_descriptor& v,
                               Bimap& short_edges,
-                              const double& sq_low,
+                              const SizingFunction& sizing,
                               const bool collapse_constraints)
     {
       std::unordered_set<halfedge_descriptor> degenerate_faces;
@@ -1726,8 +1724,8 @@ private:
             //insert new edges in 'short_edges'
             if (is_collapse_allowed(edge(hf, mesh_), collapse_constraints))
             {
-              double sqlen = sqlength(hf);
-              if (sqlen < sq_low)
+              double sqlen;
+              if (sizing.is_too_short(hf, sqlen))
                 short_edges.insert(typename Bimap::value_type(hf, sqlen));
             }
 
