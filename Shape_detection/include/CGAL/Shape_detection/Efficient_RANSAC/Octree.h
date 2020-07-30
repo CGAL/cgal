@@ -530,12 +530,41 @@ private:
 
 };
 
+
 template<class Traits>
 class DirectOctree {
 
-  CGAL::Octree::Octree<typename Traits::Input_range, typename Traits::Point_map> m_octree;
+private:
+
+  typedef typename Traits::Input_iterator Input_iterator;
+  typedef typename Traits::Input_range Input_range;
+  typedef typename Traits::Point_map Point_map;
+
+  typedef CGAL::Octree::Octree<Input_range, Point_map> Octree;
+
+private:
+
+  Octree m_octree;
+  std::size_t m_offset;
 
 public:
+
+  DirectOctree(Traits const &traits,
+               const Input_iterator &first,
+               const Input_iterator &beyond,
+               Point_map &point_map,
+               std::size_t offset = 0) {
+
+    // Create an input range from the iterators
+    Input_range point_range = {first, beyond};
+
+    // Create an octree from the range and the map
+    m_octree = Octree(point_range, point_map);
+
+    // Save the offset
+    m_offset = offset;
+
+  }
 
 
 };
