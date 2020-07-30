@@ -659,7 +659,8 @@ class Join_input_iterator_1
 
 public:
   typedef typename std::iterator_traits<I1>::iterator_category  iterator_category;
-  typedef std::decay_t<decltype(std::declval<Op>()(arg_type()))> value_type;
+  typedef std::decay_t<decltype(std::declval<Op>()(std::declval<arg_type>()))>
+                                                                value_type;
   typedef typename std::iterator_traits<I1>::difference_type    difference_type;
   typedef value_type const*                                     pointer;
   typedef value_type const&                                     reference;
@@ -745,7 +746,8 @@ class Join_input_iterator_2
 
 public:
   typedef typename std::iterator_traits<I1>::iterator_category        iterator_category;
-  typedef decltype(std::declval<Op>()(arg_type_1(), arg_type_2()))    value_type;
+  typedef decltype(std::declval<Op>()(std::declval<arg_type_1>(), std::declval<arg_type_2>()))
+                                                                      value_type;
   typedef typename std::iterator_traits<I1>::difference_type          difference_type;
   typedef value_type*                                                 pointer;
   typedef value_type&                                                 reference;
@@ -839,7 +841,7 @@ class Join_input_iterator_3
 
 public:
   typedef typename std::iterator_traits<I1>::iterator_category  iterator_category;
-  typedef decltype(std::declval<Op>()(arg_type_1(), arg_type_2(), arg_type_3()))
+  typedef decltype(std::declval<Op>()(std::declval<arg_type_1>(), std::declval<arg_type_2>(), std::declval<arg_type_3>()))
                                                                 value_type;
   typedef typename std::iterator_traits<I1>::difference_type    difference_type;
   typedef value_type*                                           pointer;

@@ -398,7 +398,7 @@ public:
 };
 
 // Macro helpers to build the kernel objects
-#define CGAL_PARAM(z, n, t) t##n()
+#define CGAL_PARAM(z, n, t) std::declval<t##n>()
 #define CGAL_TYPEMAP_AC(z, n, t) typedef typename Type_mapper< t##n, LK, AK >::type A##n;
 #define CGAL_TYPEMAP_EC(z, n, t) typedef typename Type_mapper< t##n, LK, EK >::type E##n;
 #define CGAL_LEXACT(z,n,t) CGAL::exact( l##n )
@@ -1486,10 +1486,10 @@ struct Lazy_construction_variant {
   operator()(const L1& l1, const L2& l2) const {
     typedef typename result<Lazy_construction_variant(L1, L2)>::type result_type;
 
-    typedef decltype(std::declval<AC>()(typename Type_mapper<L1, LK, AK>::type(),
-                                        typename Type_mapper<L2, LK, AK>::type())) AT;
-    typedef decltype(std::declval<EC>()(typename Type_mapper<L1, LK, EK>::type(),
-                                        typename Type_mapper<L2, LK, EK>::type())) ET;
+    typedef decltype(std::declval<AC>()(std::declval<typename Type_mapper<L1, LK, AK>::type>(),
+                                        std::declval<typename Type_mapper<L2, LK, AK>::type>())) AT;
+    typedef decltype(std::declval<EC>()(std::declval<typename Type_mapper<L1, LK, EK>::type>(),
+                                        std::declval<typename Type_mapper<L2, LK, EK>::type>())) ET;
 
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     Protect_FPU_rounding<Protection> P;
@@ -1534,12 +1534,12 @@ struct Lazy_construction_variant {
   operator()(const L1& l1, const L2& l2, const L3& l3) const {
     typedef typename result<Lazy_construction_variant(L1, L2, L3)>::type result_type;
 
-    typedef decltype(std::declval<AC>()(typename Type_mapper<L1, LK, AK>::type(),
-                                        typename Type_mapper<L2, LK, AK>::type(),
-                                        typename Type_mapper<L3, LK, AK>::type())) AT;
-    typedef decltype(std::declval<EC>()(typename Type_mapper<L1, LK, EK>::type(),
-                                        typename Type_mapper<L2, LK, EK>::type(),
-                                        typename Type_mapper<L3, LK, EK>::type())) ET;
+    typedef decltype(std::declval<AC>()(std::declval<typename Type_mapper<L1, LK, AK>::type>(),
+                                        std::declval<typename Type_mapper<L2, LK, AK>::type>(),
+                                        std::declval<typename Type_mapper<L3, LK, AK>::type>())) AT;
+    typedef decltype(std::declval<EC>()(std::declval<typename Type_mapper<L1, LK, EK>::type>(),
+                                        std::declval<typename Type_mapper<L2, LK, EK>::type>(),
+                                        std::declval<typename Type_mapper<L3, LK, EK>::type>())) ET;
 
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     Protect_FPU_rounding<Protection> P;
