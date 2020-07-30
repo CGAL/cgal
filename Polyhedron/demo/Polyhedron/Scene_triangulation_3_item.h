@@ -52,8 +52,8 @@ public:
 
   void set_valid(bool);
 
-  const T3& triangulation() const;
-  T3& triangulation();
+  virtual const T3& triangulation() const;
+  virtual T3& triangulation();
 
   bool manipulatable() const  Q_DECL_OVERRIDE{
     return true;
@@ -62,7 +62,7 @@ public:
   bool has_spheres() const;
   bool has_grid() const;
   bool has_tets() const;
-  bool is_valid() const;//true if the t3 is correct.
+
   float alpha() const Q_DECL_OVERRIDE;
   void setAlpha(int alpha) Q_DECL_OVERRIDE;
   QSlider* alphaSlider();
@@ -124,7 +124,6 @@ public:
   void reset_spheres();
 
   void reset_intersection_item();
-  void show_spheres(bool b);
   void show_intersection(bool b);
   void show_grid(bool b);
 
@@ -157,6 +156,10 @@ public:
       Grid_edges
     };
 
+    virtual bool do_take_cell(const T3::Cell_handle&) const { return true; }
+    virtual bool do_take_facet(const T3::Facet&)const { return true; }
+    virtual bool do_take_vertex(const T3::Vertex&)const { return true; }
+    virtual bool is_facet_oriented(const T3::Facet&)const { return true; }
 };
 
 #endif // SCENE_TRIANGULATION_3_ITEM_H

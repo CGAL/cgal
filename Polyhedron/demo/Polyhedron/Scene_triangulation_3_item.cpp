@@ -294,7 +294,6 @@ struct Scene_triangulation_3_item_priv {
     , histogram_()
     , surface_patch_indices_()
     , subdomain_indices_()
-    , is_valid(true)
   {
     init_default_values();
     tet_Slider = new QSlider(Qt::Horizontal);
@@ -310,7 +309,6 @@ struct Scene_triangulation_3_item_priv {
     , histogram_()
     , surface_patch_indices_()
     , subdomain_indices_()
-    , is_valid(true)
   {
     init_default_values();
     tet_Slider = new QSlider(Qt::Horizontal);
@@ -323,7 +321,7 @@ struct Scene_triangulation_3_item_priv {
   {
     if(alphaSlider)
       delete alphaSlider;
-    triangulation.clear();
+    item->triangulation().clear();
     tree.clear();
     if(frame)
     {
@@ -355,10 +353,11 @@ struct Scene_triangulation_3_item_priv {
     timer.start();
     tree.clear();
     for (Tr::Finite_cells_iterator
-           cit = triangulation.finite_cells_begin(),
-           end = triangulation.finite_cells_end();
+           cit = item->triangulation().finite_cells_begin(),
+           end = item->triangulation().finite_cells_end();
          cit != end; ++cit)
     {
+      if(!item->do_take_cell(cit)) continue;
       tree.insert(Primitive(cit));
     }
     tree.build();
@@ -379,7 +378,6 @@ struct Scene_triangulation_3_item_priv {
   void computeSpheres();
   void computeElements();
   void computeIntersections(CGAL::Three::Viewer_interface* viewer);
-
   void invalidate_stats()
   {
     min_edges_length = (std::numeric_limits<float>::max)();
@@ -483,7 +481,6 @@ struct Scene_triangulation_3_item_priv {
   QVector<QColor> colors_subdomains;
   bool show_tetrahedra;
   bool is_aabb_tree_built;
-  bool is_valid;
   bool last_intersection;
 
   void push_normal(std::vector<float>& normals, const EPICK::Vector_3& n) const
@@ -635,15 +632,15 @@ Scene_triangulation_3_item::triangulation_changed()
   d->subdomain_indices_.clear();
 
   int max = 0;
-  for (Tr::Finite_cells_iterator cit = d->triangulation.finite_cells_begin(),
-       end = d->triangulation.finite_cells_end(); cit != end; ++cit)
+  for (Tr::Finite_cells_iterator cit = triangulation().finite_cells_begin(),
+       end = triangulation().finite_cells_end(); cit != end; ++cit)
   {
     max = (std::max)(max, cit->subdomain_index());
     d->subdomain_indices_.insert(cit->subdomain_index());
   }
   const int max_subdomain_index = max;
-  for (Tr::Finite_facets_iterator fit = d->triangulation.finite_facets_begin(),
-       end = d->triangulation.finite_facets_end(); fit != end; ++fit)
+  for (Tr::Finite_facets_iterator fit = triangulation().finite_facets_begin(),
+       end = triangulation().finite_facets_end(); fit != end; ++fit)
   {
     max = (std::max)(max, fit->first->surface_patch_index(fit->second));
     d->surface_patch_indices_.insert(fit->first->surface_patch_index(fit->second));
@@ -887,7 +884,7 @@ void Scene_triangulation_3_item::compute_bbox() const {
            end = triangulation().finite_vertices_end();
          vit != end; ++vit)
     {
-      //if(vit->in_dimension() == -1) continue;
+      if(!do_take_vertex(*vit)) continue;
       if (bbox_init)
         result = result + vit->point().bbox();
       else
@@ -1115,19 +1112,7 @@ QMenu* Scene_triangulation_3_item::contextMenu()
     sliderAction->setDefaultWidget(d->tet_Slider);
     container->addAction(sliderAction);
     menu->addMenu(container);
-    QAction* actionExportFacetsInComplex =
-      menu->addAction(tr("Export facets in complex"));
-    actionExportFacetsInComplex->setObjectName("actionExportFacetsInComplex");
 
-    if(is_valid())
-    {
-      QAction* actionShowSpheres =
-          menu->addAction(tr("Show protecting &spheres"));
-      actionShowSpheres->setCheckable(true);
-      actionShowSpheres->setObjectName("actionShowSpheres");
-      connect(actionShowSpheres, SIGNAL(toggled(bool)),
-              this, SLOT(show_spheres(bool)));
-    }
     QAction* actionShowTets =
       menu->addAction(tr("Show &tetrahedra"));
     actionShowTets->setCheckable(true);
@@ -1190,7 +1175,7 @@ void Scene_triangulation_3_item_priv::initializeBuffers(CGAL::Three::Viewer_inte
 void Scene_triangulation_3_item_priv::computeIntersection(const Primitive& cell)
 {
   Geom_traits::Construct_point_3 wp2p
-    = triangulation.geom_traits().construct_point_3_object();
+    = item->triangulation().geom_traits().construct_point_3_object();
 
   typedef unsigned char UC;
   Tr::Cell_handle ch = cell.id();
@@ -1241,27 +1226,27 @@ void Scene_triangulation_3_item_priv::computeIntersections(CGAL::Three::Viewer_i
 void Scene_triangulation_3_item_priv::computeSpheres()
 {
   Geom_traits::Construct_point_3 wp2p
-    = triangulation.geom_traits().construct_point_3_object();
+    = item->triangulation().geom_traits().construct_point_3_object();
 
   if(!spheres)
     return;
   int s_id = 0;
   for(Tr::Finite_vertices_iterator
-      vit = triangulation.finite_vertices_begin(),
-      end =  triangulation.finite_vertices_end();
+      vit = item->triangulation().finite_vertices_begin(),
+      end =  item->triangulation().finite_vertices_end();
       vit != end; ++vit)
   {
     if(vit->point().weight()==0) continue;
 
     typedef Tr::Vertex_handle Vertex_handle;
     std::vector<Vertex_handle> incident_vertices;
-    triangulation.incident_vertices(vit, std::back_inserter(incident_vertices));
+    item->triangulation().incident_vertices(vit, std::back_inserter(incident_vertices));
     bool red = vit->is_special();
     for(std::vector<Vertex_handle>::const_iterator
         vvit = incident_vertices.begin(), end = incident_vertices.end();
         vvit != end; ++vvit)
     {
-      if(triangulation.is_infinite(*vvit)) continue;
+      if(item->triangulation().is_infinite(*vvit)) continue;
       if(Geom_traits::Sphere_3(wp2p(vit->point()),
                                vit->point().weight()).bounded_side(wp2p((*vvit)->point()))
          == CGAL::ON_BOUNDED_SIDE)
@@ -1352,13 +1337,14 @@ void Scene_triangulation_3_item_priv::computeElements()
   //the facets
   {
     Geom_traits::Construct_point_3 wp2p
-        = triangulation.geom_traits().construct_point_3_object();
+        = item->triangulation().geom_traits().construct_point_3_object();
 
-    for (Tr::Facet_iterator
-         fit = triangulation.facets_begin(),
-         end = triangulation.facets_end();
+    for (Tr::Finite_facets_iterator
+         fit = item->triangulation().finite_facets_begin(),
+         end = item->triangulation().finite_facets_end();
          fit != end; ++fit)
     {
+      if(!item->do_take_facet(*fit)) continue;
       const Tr::Cell_handle& cell = fit->first;
       const int& index = fit->second;
       const Tr::Bare_point& pa = wp2p(cell->vertex((index + 1) & 3)->point());
@@ -1369,7 +1355,10 @@ void Scene_triangulation_3_item_priv::computeElements()
       f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
       f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
       f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
-      draw_triangle(pb, pa, pc);
+      if(item->is_facet_oriented(*fit))
+          draw_triangle(pb, pa, pc);
+      else
+        draw_triangle(pa, pb, pc);
       draw_triangle_edges(pa, pb, pc);
     }
   }
@@ -1422,42 +1411,7 @@ void Scene_triangulation_3_item::show_grid(bool b)
   contextMenu()->findChild<QAction*>("actionShowGrid")->setChecked(b);
   itemChanged();
 }
-void Scene_triangulation_3_item::show_spheres(bool b)
-{
-  if(is_valid())
-  {
-    d->spheres_are_shown = b;
-    contextMenu()->findChild<QAction*>("actionShowSpheres")->setChecked(b);
-    if(b && !d->spheres)
-    {
-      d->spheres = new Scene_spheres_item(this, d->triangulation.number_of_vertices(), true);
-      connect(d->spheres, &Scene_spheres_item::picked,
-              this, [this](std::size_t id)
-      {
-        if(id == (std::size_t)(-1))
-          return;
-        QString msg = QString("Vertex's index : %1; Vertex's in dimension: %2.").arg(d->tr_vertices[id].index()).arg(d->tr_vertices[id].in_dimension());
-        CGAL::Three::Three::information(msg);
-        CGAL::Three::Three::mainViewer()->displayMessage(msg, 5000);
 
-      });
-      d->spheres->setName("Protecting spheres");
-      d->spheres->setRenderingMode(Gouraud);
-      connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
-      connect(d->spheres, SIGNAL(on_color_changed()), this, SLOT(on_spheres_color_changed()));
-      d->computeSpheres();
-      lockChild(d->spheres);
-      scene->addItem(d->spheres);
-      scene->changeGroup(d->spheres, this);
-    }
-    else if (!b && d->spheres!=NULL)
-    {
-      unlockChild(d->spheres);
-      scene->erase(scene->item_id(d->spheres));
-    }
-    Q_EMIT redraw();
-  }
-}
 void Scene_triangulation_3_item::show_intersection(bool b)
 {
   contextMenu()->findChild<QAction*>("actionShowTets")->setChecked(b);
@@ -1544,21 +1498,14 @@ void Scene_triangulation_3_item::copyProperties(Scene_item *item)
 
   show_intersection(t3_item->has_tets());
 
-  show_spheres(t3_item->has_spheres());
+  //todo : move that in c3t3_item
+  //show_spheres(t3_item->has_spheres());
 
   show_grid(t3_item->has_grid());
   int value = t3_item->alphaSlider()->value();
   alphaSlider()->setValue(value);
 }
 
-bool Scene_triangulation_3_item::is_valid() const
-{
-  return d->is_valid;
-}
-void Scene_triangulation_3_item::set_valid(bool b)
-{
-  d->is_valid = b;
-}
 float Scene_triangulation_3_item::getShrinkFactor() const
 {
   return float(d->tet_Slider->value())/100.0f;
@@ -1591,7 +1538,7 @@ bool Scene_triangulation_3_item::keyPressEvent(QKeyEvent *event)
 QString Scene_triangulation_3_item::computeStats(int type)
 {
   Geom_traits::Construct_point_3 wp2p
-    = d->triangulation.geom_traits().construct_point_3_object();
+    = triangulation().geom_traits().construct_point_3_object();
 
   if(!d->computed_stats)
   {
@@ -1600,11 +1547,13 @@ QString Scene_triangulation_3_item::computeStats(int type)
     double nb_angle = 0;
     double total_angle = 0;
 
-    for (T3::Facet_iterator
-      fit = d->triangulation.facets_begin(),
-      end = d->triangulation.facets_end();
+    for (T3::Finite_facets_iterator
+      fit = triangulation().finite_facets_begin(),
+      end = triangulation().finite_facets_end();
     fit != end; ++fit)
     {
+      if(!do_take_facet(*fit)) continue;
+
       const Tr::Cell_handle& cell = fit->first;
       const int& index = fit->second;
       const Tr::Bare_point& pa = wp2p(cell->vertex((index + 1) & 3)->point());
@@ -1624,8 +1573,8 @@ QString Scene_triangulation_3_item::computeStats(int type)
     }
     d->mean_edges_length = static_cast<float>(total_edges/nb_edges);
     for(Tr::Finite_vertices_iterator
-        vit = d->triangulation.finite_vertices_begin(),
-        end =  d->triangulation.finite_vertices_end();
+        vit = triangulation().finite_vertices_begin(),
+        end =  triangulation().finite_vertices_end();
         vit != end; ++vit)
     {
       if(vit->point().weight()==0) continue;
@@ -1633,11 +1582,11 @@ QString Scene_triangulation_3_item::computeStats(int type)
     }
 
     Geom_traits::Compute_approximate_dihedral_angle_3 approx_dihedral_angle
-      = d->triangulation.geom_traits().compute_approximate_dihedral_angle_3_object();
+      = triangulation().geom_traits().compute_approximate_dihedral_angle_3_object();
 
     QVector<int> sub_ids;
-    for (T3::Finite_cells_iterator cit = d->triangulation.finite_cells_begin();
-      cit != d->triangulation.finite_cells_end();
+    for (T3::Finite_cells_iterator cit = triangulation().finite_cells_begin();
+      cit != triangulation().finite_cells_end();
       ++cit)
     {
       if(!sub_ids.contains(cit->subdomain_index()))
@@ -1714,8 +1663,8 @@ QString Scene_triangulation_3_item::computeStats(int type)
     }
     d->mean_dihedral_angle = static_cast<float>(total_angle/nb_angle);
     d->nb_subdomains = sub_ids.size();
-    d->nb_vertices = d->triangulation.number_of_vertices();
-    d->nb_tets = d->triangulation.number_of_cells();
+    d->nb_vertices = triangulation().number_of_vertices();
+    d->nb_tets = triangulation().number_of_cells();
     d->computed_stats = true;
   }
 
@@ -1806,7 +1755,7 @@ void Scene_triangulation_3_item::itemAboutToBeDestroyed(Scene_item *item)
 
   if(d && item == this)
   {
-    d->triangulation.clear();
+    triangulation().clear();
     d->tree.clear();
     if(d->frame)
     {
