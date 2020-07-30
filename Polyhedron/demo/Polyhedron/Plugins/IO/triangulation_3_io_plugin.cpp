@@ -14,20 +14,14 @@ class Triangulation_3_io_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90" FILE "triangulation_3_io_plugin.json")
 
 public:
-  bool isDefaultLoader(const CGAL::Three::Scene_item *item) const override
-  {
-    //TODO: set it for triangulation_3_item
-    //if(qobject_cast<const Scene_lcc_item*>(item))
-    //  return true;
-    return false;
-  }
+
   QString name() const override{ return "triangulation_3_io_plugin"; }
-  //todo: probably the same than for c3t3_io_plugn
+  //todo:
   QString nameFilters() const override{ return "T3 files(*.tr_test)"; }
 
 
-  //todo
   bool canLoad(QFileInfo) const override{ return true; }
+  //todo
   QList<CGAL::Three::Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override{
 
     // Open file
@@ -37,9 +31,9 @@ public:
       ok = false;
       return QList<CGAL::Three::Scene_item*>();
     }
-    T3* tr = new Tr();
-    ifs >> *tr;
-    if(ifs.fail() || !tr->is_valid(false)) {
+    T3 tr;
+    ifs >> tr;
+    if(ifs.fail() || !tr.is_valid(false)) {
       std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
       ok = false;
       return QList<CGAL::Three::Scene_item*>();
@@ -71,7 +65,7 @@ public:
       }
 
       QString path = fileinfo.absoluteFilePath();
-
+      //todo: define a real extension and use it.
       if(path.endsWith(".tr_test"))
       {
         std::ofstream out(fileinfo.filePath().toUtf8(),

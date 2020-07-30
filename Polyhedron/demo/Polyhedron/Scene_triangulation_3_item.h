@@ -33,7 +33,7 @@ public:
   typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
 
   Scene_triangulation_3_item();
-  Scene_triangulation_3_item(const T3& t3);
+  Scene_triangulation_3_item(const T3 t3);
   ~Scene_triangulation_3_item();
 
   void common_constructor();
@@ -43,16 +43,6 @@ public:
 
 
   void setColor(QColor c) Q_DECL_OVERRIDE;
-  bool save_binary(std::ostream& os) const
-  {
-    return CGAL::Mesh_3::save_binary_file(os, triangulation());
-  }
-  bool save_ascii(std::ostream& os) const
-  {
-      os << "ascii CGAL T3 " << CGAL::Get_io_signature<T3>()() << "\n";
-      CGAL::set_ascii_mode(os);
-      return !!(os << triangulation());
-  }
 
   void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
 
@@ -71,7 +61,6 @@ public:
 
   bool has_spheres() const;
   bool has_grid() const;
-  bool has_cnc() const;
   bool has_tets() const;
   bool is_valid() const;//true if the t3 is correct.
   float alpha() const Q_DECL_OVERRIDE;
@@ -87,11 +76,9 @@ public:
 
   bool isFinite() const Q_DECL_OVERRIDE { return true; }
   bool isEmpty() const Q_DECL_OVERRIDE {
-    //todo
-    //return triangulation().number_of_vertices() == 0
-    //  || (    triangulation().number_of_vertices_in_complex() == 0
-    //       && triangulation().number_of_facets_in_complex()   == 0
-    //       && triangulation().number_of_cells_in_complex()    == 0  );
+    return triangulation().number_of_vertices() == 0
+      || ( triangulation().number_of_finite_facets()   == 0
+           && triangulation().number_of_finite_cells()    == 0  );
     return false;
   }
 
@@ -131,7 +118,6 @@ public:
   public Q_SLOTS:
 
   void on_spheres_color_changed();
-  void export_facets_in_complex();
 
   void data_item_destroyed();
 
@@ -141,7 +127,6 @@ public:
   void show_spheres(bool b);
   void show_intersection(bool b);
   void show_grid(bool b);
-  void show_cnc(bool b);
 
   virtual QPixmap graphicalToolTip() const Q_DECL_OVERRIDE;
 
@@ -163,7 +148,7 @@ public:
 
   protected:
     friend struct Scene_triangulation_3_item_priv;
-    Scene_triangulation_3_item_priv* d;
+    mutable Scene_triangulation_3_item_priv* d;
     enum Face_Containers{
       T3_faces = 0
     };

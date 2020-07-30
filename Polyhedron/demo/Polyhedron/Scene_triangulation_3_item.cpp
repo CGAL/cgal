@@ -344,7 +344,6 @@ struct Scene_triangulation_3_item_priv {
     spheres = NULL;
     intersection = NULL;
     spheres_are_shown = false;
-    cnc_are_shown = false;
     is_aabb_tree_built = false;
     alphaSlider = NULL;
   }
@@ -373,9 +372,6 @@ struct Scene_triangulation_3_item_priv {
   void draw_triangle_edges(const Tr::Bare_point& pa,
                            const Tr::Bare_point& pb,
                            const Tr::Bare_point& pc) const;
-  void draw_triangle_edges_cnc(const Tr::Bare_point& pa,
-                               const Tr::Bare_point& pb,
-                               const Tr::Bare_point& pc) const;
   double complex_diag() const;
   void compute_color_map(const QColor& c);
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer);
@@ -394,7 +390,6 @@ struct Scene_triangulation_3_item_priv {
     mean_dihedral_angle = 0;
     nb_subdomains = 0;
     nb_spheres = 0;
-    nb_cnc = 0;
     nb_vertices = 0;
     nb_tets = 0;
     smallest_radius_radius = (std::numeric_limits<float>::max)();
@@ -411,7 +406,6 @@ struct Scene_triangulation_3_item_priv {
     MAX_DIHEDRAL_ANGLE,
     MEAN_DIHEDRAL_ANGLE,
     NB_SPHERES,
-    NB_CNC,
     NB_VERTICES,
     NB_TETS,
     SMALLEST_RAD_RAD,
@@ -476,7 +470,6 @@ struct Scene_triangulation_3_item_priv {
   mutable float max_dihedral_angle;
   mutable float mean_dihedral_angle;
   mutable std::size_t nb_spheres;
-  mutable std::size_t nb_cnc;
   mutable std::size_t nb_subdomains;
   mutable std::size_t nb_vertices;
   mutable std::size_t nb_tets;
@@ -490,9 +483,7 @@ struct Scene_triangulation_3_item_priv {
   QVector<QColor> colors_subdomains;
   bool show_tetrahedra;
   bool is_aabb_tree_built;
-  bool cnc_are_shown;
   bool is_valid;
-  bool is_surface;
   bool last_intersection;
 
   void push_normal(std::vector<float>& normals, const EPICK::Vector_3& n) const
@@ -529,6 +520,7 @@ struct Set_show_tetrahedra {
 
 void Scene_triangulation_3_item::common_constructor()
 {
+  d->frame = new CGAL::qglviewer::ManipulatedFrame();
   compute_bbox();
   connect(d->frame, SIGNAL(modified()), this, SLOT(changed()));
   triangulation_changed();
@@ -555,7 +547,7 @@ Scene_triangulation_3_item::Scene_triangulation_3_item()
   common_constructor();
 }
 
-Scene_triangulation_3_item::Scene_triangulation_3_item(const T3& triangulation)
+Scene_triangulation_3_item::Scene_triangulation_3_item(const T3 triangulation)
   : Scene_group_item("unnamed")
   , d(new Scene_triangulation_3_item_priv(triangulation, this))
 {
@@ -681,6 +673,7 @@ Scene_triangulation_3_item::graphicalToolTip() const
 std::vector<int>
 create_histogram(const T3& triangulation, double& min_value, double& max_value)
 {
+
   Geom_traits::Compute_approximate_dihedral_angle_3 approx_dihedral_angle
     = triangulation.geom_traits().compute_approximate_dihedral_angle_3_object();
   Geom_traits::Construct_point_3 wp2p
@@ -690,14 +683,10 @@ create_histogram(const T3& triangulation, double& min_value, double& max_value)
 
   min_value = 180.;
   max_value = 0.;
-
-  for (T3::Cells_in_complex_iterator cit = triangulation.cells_in_complex_begin();
-    cit != triangulation.cells_in_complex_end();
+  for (T3::Finite_cells_iterator cit = triangulation.finite_cells_begin();
+    cit != triangulation.finite_cells_end();
     ++cit)
   {
-    if (!triangulation.is_in_complex(cit))
-      continue;
-
 #ifdef CGAL_MESH_3_DEMO_DONT_COUNT_TETS_ADJACENT_TO_SHARP_FEATURES_FOR_HISTOGRAM
     if (triangulation.in_dimension(cit->vertex(0)) <= 1
       || triangulation.in_dimension(cit->vertex(1)) <= 1
@@ -742,7 +731,6 @@ create_histogram(const T3& triangulation, double& min_value, double& max_value)
     max_value = (std::max)(max_value, a);
 
   }
-
   return histo;
 }
 
@@ -899,7 +887,7 @@ void Scene_triangulation_3_item::compute_bbox() const {
            end = triangulation().finite_vertices_end();
          vit != end; ++vit)
     {
-      if(vit->in_dimension() == -1) continue;
+      //if(vit->in_dimension() == -1) continue;
       if (bbox_init)
         result = result + vit->point().bbox();
       else
@@ -914,13 +902,13 @@ void Scene_triangulation_3_item::compute_bbox() const {
 }
 
 QString Scene_triangulation_3_item::toolTip() const {
-  return tr("<p><b>3D complex in a 3D triangulation</b></p>"
+  return tr("<p><b>3D triangulation</b></p>"
     "<p>Number of vertices: %1<br />"
-    "Number of surface facets: %2<br />"
-    "Number of volume tetrahedra: %3</p>%4")
+    "Number of finite facets: %2<br />"
+    "Number of finite cells: %3</p>%4")
     .arg(triangulation().number_of_vertices())
-    .arg(triangulation().number_of_facets_in_complex())
-    .arg(triangulation().number_of_cells_in_complex())
+    .arg(triangulation().number_of_finite_facets())
+    .arg(triangulation().number_of_finite_cells())
     .arg(property("toolTip").toString());
 }
 
@@ -952,7 +940,7 @@ void Scene_triangulation_3_item::draw(CGAL::Three::Viewer_interface* viewer) con
     // positions_poly_size is the number of total facets in the C3T3
     // it is only computed once and positions_poly is emptied at the end
     getTriangleContainer(T3_faces)->setAlpha(alpha());
-    getTriangleContainer(T3_faces)->setIsSurface(d->is_surface);
+    getTriangleContainer(T3_faces)->setIsSurface(false);
     getTriangleContainer(T3_faces)->draw(viewer, false);
     if(d->show_tetrahedra){
       ncthis->show_intersection(true);
@@ -1024,7 +1012,7 @@ void Scene_triangulation_3_item::drawEdges(CGAL::Three::Viewer_interface* viewer
 
     QVector4D cp = cgal_plane_to_vector4d(this->plane());
     getEdgeContainer(T3_edges)->setPlane(cp);
-    getEdgeContainer(T3_edges)->setIsSurface(d->is_surface);
+    getEdgeContainer(T3_edges)->setIsSurface(false);
     getEdgeContainer(T3_edges)->setColor(QColor(Qt::black));
     getEdgeContainer(T3_edges)->draw(viewer, true);
 
@@ -1043,11 +1031,6 @@ void Scene_triangulation_3_item::drawEdges(CGAL::Three::Viewer_interface* viewer
     {
       d->spheres->setPlane(this->plane());
     }
-  }
-  if(d->cnc_are_shown)
-  {
-    getEdgeContainer(CNC)->setColor(QColor(Qt::black));
-    getEdgeContainer(CNC)->draw(viewer, true);
   }
 }
 
@@ -1087,15 +1070,6 @@ void Scene_triangulation_3_item_priv::draw_triangle_edges(const Tr::Bare_point& 
   push_edge(positions_lines, pb, pc, offset);
   push_edge(positions_lines, pc, pa, offset);
 }
-void Scene_triangulation_3_item_priv::draw_triangle_edges_cnc(const Tr::Bare_point& pa,
-                                                   const Tr::Bare_point& pb,
-                                                   const Tr::Bare_point& pc) const
-{
-  const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
-  push_edge(positions_lines_not_in_complex, pa, pb, offset);
-  push_edge(positions_lines_not_in_complex, pb, pc, offset);
-  push_edge(positions_lines_not_in_complex, pc, pa, offset);
-}
 
 double Scene_triangulation_3_item_priv::complex_diag() const {
   const CGAL::Three::Scene_item::Bbox& bbox = item->bbox();
@@ -1108,17 +1082,7 @@ double Scene_triangulation_3_item_priv::complex_diag() const {
   return diag * 0.7;
 }
 
-void Scene_triangulation_3_item::export_facets_in_complex()
-{
-  SMesh outmesh;
-  CGAL::facets_in_complex_3_to_triangle_mesh(triangulation(), outmesh);
-  Scene_surface_mesh_item* item = new Scene_surface_mesh_item(std::move(outmesh));
-  item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
-  scene->addItem(item);
-  this->setVisible(false);
-}
-
-QMenu* Scene_triangulation_3_item::triangulation_3u()
+QMenu* Scene_triangulation_3_item::contextMenu()
 {
   const char* prop_name = "Menu modified by Scene_triangulation_3_item.";
 
@@ -1154,9 +1118,6 @@ QMenu* Scene_triangulation_3_item::triangulation_3u()
     QAction* actionExportFacetsInComplex =
       menu->addAction(tr("Export facets in complex"));
     actionExportFacetsInComplex->setObjectName("actionExportFacetsInComplex");
-    connect(actionExportFacetsInComplex,
-      SIGNAL(triggered()), this,
-      SLOT(export_facets_in_complex()));
 
     if(is_valid())
     {
@@ -1166,13 +1127,6 @@ QMenu* Scene_triangulation_3_item::triangulation_3u()
       actionShowSpheres->setObjectName("actionShowSpheres");
       connect(actionShowSpheres, SIGNAL(toggled(bool)),
               this, SLOT(show_spheres(bool)));
-
-      QAction* actionShowCNC =
-          menu->addAction(tr("Show cells not in complex"));
-      actionShowCNC->setCheckable(true);
-      actionShowCNC->setObjectName("actionShowCNC");
-      connect(actionShowCNC, SIGNAL(toggled(bool)),
-              this, SLOT(show_cnc(bool)));
     }
     QAction* actionShowTets =
       menu->addAction(tr("Show &tetrahedra"));
@@ -1221,14 +1175,6 @@ void Scene_triangulation_3_item_priv::initializeBuffers(CGAL::Three::Viewer_inte
           positions_lines_size);
     positions_lines.clear();
     positions_lines.shrink_to_fit();
-  }
-  // vao containing the data for the cnc
-  {
-    item->getEdgeContainer(Scene_triangulation_3_item::CNC)->initializeBuffers(viewer);
-    item->getEdgeContainer(Scene_triangulation_3_item::CNC)->setFlatDataSize(
-          positions_lines_not_in_complex_size);
-    positions_lines_not_in_complex.clear();
-    positions_lines_not_in_complex.shrink_to_fit();
   }
 
   //vao containing the data for the grid
@@ -1403,15 +1349,15 @@ void Scene_triangulation_3_item_priv::computeElements()
     }
   }
 
-  //The facets
+  //the facets
   {
     Geom_traits::Construct_point_3 wp2p
-      = triangulation.geom_traits().construct_point_3_object();
+        = triangulation.geom_traits().construct_point_3_object();
 
-    for (T3::Facet_iterator
-      fit = triangulation.facets_begin(),
-      end = triangulation.facets_end();
-    fit != end; ++fit)
+    for (Tr::Facet_iterator
+         fit = triangulation.facets_begin(),
+         end = triangulation.facets_end();
+         fit != end; ++fit)
     {
       const Tr::Cell_handle& cell = fit->first;
       const int& index = fit->second;
@@ -1423,39 +1369,8 @@ void Scene_triangulation_3_item_priv::computeElements()
       f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
       f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
       f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
-      if ((index % 2 == 1) == triangulation.is_in_complex(cell))
-        draw_triangle(pb, pa, pc);
-      else draw_triangle(pa, pb, pc);
+      draw_triangle(pb, pa, pc);
       draw_triangle_edges(pa, pb, pc);
-    }
-    //the cells not in the complex
-    for(T3::Triangulation::Cell_iterator
-        cit = triangulation.finite_cells_begin(),
-        end = triangulation.finite_cells_end();
-        cit != end; ++cit)
-    {
-      if(!triangulation.is_in_complex(cit))
-      {
-
-        bool has_far_point = false;
-        for(int i=0; i<4; i++)
-          if(triangulation.in_dimension(cit->vertex(i)) == -1)
-          {
-            has_far_point = true;
-            break;
-          }
-        if(!has_far_point)
-        {
-          const Tr::Bare_point& p1 = wp2p(cit->vertex(0)->point());
-          const Tr::Bare_point& p2 = wp2p(cit->vertex(1)->point());
-          const Tr::Bare_point& p3 = wp2p(cit->vertex(2)->point());
-          const Tr::Bare_point& p4 = wp2p(cit->vertex(3)->point());
-          draw_triangle_edges_cnc(p1, p2, p4);
-          draw_triangle_edges_cnc(p1, p3, p4);
-          draw_triangle_edges_cnc(p2, p3, p4);
-          draw_triangle_edges_cnc(p1, p2, p3);
-        }
-      }
     }
   }
 }
@@ -1515,7 +1430,7 @@ void Scene_triangulation_3_item::show_spheres(bool b)
     contextMenu()->findChild<QAction*>("actionShowSpheres")->setChecked(b);
     if(b && !d->spheres)
     {
-      d->spheres = new Scene_spheres_item(this, d->triangulation.number_of_vertices_in_complex(), true);
+      d->spheres = new Scene_spheres_item(this, d->triangulation.number_of_vertices(), true);
       connect(d->spheres, &Scene_spheres_item::picked,
               this, [this](std::size_t id)
       {
@@ -1586,16 +1501,6 @@ void Scene_triangulation_3_item::show_intersection(bool b)
   }
 }
 
-void Scene_triangulation_3_item::show_cnc(bool b)
-{
-  if(is_valid())
-  {
-    d->cnc_are_shown = b;
-    contextMenu()->findChild<QAction*>("actionShowCNC")->setChecked(b);
-    Q_EMIT redraw();
-  }
-}
-
 void Scene_triangulation_3_item::reset_intersection_item()
 {
   d->intersection = NULL;
@@ -1622,8 +1527,6 @@ bool Scene_triangulation_3_item::has_spheres()const { return d->spheres_are_show
 
 bool Scene_triangulation_3_item::has_grid()const { return d->is_grid_shown;}
 
-bool Scene_triangulation_3_item::has_cnc()const { return d->cnc_are_shown;}
-
 bool Scene_triangulation_3_item::has_tets()const { return d->intersection; }
 
 void Scene_triangulation_3_item::setNormal(float x, float y, float z) {
@@ -1642,8 +1545,6 @@ void Scene_triangulation_3_item::copyProperties(Scene_item *item)
   show_intersection(t3_item->has_tets());
 
   show_spheres(t3_item->has_spheres());
-
-  show_cnc(t3_item->has_cnc());
 
   show_grid(t3_item->has_grid());
   int value = t3_item->alphaSlider()->value();
@@ -1730,36 +1631,15 @@ QString Scene_triangulation_3_item::computeStats(int type)
       if(vit->point().weight()==0) continue;
       ++d->nb_spheres;
     }
-    for(T3::Triangulation::Cell_iterator
-        cit = d->triangulation.finite_cells_begin(),
-        end = d->triangulation.finite_cells_end();
-        cit != end; ++cit)
-    {
-      if(!d->triangulation.is_in_complex(cit))
-      {
-
-        bool has_far_point = false;
-        for(int i=0; i<4; i++)
-          if(d->triangulation.in_dimension(cit->vertex(i)) == -1)
-          {
-            has_far_point = true;
-            break;
-          }
-        if(!has_far_point)
-          ++d->nb_cnc;
-      }
-    }
 
     Geom_traits::Compute_approximate_dihedral_angle_3 approx_dihedral_angle
       = d->triangulation.geom_traits().compute_approximate_dihedral_angle_3_object();
 
     QVector<int> sub_ids;
-    for (T3::Cells_in_complex_iterator cit = d->triangulation.cells_in_complex_begin();
-      cit != d->triangulation.cells_in_complex_end();
+    for (T3::Finite_cells_iterator cit = d->triangulation.finite_cells_begin();
+      cit != d->triangulation.finite_cells_end();
       ++cit)
     {
-      if (!d->triangulation.is_in_complex(cit))
-        continue;
       if(!sub_ids.contains(cit->subdomain_index()))
       {
         sub_ids.push_back(cit->subdomain_index());
@@ -1834,7 +1714,7 @@ QString Scene_triangulation_3_item::computeStats(int type)
     }
     d->mean_dihedral_angle = static_cast<float>(total_angle/nb_angle);
     d->nb_subdomains = sub_ids.size();
-    d->nb_vertices = d->triangulation.number_of_vertices_in_complex();
+    d->nb_vertices = d->triangulation.number_of_vertices();
     d->nb_tets = d->triangulation.number_of_cells();
     d->computed_stats = true;
   }
@@ -1855,8 +1735,6 @@ QString Scene_triangulation_3_item::computeStats(int type)
     return QString::number(d->mean_dihedral_angle);
   case Scene_triangulation_3_item_priv::NB_SPHERES:
     return QString::number(d->nb_spheres);
-  case Scene_triangulation_3_item_priv::NB_CNC:
-    return QString::number(d->nb_cnc);
   case Scene_triangulation_3_item_priv::NB_VERTICES:
     return QString::number(d->nb_vertices);
   case Scene_triangulation_3_item_priv::NB_TETS:
@@ -1904,7 +1782,6 @@ void Scene_triangulation_3_item::invalidateOpenGLBuffers()
   setBuffersFilled(false);
   getTriangleContainer(T3_faces)->reset_vbos(ALL);
   getEdgeContainer(T3_edges)->reset_vbos(ALL);
-  getEdgeContainer(CNC)->reset_vbos(ALL);
   getEdgeContainer(Grid_edges)->reset_vbos(ALL);
 
   Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
@@ -1914,8 +1791,6 @@ void Scene_triangulation_3_item::invalidateOpenGLBuffers()
       continue;
     setBuffersInit(viewer, false);
   }
-  resetCutPlane();
-  compute_bbox();
   d->invalidate_stats();
 }
 void Scene_triangulation_3_item::resetCutPlane()
@@ -2015,19 +1890,14 @@ void Scene_triangulation_3_item::computeElements()const
         static_cast<int>(d->positions_lines.size()*sizeof(float)));
   d->positions_lines_size = d->positions_lines.size();
 
-  getEdgeContainer(CNC)->allocate(
-        Ec::Vertices,
-        d->positions_lines_not_in_complex.data(),
-        static_cast<int>(d->positions_lines_not_in_complex.size()*sizeof(float)));
-
-  d->positions_lines_not_in_complex_size = d->positions_lines_not_in_complex.size();
-
   getEdgeContainer(Grid_edges)->allocate(
         Ec::Vertices,
         d->positions_grid.data(),
         static_cast<int>(d->positions_grid.size()*sizeof(float)));
 
   setBuffersFilled(true);
+  compute_bbox();
+  d->reset_cut_plane();
   QApplication::restoreOverrideCursor();
 }
 
@@ -2044,7 +1914,7 @@ void Scene_triangulation_3_item::newViewer(Viewer_interface *viewer)
 
 Scene_triangulation_3_item* Scene_triangulation_3_item::clone() const
 {
-  return new Scene_triangulation_3_item(d->triangulation, d->is_surface);
+  return new Scene_triangulation_3_item(d->triangulation);
 }
 
 #include "Scene_triangulation_3_item.moc"
