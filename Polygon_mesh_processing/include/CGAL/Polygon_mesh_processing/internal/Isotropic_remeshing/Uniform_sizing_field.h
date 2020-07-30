@@ -10,8 +10,8 @@
 //
 // Author(s)     : Jane Tournois
 
-#ifndef CGAL_UNIFORM_SIZING_FIELD_H
-#define CGAL_UNIFORM_SIZING_FIELD_H
+#ifndef CGAL_PMP_REMESHING_UNIFORM_SIZING_FIELD_H
+#define CGAL_PMP_REMESHING_UNIFORM_SIZING_FIELD_H
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
@@ -54,23 +54,32 @@ private:
   }
 
 public:
-  bool is_too_long(const halfedge_descriptor& h, FT& sqlen) const
+  boost::optional<FT> is_too_long(const halfedge_descriptor& h) const
   {
-    sqlen = sqlength(h);
-    return sqlen > m_sq_long;
+    const FT sqlen = sqlength(h);
+    if(sqlen > m_sq_long)
+      return sqlen;
+    else
+      return boost::none;
   }
 
-  bool is_too_long(const vertex_descriptor& va,
-                   const vertex_descriptor& vb) const
+  boost::optional<FT> is_too_long(const vertex_descriptor& va,
+                                  const vertex_descriptor& vb) const
   {
-    FT sqlen = sqlength(va, vb);
-    return sqlen > m_sq_long;
+    const FT sqlen = sqlength(va, vb);
+    if (sqlen > m_sq_long)
+      return sqlen;
+    else
+      return boost::none;
   }
 
-  bool is_too_short(const halfedge_descriptor& h, FT& sqlen) const
+  boost::optional<FT> is_too_short(const halfedge_descriptor& h) const
   {
-    sqlen = sqlength(h);
-    return sqlen < m_sq_short;
+    const FT sqlen = sqlength(h);
+    if (sqlen < m_sq_long)
+      return sqlen;
+    else
+      return boost::none;
   }
 
   virtual Point_3 split_placement(const halfedge_descriptor& h) const
@@ -89,4 +98,4 @@ private:
 
 }//end namespace CGAL
 
-#endif //CGAL_UNIFORM_SIZING_FIELD_H
+#endif //CGAL_PMP_REMESHING_UNIFORM_SIZING_FIELD_H

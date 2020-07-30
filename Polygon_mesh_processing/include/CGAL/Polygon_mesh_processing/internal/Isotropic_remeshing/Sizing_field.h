@@ -10,12 +10,13 @@
 //
 // Author(s)     : Jane Tournois
 
-#ifndef CGAL_SIZING_FIELD_H
-#define CGAL_SIZING_FIELD_H
+#ifndef CGAL_PMP_REMESHING_SIZING_FIELD_H
+#define CGAL_PMP_REMESHING_SIZING_FIELD_H
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 #include <CGAL/Kernel_traits.h>
+#include <boost/optional.hpp>
 
 namespace CGAL
 {
@@ -38,13 +39,14 @@ public:
   typedef typename K::FT                                        FT;
 
 public:
-  virtual bool is_too_long(const halfedge_descriptor& h, FT& sql) const = 0;
-  virtual bool is_too_long(const vertex_descriptor& va, const vertex_descriptor& vb) const = 0;
-  virtual bool is_too_short(const halfedge_descriptor& h, FT& sqlen) const = 0;
+  virtual boost::optional<FT> is_too_long(const halfedge_descriptor& h) const = 0;
+  virtual boost::optional<FT> is_too_long(const vertex_descriptor& va,
+                                          const vertex_descriptor& vb) const = 0;
+  virtual boost::optional<FT> is_too_short(const halfedge_descriptor& h) const = 0;
   virtual Point_3 split_placement(const halfedge_descriptor& h) const = 0;
 
 };
 
 }//end namespace CGAL
 
-#endif //CGAL_SIZING_FIELD_H
+#endif //CGAL_PMP_REMESHING_SIZING_FIELD_H
