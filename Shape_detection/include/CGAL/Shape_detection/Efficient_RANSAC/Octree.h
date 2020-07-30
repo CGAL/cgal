@@ -23,6 +23,8 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC/Shape_base.h>
 
+#include <CGAL/Octree.h>
+
 namespace CGAL {
 namespace Shape_detection {
 
@@ -527,6 +529,17 @@ private:
   }
 
 };
+
+template<class Traits>
+class DirectOctree {
+
+  CGAL::Octree::Octree<typename Traits::Input_range, typename Traits::Point_map> m_octree;
+
+public:
+
+
+};
+
 }
 }
 }
