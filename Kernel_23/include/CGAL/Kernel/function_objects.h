@@ -2557,15 +2557,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Triangle_3       Triangle_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
   public:
-    template<typename>
-    struct result {
-      typedef const Point_3& type;
-    };
-
-    template<typename T>
-    struct result<T(Iso_cuboid_3, int)> {
-      typedef Point_3 type;
-    };
 
     const Point_3&
     operator()( const Segment_3& s, int i) const
@@ -3516,17 +3507,10 @@ namespace CommonKernelFunctors {
   class Intersect_2
   {
   public:
-    template<typename>
-    struct result;
-
-    template<typename F, typename A, typename B>
-    struct result<F(A,B)> {
-      typedef typename Intersection_traits<K, A, B>::result_type type;
-    };
 
     // 25 possibilities, so I keep the template.
     template <class T1, class T2>
-    typename Intersection_traits<K, T1, T2>::result_type
+    decltype(auto)
     operator()(const T1& t1, const T2& t2) const
     { return Intersections::internal::intersection(t1, t2, K()); }
   };
@@ -3536,21 +3520,6 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Plane_3     Plane_3;
   public:
-    template<typename>
-    struct result;
-
-    template<typename F, typename A, typename B>
-    struct result<F(A, B)> {
-      typedef typename Intersection_traits<K, A, B>::result_type type;
-    };
-
-    template<typename F>
-    struct result<F(Plane_3, Plane_3, Plane_3)> {
-      typedef boost::optional<
-        boost::variant< typename K::Point_3,
-                        typename K::Line_3,
-                        typename K::Plane_3 > > type;
-    };
 
     // n possibilities, so I keep the template.
     template <class T1, class T2>
@@ -3558,7 +3527,7 @@ namespace CommonKernelFunctors {
     operator()(const T1& t1, const T2& t2) const
     { return Intersections::internal::intersection(t1, t2, K() ); }
 
-    typename boost::optional< boost::variant< typename K::Point_3, typename K::Line_3, typename K::Plane_3 > >
+    decltype(auto)
     operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3)const
     { return Intersections::internal::intersection(pl1, pl2, pl3, K() ); }
   };

@@ -24,6 +24,7 @@
 #include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
 #include <CGAL/internal/AABB_tree/Is_ray_intersection_geomtraits.h>
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>
+#include <CGAL/result_of.h>
 
 #include <boost/optional.hpp>
 #include <boost/bind.hpp>

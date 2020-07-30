@@ -817,20 +817,6 @@ struct Lazy_construction_nt {
   CGAL_NO_UNIQUE_ADDRESS AC ac;
   CGAL_NO_UNIQUE_ADDRESS EC ec;
 
-  template<typename>
-  struct result { };
-
-#define CGAL_RESULT_NT(z, n, d)                                              \
-  template< typename F, BOOST_PP_ENUM_PARAMS(n, class T) >              \
-  struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> {                      \
-    BOOST_PP_REPEAT(n, CGAL_TYPEMAP_EC, T)                                   \
-    typedef Lazy_exact_nt<                                              \
-      typename boost::remove_cv< typename boost::remove_reference <     \
-      decltype(std::declval<EC>()(BOOST_PP_ENUM(n, CGAL_PARAM, E))) >::type >::type > type; \
-  };
-
-  BOOST_PP_REPEAT_FROM_TO(1, 6, CGAL_RESULT_NT, _)
-
   template<class...L>
   auto operator()(L const&...l) const ->
   Lazy_exact_nt<std::remove_cv_t<std::remove_reference_t<decltype(ec(CGAL::exact(l)...))>>>
@@ -847,8 +833,6 @@ struct Lazy_construction_nt {
       return new Lazy_rep_0<AT,ET,To_interval<ET> >(ec( CGAL::exact(l)... ));
     }
   }
-
-#undef CGAL_RESULT_NT
 };
 
 

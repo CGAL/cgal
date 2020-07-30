@@ -518,22 +518,8 @@ namespace CircularFunctors {
 
     //using CK::Linear_kernel::Intersect_2::operator();
 
-    template<typename>
-    struct result;
-
-    template<typename F, typename A, typename B>
-    struct result<F(A,B)> {
-      typedef typename Intersection_traits<CK, A, B>::result_type type;
-    };
-
-    //need a specialization for the case of 3 object in CK
-    template<typename F, typename A, typename B, typename OutputIterator>
-    struct result<F(A,B,OutputIterator)> {
-      typedef OutputIterator type;
-    };
-
     template<class A, class B>
-    typename Intersection_traits<CK, A, B>::result_type
+    decltype(auto)
     operator()(const A& a, const B& b) const{
       return typename CK::Linear_kernel::Intersect_2()(a,b);
     }
@@ -642,21 +628,6 @@ namespace CircularFunctors {
   class Get_equation
   {
     public:
-
-    template<typename>
-    struct result;
-
-    template<typename F>
-    struct result<F(typename CK::Line_2)>
-    {
-      typedef typename CK::Polynomial_1_2 type;
-    };
-
-    template<typename F>
-    struct result<F(typename CK::Circle_2)>
-    {
-      typedef typename CK::Polynomial_for_circles_2_2 type;
-    };
 
     typename CK::Polynomial_1_2
     operator() ( const typename CK::Line_2 & l )
@@ -1292,20 +1263,6 @@ namespace CircularFunctors {
     typedef typename CK::Point_2     Point_2;
     typedef typename CK::Circle_2    Circle_2;
   public:
-    template<typename>
-    struct result{
-      typedef FT type;
-    };
-
-    template<typename F>
-    struct result<F(Circular_arc_2)> {
-      typedef decltype(std::declval<LK_Compute_squared_radius_2>()(Circle_2())) type;
-    };
-
-    template<typename F>
-    struct result<F(Circle_2)> {
-      typedef decltype(std::declval<LK_Compute_squared_radius_2>()(Circle_2())) type;
-    };
 
     decltype(auto)
     operator()( const Circle_2& c) const
