@@ -5,7 +5,9 @@ namespace ArrTraits {
  *
  * \cgalRefines AdaptableBinaryFunction
  *
+ * \cgalHasModel ArrangementVerticalSideTraits_2::Parameter_space_in_x_2
  * \cgalHasModel ArrangementOpenBoundaryTraits_2::Parameter_space_in_x_2
+ * \cgalHasModel ArrangementSphericalBoundaryTraits_2::Parameter_space_in_x_2
  */
 class ParameterSpaceInX_2 {
 public:

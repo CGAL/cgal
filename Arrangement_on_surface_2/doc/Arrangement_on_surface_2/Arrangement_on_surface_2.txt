@@ -3223,7 +3223,7 @@ concept `ArrangementSphericalTraits_2` shown in Figure
 Top portion of the refinement hierarchy of the geometry-traits
 concepts for curves that either reach the left side of the boundary
 of the parameter space or approach it. A similar hierarchy also
-exists for the left, bottom, and top sides.
+exists for the right, bottom, and top sides.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -3247,7 +3247,7 @@ collected in two additional abstract layers called
 `ArrangementVerticalSideTraits_2` and `ArrangementHorizontalSideTraits_2`; see
 Figure \cgalFigureRef{aos_fig-side_clusters}.
 
-The abstract concept `ArrangementHorizontalSideTraits_2` requires the
+The abstract concept `ArrangementVerticalSideTraits_2` requires the
 following predicate:
 
 <DL>
@@ -3258,14 +3258,17 @@ between identified and non-identified sides as explained below.
 
 (i) Given a curve \f$c = (x(t), y(t))\f$ and an enumerator that
 specifies either the minimum end or the maximum end of the curve, and
-thus map to a parameter value \f$d \in \{0,1\}\f$, determine the
+thus maps to a parameter value \f$d \in \{0,1\}\f$, determine the
 location of the \f$d\f$-end of \f$c\f$ with respect to the
-\f$x\f$-axis. More precisely, if \f$c\f$ is open at its \f$d\f$-end
-end, determine whether \f$\lim_{t \rightarrow d} x(t)\f$ is equal to
+\f$x\f$-axis. More precisely, if \f$c\f$ is open at its \f$d\f$-end,
+determine whether \f$\lim_{t \rightarrow d} x(t)\f$ is equal to
 \f$x_{\rm min}\f$, equal to \f$x_{\rm max}\f$, or falls in between. If
-\f$c\f$ is not open at its \f$d\f$-end end, determine whether
-\f$x(d)\f$ is equal to \f$x_{\rm min}\f$, equal to \f$x_{\rm max}\f$,
-or falls in between.
+\f$c\f$ is not open at its \f$d\f$-end, determine whether \f$x(d)\f$
+is equal to \f$x_{\rm min}\f$, equal to \f$x_{\rm max}\f$, or falls in
+between. If \f$c\f$ is vertical and lies on a vertical boundary; that
+is, either \f$\forall p \in c, p_x = x_{\rm min}\f$ or \f$\forall p
+\in c, p_x = x_{\rm max}\f$, then the boundary side containing \f$c\f$
+cannot be open and must not be identified.
 
 (ii) Given a point \f$p\f$, determine the location of the point with
 respect to the \f$x\f$-axis. More precisely, determine whether
@@ -3280,7 +3283,7 @@ words, this overloaded version is required only for the concepts
 
 </DL>
 
-The abstract concept `ArrangementVerticalSideTraits_2` requires the
+The abstract concept `ArrangementHorizontalSideTraits_2` requires the
 following predicate:
 
 <DL>
@@ -3291,15 +3294,18 @@ following predicate:
 between identified and non-identified sides as explained below.
 
 (i) Given a curve \f$c\f$ and an enumerator that specifies either the
-minimum end or the maximum end of the curve, and thus map to a
+minimum end or the maximum end of the curve, and thus maps to a
 parameter value \f$d \in \{0,1\}\f$, determine the location of the
 \f$d\f$-end of \f$c\f$ with respect to the \f$y\f$-axis. More
-precisely, if \f$c\f$ is open at its \f$d\f$-end end, determine
-whether \f$\lim_{t \rightarrow d} y(t)\f$ is equal to \f$y_{\rm
+precisely, if \f$c\f$ is open at its \f$d\f$-end, determine whether
+\f$\lim_{t \rightarrow d} y(t)\f$ is equal to \f$y_{\rm min}\f$, equal
+to \f$y_{\rm max}\f$, or falls in between. If \f$c\f$ is not open at
+its \f$d\f$-end, determine whether \f$y(d)\f$ is equal to \f$y_{\rm
 min}\f$, equal to \f$y_{\rm max}\f$, or falls in between. If \f$c\f$
-is not open at its \f$d\f$-end end, determine whether \f$y(d)\f$ is
-equal to \f$y_{\rm min}\f$, equal to \f$y_{\rm max}\f$, or falls in
-between.
+is horizontal and lies on a horizontal boundary; that is, either
+\f$\forall p \in c, p_y = y_{\rm min}\f$ or \f$\forall p \in c, p_y =
+y_{\rm max}\f$, then the boundary side containing \f$c\f$ cannot be
+open and must not be identified.
 
 (ii) Given a point \f$p\f$, determine the location of the point with
 respect to the \f$y\f$-axis. More precisely, determine whether
@@ -3342,7 +3348,7 @@ end or the maximum end of the curve, and thus maps to a parameter
 value \f$d \in \{0,1\}\f$, compare the \f$x\f$-coordinate of \f$p\f$
 and the \f$x\f$-coordinate of \f$c\f$ at its respective limit or end
 depending on whether it is open or non-open. More precisely, if
-\f$c\f$ is open at its \f$d\f$-end end, compare the values \f$x_p\f$
+\f$c\f$ is open at its \f$d\f$-end, compare the values \f$x_p\f$
 and \f$\lim_{t \rightarrow d} x(t)\f$. A precondition assures that
 \f$c\f$ has a vertical asymptote at its \f$d\f$-end; that is
 \f$\lim_{t \rightarrow d} x(t)\f$ is a real value. If \f$c\f$ is not
@@ -3394,7 +3400,7 @@ boundary-side, \f$p\f$ is located far to the top in a similar
 manner. Another precondition assures that the \f$x\f$-coordinates of
 the limits of the curves at their respective ends are equal. That is,
 the predicate `Compare_x_on_boundary_2` applied to \f$c_1\f$,
-\f$c_2\f$, and \f$i\f$ evaluates to `EQUAL`.
+\f$c_2\f$, and \f$i\f$ evaluates to `CGAL::EQUAL`.
 
 </DL>
 
@@ -3431,7 +3437,9 @@ case \f$p\f$ is located far to the left, such that the result is
 invariant under a translation of \f$p\f$ farther to the left. If
 \f$i\f$ specifies the maximum ends, the curves must approach the right
 boundary-side. In that case \f$p\f$ is located far to the right in a
-similar manner.</DL>
+similar manner.
+
+</DL>
 
 The concepts `ArrangementIdentifiedLeftTraits_2` and
 `ArrangementIdentifiedRightTraits_2` introduces the following requirement:
@@ -3449,11 +3457,14 @@ pre-images of \f$p\f$.
 (ii) Given a curve \f$c\f$, determine whether the entire curve \f$c\f$
 lies in the image of the vertical and identified sides of the
 boundary.
+
 </DL>
 
 Similarly, the concepts `ArrangementIdentifiedBottomTraits_2` and
 `ArrangementIdentifiedTopTraits_2` introduces the following requirement:
+
 <DL>
+
 <DT><B>`Is_on_x_identification_2`:</B>
 
 <DD>This predicate is overloaded with two versions.
