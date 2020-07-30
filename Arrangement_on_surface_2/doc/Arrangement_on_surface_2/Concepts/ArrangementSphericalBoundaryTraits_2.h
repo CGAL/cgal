@@ -32,10 +32,45 @@ public:
 
   /// \name Categories
   /// @{
+
+  //! Must be convertible to `CGAL::Arr_identified_side_tag`.
+  typedef unspecified_type Left_side_category;
+
+  //! Must be convertible to `CGAL::Arr_identified_side_tag`.
+  typedef unspecified_type Bottom_side_category;
+
+  //! Must be convertible to `CGAL::Arr_contracted_side_tag`.
+  typedef unspecified_type Top_side_category;
+
+  //! Must be convertible to `CGAL::Arr_contracted_side_tag`.
+  typedef unspecified_type Right_side_category;
+
   /// @}
 
   /// \name Functor Types
   /// @{
+
+  /// models the concept `ArrTraits::ParameterSpaceInX_2`.
+  typedef unspecified_type Parameter_space_in_x_2;
+
+  /// models the concept `ArrTraits::CompareXOnBoundary_2`.
+  typedef unspecified_type Compare_x_on_boundary_2;
+
+  /// models the concept `ArrTraits::CompareXNearBoundary_2`.
+  typedef unspecified_type Compare_x_near_boundary_2;
+
+  /// models the concept `ArrTraits::ParameterSpaceInY_2`.
+  typedef unspecified_type Parameter_space_in_y_2;
+
+  /// models the concept `ArrTraits::CompareYOnBoundary_2`.
+  typedef unspecified_type Compare_y_on_boundary_2;
+
+  /// models the concept `ArrTraits::CompareYNearBoundary_2`.
+  typedef unspecified_type Compare_y_near_boundary_2;
+
+  /// models the concept `ArrTraits::IsOnYIdentification_2`.
+  typedef unspecified_type  Is_on_y_identification_2;
+
   /// @}
 
 }; /* end ArrangementSphericalBoundaryTraits_2 */

@@ -100,6 +100,9 @@ implemented as peripheral classes or as free (global) functions.
 
 - `CGAL::Arr_oblivious_side_tag`
 - `CGAL::Arr_open_side_tag`
+- `CGAL::Arr_closed_side_tag`
+- `CGAL::Arr_contracted_side_tag`
+- `CGAL::Arr_identified_side_tag`
 
 \cgalCRPSection{Concepts}
 
