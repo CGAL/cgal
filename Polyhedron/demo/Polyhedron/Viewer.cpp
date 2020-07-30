@@ -2025,10 +2025,10 @@ void Viewer::scaleScene()
   else
     d->scaler = QVector3D(1,1,1);
 
-  CGAL::qglviewer::Vec min(((float)bbox.xmin()+offset().x)*d->scaler.x(), ((float)bbox.ymin()+offset().y)*d->scaler.y(), ((float)bbox.zmin()+offset().z)*d->scaler.z()),
-      max(((float)bbox.xmax()+offset().x)*d->scaler.x(), ((float)bbox.ymax()+offset().y)*d->scaler.y(), ((float)bbox.zmax()+offset().z)*d->scaler.z());
-  camera()->setPivotPoint((min+max)*0.5);
-  camera()->fitBoundingBox(min, max);
+  CGAL::qglviewer::Vec vmin(((float)bbox.xmin()+offset().x)*d->scaler.x(), ((float)bbox.ymin()+offset().y)*d->scaler.y(), ((float)bbox.zmin()+offset().z)*d->scaler.z()),
+      vmax(((float)bbox.xmax()+offset().x)*d->scaler.x(), ((float)bbox.ymax()+offset().y)*d->scaler.y(), ((float)bbox.zmax()+offset().z)*d->scaler.z());
+  camera()->setPivotPoint((vmin+vmax)*0.5);
+  camera()->fitBoundingBox(vmin, vmax);
   d->scene_scaling = !d->scene_scaling;
 }
 #ifdef CGAL_USE_WEBSOCKETS
