@@ -56,7 +56,8 @@ namespace Nef_3_internal{
 
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_Exact_kernel,Exact_kernel,false)
 
-template <class R,bool has_exact_kernel=Has_nested_Exact_kernel<R>::value, class FT = typename R::RT, class Kernel_tag=typename R::Kernel_tag>
+template <class R,bool has_exact_kernel=Has_nested_Exact_kernel<R>::value &&
+                                        !std::is_floating_point<typename R::RT>::value, class FT = typename R::RT, class Kernel_tag=typename R::Kernel_tag>
 struct Type_converter{
   typedef const CGAL::Point_3<R>& Point_3;
   typedef const CGAL::Vector_3<R>& Vector_3;
@@ -670,8 +671,9 @@ template<typename Tag, typename Kernel> class Geometry_io;
 template<typename Kernel>
 class Geometry_io<Cartesian_tag, Kernel> {
  public:
-  template <typename EK, typename K> static
-  typename EK::Point_3 read_point(std::istream& in) {
+
+  template <typename EK, typename K, typename Compose_> static
+  typename EK::Point_3 read_point_impl(std::istream& in, Compose_) {
     typedef Fraction_traits<typename K::FT> FracTraits;
     typename FracTraits::Type hx, hy, hz, hw;
     typename FracTraits::Numerator_type num;
@@ -688,8 +690,8 @@ class Geometry_io<Cartesian_tag, Kernel> {
     return typename EK::Point_3(hx,hy,hz,hw);
   }
 
-  template <typename EK, typename K> static
-  typename EK::Plane_3 read_plane(std::istream& in) {
+  template <typename EK, typename K, typename Compose_> static
+  typename EK::Plane_3 read_plane_impl(std::istream& in, Compose_) {
     typedef Fraction_traits<typename K::FT> FracTraits;
     typename FracTraits::Type a, b, c, d;
     typename FracTraits::Numerator_type num;
@@ -706,8 +708,32 @@ class Geometry_io<Cartesian_tag, Kernel> {
     return typename EK::Plane_3(a,b,c,d);
   }
 
-  template <typename R> static
-    void print_point_impl(std::ostream& out, const CGAL::Point_3<R> p) {
+  template <typename EK, typename K> static
+  typename EK::Point_3 read_point_impl(std::istream& in, Null_functor) {
+    typename K::FT hx, hy, hz, hw;
+    in >> hx >> hy >> hz >> hw;
+    return typename EK::Point_3(hx,hy,hz,hw);
+  }
+
+  template <typename EK, typename K> static
+  typename EK::Plane_3 read_plane_impl(std::istream& in, Null_functor) {
+    typename K::FT a, b, c, d;
+    in >> a >> b >> c >> d;
+    return typename EK::Plane_3(a,b,c,d);
+  }
+
+  template <typename EK, typename K> static
+  typename EK::Point_3 read_point(std::istream& in) {
+    return read_point_impl<EK,K>(in, typename Fraction_traits<typename K::FT>::Compose());
+  }
+
+  template <typename EK, typename K> static
+  typename EK::Plane_3 read_plane(std::istream& in) {
+    return read_plane_impl<EK,K>(in, typename Fraction_traits<typename K::FT>::Compose());
+  }
+
+  template <typename R, typename Decompose_> static
+  void print_point_impl(std::ostream& out, const CGAL::Point_3<R> p, Decompose_) {
     typedef Fraction_traits<typename R::FT> FracTraits;
     typedef std::vector<typename FracTraits::Numerator_type> NV;
 
@@ -737,8 +763,8 @@ class Geometry_io<Cartesian_tag, Kernel> {
         << vec[2] << " " << vec[3];
   }
 
-  template <typename R> static
-    void print_vector_impl(std::ostream& out, const CGAL::Vector_3<R> p) {
+  template <typename R, typename Decompose_> static
+  void print_vector_impl(std::ostream& out, const CGAL::Vector_3<R> p, Decompose_) {
     typedef Fraction_traits<typename R::FT> FracTraits;
     typedef typename FracTraits::Numerator_type NumType;
     typedef std::vector<NumType> NV;
@@ -766,8 +792,8 @@ class Geometry_io<Cartesian_tag, Kernel> {
         << vec[2] << " " << NumType(1);
   }
 
-  template <typename R> static
-  void print_plane_impl(std::ostream& out, const CGAL::Plane_3<R> p) {
+  template <typename R, typename Decompose_> static
+  void print_plane_impl(std::ostream& out, const CGAL::Plane_3<R> p, Decompose_) {
     typedef Fraction_traits<typename R::FT> FracTraits;
     typedef std::vector<typename FracTraits::Numerator_type> NV;
 
@@ -803,19 +829,37 @@ class Geometry_io<Cartesian_tag, Kernel> {
         << vec[2] << " " << vec[3];
   }
 
+  template <typename R> static
+  void print_point_impl(std::ostream& out, const CGAL::Point_3<R> p, Null_functor)
+  {
+    out << p.x() << " " << p.y() << " " << p.z() << " " << 1;
+  }
+
+  template <typename R> static
+  void print_vector_impl(std::ostream& out, const CGAL::Vector_3<R> v, Null_functor)
+  {
+    out << v.x() << " " << v.y() << " " << v.z() << " " << 1;
+  }
+
+  template <typename R> static
+  void print_plane_impl(std::ostream& out, const CGAL::Plane_3<R> p, Null_functor)
+  {
+    out << p.a() << " " << p.b() << " " << p.c() << " " << p.d();
+  }
+
   template <class R> static
   void print_point(std::ostream& out, const CGAL::Point_3<R>& p) {
-    print_point_impl(out, Nef_3_internal::get_point(p) );
+    print_point_impl(out, Nef_3_internal::get_point(p), typename Fraction_traits<typename R::FT>::Decompose() );
   }
 
   template <class R> static
   void print_vector(std::ostream& out, const CGAL::Vector_3<R>& v) {
-    print_vector_impl(out, Nef_3_internal::get_vector(v) );
+    print_vector_impl(out, Nef_3_internal::get_vector(v), typename Fraction_traits<typename R::FT>::Decompose() );
   }
 
   template <class R> static
   void print_plane(std::ostream& out, const CGAL::Plane_3<R>& p) {
-    print_plane_impl(out, Nef_3_internal::get_plane(p) );
+    print_plane_impl(out, Nef_3_internal::get_plane(p), typename Fraction_traits<typename R::FT>::Decompose() );
   }
 
 };

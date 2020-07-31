@@ -289,14 +289,24 @@ void test_simplify_polygons(const bool /*verbose*/ = false)
   points.push_back(Point_3(1,3,0)); // #3
   points.push_back(Point_3(0,1,0)); // #4
   points.push_back(Point_3(1,1,0)); // #5
-  points.push_back(Point_3(0,0,0)); // #6
+  points.push_back(Point_3(0,0,0)); // #6 == #0
 
   // ------
   CGAL_polygon polygon;
-  polygon.push_back(0); polygon.push_back(2); polygon.push_back(4);
+  polygon.push_back(0); polygon.push_back(2); polygon.push_back(4); polygon.push_back(0); polygon.push_back(0);
   polygons.push_back(polygon);
 
   std::size_t res = PMP::internal::simplify_polygons_in_polygon_soup<K>(points, polygons);
+  std::cout << "res: " << res << " / size: " << polygons.back().size() << std::endl;
+  assert(res == 1 && polygons.back().size() == 3);
+
+  // ------
+  polygon.clear();
+  polygon.push_back(0); polygon.push_back(2); polygon.push_back(4);
+  polygons.push_back(polygon);
+
+  res = PMP::internal::simplify_polygons_in_polygon_soup<K>(points, polygons);
+  std::cout << "res: " << res << " / size: " << polygons.back().size() << std::endl;
   assert(res == 0 && polygons.back().size() == 3);
 
   // ------
@@ -305,6 +315,7 @@ void test_simplify_polygons(const bool /*verbose*/ = false)
   polygons.push_back(polygon);
 
   res = PMP::internal::simplify_polygons_in_polygon_soup(points, polygons, K());
+  std::cout << "res: " << res << " / size: " << polygons.back().size() << std::endl;
   assert(res == 1 && polygons.back().size() == 1);
 
   // ------
@@ -313,6 +324,7 @@ void test_simplify_polygons(const bool /*verbose*/ = false)
   polygons.push_back(polygon);
 
   res = PMP::internal::simplify_polygons_in_polygon_soup(points, polygons, K());
+  std::cout << "res: " << res << " / size: " << polygons.back().size() << std::endl;
   assert(res == 1 && polygons.back().size() == 1);
 
   // ------
@@ -321,7 +333,17 @@ void test_simplify_polygons(const bool /*verbose*/ = false)
   polygons.push_back(polygon);
 
   res = PMP::internal::simplify_polygons_in_polygon_soup(points, polygons, K());
+  std::cout << "res: " << res << " / size: " << polygons.back().size() << std::endl;
   assert(res == 1 && polygons.back().size() == 2);
+
+  // ------
+  polygon.clear();
+  polygon.push_back(0); polygon.push_back(2); polygon.push_back(0); polygon.push_back(4);
+  polygons.push_back(polygon);
+
+  res = PMP::internal::simplify_polygons_in_polygon_soup(points, polygons, K());
+  std::cout << "res: " << res << " / size: " << polygons.back().size() << std::endl;
+  assert(res == 0 && polygons.back().size() == 4);
 
   // ------
   // Now with the same geometric positions, but different combinatorial information
@@ -330,6 +352,7 @@ void test_simplify_polygons(const bool /*verbose*/ = false)
   polygons.push_back(polygon);
 
   res = PMP::internal::simplify_polygons_in_polygon_soup(points, polygons, K());
+  std::cout << "res: " << res << " / size: " << polygons.back().size() << std::endl;
   assert(res == 1 && polygons.back().size() == 3);
 
   // ------
@@ -338,6 +361,7 @@ void test_simplify_polygons(const bool /*verbose*/ = false)
   polygons.push_back(polygon);
 
   res = PMP::internal::simplify_polygons_in_polygon_soup(points, polygons, K());
+  std::cout << "res: " << res << " / size: " << polygons.back().size() << std::endl;
   assert(res == 1 && polygons.back().size() == 2);
 
   // ------
@@ -346,6 +370,7 @@ void test_simplify_polygons(const bool /*verbose*/ = false)
   polygons.push_back(polygon);
 
   res = PMP::internal::simplify_polygons_in_polygon_soup(points, polygons, K());
+  std::cout << "res: " << res << " / size: " << polygons.back().size() << std::endl;
   assert(res == 1 && polygons.back().size() == 3);
 }
 
