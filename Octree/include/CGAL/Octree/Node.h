@@ -281,7 +281,7 @@ public:
    * \brief check whether this node contains any points
    * \return if this node contains no points
    */
-  bool is_empty() const {
+  bool empty() const {
     return m_points.empty();
   }
 
