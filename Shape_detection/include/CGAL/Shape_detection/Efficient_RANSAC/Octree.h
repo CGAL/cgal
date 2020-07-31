@@ -33,68 +33,6 @@ namespace internal {
 const std::size_t size_t_max = (std::numeric_limits<std::size_t>::max)();
 
 template<class Sdt>
-class IndexedPointAccessor {
-public:
-  typedef Sdt Sd_traits;
-  typedef typename Sd_traits::Input_range::iterator Input_iterator;
-
-  IndexedPointAccessor() {}
-
-  IndexedPointAccessor(const Input_iterator &begin,
-                       const Input_iterator &beyond, std::size_t)
-          : m_first(begin) {
-    m_beyond = (beyond == begin) ? begin : beyond - 1;
-    m_indices.resize(size());
-    for (std::size_t i = 0; i < size(); i++)
-      m_indices[i] = i;
-  }
-
-  Input_iterator at(std::size_t i) {
-    return m_first + m_indices[i];
-  }
-
-  std::size_t index(std::size_t i) const {
-    return m_indices[i];
-  }
-
-  std::size_t offset() {
-    return 0;
-  }
-
-  Input_iterator first() {
-    return m_first;
-  }
-
-  Input_iterator beyond() {
-    return m_beyond;
-  }
-
-  void setData(Input_iterator &begin, Input_iterator &beyond) {
-    m_beyond = (beyond == begin) ? begin : beyond - 1;
-    m_indices.resize(size());
-    for (std::size_t i = 0; i < size(); i++)
-      m_indices[i] = i;
-  }
-
-  std::size_t size() {
-    return m_beyond - m_first + 1;
-  }
-
-  void swap(std::size_t a, std::size_t b) {
-    std::size_t tmp = m_indices[a];
-    m_indices[a] = m_indices[b];
-    m_indices[b] = tmp;
-  }
-
-protected:
-  Input_iterator m_first;
-
-private:
-  std::vector<std::size_t> m_indices;
-  Input_iterator m_beyond;
-};
-
-template<class Sdt>
 class Direct_octree {
 
   typedef Sdt Sd_traits;
@@ -517,7 +455,7 @@ private:
 };
 
 template<class Sdt>
-class Indexed_octree : public IndexedPointAccessor<Sdt> {
+class Indexed_octree {
 
   typedef Sdt Sd_traits;
   typedef typename Sd_traits::Input_range::iterator Input_iterator;
@@ -561,20 +499,21 @@ public:
 
   Indexed_octree(Sd_traits
                  const &traits,
-                 const Input_iterator &first,
+                 const Input_iterator &begin,
                  const Input_iterator &beyond,
                  Point_map
                  &point_pmap,
-                 std::size_t offset = 0
-  )
-          :
-
-          IndexedPointAccessor<Sdt>(first, beyond, offset),
+                 std::size_t offset = 0) :
           m_traits(traits),
-          m_root(
+          m_root(nullptr),
+          m_point_pmap(point_pmap),
+          m_first(begin) {
 
-                  nullptr),
-          m_point_pmap(point_pmap) {}
+    m_beyond = (beyond == begin) ? begin : beyond - 1;
+    m_indices.resize(size());
+    for (std::size_t i = 0; i < size(); i++)
+      m_indices[i] = i;
+  }
 
   ~Indexed_octree() {
     if (!m_root)
@@ -815,6 +754,44 @@ public:
 
   FT width() const { return m_width; }
 
+
+  Input_iterator at(std::size_t i) {
+    return m_first + m_indices[i];
+  }
+
+  std::size_t index(std::size_t i) const {
+    return m_indices[i];
+  }
+
+  std::size_t offset() {
+    return 0;
+  }
+
+  Input_iterator first() {
+    return m_first;
+  }
+
+  Input_iterator beyond() {
+    return m_beyond;
+  }
+
+  void setData(Input_iterator &begin, Input_iterator &beyond) {
+    m_beyond = (beyond == begin) ? begin : beyond - 1;
+    m_indices.resize(size());
+    for (std::size_t i = 0; i < size(); i++)
+      m_indices[i] = i;
+  }
+
+  std::size_t size() {
+    return m_beyond - m_first + 1;
+  }
+
+  void swap(std::size_t a, std::size_t b) {
+    std::size_t tmp = m_indices[a];
+    m_indices[a] = m_indices[b];
+    m_indices[b] = tmp;
+  }
+
 private:
 
   Sd_traits m_traits;
@@ -824,6 +801,10 @@ private:
   FT m_width;
   std::size_t m_max_level;
   Point_map m_point_pmap;
+
+  std::vector<std::size_t> m_indices;
+  Input_iterator m_first;
+  Input_iterator m_beyond;
 
 private:
 
