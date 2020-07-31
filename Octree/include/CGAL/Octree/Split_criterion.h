@@ -23,7 +23,7 @@ namespace Octree {
 namespace Split_criterion {
 
 /*!
- * \brief Criterion to split nodes of an octree when they contain more than a certain number of items
+ * \brief criterion to split nodes of an octree when they contain more than a certain number of items
  */
 struct Bucket_size {
 
@@ -39,7 +39,7 @@ struct Bucket_size {
 };
 
 /*!
- * \brief Criterion to split nodes of an octree when they are less than a certain depth
+ * \brief criterion to split nodes of an octree when they are less than a certain depth
  */
 struct Max_depth {
 
@@ -54,7 +54,7 @@ struct Max_depth {
 };
 
 /*!
- * \brief Criterion to split nodes when they are less than a depth and they contain more than a number of items
+ * \brief criterion to split nodes when they are less than a depth and they contain more than a number of items
  */
 struct Max_depth_or_bucket_size {
 

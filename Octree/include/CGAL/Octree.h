@@ -52,7 +52,7 @@ namespace Octree {
 /*!
  * \ingroup PkgOctreeClasses
  *
- * \brief Class Octree is a data structure for efficient computations in 3D space.
+ * \brief a data structure for efficient computations in 3D space.
  *
  * \details It builds a hierarchy of nodes which subdivide the space based on a collection of points.
  * Each node represents an axis aligned cubic region of space.
@@ -200,7 +200,7 @@ public:
   /// @{
 
   /*!
-   * \brief Subdivide an octree's nodes and sub-nodes until it meets the given criteria
+   * \brief subdivide an octree's nodes and sub-nodes until it meets the given criteria
    *
    * The split criterion can be any function pointer that takes a Node pointer
    * and returns a boolean value (where true implies that a Node needs to be split).
@@ -248,7 +248,7 @@ public:
   }
 
   /*!
-   * \brief Refine an octree using a max depth and max number of points in a node as split criterion
+   * \brief refine an octree using a max depth and max number of points in a node as split criterion
    *
    * This is equivalent to calling:
    *
@@ -270,7 +270,7 @@ public:
   /// @{
 
   /*!
-   * \brief Provides read-only access to the root node, and by extension the rest of the tree
+   * \brief provides read-only access to the root node, and by extension the rest of the tree
    *
    * \return a const reference to the root node of the tree
    */
@@ -284,7 +284,7 @@ public:
   std::size_t max_depth_reached() const { return m_max_depth_reached; }
 
   /*!
-   * \brief Constructs an input range of nodes using a tree walker function
+   * \brief constructs an input range of nodes using a tree walker function
    *
    * The result is a boost range created from iterators that meet the criteria defining a Forward Input Iterator
    * This is completely compatible with standard foreach syntax.
@@ -308,7 +308,7 @@ public:
   }
 
   /*!
-   * \brief Find the leaf node which would contain a point
+   * \brief find the leaf node which would contain a point
    *
    * Traverses the octree and finds the deepest cell that has a domain enclosing the point passed.
    * The point passed must be within the region enclosed by the octree (bbox of the root node).
@@ -346,7 +346,7 @@ public:
   }
 
   /*!
-   * \brief Find the bounding box of a node
+   * \brief find the bounding box of a node
    *
    * Creates a cubic region representing a node.
    * The size of the region is dependent on the node's depth in the tree.
@@ -376,7 +376,7 @@ public:
   }
 
   /*!
-   * \brief Find the K points in a tree that are nearest to the search point and within a specific radius
+   * \brief find the K points in a tree that are nearest to the search point and within a specific radius
    *
    * This function guarantees that there are no closer points than the ones returned,
    * but it does not guarantee that it will return at least K points.
@@ -410,7 +410,7 @@ public:
   }
 
   /*!
-   * \brief Find the K points in a tree that are nearest to the search point
+   * \brief find the K points in a tree that are nearest to the search point
    *
    * This function is equivalent to invoking nearest_k_neighbors_in_radius for an infinite radius.
    * For a tree with K or fewer points, all points in the tree will be returned.
@@ -432,7 +432,7 @@ public:
   /// @{
 
   /*!
-   * \brief Compares the topology of a pair of Octrees
+   * \brief compares the topology of a pair of Octrees
    *
    * Trees may be considered equivalent even if they contain different points.
    * Equivalent trees must have the same bounding box and the same node structure.
@@ -457,7 +457,7 @@ public:
   }
 
   /*!
-   * \brief Compares the topology of a pair of Octrees
+   * \brief compares the topology of a pair of Octrees
    * \param rhs tree to compare with
    * \return whether the trees have different topology
    */

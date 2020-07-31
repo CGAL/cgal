@@ -81,12 +81,12 @@ const Node::Node <Point_index> *deepest_first_child(const Node::Node <Point_inde
 
 
 /*!
- * \brief Walker for preorder traversal
+ * \brief walker for preorder traversal
  */
 struct Preorder {
 
   /*!
-   * \brief Retrieve the first node of a tree in a preorder traversal, given the root
+   * \brief retrieve the first node of a tree in a preorder traversal, given the root
    *
    * \tparam Point_index
    * \param root
@@ -98,7 +98,7 @@ struct Preorder {
   }
 
   /*!
-   * \brief Retrieve the next node of a tree in a preorder traversal, given the current one
+   * \brief retrieve the next node of a tree in a preorder traversal, given the current one
    *
    * \tparam Point_index
    * \param n
@@ -128,12 +128,12 @@ struct Preorder {
 };
 
 /*!
- * \brief Walker for leaves-only traversal
+ * \brief walker for leaves-only traversal
  */
 struct Postorder {
 
   /*!
-   * \brief Retrieve the first node of a tree in a postorder traversal, given the root
+   * \brief retrieve the first node of a tree in a postorder traversal, given the root
    *
    * \tparam Point_index
    * \param root
@@ -146,7 +146,7 @@ struct Postorder {
   }
 
   /*!
-   * \brief Retrieve the next node of a tree in a postorder traversal, given the current one
+   * \brief retrieve the next node of a tree in a postorder traversal, given the current one
    *
    * \tparam Point_index
    * \param n
@@ -165,12 +165,12 @@ struct Postorder {
 };
 
 /*!
- * \brief Walker for leaves-only traversal
+ * \brief walker for leaves-only traversal
  */
 struct Leaves {
 
   /*!
-   * \brief Retrieve the first node of a tree in a leaves-only traversal, given the root
+   * \brief retrieve the first node of a tree in a leaves-only traversal, given the root
    *
    * \tparam Point_index
    * \param root
@@ -183,7 +183,7 @@ struct Leaves {
   }
 
   /*!
-   * \brief Retrieve the next node of a tree in a leaves-only traversal, given the current one
+   * \brief retrieve the next node of a tree in a leaves-only traversal, given the current one
    *
    * \tparam Point_index
    * \param n

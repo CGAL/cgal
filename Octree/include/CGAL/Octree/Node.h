@@ -28,7 +28,7 @@ namespace Node {
 /*!
  * \ingroup PkgOctreeClasses
  *
- * \brief A class representing a single node of the tree. Alternatively referred to as a cell, octant, or subtree
+ * \brief represents a single node of the tree. Alternatively referred to as a cell, octant, or subtree
  *
  * \details The role of the node isn't fully stable yet
  *
@@ -43,12 +43,12 @@ public:
   /// @{
 
   /*!
-   * \brief Array for containing the children of this node
+   * \brief array for containing the children of this node
    */
   typedef std::array<Node<Point_index>, 8> Child_list;
 
   /*!
-   * \brief Set of bits representing this node's relationship to its parent
+   * \brief set of bits representing this node's relationship to its parent
    *
    * Equivalent to an array of three booleans,
    * where index[0] is whether x is greater,
@@ -59,7 +59,7 @@ public:
   typedef std::bitset<3> Index;
 
   /*!
-   * \brief Coordinate location representing this node's relationship with the rest of the tree
+   * \brief coordinate location representing this node's relationship with the rest of the tree
    *
    * Each value (x, y, z) of a location is calculated by doubling the parent's location
    * and adding the Index.
@@ -68,7 +68,7 @@ public:
   typedef std::array<uint32_t, 3> Int_location;
 
   /*!
-   * \brief A collection of point indices represented by begin and end iterators
+   * \brief a collection of point indices represented by begin and end iterators
    */
   typedef boost::iterator_range<Point_index> Point_range;
 
@@ -92,7 +92,7 @@ public:
   /// @{
 
   /*!
-   * \brief Creates a new node, optionally as the child of a parent
+   * \brief creates a new node, optionally as the child of a parent
    *
    * If no parent is provided, the node created is assumed to be the root of a tree.
    * This means that the parent reference is a nullptr, and the depth is zero.
@@ -123,7 +123,7 @@ public:
   /// @{
 
   /*!
-   * \brief Split a node into subnodes
+   * \brief split a node into subnodes
    *
    * Only leaf nodes should be split.
    * When a node is split it is no longer a leaf node.
@@ -143,7 +143,7 @@ public:
   }
 
   /*!
-   * \brief Eliminate this node's children, making it a leaf node
+   * \brief eliminate this node's children, making it a leaf node
    *
    * When a node is un-split, its children are automatically deleted.
    * After un-splitting a node it will be considered a leaf node
@@ -159,7 +159,7 @@ public:
   /// @{
 
   /*!
-   * \brief Access the child nodes of this node by their indices
+   * \brief access the child nodes of this node by their indices
    *
    * \todo Explain how index values map to the Index type
    *
@@ -181,7 +181,7 @@ public:
   }
 
   /*!
-   * \brief Read-only access the child nodes of this node by their indices
+   * \brief read-only access the child nodes of this node by their indices
    *
    * \param index The index of the child node, as an int
    * \return A const reference to the node
@@ -200,7 +200,7 @@ public:
   /// @{
 
   /*!
-   * \brief Read-only access to this node's parent
+   * \brief read-only access to this node's parent
    *
    * Ownership of a node is not equivalent to ownership of the entire tree,
    * so it's not possible to obtain write access to a node's parent,
@@ -214,13 +214,13 @@ public:
   const Node<Point_index> *parent() const { return m_parent; }
 
   /*!
-   * \brief Retrieve this node's depth in the tree
+   * \brief retrieve this node's depth in the tree
    * \return the depth of this node, where root has a depth of 0
    */
   const uint8_t &depth() const { return m_depth; }
 
   /*!
-   * \brief Retrieve this node's location in the tree
+   * \brief retrieve this node's location in the tree
    *
    * \todo Should I link to an explanation of the location type?
    *
@@ -232,7 +232,7 @@ public:
   }
 
   /*!
-   * \brief Retrieve this node's index in relation to its parent
+   * \brief retrieve this node's index in relation to its parent
    * \return the index of this nod3
    */
   Index index() const {
@@ -249,13 +249,13 @@ public:
   }
 
   /*!
-   * \brief Determine whether this node is a leaf node
+   * \brief determine whether this node is a leaf node
    * \return whether this node has no children
    */
   bool is_leaf() const { return (!m_children); }
 
   /*!
-   * \brief Determine whether this node is the root node
+   * \brief determine whether this node is the root node
    * \return whether this node has no parent
    */
   bool is_root() const { return (!m_parent); }
@@ -266,19 +266,19 @@ public:
   /// @{
 
   /*!
-   * \brief Access to the content held by this node
+   * \brief access to the content held by this node
    * \return a reference to the collection of point indices
    */
   Point_range &points() { return m_points; }
 
   /*!
-   * \brief Read-only access to the content held by this node
+   * \brief read-only access to the content held by this node
    * \return a read-only reference to the collection of point indices
    */
   const Point_range &points() const { return m_points; }
 
   /*!
-   * \brief Check whether this node contains any points
+   * \brief check whether this node contains any points
    * \return if this node contains no points
    */
   bool is_empty() const {
@@ -286,7 +286,7 @@ public:
   }
 
   /*!
-   * \brief Count the points contained by this node
+   * \brief count the points contained by this node
    * \return the number of points this node owns
    */
   std::size_t number_of_points() const {
@@ -299,7 +299,7 @@ public:
   /// @{
 
   /*!
-   * \brief Compare the topology of this node to another node
+   * \brief compare the topology of this node to another node
    *
    * \todo
    *
