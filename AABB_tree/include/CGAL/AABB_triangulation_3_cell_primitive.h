@@ -18,7 +18,6 @@
 
 
 #include <CGAL/AABB_primitive.h>
-#include <CGAL/result_of.h>
 #include <iterator>
 
 namespace CGAL
@@ -31,9 +30,10 @@ namespace CGAL
       //classical typedefs
       typedef Iterator key_type;
       typedef typename GeomTraits::Point_3 value_type;
-      typedef typename cpp11::result_of<
-        typename GeomTraits::Construct_vertex_3(typename GeomTraits::Tetrahedron_3, int)
-      >::type reference;
+      typedef decltype(
+        std::declval<typename GeomTraits::Construct_vertex_3>()(
+          std::declval<typename GeomTraits::Tetrahedron_3>(),
+          std::declval<int>())) reference;
       typedef boost::readable_property_map_tag category;
 
       inline friend

@@ -48,7 +48,7 @@ with `Dispatch_output_iterator`.
 
 Since both the number of intersections, if any, and their types, depend
 on the arguments, the function expects an output iterator on
-`cpp11::result_of<K::Intersect_2(Type1, Type2)>::%type`, as
+`decltype(std::declval<K::Intersect_2>()(std::declval<Type1>(), std::declval<Type2>()))`, as
 presented below.
 */
 

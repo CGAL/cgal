@@ -8413,8 +8413,6 @@ public:
   \cgalRefines `AdaptableFunctor` (with two arguments)
 
   \sa \link intersection_grp `CGAL::intersection()` \endlink
-  \sa `CGAL::cpp11::result_of`
-
 */
 class Intersect_2 {
 public:
@@ -8428,7 +8426,7 @@ public:
     `Type1` and `Type2`, for all pairs `Type1` and `Type2`.
     For details see the reference manual page for \link intersection_grp `CGAL::intersection()` \endlink.
   */
-  CGAL::cpp11::result_of<Kernel::Intersect_2(Type1, Type2)>::type
+  decltype(auto)
   operator()(Type1 obj1, Type2 obj2);
 
   /// @}
@@ -8442,8 +8440,6 @@ public:
   \cgalRefines `AdaptableFunctor` (with two or three arguments)
 
   \sa intersection_linear_grp
-  \sa `CGAL::cpp11::result_of`
-
 */
 class Intersect_3 {
 public:
@@ -8457,8 +8453,8 @@ public:
     objects of type `Type1` and `Type2`.
     For details see the reference manual page for \ref intersection_linear_grp.
   */
-  CGAL::cpp11::result_of<Kernel::Intersect_3(Type1, Type2)>::type
- operator()(Type1 obj1, Type2 obj2);
+  decltype(auto)
+  operator()(Type1 obj1, Type2 obj2);
 
 
 

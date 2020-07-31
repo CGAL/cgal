@@ -32,7 +32,6 @@ template <class Base_,class R_> struct Orientation_of_points_2 : private Store_k
                 struct Point_2 {
                         R_ const&r; CC const&c; Point const& p;
                         Point_2(R_ const&r_, CC const&c_, Point const&p_):r(r_),c(c_),p(p_){}
-                        // use result_of instead?
                         typename CC::result_type x()const{return c(p,0);}
                         typename CC::result_type y()const{return c(p,1);}
                 };

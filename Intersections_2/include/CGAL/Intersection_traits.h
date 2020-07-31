@@ -123,10 +123,10 @@ namespace internal {
 // Overloads for empty returns are also provided.
   template<typename F, typename A, typename B, typename T>
   decltype(auto)
-  intersection_return(T&& t) { return decltype(std::declval<F>()(A(), B()))(std::forward<T>(t)); }
+  intersection_return(T&& t) { return decltype(std::declval<F>()(std::declval<A>(), std::declval<B>()))(std::forward<T>(t)); }
   template<typename F, typename A, typename B>
   decltype(auto)
-  intersection_return() { return decltype(std::declval<F>()(A(), B()))(); }
+  intersection_return() { return decltype(std::declval<F>()(std::declval<A>(), std::declval<B>()))(); }
 
 // Something similar to wrap around boost::get and object_cast to
 // prevent ifdefing too much. Another way could be to introduce an
