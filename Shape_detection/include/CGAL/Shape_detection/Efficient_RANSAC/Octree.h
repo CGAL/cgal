@@ -50,7 +50,7 @@ public:
     return m_first + i;
   }
 
-  std::size_t index(std::size_t i) {
+  std::size_t index(std::size_t i) const {
     return i + m_offset;
   }
 
@@ -110,7 +110,7 @@ public:
     return m_first + m_indices[i];
   }
 
-  std::size_t index(std::size_t i) {
+  std::size_t index(std::size_t i) const {
     return m_indices[i];
   }
 
