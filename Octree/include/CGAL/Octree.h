@@ -349,8 +349,8 @@ public:
    * \brief find the bounding box of a node
    *
    * Creates a cubic region representing a node.
-   * The size of the region is dependent on the node's depth in the tree.
-   * The location of the region is dependent on the node's location.
+   * The size of the region depends on the node's depth in the tree.
+   * The location of the region depends on the node's location.
    * The bounding box is useful for checking for collisions with a node.
    *
    * \param node the node to determine the bounding box of
