@@ -3,6 +3,9 @@ Release History
 
 [Release 5.1] (https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 
+### Surface Mesh Topology
+- Added the function `CGAL::Curves_on_surface::is_homotopic_to_simple_cycle()`, which can be used to determine whehter a closed path on a surface mesh can be continously transformed to a cycle without self intersection.
+
 ### 3D Fast Intersection and Distance Computation
 - The introduction of the usage of the search tree by default for all distance queries
   in the 5.0 release was actually not lazy contrary to what was announced. The behavior of the
