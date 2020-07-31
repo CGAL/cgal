@@ -179,7 +179,7 @@ public:
     FT x_len = bbox.xmax() - bbox.xmin();
     FT y_len = bbox.ymax() - bbox.ymin();
     FT z_len = bbox.zmax() - bbox.zmin();
-    FT max_len = std::max({x_len, y_len, z_len});
+    FT max_len = (std::max)({x_len, y_len, z_len});
     bbox = Iso_cuboid(bbox.min(), bbox.min() + max_len * Vector(1.0, 1.0, 1.0));
 
     // Shift the squared box to make sure it's centered in the original place
