@@ -69,7 +69,7 @@ sub reformat_results($)
 	if (/LEDAWIN_VERSION = '([^']+)'/) {
 	    $LEDA_VERSION="$LEDA_VERSION+win";
 	}
-	if (/^COMPILER_VERSION = '([^']+)'/) {
+	if (/COMPILER_VERSION = '([^']+)'/) {
 	    $COMPILER = $1;
 	}
 	if (/^TESTER_NAME\s+(.*)$/) {

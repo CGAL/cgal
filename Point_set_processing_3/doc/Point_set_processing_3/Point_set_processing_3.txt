@@ -68,8 +68,7 @@ on how to upgrade from the outdated API.
 
 Named parameters are used to deal with optional parameters. The page
 \ref BGLNamedParameters explains the rationale and API in general.
-The page \ref psp_namedparameters describes their usage
-and provides a list of the parameters that are used in this package.
+The page \ref bgl_namedparameters describes their usage.
 
 \subsection Point_set_processing_3PropertyMaps Property Maps
 
@@ -172,8 +171,7 @@ The following functions are available:
 
 All of these functions (with the exception of the LAS format) can read
 and write either points alone or points with normals (depending on
-whether the [normal_map](@ref PSP_normal_map) is provided by the user
-or not).
+whether the `normal_map` named parameter is used by the user or not).
 
 Note that the %PLY format handles both ASCII and binary formats. In
 addition, %PLY and %LAS are extensible formats that can embed additional

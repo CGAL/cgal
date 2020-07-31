@@ -56,5 +56,6 @@ while preserving the input geometric curve and surface features.
 \cgalCRPSection{Function Templates}
 
 - `CGAL::tetrahedral_isotropic_remeshing()`
+- `CGAL::convert_to_triangulation_3()`
 
 */

@@ -105,13 +105,14 @@ bool build_finite_cells(Tr& tr,
     const std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
     boost::unordered_map<std::array<typename Tr::Vertex_handle, 3>,
                         std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map,
-    const std::map<std::array<int,3>, int>& border_facets,
+    const std::map<std::array<int,3>, typename Tr::Cell::Surface_patch_index>& border_facets,
     const bool verbose)
 {
   typedef std::array<int, 5>              Tet_with_ref; // 4 ids + 1 reference
 
   typedef typename Tr::Vertex_handle                            Vertex_handle;
   typedef typename Tr::Cell_handle                              Cell_handle;
+  typedef typename Tr::Cell::Surface_patch_index                Surface_patch_index;
 
   CGAL_assertion_code(
     typename Tr::Geom_traits::Construct_point_3 cp =
@@ -171,7 +172,8 @@ bool build_finite_cells(Tr& tr,
           ++k;
         } while(f[0] != n0);
 
-        typename std::map<std::array<int,3>, int>::const_iterator it = border_facets.find(f);
+        typename std::map<std::array<int,3>, Surface_patch_index>::const_iterator
+          it = border_facets.find(f);
         if(it != border_facets.end())
         {
           c->set_surface_patch_index(j, it->second);
@@ -186,7 +188,7 @@ bool build_finite_cells(Tr& tr,
           if(it != border_facets.end())
             c->set_surface_patch_index(j, it->second);
           else
-            c->set_surface_patch_index(j, 0);
+            c->set_surface_patch_index(j, Surface_patch_index());
         }
       }
     }
@@ -259,6 +261,8 @@ bool build_infinite_cells(Tr& tr,
     // the only finite facet
     it->second.push_back(std::make_pair(opp_c, 0));
     CGAL_assertion(it->second.size() == 2);
+
+    opp_c->set_surface_patch_index(0, c->surface_patch_index(i));
   }
 
 #ifdef CGAL_TET_SOUP_TO_C3T3_DEBUG
@@ -322,7 +326,7 @@ template<class Tr, bool c3t3_loader_failed>
 bool build_triangulation(Tr& tr,
                          const std::vector<typename Tr::Point>& points,
                          const std::vector<std::array<int,5> >& finite_cells,
-                         const std::map<std::array<int,3>, int>& border_facets,
+                         const std::map<std::array<int,3>, typename Tr::Cell::Surface_patch_index>& border_facets,
                          std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
                          const bool verbose = false)
 {
@@ -389,7 +393,7 @@ bool build_triangulation_from_file(std::istream& is,
 
   std::vector<Tet_with_ref> finite_cells;
   std::vector<Point_3> points;
-  std::map<Facet, int> border_facets;
+  std::map<Facet, typename Tr::Cell::Surface_patch_index> border_facets;
 
   // grab the vertices
   int dim;
@@ -420,7 +424,8 @@ bool build_triangulation_from_file(std::istream& is,
       is >> nf;
       for(int i=0; i<nf; ++i)
       {
-        int n1, n2, n3, surface_patch_id;
+        int n1, n2, n3;
+        typename Tr::Cell::Surface_patch_index surface_patch_id;
         is >> n1 >> n2 >> n3 >> surface_patch_id;
         Facet facet;
         facet[0] = n1 - 1;

@@ -137,6 +137,41 @@ typename Tr::Geom_traits::FT min_dihedral_angle(const Tr& tr,
                             c->vertex(3));
 }
 
+template<typename C3t3>
+bool is_peelable(const C3t3& c3t3,
+                 const typename C3t3::Cell_handle ch,
+                 std::array<bool, 4>& facets_on_surface)
+{
+  typedef typename C3t3::Triangulation::Geom_traits::FT FT;
+  typedef typename C3t3::Facet                          Facet;
+
+  if(!c3t3.is_in_complex(ch))
+    return false;
+
+  bool on_surface = false;
+  for (int i = 0; i < 4; ++i)
+  {
+    facets_on_surface[i] = !c3t3.is_in_complex(ch->neighbor(i));
+    on_surface = on_surface || facets_on_surface[i];
+  }
+  if(!on_surface)
+    return false;
+
+  FT area_on_surface = 0.;
+  FT area_inside = 0.;
+  for (int i = 0; i < 4; ++i)
+  {
+    Facet f(ch, i);
+    const FT facet_area = CGAL::approximate_sqrt(c3t3.triangulation().triangle(f).squared_area());
+    if(facets_on_surface[i])
+      area_on_surface += facet_area;
+    else
+      area_inside += facet_area;
+  }
+
+  return (area_inside < 1.5 * area_on_surface);
+}
+
 template<typename Tr>
 typename Tr::Geom_traits::Vector_3 facet_normal(const Tr& tr,
                                                 const typename Tr::Facet& f)
@@ -305,6 +340,28 @@ typename C3t3::Surface_patch_index surface_patch_index(const typename C3t3::Vert
       return c3t3.surface_patch_index(f);
   }
   return Surface_patch_index();
+}
+
+template<typename C3t3>
+void set_index(typename C3t3::Vertex_handle v, const C3t3& c3t3)
+{
+  switch (v->in_dimension())
+  {
+  case 3:
+    v->set_index(v->cell()->subdomain_index());
+    break;
+  case 2:
+    v->set_index(surface_patch_index(v, c3t3));
+    break;
+  case 1:
+    v->set_index(typename C3t3::Curve_index(1));
+    break;
+  case 0:
+    v->set_index(boost::get<typename C3t3::Corner_index>(v->index()));
+    break;
+  default:
+    CGAL_assertion(false);
+  }
 }
 
 template<typename C3t3>
@@ -1312,17 +1369,19 @@ void dump_cells_with_small_dihedral_angle(const Tr& tr,
        cit != tr.finite_cells_end(); ++cit)
   {
     Cell_handle c = cit;
-    if ( c->subdomain_index() != Subdomain_index()
-         && cell_select(c)
-         && min_dihedral_angle(tr, c) < angle_bound)
+    if (c->subdomain_index() != Subdomain_index() && cell_select(c))
     {
-
-      cells.push_back(c);
-      indices.push_back(c->subdomain_index());
+      double dh = min_dihedral_angle(tr, c);
+      if (dh < angle_bound)
+      {
+        cells.push_back(c);
+        indices.push_back(c->subdomain_index());
+      }
     }
   }
   std::cout << "bad cells : " << cells.size() << std::endl;
   dump_cells<Tr>(cells, indices, filename);
+  dump_cells_off(cells, tr, "bad_cells.off");
 }
 
 template<typename Tr>

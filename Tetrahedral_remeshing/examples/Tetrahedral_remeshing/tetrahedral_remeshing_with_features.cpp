@@ -79,9 +79,7 @@ int main(int argc, char* argv[])
   boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> > constraints;
 
   CGAL::Tetrahedral_remeshing::generate_input_cube(nbv, t3, constraints);
-
   make_constraints_from_cube_edges(t3, constraints);
-
   CGAL_assertion(t3.is_valid());
 
   CGAL::tetrahedral_isotropic_remeshing(t3, target_edge_length,

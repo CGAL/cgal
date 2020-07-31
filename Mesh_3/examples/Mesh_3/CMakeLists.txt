@@ -133,23 +133,26 @@ else()
   message( STATUS "NOTICE: Some examples need the CGAL_ImageIO library, and will not be compiled." )
 endif()
 
-if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support AND TARGET ${target})
+if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
   foreach(target
-      mesh_3D_image_with_features
       mesh_3D_image
-      mesh_polyhedral_domain
+      mesh_3D_image_variable_size
       mesh_3D_image_with_custom_initialization
-      mesh_two_implicit_spheres_with_balls
-      mesh_optimization_lloyd_example
-      mesh_optimization_example
+      mesh_3D_image_with_features
       mesh_implicit_sphere
-      mesh_polyhedral_complex_sm
       mesh_implicit_sphere_variable_size
-      mesh_polyhedral_domain_sm
-      mesh_polyhedral_domain_with_lipschitz_sizing
+      mesh_optimization_example
+      mesh_optimization_lloyd_example
       mesh_polyhedral_complex
+      mesh_polyhedral_complex_sm
+      mesh_polyhedral_domain
+      mesh_polyhedral_domain_sm
       mesh_polyhedral_domain_with_features
-      mesh_3D_image_variable_size)
-    target_link_libraries(${target} PUBLIC CGAL::TBB_support)
+      mesh_polyhedral_domain_with_features_sm
+      mesh_polyhedral_domain_with_lipschitz_sizing
+      mesh_two_implicit_spheres_with_balls)
+    if(TARGET ${target})
+      target_link_libraries(${target} PUBLIC CGAL::TBB_support)
+    endif()
   endforeach()
 endif()
