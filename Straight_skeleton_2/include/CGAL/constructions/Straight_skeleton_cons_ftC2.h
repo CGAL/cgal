@@ -66,32 +66,13 @@ inline CORE::BigFloat to_BigFloat<MP_Float>( MP_Float const& b )
 
 #endif
 
-
-
 template<class NT>
 inline NT inexact_sqrt_implementation( NT const& n, CGAL::Null_functor /*no_sqrt*/ )
 {
+  typedef CGAL::Interval_nt<true> IFT;
 
-#ifdef CGAL_USE_CORE
-
-  CORE::BigFloat nn = to_BigFloat(n) ;
-  CORE::BigFloat s  = CORE::sqrt(nn);
-  return NT(s.doubleValue());
-
-#else
-
-  double nn = CGAL::to_double(n) ;
-
-  if ( !CGAL_NTS is_valid(nn) || ! CGAL_NTS is_finite(nn) )
-    nn = std::numeric_limits<double>::max BOOST_PREVENT_MACRO_SUBSTITUTION () ;
-
-  CGAL_precondition(nn > 0);
-
-  double s = CGAL_NTS sqrt(nn);
-
-  return NT(s);
-
-#endif
+  CGAL::NT_converter<NT, IFT> to_ift;
+  return NT( to_double(sqrt(to_ift(n))) );
 }
 
 template<class NT, class Sqrt>
