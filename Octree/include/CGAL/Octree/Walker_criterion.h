@@ -23,8 +23,6 @@ namespace CGAL {
 
 namespace Octree {
 
-namespace Walker {
-
 template<class Point_index>
 const Node::Node <Point_index> *next_sibling(const Node::Node <Point_index> *n) {
 
@@ -79,6 +77,7 @@ const Node::Node <Point_index> *deepest_first_child(const Node::Node <Point_inde
   return first;
 }
 
+namespace Walker {
 
 /*!
  * \brief walker for preorder traversal
