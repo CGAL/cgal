@@ -186,7 +186,7 @@ Straight_skeleton_builder_2<Gt,Ss,V>::IsPseudoSplitEvent( EventPtr const& aEvent
 // contains aNode as a vertex.
 //
 template<class Gt, class Ss, class V>
-void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvent( Vertex_handle aNode, Triedge const& aTriedge )
+void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvent( Vertex_handle aNode, Triedge const& aTriedge, boost::optional<FT> bound)
 {
   if ( IsOppositeEdgeFacingTheSplitSeed(aNode,aTriedge.e2()) )
   {
@@ -197,6 +197,9 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvent( Vertex_handle aNod
       if ( CompareEvents(lTrisegment,aNode) != SMALLER )
       {
         EventPtr lEvent = EventPtr( new SplitEvent (aTriedge,lTrisegment,aNode) ) ;
+
+        // filter split event
+        if (CanSafelyIgnoreSplitEvent(lEvent, bound)) return;
 
         mVisitor.on_split_event_created(aNode) ;
 
@@ -223,6 +226,10 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvents( Vertex_handle aNo
                       << " LBorder: E" << lLBorder->id() << " RBorder: E" << lRBorder->id()
                       );
 
+  boost::optional<FT> bound =
+    UpperBoundForValidSplitEvents(GetPrevInLAV(aNode), aNode, GetNextInLAV(aNode),
+                                  mContourHalfedges.begin(), mContourHalfedges.end());
+
   for ( Halfedge_handle_vector_iterator i = mContourHalfedges.begin(); i != mContourHalfedges.end(); ++ i )
   {
     Halfedge_handle lOpposite = *i ;
@@ -233,10 +240,13 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvents( Vertex_handle aNo
 
       if ( lEventTriedge != aPrevEventTriedge )
       {
-        CollectSplitEvent(aNode, lEventTriedge ) ;
+        CollectSplitEvent(aNode, lEventTriedge, bound ) ;
       }
     }
   }
+#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
+  std::cout << "  local queue size --> " << GetVertexData(aNode).mSplitEvents.size() << std::endl;
+#endif
 }
 
 

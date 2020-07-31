@@ -491,7 +491,7 @@ public:
                             , C2F
                             >
                             Are_ss_edges_collinear_2 ;
-
+// TODO: the wrappers are probably useless...
   typedef CGAL_SS_i::Exceptionless_filtered_construction< typename Unfiltering::Construct_ss_event_time_and_point_2
                                                         , typename Exact      ::Construct_ss_event_time_and_point_2
                                                         , typename Unfiltering::Construct_ss_event_time_and_point_2
@@ -511,6 +511,102 @@ public:
                                                         , C2C
                                                         >
                                                         Construct_ss_trisegment_2 ;
+
+  // functions and tag for filtering split events
+  struct Filters_split_events_tag{};
+
+  template <class EventPtr>
+  static bool
+  can_safely_ignore_split_event(const EventPtr& lEvent, const boost::optional<double>& bound)
+  {
+    // filter event
+    if (bound)
+    {
+      typedef FK Interval_kernel;
+      Cartesian_converter<K, Interval_kernel> to_interval;
+      typedef CGAL_SS_i::Trisegment_2<Interval_kernel> Target_trisegment_2 ;
+      typedef typename Target_trisegment_2::Self_ptr Target_trisegment_2_ptr;
+      Target_trisegment_2_ptr tri = new Target_trisegment_2(to_interval(lEvent->trisegment()->e0())
+                                                           ,to_interval(lEvent->trisegment()->e1())
+                                                           ,to_interval(lEvent->trisegment()->e2())
+                                                           ,lEvent->trisegment()->collinearity()
+                                                           );
+      try
+      {
+        boost::optional<CGAL_SS_i::Rational<typename FK::FT> > opt_time = CGAL_SS_i::compute_offset_lines_isec_timeC2(tri);
+
+        if (opt_time && opt_time->to_nt().inf() > *bound) return true;
+      }
+      catch(Uncertain_conversion_exception&)
+      {}
+    }
+    return false;
+  }
+
+  template <class Vertex_handle, class Halfedge_handle_vector_iterator>
+  static boost::optional<double>
+  upper_bound_for_valid_split_events(Vertex_handle lPrev, Vertex_handle aNode, Vertex_handle lNext,
+                                     Halfedge_handle_vector_iterator contour_halfedges_begin,
+                                     Halfedge_handle_vector_iterator contour_halfedges_end)
+  {
+    boost::optional<double> bound;
+    if ( aNode->is_contour())
+    {
+
+      typedef FK Interval_kernel;
+      Cartesian_converter<K, Interval_kernel> to_interval;
+      typedef typename Interval_kernel::Line_2 Line_2;
+      typedef typename Interval_kernel::Ray_2 Ray_2;
+      typedef typename Interval_kernel::Vector_2 Vector_2;
+      typedef typename Interval_kernel::Segment_2 Segment_2;
+
+      typename Interval_kernel::FT::Protector protector;
+
+      Segment_2 s1(to_interval(lPrev->point()), to_interval(aNode->point()));
+      Segment_2 s2(to_interval(aNode->point()), to_interval(lNext->point()));
+
+      boost::optional< Line_2 > l1 = CGAL_SS_i::compute_normalized_line_ceoffC2(s1);
+      boost::optional< Line_2 > l2 = CGAL_SS_i::compute_normalized_line_ceoffC2(s2);
+
+      Vector_2 v1(l1->a(), l1->b());
+      Vector_2 v2(l2->a(), l2->b());
+      Ray_2 bisect_ray(to_interval(aNode->point()), v1+v2);
+
+      // Cartesian_converter<Interval_kernel, K> to_input;
+      // std::cout << "bisect " << aNode->point() << " " << aNode->point() + to_input(v1+v2) << "\n";
+
+      for ( Halfedge_handle_vector_iterator i = contour_halfedges_begin; i != contour_halfedges_end; ++ i )
+      {
+        try{
+          CGAL_assertion((*i)->vertex()->is_contour() && (*i)->opposite()->vertex()->is_contour() );
+          Segment_2 s_h(to_interval((*i)->opposite()->vertex()->point()),
+                        to_interval((*i)->vertex()->point()));
+
+          Uncertain<bool> inter =  do_intersect(s_h, bisect_ray);
+          Uncertain<Oriented_side> orient =  orientation(s_h[0], s_h[1], to_interval(aNode->point()));
+
+          // we use segments of the input polygon intersected by the bisector and such that
+          // they are oriented such that the reflex vertex is on the left side of the segment
+          // TODO: @MaelRL we can divide the bound by 2, right?
+          if (!is_certain(inter) || !is_certain(orient) || !inter ||  orient!=LEFT_TURN) continue;
+
+          boost::optional< Line_2 > lh = CGAL_SS_i::compute_normalized_line_ceoffC2(s_h); // Note that we don't need the normalization
+
+          typename Interval_kernel::FT h_bound =
+            ( - lh->c() -lh->a() * to_interval(aNode->point().x()) - lh->b() * to_interval(aNode->point().y()) ) /
+            (lh->a() * ( (v1+v2).x() ) + lh->b() * ( (v1+v2).y() ));
+
+          if (!bound || *bound>h_bound.sup())
+            bound=h_bound.sup();
+        }
+        catch(CGAL::Uncertain_conversion_exception&)
+        {}
+      }
+    }
+    // if (bound) std::cout << "bound is " << *bound << "\n";
+    return bound;
+  }
+
 } ;
 
 template<class K>

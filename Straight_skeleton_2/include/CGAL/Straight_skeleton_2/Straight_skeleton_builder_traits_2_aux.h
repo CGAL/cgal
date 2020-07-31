@@ -28,7 +28,7 @@
 #include <boost/intrusive_ptr.hpp>
 #include <boost/optional/optional.hpp>
 #include <boost/none.hpp>
-
+#include <boost/mpl/has_xxx.hpp>
 
 #ifdef CGAL_USE_CORE
 #  include <CGAL/CORE_BigFloat.h>
@@ -444,6 +444,8 @@ struct SS_converter : Converter
   }
 
 };
+
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Filters_split_events_tag)
 
 } // namespace CGAL_SS_i
 

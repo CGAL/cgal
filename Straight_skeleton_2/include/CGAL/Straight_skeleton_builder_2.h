@@ -672,7 +672,7 @@ private :
 
   EventPtr IsPseudoSplitEvent( EventPtr const& aEvent, Vertex_handle_pair aOpp, Site const& aSite ) ;
 
-  void CollectSplitEvent( Vertex_handle aNode, Triedge const& aTriedge ) ;
+  void CollectSplitEvent( Vertex_handle aNode, Triedge const& aTriedge, boost::optional<FT> bound=boost::none) ;
 
   void CollectSplitEvents( Vertex_handle aNode, Triedge const& aPrevEventTriedge  ) ;
 
@@ -859,6 +859,46 @@ private :
                              );
 
     mVisitor.on_contour_edge_entered(lFirstCCWBorder);
+  }
+
+// internal function to filter split event in case the traits is Filtered
+  bool CanSafelyIgnoreSplitEventImpl(const EventPtr& lEvent, const boost::optional<FT>& bound, mpl_::bool_<false>)
+  {
+    return false;
+  }
+
+  bool CanSafelyIgnoreSplitEventImpl(const EventPtr& lEvent, const boost::optional<FT>& bound, mpl_::bool_<true>)
+  {
+    return Traits::can_safely_ignore_split_event(lEvent, bound);
+  }
+
+  bool CanSafelyIgnoreSplitEvent(const EventPtr& lEvent, const boost::optional<FT>& bound)
+  {
+    return CanSafelyIgnoreSplitEventImpl(lEvent, bound, typename CGAL_SS_i::has_Filters_split_events_tag<Traits>::type());
+  }
+
+  boost::optional<FT> UpperBoundForValidSplitEventsImpl(Vertex_handle, Vertex_handle, Vertex_handle,
+                                                        Halfedge_handle_vector_iterator , Halfedge_handle_vector_iterator,
+                                                        mpl_::bool_<false>)
+  {
+    return boost::none;
+  }
+
+  boost::optional<FT> UpperBoundForValidSplitEventsImpl(Vertex_handle lPrev, Vertex_handle aNode, Vertex_handle lNext,
+                                                        Halfedge_handle_vector_iterator contour_halfedges_begin,
+                                                        Halfedge_handle_vector_iterator contour_halfedges_end,
+                                                        mpl_::bool_<true>)
+  {
+    return Traits::upper_bound_for_valid_split_events(lPrev, aNode, lNext, contour_halfedges_begin, contour_halfedges_end);
+  }
+
+  boost::optional<FT>
+  UpperBoundForValidSplitEvents(Vertex_handle lPrev, Vertex_handle aNode, Vertex_handle lNext,
+                                Halfedge_handle_vector_iterator contour_halfedges_begin,
+                                Halfedge_handle_vector_iterator contour_halfedges_end)
+  {
+    return UpperBoundForValidSplitEventsImpl(lPrev, aNode, lNext, contour_halfedges_begin, contour_halfedges_end,
+                                             typename CGAL_SS_i::has_Filters_split_events_tag<Traits>::type());
   }
 
 public:
