@@ -959,6 +959,7 @@ std::size_t stitch_boundary_cycles(const BorderHalfedgeRange& boundary_cycle_rep
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param boundary_cycle_representatives a range of border halfedges, each describing a boundary cycle of the mesh `pmesh`
+/// \param pmesh the polygon mesh to be modified by stitching
 /// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
@@ -1150,12 +1151,12 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
 ///
 /// \tparam BorderHalfedgeRange a model of `Range` with value type `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
 /// \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param boundary_cycle_representatives a range of border halfedges, each describing a boundary cycle whose halfedges
 ///                                       will be considered for stitching
 /// \param pmesh the polygon mesh to be modified by the stitching procedure
-/// \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+/// \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
