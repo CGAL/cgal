@@ -43,7 +43,7 @@ public:
   /// @{
 
   /*!
-   * \brief array for containing the children of this node
+   * \brief array for containing the child nodes of this node
    */
   typedef std::array<Node<Point_index>, 8> Child_list;
 
