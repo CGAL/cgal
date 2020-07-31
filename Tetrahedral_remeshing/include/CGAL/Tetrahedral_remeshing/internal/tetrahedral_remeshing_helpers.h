@@ -17,6 +17,7 @@
 
 #include <utility>
 #include <array>
+#include <iterator>
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Weighted_point_3.h>
@@ -24,6 +25,9 @@
 #include <CGAL/utility.h>
 
 #include <CGAL/IO/File_binary_mesh_3.h>
+
+#include <boost/container/flat_set.hpp>
+#include <boost/container/small_vector.hpp >
 
 namespace CGAL
 {
@@ -760,31 +764,35 @@ Subdomain_relation compare_subdomains(const typename C3t3::Vertex_handle v0,
                                       const C3t3& c3t3)
 {
   typedef typename C3t3::Subdomain_index Subdomain_index;
+  typedef boost::container::flat_set<Subdomain_index,
+    std::less<Subdomain_index>,
+    boost::container::small_vector<Subdomain_index, 30> > Set_of_subdomains;
 
-  std::vector<Subdomain_index> subdomains_v0;
-  incident_subdomains(v0, c3t3, std::back_inserter(subdomains_v0));
-  std::sort(subdomains_v0.begin(), subdomains_v0.end());
+  Set_of_subdomains subdomains_v0;
+  incident_subdomains(v0, c3t3,
+    std::inserter(subdomains_v0, subdomains_v0.begin()));
 
-  std::vector<Subdomain_index> subdomains_v1;
-  incident_subdomains(v1, c3t3, std::back_inserter(subdomains_v1));
-  std::sort(subdomains_v1.begin(), subdomains_v1.end());
+  Set_of_subdomains subdomains_v1;
+  incident_subdomains(v1, c3t3,
+    std::inserter(subdomains_v1, subdomains_v1.begin()));
 
   if (subdomains_v0.size() == subdomains_v1.size())
   {
-    for (unsigned int i = 0; i < subdomains_v0.size(); i++)
-      if (subdomains_v0[i] != subdomains_v1[i])
-        return DIFFERENT;
-    return EQUAL;
+    if(std::equal(subdomains_v0.begin(), subdomains_v0.end(), subdomains_v1.begin()))
+      return EQUAL;
+    else
+      return DIFFERENT;
   }
   else
   {
-    std::vector<Subdomain_index>
-    intersection((std::min)(subdomains_v0.size(), subdomains_v1.size()), -1);
-    typename std::vector<Subdomain_index>::iterator
+    boost::container::small_vector<Subdomain_index, 30>
+      intersection((std::min)(subdomains_v0.size(), subdomains_v1.size()), -1);
+    typename boost::container::small_vector<Subdomain_index, 30>::iterator
     end_it = std::set_intersection(subdomains_v0.begin(), subdomains_v0.end(),
                                    subdomains_v1.begin(), subdomains_v1.end(),
                                    intersection.begin());
-    std::ptrdiff_t intersection_size = (end_it - intersection.begin());
+    std::ptrdiff_t intersection_size =
+      std::distance(intersection.begin(), end_it);
 
     if (subdomains_v0.size() > subdomains_v1.size()
         && intersection_size == std::ptrdiff_t(subdomains_v1.size()))
