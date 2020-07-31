@@ -1244,7 +1244,7 @@ private:
     // Create a legend_ and display it
     const std::size_t size = (std::min)(color_map.size(), (std::size_t)256);
     const int text_height = 20;
-    const int height = text_height*size + text_height;
+    const int height = text_height*static_cast<int>(size) + text_height;
     const int width = 140;
     const int cell_width = width/3;
     const int top_margin = 15;
@@ -1585,6 +1585,7 @@ private:
         return displayVertexProperty(*sm, pmap);
       }
     }
+    return false;
   }
 
   bool DisplayPropertyPlugin::treat_face_property(std::string name, SMesh* sm)
@@ -1690,6 +1691,7 @@ private:
         return displayFaceProperty(*sm, pmap);
       }
     }
+    return false;
   }
 
   template<typename PM>
@@ -1837,5 +1839,6 @@ private:
     }
     return true;
   }
+
 #include "Display_property_plugin.moc"
 
