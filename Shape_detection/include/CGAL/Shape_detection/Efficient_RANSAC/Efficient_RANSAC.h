@@ -211,10 +211,11 @@ public:
 
 private:
 
-  typedef internal::Octree<internal::DirectPointAccessor<Traits> >
-          Direct_octree;
-  typedef internal::Octree<internal::IndexedPointAccessor<Traits> >
-          Indexed_octree;
+//  typedef internal::Octree<internal::DirectPointAccessor<Traits> >
+//          Direct_octree;
+  typedef internal::Direct_octree<Traits> Direct_octree;
+  typedef internal::Indexed_octree<Traits> Indexed_octree;
+
   //--------------------------------------------typedef
 
   // Creates a function pointer for instancing shape instances.
@@ -377,7 +378,7 @@ public:
     m_global_octree = new Indexed_octree(
             m_traits, m_input_iterator_first, m_input_iterator_beyond,
             m_point_pmap
-            );
+    );
     m_global_octree->createTree(m_options.cluster_epsilon);
 
     return true;
@@ -1014,14 +1015,14 @@ private:
 
 
   // TODO: Make these work outside the octree!
-  template<class PointAccessor>
-  std::size_t score(internal::Octree<PointAccessor> *octree,
+  template<class Octree>
+  std::size_t score(Octree *octree,
                     Shape *candidate,
                     std::vector<int> &shapeIndex,
                     FT epsilon,
                     FT normal_threshold) {
 
-    typedef typename internal::Octree<PointAccessor>::Cell Cell;
+    typedef typename Octree::Cell Cell;
 
     std::stack<const Cell *> stack;
     stack.push(octree->root());
@@ -1064,15 +1065,15 @@ private:
     return candidate->m_indices.size();
   }
 
-  template<class PointAccessor>
-  bool drawSamplesFromCellContainingPoint(internal::Octree<PointAccessor> *octree,
+  template<class Octree>
+  bool drawSamplesFromCellContainingPoint(Octree *octree,
                                           const Point &p,
                                           std::size_t level,
                                           std::set<std::size_t> &indices,
                                           const std::vector<int> &shapeIndex,
                                           std::size_t requiredSamples) {
 
-    typedef typename internal::Octree<PointAccessor>::Cell Cell;
+    typedef typename Octree::Cell Cell;
 
     bool upperZ, upperY, upperX;
     const Cell *cur = octree->root();
