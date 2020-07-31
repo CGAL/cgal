@@ -28,10 +28,10 @@ public:
    * to `xcv2` and `ce`. In that case \f$p\f$ is located far to the right in a
    * similar manner.
    *
-   * \pre \link ArrangementHorizontalSideTraits_2::Parameter_space_in_x_2 `parameter_space_in_x_2`\endlink(`xcv2`, `ce`) =
-   * \link ArrangementHorizontalSideTraits_2::Parameter_space_in_x_2 `parameter_space_in_x_2`\endlink(`xcv1`, `ce`).
+   * \pre \link ArrangementVerticalSideTraits_2::Parameter_space_in_x_2 `parameter_space_in_x_2`\endlink(`xcv2`, `ce`) =
+   * \link ArrangementVerticalSideTraits_2::Parameter_space_in_x_2 `parameter_space_in_x_2`\endlink(`xcv1`, `ce`).
    *
-   * \pre \link ArrangementHorizontalSideTraits_2::Parameter_space_in_x_2 `parameter_space_in_x_2`\endlink(`xcv1`, `ce`) \f$\neq\f$
+   * \pre \link ArrangementVerticalSideTraits_2::Parameter_space_in_x_2 `parameter_space_in_x_2`\endlink(`xcv1`, `ce`) \f$\neq\f$
    * `CGAL::ARR_INTERIOR`.
    */
   Comparison_result operator()(const ArrTraits::X_monotone_curve_2& xcv1,

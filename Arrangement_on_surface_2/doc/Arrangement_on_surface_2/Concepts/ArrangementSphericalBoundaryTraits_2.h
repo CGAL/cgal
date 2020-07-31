@@ -73,4 +73,29 @@ public:
 
   /// @}
 
+  /// \name Accessing Functor Objects
+  /// @{
+
+  /*! */
+  Parameter_space_in_x_2 parameter_space_in_x_2_object() const;
+
+  /*! */
+  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const;
+
+  /*! */
+  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const;
+
+  /*! */
+  Parameter_space_in_y_2 parameter_space_in_y_2_object() const;
+
+  /*! */
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const;
+
+  /*! */
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const;
+
+  /*! */
+  Is_on_y_identification_2 is_on_y_identification_2_object() const;
+  /// @}
+
 }; /* end ArrangementSphericalBoundaryTraits_2 */

@@ -30,10 +30,10 @@ public:
    * respective ends are equal. That is, `compare_x_on_boundary_2`(`xcv1`,
    * `xcv2`, `ce`) = `CGAL::EQUAL`.
    *
-   * \pre \link ArrangementVerticalSideTraits_2::Parameter_space_in_y_2 `parameter_space_in_y_2`\endlink(`xcv1`, `ce`) =
-   * \link ArrangementVerticalSideTraits_2::Parameter_space_in_y_2 `parameter_space_in_y_2`\endlink(`xcv2`, `ce`).
+   * \pre \link ArrangementHorizontalSideTraits_2::Parameter_space_in_y_2 `parameter_space_in_y_2`\endlink(`xcv1`, `ce`) =
+   * \link ArrangementHorizontalSideTraits_2::Parameter_space_in_y_2 `parameter_space_in_y_2`\endlink(`xcv2`, `ce`).
    *
-   * \pre \link ArrangementVerticalSideTraits_2::Parameter_space_in_y_2 `parameter_space_in_y_2`\endlink(`xcv1`, `ce`) \f$ \neq\f$
+   * \pre \link ArrangementHorizontalSideTraits_2::Parameter_space_in_y_2 `parameter_space_in_y_2`\endlink(`xcv1`, `ce`) \f$ \neq\f$
    * `CGAL::ARR_INTERIOR`.
    */
   Comparison_result operator()(const ArrTraits::X_monotone_curve_2& xcv1,

@@ -27,11 +27,11 @@ public:
    * x\f$-coordinate of `p` and \f$ \lim_{t \rightarrow d} x(t)\f$. Returns
    * `CGAL::SMALLER`, `CGAL::EQUAL`, or `CGAL::LARGER` accordingly.
    *
-   * \pre \link ArrangementVerticalSideTraits_2::Parameter_space_in_y_2 `Parameter_space_in_y_2`\endlink (`xcv`, `ce`) \f$\neq\f$ `CGAL::ARR_INTERIOR`.
+   * \pre \link ArrangementHorizontalSideTraits_2::Parameter_space_in_y_2 `Parameter_space_in_y_2`\endlink (`xcv`, `ce`) \f$\neq\f$ `CGAL::ARR_INTERIOR`.
    *
    * \pre If the parameter space is unbounded, \f$c\f$ has a vertical asymptote
    *      at its \f$ d\f$-end; that is,
-   *      \link ArrangementHorizontalSideTraits_2::Parameter_space_in_x_2 `Parameter_space_in_x_2`\endlink(`xcv`, `ce`) = `CGAL::ARR_INTERIOR`.
+   *      \link ArrangementVerticalSideTraits_2::Parameter_space_in_x_2 `Parameter_space_in_x_2`\endlink(`xcv`, `ce`) = `CGAL::ARR_INTERIOR`.
    */
   Comparison_result operator()(const ArrTraits::Point_2& p,
                                const ArrTraits::X_monotone_curve_2& xcv,
@@ -50,17 +50,17 @@ public:
  * \f$\lim_{t \rightarrow d_2} x_2(t)\f$. Returns `CGAL::SMALLER`,
  * `CGAL::EQUAL`, or `CGAL::LARGER` accordingly.
  *
- * \pre \link ArrangementVerticalSideTraits_2::Parameter_space_in_y_2 `Parameter_space_in_y_2`\endlink(`xcv1`, `ce1`) \f$\neq\f$ `CGAL::ARR_INTERIOR`.
+ * \pre \link ArrangementHorizontalSideTraits_2::Parameter_space_in_y_2 `Parameter_space_in_y_2`\endlink(`xcv1`, `ce1`) \f$\neq\f$ `CGAL::ARR_INTERIOR`.
  *
- * \pre \link ArrangementVerticalSideTraits_2::Parameter_space_in_y_2 `Parameter_space_in_y_2`\endlink(`xcv2`, `ce2`) \f$\neq\f$ `CGAL::ARR_INTERIOR`.
+ * \pre \link ArrangementHorizontalSideTraits_2::Parameter_space_in_y_2 `Parameter_space_in_y_2`\endlink(`xcv2`, `ce2`) \f$\neq\f$ `CGAL::ARR_INTERIOR`.
  *
  * \pre If the parameter space is unbounded, \f$c_1\f$ has a vertical
  *      asymptote at its respective end; that is,
- *      \link ArrangementHorizontalSideTraits_2::Parameter_space_in_x_2 `Parameter_space_in_x_2`\endlink(`xcv1`, `ce1`) = `CGAL::ARR_INTERIOR`.
+ *      \link ArrangementVerticalSideTraits_2::Parameter_space_in_x_2 `Parameter_space_in_x_2`\endlink(`xcv1`, `ce1`) = `CGAL::ARR_INTERIOR`.
  *
  * \pre If the parameter space is unbounded, \f$c_2\f$ has a vertical asymptote
  *      at its respective end; that is,
- *      \link ArrangementHorizontalSideTraits_2::Parameter_space_in_x_2 `Parameter_space_in_x_2`\endlink(`xcv2`, `ce2`) = `CGAL::ARR_INTERIOR`.
+ *      \link ArrangementVerticalSideTraits_2::Parameter_space_in_x_2 `Parameter_space_in_x_2`\endlink(`xcv2`, `ce2`) = `CGAL::ARR_INTERIOR`.
  */
 Comparison_result operator()(const ArrTraits::X_monotone_curve_2& xcv1,
                              CGAL::Arr_curve_end ce1,

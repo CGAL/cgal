@@ -2327,8 +2327,8 @@ a set of input points is read from a file. The file `points.dat` is
 used by default. It contains definitions of \f$100\f$ points randomly
 selected on the grid \f$[-10000,10000]\times[-10000,10000]\f$. We
 construct an arrangement of the dual lines, where the line \f$p^{*}\f$
-dual to the point \f$p = (p_x, p_y)\f$ is given by the equation \f$y =
-p_x*x - p_y\f$, and check whether three (or more) of the dual lines
+dual to the point \f$p = (x_p, y_p)\f$ is given by the equation \f$y =
+x_p*x - y_p\f$, and check whether three (or more) of the dual lines
 intersect at a common point, by searching for a (dual) vertex, whose
 degree is greater than \f$4\f$. If such a vertex exists, then there
 are at least three dual lines that intersect at a common point, which
@@ -3252,31 +3252,33 @@ following predicate:
 
 <DL>
 
-<DT>\link ArrangementHorizontalSideTraits_2::Parameter_space_in_x_2 <B>`Parameter_space_in_x_2`</B>\endlink:
-<DD>This predicate is overloaded with two versions. We distinguish
-between identified and non-identified sides as explained below.
+<DT>\link ArrangementVerticalSideTraits_2::Parameter_space_in_x_2 <B>`Parameter_space_in_x_2`</B>\endlink:
+
+<DD>This predicate is overloaded with two versions as follows:
 
 (i) Given a curve \f$c = (x(t), y(t))\f$ and an enumerator that
 specifies either the minimum end or the maximum end of the curve, and
 thus maps to a parameter value \f$d \in \{0,1\}\f$, determine the
-location of the \f$d\f$-end of \f$c\f$ with respect to the
-\f$x\f$-axis. More precisely, if \f$c\f$ is open at its \f$d\f$-end,
-determine whether \f$\lim_{t \rightarrow d} x(t)\f$ is equal to
-\f$x_{\rm min}\f$, equal to \f$x_{\rm max}\f$, or falls in between. If
+location of the \f$d\f$-end of \f$c\f$ along the
+\f$x\f$-dimension. Formally, if \f$c\f$ is open at its \f$d\f$-end,
+determine whether \f$\lim_{t \rightarrow d} x(t)\f$ evaluates to
+\f$x_{\rm min}\f$, \f$x_{\rm max}\f$, or a value in between. If
 \f$c\f$ is not open at its \f$d\f$-end, determine whether \f$x(d)\f$
-is equal to \f$x_{\rm min}\f$, equal to \f$x_{\rm max}\f$, or falls in
-between. If \f$c\f$ is vertical and lies on a vertical boundary; that
-is, either \f$\forall p \in c, p_x = x_{\rm min}\f$ or \f$\forall p
-\in c, p_x = x_{\rm max}\f$, then the boundary side containing \f$c\f$
-cannot be open and must not be identified.
+is equal to \f$x_{\rm min}\f$, \f$x_{\rm max}\f$, or a value in
+between. Return `CGAL::ARR_LEFT_BOUNDARY`, `CGAL::ARR_RIGHT_BOUNDARY`,
+or `CGAL::ARR_INTERIOR`, accordingly. If \f$c\f$ is vertical and lies
+on a vertical boundary; that is, either \f$\forall p=(x_p, y_p) \in c,
+x_p = x_{\rm min}\f$ or \f$\forall p=(x_p, y_p) \in c, x_p = x_{\rm
+max}\f$, then the boundary side containing \f$c\f$ cannot be open and
+must not be identified.
 
-(ii) Given a point \f$p\f$, determine the location of the point with
-respect to the \f$x\f$-axis. More precisely, determine whether
-\f$x_p\f$ is equal to \f$x_{\rm min}\f$, equal to \f$x_{\rm max}\f$,
-or falls in between. If \f$p\f$ is on a vertical boundary; that is,
-\f$x_p \in \{x_{\rm min},x_{\rm max}\}\f$, then the boundary side
-containing \f$p\f$ cannot be open and must not be identified. In other
-words, this overloaded version is required only for the concepts
+(ii) Given a point \f$p=(x_p, y_p)\f$, determine the location of the
+point with respect to the \f$x\f$-axis. Formally, determine whether
+\f$x_p\f$ is equal to \f$x_{\rm min}\f$, \f$x_{\rm max}\f$, or a value
+in between.  If \f$p\f$ is on a vertical boundary; that is, \f$x_p \in
+\{x_{\rm min},x_{\rm max}\}\f$, then the boundary side containing
+\f$p\f$ cannot be open and must not be identified. In other words,
+this overloaded version is required only for the concepts
 `ArrangementClosedLeftTraits_2`, `ArrangementClosedRightTraits_2`,
 `ArrangementContractedLeftTraits_2` and
 `ArrangementContractedRightTraits_2`.
@@ -3288,32 +3290,33 @@ following predicate:
 
 <DL>
 
-<DT>\link ArrangementVerticalSideTraits_2::Parameter_space_in_y_2 <B>`Parameter_space_in_y_2`</B>\endlink:
+<DT>\link ArrangementHorizontalSideTraits_2::Parameter_space_in_y_2 <B>`Parameter_space_in_y_2`</B>\endlink:
 
-<DD>This predicate is overloaded with two versions. We distinguish
-between identified and non-identified sides as explained below.
+<DD>This predicate is overloaded with two versions as follows:
 
-(i) Given a curve \f$c\f$ and an enumerator that specifies either the
-minimum end or the maximum end of the curve, and thus maps to a
-parameter value \f$d \in \{0,1\}\f$, determine the location of the
-\f$d\f$-end of \f$c\f$ with respect to the \f$y\f$-axis. More
-precisely, if \f$c\f$ is open at its \f$d\f$-end, determine whether
-\f$\lim_{t \rightarrow d} y(t)\f$ is equal to \f$y_{\rm min}\f$, equal
-to \f$y_{\rm max}\f$, or falls in between. If \f$c\f$ is not open at
-its \f$d\f$-end, determine whether \f$y(d)\f$ is equal to \f$y_{\rm
-min}\f$, equal to \f$y_{\rm max}\f$, or falls in between. If \f$c\f$
-is horizontal and lies on a horizontal boundary; that is, either
-\f$\forall p \in c, p_y = y_{\rm min}\f$ or \f$\forall p \in c, p_y =
+(i) Given a curve \f$c = (x(t), y(t))\f$ and an enumerator that
+specifies either the minimum end or the maximum end of the curve, and
+thus maps to a parameter value \f$d \in \{0,1\}\f$, determine the
+location of the \f$d\f$-end of \f$c\f$ along the
+\f$y\f$-dimension. Formally, if \f$c\f$ is open at its \f$d\f$-end,
+determine whether \f$\lim_{t \rightarrow d} y(t)\f$ evaluates to
+\f$y_{\rm min}\f$, \f$y_{\rm max}\f$, or a value in between. If
+\f$c\f$ is not open at its \f$d\f$-end, determine whether \f$y(d)\f$
+is equal to \f$y_{\rm min}\f$, \f$y_{\rm max}\f$, or a value in
+between. Return `CGAL::ARR_LEFT_BOUNDARY`, `CGAL::ARR_RIGHT_BOUNDARY`,
+or `CGAL::ARR_INTERIOR`, accordingly. If \f$c\f$ is horizontal and
+lies on a horizontal boundary; that is, either \f$\forall p=(x_p, y_p)
+\in c, y_p = y_{\rm min}\f$ or \f$\forall p=(x_p, y_p) \in c, y_p =
 y_{\rm max}\f$, then the boundary side containing \f$c\f$ cannot be
 open and must not be identified.
 
-(ii) Given a point \f$p\f$, determine the location of the point with
-respect to the \f$y\f$-axis. More precisely, determine whether
-\f$y_p\f$ is equal to \f$y_{\rm min}\f$, equal to \f$y_{\rm max}\f$,
-or falls in between.  If \f$p\f$ is on a horizontal boundary; that is,
-\f$y_p \in \{y_{\rm min},y_{\rm max}\}\f$, then the boundary side
-containing \f$p\f$ cannot be open and must not be identified. In other
-words, this overloaded version is required only for the concepts
+(ii) Given a point \f$p=(x_p, y_p)\f$, determine the location of the
+point along the \f$y\f$-dimension. Formally, determine whether
+\f$y_p\f$ is equal to \f$y_{\rm min}\f$, \f$y_{\rm max}\f$, or a value
+in between.  If \f$p\f$ is on a horizontal boundary; that is, \f$y_p
+\in \{y_{\rm min},y_{\rm max}\}\f$, then the boundary side containing
+\f$p\f$ cannot be open and must not be identified. In other words,
+this overloaded version is required only for the concepts
 `ArrangementClosedBottomTraits_2`, `ArrangementClosedTopTraits_2`,
 `ArrangementContractedBottomTraits_2` and
 `ArrangementContractedTopTraits_2`.
@@ -3342,17 +3345,17 @@ predicates:
 <DD>This predicate is overloaded with three versions.
 We distinguish between open and non-open sides as explained below.
 
-(i) Given a regular point \f$p\f$, an \f$x\f$-monotone curve \f$c =
-(x(t),y(t))\f$, and an enumerator that specifies either the minimum
-end or the maximum end of the curve, and thus maps to a parameter
-value \f$d \in \{0,1\}\f$, compare the \f$x\f$-coordinate of \f$p\f$
-and the \f$x\f$-coordinate of \f$c\f$ at its respective limit or end
-depending on whether it is open or non-open. More precisely, if
-\f$c\f$ is open at its \f$d\f$-end, compare the values \f$x_p\f$
-and \f$\lim_{t \rightarrow d} x(t)\f$. A precondition assures that
-\f$c\f$ has a vertical asymptote at its \f$d\f$-end; that is
-\f$\lim_{t \rightarrow d} x(t)\f$ is a real value. If \f$c\f$ is not
-open, compare the values \f$x_p\f$ and \f$x(d)\f$.
+(i) Given a regular point \f$p=(x_p,y_p)\f$, an \f$x\f$-monotone curve
+\f$c = (x(t),y(t))\f$, and an enumerator that specifies either the
+minimum end or the maximum end of the curve, and thus maps to a
+parameter value \f$d \in \{0,1\}\f$, compare the \f$x\f$-coordinate of
+\f$p\f$ and the \f$x\f$-coordinate of \f$c\f$ at its respective limit
+or end depending on whether it is open or non-open. More precisely, if
+\f$c\f$ is open at its \f$d\f$-end, compare the values \f$x_p\f$ and
+\f$\lim_{t \rightarrow d} x(t)\f$. A precondition assures that \f$c\f$
+has a vertical asymptote at its \f$d\f$-end; that is \f$\lim_{t
+\rightarrow d} x(t)\f$ is a real value. If \f$c\f$ is not open,
+compare the values \f$x_p\f$ and \f$x(d)\f$.
 
 (ii) Given two curves \f$c_1 = (x_1(t),y_1(t))\f$ and \f$c_2 =
 (x_2(t),x_2(t))\f$ and enumerators that specify either the minimum end
@@ -3382,10 +3385,11 @@ other words, this overloaded version is required only for the concepts
 `ArrangementIdentifiedBottomTraits_2` and
 `ArrangementIdentifiedTopTraits_2`.
 
-<DT>\link ArrangementHorizontalSideTraits_2::Compare_x_near_boundary_2 <B>`Compare_x_near_boundary_2`</B>\endlink:
-<DD>Given two \f$x\f$-monotone curves \f$c_1\f$ and \f$c_2\f$ and an
-enumerator that specifies either the minimum ends or the maximum ends
-of the two curves, and thus map to parameter values \f$d_1, d_2 \in
+<DT>\link ArrangementHorizontalSideTraits_2::Compare_x_near_boundary_2
+<B>`Compare_x_near_boundary_2`</B>\endlink: <DD>Given two
+\f$x\f$-monotone curves \f$c_1\f$ and \f$c_2\f$ and an enumerator
+\f$i\f$ that specifies either the minimum ends or the maximum ends of
+the two curves, and thus map to parameter values \f$d_1, d_2 \in
 \{0,1\}\f$, respectively, compare the \f$x\f$-coordinate of the curves
 near their respective limits or ends. That is, compare the
 \f$x\f$-coordinates of the horizontal projection of a point \f$p\f$
@@ -3449,10 +3453,10 @@ The concepts `ArrangementIdentifiedLeftTraits_2` and
 
 <DD>This predicate is overloaded with two versions.
 
-(i) Given a point \f$p\f$, determine whether \f$p\f$ lies in the image
-of the vertical and identified sides of the boundary. More precisely,
-determine whether \f$x_p \in \{x_{\rm min},x_{\rm max}\}\f$ for all
-pre-images of \f$p\f$.
+(i) Given a point \f$p=(x_p, y_p)\f$, determine whether \f$p\f$ lies
+in the image of the vertical and identified sides of the
+boundary. More precisely, determine whether \f$x_p \in \{x_{\rm
+min},x_{\rm max}\}\f$ for all pre-images of \f$p\f$.
 
 (ii) Given a curve \f$c\f$, determine whether the entire curve \f$c\f$
 lies in the image of the vertical and identified sides of the
@@ -3469,10 +3473,10 @@ Similarly, the concepts `ArrangementIdentifiedBottomTraits_2` and
 
 <DD>This predicate is overloaded with two versions.
 
-(i) Given a point \f$p\f$, determine whether \f$p\f$ lies in the image
-of the horizontal and identified sides of the boundary. More precisely,
-determine whether \f$y_p \in \{y_{\rm min},y_{\rm max}\}\f$ for all
-pre-images of \f$p\f$.
+(i) Given a point \f$p=(x_p, y_p)\f$, determine whether \f$p\f$ lies
+in the image of the horizontal and identified sides of the
+boundary. More precisely, determine whether \f$y_p \in \{y_{\rm
+min},y_{\rm max}\}\f$ for all pre-images of \f$p\f$.
 
 (ii) Given a curve \f$c\f$, determine whether the entire curve \f$c\f$
 lies in the image of the horizontal and identified sides of the
