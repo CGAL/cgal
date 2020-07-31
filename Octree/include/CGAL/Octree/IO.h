@@ -15,12 +15,10 @@
 #include <CGAL/license/Octree.h>
 
 #include <CGAL/Octree.h>
-#include <CGAL/Octree/Node.h>
 #include <CGAL/Octree/Walker_criterion.h>
 
 #include <iostream>
 #include <ostream>
-#include "Node.h"
 
 using std::ostream;
 
