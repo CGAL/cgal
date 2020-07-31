@@ -33,63 +33,6 @@ namespace internal {
 const std::size_t size_t_max = (std::numeric_limits<std::size_t>::max)();
 
 template<class Sdt>
-class DirectPointAccessor {
-public:
-  typedef Sdt Sd_traits;
-  typedef typename Sd_traits::Input_range::iterator Input_iterator;
-
-  DirectPointAccessor() {}
-
-  DirectPointAccessor(const Input_iterator &begin,
-                      const Input_iterator &beyond,
-                      std::size_t offset) : m_first(begin), m_offset(offset) {
-    m_beyond = (beyond == begin) ? begin : beyond - 1;
-  }
-
-  Input_iterator at(std::size_t i) {
-    return m_first + i;
-  }
-
-  std::size_t index(std::size_t i) const {
-    return i + m_offset;
-  }
-
-  std::size_t offset() {
-    return m_offset;
-  }
-
-  std::size_t size() {
-    return m_beyond - m_first + 1;
-  }
-
-  Input_iterator first() {
-    return m_first;
-  }
-
-  Input_iterator beyond() {
-    return m_beyond;
-  }
-
-  void setData(Input_iterator &begin, Input_iterator &beyond) {
-    m_beyond = (beyond == begin) ? begin : beyond - 1;
-  }
-
-  void swap(std::size_t a, std::size_t b) {
-    typename std::iterator_traits<Input_iterator>::value_type tmp;
-    tmp = m_first[a];
-    m_first[a] = m_first[b];
-    m_first[b] = tmp;
-  }
-
-protected:
-  Input_iterator m_first;
-
-private:
-  Input_iterator m_beyond;
-  std::size_t m_offset;
-};
-
-template<class Sdt>
 class IndexedPointAccessor {
 public:
   typedef Sdt Sd_traits;
@@ -152,7 +95,7 @@ private:
 };
 
 template<class Sdt>
-class Direct_octree : public DirectPointAccessor<Sdt> {
+class Direct_octree {
 
   typedef Sdt Sd_traits;
   typedef typename Sd_traits::Input_range::iterator Input_iterator;
@@ -195,14 +138,18 @@ public:
           : m_traits(traits), m_root(nullptr) {}
 
   Direct_octree(Sd_traits const &traits,
-                const Input_iterator &first,
+                const Input_iterator &begin,
                 const Input_iterator &beyond,
                 Point_map &point_pmap,
-                std::size_t offset = 0)
-          : DirectPointAccessor<Sdt>(first, beyond, offset),
-            m_traits(traits),
-            m_root(nullptr),
-            m_point_pmap(point_pmap) {}
+                std::size_t offset = 0) :
+          m_traits(traits),
+          m_root(nullptr),
+          m_point_pmap(point_pmap),
+          m_first(begin),
+          m_offset(offset) {
+
+    m_beyond = (beyond == begin) ? begin : beyond - 1;
+  }
 
   ~Direct_octree() {
     if (!m_root)
@@ -443,6 +390,41 @@ public:
 
   FT width() const { return m_width; }
 
+  Input_iterator at(std::size_t i) {
+    return m_first + i;
+  }
+
+  std::size_t index(std::size_t i) const {
+    return i + m_offset;
+  }
+
+  std::size_t offset() {
+    return m_offset;
+  }
+
+  std::size_t size() {
+    return m_beyond - m_first + 1;
+  }
+
+  Input_iterator first() {
+    return m_first;
+  }
+
+  Input_iterator beyond() {
+    return m_beyond;
+  }
+
+  void setData(Input_iterator &begin, Input_iterator &beyond) {
+    m_beyond = (beyond == begin) ? begin : beyond - 1;
+  }
+
+  void swap(std::size_t a, std::size_t b) {
+    typename std::iterator_traits<Input_iterator>::value_type tmp;
+    tmp = m_first[a];
+    m_first[a] = m_first[b];
+    m_first[b] = tmp;
+  }
+
 private:
 
   Sd_traits m_traits;
@@ -452,6 +434,10 @@ private:
   FT m_width;
   std::size_t m_max_level;
   Point_map m_point_pmap;
+
+  Input_iterator m_first;
+  Input_iterator m_beyond;
+  std::size_t m_offset;
 
 private:
 
@@ -574,21 +560,21 @@ public:
           : m_traits(traits), m_root(nullptr) {}
 
   Indexed_octree(Sd_traits
-  const &traits,
-  const Input_iterator &first,
-  const Input_iterator &beyond,
-          Point_map
-  &point_pmap,
-  std::size_t offset = 0
+                 const &traits,
+                 const Input_iterator &first,
+                 const Input_iterator &beyond,
+                 Point_map
+                 &point_pmap,
+                 std::size_t offset = 0
   )
-  :
+          :
 
-  IndexedPointAccessor<Sdt>(first, beyond, offset),
+          IndexedPointAccessor<Sdt>(first, beyond, offset),
           m_traits(traits),
           m_root(
 
-  nullptr),
-  m_point_pmap(point_pmap) {}
+                  nullptr),
+          m_point_pmap(point_pmap) {}
 
   ~Indexed_octree() {
     if (!m_root)
