@@ -1016,7 +1016,7 @@ private:
 
   // TODO: Make these work outside the octree!
   template<class Octree>
-  std::size_t score(Octree *octree,
+  std::size_t score(const Octree *octree,
                     Shape *candidate,
                     std::vector<int> &shapeIndex,
                     FT epsilon,
@@ -1066,7 +1066,7 @@ private:
   }
 
   template<class Octree>
-  bool drawSamplesFromCellContainingPoint(Octree *octree,
+  bool drawSamplesFromCellContainingPoint(const Octree *octree,
                                           const Point &p,
                                           std::size_t level,
                                           std::set<std::size_t> &indices,
