@@ -3275,10 +3275,12 @@ must not be identified.
 (ii) Given a point \f$p=(x_p, y_p)\f$, determine the location of the
 point with respect to the \f$x\f$-axis. Formally, determine whether
 \f$x_p\f$ is equal to \f$x_{\rm min}\f$, \f$x_{\rm max}\f$, or a value
-in between.  If \f$p\f$ is on a vertical boundary; that is, \f$x_p \in
-\{x_{\rm min},x_{\rm max}\}\f$, then the boundary side containing
-\f$p\f$ cannot be open and must not be identified. In other words,
-this overloaded version is required only for the concepts
+in between. Return `CGAL::ARR_LEFT_BOUNDARY`,
+`CGAL::ARR_RIGHT_BOUNDARY`, or `CGAL::ARR_INTERIOR`, accordingly. If
+\f$p\f$ is on a vertical boundary; that is, \f$x_p \in \{x_{\rm
+min},x_{\rm max}\}\f$, then the boundary side containing \f$p\f$
+cannot be open and must not be identified. In other words, this
+overloaded version is required only for the concepts
 `ArrangementClosedLeftTraits_2`, `ArrangementClosedRightTraits_2`,
 `ArrangementContractedLeftTraits_2` and
 `ArrangementContractedRightTraits_2`.
@@ -3313,10 +3315,12 @@ open and must not be identified.
 (ii) Given a point \f$p=(x_p, y_p)\f$, determine the location of the
 point along the \f$y\f$-dimension. Formally, determine whether
 \f$y_p\f$ is equal to \f$y_{\rm min}\f$, \f$y_{\rm max}\f$, or a value
-in between.  If \f$p\f$ is on a horizontal boundary; that is, \f$y_p
-\in \{y_{\rm min},y_{\rm max}\}\f$, then the boundary side containing
-\f$p\f$ cannot be open and must not be identified. In other words,
-this overloaded version is required only for the concepts
+in between. Return `CGAL::ARR_LEFT_BOUNDARY`,
+`CGAL::ARR_RIGHT_BOUNDARY`, or `CGAL::ARR_INTERIOR`, accordingly. If
+\f$p\f$ is on a horizontal boundary; that is, \f$y_p \in \{y_{\rm
+min},y_{\rm max}\}\f$, then the boundary side containing \f$p\f$
+cannot be open and must not be identified. In other words, this
+overloaded version is required only for the concepts
 `ArrangementClosedBottomTraits_2`, `ArrangementClosedTopTraits_2`,
 `ArrangementContractedBottomTraits_2` and
 `ArrangementContractedTopTraits_2`.
@@ -3342,6 +3346,7 @@ predicates:
 <DL>
 
 <DT>\link ArrangementHorizontalSideTraits_2::Compare_x_on_boundary_2 <B>`Compare_x_on_boundary_2`</B>\endlink:
+
 <DD>This predicate is overloaded with three versions.
 We distinguish between open and non-open sides as explained below.
 
@@ -3356,6 +3361,14 @@ or end depending on whether it is open or non-open. More precisely, if
 has a vertical asymptote at its \f$d\f$-end; that is \f$\lim_{t
 \rightarrow d} x(t)\f$ is a real value. If \f$c\f$ is not open,
 compare the values \f$x_p\f$ and \f$x(d)\f$.
+
+<table border="0" cellspacing="10">
+<tr>
+<td>
+\image html compare_x_on_boundary.png
+\image latex compare_x_on_boundary.pdf
+</td>
+<td>
 
 (ii) Given two curves \f$c_1 = (x_1(t),y_1(t))\f$ and \f$c_2 =
 (x_2(t),x_2(t))\f$ and enumerators that specify either the minimum end
@@ -3373,6 +3386,10 @@ that is \f$\lim_{t \rightarrow d_1} x_1(t)\f$ is (resp. \f$\lim_{t
 (resp. \f$d_2\f$-end), use the value \f$x_1(d_1)\f$
 (resp. \f$x_2(d_2)\f$) for the comparison.
 
+</td>
+</tr>
+</table>
+
 (iii) Given two points \f$p_1\f$ and \f$p_2\f$, such that at least one
 of them lies on a horizontal boundary side, compare the
 \f$x\f$-coordinates of the points. That is, compare \f$x_{p_1}\f$ and
@@ -3386,25 +3403,39 @@ other words, this overloaded version is required only for the concepts
 `ArrangementIdentifiedTopTraits_2`.
 
 <DT>\link ArrangementHorizontalSideTraits_2::Compare_x_near_boundary_2
-<B>`Compare_x_near_boundary_2`</B>\endlink: <DD>Given two
-\f$x\f$-monotone curves \f$c_1\f$ and \f$c_2\f$ and an enumerator
-\f$i\f$ that specifies either the minimum ends or the maximum ends of
-the two curves, and thus map to parameter values \f$d_1, d_2 \in
-\{0,1\}\f$, respectively, compare the \f$x\f$-coordinate of the curves
-near their respective limits or ends. That is, compare the
-\f$x\f$-coordinates of the horizontal projection of a point \f$p\f$
-onto \f$c_1\f$ and onto \f$c_2\f$. A precondition assures that
+<B>`Compare_x_near_boundary_2`</B>\endlink:
+
+<DD>
+<table border="0" cellspacing="10">
+<tr>
+<td>
+\image html compare_x_near_boundary.png
+\image latex compare_x_near_boundary.pdf
+</td>
+<td>
+
+Given two \f$x\f$-monotone curves \f$c_1\f$ and \f$c_2\f$ and an
+enumerator \f$i\f$ that specifies either the minimum ends or the
+maximum ends of the two curves, and thus map to parameter values
+\f$d_1, d_2 \in \{0,1\}\f$, respectively, compare the
+\f$x\f$-coordinate of the curves near their respective limits or
+ends. A precondition assures that the \f$x\f$-coordinates of the
+limits or ends of the curves at their respective ends are equal. That
+is, the predicate `Compare_x_on_boundary_2` applied to \f$c_1\f$,
+\f$c_2\f$, and \f$i\f$ evaluates to `CGAL::EQUAL`.  Formally, compare
+the \f$x\f$-coordinates of the horizontal projection of a point
+\f$p\f$ onto \f$c_1\f$ and onto \f$c_2\f$. A precondition assures that
 \f$c_1\f$ and \f$c_2\f$ have vertical asymptotes at their respective
 ends. Furthermore, both curves approach the same boundary-side, either
 the bottom or the top, at their respective ends. If both curves
 approach the bottom boundary-side, \f$p\f$ is located far to the
 bottom, such that the result is invariant under a translation of
 \f$p\f$ farther to the bottom. If both curves approach the top
-boundary-side, \f$p\f$ is located far to the top in a similar
-manner. Another precondition assures that the \f$x\f$-coordinates of
-the limits of the curves at their respective ends are equal. That is,
-the predicate `Compare_x_on_boundary_2` applied to \f$c_1\f$,
-\f$c_2\f$, and \f$i\f$ evaluates to `CGAL::EQUAL`.
+boundary-side, \f$p\f$ is located far to the top in a similar manner.
+
+</td>
+</tr>
+</table>
 
 </DL>
 

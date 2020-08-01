@@ -1141,7 +1141,7 @@ public:
      *      that xcv1 is vertical.
      * \pre the ce end of the line xcv2 lies on a boundary, implying
      *      that xcv2 is vertical.
-     * \pre the the $x$-coordinates of xcv1 and xcv2 at their ce ends are
+     * \pre the $x$-coordinates of xcv1 and xcv2 at their ce ends are
      *      equal, implying that the curves overlap!
      */
     Comparison_result
