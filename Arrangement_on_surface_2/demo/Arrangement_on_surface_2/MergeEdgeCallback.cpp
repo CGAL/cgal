@@ -5,6 +5,8 @@
 #include <QEvent>
 #include <QGraphicsSceneMouseEvent>
 
+#include "Utils.h"
+
 /*! Constructor */
 template <typename Arr_>
 MergeEdgeCallback<Arr_>::MergeEdgeCallback(
@@ -27,7 +29,6 @@ void MergeEdgeCallback<Arr_>::setScene(QGraphicsScene* scene_)
   Callback::setScene(scene_);
   this->highlightedCurve->setScene(scene_);
   this->highlightedCurve2->setScene(scene_);
-  this->squaredDistance.setScene(scene_);
 
   if (scene_)
   {
@@ -43,7 +44,6 @@ void MergeEdgeCallback<Arr_>::reset()
   this->highlightedCurve->clear();
   this->highlightedCurve2->clear();
   this->mergeableHalfedge = Halfedge_handle();
-  Q_EMIT modelChanged();
 }
 
 template <typename Arr_>
@@ -99,7 +99,10 @@ MergeEdgeCallback<Arr_>::getNearestMergeableCurve(
 {
   // find the nearest curve to the cursor that is adjacent to a curve that
   // can be merged with it
-  Kernel_point_2 p = this->convert(event->scenePos());
+  typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
+  typedef typename Kernel::Point_2                      Kernel_point_2;
+
+  Kernel_point_2 p = CGAL::Qt::Converter<Kernel>{}(event->scenePos());
   double minDist = std::numeric_limits<double>::max();
   Halfedge_iterator nearestHei;
   bool found = false;
@@ -121,7 +124,9 @@ MergeEdgeCallback<Arr_>::getNearestMergeableCurve(
     { continue; }
 
     X_monotone_curve_2 curve = hei->curve();
-    double dist = CGAL::to_double(this->squaredDistance(p, curve));
+    Compute_squared_distance_2< Traits > squaredDistance;
+    squaredDistance.setScene(this->getScene());
+    double dist = CGAL::to_double(squaredDistance(p, curve));
     if (!found || dist < minDist)
     {
       found = true;
@@ -144,7 +149,10 @@ MergeEdgeCallback<Arr_>::getNearestMergeableCurve(
 {
   // find the nearest curve to the cursor that is adjacent to a curve that
   // can be merged with it
-  Kernel_point_2 p = this->convert(event->scenePos());
+  typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
+  typedef typename Kernel::Point_2                      Kernel_point_2;
+
+  Kernel_point_2 p = CGAL::Qt::Converter<Kernel>{}(event->scenePos());
   Halfedge_handle h1 = h->prev();
   Halfedge_handle h2 = h->next();
   Vertex_iterator source = h->source();
@@ -160,8 +168,10 @@ MergeEdgeCallback<Arr_>::getNearestMergeableCurve(
   {
     X_monotone_curve_2 c1 = h1->curve();
     X_monotone_curve_2 c2 = h2->curve();
-    double d1 = CGAL::to_double(this->squaredDistance(p, c1));
-    double d2 = CGAL::to_double(this->squaredDistance(p, c2));
+    Compute_squared_distance_2< Traits > squaredDistance;
+    squaredDistance.setScene(this->getScene());
+    double d1 = CGAL::to_double(squaredDistance(p, c1));
+    double d2 = CGAL::to_double(squaredDistance(p, c2));
 
     return (d1 < d2) ? h1 : h2;
   }

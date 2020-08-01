@@ -28,7 +28,11 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Bbox_2.h>
 
-#ifdef CGAL_USE_GMP
+
+#ifdef CGAL_USE_CORE
+  #include <CGAL/CORE/BigRat.h>
+  typedef CORE::BigRat                                  NT;
+#elif CGAL_USE_GMP
   #include <CGAL/Gmpq.h>
   typedef CGAL::Gmpq                                    NT;
 #else
@@ -36,6 +40,7 @@
   #include <CGAL/Quotient.h>
   typedef CGAL::Quotient<CGAL::MP_Float>                NT;
 #endif
+
 // instead of
 //typedef CGAL::Cartesian<NT>                           Kernel;
 // workaround for VC++
@@ -49,7 +54,10 @@ class Face_with_color : public CGAL::Arr_face_base
   bool      m_visited;
 
 public:
-  Face_with_color() : CGAL::Arr_face_base(), m_color(::Qt::transparent), m_visited(false) { }
+  Face_with_color() :
+      CGAL::Arr_face_base(), m_color(QColorConstants::White), m_visited(false)
+  {
+  }
 
   QColor color() const { return m_color; }
   void set_color(const QColor& c) { m_color = c; }
@@ -218,9 +226,5 @@ typedef Lin_arr::Face_iterator                          Lin_face_iterator;
 typedef std::list<Arr_lin_2*>                           Arr_lin_list;
 typedef Arr_lin_list::const_iterator                    Arr_lin_const_iter;
 typedef Arr_lin_list::iterator                          Arr_lin_iter;
-
-#include <QMetaType>
-
-Q_DECLARE_METATYPE( CGAL::Object )
 
 #endif // ARRANGEMENT_DEMO_TYPES_H

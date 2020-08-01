@@ -10,6 +10,12 @@
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
 #include "SplitEdgeCallback.h"
+#include "Utils.h"
+
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsScene>
+#include <QGraphicsLineItem>
+#include <CGAL/Qt/Converter.h>
 
 //! displays the color of the nodes and edges after the splitting has been performed
 /*!
@@ -79,7 +85,6 @@ void SplitEdgeCallback<Arr_>::reset( )
 {
   this->hasFirstPoint = false;
   this->segmentGuide->setLine(0,0,0,0);
-  Q_EMIT modelChanged( );
 }
 
 template <typename Arr_>
@@ -226,18 +231,23 @@ SplitEdgeCallback<Arr_>::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 template <typename Arr_>
 template < typename TTraits >
 void SplitEdgeCallback<Arr_>::
-updateGuide(const Point_2& clickedPoint,
-                                          TTraits /* traits */)
+updateGuide(const Point_2& clickedPoint, TTraits /* traits */)
 {
+  typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
+  typedef typename Kernel::Point_2            Kernel_point_2;
+  typedef typename Kernel::Segment_2               Segment_2;
+
   if ( this->hasFirstPoint )
   { // provide visual feedback for where the split line is
     Point_2 currentPoint = clickedPoint;
-    typename Kernel::Point_2 pt1( CGAL::to_double( this->p1.x( ) ),
-                                  CGAL::to_double( this->p1.y( ) ) );
-    typename Kernel::Point_2 pt2( CGAL::to_double( currentPoint.x( ) ),
-                                  CGAL::to_double( currentPoint.y( ) ) );
+    Kernel_point_2 pt1( CGAL::to_double( this->p1.x( ) ),
+                        CGAL::to_double( this->p1.y( ) ) );
+    Kernel_point_2 pt2( CGAL::to_double( currentPoint.x( ) ),
+                        CGAL::to_double( currentPoint.y( ) ) );
     Segment_2 currentSegment( pt1, pt2 );
-    QLineF qSegment = this->convert( currentSegment );
+
+    typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
+    QLineF qSegment = CGAL::Qt::Converter<Kernel>{}(currentSegment);
 
     this->segmentGuide->setLine( qSegment );
     Q_EMIT modelChanged( );
@@ -248,7 +258,13 @@ template <typename Arr_>
 typename SplitEdgeCallback<Arr_>::Point_2
 SplitEdgeCallback<Arr_>::snapPoint( QGraphicsSceneMouseEvent* event )
 {
-  typename Kernel::Point_2 pt = this->convert( event->scenePos( ) );
+  typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
+  typedef typename Kernel::Point_2                      Kernel_point_2;
+  typedef typename ArrTraitsAdaptor< Traits >::Point_2 Point_2;
+
+  Kernel_point_2 pt = CGAL::Qt::Converter<Kernel>{}(event->scenePos());
+
+  typedef typename ArrTraitsAdaptor< Traits >::CoordinateType CoordinateType;
   CoordinateType x( pt.x( ) );
   CoordinateType y( pt.y( ) );
   return Point_2( x, y );

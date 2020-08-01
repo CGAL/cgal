@@ -12,6 +12,7 @@
 #include "VerticalRayShootCallback.h"
 #include "CurveGraphicsItem.h"
 #include "Utils.h"
+#include "PointLocationFunctions.h"
 
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Arrangement_with_history_2.h>
@@ -55,6 +56,32 @@ VerticalRayShootCallback<Arr_>::VerticalRayShootCallback(
 }
 
 template <typename Arr_>
+void VerticalRayShootCallback<Arr_>::setEdgeWidth( int width )
+{
+  this->highlightedCurves->setEdgeWidth( width );
+  this->rayGraphicsItem.setWidth( width );
+}
+
+template <typename Arr_>
+void VerticalRayShootCallback<Arr_>::setEdgeColor( const QColor& color )
+{
+  this->highlightedCurves->setEdgeColor( color );
+  this->rayGraphicsItem.setColor( color );
+}
+
+template <typename Arr_>
+const QColor& VerticalRayShootCallback<Arr_>::edgeColor( ) const
+{
+  return this->highlightedCurves->edgeColor( );
+}
+
+template <typename Arr_>
+int VerticalRayShootCallback<Arr_>::edgeWidth( ) const
+{
+  return this->highlightedCurves->edgeWidth( );
+}
+
+template <typename Arr_>
 void VerticalRayShootCallback<Arr_>::setScene(QGraphicsScene* scene_)
 {
   CGAL::Qt::Callback::setScene(scene_);
@@ -92,33 +119,6 @@ void VerticalRayShootCallback<Arr_>::mouseMoveEvent(
 {
 }
 
-// Those were removed from the header file to minimize includes
-template <typename Arrangement, typename Kernel_point_2>
-static CGAL::Object
-rayShootUp(const Arrangement* arr, const Kernel_point_2& point)
-{
-  typedef typename CGAL::Arr_walk_along_line_point_location<Arrangement>
-    Walk_pl_strategy;
-  typedef typename Arrangement::Geometry_traits_2 Traits;
-
-  Arr_construct_point_2<Traits> toArrPoint;
-  Walk_pl_strategy pointLocationStrategy{*arr};
-  return pointLocationStrategy.ray_shoot_up(toArrPoint(point));
-}
-
-template <typename Arrangement, typename Kernel_point_2>
-static CGAL::Object
-rayShootDown(const Arrangement* arr, const Kernel_point_2& point)
-{
-  typedef typename CGAL::Arr_walk_along_line_point_location<Arrangement>
-    Walk_pl_strategy;
-  typedef typename Arrangement::Geometry_traits_2 Traits;
-
-  Arr_construct_point_2<Traits> toArrPoint;
-  Walk_pl_strategy pointLocationStrategy{*arr};
-  return pointLocationStrategy.ray_shoot_down(toArrPoint(point));
-}
-
 template <typename Arr_>
 void VerticalRayShootCallback<Arr_>::highlightPointLocation(
   QGraphicsSceneMouseEvent* event)
@@ -133,16 +133,17 @@ void VerticalRayShootCallback<Arr_>::highlightPointLocation(
   typedef typename Kernel::FT                           FT;
 
   this->highlightedCurves->clear();
-  Kernel_point_2 queryPt;
-  CGAL::Qt::Converter< Kernel > convert;
-  queryPt = convert(event->scenePos());
+  QPointF queryQPt = event->scenePos();
+  Kernel_point_2 queryPt = CGAL::Qt::Converter<Kernel>{}(queryQPt);
+
   CGAL::Object pointLocationResult;
   if (this->shootingUp)
-  { pointLocationResult = rayShootUp(arr, queryPt); }
+    pointLocationResult =
+      PointLocationFunctions<Arrangement>{}.rayShootUp(arr, queryQPt);
   else
-  {
-    pointLocationResult = rayShootDown(arr, queryPt);
-  }
+    pointLocationResult =
+      PointLocationFunctions<Arrangement>{}.rayShootDown(arr, queryQPt);
+
   if (pointLocationResult.is_empty()) { return; }
 
   QRectF viewportRect = this->viewportRect();
@@ -193,24 +194,6 @@ void VerticalRayShootCallback<Arr_>::highlightPointLocation(
   }
 
   Q_EMIT modelChanged();
-}
-
-template <typename Arr_>
-typename VerticalRayShootCallback<Arr_>::Face_const_handle
-VerticalRayShootCallback<Arr_>::getFace(const CGAL::Object& obj)
-{
-  Face_const_handle f;
-  if (CGAL::assign(f, obj)) return f;
-
-  Halfedge_const_handle he;
-  if (CGAL::assign(he, obj)) return (he->face());
-
-  Vertex_const_handle v;
-  CGAL_assertion(CGAL::assign(v, obj));
-  CGAL::assign(v, obj);
-  if (v->is_isolated()) return v->face();
-  Halfedge_around_vertex_const_circulator eit = v->incident_halfedges();
-  return (eit->face());
 }
 
 template class VerticalRayShootCallback<Seg_arr>;

@@ -21,6 +21,7 @@
 #include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Qt/Converter.h>
 #include <QEvent>
+#include "QtMetaTypes.h"
 
 #include <QGraphicsView>
 
@@ -114,25 +115,34 @@ void CurveInputMethod::setCurveGenerator(CurveGeneratorBase* generator)
   this->curveGenerator = generator;
 }
 
+void CurveInputMethod::setPointSnapper(PointSnapperBase* snapper_)
+{
+  this->snapper = snapper_;
+}
+
 CurveType CurveInputMethod::curveType() const { return type; }
+
 
 void CurveInputMethod::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
   if (this->clickedPoints.size() > 0)
     this->updateVisualGuideMouseMoved(
-      this->clickedPoints, this->snapPoint(event));
+      this->clickedPoints, this->snapQPoint(event));
 }
 
 void CurveInputMethod::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
   if (event->button() == ::Qt::LeftButton)
   {
-    QPointF point = this->snapPoint(event);
+    Point_2 big_point = this->snapPoint(event);
+    QPointF point = {
+      CGAL::to_double(big_point.x()), CGAL::to_double(big_point.y())};
 
     // only accept unique consecutive points
     if (!this->clickedPoints.empty() && this->clickedPoints.back() == point)
       return;
     this->clickedPoints.push_back(point);
+    this->clickedBigPoints.push_back(big_point);
 
     if (this->clickedPoints.size() < static_cast<size_t>(this->numPoints))
     {
@@ -142,14 +152,14 @@ void CurveInputMethod::mousePressEvent(QGraphicsSceneMouseEvent* event)
     }
     else
     {
-      curveGenerator->generate(this->clickedPoints, this->type);
+      curveGenerator->generate(this->clickedBigPoints, this->type);
       this->resetInput_();
     }
   }
   else
   {
     if (this->numPoints == -1)
-      curveGenerator->generate(this->clickedPoints, this->type);
+      curveGenerator->generate(this->clickedBigPoints, this->type);
     this->resetInput_();
   }
 }
@@ -166,6 +176,7 @@ void CurveInputMethod::resetInput_()
 {
   this->resetInput();
   this->clickedPoints.clear();
+  this->clickedBigPoints.clear();
   this->pointsGraphicsItem.clear();
   if (this->itemsAdded)
   {
@@ -186,9 +197,15 @@ void CurveInputMethod::updateVisualGuideMouseMoved(
 {
 }
 
-QPointF CurveInputMethod::snapPoint(QGraphicsSceneMouseEvent* event)
+auto CurveInputMethod::snapPoint(QGraphicsSceneMouseEvent* event) -> Point_2
 {
-  return event->scenePos();
+  return this->snapper->snapPoint(event->scenePos());
+}
+
+QPointF CurveInputMethod::snapQPoint(QGraphicsSceneMouseEvent* event)
+{
+  auto&& pt = this->snapPoint(event);
+  return QPointF{CGAL::to_double(pt.x()), CGAL::to_double(pt.y())};
 }
 
 void CurveInputMethod::appendGraphicsItem(QGraphicsItem* item)
@@ -406,8 +423,8 @@ void BezierInputMethod::beginInput()
 }
 
 static QPointF evalBezier(
-  const std::vector<QPointF>& control_points,
-  std::vector<QPointF>& cache, float t)
+  const std::vector<QPointF>& control_points, std::vector<QPointF>& cache,
+  float t)
 {
   // iterative de Casteljau Algorithm
   cache.clear();
@@ -505,6 +522,14 @@ void GraphicsViewCurveInput<ArrTraits>::setCurveType(CurveType type)
 }
 
 template <typename ArrTraits>
+void GraphicsViewCurveInput<ArrTraits>::setPointSnapper(
+  PointSnapperBase* snapper_)
+{
+  for_each(inputMethods, [&](auto&& it) { it.setPointSnapper(snapper_); });
+}
+
+
+template <typename ArrTraits>
 template <typename>
 void GraphicsViewCurveInput<ArrTraits>::setDefaultInputMethod(std::true_type)
 {
@@ -519,9 +544,9 @@ void GraphicsViewCurveInput<ArrTraits>::setDefaultInputMethod(std::false_type)
 
 // CurveGeneratorBase
 void CurveGeneratorBase::generate(
-  const std::vector<QPointF>& clickedPoints, CurveType type)
+  const std::vector<Point_2>& clickedPoints, CurveType type)
 {
-  boost::optional<CGAL::Object> obj;
+  CGAL::Object obj;
   switch (type)
   {
   case CurveType::Segment:
@@ -553,153 +578,130 @@ void CurveGeneratorBase::generate(
   default:
     break;
   }
-  if (obj) Q_EMIT generate(*obj);
+  if (!obj.empty()) Q_EMIT generate(obj);
 }
 
-boost::optional<CGAL::Object>
-CurveGeneratorBase::generateSegment(const std::vector<QPointF>&)
+CGAL::Object CurveGeneratorBase::generateSegment(const std::vector<Point_2>&)
 {
   return {};
 }
-boost::optional<CGAL::Object>
-CurveGeneratorBase::generatePolyline(const std::vector<QPointF>&)
+CGAL::Object CurveGeneratorBase::generatePolyline(const std::vector<Point_2>&)
 {
   return {};
 }
-boost::optional<CGAL::Object>
-CurveGeneratorBase::generateRay(const std::vector<QPointF>&)
+CGAL::Object CurveGeneratorBase::generateRay(const std::vector<Point_2>&)
 {
   return {};
 }
-boost::optional<CGAL::Object>
-CurveGeneratorBase::generateLine(const std::vector<QPointF>&)
+CGAL::Object CurveGeneratorBase::generateLine(const std::vector<Point_2>&)
 {
   return {};
 }
-boost::optional<CGAL::Object>
-CurveGeneratorBase::generateCircle(const std::vector<QPointF>&)
+CGAL::Object CurveGeneratorBase::generateCircle(const std::vector<Point_2>&)
 {
   return {};
 }
-boost::optional<CGAL::Object>
-CurveGeneratorBase::generateEllipse(const std::vector<QPointF>&)
+CGAL::Object CurveGeneratorBase::generateEllipse(const std::vector<Point_2>&)
 {
   return {};
 }
-boost::optional<CGAL::Object>
-CurveGeneratorBase::generateThreePointCircularArc(const std::vector<QPointF>&)
+CGAL::Object
+CurveGeneratorBase::generateThreePointCircularArc(const std::vector<Point_2>&)
 {
   return {};
 }
-boost::optional<CGAL::Object>
-CurveGeneratorBase::generateFivePointConicArc(const std::vector<QPointF>&)
+CGAL::Object
+CurveGeneratorBase::generateFivePointConicArc(const std::vector<Point_2>&)
 {
   return {};
 }
-boost::optional<CGAL::Object>
-CurveGeneratorBase::generateBezier(const std::vector<QPointF>&)
+CGAL::Object CurveGeneratorBase::generateBezier(const std::vector<Point_2>&)
 {
   return {};
 }
 
 // Curve Generator Segment Traits
 template <typename Kernel_>
-boost::optional<CGAL::Object>
+CGAL::Object
 CurveGenerator<CGAL::Arr_segment_traits_2<Kernel_>>::generateSegment(
-  const std::vector<QPointF>& clickedPoints)
+  const std::vector<Point_2>& clickedPoints)
 {
-  Converter<Kernel_> convert;
-  auto p0 = convert(clickedPoints[0]);
-  auto p1 = convert(clickedPoints[1]);
-  Curve_2 res(p0, p1);
+  Curve_2 res{clickedPoints[0], clickedPoints[1]};
   return CGAL::make_object(res);
 }
 
 // Curve Generator Polyline Traits
 template <typename SegmentTraits>
-boost::optional<CGAL::Object>
+CGAL::Object
 CurveGenerator<CGAL::Arr_polyline_traits_2<SegmentTraits>>::generatePolyline(
-  const std::vector<QPointF>& clickedPoints)
+  const std::vector<Point_2>& clickedPoints)
 {
-  if (clickedPoints.size() < 2)
-    return {};
+  if (clickedPoints.size() < 2) return {};
 
   ArrTraits poly_tr;
   auto construct_poly = poly_tr.construct_curve_2_object();
-  std::vector<Point_2> points;
-  for (auto& p : clickedPoints) points.emplace_back(p.x(), p.y());
-  Curve_2 res = construct_poly(points.begin(), points.end());
+  Curve_2 res = construct_poly(clickedPoints.begin(), clickedPoints.end());
   return CGAL::make_object(res);
 }
 
 // Curve Generator Linear Traits
 template <typename Kernel_>
-boost::optional<CGAL::Object>
+CGAL::Object
 CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>>::generateSegment(
-  const std::vector<QPointF>& points)
+  const std::vector<Point_2>& points)
 {
-  Point_2 p0{points[0].x(), points[0].y()};
-  Point_2 p1{points[1].x(), points[1].y()};
-  Curve_2 res = Curve_2(Segment_2(p0, p1));
+  Curve_2 res = Curve_2(Segment_2(points[0], points[1]));
   return CGAL::make_object(res);
 }
 
 template <typename Kernel_>
-boost::optional<CGAL::Object>
-CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>>::generateRay(
-  const std::vector<QPointF>& points)
+CGAL::Object CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>>::generateRay(
+  const std::vector<Point_2>& points)
 {
-  Point_2 p0{points[0].x(), points[0].y()};
-  Point_2 p1{points[1].x(), points[1].y()};
-  Curve_2 res = Curve_2(Ray_2(p0, p1));
+  Curve_2 res = Curve_2(Ray_2(points[0], points[1]));
   return CGAL::make_object(res);
 }
 
 template <typename Kernel_>
-boost::optional<CGAL::Object>
-CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>>::generateLine(
-  const std::vector<QPointF>& points)
+CGAL::Object CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>>::generateLine(
+  const std::vector<Point_2>& points)
 {
-  Point_2 p0{points[0].x(), points[0].y()};
-  Point_2 p1{points[1].x(), points[1].y()};
-  Curve_2 res = Curve_2(Line_2(p0, p1));
+  Curve_2 res = Curve_2(Line_2(points[0], points[1]));
   return CGAL::make_object(res);
 }
 
 // CurveGenerator Conic Traits
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
-boost::optional<CGAL::Object>
+CGAL::Object
 CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
-  generateSegment(const std::vector<QPointF>& points)
+  generateSegment(const std::vector<Point_2>& points)
 {
-  Curve_2 res = Curve_2(Rat_segment_2(
-    Rat_point_2(points[0].x(), points[0].y()),
-    Rat_point_2(points[1].x(), points[1].y())));
+  Curve_2 res = Curve_2(Rat_segment_2(points[0], points[1]));
   return CGAL::make_object(res);
 }
 
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
-boost::optional<CGAL::Object>
+CGAL::Object
 CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
-  generateCircle(const std::vector<QPointF>& points)
+  generateCircle(const std::vector<Point_2>& points)
 {
-  float sq_rad =
+  auto sq_rad =
     (points[0].x() - points[1].x()) * (points[0].x() - points[1].x()) +
     (points[0].y() - points[1].y()) * (points[0].y() - points[1].y());
   Curve_2 res =
-    Curve_2(Rat_circle_2(Rat_point_2(points[0].x(), points[0].y()), sq_rad));
+    Curve_2(Rat_circle_2(points[0], sq_rad));
   return CGAL::make_object(res);
 }
 
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
-boost::optional<CGAL::Object>
+CGAL::Object
 CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
-  generateEllipse(const std::vector<QPointF>& points)
+  generateEllipse(const std::vector<Point_2>& points)
 {
-  double x1 = (std::min)(points[0].x(), points[1].x());
-  double y1 = (std::min)(points[0].y(), points[1].y());
-  double x2 = (std::max)(points[0].x(), points[1].x());
-  double y2 = (std::max)(points[0].y(), points[1].y());
+  auto x1 = CGAL::min(points[0].x(), points[1].x());
+  auto y1 = CGAL::min(points[0].y(), points[1].y());
+  auto x2 = CGAL::max(points[0].x(), points[1].x());
+  auto y2 = CGAL::max(points[0].y(), points[1].y());
 
   Rat_FT a = CGAL::abs(Rat_FT(x1) - Rat_FT(x2)) / 2;
   Rat_FT b = CGAL::abs(Rat_FT(y1) - Rat_FT(y2)) / 2;
@@ -720,9 +722,9 @@ CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
 }
 
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
-boost::optional<CGAL::Object>
+CGAL::Object
 CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
-  generateThreePointCircularArc(const std::vector<QPointF>& points)
+  generateThreePointCircularArc(const std::vector<Point_2>& points)
 {
   auto& qp1 = points[0];
   auto& qp2 = points[1];
@@ -744,9 +746,9 @@ CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
 }
 
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
-boost::optional<CGAL::Object>
+CGAL::Object
 CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
-  generateFivePointConicArc(const std::vector<QPointF>& points)
+  generateFivePointConicArc(const std::vector<Point_2>& points)
 {
   auto& qp0 = points[0];
   auto& qp1 = points[1];
@@ -776,25 +778,23 @@ CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
 
 // CurveGenerator Algebraic Traits
 template <typename Coefficient_>
-boost::optional<CGAL::Object>
+CGAL::Object
 CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
-  generateLine(const std::vector<QPointF>& points)
+  generateLine(const std::vector<Point_2>& points)
 {
   RationalTraits ratTraits;
   ArrTraits arrTraits;
 
-  float dx = points[1].x() - points[0].x();
-  float dy = points[1].y() - points[0].y();
+  Rational dx = points[1].x() - points[0].x();
+  Rational dy = points[1].y() - points[0].y();
   Polynomial_2 x = CGAL::shift(Polynomial_2(1), 1, 0);
   Polynomial_2 y = CGAL::shift(Polynomial_2(1), 1, 1);
 
   Polynomial_2 poly;
   if (dx != 0)
   {
-    float m = dy / dx;
-    float c = points[0].y() - m * points[0].x();
-    Rational mRat = m;
-    Rational cRat = c;
+    Rational mRat = dy / dx;
+    Rational cRat = points[0].y() - mRat * points[0].x();
     // y = (a/b) x + (e/f)
     auto a = ratTraits.numerator(mRat);
     auto b = ratTraits.denominator(mRat);
@@ -818,33 +818,34 @@ CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
 }
 
 template <typename Coefficient_>
-boost::optional<CGAL::Object>
+CGAL::Object
 CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
-  generateCircle(const std::vector<QPointF>& points)
+  generateCircle(const std::vector<Point_2>& points)
 {
-  float sq_rad =
+  auto sq_rad =
     (points[0].x() - points[1].x()) * (points[0].x() - points[1].x()) +
     (points[0].y() - points[1].y()) * (points[0].y() - points[1].y());
   return this->generateEllipse_(points[0], sq_rad, sq_rad);
 }
 
 template <typename Coefficient_>
-boost::optional<CGAL::Object>
+CGAL::Object
 CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
-  generateEllipse(const std::vector<QPointF>& points)
+  generateEllipse(const std::vector<Point_2>& points)
 {
-  float rx =
+  auto rx =
     (points[0].x() - points[1].x()) * (points[0].x() - points[1].x()) / 4.;
-  float ry =
+  auto ry =
     (points[0].y() - points[1].y()) * (points[0].y() - points[1].y()) / 4.;
-  QPointF center = (points[1] + points[0]) / 2;
+  Point_2 center = {
+    (points[1].x() + points[0].x()) / 2, (points[1].y() + points[0].y()) / 2};
   return this->generateEllipse_(center, rx, ry);
 }
 
 template <typename Coefficient_>
-boost::optional<CGAL::Object>
+CGAL::Object
 CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
-  generateEllipse_(const QPointF& center, float rx, float ry)
+  generateEllipse_(const Point_2& center, Rational rxRat, Rational ryRat)
 {
   RationalTraits ratTraits;
   ArrTraits arrTraits;
@@ -853,8 +854,6 @@ CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
   Polynomial_2 y = CGAL::shift(Polynomial_2(1), 1, 1);
   Rational xCenter = center.x();
   Rational yCenter = center.y();
-  Rational rxRat = rx;
-  Rational ryRat = ry;
 
   // (g/h) (x - a/b)^2 + (e/f) (y - c/d)^2 = (e/f) * (g/h)
   auto a = ratTraits.numerator(xCenter);
@@ -878,25 +877,17 @@ CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
 template <
   typename RatKernel, typename AlgKernel, typename NtTraits,
   typename BoundingTraits>
-boost::optional<CGAL::Object> CurveGenerator<
+CGAL::Object CurveGenerator<
   Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits, BoundingTraits>>::
-  generateBezier(const std::vector<QPointF>& clickedPoints)
+  generateBezier(const std::vector<Point_2>& clickedPoints)
 {
   using Traits =
     Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits, BoundingTraits>;
 
-  if (clickedPoints.size() < 2)
-    return {};
-
-  std::vector<typename RatKernel::Point_2> controlPoints;
-  controlPoints.reserve(clickedPoints.size());
-
-  CGAL::Qt::Converter<RatKernel> convert;
-  for (auto& point : clickedPoints)
-    controlPoints.push_back(convert(point));
+  if (clickedPoints.size() < 2) return {};
 
   return CGAL::make_object(
-    typename Traits::Curve_2{controlPoints.begin(), controlPoints.end()});
+    typename Traits::Curve_2{clickedPoints.begin(), clickedPoints.end()});
 }
 
 template class GraphicsViewCurveInput<Seg_traits>;

@@ -18,6 +18,7 @@
     <file>icons/demo_conic_ray.xpm</file>
     <file>icons/lower_env_xpm.xpm</file>
     <file>icons/upper_env_xpm.xpm</file>
+    <file>icons/grid.xpm</file>
     <file>icons/demo_snapgrid.xpm</file>
     <file>icons/demo_split.xpm</file>
     <file>icons/demo_merge.xpm</file>

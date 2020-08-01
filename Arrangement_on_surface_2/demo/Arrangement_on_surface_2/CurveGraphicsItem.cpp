@@ -10,7 +10,7 @@ namespace Qt
 
 template <class ArrTraits>
 CurveGraphicsItem<ArrTraits>::CurveGraphicsItem() :
-	boundingBox(), m_edgeColor(::Qt::red), m_edgeWidth(0),
+	boundingBox(), m_edgeColor(::Qt::red), m_edgeWidth(2),
 	m_vertexColor(::Qt::red), m_vertexRadius(1)
 {
 	this->setZValue(4);
@@ -24,6 +24,7 @@ void CurveGraphicsItem<ArrTraits>::paint(
 {
 	// draw the curves
 	QPen edgesPen(this->m_edgeColor, this->m_edgeWidth);
+    edgesPen.setCosmetic(true);
 	painter->setPen(edgesPen);
 	QRectF clippingRectangle = this->viewportRect();
 

@@ -58,6 +58,7 @@ add_executable(arrangement_2
                SplitEdgeCallback.cpp
                FillFaceCallback.cpp
                MergeEdgeCallback.cpp
+               PointLocationFunctions.cpp
                PointLocationCallback.cpp
                Utils.cpp
                NewTabDialog.cpp
@@ -77,6 +78,7 @@ add_executable(arrangement_2
                AlgebraicCurveParser.cpp
                GraphicsSceneMixin.cpp
                GridGraphicsItem.cpp
+               PointSnapper.cpp
                ${CGAL_Qt5_MOC_FILES}
                ${arrangement_2_uis}
                ${CGAL_Qt5_RESOURCE_FILES})

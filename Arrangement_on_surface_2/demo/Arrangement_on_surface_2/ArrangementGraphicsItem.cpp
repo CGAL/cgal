@@ -1,6 +1,7 @@
 #include "ArrangementGraphicsItem.h"
 #include "ArrangementPainterOstream.h"
 #include "ArrangementTypes.h"
+#include "PointLocationFunctions.h"
 #include <CGAL/Qt/Converter.h>
 #include <QPainter>
 #include <limits>
@@ -10,7 +11,7 @@ namespace Qt {
 
 ArrangementGraphicsItemBase::ArrangementGraphicsItemBase() :
     bb(0, 0, 0, 0), verticesPen(QPen(::Qt::blue, 3.)),
-    edgesPen(QPen(::Qt::blue, 1.)), backgroundColor(::Qt::transparent)
+    edgesPen(QPen(::Qt::blue, 1.))
 {
   this->verticesPen.setCosmetic(true);
   this->edgesPen.setCosmetic(true);
@@ -40,11 +41,6 @@ void ArrangementGraphicsItemBase::setEdgesPen(const QPen& pen)
   this->edgesPen = pen;
 }
 
-void ArrangementGraphicsItemBase::setBackgroundColor(QColor color)
-{
-  this->backgroundColor = color;
-}
-
 template < typename Arr_>
 ArrangementGraphicsItem< Arr_>::
 ArrangementGraphicsItem( Arrangement* arr_ ):
@@ -52,7 +48,6 @@ ArrangementGraphicsItem( Arrangement* arr_ ):
 {
   this->updatePointsItem();
   this->updateBoundingBox( );
-  this->setZValue( 3 );
 }
 
 template < typename Arr_ >
@@ -60,10 +55,10 @@ QRectF
 ArrangementGraphicsItem< Arr_ >::
 boundingRect( ) const
 {
-  double xmin = -std::numeric_limits<double>::max() / 4;
-  double ymin = -std::numeric_limits<double>::max() / 4;
-  double xmax = std::numeric_limits<double>::max() / 4;
-  double ymax = std::numeric_limits<double>::max() / 4;
+  qreal xmin = -std::numeric_limits<qreal>::max() / 4;
+  qreal ymin = -std::numeric_limits<qreal>::max() / 4;
+  qreal xmax = std::numeric_limits<qreal>::max() / 4;
+  qreal ymax = std::numeric_limits<qreal>::max() / 4;
   if (this->bb.xmin() > xmin) xmin = this->bb.xmin();
   if (this->bb.ymin() > ymin) ymin = this->bb.ymin();
   if (this->bb.xmax() < xmax) xmax = this->bb.xmax();
@@ -93,38 +88,125 @@ template <typename TTraits>
 void ArrangementGraphicsItem<Arr_>::paint(
   QPainter* painter, TTraits /* traits */)
 {
-  auto windowRect = painter->window();
-  if (
-    facesPixmap.width() != windowRect.width() ||
-    facesPixmap.height() != windowRect.height())
-  { facesPixmap = {windowRect.width(), windowRect.height()}; }
-
-  facesPixmap.fill(QColorConstants::Transparent);
-
-  QPainter painter2{&facesPixmap};
-  painter2.setCompositionMode(QPainter::CompositionMode_Source);
-  painter2.setTransform(painter->transform());
-  painter2.setBrush(painter->brush());
-  painter2.setPen(painter->pen());
-  this->paintFaces(&painter2);
-
-  painter->save();
-  painter->resetTransform();
-  painter->drawPixmap(QPoint{0, 0}, facesPixmap);
-  painter->restore();
-
-  painter->setPen(this->verticesPen);
+  this->paintFaces(painter);
 
   auto painterOstream =
     ArrangementPainterOstream<Traits>(painter, this->boundingRect());
   painterOstream.setScene(this->getScene());
 
   painter->setPen(this->edgesPen);
+  painter->setBrush(QColorConstants::Transparent);
   for (auto it = this->arr->edges_begin(); it != this->arr->edges_end(); ++it)
   {
     X_monotone_curve_2 curve = it->curve();
     painterOstream << curve;
   }
+}
+
+template <typename Arr_>
+template <typename Coefficient_>
+void ArrangementGraphicsItem<Arr_>::paint(
+  QPainter* painter, CGAL::Arr_algebraic_segment_traits_2<Coefficient_> traits)
+{
+  auto windowRect = painter->window();
+  auto width = windowRect.width();
+  auto height = windowRect.height();
+  if (tempImage.size() != windowRect.size())
+    tempImage = {width, height, QImage::Format_ARGB32};
+
+  // Transparent is used as a flag for an invalid color
+  tempImage.fill(QColorConstants::Transparent);
+  QRgb* st = reinterpret_cast<QRgb*>(tempImage.bits());
+  // draw margins with white
+  // prevents the flood algorithm from coloring those
+  auto white = QColorConstants::White.rgb();
+  for (uint16_t i = 0; i < margin; i++)
+  {
+    for (uint16_t j = 0; j < width; j++)
+    {
+      st[i * width + j] = white;
+      st[(height - 1 - i) * width + j] = white;
+    }
+    for (uint16_t j = 0; j < height; j++)
+    {
+      st[j * width + i] = white;
+      st[j * width + (width - 1 - i)] = white;
+    }
+  }
+
+  QPainter painter2{&tempImage};
+  painter2.setTransform(painter->transform());
+  painter2.setPen(this->edgesPen);
+
+  this->paintFaces(&painter2);
+
+  auto painterOstream =
+    ArrangementPainterOstream<Traits>(&painter2, this->boundingRect());
+  painterOstream.setScene(this->getScene());
+  painterOstream.paintEdges(arr->edges_begin(), arr->edges_end());
+
+  this->paintFaces(&painter2, tempImage);
+
+  painter->save();
+  painter->resetTransform();
+  painter->drawImage(QPoint{0, 0}, tempImage);
+  painter->restore();
+}
+
+template <typename Arr_>
+void ArrangementGraphicsItem<Arr_>::paintFaces(QPainter* painter, QImage& image)
+{
+  QRgb* st = reinterpret_cast<QRgb*>(tempImage.bits());
+
+  uint16_t width = tempImage.width();
+  uint16_t height = tempImage.height();
+
+  // same as QColorConstants::Transparent.rgb()
+  static constexpr QRgb invalid_rgb = 0;
+
+  QTransform deviceToScene = painter->deviceTransform().inverted();
+  auto get_face = [&](auto x, auto y) {
+    QPointF point =
+      deviceToScene.map(QPointF{static_cast<qreal>(x), static_cast<qreal>(y)});
+    return PointLocationFunctions<Arrangement>{}.getFace(arr, point);
+  };
+
+  auto paint_face = [&](auto x_, auto y_) {
+    auto face = get_face(x_, y_);
+    QRgb color = face->color().rgb();
+
+    this->fill_stack.clear();
+    this->fill_stack.push_back({x_, y_});
+    while (!this->fill_stack.empty())
+    {
+      auto xy = this->fill_stack.back();
+      this->fill_stack.pop_back();
+
+      auto x = xy.first;
+      auto y = xy.second;
+      auto j = y * width + x;
+      st[j] = color;
+
+      if (st[j - 1] == invalid_rgb) this->fill_stack.push_back({x - 1, y});
+      if (st[j + 1] == invalid_rgb) this->fill_stack.push_back({x + 1, y});
+      if (st[j - width] == invalid_rgb) this->fill_stack.push_back({x, y - 1});
+      if (st[j + width] == invalid_rgb) this->fill_stack.push_back({x, y + 1});
+    }
+  };
+
+  for (uint16_t x = margin; x + 1 + margin < width; x++)
+    for (uint16_t y = margin; y + 1 + margin < height; y++)
+      if (
+        st[y * width + x] == invalid_rgb &&
+        st[y * width + x + 1] == invalid_rgb &&
+        st[y * width + x - 1] == invalid_rgb &&
+        st[(y + 1) * width + x] == invalid_rgb &&
+        st[(y - 1) * width + x] == invalid_rgb &&
+        st[(y + 1) * width + x + 1] == invalid_rgb &&
+        st[(y + 1) * width + x - 1] == invalid_rgb &&
+        st[(y - 1) * width + x + 1] == invalid_rgb &&
+        st[(y - 1) * width + x - 1] == invalid_rgb)
+        paint_face(x, y);
 }
 
 template < typename Arr_ >
@@ -143,7 +225,7 @@ updateBoundingBox(TTraits /* traits */)
   this->bb = {};
   for (auto it = this->arr->edges_begin(); it != this->arr->edges_end(); ++it)
   {
-    // can throws "CGAL::internal::Zero_resultant_exception"
+    // can throw CGAL::internal::Zero_resultant_exception with algebraic curves
     try {
       this->bb += it->curve().bbox();
     } catch(...) {}
@@ -165,6 +247,49 @@ void ArrangementGraphicsItem<Arr_>::updateBoundingBox(
     try {
       this->bb += it->curve().supporting_curve().bbox();
     } catch(...) {}
+  }
+}
+
+template <typename Arr_>
+template <typename Kernel_>
+void ArrangementGraphicsItem<Arr_>::updateBoundingBox(
+  CGAL::Arr_linear_traits_2<Kernel_>)
+{
+  this->prepareGeometryChange( );
+
+  constexpr double max_double = std::numeric_limits<double>::max();
+  this->bb = {};
+  for (auto it = this->arr->edges_begin(); it != this->arr->edges_end(); ++it)
+  {
+    if (it->curve().is_segment())
+    {
+      this->bb += it->curve().bbox();
+    }
+    else if(it->curve().is_line())
+    {
+      this->bb += Bbox_2{-max_double, -max_double, max_double, max_double};
+      break;
+    }
+    // ray
+    else
+    {
+      auto&& ray = it->curve().ray();
+      auto&& src = ray.source();
+      double src_x = CGAL::to_double(src.x());
+      double src_y = CGAL::to_double(src.y());
+      auto&& dir = ray.direction();
+      bool dx = CGAL::is_positive(dir.dx());
+      bool dy = CGAL::is_positive(dir.dy());
+
+      if (dx && dy)
+        this->bb += Bbox_2{src_x, src_y, max_double, max_double};
+      else if (!dx && dy)
+        this->bb += Bbox_2{-max_double, src_y, src_x, max_double};
+      else if (!dx && !dy)
+        this->bb += Bbox_2{-max_double, -max_double, src_x, src_y};
+      else if (dx && !dy)
+        this->bb += Bbox_2{src_x, -max_double, max_double, src_y};
+    }
   }
 }
 
@@ -258,23 +383,14 @@ paintFace( Face_handle f, QPainter* painter,
     // make polygon from the outer ccb of the face 'f'
     QPolygonF pgn (pts);
 
-    // FIXME: get the bg color
-    QColor color = this->backgroundColor;
-    if ( f->color().isValid() ) color = f->color();
-    QBrush oldBrush = painter->brush();
+    QColor color = f->color();
     painter->setBrush(color);
     painter->drawPolygon( pgn );
-    painter->setBrush(oldBrush);
   }
   else
   {
     QRectF rect = this->viewportRect( );
-
-    QColor color = this->backgroundColor;
-    if ( f->color().isValid() )
-    {
-      color = f->color();
-    }
+    QColor color = f->color();
     painter->fillRect(rect, color);
   }
 }
@@ -304,17 +420,17 @@ paintFace( Face_handle f, QPainter* painter,
       Halfedge he = *cc;
       if (he.direction() == ARR_LEFT_TO_RIGHT && src.x() > tgt.x())
         std::swap(src, tgt);
-      if (he.direction() == ARR_RIGHT_TO_LEFT && src.x() < tgt.x())
+      else if (he.direction() == ARR_RIGHT_TO_LEFT && src.x() < tgt.x())
         std::swap(src, tgt);
 
       auto&& curve = cc->curve();
       auto first_subcurve = curve.subcurves_begin();
       QPointF src_first = convert(first_subcurve->source());
-      QPointF tgt_first = convert(first_subcurve->target());
 
       if (src_first == src)
       {
-        for (auto it = curve.subcurves_begin(); it != curve.subcurves_end(); ++it)
+        for (auto it = curve.subcurves_begin(); it != curve.subcurves_end();
+             ++it)
         {
           pts.push_back(convert(it->source()));
           pts.push_back(convert(it->target()));
@@ -323,7 +439,8 @@ paintFace( Face_handle f, QPainter* painter,
       else
       {
         QVector<QPointF> pts_tmp;
-        for (auto it = curve.subcurves_begin(); it != curve.subcurves_end(); ++it)
+        for (auto it = curve.subcurves_begin(); it != curve.subcurves_end();
+             ++it)
         {
           pts_tmp.push_front(convert(it->source()));
           pts_tmp.push_front(convert(it->target()));
@@ -335,20 +452,13 @@ paintFace( Face_handle f, QPainter* painter,
     // make polygon from the outer ccb of the face 'f'
     QPolygonF pgn( pts );
 
-    QBrush oldBrush = painter->brush();
-    if (!f->color().isValid())
-      painter->setBrush(this->backgroundColor);
-    else
-      painter->setBrush(f->color());
-
+    painter->setBrush(f->color());
     painter->drawPolygon( pgn );
-    painter->setBrush( oldBrush );
   }
   else
   {
     QRectF rect = this->viewportRect( );
-    QColor color = this->backgroundColor;
-    if (f->color().isValid()) color = f->color();
+    QColor color = f->color();
     painter->fillRect(rect, color);
   }
 }
@@ -359,7 +469,6 @@ void ArrangementGraphicsItem<Arr_>::paintFace(
   Face_handle f, QPainter* painter,
   CGAL::Arr_algebraic_segment_traits_2<Coefficient_> /* traits */)
 {
-  // FIXME: paint unbounded faces as well
   if (f->is_unbounded()) return;
 
   ArrangementPainterOstream<Traits> painterOstream{
@@ -400,9 +509,7 @@ void ArrangementGraphicsItem<Arr_>::paintFace(
 
   // make polygon from the outer ccb of the face 'f'
   QPolygonF pgn(pts);
-  QColor color = this->backgroundColor;
-  if (f->color().isValid()) { color = f->color(); }
-  painter->setBrush(color);
+  painter->setBrush(f->color());
   painter->drawPolygon(pgn);
 
   painter->restore();
@@ -555,22 +662,13 @@ void ArrangementGraphicsItem<Arr_>::paintFace(
     QPolygonF pgn(pts);
     // fill the face according to its color (stored at any of her
     // incidents curves)
-    QBrush oldBrush = painter->brush();
-    QColor def_bg_color = this->backgroundColor;
-    if (!f->color().isValid()) { painter->setBrush(def_bg_color); }
-    else
-    {
-      painter->setBrush(f->color());
-    }
+    painter->setBrush(f->color());
     painter->drawPolygon(pgn);
   }
   else
   {
     QRectF rect = this->viewportRect();
-
-    QColor color = this->backgroundColor;
-    if (f->color().isValid()) { color = f->color(); }
-    QBrush oldBrush = painter->brush();
+    QColor color = f->color();
     painter->fillRect(rect, color);
   }
 }
@@ -609,20 +707,14 @@ void ArrangementGraphicsItem<Arr_>::paintFace(
     } while(++cc != f->outer_ccb());
 
     QPolygonF pgn(pts);
-    QColor color = this->backgroundColor;
-    if (f->color().isValid()) { color = f->color(); }
-
-    QBrush oldBrush = painter->brush();
+    QColor color = f->color();
     painter->setBrush(color);
     painter->drawPolygon(pgn);
-    painter->setBrush(oldBrush);
   }
   else
   {
     QRectF rect = this->viewportRect();
-
-    QColor color = this->backgroundColor;
-    if (f->color().isValid()) color = f->color();
+    QColor color = f->color();
     painter->fillRect(rect, color);
   }
 }
@@ -633,51 +725,205 @@ void ArrangementGraphicsItem<Arr_>::paintFace(
   Face_handle f, QPainter* painter,
   CGAL::Arr_linear_traits_2<Kernel_> /* traits */)
 {
-
-  if (!f->is_unbounded()) // f is not the unbounded face
+  QVector<QPointF> pts; // holds the points of the polygon
+  QColor color = f->color();
+  painter->setBrush(color);
+  if (!f->is_unbounded())
   {
-    QVector<QPointF> pts; // holds the points of the polygon
-
     /* running with around the outer of the face and generate from it
      * polygon
      */
     Ccb_halfedge_circulator cc = f->outer_ccb();
     do
     {
+      Halfedge_handle hh = cc;
+      if (this->antenna(hh)) continue;
+
       double x = CGAL::to_double(cc->source()->point().x());
       double y = CGAL::to_double(cc->source()->point().y());
       QPointF coord_source(x, y);
       pts.push_back(coord_source);
-      // created from the outer boundary of the face
     } while (++cc != f->outer_ccb());
 
-    // make polygon from the outer ccb of the face 'f'
-    QPolygonF pgn(pts);
-
-    // FIXME: get the bg color
-    QColor color = this->backgroundColor;
-    if (f->color().isValid()) { color = f->color(); }
-    QBrush oldBrush = painter->brush();
-    painter->setBrush(color);
-    painter->drawPolygon(pgn);
-    painter->setBrush(oldBrush);
+    painter->drawPolygon(QPolygonF{pts});
   }
   else
   {
-    // QRectF rect = this->viewportRect( );
-    // QColor color = this->backgroundColor;
-    // painter->fillRect( rect, color );
-#if 0
-      QRectF rect = this->viewportRect( );
-      std::cout<<rect.left()<<'\t';
-      std::cout<<rect.right()<<'\t';
-      std::cout<<rect.top()<<'\t';
-      std::cout<<rect.bottom()<<'\n';
+    std::vector<Halfedge_handle> halfedges;
+    Ccb_halfedge_circulator cc = f->outer_ccb();
+    do
+    {
+      Halfedge_handle hh = cc;
+      if (cc->is_fictitious() || this->antenna(hh))
+        continue;
 
-      QColor color = this->backgroundColor;
-      if ( f->color().isValid() ) color = f->color();
+      halfedges.push_back(hh);
+    } while (++cc != f->outer_ccb());
+
+    QRectF rect = this->viewportRect();
+
+    switch (halfedges.size())
+    {
+    // one unbounded face
+    case 0: {
       painter->fillRect(rect, color);
-#endif
+      break;
+    }
+    // two unbounded faces
+    case 1: {
+      auto&& curve = halfedges.front()->curve();
+      auto&& line = curve.line();
+
+      // horizontal or mostly horizontal
+      if (CGAL::abs(line.b()) > CGAL::abs(line.a()))
+      {
+        qreal left_y = CGAL::to_double(line.y_at_x(rect.left()));
+        qreal right_y = CGAL::to_double(line.y_at_x(rect.right()));
+
+        pts.push_back({rect.left(), left_y});
+        pts.push_back({rect.right(), right_y});
+        if (cc->direction() == ARR_LEFT_TO_RIGHT)
+        {
+          pts.push_back(rect.bottomRight());
+          pts.push_back(rect.bottomLeft());
+        }
+        else
+        {
+          pts.push_back(rect.topRight());
+          pts.push_back(rect.topLeft());
+        }
+      }
+      // vertical or mostly vertical
+      else
+      {
+        qreal top_x = CGAL::to_double(line.x_at_y(rect.top()));
+        qreal bottom_x = CGAL::to_double(line.x_at_y(rect.bottom()));
+
+        pts.push_back({top_x, rect.top()});
+        pts.push_back({bottom_x, rect.bottom()});
+        if (cc->direction() == ARR_LEFT_TO_RIGHT)
+        {
+          pts.push_back(rect.bottomLeft());
+          pts.push_back(rect.topLeft());
+        }
+        else
+        {
+          pts.push_back(rect.bottomRight());
+          pts.push_back(rect.topRight());
+        }
+      }
+
+      painter->drawPolygon(QPolygonF{pts});
+      break;
+    }
+    // general case
+    default: {
+      using Vertex_handle = typename Arrangement::Vertex_handle;
+
+      auto handle_vertex = [&](Halfedge_handle halfedge, Vertex_handle vertex)
+      {
+        // dx * y = dy * x + c
+        typename Kernel_::RT dx, dy, c;
+
+        auto&& curve = halfedge->curve();
+        if (curve.is_segment())
+        {
+          auto&& src = halfedge->source()->point();
+          auto&& tgt = halfedge->target()->point();
+          dy = tgt.y() - src.y();
+          dx = tgt.x() - src.x();
+          c = dx * src.y() - dy * src.x();
+        }
+        else if(curve.is_ray())
+        {
+          auto&& ray = curve.ray();
+          auto&& dir = ray.direction();
+          auto&& src = ray.source();
+          dy = dir.dy();
+          dx = dir.dx();
+          c = dx * src.y() - dy * src.x();
+        }
+        // halfedge can be a line in case of a face between two parallel lines
+        else
+        {
+          auto&& line = curve.line();
+          auto param_in_x = vertex->parameter_space_in_x();
+          auto param_in_y = vertex->parameter_space_in_y();
+          dy = line.a();
+          dx = -line.b();
+          c = line.c();
+
+          if (
+            (param_in_x == LEFT_BOUNDARY && CGAL::is_positive(dx)) ||
+            (param_in_x == RIGHT_BOUNDARY && CGAL::is_negative(dx)) ||
+            (param_in_y == BOTTOM_BOUNDARY && CGAL::is_positive(dy)) ||
+            (param_in_y == TOP_BOUNDARY && CGAL::is_negative(dy)))
+          {
+            dx = -dx;
+            dy = -dy;
+            c = -c;
+          }
+        }
+        // horizontal or mostly horizontal
+        if (CGAL::abs(dx) > CGAL::abs(dy))
+        {
+          qreal x = CGAL::is_positive(dx) ? rect.right() + rect.width()
+                                          : rect.left() - rect.width();
+          // in case vertex is a finite point
+          if (!vertex->is_at_open_boundary())
+          {
+            auto p = vertex->point();
+            // check not far away
+            if (
+              (CGAL::is_positive(dx) && p.x() < x) ||
+              (CGAL::is_negative(dx) && p.x() > x))
+            {
+              pts.push_back({CGAL::to_double(p.x()), CGAL::to_double(p.y())});
+              return;
+            }
+          }
+          // in case vertex is far away (finite or at infinity), get a nearer
+          // point on the line
+          // i.e. in case farther than twice the width of the viewport
+          qreal y = CGAL::to_double((dy / dx) * x + (c / dx));
+          pts.push_back({x, y});
+        }
+        // vertical or mostly vertical
+        else
+        {
+          qreal y = CGAL::is_positive(dy) ? rect.bottom() + rect.height()
+                                          : rect.top() - rect.height();
+          // in case vertex is a finite point
+          if (!vertex->is_at_open_boundary())
+          {
+            auto p = vertex->point();
+            // check not far away
+            if (
+              (CGAL::is_positive(dy) && p.y() < y) ||
+              (CGAL::is_negative(dy) && p.y() > y))
+            {
+              pts.push_back({CGAL::to_double(p.x()), CGAL::to_double(p.y())});
+              return;
+            }
+          }
+          // in case vertex is far away (finite or at infinity), get a nearer
+          // point on the line
+          // i.e. in case farther than twice the height of the viewport
+          qreal x = CGAL::to_double((dx / dy) * y - (c / dy));
+          pts.push_back({x, y});
+        }
+      };
+
+      for (auto hh : halfedges)
+      {
+        handle_vertex(hh, hh->source());
+        handle_vertex(hh, hh->target());
+      }
+
+      painter->drawPolygon(QPolygonF{pts});
+      break;
+    }
+    }
   }
 }
 

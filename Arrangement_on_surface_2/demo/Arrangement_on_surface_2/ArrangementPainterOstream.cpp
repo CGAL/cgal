@@ -267,7 +267,7 @@ ArrangementPainterOstream<CGAL::Arr_Bezier_curve_traits_2<
   auto&& supporting_curve = curve.supporting_curve();
 
   std::vector<std::pair<double, double>> sampled_points;
-  //TODO: get adaptive number of samples
+  // TODO: get adaptive number of samples
   size_t number_of_samples = 100 * (param_range.second - param_range.first);
   sampled_points.reserve(number_of_samples);
 
@@ -351,7 +351,7 @@ static bool lies_on_border(const ArrangementPainterOstream<Traits> *apo,
   QGraphicsView* view = apo->getScene()->views().first();
   qreal width = view->width();
   qreal height = view->height();
-  const float tol = 3;
+  const float tol = 2;
   return std::abs(point.x() - width) < tol || point.x() < tol ||
          std::abs(point.y() - height) < tol || point.y() < tol;
 }
@@ -417,10 +417,18 @@ ArrangementPainterOstream<CGAL::Arr_algebraic_segment_traits_2<Coefficient_> >&
 ArrangementPainterOstream<CGAL::Arr_algebraic_segment_traits_2<Coefficient_> >::
 operator<<( const X_monotone_curve_2& curve )
 {
-  std::list<Coord_vec_2> points = this->getPointsList(curve);
-
   this->qp->save();
   this->remapFacadePainter();
+  this->paintCurve(curve);
+  this->qp->restore();
+  return *this;
+}
+
+template <typename Coefficient_>
+void ArrangementPainterOstream<CGAL::Arr_algebraic_segment_traits_2<
+  Coefficient_>>::paintCurve(const X_monotone_curve_2& curve)
+{
+  std::list<Coord_vec_2> points = this->getPointsList(curve);
   for (auto& vec : points)
   {
     auto vit = vec.begin();
@@ -439,8 +447,6 @@ operator<<( const X_monotone_curve_2& curve )
     }
     this->qp->drawPath(path);
   }
-  this->qp->restore();
-  return *this;
 }
 
 template <typename Coefficient_>

@@ -10,6 +10,7 @@
 #include "OverlayDialog.h"
 #include "ArrangementDemoWindow.h"
 #include "ArrangementTypes.h"
+#include "QtMetaTypes.h"
 
 #include <QListWidgetItem>
 #include <QString>

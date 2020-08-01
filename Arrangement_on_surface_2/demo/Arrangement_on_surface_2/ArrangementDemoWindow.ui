@@ -51,7 +51,9 @@
    <addaction name="actionZoomOut"/>
    <addaction name="actionZoomReset"/>
    <addaction name="separator"/>
-   <addaction name="actionSnapMode"/>
+   <addaction name="actionShowGrid"/>
+   <addaction name="separator"/>
+   <addaction name="actionArrangementSnapMode"/>
    <addaction name="actionGridSnapMode"/>
    <addaction name="separator"/>
    <addaction name="actionLowerEnvelope"/>
@@ -107,10 +109,10 @@
     <property name="title">
      <string>&amp;Edit</string>
     </property>
-    <addaction name="actionSnapMode"/>
-    <addaction name="actionGridSnapMode"/>
-    <addaction name="separator"/>
     <addaction name="actionShowGrid"/>
+    <addaction name="separator"/>
+    <addaction name="actionArrangementSnapMode"/>
+    <addaction name="actionGridSnapMode"/>
     <addaction name="separator"/>
     <addaction name="actionPreferences"/>
    </widget>
@@ -238,7 +240,19 @@
     <string>Fill</string>
    </property>
   </action>
-  <action name="actionSnapMode">
+  <action name="actionShowGrid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/grid.xpm</normaloff>:/icons/grid.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Show grid</string>
+   </property>
+  </action>
+  <action name="actionArrangementSnapMode">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -247,7 +261,7 @@
      <normaloff>:/icons/demo_snapvertex.xpm</normaloff>:/icons/demo_snapvertex.xpm</iconset>
    </property>
    <property name="text">
-    <string>Enable snapping</string>
+    <string>Snap to arrangement</string>
    </property>
   </action>
   <action name="actionGridSnapMode">
@@ -278,14 +292,6 @@
   <action name="actionPreferences">
    <property name="text">
     <string>&amp;Preferences...</string>
-   </property>
-  </action>
-  <action name="actionShowGrid">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Show &amp;grid</string>
    </property>
   </action>
   <action name="actionLowerEnvelope">

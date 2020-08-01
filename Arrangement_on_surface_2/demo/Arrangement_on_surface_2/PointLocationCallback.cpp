@@ -1,15 +1,14 @@
 #include "PointLocationCallback.h"
+#include "PointLocationFunctions.h"
 #include "CurveGraphicsItem.h"
+#include "ArrangementTypes.h"
 
-#include <CGAL/Arr_landmarks_point_location.h>
-#include <CGAL/Arr_simple_point_location.h>
-#include <CGAL/Arr_tags.h>
-#include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arrangement_with_history_2.h>
 #include <CGAL/Qt/Converter.h>
 
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
+
 
 /*! Constructor */
 template <typename Arr_>
@@ -63,16 +62,11 @@ void PointLocationCallback<Arr_>::highlightPointLocation(
 
 template <typename Arr_>
 void PointLocationCallback<Arr_>::highlightPointLocation(
-  QGraphicsSceneMouseEvent* event, CGAL::Arr_oblivious_side_tag)
+  QGraphicsSceneMouseEvent* event, const CGAL::Arr_oblivious_side_tag&)
 {
-  typedef typename ArrTraitsAdaptor<Traits>::Kernel Kernel;
-  typedef typename Kernel::Point_2 Kernel_point_2;
+  Face_const_handle face =
+    PointLocationFunctions<Arrangement>{}.getFace(this->arr, event->scenePos());
 
-  CGAL::Qt::Converter<Kernel> convert;
-  Kernel_point_2 point = convert(event->scenePos());
-
-  CGAL::Object pointLocationResult = this->locate(point);
-  Face_const_handle face = this->getFace(pointLocationResult);
   this->highlightedCurves->clear();
   if (!face->is_unbounded())
   { // it is an interior face; highlight its border
@@ -99,16 +93,11 @@ void PointLocationCallback<Arr_>::highlightPointLocation(
 
 template <typename Arr_>
 void PointLocationCallback<Arr_>::highlightPointLocation(
-  QGraphicsSceneMouseEvent* event, CGAL::Arr_open_side_tag)
+  QGraphicsSceneMouseEvent* event, const CGAL::Arr_open_side_tag&)
 {
-  typedef typename ArrTraitsAdaptor<Traits>::Kernel Kernel;
-  typedef typename Kernel::Point_2 Kernel_point_2;
+  Face_const_handle face =
+    PointLocationFunctions<Arrangement>{}.getFace(this->arr, event->scenePos());
 
-  CGAL::Qt::Converter<Kernel> convert;
-  Kernel_point_2 point = convert(event->scenePos());
-
-  CGAL::Object pointLocationResult = this->locate(point);
-  Face_const_handle face = this->getFace(pointLocationResult);
   this->highlightedCurves->clear();
   Ccb_halfedge_const_circulator cc = face->outer_ccb();
   do
@@ -131,50 +120,6 @@ void PointLocationCallback<Arr_>::highlightPointLocation(
       cc++;
     } while (cc != *hit);
   }
-}
-
-template <typename Arr_>
-typename PointLocationCallback<Arr_>::Face_const_handle
-PointLocationCallback<Arr_>::getFace(const CGAL::Object& obj)
-{
-  Face_const_handle f;
-  if (CGAL::assign(f, obj)) return f;
-
-  Halfedge_const_handle he;
-  if (CGAL::assign(he, obj)) return (he->face());
-
-  Vertex_const_handle v;
-  CGAL_assertion(CGAL::assign(v, obj));
-  CGAL::assign(v, obj);
-  if (v->is_isolated()) return v->face();
-  Halfedge_around_vertex_const_circulator eit = v->incident_halfedges();
-  return (eit->face());
-}
-
-template <typename Arrangement, typename SupportsLandmarks>
-struct LandmarkStrategyHelper
-{
-  using type = CGAL::Arr_walk_along_line_point_location<Arrangement>;
-};
-
-template <typename Arrangement>
-struct LandmarkStrategyHelper<Arrangement, CGAL::Tag_true>
-{
-  using type = CGAL::Arr_landmarks_point_location<Arrangement>;
-};
-
-template <typename Arr_>
-CGAL::Object PointLocationCallback<Arr_>::locate(const Kernel_point_2& pt)
-{
-  using SupportsLandmarks = typename Supports_landmarks<Arrangement>::Tag;
-  using LandmarksPointLocationStrategy =
-    typename LandmarkStrategyHelper<Arrangement, SupportsLandmarks>::type;
-
-  Arr_construct_point_2<Traits> toArrPoint;
-  Point_2 point = toArrPoint(pt);
-
-  LandmarksPointLocationStrategy pointLocationStrategy{*arr};
-  return pointLocationStrategy.locate(point);
 }
 
 template class PointLocationCallback<Seg_arr>;

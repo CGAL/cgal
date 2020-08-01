@@ -131,10 +131,12 @@ operator()(const Point_2& p, const X_monotone_curve_2& c) const
       if (n < 2) { n = 2; }
     }
 
-    std::pair<double, double>* app_pts = new std::pair<double, double>[n + 1];
-    std::pair<double, double>* end_pts = c.polyline_approximation(n, app_pts);
-    std::pair<double, double>* p_curr = app_pts;
-    std::pair<double, double>* p_next = p_curr + 1;
+    std::vector<std::pair<double, double>> app_pts;
+    app_pts.reserve(n + 1);
+    c.polyline_approximation(n, std::back_inserter(app_pts));
+    auto end_pts = app_pts.end();
+    auto p_curr = app_pts.begin();
+    auto p_next = p_curr + 1;
     do
     {
       Point_2 p1(p_curr->first, p_curr->second);

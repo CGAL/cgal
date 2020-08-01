@@ -26,6 +26,7 @@
 #include "GraphicsViewCurveInput.h"
 #include "FillFaceCallback.h"
 #include "GridGraphicsItem.h"
+#include "ArrangementTypes.h"
 
 #include <QActionGroup>
 #include <QColorDialog>
@@ -43,7 +44,6 @@
 #include "ui_ArrangementDemoWindow.h"
 #include "ui_AlgebraicCurveInputDialog.h"
 
-using namespace CGAL::Qt;
 
 ArrangementDemoWindow::ArrangementDemoWindow(QWidget* parent) :
     CGAL::Qt::DemosMainWindow(parent), ui(new Ui::ArrangementDemoWindow),
@@ -196,42 +196,48 @@ void ArrangementDemoWindow::addTab(
   this->addNavigation(demoTab->getView());
 }
 
-void ArrangementDemoWindow::resetActionGroups()
+void ArrangementDemoWindow::resetActionGroups(
+  ArrangementDemoTabBase* tab, TraitsType tt)
 {
-  if (!this->ui->actionInsert->isChecked())
-  { this->ui->actionInsert->setChecked(true); }
+  this->hideInsertMethods();
+  this->ui->actionInsert->setChecked(false);
+  this->ui->actionDrag->setChecked(true);
+  this->ui->actionLowerEnvelope->setChecked(false);
+  this->ui->actionUpperEnvelope->setChecked(false);
+  this->ui->actionShowGrid->setChecked(tab->isGridVisible());
+  this->ui->actionGridSnapMode->setChecked(tab->isSnapToGridEnabled());
+  this->ui->actionArrangementSnapMode->setChecked(
+    tab->isSnapToArrangementEnabled());
+  if (tt != SEGMENT_TRAITS && tt != POLYLINE_TRAITS && tt != LINEAR_TRAITS)
+    this->ui->actionArrangementSnapMode->setVisible(false);
   else
-  {
-    this->hideInsertMethods();
-    this->showInsertMethods();
-  }
+    this->ui->actionArrangementSnapMode->setVisible(true);
 }
 
-void ArrangementDemoWindow::resetCallbackState()
+void ArrangementDemoWindow::resetCallbackState(ArrangementDemoTabBase* tab)
 {
-  auto activeTab = this->getActiveTab().first;
-  if (activeTab)
+  if (tab)
   {
-    activeTab->getView()->setDragMode(QGraphicsView::NoDrag);
-    activeTab->unhookCallbacks();
+    tab->getView()->setDragMode(QGraphicsView::NoDrag);
+    tab->unhookCallbacks();
   }
 }
 
 void ArrangementDemoWindow::updateEnvelope(QAction* newMode)
 {
-  auto activeTab = this->getActiveTab().first;
-  if (!activeTab) return;
+  auto currentTab = this->getCurrentTab().first;
+  if (!currentTab) return;
 
   bool show = newMode->isChecked();
   if (newMode == this->ui->actionLowerEnvelope)
   {
-    activeTab->getEnvelopeCallback()->showLowerEnvelope(show);
-    activeTab->update();
+    currentTab->getEnvelopeCallback()->showLowerEnvelope(show);
+    currentTab->update();
   }
   else if (newMode == this->ui->actionUpperEnvelope)
   {
-    activeTab->getEnvelopeCallback()->showUpperEnvelope(show);
-    activeTab->update();
+    currentTab->getEnvelopeCallback()->showUpperEnvelope(show);
+    currentTab->update();
   }
 }
 
@@ -261,7 +267,7 @@ void ArrangementDemoWindow::hideInsertMethods()
 
 void ArrangementDemoWindow::showInsertMethods()
 {
-  auto tabType = this->getActiveTab().second;
+  auto tabType = this->getCurrentTab().second;
   switch(tabType)
   {
   case NONE:
@@ -303,7 +309,7 @@ void ArrangementDemoWindow::showInsertMethods()
 
 void ArrangementDemoWindow::updateInputType(QAction* a)
 {
-  auto tab = this->getActiveTab().first;
+  auto tab = this->getCurrentTab().first;
   if (!tab) return;
 
   using namespace CGAL::Qt;
@@ -362,11 +368,11 @@ void ArrangementDemoWindow::on_actionAddAlgebraicCurve_triggered()
     auto construct_curve = alg_traits.construct_curve_2_object();
 
     // adding curve to the arrangement
-    auto activeTab = this->getActiveTab().first;
-    auto algCurveInputCallback = activeTab->getCurveInputCallback();
+    auto currentTab = this->getCurrentTab().first;
+    auto algCurveInputCallback = currentTab->getCurveInputCallback();
     auto cv = construct_curve(poly.value());
     Q_EMIT algCurveInputCallback->generate(CGAL::make_object(cv));
-    activeTab->adjustViewport();
+    currentTab->adjustViewport();
   }
 }
 
@@ -385,28 +391,38 @@ void ArrangementDemoWindow::on_actionNewTab_triggered()
 
 void ArrangementDemoWindow::on_tabWidget_currentChanged(int index)
 {
-  if (index == -1) return;
-  this->resetCallbackState();
-  this->resetActionGroups();
-  this->updateFillColorSwatch();
+  auto tabPair = this->getCurrentTab();
+  auto currentTab = tabPair.first;
+  auto tt = tabPair.second;
+  if (currentTab)
+  {
+    this->resetCallbackState(currentTab);
+    this->resetActionGroups(currentTab, tt);
+    this->updateFillColorSwatch(currentTab);
+  }
 }
 
 void ArrangementDemoWindow::on_actionInsert_toggled(bool checked)
 {
   this->hideInsertMethods();
-  if (checked)
-    this->showInsertMethods();
-  else
-    this->resetCallbackState();
+
+  auto currentTab = this->getCurrentTab().first;
+  if (currentTab)
+  {
+    if (checked)
+      this->showInsertMethods();
+    else
+      this->resetCallbackState(currentTab);
+  }
 }
 
 void ArrangementDemoWindow::on_actionDrag_toggled(bool checked)
 {
-  auto activeTab = this->getActiveTab().first;
-  if (activeTab)
+  auto currentTab = this->getCurrentTab().first;
+  if (currentTab)
   {
     // TODO: Move this to DemoTab
-    QGraphicsView* activeView = activeTab->getView();
+    QGraphicsView* activeView = currentTab->getView();
     if (!checked)
       activeView->setDragMode(QGraphicsView::NoDrag);
     else
@@ -416,100 +432,129 @@ void ArrangementDemoWindow::on_actionDrag_toggled(bool checked)
 
 void ArrangementDemoWindow::on_actionDelete_toggled(bool checked)
 {
-  if (!checked)
-    this->resetCallbackState();
+  auto currentTab = this->getCurrentTab().first;
+  if (currentTab && !checked)
+    this->resetCallbackState(currentTab);
 }
 
 void ArrangementDemoWindow::on_actionDelete_triggered()
 {
-  auto activeTab = this->getActiveTab().first;
-  if (activeTab)
-    activeTab->activateDeleteCurveCallback();
+  auto currentTab = this->getCurrentTab().first;
+  if (currentTab)
+    currentTab->activateDeleteCurveCallback();
 }
 
 void ArrangementDemoWindow::on_actionPointLocation_toggled(bool checked)
 {
-  if (!checked)
+  auto currentTab = this->getCurrentTab().first;
+  if (currentTab)
   {
-    this->resetCallbackState();
-    return;
+    if (!checked)
+      this->resetCallbackState(currentTab);
+    else
+      currentTab->activatePointLocationCallback();
   }
-  auto activeTab = this->getActiveTab().first;
-  if (activeTab)
-    activeTab->activatePointLocationCallback();
 }
 
 void ArrangementDemoWindow::on_actionRayShootingUp_toggled(bool checked)
 {
-  if (!checked)
+  auto currentTab = this->getCurrentTab().first;
+  if (currentTab)
   {
-    this->resetCallbackState();
-    return;
+    if (!checked)
+      this->resetCallbackState(currentTab);
+    else
+      currentTab->activateVerticalRayShootCallback(true);
   }
-  auto activeTab = this->getActiveTab().first;
-  if (activeTab)
-    activeTab->activateVerticalRayShootCallback(true);
 }
 
 void ArrangementDemoWindow::on_actionRayShootingDown_toggled(bool checked)
 {
-  if (!checked)
+  auto currentTab = this->getCurrentTab().first;
+  if (currentTab)
   {
-    this->resetCallbackState();
-    return;
+    if (!checked)
+      this->resetCallbackState(currentTab);
+    else
+      currentTab->activateVerticalRayShootCallback(false);
   }
-  auto activeTab = this->getActiveTab().first;
-  if (activeTab)
-    activeTab->activateVerticalRayShootCallback(false);
 }
 
 void ArrangementDemoWindow::on_actionMerge_toggled(bool checked)
 {
-  if (!checked)
+  auto currentTab = this->getCurrentTab().first;
+  if (currentTab)
   {
-    this->resetCallbackState();
-    return;
+    if (!checked)
+      this->resetCallbackState(currentTab);
+    else
+      currentTab->activateMergeEdgeCallback();
   }
-  auto activeTab = this->getActiveTab().first;
-  if (activeTab)
-    activeTab->activateMergeEdgeCallback();
 }
 
 void ArrangementDemoWindow::on_actionSplit_toggled(bool checked)
 {
-  if (!checked)
+  auto currentTab = this->getCurrentTab().first;
+  if (currentTab)
   {
-    this->resetCallbackState();
-    return;
+    if (!checked)
+      this->resetCallbackState(currentTab);
+    else
+      currentTab->activateSplitEdgeCallback();
   }
-  auto activeTab = this->getActiveTab().first;
-  if (activeTab)
-    activeTab->activateSplitEdgeCallback();
 }
 
 void ArrangementDemoWindow::on_actionFill_toggled(bool checked)
 {
-  if (!checked)
+  auto currentTab = this->getCurrentTab().first;
+  if (currentTab)
   {
-    this->resetCallbackState();
-    return;
+    if (!checked)
+      this->resetCallbackState(currentTab);
+    else
+      currentTab->activateFillFaceCallback();
   }
-  auto activeTab = this->getActiveTab().first;
-  if (activeTab)
-    activeTab->activateFillFaceCallback();
+}
+
+
+void ArrangementDemoWindow::on_actionShowGrid_toggled(bool checked)
+{
+  auto currentTab = this->getCurrentTab().first;
+  if (currentTab)
+    currentTab->showGrid(checked);
+}
+
+void ArrangementDemoWindow::on_actionGridSnapMode_toggled(bool checked)
+{
+  auto currentTab = this->getCurrentTab().first;
+  if (currentTab)
+  {
+    currentTab->setSnapToGrid(checked);
+    if (checked && !this->ui->actionShowGrid->isChecked())
+      this->ui->actionShowGrid->activate(QAction::Trigger);
+  }
+}
+
+void ArrangementDemoWindow::on_actionArrangementSnapMode_toggled(bool checked)
+{
+  auto currentTab = this->getCurrentTab().first;
+  if (currentTab)
+  {
+    currentTab->setSnapToArrangement(checked);
+  }
 }
 
 void ArrangementDemoWindow::on_actionCloseTab_triggered()
 {
-  auto curTab = this->getActiveTab().first;
-  if (!curTab) return;
+  auto currentTab = this->getCurrentTab().first;
+  if (!currentTab) return;
 
   // delete the tab
   auto currentTabIndex = this->ui->tabWidget->currentIndex();
   this->ui->tabWidget->removeTab(currentTabIndex);
 
   // release memory
-  delete curTab;
+  delete currentTab;
 
   // remove the tab
   this->tabs.erase(this->tabs.begin() + currentTabIndex);
@@ -517,36 +562,34 @@ void ArrangementDemoWindow::on_actionCloseTab_triggered()
 
 void ArrangementDemoWindow::on_actionZoomIn_triggered()
 {
-  auto tab = this->getActiveTab().first;
-  if (tab)
+  auto currentTab = this->getCurrentTab().first;
+  if (currentTab)
   {
-    QGraphicsView* view = tab->getView();
+    QGraphicsView* view = currentTab->getView();
     view->scale(2.0, 2.0);
   }
 }
 
 void ArrangementDemoWindow::on_actionZoomOut_triggered()
 {
-  auto tab = this->getActiveTab().first;
-  if (tab)
+  auto currentTab = this->getCurrentTab().first;
+  if (currentTab)
   {
-    QGraphicsView* view = tab->getView();
+    QGraphicsView* view = currentTab->getView();
     view->scale(0.5, 0.5);
   }
 }
 
 void ArrangementDemoWindow::on_actionZoomReset_triggered()
 {
-  auto tab = this->getActiveTab().first;
-  if (tab)
-  {
-    tab->adjustViewport();
-  }
+  auto currentTab = this->getCurrentTab().first;
+  if (currentTab)
+    currentTab->adjustViewport();
 }
 
 void ArrangementDemoWindow::on_actionFillColor_triggered()
 {
-  auto currentTab = this->getActiveTab().first;
+  auto currentTab = this->getCurrentTab().first;
   if (!currentTab) return;
 
   FillFaceCallbackBase* fillFaceCallback = currentTab->getFillFaceCallback();
@@ -556,16 +599,15 @@ void ArrangementDemoWindow::on_actionFillColor_triggered()
   if (selectedColor.isValid())
   {
     fillFaceCallback->setColor(selectedColor);
-    this->updateFillColorSwatch();
+    this->updateFillColorSwatch(currentTab);
   }
 }
 
-void ArrangementDemoWindow::updateFillColorSwatch()
+void ArrangementDemoWindow::updateFillColorSwatch(ArrangementDemoTabBase* tab)
 {
-  auto currentTab = this->getActiveTab().first;
-  if (!currentTab) return;
+  if (!tab) return;
 
-  QColor fillColor = currentTab->getFillFaceCallback()->getColor();
+  QColor fillColor = tab->getFillFaceCallback()->getColor();
   if (!fillColor.isValid()) { fillColor = ::Qt::black; }
 
   QPixmap fillColorPixmap(16, 16);
@@ -574,7 +616,7 @@ void ArrangementDemoWindow::updateFillColorSwatch()
   this->ui->actionFillColor->setIcon(fillColorIcon);
 }
 
-auto ArrangementDemoWindow::getActiveTab()
+auto ArrangementDemoWindow::getCurrentTab()
   -> std::pair<ArrangementDemoTabBase*, TraitsType>
 {
   int tabIndex = this->ui->tabWidget->currentIndex();
@@ -598,7 +640,6 @@ std::vector<CGAL::Object> ArrangementDemoWindow::getArrangements() const
   return res;
 }
 
-// TODO: Clean up all following parts!  (serialization/preferences/overlay)
 void ArrangementDemoWindow::on_actionOverlay_triggered()
 {
   OverlayDialog overlayDialog{this};
@@ -667,11 +708,11 @@ struct ArrSaver
 
 void ArrangementDemoWindow::on_actionSaveAs_triggered()
 {
-  auto tab_tt = this->getActiveTab();
-  auto activeTab = tab_tt.first;
+  auto tab_tt = this->getCurrentTab();
+  auto currentTab = tab_tt.first;
   auto tt = tab_tt.second;
 
-  if (!activeTab)
+  if (!currentTab)
   {
     QMessageBox::information(this, "Oops", "Create a new tab first");
     return;
@@ -690,7 +731,7 @@ void ArrangementDemoWindow::on_actionSaveAs_triggered()
   visitTraitsType(tt, [&](auto type_holder) {
     using Arr = typename decltype(type_holder)::type;
     Arr* typed_arr;
-    if (CGAL::assign(typed_arr, activeTab->getArrangement()))
+    if (CGAL::assign(typed_arr, currentTab->getArrangement()))
       ArrSaver{ofs}(typed_arr);
     else
       QMessageBox::information(this, "Oops", "Error saving file!");

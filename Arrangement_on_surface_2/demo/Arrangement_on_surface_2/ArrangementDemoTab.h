@@ -26,6 +26,7 @@ class FillFaceCallbackBase;
 class SplitEdgeCallbackBase;
 class DeleteCurveCallbackBase;
 class GridGraphicsItem;
+class PointSnapperBase;
 
 namespace CGAL
 {
@@ -50,9 +51,15 @@ public:
   ArrangementDemoTabBase( QWidget* parent );
   virtual ~ArrangementDemoTabBase( );
 
-  ArrangementDemoGraphicsView* getView() const;
+  QGraphicsView* getView() const;
   virtual CGAL::Object getArrangement() const = 0;
   virtual void adjustViewport() = 0;
+  void showGrid(bool);
+  bool isGridVisible();
+  void setSnapToGrid(bool);
+  void setSnapToArrangement(bool);
+  bool isSnapToGridEnabled();
+  bool isSnapToArrangementEnabled();
 
   CGAL::Qt::ArrangementGraphicsItemBase* getArrangementGraphicsItem() const;
   GridGraphicsItem* getGridGraphicsItem() const;
@@ -94,6 +101,7 @@ protected:
   std::unique_ptr<SplitEdgeCallbackBase> splitEdgeCallback;
   std::unique_ptr<EnvelopeCallbackBase> envelopeCallback;
   std::unique_ptr<FillFaceCallbackBase> fillFaceCallback;
+  std::unique_ptr<PointSnapperBase> snapper;
 
   QObject* activeCallback;
 

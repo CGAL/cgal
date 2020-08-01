@@ -58,24 +58,40 @@ protected:
 
 }; // class PointsGraphicsItem
 
+namespace CGAL
+{
+template <
+  class RatKernel_, class AlgKernel_, class NtTraits_, class BoundingTraits_>
+class _Bezier_point_2;
+}
+
+namespace details
+{
+struct ApproximatePoint
+{
+  template <typename T>
+  QPointF operator()(const T& point)
+  {
+    return QPointF(CGAL::to_double(point.x()), CGAL::to_double(point.y()));
+  }
+
+  template <
+    class RatKernel, class AlgKernel, class NtTraits, class BoundingTraits>
+  QPointF operator()(
+    const CGAL::_Bezier_point_2<RatKernel, AlgKernel, NtTraits, BoundingTraits>&
+      point)
+  {
+    auto xy = point.approximate();
+    return QPointF(xy.first, xy.second);
+  }
+};
+}
+
 template <class Point>
 inline void PointsGraphicsItem::insert(const Point& point)
 {
   this->prepareGeometryChange();
-
-  double x = CGAL::to_double(point.x());
-  double y = CGAL::to_double(point.y());
-  this->points.push_back(QPointF(x, y));
-}
-
-// TODO: clean this up
-#include "ArrangementTypes.h"
-template <>
-inline void PointsGraphicsItem::insert<Bezier_point>(const Bezier_point& point)
-{
-  this->prepareGeometryChange();
-  auto xy = point.approximate();
-  this->points.push_back(QPointF(xy.first, xy.second));
+  this->points.push_back(details::ApproximatePoint{}(point));
 }
 
 #endif // POINTS_GRAPHICS_ITEM_H

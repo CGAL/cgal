@@ -35,7 +35,6 @@ void DeleteCurveCallback<Arr_>::reset()
 {
 	this->highlightedCurve->clear();
 	this->removableHalfedge = Halfedge_handle();
-	Q_EMIT modelChanged();
 }
 
 template <typename Arr_>
@@ -67,6 +66,7 @@ void DeleteCurveCallback<Arr_>::mousePressEvent(
 		this->arr->remove_edge(this->removableHalfedge);
 	}
 	this->reset();
+	Q_EMIT modelChanged();
 }
 
 template <typename Arr_>

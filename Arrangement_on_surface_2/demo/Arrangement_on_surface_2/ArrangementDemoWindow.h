@@ -50,7 +50,7 @@ public:
 
   std::vector<CGAL::Object> getArrangements() const;
   std::vector<QString> getTabLabels() const;
-  std::pair<ArrangementDemoTabBase*, TraitsType> getActiveTab();
+  std::pair<ArrangementDemoTabBase*, TraitsType> getCurrentTab();
 
 public Q_SLOTS:
   void updateEnvelope(QAction*);
@@ -74,6 +74,9 @@ public Q_SLOTS:
   void on_actionPointLocation_toggled(bool);
   void on_actionRayShootingUp_toggled(bool);
   void on_actionRayShootingDown_toggled(bool);
+  void on_actionShowGrid_toggled(bool);
+  void on_actionGridSnapMode_toggled(bool);
+  void on_actionArrangementSnapMode_toggled(bool);
   void on_actionMerge_toggled(bool);
   void on_actionSplit_toggled(bool);
   void on_actionFill_toggled(bool);
@@ -86,11 +89,11 @@ protected:
   void setupUi();
   ArrangementDemoTabBase* makeTab(TraitsType);
   void addTab(ArrangementDemoTabBase*, QString, TraitsType);
-  void resetCallbackState();
+  void resetCallbackState(ArrangementDemoTabBase*);
+  void resetActionGroups(ArrangementDemoTabBase*, TraitsType);
   void hideInsertMethods();
   void showInsertMethods();
-  void resetActionGroups();
-  void updateFillColorSwatch();
+  void updateFillColorSwatch(ArrangementDemoTabBase*);
   QString makeTabLabel(TraitsType);
   ArrangementDemoTabBase* openArrFile(QString filename);
 

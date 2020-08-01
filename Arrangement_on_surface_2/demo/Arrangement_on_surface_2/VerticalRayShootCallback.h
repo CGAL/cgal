@@ -72,36 +72,16 @@ public:
   VerticalRayShootCallback( Arrangement* arr_, QObject* parent_ );
   void reset( );
   void setScene( QGraphicsScene* scene_ );
-
   void slotModelChanged( );
-
-  void setEdgeWidth( int width ) override
-  {
-    this->highlightedCurves->setEdgeWidth( width );
-    this->rayGraphicsItem.setWidth( width );
-  }
-
-  void setEdgeColor( const QColor& color ) override
-  {
-    this->highlightedCurves->setEdgeColor( color );
-    this->rayGraphicsItem.setColor( color );
-  }
-
-  const QColor& edgeColor( ) const override
-  {
-    return this->highlightedCurves->edgeColor( );
-  }
-
-  int edgeWidth( ) const override
-  {
-    return this->highlightedCurves->edgeWidth( );
-  }
+  void setEdgeWidth( int width ) override;
+  void setEdgeColor( const QColor& color ) override;
+  const QColor& edgeColor( ) const override;
+  int edgeWidth( ) const override;
 
 protected:
   void mousePressEvent( QGraphicsSceneMouseEvent *event );
   void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
   void highlightPointLocation( QGraphicsSceneMouseEvent *event );
-  Face_const_handle getFace( const CGAL::Object& o );
 
   Arrangement* arr;
   CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurves;

@@ -13,15 +13,15 @@
 #define POINT_LOCATION_CALLBACK_H
 
 #include "Callback.h"
-#include "Utils.h"
-#include "CurveGraphicsItem.h"
-
 
 class QGraphicsScene;
 class QGraphicsSceneMouseEvent;
 
 namespace CGAL
 {
+class Arr_oblivious_side_tag;
+class Arr_open_side_tag;
+
 namespace Qt
 {
 template <typename T>
@@ -56,9 +56,6 @@ public:
     Ccb_halfedge_const_circulator;
   typedef typename Arrangement::Hole_const_iterator Hole_const_iterator;
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
-  typedef typename Kernel::Point_2 Kernel_point_2;
-  typedef typename Traits::Point_2 Point_2;
 
   PointLocationCallback( Arrangement* arr_, QObject* parent_ );
   void reset( );
@@ -68,12 +65,11 @@ protected:
   void mousePressEvent( QGraphicsSceneMouseEvent *event );
   void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
   void highlightPointLocation( QGraphicsSceneMouseEvent *event );
+
   void highlightPointLocation( QGraphicsSceneMouseEvent *event,
-                               CGAL::Arr_oblivious_side_tag );
+                               const CGAL::Arr_oblivious_side_tag& );
   void highlightPointLocation( QGraphicsSceneMouseEvent *event,
-                               CGAL::Arr_open_side_tag );
-  Face_const_handle getFace( const CGAL::Object& o );
-  CGAL::Object locate( const Kernel_point_2& point );
+                               const CGAL::Arr_open_side_tag& );
 
   Arrangement* arr;
   CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurves;

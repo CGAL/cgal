@@ -13,14 +13,16 @@
 #define SPLIT_EDGE_CALLBACK_H
 
 #include "Callback.h"
-#include <QEvent>
-#include <QGraphicsScene>
-#include <QGraphicsSceneMouseEvent>
-#include <CGAL/Qt/Converter.h>
-#include <CGAL/Arrangement_with_history_2.h>
+#include <QColor>
 
-#include "CurveGraphicsItem.h"
-#include "Utils.h"
+class QGraphicsSceneMouseEvent;
+class QGraphicsScene;
+class QGraphicsLineItem;
+namespace CGAL
+{
+template <typename Coefficient_>
+class Arr_algebraic_segment_traits_2;
+}
 
 class SplitEdgeCallbackBase : public CGAL::Qt::Callback
 {
@@ -52,13 +54,10 @@ public:
     Originating_curve_iterator;
   typedef typename Arrangement::Induced_edge_iterator Induced_edge_iterator;
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
   typedef typename Traits::Intersect_2 Intersect_2;
   typedef typename Traits::Equal_2 Equal_2;
   typedef typename Traits::Multiplicity Multiplicity;
-  typedef typename ArrTraitsAdaptor< Traits >::Point_2 Point_2;
-  typedef typename ArrTraitsAdaptor< Traits >::CoordinateType CoordinateType;
-  typedef typename Kernel::Segment_2 Segment_2;
+  typedef typename Traits::Point_2 Point_2;
 
   SplitEdgeCallback( Arrangement* arr_, QObject* parent );
   void setScene( QGraphicsScene* scene_ );
@@ -84,7 +83,6 @@ protected:
   void updateGuide( const Point_2& pt, TTraits traits );
 
   Traits traits;
-  CGAL::Qt::Converter<Kernel> convert;
   Arrangement* arr;
   bool hasFirstPoint;
   Point_2 p1;

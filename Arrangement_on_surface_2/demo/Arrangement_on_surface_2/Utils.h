@@ -21,20 +21,6 @@
 class QGraphicsScene;
 class QGraphicsSceneMouseEvent;
 
-BOOST_MPL_HAS_XXX_TRAIT_DEF( Approximate_2 )
-
-template <typename Arr_, bool b = has_Approximate_2< Arr_ >::value>
-struct Supports_landmarks
-{
-  typedef CGAL::Boolean_tag< b > Tag;
-};
-
-template <typename Arr_>
-struct Supports_landmarks< Arr_, true >
-{
-  typedef CGAL::Tag_true Tag;
-};
-
 /**
    Support for new ArrTraits should specify types:
 

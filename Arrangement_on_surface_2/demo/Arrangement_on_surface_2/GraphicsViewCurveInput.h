@@ -23,6 +23,7 @@
 #include "Callback.h"
 #include "GraphicsSceneMixin.h"
 #include "PointsGraphicsItem.h"
+#include "PointSnapper.h"
 
 class QEvent;
 
@@ -71,34 +72,19 @@ class CurveGeneratorBase : public QObject
   Q_OBJECT
 
 public:
-  void generate(const std::vector<QPointF>& clickedPoints, CurveType type);
+  using Point_2 = PointSnapperBase::Point_2;
 
-  virtual boost::optional<CGAL::Object>
-  generateSegment(const std::vector<QPointF>&);
-
-  virtual boost::optional<CGAL::Object>
-  generateRay(const std::vector<QPointF>&);
-
-  virtual boost::optional<CGAL::Object>
-  generateLine(const std::vector<QPointF>&);
-
-  virtual boost::optional<CGAL::Object>
-  generatePolyline(const std::vector<QPointF>&);
-
-  virtual boost::optional<CGAL::Object>
-  generateCircle(const std::vector<QPointF>&);
-
-  virtual boost::optional<CGAL::Object>
-  generateEllipse(const std::vector<QPointF>&);
-
-  virtual boost::optional<CGAL::Object>
-  generateThreePointCircularArc(const std::vector<QPointF>&);
-
-  virtual boost::optional<CGAL::Object>
-  generateFivePointConicArc(const std::vector<QPointF>&);
-
-  virtual boost::optional<CGAL::Object>
-  generateBezier(const std::vector<QPointF>&);
+  void generate(const std::vector<Point_2>& clickedPoints, CurveType type);
+  virtual CGAL::Object generateSegment(const std::vector<Point_2>&);
+  virtual CGAL::Object generateRay(const std::vector<Point_2>&);
+  virtual CGAL::Object generateLine(const std::vector<Point_2>&);
+  virtual CGAL::Object generatePolyline(const std::vector<Point_2>&);
+  virtual CGAL::Object generateCircle(const std::vector<Point_2>&);
+  virtual CGAL::Object generateEllipse(const std::vector<Point_2>&);
+  virtual CGAL::Object
+  generateThreePointCircularArc(const std::vector<Point_2>&);
+  virtual CGAL::Object generateFivePointConicArc(const std::vector<Point_2>&);
+  virtual CGAL::Object generateBezier(const std::vector<Point_2>&);
 
 Q_SIGNALS:
   void generate(CGAL::Object);
@@ -115,11 +101,9 @@ struct CurveGenerator<CGAL::Arr_segment_traits_2<Kernel_>> :
 {
   using ArrTraits = CGAL::Arr_segment_traits_2<Kernel_>;
   using Curve_2 = typename ArrTraits::Curve_2;
-  using Point_2 = typename ArrTraits::Point_2;
   using Kernel = Kernel_;
 
-  boost::optional<CGAL::Object>
-  generateSegment(const std::vector<QPointF>&) override;
+  CGAL::Object generateSegment(const std::vector<Point_2>&) override;
 };
 
 template <typename SegmentTraits>
@@ -128,10 +112,8 @@ struct CurveGenerator<CGAL::Arr_polyline_traits_2<SegmentTraits>> :
 {
   using ArrTraits = CGAL::Arr_polyline_traits_2<SegmentTraits>;
   using Curve_2 = typename ArrTraits::Curve_2;
-  using Point_2 = typename ArrTraits::Point_2;
 
-  boost::optional<CGAL::Object>
-  generatePolyline(const std::vector<QPointF>&) override;
+  CGAL::Object generatePolyline(const std::vector<Point_2>&) override;
 };
 
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
@@ -140,7 +122,6 @@ struct CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>> :
 {
   using ArrTraits = Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>;
   using Curve_2 = typename ArrTraits::Curve_2;
-  using Point_2 = typename ArrTraits::Point_2;
   using Kernel = AlgKernel;
   using Segment_2 = typename Kernel::Segment_2;
   using Rat_FT = typename RatKernel::FT;
@@ -148,20 +129,12 @@ struct CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>> :
   using Rat_segment_2 = typename RatKernel::Segment_2;
   using Rat_circle_2 = typename RatKernel::Circle_2;
 
-  boost::optional<CGAL::Object>
-  generateSegment(const std::vector<QPointF>&) override;
-
-  boost::optional<CGAL::Object>
-  generateCircle(const std::vector<QPointF>&) override;
-
-  boost::optional<CGAL::Object>
-  generateEllipse(const std::vector<QPointF>&) override;
-
-  boost::optional<CGAL::Object>
-  generateThreePointCircularArc(const std::vector<QPointF>&) override;
-
-  boost::optional<CGAL::Object>
-  generateFivePointConicArc(const std::vector<QPointF>&) override;
+  CGAL::Object generateSegment(const std::vector<Point_2>&) override;
+  CGAL::Object generateCircle(const std::vector<Point_2>&) override;
+  CGAL::Object generateEllipse(const std::vector<Point_2>&) override;
+  CGAL::Object
+  generateThreePointCircularArc(const std::vector<Point_2>&) override;
+  CGAL::Object generateFivePointConicArc(const std::vector<Point_2>&) override;
 };
 
 template <typename Kernel_>
@@ -169,21 +142,16 @@ struct CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>> :
     public CurveGeneratorBase
 {
   using Kernel = Kernel_;
+  using KernelPoint = typename Kernel::Point_2;
   using ArrTraits = CGAL::Arr_linear_traits_2<Kernel>;
   using Curve_2 = typename ArrTraits::Curve_2;
-  using Point_2 = typename Kernel::Point_2;
   using Segment_2 = typename Kernel::Segment_2;
   using Ray_2 = typename Kernel::Ray_2;
   using Line_2 = typename Kernel::Line_2;
 
-  boost::optional<CGAL::Object>
-  generateSegment(const std::vector<QPointF>&) override;
-
-  boost::optional<CGAL::Object>
-  generateRay(const std::vector<QPointF>&) override;
-
-  boost::optional<CGAL::Object>
-  generateLine(const std::vector<QPointF>&) override;
+  CGAL::Object generateSegment(const std::vector<Point_2>&) override;
+  CGAL::Object generateRay(const std::vector<Point_2>&) override;
+  CGAL::Object generateLine(const std::vector<Point_2>&) override;
 };
 
 template <typename Coefficient_>
@@ -193,23 +161,17 @@ struct CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>> :
   using Coefficient = Coefficient_;
   using ArrTraits = CGAL::Arr_algebraic_segment_traits_2<Coefficient>;
   using X_monotone_curve_2 = typename ArrTraits::X_monotone_curve_2;
-  using Point_2 = typename ArrTraits::Point_2;
   using Polynomial_2 = typename ArrTraits::Polynomial_2;
   using Curve_2 = typename ArrTraits::Curve_2;
   using Rational = CORE::BigRat; // FIX: should probably query rational type
   using RationalTraits = Rational_traits<Rational>;
 
-  boost::optional<CGAL::Object>
-  generateLine(const std::vector<QPointF>&) override;
-
-  boost::optional<CGAL::Object>
-  generateCircle(const std::vector<QPointF>&) override;
-
-  boost::optional<CGAL::Object>
-  generateEllipse(const std::vector<QPointF>&) override;
+  CGAL::Object generateLine(const std::vector<Point_2>&) override;
+  CGAL::Object generateCircle(const std::vector<Point_2>&) override;
+  CGAL::Object generateEllipse(const std::vector<Point_2>&) override;
 
 private:
-  boost::optional<CGAL::Object> generateEllipse_(const QPointF&, float, float);
+  CGAL::Object generateEllipse_(const Point_2&, Rational, Rational);
 };
 
 template <
@@ -219,17 +181,19 @@ struct CurveGenerator<
   Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits, BoundingTraits>> :
     public CurveGeneratorBase
 {
-  boost::optional<CGAL::Object>
-  generateBezier(const std::vector<QPointF>&) override;
+  CGAL::Object generateBezier(const std::vector<Point_2>&) override;
 };
 
 class CurveInputMethod : public QGraphicsSceneMixin
 {
 public:
+  using Point_2 = PointSnapperBase::Point_2;
+
   CurveInputMethod(CurveType, int numPoints_ = -1);
   virtual ~CurveInputMethod() { }
 
   void setCurveGenerator(CurveGeneratorBase*);
+  void setPointSnapper(PointSnapperBase*);
   CurveType curveType() const;
 
   virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
@@ -239,8 +203,8 @@ public:
 
   void setColor(QColor);
 
-  // override this to snap to the points you like
-  virtual QPointF snapPoint(QGraphicsSceneMouseEvent* event);
+  Point_2 snapPoint(QGraphicsSceneMouseEvent* event);
+  QPointF snapQPoint(QGraphicsSceneMouseEvent* event);
 
 protected:
   virtual void beginInput();
@@ -256,11 +220,13 @@ protected:
 private:
   const int numPoints;
   std::vector<QPointF> clickedPoints;
+  std::vector<Point_2> clickedBigPoints;
   PointsGraphicsItem pointsGraphicsItem;
   CurveGeneratorBase* curveGenerator;
   const CurveType type;
   std::vector<QGraphicsItem*> items;
   bool itemsAdded;
+  PointSnapperBase* snapper;
 };
 
 class SegmentInputMethod : public CurveInputMethod
@@ -369,7 +335,7 @@ public:
   FivePointConicInputMethod();
 };
 
-class BezierInputMethod: public CurveInputMethod
+class BezierInputMethod : public CurveInputMethod
 {
 public:
   BezierInputMethod();
@@ -398,6 +364,7 @@ public:
   void setColor(QColor c);
   void reset();
   virtual void setCurveType(CurveType type) = 0;
+  virtual void setPointSnapper(PointSnapperBase*) = 0;
 
 protected:
   GraphicsViewCurveInputBase(QObject* parent);
@@ -405,8 +372,9 @@ protected:
   virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
   virtual bool eventFilter(QObject* obj, QEvent* event);
 
-  CurveInputMethod* inputMethod; // active input method
-};                               // class GraphicsViewCurveInputBase
+  // active input method
+  CurveInputMethod* inputMethod;
+}; // class GraphicsViewCurveInputBase
 
 template <typename ArrTraits>
 struct GraphicsViewCurveInputTypeHelper
@@ -469,6 +437,7 @@ class GraphicsViewCurveInput : public GraphicsViewCurveInputBase
 public:
   GraphicsViewCurveInput(QObject* parent, QGraphicsScene* scene);
   void setCurveType(CurveType type) override;
+  void setPointSnapper(PointSnapperBase*) override;
 
 private:
   template <typename = ArrTraits>

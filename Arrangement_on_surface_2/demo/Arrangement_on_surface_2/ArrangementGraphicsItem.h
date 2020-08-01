@@ -12,7 +12,7 @@
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Qt/GraphicsItem.h>
-#include <QPixmap>
+#include <QImage>
 
 #include "GraphicsSceneMixin.h"
 #include "PointsGraphicsItem.h"
@@ -34,8 +34,6 @@ template <typename T>
 class Arr_segment_traits_2;
 template <typename T>
 class Arr_polyline_traits_2;
-class Arr_oblivious_side_tag;
-class Arr_open_side_tag;
 template <typename RatK, typename AlgK, typename Nt, typename BoundingTratits>
 class Arr_Bezier_curve_traits_2;
 } // namespace CGAL
@@ -61,8 +59,6 @@ protected:
   QPen verticesPen;
   QPen edgesPen;
   QPen facesPen;
-  QColor backgroundColor;
-  QPixmap facesPixmap;
   PointsGraphicsItem pointsGraphicsItem;
 }; // class ArrangementGraphicsItemBase
 
@@ -101,18 +97,27 @@ protected:
   void updatePointsItem();
 
   template <typename TTraits>
-  void paint(QPainter* painter, TTraits traits);
+  void paint(QPainter*, TTraits);
+
+  template <typename Coefficient_>
+  void paint(QPainter*, CGAL::Arr_algebraic_segment_traits_2<Coefficient_>);
 
   void updateBoundingBox();
 
   template <typename TTraits>
-  void updateBoundingBox(TTraits traits);
+  void updateBoundingBox(TTraits);
 
   template <typename RatK, typename AlgK, typename Nt, typename BoundingTratits>
   void updateBoundingBox(
-    CGAL::Arr_Bezier_curve_traits_2<RatK, AlgK, Nt, BoundingTratits> traits);
+    CGAL::Arr_Bezier_curve_traits_2<RatK, AlgK, Nt, BoundingTratits>);
+
+  template <typename Kernel_>
+  void updateBoundingBox(CGAL::Arr_linear_traits_2<Kernel_>);
 
   void paintFaces(QPainter* painter);
+
+  void paintFaces(QPainter*, QImage&);
+
   void paintFace(Face_handle f, QPainter* painter);
 
   void visit_ccb_faces(Face_handle& fh, QPainter* painter);
@@ -158,6 +163,11 @@ protected:
 
 protected:
   Arrangement* arr;
+
+  // related to painting algebraic faces
+  QImage tempImage;
+  std::vector<std::pair<uint16_t, uint16_t>> fill_stack;
+  static constexpr int margin = 2;
 }; // class ArrangementGraphicsItem
 
 } // namespace Qt

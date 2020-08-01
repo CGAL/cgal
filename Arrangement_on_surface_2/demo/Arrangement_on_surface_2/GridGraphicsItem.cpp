@@ -1,7 +1,7 @@
 #include "GridGraphicsItem.h"
-#include <limits>
-#include <cmath>
 #include <QPainter>
+#include <cmath>
+#include <limits>
 
 GridGraphicsItem::GridGraphicsItem() :
     gridColor{QColorConstants::Gray}, axesColor{QColorConstants::Black},
@@ -9,35 +9,25 @@ GridGraphicsItem::GridGraphicsItem() :
 {
 }
 
-int GridGraphicsItem::getXPower5()
-{
-  return x_power5;
-}
+int GridGraphicsItem::getXPower5() { return x_power5; }
 
-int GridGraphicsItem::getXPower2()
-{
-  return x_power2;
-}
+int GridGraphicsItem::getXPower2() { return x_power2; }
 
-int GridGraphicsItem::getYPower5()
-{
-  return y_power5;
-}
+int GridGraphicsItem::getYPower5() { return y_power5; }
 
-int GridGraphicsItem::getYPower2()
-{
-  return y_power2;
-}
+int GridGraphicsItem::getYPower2() { return y_power2; }
 
-float GridGraphicsItem::getXUnit()
-{
-  return x_unit;
-}
+float GridGraphicsItem::getXUnit() { return x_unit; }
 
-float GridGraphicsItem::getYUnit()
-{
-  return y_unit;
-}
+float GridGraphicsItem::getYUnit() { return y_unit; }
+
+QColor GridGraphicsItem::getGridColor() { return this->gridColor; }
+
+QColor GridGraphicsItem::getAxesColor() { return this->axesColor; }
+
+QColor GridGraphicsItem::getLabelsColor() { return this->labelsColor; }
+
+int GridGraphicsItem::getSpacing() { return this->spacing; }
 
 void GridGraphicsItem::setGridColor(const QColor& color)
 {
@@ -58,26 +48,6 @@ void GridGraphicsItem::setSpacing(int spacing_)
 {
   this->spacing = spacing_;
   this->update();
-}
-
-QColor GridGraphicsItem::getGridColor()
-{
-  return this->gridColor;
-}
-
-QColor GridGraphicsItem::getAxesColor()
-{
-  return this->axesColor;
-}
-
-QColor GridGraphicsItem::getLabelsColor()
-{
-  return this->labelsColor;
-}
-
-int GridGraphicsItem::getSpacing()
-{
-  return this->spacing;
 }
 
 void GridGraphicsItem::paint(
@@ -101,14 +71,14 @@ void GridGraphicsItem::paint(
   x_unit = pow2l * pow5l;
 
   y_power5 = std::log(gridSceneMaxYLen) / std::log(5.);
-  pow5l = std::pow(5, y_power5);
   y_power2 = std::log(gridSceneMaxYLen / pow5l) / std::log(2.);
+  pow5l = std::pow(5, y_power5);
   pow2l = std::pow(2, y_power2);
 
   y_unit = pow2l * pow5l;
 
   QRectF sceneViewport = this->viewportRect(painter);
-  // compute integer-spaced grid lines
+
   QVarLengthArray<QLineF, 100> linesX;
   QVarLengthArray<QLineF, 100> linesY;
 

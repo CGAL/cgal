@@ -22,6 +22,7 @@
 #include "EnvelopeCallback.h"
 #include "FillFaceCallback.h"
 #include "GridGraphicsItem.h"
+#include "PointSnapper.h"
 
 #include <QGridLayout>
 
@@ -66,7 +67,7 @@ void ArrangementDemoTabBase::setupUi( )
   scene->setSceneRect(xymin, xymin, wh, wh);
 }
 
-ArrangementDemoGraphicsView* ArrangementDemoTabBase::getView() const
+QGraphicsView* ArrangementDemoTabBase::getView() const
 {
   return this->graphicsView;
 }
@@ -82,10 +83,39 @@ GridGraphicsItem* ArrangementDemoTabBase::getGridGraphicsItem() const
   return this->gridGraphicsItem;
 }
 
-//! Determining the points of the arrangement
-/*!
-	\return call to the ArrangementCurveInputCallback
-*/
+void ArrangementDemoTabBase::showGrid(bool val)
+{
+  this->gridGraphicsItem->setVisible(val);
+  // this is to force showing/hiding the grid immediately
+  // TODO This forces the arrangement to upadte as well. Find a better way!
+  Q_EMIT modelChanged();
+}
+
+void ArrangementDemoTabBase::setSnapToGrid(bool val)
+{
+  this->snapper->setSnapToGrid(val);
+}
+
+void ArrangementDemoTabBase::setSnapToArrangement(bool val)
+{
+  this->snapper->setSnapToArrangement(val);
+}
+
+bool ArrangementDemoTabBase::isSnapToGridEnabled()
+{
+  return this->snapper->isSnapToGridEnabled();
+}
+
+bool ArrangementDemoTabBase::isSnapToArrangementEnabled()
+{
+  return this->snapper->isSnapToArrangementEnabled();
+}
+
+bool ArrangementDemoTabBase::isGridVisible()
+{
+  return this->gridGraphicsItem->isVisible();
+}
+
 CGAL::Qt::GraphicsViewCurveInputBase*
 ArrangementDemoTabBase::getCurveInputCallback( ) const
 {
@@ -101,10 +131,6 @@ CGAL::Qt::Callback* ArrangementDemoTabBase::getDeleteCurveCallback( ) const
   return this->deleteCurveCallback.get();
 }
 
-//! Returns the point where the mouse is selected.
-/*!
-	\return the point from the curve originates
-*/
 CGAL::Qt::Callback* ArrangementDemoTabBase::getPointLocationCallback( ) const
 {
   return this->pointLocationCallback.get();
@@ -266,9 +292,15 @@ void ArrangementDemoTab<Arr_>::initComponents()
 {
   auto scene = this->getScene();
 
+  this->gridGraphicsItem = new GridGraphicsItem();
+  this->snapper = std::make_unique<PointSnapper<Arrangement>>(
+    scene, this->gridGraphicsItem, this->arrangement.get());
+
   this->curveInputCallback =
     std::make_unique<ArrangementCurveInputCallback<Arrangement>>(
       this->arrangement.get(), this, scene);
+  this->curveInputCallback->setPointSnapper(snapper.get());
+
   this->deleteCurveCallback =
     std::make_unique<DeleteCurveCallback<Arrangement>>(
       this->arrangement.get(), this);
@@ -289,7 +321,6 @@ void ArrangementDemoTab<Arr_>::initComponents()
 
   this->arrangementGraphicsItem =
     new CGAL::Qt::ArrangementGraphicsItem<Arrangement>(this->arrangement.get());
-  this->gridGraphicsItem = new GridGraphicsItem();
 
   scene->addItem(this->arrangementGraphicsItem);
   scene->addItem(this->gridGraphicsItem);
