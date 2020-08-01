@@ -521,7 +521,11 @@ void ArrangementDemoWindow::on_actionShowGrid_toggled(bool checked)
 {
   auto currentTab = this->getCurrentTab().first;
   if (currentTab)
+  {
     currentTab->showGrid(checked);
+    if (!checked && this->ui->actionGridSnapMode->isChecked())
+      this->ui->actionGridSnapMode->activate(QAction::Trigger);
+  }
 }
 
 void ArrangementDemoWindow::on_actionGridSnapMode_toggled(bool checked)
