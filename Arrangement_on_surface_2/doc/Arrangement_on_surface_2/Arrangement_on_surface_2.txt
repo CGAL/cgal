@@ -3508,12 +3508,12 @@ following requirement:
 <DD>This predicate is overloaded with two versions.
 
 (i) Given a point \f$p=(x_p, y_p)\f$, determine whether \f$p\f$ lies
-in the image of the vertical and identified sides of the
+in the image of the vertical (and identified) sides of the
 boundary. More precisely, determine whether \f$x_p \in \{x_{\rm
 min},x_{\rm max}\}\f$ for all pre-images of \f$p\f$.
 
 (ii) Given a curve \f$c\f$, determine whether the entire curve \f$c\f$
-lies in the image of the vertical and identified sides of the
+lies in the image of the vertical (and identified) sides of the
 boundary.
 
 </DL>
@@ -3528,12 +3528,12 @@ requires the following requirement:
 <DD>This predicate is overloaded with two versions.
 
 (i) Given a point \f$p=(x_p, y_p)\f$, determine whether \f$p\f$ lies
-in the image of the horizontal and identified sides of the
+in the image of the horizontal (and identified) sides of the
 boundary. More precisely, determine whether \f$y_p \in \{y_{\rm
 min},y_{\rm max}\}\f$ for all pre-images of \f$p\f$.
 
 (ii) Given a curve \f$c\f$, determine whether the entire curve \f$c\f$
-lies in the image of the horizontal and identified sides of the
+lies in the image of the horizontal (and identified) sides of the
 boundary.
 
 </DL>
