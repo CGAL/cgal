@@ -31,9 +31,6 @@ public:
   /// models the concept `ArrTraits::ParameterSpaceInX_2`.
   typedef unspecified_type Parameter_space_in_x_2;
 
-  /// models the concept `ArrTraits::CompareXOnBoundary_2`.
-  typedef unspecified_type Compare_y_on_boundary_2;
-
   /// models the concept `ArrTraits::CompareXNearBoundary_2`.
   typedef unspecified_type Compare_y_near_boundary_2;
 
@@ -42,7 +39,6 @@ public:
   /// \name Accessing Functor Objects
   /// @{
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const;
-  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const;
   Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const;
   /// @}
 
