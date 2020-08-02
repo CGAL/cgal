@@ -1,5 +1,4 @@
-/*!
- * \ingroup PkgArrangementOnSurface2ConceptsTraits
+/*! \ingroup PkgArrangementOnSurface2ConceptsTraits
  * \cgalConcept
  *
  * A model of the concept `ArrangementIdentifiedRightTraits_2` must be used when

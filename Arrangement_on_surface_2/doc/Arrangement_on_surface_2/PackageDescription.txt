@@ -122,6 +122,8 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrangementHorizontalSideTraits_2`
 - `ArrangementVerticalSideTraits_2`
 - `ArrangementClosedIdentifiedVerticalTraits_2`
+- `ArrangementIdentifiedVerticalTraits_2`
+- `ArrangementIdentifiedHorizontalTraits_2`
 - `ArrangementOpenBoundaryTraits_2`
 - `ArrangementSphericalBoundaryTraits_2`
 - `ArrangementInputFormatter`

@@ -3499,11 +3499,11 @@ this overloaded version is required only for the concepts
 </DL>
 
 
-The concepts `ArrangementIdentifiedLeftTraits_2` and
-`ArrangementIdentifiedRightTraits_2` introduces the following requirement:
+The concept `ArrangementIdentifiedVerticalTraits_2` requires the
+following requirement:
 
 <DL>
-<DT><B>`Is_on_y_identification_2`:</B>
+<DT>\link ArrangementIdentifiedVerticalTraits_2::Is_on_y_identification_2 <B>`Is_on_y_identification_2`</B>\endlink:
 
 <DD>This predicate is overloaded with two versions.
 
@@ -3518,12 +3518,12 @@ boundary.
 
 </DL>
 
-Similarly, the concepts `ArrangementIdentifiedBottomTraits_2` and
-`ArrangementIdentifiedTopTraits_2` introduces the following requirement:
+Similarly, the concept `ArrangementIdentifiedHorizontalTraits_2`
+requires the following requirement:
 
 <DL>
 
-<DT><B>`Is_on_x_identification_2`:</B>
+<DT>\link ArrangementIdentifiedHorizontalTraits_2::Is_on_x_identification_2 <B>`Is_on_x_identification_2`</B>\endlink:
 
 <DD>This predicate is overloaded with two versions.
 
