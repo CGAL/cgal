@@ -188,16 +188,16 @@ Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
   if (criterion == MIN_ANGLE_BASED)
   {
     //Current worst dihedral angle
-    FT curr_min_dh = min_dihedral_angle(tr, ch0);
-    curr_min_dh = (std::min)(curr_min_dh, min_dihedral_angle(tr, ch1));
-    curr_min_dh = (std::min)(curr_min_dh, min_dihedral_angle(tr, cell_to_remove));
+    FT curr_min_tandh = min_tan_dihedral_angle(tr, ch0);
+    curr_min_tandh = (std::min)(curr_min_tandh, min_tan_dihedral_angle(tr, ch1));
+    curr_min_tandh = (std::min)(curr_min_tandh, min_tan_dihedral_angle(tr, cell_to_remove));
 
     //Result worst dihedral angle
-    if (curr_min_dh > min_dihedral_angle(tr, vh2,
+    if (curr_min_tandh > min_tan_dihedral_angle(tr, vh2,
                                          ch0->vertex(indices(vh0_id, 0)),
                                          ch0->vertex(indices(vh0_id, 1)),
                                          ch0->vertex(indices(vh0_id, 2)))
-        || curr_min_dh > min_dihedral_angle(tr, vh3,
+        || curr_min_tandh > min_tan_dihedral_angle(tr, vh3,
                                             ch1->vertex(indices(vh1_id, 0)),
                                             ch1->vertex(indices(vh1_id, 1)),
                                             ch1->vertex(indices(vh1_id, 2))))
@@ -206,17 +206,17 @@ Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
   else if (criterion == AVERAGE_ANGLE_BASED)
   {
     //Current worst dihedral angle
-    double average_min_dh = min_dihedral_angle(tr, ch0);
-    average_min_dh += min_dihedral_angle(tr, ch1);
-    average_min_dh += min_dihedral_angle(tr, cell_to_remove);
+    double average_min_dh = min_tan_dihedral_angle(tr, ch0);
+    average_min_dh += min_tan_dihedral_angle(tr, ch1);
+    average_min_dh += min_tan_dihedral_angle(tr, cell_to_remove);
 
     average_min_dh /= 3.;
 
     FT new_average_min_dh = 0.5 *
-                            (min_dihedral_angle(tr, vh2, ch0->vertex(indices(vh0_id, 0)),
+                            (min_tan_dihedral_angle(tr, vh2, ch0->vertex(indices(vh0_id, 0)),
                                 ch0->vertex(indices(vh0_id, 1)),
                                 ch0->vertex(indices(vh0_id, 2)))
-                             + min_dihedral_angle(tr, vh3, ch1->vertex(indices(vh1_id, 0)),
+                           + min_tan_dihedral_angle(tr, vh3, ch1->vertex(indices(vh1_id, 0)),
                                  ch1->vertex(indices(vh1_id, 1)),
                                  ch1->vertex(indices(vh1_id, 2))));
     //Result worst dihedral angle
@@ -316,6 +316,7 @@ Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
       ch->vertex(v)->set_cell(ch);
 
       inc_cells[ch->vertex(v)] = boost::none;
+      ch->reset_cache_validity();
     }
   }
 
@@ -376,7 +377,7 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
                                   typename C3t3::Vertex_handle vh2,
                                   typename C3t3::Vertex_handle vh3,
                                   CandidatesQueue& candidates,
-                                  double curr_min_dh,
+                                  const double& curr_min_tandh,
                                   bool is_sliver_well_oriented = true,
                                   int e_id = 0)
 {
@@ -478,7 +479,7 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
     } while (++cell_circulator != done);
 
 
-    FT min_flip_dihedral_angle = (std::numeric_limits<FT>::max)();
+    FT min_flip_tan_dh = (std::numeric_limits<FT>::max)();
     for (const Facet& fi : facets)
     {
       if (!tr.is_infinite(fi.first))
@@ -487,10 +488,11 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
                              fi.first->vertex(indices(fi.second, 1)),
                              fi.first->vertex(indices(fi.second, 2))))
         {
-          min_flip_dihedral_angle = (std::min)(min_flip_dihedral_angle,
-                                               min_dihedral_angle(tr, vh, fi.first->vertex(indices(fi.second, 0)),
-                                                   fi.first->vertex(indices(fi.second, 1)),
-                                                   fi.first->vertex(indices(fi.second, 2))));
+          min_flip_tan_dh = (std::min)(
+            min_flip_tan_dh,
+            min_tan_dihedral_angle(tr, vh, fi.first->vertex(indices(fi.second, 0)),
+                                           fi.first->vertex(indices(fi.second, 1)),
+                                           fi.first->vertex(indices(fi.second, 2))));
         }
         else
         {
@@ -500,10 +502,10 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
       }
     }
 
-    if (keep && (curr_min_dh  < min_flip_dihedral_angle || !is_sliver_well_oriented))
+    if (keep && (curr_min_tandh  < min_flip_tan_dh || !is_sliver_well_oriented))
     {
-      //std::cout << "vh " << vh->info() <<" old " << curr_min_dh << " min " << min_flip_dihedral_angle << std::endl;
-      candidates.push(std::make_pair(min_flip_dihedral_angle, std::make_pair(vh, e_id)));
+      //std::cout << "vh " << vh->info() <<" old " << curr_min_tandh << " min " << min_flip_tan_dh << std::endl;
+      candidates.push(std::make_pair(min_flip_tan_dh, std::make_pair(vh, e_id)));
     }
   }
 }
@@ -546,7 +548,7 @@ template<typename C3t3, typename CandidatesQueue,
 void find_best_flip_to_improve_dh(C3t3& c3t3,
                                   typename C3t3::Edge& edge,
                                   CandidatesQueue& candidates,
-                                  double curr_min_dh,
+                                  const double& curr_min_tandh,
                                   IncCellsVectorMap& inc_cells,
                                   bool is_sliver_well_oriented = true,
                                   int e_id = 0)
@@ -662,7 +664,7 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
     }
     while (++cell_circulator != done);
 
-    FT min_flip_dihedral_angle = (std::numeric_limits<FT>::max)();
+    FT min_flip_tan_dh = (std::numeric_limits<FT>::max)();
     for (const Facet& fi : facets)
     {
       if (!tr.is_infinite(fi.first))
@@ -671,10 +673,10 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
                              fi.first->vertex(indices(fi.second, 1)),
                              fi.first->vertex(indices(fi.second, 2))))
         {
-          min_flip_dihedral_angle = (std::min)(min_flip_dihedral_angle,
-                                               min_dihedral_angle(tr, vh, fi.first->vertex(indices(fi.second, 0)),
-                                                   fi.first->vertex(indices(fi.second, 1)),
-                                                   fi.first->vertex(indices(fi.second, 2))));
+          min_flip_tan_dh = (std::min)(min_flip_tan_dh,
+            min_tan_dihedral_angle(tr, vh, fi.first->vertex(indices(fi.second, 0)),
+                                           fi.first->vertex(indices(fi.second, 1)),
+                                           fi.first->vertex(indices(fi.second, 2))));
         }
         else
         {
@@ -684,10 +686,10 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
       }
     }
 
-    if (keep && (curr_min_dh  < min_flip_dihedral_angle || !is_sliver_well_oriented))
+    if (keep && (curr_min_tandh  < min_flip_tan_dh || !is_sliver_well_oriented))
     {
-      //std::cout << "vh " << vh->info() <<" old " << curr_min_dh << " min " << min_flip_dihedral_angle << std::endl;
-      candidates.push(std::make_pair(min_flip_dihedral_angle, std::make_pair(vh, e_id)));
+      //std::cout << "vh " << vh->info() <<" old " << curr_min_tandh << " min " << min_flip_tan_dh << std::endl;
+      candidates.push(std::make_pair(min_flip_tan_dh, std::make_pair(vh, e_id)));
     }
   }
 }
@@ -930,6 +932,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
       ch->vertex(v)->set_cell(ch);
 
       inc_cells[ch->vertex(v)] = boost::none;
+      ch->reset_cache_validity();
     }
   }
 
@@ -1022,16 +1025,16 @@ Sliver_removal_result flip_n_to_m(typename C3t3::Edge& edge,
     Cell_circulator circ = c3t3.triangulation().incident_cells(edge);
     Cell_circulator done = circ;
 
-    FT curr_min_dh = min_dihedral_angle(tr, circ++);
+    FT curr_min_tandh = min_tan_dihedral_angle(tr, circ++);
     while (circ != done)
     {
-      curr_min_dh = (std::min)(curr_min_dh, min_dihedral_angle(tr, circ++));
+      curr_min_tandh = (std::min)(curr_min_tandh, min_tan_dihedral_angle(tr, circ++));
     }
     if (boundary_vertices.size() == 2)
       find_best_flip_to_improve_dh(c3t3, edge, boundary_vertices[0], boundary_vertices[1],
-                                   candidates, curr_min_dh);
+                                   candidates, curr_min_tandh);
     else
-      find_best_flip_to_improve_dh(c3t3, edge, candidates, curr_min_dh,
+      find_best_flip_to_improve_dh(c3t3, edge, candidates, curr_min_tandh,
                                    inc_cells);
 
     bool flip_performed = false;
@@ -1040,9 +1043,9 @@ Sliver_removal_result flip_n_to_m(typename C3t3::Edge& edge,
       Angle_and_vertex curr_cost_vpair = candidates.top();
       candidates.pop();
 
-      //std::cout << curr_min_dh << " old, current " << curr_cost_vpair.second.first->info() <<" and angle " << curr_cost_vpair.first << std::endl;
+      //std::cout << curr_min_tandh << " old, current " << curr_cost_vpair.second.first->info() <<" and angle " << curr_cost_vpair.first << std::endl;
 
-      if (curr_min_dh >= curr_cost_vpair.first)
+      if (curr_min_tandh >= curr_cost_vpair.first)
         return NO_BEST_CONFIGURATION;
 
       result = flip_n_to_m(c3t3, edge, curr_cost_vpair.second.first, inc_cells, visitor);
@@ -1194,6 +1197,10 @@ std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
       }
     }
   }
+
+  for(Cell_handle c : c3t3.triangulation().finite_cell_handles())
+    c->reset_cache_validity();
+
   return count;
 }
 

@@ -141,6 +141,97 @@ typename Tr::Geom_traits::FT min_dihedral_angle(const Tr& tr,
                             c->vertex(3));
 }
 
+template<typename Gt>
+typename Gt::FT tan_dihedral_angle(const typename Gt::Point_3& a,
+                                   const typename Gt::Point_3& b,
+                                   const typename Gt::Point_3& c,
+                                   const typename Gt::Point_3& d,
+                                   const Gt& gt)
+{
+  typename Gt::Construct_vector_3 vector = gt.construct_vector_3_object();
+  typename Gt::Construct_cross_product_vector_3 cross_product =
+    gt.construct_cross_product_vector_3_object();
+  typename Gt::Compute_squared_distance_3 sq_distance =
+    gt.compute_squared_distance_3_object();
+  typename Gt::Compute_scalar_product_3 scalar_product =
+    gt.compute_scalar_product_3_object();
+
+  typedef typename Gt::Vector_3 Vector_3;
+  typedef typename Gt::FT FT;
+
+  const Vector_3 ab = vector(a, b);
+  const Vector_3 ac = vector(a, c);
+  const Vector_3 ad = vector(a, d);
+
+  const Vector_3 abad = cross_product(ab, ad);
+  const double x = CGAL::to_double(scalar_product(cross_product(ab, ac), abad));
+  const double l_ab = CGAL::sqrt(CGAL::to_double(sq_distance(a, b)));
+  const double y = l_ab * CGAL::to_double(scalar_product(ac, abad));
+
+  return CGAL::abs(FT(y / x));
+  //dihedral angle in degree is : FT(std::atan2(y, x) * 180 / CGAL_PI );
+  //but we can compare only y/x since atan is monotonic
+}
+
+template<typename Point, typename Geom_traits>
+typename Geom_traits::FT min_tan_dihedral_angle(const Point& p,
+                                                const Point& q,
+                                                const Point& r,
+                                                const Point& s,
+                                                const Geom_traits& gt)
+{
+  typedef typename Geom_traits::FT FT;
+  FT a = tan_dihedral_angle(p, q, r, s, gt);
+  FT min_dh = a;
+
+  a = tan_dihedral_angle(p, r, q, s, gt);
+  min_dh = (std::min)(a, min_dh);
+
+  a = tan_dihedral_angle(p, s, q, r, gt);
+  min_dh = (std::min)(a, min_dh);
+
+  a = tan_dihedral_angle(q, r, p, s, gt);
+  min_dh = (std::min)(a, min_dh);
+
+  a = tan_dihedral_angle(q, s, p, r, gt);
+  min_dh = (std::min)(a, min_dh);
+
+  a = tan_dihedral_angle(r, s, p, q, gt);
+  min_dh = (std::min)(a, min_dh);
+
+  return min_dh;
+}
+
+template<typename Tr>
+typename Tr::Geom_traits::FT min_tan_dihedral_angle(const Tr& tr,
+                                                    const typename Tr::Vertex_handle v0,
+                                                    const typename Tr::Vertex_handle v1,
+                                                    const typename Tr::Vertex_handle v2,
+                                                    const typename Tr::Vertex_handle v3)
+{
+  return min_tan_dihedral_angle(point(v0->point()),
+                                point(v1->point()),
+                                point(v2->point()),
+                                point(v3->point()),
+                                tr.geom_traits());
+}
+
+template<typename Tr>
+typename Tr::Geom_traits::FT min_tan_dihedral_angle(const Tr& tr,
+                                                    const typename Tr::Cell_handle c)
+{
+  if (c->is_cache_valid())
+    return c->sliver_value();
+
+  typename Tr::Geom_traits::FT tan_dh = min_tan_dihedral_angle(tr,
+                                                               c->vertex(0),
+                                                               c->vertex(1),
+                                                               c->vertex(2),
+                                                               c->vertex(3));
+  c->set_sliver_value(tan_dh);
+  return tan_dh;
+}
+
 template<typename C3t3>
 bool is_peelable(const C3t3& c3t3,
                  const typename C3t3::Cell_handle ch,
