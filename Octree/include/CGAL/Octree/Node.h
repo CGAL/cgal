@@ -23,7 +23,6 @@
 
 namespace CGAL {
 namespace Octree {
-namespace Node {
 
 /*!
  * \ingroup PkgOctreeClasses
@@ -338,7 +337,6 @@ public:
 
   /// @}
 };
-}
 
 }
 }

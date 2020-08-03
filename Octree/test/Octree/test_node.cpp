@@ -4,7 +4,7 @@
 #include <iostream>
 #include <cassert>
 
-typedef CGAL::Octree::Node::Node<std::vector<int>::iterator> Node;
+typedef CGAL::Octree::Node<std::vector<int>::iterator> Node;
 
 int main(void) {
 

@@ -93,7 +93,7 @@ public:
   /*!
    * \brief The Sub-tree / Octant type
    */
-  typedef Node::Node<typename PointRange::iterator> Node;
+  typedef CGAL::Octree::Node<typename PointRange::iterator> Node;
 
   /*!
    * \brief A function that determines whether a node needs to be split when refining a tree

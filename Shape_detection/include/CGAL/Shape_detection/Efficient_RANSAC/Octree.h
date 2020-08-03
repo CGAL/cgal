@@ -457,6 +457,7 @@ private:
 template<class Sdt>
 class Indexed_octree {
 
+
   typedef Sdt Sd_traits;
   typedef typename Sd_traits::Input_range::iterator Input_iterator;
   typedef typename Sd_traits::Point_3 Point_3;
