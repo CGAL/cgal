@@ -141,7 +141,7 @@ void test2(){
   typedef typename K1::Construct_max_vertex_d CMV;
   typedef typename K1::Compute_squared_radius_d SR;
   typedef typename K1::Translated_point_d TP;
-  typedef typename K1::Power_center_d PC;
+  typedef typename K1::Construct_power_center_d PC;
   typedef typename K1::Compute_power_product_d PoD;
   typedef typename K1::Construct_weighted_point_d CWP;
   typedef typename K1::Power_side_of_bounded_power_sphere_d PSBPS;
@@ -210,7 +210,7 @@ void test2(){
   CMV cMv Kinit(construct_max_vertex_d_object);
   SR sr Kinit(compute_squared_radius_d_object);
   TP tp Kinit(translated_point_d_object);
-  PC pc Kinit(power_center_d_object);
+  PC pc Kinit(construct_power_center_d_object);
   CWP cwp Kinit(construct_weighted_point_d_object);
   //PDW pdw Kinit(point_drop_weight_d_object);
   PDW const& pdw = cp;
