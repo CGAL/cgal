@@ -344,10 +344,6 @@ public:
     return m_beyond - m_first + 1;
   }
 
-  Input_iterator first() {
-    return m_first;
-  }
-
   Input_iterator beyond() {
     return m_beyond;
   }
