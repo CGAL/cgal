@@ -91,6 +91,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
 
         if(item->load_binary(in)) {
           if(add_to_scene)
+            item->resetCutPlane();
             CGAL::Three::Three::scene()->addItem(item);
           return QList<Scene_item*>() << item;
         }
@@ -98,9 +99,9 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
         item->c3t3().clear();
         in.seekg(0);
         if(try_load_other_binary_format(in, item->c3t3())) {
+          item->resetCutPlane();
           item->c3t3_changed();
           item->changed();
-          item->resetCutPlane();
           if(add_to_scene)
             CGAL::Three::Three::scene()->addItem(item);
           return QList<Scene_item*>()<< item;
@@ -109,9 +110,9 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
         item->c3t3().clear();
         in.seekg(0);
         if(try_load_a_cdt_3(in, item->c3t3())) {
+          item->resetCutPlane();
           item->c3t3_changed();
           item->changed();
-          item->resetCutPlane();
           if(add_to_scene)
             CGAL::Three::Three::scene()->addItem(item);
           return QList<Scene_item*>()<<item;
@@ -169,8 +170,8 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
           }
         }
 
-        item->c3t3_changed();
         item->resetCutPlane();
+        item->c3t3_changed();
         if(add_to_scene)
           CGAL::Three::Three::scene()->addItem(item);
         return QList<Scene_item*>()<<item;

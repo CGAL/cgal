@@ -32,11 +32,11 @@ using namespace CGAL::Three;
 public:
   typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
 
-  Scene_triangulation_3_item();
-  Scene_triangulation_3_item(const T3 t3);
+  Scene_triangulation_3_item(bool display_elements = false);
+  Scene_triangulation_3_item(const T3 t3, bool display_elements = false);
   ~Scene_triangulation_3_item();
 
-  void common_constructor();
+  void common_constructor(bool);
   bool has_stats()const  Q_DECL_OVERRIDE {return true;}
   QString computeStats(int type)  Q_DECL_OVERRIDE;
   CGAL::Three::Scene_item::Header_data header() const Q_DECL_OVERRIDE;
@@ -58,6 +58,8 @@ public:
   bool manipulatable() const  Q_DECL_OVERRIDE{
     return true;
   }
+
+  Scene_item::Bbox bbox() const Q_DECL_OVERRIDE;
 
   bool has_spheres() const;
   bool has_grid() const;
@@ -84,14 +86,10 @@ public:
 
 
   void compute_bbox() const Q_DECL_OVERRIDE;
-  Scene_item::Bbox bbox() const Q_DECL_OVERRIDE
-  {
-      return Scene_item::bbox();
-  }
 
   Scene_triangulation_3_item* clone() const  Q_DECL_OVERRIDE;
 
-  bool load_binary(std::istream& is);
+  virtual bool load_binary(std::istream& is);
 
   // data item
   const Scene_item* data_item() const;
@@ -126,6 +124,7 @@ public:
   void reset_intersection_item();
   void show_intersection(bool b);
   void show_grid(bool b);
+  void show_spheres(bool b);
 
   virtual QPixmap graphicalToolTip() const Q_DECL_OVERRIDE;
 
@@ -158,8 +157,9 @@ public:
 
     virtual bool do_take_cell(const T3::Cell_handle&) const { return true; }
     virtual bool do_take_facet(const T3::Facet&)const { return true; }
-    virtual bool do_take_vertex(const T3::Vertex&)const { return true; }
+    virtual bool do_take_vertex(const T3::Vertex_handle&)const { return true; }
     virtual bool is_facet_oriented(const T3::Facet&)const { return true; }
+    virtual bool is_surface() const { return false; }
 };
 
 #endif // SCENE_TRIANGULATION_3_ITEM_H

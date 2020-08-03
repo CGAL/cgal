@@ -39,6 +39,8 @@ using namespace CGAL::Three;
     const C3t3& c3t3() const;
     C3t3& c3t3();
 
+    void c3t3_changed();
+
     const T3& triangulation() const override;
     T3& triangulation() override;
 
@@ -46,36 +48,49 @@ using namespace CGAL::Three;
   {
     return CGAL::IO::save_binary_file(os, c3t3());
   }
+
   bool save_ascii(std::ostream& os) const
   {
       os << "ascii CGAL c3t3 " << CGAL::Get_io_signature<C3t3>()() << "\n";
       CGAL::IO::set_ascii_mode(os);
       return !!(os << c3t3());
     }
+    bool load_binary(std::istream& is) override;
 
     bool is_valid() const;//true if the c3t3 is correct, false if it was made from a .mesh, for example
-    void set_valid(bool b);
+    void set_valid(bool);
     QMenu* contextMenu() override;
 
-  public:
-    std::size_t number_of_patches() const;
+    void drawEdges(Viewer_interface *viewer) const override;
+
+    //stats
+    QString computeStats(int type)  override;
+    CGAL::Three::Scene_item::Header_data header() const override;
   public Q_SLOTS:
+    void show_cnc(bool);
+    void export_facets_in_complex();
+    void initializeBuffers(Viewer_interface *) const override;
+    void computeElements() const override;
+    void set_sharp_edges_angle(double d);
+    double get_sharp_edges_angle();
 
-  void show_spheres(bool b);
+    void set_detect_borders(bool b);
+    bool get_detect_borders();
 
-  void set_sharp_edges_angle(double d);
-  double get_sharp_edges_angle();
-
-  void set_detect_borders(bool b);
-  bool get_detect_borders();
   protected:
     friend struct Scene_c3t3_item_priv;
     mutable Scene_c3t3_item_priv* d;
 
+    enum Edge_Containers{
+      CNC = 2
+    };
     bool do_take_cell(const T3::Cell_handle&) const override;
     bool do_take_facet(const T3::Facet&)const override;
-    bool do_take_vertex(const T3::Vertex&)const override;
+    bool do_take_vertex(const T3::Vertex_handle &)const override;
     bool is_facet_oriented(const T3::Facet&)const override;
+    bool is_surface()const override;
+    void common_constructor(bool is_surface);
+
   };
 
 #endif // SCENE_C3T3_ITEM_H

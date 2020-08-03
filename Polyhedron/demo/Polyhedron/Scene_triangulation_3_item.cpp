@@ -1,7 +1,7 @@
 #include "config.h"
-#include "Scene_spheres_item.h"
 #include "Scene_triangulation_3_item.h"
 #include "Scene_surface_mesh_item.h"
+#include "Scene_spheres_item.h"
 
 #include <QVector>
 #include <QColor>
@@ -253,11 +253,11 @@ public :
         setAlpha(alphaSlider->value());
         redraw();
       });
-
       container->addAction(sliderAction);
       menu->addMenu(container);
       setProperty("menu_changed", true);
       menu->setProperty(prop_name, true);
+
     }
     return menu;
   }
@@ -445,9 +445,7 @@ struct Scene_triangulation_3_item_priv {
 
   mutable std::size_t positions_poly_size;
   mutable std::size_t positions_lines_size;
-  mutable std::size_t positions_lines_not_in_complex_size;
   mutable std::vector<float> positions_lines;
-  mutable std::vector<float> positions_lines_not_in_complex;
   mutable std::vector<float> positions_grid;
   mutable std::vector<float> positions_poly;
   mutable std::vector<float> positions_barycenter;
@@ -515,17 +513,16 @@ struct Set_show_tetrahedra {
   }
 };
 
-void Scene_triangulation_3_item::common_constructor()
+void Scene_triangulation_3_item::common_constructor(bool display_elements)
 {
   d->frame = new CGAL::qglviewer::ManipulatedFrame();
-  compute_bbox();
   connect(d->frame, SIGNAL(modified()), this, SLOT(changed()));
   triangulation_changed();
   setRenderingMode(FlatPlusEdges);
   create_flat_and_wire_sphere(1.0f,d->s_vertex,d->s_normals, d->ws_vertex);
 
-  d->is_grid_shown = true;
-  d->show_tetrahedra = true;
+  d->is_grid_shown = display_elements;
+  d->show_tetrahedra = display_elements;
   d->last_intersection = !d->show_tetrahedra;
 
   setTriangleContainer(T3_faces, new Tc(Vi::PROGRAM_C3T3, false));
@@ -537,18 +534,18 @@ void Scene_triangulation_3_item::common_constructor()
     v->installEventFilter(this);
   }
 }
-Scene_triangulation_3_item::Scene_triangulation_3_item()
+Scene_triangulation_3_item::Scene_triangulation_3_item(bool display_elements)
   : Scene_group_item("unnamed")
   , d(new Scene_triangulation_3_item_priv(this))
 {
-  common_constructor();
+  common_constructor(display_elements);
 }
 
-Scene_triangulation_3_item::Scene_triangulation_3_item(const T3 triangulation)
+Scene_triangulation_3_item::Scene_triangulation_3_item(const T3 triangulation, bool display_elements)
   : Scene_group_item("unnamed")
   , d(new Scene_triangulation_3_item_priv(triangulation, this))
 {
-  common_constructor();
+  common_constructor(display_elements);
   d->reset_cut_plane();
   triangulation_changed();
   changed();
@@ -884,7 +881,7 @@ void Scene_triangulation_3_item::compute_bbox() const {
            end = triangulation().finite_vertices_end();
          vit != end; ++vit)
     {
-      if(!do_take_vertex(*vit)) continue;
+      //if(!do_take_vertex(vit)) continue;
       if (bbox_init)
         result = result + vit->point().bbox();
       else
@@ -937,7 +934,7 @@ void Scene_triangulation_3_item::draw(CGAL::Three::Viewer_interface* viewer) con
     // positions_poly_size is the number of total facets in the C3T3
     // it is only computed once and positions_poly is emptied at the end
     getTriangleContainer(T3_faces)->setAlpha(alpha());
-    getTriangleContainer(T3_faces)->setIsSurface(false);
+    getTriangleContainer(T3_faces)->setIsSurface(is_surface());
     getTriangleContainer(T3_faces)->draw(viewer, false);
     if(d->show_tetrahedra){
       ncthis->show_intersection(true);
@@ -1009,7 +1006,7 @@ void Scene_triangulation_3_item::drawEdges(CGAL::Three::Viewer_interface* viewer
 
     QVector4D cp = cgal_plane_to_vector4d(this->plane());
     getEdgeContainer(T3_edges)->setPlane(cp);
-    getEdgeContainer(T3_edges)->setIsSurface(false);
+    getEdgeContainer(T3_edges)->setIsSurface(is_surface());
     getEdgeContainer(T3_edges)->setColor(QColor(Qt::black));
     getEdgeContainer(T3_edges)->draw(viewer, true);
 
@@ -1127,6 +1124,27 @@ QMenu* Scene_triangulation_3_item::contextMenu()
     connect(actionShowGrid, SIGNAL(toggled(bool)),
             this, SLOT(show_grid(bool)));
 
+    bool should_show_spheres = false;
+    for(Tr::Finite_vertices_iterator
+        vit = triangulation().finite_vertices_begin(),
+        end =  triangulation().finite_vertices_end();
+        vit != end; ++vit)
+    {
+      if(vit->point().weight()!=0)
+      {
+        should_show_spheres = true;
+        break;
+      }
+    }
+    if(should_show_spheres)
+    {
+      QAction* actionShowSpheres =
+          menu->addAction(tr("Show protecting &spheres"));
+      actionShowSpheres->setCheckable(true);
+      actionShowSpheres->setObjectName("actionShowSpheres");
+      connect(actionShowSpheres, SIGNAL(toggled(bool)),
+              this, SLOT(show_spheres(bool)));
+    }
 
     menu->setProperty(prop_name, true);
   }
@@ -1299,7 +1317,6 @@ void Scene_triangulation_3_item_priv::computeElements()
   normals.clear();
   f_colors.clear();
   positions_lines.clear();
-  positions_lines_not_in_complex.clear();
   s_colors.resize(0);
   s_center.resize(0);
   s_radius.resize(0);
@@ -1366,10 +1383,9 @@ void Scene_triangulation_3_item_priv::computeElements()
 
 bool Scene_triangulation_3_item::load_binary(std::istream& is)
 {
-  if(!CGAL::Mesh_3::load_binary_file(is, triangulation())) return false;
-  if(is && d->frame == 0) {
-    d->frame = new CGAL::qglviewer::ManipulatedFrame();
-  }
+  is >> triangulation();
+  if(!is)
+    return false;
   d->reset_cut_plane();
   if(is.good()) {
     triangulation_changed();
@@ -1381,7 +1397,10 @@ bool Scene_triangulation_3_item::load_binary(std::istream& is)
 }
 
 void
-Scene_triangulation_3_item_priv::reset_cut_plane() {
+Scene_triangulation_3_item_priv::reset_cut_plane()
+{
+  if(frame == 0)
+    frame = new CGAL::qglviewer::ManipulatedFrame();
   const CGAL::Three::Scene_item::Bbox& bbox = item->bbox();
   const float xcenter = static_cast<float>((bbox.xmax()+bbox.xmin())/2.);
   const float ycenter = static_cast<float>((bbox.ymax()+bbox.ymin())/2.);
@@ -1477,7 +1496,9 @@ void Scene_triangulation_3_item::setPosition(float x, float y, float z) {
   d->frame->setPosition(x+offset.x, y+offset.y, z+offset.z);
 }
 
-bool Scene_triangulation_3_item::has_spheres()const { return d->spheres_are_shown;}
+bool Scene_triangulation_3_item::has_spheres()const {
+  return d->spheres_are_shown;
+}
 
 bool Scene_triangulation_3_item::has_grid()const { return d->is_grid_shown;}
 
@@ -1497,9 +1518,7 @@ void Scene_triangulation_3_item::copyProperties(Scene_item *item)
                                       t3_item->manipulatedFrame()->orientation());
 
   show_intersection(t3_item->has_tets());
-
-  //todo : move that in c3t3_item
-  //show_spheres(t3_item->has_spheres());
+  show_spheres(t3_item->has_spheres());
 
   show_grid(t3_item->has_grid());
   int value = t3_item->alphaSlider()->value();
@@ -1542,6 +1561,7 @@ QString Scene_triangulation_3_item::computeStats(int type)
 
   if(!d->computed_stats)
   {
+    d->nb_tets = 0;
     double nb_edges = 0;
     double total_edges = 0;
     double nb_angle = 0;
@@ -1589,6 +1609,8 @@ QString Scene_triangulation_3_item::computeStats(int type)
       cit != triangulation().finite_cells_end();
       ++cit)
     {
+      if(!do_take_cell(cit))
+         continue;
       if(!sub_ids.contains(cit->subdomain_index()))
       {
         sub_ids.push_back(cit->subdomain_index());
@@ -1660,11 +1682,19 @@ QString Scene_triangulation_3_item::computeStats(int type)
       update_min_max_dihedral_angle(a);
       total_angle+=a;
       ++nb_angle;
+      ++d->nb_tets;
+    }
+    d->nb_vertices = 0;
+    for(T3::Finite_vertices_iterator vit = triangulation().finite_vertices_begin();
+        vit != triangulation().finite_vertices_end();
+        ++vit)
+    {
+      if(!do_take_vertex(vit))
+        continue;
+      ++d->nb_vertices;
     }
     d->mean_dihedral_angle = static_cast<float>(total_angle/nb_angle);
     d->nb_subdomains = sub_ids.size();
-    d->nb_vertices = triangulation().number_of_vertices();
-    d->nb_tets = triangulation().number_of_cells();
     d->computed_stats = true;
   }
 
@@ -1705,7 +1735,7 @@ CGAL::Three::Scene_item::Header_data Scene_triangulation_3_item::header() const
 {
   CGAL::Three::Scene_item::Header_data data;
   //categories
-  data.categories.append(std::pair<QString,int>(QString("Properties"),14));
+  data.categories.append(std::pair<QString,int>(QString("Properties"),13));
 
 
   //titles
@@ -1716,7 +1746,6 @@ CGAL::Three::Scene_item::Header_data Scene_triangulation_3_item::header() const
   data.titles.append(QString("Max Dihedral Angle"));
   data.titles.append(QString("Mean Dihedral Angle"));
   data.titles.append(QString("#Protecting Spheres"));
-  data.titles.append(QString("#Cells not in Complex"));
   data.titles.append(QString("#Vertices in Complex"));
   data.titles.append(QString("#Cells"));
   data.titles.append(QString("Smallest Radius-Radius Ratio"));
@@ -1746,7 +1775,7 @@ void Scene_triangulation_3_item::resetCutPlane()
 {
   if(!d)
     return;
- d->reset_cut_plane();
+  d->reset_cut_plane();
 }
 
 void Scene_triangulation_3_item::itemAboutToBeDestroyed(Scene_item *item)
@@ -1809,6 +1838,8 @@ void Scene_triangulation_3_item::initializeBuffers(Viewer_interface *v) const
 void Scene_triangulation_3_item::computeElements()const
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
+  compute_bbox();
+
   const_cast<Scene_triangulation_3_item*>(this)->d->computeElements();
 
   getTriangleContainer(T3_faces)->allocate(
@@ -1845,7 +1876,6 @@ void Scene_triangulation_3_item::computeElements()const
         static_cast<int>(d->positions_grid.size()*sizeof(float)));
 
   setBuffersFilled(true);
-  compute_bbox();
   d->reset_cut_plane();
   QApplication::restoreOverrideCursor();
 }
@@ -1866,5 +1896,46 @@ Scene_triangulation_3_item* Scene_triangulation_3_item::clone() const
   return new Scene_triangulation_3_item(d->triangulation);
 }
 
+void Scene_triangulation_3_item::show_spheres(bool b)
+{
+  d->spheres_are_shown = b;
+  contextMenu()->findChild<QAction*>("actionShowSpheres")->setChecked(b);
+  if(b && !d->spheres)
+  {
+    d->spheres = new Scene_spheres_item(this, triangulation().number_of_vertices(), true);
+    connect(d->spheres, &Scene_spheres_item::picked,
+            this, [this](std::size_t id)
+    {
+      if(id == (std::size_t)(-1))
+        return;
+      QString msg = QString("Vertex's index : %1; Vertex's in dimension: %2.").arg(d->tr_vertices[id].index()).arg(d->tr_vertices[id].in_dimension());
+      CGAL::Three::Three::information(msg);
+      CGAL::Three::Three::mainViewer()->displayMessage(msg, 5000);
+
+    });
+    d->spheres->setName("Protecting spheres");
+    d->spheres->setRenderingMode(Gouraud);
+    connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
+    connect(d->spheres, SIGNAL(on_color_changed()), this, SLOT(on_spheres_color_changed()));
+    d->computeSpheres();
+    lockChild(d->spheres);
+    scene->addItem(d->spheres);
+    scene->changeGroup(d->spheres, this);
+  }
+  else if (!b && d->spheres!=NULL)
+  {
+    unlockChild(d->spheres);
+    scene->erase(scene->item_id(d->spheres));
+  }
+  Q_EMIT redraw();
+}
+
+Scene_item::Bbox Scene_triangulation_3_item::bbox() const
+{
+  if(!is_bbox_computed)
+    compute_bbox();
+  is_bbox_computed = true;
+  return _bbox;
+}
 #include "Scene_triangulation_3_item.moc"
 

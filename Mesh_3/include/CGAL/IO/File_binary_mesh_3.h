@@ -71,6 +71,7 @@ bool load_binary_file(std::istream& is, C3T3& c3t3)
       return false;
     }
   }
+
   if(binary) CGAL::IO::set_binary_mode(is);
   is >> c3t3;
   return !!is;
