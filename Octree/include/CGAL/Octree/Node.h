@@ -44,7 +44,7 @@ public:
   /*!
    * \brief array for containing the child nodes of this node
    */
-  typedef std::array<Node<Point_index>, 8> Child_list;
+  typedef std::array<Node<Point_index>, 8> Children;
 
   /*!
    * \brief set of bits representing this node's relationship to its parent
@@ -83,7 +83,7 @@ private:
 
   Int_location m_location;
 
-  std::unique_ptr<Child_list> m_children;
+  std::unique_ptr<Children> m_children;
 
 public:
 
@@ -134,7 +134,7 @@ public:
 
     assert(is_leaf());
 
-    m_children = std::make_unique<Child_list>();
+    m_children = std::make_unique<Children>();
     for (int index = 0; index < 8; index++) {
 
       (*m_children)[index] = std::move(Node<Point_index>(this, {Index(index)}));
