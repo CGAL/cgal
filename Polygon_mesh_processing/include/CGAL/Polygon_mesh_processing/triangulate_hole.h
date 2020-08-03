@@ -496,7 +496,7 @@ bool use_dt3 =
 
   /*!
   \ingroup  hole_filling_grp
-  Same as above but the range of third points is omitted. They are not
+  same as above but the range of third points is omitted. They are not
   taken into account in the cost computation that leads the hole filling.
 */
   template <typename PointRange,

@@ -59,23 +59,26 @@ void test_triangulate_hole_with_cdt_2(
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor Halfedge_handle;
 
   // Reading the file.
-  if (verbose)
+  if (verbose) {
     std::cout << "test with the " << kernel_name << " kernel:" << std::endl;
+  }
   PolygonMesh pmesh;
   std::string path = "data/" + file_name + ".off";
   std::ifstream in(path.c_str(), std::ios_base::in);
   CGAL::set_ascii_mode(in);
   CGAL::read_off(in, pmesh);
   in.close();
-  if (verbose)
+  if (verbose) {
     std::cout << "* finished reading the file" << std::endl;
+  }
 
   // Detecting the hole borders.
   std::vector<Halfedge_handle> borders;
   detect_borders(pmesh, borders);
-  if (verbose)
+  if (verbose) {
     std::cout << "* number of detected borders: " <<
       borders.size() << std::endl;
+  }
   assert(borders.size() == num_borders);
 
   // Triangulating the holes.
@@ -91,14 +94,15 @@ void test_triangulate_hole_with_cdt_2(
         use_2d_constrained_delaunay_triangulation(true).
         geom_traits(GeomTraits()));
 
-    if (verbose)
+    if (verbose) {
       std::cout << "* number of faces in the constructed patch: " <<
         patch_faces.size() << std::endl;
+    }
     assert(patch_faces.size() == num_patch_faces);
   }
   assert(pmesh.is_valid() && is_closed(pmesh));
   assert(CGAL::Polygon_mesh_processing::is_outward_oriented(pmesh,
-  CGAL::parameters::all_default()));
+    CGAL::parameters::all_default()));
 
   // Writing the file.
   if (verbose) {
