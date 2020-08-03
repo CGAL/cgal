@@ -26,8 +26,7 @@
 
 #include <CGAL/Object.h>
 #include <CGAL/No_intersection_surface_sweep_2.h>
-#include <CGAL/Surface_sweep_2/Curve_pair.h>
-#include <boost/unordered_set.hpp>
+#include <CGAL/Surface_sweep_2/Random_access_output_iterator.h>
 #include <CGAL/algorithm.h>
 
 namespace CGAL {
@@ -102,7 +101,7 @@ public:
   typedef typename Base::Status_line_iterator           Status_line_iterator;
 
   typedef std::vector<Object>                           Object_vector;
-  typedef random_access_input_iterator<Object_vector>   vector_inserter;
+  typedef Random_access_output_iterator<Object_vector>  vector_inserter;
 
   typedef typename Base::Subcurve_alloc                 Subcurve_alloc;
 protected:

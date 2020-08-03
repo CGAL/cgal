@@ -12,6 +12,9 @@
 #ifndef CGAL_SMALL_UNORDERED_SET_H
 #define CGAL_SMALL_UNORDERED_SET_H
 
+#include <array>
+#include <unordered_set>
+
 namespace CGAL
 {
 
