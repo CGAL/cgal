@@ -562,7 +562,7 @@ checks if the %IO stream `s` is in `IO::ASCII` mode.
 \sa `CGAL::is_binary()`
 \sa `CGAL::is_pretty()`
 */
-inline bool is_ascii(std::ios& i) { return i.iword(IO::Static::get_mode()) == IO::BINARY; }
+inline bool is_ascii(std::ios& i) { return i.iword(IO::Static::get_mode()) == IO::ASCII; }
 
 /*!
 \ingroup PkgStreamSupportRef
