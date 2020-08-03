@@ -11,6 +11,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+#include <CGAL/Polygon_mesh_processing/orientation.h>
 
 template<
 class PolygonMesh,
@@ -96,6 +97,8 @@ void test_triangulate_hole_with_cdt_2(
     assert(patch_faces.size() == num_patch_faces);
   }
   assert(pmesh.is_valid() && is_closed(pmesh));
+  assert(CGAL::Polygon_mesh_processing::is_outward_oriented(pmesh,
+  CGAL::parameters::all_default()));
 
   // Writing the file.
   if (verbose) {
@@ -124,7 +127,7 @@ int main(int argc, char **argv) {
   test_triangulate_hole_with_cdt_2<Polyhedron_3_EE, EE>(
     "exact_exact", argc, argv, "w_horizontal_hole", 2, 25, false);
   std::cout <<
-    "test_triangulate_hole_with_cdt_2: horizontal hole SUCCESS" << std::endl;
+    "test_triangulate_hole_with_cdt_2: horizontal planar hole SUCCESS" << std::endl;
 
   // Checking on a data file with two planar, simple, and orthogonal holes.
   test_triangulate_hole_with_cdt_2<Surface_mesh_EI, EI>(
@@ -132,23 +135,39 @@ int main(int argc, char **argv) {
   test_triangulate_hole_with_cdt_2<Polyhedron_3_EE, EE>(
     "exact_exact", argc, argv, "w_orthogonal_hole", 2, 2, false);
   std::cout <<
-    "test_triangulate_hole_with_cdt_2: orthogonal hole SUCCESS" << std::endl;
+    "test_triangulate_hole_with_cdt_2: orthogonal planar hole SUCCESS" << std::endl;
+
+  // Checking on a data file with two planar, simple, and horizontal holes.
+  test_triangulate_hole_with_cdt_2<Surface_mesh_EI, EI>(
+    "exact_inexact", argc, argv, "elephant_flat_hole", 1, 17, false);
+  test_triangulate_hole_with_cdt_2<Polyhedron_3_EE, EE>(
+    "exact_exact", argc, argv, "elephant_flat_hole", 1, 17, false);
+  std::cout <<
+    "test_triangulate_hole_with_cdt_2: near flat hole SUCCESS" << std::endl;
+
+  // Checking on a data file with two planar, simple, and horizontal holes.
+  test_triangulate_hole_with_cdt_2<Surface_mesh_EI, EI>(
+    "exact_inexact", argc, argv, "elephant_concave_hole", 1, 24, false);
+  test_triangulate_hole_with_cdt_2<Polyhedron_3_EE, EE>(
+    "exact_exact", argc, argv, "elephant_concave_hole", 1, 24, false);
+  std::cout <<
+    "test_triangulate_hole_with_cdt_2: concave hole SUCCESS" << std::endl;
 
   // Checking on a data file with one simple but not a planar hole.
   test_triangulate_hole_with_cdt_2<Surface_mesh_EI, EI>(
-    "exact_inexact", argc, argv, "elephant_simple_hole", 1, 19, false);
+    "exact_inexact", argc, argv, "elephant_curved_hole", 1, 19, false);
   test_triangulate_hole_with_cdt_2<Polyhedron_3_EE, EE>(
-    "exact_exact", argc, argv, "elephant_simple_hole", 1, 19, false);
+    "exact_exact", argc, argv, "elephant_curved_hole", 1, 19, false);
   std::cout <<
-    "test_triangulate_hole_with_cdt_2: simple hole SUCCESS" << std::endl;
+    "test_triangulate_hole_with_cdt_2: curved hole SUCCESS" << std::endl;
 
   // Checking on a data file with one hole that is neither simple nor planar.
   test_triangulate_hole_with_cdt_2<Surface_mesh_EI, EI>(
-    "exact_inexact", argc, argv, "elephant_nonsimple_hole", 1, 29, false);
+    "exact_inexact", argc, argv, "elephant_complex_hole", 1, 29, false);
   test_triangulate_hole_with_cdt_2<Polyhedron_3_EE, EE>(
-    "exact_exact", argc, argv, "elephant_nonsimple_hole", 1, 29, false);
+    "exact_exact", argc, argv, "elephant_complex_hole", 1, 29, false);
   std::cout <<
-    "test_triangulate_hole_with_cdt_2: non simple hole SUCCESS" << std::endl;
+    "test_triangulate_hole_with_cdt_2: complex hole SUCCESS" << std::endl;
 
   return EXIT_SUCCESS;
 }

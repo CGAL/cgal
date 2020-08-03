@@ -1210,16 +1210,87 @@ public:
  ************************************************************************/
 // /!\ points.first == points.last
 
+template <typename Traits>
+bool is_planar_2(
+  const std::vector<typename Traits::Point_3>& points,
+  const typename Traits::Vector_3& avg_normal,
+  const typename Traits::FT max_distance,
+  const Traits& traits) {
+
+  typedef typename Traits::FT FT;
+  typedef typename Traits::Point_3 Point_3;
+  typedef typename Traits::Plane_3 Plane_3;
+  typedef typename Traits::Compute_squared_distance_3 Squared_distance_3;
+
+  const Squared_distance_3 squared_distance_3 =
+    traits.compute_squared_distance_3_object();
+
+  const std::size_t n = points.size() - 1; // the first equals to the last
+  if (n < 3)
+    return false; // cant be a plane!
+
+  // Compute centroid.
+  FT cx = FT(0), cy = FT(0), cz = FT(0);
+  for (std::size_t i = 0; i < n; ++i) {
+    const Point_3& p = points[i];
+    cx += p.x();
+    cy += p.y();
+    cz += p.z();
+  }
+  cx /= static_cast<FT>(n);
+  cy /= static_cast<FT>(n);
+  cz /= static_cast<FT>(n);
+  const Point_3 centroid = Point_3(cx, cy, cz);
+
+  // Compute covariance matrix.
+  FT xx = FT(0), yy = FT(0), zz = FT(0);
+  FT xy = FT(0), xz = FT(0), yz = FT(0);
+  for (std::size_t i = 0; i < n; ++i) {
+    const Point_3& p = points[i];
+    const FT dx = p.x() - cx;
+    const FT dy = p.y() - cy;
+    const FT dz = p.z() - cz;
+    xx += dx * dx; yy += dy * dy; zz += dz * dz;
+    xy += dx * dy; xz += dx * dz; yz += dy * dz;
+  }
+
+  // Check the planarity.
+  const FT x = yy * zz - yz * yz;
+  const FT y = xx * zz - xz * xz;
+  const FT z = xx * yy - xy * xy;
+  FT maxv = -FT(1);
+  maxv = (CGAL::max)(maxv, x);
+  maxv = (CGAL::max)(maxv, y);
+  maxv = (CGAL::max)(maxv, z);
+  if (maxv <= FT(0))
+    return false; // a good plane does not exist for sure!
+
+  const Plane_3 plane = Plane_3(centroid, avg_normal);
+  FT avg_sq_distance = FT(0);
+  for (std::size_t i = 0; i < n; ++i) {
+    const Point_3& p = points[i];
+    const Point_3  q = plane.projection(p);
+    avg_sq_distance += squared_distance_3(p, q);
+  }
+  avg_sq_distance /= static_cast<FT>(n);
+  // std::cout << "avg squared distance: " << avg_sq_distance << std::endl;
+
+  const FT sq_tolerance = max_distance * max_distance;
+  if (avg_sq_distance > sq_tolerance)
+    return false; // the user distance criteria are not satisfied!
+
+  // std::cout << "The hole seems to be near planar." << std::endl;
+  return true;
+}
+
 template <
-  typename PointRange1, // need size()
-  typename PointRange2,
+  typename PointRange, // need size()
   typename Tracer,
   typename Validity_checker,
   typename Traits
 >
 bool
-triangulate_hole_polyline_with_cdt(const PointRange1& points,
-                                   const PointRange2& third_points,
+triangulate_hole_polyline_with_cdt(const PointRange& points,
                                    Tracer& tracer,
                                    const Validity_checker& is_valid,
                                    const Traits& traits)
@@ -1228,30 +1299,21 @@ triangulate_hole_polyline_with_cdt(const PointRange1& points,
   typedef typename Traits::Point_3 Point_3;
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::Collinear_3 Collinear_3;
-  typedef typename Traits::Compute_squared_length_3 Squared_length_3;
 
   // Compute an average normal of the hole.
-  const Squared_length_3 squared_length_3 =
-    traits.compute_squared_length_3_object();
   const Collinear_3 collinear_3 =
     traits.collinear_3_object();
 
   std::vector<Point_3> P(boost::begin(points), boost::end(points));
-  std::vector<Point_3> Q(boost::begin(third_points), boost::end(third_points));
-
-  if (P.front() != P.back()) {
+  CGAL_assertion(P.size() >= 3);
+  if (P.front() != P.back())
     P.push_back(P.front());
-    if (!Q.empty() && P.size() > Q.size()) {
-      Q.push_back(Q.front());
-    }
-  }
-  CGAL_assertion(P.size() == Q.size());
 
   FT x = FT(0), y = FT(0), z = FT(0);
   std::size_t num_normals = 0;
   const Point_3& ref_point = P[0];
   const std::size_t size = P.size() - 1;
-  for (std::size_t i = 1; i < size; ++i) {
+  for (std::size_t i = 1; i < size - 1; ++i) {
     const std::size_t ip = i + 1;
 
     const Point_3& p1 = ref_point; // 3 points, which form a triangle
@@ -1279,37 +1341,17 @@ triangulate_hole_polyline_with_cdt(const PointRange1& points,
   if (num_normals < 1)
     return false;
 
-  // Find non-collinear the hole boundary points in order
-  // to check the hole orientation.
-  std::vector<Point_3> pts;
-  pts.reserve(3);
-  pts.push_back(ref_point);
-  for (std::size_t i = 1; i < size; ++i) {
-    const std::size_t ip = i + 1;
-    const Point_3& p1 = ref_point;
-    const Point_3& p2 = P[i];
-    const Point_3& p3 = P[ip];
-    if (!collinear_3(p1, p2, p3)) {
-      pts.push_back(p2);
-      pts.push_back(p3);
-      break;
-    }
-  }
-
-  // Not sure about that!
-  if (CGAL::orientation(pts[0], pts[1], pts[2], Q[0]) != CGAL::NEGATIVE) {
-    // std::cout << "positive" << std::endl;
-  } else {
-    // std::cout << "negative" << std::endl;
-    x = -x; y = -y; z = -z;
-  }
-
   // Setting the final normal.
   x /= static_cast<FT>(num_normals);
   y /= static_cast<FT>(num_normals);
   z /= static_cast<FT>(num_normals);
   const Vector_3 avg_normal = Vector_3(x, y, z);
-  // std::cout << "avg: " << avg_normal << std::endl;
+  // std::cout << "avg normal: " << avg_normal << std::endl;
+
+  // Checking the hole planarity.
+  const FT max_distance = FT(2) / FT(100);
+  if (!is_planar_2(P, avg_normal, max_distance, traits))
+    return false;
 
   // Checking the hole simplicity.
   typedef Triangulation_2_projection_traits_3<Traits> P_traits;
@@ -1318,88 +1360,81 @@ triangulate_hole_polyline_with_cdt(const PointRange1& points,
      return false;
 
   Lookup_table_map<int> lambda(static_cast<int>(size), -1);
+
   // Create and fill the cdt_2.
   typedef CGAL::Triangulation_vertex_base_with_info_2<std::size_t, P_traits> Vb;
   typedef CGAL::Triangulation_face_base_with_info_2<bool, P_traits>          Fbi;
   typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fbi>         Fb;
-  typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                        TDS;
-  typedef CGAL::No_constraint_intersection_tag                               Itag; // If the polygon is simple, there should be no intersection.
+  typedef CGAL::Triangulation_data_structure_2<Vb, Fb>                       TDS;
+  // If the polygon is simple, there should be no intersection.
+  typedef CGAL::No_constraint_intersection_tag                               Itag;
   typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, TDS, Itag>    CDT;
   P_traits cdt_traits(avg_normal);
   CDT cdt(cdt_traits);
 
-  std::vector< std::pair<Point_3,std::size_t> > points_and_ids;
+  std::vector< std::pair<Point_3, std::size_t> > points_and_ids;
   points_and_ids.reserve(size);
-  std::vector<typename CDT::Vertex_handle> vertices(size);
   for (std::size_t i = 0; i < size; ++i)
-  {
-    points_and_ids.push_back(std::make_pair(P[i],i));
-  }
+    points_and_ids.push_back(std::make_pair(P[i], i));
+
+  std::vector<typename CDT::Vertex_handle> vertices(size);
   cdt.insert(points_and_ids.begin(), points_and_ids.end());
   for (typename CDT::Vertex_handle v : cdt.finite_vertex_handles())
-  {
     vertices[v->info()] = v;
+
+  for (std::size_t i = 0; i < size; ++i) {
+    const std::size_t ip = (i + 1) % size;
+    if (vertices[i] != vertices[ip])
+      cdt.insert_constraint(vertices[i], vertices[ip]);
   }
 
-  for (std::size_t i = 0; i < size; ++i)
-  {
-    cdt.insert_constraint(vertices[i], vertices[(i + 1) % (size)]);
-  }
-
-  // Sets mark is_external.
+  // Mark external faces.
   for (typename CDT::All_faces_iterator fit = cdt.all_faces_begin(),
-    end = cdt.all_faces_end(); fit != end; ++fit)
-  {
+  end = cdt.all_faces_end(); fit != end; ++fit)
     fit->info() = false;
-  }
+
   std::queue<typename CDT::Face_handle> face_queue;
   face_queue.push(cdt.infinite_vertex()->face());
-  while (!face_queue.empty())
-  {
+  while (!face_queue.empty()) {
+
     typename CDT::Face_handle fh = face_queue.front();
     face_queue.pop();
-
     if (fh->info())
       continue;
 
     fh->info() = true;
     for (std::size_t i = 0; i < 3; ++i)
-    {
       if (!cdt.is_constrained(typename CDT::Edge(fh, i)))
-      {
         face_queue.push(fh->neighbor(i));
-      }
-    }
   }
-  if (cdt.dimension() != 2 ||
-    cdt.number_of_vertices() != size)
-  {
+
+  if (cdt.dimension() != 2 || cdt.number_of_vertices() != size)
     return false;
-  }
 
   // Fill the lambda.
   for (typename CDT::Finite_faces_iterator fit = cdt.finite_faces_begin(),
-    end = cdt.finite_faces_end(); fit != end; ++fit)
-  {
-    if (!fit->info()) // if !is external
-    {
+  end = cdt.finite_faces_end(); fit != end; ++fit) {
+    if (!fit->info()) { // if it is not external
+
       std::vector<std::size_t> is(3);
       for (std::size_t i = 0; i < 3; ++i)
-      {
         is[i] = fit->vertex(i)->info();
-      }
+
       std::sort(is.begin(), is.end());
-      lambda.put(is[0],is[2], is[1]);
+      lambda.put(is[0], is[2], is[1]);
       if (!is_valid(P, is[0], is[1], is[2]))
         return false;
     }
   }
 
-  // Call the tracer.
+  // Call the tracer. It correctly orients the patch faces.
+  // std::cout << "CDT is being used!" << std::endl;
   tracer(lambda, 0, size - 1);
   return true;
 }
+
 #endif
+
 /*******************************************************************************
  * Internal entry point for both polyline and Polyhedron_3 triangulation functions
  ***********************************************************************************/
