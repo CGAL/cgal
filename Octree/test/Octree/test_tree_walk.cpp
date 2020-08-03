@@ -2,7 +2,7 @@
 
 #include <CGAL/Octree.h>
 #include <CGAL/Octree/IO.h>
-#include <CGAL/Octree/Walker_criterion.h>
+#include <CGAL/Octree/Traversal.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>
@@ -28,7 +28,7 @@ bool test_preorder_1_node() {
   octree.refine(10, 1);
 
   // Create the range
-  auto nodes = octree.walk<CGAL::Octree::Walker::Preorder>();
+  auto nodes = octree.walk<CGAL::Octree::Traversal::Preorder>();
 
   // Check each item in the range
   auto iter = nodes.begin();
@@ -50,7 +50,7 @@ bool test_preorder_9_nodes() {
   octree.refine(10, 1);
 
   // Create the range
-  auto nodes = octree.walk<CGAL::Octree::Walker::Preorder>();
+  auto nodes = octree.walk<CGAL::Octree::Traversal::Preorder>();
 
   // Check each item in the range
   auto iter = nodes.begin();
@@ -78,7 +78,7 @@ bool test_preorder_25_nodes() {
   octree.refine(10, 1);
 
   // Create the range
-  auto nodes = octree.walk<CGAL::Octree::Walker::Preorder>();
+  auto nodes = octree.walk<CGAL::Octree::Traversal::Preorder>();
 
   // Check each item in the range
   auto iter = nodes.begin();

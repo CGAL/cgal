@@ -16,8 +16,8 @@
 
 #include <CGAL/Octree/Node.h>
 #include <CGAL/Octree/Split_criterion.h>
-#include <CGAL/Octree/Walker_criterion.h>
-#include <CGAL/Octree/Walker_iterator.h>
+#include <CGAL/Octree/Traversal.h>
+#include <CGAL/Octree/Traversal_iterator.h>
 
 #include <CGAL/bounding_box.h>
 #include <CGAL/Aff_transformation_3.h>
@@ -103,7 +103,7 @@ public:
   /*!
    * \brief A range that provides input-iterator access to the nodes of a tree
    */
-  typedef boost::iterator_range<Walker_iterator<const Node>> Node_range;
+  typedef boost::iterator_range<Traversal_iterator<const Node>> Node_range;
 
   /*!
    * \brief A function that determines the next node in a traversal given the current one
@@ -291,20 +291,20 @@ public:
    * Dereferencing returns a const reference to a node.
    * \todo Perhaps I should add some discussion of recommended usage
    *
-   * \tparam Walker type of the walker rule
+   * \tparam Traversal type of the walker rule
    * \param walker the rule to use when determining the order of the sequence of points produced
    * \return a forward input iterator over the nodes of the tree
    */
-  template<class Walker>
-  Node_range walk(const Walker &walker = Walker()) const {
+  template<class Traversal>
+  Node_range walk(const Traversal &walker = Traversal()) const {
 
     const Node *first = walker.first(&m_root);
 
-    Node_walker next = std::bind(&Walker::template next<typename PointRange::iterator>,
+    Node_walker next = std::bind(&Traversal::template next<typename PointRange::iterator>,
                                  walker, _1);
 
-    return boost::make_iterator_range(Walker_iterator<const Node>(first, next),
-                                      Walker_iterator<const Node>());
+    return boost::make_iterator_range(Traversal_iterator<const Node>(first, next),
+                                      Traversal_iterator<const Node>());
   }
 
   /*!

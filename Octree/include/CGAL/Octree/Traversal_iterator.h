@@ -9,8 +9,8 @@
 //
 // Author(s)     : Jackson Campolattaro, Cédric Portaneri, Tong Zhao
 
-#ifndef CGAL_OCTREE_WALKER_ITERATOR_H
-#define CGAL_OCTREE_WALKER_ITERATOR_H
+#ifndef CGAL_OCTREE_TRAVERSAL_ITERATOR_H
+#define CGAL_OCTREE_TRAVERSAL_ITERATOR_H
 
 #include <CGAL/license/Octree.h>
 
@@ -32,8 +32,8 @@ namespace CGAL {
  * \tparam Value
  */
 template<class Value>
-class Walker_iterator :
-        public boost::iterator_facade<Walker_iterator<Value>, Value, boost::forward_traversal_tag> {
+class Traversal_iterator :
+        public boost::iterator_facade<Traversal_iterator<Value>, Value, boost::forward_traversal_tag> {
 
 public:
 
@@ -45,7 +45,7 @@ public:
    *
    * \todo
    */
-  typedef std::function<Value *(Value *)> Walker_function;
+  typedef std::function<Value *(Value *)> Traversal_function;
 
   /// @}
 
@@ -59,7 +59,7 @@ public:
    *
    * \todo
    */
-  Walker_iterator() : m_value(nullptr), m_next() {}
+  Traversal_iterator() : m_value(nullptr), m_next() {}
 
   /*!
    * \brief
@@ -69,14 +69,14 @@ public:
    * \param first
    * \param next
    */
-  Walker_iterator(Value *first, const Walker_function &next) : m_value(first), m_next(next) {}
+  Traversal_iterator(Value *first, const Traversal_function &next) : m_value(first), m_next(next) {}
 
   /// @}
 
 private:
   friend class boost::iterator_core_access;
 
-  bool equal(Walker_iterator<Value> const &other) const {
+  bool equal(Traversal_iterator<Value> const &other) const {
     return m_value == other.m_value;
   }
 
@@ -91,8 +91,8 @@ private:
 private:
 
   Value *m_value;
-  Walker_function m_next;
+  Traversal_function m_next;
 };
 }
 
-#endif //CGAL_OCTREE_WALKER_ITERATOR_H
+#endif //CGAL_OCTREE_TRAVERSAL_ITERATOR_H

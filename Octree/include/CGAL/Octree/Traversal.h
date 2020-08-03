@@ -9,15 +9,15 @@
 //
 // Author(s)     : Jackson Campolattaro, Cédric Portaneri, Tong Zhao
 
-#ifndef CGAL_OCTREE_WALKER_CRITERION_H
-#define CGAL_OCTREE_WALKER_CRITERION_H
+#ifndef CGAL_OCTREE_TRAVERSAL_CRITERION_H
+#define CGAL_OCTREE_TRAVERSAL_CRITERION_H
 
 #include <CGAL/license/Octree.h>
 
 #include <iostream>
 #include <boost/range/iterator_range.hpp>
 #include "Node.h"
-#include "Walker_iterator.h"
+#include "Traversal_iterator.h"
 
 namespace CGAL {
 
@@ -77,7 +77,7 @@ const Node <Point_index> *deepest_first_child(const Node <Point_index> *n) {
   return first;
 }
 
-namespace Walker {
+namespace Traversal {
 
 /*!
  * \brief walker for preorder traversal
@@ -206,4 +206,4 @@ struct Leaves {
 
 }
 
-#endif //CGAL_OCTREE_WALKER_CRITERION_H
+#endif //CGAL_OCTREE_TRAVERSAL_CRITERION_H

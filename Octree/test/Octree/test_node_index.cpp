@@ -2,7 +2,7 @@
 
 #include <CGAL/Octree.h>
 #include <CGAL/Octree/IO.h>
-#include <CGAL/Octree/Walker_criterion.h>
+#include <CGAL/Octree/Traversal.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>

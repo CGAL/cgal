@@ -15,7 +15,7 @@
 #include <CGAL/license/Octree.h>
 
 #include <CGAL/Octree.h>
-#include <CGAL/Octree/Walker_criterion.h>
+#include <CGAL/Octree/Traversal.h>
 
 #include <iostream>
 #include <ostream>
@@ -74,7 +74,7 @@ ostream &operator<<(ostream &os, const CGAL::Octree::Octree<PointRange, PointMap
 
   // Create a range of nodes
 //  auto nodes = octree.template walk<CGAL::Octree::Walker::Preorder>();
-  auto nodes = octree.walk(CGAL::Octree::Walker::Preorder());
+  auto nodes = octree.walk(CGAL::Octree::Traversal::Preorder());
 
   // Iterate over the range and print each node
 //  for (auto &n : nodes) {
