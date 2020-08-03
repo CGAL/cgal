@@ -44,7 +44,7 @@ struct Cell {
     memset(child, 0, sizeof(Cell *) * 8);
   }
 
-  bool isLeaf() const {
+  bool is_leaf() const {
     for (std::size_t i = 0; i < 8; i++) {
       if (child[i])
         return false;

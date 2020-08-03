@@ -1042,7 +1042,7 @@ private:
 
       // differ between full or partial overlap?
       // if full overlap further traversal of this branch is not necessary
-      if (cell->isLeaf()) {
+      if (cell->is_leaf()) {
         std::vector<std::size_t> indices;
         indices.reserve(cell->size());
         for (std::size_t i = 0; i < cell->size(); i++) {
