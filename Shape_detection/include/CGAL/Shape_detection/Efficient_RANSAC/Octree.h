@@ -756,10 +756,6 @@ public:
     return 0;
   }
 
-  Input_iterator first() {
-    return m_first;
-  }
-
   Input_iterator beyond() {
     return m_beyond;
   }
