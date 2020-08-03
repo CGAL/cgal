@@ -352,10 +352,6 @@ public:
     return m_beyond;
   }
 
-  void setData(Input_iterator &begin, Input_iterator &beyond) {
-    m_beyond = (beyond == begin) ? begin : beyond - 1;
-  }
-
   void swap(std::size_t a, std::size_t b) {
     typename std::iterator_traits<Input_iterator>::value_type tmp;
     tmp = m_first[a];
