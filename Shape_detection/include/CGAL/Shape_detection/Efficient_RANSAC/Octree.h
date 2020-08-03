@@ -32,6 +32,33 @@ namespace internal {
 
 const std::size_t size_t_max = (std::numeric_limits<std::size_t>::max)();
 
+template<class Point_3>
+struct Cell {
+  std::size_t first, last;
+  Cell *child[8];
+  Point_3 center;
+  std::size_t level;
+
+  Cell(std::size_t first, std::size_t last, Point_3 center, std::size_t level)
+          : first(first), last(last), center(center), level(level) {
+    memset(child, 0, sizeof(Cell *) * 8);
+  }
+
+  bool isLeaf() const {
+    for (std::size_t i = 0; i < 8; i++) {
+      if (child[i])
+        return false;
+    }
+    return true;
+  }
+
+  std::size_t size() const {
+    if (first == size_t_max || last == size_t_max)
+      return 0;
+    else return (last - first + 1);
+  }
+};
+
 template<class Sdt>
 class Direct_octree {
 
@@ -44,31 +71,7 @@ class Direct_octree {
 
 public:
 
-  struct Cell {
-    std::size_t first, last;
-    Cell *child[8];
-    Point_3 center;
-    std::size_t level;
-
-    Cell(std::size_t first, std::size_t last, Point_3 center, std::size_t level)
-            : first(first), last(last), center(center), level(level) {
-      memset(child, 0, sizeof(Cell *) * 8);
-    }
-
-    bool isLeaf() const {
-      for (std::size_t i = 0; i < 8; i++) {
-        if (child[i])
-          return false;
-      }
-      return true;
-    }
-
-    std::size_t size() const {
-      if (first == size_t_max || last == size_t_max)
-        return 0;
-      else return (last - first + 1);
-    }
-  };
+  typedef internal::Cell<Point_3> Cell;
 
 public:
 
@@ -455,31 +458,7 @@ class Indexed_octree {
 
 public:
 
-  struct Cell {
-    std::size_t first, last;
-    Cell *child[8];
-    Point_3 center;
-    std::size_t level;
-
-    Cell(std::size_t first, std::size_t last, Point_3 center, std::size_t level)
-            : first(first), last(last), center(center), level(level) {
-      memset(child, 0, sizeof(Cell *) * 8);
-    }
-
-    bool isLeaf() const {
-      for (std::size_t i = 0; i < 8; i++) {
-        if (child[i])
-          return false;
-      }
-      return true;
-    }
-
-    std::size_t size() const {
-      if (first == size_t_max || last == size_t_max)
-        return 0;
-      else return (last - first + 1);
-    }
-  };
+  typedef internal::Cell<Point_3> Cell;
 
 public:
 
