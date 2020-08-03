@@ -772,13 +772,6 @@ public:
     return m_beyond;
   }
 
-  void setData(Input_iterator &begin, Input_iterator &beyond) {
-    m_beyond = (beyond == begin) ? begin : beyond - 1;
-    m_indices.resize(size());
-    for (std::size_t i = 0; i < size(); i++)
-      m_indices[i] = i;
-  }
-
   std::size_t size() {
     return m_beyond - m_first + 1;
   }
