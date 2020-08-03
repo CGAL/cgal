@@ -344,10 +344,6 @@ public:
     return m_beyond - m_first + 1;
   }
 
-  Input_iterator beyond() {
-    return m_beyond;
-  }
-
   void swap(std::size_t a, std::size_t b) {
     typename std::iterator_traits<Input_iterator>::value_type tmp;
     tmp = m_first[a];
