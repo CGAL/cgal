@@ -101,13 +101,6 @@ public:
 
   typedef typename Base::Status_line_iterator           Status_line_iterator;
 
-  typedef CGAL::Surface_sweep_2::Curve_pair<Subcurve>   Curve_pair;
-  typedef boost::hash<Curve_pair>                       Curve_pair_hasher;
-  typedef CGAL::Surface_sweep_2::Equal_curve_pair<Subcurve>
-                                                        Equal_curve_pair;
-  typedef boost::unordered_set<Curve_pair, Curve_pair_hasher, Equal_curve_pair>
-                                                      Curve_pair_set;
-
   typedef std::vector<Object>                           Object_vector;
   typedef random_access_input_iterator<Object_vector>   vector_inserter;
 
@@ -117,9 +110,6 @@ protected:
   Subcurve_container m_overlap_subCurves;
                                      // Contains all of the new sub-curves
                                      // creaed by an overlap.
-
-  Curve_pair_set m_curves_pair_set;  // A lookup table of pairs of Subcurves
-                                     // that have been intersected.
 
   std::vector<Object> m_x_objects;   // Auxiliary vector for storing the
                                      // intersection objects.
@@ -131,7 +121,7 @@ public:
   /*! Constructor.
    * \param visitor A pointer to a sweep-line visitor object.
    */
-  Surface_sweep_2(Visitor* visitor) : Base(visitor), m_curves_pair_set(0) {}
+  Surface_sweep_2(Visitor* visitor) : Base(visitor) {}
 
   /*!
    * Construct.
@@ -139,8 +129,7 @@ public:
    * \param visitor A pointer to a sweep-line visitor object.
    */
   Surface_sweep_2(const Geometry_traits_2* traits, Visitor* visitor) :
-    Base(traits, visitor),
-    m_curves_pair_set(0)
+    Base(traits, visitor)
   {}
 
   /*! Destrcut. */
