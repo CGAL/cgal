@@ -756,10 +756,6 @@ public:
     return 0;
   }
 
-  Input_iterator beyond() {
-    return m_beyond;
-  }
-
   std::size_t size() {
     return m_beyond - m_first + 1;
   }
