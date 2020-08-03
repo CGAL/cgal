@@ -36,12 +36,12 @@ template<class Point_3>
 class Cell {
 
   std::size_t level;
+  Point_3 center;
 
 public:
 
   std::size_t first, last;
   Cell *child[8];
-  Point_3 center;
 
   Cell(std::size_t first, std::size_t last, Point_3 center, std::size_t level)
           : first(first), last(last), center(center), level(level) {
@@ -57,6 +57,8 @@ public:
   }
 
   std::size_t depth() const { return level; }
+
+  Point_3 barycenter() const { return center; }
 
   std::size_t size() const {
     if (first == size_t_max || last == size_t_max)
@@ -155,32 +157,32 @@ public:
       std::size_t zLowYHighXSplit, zLowYLowXSplit, zLowYSplit;
       std::size_t zHighYSplit, zHighYHighXSplit, zHighYLowXSplit;
 
-      std::size_t zSplit = split(cell->first, cell->last, 2, cell->center.z());
+      std::size_t zSplit = split(cell->first, cell->last, 2, cell->barycenter().z());
 
       if (zSplit != size_t_max) {
 
-        zLowYSplit = split(cell->first, zSplit, 1, cell->center.y());
+        zLowYSplit = split(cell->first, zSplit, 1, cell->barycenter().y());
         if (zLowYSplit != size_t_max) {
           zLowYLowXSplit = split(cell->first,
-                                 zLowYSplit, 0, cell->center.x());
+                                 zLowYSplit, 0, cell->barycenter().x());
           zLowYHighXSplit = split(zLowYSplit + 1,
-                                  zSplit, 0, cell->center.x());
+                                  zSplit, 0, cell->barycenter().x());
         } else {
           zLowYLowXSplit = size_t_max;
-          zLowYHighXSplit = split(cell->first, zSplit, 0, cell->center.x());
+          zLowYHighXSplit = split(cell->first, zSplit, 0, cell->barycenter().x());
         }
 
-        zHighYSplit = split(zSplit + 1, cell->last, 1, cell->center.y());
+        zHighYSplit = split(zSplit + 1, cell->last, 1, cell->barycenter().y());
 
         if (zHighYSplit != size_t_max) {
           zHighYHighXSplit = split(zHighYSplit + 1,
-                                   cell->last, 0, cell->center.x());
+                                   cell->last, 0, cell->barycenter().x());
           zHighYLowXSplit = split(zSplit + 1,
-                                  zHighYSplit, 0, cell->center.x());
+                                  zHighYSplit, 0, cell->barycenter().x());
         } else {
           zHighYLowXSplit = size_t_max;
           zHighYHighXSplit = split(zSplit + 1,
-                                   cell->last, 0, cell->center.x());
+                                   cell->last, 0, cell->barycenter().x());
         }
       } else {
         zLowYSplit = size_t_max;
@@ -190,24 +192,24 @@ public:
         zHighYSplit = split(cell->first,
                             cell->last,
                             1,
-                            cell->center.y());
+                            cell->barycenter().y());
 
         if (zHighYSplit != size_t_max) {
           zHighYHighXSplit = split(zHighYSplit + 1,
                                    cell->last,
                                    0,
-                                   cell->center.x());
+                                   cell->barycenter().x());
 
           zHighYLowXSplit = split(cell->first,
                                   zHighYSplit,
                                   0,
-                                  cell->center.x());
+                                  cell->barycenter().x());
         } else {
           zHighYLowXSplit = size_t_max;
           zHighYHighXSplit = split(cell->first,
                                    cell->last,
                                    0,
-                                   cell->center.x());
+                                   cell->barycenter().x());
         }
       }
 
@@ -221,7 +223,7 @@ public:
               //---
               cell->child[7] = new Cell(cell->first,
                                         zLowYLowXSplit,
-                                        cell->center + Vector_3(ORIGIN, Point_3(-width, -width, -width)),
+                                        cell->barycenter() + Vector_3(ORIGIN, Point_3(-width, -width, -width)),
                                         cell->depth() + 1);
 
               if (cell->child[7]->size() > bucketSize)
@@ -233,7 +235,7 @@ public:
             //+--
             cell->child[6] = new Cell(zLowYLowXSplit + 1,
                                       zLowYSplit,
-                                      cell->center + Vector_3(ORIGIN, Point_3(width, -width, -width)),
+                                      cell->barycenter() + Vector_3(ORIGIN, Point_3(width, -width, -width)),
                                       cell->depth() + 1);
 
             if (cell->child[6]->size() > bucketSize)
@@ -247,7 +249,7 @@ public:
             //-+-
             cell->child[5] = new Cell(zLowYSplit + 1,
                                       zLowYHighXSplit,
-                                      cell->center + Vector_3(ORIGIN, Point_3(-width, width, -width)),
+                                      cell->barycenter() + Vector_3(ORIGIN, Point_3(-width, width, -width)),
                                       cell->depth() + 1);
 
             if (cell->child[5]->size() > bucketSize)
@@ -259,7 +261,7 @@ public:
           //++-
           cell->child[4] = new Cell(zLowYHighXSplit + 1,
                                     zSplit,
-                                    cell->center + Vector_3(ORIGIN, Point_3(width, width, -width)),
+                                    cell->barycenter() + Vector_3(ORIGIN, Point_3(width, width, -width)),
                                     cell->depth() + 1);
 
           if (cell->child[4]->size() > bucketSize)
@@ -274,7 +276,7 @@ public:
             //--+
             cell->child[3] = new Cell(zSplit + 1,
                                       zHighYLowXSplit,
-                                      cell->center + Vector_3(ORIGIN, Point_3(-width, -width, width)),
+                                      cell->barycenter() + Vector_3(ORIGIN, Point_3(-width, -width, width)),
                                       cell->depth() + 1);
 
             if (cell->child[3]->size() > bucketSize)
@@ -286,7 +288,7 @@ public:
           //+-+
           cell->child[2] = new Cell(zHighYLowXSplit + 1,
                                     zHighYSplit,
-                                    cell->center + Vector_3(ORIGIN, Point_3(width, -width, width)),
+                                    cell->barycenter() + Vector_3(ORIGIN, Point_3(width, -width, width)),
                                     cell->depth() + 1);
 
           if (cell->child[2]->size() > bucketSize)
@@ -300,7 +302,7 @@ public:
           //-++
           cell->child[1] = new Cell(zHighYSplit + 1,
                                     zHighYHighXSplit,
-                                    cell->center + Vector_3(ORIGIN, Point_3(-width, width, width)),
+                                    cell->barycenter() + Vector_3(ORIGIN, Point_3(-width, width, width)),
                                     cell->depth() + 1);
 
           if (cell->child[1]->size() > bucketSize)
@@ -313,7 +315,7 @@ public:
           //+++
           cell->child[0] = new Cell(zHighYHighXSplit + 1,
                                     cell->last,
-                                    cell->center + Vector_3(ORIGIN, Point_3(width, width, width)),
+                                    cell->barycenter() + Vector_3(ORIGIN, Point_3(width, width, width)),
                                     cell->depth() + 1);
 
           if (cell->child[0]->size() > bucketSize)
@@ -546,32 +548,32 @@ public:
       std::size_t zLowYHighXSplit, zLowYLowXSplit, zLowYSplit;
       std::size_t zHighYSplit, zHighYHighXSplit, zHighYLowXSplit;
 
-      std::size_t zSplit = split(cell->first, cell->last, 2, cell->center.z());
+      std::size_t zSplit = split(cell->first, cell->last, 2, cell->barycenter().z());
 
       if (zSplit != size_t_max) {
 
-        zLowYSplit = split(cell->first, zSplit, 1, cell->center.y());
+        zLowYSplit = split(cell->first, zSplit, 1, cell->barycenter().y());
         if (zLowYSplit != size_t_max) {
           zLowYLowXSplit = split(cell->first,
-                                 zLowYSplit, 0, cell->center.x());
+                                 zLowYSplit, 0, cell->barycenter().x());
           zLowYHighXSplit = split(zLowYSplit + 1,
-                                  zSplit, 0, cell->center.x());
+                                  zSplit, 0, cell->barycenter().x());
         } else {
           zLowYLowXSplit = size_t_max;
-          zLowYHighXSplit = split(cell->first, zSplit, 0, cell->center.x());
+          zLowYHighXSplit = split(cell->first, zSplit, 0, cell->barycenter().x());
         }
 
-        zHighYSplit = split(zSplit + 1, cell->last, 1, cell->center.y());
+        zHighYSplit = split(zSplit + 1, cell->last, 1, cell->barycenter().y());
 
         if (zHighYSplit != size_t_max) {
           zHighYHighXSplit = split(zHighYSplit + 1,
-                                   cell->last, 0, cell->center.x());
+                                   cell->last, 0, cell->barycenter().x());
           zHighYLowXSplit = split(zSplit + 1,
-                                  zHighYSplit, 0, cell->center.x());
+                                  zHighYSplit, 0, cell->barycenter().x());
         } else {
           zHighYLowXSplit = size_t_max;
           zHighYHighXSplit = split(zSplit + 1,
-                                   cell->last, 0, cell->center.x());
+                                   cell->last, 0, cell->barycenter().x());
         }
       } else {
         zLowYSplit = size_t_max;
@@ -581,24 +583,24 @@ public:
         zHighYSplit = split(cell->first,
                             cell->last,
                             1,
-                            cell->center.y());
+                            cell->barycenter().y());
 
         if (zHighYSplit != size_t_max) {
           zHighYHighXSplit = split(zHighYSplit + 1,
                                    cell->last,
                                    0,
-                                   cell->center.x());
+                                   cell->barycenter().x());
 
           zHighYLowXSplit = split(cell->first,
                                   zHighYSplit,
                                   0,
-                                  cell->center.x());
+                                  cell->barycenter().x());
         } else {
           zHighYLowXSplit = size_t_max;
           zHighYHighXSplit = split(cell->first,
                                    cell->last,
                                    0,
-                                   cell->center.x());
+                                   cell->barycenter().x());
         }
       }
 
@@ -612,7 +614,7 @@ public:
               //---
               cell->child[7] = new Cell(cell->first,
                                         zLowYLowXSplit,
-                                        cell->center + Vector_3(ORIGIN, Point_3(-width, -width, -width)),
+                                        cell->barycenter() + Vector_3(ORIGIN, Point_3(-width, -width, -width)),
                                         cell->depth() + 1);
 
               if (cell->child[7]->size() > bucketSize)
@@ -624,7 +626,7 @@ public:
             //+--
             cell->child[6] = new Cell(zLowYLowXSplit + 1,
                                       zLowYSplit,
-                                      cell->center + Vector_3(ORIGIN, Point_3(width, -width, -width)),
+                                      cell->barycenter() + Vector_3(ORIGIN, Point_3(width, -width, -width)),
                                       cell->depth() + 1);
 
             if (cell->child[6]->size() > bucketSize)
@@ -638,7 +640,7 @@ public:
             //-+-
             cell->child[5] = new Cell(zLowYSplit + 1,
                                       zLowYHighXSplit,
-                                      cell->center + Vector_3(ORIGIN, Point_3(-width, width, -width)),
+                                      cell->barycenter() + Vector_3(ORIGIN, Point_3(-width, width, -width)),
                                       cell->depth() + 1);
 
             if (cell->child[5]->size() > bucketSize)
@@ -650,7 +652,7 @@ public:
           //++-
           cell->child[4] = new Cell(zLowYHighXSplit + 1,
                                     zSplit,
-                                    cell->center + Vector_3(ORIGIN, Point_3(width, width, -width)),
+                                    cell->barycenter() + Vector_3(ORIGIN, Point_3(width, width, -width)),
                                     cell->depth() + 1);
 
           if (cell->child[4]->size() > bucketSize)
@@ -665,7 +667,7 @@ public:
             //--+
             cell->child[3] = new Cell(zSplit + 1,
                                       zHighYLowXSplit,
-                                      cell->center + Vector_3(ORIGIN, Point_3(-width, -width, width)),
+                                      cell->barycenter() + Vector_3(ORIGIN, Point_3(-width, -width, width)),
                                       cell->depth() + 1);
 
             if (cell->child[3]->size() > bucketSize)
@@ -677,7 +679,7 @@ public:
           //+-+
           cell->child[2] = new Cell(zHighYLowXSplit + 1,
                                     zHighYSplit,
-                                    cell->center + Vector_3(ORIGIN, Point_3(width, -width, width)),
+                                    cell->barycenter() + Vector_3(ORIGIN, Point_3(width, -width, width)),
                                     cell->depth() + 1);
 
           if (cell->child[2]->size() > bucketSize)
@@ -691,7 +693,7 @@ public:
           //-++
           cell->child[1] = new Cell(zHighYSplit + 1,
                                     zHighYHighXSplit,
-                                    cell->center + Vector_3(ORIGIN, Point_3(-width, width, width)),
+                                    cell->barycenter() + Vector_3(ORIGIN, Point_3(-width, width, width)),
                                     cell->depth() + 1);
 
           if (cell->child[1]->size() > bucketSize)
@@ -704,7 +706,7 @@ public:
           //+++
           cell->child[0] = new Cell(zHighYHighXSplit + 1,
                                     cell->last,
-                                    cell->center + Vector_3(ORIGIN, Point_3(width, width, width)),
+                                    cell->barycenter() + Vector_3(ORIGIN, Point_3(width, width, width)),
                                     cell->depth() + 1);
 
           if (cell->child[0]->size() > bucketSize)

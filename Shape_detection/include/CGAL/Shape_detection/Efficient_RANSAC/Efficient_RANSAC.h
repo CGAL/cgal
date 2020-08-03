@@ -1035,7 +1035,7 @@ private:
 
       FT diag = CGAL::sqrt(FT(3) * width * width) + epsilon;
 
-      FT dist = candidate->squared_distance(cell->center);
+      FT dist = candidate->squared_distance(cell->barycenter());
 
       if (dist > (diag * diag))
         continue;
@@ -1079,9 +1079,9 @@ private:
     const Cell *cur = octree->root();
 
     while (cur && cur->depth() < level) {
-      upperX = cur->center.x() <= p.x();
-      upperY = cur->center.y() <= p.y();
-      upperZ = cur->center.z() <= p.z();
+      upperX = cur->barycenter().x() <= p.x();
+      upperY = cur->barycenter().y() <= p.y();
+      upperZ = cur->barycenter().z() <= p.z();
 
       if (upperZ) {
         if (upperY)
