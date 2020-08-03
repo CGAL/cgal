@@ -288,7 +288,7 @@ public:
    * \brief count the points contained by this node
    * \return the number of points this node owns
    */
-  std::size_t number_of_points() const {
+  std::size_t size() const {
     return std::distance(m_points.begin(), m_points.end());
   }
 

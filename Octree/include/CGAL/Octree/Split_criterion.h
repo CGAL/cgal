@@ -34,7 +34,7 @@ struct Bucket_size {
 
   template<class Node>
   bool operator()(const Node &n) const {
-    return (n.number_of_points() > m_bucket_size);
+    return (n.size() > m_bucket_size);
   }
 };
 
@@ -65,7 +65,7 @@ struct Max_depth_or_bucket_size {
 
   template<class Node>
   bool operator()(const Node &n) const {
-    size_t num_points = n.number_of_points();
+    size_t num_points = n.size();
     size_t depth = n.depth();
     return (num_points > m_bucket_size && depth < m_max_depth);
   }
