@@ -1031,7 +1031,7 @@ private:
       const Cell *cell = stack.top();
       stack.pop();
 
-      FT width = octree->width() / (1 << (cell->level));
+      FT width = octree->width() / (1 << (cell->depth()));
 
       FT diag = CGAL::sqrt(FT(3) * width * width) + epsilon;
 
@@ -1078,7 +1078,7 @@ private:
     bool upperZ, upperY, upperX;
     const Cell *cur = octree->root();
 
-    while (cur && cur->level < level) {
+    while (cur && cur->depth() < level) {
       upperX = cur->center.x() <= p.x();
       upperY = cur->center.y() <= p.y();
       upperZ = cur->center.z() <= p.z();

@@ -33,11 +33,15 @@ namespace internal {
 const std::size_t size_t_max = (std::numeric_limits<std::size_t>::max)();
 
 template<class Point_3>
-struct Cell {
+class Cell {
+
+  std::size_t level;
+
+public:
+
   std::size_t first, last;
   Cell *child[8];
   Point_3 center;
-  std::size_t level;
 
   Cell(std::size_t first, std::size_t last, Point_3 center, std::size_t level)
           : first(first), last(last), center(center), level(level) {
@@ -51,6 +55,8 @@ struct Cell {
     }
     return true;
   }
+
+  std::size_t depth() const { return level; }
 
   std::size_t size() const {
     if (first == size_t_max || last == size_t_max)
@@ -142,8 +148,8 @@ public:
       Cell *cell = stack.top();
       stack.pop();
 
-      m_max_level = std::max<std::size_t>(m_max_level, cell->level);
-      if (cell->level == maxLevel)
+      m_max_level = std::max<std::size_t>(m_max_level, cell->depth());
+      if (cell->depth() == maxLevel)
         continue;
 
       std::size_t zLowYHighXSplit, zLowYLowXSplit, zLowYSplit;
@@ -205,7 +211,7 @@ public:
         }
       }
 
-      FT width = m_width / (1 << (cell->level + 1));
+      FT width = m_width / (1 << (cell->depth() + 1));
 
       if (zSplit != size_t_max) {
         if (zLowYSplit != size_t_max) {
@@ -216,7 +222,7 @@ public:
               cell->child[7] = new Cell(cell->first,
                                         zLowYLowXSplit,
                                         cell->center + Vector_3(ORIGIN, Point_3(-width, -width, -width)),
-                                        cell->level + 1);
+                                        cell->depth() + 1);
 
               if (cell->child[7]->size() > bucketSize)
                 stack.push(cell->child[7]);
@@ -228,7 +234,7 @@ public:
             cell->child[6] = new Cell(zLowYLowXSplit + 1,
                                       zLowYSplit,
                                       cell->center + Vector_3(ORIGIN, Point_3(width, -width, -width)),
-                                      cell->level + 1);
+                                      cell->depth() + 1);
 
             if (cell->child[6]->size() > bucketSize)
               stack.push(cell->child[6]);
@@ -242,7 +248,7 @@ public:
             cell->child[5] = new Cell(zLowYSplit + 1,
                                       zLowYHighXSplit,
                                       cell->center + Vector_3(ORIGIN, Point_3(-width, width, -width)),
-                                      cell->level + 1);
+                                      cell->depth() + 1);
 
             if (cell->child[5]->size() > bucketSize)
               stack.push(cell->child[5]);
@@ -254,7 +260,7 @@ public:
           cell->child[4] = new Cell(zLowYHighXSplit + 1,
                                     zSplit,
                                     cell->center + Vector_3(ORIGIN, Point_3(width, width, -width)),
-                                    cell->level + 1);
+                                    cell->depth() + 1);
 
           if (cell->child[4]->size() > bucketSize)
             stack.push(cell->child[4]);
@@ -269,7 +275,7 @@ public:
             cell->child[3] = new Cell(zSplit + 1,
                                       zHighYLowXSplit,
                                       cell->center + Vector_3(ORIGIN, Point_3(-width, -width, width)),
-                                      cell->level + 1);
+                                      cell->depth() + 1);
 
             if (cell->child[3]->size() > bucketSize)
               stack.push(cell->child[3]);
@@ -281,7 +287,7 @@ public:
           cell->child[2] = new Cell(zHighYLowXSplit + 1,
                                     zHighYSplit,
                                     cell->center + Vector_3(ORIGIN, Point_3(width, -width, width)),
-                                    cell->level + 1);
+                                    cell->depth() + 1);
 
           if (cell->child[2]->size() > bucketSize)
             stack.push(cell->child[2]);
@@ -295,7 +301,7 @@ public:
           cell->child[1] = new Cell(zHighYSplit + 1,
                                     zHighYHighXSplit,
                                     cell->center + Vector_3(ORIGIN, Point_3(-width, width, width)),
-                                    cell->level + 1);
+                                    cell->depth() + 1);
 
           if (cell->child[1]->size() > bucketSize)
             stack.push(cell->child[1]);
@@ -308,7 +314,7 @@ public:
           cell->child[0] = new Cell(zHighYHighXSplit + 1,
                                     cell->last,
                                     cell->center + Vector_3(ORIGIN, Point_3(width, width, width)),
-                                    cell->level + 1);
+                                    cell->depth() + 1);
 
           if (cell->child[0]->size() > bucketSize)
             stack.push(cell->child[0]);
@@ -533,8 +539,8 @@ public:
       Cell *cell = stack.top();
       stack.pop();
 
-      m_max_level = std::max<std::size_t>(m_max_level, cell->level);
-      if (cell->level == maxLevel)
+      m_max_level = std::max<std::size_t>(m_max_level, cell->depth());
+      if (cell->depth() == maxLevel)
         continue;
 
       std::size_t zLowYHighXSplit, zLowYLowXSplit, zLowYSplit;
@@ -596,7 +602,7 @@ public:
         }
       }
 
-      FT width = m_width / (1 << (cell->level + 1));
+      FT width = m_width / (1 << (cell->depth() + 1));
 
       if (zSplit != size_t_max) {
         if (zLowYSplit != size_t_max) {
@@ -607,7 +613,7 @@ public:
               cell->child[7] = new Cell(cell->first,
                                         zLowYLowXSplit,
                                         cell->center + Vector_3(ORIGIN, Point_3(-width, -width, -width)),
-                                        cell->level + 1);
+                                        cell->depth() + 1);
 
               if (cell->child[7]->size() > bucketSize)
                 stack.push(cell->child[7]);
@@ -619,7 +625,7 @@ public:
             cell->child[6] = new Cell(zLowYLowXSplit + 1,
                                       zLowYSplit,
                                       cell->center + Vector_3(ORIGIN, Point_3(width, -width, -width)),
-                                      cell->level + 1);
+                                      cell->depth() + 1);
 
             if (cell->child[6]->size() > bucketSize)
               stack.push(cell->child[6]);
@@ -633,7 +639,7 @@ public:
             cell->child[5] = new Cell(zLowYSplit + 1,
                                       zLowYHighXSplit,
                                       cell->center + Vector_3(ORIGIN, Point_3(-width, width, -width)),
-                                      cell->level + 1);
+                                      cell->depth() + 1);
 
             if (cell->child[5]->size() > bucketSize)
               stack.push(cell->child[5]);
@@ -645,7 +651,7 @@ public:
           cell->child[4] = new Cell(zLowYHighXSplit + 1,
                                     zSplit,
                                     cell->center + Vector_3(ORIGIN, Point_3(width, width, -width)),
-                                    cell->level + 1);
+                                    cell->depth() + 1);
 
           if (cell->child[4]->size() > bucketSize)
             stack.push(cell->child[4]);
@@ -660,7 +666,7 @@ public:
             cell->child[3] = new Cell(zSplit + 1,
                                       zHighYLowXSplit,
                                       cell->center + Vector_3(ORIGIN, Point_3(-width, -width, width)),
-                                      cell->level + 1);
+                                      cell->depth() + 1);
 
             if (cell->child[3]->size() > bucketSize)
               stack.push(cell->child[3]);
@@ -672,7 +678,7 @@ public:
           cell->child[2] = new Cell(zHighYLowXSplit + 1,
                                     zHighYSplit,
                                     cell->center + Vector_3(ORIGIN, Point_3(width, -width, width)),
-                                    cell->level + 1);
+                                    cell->depth() + 1);
 
           if (cell->child[2]->size() > bucketSize)
             stack.push(cell->child[2]);
@@ -686,7 +692,7 @@ public:
           cell->child[1] = new Cell(zHighYSplit + 1,
                                     zHighYHighXSplit,
                                     cell->center + Vector_3(ORIGIN, Point_3(-width, width, width)),
-                                    cell->level + 1);
+                                    cell->depth() + 1);
 
           if (cell->child[1]->size() > bucketSize)
             stack.push(cell->child[1]);
@@ -699,7 +705,7 @@ public:
           cell->child[0] = new Cell(zHighYHighXSplit + 1,
                                     cell->last,
                                     cell->center + Vector_3(ORIGIN, Point_3(width, width, width)),
-                                    cell->level + 1);
+                                    cell->depth() + 1);
 
           if (cell->child[0]->size() > bucketSize)
             stack.push(cell->child[0]);
