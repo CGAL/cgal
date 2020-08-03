@@ -27,7 +27,7 @@
 #include <CGAL/IO/File_binary_mesh_3.h>
 
 #include <boost/container/flat_set.hpp>
-#include <boost/container/small_vector.hpp >
+#include <boost/container/small_vector.hpp>
 
 namespace CGAL
 {
