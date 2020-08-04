@@ -1083,8 +1083,9 @@ private:
 
     if (cur) {
       std::size_t enough = 0;
-      for (std::size_t i = cur->first; i <= cur->last; i++) {
-        std::size_t j = octree->index(i);
+      for (auto pointIndex : cur->points()) {
+
+        std::size_t j = *pointIndex;
         if (shapeIndex[j] == -1) {
           enough++;
           if (enough >= requiredSamples)
