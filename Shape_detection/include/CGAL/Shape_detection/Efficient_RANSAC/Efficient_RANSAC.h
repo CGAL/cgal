@@ -1076,7 +1076,7 @@ private:
                                           const std::vector<int> &shapeIndex,
                                           std::size_t requiredSamples) {
 
-    typedef typename Octree::Cell Cell;
+    typedef typename Octree::Node Cell;
 
     bool upperZ, upperY, upperX;
     const Cell *cur = octree->root();
