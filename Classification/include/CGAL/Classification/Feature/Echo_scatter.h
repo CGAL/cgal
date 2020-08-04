@@ -62,7 +62,7 @@ private:
 
 public:
   /*!
-    \brief Constructs the feature.
+    \brief constructs the feature.
 
     \param input point range.
     \param echo_map property map to access the echo values of the input points.

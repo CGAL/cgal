@@ -54,7 +54,7 @@ public:
   Label_set() { }
 
   /*!
-    \brief Constructs a label set from a set of label names.
+    \brief constructs a label set from a set of label names.
   */
   Label_set(std::initializer_list<const char*> labels)
   {
@@ -68,7 +68,7 @@ public:
   /// @{
 
   /*!
-    \brief Adds a label.
+    \brief adds a label.
 
     \note Names, standard indices and colors are not used for
     identification: two labels in the same set can have the same name,
@@ -96,7 +96,7 @@ public:
 
 
   /*!
-    \brief Adds a label with default standard index and color.
+    \brief adds a label with default standard index and color.
 
     This functions tries to map label names to standard ASPRS labels
     and automatically picks the `standard_index` and `color` of the
@@ -207,7 +207,7 @@ public:
   /// \endcond
 
   /*!
-    \brief Removes a label.
+    \brief removes a label.
 
     \param label the handle to the label that must be removed.
 
@@ -228,7 +228,7 @@ public:
   }
 
   /*!
-    \brief Removes all labels.
+    \brief removes all labels.
   */
   void clear ()
   {
@@ -247,7 +247,7 @@ public:
   iterator end() { return m_labels.end(); }
 
   /*!
-    \brief Returns how many labels are defined.
+    \brief returns how many labels are defined.
   */
   std::size_t size () const
   {
@@ -255,7 +255,7 @@ public:
   }
 
   /*!
-    \brief Returns the \f$i^{th}\f$ label.
+    \brief returns the \f$i^{th}\f$ label.
   */
   Label_handle operator[] (std::size_t i) const
   {
@@ -268,7 +268,7 @@ public:
   /// @{
 
   /*!
-    \brief Checks the validity of the ground truth with respect to the
+    \brief checks the validity of the ground truth with respect to the
     label set.
 
     \param ground_truth range of label indices. This function checks

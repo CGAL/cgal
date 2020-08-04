@@ -105,7 +105,7 @@ public:
     unsigned int k;
   public:
     /*!
-      \brief Constructs a K neighbor query object.
+      \brief constructs a K neighbor query object.
       \param neighborhood point set neighborhood object.
       \param k number of neighbors per query.
     */
@@ -140,7 +140,7 @@ public:
     float radius;
   public:
     /*!
-      \brief Constructs a range neighbor query object.
+      \brief constructs a range neighbor query object.
       \param neighborhood point set neighborhood object.
       \param radius radius of the neighbor query sphere.
     */
@@ -168,7 +168,7 @@ public:
   /// @{
 
   /*!
-    \brief Constructs a neighborhood object based on the input range.
+    \brief constructs a neighborhood object based on the input range.
 
     \param input point range.
     \param point_map property map to access the input points.
@@ -187,7 +187,7 @@ public:
   }
 
   /*!
-    \brief Constructs a simplified neighborhood object based on the input range.
+    \brief constructs a simplified neighborhood object based on the input range.
 
     This method first computes a simplified version of the input point
     set by voxelization: a 3D grid is defined and for each subset
@@ -220,7 +220,7 @@ public:
   /// @{
 
   /*!
-    \brief Returns a neighbor query object with fixed number of neighbors `k`.
+    \brief returns a neighbor query object with fixed number of neighbors `k`.
   */
   K_neighbor_query k_neighbor_query (const unsigned int k) const
   {
@@ -228,7 +228,7 @@ public:
   }
 
   /*!
-    \brief Returns a neighbor query object with fixed radius `radius`.
+    \brief returns a neighbor query object with fixed radius `radius`.
   */
   Sphere_neighbor_query sphere_neighbor_query (const float radius) const
   {

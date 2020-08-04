@@ -184,7 +184,7 @@ public:
   /// @{
 
   /*!
-    \brief Initializes a feature generator from an input range.
+    \brief initializes a feature generator from an input range.
 
     If not provided by the user, The size of the smallest scale is
     automatically estimated using a method equivalent to
@@ -236,7 +236,7 @@ public:
 
 
   /*!
-    \brief Generate geometric features based on point position information.
+    \brief generates geometric features based on point position information.
 
     This is a meta-function that calls the following functions:
 
@@ -256,7 +256,7 @@ public:
   }
 
   /*!
-    \brief Generate geometric eigen features.
+    \brief generates geometric eigen features.
 
     At each scale, features
     `CGAL::Classification::Feature::Eigenvalue` with indices 0, 1 and
@@ -272,7 +272,7 @@ public:
   }
 
   /*!
-    \brief Generate geometric features based on local dispersion information.
+    \brief generates geometric features based on local dispersion information.
 
     At each scale, the following features are generated:
 
@@ -290,7 +290,7 @@ public:
   }
 
   /*!
-    \brief Generate geometric features based on elevation information.
+    \brief generates geometric features based on elevation information.
 
     At each scale, the following features are generated:
 
@@ -315,7 +315,7 @@ public:
 
 
   /*!
-    \brief Generate geometric features based on normal analysis information.
+    \brief generates geometric features based on normal analysis information.
 
     At each scale, the version of
     `CGAL::Classification::Feature::Verticality` based on eigenvalue
@@ -330,7 +330,7 @@ public:
   }
 
   /*!
-    \brief Generate geometric features based on normal vector information.
+    \brief generates geometric features based on normal vector information.
 
     Generates the version of `CGAL::Classification::Feature::Verticality` based on normal vectors.
 
@@ -348,7 +348,7 @@ public:
   }
 
   /*!
-    \brief Generate geometric features based on point color information.
+    \brief generates geometric features based on point color information.
 
     Generates `CGAL::Classification::Feature::Color_channel` with
     channels `HUE`, `SATURATION` and `VALUE`.
@@ -369,7 +369,7 @@ public:
   }
 
   /*!
-    \brief Generate geometric features based on echo information.
+    \brief generates geometric features based on echo information.
 
     At each scale, generates `CGAL::Classification::Feature::Echo_scatter`.
 
@@ -394,19 +394,19 @@ public:
   /// @{
 
   /*!
-    \brief Returns the bounding box of the input point set.
+    \brief returns the bounding box of the input point set.
   */
   const Iso_cuboid_3& bbox() const { return m_bbox; }
   /*!
-    \brief Returns the neighborhood structure at scale `scale`.
+    \brief returns the neighborhood structure at scale `scale`.
   */
   const Neighborhood& neighborhood(std::size_t scale = 0) const { return (*m_scales[scale]->neighborhood); }
   /*!
-    \brief Returns the planimetric grid structure at scale `scale`.
+    \brief returns the planimetric grid structure at scale `scale`.
   */
   const Planimetric_grid& grid(std::size_t scale = 0) const { return *(m_scales[scale]->grid); }
   /*!
-    \brief Returns the local eigen analysis structure at scale `scale`.
+    \brief returns the local eigen analysis structure at scale `scale`.
   */
   const Local_eigen_analysis& eigen(std::size_t scale = 0) const { return *(m_scales[scale]->eigen); }
 
@@ -416,26 +416,26 @@ public:
   /// @{
 
   /*!
-    \brief Returns the number of scales that were computed.
+    \brief returns the number of scales that were computed.
   */
   std::size_t number_of_scales() const { return m_scales.size(); }
 
   /*!
-    \brief Returns the grid resolution at scale `scale`. This
+    \brief returns the grid resolution at scale `scale`. This
     resolution is the length and width of a cell of the
     `Planimetric_grid` defined at this scale.
   */
   float grid_resolution(std::size_t scale = 0) const { return m_scales[scale]->grid_resolution(); }
   /*!
 
-    \brief Returns the radius used for neighborhood queries at scale
+    \brief returns the radius used for neighborhood queries at scale
     `scale`. This radius is the smallest radius that is relevant from
     a geometric point of view at this scale (that is to say that
     encloses a few cells of `Planimetric_grid`).
   */
   float radius_neighbors(std::size_t scale = 0) const { return m_scales[scale]->radius_neighbors(); }
   /*!
-    \brief Returns the radius used for digital terrain modeling at
+    \brief returns the radius used for digital terrain modeling at
     scale `scale`. This radius represents the minimum size of a
     building at this scale.
   */

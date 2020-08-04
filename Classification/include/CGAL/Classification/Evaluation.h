@@ -46,7 +46,7 @@ public:
   /// @{
 
   /*!
-    \brief Instantiates an empty evaluation object.
+    \brief instantiates an empty evaluation object.
 
     \param labels labels used.
   */
@@ -58,7 +58,7 @@ public:
 
   /*!
 
-    \brief Instantiates an evaluation object and computes all
+    \brief instantiates an evaluation object and computes all
     measurements.
 
     \param labels labels used.
@@ -105,7 +105,7 @@ public:
   /// @{
 
   /*!
-    \brief Append more items to the evaluation object.
+    \brief appends more items to the evaluation object.
 
     \param ground_truth vector of label indices: it should contain the
     index of the corresponding label in the `Label_set` provided in the
@@ -142,7 +142,7 @@ public:
   /// @{
 
   /*!
-    \brief Returns the number of items whose ground truth is
+    \brief returns the number of items whose ground truth is
     `ground_truth` and which were classified as `result`.
   */
   std::size_t confusion (Label_handle ground_truth, Label_handle result)
@@ -154,7 +154,7 @@ public:
 
   /*!
 
-    \brief Returns the precision of the training for the given label.
+    \brief returns the precision of the training for the given label.
 
     Precision is the number of true positives divided by the sum of
     the true positives and the false positives.
@@ -178,7 +178,7 @@ public:
 
   /*!
 
-    \brief Returns the recall of the training for the given label.
+    \brief returns the recall of the training for the given label.
 
     Recall is the number of true positives divided by the sum of
     the true positives and the false negatives.
@@ -198,7 +198,7 @@ public:
 
   /*!
 
-    \brief Returns the \f$F_1\f$ score of the training for the given label.
+    \brief returns the \f$F_1\f$ score of the training for the given label.
 
     \f$F_1\f$ score is the harmonic mean of `precision()` and `recall()`:
 
@@ -219,7 +219,7 @@ public:
   }
 
   /*!
-    \brief Returns the intersection over union of the training for the
+    \brief returns the intersection over union of the training for the
     given label.
 
     Intersection over union is the number of true positives divided by
@@ -247,7 +247,7 @@ public:
   /// @{
 
   /*!
-    \brief Returns the number of misclassified items.
+    \brief returns the number of misclassified items.
   */
   std::size_t number_of_misclassified_items() const
   {
@@ -260,7 +260,7 @@ public:
   }
 
   /*!
-    \brief Returns the total number of items used for evaluation.
+    \brief returns the total number of items used for evaluation.
   */
   std::size_t number_of_items() const
   {
@@ -272,7 +272,7 @@ public:
   }
 
   /*!
-    \brief Returns the accuracy of the training.
+    \brief returns the accuracy of the training.
 
     Accuracy is the total number of true positives divided by the
     total number of provided inliers.
@@ -291,7 +291,7 @@ public:
   }
 
   /*!
-    \brief Returns the mean \f$F_1\f$ score of the training over all
+    \brief returns the mean \f$F_1\f$ score of the training over all
     labels (see `f1_score()`).
   */
   float mean_f1_score() const
@@ -308,7 +308,7 @@ public:
   }
 
   /*!
-    \brief Returns the mean intersection over union of the training
+    \brief returns the mean intersection over union of the training
     over all labels (see `intersection_over_union()`).
   */
   float mean_intersection_over_union() const
@@ -333,7 +333,7 @@ public:
   /// @{
 
   /*!
-    \brief Outputs the evaluation in a simple ASCII format to the stream `os`.
+    \brief outputs the evaluation in a simple ASCII format to the stream `os`.
   */
   friend std::ostream& operator<< (std::ostream& os, const Evaluation& evaluation)
   {
@@ -360,7 +360,7 @@ public:
   }
 
   /*!
-    \brief Outputs the evaluation as an HTML page to the stream `os`.
+    \brief outputs the evaluation as an HTML page to the stream `os`.
   */
   static std::ostream& output_to_html (std::ostream& os, const Evaluation& evaluation)
   {

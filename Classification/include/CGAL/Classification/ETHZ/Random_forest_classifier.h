@@ -81,7 +81,7 @@ public:
   /// @{
 
   /*!
-    \brief Instantiates the classifier using the sets of `labels` and `features`.
+    \brief instantiates the classifier using the sets of `labels` and `features`.
 
   */
   Random_forest_classifier (const Label_set& labels,
@@ -90,7 +90,7 @@ public:
   { }
 
   /*!
-    \brief Copies the `other` classifier's configuration using another
+    \brief copies the `other` classifier's configuration using another
     set of `features`.
 
     This constructor can be used to apply a trained random forest to
@@ -126,7 +126,7 @@ public:
   /// \endcond
 
   /*!
-    \brief Runs the training algorithm.
+    \brief runs the training algorithm.
 
     From the set of provided ground truth, this algorithm estimates
     sets up the random trees that produce the most accurate result
@@ -243,7 +243,7 @@ public:
   /// @{
 
   /*!
-    \brief Computes, for each feature, how many nodes in the forest
+    \brief computes, for each feature, how many nodes in the forest
     uses it as a split criterion.
 
     Each tree of the random forest recursively splits the training
@@ -278,7 +278,7 @@ public:
   /// @{
 
   /*!
-    \brief Saves the current configuration in the stream `output`.
+    \brief saves the current configuration in the stream `output`.
 
     This allows to easily save and recover a specific classification
     configuration.
@@ -292,7 +292,7 @@ public:
   }
 
   /*!
-    \brief Loads a configuration from the stream `input`.
+    \brief loads a configuration from the stream `input`.
 
     The input file should be a binary file written by the
     `save_configuration()` method. The feature set of the classifier
@@ -320,7 +320,7 @@ public:
   /// @{
 
   /*!
-    \brief Converts a deprecated configuration (in compressed ASCII
+    \brief converts a deprecated configuration (in compressed ASCII
     format) to a new configuration (in binary format).
 
     The input file should be a GZIP container written by the

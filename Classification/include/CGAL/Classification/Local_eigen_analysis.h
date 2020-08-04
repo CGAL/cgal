@@ -215,7 +215,7 @@ public:
   /// @{
 
   /*!
-    \brief Computes the local eigen analysis of an input point set
+    \brief computes the local eigen analysis of an input point set
     based on a local neighborhood.
 
     \tparam PointRange model of `ConstRange`. Its iterator type is
@@ -302,7 +302,7 @@ public:
 
 
   /*!
-    \brief Computes the local eigen analysis of an input face graph
+    \brief computes the local eigen analysis of an input face graph
     based on a local neighborhood.
 
     \tparam FaceListGraph model of `FaceListGraph`.
@@ -385,7 +385,7 @@ public:
   }
 
   /*!
-    \brief Computes the local eigen analysis of an input set of point
+    \brief computes the local eigen analysis of an input set of point
     clusters based on a local neighborhood.
 
     \tparam ClusterRange model of `ConstRange`. Its iterator type is
@@ -454,7 +454,7 @@ public:
   /// @{
 
   /*!
-    \brief Returns the estimated unoriented normal vector of the point at position `index`.
+    \brief returns the estimated unoriented normal vector of the point at position `index`.
     \tparam GeomTraits model of \cgal Kernel.
   */
   template <typename GeomTraits>
@@ -467,7 +467,7 @@ public:
   }
 
   /*!
-    \brief Returns the estimated local tangent plane of the point at position `index`.
+    \brief returns the estimated local tangent plane of the point at position `index`.
     \tparam GeomTraits model of \cgal Kernel.
   */
   template <typename GeomTraits>
@@ -481,7 +481,7 @@ public:
   }
 
   /*!
-    \brief Returns the normalized eigenvalues of the point at position `index`.
+    \brief returns the normalized eigenvalues of the point at position `index`.
   */
   Eigenvalues eigenvalue (std::size_t index) const
   {

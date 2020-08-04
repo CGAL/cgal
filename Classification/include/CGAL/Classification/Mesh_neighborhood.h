@@ -91,7 +91,7 @@ public:
   public:
 
     /*!
-      \brief Constructs a 1-ring neighbor query object.
+      \brief constructs a 1-ring neighbor query object.
       \param neighborhood mesh neighborhood object.
     */
     One_ring_neighbor_query (const Mesh_neighborhood& neighborhood)
@@ -125,7 +125,7 @@ public:
   public:
 
     /*!
-      \brief Constructs a N-ring neighbor query object.
+      \brief constructs a N-ring neighbor query object.
       \param neighborhood mesh neighborhood object.
       \param n size of neighborhood.
     */
@@ -151,7 +151,7 @@ public:
   /// @{
 
   /*!
-    \brief Constructs a neighborhood object based on the input mesh.
+    \brief constructs a neighborhood object based on the input mesh.
 
     \param mesh input mesh.
   */
@@ -171,7 +171,7 @@ public:
   /// @{
 
   /*!
-    \brief Returns a 1-ring neighbor query object.
+    \brief returns a 1-ring neighbor query object.
   */
   One_ring_neighbor_query one_ring_neighbor_query () const
   {
@@ -179,7 +179,7 @@ public:
   }
 
   /*!
-    \brief Returns an N-ring neighbor query object.
+    \brief returns an N-ring neighbor query object.
   */
   N_ring_neighbor_query n_ring_neighbor_query (const std::size_t n) const
   {
