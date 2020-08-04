@@ -1079,24 +1079,7 @@ private:
     typedef typename Octree::Node Cell;
 
     bool upperZ, upperY, upperX;
-    const Cell *cur = &octree->root();
-
-    while (cur && cur->depth() < level) {
-      upperX = octree->barycenter(*cur).x() <= p.x();
-      upperY = octree->barycenter(*cur).y() <= p.y();
-      upperZ = octree->barycenter(*cur).z() <= p.z();
-
-      // TODO: Incompatible with Node children paradigm
-      if (upperZ) {
-        if (upperY)
-          cur = (upperX) ? cur->child[0] : cur->child[1];
-        else cur = (upperX) ? cur->child[2] : cur->child[3];
-      } else {
-        if (upperY)
-          cur = (upperX) ? cur->child[4] : cur->child[5];
-        else cur = (upperX) ? cur->child[6] : cur->child[7];
-      }
-    }
+    const Cell *cur = &octree->locate(p);
 
     if (cur) {
       std::size_t enough = 0;
