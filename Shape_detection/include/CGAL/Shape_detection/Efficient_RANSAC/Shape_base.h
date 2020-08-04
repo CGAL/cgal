@@ -36,10 +36,6 @@
 
 namespace CGAL {
   namespace Shape_detection {
-  namespace internal {
-    template<class PointAccessor>
-    class Octree;
-  }
 
     /*!
      \ingroup PkgShapeDetectionRANSACShapes
@@ -56,8 +52,6 @@ namespace CGAL {
     friend class Efficient_RANSAC;
     template <class T>
     friend class Region_growing_depr;
-    template<class PointAccessor>
-    friend class internal::Octree;
     /// \endcond
 
   public:
