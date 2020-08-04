@@ -1224,14 +1224,17 @@ template <typename Traits>
 bool is_planar_2(
   const std::vector<typename Traits::Point_3>& points,
   const typename Traits::Vector_3& avg_normal,
-  const typename Traits::FT max_distance,
+  const typename Traits::FT max_sq_distance,
   const Traits& traits) {
 
   typedef typename Traits::FT FT;
   typedef typename Traits::Point_3 Point_3;
   typedef typename Traits::Plane_3 Plane_3;
+  typedef typename Traits::Construct_projected_point_3 Projection_3;
   typedef typename Traits::Compute_squared_distance_3 Squared_distance_3;
 
+  const Projection_3 projection_3 =
+    traits.construct_projected_point_3_object();
   const Squared_distance_3 squared_distance_3 =
     traits.compute_squared_distance_3_object();
 
@@ -1275,14 +1278,13 @@ bool is_planar_2(
   FT avg_sq_distance = FT(0);
   for (std::size_t i = 0; i < n; ++i) {
     const Point_3& p = points[i];
-    const Point_3  q = plane.projection(p);
+    const Point_3  q = projection_3(plane, p);
     avg_sq_distance += squared_distance_3(p, q);
   }
   avg_sq_distance /= static_cast<FT>(n);
   // std::cout << "avg squared distance: " << avg_sq_distance << std::endl;
 
-  const FT sq_tolerance = CGAL::square(max_distance);
-  if (avg_sq_distance > sq_tolerance) {
+  if (avg_sq_distance > max_sq_distance) {
     return false; // the user distance criteria are not satisfied!
   }
 
@@ -1359,8 +1361,8 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   // std::cout << "avg normal: " << avg_normal << std::endl;
 
   // Checking the hole planarity.
-  const FT max_distance = FT(2) / FT(100);
-  if (!is_planar_2(P, avg_normal, max_distance, traits)) {
+  const FT max_sq_distance = FT(4) / FT(10000);
+  if (!is_planar_2(P, avg_normal, max_sq_distance, traits)) {
     return false;
   }
 
