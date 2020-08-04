@@ -287,6 +287,8 @@ public:
   typedef Arr_halfedge<V,H,F>         Halfedge;
   typedef Arr_isolated_vertex<V,H,F>  Isolated_vertex;
 
+  mutable std::size_t index;
+
   /*! Default constructor. */
   Arr_vertex() {}
 

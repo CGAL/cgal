@@ -424,6 +424,17 @@ protected:
     _init_curves(curves_begin, curves_end);     // initialize the curves
   }
 
+  /*! Initiliaze the sweep algorithm. */
+  template <typename EdgeRange, typename Accessor>
+  void _init_indexed_sweep(const EdgeRange& edges,
+                           const Accessor& accessor)
+  {
+    m_num_of_subCurves =
+      static_cast<unsigned int>(std::distance(edges.begin(), edges.end()));
+    _init_structures();
+    _init_indexed_curves(edges, accessor);     // initialize the curves
+  }
+
   /*! Initialize the data structures for the sweep-line algorithm. */
   virtual void _init_structures();
 

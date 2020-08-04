@@ -40,6 +40,45 @@
 
 namespace CGAL {
 
+template <typename Curve>
+class Indexed_sweep_accessor
+{
+  std::size_t nbv;
+
+public:
+  Indexed_sweep_accessor (std::size_t nbv) : nbv(nbv) { }
+
+  std::size_t nb_vertices() const { return nbv; }
+
+  std::size_t source_index (const Curve& c) const
+  {
+    return halfedge(c)->target()->index;
+  }
+
+  std::size_t target_index (const Curve& c) const
+  {
+    return halfedge(c)->source()->index;
+  }
+
+  const Curve& curve (const Curve& c) const
+  {
+    return c;
+  }
+
+private:
+
+  typename Curve::Halfedge_handle halfedge (const Curve& c) const
+  {
+    if (c.red_halfedge_handle() == typename Curve::Halfedge_handle())
+    {
+      CGAL_assertion (c.blue_halfedge_handle() != typename Curve::Halfedge_handle());
+      return c.blue_halfedge_handle();
+    }
+    // else
+    return c.red_halfedge_handle();
+  }
+};
+
 /*! Compute the overlay of two input arrangements.
  * \tparam GeometryTraitsA_2 the geometry traits of the first arrangement.
  * \tparam GeometryTraitsB_2 the geometry traits of the second arrangement.
@@ -129,6 +168,15 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
   CGAL_precondition(((void*)(&arr) != (void*)(&arr1)) &&
                     ((void*)(&arr) != (void*)(&arr2)));
 
+  // Index vertices for indexed sweep
+  std::size_t idx = 0;
+  for (typename Arr_a::Vertex_const_iterator vit = arr1.vertices_begin();
+       vit != arr1.vertices_end(); ++vit, ++idx)
+    vit->index = idx;
+  for (typename Arr_b::Vertex_const_iterator vit = arr2.vertices_begin();
+       vit != arr2.vertices_end(); ++vit, ++idx)
+    vit->index = idx;
+
   // Prepare a vector of extended x-monotone curves that represent all edges
   // in both input arrangements. Each curve is associated with a halfedge
   // directed from right to left.
@@ -183,7 +231,7 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
   if (total_iso_verts == 0) {
     // Clear the result arrangement and perform the sweep to construct it.
     arr.clear();
-    surface_sweep.sweep(xcvs_vec.begin(), xcvs_vec.end());
+    surface_sweep.indexed_sweep (xcvs_vec, Indexed_sweep_accessor<Ovl_x_monotone_curve_2>(idx));
     xcvs_vec.clear();
     return;
   }
