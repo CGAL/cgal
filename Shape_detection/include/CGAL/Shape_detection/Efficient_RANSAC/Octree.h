@@ -39,6 +39,10 @@ public:
   std::size_t size() const {
     return this->root().size();
   }
+
+  const Bbox_3 &boundingBox() const {
+    return this->bbox(this->root());
+  }
 };
 
 template<class Traits>
@@ -48,6 +52,10 @@ public:
 
   std::size_t size() const {
     return this->root().size();
+  }
+
+  const Bbox_3 &boundingBox() const {
+    return this->bbox(this->root());
   }
 };
 
