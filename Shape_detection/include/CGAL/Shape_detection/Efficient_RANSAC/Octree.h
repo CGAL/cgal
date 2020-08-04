@@ -32,7 +32,7 @@ namespace internal {
 
 
 template<class Traits>
-class Direct_octree : public Octree::Octree<typename Traits::Input_range, typename Traits::Point_map> {
+class Direct_octree : public Octree::Octree<std::vector<std::size_t>, typename Traits::Point_map> {
 
   Traits m_traits;
   std::size_t m_offset;
@@ -47,7 +47,7 @@ public:
                 const Input_iterator &end,
                 Point_map &point_map,
                 std::size_t offset = 0) :
-          Octree::Octree<typename Traits::Input_range, typename Traits::Point_map>({begin, end}, point_map),
+          Octree::Octree<std::vector<std::size_t>, typename Traits::Point_map>({}, point_map),
           m_traits(traits),
           m_offset(offset) {
 
@@ -76,7 +76,7 @@ public:
 };
 
 template<class Traits>
-class Indexed_octree : public Octree::Octree<typename Traits::Input_range, typename Traits::Point_map> {
+class Indexed_octree : public Octree::Octree<std::vector<std::size_t>, typename Traits::Point_map> {
 
   Traits m_traits;
 
@@ -89,7 +89,7 @@ public:
                 const Input_iterator &begin,
                 const Input_iterator &end,
                 Point_map &point_map) :
-          Octree::Octree<typename Traits::Input_range, typename Traits::Point_map>({begin, end}, point_map),
+          Octree::Octree<std::vector<std::size_t>, typename Traits::Point_map>({}, point_map),
           m_traits(traits) {
 
   }

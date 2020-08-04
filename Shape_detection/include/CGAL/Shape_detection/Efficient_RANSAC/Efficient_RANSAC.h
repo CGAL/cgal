@@ -1083,9 +1083,7 @@ private:
 
     if (cur) {
       std::size_t enough = 0;
-      for (auto pointIndex : cur->points()) {
-
-        std::size_t j = *pointIndex;
+      for (auto j : cur->points()) {
         if (shapeIndex[j] == -1) {
           enough++;
           if (enough >= requiredSamples)
