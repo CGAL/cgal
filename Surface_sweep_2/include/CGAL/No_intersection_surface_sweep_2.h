@@ -309,6 +309,17 @@ public:
     m_visitor->after_sweep();
   }
 
+  template <typename EdgeRange, typename Accessor>
+  void indexed_sweep (const EdgeRange& edges,
+                      const Accessor& accessor)
+  {
+    m_visitor->before_sweep();
+    _init_indexed_sweep(edges, accessor);
+    _sweep();
+    _complete_sweep();
+    m_visitor->after_sweep();
+  }
+
   /*! Get an iterator for the first subcurve in the status line. */
   Status_line_iterator status_line_begin() { return m_statusLine.begin(); }
 
@@ -376,6 +387,32 @@ protected:
       _init_curve(*cit, index);
   }
 
+  /*! Create a Subcurve object and two Event objects for each curve. */
+  template <typename EdgeRange, typename Accessor>
+  void _init_indexed_curves(const EdgeRange& edges,
+                            const Accessor& accessor)
+  {
+    std::vector<Event_queue_iterator> events (accessor.nb_vertices());
+
+    unsigned int index = 0;
+    for (const auto& e : edges)
+    {
+      std::size_t source = accessor.source_index(e);
+      std::size_t target = accessor.target_index(e);
+      const X_monotone_curve_2& curve = accessor.curve (e);
+
+      // Construct and initialize a subcurve object.
+      std::allocator_traits<Subcurve_alloc>::construct(m_subCurveAlloc, m_subCurves + index, m_masterSubcurve );
+      (m_subCurves + index)->set_hint(this->m_statusLine.end());
+      (m_subCurves + index)->init (curve);
+
+      _init_curve_end(curve, ARR_MAX_END, m_subCurves + index, events, target);
+      _init_curve_end(curve, ARR_MIN_END, m_subCurves + index, events, source);
+
+      ++ index;
+    }
+  }
+
   /*! Initiliaze the sweep algorithm. */
   template <typename CurveInputIterator>
   void _init_sweep(CurveInputIterator curves_begin,
@@ -412,6 +449,11 @@ protected:
    */
   void _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind,
                        Subcurve* sc);
+
+  // Variant keeping track of indexed events
+  void _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind,
+                       Subcurve* sc,
+                       std::vector<Event_queue_iterator>& events, std::size_t index);
 
   /*! Handle the subcurves that are to the left of the event point (i.e.,
    * subcurves that we are done with).
@@ -485,6 +527,14 @@ protected:
                                       Arr_parameter_space ps_y,
                                       Subcurve* sc = nullptr);
 
+  // Variant keeping track of indexed events
+  std::pair<Event*, bool> _push_event(const Point_2& pt, Attribute type,
+                                      Arr_parameter_space ps_x,
+                                      Arr_parameter_space ps_y,
+                                      Subcurve* sc,
+                                      std::vector<Event_queue_iterator>& events,
+                                      std::size_t index);
+
   /*! Push an event point associated with a curve end into the event queue.
    * \param cv The x-monotone curve.
    * \param ind The relevant curve end.
@@ -502,6 +552,17 @@ protected:
                                       Arr_parameter_space ps_x,
                                       Arr_parameter_space ps_y,
                                       Subcurve* sc = nullptr);
+
+  // Variant keeping track of indexed events
+  std::pair<Event*, bool> _push_event(const X_monotone_curve_2& cv,
+                                      Arr_curve_end ind,
+                                      Attribute type,
+                                      Arr_parameter_space ps_x,
+                                      Arr_parameter_space ps_y,
+                                      Subcurve* sc,
+                                      const Point_2& pt,
+                                      std::vector<Event_queue_iterator>& events,
+                                      std::size_t index);
 
   void _update_event_at_open_boundary(Event* e,
                                       const X_monotone_curve_2& cv,
