@@ -1055,6 +1055,8 @@ private:
                                  normal_threshold,
                                  indices);
       } else {
+
+        // TODO: Incompatible with Node children paradigm
         for (std::size_t i = 0; i < 8; i++)
           if (cell->child[i])
             stack.push(cell->child[i]);
@@ -1083,6 +1085,7 @@ private:
       upperY = cur->barycenter().y() <= p.y();
       upperZ = cur->barycenter().z() <= p.z();
 
+      // TODO: Incompatible with Node children paradigm
       if (upperZ) {
         if (upperY)
           cur = (upperX) ? cur->child[0] : cur->child[1];
