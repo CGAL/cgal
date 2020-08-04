@@ -148,6 +148,8 @@ typename Gt::FT tan_dihedral_angle(const typename Gt::Point_3& a,
                                    const typename Gt::Point_3& d,
                                    const Gt& gt)
 {
+  CGAL_assertion(CGAL::orientation(a,b,c,d) != CGAL::NEGATIVE);
+
   typename Gt::Construct_vector_3 vector = gt.construct_vector_3_object();
   typename Gt::Construct_cross_product_vector_3 cross_product =
     gt.construct_cross_product_vector_3_object();
@@ -184,7 +186,7 @@ typename Geom_traits::FT min_tan_dihedral_angle(const Point& p,
   FT a = tan_dihedral_angle(p, q, r, s, gt);
   FT min_dh = a;
 
-  a = tan_dihedral_angle(p, r, q, s, gt);
+  a = tan_dihedral_angle(p, r, s, q, gt);
   min_dh = (std::min)(a, min_dh);
 
   a = tan_dihedral_angle(p, s, q, r, gt);
@@ -193,7 +195,7 @@ typename Geom_traits::FT min_tan_dihedral_angle(const Point& p,
   a = tan_dihedral_angle(q, r, p, s, gt);
   min_dh = (std::min)(a, min_dh);
 
-  a = tan_dihedral_angle(q, s, p, r, gt);
+  a = tan_dihedral_angle(q, s, r, p, gt);
   min_dh = (std::min)(a, min_dh);
 
   a = tan_dihedral_angle(r, s, p, q, gt);
