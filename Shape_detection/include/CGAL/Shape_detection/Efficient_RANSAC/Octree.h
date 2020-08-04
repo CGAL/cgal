@@ -29,13 +29,14 @@ namespace CGAL {
 namespace Shape_detection {
 namespace internal {
 
+
 template<class Traits>
-class Direct_octree {
+class Direct_octree : public Octree::Octree<typename Traits::Input_range, typename Traits::Point_map> {
 
 };
 
 template<class Traits>
-class Indexed_octree {
+class Indexed_octree : public Octree::Octree<typename Traits::Input_range, typename Traits::Point_map> {
 
 };
 
