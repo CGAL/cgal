@@ -37,7 +37,7 @@ namespace Polygon_mesh_processing {
 /*!
   \ingroup PMP_IO_grp
 
- * \brief reads the file as a polygon soup, repairs, and orients it to obtain a polygon mesh.
+ * \brief reads the file as a polygon soup, repairs, and orients it as to obtain a polygon mesh.
  *
  * Supported file formats are the following:
  * - \ref IOStreamOFF (`.off`)
@@ -68,7 +68,7 @@ namespace Polygon_mesh_processing {
  *
  *   \cgalParamNBegin{repair_polygon_soup}
  *     \cgalParamDescription{a parameter used indicate whether `CGAL::Polygon_mesh_processing::repair_polygon_soup()`
- *                           should be called on the soup in case of issues in the input.}
+ *                           should be called on the intermediate polygon soup.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd

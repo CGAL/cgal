@@ -49,7 +49,8 @@ namespace CGAL {
  *
  * \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
+ *                    whose value type is the point type
  * \tparam TriangleRange a model of the concept `SequenceContainer`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
  *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`.

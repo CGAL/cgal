@@ -123,19 +123,20 @@ bool read_VTP(const std::string& fname,
 /*!
  * \ingroup PkgStreamSupportIoFuncsVTP
  *
- * \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamVTK.
+ * \brief reads the content of the input file into `points` and `polygons`, using the \ref IOStreamVTK.
  *
  * \attention The polygon soup is not cleared, and the data from the file are appended.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
+ * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
+ *                    whose value type is the point type
  * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
  *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
  *                      convertible to `std::size_t`
  *
  * \param fname the path to the input file
- * \param points points of the soup of polygons.
- * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ * \param points points of the soup of polygons
+ * \param polygons a range of polygons. Each element in it describes a polygon
  *        using the indices of the points in `points`.
  *
  * \returns `true` if the reading was successful, `false` otherwise.
@@ -359,8 +360,8 @@ void write_soup_polys_points(std::ostream& os,
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param os the output stream
- * \param points points of the soup of polygons.
- * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ * \param points points of the soup of polygons
+ * \param polygons a range of polygons. Each element in it describes a polygon
  *        using the indices of the points in `points`.
  * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
@@ -458,8 +459,8 @@ bool write_VTP(std::ostream& os, const PointRange& points, const PolygonRange& p
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the output file
- * \param points points of the soup of polygons.
- * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ * \param points points of the soup of polygons
+ * \param polygons a range of polygons. Each element in it describes a polygon
  *        using the indices of the points in `points`.
  * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *

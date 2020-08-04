@@ -278,7 +278,8 @@ bool read_PLY(std::istream& is,
  *
  * \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
+ * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
+ *                    whose value type is the point type
  * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
  *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
@@ -286,8 +287,8 @@ bool read_PLY(std::istream& is,
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param is the input stream
- * \param points points of the soup of polygons.
- * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ * \param points points of the soup of polygons
+ * \param polygons a range of polygons. Each element in it describes a polygon
  *        using the indices of the points in `points`.
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
@@ -357,8 +358,8 @@ bool read_PLY(std::istream& is, PointRange& points, PolygonRange& polygons,
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the input file
- * \param points points of the soup of polygons.
- * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ * \param points points of the soup of polygons
+ * \param polygons a range of polygons. Each element in it describes a polygon
  *        using the indices of the points in `points`.
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
@@ -434,8 +435,8 @@ bool read_PLY(const std::string& fname, PointRange& points, PolygonRange& polygo
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param out the output stream
- * \param points points of the soup of polygons.
- * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ * \param points points of the soup of polygons
+ * \param polygons a range of polygons. Each element in it describes a polygon
  *        using the indices of the points in `points`.
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
@@ -519,8 +520,8 @@ bool write_PLY(std::ostream& out, const PointRange& points, const PolygonRange& 
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the output file
- * \param points points of the soup of polygons.
- * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ * \param points points of the soup of polygons
+ * \param polygons a range of polygons. Each element in it describes a polygon
  *        using the indices of the points in `points`.
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *

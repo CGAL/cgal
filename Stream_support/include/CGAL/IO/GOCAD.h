@@ -171,8 +171,8 @@ bool read_GOCAD(std::istream& is,
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param is the input stream
- * \param points points of the soup of polygons.
- * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ * \param points points of the soup of polygons
+ * \param polygons a range of polygons. Each element in it describes a polygon
  *        using the indices of the points in `points`.
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
@@ -228,8 +228,8 @@ bool read_GOCAD(std::istream& is, PointRange& points, PolygonRange& polygons,
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the input file
- * \param points points of the soup of polygons.
- * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ * \param points points of the soup of polygons
+ * \param polygons a range of polygons. Each element in it describes a polygon
  *        using the indices of the points in `points`.
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
@@ -348,8 +348,8 @@ bool write_GOCAD(std::ostream& os,
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param os the output stream
- * \param points points of the soup of polygons.
- * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ * \param points points of the soup of polygons
+ * \param polygons a range of polygons. Each element in it describes a polygon
  *        using the indices of the points in `points`.
  * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
@@ -401,8 +401,8 @@ bool write_GOCAD(std::ostream& os, const PointRange& points, const PolygonRange&
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the output file
- * \param points points of the soup of polygons.
- * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ * \param points points of the soup of polygons
+ * \param polygons a range of polygons. Each element in it describes a polygon
  *        using the indices of the points in `points`.
  * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *

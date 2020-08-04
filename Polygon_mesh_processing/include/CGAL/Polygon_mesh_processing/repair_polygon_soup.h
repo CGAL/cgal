@@ -171,7 +171,7 @@ bool simplify_polygon(PointRange& points,
 //                      whose `value_type` is `std::size_t`.
 // \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 //
-// \param points points of the soup of polygons.
+// \param points points of the soup of polygons
 // \param polygons a vector of polygons. Each element in the vector describes a polygon
 //        using the indices of the points in `points`.
 // \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -225,7 +225,7 @@ std::size_t simplify_polygons_in_polygon_soup(PointRange& points,
 //                      and `Swappable` whose `value_type` is `std::size_t`.
 // \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 //
-// \param points points of the soup of polygons.
+// \param points points of the soup of polygons
 // \param polygons a vector of polygons. Each element in the vector describes a polygon
 //        using the indices of the points in `points`.
 // \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -330,7 +330,7 @@ std::size_t split_pinched_polygons_in_polygon_soup(PointRange& points,
 //                      whose `value_type` is `std::size_t`.
 // \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 //
-// \param points points of the soup of polygons.
+// \param points points of the soup of polygons
 // \param polygons a vector of polygons. Each element in the vector describes a polygon
 //        using the indices of the points in `points`.
 //
@@ -387,7 +387,7 @@ std::size_t remove_degenerate_polygons_in_polygon_soup(PointRange& points,
 ///                      whose `value_type` is itself a model of the concept `RandomAccessContainer`
 ///                      whose `value_type` is `std::size_t`.
 ///
-/// \param points points of the soup of polygons.
+/// \param points points of the soup of polygons
 /// \param polygons a vector of polygons. Each element in the vector describes a polygon
 ///        using the indices of the points in `points`.
 ///
@@ -492,7 +492,7 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
 ///                      whose `value_type` is `std::size_t`.
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
-/// \param points points of the soup of polygons.
+/// \param points points of the soup of polygons
 /// \param polygons a vector of polygons. Each element in the vector describes a polygon
 ///        using the indices of the points in `points`.
 /// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -805,7 +805,7 @@ struct Duplicate_collector<ValueType, CGAL::Emptyset_iterator>
 // \tparam DuplicateOutputIterator a model of `OutputIterator` with value type
 //                                 `std::vector<std::vector<std::size_t> >`.
 //
-// \param points points of the soup of polygons.
+// \param points points of the soup of polygons
 // \param polygons a vector of polygons. Each element in the vector describes a polygon
 //        using the indices of the points in `points`.
 // \param out the output iterator in which duplicate polygons are put. Each entry is a vector of
@@ -882,7 +882,7 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
 ///                      and `ReversibleContainer` whose `value_type` is `std::size_t`.
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
-/// \param points points of the soup of polygons.
+/// \param points points of the soup of polygons
 /// \param polygons a vector of polygons. Each element in the vector describes a polygon
 ///        using the indices of the points in `points`.
 /// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -1046,7 +1046,7 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(PointRange& points,
 ///                      `Swappable`, and `ReversibleContainer` whose `value_type` is `std::size_t`.
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
-/// \param points points of the soup of polygons.
+/// \param points points of the soup of polygons
 /// \param polygons a vector of polygons. Each element in the vector describes a polygon
 ///        using the indices of the points in `points`.
 /// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below

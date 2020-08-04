@@ -371,7 +371,7 @@ It is an XML-based format that aims to enhance the \ref IOStreamSTL by adding me
 extra information such as colors.
 
 A precise specification of the format is available at <a href="http://www.3mf.io/specification/">3mf.io</a>;
-note that only version `1.x` is currently supported in \cgal.
+note that only versions `1.x` are currently supported in \cgal.
 
 <table class="iotable">
   <tr>

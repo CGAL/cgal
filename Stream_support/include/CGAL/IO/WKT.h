@@ -483,7 +483,7 @@ std::ostream& write_multi_linestring_WKT(std::ostream& out,
 
 //! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! Reads the content of a WKT stream and fills `points`, `polylines` and `polygons`
+//! reads the content of a WKT stream and fills `points`, `polylines` and `polygons`
 //! with all the POINT, MULTIPOINT, LINESTRING, MULTILINESTRING, POLYGON and MULTIPOLYGON it finds in `input`.
 //!
 //! \tparam MultiPoint must be a model of `RandomAccessRange` of `CGAL::Point_2` or `CGAL::Point_3`.

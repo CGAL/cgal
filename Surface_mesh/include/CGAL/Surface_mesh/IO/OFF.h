@@ -261,9 +261,11 @@ bool read_OFF_with_or_without_vnormals(std::istream& is,
 /// \brief extracts the surface mesh from an input stream in the \ref IOStreamOFF
 ///        and appends it to the surface mesh `sm`.
 ///
-/// This function reads points as well as vertex normals, vertex and face colors,
-/// and texture vertex coordinates. Those last four attributes are stored in internal property maps
-/// named "v:normal", "v:color", "f:color", and `"v:texcoord"`, respectively.
+/// This function reads points, as well as vertex normals, vertex and face colors,
+/// and texture vertex coordinates if those attributes are available in the input.
+/// These last four attributes are stored in internal property maps of `sm`
+/// named "v:normal", "v:color", "f:color", and `"v:texcoord"`, respectively,
+/// which will be created if they do not already exist.
 /// If property maps are passed through named parameters (see below),
 /// then they are used instead of the internal ones.
 ///
