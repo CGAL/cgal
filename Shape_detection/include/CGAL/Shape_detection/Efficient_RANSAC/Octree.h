@@ -66,6 +66,13 @@ public:
   }
 
   std::size_t offset() const { return m_offset; }
+
+  void createTree(double cluster_epsilon_for_max_level_recomputation = -1., std::size_t bucketSize = 2,
+                  std::size_t maxLevel = 10) {
+
+    // TODO: I need to find out what cluster_epsilon is used for
+    this->refine(maxLevel, bucketSize);
+  }
 };
 
 template<class Traits>
@@ -83,6 +90,13 @@ public:
 
   std::size_t maxLevel() const {
     return this->max_depth_reached();
+  }
+
+  void createTree(double cluster_epsilon_for_max_level_recomputation = -1., std::size_t bucketSize = 2,
+                  std::size_t maxLevel = 10) {
+
+    // TODO: I need to find out what cluster_epsilon is used for
+    this->refine(maxLevel, bucketSize);
   }
 };
 
