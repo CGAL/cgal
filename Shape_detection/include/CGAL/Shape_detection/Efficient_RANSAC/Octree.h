@@ -32,38 +32,44 @@ namespace internal {
 
 
 template<class Traits>
-class Direct_octree : public Octree::Octree<std::vector<std::size_t>, typename Traits::Point_map> {
+class Direct_octree {
 
-  Traits m_traits;
-  std::size_t m_offset;
-  std::vector<std::size_t> &m_index_map;
 
   typedef typename Traits::Input_range::iterator Input_iterator;
   typedef typename Traits::Point_map Point_map;
 
+  typedef Octree::Octree<typename Traits::Input_range, typename Traits::Point_map> Octree;
+
+  Traits m_traits;
+  std::size_t m_offset;
+
+  Octree m_octree;
+
 public:
+
+  typedef typename Octree::Node Node;
 
   Direct_octree(const Traits &traits,
                 const Input_iterator &begin,
                 const Input_iterator &end,
                 Point_map &point_map,
                 std::size_t offset = 0) :
-          Octree::Octree<std::vector<std::size_t>, typename Traits::Point_map>(m_index_map, point_map),
+          m_octree({begin, end}, point_map),
           m_traits(traits),
           m_offset(offset) {
 
   }
 
   std::size_t size() const {
-    return this->root().size();
+    return m_octree.root().size();
   }
 
   const Bbox_3 &boundingBox() const {
-    return this->bbox(this->root());
+    return m_octree.bbox(this->root());
   }
 
   std::size_t maxLevel() const {
-    return this->max_depth_reached();
+    return m_octree.max_depth_reached();
   }
 
   std::size_t offset() const { return m_offset; }
@@ -72,56 +78,68 @@ public:
                   std::size_t maxLevel = 10) {
 
     // TODO: I need to find out what cluster_epsilon is used for
-    this->refine(maxLevel, bucketSize);
+    m_octree.refine(maxLevel, bucketSize);
   }
 
-  std::size_t index(std::size_t i) { return m_index_map[i]; }
+  typename Traits::FT width() const { return m_octree.m_side_per_depth[0]; }
 
-  typename Traits::FT width() const { return this->m_side_per_depth[0]; }
+  const Node &locate(const typename Traits::Point_3 &p) const {
+    return m_octree.locate(p);
+  }
 };
 
 template<class Traits>
-class Indexed_octree : public Octree::Octree<std::vector<std::size_t>, typename Traits::Point_map> {
-
-  Traits m_traits;
-  std::vector<std::size_t> m_index_map;
+class Indexed_octree {
 
   typedef typename Traits::Input_range::iterator Input_iterator;
   typedef typename Traits::Point_map Point_map;
 
+  typedef Octree::Octree<typename Traits::Input_range, typename Traits::Point_map> Octree;
+
+  Traits m_traits;
+  std::vector<std::size_t> m_index_map;
+
+  Octree m_octree;
+
 public:
+
+  typedef typename Octree::Node Node;
 
   Indexed_octree(const Traits &traits,
                  const Input_iterator &begin,
                  const Input_iterator &end,
                  Point_map &point_map) :
-          Octree::Octree<std::vector<std::size_t>, typename Traits::Point_map>({}, point_map),
+          m_octree({}, point_map),
           m_traits(traits) {
 
   }
 
   std::size_t size() const {
-    return this->root().size();
+    return m_octree.root().size();
   }
 
   const Bbox_3 &boundingBox() const {
-    return this->bbox(this->root());
+    return m_octree.bbox(m_octree.root());
   }
 
   std::size_t maxLevel() const {
-    return this->max_depth_reached();
+    return m_octree.max_depth_reached();
   }
 
   void createTree(double cluster_epsilon_for_max_level_recomputation = -1., std::size_t bucketSize = 2,
                   std::size_t maxLevel = 10) {
 
     // TODO: I need to find out what cluster_epsilon is used for
-    this->refine(maxLevel, bucketSize);
+    m_octree.refine(maxLevel, bucketSize);
   }
 
   std::size_t index(std::size_t i) { return m_index_map[i]; }
 
-  typename Traits::FT width() const { return this->m_side_per_depth[0]; }
+  typename Traits::FT width() const { return m_octree.m_side_per_depth[0]; }
+
+  const Node &locate(const typename Traits::Point_3 &p) const {
+    return m_octree.locate(p);
+  }
 };
 
 }

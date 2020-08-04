@@ -1057,10 +1057,12 @@ private:
                                  indices);
       } else {
 
-        // TODO: Incompatible with Node children paradigm
-        for (std::size_t i = 0; i < 8; i++)
-          if (cell->child[i])
-            stack.push(cell->child[i]);
+        if (!cell->is_leaf()) {
+          for (std::size_t i = 0; i < 8; i++) {
+            if (!(*cell)[i].empty())
+              stack.push(&(*cell)[i]);
+          }
+        }
       }
 
     }
