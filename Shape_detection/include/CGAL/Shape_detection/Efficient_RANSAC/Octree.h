@@ -36,6 +36,7 @@ class Direct_octree : public Octree::Octree<std::vector<std::size_t>, typename T
 
   Traits m_traits;
   std::size_t m_offset;
+  std::vector<std::size_t> &m_index_map;
 
   typedef typename Traits::Input_range::iterator Input_iterator;
   typedef typename Traits::Point_map Point_map;
@@ -47,7 +48,7 @@ public:
                 const Input_iterator &end,
                 Point_map &point_map,
                 std::size_t offset = 0) :
-          Octree::Octree<std::vector<std::size_t>, typename Traits::Point_map>({}, point_map),
+          Octree::Octree<std::vector<std::size_t>, typename Traits::Point_map>(m_index_map, point_map),
           m_traits(traits),
           m_offset(offset) {
 
@@ -73,12 +74,15 @@ public:
     // TODO: I need to find out what cluster_epsilon is used for
     this->refine(maxLevel, bucketSize);
   }
+
+  std::size_t index(std::size_t i) { return m_index_map[i]; }
 };
 
 template<class Traits>
 class Indexed_octree : public Octree::Octree<std::vector<std::size_t>, typename Traits::Point_map> {
 
   Traits m_traits;
+  std::vector<std::size_t> m_index_map;
 
   typedef typename Traits::Input_range::iterator Input_iterator;
   typedef typename Traits::Point_map Point_map;
@@ -86,9 +90,9 @@ class Indexed_octree : public Octree::Octree<std::vector<std::size_t>, typename 
 public:
 
   Indexed_octree(const Traits &traits,
-                const Input_iterator &begin,
-                const Input_iterator &end,
-                Point_map &point_map) :
+                 const Input_iterator &begin,
+                 const Input_iterator &end,
+                 Point_map &point_map) :
           Octree::Octree<std::vector<std::size_t>, typename Traits::Point_map>({}, point_map),
           m_traits(traits) {
 
@@ -112,6 +116,8 @@ public:
     // TODO: I need to find out what cluster_epsilon is used for
     this->refine(maxLevel, bucketSize);
   }
+
+  std::size_t index(std::size_t i) { return m_index_map[i]; }
 };
 
 }
