@@ -24,6 +24,7 @@
 #include <CGAL/Shape_detection/Efficient_RANSAC/Shape_base.h>
 
 #include <CGAL/Octree.h>
+#include <CGAL/Octree/Node.h>
 
 namespace CGAL {
 namespace Shape_detection {
@@ -33,11 +34,21 @@ namespace internal {
 template<class Traits>
 class Direct_octree : public Octree::Octree<typename Traits::Input_range, typename Traits::Point_map> {
 
+public:
+
+  std::size_t size() const {
+    return this->root().size();
+  }
 };
 
 template<class Traits>
 class Indexed_octree : public Octree::Octree<typename Traits::Input_range, typename Traits::Point_map> {
 
+public:
+
+  std::size_t size() const {
+    return this->root().size();
+  }
 };
 
 }
