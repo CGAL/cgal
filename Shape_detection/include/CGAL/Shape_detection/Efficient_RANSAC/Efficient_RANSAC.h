@@ -1036,7 +1036,7 @@ private:
 
       FT diag = CGAL::sqrt(FT(3) * width * width) + epsilon;
 
-      FT dist = candidate->squared_distance(cell->barycenter());
+      FT dist = candidate->squared_distance(octree->barycenter(*cell));
 
       if (dist > (diag * diag))
         continue;
@@ -1047,8 +1047,8 @@ private:
         std::vector<std::size_t> indices;
         indices.reserve(cell->size());
         for (std::size_t i = 0; i < cell->size(); i++) {
-          if (shapeIndex[octree->index(cell->first + i)] == -1) {
-            indices.push_back(octree->index(cell->first + i));
+          if (shapeIndex[*(cell->points().begin() + i)] == -1) {
+            indices.push_back(*(cell->points().begin() + i));
           }
         }
 
