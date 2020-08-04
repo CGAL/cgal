@@ -467,9 +467,7 @@ public:
 
   /// @}
 
-
-private: // functions :
-
+  // TODO: Document this
   // TODO: Could this method name be reduced to just "center" ?
   Point barycenter(const Node &node) const {
 
@@ -484,6 +482,8 @@ private: // functions :
     // Convert that location into a point
     return {bary[0], bary[1], bary[2]};
   }
+
+private: // functions :
 
   void reassign_points(Node &node, Range_iterator begin, Range_iterator end, const Point &center,
                        std::bitset<3> coord = {},
