@@ -206,17 +206,17 @@ Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
   else if (criterion == AVERAGE_ANGLE_BASED)
   {
     //Current worst dihedral angle
-    double average_min_dh = min_tan_dihedral_angle(tr, ch0);
-    average_min_dh += min_tan_dihedral_angle(tr, ch1);
-    average_min_dh += min_tan_dihedral_angle(tr, cell_to_remove);
+    double average_min_dh = min_dihedral_angle(tr, ch0);
+    average_min_dh += min_dihedral_angle(tr, ch1);
+    average_min_dh += min_dihedral_angle(tr, cell_to_remove);
 
     average_min_dh /= 3.;
 
     FT new_average_min_dh = 0.5 *
-                            (min_tan_dihedral_angle(tr, vh2, ch0->vertex(indices(vh0_id, 0)),
+                            (min_dihedral_angle(tr, vh2, ch0->vertex(indices(vh0_id, 0)),
                                 ch0->vertex(indices(vh0_id, 1)),
                                 ch0->vertex(indices(vh0_id, 2)))
-                           + min_tan_dihedral_angle(tr, vh3, ch1->vertex(indices(vh1_id, 0)),
+                           + min_dihedral_angle(tr, vh3, ch1->vertex(indices(vh1_id, 0)),
                                  ch1->vertex(indices(vh1_id, 1)),
                                  ch1->vertex(indices(vh1_id, 2))));
     //Result worst dihedral angle
