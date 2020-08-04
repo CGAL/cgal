@@ -58,7 +58,7 @@ class Feature_set
 public:
 
 #ifdef DOXYGEN_RUNNING
-  using const_iterator = unspecified_type; ///< A random access iterator with value type `Feature_handle`.
+  using const_iterator = unspecified_type; ///< A random access constant iterator with value type `Feature_handle`.
   using iterator = unspecified_type; ///< A random access iterator with value type `Feature_handle`.
 #else
   using const_iterator = std::vector<Feature_handle>::const_iterator;
