@@ -78,7 +78,21 @@ public:
 template<class Traits>
 class Indexed_octree : public Octree::Octree<typename Traits::Input_range, typename Traits::Point_map> {
 
+  Traits m_traits;
+
+  typedef typename Traits::Input_range::iterator Input_iterator;
+  typedef typename Traits::Point_map Point_map;
+
 public:
+
+  Indexed_octree(const Traits &traits,
+                const Input_iterator &begin,
+                const Input_iterator &end,
+                Point_map &point_map) :
+          Octree::Octree<typename Traits::Input_range, typename Traits::Point_map>({begin, end}, point_map),
+          m_traits(traits) {
+
+  }
 
   std::size_t size() const {
     return this->root().size();
