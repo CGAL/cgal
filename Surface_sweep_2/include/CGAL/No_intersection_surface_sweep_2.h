@@ -143,7 +143,8 @@ protected:
 public:
   typedef CGAL::Surface_sweep_2::Event_comparer<Traits_adaptor_2, Event>
                                                         Event_comparer;
-  typedef Multiset<Event*, Event_comparer, Allocator>   Event_queue;
+  typedef Multiset<Event*, Event_comparer, Allocator, Tag_true>
+                                                        Event_queue;
   typedef typename Event_queue::iterator                Event_queue_iterator;
 
   typedef typename Event::Subcurve_iterator
