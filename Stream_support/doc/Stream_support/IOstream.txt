@@ -17,15 +17,16 @@ to and from files, the console, or other custom structures.
 
 \subsection StreamSupportOutline Outline
 
-- \ref IOstreamIO : the most essential data structures of \cgal, its kernel objects, all provide
-                    adapted input and output operators. In addition, \cgal provides tools to enhance
-                    the existing stream system of the STL to easily read and write classes external to \cgal.
-- \ref IOstreamSupportedFormats : a number of traditional data structures such as point sets or
-                                  polygon meshes have well-established standards specifying
-                                  a particular data format to facilitate data exchanges. Formats
-                                  supported for \cgal data structures are detailed in this section.
-                                  The page \ref IOStreamSupportedFileFormats offers the reversed viewpoint
-                                  (file format to \cgal data structure).
+- \ref IOstreamIO :
+  the most essential data structures of \cgal, its kernel objects, all provide
+  adapted input and output operators. In addition, \cgal provides tools to enhance
+  the existing stream system of the STL to easily read and write classes external to \cgal.
+- \ref IOstreamSupportedFormats :
+  a number of traditional data structures such as point sets or polygon meshes have well-established
+  standards specifying a particular data format to facilitate data exchanges. Formats supported
+  for \cgal data structures are detailed in this section; the page \ref IOStreamSupportedFileFormats
+  offers the reversed viewpoint (file format to \cgal data structure). Finally, an alternative to
+  standard file formats is serialization of data, see Section \ref IOstreamOther.
 
 \section IOstreamPrecision Stream Precision
 
