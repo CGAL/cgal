@@ -98,7 +98,7 @@ typename Geom_traits::FT min_dihedral_angle(const Point& p,
   FT a = CGAL::abs(dihedral_angle(p, q, r, s, gt));
   FT min_dh = a;
 
-  a = CGAL::abs(dihedral_angle(p, r, q, s, gt));
+  a = CGAL::abs(dihedral_angle(p, r, s, q, gt));
   min_dh = (std::min)(a, min_dh);
 
   a = CGAL::abs(dihedral_angle(p, s, q, r, gt));
@@ -107,7 +107,7 @@ typename Geom_traits::FT min_dihedral_angle(const Point& p,
   a = CGAL::abs(dihedral_angle(q, r, p, s, gt));
   min_dh = (std::min)(a, min_dh);
 
-  a = CGAL::abs(dihedral_angle(q, s, p, r, gt));
+  a = CGAL::abs(dihedral_angle(q, s, r, p, gt));
   min_dh = (std::min)(a, min_dh);
 
   a = CGAL::abs(dihedral_angle(r, s, p, q, gt));
