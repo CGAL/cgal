@@ -910,6 +910,14 @@ namespace internal {
       m_ptr = nullptr;
     }
 
+    CC_iterator (pointer p)
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      : ts(0)
+#endif
+    {
+      m_ptr.p = p;
+    }
+
   private:
 
     typedef typename DSC::Time_stamper           Time_stamper;
