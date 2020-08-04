@@ -111,6 +111,16 @@ public:
     m_closed(1)
   {}
 
+  /*! Squat the content of Point_2 for the pointer of Compact Container */
+  void* for_compact_container() const
+  {
+    return reinterpret_cast<void*&>(const_cast<Point_2&>(m_point));
+  }
+  void*& for_compact_container()
+  {
+    return reinterpret_cast<void*&>(m_point);
+  }
+
   /*! Initialize an event that is associated with a valid point. */
   void init(const Point_2& point, Attribute type,
             Arr_parameter_space ps_x, Arr_parameter_space ps_y)

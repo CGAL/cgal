@@ -160,19 +160,11 @@ public:
   typedef typename Status_line::iterator                Status_line_iterator;
 
   typedef std::allocator_traits<Allocator> Allocator_traits;
-  typedef typename Allocator_traits::template rebind_alloc<Event> Event_alloc;
   typedef typename Allocator_traits::template rebind_alloc<Subcurve> Subcurve_alloc;
 
 protected:
-  /*! \struct
-   * An auxiliary functor for comparing event pointers.
-   */
-  struct CompEventPtr {
-    Comparison_result operator()(Event* e1, Event* e2) const
-    { return (e1 < e2) ? SMALLER : ((e1 > e2) ? LARGER : EQUAL); }
-  };
 
-  typedef Multiset<Event*, CompEventPtr>           Allocated_events_set;
+  typedef Compact_container<Event>                 Allocated_events_set;
   typedef typename Allocated_events_set::iterator  Allocated_events_iterator;
 
   // Data members:
@@ -205,7 +197,6 @@ protected:
                                     // may happen only with events that are
                                     // associated with isolated query points.
 
-  Event_alloc m_eventAlloc;         // An allocator for the events objects.
   Subcurve_alloc m_subCurveAlloc;   // An allocator for the subcurve objects.
 
   Event m_masterEvent;              // A master Event (created once by the
