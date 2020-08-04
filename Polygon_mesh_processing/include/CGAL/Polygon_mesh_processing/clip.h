@@ -540,7 +540,7 @@ generic_clip_impl(
   *      will not be part of the output. Default value is `true`.
   *   \cgalParamEnd
   *   \cgalParamBegin{do_not_modify} (`np_c` only) if `true`, `clipper` will not be modified. The default value is `false`.
-  *                                  An interesting property of this option is that when set to `true`,
+  *                                  If  this option is set to `true`,
   *                                  `tm` is no longer required to be without self-intersection.
   *                                  Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
   *                                  and `clip_volume` to `false`.

@@ -627,8 +627,8 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *      will be thrown if at least one is found (`np1` only).
  *   \cgalParamEnd
  *   \cgalParamBegin{do_not_modify} if `true`, the corresponding mesh will not be updated. The default value is `false`.
- *                                  Obviously if this parameter is set to `true` for both meshes nothing will be done.
- *                                  An interesting property of this option is that when set to `true` for one mesh,
+ *                                  If this parameter is set to `true` for both meshes nothing will be done.
+ *                                  If this option is set to `true` for one mesh,
  *                                  the other mesh is no longer required to be without self-intersection.
  *   \cgalParamEnd
  * \cgalNamedParamsEnd
