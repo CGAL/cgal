@@ -743,6 +743,7 @@ public:
           num_invalid++;
 
           for (std::size_t j = 0; j < m_num_subsets; j++) {
+            // TODO: With the new octree, all trees have roots (even before refining)
             if (m_direct_octrees[j]/* && m_direct_octrees[j]->root()*/) {
               std::size_t offset = m_direct_octrees[j]->offset();
 
