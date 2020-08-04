@@ -1094,7 +1094,8 @@ private:
         do {
           std::size_t p = CGAL::get_default_random().
                   uniform_int<std::size_t>(0, cur->size() - 1);
-          std::size_t j = octree->index(cur->first + p);
+          // TODO: I'm not sure if dereferencing this is working correctly
+          std::size_t j = *(cur->points().begin() + p);
           if (shapeIndex[j] == -1)
             indices.insert(j);
         } while (indices.size() < requiredSamples);
