@@ -344,7 +344,7 @@ bool read_PLY(std::istream& is, CGAL::Point_set_3<Point, Vector>& point_set)
   \return `true` if the reading was successful, `false` otherwise.
 */
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const char* fname,
+bool read_PLY(const std::string& fname,
               CGAL::Point_set_3<Point, Vector>& point_set,
               std::string& comments,
               const CGAL_BGL_NP_CLASS& np)
@@ -367,43 +367,23 @@ bool read_PLY(const char* fname,
 /// \cond SKIP_IN_MANUAL
 
 template <typename Point, typename Vector>
-bool read_PLY(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set, std::string& comments)
-{
-  return read_PLY(fname, point_set, comments, parameters::all_default());
-}
-
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
-{
-  std::string unused_comments;
-  return read_PLY(fname, point_set, unused_comments, np);
-}
-
-template <typename Point, typename Vector>
-bool read_PLY(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  std::string unused_comments;
-  return read_PLY(fname, point_set, unused_comments, parameters::all_default());
-}
-
-template <typename Point, typename Vector>
 bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set, std::string& comments)
 {
-  return read_PLY(fname.c_str(), point_set, comments, parameters::all_default());
+  return read_PLY(fname, point_set, comments, parameters::all_default());
 }
 
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
 {
   std::string unused_comments;
-  return read_PLY(fname.c_str(), point_set, unused_comments, np);
+  return read_PLY(fname, point_set, unused_comments, np);
 }
 
 template <typename Point, typename Vector>
 bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
   std::string unused_comments;
-  return read_PLY(fname.c_str(), point_set, unused_comments, parameters::all_default());
+  return read_PLY(fname, point_set, unused_comments, parameters::all_default());
 }
 
 /// \endcond
@@ -762,7 +742,7 @@ bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
   \return `true` if the reading was successful, `false` otherwise.
 */
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(const char* fname,
+bool write_PLY(const std::string& fname,
                const CGAL::Point_set_3<Point, Vector>& point_set,
                const std::string& comments,
                const CGAL_BGL_NP_CLASS& np)
@@ -785,46 +765,22 @@ bool write_PLY(const char* fname,
 /// \cond SKIP_IN_MANUAL
 
 template <typename Point, typename Vector>
-bool write_PLY(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_set, const std::string& comments)
+bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set,
+               const std::string& comments)
 {
   return write_PLY(fname, point_set, comments, parameters::all_default());
 }
 
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
+bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
 {
   return write_PLY(fname, point_set, std::string(), np);
 }
 
 template <typename Point, typename Vector>
-bool write_PLY(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  return write_PLY(fname, point_set, std::string(), parameters::all_default());
-}
-
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set,
-               const std::string& comments, const CGAL_BGL_NP_CLASS& np)
-{
-  return write_PLY(fname.c_str(), point_set, comments, np);
-}
-
-template <typename Point, typename Vector>
-bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const std::string& comments)
-{
-  return write_PLY(fname.c_str(), point_set, comments, parameters::all_default());
-}
-
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
-{
-  return write_PLY(fname.c_str(), point_set, std::string(), np);
-}
-
-template <typename Point, typename Vector>
 bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set)
 {
-  return write_PLY(fname.c_str(), point_set, std::string(), parameters::all_default());
+  return write_PLY(fname, point_set, std::string(), parameters::all_default());
 }
 
 /// \endcond

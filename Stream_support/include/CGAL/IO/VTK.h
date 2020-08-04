@@ -97,7 +97,7 @@ bool vtkPointSet_to_polygon_soup(vtkPointSet* poly_data,
 // Read
 
 template <typename PointRange, typename PolygonRange, typename NamedParameters>
-bool read_VTP(const char* fname,
+bool read_VTP(const std::string& fname,
               PointRange& points,
               PolygonRange& polygons,
               const NamedParameters& np)
@@ -125,6 +125,8 @@ bool read_VTP(const char* fname,
  *
  * \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamVTK.
  *
+ * \attention The polygon soup is not cleared, and the data from the file are appended.
+ *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
  * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
@@ -139,20 +141,9 @@ bool read_VTP(const char* fname,
  * \returns `true` if the reading was successful, `false` otherwise.
  */
 template <typename PointRange, typename PolygonRange>
-bool read_VTP(const char* fname, PointRange& points, PolygonRange& polygons)
-{
-  return read_VTP(fname, points, polygons, parameters::all_default());
-}
-
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_VTP(const std::string& fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np)
-{
-  return read_VTP(fname.c_str(), points, polygons, np);
-}
-template <typename PointRange, typename PolygonRange>
 bool read_VTP(const std::string& fname, PointRange& points, PolygonRange& polygons)
 {
-  return read_VTP(fname.c_str(), points, polygons, parameters::all_default());
+  return read_VTP(fname, points, polygons, parameters::all_default());
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -489,7 +480,7 @@ bool write_VTP(std::ostream& os, const PointRange& points, const PolygonRange& p
  * \return `true` if the writing was successful, `false` otherwise.
  */
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_VTP(const char* fname,
+bool write_VTP(const std::string& fname,
                const PointRange& points,
                const PolygonRange& polygons,
                const CGAL_BGL_NP_CLASS& np)
@@ -512,21 +503,9 @@ bool write_VTP(const char* fname,
 /// \cond SKIP_IN_MANUAL
 
 template <typename PointRange, typename PolygonRange>
-bool write_VTP(const char* fname, const PointRange& points, const PolygonRange& polygons)
-{
-  return write_VTP(fname, points, polygons, parameters::all_default());
-}
-
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_VTP(const std::string& fname, const PointRange& points, const PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np)
-{
-  return write_VTP(fname.c_str(), points, polygons, np);
-}
-
-template <typename PointRange, typename PolygonRange>
 bool write_VTP(const std::string& fname, const PointRange& points, const PolygonRange& polygons)
 {
-  return write_VTP(fname.c_str(), points, polygons, parameters::all_default());
+  return write_VTP(fname, points, polygons, parameters::all_default());
 }
 
 /// \endcond

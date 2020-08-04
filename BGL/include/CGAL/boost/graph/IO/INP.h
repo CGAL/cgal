@@ -75,7 +75,7 @@ bool write_INP(std::ostream& os,
 }
 
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_INP(const char* fname,
+bool write_INP(const std::string& fname,
                const std::string& type,
                const Graph& g,
                const CGAL_BGL_NP_CLASS& np)
@@ -91,7 +91,7 @@ bool write_INP(std::ostream& os, const std::string& name, const std::string& typ
 }
 
 template <typename Graph>
-bool write_INP(const char* fname, const std::string& type, const Graph& g)
+bool write_INP(const std::string& fname, const std::string& type, const Graph& g)
 {
   return write_INP(fname, type, g, parameters::all_default());
 }

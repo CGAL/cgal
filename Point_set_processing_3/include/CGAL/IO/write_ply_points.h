@@ -283,7 +283,7 @@ bool write_PLY(std::ostream& os, const PointRange& points,
    \sa `write_PLY_with_properties()`
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(const char* filename,
+bool write_PLY(const std::string& filename,
                const PointRange& points,
                const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
@@ -309,24 +309,10 @@ bool write_PLY(const char* filename,
 /// \cond SKIP_IN_MANUAL
 
 template <typename PointRange>
-bool write_PLY(const char* filename, const PointRange& points,
-               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
-{
-  return write_PLY(filename, points, parameters::all_default());
-}
-
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(const std::string& filename, const PointRange& points, const CGAL_BGL_NP_CLASS& np,
-               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
-{
-  return write_PLY(filename.c_str(), points, np);
-}
-
-template <typename PointRange>
 bool write_PLY(const std::string& filename, const PointRange& points,
                typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
-  return write_PLY(filename.c_str(), points, parameters::all_default());
+  return write_PLY(filename, points, parameters::all_default());
 }
 
 /// \endcond

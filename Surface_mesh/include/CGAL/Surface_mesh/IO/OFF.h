@@ -269,7 +269,7 @@ bool read_OFF_with_or_without_vnormals(std::istream& is,
 ///
 /// Ignores comment lines which start with a hash, and lines with whitespace.
 ///
-/// \attention The graph `g` is not cleared, and the data from the stream is added.
+/// \attention The graph `sm` is not cleared, and the data from the stream is added.
 ///
 /// \tparam Point The type of the \em point property of a vertex. There is no requirement on `P`,
 ///               besides being default constructible and assignable.

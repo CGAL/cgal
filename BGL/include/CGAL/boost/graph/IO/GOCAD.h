@@ -84,7 +84,7 @@ public:
 ///
 /// The data is expected to represent a 2-manifold (possibly with borders).
 ///
-/// \attention The graph `g` is not cleared, and the data from the stream is added.
+/// \attention The graph `g` is not cleared, and the data from the stream are appended.
 ///
 /// \tparam Graph a model of `MutableFaceGraph`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -107,7 +107,7 @@ public:
 ///   \cgalParamNBegin{verbose}
 ///     \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
 ///     \cgalParamType{Boolean}
-///     \cgalParamDefault{`true`}
+///     \cgalParamDefault{`false`}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
@@ -169,7 +169,7 @@ bool read_GOCAD(std::istream& is, Graph& g,
 ///
 /// The data is expected to represent a 2-manifold (possibly with borders).
 ///
-/// \attention The graph `g` is not cleared, and the data from the stream is added.
+/// \attention The graph `g` is not cleared, and the data from the file are appended.
 ///
 /// \tparam Graph a model of `MutableFaceGraph`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -192,7 +192,7 @@ bool read_GOCAD(std::istream& is, Graph& g,
 ///   \cgalParamNBegin{verbose}
 ///     \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
 ///     \cgalParamType{Boolean}
-///     \cgalParamDefault{`true`}
+///     \cgalParamDefault{`false`}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
@@ -202,7 +202,7 @@ bool read_GOCAD(std::istream& is, Graph& g,
 ///
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(const char* fname,
+bool read_GOCAD(const std::string& fname,
                 std::pair<std::string, std::string>& name_and_color,
                 Graph& g,
                 const CGAL_BGL_NP_CLASS& np
@@ -219,32 +219,18 @@ bool read_GOCAD(const char* fname,
 /// \cond SKIP_IN_MANUAL
 
 template <typename Graph>
-bool read_GOCAD(const char* fname, std::pair<std::string, std::string>& name_and_color, Graph& g,
+bool read_GOCAD(const std::string& fname, std::pair<std::string, std::string>& name_and_color, Graph& g,
                 typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   return read_GOCAD(fname, name_and_color, g, parameters::all_default());
 }
 
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(const char* fname, Graph& g, const CGAL_BGL_NP_CLASS& np,
+bool read_GOCAD(const std::string& fname, Graph& g, const CGAL_BGL_NP_CLASS& np,
                 typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   std::pair<std::string, std::string> dummy;
   return read_GOCAD(fname, dummy, g, np);
-}
-
-template <typename Graph>
-bool read_GOCAD(const char* fname, Graph& g,
-                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
-{
-  return read_GOCAD(fname, g, parameters::all_default());
-}
-
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(const std::string& fname, Graph& g, CGAL_BGL_NP_CLASS np,
-                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
-{
-  return read_GOCAD(fname.c_str(), g, np);
 }
 
 template <typename Graph>
@@ -253,8 +239,6 @@ bool read_GOCAD(const std::string& fname, Graph& g,
 {
   return read_GOCAD(fname, g, parameters::all_default());
 }
-
-/// \endcond
 
 /// \endcond
 
@@ -368,13 +352,6 @@ bool write_GOCAD(std::ostream& os, const char* name, const Graph& g,
   return write_GOCAD(os, name, g, parameters::all_default());
 }
 
-template <typename Graph>
-bool write_GOCAD(std::ostream& os, const Graph& g,
-                 typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
-{
-  return write_GOCAD(os, "anonymous", g, parameters::all_default());
-}
-
 /// \endcond
 
 /// \ingroup PkgBGLIoFuncsGOCAD
@@ -422,6 +399,17 @@ bool write_GOCAD(std::ostream& os,
   return write_GOCAD(os, "anonymous", g, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
+template <typename Graph>
+bool write_GOCAD(std::ostream& os, const Graph& g,
+                 typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+{
+  return write_GOCAD(os, g, parameters::all_default());
+}
+
+/// \endcond
+
 /// \ingroup PkgBGLIoFuncsGOCAD
 ///
 /// \brief writes the graph `g` into a file named `fname`, using the \ref IOStreamGocad.
@@ -456,7 +444,7 @@ bool write_GOCAD(std::ostream& os,
 ///
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_GOCAD(const char* fname,
+bool write_GOCAD(const std::string& fname,
                  const Graph& g,
                  const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
@@ -466,24 +454,10 @@ bool write_GOCAD(const char* fname,
 {
   std::ofstream os(fname);
   CGAL::set_mode(os, CGAL::IO::ASCII);
-  return write_GOCAD(os, fname, g, np);
+  return write_GOCAD(os, fname.c_str(), g, np);
 }
 
 /// \cond SKIP_IN_MANUAL
-
-template <typename Graph>
-bool write_GOCAD(const char* fname, const Graph& g,
-                 typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
-{
-  return write_GOCAD(fname, g, parameters::all_default());
-}
-
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_GOCAD(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np,
-                 typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
-{
-  return write_GOCAD(fname.c_str(), g, np);
-}
 
 template <typename Graph>
 bool write_GOCAD(const std::string& fname, const Graph& g,

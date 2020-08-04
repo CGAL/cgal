@@ -79,7 +79,7 @@ public:
 
   Ignores comment lines which start with a hash, and lines with whitespace.
 
-  \attention The graph `g` is not cleared, and the data from the stream is added.
+  \attention The graph `g` is not cleared, and the data from the stream are appended.
 
   \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -101,7 +101,7 @@ public:
     \cgalParamNBegin{verbose}
       \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
       \cgalParamType{Boolean}
-      \cgalParamDefault{`true`}
+      \cgalParamDefault{`false`}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -146,7 +146,7 @@ bool read_OBJ(std::istream& is, Graph& g,
 
   Ignores comment lines which start with a hash, and lines with whitespace.
 
-  \attention The graph `g` is not cleared, and the data from the stream is added.
+  \attention The graph `g` is not cleared, and the data from the file are appended.
 
   \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -168,7 +168,7 @@ bool read_OBJ(std::istream& is, Graph& g,
     \cgalParamNBegin{verbose}
       \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
       \cgalParamType{Boolean}
-      \cgalParamDefault{`true`}
+      \cgalParamDefault{`false`}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -178,7 +178,7 @@ bool read_OBJ(std::istream& is, Graph& g,
 */
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OBJ(const char* fname,
+bool read_OBJ(const std::string& fname,
               Graph& g,
               const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
@@ -192,20 +192,6 @@ bool read_OBJ(const char* fname,
 }
 
 /// \cond SKIP_IN_MANUAL
-
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OBJ(const std::string& fname, Graph& g, const CGAL_BGL_NP_CLASS& np,
-              typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
-{
-  return read_OBJ(fname.c_str(), g, np);
-}
-
-template <typename Graph>
-bool read_OBJ(const char* fname, Graph& g,
-              typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
-{
-  return read_OBJ(fname, g, parameters::all_default());
-}
 
 template <typename Graph>
 bool read_OBJ(const std::string& fname, Graph& g,
@@ -307,7 +293,7 @@ bool write_OBJ(std::ostream& os, const Graph& g,
 */
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OBJ(const char* fname,
+bool write_OBJ(const std::string& fname,
                const Graph& g,
                const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
@@ -321,20 +307,6 @@ bool write_OBJ(const char* fname,
 }
 
 /// \cond SKIP_IN_MANUAL
-
-template <typename Graph>
-bool write_OBJ(const char* fname, const Graph& g,
-               typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
-{
-  return write_OBJ(fname, g, parameters::all_default());
-}
-
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OBJ(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np,
-               typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
-{
-  return write_OBJ(fname.c_str(), g, np);
-}
 
 template <typename Graph>
 bool write_OBJ(const std::string& fname, const Graph& g,

@@ -370,7 +370,8 @@ The `3MF`, using the file extension `.3mf`, is an open source file format create
 It is an XML-based format that aims to enhance the \ref IOStreamSTL by adding means to include
 extra information such as colors.
 
-A precise specification of the format is available at <a href="http://www.3mf.io/specification/">3mf.io</a>.
+A precise specification of the format is available at <a href="http://www.3mf.io/specification/">3mf.io</a>;
+note that only version `1.x` is currently supported in \cgal.
 
 <table class="iotable">
   <tr>
@@ -413,8 +414,17 @@ A WRL file includes data specifying 3-D details such as vertices, edges for a 3-
 
 A precise specification of the format is available <a href="http://gun.teipir.gr/VRML-amgem/spec/">here</a>.
 
-Any structure that is a model of the concept `FaceGraph` can be exported into the `.wrl` file format
-using the function \link PkgBGLIoFuncsWRL `CGAL::write_WRL()` \endlink.
+<table class="iotable">
+  <tr>
+    <th colspan="4">3D Manufacturing Format (3MF)</th>
+  </tr>
+  <tr>
+    <td rowspan="1" width="75">Output</td>
+    <td rowspan="1" width="175">Polygon Mesh</td>
+    <td width="250">Any model of `FaceGraph`</td>
+    <td width="500">\link PkgBGLIoFuncsWRL CGAL::write_WRL(const char*, Graph&)\endlink</td>
+  </tr>
+</table>
 
 \section IOStreamVTK VTK (VTU / VTP) File Formats
 

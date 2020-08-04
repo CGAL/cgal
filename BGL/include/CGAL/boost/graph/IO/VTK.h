@@ -118,7 +118,7 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
  *
  * The data is expected to represent a 2-manifold (possibly with borders).
  *
- * \attention The graph `g` is not cleared, and the data from the stream is added.
+ * \attention The graph `g` is not cleared, and the data from the file are appended.
  *
  * \tparam Graph a model of `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -144,7 +144,7 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
 */
 template<typename Graph,
          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_VTP(const char* fname,
+bool read_VTP(const std::string& fname,
               Graph& g,
               const CGAL_BGL_NP_CLASS& np)
 {
@@ -167,13 +167,6 @@ bool read_VTP(const char* fname,
 
 /// \cond SKIP_IN_MANUAL
 
-template<typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_VTP(const std::string& fname, Graph& g, const CGAL_BGL_NP_CLASS& np)
-{
-  return read_VTP(fname.c_str(), g, np);
-}
-template<typename Graph>
-bool read_VTP(const char* fname, Graph& g) { return read_VTP(fname, g, parameters::all_default()); }
 template<typename Graph>
 bool read_VTP(const std::string& fname, Graph& g) { return read_VTP(fname, g, parameters::all_default()); }
 
@@ -532,7 +525,7 @@ bool write_VTP(std::ostream& os,
  * \returns `true` if writing was successful, `false` otherwise.
  */
 template<typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_VTP(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
+bool write_VTP(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
   std::ofstream os(fname);
   return write_VTP(os, g, np);
@@ -542,10 +535,6 @@ bool write_VTP(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
 
 template<typename Graph>
 bool write_VTP(std::ostream& os, const Graph& g) { return write_VTP(os, g, CGAL::parameters::all_default()); }
-template<typename Graph>
-bool write_VTP(const char* fname, const Graph& g) { return write_VTP(fname, g, parameters::all_default()); }
-template<typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_VTP(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np) { return write_VTP(fname.c_str(), g, np); }
 template<typename Graph>
 bool write_VTP(const std::string& fname, const Graph& g) { return write_VTP(fname, g, parameters::all_default()); }
 

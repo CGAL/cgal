@@ -37,8 +37,7 @@ namespace Polygon_mesh_processing {
 /*!
   \ingroup PMP_IO_grp
 
- * \brief attempts to read a file as a polygon mesh; in case of failure, reads the file as a polygon soup,
- * repairs and orients it to obtain a polygon mesh.
+ * \brief reads the file as a polygon soup, repairs, and orients it to obtain a polygon mesh.
  *
  * Supported file formats are the following:
  * - \ref IOStreamOFF (`.off`)
@@ -77,16 +76,16 @@ namespace Polygon_mesh_processing {
  *   \cgalParamNBegin{verbose}
  *     \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
  *     \cgalParamType{Boolean}
- *     \cgalParamDefault{`true`}
+ *     \cgalParamDefault{`false`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- * \return `true` if the reading and conversion were successful, `false` otherwise.
+ * \return `true` if the reading, repairing, and orientation operations were successful, `false` otherwise.
  *
  * \sa \link PkgBGLIOFct `CGAL::write_polygon_mesh()` \endlink
  */
 template <typename PolygonMesh, typename NamedParameters>
-bool read_polygon_mesh(const char* fname,
+bool read_polygon_mesh(const std::string& fname,
                        PolygonMesh& g,
                        const NamedParameters& np)
 {
@@ -98,31 +97,28 @@ bool read_polygon_mesh(const char* fname,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  bool ok = CGAL::read_polygon_mesh(fname, g, np);
-
-  if(ok)
-    return true;
-
-  clear(g);
+  const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
   std::vector<Point> points;
   std::vector<std::vector<std::size_t> > faces;
   if(!CGAL::read_polygon_soup(fname, points, faces))
   {
-    std::cerr << "Error: cannot read file\n";
+    if(verbose)
+      std::cerr << "W: cannot read polygon soup\n";
     return false;
   }
 
-  std::cout << "Cleaning polygon soup..." << std::endl;
   const bool do_repair = choose_parameter(get_parameter(np, internal_np::repair_polygon_soup), true);
   if(do_repair)
     PMP::repair_polygon_soup(points, faces, np);
 
-  if(!PMP::orient_polygon_soup(points, faces))
-    std::cerr << "W: File does not describe a polygon mesh" << std::endl;
-
-  if(!PMP::is_polygon_soup_a_polygon_mesh(faces))
+  if(!PMP::orient_polygon_soup(points, faces) ||
+     !PMP::is_polygon_soup_a_polygon_mesh(faces))
+  {
+    if(verbose)
+      std::cerr << "W: File does not describe a polygon mesh" << std::endl;
     return false;
+  }
 
   PMP::polygon_soup_to_polygon_mesh(points, faces, g, parameters::all_default(), np);
 
@@ -130,18 +126,6 @@ bool read_polygon_mesh(const char* fname,
 }
 
 /// \cond SKIP_IN_MANUAL
-
-template <typename PolygonMesh>
-bool read_polygon_mesh(const char* fname, PolygonMesh& g)
-{
-  return CGAL::Polygon_mesh_processing::read_polygon_mesh(fname, g, parameters::all_default());
-}
-
-template <typename PolygonMesh, typename NamedParameters>
-bool read_polygon_mesh(const std::string& fname, PolygonMesh& g, const NamedParameters& np)
-{
-  return CGAL::Polygon_mesh_processing::read_polygon_mesh(fname.c_str(), g, np);
-}
 
 template <typename PolygonMesh>
 bool read_polygon_mesh(const std::string& fname, PolygonMesh& g)

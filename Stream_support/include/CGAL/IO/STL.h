@@ -45,6 +45,8 @@ namespace CGAL {
  *
  * \brief reads the content of `is` into `points` and `facets`, using the \ref IOStreamSTL.
  *
+ * \attention The polygon soup is not cleared, and the data from the stream are appended.
+ *
  * \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
@@ -62,7 +64,7 @@ namespace CGAL {
  *   \cgalParamNBegin{verbose}
  *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
  *     \cgalParamType{Boolean}
- *     \cgalParamDefault{`true`}
+ *     \cgalParamDefault{`false`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -78,7 +80,7 @@ bool read_STL(std::istream& is,
 #endif
               )
 {
-  const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), true);
+  const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
   if(!is.good())
   {
@@ -178,6 +180,8 @@ bool read_STL(std::istream& is, PointRange& points, TriangleRange& facets,
  *
  * \brief reads the content of a file named `fname` into `points` and `facets`, using the \ref IOStreamSTL.
  *
+ * \attention The polygon soup is not cleared, and the data from the file are appended.
+ *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam TriangleRange a model of the concept `SequenceContainer`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
@@ -199,14 +203,17 @@ bool read_STL(std::istream& is, PointRange& points, TriangleRange& facets,
  *   \cgalParamNBegin{verbose}
  *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
  *     \cgalParamType{Boolean}
- *     \cgalParamDefault{`true`}
+ *     \cgalParamDefault{`false`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \returns `true` if the reading was successful, `false` otherwise.
  */
 template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_STL(const char* fname, PointRange& points, TriangleRange& facets, const CGAL_BGL_NP_CLASS& np
+bool read_STL(const std::string& fname,
+              PointRange& points,
+              TriangleRange& facets,
+              const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
               , typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr
 #endif
@@ -228,20 +235,6 @@ bool read_STL(const char* fname, PointRange& points, TriangleRange& facets, cons
 }
 
 /// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename TriangleRange>
-bool read_STL(const char* fname, PointRange& points, TriangleRange& facets,
-              typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
-{
-  return read_STL(fname, points, facets, parameters::all_default());
-}
-
-template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facets, const CGAL_BGL_NP_CLASS& np,
-              typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
-{
-  return read_STL(fname.c_str(), points, facets, np);
-}
 
 template <typename PointRange, typename TriangleRange>
 bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facets,
@@ -376,6 +369,8 @@ bool write_STL(std::ostream& os, const PointRange& points, const TriangleRange& 
  *
  * \brief writes the content of `points` and `facets` in a file named `fname`, using the \ref IOStreamSTL.
  *
+ * \attention The polygon soup is not cleared, and the data from the file are appended.
+ *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam TriangleRange a model of the concept `SequenceContainer`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
@@ -405,7 +400,7 @@ bool write_STL(std::ostream& os, const PointRange& points, const TriangleRange& 
  * \return `true` if the writing was successful, `false` otherwise.
  */
 template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_STL(const char* fname,
+bool write_STL(const std::string& fname,
                const PointRange& points,
                const TriangleRange& facets,
                const CGAL_BGL_NP_CLASS& np
@@ -432,24 +427,10 @@ bool write_STL(const char* fname,
 /// \cond SKIP_IN_MANUAL
 
 template <typename PointRange, typename TriangleRange>
-bool write_STL(const char* fname, const PointRange& points, const TriangleRange& facets,
-               typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
-{
-  return write_STL(fname, points, facets, parameters::all_default());
-}
-
-template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_STL(const std::string& fname, const PointRange& points, const TriangleRange& facets, const CGAL_BGL_NP_CLASS& np,
-               typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
-{
-  return write_STL(fname.c_str(), points, facets, np);
-}
-
-template <typename PointRange, typename TriangleRange>
 bool write_STL(const std::string& fname, const PointRange& points, const TriangleRange& facets,
                typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
 {
-  return write_STL(fname.c_str(), points, facets, parameters::all_default());
+  return write_STL(fname, points, facets, parameters::all_default());
 }
 
 /// \endcond

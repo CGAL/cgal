@@ -72,7 +72,7 @@ public:
 
   The data is expected to represent a 2-manifold (possibly with borders).
 
-  \attention The graph `g` is not cleared, and the data from the stream is added.
+  \attention The graph `g` is not cleared, and the data from the stream are appended.
 
   \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
 
@@ -96,7 +96,7 @@ public:
     \cgalParamNBegin{verbose}
       \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
       \cgalParamType{Boolean}
-      \cgalParamDefault{`true`}
+      \cgalParamDefault{`false`}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -123,7 +123,7 @@ bool read_STL(std::istream& is,
 
   The data is expected to represent a 2-manifold (possibly with borders).
 
-  \attention The graph `g` is not cleared, and the data from the stream is added.
+  \attention The graph `g` is not cleared, and the data from the file are appended.
 
   \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -151,7 +151,7 @@ bool read_STL(std::istream& is,
     \cgalParamNBegin{verbose}
       \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
       \cgalParamType{Boolean}
-      \cgalParamDefault{`true`}
+      \cgalParamDefault{`false`}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -160,7 +160,9 @@ bool read_STL(std::istream& is,
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_STL(const char* fname, Graph& g, const CGAL_BGL_NP_CLASS& np)
+bool read_STL(const std::string& fname,
+              Graph& g, const
+              CGAL_BGL_NP_CLASS& np)
 {
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)
@@ -179,16 +181,8 @@ bool read_STL(const char* fname, Graph& g, const CGAL_BGL_NP_CLASS& np)
 
 /// \cond SKIP_IN_MANUAL
 
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_STL(const std::string& fname, Graph& g, const CGAL_BGL_NP_CLASS& np)
-{
-  return read_STL(fname.c_str(), g, np);
-}
-
 template <typename Graph>
 bool read_STL(std::istream& is, Graph& g) { return read_STL(is, g, parameters::all_default()); }
-template <typename Graph>
-bool read_STL(const char* fname, Graph& g) { return read_STL(fname, g, parameters::all_default()); }
 template <typename Graph>
 bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, parameters::all_default()); }
 
@@ -352,7 +346,7 @@ bool write_STL(std::ostream& os,
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_STL(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
+bool write_STL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)
@@ -371,16 +365,8 @@ bool write_STL(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
 
 /// \cond SKIP_IN_MANUAL
 
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_STL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
-{
-  return write_STL(fname.c_str(), g, np);
-}
-
 template <typename Graph>
 bool write_STL(std::ostream& os, const Graph& g) { return write_STL(os, g, parameters::all_default()); }
-template <typename Graph>
-bool write_STL(const char* fname, const Graph& g) { return write_STL(fname, g, parameters::all_default()); }
 template <typename Graph>
 bool write_STL(const std::string& fname, const Graph& g) { return write_STL(fname, g, parameters::all_default()); }
 

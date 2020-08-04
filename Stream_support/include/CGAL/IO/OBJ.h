@@ -50,7 +50,7 @@ bool read_OBJ(std::istream& is,
               PolygonRange& polygons,
               VertexNormalOutputIterator,
               VertexTextureOutputIterator,
-              const bool verbose = true)
+              const bool verbose = false)
 {
   if(!is.good())
   {
@@ -190,6 +190,8 @@ bool read_OBJ(std::istream& is,
 ///
 /// \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamOBJ.
 ///
+/// \attention The polygon soup is not cleared, and the data from the stream are appended.
+///
 /// \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
 /// \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
 ///                      whose `value_type` is itself a model of the concepts `SequenceContainer`
@@ -207,7 +209,7 @@ bool read_OBJ(std::istream& is,
 ///   \cgalParamNBegin{verbose}
 ///     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
 ///     \cgalParamType{Boolean}
-///     \cgalParamDefault{`true`}
+///     \cgalParamDefault{`false`}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
@@ -222,7 +224,7 @@ bool read_OBJ(std::istream& is,
 #endif
               )
 {
-  const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), true);
+  const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
   return IO::internal::read_OBJ(is, points, polygons,
                                 CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
@@ -244,6 +246,8 @@ bool read_OBJ(std::istream& is, PointRange& points, PolygonRange& polygons,
 ///
 /// \brief reads the content of the file `fname` into `points` and `polygons`, using the \ref IOStreamOBJ.
 ///
+/// \attention The polygon soup is not cleared, and the data from the file are appended.
+///
 /// \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
 /// \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
 ///                      whose `value_type` is itself a model of the concept `SequenceContainer`
@@ -261,13 +265,13 @@ bool read_OBJ(std::istream& is, PointRange& points, PolygonRange& polygons,
 ///   \cgalParamNBegin{verbose}
 ///     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
 ///     \cgalParamType{Boolean}
-///     \cgalParamDefault{`true`}
+///     \cgalParamDefault{`false`}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \returns `true` if the reading was successful, `false` otherwise.
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OBJ(const char* fname,
+bool read_OBJ(const std::string& fname,
               PointRange& points,
               PolygonRange& polygons,
               const CGAL_BGL_NP_CLASS& np
@@ -276,26 +280,12 @@ bool read_OBJ(const char* fname,
 #endif
               )
 {
-  std::ifstream in(fname);
+  std::ifstream is(fname);
   CGAL::set_mode(is, CGAL::IO::ASCII);
-  return read_OBJ(in, points, polygons, np);
+  return read_OBJ(is, points, polygons, np);
 }
 
 /// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename PolygonRange>
-bool read_OBJ(const char* fname, PointRange& points, PolygonRange& polygons,
-              typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return read_OBJ(fname, points, polygons, parameters::all_default());
-}
-
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np,
-              typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return read_OBJ(fname.c_str(), points, polygons, np);
-}
 
 template <typename PointRange, typename PolygonRange>
 bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygons,
@@ -395,7 +385,7 @@ bool write_OBJ(std::ostream& os, const PointRange& points, const PolygonRange& p
 template <typename PointRange,
           typename PolygonRange,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OBJ(const char* fname,
+bool write_OBJ(const std::string& fname,
                const PointRange& points,
                const PolygonRange& polygons,
                const CGAL_BGL_NP_CLASS& np
@@ -412,24 +402,10 @@ bool write_OBJ(const char* fname,
 /// \cond SKIP_IN_MANUAL
 
 template <typename PointRange, typename PolygonRange>
-bool write_OBJ(const char* fname, const PointRange& points, const PolygonRange& polygons,
-               typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return write_OBJ(fname, points, polygons, parameters::all_default());
-}
-
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OBJ(const std::string& fname, const PointRange& points, const PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np,
-               typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return write_OBJ(fname.c_str(), points, polygons, np);
-}
-
-template <typename PointRange, typename PolygonRange>
 bool write_OBJ(const std::string& fname, const PointRange& points, const PolygonRange& polygons,
                typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
-  return write_OBJ(fname.c_str(), points, polygons, parameters::all_default());
+  return write_OBJ(fname, points, polygons, parameters::all_default());
 }
 
 /// \endcond

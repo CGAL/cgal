@@ -337,7 +337,7 @@ bool write_LAS(std::ostream& os,
    \sa `write_LAS_with_properties()`
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_LAS(const char* filename,
+bool write_LAS(const std::string& filename,
                const PointRange& points,
                const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
@@ -352,13 +352,6 @@ bool write_LAS(const char* filename,
 
 /// \cond SKIP_IN_MANUAL
 
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_LAS(const std::string& filename, const PointRange& points, const CGAL_BGL_NP_CLASS& np,
-               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
-{
-  return write_LAS(filename.c_str(), points, np);
-}
-
 // variant with default NP
 template <typename PointRange>
 bool write_LAS(std::ostream& os, const PointRange& points,
@@ -368,19 +361,12 @@ bool write_LAS(std::ostream& os, const PointRange& points,
 }
 
 template <typename PointRange>
-bool write_LAS(const char* filename, const PointRange& points,
+bool write_LAS(const std::string& filename, const PointRange& points,
                typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
   std::ofstream os(filename, std::ios::binary);
   CGAL::set_mode(os, CGAL::IO::BINARY);
   return write_LAS(os, points, CGAL::Point_set_processing_3::parameters::all_default(points)());
-}
-
-template <typename PointRange>
-bool write_LAS(const std::string& filename, const PointRange& points,
-               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
-{
-  return write_LAS(filename, points, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
 /// \endcond

@@ -55,7 +55,7 @@ bool read_PLY(std::istream& is,
               ColorOutputIterator fc_out,
               ColorOutputIterator vc_out,
               HUVOutputIterator huvs_out,
-              const bool verbose = true,
+              const bool verbose = false,
               typename std::enable_if<CGAL::is_iterator<ColorOutputIterator>::value>::type* = nullptr)
 {
   typedef typename boost::range_value<PointRange>::type     Point_3;
@@ -237,7 +237,7 @@ bool read_PLY(std::istream& is,
               ColorRange& fcolors,
               ColorRange& vcolors,
               HUVRange& huvs,
-              const bool verbose = true,
+              const bool verbose = false,
               typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
   return IO::internal::read_PLY(is, points, polygons,
@@ -254,7 +254,7 @@ bool read_PLY(std::istream& is,
               PolygonRange& polygons,
               ColorRange& fcolors,
               ColorRange& vcolors,
-              const bool verbose = true)
+              const bool verbose = false)
 {
   std::vector<std::pair<unsigned int, unsigned int> > dummy_pui;
   std::vector<std::pair<float, float> > dummy_pf;
@@ -273,6 +273,8 @@ bool read_PLY(std::istream& is,
  * \ingroup PkgStreamSupportIoFuncsPLY
  *
  * \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamPLY.
+ *
+ * \attention The polygon soup is not cleared, and the data from the stream are appended.
  *
  * \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
  *
@@ -299,7 +301,7 @@ bool read_PLY(std::istream& is,
  *   \cgalParamNBegin{verbose}
  *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
  *     \cgalParamType{Boolean}
- *     \cgalParamDefault{`true`}
+ *     \cgalParamDefault{`false`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -346,6 +348,8 @@ bool read_PLY(std::istream& is, PointRange& points, PolygonRange& polygons,
  *
  * \brief reads the content of `fname` into `points` and `polygons`, using the \ref IOStreamPLY.
  *
+ * \attention The polygon soup is not cleared, and the data from the file are appended.
+ *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
@@ -368,14 +372,14 @@ bool read_PLY(std::istream& is, PointRange& points, PolygonRange& polygons,
  *   \cgalParamNBegin{verbose}
  *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
  *     \cgalParamType{Boolean}
- *     \cgalParamDefault{`true`}
+ *     \cgalParamDefault{`false`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \returns `true` if the reading was successful, `false` otherwise.
  */
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const char* fname,
+bool read_PLY(const std::string& fname,
               PointRange& points,
               PolygonRange& polygons,
               const CGAL_BGL_NP_CLASS& np
@@ -402,24 +406,10 @@ bool read_PLY(const char* fname,
 /// \cond SKIP_IN_MANUAL
 
 template <typename PointRange, typename PolygonRange>
-bool read_PLY(const char* fname, PointRange& points, PolygonRange& polygons,
-              typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return read_PLY(fname, points, polygons, parameters::all_default());
-}
-
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const std::string& fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np,
-              typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return read_PLY(fname.c_str(), points, polygons, np);
-}
-
-template <typename PointRange, typename PolygonRange>
 bool read_PLY(const std::string& fname, PointRange& points, PolygonRange& polygons,
               typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
-  return read_PLY(fname.c_str(), points, polygons, parameters::all_default());
+  return read_PLY(fname, points, polygons, parameters::all_default());
 }
 
 /// \endcond
@@ -552,7 +542,7 @@ bool write_PLY(std::ostream& out, const PointRange& points, const PolygonRange& 
  * \return `true` if the writing was successful, `false` otherwise.
  */
 template <class PointRange, class PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS >
-bool write_PLY(const char* fname,
+bool write_PLY(const std::string& fname,
                const PointRange& points,
                const PolygonRange& polygons,
                const CGAL_BGL_NP_CLASS& np
@@ -579,24 +569,10 @@ bool write_PLY(const char* fname,
 /// \cond SKIP_IN_MANUAL
 
 template <class PointRange, class PolygonRange>
-bool write_PLY(const char* fname, const PointRange& points, const PolygonRange& polygons,
-               typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return write_PLY(fname, points, polygons, parameters::all_default());
-}
-
-template <class PointRange, class PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS >
-bool write_PLY(const std::string& fname, const PointRange& points, const PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np,
-               typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return write_PLY(fname.c_str(), points, polygons, np);
-}
-
-template <class PointRange, class PolygonRange>
 bool write_PLY(const std::string& fname, const PointRange& points, const PolygonRange& polygons,
                typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
-  return write_PLY(fname.c_str(), points, polygons, parameters::all_default());
+  return write_PLY(fname, points, polygons, parameters::all_default());
 }
 
 /// \endcond

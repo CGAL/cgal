@@ -10,9 +10,6 @@ appends it to the polyhedral surface \f$ P\f$. Only the point coordinates
 and facets from the input stream are used to build the polyhedral
 surface. Neither normal vectors nor color attributes are evaluated.
 
-For OFF an ASCII and a binary format exist. The stream detects the
-format automatically and can read both.
-
 \sa `CGAL::Polyhedron_3<Traits>`
 \sa `CGAL::Polyhedron_incremental_builder_3<HDS>`
 \sa \link PkgPolyhedronIOFunc `operator<<(std::ostream&, Polyhedron_3<PolyhedronTraits_3>&)`\endlink

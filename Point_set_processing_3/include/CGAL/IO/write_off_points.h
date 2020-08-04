@@ -197,7 +197,7 @@ bool write_OFF(std::ostream& os, const PointRange& points,
 */
 template <typename PointRange,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const char* filename,
+bool write_OFF(const std::string& filename,
                const PointRange& points,
                const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
@@ -212,25 +212,11 @@ bool write_OFF(const char* filename,
 /// \cond SKIP_IN_MANUAL
 
 template <typename PointRange>
-bool write_OFF(const char* filename, const PointRange& points,
+bool write_OFF(const std::string& filename, const PointRange& points,
                typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
   std::ofstream os(filename);
   return write_OFF(os, points, parameters::all_default());
-}
-
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const std::string& filename, const PointRange& points, const CGAL_BGL_NP_CLASS& np,
-               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
-{
-  return write_OFF(filename.c_str(), points, np);
-}
-
-template <typename PointRange>
-bool write_OFF(const std::string& filename, const PointRange& points,
-               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
-{
-  return write_OFF(filename, points, parameters::all_default());
 }
 
 /// \endcond

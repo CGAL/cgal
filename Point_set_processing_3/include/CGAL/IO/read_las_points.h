@@ -516,7 +516,7 @@ bool read_LAS(std::istream& is, OutputIterator output,
    \tparam PointOutputIterator iterator over output points.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-   \param filename the name of the input file
+   \param filename name of the input file
    \param output output iterator over points
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
@@ -541,7 +541,7 @@ bool read_LAS(std::istream& is, OutputIterator output,
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_LAS(const char* filename,
+bool read_LAS(const std::string& filename,
               PointOutputIterator output,
               const CGAL_BGL_NP_CLASS& np)
 {
@@ -553,35 +553,11 @@ bool read_LAS(const char* filename,
 /// \cond SKIP_IN_MANUAL
 
 template <typename OutputIterator,typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_LAS(const char* fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np)
+bool read_LAS(const std::string& fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np)
 {
   std::ifstream is(fname, std::ios::binary);
   CGAL::set_mode(is, CGAL::IO::BINARY);
   return read_LAS<typename value_type_traits<OutputIterator>::type>(is, output, np);
-}
-
-template <typename OutputIteratorValueType, typename OutputIterator>
-bool read_LAS(const char* fname, OutputIterator output)
-{
-  return read_LAS<OutputIteratorValueType>(fname, output, parameters::all_default());
-}
-
-template <typename OutputIterator>
-bool read_LAS(const char* fname, OutputIterator output)
-{
-  return read_LAS<typename value_type_traits<OutputIterator>::type>(fname, output, parameters::all_default());
-}
-
-template <typename OutputIteratorValueType, typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_LAS(const std::string& fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np)
-{
-  return read_LAS(fname.c_str(), output, np);
-}
-
-template <typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_LAS(const std::string& fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np)
-{
-  return read_LAS<typename value_type_traits<OutputIterator>::type>(fname.c_str(), output, np);
 }
 
 template <typename OutputIteratorValueType, typename OutputIterator>

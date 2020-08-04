@@ -85,7 +85,7 @@ public:
     std::vector<Vertex_texture> vertex_textures;
     std::vector<Face_color> face_colors;
 
-    const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), true);
+    const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
 
     bool ok =
         static_cast<Derived*>(this)->read(m_is, m_points, m_faces,

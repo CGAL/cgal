@@ -463,7 +463,7 @@ Free functions are provided for reading and writing several \cgal types using th
 
 You can find more information about WKT \ref PkgStreamSupportRef "here".
 The following table summarizes the most useful functions. Note that the name deviates
-from the standard \cgal I/O functions, for clarity reasons.
+from the standard \cgal I/O functions.
 
 <table>
 <tr>

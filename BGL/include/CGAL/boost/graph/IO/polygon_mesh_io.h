@@ -76,8 +76,53 @@ bool read_polygon_mesh(std::istream& is,
 }
 */
 
-/// \cond SKIP_IN_MANUAL
-
+/*!
+ * \ingroup PkgBGLIOFct
+ *
+ * \brief reads a polygon mesh from a file.
+ *
+ * Supported file formats are the following:
+ * - \ref IOStreamOFF (`.off`)
+ * - \ref IOStreamOBJ (`.obj`)
+ * - \ref IOStreamSTL (`.stl`)
+ * - \ref IOStreamPLY (`.ply`)
+ * - \ref IOStreamGocad (`.ts`)
+ * - \ref IOStreamVTK (`.vtp`)
+ *
+ * The format is detected from the filename extension (letter case is not important).
+ *
+ * The data is expected to represent a 2-manifold (possibly with borders).
+ *
+ * \tparam Graph a model of `MutableFaceGraph`
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * \param fname the name of the file
+ * \param g the mesh
+ * \param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `g`}
+ *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `Graph`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * Other named parameters may be used according to the file extension, see \ref PkgBGLIOFct for an exhaustive list.
+ *
+ * \return `true` if reading was successful, `false` otherwise.
+ *
+ * \sa \link PMP_IO_grp `CGAL::Polygon_mesh_processing::read_polygon_mesh()`\endlink if the data is not 2-manifold
+*/
 template <class Graph, typename NamedParameters>
 bool read_polygon_mesh(const std::string& fname,
                        Graph& g,
@@ -117,71 +162,10 @@ bool read_polygon_mesh(const std::string& fname,
   return false;
 }
 
-template <class Graph>
-bool read_polygon_mesh(const std::string& fname, Graph& g)
-{
-  return read_polygon_mesh(fname, g, parameters::all_default());
-}
-
-/// \endcond
-
-/*!
- * \ingroup PkgBGLIOFct
- *
- * \brief reads a polygon mesh from a file.
- *
- * Supported file formats are the following:
- * - \ref IOStreamOFF (`.off`)
- * - \ref IOStreamOBJ (`.obj`)
- * - \ref IOStreamSTL (`.stl`)
- * - \ref IOStreamPLY (`.ply`)
- * - \ref IOStreamGocad (`.ts`)
- * - \ref IOStreamVTK (`.vtp`)
- *
- * The format is detected from the filename extension (letter case is not important).
- *
- * The data is expected to represent a 2-manifold (possibly with borders).
- *
- * \tparam Graph a model of `MutableFaceGraph`
- * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
- *
- * \param fname the name of the file
- * \param g the mesh
- * \param np optional \ref bgl_namedparameters "Named Parameters" described below
- *
- * \cgalNamedParamsBegin
- *   \cgalParamNBegin{vertex_point_map}
- *     \cgalParamDescription{a property map associating points to the vertices of `g`}
- *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
- *                    as key type and `%Point_3` as value type}
- *     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
- *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     must be available in `Graph`.}
- *   \cgalParamNEnd
- *
- *   \cgalParamNBegin{verbose}
- *     \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
- *     \cgalParamType{Boolean}
- *     \cgalParamDefault{`true`}
- *   \cgalParamNEnd
- * \cgalNamedParamsEnd
- *
- * Other named parameters may be used according to the file extension, see \ref PkgBGLIOFct for an exhaustive list.
- *
- * \return `true` if reading was successful, `false` otherwise.
- *
- * \sa \link PMP_IO_grp `CGAL::Polygon_mesh_processing::read_polygon_mesh()`\endlink if the data is not 2-manifold
-*/
-template <class Graph, typename NamedParameters>
-bool read_polygon_mesh(const char* fname, Graph& g, const NamedParameters& np)
-{
-  return read_polygon_mesh(std::string(fname), g, np);
-}
-
 /// \cond SKIP_IN_MANUAL
 
 template <class Graph>
-bool read_polygon_mesh(const char* fname, Graph& g)
+bool read_polygon_mesh(const std::string& fname, Graph& g)
 {
   return read_polygon_mesh(fname, g, parameters::all_default());
 }
@@ -191,55 +175,6 @@ bool read_polygon_mesh(const char* fname, Graph& g)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
-
-/// \cond SKIP_IN_MANUAL
-
-template <class Graph, typename NamedParameters>
-bool write_polygon_mesh(const std::string& fname,
-                        Graph& g,
-                        const NamedParameters& np)
-{
-  const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
-
-  const std::string ext = IO::internal::get_file_extension(fname);
-  if(ext == std::string())
-  {
-    if(verbose)
-      std::cerr << "Error: trying to output to file without extension" << std::endl;
-    return false;
-  }
-
-  if(ext == "obj")
-    return write_OBJ(fname, g, np);
-  else if(ext == "off")
-    return write_OFF(fname, g, np);
-  else if(ext == "ply")
-    return write_PLY(fname, g, np);
-  else if(ext == "stl")
-    return write_STL(fname, g, np);
-  else if(ext == "ts")
-    return write_GOCAD(fname, g, np);
-#ifdef CGAL_USE_VTK
-  else if(ext == "vtp")
-    return write_VTP(fname, g, np);
-#endif
-
-  if(verbose)
-  {
-    std::cerr << "Error: unknown output file extension: " << ext << "\n"
-              << "Please refer to the documentation for the list of supported file formats" << std::endl;
-  }
-
-  return false;
-}
-
-template <class Graph>
-bool write_polygon_mesh(const std::string& fname, Graph& g)
-{
-  return write_polygon_mesh(fname, g, parameters::all_default());
-}
-
-/// \endcond
 
 /*!
  * \ingroup PkgBGLIOFct
@@ -283,7 +218,7 @@ bool write_polygon_mesh(const std::string& fname, Graph& g)
  *   \cgalParamNBegin{verbose}
  *     \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
  *     \cgalParamType{Boolean}
- *     \cgalParamDefault{`true`}
+ *     \cgalParamDefault{`false`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -292,15 +227,48 @@ bool write_polygon_mesh(const std::string& fname, Graph& g)
  * \return `true` if writing was successful, `false` otherwise.
  */
 template <class Graph, typename NamedParameters>
-bool write_polygon_mesh(const char* fname, Graph& g, const NamedParameters& np)
+bool write_polygon_mesh(const std::string& fname,
+                        Graph& g,
+                        const NamedParameters& np)
 {
-  return write_polygon_mesh(std::string(fname), g, np);
+  const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
+
+  const std::string ext = IO::internal::get_file_extension(fname);
+  if(ext == std::string())
+  {
+    if(verbose)
+      std::cerr << "Error: trying to output to file without extension" << std::endl;
+    return false;
+  }
+
+  if(ext == "obj")
+    return write_OBJ(fname, g, np);
+  else if(ext == "off")
+    return write_OFF(fname, g, np);
+  else if(ext == "ply")
+    return write_PLY(fname, g, np);
+  else if(ext == "stl")
+    return write_STL(fname, g, np);
+  else if(ext == "ts")
+    return write_GOCAD(fname, g, np);
+#ifdef CGAL_USE_VTK
+  else if(ext == "vtp")
+    return write_VTP(fname, g, np);
+#endif
+
+  if(verbose)
+  {
+    std::cerr << "Error: unknown output file extension: " << ext << "\n"
+              << "Please refer to the documentation for the list of supported file formats" << std::endl;
+  }
+
+  return false;
 }
 
 /// \cond SKIP_IN_MANUAL
 
 template <class Graph>
-bool write_polygon_mesh(const char* fname, Graph& g)
+bool write_polygon_mesh(const std::string& fname, Graph& g)
 {
   return write_polygon_mesh(fname, g, parameters::all_default());
 }

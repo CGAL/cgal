@@ -157,22 +157,12 @@ bool read_LAS(std::istream& is,
   \return `true` if the reading was successful, `false` otherwise.
 */
 template <typename Point, typename Vector>
-bool read_LAS(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set)
+bool read_LAS(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
   std::ifstream is(fname, std::ios::binary);
   CGAL::set_mode(is, CGAL::IO::BINARY);
   return read_LAS(is, point_set);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename Point, typename Vector>
-bool read_LAS(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  return read_LAS(fname.c_str(), point_set);
-}
-
-/// \endcond
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
@@ -398,23 +388,13 @@ bool write_LAS(std::ostream& os,
   \return `true` if the writing was successful, `false` otherwise.
  */
 template <typename Point, typename Vector>
-bool write_LAS(const char* fname,
+bool write_LAS(const std::string& fname,
                CGAL::Point_set_3<Point, Vector>& point_set)
 {
   std::ofstream os(fname, std::ios::binary);
   CGAL::set_mode(os, CGAL::IO::BINARY);
   return write_LAS(os, point_set);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename Point, typename Vector>
-bool write_LAS(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  return write_LAS(fname.c_str(), point_set);
-}
-
-/// \endcond
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 

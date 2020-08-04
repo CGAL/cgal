@@ -57,7 +57,7 @@ bool read_OFF(std::istream& is,
               VertexColorOutputIterator vc_out,
               VertexTextureOutputIterator vt_out,
               FaceColorOutputIterator fc_out,
-              const bool verbose = true)
+              const bool verbose = false)
 {
   typedef typename boost::range_value<PointRange>::type                               Point;
   typedef typename CGAL::Kernel_traits<Point>::Kernel                                 Kernel;
@@ -186,7 +186,7 @@ bool read_OFF(std::istream& is,
  *   \cgalParamNBegin{verbose}
  *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
  *     \cgalParamType{Boolean}
- *     \cgalParamDefault{`true`}
+ *     \cgalParamDefault{`false`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -250,14 +250,14 @@ bool read_OFF(std::istream& is, PointRange& points, PolygonRange& polygons,
  *   \cgalParamNBegin{verbose}
  *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
  *     \cgalParamType{Boolean}
- *     \cgalParamDefault{`true`}
+ *     \cgalParamDefault{`false`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \returns `true` if the reading was successful, `false` otherwise.
  */
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(const char* fname,
+bool read_OFF(const std::string& fname,
               PointRange& points,
               PolygonRange& polygons,
               const CGAL_BGL_NP_CLASS& np
@@ -271,20 +271,6 @@ bool read_OFF(const char* fname,
 }
 
 /// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename PolygonRange>
-bool read_OFF(const char* fname, PointRange& points, PolygonRange& polygons,
-              typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return read_OFF(fname, points, polygons, parameters::all_default());
-}
-
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np,
-              typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return read_OFF(fname.c_str(), points, polygons, np);
-}
 
 template <typename PointRange, typename PolygonRange>
 bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygons,
@@ -379,7 +365,7 @@ bool write_OFF(std::ostream& os, const PointRange& points, const PolygonRange& p
  * \return `true` if the writing was successful, `false` otherwise.
  */
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const char* fname,
+bool write_OFF(const std::string& fname,
                const PointRange& points,
                const PolygonRange& polygons,
                const CGAL_BGL_NP_CLASS& np
@@ -394,20 +380,6 @@ bool write_OFF(const char* fname,
 }
 
 /// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename PolygonRange>
-bool write_OFF(const char* fname, const PointRange& points, const PolygonRange& polygons,
-               typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return write_OFF(fname, points, polygons, parameters::all_default());
-}
-
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const std::string& fname, const PointRange& points, const PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np,
-               typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return write_OFF(fname.c_str(), points, polygons, np);
-}
 
 template <typename PointRange, typename PolygonRange>
 bool write_OFF(const std::string& fname, const PointRange& points, const PolygonRange& polygons,

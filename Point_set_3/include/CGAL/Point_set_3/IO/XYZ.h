@@ -89,21 +89,11 @@ bool read_XYZ(std::istream& is,
   \return `true` if the reading was successful, `false` otherwise.
 */
 template <typename Point, typename Vector>
-bool read_XYZ(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set)
+bool read_XYZ(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
   std::ifstream is(fname);
   return read_XYZ(is, point_set);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename Point, typename Vector>
-bool read_XYZ(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  return read_XYZ(fname.c_str(), point_set);
-}
-
-/// \endcond
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
@@ -199,7 +189,7 @@ bool write_XYZ(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
   \return `true` if the writing was successful, `false` otherwise.
  */
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_XYZ(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
+bool write_XYZ(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
 {
   std::ofstream os(fname);
   return write_XYZ(os, point_set, np);
@@ -208,22 +198,10 @@ bool write_XYZ(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_
 /// \cond SKIP_IN_MANUAL
 
 template <typename Point, typename Vector>
-bool write_XYZ(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_set)
+bool write_XYZ(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set)
 {
   std::ofstream os(fname);
   return write_XYZ(os, point_set, parameters::all_default());
-}
-
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_XYZ(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
-{
-  return write_XYZ(fname.c_str(), point_set, np);
-}
-
-template <typename Point, typename Vector>
-bool write_XYZ(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  return write_XYZ(fname.c_str(), point_set, parameters::all_default());
 }
 
 /// \endcond

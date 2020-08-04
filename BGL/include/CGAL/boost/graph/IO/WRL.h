@@ -106,22 +106,14 @@ bool write_WRL(std::ostream& os,
   \returns `true` if writing was successful, `false` otherwise.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_WRL(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
+bool write_WRL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
   std::ifstream is(fname);
   return write_WRL(is, g, np);
 }
 
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_WRL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
-{
-  return write_WRL(fname.c_str(), g, np);
-}
-
 template <typename Graph>
 bool write_WRL(std::ostream& os, const Graph& g) { return write_WRL(os, g, parameters::all_default()); }
-template <typename Graph>
-bool write_WRL(const char* fname, const Graph& g) { return write_WRL(fname, g, parameters::all_default()); }
 template <typename Graph>
 bool write_WRL(const std::string& fname, const Graph& g) { return write_WRL(fname, g, parameters::all_default()); }
 
