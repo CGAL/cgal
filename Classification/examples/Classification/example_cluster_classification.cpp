@@ -18,8 +18,6 @@
 #include <CGAL/Shape_detection/Region_growing.h>
 #include <CGAL/Real_timer.h>
 
-typedef CGAL::Parallel_if_available_tag Concurrency_tag;
-
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3                Point;
 typedef Kernel::Iso_cuboid_3           Iso_cuboid_3;
@@ -37,6 +35,7 @@ typedef CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<Kernel,
 typedef CGAL::Shape_detection::Region_growing<Point_set, Neighbor_query, Region_type>                   Region_growing;
 
 namespace Classification = CGAL::Classification;
+namespace Feature = CGAL::Classification::Feature;
 
 typedef Classification::Label_handle   Label_handle;
 typedef Classification::Feature_handle Feature_handle;
@@ -50,7 +49,7 @@ typedef Classification::Cluster<Point_set, Pmap>                             Clu
 int main (int argc, char** argv)
 {
   std::string filename        = "data/b9.ply";
-  std::string filename_config = "data/b9_clusters_config.gz";
+  std::string filename_config = "data/b9_clusters_config.bin";
 
   if (argc > 1)
     filename = argv[1];
@@ -67,7 +66,7 @@ int main (int argc, char** argv)
   CGAL::Real_timer t;
   t.start();
   pts.add_normal_map();
-  CGAL::jet_estimate_normals<Concurrency_tag> (pts, 12);
+  CGAL::jet_estimate_normals<CGAL::Parallel_if_available_tag> (pts, 12);
   t.stop();
   std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
   t.reset();
@@ -151,50 +150,38 @@ int main (int argc, char** argv)
 
   Feature_set features;
 
-#ifdef CGAL_LINKED_WITH_TBB
-  features.begin_parallel_additions();
-#endif
-
   // First, compute means of features.
-  for (std::size_t i = 0; i < pointwise_features.size(); ++ i)
-    features.add<Classification::Feature::Cluster_mean_of_feature> (clusters, pointwise_features[i]);
-
-#ifdef CGAL_LINKED_WITH_TBB
-  features.end_parallel_additions();
   features.begin_parallel_additions();
-#endif
+  for (Feature_handle fh : pointwise_features)
+    features.add<Feature::Cluster_mean_of_feature> (clusters, fh);
+  features.end_parallel_additions();
 
   // Then, compute variances of features (and remaining cluster features).
+  features.begin_parallel_additions();
   for (std::size_t i = 0; i < pointwise_features.size(); ++ i)
-    features.add<Classification::Feature::Cluster_variance_of_feature> (clusters,
-                                                                        pointwise_features[i], // i^th feature
-                                                                        features[i]);          // mean of i^th feature
+    features.add<Feature::Cluster_variance_of_feature> (clusters,
+                                                        pointwise_features[i], // i^th feature
+                                                        features[i]);          // mean of i^th feature
 
-  features.add<Classification::Feature::Cluster_size> (clusters);
-  features.add<Classification::Feature::Cluster_vertical_extent> (clusters);
+  features.add<Feature::Cluster_size> (clusters);
+  features.add<Feature::Cluster_vertical_extent> (clusters);
 
   for (std::size_t i = 0; i < 3; ++ i)
-    features.add<Classification::Feature::Eigenvalue> (clusters, eigen, (unsigned int)(i));
+    features.add<Feature::Eigenvalue> (clusters, eigen, (unsigned int)(i));
 
-#ifdef CGAL_LINKED_WITH_TBB
   features.end_parallel_additions();
-#endif
 
   //! [Features]
   ///////////////////////////////////////////////////////////////////
 
   t.stop();
 
-  // Add types.
-  Label_set labels;
-  Label_handle ground     = labels.add ("ground");
-  Label_handle vegetation = labels.add ("vegetation");
-  Label_handle roof       = labels.add ("roof");
+  Label_set labels = { "ground", "vegetation", "roof" };
 
   std::vector<int> label_indices(clusters.size(), -1);
 
   std::cerr << "Using ETHZ Random Forest Classifier" << std::endl;
-  Classification::ETHZ_random_forest_classifier classifier (labels, features);
+  Classification::ETHZ::Random_forest_classifier classifier (labels, features);
 
   std::cerr << "Loading configuration" << std::endl;
   std::ifstream in_config (filename_config, std::ios_base::in | std::ios_base::binary);
@@ -203,7 +190,7 @@ int main (int argc, char** argv)
   std::cerr << "Classifying" << std::endl;
   t.reset();
   t.start();
-  Classification::classify<Concurrency_tag> (clusters, labels, classifier, label_indices);
+  Classification::classify<CGAL::Parallel_if_available_tag> (clusters, labels, classifier, label_indices);
   t.stop();
 
   std::cerr << "Classification done in " << t.time() << " second(s)" << std::endl;
