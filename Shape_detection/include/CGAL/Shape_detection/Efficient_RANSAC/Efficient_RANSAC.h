@@ -743,7 +743,7 @@ public:
           num_invalid++;
 
           for (std::size_t j = 0; j < m_num_subsets; j++) {
-            if (m_direct_octrees[j] && m_direct_octrees[j]->root()) {
+            if (m_direct_octrees[j]/* && m_direct_octrees[j]->root()*/) {
               std::size_t offset = m_direct_octrees[j]->offset();
 
               if (offset <= indices_points_best_candidate.at(i) &&

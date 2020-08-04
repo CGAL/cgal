@@ -34,6 +34,8 @@ namespace internal {
 template<class Traits>
 class Direct_octree : public Octree::Octree<typename Traits::Input_range, typename Traits::Point_map> {
 
+  std::size_t m_offset;
+
 public:
 
   std::size_t size() const {
@@ -43,6 +45,12 @@ public:
   const Bbox_3 &boundingBox() const {
     return this->bbox(this->root());
   }
+
+  std::size_t maxLevel() const {
+    return this->max_depth_reached();
+  }
+
+  std::size_t offset() const { return m_offset; }
 };
 
 template<class Traits>
@@ -56,6 +64,10 @@ public:
 
   const Bbox_3 &boundingBox() const {
     return this->bbox(this->root());
+  }
+
+  std::size_t maxLevel() const {
+    return this->max_depth_reached();
   }
 };
 
