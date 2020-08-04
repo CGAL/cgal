@@ -29,6 +29,16 @@ namespace CGAL {
 namespace Shape_detection {
 namespace internal {
 
+template<class Traits>
+class Direct_octree {
+
+};
+
+template<class Traits>
+class Indexed_octree {
+
+};
+
 }
 }
 }
