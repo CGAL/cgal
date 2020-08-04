@@ -133,6 +133,10 @@ public:
     m_is_closed=false;
   }
 
+  /// @return true iff the prev index exists
+  bool prev_index_exists(std::size_t i) const
+  { return is_closed() || i>0; }
+
   /// @return true iff the next index exists
   bool next_index_exists(std::size_t i) const
   { return is_closed() || i<(m_path.size()-1); }
@@ -164,25 +168,25 @@ public:
   { return get_ith_dart(i); }
 
   /// @return the dart before the ith dart of the path,
-  ///          nullptr if such a dart does not exist.
+  ///          Map::null_handle if such a dart does not exist.
   Dart_const_handle get_prev_dart(std::size_t i) const
   {
     CGAL_assertion(i<m_path.size());
-    if (i==0 && !is_closed()) return nullptr;
+    if (i==0 && !is_closed()) return Map::null_handle;
     return m_path[prev_index(i)];
   }
 
   /// @return the dart after the ith dart of the path,
-  ///          nullptr if such a dart does not exist.
+  ///          Map::null_handle if such a dart does not exist.
   Dart_const_handle get_next_dart(std::size_t i) const
   {
     CGAL_assertion(i<m_path.size());
-    if (i==m_path.size()-1 && !is_closed()) return nullptr;
+    if (i==m_path.size()-1 && !is_closed()) return Map::null_handle;
     return m_path[next_index(i)];
   }
 
   /// @return the flip before the ith flip of the path,
-  ///          nullptr if such a flip does not exist.
+  ///          false if such a flip does not exist.
   bool get_prev_flip(std::size_t i) const
   {
     CGAL_assertion(i<m_path.size());
@@ -191,7 +195,7 @@ public:
   }
 
   /// @return the flip after the ith flip of the path,
-  ///          nullptr if such a flip does not exist.
+  ///          false if such a flip does not exist.
   bool get_next_flip(std::size_t i) const
   {
     CGAL_assertion(i<m_path.size());
@@ -322,7 +326,7 @@ public:
   bool can_be_pushed_by_label(const std::string& e, bool flip=false) const
   {
     Dart_const_handle dh=get_map().get_dart_labeled(e);
-    if (dh==nullptr) { return false; }
+    if (dh==Map::null_handle) { return false; }
     return can_be_pushed(dh, flip);
   }
 
@@ -334,7 +338,7 @@ public:
     for (std::string e; std::getline(iss, e, ' '); )
     {
       Dart_const_handle dh=get_map().get_dart_labeled(e);
-      if (dh!=nullptr) { push_back(dh, false, update_isclosed); }
+      if (dh!=Map::null_handle) { push_back(dh, false, update_isclosed); }
     }
   }
 

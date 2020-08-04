@@ -308,6 +308,10 @@ public:
       Base(iter, iend, pred)
     {}
 
+    Edge_iterator(const Base& base) :
+      Base(base)
+    {}
+
     // Casting to a halfedge iterator.
     operator Halfedge_iterator() const
     {
@@ -340,6 +344,10 @@ public:
     Edge_const_iterator(DEdge_const_iter iter, DEdge_const_iter iend,
                         const _Is_valid_halfedge& pred) :
       Base(iter, iend, pred)
+    {}
+
+    Edge_const_iterator(const Base& base) :
+      Base(base)
     {}
 
     // Casting to a halfedge iterator.
@@ -430,6 +438,10 @@ public:
                                   DFace_const_iter iend,
                                   const _Is_unbounded_face& is_unbounded) :
       Base(iter, iend, is_unbounded)
+    {}
+
+    Unbounded_face_const_iterator(const Base& base) :
+      Base(base)
     {}
 
     // Casting to a face iterator.

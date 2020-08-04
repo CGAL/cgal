@@ -50,8 +50,9 @@ void test_avg_knn_sq_distance(std::deque<Point>& points, // input point set
             << nb_neighbors_remove_outliers << ")...\n";
 
   // Removes outliers using erase-remove idiom
-  points.erase(CGAL::remove_outliers(points, nb_neighbors_remove_outliers,
-                                     CGAL::parameters::threshold_percent(removed_percentage)),
+  points.erase(CGAL::remove_outliers<CGAL::Parallel_if_available_tag>
+               (points, nb_neighbors_remove_outliers,
+                CGAL::parameters::threshold_percent(removed_percentage)),
                points.end());
 
   // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
@@ -139,4 +140,3 @@ int main(int argc, char * argv[])
   std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
   return accumulated_fatal_err;
 }
-

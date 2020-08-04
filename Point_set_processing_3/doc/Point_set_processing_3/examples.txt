@@ -9,6 +9,7 @@
 \example Point_set_processing_3/registration_with_OpenGR.cpp
 \example Point_set_processing_3/registration_with_pointmatcher.cpp
 \example Point_set_processing_3/registration_with_opengr_pointmatcher_pipeline.cpp
+\example Point_set_processing_3/clustering_example.cpp
 \example Point_set_processing_3/remove_outliers_example.cpp
 \example Point_set_processing_3/grid_simplification_example.cpp
 \example Point_set_processing_3/grid_simplify_indices.cpp

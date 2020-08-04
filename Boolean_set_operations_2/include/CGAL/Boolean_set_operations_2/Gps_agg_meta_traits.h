@@ -8,7 +8,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+// Author(s): Baruch Zukerman <baruchzu@post.tau.ac.il>
+//            Efi Fogel       <efifogel@gmail.com>
 
 #ifndef CGAL_BSO_2_GPS_AGG_META_TRAITS_H
 #define CGAL_BSO_2_GPS_AGG_META_TRAITS_H
@@ -81,8 +82,8 @@ class Gps_agg_meta_traits :
   typedef typename Arr::Traits_adaptor_2        Traits;
   typedef Traits                                Gt2;
 
-  typedef typename Gt2::X_monotone_curve_2      Base_X_monotone_curve_2;
-  typedef typename Gt2::Point_2                 Base_Point_2;
+  typedef typename Gt2::X_monotone_curve_2      Base_x_monotone_curve_2;
+  typedef typename Gt2::Point_2                 Base_point_2;
   typedef typename Gt2::Construct_min_vertex_2  Base_Construct_min_vertex_2;
   typedef typename Gt2::Construct_max_vertex_2  Base_Construct_max_vertex_2;
   typedef typename Gt2::Compare_endpoints_xy_2  Base_Compare_endpoints_xy_2;
@@ -106,8 +107,8 @@ public:
   typedef Point_with_vertex<Arr>                Point_data;
 
 private:
-  typedef Gps_traits_decorator<Gt2, Curve_data, Point_data>
-                                                Base;
+  typedef Gps_agg_meta_traits<Arrangement>                      Self;
+  typedef Gps_traits_decorator<Gt2, Curve_data, Point_data>     Base;
 
 public:
   typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;
@@ -145,93 +146,88 @@ public:
 
   class Intersect_2 {
   private:
-    Base_Intersect_2 m_base;
-    Base_Compare_endpoints_xy_2 m_base_cmp_endpoints;
-    Base_Compare_xy_2 m_base_cmp_xy;
-    Base_Construct_min_vertex_2 m_base_ctr_min_v;
+    const Self& m_traits;
+
+    /*! Constructor. */
+    Intersect_2(const Self& traits) : m_traits(traits) {}
+
+    friend Self;
 
   public:
-    /*! Construct. */
-    Intersect_2(const Base_Intersect_2& base,
-                const Base_Compare_endpoints_xy_2& base_cmp_endpoints,
-                const Base_Compare_xy_2& base_cmp_xy,
-                const Base_Construct_min_vertex_2& base_ctr_min_v) :
-      m_base(base),
-      m_base_cmp_endpoints(base_cmp_endpoints),
-      m_base_cmp_xy(base_cmp_xy),
-      m_base_ctr_min_v(base_ctr_min_v)
-    {}
-
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& cv1,
                               const X_monotone_curve_2& cv2,
                               OutputIterator oi) const
     {
-      if (cv1.data().arr() == cv2.data().arr()) {
-        return oi;      // the curves are disjoint-interior because they
-                        // are already at the same arrangement.
-      }
+      // Check whether the curves are already in the same arrangement, and thus
+      // must be interior-disjoint
+      if (cv1.data().arr() == cv2.data().arr()) return oi;
 
-      const std::pair<Base_Point_2, Multiplicity>* base_pt;
-      const Base_X_monotone_curve_2* overlap_cv;
-      OutputIterator oi_end;
-      if(m_base_cmp_xy(m_base_ctr_min_v(cv1.base()),
-                       m_base_ctr_min_v(cv2.base())) == LARGER)
-        oi_end = m_base(cv1.base(), cv2.base(), oi);
+      typedef const std::pair<Base_point_2, Multiplicity>
+        Intersection_base_point;
+      typedef boost::variant<Intersection_base_point, Base_x_monotone_curve_2>
+                                                        Intersection_base_result;
+      typedef const std::pair<Point_2, Multiplicity>    Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                        Intersection_result;
+
+      const auto* base_traits = m_traits.m_base_traits;
+      auto base_cmp_xy = base_traits->compare_xy_2_object();
+      auto base_cmp_endpoints = base_traits->compare_endpoints_xy_2_object();
+      auto base_ctr_min_vertex = base_traits->construct_min_vertex_2_object();
+      auto base_intersect = base_traits->intersect_2_object();
+
+      std::vector<Intersection_base_result> xections;
+      if (base_cmp_xy(base_ctr_min_vertex(cv1.base()),
+                      base_ctr_min_vertex(cv2.base())) == LARGER)
+        base_intersect(cv1.base(), cv2.base(), back_inserter(xections));
       else
-        oi_end = m_base(cv2.base(), cv1.base(), oi);
+        base_intersect(cv2.base(), cv1.base(), back_inserter(xections));
 
-      // convert objects that are associated with Base_X_monotone_curve_2 to
+      // convert objects that are associated with Base_x_monotone_curve_2 to
       // the extenede X_monotone_curve_2
-      for (; oi != oi_end; ++oi) {
-        base_pt = object_cast<std::pair<Base_Point_2, Multiplicity> >(&(*oi));
-
+      for (const auto& xection : xections) {
+        const Intersection_base_point* base_pt =
+          boost::get<Intersection_base_point>(&xection);
         if (base_pt != nullptr) {
           Point_2 point_plus(base_pt->first); // the extended point
-          *oi = CGAL::make_object(std::make_pair(point_plus,
-                                                 base_pt->second));
+          *oi++ =
+            Intersection_result(std::make_pair(point_plus, base_pt->second));
+          continue;
+        }
+
+        const Base_x_monotone_curve_2* overlap_cv =
+          boost::get<Base_x_monotone_curve_2>(&xection);
+        CGAL_assertion(overlap_cv != nullptr);
+        unsigned int ov_bc;
+        unsigned int ov_twin_bc;
+        if (base_cmp_endpoints(cv1) == base_cmp_endpoints(cv2)) {
+          // cv1 and cv2 have the same directions
+          ov_bc = cv1.data().bc() + cv2.data().bc();
+          ov_twin_bc = cv1.data().twin_bc() + cv2.data().twin_bc();
         }
         else {
-          overlap_cv = object_cast<Base_X_monotone_curve_2>(&(*oi));
-
-          if (overlap_cv != nullptr) {
-            unsigned int ov_bc;
-            unsigned int ov_twin_bc;
-            if (m_base_cmp_endpoints(cv1) == m_base_cmp_endpoints(cv2)) {
-              // cv1 and cv2 have the same directions
-              ov_bc = cv1.data().bc() + cv2.data().bc();
-              ov_twin_bc = cv1.data().twin_bc() + cv2.data().twin_bc();
-            }
-            else {
-              // cv1 and cv2 have opposite directions
-              ov_bc = cv1.data().bc() + cv2.data().twin_bc();
-              ov_twin_bc = cv1.data().twin_bc() + cv2.data().bc();
-            }
-
-            if(m_base_cmp_endpoints(*overlap_cv) != m_base_cmp_endpoints(cv1)) {
-              // overlap_cv, cv1 have opposite directions
-              std::swap(ov_bc, ov_twin_bc);
-            }
-
-            Curve_data cv_data(cv1.data().arr(), Halfedge_handle(),
-                               ov_bc, ov_twin_bc);
-              *oi = CGAL::make_object(X_monotone_curve_2(*overlap_cv, cv_data));
-          }
+          // cv1 and cv2 have opposite directions
+          ov_bc = cv1.data().bc() + cv2.data().twin_bc();
+          ov_twin_bc = cv1.data().twin_bc() + cv2.data().bc();
         }
+
+        if (base_cmp_endpoints(*overlap_cv) != base_cmp_endpoints(cv1)) {
+          // overlap_cv, cv1 have opposite directions
+          std::swap(ov_bc, ov_twin_bc);
+        }
+
+        Curve_data cv_data(cv1.data().arr(), Halfedge_handle(),
+                           ov_bc, ov_twin_bc);
+        *oi++ = Intersection_result(X_monotone_curve_2(*overlap_cv, cv_data));
       }
-      //return past-end iterator
-      return oi_end;
+
+      return oi;
     }
   };
 
   /*! Obtain an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object() const
-  {
-    return Intersect_2(this->m_base_tr->intersect_2_object(),
-                       this->m_base_tr->compare_endpoints_xy_2_object(),
-                       this->m_base_tr->compare_xy_2_object(),
-                       this->m_base_tr->construct_min_vertex_2_object());
-  }
+  Intersect_2 intersect_2_object() const { return Intersect_2(*this); }
 
   class Split_2 {
   private:
@@ -256,7 +252,7 @@ public:
 
   /*! Obtain a Split_2 functor object. */
   Split_2 split_2_object() const
-  { return Split_2(this->m_base_tr->split_2_object()); }
+  { return Split_2(this->m_base_traits->split_2_object()); }
 
   class Construct_min_vertex_2 {
   private:
@@ -286,7 +282,7 @@ public:
   /*! Get a Construct_min_vertex_2 functor object. */
   Construct_min_vertex_2 construct_min_vertex_2_object() const
   {
-    return Construct_min_vertex_2(this->m_base_tr->
+    return Construct_min_vertex_2(this->m_base_traits->
                                   construct_min_vertex_2_object());
   }
 
@@ -318,7 +314,7 @@ public:
   /*! Get a Construct_min_vertex_2 functor object. */
   Construct_max_vertex_2 construct_max_vertex_2_object() const
   {
-    return Construct_max_vertex_2(this->m_base_tr->
+    return Construct_max_vertex_2(this->m_base_traits->
                                   construct_max_vertex_2_object());
   }
 
@@ -348,7 +344,7 @@ public:
 
   /*! Obtain a Construct_min_vertex_2 functor object. */
   Compare_xy_2 compare_xy_2_object() const
-  { return Compare_xy_2(this->m_base_tr->compare_xy_2_object()); }
+  { return Compare_xy_2(this->m_base_traits->compare_xy_2_object()); }
 
   // left-right
   class Parameter_space_in_x_2 {
@@ -380,7 +376,7 @@ public:
   /*! Obtain a Construct_min_vertex_2 functor object. */
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const
   {
-    return Parameter_space_in_x_2(this->m_base_tr->
+    return Parameter_space_in_x_2(this->m_base_traits->
                                   parameter_space_in_x_2_object());
   }
 
@@ -404,7 +400,7 @@ public:
   /*! Obtain a Construct_min_vertex_2 functor object. */
   Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
   {
-    return Compare_y_near_boundary_2(this->m_base_tr->
+    return Compare_y_near_boundary_2(this->m_base_traits->
                                      compare_y_near_boundary_2_object()
     );
   }
@@ -443,7 +439,7 @@ public:
   /*! Obtain a Construct_min_vertex_2 functor object. */
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
   {
-    return Parameter_space_in_y_2(this->m_base_tr->
+    return Parameter_space_in_y_2(this->m_base_traits->
                                   parameter_space_in_y_2_object());
   }
 
@@ -476,7 +472,7 @@ public:
   /*! Obtain a Construct_min_vertex_2 functor object. */
   Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
   {
-    return Compare_x_near_boundary_2(this->m_base_tr->
+    return Compare_x_near_boundary_2(this->m_base_traits->
                                      compare_x_near_boundary_2_object());
   }
 

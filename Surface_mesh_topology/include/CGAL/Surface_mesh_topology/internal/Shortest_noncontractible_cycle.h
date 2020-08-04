@@ -159,8 +159,8 @@ public:
 
   template <class WeightFunctor>
   Path compute_shortest_non_contractible_cycle(typename WeightFunctor::Weight_t* length,
-                                              const WeightFunctor& wf,
-                                              bool display_time=false)
+                                               const WeightFunctor& wf,
+                                               bool display_time=false)
   {
     CGAL::Timer t;
     if (display_time)

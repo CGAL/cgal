@@ -30,6 +30,7 @@
 #include <CGAL/Timer.h>
 #include <unordered_map>
 #include <queue>
+#include <tuple>
 #include <iostream>
 #include <boost/intrusive/rbtree.hpp>
 #include <boost/intrusive/link_mode.hpp>
@@ -47,7 +48,7 @@ struct Minimal_quadrangulation_local_map_items
     typedef std::size_t Dart_info;
 #endif // CGAL_PWRLE_TURN_V3
     typedef CGAL::Cell_attribute<CMap, int32_t> Vertex_attribute;
-    typedef CGAL::cpp11::tuple<Vertex_attribute, void, void> Attributes;
+    typedef std::tuple<Vertex_attribute, void, void> Attributes;
   };
 };
 

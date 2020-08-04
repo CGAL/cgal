@@ -503,8 +503,8 @@ public:
 
     if (is_c3t3)
     {
-      typedef boost::array<int, 3> Facet; // 3 = id
-      typedef boost::array<int, 5> Tet_with_ref; // first 4 = id, fifth = reference
+      typedef std::array<int, 3> Facet; // 3 = id
+      typedef std::array<int, 5> Tet_with_ref; // first 4 = id, fifth = reference
       Scene_c3t3_item* c3t3_item = new Scene_c3t3_item();
       c3t3_item->set_valid(false);
       //build a triangulation from data:
@@ -547,7 +547,9 @@ public:
           std::swap(finite_cells[i][1], finite_cells[i][3]);
         }
       }
-      CGAL::build_triangulation<Tr, true>(c3t3_item->c3t3().triangulation(), points, finite_cells, border_facets);
+      std::vector<typename Tr::Vertex_handle> new_vertices;
+      CGAL::build_triangulation<Tr, true>(c3t3_item->c3t3().triangulation(),
+        points, finite_cells, border_facets, new_vertices);
 
       for( C3t3::Triangulation::Finite_cells_iterator
            cit = c3t3_item->c3t3().triangulation().finite_cells_begin();

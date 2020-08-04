@@ -173,6 +173,8 @@ private:
     void attrib_buffers(CGAL::QGLViewer*);
     void compile_shaders();
     void compute_texture(int, int, Color_ramp, Color_ramp);
+private slots:
+    void updateCutPlane();
 
 public:
     // file menu
@@ -251,8 +253,6 @@ public:
     void activate_cutting_plane();
     void deactivate_cutting_plane();
 
-    //timer sends a top when all the events are finished
-    void timerEvent(QTimerEvent *);
 
 
 public slots:

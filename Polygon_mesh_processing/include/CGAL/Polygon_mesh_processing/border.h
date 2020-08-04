@@ -154,18 +154,23 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   * @tparam HalfedgeOutputIterator model of `OutputIterator`
      holding `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
      for patch border
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param pmesh the polygon mesh to which the faces in `face_range` belong
   * @param face_range the range of faces defining the patch whose border halfedges
   *                   are collected
   * @param out the output iterator that collects the border halfedges of the patch,
   *            seen from outside.
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   * \cgalNamedParamsBegin
-      \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
-    \cgalNamedParamsEnd
+  *   \cgalParamNBegin{face_index_map}
+  *     \cgalParamDescription{a property map associating to each face of `pmesh` a unique index between `0` and `num_faces(pmesh) - 1`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
+  *                    as key type and `std::size_t` as value type}
+  *     \cgalParamDefault{an automatically indexed internal map}
+  *   \cgalParamNEnd
+  * \cgalNamedParamsEnd
   *
   * @returns `out`
   */

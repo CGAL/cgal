@@ -404,6 +404,7 @@ void split_along_edges(TriangleMesh& tm,
 
 /**
   * \ingroup PMP_corefinement_grp
+  *
   * clips `tm` by keeping the part that is inside the volume \link coref_def_subsec bounded \endlink
   * by `clipper`.
   * If `tm` is closed, the clipped part can be closed too if the named parameter `clip_volume` is set to `true`.
@@ -415,38 +416,63 @@ void split_along_edges(TriangleMesh& tm,
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(clipper)` \endlink
   *
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
-  * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
-  * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
+  * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tm input triangulated surface mesh
   * @param clipper triangulated surface mesh used to clip `tm`
-  * @param np_tm optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
-  * @param np_c optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np_tm an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  * @param np_c an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  *
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamBegin{vertex_point_map}
-  *     the property map with the points associated to the vertices of `tm` (`clipper`).
-  *     If this parameter is omitted, an internal property map for
-  *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
-  *   \cgalParamEnd
-  *   \cgalParamBegin{face_index_map}
-  *     a property map containing a unique index for each face of `tm` (`clipper`).
-  *   \cgalParamEnd
-  *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
-  *                            that is used to track the creation of new faces.
-  *   \cgalParamEnd
-  *   \cgalParamBegin{throw_on_self_intersection} if `true`,
-  *      the set of triangles closed to the intersection of `tm` and `clipper` will be
-  *      checked for self-intersections and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
-  *      will be thrown if at least one is found.  Default value is `false`.
-  *   \cgalParamEnd
-  *   \cgalParamBegin{clip_volume} if `true` and `tm` is closed, the clipping will be done on
-  *      the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
-  *      (i.e., `tm` will be kept closed). Default value is `false`.
-  *   \cgalParamEnd
-  *   \cgalParamBegin{use_compact_clipper} if `false`, the parts of `tm` coplanar with `clipper`
-  *      will not be part of the output. Default value is `true`.
-  *   \cgalParamEnd
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tm` (resp. `clipper`)}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm (resp. clipper))`}
+  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+  *                     must be available in `TriangleMesh`.}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{face_index_map}
+  *     \cgalParamDescription{a property map associating to each face of `tm` (`clipper`) a unique index between `0` and `num_faces(tm (resp. clipper)) - 1`}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+  *                    as key type and `std::size_t` as value type}
+  *     \cgalParamDefault{an automatically indexed internal map}
+  *     \cgalParamExtra{if the property map is writable, the indices of the faces of `tm` and `clipper`
+  *                     will be set after refining `tm` with the intersection with `clipper`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{visitor}
+  *     \cgalParamDescription{a visitor used to track the creation of new faces}
+  *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
+  *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{throw_on_self_intersection}
+  *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm` and `clipper` will be
+  *                           checked for self-intersections and `Corefinement::Self_intersection_exception`
+  *                           will be thrown if at least one self-intersection is found.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{clip_volume}
+  *     \cgalParamDescription{If `true`, and `tm` is closed, the clipping will be done on the volume
+  *                           \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
+  *                           (i.e., `tm` will be kept closed).}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{use_compact_clipper}
+  *     \cgalParamDescription{if `false`, the parts of `tm` coplanar with `clipper` will not be part of the output.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *     \cgalParamExtra{This option has an effect only if a surface and not a volume is clipped,
+  *                     (i.e., if `clip_volume` is `false` or if `tm` is open).}
+  *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @return `true` if the output surface mesh is manifold.
@@ -479,33 +505,56 @@ clip(TriangleMesh& tm,
   *
   * \note In the current implementation it is not possible to set the vertex point map and the default will be used. `Plane_3` must be
   * from the same %Kernel as the point of the vertex point map.
+  *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   *
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
   *
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tm input triangulated surface mesh
   * @param plane plane whose negative side defines the half-space to intersect `tm` with.
   *              `Plane_3` is the plane type for the same CGAL kernel as the point of the vertex point map of `tm`.
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
-  *                            that is used to track the creation of new faces.
-  *   \cgalParamEnd
-  *   \cgalParamBegin{throw_on_self_intersection} if `true`,
-  *      the set of triangles closed to the intersection of `tm` and `plane` will be
-  *      checked for self-intersections and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
-  *      will be thrown if at least one is found. Default value is `false`.
-  *   \cgalParamEnd
-  *   \cgalParamBegin{clip_volume} if `true` and `tm` is closed, the clipping will be done on
-  *      the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
-  *      (i.e., `tm` will be kept closed). Default value is `false`.
-  *   \cgalParamEnd
-  *   \cgalParamBegin{use_compact_clipper} if `false` the parts of `tm` coplanar with `plane`
-  *      will not be part of the output. Default value is `true`.
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{visitor}
+  *     \cgalParamDescription{a visitor used to track the creation of new faces}
+  *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
+  *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{throw_on_self_intersection}
+  *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm`
+  *                           and `plane` will be checked for self-intersections
+  *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
+  *                           will be thrown if at least one self-intersection is found.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{clip_volume}
+  *     \cgalParamDescription{If `true`, and `tm` is closed, the clipping will be done on
+  *                           the volume \link coref_def_subsec bounded \endlink by `tm`
+  *                           rather than on its surface (i.e., `tm` will be kept closed).}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{use_compact_clipper}
+  *     \cgalParamDescription{if `false` the parts of `tm` coplanar with `plane` will not be part of the output}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`true`}
+  *   \cgalParamNEnd
+  *
   * \cgalNamedParamsEnd
   *
   * @return `true` if the output surface mesh is manifold.
@@ -560,27 +609,41 @@ bool clip(TriangleMesh& tm,
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
   *
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tm input triangulated surface mesh
   * @param iso_cuboid iso-cuboid used to clip `tm`.
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
-  *                            that is used to track the creation of new faces.
-  *   \cgalParamEnd
-  *   \cgalParamBegin{throw_on_self_intersection} if `true`,
-  *      the set of triangles closed to the intersection of `tm` and `iso_cuboid` will be
-  *      checked for self-intersections and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
-  *      will be thrown if at least one is found.
-  *   \cgalParamEnd
-  *   \cgalParamBegin{clip_volume} if `true` and `tm` is closed, the clipping will be done on
-  *      the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
-  *      (i.e., `tm` will be kept closed).
-  *   \cgalParamEnd
-  *   \cgalParamBegin{use_compact_clipper} if `false` and `clip_volume` is `false` and `tm` is open, the parts of `tm` coplanar with `is_cuboid`
-  *                                        will not be part of the output.
+  *   \cgalParamNBegin{visitor}
+  *     \cgalParamDescription{a visitor used to track the creation of new faces}
+  *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
+  *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{throw_on_self_intersection}
+  *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm`
+  *                           and `iso_cuboid` will be checked for self-intersections
+  *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
+  *                           will be thrown if at least one self-intersection is found.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{clip_volume}
+  *     \cgalParamDescription{If `true`, and `tm` is closed, the clipping will be done on
+  *                           the volume \link coref_def_subsec bounded \endlink by `tm`
+  *                           rather than on its surface (i.e., `tm` will be kept closed).}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{use_compact_clipper}
+  *     \cgalParamDescription{if `false` the parts of `tm` coplanar with `iso_cuboid` will not be part of the output}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`true`}
+  *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @return `true` if the output surface mesh is manifold.
@@ -616,28 +679,39 @@ bool clip(TriangleMesh& tm,
   *
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
   *
-  * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
-  * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
+  * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tm input triangulated surface mesh
   * @param splitter triangulated surface mesh used to split `tm`
-  * @param np_tm optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
-  * @param np_s optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np_tm an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  * @param np_s an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamBegin{vertex_point_map}
-  *     the property map with the points associated to the vertices of `tm` (`splitter`).
-  *     If this parameter is omitted, an internal property map for
-  *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
-  *   \cgalParamEnd
-  *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
-  *                            that is used to track the creation of new faces.
-  *   \cgalParamEnd
-  *   \cgalParamBegin{throw_on_self_intersection} if `true`,
-  *      the set of triangles closed to the intersection of `tm` and `splitter` will be
-  *      checked for self-intersections and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
-  *      will be thrown if at least one is found.
-  *   \cgalParamEnd
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tm` (`splitter`)}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+  *     \cgalParamDefault{If this parameter is omitted, an internal property map for
+  *                       `CGAL::vertex_point_t` must be available in `TriangleMesh`.}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{visitor}
+  *     \cgalParamDescription{a visitor used to track the creation of new faces}
+  *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
+  *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{throw_on_self_intersection}
+  *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm`
+  *                           and `splitter` will be checked for self-intersections
+  *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
+  *                           will be thrown if at least one self-intersection is found.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
   * \cgalNamedParamsEnd
 */
 template <class TriangleMesh,
@@ -681,27 +755,42 @@ void split(TriangleMesh& tm,
   * adds intersection edges of `plane` and `tm` in `tm` and duplicates those edges.
   *
   * \note In the current implementation it is not possible to set the vertex point map and the default will be used.
+  *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   *
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
   *
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tm input triangulated surface mesh
   * @param plane the plane that will be used to split `tm`.
   *              `Plane_3` is the plane type for the same CGAL kernel as the point of the vertex point map of `tm`.
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
-  *                            that is used to track the creation of new faces.
-  *   \cgalParamEnd
-  *   \cgalParamBegin{throw_on_self_intersection} if `true`,
-  *      the set of triangles closed to the intersection of `tm` and `plane` will be
-  *      checked for self-intersections and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
-  *      will be thrown if at least one is found.
-  *   \cgalParamEnd
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{visitor}
+  *     \cgalParamDescription{a visitor used to track the creation of new faces}
+  *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
+  *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{throw_on_self_intersection}
+  *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm`
+  *                           and `plane` will be checked for self-intersections
+  *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
+  *                           will be thrown if at least one self-intersection is found.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
   * \cgalNamedParamsEnd
   */
 template <class TriangleMesh,
@@ -743,26 +832,55 @@ void split(TriangleMesh& tm,
   *
   * \note In the current implementation it is not possible to set the vertex point map and the default will be used.
   * \note `Iso_cuboid_3` must be from the same %Kernel as the point of the vertex point map.
+  *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   *
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
   *
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tm input triangulated surface mesh
   * @param iso_cuboid iso-cuboid used to split `tm`.
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
-  *                            that is used to track the creation of new faces.
-  *   \cgalParamEnd
-  *   \cgalParamBegin{throw_on_self_intersection} if `true`,
-  *      the set of triangles closed to the intersection of `tm` and `iso_cuboid` will be
-  *      checked for self-intersections and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
-  *      will be thrown if at least one is found.
-  *   \cgalParamEnd
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{visitor}
+  *     \cgalParamDescription{a visitor used to track the creation of new faces}
+  *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
+  *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{throw_on_self_intersection}
+  *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm`
+  *                           and `iso_cuboid` will be checked for self-intersections
+  *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
+  *                           will be thrown if at least one self-intersection is found.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{clip_volume}
+  *     \cgalParamDescription{If `true`, and `tm` is closed, the clipping will be done on
+  *                           the volume \link coref_def_subsec bounded \endlink by `tm`
+  *                           rather than on its surface (i.e., `tm` will be kept closed).}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{use_compact_clipper}
+  *     \cgalParamDescription{if `false` the parts of `tm` coplanar with `iso_cuboid` will not be part of the output}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`true`}
+  *   \cgalParamNEnd
+  *
   * \cgalNamedParamsEnd
   */
 template <class TriangleMesh,
