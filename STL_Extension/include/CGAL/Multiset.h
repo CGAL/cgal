@@ -282,7 +282,7 @@ protected:
 
     void deallocate (Node* n)
     {
-      base.erase (typename Base::iterator(n));
+      base.erase (Base::iterator::create_from_pointer(n));
     }
   };
 

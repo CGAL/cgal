@@ -910,12 +910,11 @@ namespace internal {
       m_ptr = nullptr;
     }
 
-    CC_iterator (pointer p)
-#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
-      : ts(0)
-#endif
+    static CC_iterator create_from_pointer (pointer p)
     {
-      m_ptr.p = p;
+      CC_iterator out;
+      out.m_ptr.p = p;
+      return out;
     }
 
   private:
