@@ -1023,7 +1023,7 @@ private:
                     FT epsilon,
                     FT normal_threshold) {
 
-    typedef typename Octree::Cell Cell;
+    typedef typename Octree::Node Cell;
 
     std::stack<const Cell *> stack;
     stack.push(octree->root());
