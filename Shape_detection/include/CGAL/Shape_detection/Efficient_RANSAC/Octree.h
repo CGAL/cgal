@@ -76,6 +76,8 @@ public:
   }
 
   std::size_t index(std::size_t i) { return m_index_map[i]; }
+
+  typename Traits::FT width() const { return this->m_side_per_depth[0]; }
 };
 
 template<class Traits>
@@ -118,6 +120,8 @@ public:
   }
 
   std::size_t index(std::size_t i) { return m_index_map[i]; }
+
+  typename Traits::FT width() const { return this->m_side_per_depth[0]; }
 };
 
 }

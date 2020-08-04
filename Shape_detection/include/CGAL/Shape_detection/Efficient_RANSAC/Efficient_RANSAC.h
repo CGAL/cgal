@@ -1026,7 +1026,7 @@ private:
     typedef typename Octree::Node Cell;
 
     std::stack<const Cell *> stack;
-    stack.push(octree->root());
+    stack.push(&octree->root());
 
     while (!stack.empty()) {
       const Cell *cell = stack.top();
