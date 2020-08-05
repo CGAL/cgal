@@ -370,7 +370,7 @@ public:
                 0);
 
       m_available_octree_sizes[s] = subsetSize;
-      m_direct_octrees[s]->createTree(m_options.cluster_epsilon);
+      m_direct_octrees[s]->refine(m_options.cluster_epsilon);
 
       remainingPoints -= subsetSize;
     }
@@ -379,7 +379,7 @@ public:
             m_traits, m_input_iterator_first, m_input_iterator_beyond,
             m_point_pmap
     );
-    m_global_octree->createTree(m_options.cluster_epsilon);
+    m_global_octree->refine(m_options.cluster_epsilon);
 
     return true;
   }
