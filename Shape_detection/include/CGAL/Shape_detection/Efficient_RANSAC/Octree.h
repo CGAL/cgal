@@ -87,10 +87,6 @@ public:
     return m_octree.root().size();
   }
 
-  const Bbox_3 &boundingBox() const {
-    return m_octree.bbox(this->root());
-  }
-
   std::size_t maxLevel() const {
     return m_octree.max_depth_reached();
   }
@@ -152,7 +148,7 @@ public:
     return m_octree.root().size();
   }
 
-  const Bbox_3 &boundingBox() const {
+  Bbox_3 boundingBox() const {
     return m_octree.bbox(m_octree.root());
   }
 
