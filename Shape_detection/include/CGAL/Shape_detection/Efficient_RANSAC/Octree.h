@@ -86,6 +86,8 @@ public:
   const Node &locate(const typename Traits::Point_3 &p) const {
     return m_octree.locate(p);
   }
+
+  const Node &root() const { return m_octree.root(); }
 };
 
 template<class Traits>
@@ -141,6 +143,8 @@ public:
   const Node &locate(const typename Traits::Point_3 &p) const {
     return m_octree.locate(p);
   }
+
+  const Node &root() const { return m_octree.root(); }
 };
 
 }
