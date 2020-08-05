@@ -31,24 +31,22 @@ namespace CGAL {
 namespace Shape_detection {
 namespace internal {
 
-template <typename InputIterator, typename PointMap>
-struct Point_map_to_indexed_point_map
-{
-  typedef std::size_t                                           key_type;
+template<typename InputIterator, typename PointMap>
+struct Point_map_to_indexed_point_map {
+  typedef std::size_t key_type;
   typedef typename boost::property_traits<PointMap>::value_type value_type;
-  typedef typename boost::property_traits<PointMap>::reference  reference;
-  typedef typename boost::readable_property_map_tag             category;
+  typedef typename boost::property_traits<PointMap>::reference reference;
+  typedef typename boost::readable_property_map_tag category;
 
   InputIterator begin;
   PointMap point_map;
 
-  Point_map_to_indexed_point_map (InputIterator begin = InputIterator(),
-                                  PointMap point_map = PointMap())
-    : begin (begin), point_map (point_map) { }
+  Point_map_to_indexed_point_map(InputIterator begin = InputIterator(),
+                                 PointMap point_map = PointMap())
+          : begin(begin), point_map(point_map) {}
 
-  friend reference get (const Point_map_to_indexed_point_map& map, std::size_t index)
-  {
-    return get (map.point_map, *(map.begin + index));
+  friend reference get(const Point_map_to_indexed_point_map &map, std::size_t index) {
+    return get(map.point_map, *(map.begin + index));
   }
 };
 
@@ -57,14 +55,17 @@ class Direct_octree {
 
   typedef typename Traits::Input_range::iterator Input_iterator;
   typedef typename Traits::Point_map Point_map;
-  typedef CGAL::Iterator_range<Input_iterator> Input_range;
+  typedef std::vector<std::size_t> Input_range;
+  typedef Point_map_to_indexed_point_map<Input_iterator, Point_map> Indexed_point_map;
 
-  typedef Octree::Octree<Input_range, typename Traits::Point_map> Octree;
+  typedef Octree::Octree<Input_range, Indexed_point_map> Octree;
 
   Traits m_traits;
-  std::size_t m_offset;
   Input_range m_input_range;
+  Indexed_point_map m_index_map;
   Octree m_octree;
+
+  std::size_t m_offset;
 
 public:
 
@@ -75,12 +76,12 @@ public:
                 Input_iterator end,
                 Point_map point_map,
                 std::size_t offset = 0) :
-          m_input_range (begin, end),
-          m_octree(m_input_range, point_map),
           m_traits(traits),
-          m_offset(offset) {
-
-  }
+          m_input_range(boost::counting_iterator<std::size_t>(0),
+                        boost::counting_iterator<std::size_t>(end - begin)),
+          m_index_map(begin, point_map),
+          m_octree(m_input_range, m_index_map),
+          m_offset(offset) {}
 
   std::size_t size() const {
     return m_octree.root().size();
@@ -97,7 +98,7 @@ public:
   std::size_t offset() const { return m_offset; }
 
   void refine(double cluster_epsilon_for_max_level_recomputation = -1., std::size_t bucketSize = 2,
-                  std::size_t maxLevel = 10) {
+              std::size_t maxLevel = 10) {
 
     // TODO: I need to find out what cluster_epsilon is used for
     m_octree.refine(maxLevel, bucketSize);
@@ -140,13 +141,12 @@ public:
   Indexed_octree(const Traits &traits,
                  Input_iterator begin,
                  Input_iterator end,
-                 Point_map point_map)
-    : m_traits (traits)
-    , m_input_range (boost::counting_iterator<std::size_t>(0),
-                     boost::counting_iterator<std::size_t>(end - begin))
-    , m_index_map (begin, point_map)
-    , m_octree (m_input_range, m_index_map)
-  { }
+                 Point_map point_map) :
+          m_traits(traits),
+          m_input_range(boost::counting_iterator<std::size_t>(0),
+                        boost::counting_iterator<std::size_t>(end - begin)),
+          m_index_map(begin, point_map),
+          m_octree(m_input_range, m_index_map) {}
 
   std::size_t size() const {
     return m_octree.root().size();
@@ -161,7 +161,7 @@ public:
   }
 
   void refine(double cluster_epsilon_for_max_level_recomputation = -1., std::size_t bucketSize = 2,
-                  std::size_t maxLevel = 10) {
+              std::size_t maxLevel = 10) {
 
     // TODO: I need to find out what cluster_epsilon is used for
     m_octree.refine(maxLevel, bucketSize);
