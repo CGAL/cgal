@@ -50,10 +50,49 @@ class Small_unordered_set
   using Set   = std::unordered_set<Key>;
 
   Array m_array;
-  std::shared_ptr<Set> m_set;
+  std::unique_ptr<Set> m_set;
   std::size_t m_size = 0;
 
 public:
+
+  Small_unordered_set() { }
+
+  ~Small_unordered_set() { }
+
+  Small_unordered_set (const Small_unordered_set& other)
+    : m_size (other.m_size)
+  {
+    if (other.m_set)
+      m_set = std::make_unique<Set>(*other.m_set);
+    else
+      m_array = other.m_array;
+  }
+
+  Small_unordered_set (Small_unordered_set&& other)
+    : m_size (other.m_size)
+  {
+    if (other.m_set)
+      m_set = std::move(other.m_set);
+    else
+      m_array = std::move(other.m_array);
+  }
+
+  Small_unordered_set& operator= (const Small_unordered_set& other)
+  {
+    m_size = other.m_size;
+    if (other.m_set)
+      m_set = std::make_unique<Set>(*other.m_set);
+    else
+      m_array = other.m_array;
+  }
+
+  Small_unordered_set& operator= (Small_unordered_set&& other)
+  {
+    if (other.m_set)
+      m_set = std::move(other.m_set);
+    else
+      m_array = std::move(other.m_array);
+  }
 
   bool insert (const Key& key)
   {
@@ -68,7 +107,7 @@ public:
 
     if (!m_set)
     {
-      m_set = std::make_shared<Set>();
+      m_set = std::make_unique<Set>();
       m_set->reserve (MaxSize + 1);
       for (const Key& a : m_array)
         m_set->insert(a);
