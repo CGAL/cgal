@@ -42,6 +42,7 @@ class Direct_octree {
 
   Traits m_traits;
   std::size_t m_offset;
+  std::vector<std::size_t> m_index_map;
 
   Octree m_octree;
 
@@ -54,7 +55,7 @@ public:
                 const Input_iterator &end,
                 Point_map &point_map,
                 std::size_t offset = 0) :
-          m_octree({begin, end}, point_map),
+          m_octree(m_index_map, point_map),
           m_traits(traits),
           m_offset(offset) {
 
@@ -81,13 +82,19 @@ public:
     m_octree.refine(maxLevel, bucketSize);
   }
 
-  typename Traits::FT width() const { return m_octree.m_side_per_depth[0]; }
+  typename Traits::FT width() const {
+    return m_octree.bbox(m_octree.root()).xmax() - m_octree.bbox(m_octree.root()).xmin();
+  }
 
   const Node &locate(const typename Traits::Point_3 &p) const {
     return m_octree.locate(p);
   }
 
   const Node &root() const { return m_octree.root(); }
+
+  typename Traits::Point_3 barycenter(const Node &node) const {
+    return m_octree.barycenter(node);
+  }
 };
 
 template<class Traits>
@@ -138,13 +145,19 @@ public:
 
   std::size_t index(std::size_t i) { return m_index_map[i]; }
 
-  typename Traits::FT width() const { return m_octree.m_side_per_depth[0]; }
+  typename Traits::FT width() const {
+    return m_octree.bbox(m_octree.root()).xmax() - m_octree.bbox(m_octree.root()).xmin();
+  }
 
   const Node &locate(const typename Traits::Point_3 &p) const {
     return m_octree.locate(p);
   }
 
   const Node &root() const { return m_octree.root(); }
+
+  typename Traits::Point_3 barycenter(const Node &node) const {
+    return m_octree.barycenter(node);
+  }
 };
 
 }
