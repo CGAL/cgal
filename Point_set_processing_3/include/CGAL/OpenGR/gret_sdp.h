@@ -12,7 +12,7 @@
 #include "boost/tuple/tuple.hpp"
 
 #include <gr/algorithms/GRET_SDP.h>
-#include <gr/accelerators/MOSEKWrapper.h>
+#include <gr/accelerators/gret_sdp/MOSEKWrapper.h>
 #include <gr/shared.h>
 #include <memory>
 
