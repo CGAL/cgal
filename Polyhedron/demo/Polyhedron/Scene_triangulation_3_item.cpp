@@ -1899,33 +1899,37 @@ Scene_triangulation_3_item* Scene_triangulation_3_item::clone() const
 void Scene_triangulation_3_item::show_spheres(bool b)
 {
   d->spheres_are_shown = b;
-  contextMenu()->findChild<QAction*>("actionShowSpheres")->setChecked(b);
-  if(b && !d->spheres)
+  QAction* action_show_spheres = contextMenu()->findChild<QAction*>("actionShowSpheres");
+  if(action_show_spheres)
   {
-    d->spheres = new Scene_spheres_item(this, triangulation().number_of_vertices(), true);
-    connect(d->spheres, &Scene_spheres_item::picked,
-            this, [this](std::size_t id)
+    action_show_spheres->setChecked(b);
+    if(b && !d->spheres)
     {
-      if(id == (std::size_t)(-1))
-        return;
-      QString msg = QString("Vertex's index : %1; Vertex's in dimension: %2.").arg(d->tr_vertices[id].index()).arg(d->tr_vertices[id].in_dimension());
-      CGAL::Three::Three::information(msg);
-      CGAL::Three::Three::mainViewer()->displayMessage(msg, 5000);
+      d->spheres = new Scene_spheres_item(this, triangulation().number_of_vertices(), true);
+      connect(d->spheres, &Scene_spheres_item::picked,
+              this, [this](std::size_t id)
+      {
+        if(id == (std::size_t)(-1))
+          return;
+        QString msg = QString("Vertex's index : %1; Vertex's in dimension: %2.").arg(d->tr_vertices[id].index()).arg(d->tr_vertices[id].in_dimension());
+        CGAL::Three::Three::information(msg);
+        CGAL::Three::Three::mainViewer()->displayMessage(msg, 5000);
 
-    });
-    d->spheres->setName("Protecting spheres");
-    d->spheres->setRenderingMode(Gouraud);
-    connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
-    connect(d->spheres, SIGNAL(on_color_changed()), this, SLOT(on_spheres_color_changed()));
-    d->computeSpheres();
-    lockChild(d->spheres);
-    scene->addItem(d->spheres);
-    scene->changeGroup(d->spheres, this);
-  }
-  else if (!b && d->spheres!=NULL)
-  {
-    unlockChild(d->spheres);
-    scene->erase(scene->item_id(d->spheres));
+      });
+      d->spheres->setName("Protecting spheres");
+      d->spheres->setRenderingMode(Gouraud);
+      connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
+      connect(d->spheres, SIGNAL(on_color_changed()), this, SLOT(on_spheres_color_changed()));
+      d->computeSpheres();
+      lockChild(d->spheres);
+      scene->addItem(d->spheres);
+      scene->changeGroup(d->spheres, this);
+    }
+    else if (!b && d->spheres!=NULL)
+    {
+      unlockChild(d->spheres);
+      scene->erase(scene->item_id(d->spheres));
+    }
   }
   Q_EMIT redraw();
 }

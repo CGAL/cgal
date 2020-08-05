@@ -64,6 +64,12 @@ struct Scene_c3t3_item_priv {
   Scene_c3t3_item_priv(const C3t3& c3t3_, Scene_c3t3_item* item)
     : item(item), c3t3(c3t3_), is_valid(true), computed_stats(false){
   }
+
+  ~Scene_c3t3_item_priv()
+  {
+    c3t3.clear();
+  }
+
   void draw_triangle_edges_cnc(const Tr::Bare_point& pa,
                                const Tr::Bare_point& pb,
                                const Tr::Bare_point& pc) const;
@@ -389,6 +395,8 @@ CGAL::Three::Scene_item::Header_data Scene_c3t3_item::header() const
   return data;
 }
 
+bool Scene_c3t3_item::has_cnc()const { return d->cnc_are_shown;}
+
 bool Scene_c3t3_item::is_surface() const
 {
   return d->is_surface;
@@ -399,6 +407,21 @@ double Scene_c3t3_item::get_sharp_edges_angle() { return d->sharp_edges_angle; }
 
 void Scene_c3t3_item::set_detect_borders(bool b) { d->detect_borders = b;}
 bool Scene_c3t3_item::get_detect_borders() { return d->detect_borders; }
+
+Scene_c3t3_item* Scene_c3t3_item::clone() const
+{
+  return new Scene_c3t3_item(d->c3t3, d->is_surface);
+}
+
+void Scene_c3t3_item::copyProperties(Scene_item *item)
+{
+  Scene_triangulation_3_item::copyProperties(item);
+  Scene_c3t3_item* c3t3_item = qobject_cast<Scene_c3t3_item*>(item);
+  if(!c3t3_item)
+    return;
+  show_cnc(c3t3_item->has_cnc());
+
+}
 
 #include "Scene_c3t3_item.moc"
 
