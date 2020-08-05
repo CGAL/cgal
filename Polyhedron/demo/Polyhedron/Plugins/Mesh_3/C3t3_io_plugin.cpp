@@ -90,9 +90,10 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
 
 
         if(item->load_binary(in)) {
-          if(add_to_scene)
+          if(add_to_scene){
             item->resetCutPlane();
             CGAL::Three::Three::scene()->addItem(item);
+          }
           return QList<Scene_item*>() << item;
         }
 
