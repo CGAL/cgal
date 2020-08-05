@@ -98,8 +98,8 @@ public:
   {
     if (m_size != MaxSize)
     {
-      for (const Key& a : m_array)
-        if (a == key)
+      for (std::size_t i = 0; i < m_size; ++ i)
+        if (m_array[i] == key)
           return false;
       m_array[m_size ++] = key;
       return true;
