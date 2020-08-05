@@ -491,7 +491,7 @@ public:
     }
 
     // Use bounding box diagonal as reference for default values
-    Bbox_3 bbox = m_global_octree->boundingBox();
+    Bbox_3 bbox = m_global_octree->bbox();
     FT bbox_diagonal = (FT) CGAL::sqrt(
             (bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin())
             + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin())

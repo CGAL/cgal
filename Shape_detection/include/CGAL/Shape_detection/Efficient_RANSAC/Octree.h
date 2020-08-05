@@ -148,7 +148,7 @@ public:
     return m_octree.root().size();
   }
 
-  Bbox_3 boundingBox() const {
+  Bbox_3 bbox() const {
     return m_octree.bbox(m_octree.root());
   }
 
