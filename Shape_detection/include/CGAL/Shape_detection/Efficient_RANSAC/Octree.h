@@ -22,6 +22,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC/Shape_base.h>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 
 #include <CGAL/Octree.h>
 #include <CGAL/Octree/Node.h>
@@ -30,20 +31,39 @@ namespace CGAL {
 namespace Shape_detection {
 namespace internal {
 
+template <typename InputIterator, typename PointMap>
+struct Point_map_to_indexed_point_map
+{
+  typedef std::size_t                                           key_type;
+  typedef typename boost::property_traits<PointMap>::value_type value_type;
+  typedef typename boost::property_traits<PointMap>::reference  reference;
+  typedef typename boost::readable_property_map_tag             category;
+
+  InputIterator begin;
+  PointMap point_map;
+
+  Point_map_to_indexed_point_map (InputIterator begin = InputIterator(),
+                                  PointMap point_map = PointMap())
+    : begin (begin), point_map (point_map) { }
+
+  friend reference get (const Point_map_to_indexed_point_map& map, std::size_t index)
+  {
+    return get (map.point_map, *(map.begin + index));
+  }
+};
 
 template<class Traits>
 class Direct_octree {
 
   typedef typename Traits::Input_range::iterator Input_iterator;
   typedef typename Traits::Point_map Point_map;
-  typedef std::vector<std::size_t> Input_range;
+  typedef CGAL::Iterator_range<Input_iterator> Input_range;
 
   typedef Octree::Octree<Input_range, typename Traits::Point_map> Octree;
 
   Traits m_traits;
   std::size_t m_offset;
-  std::vector<std::size_t> m_index_map;
-
+  Input_range m_input_range;
   Octree m_octree;
 
 public:
@@ -51,11 +71,12 @@ public:
   typedef typename Octree::Node Node;
 
   Direct_octree(const Traits &traits,
-                const Input_iterator &begin,
-                const Input_iterator &end,
-                Point_map &point_map,
+                Input_iterator begin,
+                Input_iterator end,
+                Point_map point_map,
                 std::size_t offset = 0) :
-          m_octree(m_index_map, point_map),
+          m_input_range (begin, end),
+          m_octree(m_input_range, point_map),
           m_traits(traits),
           m_offset(offset) {
 
@@ -103,12 +124,13 @@ class Indexed_octree {
   typedef typename Traits::Input_range::iterator Input_iterator;
   typedef typename Traits::Point_map Point_map;
   typedef std::vector<std::size_t> Input_range;
+  typedef Point_map_to_indexed_point_map<Input_iterator, Point_map> Indexed_point_map;
 
-  typedef Octree::Octree<Input_range, typename Traits::Point_map> Octree;
+  typedef Octree::Octree<Input_range, Indexed_point_map> Octree;
 
   Traits m_traits;
-  std::vector<std::size_t> m_index_map;
-
+  Input_range m_input_range;
+  Indexed_point_map m_index_map;
   Octree m_octree;
 
 public:
@@ -116,13 +138,15 @@ public:
   typedef typename Octree::Node Node;
 
   Indexed_octree(const Traits &traits,
-                 const Input_iterator &begin,
-                 const Input_iterator &end,
-                 Point_map &point_map) :
-          m_octree({}, point_map),
-          m_traits(traits) {
-
-  }
+                 Input_iterator begin,
+                 Input_iterator end,
+                 Point_map point_map)
+    : m_traits (traits)
+    , m_input_range (boost::counting_iterator<std::size_t>(0),
+                     boost::counting_iterator<std::size_t>(end - begin))
+    , m_index_map (begin, point_map)
+    , m_octree (m_input_range, m_index_map)
+  { }
 
   std::size_t size() const {
     return m_octree.root().size();
