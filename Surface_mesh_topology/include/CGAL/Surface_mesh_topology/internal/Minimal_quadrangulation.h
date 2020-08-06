@@ -578,7 +578,7 @@ public:
 
         auto& p_original = factorization.first;
         p_original.simplify_flips();
-        
+
         auto perturbation = compute_perturbation(p_original);
 
         // Check whether orders form a valid parenthesis expression
