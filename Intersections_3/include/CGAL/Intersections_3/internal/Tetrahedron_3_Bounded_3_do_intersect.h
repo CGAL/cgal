@@ -162,11 +162,11 @@ do_intersect(const typename K::Sphere_3 &sp,
 template <class K>
 inline
 typename K::Boolean
-do_intersect(const typename K::Tetrahedron_3 &tet,
-             const typename K::Tetrahedron_3 &sp,
+do_intersect(const typename K::Tetrahedron_3 &lh_tet,
+             const typename K::Tetrahedron_3 &rh_tet,
              const K & k)
 {
-  return do_intersect_tetrahedron_bounded(sp, tet, tet[0], k);
+  return do_intersect_tetrahedron_bounded(lh_tet, rh_tet, lh_tet[0], k);
 }
 
 template <class K>
