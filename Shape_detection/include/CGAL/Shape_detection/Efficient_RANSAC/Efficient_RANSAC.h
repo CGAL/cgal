@@ -1090,14 +1090,20 @@ private:
     std::cerr << "drawSamplesFromCellContainingPoint" << std::endl;
     std::cerr << "  point: " << p << std::endl;
     std::cerr << "  level: " << level << std::endl;
-//    std::cerr << "            indices: " << indices << std::endl;
+    std::cerr << "  indices size: " << indices.size() << std::endl;
     std::cerr << "  required samples: " << requiredSamples << std::endl;
+    std::cerr << "  ~~~~~~~~~~~~~~~~~~~~ " << std::endl;
+
 
 
     typedef typename Octree::Node Cell;
 
     bool upperZ, upperY, upperX;
     const Cell *cur = &octree->locate(p);
+
+    std::cerr << (cur ? "  node found" : "  node not found") << std::endl;
+
+//    std::cerr << "  relevant node: " << cur << std::endl;
 
     if (cur) {
       std::size_t enough = 0;
@@ -1108,6 +1114,7 @@ private:
             break;
         }
       }
+
       if (enough >= requiredSamples) {
         do {
           std::size_t p = CGAL::get_default_random().
@@ -1117,6 +1124,8 @@ private:
           if (shapeIndex[j] == -1)
             indices.insert(j);
         } while (indices.size() < requiredSamples);
+
+        std::cerr << "  indices size: " << indices.size() << std::endl;
 
         return true;
       } else return false;
