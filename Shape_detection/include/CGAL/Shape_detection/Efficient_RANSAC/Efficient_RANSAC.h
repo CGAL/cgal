@@ -1095,7 +1095,6 @@ private:
     std::cerr << "  ~~~~~~~~~~~~~~~~~~~~ " << std::endl;
 
 
-
     typedef typename Octree::Node Cell;
 
     bool upperZ, upperY, upperX;
@@ -1105,30 +1104,31 @@ private:
 
 //    std::cerr << "  relevant node: " << cur << std::endl;
 
-    if (cur) {
-      std::size_t enough = 0;
-      for (auto j : cur->points()) {
-        if (shapeIndex[j] == -1) {
-          enough++;
-          if (enough >= requiredSamples)
-            break;
-        }
+    if (!cur)
+      return false;
+
+    std::size_t enough = 0;
+    for (auto j : cur->points()) {
+      if (shapeIndex[j] == -1) {
+        enough++;
+        if (enough >= requiredSamples)
+          break;
       }
+    }
 
-      if (enough >= requiredSamples) {
-        do {
-          std::size_t p = CGAL::get_default_random().
-                  uniform_int<std::size_t>(0, cur->size() - 1);
-          // TODO: I'm not sure if dereferencing this is working correctly
-          std::size_t j = *(cur->points().begin() + p);
-          if (shapeIndex[j] == -1)
-            indices.insert(j);
-        } while (indices.size() < requiredSamples);
+    if (enough >= requiredSamples) {
+      do {
+        std::size_t p = CGAL::get_default_random().
+                uniform_int<std::size_t>(0, cur->size() - 1);
+        // TODO: I'm not sure if dereferencing this is working correctly
+        std::size_t j = *(cur->points().begin() + p);
+        if (shapeIndex[j] == -1)
+          indices.insert(j);
+      } while (indices.size() < requiredSamples);
 
-        std::cerr << "  indices size: " << indices.size() << std::endl;
+      std::cerr << "  indices size: " << indices.size() << std::endl;
 
-        return true;
-      } else return false;
+      return true;
     } else return false;
   }
 
