@@ -911,6 +911,9 @@ private:
 
   Shape *get_best_candidate(std::vector<Shape *> &candidates,
                             const std::size_t num_available_points) {
+
+    std::cerr << "  Get best candidate" << std::endl;
+
     if (candidates.size() == 1)
       return candidates.back();
 
@@ -969,6 +972,9 @@ private:
                      std::size_t num_available_points,
                      std::size_t max_subset,
                      std::size_t min_points) {
+
+    std::cerr << "    Improve bound" << std::endl;
+
     if (candidate->m_nb_subset_used >= max_subset)
       return false;
 
@@ -1033,6 +1039,8 @@ private:
                     FT epsilon,
                     FT normal_threshold) {
 
+    std::cerr << "  Score" << std::endl;
+
     typedef typename Octree::Node Cell;
 
     std::stack<const Cell *> stack;
@@ -1087,6 +1095,8 @@ private:
                                           std::set<std::size_t> &indices,
                                           const std::vector<int> &shapeIndex,
                                           std::size_t requiredSamples) {
+
+//    std::cerr << "  Draw samples from cell" << std::endl;
 
     typedef typename Octree::Node Cell;
 
