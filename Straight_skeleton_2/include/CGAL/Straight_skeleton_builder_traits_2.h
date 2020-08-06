@@ -452,6 +452,7 @@ public:
     if (bound)
     {
       typedef FK Interval_kernel;
+      typename Interval_kernel::FT::Protector p;
       Cartesian_converter<K, Interval_kernel> to_interval;
       typedef CGAL_SS_i::Trisegment_2<Interval_kernel> Target_trisegment_2 ;
       typedef typename Target_trisegment_2::Self_ptr Target_trisegment_2_ptr;
