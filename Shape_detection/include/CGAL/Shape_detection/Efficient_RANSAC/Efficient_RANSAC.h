@@ -1079,6 +1079,36 @@ private:
     return candidate->m_indices.size();
   }
 
+
+  template<class Octree>
+  const typename Octree::Node *node_containing_point(const Octree *octree, const Point &p, std::size_t level) {
+
+    // Find the node containing the point
+    bool upperZ, upperY, upperX;
+    const typename Octree::Node *cur = &octree->root();
+    while (cur && cur->depth() < level) {
+
+      // Determine the coordinate of the child
+      std::bitset<3> coordinate;
+      coordinate[0] = octree->barycenter(*cur).x() <= p.x();
+      coordinate[1] = octree->barycenter(*cur).y() <= p.y();
+      coordinate[2] = octree->barycenter(*cur).z() <= p.z();
+
+      // If cur is a leaf node, its child is null
+      if (cur->is_leaf())
+        return nullptr;
+
+      // Otherwise, return the correct child of cur
+      cur = &(*cur)[coordinate.to_ulong()];
+
+      // If that child is empty, return null
+      if (cur->empty())
+        return nullptr;
+    }
+
+    return cur;
+  }
+
   template<class Octree>
   bool drawSamplesFromCellContainingPoint(const Octree *octree,
                                           const Point &p,
@@ -1097,8 +1127,7 @@ private:
 
     typedef typename Octree::Node Cell;
 
-    bool upperZ, upperY, upperX;
-    const Cell *cur = &octree->locate(p);
+    const Cell *cur = node_containing_point(octree, p, level);
 
     std::cerr << (cur ? "  node found" : "  node not found") << std::endl;
 
