@@ -234,12 +234,16 @@ public:
   */
   Efficient_RANSAC(Traits t = Traits())
           : m_traits(t), m_direct_octrees(nullptr), m_global_octree(nullptr), m_num_subsets(0),
-            m_num_available_points(0), m_num_total_points(0), m_valid_iterators(false) {}
+            m_num_available_points(0), m_num_total_points(0), m_valid_iterators(false) {
+    std::cerr << std::endl;
+    std::cerr << "Build Efficient_RANSAC" << std::endl;
+  }
 
   /*!
     Releases all memory allocated by this instance including shapes.
   */
   ~Efficient_RANSAC() {
+    std::cerr << "Delete Efficient_RANSAC" << std::endl;
     clear();
   }
 
