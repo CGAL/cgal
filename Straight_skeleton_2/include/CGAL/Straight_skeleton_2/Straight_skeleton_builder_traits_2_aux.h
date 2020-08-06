@@ -108,8 +108,8 @@ private:
 
   bool has_enough_precision(const boost::tuple<typename FK::FT, typename FK::Point_2>& time_and_point, double precision) const
   {
-    return has_smaller_relative_precision(get<0>(time_and_point), precision) &&
-           has_enough_precision(get<1>(time_and_point), precision);
+    return has_smaller_relative_precision(boost::get<0>(time_and_point), precision) &&
+           has_enough_precision(boost::get<1>(time_and_point), precision);
   }
 
 public:
