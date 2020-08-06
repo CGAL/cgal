@@ -25,7 +25,6 @@
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 
 #include <CGAL/Octree.h>
-#include <CGAL/Octree/Node.h>
 #include <CGAL/Octree/IO.h>
 
 namespace CGAL {
@@ -56,15 +55,16 @@ class Direct_octree {
 
   typedef typename Traits::Input_range::iterator Input_iterator;
   typedef typename Traits::Point_map Point_map;
+  typedef typename Traits::FT FT;
   typedef std::vector<std::size_t> Input_range;
   typedef Point_map_to_indexed_point_map<Input_iterator, Point_map> Indexed_point_map;
 
-  typedef Octree::Octree<Input_range, Indexed_point_map> Octree;
+  typedef CGAL::Octree::Octree<Input_range, Indexed_point_map> Octree;
 
   Traits m_traits;
   Input_range m_input_range;
   Indexed_point_map m_index_map;
-  Octree m_octree;
+  CGAL::Octree::Octree<Input_range, Indexed_point_map> m_octree;
 
   std::size_t m_offset;
 
@@ -97,7 +97,33 @@ public:
   void refine(double cluster_epsilon_for_max_level_recomputation = -1., std::size_t bucketSize = 2,
               std::size_t maxLevel = 10) {
 
-    // TODO: I need to find out what cluster_epsilon is used for
+    std::cerr << "refine" << std::endl;
+    std::cerr << "  max level: " << maxLevel << std::endl;
+    std::cerr << "  cluster epsilon: " << cluster_epsilon_for_max_level_recomputation << std::endl;
+    std::cerr << "  ~~~~~~~~~~~~~~~~~~~~ " << std::endl;
+
+    if (cluster_epsilon_for_max_level_recomputation > 0.) {
+
+      std::cerr << "  finding bbox" << std::endl;
+
+      auto m_bBox = m_octree.bbox(m_octree.root());
+
+      std::cerr << "  bbox: " << m_bBox << std::endl;
+
+
+      FT bbox_diagonal = (FT) CGAL::sqrt(
+              (m_bBox.xmax() - m_bBox.xmin()) * (m_bBox.xmax() - m_bBox.xmin())
+              + (m_bBox.ymax() - m_bBox.ymin()) * (m_bBox.ymax() - m_bBox.ymin())
+              + (m_bBox.zmax() - m_bBox.zmin()) * (m_bBox.zmax() - m_bBox.zmin()));
+
+      maxLevel = std::size_t(std::log(bbox_diagonal
+                                      / cluster_epsilon_for_max_level_recomputation)
+                             / std::log(2.0));
+
+      std::cerr << "  max level: " << maxLevel << std::endl;
+    }
+
+    std::cerr << "  refining bbox" << std::endl;
     m_octree.refine(maxLevel, bucketSize);
   }
 
