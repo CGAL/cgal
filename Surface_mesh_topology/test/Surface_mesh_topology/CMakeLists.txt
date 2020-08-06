@@ -37,7 +37,7 @@ set(SOURCE_FILES
   simplicity_cylinder.cpp
   simplicity_double_torus.cpp
   simplicity_double_torus_with_holes.cpp
-  simplicity_homology_group.cpp
+  simplicity_fundamental_polygon.cpp
   simplicity_torus.cpp
   test_homotopy.cpp
   test_homotopy_with_polygonal_schema.cpp
