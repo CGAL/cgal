@@ -22,7 +22,6 @@
 
 using std::ostream;
 
-
 template<typename Value>
 ostream &operator<<(ostream &os, const CGAL::Octree::Node<Value> &node) {
 

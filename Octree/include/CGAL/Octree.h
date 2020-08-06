@@ -191,6 +191,7 @@ public:
     m_bbox_min = bbox.min();
     m_bbox_side = bbox.max()[0] - m_bbox_min[0];
     m_root.points() = {point_range.begin(), point_range.end()};
+    m_side_per_depth.push_back(m_bbox_side);
 
   }
 
@@ -216,6 +217,9 @@ public:
 
     // Make sure the max depth is reset as well
     m_max_depth_reached = 0;
+
+    // Reset the side length map, too
+    m_side_per_depth.resize(0);
 
     // create a side length map
     for (int i = 0; i <= (int) 32; i++)
