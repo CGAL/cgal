@@ -16,12 +16,12 @@ class Triangulation_3_io_plugin :
 public:
 
   QString name() const override{ return "triangulation_3_io_plugin"; }
-  //todo:
-  QString nameFilters() const override{ return "T3 files(*.tr_test)"; }
+
+  QString nameFilters() const override{ return "T3 files(*.ascii.cgal);;T3 binary files (*.binary.cgal)"; }
 
 
   bool canLoad(QFileInfo) const override{ return true; }
-  //todo
+
   QList<CGAL::Three::Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override{
 
     // Open file
@@ -31,14 +31,32 @@ public:
       ok = false;
       return QList<CGAL::Three::Scene_item*>();
     }
-    T3 tr;
+#if 0
+    //{
+    CGAL::Random rng;
+    std::vector<T3::Point> points;
+    while (points.size() < 30)
+    {
+      T3::Point p(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.));
+      points.push_back(p);
+    }
+
+    T3 tr(points.begin(), points.end());
+    for (T3::Cell_handle c : tr.finite_cell_handles())
+      c->set_subdomain_index(1);
+    // }
+#else
+    T3 tr;;
+
+    if(fileinfo.absoluteFilePath().endsWith(".binary.cgal"))
+      CGAL::set_binary_mode(ifs);
     ifs >> tr;
     if(ifs.fail() || !tr.is_valid(false)) {
       std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
       ok = false;
       return QList<CGAL::Three::Scene_item*>();
     }
-
+#endif
     Scene_triangulation_3_item* new_item = new Scene_triangulation_3_item(tr);
     new_item->setName(fileinfo.fileName());
     new_item->invalidateOpenGLBuffers();
@@ -65,20 +83,23 @@ public:
       }
 
       QString path = fileinfo.absoluteFilePath();
-      //todo: define a real extension and use it.
-      if(path.endsWith(".tr_test"))
-      {
-        std::ofstream out(fileinfo.filePath().toUtf8(),
-                          std::ios_base::out|std::ios_base::binary);
 
-        out << t3_item->triangulation();
-        if( out.fail())
-          return false;
-        else
-        {
-          items.pop_front();
-          return true;
-        }
+      std::ofstream out(fileinfo.filePath().toUtf8());
+      if(path.endsWith(".binary.cgal"))
+      {
+        CGAL::set_binary_mode(out);
+      }
+      else
+      {
+        CGAL::set_ascii_mode(out);
+      }
+      out << t3_item->triangulation();
+      if( out.fail())
+        return false;
+      else
+      {
+        items.pop_front();
+        return true;
       }
     }
     return false;

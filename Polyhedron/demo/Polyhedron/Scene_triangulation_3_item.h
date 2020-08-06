@@ -32,8 +32,8 @@ using namespace CGAL::Three;
 public:
   typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
 
-  Scene_triangulation_3_item(bool display_elements = false);
-  Scene_triangulation_3_item(const T3 t3, bool display_elements = false);
+  Scene_triangulation_3_item(bool display_elements = true);
+  Scene_triangulation_3_item(const T3 t3, bool display_elements = true);
   ~Scene_triangulation_3_item();
 
   void common_constructor(bool);
