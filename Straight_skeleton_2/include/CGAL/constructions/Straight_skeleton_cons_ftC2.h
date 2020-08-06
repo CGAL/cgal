@@ -13,8 +13,8 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-
 #include <CGAL/predicates/Straight_skeleton_pred_ftC2.h>
+#include <CGAL/Lazy.h>
 
 namespace CGAL {
 
@@ -26,46 +26,6 @@ Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2
                                                                      , Segment_2<K> const& e1
                                                                      , Segment_2<K> const& e2
                                                                      );
-#ifdef CGAL_USE_CORE
-
-template<class NT>
-inline CORE::BigFloat to_BigFloat( NT const& n )
-{
-  return CORE::BigFloat( CGAL::to_double(n) ) ;
-}
-
-template<>
-inline CORE::BigFloat to_BigFloat<MP_Float>( MP_Float const& b )
-{
-  if (b.is_zero())
-    return CORE::BigFloat::getZero();
-
-  typedef MP_Float::exponent_type exponent_type;
-
-  const int                    log_limb         = 8 * sizeof(MP_Float::limb);
-  const MP_Float::V::size_type limbs_per_double = 2 + 53/log_limb;
-
-  exponent_type exp = b.max_exp();
-  int steps = static_cast<int>((std::min)(limbs_per_double, b.v.size()));
-
-  CORE::BigFloat d_exp_1 = CORE::BigFloat::exp2(-log_limb);
-
-  CORE::BigFloat d_exp   = CORE::BigFloat::getOne() ;
-
-  CORE::BigFloat d       = CORE::BigFloat::getZero();
-
-  for ( exponent_type i = exp - 1; i > exp - 1 - steps; i--)
-  {
-    d_exp *= d_exp_1;
-    d += d_exp * CORE::BigFloat(b.of_exp(i));
-  }
-
-  return d * CORE::BigFloat::exp2( static_cast<int>(exp * log_limb) );
-}
-
-
-#endif
-
 template<class NT>
 inline NT inexact_sqrt_implementation( NT const& n, CGAL::Null_functor /*no_sqrt*/ )
 {
@@ -95,10 +55,16 @@ inline Quotient<MP_Float> inexact_sqrt( Quotient<MP_Float> const& q )
   return Quotient<MP_Float>(CGAL_SS_i::inexact_sqrt(q.numerator()*q.denominator()), q.denominator() );
 }
 
+template <class NT>
+inline Lazy_exact_nt<NT> inexact_sqrt( Lazy_exact_nt<NT> const& lz)
+{
+  return inexact_sqrt( exact(lz) );
+}
+
 
 // Given an oriented 2D straight line segment 'e', computes the normalized coefficients (a,b,c) of the
 // supporting line.
-// POSTCONDITION: [a,b] is the leftward normal _unit_ (a�+b�=1) vector.
+// POSTCONDITION: [a,b] is the leftward normal _unit_ (a²+b²=1) vector.
 // POSTCONDITION: In case of overflow, an empty optional<> is returned.
 template<class K>
 optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const& e )
@@ -519,7 +485,7 @@ optional< Rational< typename K::FT > > compute_offset_lines_isec_timeC2 ( intrus
 //
 // PRECONDITIONS:
 // None of e0, e1 and e2 are collinear (but two of them can be parallel)
-// The line coefficients must be normalized: a�+b�==1 and (a,b) being the leftward normal vector
+// The line coefficients must be normalized: a²+b²==1 and (a,b) being the leftward normal vector
 // The offsets at a certain distance do intersect in a single point.
 //
 // POSTCONDITION: In case of overflow an empty optional is returned.
@@ -578,7 +544,7 @@ optional< Point_2<K> > construct_normal_offset_lines_isecC2 ( intrusive_ptr< Tri
 // two and only two of the edges are collinear, not neccesarily consecutive but with the same orientaton
 //
 // PRECONDITIONS:
-// The line coefficients must be normalized: a�+b�==1 and (a,b) being the leftward normal vector
+// The line coefficients must be normalized: a²+b²==1 and (a,b) being the leftward normal vector
 // The offsets at a certain distance do intersect in a single point.
 //
 // POSTCONDITION: In case of overflow an empty optional is returned.
