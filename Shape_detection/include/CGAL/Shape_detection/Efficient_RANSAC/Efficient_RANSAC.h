@@ -554,20 +554,34 @@ public:
     bool force_exit = false;
     bool keep_searching = true;
 
+    std::cerr << "    Start main loop" << std::endl;
     do { // main loop
       best_expected = 0;
 
       if (keep_searching)
+        std::cerr << "      Keep searching (start second loop)" << std::endl;
         do {
           // Generate candidates
           //1. pick a point p1 randomly among available points
           std::set<std::size_t> indices;
           bool done = false;
+          std::cerr << "        Pick a random point (start third loop)" << std::endl;
           do {
+
+//            std::cerr << "        Pick a random index (start fourth loop)" << std::endl;
             do
               first_sample = get_default_random()(
                       static_cast<unsigned int>(m_num_available_points));
             while (m_shape_index[first_sample] != -1);
+
+            std::cerr << "          Chose sample " << first_sample << " from " << m_num_available_points << " points" << std::endl;
+
+            int num_marked_points;
+            for (int i = 0; i < m_num_available_points; ++i) {
+              if (m_shape_index[i] == -1)
+                num_marked_points;
+            }
+            std::cerr << "          " << num_marked_points << " indices = -1" << std::endl;
 
             done =
                     drawSamplesFromCellContainingPoint(m_global_octree,
