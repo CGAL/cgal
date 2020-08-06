@@ -544,7 +544,63 @@ private:
                                              force_exact
 #endif
                                              ) const;
+public:
+  // IO
+  void write(std::ostream& os) const
+  {
+    os << "Bezier_x_monotone("
+       << this->supporting_curve()
+       << " [" << this->xid()
+       << "] |" << this->source()
+       << " -->" << this->target()
+       << ',' << this->is_directed_right()
+       << ',' << this->_inc_to_right
+       << ',' << this->is_vertical()
+       << ')';
+  }
 
+  void read(std::istream& is)
+  {
+    Bezier_io_internal::swallow(is, "Bezier_x_monotone");
+    Bezier_io_internal::swallow(is, '(');
+    Curve_2 curve;
+    is >> curve;
+
+    Bezier_io_internal::swallow(is, '[');
+    unsigned int xid;
+    is >> xid;
+
+    Bezier_io_internal::swallow(is, ']');
+    Bezier_io_internal::swallow(is, '|');
+    Point_2 source;
+    is >> source;
+
+    Bezier_io_internal::swallow(is, "-->");
+    Point_2 target;
+    is >> target;
+
+    Bezier_io_internal::swallow(is, ',');
+    bool dir_right;
+    is >> dir_right;
+
+    Bezier_io_internal::swallow(is, ',');
+    bool inc_to_right;
+    is >> inc_to_right;
+
+    Bezier_io_internal::swallow(is, ',');
+    bool is_vert;
+    is >> is_vert;
+
+    Bezier_io_internal::swallow(is, ')');
+
+    this->_curve = curve;
+    this->_xid = xid;
+    this->_ps = source;
+    this->_pt = target;
+    this->_dir_right = dir_right;
+    this->_inc_to_right = inc_to_right;
+    this->_is_vert = is_vert;
+  }
 };
 
 /*!
@@ -557,12 +613,18 @@ operator<<(std::ostream& os,
            const _Bezier_x_monotone_2
            <Rat_kernel, Alg_kernel, Nt_traits, Bounding_traits>& cv)
 {
-  os << cv.supporting_curve()
-     << " [" << cv.xid()
-     << "] | " << cv.source()
-     << " --> " << cv.target();
-
+  cv.write(os);
   return os;
+}
+
+template <
+  class Rat_kernel, class Alg_kernel, class Nt_traits, class Bounding_traits>
+std::istream& operator>>(
+  std::istream& is,
+  _Bezier_x_monotone_2<Rat_kernel, Alg_kernel, Nt_traits, Bounding_traits>& cv)
+{
+  cv.read(is);
+  return is;
 }
 
 // ---------------------------------------------------------------------------

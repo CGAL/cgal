@@ -1515,6 +1515,138 @@ private:
   }
 };
 
+/*!
+ * Exporter for bounding information
+ */
+template <class Kernel_>
+std::ostream&
+operator<<(std::ostream& os, const _Bez_point_bound<Kernel_>& point_bound)
+{
+  os << "point_bound{";
+  os << "type{" << static_cast<int>(point_bound.type) << '}';
+  os << "ctrl_pts{";
+  os << point_bound.ctrl.size();
+  for (auto& p : point_bound.ctrl) os << '{' << p << '}';
+  os << '}';
+  os << "t_min{" << point_bound.t_min << '}';
+  os << "t_max{" << point_bound.t_max << '}';
+  os << "can_refine{" << point_bound.can_refine << '}';
+  os << "}";
+
+  return os;
+}
+
+template <class Kernel_>
+std::istream&
+operator>>(std::istream& is, _Bez_point_bound<Kernel_>& point_bound)
+{
+  Bezier_io_internal::swallow(is, "point_bound");
+  Bezier_io_internal::swallow(is, '{');
+
+  Bezier_io_internal::swallow(is, "type");
+  Bezier_io_internal::swallow(is, '{');
+  typename _Bez_point_bound<Kernel_>::Type type;
+  int type_int;
+  is >> type_int;
+  type = static_cast<typename _Bez_point_bound<Kernel_>::Type>(type_int);
+  Bezier_io_internal::swallow(is, '}');
+
+  Bezier_io_internal::swallow(is, "ctrl_pts");
+  Bezier_io_internal::swallow(is, '{');
+  typename _Bez_point_bound<Kernel_>::Control_points control_points;
+  size_t n;
+  is >> n;
+  for (size_t i = 0; i < n; i++)
+  {
+    typename _Bez_point_bound<Kernel_>::Point_2 pt;
+    Bezier_io_internal::swallow(is, '{');
+    is >> pt;
+    Bezier_io_internal::swallow(is, '}');
+    control_points.push_back(pt);
+  }
+  Bezier_io_internal::swallow(is, '}');
+
+  Bezier_io_internal::swallow(is, "t_min");
+  Bezier_io_internal::swallow(is, '{');
+  typename _Bez_point_bound<Kernel_>::NT t_min;
+  is >> t_min;
+  Bezier_io_internal::swallow(is, '}');
+
+  Bezier_io_internal::swallow(is, "t_max");
+  Bezier_io_internal::swallow(is, '{');
+  typename _Bez_point_bound<Kernel_>::NT t_max;
+  is >> t_max;
+  Bezier_io_internal::swallow(is, '}');
+
+  Bezier_io_internal::swallow(is, "can_refine");
+  Bezier_io_internal::swallow(is, '{');
+  bool can_refine;
+  is >> can_refine;
+  Bezier_io_internal::swallow(is, '}');
+
+  Bezier_io_internal::swallow(is, '}');
+
+  point_bound.type = type;
+  point_bound.ctrl = control_points;
+  point_bound.t_min = t_min;
+  point_bound.t_max = t_max;
+  point_bound.can_refine = can_refine;
+
+  return is;
+}
+
+template <class Kernel_>
+std::ostream&
+operator<<(std::ostream& os, const _Bez_point_bbox<Kernel_>& point_bbox)
+{
+  os << "point_bbox{";
+  os << "min_x{" << point_bbox.min_x << '}';
+  os << "max_x{" << point_bbox.max_x << '}';
+  os << "min_y{" << point_bbox.min_y << '}';
+  os << "max_y{" << point_bbox.max_y << '}';
+  os << '}';
+
+  return os;
+}
+
+template <class Kernel_>
+std::istream&
+operator>>(std::istream& is, _Bez_point_bbox<Kernel_>& point_bbox)
+{
+  Bezier_io_internal::swallow(is, "point_bbox");
+  Bezier_io_internal::swallow(is, '{');
+
+  Bezier_io_internal::swallow(is, "min_x");
+  Bezier_io_internal::swallow(is, '{');
+  typename _Bez_point_bound<Kernel_>::NT min_x;
+  is >> min_x;
+  Bezier_io_internal::swallow(is, '}');
+
+  Bezier_io_internal::swallow(is, "max_x");
+  Bezier_io_internal::swallow(is, '{');
+  typename _Bez_point_bound<Kernel_>::NT max_x;
+  is >> max_x;
+  Bezier_io_internal::swallow(is, '}');
+
+  Bezier_io_internal::swallow(is, "min_y");
+  Bezier_io_internal::swallow(is, '{');
+  typename _Bez_point_bound<Kernel_>::NT min_y;
+  is >> min_y;
+  Bezier_io_internal::swallow(is, '}');
+
+  Bezier_io_internal::swallow(is, "max_y");
+  Bezier_io_internal::swallow(is, '{');
+  typename _Bez_point_bound<Kernel_>::NT max_y;
+  is >> max_y;
+  Bezier_io_internal::swallow(is, '}');
+
+  Bezier_io_internal::swallow(is, '}');
+
+  point_bbox = {min_x, max_x, min_y, max_y};
+
+  return is;
+}
+
 } //namespace CGAL
 
 #endif //CGAL_BEZIER_BOUNDING_RATIONAL_TRAITS_H

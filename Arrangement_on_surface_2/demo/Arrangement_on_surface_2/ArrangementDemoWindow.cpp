@@ -705,8 +705,6 @@ struct ArrSaver
     conicReader.write_data(ofs, arr->curves_begin(), arr->curves_end());
   }
 
-  void operator()(Bezier_arr* arr) { }
-
   std::ofstream& ofs;
 };
 
@@ -782,11 +780,6 @@ struct ArrOpener
     auto arr = std::make_unique<Conic_arr>();
     CGAL::insert(*arr, curve_list.begin(), curve_list.end());
     return arr;
-  }
-
-  auto operator()(TypeHolder<Bezier_arr>)
-  {
-    return std::make_unique<Bezier_arr>();
   }
 
   std::ifstream& ifs;
