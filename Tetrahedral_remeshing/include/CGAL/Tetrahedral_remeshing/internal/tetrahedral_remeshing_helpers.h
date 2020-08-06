@@ -142,76 +142,91 @@ typename Tr::Geom_traits::FT min_dihedral_angle(const Tr& tr,
 }
 
 template<typename Gt>
-typename Gt::FT tan_dihedral_angle(const typename Gt::Point_3& a,
-                                   const typename Gt::Point_3& b,
-                                   const typename Gt::Point_3& c,
-                                   const typename Gt::Point_3& d,
+typename Gt::FT cos_dihedral_angle(const typename Gt::Point_3& i,
+                                   const typename Gt::Point_3& j,
+                                   const typename Gt::Point_3& k,
+                                   const typename Gt::Point_3& l,
                                    const Gt& gt)
 {
-  CGAL_assertion(CGAL::orientation(a,b,c,d) != CGAL::NEGATIVE);
+  CGAL_assertion(CGAL::orientation(i, j, k, l) != CGAL::NEGATIVE);
 
   typename Gt::Construct_vector_3 vector = gt.construct_vector_3_object();
   typename Gt::Construct_cross_product_vector_3 cross_product =
     gt.construct_cross_product_vector_3_object();
-  typename Gt::Compute_squared_distance_3 sq_distance =
-    gt.compute_squared_distance_3_object();
   typename Gt::Compute_scalar_product_3 scalar_product =
     gt.compute_scalar_product_3_object();
 
   typedef typename Gt::Vector_3 Vector_3;
   typedef typename Gt::FT FT;
 
-  const Vector_3 ab = vector(a, b);
-  const Vector_3 ac = vector(a, c);
-  const Vector_3 ad = vector(a, d);
+  const Vector_3 ji = vector(j, i);
+  const Vector_3 kj = vector(k, j);
+  const Vector_3 kl = vector(k, l);
 
-  const Vector_3 abad = cross_product(ab, ad);
-  const double x = CGAL::to_double(scalar_product(cross_product(ab, ac), abad));
-  const double l_ab = CGAL::sqrt(CGAL::to_double(sq_distance(a, b)));
-  const double y = l_ab * CGAL::to_double(scalar_product(ac, abad));
+  const Vector_3 jikj = cross_product(ji, kj);
+  if(CGAL::NULL_VECTOR == jikj)
+    return 1.;
 
-  return CGAL::abs(FT(y / x));
-  //dihedral angle in degree is : FT(std::atan2(y, x) * 180 / CGAL_PI );
-  //but we can compare only y/x since atan is monotonic
+  const Vector_3 klkj = cross_product(kl, kj);
+  if (CGAL::NULL_VECTOR == klkj)
+    return 1.;
+
+  const FT num = scalar_product(jikj, klkj);
+  if(num == 0.)
+    return 0.;
+
+  const double den = CGAL::sqrt(CGAL::to_double(
+    scalar_product(jikj, jikj) * scalar_product(klkj, klkj)));
+
+  const double cos = num/den;
+
+  if(cos > 1.)        return FT(1.);
+  else if(cos < -1.)  return FT(-1.);
+  else                return FT(cos);
 }
 
 template<typename Point, typename Geom_traits>
-typename Geom_traits::FT min_tan_dihedral_angle(const Point& p,
+typename Geom_traits::FT max_cos_dihedral_angle(const Point& p,
                                                 const Point& q,
                                                 const Point& r,
                                                 const Point& s,
                                                 const Geom_traits& gt)
 {
   typedef typename Geom_traits::FT FT;
-  FT a = tan_dihedral_angle(p, q, r, s, gt);
-  FT min_dh = a;
+  FT a = cos_dihedral_angle(p, q, r, s, gt);
+  FT max_cos_dh = a;
+  if(max_cos_dh == 1.) return 1.;
 
-  a = tan_dihedral_angle(p, r, s, q, gt);
-  min_dh = (std::min)(a, min_dh);
+  a = cos_dihedral_angle(p, r, s, q, gt);
+  max_cos_dh = (std::max)(a, max_cos_dh);
+  if (max_cos_dh == 1.) return 1.;
 
-  a = tan_dihedral_angle(p, s, q, r, gt);
-  min_dh = (std::min)(a, min_dh);
+  a = cos_dihedral_angle(p, s, q, r, gt);
+  max_cos_dh = (std::max)(a, max_cos_dh);
+  if (max_cos_dh == 1.) return 1.;
 
-  a = tan_dihedral_angle(q, r, p, s, gt);
-  min_dh = (std::min)(a, min_dh);
+  a = cos_dihedral_angle(q, r, p, s, gt);
+  max_cos_dh = (std::max)(a, max_cos_dh);
+  if (max_cos_dh == 1.) return 1.;
 
-  a = tan_dihedral_angle(q, s, r, p, gt);
-  min_dh = (std::min)(a, min_dh);
+  a = cos_dihedral_angle(q, s, r, p, gt);
+  max_cos_dh = (std::max)(a, max_cos_dh);
+  if (max_cos_dh == 1.) return 1.;
 
-  a = tan_dihedral_angle(r, s, p, q, gt);
-  min_dh = (std::min)(a, min_dh);
+  a = cos_dihedral_angle(r, s, p, q, gt);
+  max_cos_dh = (std::max)(a, max_cos_dh);
 
-  return min_dh;
+  return max_cos_dh;
 }
 
 template<typename Tr>
-typename Tr::Geom_traits::FT min_tan_dihedral_angle(const Tr& tr,
+typename Tr::Geom_traits::FT max_cos_dihedral_angle(const Tr& tr,
                                                     const typename Tr::Vertex_handle v0,
                                                     const typename Tr::Vertex_handle v1,
                                                     const typename Tr::Vertex_handle v2,
                                                     const typename Tr::Vertex_handle v3)
 {
-  return min_tan_dihedral_angle(point(v0->point()),
+  return max_cos_dihedral_angle(point(v0->point()),
                                 point(v1->point()),
                                 point(v2->point()),
                                 point(v3->point()),
@@ -219,19 +234,19 @@ typename Tr::Geom_traits::FT min_tan_dihedral_angle(const Tr& tr,
 }
 
 template<typename Tr>
-typename Tr::Geom_traits::FT min_tan_dihedral_angle(const Tr& tr,
+typename Tr::Geom_traits::FT max_cos_dihedral_angle(const Tr& tr,
                                                     const typename Tr::Cell_handle c)
 {
-  if (c->is_cache_valid())
-    return c->sliver_value();
+//  if (c->is_cache_valid())
+//    return c->sliver_value();
 
-  typename Tr::Geom_traits::FT tan_dh = min_tan_dihedral_angle(tr,
+  typename Tr::Geom_traits::FT cos_dh = max_cos_dihedral_angle(tr,
                                                                c->vertex(0),
                                                                c->vertex(1),
                                                                c->vertex(2),
                                                                c->vertex(3));
-  c->set_sliver_value(tan_dh);
-  return tan_dh;
+//  c->set_sliver_value(cos_dh);
+  return cos_dh;
 }
 
 template<typename C3t3>
