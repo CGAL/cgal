@@ -25,14 +25,14 @@ struct Array_traits
 {
   struct Equal_3
   {
-    bool operator()(const Custom_point& p, const Custom_point& q) {
+    bool operator()(const Custom_point& p, const Custom_point& q) const {
       return (p == q);
     }
   };
 
   struct Less_xyz_3
   {
-    bool operator()(const Custom_point& p, const Custom_point& q) {
+    bool operator()(const Custom_point& p, const Custom_point& q) const {
       return std::lexicographical_compare(p.begin(), p.end(), q.begin(), q.end());
     }
   };
