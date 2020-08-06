@@ -33,7 +33,8 @@ TARGETS = \
   vertical_decomposition.pdf \
   compare_x_on_boundary.pdf \
   compare_x_near_boundary.pdf \
-  compare_y_near_boundary.pdf
+  compare_y_near_boundary.pdf \
+  identified_clusters.pdf
 
 .DEFAULT_GOAL = all
 .PHONY: all clean

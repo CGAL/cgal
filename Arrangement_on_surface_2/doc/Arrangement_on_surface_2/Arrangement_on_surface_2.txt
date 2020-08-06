@@ -3125,18 +3125,19 @@ parameter-space boundary (the pre-images of their endpoints lie on
 boundary sides) or approach them (the pre-images of their endpoints
 approach boundary sides). These boundary conditions typically occur
 with unbounded curves or with arrangements embedded in curved
-surfaces.  The categories `Left_side_category`, `Right_side_category`,
-`Bottom_side_category`, and `Top_side_category`, nested in every
-geometry traits class indicate whether the corresponding boundary side
-(i.e., left, right, bootom, and top) is open, closed, contracted, or
-identified, and whether this information is relevant at all. When all
-curves inserted into the arrangement are not expected to reach that
-particular boundary side, the information is
-iirelevant.\cgalFootnote{Note that we explicitly distinguish
-closed-only, contracted, and identified sides, although the latter two
-are closed in \f$\Phi\f$ as well.} Each one of the categories above
-must be convertible to one of the tag types listed below according to
-the boundary condition that should be handled.
+surfaces. The category types `Left_side_category`,
+`Right_side_category`, `Bottom_side_category`, and
+`Top_side_category`, nested in every geometry traits class indicate
+whether the corresponding boundary side (i.e., left, right, bootom,
+and top) is open, closed, contracted, or identified, and whether this
+information is relevant at all. When all curves inserted into the
+arrangement are not expected to approach or reach that particular
+boundary side, the information is iirelevant. (Note that we explicitly
+distinguish closed-only, contracted, and identified sides, although
+the latter two are closed in the parameter space as well.) Each one of
+the categories above must be convertible to one of the tag types
+listed below according to the boundary condition that should be
+handled.
 
 <ul>
 
@@ -3151,9 +3152,9 @@ the boundary condition that should be handled.
 For each of the four sides of the parameter space there are four
 available concepts, models of which can be used to handle open,
 closed, contracted, and identified side, respectively. (When curves
-are not expected to reach or a pproach a particular side, no special
-handling is required; thus, there is no need for corresponding
-concepts.) For example, it is required that the category type \link
+are not expected to reach or approach a particular side, no special
+handling is required; thus, there is no need for a corresponding
+concept.) For example, it is required that the category type \link
 ArrangementOpenBottomTraits_2::Bottom_side_category
 `Bottom_side_category`\endlink, nested in models of the concept
 `ArrangementOpenBottomTraits_2`, is convertible to the tag type
@@ -3214,9 +3215,11 @@ concepts for curves embedded in a spherical-like parameterized surface
 <!----------------------------------------------------------------------------->
 
 A suitable geometry-traits component for arrangements embedded in
-surfaces homeomorphic to a sphere is a model of the combined
-concept `ArrangementSphericalTraits_2` shown in Figure
-\cgalFigureRef{aos_fig-spherical_concept_hierarchy}.
+surfaces homeomorphic to a sphere is a model of the combined concept
+`ArrangementSphericalTraits_2` shown in Figure
+\cgalFigureRef{aos_fig-spherical_concept_hierarchy}. Here the two
+vertical sides of the parameter space are identified and the two
+horizontal sides are contracted.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-left_side_cluster,left_side_cluster.png}
@@ -3246,6 +3249,25 @@ The shared requirements for the options of opposite sides are
 collected in two additional abstract layers called
 `ArrangementVerticalSideTraits_2` and `ArrangementHorizontalSideTraits_2`; see
 Figure \cgalFigureRef{aos_fig-side_clusters}.
+
+<!----------------------------------------------------------------------------->
+\cgalFigureBegin{aos_fig-identified_clusters,identified_clusters.png} Top
+portion of the refinement hierarchy of the geometry-traits concepts,
+where the vertical sides of the parameter space are identified, for
+curves that either reach the vertical sides of the boundary of the
+parameter space or approach it, and similarly for curves that either
+reach or approach identified horizontal sides.
+\cgalFigureEnd
+<!----------------------------------------------------------------------------->
+
+The shared requirements for opposite identified sides are collected in
+too additional abstract layers called
+`ArrangementIdentifiedVerticalTraits_2` and
+`ArrangementIdentifiedHorizontalTraits_2`; see Figure
+\cgalFigureRef{aos_fig-identified_clusters}.
+
+In the following we list the specific requirements of all the
+aforemenstioned concepts.
 
 The abstract concept `ArrangementVerticalSideTraits_2` requires the
 following predicate:
@@ -3340,6 +3362,42 @@ asymmetry is also reflected in the predicates listed below. They help
 determining the order of curve-ends lying on the boundary of the
 parameter space with respect to regular points and among each other.
 
+The concept `ArrangementVerticalSideTraits_2` requires the following
+additional predicate:
+
+<DL>
+
+<DT>\link ArrangementVerticalSideTraits_2::Compare_y_near_boundary_2 <B>`Compare_y_near_boundary_2`</B>\endlink:
+
+<DD>
+<table border="0" cellspacing="10">
+<tr>
+<td>
+\image html compare_y_near_boundary.png
+\image latex compare_y_near_boundary.pdf
+</td>
+<td>
+
+Given two \f$x\f$-monotone curves \f$c_1\f$ and \f$c_2\f$, and an
+enumerator \f$i\f$ that specifies either the minimum ends or the
+maximum ends of the two curves, and thus maps to parameter values \f$d
+\in \{0,1\}\f$, compare the \f$y\f$-coordinates of the curves near
+their respective ends. More precisely, compares the
+\f$y\f$-coordinates of the vertical projection of a point \f$p\f$ onto
+\f$c_1\f$ and onto \f$c_2\f$. If the enumerator \f$i\f$ specifies the
+minimum ends, the curves must approach the left boundary-side. In this
+case \f$p\f$ is located far to the left, such that the result is
+invariant under a translation of \f$p\f$ farther to the left. If
+\f$i\f$ specifies the maximum ends, the curves must approach the right
+boundary-side. In that case \f$p\f$ is located far to the right in a
+similar manner.
+
+</td>
+</tr>
+</table>
+
+</DL>
+
 The concept `ArrangementHorizontalSideTraits_2` requires two additional
 predicates:
 
@@ -3433,42 +3491,6 @@ approach the bottom boundary-side, \f$p\f$ is located far to the
 bottom, such that the result is invariant under a translation of
 \f$p\f$ farther to the bottom. If both curves approach the top
 boundary-side, \f$p\f$ is located far to the top in a similar manner.
-
-</td>
-</tr>
-</table>
-
-</DL>
-
-The concept `ArrangementVerticalSideTraits_2` requires the following
-additional predicate:
-
-<DL>
-
-<DT>\link ArrangementVerticalSideTraits_2::Compare_y_near_boundary_2 <B>`Compare_y_near_boundary_2`</B>\endlink:
-
-<DD>
-<table border="0" cellspacing="10">
-<tr>
-<td>
-\image html compare_y_near_boundary.png
-\image latex compare_y_near_boundary.pdf
-</td>
-<td>
-
-Given two \f$x\f$-monotone curves \f$c_1\f$ and \f$c_2\f$, and an
-enumerator \f$i\f$ that specifies either the minimum ends or the
-maximum ends of the two curves, and thus maps to parameter values \f$d
-\in \{0,1\}\f$, compare the \f$y\f$-coordinates of the curves near
-their respective ends. More precisely, compares the
-\f$y\f$-coordinates of the vertical projection of a point \f$p\f$ onto
-\f$c_1\f$ and onto \f$c_2\f$. If the enumerator \f$i\f$ specifies the
-minimum ends, the curves must approach the left boundary-side. In this
-case \f$p\f$ is located far to the left, such that the result is
-invariant under a translation of \f$p\f$ farther to the left. If
-\f$i\f$ specifies the maximum ends, the curves must approach the right
-boundary-side. In that case \f$p\f$ is located far to the right in a
-similar manner.
 
 </td>
 </tr>
