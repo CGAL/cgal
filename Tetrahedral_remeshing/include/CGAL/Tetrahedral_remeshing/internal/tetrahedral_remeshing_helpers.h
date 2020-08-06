@@ -237,15 +237,15 @@ template<typename Tr>
 typename Tr::Geom_traits::FT max_cos_dihedral_angle(const Tr& tr,
                                                     const typename Tr::Cell_handle c)
 {
-//  if (c->is_cache_valid())
-//    return c->sliver_value();
+  if (c->is_cache_valid())
+    return c->sliver_value();
 
   typename Tr::Geom_traits::FT cos_dh = max_cos_dihedral_angle(tr,
                                                                c->vertex(0),
                                                                c->vertex(1),
                                                                c->vertex(2),
                                                                c->vertex(3));
-//  c->set_sliver_value(cos_dh);
+  c->set_sliver_value(cos_dh);
   return cos_dh;
 }
 
