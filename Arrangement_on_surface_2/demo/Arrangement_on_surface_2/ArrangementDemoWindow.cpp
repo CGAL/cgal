@@ -201,7 +201,7 @@ void ArrangementDemoWindow::resetActionGroups(
 {
   this->hideInsertMethods();
   this->ui->actionInsert->setChecked(false);
-  this->ui->actionDrag->setChecked(true);
+  this->ui->actionDrag->setChecked(false);
   this->ui->actionLowerEnvelope->setChecked(false);
   this->ui->actionUpperEnvelope->setChecked(false);
   this->ui->actionShowGrid->setChecked(tab->isGridVisible());
@@ -212,6 +212,8 @@ void ArrangementDemoWindow::resetActionGroups(
     this->ui->actionArrangementSnapMode->setVisible(false);
   else
     this->ui->actionArrangementSnapMode->setVisible(true);
+  // default action group is scrolling
+  this->ui->actionDrag->activate(QAction::Trigger);
 }
 
 void ArrangementDemoWindow::resetCallbackState(ArrangementDemoTabBase* tab)
