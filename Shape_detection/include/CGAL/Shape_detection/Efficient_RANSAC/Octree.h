@@ -26,6 +26,7 @@
 
 #include <CGAL/Octree.h>
 #include <CGAL/Octree/Node.h>
+#include <CGAL/Octree/IO.h>
 
 namespace CGAL {
 namespace Shape_detection {
