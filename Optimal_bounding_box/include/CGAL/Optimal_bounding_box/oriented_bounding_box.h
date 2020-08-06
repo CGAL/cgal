@@ -23,7 +23,6 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/assertions.h>
-#include <CGAL/Bbox_3.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Convex_hull_traits_3.h>
@@ -64,25 +63,42 @@ void construct_oriented_bounding_box(const PointRange& points,
                                      std::array<typename Traits::Point_3, 8>& obb_points,
                                      const Traits& traits)
 {
+  typedef typename Traits::FT                                        FT;
   typedef typename Traits::Point_3                                   Point;
 
+  CGAL_precondition(!points.empty());
+
   // Construct the bbox of the transformed point set
-  CGAL::Bbox_3 bbox;
-  for(const Point& pt : points)
+  typename PointRange::const_iterator pit = std::begin(points);
+  const Point& first_pt = *pit++;
+  const Point first_rot_pt = transformation.transform(first_pt);
+  FT xmin = first_rot_pt.x(), xmax = first_rot_pt.x();
+  FT ymin = first_rot_pt.y(), ymax = first_rot_pt.y();
+  FT zmin = first_rot_pt.z(), zmax = first_rot_pt.z();
+
+  for(typename PointRange::const_iterator end=std::end(points); pit!=end; ++pit)
   {
-    const Point rotated_pt = transformation.transform(pt);
-    bbox += traits.construct_bbox_3_object()(rotated_pt);
+    const Point rot_pt = transformation.transform(*pit);
+
+    xmin = (std::min)(rot_pt.x(), xmin);
+    ymin = (std::min)(rot_pt.y(), ymin);
+    zmin = (std::min)(rot_pt.z(), zmin);
+    xmax = (std::max)(rot_pt.x(), xmax);
+    ymax = (std::max)(rot_pt.y(), ymax);
+    zmax = (std::max)(rot_pt.z(), zmax);
   }
 
-  obb_points[0] = Point(bbox.xmin(), bbox.ymin(), bbox.zmin());
-  obb_points[1] = Point(bbox.xmax(), bbox.ymin(), bbox.zmin());
-  obb_points[2] = Point(bbox.xmax(), bbox.ymax(), bbox.zmin());
-  obb_points[3] = Point(bbox.xmin(), bbox.ymax(), bbox.zmin());
+  typename Traits::Construct_point_3 cp = traits.construct_point_3_object();
 
-  obb_points[4] = Point(bbox.xmin(), bbox.ymax(), bbox.zmax()); // see order in make_hexahedron()...
-  obb_points[5] = Point(bbox.xmin(), bbox.ymin(), bbox.zmax());
-  obb_points[6] = Point(bbox.xmax(), bbox.ymin(), bbox.zmax());
-  obb_points[7] = Point(bbox.xmax(), bbox.ymax(), bbox.zmax());
+  obb_points[0] = cp(xmin, ymin, zmin);
+  obb_points[1] = cp(xmax, ymin, zmin);
+  obb_points[2] = cp(xmax, ymax, zmin);
+  obb_points[3] = cp(xmin, ymax, zmin);
+
+  obb_points[4] = cp(xmin, ymax, zmax); // see order in make_hexahedron()...
+  obb_points[5] = cp(xmin, ymin, zmax);
+  obb_points[6] = cp(xmax, ymin, zmax);
+  obb_points[7] = cp(xmax, ymax, zmax);
 
   // Apply the inverse rotation to the rotated axis aligned bounding box
   for(std::size_t i=0; i<8; ++i)
@@ -272,27 +288,34 @@ void construct_oriented_bounding_box(const PointRange& points,
 /// \tparam Output either the type `Aff_transformation_3` of the traits class,
 ///                or `std::array<Point, 8>` with `Point` being equivalent to the type `%Point_3` of the traits class,
 ///                or a model of `MutableFaceGraph`
-/// \tparam NamedParameters a sequence of \ref obb_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param points the input range
 /// \param out the resulting array of points or affine transformation
-/// \param np an optional sequence of \ref obb_namedparameters "Named Parameters" among the ones listed below:
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{point_map}
-///     a model of `ReadablePropertyMap` with value type the type `%Point_3` of the traits class.
-///     If this parameter is omitted, `CGAL::Identity_property_map<%Point_3>` is used.
-///   \cgalParamEnd
-///   \cgalParamBegin{geom_traits}
-///     a geometric traits class instance, model of the concept `OrientedBoundingBoxTraits_3`.
-///     %Default is a default construction object of type `CGAL::Oriented_bounding_box_traits_3<K>`
-///     where `K` is a kernel type deduced from the point type.
-///   \cgalParamEnd
-///   \cgalParamBegin{use_convex_hull}
-///     a Boolean value to indicate whether the algorithm should first extract the so-called extreme
-///     points of the data range (i.e. construct the convex hull) to reduce the input data range
-///     and accelerate the algorithm. %Default is `true`.
-///   \cgalParamEnd
+///   \cgalParamNBegin{point_map}
+///     \cgalParamDescription{a property map associating points to the elements of the point range}
+///     \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`}
+///     \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{a model of `OrientedBoundingBoxTraits_3`}
+///     \cgalParamDefault{a default-constructed object of type `CGAL::Oriented_bounding_box_traits_3<K>`,
+///                       where `K` is a kernel type deduced from the point type.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{use_convex_hull}
+///     \cgalParamDescription{Parameter used in the construction of oriented bounding box to indicate
+///                           whether the algorithm should first extract the extreme points (points
+///                           that are on the 3D convex hull) of the input data range
+///                           to accelerate the computation of the bounding box.}
+///     \cgalParamType{Boolean}
+///     \cgalParamDefault{`true`}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 template <typename PointRange,
@@ -363,28 +386,37 @@ void oriented_bounding_box(const PointRange& points,
 /// \tparam Output either the type `Aff_transformation_3` of the traits class,
 ///                or `std::array<Point, 8>` with `Point` being equivalent to the type `%Point_3` of the traits class,
 ///                or a model of `MutableFaceGraph`
-/// \tparam NamedParameters a sequence of \ref obb_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param pmesh the input mesh
 /// \param out the resulting array of points or affine transformation
-/// \param np an optional sequence of \ref obb_namedparameters "Named Parameters" among the ones listed below:
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_point_map}
-///     the property map with the points associated to the vertices of `pmesh`.
-///     If this parameter is omitted, an internal property map for
-///     `CGAL::vertex_point_t` must be available in `PolygonMesh`.
-///   \cgalParamEnd
-///   \cgalParamBegin{geom_traits}
-///     a geometric traits class instance, model of the concept `OrientedBoundingBoxTraits_3`.
-///     %Default is a default construction object of type `CGAL::Oriented_bounding_box_traits_3<K>`
-///     where `K` is a kernel type deduced from the point type.
-///   \cgalParamEnd
-///   \cgalParamBegin{use_convex_hull}
-///     a Boolean value to indicate whether the algorithm should first extract the so-called extreme
-///     points of the data range (i.e. construct the convex hull) to reduce the input data range
-///     and accelerate the algorithm. %Default is `true`.
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+///                     should be available for the vertices of `pmesh`.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{a model of `OrientedBoundingBoxTraits_3`}
+///     \cgalParamDefault{a default-constructed object of type `CGAL::Oriented_bounding_box_traits_3<K>`,
+///                       where `K` is a kernel type deduced from the point type.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{use_convex_hull}
+///     \cgalParamDescription{Parameter used in the construction of oriented bounding box to indicate
+///                           whether the algorithm should first extract the extreme points (points
+///                           that are on the 3D convex hull) of the input data range
+///                           to accelerate the computation of the bounding box.}
+///     \cgalParamType{Boolean}
+///     \cgalParamDefault{`true`}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 template <typename PolygonMesh,

@@ -40,12 +40,13 @@ struct Outlier_removal_functor
   {
     // Computes outliers
     *result =
-      CGAL::remove_outliers(*points,
-                            nb_neighbors,
-                            points->parameters().
-                            threshold_percent(removed_percentage).
-                            threshold_distance(distance_threshold).
-                            callback (*(this->callback())));
+      CGAL::remove_outliers<CGAL::Parallel_if_available_tag>
+      (*points,
+       nb_neighbors,
+       points->parameters().
+       threshold_percent(removed_percentage).
+       threshold_distance(distance_threshold).
+       callback (*(this->callback())));
   }
 };
 

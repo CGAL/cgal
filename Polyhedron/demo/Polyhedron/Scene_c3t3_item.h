@@ -101,9 +101,8 @@ public:
   {
       return Scene_item::bbox();
   }
-  Scene_c3t3_item* clone() const  Q_DECL_OVERRIDE{
-    return 0;
-  }
+
+  Scene_c3t3_item* clone() const  Q_DECL_OVERRIDE;
 
   bool load_binary(std::istream& is);
 

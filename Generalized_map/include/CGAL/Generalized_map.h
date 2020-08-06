@@ -31,6 +31,7 @@
 #include <bitset>
 #include <vector>
 #include <deque>
+#include <tuple>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/unordered_map.hpp>
 #include <CGAL/config.h>
@@ -403,7 +404,7 @@ namespace CGAL {
               bool copy_perforated_darts=false,
               size_type mark_perforated=INVALID_MARK)
     {
-      CGAL::cpp11::tuple<> converters;
+      std::tuple<> converters;
       copy(amap, origin_to_copy, copy_to_origin, converters,
            copy_perforated_darts, mark_perforated);
     }
@@ -418,7 +419,7 @@ namespace CGAL {
                          bool copy_perforated_darts=false,
                          size_type mark_perforated=INVALID_MARK)
     {
-      CGAL::cpp11::tuple<> converters;
+      std::tuple<> converters;
       copy_from_const(amap, origin_to_copy, copy_to_origin, converters,
                       copy_perforated_darts, mark_perforated);
     }

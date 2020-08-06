@@ -112,7 +112,7 @@ public:
   /*!
   Id type:
   - `boost::graph_traits<FaceGraph>::%face_descriptor` if `OneFaceGraphPerTree` is `CGAL::Tag_true`
-  - `std::pair<boost::graph_traits<FaceGraph>::%face_descriptor, FaceGraph>` if `OneFaceGraphPerTree` is `CGAL::Tag_false`
+  - `std::pair<boost::graph_traits<FaceGraph>::%face_descriptor, const FaceGraph*>` if `OneFaceGraphPerTree` is `CGAL::Tag_false`
   */
   unspecified_type Id;
 

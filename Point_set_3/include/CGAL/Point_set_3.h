@@ -947,13 +947,12 @@ public:
 
 
   /*!
-    \brief Returns a sequence of \ref psp_namedparameters "Named Parameters" for Point Set Processing algorithms.
+    \brief Returns a sequence of \ref bgl_namedparameters "Named Parameters" to be used in Point Set Processing algorithms.
 
-    \cgalNamedParamsBegin
-      \cgalParamBegin{point_map} contains the point map (see `point_map()`)\cgalParamEnd
-      \cgalParamBegin{normal_map} contains the normal map (see `normal_map()`)\cgalParamEnd
-      \cgalParamBegin{geom_traits} contains the kernel `typename Kernel_traits<Point>`::`Kernel`\cgalParamEnd
-    \cgalNamedParamsEnd
+    The following named parameters are used:
+    - `point_map`: contains the point property map (see `point_map()`)
+    - `normal_map`: contains the normal map (see `normal_map()`)
+    - `geom_traits`: contains the kernel `typename Kernel_traits<Point>`::`Kernel`
 
     \warning this method does not check if the normal map was
     instanciated or not. The normal map named parameter should not be
