@@ -235,15 +235,12 @@ public:
   Efficient_RANSAC(Traits t = Traits())
           : m_traits(t), m_direct_octrees(nullptr), m_global_octree(nullptr), m_num_subsets(0),
             m_num_available_points(0), m_num_total_points(0), m_valid_iterators(false) {
-    std::cerr << std::endl;
-    std::cerr << "Build Efficient_RANSAC" << std::endl;
   }
 
   /*!
     Releases all memory allocated by this instance including shapes.
   */
   ~Efficient_RANSAC() {
-    std::cerr << "Delete Efficient_RANSAC" << std::endl;
     clear();
   }
 
@@ -324,8 +321,6 @@ public:
     before by the user.
   */
   bool preprocess() {
-
-    std::cerr << "  Preprocess" << std::endl;
 
     if (m_num_total_points == 0)
       return false;
@@ -474,8 +469,6 @@ public:
               const std::function<bool(double)> &callback
               = std::function<bool(double)>()) {
 
-    std::cerr << "  Detect" << std::endl;
-
     m_options = options;
 
     // No shape types for detection or no points provided, exit
@@ -554,34 +547,20 @@ public:
     bool force_exit = false;
     bool keep_searching = true;
 
-    std::cerr << "    Start main loop" << std::endl;
     do { // main loop
       best_expected = 0;
 
       if (keep_searching)
-        std::cerr << "      Keep searching (start second loop)" << std::endl;
         do {
           // Generate candidates
           //1. pick a point p1 randomly among available points
           std::set<std::size_t> indices;
           bool done = false;
-          std::cerr << "        Pick a random point (start third loop)" << std::endl;
           do {
-
-//            std::cerr << "        Pick a random index (start fourth loop)" << std::endl;
             do
               first_sample = get_default_random()(
                       static_cast<unsigned int>(m_num_available_points));
             while (m_shape_index[first_sample] != -1);
-
-            std::cerr << "          Chose sample " << first_sample << " from " << m_num_available_points << " points" << std::endl;
-
-            int num_marked_points;
-            for (int i = 0; i < m_num_available_points; ++i) {
-              if (m_shape_index[i] == -1)
-                num_marked_points;
-            }
-            std::cerr << "          " << num_marked_points << " indices = -1" << std::endl;
 
             done =
                     drawSamplesFromCellContainingPoint(m_global_octree,
@@ -926,8 +905,6 @@ private:
   Shape *get_best_candidate(std::vector<Shape *> &candidates,
                             const std::size_t num_available_points) {
 
-    std::cerr << "  Get best candidate" << std::endl;
-
     if (candidates.size() == 1)
       return candidates.back();
 
@@ -1110,7 +1087,12 @@ private:
                                           const std::vector<int> &shapeIndex,
                                           std::size_t requiredSamples) {
 
-//    std::cerr << "  Draw samples from cell" << std::endl;
+    std::cerr << "drawSamplesFromCellContainingPoint" << std::endl;
+    std::cerr << "  point: " << p << std::endl;
+    std::cerr << "  level: " << level << std::endl;
+//    std::cerr << "            indices: " << indices << std::endl;
+    std::cerr << "  required samples: " << requiredSamples << std::endl;
+
 
     typedef typename Octree::Node Cell;
 
