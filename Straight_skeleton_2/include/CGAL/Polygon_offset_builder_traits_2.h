@@ -18,7 +18,6 @@
 #include <CGAL/Straight_skeleton_builder_traits_2.h>
 #include <CGAL/predicates/Polygon_offset_pred_ftC2.h>
 #include <CGAL/constructions/Polygon_offset_cons_ftC2.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 namespace CGAL {
 
@@ -61,42 +60,7 @@ struct Construct_offset_point_2 : Functor_base_2<K>
                          , Trisegment_2_ptr const& aNode
                          ) const
   {
-    typename Has_inexact_constructions<K>::type has_inexact_constructions
-    CGAL_SUNPRO_INITIALIZE( = typename Has_inexact_constructions<K>::type()) ;
-
-    return calc(aT, aE0, aE1, aNode, has_inexact_constructions);
-  }
-
-  result_type calc ( FT               const& aT
-                   , Segment_2        const& aE0
-                   , Segment_2        const& aE1
-                   , Trisegment_2_ptr const& aNode
-                   , Tag_false        // kernel already has exact constructions
-                   ) const
-  {
     result_type p = construct_offset_pointC2(aT,aE0,aE1,aNode);
-
-    CGAL_stskel_intrinsic_test_assertion(!p || (p && !is_point_calculation_clearly_wrong(aT,*p,aE0,aE1)));
-
-    return p ;
-  }
-
-  result_type calc ( FT               const& aT
-                   , Segment_2        const& aE0
-                   , Segment_2        const& aE1
-                   , Trisegment_2_ptr const& aNode
-                   , Tag_true         // kernel does not provides exact constructions
-                   ) const
-  {
-    typedef Exact_predicates_exact_constructions_kernel EK ;
-
-    typedef Cartesian_converter<K,EK> BaseC2E;
-    typedef Cartesian_converter<EK,K> BaseE2C;
-
-    SS_converter<BaseC2E> C2E ;
-    SS_converter<BaseE2C> E2C ;
-
-    result_type p = E2C(construct_offset_pointC2(C2E(aT),C2E(aE0),C2E(aE1),C2E(aNode)));
 
     CGAL_stskel_intrinsic_test_assertion(!p || (p && !is_point_calculation_clearly_wrong(aT,*p,aE0,aE1)));
 
@@ -236,31 +200,23 @@ public:
 
   typedef CGAL_SS_i::Exceptionless_filtered_construction< typename Unfiltering::Construct_offset_point_2
                                                         , typename Exact      ::Construct_offset_point_2
-                                                        , typename Unfiltering::Construct_offset_point_2
+                                                        , typename Filtering::Construct_offset_point_2
                                                         , C2E
-                                                        , C2C
+                                                        , C2F
                                                         , E2C
-                                                        , C2C
+                                                        , F2C
                                                         >
                                                         Construct_offset_point_2 ;
 
-  typedef CGAL_SS_i::Exceptionless_filtered_construction< typename Unfiltering::Construct_ss_trisegment_2
-                                                        , typename Exact      ::Construct_ss_trisegment_2
-                                                        , typename Unfiltering::Construct_ss_trisegment_2
-                                                        , C2E
-                                                        , C2C
-                                                        , E2C
-                                                        , C2C
-                                                        >
-                                                        Construct_ss_trisegment_2 ;
+  typedef typename Unfiltering::Construct_ss_trisegment_2 Construct_ss_trisegment_2 ;
 
   typedef CGAL_SS_i::Exceptionless_filtered_construction< typename Unfiltering::Construct_ss_event_time_and_point_2
                                                         , typename Exact      ::Construct_ss_event_time_and_point_2
-                                                        , typename Unfiltering::Construct_ss_event_time_and_point_2
+                                                        , typename Filtering::Construct_ss_event_time_and_point_2
                                                         , C2E
-                                                        , C2C
+                                                        , C2F
                                                         , E2C
-                                                        , C2C
+                                                        , F2C
                                                         >
                                                         Construct_ss_event_time_and_point_2 ;
 } ;

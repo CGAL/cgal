@@ -98,13 +98,22 @@ private:
   typedef typename AC::result_type  AC_result_type;
   typedef typename FC::result_type  FC_result_type;
   typedef typename EC::result_type  EC_result_type;
+  typedef typename C2F::Target_kernel FK;
+
+  bool has_enough_precision(const typename FK::Point_2& point, double precision) const
+  {
+    return has_smaller_relative_precision(point.x(), precision) &&
+           has_smaller_relative_precision(point.y(), precision);
+  }
+
+  bool has_enough_precision(const boost::tuple<typename FK::FT, typename FK::Point_2>& time_and_point, double precision) const
+  {
+    return has_smaller_relative_precision(get<0>(time_and_point), precision) &&
+           has_enough_precision(get<1>(time_and_point), precision);
+  }
 
 public:
   typedef AC_result_type           result_type;
-
-public:
-
-  Exceptionless_filtered_construction() {}
 
   template <class ... A>
   result_type
@@ -114,7 +123,11 @@ public:
     {
       Protect_FPU_rounding<Protection> P;
       FC_result_type fr = Filter_construction(To_Filtered(std::forward<A>(a))...);
-      if ( fr )
+
+      const double precision =
+        Lazy_exact_nt<double>::get_relative_precision_of_to_double();
+
+      if ( fr && has_enough_precision(*fr, precision) )
         return From_Filtered(fr);
     }
     catch (Uncertain_conversion_exception&) {}
