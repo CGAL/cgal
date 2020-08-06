@@ -324,6 +324,9 @@ public:
     before by the user.
   */
   bool preprocess() {
+
+    std::cerr << "  Preprocess" << std::endl;
+
     if (m_num_total_points == 0)
       return false;
 
@@ -470,6 +473,9 @@ public:
   bool detect(const Parameters &options = Parameters(),
               const std::function<bool(double)> &callback
               = std::function<bool(double)>()) {
+
+    std::cerr << "  Detect" << std::endl;
+
     m_options = options;
 
     // No shape types for detection or no points provided, exit
