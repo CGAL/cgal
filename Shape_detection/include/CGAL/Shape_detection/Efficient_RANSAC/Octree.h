@@ -97,19 +97,9 @@ public:
   void refine(double cluster_epsilon_for_max_level_recomputation = -1., std::size_t bucketSize = 2,
               std::size_t maxLevel = 10) {
 
-    std::cerr << "refine" << std::endl;
-    std::cerr << "  max level: " << maxLevel << std::endl;
-    std::cerr << "  cluster epsilon: " << cluster_epsilon_for_max_level_recomputation << std::endl;
-    std::cerr << "  ~~~~~~~~~~~~~~~~~~~~ " << std::endl;
-
     if (cluster_epsilon_for_max_level_recomputation > 0.) {
 
-      std::cerr << "  finding bbox" << std::endl;
-
       auto m_bBox = m_octree.bbox(m_octree.root());
-
-      std::cerr << "  bbox: " << m_bBox << std::endl;
-
 
       FT bbox_diagonal = (FT) CGAL::sqrt(
               (m_bBox.xmax() - m_bBox.xmin()) * (m_bBox.xmax() - m_bBox.xmin())
@@ -120,10 +110,8 @@ public:
                                       / cluster_epsilon_for_max_level_recomputation)
                              / std::log(2.0));
 
-      std::cerr << "  max level: " << maxLevel << std::endl;
     }
 
-    std::cerr << "  refining bbox" << std::endl;
     m_octree.refine(maxLevel, bucketSize);
   }
 
