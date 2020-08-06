@@ -56,7 +56,7 @@
     <addaction name="actionOpenDXF" />f
     <addaction name="actionOpenBezier" />
     <addaction name="separator" />
-    <addaction name="actionSaveResult" />
+    <addaction name="actionSaveCurrentBucket" />
     <addaction name="separator" />
     <addaction name="actionQuit" />
    </widget>
@@ -2889,7 +2889,7 @@
      <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
    </property>
    <property name="text">
-    <string>Open Circular curve</string>
+    <string>Open Linear Polygon</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+L</string>
@@ -3126,7 +3126,7 @@
      <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
    </property>
    <property name="text" >
-    <string>&amp;Open DXF</string>
+    <string>&amp;Open Line Segment and Circular Arcs</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+X</string>
@@ -3144,7 +3144,7 @@
     <string>Ctrl+B</string>
    </property>
   </action>
-  <action name="actionSaveResult" >
+  <action name="actionSaveCurrentBucket" >
    <property name="icon" >
     <iconset resource="boolean_operations_2.qrc" >
      <normaloff>:/cgal/fileToolbar/fileSave.png</normaloff>:/cgal/fileToolbar/fileSave.png</iconset>

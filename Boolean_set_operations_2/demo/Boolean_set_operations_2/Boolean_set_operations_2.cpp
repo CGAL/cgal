@@ -96,6 +96,7 @@
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/DemosMainWindow.h>
 #include <CGAL/Qt/utility.h>
+#include <CGAL/IO/Gps_iostream.h>
 #include <CGAL/IO/Dxf_bsop_reader.h>
 #include <CGAL/Qt/GraphicsViewNavigation.h>
 
@@ -128,15 +129,17 @@ void error_handler(char const* what, char const* expr, char const* file,
                    int line, char const* msg);
 
 
-//Circular_polygon linearPart_2_circ(Circular_Linear_polygon const& pgn);
-//Circular_polygon_with_holes linearPart_2_circ(Circular_Linear_polygon_with_holes const& pwh);
-//bool read_linear(QString aFileName, Circular_polygon_set& rSet,
-                   //Circular_region_source_container& rSources);
-//bool read_dxf ( QString aFileName, Circular_polygon_set& rSet, 
-                //    Circular_region_source_container& rSources );
-//bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet,
-     //               Bezier_region_source_container& rSources  );
-//Bezier_curve read_bezier_curve ( std::istream& is, bool aDoubleFormat );
+// Circular_polygon linearPart_2_circ(Circular_Linear_polygon const& pgn);
+// Circular_polygon_with_holes linearPart_2_circ(Circular_Linear_polygon_with_holes const& pwh);
+
+
+bool read_linear(QString aFileName, Circular_polygon_set& rSet,
+                   Circular_region_source_container& rSources);
+bool read_dxf ( QString aFileName, Circular_polygon_set& rSet, 
+                   Circular_region_source_container& rSources );
+bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet,
+                   Bezier_region_source_container& rSources  );
+Bezier_curve read_bezier_curve ( std::istream& is, bool aDoubleFormat );
 
 // Typedefs
 typedef CGAL::Qt::Circular_set_graphics_item<Circular_polygon_set,
@@ -1108,7 +1111,7 @@ public slots:
   void on_actionOpenDXF_triggered();
   void on_actionOpenBezier_triggered();
   void wheelEvent(QWheelEvent *event);
-  //void on_actionSaveResult_triggered();
+  void on_actionSaveCurrentBucket_triggered();
   void on_actionAddColor_triggered();
   void on_actionMinusColor_triggered();
 
@@ -4796,29 +4799,31 @@ linearPart_2_circ(Circular_Linear_polygon_with_holes const& pwh)
   return rCP;
 }*/
 
-/*Circular_polygon linear_2_circ( Linear_polygon const& pgn )
-{
-  CGAL::Cartesian_converter<Linear_kernel,Gps_circular_kernel> convert ;
+// Circular_polygon linear_2_circ( Linear_polygon const& pgn )
+// {
+//   CGAL::Cartesian_converter<Linear_kernel,Gps_circular_kernel> convert ;
   
-  Circular_polygon rCP;
+//   Circular_polygon rCP;
   
-  for( Linear_polygon::Edge_const_iterator ei = pgn.edges_begin(); ei != pgn.edges_end(); ++ei )
-  {
-    if  ( ei->source() != ei->target() )
-      rCP.push_back( Circular_X_monotone_curve( convert(ei->source()), convert(ei->target())) );
-  }  
-  return rCP;
-}
-Circular_polygon_with_holes linear_2_circ( Linear_polygon_with_holes const& pwh )
-{
-  Circular_polygon_with_holes rCP( linear_2_circ(pwh.outer_boundary()) ) ;
+//   for( Linear_polygon::Edge_const_iterator ei = pgn.edges_begin(); ei != pgn.edges_end(); ++ei )
+//   {
+//     if  ( ei->source() != ei->target() )
+//       rCP.push_back( Circular_X_monotone_curve( convert(ei->source()), convert(ei->target())) );
+//   }  
+//   return rCP;
+// }
+// Circular_polygon_with_holes linear_2_circ( Linear_polygon_with_holes const& pwh )
+// {
+//   Circular_polygon_with_holes rCP( linear_2_circ(pwh.outer_boundary()) ) ;
   
-  for( Linear_polygon_with_holes::Hole_const_iterator hi = pwh.holes_begin(); hi != pwh.holes_end(); ++ hi )
-    rCP.add_hole( linear_2_circ(*hi)  );
-  return rCP;
-}
-bool read_linear( QString aFileName, Circular_polygon_set& rSet,
- Circular_region_source_container& rSources )
+//   for( Linear_polygon_with_holes::Hole_const_iterator hi = pwh.holes_begin(); hi != pwh.holes_end(); ++ hi )
+//     rCP.add_hole( linear_2_circ(*hi)  );
+//   return rCP;
+// }
+
+
+bool read_linear( QString aFileName, Linear_polygon_set& rSet,
+ Linear_region_source_container& rSources )
 {
   bool rOK = false ;
   
@@ -4833,8 +4838,8 @@ bool read_linear( QString aFileName, Circular_polygon_set& rSet,
       unsigned int n_boundaries;
       in_file >> n_boundaries;
       
-      Circular_polygon outer ;
-      std::vector<Circular_polygon> holes ;
+      Linear_polygon outer ;
+      std::vector<Linear_polygon> holes ;
       
       for ( unsigned int r = 0 ; r < n_boundaries ; ++ r )
       {
@@ -4842,16 +4847,15 @@ bool read_linear( QString aFileName, Circular_polygon_set& rSet,
         in_file >> p ;
         
         if ( r == 0 )
-             outer = linear_2_circ(p); 
-        else holes.push_back( linear_2_circ(p) );
+             outer = p; 
+        else holes.push_back(p);
       }
       
-      Circular_polygon_with_holes pwh(outer,holes.begin(),holes.end());
+      Linear_polygon_with_holes pwh(outer,holes.begin(),holes.end());
       rSources.push_back(pwh);
       rSet.join(pwh) ;    
       rOK = true ;
     }
-    
   }
   
   return rOK ;
@@ -4861,31 +4865,31 @@ bool read_dxf ( QString aFileName, Circular_polygon_set& rSet,
 {
   bool rOK = false ;
   
-  std::ifstream in_file (qPrintable(aFileName));
-  if ( in_file )
-  {
-    CGAL::Dxf_bsop_reader<Gps_circular_kernel>   reader;
-    std::vector<Circular_polygon>            circ_polygons;
-    std::vector<Circular_polygon_with_holes> circ_polygons_with_holes;
+  // std::ifstream in_file (qPrintable(aFileName));
+  // if ( in_file )
+  // {
+  //   CGAL::Dxf_bsop_reader<Gps_circular_kernel>   reader;
+  //   std::vector<Circular_polygon>            circ_polygons;
+  //   std::vector<Circular_polygon_with_holes> circ_polygons_with_holes;
     
-    reader(in_file
-          ,std::back_inserter(circ_polygons)
-          ,std::back_inserter(circ_polygons_with_holes)
-          ,false
-          );
+  //   reader(in_file
+  //         ,std::back_inserter(circ_polygons)
+  //         ,std::back_inserter(circ_polygons_with_holes)
+  //         ,false
+  //         );
           
-    for ( std::vector<Circular_polygon>::iterator pit = circ_polygons.begin() ; pit != circ_polygons.end() ; ++ pit )
-      circ_polygons_with_holes.push_back( Circular_polygon_with_holes(*pit) ) ;
-    rSet.join( circ_polygons_with_holes.begin(), circ_polygons_with_holes.end() ) ;
-    std::copy(circ_polygons_with_holes.begin(), circ_polygons_with_holes.end(), std::back_inserter(rSources) );
-    rOK = true ;
-  }
+  //   for ( std::vector<Circular_polygon>::iterator pit = circ_polygons.begin() ; pit != circ_polygons.end() ; ++ pit )
+  //     circ_polygons_with_holes.push_back( Circular_polygon_with_holes(*pit) ) ;
+  //   rSet.join( circ_polygons_with_holes.begin(), circ_polygons_with_holes.end() ) ;
+  //   std::copy(circ_polygons_with_holes.begin(), circ_polygons_with_holes.end(), std::back_inserter(rSources) );
+  //   rOK = true ;
+  // }
   
   return rOK ;
 }
-*/
 
-/*bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet,
+
+bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet,
  Bezier_region_source_container& rSources  )
 {
   
@@ -4950,8 +4954,8 @@ bool read_dxf ( QString aFileName, Circular_polygon_set& rSet,
               {
                 if (CGAL::assign (xcv, *xoit))
                 {
-                  //TRACE( " X montonote: " << xcv.source() << " -> " << xcv.target() << ( xcv.is_directed_right() 
-                  ? " RIGHT":" LEFT") << ( xcv.is_vertical() ? " VERTICAL" : "")) ;
+                  // TRACE( " X montonote: " << xcv.source() << " -> " << xcv.target() << ( xcv.is_directed_right() 
+                  // ? " RIGHT":" LEFT") << ( xcv.is_vertical() ? " VERTICAL" : "")) ;
                   xcvs.push_back (xcv);
                 }  
               }
@@ -5006,9 +5010,10 @@ bool read_dxf ( QString aFileName, Circular_polygon_set& rSet,
       show_error("Exception ocurred during reading of bezier polygon set.");
     } 
   }
-  
+
   return rOK ;
 }
+
 Bezier_curve read_bezier_curve ( std::istream& is, bool aDoubleFormat )
 {
   // Read the number of control points.
@@ -5063,7 +5068,7 @@ Bezier_curve read_bezier_curve ( std::istream& is, bool aDoubleFormat )
   }
   ctrl_pts2.push_back(*last);
   return Bezier_curve(ctrl_pts2.begin(),ctrl_pts2.end());
-}*/
+}
 
 
 bool save_linear ( QString aFileName, Linear_polygon_set& rSet )
@@ -5202,13 +5207,13 @@ bool save_bezier_sources ( QString aFileName, Bezier_region_source_container con
   
 }
 
-/*void MainWindow::on_actionSaveResult_triggered()
+void MainWindow::on_actionSaveCurrentBucket_triggered()
 {
   if ( m_circular_active )
   {
     if ( !save_circular(QFileDialog::getSaveFileName(this, 
-    tr("Save Result Circular Polygon Set"), "../data", tr("Circular Curve files (*.lps)") ) 
-                       ,states_stack.back().result_set().circular()
+    tr("Save Result Circular Polygon Set"), "/data/index.dxf", tr("Circular Curve files (*.dxf)") ) 
+                       ,states_stack.back().active_set(m_color_active).circular()
                        )
        )
     {
@@ -5219,8 +5224,8 @@ bool save_bezier_sources ( QString aFileName, Bezier_region_source_container con
   else if (m_bezier_active)
   {
     if ( !save_bezier_result(QFileDialog::getSaveFileName(this, 
-    tr("Save Result Bezier Polygon Set"), "../data", tr("Bezier Curve files (*.bps)") )
-                            ,states_stack.back().result_set().bezier() 
+    tr("Save Result Bezier Polygon Set"), "/data/index.bps", tr("Bezier Curve files (*.bps)") )
+                            ,states_stack.back().active_set(m_color_active).bezier() 
                             )
        )
     {
@@ -5230,16 +5235,16 @@ bool save_bezier_sources ( QString aFileName, Bezier_region_source_container con
   else 
   {
     if ( !save_linear(QFileDialog::getSaveFileName(this, 
-    tr("Save Result Linear Polygon Set"), "../data", tr("Linear Curve files (*.lps)") ) 
-                       ,states_stack.back().result_set().linear()
+    tr("Save Result Linear Polygon Set"), "/data/index.lps", tr("Linear Curve files (*.lps)") ) 
+                       ,states_stack.back().active_set(m_color_active).linear()
                        )
        )
     {
-      show_error("Cannot save circular polygon set.");
+      show_error("Cannot save linear polygon set.");
     }
   }
 }
-*/
+
 
 
 //check out
@@ -5367,12 +5372,17 @@ bool MainWindow::ensure_linear_mode()
 
 void MainWindow::open(QString fileName)
 {
-  /*if(! fileName.isEmpty()) {
+  if(! fileName.isEmpty()) {
     bool lRead = false;
     if(fileName.endsWith(".lps"))
     {
-      if ( ensure_circular_mode() )
-        lRead = read_linear(fileName,states_stack.back().active_set(m_color_active).circular(), states_stack.back().active_circular_sources(m_color_active) ) ;
+      if ( ensure_linear_mode() )
+        lRead = read_linear(fileName,states_stack.back().active_set(m_color_active).linear(), states_stack.back().active_linear_sources(m_color_active) ) ;
+    }
+    else if (fileName.endsWith(".dxf"))
+    {
+      if (ensure_circular_mode())
+        lRead = read_dxf(fileName,states_stack.back().active_set(m_color_active).circular(), states_stack.back().active_circular_sources(m_color_active) ) ;
     }
     else if (fileName.endsWith(".bps"))
     {
@@ -5384,7 +5394,7 @@ void MainWindow::open(QString fileName)
       zoomToFit();
       this->addToRecentFiles(fileName);
     }
-  }*/
+  }
 }
 
 
@@ -5404,6 +5414,7 @@ void MainWindow::on_actionInsertCircular_toggled(bool aChecked)
       }
       
       actionPAN->setChecked(false);
+      m_pan = false;
       actionInsertLinear->setChecked( false );
       actionInsertBezier->setChecked( false ); 
       //actionInsertMink_Polygon -> setChecked(false);
@@ -5441,6 +5452,7 @@ void MainWindow::on_actionInsertBezier_toggled(bool aChecked)
         }
         
         actionPAN->setChecked(false);
+        m_pan = false;
         actionInsertLinear->setChecked( false );
         actionInsertCircular->setChecked( false );
         //actionInsertMink_Polygon -> setChecked(false);
@@ -5477,6 +5489,7 @@ void MainWindow::on_actionInsertLinear_toggled(bool aChecked)
       }
 
       actionPAN->setChecked(false);
+      m_pan = false;
       actionInsertCircular->setChecked( false );
       actionInsertBezier->setChecked( false ); 
     //actionInsertMink_Polygon -> setChecked(false);
@@ -5666,6 +5679,7 @@ void MainWindow::on_actionComplementH_toggled(bool aChecked)
           default : break;  
     }
     
+    actionComplementH->setChecked(false);
 
     lDone = true;
     this->setCursor(old);
@@ -5881,6 +5895,7 @@ void MainWindow::on_actionIntersectionH_toggled(bool aChecked)
 	      default: break;
 	  } 
 
+    actionIntersectionH->setChecked(false);
 
 	  lDone = true;
 	  this->setCursor(old);
@@ -6137,6 +6152,8 @@ void MainWindow::on_actionDifferenceH_toggled(bool aChecked)
 	    ask_user_ok("Difference Operation Error", "Operation valid for 2 colored polygon set\n");
 	  }
 
+    actionDifferenceH->setChecked(false);
+
 
 	  this->setCursor(old);
 	  if (lDone) modelChanged();
@@ -6334,6 +6351,8 @@ void MainWindow::on_actionSymmetric_DifferenceH_toggled(bool aChecked)
 	            break;
 	  }
 
+    actionSymmetric_DifferenceH->setChecked(false);
+
 	    lDone = true;
 	 
 	    this->setCursor(old);
@@ -6485,6 +6504,8 @@ void MainWindow::on_actionUnionH_toggled(bool aChecked)
 	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 	  }
+
+    actionUnionH->setChecked(false);
 	  
 	  lDone = true;
 
@@ -6546,6 +6567,8 @@ void MainWindow::on_actionCopyH_toggled(bool aChecked)
         case 6: if(!states_stack.back().aqua_set().is_empty()) states_stack.back().result_set().assign(states_stack.back().aqua_set());break;
         default: show_warning("Please select a Bucket!!!");break;
       }
+
+      actionCopyH->setChecked(false);
 
       lDone = true;
       m_color_cm = 0; //copy
@@ -6616,6 +6639,8 @@ void MainWindow::on_actionMoveH_toggled(bool aChecked)
         case 6: if(!states_stack.back().aqua_set().is_empty()) {states_stack.back().result_set().assign(states_stack.back().aqua_set()); m_color_move=6; } break;
         default: show_warning("Please select a Bucket!!!");break;
       }
+
+      actionMoveH->setChecked(false);
 
       lDone = true;
       m_color_cm = 1; //copy
@@ -6767,6 +6792,8 @@ void MainWindow::on_actionPasteH_toggled(bool aChecked)
       actionCopyH->setChecked(false);
       actionMoveH->setChecked(false);
     }
+
+    actionPasteH->setChecked(false);
 
       lDone = true;
       m_color_cm = 0; //copy
@@ -7097,6 +7124,8 @@ void MainWindow::on_actionMinkowski_SumH_toggled(bool aChecked)
 	       ask_user_ok("Minkowski Sum Operation Error", "Function supports 2 polygon as input\n");  
 	    }
 	   }
+
+     actionMinkowski_SumH->setChecked(false);
 
 	  this->setCursor(old);
 	  if (lDone){ 
