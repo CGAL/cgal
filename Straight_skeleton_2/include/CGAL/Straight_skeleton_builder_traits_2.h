@@ -517,7 +517,6 @@ public:
 
           // we use segments of the input polygon intersected by the bisector and such that
           // they are oriented such that the reflex vertex is on the left side of the segment
-          // TODO: @MaelRL we can divide the bound by 2, right?
           if (!is_certain(inter) || !is_certain(orient) || !inter ||  orient!=LEFT_TURN) continue;
 
           boost::optional< Line_2 > lh = CGAL_SS_i::compute_normalized_line_ceoffC2(s_h); // Note that we don't need the normalization
