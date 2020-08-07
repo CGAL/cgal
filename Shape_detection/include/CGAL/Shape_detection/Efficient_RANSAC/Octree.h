@@ -152,7 +152,8 @@ public:
   Indexed_octree(const Traits &traits,
                  Input_iterator begin,
                  Input_iterator end,
-                 Point_map point_map) :
+                 Point_map point_map,
+                 std::size_t offset = 0) :
           m_traits(traits),
           m_input_range(boost::counting_iterator<std::size_t>(0),
                         boost::counting_iterator<std::size_t>(end - begin)),
@@ -170,6 +171,8 @@ public:
   std::size_t maxLevel() const {
     return m_octree.max_depth_reached();
   }
+
+  std::size_t offset() const { return 0; }
 
   void refine(double cluster_epsilon_for_max_level_recomputation = -1., std::size_t bucketSize = 2,
               std::size_t maxLevel = 10) {
