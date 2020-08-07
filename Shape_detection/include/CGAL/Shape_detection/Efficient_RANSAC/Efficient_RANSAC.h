@@ -300,7 +300,6 @@ public:
 
     m_valid_iterators = true;
 
-    std::cout << *(m_input_iterator_first + 0) << std::endl;
   }
 
   /*!
@@ -373,8 +372,13 @@ public:
                 m_point_pmap,
                 0);
 
+      std::cout << "s = " << s << std::endl;
+      std::cout << *(m_input_iterator_first + 0) << std::endl;
+
       m_available_octree_sizes[s] = subsetSize;
       m_direct_octrees[s]->refine(m_options.cluster_epsilon);
+
+      std::cout << *(m_input_iterator_first + 0) << std::endl;
 
       remainingPoints -= subsetSize;
     }
@@ -564,7 +568,6 @@ public:
                       static_cast<unsigned int>(m_num_available_points));
             while (m_shape_index[first_sample] != -1);
 
-            std::cout << *(m_input_iterator_first + 0) << std::endl;
 
             done =
                     drawSamplesFromCellContainingPoint(m_global_octree,
