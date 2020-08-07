@@ -9,13 +9,13 @@
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
 
-#ifdef CGAL_INCLUDE_FROM_PERIODIC_2_TRIANGULATION_2_H
+#ifdef CGAL_INCLUDE_FROM_TRIANGULATION_ON_FLAT_TORUS_2_H
 
 #include <vector>
 
 template < class GT, class Tds >
-inline std::vector<typename Periodic_2_triangulation_2<GT, Tds>::Vertex_handle >
-Periodic_2_triangulation_2<GT, Tds>::insert_dummy_points()
+inline std::vector<typename Triangulation_on_square_flat_torus_2<GT, Tds>::Vertex_handle >
+Triangulation_on_square_flat_torus_2<GT, Tds>::insert_dummy_points()
 {
   clear();
 
@@ -152,4 +152,4 @@ Periodic_2_triangulation_2<GT, Tds>::insert_dummy_points()
   return ret_vector;
 }
 
-#endif // CGAL_INCLUDE_FROM_PERIODIC_2_TRIANGULATION_2_H
+#endif // CGAL_INCLUDE_FROM_TRIANGULATION_ON_FLAT_TORUS_2_H

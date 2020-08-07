@@ -2743,11 +2743,6 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
 
   tester.set_offset(o);
 
-  // Choose the periodic copy of tester.point() that is in conflict with c.
-  // @fixme broken for generic P3T3
-//  CGAL_triangulation_assertion(side_of_cell(tester.point(), combine_offsets(o, current_off),
-//                                            c, lt_assert, i_assert, j_assert) != ON_UNBOUNDED_SIDE);
-
   // If the new point is not in conflict with its cell, it is hidden.
   if(!tester.test_initial_cell(c, current_off))
   {
@@ -2826,19 +2821,25 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
     Point_hider& hider, CoverManager& cover_manager, Vertex_handle vh)
 {
   CGAL_triangulation_assertion_code(Locate_type lt_assert; int i_assert; int j_assert;);
-  CGAL_triangulation_assertion(side_of_cell(tester.point(), o, c, lt_assert, i_assert, j_assert) != ON_UNBOUNDED_SIDE);
+  CGAL_triangulation_assertion(side_of_cell(tester.point(), o, c,
+                                            lt_assert, i_assert, j_assert) != ON_UNBOUNDED_SIDE);
 
   tester.set_offset(o);
 
   // Choose the periodic copy of tester.point() that is in conflict with c.
   bool found = false;
-  Offset current_off = get_location_offset(tester, c, found);
+  const Offset current_off = get_location_offset(tester, c, found);
 
   if(!found)
   {
     hider.hide_point(c, p);
     return Vertex_handle();
   }
+
+  // Choose the periodic copy of tester.point() that is in conflict with c.
+  // @fixme broken for generic P3T3?
+  CGAL_triangulation_assertion(side_of_cell(tester.point(), combine_offsets(o, current_off),
+                                            c, lt_assert, i_assert, j_assert) != ON_UNBOUNDED_SIDE);
 
   return periodic_insert(p, o, lt, current_off, c, tester, hider, cover_manager, vh);
 }

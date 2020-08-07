@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2020 XXXXXXXX
+// Copyright (c) 2020 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,7 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     :
+// Author(s)     : Georg Osang
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_2_LATTICE_2_H
 #define CGAL_PERIODIC_2_TRIANGULATION_2_LATTICE_2_H
@@ -83,7 +84,7 @@ public:
       if(4*c01*c01 <= c00*c00)
       {
         // Basis is Lagrange-reduced.
-        if(c01 > 0)
+        if(c01 > FT(0))
         {
           // Negate b1 if necessary to ensure obtuse angle between b0 and b1.
           basis_[1] = k.construct_opposite_vector_2_object()(basis_[1]);
@@ -107,7 +108,7 @@ public:
       }
     }
 
-    CGAL_assertion(basis_is_reduced());
+    CGAL_postcondition(basis_is_reduced());
   }
 
   // Only used in assertion check.
@@ -116,13 +117,12 @@ public:
     Vector ext = k.construct_opposite_vector_2_object()(
                    k.construct_sum_of_vectors_2_object()(basis_[0], basis_[1]));
     return k.compute_scalar_product_2_object()(basis_[0], basis_[1]) <= 0 &&
-             k.compute_scalar_product_2_object()(basis_[0], ext) <= 0 &&
-             k.compute_scalar_product_2_object()(basis_[1], ext) <= 0;
+           k.compute_scalar_product_2_object()(basis_[0], ext) <= 0 &&
+           k.compute_scalar_product_2_object()(basis_[1], ext) <= 0;
   }
 
   void construct_Voronoi_face_normals()
   {
-    // @tmp is this really needed or can things be done with predicates?
     Vector third = k.construct_opposite_vector_2_object()(
                      k.construct_sum_of_vectors_2_object()(basis_[0], basis_[1]));
 
@@ -135,8 +135,7 @@ public:
   }
 
   // Canonicalization
-  // @fixme, this shouldn't take the offsetted point, but the canonical point and
-  // the offset (to obtain an exact predicate)
+  // @exact
   bool is_in_scaled_domain(const Point& p,
                            const FT scaling_factor = 1) const
   {
@@ -145,19 +144,20 @@ public:
       const Vector& vfn = Vfn_[i];
       const Vector ptv(CGAL::ORIGIN, p);
 
-      const FT sp = k.compute_scalar_product_2_object()(ptv, vfn) /
-                      k.compute_scalar_product_2_object()(vfn, vfn);
+      const FT sp = FT(2) * k.compute_scalar_product_2_object()(ptv, vfn) /
+                              k.compute_scalar_product_2_object()(vfn, vfn);
 
-      if(!(-0.5 * scaling_factor <= sp && sp < 0.5 * scaling_factor))
+      if(scaling_factor <= sp || sp < -scaling_factor)
         return false;
     }
 
     return true;
   }
 
+  // @exact
   Point construct_canonical_point(const Point& p) const
   {
-    // @check It is fine to do constructions here because an approximation
+    // @fixme? It is fine to do constructions here because an approximation
     // of the exact canonical position of 'p' is fine: we only care about
     // consistency between that approximate position and its offsetted positions
 
@@ -167,7 +167,7 @@ public:
     int vfn_pos = 0;
     while(vfn_pos < 3)
     {
-      const Vector& vfn = Vfn_[vfn_pos]; // @todo operator(int)
+      const Vector& vfn = Vfn_[vfn_pos];
       const Vector ptv(CGAL::ORIGIN, cp);
 
       const FT sp = k.compute_scalar_product_2_object()(ptv, vfn) /
@@ -180,7 +180,7 @@ public:
       else
       {
         Vector tv = vfn;
-        tv = k.construct_scaled_vector_2_object()(tv, - std::floor(CGAL::to_double(sp + 0.5) ));
+        tv = k.construct_scaled_vector_2_object()(tv, - std::floor(CGAL::to_double(sp + 0.5)));
         cp = k.construct_translated_point_2_object()(cp, tv);
         vfn_pos = 0;
       }
@@ -191,19 +191,28 @@ public:
 
   Point translate_by_offset(const Point& p, const Offset o) const
   {
+//    std::cout << "translate_by_offset(" << p << " Off: " << o << ") = ";
+
 //    std::cout << "Reduced basis b[0] = " << basis_[0] << std::endl;
 //    std::cout << "Reduced basis b[1] = " << basis_[1] << std::endl;
-
-//    std::cout << "translate_by_offset(" << p << " Off: " << o << ") = ";
 
     Vector translation = k.construct_sum_of_vectors_2_object()(
                            k.construct_scaled_vector_2_object()(basis_[0], o.x()),
                            k.construct_scaled_vector_2_object()(basis_[1], o.y()));
 
-//    std::cout << k.construct_translated_point_2_object()(p, translation) << std::endl;
-
     return k.construct_translated_point_2_object()(p, translation);
   }
+
+public:
+  // A list of those offsets such that the domain translated along the offset
+  // overlaps the scaled domain.
+  std::array<std::array<int, 2>, 12> overlapping_offsets =
+  {{
+    // entirely contained in scaled domains
+    {-1, -1}, {0, 1}, {1, 0}, {-1, 0}, {0, -1}, {1, 1},
+    // intersecting the scaled domain
+    {-1, -2}, {1, 2}, {-2, -1}, {2, 1}, {-1, 1}, {1, -1}
+  }};
 
 private:
   FT systole_sq_length_;
@@ -213,41 +222,6 @@ private:
   K k;
 };
 
-namespace Periodic_2_triangulations_2 {
-namespace internal {
-
-template < typename K_,
-           typename Construct_point_2_base_ = typename K_::Construct_point_2>
-class Lattice_construct_point_2
-  : public Construct_point_2_base_
-{
-  typedef Construct_point_2_base_            Base;
-  typedef K_                                 Kernel;
-
-  typedef typename Kernel::Point_2           Point;
-  typedef CGAL::Periodic_2_offset_2          Offset;
-
-  typedef Lattice_2<K_>                      Lattice;
-
-public:
-  Lattice_construct_point_2(const Lattice* lattice, const Base& cp)
-    : Base(cp), lattice_(lattice)
-  { }
-
-  using Base::operator();
-
-  Point operator()(const Point& p, const Offset& o) const
-  {
-    CGAL_assertion(lattice_ != nullptr);
-    return lattice_->translate_by_offset(p, o);
-  }
-
-private:
-  const Lattice* lattice_;
-};
-
-} // namespace internal
-} // namespace Periodic_2_triangulations_2
 } // namespace CGAL
 
 #endif // CGAL_PERIODIC_2_TRIANGULATION_2_LATTICE_2_H

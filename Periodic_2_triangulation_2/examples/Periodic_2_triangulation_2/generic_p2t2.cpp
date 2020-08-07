@@ -1,26 +1,30 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-#include <CGAL/Generic_P2T2/Periodic_2_Delaunay_triangulation_2_generic.h>
+#include <CGAL/Periodic_2_triangulation_2/Lattice_2/Triangulation_face_base_on_lattice_2.h>
+#include <CGAL/Periodic_2_triangulation_2/Lattice_2/Lattice_2.h>
+#include <CGAL/Periodic_2_triangulation_vertex_base_2.h>
+#include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
+#include <CGAL/Periodic_2_Delaunay_triangulation_2.h>
 
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Real_timer.h>
 
 #include <iostream>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel                            K;
+typedef CGAL::Exact_predicates_exact_constructions_kernel                              K;
 typedef K::FT                                                                          FT;
 typedef K::Vector_2                                                                    Vector;
 
 typedef typename CGAL::Periodic_2_offset_2                                             Offset;
 typedef CGAL::Lattice_2<K>                                                             Lattice;
-typedef CGAL::Periodic_2_triangulations_2::internal::Lattice_construct_point_2<K>      CP2;
-typedef CGAL::Periodic_2_Delaunay_triangulation_traits_base_2<K, Offset, Lattice, CP2> GT;
+typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<K, Offset, Lattice>           GT;
 
-typedef CGAL::Periodic_2_triangulation_vertex_base_2_generic<GT>                       Vb;
+typedef CGAL::Periodic_2_triangulation_vertex_base_2<GT>                               Vb;
 typedef CGAL::Triangulation_face_base_with_info_2<std::pair<bool, CGAL::Color>, GT>    Fbb;
-typedef CGAL::Periodic_2_triangulation_face_base_2_generic<GT, Fbb>                    Fb;
+typedef CGAL::Triangulation_face_base_on_lattice_2<GT, Fbb>                            Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb>                                   Tds;
-typedef CGAL::Periodic_2_Delaunay_triangulation_2_generic<GT, Tds>                     GPDT;
+typedef CGAL::Periodic_2_Delaunay_triangulation_2<GT, Tds>                             GPDT;
 
 typedef GPDT::Point                                                                    Point;
 
@@ -83,28 +87,20 @@ int main(int argc, char** argv)
   CGAL::Real_timer timer;
   timer.start();
 
-  GPDT Tr(l);
+  GPDT tr(l);
   for(const Point& pt : pts)
-    Tr.insert(pt);
+    tr.insert(pt);
 
   std::cout << "Done!" << std::endl;
-  std::cout << "Number of vertices: " << Tr.number_of_vertices() << std::endl;
-  std::cout << "Number of faces: " << Tr.number_of_faces() << std::endl;
-  std::cout << "Is the triangulation 1-cover? " << std::boolalpha << Tr.is_1_cover() << std::endl;
+  std::cout << "Number of vertices: " << tr.number_of_vertices() << std::endl;
+  std::cout << "Number of faces: " << tr.number_of_faces() << std::endl;
+  std::cout << "Is the triangulation 1-cover? " << std::boolalpha << tr.is_1_cover() << std::endl;
 
   timer.stop();
   std::cout << "Time: " << timer.time() << " s" << std::endl;
 
-  if(Tr.is_1_cover())
-  {
-    std::ofstream out("final.off");
-    CGAL::write_PD2T2_to_OFF(out, Tr.p2dt2);
-  }
-  else
-  {
-    std::ofstream out("final.off");
-    CGAL::write_DT2_to_OFF(out, Tr.dt2);
-  }
+  std::ofstream out("final.off");
+  out << tr;
 
   return EXIT_SUCCESS;
 }

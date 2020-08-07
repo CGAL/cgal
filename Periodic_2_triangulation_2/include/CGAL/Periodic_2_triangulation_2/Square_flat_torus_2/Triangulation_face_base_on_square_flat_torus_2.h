@@ -9,11 +9,10 @@
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
 
-#ifndef CGAL_PERIODIC_2_TRIANGULATION_FACE_BASE_2_H
-#define CGAL_PERIODIC_2_TRIANGULATION_FACE_BASE_2_H
+#ifndef CGAL_P2T2_TRIANGULATION_FACE_BASE_ON_SQUARE_FLAT_TORUS_2_H
+#define CGAL_P2T2_TRIANGULATION_FACE_BASE_ON_SQUARE_FLAT_TORUS_2_H
 
 #include <CGAL/license/Periodic_2_triangulation_2.h>
-
 
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
@@ -24,8 +23,9 @@
 namespace CGAL
 {
 
-template < typename Gt, typename Fb = Triangulation_face_base_2<Gt> >
-class Periodic_2_triangulation_face_base_2
+template <typename Gt,
+          typename Fb = Triangulation_face_base_2<Gt> >
+class Triangulation_face_base_on_square_flat_torus_2
   : public Fb
 {
   typedef Fb                                            Base;
@@ -37,42 +37,46 @@ public:
   typedef typename Tds::Vertex_handle                   Vertex_handle;
   typedef typename Tds::Face_handle                     Face_handle;
 
-  template < typename TDS2 >
+  template <typename TDS2>
   struct Rebind_TDS
   {
-    typedef typename Fb::template Rebind_TDS<TDS2>::Other  Fb2;
-    typedef Periodic_2_triangulation_face_base_2<Gt, Fb2>  Other;
+    typedef typename Fb::template Rebind_TDS<TDS2>::Other            Fb2;
+    typedef Triangulation_face_base_on_square_flat_torus_2<Gt, Fb2>  Other;
   };
 
 public:
-  Periodic_2_triangulation_face_base_2()
-    : Fb(), _off(0) {}
+  Triangulation_face_base_on_square_flat_torus_2()
+    : Fb(), _off(0)
+  { }
 
-  Periodic_2_triangulation_face_base_2(Vertex_handle v0,
-                                       Vertex_handle v1,
-                                       Vertex_handle v2)
-    : Fb(v0, v1, v2) , _off(0) {}
+  Triangulation_face_base_on_square_flat_torus_2(Vertex_handle v0,
+                                                 Vertex_handle v1,
+                                                 Vertex_handle v2)
+    : Fb(v0, v1, v2) , _off(0)
+  { }
 
-  Periodic_2_triangulation_face_base_2(Vertex_handle v0,
-                                       Vertex_handle v1,
-                                       Vertex_handle v2,
-                                       Face_handle n0,
-                                       Face_handle n1,
-                                       Face_handle n2)
-    : Fb(v0, v1, v2, n0, n1, n2), _off(0) {}
+  Triangulation_face_base_on_square_flat_torus_2(Vertex_handle v0,
+                                                 Vertex_handle v1,
+                                                 Vertex_handle v2,
+                                                 Face_handle n0,
+                                                 Face_handle n1,
+                                                 Face_handle n2)
+    : Fb(v0, v1, v2, n0, n1, n2), _off(0)
+  { }
 
   /// Periodic functions
-  int offset(int i) const
+  int offset(const int i) const
   {
     CGAL_triangulation_precondition( i >= 0 && i < 3 );
     return ((_off >> 2 * i) & 3);
   }
+
   bool has_zero_offsets() const
   {
     return (_off & 63) == 0;
   }
 
-  void set_offsets(unsigned int o0, unsigned int o1, unsigned int o2)
+  void set_offsets(const unsigned int o0, const unsigned int o1, const unsigned int o2)
   {
     // 192=11000000
     _off = _off | 192;
@@ -98,7 +102,7 @@ public:
       }
   }
 
-  void set_additional_flag(unsigned char b)
+  void set_additional_flag(const unsigned char b)
   {
     CGAL_assertion(b < 4);
     // 63=00111111
@@ -121,24 +125,20 @@ private:
   unsigned char _off;
 };
 
-template < class Tds >
-inline
-std::istream&
-operator>>(std::istream &is, Periodic_2_triangulation_face_base_2<Tds> &)
-// non combinatorial information. Default = nothing
+template <typename Gt, typename Fb>
+inline std::istream& operator>>(std::istream &is, Triangulation_face_base_on_square_flat_torus_2<Gt, Fb> &)
 {
+  // non combinatorial information. Default = nothing
   return is;
 }
 
-template < class Tds >
-inline
-std::ostream&
-operator<<(std::ostream &os, const Periodic_2_triangulation_face_base_2<Tds> &)
-// non combinatorial information. Default = nothing
+template <typename Gt, typename Fb>
+inline std::ostream& operator<<(std::ostream &os, const Triangulation_face_base_on_square_flat_torus_2<Gt, Fb> &)
 {
+  // non combinatorial information. Default = nothing
   return os;
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
-#endif //CGAL_PERIODIC_2_TRIANGULATION_FACE_BASE_2_H
+#endif // CGAL_P2T2_TRIANGULATION_FACE_BASE_ON_SQUARE_FLAT_TORUS_2_H

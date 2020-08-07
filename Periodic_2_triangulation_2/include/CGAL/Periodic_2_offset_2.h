@@ -24,10 +24,6 @@ namespace CGAL {
 /// The class Periodic_2_offset_2 is a model of the concept Periodic_2Offset_2.
 class Periodic_2_offset_2
 {
-  //  template <class K2>
-  //  friend std::ostream & operator<<(std::ostream &os,
-  //                                   const Periodic_2_offset_2 &off);
-
 public:
   /// Default constructor.
   Periodic_2_offset_2() : _offx(0), _offy(0) {}
@@ -171,6 +167,7 @@ inline std::istream
   return is;
 }
 
+// @tmp
 Periodic_2_offset_2 min(const Periodic_2_offset_2 &off1, const Periodic_2_offset_2 &off2)
 {
   if (off1 < off2)

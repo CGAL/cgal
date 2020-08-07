@@ -9,93 +9,109 @@
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
 
-#ifndef CGAL_PERIODIC_2_DELAUNAY_TRIANGULATION_2_H
-#define CGAL_PERIODIC_2_DELAUNAY_TRIANGULATION_2_H
+#ifndef CGAL_P2T2_DELAUNAY_TRIANGULATION_ON_SQUARE_FLAT_TORUS_2_H
+#define CGAL_P2T2_DELAUNAY_TRIANGULATION_ON_SQUARE_FLAT_TORUS_2_H
 
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 
-#include <CGAL/Periodic_2_triangulation_2.h>
+#include <CGAL/Periodic_2_triangulation_2/Square_flat_torus_2/Triangulation_on_square_flat_torus_2.h>
+#include <CGAL/Periodic_2_triangulation_2/Square_flat_torus_2/Triangulation_face_base_on_square_flat_torus_2.h>
 #include <CGAL/Periodic_2_triangulation_vertex_base_2.h>
-#include <CGAL/Periodic_2_triangulation_face_base_2.h>
 
 #include <CGAL/algorithm.h>
+#include <CGAL/Default.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Triangulation_data_structure_2.h>
+#include <CGAL/Triangulation_utils_2.h>
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 #include <CGAL/internal/info_check.h>
 #include <CGAL/tss.h>
 
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
+
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
 namespace CGAL {
 
-template <
-    class Gt,
-    class Tds = Triangulation_data_structure_2 <
-                  Periodic_2_triangulation_vertex_base_2<Gt>,
-                  Periodic_2_triangulation_face_base_2<Gt> > >
-class Periodic_2_Delaunay_triangulation_2
-  : public Periodic_2_triangulation_2<Gt, Tds>
+template < class Gt_,
+           class Tds_ = CGAL::Default >
+class Delaunay_triangulation_on_square_flat_torus_2
+  : public Triangulation_on_square_flat_torus_2<
+             Gt_,
+             typename Default::Get<Tds_,
+               Triangulation_data_structure_2<
+                 Periodic_2_triangulation_vertex_base_2<Gt_>,
+                 Triangulation_face_base_on_square_flat_torus_2<Gt_> > >::type>
 {
-  typedef Periodic_2_Delaunay_triangulation_2<Gt, Tds>          Self;
+public:
+  typedef Gt_                                                     Geom_traits;
+
+  typedef typename Default::Get<Tds_,
+                                Triangulation_data_structure_2<
+                                  Periodic_2_triangulation_vertex_base_2<Gt_>,
+                                  Triangulation_face_base_on_square_flat_torus_2<Gt_> > >::type
+                                                                  Triangulation_data_structure;
+
+private:
+  typedef Geom_traits                                             Gt;
+  typedef Triangulation_data_structure                            Tds;
+  typedef Delaunay_triangulation_on_square_flat_torus_2<Gt, Tds>  Self;
 
 public:
-  typedef Periodic_2_triangulation_2<Gt, Tds>                   Base;
+  typedef Triangulation_on_square_flat_torus_2<Gt, Tds>           Base;
 
-public:
-  typedef Tds                                                   Triangulation_data_structure;
-  typedef Gt                                                    Geom_traits;
+  typedef typename Gt::Periodic_2_offset_2                        Offset;
+  typedef typename Gt::Domain                                     Domain;
+  typedef std::array<int, 2>                                      Covering_sheets;
 
-  typedef typename Gt::Periodic_2_offset_2                      Offset;
-  typedef typename Gt::Domain                                   Domain;
-  typedef std::array<int, 2>                                    Covering_sheets;
+  typedef typename Gt::FT                                         FT;
+  typedef typename Gt::Point_2                                    Point;
+  typedef typename Gt::Segment_2                                  Segment;
+  typedef typename Gt::Triangle_2                                 Triangle;
+  typedef typename Gt::Iso_rectangle_2                            Iso_rectangle;
 
-  typedef typename Gt::FT                                       FT;
-  typedef typename Gt::Point_2                                  Point;
-  typedef typename Gt::Segment_2                                Segment;
-  typedef typename Gt::Triangle_2                               Triangle;
+  typedef std::pair<Point, Offset>                                Periodic_point;
+  typedef std::array<std::pair<Point, Offset>, 2>                 Periodic_segment;
+  typedef std::array<std::pair<Point, Offset>, 3>                 Periodic_triangle;
+  typedef std::array<std::pair<Point, Offset>, 4>                 Periodic_tetrahedron;
 
-  typedef std::pair<Point, Offset>                              Periodic_point;
-  typedef std::array< std::pair<Point, Offset>, 2>              Periodic_segment;
-  typedef std::array< std::pair<Point, Offset>, 3>              Periodic_triangle;
-  typedef std::array< std::pair<Point, Offset>, 4>              Periodic_tetrahedron;
+  typedef typename Base::size_type                                size_type;
+  typedef typename Base::Locate_type                              Locate_type;
 
-  typedef typename Base::size_type                              size_type;
-  typedef typename Base::Locate_type                            Locate_type;
+  typedef typename Base::Vertex_handle                            Vertex_handle;
+  typedef typename Base::Vertex_circulator                        Vertex_circulator;
+  typedef typename Base::Vertex_iterator                          Vertex_iterator;
+  typedef typename Base::Edge                                     Edge;
+  typedef typename Base::Edge_circulator                          Edge_circulator;
+  typedef typename Base::Edge_iterator                            Edge_iterator;
+  typedef typename Base::Face_handle                              Face_handle;
+  typedef typename Base::Face_circulator                          Face_circulator;
+  typedef typename Base::Face_iterator                            Face_iterator;
+  typedef typename Base::Finite_vertices_iterator                 Finite_vertices_iterator;
+  typedef typename Base::Finite_edges_iterator                    Finite_edges_iterator;
+  typedef typename Base::Finite_faces_iterator                    Finite_faces_iterator;
+  typedef typename Base::All_faces_iterator                       All_faces_iterator;
 
-  typedef typename Base::Vertex_handle                          Vertex_handle;
-  typedef typename Base::Vertex_circulator                      Vertex_circulator;
-  typedef typename Base::Vertex_iterator                        Vertex_iterator;
-  typedef typename Base::Edge                                   Edge;
-  typedef typename Base::Edge_circulator                        Edge_circulator;
-  typedef typename Base::Edge_iterator                          Edge_iterator;
-  typedef typename Base::Face_handle                            Face_handle;
-  typedef typename Base::Face_circulator                        Face_circulator;
-  typedef typename Base::Face_iterator                          Face_iterator;
-  typedef typename Base::Finite_vertices_iterator               Finite_vertices_iterator;
-  typedef typename Base::Finite_edges_iterator                  Finite_edges_iterator;
-  typedef typename Base::Finite_faces_iterator                  Finite_faces_iterator;
-  typedef typename Base::All_faces_iterator                     All_faces_iterator;
-
-  typedef typename Base::Periodic_segment_iterator              Periodic_segment_iterator;
-  typedef typename Base::Periodic_triangle_iterator             Periodic_triangle_iterator;
+  typedef typename Base::Periodic_segment_iterator                Periodic_segment_iterator;
+  typedef typename Base::Periodic_triangle_iterator               Periodic_triangle_iterator;
 
   //Tag to distinguish Delaunay from regular triangulations
-  typedef Tag_false                                             Weighted_tag;
+  typedef Tag_false                                               Weighted_tag;
 
   // Tag to distinguish periodic triangulations from others
-  typedef Tag_true                                              Periodic_tag;
+  typedef Tag_true                                                Periodic_tag;
 
 private:
   struct Face_handle_hash
-      : public CGAL::cpp98::unary_function<Face_handle, std::size_t>
+    : public CGAL::cpp98::unary_function<Face_handle, std::size_t>
   {
-    std::size_t operator()(Face_handle fh) const
+    std::size_t operator()(const Face_handle f) const
     {
-      return boost::hash<typename Face_handle::pointer>()(&*fh);
+      return boost::hash<typename Face_handle::pointer>()(&*f);
     }
   };
 
@@ -104,62 +120,156 @@ private:
 
 public:
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
-  using Base::empty;
   using Base::cw;
   using Base::ccw;
-  using Base::locate;
-  using Base::construct_point;
-  using Base::periodic_point;
 
   using Base::combine_offsets;
   using Base::get_offset;
   using Base::get_neighbor_offset;
-  using Base::int_to_off;
-  using Base::set_offsets;
-  using Base::is_1_cover;
-  using Base::number_of_sheets;
+  using Base::extract_offset;
+
+  using Base::construct_point;
+  using Base::periodic_point;
+  using Base::orientation;
+  using Base::point;
+  using Base::construct_segment;
 
   using Base::dimension;
   using Base::domain;
   using Base::geom_traits;
   using Base::tds;
   using Base::number_of_vertices;
-  using Base::vertices_begin;
-  using Base::vertices_end;
   using Base::edges_begin;
   using Base::edges_end;
   using Base::faces_begin;
   using Base::faces_end;
-  using Base::incident_faces;
 
-  using Base::orientation;
-  using Base::point;
-  using Base::construct_segment;
+  using Base::locate;
+  using Base::is_1_cover;
 #endif
 
 public:
-  /// Checks whether f->vertex(i) lies outside the circumcircle of the face nb
-  inline bool locally_Delaunay(Face_handle f, int i, Face_handle nb);
-
   /// Determines whether the point p lies on the (un-)bounded side of
   /// the circle through the points p0, p1 and p2
   Oriented_side side_of_oriented_circle(const Point& p0, const Point& p1, const Point& p2, const Point& p,
-                                        bool perturb) const;
+                                        bool perturb) const
+  {
+    Oriented_side os = geom_traits().side_of_oriented_circle_2_object()(p0, p1, p2, p);
+    if((os != ON_ORIENTED_BOUNDARY) || (!perturb))
+      return os;
+
+    // We are now in a degenerate case => we do a symbolic perturbation.
+
+    // We sort the points lexicographically.
+    const Point * points[4] = { &p0, &p1, &p2, &p };
+    std::sort(points, points + 4, typename Base::Perturbation_order(this));
+
+    // We successively look whether the leading monomial, then 2nd monomial
+    // of the determinant has non null coefficient.
+    // 2 iterations are enough (cf paper)
+    for(int i = 3; i > 0; --i)
+    {
+      if(points[i] == &p)
+        return ON_NEGATIVE_SIDE; // since p0 p1 p2 are non collinear and positively oriented
+
+      Orientation o;
+      if(points[i] == &p2 && (o = orientation(p0, p1, p)) != COLLINEAR)
+        return Oriented_side(o);
+      if(points[i] == &p1 && (o = orientation(p0, p, p2)) != COLLINEAR)
+        return Oriented_side(o);
+      if(points[i] == &p0 && (o = orientation(p, p1, p2)) != COLLINEAR)
+        return Oriented_side(o);
+    }
+
+    CGAL_triangulation_assertion(false);
+    return ON_NEGATIVE_SIDE;
+  }
 
   /// Determines whether the point (p,o) lies on the (un-)bounded side of
   /// the circle through the points (p0,o0), (p1,o1) and (p2,o2)
   Oriented_side side_of_oriented_circle(const Point& p0, const Point& p1, const Point& p2, const Point& p,
                                         const Offset& o0, const Offset& o1, const Offset& o2, const Offset& o,
-                                        bool perturb) const;
+                                        const bool perturb) const
+  {
+    Oriented_side os = geom_traits().side_of_oriented_circle_2_object()(p0, p1, p2, p, o0, o1, o2, o);
+    if((os != ON_ORIENTED_BOUNDARY) || (!perturb))
+      return os;
+
+    // We are now in a degenerate case => we do a symbolic perturbation.
+    // We sort the points lexicographically.
+    Periodic_point pts[4] = { std::make_pair(p0, o0), std::make_pair(p1, o1),
+                              std::make_pair(p2, o2), std::make_pair(p, o)
+                            };
+    const Periodic_point *points[4] = { &pts[0], &pts[1], &pts[2], &pts[3] };
+
+    std::sort(points, points + 4, typename Base::Perturbation_order(this));
+
+    // We successively look whether the leading monomial, then 2nd monomial
+    // of the determinant has non null coefficient.
+    // 2 iterations are enough (cf paper)
+    for(int i = 3; i > 0; --i)
+    {
+      if(points[i] == &pts[3])
+        return ON_NEGATIVE_SIDE; // since p0 p1 p2 are non collinear and positively oriented
+
+      Orientation orient;
+      if((points[i] == &pts[2]) && ((orient = orientation(p0, p1, p, o0, o1, o)) != COLLINEAR))
+        return Oriented_side(orient);
+      if((points[i] == &pts[1]) && ((orient = orientation(p0, p, p2, o0, o, o2)) != COLLINEAR))
+        return Oriented_side(orient);
+      if((points[i] == &pts[0]) && ((orient = orientation(p, p1, p2, o, o1, o2)) != COLLINEAR))
+        return Oriented_side(orient);
+    }
+
+    CGAL_triangulation_assertion(false);
+    return ON_NEGATIVE_SIDE;
+  }
 
   /// Determines whether the point p lies on the (un-)bounded side of
   /// the circle through the vertices of f
-  Oriented_side side_of_oriented_circle(Face_handle f, const Point& p, bool perturb = false) const;
-
-  Bounded_side side_of_circle(Face_handle f,
-                              const Point& p, const Offset& o = Offset(),
-                              bool perturb = false) const
+  Oriented_side side_of_oriented_circle(const Face_handle f, const Point& p,
+                                        const bool perturb = false) const
   {
+    Oriented_side os = ON_NEGATIVE_SIDE;
+
+    int i = 0;
+    // TODO: optimize which copies to check depending on the offsets in
+    // the face.
+    while(os == ON_NEGATIVE_SIDE && i < 4)
+    {
+      os = side_of_oriented_circle(f->vertex(0)->point(), f->vertex(1)->point(), f->vertex(2)->point(), p,
+                                   get_offset(f, 0), get_offset(f, 1), get_offset(f, 2), combine_offsets(Offset(), extract_offset(i)),
+                                   perturb);
+      ++i;
+    }
+
+    return os;
+  }
+
+  Bounded_side side_of_circle(const Face_handle f,
+                              const Point& p, const Offset& o = Offset(),
+                              const bool perturb = false) const
+  {
+#ifdef CGAL_DEBUG_P2T2
+    std::cout << "side_of_circle" << std::endl;
+    std::cout << "face: " << f->vertex(0)->point() << " (" << &*(f->vertex(0)) << ") | "
+                                  << f->vertex(1)->point() << " (" << &*(f->vertex(0)) << ") | "
+                                  << f->vertex(2)->point() << " (" << &*(f->vertex(0)) << ")" << std::endl;
+    std::cout << "vertex offs: " << get_offset(f->vertex(0)) << " | "
+                                 << get_offset(f->vertex(1)) << " | "
+                                 << get_offset(f->vertex(2)) << std::endl;
+    std::cout << "face offs: " << extract_offset(f->offset(0)) << " | "
+                               << extract_offset(f->offset(1)) << " | "
+                               << extract_offset(f->offset(2)) << std::endl;
+    std::cout << "face points: " << point(f, 0) << " 0 | "
+                                 << point(f, 1) << " 0 | "
+                                 << point(f, 2) << " 0 | "
+                                 << point(f, 0) << " 0" << std::endl;
+    std::cout << "p: " << p << std::endl;
+    std::cout << "o: " << o << std::endl;
+    std::cout << "cp: " << construct_point(p, o) << std::endl;
+#endif
+
     return enum_cast<Bounded_side>(
              side_of_oriented_circle(
                f->vertex(0)->point(), f->vertex(1)->point(), f->vertex(2)->point(), p,
@@ -167,35 +277,77 @@ public:
                perturb));
   }
 
-  bool incircle(int x, int j, int k, int l,
-                 std::vector<Face_handle>&,
-                 std::vector<Vertex_handle>& w,
-                 std::vector<int>&)
+  bool incircle(const int x, const int j, const int k, const int l,
+                std::vector<Face_handle>&,
+                std::vector<Vertex_handle>& w,
+                std::vector<int>&)
   {
-    return _side_of_circle(w[j]->point(), w[k]->point(), w[l]->point(), w[x]->point(), true) ==  ON_POSITIVE_SIDE;
+    return side_of_oriented_circle(w[j]->point(), w[k]->point(), w[l]->point(), w[x]->point(), true) ==  ON_POSITIVE_SIDE;
   }
 
-  bool incircle(int x, int j, int k, int l,
-                 std::vector<Face_handle> &,
-                 std::vector<Vertex_handle> &w,
-                 std::vector<Offset> &o,
-                 std::vector<int> &)
+  bool incircle(const int x, const int j, const int k, const int l,
+                std::vector<Face_handle> &,
+                std::vector<Vertex_handle> &w,
+                std::vector<Offset> &o,
+                std::vector<int> &)
   {
-    return _side_of_circle(w[j]->point(), w[k]->point(), w[l]->point(), w[x]->point(),
-                           o[j], o[k], o[l], o[x], true) ==  ON_POSITIVE_SIDE;
+    return side_of_oriented_circle(w[j]->point(), w[k]->point(), w[l]->point(), w[x]->point(),
+                                   o[j], o[k], o[l], o[x], true) ==  ON_POSITIVE_SIDE;
   }
 
-  CGAL::Comparison_result
-  compare_squared_circumradius_to_threshold(const Periodic_point& p0, const Periodic_point& p1,
-                                            const Periodic_point& p2, const FT threshold) const
+  /// Checks whether f->vertex(i) lies outside the circumcircle of the face nb
+  inline bool locally_Delaunay(Face_handle f, int i, Face_handle nb)
   {
+    CGAL_BRANCH_PROFILER("locally_Delaunay(), simplicity check failures", tmp);
+
+    bool simplicity_criterion = is_1_cover() && f->has_zero_offsets() && nb->has_zero_offsets();
+
+    const Point *p[4];
+    for(int index = 0; index < 3; ++index)
+      p[index] = &nb->vertex(index)->point();
+
+    p[3] = &f->vertex(i)->point();
+
+    Oriented_side os;
+    if(simplicity_criterion)
+    {
+      // No periodic offsets
+      os = side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3], true);
+    }
+    else
+    {
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
+
+      Offset off[4];
+
+      for(int index=0; index<3; ++index)
+        off[index] = get_offset(nb, index);
+
+      off[3] = combine_offsets(get_offset(f, i), get_neighbor_offset(f, i));
+
+      os = side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3],
+                                   off[0], off[1], off[2], off[3], true);
+    }
+
+    return (ON_POSITIVE_SIDE != os);
+  }
+
+  Comparison_result compare_squared_circumradius_to_threshold(const Periodic_point& p0,
+                                                              const Periodic_point& p1,
+                                                              const Periodic_point& p2,
+                                                              const FT threshold) const
+  {
+//    std::cout << "threshold: " << squared_circumradius_threshold << std::endl;
+//    std::cout << p0.first << " " << p0.second << " " << point(p0) << std::endl;
+//    std::cout << p1.first << " " << p1.second << " " << point(p1) << std::endl;
+//    std::cout << p2.first << " " << p2.second << " " << point(p2) << std::endl;
+
     return geom_traits().compare_squared_radius_2_object()(p0.first, p1.first, p2.first,
                                                            p0.second, p1.second, p2.second,
                                                            threshold);
   }
 
-  CGAL::Comparison_result
-  compare_squared_circumradius_to_threshold(Face_handle face, const FT threshold) const
+  Comparison_result compare_squared_circumradius_to_threshold(Face_handle face, const FT threshold) const
   {
     Periodic_point p0 = periodic_point(face, 0);
     Periodic_point p1 = periodic_point(face, 1);
@@ -218,33 +370,31 @@ public:
 
 public:
   /// \name Constructors
-  Periodic_2_Delaunay_triangulation_2(const Gt& gt)
+  Delaunay_triangulation_on_square_flat_torus_2(const Gt& gt)
     : Base(gt)
   {
-    update_cover_data_after_setting_domain();
+    update_cover_data_after_setting_domain(gt.get_domain());
   }
 
-  Periodic_2_Delaunay_triangulation_2(const Domain& domain = Domain())
-    : Periodic_2_Delaunay_triangulation_2(Gt(domain))
+  Delaunay_triangulation_on_square_flat_torus_2(const Domain& domain = Domain())
+    : Delaunay_triangulation_on_square_flat_torus_2(Gt(domain))
   { }
 
   /// Copy
+
   // @todo (can't be "= default" because some members are pointers)
-  Periodic_2_Delaunay_triangulation_2(const Periodic_2_Delaunay_triangulation_2<Gt, Tds>& tr) = delete;
-  Periodic_2_Delaunay_triangulation_2& operator=(const Periodic_2_Delaunay_triangulation_2&) = delete;
+  Delaunay_triangulation_on_square_flat_torus_2(const Delaunay_triangulation_on_square_flat_torus_2<Gt, Tds>& tr) = delete;
+  Delaunay_triangulation_on_square_flat_torus_2& operator=(const Delaunay_triangulation_on_square_flat_torus_2&) = delete;
 
   /// Constructor with insertion of points
   template <class InputIterator>
-  Periodic_2_Delaunay_triangulation_2(InputIterator first, InputIterator last,
-                                      const Gt& gt = Gt())
-    : Periodic_2_triangulation_2<Gt, Tds>(domain, gt)
+  Delaunay_triangulation_on_square_flat_torus_2(InputIterator first, InputIterator last, const Gt& gt = Gt())
+    : Triangulation_on_square_flat_torus_2<Gt, Tds>(domain, gt)
   {
     insert(first, last);
   }
 
-  void copy_multiple_covering(const Periodic_2_Delaunay_triangulation_2& tr);
-
-  void swap(Periodic_2_Delaunay_triangulation_2& tr)
+  void swap(Delaunay_triangulation_on_square_flat_torus_2& tr)
   {
     Base::swap(tr);
 
@@ -258,32 +408,38 @@ public:
     faces_with_too_big_circumdisk.clear();
   }
 
-  void update_cover_data_after_setting_domain()
+  template <typename D> // that's domain, but need an abstract level to compile
+  void update_cover_data_after_setting_domain(const D& d)
   {
-#ifndef CGAL_GENERIC_P2T2
+    squared_circumradius_threshold = d.systole_sq_length(); // case of Lattice
+  }
+
+  void update_cover_data_after_setting_domain(const Iso_rectangle& d)
+  {
     // the criterion is that the largest circumdisk must have a diameter smaller than c/2
     // (c being the square side), thus we need a squared circumdisk radius smaller than c*c/16
-    squared_circumradius_threshold = (domain().xmax() - domain().xmin()) *
-                                     (domain().xmax() - domain().xmin()) / FT(16);
-#endif
+    squared_circumradius_threshold = square(d.xmax() - d.xmin()) / FT(16);
   }
 
   void set_domain(const Domain& domain) override
   {
     clear();
     Base::set_domain(domain);
-    update_cover_data_after_setting_domain();
+    update_cover_data_after_setting_domain(geom_traits().get_domain());
   }
 
   /// \name Insertion-Removal
-  Vertex_handle insert(const Point& p, Face_handle start = Face_handle())
+  Vertex_handle insert(const Point& p,
+                       Face_handle start = Face_handle())
   {
     Conflict_tester tester(p, this);
     Point_hider hider;
     Cover_manager cover_manager(*this);
-    Vertex_handle vh = Base::insert_in_conflict(p, start, tester, hider, cover_manager);
-    CGAL_assertion(vh != Vertex_handle());
-    return vh;
+
+    Vertex_handle v = Base::insert_in_conflict(p, start, tester, hider, cover_manager);
+    CGAL_assertion(v != Vertex_handle());
+
+    return v;
   }
 
   Vertex_handle insert(const Point& p,
@@ -294,9 +450,11 @@ public:
     Conflict_tester tester(p, this);
     Point_hider hider;
     Cover_manager cover_manager(*this);
-    Vertex_handle vh = Base::insert_in_conflict(p, lt, f, li, tester, hider, cover_manager);
-    CGAL_assertion(vh != Vertex_handle());
-    return vh;
+
+    Vertex_handle v = Base::insert_in_conflict(p, lt, f, li, tester, hider, cover_manager);
+    CGAL_assertion(v != Vertex_handle());
+
+    return v;
   }
 
   Vertex_handle push_back(const Point& p) { return insert(p); }
@@ -370,8 +528,8 @@ public:
     std::vector<Vertex_handle> double_vertices =
       Base::insert_in_conflict(points.begin(), points.end(), hint, tester, hider, cover_manager);
 
-    CGAL_assertion_code(for(Vertex_handle vh : double_vertices))
-    CGAL_assertion(vh != Vertex_handle());
+    CGAL_assertion_code(for(Vertex_handle v : double_vertices))
+    CGAL_assertion(v != Vertex_handle());
 
     if(is_large_point_set)
     {
@@ -384,18 +542,16 @@ public:
       Remover remover(this, dt);
       Conflict_tester t(this);
 
-      for(const Vertex_handle dummy_vh : dummy_points)
+      for(const Vertex_handle dummy_v : dummy_points)
       {
-        if(std::find(double_vertices.begin(), double_vertices.end(), dummy_vh) == double_vertices.end())
-          Base::remove(dummy_vh, remover, t, cover_manager);
+        if(std::find(double_vertices.begin(), double_vertices.end(), dummy_v) == double_vertices.end())
+          Base::remove(dummy_v, remover, t, cover_manager);
       }
     }
 
     return number_of_vertices() - n;
   }
-#endif
 
-#if 0
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 private:
   //top stands for tuple-or-pair
@@ -516,10 +672,10 @@ private:
       Remover remover(this, dt);
       Conflict_tester t(this);
 
-      for(const Vertex_handle dummy_vh : dummy_points)
+      for(const Vertex_handle dummy_v : dummy_points)
       {
-        if(std::find(double_vertices.begin(), double_vertices.end(), dummy_vh) == double_vertices.end())
-          Base::remove(dummy_vh, remover, t, cover_manager);
+        if(std::find(double_vertices.begin(), double_vertices.end(), dummy_v) == double_vertices.end())
+          Base::remove(dummy_v, remover, t, cover_manager);
       }
     }
 
@@ -557,7 +713,7 @@ public:
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #endif
 
-  void remove(Vertex_handle v);
+  void remove(Vertex_handle /*v*/) { CGAL_assertion(false); } // @todo
 
   template <typename InputIterator>
   std::ptrdiff_t remove(InputIterator first, InputIterator beyond)
@@ -571,8 +727,33 @@ public:
 
   /// \name Displacement
 
-  Vertex_handle move_if_no_collision(Vertex_handle v, const Point& p);
-  Vertex_handle move_point(Vertex_handle v, const Point& p);
+  Vertex_handle move_if_no_collision(Vertex_handle v, const Point& p)
+  {
+    Locate_type lt;
+    int li;
+    Vertex_handle inserted;
+    Face_handle loc = locate(p, lt, li, v->face());
+
+    if(lt == Base::VERTEX)
+      return v;
+    else
+      /// This can be optimized by checking whether we can move v->point() to p
+      return insert(p, lt, loc, li);
+  }
+
+  Vertex_handle move_point(Vertex_handle v, const Point& p)
+  {
+    if(v->point() == p)
+      return v;
+
+    Vertex_handle w = move_if_no_collision(v, p);
+    if(w != v)
+    {
+      remove(v);
+      return w;
+    }
+    return v;
+  }
 
   /// \name Conflict checking
 
@@ -611,10 +792,10 @@ public:
     }
 
     // Reset the conflict flag in the conflict faces.
-    for(Face_handle fh : faces)
+    for(Face_handle f : faces)
     {
-      fh->tds_data().clear();
-      *fit++ = fh;
+      f->tds_data().clear();
+      *fit++ = f;
     }
 
     for(Vertex_handle vc : this->v_offsets)
@@ -657,12 +838,12 @@ public:
     template <class InputIterator>
     inline void set_vertices(InputIterator, InputIterator) const { }
 
-    inline void hide_point(Face_handle, const Point &) { }
+    inline void hide_point(Face_handle, const Point &) { CGAL_triangulation_assertion(false); }
     inline void hide(Point&, Face_handle) const { CGAL_triangulation_assertion(false); }
     inline void do_hide(const Point &, Face_handle) const { CGAL_triangulation_assertion(false); }
 
     template <class Conflict_tester>
-    inline void hide_points(Vertex_handle, const Conflict_tester &) { }
+    inline void hide_points(Vertex_handle, const Conflict_tester &) { CGAL_triangulation_assertion(false); }
 
     template <class Tester>
     inline bool replace_vertex(const Point&, Vertex_handle, const Tester&) const { return true; }
@@ -688,10 +869,10 @@ public:
       return (tr_ptr->side_of_circle(f, p, tr_ptr->combine_offsets(o, off), true) == ON_BOUNDED_SIDE);
     }
 
-    bool operator()(const Face_handle f, const Point& pt, const Offset &off) const
-    {
-      return (tr_ptr->side_of_circle(f, pt, o + off, true) == ON_BOUNDED_SIDE);
-    }
+//    bool operator()(const Face_handle f, const Point& pt, const Offset &off) const
+//    {
+//      return (tr_ptr->side_of_circle(f, pt, o + off, true) == ON_BOUNDED_SIDE);
+//    }
 
     int compare_weight(Point, Point) const { return 0; }
 
@@ -708,34 +889,95 @@ public:
     const Offset& get_offset() const { return o; }
   };
 
-  bool test_conflict(const Point& p, Face_handle fh) const
+  bool test_conflict(const Point& p, Face_handle f) const
   {
-    return side_of_oriented_circle(fh, p, true) ==  ON_POSITIVE_SIDE;
+    return side_of_oriented_circle(f, p, true) ==  ON_POSITIVE_SIDE;
   }
 
   /// \name Check - Query
 
-  Vertex_handle nearest_vertex_2D(const Point& p, Face_handle f) const;
+  Vertex_handle nearest_vertex_2D(const Point& p, Face_handle f) const
+  {
+    CGAL_triangulation_precondition(dimension() == 2);
+    f = locate(p, f);
+
+    typename Geom_traits::Compare_distance_2 compare_distance = geom_traits().compare_distance_2_object();
+
+    Vertex_handle nn =  f->vertex(0);
+    if(compare_distance(p, f->vertex(1)->point(), nn->point()) == SMALLER)
+      nn = f->vertex(1);
+    if(compare_distance(p, f->vertex(2)->point(), nn->point()) == SMALLER)
+      nn = f->vertex(2);
+
+    look_nearest_neighbor(p, f, 0, nn);
+    look_nearest_neighbor(p, f, 1, nn);
+    look_nearest_neighbor(p, f, 2, nn);
+
+    return nn;
+  }
 
   void look_nearest_neighbor(const Point& p,
                              Face_handle f,
                              int i,
-                             Vertex_handle& nn) const;
+                             Vertex_handle& nn) const
+  {
+    Face_handle  ni = f->neighbor(i);
+    if(this->side_of_oriented_circle(ni, p, true) != ON_POSITIVE_SIDE)
+      return;
+
+    typename Geom_traits::Compare_distance_2 compare_distance = geom_traits().compare_distance_2_object();
+    i = ni->index(f);
+    if(compare_distance(p, ni->vertex(i)->point(), nn->point()) == SMALLER)
+      nn = ni->vertex(i);
+
+    // recursive exploration of triangles whose circumcircle contains p
+    look_nearest_neighbor(p, ni, ccw(i), nn);
+    look_nearest_neighbor(p, ni, cw(i), nn);
+  }
 
   /// Returns the vertex closest to p, the point location will start from f
-  Vertex_handle nearest_vertex(const Point& p, Face_handle f = Face_handle()) const;
+  Vertex_handle nearest_vertex(const Point& p, Face_handle f = Face_handle()) const
+  {
+    switch(dimension())
+    {
+      case -2:
+        return Vertex_handle();
+        //break;
+      case 2:
+        return nearest_vertex_2D(p, f);
+        //break;
+    }
+
+    return Vertex_handle();
+  }
 
 public:
   /// \name Dual
 
   /// Returns the dual of f, which is the circumcenter of f.
-  Point dual(Face_handle f) const;
+  Point dual(Face_handle f) const
+  {
+    CGAL_triangulation_precondition(dimension() == 2);
+    return circumcenter(f);
+  }
+
   /// Returns the dual of e, which is always a segment in the periodic triangulation.
-  Segment dual(const Edge& e) const ;
+  Segment dual(const Edge& e) const
+  {
+    // dimension==2
+    Face_handle nb = e.first->neighbor(e.second);
+    Point p0 = dual(e.first);
+    Point p1 = dual(nb);
+    Offset o = combine_offsets(Offset(), get_neighbor_offset(e.first, e.second));
+    Segment s = construct_segment(p0, p1, o, Offset());
+
+    return s;
+  }
+
   /// Returns the dual of the edge pointed to by ec.
-  Segment dual(const Edge_circulator& ec) const;
+  Segment dual(const Edge_circulator& ec) const { return dual(*ec); }
   /// Returns the dual of the edge pointed to by ei.
-  Segment dual(const Edge_iterator& ei) const;
+  Segment dual(const Edge_iterator& ei) const { return dual(*ei); }
 
   template <class Stream>
   Stream& draw_dual(Stream& ps)
@@ -752,7 +994,7 @@ public:
   bool is_valid(bool verbose = false, int level = 0) const
   {
     // Check the parent
-    bool result = Periodic_2_triangulation_2<Gt, Tds>::is_valid(verbose, level);
+    bool result = Base::is_valid(verbose, level);
 
     // Check in_sphere:
     if(dimension() == 2)
@@ -775,8 +1017,8 @@ public:
 
           result &= ON_POSITIVE_SIDE !=
               side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3],
-              off[0], off[1], off[2], off[3],
-              false);
+                                      off[0], off[1], off[2], off[3],
+                                      false);
           CGAL_triangulation_assertion(result);
         }
       }
@@ -810,10 +1052,10 @@ private:
 
     bool can_be_converted_to_1_sheet() const { return tr.can_be_converted_to_1_sheet(); }
 
-    bool update_cover_data_during_management(Face_handle new_fh,
+    bool update_cover_data_during_management(Face_handle new_f,
                                              const std::vector<Face_handle>& new_faces)
     {
-      return tr.update_cover_data_during_management(new_fh, new_faces);
+      return tr.update_cover_data_during_management(new_f, new_faces);
     }
   };
 
@@ -856,10 +1098,10 @@ public:
 
   // returns 'true/false' depending on whether the cover would (or has, if 'abort_if_cover_change'
   // is set to 'false') change.
-  bool update_cover_data_during_management(Face_handle new_fh,
+  bool update_cover_data_during_management(Face_handle new_f,
                                            const std::vector<Face_handle>& new_faces)
   {
-    if(compare_squared_circumradius_to_threshold(new_fh, squared_circumradius_threshold) != CGAL::SMALLER)
+    if(compare_squared_circumradius_to_threshold(new_f, squared_circumradius_threshold) != CGAL::SMALLER)
     {
       if(is_1_cover())
       {
@@ -869,21 +1111,21 @@ public:
       }
       else
       {
-        faces_with_too_big_circumdisk.insert(new_fh);
+        faces_with_too_big_circumdisk.insert(new_f);
       }
     }
 
     return false;
   }
 
-  virtual void update_cover_data_after_converting_to_9_sheeted_covering()
+  virtual void update_cover_data_after_converting_to_9_sheeted_covering() override
   {
     for(Face_iterator iter = faces_begin(), end_iter = faces_end(); iter != end_iter; ++iter)
       if(compare_squared_circumradius_to_threshold(iter, squared_circumradius_threshold) != CGAL::SMALLER)
         faces_with_too_big_circumdisk.insert(iter);
   }
 
-  virtual void clear_covering_data()
+  virtual void clear_covering_data() override
   {
     faces_with_too_big_circumdisk.clear();
   }
@@ -924,316 +1166,6 @@ private:
   Too_big_circumdisks_set faces_with_too_big_circumdisk;
 };
 
-template <class Gt, class Tds>
-typename Periodic_2_Delaunay_triangulation_2<Gt, Tds>::Vertex_handle
-Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
-nearest_vertex(const Point& p, Face_handle f) const
-{
-  switch(dimension())
-  {
-    case 0:
-      return Vertex_handle();
-      //break;
-    case 2:
-      return nearest_vertex_2D(p, f);
-      //break;
-  }
-
-  return Vertex_handle();
-}
-
-template <class Gt, class Tds>
-typename Periodic_2_Delaunay_triangulation_2<Gt, Tds>::Vertex_handle
-Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
-nearest_vertex_2D(const Point& p, Face_handle f) const
-{
-  CGAL_triangulation_precondition(dimension() == 2);
-  f = locate(p, f);
-
-  typename Geom_traits::Compare_distance_2 compare_distance = geom_traits().compare_distance_2_object();
-
-  Vertex_handle nn =  f->vertex(0);
-  if(compare_distance(p, f->vertex(1)->point(), nn->point()) == SMALLER)
-    nn = f->vertex(1);
-  if(compare_distance(p, f->vertex(2)->point(), nn->point()) == SMALLER)
-    nn = f->vertex(2);
-
-  look_nearest_neighbor(p, f, 0, nn);
-  look_nearest_neighbor(p, f, 1, nn);
-  look_nearest_neighbor(p, f, 2, nn);
-
-  return nn;
-}
-
-template <class Gt, class Tds>
-void
-Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
-look_nearest_neighbor(const Point& p,
-                      Face_handle f,
-                      int i,
-                      Vertex_handle& nn) const
-{
-  Face_handle  ni = f->neighbor(i);
-  if(this->side_of_oriented_circle(ni, p, true) != ON_POSITIVE_SIDE)
-    return;
-
-  typename Geom_traits::Compare_distance_2 compare_distance = geom_traits().compare_distance_2_object();
-  i = ni->index(f);
-  if(compare_distance(p, ni->vertex(i)->point(), nn->point()) == SMALLER)
-    nn = ni->vertex(i);
-
-  // recursive exploration of triangles whose circumcircle contains p
-  look_nearest_neighbor(p, ni, ccw(i), nn);
-  look_nearest_neighbor(p, ni, cw(i), nn);
-}
-
-//DUALITY
-template<class Gt, class Tds>
-inline
-typename Periodic_2_Delaunay_triangulation_2<Gt, Tds>::Point
-Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
-dual(Face_handle f) const
-{
-  CGAL_triangulation_precondition(dimension() == 2);
-  return circumcenter(f);
-}
-
-template <class Gt, class Tds>
-inline typename Gt::Segment_2
-Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
-dual(const Edge& e) const
-{
-  // dimension==2
-  Face_handle nb = e.first->neighbor(e.second);
-  Point p0 = dual(e.first);
-  Point p1 = dual(nb);
-  Offset o = combine_offsets(Offset(), get_neighbor_offset(e.first, e.second));
-  Segment s = construct_segment(p0, p1, o, Offset());
-
-  return s;
-}
-
-template <class Gt, class Tds>
-inline typename Gt::Segment_2
-Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
-dual(const Edge_circulator& ec) const
-{
-  return dual(*ec);
-}
-
-template <class Gt, class Tds>
-inline typename Gt::Segment_2
-Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
-dual(const Edge_iterator& ei) const
-{
-  return dual(*ei);
-}
-
-///////////////////////////////////////////////////////////////
-//  INSERT
-
-template <class Gt, class Tds>
-bool
-Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
-locally_Delaunay(Face_handle f, int i, Face_handle nb)
-{
-  CGAL_BRANCH_PROFILER("locally_Delaunay(), simplicity check failures", tmp);
-
-  bool simplicity_criterion = is_1_cover() && f->has_zero_offsets() && nb->has_zero_offsets();
-
-  const Point *p[4];
-  for(int index = 0; index < 3; ++index)
-    p[index]   = &nb->vertex(index)->point();
-
-  p[3] = &f->vertex(i)->point();
-
-  Oriented_side os;
-  if(simplicity_criterion)
-  {
-    // No periodic offsets
-    os = side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3], true);
-  }
-  else
-  {
-    CGAL_BRANCH_PROFILER_BRANCH(tmp);
-
-    Offset off[4];
-
-    for(int index=0; index<3; ++index)
-      off[index] = get_offset(nb, index);
-
-    off[3] = combine_offsets(get_offset(f, i), get_neighbor_offset(f, i));
-
-    os = side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3],
-                                 off[0], off[1], off[2], off[3], true);
-  }
-
-  return (ON_POSITIVE_SIDE != os);
-}
-
-///////////////////////////////////////////////////////////////
-//  REMOVE    see INRIA RResearch Report 7104
-
-template <class Gt, class Tds>
-void
-Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
-remove(Vertex_handle v)
-{
-  // @todo
-  CGAL_assertion(false);
-}
-
-namespace P2DT2 {
-namespace internal {
-
-template<class P2DT2>
-struct Static_data
-{
-  Static_data(int m) : maxd(m), f(maxd), i(maxd), w(maxd), offset_w(maxd) { }
-
-  int maxd;
-  std::vector<typename P2DT2::Face_handle> f;
-  std::vector<int> i;
-  std::vector<typename P2DT2::Vertex_handle> w;
-  std::vector<typename P2DT2::Offset> offset_w;
-};
-
-} // namespace internal
-} // namespace P2DT2
-
-template<class Gt, class Tds>
-Oriented_side
-Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
-side_of_oriented_circle(const Point& p0, const Point& p1, const Point& p2, const Point& p, bool perturb) const
-{
-  Oriented_side os = geom_traits().side_of_oriented_circle_2_object()(p0, p1, p2, p);
-  if((os != ON_ORIENTED_BOUNDARY) || (!perturb))
-    return os;
-
-  // We are now in a degenerate case => we do a symbolic perturbation.
-
-  // We sort the points lexicographically.
-  const Point * points[4] = { &p0, &p1, &p2, &p };
-  std::sort(points, points + 4, typename Base::Perturbation_order(this));
-
-  // We successively look whether the leading monomial, then 2nd monomial
-  // of the determinant has non null coefficient.
-  // 2 iterations are enough (cf paper)
-  for(int i = 3; i > 0; --i)
-  {
-    if(points[i] == &p)
-      return ON_NEGATIVE_SIDE; // since p0 p1 p2 are non collinear and positively oriented
-
-    Orientation o;
-    if(points[i] == &p2 && (o = orientation(p0, p1, p)) != COLLINEAR)
-      return Oriented_side(o);
-    if(points[i] == &p1 && (o = orientation(p0, p, p2)) != COLLINEAR)
-      return Oriented_side(o);
-    if(points[i] == &p0 && (o = orientation(p, p1, p2)) != COLLINEAR)
-      return Oriented_side(o);
-  }
-
-  CGAL_triangulation_assertion(false);
-  return ON_NEGATIVE_SIDE;
-}
-
-template<class Gt, class Tds>
-Oriented_side
-Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
-side_of_oriented_circle(const Point& p0, const Point& p1, const Point& p2, const Point& p,
-                        const Offset& o0, const Offset& o1, const Offset& o2, const Offset& o,
-                        bool perturb) const
-{
-  Oriented_side os = geom_traits().side_of_oriented_circle_2_object()(p0, p1, p2, p, o0, o1, o2, o);
-  if((os != ON_ORIENTED_BOUNDARY) || (!perturb))
-    return os;
-
-  // We are now in a degenerate case => we do a symbolic perturbation.
-  // We sort the points lexicographically.
-  Periodic_point pts[4] = { std::make_pair(p0, o0), std::make_pair(p1, o1),
-                            std::make_pair(p2, o2), std::make_pair(p, o)
-                          };
-  const Periodic_point *points[4] = { &pts[0], &pts[1], &pts[2], &pts[3] };
-
-  std::sort(points, points + 4, typename Base::Perturbation_order(this));
-
-  // We successively look whether the leading monomial, then 2nd monomial
-  // of the determinant has non null coefficient.
-  // 2 iterations are enough (cf paper)
-  for(int i = 3; i > 0; --i)
-  {
-    if(points[i] == &pts[3])
-      return ON_NEGATIVE_SIDE; // since p0 p1 p2 are non collinear and positively oriented
-
-    Orientation orient;
-    if((points[i] == &pts[2]) && ((orient = orientation(p0, p1, p, o0, o1, o)) != COLLINEAR))
-      return Oriented_side(orient);
-    if((points[i] == &pts[1]) && ((orient = orientation(p0, p, p2, o0, o, o2)) != COLLINEAR))
-      return Oriented_side(orient);
-    if((points[i] == &pts[0]) && ((orient = orientation(p, p1, p2, o, o1, o2)) != COLLINEAR))
-      return Oriented_side(orient);
-  }
-
-  CGAL_triangulation_assertion(false);
-  return ON_NEGATIVE_SIDE;
-}
-
-template<class Gt, class Tds>
-Oriented_side
-Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
-side_of_oriented_circle(Face_handle f, const Point & p, bool perturb) const
-{
-  Oriented_side os = ON_NEGATIVE_SIDE;
-
-  int i = 0;
-  // TODO: optimize which copies to check depending on the offsets in
-  // the face.
-  while(os == ON_NEGATIVE_SIDE && i < 4)
-  {
-    os = side_of_oriented_circle(f->vertex(0)->point(), f->vertex(1)->point(), f->vertex(2)->point(), p,
-                                 get_offset(f, 0), get_offset(f, 1), get_offset(f, 2), combine_offsets(Offset(), int_to_off(i)),
-                                 perturb);
-    ++i;
-  }
-
-  return os;
-}
-
-///////////////////////////////////////////////////////////////
-//  DISPLACEMENT
-
-template <class Gt, class Tds >
-typename Periodic_2_Delaunay_triangulation_2<Gt, Tds>::Vertex_handle
-Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
-move_if_no_collision(Vertex_handle v, const Point& p)
-{
-  Locate_type lt;
-  int li;
-  Vertex_handle inserted;
-  Face_handle loc = locate(p, lt, li, v->face());
-
-  if(lt == Base::VERTEX)
-    return v;
-  else
-    /// This can be optimized by checking whether we can move v->point() to p
-    return insert(p, lt, loc, li);
-}
-
-template <class Gt, class Tds >
-typename Periodic_2_Delaunay_triangulation_2<Gt, Tds>::Vertex_handle
-Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
-move_point(Vertex_handle v, const Point& p)
-{
-  if(v->point() == p) return v;
-  Vertex_handle w = move_if_no_collision(v, p);
-  if(w != v)
-  {
-    remove(v);
-    return w;
-  }
-  return v;
-}
-
 } // namespace CGAL
 
-#endif // CGAL_PERIODIC_2_DELAUNAY_TRIANGULATION_2_H
+#endif // CGAL_P2T2_DELAUNAY_TRIANGULATION_ON_SQUARE_FLAT_TORUS_2_H

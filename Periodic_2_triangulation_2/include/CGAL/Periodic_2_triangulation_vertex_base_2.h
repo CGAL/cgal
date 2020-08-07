@@ -16,15 +16,11 @@
 
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 
-
-#include <CGAL/basic.h>
 #include <CGAL/Dummy_tds_2.h>
 #include <CGAL/Periodic_2_offset_2.h>
 #include <CGAL/Triangulation_vertex_base_2.h>
 
-namespace CGAL
-{
-
+namespace CGAL {
 
 template < class Gt, class Vb = CGAL::Triangulation_vertex_base_2<Gt> >
 class Periodic_2_triangulation_vertex_base_2
@@ -92,25 +88,24 @@ private:
   bool _offset_flag;
 };
 
-template < class Tds >
+template <typename Gt, typename Vb>
 inline
-std::istream&
-operator>>(std::istream &is, Periodic_2_triangulation_vertex_base_2<Tds> &)
-// no combinatorial information.
+std::istream& operator>>(std::istream &is, Periodic_2_triangulation_vertex_base_2<Gt, Vb> &)
 {
+  // no combinatorial information.
+  // @todo should output offset?
   return is;
 }
 
-template < class Tds >
+template <typename Gt, typename Vb>
 inline
 std::ostream&
-operator<<(std::ostream &os,
-           const Periodic_2_triangulation_vertex_base_2<Tds> &)
-// no combinatorial information.
+operator<<(std::ostream &os, const Periodic_2_triangulation_vertex_base_2<Gt, Vb> &)
 {
+  // no combinatorial information.
   return os;
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_PERIODIC_2_TRIANGULATION_VERTEX_BASE_2_H
