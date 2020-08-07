@@ -710,7 +710,22 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
     Q_FOREACH(Item_id id, children)
     {
       Scene_item* item = m_entries[id];
-      if(item->alpha() == 1.0f)
+      Scene_group_item* group = qobject_cast<Scene_group_item*>(item);
+      bool is_transparent=false;
+      if(item->alpha() != 1.0f)
+        is_transparent = true;
+      else if(group)
+      {
+        for(const auto& child : group->getChildren())
+        {
+          if(group->getChild(child)->alpha() < 1.0f)
+          {
+            is_transparent = true;
+            break;
+          }
+        }
+      }
+      if(!is_transparent)
         opaque_items.push_back(id);
       else
         transparent_items.push_back(id);
