@@ -222,6 +222,7 @@ public:
     m_side_per_depth.resize(0);
 
     // create a side length map
+    // TODO: This should not be a fixed value (32)
     for (int i = 0; i <= (int) 32; i++)
       m_side_per_depth.push_back(m_bbox_side / (FT) (1 << i));
 

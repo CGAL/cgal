@@ -213,7 +213,7 @@ private:
 
 //  typedef internal::Octree<internal::DirectPointAccessor<Traits> >
 //          Direct_octree;
-  typedef internal::Direct_octree<Traits> Direct_octree;
+  typedef internal::Indexed_octree<Traits> Direct_octree;
   typedef internal::Indexed_octree<Traits> Indexed_octree;
 
   //--------------------------------------------typedef
@@ -372,13 +372,8 @@ public:
                 m_point_pmap,
                 0);
 
-      std::cout << "s = " << s << std::endl;
-      std::cout << *(m_input_iterator_first + 0) << std::endl;
-
       m_available_octree_sizes[s] = subsetSize;
       m_direct_octrees[s]->refine(m_options.cluster_epsilon);
-
-      std::cout << *(m_input_iterator_first + 0) << std::endl;
 
       remainingPoints -= subsetSize;
     }
@@ -905,8 +900,9 @@ public:
 
 private:
   int select_random_octree_level() {
-    return (int) get_default_random()(
-            static_cast<unsigned int>(m_global_octree->maxLevel() + 1));
+    std::cout << m_global_octree->maxLevel() << std::endl;
+    auto upper_bound = static_cast<unsigned int>(m_global_octree->maxLevel() + 1);
+    return (int) get_default_random()(upper_bound);
   }
 
   Shape *get_best_candidate(std::vector<Shape *> &candidates,
