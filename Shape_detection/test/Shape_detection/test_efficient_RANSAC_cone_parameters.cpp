@@ -10,6 +10,11 @@
 
 template <class K>
 bool test_cone_parameters() {
+
+  // Determined by fair dice roll, guaranteed to be random
+  // TODO: Remove this after tests are passing
+  CGAL::get_default_random() = CGAL::Random(4);
+
   const int NB_ROUNDS = 10;
   const int NB_POINTS = 1000;
 
@@ -40,6 +45,8 @@ bool test_cone_parameters() {
 
     sample_random_cone(NB_POINTS, apex, axis, angle, mid,
       std::back_inserter(points));
+
+    std::cout<< apex << std::endl;
 
           // Add outliers in second half of rounds.
     if (i >= NB_ROUNDS / 2)
