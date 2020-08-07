@@ -1131,40 +1131,42 @@ private:
 
     std::cerr << (cur ? "  node found" : "  node not found") << std::endl;
 
+    // Stop if the node we need doesn't exist
     if (!cur)
       return false;
 
-    std::cerr << "  node contains " << cur->size() << " points" << std::endl;
+    std::cerr << "    points contained: " << cur->size() << std::endl;
 
     // Count point indices that map to -1 in the shape index
     std::size_t enough = 0;
     for (auto j : cur->points()) {
-      if (shapeIndex[j] == -1) {
+
+      std::cerr << "  j: " << j << std::endl;
+      if (shapeIndex[j] == -1)
         enough++;
-        if (enough >= requiredSamples)
-          break;
-      }
+      if (enough >= requiredSamples)
+        break;
     }
 
     std::cerr << "  enough: " << enough << std::endl;
 
-    if (enough >= requiredSamples) {
-      do {
-        std::size_t p = CGAL::get_default_random().
-                uniform_int<std::size_t>(0, cur->size() - 1);
-        // TODO: I'm not sure if dereferencing this is working correctly
-        std::size_t j = *(cur->points().begin() + p);
+    // Make sure we found enough samples
+    if (enough < requiredSamples)
+      return false;
 
-        std::cerr << "  j: " << j << std::endl;
+    do {
+      std::size_t p = CGAL::get_default_random().
+              uniform_int<std::size_t>(0, cur->size() - 1);
+      // TODO: I'm not sure if dereferencing this is working correctly
+      std::size_t j = *(cur->points().begin() + p);
 
-        if (shapeIndex[j] == -1)
-          indices.insert(j);
-      } while (indices.size() < requiredSamples);
+      if (shapeIndex[j] == -1)
+        indices.insert(j);
+    } while (indices.size() < requiredSamples);
 
-      std::cerr << "  indices size: " << indices.size() << std::endl;
+    std::cerr << "  indices size: " << indices.size() << std::endl;
 
-      return true;
-    } else return false;
+    return true;
   }
 
 private:
