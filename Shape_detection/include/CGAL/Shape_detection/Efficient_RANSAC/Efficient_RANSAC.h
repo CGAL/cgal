@@ -299,6 +299,8 @@ public:
             m_input_iterator_first, m_input_iterator_beyond);
 
     m_valid_iterators = true;
+
+    std::cout << *(m_input_iterator_first + 0) << std::endl;
   }
 
   /*!
@@ -561,6 +563,8 @@ public:
               first_sample = get_default_random()(
                       static_cast<unsigned int>(m_num_available_points));
             while (m_shape_index[first_sample] != -1);
+
+            std::cout << *(m_input_iterator_first + 0) << std::endl;
 
             done =
                     drawSamplesFromCellContainingPoint(m_global_octree,
