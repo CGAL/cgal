@@ -428,7 +428,7 @@ public:
                             , C2F
                             >
                             Are_ss_edges_collinear_2 ;
-// TODO: the wrappers are probably useless...
+
   typedef CGAL_SS_i::Exceptionless_filtered_construction< typename Unfiltering::Construct_ss_event_time_and_point_2
                                                         , typename Exact      ::Construct_ss_event_time_and_point_2
                                                         , typename Filtering  ::Construct_ss_event_time_and_point_2
