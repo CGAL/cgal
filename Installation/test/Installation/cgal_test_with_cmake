@@ -41,7 +41,7 @@ touch $ERRORFILE
 #---------------------------------------------------------------------#
 
 cd build_dir
-ctest -L Installation_Tests -VV |tee tmp.txt
+ctest -L Installation_Tests -VV |tee res.txt
 SUCCES="y"
 FAILED=$(cat res.txt|grep -i ***Failed)
 if [ -z "$FAILED" ]; then
