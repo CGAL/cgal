@@ -244,6 +244,9 @@ public:
         // Split the node, redistributing its points to its children
         split((*current));
 
+        // Check if we've reached a new max depth
+        m_max_depth_reached = (std::max)(current->depth(), m_max_depth_reached);
+
         // Process each of its children
         for (int i = 0; i < 8; ++i)
           todo.push(&(*current)[i]);
