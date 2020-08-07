@@ -3,6 +3,9 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulation3TriangulationClasses
 
+The class `Regular_triangulation_3` represents a three-dimensional
+weighted Delaunay triangulation.
+
 Let \f$ {S}^{(w)}\f$ be a set of weighted points in \f$ \mathbb{R}^3\f$. Let
 \f$ {p}^{(w)}=(p,w_p), p\in\mathbb{R}^3, w_p\in\mathbb{R}\f$ and
 \f$ {z}^{(w)}=(z,w_z), z\in\mathbb{R}^3, w_z\in\mathbb{R}\f$ be two weighted points.
