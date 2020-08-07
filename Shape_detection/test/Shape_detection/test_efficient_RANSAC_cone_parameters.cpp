@@ -46,8 +46,6 @@ bool test_cone_parameters() {
     sample_random_cone(NB_POINTS, apex, axis, angle, mid,
                        std::back_inserter(points));
 
-    std::cout << std::endl;
-
     // Add outliers in second half of rounds.
     if (i >= NB_ROUNDS / 2)
       for (std::size_t j = 0; j < NB_POINTS / 2; j++)
