@@ -13,7 +13,6 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-#include <CGAL/predicates/Straight_skeleton_pred_ftC2.h>
 #include <CGAL/Lazy.h>
 
 namespace CGAL {
@@ -22,10 +21,48 @@ namespace CGAL_SS_i
 {
 
 template<class K>
-Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2<K> const& e0
-                                                                     , Segment_2<K> const& e1
-                                                                     , Segment_2<K> const& e2
-                                                                     );
+bool are_edges_collinear( Segment_2<K> const& e0, Segment_2<K> const& e1 )
+{
+  return   collinear(e0.source(),e0.target(),e1.source())
+         & collinear(e0.source(),e0.target(),e1.target()) ;
+}
+
+template<class K>
+inline
+bool are_parallel_edges_equally_oriented( Segment_2<K> const& e0, Segment_2<K> const& e1 )
+{
+  return angle(typename K::Vector_2(e0.source(), e0.target()),
+               typename K::Vector_2(e1.source(), e1.target())) == ACUTE;
+}
+
+template<class K>
+bool are_edges_orderly_collinear( Segment_2<K> const& e0, Segment_2<K> const& e1 )
+{
+  return are_edges_collinear(e0,e1) & are_parallel_edges_equally_oriented(e0,e1);
+}
+
+
+template<class K>
+Trisegment_collinearity trisegment_collinearity_no_exact_constructions ( Segment_2<K> const& e0
+                                                                       , Segment_2<K> const& e1
+                                                                       , Segment_2<K> const& e2)
+{
+  bool is_01 = are_edges_orderly_collinear(e0,e1);
+  bool is_02 = are_edges_orderly_collinear(e0,e2);
+  bool is_12 = are_edges_orderly_collinear(e1,e2);
+
+  if ( is_01 & !is_02 & !is_12 )
+    return TRISEGMENT_COLLINEARITY_01;
+  else if ( is_02 & !is_01 & !is_12 )
+    return TRISEGMENT_COLLINEARITY_02;
+  else if ( is_12 & !is_01 & !is_02 )
+    return TRISEGMENT_COLLINEARITY_12;
+  else if ( !is_01 & !is_02 & !is_12  )
+    return TRISEGMENT_COLLINEARITY_NONE;
+  else
+    return TRISEGMENT_COLLINEARITY_ALL;
+}
+
 template<class NT>
 inline NT inexact_sqrt_implementation( NT const& n, CGAL::Null_functor /*no_sqrt*/ )
 {
@@ -183,11 +220,9 @@ intrusive_ptr< Trisegment_2<K> > construct_trisegment ( Segment_2<K> const& e0
   typedef Trisegment_2<K>                 Trisegment_2 ;
   typedef typename Trisegment_2::Self_ptr Trisegment_2_ptr ;
 
-  Uncertain<Trisegment_collinearity> lCollinearity = certified_trisegment_collinearity(e0,e1,e2);
+  Trisegment_collinearity lCollinearity = trisegment_collinearity_no_exact_constructions(e0,e1,e2);
 
-  if (is_certain(lCollinearity) )
-       return Trisegment_2_ptr( new Trisegment_2(e0, e1, e2, lCollinearity) ) ;
-  else return Trisegment_2_ptr();
+  return Trisegment_2_ptr( new Trisegment_2(e0, e1, e2, lCollinearity) ) ;
 }
 
 // Given 3 oriented straight line segments: e0, e1, e2
