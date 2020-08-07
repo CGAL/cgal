@@ -186,20 +186,20 @@ struct Dihedral_angle_cosine
     {
       CGAL_assertion(r.m_sgn == CGAL::POSITIVE);
   
-      double sqlcos = (l.m_sq_num / l.m_sq_den);
-      double sqrcos = (r.m_sq_num / r.m_sq_den);
+//      double sqlcos = (l.m_sq_num / l.m_sq_den);
+//      double sqrcos = (r.m_sq_num / r.m_sq_den);
   
-      return (sqlcos < sqrcos);
+      return  (l.m_sq_num * r.m_sq_den < r.m_sq_num* l.m_sq_den);;
     }
     else //both angles are in [PI/2; PI]
     {
       CGAL_assertion(l.m_sgn != CGAL::POSITIVE);
       CGAL_assertion(r.m_sgn != CGAL::POSITIVE);
-  
-      double sqlcos = (l.m_sq_num / l.m_sq_den);
-      double sqrcos = (r.m_sq_num / r.m_sq_den);
-  
-      return (sqlcos >= sqrcos);
+
+//      double sqlcos = (l.m_sq_num / l.m_sq_den);
+//      double sqrcos = (r.m_sq_num / r.m_sq_den);
+
+      return  (l.m_sq_num * r.m_sq_den >= r.m_sq_num* l.m_sq_den);;
     } 
   }
 
