@@ -11,10 +11,6 @@
 template<class K>
 bool test_cone_parameters() {
 
-  // Determined by fair dice roll, guaranteed to be random
-  // TODO: Remove this after tests are passing
-  CGAL::get_default_random() = CGAL::Random(4);
-
   const int NB_ROUNDS = 10;
   const int NB_POINTS = 1000;
 
