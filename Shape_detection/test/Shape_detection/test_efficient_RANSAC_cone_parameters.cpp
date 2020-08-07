@@ -116,14 +116,14 @@ int main() {
   std::cout << "test_cone_parameters<CGAL::Simple_cartesian<float>> ";
   if (!test_cone_parameters<CGAL::Simple_cartesian<float> >())
     success = false;
-//
-//  std::cout << "test_cone_parameters<CGAL::Simple_cartesian<double>> ";
-//  if (!test_cone_parameters<CGAL::Simple_cartesian<double> >())
-//    success = false;
-//
-//  std::cout << "test_cone_parameters<CGAL::Exact_predicates_inexact_constructions_kernel> ";
-//  if (!test_cone_parameters<CGAL::Exact_predicates_inexact_constructions_kernel>())
-//    success = false;
+
+  std::cout << "test_cone_parameters<CGAL::Simple_cartesian<double>> ";
+  if (!test_cone_parameters<CGAL::Simple_cartesian<double> >())
+    success = false;
+
+  std::cout << "test_cone_parameters<CGAL::Exact_predicates_inexact_constructions_kernel> ";
+  if (!test_cone_parameters<CGAL::Exact_predicates_inexact_constructions_kernel>())
+    success = false;
 
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
