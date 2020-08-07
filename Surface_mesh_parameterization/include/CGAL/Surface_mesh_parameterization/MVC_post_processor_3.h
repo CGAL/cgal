@@ -14,6 +14,7 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
+#include <CGAL/Surface_mesh_parameterization/internal/Bool_property_map.h>
 #include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 
