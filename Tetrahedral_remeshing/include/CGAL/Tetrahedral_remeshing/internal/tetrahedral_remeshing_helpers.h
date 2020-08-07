@@ -171,15 +171,36 @@ struct Dihedral_angle_cosine
   friend bool operator<(const Dihedral_angle_cosine& l,
                         const Dihedral_angle_cosine& r)
   {
-    double lcos = CGAL::sqrt(l.m_sq_num / l.m_sq_den);
-    if (l.m_sgn == CGAL::NEGATIVE)
-      lcos = -1. * lcos;
-
-    double rcos = CGAL::sqrt(r.m_sq_num / r.m_sq_den);
-    if (r.m_sgn == CGAL::NEGATIVE)
-      rcos = -1. * rcos;
-
-    return lcos < rcos;
+    //if numerators have different signs
+    if (l.m_sgn == CGAL::NEGATIVE && r.m_sgn != CGAL::NEGATIVE)
+      return true;
+  
+    else if (l.m_sgn == CGAL::POSITIVE && r.m_sgn != CGAL::POSITIVE)
+      return false;
+  
+    else if (l.m_sgn == CGAL::ZERO)
+      return (r.m_sgn == CGAL::POSITIVE);
+  
+    //else numerators have the same sign
+    else if (l.m_sgn == CGAL::POSITIVE) //both angles are in [0; PI/2[
+    {
+      CGAL_assertion(r.m_sgn == CGAL::POSITIVE);
+  
+      double sqlcos = (l.m_sq_num / l.m_sq_den);
+      double sqrcos = (r.m_sq_num / r.m_sq_den);
+  
+      return (sqlcos < sqrcos);
+    }
+    else //both angles are in [PI/2; PI]
+    {
+      CGAL_assertion(l.m_sgn != CGAL::POSITIVE);
+      CGAL_assertion(r.m_sgn != CGAL::POSITIVE);
+  
+      double sqlcos = (l.m_sq_num / l.m_sq_den);
+      double sqrcos = (r.m_sq_num / r.m_sq_den);
+  
+      return (sqlcos >= sqrcos);
+    } 
   }
 
   friend bool operator<=(const Dihedral_angle_cosine& l,
