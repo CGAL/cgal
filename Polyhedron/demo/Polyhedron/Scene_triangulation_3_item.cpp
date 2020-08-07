@@ -153,7 +153,6 @@ public :
       alphaSlider->setMaximum(255);
       alphaSlider->setValue(255);
     }
-    viewer->makeCurrent();
     const EPICK::Plane_3& plane = qobject_cast<Scene_triangulation_3_item*>(this->parent())->plane();
     float shrink_factor = qobject_cast<Scene_triangulation_3_item*>(this->parent())->getShrinkFactor();
     QVector4D cp = cgal_plane_to_vector4d(plane);
@@ -912,7 +911,7 @@ void Scene_triangulation_3_item::draw(CGAL::Three::Viewer_interface* viewer) con
   Scene_triangulation_3_item* ncthis = const_cast<Scene_triangulation_3_item*>(this);
   if(!isInit(viewer))
     initGL(viewer);
-  //viewer->makeCurrent();
+
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {
@@ -958,7 +957,7 @@ void Scene_triangulation_3_item::draw(CGAL::Three::Viewer_interface* viewer) con
   }
   if(d->is_grid_shown)
   {
-    //viewer->makeCurrent(); //messes with the depthPeeling
+
     getEdgeContainer(Grid_edges)->setColor(QColor(Qt::black));
     QMatrix4x4 f_mat;
     for (int i = 0; i<16; i++)
