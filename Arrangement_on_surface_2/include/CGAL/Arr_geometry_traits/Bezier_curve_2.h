@@ -443,7 +443,13 @@ public:
    */
   bool is_same (const Self& bc) const
   {
-    if(this->identical(bc))
+    return *this == bc;
+    // TODO: use identical instead!
+  }
+
+  bool operator==(const Self& bc) const
+  {
+    if (this->identical(bc))
       return true;
     if (this->number_of_control_points() != bc.number_of_control_points())
       return false;
