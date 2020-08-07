@@ -141,12 +141,64 @@ typename Tr::Geom_traits::FT min_dihedral_angle(const Tr& tr,
                             c->vertex(3));
 }
 
+struct Dihedral_angle_cosine
+{
+  CGAL::Sign m_sgn;
+  double m_sq_num;
+  double m_sq_den;
+
+  Dihedral_angle_cosine(const double& num, const double& sq_den)
+    : m_sgn(CGAL::sign(num))
+    , m_sq_num(CGAL::square(num))
+    , m_sq_den(sq_den)
+  {}
+
+  Dihedral_angle_cosine& operator=(const Dihedral_angle_cosine& r)
+  {
+    if (this != &r) { // self-assignment check
+      this->m_sgn = r.m_sgn;
+      this->m_sq_num = r.m_sq_num;
+      this->m_sq_den = r.m_sq_den;
+    }
+    return *this;
+  }
+
+  bool is_one() const
+  {
+    return m_sgn == CGAL::POSITIVE && m_sq_num == m_sq_den;
+  }
+
+  friend bool operator<(const Dihedral_angle_cosine& l,
+                        const Dihedral_angle_cosine& r)
+  {
+    double lcos = CGAL::sqrt(l.m_sq_num / l.m_sq_den);
+    if (l.m_sgn == CGAL::NEGATIVE)
+      lcos = -1. * lcos;
+
+    double rcos = CGAL::sqrt(r.m_sq_num / r.m_sq_den);
+    if (r.m_sgn == CGAL::NEGATIVE)
+      rcos = -1. * rcos;
+
+    return lcos < rcos;
+  }
+
+  friend bool operator<=(const Dihedral_angle_cosine& l,
+                         const Dihedral_angle_cosine& r)
+  {
+    if(l < r)
+      return true;
+    else
+      return l.m_sgn == r.m_sgn
+         &&  l.m_sq_num * r.m_sq_den == r.m_sq_num * l.m_sq_den;
+  }
+};
+
 template<typename Gt>
-typename Gt::FT cos_dihedral_angle(const typename Gt::Point_3& i,
-                                   const typename Gt::Point_3& j,
-                                   const typename Gt::Point_3& k,
-                                   const typename Gt::Point_3& l,
-                                   const Gt& gt)
+Dihedral_angle_cosine cos_dihedral_angle(const typename Gt::Point_3& i,
+                                         const typename Gt::Point_3& j,
+                                         const typename Gt::Point_3& k,
+                                         const typename Gt::Point_3& l,
+                                         const Gt& gt)
 {
   CGAL_assertion(CGAL::orientation(i, j, k, l) != CGAL::NEGATIVE);
 
@@ -165,66 +217,62 @@ typename Gt::FT cos_dihedral_angle(const typename Gt::Point_3& i,
 
   const Vector_3 jikj = cross_product(ji, kj);
   if(CGAL::NULL_VECTOR == jikj)
-    return 1.;
+    return Dihedral_angle_cosine(1.,1.);
 
   const Vector_3 klkj = cross_product(kl, kj);
   if (CGAL::NULL_VECTOR == klkj)
-    return 1.;
+    return Dihedral_angle_cosine(1.,1.);
 
   const FT num = scalar_product(jikj, klkj);
   if(num == 0.)
-    return 0.;
+    return Dihedral_angle_cosine(0.,1.);
 
-  const double den = CGAL::sqrt(CGAL::to_double(
-    scalar_product(jikj, jikj) * scalar_product(klkj, klkj)));
+  const double sqden = CGAL::to_double(
+    scalar_product(jikj, jikj) * scalar_product(klkj, klkj));
 
-  const double cos = num/den;
-
-  if(cos > 1.)        return FT(1.);
-  else if(cos < -1.)  return FT(-1.);
-  else                return FT(cos);
+  return Dihedral_angle_cosine(num, sqden);
 }
 
 template<typename Point, typename Geom_traits>
-typename Geom_traits::FT max_cos_dihedral_angle(const Point& p,
-                                                const Point& q,
-                                                const Point& r,
-                                                const Point& s,
-                                                const Geom_traits& gt)
+Dihedral_angle_cosine max_cos_dihedral_angle(const Point& p,
+                                             const Point& q,
+                                             const Point& r,
+                                             const Point& s,
+                                             const Geom_traits& gt)
 {
   typedef typename Geom_traits::FT FT;
-  FT a = cos_dihedral_angle(p, q, r, s, gt);
-  FT max_cos_dh = a;
-  if(max_cos_dh == 1.) return 1.;
+  Dihedral_angle_cosine a = cos_dihedral_angle(p, q, r, s, gt);
+  Dihedral_angle_cosine max_cos_dh = a;
+  if(max_cos_dh.is_one()) return max_cos_dh;
 
   a = cos_dihedral_angle(p, r, s, q, gt);
-  max_cos_dh = (std::max)(a, max_cos_dh);
-  if (max_cos_dh == 1.) return 1.;
+  if(max_cos_dh < a) max_cos_dh = a;
+  if (max_cos_dh.is_one()) return max_cos_dh;
 
   a = cos_dihedral_angle(p, s, q, r, gt);
-  max_cos_dh = (std::max)(a, max_cos_dh);
-  if (max_cos_dh == 1.) return 1.;
+  if (max_cos_dh < a) max_cos_dh = a;
+  if (max_cos_dh.is_one()) return max_cos_dh;
 
   a = cos_dihedral_angle(q, r, p, s, gt);
-  max_cos_dh = (std::max)(a, max_cos_dh);
-  if (max_cos_dh == 1.) return 1.;
+  if (max_cos_dh < a) max_cos_dh = a;
+  if (max_cos_dh.is_one()) return max_cos_dh;
 
   a = cos_dihedral_angle(q, s, r, p, gt);
-  max_cos_dh = (std::max)(a, max_cos_dh);
-  if (max_cos_dh == 1.) return 1.;
+  if (max_cos_dh < a) max_cos_dh = a;
+  if (max_cos_dh.is_one()) return max_cos_dh;
 
   a = cos_dihedral_angle(r, s, p, q, gt);
-  max_cos_dh = (std::max)(a, max_cos_dh);
+  if (max_cos_dh < a) max_cos_dh = a;
 
   return max_cos_dh;
 }
 
 template<typename Tr>
-typename Tr::Geom_traits::FT max_cos_dihedral_angle(const Tr& tr,
-                                                    const typename Tr::Vertex_handle v0,
-                                                    const typename Tr::Vertex_handle v1,
-                                                    const typename Tr::Vertex_handle v2,
-                                                    const typename Tr::Vertex_handle v3)
+Dihedral_angle_cosine max_cos_dihedral_angle(const Tr& tr,
+                                             const typename Tr::Vertex_handle v0,
+                                             const typename Tr::Vertex_handle v1,
+                                             const typename Tr::Vertex_handle v2,
+                                             const typename Tr::Vertex_handle v3)
 {
   return max_cos_dihedral_angle(point(v0->point()),
                                 point(v1->point()),
@@ -234,18 +282,18 @@ typename Tr::Geom_traits::FT max_cos_dihedral_angle(const Tr& tr,
 }
 
 template<typename Tr>
-typename Tr::Geom_traits::FT max_cos_dihedral_angle(const Tr& tr,
-                                                    const typename Tr::Cell_handle c)
+Dihedral_angle_cosine max_cos_dihedral_angle(const Tr& tr,
+                                             const typename Tr::Cell_handle c)
 {
-  if (c->is_cache_valid())
-    return c->sliver_value();
+//  if (c->is_cache_valid())
+//    return c->sliver_value();
 
-  typename Tr::Geom_traits::FT cos_dh = max_cos_dihedral_angle(tr,
-                                                               c->vertex(0),
-                                                               c->vertex(1),
-                                                               c->vertex(2),
-                                                               c->vertex(3));
-  c->set_sliver_value(cos_dh);
+  Dihedral_angle_cosine cos_dh = max_cos_dihedral_angle(tr,
+                                                        c->vertex(0),
+                                                        c->vertex(1),
+                                                        c->vertex(2),
+                                                        c->vertex(3));
+//  c->set_sliver_value(cos_dh.m_num);
   return cos_dh;
 }
 
