@@ -147,9 +147,9 @@ struct Dihedral_angle_cosine
   double m_sq_num;
   double m_sq_den;
 
-  Dihedral_angle_cosine(const double& num, const double& sq_den)
-    : m_sgn(CGAL::sign(num))
-    , m_sq_num(CGAL::square(num))
+  Dihedral_angle_cosine(const CGAL::Sign& sgn, const double& sq_num, const double& sq_den)
+    : m_sgn(sgn)
+    , m_sq_num(sq_num)
     , m_sq_den(sq_den)
   {}
 
@@ -166,6 +166,19 @@ struct Dihedral_angle_cosine
   bool is_one() const
   {
     return m_sgn == CGAL::POSITIVE && m_sq_num == m_sq_den;
+  }
+  double signed_square_value() const
+  {
+    switch(m_sgn)
+    {
+    case CGAL::POSITIVE:
+      return m_sq_num / m_sq_den;
+    case ZERO:
+      return 0.;
+    default:
+      CGAL_assertion(m_sgn == CGAL::NEGATIVE);
+      return -1. * m_sq_num / m_sq_den;
+    };
   }
 
   friend bool operator<(const Dihedral_angle_cosine& l,
@@ -185,19 +198,13 @@ struct Dihedral_angle_cosine
     else if (l.m_sgn == CGAL::POSITIVE) //both angles are in [0; PI/2[
     {
       CGAL_assertion(r.m_sgn == CGAL::POSITIVE);
-  
-//      double sqlcos = (l.m_sq_num / l.m_sq_den);
-//      double sqrcos = (r.m_sq_num / r.m_sq_den);
-  
+
       return  (l.m_sq_num * r.m_sq_den < r.m_sq_num* l.m_sq_den);;
     }
     else //both angles are in [PI/2; PI]
     {
       CGAL_assertion(l.m_sgn != CGAL::POSITIVE);
       CGAL_assertion(r.m_sgn != CGAL::POSITIVE);
-
-//      double sqlcos = (l.m_sq_num / l.m_sq_den);
-//      double sqrcos = (r.m_sq_num / r.m_sq_den);
 
       return  (l.m_sq_num * r.m_sq_den >= r.m_sq_num* l.m_sq_den);;
     } 
@@ -238,20 +245,20 @@ Dihedral_angle_cosine cos_dihedral_angle(const typename Gt::Point_3& i,
 
   const Vector_3 jikj = cross_product(ji, kj);
   if(CGAL::NULL_VECTOR == jikj)
-    return Dihedral_angle_cosine(1.,1.);
+    return Dihedral_angle_cosine(CGAL::POSITIVE, 1.,1.);
 
   const Vector_3 klkj = cross_product(kl, kj);
   if (CGAL::NULL_VECTOR == klkj)
-    return Dihedral_angle_cosine(1.,1.);
+    return Dihedral_angle_cosine(CGAL::POSITIVE, 1.,1.);
 
   const FT num = scalar_product(jikj, klkj);
   if(num == 0.)
-    return Dihedral_angle_cosine(0.,1.);
+    return Dihedral_angle_cosine(CGAL::ZERO, 0.,1.);
 
   const double sqden = CGAL::to_double(
     scalar_product(jikj, jikj) * scalar_product(klkj, klkj));
 
-  return Dihedral_angle_cosine(num, sqden);
+  return Dihedral_angle_cosine(CGAL::sign(num), CGAL::square(num), sqden);
 }
 
 template<typename Point, typename Geom_traits>
@@ -306,15 +313,16 @@ template<typename Tr>
 Dihedral_angle_cosine max_cos_dihedral_angle(const Tr& tr,
                                              const typename Tr::Cell_handle c)
 {
-//  if (c->is_cache_valid())
-//    return c->sliver_value();
+  if (c->is_cache_valid())
+    return Dihedral_angle_cosine(CGAL::sign(c->sliver_value()), c->sliver_value(), 1.);
 
   Dihedral_angle_cosine cos_dh = max_cos_dihedral_angle(tr,
                                                         c->vertex(0),
                                                         c->vertex(1),
                                                         c->vertex(2),
                                                         c->vertex(3));
-//  c->set_sliver_value(cos_dh.m_num);
+
+  c->set_sliver_value(cos_dh.signed_square_value());
   return cos_dh;
 }
 

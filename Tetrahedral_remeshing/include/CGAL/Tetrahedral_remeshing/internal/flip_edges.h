@@ -479,7 +479,7 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
     } while (++cell_circulator != done);
 
 
-    Dihedral_angle_cosine max_flip_cos_dh(-1., 1.);
+    Dihedral_angle_cosine max_flip_cos_dh(CGAL::NEGATIVE, 1., 1.);
     for (const Facet& fi : facets)
     {
       if (!tr.is_infinite(fi.first))
@@ -670,7 +670,7 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
     }
     while (++cell_circulator != done);
 
-    Dihedral_angle_cosine max_flip_cos_dh(-1., 1.);
+    Dihedral_angle_cosine max_flip_cos_dh(CGAL::NEGATIVE, 1., 1.);
     for (const Facet& fi : facets)
     {
       if (!tr.is_infinite(fi.first))
