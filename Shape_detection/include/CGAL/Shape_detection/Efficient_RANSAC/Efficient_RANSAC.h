@@ -493,7 +493,10 @@ public:
     }
 
     // Use bounding box diagonal as reference for default values
-    Bbox_3 bbox = m_global_octree->bbox();
+    // TODO: Remove forced value when I'm done testing
+    Bbox_3 bbox = CGAL::Bbox_3(-0.5, -0.37179499864578247, -0.37179499864578247, 0.5, 0.37179499864578247,
+                               0.37179499864578247);
+    std::cerr << bbox << std::endl;
     FT bbox_diagonal = (FT) CGAL::sqrt(
             (bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin())
             + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin())

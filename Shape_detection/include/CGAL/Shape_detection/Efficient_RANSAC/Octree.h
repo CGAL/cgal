@@ -158,7 +158,7 @@ public:
           m_input_range(boost::counting_iterator<std::size_t>(0),
                         boost::counting_iterator<std::size_t>(end - begin)),
           m_index_map(begin, point_map),
-          m_octree(m_input_range, m_index_map) {}
+          m_octree(m_input_range, m_index_map, 1.0) {}
 
   std::size_t size() const {
     return m_octree.root().size();

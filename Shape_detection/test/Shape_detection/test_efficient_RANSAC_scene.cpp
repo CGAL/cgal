@@ -149,13 +149,13 @@ int main(int argc, char** argv) {
   if (!test_scene<CGAL::Simple_cartesian<float> >(argc, argv))
     success = false;
 
-  std::cout << "test_scene<CGAL::Simple_cartesian<double>> ";
-  if (!test_scene<CGAL::Simple_cartesian<double> >(argc, argv))
-    success = false;
-
-  std::cout << "test_scene<CGAL::Exact_predicates_inexact_constructions_kernel> ";
-  if (!test_scene<CGAL::Exact_predicates_inexact_constructions_kernel>(argc, argv))
-    success = false;
+//  std::cout << "test_scene<CGAL::Simple_cartesian<double>> ";
+//  if (!test_scene<CGAL::Simple_cartesian<double> >(argc, argv))
+//    success = false;
+//
+//  std::cout << "test_scene<CGAL::Exact_predicates_inexact_constructions_kernel> ";
+//  if (!test_scene<CGAL::Exact_predicates_inexact_constructions_kernel>(argc, argv))
+//    success = false;
 
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
