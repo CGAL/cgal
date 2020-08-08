@@ -550,7 +550,7 @@ public:
 
     do { // main loop
       best_expected = 0;
-      std::cerr << "~~~~" << std::endl;
+      std::cerr << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
 
       if (keep_searching) {
         do {
@@ -559,11 +559,13 @@ public:
           std::set<std::size_t> indices;
           bool done = false;
           do {
-            do
+
+            do {
+
               first_sample = get_default_random()(
                       static_cast<unsigned int>(m_num_available_points));
-            while (m_shape_index[first_sample] != -1);
-
+            } while (m_shape_index[first_sample] != -1);
+            std::cerr << first_sample << std::endl;
 
             done =
                     drawSamplesFromCellContainingPoint(m_global_octree,
@@ -573,6 +575,8 @@ public:
                                                        indices,
                                                        m_shape_index,
                                                        required_samples);
+
+            std::cerr << m_shape_index[first_sample] << std::endl;
 
             if (callback && !callback(num_invalid / double(m_num_total_points)))
               return false;
