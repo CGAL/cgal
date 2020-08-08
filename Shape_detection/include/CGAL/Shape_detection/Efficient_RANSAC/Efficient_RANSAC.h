@@ -496,7 +496,6 @@ public:
     // TODO: Remove forced value when I'm done testing
     Bbox_3 bbox = CGAL::Bbox_3(-0.5, -0.37179499864578247, -0.37179499864578247, 0.5, 0.37179499864578247,
                                0.37179499864578247);
-    std::cerr << bbox << std::endl;
     FT bbox_diagonal = (FT) CGAL::sqrt(
             (bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin())
             + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin())
@@ -551,8 +550,9 @@ public:
 
     do { // main loop
       best_expected = 0;
+      std::cerr << "~~~~" << std::endl;
 
-      if (keep_searching)
+      if (keep_searching) {
         do {
           // Generate candidates
           //1. pick a point p1 randomly among available points
@@ -630,7 +630,8 @@ public:
                                      m_global_octree->maxLevel())
                     > m_options.probability
                  && keep_searching);
-      // end of generate candidate
+        // end of generate candidate
+      }
 
       if (force_exit) {
         break;
