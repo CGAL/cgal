@@ -95,7 +95,7 @@ bool basic_tests()
   internal::Path_on_surface_with_rle<internal::Light_MQ<CMap> > p7(lmq, p6);
   if (!p7.is_valid() || p7.size_of_list()!=3)
   {
-    std::cerr<<"path_tests ERROR: !p7.is_valid() || size_of_list()!=2."<<std::endl;
+    std::cerr<<"path_tests ERROR: !p7.is_valid() || size_of_list()!=3."<<std::endl;
     res=false;
   }
 
