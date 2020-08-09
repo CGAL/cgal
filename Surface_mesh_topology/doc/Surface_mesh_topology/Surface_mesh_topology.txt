@@ -286,15 +286,15 @@ The canonical form of a curve is obtained by flattening its brackets, removing i
 It can be proven that the canonical form is uniquely defined and only depends on the homotopy class of the curve. Hence, the curves \f$C'\f$ and \f$D'\f$ in \f$\cal{Q}\f$ are homotopic if and only if their canonical forms are equal. Since each curve is defined as a sequence of (oriented) edges up to a cyclic permutation, we resort to the Knuth-Morris-Pratt algorithm to decide in linear time if the canonical forms are the same up to a cyclic permutation.
 
 \subsection SMTopology_Simplicity_Test Simplicity Test
-It can be shown that a closed curve is homotopic to a simple one if and only if its canonical form can be made intersection free via infinitesimal perturbations and some homotopy preserving operations. One can imagine each edge in the quadrangulation has width and each vertex in the quadrangulation has area so that paths visiting the same vertex/edge multiple times can avoid intersection within a vertex or an edge. See \cgalFigureRef{fig_perturbation_sample} for an example.
+It can be shown that a closed curve is homotopic to a simple one if and only if its canonical form can be made intersection free via infinitesimal perturbations and some homotopy preserving operations. One can imagine each edge in the quadrangulation has a width and each vertex in the quadrangulation has an area so that paths visiting the same vertex/edge multiple times can avoid intersection within a vertex or an edge. See \cgalFigureRef{fig_perturbation_sample} for an example.
 \cgalFigureBegin{fig_perturbation_sample,perturbation_sample.svg}
  Applying a perturbation to reduce 2 intersections between red subpath and blue subpath.
     \cgalFigureEnd
 
-Such perturbation can be expressed as orderings of edges from the canonical form which cross the same edge in the quadrangulation. The idea of the algorithm is to inductively build such ordering and try to avoid intersection as best as we can.
+Such a perturbation can be expressed as orderings of edges from the canonical form which cross the same edge in the quadrangulation. The idea of the algorithm is to inductively build such ordering and try to avoid intersection as best as we can.
 
 \subsubsection SMTopology_Simplicity_Test_Primitive Detect Repetition
-It can be proven that if the canonical form can be expressed as concatenation of two or more copies of the same path, the path can never be made to be intersection free. So the first step of the algorithm is to detect repetition.
+It can be proven that if the canonical form can be expressed as concatenation of two or more copies of the same path, the path can never be made intersection free. So the first step of the algorithm is to detect repetition.
 
 Let \f$P\f$ be a path and let \f$+\f$ be the operator of concatenation. It can be shown that \f$P\f$ contains no repetition if and only if there are only 2 matchings of \f$P\f$ in \f$P+P\f$ (matching the first and the second copy). The algorithm resorts to the Knuth-Morris-Pratt algorithm to decide in linear time if the canonical form contains no repetition.
 
@@ -305,7 +305,7 @@ Apart from applying perturbation, the algorithm also tries to avoid crossing usi
     \cgalFigureEnd
 
 \subsubsection SMTopology_Simplicity_Test_Relative_Order Decide Relative Order
-Since the algorithm inductively builds an ordering, it has to determine relative order between the edge being processed and edges that has been ordered. There are three cases to consider.
+Since the algorithm inductively builds an ordering, it has to determine a relative order between the edge being processed and the edges that has been ordered. There are three cases to consider.
 
 -# The predecessor of the current edge is adjacent to another edge which forms the same turn of the predecessor and the current edge. In this case, the current edge must be adjacent to the edge forming the turn. See \cgalFigureRef{fig_relative_order_corner}.
 \cgalFigureBegin{fig_relative_order_corner,relative_order_corner.svg}
@@ -317,15 +317,15 @@ Since the algorithm inductively builds an ordering, it has to determine relative
  The red edge is being processed and is compared against the pink edge. Since the green edge (the predecessor of the red edge) is to the right of the blue edge around the vertex, red edge must be to the right of the pink edge in the ordering.
     \cgalFigureEnd
 
--# If the current edge crosses the same edge in the quadrangulation as the first edge of the path, the predecessor of the first edge (aka the last edge of the path) has not been processed yet. Hence if they form the same turn, we cannot determine the relative order of the predecessors. So the idea is to keep following the predecessors of current edge and the first edge until they diverge, at which point the relative order around the vertex can be used to determine the relative order. See \cgalFigureRef{fig_relative_order_first}. This can be precomputed by finding the all the longest common suffices of the path against its circular shifts. A modified Knuth-Morris-Pratt algorithm is applied to preprocess the path in linear time.
+-# If the current edge crosses the same edge in the quadrangulation as the first edge of the path, the predecessor of the first edge (aka the last edge of the path) has not been processed yet. Hence if they form the same turn, we cannot determine the relative order of the predecessors. So the idea is to keep following the predecessors of current edge and the first edge until they diverge, at which point the relative order around the vertex can be used to determine the relative order. See \cgalFigureRef{fig_relative_order_first}. This can be precomputed by finding all the longest common suffices of the path against its circular shifts. A modified Knuth-Morris-Pratt algorithm is applied to preprocess the path in linear time.
 \cgalFigureBegin{fig_relative_order_first,relative_order_first.svg}
- The red edge is being processed and is compared against the pink edge which is the first edge of the path. The blue and green edges are the first diverging pair when tracing backward. The dashed line means that edges may not be processed yet. Since the green edge is to the right of the blue edge around the vertex, red edge must be to the right of the pink edge in the ordering.
+ The red edge is being processed and is compared against the pink edge which is the first edge of the path. The blue and green edges are the first diverging pair when tracing backward. The dashed line means that edges may not be processed yet. Since the green edge is to the right of the blue edge around the vertex, the red edge must be to the right of the pink edge in the ordering.
     \cgalFigureEnd
 
 The ordering is stored in a red-black tree on each edge of the quadrangulation. So each insertion and search takes \f$O(\log{l})\f$ time.
 
 \subsubsection SMTopology_Simplicity_Test_Verification Verify Ordering
-After computing a tentative ordering within the edges of the path, we have to verify such ordering could result in a intersection free arrangement. Since there is no intersection within an edge, we only need to verify this for each vertex in the quadrangulation. We can consider the two consecutive edges composing a turn (one going in the vertex, one going out of the vertex) at the vertex being verified a <em>pair</em>. The ordering at the vertex is intersection free if and only if there is no two pairs crossing each other according to the clockwise ordering around the vertex. In other words, for any two pairs \f$(a, a')\f$ and \f$(b, b')\f$, subsequence \f$a, b, a', b'\f$ should not appear in the clockwise ordering. This is very similar to verifying balanced parentheses in a string. We traverse clockwise at each vertex and use a stack-based algorithm to verify in linear time that the ordering produces a cycle without self-intersection.
+After computing a tentative ordering within the edges of the path, we have to verify that such an ordering could result in an intersection free arrangement. Since there is no intersection within an edge, we only need to verify this for each vertex in the quadrangulation. We can consider the two consecutive edges composing a turn (one going in the vertex, one going out of the vertex) at the vertex being verified a <em>pair</em>. The ordering at the vertex is intersection free if and only if there is no two pairs crossing each other according to the clockwise ordering around the vertex. In other words, for any two pairs \f$(a, a')\f$ and \f$(b, b')\f$, subsequence \f$a, b, a', b'\f$ should not appear in the clockwise ordering. This is very similar to verifying balanced parentheses in a string. We traverse clockwise at each vertex and use a stack-based algorithm to verify in linear time that the ordering produces a cycle without self-intersection.
 
 \section Implementation History
 
