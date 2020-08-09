@@ -309,7 +309,7 @@ Since the algorithm inductively builds an ordering, it has to determine a relati
 
 -# The predecessor of the current edge is adjacent to another edge which forms the same turn of the predecessor and the current edge. In this case, the current edge must be adjacent to the edge forming the turn. See \cgalFigureRef{fig_relative_order_corner}.
 \cgalFigureBegin{fig_relative_order_corner,relative_order_corner.svg}
- The red edge is being processed. The blue edge is adjacent to green edge (the predecessor of the red edge) in the previously constructed ordering and forms a turn (blue-pink turn) same to the green-red turn. The red edge must be right next to the pink edge in the ordering.
+ The red edge is being processed. The blue edge is adjacent to green edge (the predecessor of the red edge) in the previously constructed ordering and forms a turn (blue-pink turn) same as the green-red turn. The red edge must be right next to the pink edge in the ordering.
     \cgalFigureEnd
 
 -# Comparing the current edge with another edge by the predecessor of the current edge. If the edge being compared against has predecessor/successor extended to the direction of the predecessor of the current edge, and they doesn't form the same turn. The relative order of edges around the vertex can be used as the relative order between the edges. See \cgalFigureRef{fig_relative_order_normal}.
@@ -322,7 +322,7 @@ Since the algorithm inductively builds an ordering, it has to determine a relati
  The red edge is being processed and is compared against the pink edge which is the first edge of the path. The blue and green edges are the first diverging pair when tracing backward. The dashed line means that edges may not be processed yet. Since the green edge is to the right of the blue edge around the vertex, the red edge must be to the right of the pink edge in the ordering.
     \cgalFigureEnd
 
-The ordering is stored in a red-black tree on each edge of the quadrangulation. So each insertion and search takes \f$O(\log{l})\f$ time.
+The ordering is stored in a red-black tree for each edge of the quadrangulation. So each insertion and search takes \f$O(\log{l})\f$ time.
 
 \subsubsection SMTopology_Simplicity_Test_Verification Verify Ordering
 After computing a tentative ordering within the edges of the path, we have to verify that such an ordering could result in an intersection free arrangement. Since there is no intersection within an edge, we only need to verify this for each vertex in the quadrangulation. We can consider the two consecutive edges composing a turn (one going in the vertex, one going out of the vertex) at the vertex being verified a <em>pair</em>. The ordering at the vertex is intersection free if and only if there is no two pairs crossing each other according to the clockwise ordering around the vertex. In other words, for any two pairs \f$(a, a')\f$ and \f$(b, b')\f$, subsequence \f$a, b, a', b'\f$ should not appear in the clockwise ordering. This is very similar to verifying balanced parentheses in a string. We traverse clockwise at each vertex and use a stack-based algorithm to verify in linear time that the ordering produces a cycle without self-intersection.
