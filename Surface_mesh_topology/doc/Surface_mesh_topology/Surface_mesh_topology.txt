@@ -288,7 +288,7 @@ It can be proven that the canonical form is uniquely defined and only depends on
 \subsection SMTopology_Simplicity_Test Simplicity Test
 It can be shown that a closed curve is homotopic to a simple one if and only if its canonical form can be made intersection free via infinitesimal perturbations and some homotopy preserving operations. One can imagine each edge in the quadrangulation has width and each vertex in the quadrangulation has area so that paths visiting the same vertex/edge multiple times can avoid intersection within a vertex or an edge. See \cgalFigureRef{fig_perturbation_sample} for an example.
 \cgalFigureBegin{fig_perturbation_sample,perturbation_sample.svg}
- Applying perturbation to reduce 2 intersections between red subpath and blue subpath.
+ Applying a perturbation to reduce 2 intersections between red subpath and blue subpath.
     \cgalFigureEnd
 
 Such perturbation can be expressed as orderings of edges from the canonical form which cross the same edge in the quadrangulation. The idea of the algorithm is to inductively build such ordering and try to avoid intersection as best as we can.
