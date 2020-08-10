@@ -7,7 +7,13 @@ project(Octree_Tests)
 find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core)
 if (CGAL_FOUND)
 
-    # TODO: Add single-source programs
+    create_single_source_cgal_program("Octree_build_from_Point_set.cpp")
+    create_single_source_cgal_program("Octree_build_from_Point_vector.cpp")
+    create_single_source_cgal_program("Octree_build_with_custom_split.cpp")
+    create_single_source_cgal_program("Octree_find_nearest_neighbor.cpp")
+    create_single_source_cgal_program("Octree_traversal_custom.cpp")
+    create_single_source_cgal_program("Octree_traversal_manual.cpp")
+    create_single_source_cgal_program("Octree_traversal_preorder.cpp")
 
 else ()
     message(WARNING
