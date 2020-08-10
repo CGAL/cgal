@@ -29,7 +29,13 @@ The tree is then printed to the standard output.
 
 \subsection Section_Octree_Example_Point_Vector Building an Octree from a Vector of Points
 
-e.g. I have a collection of points contained by an `std::vector<Point_3>`, and I want to build a tree from it.
+This example illustrates how to create an octree from a collection of points that isn't a `Point_set_3`.
+It also shows a more explicit way of setting the split criteria when refining the tree.
+
+An `std::vector<Point_3>` is manually filled with points.
+The vector is used as the point map, and ...
+\todo How should I create the point index vector?
+
 \cgalExample{Octree/Octree_build_from_Point_vector.cpp}
 
 \subsection Section_Octree_Example_Custom_Split_Criterion Building an Octree with a Custom Split_criterion
