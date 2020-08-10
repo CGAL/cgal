@@ -26,6 +26,7 @@
 #include <boost/intrusive_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <boost/mpl/bool.hpp>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
