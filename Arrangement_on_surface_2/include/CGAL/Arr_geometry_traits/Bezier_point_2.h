@@ -1585,7 +1585,7 @@ bool _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_refine ()
 
   if (orig1.point_bound().type == Bez_point_bound::INTERSECTION_PT)
   {
-    CGAL_assertion(_origs.size() == 2);
+    CGAL_assertion(_origs.size() >= 2);
 
     // Obtain the other curve that originates the intersection point and use
     // it to refine its reprsentation.
