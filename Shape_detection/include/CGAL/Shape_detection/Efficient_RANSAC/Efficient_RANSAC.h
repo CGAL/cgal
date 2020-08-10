@@ -561,11 +561,13 @@ public:
           do {
 
             do {
-
-              first_sample = get_default_random()(
-                      static_cast<unsigned int>(m_num_available_points));
+              first_sample = get_default_random()(static_cast<unsigned int>(m_num_available_points));
             } while (m_shape_index[first_sample] != -1);
-            std::cerr << first_sample << std::endl;
+            std::cerr << "first sample: " << first_sample << std::endl;
+            std::cerr << "point index: " << *(m_input_iterator_first + first_sample) << std::endl;
+
+            auto point = get(m_point_pmap,
+                             *(m_input_iterator_first + first_sample));
 
             done =
                     drawSamplesFromCellContainingPoint(m_global_octree,
@@ -575,8 +577,6 @@ public:
                                                        indices,
                                                        m_shape_index,
                                                        required_samples);
-
-            std::cerr << m_shape_index[first_sample] << std::endl;
 
             if (callback && !callback(num_invalid / double(m_num_total_points)))
               return false;
@@ -1120,6 +1120,8 @@ private:
                                           std::set<std::size_t> &indices,
                                           const std::vector<int> &shapeIndex,
                                           std::size_t requiredSamples) {
+
+    std::cerr << "  point: " << p << std::endl;
 
     typedef typename Octree::Node Cell;
 

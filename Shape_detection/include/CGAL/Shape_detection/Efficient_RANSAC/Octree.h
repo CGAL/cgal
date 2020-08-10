@@ -135,6 +135,7 @@ class Indexed_octree {
 
   typedef typename Traits::Input_range::iterator Input_iterator;
   typedef typename Traits::Point_map Point_map;
+  typedef typename Traits::FT FT;
   typedef std::vector<std::size_t> Input_range;
   typedef Point_map_to_indexed_point_map<Input_iterator, Point_map> Indexed_point_map;
 
@@ -177,7 +178,21 @@ public:
   void refine(double cluster_epsilon_for_max_level_recomputation = -1., std::size_t bucketSize = 2,
               std::size_t maxLevel = 10) {
 
-    // TODO: I need to find out what cluster_epsilon is used for
+    if (cluster_epsilon_for_max_level_recomputation > 0.) {
+
+      auto m_bBox = m_octree.bbox(m_octree.root());
+
+      FT bbox_diagonal = (FT) CGAL::sqrt(
+              (m_bBox.xmax() - m_bBox.xmin()) * (m_bBox.xmax() - m_bBox.xmin())
+              + (m_bBox.ymax() - m_bBox.ymin()) * (m_bBox.ymax() - m_bBox.ymin())
+              + (m_bBox.zmax() - m_bBox.zmin()) * (m_bBox.zmax() - m_bBox.zmin()));
+
+      maxLevel = std::size_t(std::log(bbox_diagonal
+                                      / cluster_epsilon_for_max_level_recomputation)
+                             / std::log(2.0));
+
+    }
+
     m_octree.refine(maxLevel, bucketSize);
   }
 
