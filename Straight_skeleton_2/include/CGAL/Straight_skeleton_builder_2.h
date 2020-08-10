@@ -863,12 +863,12 @@ private :
   }
 
 // internal function to filter split event in case the traits is Filtered
-  bool CanSafelyIgnoreSplitEventImpl(const EventPtr& lEvent, const boost::optional<FT>& bound, mpl_::bool_<false>)
+  bool CanSafelyIgnoreSplitEventImpl(const EventPtr& lEvent, const boost::optional<FT>& bound, boost::mpl::bool_<false>)
   {
     return false;
   }
 
-  bool CanSafelyIgnoreSplitEventImpl(const EventPtr& lEvent, const boost::optional<FT>& bound, mpl_::bool_<true>)
+  bool CanSafelyIgnoreSplitEventImpl(const EventPtr& lEvent, const boost::optional<FT>& bound, boost::mpl::bool_<true>)
   {
     return Traits::can_safely_ignore_split_event(lEvent, bound);
   }
@@ -880,7 +880,7 @@ private :
 
   boost::optional<FT> UpperBoundForValidSplitEventsImpl(Vertex_handle, Vertex_handle, Vertex_handle,
                                                         Halfedge_handle_vector_iterator , Halfedge_handle_vector_iterator,
-                                                        mpl_::bool_<false>)
+                                                        boost::mpl::bool_<false>)
   {
     return boost::none;
   }
@@ -888,7 +888,7 @@ private :
   boost::optional<FT> UpperBoundForValidSplitEventsImpl(Vertex_handle lPrev, Vertex_handle aNode, Vertex_handle lNext,
                                                         Halfedge_handle_vector_iterator contour_halfedges_begin,
                                                         Halfedge_handle_vector_iterator contour_halfedges_end,
-                                                        mpl_::bool_<true>)
+                                                        boost::mpl::bool_<true>)
   {
     return Traits::upper_bound_for_valid_split_events(lPrev, aNode, lNext, contour_halfedges_begin, contour_halfedges_end);
   }
