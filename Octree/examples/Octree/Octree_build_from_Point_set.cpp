@@ -1,8 +1,9 @@
 #include <fstream>
 #include <iostream>
 
-#include <CGAL/Octree.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Octree.h>
+#include <CGAL/Octree/IO.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 
@@ -27,6 +28,16 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
   std::cout << "loaded " << points.number_of_points() << " points" << std::endl;
+
+  // Create an octree from the points
+  Point_map point_map = points.point_map();
+  Octree octree(points, point_map);
+
+  // Build the octree
+  octree.refine(10, 20);
+
+  // Print out the tree
+  std::cout << octree;
 
   return EXIT_SUCCESS;
 }
