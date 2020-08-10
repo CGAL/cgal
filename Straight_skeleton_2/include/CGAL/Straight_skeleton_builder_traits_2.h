@@ -24,6 +24,41 @@ namespace CGAL {
 
 namespace CGAL_SS_i {
 
+//TODO: call reserve, but how? #input vertices + n*m estimation?
+template <class K>
+struct Time_cache
+{
+  typedef boost::optional< Rational< typename K::FT > > Event_time;
+  std::vector<Event_time> event_times;
+  std::vector<bool> already_computed;
+
+  bool is_time_cached(std::size_t i)
+  {
+    return already_computed.size()>i && already_computed[i];
+  }
+
+  const Event_time& time(std::size_t i)
+  {
+    CGAL_assertion(is_time_cached(i));
+    return event_times[i];
+  }
+
+  void set_time(std::size_t i, const Event_time& time)
+  {
+    if (event_times.size()<=i){
+      event_times.resize(i+1);
+      already_computed.resize(i+1, false);
+    }
+    already_computed[i]=true;
+    event_times[i]=time;
+  }
+
+  void reset(std::size_t i)
+  {
+    if (is_time_cached(i)) // needed if approx time is set but not exact time
+      already_computed[i]=false;
+  }
+};
 
 template<class K>
 struct Construct_ss_trisegment_2 : Functor_base_2<K>
@@ -36,13 +71,17 @@ struct Construct_ss_trisegment_2 : Functor_base_2<K>
 
   typedef Trisegment_2_ptr result_type ;
 
-
-  result_type operator() () const { return cgal_make_optional( Trisegment_2::null() ) ; }
+  template <class Traits>
+  Construct_ss_trisegment_2(const Traits& traits)
+    : nextID(traits.trisegment_id)
+  {}
 
   result_type operator() ( Segment_2 const& aS0, Segment_2 const& aS1, Segment_2 const& aS2 ) const
   {
-    return construct_trisegment(aS0,aS1,aS2);
+    return construct_trisegment(aS0,aS1,aS2,nextID++);
   }
+
+  std::size_t& nextID;
 };
 
 template<class K>
@@ -55,14 +94,20 @@ struct Do_ss_event_exist_2 : Functor_base_2<K>
 
   typedef Uncertain<bool> result_type ;
 
+  Do_ss_event_exist_2(Time_cache<K>& time_cache)
+    : mTime_cache(time_cache)
+  {}
+
   Uncertain<bool> operator() ( Trisegment_2_ptr const& aTrisegment, boost::optional<FT> aMaxTime ) const
   {
-    Uncertain<bool> rResult = exist_offset_lines_isec2(aTrisegment,aMaxTime) ;
+    Uncertain<bool> rResult = exist_offset_lines_isec2(aTrisegment,aMaxTime, mTime_cache) ;
 
     CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Exist_event",aTrisegment);
 
     return rResult ;
   }
+
+  Time_cache<K>& mTime_cache;
 };
 
 template<class K>
@@ -96,14 +141,20 @@ struct Compare_ss_event_times_2 : Functor_base_2<K>
 
   typedef Uncertain<Comparison_result> result_type ;
 
+  Compare_ss_event_times_2(Time_cache<K>& time_cache)
+    : mTime_cache(time_cache)
+  {}
+
   Uncertain<Comparison_result> operator() ( Trisegment_2_ptr const& aL, Trisegment_2_ptr const& aR ) const
   {
-    Uncertain<Comparison_result> rResult = compare_offset_lines_isec_timesC2(aL,aR) ;
+    Uncertain<Comparison_result> rResult = compare_offset_lines_isec_timesC2(aL,aR, mTime_cache) ;
 
     CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Compare_event_times","L: " << aL << "\nR:" << aR );
 
     return rResult ;
   }
+
+  Time_cache<K>& mTime_cache;
 };
 
 template<class K>
@@ -142,14 +193,21 @@ struct Are_ss_events_simultaneous_2 : Functor_base_2<K>
 
   typedef Uncertain<bool> result_type ;
 
+
+  Are_ss_events_simultaneous_2(Time_cache<K>& time_cache)
+    : mTime_cache(time_cache)
+  {}
+
   Uncertain<bool> operator() ( Trisegment_2_ptr const& aA, Trisegment_2_ptr const& aB ) const
   {
-    Uncertain<bool> rResult = are_events_simultaneousC2(aA,aB);
+    Uncertain<bool> rResult = are_events_simultaneousC2(aA,aB,mTime_cache);
 
     CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Are_events_simultaneous","A=" << aA << "\nB=" << aB);
 
     return rResult ;
   }
+
+  Time_cache<K>& mTime_cache;
 };
 
 template<class K>
@@ -205,6 +263,9 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
 
   typedef boost::optional<rtype> result_type ;
 
+  Construct_ss_event_time_and_point_2(Time_cache<K>& time_cache)
+    :mTime_cache(time_cache)
+  {}
 
   result_type operator() ( Trisegment_2_ptr const& aTrisegment ) const
   {
@@ -213,7 +274,7 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
     FT      t(0) ;
     Point_2 i = ORIGIN ;
 
-    optional< Rational<FT> > ot = compute_offset_lines_isec_timeC2(aTrisegment);
+    optional< Rational<FT> > ot = compute_offset_lines_isec_timeC2(aTrisegment, mTime_cache);
 
     if ( !!ot && certainly( CGAL_NTS certified_is_not_zero(ot->d()) ) )
     {
@@ -284,6 +345,8 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
 
     return rR ;
   }
+
+  Time_cache<K>& mTime_cache;
 };
 
 } // namespace CGAL_SS_i
@@ -331,6 +394,8 @@ class Straight_skeleton_builder_traits_2_impl<Tag_false,K> : public Straight_ske
 
 public:
 
+  mutable std::size_t trisegment_id = 0;
+
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Do_ss_event_exist_2>
     Do_ss_event_exist_2 ;
 
@@ -354,6 +419,45 @@ public:
 
   typedef typename Unfiltering::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
   typedef typename Unfiltering::Construct_ss_trisegment_2           Construct_ss_trisegment_2 ;
+
+  mutable CGAL_SS_i::Time_cache<K> time_cache;
+
+  void reset_trisegment(std::size_t i) const
+  {
+    time_cache.reset(i);
+  }
+
+  using Straight_skeleton_builder_traits_2_base<K>::get;
+
+  Compare_ss_event_times_2
+  get(Compare_ss_event_times_2 const* = 0 ) const
+  {
+    return Compare_ss_event_times_2(const_cast<CGAL_SS_i::Time_cache<K>&>(time_cache));
+  }
+
+  Do_ss_event_exist_2
+  get(Do_ss_event_exist_2 const* = 0 ) const
+  {
+    return Do_ss_event_exist_2(const_cast<CGAL_SS_i::Time_cache<K>&>(time_cache));
+  }
+
+  Are_ss_events_simultaneous_2
+  get(Are_ss_events_simultaneous_2 const* = 0 ) const
+  {
+    return Are_ss_events_simultaneous_2(const_cast<CGAL_SS_i::Time_cache<K>&>(time_cache));
+  }
+
+  Construct_ss_event_time_and_point_2
+  get(Construct_ss_event_time_and_point_2 const* = 0 ) const
+  {
+    return Construct_ss_event_time_and_point_2(const_cast<CGAL_SS_i::Time_cache<K>&>(time_cache));
+  }
+
+  Construct_ss_trisegment_2
+  get( Construct_ss_trisegment_2 const* = 0 ) const
+  {
+    return Construct_ss_trisegment_2(*this);
+  }
 } ;
 
 template<class K>
@@ -362,7 +466,7 @@ class Straight_skeleton_builder_traits_2_impl<Tag_true,K> : public Straight_skel
   typedef typename K::Exact_kernel       EK ;
   typedef typename K::Approximate_kernel FK ;
 
-  typedef Straight_skeleton_builder_traits_2_functors<EK> Exact ;
+  typedef Straight_skeleton_builder_traits_2_impl<Tag_false, EK> Exact ;
   typedef Straight_skeleton_builder_traits_2_functors<FK> Filtering ;
   typedef Straight_skeleton_builder_traits_2_functors<K>  Unfiltering ;
 
@@ -441,11 +545,48 @@ public:
 
   typedef typename Unfiltering::Construct_ss_trisegment_2        Construct_ss_trisegment_2 ;
 
-  // functions and tag for filtering split events
+  using Straight_skeleton_builder_traits_2_base<K>::get;
+
+// constructor of predicates using time caching
+  Compare_ss_event_times_2
+  get(Compare_ss_event_times_2 const* = 0 ) const
+  {
+    return Compare_ss_event_times_2( typename Exact::Compare_ss_event_times_2(const_cast<CGAL_SS_i::Time_cache<EK>&>(mExact_traits.time_cache)),
+                                     typename Filtering::Compare_ss_event_times_2(const_cast<CGAL_SS_i::Time_cache<FK>&>(mApproximate_traits.time_cache)) );
+  }
+
+  Do_ss_event_exist_2
+  get(Do_ss_event_exist_2 const* = 0 ) const
+  {
+    return Do_ss_event_exist_2( typename Exact::Do_ss_event_exist_2(const_cast<CGAL_SS_i::Time_cache<EK>&>(mExact_traits.time_cache)),
+                                typename Filtering::Do_ss_event_exist_2(const_cast<CGAL_SS_i::Time_cache<FK>&>(mApproximate_traits.time_cache)) );
+  }
+
+  Are_ss_events_simultaneous_2
+  get(Are_ss_events_simultaneous_2 const* = 0 ) const
+  {
+    return Are_ss_events_simultaneous_2( typename Exact::Are_ss_events_simultaneous_2(const_cast<CGAL_SS_i::Time_cache<EK>&>(mExact_traits.time_cache)),
+                                         typename Filtering::Are_ss_events_simultaneous_2(const_cast<CGAL_SS_i::Time_cache<FK>&>(mApproximate_traits.time_cache)) );
+  }
+
+  Construct_ss_event_time_and_point_2
+  get(Construct_ss_event_time_and_point_2 const* = 0 ) const
+  {
+    return Construct_ss_event_time_and_point_2( typename Exact::Construct_ss_event_time_and_point_2(const_cast<CGAL_SS_i::Time_cache<EK>&>(mExact_traits.time_cache)),
+                                                typename Filtering::Construct_ss_event_time_and_point_2(const_cast<CGAL_SS_i::Time_cache<FK>&>(mApproximate_traits.time_cache)) );
+  }
+// constructor of trisegments using global id stored in the traits
+  Construct_ss_trisegment_2
+  get( Construct_ss_trisegment_2 const* = 0 ) const
+  {
+    return Construct_ss_trisegment_2(*this);
+  }
+
+// functions and tag for filtering split events
   struct Filters_split_events_tag{};
 
   template <class EventPtr>
-  static bool
+  bool
   can_safely_ignore_split_event(const EventPtr& lEvent, const boost::optional<double>& bound)
   {
     // filter event
@@ -460,12 +601,17 @@ public:
                                                            ,to_interval(lEvent->trisegment()->e1())
                                                            ,to_interval(lEvent->trisegment()->e2())
                                                            ,lEvent->trisegment()->collinearity()
+                                                           ,lEvent->trisegment()->id
                                                            );
       try
       {
-        boost::optional<CGAL_SS_i::Rational<typename FK::FT> > opt_time = CGAL_SS_i::compute_offset_lines_isec_timeC2(tri);
+        boost::optional<CGAL_SS_i::Rational<typename FK::FT> > opt_time = CGAL_SS_i::compute_offset_lines_isec_timeC2(tri, const_cast<CGAL_SS_i::Time_cache<FK>&>(mApproximate_traits.time_cache));
 
-        if (opt_time && opt_time->to_nt().inf() > *bound) return true;
+        if (opt_time && opt_time->to_nt().inf() > *bound)
+        {
+          reset_trisegment(tri->id); // avoid filling the cache vectors with times of trisegments that will be removed
+          return true;
+        }
       }
       catch(Uncertain_conversion_exception&)
       {}
@@ -474,7 +620,7 @@ public:
   }
 
   template <class Vertex_handle, class Halfedge_handle_vector_iterator>
-  static boost::optional<double>
+  boost::optional<double>
   upper_bound_for_valid_split_events(Vertex_handle lPrev, Vertex_handle aNode, Vertex_handle lNext,
                                      Halfedge_handle_vector_iterator contour_halfedges_begin,
                                      Halfedge_handle_vector_iterator contour_halfedges_end)
@@ -536,13 +682,27 @@ public:
     return bound;
   }
 
+  // TODO: as soon as an exact value we could refine the interval one. Not sure if it is worth it
+  Exact mExact_traits;
+  Straight_skeleton_builder_traits_2_impl<Tag_false, FK> mApproximate_traits; // only used for the time_cache variable not the functor types
+
+  mutable std::size_t trisegment_id = 0;
+
+  void reset_trisegment(std::size_t i) const
+  {
+    if (i+1==trisegment_id)
+    {
+      --trisegment_id;
+      mExact_traits.time_cache.reset(i);
+      mApproximate_traits.time_cache.reset(i);
+    }
+  }
 } ;
 
 template<class K>
 class Straight_skeleton_builder_traits_2
   : public Straight_skeleton_builder_traits_2_impl<typename CGAL_SS_i::Is_filtering_kernel<K>::type, K>
-{
-} ;
+{} ;
 
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Do_ss_event_exist_2)
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Compare_ss_event_times_2)

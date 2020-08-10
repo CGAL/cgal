@@ -870,7 +870,7 @@ private :
 
   bool CanSafelyIgnoreSplitEventImpl(const EventPtr& lEvent, const boost::optional<FT>& bound, boost::mpl::bool_<true>)
   {
-    return Traits::can_safely_ignore_split_event(lEvent, bound);
+    return mTraits.can_safely_ignore_split_event(lEvent, bound);
   }
 
   bool CanSafelyIgnoreSplitEvent(const EventPtr& lEvent, const boost::optional<FT>& bound)
@@ -890,7 +890,7 @@ private :
                                                         Halfedge_handle_vector_iterator contour_halfedges_end,
                                                         boost::mpl::bool_<true>)
   {
-    return Traits::upper_bound_for_valid_split_events(lPrev, aNode, lNext, contour_halfedges_begin, contour_halfedges_end);
+    return mTraits.upper_bound_for_valid_split_events(lPrev, aNode, lNext, contour_halfedges_begin, contour_halfedges_end);
   }
 
   boost::optional<FT>

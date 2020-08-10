@@ -215,6 +215,7 @@ template<class K>
 intrusive_ptr< Trisegment_2<K> > construct_trisegment ( Segment_2<K> const& e0
                                                       , Segment_2<K> const& e1
                                                       , Segment_2<K> const& e2
+                                                      , std::size_t id
                                                       )
 {
   typedef Trisegment_2<K>                 Trisegment_2 ;
@@ -222,7 +223,7 @@ intrusive_ptr< Trisegment_2<K> > construct_trisegment ( Segment_2<K> const& e0
 
   Trisegment_collinearity lCollinearity = trisegment_collinearity_no_exact_constructions(e0,e1,e2);
 
-  return Trisegment_2_ptr( new Trisegment_2(e0, e1, e2, lCollinearity) ) ;
+  return Trisegment_2_ptr( new Trisegment_2(e0, e1, e2, lCollinearity, id) ) ;
 }
 
 // Given 3 oriented straight line segments: e0, e1, e2
@@ -504,15 +505,18 @@ optional< Rational< typename K::FT> > compute_degenerate_offset_lines_isec_timeC
 //
 // Calls the appropiate function depending on the collinearity of the edges.
 //
-template<class K>
-optional< Rational< typename K::FT > > compute_offset_lines_isec_timeC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
+template<class K, class TimeCache>
+optional< Rational< typename K::FT > > compute_offset_lines_isec_timeC2 ( intrusive_ptr< Trisegment_2<K> > const& tri, TimeCache& cache)
 {
+  if (cache.is_time_cached(tri->id))
+    return cache.time(tri->id);
   CGAL_precondition ( tri->collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
 
-  return tri->collinearity() == TRISEGMENT_COLLINEARITY_NONE ? compute_normal_offset_lines_isec_timeC2    (tri)
-                                                             : compute_degenerate_offset_lines_isec_timeC2(tri);
+  optional< Rational< typename K::FT > > res = tri->collinearity() == TRISEGMENT_COLLINEARITY_NONE ? compute_normal_offset_lines_isec_timeC2    (tri)
+                                                                                                   : compute_degenerate_offset_lines_isec_timeC2(tri);
+  cache.set_time(tri->id, res);
+  return res;
 }
-
 
 // Given 3 oriented line segments e0, e1 and e2
 // such that their offsets at a certian distance intersect in a single point,

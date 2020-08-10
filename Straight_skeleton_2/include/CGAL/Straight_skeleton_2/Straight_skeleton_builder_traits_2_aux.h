@@ -30,10 +30,6 @@
 #include <boost/none.hpp>
 #include <boost/mpl/has_xxx.hpp>
 
-#ifdef CGAL_USE_CORE
-#  include <CGAL/CORE_BigFloat.h>
-#endif
-
 namespace CGAL {
 
 namespace CGAL_SS_i {
@@ -113,6 +109,14 @@ private:
   }
 
 public:
+
+  Exceptionless_filtered_construction() {}
+
+  Exceptionless_filtered_construction(const EC& Exact_construction, const FC& Filter_construction)
+    : Exact_construction(Exact_construction)
+    , Filter_construction(Filter_construction)
+  {}
+
   typedef AC_result_type           result_type;
 
   template <class ... A>
@@ -207,7 +211,9 @@ public:
                , Segment_2 const&        aE1
                , Segment_2 const&        aE2
                , Trisegment_collinearity aCollinearity
+               , std::size_t id
                )
+    : id(id)
   {
     mCollinearity = aCollinearity ;
 
@@ -300,6 +306,8 @@ public:
       recursive_print(os,aTriPtr->child_r(),aDepth+1);
   }
 
+  std::size_t id;
+
 private :
 
   Segment_2               mE[3];
@@ -389,6 +397,7 @@ struct SS_converter : Converter
                                                             ,cvt_s(tri->e1())
                                                             ,cvt_s(tri->e2())
                                                             ,tri->collinearity()
+                                                            ,tri->id
                                                             )
                                    ) ;
   }

@@ -165,8 +165,10 @@ Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2
 // Those seeds are used to determine the actual position of the degenerate vertex in case of collinear edges (since that point is
 // not given by the collinear edges alone)
 //
-template<class K, class FT>
-Uncertain<bool> exist_offset_lines_isec2 ( intrusive_ptr< Trisegment_2<K> > const& tri, optional<FT> const& aMaxTime )
+template<class K, class FT, class TimeCache>
+Uncertain<bool> exist_offset_lines_isec2 ( intrusive_ptr< Trisegment_2<K> > const& tri
+                                         , optional<FT> const& aMaxTime
+                                         , TimeCache& time_cache )
 {
 
   typedef Rational<FT>       Rational ;
@@ -179,7 +181,7 @@ Uncertain<bool> exist_offset_lines_isec2 ( intrusive_ptr< Trisegment_2<K> > cons
   {
     CGAL_STSKEL_TRAITS_TRACE( ( tri->collinearity() == TRISEGMENT_COLLINEARITY_NONE ? " normal edges" : " collinear edges" ) ) ;
 
-    Optional_rational t = compute_offset_lines_isec_timeC2(tri) ;
+    Optional_rational t = compute_offset_lines_isec_timeC2(tri, time_cache) ;
     if ( t )
     {
       Uncertain<bool> d_is_zero = CGAL_NTS certified_is_zero(t->d()) ;
@@ -224,9 +226,10 @@ Uncertain<bool> exist_offset_lines_isec2 ( intrusive_ptr< Trisegment_2<K> > cons
 // (m0',m1',m2') and (n0',n1',n2') intersect each in a single point; returns the relative order of mt w.r.t nt.
 // That is, indicates which offset triple intersects first (closer to the source lines)
 // PRECONDITION: There exist distances mt and nt for which each offset triple intersect at a single point.
-template<class K>
+template<class K, class TimeCache>
 Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( intrusive_ptr< Trisegment_2<K> > const& m
                                                                , intrusive_ptr< Trisegment_2<K> > const& n
+                                                               , TimeCache& time_cache
                                                                )
 {
   typedef typename K::FT FT ;
@@ -237,8 +240,8 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( intrusive_ptr< 
 
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
-  Optional_rational mt_ = compute_offset_lines_isec_timeC2(m);
-  Optional_rational nt_ = compute_offset_lines_isec_timeC2(n);
+  Optional_rational mt_ = compute_offset_lines_isec_timeC2(m, time_cache);
+  Optional_rational nt_ = compute_offset_lines_isec_timeC2(n, time_cache);
 
   if ( mt_ && nt_ )
   {
@@ -466,8 +469,8 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2<K> > c
 // PRECONDITIONS:
 //   There exist single points at which the offset lines for 'l' and 'r' at 'tl', 'tr' intersect.
 //
-template<class K>
-Uncertain<bool> are_events_simultaneousC2 ( intrusive_ptr< Trisegment_2<K> > const& l, intrusive_ptr< Trisegment_2<K> > const& r )
+template<class K, class TimeCache>
+Uncertain<bool> are_events_simultaneousC2 ( intrusive_ptr< Trisegment_2<K> > const& l, intrusive_ptr< Trisegment_2<K> > const& r, TimeCache& time_cache )
 {
   typedef typename K::FT FT ;
 
@@ -481,8 +484,8 @@ Uncertain<bool> are_events_simultaneousC2 ( intrusive_ptr< Trisegment_2<K> > con
 
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 
-  Optional_rational lt_ = compute_offset_lines_isec_timeC2(l);
-  Optional_rational rt_ = compute_offset_lines_isec_timeC2(r);
+  Optional_rational lt_ = compute_offset_lines_isec_timeC2(l, time_cache);
+  Optional_rational rt_ = compute_offset_lines_isec_timeC2(r, time_cache);
 
   if ( lt_ && rt_ )
   {
