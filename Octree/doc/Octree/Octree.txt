@@ -16,31 +16,31 @@ The Octree package provides the Octree and Node classes.
 
 \section Section_Octree_Examples Examples
 
-\subsection Section_Octree_Example_Point_Set Example for an Octree built from a Point_set_3
+\subsection Section_Octree_Example_Point_Set Building an Octree from a Point_set_3
 
 e.g. I've loaded a `Point_set_3` from a file, and I want to build a tree from it.
 
-\subsection Section_Octree_Example_Point_Vector Example for an Octree built from a Vector of Points
+\subsection Section_Octree_Example_Point_Vector Building an Octree from a Vector of Points
 
 e.g. I have a collection of points contained by an `std::vector<Point_3>`, and I want to build a tree from it.
 
-\subsection Section_Octree_Example_Custom_Split_Criterion Example for a Custom Split_criterion
+\subsection Section_Octree_Example_Custom_Split_Criterion Building an Octree with a Custom Split_criterion
 
 e.g. I want to build an octree with a split criterion that isn't provided
 
-\subsection Section_Octree_Example_Nearest_Neighbor Example for Nearest Neighbor
+\subsection Section_Octree_Example_Nearest_Neighbor Finding the Nearest Neighbor of a Point
 
 e.g. I've built a tree and I want to use it to find the nearest point to a specific location
 
-\subsection Section_Octree_Example_Manual_Traveral Example for Manual Traversal
+\subsection Section_Octree_Example_Manual_Traveral Manual Traversal
 
 e.g. I have a reference to the root node of a tree, and I want a reference to a specific child
 
-\subsection Section_Octree_Example_Preorder_Traversal Example for Preorder Traversal
+\subsection Section_Octree_Example_Preorder_Traversal Preorder Traversal
 
 e.g. I've build a tree and I want to print it out (parents before children)
 
-\subsection Section_Octree_Example_Custom_Traversal Example for a Custom Traversal Method
+\subsection Section_Octree_Example_Custom_Traversal Using a Custom Traversal Method
 
 e.g. I've build a tree and I want to print it out, but layer by layer
 
