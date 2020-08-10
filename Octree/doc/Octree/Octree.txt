@@ -12,17 +12,48 @@ namespace CGAL {
 An octree is a commonly used data structure that subdivides 3d space.
 The Octree package provides the Octree and Node classes.
 
-\section Section_Octree_Example_Programs Example Programs
+\section Section_Octree Octree
+
+\section Section_Octree_Examples Examples
 
 \subsection Section_Octree_Example_Point_Set Example for an Octree built from a Point_set_3
+
+e.g. I've loaded a `Point_set_3` from a file, and I want to build a tree from it.
+
+\subsection Section_Octree_Example_Point_Vector Example for an Octree built from a Vector of Points
+
+e.g. I have a collection of points contained by an `std::vector<Point_3>`, and I want to build a tree from it.
+
 \subsection Section_Octree_Example_Custom_Split_Criterion Example for a Custom Split_criterion
+
+e.g. I want to build an octree with a split criterion that isn't provided
+
+\subsection Section_Octree_Example_Nearest_Neighbor Example for Nearest Neighbor
+
+e.g. I've built a tree and I want to use it to find the nearest point to a specific location
+
+\subsection Section_Octree_Example_Manual_Traveral Example for Manual Traversal
+
+e.g. I have a reference to the root node of a tree, and I want a reference to a specific child
+
+\subsection Section_Octree_Example_Preorder_Traversal Example for Preorder Traversal
+
+e.g. I've build a tree and I want to print it out (parents before children)
+
+\subsection Section_Octree_Example_Custom_Traversal Example for a Custom Traversal Method
+
+e.g. I've build a tree and I want to print it out, but layer by layer
+
+\section Section_Octree_Performance Performance
+
+\subsection Section_Octree_Performance_Comparison Comparison with kD Tree
+
+e.g. When is an octree the right choice?
 
 \section Section_Octree_Software_Design Software Design
 
 \subsection Subsection_Octree_Splitting_Rules Splitting Rules
 \subsection Subsection_Octree_Walker_Rules Walker Rules
-
-Explain the design of the package.
 
 */
 
