@@ -154,7 +154,7 @@ public:
    */
   Octree(
           PointRange &point_range,
-          PointMap point_map,
+          PointMap point_map = PointMap(),
           const FT enlarge_ratio = 1.2) :
           m_ranges(point_range),
           m_points_map(point_map) {
