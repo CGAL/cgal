@@ -26,8 +26,7 @@ int main(int argc, char **argv) {
   points.emplace_back(-1, 1, 1);
 
   // Create an octree from the points
-  Point_map point_map = Point_map ();
-  Octree octree(points, point_map);
+  Octree octree(points);
 
   // Build the octree with a small bucket size
   octree.refine(10, 2);
