@@ -40,7 +40,12 @@ The vector is used as the point map, and ...
 
 \subsection Section_Octree_Example_Custom_Split_Criterion Building an Octree with a Custom Split_criterion
 
-e.g. I want to build an octree with a split criterion that isn't provided
+This example illustrates how to refine an octree using a split criterion that isn't provided by default.
+
+The criterion is a functor created by the user to determine whether a node needs to be split.
+This particular criterion sets a node's bucket size as a ratio of its depth.
+For example, for a ratio of 2, a node at depth 2 can hold 4 points, a node at depth 7 can hold 14.
+
 \cgalExample{Octree/Octree_build_with_custom_split.cpp}
 
 \subsection Section_Octree_Example_Nearest_Neighbor Finding the Nearest Neighbor of a Point
