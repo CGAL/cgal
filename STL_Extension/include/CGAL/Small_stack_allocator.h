@@ -94,9 +94,12 @@ public:
 
   Small_stack_allocator() { }
 
-  // Forbid copy/assignment
-  Small_stack_allocator (const Small_stack_allocator&) = delete;
-  Small_stack_allocator& operator=  (const Small_stack_allocator&) = delete;
+  // Do not copy pool
+  Small_stack_allocator(const Small_stack_allocator&) { }
+  Small_stack_allocator& operator=  (const Small_stack_allocator&)
+  {
+    return Small_stack_allocator();
+  }
 
   T* allocate (std::size_t n)
   {

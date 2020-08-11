@@ -17,6 +17,9 @@
 
 #include <CGAL/license/Surface_sweep_2.h>
 
+#include <CGAL/Small_stack_allocator.h>
+
+
 /*! \file
  *
  * Defintion of the No_overlap_event_base class.
@@ -65,7 +68,8 @@ public:
   typedef typename internal::Arr_complete_right_side_category<Gt2>::Category
                                                         Right_side_category;
 
-  typedef std::list<Subcurve*>                          Subcurve_container;
+  typedef Small_stack_allocator<Subcurve*, 4>           Subcurve_allocator;
+  typedef std::list<Subcurve*, Subcurve_allocator>      Subcurve_container;
   typedef typename Subcurve_container::iterator         Subcurve_iterator;
   typedef typename Subcurve_container::const_iterator   Subcurve_const_iterator;
   typedef typename Subcurve_container::reverse_iterator
