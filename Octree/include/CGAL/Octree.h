@@ -108,7 +108,7 @@ public:
   /*!
    * \brief A function that determines the next node in a traversal given the current one
    */
-  typedef std::function<const Node *(const Node *)> Node_walker;
+  typedef std::function<const Node *(const Node *)> Node_traversal_method;
 
   /// @}
 
@@ -304,12 +304,12 @@ public:
    * \return a forward input iterator over the nodes of the tree
    */
   template<class Traversal>
-  Node_range walk(const Traversal &walker = Traversal()) const {
+  Node_range traverse(const Traversal &traversal_method = Traversal()) const {
 
-    const Node *first = walker.first(&m_root);
+    const Node *first = traversal_method.first(&m_root);
 
-    Node_walker next = std::bind(&Traversal::template next<typename PointRange::iterator>,
-                                 walker, _1);
+    Node_traversal_method next = std::bind(&Traversal::template next<typename PointRange::iterator>,
+                                 traversal_method, _1);
 
     return boost::make_iterator_range(Traversal_iterator<const Node>(first, next),
                                       Traversal_iterator<const Node>());
