@@ -16,7 +16,6 @@
 
 #include <cstdlib>
 
-
 namespace CGAL
 {
 
@@ -42,6 +41,8 @@ public:
   T* allocate (std::size_t n)
   {
     CGAL_BRANCH_PROFILER("stack allocations / total allocations of Small_stack_allocator", prof);
+
+    // If chunk to allocate does not exceed remaining stack size, use stack
     if (m_next + n < MaxSize)
     {
       CGAL_BRANCH_PROFILER_BRANCH(prof);
@@ -50,17 +51,23 @@ public:
       return out;
     }
 
+    // Else, fallback to `new` allocation
     return new T[n];
   }
 
   void deallocate (T* p, std::size_t n)
   {
+    // If pointer is part of the pool, nothing to do
     if (m_pool <= p && p < m_pool + MaxSize)
     {
       std::size_t pos = static_cast<std::size_t>(p - m_pool);
+
+      // If pointer was the last one allocated, we can use again this
+      // chunk of memory
       if (pos + n == m_next)
         m_next = pos;
     }
+    // Else, delete it
     else
       delete[] p;
   }
@@ -69,6 +76,18 @@ public:
 
 } // namespace internal
 
+/*
+  The small stack allocator holds a statically allocated array of type
+  T. When allocation is required, it first returns pointers from that
+  statically allocated space. When allocation exceeds this small size,
+  it goes to the "normal" mode and allocates with `new`.
+
+  When deallocating, the stack can be used again if the last element
+  allocated on it is deallocated (in the absence of the free list, it
+  is difficult to do better than that). Keep in mind that this
+  allocator is mainly designed for containers that you know are going
+  to do few allocations/deallocations.
+*/
 template <typename T, std::size_t MaxSize>
 class Small_stack_allocator
 {
@@ -96,7 +115,7 @@ public:
 
   // Do not copy pool
   Small_stack_allocator(const Small_stack_allocator&) { }
-  Small_stack_allocator& operator=  (const Small_stack_allocator&)
+  Small_stack_allocator& operator= (const Small_stack_allocator&)
   {
     return Small_stack_allocator();
   }
@@ -112,9 +131,6 @@ public:
   }
 };
 
-
 } // namespace CGAL
-
-
 
 #endif // CGAL_SMALL_STACK_ALLOCATOR_H
