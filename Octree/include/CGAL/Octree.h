@@ -300,7 +300,7 @@ public:
    * \todo Perhaps I should add some discussion of recommended usage
    *
    * \tparam Traversal type of the walker rule
-   * \param walker the rule to use when determining the order of the sequence of points produced
+   * \param traversal_method the rule to use when determining the order of the sequence of points produced
    * \return a forward input iterator over the nodes of the tree
    */
   template<class Traversal>
