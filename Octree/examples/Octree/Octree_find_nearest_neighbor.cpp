@@ -39,11 +39,20 @@ int main(int argc, char **argv) {
   // Find the nearest points to a few locations
   std::vector<Point> points_to_find = {
           {0, 0, 0},
-          {1, 1, 1}
+          {1, 1, 1},
+          {-1, -1, -1},
+          {-0.46026, -0.25353, 0.32051},
+          {-0.460261, -0.253533, 0.320513}
   };
   for (auto p : points_to_find) {
 
-    std::cout << "the nearest point to (" << p << ") is (" << std::endl;
+    // The nearest points will be placed in this vector
+    std::vector<Point> nearest_points;
+
+    // k=1 to find the single closest point
+    octree.nearest_k_neighbors(p, 1, std::back_inserter(nearest_points));
+
+    std::cout << "the nearest point to (" << p << ") is (" << nearest_points[0] << ")" << std::endl;
   }
 
   return EXIT_SUCCESS;
