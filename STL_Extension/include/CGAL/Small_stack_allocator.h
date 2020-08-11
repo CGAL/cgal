@@ -93,7 +93,11 @@ class Small_stack_allocator
 {
 public:
 
-  using value_type = T;
+  using pointer =               T*;
+  using const_pointer =   const T*;
+  using reference =             T&;
+  using const_reference = const T&;
+  using value_type =            T ;
 
   template <typename T2, std::size_t MaxSize2>
   friend class Small_stack_allocator;
@@ -129,6 +133,25 @@ public:
   {
     m_pool.deallocate (p, n);
   }
+
+  // Functions construct and destroy are not used by modern compilers
+  // and are deprecated from the Allocator concept in C++17. They are
+  // included to comply with older compilers and should be removed at
+  // some point.
+
+  template <typename U, typename ... Args>
+  void construct (U* u, Args&& ... args)
+  {
+    ::new (static_cast<void*>(u))
+      U (std::forward<Args> (args)...);
+  }
+
+  template <typename U>
+  void destroy (U* u)
+  {
+    u->~U();
+  }
+
 };
 
 } // namespace CGAL
