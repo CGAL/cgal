@@ -57,17 +57,34 @@ The nearest neighbor method is invoked for several input points.
 A k value of 1 is used to find the single closest point.
 Results are put in a vector, and then printed.
 
-e.g. I've built a tree and I want to use it to find the nearest point to a specific location
 \cgalExample{Octree/Octree_find_nearest_neighbor.cpp}
 
 \subsection Section_Octree_Example_Manual_Traveral Manual Traversal
 
-e.g. I have a reference to the root node of a tree, and I want a reference to a specific child
+This example demonstrates ways of accessing different nodes of a tree, given a reference to one.
+
+If you have the root node, it's possible to get to its children using the subscript operator (`[]`).
+Values from 0-7 provide access to the different children.
+Using the operator on a leaf node is considered undefined behavior.
+
+For non-root nodes, it's possible to access parent nodes using the `parent` accessor.
+Note that the accessor returns a pointer and not a reference,
+calling the root node's parent accessor will return null.
+
+These accessors and operators can be chained to access any node in the tree in a single line of code.
+
+\todo I want to add an enum for node indices, so I can refer to them by name (e.g. LEFT_TOP_FRONT)
+
 \cgalExample{Octree/Octree_traversal_manual.cpp}
 
 \subsection Section_Octree_Example_Preorder_Traversal Preorder Traversal
 
-e.g. I've build a tree and I want to print it out (parents before children)
+This example illustrates how to use the provided traversals.
+
+A tree is constructed, and a traversal is used to create a range that can be iterated over using a for-each loop.
+The default output operator for the octree uses the preorder traversal to do a pretty-print of the tree structure.
+In this case, we print out the nodes of the tree without indentation instead.
+
 \cgalExample{Octree/Octree_traversal_preorder.cpp}
 
 \subsection Section_Octree_Example_Custom_Traversal Using a Custom Traversal Method
