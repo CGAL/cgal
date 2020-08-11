@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
     std::cerr << "Error: cannot read file" << std::endl;
     return EXIT_FAILURE;
   }
-  std::cout << "loaded " << points.number_of_points() << " points" << std::endl;
+  std::cout << "loaded " << points.number_of_points() << " points\n" << std::endl;
 
   // Create an octree from the points
   Octree octree(points, points.point_map());
