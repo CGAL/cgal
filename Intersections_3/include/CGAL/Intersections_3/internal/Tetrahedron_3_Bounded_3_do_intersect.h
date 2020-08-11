@@ -160,13 +160,6 @@ do_intersect(const typename K::Tetrahedron_3 &tet,
   return do_intersect_tetrahedron_bounded(sp, tet, tet[0], k);
 }
 
-template <class K>
-inline typename K::Boolean do_intersect(const typename K::Tetrahedron_3 &tet,
-                                        const CGAL::Bbox_3 &bb, const K &k) {
-  // Swap arguments.
-  return do_intersect(bb, tet, k);
-}
-
 // BBox_3 specific code since it is ok for BBox_3 to degenerate.
 template <class K>
 inline typename K::Boolean do_intersect(const CGAL::Bbox_3 &aabb,
@@ -195,6 +188,14 @@ inline typename K::Boolean do_intersect(const CGAL::Bbox_3 &aabb,
   if (is_indeterminate(b)) result = b;
 
   return result;
+}
+
+
+template <class K>
+inline typename K::Boolean do_intersect(const typename K::Tetrahedron_3 &tet,
+                                        const CGAL::Bbox_3 &bb, const K &k) {
+  // Swap arguments.
+  return do_intersect(bb, tet, k);
 }
 
 } // namespace internal
