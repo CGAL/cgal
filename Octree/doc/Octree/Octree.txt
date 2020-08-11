@@ -50,6 +50,13 @@ For example, for a ratio of 2, a node at depth 2 can hold 4 points, a node at de
 
 \subsection Section_Octree_Example_Nearest_Neighbor Finding the Nearest Neighbor of a Point
 
+This example illustrates how to use an octree to accelerate the search for points close to a location.
+
+Points are loaded from a file and an octree is built.
+The nearest neighbor method is invoked for several input points.
+A k value of 1 is used to find the single closest point.
+Results are put in a vector, and then printed.
+
 e.g. I've built a tree and I want to use it to find the nearest point to a specific location
 \cgalExample{Octree/Octree_find_nearest_neighbor.cpp}
 
