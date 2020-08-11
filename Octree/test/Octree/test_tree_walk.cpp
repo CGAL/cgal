@@ -21,10 +21,9 @@ bool test_preorder_1_node() {
   // Define the dataset
   Point_set points;
   points.insert({-1, -1, -1});
-  auto point_map = points.point_map();
 
   // Create the octree
-  Octree octree(points, point_map);
+  Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
   // Create the range
@@ -43,10 +42,9 @@ bool test_preorder_9_nodes() {
   Point_set points;
   points.insert({-1, -1, -1});
   points.insert({1, -1, -1});
-  auto point_map = points.point_map();
 
   // Create the octree
-  Octree octree(points, point_map);
+  Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
   // Create the range
@@ -71,10 +69,9 @@ bool test_preorder_25_nodes() {
   points.insert({1, 1, 2});
   points.insert({1, 1, 3});
   points.insert({1, 1, 4});
-  auto point_map = points.point_map();
 
   // Create the octree
-  Octree octree(points, point_map);
+  Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
   // Create the range

@@ -22,10 +22,9 @@ void test_1_point() {
   // Define the dataset
   Point_set points;
   points.insert({-1, -1, -1});
-  auto point_map = points.point_map();
 
   // Create the octree
-  Octree octree(points, point_map);
+  Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
   // Because there's only the root node, any point should be placed in it
@@ -49,10 +48,9 @@ void test_8_points() {
   points.insert({1, -1, 1});
   points.insert({-1, 1, 1});
   points.insert({1, 1, 1});
-  auto point_map = points.point_map();
 
   // Create the octree
-  Octree octree(points, point_map);
+  Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
   // Existing points should end up in the same place
@@ -91,10 +89,9 @@ void test_10_points() {
   points.insert({1, 1, 1});
   points.insert({0.875, 1, -1});
   points.insert({-1, -0.75, 1});
-  auto point_map = points.point_map();
 
   // Create the octree
-  Octree octree(points, point_map);
+  Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
   // Existing points should end up in the same place

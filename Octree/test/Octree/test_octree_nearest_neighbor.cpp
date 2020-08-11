@@ -68,8 +68,7 @@ void naive_vs_octree(std::size_t dataset_size) {
 
   // Do the same using the octree
   Point octree_nearest = *generator;
-  auto point_map = points.point_map();
-  Octree octree(points, point_map);
+  Octree octree(points, points.point_map());
   octree.refine(10, 20);
   auto octree_start_time = high_resolution_clock::now();
   {
@@ -125,8 +124,7 @@ void kdtree_vs_octree(std::size_t dataset_size, std::size_t K) {
 
   // Do the same using the octree
   std::vector<Point> octree_nearest_neighbors;
-  auto point_map = points.point_map();
-  Octree octree(points, point_map);
+  Octree octree(points, points.point_map());
   octree.refine(10, 20);
   auto octree_start_time = high_resolution_clock::now();
   octree.nearest_k_neighbors(random_point, K, std::back_inserter(octree_nearest_neighbors));

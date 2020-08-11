@@ -21,10 +21,9 @@ void test_1_point() {
   // Define the dataset
   Point_set points;
   points.insert({-1, -1, -1});
-  auto point_map = points.point_map();
 
   // Create the octree
-  Octree octree(points, point_map);
+  Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
   // Check that the topology matches
@@ -40,10 +39,9 @@ void test_2_points() {
   Point_set points;
   points.insert({-1, -1, -1});
   points.insert({1, -1, -1});
-  auto point_map = points.point_map();
 
   // Create the octree
-  Octree octree(points, point_map);
+  Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
   // The octree should have been split once
@@ -60,10 +58,9 @@ void test_4_points() {
   points.insert({1, 1, 2});
   points.insert({1, 1, 3});
   points.insert({1, 1, 4});
-  auto point_map = points.point_map();
 
   // Create the octree
-  Octree octree(points, point_map);
+  Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
   // The octree should have been split once on the first level, and twice on the second
