@@ -42,9 +42,9 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_Uncertain.cpp" )
   create_single_source_cgal_program( "test_vector.cpp" )
   create_single_source_cgal_program( "test_join_iterators.cpp" )
+  create_single_source_cgal_program( "test_Small_stack_allocator.cpp" )
 else()
 
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
 
 endif()
-
