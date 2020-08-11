@@ -33,8 +33,10 @@ This example illustrates how to create an octree from a collection of points tha
 It also shows a more explicit way of setting the split criteria when refining the tree.
 
 An `std::vector<Point_3>` is manually filled with points.
-The vector is used as the point map, and ...
-\todo How should I create the point index vector?
+The vector is used as the point set,
+and by using a `CGAL::Identity_property_map` as the octree's map type, a map doesn't need to be provided.
+
+The split criterion is manually constructed and passed to the refine method.
 
 \cgalExample{Octree/Octree_build_from_Point_vector.cpp}
 
