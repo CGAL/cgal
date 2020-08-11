@@ -2105,11 +2105,10 @@ _approximate_intersection_points(const Self& cv,
     if (bound1.type == Bounding_traits::Bez_point_bound::RATIONAL_PT &&
         bound2.type == Bounding_traits::Bez_point_bound::RATIONAL_PT)
     {
-      CGAL_assertion (CGAL::compare(bound1.t_min, bound1.t_max) == EQUAL);
-      CGAL_assertion (CGAL::compare(bound2.t_min, bound2.t_max) == EQUAL);
-      Rational t1 = bound1.t_min;
-      Rational t2 = bound2.t_min;
-      Nt_traits nt_traits;
+      CGAL_assertion (CGAL::compare (bound1.t_min, bound1.t_max) == EQUAL);
+      CGAL_assertion (CGAL::compare (bound2.t_min, bound2.t_max) == EQUAL);
+      Rational   t1 = bound1.t_min;
+      Rational   t2 = bound2.t_min;
 
       if (is_self_intersection) {
         // Set the originators with the curve x-monotone IDs.
@@ -2125,8 +2124,8 @@ _approximate_intersection_points(const Self& cv,
       }
       else {
         // Set the originators referring to the entire supporting curves.
-        pt = Point_2(B1, t1);
-        pt.add_originator(Originator (B2, nt_traits.convert (t2)));
+        pt = Point_2 (B1, t1);
+        pt.add_originator (Originator (B2, t2));
       }
     }
     else {
