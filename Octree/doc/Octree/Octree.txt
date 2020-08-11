@@ -75,7 +75,7 @@ calling the root node's parent accessor will return null.
 
 These accessors and operators can be chained to access any node in the tree in a single line of code.
 
-\todo I want to add an enum for node indices, so I can refer to them by name (e.g. LEFT_TOP_FRONT)
+\todo I plan to add an enum for node indices, so I can refer to them by name (e.g. LEFT_TOP_FRONT)
 
 \cgalExample{Octree/Octree_traversal_manual.cpp}
 
@@ -89,10 +89,14 @@ In this case, we print out the nodes of the tree without indentation instead.
 
 \cgalExample{Octree/Octree_traversal_preorder.cpp}
 
+<!--
 \subsection Section_Octree_Example_Custom_Traversal Using a Custom Traversal Method
 
 e.g. I've build a tree and I want to print it out, but layer by layer
+
 \cgalExample{Octree/Octree_traversal_custom.cpp}
+
+!-->
 
 \section Section_Octree_Performance Performance
 
