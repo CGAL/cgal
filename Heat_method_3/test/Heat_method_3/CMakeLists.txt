@@ -33,8 +33,9 @@ endif()
 
 
 find_package(Eigen3 3.3.0)
+include(CGAL_Eigen_support)
 
-if (NOT EIGEN3_FOUND)
+if (NOT TARGET CGAL::Eigen_support)
   message(STATUS "This project requires the  Eigen library (3.3 or greater), and will not be compiled.")
   return()
 endif()
@@ -49,8 +50,8 @@ include_directories( BEFORE include )
 include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "heat_method_concept.cpp" )
-CGAL_target_use_Eigen(heat_method_concept)
+target_link_libraries(heat_method_concept PUBLIC CGAL::Eigen_support)
 create_single_source_cgal_program( "heat_method_surface_mesh_test.cpp" )
-CGAL_target_use_Eigen(heat_method_surface_mesh_test)
+target_link_libraries(heat_method_surface_mesh_test PUBLIC CGAL::Eigen_support)
 create_single_source_cgal_program( "heat_method_surface_mesh_direct_test.cpp" )
-CGAL_target_use_Eigen(heat_method_surface_mesh_direct_test)
+target_link_libraries(heat_method_surface_mesh_direct_test PUBLIC CGAL::Eigen_support)

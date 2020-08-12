@@ -563,7 +563,7 @@ public:
     Partial_facet pf;
 #endif
     bool hit = false;
-    Point_3 eor; // 'end of ray', the latest ray's hit point
+    Point_3 eor = CGAL::ORIGIN; // 'end of ray', the latest ray's hit point
     Objects_along_ray objects = candidate_provider->objects_along_ray(ray);
     Objects_along_ray_iterator objects_iterator = objects.begin();
     while( !hit && objects_iterator != objects.end()) {

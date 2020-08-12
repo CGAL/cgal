@@ -154,10 +154,6 @@ public:
   public:
     Context() : enclosing(nullptr) {}
 
-    Context(const Context& hc)
-      : enclosing(hc.enclosing), pos(hc.pos)
-    {}
-
     Vertex_it    vertices_begin()const { return enclosing->skip_begin();}
     Vertex_it    current()const {return pos;}
     Vertex_it    vertices_end()const {return enclosing->skip_end();}
@@ -187,9 +183,11 @@ public:
     , sc_to_c_map(Pair_compare(comp))
   { }
   Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch);
+  Polyline_constraint_hierarchy_2(Polyline_constraint_hierarchy_2&&) = default;
   ~Polyline_constraint_hierarchy_2(){ clear();}
   void clear();
   Polyline_constraint_hierarchy_2& operator=(const Polyline_constraint_hierarchy_2& ch);
+  Polyline_constraint_hierarchy_2& operator=(Polyline_constraint_hierarchy_2&& ch) = default;
 
   // Query
   bool is_subconstrained_edge(T va, T vb) const;
@@ -499,7 +497,7 @@ swap(Constraint_id first, Constraint_id second){
     // and replace the context of the constraint
     for(Context_iterator ctit=hcl->begin(); ctit != hcl->end(); ctit++) {
       if(ctit->enclosing == first.vl_ptr()){
-        ctit->enclosing = 0;
+        ctit->enclosing = nullptr;
         break;
       }
     }
@@ -530,7 +528,7 @@ swap(Constraint_id first, Constraint_id second){
 
     // and replace the context of the constraint
     for(Context_iterator ctit=hcl->begin(); ctit != hcl->end(); ctit++) {
-      if(ctit->enclosing == 0){
+      if(ctit->enclosing == nullptr){
         ctit->enclosing = second.vl_ptr();
         break;
       }

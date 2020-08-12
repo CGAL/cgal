@@ -54,9 +54,9 @@ namespace CGAL {
 // =====================
 // failure functions
 // -----------------
-CGAL_EXPORT CGAL_NORETURN void assertion_fail      ( const char*, const char*, int, const char* = "") ;
-CGAL_EXPORT CGAL_NORETURN void precondition_fail   ( const char*, const char*, int, const char* = "") ;
-CGAL_EXPORT CGAL_NORETURN void postcondition_fail  ( const char*, const char*, int, const char* = "") ;
+[[noreturn]] CGAL_EXPORT void assertion_fail      ( const char*, const char*, int, const char* = "") ;
+[[noreturn]] CGAL_EXPORT void precondition_fail   ( const char*, const char*, int, const char* = "") ;
+[[noreturn]] CGAL_EXPORT void postcondition_fail  ( const char*, const char*, int, const char* = "") ;
 
 // warning function
 // ----------------
