@@ -274,14 +274,13 @@ public:
 
   void grade() {
 
-    std::queue<const Node *> leaf_nodes;
-    for (auto &leaf : traverse(Traversal::Leaves()))
-      leaf_nodes.push(&leaf);
+    std::queue<Node *> leaf_nodes;
+    leaves(m_root, leaf_nodes);
 
-    while (!leaf_nodes.empty()) {
-      const Node *node = leaf_nodes.front();
-      leaf_nodes.pop();
-      if (!node->is_leaf()) continue;
+//    while (!leaf_nodes.empty()) {
+//      const Node *node = leaf_nodes.front();
+//      leaf_nodes.pop();
+//      if (!node->is_leaf()) continue;
 //
 //      std::list<Node *> neighbors_to_split = node->find_unbalanced_neighbors_to_split();
 //      if (!neighbors_to_split.empty()) leaf_nodes.push(node);
@@ -293,7 +292,7 @@ public:
 //          leaf_nodes.push(neighbor_child);
 //        }
 //      }
-    }
+//    }
   }
 
   /// @}
@@ -517,7 +516,19 @@ public:
 
 private: // functions :
 
-  void reassign_points(Node &node, Range_iterator begin, Range_iterator end, const Point &center,
+    void leaves(Node &node, std::queue<Node *> &output) {
+
+      if (node.is_leaf()) {
+        output.push(&node);
+      } else {
+        for (int i = 0; i < 7; ++i) {
+          leaves(node[i], output);
+        }
+      }
+    }
+
+
+    void reassign_points(Node &node, Range_iterator begin, Range_iterator end, const Point &center,
                        std::bitset<3> coord = {},
                        std::size_t dimension = 0) {
 
@@ -585,18 +596,6 @@ private: // functions :
     typename Node::Index index;
     FT distance;
   };
-
-  template<typename Point_output_iterator>
-  void leaves(Node &node, Point_output_iterator output) {
-
-    if (node.is_leaf()) {
-      *output++ = node;
-    } else {
-      for (int i = 0; i < 7; ++i) {
-        leaves(node[i], output);
-      }
-    }
-  }
 
   void nearest_k_neighbors_recursive(Sphere &search_bounds, const Node &node,
                                      std::vector<Point_with_distance> &results, FT epsilon = 0) const {
