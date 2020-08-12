@@ -8,14 +8,14 @@
 // Type Declarations
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
-typedef std::vector<Point> Point_set;
+typedef std::vector<Point> Point_vector;
 typedef CGAL::Identity_property_map<Point> Point_map;
-typedef CGAL::Octree::Octree<Point_set, Point_map> Octree;
+typedef CGAL::Octree::Octree<Point_vector, Point_map> Octree;
 
 int main(int argc, char **argv) {
 
   // Here, our point set is a vector
-  Point_set points;
+  Point_vector points;
 
   // Add a few points to the vector
   points.emplace_back(1, 1, 1);
