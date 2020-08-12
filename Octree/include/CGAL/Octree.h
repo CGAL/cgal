@@ -276,9 +276,24 @@ public:
 
   void grade() {
 
+    // Collect all the leaf nodes
     std::queue<Node *> leaf_nodes;
-    for (auto &leaf : traverse(Traversal::Leaves()))
-      leaf_nodes.push(&leaf);
+    leaves(m_root, leaf_nodes);
+
+    // Iterate over the nodes
+    while (!leaf_nodes.empty()) {
+
+      // Get the next node
+      Node *node = leaf_nodes.front();
+      leaf_nodes.pop();
+
+      // Skip this node if it isn't a leaf anymore
+      if (!node->is_leaf())
+        continue;
+
+      // Find neighbors that need to be split
+      std::list<Node *> neighbors_to_split;
+    }
   }
 
   /// @}
