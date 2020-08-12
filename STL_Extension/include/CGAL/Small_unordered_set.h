@@ -57,8 +57,6 @@ public:
 
   Small_unordered_set() { }
 
-  ~Small_unordered_set() { }
-
   Small_unordered_set (const Small_unordered_set& other)
     : m_size (other.m_size)
   {
@@ -88,6 +86,7 @@ public:
 
   Small_unordered_set& operator= (Small_unordered_set&& other)
   {
+    m_size = other.m_size;
     if (other.m_set)
       m_set = std::move(other.m_set);
     else
