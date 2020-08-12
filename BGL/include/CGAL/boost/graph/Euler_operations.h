@@ -573,7 +573,7 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
 
   std::vector<typename boost::graph_traits<PMesh>::vertex_descriptor> face(vrange.begin(), vrange.end());
 
-  int N = face.size();
+  std::size_t N = face.size();
   std::vector<vertex_descriptor> f2(face);
   std::sort(f2.begin(), f2.end());
 
@@ -589,7 +589,7 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
 
   face.push_back(face.front());
 
-  for(int i=0; i < N; i++){
+  for(std::size_t i=0; i < N; ++i){
     halfedge_descriptor hd;
     bool found;
     boost::tie(hd,found) = halfedge(face[i],face[i+1],sm);
@@ -598,7 +598,7 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
     }
   }
 
-  for(int i=0; i < N; i++){
+  for(std::size_t i=0; i < N; ++i){
     if(halfedge(face[i],sm) == boost::graph_traits<PMesh>::null_halfedge()){
       continue;
     }
@@ -615,7 +615,7 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
   //would make the vertex indices[i] a manifold but this should be forbidden
   //if a facet only incident to that vertex has already been inserted.
   //We check this for each vertex of the sequence.
-  for(int i = 0; i < N; ++i) {
+  for(std::size_t i = 0; i < N; ++i) {
     std::size_t prev_index= (i-1+N)%N;
     std::size_t next_index= (i+1)%N;
     vertex_descriptor   previous_vertex = face[ prev_index ];
