@@ -127,7 +127,7 @@ struct Preorder {
 };
 
 /*!
- * \brief walker for leaves-only traversal
+ * \todo
  */
 struct Postorder {
 

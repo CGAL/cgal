@@ -103,12 +103,14 @@ public:
   /*!
    * \brief A range that provides input-iterator access to the nodes of a tree
    */
-  typedef boost::iterator_range<Traversal_iterator<const Node>> Node_range;
+  typedef boost::iterator_range<Traversal_iterator<const Node>> Node_range_const;
+  typedef boost::iterator_range<Traversal_iterator<Node>> Node_range;
 
   /*!
    * \brief A function that determines the next node in a traversal given the current one
    */
-  typedef std::function<const Node *(const Node *)> Node_traversal_method;
+  typedef std::function<const Node *(const Node *)> Node_traversal_method_const;
+  typedef std::function<Node *(Node *)> Node_traversal_method;
 
   /// @}
 
@@ -275,24 +277,8 @@ public:
   void grade() {
 
     std::queue<Node *> leaf_nodes;
-    leaves(m_root, leaf_nodes);
-
-//    while (!leaf_nodes.empty()) {
-//      const Node *node = leaf_nodes.front();
-//      leaf_nodes.pop();
-//      if (!node->is_leaf()) continue;
-//
-//      std::list<Node *> neighbors_to_split = node->find_unbalanced_neighbors_to_split();
-//      if (!neighbors_to_split.empty()) leaf_nodes.push(node);
-//      for (Node *neighbor : neighbors_to_split) {
-//        neighbor->split();
-//        reassign_points(neighbor);
-//        for (int child_id = 0; child_id < 8; child_id++) {
-//          Node *neighbor_child = neighbor->child(child_id);
-//          leaf_nodes.push(neighbor_child);
-//        }
-//      }
-//    }
+    for (auto &leaf : traverse(Traversal::Leaves()))
+      leaf_nodes.push(&leaf);
   }
 
   /// @}
@@ -327,11 +313,11 @@ public:
    * \return a forward input iterator over the nodes of the tree
    */
   template<class Traversal>
-  Node_range traverse(const Traversal &traversal_method = Traversal()) const {
+  Node_range_const traverse(const Traversal &traversal_method = Traversal()) const {
 
     const Node *first = traversal_method.first(&m_root);
 
-    Node_traversal_method next = std::bind(&Traversal::template next<typename Point_range::iterator>,
+    Node_traversal_method_const next = std::bind(&Traversal::template next<typename Point_range::iterator>,
                                            traversal_method, _1);
 
     return boost::make_iterator_range(Traversal_iterator<const Node>(first, next),
@@ -516,18 +502,6 @@ public:
 
 private: // functions :
 
-    void leaves(Node &node, std::queue<Node *> &output) {
-
-      if (node.is_leaf()) {
-        output.push(&node);
-      } else {
-        for (int i = 0; i < 7; ++i) {
-          leaves(node[i], output);
-        }
-      }
-    }
-
-
     void reassign_points(Node &node, Range_iterator begin, Range_iterator end, const Point &center,
                        std::bitset<3> coord = {},
                        std::size_t dimension = 0) {
@@ -678,6 +652,26 @@ private: // functions :
         }
       }
     }
+  }
+
+  // TODO: These helper methods haven't been properly integrated yet
+
+  void leaves(Node &node, std::queue<Node *> &output) {
+
+    if (node.is_leaf()) {
+      output.push(&node);
+    } else {
+      for (int i = 0; i < 7; ++i) {
+        leaves(node[i], output);
+      }
+    }
+  }
+
+  std::list<Node *> unbalanced_neighbors_to_split(Node &node) {
+
+    std::list<Node *> neighbors_to_split;
+
+
   }
 
 }; // end class Octree
