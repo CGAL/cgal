@@ -59,10 +59,10 @@ namespace Octree {
  * A node contains the range of points that are present in the region it defines,
  * and it may contain eight other nodes which further subdivide the region.
  *
- * \tparam PointRange is a range type that provides random access iterators over the indices of a set of points.
- * \tparam PointMap is a type that maps items in the PointRange to Point data
+ * \tparam Point_range is a range type that provides random access iterators over the indices of a set of points.
+ * \tparam PointMap is a type that maps items in the range to Point data
  */
-template<class PointRange, class PointMap = Identity_property_map<typename PointRange::iterator::value_type>>
+template<class Point_range, class PointMap = Identity_property_map<typename Point_range::iterator::value_type>>
 class Octree {
 
 public:
@@ -88,12 +88,12 @@ public:
   /*!
    * \brief
    */
-  typedef boost::iterator_range<typename PointRange::iterator> Points_iterator_range;
+  typedef boost::iterator_range<typename Point_range::iterator> Points_iterator_range;
 
   /*!
    * \brief The Sub-tree / Octant type
    */
-  typedef CGAL::Octree::Node<typename PointRange::iterator> Node;
+  typedef CGAL::Octree::Node<typename Point_range::iterator> Node;
 
   /*!
    * \brief A function that determines whether a node needs to be split when refining a tree
@@ -118,7 +118,7 @@ private: // Private types
   typedef typename Kernel::Iso_cuboid_3 Iso_cuboid;
   typedef typename Kernel::Sphere_3 Sphere;
   typedef typename CGAL::Bbox_3 Bbox;
-  typedef typename PointRange::iterator Range_iterator;
+  typedef typename Point_range::iterator Range_iterator;
   typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
 
 private: // data members :
@@ -126,7 +126,7 @@ private: // data members :
   Node m_root;                      /* root node of the octree */
   uint8_t m_max_depth_reached = 0;  /* octree actual highest depth reached */
 
-  PointRange &m_ranges;              /* input point range */
+  Point_range &m_ranges;              /* input point range */
   PointMap m_points_map;          /* property map: `value_type of InputIterator` -> `Point` (Position) */
 
   Point m_bbox_min;                  /* input bounding box min value */
@@ -153,7 +153,7 @@ public:
    * \param enlarge_ratio the degree to which the bounding box should be enlarged
    */
   Octree(
-          PointRange &point_range,
+          Point_range &point_range,
           PointMap point_map = PointMap(),
           const FT enlarge_ratio = 1.2) :
           m_ranges(point_range),
@@ -308,7 +308,7 @@ public:
 
     const Node *first = traversal_method.first(&m_root);
 
-    Node_traversal_method next = std::bind(&Traversal::template next<typename PointRange::iterator>,
+    Node_traversal_method next = std::bind(&Traversal::template next<typename Point_range::iterator>,
                                            traversal_method, _1);
 
     return boost::make_iterator_range(Traversal_iterator<const Node>(first, next),
@@ -450,7 +450,7 @@ public:
    * \param rhs tree to compare with
    * \return whether the trees have the same topology
    */
-  bool operator==(const Octree<PointRange, PointMap> &rhs) const {
+  bool operator==(const Octree<Point_range, PointMap> &rhs) const {
 
     // Identical trees should have the same bounding box
     if (rhs.m_bbox_min != m_bbox_min || rhs.m_bbox_side != m_bbox_side)
@@ -469,7 +469,7 @@ public:
    * \param rhs tree to compare with
    * \return whether the trees have different topology
    */
-  bool operator!=(const Octree<PointRange, PointMap> &rhs) const {
+  bool operator!=(const Octree<Point_range, PointMap> &rhs) const {
     return !operator==(rhs);
   }
 
