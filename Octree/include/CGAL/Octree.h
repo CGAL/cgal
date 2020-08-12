@@ -278,10 +278,10 @@ public:
     for (auto &leaf : traverse(Traversal::Leaves()))
       leaf_nodes.push(&leaf);
 
-//    while (!leaf_nodes.empty()) {
-//      Node *node = leaf_nodes.front();
-//      leaf_nodes.pop();
-//      if (!node->is_leaf()) continue;
+    while (!leaf_nodes.empty()) {
+      const Node *node = leaf_nodes.front();
+      leaf_nodes.pop();
+      if (!node->is_leaf()) continue;
 //
 //      std::list<Node *> neighbors_to_split = node->find_unbalanced_neighbors_to_split();
 //      if (!neighbors_to_split.empty()) leaf_nodes.push(node);
@@ -293,7 +293,7 @@ public:
 //          leaf_nodes.push(neighbor_child);
 //        }
 //      }
-//    }
+    }
   }
 
   /// @}
@@ -585,6 +585,18 @@ private: // functions :
     typename Node::Index index;
     FT distance;
   };
+
+  template<typename Point_output_iterator>
+  void leaves(Node &node, Point_output_iterator output) {
+
+    if (node.is_leaf()) {
+      *output++ = node;
+    } else {
+      for (int i = 0; i < 7; ++i) {
+        leaves(node[i], output);
+      }
+    }
+  }
 
   void nearest_k_neighbors_recursive(Sphere &search_bounds, const Node &node,
                                      std::vector<Point_with_distance> &results, FT epsilon = 0) const {
