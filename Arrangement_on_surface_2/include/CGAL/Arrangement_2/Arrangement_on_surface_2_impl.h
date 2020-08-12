@@ -2741,6 +2741,8 @@ _insert_at_vertices(DHalfedge* he_to,
 
       if (m_sweep_mode)
       {
+        // Inner CCB are obtained using Halfedge::inner_ccb() which
+        // performs path reduction and always return valid iCCB
         CGAL_assertion(ic1->is_valid());
         CGAL_assertion(ic2->is_valid());
         ic2->set_next(ic1);
