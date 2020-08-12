@@ -314,7 +314,9 @@ public:
                       const Accessor& accessor)
   {
     m_visitor->before_sweep();
+    accessor.before_init();
     _init_indexed_sweep(edges, accessor);
+    accessor.after_init();
     _sweep();
     _complete_sweep();
     m_visitor->after_sweep();
