@@ -216,6 +216,60 @@ public:
   }
 };
 
+//special case when ray query is from another Kernel K1 is the kernel compatible with the AABB-tree
+template<typename AABBTraits, class K1, class K2, class Helper>
+class K2_Ray_3_K1_Triangle_3_traversal_traits
+{
+  //the status indicates whether the query point is strictly inside the polyhedron, and the number of intersected triangles if yes
+  std::pair<boost::logic::tribool,std::size_t>& m_status;
+  bool m_stop;
+  const AABBTraits& m_aabb_traits;
+  typedef typename AABBTraits::Primitive Primitive;
+  typedef CGAL::AABB_node<AABBTraits> Node;
+  Helper m_helper;
+  CGAL::Cartesian_converter<K1,K2> to_K2;
+
+public:
+  K2_Ray_3_K1_Triangle_3_traversal_traits(std::pair<boost::logic::tribool,std::size_t>& status,
+                                          const AABBTraits& aabb_traits,
+                                          const Helper& h)
+    :m_status(status), m_stop(false), m_aabb_traits(aabb_traits), m_helper(h)
+  {m_status.first=true;}
+
+  bool go_further() const { return !m_stop; }
+
+  template<class Query>
+  void intersection(const Query& query, const Primitive& primitive)
+  {
+    Intersections::internal::r3t3_do_intersect_endpoint_position_visitor visitor;
+    std::pair<bool,Intersections::internal::R3T3_intersection::type> res=
+      Intersections::internal::do_intersect(to_K2(m_helper.get_primitive_datum(primitive, m_aabb_traits)),
+                                            query, K2(), visitor);
+
+    if (res.first){
+      switch (res.second){
+        case Intersections::internal::R3T3_intersection::CROSS_FACET:
+          ++m_status.second;
+        break;
+        case Intersections::internal::R3T3_intersection::ENDPOINT_IN_TRIANGLE:
+          m_status.first=false;
+          m_stop=true;
+        break;
+        default:
+          m_status.first=boost::logic::indeterminate;
+          m_stop=true;
+      }
+    }
+  }
+
+  template<class Query>
+  bool do_intersect(const Query& query, const Node& node) const
+  {
+    return CGAL::do_intersect(query, m_helper.get_node_bbox(node));
+  }
+};
+
+
 }// namespace internal
 }// namespace CGAL
 
