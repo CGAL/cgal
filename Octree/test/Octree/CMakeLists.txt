@@ -11,6 +11,7 @@ find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core)
 
 create_single_source_cgal_program("test_octree_equality.cpp")
 create_single_source_cgal_program("test_octree_refine.cpp")
+create_single_source_cgal_program("test_octree_grade.cpp")
 create_single_source_cgal_program("test_octree_locate.cpp")
 create_single_source_cgal_program("test_octree_bbox.cpp")
 create_single_source_cgal_program("test_octree_nearest_neighbor.cpp")
