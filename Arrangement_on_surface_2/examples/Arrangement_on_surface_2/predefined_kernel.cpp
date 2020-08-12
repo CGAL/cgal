@@ -1,5 +1,5 @@
 //! \file examples/Arrangement_on_surface_2/predefined_kernel.cpp
-// Constructing an arrangements of intersecting line segments using the
+// Constructing an arrangement of intersecting line segments using the
 // predefined kernel with exact constructions and exact predicates.
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>

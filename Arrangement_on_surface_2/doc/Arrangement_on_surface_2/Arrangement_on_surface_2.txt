@@ -3564,75 +3564,85 @@ boundary.
 \subsection aos_ssec-geom_traits-models Models of the Geometry Traits Concepts
 <!----------------------------------------------------------------------------->
 
-In this section we review the traits classes included in the public
-distribution of \cgal, that handle line segments, polylines, conic
-arcs, rational functions, and arcs of B&eacute;zier and algebraic
-curves.  The last subsection overviews decorators for geometric traits
-classes distributed with \cgal, which extend other geometric
-traits-class by attaching auxiliary data with the geometric objects.
+In this section we review the traits classes that are models of
+conecpts introduced in the previous sections. They handle line
+segments, circular arcs, polylines, conic arcs, rational functions,
+arcs of B&eacute;zier, and arcs of algebraic curves.  The last
+subsection describes decorators for geometric traits classes
+distributed with \cgal, which extend geometric traits-classes by
+attaching auxiliary data with the geometric objects.
 
 <!----------------------------------------------------------------------------->
-\subsubsection arr_ssectr_segs Line Segments and Linear Objects
+\subsubsection arr_ssectr_segs Traits Classes for Line Segments and Linear Objects
 <!----------------------------------------------------------------------------->
 
-The `Arr_segment_traits_2<Kernel>` class used so far in most example
-programs in this chapter is a model of the concepts
-`ArrangementTraits_2`, `ArrangementLandmarkTraits_2`, and
-`ArrangementDirectionalXMonotoneTraits_2`; the latter enables Boolean
-set operations. It is parameterized by a geometric kernel and uses the
-`Kernel::Point_2` type as it point type. However, neither the
-`Curve_2` nor the `X_monotone_curve_2` types are identical to the
-`Kernel::Segment_2` type. A kernel segment is typically represented by
-its two endpoints, and these may have a large bit-size representation,
-if the segment is intersected and split several times (in comparison
-with the representation of its original endpoints). The large
-representation may significantly slow down the various traits-class
-operations involving such a segment. In contrast, the
-`Arr_segment_traits_2` represents a segment using its supporting line
-and the two endpoints, such that most computations are performed on
-the supporting line, which never changes as the segment is split. It
-also caches some additional information with the segment to speed up
-various predicates.  An `X_monotone_curve_2` object can still be
-constructed from two endpoints or from a kernel segment. Moreover, an
-`X_monotone_curve_2` instance can also be casted or assigned to a
-`Kernel::Segment_2` object. The two types are thus fully convertible
-to one another.
+There are two distinct traits classes that handle line segments. One
+caches information in the curve records (see Paragraph \ref
+arr_sssectr_caching_segs), while the other retains the minimal amount
+of data (see Paragraph \ref arr_sssectr_non_caching_segs). Operations
+on arrangements instantiated with the former traits class consume more
+space, but they are more efficient for dense arrangements (namely,
+arrangements induced by line segments with a large number of
+intersections). Another model handles not only (bounded) line
+segments, but also rays and lines; see Paragraph \ref
+arr_sssectr_linear.
 
-The `Arr_segment_traits_2<Kernel>` class is very efficient for
-maintaining arrangements of a large number of intersecting line
-segments, especially if it is instantiated with the appropriate
-geometric kernel. Using `Exact_predicates_exact_constructions_kernel`
-as the kernel type, which is the default, is generally a good choice;
-the coordinates of the segment endpoints are represented as exact
-rational numbers, and this ensures the robustness and correctness of
-any computation.\cgalFootnote{Many of the example programs in the rest
-of the chapter include a header file named `arr_rational_nt.h`, which
-defines a type named `Number_type` as either `Gmpq` or
-`Quotient<MP_Float>`, depending on whether <span
-class="textsc">Gmp</span> is installed or not.}
+<!----------------------------------------------------------------------------->
+\paragraph arr_sssectr_caching_segs The Caching Segment-Traits Class
+<!----------------------------------------------------------------------------->
 
-An instance of the `Arr_segment_traits_2<Kernel>` class template can
-be very efficient for constructing arrangements induced by line
-segments with a large number of intersections. Efficiency is affected
-by the substituted geometric kernel. Using `Cartesian<Gmpq>` as the
+An instance of the `Arr_segment_traits_2<Kernel>` class template used
+in most example programs so far is instantiated by substituting the
+`Kernel` template parameter with a geometric kernel that must conform
+to the \cgal{} `Kernel` concept; see Package \ref
+PkgKernel23Concepts. This traits class defines its point type to be
+the `Kernel::Point_2` type. However, neither the `Curve_2` nor the
+`X_monotone_curve_2` nested types of the traits are defined as the
+`Kernel::Segment_2` type. A kernel segment is represented by its two
+endpoints, and these may have a large bit size representation when the
+segment is the result of several split operations in comparison with
+the representation of the original-segment endpoints. The large bit
+size representation may significantly slow down the various
+traits-class operations involving such segments. (A straightforward
+solution would be to repeatedly normalize the results of all
+computations. However, our experience shows that indiscriminate
+normalization considerably slows down the arrangement construction.)
+
+In contrast, the `Arr_segment_traits_2` class template represents a
+segment using its supporting line in addition to the two endpoints.
+Most computations are performed on the supporting line, which never
+changes as the segment is split. The `Arr_segment_traits_2` class
+template also caches some additional information with each segment to
+speed up various predicates, i.e., two Boolean flags indicating (i)
+whether the segment is vertical and (ii) whether the segment
+target-point is lexicographically larger than its source.  An
+`X_monotone_curve_2` object is still constructible from two endpoints
+or from a kernel segment and converted to an `X_monotone_curve_2`
+object. Moreover, an `X_monotone_curve_2` instance can also be cast or
+to a `Kernel::Segment_2` object. The two types are thus convertible to
+one another.
+
+Using an instance of the `Arr_segment_traits_2<Kernel>`
+class template can be very efficient when constructing arrangements
+induced by line segments with a large number of
+intersections. Efficiency is affected by the substituted geometric
+kernel. Using `Exact_predicates_exact_constructions_kernel` as the
 kernel type is in general not a bad choice; the coordinates of the
-segment endpoints are represented as multi-precision rational-numbers,
-and this ensures the correctness of all computations regardless of the
-input. Computations on multi-precision number types, such as `Gmpq`,
-typically take longer than computations on machine-precision
-floating-point. However, in almost all cases it is possible to
-expedite the computation using numerical filtering; see `Kernel_2` and
-`Kernel_3`. If the input set of line segments do not have
-degeneracies; namely, no two segments in the set share a common
-endpoint, and no three segments intersect at a common point, or at
-least, degeneracies exist but their number is relatively small, then
-filtered computation incurs only negligible overhead compared to
-floating-point arithmetic, which is error-prone. Indeed, in almost all
-examples and applications given in this manual, a predefined filtered
-kernel is used to instantiate the line-segment traits class, namely
-`Exact_predicates_exact_constructions_kernel`. Furthermore, this
-kernel is used as a default kernel in case the user did not provide
-one.
+segment endpoints are represented as multi-precision rational numbers,
+which ensures the correctness of all computations regardless of the
+input.  Computations on multi-precision number types (such as `Gmpq`)
+take longer than computations on machine-precision floating-point. A
+kernel object of the aformentioned type uses numerical filtering to
+expedite computation; see `Kernel_2` and `Kernel_3`. If the input set
+of line segments do not have degeneracies; namely, no two segments in
+the set share a common endpoint, and no three segments intersect at a
+common point, or at least, degeneracies exist but their number is
+relatively small, then filtered computation incurs only negligible
+overhead compared to floating-point arithmetic, which is
+error-prone. Indeed, in almost all examples and applications given in
+this manual, the predefined filtered kernel
+`Exact_predicates_exact_constructions_kernel` is used to instantiate
+the line-segment traits class.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{arr_figpredef_kernels,fan_grids.png,Europe.png}
@@ -3654,28 +3664,45 @@ in \cgalFigureRef{arr_figpredef_kernels} (a):
 
 \cgalExample{Arrangement_on_surface_2/predefined_kernel.cpp}
 
-The arrangement package also offers a simpler alternative
-segment-traits class. The traits class
-`Arr_non_caching_segment_basic_traits_2<Kernel>` models the
-`ArrangementBasicTraits_2` concept. It uses `Kernel::Point_2` as its
-point type and `Kernel::Segment_2` as its \f$x\f$-monotone curve
-type. As this traits class does not support intersecting and splitting
-segments, the kernel representation is sufficient. It is still less
-efficient than `Arr_segment_traits_2` for constructing arrangements of
-pairwise disjoint line segments in many cases, as it performs no
-caching at all, but using this traits class may be preferable as it
-reduces the memory consumption a bit, since no extra data is stored
-with the line segments.
+<!----------------------------------------------------------------------------->
+\paragraph arr_sssectr_non_caching_segs The Non-Caching Segment-Traits Class
+<!----------------------------------------------------------------------------->
 
-The class `Arr_non_caching_segment_traits_2<Kernel>` inherits from
-`Arr_non_caching_segment_basic_traits_2<Kernel>` and extends it to be
-a model of the concepts `ArrangementTraits_2`,
-`ArrangementLandmarkTraits_2`,and
-`ArrangementDirectionalXMonotoneTraits_2`. It may thus be used to
-construct arrangement of intersecting line segments, but as explained
-above, for efficiency reasons it is recommended to use it only when
-the arrangement is very sparse and contains hardly any intersection
-points.
+The arrangement package offers an alternative segment-traits class
+template that handles line segments, namely the
+`Arr_non_caching_segment_basic_traits_2<Kernel>` class template.  This
+class template and the `Arr_segment_traits_2<Kernel>` class template
+are both parameterized by a geometric kernel and model the concepts
+`ArrangementTraits_2` and `ArrangementLandmarkTraits_2`.
+\cgalFootnote{They also model the refined concept
+`ArrangementDirectionalXMonotoneTraits_2`, which enables Boolean set
+operations; see Package \ref PkgBooleanSetOperations2Ref.} The class
+template `Arr_non_caching_segment_traits_2<Kernel>` derives from the
+instance `Arr_non_caching_segment_basic_traits_2<Kernel>`, which
+models the `ArrangementLandmarkTraits_2` traits concept but not the
+refined `ArrangementXMonotoneTraits_2` concept. Like the
+`Arr_segment_traits_2` class template it derives from the `Kernel`
+type. Unlike the `Arr_segment_traits_2` class template it defines its
+point and segment types as `Kernel::Point_2` and `Kernel::Segment_2`,
+respectively, and most of its defined operations are delegations of
+the corresponding operations of the `Kernel` type. For example, the
+functor `Compare_xy_2` is defined as `Kernel::Compare_xy_2`. The
+remaining operations are defined in terms of just a few other kernel
+operations. For example, the `Compare_y_at_x_right_2` predicate is
+defined in terms of the `Kernel::Compare_slope_2` predicate (ignoring
+preconditions for the sake of clarity); see Section \ref
+aos_sssec-geom_traits-concepts_basic for the description of this
+predicate.  The class template
+`Arr_non_caching_segment_basic_traits_2<Kernel>` is slightly less
+efficient than the `Arr_segment_traits_2` class template for
+constructing arrangements of pairwise interior-disjoint line-segments
+in many cases, as it does not exploit caching at all. Nevertheless,
+you may choose to use this traits class, as it consumes less
+memory. For arrangements of line segments that do intersect you may
+use the class template
+`Arr_non_caching_segment_traits_2<Kernel>`. However, the performance
+difference in favor of the `Arr_segment_traits_2` class template is
+much larger, especially when the number of intersections is large.
 
 In the following example we read an input file containing a set of
 line segments that are pairwise disjoint in their interior. As the
@@ -3692,16 +3719,30 @@ the map of Europe, as depicted in
 
 \cgalExample{Arrangement_on_surface_2/predefined_kernel_non_intersecting.cpp}
 
-The `Arr_linear_traits_2<Kernel>` class used for demonstrating the
-construction of arrangements of unbounded curves is capable of
-handling bounded and unbounded linear objects, namely lines, rays and
-line segments. It is parameterized by a geometric kernel and such that
-its nested `%Point_2` type is the same as the kernel point. The
-`Curve_2` (and `X_monotone_curve_2`) type it defines is constructible
-from a `Kernel::Line_2`, a `Kernel::Ray_2` or from a
-`Kernel::Segment_2` object. Just like the default segment-traits
-class, the linear-traits class also use caching techniques to speed up
-its predicates and constructions.
+<!----------------------------------------------------------------------------->
+\paragraph arr_sssectr_linear The Linear-Traits Class
+<!----------------------------------------------------------------------------->
+
+The `Arr_linear_traits_2<Kernel>` class used in Section \ref
+aos_sec-unbounded for demonstrating the construction of arrangements
+of unbounded curves is capable of handling bounded and unbounded
+linear objects, namely, lines, rays, and line segments. It models the
+concepts `ArrangementTraits_2`, `ArrangementLandmarkTraits_2`, and
+`{ArrangementOpenBoundaryTraits_2`. It is parameterized by a geometric
+kernel and its nested `Point_2` type is defined to be the kernel-point
+type. The `Curve_2` (and `X_monotone_curve_2`) nested types are
+constructible from a `Kernel::Line_2`, a `Kernel::Ray_2`, or from a
+`Kernel::Segment_2` object. Given a linear-curve object \f$c\f$, you
+can use the calls `c.is_line()`, `c.is_ray()`, and `c.is_segment()` to
+find out whether it has a source point or a target point. Based on the
+curve type, you can access its endpoints using the methods
+`c.source()` (for rays and for line segments) and `c.target()` (for
+segments only). It is also possible to cast a curve into a
+`Kernel::Line_2`, a `Kernel::Ray_2`, or a `Kernel::Segment_2` type,
+using the methods `c.line()`, `c.ray()`, and `c.segment()`,
+respectively.  Just like the default segment-traits class, the
+linear-curve traits class uses caching techniques to speed up its
+predicate evaluations and object constructions.
 
 <!----------------------------------------------------------------------------->
 \subsubsection arr_ssectr_polylines The Polyline and Polycurve Traits Classes
