@@ -3753,7 +3753,19 @@ particular interest, as they can be used to approximate more complex
 curves in the plane. At the same time they are easier to handle in
 comparison to higher-degree algebraic curves, as rational arithmetic
 is sufficient to carry out computations on polylines, and to construct
-arrangements of polylines in an exact and robust manner.
+arrangements of polylines in an exact and robust manner. Here, we
+extend the notion of polylines and use the term to refer to chains of
+subcurves that are not necessarily linear. However, each subcurve must
+be uniquely defined by (and, thus, can be uniquely constructed from)
+two points within the handled family of curves; see Paragraph \ref
+arr_sssectr_polylines. We also provide a similar traits class that
+handles continuous piecewise curves that are not necessarily linear
+and are not subject to any constraint; see Paragraph \ref
+arr_sssectr_polycurves.
+
+<!----------------------------------------------------------------------------->
+\paragraph arr_sssectr_polylines The Polyline Traits Class
+<!----------------------------------------------------------------------------->
 
 The `Arr_polyline_traits_2<SubcurveTraits_2>` class template handles
 polylines. It models the concepts `ArrangementTraits_2`,
@@ -3821,15 +3833,14 @@ segment. For example, the general polyline
 \image html generic-polyline.png
 \image latex generic-polyline.pdf
 
-can be represented by one of the following two
+can be represented by one of the following two orientations.
 
 \image html well-oriented-polyline.png
 \image latex well-oriented-polyline.pdf
 
-Also, note, that a single polyline can be split into several
-\f$x\f$-monotone polylines, and that the number of intersection
-points (or overlapping sections) between two polylines can also
-be large.
+Also, note that a single polyline can be split into several
+\f$x\f$-monotone polylines, and that the number of intersection points
+(or overlapping sections) between two polylines can be large.
 
 \cgalAdvancedBegin
 Technically speaking, it is possible to construct a general polyline
@@ -3887,21 +3898,25 @@ polylines:
 
 \cgalExample{Arrangement_on_surface_2/polylines.cpp}
 
-The traits class `Arr_polycurve_traits_2<GeometryTraits_2>` handles
+<!----------------------------------------------------------------------------->
+\paragraph arr_sssectr_polycurves The Polycurve Traits Class
+<!----------------------------------------------------------------------------->
+
+The traits class `Arr_polycurve_traits_2<SubcurveTraits_2>` handles
 piecewise curves that are not necessarily linear, such as conic arcs,
 circular arcs, Bezier curves, or line segments. We call such a
 compound curve a <em>polycurve</em>. Similar to a polyline, a
 polycurve is a chain of subcurves, where each two neighboring
 subcurves in the chain share a common endpoint; that is, the polycurve
 is continuous. As a matter of fact, most characteristics of the
-`Arr_polyline_traits_2<GeometryTraits_2>` traits class apply also to
-the `Arr_polycurve_traits_2<GeometryTraits_2>` traits class. The only
+`Arr_polyline_traits_2<SubcurveTraits_2>` traits class apply also to
+the `Arr_polycurve_traits_2<SubcurveTraits_2>` traits class. The only
 difference between the two, is that the latter is not a model of the
 concept `ArrangementConstructXMonotoneCurveTraits_2`, and as such, it
-is not able to construct a subcurve from two points. As a consequence,
-it does not support the operations that (i) construct a polycurve from
-a sequence of point, and (ii) push a point at the back or at the front
-of a non-empty polycurve.
+is not able to construct a subcurve from only two points. As a
+consequence, it does not support the operations that (i) construct a
+polycurve from a sequence of points, and (ii) push a point at the back
+or at the front of a non-empty polycurve.
 
 <!----------------------------------------------------------------------------->
 \subsubsection arr_ssectr_circ_seg Circular Arcs and Line Segments

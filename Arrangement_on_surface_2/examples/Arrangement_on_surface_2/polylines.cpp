@@ -9,9 +9,9 @@
 #include <list>
 
 #include "arr_print.h"
-/*
-  Define the Arrangement traits class to be used. You can either use some user
-  defined kernel and Segment_traits_2 or the defaults.
+
+/* Define the Arrangement traits class to be used. You can either use some user
+ * defined kernel and Segment_traits_2 or the defaults.
  */
 
 // Instantiate the traits class using a user-defined kernel
@@ -23,7 +23,6 @@ typedef CGAL::Arr_polyline_traits_2<Segment_traits_2>     Geom_traits_2;
 // Identical instantiation can be achieved using the default Kernel:
 // typedef CGAL::Arr_polyline_traits_2<>                    Geom_traits_2;
 
-
 typedef Geom_traits_2::Point_2                            Point_2;
 typedef Geom_traits_2::Segment_2                          Segment_2;
 typedef Geom_traits_2::Curve_2                            Polyline_2;
@@ -34,8 +33,7 @@ int main()
   Geom_traits_2 traits;
   Arrangement_2 arr(&traits);
 
-  Geom_traits_2::Construct_curve_2 polyline_construct =
-    traits.construct_curve_2_object();
+  auto polyline_construct = traits.construct_curve_2_object();
 
   Point_2 points1[5];
   points1[0] = Point_2(0, 0);
