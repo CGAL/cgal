@@ -1531,7 +1531,7 @@ public:
    * Cleans the inner CCB if sweep mode was used, by removing all
    * non-valid inner CCBs
    */
-  void clean_inner_ccbs()
+  void clean_inner_ccbs_after_sweep()
   {
     for (DHalfedge_iter he = _dcel().halfedges_begin();
          he != _dcel().halfedges_end(); ++ he)
@@ -1543,10 +1543,12 @@ public:
       if (ic1->is_valid())
         continue;
 
+      // Calling Halfedge::inner_ccb() reduces the path and makes the
+      // halfedge point to a correct CCB
       DInner_ccb* ic2 = he->inner_ccb();
-      if (!ic2->halfedge()->is_on_inner_ccb()
-          || ic2->halfedge()->inner_ccb_no_redirect() != ic2)
-        ic2->set_halfedge(&(*he));
+      CGAL_USE(ic2);
+      CGAL_assertion (ic2->halfedge()->is_on_inner_ccb()
+                      && ic2->halfedge()->inner_ccb_no_redirect() == ic2);
     }
 
     typename Dcel::Inner_ccb_iterator it = _dcel().inner_ccbs_begin();

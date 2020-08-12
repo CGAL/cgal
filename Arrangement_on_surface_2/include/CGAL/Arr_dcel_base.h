@@ -483,10 +483,13 @@ public:
     if (out->is_valid())
       return out;
 
-    // else
-    out = const_cast<Inner_ccb*>(out)->reduce_path();
-    const_cast<Halfedge*>(this)->set_inner_ccb(out);
-    return out;
+    // else reduce path and get valid iccb
+    const Inner_ccb* valid = out->next();
+    while (!valid->is_valid())
+      valid = valid->next();
+    const_cast<Inner_ccb*>(out)->set_next(const_cast<Inner_ccb*>(valid));
+    const_cast<Halfedge*>(this)->set_inner_ccb(valid);
+    return valid;
   }
 
   /*! Get an incident inner CCB (non-const version).
@@ -500,10 +503,13 @@ public:
     if (out->is_valid())
       return out;
 
-    // else
-    out = out->reduce_path();
-    set_inner_ccb(out);
-    return out;
+    // else reduce path and get valid iccb
+    Inner_ccb* valid = out->next();
+    while (!valid->is_valid())
+      valid = valid->next();
+    out->set_next(valid);
+    set_inner_ccb(valid);
+    return valid;
   }
 
   Inner_ccb* inner_ccb_no_redirect()
@@ -798,9 +804,11 @@ private:
   Inner_ccb_iterator  iter;   // The inner CCB identifier.
   enum
   {
-    ITER_IS_SINGULAR,
-    ITER_IS_NOT_SINGULAR,
-    INVALID
+    ITER_IS_SINGULAR,     // singular = default iterator, not initialized
+    ITER_IS_NOT_SINGULAR, // not singular = iterator was assigned and is valid
+    INVALID               // invalid = the inner CCB is invalid and
+                          //           only links to another inner CCB
+                          //           in chain to valid CCB
   } status;
 
 public:
@@ -893,14 +901,6 @@ public:
     f_or_icc.icc = next;
   }
 
-  Arr_inner_ccb* reduce_path()
-  {
-    if (is_valid())
-      return this;
-    // else
-    f_or_icc.icc = f_or_icc.icc->reduce_path();
-    return f_or_icc.icc;
-  }
 };
 
 /*! \class
