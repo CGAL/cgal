@@ -333,7 +333,7 @@ public:
     const Node *first = traversal_method.first(&m_root);
 
     Node_traversal_method_const next = std::bind(&Traversal::template next<typename Point_range::iterator>,
-                                           traversal_method, _1);
+                                                 traversal_method, _1);
 
     return boost::make_iterator_range(Traversal_iterator<const Node>(first, next),
                                       Traversal_iterator<const Node>());
@@ -517,7 +517,7 @@ public:
 
 private: // functions :
 
-    void reassign_points(Node &node, Range_iterator begin, Range_iterator end, const Point &center,
+  void reassign_points(Node &node, Range_iterator begin, Range_iterator end, const Point &center,
                        std::bitset<3> coord = {},
                        std::size_t dimension = 0) {
 
@@ -684,8 +684,17 @@ private: // functions :
 
   std::list<Node *> unbalanced_neighbors_to_split(Node &node) {
 
+    // Neighbors will be added to this linked list
     std::list<Node *> neighbors_to_split;
 
+    for (int direction = 0; direction < 6; ++direction) {
+      Node *neighbor = greater_or_equal_neighbor(direction);
+    }
+
+
+  }
+
+  Node *greater_or_equal_neighbor(std::size_t direction) {
 
   }
 
