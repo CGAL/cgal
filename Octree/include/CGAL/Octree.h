@@ -60,9 +60,9 @@ namespace Octree {
  * and it may contain eight other nodes which further subdivide the region.
  *
  * \tparam Point_range is a range type that provides random access iterators over the indices of a set of points.
- * \tparam PointMap is a type that maps items in the range to Point data
+ * \tparam Point_map is a type that maps items in the range to Point data
  */
-template<class Point_range, class PointMap = Identity_property_map<typename Point_range::iterator::value_type>>
+template<class Point_range, class Point_map = Identity_property_map<typename Point_range::iterator::value_type>>
 class Octree {
 
 public:
@@ -73,7 +73,7 @@ public:
   /*!
    * \brief The point type is deduced from the type of the property map used
    */
-  typedef typename boost::property_traits<PointMap>::value_type Point;
+  typedef typename boost::property_traits<Point_map>::value_type Point;
 
   /*!
    * \brief The Kernel used is deduced from the point type
@@ -127,7 +127,7 @@ private: // data members :
   uint8_t m_max_depth_reached = 0;  /* octree actual highest depth reached */
 
   Point_range &m_ranges;              /* input point range */
-  PointMap m_points_map;          /* property map: `value_type of InputIterator` -> `Point` (Position) */
+  Point_map m_points_map;          /* property map: `value_type of InputIterator` -> `Point` (Position) */
 
   Point m_bbox_min;                  /* input bounding box min value */
   FT m_bbox_side;              /* input bounding box side length (cube) */
@@ -154,7 +154,7 @@ public:
    */
   Octree(
           Point_range &point_range,
-          PointMap point_map = PointMap(),
+          Point_map point_map = Point_map(),
           const FT enlarge_ratio = 1.2) :
           m_ranges(point_range),
           m_points_map(point_map) {
@@ -162,11 +162,11 @@ public:
     // compute bounding box that encloses all points
     Iso_cuboid bbox = CGAL::bounding_box(boost::make_transform_iterator
                                                  (m_ranges.begin(),
-                                                  CGAL::Property_map_to_unary_function<PointMap>(
+                                                  CGAL::Property_map_to_unary_function<Point_map>(
                                                           m_points_map)),
                                          boost::make_transform_iterator
                                                  (m_ranges.end(),
-                                                  CGAL::Property_map_to_unary_function<PointMap>(
+                                                  CGAL::Property_map_to_unary_function<Point_map>(
                                                           m_points_map)));
 
     // Find the center point of the box
@@ -450,7 +450,7 @@ public:
    * \param rhs tree to compare with
    * \return whether the trees have the same topology
    */
-  bool operator==(const Octree<Point_range, PointMap> &rhs) const {
+  bool operator==(const Octree<Point_range, Point_map> &rhs) const {
 
     // Identical trees should have the same bounding box
     if (rhs.m_bbox_min != m_bbox_min || rhs.m_bbox_side != m_bbox_side)
@@ -469,7 +469,7 @@ public:
    * \param rhs tree to compare with
    * \return whether the trees have different topology
    */
-  bool operator!=(const Octree<Point_range, PointMap> &rhs) const {
+  bool operator!=(const Octree<Point_range, Point_map> &rhs) const {
     return !operator==(rhs);
   }
 
