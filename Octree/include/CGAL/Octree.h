@@ -273,25 +273,27 @@ public:
   }
 
   void grade() {
-    std::queue<Node *> leaf_nodes;
-    fill_leaf_queue(&m_root, leaf_nodes);
 
-    while (!leaf_nodes.empty()) {
-      Node *node = leaf_nodes.front();
-      leaf_nodes.pop();
-      if (!node->is_leaf()) continue;
+    std::queue<const Node *> leaf_nodes;
+    for (auto &leaf : traverse(Traversal::Leaves()))
+      leaf_nodes.push(&leaf);
 
-      std::list<Node *> neighbors_to_split = node->find_unbalanced_neighbors_to_split();
-      if (!neighbors_to_split.empty()) leaf_nodes.push(node);
-      for (Node *neighbor : neighbors_to_split) {
-        neighbor->split();
-        reassign_points(neighbor);
-        for (int child_id = 0; child_id < 8; child_id++) {
-          Node *neighbor_child = neighbor->child(child_id);
-          leaf_nodes.push(neighbor_child);
-        }
-      }
-    }
+//    while (!leaf_nodes.empty()) {
+//      Node *node = leaf_nodes.front();
+//      leaf_nodes.pop();
+//      if (!node->is_leaf()) continue;
+//
+//      std::list<Node *> neighbors_to_split = node->find_unbalanced_neighbors_to_split();
+//      if (!neighbors_to_split.empty()) leaf_nodes.push(node);
+//      for (Node *neighbor : neighbors_to_split) {
+//        neighbor->split();
+//        reassign_points(neighbor);
+//        for (int child_id = 0; child_id < 8; child_id++) {
+//          Node *neighbor_child = neighbor->child(child_id);
+//          leaf_nodes.push(neighbor_child);
+//        }
+//      }
+//    }
   }
 
   /// @}
