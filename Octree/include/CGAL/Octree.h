@@ -688,14 +688,55 @@ private: // functions :
     std::list<Node *> neighbors_to_split;
 
     for (int direction = 0; direction < 6; ++direction) {
-      Node *neighbor = greater_or_equal_neighbor(direction);
+      Node *neighbor = greater_or_equal_neighbor(node, direction);
+      if (nullptr != neighbor &&
+          node.parent() != neighbor->parent() &&
+          neighbor->is_leaf() &&
+          true) {
+
+      }
     }
-
-
   }
 
-  Node *greater_or_equal_neighbor(std::size_t direction) {
+  Node *greater_or_equal_neighbor(Node *node, std::size_t direction) {
 
+    // A root node doesn't have neighbors
+    if (node->is_root())
+      return nullptr;
+
+    unsigned int dir_axis = direction & 1;  // 0, 1, 0, 1, 0, 1
+    unsigned int bit_axis = direction >> 1; // 0, 0, 1, 1, 2, 2
+    unsigned int dir_idx_offset = 1;  // -1, 1, -2, 2, -4, 4
+    dir_idx_offset <<= bit_axis;
+    if (!dir_axis)
+      dir_idx_offset = -dir_idx_offset;
+
+    // Find each sibling with the same parent
+    for (unsigned int child_id = 0; child_id < 8; child_id++) {
+
+      // If that sibling isn't this node and it's in the right direction
+      if (((child_id >> bit_axis) & 1) != dir_axis && *node->parent()[child_id] == this) {
+
+        // Return that sibling
+        return *node->parent()[child_id + dir_idx_offset];
+      }
+    }
+
+    // Find the parent's sibling in that direction (recursively)
+    Node *parent_neighbor = greater_or_equal_neighbor(node->parent(), direction);
+
+    // If that node doesn't have children, return it
+    if (parent_neighbor == nullptr || parent_neighbor->is_leaf())
+      return parent_neighbor;
+
+    // Otherwise, find the closest child of that parent
+    for (int child_id = 0; child_id < 8; child_id++) {
+      if (((child_id >> bit_axis) & 1) == dir_axis && *node->parent()[child_id] == this) {
+        return *parent_neighbor[child_id - dir_idx_offset];
+      }
+    }
+
+    return nullptr;
   }
 
 }; // end class Octree
