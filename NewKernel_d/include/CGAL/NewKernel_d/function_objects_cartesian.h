@@ -27,6 +27,7 @@
 #include <CGAL/predicates/sign_of_determinant.h>
 #include <functional>
 #include <initializer_list>
+#include <vector>
 
 namespace CGAL {
 namespace CartesianDKernelFunctors {
