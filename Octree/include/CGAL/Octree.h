@@ -62,7 +62,7 @@ namespace Octree {
  * \tparam PointRange is a range type that provides random access iterators over the indices of a set of points.
  * \tparam PointMap is a type that maps items in the PointRange to Point data
  */
-template<class PointRange, class PointMap>
+template<class PointRange, class PointMap = Identity_property_map<typename PointRange::iterator::value_type>>
 class Octree {
 
 public:
@@ -309,7 +309,7 @@ public:
     const Node *first = traversal_method.first(&m_root);
 
     Node_traversal_method next = std::bind(&Traversal::template next<typename PointRange::iterator>,
-                                 traversal_method, _1);
+                                           traversal_method, _1);
 
     return boost::make_iterator_range(Traversal_iterator<const Node>(first, next),
                                       Traversal_iterator<const Node>());
