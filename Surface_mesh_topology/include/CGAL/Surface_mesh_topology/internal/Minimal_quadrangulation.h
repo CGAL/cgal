@@ -290,14 +290,17 @@ public:
 
   /// @return true iff 'p' is contractible.
   bool is_contractible(const Path_on_surface<Mesh>& p,
-                       bool display_time=false) const
+                       bool display_time=false, bool is_verbose=false) const
   {
     if (p.is_empty())
     { return true; }
 
     if (!p.is_closed())
     {
-      std::cerr<<"Error: is_contractible requires a closed path."<<std::endl;
+      if (is_verbose)
+      {
+        std::cerr<<"Error: is_contractible requires a closed path."<<std::endl;
+      }
       return false;
     }
 
@@ -340,15 +343,18 @@ public:
   /// @return true iff 'p1' and 'p2' are freely homotopic.
   bool are_freely_homotopic(const Path_on_surface<Mesh>& p1,
                             const Path_on_surface<Mesh>& p2,
-                            bool display_time=false) const
+                            bool display_time=false, bool is_verbose=false) const
   {
     if (p1.is_empty() && p2.is_empty()) { return true; }
 
     if ((!p1.is_empty() && !p1.is_closed()) ||
         (!p2.is_empty() && !p2.is_closed()))
     {
-      std::cerr<<"Error: are_freely_homotopic requires two closed paths."
-               <<std::endl;
+      if (is_verbose)
+      {
+        std::cerr<<"Error: are_freely_homotopic requires two closed paths."
+                 <<std::endl;
+      }
       return false;
     }
 
@@ -401,7 +407,7 @@ public:
   /// @return true iff 'p1' and 'p2' are base point freely homotopic.
   bool are_base_point_homotopic(const Path_on_surface<Mesh>& p1,
                                 const Path_on_surface<Mesh>& p2,
-                                bool display_time=false) const
+                                bool display_time=false, bool is_verbose=false) const
   {
     if (p1.is_empty() && p2.is_empty()) { return true; }
     if (p1.is_empty() || p2.is_empty()) { return false; }
@@ -413,8 +419,11 @@ public:
         (p1.back_flip()?p1.back():get_original_map().template beta<1>(p1.back()),
          p2.back_flip()?p2.back():get_original_map().template beta<1>(p2.back())))
     {
-      std::cerr<<"Error: are_base_point_homotopic requires two paths that"
-               <<" share the same vertices as extremities."<<std::endl;
+      if (is_verbose)
+      {
+        std::cerr<<"Error: are_base_point_homotopic requires two paths that"
+                 <<" share the same vertices as extremities."<<std::endl;
+      }
       return false;
     }
 
@@ -526,14 +535,17 @@ public:
 
   /// @return true iff 'p' is a simple curve.
   bool is_homotopic_to_simple_cycle(const Path_on_surface<Mesh>& p,
-                       bool display_time=false) const
+                       bool display_time=false, bool is_verbose=false) const
   {
     if (p.is_empty())
     { return true; }
 
     if (!p.is_closed())
     {
-      std::cerr<<"Error: is_homotopic_to_simple_cycle requires a closed path."<<std::endl;
+      if (is_verbose)
+      {
+        std::cerr<<"Error: is_homotopic_to_simple_cycle requires a closed path."<<std::endl;
+      }
       return true;
     }
 
