@@ -336,10 +336,14 @@ public:
     return !operator==(rhs);
   }
 
-  Node<Point_index> *adjacent(std::bitset<3> direction) {
+  const Node<Point_index> *adjacent(std::bitset<3> direction) const {
 
     // Nodes only have up to 6 different adjacent nodes (since cubes have 6 sides)
     assert(direction.to_ulong() < 6);
+
+    // The root node has no adjacent nodes!
+    if (is_root())
+      return nullptr;
 
     // Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
     // direction:    000    001   010   011   100   101
@@ -356,8 +360,15 @@ public:
     // Finally, apply the sign to the offset
     offset = (sign ? -offset : offset);
 
+    // Check if this child has the opposite sign along the direction's axis
+    if ((index() >> dimension)[0] != sign) {
 
-    // Determine if the adjacent node is a direct sibling (same parent)
+      // This means the adjacent node is a direct sibling, the offset can be applied easily!
+      return &(*parent())[index().to_ulong() + offset];
+    }
+
+    //
+    return nullptr;
   }
 
   /// @}
