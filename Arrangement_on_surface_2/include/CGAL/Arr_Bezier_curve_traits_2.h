@@ -596,7 +596,8 @@ public:
 
       for (it = vt_list.begin(); it != vt_list.end(); ++it)
       {
-        p1 = Point_2 (B, *it);
+        // TODO: add originators
+        p1 = Point_2 (B, *it, {});
         *oi++ = CGAL::make_object (X_monotone_curve_2 (B, xid,
                                                        p0, p1,
                                                        *p_cache));

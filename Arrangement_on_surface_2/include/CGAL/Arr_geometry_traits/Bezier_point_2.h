@@ -630,20 +630,20 @@ public:
 
   /*!
    * Constructor given an originating curve and an algebraic t0 value.
-   * \pre t0 must be between 0 and 1.
+   * \pre t0 must be between 0 and 1 (only for private use).
    */
-  _Bezier_point_2 (const Curve_2& B, const Algebraic& t0) :
+  _Bezier_point_2 (const Curve_2& B, const Algebraic& t0, bool dummy) :
     Bpt_handle (Bpt_rep (B, t0))
   {}
 
-  /*!
-   * Constructor given an x-monotone curve and an algebraic t0 value.
-   * \pre t0 must be between 0 and 1.
-   */
-  _Bezier_point_2 (const Curve_2& B, unsigned int xid,
-                   const Algebraic& t0) :
-    Bpt_handle (Bpt_rep (B, xid, t0))
-  {}
+  // /*!
+  //  * Constructor given an x-monotone curve and an algebraic t0 value.
+  //  * \pre t0 must be between 0 and 1.
+  //  */
+  // _Bezier_point_2 (const Curve_2& B, unsigned int xid,
+  //                  const Algebraic& t0) :
+  //   Bpt_handle (Bpt_rep (B, xid, t0))
+  // {}
 
   /*!
    * Assignment operator.
@@ -1585,7 +1585,7 @@ bool _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_refine ()
 
   if (orig1.point_bound().type == Bez_point_bound::INTERSECTION_PT)
   {
-    CGAL_assertion(_origs.size() >= 2);
+    CGAL_assertion(_origs.size() == 2);
 
     // Obtain the other curve that originates the intersection point and use
     // it to refine its reprsentation.

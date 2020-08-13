@@ -62,7 +62,7 @@ protected:
   typedef Arr_traits_adaptor_2<Traits_2>           Traits_adaptor_2;
 
   // Data members:
-  Traits_adaptor_2  *traits;        // The traits object.
+  const Traits_adaptor_2  *traits;        // The traits object.
   bool               own_traits;    // Whether we own the traits object.
   Envelope_type      env_type;      // Either LOWER or UPPER.
 
@@ -90,7 +90,7 @@ public:
     own_traits(false),
     env_type(LOWER)
   {
-    traits = static_cast<const Traits_adaptor_2*> (_traits);
+    traits = reinterpret_cast<const Traits_adaptor_2*> (_traits);
   }
 
   /*!

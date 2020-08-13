@@ -454,7 +454,7 @@ operator()(
   if (pLeft && this->compare_x_2(*pLeft, pMin) == CGAL::LARGER)
   {
     auto t = local_get_t(*pLeft);
-    Point_2 splitPoint(curve.supporting_curve(), t);
+    Point_2 splitPoint(curve.supporting_curve(), t, {});
     this->split_2(curve, splitPoint, unusedTrimmings, subcurve);
   }
   else
@@ -464,7 +464,7 @@ operator()(
   if (pRight && this->compare_x_2(*pRight, pMax) == CGAL::SMALLER)
   {
     auto t = local_get_t(*pRight);
-    Point_2 splitPoint(curve.supporting_curve(), t);
+    Point_2 splitPoint(curve.supporting_curve(), t, {});
     this->split_2(subcurve, splitPoint, finalSubcurve, unusedTrimmings);
   }
   else
