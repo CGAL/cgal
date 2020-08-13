@@ -18,25 +18,25 @@ The Octree package provides the Octree and Node classes.
 
 \subsection Section_Octree_Example_Point_Vector Building an Octree from a Vector of Points
 
-This example illustrates how to create an octree from a collection of points that isn't a `Point_set_3`.
-It also shows a more explicit way of setting the split criteria when refining the tree.
+This example illustrates how to create an octree from a `std::vector`.
 
 An `std::vector<Point_3>` is manually filled with points.
 The vector is used as the point set,
-and by using a `CGAL::Identity_property_map` as the octree's map type, a map doesn't need to be provided.
-
-The split criterion is manually constructed and passed to the refine method.
+a `CGAL::Identity_property_map` it automatically set as the octree's map type, so a map doesn't need to be provided.
 
 \cgalExample{Octree/Octree_build_from_Point_vector.cpp}
 
 \subsection Section_Octree_Example_Point_Set Building an Octree from a Point_set_3
 
 This example illustrates how to create an octree from a `Point_set_3` loaded from a file.
+It also shows a more explicit way of setting the split criteria when refining the tree.
 
 An octree is constructed from the point set and its map.
 The tree is refined with a max-depth (deepest node allowed) of 10,
 and a bucket size (maximum number of points contained by a single node) of 20.
 The tree is then printed to the standard output.
+
+The split criterion is manually constructed and passed to the refine method.
 
 \cgalExample{Octree/Octree_build_from_Point_set.cpp}
 
