@@ -41,10 +41,12 @@ public:
   /// \name Types
   /// @{
 
+  typedef Node<Point_index> Self;
+
   /*!
    * \brief array for containing the child nodes of this node
    */
-  typedef std::array<Node<Point_index>, 8> Children;
+  typedef std::array<Self, 8> Children;
 
   /*!
    * \brief set of bits representing this node's relationship to its parent
@@ -78,7 +80,7 @@ private:
 
   Point_range m_points;
 
-  const Node<Point_index> *m_parent;
+  const Self *m_parent;
 
   uint8_t m_depth;
 
@@ -104,7 +106,7 @@ public:
    * \param parent A reference to the node containing this one
    * \param index This node's relationship to its parent
    */
-  explicit Node(Node<Point_index> *parent = nullptr, Index index = 0) : m_parent(parent), m_depth(0),
+  explicit Node(Self *parent = nullptr, Index index = 0) : m_parent(parent), m_depth(0),
                                                                         m_location({0, 0, 0}) {
 
     if (parent) {
@@ -138,7 +140,7 @@ public:
     m_children = std::make_unique<Children>();
     for (int index = 0; index < 8; index++) {
 
-      (*m_children)[index] = std::move(Node<Point_index>(this, {Index(index)}));
+      (*m_children)[index] = std::move(Self(this, {Index(index)}));
     }
   }
 
@@ -172,7 +174,7 @@ public:
    * \param index The index of the child node, as an int
    * \return A reference to the node
    */
-  Node<Point_index> &operator[](int index) {
+  Self &operator[](int index) {
 
     assert(!is_leaf());
     assert(0 <= index && index < 8);
@@ -186,7 +188,7 @@ public:
    * \param index The index of the child node, as an int
    * \return A const reference to the node
    */
-  const Node<Point_index> &operator[](int index) const {
+  const Self &operator[](int index) const {
 
     assert(!is_leaf());
     assert(0 <= index && index < 8);
@@ -211,7 +213,7 @@ public:
    *
    * \return A const pointer to the parent of this node (possibly nullptr)
    */
-  const Node<Point_index> *parent() const { return m_parent; }
+  const Self *parent() const { return m_parent; }
 
   /*!
    * \brief retrieve this node's depth in the tree
@@ -336,7 +338,7 @@ public:
     return !operator==(rhs);
   }
 
-  const Node<Point_index> *adjacent(std::bitset<3> direction) const {
+  const Self *adjacent(std::bitset<3> direction) const {
 
     // Nodes only have up to 6 different adjacent nodes (since cubes have 6 sides)
     assert(direction.to_ulong() < 6);
