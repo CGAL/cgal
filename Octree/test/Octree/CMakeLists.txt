@@ -19,4 +19,5 @@ create_single_source_cgal_program("test_octree_traverse.cpp")
 
 create_single_source_cgal_program("test_node.cpp")
 create_single_source_cgal_program("test_node_index.cpp")
+create_single_source_cgal_program("test_node_adjacent.cpp")
 

@@ -291,8 +291,18 @@ public:
       if (!node->is_leaf())
         continue;
 
-      // Find neighbors that need to be split
-      std::list<Node *> neighbors_to_split;
+      // Iterate over each of the neighbors that needs to be split
+      std::list<Node *> neighbors_to_split = unbalanced_neighbors_to_split(node);
+      for (auto *neighbor : neighbors_to_split) {
+
+        // Split the neighbors
+        split(*neighbor);
+
+        // Add newly created children to the queue
+        for (int i = 0; i < 8; ++i) {
+          leaf_nodes.push(&(*neighbor)[i]);
+        }
+      }
     }
   }
 
@@ -682,7 +692,7 @@ private: // functions :
     }
   }
 
-  std::list<Node *> unbalanced_neighbors_to_split(Node &node) {
+  std::list<Node *> unbalanced_neighbors_to_split(Node *node) {
 
     // Neighbors will be added to this linked list
     std::list<Node *> neighbors_to_split;
@@ -690,9 +700,9 @@ private: // functions :
     for (int direction = 0; direction < 6; ++direction) {
       Node *neighbor = greater_or_equal_neighbor(node, direction);
       if (nullptr != neighbor &&
-          node.parent() != neighbor->parent() &&
+          node->parent() != neighbor->parent() &&
           neighbor->is_leaf() &&
-          (node.depth() - neighbor->depth()) > 1) {
+          (node->depth() - neighbor->depth()) > 1) {
 
         neighbors_to_split.push_back(neighbor);
       }
@@ -718,10 +728,10 @@ private: // functions :
     for (unsigned int child_id = 0; child_id < 8; child_id++) {
 
       // If that sibling isn't this node and it's in the right direction
-      if (((child_id >> bit_axis) & 1) != dir_axis && *node->parent()[child_id] == this) {
+      if (((child_id >> bit_axis) & 1) != dir_axis && (*node->parent())[child_id] == *node) {
 
         // Return that sibling
-        return *node->parent()[child_id + dir_idx_offset];
+        return &(node->parent()[child_id + dir_idx_offset]);
       }
     }
 
@@ -734,7 +744,7 @@ private: // functions :
 
     // Otherwise, find the closest child of that parent
     for (int child_id = 0; child_id < 8; child_id++) {
-      if (((child_id >> bit_axis) & 1) == dir_axis && *node->parent()[child_id] == this) {
+      if (((child_id >> bit_axis) & 1) == dir_axis && (*node->parent())[child_id] == *node) {
         return *parent_neighbor[child_id - dir_idx_offset];
       }
     }
