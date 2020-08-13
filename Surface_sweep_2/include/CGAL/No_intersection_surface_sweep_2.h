@@ -408,8 +408,8 @@ protected:
       (m_subCurves + index)->set_hint(this->m_statusLine.end());
       (m_subCurves + index)->init (curve);
 
-      _init_curve_end(curve, ARR_MAX_END, m_subCurves + index, events, target);
-      _init_curve_end(curve, ARR_MIN_END, m_subCurves + index, events, source);
+      _init_curve_end(curve, ARR_MAX_END, m_subCurves + index, events, source);
+      _init_curve_end(curve, ARR_MIN_END, m_subCurves + index, events, target);
 
       ++ index;
     }
