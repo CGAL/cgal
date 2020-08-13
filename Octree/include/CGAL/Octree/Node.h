@@ -361,8 +361,16 @@ public:
     return !operator==(rhs);
   }
 
+  Self *adjacent(Direction direction) {
+    return adjacent(std::bitset<3>(static_cast<int>(direction)));
+  }
+
   const Self *adjacent(Direction direction) const {
     return adjacent(std::bitset<3>(static_cast<int>(direction)));
+  }
+
+  Self *adjacent(std::bitset<3> direction) {
+    return const_cast<Self *>(const_cast<const Self *>(this)->adjacent(direction));
   }
 
   const Self *adjacent(std::bitset<3> direction) const {

@@ -279,6 +279,7 @@ public:
     // Collect all the leaf nodes
     std::queue<Node *> leaf_nodes;
     for (auto &leaf : traverse(Traversal::Leaves())) {
+      // TODO: I'd like to find a better (safer) way of doing this
       leaf_nodes.push(const_cast<Node *>(&leaf));
     }
 
