@@ -51,12 +51,15 @@ int main(void) {
   assert(nullptr == octree.root().adjacent(5));
 
   // Left Top Front node should have siblings to the Right, Down, and Back
-  auto &left_top_front = octree.root()[2];
-  assert(nullptr != left_top_front.adjacent(Node::Direction::RIGHT));
-  assert(nullptr != left_top_front.adjacent(Node::Direction::DOWN));
-  assert(nullptr != left_top_front.adjacent(Node::Direction::BACK));
-
-  std::cout << left_top_front;
+  auto &left_top_front = octree.root()[Node::LEFT_TOP_FRONT];
+  assert(nullptr != left_top_front.adjacent(Node::RIGHT));
+  assert(nullptr != left_top_front.adjacent(Node::DOWN));
+  std::cout << left_top_front << std::endl;
+  std::cout << *left_top_front.adjacent(Node::RIGHT) << std::endl;
+  assert(nullptr != left_top_front.adjacent(Node::BACK));
+  assert(nullptr == left_top_front.adjacent(Node::LEFT));
+  assert(nullptr == left_top_front.adjacent(Node::UP));
+  assert(nullptr == left_top_front.adjacent(Node::FRONT));
 
   return 0;
 }

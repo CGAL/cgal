@@ -20,6 +20,7 @@
 #include <memory>
 #include <bitset>
 #include <cassert>
+#include <iostream>
 
 namespace CGAL {
 namespace Octree {
@@ -75,6 +76,8 @@ public:
 
   /// @}
 
+  // TODO: There's probably a better name for this
+  // TODO: Should I use an enum class?
   enum Child {
     LEFT_BOTTOM_FRONT,
     RIGHT_BOTTOM_FRONT,
@@ -378,16 +381,19 @@ public:
     bool sign = direction[0];
 
     // The first two bits indicate the dimension/axis (x, y, z)
-    uint8_t dimension = (direction >> 2).to_ulong();
+    uint8_t dimension = (direction >> 1).to_ulong();
 
     // Create an offset so that the bit-significance lines up with the dimension (e.g. 1, 2, 4 --> 001, 010, 100)
-    int8_t offset = 1 << dimension;
+    int8_t offset = (uint8_t) 1 << dimension;
+    std::cout << (int)offset << std::endl;
 
     // Finally, apply the sign to the offset
-    offset = (sign ? -offset : offset);
+    offset = (sign ? offset : -offset);
 
     // Check if this child has the opposite sign along the direction's axis
     if ((index() >> dimension)[0] != sign) {
+
+      std::cout << index().to_ulong() << std::endl;
 
       // This means the adjacent node is a direct sibling, the offset can be applied easily!
       return &(*parent())[index().to_ulong() + offset];
