@@ -361,19 +361,19 @@ public:
     return !operator==(rhs);
   }
 
-  Self *adjacent(Direction direction) {
-    return adjacent(std::bitset<3>(static_cast<int>(direction)));
+  Self *adjacent_node_node(Direction direction) {
+    return adjacent_node(std::bitset<3>(static_cast<int>(direction)));
   }
 
-  const Self *adjacent(Direction direction) const {
-    return adjacent(std::bitset<3>(static_cast<int>(direction)));
+  const Self *adjacent_node_node(Direction direction) const {
+    return adjacent_node(std::bitset<3>(static_cast<int>(direction)));
   }
 
-  Self *adjacent(std::bitset<3> direction) {
-    return const_cast<Self *>(const_cast<const Self *>(this)->adjacent(direction));
+  Self *adjacent_node_node(std::bitset<3> direction) {
+    return const_cast<Self *>(const_cast<const Self *>(this)->adjacent_node(direction));
   }
 
-  const Self *adjacent(std::bitset<3> direction) const {
+  const Self *adjacent_node(std::bitset<3> direction) const {
 
     // Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
     // direction:    000    001   010   011   100   101
@@ -405,7 +405,7 @@ public:
     }
 
     // Find the parent's neighbor in that direction if it exists
-    auto *adjacent_node_of_parent = parent()->adjacent(direction);
+    auto *adjacent_node_of_parent = parent()->adjacent_node(direction);
 
     // If the parent has no neighbor, then this node doesn't have one
     if (!adjacent_node_of_parent)

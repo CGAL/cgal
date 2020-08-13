@@ -704,7 +704,7 @@ private: // functions :
     for (int direction = 0; direction < 6; ++direction) {
 
       // Get the neighbor in this direction
-      Node *neighbor = node->adjacent(direction);
+      Node *neighbor = node->adjacent_node(direction);
 
       // Skip if there is no neighbor in this direction
       if (!neighbor)
