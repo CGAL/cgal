@@ -294,16 +294,36 @@ public:
       if (!node->is_leaf())
         continue;
 
-      // Iterate over each of the neighbors that needs to be split
-      std::list<Node *> neighbors_to_split = unbalanced_neighbors_to_split(node);
-      for (auto *neighbor : neighbors_to_split) {
+      // Iterate over each of the neighbors
+      for (int direction = 0; direction < 6; ++direction) {
 
-        // Split the neighbors
-        split(*neighbor);
+        // Get the neighbor
+        auto *neighbor = node->adjacent_node(direction);
 
-        // Add newly created children to the queue
-        for (int i = 0; i < 8; ++i) {
-          leaf_nodes.push(&(*neighbor)[i]);
+        // If it doesn't exist, skip it
+        if (!neighbor)
+          continue;
+
+        // Skip if this neighbor is a direct sibling (it's guaranteed to be the same depth)
+        // TODO: This check might be redundant, if it doesn't affect performance maybe I could remove it
+        if (neighbor->parent() == node->parent())
+          continue;
+
+        // If it's already been split, skip it
+        if (!neighbor->is_leaf())
+          continue;
+
+        // Check if the neighbor breaks our grading rule
+        // TODO: could the rule be parametrized?
+        if ((node->depth() - neighbor->depth()) > 1) {
+
+          // Split the neighbor
+          split(*neighbor);
+
+          // Add newly created children to the queue
+          for (int i = 0; i < 8; ++i) {
+            leaf_nodes.push(&(*neighbor)[i]);
+          }
         }
       }
     }
