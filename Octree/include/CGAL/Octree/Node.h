@@ -341,12 +341,23 @@ public:
     // Nodes only have up to 6 different adjacent nodes (since cubes have 6 sides)
     assert(direction.to_ulong() < 6);
 
+    // Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
+    // direction:    000    001   010   011   100   101
 
-    //                 Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
-    //                 direction:    000    001   010   011   100   101
-    bool axis = direction[0]; //   false  true  false  true  false  true
+    // The least significant bit indicates the sign (which side of the node)
+    bool sign = direction[0];
+
+    // The first two bits indicate the dimension/axis (x, y, z)
+    uint8_t dimension = (direction >> 2).to_ulong();
+
+    // Create an offset so that the bit-significance lines up with the dimension (e.g. 1, 2, 4 --> 001, 010, 100)
+    int8_t offset = 1 << dimension;
+
+    // Finally, apply the sign to the offset
+    offset = (sign ? -offset : offset);
 
 
+    // Determine if the adjacent node is a direct sibling (same parent)
   }
 
   /// @}
