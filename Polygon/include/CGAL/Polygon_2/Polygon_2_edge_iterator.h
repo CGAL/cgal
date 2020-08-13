@@ -43,7 +43,8 @@ class Polygon_2_edge_iterator {
     typedef typename std::iterator_traits<typename Container_::iterator>::iterator_category iterator_category;
     typedef typename Traits_::Segment_2 Segment_2;
     typedef typename Traits_::Point_2 Point_2;
-    typedef std::pair<Point_2, Point_2> Point_pair;
+    typedef std::pair<std::reference_wrapper<const Point_2>,
+                      std::reference_wrapper<const Point_2> > Point_pair;
 
     typedef typename std::conditional<ConstructSegment::value,
                                       Segment_2, Point_pair>::type
@@ -93,7 +94,7 @@ class Polygon_2_edge_iterator {
       ++second_vertex;
       if (second_vertex == container->end())
         second_vertex = container->begin();
-      return std::make_pair (*first_vertex, *second_vertex);
+      return std::make_pair (std::cref(*first_vertex), std::cref(*second_vertex));
     }
 
 
@@ -187,12 +188,7 @@ distance_type(const Polygon_2_edge_iterator<Traits_,Container_,Container_>&)
 template <class Traits_,  class Container_>
 typename Traits_::Segment_2*
 value_type(const Polygon_2_edge_iterator<Traits_,Container_,Tag_true>&)
-{ return (typename Traits_::Segment_2 *)(0); }
-
-template <class Traits_,  class Container_>
-std::pair <typename Traits_::Point_2, typename Traits_::Point_2>*
-value_type(const Polygon_2_edge_iterator<Traits_,Container_,Tag_false>&)
-{ return (std::pair<typename Traits_::Point_2, typename Traits_::Point_2>*)(0); }
+{ return (typename Polygon_2_edge_iterator<Traits_,Container_,Tag_true>::value_type *)(0); }
 
 
 //-----------------------------------------------------------------------//
