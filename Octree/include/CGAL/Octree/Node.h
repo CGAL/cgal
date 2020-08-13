@@ -79,14 +79,14 @@ public:
   // TODO: There's probably a better name for this
   // TODO: Should I use an enum class?
   enum Child {
-    LEFT_BOTTOM_FRONT,
-    RIGHT_BOTTOM_FRONT,
-    LEFT_TOP_FRONT,
-    RIGHT_TOP_FRONT,
     LEFT_BOTTOM_BACK,
     RIGHT_BOTTOM_BACK,
     LEFT_TOP_BACK,
-    RIGHT_TOP_BACK
+    RIGHT_TOP_BACK,
+    LEFT_BOTTOM_FRONT,
+    RIGHT_BOTTOM_FRONT,
+    LEFT_TOP_FRONT,
+    RIGHT_TOP_FRONT
   };
 
   enum Direction {
@@ -379,21 +379,21 @@ public:
 
     // The least significant bit indicates the sign (which side of the node)
     bool sign = direction[0];
+    std::cout << "sign: " << (int)sign << std::endl;
 
     // The first two bits indicate the dimension/axis (x, y, z)
     uint8_t dimension = (direction >> 1).to_ulong();
+    std::cout << "dimension: " << (int)dimension << std::endl;
 
     // Create an offset so that the bit-significance lines up with the dimension (e.g. 1, 2, 4 --> 001, 010, 100)
     int8_t offset = (uint8_t) 1 << dimension;
-    std::cout << (int)offset << std::endl;
 
     // Finally, apply the sign to the offset
     offset = (sign ? offset : -offset);
+    std::cout << "offset: " << (int)offset << std::endl;
 
     // Check if this child has the opposite sign along the direction's axis
-    if ((index() >> dimension)[0] != sign) {
-
-      std::cout << index().to_ulong() << std::endl;
+    if (index()[dimension] != sign) {
 
       // This means the adjacent node is a direct sibling, the offset can be applied easily!
       return &(*parent())[index().to_ulong() + offset];
