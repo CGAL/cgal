@@ -75,6 +75,26 @@ public:
 
   /// @}
 
+  enum Child {
+    LEFT_BOTTOM_FRONT,
+    RIGHT_BOTTOM_FRONT,
+    LEFT_TOP_FRONT,
+    RIGHT_TOP_FRONT,
+    LEFT_BOTTOM_BACK,
+    RIGHT_BOTTOM_BACK,
+    LEFT_TOP_BACK,
+    RIGHT_TOP_BACK
+  };
+
+  enum Direction {
+    LEFT,
+    RIGHT,
+    DOWN,
+    UP,
+    BACK,
+    FRONT
+  };
+
 
 private:
 
@@ -337,15 +357,6 @@ public:
   bool operator!=(const Node &rhs) const {
     return !operator==(rhs);
   }
-
-  enum class Direction {
-    LEFT,
-    RIGHT,
-    DOWN,
-    UP,
-    BACK,
-    FRONT
-  };
 
   const Self *adjacent(Direction direction) const {
     return adjacent(std::bitset<3>(static_cast<int>(direction)));
