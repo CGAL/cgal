@@ -692,10 +692,13 @@ private: // functions :
       if (nullptr != neighbor &&
           node.parent() != neighbor->parent() &&
           neighbor->is_leaf() &&
-          true) {
+          (node.depth() - neighbor->depth()) > 1) {
 
+        neighbors_to_split.push_back(neighbor);
       }
     }
+
+    return neighbors_to_split;
   }
 
   Node *greater_or_equal_neighbor(Node *node, std::size_t direction) {
