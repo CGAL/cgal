@@ -107,7 +107,7 @@ public:
    * \param index This node's relationship to its parent
    */
   explicit Node(Self *parent = nullptr, Index index = 0) : m_parent(parent), m_depth(0),
-                                                                        m_location({0, 0, 0}) {
+                                                           m_location({0, 0, 0}) {
 
     if (parent) {
 
@@ -336,6 +336,19 @@ public:
 
   bool operator!=(const Node &rhs) const {
     return !operator==(rhs);
+  }
+
+  enum class Direction {
+    LEFT,
+    RIGHT,
+    DOWN,
+    UP,
+    BACK,
+    FRONT
+  };
+
+  const Self *adjacent(Direction direction) const {
+    return adjacent(std::bitset<3>(static_cast<int>(direction)));
   }
 
   const Self *adjacent(std::bitset<3> direction) const {

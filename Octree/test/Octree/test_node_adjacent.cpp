@@ -13,6 +13,7 @@ typedef CGAL::Point_set_3<Point> Point_set;
 typedef CGAL::Octree::Octree
         <Point_set, typename Point_set::Point_map>
         Octree;
+typedef Octree::Node Node;
 
 int main(void) {
 
@@ -51,9 +52,9 @@ int main(void) {
 
   // Left Top Front node should have siblings to the Right, Down, and Back
   auto &left_top_front = octree.root()[2];
-  assert(nullptr != left_top_front.adjacent(1));
-  assert(nullptr != left_top_front.adjacent(2));
-  assert(nullptr != left_top_front.adjacent(4));
+  assert(nullptr != left_top_front.adjacent(Node::Direction::RIGHT));
+  assert(nullptr != left_top_front.adjacent(Node::Direction::DOWN));
+  assert(nullptr != left_top_front.adjacent(Node::Direction::BACK));
 
   std::cout << left_top_front;
 
