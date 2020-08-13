@@ -697,15 +697,30 @@ private: // functions :
     // Neighbors will be added to this linked list
     std::list<Node *> neighbors_to_split;
 
+    // Find all of this node's neighbors
     for (int direction = 0; direction < 6; ++direction) {
-      Node *neighbor = greater_or_equal_neighbor(node, direction);
-      if (nullptr != neighbor &&
-          node->parent() != neighbor->parent() &&
-          neighbor->is_leaf() &&
-          (node->depth() - neighbor->depth()) > 1) {
 
+      // Get the neighbor in this direction
+      Node *neighbor = node->adjacent(direction);
+
+      // Skip if there is no neighbor in this direction
+      if (!neighbor)
+        continue;
+
+      // Skip if this neighbor is a direct sibling (it's guaranteed to be the same depth)
+      // TODO: This might be redundant
+      if (neighbor->parent() == node->parent())
+        continue;
+
+      // Skip if the neighbor is already split
+      if (!neighbor->is_leaf())
+        continue;
+
+      // Add the neighbor to the list if it breaks our grading rule
+      // TODO: could the rule be parametrized?
+      if ((node->depth() - neighbor->depth()) > 1)
         neighbors_to_split.push_back(neighbor);
-      }
+
     }
 
     return neighbors_to_split;
