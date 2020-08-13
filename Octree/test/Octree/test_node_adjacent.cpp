@@ -39,7 +39,17 @@ int main(void) {
   Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
+  std::cout << octree << std::endl;
+
+  // Root node should have no siblings
   assert(nullptr == octree.root().adjacent(0));
+  assert(nullptr == octree.root().adjacent(1));
+  assert(nullptr == octree.root().adjacent(2));
+  assert(nullptr == octree.root().adjacent(3));
+  assert(nullptr == octree.root().adjacent(4));
+  assert(nullptr == octree.root().adjacent(5));
+
+  // Left Top Front node should have siblings to the Right, Down, and Back
 
   return 0;
 }
