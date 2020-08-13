@@ -407,8 +407,9 @@ public:
     if (adjacent_node_of_parent->is_leaf())
       return adjacent_node_of_parent;
 
+    // Return the nearest node of the parent by subtracting the offset instead of adding
+    return &(*adjacent_node_of_parent)[index().to_ulong() - offset];
 
-    return nullptr;
   }
 
   /// @}

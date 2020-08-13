@@ -64,7 +64,7 @@ int main(void) {
 
   auto &right_top_back_of_left_bottom_back = octree.root()[Node::LEFT_BOTTOM_BACK][Node::RIGHT_TOP_BACK];
   assert(octree.root()[Node::LEFT_BOTTOM_BACK][Node::LEFT_TOP_BACK] == *right_top_back_of_left_bottom_back.adjacent(Node::LEFT));
-  assert(octree.root()[Node::RIGHT_BOTTOM_BACK][Node::LEFT_TOP_BACK] == *right_top_back_of_left_bottom_back.adjacent(Node::RIGHT));
+  assert(octree.root()[Node::RIGHT_BOTTOM_BACK] == *right_top_back_of_left_bottom_back.adjacent(Node::RIGHT));
   assert(nullptr != right_top_back_of_left_bottom_back.adjacent(Node::RIGHT));
   assert(nullptr != right_top_back_of_left_bottom_back.adjacent(Node::UP));
   assert(nullptr != right_top_back_of_left_bottom_back.adjacent(Node::DOWN));
