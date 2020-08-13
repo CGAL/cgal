@@ -39,7 +39,7 @@ int main(void) {
   Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
-  std::cout << octree;
+  assert(nullptr == octree.root().adjacent(0));
 
   return 0;
 }
