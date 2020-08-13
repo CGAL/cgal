@@ -396,7 +396,18 @@ public:
       return &(*parent())[index().to_ulong() + offset];
     }
 
-    //
+    // Find the parent's neighbor in that direction if it exists
+    auto *adjacent_node_of_parent = parent()->adjacent(direction);
+
+    // If the parent has no neighbor, then this node doesn't have one
+    if (!adjacent_node_of_parent)
+      return nullptr;
+
+    // If the parent's adjacent node has no children, then it's this node's adjacent node
+    if (adjacent_node_of_parent->is_leaf())
+      return adjacent_node_of_parent;
+
+
     return nullptr;
   }
 
