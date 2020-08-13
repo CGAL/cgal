@@ -379,18 +379,15 @@ public:
 
     // The least significant bit indicates the sign (which side of the node)
     bool sign = direction[0];
-    std::cout << "sign: " << (int)sign << std::endl;
 
     // The first two bits indicate the dimension/axis (x, y, z)
     uint8_t dimension = (direction >> 1).to_ulong();
-    std::cout << "dimension: " << (int)dimension << std::endl;
 
     // Create an offset so that the bit-significance lines up with the dimension (e.g. 1, 2, 4 --> 001, 010, 100)
     int8_t offset = (uint8_t) 1 << dimension;
 
     // Finally, apply the sign to the offset
     offset = (sign ? offset : -offset);
-    std::cout << "offset: " << (int)offset << std::endl;
 
     // Check if this child has the opposite sign along the direction's axis
     if (index()[dimension] != sign) {

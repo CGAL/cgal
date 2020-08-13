@@ -52,17 +52,9 @@ int main(void) {
 
   // Left Top Front node should have siblings to the Right, Down, and Back
   auto &left_top_back = octree.root()[Node::LEFT_TOP_BACK];
-  std::cout << left_top_back << std::endl;
-  left_top_back.adjacent(0);
-  left_top_back.adjacent(1);
-  left_top_back.adjacent(2);
-  left_top_back.adjacent(3);
-  left_top_back.adjacent(4);
-  left_top_back.adjacent(5);
-
-  assert(nullptr != left_top_back.adjacent(Node::RIGHT));
-  assert(nullptr != left_top_back.adjacent(Node::DOWN));
-  assert(nullptr != left_top_back.adjacent(Node::FRONT));
+  assert(octree.root()[Node::RIGHT_TOP_BACK] == *left_top_back.adjacent(Node::RIGHT));
+  assert(octree.root()[Node::LEFT_BOTTOM_BACK] == *left_top_back.adjacent(Node::DOWN));
+  assert(octree.root()[Node::LEFT_TOP_FRONT] == *left_top_back.adjacent(Node::FRONT));
   assert(nullptr == left_top_back.adjacent(Node::LEFT));
   assert(nullptr == left_top_back.adjacent(Node::UP));
   assert(nullptr == left_top_back.adjacent(Node::BACK));
