@@ -367,15 +367,15 @@ public:
 
   const Self *adjacent(std::bitset<3> direction) const {
 
+    // Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
+    // direction:    000    001   010   011   100   101
+
     // Nodes only have up to 6 different adjacent nodes (since cubes have 6 sides)
     assert(direction.to_ulong() < 6);
 
     // The root node has no adjacent nodes!
     if (is_root())
       return nullptr;
-
-    // Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
-    // direction:    000    001   010   011   100   101
 
     // The least significant bit indicates the sign (which side of the node)
     bool sign = direction[0];
