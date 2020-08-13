@@ -73,6 +73,7 @@ public:
 
   /// @}
 
+
 private:
 
   Point_range m_points;
@@ -333,6 +334,19 @@ public:
 
   bool operator!=(const Node &rhs) const {
     return !operator==(rhs);
+  }
+
+  Node<Point_index> *adjacent(std::bitset<3> direction) {
+
+    // Nodes only have up to 6 different adjacent nodes (since cubes have 6 sides)
+    assert(direction.to_ulong() < 6);
+
+
+    //                 Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
+    //                 direction:    000    001   010   011   100   101
+    bool axis = direction[0]; //   false  true  false  true  false  true
+
+
   }
 
   /// @}
