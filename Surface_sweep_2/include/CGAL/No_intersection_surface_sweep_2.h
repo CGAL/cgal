@@ -309,6 +309,23 @@ public:
     m_visitor->after_sweep();
   }
 
+  /*!
+    Run the indexed sweep-line algorithm on a given range of
+    x-monotone curves and accessor. The main difference from the
+    original sweep() function is that the accessor allows to get
+    indices of end-points and avoid checking several times in the
+    event queue when the same vertex as several incident edges.
+
+    \param edges A range of edges
+    \param accessor An object providing, for a value_type `e` of
+           range `edges`, the following methods:
+     - size_t             min_end_index(e) -> the index of the min end of curve c
+     - size_t             max_end_index(e) -> the index of the max end of curve c
+     - X_monotone_curve_2 curve(e)         -> the x-monotone curve associated to e
+     - size_t             nb_vertices()    -> the total number of points/events
+     - void               before_init()    -> called before initialization
+     - void               after_init()     -> called after initialization
+   */
   template <typename EdgeRange, typename Accessor>
   void indexed_sweep (const EdgeRange& edges,
                       const Accessor& accessor)
@@ -322,6 +339,30 @@ public:
     m_visitor->after_sweep();
   }
 
+  /*!
+    Run the indexed sweep-line algorithm on a given range of
+    x-monotone curves and accessor. The main difference from the
+    original sweep() function is that the accessor allows to get
+    indices of end-points and avoid checking several times in the
+    event queue when the same vertex as several incident edges.
+
+    Variant with action event points (if a curve passed through an
+    action point, it will be split).
+
+    \param edges A range of edges
+    \param accessor An object providing, for a value_type `e` of
+           range `edges`, the following methods:
+     - size_t             min_end_index(e) -> the index of the min end of curve c
+     - size_t             max_end_index(e) -> the index of the max end of curve c
+     - X_monotone_curve_2 curve(e)         -> the x-monotone curve associated to e
+     - size_t             nb_vertices()    -> the total number of points/events
+     - void               before_init()    -> called before initialization
+     - void               after_init()     -> called after initialization
+    \param points_begin An iterator for the first point in the range.
+    \param points_end A past-the-end iterator for this range.
+    \pre The value-type of PointInputIterator is the
+         traits-class Point_2.
+  */
   template <typename EdgeRange, typename Accessor,
             typename PointInputIterator>
   void indexed_sweep (const EdgeRange& edges,
@@ -417,8 +458,8 @@ protected:
     unsigned int index = 0;
     for (const auto& e : edges)
     {
-      std::size_t source = accessor.source_index(e);
-      std::size_t target = accessor.target_index(e);
+      std::size_t max_end = accessor.max_end_index(e);
+      std::size_t min_end = accessor.min_end_index(e);
       const X_monotone_curve_2& curve = accessor.curve (e);
 
       // Construct and initialize a subcurve object.
@@ -426,8 +467,8 @@ protected:
       (m_subCurves + index)->set_hint(this->m_statusLine.end());
       (m_subCurves + index)->init (curve);
 
-      _init_curve_end(curve, ARR_MAX_END, m_subCurves + index, events, source);
-      _init_curve_end(curve, ARR_MIN_END, m_subCurves + index, events, target);
+      _init_curve_end(curve, ARR_MAX_END, m_subCurves + index, events, max_end);
+      _init_curve_end(curve, ARR_MIN_END, m_subCurves + index, events, min_end);
 
       ++ index;
     }

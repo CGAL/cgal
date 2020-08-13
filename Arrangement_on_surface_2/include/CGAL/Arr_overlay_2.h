@@ -57,14 +57,14 @@ public:
     return arr1.number_of_vertices() + arr2.number_of_vertices();
   }
 
-  std::size_t source_index (const Curve& c) const
-  {
-    return reinterpret_cast<std::size_t>(halfedge(c)->source()->inc());
-  }
-
-  std::size_t target_index (const Curve& c) const
+  std::size_t min_end_index (const Curve& c) const
   {
     return reinterpret_cast<std::size_t>(halfedge(c)->target()->inc());
+  }
+
+  std::size_t max_end_index (const Curve& c) const
+  {
+    return reinterpret_cast<std::size_t>(halfedge(c)->source()->inc());
   }
 
   const Curve& curve (const Curve& c) const
@@ -258,7 +258,7 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
   if (total_iso_verts == 0) {
     // Clear the result arrangement and perform the sweep to construct it.
     arr.clear();
-    if (std::is_same<typename Agt2::Base_traits_2::Bottom_side_category,
+    if (std::is_same<typename Agt2::Bottom_side_category,
                      Arr_contracted_side_tag>::value)
       surface_sweep.sweep (xcvs_vec.begin(), xcvs_vec.end());
     else
@@ -297,7 +297,7 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
 
   // Clear the result arrangement and perform the sweep to construct it.
   arr.clear();
-  if (std::is_same<typename Agt2::Base_traits_2::Bottom_side_category,
+  if (std::is_same<typename Agt2::Bottom_side_category,
       Arr_contracted_side_tag>::value)
     surface_sweep.sweep(xcvs_vec.begin(), xcvs_vec.end(),
                         pts_vec.begin(), pts_vec.end());
