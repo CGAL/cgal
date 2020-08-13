@@ -653,7 +653,7 @@ void _Bezier_cache<NtTraits>::_self_intersection_params
   //   II: Y(t) - Y(s) / (t - s) = 0
   //
   Integer                 *coeffs;
-  int                      i;
+  int                      i, k;
 
   // Consruct the bivariate polynomial that corresponds to Equation I.
   // Note that we represent a bivariate polynomial as a vector of univariate
@@ -667,11 +667,12 @@ void _Bezier_cache<NtTraits>::_self_intersection_params
   coeffs = new Integer [degX];
 
   for (i = 0; i < degX; i++)
-    coeffs[i] = nt_traits.get_coefficient(polyX, i + 1);
+  {
+    for (k = i + 1; k < degX; k++)
+      coeffs[k - i - 1] = nt_traits.get_coefficient (polyX, k);
 
-  for (i = 0; i < degX; i++)
-    coeffsX_st[degX - i - 1] =
-        nt_traits.construct_polynomial(coeffs + i, degX - i - 1);
+    coeffsX_st[i] = nt_traits.construct_polynomial (coeffs, degX - i - 1);
+  }
 
   delete[] coeffs;
 
@@ -684,11 +685,12 @@ void _Bezier_cache<NtTraits>::_self_intersection_params
   coeffs = new Integer [degY];
 
   for (i = 0; i < degY; i++)
-    coeffs[i] = nt_traits.get_coefficient(polyY, i + 1);
+  {
+    for (k = i + 1; k < degY; k++)
+      coeffs[k - i - 1] = nt_traits.get_coefficient (polyY, k);
 
-  for (i = 0; i < degY; i++)
-    coeffsY_st[degY - i - 1] =
-        nt_traits.construct_polynomial(coeffs + i, degY - i - 1);
+    coeffsY_st[i] = nt_traits.construct_polynomial (coeffs, degY - i - 1);
+  }
 
   delete[] coeffs;
 

@@ -2970,11 +2970,6 @@ private:
         );
 
     }
-    // suppress the warning: enumeration value ‘EXTERIOR’ not handled in switch
-    // [-Wswitch]
-    default: {
-      break;
-    }
     } // switch
 
     return std::make_pair(CGAL::to_double(y_approx.first),

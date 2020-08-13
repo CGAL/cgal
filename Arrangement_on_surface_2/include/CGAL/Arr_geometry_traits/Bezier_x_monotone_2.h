@@ -544,63 +544,7 @@ private:
                                              force_exact
 #endif
                                              ) const;
-public:
-  // IO
-  void write(std::ostream& os) const
-  {
-    os << "Bezier_x_monotone("
-       << this->supporting_curve()
-       << " [" << this->xid()
-       << "] |" << this->source()
-       << " -->" << this->target()
-       << ',' << this->is_directed_right()
-       << ',' << this->_inc_to_right
-       << ',' << this->is_vertical()
-       << ')';
-  }
 
-  void read(std::istream& is)
-  {
-    Bezier_io_internal::swallow(is, "Bezier_x_monotone");
-    Bezier_io_internal::swallow(is, '(');
-    Curve_2 curve;
-    is >> curve;
-
-    Bezier_io_internal::swallow(is, '[');
-    unsigned int xid;
-    is >> xid;
-
-    Bezier_io_internal::swallow(is, ']');
-    Bezier_io_internal::swallow(is, '|');
-    Point_2 source;
-    is >> source;
-
-    Bezier_io_internal::swallow(is, "-->");
-    Point_2 target;
-    is >> target;
-
-    Bezier_io_internal::swallow(is, ',');
-    bool dir_right;
-    is >> dir_right;
-
-    Bezier_io_internal::swallow(is, ',');
-    bool inc_to_right;
-    is >> inc_to_right;
-
-    Bezier_io_internal::swallow(is, ',');
-    bool is_vert;
-    is >> is_vert;
-
-    Bezier_io_internal::swallow(is, ')');
-
-    this->_curve = curve;
-    this->_xid = xid;
-    this->_ps = source;
-    this->_pt = target;
-    this->_dir_right = dir_right;
-    this->_inc_to_right = inc_to_right;
-    this->_is_vert = is_vert;
-  }
 };
 
 /*!
@@ -613,18 +557,12 @@ operator<<(std::ostream& os,
            const _Bezier_x_monotone_2
            <Rat_kernel, Alg_kernel, Nt_traits, Bounding_traits>& cv)
 {
-  cv.write(os);
-  return os;
-}
+  os << cv.supporting_curve()
+     << " [" << cv.xid()
+     << "] | " << cv.source()
+     << " --> " << cv.target();
 
-template <
-  class Rat_kernel, class Alg_kernel, class Nt_traits, class Bounding_traits>
-std::istream& operator>>(
-  std::istream& is,
-  _Bezier_x_monotone_2<Rat_kernel, Alg_kernel, Nt_traits, Bounding_traits>& cv)
-{
-  cv.read(is);
-  return is;
+  return os;
 }
 
 // ---------------------------------------------------------------------------
@@ -1201,11 +1139,10 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_left
     Originator_iterator  org = p.get_originator(_curve, _xid);
 
     CGAL_assertion(org != p.originators_end());
+    CGAL_assertion(_inc_to_right != cv._inc_to_right);
 
     if (org->point_bound().type == Bez_point_bound::VERTICAL_TANGENCY_PT)
     {
-      CGAL_assertion(_inc_to_right != cv._inc_to_right);
-
       if (! p.is_exact())
       {
         // Comparison based on the control polygon of the bounded vertical
@@ -2105,10 +2042,11 @@ _approximate_intersection_points(const Self& cv,
     if (bound1.type == Bounding_traits::Bez_point_bound::RATIONAL_PT &&
         bound2.type == Bounding_traits::Bez_point_bound::RATIONAL_PT)
     {
-      CGAL_assertion (CGAL::compare (bound1.t_min, bound1.t_max) == EQUAL);
-      CGAL_assertion (CGAL::compare (bound2.t_min, bound2.t_max) == EQUAL);
-      Rational   t1 = bound1.t_min;
-      Rational   t2 = bound2.t_min;
+      CGAL_assertion (CGAL::compare(bound1.t_min, bound1.t_max) == EQUAL);
+      CGAL_assertion (CGAL::compare(bound2.t_min, bound2.t_max) == EQUAL);
+      Rational t1 = bound1.t_min;
+      Rational t2 = bound2.t_min;
+      Nt_traits nt_traits;
 
       if (is_self_intersection) {
         // Set the originators with the curve x-monotone IDs.
@@ -2124,8 +2062,8 @@ _approximate_intersection_points(const Self& cv,
       }
       else {
         // Set the originators referring to the entire supporting curves.
-        pt = Point_2 (B1, t1);
-        pt.add_originator (Originator (B2, t2));
+        pt = Point_2(B1, t1);
+        pt.add_originator(Originator (B2, nt_traits.convert (t2)));
       }
     }
     else {

@@ -89,16 +89,10 @@ struct Pixel_2_
                           // (always 0 for pixels)
 
     Pixel_2_& operator =(const Pixel_2_& pix) {
-        x = pix.x;
-        y = pix.y;
-        level = pix.level;
 #ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
-        xv = pix.xv;
-        yv = pix.yv
-        // using memcpy with non trivial types is unsafe and causes a warning
-        // memcpy(this, &pix, sizeof(int)*3 + sizeof(double)*2);
-// #else
-        // memcpy(this, &pix, sizeof(int)*3);
+        memcpy(this, &pix, sizeof(int)*3 + sizeof(double)*2);
+#else
+        memcpy(this, &pix, sizeof(int)*3);
 #endif
         sub_x = pix.sub_x;
         sub_y = pix.sub_y;
@@ -934,13 +928,11 @@ void get_precached_poly(int var, const NT& key, int /* level */, Poly_1& poly)
 //! recomputed with modular or exact rational arithmetic
 int evaluate_generic(int var, const NT& c, const NT& key, const Poly_1& poly)
 {
-    // suppress variable set but not used for x and y
-    // NT x = key, y = c;
-    NT c1;
+    NT x = key, y = c, c1;
 
     if(var == CGAL_X_RANGE) {
-        // x = c;
-        // y = key;
+        x = c;
+        y = key;
         c1 = x_min + c*pixel_w;
     } else
         c1 = y_min + c*pixel_h;
@@ -985,6 +977,7 @@ void precompute(const Polynomial_2& in) {
     Coeff_src max_c = max_coeff(in);
     /////// magic symbol ////////////
     // somehow relates to double precision fix
+    std::cerr << ' ';
 
     typedef Reduce_by<Rat_coercion_type, Coeff_src> Reduce_op;
     Transform<Rational_poly_2, Polynomial_2, Reduce_op> transform;
