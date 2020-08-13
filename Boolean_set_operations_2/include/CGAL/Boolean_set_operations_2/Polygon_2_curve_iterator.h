@@ -52,7 +52,7 @@ public:
 
 
     typedef Polygon_                                      Polygon;
-    typedef typename Polygon::Edge_const_iterator         Edge_const_iterator;
+    typedef typename Polygon::Vertex_pair_iterator        Edge_const_iterator;
     typedef typename Edge_const_iterator::difference_type difference_type;
 
   private:
