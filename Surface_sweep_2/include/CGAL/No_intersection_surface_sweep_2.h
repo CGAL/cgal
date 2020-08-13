@@ -322,6 +322,24 @@ public:
     m_visitor->after_sweep();
   }
 
+  template <typename EdgeRange, typename Accessor,
+            typename PointInputIterator>
+  void indexed_sweep (const EdgeRange& edges,
+                      const Accessor& accessor,
+                      PointInputIterator action_points_begin,
+                      PointInputIterator action_points_end)
+  {
+    m_visitor->before_sweep();
+    accessor.before_init();
+    _init_indexed_sweep(edges, accessor);
+    accessor.after_init();
+    _init_points(action_points_begin, action_points_end, Event::ACTION);
+    //m_visitor->after_init();
+    _sweep();
+    _complete_sweep();
+    m_visitor->after_sweep();
+  }
+
   /*! Get an iterator for the first subcurve in the status line. */
   Status_line_iterator status_line_begin() { return m_statusLine.begin(); }
 

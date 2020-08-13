@@ -297,8 +297,16 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
 
   // Clear the result arrangement and perform the sweep to construct it.
   arr.clear();
-  surface_sweep.sweep(xcvs_vec.begin(), xcvs_vec.end(),
-                      pts_vec.begin(), pts_vec.end());
+  if (std::is_same<typename Agt2::Base_traits_2::Bottom_side_category,
+      Arr_contracted_side_tag>::value)
+    surface_sweep.sweep(xcvs_vec.begin(), xcvs_vec.end(),
+                        pts_vec.begin(), pts_vec.end());
+  else
+    surface_sweep.indexed_sweep (xcvs_vec,
+                                 Indexed_sweep_accessor
+                                 <Arr_a, Arr_b, Ovl_x_monotone_curve_2>
+                                 (arr1, arr2),
+                                 pts_vec.begin(), pts_vec.end());
   xcvs_vec.clear();
   pts_vec.clear();
 }
