@@ -278,7 +278,9 @@ public:
 
     // Collect all the leaf nodes
     std::queue<Node *> leaf_nodes;
-    leaves(m_root, leaf_nodes);
+    for (auto &leaf : traverse(Traversal::Leaves())) {
+      leaf_nodes.push(const_cast<Node *>(&leaf));
+    }
 
     // Iterate over the nodes
     while (!leaf_nodes.empty()) {
@@ -708,7 +710,7 @@ private: // functions :
         continue;
 
       // Skip if this neighbor is a direct sibling (it's guaranteed to be the same depth)
-      // TODO: This might be redundant
+      // TODO: This might be redundant, if it doesn't affect performance maybe I could remove it
       if (neighbor->parent() == node->parent())
         continue;
 
