@@ -267,6 +267,12 @@ public:
     refine(Split_criterion::Max_depth_or_bucket_size(max_depth, bucket_size));
   }
 
+  /*!
+   * \brief eliminate large jumps in depth by splitting nodes that are much shallower than their neighbors
+   *
+   * This function guarantees that any pair of adjacent nodes has a difference in depth no greater than 1.
+   * \todo link to adjacent nodes explanation
+   */
   void grade() {
 
     // Collect all the leaf nodes
