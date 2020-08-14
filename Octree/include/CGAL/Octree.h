@@ -71,6 +71,11 @@ public:
   /// @{
 
   /*!
+   * \brief self typedef for convenience
+   */
+  typedef Octree<Point_range, Point_map> Self;
+
+  /*!
    * \brief The point type is deduced from the type of the property map used
    */
   typedef typename boost::property_traits<Point_map>::value_type Point;
