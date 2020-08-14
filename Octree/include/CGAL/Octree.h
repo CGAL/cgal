@@ -86,11 +86,6 @@ public:
   typedef typename Kernel::FT FT;
 
   /*!
-   * \brief
-   */
-  typedef boost::iterator_range<typename Point_range::iterator> Points_iterator_range;
-
-  /*!
    * \brief The Sub-tree / Octant type
    */
   typedef CGAL::Octree::Node<typename Point_range::iterator> Node;
