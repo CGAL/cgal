@@ -214,12 +214,10 @@ public:
     m_max_depth_reached = 0;
 
     // Reset the side length map, too
-    m_side_per_depth.resize(0);
+    m_side_per_depth.resize(1);
 
     // create a side length map
-    // TODO: This should not be a fixed value (32)
-    for (int i = 0; i <= (int) 32; i++)
-      m_side_per_depth.push_back(m_bbox_side / (FT) (1 << i));
+    m_side_per_depth.push_back(*(m_side_per_depth.end() - 1) / 2);
 
     // Initialize a queue of nodes that need to be refined
     std::queue<Node *> todo;
@@ -231,7 +229,6 @@ public:
       // Get the next element
       auto current = todo.front();
       todo.pop();
-      int depth = current->depth();
 
       // Check if this node needs to be processed
       if (split_criterion(*current)) {
@@ -240,7 +237,14 @@ public:
         split((*current));
 
         // Check if we've reached a new max depth
-        m_max_depth_reached = (std::max)(current->depth(), m_max_depth_reached);
+        if (current->depth() > m_max_depth_reached) {
+
+          // Update the max depth
+          m_max_depth_reached = current->depth();
+
+          // Update the side length map
+          m_side_per_depth.push_back(*(m_side_per_depth.end() - 1) / 2);
+        }
 
         // Process each of its children
         for (int i = 0; i < 8; ++i)
