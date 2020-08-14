@@ -36,7 +36,8 @@ TARGETS = \
   compare_y_near_boundary.pdf \
   identified_clusters.pdf \
   generic_polyline.tex \
-  well_oriented_polyline.tex
+  well_oriented_polyline.tex \
+  circular_arcs.tex
 
 .DEFAULT_GOAL = all
 .PHONY: all clean

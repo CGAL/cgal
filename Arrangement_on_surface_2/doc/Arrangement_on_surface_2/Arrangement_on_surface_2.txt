@@ -3577,14 +3577,14 @@ attaching auxiliary data with the geometric objects.
 <!----------------------------------------------------------------------------->
 
 There are two distinct traits classes that handle line segments. One
-caches information in the curve records (see Paragraph \ref
+caches information in the curve records (see Section \ref
 arr_sssectr_caching_segs), while the other retains the minimal amount
-of data (see Paragraph \ref arr_sssectr_non_caching_segs). Operations
+of data (see Section \ref arr_sssectr_non_caching_segs). Operations
 on arrangements instantiated with the former traits class consume more
 space, but they are more efficient for dense arrangements (namely,
 arrangements induced by line segments with a large number of
 intersections). Another model handles not only (bounded) line
-segments, but also rays and lines; see Paragraph \ref
+segments, but also rays and lines; see Section \ref
 arr_sssectr_linear.
 
 <!----------------------------------------------------------------------------->
@@ -3757,10 +3757,10 @@ arrangements of polylines in an exact and robust manner. Here, we
 extend the notion of polylines and use the term to refer to chains of
 subcurves that are not necessarily linear. However, each subcurve must
 be uniquely defined by (and, thus, can be uniquely constructed from)
-two points within the handled family of curves; see Paragraph \ref
+two points within the handled family of curves; see Section \ref
 arr_sssectr_polylines. We also provide a similar traits class that
 handles continuous piecewise curves that are not necessarily linear
-and are not subject to the aformentioned constraint; see Paragraph \ref
+and are not subject to the aformentioned constraint; see Section \ref
 arr_sssectr_polycurves.
 
 <!----------------------------------------------------------------------------->
@@ -3855,13 +3855,14 @@ arrangement.
 The polyline traits class also supports the traversal over the range
 of defining segments of a given polyline. The \a first and \a
 past-the-end iterators can be obtained through the access methods
-\link CGAL::X_monotone_polyline_2::begin_segments()
+\link
+CGAL::Arr_polyline_traits_2::X_monotone_curve_2::begin_segments()
 `begin_segments()`\endlink and \link
-CGAL::X_monotone_polyline_2::end_segments() `end_segments()`\endlink,
-respectively, of a polyline \f$c\f$. The vertices of an
-\f$x\f$-monotone curve are always stored in a strongly monotonic
-lexicographical order.  In other words, \f$x\f$-monotone polylines can
-be directed \a either left-to-right \a or right-to-left.
+CGAL::Arr_polyline_traits_2::X_monotone_curve_2::end_segments()
+`end_segments()`\endlink, respectively, of a polyline \f$c\f$. The
+vertices of an \f$x\f$-monotone curve are always stored in a strongly
+monotonic lexicographical order.  In other words, \f$x\f$-monotone
+polylines can be directed \a either left-to-right \a or right-to-left.
 
 The polyline-traits class does not perform any geometric operations
 directly. Instead, it solely relies on the functionality of the
@@ -3938,6 +3939,7 @@ typedef CGAL::Arrangement_2<Traits>                        Arrangement;
 \paragraph arr_sssectr_polycurves The Polycurve Traits Class
 <!----------------------------------------------------------------------------->
 
+<!--
 The traits class `Arr_polycurve_traits_2<SubcurveTraits_2>` handles
 piecewise curves that are not necessarily linear, such as conic arcs,
 circular arcs, Bezier curves, or line segments. We call such a
@@ -3954,105 +3956,226 @@ able to construct a subcurve from only two points. As a consequence,
 it does not support the operations that (i) construct a polycurve from
 a sequence of points, and (ii) push a point at the back or at the
 front of a non-empty polycurve.
+-->
 
 <!----------------------------------------------------------------------------->
-\subsubsection arr_ssectr_circ_seg Circular Arcs and Line Segments
+\subsubsection arr_ssectr_algebraic Traits Classes for Algebraic Curves
 <!----------------------------------------------------------------------------->
 
-Circles and circular arcs are the simplest form of non-linear curves.
-We handle circles whose centers have rational coordinates and whose
-squared radii are also rational. If we denote the circle center by
-\f$(x_0,y_0)\f$ and its radius by \f$r\f$, then the equation of the
-circle - that is, \f$(x - x_0)^2 + (y - y_0)^2 = r^2\f$ - has rational
-coefficients.  The intersection points of two such circles are
-therefore solutions of a quadratic equation with rational
-coefficients, or algebraic numbers of degree \f$2\f$. The same applies
-for intersection points between such a rational circle and a line, or
-a line segment, with rational coefficients (a line whose equation is
-\f$ax + by + c = 0\f$, where \f$a\f$, \f$b\f$ and \f$c\f$ are
-rational). Such numbers can be expressed as \f$\alpha +
-\beta\sqrt{\gamma}\f$, where \f$\alpha\f$, \f$\beta\f$ and
-\f$\gamma\f$ are all rational numbers.
+A curve in our context is typically (but not necessarily) defined as
+the zero set of a bivariate nonzero polynomial with rational (or,
+equivalently, integral) coefficients. We call such polynomials and the
+curves they define \a algebraic. When dealing with linear curves
+(e.g., line segments and polylines), having rational coefficients
+guarantees that all intersection points also have rational
+coordinates, such that the arrangement of such curves can be
+constructed and maintained using only rational arithmetic. The \ref
+PkgArrangementOnSurface2 package also offers geometry traits-classes
+that handle algebraic curves defined by algebraic polynomials of
+degree higher than~\f$1\f$. Unfortunately, the coordinates of the
+intersection points constructed by these traits models are in general
+algebraic numbers\cgalFootnote{A number is called \a algebraic, if it
+is the root of a univariate algebraic polynomial with rational
+coefficients.} of degree higher than \f$1\f$. It is therefore clear
+that we have to use number types different from plain rational to
+represent point coordinates and be able to apply arithmetic operations
+on them.
 
-Arrangement of circular arcs and of line segments are very useful, as
-they occur in many applications. For example, when dilating a polygon
-by some radius we obtain a shape whose boundary is comprised of line
-segments, which correspond to dilated polygon edges, and circular
-arcs, which result from dilated polygon vertices. Using the
-arrangement of the boundary curves it is possible, for example, to
-compute the union of a set of dilated polygons.
+Several types of algebraic curves are handled by more than one traits
+model.  Section \ref arr_sssectr_linear introduces a few different
+traits models that handle line segments. This duplication becomes more
+evident with the introduction of traits classes that handle algebraic
+curves. The different traits models have different properties. In some
+cases they were developed by different authors at different times
+exploiting different tools that were available at the time they were
+developed. As a general rule, you should always use the minimal traits
+model that still satisfies your needs, as the most dedicated model is
+most likely to be the most efficient.
 
-The `Arr_circle_segment_traits_2<Kernel>` class-template is designed
-for efficient handling of arrangements of circular arcs and line
-segments.  It is a model of the concepts `ArrangementTraits_2` and
-`ArrangementDirectionalXMonotoneTraits_2`; the latter enables Boolean
-set operations. Note that it is not a model of
-`ArrangementLandmarkTraits_2` concept, so it is impossible to use the
-landmark point-location strategy. The traits class template is
-parameterized by a geometric kernel, and can handle arrangements of
-segments of `Kernel::Circle_2` objects (full circles are also
-supported) or of `Kernel::Line_2` objects - namely circular arcs and
-line segments.  It is important to observe that the nested `%Point_2`
-type defined by the traits class, whose coordinates are typically
-algebraic numbers of degree 2, is <em>not</em> the same as the
-`Kernel::Point_2` type, which is capable of representing a point with
-rational coordinates. The coordinates of a point are represented using
-the nested `CoordNT` number-type.
+<!----------------------------------------------------------------------------->
+\paragraph arr_sssectr_circ_seg Circular Arcs and Line Segments
+<!----------------------------------------------------------------------------->
+
+Arrangement of circular arcs and of line segments are very useful and
+frequently arise in applications, where curves of interleaved line
+segments and circular arcs are used to model the boundaries of complex
+shapes. Such curves can fit the original boundary more tightly and
+more compactly than, for example, a simple polyline. For example, when
+dilating a polygon by some radius we obtain a shape whose boundary
+comprises of line segments, which correspond to dilated polygon edges,
+and circular arcs, which result from dilated polygon vertices. Using
+the arrangement of the boundary curves it is possible, for example, to
+compute the union of a set of dilated polygons.  Besides the
+importance of arrangements of circular arcs and line segments it turns
+out that it is possible to implement efficient traits models that
+handle curves restricted to circular arcs and line segments. Rational
+numbers cannot represent the coordinates of intersection points that
+may arise in such arrangements in an exact manner. Thus, algebraic
+numbers must be used. However, the performance impact that (general)
+algebraic numbers incur can be reduced by the use of an efficient type
+of exact algebraic numbers called <em>square root extension</em> that
+uses rational arithmetic in an almost straightforward fashion.
+
+Square root numbers have the form \f$\alpha + \beta\sqrt{\gamma}\f$,
+where \f$\alpha\f$, \f$\beta\f$, and \f$\gamma\f$ are rational
+numbers. (Square root numbers are also called one-root numbers.) The
+rational number \f$\gamma\f$ is referred to as the extension. Each
+subset that has a particular extension is closed under arithmetic
+operations and order relations; hence, it is a valid algebraic
+structure.\cgalFootnote{The term algebraic structure refers to the set
+closed under one or more operations satisfying some axioms; see, e.g.,
+http://en.wikipedia.org/wiki/Algebraic_structure.  For example, all
+numbers that can be expressed as \f$\alpha + \beta\sqrt{K}\f$, where
+\f$\alpha\f$ and \f$\beta\f$ are rational and \f$K\f$ is a rational
+constant, compose an algebraic structure.}  The class template
+`CGAL::Sqrt_extension<NT,Root>` implements the square root extension
+type. Instances of this template represent square root numbers. It is
+equipped with the implementation of a set of arithmetic operations and
+order relations that exploit identical extensions of operands. It also
+provides the ability to compare two numbers with different extensions
+\f$\gamma_1 \neq \gamma_2\f$ efficiently. Each operation is
+implemented using only few rational arithmetic operations. Here, `NT`
+is the type of \f$\alpha\f$ and \f$\beta\f$, and `Root` is the type of
+\f$\gamma\f$.  The running times of the arithmetic operations and
+order relations provided by the square root extension when the
+identical-extension condition is met are comparable to the running
+times of the corresponding arithmetic operations of rational-number
+types. The running times of order relations when the condition is not
+met are only slightly larger. In practice, using number types that
+represent (arbitrary) algebraic numbers increases the running time of
+the application significantly.
+
+We call circles whose center coordinates and squared radii are
+rational numbers <em>rational circles</em>. The equation of such a
+circle, that is, \f$(x - x_0)^2 + (y - y_0)^2 = r^2\f$, where
+\f$(x_0,y_0)\f$ and \f$r\f$ denote the circle center and its radius,
+respectively, has rational coefficients. The coordinates of the points
+of intersection between two such circles are therefore solutions of
+quadratic equations with rational coefficients, in other words,
+algebraic numbers of degree~\f$2\f$ or simply square root numbers. The
+same applies to intersection points between such a rational circle and
+a line, or a line segment, with rational coefficients (a line whose
+equation is \f$ax + by + c = 0\f$, where \f$a\f$, \f$b\f$, and \f$c\f$
+are rational).
+
+The \ref PkgArrangementOnSurface2 package offers a traits
+class-template called `Arr_circle_segment_traits_2<Kernel>` that
+exclusively handles line segments, circular arcs, and whole circles
+and models the concepts `ArrangementTraits_2` and
+`ArrangementDirectionalXMonotoneTraits_2`; see Package \ref
+PkgBooleanSetOperations2Ref. Note that it is not a model of the
+`ArrangementLandmarkTraits_2` concept.  It exploits efficient
+computations with square root numbers, which makes it attractive for
+arrangements induced by line segments, circular arcs, and whole
+circles.  When the traits class-template is instantiated, the `Kernel`
+template parameter must be substituted with a geometric kernel that
+models the `Kernel` concept. Always plug in a kernel that uses a
+rational number type, such as
+`Exact_predicates_exact_constructions_kernel`. Observe that the nested
+type \link CGAL::Arr_circle_segment_traits_2::Point_2
+`Point_2`\endlink defined by the traits class, whose coordinates are
+typically algebraic numbers of degree 2, is \a not the same as the
+`Kernel::Point_2` type. The coordinates of a point are represented
+using the number type `CoordNT`, nested in the traits class-template.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{arr_figex_13,circles.png}
+
 An arrangement of three circles constructed in `circles.cpp`. Each
 circle is split into two \f$x\f$-monotone circular arcs, whose
-endpoints are drawn as disks. Circles mark vertices that correspond to
-intersection points. The vertex \f$y_{\rm max}\f$ is a common
+endpoints are drawn as red disks. Rings mark vertices that correspond
+to intersection points. The vertex \f$v_{\rm max}\f$ is a common
 intersection point of all three circles.
+
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
 In the following example an arrangement of three full circles is
-constructed, as shown in \cgalFigureRef{arr_figex_13}. Then, the
-vertex of maximal degree is searched for. The geometric mapping of
-this vertex is the point \f$(4,3)\f$, as all three circles intersect
-at this point and the associated vertex has six incident edges:
+constructed, as shown in \cgalFigureRef{arr_figex_13}. Each Index is
+split into two \f$x\f$-monotone circular arcs, the endpoints of which
+are drawn as red discs; rings mark vertices that correspond to
+intersection points. Once the arrangement is constructed, we locate
+the vertex of maximal degree in the arrangement. The geometric mapping
+of this vertex, denoted by \f$v_{\rm max}\f$, is the point
+\f$(4,3)\f$, as all three circles intersect at this point and the
+associated vertex has six incident edges.
 
 \cgalExample{Arrangement_on_surface_2/circles.cpp}
 
-The `Curve_2` type nested in `Arr_circle_segment_traits_2` can be used
-to represent circles, circular arcs, or line segments. Curve objects
-can therefore be constructed from a `Kernel::Circle_2` object or from
-a `Kernel::Segment_2` object. A circular arc is typically defined by a
-supporting circle and two endpoints, where the endpoints are instances
-of the `%Point_2` type, with rational or irrational coordinates. The
-orientation of the arc is determined by the orientation of the
-supporting circle. Similarly, we also support the construction of
-lines segments given their supporting line (of type `Kernel::Line_2`)
-and two endpoints, which may have irrational coordinates (unlike the
-`Kernel::Segment_2` type).
+The types common to the example programs that use the
+`Arr_circle_segment_traits_2` class template are listed below and
+defined in the header file `arr_circular.h`.  Even though algebraic
+numbers are required to represent coordinates of points where the
+inducing curves are circles or circular arcs, such as the curves
+handled by the `Arr_circle_segment_traits_2` class template, an
+(exact) rational kernel suffices, and a filtered one improves the
+performance further.
 
-Note that the `Kernel::Circle_2` type represents a circle whose
-<em>squared radius</em> is rational, where the radius itself may be
-irrational.  However, if the radius is known to be rational, it is
-advisable to use it, for efficiency reasons. It is therefore also
-possible to construct a circle, or a circular arc specifying the
-circle center (a `Kernel::Point_2`), its rational radius, and its
-orientation. Finally, we also support the construction of a circular
-arcs that is defined by two endpoints and an arbitrary midpoint that
-lies on the arc in between its endpoint. In this case, all three
-points are required to have rational coordinates (to be kernel
-points).
+\code{.cpp}
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Arr_circle_segment_traits_2.h>
+#include <CGAL/Arrangement_2.h>
+
+typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
+typedef Kernel::FT                                         Number_type;
+typedef CGAL::Arr_circle_segment_traits_2<Kernel>          Traits;
+typedef Traits::CoordNT                                    CoordNT;
+typedef Traits::Point_2                                    Point;
+typedef Traits::Curve_2                                    Curve;
+typedef Traits::Rational_point_2                           Rational_point;
+typedef Traits::Rational_segment_2                         Segment;
+typedef Traits::Rational_circle_2                          Circle;
+typedef CGAL::Arrangement_2<Traits>                        Arrangement;
+\endcode
+
+The `Curve_2` type nested in `Arr_circle_segment_traits_2` can be used
+to represent circles, circular arcs, or line segments. We now describe
+and demonstrate a variety of ways in which the curves of this type can
+be constructed. A Curve object can be constructed from a
+`Kernel::Circle_2` object or from a `Kernel::Segment_2` object. A
+circular arc is typically defined by a supporting circle and two
+endpoints, where the endpoints are of type `Point_2`, with rational or
+irrational coordinates. The orientation of the arc is determined by
+the orientation of the supporting circle. Similarly, we also support
+the construction of line segments given their supporting line (of
+type `Kernel::Line_2`) and two endpoints, which may have irrational
+coordinates (unlike the `Kernel::Segment_2` type).
+
+Note that the `Kernel::Circle_2` type is used to represent a circle
+whose <em>squared radius</em> is rational, where the radius itself may
+be irrational.  However, if the radius is known to be rational, its
+use is recommended for efficiency. It is therefore also possible to
+construct a circle, or a circular arc specifying the circle center (a
+`Kernel::Point_2`), its rational radius (of type `Kernel::FT`), and
+its orientation. Finally, we also support the construction of a
+circular arc that is defined by two endpoints and an arbitrary
+interior point that lies on the arc in between its endpoints. In this
+case, all three points are required to have rational coordinates;
+namely, they are all given as `Kernel::Point_2` objects.
+
+<!----------------------------------------------------------------------------->
+\cgalFigureBegin{arr_figex_circular_arcs,circular_arcs.png}
+
+An arrangement of two full circles, two line segments, and three
+circular arcs as constructed in `circular_arcs.cpp`. Endpoints are
+drawn as red disks and intersection points are drawn as rings.
+
+\cgalFigureEnd
+<!----------------------------------------------------------------------------->
 
 The following example demonstrates the usage of the various
-construction methods for circular arcs and line segments. Note the
-usage of the constructor of `CoordNT (alpha, beta, gamma)`, which
-creates a degree-\f$2\f$ algebraic number whose value is \f$\alpha +
+construction methods for circular arcs and line segments. The
+resulting arrangement is depicted in Figure
+\cgalFigureRef{arr_figex_circular_arcs}. Note the usage of the
+constructor of `CoordNT(alpha, beta, gamma)`, which creates a
+degree-\f$2\f$ algebraic number whose value is \f$\alpha +
 \beta\sqrt{\gamma}\f$.
 
 \cgalExample{Arrangement_on_surface_2/circular_arcs.cpp}
 
-It is also possible to construct \f$x\f$-monotone curve objects, which
-represent \f$x\f$-monotone circular arcs or line segments, using
-similar constructors.  Construction from a full circle is obviously
-not supported. See the Reference Manual for more details.
+It is also possible to construct \f$x\f$-monotone curve objects that
+represent \f$x\f$-monotone circular arcs or line segments using
+similar constructors. (Full circles are not \f$x\f$-monotone.)
 
 The traits class-template
 `Arr_circular_line_arc_traits_2<CircularKernel>` offered by the
@@ -4063,8 +4186,13 @@ purposes, are based on different concepts, and posses different
 characteristics. You are encouraged to experiment with both, compare
 their performance, and use the most suitable for your case.
 
+<!--
+\todo What is the difference and what are possible conditions under
+which I should choose one over the other
+-->
+
 <!----------------------------------------------------------------------------->
-\subsubsection arr_ssectr_conic Conic Arcs
+\paragraph arr_sssectr_conic Traits class for Conic Arcs
 <!----------------------------------------------------------------------------->
 
 A <em>conic curve</em> is an algebraic curve of degree 2. Namely, it

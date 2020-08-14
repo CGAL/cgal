@@ -57,8 +57,9 @@ int main()
   segs.push_back(Segment_2(Point_2(3, 6), Point_2(5, 2)));
   Polyline_2 pi3 = polyline_construct(segs.begin(), segs.end());
 
-  Polyline_2 polylines[] = {pi1, pi2, pi3};
-  insert(arr, &polylines[0], &polylines[3]);
+  insert(arr, pi1);
+  insert(arr, pi2);
+  insert(arr, pi3);
   print_arrangement(arr);
   return 0;
 }

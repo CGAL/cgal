@@ -225,10 +225,6 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::Arr_vertex_index_map<Arrangement>`
 - `CGAL::Arr_face_index_map<Arrangement>`
 - `CGAL::Arr_point_location_result<Arrangement>`
-- `CGAL::Polyline<SubcurveType_2, PointType_2>`
-- `CGAL::X_monotone_polyline<SubcurveType_2, PointType_2>`
-- `CGAL::Polycurve<SubcurveType_2, PointType_2>`
-- `CGAL::X_monotone_polycurve<SubcurveType_2, PointType_2>`
 
 \cgalCRPSection{Macros}
 - \link CGAL_ARR_POINT_LOCATION_VERSION `CGAL_ARR_POINT_LOCATION_VERSION` \endlink
