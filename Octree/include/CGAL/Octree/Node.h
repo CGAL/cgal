@@ -376,6 +376,17 @@ public:
   /**
    * \brief find the directly adjacent node in a specific direction
    *
+   * Adjacent nodes are found according to several properties:
+   * - Adjacent nodes may be larger than the seek node, but never smaller
+   * - A node can have no more than 6 different adjacent nodes (left, right, up, down, front, back)
+   * - A node is free to have fewer than 6 adjacent nodes
+   *   (e.g. edge nodes have no neighbors in some directions, the root node has none at all).
+   * - Adjacent nodes are not required to be leaf nodes
+   *
+   *
+   * Here's a diagram demonstrating the concept for a quadtree.
+   * Because it's in 2d space, the seek node has only four neighbors (up, down, left, right)
+   *
    *     +---------------+---------------+
    *     |               |               |
    *     |               |               |
@@ -394,11 +405,17 @@ public:
    *     |   |   |       |       |       |
    *     +---+---+-------+-------+-------+
    *
-   *     (S) : Seek node
-   *      A  : Adjacent node
+   *         (S) : Seek node
+   *          A  : Adjacent node
    *
-   * \param direction
-   * \return
+   * Note how the top adjacent node is larger than the seek node.
+   * The right adjacent node is the same size, even though it contains further subdivisions.
+   *
+   * This implementation returns a pointer to the adjacent node if it's found.
+   * If there is no adjacent node in that direction, it returns nullptr.
+   *
+   * \param direction which way to find the adjacent node relative to this one
+   * \return a pointer to the adjacent node if it exists
    */
   const Self *adjacent_node(std::bitset<3> direction) const {
 
