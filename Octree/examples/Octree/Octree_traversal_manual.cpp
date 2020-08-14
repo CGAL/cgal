@@ -44,12 +44,16 @@ int main(int argc, char **argv) {
   std::cout << octree.root()[0] << std::endl;
   std::cout << "the fifth child: " << std::endl;
   std::cout << octree.root()[4] << std::endl;
+  std::cout << "the fifth child, accessed without the root keyword: " << std::endl;
+  std::cout << octree[4] << std::endl;
   std::cout << "the second child of the fourth child: " << std::endl;
   std::cout << octree.root()[4][1] << std::endl;
+  std::cout << "the second child of the fourth child, accessed without the root keyword: " << std::endl;
+  std::cout << octree[4][1] << std::endl;
   std::cout << std::endl;
 
   // Retrieve one of the deeper children
-  const Octree::Node &cur = octree.root()[3][2];
+  const Octree::Node &cur = octree[3][2];
   std::cout << "Navigation relative to a child node" << std::endl;
   std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
   std::cout << "the third child of the fourth child: " << std::endl;
