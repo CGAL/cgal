@@ -448,7 +448,7 @@ public:
    * \param rhs node to compare with
    * \return whether the nodes have different topology
    */
-  bool operator==(const Node &rhs) const {
+  bool operator==(const Self &rhs) const {
 
     // TODO: Should I compare the values they contain
 //          if (m_points != rhs.m_points)
@@ -482,7 +482,7 @@ public:
    * \param rhs node to compare with
    * \return whether the trees have different topology
    */
-  bool operator!=(const Node &rhs) const {
+  bool operator!=(const Self &rhs) const {
     return !operator==(rhs);
   }
 
