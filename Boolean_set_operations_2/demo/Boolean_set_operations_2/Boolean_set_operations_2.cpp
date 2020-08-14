@@ -60,6 +60,10 @@
 #include <QGraphicsPixmapItem>
 #include <QKeyEvent>
 
+#include <CGAL/auto_link/Qt.h>
+#include <CGAL/Qt/GraphicsViewInput.h>
+#include <CGAL/Qt/Converter.h>
+
 #include <CGAL/basic.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/number_utils.h>
@@ -74,6 +78,7 @@
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Arr_Bezier_curve_traits_2.h>
+#include <CGAL/Arr_circle_segment_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Gps_traits_2.h>
@@ -96,7 +101,6 @@
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/DemosMainWindow.h>
 #include <CGAL/Qt/utility.h>
-#include <CGAL/IO/Gps_iostream.h>
 #include <CGAL/IO/Dxf_bsop_reader.h>
 #include <CGAL/Qt/GraphicsViewNavigation.h>
 
@@ -132,15 +136,6 @@ void error_handler(char const* what, char const* expr, char const* file,
 // Circular_polygon linearPart_2_circ(Circular_Linear_polygon const& pgn);
 // Circular_polygon_with_holes linearPart_2_circ(Circular_Linear_polygon_with_holes const& pwh);
 
-
-bool read_linear(QString aFileName, Circular_polygon_set& rSet,
-                   Circular_region_source_container& rSources);
-bool read_dxf ( QString aFileName, Circular_polygon_set& rSet, 
-                   Circular_region_source_container& rSources );
-bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet,
-                   Bezier_region_source_container& rSources  );
-Bezier_curve read_bezier_curve ( std::istream& is, bool aDoubleFormat );
-
 // Typedefs
 typedef CGAL::Qt::Circular_set_graphics_item<Circular_polygon_set,
                                              Circular_traits>   Circular_GI;
@@ -164,7 +159,7 @@ void error(std::string aS)
 void error_handler(char const* what, char const* expr, char const* file,
                    int line, char const* msg)
 {
-  if(expr != "first != last" && expr !="_inc_to_right != cv._inc_to_right" && line != 1684 && expr != "is_new == true")
+  if(expr != "first != last" && expr !="_inc_to_right != cv._inc_to_right" && line != 1684 && expr != "is_new == true")// && expr != "comp_f(object, nodeP->object) != LARGER" && expr != "! _predP->is_valid() || comp_f(object, _predP->object) != SMALLER")
   {
     std::ostringstream ss;
 
@@ -188,6 +183,35 @@ void error_handler(char const* what, char const* expr, char const* file,
     error(ss.str());
   }
 }
+
+
+
+// opened data bezier complement
+// CGAL error: precondition violation!
+// Expr: comp_f(object, nodeP->object) != LARGER
+// File: /home/ronnie8888/Documents/cgal-public-dev/STL_Extension/include/CGAL/Multiset.h
+// Line: 2140
+// Explanation:
+
+// opened data sym diff
+// CGAL error: precondition violation!
+// Expr: ! _predP->is_valid() || comp_f(object, _predP->object) != SMALLER
+// File: /home/ronnie8888/Documents/cgal-public-dev/STL_Extension/include/CGAL/Multiset.h
+// Line: 2142
+// Explanation:
+
+// CGAL error: precondition violation!
+// Expr: comp_f(object, parentP->object) != SMALLER
+// File: /home/ronnie8888/Documents/cgal-public-dev/STL_Extension/include/CGAL/Multiset.h
+// Line: 2128
+// Explanation:
+
+// CGAL error: warning violation!
+// Expr: holes_disjoint
+// File: /home/ronnie8888/Documents/cgal-public-dev/Boolean_set_operations_2/include/CGAL/Boolean_set_operations_2/Gps_polygon_validation.h
+// Line: 788
+// Explanation:Holes of the PWH intersect amongst themselves or with outer boundary
+
 
 
 // CGAL error: assertion violation!
@@ -1008,7 +1032,7 @@ private:
   size_t m_color_complement;
   size_t m_color_copy;
   size_t m_color_move_ext;
-  size_t m_color_paste;
+  //size_t m_color_paste;
   bool m_blue_int;
   bool m_red_int;
   bool m_black_int;
@@ -1065,6 +1089,7 @@ private:
 
   size_t m_state_num;
 
+
   QGraphicsLineItem *xAxis  = new QGraphicsLineItem();
   QGraphicsLineItem *yAxis  = new QGraphicsLineItem();
 
@@ -1105,6 +1130,9 @@ public slots:
   void on_actionInsertCircular_toggled(bool aChecked);
   void on_actionInsertBezier_toggled(bool aChecked);
   void on_showColorBucket_toggled(bool aChecked);
+  void on_sceneDockWidget_visibilityChanged(bool visible);
+  void on_infoDockWidget_visibilityChanged(bool visible);
+  void on_consoleDockWidget_visibilityChanged(bool visible);
   void on_showConsole_toggled(bool aChecked);
   void on_showInfo_toggled(bool aChecked);
   void on_actionOpenLinear_triggered();
@@ -1117,7 +1145,7 @@ public slots:
 
   void on_actionCopyH_toggled(bool aChecked);
   void on_actionMoveH_toggled(bool aChecked);
-  void on_actionPasteH_toggled(bool aChecked);
+  //void on_actionPasteH_toggled(bool aChecked);
 
   void show_not_empty_warning();
 
@@ -1152,13 +1180,13 @@ public slots:
   void on_moveAqua_toggled(bool aCheck);
 
 
-  void on_pasteBlue_toggled(bool aCheck);
-  void on_pasteRed_toggled(bool aCheck);
-  void on_pasteBlack_toggled(bool aCheck);
-  void on_pasteBrown_toggled(bool aCheck);
-  void on_pasteYellow_toggled(bool aCheck);
-  void on_pasteMagenta_toggled(bool aCheck);
-  void on_pasteAqua_toggled(bool aCheck);
+  // void on_pasteBlue_toggled(bool aCheck);
+  // void on_pasteRed_toggled(bool aCheck);
+  // void on_pasteBlack_toggled(bool aCheck);
+  // void on_pasteBrown_toggled(bool aCheck);
+  // void on_pasteYellow_toggled(bool aCheck);
+  // void on_pasteMagenta_toggled(bool aCheck);
+  // void on_pasteAqua_toggled(bool aCheck);
 
   //To be added again in GSoC2020
 
@@ -1225,6 +1253,13 @@ public slots:
   void on_actionClearH_toggled(bool aChecked);
   void on_actionPAN_triggered();
   Polygon_with_holes_2 getMinkInputPolygon(size_t colorx);
+
+  bool read_linear(QString aFileName, Linear_polygon_set& rSet,
+                   Linear_region_source_container& rSources);
+  bool read_circular ( QString aFileName, Circular_polygon_set& rSet, 
+                     Circular_region_source_container& rSources );
+  bool read_bezier ( QString aFileName );
+  Bezier_curve read_bezier_curve ( std::istream& is, bool aDoubleFormat );
 
 signals:
   void changed();
@@ -1443,7 +1478,7 @@ MainWindow::MainWindow() :
   m_color_move(1111), //default//default
   m_color_copy(1111),//default
   m_color_move_ext(111),//default
-  m_color_paste(1111),//default
+  //m_color_paste(1111),//default
   m_color_cm(1111), //default
   m_color_visible(7), //default
   m_color_complement(0), //default
@@ -1499,7 +1534,7 @@ MainWindow::MainWindow() :
   // Setup the m_scene and the view
   //
   m_scene.setItemIndexMethod(QGraphicsScene::NoIndex);
-  m_scene.setSceneRect(-320, -210, 640, 420);
+  m_scene.setSceneRect(-355, -200, 640, 420);
   this->graphicsView->setScene(&m_scene);
   this->graphicsView->setMouseTracking(true);
   this->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -1598,6 +1633,13 @@ MainWindow::MainWindow() :
   QObject::connect(showResult, SIGNAL(toggled(bool)), this,
                    SLOT(on_showResult_toggled(bool)));
 
+  // QObject::connect(sceneDockWidget, SIGNAL(visibilityChanged(bool)), this,
+  //                  SLOT(on_sceneDockWidget_visibilityChanged(bool)));
+  // QObject::connect(infoDockWidget, SIGNAL(visibilityChanged(bool)), this,
+  //                  SLOT(on_infoDockWidget_visibilityChanged(bool)));
+  // QObject::connect(consoleDockWidget, SIGNAL(visibilityChanged(bool)), this,
+  //                  SLOT(on_consoleDockWidget_visibilityChanged(bool)));
+
   QObject::connect(showColorBucket, SIGNAL(toggled(bool)), this,
                    SLOT(on_showColorBucket_toggled(bool)));
   QObject::connect(showConsole, SIGNAL(toggled(bool)), this,
@@ -1646,20 +1688,20 @@ MainWindow::MainWindow() :
 
 
   
-  QObject::connect(pasteBlue, SIGNAL(toggled(bool)), this,
-                   SLOT(on_pasteBlue_toggled(bool)));
-  QObject::connect(pasteRed, SIGNAL(toggled(bool)), this,
-                   SLOT(on_pasteRed_toggled(bool)));
-  QObject::connect(pasteBlack, SIGNAL(toggled(bool)), this,
-                   SLOT(on_pasteBlack_toggled(bool)));
-  QObject::connect(pasteBrown, SIGNAL(toggled(bool)), this,
-                   SLOT(on_pasteBrown_toggled(bool)));
-  QObject::connect(pasteYellow, SIGNAL(toggled(bool)), this,
-                   SLOT(on_pasteYellow_toggled(bool)));
-  QObject::connect(pasteMagenta, SIGNAL(toggled(bool)), this,
-                   SLOT(on_pasteMagenta_toggled(bool)));
-  QObject::connect(pasteAqua, SIGNAL(toggled(bool)), this,
-                   SLOT(on_pasteAqua_toggled(bool)));
+  // QObject::connect(pasteBlue, SIGNAL(toggled(bool)), this,
+  //                  SLOT(on_pasteBlue_toggled(bool)));
+  // QObject::connect(pasteRed, SIGNAL(toggled(bool)), this,
+  //                  SLOT(on_pasteRed_toggled(bool)));
+  // QObject::connect(pasteBlack, SIGNAL(toggled(bool)), this,
+  //                  SLOT(on_pasteBlack_toggled(bool)));
+  // QObject::connect(pasteBrown, SIGNAL(toggled(bool)), this,
+  //                  SLOT(on_pasteBrown_toggled(bool)));
+  // QObject::connect(pasteYellow, SIGNAL(toggled(bool)), this,
+  //                  SLOT(on_pasteYellow_toggled(bool)));
+  // QObject::connect(pasteMagenta, SIGNAL(toggled(bool)), this,
+  //                  SLOT(on_pasteMagenta_toggled(bool)));
+  // QObject::connect(pasteAqua, SIGNAL(toggled(bool)), this,
+  //                  SLOT(on_pasteAqua_toggled(bool)));
 
   //complement
   QObject::connect(showBlueComp, SIGNAL(toggled(bool)), this,
@@ -1765,10 +1807,12 @@ MainWindow::MainWindow() :
   this->graphicsView->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
   // axis 
 
-  QPen *dashedLine {new QPen(QBrush(Qt::black), 1, Qt::SolidLine)};
-  xAxis->setLine(-15500000, 0, 15500000, 0);
+  QPen *dashedLine {new QPen(QBrush(Qt::black), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin)};
+  // dashedLine->setCosmetic(true);
+  dashedLine->setWidth(0);
+  xAxis->setLine(-155000000000000, 0, 155000000000000, 0);
   xAxis->setPen(*dashedLine);
-  yAxis->setLine(0, -10000000, 0, 10000000);
+  yAxis->setLine(0, -100000000000000, 0, 100000000000000);
   yAxis->setPen(*dashedLine);
 
   // m_scene.addLine(0,-10000000,0,10000000, QPen(Qt::black));
@@ -1785,6 +1829,9 @@ MainWindow::MainWindow() :
   m_linear_input -> mOngoingPieceGI -> setPen(sPens[0]);
   m_linear_input -> mLinearGI -> setPen(sPens[0]);
   m_linear_input -> mHandleGI -> setPen(sPens[0]);
+  actionOpenLinear->setEnabled(true);
+  actionOpenDXF->setEnabled(false);
+  actionOpenBezier->setEnabled(false);
 
   states_stack.back().blue_set().clear();states_stack.back().red_set().clear();states_stack.back().black_set().clear();states_stack.back().brown_set().clear();states_stack.back().yellow_set().clear();states_stack.back().magenta_set().clear();states_stack.back().aqua_set().clear();
 }
@@ -2153,7 +2200,6 @@ void MainWindow::on_showClear_toggled(bool a_check)
 	}
 	else
 	{
-
 		clearRed->setChecked(false);
 		clearBlue->setChecked(false);
 		clearBrown->setChecked(false);
@@ -2164,6 +2210,36 @@ void MainWindow::on_showClear_toggled(bool a_check)
 	}
 }
 
+
+void MainWindow::on_sceneDockWidget_visibilityChanged(bool a_check)
+{
+  if(a_check) showColorBucket->setChecked(true);
+  else if(!this->windowState().testFlag(Qt::WindowMinimized))  
+  {
+    //sceneDockWidget->setVisible(false);
+    showColorBucket->setChecked(false);
+  }
+}
+
+void MainWindow::on_infoDockWidget_visibilityChanged(bool a_check)
+{
+  if(a_check) showInfo->setChecked(true);
+  else if(!this->windowState().testFlag(Qt::WindowMinimized))  
+  {
+    //infoDockWidget->setVisible(false);
+    showInfo->setChecked(false);
+  }
+}
+
+void MainWindow::on_consoleDockWidget_visibilityChanged(bool a_check)
+{
+  if(a_check) showConsole->setChecked(true);
+  else if(!this->windowState().testFlag(Qt::WindowMinimized))  
+  {
+    //consoleDockWidget->setVisible(false);
+    showConsole->setChecked(false);
+  }
+}
 
 void MainWindow::on_showColorBucket_toggled(bool a_check)
 {
@@ -2588,138 +2664,138 @@ void MainWindow::on_moveAqua_toggled(bool aCheck)
 }
 
 
-void MainWindow::on_pasteBlue_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_color_paste = 0 ;
-    pasteRed->setChecked(false);
-    pasteBlack->setChecked(false);
-    pasteBrown->setChecked(false);
-    pasteYellow->setChecked(false);
-    pasteMagenta->setChecked(false);
-    pasteAqua->setChecked(false);
-  } 
+// void MainWindow::on_pasteBlue_toggled(bool aCheck)
+// {
+//   if(aCheck)
+//   {
+//     m_color_paste = 0 ;
+//     pasteRed->setChecked(false);
+//     pasteBlack->setChecked(false);
+//     pasteBrown->setChecked(false);
+//     pasteYellow->setChecked(false);
+//     pasteMagenta->setChecked(false);
+//     pasteAqua->setChecked(false);
+//   } 
 
-  else
-  {
-    pasteBlue->setChecked(false);
-  }
-}
+//   else
+//   {
+//     pasteBlue->setChecked(false);
+//   }
+// }
 
-void MainWindow::on_pasteRed_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_color_paste = 1;
-    pasteBlue->setChecked(false);
-    pasteBlack->setChecked(false);
-    pasteBrown->setChecked(false);
-    pasteYellow->setChecked(false);
-    pasteMagenta->setChecked(false);
-    pasteAqua->setChecked(false);
-  } 
+// void MainWindow::on_pasteRed_toggled(bool aCheck)
+// {
+//   if(aCheck)
+//   {
+//     m_color_paste = 1;
+//     pasteBlue->setChecked(false);
+//     pasteBlack->setChecked(false);
+//     pasteBrown->setChecked(false);
+//     pasteYellow->setChecked(false);
+//     pasteMagenta->setChecked(false);
+//     pasteAqua->setChecked(false);
+//   } 
 
-  else
-  {
-    pasteRed->setChecked(false);
-  } 
-}
+//   else
+//   {
+//     pasteRed->setChecked(false);
+//   } 
+// }
 
-void MainWindow::on_pasteBlack_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_color_paste = 2;
-    pasteRed->setChecked(false);
-    pasteBlue->setChecked(false);
-    pasteBrown->setChecked(false);
-    pasteYellow->setChecked(false);
-    pasteMagenta->setChecked(false);
-    pasteAqua->setChecked(false);
-  }  
+// void MainWindow::on_pasteBlack_toggled(bool aCheck)
+// {
+//   if(aCheck)
+//   {
+//     m_color_paste = 2;
+//     pasteRed->setChecked(false);
+//     pasteBlue->setChecked(false);
+//     pasteBrown->setChecked(false);
+//     pasteYellow->setChecked(false);
+//     pasteMagenta->setChecked(false);
+//     pasteAqua->setChecked(false);
+//   }  
 
-  else
-  {
-    pasteBlack->setChecked(false);
-  }
-}
+//   else
+//   {
+//     pasteBlack->setChecked(false);
+//   }
+// }
 
-void MainWindow::on_pasteBrown_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_color_paste = 3;
-    pasteRed->setChecked(false);
-    pasteBlack->setChecked(false);
-    pasteBlue->setChecked(false);
-    pasteYellow->setChecked(false);
-    pasteMagenta->setChecked(false);
-    pasteAqua->setChecked(false);
-  }  
+// void MainWindow::on_pasteBrown_toggled(bool aCheck)
+// {
+//   if(aCheck)
+//   {
+//     m_color_paste = 3;
+//     pasteRed->setChecked(false);
+//     pasteBlack->setChecked(false);
+//     pasteBlue->setChecked(false);
+//     pasteYellow->setChecked(false);
+//     pasteMagenta->setChecked(false);
+//     pasteAqua->setChecked(false);
+//   }  
 
-  else
-  {
-    pasteBrown->setChecked(false);
-  }
-}
+//   else
+//   {
+//     pasteBrown->setChecked(false);
+//   }
+// }
 
-void MainWindow::on_pasteYellow_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_color_paste = 4;
-    pasteRed->setChecked(false);
-    pasteBlack->setChecked(false);
-    pasteBrown->setChecked(false);
-    pasteBlue->setChecked(false);
-    pasteMagenta->setChecked(false);
-    pasteAqua->setChecked(false);
-  }  
+// void MainWindow::on_pasteYellow_toggled(bool aCheck)
+// {
+//   if(aCheck)
+//   {
+//     m_color_paste = 4;
+//     pasteRed->setChecked(false);
+//     pasteBlack->setChecked(false);
+//     pasteBrown->setChecked(false);
+//     pasteBlue->setChecked(false);
+//     pasteMagenta->setChecked(false);
+//     pasteAqua->setChecked(false);
+//   }  
 
-  else
-  {
-    pasteYellow->setChecked(false);
-  }
-}
+//   else
+//   {
+//     pasteYellow->setChecked(false);
+//   }
+// }
 
-void MainWindow::on_pasteMagenta_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_color_paste = 5;
-    pasteRed->setChecked(false);
-    pasteBlack->setChecked(false);
-    pasteBrown->setChecked(false);
-    pasteYellow->setChecked(false);
-    pasteBlue->setChecked(false);
-    pasteAqua->setChecked(false);
-  } 
+// void MainWindow::on_pasteMagenta_toggled(bool aCheck)
+// {
+//   if(aCheck)
+//   {
+//     m_color_paste = 5;
+//     pasteRed->setChecked(false);
+//     pasteBlack->setChecked(false);
+//     pasteBrown->setChecked(false);
+//     pasteYellow->setChecked(false);
+//     pasteBlue->setChecked(false);
+//     pasteAqua->setChecked(false);
+//   } 
 
-  else
-  {
-    pasteMagenta->setChecked(false);
-  } 
-}
+//   else
+//   {
+//     pasteMagenta->setChecked(false);
+//   } 
+// }
 
-void MainWindow::on_pasteAqua_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_color_paste = 6;
-    pasteRed->setChecked(false);
-    pasteBlack->setChecked(false);
-    pasteBrown->setChecked(false);
-    pasteYellow->setChecked(false);
-    pasteMagenta->setChecked(false);
-    pasteBlue->setChecked(false);
-  } 
+// void MainWindow::on_pasteAqua_toggled(bool aCheck)
+// {
+//   if(aCheck)
+//   {
+//     m_color_paste = 6;
+//     pasteRed->setChecked(false);
+//     pasteBlack->setChecked(false);
+//     pasteBrown->setChecked(false);
+//     pasteYellow->setChecked(false);
+//     pasteMagenta->setChecked(false);
+//     pasteBlue->setChecked(false);
+//   } 
 
-  else
-  {
-    pasteAqua->setChecked(false);
-  } 
-}
+//   else
+//   {
+//     pasteAqua->setChecked(false);
+//   } 
+// }
 
 
 
@@ -3589,7 +3665,7 @@ void MainWindow::on_actionAddColor_triggered()
     showBrownMink_Sum -> setVisible(true);
     copyBrown -> setVisible(true);
     moveBrown -> setVisible(true);
-    pasteBrown -> setVisible(true);
+    // pasteBrown -> setVisible(true);
     showBrownLabel -> setVisible(true);
 
     line10 -> setVisible(true);
@@ -3603,7 +3679,7 @@ void MainWindow::on_actionAddColor_triggered()
       line06 -> setGeometry(QRect(425,0,7,155));
       line061 -> setGeometry(QRect(470,0,7,155));
       line062 -> setGeometry(QRect(515,0,7,155));
-      line063 -> setGeometry(QRect(560,0,7,155));
+      line063 -> setGeometry(QRect(570,0,7,155));
       line006 -> setGeometry(QRect(620,0,7,155));
       line0007 -> setGeometry(QRect(380,0,7,155));
       line0006 -> setGeometry(QRect(70,0,7,155));
@@ -3628,7 +3704,7 @@ void MainWindow::on_actionAddColor_triggered()
     showYellowMink_Sum -> setVisible(true);
     copyYellow -> setVisible(true);
     moveYellow -> setVisible(true);
-    pasteYellow -> setVisible(true);
+    // pasteYellow -> setVisible(true);
     showYellowLabel -> setVisible(true);
 
     line9 -> setVisible(true);
@@ -3642,7 +3718,7 @@ void MainWindow::on_actionAddColor_triggered()
       line06 -> setGeometry(QRect(425,0,7,185));
       line061 -> setGeometry(QRect(470,0,7,185));
       line062 -> setGeometry(QRect(515,0,7,185));
-      line063 -> setGeometry(QRect(560,0,7,185));
+      line063 -> setGeometry(QRect(570,0,7,185));
       line006 -> setGeometry(QRect(620,0,7,185));
       line0007 -> setGeometry(QRect(380,0,7,185));
       line0006 -> setGeometry(QRect(70,0,7,185));
@@ -3667,7 +3743,7 @@ void MainWindow::on_actionAddColor_triggered()
     showMagentaMink_Sum -> setVisible(true);
     copyMagenta -> setVisible(true);
     moveMagenta -> setVisible(true);
-    pasteMagenta -> setVisible(true);
+    // pasteMagenta -> setVisible(true);
     showMagentaLabel -> setVisible(true);
 
     line8 -> setVisible(true);
@@ -3681,7 +3757,7 @@ void MainWindow::on_actionAddColor_triggered()
       line06 -> setGeometry(QRect(425,0,7,215));
       line061 -> setGeometry(QRect(470,0,7,215));
       line062 -> setGeometry(QRect(515,0,7,215));
-      line063 -> setGeometry(QRect(560,0,7,215));
+      line063 -> setGeometry(QRect(570,0,7,215));
       line006 -> setGeometry(QRect(620,0,7,215));
       line0007 -> setGeometry(QRect(380,0,7,215));
       line0006 -> setGeometry(QRect(70,0,7,215));
@@ -3706,7 +3782,7 @@ void MainWindow::on_actionAddColor_triggered()
     showAquaMink_Sum -> setVisible(true); 
     copyAqua -> setVisible(true);
     moveAqua -> setVisible(true);
-    pasteAqua -> setVisible(true);
+    // pasteAqua -> setVisible(true);
     showAquaLabel -> setVisible(true);
 
     line7 -> setVisible(true);
@@ -3720,7 +3796,7 @@ void MainWindow::on_actionAddColor_triggered()
       line06 -> setGeometry(QRect(425,0,7,245));
       line061 -> setGeometry(QRect(470,0,7,245));
       line062 -> setGeometry(QRect(515,0,7,245));
-      line063 -> setGeometry(QRect(560,0,7,245));
+      line063 -> setGeometry(QRect(570,0,7,245));
       line006 -> setGeometry(QRect(620,0,7,245));
       line0007 -> setGeometry(QRect(380,0,7,245));
       line0006 -> setGeometry(QRect(70,0,7,245));
@@ -3769,7 +3845,7 @@ void MainWindow::on_actionMinusColor_triggered()
     showBrownMink_Sum -> setVisible(false);
     copyBrown -> setVisible(false);
     moveBrown -> setVisible(false);
-    pasteBrown -> setVisible(false);
+    // pasteBrown -> setVisible(false);
     showBrownLabel -> setVisible(false);
 
     
@@ -3789,7 +3865,7 @@ void MainWindow::on_actionMinusColor_triggered()
       line006 -> setGeometry(QRect(620,0,7,125));
       line061 -> setGeometry(QRect(470,0,7,125));
       line062 -> setGeometry(QRect(515,0,7,125));
-      line063 -> setGeometry(QRect(560,0,7,125));
+      line063 -> setGeometry(QRect(570,0,7,125));
       line0007 -> setGeometry(QRect(380,0,7,125));
       line0006 -> setGeometry(QRect(70,0,7,125));
 
@@ -3823,7 +3899,7 @@ void MainWindow::on_actionMinusColor_triggered()
     showYellowMink_Sum -> setVisible(false);
     copyYellow -> setVisible(false);
     moveYellow -> setVisible(false);
-    pasteYellow -> setVisible(false);
+    // pasteYellow -> setVisible(false);
     showYellowLabel -> setVisible(false);
 
     drawBlue -> setChecked(true);
@@ -3841,7 +3917,7 @@ void MainWindow::on_actionMinusColor_triggered()
       line06 -> setGeometry(QRect(425,0,7,155));
       line061 -> setGeometry(QRect(470,0,7,155));
       line062 -> setGeometry(QRect(515,0,7,155));
-      line063 -> setGeometry(QRect(560,0,7,155));
+      line063 -> setGeometry(QRect(570,0,7,155));
       line006 -> setGeometry(QRect(620,0,7,155));
       line0007 -> setGeometry(QRect(380,0,7,155));
       line0006 -> setGeometry(QRect(70,0,7,155));
@@ -3872,7 +3948,7 @@ void MainWindow::on_actionMinusColor_triggered()
     showMagentaMink_Sum -> setVisible(false);
     copyMagenta -> setVisible(false);
     moveMagenta -> setVisible(false);
-    pasteMagenta -> setVisible(false);
+    // pasteMagenta -> setVisible(false);
     showMagentaLabel -> setVisible(false);
 
     drawBlue -> setChecked(true);
@@ -3889,7 +3965,7 @@ void MainWindow::on_actionMinusColor_triggered()
       line06 -> setGeometry(QRect(425,0,7,185));
       line061 -> setGeometry(QRect(470,0,7,185));
       line062 -> setGeometry(QRect(515,0,7,185));
-      line063 -> setGeometry(QRect(560,0,7,185));
+      line063 -> setGeometry(QRect(570,0,7,185));
       line006 -> setGeometry(QRect(620,0,7,185));
       line0007 -> setGeometry(QRect(380,0,7,185));
       line0006 -> setGeometry(QRect(70,0,7,185));
@@ -3921,7 +3997,7 @@ void MainWindow::on_actionMinusColor_triggered()
     showAquaMink_Sum -> setVisible(false);
     copyAqua -> setVisible(false);
     moveAqua -> setVisible(false);
-    pasteAqua -> setVisible(false);
+    // pasteAqua -> setVisible(false);
     showAquaLabel -> setVisible(false);
 
 
@@ -3938,7 +4014,7 @@ void MainWindow::on_actionMinusColor_triggered()
       line06 -> setGeometry(QRect(425,0,7,215));
       line061 -> setGeometry(QRect(470,0,7,215));
       line062 -> setGeometry(QRect(515,0,7,215));
-      line063 -> setGeometry(QRect(560,0,7,215));
+      line063 -> setGeometry(QRect(570,0,7,215));
       line006 -> setGeometry(QRect(620,0,7,215));
       line0007 -> setGeometry(QRect(380,0,7,215));
       line0006 -> setGeometry(QRect(70,0,7,215));
@@ -3988,7 +4064,7 @@ void MainWindow::on_actionUndo_triggered()
       case 3: if(actionDifferenceH->isChecked()) actionDifferenceH->setChecked(false); break;
       case 4: if(actionSymmetric_DifferenceH->isChecked()) actionSymmetric_DifferenceH->setChecked(false); break;
       case 5: if(actionMinkowski_SumH->isChecked()) actionMinkowski_SumH->setChecked(false); break;
-      case 8: if(actionPasteH->isChecked()) actionPasteH->setChecked(false); break;
+      // case 8: if(actionPasteH->isChecked()) actionPasteH->setChecked(false); break;
       case 10: if(actionComplementH->isChecked()) actionComplementH->setChecked(false); break;
       case 11: if(actionComplementH->isChecked()) actionComplementH->setChecked(false); break;
     }
@@ -4035,7 +4111,9 @@ void MainWindow::on_actionNew_triggered()
   for( Curve_set_iterator si = states_stack.back().m_curve_sets.begin(); si != states_stack.back().m_curve_sets.end() ; ++ si )
     si->clear();
 
-  this->graphicsView->setSceneRect(-320, -210, 640, 420);
+  m_scene.setSceneRect(-355, -200, 640, 420);
+  this->graphicsView->setScene(&m_scene);
+  //this->graphicsView->scale(2.5, -2.5);
 
   states_stack.back().result_set().clear();
   states_stack.back().blue_set().clear();
@@ -4090,7 +4168,7 @@ void MainWindow::on_actionNew_triggered()
 
   if(m_grid)
   {
-    actionAxis->setChecked(false);
+    on_actionAxis_triggered();
   }
 
   m_linear_input->Reset();
@@ -4124,7 +4202,7 @@ void MainWindow::on_actionNew_triggered()
 
   actionCopyH->setChecked(false);
   actionMoveH->setChecked(false);
-  actionPasteH->setChecked(false);
+  // actionPasteH->setChecked(false);
   //actionAxis->setChecked(false);
 
   actionComplementH -> setChecked(false);
@@ -4162,7 +4240,7 @@ void MainWindow::on_actionNew_triggered()
 
   m_color_copy = 111; //default
   m_color_move_ext = 111; //default
-  m_color_paste = 111; //default
+  // m_color_paste = 111; //default
   m_color_complement = 0; //default
   m_blue_int = true; //default
   m_red_int = true ; //default
@@ -4250,13 +4328,13 @@ void MainWindow::on_actionNew_triggered()
   moveMagenta->setChecked(false);
   moveAqua->setChecked(false);
 
-  pasteBlue->setChecked(false);
-  pasteRed->setChecked(false);
-  pasteBlack->setChecked(false);
-  pasteBrown->setChecked(false);
-  pasteYellow->setChecked(false);
-  pasteMagenta->setChecked(false);
-  pasteAqua->setChecked(false);
+  // pasteBlue->setChecked(false);
+  // pasteRed->setChecked(false);
+  // pasteBlack->setChecked(false);
+  // pasteBrown->setChecked(false);
+  // pasteYellow->setChecked(false);
+  // pasteMagenta->setChecked(false);
+  // pasteAqua->setChecked(false);
 
   showBlackInt->setChecked(false);
   showBrownInt->setChecked(false);
@@ -4310,7 +4388,7 @@ void MainWindow::on_actionNew_triggered()
   showBlackMink_Sum -> setVisible(true);
   copyBlack -> setVisible(true);
   moveBlack -> setVisible(true);
-  pasteBlack -> setVisible(true);
+  // pasteBlack -> setVisible(true);
   
   m_visible_brown = false;
   showBrown ->setVisible(false);
@@ -4323,7 +4401,7 @@ void MainWindow::on_actionNew_triggered()
   showBrownMink_Sum -> setVisible(false);
   copyBrown -> setVisible(false);
   moveBrown -> setVisible(false);
-  pasteBrown -> setVisible(false);
+  // pasteBrown -> setVisible(false);
 
 
   m_visible_yellow = false;
@@ -4337,7 +4415,7 @@ void MainWindow::on_actionNew_triggered()
   showYellowMink_Sum -> setVisible(false);
   copyYellow -> setVisible(false);
   moveYellow -> setVisible(false);
-  pasteYellow -> setVisible(false);
+  // pasteYellow -> setVisible(false);
 
 
   m_visible_magenta = false;
@@ -4351,7 +4429,7 @@ void MainWindow::on_actionNew_triggered()
   showMagentaMink_Sum -> setVisible(false);  
   copyMagenta -> setVisible(false);
   moveMagenta -> setVisible(false);
-  pasteMagenta -> setVisible(false);
+  // pasteMagenta -> setVisible(false);
   
 
   m_visible_aqua = false;
@@ -4365,7 +4443,7 @@ void MainWindow::on_actionNew_triggered()
   showAquaMink_Sum -> setVisible(false);
   copyAqua -> setVisible(false);
   moveAqua -> setVisible(false);
-  pasteAqua -> setVisible(false);
+  // pasteAqua -> setVisible(false);
 
   
   actionAddColor -> setEnabled(true);
@@ -4390,7 +4468,7 @@ void MainWindow::on_actionNew_triggered()
   line06 -> setGeometry(QRect(425,0,7,125));
   line061 -> setGeometry(QRect(470,0,7,125));
   line062 -> setGeometry(QRect(515,0,7,125));
-  line063 -> setGeometry(QRect(560,0,7,125));
+  line063 -> setGeometry(QRect(570,0,7,125));
   line006 -> setGeometry(QRect(620,0,7,125));
   line0007 -> setGeometry(QRect(380,0,7,125));
   line0006 -> setGeometry(QRect(70,0,7,125));
@@ -4412,7 +4490,7 @@ void MainWindow::on_actionDeleteAll_triggered()
     actionDifferenceH->setChecked(false);
     actionSymmetric_DifferenceH->setChecked(false);
     actionMinkowski_SumH->setChecked(false);
-    actionPasteH->setChecked(false);
+    // actionPasteH->setChecked(false);
     actionComplementH->setChecked(false);
     actionComplementH->setChecked(false);
 
@@ -4482,7 +4560,7 @@ void MainWindow::on_actionClearH_toggled(bool aChecked)
     actionDifferenceH->setChecked(false);
     actionSymmetric_DifferenceH->setChecked(false);
     actionMinkowski_SumH->setChecked(false);
-    actionPasteH->setChecked(false);
+    // actionPasteH->setChecked(false);
     actionComplementH->setChecked(false);
     actionComplementH->setChecked(false);
 
@@ -4764,8 +4842,8 @@ void MainWindow::on_actionOpenLinear_triggered()
 void MainWindow::on_actionOpenDXF_triggered()
 {
   open(QFileDialog::getOpenFileName(this,
-                                    tr("Open Circular Polygon"), "../data",
-                                    tr("Circular curve files (*.dxf)")));
+                                    tr("Open Line segments and circular arcs"), "../data",
+                                    tr("Circular curve files (*.cps)")));
 }
 
 void MainWindow::on_actionOpenBezier_triggered()
@@ -4822,7 +4900,7 @@ linearPart_2_circ(Circular_Linear_polygon_with_holes const& pwh)
 // }
 
 
-bool read_linear( QString aFileName, Linear_polygon_set& rSet,
+bool MainWindow::read_linear( QString aFileName, Linear_polygon_set& rSet,
  Linear_region_source_container& rSources )
 {
   bool rOK = false ;
@@ -4830,67 +4908,296 @@ bool read_linear( QString aFileName, Linear_polygon_set& rSet,
   std::ifstream in_file (qPrintable(aFileName));
   if ( in_file )
   {
-    unsigned int n_regions ;
-    in_file >> n_regions;
-    
-    for ( unsigned int r = 0 ; r < n_regions ; ++ r )
+    try
     {
-      unsigned int n_boundaries;
-      in_file >> n_boundaries;
       
-      Linear_polygon outer ;
-      std::vector<Linear_polygon> holes ;
+      typedef Linear_traits                           Gps_traits;
+      typedef typename Gps_traits::X_monotone_curve_2 Linear_X_monotone_curve;
+      typedef typename Gps_traits::Curve_2            Linear_curve;
+      typedef std::vector<Linear_curve>               Linear_curve_vector;
+      typedef typename Gps_traits::X_monotone_curve_2 Linear_X_monotone_curve;
+      typedef typename Gps_traits::Polygon_2          Linear_polygon;
+      typedef typename Gps_traits::Point_2            Linear_point;
+      typedef typename Kernel::Point_2                Point;
+      typedef typename Kernel::FT                     FT;
+      Linear_curve_vector mLinearPolygonPieces;
       
-      for ( unsigned int r = 0 ; r < n_boundaries ; ++ r )
+      std::string format ;
+      std::getline(in_file,format);
+      
+      bool lDoubleFormat = ( format.length() >= 6 && format.substr(0,6) == "DOUBLE") ;
+
+      //number of linear polygon with holes
+      unsigned int n_regions ;
+      in_file >> n_regions;
+      
+      for ( unsigned int r = 0 ; r < n_regions ; ++ r )
       {
-        Linear_polygon p ;
-        in_file >> p ;
+        //number of linear polygon including holes
+        unsigned int n_boundaries;
+        in_file >> n_boundaries;
+
+        std::vector<Linear_polygon> Linear_polygons;
         
-        if ( r == 0 )
-             outer = p; 
-        else holes.push_back(p);
-      }
-      
-      Linear_polygon_with_holes pwh(outer,holes.begin(),holes.end());
-      rSources.push_back(pwh);
-      rSet.join(pwh) ;    
-      rOK = true ;
+        for ( unsigned int r = 0 ; r < n_boundaries ; ++ r )
+        {
+          // number of points in linear polygon
+          unsigned int n_points;
+          in_file >> n_points;
+          std::vector<Point> points;
+
+          std::vector<Linear_X_monotone_curve> xcvs;
+          Gps_traits traits;
+          typename Gps_traits::Make_x_monotone_2 make_x_monotone = traits.make_x_monotone_2_object();
+
+          for(unsigned int j=0; j< n_points; ++j)
+          {
+            double x,y;
+            in_file>> x >> y;
+            points.push_back(Point(x,y));
+            if(j>0)
+            {
+              mLinearPolygonPieces.push_back(Linear_curve(points[points.size() - 2 ],points[points.size() - 1]));
+            }
+          }
+          points.clear();
+
+
+          for (auto it = mLinearPolygonPieces.begin();
+               it != mLinearPolygonPieces.end(); ++it)
+          {
+            std::vector<CGAL::Object> x_objs;
+            std::vector<CGAL::Object>::const_iterator xoit;
+
+            make_x_monotone(*it, std::back_inserter(x_objs));
+
+            for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) {
+              Linear_X_monotone_curve xcv;
+              if (CGAL::assign(xcv, *xoit)) xcvs.push_back (xcv);
+            }
+          }
+
+          if (xcvs.size() > 0) 
+          {
+            Linear_point const& first_point = xcvs.front().source();
+            Linear_point const& last_point =  xcvs.back().target();
+            FT fxs = first_point.x();
+            FT fys = first_point.y();
+            FT lxs = last_point .x();
+            FT lys = last_point .y();
+            xcvs.push_back(Linear_X_monotone_curve( Point(lxs,lys), Point(fxs,fys)));
+            Linear_polygon lp(xcvs.begin(), xcvs.end());
+
+            CGAL::Orientation orient = lp.orientation(); 
+            if (orient == CGAL::CLOCKWISE) 
+            {
+              lp.reverse_orientation();
+            }
+            Linear_polygon_with_holes lCPWH(lp);
+
+            if(r==0)
+            {
+              get_new_state(11);
+              states_stack.back().active_set(m_color_active).linear().join(lCPWH);
+              states_stack.back().active_linear_sources(m_color_active).push_back(lCPWH);
+              processInput(CGAL::make_object(lp));
+            }
+            else
+            {
+              states_stack.back().result_set().clear();
+              states_stack.back().result_linear_sources().clear();
+              states_stack.back().result_set().linear().join(lCPWH);
+              states_stack.back().result_linear_sources().push_back(lCPWH);
+              states_stack.back().active_set(m_color_active).difference(states_stack.back().result_set());
+              states_stack.back().result_set().clear();
+              states_stack.back().result_linear_sources().clear();
+            }
+            mLinearPolygonPieces.clear();
+          }
+        }
+        
+        rOK = true ;
+      }  
+    }
+    catch(...)
+    {
+      show_warning("Exception ocurred during reading of linear polygon set.");
     }
   }
   
   return rOK ;
 }
-bool read_dxf ( QString aFileName, Circular_polygon_set& rSet, 
+
+bool MainWindow::read_circular ( QString aFileName, Circular_polygon_set& rSet, 
     Circular_region_source_container& rSources )
 {
   bool rOK = false ;
   
-  // std::ifstream in_file (qPrintable(aFileName));
-  // if ( in_file )
-  // {
-  //   CGAL::Dxf_bsop_reader<Gps_circular_kernel>   reader;
-  //   std::vector<Circular_polygon>            circ_polygons;
-  //   std::vector<Circular_polygon_with_holes> circ_polygons_with_holes;
-    
-  //   reader(in_file
-  //         ,std::back_inserter(circ_polygons)
-  //         ,std::back_inserter(circ_polygons_with_holes)
-  //         ,false
-  //         );
-          
-  //   for ( std::vector<Circular_polygon>::iterator pit = circ_polygons.begin() ; pit != circ_polygons.end() ; ++ pit )
-  //     circ_polygons_with_holes.push_back( Circular_polygon_with_holes(*pit) ) ;
-  //   rSet.join( circ_polygons_with_holes.begin(), circ_polygons_with_holes.end() ) ;
-  //   std::copy(circ_polygons_with_holes.begin(), circ_polygons_with_holes.end(), std::back_inserter(rSources) );
-  //   rOK = true ;
-  // }
-  
+  std::ifstream in_file (qPrintable(aFileName));
+  if ( in_file )
+  {
+    try
+    {
+      
+      typedef CGAL::Gps_circle_segment_traits_2<Kernel> Gps_traits;
+      typedef typename Gps_traits::Curve_2              Circular_curve;
+      typedef typename Gps_traits::X_monotone_curve_2   Circular_X_monotone_curve;
+      typedef typename Gps_traits::Polygon_2            Circular_polygon;
+      typedef typename Circular_polygon::Point_2        Arc_point;
+      typedef typename Kernel::FT                       FT;
+      typedef typename Kernel::Vector_2                 Vector;
+      typedef typename Kernel::Point_2                  Point;
+      typedef typename Kernel::Circle_2                 Circle;
+
+      typedef std::vector<Circular_curve>               Circular_curve_vector;
+
+      Circular_curve_vector mCircularPolygonPieces;
+      
+      std::string format ;
+      std::getline(in_file,format);
+      
+      bool lDoubleFormat = ( format.length() >= 6 && format.substr(0,6) == "DOUBLE") ;
+
+      //number of linear polygon with holes
+      unsigned int n_regions ;
+      in_file >> n_regions;
+      
+      for ( unsigned int r = 0 ; r < n_regions ; ++ r )
+      {
+        //number of linear polygon including holes
+        unsigned int n_boundaries;
+        in_file >> n_boundaries;
+
+        std::vector<Circular_polygon> Circular_polygons;
+        
+        for ( unsigned int r = 0 ; r < n_boundaries ; ++ r )
+        {
+          // number of points in linear polygon
+          unsigned int n_points;
+          in_file >> n_points;
+          std::vector<Point> points;
+
+          std::vector<Circular_X_monotone_curve> xcvs;
+          Gps_traits traits;
+          typename Gps_traits::Make_x_monotone_2 make_x_monotone = traits.make_x_monotone_2_object();
+
+          for(unsigned int j=0; j< n_points; ++j)
+          {
+            unsigned int buldge;
+            in_file>>buldge;
+            if(buldge)
+            {
+              double cx,cy,sx,sy,tx,ty;
+              FT rsq;
+              CGAL::Orientation  orient;
+              int orients;
+              in_file>>cx>>cy;
+              in_file>>rsq;
+              in_file>>orients;
+
+              if(orients==1)
+              {
+                orient=CGAL::COUNTERCLOCKWISE;
+              }
+              else
+              {
+                orient=CGAL::CLOCKWISE; 
+              }
+
+              in_file>> sx >> sy;
+              in_file>> tx >> ty;
+
+              Circle circ(Point(cx,cy),rsq,orient);
+              mCircularPolygonPieces.push_back(Circular_curve(circ,Arc_point(sx,sy),Arc_point(tx,ty)));
+            }
+            else
+            {
+              double sx,sy,tx,ty;
+
+              in_file>> sx >> sy;
+              in_file>> tx >> ty;
+
+              mCircularPolygonPieces.push_back(Circular_curve(Point(sx,sy),Point(tx,ty)));
+            
+            }
+          }
+
+
+          if (mCircularPolygonPieces.size() > 0) 
+          {
+            Gps_traits traits;
+            auto make_x_monotone = traits.make_x_monotone_2_object();
+
+            std::vector<Circular_X_monotone_curve> xcvs;
+            for (auto it = mCircularPolygonPieces.begin();
+                 it != mCircularPolygonPieces.end(); ++ it)
+            {
+              std::vector<CGAL::Object> x_objs;
+              std::vector<CGAL::Object>::const_iterator xoit;
+              //cout<<"point 1"<<endl;
+              make_x_monotone(*it, std::back_inserter(x_objs));
+              //cout<<"add curves"<<endl;
+              //cout<<"point 2"<<endl;
+              //exception handling: if user draws a line and ends polygon
+              Circular_X_monotone_curve xcv;
+              xoit = x_objs.begin();
+              CGAL::assign(xcv,*xoit);
+              //if (xcv.is_linear() && mCircularPolygonPieces.size() == 1) return;
+            
+              for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) 
+              {
+                if (CGAL::assign(xcv, *xoit)) xcvs.push_back(xcv);
+              }
+            }
+
+            if (xcvs.size() > 0) 
+            {
+              Circular_polygon cp(xcvs.begin(), xcvs.end());
+
+              CGAL::Orientation  orient = cp.orientation();
+              //TRACE( "  Orientation: " << orient ) ;
+                
+              if (orient == CGAL::CLOCKWISE)
+              {
+                //TRACE( "Reversing orientation: " ) ;
+                cp.reverse_orientation();
+              }
+
+              Circular_polygon_with_holes lCPWH(cp);
+
+              if(r==0)
+              {
+                // processInput(CGAL::make_object(cp));
+                get_new_state(11);
+                states_stack.back().active_set(m_color_active).circular().join(lCPWH);
+                states_stack.back().active_circular_sources(m_color_active).push_back(lCPWH);
+              }
+
+              else
+              {
+                states_stack.back().result_set().circular().join(lCPWH);
+                states_stack.back().result_circular_sources().push_back(lCPWH);
+                states_stack.back().active_set(m_color_active).difference(states_stack.back().result_set());
+                states_stack.back().result_set().clear();
+                states_stack.back().result_circular_sources().clear();
+              }
+            }
+
+            mCircularPolygonPieces.clear();
+          }
+        }
+        rOK = true ;
+      }
+    }
+    catch(...)
+    {
+      show_warning("Exception ocurred during reading of circular polygon set.");
+    }
+  }
   return rOK ;
 }
 
-
-bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet,
- Bezier_region_source_container& rSources  )
+bool MainWindow::read_bezier ( QString aFileName)
 {
   
   bool rOK = false ;
@@ -4990,31 +5297,33 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet,
               pwh.add_hole(*it);    
           }
           
-          if ( is_valid_polygon_with_holes(pwh, rSet.traits() ) )
-          {
-            rSet.join(pwh) ;      
-            rSources.push_back(br_source);
-          }
-          else
-          {
-            show_warning( "Bezier polygon is not valid" );
-          }
+          get_new_state(11);
+          states_stack.back().active_set(m_color_active).bezier().join(pwh) ;      
+          states_stack.back().active_bezier_sources(m_color_active).push_back(br_source);
         }
         
         rOK = true ;
       }
-      
     }
-    catch(...)
+    catch(const std::exception& e)
     {
-      show_error("Exception ocurred during reading of bezier polygon set.");
+      // std::string s = e.what();
+      // show_error(s);
     } 
   }
 
   return rOK ;
 }
 
-Bezier_curve read_bezier_curve ( std::istream& is, bool aDoubleFormat )
+
+// result of symmetric difference
+// CGAL error: warning violation!
+// Expr: holes_disjoint
+// File: /home/ronnie8888/Documents/cgal-public-dev/Boolean_set_operations_2/include/CGAL/Boolean_set_operations_2/Gps_polygon_validation.h
+// Line: 788
+// Explanation:Holes of the PWH intersect amongst themselves or with outer boundary
+
+Bezier_curve MainWindow::read_bezier_curve ( std::istream& is, bool aDoubleFormat )
 {
   // Read the number of control points.
   unsigned int  n;
@@ -5074,14 +5383,164 @@ Bezier_curve read_bezier_curve ( std::istream& is, bool aDoubleFormat )
 bool save_linear ( QString aFileName, Linear_polygon_set& rSet )
 {
   bool rOK = false ;
+
+  Linear_polygon_set lps;
+  typedef typename Kernel::Point_2                Point;
+  std::list<Polygon_2> pgns;
+
+  std::ofstream out_file( qPrintable(aFileName) ) ;
+  if ( out_file )
+  {
+    out_file << "DOUBLE" << std::endl ;
+    std::vector<Linear_polygon_with_holes> lpwh_container;
+
+    rSet.polygons_with_holes( std::back_inserter(lpwh_container) ) ;
+  
+    out_file << lpwh_container.size() << std::endl ;
+
+    for( std::vector<Linear_polygon_with_holes>::const_iterator rit = lpwh_container.begin(); 
+      rit != lpwh_container.end() ; ++ rit )
+    {
+      Linear_polygon_with_holes lpwh = *rit ;
+      
+      out_file << " " << (1 + lpwh.number_of_holes() ) << std::endl ;
+  
+      int cc = lpwh.outer_boundary().size() ;
+      int lc = cc - 1 ;
+      
+      out_file << "  " <<  cc << std::endl ;
+     
+      int i = 0 ;
+      
+      for ( Linear_polygon::Curve_const_iterator cit = lpwh.outer_boundary().curves_begin() ; 
+        cit != lpwh.outer_boundary().curves_end() ; ++ cit, ++ i  )
+      {
+        auto pt = cit->source();  
+        out_file << "   " << CGAL::to_double(pt.x()) << " " << CGAL::to_double(pt.y()) << std::endl ;
+      }
+      // out_file << "   " << CGAL::to_double(lpwh.outer_boundary().curves_begin()->source().x()) << " " << CGAL::to_double(lpwh.outer_boundary().curves_begin()->source().y()) << std::endl ;
+      
+      for ( Linear_polygon_with_holes::Hole_const_iterator hit = lpwh.holes_begin() ; hit != lpwh.holes_end() ; ++ hit )
+      {
+
+        int cc = hit->size() ;
+        int lc = cc - 1 ;
+        
+        out_file << "  " <<  cc << std::endl ;
+       
+        int i = 0 ;
+        
+        for ( Linear_polygon::Curve_const_iterator cit = hit->curves_begin() ; 
+          cit != hit->curves_end() ; ++ cit, ++ i  )
+        {
+          auto pt = cit->source();  
+          out_file << "   " << CGAL::to_double(pt.x()) << " " << CGAL::to_double(pt.y()) << std::endl ;
+        }
+        // out_file << "   " << CGAL::to_double(hit->curves_begin()->source().x()) << " " << CGAL::to_double(hit->curves_begin()->source().y()) << std::endl ;
+      }
+      
+      rOK = true ;
+    }
+
+  }
   
   return rOK ;
 }
 
+
 bool save_circular ( QString aFileName, Circular_polygon_set& rSet )
 {
   bool rOK = false ;
+
+  std::ofstream out_file( qPrintable(aFileName) ) ;
+  if ( out_file )
+  {
+    out_file << "DOUBLE" << std::endl ;
+    std::vector<Circular_polygon_with_holes> cpwh_container;
+
+    rSet.polygons_with_holes( std::back_inserter(cpwh_container) ) ;
   
+    out_file << cpwh_container.size() << std::endl ;
+
+    for( std::vector<Circular_polygon_with_holes>::const_iterator rit = cpwh_container.begin(); 
+      rit != cpwh_container.end() ; ++ rit )
+    {
+      Circular_polygon_with_holes cpwh = *rit ;
+      
+      out_file << " " << (1 + cpwh.number_of_holes() ) << std::endl ;
+  
+      int cc = cpwh.outer_boundary().size() ;
+      int lc = cc - 1 ;
+      
+      out_file << "  " <<  cc << std::endl ;
+     
+      int i = 0 ;
+      
+      for ( Circular_polygon::Curve_const_iterator cit = cpwh.outer_boundary().curves_begin() ; 
+        cit != cpwh.outer_boundary().curves_end() ; ++ cit, ++ i  )
+      {
+
+        if(cit->is_circular())
+        {
+          out_file << "   1"<<std::endl;
+          out_file << "    " << CGAL::to_double(cit->supporting_circle().center().x()) << " " << CGAL::to_double(cit->supporting_circle().center().y())<<std::endl;
+          out_file << "    " << CGAL::to_double(cit->supporting_circle().squared_radius())<<std::endl;
+          out_file << "    " << cit->supporting_circle().orientation ()<<std::endl;
+          //show_warning(to_string(cit->supporting_circle().orientation()==CGAL::CLOCKWISE));
+          //CLOCKWISE = -
+          //COLLINEAR = 0
+          //COUNTERCLOCKWISE = +
+        } 
+        else
+        {
+          out_file << "   0"<<std::endl;
+        }
+        auto pt = cit->source();  
+        out_file << "    " << CGAL::to_double(pt.x()) << " " << CGAL::to_double(pt.y()) << std::endl;
+        pt = cit->target();  
+        out_file << "    " << CGAL::to_double(pt.x()) << " " << CGAL::to_double(pt.y()) << std::endl;
+      }
+
+      for ( Circular_polygon_with_holes::Hole_const_iterator hit = cpwh.holes_begin() ; hit != cpwh.holes_end() ; ++ hit )
+      {
+
+        int cc = hit->size() ;
+        int lc = cc - 1 ;
+        
+        out_file << "  " <<  cc << std::endl ;
+       
+        int i = 0 ;
+        
+        for ( Circular_polygon::Curve_const_iterator cit = hit->curves_begin() ; 
+          cit != hit->curves_end() ; ++ cit, ++ i  )
+        {
+
+          if(cit->is_circular())
+          {
+            out_file << "   1"<<std::endl;
+            out_file << "    " << CGAL::to_double(cit->supporting_circle().center().x()) << " " << CGAL::to_double(cit->supporting_circle().center().y())<<std::endl;
+            out_file << "    " << CGAL::to_double(cit->supporting_circle().squared_radius())<<std::endl;
+            out_file << "    " << cit->supporting_circle().orientation ()<<std::endl;
+            //show_warning(to_string(cit->supporting_circle().orientation()==CGAL::CLOCKWISE));
+            //CLOCKWISE = -
+            //COLLINEAR = 0
+            //COUNTERCLOCKWISE = +
+          } 
+          else
+          {
+            out_file << "   0"<<std::endl;
+          }
+          auto pt = cit->source();  
+          out_file << "   " << CGAL::to_double(pt.x()) << " " << CGAL::to_double(pt.y()) << std::endl;
+          pt = cit->target();  
+          out_file << "    " << CGAL::to_double(pt.x()) << " " << CGAL::to_double(pt.y()) << std::endl;
+        }
+      }
+      
+      rOK = true ;
+    }
+  }
+
   return rOK ;
 }
 
@@ -5144,7 +5603,7 @@ bool save_bezier_result ( QString aFileName, Bezier_polygon_set const& aSet )
     {
       Bezier_polygon_with_holes bpwh = *rit ;
       
-      out_file << " " << ( 1 + bpwh.number_of_holes() ) << std::endl ;
+      out_file << " " << (1 + bpwh.number_of_holes() ) << std::endl ;
   
       save_bezier_polygon( out_file, bpwh.outer_boundary() ) ;
       
@@ -5159,60 +5618,60 @@ bool save_bezier_result ( QString aFileName, Bezier_polygon_set const& aSet )
   
 }
 
-bool save_bezier_sources ( QString aFileName, Bezier_region_source_container const& aSources )
-{
-  bool rOK = false ;
+// bool save_bezier_sources ( QString aFileName, Bezier_region_source_container const& aSources )
+// {
+//   bool rOK = false ;
   
-  std::ofstream out_file( qPrintable(aFileName) ) ;
-  if ( out_file )
-  {
-    out_file << std::setprecision(19);
+//   std::ofstream out_file( qPrintable(aFileName) ) ;
+//   if ( out_file )
+//   {
+//     out_file << std::setprecision(19);
     
-    out_file << "DOUBLE" << std::endl ;
+//     out_file << "DOUBLE" << std::endl ;
     
-    out_file << aSources.size() << std::endl ;
+//     out_file << aSources.size() << std::endl ;
     
-    for( Bezier_region_source_container::const_iterator rit = aSources.begin(); 
-      rit != aSources.end() ; ++ rit )
-    {
-      Bezier_region_source const& br = *rit ;
+//     for( Bezier_region_source_container::const_iterator rit = aSources.begin(); 
+//       rit != aSources.end() ; ++ rit )
+//     {
+//       Bezier_region_source const& br = *rit ;
       
-      out_file << "  " << br.size() << std::endl ;
+//       out_file << "  " << br.size() << std::endl ;
       
-      for( Bezier_region_source::const_iterator bit = br.begin(); bit != br.end() ; ++ bit )
-      {
-        Bezier_boundary_source const& bb = *bit ;
+//       for( Bezier_region_source::const_iterator bit = br.begin(); bit != br.end() ; ++ bit )
+//       {
+//         Bezier_boundary_source const& bb = *bit ;
         
-        out_file << "   " << bb.size() << std::endl ;
+//         out_file << "   " << bb.size() << std::endl ;
         
-        for ( Bezier_boundary_source::const_iterator cit = bb.begin() ; cit != bb.end() ; ++ cit )
-        {
-          Bezier_curve const& bc = *cit ;
+//         for ( Bezier_boundary_source::const_iterator cit = bb.begin() ; cit != bb.end() ; ++ cit )
+//         {
+//           Bezier_curve const& bc = *cit ;
 
-          out_file << "    " << bc.number_of_control_points() << std::endl ;
+//           out_file << "    " << bc.number_of_control_points() << std::endl ;
           
-          for ( Bezier_curve::Control_point_iterator pit = bc.control_points_begin() ;
-           pit != bc.control_points_end() ; ++ pit )
-          {
-            out_file << "     " << CGAL::to_double(pit->x()) << " " << CGAL::to_double(pit->y()) << std::endl ;
-          }
-        }
-      } 
-    }
+//           for ( Bezier_curve::Control_point_iterator pit = bc.control_points_begin() ;
+//            pit != bc.control_points_end() ; ++ pit )
+//           {
+//             out_file << "     " << CGAL::to_double(pit->x()) << " " << CGAL::to_double(pit->y()) << std::endl ;
+//           }
+//         }
+//       } 
+//     }
     
-    rOK = true ;
-  }
+//     rOK = true ;
+//   }
   
-  return rOK ;
+//   return rOK ;
   
-}
+// }
 
 void MainWindow::on_actionSaveCurrentBucket_triggered()
 {
   if ( m_circular_active )
   {
     if ( !save_circular(QFileDialog::getSaveFileName(this, 
-    tr("Save Result Circular Polygon Set"), "/data/index.dxf", tr("Circular Curve files (*.dxf)") ) 
+    tr("Save Result Circular Polygon Set"), "/data/index.cps", tr("Circular Curve files (*.cps)") ) 
                        ,states_stack.back().active_set(m_color_active).circular()
                        )
        )
@@ -5356,20 +5815,6 @@ bool MainWindow::ensure_linear_mode()
 }
 
 
-//check out
-//bool read_linear(QString /* aFileName */, Linear_polygon_set& /* rSet */,
-//                 Linear_region_source_container& /* rSources */)
-//{
-//  bool rOK = false;
-//  return rOK;
-//}
-
-//bool read_circular(QString /* aFileName */, Circular_polygon_set& /* rSet */,
- //                  Circular_region_source_container& /* rSources */)
-//{
-//  bool rOK = false;
-//}
-
 void MainWindow::open(QString fileName)
 {
   if(! fileName.isEmpty()) {
@@ -5379,19 +5824,19 @@ void MainWindow::open(QString fileName)
       if ( ensure_linear_mode() )
         lRead = read_linear(fileName,states_stack.back().active_set(m_color_active).linear(), states_stack.back().active_linear_sources(m_color_active) ) ;
     }
-    else if (fileName.endsWith(".dxf"))
+    else if (fileName.endsWith(".cps"))
     {
       if (ensure_circular_mode())
-        lRead = read_dxf(fileName,states_stack.back().active_set(m_color_active).circular(), states_stack.back().active_circular_sources(m_color_active) ) ;
+        lRead = read_circular(fileName,states_stack.back().active_set(m_color_active).circular(), states_stack.back().active_circular_sources(m_color_active) ) ;
     }
     else if (fileName.endsWith(".bps"))
     {
       if ( ensure_bezier_mode() )
-        lRead = read_bezier(fileName,states_stack.back().active_set(m_color_active).bezier(), states_stack.back().active_bezier_sources(m_color_active) ) ;
+        lRead = read_bezier(fileName);
     }
     if (lRead) {
       modelChanged();
-      zoomToFit();
+      // zoomToFit();
       this->addToRecentFiles(fileName);
     }
   }
@@ -5415,6 +5860,9 @@ void MainWindow::on_actionInsertCircular_toggled(bool aChecked)
       
       actionPAN->setChecked(false);
       m_pan = false;
+      actionOpenLinear->setEnabled(false);
+      actionOpenDXF->setEnabled(true);
+      actionOpenBezier->setEnabled(false);
       actionInsertLinear->setChecked( false );
       actionInsertBezier->setChecked( false ); 
       //actionInsertMink_Polygon -> setChecked(false);
@@ -5453,6 +5901,9 @@ void MainWindow::on_actionInsertBezier_toggled(bool aChecked)
         
         actionPAN->setChecked(false);
         m_pan = false;
+        actionOpenLinear->setEnabled(false);
+        actionOpenDXF->setEnabled(false);
+        actionOpenBezier->setEnabled(true);
         actionInsertLinear->setChecked( false );
         actionInsertCircular->setChecked( false );
         //actionInsertMink_Polygon -> setChecked(false);
@@ -5490,6 +5941,9 @@ void MainWindow::on_actionInsertLinear_toggled(bool aChecked)
 
       actionPAN->setChecked(false);
       m_pan = false;
+      actionOpenLinear->setEnabled(true);
+      actionOpenDXF->setEnabled(false);
+      actionOpenBezier->setEnabled(false);
       actionInsertCircular->setChecked( false );
       actionInsertBezier->setChecked( false ); 
     //actionInsertMink_Polygon -> setChecked(false);
@@ -5522,7 +5976,7 @@ void MainWindow::on_actionComplementH_toggled(bool aChecked)
   	// actionPaste->setChecked(false);
     actionCopyH->setChecked(false);
     actionMoveH->setChecked(false);
-    actionPasteH->setChecked(false);
+    // actionPasteH->setChecked(false);
 
     get_new_state(0);
 
@@ -5705,7 +6159,7 @@ void MainWindow::on_actionIntersectionH_toggled(bool aChecked)
 	  actionMinkowski_SumH->setChecked(false);
     actionCopyH->setChecked(false);
     actionMoveH->setChecked(false);
-    actionPasteH->setChecked(false);
+    // actionPasteH->setChecked(false);
 
     get_new_state(1);
 
@@ -5925,7 +6379,7 @@ void MainWindow::on_actionDifferenceH_toggled(bool aChecked)
 	  actionMinkowski_SumH->setChecked(false);
     actionCopyH->setChecked(false);
     actionMoveH->setChecked(false);
-    actionPasteH->setChecked(false);
+    // actionPasteH->setChecked(false);
 
 
 	  size_t count = 0;
@@ -6182,7 +6636,7 @@ void MainWindow::on_actionSymmetric_DifferenceH_toggled(bool aChecked)
 	  actionMinkowski_SumH->setChecked(false);
     actionCopyH->setChecked(false);
     actionMoveH->setChecked(false);
-    actionPasteH->setChecked(false);
+    //actionPasteH->setChecked(false);
 
     get_new_state(4);
 
@@ -6380,7 +6834,7 @@ void MainWindow::on_actionUnionH_toggled(bool aChecked)
   	// actionPaste->setChecked(false);
     actionCopyH->setChecked(false);
     actionMoveH->setChecked(false);
-    actionPasteH->setChecked(false);
+    //actionPasteH->setChecked(false);
 
     get_new_state(2);
 
@@ -6532,7 +6986,7 @@ void MainWindow::on_actionCopyH_toggled(bool aChecked)
       // actionMove->setChecked(false);
       // actionPaste->setChecked(false);
       actionMoveH->setChecked(false);
-      actionPasteH->setChecked(false);
+      // actionPasteH->setChecked(false);
 
       //makes no sense to just undo copy alone but rather be used with paste and that is handled anyways
       //get_new_state(6);
@@ -6572,6 +7026,11 @@ void MainWindow::on_actionCopyH_toggled(bool aChecked)
 
       lDone = true;
       m_color_cm = 0; //copy
+      if(!states_stack.back().result_set().is_empty()) states_stack.back().active_set(m_color_active).join(states_stack.back().result_set());
+      states_stack.back().result_set().clear();
+      states_stack.back().result_linear_sources().clear();
+      states_stack.back().result_circular_sources().clear();
+      states_stack.back().result_bezier_sources().clear();
     this->setCursor(old);
     if (lDone) modelChanged();
   }
@@ -6603,7 +7062,7 @@ void MainWindow::on_actionMoveH_toggled(bool aChecked)
       // actionMove->setChecked(true);
       // actionPaste->setChecked(false);
       actionCopyH->setChecked(false);
-      actionPasteH->setChecked(false);
+      // actionPasteH->setChecked(false);
 
       //makes no sense to just undo copy/move alone but rather be used with paste and that is handled anyways
       //get_new_state(7);
@@ -6630,17 +7089,21 @@ void MainWindow::on_actionMoveH_toggled(bool aChecked)
 
       switch(m_color_move_ext)
       {
-        case 0: if(!states_stack.back().blue_set().is_empty()) { states_stack.back().result_set().assign(states_stack.back().blue_set()); m_color_move=0; } break;
-        case 1: if(!states_stack.back().red_set().is_empty()) {states_stack.back().result_set().assign(states_stack.back().red_set()); m_color_move=1; } break;
-        case 2: if(!states_stack.back().black_set().is_empty()) {states_stack.back().result_set().assign(states_stack.back().black_set()); m_color_move=2; } break;
-        case 3: if(!states_stack.back().brown_set().is_empty()) {states_stack.back().result_set().assign(states_stack.back().brown_set()); m_color_move=3; } break;
-        case 4: if(!states_stack.back().yellow_set().is_empty()) {states_stack.back().result_set().assign(states_stack.back().yellow_set()); m_color_move=4; } break;
-        case 5: if(!states_stack.back().magenta_set().is_empty()) {states_stack.back().result_set().assign(states_stack.back().magenta_set()); m_color_move=5; } break;
-        case 6: if(!states_stack.back().aqua_set().is_empty()) {states_stack.back().result_set().assign(states_stack.back().aqua_set()); m_color_move=6; } break;
+        case 0: if(!states_stack.back().blue_set().is_empty()) { states_stack.back().result_set().assign(states_stack.back().blue_set()); states_stack.back().active_set(m_color_active).join(states_stack.back().result_set()); states_stack.back().blue_set().clear(); } break;
+        case 1: if(!states_stack.back().red_set().is_empty()) {states_stack.back().result_set().assign(states_stack.back().red_set()); states_stack.back().active_set(m_color_active).join(states_stack.back().result_set()); states_stack.back().red_set().clear(); } break;
+        case 2: if(!states_stack.back().black_set().is_empty()) {states_stack.back().result_set().assign(states_stack.back().black_set()); states_stack.back().active_set(m_color_active).join(states_stack.back().result_set()); states_stack.back().black_set().clear(); } break;
+        case 3: if(!states_stack.back().brown_set().is_empty()) {states_stack.back().result_set().assign(states_stack.back().brown_set()); states_stack.back().active_set(m_color_active).join(states_stack.back().result_set()); states_stack.back().brown_set().clear(); } break;
+        case 4: if(!states_stack.back().yellow_set().is_empty()) {states_stack.back().result_set().assign(states_stack.back().yellow_set()); states_stack.back().active_set(m_color_active).join(states_stack.back().result_set()); states_stack.back().yellow_set().clear(); } break;
+        case 5: if(!states_stack.back().magenta_set().is_empty()) {states_stack.back().result_set().assign(states_stack.back().magenta_set()); states_stack.back().active_set(m_color_active).join(states_stack.back().result_set()); states_stack.back().magenta_set().clear(); } break;
+        case 6: if(!states_stack.back().aqua_set().is_empty()) {states_stack.back().result_set().assign(states_stack.back().aqua_set()); states_stack.back().active_set(m_color_active).join(states_stack.back().result_set()); states_stack.back().aqua_set().clear(); } break;
         default: show_warning("Please select a Bucket!!!");break;
       }
 
       actionMoveH->setChecked(false);
+      states_stack.back().result_set().clear();
+      states_stack.back().result_linear_sources().clear();
+      states_stack.back().result_circular_sources().clear();
+      states_stack.back().result_bezier_sources().clear();
 
       lDone = true;
       m_color_cm = 1; //copy
@@ -6655,152 +7118,152 @@ void MainWindow::on_actionMoveH_toggled(bool aChecked)
 //   //actionMoveH->setChecked(true);
 // }
 
-void MainWindow::on_actionPasteH_toggled(bool aChecked)
-{
-  if(actionPasteH->isChecked())
-  {
-    bool lDone = false;
-      QCursor old = this->cursor();
-      this->setCursor(Qt::WaitCursor);
+// void MainWindow::on_actionPasteH_toggled(bool aChecked)
+// {
+//   if(actionPasteH->isChecked())
+//   {
+//     bool lDone = false;
+//       QCursor old = this->cursor();
+//       this->setCursor(Qt::WaitCursor);
 
-      actionUnionH->setChecked(false);
-      actionIntersectionH->setChecked(false);
-      actionDifferenceH->setChecked(false); 
-      actionSymmetric_DifferenceH->setChecked(false); 
-      actionMinkowski_SumH->setChecked(false);
-      // actionCopy->setChecked(false);
-      // actionMove->setChecked(false);
-      // actionPaste->setChecked(true);
-      actionMoveH->setChecked(false);
-      actionCopyH->setChecked(false);
+//       actionUnionH->setChecked(false);
+//       actionIntersectionH->setChecked(false);
+//       actionDifferenceH->setChecked(false); 
+//       actionSymmetric_DifferenceH->setChecked(false); 
+//       actionMinkowski_SumH->setChecked(false);
+//       // actionCopy->setChecked(false);
+//       // actionMove->setChecked(false);
+//       // actionPaste->setChecked(true);
+//       actionMoveH->setChecked(false);
+//       actionCopyH->setChecked(false);
 
-      get_new_state(8);
+//       get_new_state(8);
 
-      //operation_name
-       // COMPLEMENT_OP = 0
-      // INTERSECTION_OP = 1
-      // UNION_OP = 2
-      // DIFFERENCE_OP = 3
-      // SYMMETRIC_dIFFERENCE_OP = 4
-      // MINKOWSKI_SUM_OP = 5
-      // COPY_OP = 6
-      // MOVE_OP = 7
-      // PASTE_OP = 8
-      // CLEAR_OP = 9
-    // DELETEALL_OP = 10
-      // START_OP = 11
+//       //operation_name
+//        // COMPLEMENT_OP = 0
+//       // INTERSECTION_OP = 1
+//       // UNION_OP = 2
+//       // DIFFERENCE_OP = 3
+//       // SYMMETRIC_dIFFERENCE_OP = 4
+//       // MINKOWSKI_SUM_OP = 5
+//       // COPY_OP = 6
+//       // MOVE_OP = 7
+//       // PASTE_OP = 8
+//       // CLEAR_OP = 9
+//     // DELETEALL_OP = 10
+//       // START_OP = 11
 
-    if(!states_stack.back().result_set().is_empty())
-    {
+//     if(!states_stack.back().result_set().is_empty())
+//     {
         
-        // if(!states_stack.back().active_set(m_color_active).is_empty())
-        // {
-        //   if(empty_warn)
-        //   {
-        //     show_not_empty_warning();
-        //   }
-        // }
+//         // if(!states_stack.back().active_set(m_color_active).is_empty())
+//         // {
+//         //   if(empty_warn)
+//         //   {
+//         //     show_not_empty_warning();
+//         //   }
+//         // }
       
 
-        switch(m_color_paste)
-        {
-          case 0: if(m_color_cm==0) 
-              { 
-                states_stack.back().blue_set().join(states_stack.back().result_set());
-              }
-              else if(m_color_cm==1)
-              {
-                states_stack.back().blue_set().join(states_stack.back().result_set());
-                states_stack.back().move_set(m_color_move).clear();
-              }
-              break;
+//         switch(m_color_paste)
+//         {
+//           case 0: if(m_color_cm==0) 
+//               { 
+//                 states_stack.back().blue_set().join(states_stack.back().result_set());
+//               }
+//               else if(m_color_cm==1)
+//               {
+//                 states_stack.back().blue_set().join(states_stack.back().result_set());
+//                 states_stack.back().move_set(m_color_move).clear();
+//               }
+//               break;
 
-          case 1: if(m_color_cm==0) 
-              { 
-                states_stack.back().red_set().join(states_stack.back().result_set());
-              }
-              else if(m_color_cm==1)
-              {
-                states_stack.back().red_set().join(states_stack.back().result_set());
-                states_stack.back().move_set(m_color_move).clear();
-              }
-              break;
-          case 2: if(m_color_cm==0) 
-              { 
-                states_stack.back().black_set().join(states_stack.back().result_set());
-              }
-              else if(m_color_cm==1)
-              {
-                states_stack.back().black_set().join(states_stack.back().result_set());
-                states_stack.back().move_set(m_color_move).clear();
-              }
-              break;
-          case 3: if(m_color_cm==0) 
-              { 
-                states_stack.back().brown_set().join(states_stack.back().result_set());
-              }
-              else if(m_color_cm==1)
-              {
-                states_stack.back().brown_set().join(states_stack.back().result_set());
-                states_stack.back().move_set(m_color_move).clear();
-              }
-              break;
-          case 4: if(m_color_cm==0) 
-              { 
-                states_stack.back().yellow_set().join(states_stack.back().result_set());
-              }
-              else if(m_color_cm==1)
-              {
-                states_stack.back().yellow_set().join(states_stack.back().result_set());
-                states_stack.back().move_set(m_color_move).clear();
-              }
-              break;
-          case 5: if(m_color_cm==0) 
-              { 
-                states_stack.back().magenta_set().join(states_stack.back().result_set());
-              }
-              else if(m_color_cm==1)
-              {
-                states_stack.back().magenta_set().join(states_stack.back().result_set());
-                states_stack.back().move_set(m_color_move).clear();
-              }
-              break;
-          case 6: if(m_color_cm==0) 
-              { 
-                states_stack.back().aqua_set().join(states_stack.back().result_set());
-              }
-              else if(m_color_cm==1)
-              {
-                states_stack.back().aqua_set().join(states_stack.back().result_set());
-                states_stack.back().move_set(m_color_move).clear();
-              }
-              break;
-        default: show_warning("Please select a Bucket!!!");break;
-        }
+//           case 1: if(m_color_cm==0) 
+//               { 
+//                 states_stack.back().red_set().join(states_stack.back().result_set());
+//               }
+//               else if(m_color_cm==1)
+//               {
+//                 states_stack.back().red_set().join(states_stack.back().result_set());
+//                 states_stack.back().move_set(m_color_move).clear();
+//               }
+//               break;
+//           case 2: if(m_color_cm==0) 
+//               { 
+//                 states_stack.back().black_set().join(states_stack.back().result_set());
+//               }
+//               else if(m_color_cm==1)
+//               {
+//                 states_stack.back().black_set().join(states_stack.back().result_set());
+//                 states_stack.back().move_set(m_color_move).clear();
+//               }
+//               break;
+//           case 3: if(m_color_cm==0) 
+//               { 
+//                 states_stack.back().brown_set().join(states_stack.back().result_set());
+//               }
+//               else if(m_color_cm==1)
+//               {
+//                 states_stack.back().brown_set().join(states_stack.back().result_set());
+//                 states_stack.back().move_set(m_color_move).clear();
+//               }
+//               break;
+//           case 4: if(m_color_cm==0) 
+//               { 
+//                 states_stack.back().yellow_set().join(states_stack.back().result_set());
+//               }
+//               else if(m_color_cm==1)
+//               {
+//                 states_stack.back().yellow_set().join(states_stack.back().result_set());
+//                 states_stack.back().move_set(m_color_move).clear();
+//               }
+//               break;
+//           case 5: if(m_color_cm==0) 
+//               { 
+//                 states_stack.back().magenta_set().join(states_stack.back().result_set());
+//               }
+//               else if(m_color_cm==1)
+//               {
+//                 states_stack.back().magenta_set().join(states_stack.back().result_set());
+//                 states_stack.back().move_set(m_color_move).clear();
+//               }
+//               break;
+//           case 6: if(m_color_cm==0) 
+//               { 
+//                 states_stack.back().aqua_set().join(states_stack.back().result_set());
+//               }
+//               else if(m_color_cm==1)
+//               {
+//                 states_stack.back().aqua_set().join(states_stack.back().result_set());
+//                 states_stack.back().move_set(m_color_move).clear();
+//               }
+//               break;
+//         default: show_warning("Please select a Bucket!!!");break;
+//         }
 
         
-        states_stack.back().result_set().clear();
-        states_stack.back().result_linear_sources().clear();
-        states_stack.back().result_circular_sources().clear();
-        states_stack.back().result_bezier_sources().clear();
-    }
-    else
-    {
-      show_warning("Cannot copy or move from empty Bucket!!!");
-      // actionCopy->setChecked(false);
-      // actionMove->setChecked(false);
-      actionCopyH->setChecked(false);
-      actionMoveH->setChecked(false);
-    }
+//         states_stack.back().result_set().clear();
+//         states_stack.back().result_linear_sources().clear();
+//         states_stack.back().result_circular_sources().clear();
+//         states_stack.back().result_bezier_sources().clear();
+//     }
+//     else
+//     {
+//       show_warning("Cannot copy or move from empty Bucket!!!");
+//       // actionCopy->setChecked(false);
+//       // actionMove->setChecked(false);
+//       actionCopyH->setChecked(false);
+//       actionMoveH->setChecked(false);
+//     }
 
-    actionPasteH->setChecked(false);
+//     actionPasteH->setChecked(false);
 
-      lDone = true;
-      m_color_cm = 0; //copy
-    this->setCursor(old);
-    if (lDone) modelChanged();
-  }
-}
+//       lDone = true;
+//       m_color_cm = 0; //copy
+//     this->setCursor(old);
+//     if (lDone) modelChanged();
+//   }
+// }
 
 Polygon_with_holes_2 MainWindow::getMinkInputPolygon(size_t colorx)
 {
@@ -7150,6 +7613,7 @@ void MainWindow::on_actionAxis_triggered()
     m_scene.removeItem(yAxis);
     m_grid = false;
   }
+  actionAxis->setChecked(false);
   m_scene.update();
   modelChanged();
 }
@@ -7249,11 +7713,13 @@ void MainWindow::wheelEvent(QWheelEvent *event)
   static double currentScale = 1.0;  // stores the current scale value.
   static const double scaleMin = .1; // defines the min scale limit.
 
-  if(m_scene.width()>=15000000 && event->delta()>0)
+  if(m_scene.width()>=1500000 && event->delta()>0)
   {
-    currentScale = 0.0;
+    // currentScale = 0.0;
+    this->graphicsView->setDragMode(QGraphicsView::NoDrag);
+    this->graphicsView->setSceneRect(-1500000,-1000000,3100000,2000000);
   }
-  if(m_scene.width()<=15000000)
+  if(m_scene.width()<=1500000)
   {
 
     if(event->delta() > 0) 
