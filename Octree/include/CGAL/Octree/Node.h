@@ -72,7 +72,7 @@ public:
   /*!
    * \brief a collection of point indices represented by begin and end iterators
    */
-  typedef boost::iterator_range<Point_index> Point_range;
+  typedef boost::iterator_range <Point_index> Point_range;
 
   /// @}
 
@@ -109,7 +109,7 @@ private:
 
   Int_location m_location;
 
-  std::unique_ptr<Children> m_children;
+  std::unique_ptr <Children> m_children;
 
 public:
 
@@ -285,6 +285,111 @@ public:
    */
   bool is_root() const { return (!m_parent); }
 
+  /**
+   * \brief find the directly adjacent node in a specific direction
+   *
+   * Adjacent nodes are found according to several properties:
+   * - Adjacent nodes may be larger than the seek node, but never smaller
+   * - A node can have no more than 6 different adjacent nodes (left, right, up, down, front, back)
+   * - A node is free to have fewer than 6 adjacent nodes
+   *   (e.g. edge nodes have no neighbors in some directions, the root node has none at all).
+   * - Adjacent nodes are not required to be leaf nodes
+   *
+   *
+   * Here's a diagram demonstrating the concept for a quadtree.
+   * Because it's in 2d space, the seek node has only four neighbors (up, down, left, right)
+   *
+   *     +---------------+---------------+
+   *     |               |               |
+   *     |               |               |
+   *     |               |               |
+   *     |       A       |               |
+   *     |               |               |
+   *     |               |               |
+   *     |               |               |
+   *     +-------+-------+---+---+-------+
+   *     |       |       |   |   |       |
+   *     |   A   |  (S)  +---A---+       |
+   *     |       |       |   |   |       |
+   *     +---+---+-------+---+---+-------+
+   *     |   |   |       |       |       |
+   *     +---+---+   A   |       |       |
+   *     |   |   |       |       |       |
+   *     +---+---+-------+-------+-------+
+   *
+   *         (S) : Seek node
+   *          A  : Adjacent node
+   *
+   * Note how the top adjacent node is larger than the seek node.
+   * The right adjacent node is the same size, even though it contains further subdivisions.
+   *
+   * This implementation returns a pointer to the adjacent node if it's found.
+   * If there is no adjacent node in that direction, it returns nullptr.
+   *
+   * \todo explain how direction is encoded
+   *
+   * \param direction which way to find the adjacent node relative to this one
+   * \return a pointer to the adjacent node if it exists
+   */
+  const Self *adjacent_node(std::bitset<3> direction) const {
+
+    // Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
+    // direction:    000    001   010   011   100   101
+
+    // Nodes only have up to 6 different adjacent nodes (since cubes have 6 sides)
+    assert(direction.to_ulong() < 6);
+
+    // The root node has no adjacent nodes!
+    if (is_root())
+      return nullptr;
+
+    // The least significant bit indicates the sign (which side of the node)
+    bool sign = direction[0];
+
+    // The first two bits indicate the dimension/axis (x, y, z)
+    uint8_t dimension = (direction >> 1).to_ulong();
+
+    // Create an offset so that the bit-significance lines up with the dimension (e.g. 1, 2, 4 --> 001, 010, 100)
+    int8_t offset = (uint8_t) 1 << dimension;
+
+    // Finally, apply the sign to the offset
+    offset = (sign ? offset : -offset);
+
+    // Check if this child has the opposite sign along the direction's axis
+    if (index()[dimension] != sign) {
+
+      // This means the adjacent node is a direct sibling, the offset can be applied easily!
+      return &(*parent())[index().to_ulong() + offset];
+    }
+
+    // Find the parent's neighbor in that direction if it exists
+    auto *adjacent_node_of_parent = parent()->adjacent_node(direction);
+
+    // If the parent has no neighbor, then this node doesn't have one
+    if (!adjacent_node_of_parent)
+      return nullptr;
+
+    // If the parent's adjacent node has no children, then it's this node's adjacent node
+    if (adjacent_node_of_parent->is_leaf())
+      return adjacent_node_of_parent;
+
+    // Return the nearest node of the parent by subtracting the offset instead of adding
+    return &(*adjacent_node_of_parent)[index().to_ulong() - offset];
+
+  }
+
+  const Self *adjacent_node(Direction direction) const {
+    return adjacent_node(std::bitset<3>(static_cast<int>(direction)));
+  }
+
+  Self *adjacent_node(std::bitset<3> direction) {
+    return const_cast<Self *>(const_cast<const Self *>(this)->adjacent_node(direction));
+  }
+
+  Self *adjacent_node(Direction direction) {
+    return adjacent_node(std::bitset<3>(static_cast<int>(direction)));
+  }
+
   /// @}
 
   /// \name Value Accessors
@@ -359,109 +464,6 @@ public:
 
   bool operator!=(const Node &rhs) const {
     return !operator==(rhs);
-  }
-
-  Self *adjacent_node(Direction direction) {
-    return adjacent_node(std::bitset<3>(static_cast<int>(direction)));
-  }
-
-  const Self *adjacent_node(Direction direction) const {
-    return adjacent_node(std::bitset<3>(static_cast<int>(direction)));
-  }
-
-  Self *adjacent_node(std::bitset<3> direction) {
-    return const_cast<Self *>(const_cast<const Self *>(this)->adjacent_node(direction));
-  }
-
-  /**
-   * \brief find the directly adjacent node in a specific direction
-   *
-   * Adjacent nodes are found according to several properties:
-   * - Adjacent nodes may be larger than the seek node, but never smaller
-   * - A node can have no more than 6 different adjacent nodes (left, right, up, down, front, back)
-   * - A node is free to have fewer than 6 adjacent nodes
-   *   (e.g. edge nodes have no neighbors in some directions, the root node has none at all).
-   * - Adjacent nodes are not required to be leaf nodes
-   *
-   *
-   * Here's a diagram demonstrating the concept for a quadtree.
-   * Because it's in 2d space, the seek node has only four neighbors (up, down, left, right)
-   *
-   *     +---------------+---------------+
-   *     |               |               |
-   *     |               |               |
-   *     |               |               |
-   *     |       A       |               |
-   *     |               |               |
-   *     |               |               |
-   *     |               |               |
-   *     +-------+-------+---+---+-------+
-   *     |       |       |   |   |       |
-   *     |   A   |  (S)  +---A---+       |
-   *     |       |       |   |   |       |
-   *     +---+---+-------+---+---+-------+
-   *     |   |   |       |       |       |
-   *     +---+---+   A   |       |       |
-   *     |   |   |       |       |       |
-   *     +---+---+-------+-------+-------+
-   *
-   *         (S) : Seek node
-   *          A  : Adjacent node
-   *
-   * Note how the top adjacent node is larger than the seek node.
-   * The right adjacent node is the same size, even though it contains further subdivisions.
-   *
-   * This implementation returns a pointer to the adjacent node if it's found.
-   * If there is no adjacent node in that direction, it returns nullptr.
-   *
-   * \param direction which way to find the adjacent node relative to this one
-   * \return a pointer to the adjacent node if it exists
-   */
-  const Self *adjacent_node(std::bitset<3> direction) const {
-
-    // Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
-    // direction:    000    001   010   011   100   101
-
-    // Nodes only have up to 6 different adjacent nodes (since cubes have 6 sides)
-    assert(direction.to_ulong() < 6);
-
-    // The root node has no adjacent nodes!
-    if (is_root())
-      return nullptr;
-
-    // The least significant bit indicates the sign (which side of the node)
-    bool sign = direction[0];
-
-    // The first two bits indicate the dimension/axis (x, y, z)
-    uint8_t dimension = (direction >> 1).to_ulong();
-
-    // Create an offset so that the bit-significance lines up with the dimension (e.g. 1, 2, 4 --> 001, 010, 100)
-    int8_t offset = (uint8_t) 1 << dimension;
-
-    // Finally, apply the sign to the offset
-    offset = (sign ? offset : -offset);
-
-    // Check if this child has the opposite sign along the direction's axis
-    if (index()[dimension] != sign) {
-
-      // This means the adjacent node is a direct sibling, the offset can be applied easily!
-      return &(*parent())[index().to_ulong() + offset];
-    }
-
-    // Find the parent's neighbor in that direction if it exists
-    auto *adjacent_node_of_parent = parent()->adjacent_node(direction);
-
-    // If the parent has no neighbor, then this node doesn't have one
-    if (!adjacent_node_of_parent)
-      return nullptr;
-
-    // If the parent's adjacent node has no children, then it's this node's adjacent node
-    if (adjacent_node_of_parent->is_leaf())
-      return adjacent_node_of_parent;
-
-    // Return the nearest node of the parent by subtracting the offset instead of adding
-    return &(*adjacent_node_of_parent)[index().to_ulong() - offset];
-
   }
 
   /// @}
