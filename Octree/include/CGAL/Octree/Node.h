@@ -42,6 +42,9 @@ public:
   /// \name Types
   /// @{
 
+  /*!
+   * \brief self typedef for convenience
+   */
   typedef Node<Point_index> Self;
 
   /*!
@@ -285,7 +288,7 @@ public:
    */
   bool is_root() const { return (!m_parent); }
 
-  /**
+  /*!
    * \brief find the directly adjacent node in a specific direction
    *
    * Adjacent nodes are found according to several properties:
@@ -378,21 +381,21 @@ public:
 
   }
 
-  /**
+  /*!
    * \todo I need to get copydoc working so I don't have to duplicate documentation
    */
   const Self *adjacent_node(Direction direction) const {
     return adjacent_node(std::bitset<3>(static_cast<int>(direction)));
   }
 
-  /**
+  /*!
    * \todo I need to get copydoc working so I don't have to duplicate documentation
    */
   Self *adjacent_node(std::bitset<3> direction) {
     return const_cast<Self *>(const_cast<const Self *>(this)->adjacent_node(direction));
   }
 
-  /**
+  /*!
    * \todo I need to get copydoc working so I don't have to duplicate documentation
    */
   Self *adjacent_node(Direction direction) {
