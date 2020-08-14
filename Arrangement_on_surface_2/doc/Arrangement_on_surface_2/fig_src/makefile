@@ -34,7 +34,9 @@ TARGETS = \
   compare_x_on_boundary.pdf \
   compare_x_near_boundary.pdf \
   compare_y_near_boundary.pdf \
-  identified_clusters.pdf
+  identified_clusters.pdf \
+  generic_polyline.tex \
+  well_oriented_polyline.tex
 
 .DEFAULT_GOAL = all
 .PHONY: all clean

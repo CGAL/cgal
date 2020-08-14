@@ -14,14 +14,12 @@
  * defined kernel and Segment_traits_2 or the defaults.
  */
 
-// Instantiate the traits class using a user-defined kernel
-// and Segment_traits_2.
+// Instantiate the traits class using a user-defined kernel and Segment_traits_2.
+// Identical instantiation can be achieved using the default Kernel:
+// typedef CGAL::Arr_polyline_traits_2<>                    Geom_traits_2;
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>                Segment_traits_2;
 typedef CGAL::Arr_polyline_traits_2<Segment_traits_2>     Geom_traits_2;
-
-// Identical instantiation can be achieved using the default Kernel:
-// typedef CGAL::Arr_polyline_traits_2<>                    Geom_traits_2;
 
 typedef Geom_traits_2::Point_2                            Point_2;
 typedef Geom_traits_2::Segment_2                          Segment_2;
@@ -62,10 +60,8 @@ int main()
   segs.push_back(Segment_2(Point_2(3, 6), Point_2(5, 2)));
   Polyline_2 pi3 = polyline_construct(segs.begin(), segs.end());
 
-  insert(arr, pi1);
-  insert(arr, pi2);
-  insert(arr, pi3);
-
+  Polyline_2 polylines[] = {pi1, pi2, pi3};
+  insert(arr, &polylines[0], &polylines[3]);
   print_arrangement(arr);
   return 0;
 }

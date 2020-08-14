@@ -3594,7 +3594,7 @@ arr_sssectr_linear.
 An instance of the `Arr_segment_traits_2<Kernel>` class template used
 in most example programs so far is instantiated by substituting the
 `Kernel` template parameter with a geometric kernel that must conform
-to the \cgal{} `Kernel` concept; see Package \ref
+to the `Kernel` concept; see Package \ref
 PkgKernel23Concepts. This traits class defines its point type to be
 the `Kernel::Point_2` type. However, neither the `Curve_2` nor the
 `X_monotone_curve_2` nested types of the traits are defined as the
@@ -3760,7 +3760,7 @@ be uniquely defined by (and, thus, can be uniquely constructed from)
 two points within the handled family of curves; see Paragraph \ref
 arr_sssectr_polylines. We also provide a similar traits class that
 handles continuous piecewise curves that are not necessarily linear
-and are not subject to any constraint; see Paragraph \ref
+and are not subject to the aformentioned constraint; see Paragraph \ref
 arr_sssectr_polycurves.
 
 <!----------------------------------------------------------------------------->
@@ -3768,31 +3768,33 @@ arr_sssectr_polycurves.
 <!----------------------------------------------------------------------------->
 
 The `Arr_polyline_traits_2<SubcurveTraits_2>` class template handles
-polylines. It models the concepts `ArrangementTraits_2`,
-and `ArrangementDirectionalXMonotoneTraits_2`. The type that
-substitutes the template parameter `SubcurveTraits_2` when
-`Arr_polyline_traits_2<SubcurveTraits_2>` is instantiated must be a
-geometry-traits class that models the following concepts:
+polylines. It models the following three concepts:
 
 - `ArrangementTraits_2`,
-- `ArrangementDirectionalXMonotoneTraits_2`,
-- `ArrangementConstructXMonotoneCurveTraits_2`.
 
-We refer to the type that substitutes the template parameter
-`SubcurveTraits_2` as the <em>subcurve traits</em> hereafter.  If, in
-addition, the subcurve traits also models the concept
+- `ArrangementDirectionalXMonotoneTraits_2`, and
+
+- `ArrangementConstructXMonotoneCurveTraits_2`; see Package \ref
+PkgBooleanSetOperations2Ref.
+
+The type that substitutes the template parameter `SubcurveTraits_2`
+when `Arr_polyline_traits_2<SubcurveTraits_2>` is instantiated must be
+a geometry-traits class that models the same three concepts.  We refer
+to the type that substitutes the template parameter `SubcurveTraits_2`
+as the <em>subcurve traits</em> hereafter.  If, in addition, the
+subcurve traits also models the concept
 `ArrangementApproximateTraits_2` then the instantiated
 `Arr_polyline_traits_2<SubcurveTraits>` type models the concept
 `ArrangementApproximateTraits_2` as well. (By definition, modeling the
 concepts `ArrangementApproximateTraits_2` and
 `ArrangementConstructXMonotoneCurveTraits_2` implies modeling the
-concept `ArrangementLandmarkTraits_2`.) The same holds for the
-`ArrangementOpenBoundaryTraits_2` concept as well.  Modeling the
+concept `ArrangementLandmarkTraits_2`.) Similarly, if the subcurve
+traits also models the concept `ArrangementOpenBoundaryTraits_2` then
+the instantiated `Arr_polyline_traits_2<SubcurveTraits>` type models
+the concept `ArrangementOpenBoundaryTraits_2` as well. Modeling the
 `ArrangementConstructXMonotoneCurveTraits_2` concept implies that the
 subcurve traits must support the construction of a unique
-(\f$x\f$-monotone) segment given two input points. Roughly speaking,
-it means that each operation defined by the subcurve traits must
-handle linear curves.
+(\f$x\f$-monotone) segment given two input points.
 
 An instance of the polyline traits class-template inherits its nested
 point type, i.e., `%Point_2`, from the subcurve traits, and defines the
@@ -3814,11 +3816,7 @@ A polyline can be constructed given one of the following inputs:
 - <b>A range of <em>points</em></b>, where two succeeding points in the
   range represent the endpoints of a segment of the polyline.
 
-- <b>A range of <em>segments</em></b>. Note that , if the types
-`SubcurveTraits_2::Curve_2` and `SubcurveTraits_2::X_monotone_curve_2` are
-not the same, then when `Make_x_monotone_2` is invoked the segments
-that compose the polyline will be broken into \f$x\f$-monotone
-parts.
+- <b>A range of <em>segments</em></b>.
 
 - <b>A pair of points \a or a single segment</b>. In this case a polyline
   that consists of a single segment is constructed.
@@ -3826,21 +3824,26 @@ parts.
 Note that degenerate polylines are not supported. That is, it is
 impossible to construct a polyline that contains a segment of length
 zero, or an isolated point. Finally, a polyline is
-<b><em>continuous</em></b> and <b><em>well-oriented</em></b>; that is,
-the target of the \f$i\f$th segment is the source of the \f$i+1\f$st
-segment. For example, the general polyline
+<b><em>continuous</em></b> and <b><em>well-oriented</em></b>.
+Moreover, the target of the \f$i\f$th segment is the source of
+the \f$i+1\f$st segment. If the macro `CGAL_ALWAYS_LEFT_TO_RIGHT` is
+set to 1, then \f$x\f$-monotone polylines are always directed from
+left-to-right. (This option is retained for backward compatibility.)
+Also, note that a single polyline can be split into several
+\f$x\f$-monotone polylines, and that the number of intersection points
+(or overlapping sections) between two polylines can be large.
+
+For example, the general polyline
 
 \image html generic-polyline.png
 \image latex generic-polyline.pdf
 
 can be represented by one of the following two orientations.
 
-\image html well-oriented-polyline.png
-\image latex well-oriented-polyline.pdf
+\image html well_oriented_polyline.png
+\image latex well_oriented_polyline.pdf
 
-Also, note that a single polyline can be split into several
-\f$x\f$-monotone polylines, and that the number of intersection points
-(or overlapping sections) between two polylines can be large.
+Distinct \f$x\f$-monotone polylines are rendered in different colors.
 
 \cgalAdvancedBegin
 Technically speaking, it is possible to construct a general polyline
@@ -3849,16 +3852,16 @@ impossible to use such polylines for the purpose of computing an
 arrangement.
 \cgalAdvancedEnd
 
-You can traverse over the range of defining segments of a given
-polyline. The \a first and \a past-the-end iterators can be obtained
-through the access functions of the polyline `begin_segments()` and
-`end_segments()`, respectively. The vertices of an \f$x\f$-monotone
-curve are always stored in a strongly monotonic lexicographical order.
-In other words, \f$x\f$-monotone polylines can be directed \a either
-left-to-right \a or right-to-left. If the macro
-#CGAL_ALWAYS_LEFT_TO_RIGHT is set to 1, then the \f$x\f$-monotone
-polylines are always directed from left-to-right (only proposed for
-backward compatibility).
+The polyline traits class also supports the traversal over the range
+of defining segments of a given polyline. The \a first and \a
+past-the-end iterators can be obtained through the access methods
+\link CGAL::X_monotone_polyline_2::begin_segments()
+`begin_segments()`\endlink and \link
+CGAL::X_monotone_polyline_2::end_segments() `end_segments()`\endlink,
+respectively, of a polyline \f$c\f$. The vertices of an
+\f$x\f$-monotone curve are always stored in a strongly monotonic
+lexicographical order.  In other words, \f$x\f$-monotone polylines can
+be directed \a either left-to-right \a or right-to-left.
 
 The polyline-traits class does not perform any geometric operations
 directly. Instead, it solely relies on the functionality of the
@@ -3880,12 +3883,15 @@ data objects with the different segments that compose a polyline.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{arr_figex_12,polylines.png}
+
 An arrangement of three polylines, as constructed in
-`polylines.cpp`. Disks mark vertices associated with polyline
+`polylines.cpp`. Red disks mark vertices associated with polyline
 endpoints, while circles mark vertices that correspond to intersection
 points. Note that \f$\pi_2\f$ is split into three \f$ x\f$-monotone
 polylines, and that \f$\pi_1\f$ and \f$\pi_3\f$ have two overlapping
-sections.
+sections. The target endpoint of \f$\pi_3\f$ is also an intersection
+point; it is rendered as a circle.
+
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
