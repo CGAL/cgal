@@ -43,33 +43,33 @@ int main(void) {
   std::cout << octree << std::endl;
 
   // Root node should have no siblings
-  assert(nullptr == octree.root().adjacent(0));
-  assert(nullptr == octree.root().adjacent(1));
-  assert(nullptr == octree.root().adjacent(2));
-  assert(nullptr == octree.root().adjacent(3));
-  assert(nullptr == octree.root().adjacent(4));
-  assert(nullptr == octree.root().adjacent(5));
+  assert(nullptr == octree.root().adjacent_node(0));
+  assert(nullptr == octree.root().adjacent_node(1));
+  assert(nullptr == octree.root().adjacent_node(2));
+  assert(nullptr == octree.root().adjacent_node(3));
+  assert(nullptr == octree.root().adjacent_node(4));
+  assert(nullptr == octree.root().adjacent_node(5));
 
   // Left Top Front node should have siblings to the Right, Down, and Back
   auto &left_top_back = octree.root()[Node::LEFT_TOP_BACK];
 
-  assert(octree.root()[Node::RIGHT_TOP_BACK] == *left_top_back.adjacent(Node::RIGHT));
-  assert(octree.root()[Node::LEFT_BOTTOM_BACK] == *left_top_back.adjacent(Node::DOWN));
-  assert(octree.root()[Node::LEFT_TOP_FRONT] == *left_top_back.adjacent(Node::FRONT));
-  assert(nullptr == left_top_back.adjacent(Node::LEFT));
-  assert(nullptr == left_top_back.adjacent(Node::UP));
-  assert(nullptr == left_top_back.adjacent(Node::BACK));
+  assert(octree.root()[Node::RIGHT_TOP_BACK] == *left_top_back.adjacent_node(Node::RIGHT));
+  assert(octree.root()[Node::LEFT_BOTTOM_BACK] == *left_top_back.adjacent_node(Node::DOWN));
+  assert(octree.root()[Node::LEFT_TOP_FRONT] == *left_top_back.adjacent_node(Node::FRONT));
+  assert(nullptr == left_top_back.adjacent_node(Node::LEFT));
+  assert(nullptr == left_top_back.adjacent_node(Node::UP));
+  assert(nullptr == left_top_back.adjacent_node(Node::BACK));
 
   std::cout << octree.root()[Node::LEFT_BOTTOM_BACK] << std::endl;
 
   auto &right_top_back_of_left_bottom_back = octree.root()[Node::LEFT_BOTTOM_BACK][Node::RIGHT_TOP_BACK];
-  assert(octree.root()[Node::LEFT_BOTTOM_BACK][Node::LEFT_TOP_BACK] == *right_top_back_of_left_bottom_back.adjacent(Node::LEFT));
-  assert(octree.root()[Node::RIGHT_BOTTOM_BACK] == *right_top_back_of_left_bottom_back.adjacent(Node::RIGHT));
-  assert(nullptr != right_top_back_of_left_bottom_back.adjacent(Node::RIGHT));
-  assert(nullptr != right_top_back_of_left_bottom_back.adjacent(Node::UP));
-  assert(nullptr != right_top_back_of_left_bottom_back.adjacent(Node::DOWN));
-  assert(nullptr == right_top_back_of_left_bottom_back.adjacent(Node::BACK));
-  assert(nullptr != right_top_back_of_left_bottom_back.adjacent(Node::FRONT));
+  assert(octree.root()[Node::LEFT_BOTTOM_BACK][Node::LEFT_TOP_BACK] == *right_top_back_of_left_bottom_back.adjacent_node(Node::LEFT));
+  assert(octree.root()[Node::RIGHT_BOTTOM_BACK] == *right_top_back_of_left_bottom_back.adjacent_node(Node::RIGHT));
+  assert(nullptr != right_top_back_of_left_bottom_back.adjacent_node(Node::RIGHT));
+  assert(nullptr != right_top_back_of_left_bottom_back.adjacent_node(Node::UP));
+  assert(nullptr != right_top_back_of_left_bottom_back.adjacent_node(Node::DOWN));
+  assert(nullptr == right_top_back_of_left_bottom_back.adjacent_node(Node::BACK));
+  assert(nullptr != right_top_back_of_left_bottom_back.adjacent_node(Node::FRONT));
 
   return 0;
 }

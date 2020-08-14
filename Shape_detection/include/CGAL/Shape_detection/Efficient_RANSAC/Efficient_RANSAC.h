@@ -550,7 +550,6 @@ public:
 
     do { // main loop
       best_expected = 0;
-      std::cerr << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
 
       if (keep_searching) {
         do {
@@ -563,8 +562,6 @@ public:
             do {
               first_sample = get_default_random()(static_cast<unsigned int>(m_num_available_points));
             } while (m_shape_index[first_sample] != -1);
-            std::cerr << "first sample: " << first_sample << std::endl;
-            std::cerr << "point index: " << *(m_input_iterator_first + first_sample) << std::endl;
 
             auto point = get(m_point_pmap,
                              *(m_input_iterator_first + first_sample));
@@ -1120,8 +1117,6 @@ private:
                                           std::set<std::size_t> &indices,
                                           const std::vector<int> &shapeIndex,
                                           std::size_t requiredSamples) {
-
-    std::cerr << "  point: " << p << std::endl;
 
     typedef typename Octree::Node Cell;
 
