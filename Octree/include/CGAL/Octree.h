@@ -348,6 +348,8 @@ public:
    */
   const Node &root() const { return m_root; }
 
+  const Node &operator[](int index) const { return m_root[index]; }
+
   /*!
    * \brief Finds the deepest level reached by a leaf node in this tree
    *
