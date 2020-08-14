@@ -99,13 +99,11 @@ public:
    * \brief A range that provides input-iterator access to the nodes of a tree
    */
   typedef boost::iterator_range<Traversal_iterator<const Node>> Node_range_const;
-  typedef boost::iterator_range<Traversal_iterator<Node>> Node_range;
 
   /*!
    * \brief A function that determines the next node in a traversal given the current one
    */
   typedef std::function<const Node *(const Node *)> Node_traversal_method_const;
-  typedef std::function<Node *(Node *)> Node_traversal_method;
 
   /// @}
 
