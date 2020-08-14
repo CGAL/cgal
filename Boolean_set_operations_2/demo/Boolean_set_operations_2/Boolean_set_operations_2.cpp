@@ -5175,6 +5175,8 @@ bool MainWindow::read_circular ( QString aFileName, Circular_polygon_set& rSet,
 
               else
               {
+                states_stack.back().result_set().clear();
+                states_stack.back().result_circular_sources().clear();
                 states_stack.back().result_set().circular().join(lCPWH);
                 states_stack.back().result_circular_sources().push_back(lCPWH);
                 states_stack.back().active_set(m_color_active).difference(states_stack.back().result_set());
@@ -5273,35 +5275,29 @@ bool MainWindow::read_bezier ( QString aFileName)
           
           CGAL::Orientation  orient = pgn.orientation();
           //TRACE( "  Orientation: " << orient ) ;
-            
-          if (( b == 0 && orient == CGAL::CLOCKWISE) || ( b > 0 && orient == CGAL::COUNTERCLOCKWISE))
+          if ( orient == CGAL::CLOCKWISE ) pgn.reverse_orientation();
+
+          if(b==0)
           {
-            //TRACE( "Reversing orientation: " ) ;
-            pgn.reverse_orientation();
+            get_new_state(11);
+            states_stack.back().active_set(m_color_active).bezier().join( Bezier_polygon_with_holes(pgn) ) ;  
+            Bezier_region_source br ; 
+            br.push_back (bb_source);
+            states_stack.back().active_bezier_sources(m_color_active).push_back(br);
           }
-            
-          br_source.push_back(bb_source);
-          bezier_polygons.push_back (pgn);
-        }
-      
-        if ( bezier_polygons.size() > 0 )
-        {
-          Bezier_polygon_with_holes pwh(bezier_polygons.front());
-          
-          if ( bezier_polygons.size() > 1 )
+          else
           {
-            for ( Bezier_polygon_vector::const_iterator it = std::next(bezier_polygons.begin())
-                ; it != bezier_polygons.end()
-                ; ++ it 
-                )
-              pwh.add_hole(*it);    
-          }
-          
-          get_new_state(11);
-          states_stack.back().active_set(m_color_active).bezier().join(pwh) ;      
-          states_stack.back().active_bezier_sources(m_color_active).push_back(br_source);
+            states_stack.back().result_set().clear();
+            states_stack.back().result_bezier_sources().clear();
+            states_stack.back().result_set().bezier().join( Bezier_polygon_with_holes(pgn) ) ;  
+            Bezier_region_source br ; 
+            br.push_back (bb_source);
+            states_stack.back().result_bezier_sources().push_back(br);
+            states_stack.back().active_set(m_color_active).difference(states_stack.back().result_set());
+            states_stack.back().result_set().clear();
+            states_stack.back().result_bezier_sources().clear();
+          }  
         }
-        
         rOK = true ;
       }
     }
