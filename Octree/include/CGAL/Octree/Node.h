@@ -378,14 +378,23 @@ public:
 
   }
 
+  /**
+   * \todo I need to get copydoc working so I don't have to duplicate documentation
+   */
   const Self *adjacent_node(Direction direction) const {
     return adjacent_node(std::bitset<3>(static_cast<int>(direction)));
   }
 
+  /**
+   * \todo I need to get copydoc working so I don't have to duplicate documentation
+   */
   Self *adjacent_node(std::bitset<3> direction) {
     return const_cast<Self *>(const_cast<const Self *>(this)->adjacent_node(direction));
   }
 
+  /**
+   * \todo I need to get copydoc working so I don't have to duplicate documentation
+   */
   Self *adjacent_node(Direction direction) {
     return adjacent_node(std::bitset<3>(static_cast<int>(direction)));
   }
