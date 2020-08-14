@@ -715,40 +715,6 @@ private: // functions :
     }
   }
 
-  std::list<Node *> unbalanced_neighbors_to_split(Node *node) {
-
-    // Neighbors will be added to this linked list
-    std::list<Node *> neighbors_to_split;
-
-    // Find all of this node's neighbors
-    for (int direction = 0; direction < 6; ++direction) {
-
-      // Get the neighbor in this direction
-      Node *neighbor = node->adjacent_node(direction);
-
-      // Skip if there is no neighbor in this direction
-      if (!neighbor)
-        continue;
-
-      // Skip if this neighbor is a direct sibling (it's guaranteed to be the same depth)
-      // TODO: This might be redundant, if it doesn't affect performance maybe I could remove it
-      if (neighbor->parent() == node->parent())
-        continue;
-
-      // Skip if the neighbor is already split
-      if (!neighbor->is_leaf())
-        continue;
-
-      // Add the neighbor to the list if it breaks our grading rule
-      // TODO: could the rule be parametrized?
-      if ((node->depth() - neighbor->depth()) > 1)
-        neighbors_to_split.push_back(neighbor);
-
-    }
-
-    return neighbors_to_split;
-  }
-
 }; // end class Octree
 
 } // namespace Octree

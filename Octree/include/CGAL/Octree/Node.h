@@ -373,6 +373,33 @@ public:
     return const_cast<Self *>(const_cast<const Self *>(this)->adjacent_node(direction));
   }
 
+  /**
+   * \brief find the directly adjacent node in a specific direction
+   *
+   *     +---------------+---------------+
+   *     |               |               |
+   *     |               |               |
+   *     |               |               |
+   *     |       A       |               |
+   *     |               |               |
+   *     |               |               |
+   *     |               |               |
+   *     +-------+-------+---+---+-------+
+   *     |       |       |   |   |       |
+   *     |   A   |  (S)  +---A---+       |
+   *     |       |       |   |   |       |
+   *     +---+---+-------+---+---+-------+
+   *     |   |   |       |       |       |
+   *     +---+---+   A   |       |       |
+   *     |   |   |       |       |       |
+   *     +---+---+-------+-------+-------+
+   *
+   *     (S) : Seek node
+   *      A  : Adjacent node
+   *
+   * \param direction
+   * \return
+   */
   const Self *adjacent_node(std::bitset<3> direction) const {
 
     // Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
