@@ -127,6 +127,7 @@ private: // data members :
   Point m_bbox_min;                  /* input bounding box min value */
   FT m_bbox_side;              /* input bounding box side length (cube) */
 
+  // TODO: I might be able to imply the max depth in the length of this vector
   std::vector<FT> m_side_per_depth;      /* side length per node's depth */
 
 public:
@@ -187,6 +188,7 @@ public:
     m_bbox_side = bbox.max()[0] - m_bbox_min[0];
     m_root.points() = {point_range.begin(), point_range.end()};
     m_side_per_depth.push_back(m_bbox_side);
+    m_side_per_depth.push_back(m_bbox_side / 2);
 
   }
 
@@ -214,10 +216,7 @@ public:
     m_max_depth_reached = 0;
 
     // Reset the side length map, too
-    m_side_per_depth.resize(1);
-
-    // create a side length map
-    m_side_per_depth.push_back(*(m_side_per_depth.end() - 1) / 2);
+    m_side_per_depth.resize(2);
 
     // Initialize a queue of nodes that need to be refined
     std::queue<Node *> todo;
