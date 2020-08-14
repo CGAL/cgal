@@ -514,7 +514,7 @@ public:
    * \param rhs tree to compare with
    * \return whether the trees have the same topology
    */
-  bool operator==(const Octree<Point_range, Point_map> &rhs) const {
+  bool operator==(const Self &rhs) const {
 
     // Identical trees should have the same bounding box
     if (rhs.m_bbox_min != m_bbox_min || rhs.m_bbox_side != m_bbox_side)
@@ -533,7 +533,7 @@ public:
    * \param rhs tree to compare with
    * \return whether the trees have different topology
    */
-  bool operator!=(const Octree<Point_range, Point_map> &rhs) const {
+  bool operator!=(const Self &rhs) const {
     return !operator==(rhs);
   }
 
