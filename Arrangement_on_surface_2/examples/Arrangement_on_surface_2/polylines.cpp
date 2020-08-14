@@ -1,13 +1,10 @@
 //! \file examples/Arrangement_on_surface_2/polylines.cpp
 // Constructing an arrangement of polylines.
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arr_polyline_traits_2.h>
-#include <CGAL/Arrangement_2.h>
 #include <vector>
 #include <list>
 
+#include "arr_polylines .h"
 #include "arr_print.h"
 
 /* Define the Arrangement traits class to be used. You can either use some user

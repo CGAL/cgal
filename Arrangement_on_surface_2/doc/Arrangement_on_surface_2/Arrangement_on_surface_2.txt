@@ -3886,23 +3886,53 @@ data objects with the different segments that compose a polyline.
 
 An arrangement of three polylines, as constructed in
 `polylines.cpp`. Red disks mark vertices associated with polyline
-endpoints, while circles mark vertices that correspond to intersection
-points. Note that \f$\pi_2\f$ is split into three \f$ x\f$-monotone
-polylines, and that \f$\pi_1\f$ and \f$\pi_3\f$ have two overlapping
-sections. The target endpoint of \f$\pi_3\f$ is also an intersection
-point; it is rendered as a circle.
+endpoints, while rings mark vertices that correspond to intersection
+points. The target endpoint of \f$\pi_3\f$ is also an intersection
+point; it is rendered as a ring. Observe that the polyline \f$\pi_2\f$
+is split into three \f$x\f$-monotone polylines, and that the two
+curves \f$\pi_1\f$ and \f$\pi_3\f$ have two overlapping sections---an
+impossible scenario in arrangements of line segments.
 
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
 The following example program constructs an arrangement of three
-polylines, as depicted in \cgalFigureRef{arr_figex_12}. Note that
-most points defining the polylines are not associated with arrangement
-vertices. The arrangement vertices are either the endpoints of
-each \f$x\f$-monotone polyline or the intersection points between two
-polylines:
+polylines, \f$\pi_1\f$, \f$\pi_2\f$, and \f$\pi_3\f$, as depicted in
+\cgalFigureRef{arr_figex_12}. In this example, each polyline is
+constructed from points stored in a different container, i.e., array,
+list, and vector. Points defining the polylines are not necessarily
+associated with arrangement vertices. The arrangement vertices are
+either the extreme points of each \f$x\f$-monotone polyline (drawn as
+red discs) or the intersection points between two polylines (drawn as
+rings).
 
 \cgalExample{Arrangement_on_surface_2/polylines.cpp}
+
+The common types used by the example programs involving arrangements
+of polylines are listed below, and defined in the header file
+`arr_polylines.h`. As we do in the case of segments and linear
+objects, we use the predefined kernel to instantiate our traits class.
+However, in this case we have yet another layer of template
+instantiation, namely the instantiation of the polyline-traits
+class-template with an instance of a subcurve traits
+class-template. Naturally, we use the `Arr_segment_traits_2` class
+template, instantiated with the predefined filtered kernel.
+
+\code{.cpp}
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/Arrangement_2.h>
+
+typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
+typedef Kernel::FT                                         Number_type;
+
+typedef CGAL::Arr_segment_traits_2<Kernel>                 Segment_traits;
+typedef CGAL::Arr_polyline_traits_2<Segment_traits>        Traits;
+typedef Traits::Point_2                                    Point;
+typedef Traits::Curve_2                                    Polyline;
+typedef CGAL::Arrangement_2<Traits>                        Arrangement;
+\endcode
 
 <!----------------------------------------------------------------------------->
 \paragraph arr_sssectr_polycurves The Polycurve Traits Class
@@ -3915,14 +3945,15 @@ compound curve a <em>polycurve</em>. Similar to a polyline, a
 polycurve is a chain of subcurves, where each two neighboring
 subcurves in the chain share a common endpoint; that is, the polycurve
 is continuous. As a matter of fact, most characteristics of the
-`Arr_polyline_traits_2<SubcurveTraits_2>` traits class apply also to
-the `Arr_polycurve_traits_2<SubcurveTraits_2>` traits class. The only
-difference between the two, is that the latter is not a model of the
-concept `ArrangementConstructXMonotoneCurveTraits_2`, and as such, it
-is not able to construct a subcurve from only two points. As a
-consequence, it does not support the operations that (i) construct a
-polycurve from a sequence of points, and (ii) push a point at the back
-or at the front of a non-empty polycurve.
+`Arr_polyline_traits_2<SubcurveTraits_2>` traits class template apply
+also to the `Arr_polycurve_traits_2<SubcurveTraits_2>` traits class
+template. The only difference between the two, is that the latter is
+not a model of the concept
+`ArrangementConstructXMonotoneCurveTraits_2`, and as such, it is not
+able to construct a subcurve from only two points. As a consequence,
+it does not support the operations that (i) construct a polycurve from
+a sequence of points, and (ii) push a point at the back or at the
+front of a non-empty polycurve.
 
 <!----------------------------------------------------------------------------->
 \subsubsection arr_ssectr_circ_seg Circular Arcs and Line Segments
@@ -3930,7 +3961,7 @@ or at the front of a non-empty polycurve.
 
 Circles and circular arcs are the simplest form of non-linear curves.
 We handle circles whose centers have rational coordinates and whose
-squared radii is also rational. If we denote the circle center by
+squared radii are also rational. If we denote the circle center by
 \f$(x_0,y_0)\f$ and its radius by \f$r\f$, then the equation of the
 circle - that is, \f$(x - x_0)^2 + (y - y_0)^2 = r^2\f$ - has rational
 coefficients.  The intersection points of two such circles are
@@ -3943,7 +3974,7 @@ rational). Such numbers can be expressed as \f$\alpha +
 \beta\sqrt{\gamma}\f$, where \f$\alpha\f$, \f$\beta\f$ and
 \f$\gamma\f$ are all rational numbers.
 
-Arrangement of circular arcs and of line segment are very useful, as
+Arrangement of circular arcs and of line segments are very useful, as
 they occur in many applications. For example, when dilating a polygon
 by some radius we obtain a shape whose boundary is comprised of line
 segments, which correspond to dilated polygon edges, and circular
