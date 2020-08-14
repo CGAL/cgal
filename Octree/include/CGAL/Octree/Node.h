@@ -445,8 +445,8 @@ public:
    *
    * \todo
    *
-   * \param rhs
-   * \return
+   * \param rhs node to compare with
+   * \return whether the nodes have different topology
    */
   bool operator==(const Node &rhs) const {
 
@@ -474,6 +474,14 @@ public:
     return (location() == rhs.location());
   }
 
+  /*!
+   * \brief compares the topology of this node to another node
+   *
+   * \todo
+   *
+   * \param rhs node to compare with
+   * \return whether the trees have different topology
+   */
   bool operator!=(const Node &rhs) const {
     return !operator==(rhs);
   }
