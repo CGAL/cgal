@@ -348,6 +348,14 @@ public:
    */
   const Node &root() const { return m_root; }
 
+  /*!
+   * \brief access the child nodes of the root node by their indices
+   *
+   * my_tree[5] is equivalent to my_tree.root()[5]
+   *
+   * \param index The index of the child node, as an int
+   * \return A reference to the node
+   */
   const Node &operator[](int index) const { return m_root[index]; }
 
   /*!
