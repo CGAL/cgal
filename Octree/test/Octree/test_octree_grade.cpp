@@ -4,10 +4,12 @@
 #include <iostream>
 #include <CGAL/Octree.h>
 #include <CGAL/Octree/IO.h>
+#include <CGAL/Octree/Traversal.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>
 
 #include <cassert>
+#include <CGAL/point_generators_3.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
@@ -17,87 +19,59 @@ typedef CGAL::Octree::Octree
         <Point_set, typename Point_set::Point_map>
         Octree;
 
-void test_1_point() {
+std::size_t count_jumps(Octree &octree) {
 
-  // Define the dataset
-  Point_set points;
-  points.insert({-1, -1, -1});
+  std::size_t jumps = 0;
 
-  // Create the octree
-  Octree octree(points, points.point_map());
-  octree.refine(10, 1);
+  for (auto &node : octree.traverse(CGAL::Octree::Traversal::Leaves())) {
 
-  std::cout << octree << std::endl;
+    for (int direction = 0; direction < 6; ++direction) {
 
-  std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
-  octree.grade();
+      auto adjacent_node = node.adjacent_node(direction);
 
-  std::cout << octree << std::endl;
+      if (!adjacent_node)
+        continue;
 
-  std::cout << "\n\n\n" << std::endl;
+      if ((node.depth() - adjacent_node->depth()) > 1)
+        jumps++;
+    }
+  }
+
+  return jumps;
 }
 
-void test_8_points() {
+void test(std::size_t dataset_size) {
 
-  // Define the dataset
+  // Create a dataset
   Point_set points;
-  points.insert({-1, -1, -1});
-  points.insert({1, -1, -1});
-  points.insert({-1, 1, -1});
-  points.insert({1, 1, -1});
-  points.insert({-1, -1, 1});
-  points.insert({1, -1, 1});
-  points.insert({-1, 1, 1});
-  points.insert({1, 1, 1});
+  CGAL::Random_points_in_cube_3<Point> generator;
+  points.reserve(dataset_size);
+  for (std::size_t i = 0; i < dataset_size; ++i)
+    points.insert(*(generator++));
 
-  // Create the octree
+  // Build an octree
   Octree octree(points, points.point_map());
-  octree.refine(10, 1);
 
-  std::cout << octree << std::endl;
+  // Refine the octree
+  octree.refine();
 
-  std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
+  // Count the jumps in depth
+  auto jumps = count_jumps(octree);
+  std::cout << "un-graded octree has " << jumps << " jumps" << std::endl;
+  assert(jumps > 0);
+
+  // Grade the octree
   octree.grade();
 
-  std::cout << octree << std::endl;
-
-  std::cout << "\n\n\n" << std::endl;
-}
-
-void test_10_points() {
-
-  // Define the dataset
-  Point_set points;
-  points.insert({-1, -1, -1});
-  points.insert({1, -1, -1});
-  points.insert({-1, 1, -1});
-  points.insert({1, 1, -1});
-  points.insert({-1, -1, 1});
-  points.insert({1, -1, 1});
-  points.insert({-1, 1, 1});
-  points.insert({1, 1, 1});
-  points.insert({0.875, 1, -1});
-  points.insert({-1, -0.75, 1});
-
-  // Create the octree
-  Octree octree(points, points.point_map());
-  octree.refine(10, 1);
-
-  std::cout << octree << std::endl;
-
-  std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
-  octree.grade();
-
-  std::cout << octree << std::endl;
-
-  std::cout << "\n\n\n" << std::endl;
+  // Count the jumps in depth
+  jumps = count_jumps(octree);
+  std::cout << "graded octree has " << jumps << " jumps" << std::endl;
+  assert(jumps == 0);
 }
 
 int main(void) {
 
-  test_1_point();
-  test_8_points();
-  test_10_points();
+  test(100000);
 
   return EXIT_SUCCESS;
 }
