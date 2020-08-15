@@ -87,10 +87,4 @@ void FillFaceCallback<Arr_>::fillFace(QGraphicsSceneMouseEvent* event)
     f->set_color(QColorConstants::White);
 }
 
-
-template class FillFaceCallback<Seg_arr>;
-template class FillFaceCallback<Pol_arr>;
-template class FillFaceCallback<Conic_arr>;
-template class FillFaceCallback<Lin_arr>;
-template class FillFaceCallback<Alg_seg_arr>;
-template class FillFaceCallback<Bezier_arr>;
+ARRANGEMENT_DEMO_SPECIALIZE_ARR(FillFaceCallback)

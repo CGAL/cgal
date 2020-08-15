@@ -31,7 +31,7 @@ namespace CGAL {
 namespace Qt {
 
 template < typename ArrTraits >
-class ArrangementPainterOstreamBase : public QGraphicsSceneMixin
+class ArrangementPainterOstreamBase : public GraphicsSceneMixin
 {
 public:
   // typedefs
@@ -69,7 +69,7 @@ public:
 
   void setScene( QGraphicsScene* scene_ ) override
   {
-    QGraphicsSceneMixin::setScene(scene_);
+    GraphicsSceneMixin::setScene(scene_);
 
     // set the clipping rectangle
     if ( scene_ )

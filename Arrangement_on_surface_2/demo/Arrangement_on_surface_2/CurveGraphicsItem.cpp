@@ -161,7 +161,7 @@ void CurveGraphicsItem<ArrTraits>::updateBoundingBox()
 }
 
 template <>
-void CurveGraphicsItem<Bezier_traits>::updateBoundingBox()
+void CurveGraphicsItem<demo_types::Bezier_traits>::updateBoundingBox()
 {
   this->prepareGeometryChange();
 
@@ -179,12 +179,7 @@ void CurveGraphicsItem<Bezier_traits>::updateBoundingBox()
   this->boundingBox = remove_infs(this->boundingBox, this->viewportRect());
 }
 
-template class CurveGraphicsItem<Seg_traits>;
-template class CurveGraphicsItem<Pol_traits>;
-template class CurveGraphicsItem<Conic_traits>;
-template class CurveGraphicsItem<Lin_traits>;
-template class CurveGraphicsItem<Alg_seg_traits>;
-template class CurveGraphicsItem<Bezier_traits>;
+ARRANGEMENT_DEMO_SPECIALIZE_TRAITS(CurveGraphicsItem)
 
 } // namespace Qt
 } // namespace CGAL

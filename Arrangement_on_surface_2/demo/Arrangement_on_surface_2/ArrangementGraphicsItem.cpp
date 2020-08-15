@@ -305,23 +305,6 @@ void ArrangementGraphicsItem<Arr_>::updatePointsItem()
   }
 }
 
-// TODO: This is ugly. Clean it.
-template <>
-void ArrangementGraphicsItem<Bezier_arr>::updatePointsItem()
-{
-  this->pointsGraphicsItem.clear();
-  for (auto it = this->arr->vertices_begin(); it != this->arr->vertices_end();
-       ++it)
-  {
-    // Bezier_point can either be rational or exact
-    // Calling Bezier_point::x() assumes that it is exact, which might not be
-    // the case
-    std::pair<double, double> p = it->point().approximate();
-    QPointF qp {p.first, p.second};
-    this->pointsGraphicsItem.insert(qp);
-  }
-}
-
 template < typename Arr_ >
 void ArrangementGraphicsItem< Arr_ >::modelChanged( )
 {
@@ -406,7 +389,7 @@ paintFace( Face_handle f, QPainter* painter,
   {
     QVector< QPointF > pts; // holds the points of the polygon
 
-    CGAL::Qt::Converter<Kernel> convert;
+    CGAL::Qt::Converter<Kernel_> convert;
     /* running with around the outer of the face and generate from it
      * polygon
      */
@@ -569,7 +552,6 @@ void ArrangementGraphicsItem<Arr_>::paintFace(
   Face_handle f, QPainter* painter,
   CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>)
 {
-
   if (!f->is_unbounded()) // f is not the unbounded face
   {
     QVector<QPointF> pts; // holds the points of the polygon
@@ -607,61 +589,47 @@ void ArrangementGraphicsItem<Arr_>::paintFace(
                                    : coord_target_viewport.x();
         int x_max = is_source_left ? coord_target_viewport.x()
                                    : coord_source_viewport.x();
-        double curr_x, curr_y;
-        int x;
-
-        Arr_conic_point_2 px;
 
         pts.push_back(coord_source);
 
         // Draw the curve as pieces of small segments
         const int DRAW_FACTOR = 5;
+        int start;
+        int end;
+        int step;
         if (is_source_left)
         {
-          for (x = x_min + DRAW_FACTOR; x < x_max; x += DRAW_FACTOR)
-          {
-            //= COORD_SCALE)
-            curr_x = this->toScene(QPoint{x, 0}).x();
-            Alg_kernel ker;
-            Arr_conic_point_2 curr_p(curr_x, 0);
-
-            // If curr_x > x_max or curr_x < x_min
-            if (!(ker.compare_x_2_object()(curr_p, c.left()) != CGAL::SMALLER &&
-                  ker.compare_x_2_object()(curr_p, c.right()) != CGAL::LARGER))
-            { continue; }
-
-            px = c.point_at_x(curr_p);
-            curr_y = CGAL::to_double(px.y());
-            QPointF curr(curr_x, curr_y);
-            pts.push_back(curr);
-          } // for
+          start = x_min + DRAW_FACTOR;
+          end = x_max;
+          step = DRAW_FACTOR;
         }
         else
         {
-          for (x = x_max; x > x_min; x -= DRAW_FACTOR)
-          {
-            curr_x = this->toScene(QPoint{x, 0}).x();
-            Alg_kernel ker;
-            Arr_conic_point_2 curr_p(curr_x, 0);
-            if (!(ker.compare_x_2_object()(curr_p, c.left()) != CGAL::SMALLER &&
-                  ker.compare_x_2_object()(curr_p, c.right()) != CGAL::LARGER))
-            { continue; }
+          start = x_max;
+          end = x_min;
+          step = -DRAW_FACTOR;
+        }
+        for (int x = start; x < end; x += step)
+        {
+          double curr_x = this->toScene(QPoint{x, 0}).x();
+          AlgKernel ker;
+          Point_2 curr_p(curr_x, 0);
 
-            px = c.point_at_x(curr_p);
-            curr_y = CGAL::to_double(px.y());
-            QPointF curr(curr_x, curr_y);
-            pts.push_back(curr);
-          } // for
-        }   // else
+          // If curr_x > x_max or curr_x < x_min
+          if (!(ker.compare_x_2_object()(curr_p, c.left()) != CGAL::SMALLER &&
+                ker.compare_x_2_object()(curr_p, c.right()) != CGAL::LARGER))
+          { continue; }
+
+          auto px = c.point_at_x(curr_p);
+          double curr_y = CGAL::to_double(px.y());
+          QPointF curr(curr_x, curr_y);
+          pts.push_back(curr);
+        }
         pts.push_back(coord_target);
       }
-      // created from the outer boundary of the face
     } while (++cc != f->outer_ccb());
 
-    // make polygon from the outer ccb of the face 'f'
     QPolygonF pgn(pts);
-    // fill the face according to its color (stored at any of her
-    // incidents curves)
     painter->setBrush(f->color());
     painter->drawPolygon(pgn);
   }
@@ -927,12 +895,7 @@ void ArrangementGraphicsItem<Arr_>::paintFace(
   }
 }
 
-template class ArrangementGraphicsItem<Seg_arr>;
-template class ArrangementGraphicsItem<Pol_arr>;
-template class ArrangementGraphicsItem<Conic_arr>;
-template class ArrangementGraphicsItem<Lin_arr>;
-template class ArrangementGraphicsItem<Alg_seg_arr>;
-template class ArrangementGraphicsItem<Bezier_arr>;
+ARRANGEMENT_DEMO_SPECIALIZE_ARR(ArrangementGraphicsItem)
 
 } // namespace QT
 } // namespace CGAL

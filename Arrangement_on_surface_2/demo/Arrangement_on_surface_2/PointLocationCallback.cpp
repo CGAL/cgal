@@ -122,9 +122,4 @@ void PointLocationCallback<Arr_>::highlightPointLocation(
   }
 }
 
-template class PointLocationCallback<Seg_arr>;
-template class PointLocationCallback<Pol_arr>;
-template class PointLocationCallback<Conic_arr>;
-template class PointLocationCallback<Lin_arr>;
-template class PointLocationCallback<Alg_seg_arr>;
-template class PointLocationCallback<Bezier_arr>;
+ARRANGEMENT_DEMO_SPECIALIZE_ARR(PointLocationCallback)

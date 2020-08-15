@@ -131,9 +131,4 @@ void DeleteCurveCallback<Arr_>::highlightNearestCurve(
 	Q_EMIT modelChanged();
 }
 
-template class DeleteCurveCallback<Seg_arr>;
-template class DeleteCurveCallback<Pol_arr>;
-template class DeleteCurveCallback<Conic_arr>;
-template class DeleteCurveCallback<Lin_arr>;
-template class DeleteCurveCallback<Alg_seg_arr>;
-template class DeleteCurveCallback<Bezier_arr>;
+ARRANGEMENT_DEMO_SPECIALIZE_ARR(DeleteCurveCallback)

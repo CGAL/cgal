@@ -27,7 +27,7 @@ Compute_squared_distance_2<CGAL::Arr_segment_traits_2<Kernel_>>::operator()(
   Point_2 p2 = c.target();
   Segment_2 seg(p1, p2);
 
-  return CGAL::to_double(this->squared_distance(p, seg));
+  return CGAL::to_double(CGAL::squared_distance(p, seg));
 }
 
 template <typename Kernel_>
@@ -42,17 +42,17 @@ Compute_squared_distance_2<CGAL::Arr_linear_traits_2<Kernel_>>::operator()(
   if (c.is_segment())
   {
     seg = c.segment();
-    res = this->squared_distance(p, seg);
+    res = CGAL::squared_distance(p, seg);
   }
   else if (c.is_ray())
   {
     ray = c.ray();
-    res = this->squared_distance(p, ray);
+    res = CGAL::squared_distance(p, ray);
   }
   else // ( c.is_line( ) )
   {
     line = c.line();
-    res = this->squared_distance(p, line);
+    res = CGAL::squared_distance(p, line);
   }
   return CGAL::to_double(res);
 }
@@ -70,7 +70,7 @@ Compute_squared_distance_2<CGAL::Arr_polyline_traits_2<Kernel_>>::operator()(
   while (seg_it_s != c.subcurves_end())
   {
     Segment_2 seg = *seg_it_s;
-    FT dist = this->squared_distance(p, seg);
+    FT dist = CGAL::squared_distance(p, seg);
 
     if (first || dist < min_dist)
     {
@@ -245,8 +245,8 @@ auto Arr_construct_point_2<ArrTraits>::operator()(
   return res;
 }
 
-template <typename Arr_, typename ArrTraits>
-auto Find_nearest_edge<Arr_, ArrTraits>::operator()(const Point_2& queryPt)
+template <typename Arr_>
+auto Find_nearest_edge<Arr_>::operator()(const Point_2& queryPt)
   -> Halfedge_const_handle
 {
   typedef CGAL::Arr_walk_along_line_point_location<Arrangement>
@@ -316,8 +316,8 @@ auto Find_nearest_edge<Arr_, ArrTraits>::operator()(const Point_2& queryPt)
   return closestEdge;
 }
 
-template <typename Arr_, typename ArrTraits>
-auto Find_nearest_edge<Arr_, ArrTraits>::getFace(const CGAL::Object& obj)
+template <typename Arr_>
+auto Find_nearest_edge<Arr_>::getFace(const CGAL::Object& obj)
   -> Face_const_handle
 {
   Face_const_handle f;
@@ -454,7 +454,7 @@ operator()(
   if (pLeft && this->compare_x_2(*pLeft, pMin) == CGAL::LARGER)
   {
     auto t = local_get_t(*pLeft);
-    Point_2 splitPoint(curve.supporting_curve(), t, {});
+    Point_2 splitPoint(curve.supporting_curve(), t);
     this->split_2(curve, splitPoint, unusedTrimmings, subcurve);
   }
   else
@@ -464,7 +464,7 @@ operator()(
   if (pRight && this->compare_x_2(*pRight, pMax) == CGAL::SMALLER)
   {
     auto t = local_get_t(*pRight);
-    Point_2 splitPoint(curve.supporting_curve(), t, {});
+    Point_2 splitPoint(curve.supporting_curve(), t);
     this->split_2(subcurve, splitPoint, finalSubcurve, unusedTrimmings);
   }
   else
@@ -610,7 +610,7 @@ auto Arr_compute_y_at_x_2<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
 }
 
 template <typename Bezier_x_monotone_2>
-auto get_t_range(const Bezier_x_monotone_2& curve)
+static inline auto get_t_range(const Bezier_x_monotone_2& curve)
 {
   auto&& supp_curve = curve.supporting_curve();
   auto ps_org = curve.source().get_originator(supp_curve, curve.xid());
@@ -619,12 +619,9 @@ auto get_t_range(const Bezier_x_monotone_2& curve)
   auto pt_org = curve.target().get_originator(supp_curve, curve.xid());
   CGAL_assertion(pt_org != curve.target().originators_end());
 
-  // Make sure that the two endpoints are exact.
-  typename Bezier_x_monotone_2::Bezier_cache cache{};
-  if (!ps_org->has_parameter()) curve.source().make_exact(cache);
-  if (!pt_org->has_parameter()) curve.target().make_exact(cache);
-
-  return (std::make_pair(ps_org->parameter(), pt_org->parameter()));
+  return std::make_pair(
+    (ps_org->point_bound().t_min + ps_org->point_bound().t_max) / 2,
+    (pt_org->point_bound().t_min + pt_org->point_bound().t_max) / 2);
 }
 
 template <typename RatKernel, class AlgKernel, class NtTraits>
@@ -635,7 +632,7 @@ operator()(const X_monotone_curve_2& curve, const Rational& x, Point_2* out)
 {
   auto&& supp_curve = curve.supporting_curve();
   auto t = this->get_t(curve, x);
-  Nt_traits nt_traits;
+  NtTraits nt_traits;
   return nt_traits.evaluate_at(supp_curve.y_polynomial(), t) /
          nt_traits.convert(supp_curve.y_norm());
 }
@@ -649,8 +646,8 @@ auto Arr_compute_y_at_x_2<
   curve.supporting_curve().get_t_at_x(x, std::back_inserter(t_vals));
   auto t_range = get_t_range(curve);
 
-  const Algebraic& t_src = t_range.first;
-  const Algebraic& t_trg = t_range.second;
+  const Algebraic& t_src{t_range.first};
+  const Algebraic& t_trg{t_range.second};
 
   for (auto t_iter = t_vals.begin(); t_iter != t_vals.end(); ++t_iter)
   {
@@ -673,38 +670,8 @@ double Arr_compute_y_at_x_2<
   return CGAL::to_double((*this)(curve, x));
 }
 
-// TODO(Ahmed Essam): create a macro to specialize structs
-template class Compute_squared_distance_2<Seg_traits>;
-template class Compute_squared_distance_2<Pol_traits>;
-template class Compute_squared_distance_2<Conic_traits>;
-template class Compute_squared_distance_2<Lin_traits>;
-template class Compute_squared_distance_2<Alg_seg_traits>;
-template class Compute_squared_distance_2<Bezier_traits>;
-
-template class Arr_construct_point_2<Seg_traits>;
-template class Arr_construct_point_2<Pol_traits>;
-template class Arr_construct_point_2<Conic_traits>;
-template class Arr_construct_point_2<Lin_traits>;
-template class Arr_construct_point_2<Alg_seg_traits>;
-template class Arr_construct_point_2<Bezier_traits>;
-
-template class Find_nearest_edge<Seg_arr, Seg_traits>;
-template class Find_nearest_edge<Pol_arr, Pol_traits>;
-template class Find_nearest_edge<Conic_arr, Conic_traits>;
-template class Find_nearest_edge<Lin_arr, Lin_traits>;
-template class Find_nearest_edge<Alg_seg_arr, Alg_seg_traits>;
-template class Find_nearest_edge<Bezier_arr, Bezier_traits>;
-
-template class Construct_x_monotone_subcurve_2<Seg_traits>;
-template class Construct_x_monotone_subcurve_2<Pol_traits>;
-template class Construct_x_monotone_subcurve_2<Conic_traits>;
-template class Construct_x_monotone_subcurve_2<Lin_traits>;
-template class Construct_x_monotone_subcurve_2<Alg_seg_traits>;
-template class Construct_x_monotone_subcurve_2<Bezier_traits>;
-
-template class Arr_compute_y_at_x_2<Seg_traits>;
-template class Arr_compute_y_at_x_2<Pol_traits>;
-template class Arr_compute_y_at_x_2<Conic_traits>;
-template class Arr_compute_y_at_x_2<Lin_traits>;
-template class Arr_compute_y_at_x_2<Alg_seg_traits>;
-template class Arr_compute_y_at_x_2<Bezier_traits>;
+ARRANGEMENT_DEMO_SPECIALIZE_TRAITS(Compute_squared_distance_2)
+ARRANGEMENT_DEMO_SPECIALIZE_TRAITS(Arr_construct_point_2)
+ARRANGEMENT_DEMO_SPECIALIZE_TRAITS(Construct_x_monotone_subcurve_2)
+ARRANGEMENT_DEMO_SPECIALIZE_TRAITS(Arr_compute_y_at_x_2)
+ARRANGEMENT_DEMO_SPECIALIZE_ARR(Find_nearest_edge)

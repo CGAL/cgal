@@ -183,9 +183,4 @@ MergeEdgeCallback<Arr_>::getNearestMergeableCurve(
     return Halfedge_handle();
 }
 
-template class MergeEdgeCallback<Seg_arr>;
-template class MergeEdgeCallback<Pol_arr>;
-template class MergeEdgeCallback<Conic_arr>;
-template class MergeEdgeCallback<Lin_arr>;
-template class MergeEdgeCallback<Alg_seg_arr>;
-template class MergeEdgeCallback<Bezier_arr>;
+ARRANGEMENT_DEMO_SPECIALIZE_ARR(MergeEdgeCallback)

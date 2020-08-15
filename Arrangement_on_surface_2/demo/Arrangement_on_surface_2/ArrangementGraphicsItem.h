@@ -43,7 +43,7 @@ namespace Qt {
 
 class ArrangementGraphicsItemBase :
     public GraphicsItem,
-    public QGraphicsSceneMixin
+    public GraphicsSceneMixin
 {
 public:
   ArrangementGraphicsItemBase();

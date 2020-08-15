@@ -113,13 +113,16 @@ static constexpr ArrangementDemoWindow::TraitsType traitFromType()
 {
   using TraitsType = ArrangementDemoWindow::TraitsType;
   using namespace std;
+  using namespace demo_types;
 
   if (is_same<T, Seg_arr>::value) return TraitsType::SEGMENT_TRAITS;
   else if (is_same<T, Pol_arr>::value) return TraitsType::POLYLINE_TRAITS;
-  else if (is_same<T, Conic_arr>::value) return TraitsType::CONIC_TRAITS;
   else if (is_same<T, Lin_arr>::value) return TraitsType::LINEAR_TRAITS;
+#ifdef CGAL_USE_CORE
+  else if (is_same<T, Conic_arr>::value) return TraitsType::CONIC_TRAITS;
   else if (is_same<T, Alg_seg_arr>::value) return TraitsType::ALGEBRAIC_TRAITS;
   else if (is_same<T, Bezier_arr>::value) return TraitsType::BEZIER_TRAITS;
+#endif
   else return TraitsType::NONE;
 }
 
@@ -127,6 +130,7 @@ template <class Lambda>
 static void visitTraitsType(ArrangementDemoWindow::TraitsType tt, Lambda lambda)
 {
   using TraitsType = ArrangementDemoWindow::TraitsType;
+  using namespace demo_types;
 
   switch (tt)
   {
@@ -137,13 +141,12 @@ static void visitTraitsType(ArrangementDemoWindow::TraitsType tt, Lambda lambda)
   case TraitsType::POLYLINE_TRAITS:
     lambda(TypeHolder<Pol_arr>{});
     break;
+  case TraitsType::LINEAR_TRAITS:
+    lambda(TypeHolder<Lin_arr>{});
+    break;
 #ifdef CGAL_USE_CORE
   case TraitsType::CONIC_TRAITS:
     lambda(TypeHolder<Conic_arr>{});
-    break;
-#endif
-  case TraitsType::LINEAR_TRAITS:
-    lambda(TypeHolder<Lin_arr>{});
     break;
   case TraitsType::ALGEBRAIC_TRAITS:
     lambda(TypeHolder<Alg_seg_arr>{});
@@ -151,18 +154,23 @@ static void visitTraitsType(ArrangementDemoWindow::TraitsType tt, Lambda lambda)
   case TraitsType::BEZIER_TRAITS:
     lambda(TypeHolder<Bezier_arr>{});
     break;
+#endif
   }
 }
 
 template <class Lambda>
 static void forEachTraitsType(Lambda lambda)
 {
+  using namespace demo_types;
+
   lambda(TypeHolder<Seg_arr>{});
   lambda(TypeHolder<Pol_arr>{});
   lambda(TypeHolder<Lin_arr>{});
+#ifdef CGAL_USE_CORE
   lambda(TypeHolder<Conic_arr>{});
   lambda(TypeHolder<Alg_seg_arr>{});
   lambda(TypeHolder<Bezier_arr>{});
+#endif
 }
 
 QString ArrangementDemoWindow::makeTabLabel(TraitsType tt)
@@ -282,18 +290,19 @@ void ArrangementDemoWindow::showInsertMethods()
     this->ui->actionPolyline->setVisible(true);
     this->ui->actionPolyline->activate(QAction::Trigger);
     break;
+  case LINEAR_TRAITS:
+    this->ui->actionSegment->setVisible(true);
+    this->ui->actionSegment->activate(QAction::Trigger);
+    this->ui->actionRay->setVisible(true);
+    this->ui->actionLine->setVisible(true);
+    break;
+#ifdef CGAL_USE_CORE
   case CONIC_TRAITS:
     this->ui->actionSegment->setVisible(true);
     this->ui->actionCircle->setVisible(true);
     this->ui->actionEllipse->setVisible(true);
     this->ui->actionConicThreePoint->setVisible(true);
     this->ui->actionConicFivePoint->setVisible(true);
-    break;
-  case LINEAR_TRAITS:
-    this->ui->actionSegment->setVisible(true);
-    this->ui->actionSegment->activate(QAction::Trigger);
-    this->ui->actionRay->setVisible(true);
-    this->ui->actionLine->setVisible(true);
     break;
   case ALGEBRAIC_TRAITS:
     this->ui->actionCircle->setVisible(true);
@@ -306,6 +315,7 @@ void ArrangementDemoWindow::showInsertMethods()
     this->ui->actionBezier->setVisible(true);
     this->ui->actionBezier->activate(QAction::Trigger);
     break;
+#endif
   }
 }
 
@@ -342,17 +352,18 @@ void ArrangementDemoWindow::updateInputType(QAction* a)
 // should refactor this to GraphicsViewCurveInput if any other use case arises
 void ArrangementDemoWindow::on_actionAddAlgebraicCurve_triggered()
 {
+#ifdef CGAL_USE_CORE
   AlgebraicCurveInputDialog newDialog;
   newDialog.getUi()->lineEdit->setFocus();
 
   if (newDialog.exec() == QDialog::Accepted)
   {
-    typedef Alg_seg_arr::Geometry_traits_2 Alg_seg_geom_traits;
-    typedef typename Alg_seg_geom_traits::Polynomial_2 Polynomial_2;
+    using namespace demo_types;
+
+    typedef Alg_seg_traits::Polynomial_2 Polynomial_2;
 
     std::string algebraicExpression = newDialog.getLineEditText();
-    AlgebraicCurveParser<Polynomial_2> parser(algebraicExpression);
-    auto poly = parser.parse();
+    auto poly = AlgebraicCurveParser<Polynomial_2>{}(algebraicExpression);
 
     if (!poly)
     {
@@ -366,16 +377,17 @@ void ArrangementDemoWindow::on_actionAddAlgebraicCurve_triggered()
     }
 
     // To create a curve
-    Alg_seg_geom_traits alg_traits;
+    Alg_seg_traits alg_traits;
     auto construct_curve = alg_traits.construct_curve_2_object();
 
     // adding curve to the arrangement
     auto currentTab = this->getCurrentTab().first;
     auto algCurveInputCallback = currentTab->getCurveInputCallback();
-    auto cv = construct_curve(poly.value());
+    auto cv = construct_curve(*poly);
     Q_EMIT algCurveInputCallback->generate(CGAL::make_object(cv));
     currentTab->adjustViewport();
   }
+#endif
 }
 
 void ArrangementDemoWindow::on_actionQuit_triggered() { qApp->exit(); }
@@ -689,7 +701,7 @@ void ArrangementDemoWindow::makeOverlayTab(
   makeTab(std::move(overlayArr), tabLabel, tt);
 }
 
-struct ArrSaver
+struct ArrWriter
 {
   template <typename Arr>
   void operator()(Arr* arr)
@@ -701,11 +713,17 @@ struct ArrSaver
     CGAL::write(*arr, ofs, arrFormatter);
   }
 
-  void operator()(Conic_arr* arr)
+#ifdef CGAL_USE_CORE
+  void operator()(demo_types::Conic_arr* arr)
   {
-    Conic_reader<Conic_arr::Geometry_traits_2> conicReader;
+    Conic_reader<demo_types::Conic_arr::Geometry_traits_2> conicReader;
     conicReader.write_data(ofs, arr->curves_begin(), arr->curves_end());
   }
+
+  void operator()(demo_types::Bezier_arr* arr)
+  {
+  }
+#endif
 
   std::ofstream& ofs;
 };
@@ -730,13 +748,13 @@ void ArrangementDemoWindow::on_actionSaveAs_triggered()
   std::ofstream ofs(ba.data());
 
   // write type info
-  ofs << static_cast<int>(tt) << std::endl;
+  ofs << "# " << static_cast<int>(tt) << std::endl;
 
   visitTraitsType(tt, [&](auto type_holder) {
     using Arr = typename decltype(type_holder)::type;
     Arr* typed_arr;
     if (CGAL::assign(typed_arr, currentTab->getArrangement()))
-      ArrSaver{ofs}(typed_arr);
+      ArrWriter{ofs}(typed_arr);
     else
       QMessageBox::information(this, "Oops", "Error saving file!");
   });
@@ -759,7 +777,7 @@ void ArrangementDemoWindow::on_actionOpen_triggered()
   }
 }
 
-struct ArrOpener
+struct ArrReader
 {
   template <typename Arr>
   auto operator()(TypeHolder<Arr>)
@@ -773,8 +791,11 @@ struct ArrOpener
     return arr;
   }
 
-  auto operator()(TypeHolder<Conic_arr>)
+#ifdef CGAL_USE_CORE
+  auto operator()(TypeHolder<demo_types::Conic_arr>)
   {
+    using namespace demo_types;
+
     Conic_reader<Conic_arr::Geometry_traits_2> conicReader;
     std::vector<Conic_arr::Curve_2> curve_list;
     CGAL::Bbox_2 bbox;
@@ -783,6 +804,12 @@ struct ArrOpener
     CGAL::insert(*arr, curve_list.begin(), curve_list.end());
     return arr;
   }
+
+  auto operator()(TypeHolder<demo_types::Bezier_arr>)
+  {
+    return std::make_unique<demo_types::Bezier_arr>();
+  }
+#endif
 
   std::ifstream& ifs;
 };
@@ -795,6 +822,9 @@ ArrangementDemoTabBase* ArrangementDemoWindow::openArrFile(QString filename)
   std::ifstream ifs(filename_ba.data());
 
   // read type info
+  while (ifs.peek() == '#' || std::isspace(ifs.peek()))
+    ifs.get();
+
   int tt_int;
   ifs >> tt_int;
   auto tt = static_cast<TraitsType>(tt_int);
@@ -802,7 +832,7 @@ ArrangementDemoTabBase* ArrangementDemoWindow::openArrFile(QString filename)
   ArrangementDemoTabBase* createdTab = nullptr;
 
   visitTraitsType(tt, [&](auto type_holder) {
-    auto arr = ArrOpener{ifs}(type_holder);
+    auto arr = ArrReader{ifs}(type_holder);
     createdTab = this->makeTab(std::move(arr), this->makeTabLabel(tt), tt);
   });
 

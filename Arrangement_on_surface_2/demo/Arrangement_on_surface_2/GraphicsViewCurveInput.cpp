@@ -48,7 +48,7 @@ namespace Qt
 GraphicsViewCurveInputBase::GraphicsViewCurveInputBase(
   QObject* parent, QGraphicsScene* scene) :
     GraphicsViewInput(parent),
-    QGraphicsSceneMixin(scene), inputMethod(nullptr)
+    GraphicsSceneMixin(scene), inputMethod(nullptr)
 {
 }
 
@@ -56,7 +56,7 @@ void GraphicsViewCurveInputBase::reset()
 {
   if (this->inputMethod)
   {
-    this->inputMethod->resetInput_();
+    this->inputMethod->reset();
     this->inputMethod = nullptr;
   }
 }
@@ -98,7 +98,7 @@ void GraphicsViewCurveInputBase::setColor(QColor c)
 }
 
 CurveInputMethod::CurveInputMethod(CurveType type_, int numPoints_) :
-    QGraphicsSceneMixin(), numPoints{numPoints_}, type{type_}, itemsAdded{false}
+    GraphicsSceneMixin(), numPoints{numPoints_}, type{type_}, itemsAdded{false}
 {
   if (numPoints > 0) clickedPoints.reserve(numPoints);
   this->pointsGraphicsItem.setZValue(100);
@@ -110,9 +110,14 @@ void CurveInputMethod::setColor(QColor c)
   this->pointsGraphicsItem.setColor(c);
 }
 
-void CurveInputMethod::setCurveGenerator(CurveGeneratorBase* generator)
+QColor CurveInputMethod::getColor() const
 {
-  this->curveGenerator = generator;
+  return this->color;
+}
+
+void CurveInputMethod::setCallback(CurveInputMethodCallback* callback_)
+{
+  this->callback = callback_;
 }
 
 void CurveInputMethod::setPointSnapper(PointSnapperBase* snapper_)
@@ -152,15 +157,15 @@ void CurveInputMethod::mousePressEvent(QGraphicsSceneMouseEvent* event)
     }
     else
     {
-      curveGenerator->generate(this->clickedBigPoints, this->type);
-      this->resetInput_();
+      callback->curveInputDoneEvent(this->clickedBigPoints, this->type);
+      this->reset();
     }
   }
-  else
+  else if (event->button() == ::Qt::RightButton)
   {
     if (this->numPoints == -1)
-      curveGenerator->generate(this->clickedBigPoints, this->type);
-    this->resetInput_();
+      callback->curveInputDoneEvent(this->clickedBigPoints, this->type);
+    this->reset();
   }
 }
 
@@ -172,7 +177,7 @@ void CurveInputMethod::beginInput_()
   for (auto& item : items) this->getScene()->addItem(item);
 }
 
-void CurveInputMethod::resetInput_()
+void CurveInputMethod::reset()
 {
   this->resetInput();
   this->clickedPoints.clear();
@@ -507,7 +512,7 @@ GraphicsViewCurveInput<ArrTraits>::GraphicsViewCurveInput(
     SIGNAL(generate(CGAL::Object)));
   for_each(inputMethods, [&](auto&& it) {
     it.setScene(scene);
-    it.setCurveGenerator(&curveGenerator);
+    it.setCallback(&curveGenerator);
   });
 }
 
@@ -543,7 +548,7 @@ void GraphicsViewCurveInput<ArrTraits>::setDefaultInputMethod(std::false_type)
 }
 
 // CurveGeneratorBase
-void CurveGeneratorBase::generate(
+void CurveGeneratorBase::curveInputDoneEvent(
   const std::vector<Point_2>& clickedPoints, CurveType type)
 {
   CGAL::Object obj;
@@ -890,12 +895,7 @@ CGAL::Object CurveGenerator<
     typename Traits::Curve_2{clickedPoints.begin(), clickedPoints.end()});
 }
 
-template class GraphicsViewCurveInput<Seg_traits>;
-template class GraphicsViewCurveInput<Pol_traits>;
-template class GraphicsViewCurveInput<Conic_traits>;
-template class GraphicsViewCurveInput<Lin_traits>;
-template class GraphicsViewCurveInput<Alg_seg_traits>;
-template class GraphicsViewCurveInput<Bezier_traits>;
+ARRANGEMENT_DEMO_SPECIALIZE_TRAITS(GraphicsViewCurveInput)
 
 } // namespace Qt
 } // namespace CGAL

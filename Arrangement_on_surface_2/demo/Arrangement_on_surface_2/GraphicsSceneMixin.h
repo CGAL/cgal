@@ -8,14 +8,14 @@
 class QGraphicsScene;
 class QGraphicsView;
 
-class QGraphicsSceneMixin
+class GraphicsSceneMixin
 {
 public:
   /*! Costructor */
-  QGraphicsSceneMixin(QGraphicsScene* scene_ = nullptr);
+  GraphicsSceneMixin(QGraphicsScene* scene_ = nullptr);
 
   /*! Destructor (virtual) */
-  virtual ~QGraphicsSceneMixin();
+  virtual ~GraphicsSceneMixin();
   virtual void setScene(QGraphicsScene* scene_);
   QGraphicsScene* getScene() const;
   QRectF viewportRect() const;

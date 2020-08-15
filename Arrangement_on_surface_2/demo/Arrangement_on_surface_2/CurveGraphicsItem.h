@@ -25,8 +25,9 @@ namespace Qt {
 /**
    Draws selected curves and vertices of an arrangement.
 */
+// TODO: ArrangementGraphicsItem should probably use this class
 template < class ArrTraits >
-class CurveGraphicsItem : public GraphicsItem, public QGraphicsSceneMixin
+class CurveGraphicsItem : public GraphicsItem, public GraphicsSceneMixin
 {
 public:
   // known curve types
@@ -39,9 +40,9 @@ public: // ctors
   CurveGraphicsItem( );
 
 public: // methods
-  void paint(QPainter* painter,
-                     const QStyleOptionGraphicsItem* /* option */,
-                     QWidget* /* widget */) override;
+  void paint(
+    QPainter* painter, const QStyleOptionGraphicsItem* /* option */,
+    QWidget* /* widget */) override;
   QRectF boundingRect( ) const override;
   void insert( const X_monotone_curve_2& curve );
   void insert( const Point_2& point );

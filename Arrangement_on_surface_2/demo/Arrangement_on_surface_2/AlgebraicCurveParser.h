@@ -22,22 +22,12 @@
 
 #include <vector>
 #include <string>
-#include <complex>
 #include <boost/optional.hpp>
-#include <CGAL/Polynomial_traits_d.h>
 
 template <typename Polynomial_2>
-class AlgebraicCurveParser {
-	using Traits = CGAL::Polynomial_traits_d<Polynomial_2>;
-	using Coefficient = typename Traits::Innermost_coefficient_type;
-
-public:
-    explicit AlgebraicCurveParser(std::string expression);
-    bool validateExpression();
-	boost::optional<Polynomial_2> parse();
-
-private:
-    std::string expression;
+struct AlgebraicCurveParser
+{
+  boost::optional<Polynomial_2> operator()(const std::string& expression);
 };
 
 #endif //ARRANGEMENT_ON_SURFACE_2_DEMO_ALGEBRAICCURVEPARSERNEW_H

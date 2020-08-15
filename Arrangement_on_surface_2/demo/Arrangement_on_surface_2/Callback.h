@@ -23,7 +23,7 @@ class QGraphicsSceneMouseEvent;
 namespace CGAL {
 namespace Qt {
 
-class Callback : public QObject, public QGraphicsSceneMixin
+class Callback : public QObject, public GraphicsSceneMixin
 {
 Q_OBJECT
 

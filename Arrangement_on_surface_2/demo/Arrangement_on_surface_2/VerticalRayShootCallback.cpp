@@ -196,9 +196,4 @@ void VerticalRayShootCallback<Arr_>::highlightPointLocation(
   Q_EMIT modelChanged();
 }
 
-template class VerticalRayShootCallback<Seg_arr>;
-template class VerticalRayShootCallback<Pol_arr>;
-template class VerticalRayShootCallback<Conic_arr>;
-template class VerticalRayShootCallback<Lin_arr>;
-template class VerticalRayShootCallback<Alg_seg_arr>;
-template class VerticalRayShootCallback<Bezier_arr>;
+ARRANGEMENT_DEMO_SPECIALIZE_ARR(VerticalRayShootCallback)

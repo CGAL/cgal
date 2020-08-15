@@ -23,6 +23,8 @@
 OverlayDialog::OverlayDialog( ArrangementDemoWindow* parent ) :
   ui( new Ui::OverlayDialog )
 {
+  using namespace demo_types;
+
   // An extra parenthesis around QColor to avoid the
   // http://en.wikipedia.org/wiki/Most_vexing_parse
   // on clang
@@ -150,6 +152,8 @@ void OverlayDialog::on_unpickPushButton_pressed( )
 
 void OverlayDialog::restrictSelection( QListWidgetItem* item )
 {
+  using namespace demo_types;
+
   CGAL::Object o = item->data( ARRANGEMENT ).value< CGAL::Object >( );
   Seg_arr* seg;
   Pol_arr* pol;

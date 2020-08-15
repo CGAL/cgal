@@ -40,7 +40,7 @@ enum class CurveType;
 } // namespace Qt
 } // namespace CGAL
 
-class ArrangementDemoTabBase : public QWidget, public QGraphicsSceneMixin
+class ArrangementDemoTabBase : public QWidget, public GraphicsSceneMixin
 {
   Q_OBJECT
 

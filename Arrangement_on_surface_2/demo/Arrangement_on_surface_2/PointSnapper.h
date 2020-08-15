@@ -4,24 +4,21 @@
 #include "GridGraphicsItem.h"
 #include "GraphicsSceneMixin.h"
 
-#include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
-#include <CGAL/ipower.h>
 #include <boost/optional.hpp>
+#include "ArrangementTypes.h"
 
 class GridGraphicsItem;
 class QGraphicsScene;
 
-class PointSnapperBase : public QGraphicsSceneMixin
+class PointSnapperBase : public GraphicsSceneMixin
 {
 public:
-  using Nt_traits = CGAL::CORE_algebraic_number_traits;
-  using Integer = Nt_traits::Integer;
-  using Rational = Nt_traits::Rational;
-  using RatKernel = CGAL::Cartesian<Rational>;
-  using Point_2 = CGAL::Point_2<RatKernel>;
-  using Compute_squared_distance_2 = RatKernel::Compute_squared_distance_2;
+  using Rat_kernel = demo_types::Rat_kernel;
+  using Rational = demo_types::Rational;
+  using Point_2 = CGAL::Point_2<Rat_kernel>;
+  using Compute_squared_distance_2 = Rat_kernel::Compute_squared_distance_2;
 
 public:
   PointSnapperBase(QGraphicsScene* scene, GridGraphicsItem* grid);
@@ -45,7 +42,7 @@ template <typename Arr_>
 class PointSnapper : public PointSnapperBase
 {
   using Arrangement = Arr_;
-  using Compute_squared_distance_2 = RatKernel::Compute_squared_distance_2;
+  using Compute_squared_distance_2 = Rat_kernel::Compute_squared_distance_2;
 
 public:
   PointSnapper(QGraphicsScene*, GridGraphicsItem*, Arrangement*);

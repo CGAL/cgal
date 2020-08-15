@@ -27,11 +27,6 @@
 
 class QEvent;
 
-namespace CORE
-{
-class BigRat;
-} // namespace CORE
-
 namespace CGAL
 {
 
@@ -67,14 +62,24 @@ enum class CurveType
   None,
 };
 
-class CurveGeneratorBase : public QObject
+class CurveInputMethodCallback
+{
+public:
+  using Point_2 = PointSnapperBase::Point_2;
+
+  virtual void curveInputDoneEvent(
+    const std::vector<Point_2>& clickedPoints, CurveType type) = 0;
+};
+
+class CurveGeneratorBase : public QObject, public CurveInputMethodCallback
 {
   Q_OBJECT
 
 public:
   using Point_2 = PointSnapperBase::Point_2;
 
-  void generate(const std::vector<Point_2>& clickedPoints, CurveType type);
+  void curveInputDoneEvent(
+    const std::vector<Point_2>& clickedPoints, CurveType type) override;
   virtual CGAL::Object generateSegment(const std::vector<Point_2>&);
   virtual CGAL::Object generateRay(const std::vector<Point_2>&);
   virtual CGAL::Object generateLine(const std::vector<Point_2>&);
@@ -163,7 +168,8 @@ struct CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>> :
   using X_monotone_curve_2 = typename ArrTraits::X_monotone_curve_2;
   using Polynomial_2 = typename ArrTraits::Polynomial_2;
   using Curve_2 = typename ArrTraits::Curve_2;
-  using Rational = CORE::BigRat; // FIX: should probably query rational type
+  using Algebraic_real_1 = typename ArrTraits::Algebraic_real_1;
+  using Rational = typename Algebraic_real_1::Rational;
   using RationalTraits = Rational_traits<Rational>;
 
   CGAL::Object generateLine(const std::vector<Point_2>&) override;
@@ -184,7 +190,7 @@ struct CurveGenerator<
   CGAL::Object generateBezier(const std::vector<Point_2>&) override;
 };
 
-class CurveInputMethod : public QGraphicsSceneMixin
+class CurveInputMethod : public GraphicsSceneMixin
 {
 public:
   using Point_2 = PointSnapperBase::Point_2;
@@ -192,16 +198,17 @@ public:
   CurveInputMethod(CurveType, int numPoints_ = -1);
   virtual ~CurveInputMethod() { }
 
-  void setCurveGenerator(CurveGeneratorBase*);
+  void setCallback(CurveInputMethodCallback*);
   void setPointSnapper(PointSnapperBase*);
   CurveType curveType() const;
 
   virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
   virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
+  void reset();
   void beginInput_();
-  void resetInput_();
 
   void setColor(QColor);
+  QColor getColor() const;
 
   Point_2 snapPoint(QGraphicsSceneMouseEvent* event);
   QPointF snapQPoint(QGraphicsSceneMouseEvent* event);
@@ -222,7 +229,7 @@ private:
   std::vector<QPointF> clickedPoints;
   std::vector<Point_2> clickedBigPoints;
   PointsGraphicsItem pointsGraphicsItem;
-  CurveGeneratorBase* curveGenerator;
+  CurveInputMethodCallback* callback;
   const CurveType type;
   std::vector<QGraphicsItem*> items;
   bool itemsAdded;
@@ -356,7 +363,7 @@ private:
 
 class GraphicsViewCurveInputBase :
     public GraphicsViewInput,
-    public QGraphicsSceneMixin
+    public GraphicsSceneMixin
 {
 public:
   GraphicsViewCurveInputBase(QObject* parent, QGraphicsScene* scene);

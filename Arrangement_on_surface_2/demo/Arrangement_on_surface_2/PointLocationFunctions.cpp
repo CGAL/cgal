@@ -103,9 +103,4 @@ CGAL::Object PointLocationFunctions<Arr_>::rayShootDown(
     toArrPoint(toKernelPoint<Traits>(pt)));
 }
 
-template class PointLocationFunctions<Seg_arr>;
-template class PointLocationFunctions<Pol_arr>;
-template class PointLocationFunctions<Conic_arr>;
-template class PointLocationFunctions<Lin_arr>;
-template class PointLocationFunctions<Alg_seg_arr>;
-template class PointLocationFunctions<Bezier_arr>;
+ARRANGEMENT_DEMO_SPECIALIZE_ARR(PointLocationFunctions)

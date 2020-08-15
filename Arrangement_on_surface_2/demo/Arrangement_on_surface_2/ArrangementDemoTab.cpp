@@ -31,7 +31,7 @@ static constexpr double MAX_WIDTH =
 
 ArrangementDemoTabBase::ArrangementDemoTabBase( QWidget* parent ) :
   QWidget( parent ),
-  QGraphicsSceneMixin( new QGraphicsScene() ),
+  GraphicsSceneMixin( new QGraphicsScene() ),
   graphicsView( new ArrangementDemoGraphicsView( this ) ),
   layout( new QGridLayout( this ) ),
   curveInputCallback( nullptr ),
@@ -299,8 +299,6 @@ void ArrangementDemoTab<Arr_>::initComponents()
   this->curveInputCallback =
     std::make_unique<ArrangementCurveInputCallback<Arrangement>>(
       this->arrangement.get(), this, scene);
-  this->curveInputCallback->setPointSnapper(snapper.get());
-
   this->deleteCurveCallback =
     std::make_unique<DeleteCurveCallback<Arrangement>>(
       this->arrangement.get(), this);
@@ -318,9 +316,11 @@ void ArrangementDemoTab<Arr_>::initComponents()
     this->arrangement.get(), this);
   this->fillFaceCallback = std::make_unique<FillFaceCallback<Arrangement>>(
     this->arrangement.get(), this);
-
   this->arrangementGraphicsItem =
     new CGAL::Qt::ArrangementGraphicsItem<Arrangement>(this->arrangement.get());
+
+  this->curveInputCallback->setPointSnapper(snapper.get());
+  this->splitEdgeCallback->setPointSnapper(snapper.get());
 
   scene->addItem(this->arrangementGraphicsItem);
   scene->addItem(this->gridGraphicsItem);
@@ -419,7 +419,7 @@ static CGAL::Bbox_2 addMargins(const CGAL::Bbox_2& box)
 
 static const auto& getXyCurves()
 {
-  using Traits = Alg_seg_traits;
+  using Traits = demo_types::Alg_seg_traits;
   static std::vector<typename Traits::X_monotone_curve_2> xy_curves;
   if (xy_curves.empty())
   {
@@ -454,10 +454,10 @@ findOtherInterestingPoints(const std::unique_ptr<Arr_>& arr)
 }
 
 template <>
-CGAL::Bbox_2 findOtherInterestingPoints<Alg_seg_arr>(
-  const std::unique_ptr<Alg_seg_arr>& arr)
+CGAL::Bbox_2 findOtherInterestingPoints<demo_types::Alg_seg_arr>(
+  const std::unique_ptr<demo_types::Alg_seg_arr>& arr)
 {
-  using Traits = Alg_seg_traits;
+  using Traits = demo_types::Alg_seg_traits;
   CGAL::Bbox_2 bb = {};
   std::vector<CGAL::Object> intersections;
   for (auto it = arr->edges_begin(); it != arr->edges_end(); ++it)
@@ -493,8 +493,7 @@ static CGAL::Bbox_2 curvesBbox(const std::unique_ptr<Arr>& arr)
 }
 
 template <>
-CGAL::Bbox_2 curvesBbox(
-  const std::unique_ptr<Bezier_arr>& arr)
+CGAL::Bbox_2 curvesBbox(const std::unique_ptr<demo_types::Bezier_arr>& arr)
 {
   return {};
 }
@@ -513,7 +512,8 @@ static CGAL::Bbox_2 pointsBbox(const std::unique_ptr<Arr>& arr)
 }
 
 template <>
-CGAL::Bbox_2 pointsBbox<Bezier_arr>(const std::unique_ptr<Bezier_arr>& arr)
+CGAL::Bbox_2 pointsBbox<demo_types::Bezier_arr>(
+  const std::unique_ptr<demo_types::Bezier_arr>& arr)
 {
   CGAL::Bbox_2 bb;
   for (auto it = arr->vertices_begin(); it != arr->vertices_end(); it++)
@@ -554,9 +554,4 @@ void ArrangementDemoTab<Arr_>::adjustViewport()
   Q_EMIT modelChanged();
 }
 
-template class ArrangementDemoTab<Seg_arr>;
-template class ArrangementDemoTab<Pol_arr>;
-template class ArrangementDemoTab<Conic_arr>;
-template class ArrangementDemoTab<Lin_arr>;
-template class ArrangementDemoTab<Alg_seg_arr>;
-template class ArrangementDemoTab<Bezier_arr>;
+ARRANGEMENT_DEMO_SPECIALIZE_ARR(ArrangementDemoTab)

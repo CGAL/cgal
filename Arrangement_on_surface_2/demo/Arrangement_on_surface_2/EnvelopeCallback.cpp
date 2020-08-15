@@ -193,9 +193,4 @@ void EnvelopeCallback< Arr_>::showUpperEnvelope( bool show )
   }
 }
 
-template class EnvelopeCallback<Seg_arr>;
-template class EnvelopeCallback<Pol_arr>;
-template class EnvelopeCallback<Conic_arr>;
-template class EnvelopeCallback<Lin_arr>;
-template class EnvelopeCallback<Alg_seg_arr>;
-template class EnvelopeCallback<Bezier_arr>;
+ARRANGEMENT_DEMO_SPECIALIZE_ARR(EnvelopeCallback)

@@ -1,10 +1,12 @@
+#include <QGraphicsView>
+#include <CGAL/ipower.h>
+
 #include "PointSnapper.h"
 #include "ArrangementTypes.h"
 
-
 PointSnapperBase::PointSnapperBase(
   QGraphicsScene* scene, GridGraphicsItem* grid) :
-    QGraphicsSceneMixin(scene),
+    GraphicsSceneMixin(scene),
     gridGraphicsItem{grid},
     snapToGridEnabled{false},
     snapToArrangementEnabled{false}
@@ -43,8 +45,15 @@ auto PointSnapperBase::snapPoint(const QPointF& qpt) -> Point_2
     return Point_2{qpt.x(), qpt.y()};
 }
 
+// snap to grid without loss of precision
 auto PointSnapperBase::snapToGrid(const QPointF& qpt) -> Point_2
 {
+  Rational two{2};
+  Rational five{5};
+  Rational half{0.5};
+  // can't use 0.2 since it's not perfectly representable as a float/double
+  Rational fifth{Rational{1} / five};
+
   Rational x;
   {
     int a = gridGraphicsItem->getXPower2();
@@ -52,30 +61,30 @@ auto PointSnapperBase::snapToGrid(const QPointF& qpt) -> Point_2
     // we have to calculate l in BigRat to be exact
     Rational lx;
     if (a < 0)
-      lx = CGAL::ipower(Rational{0.5}, -a);
+      lx = CGAL::ipower(half, -a);
     else
-      lx = CGAL::ipower(Rational{2}, a);
+      lx = CGAL::ipower(two, a);
     if (b < 0)
-      lx *= CGAL::ipower(Rational{0.2}, -b);
+      lx *= CGAL::ipower(fifth, -b);
     else
-      lx *= CGAL::ipower(Rational{5}, b);
+      lx *= CGAL::ipower(five, b);
     x = lx * std::lround(CORE::doubleValue(Rational(qpt.x()) / lx));
   }
 
   Rational y;
   {
-    int c = gridGraphicsItem->getYPower2();
-    int d = gridGraphicsItem->getYPower5();
+    int a = gridGraphicsItem->getYPower2();
+    int b = gridGraphicsItem->getYPower5();
     // we have to calculate l in BigRat to be exact
     Rational ly;
-    if (c < 0)
-      ly = CGAL::ipower(Rational{0.5}, -c);
+    if (a < 0)
+      ly = CGAL::ipower(half, -a);
     else
-      ly = CGAL::ipower(Rational{2}, c);
-    if (d < 0)
-      ly *= CGAL::ipower(Rational{0.2}, -d);
+      ly = CGAL::ipower(two, a);
+    if (b < 0)
+      ly *= CGAL::ipower(fifth, -b);
     else
-      ly *= CGAL::ipower(Rational{5}, d);
+      ly *= CGAL::ipower(five, b);
     y = ly * std::lround(CORE::doubleValue(Rational(qpt.y()) / ly));
   }
 
@@ -106,9 +115,10 @@ PointSnapper<Arr_>::PointSnapper(
 
 template <typename Arrangement>
 inline boost::optional<PointSnapperBase::Point_2> snapToArrangement(
-  const QPointF& qpt, const QRectF& viewportRect, Arrangement* arr)
+  const QPointF& qpt, const QTransform& worldTransform, Arrangement* arr)
 {
   using Point_2 = PointSnapperBase::Point_2;
+  using Rational = PointSnapperBase::Rational;
   using Compute_squared_distance_2 =
     PointSnapperBase::Compute_squared_distance_2;
 
@@ -119,10 +129,12 @@ inline boost::optional<PointSnapperBase::Point_2> snapToArrangement(
 
   bool first = true;
   Rational minDist(0);
-  if (viewportRect == QRectF()) { return initialPoint; }
 
-  // TODO: find a less adhoc formula
-  Rational maxDist = (viewportRect.width() * viewportRect.height()) / 1024.f;
+  static constexpr int PIXEL_RADIUS = 15;
+  Rational maxDist =
+    PIXEL_RADIUS * PIXEL_RADIUS *
+    std::abs(1 / (worldTransform.m11() * worldTransform.m22()));
+
   for (auto vit = arr->vertices_begin(); vit != arr->vertices_end(); ++vit)
   {
     auto arr_point = vit->point();
@@ -147,8 +159,8 @@ struct SnapToArrangement
 {
   using Point_2 = PointSnapperBase::Point_2;
   template <typename Arrangement>
-  boost::optional<Point_2>
-  operator()(const QPointF& qpt, QRectF viewportRect, Arrangement* arr)
+  boost::optional<Point_2> operator()(
+    const QPointF& qpt, const QTransform& worldTransform, Arrangement* arr)
   {
     return Point_2{qpt.x(), qpt.y()};
   }
@@ -158,10 +170,10 @@ struct SnapToArrangement<CGAL::Arr_linear_traits_2<Kernel>>
 {
   using Point_2 = PointSnapperBase::Point_2;
   template <typename Arrangement>
-  boost::optional<Point_2>
-  operator()(const QPointF& qpt, QRectF viewportRect, Arrangement* arr)
+  boost::optional<Point_2> operator()(
+    const QPointF& qpt, const QTransform& worldTransform, Arrangement* arr)
   {
-    return snapToArrangement(qpt, viewportRect, arr);
+    return snapToArrangement(qpt, worldTransform, arr);
   }
 };
 template <typename Kernel>
@@ -169,10 +181,10 @@ struct SnapToArrangement<CGAL::Arr_segment_traits_2<Kernel>>
 {
   using Point_2 = PointSnapperBase::Point_2;
   template <typename Arrangement>
-  boost::optional<Point_2>
-  operator()(const QPointF& qpt, QRectF viewportRect, Arrangement* arr)
+  boost::optional<Point_2> operator()(
+    const QPointF& qpt, const QTransform& worldTransform, Arrangement* arr)
   {
-    return snapToArrangement(qpt, viewportRect, arr);
+    return snapToArrangement(qpt, worldTransform, arr);
   }
 };
 template <typename Kernel>
@@ -180,10 +192,10 @@ struct SnapToArrangement<CGAL::Arr_polyline_traits_2<Kernel>>
 {
   using Point_2 = PointSnapperBase::Point_2;
   template <typename Arrangement>
-  boost::optional<Point_2>
-  operator()(const QPointF& qpt, QRectF viewportRect, Arrangement* arr)
+  boost::optional<Point_2> operator()(
+    const QPointF& qpt, const QTransform& worldTransform, Arrangement* arr)
   {
-    return snapToArrangement(qpt, viewportRect, arr);
+    return snapToArrangement(qpt, worldTransform, arr);
   }
 };
 
@@ -192,12 +204,11 @@ auto PointSnapper<Arr_>::snapToArrangement(const QPointF& qpt)
   -> boost::optional<Point_2>
 {
   using Traits = typename Arrangement::Geometry_traits_2;
-  return SnapToArrangement<Traits>{}(qpt, viewportRect(), arr);
+  auto view = getView();
+  if (view)
+    return SnapToArrangement<Traits>{}(qpt, view->transform(), arr);
+  else
+    return {};
 }
 
-template class PointSnapper<Seg_arr>;
-template class PointSnapper<Pol_arr>;
-template class PointSnapper<Conic_arr>;
-template class PointSnapper<Lin_arr>;
-template class PointSnapper<Bezier_arr>;
-template class PointSnapper<Alg_seg_arr>;
+ARRANGEMENT_DEMO_SPECIALIZE_ARR(PointSnapper)

@@ -461,12 +461,7 @@ void ArrangementPainterOstream<
   Facade::setup(bbox, view->width(), view->height());
 }
 
-template class ArrangementPainterOstream<Seg_traits>;
-template class ArrangementPainterOstream<Pol_traits>;
-template class ArrangementPainterOstream<Conic_traits>;
-template class ArrangementPainterOstream<Lin_traits>;
-template class ArrangementPainterOstream<Alg_seg_traits>;
-template class ArrangementPainterOstream<Bezier_traits>;
+ARRANGEMENT_DEMO_SPECIALIZE_TRAITS(ArrangementPainterOstream)
 
 } // namespace Qt
 } // namespace CGAL

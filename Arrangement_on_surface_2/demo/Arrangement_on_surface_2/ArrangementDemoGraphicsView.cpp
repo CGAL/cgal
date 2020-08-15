@@ -25,7 +25,7 @@
 */
 ArrangementDemoGraphicsView::ArrangementDemoGraphicsView( QWidget* parent ) :
   QGraphicsView( parent ),
-  maxScale( 1000000 ),
+  maxScale( 500000 ),
   minScale( 0.0002 ),
   backgroundColor( ::Qt::white )
 {

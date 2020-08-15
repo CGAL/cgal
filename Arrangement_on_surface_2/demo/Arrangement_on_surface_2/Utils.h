@@ -101,7 +101,7 @@ public:
 };
 
 template <typename ArrTraits >
-class Arr_compute_y_at_x_2 : public QGraphicsSceneMixin
+class Arr_compute_y_at_x_2 : public GraphicsSceneMixin
 {
 public:
   typedef ArrTraits Traits;
@@ -142,7 +142,7 @@ protected:
 
 template <typename Coefficient_>
 class Arr_compute_y_at_x_2< CGAL::Arr_algebraic_segment_traits_2<
-                              Coefficient_ > > : public QGraphicsSceneMixin
+                              Coefficient_ > > : public GraphicsSceneMixin
 {
 public:
   typedef Coefficient_ Coefficient;
@@ -167,7 +167,7 @@ protected:
 template <typename RatKernel, class AlgKernel, class NtTraits>
 struct Arr_compute_y_at_x_2<
   CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>> :
-    public QGraphicsSceneMixin
+    public GraphicsSceneMixin
 {
   typedef CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>
     Traits;
@@ -184,26 +184,8 @@ struct Arr_compute_y_at_x_2<
 };
 
 template <class ArrTraits>
-class Compute_squared_distance_2_base : public QGraphicsSceneMixin
+class Compute_squared_distance_2_base : public GraphicsSceneMixin
 {
-public:
-  typedef CGAL::Cartesian< double > InexactKernel;
-
-public:
-  // ctors
-  Compute_squared_distance_2_base( ) { }
-
-public: // methods
-
-  template < class T1, class T2 >
-  double operator() ( const T1& t1, const T2& t2 )
-  {
-    return this->squaredDistance( t1, t2 );
-  }
-
-protected: // fields
-  typename Kernel::Compute_squared_distance_2 squared_distance;
-  InexactKernel::Compute_squared_distance_2 squaredDistance;
 };
 
 template <typename ArrTraits >
@@ -477,19 +459,19 @@ protected:
   Point_2 operator()(const T& x, const T& y, TTraits /* traits */);
 };
 
-class Find_nearest_edge_base : public QGraphicsSceneMixin
+class Find_nearest_edge_base : public GraphicsSceneMixin
 {
 public:
   /*! Destructor (virtual) */
   virtual ~Find_nearest_edge_base() {}
 };
 
-template <typename Arr_, typename ArrTraits = typename Arr_::Geometry_traits_2>
+template <typename Arr_>
 class Find_nearest_edge : public Find_nearest_edge_base
 {
 public: // typedefs
   typedef Arr_ Arrangement;
-  //typedef typename Arrangement::Geometry_traits_2 ArrTraits;
+  typedef typename Arrangement::Geometry_traits_2      ArrTraits;
   typedef Compute_squared_distance_2< ArrTraits > Point_curve_distance;
   typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
   typedef typename ArrTraitsAdaptor<ArrTraits>::Kernel  Kernel;
