@@ -5108,7 +5108,8 @@ bool MainWindow::read_circular ( QString aFileName, Circular_polygon_set& rSet,
               in_file>> tx >> ty;
 
               Circle circ(Point(cx,cy),rsq,orient);
-              mCircularPolygonPieces.push_back(Circular_curve(circ,Arc_point(sx,sy),Arc_point(tx,ty)));
+              // mCircularPolygonPieces.push_back(Circular_curve(circ,Arc_point(sx,sy),Arc_point(tx,ty)));
+              mCircularPolygonPieces.push_back(Circular_curve(Point(sx,sy),Point((sx+tx)/3,(sy+ty)/3),Point(tx,ty)));
             }
             else
             {
@@ -5305,6 +5306,7 @@ bool MainWindow::read_bezier ( QString aFileName)
     {
       // std::string s = e.what();
       // show_error(s);
+      on_actionUndo_triggered();
     } 
   }
 
@@ -7917,6 +7919,7 @@ void MainWindow::processInput(CGAL::Object o)
     {
       //std::string s = e.what();
       //exception_handler();
+      on_actionUndo_triggered();
     }
   modelChanged();  
 
