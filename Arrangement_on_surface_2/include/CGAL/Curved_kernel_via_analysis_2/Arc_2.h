@@ -2970,6 +2970,9 @@ private:
         );
 
     }
+    default: {
+       CGAL_error();
+    }
     } // switch
 
     return std::make_pair(CGAL::to_double(y_approx.first),

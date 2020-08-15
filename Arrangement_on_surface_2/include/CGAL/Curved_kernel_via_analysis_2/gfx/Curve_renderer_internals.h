@@ -88,21 +88,12 @@ struct Pixel_2_
     Integer sub_x, sub_y; // subpixel coordinates relative to pixel's boundary
                           // (always 0 for pixels)
 
-    Pixel_2_& operator =(const Pixel_2_& pix) {
-#ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
-        memcpy(this, &pix, sizeof(int)*3 + sizeof(double)*2);
-#else
-        memcpy(this, &pix, sizeof(int)*3);
-#endif
-        sub_x = pix.sub_x;
-        sub_y = pix.sub_y;
-        return *this;
-    }
+    Pixel_2_& operator =(const Pixel_2_& pix) = default;
 
     bool operator ==(const Pixel_2_& pix) const {
-        if(memcmp(this, &pix, sizeof(int)*3))
-            return false;
-        return (sub_x == pix.sub_x && sub_y == pix.sub_y);
+        return (
+          x == pix.x && y == pix.y && level == pix.level &&
+          sub_x == pix.sub_x && sub_y == pix.sub_y);
     }
 };
 
@@ -928,13 +919,11 @@ void get_precached_poly(int var, const NT& key, int /* level */, Poly_1& poly)
 //! recomputed with modular or exact rational arithmetic
 int evaluate_generic(int var, const NT& c, const NT& key, const Poly_1& poly)
 {
-    NT x = key, y = c, c1;
+    NT c1;
 
-    if(var == CGAL_X_RANGE) {
-        x = c;
-        y = key;
+    if(var == CGAL_X_RANGE)
         c1 = x_min + c*pixel_w;
-    } else
+    else
         c1 = y_min + c*pixel_h;
 
     bool error_bounds_;
@@ -977,7 +966,7 @@ void precompute(const Polynomial_2& in) {
     Coeff_src max_c = max_coeff(in);
     /////// magic symbol ////////////
     // somehow relates to double precision fix
-    std::cerr << ' ';
+    // std::cerr << ' ';
 
     typedef Reduce_by<Rat_coercion_type, Coeff_src> Reduce_op;
     Transform<Rational_poly_2, Polynomial_2, Reduce_op> transform;
