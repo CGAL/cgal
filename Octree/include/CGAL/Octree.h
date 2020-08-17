@@ -124,7 +124,6 @@ private: // Private types
 private: // data members :
 
   Node m_root;                      /* root node of the octree */
-  uint8_t m_max_depth_reached = 0;  /* octree actual highest depth reached */
 
   Point_range &m_ranges;              /* input point range */
   Point_map m_points_map;          /* property map: `value_type of InputIterator` -> `Point` (Position) */
@@ -217,9 +216,6 @@ public:
     if (!m_root.is_leaf())
       m_root.unsplit();
 
-    // Make sure the max depth is reset as well
-    m_max_depth_reached = 0;
-
     // Reset the side length map, too
     m_side_per_depth.resize(2);
 
@@ -241,10 +237,7 @@ public:
         split((*current));
 
         // Check if we've reached a new max depth
-        if (current->depth() == m_max_depth_reached) {
-
-          // Update the max depth
-          m_max_depth_reached = current->depth() + 1;
+        if (current->depth() == max_depth_reached()) {
 
           // Update the side length map
           m_side_per_depth.push_back(*(m_side_per_depth.end() - 1) / 2);
