@@ -49,8 +49,6 @@ void test_2_points() {
   Octree::Node other{};
   other.split();
   assert(other == octree.root());
-  std::cout << octree << std::endl;
-  std::cout << octree.max_depth_reached() << std::endl;
   assert(1 == octree.max_depth_reached());
 
 }

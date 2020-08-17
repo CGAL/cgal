@@ -363,7 +363,7 @@ public:
    *
    * \return the deepest level, where root is 0
    */
-  std::size_t max_depth_reached() const { return m_max_depth_reached; }
+  std::size_t max_depth_reached() const { return m_side_per_depth.size() - 2; }
 
   /*!
    * \brief constructs an input range of nodes using a tree walker function
