@@ -59,12 +59,20 @@ public:
 
   std::size_t min_end_index (const Curve& c) const
   {
-    return reinterpret_cast<std::size_t>(halfedge(c)->target()->inc());
+    if (c.red_halfedge_handle() != typename Curve::HH_red())
+      return reinterpret_cast<std::size_t>(c.red_halfedge_handle()->target()->inc());
+    // else
+    CGAL_assertion (c.blue_halfedge_handle() != typename Curve::HH_blue());
+    return reinterpret_cast<std::size_t>(c.blue_halfedge_handle()->target()->inc());
   }
 
   std::size_t max_end_index (const Curve& c) const
   {
-    return reinterpret_cast<std::size_t>(halfedge(c)->source()->inc());
+    if (c.red_halfedge_handle() != typename Curve::HH_red())
+      return reinterpret_cast<std::size_t>(c.red_halfedge_handle()->source()->inc());
+    // else
+    CGAL_assertion (c.blue_halfedge_handle() != typename Curve::HH_blue());
+    return reinterpret_cast<std::size_t>(c.blue_halfedge_handle()->source()->inc());
   }
 
   const Curve& curve (const Curve& c) const
@@ -103,16 +111,6 @@ public:
 
 private:
 
-  typename Curve::Halfedge_handle halfedge (const Curve& c) const
-  {
-    if (c.red_halfedge_handle() == typename Curve::Halfedge_handle())
-    {
-      CGAL_assertion (c.blue_halfedge_handle() != typename Curve::Halfedge_handle());
-      return c.blue_halfedge_handle();
-    }
-    // else
-    return c.red_halfedge_handle();
-  }
 };
 
 /*! Compute the overlay of two input arrangements.
