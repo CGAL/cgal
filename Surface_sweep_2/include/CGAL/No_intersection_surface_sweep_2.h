@@ -310,11 +310,11 @@ public:
   }
 
   /*!
-    Run the indexed sweep-line algorithm on a given range of
+    runs the indexed sweep-line algorithm on a given range of
     x-monotone curves and accessor. The main difference from the
-    original sweep() function is that the accessor allows to get
+    original `sweep()` function is that the accessor allows to get
     indices of end-points and avoid checking several times in the
-    event queue when the same vertex as several incident edges.
+    event queue when the same vertex has several incident edges.
 
     \param edges A range of edges
     \param accessor An object providing, for a value_type `e` of
@@ -340,11 +340,11 @@ public:
   }
 
   /*!
-    Run the indexed sweep-line algorithm on a given range of
+    runs the indexed sweep-line algorithm on a given range of
     x-monotone curves and accessor. The main difference from the
-    original sweep() function is that the accessor allows to get
+    original `sweep()` function is that the accessor allows to get
     indices of end-points and avoid checking several times in the
-    event queue when the same vertex as several incident edges.
+    event queue when the same vertex has several incident edges.
 
     Variant with action event points (if a curve passed through an
     action point, it will be split).
@@ -375,7 +375,6 @@ public:
     _init_indexed_sweep(edges, accessor);
     accessor.after_init();
     _init_points(action_points_begin, action_points_end, Event::ACTION);
-    //m_visitor->after_init();
     _sweep();
     _complete_sweep();
     m_visitor->after_sweep();

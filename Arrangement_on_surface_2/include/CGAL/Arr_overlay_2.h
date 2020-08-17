@@ -80,6 +80,7 @@ public:
     return c;
   }
 
+  // Initializes indices by squatting Vertex::inc();
   void before_init() const
   {
     std::size_t idx = 0;
@@ -98,6 +99,7 @@ public:
     }
   }
 
+  // Restores state of arrangements before index squatting
   void after_init() const
   {
     std::size_t idx = 0;
