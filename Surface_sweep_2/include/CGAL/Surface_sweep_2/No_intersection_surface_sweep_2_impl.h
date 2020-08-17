@@ -316,18 +316,30 @@ _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc,
   // Create the corresponding event and push it into the event queue.
   std::pair<Event*, bool> pair_res;
 
-  const Point_2& pt = (ind == ARR_MIN_END) ?
-    m_traits->construct_min_vertex_2_object()(cv) :
-    m_traits->construct_max_vertex_2_object()(cv);
+  if (m_traits->is_closed_2_object()(cv, ind)) {
+    // The curve end is closed and thus associated with a valid endpoint.
+    const Point_2& pt = (ind == ARR_MIN_END) ?
+      m_traits->construct_min_vertex_2_object()(cv) :
+      m_traits->construct_max_vertex_2_object()(cv);
 
-  pair_res = ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) ?
-    _push_event(pt, end_attr, ps_x, ps_y, sc, events, index) :
-    _push_event(cv, ind, end_attr, ps_x, ps_y, sc, pt, events, index);
+    pair_res = ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) ?
+      _push_event(pt, end_attr, ps_x, ps_y, sc, events, index) :
+      _push_event(cv, ind, end_attr, ps_x, ps_y, sc, pt, events, index);
 
-  // Inform the visitor in case we updated an existing event.
-  Event* e = pair_res.first;
-  CGAL_assertion(e->is_closed());
-  m_visitor->update_event(e, pt, cv, ind, pair_res.second);
+    // Inform the visitor in case we updated an existing event.
+    Event* e = pair_res.first;
+    CGAL_assertion(e->is_closed());
+    m_visitor->update_event(e, pt, cv, ind, pair_res.second);
+  }
+  else {
+    // The curve end is open, insert it into the event queue.
+    pair_res = _push_event(cv, ind, end_attr, ps_x, ps_y, sc);
+
+    // Inform the visitor in case we updated an existing event.
+    Event* e = pair_res.first;
+    CGAL_assertion(! e->is_closed());
+    _update_event_at_open_boundary(e, cv, ind, pair_res.second);
+  }
 }
 
 //-----------------------------------------------------------------------------
