@@ -192,7 +192,6 @@ public:
     m_bbox_side = bbox.max()[0] - m_bbox_min[0];
     m_root.points() = {point_range.begin(), point_range.end()};
     m_side_per_depth.push_back(m_bbox_side);
-    m_side_per_depth.push_back(m_bbox_side / 2);
 
   }
 
@@ -217,7 +216,7 @@ public:
       m_root.unsplit();
 
     // Reset the side length map, too
-    m_side_per_depth.resize(2);
+    m_side_per_depth.resize(1);
 
     // Initialize a queue of nodes that need to be refined
     std::queue<Node *> todo;
@@ -356,7 +355,7 @@ public:
    *
    * \return the deepest level, where root is 0
    */
-  std::size_t max_depth_reached() const { return m_side_per_depth.size() - 2; }
+  std::size_t max_depth_reached() const { return m_side_per_depth.size() - 1; }
 
   /*!
    * \brief constructs an input range of nodes using a tree walker function
