@@ -284,7 +284,6 @@ public:
     typedef typename AABB_tree::AABB_traits AABB_traits;
     typedef internal::Default_tree_helper<AABB_tree> Helper;
     Helper helper;
-    typename AABB_traits::Bounding_box bbox = helper.get_tree_bbox(*tree_ptr);
 
     static const unsigned int seed = 1340818006;
     CGAL::Random rg(seed); // seed some value for make it easy to debug
