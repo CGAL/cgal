@@ -241,10 +241,10 @@ public:
         split((*current));
 
         // Check if we've reached a new max depth
-        if (current->depth() > m_max_depth_reached) {
+        if (current->depth() == m_max_depth_reached) {
 
           // Update the max depth
-          m_max_depth_reached = current->depth();
+          m_max_depth_reached = current->depth() + 1;
 
           // Update the side length map
           m_side_per_depth.push_back(*(m_side_per_depth.end() - 1) / 2);
