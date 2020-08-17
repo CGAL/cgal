@@ -30,6 +30,7 @@ void test_1_point() {
   Octree::Node single_node{};
   single_node.points() = octree.root().points();
   assert(single_node == octree.root());
+  assert(0 == octree.max_depth_reached());
 
 }
 
@@ -48,6 +49,9 @@ void test_2_points() {
   Octree::Node other{};
   other.split();
   assert(other == octree.root());
+  std::cout << octree << std::endl;
+  std::cout << octree.max_depth_reached() << std::endl;
+  assert(1 == octree.max_depth_reached());
 
 }
 
@@ -69,6 +73,7 @@ void test_4_points() {
   other[3].split();
   other[7].split();
   assert(other == octree.root());
+  assert(2 == octree.max_depth_reached());
 }
 
 int main(void) {
