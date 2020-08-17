@@ -518,7 +518,6 @@ generic_clip_impl(
   *
   *
   * \cgalNamedParamsBegin
-<<<<<<< HEAD
   *   \cgalParamNBegin{vertex_point_map}
   *     \cgalParamDescription{a property map associating points to the vertices of `tm` (resp. `clipper`)}
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
