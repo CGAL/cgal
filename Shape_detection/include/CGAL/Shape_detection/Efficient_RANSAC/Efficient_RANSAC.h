@@ -211,8 +211,8 @@ public:
 
 private:
 
-  typedef internal::Direct_octree<Traits> Direct_octree;
-  typedef internal::Direct_octree<Traits> Indexed_octree;
+  typedef internal::RANSAC_octree<Traits> Direct_octree;
+  typedef internal::RANSAC_octree<Traits> Indexed_octree;
 
   //--------------------------------------------typedef
 

@@ -51,7 +51,7 @@ struct Point_map_to_indexed_point_map {
 };
 
 template<class Traits>
-class Direct_octree {
+class RANSAC_octree {
 
   typedef typename Traits::Input_range::iterator Input_iterator;
   typedef typename Traits::Point_map Point_map;
@@ -72,7 +72,7 @@ public:
 
   typedef typename Octree::Node Node;
 
-  Direct_octree(const Traits &traits,
+  RANSAC_octree(const Traits &traits,
                 Input_iterator begin,
                 Input_iterator end,
                 Point_map point_map,
