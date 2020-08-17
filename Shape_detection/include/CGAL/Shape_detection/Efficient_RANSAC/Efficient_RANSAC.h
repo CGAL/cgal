@@ -212,7 +212,7 @@ public:
 private:
 
   typedef internal::Direct_octree<Traits> Direct_octree;
-  typedef internal::Indexed_octree<Traits> Indexed_octree;
+  typedef internal::Direct_octree<Traits> Indexed_octree;
 
   //--------------------------------------------typedef
 

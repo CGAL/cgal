@@ -77,8 +77,6 @@ public:
    */
   typedef boost::iterator_range <Point_index> Point_range;
 
-  /// @}
-
   // TODO: There's probably a better name for this
   // TODO: Should I use an enum class?
   enum Child {
@@ -101,6 +99,7 @@ public:
     FRONT
   };
 
+  /// @}
 
 private:
 

@@ -123,10 +123,10 @@ private: // Private types
 
 private: // data members :
 
-  Node m_root;                      /* root node of the octree */
-
   Point_range &m_ranges;              /* input point range */
   Point_map m_points_map;          /* property map: `value_type of InputIterator` -> `Point` (Position) */
+
+  Node m_root;                      /* root node of the octree */
 
   Point m_bbox_min;                  /* input bounding box min value */
   FT m_bbox_side;              /* input bounding box side length (cube) */
