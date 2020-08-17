@@ -531,7 +531,7 @@ public:
       return false;
 
     // Identical trees should have the same depth
-    if (rhs.m_max_depth_reached != m_max_depth_reached)
+    if (rhs.max_depth_reached() != max_depth_reached())
       return false;
 
     // If all else is equal, recursively compare the trees themselves
