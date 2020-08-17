@@ -233,15 +233,15 @@ public:
       // Check if this node needs to be processed
       if (split_criterion(*current)) {
 
-        // Split the node, redistributing its points to its children
-        split((*current));
-
         // Check if we've reached a new max depth
         if (current->depth() == max_depth_reached()) {
 
           // Update the side length map
           m_side_per_depth.push_back(*(m_side_per_depth.end() - 1) / 2);
         }
+
+        // Split the node, redistributing its points to its children
+        split((*current));
 
         // Process each of its children
         for (int i = 0; i < 8; ++i)
