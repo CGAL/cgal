@@ -118,5 +118,16 @@ coverage of the convex hull of the vertices).
 
 \cgalExample{Tetrahedral_remeshing/tetrahedral_remeshing_from_mesh.cpp}
 
+
+\section secTetRemeshingHistory Implementation History
+
+This package implements the uniform version of the "Multi-Material Adaptive Volume Remesher"
+algorithm for quality tetrahedral remeshing, described by Noura Faraj et al. in \cgalCite{faraj2016mvr}.
+
+A first version of the code was written by Noura Faraj, Jean-Marc Thiery, and Tamy Boubekeur.
+Jane Tournois worked on the finalization of the code, the API, and documentation.
+
+It was initially published in CGAL-5.1.
+
 */
 } /* namespace CGAL */
