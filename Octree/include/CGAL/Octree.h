@@ -129,7 +129,6 @@ private: // data members :
   Node m_root;                      /* root node of the octree */
 
   Point m_bbox_min;                  /* input bounding box min value */
-  FT m_bbox_side;              /* input bounding box side length (cube) */
 
   // TODO: I might be able to imply the max depth in the length of this vector
   std::vector<FT> m_side_per_depth;      /* side length per node's depth */
@@ -189,7 +188,6 @@ public:
 
     // save octree attributes
     m_bbox_min = bbox.min();
-    m_bbox_side = bbox.max()[0] - m_bbox_min[0];
     m_side_per_depth.push_back(bbox.max()[0] - m_bbox_min[0]);
     m_root.points() = {point_range.begin(), point_range.end()};
 
