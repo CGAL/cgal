@@ -712,12 +712,12 @@ public:
                                                         Intersection_result;
 
       // Early ending with Bbox overlapping test
-      if (!CGAL::do_overlap(cv1.bbox(), cv2.bbox()))
-        return oi;
+      if (! CGAL::do_overlap(cv1.bbox(), cv2.bbox())) return oi;
 
       // Early ending with specialized do_intersect
       const Kernel& kernel = m_traits;
-      if (!do_intersect (cv1.left(), cv1.right(), cv2.left(), cv2.right(), kernel))
+      if (! do_intersect(cv1.left(), cv1.right(), cv2.left(), cv2.right(),
+                         kernel))
         return oi;
 
       // Intersect the two supporting lines.
@@ -793,56 +793,44 @@ public:
     // Specialized do_intersect with many tests skipped because at
     // this point, we already know which point is left / right for
     // both segments
-    bool do_intersect (const Point_2 &A1,
-                       const Point_2 &A2,
-                       const Point_2 &B1,
-                       const Point_2 &B2,
-                       const Kernel& k) const
+    bool do_intersect(const Point_2& A1, const Point_2& A2,
+                      const Point_2& B1, const Point_2& B2,
+                      const Kernel& k) const
     {
-      typename Kernel::Less_xy_2 less_xy;
-      typename Kernel::Compare_xy_2 compare_xy;
+      auto less_xy = k.less_xy_2_object();
+      auto compare_xy = k.compare_xy_2_object();
+      namespace interx = CGAL::Intersections::internal;
 
       switch(make_certain(compare_xy(A1,B1))) {
-        case SMALLER:
-          switch(make_certain(compare_xy(A2,B1))) {
-            case SMALLER:
-              return false;
-            case EQUAL:
-              return true;
-            default: // LARGER
-              switch(make_certain(compare_xy(A2,B2))) {
-                case SMALLER:
-                  return CGAL::Intersections::internal
-                    ::seg_seg_do_intersect_crossing(A1,A2,B1,B2, k);
-                case EQUAL:
-                  return true;
-                default: // LARGER
-                  return CGAL::Intersections::internal
-                    ::seg_seg_do_intersect_contained(A1,A2,B1,B2, k);
-              }
+       case SMALLER:
+        switch(make_certain(compare_xy(A2,B1))) {
+         case SMALLER: return false;
+         case EQUAL: return true;
+         default: // LARGER
+          switch(make_certain(compare_xy(A2,B2))) {
+           case SMALLER:
+            return interx::seg_seg_do_intersect_crossing(A1,A2,B1,B2, k);
+           case EQUAL: return true;
+           default: // LARGER
+            return interx::seg_seg_do_intersect_contained(A1,A2,B1,B2, k);
           }
-        case EQUAL:
-          return true;
-        default: // LARGER
-          switch(make_certain(compare_xy(B2,A1))) {
-            case SMALLER:
-              return false;
-            case EQUAL:
-              return true;
-            default: // LARGER
-              switch(make_certain(compare_xy(B2,A2))) {
-                case SMALLER:
-                  return CGAL::Intersections::internal
-                    ::seg_seg_do_intersect_crossing(B1,B2,A1,A2, k);
-                case EQUAL:
-                  return true;
-                default: // LARGER
-                  return CGAL::Intersections::internal
-                    ::seg_seg_do_intersect_contained(B1,B2,A1,A2, k);
-              }
+        }
+       case EQUAL: return true;
+       default: // LARGER
+        switch(make_certain(compare_xy(B2,A1))) {
+         case SMALLER: return false;
+         case EQUAL: return true;
+         default: // LARGER
+          switch(make_certain(compare_xy(B2,A2))) {
+           case SMALLER:
+            return interx::seg_seg_do_intersect_crossing(B1,B2,A1,A2, k);
+           case EQUAL: return true;
+           default: // LARGER
+            return interx::seg_seg_do_intersect_contained(B1,B2,A1,A2, k);
           }
+        }
       }
-      CGAL_assertion(false);
+      CGAL_error();     // never reached
       return false;
     }
   };
@@ -1130,8 +1118,7 @@ public:
   Bbox_2 bbox() const
   {
     Kernel kernel;
-    typename Kernel::Construct_bbox_2
-      construct_bbox = kernel.construct_bbox_2_object();
+    auto construct_bbox = kernel.construct_bbox_2_object();
     return construct_bbox(this->m_ps) + construct_bbox(this->m_pt);
   }
 
