@@ -367,6 +367,7 @@ Viewer::~Viewer()
                              .arg(d->specular.z()));
     viewer_settings.setValue("spec_power",
                              d->spec_power);
+    d->vao.destroy();
     if(d->_recentFunctions)
       delete d->_recentFunctions;
     if(d->painter)
