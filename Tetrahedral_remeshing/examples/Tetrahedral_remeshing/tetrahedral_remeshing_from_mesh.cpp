@@ -5,9 +5,7 @@
 
 #include <CGAL/IO/File_medit.h>
 
-#include <iostream>
 #include <fstream>
-#include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -18,9 +16,9 @@ int main(int argc, char* argv[])
   const char* filename = (argc > 1) ? argv[1] : "data/sphere.mesh";
   const double target_edge_length = (argc > 2) ? atof(argv[2]) : 0.1;
 
-  std::ifstream is(filename, std::ios_base::in);
-
   Remeshing_triangulation tr;
+
+  std::ifstream is(filename, std::ios_base::in);
   CGAL::read_MEDIT(is, tr);
 
   CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length);
