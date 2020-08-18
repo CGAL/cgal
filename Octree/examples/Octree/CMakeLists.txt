@@ -14,6 +14,7 @@ if (CGAL_FOUND)
     create_single_source_cgal_program("Octree_traversal_custom.cpp")
     create_single_source_cgal_program("Octree_traversal_manual.cpp")
     create_single_source_cgal_program("Octree_traversal_preorder.cpp")
+    create_single_source_cgal_program("Octree_grade.cpp")
 
 else ()
     message(WARNING

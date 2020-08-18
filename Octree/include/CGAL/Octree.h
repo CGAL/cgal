@@ -130,7 +130,6 @@ private: // data members :
 
   Point m_bbox_min;                  /* input bounding box min value */
 
-  // TODO: I might be able to imply the max depth in the length of this vector
   std::vector<FT> m_side_per_depth;      /* side length per node's depth */
 
 public:
