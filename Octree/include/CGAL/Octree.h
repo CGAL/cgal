@@ -190,8 +190,8 @@ public:
     // save octree attributes
     m_bbox_min = bbox.min();
     m_bbox_side = bbox.max()[0] - m_bbox_min[0];
+    m_side_per_depth.push_back(bbox.max()[0] - m_bbox_min[0]);
     m_root.points() = {point_range.begin(), point_range.end()};
-    m_side_per_depth.push_back(m_bbox_side);
 
   }
 
