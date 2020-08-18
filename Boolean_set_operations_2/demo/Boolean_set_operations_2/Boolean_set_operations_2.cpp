@@ -37,11 +37,13 @@
 
 #include <QApplication>
 #include <qmessagebox.h>
+#include <QDesktopWidget>
 
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QToolButton>
 #include <QActionGroup>
+#include <QSize>
 #include <QPen>
 #include <QtGui>
 #include <QString>
@@ -59,6 +61,7 @@
 #include <QGraphicsView>
 #include <QGraphicsPixmapItem>
 #include <QKeyEvent>
+#include <QTimer>
 
 #include <CGAL/auto_link/Qt.h>
 #include <CGAL/Qt/GraphicsViewInput.h>
@@ -89,6 +92,7 @@
 #include <CGAL/Boolean_set_operations_2.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/minkowski_sum_2.h>
+#include <CGAL/squared_distance_2.h>
 
 #ifdef CGAL_USE_GMP
   #include <CGAL/Gmpq.h>
@@ -167,7 +171,7 @@ void error_handler(char const* what, char const* expr, char const* file,
        << "Expr: " << expr << std::endl
        << "File: " << file << std::endl
        << "Line: " << line << std::endl;
-    if (msg != 0 || msg !="")
+    if (msg != 0 || msg !="" || msg != NULL)
     {
       ss << "Explanation:" << msg << std::endl;
     }
@@ -1089,7 +1093,6 @@ private:
 
   size_t m_state_num;
 
-
   QGraphicsLineItem *xAxis  = new QGraphicsLineItem();
   QGraphicsLineItem *yAxis  = new QGraphicsLineItem();
 
@@ -1245,6 +1248,8 @@ public slots:
   void on_drawYellow_toggled (bool a_check);
   void on_drawMagenta_toggled (bool a_check);
   void on_drawAqua_toggled (bool a_check);
+
+  void resizeEvent(QResizeEvent* event);
 
   void exception_handler();
 
@@ -1534,7 +1539,7 @@ MainWindow::MainWindow() :
   // Setup the m_scene and the view
   //
   m_scene.setItemIndexMethod(QGraphicsScene::NoIndex);
-  m_scene.setSceneRect(-355, -200, 640, 420);
+  m_scene.setSceneRect(-320, -210, 640, 420);
   this->graphicsView->setScene(&m_scene);
   this->graphicsView->setMouseTracking(true);
   this->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -1581,6 +1586,7 @@ MainWindow::MainWindow() :
   get_new_state(12);
   actionUndo->setEnabled(false);
 
+  this->setWindowState(Qt::WindowMaximized);
 
   //initializing classes to draw respective polygons using mouse
   m_bezier_input = new CGAL::Qt::GraphicsViewBezierPolygonInput<Bezier_traits>(this, &m_scene);
@@ -1805,8 +1811,8 @@ MainWindow::MainWindow() :
 
   //clear
   this->graphicsView->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
+  
   // axis 
-
   QPen *dashedLine {new QPen(QBrush(Qt::black), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin)};
   // dashedLine->setCosmetic(true);
   dashedLine->setWidth(0);
@@ -4111,8 +4117,9 @@ void MainWindow::on_actionNew_triggered()
   for( Curve_set_iterator si = states_stack.back().m_curve_sets.begin(); si != states_stack.back().m_curve_sets.end() ; ++ si )
     si->clear();
 
-  m_scene.setSceneRect(-355, -200, 640, 420);
+  m_scene.setSceneRect(-320, -210, 640, 420);
   this->graphicsView->setScene(&m_scene);
+  this->graphicsView->fitInView(m_scene.sceneRect());
   //this->graphicsView->scale(2.5, -2.5);
 
   states_stack.back().result_set().clear();
@@ -4166,10 +4173,10 @@ void MainWindow::on_actionNew_triggered()
   m_disjoint = false;
   // empty_warn = true;
 
-  if(m_grid)
-  {
-    on_actionAxis_triggered();
-  }
+  // if(m_grid)
+  // {
+  //   on_actionAxis_triggered();
+  // }
 
   m_linear_input->Reset();
   m_circular_input->Reset();
@@ -5000,7 +5007,6 @@ bool MainWindow::read_linear( QString aFileName, Linear_polygon_set& rSet,
               get_new_state(11);
               states_stack.back().active_set(m_color_active).linear().join(lCPWH);
               states_stack.back().active_linear_sources(m_color_active).push_back(lCPWH);
-              processInput(CGAL::make_object(lp));
             }
             else
             {
@@ -5087,31 +5093,15 @@ bool MainWindow::read_circular ( QString aFileName, Circular_polygon_set& rSet,
             in_file>>buldge;
             if(buldge)
             {
-              double cx,cy,sx,sy,tx,ty;
-              FT rsq;
-              CGAL::Orientation  orient;
-              int orients;
-              in_file>>cx>>cy;
-              in_file>>rsq;
-              in_file>>orients;
-
-              if(orients==1)
-              {
-                orient=CGAL::COUNTERCLOCKWISE;
-              }
-              else
-              {
-                orient=CGAL::CLOCKWISE; 
-              }
+              double sx,sy,mx,my,tx,ty;
 
               in_file>> sx >> sy;
+              in_file>> mx >> my;
               in_file>> tx >> ty;
 
-              Circle circ(Point(cx,cy),rsq,orient);
-              // mCircularPolygonPieces.push_back(Circular_curve(circ,Arc_point(sx,sy),Arc_point(tx,ty)));
-              mCircularPolygonPieces.push_back(Circular_curve(Point(sx,sy),Point((sx+tx)/3,(sy+ty)/3),Point(tx,ty)));
+              mCircularPolygonPieces.push_back(Circular_curve(Point(sx,sy),Point(mx,my),Point(tx,ty)));
             }
-            else
+            else  //3576.382857 3576.382064
             {
               double sx,sy,tx,ty;
 
@@ -5471,30 +5461,49 @@ bool save_circular ( QString aFileName, Circular_polygon_set& rSet )
       int lc = cc - 1 ;
       
       out_file << "  " <<  cc << std::endl ;
-     
       int i = 0 ;
       
       for ( Circular_polygon::Curve_const_iterator cit = cpwh.outer_boundary().curves_begin() ; 
         cit != cpwh.outer_boundary().curves_end() ; ++ cit, ++ i  )
       {
 
+        auto pt = cit->source();  
         if(cit->is_circular())
         {
-          out_file << "   1"<<std::endl;
-          out_file << "    " << CGAL::to_double(cit->supporting_circle().center().x()) << " " << CGAL::to_double(cit->supporting_circle().center().y())<<std::endl;
-          out_file << "    " << CGAL::to_double(cit->supporting_circle().squared_radius())<<std::endl;
-          out_file << "    " << cit->supporting_circle().orientation ()<<std::endl;
-          //show_warning(to_string(cit->supporting_circle().orientation()==CGAL::CLOCKWISE));
-          //CLOCKWISE = -
-          //COLLINEAR = 0
-          //COUNTERCLOCKWISE = +
+          out_file << "   1" << std::endl;
+          out_file << "    " << CGAL::to_double(pt.x()) << " " << CGAL::to_double(pt.y()) << std::endl;
+
+          double r,mx,my,tx,ty,cx,cy,sx,sy,st,tnx,tny,frmst;
+          r = sqrt(CGAL::to_double(cit->supporting_circle().squared_radius())); //radius r
+          sx = CGAL::to_double(cit->source().x()); // source x()
+          sy = CGAL::to_double(cit->source().y()); // source y()
+          tx = CGAL::to_double(cit->target().x()); // target x()
+          ty = CGAL::to_double(cit->target().y()); // target y()
+          cx = CGAL::to_double(cit->supporting_circle().center().x()); // center x()
+          cy = CGAL::to_double(cit->supporting_circle().center().y()); // center y()
+          st = sqrt((sx-tx)*(sx-tx) + (sy-ty)*(sy-ty)); //Source to target euclides distance ST
+          tnx = tx-cx; // origin shifting to center
+          tny = ty-cy; // origin shifting to center
+          frmst = sqrt((4 * r * r) - (st * st)); // intermediate value
+
+          if(cit->supporting_circle().orientation()==CGAL::CLOCKWISE)
+          {
+            mx = ( ( (frmst * tnx) - (st * tny) ) / ( 2 * r ) ) + cx;
+            my = ( ( (st * tnx) + (frmst * tny) ) / ( 2 * r ) ) + cy;
+          }
+          else
+          {
+            mx = ( ( (tnx * frmst) + (tny * st) ) / ( 2 * r ) ) + cx;
+            my = ( ( (tny * frmst) - (st * tnx)) / ( 2 * r ) ) + cy;
+          }
+
+          out_file << "    " << mx << " " << my << std::endl;
         } 
         else
         {
-          out_file << "   0"<<std::endl;
+          out_file << "   0" << std::endl;
+          out_file << "    " << CGAL::to_double(pt.x()) << " " << CGAL::to_double(pt.y()) << std::endl;
         }
-        auto pt = cit->source();  
-        out_file << "    " << CGAL::to_double(pt.x()) << " " << CGAL::to_double(pt.y()) << std::endl;
         pt = cit->target();  
         out_file << "    " << CGAL::to_double(pt.x()) << " " << CGAL::to_double(pt.y()) << std::endl;
       }
@@ -5513,23 +5522,43 @@ bool save_circular ( QString aFileName, Circular_polygon_set& rSet )
           cit != hit->curves_end() ; ++ cit, ++ i  )
         {
 
+          auto pt = cit->source();  
           if(cit->is_circular())
           {
-            out_file << "   1"<<std::endl;
-            out_file << "    " << CGAL::to_double(cit->supporting_circle().center().x()) << " " << CGAL::to_double(cit->supporting_circle().center().y())<<std::endl;
-            out_file << "    " << CGAL::to_double(cit->supporting_circle().squared_radius())<<std::endl;
-            out_file << "    " << cit->supporting_circle().orientation ()<<std::endl;
-            //show_warning(to_string(cit->supporting_circle().orientation()==CGAL::CLOCKWISE));
-            //CLOCKWISE = -
-            //COLLINEAR = 0
-            //COUNTERCLOCKWISE = +
+            out_file << "   1" << std::endl;
+            out_file << "    " << CGAL::to_double(pt.x()) << " " << CGAL::to_double(pt.y()) << std::endl;
+
+            double r,mx,my,tx,ty,cx,cy,sx,sy,st,tnx,tny,frmst;
+            r = sqrt(CGAL::to_double(cit->supporting_circle().squared_radius())); //radius r
+            sx = CGAL::to_double(cit->source().x()); // source x()
+            sy = CGAL::to_double(cit->source().y()); // source y()
+            tx = CGAL::to_double(cit->target().x()); // target x()
+            ty = CGAL::to_double(cit->target().y()); // target y()
+            cx = CGAL::to_double(cit->supporting_circle().center().x()); // center x()
+            cy = CGAL::to_double(cit->supporting_circle().center().y()); // center y()
+            st = sqrt((sx-tx)*(sx-tx) + (sy-ty)*(sy-ty)); //Source to target euclides distance ST
+            tnx = tx-cx; // origin shifting to center
+            tny = ty-cy; // origin shifting to center
+            frmst = sqrt((4 * r * r) - (st * st)); // intermediate value
+
+            if(cit->supporting_circle().orientation()==CGAL::CLOCKWISE)
+            {
+              mx = ( ( (frmst * tnx) - (st * tny) ) / ( 2 * r ) ) + cx;
+              my = ( ( (st * tnx) + (frmst * tny) ) / ( 2 * r ) ) + cy;
+            }
+            else
+            {
+              mx = ( ( (tnx * frmst) + (tny * st) ) / ( 2 * r ) ) + cx;
+              my = ( ( (tny * frmst) - (st * tnx)) / ( 2 * r ) ) + cy;
+            }
+
+            out_file << "    " << mx << " " << my << std::endl;
           } 
           else
           {
-            out_file << "   0"<<std::endl;
+            out_file << "   0" << std::endl;
+            out_file << "    " << CGAL::to_double(pt.x()) << " " << CGAL::to_double(pt.y()) << std::endl;
           }
-          auto pt = cit->source();  
-          out_file << "   " << CGAL::to_double(pt.x()) << " " << CGAL::to_double(pt.y()) << std::endl;
           pt = cit->target();  
           out_file << "    " << CGAL::to_double(pt.x()) << " " << CGAL::to_double(pt.y()) << std::endl;
         }
@@ -7716,6 +7745,7 @@ void MainWindow::wheelEvent(QWheelEvent *event)
     // currentScale = 0.0;
     this->graphicsView->setDragMode(QGraphicsView::NoDrag);
     this->graphicsView->setSceneRect(-1500000,-1000000,3100000,2000000);
+    this->graphicsView->fitInView(m_scene.sceneRect());
   }
   if(m_scene.width()<=1500000)
   {
@@ -7775,6 +7805,10 @@ void MainWindow::show_not_empty_warning()
   }
 }
 
+void MainWindow::resizeEvent(QResizeEvent* e)
+{
+  this->graphicsView->fitInView(m_scene.sceneRect());
+}
 
 void MainWindow::exception_handler()
 {
