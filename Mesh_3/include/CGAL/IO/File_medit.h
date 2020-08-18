@@ -895,8 +895,7 @@ output_to_medit(std::ostream& os,
 
 
 template<typename T3>
-void
-output_triangulation_to_medit(std::ostream& os, const T3& t3)
+void write_MEDIT(std::ostream& os, const T3& t3)
 {
   CGAL::Mesh_complex_3_in_triangulation_3<T3, int, int> c3t3;
   c3t3.triangulation() = t3;
@@ -905,11 +904,9 @@ output_triangulation_to_medit(std::ostream& os, const T3& t3)
 }
 
 template<typename T3>
-bool input_medit(std::istream& in, T3& t3)
+bool read_MEDIT(std::istream& in, T3& t3)
 {
-//  in.open(fileinfo.filePath().toUtf8(), std::ios_base::in);//not binary
   CGAL_assertion(!(!in));
-
   return CGAL::build_triangulation_from_file<T3, true>(in, t3);
 }
 

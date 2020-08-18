@@ -1,5 +1,3 @@
-#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
@@ -23,12 +21,12 @@ int main(int argc, char* argv[])
   std::ifstream is(filename, std::ios_base::in);
 
   Remeshing_triangulation tr;
-  CGAL::input_medit(is, tr);
+  CGAL::read_MEDIT(is, tr);
 
   CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length);
 
   std::ofstream os("after_remeshing.mesh");
-  CGAL::output_triangulation_to_medit(os, tr);
+  CGAL::write_MEDIT(os, tr);
 
   return EXIT_SUCCESS;
 }
