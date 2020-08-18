@@ -31,8 +31,8 @@ template<class K>
 inline
 bool are_parallel_edges_equally_oriented( Segment_2<K> const& e0, Segment_2<K> const& e1 )
 {
-  return angle(typename K::Vector_2(e0.source(), e0.target()),
-               typename K::Vector_2(e1.source(), e1.target())) == ACUTE;
+  return angle(e0.source(), e0.target(),
+               e1.source(), e1.target()) == ACUTE;
 }
 
 template<class K>
