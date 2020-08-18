@@ -103,6 +103,7 @@ This example demonstrates how to use the grade method to eliminate large jumps i
 
 A tree is created such that one node is split many more times than those it borders.
 `grade()` splits the octree's nodes so that adjacent nodes never have a difference in depth greater than one.
+The tree is printed before and after grading, so that the differences are visible.
 
 \cgalExample{Octree/Octree_grade.cpp}
 
