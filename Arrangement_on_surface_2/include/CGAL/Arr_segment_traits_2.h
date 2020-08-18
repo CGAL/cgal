@@ -797,7 +797,6 @@ public:
                       const Point_2& B1, const Point_2& B2,
                       const Kernel& k) const
     {
-      auto less_xy = k.less_xy_2_object();
       auto compare_xy = k.compare_xy_2_object();
       namespace interx = CGAL::Intersections::internal;
 
