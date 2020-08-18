@@ -519,7 +519,7 @@ public:
   bool operator==(const Self &rhs) const {
 
     // Identical trees should have the same bounding box
-    if (rhs.m_bbox_min != m_bbox_min || rhs.m_bbox_side != m_bbox_side)
+    if (rhs.m_bbox_min != m_bbox_min || rhs.m_side_per_depth[0] != m_side_per_depth[0])
       return false;
 
     // Identical trees should have the same depth
