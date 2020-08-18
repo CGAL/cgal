@@ -15,7 +15,6 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Random.h>
 
@@ -107,20 +106,34 @@ protected:
     using Vector = typename Kernel::Vector_3;
 
     auto vnormals = get(CGAL::dynamic_vertex_property_t<Vector>(), sm);
+    auto point_pmap = get(CGAL::vertex_point, sm);
+    for (auto v : vertices(sm))
     {
-      // temporary face property map needed by `compute_normals`
-      auto fpm = get(CGAL::dynamic_face_property_t<Vector>(), sm);
-
-      CGAL::Polygon_mesh_processing::compute_normals(sm, vnormals, fpm);
+      Vector n(NULL_VECTOR);
+      int i=0;
+      for (auto h : halfedges_around_target(halfedge(v, sm), sm))
+      {
+        if (!is_border(h, sm))
+        {
+          Vector ni = CGAL::cross_product(
+                        Vector(get(point_pmap, source(h, sm)), get(point_pmap, target(h, sm))),
+                        Vector(get(point_pmap, target(h, sm)), get(point_pmap, target(next(h, sm), sm))));
+          if (ni != NULL_VECTOR)
+          {
+            n+=ni;
+            ++i;
+          }
+        }
+      }
+      put(vnormals, v, n/i);
     }
 
     // This function return a lambda expression, type-erased in a
     // `std::function<void()>` object.
-    return [this, &sm, vnormals, anofaces, fcolor]()
+    return [this, &sm, vnormals, anofaces, fcolor, point_pmap]()
     {
       this->clear();
 
-      auto point_pmap = get(CGAL::vertex_point, sm);
       if (!anofaces)
       {
         for (auto fh: faces(sm))
