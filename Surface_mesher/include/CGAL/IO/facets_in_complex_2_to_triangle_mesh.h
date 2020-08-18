@@ -1,7 +1,5 @@
 // Copyright (c) 2007-09  INRIA Sophia-Antipolis (France).
 // Copyright (c) 2017 GeometryFactory (France).
-
-
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -11,6 +9,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Maxime Gimeno, Pierre Alliez
+
 #ifndef CGAL_FACETS_IN_COMPLEX_2_TO_TRIANGLE_MESH_H
 #define CGAL_FACETS_IN_COMPLEX_2_TO_TRIANGLE_MESH_H
 
@@ -65,7 +64,7 @@ void facets_in_complex_2_to_triangle_mesh(const C2T3& c2t3, TriangleMesh& graph)
 
     CGAL_assertion_code(typename Tr::size_type nb_facets = 0; )
 
-        while (oriented_set.size() != number_of_facets) {
+    while (oriented_set.size() != number_of_facets) {
       while ( fit->first->is_facet_on_surface(fit->second) == false ||
               oriented_set.find(*fit) != oriented_set.end() ||
 
