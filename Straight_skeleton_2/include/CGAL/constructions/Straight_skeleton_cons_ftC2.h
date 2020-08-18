@@ -23,8 +23,8 @@ namespace CGAL_SS_i
 template<class K>
 bool are_edges_collinear( Segment_2<K> const& e0, Segment_2<K> const& e1 )
 {
-  return   collinear(e0.source(),e0.target(),e1.source())
-         & collinear(e0.source(),e0.target(),e1.target()) ;
+  return   ((e1.source() == e0.source()) || (e1.source() == e0.target()) || collinear(e0.source(),e0.target(),e1.source()))
+    && ( (e1.target() == e0.source()) || (e1.target() == e0.target()) || (collinear(e0.source(),e0.target(),e1.target()))) ;
 }
 
 template<class K>
@@ -663,4 +663,3 @@ optional< Point_2<K> > construct_offset_lines_isecC2 ( intrusive_ptr< Trisegment
 
 #endif // CGAL_STRAIGHT_SKELETON_CONS_FTC2_H //
 // EOF //
-
