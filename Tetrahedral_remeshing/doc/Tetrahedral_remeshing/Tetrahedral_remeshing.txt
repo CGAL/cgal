@@ -100,7 +100,7 @@ setting the named parameter `remesh_boundaries` to `false`.
 
 The tetrahedral remeshing algorithm is designed as a post-processing for
 mesh generation algorithms. The API allows to generate a tetrahedral mesh
-with the CGAL \ref PkgMesh3 package, and
+with the \cgal \ref PkgMesh3 package, and
 further improve it with the tetrahedral remeshing algorithm.
 This example shows how to use tetrahedral mesh generation and remeshing in sequence,
 from a polyhedral domain with features.
