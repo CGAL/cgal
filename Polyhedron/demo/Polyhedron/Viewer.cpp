@@ -414,7 +414,8 @@ Viewer::~Viewer()
                              .arg(d->back_color.redF())
                              .arg(d->back_color.greenF())
                              .arg(d->back_color.blueF()));
-
+    makeCurrent();
+    d->vao.destroy();
     if(d->_recentFunctions)
       delete d->_recentFunctions;
     if(d->painter)
