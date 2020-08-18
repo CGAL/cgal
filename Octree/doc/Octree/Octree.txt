@@ -97,6 +97,14 @@ e.g. I've build a tree and I want to print it out, but layer by layer
 \cgalExample{Octree/Octree_traversal_custom.cpp}
 
 !-->
+\subsection Section_Octree_Grade Grading an octree
+
+This example demonstrates how to use the grade method to eliminate large jumps in depth within the octree.
+
+A tree is created such that one node is split many more times than those it borders.
+`grade()` splits the octree's nodes so that adjacent nodes never have a difference in depth greater than one.
+
+\cgalExample{Octree/Octree_grade.cpp}
 
 \section Section_Octree_Performance Performance
 
