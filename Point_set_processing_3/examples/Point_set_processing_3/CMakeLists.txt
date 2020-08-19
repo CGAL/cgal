@@ -120,10 +120,11 @@ if ( CGAL_FOUND )
       
       find_package(MOSEK REQUIRED)
       include_directories(${MOSEK_INCLUDE_DIRS})
-      add_executable(gret-sdp_with_OpenGR "gret-sdp_with_OpenGR.cpp" )
-      target_link_libraries(gret-sdp_with_OpenGR
+      add_executable(registration_with_OpenGR_using_GRET_SDP "registration_with_OpenGR_using_GRET_SDP.cpp" )
+      target_link_libraries(registration_with_OpenGR_using_GRET_SDP
       ${CGAL_libs} CGAL::OpenGR_support ${MOSEK_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
-      add_dependencies(gret-sdp_with_OpenGR copy_gret_sdp_data)
+      target_compile_definitions(registration_with_OpenGR_using_GRET_SDP PUBLIC OpenGR_USE_MOSEK)
+      add_dependencies(registration_with_OpenGR_using_GRET_SDP copy_gret_sdp_data)
       endif(Boost_FOUND)
       
       # SUPER4PC
