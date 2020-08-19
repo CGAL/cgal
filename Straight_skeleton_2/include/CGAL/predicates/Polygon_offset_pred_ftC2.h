@@ -21,6 +21,29 @@ namespace CGAL {
 namespace CGAL_SS_i
 {
 
+template <class K>
+struct No_cache
+{
+  typedef boost::optional< Rational< typename K::FT > > Event_time;
+
+  bool is_time_cached(std::size_t)
+  {
+    return false;
+  }
+
+  Event_time time(std::size_t)
+  {
+    CGAL_error();
+    return Event_time();
+  }
+
+  void set_time(std::size_t, const Event_time&)
+  {}
+
+  void reset(std::size_t)
+  {}
+};
+
 // Given a triple of oriented straight line segments: (e0,e1,e2) such that
 // there exists a distance 'et' for which the offsets lines at 'et' (e0',e1',e2') intersect in a single point;
 // returns the relative order of 't' w.r.t 'et'.
@@ -37,7 +60,8 @@ Uncertain<Comparison_result> compare_offset_against_isec_timeC2 ( typename K::FT
 
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
-  Optional_rational et_ = compute_offset_lines_isec_timeC2(tri);
+  No_cache<K> time_cache;
+  Optional_rational et_ = compute_offset_lines_isec_timeC2(tri, time_cache);
   if ( et_ )
   {
     Quotient et = et_->to_quotient();

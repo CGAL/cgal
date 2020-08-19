@@ -119,8 +119,23 @@ struct Polygon_offset_builder_traits_2_functors
   typedef CGAL_SS_i::Compare_offset_against_event_time_2<K> Compare_offset_against_event_time_2 ;
   typedef CGAL_SS_i::Compare_ss_event_times_2           <K> Compare_ss_event_times_2 ;
   typedef CGAL_SS_i::Construct_offset_point_2           <K> Construct_offset_point_2 ;
-  typedef CGAL_SS_i::Construct_ss_trisegment_2          <K> Construct_ss_trisegment_2 ;
   typedef CGAL_SS_i::Construct_ss_event_time_and_point_2<K> Construct_ss_event_time_and_point_2 ;
+
+  struct Construct_ss_trisegment_2 : CGAL_SS_i::Functor_base_2<K>
+  {
+    typedef CGAL_SS_i::Functor_base_2<K> Base ;
+
+    typedef typename Base::Segment_2        Segment_2 ;
+    typedef typename Base::Trisegment_2     Trisegment_2 ;
+    typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
+
+    typedef Trisegment_2_ptr result_type ;
+
+    result_type operator() ( Segment_2 const& aS0, Segment_2 const& aS1, Segment_2 const& aS2 ) const
+    {
+      return CGAL_SS_i::construct_trisegment(aS0,aS1,aS2,0);
+    }
+  };
 } ;
 
 template<class K>
