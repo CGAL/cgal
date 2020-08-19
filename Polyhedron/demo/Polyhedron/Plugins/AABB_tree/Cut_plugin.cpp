@@ -34,6 +34,8 @@
 #include <QApplication>
 #include <CGAL/Three/Scene_item.h>
 #include <QMouseEvent>
+#include <QWidgetAction>
+#include <QMenu>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
@@ -230,21 +232,18 @@ typedef QMap<QObject*, Facet_sm_tree*>                   Facet_sm_trees;
 typedef QMap<QObject*, Edge_sm_tree*>                    Edge_sm_trees;
 
 
+
 class Q_DECL_EXPORT Scene_aabb_item : public CGAL::Three::Scene_item_rendering_helper
 {
   Q_OBJECT
 public:
   Scene_aabb_item(const Facet_sm_tree& tree)
   {
-      const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
-      positions_lines.clear();
-
-      CGAL::AABB_drawing_traits<Facet_sm_primitive, CGAL::AABB_node<Facet_sm_traits> > traits;
-      traits.v_edges = &positions_lines;
-      for(int i=0; i<3; ++i)
-        traits.offset[i] = offset[i];
-
-      tree.traversal(0, traits);
+      traversal(tree.size(), *tree.root_node(), 0);
+      lvlSlider = new QSlider(Qt::Horizontal);
+      lvlSlider->setMinimum(0);
+      lvlSlider->setMaximum(boxes.size()-1);
+      lvlSlider->setValue(0);
       const CGAL::Bbox_3 bbox = tree.bbox();
       setBbox(Bbox(bbox.xmin(),
                   bbox.ymin(),
@@ -256,7 +255,6 @@ public:
                 <<bbox.zmin()<<", "<<bbox.zmax();
       tree_size = tree.size();
       is_tree_empty = tree.empty();
-      nb_lines = positions_lines.size();
       setEdgeContainer(0, new Ec(Vi::PROGRAM_NO_SELECTION, false));
       for(auto v : CGAL::QGLViewer::QGLViewerPool())
       {
@@ -269,6 +267,29 @@ public:
     ~Scene_aabb_item()
     {
     }
+
+  QMenu* contextMenu()
+  {
+    const char* prop_name = "Menu modified by Scene_aabb_item.";
+
+    QMenu* menu = Scene_item::contextMenu();
+    bool menuChanged = menu->property(prop_name).toBool();
+    if (!menuChanged) {
+      QMenu *container = new QMenu(tr("Tree level"));
+      QWidgetAction *sliderAction = new QWidgetAction(0);
+      connect(lvlSlider, &QSlider::valueChanged, this,
+              [this](){
+        invalidateOpenGLBuffers();
+        redraw();
+      });
+      sliderAction->setDefaultWidget(lvlSlider);
+      container->addAction(sliderAction);
+      menu->addMenu(container);
+      menu->setProperty(prop_name, true);
+    }
+    return menu;
+  }
+
 
   bool isFinite() const { return false; }
   bool isEmpty() const { return is_tree_empty; }
@@ -296,7 +317,6 @@ public:
     return (m == Wireframe);
   }
 
-  // Wireframe OpenGL drawing in a display list
   void invalidateOpenGLBuffers()
   {
       setBuffersFilled(false);
@@ -307,17 +327,58 @@ private:
    bool is_tree_empty;
    mutable  std::vector<float> positions_lines;
    mutable std::size_t nb_lines;
+   std::vector<std::vector<Bbox> > boxes;
+   QSlider* lvlSlider;
+
+
+   void
+   traversal(const std::size_t nb_primitives,
+             const CGAL::AABB_node<Facet_sm_traits>& node,
+             int lvl)
+   {
+     //traversed lvl by lvl, so one push_back should be enough.
+     if(boxes.size() <= lvl )
+       boxes.push_back(std::vector<Bbox>());
+     CGAL_assertion(boxes.size() > lvl);
+     boxes[lvl].push_back(node.bbox());
+
+     // Recursive traversal
+     switch(nb_primitives)
+     {
+     case 2:
+       break;
+     case 3:
+       traversal(2, node.right_child(), lvl +1);
+       break;
+     default:
+       traversal(nb_primitives/2, node.left_child(),lvl +1);
+       traversal(nb_primitives-nb_primitives/2, node.right_child(), lvl +1);
+     }
+   }
+
+
 public:
     void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
     {
+      //to put in a computeElements() function.{
+      positions_lines.clear();
+      const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
+      CGAL::AABB_drawing_traits<Facet_sm_primitive,  CGAL::AABB_node<Facet_sm_traits> > traits;
+      for(int i=0; i<3; ++i)
+        traits.offset[i] = offset[i];
+      traits.v_edges = &positions_lines;
+      for(const auto& bb : boxes[lvlSlider->value()])
+        traits.gl_draw(bb);
+      nb_lines = positions_lines.size();
+      //}
       Ec* ec = getEdgeContainer(0);
         ec->allocate(Ec::Vertices,
                      positions_lines.data(),
                      static_cast<int>(positions_lines.size()*sizeof(float)));
         ec->initializeBuffers(viewer);
         ec->setFlatDataSize(nb_lines);
-        //positions_lines.clear();
-        //positions_lines.shrink_to_fit();
+        positions_lines.clear();
+        positions_lines.shrink_to_fit();
         setBuffersFilled(true);
     }
     void drawEdges(CGAL::Three::Viewer_interface* viewer) const
