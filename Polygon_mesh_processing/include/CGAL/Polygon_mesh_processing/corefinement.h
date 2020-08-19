@@ -703,11 +703,6 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *                      If this option is set to `true` for one mesh,
  *                      the other mesh is no longer required to be without self-intersection.}
  *   \cgalParamNEnd
- *   \cgalParamBegin{do_not_modify} 
- *                                  If this parameter is set to `true` for both meshes nothing will be done.
- *                                  If this option is set to `true` for one mesh,
- *                                  the other mesh is no longer required to be without self-intersection.
- *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  */

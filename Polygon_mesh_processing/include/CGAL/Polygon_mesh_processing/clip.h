@@ -826,7 +826,6 @@ bool clip(TriangleMesh& tm,
   *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
   *                     and `clip_volume` to `false`.}
   *   \cgalParamNEnd
-  *   \cgalParamNEnd
   *
   * \cgalNamedParamsEnd
 */
