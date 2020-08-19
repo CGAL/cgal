@@ -125,6 +125,7 @@ public:
 
   void set_vertex_id(vertex_descriptor v, Node_id node_id, const TriangleMesh& tm)
   {
+    CGAL_use(tm);
     CGAL_assertion(&tm == &tm1);
     vertex_to_node_id1.insert( std::make_pair(v, node_id) );
   }
