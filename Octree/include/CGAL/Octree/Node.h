@@ -101,8 +101,18 @@ public:
    *         +--------+
    *       0           1
    *
+   * This lookup table may also be helpful:
    *
-   * \todo I should have a lookup table
+   * | Child                 | Enum                  | bitset | number |
+   * | --------------------- | --------------------- | ------ | ------ |
+   * | left, bottom, back    | LEFT_BOTTOM_BACK      | 000    | 0      |
+   * | right, bottom, back   | RIGHT_BOTTOM_BACK     | 001    | 1      |
+   * | left, top, back       | LEFT_TOP_BACK         | 010    | 2      |
+   * | right, top, back      | RIGHT_TOP_BACK        | 011    | 3      |
+   * | left, bottom, front   | LEFT_BOTTOM_FRONT     | 100    | 4      |
+   * | right, bottom, front  | RIGHT_BOTTOM_FRONT    | 101    | 5      |
+   * | left, top, front      | LEFT_TOP_FRONT        | 110    | 6      |
+   * | right, top, front     | RIGHT_TOP_FRONT       | 111    | 7      |
    */
   enum Child {
     LEFT_BOTTOM_BACK,
