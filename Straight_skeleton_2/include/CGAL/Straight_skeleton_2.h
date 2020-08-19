@@ -62,8 +62,6 @@ public :
 private :
 
     Vertex_handle   vertices_push_back( const Vertex& v)                   { return Base::vertices_push_back(v); }
-    Halfedge_handle edges_push_back( const Halfedge& h, const Halfedge& g) { return Base::edges_push_back(h,g); }
-    Halfedge_handle edges_push_back( const Halfedge& h)                    { return Base::edges_push_back(h); }
     Face_handle     faces_push_back( const Face& f)                        { return Base::faces_push_back(f); }
 
     void vertices_pop_front()                                          { Base::vertifces_pop_front(); }

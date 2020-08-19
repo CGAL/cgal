@@ -277,6 +277,17 @@ private :
   Halfedge_handle validate( Halfedge_handle aH ) const ;
   Vertex_handle   validate( Vertex_handle   aH ) const ;
 
+  std::list<Vertex_handle>& GetHalfedgeLAVList(Halfedge_handle aH)
+  {
+    return mLAVLists[aH->id()];
+  }
+
+  Halfedge_handle SSkelEdgesPushBack(const Halfedge& aH1, const Halfedge& aH2)
+  {
+    mLAVLists.resize(aH2.id()+1);
+    return mSSkel->SSkel::Base::edges_push_back (aH1, aH2);
+  }
+
   void InitVertexData( Vertex_handle aV )
   {
     mVertexData.push_back( Vertex_data_ptr( new Vertex_data(aV,mEventCompare) ) ) ;
@@ -320,6 +331,15 @@ private :
   void SetVertexTriedge ( Vertex_handle aV, Triedge const& aTriedge )
   {
     GetVertexData(aV).mTriedge = aTriedge ;
+    GetHalfedgeLAVList(aTriedge.e0()).push_back(aV);
+  }
+
+  void GLAV_push_back ( Vertex_handle /* aV */ )
+  {}
+
+  void GLAV_remove ( Vertex_handle aV )
+  {
+    GetHalfedgeLAVList(GetVertexData(aV).mTriedge.e0()).remove(aV);
   }
 
   Segment_2 CreateSegment ( Halfedge_const_handle aH ) const
@@ -738,11 +758,12 @@ private:
 
   std::vector<Vertex_data_ptr> mVertexData ;
 
+  std::vector<std::list<Vertex_handle>> mLAVLists;
+
   Vertex_handle_vector   mReflexVertices ;
   Halfedge_handle_vector mDanglingBisectors ;
   Halfedge_handle_vector mContourHalfedges ;
 
-  std::list<Vertex_handle> mGLAV ;
 
   Vertex_handle_pair_vector mSplitNodes ;
 
@@ -781,7 +802,7 @@ private :
 
     while ( lCurr != aEnd )
     {
-      Halfedge_handle lCCWBorder = mSSkel->SSkel::Base::edges_push_back ( Halfedge(mEdgeID),Halfedge(mEdgeID+1)  );
+      Halfedge_handle lCCWBorder = SSkelEdgesPushBack( Halfedge(mEdgeID),Halfedge(mEdgeID+1)  );
       Halfedge_handle lCWBorder = lCCWBorder->opposite();
       mEdgeID += 2 ;
 
