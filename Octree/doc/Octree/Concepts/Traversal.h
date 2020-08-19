@@ -1,11 +1,9 @@
-#ifndef DOCUMENTATION_TRAVERSAL_H
-#define DOCUMENTATION_TRAVERSAL_H
 
 /*!
  * \ingroup PkgOctreeConcepts
  * \cgalConcept
  *
- * \brief Provides the functions needed to traverse the nodes of an octree using a Traversal_iterator.
+ * \brief A Traversal provides the functions needed to traverse the nodes of an octree using a Traversal_iterator.
  *
  * A traversal is used to define a specific walk of the tree (e.g. Preorder, Postorder) iteratively
  * rather than recursively.
@@ -45,4 +43,3 @@ public:
 
 };
 
-#endif //DOCUMENTATION_TRAVERSAL_H
