@@ -103,16 +103,16 @@ public:
    *
    * This lookup table may also be helpful:
    *
-   * | Child                 | Enum                  | bitset | number |
-   * | --------------------- | --------------------- | ------ | ------ |
-   * | left, bottom, back    | LEFT_BOTTOM_BACK      | 000    | 0      |
-   * | right, bottom, back   | RIGHT_BOTTOM_BACK     | 001    | 1      |
-   * | left, top, back       | LEFT_TOP_BACK         | 010    | 2      |
-   * | right, top, back      | RIGHT_TOP_BACK        | 011    | 3      |
-   * | left, bottom, front   | LEFT_BOTTOM_FRONT     | 100    | 4      |
-   * | right, bottom, front  | RIGHT_BOTTOM_FRONT    | 101    | 5      |
-   * | left, top, front      | LEFT_TOP_FRONT        | 110    | 6      |
-   * | right, top, front     | RIGHT_TOP_FRONT       | 111    | 7      |
+   * | Child                 | bitset | number | Enum                  |
+   * | --------------------- | ------ | ------ | --------------------- |
+   * | left, bottom, back    | 000    | 0      | LEFT_BOTTOM_BACK      |
+   * | right, bottom, back   | 001    | 1      | RIGHT_BOTTOM_BACK     |
+   * | left, top, back       | 010    | 2      | LEFT_TOP_BACK         |
+   * | right, top, back      | 011    | 3      | RIGHT_TOP_BACK        |
+   * | left, bottom, front   | 100    | 4      | LEFT_BOTTOM_FRONT     |
+   * | right, bottom, front  | 101    | 5      | RIGHT_BOTTOM_FRONT    |
+   * | left, top, front      | 110    | 6      | LEFT_TOP_FRONT        |
+   * | right, top, front     | 111    | 7      | RIGHT_TOP_FRONT       |
    */
   enum Child {
     LEFT_BOTTOM_BACK,
@@ -146,7 +146,16 @@ public:
    *         4 *  |
    *              * 2
    *
-   * \todo
+   * This lookup table may also be helpful:
+   *
+   * | Direction | bitset | number | Enum  |
+   * | --------- | ------ | ------ | ----- |
+   * | `-x`      | 000    | 0      | LEFT  |
+   * | `+x`      | 001    | 1      | RIGHT |
+   * | `-y`      | 010    | 2      | DOWN  |
+   * | `+y`      | 011    | 3      | UP    |
+   * | `-z`      | 100    | 4      | BACK  |
+   * | `+z`      | 101    | 5      | FRONT |
    */
   enum Direction {
     LEFT,
