@@ -77,8 +77,13 @@ public:
    */
   typedef boost::iterator_range <Point_index> Point_range;
 
-  // TODO: There's probably a better name for this
-  // TODO: Should I use an enum class?
+  // TODO: Should I use enum classes?
+
+  /*!
+   * \brief the index of a node relative to its parent (a position defined by the corners of a cube)
+   *
+   * \todo
+   */
   enum Child {
     LEFT_BOTTOM_BACK,
     RIGHT_BOTTOM_BACK,
@@ -90,6 +95,11 @@ public:
     RIGHT_TOP_FRONT
   };
 
+  /*!
+   * \brief two directions along each axis in cartesian space, relative to a node
+   *
+   * \todo
+   */
   enum Direction {
     LEFT,
     RIGHT,

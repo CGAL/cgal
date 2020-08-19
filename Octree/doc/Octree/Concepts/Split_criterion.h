@@ -9,7 +9,6 @@
  */
 struct Split_criterion {
 
-
   /// \name Operators
   /// @{
 
