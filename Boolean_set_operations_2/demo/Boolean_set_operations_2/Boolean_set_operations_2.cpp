@@ -1047,6 +1047,7 @@ private:
   bool m_grid;
   bool m_pan;
   bool m_reset;
+  bool dragOver;
 
   bool m_blue_union;
   bool m_red_union;
@@ -1526,6 +1527,7 @@ MainWindow::MainWindow() :
   m_pan(false),
   m_grid(false),
   m_reset(false),
+  dragOver(false),
   m_state_num(0)
 {
   CGAL::set_error_handler  (error_handler);
@@ -1820,6 +1822,7 @@ MainWindow::MainWindow() :
   xAxis->setPen(*dashedLine);
   yAxis->setLine(0, -100000000000000, 0, 100000000000000);
   yAxis->setPen(*dashedLine);
+  
 
   // m_scene.addLine(0,-10000000,0,10000000, QPen(Qt::black));
   // m_scene.addLine(-15500000,0,15500000,0, QPen(Qt::black));
@@ -2179,7 +2182,8 @@ void MainWindow::on_VisibleHeader_toggled(bool a_check)
 		showBrown->setChecked(true);
 		showYellow->setChecked(true);
 		showMagenta->setChecked(true);
-		showAqua->setChecked(true);
+    showAqua->setChecked(true);
+    drawBlue->setChecked(true);
 	} 
   else
   {
@@ -3676,19 +3680,18 @@ void MainWindow::on_actionAddColor_triggered()
 
     line10 -> setVisible(true);
 
-    line1 -> setGeometry(QRect(115,0,7,155));
-      line2 -> setGeometry(QRect(155,0,7,155));
-      line3 -> setGeometry(QRect(200,0,7,155));
-      line4 -> setGeometry(QRect(245,0,7,155));
-      line5 -> setGeometry(QRect(290,0,7,155));
-      line6 -> setGeometry(QRect(335,0,7,155));
-      line06 -> setGeometry(QRect(425,0,7,155));
-      line061 -> setGeometry(QRect(470,0,7,155));
-      line062 -> setGeometry(QRect(515,0,7,155));
-      line063 -> setGeometry(QRect(570,0,7,155));
-      line006 -> setGeometry(QRect(620,0,7,155));
-      line0007 -> setGeometry(QRect(380,0,7,155));
-      line0006 -> setGeometry(QRect(70,0,7,155));
+    line1 -> setGeometry(QRect(115,0,7,185));
+      line2 -> setGeometry(QRect(155,0,7,185));
+      line3 -> setGeometry(QRect(200,0,7,185));
+      line4 -> setGeometry(QRect(245,0,7,185));
+      line5 -> setGeometry(QRect(290,0,7,185));
+      line6 -> setGeometry(QRect(335,0,7,185));
+      line06 -> setGeometry(QRect(425,0,7,185));
+      line061 -> setGeometry(QRect(470,0,7,185));
+      line062 -> setGeometry(QRect(515,0,7,185));
+      line063 -> setGeometry(QRect(560,0,7,185));
+      line0007 -> setGeometry(QRect(380,0,7,185));
+      line0006 -> setGeometry(QRect(70,0,7,185));
 
       actionMinusColor -> setEnabled(true);
 
@@ -3715,19 +3718,18 @@ void MainWindow::on_actionAddColor_triggered()
 
     line9 -> setVisible(true);
 
-    line1 -> setGeometry(QRect(115,0,7,185));
-      line2 -> setGeometry(QRect(155,0,7,185));
-      line3 -> setGeometry(QRect(200,0,7,185));
-      line4 -> setGeometry(QRect(245,0,7,185));
-      line5 -> setGeometry(QRect(290,0,7,185));
-      line6 -> setGeometry(QRect(335,0,7,185));
-      line06 -> setGeometry(QRect(425,0,7,185));
-      line061 -> setGeometry(QRect(470,0,7,185));
-      line062 -> setGeometry(QRect(515,0,7,185));
-      line063 -> setGeometry(QRect(570,0,7,185));
-      line006 -> setGeometry(QRect(620,0,7,185));
-      line0007 -> setGeometry(QRect(380,0,7,185));
-      line0006 -> setGeometry(QRect(70,0,7,185));
+    line1 -> setGeometry(QRect(115,0,7,215));
+      line2 -> setGeometry(QRect(155,0,7,215));
+      line3 -> setGeometry(QRect(200,0,7,215));
+      line4 -> setGeometry(QRect(245,0,7,215));
+      line5 -> setGeometry(QRect(290,0,7,215));
+      line6 -> setGeometry(QRect(335,0,7,215));
+      line06 -> setGeometry(QRect(425,0,7,215));
+      line061 -> setGeometry(QRect(470,0,7,215));
+      line062 -> setGeometry(QRect(515,0,7,215));
+      line063 -> setGeometry(QRect(560,0,7,215));
+      line0007 -> setGeometry(QRect(380,0,7,215));
+      line0006 -> setGeometry(QRect(70,0,7,215));
 
       
       actionMinusColor -> setText("Remove Yellow");
@@ -3754,19 +3756,18 @@ void MainWindow::on_actionAddColor_triggered()
 
     line8 -> setVisible(true);
 
-    line1 -> setGeometry(QRect(115,0,7,215));
-      line2 -> setGeometry(QRect(155,0,7,215));
-      line3 -> setGeometry(QRect(200,0,7,215));
-      line4 -> setGeometry(QRect(245,0,7,215));
-      line5 -> setGeometry(QRect(290,0,7,215));
-      line6 -> setGeometry(QRect(335,0,7,215));
-      line06 -> setGeometry(QRect(425,0,7,215));
-      line061 -> setGeometry(QRect(470,0,7,215));
-      line062 -> setGeometry(QRect(515,0,7,215));
-      line063 -> setGeometry(QRect(570,0,7,215));
-      line006 -> setGeometry(QRect(620,0,7,215));
-      line0007 -> setGeometry(QRect(380,0,7,215));
-      line0006 -> setGeometry(QRect(70,0,7,215));
+    line1 -> setGeometry(QRect(115,0,7,245));
+      line2 -> setGeometry(QRect(155,0,7,245));
+      line3 -> setGeometry(QRect(200,0,7,245));
+      line4 -> setGeometry(QRect(245,0,7,245));
+      line5 -> setGeometry(QRect(290,0,7,245));
+      line6 -> setGeometry(QRect(335,0,7,245));
+      line06 -> setGeometry(QRect(425,0,7,245));
+      line061 -> setGeometry(QRect(470,0,7,245));
+      line062 -> setGeometry(QRect(515,0,7,245));
+      line063 -> setGeometry(QRect(560,0,7,245));
+      line0007 -> setGeometry(QRect(380,0,7,245));
+      line0006 -> setGeometry(QRect(70,0,7,245));
 
       
 
@@ -3793,19 +3794,18 @@ void MainWindow::on_actionAddColor_triggered()
 
     line7 -> setVisible(true);
 
-    line1 -> setGeometry(QRect(115,0,7,245));
-      line2 -> setGeometry(QRect(155,0,7,245));
-      line3 -> setGeometry(QRect(200,0,7,245));
-      line4 -> setGeometry(QRect(245,0,7,245));
-      line5 -> setGeometry(QRect(290,0,7,245));
-      line6 -> setGeometry(QRect(335,0,7,245));
-      line06 -> setGeometry(QRect(425,0,7,245));
-      line061 -> setGeometry(QRect(470,0,7,245));
-      line062 -> setGeometry(QRect(515,0,7,245));
-      line063 -> setGeometry(QRect(570,0,7,245));
-      line006 -> setGeometry(QRect(620,0,7,245));
-      line0007 -> setGeometry(QRect(380,0,7,245));
-      line0006 -> setGeometry(QRect(70,0,7,245));
+    line1 -> setGeometry(QRect(115,0,7,275));
+      line2 -> setGeometry(QRect(155,0,7,275));
+      line3 -> setGeometry(QRect(200,0,7,275));
+      line4 -> setGeometry(QRect(245,0,7,275));
+      line5 -> setGeometry(QRect(290,0,7,275));
+      line6 -> setGeometry(QRect(335,0,7,275));
+      line06 -> setGeometry(QRect(425,0,7,275));
+      line061 -> setGeometry(QRect(470,0,7,275));
+      line062 -> setGeometry(QRect(515,0,7,275));
+      line063 -> setGeometry(QRect(560,0,7,275));
+      line0007 -> setGeometry(QRect(380,0,7,275));
+      line0006 -> setGeometry(QRect(70,0,7,275));
 
 
     actionAddColor -> setEnabled(false);
@@ -3861,19 +3861,19 @@ void MainWindow::on_actionMinusColor_triggered()
 
     line10 -> setVisible(false);
 
-    line1 -> setGeometry(QRect(115,0,7,125));
-      line2 -> setGeometry(QRect(155,0,7,125));
-      line3 -> setGeometry(QRect(200,0,7,125));
-      line4 -> setGeometry(QRect(245,0,7,125));
-      line5 -> setGeometry(QRect(290,0,7,125));
-      line6 -> setGeometry(QRect(335,0,7,125));
-      line06 -> setGeometry(QRect(425,0,7,125));
-      line006 -> setGeometry(QRect(620,0,7,125));
-      line061 -> setGeometry(QRect(470,0,7,125));
-      line062 -> setGeometry(QRect(515,0,7,125));
-      line063 -> setGeometry(QRect(570,0,7,125));
-      line0007 -> setGeometry(QRect(380,0,7,125));
-      line0006 -> setGeometry(QRect(70,0,7,125));
+    line1 -> setGeometry(QRect(115,0,7,155));
+      line2 -> setGeometry(QRect(155,0,7,155));
+      line3 -> setGeometry(QRect(200,0,7,155));
+      line4 -> setGeometry(QRect(245,0,7,155));
+      line5 -> setGeometry(QRect(290,0,7,155));
+      line6 -> setGeometry(QRect(335,0,7,155));
+      line06 -> setGeometry(QRect(425,0,7,155));
+      line061 -> setGeometry(QRect(470,0,7,155));
+      line062 -> setGeometry(QRect(515,0,7,155));
+      line063 -> setGeometry(QRect(560,0,7,155));
+      line0007 -> setGeometry(QRect(380,0,7,155));
+      line0006 -> setGeometry(QRect(70,0,7,155));
+
 
       actionMinusColor -> setText("Bucket Removal Not Allowed");
 
@@ -3914,19 +3914,19 @@ void MainWindow::on_actionMinusColor_triggered()
 
     line9 -> setVisible(false);
 
-    line1 -> setGeometry(QRect(115,0,7,155));
-      line2 -> setGeometry(QRect(155,0,7,155));
-      line3 -> setGeometry(QRect(200,0,7,155));
-      line4 -> setGeometry(QRect(245,0,7,155));
-      line5 -> setGeometry(QRect(290,0,7,155));
-      line6 -> setGeometry(QRect(335,0,7,155));
-      line06 -> setGeometry(QRect(425,0,7,155));
-      line061 -> setGeometry(QRect(470,0,7,155));
-      line062 -> setGeometry(QRect(515,0,7,155));
-      line063 -> setGeometry(QRect(570,0,7,155));
-      line006 -> setGeometry(QRect(620,0,7,155));
-      line0007 -> setGeometry(QRect(380,0,7,155));
-      line0006 -> setGeometry(QRect(70,0,7,155));
+    line1 -> setGeometry(QRect(115,0,7,185));
+      line2 -> setGeometry(QRect(155,0,7,185));
+      line3 -> setGeometry(QRect(200,0,7,185));
+      line4 -> setGeometry(QRect(245,0,7,185));
+      line5 -> setGeometry(QRect(290,0,7,185));
+      line6 -> setGeometry(QRect(335,0,7,185));
+      line06 -> setGeometry(QRect(425,0,7,185));
+      line061 -> setGeometry(QRect(470,0,7,185));
+      line062 -> setGeometry(QRect(515,0,7,185));
+      line063 -> setGeometry(QRect(560,0,7,185));
+      line0007 -> setGeometry(QRect(380,0,7,185));
+      line0006 -> setGeometry(QRect(70,0,7,185));
+
 
       actionMinusColor -> setText("Remove Brown");  
 
@@ -3962,19 +3962,19 @@ void MainWindow::on_actionMinusColor_triggered()
 
     line8 -> setVisible(false);
 
-    line1 -> setGeometry(QRect(115,0,7,185));
-      line2 -> setGeometry(QRect(155,0,7,185));
-      line3 -> setGeometry(QRect(200,0,7,185));
-      line4 -> setGeometry(QRect(245,0,7,185));
-      line5 -> setGeometry(QRect(290,0,7,185));
-      line6 -> setGeometry(QRect(335,0,7,185));
-      line06 -> setGeometry(QRect(425,0,7,185));
-      line061 -> setGeometry(QRect(470,0,7,185));
-      line062 -> setGeometry(QRect(515,0,7,185));
-      line063 -> setGeometry(QRect(570,0,7,185));
-      line006 -> setGeometry(QRect(620,0,7,185));
-      line0007 -> setGeometry(QRect(380,0,7,185));
-      line0006 -> setGeometry(QRect(70,0,7,185));
+    line1 -> setGeometry(QRect(115,0,7,215));
+      line2 -> setGeometry(QRect(155,0,7,215));
+      line3 -> setGeometry(QRect(200,0,7,215));
+      line4 -> setGeometry(QRect(245,0,7,215));
+      line5 -> setGeometry(QRect(290,0,7,215));
+      line6 -> setGeometry(QRect(335,0,7,215));
+      line06 -> setGeometry(QRect(425,0,7,215));
+      line061 -> setGeometry(QRect(470,0,7,215));
+      line062 -> setGeometry(QRect(515,0,7,215));
+      line063 -> setGeometry(QRect(560,0,7,215));
+      line0007 -> setGeometry(QRect(380,0,7,215));
+      line0006 -> setGeometry(QRect(70,0,7,215));
+
 
       actionMinusColor -> setText("Remove Yellow");
 
@@ -4011,19 +4011,19 @@ void MainWindow::on_actionMinusColor_triggered()
 
     line7 -> setVisible(false);
 
-    line1 -> setGeometry(QRect(115,0,7,215));
-      line2 -> setGeometry(QRect(155,0,7,215));
-      line3 -> setGeometry(QRect(200,0,7,215));
-      line4 -> setGeometry(QRect(245,0,7,215));
-      line5 -> setGeometry(QRect(290,0,7,215));
-      line6 -> setGeometry(QRect(335,0,7,215));
-      line06 -> setGeometry(QRect(425,0,7,215));
-      line061 -> setGeometry(QRect(470,0,7,215));
-      line062 -> setGeometry(QRect(515,0,7,215));
-      line063 -> setGeometry(QRect(570,0,7,215));
-      line006 -> setGeometry(QRect(620,0,7,215));
-      line0007 -> setGeometry(QRect(380,0,7,215));
-      line0006 -> setGeometry(QRect(70,0,7,215));
+    line1 -> setGeometry(QRect(115,0,7,245));
+      line2 -> setGeometry(QRect(155,0,7,245));
+      line3 -> setGeometry(QRect(200,0,7,245));
+      line4 -> setGeometry(QRect(245,0,7,245));
+      line5 -> setGeometry(QRect(290,0,7,245));
+      line6 -> setGeometry(QRect(335,0,7,245));
+      line06 -> setGeometry(QRect(425,0,7,245));
+      line061 -> setGeometry(QRect(470,0,7,245));
+      line062 -> setGeometry(QRect(515,0,7,245));
+      line063 -> setGeometry(QRect(560,0,7,245));
+      line0007 -> setGeometry(QRect(380,0,7,245));
+      line0006 -> setGeometry(QRect(70,0,7,245));
+
 
       actionAddColor -> setEnabled(true);
       actionAddColor -> setText("Add a Bucket");
@@ -4466,19 +4466,18 @@ void MainWindow::on_actionNew_triggered()
   line10 -> setVisible(false);
   line11 -> setVisible(true);
 
-  line1 -> setGeometry(QRect(115,0,7,125));
-  line2 -> setGeometry(QRect(155,0,7,125));
-  line3 -> setGeometry(QRect(200,0,7,125));
-  line4 -> setGeometry(QRect(245,0,7,125));
-  line5 -> setGeometry(QRect(290,0,7,125));
-  line6 -> setGeometry(QRect(335,0,7,125));
-  line06 -> setGeometry(QRect(425,0,7,125));
-  line061 -> setGeometry(QRect(470,0,7,125));
-  line062 -> setGeometry(QRect(515,0,7,125));
-  line063 -> setGeometry(QRect(570,0,7,125));
-  line006 -> setGeometry(QRect(620,0,7,125));
-  line0007 -> setGeometry(QRect(380,0,7,125));
-  line0006 -> setGeometry(QRect(70,0,7,125));
+  line1 -> setGeometry(QRect(115,0,7,155));
+  line2 -> setGeometry(QRect(155,0,7,155));
+  line3 -> setGeometry(QRect(200,0,7,155));
+  line4 -> setGeometry(QRect(245,0,7,155));
+  line5 -> setGeometry(QRect(290,0,7,155));
+  line6 -> setGeometry(QRect(335,0,7,155));
+  line06 -> setGeometry(QRect(425,0,7,155));
+  line061 -> setGeometry(QRect(470,0,7,155));
+  line062 -> setGeometry(QRect(515,0,7,155));
+  line063 -> setGeometry(QRect(560,0,7,155));
+  line0007 -> setGeometry(QRect(380,0,7,155));
+  line0006 -> setGeometry(QRect(70,0,7,155));
 
   zoomToFit();
   modelChanged();
@@ -7809,6 +7808,7 @@ void MainWindow::resizeEvent(QResizeEvent* e)
 {
   this->graphicsView->fitInView(m_scene.sceneRect());
 }
+
 
 void MainWindow::exception_handler()
 {
