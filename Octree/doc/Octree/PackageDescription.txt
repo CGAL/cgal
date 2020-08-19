@@ -14,9 +14,9 @@
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Jackson Campolattaro, Cédric Portaneri, Tong Zhao, xxx}
 \cgalPkgDesc{
-This package ...
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
- ...  The package provides ...}
+The Octree package provides a data structure that subdivides 3d space,
+and a collection of algorithms for operating on the structure.
+}
 \cgalPkgManuals{Chapter_Octree,PkgOctreeRef}
 \cgalPkgSummaryEnd
 
@@ -28,10 +28,17 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 \cgalPkgDescriptionEnd
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+\todo * Thumbnail
+
+\todo * Windows demo
 
 \cgalClassifedRefPages
 
+\cgalCRPSection{Concepts}
+- `Traversal`
+- `Split_criterion`
+
 \cgalCRPSection{Classes}
-- ` CGAL::Octree::Octree<class PointRange, class PointMap>`
+- `CGAL::Octree::Octree<class PointRange, class PointMap>`
+- `CGAL::Octree::Node<class Point_index>`
 */
