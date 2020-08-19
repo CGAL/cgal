@@ -82,6 +82,33 @@ public:
   /*!
    * \brief the index of a node relative to its parent (a position defined by the corners of a cube)
    *
+   * Corners are mapped to numbers as 3-bit integers, in "zyx" order.
+   *
+   * For example:
+   * > right-top-back --> x=1, y=1, z=0 --> zyx = 011 --> 3
+   *
+   * The following diagram may be a useful reference:
+   *
+   *           6          7
+   *            +--------+
+   *           /|       /|
+   *          / |      / |
+   *       2 +--------+ 3|
+   *         |  |     |  |
+   *         |  +-----|--+
+   *         | / 4    | / 5
+   *         |/       |/
+   *         +--------+
+   *       0           1
+   *
+   *       y+
+   *       *
+   *       |   z+
+   *       |  *
+   *       | /
+   *       |/
+   *       +--------* x+
+   *
    * \todo
    */
   enum Child {
