@@ -79,23 +79,31 @@ public:
     typedef typename Kernel::Point_2               Point_2;
 
   protected:
-    Line_2    l;                // The line that supports the segment.
+    mutable Line_2    l;        // The line that supports the segment.
+
     Point_2   ps;               // The source point of the segment.
     Point_2   pt;               // The target point of the segment.
     bool      is_pt_max;        // Is the target (lexicographically) larger
                                 // than the source.
-    bool      is_vert;          // Is this a vertical segment.
+
+    mutable enum                // Line verticality
+    {
+      UNKNOWN,                  // If the line is not computed
+      REGULAR,                  // If the line is computed and not vertical
+      VERTICAL                  // If the line is computed and vertical
+    }         is_vert;
+
     bool      is_degen;         // Is the segment degenerate (a single point).
 
   public:
     /*! Default constructor. */
-    _Segment_cached_2() : is_vert(false), is_degen(true) {}
+    _Segment_cached_2() : is_vert(UNKNOWN), is_degen(true) {}
 
     /*! Constructor from a segment.
      * \param seg The segment.
      * \pre The segment is not degenerate.
      */
-    _Segment_cached_2(const Segment_2& seg)
+    _Segment_cached_2(const Segment_2& seg) : is_vertex(UNKNOWN)
     {
       Kernel   kernel;
 
@@ -111,9 +119,6 @@ public:
 
       CGAL_precondition_msg (! is_degen,
                              "Cannot construct a degenerate segment.");
-
-      l = kernel.construct_line_2_object()(seg);
-      is_vert = kernel.is_vertical_2_object()(seg);
     }
 
     /*!
@@ -124,7 +129,8 @@ public:
      */
     _Segment_cached_2(const Point_2& source, const Point_2& target) :
       ps(source),
-      pt(target)
+      pt(target),
+      is_vert(UNKNOWN)
     {
       Kernel   kernel;
 
@@ -134,9 +140,6 @@ public:
 
       CGAL_precondition_msg(! is_degen,
                             "Cannot construct a degenerate segment.");
-
-      l = kernel.construct_line_2_object()(source, target);
-      is_vert = kernel.is_vertical_2_object()(l);
     }
 
     /*!
@@ -161,7 +164,7 @@ public:
                                                 Has_exact_division())
         );
 
-      is_vert = kernel.is_vertical_2_object()(l);
+      is_vert = (kernel.is_vertical_2_object()(l) ? VERTICAL : REGULAR);
 
       Comparison_result  res = kernel.compare_xy_2_object()(ps, pt);
       is_degen = (res == EQUAL);
@@ -194,7 +197,7 @@ public:
                             "Cannot construct a degenerate segment.");
 
       l = kernel.construct_line_2_object()(seg);
-      is_vert = kernel.is_vertical_2_object()(seg);
+      is_vert = (kernel.is_vertical_2_object()(seg) ? VERTICAL : REGULAR);
 
       return (*this);
     }
@@ -245,12 +248,17 @@ public:
       else ps = p;
     }
 
-    /*! Obtain the supporting line.
+    /*! Obtain the supporting line (compute it first if needed).
      */
     const Line_2& line() const
     {
-      CGAL_precondition(! is_degen);
-      return (l);
+      if (is_vert == UNKNOWN)
+      {
+        Kernel kernel;
+        l = kernel.construct_line_2_object()(ps, pt);
+        is_vert = (kernel.is_vertical_2_object()(l) ? VERTICAL : REGULAR);
+      }
+      return l;
     }
 
     /*! Determine whether the curve is vertical.
@@ -258,7 +266,7 @@ public:
     bool is_vertical() const
     {
       CGAL_precondition(! is_degen);
-      return (is_vert);
+      return (is_vert == VERTICAL);
     }
 
     /*! Determine whether the curve is directed lexicographic from left to right
