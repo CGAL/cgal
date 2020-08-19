@@ -13,10 +13,7 @@
 \cgalPkgPicture{octree_thumbnail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Jackson Campolattaro, Cédric Portaneri, Tong Zhao, xxx}
-\cgalPkgDesc{
-The Octree package provides a data structure that subdivides 3d space,
-and a collection of algorithms for operating on the structure.
-}
+\cgalPkgDesc{The Octree package provides a data structure that subdivides 3d space, and a collection of algorithms for operating on the structure.}
 \cgalPkgManuals{Chapter_Octree,PkgOctreeRef}
 \cgalPkgSummaryEnd
 
