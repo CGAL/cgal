@@ -15,8 +15,8 @@
 // model itself
 
 // It is the responsibility of the including file to correctly set the
-// macros CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME, CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME 
-// and optionally CGAL_GRAPH_TRAITS_INHERITANCE_TEMPLATE_PARAMS. 
+// macros CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME, CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME
+// and optionally CGAL_GRAPH_TRAITS_INHERITANCE_TEMPLATE_PARAMS.
 // They are #undefed at the end of this file.
 
 /**
