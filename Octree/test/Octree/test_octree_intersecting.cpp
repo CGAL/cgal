@@ -44,13 +44,16 @@ int main(void) {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
     std::vector<const Octree::Node *> nodes{};
-
+    octree.intersecting_nodes(Point{1, 1, 1},
+                              std::back_inserter(nodes));
   }
 
   // Intersection with a sphere
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
     std::vector<const Octree::Node *> nodes{};
+    octree.intersecting_nodes(Kernel::Sphere_3(Point{1, 1, 1}, 4.0),
+                              std::back_inserter(nodes));
 
   }
 
@@ -58,6 +61,8 @@ int main(void) {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
     std::vector<const Octree::Node *> nodes{};
+    octree.intersecting_nodes(Kernel::Ray_3(Point{1, 1, 1}, Point{0, 0, 0}),
+                              std::back_inserter(nodes));
 
   }
 
