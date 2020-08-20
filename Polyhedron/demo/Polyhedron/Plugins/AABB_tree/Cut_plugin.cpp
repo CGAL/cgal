@@ -232,301 +232,6 @@ typedef QMap<QObject*, Facet_sm_tree*>                   Facet_sm_trees;
 typedef QMap<QObject*, Edge_sm_tree*>                    Edge_sm_trees;
 
 
-
-class Q_DECL_EXPORT Scene_aabb_item : public CGAL::Three::Scene_item_rendering_helper
-{
-  Q_OBJECT
-public:
-  Scene_aabb_item(const Facet_sm_tree& tree)
-  {
-      traversal(tree.size(), *tree.root_node(), 0);
-      lvlSlider = new QSlider(Qt::Horizontal);
-      lvlSlider->setMinimum(0);
-      lvlSlider->setMaximum(boxes.size()-1);
-      lvlSlider->setValue(0);
-      const CGAL::Bbox_3 bbox = tree.bbox();
-      setBbox(Bbox(bbox.xmin(),
-                  bbox.ymin(),
-                  bbox.zmin(),
-                  bbox.xmax(),
-                  bbox.ymax(),
-                  bbox.zmax()));
-      qDebug()<<this->name()<<" at creation: "<<bbox.xmin()<<", "<<bbox.xmax()<<", "<<bbox.ymin()<<", "<<bbox.ymax()<<", "
-                <<bbox.zmin()<<", "<<bbox.zmax();
-      tree_size = tree.size();
-      is_tree_empty = tree.empty();
-      setEdgeContainer(0, new Ec(Vi::PROGRAM_NO_SELECTION, false));
-      for(auto v : CGAL::QGLViewer::QGLViewerPool())
-      {
-        CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
-        initGL(viewer);
-      }
-      invalidateOpenGLBuffers();
-  }
-
-    ~Scene_aabb_item()
-    {
-    }
-
-  QMenu* contextMenu()
-  {
-    const char* prop_name = "Menu modified by Scene_aabb_item.";
-
-    QMenu* menu = Scene_item::contextMenu();
-    bool menuChanged = menu->property(prop_name).toBool();
-    if (!menuChanged) {
-      QMenu *container = new QMenu(tr("Tree level"));
-      QWidgetAction *sliderAction = new QWidgetAction(0);
-      connect(lvlSlider, &QSlider::valueChanged, this,
-              [this](){
-        invalidateOpenGLBuffers();
-        redraw();
-      });
-      sliderAction->setDefaultWidget(lvlSlider);
-      container->addAction(sliderAction);
-      menu->addMenu(container);
-      menu->setProperty(prop_name, true);
-    }
-    return menu;
-  }
-
-
-  bool isFinite() const { return false; }
-  bool isEmpty() const { return is_tree_empty; }
-  //computed in constructor
-  void compute_bbox() const {}
-
-  Scene_aabb_item* clone() const {
-    return 0;
-  }
-
-  QString toolTip() const {
-    return
-      tr("<p><b>%1</b> (mode: %2, color: %3)<br />"
-         "<i>AABB_tree</i></p>"
-         "<p>Number of nodes: %4</p>")
-      .arg(this->name())
-      .arg(this->renderingModeName())
-      .arg(this->color().name())
-      .arg(tree_size);
-  }
-
-
-  // Indicate if rendering mode is supported
-  bool supportsRenderingMode(RenderingMode m) const {
-    return (m == Wireframe);
-  }
-
-  void invalidateOpenGLBuffers()
-  {
-      setBuffersFilled(false);
-      getEdgeContainer(0)->reset_vbos(ALL);
-  }
-private:
-   std::size_t tree_size;
-   bool is_tree_empty;
-   mutable  std::vector<float> positions_lines;
-   mutable std::size_t nb_lines;
-   std::vector<std::vector<Bbox> > boxes;
-   QSlider* lvlSlider;
-
-
-   void
-   traversal(const std::size_t nb_primitives,
-             const CGAL::AABB_node<Facet_sm_traits>& node,
-             int lvl)
-   {
-     //traversed lvl by lvl, so one push_back should be enough.
-     if(boxes.size() <= lvl )
-       boxes.push_back(std::vector<Bbox>());
-     CGAL_assertion(boxes.size() > lvl);
-     boxes[lvl].push_back(node.bbox());
-
-     // Recursive traversal
-     switch(nb_primitives)
-     {
-     case 2:
-       break;
-     case 3:
-       traversal(2, node.right_child(), lvl +1);
-       break;
-     default:
-       traversal(nb_primitives/2, node.left_child(),lvl +1);
-       traversal(nb_primitives-nb_primitives/2, node.right_child(), lvl +1);
-     }
-   }
-
-
-public:
-    void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
-    {
-      //to put in a computeElements() function.{
-      positions_lines.clear();
-      const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
-      CGAL::AABB_drawing_traits<Facet_sm_primitive,  CGAL::AABB_node<Facet_sm_traits> > traits;
-      for(int i=0; i<3; ++i)
-        traits.offset[i] = offset[i];
-      traits.v_edges = &positions_lines;
-      for(const auto& bb : boxes[lvlSlider->value()])
-        traits.gl_draw(bb);
-      nb_lines = positions_lines.size();
-      //}
-      Ec* ec = getEdgeContainer(0);
-        ec->allocate(Ec::Vertices,
-                     positions_lines.data(),
-                     static_cast<int>(positions_lines.size()*sizeof(float)));
-        ec->initializeBuffers(viewer);
-        ec->setFlatDataSize(nb_lines);
-        positions_lines.clear();
-        positions_lines.shrink_to_fit();
-        setBuffersFilled(true);
-    }
-    void drawEdges(CGAL::Three::Viewer_interface* viewer) const
-    {
-      if ( getBuffersFilled() &&
-           ! getBuffersInit(viewer))
-      {
-        initializeBuffers(viewer);
-        setBuffersInit(viewer, true);
-      }
-      if(!getBuffersFilled())
-      {
-        initializeBuffers(viewer);
-      }
-        Ec* ec = getEdgeContainer(0);
-        ec->setColor(this->color());
-        ec->draw(viewer, true);
-    }
-}; // end class Scene_aabb_item
-
-class Q_DECL_EXPORT Scene_edges_item : public CGAL::Three::Scene_item_rendering_helper
-{
-  Q_OBJECT
-public:
-    Scene_edges_item()
-    {
-        positions_lines.resize(0);
-        setEdgeContainer(0, new Ec(Vi::PROGRAM_NO_SELECTION, false));
-    }
-  ~Scene_edges_item()
-  {
-  }
-    bool isFinite() const { return true; }
-  bool isEmpty() const { return edges.empty(); }
-  void compute_bbox() const {
-    if(isEmpty())
-    {
-      setBbox(Bbox());
-      return;
-    }
-    CGAL::Bbox_3 bbox = edges.begin()->bbox();
-    for(size_t i = 1, end = edges.size(); i < end; ++i) {
-      bbox = bbox + edges[i].bbox();
-    }
-    setBbox(Bbox(bbox.xmin(),
-                bbox.ymin(),
-                bbox.zmin(),
-                bbox.xmax(),
-                bbox.ymax(),
-                bbox.zmax()));
-  }
-  void invalidateOpenGLBuffers()
-  {
-   setBuffersFilled(false);
-   getEdgeContainer(0)->reset_vbos(ALL);
-   compute_bbox();
-  }
-
-  Scene_edges_item* clone() const {
-    Scene_edges_item* item = new Scene_edges_item();
-    item->edges = edges;
-    return item;
-  }
-
-  QString toolTip() const {
-    return
-      tr("<p><b>%1</b> (mode: %2, color: %3)<br />"
-         "<i>Edges</i></p>"
-         "<p>Number of edges: %4</p>")
-      .arg(this->name())
-      .arg(this->renderingModeName())
-      .arg(this->color().name())
-      .arg(edges.size());
-  }
-
-  // Indicate if rendering mode is supported
-  bool supportsRenderingMode(RenderingMode m) const {
-    return (m == Wireframe);
-  }
-
-
-
-  bool save(std::ostream& os) const
-  {
-    os.precision(17);
-    for(size_t i = 0, end = edges.size(); i < end; ++i){
-      os << "2 " << edges[i].source() << " " <<  edges[i].target() << "\n";
-    }
-    return true;
-  }
-
-public:
-  std::vector<Simple_kernel::Segment_3> edges;
-private:
-    mutable std::vector<float> positions_lines;
-  mutable std::size_t nb_lines;
-    void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
-    {
-      Ec* ec = getEdgeContainer(0);
-      ec->initializeBuffers(viewer);
-      ec->setFlatDataSize(nb_lines);
-      positions_lines.clear();
-      positions_lines.shrink_to_fit();
-    }
-    void computeElements() const
-    {
-       const CGAL::qglviewer::Vec v_offset = Three::mainViewer()->offset();
-       Simple_kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
-       QApplication::setOverrideCursor(Qt::WaitCursor);
-       positions_lines.clear();
-
-       for(size_t i = 0, end = edges.size();
-           i < end; ++i)
-       {
-         const Simple_kernel::Point_3& a = edges[i].source()+offset;
-         const Simple_kernel::Point_3& b = edges[i].target()+offset;
-         positions_lines.push_back(a.x()); positions_lines.push_back(a.y()); positions_lines.push_back(a.z());
-         positions_lines.push_back(b.x()); positions_lines.push_back(b.y()); positions_lines.push_back(b.z());
-       }
-       getEdgeContainer(0)->allocate(
-             Ec::Vertices,
-             positions_lines.data(),
-             static_cast<int>(positions_lines.size()*sizeof(float)));
-       nb_lines = positions_lines.size();
-       setBuffersFilled(true);
-       QApplication::restoreOverrideCursor();
-    }
-    void drawEdges(CGAL::Three::Viewer_interface* viewer) const
-    {
-      if(!isInit(viewer))
-        initGL(viewer);
-      if ( getBuffersFilled() &&
-           ! getBuffersInit(viewer))
-      {
-        initializeBuffers(viewer);
-        setBuffersInit(viewer, true);
-      }
-      if(!getBuffersFilled())
-      {
-        computeElements();
-        initializeBuffers(viewer);
-      }
-      Ec* ec = getEdgeContainer(0);
-      ec->setColor(this->color());
-      ec->draw(viewer, true);
-    }
-}; // end class Scene_edges_item
-
 class Q_DECL_EXPORT Scene_aabb_plane_item : public Scene_plane_item
 {
   Q_OBJECT
@@ -841,6 +546,359 @@ private:
     getEdgeContainer(0)->setFlatDataSize(positions_lines.size());
   }
 };
+
+
+class Q_DECL_EXPORT Scene_aabb_item : public CGAL::Three::Scene_item_rendering_helper
+{
+  Q_OBJECT
+public:
+  Scene_aabb_item(const Facet_sm_tree& tree)
+  {
+    filter_plane = false;
+    tree_size = tree.size();
+    is_tree_empty = tree.empty();
+    traversal(tree.size(), *tree.root_node(), 0);
+    lvlSlider = new QSlider(Qt::Horizontal);
+    lvlSlider->setMinimum(-1);
+    lvlSlider->setMaximum(boxes.size()-1);
+    lvlSlider->setValue(-1);
+    lvlSlider->setPageStep(1);
+    const CGAL::Bbox_3 bbox = tree.bbox();
+    setBbox(Bbox(bbox.xmin(),
+                 bbox.ymin(),
+                 bbox.zmin(),
+                 bbox.xmax(),
+                 bbox.ymax(),
+                 bbox.zmax()));
+    qDebug()<<this->name()<<" at creation: "<<bbox.xmin()<<", "<<bbox.xmax()<<", "<<bbox.ymin()<<", "<<bbox.ymax()<<", "
+           <<bbox.zmin()<<", "<<bbox.zmax();
+    setEdgeContainer(0, new Ec(Vi::PROGRAM_NO_SELECTION, false));
+    for(auto v : CGAL::QGLViewer::QGLViewerPool())
+    {
+      CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
+      initGL(viewer);
+    }
+    invalidateOpenGLBuffers();
+  }
+
+    ~Scene_aabb_item()
+    {
+    }
+
+  QMenu* contextMenu()
+  {
+    const char* prop_name = "Menu modified by Scene_aabb_item.";
+
+    QMenu* menu = Scene_item::contextMenu();
+    bool menuChanged = menu->property(prop_name).toBool();
+    if (!menuChanged) {
+
+      QAction* filterAction = new QAction(tr("Only Intersected Boxes"));
+      filterAction->setCheckable(true);
+      filterAction->setChecked(false);
+      connect(filterAction, &QAction::toggled, this, [this](bool b){
+        if(b)
+        {
+          filter_plane = true;
+          invalidateOpenGLBuffers();
+          redraw();
+        }
+        else
+        {
+          filter_plane = false;
+          invalidateOpenGLBuffers();
+          redraw();
+        }
+      });
+      menu->addAction(filterAction);
+
+      QMenu *container = new QMenu(tr("Tree level"));
+      QWidgetAction *sliderAction = new QWidgetAction(0);
+      connect(lvlSlider, &QSlider::valueChanged, this,
+              [this](){
+        invalidateOpenGLBuffers();
+        redraw();
+      });
+      sliderAction->setDefaultWidget(lvlSlider);
+
+      container->addAction(sliderAction);
+      menu->addMenu(container);
+
+
+      menu->setProperty(prop_name, true);
+    }
+    return menu;
+  }
+
+
+  bool isFinite() const { return false; }
+  bool isEmpty() const { return is_tree_empty; }
+  //computed in constructor
+  void compute_bbox() const {}
+
+  Scene_aabb_item* clone() const {
+    return 0;
+  }
+
+  QString toolTip() const {
+    return
+      tr("<p><b>%1</b> (mode: %2, color: %3)<br />"
+         "<i>AABB_tree</i></p>"
+         "<p>Number of nodes: %4</p>")
+      .arg(this->name())
+      .arg(this->renderingModeName())
+      .arg(this->color().name())
+      .arg(tree_size);
+  }
+
+
+  // Indicate if rendering mode is supported
+  bool supportsRenderingMode(RenderingMode m) const {
+    return (m == Wireframe);
+  }
+
+  void invalidateOpenGLBuffers()
+  {
+      setBuffersFilled(false);
+      getEdgeContainer(0)->reset_vbos(ALL);
+  }
+
+  void update_tree(Scene_aabb_plane_item* plane_item)const
+  {
+    positions_lines.clear();
+    const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
+    CGAL::AABB_drawing_traits<Facet_sm_primitive,  CGAL::AABB_node<Facet_sm_traits> > traits;
+    for(int i=0; i<3; ++i)
+      traits.offset[i] = offset[i];
+    traits.v_edges = &positions_lines;
+    if(lvlSlider->value() != -1)
+    {
+      for(const auto& bb : boxes[lvlSlider->value()])
+      {
+        if(!plane_item || (!filter_plane) || CGAL::do_intersect(plane_item->plane(offset), bb))
+          traits.gl_draw(bb);
+      }
+    }
+    else
+    {
+      for(std::size_t i=0; i<boxes.size(); ++i)
+      {
+        for(const auto& bb : boxes[i])
+        {
+          if(!plane_item || (!filter_plane) || CGAL::do_intersect(plane_item->plane(offset), bb))
+            traits.gl_draw(bb);
+        }
+      }
+    }
+    nb_lines = positions_lines.size();
+  }
+
+private:
+   std::size_t tree_size;
+   bool is_tree_empty;
+   bool filter_plane;
+   mutable  std::vector<float> positions_lines;
+   mutable std::size_t nb_lines;
+   std::vector<std::vector<Bbox> > boxes;
+   QSlider* lvlSlider;
+
+   void
+   traversal(const std::size_t nb_primitives,
+             const CGAL::AABB_node<Facet_sm_traits>& node,
+             int lvl)
+   {
+     //traversed lvl by lvl, so one push_back should be enough.
+     if(boxes.size() <= lvl )
+       boxes.push_back(std::vector<Bbox>());
+     CGAL_assertion(boxes.size() > lvl);
+     boxes[lvl].push_back(node.bbox());
+
+     // Recursive traversal
+     switch(nb_primitives)
+     {
+     case 2:
+       break;
+     case 3:
+       traversal(2, node.right_child(), lvl +1);
+       break;
+     default:
+       traversal(nb_primitives/2, node.left_child(),lvl +1);
+       traversal(nb_primitives-nb_primitives/2, node.right_child(), lvl +1);
+     }
+   }
+
+   Scene_aabb_plane_item* get_plane_item()const
+   {
+     Scene_aabb_plane_item* plane_item = nullptr;
+     if(filter_plane)
+       for(int i=0; i< CGAL::Three::Three::scene()->numberOfEntries(); ++i)
+       {
+         plane_item = qobject_cast<Scene_aabb_plane_item*>(CGAL::Three::Three::scene()->item(i));
+         if(plane_item)
+         {
+           return plane_item;
+         }
+       }
+     return nullptr;
+   }
+
+
+public:
+    void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
+    {
+
+      Ec* ec = getEdgeContainer(0);
+        ec->allocate(Ec::Vertices,
+                     positions_lines.data(),
+                     static_cast<int>(positions_lines.size()*sizeof(float)));
+        ec->initializeBuffers(viewer);
+        ec->setFlatDataSize(nb_lines);
+        positions_lines.clear();
+        positions_lines.shrink_to_fit();
+        setBuffersFilled(true);
+    }
+
+    void drawEdges(CGAL::Three::Viewer_interface* viewer) const
+    {
+      if(!getBuffersFilled())
+      {
+        update_tree(get_plane_item());
+        initializeBuffers(viewer);
+      }
+        Ec* ec = getEdgeContainer(0);
+        ec->setColor(this->color());
+        ec->draw(viewer, true);
+    }
+
+}; // end class Scene_aabb_item
+
+class Q_DECL_EXPORT Scene_edges_item : public CGAL::Three::Scene_item_rendering_helper
+{
+  Q_OBJECT
+public:
+    Scene_edges_item()
+    {
+        positions_lines.resize(0);
+        setEdgeContainer(0, new Ec(Vi::PROGRAM_NO_SELECTION, false));
+    }
+  ~Scene_edges_item()
+  {
+  }
+    bool isFinite() const { return true; }
+  bool isEmpty() const { return edges.empty(); }
+  void compute_bbox() const {
+    if(isEmpty())
+    {
+      setBbox(Bbox());
+      return;
+    }
+    CGAL::Bbox_3 bbox = edges.begin()->bbox();
+    for(size_t i = 1, end = edges.size(); i < end; ++i) {
+      bbox = bbox + edges[i].bbox();
+    }
+    setBbox(Bbox(bbox.xmin(),
+                bbox.ymin(),
+                bbox.zmin(),
+                bbox.xmax(),
+                bbox.ymax(),
+                bbox.zmax()));
+  }
+  void invalidateOpenGLBuffers()
+  {
+   setBuffersFilled(false);
+   getEdgeContainer(0)->reset_vbos(ALL);
+   compute_bbox();
+  }
+
+  Scene_edges_item* clone() const {
+    Scene_edges_item* item = new Scene_edges_item();
+    item->edges = edges;
+    return item;
+  }
+
+  QString toolTip() const {
+    return
+      tr("<p><b>%1</b> (mode: %2, color: %3)<br />"
+         "<i>Edges</i></p>"
+         "<p>Number of edges: %4</p>")
+      .arg(this->name())
+      .arg(this->renderingModeName())
+      .arg(this->color().name())
+      .arg(edges.size());
+  }
+
+  // Indicate if rendering mode is supported
+  bool supportsRenderingMode(RenderingMode m) const {
+    return (m == Wireframe);
+  }
+
+
+
+  bool save(std::ostream& os) const
+  {
+    os.precision(17);
+    for(size_t i = 0, end = edges.size(); i < end; ++i){
+      os << "2 " << edges[i].source() << " " <<  edges[i].target() << "\n";
+    }
+    return true;
+  }
+
+public:
+  std::vector<Simple_kernel::Segment_3> edges;
+private:
+    mutable std::vector<float> positions_lines;
+  mutable std::size_t nb_lines;
+    void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
+    {
+      Ec* ec = getEdgeContainer(0);
+      ec->initializeBuffers(viewer);
+      ec->setFlatDataSize(nb_lines);
+      positions_lines.clear();
+      positions_lines.shrink_to_fit();
+    }
+    void computeElements() const
+    {
+       const CGAL::qglviewer::Vec v_offset = Three::mainViewer()->offset();
+       Simple_kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
+       QApplication::setOverrideCursor(Qt::WaitCursor);
+       positions_lines.clear();
+
+       for(size_t i = 0, end = edges.size();
+           i < end; ++i)
+       {
+         const Simple_kernel::Point_3& a = edges[i].source()+offset;
+         const Simple_kernel::Point_3& b = edges[i].target()+offset;
+         positions_lines.push_back(a.x()); positions_lines.push_back(a.y()); positions_lines.push_back(a.z());
+         positions_lines.push_back(b.x()); positions_lines.push_back(b.y()); positions_lines.push_back(b.z());
+       }
+       getEdgeContainer(0)->allocate(
+             Ec::Vertices,
+             positions_lines.data(),
+             static_cast<int>(positions_lines.size()*sizeof(float)));
+       nb_lines = positions_lines.size();
+       setBuffersFilled(true);
+       QApplication::restoreOverrideCursor();
+    }
+    void drawEdges(CGAL::Three::Viewer_interface* viewer) const
+    {
+      if(!isInit(viewer))
+        initGL(viewer);
+      if ( getBuffersFilled() &&
+           ! getBuffersInit(viewer))
+      {
+        initializeBuffers(viewer);
+        setBuffersInit(viewer, true);
+      }
+      if(!getBuffersFilled())
+      {
+        computeElements();
+        initializeBuffers(viewer);
+      }
+      Ec* ec = getEdgeContainer(0);
+      ec->setColor(this->color());
+      ec->draw(viewer, true);
+    }
+}; // end class Scene_edges_item
 
 using namespace CGAL::Three;
 class Polyhedron_demo_cut_plugin :
@@ -1341,6 +1399,18 @@ void Polyhedron_demo_cut_plugin::cut()
 {
   if(!plane_item)
     return;
+
+  for(std::size_t id =0; id < CGAL::Three::Three::scene()->numberOfEntries(); ++id)
+  {
+    Scene_item* item = CGAL::Three::Three::scene()->item(id);
+    Scene_aabb_item* aabb_item = qobject_cast<Scene_aabb_item*>(item);
+    if(!aabb_item){
+      continue;
+    }
+    aabb_item->invalidateOpenGLBuffers();
+    break;
+  }
+
   switch(plane_item->cutPlaneType())
   {
   case Scene_aabb_plane_item::CUT_SEGMENTS:
