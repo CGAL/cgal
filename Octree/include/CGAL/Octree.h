@@ -716,6 +716,17 @@ private: // functions :
   template<typename Query, typename Node_output_iterator>
   void intersecting_nodes_recursive(const Query &query, const Node &node, Node_output_iterator output) const {
 
+    // Check if the current node intersects with the query
+    if (CGAL::do_intersect(query, bbox(node))) {
+
+      // if this node is a leaf, than it's considered an intersecting node
+      if (node.is_leaf()) {
+        *output++ = &node;
+        return;
+      }
+
+
+    }
   }
 
 }; // end class Octree
