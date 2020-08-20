@@ -499,7 +499,7 @@ public:
 
   template<typename Query, typename Node_output_iterator>
   void intersecting_nodes(const Query &query, Node_output_iterator output) const {
-
+    intersecting_nodes_recursive(query, root(), output);
   }
 
   /// @}
