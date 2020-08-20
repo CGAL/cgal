@@ -43,14 +43,22 @@ int main(void) {
   // Intersection with a point (not particularly useful)
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
+    // Get a list of nodes intersected
     std::vector<const Octree::Node *> nodes{};
     octree.intersecting_nodes(Point{1, 1, 1},
                               std::back_inserter(nodes));
+
+    // A point should only intersect one node
+    assert(1 == nodes.size());
+
+    // That node should be the node leaf that contains the point
+    assert(octree.locate(Point{1, 1, 1}) == *nodes[0]);
   }
 
   // Intersection with a sphere
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
+    // Get a list of nodes intersected
     std::vector<const Octree::Node *> nodes{};
     octree.intersecting_nodes(Kernel::Sphere_3(Point{1, 1, 1}, 4.0),
                               std::back_inserter(nodes));
@@ -60,6 +68,7 @@ int main(void) {
   // Intersection with a ray
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
+    // Get a list of nodes intersected
     std::vector<const Octree::Node *> nodes{};
     octree.intersecting_nodes(Kernel::Ray_3(Point{1, 1, 1}, Point{0, 0, 0}),
                               std::back_inserter(nodes));
