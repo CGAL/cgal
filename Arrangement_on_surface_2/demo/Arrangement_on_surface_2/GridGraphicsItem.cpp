@@ -4,8 +4,8 @@
 #include <limits>
 
 GridGraphicsItem::GridGraphicsItem() :
-    gridColor{QColorConstants::Gray}, axesColor{QColorConstants::Black},
-    labelsColor{QColorConstants::Black}, spacing{75}
+    gridColor{QColorConstants::Gray}, axesColor{::Qt::black},
+    labelsColor{::Qt::black}, spacing{75}
 {
 }
 

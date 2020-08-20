@@ -19,8 +19,8 @@ class QGraphicsSceneMouseEvent;
 
 namespace CGAL
 {
-class Arr_oblivious_side_tag;
-class Arr_open_side_tag;
+struct Arr_oblivious_side_tag;
+struct Arr_open_side_tag;
 
 namespace Qt
 {

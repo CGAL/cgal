@@ -17,18 +17,6 @@
 
 class QGraphicsSceneMouseEvent;
 
-namespace CGAL
-{
-template <typename T>
-struct Arr_trapezoid_ric_point_location;
-template <typename T>
-struct Arr_walk_along_line_point_location;
-template <typename T>
-struct Arr_simple_point_location;
-template <typename T>
-struct Supports_landmarks;
-} // namespace CGAL
-
 class FillFaceCallbackBase : public CGAL::Qt::Callback
 {
 public:

@@ -118,7 +118,7 @@ public:
   ArrangementDemoTab(
     QWidget* parent, std::unique_ptr<Arrangement> arrangement_ = nullptr);
   ~ArrangementDemoTab();
-  void adjustViewport();
+  void adjustViewport() override;
 
 private:
   void initArrangement();

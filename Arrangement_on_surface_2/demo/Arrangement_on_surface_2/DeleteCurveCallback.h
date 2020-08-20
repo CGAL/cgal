@@ -66,9 +66,9 @@ public:
   void reset() override;
 
 protected:
-  void mousePressEvent( QGraphicsSceneMouseEvent *event );
-  void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
-  void highlightNearestCurve( QGraphicsSceneMouseEvent *event );
+  void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+  void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+  void highlightNearestCurve(QGraphicsSceneMouseEvent* event);
 
   CGAL::Qt::CurveGraphicsItem<Traits>* highlightedCurve;
   Arrangement* arr;

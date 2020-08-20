@@ -98,8 +98,3 @@ double PointsGraphicsItem::getPointRadius( ) const
 {
   return this->pointRadius;
 }
-
-void PointsGraphicsItem::modelChanged( )
-{
-  this->update( );
-}

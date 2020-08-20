@@ -84,7 +84,7 @@ void FillFaceCallback<Arr_>::fillFace(QGraphicsSceneMouseEvent* event)
   if (f->color() != this->fillColor)
     f->set_color(this->fillColor);
   else
-    f->set_color(QColorConstants::White);
+    f->set_color(::Qt::white);
 }
 
 ARRANGEMENT_DEMO_SPECIALIZE_ARR(FillFaceCallback)

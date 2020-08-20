@@ -13,6 +13,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Qt/GraphicsItem.h>
 #include <QImage>
+#include <QPen>
 
 #include "GraphicsSceneMixin.h"
 #include "PointsGraphicsItem.h"
@@ -68,11 +69,9 @@ class ArrangementGraphicsItem : public ArrangementGraphicsItemBase
   typedef ArrangementGraphicsItemBase                   Superclass;
   typedef Arr_                                          Arrangement;
   typedef typename Arrangement::Geometry_traits_2       Traits;
-  typedef typename Arrangement::Edge_iterator           Edge_iterator;
   typedef typename Arrangement::Halfedge                Halfedge;
   typedef typename Arrangement::Halfedge_handle         Halfedge_handle;
   typedef typename Arrangement::Face_handle             Face_handle;
-  typedef typename Arrangement::Face_iterator           Face_iterator;
   typedef typename Arrangement::Unbounded_face_iterator Unbounded_face_iterator;
   typedef typename Arrangement::Hole_iterator           Holes_iterator;
   typedef typename Arrangement::Ccb_halfedge_circulator Ccb_halfedge_circulator;
@@ -87,7 +86,7 @@ public:
   ~ArrangementGraphicsItem() {}
 
 public:
-  void modelChanged();
+  void modelChanged() override;
   QRectF boundingRect() const override;
   void paint(
     QPainter* painter, const QStyleOptionGraphicsItem* option,

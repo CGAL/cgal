@@ -49,7 +49,7 @@ public: // methods
   void clear( );
 
 public Q_SLOTS:
-  void modelChanged( );
+  void modelChanged( ) override;
   const QColor& edgeColor( ) const;
   void setEdgeColor( const QColor& color );
   int edgeWidth( ) const;

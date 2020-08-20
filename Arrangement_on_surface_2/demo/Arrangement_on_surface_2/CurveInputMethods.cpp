@@ -335,7 +335,7 @@ void BezierInputMethod::beginInput()
 
   // TODO: set bezier guide color dynamically
   pen = this->bezierGuide.pen();
-  pen.setColor(QColorConstants::DarkGray);
+  pen.setColor(::Qt::darkGray);
   pen.setCosmetic(true);
   this->bezierGuide.setPen(pen);
 }

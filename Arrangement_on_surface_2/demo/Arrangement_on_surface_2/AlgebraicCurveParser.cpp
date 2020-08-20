@@ -132,5 +132,5 @@ AlgebraicCurveParser<Polynomial_2>::operator()(const std::string& expression)
 // makes compilation slower
 // template class
 // AlgebraicCurveParser<demo_types::Alg_seg_traits::Polynomial_2>;
-template class AlgebraicCurveParser<
+template struct AlgebraicCurveParser<
   CGAL::Arr_algebraic_segment_traits_2<CORE::BigInt>::Polynomial_2>;

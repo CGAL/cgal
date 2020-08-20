@@ -42,7 +42,7 @@ class Face_with_color : public CGAL::Arr_face_base
 
 public:
   Face_with_color() :
-      CGAL::Arr_face_base(), m_color(QColorConstants::White), m_visited(false)
+      CGAL::Arr_face_base(), m_color(::Qt::white), m_visited(false)
   {
   }
 
@@ -131,29 +131,29 @@ typedef CGAL::Arrangement_with_history_2<Lin_traits, Lin_dcel>
 }
 
 #ifdef CGAL_USE_CORE
-  #define ARRANGEMENT_DEMO_SPECIALIZE_ARR_CORE(struct_name)                    \
-    template class struct_name<demo_types::Conic_arr>;                         \
-    template class struct_name<demo_types::Bezier_arr>;                        \
-    template class struct_name<demo_types::Alg_seg_arr>;
-  #define ARRANGEMENT_DEMO_SPECIALIZE_TRAITS_CORE(struct_name)                 \
-    template class struct_name<demo_types::Conic_traits>;                      \
-    template class struct_name<demo_types::Bezier_traits>;                     \
-    template class struct_name<demo_types::Alg_seg_traits>;
+  #define ARRANGEMENT_DEMO_SPECIALIZE_ARR_CORE(class_name)                     \
+    template class class_name<demo_types::Conic_arr>;                          \
+    template class class_name<demo_types::Bezier_arr>;                         \
+    template class class_name<demo_types::Alg_seg_arr>;
+  #define ARRANGEMENT_DEMO_SPECIALIZE_TRAITS_CORE(class_name)                  \
+    template class class_name<demo_types::Conic_traits>;                       \
+    template class class_name<demo_types::Bezier_traits>;                      \
+    template class class_name<demo_types::Alg_seg_traits>;
 #else
-  #define ARRANGEMENT_DEMO_SPECIALIZE_ARR_CORE(struct_name)
-  #define ARRANGEMENT_DEMO_SPECIALIZE_TRAITS_CORE(struct_name)
+  #define ARRANGEMENT_DEMO_SPECIALIZE_ARR_CORE(class_name)
+  #define ARRANGEMENT_DEMO_SPECIALIZE_TRAITS_CORE(class_name)
 #endif
 
-#define ARRANGEMENT_DEMO_SPECIALIZE_ARR(struct_name)                           \
-  template class struct_name<demo_types::Seg_arr>;                             \
-  template class struct_name<demo_types::Pol_arr>;                             \
-  template class struct_name<demo_types::Lin_arr>;                             \
-  ARRANGEMENT_DEMO_SPECIALIZE_ARR_CORE(struct_name)
+#define ARRANGEMENT_DEMO_SPECIALIZE_ARR(class_name)                            \
+  template class class_name<demo_types::Seg_arr>;                              \
+  template class class_name<demo_types::Pol_arr>;                              \
+  template class class_name<demo_types::Lin_arr>;                              \
+  ARRANGEMENT_DEMO_SPECIALIZE_ARR_CORE(class_name)
 
-#define ARRANGEMENT_DEMO_SPECIALIZE_TRAITS(struct_name)                        \
-  template class struct_name<demo_types::Seg_traits>;                          \
-  template class struct_name<demo_types::Pol_traits>;                          \
-  template class struct_name<demo_types::Lin_traits>;                          \
-  ARRANGEMENT_DEMO_SPECIALIZE_TRAITS_CORE(struct_name)
+#define ARRANGEMENT_DEMO_SPECIALIZE_TRAITS(class_name)                         \
+  template class class_name<demo_types::Seg_traits>;                           \
+  template class class_name<demo_types::Pol_traits>;                           \
+  template class class_name<demo_types::Lin_traits>;                           \
+  ARRANGEMENT_DEMO_SPECIALIZE_TRAITS_CORE(class_name)
 
 #endif // ARRANGEMENT_DEMO_TYPES_H

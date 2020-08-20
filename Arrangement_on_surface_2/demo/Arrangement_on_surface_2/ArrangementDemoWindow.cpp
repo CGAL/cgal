@@ -890,7 +890,7 @@ void ArrangementDemoWindow::on_actionPreferences_triggered()
     agi->setVerticesPen(verticesPen);
     agi->modelChanged();
     gridGraphicsItem->setAxesColor(gridColor);
-    gridColor.setAlpha(0.5);
+    gridColor.setAlphaF(0.5);
     gridGraphicsItem->setAxesColor(gridColor);
     envelopeCallback->setEnvelopeEdgeColor(envelopeEdgeColor);
     envelopeCallback->setEnvelopeEdgeWidth(envelopeEdgeWidth);

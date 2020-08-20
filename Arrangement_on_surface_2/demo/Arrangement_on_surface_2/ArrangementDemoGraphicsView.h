@@ -29,12 +29,10 @@ public:
   void resetTransform();
 
 protected:
-  void drawBackground(QPainter* painter, const QRectF& rect) override;
   void paintEvent(QPaintEvent* event) override;
 
   qreal maxScale;
   qreal minScale;
-  QColor backgroundColor;     /*!< color for the background */
 };
 
 #endif // ARRANGEMENT_DEMO_GRAPHICS_VIEW_H

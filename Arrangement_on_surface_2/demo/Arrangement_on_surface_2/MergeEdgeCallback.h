@@ -42,12 +42,12 @@ public:
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
 
   MergeEdgeCallback( Arrangement* arr_, QObject* parent_ );
-  void setScene( QGraphicsScene* scene_ ) override;
-  void reset( );
+  void setScene(QGraphicsScene* scene_) override;
+  void reset() override;
 
 protected:
-  void mousePressEvent( QGraphicsSceneMouseEvent* event );
-  void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
+  void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+  void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
   Halfedge_handle getNearestMergeableCurve( QGraphicsSceneMouseEvent* event );
   Halfedge_handle getNearestMergeableCurve( Halfedge_handle h,
                                             QGraphicsSceneMouseEvent* event );

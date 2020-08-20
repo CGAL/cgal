@@ -26,11 +26,9 @@
 ArrangementDemoGraphicsView::ArrangementDemoGraphicsView( QWidget* parent ) :
   QGraphicsView( parent ),
   maxScale( 500000 ),
-  minScale( 0.0002 ),
-  backgroundColor( ::Qt::white )
+  minScale( 0.0002 )
 {
   this->resetTransform();
-  this->setBackgroundBrush( QBrush( backgroundColor ) );
   this->setResizeAnchor(QGraphicsView::AnchorUnderMouse);
   this->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
   this->setMouseTracking( true );
@@ -38,33 +36,6 @@ ArrangementDemoGraphicsView::ArrangementDemoGraphicsView( QWidget* parent ) :
   this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   // TODO: Make options menu work
   this->setRenderHint(QPainter::Antialiasing);
-}
-
-//! Member function to set color of background
-/*!
-  \param color a Qcolor object
-*/
-void ArrangementDemoGraphicsView::setBackgroundColor( QColor color )
-{
-  this->backgroundColor = color;
-}
-
-//! Member function to get back the color of background screen
-/*!
-  \return The of the viewport/screen
-*/
-QColor ArrangementDemoGraphicsView::getBackgroundColor( ) const
-{
-  return this->backgroundColor;
-}
-
-//! Member function to draw within the size of the viewport even when its changed
-/*!
-  \param painter a Qpainter pointer to its class 
-*/
-void ArrangementDemoGraphicsView::drawBackground(
-  QPainter* painter, const QRectF& /* rect */)
-{
 }
 
 void ArrangementDemoGraphicsView::paintEvent(QPaintEvent* event)

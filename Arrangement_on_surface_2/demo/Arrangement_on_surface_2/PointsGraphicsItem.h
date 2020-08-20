@@ -13,17 +13,15 @@
 #define POINTS_GRAPHICS_ITEM_H
 
 #include <vector>
-#include <CGAL/Qt/GraphicsItem.h>
+#include <QGraphicsItem>
 #include <CGAL/number_utils.h>
-#include <QPen>
 
 class QPainter;
-class QPen;
 
 /**
    Add a set of points to the QGraphicsScene.
 */
-class PointsGraphicsItem: public CGAL::Qt::GraphicsItem
+class PointsGraphicsItem: public QGraphicsItem
 {
 public:
   PointsGraphicsItem( );
@@ -47,9 +45,6 @@ public:
 
   void setPointRadius( double d );			//!< sets the user defined radius of the curve
   double getPointRadius( ) const;			//!< returns the radius of the curve
-
-public Q_SLOTS:
-  virtual void modelChanged( );
 
 protected:
   std::vector< QPointF > points;  		/*!< vector of points of the curve */

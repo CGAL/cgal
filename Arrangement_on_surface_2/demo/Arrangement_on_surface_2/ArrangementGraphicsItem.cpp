@@ -17,7 +17,7 @@ ArrangementGraphicsItemBase::ArrangementGraphicsItemBase() :
   this->edgesPen.setCosmetic(true);
   this->edgesPen.setWidth(2);
   this->facesPen.setCosmetic(true);
-  this->facesPen.setColor(QColorConstants::Transparent);
+  this->facesPen.setColor(::Qt::transparent);
   this->pointsGraphicsItem.setParentItem(this);
 }
 
@@ -95,7 +95,7 @@ void ArrangementGraphicsItem<Arr_>::paint(
   painterOstream.setScene(this->getScene());
 
   painter->setPen(this->edgesPen);
-  painter->setBrush(QColorConstants::Transparent);
+  painter->setBrush(::Qt::transparent);
   for (auto it = this->arr->edges_begin(); it != this->arr->edges_end(); ++it)
   {
     X_monotone_curve_2 curve = it->curve();
@@ -115,11 +115,11 @@ void ArrangementGraphicsItem<Arr_>::paint(
     tempImage = {width, height, QImage::Format_ARGB32};
 
   // Transparent is used as a flag for an invalid color
-  tempImage.fill(QColorConstants::Transparent);
+  tempImage.fill(::Qt::transparent);
   QRgb* st = reinterpret_cast<QRgb*>(tempImage.bits());
   // draw margins with white
   // prevents the flood algorithm from coloring those
-  auto white = QColorConstants::White.rgb();
+  auto white = QColor{::Qt::white}.rgb();
   for (uint16_t i = 0; i < margin; i++)
   {
     for (uint16_t j = 0; j < width; j++)

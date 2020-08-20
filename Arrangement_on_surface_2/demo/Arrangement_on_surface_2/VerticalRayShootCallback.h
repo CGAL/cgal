@@ -70,18 +70,18 @@ public:
   typedef typename Arrangement::Hole_const_iterator     Hole_const_iterator;
 
   VerticalRayShootCallback( Arrangement* arr_, QObject* parent_ );
-  void reset( );
-  void setScene( QGraphicsScene* scene_ );
-  void slotModelChanged( );
+  void reset() override;
+  void setScene(QGraphicsScene* scene_) override;
+  void slotModelChanged( ) override;
   void setEdgeWidth( int width ) override;
   void setEdgeColor( const QColor& color ) override;
   const QColor& edgeColor( ) const override;
   int edgeWidth( ) const override;
 
 protected:
-  void mousePressEvent( QGraphicsSceneMouseEvent *event );
-  void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
-  void highlightPointLocation( QGraphicsSceneMouseEvent *event );
+  void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+  void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+  void highlightPointLocation(QGraphicsSceneMouseEvent* event);
 
   Arrangement* arr;
   CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurves;

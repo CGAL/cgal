@@ -63,26 +63,26 @@ public:
   /**
      Enable/disable drawing the lower envelope.
   */
-  void showLowerEnvelope( bool show );
+  void showLowerEnvelope( bool show ) override;
 
   /**
      Enable/disable drawing the lower envelope.
   */
-  void showUpperEnvelope( bool show );
+  void showUpperEnvelope( bool show ) override;
 
   /**
      Slot: Update and redraw the envelopes.
   */
   void slotModelChanged( ) override;
 
-  void setEnvelopeEdgeColor( const QColor& color );
-  const QColor& getEnvelopeEdgeColor( ) const;
-  void setEnvelopeEdgeWidth( int width );
-  int getEnvelopeEdgeWidth( ) const;
-  void setEnvelopeVertexColor( const QColor& color );
-  const QColor& getEnvelopeVertexColor( ) const;
-  void setEnvelopeVertexRadius( int radius );
-  int getEnvelopeVertexRadius( ) const;
+  void setEnvelopeEdgeColor(const QColor& color) override;
+  const QColor& getEnvelopeEdgeColor() const override;
+  void setEnvelopeEdgeWidth(int width) override;
+  int getEnvelopeEdgeWidth() const override;
+  void setEnvelopeVertexColor(const QColor& color) override;
+  const QColor& getEnvelopeVertexColor() const override;
+  void setEnvelopeVertexRadius(int radius) override;
+  int getEnvelopeVertexRadius() const override;
 
 protected:
   void setScene( QGraphicsScene* scene_ ) override;

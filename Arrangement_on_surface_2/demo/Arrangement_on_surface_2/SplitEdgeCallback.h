@@ -59,8 +59,8 @@ public:
   typedef typename CGAL::Qt::CurveInputMethod::Point_2 Input_point_2;
 
   SplitEdgeCallback( Arrangement* arr_, QObject* parent );
-  void setScene( QGraphicsScene* scene_ );
-  void reset( );
+  void setScene(QGraphicsScene* scene_) override;
+  void reset() override;
 
 protected:
   void mousePressEvent(QGraphicsSceneMouseEvent* event) override;

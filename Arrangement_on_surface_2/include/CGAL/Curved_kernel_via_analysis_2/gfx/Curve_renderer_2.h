@@ -2579,8 +2579,8 @@ inline bool is_isolated_pixel(const Pixel_2& /* pix */) {
 }
 
 // DEBUG ONLY
-void dump_neighbourhood(const Pixel_2& pix) {
 #ifdef Gfx_USE_OUT
+void dump_neighbourhood(const Pixel_2& pix) {
     CGAL::set_mode(std::cerr, CGAL::IO::PRETTY);
     CGAL::set_mode(std::cout, CGAL::IO::PRETTY);
 
@@ -2757,8 +2757,10 @@ void dump_neighbourhood(const Pixel_2& pix) {
     Gfx_OUT("val = " << b << std::endl);
     if(a*b < 0)
         Gfx_OUT("sign change at segment 2" << std::endl);
-#endif // Gfx_USE_OUT
 }
+#else
+void dump_neighbourhood(const Pixel_2&) { }
+#endif // Gfx_USE_OUT
 
 //!@}
 }; // class Curve_renderer_2<>

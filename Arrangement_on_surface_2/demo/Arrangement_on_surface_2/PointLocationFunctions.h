@@ -7,8 +7,9 @@
 class QPointF;
 
 template <typename Arr_>
-struct PointLocationFunctions
+class PointLocationFunctions
 {
+public:
   using Arrangement = Arr_;
   using Traits = typename Arrangement::Geometry_traits_2;
   using Halfedge_const_handle = typename Arrangement::Halfedge_const_handle;

@@ -260,12 +260,12 @@ protected: // members
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
 };
 
-template < typename RatKernel, class AlgKernel, class NtTraits >
-class ArrangementPainterOstream<CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel,
-                                                         NtTraits > >:
-  public ArrangementPainterOstreamBase< CGAL::Arr_Bezier_curve_traits_2<RatKernel,
-                                                                 AlgKernel,
-                                                                 NtTraits> > {
+template <typename RatKernel, class AlgKernel, class NtTraits>
+class ArrangementPainterOstream<
+  CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>> :
+    public ArrangementPainterOstreamBase<
+      CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>
+{
 
 public: // typedefs
   typedef CGAL::Arr_Bezier_curve_traits_2< RatKernel, AlgKernel, NtTraits >
@@ -300,12 +300,6 @@ public: // methods
 
   std::vector<std::pair<double, double>>
   getPoints(const X_monotone_curve_2& curve);
-
-  template < typename T >
-  ArrangementPainterOstream& operator<<( const T& p )
-  {
-    return *this;
-  }
 };
 
 template < typename Kernel_ >
