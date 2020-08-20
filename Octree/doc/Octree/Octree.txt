@@ -12,6 +12,11 @@ namespace CGAL {
 An octree is a commonly used data structure that subdivides 3d space.
 The Octree package provides the Octree and Node classes.
 
+\todo I need to discuss use-cases
+
+Note that the octree will often be outperformed by Spacial_searching's kD-tree.
+Octrees are most useful when implementing algorithms that require nodes without high aspect-ratios.
+
 \section Section_Octree Octree
 
 \section Section_Octree_Examples Examples
@@ -117,7 +122,6 @@ e.g. When is an octree the right choice?
 
 \subsection Subsection_Octree_Splitting_Rules Splitting Rules
 \subsection Subsection_Octree_Walker_Rules Walker Rules
-
 */
 
 }
