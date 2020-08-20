@@ -672,13 +672,25 @@ public:
 
     /*! Determine whether the bounding boxes of two segments overlap
      */
-    bool do_overlap(const X_monotone_curve_2& cv1,
-                    const X_monotone_curve_2& cv2) const
+    bool do_bboxes_overlap(const X_monotone_curve_2& cv1,
+                           const X_monotone_curve_2& cv2) const
     {
-      const Kernel& kernel = m_traits;
-      auto bbox_ctr = kernel.construct_bbox_2_object();
-      auto bbox1 = bbox_ctr(cv1.source()) + bbox_ctr(cv1.target());
-      auto bbox2 = bbox_ctr(cv2.source()) + bbox_ctr(cv2.target());
+      auto x1_min = CGAL::to_double(cv1.left().x());
+      auto x1_max = CGAL::to_double(cv1.right().x());
+      auto y1_s = CGAL::to_double(cv1.source().y());
+      auto y1_t = CGAL::to_double(cv1.target().y());
+      auto bbox1 = (y1_s < y1_t) ?
+        CGAL::Bbox_2(x1_min, y1_s, x1_max, y1_t) :
+        CGAL::Bbox_2(x1_min, y1_t, x1_max, y1_s);
+
+      auto x2_min = CGAL::to_double(cv2.left().x());
+      auto x2_max = CGAL::to_double(cv2.right().x());
+      auto y2_s = CGAL::to_double(cv2.source().y());
+      auto y2_t = CGAL::to_double(cv2.target().y());
+      auto bbox2 = (y2_s < y2_t) ?
+        CGAL::Bbox_2(x2_min, y2_s, x2_max, y2_t) :
+        CGAL::Bbox_2(x2_min, y2_t, x2_max, y2_s);
+
       return CGAL::do_overlap(bbox1, bbox2);
     }
 
@@ -701,7 +713,7 @@ public:
                                                         Intersection_result;
 
       // Early ending with Bbox overlapping test
-      if (! do_overlap(cv1, cv2)) return oi;
+      if (! do_bboxes_overlap(cv1, cv2)) return oi;
 
       // Early ending with specialized do_intersect
       const Kernel& kernel = m_traits;
