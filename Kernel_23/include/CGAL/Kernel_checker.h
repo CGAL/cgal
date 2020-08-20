@@ -84,10 +84,8 @@ public:
   {
     auto res1 = p1(a.first...);
     auto res2 = p2(a.second...);
-    if (! cmp(res1, res2))
-    {
-      CGAL_kernel_assertion(false);
-    }
+
+    CGAL_kernel_assertion(cmp(res1, res2));
     return Pairify<decltype(res1), decltype(res2)>()(res1, res2);
   }
 };
