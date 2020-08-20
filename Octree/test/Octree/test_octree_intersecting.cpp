@@ -43,10 +43,12 @@ int main(void) {
   // Intersection with a point (not particularly useful)
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
+    // Set the search point
+    auto query = Point{1, 1, 1};
+
     // Get a list of nodes intersected
     std::vector<const Octree::Node *> nodes{};
-    octree.intersecting_nodes(Point{1, 1, 1},
-                              std::back_inserter(nodes));
+    octree.intersecting_nodes(query, std::back_inserter(nodes));
 
     // A point should only intersect one node
     assert(1 == nodes.size());
@@ -58,20 +60,24 @@ int main(void) {
   // Intersection with a sphere
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
+    // Set the search point
+    auto query = Kernel::Sphere_3(Point{1, 1, 1}, 4.0);
+
     // Get a list of nodes intersected
     std::vector<const Octree::Node *> nodes{};
-    octree.intersecting_nodes(Kernel::Sphere_3(Point{1, 1, 1}, 4.0),
-                              std::back_inserter(nodes));
+    octree.intersecting_nodes(query, std::back_inserter(nodes));
 
   }
 
   // Intersection with a ray
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
+    // Set the search point
+    auto query = Kernel::Ray_3(Point{1, 1, 1}, Point{0, 0, 0});
+
     // Get a list of nodes intersected
     std::vector<const Octree::Node *> nodes{};
-    octree.intersecting_nodes(Kernel::Ray_3(Point{1, 1, 1}, Point{0, 0, 0}),
-                              std::back_inserter(nodes));
+    octree.intersecting_nodes(query, std::back_inserter(nodes));
 
   }
 
