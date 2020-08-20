@@ -2,6 +2,7 @@
 #include <QEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsView>
+#include <QtGlobal>
 
 namespace CGAL
 {
@@ -90,6 +91,15 @@ void CurveInputMethod::beginInput_()
   for (auto& item : items) this->getScene()->addItem(item);
 }
 
+static inline void clearPainterPath(QPainterPath& ppath)
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
+  ppath.clear();
+#else
+  ppath = {};
+#endif
+}
+
 void CurveInputMethod::reset()
 {
   this->resetInput();
@@ -165,7 +175,7 @@ PolylineInputMethod::PolylineInputMethod() :
 
 void PolylineInputMethod::beginInput()
 {
-  this->painterPath.clear();
+  clearPainterPath(this->painterPath);
   this->polylineGuide.setPath(this->painterPath);
   this->lastLine.setLine(0, 0, 0, 0);
   QPen pen = this->polylineGuide.pen();
@@ -323,8 +333,8 @@ BezierInputMethod::BezierInputMethod() : CurveInputMethod(CurveType::Bezier, -1)
 
 void BezierInputMethod::beginInput()
 {
-  this->painterOldPath.clear();
-  this->painterPath.clear();
+  clearPainterPath(this->painterOldPath);
+  clearPainterPath(this->painterPath);
   this->bezierGuide.setPath(this->painterPath);
   this->bezierOldGuide.setPath(this->painterOldPath);
 
@@ -374,7 +384,7 @@ static void updateBezierPainterPath(
   const std::vector<QPointF>& controlPoints, std::vector<QPointF>& cache,
   const QTransform& worldTransform, QPainterPath& painterPath)
 {
-  painterPath.clear();
+  clearPainterPath(painterPath);
   if (controlPoints.size() < 2) return;
 
   float pixel_len = approx_pixel_length(controlPoints, worldTransform);

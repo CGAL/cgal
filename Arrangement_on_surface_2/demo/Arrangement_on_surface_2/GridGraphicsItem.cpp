@@ -2,9 +2,10 @@
 #include <QPainter>
 #include <cmath>
 #include <limits>
+#include <QtGlobal>
 
 GridGraphicsItem::GridGraphicsItem() :
-    gridColor{QColorConstants::Gray}, axesColor{::Qt::black},
+    gridColor{::Qt::gray}, axesColor{::Qt::black},
     labelsColor{::Qt::black}, spacing{75}
 {
 }
@@ -48,6 +49,16 @@ void GridGraphicsItem::setSpacing(int spacing_)
 {
   this->spacing = spacing_;
   this->update();
+}
+
+static inline qreal
+horizontalAdvance(const QFontMetrics& fm, const QString& text)
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+  return fm.horizontalAdvance(text);
+#else
+  return fm.boundingRect(text).width();
+#endif
 }
 
 void GridGraphicsItem::paint(
@@ -163,7 +174,7 @@ void GridGraphicsItem::paint(
   {
     if (std::abs(x) < x_unit / 2) continue;
     QString txt = QString{"%1"}.arg(x);
-    qreal txtWidth = fm.horizontalAdvance(txt) + 4;
+    qreal txtWidth = horizontalAdvance(fm, txt) + 4;
     QPointF pos =
       worldTransform.map(QPointF{x, xAxis_y}) +
       sign * QPointF{uy.x() * txtWidth, uy.y() * txtHeight} / scaleY;
@@ -180,7 +191,7 @@ void GridGraphicsItem::paint(
   {
     if (std::abs(y) < y_unit / 2) continue;
     QString txt = QString{"%1"}.arg(y);
-    qreal txtWidth = fm.horizontalAdvance(txt) + 4;
+    qreal txtWidth = horizontalAdvance(fm, txt) + 4;
     QPointF pos =
       worldTransform.map(QPointF{yAxis_x, y}) +
       sign * QPointF{ux.x() * txtWidth, ux.y() * txtHeight} / scaleX;
