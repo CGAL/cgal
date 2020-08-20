@@ -2968,6 +2968,7 @@ private:
         kernel().approximate_absolute_y_2_object()(
             arc.curve_end(end).xy(), prec
         );
+      break;
 
     }
     default: {
