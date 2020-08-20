@@ -852,8 +852,9 @@ bool get_range_MAA_1(int var, const NT& l_, const NT& r_, const NT& key,
             eval1 = CGAL_SGN(low);
             eval2 = CGAL_SGN(up);
 
-        } else if(d == 0)
+        } else if(d == 0) {
             ;//Gfx_DETAILED_OUT("MAA bounds: sign change\n");
+        }
 
         if(d == 1 && check == 3) {
             first_der = (eval1*eval2 < 0);

@@ -241,7 +241,7 @@ struct Curve_renderer_traits_base
         typedef void result_type;
 
         template <class Float>
-        void operator()(const Float& x) const
+        void operator()(const Float& /*x*/) const
         { }
     };
 
@@ -251,7 +251,7 @@ struct Curve_renderer_traits_base
         typedef bool result_type;
 
         template <class Float>
-        bool operator()(const Float& x) const
+        bool operator()(const Float& /*x*/) const
         { return false;/*(CGAL_ABS(x) <= 1e-16)*/; }
     };
 
