@@ -12,14 +12,13 @@
 #ifndef SPLIT_EDGE_CALLBACK_H
 #define SPLIT_EDGE_CALLBACK_H
 
-#include "Callback.h"
 #include "GraphicsViewCurveInput.h"
-#include <QColor>
 
 class QGraphicsSceneMouseEvent;
 class QGraphicsScene;
 class QGraphicsLineItem;
 class PointSnapperBase;
+class QColor;
 
 namespace CGAL
 {

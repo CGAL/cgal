@@ -13,7 +13,6 @@
 #define MERGE_EDGE_CALLBACK_H
 
 #include "Callback.h"
-#include <CGAL/Qt/Converter.h>
 
 namespace CGAL
 {

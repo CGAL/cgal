@@ -14,9 +14,7 @@
 #include "Utils.h"
 #include "PointLocationFunctions.h"
 
-#include <CGAL/Qt/Converter.h>
 #include <CGAL/Arrangement_with_history_2.h>
-#include <CGAL/Arr_walk_along_line_point_location.h>
 
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
@@ -123,18 +121,8 @@ template <typename Arr_>
 void VerticalRayShootCallback<Arr_>::highlightPointLocation(
   QGraphicsSceneMouseEvent* event)
 {
-  // minimizing #includes in in the header file
-  // Utils.h and ArrangementTypes.h are disasters
-  typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
-  typedef typename ArrTraitsAdaptor< Traits >::CoordinateType CoordinateType;
-  typedef typename Kernel::Point_2                      Kernel_point_2;
-  typedef typename Traits::Point_2                      Point_2;
-  typedef typename Kernel::Segment_2                    Segment_2;
-  typedef typename Kernel::FT                           FT;
-
   this->highlightedCurves->clear();
   QPointF queryQPt = event->scenePos();
-  Kernel_point_2 queryPt = CGAL::Qt::Converter<Kernel>{}(queryQPt);
 
   CGAL::Object pointLocationResult;
   if (this->shootingUp)
@@ -147,24 +135,22 @@ void VerticalRayShootCallback<Arr_>::highlightPointLocation(
   if (pointLocationResult.is_empty()) { return; }
 
   QRectF viewportRect = this->viewportRect();
-  FT y2;
+  qreal y2;
   if (this->shootingUp)
   { // +y in Qt is towards the bottom
-    y2 = FT(viewportRect.bottom());
+    y2 = viewportRect.bottom();
   }
   else
   {
-    y2 = FT(viewportRect.top());
+    y2 = viewportRect.top();
   }
   Face_const_handle unboundedFace;
   Halfedge_const_handle halfedge;
   Vertex_const_handle vertex;
   if (CGAL::assign(unboundedFace, pointLocationResult))
   {
-    Kernel_point_2 p2(FT(queryPt.x()), y2);
-    Segment_2 lineSegment(queryPt, p2);
-    this->rayGraphicsItem.setSource(event->scenePos());
-    this->rayGraphicsItem.setTargetY(CGAL::to_double(y2));
+    this->rayGraphicsItem.setSource(queryQPt);
+    this->rayGraphicsItem.setTargetY(y2);
     this->rayGraphicsItem.setIsInfinite(true);
   }
   else if (CGAL::assign(halfedge, pointLocationResult))
@@ -174,21 +160,16 @@ void VerticalRayShootCallback<Arr_>::highlightPointLocation(
     // draw a ray from the clicked point to the hit curve
     Arr_compute_y_at_x_2<Traits> compute_y_at_x_2;
     compute_y_at_x_2.setScene(this->getScene());
-    CoordinateType x(queryPt.x());
-    double yApprox =
-      CGAL::to_double(compute_y_at_x_2.approx(halfedge->curve(), x));
-    FT yInt(yApprox);
-    Kernel_point_2 p2(queryPt.x(), yInt);
-    Segment_2 seg(queryPt, p2);
-    this->rayGraphicsItem.setSource(event->scenePos());
-    this->rayGraphicsItem.setTargetY(CGAL::to_double(yInt));
+    double yApprox = compute_y_at_x_2.approx(halfedge->curve(), queryQPt.x());
+    this->rayGraphicsItem.setSource(queryQPt);
+    this->rayGraphicsItem.setTargetY(yApprox);
     this->rayGraphicsItem.setIsInfinite(false);
   }
   else if (CGAL::assign(vertex, pointLocationResult))
   {
     if (!vertex->is_at_open_boundary())
     {
-      Point_2 pt = vertex->point();
+      auto pt = vertex->point();
       this->highlightedCurves->insert(pt);
     }
   }

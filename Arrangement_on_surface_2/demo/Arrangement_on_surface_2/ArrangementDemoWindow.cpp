@@ -12,7 +12,6 @@
 #include "AlgebraicCurveParser.h"
 #include "ArrangementDemoPropertiesDialog.h"
 #include "ArrangementDemoTab.h"
-#include "Conic_reader.h"
 #include "NewTabDialog.h"
 #include "OverlayDialog.h"
 #include "DeleteCurveCallback.h"
@@ -40,6 +39,7 @@
 #include <CGAL/IO/Arr_with_history_text_formatter.h>
 #include <CGAL/Arr_default_overlay_traits.h>
 #include <CGAL/Arr_overlay_2.h>
+#include "Conic_reader.h"
 
 #include "ui_ArrangementDemoWindow.h"
 #include "ui_AlgebraicCurveInputDialog.h"
@@ -403,7 +403,7 @@ void ArrangementDemoWindow::on_actionNewTab_triggered()
   }
 }
 
-void ArrangementDemoWindow::on_tabWidget_currentChanged(int index)
+void ArrangementDemoWindow::on_tabWidget_currentChanged(int)
 {
   auto tabPair = this->getCurrentTab();
   auto currentTab = tabPair.first;
@@ -720,7 +720,7 @@ struct ArrWriter
     conicReader.write_data(ofs, arr->curves_begin(), arr->curves_end());
   }
 
-  void operator()(demo_types::Bezier_arr* arr)
+  void operator()(demo_types::Bezier_arr*)
   {
   }
 #endif

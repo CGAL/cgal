@@ -61,7 +61,6 @@ void ArrangementDemoTabBase::setupUi( )
   this->layout->addWidget( this->graphicsView, 0, 0 );
   this->graphicsView->setScene( scene );
 
-  // TODO: Find suitable values
   double xymin = -MAX_WIDTH / 2;
   double wh = MAX_WIDTH;
   scene->setSceneRect(xymin, xymin, wh, wh);
@@ -122,10 +121,6 @@ ArrangementDemoTabBase::getCurveInputCallback( ) const
   return this->curveInputCallback.get();
 }
 
-//! eraser option i.e. to delete the selected curve.
-/*!
-	\return the drawing after the selected curve has been removed
-*/
 CGAL::Qt::Callback* ArrangementDemoTabBase::getDeleteCurveCallback( ) const
 {
   return this->deleteCurveCallback.get();
@@ -136,47 +131,27 @@ CGAL::Qt::Callback* ArrangementDemoTabBase::getPointLocationCallback( ) const
   return this->pointLocationCallback.get();
 }
 
-//! Vertical ray offshoot feedback
-/*!
-	\return the ray in the direction closest to the edge of the screen
-*/
 VerticalRayShootCallbackBase*
 ArrangementDemoTabBase::getVerticalRayShootCallback( ) const
 {
   return this->verticalRayShootCallback.get();
 }
 
-//! Merging the segments
-/*!
-	\return the curves after merging them back together
-*/
 CGAL::Qt::Callback* ArrangementDemoTabBase::getMergeEdgeCallback( ) const
 {
   return this->mergeEdgeCallback.get();
 }
 
-//! Splitting the curves drawn in the screen with points.
-/*!
-	\return the points of splitting
-*/
 SplitEdgeCallbackBase* ArrangementDemoTabBase::getSplitEdgeCallback( ) const
 {
   return this->splitEdgeCallback.get();
 }
 
-//! feedback after the envelope call.
-/*!
-	\return result of the envelope call
-*/
 EnvelopeCallbackBase* ArrangementDemoTabBase::getEnvelopeCallback( ) const
 {
   return this->envelopeCallback.get();
 }
 
-//! member function to fill the viewport
-/*!
-	\return result after calling the fill color option
-*/
 FillFaceCallbackBase* ArrangementDemoTabBase::getFillFaceCallback( ) const
 {
   return this->fillFaceCallback.get();
@@ -197,22 +172,13 @@ void ArrangementDemoTabBase::unhookCallbacks()
   {
     this->getScene()->removeEventFilter(this->activeCallback);
 
-    // TODO(Ahmed Essam): This is ugly. Fix it.
-    // GraphicsViewCurveInputBase should inherit from Callback
-    auto callback = dynamic_cast<CGAL::Qt::Callback*>(this->activeCallback);
-    if (callback) { callback->reset(); }
-    else
-    {
-      auto curveInput = dynamic_cast<CGAL::Qt::GraphicsViewCurveInputBase*>(
-        this->activeCallback);
-      if (curveInput) curveInput->reset();
-    }
-
+    activeCallback->reset();
     this->activeCallback = nullptr;
   }
 }
 
-void ArrangementDemoTabBase::unhookAndInstallEventFilter(QObject* obj)
+void ArrangementDemoTabBase::unhookAndInstallEventFilter(
+  CGAL::Qt::Callback* obj)
 {
   this->unhookCallbacks();
   this->getScene()->installEventFilter(obj);
@@ -224,7 +190,7 @@ void ArrangementDemoTabBase::activateDeleteCurveCallback()
   // TODO(Ahmed Essam): Create different button for modes of delete
   if (
     this->activeCallback ==
-    static_cast<QObject*>(this->deleteCurveCallback.get()))
+    static_cast<CGAL::Qt::Callback*>(this->deleteCurveCallback.get()))
   {
     auto deleteMode = this->deleteCurveCallback->getDeleteMode();
     if (deleteMode == DeleteMode::DeleteOriginatingCuve)
@@ -448,7 +414,7 @@ static const auto& getXyCurves()
 
 template <class Arr_>
 CGAL::Bbox_2
-findOtherInterestingPoints(const std::unique_ptr<Arr_>& arr)
+findOtherInterestingPoints(const std::unique_ptr<Arr_>&)
 {
   return {};
 }
@@ -493,7 +459,7 @@ static CGAL::Bbox_2 curvesBbox(const std::unique_ptr<Arr>& arr)
 }
 
 template <>
-CGAL::Bbox_2 curvesBbox(const std::unique_ptr<demo_types::Bezier_arr>& arr)
+CGAL::Bbox_2 curvesBbox(const std::unique_ptr<demo_types::Bezier_arr>&)
 {
   return {};
 }

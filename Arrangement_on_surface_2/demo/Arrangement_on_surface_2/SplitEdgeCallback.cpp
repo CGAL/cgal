@@ -15,8 +15,7 @@
 
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsScene>
-#include <QGraphicsLineItem>
-#include <CGAL/Qt/Converter.h>
+
 
 SplitEdgeCallbackBase::SplitEdgeCallbackBase( QObject* parent ) :
   CGAL::Qt::Callback( parent )

@@ -41,10 +41,9 @@ void CurveGraphicsItem<ArrTraits>::paint(
 template <class ArrTraits>
 QRectF CurveGraphicsItem<ArrTraits>::boundingRect() const
 {
-  typedef typename ArrTraitsAdaptor<Traits>::Kernel Kernel;
-  CGAL::Qt::Converter<Kernel> convert;
-  QRectF boundingRectangle = convert(this->boundingBox);
-  return boundingRectangle;
+  return {
+    QPointF{this->boundingBox.xmin(), this->boundingBox.ymin()},
+    QPointF{this->boundingBox.xmax(), this->boundingBox.ymax()}};
 }
 
 template <class ArrTraits>

@@ -10,95 +10,12 @@
 #ifndef CGAL_ARRANGEMENTS_DEMO_UTILS_H
 #define CGAL_ARRANGEMENTS_DEMO_UTILS_H
 
-#include <CGAL/iterator.h>
-#include <CGAL/Qt/Converter.h>
-#include <QGraphicsSceneMouseEvent>
-
 #include "ArrangementDemoGraphicsView.h"
 #include "ArrangementTypes.h"
 #include "GraphicsSceneMixin.h"
+#include "ArrTraitsAdaptor.h"
 
 class QGraphicsScene;
-class QGraphicsSceneMouseEvent;
-
-/**
-   Support for new ArrTraits should specify types:
-
-   * Kernel - a not-necessarily-exact kernel to represent the arrangement
-   graphically. We'll use the Point_2 type provided by this kernel for
-   computing distances
-   * Point_2 - the point type used in the particular arrangement
-   * CoordinateType - the coordinate type used by the point type
-   */
-template <typename ArrTraits>
-class ArrTraitsAdaptor
-{ };
-
-template <typename Kernel_>
-class ArrTraitsAdaptor< CGAL::Arr_segment_traits_2< Kernel_ > >
-{
-public:
-  typedef Kernel_ Kernel;
-  typedef CGAL::Arr_segment_traits_2< Kernel > ArrTraits;
-  typedef typename ArrTraits::Point_2 Point_2;
-  typedef typename Kernel::FT CoordinateType;
-};
-
-template <typename Kernel_>
-class ArrTraitsAdaptor< CGAL::Arr_linear_traits_2< Kernel_ > >
-{
-public:
-  typedef Kernel_ Kernel;
-  typedef CGAL::Arr_linear_traits_2< Kernel > ArrTraits;
-  typedef typename ArrTraits::Point_2 Point_2;
-  typedef typename Kernel::FT CoordinateType;
-};
-
-template <typename SegmentTraits>
-class ArrTraitsAdaptor< CGAL::Arr_polyline_traits_2< SegmentTraits > >
-{
-public:
-  typedef CGAL::Arr_polyline_traits_2< SegmentTraits > ArrTraits;
-  typedef typename SegmentTraits::Kernel Kernel;
-  typedef typename ArrTraits::Point_2 Point_2;
-  typedef typename Kernel::FT CoordinateType;
-};
-
-template <typename RatKernel, typename AlgKernel, typename NtTraits >
-class ArrTraitsAdaptor< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel,
-                                                  NtTraits > >
-{
-public:
-  typedef CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > ArrTraits;
-  typedef AlgKernel Kernel;
-  typedef typename ArrTraits::Point_2 Point_2;
-  typedef typename Kernel::FT CoordinateType;
-};
-
-template <typename RatKernel, typename AlgKernel, typename NtTraits>
-class ArrTraitsAdaptor<
-  CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>
-{
-public:
-  typedef CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>
-    ArrTraits;
-  typedef RatKernel Kernel;
-  typedef typename ArrTraits::Point_2 Point_2;
-  typedef typename Kernel::FT CoordinateType;
-};
-
-template <typename Coefficient_>
-class ArrTraitsAdaptor< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >
-{
-public:
-  typedef Coefficient_ Coefficient;
-  typedef typename CGAL::Arr_algebraic_segment_traits_2<Coefficient>
-                                                        ArrTraits;
-  typedef typename ArrTraits::Point_2                   Point_2; // CKvA_2
-  typedef typename ArrTraits::Algebraic_real_1          CoordinateType;
-  typedef CGAL::Cartesian< typename ArrTraits::Bound >  Kernel;
-  //typedef typename ArrTraits::CKvA_2                  Kernel;
-};
 
 template <typename ArrTraits >
 class Arr_compute_y_at_x_2 : public GraphicsSceneMixin
@@ -153,9 +70,8 @@ public:
   typedef typename Traits::Multiplicity                 Multiplicity;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
 
-  CoordinateType operator()(
-    const X_monotone_curve_2& curve, const CoordinateType& x,
-    Point_2* out = nullptr);
+  CoordinateType
+  operator()(const X_monotone_curve_2& curve, const CoordinateType& x);
 
   double approx(const X_monotone_curve_2& curve, const CoordinateType& x);
 
@@ -176,8 +92,7 @@ struct Arr_compute_y_at_x_2<
   typedef typename Traits::Algebraic Algebraic;
   typedef typename Traits::Point_2 Point_2;
 
-  Algebraic operator()(
-    const X_monotone_curve_2& curve, const Rational& x, Point_2* out = nullptr);
+  Algebraic operator()(const X_monotone_curve_2& curve, const Rational& x);
 
   Algebraic get_t(const X_monotone_curve_2& curve, const Rational& x);
   double approx(const X_monotone_curve_2& curve, const Rational& x);
@@ -316,8 +231,8 @@ public:
                                                         Multivariate_content;
   typedef typename Polynomial_traits_2::Substitute      Substitute;
   typedef typename Polynomial_traits_2::
-	  Construct_innermost_coefficient_const_iterator_range
-		  ConstructInnerCoeffIter;
+    Construct_innermost_coefficient_const_iterator_range
+      ConstructInnerCoeffIter;
 
 public:
   double operator()(const Point_2& p, const X_monotone_curve_2& c) const;

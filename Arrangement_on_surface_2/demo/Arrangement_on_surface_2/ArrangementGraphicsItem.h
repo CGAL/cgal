@@ -97,22 +97,23 @@ protected:
   void updatePointsItem();
 
   template <typename TTraits>
-  void paint(QPainter*, TTraits);
+  void paint(QPainter*, const TTraits*);
 
   template <typename Coefficient_>
-  void paint(QPainter*, CGAL::Arr_algebraic_segment_traits_2<Coefficient_>);
+  void
+  paint(QPainter*, const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>*);
 
   void updateBoundingBox();
 
   template <typename TTraits>
-  void updateBoundingBox(TTraits);
+  void updateBoundingBox(const TTraits*);
 
   template <typename RatK, typename AlgK, typename Nt, typename BoundingTratits>
   void updateBoundingBox(
-    CGAL::Arr_Bezier_curve_traits_2<RatK, AlgK, Nt, BoundingTratits>);
+    const CGAL::Arr_Bezier_curve_traits_2<RatK, AlgK, Nt, BoundingTratits>*);
 
   template <typename Kernel_>
-  void updateBoundingBox(CGAL::Arr_linear_traits_2<Kernel_>);
+  void updateBoundingBox(const CGAL::Arr_linear_traits_2<Kernel_>*);
 
   void paintFaces(QPainter* painter);
 
@@ -132,34 +133,36 @@ protected:
 
   template <typename Kernel_>
   void paintFace(
-    Face_handle f, QPainter* painter, CGAL::Arr_segment_traits_2<Kernel_>);
+    Face_handle f, QPainter* painter,
+    const CGAL::Arr_segment_traits_2<Kernel_>*);
 
   template <typename Kernel_>
   void paintFace(
-    Face_handle f, QPainter* painter, CGAL::Arr_polyline_traits_2<Kernel_>);
+    Face_handle f, QPainter* painter,
+    const CGAL::Arr_polyline_traits_2<Kernel_>*);
 
   template <typename RatKernel, typename AlgKernel, typename NtTraits>
   void paintFace(
     Face_handle f, QPainter* painter,
-    CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>);
+    const CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>*);
 
   template <
     typename RatKernel, typename AlgKernel, typename NtTraits,
     typename BoundingTraits>
   void paintFace(
     Face_handle f, QPainter* painter,
-    CGAL::Arr_Bezier_curve_traits_2<
-      RatKernel, AlgKernel, NtTraits, BoundingTraits>);
+    const CGAL::Arr_Bezier_curve_traits_2<
+      RatKernel, AlgKernel, NtTraits, BoundingTraits>*);
 
   template <typename Coefficient_>
   void paintFace(
     Face_handle f, QPainter* painter,
-    CGAL::Arr_algebraic_segment_traits_2<Coefficient_> /* traits */);
+    const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>*);
 
   template <typename Kernel_>
   void paintFace(
     Face_handle f, QPainter* painter,
-    CGAL::Arr_linear_traits_2<Kernel_> /* traits */);
+    const CGAL::Arr_linear_traits_2<Kernel_>*);
 
 protected:
   Arrangement* arr;

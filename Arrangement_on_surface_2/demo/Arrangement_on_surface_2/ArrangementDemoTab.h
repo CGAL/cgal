@@ -88,7 +88,7 @@ protected Q_SLOTS:
 
 protected:
   virtual void setupUi( );
-  void unhookAndInstallEventFilter(QObject*);
+  void unhookAndInstallEventFilter(CGAL::Qt::Callback*);
 
   ArrangementDemoGraphicsView* graphicsView;
   QGridLayout* layout;
@@ -103,8 +103,7 @@ protected:
   std::unique_ptr<FillFaceCallbackBase> fillFaceCallback;
   std::unique_ptr<PointSnapperBase> snapper;
 
-  QObject* activeCallback;
-
+  CGAL::Qt::Callback* activeCallback;
   CGAL::Qt::ArrangementGraphicsItemBase* arrangementGraphicsItem;
   GridGraphicsItem* gridGraphicsItem;
 }; // class ArrangementDemoTabBase

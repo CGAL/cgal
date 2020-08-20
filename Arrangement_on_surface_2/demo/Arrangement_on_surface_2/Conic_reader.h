@@ -14,8 +14,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <sstream>
-#include <list>
 #include <string>
 
 #include <CGAL/Bbox_2.h>

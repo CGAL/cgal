@@ -12,7 +12,6 @@
 #ifndef ARRANGEMENT_CURVE_INPUT_CALLBACK_H
 #define ARRANGEMENT_CURVE_INPUT_CALLBACK_H
 
-#include <CGAL/Qt/GraphicsViewInput.h>
 #include "GraphicsViewCurveInput.h"
 
 template <typename Arr_>
@@ -24,15 +23,13 @@ public:
   typedef typename Arrangement::Geometry_traits_2       Traits;
   typedef CGAL::Qt::GraphicsViewCurveInput< Traits >    Superclass;
   typedef typename Traits::Curve_2                      Curve_2;
+  typedef ArrangementCurveInputCallback<Arrangement>    Self;
 
   ArrangementCurveInputCallback(Arrangement* arrangement_, QObject* parent, QGraphicsScene* scene):
     Superclass( parent, scene ),
     arrangement( arrangement_)
   {
-    this->setScene(scene);
-
-    QObject::connect( this, SIGNAL( generate( CGAL::Object ) ),
-                      this, SLOT( processInput( CGAL::Object ) ) );
+    QObject::connect(this, &Superclass::generate, this, &Self::processInput);
   }
 
   void processInput( CGAL::Object o )
@@ -41,19 +38,8 @@ public:
     if ( CGAL::assign( curve, o ) )
     {
       CGAL::insert( *( this->arrangement ), curve );
+      Q_EMIT CGAL::Qt::GraphicsViewCurveInputBase::modelChanged( );
     }
-
-    Q_EMIT CGAL::Qt::GraphicsViewInput::modelChanged( );
-  }
-
-  void setScene( QGraphicsScene* scene )
-  {
-    this->Superclass::setScene( scene );
-  }
-
-  void setArrangement( Arrangement* newArr )
-  {
-    this->arrangement = newArr;
   }
 
 protected:

@@ -20,7 +20,8 @@
 namespace CGAL {
 namespace Qt {
 
-Callback::Callback( QObject* parent ) : QObject( parent ) { }
+Callback::Callback(QObject* parent, QGraphicsScene* scene_) :
+    QObject(parent), GraphicsSceneMixin(scene_) { }
 
 void Callback::reset( ) { }
 

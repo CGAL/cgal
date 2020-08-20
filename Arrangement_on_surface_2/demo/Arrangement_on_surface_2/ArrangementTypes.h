@@ -12,8 +12,6 @@
 #ifndef ARRANGEMENT_DEMO_TYPES_H
 #define ARRANGEMENT_DEMO_TYPES_H
 
-#include <CGAL/basic.h>
-
 #include <CGAL/Arrangement_with_history_2.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_default_dcel.h>
@@ -76,11 +74,11 @@ public:
 // less specializations, and makes PointSnapper untemplated
 #ifdef CGAL_USE_CORE
   typedef CORE::BigRat                                  Rational;
-  typedef CGAL::Cartesian<Rational>                     Rat_kernel;
 #else
   typedef CGAL::Exact_rational                          Rational;
-  typedef CGAL::Cartesian<CGAL::Exact_rational>         Rat_kernel;
 #endif
+
+typedef CGAL::Cartesian<Rational>                       Rat_kernel;
 
 // Segments:
 typedef CGAL::Arr_segment_traits_2<Rat_kernel>          Seg_traits;

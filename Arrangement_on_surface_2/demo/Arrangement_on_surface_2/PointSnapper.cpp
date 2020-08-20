@@ -159,8 +159,8 @@ struct SnapToArrangement
 {
   using Point_2 = PointSnapperBase::Point_2;
   template <typename Arrangement>
-  boost::optional<Point_2> operator()(
-    const QPointF& qpt, const QTransform& worldTransform, Arrangement* arr)
+  boost::optional<Point_2>
+  operator()(const QPointF& qpt, const QTransform&, Arrangement*)
   {
     return Point_2{qpt.x(), qpt.y()};
   }

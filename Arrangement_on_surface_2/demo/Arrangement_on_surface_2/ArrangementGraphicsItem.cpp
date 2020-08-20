@@ -80,13 +80,13 @@ paint(QPainter* painter,
       const QStyleOptionGraphicsItem* /* option */,
       QWidget*  /*widget*/)
 {
-  this->paint( painter, Traits( ) );
+  this->paint( painter, arr->traits() );
 }
 
 template <typename Arr_>
 template <typename TTraits>
 void ArrangementGraphicsItem<Arr_>::paint(
-  QPainter* painter, TTraits /* traits */)
+  QPainter* painter, const TTraits* /* traits */)
 {
   this->paintFaces(painter);
 
@@ -106,7 +106,7 @@ void ArrangementGraphicsItem<Arr_>::paint(
 template <typename Arr_>
 template <typename Coefficient_>
 void ArrangementGraphicsItem<Arr_>::paint(
-  QPainter* painter, CGAL::Arr_algebraic_segment_traits_2<Coefficient_> traits)
+  QPainter* painter, const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>*)
 {
   auto windowRect = painter->window();
   auto width = windowRect.width();
@@ -156,10 +156,10 @@ void ArrangementGraphicsItem<Arr_>::paint(
 template <typename Arr_>
 void ArrangementGraphicsItem<Arr_>::paintFaces(QPainter* painter, QImage& image)
 {
-  QRgb* st = reinterpret_cast<QRgb*>(tempImage.bits());
+  QRgb* st = reinterpret_cast<QRgb*>(image.bits());
 
-  uint16_t width = tempImage.width();
-  uint16_t height = tempImage.height();
+  uint16_t width = image.width();
+  uint16_t height = image.height();
 
   // same as QColorConstants::Transparent.rgb()
   static constexpr QRgb invalid_rgb = 0;
@@ -212,13 +212,15 @@ void ArrangementGraphicsItem<Arr_>::paintFaces(QPainter* painter, QImage& image)
 template < typename Arr_ >
 void ArrangementGraphicsItem< Arr_ >::updateBoundingBox( )
 {
-  this->updateBoundingBox( Traits( ) );
+  this->updateBoundingBox( arr->traits() );
 }
+
+constexpr double max_double = std::numeric_limits<double>::max();
 
 template < typename Arr_ >
 template < typename TTraits >
 void ArrangementGraphicsItem< Arr_ >::
-updateBoundingBox(TTraits /* traits */)
+updateBoundingBox(const TTraits* /* traits */)
 {
   this->prepareGeometryChange( );
 
@@ -226,38 +228,40 @@ updateBoundingBox(TTraits /* traits */)
   for (auto it = this->arr->edges_begin(); it != this->arr->edges_end(); ++it)
   {
     // can throw CGAL::internal::Zero_resultant_exception with algebraic curves
-    try {
+    // also horizontal lines with algebraic curves throw
+    try
+    {
       this->bb += it->curve().bbox();
-    } catch(...) {}
+    }
+    catch (const std::exception& ex)
+    {
+      std::cerr << ex.what() << '\n';
+      // in case an exception is thrown, make bbox to be unbounded just in case
+      this->bb = {-max_double, -max_double, max_double, max_double};
+      break;
+    }
   }
 }
 
 template <typename Arr_>
 template <typename RatK, typename AlgK, typename Nt, typename BoundingTratits>
 void ArrangementGraphicsItem<Arr_>::updateBoundingBox(
-  CGAL::Arr_Bezier_curve_traits_2<RatK, AlgK, Nt, BoundingTratits> /* traits */)
+  const CGAL::Arr_Bezier_curve_traits_2<RatK, AlgK, Nt, BoundingTratits>*)
 {
   this->prepareGeometryChange( );
 
   this->bb = {};
   for (auto it = this->arr->edges_begin(); it != this->arr->edges_end(); ++it)
-  {
-    // FIXME: There is no method to find bounding box of bezier x monotone curve
-    // Look at Bezier_x_monotone_2.h Subcurve struct
-    try {
-      this->bb += it->curve().supporting_curve().bbox();
-    } catch(...) {}
-  }
+    this->bb += it->curve().supporting_curve().bbox();
 }
 
 template <typename Arr_>
 template <typename Kernel_>
 void ArrangementGraphicsItem<Arr_>::updateBoundingBox(
-  CGAL::Arr_linear_traits_2<Kernel_>)
+  const CGAL::Arr_linear_traits_2<Kernel_>*)
 {
   this->prepareGeometryChange( );
 
-  constexpr double max_double = std::numeric_limits<double>::max();
   this->bb = {};
   for (auto it = this->arr->edges_begin(); it != this->arr->edges_end(); ++it)
   {
@@ -321,7 +325,7 @@ paintFace( Face_handle f, QPainter* painter )
   if (f->visited()) return;
 
   Holes_iterator hit; // holes iterator
-  this->paintFace(f, painter, Traits());
+  this->paintFace(f, painter, arr->traits());
   f->set_visited(true);
 
   for (hit = f->holes_begin(); hit != f->holes_end(); ++hit)
@@ -345,7 +349,7 @@ template < typename Kernel_ >
 void
 ArrangementGraphicsItem< Arr_ >::
 paintFace( Face_handle f, QPainter* painter,
-           CGAL::Arr_segment_traits_2< Kernel_ > )
+           const CGAL::Arr_segment_traits_2< Kernel_ >* )
 {
   if (!f->is_unbounded())  // f is not the unbounded face
   {
@@ -378,12 +382,10 @@ paintFace( Face_handle f, QPainter* painter,
   }
 }
 
-template < typename Arr_ >
-template < typename Kernel_ >
-void
-ArrangementGraphicsItem< Arr_ >::
-paintFace( Face_handle f, QPainter* painter,
-                CGAL::Arr_polyline_traits_2< Kernel_ > )
+template <typename Arr_>
+template <typename Kernel_>
+void ArrangementGraphicsItem<Arr_>::paintFace(
+  Face_handle f, QPainter* painter, const CGAL::Arr_polyline_traits_2<Kernel_>*)
 {
   if (!f->is_unbounded())
   {
@@ -450,7 +452,7 @@ template < typename Arr_ >
 template <typename Coefficient_>
 void ArrangementGraphicsItem<Arr_>::paintFace(
   Face_handle f, QPainter* painter,
-  CGAL::Arr_algebraic_segment_traits_2<Coefficient_> /* traits */)
+  const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>* /* traits */)
 {
   if (f->is_unbounded()) return;
 
@@ -550,7 +552,7 @@ template <typename Arr_>
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
 void ArrangementGraphicsItem<Arr_>::paintFace(
   Face_handle f, QPainter* painter,
-  CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>)
+  const CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>*)
 {
   if (!f->is_unbounded()) // f is not the unbounded face
   {
@@ -647,8 +649,8 @@ template <
   typename BoundingTraits>
 void ArrangementGraphicsItem<Arr_>::paintFace(
   Face_handle f, QPainter* painter,
-  CGAL::Arr_Bezier_curve_traits_2<
-    RatKernel, AlgKernel, NtTraits, BoundingTraits> traits)
+  const CGAL::Arr_Bezier_curve_traits_2<
+    RatKernel, AlgKernel, NtTraits, BoundingTraits>*)
 {
   if (!f->is_unbounded())
   {
@@ -691,7 +693,7 @@ template <typename Arr_>
 template <typename Kernel_>
 void ArrangementGraphicsItem<Arr_>::paintFace(
   Face_handle f, QPainter* painter,
-  CGAL::Arr_linear_traits_2<Kernel_> /* traits */)
+  const CGAL::Arr_linear_traits_2<Kernel_>* /* traits */)
 {
   QVector<QPointF> pts; // holds the points of the polygon
   QColor color = f->color();

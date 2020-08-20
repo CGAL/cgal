@@ -2,6 +2,7 @@
 #include <CGAL/Arr_simple_point_location.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
+#include <CGAL/Qt/Converter.h>
 
 #include <QPointF>
 
@@ -42,15 +43,15 @@ static auto toKernelPoint(const QPointF& pt)
 }
 
 template <typename Arr_>
-CGAL::Object
-PointLocationFunctions<Arr_>::locate(const Arrangement* arr, const QPointF& pt)
+CGAL::Object PointLocationFunctions<Arr_>::locate(
+  const Arrangement* arr, const Kernel_point_2& pt)
 {
   using SupportsLandmarks = typename Supports_landmarks<Arrangement>::Tag;
   using PointLocationStrategy =
     typename StrategyHelper<Arrangement, SupportsLandmarks>::type;
 
   Arr_construct_point_2<Traits> toArrPoint;
-  auto arr_point = toArrPoint(toKernelPoint<Traits>(pt));
+  auto arr_point = toArrPoint(pt);
 
   PointLocationStrategy pointLocationStrategy{*arr};
   return pointLocationStrategy.locate(arr_point);
@@ -58,7 +59,7 @@ PointLocationFunctions<Arr_>::locate(const Arrangement* arr, const QPointF& pt)
 
 template <typename Arr_>
 auto PointLocationFunctions<Arr_>::getFace(
-  const Arrangement* arr, const QPointF& pt) -> Face_const_handle
+  const Arrangement* arr, const Kernel_point_2& pt) -> Face_const_handle
 {
   CGAL::Object obj = locate(arr, pt);
 
@@ -75,6 +76,20 @@ auto PointLocationFunctions<Arr_>::getFace(
   if (v->is_isolated()) return v->face();
   Halfedge_around_vertex_const_circulator eit = v->incident_halfedges();
   return (eit->face());
+}
+
+template <typename Arr_>
+CGAL::Object
+PointLocationFunctions<Arr_>::locate(const Arrangement* arr, const QPointF& pt)
+{
+  return this->locate(arr, toKernelPoint<Traits>(pt));
+}
+
+template <typename Arr_>
+auto PointLocationFunctions<Arr_>::getFace(
+  const Arrangement* arr, const QPointF& pt) -> Face_const_handle
+{
+  return this->getFace(arr, toKernelPoint<Traits>(pt));
 }
 
 template <typename Arr_>

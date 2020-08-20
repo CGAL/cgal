@@ -15,7 +15,6 @@
 #include <vector>
 
 #include <CGAL/Qt/PainterOstream.h>
-#include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>

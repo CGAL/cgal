@@ -28,7 +28,7 @@ class Callback : public QObject, public GraphicsSceneMixin
 Q_OBJECT
 
 public:
-  Callback( QObject* parent );
+  Callback( QObject* parent, QGraphicsScene* scene_ = nullptr );
   virtual void reset( );
 
 public Q_SLOTS:

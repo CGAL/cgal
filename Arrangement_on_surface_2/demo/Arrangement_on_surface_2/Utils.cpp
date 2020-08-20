@@ -12,10 +12,8 @@
 #include "Utils.h"
 #include "ArrangementTypes.h"
 #include "ArrangementPainterOstream.h"
+#include "PointLocationFunctions.h"
 
-#include <CGAL/Arr_walk_along_line_point_location.h>
-
-#include <QGraphicsSceneMouseEvent>
 #include <QScrollBar>
 
 template <typename Kernel_>
@@ -249,13 +247,9 @@ template <typename Arr_>
 auto Find_nearest_edge<Arr_>::operator()(const Point_2& queryPt)
   -> Halfedge_const_handle
 {
-  typedef CGAL::Arr_walk_along_line_point_location<Arrangement>
-    Point_location_strategy;
+  Face_const_handle face =
+    PointLocationFunctions<Arrangement>{}.getFace(arr, queryPt);
 
-  typename ArrTraits::Point_2 pt = this->toArrPoint(queryPt);
-  Point_location_strategy pointLocationStrategy{*arr};
-  CGAL::Object pointLocationResult = pointLocationStrategy.locate(pt);
-  Face_const_handle face = this->getFace(pointLocationResult);
   bool first = 1;
   X_monotone_curve_2 closestCurve;
   Halfedge_const_handle closestEdge;
@@ -561,8 +555,7 @@ auto Arr_compute_y_at_x_2<ArrTraits>::operator()(
 
 template <typename Coefficient_>
 auto Arr_compute_y_at_x_2<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
-operator()(
-  const X_monotone_curve_2& curve, const CoordinateType& x, Point_2* out)
+operator()(const X_monotone_curve_2& curve, const CoordinateType& x)
   -> CoordinateType
 {
   CGAL::Object o;
@@ -575,7 +568,6 @@ operator()(
   {
     Point_2 p = res.first;
     CoordinateType coord = p.y();
-    if (out) *out = p;
     return coord;
   }
   else
@@ -627,7 +619,7 @@ static inline auto get_t_range(const Bezier_x_monotone_2& curve)
 template <typename RatKernel, class AlgKernel, class NtTraits>
 auto Arr_compute_y_at_x_2<
   CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>::
-operator()(const X_monotone_curve_2& curve, const Rational& x, Point_2* out)
+operator()(const X_monotone_curve_2& curve, const Rational& x)
   -> Algebraic
 {
   auto&& supp_curve = curve.supporting_curve();

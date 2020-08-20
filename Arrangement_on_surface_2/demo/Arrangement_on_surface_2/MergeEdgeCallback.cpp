@@ -1,8 +1,7 @@
 #include "MergeEdgeCallback.h"
 #include "ArrangementTypes.h"
 #include "CurveGraphicsItem.h"
-#include <CGAL/Arrangement_with_history_2.h>
-#include <QEvent>
+#include <CGAL/Qt/Converter.h>
 #include <QGraphicsSceneMouseEvent>
 
 #include "Utils.h"
