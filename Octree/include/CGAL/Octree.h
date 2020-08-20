@@ -497,6 +497,11 @@ public:
     return nearest_k_neighbors_in_radius(search_point, std::numeric_limits<FT>::max(), k, output);
   }
 
+  template<typename Query, typename Node_output_iterator>
+  void intersecting_nodes(const Query &query, Node_output_iterator output) const {
+
+  }
+
   /// @}
 
   /// \name Operators
