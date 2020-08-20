@@ -15,8 +15,7 @@ This chapter describes algorithms which for a given point set compute
 the <i>best</i> circumscribing object from a specific
 class. If the class consists of all spheres in \f$ d\f$-dimensional
 Euclidean space and <i>best</i> is defined as having smallest radius,
-then we obtain the smallest enclosing sphere problem already mentioned
-above.
+then we obtain the smallest enclosing sphere problem.
 
 In the following example a smallest enclosing circle
 (`Min_circle_2<Traits>`) is constructed from points
@@ -85,4 +84,3 @@ three boxes; the center points are shown in red.
 
 */
 } /* namespace CGAL */
-
