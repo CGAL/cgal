@@ -713,18 +713,6 @@ private: // functions :
     }
   }
 
-  // TODO: These helper methods haven't been properly integrated yet
-
-  void leaves(Node &node, std::queue<Node *> &output) {
-
-    if (node.is_leaf()) {
-      output.push(&node);
-    } else {
-      for (int i = 0; i < 7; ++i) {
-        leaves(node[i], output);
-      }
-    }
-  }
 
 }; // end class Octree
 
