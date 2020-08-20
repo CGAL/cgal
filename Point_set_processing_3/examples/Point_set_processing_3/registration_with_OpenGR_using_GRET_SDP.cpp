@@ -24,12 +24,8 @@
 // For computations 3D space
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_3 = Kernel::Point_3;
-using Vector_3 = Kernel::Vector_3;
 using Point_range = std::vector<Point_3>;
-// Point with global coordinate index
-using Indexed_Point = std::pair<Point_3, int>;
-using Point_map = CGAL::First_of_pair_property_map<Indexed_Point>;
-using Index_map = CGAL::Second_of_pair_property_map<Indexed_Point>;
+using Point_map = CGAL::Identity_property_map<Point_3>;
 
 // KD tree in N dimension
 using Search_traits_base = CGAL::Search_traits_3<Kernel>;
@@ -41,6 +37,10 @@ using Splitter = typename Knn::Splitter;
 using Distance = typename Knn::Distance;
 using Tree_ptr = std::unique_ptr<Tree>;
 using Fuzzy_sphere = CGAL::Fuzzy_sphere<Search_traits>;
+
+// convenience definitions for correspondences
+using Correspondence = std::pair<size_t, size_t>;
+using CorrespondenceRange = std::vector<Correspondence>;
 
 // extracts point clouds and transformations from a stanford config file
 template <typename PointMap, typename PointRange, typename Transformation>
@@ -143,15 +143,15 @@ void constructKdTree(Point_range& feature_range, Tree_ptr& tree, Distance& dista
   distance = Distance(point_d_map);
 }
 
-template <typename PointRange, typename TransformationRange, typename IndexedPointRange>
-int computeCorrespondences(const std::vector<PointRange>& point_clouds, const TransformationRange& transformations, std::vector<IndexedPointRange>& patches, 
+template <typename PointRange, typename TransformationRange>
+void computeCorrespondences(const std::vector<PointRange>& point_clouds, const TransformationRange& transformations, std::vector<CorrespondenceRange>& correspondences, 
                             int sampling_number = 200, const double max_dist = 0.00001){
   using PointType = typename PointRange::value_type;
   int num_point_clouds = point_clouds.size();
 
   Point_range merged_point_cloud;
   std::vector<Point_range> transformed_point_clouds(num_point_clouds);
-  // construct transformed patches
+  // construct transformed point clouds
   for (size_t i = 0; i < num_point_clouds; i++){
     for (size_t j = 0; j < point_clouds[i].size(); j++){
       const PointType point = point_clouds[i][j].transform(transformations[i].inverse());
@@ -176,27 +176,20 @@ int computeCorrespondences(const std::vector<PointRange>& point_clouds, const Tr
 
   // construct correspondences
   for (size_t i = 0; i < merged_point_cloud.size(); i++) {
+    CorrespondenceRange correspondence;
     Point_3& query_point = merged_point_cloud[i];
-    for (size_t j = 0; j < patches.size(); j++) {
+    for (size_t j = 0; j < num_point_clouds; j++) {
       Knn knn(*trees[j], query_point, 1, 0, true, distances[j]);
       double dist = knn.begin()->second;
       if(dist < max_dist){
         std::size_t nn = knn.begin()->first;
-        patches[j].emplace_back(point_clouds[j][nn] , i);
+        correspondence.emplace_back(j, nn);
       } 
     }
+    if(!correspondence.empty())
+      correspondences.push_back(std::move(correspondence));
   }       
-
-  return num_global_coordinates;
 }
-
-template <typename PointRange, typename TransformationRange>
-void transformAndMergePointSets(const std::vector<PointRange>& point_clouds, const TransformationRange& transformations, PointRange& registered_point_cloud){
-  for (size_t i = 0; i < point_clouds.size(); i++)
-    for (size_t j = 0; j < point_clouds[i].size(); j++)
-      registered_point_cloud.push_back(point_clouds[i][j].transform(transformations[i]));
-}
-
 
 int main (int argc, char** argv)
 {
@@ -209,18 +202,11 @@ int main (int argc, char** argv)
   extractPCAndTrFromStandfordConfFile(config_fname, ground_truth_transformations, point_clouds, point_map);
   int num_point_clouds = point_clouds.size();
 
-  std::vector<std::vector<Indexed_Point>> patches(num_point_clouds);
-  int num_global_coordinates = computeCorrespondences(point_clouds, ground_truth_transformations, patches);
-
-  CGAL::OpenGR::GRET_SDP<Kernel> matcher;
-  matcher.registerPatches(patches, num_global_coordinates, CGAL::parameters::point_map(Point_map())
-                                                .vertex_index_map(Index_map()));
-
-  std::vector<Kernel::Aff_transformation_3> computed_transformations;
-  matcher.getTransformations(computed_transformations);
+  std::vector<CorrespondenceRange> correspondences;
+  computeCorrespondences(point_clouds, ground_truth_transformations, correspondences);
 
   Point_range registered_point_cloud;
-  transformAndMergePointSets(point_clouds, computed_transformations, registered_point_cloud);
+  CGAL::OpenGR::registerPointClouds<Kernel>(point_clouds, correspondences, CGAL::parameters::point_map(Point_map()), registered_point_cloud);
 
   std::ofstream out("registered_point_clouds.ply");
   if (!out ||
