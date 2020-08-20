@@ -713,6 +713,10 @@ private: // functions :
     }
   }
 
+  template<typename Query, typename Node_output_iterator>
+  void intersecting_nodes_recursive(const Query &query, const Node &node, Node_output_iterator output) const {
+
+  }
 
 }; // end class Octree
 
