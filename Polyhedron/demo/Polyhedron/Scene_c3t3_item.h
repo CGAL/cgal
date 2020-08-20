@@ -155,6 +155,12 @@ public:
 
   QColor get_histogram_color(const double v) const;
 
+  void set_sharp_edges_angle(double d);
+  double get_sharp_edges_angle();
+
+  void set_detect_borders(bool b);
+  bool get_detect_borders();
+
   void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
 
   void initializeBuffers(Viewer_interface *) const Q_DECL_OVERRIDE;

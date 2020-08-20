@@ -347,6 +347,8 @@ struct Scene_c3t3_item_priv {
     cnc_are_shown = false;
     is_aabb_tree_built = false;
     alphaSlider = NULL;
+    sharp_edges_angle = -1;
+    detect_borders = false;
   }
   void computeIntersection(const Primitive& facet);
   void fill_aabb_tree() {
@@ -501,6 +503,9 @@ struct Scene_c3t3_item_priv {
   bool is_valid;
   bool is_surface;
   bool last_intersection;
+  //only for optimizers
+  double sharp_edges_angle;
+  bool detect_borders;
 
   void push_normal(std::vector<float>& normals, const EPICK::Vector_3& n) const
   {
@@ -2105,6 +2110,13 @@ Scene_c3t3_item* Scene_c3t3_item::clone() const
 {
   return new Scene_c3t3_item(d->c3t3, d->is_surface);
 }
+
+void Scene_c3t3_item::set_sharp_edges_angle(double a) { d->sharp_edges_angle = a; }
+double Scene_c3t3_item::get_sharp_edges_angle() { return d->sharp_edges_angle; }
+
+void Scene_c3t3_item::set_detect_borders(bool b) { d->detect_borders = b;}
+bool Scene_c3t3_item::get_detect_borders() { return d->detect_borders; }
+
 
 #include "Scene_c3t3_item.moc"
 
