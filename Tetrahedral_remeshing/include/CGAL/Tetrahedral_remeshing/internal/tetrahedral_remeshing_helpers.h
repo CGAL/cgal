@@ -27,7 +27,7 @@
 #include <CGAL/IO/File_binary_mesh_3.h>
 
 #include <boost/container/flat_set.hpp>
-#include <boost/container/small_vector.hpp >
+#include <boost/container/small_vector.hpp>
 
 namespace CGAL
 {
@@ -1034,15 +1034,16 @@ void get_edge_info(const typename C3t3::Edge& edge,
   //feature edges and feature vertices
   if (dim0 < 2 || dim1 < 2)
   {
+    if (!topology_test(edge, c3t3, cell_selector))
+    {
+#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
+      nb_topology_test++;
+#endif
+      return;
+    }
+
     if (c3t3.is_in_complex(edge))
     {
-      if (!topology_test(edge, c3t3, cell_selector))
-      {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-        nb_topology_test++;
-#endif
-        return;
-      }
       const std::size_t nb_si_v0 = nb_incident_subdomains(v0, c3t3);
       const std::size_t nb_si_v1 = nb_incident_subdomains(v1, c3t3);
 
@@ -1059,6 +1060,19 @@ void get_edge_info(const typename C3t3::Edge& edge,
           update_v0 = true;
         if (!c3t3.is_in_complex(v1))
           update_v1 = true;
+      }
+    }
+    else
+    {
+      if (dim0 == 2 && is_boundary_edge(v0, v1, c3t3, cell_selector))
+      {
+        update_v0 = true;
+        return;
+      }
+      else if(dim1 == 2 && is_boundary_edge(v0, v1, c3t3, cell_selector))
+      {
+        update_v1 = true;
+        return;
       }
     }
     return;
