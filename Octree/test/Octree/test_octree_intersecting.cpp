@@ -67,10 +67,7 @@ int main(void) {
     std::vector<const Octree::Node *> nodes{};
     octree.intersecting_nodes(query, std::back_inserter(nodes));
 
-    // Print out the results
-    for (auto node : nodes)
-      std::cout << *node << std::endl;
-
+    // Check the results
     assert(4 == nodes.size());
     assert(octree[Octree::Node::RIGHT_TOP_BACK] == *nodes[0]);
     assert(octree[Octree::Node::RIGHT_BOTTOM_FRONT] == *nodes[1]);
@@ -88,6 +85,16 @@ int main(void) {
     std::vector<const Octree::Node *> nodes{};
     octree.intersecting_nodes(query, std::back_inserter(nodes));
 
+    // Check the results
+    assert(8 == nodes.size());
+    assert(octree[Octree::Node::LEFT_BOTTOM_BACK] == *nodes[0]);
+    assert(octree[Octree::Node::RIGHT_BOTTOM_BACK][Octree::Node::LEFT_TOP_FRONT] == *nodes[1]);
+    assert(octree[Octree::Node::LEFT_TOP_BACK] == *nodes[2]);
+    assert(octree[Octree::Node::RIGHT_TOP_BACK] == *nodes[3]);
+    assert(octree[Octree::Node::LEFT_BOTTOM_FRONT] == *nodes[4]);
+    assert(octree[Octree::Node::RIGHT_BOTTOM_FRONT] == *nodes[5]);
+    assert(octree[Octree::Node::LEFT_TOP_FRONT] == *nodes[6]);
+    assert(octree[Octree::Node::RIGHT_TOP_FRONT] == *nodes[7]);
   }
 
   return EXIT_SUCCESS;
