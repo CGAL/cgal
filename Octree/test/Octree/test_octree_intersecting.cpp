@@ -61,12 +61,21 @@ int main(void) {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
     // Set the search point
-    auto query = Kernel::Sphere_3(Point{1, 1, 1}, 4.0);
+    auto query = Kernel::Sphere_3(Point{1, 0.5, 1}, 1.0);
 
     // Get a list of nodes intersected
     std::vector<const Octree::Node *> nodes{};
     octree.intersecting_nodes(query, std::back_inserter(nodes));
 
+    // Print out the results
+    for (auto node : nodes)
+      std::cout << *node << std::endl;
+
+    assert(4 == nodes.size());
+    assert(octree[Octree::Node::RIGHT_TOP_BACK] == *nodes[0]);
+    assert(octree[Octree::Node::RIGHT_BOTTOM_FRONT] == *nodes[1]);
+    assert(octree[Octree::Node::LEFT_TOP_FRONT] == *nodes[2]);
+    assert(octree[Octree::Node::RIGHT_TOP_FRONT] == *nodes[3]);
   }
 
   // Intersection with a ray
@@ -80,9 +89,6 @@ int main(void) {
     octree.intersecting_nodes(query, std::back_inserter(nodes));
 
   }
-
-  // Print out the tree
-  std::cout << octree;
 
   return EXIT_SUCCESS;
 }
