@@ -24,7 +24,7 @@ or clear operation.
 
 \note  This class is (almost) obsolete. The class
 `CGAL::Min_sphere_of_spheres_d<Traits>` solves a more general problem
-and is faster then `Min_sphere_d` even if used only for points
+and is faster than `Min_sphere_d` even if used only for points
 as input. Most importantly, `CGAL::Min_sphere_of_spheres_d<Traits>` has
 a specialized implementation for floating-point arithmetic which
 ensures correct results in a large number of cases (including

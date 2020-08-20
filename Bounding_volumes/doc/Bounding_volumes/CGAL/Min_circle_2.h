@@ -25,7 +25,7 @@ set \f$ S\f$ which remains fixed until the next insert or clear operation.
 
 \note This class is (almost) obsolete. The class
 `CGAL::Min_sphere_of_spheres_d<Traits>` solves a more general problem
-and is faster then `Min_circle_2` even if used only for points in two
+and is faster than `Min_circle_2` even if used only for points in two
 dimensions as input. Most importantly,
 `CGAL::Min_sphere_of_spheres_d<Traits>` has
 a specialized implementation for floating-point arithmetic which
