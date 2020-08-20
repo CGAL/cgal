@@ -18,15 +18,17 @@
 
 #include "ui_OverlayDialog.h"
 
+// TODO: clean this up!
 // TODO: Don't color the text, but set an icon for each arrangement type...
 // TODO: Or maybe don't bother
 OverlayDialog::OverlayDialog( ArrangementDemoWindow* parent ) :
+  QDialog( parent ),
   ui( new Ui::OverlayDialog )
 {
   using namespace demo_types;
 
   // An extra parenthesis around QColor to avoid the
-  // http://en.wikipedia.org/wiki/Most_vexing_parse
+  // https://en.wikipedia.org/wiki/Most_vexing_parse
   // on clang
   QBrush segColor( ( QColor( ::Qt::red ) ) );
   QBrush polyColor( ( QColor( ::Qt::darkGreen ) ) );
@@ -43,15 +45,16 @@ OverlayDialog::OverlayDialog( ArrangementDemoWindow* parent ) :
     item->setText( labels[ i ] );
     item->setData( ARRANGEMENT, QVariant::fromValue( arrangements[ i ] ) );
     QIcon icon;
+
     Seg_arr* seg;
     Pol_arr* pol;
-
+    Lin_arr* lin;
 #ifdef CGAL_USE_CORE
     Conic_arr* conic;
+    Alg_seg_arr* alg;
+    Bezier_arr* bezier;
 #endif
 
-    Lin_arr* lin;
-    // Alg_seg_arr* alg;
     if ( CGAL::assign( seg, arrangements[ i ] ) )
     {
       icon.addFile(QString::fromUtf8(":/icons/green_icon.xpm"), QSize(),
@@ -62,6 +65,11 @@ OverlayDialog::OverlayDialog( ArrangementDemoWindow* parent ) :
       icon.addFile(QString::fromUtf8(":/icons/yellow_icon.xpm"), QSize(),
                    QIcon::Normal, QIcon::Off);
     }
+    else if ( CGAL::assign( lin, arrangements[ i ] ) )
+    {
+      icon.addFile(QString::fromUtf8(":/icons/blue_icon.xpm"), QSize(),
+                   QIcon::Normal, QIcon::Off);
+    }
 
 #ifdef CGAL_USE_CORE
     else if ( CGAL::assign( conic, arrangements[ i ] ) )
@@ -69,18 +77,18 @@ OverlayDialog::OverlayDialog( ArrangementDemoWindow* parent ) :
       icon.addFile(QString::fromUtf8(":/icons/red_icon.xpm"), QSize(),
                    QIcon::Normal, QIcon::Off);
     }
-#endif
-
-    else if ( CGAL::assign( lin, arrangements[ i ] ) )
+    else if ( CGAL::assign( alg, arrangements[ i ] ) )
     {
-      icon.addFile(QString::fromUtf8(":/icons/blue_icon.xpm"), QSize(),
+      icon.addFile(QString::fromUtf8(":/icons/yellow_icon.xpm"), QSize(),
                    QIcon::Normal, QIcon::Off);
     }
-    // else if ( CGAL::assign( alg, arrangements[ i ] ) )
-    // {
-    //   icon.addFile(QString::fromUtf8(":/icons/yellow_icon.xpm"), QSize(),
-    //                QIcon::Normal, QIcon::Off);
-    // }
+    else if ( CGAL::assign( bezier, arrangements[ i ] ) )
+    {
+      icon.addFile(QString::fromUtf8(":/icons/pink_icon.xpm"), QSize(),
+                   QIcon::Normal, QIcon::Off);
+    }
+#endif
+
     item->setIcon( icon );
   }
 }
@@ -103,27 +111,27 @@ void OverlayDialog::on_pickPushButton_pressed( )
 {
   int currentIndex = this->ui->arrangementsListWidget->currentRow( );
   if ( currentIndex == -1 )
-	return;
+    return;
 
   if ( !(this->ui->arrangementsListWidget->item( currentIndex )->flags( ) &
-		 Qt::ItemIsEnabled) )
+         Qt::ItemIsEnabled) )
   {
-	return;
+    return;
   }
   QListWidgetItem* takenItem =
-	this->ui->arrangementsListWidget->takeItem( currentIndex );
+    this->ui->arrangementsListWidget->takeItem( currentIndex );
   this->ui->overlayListWidget->addItem( takenItem );
 
   if ( this->ui->overlayListWidget->count( ) == 2 )
   {
-	this->ui->pickPushButton->setEnabled( false );
+    this->ui->pickPushButton->setEnabled( false );
   }
   else
   {
-	this->ui->pickPushButton->setEnabled( true );
+    this->ui->pickPushButton->setEnabled( true );
   }
   QItemSelectionModel* selectionModel =
-	this->ui->arrangementsListWidget->selectionModel( );
+    this->ui->arrangementsListWidget->selectionModel( );
   selectionModel->clearSelection( );
   this->restrictSelection( takenItem );
 }
@@ -132,22 +140,22 @@ void OverlayDialog::on_unpickPushButton_pressed( )
 {
   int currentIndex = this->ui->overlayListWidget->currentRow( );
   if ( currentIndex == -1 )
-	return;
+    return;
 
   QListWidgetItem* takenItem =
-	this->ui->overlayListWidget->takeItem( currentIndex );
+    this->ui->overlayListWidget->takeItem( currentIndex );
   this->ui->arrangementsListWidget->addItem( takenItem );
 
   if ( this->ui->overlayListWidget->count( ) == 2 )
   {
-	this->ui->pickPushButton->setEnabled( false );
+    this->ui->pickPushButton->setEnabled( false );
   }
   else
   {
-	this->ui->pickPushButton->setEnabled( true );
+    this->ui->pickPushButton->setEnabled( true );
   }
   if ( this->ui->overlayListWidget->count( ) == 0 )
-	this->unrestrictSelection( );
+    this->unrestrictSelection( );
 }
 
 void OverlayDialog::restrictSelection( QListWidgetItem* item )
@@ -155,14 +163,15 @@ void OverlayDialog::restrictSelection( QListWidgetItem* item )
   using namespace demo_types;
 
   CGAL::Object o = item->data( ARRANGEMENT ).value< CGAL::Object >( );
+
   Seg_arr* seg;
   Pol_arr* pol;
-
+  Lin_arr* lin;
 #ifdef CGAL_USE_CORE
   Conic_arr* conic;
+  Alg_seg_arr* alg;
+  Bezier_arr* bezier;
 #endif
-
-  Lin_arr* lin;
 
   if ( CGAL::assign( seg, o ) )
   {
@@ -202,6 +211,25 @@ void OverlayDialog::restrictSelection( QListWidgetItem* item )
       otherItem->setFlags( flags );
     }
   }
+  else if ( CGAL::assign( lin, o ) )
+  {
+    for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
+    {
+      QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
+      CGAL::Object o2 = otherItem->data( ARRANGEMENT ).value< CGAL::Object >( );
+      bool enabled = CGAL::assign( lin, o2 );
+      Qt::ItemFlags flags = otherItem->flags( );
+      if ( ! enabled )
+      {
+        flags &= ~( Qt::ItemIsEnabled );
+      }
+      else
+      {
+        flags |= Qt::ItemIsEnabled;
+      }
+      otherItem->setFlags( flags );
+    }
+  }
 
 #ifdef CGAL_USE_CORE
   else if ( CGAL::assign( conic, o ) )
@@ -223,15 +251,13 @@ void OverlayDialog::restrictSelection( QListWidgetItem* item )
       otherItem->setFlags( flags );
     }
   }
-#endif
-
-  else if ( CGAL::assign( lin, o ) )
+  else if ( CGAL::assign( alg, o ) )
   {
     for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
     {
       QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
       CGAL::Object o2 = otherItem->data( ARRANGEMENT ).value< CGAL::Object >( );
-      bool enabled = CGAL::assign( lin, o2 );
+      bool enabled = CGAL::assign( alg, o2 );
       Qt::ItemFlags flags = otherItem->flags( );
       if ( ! enabled )
       {
@@ -244,6 +270,27 @@ void OverlayDialog::restrictSelection( QListWidgetItem* item )
       otherItem->setFlags( flags );
     }
   }
+  else if ( CGAL::assign( bezier, o ) )
+  {
+    for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
+    {
+      QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
+      CGAL::Object o2 = otherItem->data( ARRANGEMENT ).value< CGAL::Object >( );
+      bool enabled = CGAL::assign( bezier, o2 );
+      Qt::ItemFlags flags = otherItem->flags( );
+      if ( ! enabled )
+      {
+        flags &= ~( Qt::ItemIsEnabled );
+      }
+      else
+      {
+        flags |= Qt::ItemIsEnabled;
+      }
+      otherItem->setFlags( flags );
+    }
+  }
+#endif
+
 }
 
 void OverlayDialog::unrestrictSelection( )

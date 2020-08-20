@@ -56,8 +56,8 @@ operator<<( const X_monotone_curve_2& curve )
 // Instantiation of Arr_conic_traits_2
 template <typename RatKernel, class AlgKernel, class NtTraits>
 auto ArrangementPainterOstream<CGAL::Arr_conic_traits_2<
-	RatKernel, AlgKernel, NtTraits>>::visibleParts(X_monotone_curve_2 curve)
-	-> std::vector<X_monotone_curve_2>
+  RatKernel, AlgKernel, NtTraits>>::visibleParts(X_monotone_curve_2 curve)
+  -> std::vector<X_monotone_curve_2>
 {
   // see if we intersect the bottom edge of the viewport
   Intersect_2 intersect_2 = this->traits.intersect_2_object( );
@@ -144,8 +144,8 @@ auto ArrangementPainterOstream<CGAL::Arr_conic_traits_2<
 
 template <typename RatKernel, class AlgKernel, class NtTraits>
 void ArrangementPainterOstream<
-	CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
-	filterIntersectionPoints(std::vector<CGAL::Object>& res)
+  CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
+  filterIntersectionPoints(std::vector<CGAL::Object>& res)
 {
   std::vector< std::pair< Intersection_point_2, Multiplicity > > tmp;
 
@@ -176,8 +176,8 @@ void ArrangementPainterOstream<
 
 template <typename RatKernel, class AlgKernel, class NtTraits>
 void ArrangementPainterOstream<
-	CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
-	printIntersectResult(const std::vector<CGAL::Object>& res)
+  CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
+  printIntersectResult(const std::vector<CGAL::Object>& res)
 {
   for ( std::vector< CGAL::Object >::const_iterator it = res.begin( );
         it != res.end( ); ++it )

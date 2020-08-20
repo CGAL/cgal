@@ -24,10 +24,10 @@ class NewTabDialog : public QDialog
 {
 public:
   NewTabDialog( QWidget* parent = 0 );
-  int checkedId( ) const;					//!< returns ID of the the radio button
+  int checkedId( ) const;
 
-protected:	
-  Ui::NewTabDialog* ui;						/*!< reference to the ui_NewTabDialog for displaying the dialogue */
-  QButtonGroup* buttonGroup;				/*!< radio button group */
+protected:
+  Ui::NewTabDialog* ui;
+  QButtonGroup* buttonGroup;
 };
 #endif // NEW_TAB_DIALOG_H

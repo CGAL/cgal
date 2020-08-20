@@ -56,20 +56,20 @@ class ColorItemEditor : public QPushButton
   Q_PROPERTY(QColor color READ color WRITE setColor USER true)
 
 public:
-  ColorItemEditor(QWidget *widget = 0);			//!< a color picker
+  ColorItemEditor(QWidget *widget = 0);
 
 public:
   QColor color( ) const;
-  void setColor( QColor c );					//!< a member function to set the color of the viewport
+  void setColor( QColor c );
 
 Q_SIGNALS:
-  void confirmed( );			
+  void confirmed( );
 
 protected:
-  void mousePressEvent( QMouseEvent* e );		//!< a member function for determining user input
+  void mousePressEvent( QMouseEvent* e );
 
 private:
-  QColor m_color;				/*!< A QColor object */
+  QColor m_color;
 }; // ColorItemEditor
 
 #endif // COLORLISTEDITOR_H

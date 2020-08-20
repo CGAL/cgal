@@ -30,26 +30,23 @@ public:
     QPainter* painter, const QStyleOptionGraphicsItem* option = nullptr,
     QWidget* widget = nullptr) override;
 
-  QRectF boundingRect( ) const override;				//!< virtual function for the bounding box
+  QRectF boundingRect( ) const override;
 
-  /** Template type
-     *  adds the points to the vector
-     */
   template < class Point >
   inline void insert( const Point& point );
 
   void clear( );
 
-  void setColor( QColor c );				//!< sets the color of the curve.
-  QColor getColor( ) const;					//!< returns the color of the curve
+  void setColor( QColor c );
+  QColor getColor( ) const;
 
-  void setPointRadius( double d );			//!< sets the user defined radius of the curve
-  double getPointRadius( ) const;			//!< returns the radius of the curve
+  void setPointRadius( double d );
+  double getPointRadius( ) const;
 
 protected:
-  std::vector< QPointF > points;  		/*!< vector of points of the curve */
-  double pointRadius;					/*!< area of the curve draw */
-  QColor color;                       	/*!< QColor object for the curve */
+  std::vector< QPointF > points;
+  double pointRadius;
+  QColor color;
 
 }; // class PointsGraphicsItem
 

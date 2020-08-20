@@ -26,7 +26,7 @@ public:
   QColor getColor( ) const;
 
 protected:
-  QColor fillColor;     		/*!< Qcolor object to fill a selected space */
+  QColor fillColor;
 };
 
 /**

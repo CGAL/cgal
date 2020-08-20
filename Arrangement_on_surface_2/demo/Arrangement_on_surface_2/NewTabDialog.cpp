@@ -12,37 +12,31 @@
 #include "NewTabDialog.h"
 #include "ArrangementDemoWindow.h"
 #include "ui_NewTabDialog.h"
+#include <QButtonGroup>
 
-//!	A constructor for the dialog box referencing the radio buttons for each traits to be added onto the dialog box 
-/*!
-  	\param parent A QWidget pointer to the class
-  	\param f A QT::WindowFlags config variable
-*/
 NewTabDialog::NewTabDialog( QWidget* parent ) :
   QDialog( parent ),
   ui( new Ui::NewTabDialog ),
   buttonGroup( new QButtonGroup )
 {
   this->ui->setupUi( this );
-	
+
   this->buttonGroup->addButton( this->ui->segmentRadioButton,
-								ArrangementDemoWindow::SEGMENT_TRAITS );
+                                ArrangementDemoWindow::SEGMENT_TRAITS );
   this->buttonGroup->addButton( this->ui->polylineRadioButton,
-								ArrangementDemoWindow::POLYLINE_TRAITS );
-  this->buttonGroup->addButton( this->ui->conicRadioButton,
-								ArrangementDemoWindow::CONIC_TRAITS );
+                                ArrangementDemoWindow::POLYLINE_TRAITS );
   this->buttonGroup->addButton( this->ui->linearRadioButton,
-								ArrangementDemoWindow::LINEAR_TRAITS );
+                                ArrangementDemoWindow::LINEAR_TRAITS );
+#ifdef CGAL_USE_CORE
+  this->buttonGroup->addButton( this->ui->conicRadioButton,
+                                ArrangementDemoWindow::CONIC_TRAITS );
   this->buttonGroup->addButton( this->ui->algebraicRadioButton,
-								ArrangementDemoWindow::ALGEBRAIC_TRAITS );
+                                ArrangementDemoWindow::ALGEBRAIC_TRAITS );
   this->buttonGroup->addButton( this->ui->bezierRadioButton,
                                 ArrangementDemoWindow::BEZIER_TRAITS );
+#endif
 }
 
-//!	returns the ID of the checked radio button
-/*!
-  	\return interger value of the checked radio button
-*/
 int NewTabDialog::checkedId( ) const
 {
   return this->buttonGroup->checkedId( );

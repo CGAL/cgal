@@ -27,7 +27,7 @@ class ArrangementDemoPropertiesDialog : public QDialog
   public:
   // keep this in order with the ui layout
   enum PropertyKey {
-    EDGE_COLOR_KEY,               /*!< color key  */  
+    EDGE_COLOR_KEY,               /*!< color key  */
     EDGE_WIDTH_KEY,               /*!< width key  */
     VERTEX_COLOR_KEY,             /*!< vertex color  */
     VERTEX_RADIUS_KEY,            /*!< vertex radius  */

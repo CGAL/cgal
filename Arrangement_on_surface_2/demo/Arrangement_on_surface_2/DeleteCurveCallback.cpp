@@ -1,8 +1,8 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 
-#include "DeleteCurveCallback.h"
 #include "CurveGraphicsItem.h"
+#include "DeleteCurveCallback.h"
 #include "Utils.h"
 
 /*! Constructor */
@@ -33,102 +33,95 @@ void DeleteCurveCallback<Arr_>::setScene(QGraphicsScene* scene_)
 template <typename Arr_>
 void DeleteCurveCallback<Arr_>::reset()
 {
-	this->highlightedCurve->clear();
-	this->removableHalfedge = Halfedge_handle();
+  this->highlightedCurve->clear();
+  this->removableHalfedge = Halfedge_handle();
 }
 
 template <typename Arr_>
 void DeleteCurveCallback<Arr_>::mousePressEvent(
-	QGraphicsSceneMouseEvent* /* event */)
+  QGraphicsSceneMouseEvent* /* event */)
 {
-	if (this->removableHalfedge == Halfedge_handle())
-	{
-		return;
-	}
+  if (this->removableHalfedge == Halfedge_handle()) { return; }
 
-	if (this->deleteMode == DeleteMode::DeleteOriginatingCuve)
-	{
-		Originating_curve_iterator it =
-			this->arr->originating_curves_begin(this->removableHalfedge);
-		Originating_curve_iterator it_end =
-			this->arr->originating_curves_end(this->removableHalfedge);
-		while (it != it_end)
-		{
-			Originating_curve_iterator temp = it;
-			++temp;
-			CGAL::remove_curve(*(this->arr), it);
-			it = temp;
-		}
-	}
-	else
-	{
-		// CGAL::remove_edge( *(this->arr), this->removableHalfedge->curve( ) );
-		this->arr->remove_edge(this->removableHalfedge);
-	}
-	this->reset();
-	Q_EMIT modelChanged();
+  if (this->deleteMode == DeleteMode::DeleteOriginatingCuve)
+  {
+    Originating_curve_iterator it =
+      this->arr->originating_curves_begin(this->removableHalfedge);
+    Originating_curve_iterator it_end =
+      this->arr->originating_curves_end(this->removableHalfedge);
+    while (it != it_end)
+    {
+      Originating_curve_iterator temp = it;
+      ++temp;
+      CGAL::remove_curve(*(this->arr), it);
+      it = temp;
+    }
+  }
+  else
+  {
+    // CGAL::remove_edge( *(this->arr), this->removableHalfedge->curve( ) );
+    this->arr->remove_edge(this->removableHalfedge);
+  }
+  this->reset();
+  Q_EMIT modelChanged();
 }
 
 template <typename Arr_>
 void DeleteCurveCallback<Arr_>::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-	this->highlightNearestCurve(event);
+  this->highlightNearestCurve(event);
 }
 
 template <typename Arr_>
 void DeleteCurveCallback<Arr_>::highlightNearestCurve(
-	QGraphicsSceneMouseEvent* event)
+  QGraphicsSceneMouseEvent* event)
 {
-    typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
-    typedef typename Kernel::Point_2                      Point;
+  typedef typename ArrTraitsAdaptor<Traits>::Kernel Kernel;
+  typedef typename Kernel::Point_2 Point;
 
-    CGAL::Qt::Converter< Kernel > convert;
-	// find the nearest curve to the cursor to be the new highlighted curve
-	Point p = convert(event->scenePos());
+  CGAL::Qt::Converter<Kernel> convert;
+  // find the nearest curve to the cursor to be the new highlighted curve
+  Point p = convert(event->scenePos());
 
-	Find_nearest_edge<Arr_> findNearestEdge(this->arr);
-	findNearestEdge.setScene(this->scene);
-	auto nearestEdge = findNearestEdge(p);
-	this->removableHalfedge = this->arr->non_const_handle(nearestEdge);
+  Find_nearest_edge<Arr_> findNearestEdge(this->arr);
+  findNearestEdge.setScene(this->scene);
+  auto nearestEdge = findNearestEdge(p);
+  this->removableHalfedge = this->arr->non_const_handle(nearestEdge);
 
-	// now 'removableHalfedge' holds the closest halfedge to the point of the
-	// mouse
-	// this->removableHalfedge = nearestHei;
-	// if ( isFirst )
-	if (this->removableHalfedge == Halfedge_handle())
-	{
-		return;
-	}
+  // now 'removableHalfedge' holds the closest halfedge to the point of the
+  // mouse
+  // this->removableHalfedge = nearestHei;
+  // if ( isFirst )
+  if (this->removableHalfedge == Halfedge_handle()) { return; }
 
-	// create a curve graphics item and add it to the scene
-	this->highlightedCurve->clear();
-	if (this->deleteMode == DeleteMode::DeleteOriginatingCuve)
-	{ // highlight the originating curve
-		Originating_curve_iterator ocit, temp;
-		ocit = this->arr->originating_curves_begin(this->removableHalfedge);
-		while (ocit !=
-			   this->arr->originating_curves_end(this->removableHalfedge))
-		{
-			temp = ocit;
-			++temp;
+  // create a curve graphics item and add it to the scene
+  this->highlightedCurve->clear();
+  if (this->deleteMode == DeleteMode::DeleteOriginatingCuve)
+  { // highlight the originating curve
+    Originating_curve_iterator ocit, temp;
+    ocit = this->arr->originating_curves_begin(this->removableHalfedge);
+    while (ocit != this->arr->originating_curves_end(this->removableHalfedge))
+    {
+      temp = ocit;
+      ++temp;
 
-			Curve_handle ch = ocit;
-			Induced_edge_iterator itr;
-			for (itr = this->arr->induced_edges_begin(ch);
-				 itr != this->arr->induced_edges_end(ch); ++itr)
-			{
-				auto curve = (*itr)->curve();
-				this->highlightedCurve->insert(curve);
-			}
-			ocit = temp;
-		}
-	}
-	else
-	{ // highlight just the edge
-		this->highlightedCurve->insert(this->removableHalfedge->curve());
-	}
+      Curve_handle ch = ocit;
+      Induced_edge_iterator itr;
+      for (itr = this->arr->induced_edges_begin(ch);
+           itr != this->arr->induced_edges_end(ch); ++itr)
+      {
+        auto curve = (*itr)->curve();
+        this->highlightedCurve->insert(curve);
+      }
+      ocit = temp;
+    }
+  }
+  else
+  { // highlight just the edge
+    this->highlightedCurve->insert(this->removableHalfedge->curve());
+  }
 
-	Q_EMIT modelChanged();
+  Q_EMIT modelChanged();
 }
 
 ARRANGEMENT_DEMO_SPECIALIZE_ARR(DeleteCurveCallback)

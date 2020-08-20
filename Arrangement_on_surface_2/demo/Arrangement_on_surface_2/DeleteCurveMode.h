@@ -23,17 +23,14 @@ class DeleteCurveMode
 {
 public:
   enum Mode {
-    DELETE_CURVE,			/*!< Enum value 1 denoting the curve. */  
-    DELETE_EDGE				/*!< Enum value 2 denoting the edge of the curve. */ 
+    DELETE_CURVE,
+    DELETE_EDGE
   };
 
-	//! overloaded functions for deleting depending on scenarios
-	/*!
-	*/
-	DeleteCurveMode( );
-	DeleteCurveMode( const DeleteCurveMode& dcm );
-	DeleteCurveMode( Mode mode );
-	~DeleteCurveMode( );
+  DeleteCurveMode( );
+  DeleteCurveMode( const DeleteCurveMode& dcm );
+  DeleteCurveMode( Mode mode );
+  ~DeleteCurveMode( );
 
   Mode mode( ) const;
   void setMode( Mode mode );
@@ -41,7 +38,7 @@ public:
   static QString ToString( const DeleteCurveMode& mode );
 
 protected:
-  Mode m_mode;                                /*!< mode determing the policy for the curves*/
+  Mode m_mode;
 };
 
 Q_DECLARE_METATYPE( DeleteCurveMode )

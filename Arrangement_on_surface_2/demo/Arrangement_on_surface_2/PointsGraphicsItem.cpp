@@ -21,14 +21,9 @@ PointsGraphicsItem::PointsGraphicsItem( ) :
   color( ::Qt::blue )
 { }
 
-//! drawing the curve onto the viewport.
-/*!
-  	\param painter A QPainter pointer to the class
-  	\param QStyleOptionGraphicsItem and QWdidget
-*/
-void PointsGraphicsItem::paint(QPainter* painter,
-							   const QStyleOptionGraphicsItem* /* option */,
-							   QWidget* /* widget */)
+void PointsGraphicsItem::paint(
+  QPainter* painter, const QStyleOptionGraphicsItem* /* option */,
+  QWidget* /* widget */)
 {
   painter->save();
 
@@ -43,32 +38,25 @@ void PointsGraphicsItem::paint(QPainter* painter,
   painter->restore();
 }
 
-//! determing the bounding box of the curve.
-/*!
-  	\return A QRectF object
-*/
-QRectF PointsGraphicsItem::boundingRect( ) const
+QRectF PointsGraphicsItem::boundingRect() const
 {
-  if ( this->points.size( ) == 0 )
+  if (this->points.size() == 0) { return QRectF(); }
+  double xmin = (std::numeric_limits<double>::max)();
+  double xmax = -(std::numeric_limits<double>::max)();
+  double ymin = (std::numeric_limits<double>::max)();
+  double ymax = -(std::numeric_limits<double>::max)();
+  for (unsigned int i = 0; i < this->points.size(); ++i)
   {
-	return QRectF( );
+    QPointF pt = this->points[i];
+    double x = pt.x();
+    double y = pt.y();
+    xmin = (std::min)(xmin, x);
+    xmax = (std::max)(xmax, x);
+    ymin = (std::min)(ymin, y);
+    ymax = (std::max)(ymax, y);
   }
-  double xmin = (std::numeric_limits< double >::max)( );
-  double xmax = -(std::numeric_limits< double >::max)( );
-  double ymin = (std::numeric_limits< double >::max)( );
-  double ymax = -(std::numeric_limits< double >::max)( );
-  for ( unsigned int i = 0; i < this->points.size(); ++i )
-  {
-	QPointF pt = this->points[ i ];
-	double x = pt.x( );
-	double y = pt.y( );
-	xmin = (std::min)( xmin, x );
-	xmax = (std::max)( xmax, x );
-	ymin = (std::min)( ymin, y );
-	ymax = (std::max)( ymax, y );
-  }
-  QRectF res( QPointF( xmin, ymin ), QPointF( xmax, ymax ) );
-  res.adjust( -5, -5, 5, 5 ); // pad the borders a bit
+  QRectF res(QPointF(xmin, ymin), QPointF(xmax, ymax));
+  res.adjust(-5, -5, 5, 5); // pad the borders a bit
   return res;
 }
 
