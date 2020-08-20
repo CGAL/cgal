@@ -725,6 +725,10 @@ private: // functions :
         return;
       }
 
+      // Otherwise, each of the children need to be checked
+      for (int i = 0; i < 8; ++i) {
+        intersecting_nodes_recursive(query, node[i], output);
+      }
 
     }
   }
