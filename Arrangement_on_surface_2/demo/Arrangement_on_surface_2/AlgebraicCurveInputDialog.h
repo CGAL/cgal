@@ -3,7 +3,7 @@
 
 #include <QDialog>
 
-namespace Ui 
+namespace Ui
 {
 class AlgebraicCurveInputDialog;
 }
