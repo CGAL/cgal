@@ -649,11 +649,10 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   Cell_circulator cell_circulator = tr.incident_cells(edge);
   Cell_circulator done = cell_circulator;
 
+  boost::container::small_vector<Facet, 60> facets;
   for (Vertex_handle vh : opposite_vertices)
   {
     bool keep = true;
-
-    std::vector<Facet> facets;
     do
     {
       //Store it if it do not have vh
@@ -698,6 +697,7 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
         }
       }
     }
+    facets.clear();
 
     if (keep && (max_flip_cos_dh < curr_max_cosdh || !is_sliver_well_oriented))
     {
