@@ -1,14 +1,15 @@
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Min_circle_2.h>
-#include <CGAL/Min_circle_2_traits_2.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Min_sphere_of_spheres_d.h>
+#include <CGAL/Min_sphere_of_points_d_traits_2.h.h>
+
 #include <iostream>
 
 // typedefs
-typedef  CGAL::Exact_predicates_exact_constructions_kernel K;
-typedef  CGAL::Min_circle_2_traits_2<K>  Traits;
-typedef  CGAL::Min_circle_2<Traits>      Min_circle;
+typedef  CGAL::Simple_cartesian<double>            K;
+typedef  CGAL::Min_sphere_of_points_d_traits_2<K>  Traits;
+typedef  CGAL::Min_sphere_of_spheres_d<Traits>     Min_circle;
 
-typedef  K::Point_2                      Point;
+typedef  K::Point_2                                Point;
 
 int
 main( int, char**)
@@ -16,15 +17,15 @@ main( int, char**)
     const int n = 100;
     Point P[n];
 
-    for ( int i = 0; i < n; ++i)
-        P[ i] = Point( (i%2 == 0 ? i : -i), 0);
-    // (0,0), (-1,0), (2,0), (-3,0), ...
+    for ( int i = 0; i < n; ++i){
+      P[ i] = Point( (i%2 == 0 ? i : -i), 0, 1);
+      // (0,0), (-1,0), (2,0), (-3,0), ...
+    }
 
-    Min_circle  mc1( P, P+n, false);    // very slow
-    Min_circle  mc2( P, P+n, true);     // fast
+    Min_circle  mc( P, P+n);
 
     CGAL::set_pretty_mode( std::cout);
-    std::cout << mc2;
+    std::cout << mc;
 
     return 0;
 }
