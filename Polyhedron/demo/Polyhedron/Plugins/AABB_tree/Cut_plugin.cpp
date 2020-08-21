@@ -662,6 +662,13 @@ public:
   void invalidateOpenGLBuffers()
   {
       setBuffersFilled(false);
+      for(CGAL::QGLViewer* v: CGAL::QGLViewer::QGLViewerPool())
+      {
+        CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
+        if(viewer == NULL)
+          continue;
+        setBuffersInit(viewer, false);
+      }
       getEdgeContainer(0)->reset_vbos(ALL);
   }
 
@@ -693,6 +700,11 @@ public:
       }
     }
     nb_lines = positions_lines.size();
+    Ec* ec = getEdgeContainer(0);
+    ec->allocate(Ec::Vertices,
+                 positions_lines.data(),
+                 static_cast<int>(positions_lines.size()*sizeof(float)));
+    setBuffersFilled(true);
   }
 
 private:
@@ -746,30 +758,41 @@ private:
 
 
 public:
-    void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
-    {
-
-      Ec* ec = getEdgeContainer(0);
-        ec->allocate(Ec::Vertices,
-                     positions_lines.data(),
-                     static_cast<int>(positions_lines.size()*sizeof(float)));
-        ec->initializeBuffers(viewer);
-        ec->setFlatDataSize(nb_lines);
-        positions_lines.clear();
-        positions_lines.shrink_to_fit();
-        setBuffersFilled(true);
-    }
+   void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
+   {
+     Ec* ec = getEdgeContainer(0);
+     ec->initializeBuffers(viewer);
+     ec->setFlatDataSize(nb_lines);
+     positions_lines.clear();
+     positions_lines.shrink_to_fit();
+   }
 
     void drawEdges(CGAL::Three::Viewer_interface* viewer) const
     {
+      if(!isInit(viewer)){
+        setBuffersFilled(false);
+        setBuffersInit(viewer, false);
+        initGL(viewer);
+      }
+      if ( getBuffersFilled() &&
+           ! getBuffersInit(viewer))
+      {
+        initializeBuffers(viewer);
+        setBuffersInit(viewer, true);
+      }
       if(!getBuffersFilled())
       {
         update_tree(get_plane_item());
         initializeBuffers(viewer);
       }
-        Ec* ec = getEdgeContainer(0);
-        ec->setColor(this->color());
+      Ec* ec = getEdgeContainer(0);
+      ec->setColor(this->color());
         ec->draw(viewer, true);
+    }
+
+    void computeElements() const
+    {
+      update_tree(get_plane_item());
     }
 
 }; // end class Scene_aabb_item
