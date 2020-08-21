@@ -22,10 +22,49 @@ namespace CGAL {
 
 namespace OpenGR {
 
-template <typename Kernel, class PointRange, class CorrespondencesRange, class NamedParameters, class TransformRange>
+
+
+/**
+   \ingroup PkgPointSetProcessing3Algorithms
+
+   Computes the registration of the point clouds in `point_clouds` using the correspondences provided 
+   in `correspondences` and stores the corresponding affine transformations in `transformations`.
+
+   Registration is computed using the GRET-SDP algorithm that is described in [this paper](https://arxiv.org/abs/1306.5226)
+   
+   \note This function requires the \ref thirdpartyOpenGR library.
+
+   \warning 
+
+   \tparam PointRange is a model of `Range`. The value type of its iterator is
+   the key type of the named parameter `point_map` in `NamedParameters`.
+   \tparam CorrespondencesRange is a model of `Range`. The value type of its iterator is
+   is another range of correspondences. The value type of the iterator of a correspondences range 
+   is `std::pair<size_t,size_t>`.
+   \tparam TransformRange is a model of `Range`. The value type of its iterator is `Kernel::Aff_transformation_3`
+   where `Kernel` is the same kernel used to construct the value type of PointRange `Kernel_traits<typename PointRange::value_type>::Kernel`. ???
+   The value type of its iterator could be any class with a constructor that accepts 12 doubles, ints,... ???
+
+   \param point_clouds vector of input point ranges of the point clouds to be registered.
+   \param correspondences input range of correspondences. Each entry in correspondences is a range itself that stores the indexes of the points that are 
+   considered to correspond to the same global coordinate. A points indexes are stores using a `std::pair<size_t,size_t>` where `first` equals the point cloud index 
+   and `second` equals the index within this point cloud that it belongs to (indexes with respect to `point_clouds`).  
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param transformations ouput range of the affine transformations where the i'th transformation should be applied to the i'th point cloud in order to register them.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` whose key type
+     is the value type of the iterator of `PointRange` and whose value type is
+     `geom_traits::Point_3`.  If this parameter is omitted,
+     `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+   \cgalNamedParamsEnd
+
+*/
+template <class PointRange, class CorrespondencesRange, class NamedParameters, class TransformRange>
 void computeRegistrationTransformations(const std::vector<PointRange>& point_clouds, const CorrespondencesRange& correspondences, 
                                         const NamedParameters& np, TransformRange& transformations)
 {
+    using Kernel = typename CGAL::Kernel_traits<typename PointRange::value_type>::Kernel;
     using Scalar = typename Kernel::FT;
     using GR_PointType = gr::Point3D<Scalar> ;
     using GR_IndexedPointType = std::pair<GR_PointType, std::size_t>;
@@ -78,13 +117,48 @@ void computeRegistrationTransformations(const std::vector<PointRange>& point_clo
         );
 }
 
-template <typename Kernel, class PointRange, class CorrespondencesRange, class NamedParameters>
+
+/**
+   \ingroup PkgPointSetProcessing3Algorithms
+
+   Computes the registration of the point clouds in `point_clouds` using the correspondences provided 
+   in `correspondences` and stores the registered point cloud in `registered_points`.
+
+   Registration is computed using the GRET-SDP algorithm that is described in [this paper](https://arxiv.org/abs/1306.5226)
+   
+   \note This function requires the \ref thirdpartyOpenGR library.
+
+   \warning 
+
+   \tparam PointRange is a model of `Range`. The value type of its iterator is
+   the key type of the named parameter `point_map` in `NamedParameters`.
+   \tparam CorrespondencesRange is a model of `Range`. The value type of its iterator is
+   is another range of correspondences. The value type of the iterator of a correspondences range 
+   is `std::pair<size_t,size_t>`.
+
+   \param point_clouds vector of input point ranges of the point clouds to be registered.
+   \param correspondences input range of correspondences. Each entry in correspondences is a range itself that stores the indexes of the points that are 
+   considered to correspond to the same global coordinate. A points indexes are stores using a `std::pair<size_t,size_t>` where `first` equals the point cloud index 
+   and `second` equals the index within this point cloud that it belongs to (indexes with respect to `point_clouds`).  
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param registered_points ouput point range of the registered point clouds.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` whose key type
+     is the value type of the iterator of `PointRange` and whose value type is
+     `geom_traits::Point_3`.  If this parameter is omitted,
+     `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+   \cgalNamedParamsEnd
+
+*/
+template <class PointRange, class CorrespondencesRange, class NamedParameters>
 void registerPointClouds(   const std::vector<PointRange>& point_clouds, const CorrespondencesRange& correspondences, 
                             const NamedParameters& np, PointRange& registered_points)
 {
+    using Kernel = typename CGAL::Kernel_traits<typename PointRange::value_type>::Kernel;
     // compute registration transformations
     std::vector<typename Kernel::Aff_transformation_3> transformations;
-    computeRegistrationTransformations<Kernel>(point_clouds, correspondences, np, transformations);
+    computeRegistrationTransformations(point_clouds, correspondences, np, transformations);
 
     // add transformed point clouds to registered_points
     for (size_t i = 0; i < point_clouds.size(); i++){

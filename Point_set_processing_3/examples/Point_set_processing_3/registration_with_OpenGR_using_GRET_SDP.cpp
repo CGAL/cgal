@@ -206,7 +206,7 @@ int main (int argc, char** argv)
   computeCorrespondences(point_clouds, ground_truth_transformations, correspondences);
 
   Point_range registered_point_cloud;
-  CGAL::OpenGR::registerPointClouds<Kernel>(point_clouds, correspondences, CGAL::parameters::point_map(Point_map()), registered_point_cloud);
+  CGAL::OpenGR::registerPointClouds(point_clouds, correspondences, CGAL::parameters::point_map(Point_map()), registered_point_cloud);
 
   std::ofstream out("registered_point_clouds.ply");
   if (!out ||
