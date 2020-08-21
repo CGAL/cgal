@@ -644,7 +644,9 @@ public:
     return
       tr("<p><b>%1</b> (mode: %2, color: %3)<br />"
          "<i>AABB_tree</i></p>"
-         "<p>Number of nodes: %4</p>")
+         "<p>Number of nodes: %4</p>"
+         "<p><b>Instructions:</b><br>Check <i>Only Intersected Boxes</i> in the item's menu to filter out the boxes of the tree that are not intersected by the plane.<br>"
+         "Use the cursor <i>Tree level</i> to only print the boxes of the Nth level. The most left-hand level is the full Tree.</p>")
       .arg(this->name())
       .arg(this->renderingModeName())
       .arg(this->color().name())
