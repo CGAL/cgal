@@ -420,6 +420,14 @@ Maximum number of seconds after which the algorithm stops. Super4PCS explores th
 transformation space to align the two input clouds. Since the exploration is performed
 randomly, it is recommended to use a large time value to explore the whole space.
 
+
+\subsection Point_set_processing_3Examples_registration_OpenGR_GRET_SDP OpenGR GRET-SDP Example
+GRET-SDP is an registration algorithm for multiple point clouds that is described in [this paper](https://arxiv.org/abs/1306.5226). 
+It is important to note that for each point, its corresponding points (e.g. points that represent the same location in space) in the other point clouds have to be known. 
+
+The following example reads N point clouds from a stanford config file, computes their correspondences and alignes them using the GRET-SDP algorithm from OpenGR. 
+\cgalExample{Point_set_processing_3/registration_with_OpenGR_using_GRET_SDP.cpp}
+
 \subsection Point_set_processing_3Examples_registration_PointMatcher PointMatcher Example
 
 The following example reads two point sets and aligns them using the

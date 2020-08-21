@@ -209,6 +209,11 @@ int main (int argc, char** argv)
   std::vector<CorrespondenceRange> correspondences;
   computeCorrespondences(point_clouds, point_map, ground_truth_transformations, correspondences);
 
+  // EITHER call the registration method GRET-SDP from OpenGR to get the transfromations for registration
+  std::vector<Kernel::Aff_transformation_3> transformations;
+  CGAL::OpenGR::compute_registration_transformations(point_clouds, correspondences, CGAL::parameters::point_map(point_map).normal_map(Normal_map()), transformations);
+
+  // OR call  the registration method GRET-SDP from OpenGR and apply transformations directly 
   Pwn_range registered_point_cloud;
   CGAL::OpenGR::register_point_clouds(point_clouds, correspondences, CGAL::parameters::point_map(point_map).normal_map(Normal_map()), registered_point_cloud);
 

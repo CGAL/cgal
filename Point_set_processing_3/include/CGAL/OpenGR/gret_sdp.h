@@ -152,7 +152,7 @@ void compute_registration_transformations(const std::vector<PointRange>& point_c
 
 */
 template <class PointRange, class CorrespondencesRange, class NamedParameters>
-void register_point_clouds(   const std::vector<PointRange>& point_clouds, const CorrespondencesRange& correspondences, 
+void register_point_clouds( const std::vector<PointRange>& point_clouds, const CorrespondencesRange& correspondences, 
                             const NamedParameters& np, PointRange& registered_points)
 {
     namespace PSP = CGAL::Point_set_processing_3;
