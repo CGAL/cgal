@@ -313,16 +313,15 @@ template<typename Tr>
 Dihedral_angle_cosine max_cos_dihedral_angle(const Tr& tr,
                                              const typename Tr::Cell_handle c)
 {
-  if (c->is_cache_valid())
-    return Dihedral_angle_cosine(CGAL::sign(c->sliver_value()), c->sliver_value(), 1.);
+//  if (c->is_cache_valid())
+//    return c->sliver_value();
 
   Dihedral_angle_cosine cos_dh = max_cos_dihedral_angle(tr,
                                                         c->vertex(0),
                                                         c->vertex(1),
                                                         c->vertex(2),
                                                         c->vertex(3));
-
-  c->set_sliver_value(cos_dh.signed_square_value());
+//  c->set_sliver_value(cos_dh.m_num);
   return cos_dh;
 }
 
