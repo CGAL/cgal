@@ -490,13 +490,7 @@ build_cgal_on_host()
 
       CGAL_BINARY_DIR="${CGAL_BINARY_DIR_BASE}/${PLATFORM}"
 
-      if [ -d "${REFERENCE_PLATFORMS_DIR}/${PLATFORM}" ] ; then
-        CGAL_REFERENCE_CACHE_DIR="${REFERENCE_PLATFORMS_DIR}/${PLATFORM}"
-      else
-        CGAL_REFERENCE_CACHE_DIR=""
-      fi
-
-      log "${ACTUAL_LOGFILE}" "Building cgal libs on host ${HOST} and platform ${PLATFORM}\nUnder ${CGAL_BINARY_DIR}\nUsing reference cache directory ${CGAL_REFERENCE_CACHE_DIR}"
+      log "${ACTUAL_LOGFILE}" "Building cgal libs on host ${HOST} and platform ${PLATFORM}\nUnder ${CGAL_BINARY_DIR}\n"
 
       if [ -f "${CGAL_BINARY_DIR}/localbuildscript" ] ; then
         log "${ACTUAL_LOGFILE}" "WARNING! Already built on platform ${PLATFORM}."
@@ -514,19 +508,12 @@ if [ -z "\$CMAKE_GENERATOR" ]; then
   CMAKE_GENERATOR='${CMAKE_GENERATOR}';
 fi
 MAKE_CMD='${MAKE_CMD}';
-if [ -n "${IS_CYGWIN}" ]; then
-  CGAL_REFERENCE_CACHE_DIR=\$( cygpath -w '${CGAL_REFERENCE_CACHE_DIR}' );
-else
-  CGAL_REFERENCE_CACHE_DIR='${CGAL_REFERENCE_CACHE_DIR}';\
-fi
 
 export CMAKE_GENERATOR;
 export MAKE_CMD;
 export CGAL_BINARY_DIR;
-export CGAL_REFERENCE_CACHE_DIR;
 cd '${CGAL_BINARY_DIR}';
 cmake \${INIT_FILE:+"-C\${INIT_FILE}"} '${CMAKE_GENERATOR}' -DRUNNING_CGAL_AUTO_TEST=TRUE \\
-                           -DCGAL_REFERENCE_CACHE_DIR="\$CGAL_REFERENCE_CACHE_DIR" \\
                            VERBOSE=1 \\
                            ../../..;
 ${MAKE_CMD} VERBOSE=ON -k -fMakefile  ;

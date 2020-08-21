@@ -54,12 +54,13 @@ class CollapseTriangulation
   typedef typename C3t3::Cell_handle                          Cell_handle;
   typedef typename C3t3::Vertex_handle                        Vertex_handle;
   typedef typename C3t3::Subdomain_index                      Subdomain_index;
+  typedef typename C3t3::Surface_patch_index                  Surface_patch_index;
   typedef typename C3t3::Triangulation::Point                 Point_3;
   typedef typename C3t3::Triangulation::Geom_traits::Vector_3 Vector_3;
 
 public:
-  CollapseTriangulation(C3t3& c3t3,
-                        const Edge& e,
+  CollapseTriangulation(const Edge& e,
+                        const std::unordered_set<Cell_handle>& cells_to_insert,
                         Collapse_type _collapse_type)
     : collapse_type(_collapse_type)
     , v0_init(e.first->vertex(e.second))
@@ -67,14 +68,6 @@ public:
   {
     typedef std::array<int, 3> Facet; // 3 = id
     typedef std::array<int, 5> Tet_with_ref; // first 4 = id, fifth = reference
-
-    std::unordered_set<Cell_handle> cells_to_insert;
-    c3t3.triangulation().finite_incident_cells(v0_init,
-      std::inserter(cells_to_insert, cells_to_insert.end()));
-    c3t3.triangulation().finite_incident_cells(v1_init,
-      std::inserter(cells_to_insert, cells_to_insert.end()));
-
-    make_cells_set_manifold(c3t3, cells_to_insert);
 
     std::unordered_set<Vertex_handle> vertices_to_insert;
     for (Cell_handle ch : cells_to_insert)
@@ -115,7 +108,7 @@ public:
 
     // finished
     std::vector<Vertex_handle> new_vertices;
-    std::map<Facet, int> border_facets;
+    std::map<Facet, typename C3t3::Surface_patch_index> border_facets;
      if (CGAL::build_triangulation<Tr, false>(triangulation,
                                               points, finite_cells, border_facets,
                                               new_vertices, false/*verbose*/))
@@ -142,58 +135,6 @@ public:
     else
       std::cout << "Warning : CollapseTriangulation is not valid!" << std::endl;
 #endif
-  }
-
-  void make_cells_set_manifold(const C3t3& c3t3,
-                               std::unordered_set<Cell_handle>& cells)
-  {
-    typedef Vertex_handle Vh;
-    typedef std::array<Vh, 3> FV;
-    typedef std::pair<Vh, Vh> EV;
-
-    boost::unordered_map<FV, int> facets;
-    for (Cell_handle c : cells)
-    {
-      for (int i = 0; i < 4; ++i)
-      {
-        const FV fvi = make_vertex_array(c->vertex((i + 1) % 4),
-                                         c->vertex((i + 2) % 4),
-                                         c->vertex((i + 3) % 4));
-        typename boost::unordered_map<FV, int>::iterator fit = facets.find(fvi);
-        if(fit == facets.end())
-          facets.insert(std::make_pair(fvi, 1));
-        else
-          fit->second++;
-      }
-    }
-
-    boost::unordered_map<EV, int> edges;
-    for (const std::pair<FV, int>& fvv : facets)
-    {
-      if(fvv.second != 1)
-        continue;
-
-      for (int i = 0; i < 3; ++i)
-      {
-        const EV evi = make_vertex_pair(fvv.first[i], fvv.first[(i + 1) % 3]);
-        typename boost::unordered_map<EV, int>::iterator eit = edges.find(evi);
-        if (eit == edges.end())
-          edges.insert(std::make_pair(evi, 1));
-        else
-          eit->second++;
-      }
-    }
-
-    for (const std::pair<EV, int>& evv : edges)
-    {
-      if (evv.second != 2)
-      {
-        c3t3.triangulation().finite_incident_cells(evv.first.first,
-          std::inserter(cells, cells.begin()));
-        c3t3.triangulation().finite_incident_cells(evv.first.second,
-          std::inserter(cells, cells.begin()));
-      }
-    }
   }
 
   Result_type collapse()
@@ -1038,6 +979,55 @@ typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
   return vh;
 }
 
+template<typename C3t3>
+bool is_cells_set_manifold(const C3t3&,
+    std::unordered_set<typename C3t3::Cell_handle>& cells)
+{
+  typedef typename C3t3::Cell_handle Cell_handle;
+  typedef typename C3t3::Vertex_handle Vh;
+  typedef std::array<Vh, 3> FV;
+  typedef std::pair<Vh, Vh> EV;
+
+  boost::unordered_map<FV, int> facets;
+  for (Cell_handle c : cells)
+  {
+    for (int i = 0; i < 4; ++i)
+    {
+      const FV fvi = make_vertex_array(c->vertex((i + 1) % 4),
+        c->vertex((i + 2) % 4),
+        c->vertex((i + 3) % 4));
+      typename boost::unordered_map<FV, int>::iterator fit = facets.find(fvi);
+      if (fit == facets.end())
+        facets.insert(std::make_pair(fvi, 1));
+      else
+        fit->second++;
+    }
+  }
+
+  boost::unordered_map<EV, int> edges;
+  for (const std::pair<FV, int>& fvv : facets)
+  {
+    if (fvv.second != 1)
+      continue;
+
+    for (int i = 0; i < 3; ++i)
+    {
+      const EV evi = make_vertex_pair(fvv.first[i], fvv.first[(i + 1) % 3]);
+      typename boost::unordered_map<EV, int>::iterator eit = edges.find(evi);
+      if (eit == edges.end())
+        edges.insert(std::make_pair(evi, 1));
+      else
+        eit->second++;
+    }
+  }
+
+  for (const std::pair<EV, int>& evv : edges)
+    if (evv.second != 2)
+      return false;
+
+  return true;
+}
+
 template<typename C3t3, typename CellSelector, typename Visitor>
 typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
     C3t3& c3t3,
@@ -1049,6 +1039,7 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
   typedef typename C3t3::Triangulation   Tr;
   typedef typename Tr::Point             Point;
   typedef typename Tr::Vertex_handle     Vertex_handle;
+  typedef typename Tr::Cell_handle       Cell_handle;
 
   const Vertex_handle v0 = edge.first->vertex(edge.second);
   const Vertex_handle v1 = edge.first->vertex(edge.third);
@@ -1121,7 +1112,19 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
     CGAL_assertion(c3t3.triangulation().is_edge(edge.first->vertex(edge.second),
                                                 edge.first->vertex(edge.third), dc, di, dj));
 
-    CollapseTriangulation<C3t3> local_tri(c3t3, edge, collapse_type);
+    Vertex_handle v0_init = edge.first->vertex(edge.second);
+    Vertex_handle v1_init = edge.first->vertex(edge.third);
+
+    std::unordered_set<Cell_handle> cells_to_insert;
+    c3t3.triangulation().finite_incident_cells(v0_init,
+      std::inserter(cells_to_insert, cells_to_insert.end()));
+    c3t3.triangulation().finite_incident_cells(v1_init,
+      std::inserter(cells_to_insert, cells_to_insert.end()));
+
+    if(!is_cells_set_manifold(c3t3, cells_to_insert))
+      return Vertex_handle();
+
+    CollapseTriangulation<C3t3> local_tri(edge, cells_to_insert, collapse_type);
 
     Result_type res = local_tri.collapse();
     if (res == VALID)

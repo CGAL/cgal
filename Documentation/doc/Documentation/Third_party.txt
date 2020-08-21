@@ -56,7 +56,7 @@ or <A HREF="https://msdn.microsoft.com/en-us/library/1fe2x6kt(v=vs.140).aspx">`h
 The \stl comes with the compiler, and as such no installation is required.
 
 \subsection thirdpartyBoost Boost
-<b>Version 1.62 or later</b>
+<b>Version 1.66 or later</b>
 
 The \sc{Boost} libraries are a set of portable C++ source libraries.
 Most of \sc{Boost} libraries are header-only, but a few of them need to be compiled or
@@ -64,10 +64,6 @@ installed as binaries.
 
 \cgal only requires the headers of the \sc{Boost} libraries, but some demos and examples
 depend on the binary library `Boost.Program_options`.
-As an exception and because of a bug in the \gcc compiler about the \cpp 11
-keyword `thread_local`, the `CGAL_Core` library always requires
-the binary library `Boost.Thread` if the \gcc compiler version 9.0 or
-earlier is used.
 
 In case the \sc{Boost} libraries are not installed on your system already, you
 can obtain them from <A HREF="https://www.boost.org">`https://www.boost.org/`</A>.
