@@ -24,7 +24,7 @@
 #endif
 
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
-#include <CGAL/barycenter.h>
+#include <CGAL/centroid.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -1211,15 +1211,6 @@ public:
  ************************************************************************/
 // /!\ points.first == points.last
 
-template <typename Point_3, typename FT>
-struct Pair_from_point {
-  typedef Point_3 argument_type;
-  typedef std::pair<Point_3, FT> result_type;
-  result_type operator() (const argument_type& p) const {
-    return std::make_pair(p, FT(1));
-  }
-};
-
 template <typename Traits>
 bool is_planar_2(
   const std::vector<typename Traits::Point_3>& points,
@@ -1244,11 +1235,8 @@ bool is_planar_2(
   }
 
   // Compute centroid.
-  const Point_3 centroid = CGAL::barycenter(
-    boost::make_transform_iterator(
-      points.begin(), Pair_from_point<Point_3, FT>()),
-    boost::make_transform_iterator(
-      points.end() - 1, Pair_from_point<Point_3, FT>()));
+  const Point_3 centroid =
+    CGAL::centroid(points.begin(), points.end() - 1);
 
   // Compute covariance matrix.
   FT xx = FT(0), yy = FT(0), zz = FT(0);
