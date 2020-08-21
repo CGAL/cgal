@@ -1433,7 +1433,6 @@ void Polyhedron_demo_cut_plugin::cut()
       continue;
     }
     aabb_item->invalidateOpenGLBuffers();
-    break;
   }
 
   switch(plane_item->cutPlaneType())
