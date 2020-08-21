@@ -61,10 +61,11 @@ namespace OpenGR {
 
 */
 template <class PointRange, class CorrespondencesRange, class NamedParameters, class TransformRange>
-void computeRegistrationTransformations(const std::vector<PointRange>& point_clouds, const CorrespondencesRange& correspondences, 
+void compute_registration_transformations(const std::vector<PointRange>& point_clouds, const CorrespondencesRange& correspondences, 
                                         const NamedParameters& np, TransformRange& transformations)
 {
-    using Kernel = typename CGAL::Kernel_traits<typename PointRange::value_type>::Kernel;
+    using PointMap = typename CGAL::GetPointMap<PointRange, NamedParameters>::type;
+    using Kernel = typename CGAL::Kernel_traits<typename PointMap::value_type>::Kernel;
     using Scalar = typename Kernel::FT;
     using GR_PointType = gr::Point3D<Scalar> ;
     using GR_IndexedPointType = std::pair<GR_PointType, std::size_t>;
@@ -73,7 +74,6 @@ void computeRegistrationTransformations(const std::vector<PointRange>& point_clo
     using GR_PatchType = std::vector<GR_IndexedPointType>;
     using GR_VectorType = typename GR_MatcherType::VectorType;
     
-    using PointMap = typename CGAL::GetPointMap<PointRange, NamedParameters>::type;
 
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -152,18 +152,38 @@ void computeRegistrationTransformations(const std::vector<PointRange>& point_clo
 
 */
 template <class PointRange, class CorrespondencesRange, class NamedParameters>
-void registerPointClouds(   const std::vector<PointRange>& point_clouds, const CorrespondencesRange& correspondences, 
+void register_point_clouds(   const std::vector<PointRange>& point_clouds, const CorrespondencesRange& correspondences, 
                             const NamedParameters& np, PointRange& registered_points)
 {
-    using Kernel = typename CGAL::Kernel_traits<typename PointRange::value_type>::Kernel;
+    namespace PSP = CGAL::Point_set_processing_3;
+    // property map types
+    typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
+    typedef typename PSP::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
+
+    using Kernel = typename CGAL::Kernel_traits<typename PointMap::value_type>::Kernel;
+    using Pwn = typename PointRange::value_type;
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
     // compute registration transformations
     std::vector<typename Kernel::Aff_transformation_3> transformations;
-    computeRegistrationTransformations(point_clouds, correspondences, np, transformations);
+    compute_registration_transformations(point_clouds, correspondences, np, transformations);
+
+
+
+
+    PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+    NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
 
     // add transformed point clouds to registered_points
     for (size_t i = 0; i < point_clouds.size(); i++){
         for (size_t j = 0; j < point_clouds[i].size(); j++){
-            registered_points.push_back(point_clouds[i][j].transform(transformations[i]));
+            auto point = get(point_map, point_clouds[i][j]).transform(transformations[i]);
+            auto normal = get(normal_map, point_clouds[i][j]);
+            Pwn pwn;
+            put(point_map, pwn, point);
+            put(normal_map, pwn, normal);
+            registered_points.push_back(pwn);
         }
     }
 }

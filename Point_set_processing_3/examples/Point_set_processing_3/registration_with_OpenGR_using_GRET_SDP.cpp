@@ -21,15 +21,20 @@
 #include <vector>
 #include <string>
 
+
 // For computations 3D space
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_3 = Kernel::Point_3;
+using Vector_3 = Kernel::Vector_3;
 using Point_range = std::vector<Point_3>;
-using Point_map = CGAL::Identity_property_map<Point_3>;
+using Pwn = std::pair<Point_3, Vector_3>;
+using Pwn_range = std::vector<Pwn>;
+using Point_map = CGAL::First_of_pair_property_map<Pwn>;
+using Normal_map = CGAL::Second_of_pair_property_map<Pwn>;
 
 // KD tree in N dimension
 using Search_traits_base = CGAL::Search_traits_3<Kernel>;
-using Point_3_map = typename CGAL::Pointer_property_map<Point_3>::type;
+using Point_3_map = typename CGAL::Pointer_property_map<Point_3>::type;;
 using Search_traits = CGAL::Search_traits_adapter<std::size_t, Point_3_map, Search_traits_base>;
 using Knn = CGAL::Orthogonal_k_neighbor_search<Search_traits>;
 using Tree = typename Knn::Tree;
@@ -132,21 +137,20 @@ void extractPCAndTrFromStandfordConfFile(
     }
 }
 
-void constructKdTree(Point_range& feature_range, Tree_ptr& tree, Distance& distance){
-  Point_3_map point_d_map = CGAL::make_property_map(feature_range);
+void constructKdTree(Point_range& point_range, Tree_ptr& tree, Distance& distance){
+  Point_3_map point_map = CGAL::make_property_map(point_range);
   tree.reset(
     new Tree(
-    boost::counting_iterator<std::size_t>(0), boost::counting_iterator<std::size_t>(feature_range.size()),
-    Splitter(), Search_traits(point_d_map)
+    boost::counting_iterator<std::size_t>(0), boost::counting_iterator<std::size_t>(point_range.size()),
+    Splitter(), Search_traits(point_map)
     ));
   tree->build();
-  distance = Distance(point_d_map);
+  distance = Distance(point_map);
 }
 
-template <typename PointRange, typename TransformationRange>
-void computeCorrespondences(const std::vector<PointRange>& point_clouds, const TransformationRange& transformations, std::vector<CorrespondenceRange>& correspondences, 
+template <typename PointMap, typename TransformationRange>
+void computeCorrespondences(const std::vector<Pwn_range>& point_clouds, const PointMap& point_map, const TransformationRange& transformations, std::vector<CorrespondenceRange>& correspondences, 
                             int sampling_number = 200, const double max_dist = 0.00001){
-  using PointType = typename PointRange::value_type;
   int num_point_clouds = point_clouds.size();
 
   Point_range merged_point_cloud;
@@ -154,7 +158,7 @@ void computeCorrespondences(const std::vector<PointRange>& point_clouds, const T
   // construct transformed point clouds
   for (size_t i = 0; i < num_point_clouds; i++){
     for (size_t j = 0; j < point_clouds[i].size(); j++){
-      const PointType point = point_clouds[i][j].transform(transformations[i].inverse());
+      Point_3 point = get(point_map, point_clouds[i][j]).transform(transformations[i].inverse());
       transformed_point_clouds[i].push_back(point);
       merged_point_cloud.push_back(point);
     }
@@ -177,7 +181,7 @@ void computeCorrespondences(const std::vector<PointRange>& point_clouds, const T
   // construct correspondences
   for (size_t i = 0; i < merged_point_cloud.size(); i++) {
     CorrespondenceRange correspondence;
-    Point_3& query_point = merged_point_cloud[i];
+    const Point_3& query_point = merged_point_cloud[i];
     for (size_t j = 0; j < num_point_clouds; j++) {
       Knn knn(*trees[j], query_point, 1, 0, true, distances[j]);
       double dist = knn.begin()->second;
@@ -194,25 +198,25 @@ void computeCorrespondences(const std::vector<PointRange>& point_clouds, const T
 int main (int argc, char** argv)
 {
   const char* config_fname = (argc>1)?argv[1]:"gret-sdp-data/bun.conf";
-
-  std::vector<Point_range> point_clouds;
-  CGAL::Identity_property_map<Point_3> point_map;
+  
+  std::vector<Pwn_range> point_clouds;
+  Point_map point_map;
   std::vector<Kernel::Aff_transformation_3> ground_truth_transformations;
 
   extractPCAndTrFromStandfordConfFile(config_fname, ground_truth_transformations, point_clouds, point_map);
   int num_point_clouds = point_clouds.size();
 
   std::vector<CorrespondenceRange> correspondences;
-  computeCorrespondences(point_clouds, ground_truth_transformations, correspondences);
+  computeCorrespondences(point_clouds, point_map, ground_truth_transformations, correspondences);
 
-  Point_range registered_point_cloud;
-  CGAL::OpenGR::registerPointClouds(point_clouds, correspondences, CGAL::parameters::point_map(Point_map()), registered_point_cloud);
+  Pwn_range registered_point_cloud;
+  CGAL::OpenGR::register_point_clouds(point_clouds, correspondences, CGAL::parameters::point_map(point_map).normal_map(Normal_map()), registered_point_cloud);
 
   std::ofstream out("registered_point_clouds.ply");
   if (!out ||
     !CGAL::write_ply_points(
       out, registered_point_cloud,
-      CGAL::parameters::point_map(CGAL::Identity_property_map<Point_3>())))
+      CGAL::parameters::point_map(point_map)))
   {
     return EXIT_FAILURE;
   }
