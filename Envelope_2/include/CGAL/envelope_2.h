@@ -101,7 +101,7 @@ void lower_envelope_x_monotone_2 (InputIterator begin, InputIterator end,
  * \param diag Output: The minimization diagram.
  * \pre The value-type of the iterator is Traits::X_monotone_curve_2.
  */
-template <class InputIterator, class EnvelopeDiagram, class Traits>
+template <class InputIterator, class Traits, class EnvelopeDiagram>
 void lower_envelope_x_monotone_2 (InputIterator begin, InputIterator end,
                                   const Traits* traits, EnvelopeDiagram& diag)
 {
@@ -148,7 +148,7 @@ void upper_envelope_x_monotone_2 (InputIterator begin, InputIterator end,
  * \param diag Output: The maximization diagram.
  * \pre The value-type of the iterator is Traits::X_monotone_curve_2.
  */
-template <class InputIterator, class EnvelopeDiagram, class Traits>
+template <class InputIterator, class Traits, class EnvelopeDiagram>
 void upper_envelope_x_monotone_2 (InputIterator begin, InputIterator end,
                                   const Traits* traits, EnvelopeDiagram& diag)
 {
