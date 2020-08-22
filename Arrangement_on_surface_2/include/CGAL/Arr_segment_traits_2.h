@@ -675,22 +675,10 @@ public:
     bool do_bboxes_overlap(const X_monotone_curve_2& cv1,
                            const X_monotone_curve_2& cv2) const
     {
-      auto x1_min = CGAL::to_double(cv1.left().x());
-      auto x1_max = CGAL::to_double(cv1.right().x());
-      auto y1_s = CGAL::to_double(cv1.source().y());
-      auto y1_t = CGAL::to_double(cv1.target().y());
-      auto bbox1 = (y1_s < y1_t) ?
-        CGAL::Bbox_2(x1_min, y1_s, x1_max, y1_t) :
-        CGAL::Bbox_2(x1_min, y1_t, x1_max, y1_s);
-
-      auto x2_min = CGAL::to_double(cv2.left().x());
-      auto x2_max = CGAL::to_double(cv2.right().x());
-      auto y2_s = CGAL::to_double(cv2.source().y());
-      auto y2_t = CGAL::to_double(cv2.target().y());
-      auto bbox2 = (y2_s < y2_t) ?
-        CGAL::Bbox_2(x2_min, y2_s, x2_max, y2_t) :
-        CGAL::Bbox_2(x2_min, y2_t, x2_max, y2_s);
-
+      const Kernel& kernel = m_traits;
+      auto construct_bbox = kernel.construct_bbox_2_object();
+      auto bbox1 = construct_bbox(cv1.source()) + construct_bbox(cv1.target());
+      auto bbox2 = construct_bbox(cv2.source()) + construct_bbox(cv2.target());
       return CGAL::do_overlap(bbox1, bbox2);
     }
 
@@ -1389,8 +1377,6 @@ is_in_y_range(const Point_2& p) const
   const Comparison_result res2 = compare_y(p, right());
   return (res2 != LARGER);
 }
-
-// IO
 
 /*! \class A representation of a segment, as used by the Arr_segment_traits_2
  * traits-class.
