@@ -49,9 +49,7 @@
 #include <QString>
 #include <QFileDialog>
 #include <QInputDialog>
-#include <QDragEnterEvent>
 #include <QWheelEvent>
-#include <QDropEvent> 
 #include <QPainter>
 #include <QSlider>
 #include <QGraphicsLineItem>
@@ -252,7 +250,7 @@ enum {
 
 // enum {
 //   COMPLEMENT_OP, INTERSECTION_OP, UNION_OP, DIFFERENCE_OP, SYMMETRIC_dIFFERENCE_OP, 
-//   MINKOWSKI_SUM_OP, COPY_OP, MOVE_OP, PASTE_OP, CLEAR_OP, START_OP};
+//   MINKOWSKI_SUM_OP, COPY_OP, MOVE_OP, CLEAR_OP, START_OP};
 
 
 
@@ -755,7 +753,6 @@ class State_current{
   // MINKOWSKI_SUM_OP = 5
   // COPY_OP = 6
   // MOVE_OP = 7
-  // PASTE_OP = 8
   // CLEAR_OP = 9
     // DELETEALL_OP = 10
   // START_OP = 11
@@ -1036,7 +1033,6 @@ private:
   size_t m_color_complement;
   size_t m_color_copy;
   size_t m_color_move_ext;
-  //size_t m_color_paste;
   bool m_blue_int;
   bool m_red_int;
   bool m_black_int;
@@ -1047,7 +1043,6 @@ private:
   bool m_grid;
   bool m_pan;
   bool m_reset;
-  bool dragOver;
 
   bool m_blue_union;
   bool m_red_union;
@@ -1109,8 +1104,6 @@ public:
   MainWindow();
 
 private:
-  void dragEnterEvent(QDragEnterEvent* event);
-  void dropEvent(QDropEvent* event);
   void zoomToFit();
   
 
@@ -1149,7 +1142,6 @@ public slots:
 
   void on_actionCopyH_toggled(bool aChecked);
   void on_actionMoveH_toggled(bool aChecked);
-  //void on_actionPasteH_toggled(bool aChecked);
 
   void show_not_empty_warning();
 
@@ -1184,13 +1176,6 @@ public slots:
   void on_moveAqua_toggled(bool aCheck);
 
 
-  // void on_pasteBlue_toggled(bool aCheck);
-  // void on_pasteRed_toggled(bool aCheck);
-  // void on_pasteBlack_toggled(bool aCheck);
-  // void on_pasteBrown_toggled(bool aCheck);
-  // void on_pasteYellow_toggled(bool aCheck);
-  // void on_pasteMagenta_toggled(bool aCheck);
-  // void on_pasteAqua_toggled(bool aCheck);
 
   //To be added again in GSoC2020
 
@@ -1293,14 +1278,8 @@ private:
     // SYMMETRIC_dIFFERENCE_OP = 4
     // MINKOWSKI_SUM_OP = 5
     // RESET_OP = 6
-    // PAN_OP = 7 (Not needed hence removing)
-
-      //makes no sense to just undo copy alone but rather be used with paste and that is handled anyways
-    // COPY_OP = 6
-    // MOVE_OP = 7
-      //hence these 2 are abandoned
-    
-    // PASTE_OP = 8
+    // COPY_OP = 7
+    // MOVE_OP = 8
     // CLEAR_OP = 9
     // DELETEALL_OP = 10
     // DRAWPOL_OP = 11
@@ -1484,7 +1463,6 @@ MainWindow::MainWindow() :
   m_color_move(1111), //default//default
   m_color_copy(1111),//default
   m_color_move_ext(111),//default
-  //m_color_paste(1111),//default
   m_color_cm(1111), //default
   m_color_visible(7), //default
   m_color_complement(0), //default
@@ -1527,7 +1505,6 @@ MainWindow::MainWindow() :
   m_pan(false),
   m_grid(false),
   m_reset(false),
-  dragOver(false),
   m_state_num(0)
 {
   CGAL::set_error_handler  (error_handler);
@@ -1536,7 +1513,6 @@ MainWindow::MainWindow() :
 
   setupUi(this);  
 
-  setAcceptDrops(true);
   //
   // Setup the m_scene and the view
   //
@@ -1546,6 +1522,8 @@ MainWindow::MainWindow() :
   this->graphicsView->setMouseTracking(true);
   this->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   this->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+
   //this->on_actionInsertLinear_triggered();
 
   // Turn the vertical axis upside down
@@ -1555,7 +1533,7 @@ MainWindow::MainWindow() :
 
   //need to be given finishing touch
   // The navigation adds zooming and translation functionality to the
-  // QGraphicsView
+  // QGraphicsView./
   this->addNavigation(this->graphicsView);
   //setting the menus
   this->setupStatusBar();
@@ -1567,22 +1545,20 @@ MainWindow::MainWindow() :
   this->addRecentFiles(this->menuFile, this->actionClose);
 
 
-  // COMPLEMENT_OP = 0
-  // INTERSECTION_OP = 1
-  // UNION_OP = 2
-  // DIFFERENCE_OP = 3
-  // SYMMETRIC_dIFFERENCE_OP = 4
-  // MINKOWSKI_SUM_OP = 5
-  // COPY_OP = 6
-  // MOVE_OP = 7
-  // PASTE_OP = 8
-  // CLEAR_OP = 9
+  //operation_name
+     // COMPLEMENT_OP = 0
+    // INTERSECTION_OP = 1
+    // UNION_OP = 2
+    // DIFFERENCE_OP = 3
+    // SYMMETRIC_dIFFERENCE_OP = 4
+    // MINKOWSKI_SUM_OP = 5
+    // RESET_OP = 6
+    // COPY_OP = 7
+    // MOVE_OP = 8
+    // CLEAR_OP = 9
     // DELETEALL_OP = 10
-  //DrawPoly_OP = 11
-  //LinearPoly_OP = 12
-  //CircularPoly_OP = 13
-  //BezierPoly_OP = 14
-  // START_OP = 15
+    // START_OP = 11
+
 
   //initializing and pushing first state in States_stack
   get_new_state(12);
@@ -1694,22 +1670,6 @@ MainWindow::MainWindow() :
   QObject::connect(moveAqua, SIGNAL(toggled(bool)), this,
                    SLOT(on_moveAqua_toggled(bool)));
 
-
-  
-  // QObject::connect(pasteBlue, SIGNAL(toggled(bool)), this,
-  //                  SLOT(on_pasteBlue_toggled(bool)));
-  // QObject::connect(pasteRed, SIGNAL(toggled(bool)), this,
-  //                  SLOT(on_pasteRed_toggled(bool)));
-  // QObject::connect(pasteBlack, SIGNAL(toggled(bool)), this,
-  //                  SLOT(on_pasteBlack_toggled(bool)));
-  // QObject::connect(pasteBrown, SIGNAL(toggled(bool)), this,
-  //                  SLOT(on_pasteBrown_toggled(bool)));
-  // QObject::connect(pasteYellow, SIGNAL(toggled(bool)), this,
-  //                  SLOT(on_pasteYellow_toggled(bool)));
-  // QObject::connect(pasteMagenta, SIGNAL(toggled(bool)), this,
-  //                  SLOT(on_pasteMagenta_toggled(bool)));
-  // QObject::connect(pasteAqua, SIGNAL(toggled(bool)), this,
-  //                  SLOT(on_pasteAqua_toggled(bool)));
 
   //complement
   QObject::connect(showBlueComp, SIGNAL(toggled(bool)), this,
@@ -2674,140 +2634,6 @@ void MainWindow::on_moveAqua_toggled(bool aCheck)
 }
 
 
-// void MainWindow::on_pasteBlue_toggled(bool aCheck)
-// {
-//   if(aCheck)
-//   {
-//     m_color_paste = 0 ;
-//     pasteRed->setChecked(false);
-//     pasteBlack->setChecked(false);
-//     pasteBrown->setChecked(false);
-//     pasteYellow->setChecked(false);
-//     pasteMagenta->setChecked(false);
-//     pasteAqua->setChecked(false);
-//   } 
-
-//   else
-//   {
-//     pasteBlue->setChecked(false);
-//   }
-// }
-
-// void MainWindow::on_pasteRed_toggled(bool aCheck)
-// {
-//   if(aCheck)
-//   {
-//     m_color_paste = 1;
-//     pasteBlue->setChecked(false);
-//     pasteBlack->setChecked(false);
-//     pasteBrown->setChecked(false);
-//     pasteYellow->setChecked(false);
-//     pasteMagenta->setChecked(false);
-//     pasteAqua->setChecked(false);
-//   } 
-
-//   else
-//   {
-//     pasteRed->setChecked(false);
-//   } 
-// }
-
-// void MainWindow::on_pasteBlack_toggled(bool aCheck)
-// {
-//   if(aCheck)
-//   {
-//     m_color_paste = 2;
-//     pasteRed->setChecked(false);
-//     pasteBlue->setChecked(false);
-//     pasteBrown->setChecked(false);
-//     pasteYellow->setChecked(false);
-//     pasteMagenta->setChecked(false);
-//     pasteAqua->setChecked(false);
-//   }  
-
-//   else
-//   {
-//     pasteBlack->setChecked(false);
-//   }
-// }
-
-// void MainWindow::on_pasteBrown_toggled(bool aCheck)
-// {
-//   if(aCheck)
-//   {
-//     m_color_paste = 3;
-//     pasteRed->setChecked(false);
-//     pasteBlack->setChecked(false);
-//     pasteBlue->setChecked(false);
-//     pasteYellow->setChecked(false);
-//     pasteMagenta->setChecked(false);
-//     pasteAqua->setChecked(false);
-//   }  
-
-//   else
-//   {
-//     pasteBrown->setChecked(false);
-//   }
-// }
-
-// void MainWindow::on_pasteYellow_toggled(bool aCheck)
-// {
-//   if(aCheck)
-//   {
-//     m_color_paste = 4;
-//     pasteRed->setChecked(false);
-//     pasteBlack->setChecked(false);
-//     pasteBrown->setChecked(false);
-//     pasteBlue->setChecked(false);
-//     pasteMagenta->setChecked(false);
-//     pasteAqua->setChecked(false);
-//   }  
-
-//   else
-//   {
-//     pasteYellow->setChecked(false);
-//   }
-// }
-
-// void MainWindow::on_pasteMagenta_toggled(bool aCheck)
-// {
-//   if(aCheck)
-//   {
-//     m_color_paste = 5;
-//     pasteRed->setChecked(false);
-//     pasteBlack->setChecked(false);
-//     pasteBrown->setChecked(false);
-//     pasteYellow->setChecked(false);
-//     pasteBlue->setChecked(false);
-//     pasteAqua->setChecked(false);
-//   } 
-
-//   else
-//   {
-//     pasteMagenta->setChecked(false);
-//   } 
-// }
-
-// void MainWindow::on_pasteAqua_toggled(bool aCheck)
-// {
-//   if(aCheck)
-//   {
-//     m_color_paste = 6;
-//     pasteRed->setChecked(false);
-//     pasteBlack->setChecked(false);
-//     pasteBrown->setChecked(false);
-//     pasteYellow->setChecked(false);
-//     pasteMagenta->setChecked(false);
-//     pasteBlue->setChecked(false);
-//   } 
-
-//   else
-//   {
-//     pasteAqua->setChecked(false);
-//   } 
-// }
-
-
 
 void MainWindow::on_showBlueInt_toggled(bool aCheck)
 {
@@ -3675,7 +3501,6 @@ void MainWindow::on_actionAddColor_triggered()
     showBrownMink_Sum -> setVisible(true);
     copyBrown -> setVisible(true);
     moveBrown -> setVisible(true);
-    // pasteBrown -> setVisible(true);
     showBrownLabel -> setVisible(true);
 
     line10 -> setVisible(true);
@@ -3713,7 +3538,6 @@ void MainWindow::on_actionAddColor_triggered()
     showYellowMink_Sum -> setVisible(true);
     copyYellow -> setVisible(true);
     moveYellow -> setVisible(true);
-    // pasteYellow -> setVisible(true);
     showYellowLabel -> setVisible(true);
 
     line9 -> setVisible(true);
@@ -3751,7 +3575,6 @@ void MainWindow::on_actionAddColor_triggered()
     showMagentaMink_Sum -> setVisible(true);
     copyMagenta -> setVisible(true);
     moveMagenta -> setVisible(true);
-    // pasteMagenta -> setVisible(true);
     showMagentaLabel -> setVisible(true);
 
     line8 -> setVisible(true);
@@ -3789,7 +3612,6 @@ void MainWindow::on_actionAddColor_triggered()
     showAquaMink_Sum -> setVisible(true); 
     copyAqua -> setVisible(true);
     moveAqua -> setVisible(true);
-    // pasteAqua -> setVisible(true);
     showAquaLabel -> setVisible(true);
 
     line7 -> setVisible(true);
@@ -3851,7 +3673,6 @@ void MainWindow::on_actionMinusColor_triggered()
     showBrownMink_Sum -> setVisible(false);
     copyBrown -> setVisible(false);
     moveBrown -> setVisible(false);
-    // pasteBrown -> setVisible(false);
     showBrownLabel -> setVisible(false);
 
     
@@ -3905,7 +3726,6 @@ void MainWindow::on_actionMinusColor_triggered()
     showYellowMink_Sum -> setVisible(false);
     copyYellow -> setVisible(false);
     moveYellow -> setVisible(false);
-    // pasteYellow -> setVisible(false);
     showYellowLabel -> setVisible(false);
 
     drawBlue -> setChecked(true);
@@ -3954,7 +3774,6 @@ void MainWindow::on_actionMinusColor_triggered()
     showMagentaMink_Sum -> setVisible(false);
     copyMagenta -> setVisible(false);
     moveMagenta -> setVisible(false);
-    // pasteMagenta -> setVisible(false);
     showMagentaLabel -> setVisible(false);
 
     drawBlue -> setChecked(true);
@@ -4003,7 +3822,6 @@ void MainWindow::on_actionMinusColor_triggered()
     showAquaMink_Sum -> setVisible(false);
     copyAqua -> setVisible(false);
     moveAqua -> setVisible(false);
-    // pasteAqua -> setVisible(false);
     showAquaLabel -> setVisible(false);
 
 
@@ -4045,14 +3863,8 @@ void MainWindow::on_actionUndo_triggered()
     // SYMMETRIC_dIFFERENCE_OP = 4
     // MINKOWSKI_SUM_OP = 5
     // RESET_OP = 6
-    // PAN_OP = 7(not needed hence removed)
-
-      //makes no sense to just undo copy alone but rather be used with paste and that is handled anyways
-    // COPY_OP = 6
-    // MOVE_OP = 7
-      //hence these 2 are abandoned
-    
-    // PASTE_OP = 8
+    // COPY_OP = 7
+    // MOVE_OP = 8
     // CLEAR_OP = 9
     // DELETEALL_OP = 10
     // DRAWPOL_OP = 11
@@ -4070,7 +3882,6 @@ void MainWindow::on_actionUndo_triggered()
       case 3: if(actionDifferenceH->isChecked()) actionDifferenceH->setChecked(false); break;
       case 4: if(actionSymmetric_DifferenceH->isChecked()) actionSymmetric_DifferenceH->setChecked(false); break;
       case 5: if(actionMinkowski_SumH->isChecked()) actionMinkowski_SumH->setChecked(false); break;
-      // case 8: if(actionPasteH->isChecked()) actionPasteH->setChecked(false); break;
       case 10: if(actionComplementH->isChecked()) actionComplementH->setChecked(false); break;
       case 11: if(actionComplementH->isChecked()) actionComplementH->setChecked(false); break;
     }
@@ -4120,7 +3931,7 @@ void MainWindow::on_actionNew_triggered()
   m_scene.setSceneRect(-320, -210, 640, 420);
   this->graphicsView->setScene(&m_scene);
   this->graphicsView->fitInView(m_scene.sceneRect());
-  //this->graphicsView->scale(2.5, -2.5);
+  this->graphicsView->scale(2.5, 2.5);
 
   states_stack.back().result_set().clear();
   states_stack.back().blue_set().clear();
@@ -4202,14 +4013,9 @@ void MainWindow::on_actionNew_triggered()
   showInfo -> setChecked(true);
 
 
-  // actionCopy->setChecked(false);
-  // actionMove->setChecked(false);
-  // actionPaste->setChecked(false);
-
 
   actionCopyH->setChecked(false);
   actionMoveH->setChecked(false);
-  // actionPasteH->setChecked(false);
   //actionAxis->setChecked(false);
 
   actionComplementH -> setChecked(false);
@@ -4247,7 +4053,6 @@ void MainWindow::on_actionNew_triggered()
 
   m_color_copy = 111; //default
   m_color_move_ext = 111; //default
-  // m_color_paste = 111; //default
   m_color_complement = 0; //default
   m_blue_int = true; //default
   m_red_int = true ; //default
@@ -4335,13 +4140,6 @@ void MainWindow::on_actionNew_triggered()
   moveMagenta->setChecked(false);
   moveAqua->setChecked(false);
 
-  // pasteBlue->setChecked(false);
-  // pasteRed->setChecked(false);
-  // pasteBlack->setChecked(false);
-  // pasteBrown->setChecked(false);
-  // pasteYellow->setChecked(false);
-  // pasteMagenta->setChecked(false);
-  // pasteAqua->setChecked(false);
 
   showBlackInt->setChecked(false);
   showBrownInt->setChecked(false);
@@ -4395,7 +4193,6 @@ void MainWindow::on_actionNew_triggered()
   showBlackMink_Sum -> setVisible(true);
   copyBlack -> setVisible(true);
   moveBlack -> setVisible(true);
-  // pasteBlack -> setVisible(true);
   
   m_visible_brown = false;
   showBrown ->setVisible(false);
@@ -4408,7 +4205,6 @@ void MainWindow::on_actionNew_triggered()
   showBrownMink_Sum -> setVisible(false);
   copyBrown -> setVisible(false);
   moveBrown -> setVisible(false);
-  // pasteBrown -> setVisible(false);
 
 
   m_visible_yellow = false;
@@ -4422,7 +4218,6 @@ void MainWindow::on_actionNew_triggered()
   showYellowMink_Sum -> setVisible(false);
   copyYellow -> setVisible(false);
   moveYellow -> setVisible(false);
-  // pasteYellow -> setVisible(false);
 
 
   m_visible_magenta = false;
@@ -4436,7 +4231,6 @@ void MainWindow::on_actionNew_triggered()
   showMagentaMink_Sum -> setVisible(false);  
   copyMagenta -> setVisible(false);
   moveMagenta -> setVisible(false);
-  // pasteMagenta -> setVisible(false);
   
 
   m_visible_aqua = false;
@@ -4450,7 +4244,6 @@ void MainWindow::on_actionNew_triggered()
   showAquaMink_Sum -> setVisible(false);
   copyAqua -> setVisible(false);
   moveAqua -> setVisible(false);
-  // pasteAqua -> setVisible(false);
 
   
   actionAddColor -> setEnabled(true);
@@ -4496,7 +4289,6 @@ void MainWindow::on_actionDeleteAll_triggered()
     actionDifferenceH->setChecked(false);
     actionSymmetric_DifferenceH->setChecked(false);
     actionMinkowski_SumH->setChecked(false);
-    // actionPasteH->setChecked(false);
     actionComplementH->setChecked(false);
     actionComplementH->setChecked(false);
 
@@ -4509,9 +4301,9 @@ void MainWindow::on_actionDeleteAll_triggered()
     // DIFFERENCE_OP = 3
     // SYMMETRIC_dIFFERENCE_OP = 4
     // MINKOWSKI_SUM_OP = 5
-    // COPY_OP = 6
-    // MOVE_OP = 7
-    // PASTE_OP = 8
+    // RESET_OP = 6
+    // COPY_OP = 7
+    // MOVE_OP = 8
     // CLEAR_OP = 9
     // DELETEALL_OP = 10
     // START_OP = 11
@@ -4566,7 +4358,6 @@ void MainWindow::on_actionClearH_toggled(bool aChecked)
     actionDifferenceH->setChecked(false);
     actionSymmetric_DifferenceH->setChecked(false);
     actionMinkowski_SumH->setChecked(false);
-    // actionPasteH->setChecked(false);
     actionComplementH->setChecked(false);
     actionComplementH->setChecked(false);
 
@@ -4579,9 +4370,9 @@ void MainWindow::on_actionClearH_toggled(bool aChecked)
     // DIFFERENCE_OP = 3
     // SYMMETRIC_dIFFERENCE_OP = 4
     // MINKOWSKI_SUM_OP = 5
-    // COPY_OP = 6
-    // MOVE_OP = 7
-    // PASTE_OP = 8
+    // RESET_OP = 6
+    // COPY_OP = 7
+    // MOVE_OP = 8
     // CLEAR_OP = 9
     // DELETEALL_OP = 10
     // START_OP = 11
@@ -4824,19 +4615,6 @@ void MainWindow::on_drawAqua_toggled(bool /* a_check */)
 
 //extra utilities
 void MainWindow::on_actionRecenter_triggered() { zoomToFit(); }
-
-void MainWindow::dragEnterEvent(QDragEnterEvent* event)
-{
-  if (event->mimeData()->hasFormat("text/uri-list"))
-    event->acceptProposedAction();
-}
-
-void MainWindow::dropEvent(QDropEvent* event)
-{
-  QString filename = event->mimeData()->urls().at(0).path();
-  open(filename);
-  event->acceptProposedAction();
-}
 
 void MainWindow::on_actionOpenLinear_triggered()
 {
@@ -5997,15 +5775,12 @@ void MainWindow::on_actionComplementH_toggled(bool aChecked)
 	  actionDifferenceH->setChecked(false); 
 	  actionSymmetric_DifferenceH->setChecked(false); 
 	  actionMinkowski_SumH->setChecked(false);
-	  // actionCopy->setChecked(false);
-	  // actionMove->setChecked(false);
-  	// actionPaste->setChecked(false);
     actionCopyH->setChecked(false);
     actionMoveH->setChecked(false);
-    // actionPasteH->setChecked(false);
 
     get_new_state(0);
 
+    //operation_name
     //operation_name
      // COMPLEMENT_OP = 0
     // INTERSECTION_OP = 1
@@ -6013,9 +5788,9 @@ void MainWindow::on_actionComplementH_toggled(bool aChecked)
     // DIFFERENCE_OP = 3
     // SYMMETRIC_dIFFERENCE_OP = 4
     // MINKOWSKI_SUM_OP = 5
-    // COPY_OP = 6
-    // MOVE_OP = 7
-    // PASTE_OP = 8
+    // RESET_OP = 6
+    // COPY_OP = 7
+    // MOVE_OP = 8
     // CLEAR_OP = 9
     // DELETEALL_OP = 10
     // START_OP = 11
@@ -6175,9 +5950,6 @@ void MainWindow::on_actionIntersectionH_toggled(bool aChecked)
 	  QCursor old = this->cursor();
 	  this->setCursor(Qt::WaitCursor);
 
-	  // actionCopy->setChecked(false);
-	  // actionMove->setChecked(false);
-  	// actionPaste->setChecked(false);
 	  actionComplementH->setChecked(false);
 	  actionUnionH->setChecked(false);
 	  actionDifferenceH->setChecked(false); 
@@ -6185,8 +5957,6 @@ void MainWindow::on_actionIntersectionH_toggled(bool aChecked)
 	  actionMinkowski_SumH->setChecked(false);
     actionCopyH->setChecked(false);
     actionMoveH->setChecked(false);
-    // actionPasteH->setChecked(false);
-
     get_new_state(1);
 
     //operation_name
@@ -6196,9 +5966,9 @@ void MainWindow::on_actionIntersectionH_toggled(bool aChecked)
     // DIFFERENCE_OP = 3
     // SYMMETRIC_dIFFERENCE_OP = 4
     // MINKOWSKI_SUM_OP = 5
-    // COPY_OP = 6
-    // MOVE_OP = 7
-    // PASTE_OP = 8
+    // RESET_OP = 6
+    // COPY_OP = 7
+    // MOVE_OP = 8
     // CLEAR_OP = 9
     // DELETEALL_OP = 10
     // START_OP = 11
@@ -6395,9 +6165,6 @@ void MainWindow::on_actionDifferenceH_toggled(bool aChecked)
 	  QCursor old = this->cursor();
 	  this->setCursor(Qt::WaitCursor);
 
-	  // actionCopy->setChecked(false);
-	  // actionMove->setChecked(false);
-  	//   actionPaste->setChecked(false);
 	  actionComplementH->setChecked(false);
 	  actionUnionH->setChecked(false);
 	  actionIntersectionH->setChecked(false);
@@ -6405,7 +6172,6 @@ void MainWindow::on_actionDifferenceH_toggled(bool aChecked)
 	  actionMinkowski_SumH->setChecked(false);
     actionCopyH->setChecked(false);
     actionMoveH->setChecked(false);
-    // actionPasteH->setChecked(false);
 
 
 	  size_t count = 0;
@@ -6467,9 +6233,9 @@ void MainWindow::on_actionDifferenceH_toggled(bool aChecked)
     // DIFFERENCE_OP = 3
     // SYMMETRIC_dIFFERENCE_OP = 4
     // MINKOWSKI_SUM_OP = 5
-    // COPY_OP = 6
-    // MOVE_OP = 7
-    // PASTE_OP = 8
+    // RESET_OP = 6
+    // COPY_OP = 7
+    // MOVE_OP = 8
     // CLEAR_OP = 9
     // DELETEALL_OP = 10
     // START_OP = 11
@@ -6652,9 +6418,6 @@ void MainWindow::on_actionSymmetric_DifferenceH_toggled(bool aChecked)
 	  this->setCursor(Qt::WaitCursor);
 
 	  
-	  // actionCopy->setChecked(false);
-	  // actionMove->setChecked(false);
-  	//   actionPaste->setChecked(false);
 	  actionComplementH->setChecked(false);
 	  actionUnionH->setChecked(false);
 	  actionIntersectionH->setChecked(false);
@@ -6662,20 +6425,19 @@ void MainWindow::on_actionSymmetric_DifferenceH_toggled(bool aChecked)
 	  actionMinkowski_SumH->setChecked(false);
     actionCopyH->setChecked(false);
     actionMoveH->setChecked(false);
-    //actionPasteH->setChecked(false);
 
     get_new_state(4);
 
-    //operation_name
+   //operation_name
      // COMPLEMENT_OP = 0
     // INTERSECTION_OP = 1
     // UNION_OP = 2
     // DIFFERENCE_OP = 3
     // SYMMETRIC_dIFFERENCE_OP = 4
     // MINKOWSKI_SUM_OP = 5
-    // COPY_OP = 6
-    // MOVE_OP = 7
-    // PASTE_OP = 8
+    // RESET_OP = 6
+    // COPY_OP = 7
+    // MOVE_OP = 8
     // CLEAR_OP = 9
     // DELETEALL_OP = 10
     // START_OP = 11
@@ -6855,25 +6617,21 @@ void MainWindow::on_actionUnionH_toggled(bool aChecked)
 	  actionDifferenceH->setChecked(false); 
 	  actionSymmetric_DifferenceH->setChecked(false); 
 	  actionMinkowski_SumH->setChecked(false);
-	  // actionCopy->setChecked(false);
-	  // actionMove->setChecked(false);
-  	// actionPaste->setChecked(false);
     actionCopyH->setChecked(false);
     actionMoveH->setChecked(false);
-    //actionPasteH->setChecked(false);
 
     get_new_state(2);
 
-    //operation_name
+   //operation_name
      // COMPLEMENT_OP = 0
     // INTERSECTION_OP = 1
     // UNION_OP = 2
     // DIFFERENCE_OP = 3
     // SYMMETRIC_dIFFERENCE_OP = 4
     // MINKOWSKI_SUM_OP = 5
-    // COPY_OP = 6
-    // MOVE_OP = 7
-    // PASTE_OP = 8
+    // RESET_OP = 6
+    // COPY_OP = 7
+    // MOVE_OP = 8
     // CLEAR_OP = 9
     // DELETEALL_OP = 10
     // START_OP = 11
@@ -7008,28 +6766,23 @@ void MainWindow::on_actionCopyH_toggled(bool aChecked)
       actionDifferenceH->setChecked(false); 
       actionSymmetric_DifferenceH->setChecked(false); 
       actionMinkowski_SumH->setChecked(false);
-      // actionCopy->setChecked(true);
-      // actionMove->setChecked(false);
-      // actionPaste->setChecked(false);
       actionMoveH->setChecked(false);
-      // actionPasteH->setChecked(false);
 
-      //makes no sense to just undo copy alone but rather be used with paste and that is handled anyways
-      //get_new_state(6);
+      get_new_state(7);
 
       //operation_name
-       // COMPLEMENT_OP = 0
-      // INTERSECTION_OP = 1
-      // UNION_OP = 2
-      // DIFFERENCE_OP = 3
-      // SYMMETRIC_dIFFERENCE_OP = 4
-      // MINKOWSKI_SUM_OP = 5
-      // COPY_OP = 6
-      // MOVE_OP = 7
-      // PASTE_OP = 8
-      // CLEAR_OP = 9
+     // COMPLEMENT_OP = 0
+    // INTERSECTION_OP = 1
+    // UNION_OP = 2
+    // DIFFERENCE_OP = 3
+    // SYMMETRIC_dIFFERENCE_OP = 4
+    // MINKOWSKI_SUM_OP = 5
+    // RESET_OP = 6
+    // COPY_OP = 7
+    // MOVE_OP = 8
+    // CLEAR_OP = 9
     // DELETEALL_OP = 10
-      // START_OP = 11
+    // START_OP = 11
 
       states_stack.back().result_set().clear();
       states_stack.back().result_linear_sources().clear();
@@ -7063,12 +6816,6 @@ void MainWindow::on_actionCopyH_toggled(bool aChecked)
 }
 
 
-// void MainWindow::on_actionCopy_triggered()
-// {
-//   //actionCopy->setChecked(true);
-// }
-
-
 void MainWindow::on_actionMoveH_toggled(bool aChecked)
 {
 
@@ -7084,28 +6831,24 @@ void MainWindow::on_actionMoveH_toggled(bool aChecked)
       actionDifferenceH->setChecked(false); 
       actionSymmetric_DifferenceH->setChecked(false); 
       actionMinkowski_SumH->setChecked(false);
-      // actionCopy->setChecked(false);
-      // actionMove->setChecked(true);
-      // actionPaste->setChecked(false);
       actionCopyH->setChecked(false);
-      // actionPasteH->setChecked(false);
 
-      //makes no sense to just undo copy/move alone but rather be used with paste and that is handled anyways
-      //get_new_state(7);
+      
+      get_new_state(8);
 
       //operation_name
-       // COMPLEMENT_OP = 0
-      // INTERSECTION_OP = 1
-      // UNION_OP = 2
-      // DIFFERENCE_OP = 3
-      // SYMMETRIC_dIFFERENCE_OP = 4
-      // MINKOWSKI_SUM_OP = 5
-      // COPY_OP = 6
-      // MOVE_OP = 7
-      // PASTE_OP = 8
-      // CLEAR_OP = 9
+     // COMPLEMENT_OP = 0
+    // INTERSECTION_OP = 1
+    // UNION_OP = 2
+    // DIFFERENCE_OP = 3
+    // SYMMETRIC_dIFFERENCE_OP = 4
+    // MINKOWSKI_SUM_OP = 5
+    // RESET_OP = 6
+    // COPY_OP = 7
+    // MOVE_OP = 8
+    // CLEAR_OP = 9
     // DELETEALL_OP = 10
-      // START_OP = 11
+    // START_OP = 11
       
       states_stack.back().result_set().clear();
       states_stack.back().result_linear_sources().clear();
@@ -7138,158 +6881,6 @@ void MainWindow::on_actionMoveH_toggled(bool aChecked)
   }
 }
 
-
-// void MainWindow::on_actionMove_triggered()
-// {
-//   //actionMoveH->setChecked(true);
-// }
-
-// void MainWindow::on_actionPasteH_toggled(bool aChecked)
-// {
-//   if(actionPasteH->isChecked())
-//   {
-//     bool lDone = false;
-//       QCursor old = this->cursor();
-//       this->setCursor(Qt::WaitCursor);
-
-//       actionUnionH->setChecked(false);
-//       actionIntersectionH->setChecked(false);
-//       actionDifferenceH->setChecked(false); 
-//       actionSymmetric_DifferenceH->setChecked(false); 
-//       actionMinkowski_SumH->setChecked(false);
-//       // actionCopy->setChecked(false);
-//       // actionMove->setChecked(false);
-//       // actionPaste->setChecked(true);
-//       actionMoveH->setChecked(false);
-//       actionCopyH->setChecked(false);
-
-//       get_new_state(8);
-
-//       //operation_name
-//        // COMPLEMENT_OP = 0
-//       // INTERSECTION_OP = 1
-//       // UNION_OP = 2
-//       // DIFFERENCE_OP = 3
-//       // SYMMETRIC_dIFFERENCE_OP = 4
-//       // MINKOWSKI_SUM_OP = 5
-//       // COPY_OP = 6
-//       // MOVE_OP = 7
-//       // PASTE_OP = 8
-//       // CLEAR_OP = 9
-//     // DELETEALL_OP = 10
-//       // START_OP = 11
-
-//     if(!states_stack.back().result_set().is_empty())
-//     {
-        
-//         // if(!states_stack.back().active_set(m_color_active).is_empty())
-//         // {
-//         //   if(empty_warn)
-//         //   {
-//         //     show_not_empty_warning();
-//         //   }
-//         // }
-      
-
-//         switch(m_color_paste)
-//         {
-//           case 0: if(m_color_cm==0) 
-//               { 
-//                 states_stack.back().blue_set().join(states_stack.back().result_set());
-//               }
-//               else if(m_color_cm==1)
-//               {
-//                 states_stack.back().blue_set().join(states_stack.back().result_set());
-//                 states_stack.back().move_set(m_color_move).clear();
-//               }
-//               break;
-
-//           case 1: if(m_color_cm==0) 
-//               { 
-//                 states_stack.back().red_set().join(states_stack.back().result_set());
-//               }
-//               else if(m_color_cm==1)
-//               {
-//                 states_stack.back().red_set().join(states_stack.back().result_set());
-//                 states_stack.back().move_set(m_color_move).clear();
-//               }
-//               break;
-//           case 2: if(m_color_cm==0) 
-//               { 
-//                 states_stack.back().black_set().join(states_stack.back().result_set());
-//               }
-//               else if(m_color_cm==1)
-//               {
-//                 states_stack.back().black_set().join(states_stack.back().result_set());
-//                 states_stack.back().move_set(m_color_move).clear();
-//               }
-//               break;
-//           case 3: if(m_color_cm==0) 
-//               { 
-//                 states_stack.back().brown_set().join(states_stack.back().result_set());
-//               }
-//               else if(m_color_cm==1)
-//               {
-//                 states_stack.back().brown_set().join(states_stack.back().result_set());
-//                 states_stack.back().move_set(m_color_move).clear();
-//               }
-//               break;
-//           case 4: if(m_color_cm==0) 
-//               { 
-//                 states_stack.back().yellow_set().join(states_stack.back().result_set());
-//               }
-//               else if(m_color_cm==1)
-//               {
-//                 states_stack.back().yellow_set().join(states_stack.back().result_set());
-//                 states_stack.back().move_set(m_color_move).clear();
-//               }
-//               break;
-//           case 5: if(m_color_cm==0) 
-//               { 
-//                 states_stack.back().magenta_set().join(states_stack.back().result_set());
-//               }
-//               else if(m_color_cm==1)
-//               {
-//                 states_stack.back().magenta_set().join(states_stack.back().result_set());
-//                 states_stack.back().move_set(m_color_move).clear();
-//               }
-//               break;
-//           case 6: if(m_color_cm==0) 
-//               { 
-//                 states_stack.back().aqua_set().join(states_stack.back().result_set());
-//               }
-//               else if(m_color_cm==1)
-//               {
-//                 states_stack.back().aqua_set().join(states_stack.back().result_set());
-//                 states_stack.back().move_set(m_color_move).clear();
-//               }
-//               break;
-//         default: show_warning("Please select a Bucket!!!");break;
-//         }
-
-        
-//         states_stack.back().result_set().clear();
-//         states_stack.back().result_linear_sources().clear();
-//         states_stack.back().result_circular_sources().clear();
-//         states_stack.back().result_bezier_sources().clear();
-//     }
-//     else
-//     {
-//       show_warning("Cannot copy or move from empty Bucket!!!");
-//       // actionCopy->setChecked(false);
-//       // actionMove->setChecked(false);
-//       actionCopyH->setChecked(false);
-//       actionMoveH->setChecked(false);
-//     }
-
-//     actionPasteH->setChecked(false);
-
-//       lDone = true;
-//       m_color_cm = 0; //copy
-//     this->setCursor(old);
-//     if (lDone) modelChanged();
-//   }
-// }
 
 Polygon_with_holes_2 MainWindow::getMinkInputPolygon(size_t colorx)
 {
@@ -7385,18 +6976,18 @@ void MainWindow::on_actionMinkowski_SumH_toggled(bool aChecked)
       get_new_state(5);
 
       //operation_name
-       // COMPLEMENT_OP = 0
-      // INTERSECTION_OP = 1
-      // UNION_OP = 2
-      // DIFFERENCE_OP = 3
-      // SYMMETRIC_dIFFERENCE_OP = 4
-      // MINKOWSKI_SUM_OP = 5
-      // COPY_OP = 6
-      // MOVE_OP = 7
-      // PASTE_OP = 8
-      // CLEAR_OP = 9
+     // COMPLEMENT_OP = 0
+    // INTERSECTION_OP = 1
+    // UNION_OP = 2
+    // DIFFERENCE_OP = 3
+    // SYMMETRIC_dIFFERENCE_OP = 4
+    // MINKOWSKI_SUM_OP = 5
+    // RESET_OP = 6
+    // COPY_OP = 7
+    // MOVE_OP = 8
+    // CLEAR_OP = 9
     // DELETEALL_OP = 10
-      // START_OP = 11
+    // START_OP = 11
 
       if(!states_stack.back().active_set(m_color_active).is_empty())
       {
@@ -7723,16 +7314,6 @@ void MainWindow::on_actionPAN_triggered()
 
 void MainWindow::wheelEvent(QWheelEvent *event)
 {
-  // if(event->delta() > 0)
-  //   this->graphicsView->scale(1.25, 1.25);
-  // else
-  //   this->graphicsView->scale(0.8, 0.8);
-
-
-  // qreal deltaScale = 1;
-  // deltaScale += event->delta() > 0 ? 0.25 : -0.20;
-  // this->graphicsView->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
-  // this->graphicsView->scale(deltaScale, deltaScale);
 
   this->graphicsView->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
   static const double scaleFactor = 1.15;
@@ -7751,15 +7332,20 @@ void MainWindow::wheelEvent(QWheelEvent *event)
 
     if(event->delta() > 0) 
     {
-      this->graphicsView->scale(scaleFactor, scaleFactor);
-      currentScale *= scaleFactor;
+      m_scene.setSceneRect( -m_scene.sceneRect().width()*scaleFactor/2 , -m_scene.sceneRect().height()*scaleFactor/2 , m_scene.sceneRect().width()*scaleFactor , m_scene.sceneRect().height()*scaleFactor );
+      this->graphicsView->fitInView(m_scene.sceneRect());
+      this->graphicsView->scale(2.5, 2.5);
+
+      // show_warning(to_string(m_scene.sceneRect().height())+" "+to_string(m_scene.sceneRect().width()));
     } 
     else if (currentScale > scaleMin) 
     {
-      this->graphicsView->scale(1 / scaleFactor, 1 / scaleFactor);
-      currentScale /= scaleFactor;
+      m_scene.setSceneRect( -m_scene.sceneRect().width() / ( scaleFactor * 2 ) , -m_scene.sceneRect().height() / ( scaleFactor * 2 ) , m_scene.sceneRect().width()/scaleFactor , m_scene.sceneRect().height()/scaleFactor );
+      this->graphicsView->fitInView(m_scene.sceneRect());
+      this->graphicsView->scale(2.5, 2.5);
     }
   }
+  modelChanged();
 }
 
 
@@ -7777,10 +7363,13 @@ void MainWindow::zoomToFit()
     }
   }
         
-  if (lTotalRect) {
+  if (lTotalRect) 
+  {
     this->graphicsView->setSceneRect(*lTotalRect);
     this->graphicsView->fitInView(*lTotalRect, Qt::KeepAspectRatio);
   }
+
+  modelChanged();
 }
 
 
@@ -7807,6 +7396,8 @@ void MainWindow::show_not_empty_warning()
 void MainWindow::resizeEvent(QResizeEvent* e)
 {
   this->graphicsView->fitInView(m_scene.sceneRect());
+  this->graphicsView->scale(2.5, 2.5);
+  modelChanged();
 }
 
 
@@ -7814,26 +7405,9 @@ void MainWindow::exception_handler()
 {
   try
   {
-    // if(!(m_circular_active||m_bezier_active))
-    // {
-    //   m_linear_input -> RemoveLastPiece();
-    //   m_linear_input -> mink_polygon.erase(m_linear_input -> mink_polygon.vertices_end());
-    //   m_linear_input -> mState = (m_linear_input -> mLinearPolygonPieces.size() > 0) ? m_linear_input -> PieceEnded : m_linear_input -> Start;
-    // }
-    // else if (m_circular_active)
-    // {
-    //   m_circular_input -> RemoveLastPiece();
-    //   m_circular_input -> mState = (m_circular_input -> mCircularPolygonPieces.size() > 0) ? m_circular_input -> PieceEnded : m_circular_input -> Start;
-    // }
-    // else
-    // {
-    //   m_bezier_input -> RemoveLastPiece();
-    //   m_bezier_input -> mState   = ( m_bezier_input -> mBezierPolygonPieces.size() > 0 )? m_bezier_input -> PieceEnded : m_bezier_input -> Start ;
-    // }
     if(ensure_linear_mode())
     {
       m_linear_input -> Reset();
-      //m_linear_input -> mink_polygon.clear();
       m_linear_input -> mState = m_linear_input -> Start;
     }
     else if(ensure_circular_mode())
