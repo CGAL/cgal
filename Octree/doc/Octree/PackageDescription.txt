@@ -33,7 +33,7 @@
 
 \cgalCRPSection{Concepts}
 - `Traversal`
-- `Split_criterion`
+- `SplitCriterion`
 
 \cgalCRPSection{Classes}
 - `CGAL::Octree::Octree<class PointRange, class PointMap>`

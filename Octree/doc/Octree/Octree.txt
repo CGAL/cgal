@@ -45,7 +45,7 @@ The split criterion is manually constructed and passed to the refine method.
 
 \cgalExample{Octree/Octree_build_from_Point_set.cpp}
 
-\subsection Section_Octree_Example_Custom_Split_Criterion Building an Octree with a Custom Split_criterion
+\subsection Section_Octree_Example_Custom_Split_Criterion Building an Octree with a Custom Split Criterion
 
 This example illustrates how to refine an octree using a split criterion that isn't provided by default.
 
