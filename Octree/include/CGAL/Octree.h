@@ -498,7 +498,9 @@ public:
   }
 
   /*!
-   * \brief
+   * \brief find the leaf nodes that intersect with any primitive
+   *
+   * This function finds all the intersecting nodes and returns them as const pointers.
    *
    * \tparam Query the primitive class (e.g. Sphere_3, Ray_3)
    * \tparam Node_output_iterator an output iterator type that will accept points
