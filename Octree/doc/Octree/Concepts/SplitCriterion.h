@@ -3,11 +3,11 @@
  * \ingroup PkgOctreeConcepts
  * \cgalConcept
  *
- * \brief A Split_criterion is a functor which determines whether an octree node needs to be split during refinement.
+ * \brief A SplitCriterion is a functor which determines whether an octree node needs to be split during refinement.
  *
  * This can also be done by a function pointer, or a lambda.
  */
-struct Split_criterion {
+struct SplitCriterion {
 
   /// \name Operators
   /// @{
