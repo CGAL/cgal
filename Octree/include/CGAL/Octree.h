@@ -497,6 +497,14 @@ public:
     return nearest_k_neighbors_in_radius(search_point, std::numeric_limits<FT>::max(), k, output);
   }
 
+  /*!
+   * \brief
+   *
+   * \tparam Query the primitive class (e.g. Sphere_3, Ray_3)
+   * \tparam Node_output_iterator an output iterator type that will accept points
+   * \param query the primitive to check for intersections
+   * \param output the output iterator to add node references to
+   */
   template<typename Query, typename Node_output_iterator>
   void intersecting_nodes(const Query &query, Node_output_iterator output) const {
     intersecting_nodes_recursive(query, root(), output);
