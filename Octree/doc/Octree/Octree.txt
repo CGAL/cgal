@@ -65,6 +65,10 @@ The split criterion is manually constructed and passed to the refine method.
 
 \subsubsection Section_Octree_Custom_Split_Criterion Building an Octree with a Custom Split Criterion
 
+It's very easy to create your own criterion if the existing ones don't match your needs.
+For example, you might design a criterion which only splits nodes that contain exactly 4 points.
+\todo Link to SplitCriterion concept
+
 \b Example
 
 This example illustrates how to refine an octree using a split criterion that isn't provided by default.
