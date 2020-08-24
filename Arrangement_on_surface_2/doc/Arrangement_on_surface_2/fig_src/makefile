@@ -37,7 +37,8 @@ TARGETS = \
   identified_clusters.pdf \
   generic_polyline.tex \
   well_oriented_polyline.tex \
-  circular_arcs.tex
+  circular_arcs.tex \
+  conic_multiplicities.tex
 
 .DEFAULT_GOAL = all
 .PHONY: all clean

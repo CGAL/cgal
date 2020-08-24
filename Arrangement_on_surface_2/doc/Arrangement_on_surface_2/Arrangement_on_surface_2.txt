@@ -14,7 +14,7 @@ Michael Hemmer, Oren Salzman, and Baruch Zukerman
 <!--=========================================================================-->
 
 Geometric arrangements, or arrangements for short, are subdivisions of
-some space induced by geometric objects. Figure
+some space induced by geometric objects.
 \cgalFigureRef{aos_fig-simple_arr} shows an arrangement of two curves
 \f$c_1\f$ and \f$c_2\f$ in the plane. It has three faces&mdash;two
 bounded faces \f$f_1\f$ and \f$f_2\f$ (filled with diagonal-stripe
@@ -1870,17 +1870,17 @@ other, namely a kernel that is exact allways. Note that we alternately
 use the naive point-location strategy, given explicitly to the
 insertion functions, and the default walk point-location strategy.
 
-The resulting arrangement is depicted in Figure
-\cgalFigureRef{arr_figex_10}, where the vertices that correspond to
-segment endpoints are drawn as dark discs, and the vertices that
-correspond to intersection points are drawn as circles. It consists of
-13 vertices, 16 edges, and 5 faces. We also perform a point-location
-query on the resulting arrangement. The query point \f$q\f$ is drawn
-as a plus sign. The face that contains it is drawn with a shaded
-texture. The program calls an instance of the function template
-`print_arrangement_size()`, which prints quantitative measures of the
-arrangement; see \ref lst_paz "code example" for its listing in
-Section \ref aos_ssec-basic-arr_class.
+The resulting arrangement is depicted in \cgalFigureRef{arr_figex_10},
+where the vertices that correspond to segment endpoints are drawn as
+dark discs, and the vertices that correspond to intersection points
+are drawn as circles. It consists of 13 vertices, 16 edges, and 5
+faces. We also perform a point-location query on the resulting
+arrangement. The query point \f$q\f$ is drawn as a plus sign. The face
+that contains it is drawn with a shaded texture. The program calls an
+instance of the function template `print_arrangement_size()`, which
+prints quantitative measures of the arrangement; see \ref lst_paz
+"code example" for its listing in Section \ref
+aos_ssec-basic-arr_class.
 
 \cgalExample{Arrangement_on_surface_2/incremental_insertion.cpp}
 
@@ -2163,7 +2163,7 @@ triangles, which can be viewed as degenerate trapezoids. The unbounded
 cells can be similarly categorized into two types. Observe that the
 boundary of an unbounded cell contains only one original edge or none
 and it may contain only non-vertical edges.  The resulting cells are
-therefore referred to as <em>pseudo trapezoids</em>. The figure
+therefore referred to as <em>pseudo trapezoids</em>. The
 \cgalFigureRef{arr_fig_bounded_vd} depicts the vertical decomposition
 of an arrangement induced by four line segments, as constructed in
 `vertical_decomposition.cpp` and listed below. The decomposition
@@ -2540,7 +2540,7 @@ of arrangements embedded in the plane. In this section we explain how
 to construct, maintain, and manipulate two-dimensional arrangements
 embedded in orientable parametric surfaces in three dimensions, such
 as planes, cylinders, spheres, and tori, and surfaces homeomorphic to
-them; see Figure \cgalFigureRef{aos_fig-surfaces}. Such arrangements
+them; see \cgalFigureRef{aos_fig-surfaces}. Such arrangements
 have many theoretical and practical applications; see, e.g.,
 \cgalCite{as-aa-00}, \cgalCite{cgal:bfhks-apsca-10},
 \cgalCite{cgal:bfhmw-apsgf-10}, \cgalCite{cgal:fhktww-a-07}, and
@@ -2744,7 +2744,7 @@ the parameter space being open, closed, constracted, or identified.
 
 At this point only one type of arrangements on non planar surfaces is
 supported, namely, arrangements embedded in the sphere and induced by
-arcs of great circles, aka geodesic arcs. Figure
+arcs of great circles, aka geodesic arcs.
 \cgalFigureRef{aos_fig-voronoi} shows various Voronoi diagrams the
 bisectors of which are geodesic arcs.  They are represented as
 arrangements induced by geodesic arcs embedded in the sphere.
@@ -2829,7 +2829,7 @@ to concept \sc{B} indicates that concept \sc{B} refines concept
 \sc{A}.  A rather large direccted acyclic graph is required to capture
 the entire hierarchy of the geometry traits-class concepts. In the
 following sections we review individual clusters of the graph and
-describe the relations between them. Figure
+describe the relations between them.
 \cgalFigureRef{aos_fig-central_concept_cluster} depicts the central
 cluster.
 
@@ -3193,7 +3193,7 @@ sufficient to handle not only curves embedded in an unbounded
 parameter space, but also curves embedded in a bounded parameter space
 with open boundaries. The arrangement type instantiated with a traits
 class that models the combined concept
-`ArrangementOpenBoundaryTraits_2` shown in Figure
+`ArrangementOpenBoundaryTraits_2` shown in
 \cgalFigureRef{aos_fig-open_concept_hierarchy} can handle curves that
 are open in any direction. Recall that an arrangement that supports
 unbounded \f$x\f$-monotone curves maintains an implicit bounding
@@ -3216,7 +3216,7 @@ concepts for curves embedded in a spherical-like parameterized surface
 
 A suitable geometry-traits component for arrangements embedded in
 surfaces homeomorphic to a sphere is a model of the combined concept
-`ArrangementSphericalTraits_2` shown in Figure
+`ArrangementSphericalTraits_2` shown in
 \cgalFigureRef{aos_fig-spherical_concept_hierarchy}. Here the two
 vertical sides of the parameter space are identified and the two
 horizontal sides are contracted.
@@ -3233,7 +3233,7 @@ exists for the right, bottom, and top sides.
 The shared requirements for the four options of a side are collected
 in abstract layers called `ArrangementLeftSideTraits_2`,
 `ArrangementRightSideTraits_2`, `ArrangementBottomSideTraits_2`, and
-`ArrangementTopSideTraits_2`; see, e.g., Figure
+`ArrangementTopSideTraits_2`; see, e.g.,
 \cgalFigureRef{aos_fig-left_side_cluster}.
 
 <!----------------------------------------------------------------------------->
@@ -3247,8 +3247,9 @@ curves that either reach or approach horizontal sides.
 
 The shared requirements for the options of opposite sides are
 collected in two additional abstract layers called
-`ArrangementVerticalSideTraits_2` and `ArrangementHorizontalSideTraits_2`; see
-Figure \cgalFigureRef{aos_fig-side_clusters}.
+`ArrangementVerticalSideTraits_2` and
+`ArrangementHorizontalSideTraits_2`; see
+\cgalFigureRef{aos_fig-side_clusters}.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-identified_clusters,identified_clusters.png} Top
@@ -3263,7 +3264,7 @@ reach or approach identified horizontal sides.
 The shared requirements for opposite identified sides are collected in
 too additional abstract layers called
 `ArrangementIdentifiedVerticalTraits_2` and
-`ArrangementIdentifiedHorizontalTraits_2`; see Figure
+`ArrangementIdentifiedHorizontalTraits_2`; see
 \cgalFigureRef{aos_fig-identified_clusters}.
 
 In the following we list the specific requirements of all the
@@ -4165,7 +4166,7 @@ drawn as red disks and intersection points are drawn as rings.
 
 The following example demonstrates the usage of the various
 construction methods for circular arcs and line segments. The
-resulting arrangement is depicted in Figure
+resulting arrangement is depicted in
 \cgalFigureRef{arr_figex_circular_arcs}. Note the usage of the
 constructor of `CoordNT(alpha, beta, gamma)`, which creates a
 degree-\f$2\f$ algebraic number whose value is \f$\alpha +
@@ -4204,100 +4205,104 @@ s - t^2\f$ determines the type of curve:
 
 <UL>
 
-<LI>If \f$\Delta_{C} > 0\f$ the curve is an ellipse. A circle is a
+<LI>If \f$\Delta_{C} > 0\f$, the curve is an ellipse. A circle is a
 special case of an ellipse, where \f$r = s\f$ and \f$t = 0\f$.
-<LI>If \f$\Delta_{C} = 0\f$ the curve is a parabola - an unbounded
+
+<LI>If \f$\Delta_{C} = 0\f$, the curve is a parabola---an unbounded
 conic curve with a single connected branch. When \f$r = s = t = 0\f$
 we have a line, which can be considered as a degenerate parabola.
-<LI>If \f$\Delta_{C} < 0\f$ the curve is a hyperbola. That is, it
-is comprised of two disconnected unbounded branches.
+
+<LI>If \f$\Delta_{C} < 0\f$, the curve is a hyperbola. That is, it
+comprises of two disconnected unbounded branches.
+
 </UL>
 
-As the arrangement package is suitable for bounded curves, we consider
-bounded segments of conic curves, referred to as <em>conic
-arcs</em>. A conic arc \f$a\f$ may be either (i) a full ellipse, or
-(ii) defined by the tuple \f$\langle c, p_s, p_t, o \rangle\f$, where
-\f$c\f$ is a conic curve and \f$p_s\f$ and \f$p_t\f$ are two points
-on \f$c\f$ (namely \f$c(p_s) = C(p_t) = 0\f$) that define the
-<em>source</em> and <em>target</em> of the arc, respectively. The arc
-is formed by traversing \f$c\f$ from the source to the target going
-in the orientation specified by \f$ o\f$, which is typically clockwise
-or counterclockwise orientation (but may also be collinear in case of
-degenerate conic curves).
+The `Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>` class
+template is capable of handling only bounded arcs of conic curves,
+referred to as <em>conic arcs</em>. A conic arc \f$a\f$ may be either
+(i) a full ellipse, or (ii) defined by the tuple \f$\langle \kappa,
+p_s, p_t, o \rangle\f$, where \f$\kappa\f$ is a conic curve and
+\f$p_s\f$ and \f$p_t\f$ are two points on \f$c\f$ (namely
+\f$\kappa(p_s) = \kappa(p_t) = 0\f$) that define the <em>source</em>
+and <em>target</em> of the arc, respectively. The arc is formed by
+traversing \f$\kappa\f$ from the source to the target going in the
+orientation specified by \f$o\f$, which is typically clockwise or
+counterclockwise orientation, but may also be collinear in case of
+degenerate conic conic-curves, namely, lines or pairs of lines.
 
 We always assume that the conic coefficients \f$\langle r, s, t, u, v,
-w \rangle\f$ are rational. When dealing with linear curves (line
-segments and polylines), similar assumptions guarantee that all
-intersection points also have rational coordinates, such that the
-arrangement of such curves can be constructed and maintained using
-only rational arithmetic. Unfortunately, this does not hold for conic
-curves, as the coordinates of intersection points of two conic curves
-with rational coefficients are in general algebraic numbers of degree
-\f$4\f$.\cgalFootnote{Namely, they are roots of polynomials with
-integer coefficients of degree \f$4\f$. However, in some special
-cases, for example when handling only circles and circular arcs, the
-coordinates of the intersection points are only of degree \f$ 2\f$,
-namely they are solutions of quadratic equations.}  In addition, conic
-arcs may not necessarily be \f$x\f$-monotone, and must be split at
-points where the tangent to the arc is vertical.  In the general case,
-such points typically have coordinates that are algebraic numbers of
-degree \f$2\f$.  It is therefore clear that we have to use different
-number types to represent the conic coefficients and the point
-coordinates.  Note that as arrangement vertices induced by
-intersection points and points with vertical tangents are likely to
-have algebraic coordinates, we also allow the original endpoints of
-the input arcs \f$p_s\f$ and \f$p_t\f$ to have algebraic coordinates.
+w \rangle\f$ are rational. The coordinates of points of intersection
+between two conic curves with rational coefficients are in general
+algebraic numbers of degree 4. Namely, they are roots of algebraic
+polynomials of degree 4. In addition, conic arcs may not necessarily
+be \f$x\f$-monotone, and must be split at points where the tangent to
+the arc is vertical.  In the general case such points typically have
+coordinates that are algebraic numbers of degree 2. Note that as
+arrangement vertices induced by intersection points and points with
+vertical tangents are likely to have algebraic coordinates, we also
+allow the original endpoints of the input arcs \f$p_s\f$ and \f$p_t\f$
+to have algebraic coordinates.
 
 The `Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>` class
 template is designed for efficient handling of arrangements of
 bounded conic arcs. The template has three parameters, defined as
 follows:
+
 <UL>
 
-<LI>The `RatKernel` class is a geometric kernel, whose field type is
-an exact rational type. It is used to define basic geometric entities
-(e.g., a line segment or a circle) with rational
-coefficients. Typically we use one of the standard \cgal kernels,
-instantiated with the number type `NtTraits::Rational` (see below).
+<LI>The `RatKernel` template parameter must be substituted with a
+geometric kernel whose field type is an exact rational type. It is
+used to define basic geometric entities (e.g., a line segment or a
+circle) with rational coefficients. Typically we use one of the
+standard \cgal kernels, instantiated with the number type
+`NtTraits::Rational` (see below).
 
-<LI>The `AlgKernel` class is a geometric kernel whose field type is an
-exact algebraic type. It is used to define points with algebraic
-coordinates. Typically we use one of the standard \cgal kernels,
-instantiated with the number type `NtTraits::Algebraic` (see below).
+<LI>The `AlgKernel` template parameter must be substituted with a
+geometric kernel whose field type is an exact algebraic type. It is
+used to define points with algebraic coordinates. Typically, we use
+one of the standard \cgal kernels, instantiated with the number type
+`NtTraits::Algebraic` (see below).
 
-<LI>The `NtTraits` class (the number-type traits class) encapsulates
-all the numeric operations needed for performing the geometric
-computation carried out by the geometric traits class.  It defines the
-`Integer`, `Rational` and `Algebraic` number-types, and supports
-several operations on these types, such as conversion between number
-types, solving quadratic equations and extracting the real roots of a
-polynomial with integer coefficients. It is highly recommended to use
-the `CORE_algebraic_number_traits` class, which is included in the
-arrangement package. It relies on the exact number types implemented
-in the <span class="textsc">Core</span> library and performs exact
-computations on the number types it defines.
+<LI>The `NtTraits` template parameter must be substituted with a type
+that encapsulates all the numeric operations needed for performing
+geometric computation carried out by the geometric traits class.  It
+defines the `Integer`, `Rational`, and `Algebraic` number-types, and
+supports several operations on these types, such as conversion between
+these types, solving quadratic equations, and extracting the real
+roots of polynomials with integer coefficients. The use of the
+`CORE_algebraic_number_traits` class, which is included in the
+arrangement package, is highly recommended. The traits class-template
+relies on the multi-precision number types implemented in the <span
+class="textsc">Core</span> library and performs exact computations on
+the number types it defines.
+
 </UL>
 
+The instantiation of the conic traits class-template is slightly more
+complicated than the instantiation of the traits classes you have
+encountered so far. This instantiation is exemplified in the header
+file `arr_conics.h`. Note how we first define the rational and
+algebraic kernels using the number types given by the <span
+class="textsc">Core</span> number type traits-class, then use them to
+define the conic traits class-template. Also note the types defined by
+the rational kernels, which we need for conveniently constructing
+conic arcs.
+
 The `Arr_conic_traits_2` models the `ArrangementTraits_2` and
-`ArrangementLandmarkTraits_2` concepts. (It supports the landmark
-point-location strategy). Its `%Point_2` type is derived from
-`AlgKernel::Point_2`, while the `Curve_2` type represents a bounded,
-not necessarily \f$x\f$-monotone, conic arc.  The
+`ArrangementLandmarkTraits_2` concepts. Its `Point_2` type is derived
+from `AlgKernel::Point_2`, while the `Curve_2` type represents a
+bounded, not necessarily \f$x\f$-monotone, conic arc.  The
 `X_monotone_curve_2` type is derived from `Curve_2`, but its
-constructors are to be used only by the traits class.  You should
+constructors are used only by the traits class.  Users should
 therefore construct only `Curve_2` objects and insert them into the
-arrangement using the `insert()` or `insert()` functions.
+arrangement using the `insert()` function.
 
-Conic arcs can be constructed from full ellipses or by specifying a
-supporting curve, two endpoints and an orientation. However, several
+Conic arcs are constructible from full ellipses or by specifying a
+supporting curve, two endpoints, and an orientation. However, several
 constructors of `Curve_2` are available to allow for some special
-cases, such as circular arcs or line segments. The `Curve_2` (and the
-derived `X_monotone_curve_2`) classes also support basic access
-functions such as `source()`, `target()` and `orientation()`.
-
-<!----------------------------------------------------------------------------->
-\subsubsection Arrangement_on_surface_2ExamplesforArrangements Examples for Arrangements of Conics
-<!----------------------------------------------------------------------------->
+cases, such as circular arcs or line segments. The `Curve_2` and the
+derived `X_monotone_curve_2` classes also support basic access
+functions such as `source()`, `target()`, and `orientation()`.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{arr_figex_14,conics.png}
@@ -4308,30 +4313,71 @@ An arrangement of mixed conic arcs, as constructed in conics.cpp
 The following example demonstrates the usage of the various
 constructors for conic arcs. The resulting arrangement is depicted in
 \cgalFigureRef{arr_figex_14}. Especially noteworthy are the
-constructor of a circular arc that accepts three points and the
+constructor of a circular arc that accepts three points, the
+constructor of a conic arc that accepts five points, and the
 constructor that allows specifying approximate endpoints, where the
 exact endpoints are given explicitly as intersections of the
-supporting conic with two other conic curves. Also note that as the
-preconditions required by some of these constructors are rather
-complicated (see the Reference Manual for the details), a precondition
-violation does not cause the program to terminate - instead, an
-<em>invalid</em> arc is created. We can verify the validity of an arc
-by using the `is_valid()` method. Needless to say, inserting invalid
-arcs into an arrangement is not allowed.
+supporting conic with two other conic curves. The approximate
+endpoints are used to select the specific exact endpoints out of all
+intersection points of the pair of curves (the supporting conic curve
+and the auxiliary conic curve).  Also note that as the preconditions
+required by some of these constructors are rather complicated (see the
+Reference Manual for the details), a precondition violation does not
+cause the program to terminate---instead, an <em>invalid</em> arc is
+created. The call `a.is_valid()` verifies the validity of the arc
+\f$a\f$. Naturally, inserting invalid arcs into an arrangement is not
+allowed, so the validity of an arc should be checked once it is
+constructed.
 
 \cgalExample{Arrangement_on_surface_2/conics.cpp}
 
+The types common to the example programs that use the
+`Arr_conic_traits_2` class template are listed below and
+defined in the header file `arr_conics.h`.
+
+\code{.cpp}
+#include <CGAL/Cartesian.h>
+#include <CGAL/CORE_algebraic_number_traits.h>
+#include <CGAL/Arr_conic_traits_2.h>
+#include <CGAL/Arrangement_2.h>
+
+typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
+typedef Nt_traits::Rational                           Rational;
+typedef CGAL::Cartesian<Rational>                     Rat_kernel;
+typedef Rat_kernel::Point_2                           Rat_point;
+typedef Rat_kernel::Segment_2                         Rat_segment;
+typedef Rat_kernel::Circle_2                          Rat_circle;
+typedef Nt_traits::Algebraic                          Algebraic;
+typedef CGAL::Cartesian<Algebraic>                    Alg_kernel;
+
+typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
+                                                      Traits;
+typedef Traits::Point_2                               Point;
+typedef Traits::Curve_2                               Conic_arc;
+typedef Traits::X_monotone_curve_2                    X_monotone_conic_arc;
+typedef CGAL::Arrangement_2<Traits>                   Arrangement;
+\endcode
+
+<!----------------------------------------------------------------------------->
+\cgalFigureBegin{arr_fig_conic_multiplicities,conic_multiplicities.png}
+An arrangement of a circular arc and an hyperbolic arc, as constructed
+in conic_multiplicities.cpp
+\cgalFigureEnd
+<!----------------------------------------------------------------------------->
+
 The last example in this section demonstrates how the conic-traits
-class can handle intersection points with multiplicity. The supporting
-curves of the two arcs, a circle centered at \f$(0,\frac{1}{2})\f$
-with radius \f$\frac{1}{2}\f$, and the hyperbola \f$y =
+class can handle intersection points with multiplicity. The resulting
+arrangement is depicted in
+\cgalFigureRef{arr_fig_conic_multiplicities}. The supporting curves of
+the two arcs, a circle centered at \f$(0,\frac{1}{2})\f$ with radius
+\f$\frac{1}{2}\f$, and the hyperbola \f$y =
 \frac{x^2}{1-x}\f$,\cgalFootnote{This curve can also be written as
 \f$c: x^2 + xy - y = 0\f$. It is a hyperbola since \f$\Delta_{C} =
 -1\f$.}  intersect at the origin such that the intersection point has
 multiplicity \f$3\f$ (note that they both have the same horizontal
 tangent at \f$(0,0)\f$ and the same curvature \f$1\f$). In addition,
 they have another intersection point at
-\f$(\frac{1}{2},\frac{1}{2})\f$ of multiplicity \f$1\f$:
+\f$(\frac{1}{2},\frac{1}{2})\f$ of multiplicity \f$1\f$.
 
 \cgalExample{Arrangement_on_surface_2/conic_multiplicities.cpp}
 
@@ -4701,7 +4747,7 @@ identification curve.
 
 The following example constructs an arrangement induced by 12 arcs of
 great circles embedded in the sphere. The arrangement is depicted in
-Figure \cgalFigureRef{spherical_insert}.
+\cgalFigureRef{spherical_insert}.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{spherical_insert,spherical_insert.png}
@@ -5472,7 +5518,7 @@ as well as all geometric entities associated with vertices and edges.
 The ability to use the input/output operators, requires that the
 `%Point_2` type and the `X_monotone_curve_2` type defined by the traits
 class both support the `<<` and `>>` operators. The
-`Arr_conic_traits_2` class (see Section \ref arr_ssectr_conic), the
+`Arr_conic_traits_2` class (see Section \ref arr_sssectr_conic), the
 `Arr_rational_function_traits_2` class (see Section \ref
 arr_ssectr_ratfunc), and the `Arr_linear_traits_2` class (see Section
 \ref arr_ssectr_segs) currently do not provide these operators for the
