@@ -44,6 +44,11 @@ a `CGAL::Identity_property_map` is automatically set as the octree's map type, s
 
 \subsubsection Section_Octree_Point_Set Building an Octree from a Point_set_3
 
+Using a `Point_set_3` is slightly more complicated, but it comes with a number of advantages.
+CGAL's Point set class has many useful features.
+Here we take advantage of its ability to save and load from files easily.
+The independent point-range and map may also come with a performance benefit.
+
 \b Example
 
 This example illustrates how to create an octree from a `Point_set_3` loaded from a file.
