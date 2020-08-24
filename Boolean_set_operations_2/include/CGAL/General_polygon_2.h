@@ -21,6 +21,7 @@
 #include <CGAL/Boolean_set_operations_2/Gps_traits_adaptor.h>
 #include <CGAL/Bbox_2.h>
 
+#include <CGAL/Boolean_set_operations_2/Points_to_x_monotone_curves_iterator.h>
 
 namespace CGAL {
 
@@ -45,7 +46,23 @@ public:
 
   template <class CurveIterator>
   General_polygon_2(CurveIterator begin,
-                    CurveIterator end) : m_xcurves (begin, end)
+                    CurveIterator end,
+                    typename std::enable_if
+                    <std::is_same<typename CurveIterator::value_type,
+                                  X_monotone_curve_2>::value>::type* = 0)
+    : m_xcurves (begin, end)
+  {}
+
+  template <class PointIterator>
+  General_polygon_2(PointIterator begin,
+                    PointIterator end,
+                    typename std::enable_if
+                    <std::is_same<typename PointIterator::value_type,
+                                  Point_2>::value>::type* = 0)
+    : m_xcurves (Points_to_x_monotone_curves_iterator<PointIterator, Arr_traits>
+                 (begin, end),
+                 Points_to_x_monotone_curves_iterator<PointIterator, Arr_traits>
+                 ())
   {}
 
   template <class CurveIterator>
