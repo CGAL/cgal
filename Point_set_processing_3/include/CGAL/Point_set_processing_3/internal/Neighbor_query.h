@@ -112,7 +112,7 @@ public:
 
   template <typename OutputIterator>
   void get_iterators (const Point& query, unsigned int k, FT neighbor_radius,
-                      OutputIterator output, bool fallback_k_if_sphere_empty = true) const
+                      OutputIterator output, unsigned int fallback_k_if_sphere_empty = 3) const
   {
     if (neighbor_radius != FT(0))
     {
@@ -142,11 +142,10 @@ public:
       catch (const Maximum_points_reached_exception&)
       { }
 
-      // Fallback, if less than 3 points are return, search for the 3
+      // Fallback, if not enough  points are return, search for the knn
       // first points
-      if (fallback_k_if_sphere_empty && nb < 3)
-        k = 3;
-      // Else, no need to search for K nearest neighbors
+      if (nb < fallback_k_if_sphere_empty)
+        k = fallback_k_if_sphere_empty;
       else
         k = 0;
     }
@@ -173,14 +172,14 @@ public:
 
   template <typename OutputIterator>
   void get_points (const Point& query, unsigned int k, FT neighbor_radius,
-                   OutputIterator output) const
+                   OutputIterator output, unsigned int fallback_k_if_sphere_empty = 3) const
   {
     return get_iterators(query, k, neighbor_radius,
                          boost::make_function_output_iterator
                          ([&](const input_iterator& it)
                           {
                             *(output ++) = get (m_point_map, *it);
-                          }));
+                          }), fallback_k_if_sphere_empty);
   }
 };
 

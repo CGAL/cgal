@@ -262,6 +262,8 @@ public:
     bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& i) const { return  It::operator==(i); }
     bool operator!=( const Self& i) const { return !(*this == i); }
+    bool operator==( const It& i) const { return  It::operator==(i); }
+    bool operator!=( const It& i) const { return !(*this == i); }
 
     Self& operator++() {
         this->nt = (*this->nt).next();

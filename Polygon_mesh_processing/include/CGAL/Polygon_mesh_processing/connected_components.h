@@ -30,6 +30,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/Container_helper.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/tuple.h>
@@ -820,7 +821,7 @@ void keep_connected_components(PolygonMesh& pmesh
 
 /*!
 * \ingroup keep_connected_components_grp
-* Removes in `pmesh` the connected components designated by theirs ids
+* removes in `pmesh` the connected components designated by theirs ids
 * in `components_to_remove` as well as all isolated vertices.
 * The connected component id of a face is given by `fcm`.
 *
@@ -1092,7 +1093,7 @@ void split_connected_components_impl(FIMap fim,
     }
     nb_patches+=1;
   }
-
+  CGAL::internal::reserve(range, nb_patches);
   for(faces_size_type i=0; i<nb_patches; ++i)
   {
     CGAL::Face_filtered_graph<PolygonMesh, FIMap, VIMap, HIMap>

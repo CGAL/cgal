@@ -29,6 +29,7 @@
 #include <boost/range/value_type.hpp>
 #include <boost/range/reference.hpp>
 
+#include <array>
 #include <set>
 #include <type_traits>
 #include <vector>
@@ -37,13 +38,26 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
 
+template <typename PM_Point, typename PS_Point>
+PM_Point convert_to_pm_point(const PS_Point& p)
+{
+  CGAL_static_assertion((std::is_convertible<PS_Point, PM_Point>::value));
+  return PM_Point(p);
+}
+
+// just for backward compatibility reasons
+template <typename PM_Point, typename PS_FT>
+PM_Point convert_to_pm_point(const std::array<PS_FT, 3>& p)
+{
+  return PM_Point(p[0], p[1], p[2]);
+}
+
 template <typename PointRange,
           typename PolygonRange,
           typename PointMap = typename CGAL::GetPointMap<PointRange>::const_type>
 class PS_to_PM_converter
 {
   typedef typename boost::range_value<PolygonRange>::type                 Polygon;
-  typedef typename boost::property_traits<PointMap>::value_type           Point;
 
 public:
   /**
@@ -67,8 +81,6 @@ public:
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
 
     typedef typename boost::property_traits<VertexPointMap>::value_type     PM_Point;
-
-    CGAL_static_assertion((std::is_convertible<Point, PM_Point>::value));
 
     reserve(pmesh, static_cast<typename boost::graph_traits<PolygonMesh>::vertices_size_type>(m_points.size()),
             static_cast<typename boost::graph_traits<PolygonMesh>::edges_size_type>(2*m_polygons.size()),
@@ -94,7 +106,7 @@ public:
         continue;
 
       vertices[i] = add_vertex(pmesh);
-      PM_Point pi(get(m_pm, m_points[i]));
+      PM_Point pi = convert_to_pm_point<PM_Point>(get(m_pm, m_points[i]));
       put(vpm, vertices[i], pi);
     }
 

@@ -286,7 +286,7 @@ struct Regularization_graph
 
 /*!
 \ingroup PkgBGLSelectionFct
-Augments a selection with faces of `fg` that are adjacent
+augments a selection with faces of `fg` that are adjacent
 to a face in `selection`. This process is applied `k` times considering
 all faces added in the previous steps.
 Two faces are said to be adjacent if they share a vertex or an edge.
@@ -356,7 +356,7 @@ expand_face_selection(
 
 /*!
 \ingroup PkgBGLSelectionFct
-Diminishes a selection of faces from faces adjacent to a non-selected face.
+diminishes a selection of faces from faces adjacent to a non-selected face.
 This process is applied `k` times considering all faces removed in the previous steps.
 Two faces are said to be adjacent if they share a vertex or an edge.
 Each face removed from the selection is added exactly once in `out`.
@@ -749,7 +749,7 @@ select_incident_faces(
 
 /*!
 \ingroup PkgBGLSelectionFct
-Augments a selection with edges of `fg` that are adjacent
+augments a selection with edges of `fg` that are adjacent
 to an edge in `selection`. This process is applied `k` times considering
 all edges added in the previous steps.
 Two edges are said to be adjacent if they are incident to the same face or vertex.
@@ -816,7 +816,7 @@ expand_edge_selection(
 
 /*!
 \ingroup PkgBGLSelectionFct
-Diminishes a selection of edges from edges adjacent to a non-selected edge.
+diminishes a selection of edges from edges adjacent to a non-selected edge.
 This process is applied `k` times considering all edges removed in the previous steps.
 Two edges are said to be adjacent if they are incident to the same face or vertex.
 Each edge removed from the selection is added exactly once in `out`.
@@ -902,7 +902,7 @@ reduce_edge_selection(
 
 /*!
 \ingroup PkgBGLSelectionFct
-Augments a selection with vertices of `fg` that are adjacent
+augments a selection with vertices of `fg` that are adjacent
 to a vertex in `selection`. This process is applied `k` times considering
 all vertices added in the previous steps.
 Two vertices are said to be adjacent if they are part of the same face.
@@ -957,7 +957,7 @@ expand_vertex_selection(
 
 /*!
 \ingroup PkgBGLSelectionFct
-Diminishes a selection of vertices from vertices adjacent to a non-selected vertex.
+diminishes a selection of vertices from vertices adjacent to a non-selected vertex.
 This process is applied `k` times considering all vertices removed in the previous steps.
 Two vertices are said to be adjacent if they are part of the same face.
 Each vertex removed from the selection is added exactly once in `out`.

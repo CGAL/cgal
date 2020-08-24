@@ -131,7 +131,7 @@ public:
   }
 }; // end class Less_on_G_copy_vertex_descriptors
 
-// Splits a graph at vertices with degree higher than two and at vertices where `is_terminal` returns `true`
+// splits a graph at vertices with degree higher than two and at vertices where `is_terminal` returns `true`
 // The vertices are duplicated, and new incident edges created.
 // `OrigGraph` must be undirected
 template <typename Graph,

@@ -53,13 +53,6 @@ endif()
 #   keyword, or ``PUBLIC`` otherwise.
 #
 
-# See the release notes of CGAL-4.10: CGAL_Core now requires
-# Boost.Thread, with GNU G++ < 9.1.
-if (CMAKE_CXX_COMPILER_ID STREQUAL GNU AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.1)
-  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_TweakFindBoost.cmake)
-  find_package( Boost 1.48 REQUIRED COMPONENTS thread system )
-endif()
-
 function(CGAL_setup_CGAL_Core_dependencies target)
   if(ARGV1 STREQUAL INTERFACE)
     set(keyword INTERFACE)
@@ -70,21 +63,5 @@ function(CGAL_setup_CGAL_Core_dependencies target)
   use_CGAL_GMP_support(CGAL_Core ${keyword})
   target_compile_definitions(${target} ${keyword} CGAL_USE_CORE=1)
   target_link_libraries( CGAL_Core ${keyword} CGAL::CGAL )
-
-  # See the release notes of CGAL-4.10: CGAL_Core now requires
-  # Boost.Thread, with GNU G++.
-  if (CMAKE_CXX_COMPILER_ID STREQUAL GNU AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.1)
-    if(TARGET Boost::thread)
-      target_link_libraries( CGAL_Core ${keyword} Boost::thread)
-    else()
-      # Note that `find_package( Boost...)` must be called in the
-      # function `CGAL_setup_CGAL_Core_dependencies()` because the
-      # calling `CMakeLists.txt` may also call `find_package(Boost)`
-      # between the inclusion of this module, and the call to this
-      # function. That resets `Boost_LIBRARIES`.
-      find_package( Boost 1.48 REQUIRED thread system )
-      target_link_libraries( CGAL_Core ${keyword} ${Boost_LIBRARIES})
-    endif()
-  endif()
 
 endfunction()

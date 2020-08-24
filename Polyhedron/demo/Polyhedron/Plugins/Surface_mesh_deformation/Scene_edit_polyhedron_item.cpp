@@ -885,7 +885,7 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
      &&d->state.shift_pressing)
   {
     QWheelEvent *w_event = static_cast<QWheelEvent*>(event);
-    int steps = w_event->delta() / 120;
+    int steps = w_event->angleDelta().y() / 120;
     d->expand_or_reduce(steps, d->sm_item->polyhedron());
   }
   if(event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease)

@@ -40,7 +40,6 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
 {
   typedef typename boost::graph_traits<SourceMesh>::vertex_descriptor sm_vertex_descriptor;
   typedef typename boost::graph_traits<TargetMesh>::vertex_descriptor tm_vertex_descriptor;
-  typedef typename boost::graph_traits<TargetMesh>::halfedge_iterator tm_halfedge_iterator;
 
   typedef typename boost::graph_traits<SourceMesh>::face_descriptor sm_face_descriptor;
   typedef typename boost::graph_traits<TargetMesh>::face_descriptor tm_face_descriptor;
@@ -64,14 +63,17 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
   const tm_face_descriptor tm_null_face = boost::graph_traits<TargetMesh>::null_face();
   const tm_vertex_descriptor tm_null_vertex = boost::graph_traits<TargetMesh>::null_vertex();
 
-  reserve(tm, static_cast<typename boost::graph_traits<TargetMesh>::vertices_size_type>(vertices(sm).size()),
-              static_cast<typename boost::graph_traits<TargetMesh>::edges_size_type>(edges(sm).size()),
-              static_cast<typename boost::graph_traits<TargetMesh>::faces_size_type>(faces(sm).size()) );
+  reserve(tm, static_cast<typename boost::graph_traits<TargetMesh>::vertices_size_type>(vertices(tm).size()+vertices(sm).size()),
+              static_cast<typename boost::graph_traits<TargetMesh>::edges_size_type>(edges(tm).size()+edges(sm).size()),
+              static_cast<typename boost::graph_traits<TargetMesh>::faces_size_type>(faces(tm).size()+faces(sm).size()) );
 
   //insert halfedges and create each vertex when encountering its halfedge
+  std::vector<tm_edge_descriptor> new_edges;
+  new_edges.reserve(edges(sm).size());
   for(sm_edge_descriptor sm_e : edges(sm))
   {
     tm_edge_descriptor tm_e = add_edge(tm);
+    new_edges.push_back(tm_e);
     sm_halfedge_descriptor sm_h = halfedge(sm_e, sm), sm_h_opp = opposite(sm_h, sm);
     tm_halfedge_descriptor tm_h = halfedge(tm_e, tm), tm_h_opp = opposite(tm_h, tm);
 
@@ -173,9 +175,10 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
   }
 
   // detect if there are some non-manifold umbrellas and fix missing halfedge target pointers
-  for (tm_halfedge_iterator it=halfedges(tm).first; it!=halfedges(tm).second; ++it)
+  typedef typename std::vector<tm_edge_descriptor>::iterator edge_iterator;
+  for (edge_iterator it=new_edges.begin(); it!=new_edges.end(); ++it)
   {
-    if (target(*it, tm) == tm_null_vertex)
+    if (target(*it, tm) == tm_null_vertex || source(*it, tm) == tm_null_vertex)
     {
       // create and fill a map from target halfedge to source halfedge
       typedef CGAL::dynamic_halfedge_property_t<sm_halfedge_descriptor> Dyn_th_tag;
@@ -183,17 +186,22 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
       for (sm_halfedge_descriptor hs : halfedges(sm))
         put(ht_to_hs, get(hs_to_ht, hs), hs);
 
-      for(; it!=halfedges(tm).second; ++it)
+      for(; it!=new_edges.end(); ++it)
       {
-        if (target(*it, tm) == tm_null_vertex)
+        tm_halfedge_descriptor nh_t = halfedge(*it, tm);
+        for (int i=0; i<2; ++i)
         {
-          // we recover tm_v using the halfedge associated to the target vertex of
-          // the halfedge in sm corresponding to *it. This is working because we
-          // set the vertex halfedge pointer to the "same" halfedges.
-          tm_vertex_descriptor tm_v =
-            target( get(hs_to_ht, halfedge(target(get(ht_to_hs, *it), sm), sm)), tm);
-          for(tm_halfedge_descriptor ht : halfedges_around_target(*it, tm))
-            set_target(ht, tm_v, tm);
+          if (target(nh_t, tm) == tm_null_vertex)
+          {
+            // we recover tm_v using the halfedge associated to the target vertex of
+            // the halfedge in sm corresponding to nh_t. This is working because we
+            // set the vertex halfedge pointer to the "same" halfedges.
+            tm_vertex_descriptor tm_v =
+              target( get(hs_to_ht, halfedge(target(get(ht_to_hs, nh_t), sm), sm)), tm);
+            for(tm_halfedge_descriptor ht : halfedges_around_target(nh_t, tm))
+              set_target(ht, tm_v, tm);
+          }
+          nh_t = opposite(nh_t, tm);
         }
       }
       break;

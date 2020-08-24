@@ -9,6 +9,7 @@
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/TextRenderer.h>
 #include <CGAL/Three/exceptions.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/Qt/debug.h>
 #include <CGAL/double.h>
 
@@ -401,32 +402,25 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
                                                 objectValue);
     }
   }
+  filterOperations(true);
   // debugger->action(QScriptEngineDebugger::InterruptAction)->trigger();
 #endif
 }
 
 void addActionToMenu(QAction* action, QMenu* menu)
 {
-  bool added = false;
-  for(QAction* it : menu->actions())
-  {
-    QString atxt = action->text().remove("&"),
-        btxt = it->text().remove("&");
-    int i = 0;
-    while(atxt[i] == btxt[i]
-          && i < atxt.size()
-          && i < btxt.size())
-      ++i;
-    bool res = (atxt[i] < btxt[i]);
-    if (res)
-    {
-      menu->insertAction(it, action);
-      added = true;
-      break;
-    }
-  }
-  if(!added)
+  auto actions = menu->actions();
+  auto it = std::lower_bound(actions.begin(), actions.end(),
+                             action->text().remove("&"),
+                             [](QAction* a, QString text) {
+                               return a->text().remove("&").compare(text) < 0;
+                             });
+  if(it == actions.end()) {
     menu->addAction(action);
+  }
+  else {
+    menu->insertAction(*it, action);
+  }
 }
 
 //Recursive function that do a pass over a menu and its sub-menus(etc.) and hide them when they are empty
@@ -490,12 +484,12 @@ void MainWindow::filterOperations(bool)
         menu->removeAction(action);
     }
   }
+
   Q_FOREACH(QAction* action, action_menu_map.keys())
   {
     QMenu* menu = action_menu_map[action];
     addActionToMenu(action, menu);
   }
-
   QString filter=operationSearchBar.text();
   Q_FOREACH(const PluginNamePair& p, plugins) {
     Q_FOREACH(QAction* action, p.first->actions()) {
@@ -765,7 +759,7 @@ void MainWindow::loadPlugins()
     qputenv("PATH", new_path);
 #endif
     Q_FOREACH (QString pluginsDir,
-               env_path.split(separator, QString::SkipEmptyParts)) {
+               env_path.split(separator, CGAL_QT_SKIP_EMPTY_PARTS)) {
       QDir dir(pluginsDir);
       if(dir.isReadable())
         plugins_directories << dir;

@@ -471,7 +471,7 @@ namespace Polygon_mesh_processing {
 
   /*!
   \ingroup  hole_filling_grp
-  same as above but the range of third points is omitted. They are not
+  Same as above but the range of third points is omitted. They are not
   taken into account in the cost computation that leads the hole filling.
 */
   template <typename PointRange,
