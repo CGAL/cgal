@@ -62,17 +62,20 @@ void extractPCAndTrFromStandfordConfFile(
 
     std::vector<string> files;
     
-    //VERIFY (filesystem::exists(confFilePath) && filesystem::is_regular_file(confFilePath));
+    if(!(filesystem::exists(confFilePath) && filesystem::is_regular_file(confFilePath)))
+      throw std::runtime_error("Config file does not exist or is no regular file.");
 
     // extract the working directory for the configuration path
-    const std::string workingDir = filesystem::path(confFilePath).parent_path().native();
-    //VERIFY (filesystem::exists(workingDir));
+    const std::string workingDir = filesystem::path(confFilePath).parent_path().native();    
+    if(!filesystem::exists(confFilePath))
+      throw std::runtime_error("Directory \"" + workingDir + "\" does not exist.");
 
     // read the configuration file and call the matching process
     std::string line;
     std::ifstream confFile;
     confFile.open(confFilePath);
-    //VERIFY (confFile.is_open());
+    if(!confFile.is_open())
+      throw std::runtime_error("Could not open config file.");
 
     while ( getline (confFile,line) )
     {
@@ -89,7 +92,8 @@ void extractPCAndTrFromStandfordConfFile(
         if (tokens.size() == 9){
             if (tokens[0].compare("bmesh") == 0){
                 std::string inputfile = filesystem::path(confFilePath).parent_path().string()+string("/")+tokens[1];
-                //VERIFY(filesystem::exists(inputfile) && filesystem::is_regular_file(inputfile));
+                if(!(filesystem::exists(inputfile) && filesystem::is_regular_file(inputfile)))
+                  throw std::runtime_error("File \"" + inputfile + "\" does not exist or is no regular file.");
 
                 // build the Eigen rotation matrix from the rotation and translation stored in the files
                 Eigen::Matrix<double, 3, 1> tr (
