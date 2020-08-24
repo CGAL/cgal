@@ -1436,6 +1436,15 @@ public:
   /*! Flip the segment (swap its source and target).
    */
   Arr_segment_2 flip() const;
+
+  /*! Create a bounding box for the segment.
+   */
+  Bbox_2 bbox() const
+  {
+    Kernel kernel;
+    auto construct_bbox = kernel.construct_bbox_2_object();
+    return construct_bbox(this->m_ps) + construct_bbox(this->m_pt);
+  }
 };
 
 //! \brief constructs default.
