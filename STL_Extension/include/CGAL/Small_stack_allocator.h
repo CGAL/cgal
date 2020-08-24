@@ -52,7 +52,7 @@ public:
     }
 
     // Else, fallback to `new` allocation
-    return new T[n];
+    return static_cast<T*>(::operator new(n * sizeof(T)));
   }
 
   void deallocate (T* p, std::size_t n)
@@ -69,7 +69,7 @@ public:
     }
     // Else, delete it
     else
-      delete[] p;
+      ::operator delete(p);
   }
 
 };
