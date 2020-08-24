@@ -17,11 +17,11 @@ The Octree package provides the Octree and Node classes.
 Note that the octree will often be outperformed by Spacial_searching's kD-tree.
 Octrees are most useful when implementing algorithms that require nodes without high aspect-ratios.
 
-\section Section_Octree Octree
+\section Section_Usage Usage
 
-\section Section_Octree_Examples Examples
+\subsection Section_Octree_Building Building an Octree
 
-\subsection Section_Octree_Example_Point_Vector Building an Octree from a Vector of Points
+\subsubsection Section_Octree_Example_Point_Vector Building an Octree from a Vector of Points
 
 This example illustrates how to create an octree from a `std::vector`.
 
@@ -31,7 +31,7 @@ a `CGAL::Identity_property_map` it automatically set as the octree's map type, s
 
 \cgalExample{Octree/Octree_build_from_Point_vector.cpp}
 
-\subsection Section_Octree_Example_Point_Set Building an Octree from a Point_set_3
+\subsubsection Section_Octree_Example_Point_Set Building an Octree from a Point_set_3
 
 This example illustrates how to create an octree from a `Point_set_3` loaded from a file.
 It also shows a more explicit way of setting the split criteria when refining the tree.
@@ -45,7 +45,7 @@ The split criterion is manually constructed and passed to the refine method.
 
 \cgalExample{Octree/Octree_build_from_Point_set.cpp}
 
-\subsection Section_Octree_Example_Custom_Split_Criterion Building an Octree with a Custom Split Criterion
+\subsubsection Section_Octree_Example_Custom_Split_Criterion Building an Octree with a Custom Split Criterion
 
 This example illustrates how to refine an octree using a split criterion that isn't provided by default.
 
@@ -55,7 +55,9 @@ For example, for a ratio of 2, a node at depth 2 can hold 4 points, a node at de
 
 \cgalExample{Octree/Octree_build_with_custom_split.cpp}
 
-\subsection Section_Octree_Example_Nearest_Neighbor Finding the Nearest Neighbor of a Point
+\subsection Section_Octree_Nearest_Neighbor Nearest Neighbor
+
+\subsubsection Section_Octree_Example_Nearest_Neighbor Finding the Nearest Neighbor of a Point
 
 This example illustrates how to use an octree to accelerate the search for points close to a location.
 
@@ -66,7 +68,9 @@ Results are put in a vector, and then printed.
 
 \cgalExample{Octree/Octree_find_nearest_neighbor.cpp}
 
-\subsection Section_Octree_Example_Manual_Traveral Manual Traversal
+\subsection Section_Octree_Traversal Traversal
+
+\subsubsection Section_Octree_Example_Manual_Traveral Manual Traversal
 
 This example demonstrates ways of accessing different nodes of a tree, given a reference to one.
 
@@ -84,7 +88,7 @@ These accessors and operators can be chained to access any node in the tree in a
 
 \cgalExample{Octree/Octree_traversal_manual.cpp}
 
-\subsection Section_Octree_Example_Preorder_Traversal Preorder Traversal
+\subsubsection Section_Octree_Example_Preorder_Traversal Preorder Traversal
 
 This example illustrates how to use the provided traversals.
 
@@ -95,14 +99,14 @@ In this case, we print out the nodes of the tree without indentation instead.
 \cgalExample{Octree/Octree_traversal_preorder.cpp}
 
 <!--
-\subsection Section_Octree_Example_Custom_Traversal Using a Custom Traversal Method
+\subsubsection Section_Octree_Example_Custom_Traversal Using a Custom Traversal Method
 
 e.g. I've build a tree and I want to print it out, but layer by layer
 
 \cgalExample{Octree/Octree_traversal_custom.cpp}
 
 !-->
-\subsection Section_Octree_Grade Grading an octree
+\subsubsection Section_Octree_Grade Grading an octree
 
 This example demonstrates how to use the grade method to eliminate large jumps in depth within the octree.
 
