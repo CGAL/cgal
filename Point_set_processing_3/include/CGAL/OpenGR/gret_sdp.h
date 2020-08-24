@@ -28,7 +28,7 @@ namespace OpenGR {
    \ingroup PkgPointSetProcessing3Algorithms
 
    Computes the registration of the point clouds in `point_clouds` using the correspondences provided 
-   in `correspondences` and stores the corresponding affine transformations in `transformations`.
+   in `correspondences` and stores the respective affine transformations in `transformations`.
 
    Registration is computed using the GRET-SDP algorithm that is described in [this paper](https://arxiv.org/abs/1306.5226)
    
@@ -39,16 +39,14 @@ namespace OpenGR {
    \tparam PointRange is a model of `Range`. The value type of its iterator is
    the key type of the named parameter `point_map` in `NamedParameters`.
    \tparam CorrespondencesRange is a model of `Range`. The value type of its iterator is
-   is another range of correspondences. The value type of the iterator of a correspondences range 
+   is another range of correspondences. The value type of the iterator of a correspondence range 
    is `std::pair<size_t,size_t>`.
-   \tparam TransformRange is a model of `Range`. The value type of its iterator is `Kernel::Aff_transformation_3`
-   where `Kernel` is the same kernel used to construct the value type of PointRange `Kernel_traits<typename PointRange::value_type>::Kernel`. ???
-   The value type of its iterator could be any class with a constructor that accepts 12 doubles, ints,... ???
+   \tparam TransformRange is a model of `Range`. The value type of its iterator is `geom_traits::Aff_transformation_3`.
 
    \param point_clouds vector of input point ranges of the point clouds to be registered.
    \param correspondences input range of correspondences. Each entry in correspondences is a range itself that stores the indexes of the points that are 
-   considered to correspond to the same global coordinate. A points indexes are stores using a `std::pair<size_t,size_t>` where `first` equals the point cloud index 
-   and `second` equals the index within this point cloud that it belongs to (indexes with respect to `point_clouds`).  
+   considered to correspond to the same global coordinate. A points indexes are stores using `std::pair<size_t,size_t>` where `first` equals the point cloud index 
+   and `second` equals the index within this point cloud that this point belongs to (indexes with respect to `point_clouds`).  
    \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
    \param transformations ouput range of the affine transformations where the i'th transformation should be applied to the i'th point cloud in order to register them.
 
@@ -57,6 +55,11 @@ namespace OpenGR {
      is the value type of the iterator of `PointRange` and whose value type is
      `geom_traits::Point_3`.  If this parameter is omitted,
      `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{normal_map} a model of `ReadablePropertyMap` whose key
+     type is the value type of the iterator of `PointRange` and whose value
+     type `geom_traits::Vector_3`.\cgalParamEnd
+    \cgalParamBegin{geom_traits} an instance of a geometric traits class,
+     model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
 
 */
@@ -100,7 +103,7 @@ void compute_registration_transformations(const std::vector<PointRange>& point_c
 
     // register patches
     gr::DummyTransformVisitor tr_visitor;
-    matcher.template RegisterPatches<gr::MOSEK_WRAPPER<Scalar>>(patches, num_global_coordinates, tr_visitor);
+    matcher.template RegisterPatches<gr::SDPA_WRAPPER<Scalar>>(patches, num_global_coordinates, tr_visitor);
     
     // get transformations
     using GR_TrafoType = typename GR_MatcherType::MatrixType;
@@ -148,6 +151,11 @@ void compute_registration_transformations(const std::vector<PointRange>& point_c
      is the value type of the iterator of `PointRange` and whose value type is
      `geom_traits::Point_3`.  If this parameter is omitted,
      `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{normal_map} a model of `ReadablePropertyMap` whose key
+     type is the value type of the iterator of `PointRange` and whose value
+     type `geom_traits::Vector_3`.\cgalParamEnd
+    \cgalParamBegin{geom_traits} an instance of a geometric traits class,
+     model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
 
 */
@@ -169,9 +177,7 @@ void register_point_clouds( const std::vector<PointRange>& point_clouds, const C
     std::vector<typename Kernel::Aff_transformation_3> transformations;
     compute_registration_transformations(point_clouds, correspondences, np, transformations);
 
-
-
-
+    // get point and normal maps
     PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
     NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
 

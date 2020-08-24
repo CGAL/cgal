@@ -118,13 +118,13 @@ if ( CGAL_FOUND )
       COMMAND ${CMAKE_COMMAND} -E copy ${GRET_SDP_DATA_DIR_FROM}/bun*.ply ${GRET_SDP_DATA_DIR_TO}/.
       )
       
-      find_package(MOSEK REQUIRED)
-      include_directories(${MOSEK_INCLUDE_DIRS})
+      find_package(SDPA REQUIRED)
+      include_directories(${SDPA_INCLUDE_DIRS})
       include_directories(${Boost_INCLUDE_DIRS})
       add_executable(registration_with_OpenGR_using_GRET_SDP "registration_with_OpenGR_using_GRET_SDP.cpp" )
       target_link_libraries(registration_with_OpenGR_using_GRET_SDP
-      ${CGAL_libs} CGAL::OpenGR_support ${MOSEK_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
-      target_compile_definitions(registration_with_OpenGR_using_GRET_SDP PUBLIC OpenGR_USE_MOSEK)
+      ${CGAL_libs} CGAL::OpenGR_support ${SDPA_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+      target_compile_definitions(registration_with_OpenGR_using_GRET_SDP PUBLIC OpenGR_USE_SDPA)
       add_dependencies(registration_with_OpenGR_using_GRET_SDP copy_gret_sdp_data)
       endif(Boost_FOUND)
       
