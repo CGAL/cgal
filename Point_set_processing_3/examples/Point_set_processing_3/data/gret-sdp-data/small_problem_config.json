@@ -1,7 +1,0 @@
-{
-	"n":	10,
-	"m":	3,
-	"d":	3,
-	"patches":["small_problem_patch0.dat", "small_problem_patch1.dat", "small_problem_patch2.dat"],
-	"gt_trafos":["small_problem_gt_trafo0.dat", "small_problem_gt_trafo1.dat", "small_problem_gt_trafo2.dat"]
-}

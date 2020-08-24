@@ -105,21 +105,22 @@ if ( CGAL_FOUND )
     include(CGAL_OpenGR_support)
     if (TARGET CGAL::OpenGR_support)
 
-    # GRET SDP
-    find_package(Boost 1.54 COMPONENTS system filesystem  REQUIRED)
+      # GRET SDP
+      find_package(Boost 1.54 COMPONENTS system filesystem  REQUIRED)
       if (Boost_FOUND)    
-      include_directories(${Boost_INCLUDE_DIRS})
-      set(GRET_SDP_DATA_DIR_TO ${CMAKE_CURRENT_BINARY_DIR}/gret-sdp-data)
-      set(GRET_SDP_DATA_DIR_FROM ${PROJECT_SOURCE_DIR}/data/gret-sdp-data)
+      set(GRET_SDP_DATA_DIR_TO ${CMAKE_CURRENT_BINARY_DIR}/data)
+      set(GRET_SDP_DATA_DIR_FROM ${PROJECT_SOURCE_DIR}/data/)
       add_custom_target(copy_gret_sdp_data)
       add_custom_command(TARGET copy_gret_sdp_data
-          POST_BUILD
-          COMMAND ${CMAKE_COMMAND} -E make_directory ${GRET_SDP_DATA_DIR_TO}
-          COMMAND ${CMAKE_COMMAND} -E copy ${GRET_SDP_DATA_DIR_FROM}/* ${GRET_SDP_DATA_DIR_TO}/.
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${GRET_SDP_DATA_DIR_TO}
+      COMMAND ${CMAKE_COMMAND} -E copy ${GRET_SDP_DATA_DIR_FROM}/bun.conf ${GRET_SDP_DATA_DIR_TO}/.
+      COMMAND ${CMAKE_COMMAND} -E copy ${GRET_SDP_DATA_DIR_FROM}/bun*.ply ${GRET_SDP_DATA_DIR_TO}/.
       )
       
       find_package(MOSEK REQUIRED)
       include_directories(${MOSEK_INCLUDE_DIRS})
+      include_directories(${Boost_INCLUDE_DIRS})
       add_executable(registration_with_OpenGR_using_GRET_SDP "registration_with_OpenGR_using_GRET_SDP.cpp" )
       target_link_libraries(registration_with_OpenGR_using_GRET_SDP
       ${CGAL_libs} CGAL::OpenGR_support ${MOSEK_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})

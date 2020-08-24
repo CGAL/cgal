@@ -197,7 +197,7 @@ void computeCorrespondences(const std::vector<Pwn_range>& point_clouds, const Po
 
 int main (int argc, char** argv)
 {
-  const char* config_fname = (argc>1)?argv[1]:"gret-sdp-data/bun.conf";
+  const char* config_fname = (argc>1)?argv[1]:"data/bun.conf";
   
   std::vector<Pwn_range> point_clouds;
   Point_map point_map;
