@@ -44,7 +44,7 @@ double
 register_point_sets(const PointRange1& range1,    PointRange2& range2,
                     PointMap1 point_map1,   PointMap2 point_map2,
                     VectorMap1 vector_map1, VectorMap2 vector_map2,
-                    Super4PCSOptions<Kernel>& options)
+                    Options<Kernel>& options)
 {
   std::pair<typename Kernel::Aff_transformation_3, double> res =
     compute_registration_transformation<Kernel>(range1, range2,
@@ -203,7 +203,7 @@ register_point_sets (const PointRange1& point_set_1, PointRange2& point_set_2,
   PointMap1 point_map2 = choose_parameter(get_parameter(np2, internal_np::point_map), PointMap2());
   NormalMap2 normal_map2 = choose_parameter(get_parameter(np2, internal_np::normal_map), NormalMap2());
 
-  Super4PCSOptions<Kernel> options;
+  Options<Kernel> options;
   options.sample_size = choose_parameter(get_parameter(np1, internal_np::number_of_samples), 200);
   options.delta = choose_parameter(get_parameter(np1, internal_np::accuracy), 5.00);
   options.max_time_seconds = choose_parameter(get_parameter(np1, internal_np::maximum_running_time), 1000);
