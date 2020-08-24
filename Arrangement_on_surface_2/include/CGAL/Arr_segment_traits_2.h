@@ -265,6 +265,9 @@ public:
      */
     bool is_vertical() const
     {
+      // Force computation of line is orientation is still unknown
+      if (is_vert == UNKNOWN)
+        line();
       CGAL_precondition(! is_degen);
       return (is_vert == VERTICAL);
     }
