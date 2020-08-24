@@ -27,7 +27,7 @@ class Points_to_x_monotone_curves_iterator
   Singleton m_first_element;
   Range m_range;
 
-  std::size_t m_index;
+  Range_iterator m_current;
   X_monotone_curve m_curve;
   typename ArrPolylineTraits::Construct_x_monotone_curve_2 m_curve_construct;
 
@@ -36,7 +36,7 @@ public:
   Points_to_x_monotone_curves_iterator ()
     : m_input_range(PointIterator(), PointIterator())
     , m_range (m_input_range, m_first_element)
-    , m_index(std::size_t(-1))
+    , m_current()
     , m_curve_construct(ArrPolylineTraits().construct_x_monotone_curve_2_object())
   { }
 
@@ -44,7 +44,7 @@ public:
     : m_input_range(begin, end)
     , m_first_element ({*begin})
     , m_range (m_input_range, m_first_element)
-    , m_index(0)
+    , m_current(m_range.begin())
     , m_curve_construct(ArrPolylineTraits().construct_x_monotone_curve_2_object())
   {
     construct_next_x_monotone_curve();
@@ -55,9 +55,6 @@ private:
 
   friend class boost::iterator_core_access;
 
-  Range_iterator iter (std::size_t index) const { return m_range.begin() + index; }
-  const Point_2& value (std::size_t index) const { return *(iter(index)); }
-
   void increment()
   {
     construct_next_x_monotone_curve();
@@ -65,7 +62,7 @@ private:
 
   bool equal (const Points_to_x_monotone_curves_iterator& other) const
   {
-    return this->m_index == other.m_index;
+    return this->m_current == other.m_current;
   }
 
   X_monotone_curve& dereference() const
@@ -76,31 +73,35 @@ private:
   void construct_next_x_monotone_curve()
   {
     // If end is reached, just put the index out of bound to match end() iterator
-    if (m_index == m_range.size())
+    if (m_current == m_range.end())
     {
-      m_index = std::size_t(-1);
+      m_current = Range_iterator();
       return;
     }
 
-    CGAL::Comparison_result comp = compare_xy (value(m_index), value(m_index + 1));
-    CGAL::Comparison_result comp_x = compare_x (value(m_index), value(m_index + 1));
+    Range_iterator ita = m_current;
+    Range_iterator itb = m_current;
+    itb ++;
 
-    for (std::size_t i = m_index + 2; i < m_range.size(); ++ i)
+    CGAL::Comparison_result comp = compare_xy (*ita, *itb);
+    CGAL::Comparison_result comp_x = compare_x (*ita, *itb);
+
+    for (; itb != m_range.end(); ++ ita, ++ itb)
     {
-      const Point_2& pa = value(i-1);
-      const Point_2& pb = value(i);
+      const Point_2& pa = *ita;
+      const Point_2& pb = *itb;
       CGAL::Comparison_result new_comp = compare_xy (pa, pb);
       CGAL::Comparison_result new_comp_x = compare_x (pa, pb);
       if (new_comp != comp || new_comp_x != comp_x)
       {
-        m_curve = m_curve_construct (iter(m_index), iter(i));
-        m_index = i - 1;
+        m_curve = m_curve_construct (m_current, itb);
+        m_current = ita;
         return;
       }
     }
 
-    m_curve = m_curve_construct (iter(m_index), m_range.end());
-    m_index = m_range.size();
+    m_curve = m_curve_construct (m_current, m_range.end());
+    m_current = m_range.end();
   }
 };
 
