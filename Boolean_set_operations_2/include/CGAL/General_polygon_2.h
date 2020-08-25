@@ -22,6 +22,7 @@
 #include <CGAL/Bbox_2.h>
 
 #include <CGAL/Boolean_set_operations_2/Points_to_x_monotone_curves_iterator.h>
+#include <boost/function_output_iterator.hpp>
 
 namespace CGAL {
 
@@ -32,6 +33,7 @@ public:
 
   typedef Arr_traits                                 Traits_2;
   typedef typename Traits_2::Point_2                 Point_2;
+  typedef typename Traits_2::Curve_2                 Curve_2;
   typedef typename Traits_2::X_monotone_curve_2      X_monotone_curve_2;
   typedef std::list<X_monotone_curve_2>              Containter;
   typedef typename Containter::iterator              Curve_iterator;
@@ -44,25 +46,26 @@ public:
 
   General_polygon_2(){}
 
+  General_polygon_2 (const Curve_2& curve)
+  {
+    typename Traits_2::Make_x_monotone_2 make_x_monotone_2
+      = Traits_2().make_x_monotone_2_object();
+    make_x_monotone_2
+      (curve,
+       boost::make_function_output_iterator
+       ([&](const Object& obj)
+        {
+          const X_monotone_curve_2* xc
+            = object_cast<X_monotone_curve_2>(&obj);
+          CGAL_assertion (xc);
+          m_xcurves.push_back (*xc);
+        }));
+  }
+
   template <class CurveIterator>
   General_polygon_2(CurveIterator begin,
-                    CurveIterator end,
-                    typename std::enable_if
-                    <std::is_convertible<typename CurveIterator::value_type,
-                    X_monotone_curve_2>::value>::type* = 0)
+                    CurveIterator end)
     : m_xcurves (begin, end)
-  {}
-
-  template <class PointIterator>
-  General_polygon_2(PointIterator begin,
-                    PointIterator end,
-                    typename std::enable_if
-                    <std::is_same<typename PointIterator::value_type,
-                                  Point_2>::value>::type* = 0)
-    : m_xcurves (Points_to_x_monotone_curves_iterator<PointIterator, Arr_traits>
-                 (begin, end),
-                 Points_to_x_monotone_curves_iterator<PointIterator, Arr_traits>
-                 ())
   {}
 
   template <class CurveIterator>
