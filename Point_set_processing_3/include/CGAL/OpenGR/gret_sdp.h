@@ -30,7 +30,7 @@ namespace OpenGR {
    Computes the registration of the point clouds in `point_clouds` using the correspondences provided 
    in `correspondences` and stores the respective affine transformations in `transformations`.
 
-   Registration is computed using the GRET-SDP algorithm that is described in [this paper](https://arxiv.org/abs/1306.5226).
+   Registration is computed using the GRET-SDP algorithm that is described in \cgalCite{cgal:cks-grmpcsp}.
    
    \note This function requires the \ref thirdpartyOpenGR library.
 
@@ -125,7 +125,7 @@ void compute_registration_transformations(  const std::vector<PointRange>& point
    Computes the registration of the point clouds in `point_clouds` using the correspondences provided 
    in `correspondences` and stores the registered point cloud in `registered_points`.
 
-   Registration is computed using the GRET-SDP algorithm that is described in [this paper](https://arxiv.org/abs/1306.5226).
+   Registration is computed using the GRET-SDP algorithm that is described in \cgalCite{cgal:cks-grmpcsp}.
    
    \note This function requires the \ref thirdpartyOpenGR library.
 
