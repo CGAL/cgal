@@ -53,6 +53,7 @@ OverlayDialog::OverlayDialog( ArrangementDemoWindow* parent ) :
     Conic_arr* conic;
     Alg_seg_arr* alg;
     Bezier_arr* bezier;
+    Rational_arr* rat_arr;
 #endif
 
     if ( CGAL::assign( seg, arrangements[ i ] ) )
@@ -85,6 +86,11 @@ OverlayDialog::OverlayDialog( ArrangementDemoWindow* parent ) :
     else if ( CGAL::assign( bezier, arrangements[ i ] ) )
     {
       icon.addFile(QString::fromUtf8(":/icons/pink_icon.xpm"), QSize(),
+                   QIcon::Normal, QIcon::Off);
+    }
+    else if ( CGAL::assign( rat_arr, arrangements[ i ] ) )
+    {
+      icon.addFile(QString::fromUtf8(":/icons/yellow_icon.xpm"), QSize(),
                    QIcon::Normal, QIcon::Off);
     }
 #endif
@@ -171,6 +177,7 @@ void OverlayDialog::restrictSelection( QListWidgetItem* item )
   Conic_arr* conic;
   Alg_seg_arr* alg;
   Bezier_arr* bezier;
+  Rational_arr* rat_arr;
 #endif
 
   if ( CGAL::assign( seg, o ) )
@@ -277,6 +284,25 @@ void OverlayDialog::restrictSelection( QListWidgetItem* item )
       QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
       CGAL::Object o2 = otherItem->data( ARRANGEMENT ).value< CGAL::Object >( );
       bool enabled = CGAL::assign( bezier, o2 );
+      Qt::ItemFlags flags = otherItem->flags( );
+      if ( ! enabled )
+      {
+        flags &= ~( Qt::ItemIsEnabled );
+      }
+      else
+      {
+        flags |= Qt::ItemIsEnabled;
+      }
+      otherItem->setFlags( flags );
+    }
+  }
+  else if ( CGAL::assign( rat_arr, o ) )
+  {
+    for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
+    {
+      QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
+      CGAL::Object o2 = otherItem->data( ARRANGEMENT ).value< CGAL::Object >( );
+      bool enabled = CGAL::assign( rat_arr, o2 );
       Qt::ItemFlags flags = otherItem->flags( );
       if ( ! enabled )
       {
