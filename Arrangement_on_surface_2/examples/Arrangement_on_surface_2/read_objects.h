@@ -22,7 +22,7 @@ template<typename Type, typename Output_iterator>
 Output_iterator
 read_stream(std::ifstream& is, unsigned int n, Output_iterator oi)
 {
-  for (unsigned int i = 0; i < n; ++i) {
+  for (size_t i = 0; i < n; ++i) {
     Type s;
     is >> s;
     *oi++ = s;
@@ -38,7 +38,7 @@ template<typename Type, typename Output_iterator>
 Output_iterator read_objects(const char* filename, Output_iterator oi)
 {
   std::ifstream  is;
-  if (!open_stream(is, filename)) return oi;    // open the input file
+  if (! open_stream(is, filename)) return oi;   // open the input file
   unsigned int n;
   is >> n;                                      // read number of objects
   read_stream<Type>(is, n, oi);                 // read objects from the file
