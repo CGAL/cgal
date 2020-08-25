@@ -37,6 +37,9 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
 
+#include <boost/iterator/zip_iterator.hpp>
+#include <boost/iterator/transform_iterator.hpp>
+
 namespace CGAL {
 
 // If no template instantiation is provided, it will be instantiated
@@ -589,6 +592,35 @@ public:
   /*! Obtain a Construct_x_monotone_curve_2 functor object. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
   { return Construct_x_monotone_curve_2(*this); }
+
+  /*! Obtain a Curve_2 object from a range of points */
+  template <typename PointRange>
+  static Curve_2 make_curve_2 (const PointRange& points)
+  {
+    using Point_iterator = typename PointRange::const_iterator;
+    using Zip_iterator = boost::zip_iterator<boost::tuple<Point_iterator,
+                                                          Point_iterator> >;
+
+    Point_iterator begin = points.begin();
+    Point_iterator begin_plus_1 = begin; begin_plus_1 ++;
+    Point_iterator end = points.end();
+    Point_iterator end_minus_1 = end; end_minus_1 --;
+
+    auto point_pair_to_segment
+      = [](const typename Zip_iterator::reference& t)
+      -> typename Segment_traits_2::Curve_2
+    {
+      return typename Segment_traits_2::Curve_2 (boost::get<0>(t), boost::get<1>(t));
+    };
+
+    return Curve_2
+      (boost::make_transform_iterator
+       (boost::make_zip_iterator (boost::make_tuple(begin, begin_plus_1)),
+        point_pair_to_segment),
+       boost::make_transform_iterator
+       (boost::make_zip_iterator (boost::make_tuple(end_minus_1, end)),
+        point_pair_to_segment));
+  }
 
   /*! Deprecated!
    * Obtain the segment traits.
