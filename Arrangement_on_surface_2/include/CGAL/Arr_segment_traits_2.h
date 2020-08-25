@@ -1482,7 +1482,7 @@ Arr_segment_2<Kernel>::Arr_segment_2(const Line_2& line,
 
 //! \brief casts to a segment.
 template <typename Kernel>
-Arr_segment_2<Kernel>::operator Segment_2() const
+Arr_segment_2<Kernel>::operator typename Kernel::Segment_2() const
 {
   Kernel kernel;
   auto seg_ctr = kernel.construct_segment_2_object();
