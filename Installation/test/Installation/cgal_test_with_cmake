@@ -43,10 +43,11 @@ touch $ERRORFILE
 cd build_dir
 ctest -L Installation_Tests -VV |tee res.txt
 SUCCES="y"
-FAILED=$(cat res.txt|grep -i ***Failed)
+FAILED=$(cat res.txt|grep "\*\*\*Failed")
 if [ -z "$FAILED" ]; then
   echo "   successful run of Installation tests" >> $ERRORFILE
 else
   echo "   ERROR:    run of Installation tests" >> $ERRORFILE
   SUCCES=""
 fi
+cat $ERRORFILE
