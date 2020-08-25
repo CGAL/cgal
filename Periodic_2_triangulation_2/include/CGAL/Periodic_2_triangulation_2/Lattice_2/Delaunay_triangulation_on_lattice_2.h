@@ -28,6 +28,7 @@
 #include <CGAL/Periodic_2_triangulation_2/Lattice_2/Lattice_2.h>
 #include <CGAL/Periodic_2_triangulation_2/Square_flat_torus_2/Delaunay_triangulation_on_square_flat_torus_2.h>
 #include <CGAL/Periodic_2_triangulation_vertex_base_2.h>
+#include <CGAL/Periodic_2_triangulation_2/IO/periodic_2_triangulation_2_io.h>
 #include <CGAL/draw_triangulation_2.h>
 
 #include <CGAL/Triangulation_data_structure_2.h>
@@ -1019,7 +1020,7 @@ public:
     }
 
     std::ofstream out_p2t2("res_p2t2.off");
-    CGAL::write_PD2T2_to_OFF(out_p2t2, p2t2);
+    CGAL::write_PD2T2_to_OFF(out_p2t2, p2dt2);
     out_p2t2.close();
 
     CGAL_postcondition(p2dt2.is_valid(true));

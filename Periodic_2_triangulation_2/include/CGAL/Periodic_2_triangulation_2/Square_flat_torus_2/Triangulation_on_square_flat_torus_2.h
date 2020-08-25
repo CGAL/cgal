@@ -15,10 +15,10 @@
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 
 #include <CGAL/Periodic_2_triangulation_2/Square_flat_torus_2/Triangulation_face_base_on_square_flat_torus_2.h>
+#include <CGAL/Periodic_2_triangulation_2/IO/periodic_2_triangulation_2_io.h>
 
 #include <CGAL/Periodic_2_triangulation_vertex_base_2.h>
 #include <CGAL/Periodic_2_triangulation_iterators_2.h>
-#include <CGAL/periodic_2_triangulation_2_io.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Default.h>

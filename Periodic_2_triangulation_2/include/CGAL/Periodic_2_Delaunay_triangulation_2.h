@@ -48,7 +48,6 @@ private:
                      Triangulation_face_base_on_lattice_2<Gt_> > >::type> Base;
 
 public:
-  // @fixme are these correct?
   template <typename ...Args>
   Periodic_2_Delaunay_triangulation_2(const Args& ...args) : Base(args...) { }
 
@@ -72,7 +71,6 @@ private:
                      Triangulation_face_base_on_square_flat_torus_2<Gt_> > >::type> Base;
 
 public:
-  // @fixme are these correct?
   template <typename ...Args>
   Periodic_2_Delaunay_triangulation_2(const Args& ...args) : Base(args...) { }
 

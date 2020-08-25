@@ -5,7 +5,7 @@
 
 #include <CGAL/Periodic_2_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
-#include <CGAL/periodic_2_triangulation_2_io.h>
+#include <CGAL/Periodic_2_triangulation_2/IO/periodic_2_triangulation_2_io.h>
 
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>

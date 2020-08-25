@@ -13,9 +13,9 @@
 
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 
-#include <CGAL/array.h>
-
+#include <array>
 #include <iostream>
+#include <map>
 #include <utility>
 
 namespace CGAL {
@@ -37,8 +37,7 @@ bool write_DT2_to_OFF(Stream& os, const T2& t2)
     std::array<int, 3> face;
     for(int i=0; i<3; ++i)
     {
-      std::pair<typename std::map<Point, int>::iterator, bool> itb =
-          ids.insert(std::make_pair(t2.point(fit, i), pid));
+      std::pair<typename std::map<Point, int>::iterator, bool> itb = ids.emplace(t2.point(fit, i), pid);
       if(itb.second)
       {
         points.push_back(t2.point(fit, i));
@@ -47,6 +46,7 @@ bool write_DT2_to_OFF(Stream& os, const T2& t2)
 
       face[i] = itb.first->second;
     }
+
     faces.push_back(face);
   }
 
@@ -82,7 +82,7 @@ bool write_PD2T2_to_OFF(Stream &os, P2T2& p2t2)
     std::array<int, 3> face;
     for(int i=0; i<3; ++i)
     {
-      auto itb = ids.insert(std::make_pair(p2t2.point(fit, i), pid));
+      auto itb = ids.emplace(p2t2.point(fit, i), pid);
       if(itb.second)
       {
         points.push_back(p2t2.point(fit, i));
@@ -91,6 +91,7 @@ bool write_PD2T2_to_OFF(Stream &os, P2T2& p2t2)
 
       face[i] = itb.first->second;
     }
+
     faces.push_back(face);
   }
 

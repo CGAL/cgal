@@ -22,15 +22,32 @@
 
 namespace CGAL {
 
+// There is no "Triangulation_on_lattice_2" so you really shouldn't be calling a
 template <class Gt,
           class Tds = Triangulation_data_structure_2 <
                         Periodic_2_triangulation_vertex_base_2<Gt>,
                         Periodic_2_triangulation_face_base_2<Gt> >,
           class Domain = typename Gt::Domain>
 class Periodic_2_triangulation_2
-  :
+  : public Delaunay_triangulation_on_lattice_2<
+             Gt_, typename Default::Get<Tds_,
+                    Triangulation_data_structure_2<
+                      Periodic_2_triangulation_vertex_base_2<Gt_>,
+                      Triangulation_face_base_on_lattice_2<Gt_> > >::type>
 {
+private:
+  typedef Delaunay_triangulation_on_lattice_2<
+            Gt_, typename Default::Get<Tds_,
+                   Triangulation_data_structure_2<
+                     Periodic_2_triangulation_vertex_base_2<Gt_>,
+                     Triangulation_face_base_on_lattice_2<Gt_> > >::type> Base;
 
+public:
+  template <typename ...Args>
+  Periodic_2_Delaunay_triangulation_2(const Args& ...args) : Base(args...) { }
+
+  template <typename ...Args>
+  Periodic_2_Delaunay_triangulation_2(const Args&& ...args) : Base(std::forward<Args>(args)...) { }
 };
 
 template <class Gt_, class Tds_, class K_>
@@ -49,7 +66,6 @@ private:
                      Triangulation_face_base_on_square_flat_torus_2<Gt_> > >::type> Base;
 
 public:
-  // @fixme are these correct?
   template <typename ...Args>
   Periodic_2_triangulation_2(const Args& ...args) : Base(args...) { }
 
