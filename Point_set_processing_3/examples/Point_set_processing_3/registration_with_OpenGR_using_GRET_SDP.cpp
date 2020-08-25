@@ -20,6 +20,7 @@
 
 #include <vector>
 #include <string>
+#include <numeric>
 
 
 // For computations 3D space
@@ -214,11 +215,12 @@ int main (int argc, char** argv)
   computeCorrespondences(point_clouds, point_map, ground_truth_transformations, correspondences);
 
   // EITHER call the registration method GRET-SDP from OpenGR to get the transfromations for registration
-  std::vector<Kernel::Aff_transformation_3> transformations;
+  std::vector<Kernel::Aff_transformation_3> transformations(num_point_clouds);
   CGAL::OpenGR::compute_registration_transformations(point_clouds, correspondences, CGAL::parameters::point_map(point_map).normal_map(Normal_map()), transformations);
 
   // OR call  the registration method GRET-SDP from OpenGR and apply transformations directly 
-  Pwn_range registered_point_cloud;
+  int num_total_points = std::accumulate(point_clouds.begin(), point_clouds.end(), 0, [](int sum, const auto& pc){ return sum + pc.size(); });
+  Pwn_range registered_point_cloud(num_total_points);
   CGAL::OpenGR::register_point_clouds(point_clouds, correspondences, CGAL::parameters::point_map(point_map).normal_map(Normal_map()), registered_point_cloud);
 
   std::ofstream out("registered_point_clouds.ply");

@@ -30,7 +30,7 @@ namespace OpenGR {
    Computes the registration of the point clouds in `point_clouds` using the correspondences provided 
    in `correspondences` and stores the respective affine transformations in `transformations`.
 
-   Registration is computed using the GRET-SDP algorithm that is described in [this paper](https://arxiv.org/abs/1306.5226)
+   Registration is computed using the GRET-SDP algorithm that is described in [this paper](https://arxiv.org/abs/1306.5226).
    
    \note This function requires the \ref thirdpartyOpenGR library.
 
@@ -41,7 +41,7 @@ namespace OpenGR {
    \tparam CorrespondencesRange is a model of `Range`. The value type of its iterator is
    is another range of correspondences. The value type of the iterator of a correspondence range 
    is `std::pair<size_t,size_t>`.
-   \tparam TransformRange is a model of `Range`. The value type of its iterator is `geom_traits::Aff_transformation_3`.
+   \tparam TransformRange is a model of `Range` whose size is the number of point clouds. The value type of its iterator is `geom_traits::Aff_transformation_3`.
 
    \param point_clouds vector of input point ranges of the point clouds to be registered.
    \param correspondences input range of correspondences. Each entry in correspondences is a range itself that stores the indexes of the points that are 
@@ -82,15 +82,16 @@ void compute_registration_transformations(const std::vector<PointRange>& point_c
     using parameters::get_parameter;
     
     const int num_point_clouds = point_clouds.size();
-    const int num_global_coordinates = correspondences.size();
+    const int num_global_coordinates = std::distance(std::begin(correspondences),std::end(correspondences));
 
     PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
 
     // compute patches
     std::vector<GR_PatchType> patches(num_point_clouds);
-    for (size_t i = 0; i < num_global_coordinates; i++){
-        for(const auto& correspondence : correspondences[i]){
-            const auto& p = get (point_map, point_clouds[correspondence.first][correspondence.second]);
+    auto correspond_it = std::begin(correspondences);
+    for (size_t i = 0; i < num_global_coordinates; i++, correspond_it++){
+        for(const auto& correspondence : *correspond_it){
+            const auto& p = get (point_map, *(std::begin(point_clouds[correspondence.first])+correspondence.second));
             GR_PointType out(p.x(), p.y(), p.z());
             patches[correspondence.first].emplace_back(out ,i);
         }
@@ -111,9 +112,10 @@ void compute_registration_transformations(const std::vector<PointRange>& point_c
     matcher.getTransformations(gr_transformations);
 
     // convert to cgal affin transformations
-    transformations.reserve(num_point_clouds);
+    using CGAL_TrafoType = typename Kernel::Aff_transformation_3;
+    auto trafo_it = std::begin(transformations);
     for(const GR_TrafoType& gr_trafo : gr_transformations)
-        transformations.emplace_back(
+        *(trafo_it++) = CGAL_TrafoType(
             gr_trafo.coeff(0,0), gr_trafo.coeff(0,1), gr_trafo.coeff(0,2), gr_trafo.coeff(0,3),
             gr_trafo.coeff(1,0), gr_trafo.coeff(1,1), gr_trafo.coeff(1,2), gr_trafo.coeff(1,3),
             gr_trafo.coeff(2,0), gr_trafo.coeff(2,1), gr_trafo.coeff(2,2), gr_trafo.coeff(2,3)
@@ -127,7 +129,7 @@ void compute_registration_transformations(const std::vector<PointRange>& point_c
    Computes the registration of the point clouds in `point_clouds` using the correspondences provided 
    in `correspondences` and stores the registered point cloud in `registered_points`.
 
-   Registration is computed using the GRET-SDP algorithm that is described in [this paper](https://arxiv.org/abs/1306.5226)
+   Registration is computed using the GRET-SDP algorithm that is described in [this paper](https://arxiv.org/abs/1306.5226).
    
    \note This function requires the \ref thirdpartyOpenGR library.
 
@@ -144,7 +146,7 @@ void compute_registration_transformations(const std::vector<PointRange>& point_c
    considered to correspond to the same global coordinate. A points indexes are stores using a `std::pair<size_t,size_t>` where `first` equals the point cloud index 
    and `second` equals the index within this point cloud that it belongs to (indexes with respect to `point_clouds`).  
    \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
-   \param registered_points ouput point range of the registered point clouds.
+   \param registered_points ouput point range of the registered point clouds whose size is the accumulated size of all point clouds.
 
    \cgalNamedParamsBegin
      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` whose key type
@@ -174,7 +176,7 @@ void register_point_clouds( const std::vector<PointRange>& point_clouds, const C
     using parameters::get_parameter;
 
     // compute registration transformations
-    std::vector<typename Kernel::Aff_transformation_3> transformations;
+    std::vector<typename Kernel::Aff_transformation_3> transformations(point_clouds.size());
     compute_registration_transformations(point_clouds, correspondences, np, transformations);
 
     // get point and normal maps
@@ -182,14 +184,15 @@ void register_point_clouds( const std::vector<PointRange>& point_clouds, const C
     NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
 
     // add transformed point clouds to registered_points
+    auto it = std::begin(registered_points);
     for (size_t i = 0; i < point_clouds.size(); i++){
-        for (size_t j = 0; j < point_clouds[i].size(); j++){
-            auto point = get(point_map, point_clouds[i][j]).transform(transformations[i]);
-            auto normal = get(normal_map, point_clouds[i][j]);
-            Pwn pwn;
-            put(point_map, pwn, point);
-            put(normal_map, pwn, normal);
-            registered_points.push_back(pwn);
+        for(const auto& pwn : point_clouds[i]){
+            auto point = get(point_map, pwn).transform(transformations[i]);
+            auto normal = get(normal_map, pwn);
+            Pwn transformed_pwn;
+            put(point_map, transformed_pwn, point);
+            put(normal_map, transformed_pwn, normal);
+            *(it++) = transformed_pwn;
         }
     }
 }
