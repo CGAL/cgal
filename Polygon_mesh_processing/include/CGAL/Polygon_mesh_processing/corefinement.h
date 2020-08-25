@@ -89,56 +89,83 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm2)` \endlink
   *
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
-  * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
-  * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
-  * @tparam NamedParametersOut0 a sequence of \ref pmp_namedparameters "Named Parameters" for computing the union of the volumes bounded by `tm1` and `tm2`
-  * @tparam NamedParametersOut1 a sequence of \ref pmp_namedparameters "Named Parameters" for computing the intersection of the volumes bounded by `tm1` and `tm2`
-  * @tparam NamedParametersOut2 a sequence of \ref pmp_namedparameters "Named Parameters" for computing the difference of the volumes bounded by `tm1` and `tm2`
-  * @tparam NamedParametersOut3 a sequence of \ref pmp_namedparameters "Named Parameters" for computing the difference of the volumes bounded by `tm2` and `tm1`
+  * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
+  * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
+  * @tparam NamedParametersOut0 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the union of the volumes bounded by `tm1` and `tm2`
+  * @tparam NamedParametersOut1 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the intersection of the volumes bounded by `tm1` and `tm2`
+  * @tparam NamedParametersOut2 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the difference of the volumes bounded by `tm1` and `tm2`
+  * @tparam NamedParametersOut3 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the difference of the volumes bounded by `tm2` and `tm1`
   *
   * @param tm1 first input triangulated surface mesh
   * @param tm2 second input triangulated surface mesh
   * @param output an array of output surface meshes
-  * @param np1 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
-  * @param np2 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamBegin{vertex_point_map}
-  *     the property map with the points associated to the vertices of `tm1` (`tm2`).
-  *     If this parameter is omitted, an internal property map for
-  *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
-  *   \cgalParamEnd
-  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
-  *     constrained-or-not status of each edge of `tm1` (`tm2`).
-  *   \cgalParamEnd
-  *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm1` (`tm2`).
-  *     Note that if the property map is writable, the indices of the faces
-  *     of `tm1` and `tm2` will be set after the corefinement is done.
-  *   \cgalParamEnd
-  *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
-  *                            that is used to track the creation of new faces  (`np1` only)
-  *   \cgalParamEnd
-  *   \cgalParamBegin{throw_on_self_intersection} if `true`, for each input triangle mesh,
-  *      the set of triangles close to the intersection of `tm1` and `tm2` will be
-  *      checked for self-intersection and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
-  *      will be thrown if at least one is found (`np1` only).
-  *   \cgalParamEnd
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tm1` (`tm2`)}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm1 (tm2))`}
+  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+  *                     must be available in `TriangleMesh`.}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{edge_is_constrained_map}
+  *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm1` (`tm2`)}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+  *                    as key type and `bool` as value type}
+  *     \cgalParamDefault{a constant property map returning `false` for any edge}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{face_index_map}
+  *     \cgalParamDescription{a property map associating to each face of `tm1` (`tm2`) a unique index
+  *                           between `0` and `num_faces(tm1) - 1` (`num_faces(tm2) - 1`)}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+  *                    as key type and `std::size_t` as value type}
+  *     \cgalParamDefault{an automatically indexed internal map}
+  *     \cgalParamExtra{If the property map is writable, the indices of the faces of `tm1` and `tm2`
+  *                     will be set after the corefinement is done.}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{visitor}
+  *     \cgalParamDescription{a visitor used to track the creation of new faces}
+  *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
+  *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
+  *     \cgalParamExtra{`np1` only}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{throw_on_self_intersection}
+  *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm1` and `tm2` will be
+  *                           checked for self-intersections and `Corefinement::Self_intersection_exception`
+  *                           will be thrown if at least one self-intersection is found.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *     \cgalParamExtra{`np1` only}
+  *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
-  * @param nps_out tuple of optional sequences of \ref pmp_namedparameters "Named Parameters" each among the ones listed below
+  * @param nps_out an optional tuple of sequences of \ref bgl_namedparameters "Named Parameters" each among the ones listed below
   *        (`tm_out` being used to refer to the output surface mesh in `output` corresponding to a given named parameter sequence)
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamBegin{vertex_point_map}
-  *     the property map with the points associated to the vertices of `tm_out`.
-  *     If this parameter is omitted, an internal property map for
-  *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
-  *   \cgalParamEnd
-  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
-  *     constrained-or-not status of each edge of `tm_out`. An edge of `tm_out` is constrained
-  *     if it is on the intersection of `tm1` and `tm2`, or if the edge corresponds to a
-  *     constrained edge in `tm1` or `tm2`.
-  *   \cgalParamEnd
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tm_out`}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm_out)`}
+  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+  *                     must be available in `TriangleMesh`.}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{edge_is_constrained_map}
+  *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm_out`.
+  *                           An edge of `tm_out` is constrained if it is on the intersection of `tm1` and `tm2`,
+  *                           or if the edge corresponds to a constrained edge in `tm1` or `tm2`.}
+  *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+  *                    as key type and `bool` as value type}
+  *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @return an array filled as follows: for each operation computed, the position in the array
@@ -449,52 +476,79 @@ corefine_and_compute_boolean_operations(
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm2)` \endlink
   *
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
-  * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
-  * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
-  * @tparam NamedParametersOut a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
+  * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
+  * @tparam NamedParametersOut a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tm1 first input triangulated surface mesh
   * @param tm2 second input triangulated surface mesh
   * @param tm_out output surface mesh
-  * @param np1 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
-  * @param np2 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamBegin{vertex_point_map}
-  *     the property map with the points associated to the vertices of `tm1` (`tm2`).
-  *     If this parameter is omitted, an internal property map for
-  *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
-  *   \cgalParamEnd
-  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
-  *     constrained-or-not status of each edge of `tm1` (`tm2`).
-  *   \cgalParamEnd
-  *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm1` (`tm2`).
-  *     Note that if the property map is writable, the indices of the faces
-  *     of `tm1` and `tm2` will be set after the corefinement is done.
-  *   \cgalParamEnd
-  *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
-  *                            that is used to track the creation of new faces  (`np1` only)
-  *   \cgalParamEnd
-  *   \cgalParamBegin{throw_on_self_intersection} if `true`, for each input triangle mesh,
-  *      the set of triangles close to the intersection of `tm1` and `tm2` will be
-  *      checked for self-intersection and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
-  *      will be thrown if at least one is found (`np1` only).
-  *   \cgalParamEnd
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tm1` (`tm2`)}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm1 (tm2))`}
+  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+  *                     must be available in `TriangleMesh`.}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{edge_is_constrained_map}
+  *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm1` (`tm2`)}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+  *                    as key type and `bool` as value type}
+  *     \cgalParamDefault{a constant property map returning `false` for any edge}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{face_index_map}
+  *     \cgalParamDescription{a property map associating to each face of `tm1` (`tm2`) a unique index
+  *                           between `0` and `num_faces(tm1) - 1` (`num_faces(tm2) - 1`)}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+  *                    as key type and `std::size_t` as value type}
+  *     \cgalParamDefault{an automatically indexed internal map}
+  *     \cgalParamExtra{If the property map is writable, the indices of the faces of `tm1` and `tm2`
+  *                     will be set after the corefinement is done.}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{visitor}
+  *     \cgalParamDescription{a visitor used to track the creation of new faces}
+  *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
+  *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
+  *     \cgalParamExtra{`np1` only}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{throw_on_self_intersection}
+  *     \cgalParamDescription{If `true` the set of triangles closed to the intersection of `tm1` and `tm2` will be
+  *                           checked for self-intersections and `Corefinement::Self_intersection_exception`
+  *                           will be thrown if at least one self-intersection is found.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *     \cgalParamExtra{`np1` only}
+  *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
-  * @param np_out optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np_out an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamBegin{vertex_point_map}
-  *     the property map with the points associated to the vertices of `tm_out`.
-  *     If this parameter is omitted, an internal property map for
-  *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
-  *   \cgalParamEnd
-  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
-  *     constrained-or-not status of each edge of `tm_out`. An edge of `tm_out` is constrained
-  *     if it is on the intersection of `tm1` and `tm2`, or if the edge corresponds to a
-  *     constrained edge in `tm1` or `tm2`.
-  *   \cgalParamEnd
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tm_out`}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm_out)`}
+  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+  *                     must be available in `TriangleMesh`.}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{edge_is_constrained_map}
+  *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm_out`.
+  *                           An edge of `tm_out` is constrained if it is on the intersection of `tm1` and `tm2`,
+  *                           or if the edge corresponds to a constrained edge in `tm1` or `tm2`.}
+  *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+  *                    as key type and `bool` as value type}
+  *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @return `true` if the output surface mesh is manifold and is put into `tm_out`.
@@ -601,31 +655,46 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm2)` \endlink
  *
  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
- * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
- * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
+ * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param tm1 first input triangulated surface mesh
  * @param tm2 second input triangulated surface mesh
- * @param np1 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
- * @param np2 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *   \cgalParamBegin{vertex_point_map}
- *     the property map with the points associated to the vertices of `tm1` (`tm2`).
- *     If this parameter is omitted, an internal property map for
- *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
- *   \cgalParamEnd
- *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
- *     constrained-or-not status of each edge of `tm1` (`tm2`)
- *   \cgalParamEnd
- *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
- *                            that is used to track the creation of new faces (`np1` only)
- *   \cgalParamEnd
- *   \cgalParamBegin{throw_on_self_intersection} if `true`, for each input triangle mesh,
- *      the set of triangles close to the intersection of `tm1` and `tm2` will be
- *      checked for self-intersection and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
- *      will be thrown if at least one is found (`np1` only).
- *   \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm1` (`tm2`)}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm1 (tm2))`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `TriangleMesh`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{edge_is_constrained_map}
+ *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm1` (`tm2`)}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+ *                    as key type and `bool` as value type}
+ *     \cgalParamDefault{a constant property map returning `false` for any edge}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{visitor}
+ *     \cgalParamDescription{a visitor used to track the creation of new faces}
+ *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
+ *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
+ *     \cgalParamExtra{`np1` only}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{throw_on_self_intersection}
+ *     \cgalParamDescription{If `true` the set of triangles closed to the intersection of `tm1` and `tm2` will be
+ *                           checked for self-intersections and `Corefinement::Self_intersection_exception`
+ *                           will be thrown if at least one self-intersection is found.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *     \cgalParamExtra{`np1` only}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  */
@@ -716,20 +785,39 @@ namespace experimental {
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param tm input triangulated surface mesh
- * @param np optional sequence of \ref namedparameters among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *   \cgalParamBegin{vertex_point_map}
- *     the property map with the points associated to the vertices of `tm`.
- *     If this parameter is omitted, an internal property map for
- *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
- *   \cgalParamEnd
- *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
- *     constrained-or-not status of each edge of `tm`
- *   \cgalParamEnd
- *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
- *                            that is used to track the creation of new faces
- *   \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `TriangleMesh`.}
+ *  \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{edge_is_constrained_map}
+ *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+ *                    as key type and `bool` as value type}
+ *     \cgalParamDefault{a constant property map returning `false` for any edge}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{face_index_map}
+ *     \cgalParamDescription{a property map associating to each face of `tm` a unique index between `0` and `num_faces(tm) - 1`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{an automatically indexed internal map}
+ *     \cgalParamExtra{If the property map is writable, the indices of the faces of `tm1` and `tm2`
+ *                     will be set after the corefinement is done.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{visitor}
+ *     \cgalParamDescription{a visitor used to track the creation of new faces}
+ *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
+ *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  */
@@ -789,21 +877,40 @@ autorefine(      TriangleMesh& tm,
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param tm input triangulated surface mesh
- * @param np optional sequence of \ref namedparameters among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *   \cgalParamBegin{vertex_point_map}
- *     the property map with the points associated to the vertices of `tm`.
- *     If this parameter is omitted, an internal property map for
- *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
- *   \cgalParamEnd
- *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
- *     constrained-or-not status of each edge of `tm`
- *   \cgalParamEnd
- *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm` \cgalParamEnd
- *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
- *                            that is used to track the creation of new faces
- *   \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `TriangleMesh`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{edge_is_constrained_map}
+ *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+ *                    as key type and `bool` as value type}
+ *     \cgalParamDefault{a constant property map returning `false` for any edge}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{face_index_map}
+ *     \cgalParamDescription{a property map associating to each face of `tm` a unique index between `0` and `num_faces(tm) - 1`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{an automatically indexed internal map}
+ *     \cgalParamExtra{If the property map is writable, the indices of the faces of `tm` will be set
+ *                     after the autorefinement is done.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{visitor}
+ *     \cgalParamDescription{a visitor used to track the creation of new faces}
+ *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
+ *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
+ *   \cgalParamNEnd
+ *
  * \cgalNamedParamsEnd
  *
  */

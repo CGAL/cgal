@@ -217,6 +217,8 @@ public:
     , hierarchy(Vh_less_xy(this))
   { copy_triangulation(ctp);}
 
+  Constrained_triangulation_plus_2(Constrained_triangulation_plus_2&&) = default;
+
   virtual ~Constrained_triangulation_plus_2() {}
 
   Constrained_triangulation_plus_2 & operator=(const Constrained_triangulation_plus_2& ctp)
@@ -224,6 +226,8 @@ public:
     copy_triangulation(ctp);
     return *this;
   }
+
+  Constrained_triangulation_plus_2& operator=(Constrained_triangulation_plus_2&&) = default;
 
   template<class InputIterator>
   Constrained_triangulation_plus_2(InputIterator first,
@@ -415,7 +419,7 @@ public:
     ++beg;
     Face_container<Constrained_triangulation_plus_2> fc(*this);
 
-    Constraint_id head = 0, tail = 0;
+    Constraint_id head = nullptr, tail = nullptr;
     if(pos != beg){
       // split off head
       --pos;
@@ -496,7 +500,7 @@ public:
       return pos;
 
     }
-    Constraint_id head = 0, tail = 0;
+    Constraint_id head = nullptr, tail = nullptr;
     Vertices_in_constraint_iterator bit = vertices_in_constraint_begin(cid);
     Vertices_in_constraint_iterator pred = pos;
     --pred;

@@ -214,6 +214,7 @@ private:
     Scene_polylines_item* polylines_item;
   };
   struct Image_mesh_items {
+    Image_mesh_items(gsl::not_null<Scene_image_item*> ptr) : image_item(ptr) {}
     gsl::not_null<Scene_image_item*> image_item;
     Scene_polylines_item* polylines_item = nullptr;
   };

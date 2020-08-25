@@ -109,7 +109,7 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
     MScalar mg_;
     MPoly   mF1,mF2,mG_;
 
-    typename CRT::Scalar_type p,q,pq,s,t;
+    typename CRT::Scalar_type p(0),q(0),pq,s,t;
     Poly Gs,H1s,H2s, Gs_old; // s =^ star
 #ifdef CGAL_MODULAR_GCD_TIMER
     timer_init.stop();

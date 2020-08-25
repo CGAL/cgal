@@ -694,6 +694,8 @@ Comparison of time and memory consumed by the different alpha
 expansion implementations.
 \cgalFigureEnd
 
+\subsection BGLGraphcutExample Example
+
 The following example shows how to apply the alpha expansion algorithm
 to a `boost::adjacency_list` describing a 2D array with 3 labels "X",
 " " and "O":
@@ -720,6 +722,29 @@ XX  OO
 X  OOO
   OOOO
 ```
+
+\subsection BGLGraphcutRegularizeSelection Application to Regularization of the Borders of a Face Selection
+
+Manually selecting faces on a triangle mesh may create irregular
+borders (sawtooth) because of the shape of the triangles. Such borders
+can be regularized using the alpha expansion algorithm.
+
+\cgal provides a function `CGAL::regularize_face_selection_borders()`
+to apply this algorithm to the borders of a face selection on a
+`FaceGraph`. \cgalFigureRef{regularization_fig} shows how this
+function affects a selection depending on the parameters.
+
+\cgalFigureBegin{regularization_fig, regularize_selection.png}
+Regularization of the borders of a face selection using alpha
+expansion. Different outputs are shown for different weight
+parameters, with and without preventing unselection.
+\cgalFigureEnd
+
+The following example shows how to apply this alpha expansion
+regularization to the borders of a face selection of a
+`CGAL::Surface_mesh` object:
+
+\cgalExample{BGL_graphcut/face_selection_borders_regularization_example.cpp}
 
 
 */

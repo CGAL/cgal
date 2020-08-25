@@ -157,7 +157,7 @@ public :
     const EPICK::Plane_3& plane = qobject_cast<Scene_c3t3_item*>(this->parent())->plane();
     float shrink_factor = qobject_cast<Scene_c3t3_item*>(this->parent())->getShrinkFactor();
     QVector4D cp = cgal_plane_to_vector4d(plane);
-    getTriangleContainer(0)->setPlane(cp);
+    getTriangleContainer(0)->setPlane(-cp);
     getTriangleContainer(0)->setShrinkFactor(shrink_factor);
     // positions_poly is also used for the faces in the cut plane
     // and changes when the cut plane is moved
@@ -347,6 +347,8 @@ struct Scene_c3t3_item_priv {
     cnc_are_shown = false;
     is_aabb_tree_built = false;
     alphaSlider = NULL;
+    sharp_edges_angle = -1;
+    detect_borders = false;
   }
   void computeIntersection(const Primitive& facet);
   void fill_aabb_tree() {
@@ -393,10 +395,10 @@ struct Scene_c3t3_item_priv {
 
   void invalidate_stats()
   {
-    min_edges_length = std::numeric_limits<float>::max();
+    min_edges_length = (std::numeric_limits<float>::max)();
     max_edges_length = 0;
     mean_edges_length = 0;
-    min_dihedral_angle = std::numeric_limits<float>::max();
+    min_dihedral_angle = (std::numeric_limits<float>::max)();
     max_dihedral_angle = 0;
     mean_dihedral_angle = 0;
     nb_subdomains = 0;
@@ -404,8 +406,8 @@ struct Scene_c3t3_item_priv {
     nb_cnc = 0;
     nb_vertices = 0;
     nb_tets = 0;
-    smallest_radius_radius = std::numeric_limits<float>::max();
-    smallest_edge_radius = std::numeric_limits<float>::max();
+    smallest_radius_radius = (std::numeric_limits<float>::max)();
+    smallest_edge_radius = (std::numeric_limits<float>::max)();
     biggest_v_sma_cube = 0;
     computed_stats = false;
   }
@@ -501,6 +503,9 @@ struct Scene_c3t3_item_priv {
   bool is_valid;
   bool is_surface;
   bool last_intersection;
+  //only for optimizers
+  double sharp_edges_angle;
+  bool detect_borders;
 
   void push_normal(std::vector<float>& normals, const EPICK::Vector_3& n) const
   {
@@ -569,8 +574,10 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3, bool is_surface)
   : Scene_group_item("unnamed")
   , d(new Scene_c3t3_item_priv(c3t3, this))
 {
-  d->reset_cut_plane();
   common_constructor(is_surface);
+  d->reset_cut_plane();
+  c3t3_changed();
+  changed();
 }
 
 Scene_c3t3_item::~Scene_c3t3_item()
@@ -1428,6 +1435,7 @@ void Scene_c3t3_item_priv::computeElements()
 
   //The grid
   {
+    positions_grid.resize(0);
 
     float x = (2 * (float)complex_diag()) / 10.0f;
     float y = (2 * (float)complex_diag()) / 10.0f;
@@ -2097,5 +2105,18 @@ void Scene_c3t3_item::newViewer(Viewer_interface *viewer)
     d->computeIntersections(viewer);
   }
 }
+
+Scene_c3t3_item* Scene_c3t3_item::clone() const
+{
+  return new Scene_c3t3_item(d->c3t3, d->is_surface);
+}
+
+void Scene_c3t3_item::set_sharp_edges_angle(double a) { d->sharp_edges_angle = a; }
+double Scene_c3t3_item::get_sharp_edges_angle() { return d->sharp_edges_angle; }
+
+void Scene_c3t3_item::set_detect_borders(bool b) { d->detect_borders = b;}
+bool Scene_c3t3_item::get_detect_borders() { return d->detect_borders; }
+
+
 #include "Scene_c3t3_item.moc"
 

@@ -143,12 +143,17 @@ protected:
     }
     case QEvent::Wheel: {
       QWheelEvent* event = static_cast<QWheelEvent*>(ev);
-      QPointF old_pos = v->mapToScene(event->pos());
-      if(event->delta() <0)
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+      QPoint pos = event->pos();
+#else
+      QPointF pos = event->position();
+#endif
+      QPointF old_pos = v->mapToScene(pos.x(), pos.y());
+      if(event->angleDelta().y() <0)
         v->scale(1.2, 1.2);
       else
         v->scale(0.8, 0.8);
-      QPointF new_pos = v->mapToScene(event->pos());
+      QPointF new_pos = v->mapToScene(pos.x(), pos.y());
       QPointF delta = new_pos - old_pos;
       v->translate(delta.x(), delta.y());
       v->update();
@@ -907,7 +912,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   } //end for each component
 
   QApplication::restoreOverrideCursor();
-  QPointF min(FLT_MAX, FLT_MAX), max(-FLT_MAX, -FLT_MAX);
+  QPointF pmin(FLT_MAX, FLT_MAX), pmax(-FLT_MAX, -FLT_MAX);
 
   SMesh::Property_map<halfedge_descriptor, float> umap;
   SMesh::Property_map<halfedge_descriptor, float> vmap;
@@ -926,14 +931,14 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     FT v = uv_pm[target(hd, sMesh)].y();
     put(umap, *it, static_cast<float>(u));
     put(vmap, *it, static_cast<float>(v));
-    if(u<min.x())
-      min.setX(u);
-    if(u>max.x())
-      max.setX(u);
-    if(v<min.y())
-      min.setY(v);
-    if(v>max.y())
-      max.setY(v);
+    if(u<pmin.x())
+      pmin.setX(u);
+    if(u>pmax.x())
+      pmax.setX(u);
+    if(v<pmin.y())
+      pmin.setY(v);
+    if(v>pmax.y())
+      pmax.setY(v);
   }
 
   Components* components = new Components(0);
@@ -948,7 +953,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   }
 
   Scene_textured_facegraph_item* new_item = new Scene_textured_facegraph_item(tMesh);
-  UVItem *projection = new UVItem(components,new_item->textured_face_graph(), uv_borders, QRectF(min, max));
+  UVItem *projection = new UVItem(components,new_item->textured_face_graph(), uv_borders, QRectF(pmin, pmax));
   projection->set_item_name(new_item_name);
 
   new_item->setName(new_item_name);

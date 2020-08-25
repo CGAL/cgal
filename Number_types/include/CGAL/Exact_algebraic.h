@@ -49,12 +49,10 @@ typedef unspecified_type Exact_algebraic;
 
 #else // not DOXYGEN_RUNNING
 
-#ifdef CGAL_USE_CORE
-  typedef CORE::Expr Exact_algebraic;
-#endif
-
 #ifdef CGAL_USE_LEDA
 typedef leda_real Exact_algebraic;
+#elif defined CGAL_USE_CORE
+  typedef CORE::Expr Exact_algebraic;
 #endif
 
 #endif

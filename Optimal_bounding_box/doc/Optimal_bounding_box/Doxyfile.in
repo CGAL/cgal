@@ -1,0 +1,18 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Optimal Bounding Box"
+EXTRACT_ALL                =  false
+HIDE_UNDOC_CLASSES         =  true
+WARN_IF_UNDOCUMENTED       =  true
+
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
+EXPAND_AS_DEFINED      = CGAL_BGL_NP_TEMPLATE_PARAMETERS \
+                         CGAL_BGL_NP_CLASS
+EXCLUDE = ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Optimal_bounding_box/internal
+EXCLUDE_SYMBOLS += experimental
+
+HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/aabb_vs_obb.jpg \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/obb_chess.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/obb_time.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/ch_speedup.png

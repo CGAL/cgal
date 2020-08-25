@@ -49,7 +49,7 @@ public:
 
     // For use by the Compact_container.
   void *   for_compact_container() const { return _f.for_compact_container(); }
-  void * & for_compact_container()       { return _f.for_compact_container(); }
+  void for_compact_container(void* p) { _f.for_compact_container(p); }
 
 private:
   Face_handle _f;

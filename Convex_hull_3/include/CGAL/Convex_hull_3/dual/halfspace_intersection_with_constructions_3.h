@@ -142,7 +142,7 @@ namespace CGAL
                                                             boost::optional<typename Kernel_traits<typename std::iterator_traits<PlaneIterator>::value_type>::Kernel::Point_3> const& origin = boost::none) {
           typedef typename Kernel_traits<typename std::iterator_traits<PlaneIterator>::value_type>::Kernel K;
           typedef typename K::Point_3 Point_3;
-          typedef typename internal::Convex_hull_3::Default_traits_for_Chull_3<Point_3>::type Traits;
+          typedef typename Convex_hull_3::internal::Default_traits_for_Chull_3<Point_3>::type Traits;
 
           halfspace_intersection_with_constructions_3(pbegin, pend, P, origin, Traits());
         }

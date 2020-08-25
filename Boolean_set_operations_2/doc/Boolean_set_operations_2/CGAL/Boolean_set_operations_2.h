@@ -68,14 +68,13 @@ The value type of the `OutputIterator` is either
 `Polygon_with_holes_2` or
 `General_polygon_with_holes_2`.
 
-The signature of the function is
-\code
-  OutputIterator difference(const Type1 & p1, const Type2 & p2, OutputIterator oi);
-\endcode
+The signature of the function is:
+  - `%OutputIterator %difference(const Type1 & p1, const Type2 & p2, %OutputIterator oi);`
+
 
 \cgalHeading{Parameters}
 
-The types of the paramters of the `difference()` function are any of the following combinations.
+The types of the parameters of the `difference()` function are any of the following combinations.
 
 <div align="left">
 <table cellpadding=3 border="1">
@@ -187,14 +186,13 @@ namespace CGAL {
 Each one of these functions computes if the interior of two given
 polygons `p1` and `p2` intersect.
 
-The signature of the function is
-\code
-  bool do_intersect(const Type1 & p1, const Type2 & p2);
-\endcode
+The signature of the function is:
+  - `bool do_intersect(const Type1 & p1, const Type2 & p2);`
+
 
 \cgalHeading{Parameters}
 
-The types of the paramters of the `do_intersect()` function are any of the following combinations.
+The types of the parameters of the \link ref_bso_do_intersect `do_intersect()` \endlink function are any of the following combinations.
 
 <div align="left">
 <table cellpadding=3 border="1">
@@ -316,15 +314,14 @@ holes into an output container through a given output iterator
 `General_polygon_with_holes_2`.
 
 
-The signature of the function is
-\code
-  OutputIterator intersection(const Type1 & p1, const Type2 & p2, OutputIterator oi);
-\endcode
+The signature of the function is:
+  - `%OutputIterator %intersection(const Type1 & p1, const Type2 & p2, %OutputIterator oi);`
+
 
 
 \cgalHeading{Parameters}
 
-The types of the paramters of the `intersection()` function are any of the following combinations.
+The types of the parameters of the `intersection()` function are any of the following combinations.
 
 
 <div align="left">
@@ -476,14 +473,13 @@ Each one of these functions computes the union of two given polygons
 returns `false`.
 
 
-The signature of the function is
-\code
-  bool join(const Type1 & p1, const Type2 & p2, General_polygon_with_holes_2 & res);
-\endcode
+The signature of the function is:
+  - `bool join(const Type1 & p1, const Type2 & p2, General_polygon_with_holes_2 & res);`
+
 
 \cgalHeading{Parameters}
 
-The types of the paramters of the `join()` function are any of the following combinations.
+The types of the parameters of the `join()` function are any of the following combinations.
 
 <div align="left">
 <table cellpadding=3 border="1">
@@ -630,14 +626,12 @@ given polygons `p1` and `p2` intersect in their interior,
 all, and `ON_ORIENTED_BOUNDARY` if `p1` and `p2` intersect
 only in their boundaries.
 
-The signature of the function is
-\code
-  Oriented_side oriented_side(const Type1 & p1, const Type2 & p2);
-\endcode
+The signature of the function is:
+  - `Oriented_side oriented_side(const Type1 & p1, const Type2 & p2);`
 
 \cgalHeading{Parameters}
 
-The types of the paramters of the `oriented_side()` function are any of the following combinations.
+The types of the parameters of the `oriented_side()` function are any of the following combinations.
 
 <div align="left">
 <table cellpadding=3 border="1">
@@ -716,14 +710,12 @@ iterator `oi`. The value type of the `OutputIterator` is either
 `Polygon_with_holes_2` or
 `General_polygon_with_holes_2`.
 
-The signature of the function is
-\code
-  OutputIterator symmetric_difference(const Type1 & p1, const Type2 & p2, OutputIterator oi);
-\endcode
+The signature of the function is:
+  - `%OutputIterator symmetric_difference(const Type1 & p1, const Type2 & p2, %OutputIterator oi);`
 
 \cgalHeading{Parameters}
 
-The types of the paramters of the `symmetric_difference()` function are any of the following combinations.
+The types of the parameters of the `symmetric_difference()` function are any of the following combinations.
 
 <div align="left">
 <table cellpadding=3 border="1">

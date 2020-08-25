@@ -33,9 +33,9 @@ which is a simple array of numbers.
 \sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
 */
 
-template<class T>
+template<class T, int D = ::Eigen::Dynamic>
 class Eigen_vector
-  : public Eigen::Matrix<T, Eigen::Dynamic, 1>
+  : public ::Eigen::Matrix<T, D, 1>
 {
 // Public types
 public:
@@ -44,23 +44,23 @@ public:
   typedef T                                      NT;
 
   /// The internal vector type from \ref thirdpartyEigen "Eigen".
-  typedef Eigen::Matrix<T, Eigen::Dynamic, 1>    EigenType;
+  typedef ::Eigen::Matrix<T, D, 1>               EigenType;
   /// @}
 
 // Public operations
 public:
-  Eigen_vector<T>& operator=(const Eigen_vector<T>& other)
+  Eigen_vector& operator=(const Eigen_vector& other)
   {
     return static_cast<EigenType&>(*this) = other.eigen_object();
   }
 
-  Eigen_vector<T>& operator=(const EigenType& other)
+  Eigen_vector& operator=(const EigenType& other)
   {
-    return static_cast<Eigen_vector<T>&>(static_cast<EigenType&>(*this) = other);
+    return static_cast<Eigen_vector&>(static_cast<EigenType&>(*this) = other);
   }
-  Eigen_vector()
-    : EigenType()
-  {}
+
+  /// Constructs a null vector.
+  Eigen_vector() : EigenType() {}
 
   /// Create a vector initialized with zeros.
   Eigen_vector(std::size_t dimension)

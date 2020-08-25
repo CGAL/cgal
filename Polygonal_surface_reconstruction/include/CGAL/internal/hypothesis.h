@@ -374,12 +374,12 @@ namespace CGAL {
                                 Planar_segment* s = segments[i];
                                 const Plane* plane = s->fit_supporting_plane(); // user may provide invalid plane fitting (we always fit)
 
-                                FT max_dist = -std::numeric_limits<FT>::max();
+                                FT max_dist = -(std::numeric_limits<FT>::max)();
                                 for (std::size_t j = 0; j < s->size(); ++j) {
                                         std::size_t idx = s->at(j);
                                         const Point& p = points[idx];
                                         FT sdist = CGAL::squared_distance(*plane, p);
-                                        max_dist = std::max(max_dist, std::sqrt(sdist));
+                                        max_dist = (std::max)(max_dist, std::sqrt(sdist));
                                 }
 
                                 avg_max_dist += max_dist;

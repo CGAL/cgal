@@ -257,12 +257,12 @@ public:
       return temp;
     }
 
-    bool operator==(const Source_point_iterator& other)
+    bool operator==(const Source_point_iterator& other) const
     {
       return m_iterator == other.m_iterator;
     }
 
-    bool operator!=(const Source_point_iterator& other)
+    bool operator!=(const Source_point_iterator& other) const
     {
       return m_iterator != other.m_iterator;
     }
@@ -413,7 +413,7 @@ public:
                                  + (sizeof(Cone_expansion_event) + (sizeof(Cone_expansion_event*)) * m_peakQueueSize)
                                  + (sizeof(Cone_tree_node) * m_nodesAtPeakQueue);
 
-    return std::max(peakNodeUsage, peakQueueUsage);
+    return (std::max)(peakNodeUsage, peakQueueUsage);
   }
 
   /// \endcond

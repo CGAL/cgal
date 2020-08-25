@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
   Mesh mesh;
   if(!input || !(input >> mesh) || num_vertices(mesh) == 0)
   {
-    std::cerr << filename << " is not a valid off file.\n";
+    std::cerr << filename << " is not a valid off file." << std::endl;
     return EXIT_FAILURE;
   }
 

@@ -30,10 +30,9 @@ Returns the pointer necessary for `Compact_container_traits<T>`.
 void * for_compact_container() const;
 
 /*!
-Returns a reference to the pointer necessary for
-`Compact_container_traits<T>`.
+Sets the pointer necessary for `Compact_container_traits<T>` to `p`.
 */
-void * & for_compact_container();
+void for_compact_container(void* p);
 
 /// @}
 
@@ -796,7 +795,7 @@ types `T` to make them usable with the default `Compact_container_traits`.
 
 `void * t.for_compact_container() const;`
 
-`void *& t.for_compact_container();`.
+`void t.for_compact_container(void *);`.
 
 
 */
@@ -820,11 +819,11 @@ static void * pointer(const T &t);
 /// \name Operations
 /// @{
 /*!
-Returns a reference to the pointer held by `t`.
-The template version defines this function as: `return t.for_compact_container();`
+Sets the pointer held by `t` to `p`.
+The template version defines this function as: `t.for_compact_container(p);`
 
 */
-static void * & pointer(T &t);
+  static void set_pointer(T &t, void* p);
 
 
 
