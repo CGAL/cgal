@@ -38,7 +38,8 @@ TARGETS = \
   generic_polyline.tex \
   well_oriented_polyline.tex \
   circular_arcs.tex \
-  conic_multiplicities.tex
+  conic_multiplicities.tex \
+  rational_function_singular.tex
 
 .DEFAULT_GOAL = all
 .PHONY: all clean

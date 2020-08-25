@@ -50,15 +50,12 @@ int main()
   // Create a circular arc (C7) defined by two endpoints and a midpoint,
   // all having rational coordinates. This arc is the upper right
   // quarter of a circle centered at the origin with radius 5.
-  Rational_point s7(0, 5);
-  Rational_point mid7(3, 4);
-  Rational_point t7(5, 0);
-  curves.push_back(Curve(s7, mid7, t7));
+  curves.push_back(Curve(Rational_point(0, 5), Rational_point(3, 4),
+                         Rational_point(5, 0)));
 
   // Construct the arrangement of the curves and print its size.
   Arrangement  arr;
   insert(arr, curves.begin(), curves.end());
   print_arrangement_size(arr);
-
   return 0;
 }

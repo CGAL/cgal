@@ -32,18 +32,17 @@ int main()
   // Insert a full unit circle (C5) that is centered at (0, 4).
   insert(arr, Conic_arc(Rat_circle(Rat_point(0,4), 1)));
 
-  // Insert a parabolic arc (C6) supported by the parabola y = -x^2
-  // with endpoints (-sqrt(3),-3) (~(-1.73,-3)) and (sqrt(2),-2) (~(1.41,-2)).
+  // Insert a parabolic arc (C6) supported by the parabola y = -x^2 with
+  // endpoints (-sqrt(3),-3) (~(-1.73,-3)) and (sqrt(2),-2) (~(1.41,-2)).
   // Since the x-coordinates of the endpoints cannot be acccurately represented,
   // we specify them as the intersections of the parabola with the lines
   // y = -3 and y = -2, respectively. The arc is clockwise-oriented.
   Conic_arc c6 =
-    Conic_arc(1, 0, 0, 0, 1, 0,       // The parabola.
-              CGAL::CLOCKWISE,
-              Point(-1.73, -3),       // Approximation of the source.
-              0, 0, 0, 0, 1, 3,       // The line: y = -3.
-              Point(1.41, -2),        // Approximation of the target.
-              0, 0, 0, 0, 1, 2);      // The line: y = -2.
+    Conic_arc(1, 0, 0, 0, 1, 0, CGAL::CLOCKWISE, // The parabola.
+              Point(-1.73, -3),                  // approximation of the source.
+              0, 0, 0, 0, 1, 3,                  // the line: y = -3.
+              Point(1.41, -2),                   // approximation of the target.
+              0, 0, 0, 0, 1, 2);                 // the line: y = -2.
   CGAL_assertion(c6.is_valid());
   insert(arr, c6);
 

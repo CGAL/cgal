@@ -4382,81 +4382,127 @@ they have another intersection point at
 \cgalExample{Arrangement_on_surface_2/conic_multiplicities.cpp}
 
 <!----------------------------------------------------------------------------->
-\subsubsection arr_ssectr_ratfunc Arcs of Rational Functions
+\paragraph arr_sssectr_ratfunc Arcs of Rational Functions
 <!----------------------------------------------------------------------------->
 
-The traits class `Arr_rational_function_traits_2<AlgebraicKernel_d_1>`
-handles bounded and unbounded arcs of rational functions, referred to
-as <em>rational arcs</em> (in particular, such an arc may correspond
-to the entire graph of a rational function), and enables the
-construction and maintenance of arrangements of such arcs. Rational
+A <em>rational function</em> is given by the equation \f$y =
+\frac{P(x)}{Q(x)}\f$, where \f$P\f$ and \f$Q\f$ are polynomials of
+arbitrary degrees. In particular, if \f$ Q(x) = 1\f$, then the
+function is simply a polynomial function. A bounded <em>rational
+arc</em> is defined by the graph of a rational function over some
+interval \f$[x_{\rm min}, x_{\rm max}]\f$, where \f$Q\f$ does not have
+any real roots in this interval (thus, the arc does not contain any
+singularities). However, we may consider functions defined over
+unbounded intervals, namely, over \f$(-\infty, x_{\max}]\f$,
+\f$[x_{\min}, \infty)\f$, or \f$(-\infty, \infty)\f$. Rational
 functions, and polynomial functions in particular, are not only
-interesting in their own right, they are also very useful for
-approximating or interpolating more complicated curves; see, e.g.,
-[\cgalCite{cgal:ptvf-nrcpp-02} Chapter 3.
+interesting in their own right, they are also useful for approximating
+more complicated curves and for interpolation; see, e.g.,
+\cgalCite{cgal:ptvf-nrcpp-02} Chapter 3.
 
-`Arr_rational_function_traits_2<AlgebraicKernel_d_1>` is a model of
-the concepts `ArrangementTraits_2`, `ArrangementOpenBoundaryTraits_2`,
-and `ArrangementDirectionalXMonotoneTraits_2`; the latter enables
-Boolean set operations. Note that it is not a model of
-`ArrangementLandmarkTraits_2` concept, so it is impossible to use the
-landmark point-location strategy with this traits class.
+Using the `Arr_rational_function_traits_2` class template it is
+possible to construct and maintain arrangements induced by rational
+arcs. Every instance of the `Arr_rational_function_traits_2` class
+template models the concepts `ArrangementTraits_2` and
+`ArrangementOpenBoundaryTraits_2`, but it does not model the
+`ArrangementLandmarkTraits_2` concept. It also models the refined
+concept `ArrangementDirectionalXMonotoneTraits_2` which enables
+Boolean set operations; see Package \ref PkgBooleanSetOperations2Ref.
+Note that it is not a model of `ArrangementLandmarkTraits_2` concept,
+so it is impossible to use the landmark point-location strategy with
+this traits class.
 
-A rational function \f$y = \frac{P(x)}{Q(x)}\f$ is defined by two
-polynomials \f$P\f$ and \f$ Q\f$ of arbitrary degrees. If \f$ Q(x) =
-1\f$ then the function is a simple polynomial function. Usually the
-domain is \f$\mathbb{R}\f$ but the function may also be restricted to
-a bounded interval \f$[x_{\rm min}, x_{\rm max}]\f$ or defined over a
-ray \f$ (-\infty, x_{\rm max}]\f$ or \f$[x_{\rm min},
-\infty)\f$. Rational functions are represented by the nested type
-`Curve_2`.  A rational arc is always \f$x\f$-monotone in the
-mathematical sense. However, it is not necessarily continuous, as it
-may have singularities. An arc that has singularities must be split
-into continuous portions before being inserted into the
-arrangement. Arbitrary rational functions are represented by the
-nested type `Curve_2` and continuous portions of rational functions
-are represented by the nested type `X_monotone_curve_2`. Constructors
-for both types are provided by the traits. A `Curve_2` may be split up
-into several `X_monotone_curve_2` using `Make_x_monotone_2`.
+<!----------------------------------------------------------------------------->
+\cgalFigureBegin{arr_fig_rat_func_singular,rational_function_singular.png}
+An arrangement of an arc of a rational functions that has
+singularities at \f$x = 1\f$ and at \f$x = 2\f$.
+\cgalFigureEnd
+<!----------------------------------------------------------------------------->
 
-Using the `Arr_rational_function_traits_2<AlgebraicKernel_d_1>` class
-template it is possible to construct and maintain arrangement of
-rational arcs. The template parameter of the traits must be a model of
-the concept `AlgebraicKernel_d_1`. A rational function is represented
-as the quotient of two polynomials \f$P\f$ and \f$Q\f$ of type
-`AlgebraicKernel_d_1::Polynomial_1` and an \f$x\f$-interval over
-which the polynomials are defined. The type of the polynomial
-coefficients, namely `AlgebraicKernel_d_1::Coefficient`, cannot be
-algebraic.  Moreover, it is recommended that this type is not made
-rational either, since using rational, as opposed to integral,
+A rational arc is always \f$x\f$-monotone in the mathematical sense.
+However, it is not necessarily continuous, as it may have
+singularities. An arc that has singularities must be split into
+continuous portions before being inserted into the arrangement.
+Consider, for example, the rational arc given by the equation \f$y =
+\frac{1}{(x-1)(2-x)}\f$ defined over the interval \f$[0,3]\f$, as
+depicted in \cgalFigureRef{arr_fig_rat_func_singular}. This
+arc has two singularities, at \f$x = 1\f$ and at \f$x = 2\f$. It is
+split into three continuous portions defined over the intervals
+\f$[0,1)\f$, \f$(1,2)\f$, and \f$(2,3]\f$ by the traits operation
+`Make_x_monotone_2`. Arbitrary rational functions are represented by
+the nested type `Curve_2` and continuous portions of rational
+functions are represented by the nested type `X_monotone_curve_2`.
+Constructors for both types are provided by the traits in form of
+functors.
+
+When the `Arr_rational_function_traits_2<AlgebraicKernel_d_1>` class
+template is instantiated, the template parameter must be substituted
+with a model of the `AlgebraicKernel_d_1` concept. Models of this
+concept, such as the `Algebraic_kernel_d_1<Coefficient>` class
+template provided by the package \ref PkgAlgebraicFoundations are
+meant to support algebraic functionalities on univariate polynomials
+of arbitrary degree. See the documentation of the concept
+`AlgebraicKernel_d_1` for more information. A rational function is
+then represented as the quotient of two polynomials, \f$P\f$ and
+\f$Q\f$, of type `Polynomial_1` nested in every model of the concept
+`AlgebraicKernel_d_1` and in particular in the algebraic-kernel type
+that substitutes the template parameter `AlgebraicKernel_d_1` when the
+traits class-template is instantiated. Such a rational function is
+constructible from a single polynomial \f$P\f$ (with \f$Q(x) = 1\f$),
+or from two polynomials \f$P\f$ and \f$Q\f$. The type of the
+polynomial coefficients, namely `Coefficient`, and the type of the
+interval bounds, namely `Bound`, are also nested in the
+algebraic-kernel type. If an instance of the
+`Algebraic_kernel_d_1<Coefficient>` class template is used, for
+example, as the algebraic-kernel type, the type that substitutes its
+template parameter is defined as the `Coefficient` type. This type
+cannot be algebraic. Moreover, it is recommended that this type is not
+made rational either, since using rational (as opposed to integral)
 coefficients does not extend the range of the rational arcs and is
-typically less efficient.  The type of the interval bounds, namely
-`AlgebraicKernel_d_1::Bound`, however, can be algebraic. A point is
-represented by a rational function and its \f$x\f$-coordinate, which
-is of type `AlgebraicKernel_d_1::Algebraic_real_1`. Note that an
-explicit representation of the \f$y\f$-coordinate is only computed
-upon request, as it can be a rather costly operation.
+typically less efficient.\cgalFootnote{The `Algebraic_kernel_d_1` class
+template uses the types provided by the \ref PkgPolynomial package to
+define its nested `Polynomial_1` type and conveniently expose it to
+the user.} The `Bound` type, however, can be algebraic. A point of
+type `Point_2` nested in the `Arr_rational_function_traits_2` class
+template is represented by a rational function and its $x$-coordinate,
+which is derived from the type `Algebraic_real_1` nested in the
+algebraic-kernel type. An explicit representation by the nested type
+`Algebraic_real_1` of the \f$y\f$-coordinate is only computed upon
+request, as it can be a rather costly operation.
+
+The aforementioned types, `Polynomial_1`, `Coefficient`,
+`Bound, and `Algebraic_real_1`, are conveniently nested in
+the `Arr_rational_function_traits_2` class template among
+the others and obtained from there in the type definitions used
+in the examples given in this section and listed below. These types
+are defined in the header file `arr_rat_functions.h`.
+
+\code{.cpp}
+#include <CGAL/basic.h>
+#include <CGAL/CORE_BigInt.h>
+#include <CGAL/Algebraic_kernel_d_1.h>
+#include <CGAL/Arr_rational_function_traits_2.h>
+#include <CGAL/Arrangement_2.h>
+
+typedef CORE::BigInt                               Number_type;
+typedef CGAL::Algebraic_kernel_d_1<Number_type>    AK1;
+typedef CGAL::Arr_rational_function_traits_2<AK1>  Traits;
+
+typedef Traits::Polynomial_1                       Polynomial;
+typedef Traits::Algebraic_real_1                   Alg_real;
+typedef Traits::Bound                              Bound;
+
+typedef CGAL::Arrangement_2<Traits>                Arrangement;
+\endcode
 
 The constructed rational functions are cached by the traits class. The
 cache is local to each traits class object. It is therefore necessary
 to construct curves using only the constructor objects provided by
-member functions of the traits class.  Moreover, a curve must only be
+member functions of the traits class. Moreover, a curve must only be
 used by the traits class object that was used to construct it. The
 cache is automatically cleaned up from time to time. The amortized
 clean up costs are constant. In addition, there is also a separate
-member function that cleans up the cache on demand.
-
-The curve constructors have an additional advantage. They conveniently
-enable the provision of two polynomials that define a rational arc
-using rational coefficients. For example, let \f$P\f$ and \f$Q\f$
-denote two polynomials with integral coefficients that define a
-rational arc at interest, and let \f$P'\f$ and \f$Q'\f$ denote two
-polynomials with rational coefficients that define the same rational
-arc; that is, the quotients \f$P/Q\f$ and \f$P'/Q'\f$ are
-identical. You can construct the rational arc providing the
-coefficients of \f$P'\f$ and \f$Q'\f$ to the constructor. In this
-case the constructor normalizes the coefficients and stores the
-desired polynomials \f$P\f$ and \f$Q\f$.
+member function that cleans up the cache upon request.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{arr_figex_16,rational_functions.png}
@@ -4466,9 +4512,9 @@ rational_functions.cpp.
 <!----------------------------------------------------------------------------->
 
 The following example demonstrates the construction of an arrangement
-of rational arcs depicted in \cgalFigureRef{arr_figex_16}. Note the
-usage of the two constructors, for polynomial arcs and for rational
-arcs:
+induced by rational arcs depicted in
+\cgalFigureRef{arr_figex_16}. It uses constructors both
+for polynomial arcs and for rational arcs.
 
 \cgalExample{Arrangement_on_surface_2/rational_functions.cpp}
 
@@ -4480,7 +4526,7 @@ unbounded_rational_functions.cpp
 <!----------------------------------------------------------------------------->
 
 The following example demonstrates the construction of an arrangement
-of six rational arcs - four unbounded arcs and two bounded ones - as
+of six rational arcs, four unbounded arcs and two bounded ones, as
 depicted in \cgalFigureRef{arr_figex_unb_rat}. Note the usage of the
 constructors of an entire rational function and of an infinite "ray"
 of such a function. Also observe that the hyperbolas \f$y =
@@ -4489,6 +4535,23 @@ although they have common vertical and horizontal asymptotes, so very
 "thin" unbounded faces are created between them:
 
 \cgalExample{Arrangement_on_surface_2/unbounded_rational_functions.cpp}
+
+The curve constructors have an additional advantage. They conveniently
+enable the provision of two polynomials that define a rational arc
+using rational coefficients. For example, let \f$P\f$ and \f$Q\f$
+denote two polynomials with integral coefficients that define a
+rational arc of interest, and let \f$P'\f$ and \f$Q'\f$ denote two
+polynomials with rational coefficients that define the same rational
+arc; that is, the quotients \f$P/Q\f$ and \f$P'/Q'\f$ are
+identical. You can construct the rational arc providing the
+coefficients of \f$P'\f$ and \f$Q'\f$ to the constructor. In this case
+the constructor normalizes the coefficients and generates the desired
+polynomials \f$P\f$ and \f$Q\f$. To this end, the curve constructors
+of both types, namely `Curve_2` and `X_monotone_curve_2`, have
+operators that accept ranges of polynomial coefficients as well as
+polynomials. The coefficients in a given range must be in the order of
+the degrees of the corresponding variables starting from the constant
+term.
 
 <!----------------------------------------------------------------------------->
 \subsubsection arr_ssectr_bez Planar B&eacute;zier Curves
@@ -5520,7 +5583,7 @@ The ability to use the input/output operators, requires that the
 class both support the `<<` and `>>` operators. The
 `Arr_conic_traits_2` class (see Section \ref arr_sssectr_conic), the
 `Arr_rational_function_traits_2` class (see Section \ref
-arr_ssectr_ratfunc), and the `Arr_linear_traits_2` class (see Section
+arr_sssectr_ratfunc), and the `Arr_linear_traits_2` class (see Section
 \ref arr_ssectr_segs) currently do not provide these operators for the
 geometric types they define.  Thus, only arrangements of line segments
 or of polylines can be written or read.
