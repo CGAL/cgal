@@ -1797,10 +1797,10 @@ public:
     // The empty triangulation has a single sheeted cover
     _cover = make_array(3, 3);
 
-    /// Virtual vertices, one per periodic domain
+    // Virtual vertices, one per periodic domain
     Vertex_handle vir_vertices[3][3];
 
-    /// Virtual faces, two per periodic domain
+    // Virtual faces, two per periodic domain
     Face_handle faces[3][3][2];
 
     // Initialise vertices:
@@ -1825,7 +1825,7 @@ public:
     // Create faces:
     for(int i=0; i<_cover[0]; ++i)
       for(int j=0; j<_cover[1]; ++j)
-        for(int f = 0; f < 2; f++)
+        for(int f = 0; f < 2; ++f)
           faces[i][j][f] = _tds.create_face(); // f faces per 'rectangle'
 
     // table containing the vertex information
@@ -1875,6 +1875,30 @@ public:
     return vir_vertices[0][0];
   }
 
+public:
+  template<class EdgeIt>
+  Vertex_handle star_hole(const Point& p,
+                          EdgeIt edge_begin, EdgeIt edge_end)
+  {
+    std::list<Face_handle> empty_list;
+    return star_hole(p, edge_begin, edge_end, empty_list.begin(), empty_list.end());
+  }
+
+  template<class EdgeIt, class FaceIt>
+  Vertex_handle star_hole(const Point& p,
+                          EdgeIt edge_begin, EdgeIt edge_end,
+                          FaceIt face_begin, FaceIt face_end)
+  {
+    CGAL_assertion(is_1_cover());
+
+    Vertex_handle v = _tds.star_hole(edge_begin, edge_end, face_begin, face_end);
+    v->set_point(p);
+    return v;
+  }
+
+public:
+  Vertex_handle insert_first(const Point& p) { return create_initial_triangulation(p); }
+
   /// Inserts a point in the triangulation
   /// \param p the point to be inserted
   /// \param start the start face for point location
@@ -1897,11 +1921,13 @@ public:
     return insert(p, lt, loc, li);
   }
 
-  // @todo below is NON DELAUNAY/REGULAR, make it clear
-
+  // This insert is for a basic (non Delaunay/regular) triangulation
   /// Inserts a point in the triangulation
   /// \pre The point has been located in the triangulation
-  Vertex_handle insert(const Point& p, Locate_type lt, Face_handle loc, int li)
+  Vertex_handle insert(const Point& p,
+                       Locate_type lt,
+                       Face_handle loc,
+                       int li)
   {
     if(number_of_stored_vertices() == 0)
       return create_initial_triangulation(p);
@@ -1955,13 +1981,137 @@ public:
     return vh;
   }
 
+  /// Inserts a point with an offset in the triangulation
+  /// \pre The point has been located in the triangulation
+  Vertex_handle insert(const Point& p, const Offset& o, Locate_type lt,
+                       Face_handle loc, int li, Vertex_handle vh)
+  {
+    Vertex_handle result;
+    switch(lt)
+    {
+      case FACE:
+      {
+        result = insert_in_face(p, o, loc, vh);
+        break;
+      }
+      case EDGE:
+      {
+        CGAL_triangulation_assertion(false);
+        break;
+      }
+      case VERTEX:
+      {
+        // The vertex is a special case, we can return immediately
+        CGAL_triangulation_assertion(vh == Vertex_handle());
+        return loc->vertex(li);
+      }
+      case EMPTY:
+      {
+        result = create_initial_triangulation(p);
+        break;
+      }
+      default:
+      {
+        CGAL_triangulation_assertion(false); // locate step failed
+        return Vertex_handle();
+      }
+    }
+
+    if(!is_1_cover() && (vh == Vertex_handle()))
+      virtual_vertices_reverse[result] = std::vector<Vertex_handle>();
+
+    return result;
+  }
+
   /// Insert a point in the triangulation
   Vertex_handle push_back(const Point& p) { return insert(p); }
 
+  template<class InputIterator>
+  int insert(InputIterator first, InputIterator last)
+  {
+    while(first != last)
+      insert(*first++);
+  }
+
+  /// Inserts (p,o) in the face f and sets the offsets of the newly created faces
+  /// Doesn't insert periodic copies
+  Vertex_handle insert_in_face(const Point& p, const Offset& o,
+                               Face_handle f,
+                               Vertex_handle vh)
+  {
+    CGAL_triangulation_assertion(f != Face_handle());
+    CGAL_triangulation_assertion(number_of_vertices() != 0);
+    CGAL_triangulation_assertion((!is_1_cover()) || (o == Offset()));
+
+    Offset current_off;
+    const bool simplicity_criterion = f->has_zero_offsets() && o.is_zero();
+
+    // Save the neighbors and the offsets
+    Face_handle nb[3];
+    int nb_index[3];
+    Offset offsets[3];
+    CGAL_triangulation_assertion_code(Vertex_handle vertices[3];)
+
+    if(!simplicity_criterion)
+    {
+      // Choose the periodic copy of tester.point() that is inside f.
+      current_off = get_location_offset(f, p, o);
+
+      CGAL_triangulation_assertion(oriented_side(f, p, combine_offsets(o, current_off)) != ON_NEGATIVE_SIDE);
+
+      for(int i=0; i<3; ++i)
+      {
+        nb[i] = f->neighbor(i);
+        nb_index[i] = nb[i]->index(f);
+        offsets[i] = extract_offset(f->offset(i));
+        CGAL_triangulation_assertion_code(vertices[i] = f->vertex(i););
+      }
+    }
+
+    // Insert the new vertex
+    Vertex_handle v = _tds.insert_in_face(f);
+    v->set_point(p);
+
+    if(!simplicity_criterion)
+    {
+      // Update the offsets
+      Offset v_offset = off_to_int(current_off);
+      Offset new_offsets[3];
+      for(int i=0; i<3; ++i)
+      {
+        Face_handle new_face = nb[i]->neighbor(nb_index[i]);
+        int v_index = new_face->index(v);
+
+        CGAL_triangulation_assertion(new_face->vertex(ccw(v_index)) == vertices[ccw(i)]);
+        CGAL_triangulation_assertion(new_face->vertex(cw(v_index)) == vertices[cw(i)]);
+
+        new_offsets[v_index] = current_off;
+        new_offsets[ccw(v_index)] = offsets[ccw(i)];
+        new_offsets[cw(v_index)] = offsets[cw(i)];
+        set_offsets(new_face, new_offsets[0], new_offsets[1], new_offsets[2]);
+      }
+    }
+
+    if(!is_1_cover())
+    {
+      // update the book-keeping in case of a periodic copy
+      if(vh != Vertex_handle())
+      {
+        virtual_vertices[v] = Virtual_vertex(vh, o);
+        virtual_vertices_reverse[vh].push_back(v);
+      }
+    }
+
+    return v;
+  }
+
   /// Inserts p in the face f and sets the offsets of the newly created faces
   /// Insert periodic copies in all periodic copies of the domain
-  Vertex_handle insert_in_face(const Point& p, Face_handle f);
+  Vertex_handle insert_in_face(const Point& p, Face_handle f) { return insert(p, FACE, f, 0); }
 
+  // Delaunay/regular insertion
+
+protected:
   template < class ConflictTester, class PointHider, class CoverManager >
   Vertex_handle periodic_insert(const Point& p, const Offset& o,
                                 Locate_type /*lt*/, const Offset& current_off,
@@ -2105,7 +2255,7 @@ public:
     return periodic_insert(p, o, lt, current_off, f, tester, hider, cover_manager, vh);
   }
 
-  // COMMON INSERTION for DELAUNAY and REGULAR TRIANGULATION
+  // common insertion for Delaunay and regular triangulations
   template <class ConflictTester, class PointHider, class CoverManager>
   Vertex_handle insert_in_conflict(const Point& p,
                                    Locate_type lt,
@@ -2407,123 +2557,77 @@ public:
   }
 
 private:
-  /// Inserts (p,o) in the face f and sets the offsets of the newly created faces
-  /// Doesn't insert periodic copies
-  Vertex_handle insert_in_face(const Point& p, const Offset& o,
-                               Face_handle f,
-                               Vertex_handle vh)
-  {
-    CGAL_triangulation_assertion(f != Face_handle());
-    CGAL_triangulation_assertion(number_of_vertices() != 0);
-    CGAL_triangulation_assertion((!is_1_cover()) || (o == Offset()));
-
-    Offset current_off;
-    const bool simplicity_criterion = f->has_zero_offsets() && o.is_zero();
-
-    // Save the neighbors and the offsets
-    Face_handle nb[3];
-    int nb_index[3];
-    Offset offsets[3];
-    CGAL_triangulation_assertion_code(Vertex_handle vertices[3];)
-
-    if(!simplicity_criterion)
-    {
-      // Choose the periodic copy of tester.point() that is inside f.
-      current_off = get_location_offset(f, p, o);
-
-      CGAL_triangulation_assertion(oriented_side(f, p, combine_offsets(o, current_off)) != ON_NEGATIVE_SIDE);
-
-      for(int i=0; i<3; ++i)
-      {
-        nb[i] = f->neighbor(i);
-        nb_index[i] = nb[i]->index(f);
-        offsets[i] = extract_offset(f->offset(i));
-        CGAL_triangulation_assertion_code(vertices[i] = f->vertex(i););
-      }
-    }
-
-    // Insert the new vertex
-    Vertex_handle v = _tds.insert_in_face(f);
-    v->set_point(p);
-
-    if(!simplicity_criterion)
-    {
-      // Update the offsets
-      Offset v_offset = off_to_int(current_off);
-      Offset new_offsets[3];
-      for(int i=0; i<3; ++i)
-      {
-        Face_handle new_face = nb[i]->neighbor(nb_index[i]);
-        int v_index = new_face->index(v);
-
-        CGAL_triangulation_assertion(new_face->vertex(ccw(v_index)) == vertices[ccw(i)]);
-        CGAL_triangulation_assertion(new_face->vertex(cw(v_index)) == vertices[cw(i)]);
-
-        new_offsets[v_index] = current_off;
-        new_offsets[ccw(v_index)] = offsets[ccw(i)];
-        new_offsets[cw(v_index)] = offsets[cw(i)];
-        set_offsets(new_face, new_offsets[0], new_offsets[1], new_offsets[2]);
-      }
-    }
-
-    if(!is_1_cover())
-    {
-      // update the book-keeping in case of a periodic copy
-      if(vh != Vertex_handle())
-      {
-        virtual_vertices[v] = Virtual_vertex(vh, o);
-        virtual_vertices_reverse[vh].push_back(v);
-      }
-    }
-
-    return v;
-  }
-
   /// Remove a vertex without removing it's possible periodic copies.
   /// Helper functions
-  void remove_degree_3_single_copy(Vertex_handle vh); // @todo restore
-
-protected:
-  /// Inserts a point with an offset in the triangulation
-  /// \pre The point has been located in the triangulation
-  Vertex_handle insert(const Point& p, const Offset& o, Locate_type lt,
-                       Face_handle loc, int li, Vertex_handle vh)
+  void remove_degree_3_single_copy(Vertex_handle vh)
   {
-    Vertex_handle result;
-    switch(lt)
+    Face_handle f = vh->face();
+    int i = ccw(f->index(vh));
+
+    Face_handle f2 = f->neighbor(i);
+    int j = f2->index(f);
+
+    // Get the offsets in ccw order
+    Offset off[3];
+    off[i] = get_offset(f, i);
+    off[ccw(i)] = get_offset(f, ccw(i));
+    off[cw(i)] = combine_offsets(get_offset(f2, j), get_neighbor_offset(f2, j, f, i));
+    if(off[0].x() < 0 || off[1].x() < 0 || off[2].x() < 0)
     {
-      case FACE:
-      {
-        result = insert_in_face(p, o, loc, vh);
-        break;
-      }
-      case EDGE:
-      {
-        CGAL_triangulation_assertion(false);
-        break;
-      }
-      case VERTEX:
-      {
-        // The vertex is a special case, we can return immediately
-        CGAL_triangulation_assertion(vh == Vertex_handle());
-        return loc->vertex(li);
-      }
-      case EMPTY:
-      {
-        result = create_initial_triangulation(p);
-        break;
-      }
-      default:
-      {
-        CGAL_triangulation_assertion(false); // locate step failed
-        return Vertex_handle();
-      }
+      Offset o(number_of_sheets()[0], 0);
+      off[0] += o;
+      off[1] += o;
+      off[2] += o;
     }
 
-    if(!is_1_cover() && (vh == Vertex_handle()))
-      virtual_vertices_reverse[result] = std::vector<Vertex_handle>();
+    if(off[0].y() < 0 || off[1].y() < 0 || off[2].y() < 0)
+    {
+      Offset o(0, number_of_sheets()[1]);
+      off[0] += o;
+      off[1] += o;
+      off[2] += o;
+    }
 
-    return result;
+    // Remove the vertex, keep face f
+    _tds.remove_degree_3(vh, f);
+
+    // Reset the offsets
+    set_offsets(f,
+                (off[0].x() >= number_of_sheets()[0] ? 2 : 0) + (off[0].y() >= number_of_sheets()[1] ? 1 : 0),
+                (off[1].x() >= number_of_sheets()[0] ? 2 : 0) + (off[1].y() >= number_of_sheets()[1] ? 1 : 0),
+                (off[2].x() >= number_of_sheets()[0] ? 2 : 0) + (off[2].y() >= number_of_sheets()[1] ? 1 : 0));
+  }
+
+public:
+  void remove_degree_3(Vertex_handle v)
+  {
+    CGAL_triangulation_precondition(number_of_vertices() > 1);
+    CGAL_triangulation_precondition(degree(v) == 3);
+
+    if(is_1_cover())
+      return remove_degree_3_single_copy(v);
+
+    {
+      Virtual_vertex_map_it it = virtual_vertices.find(v);
+      if(it != virtual_vertices.end())
+        v = it->second.first;
+    }
+
+    remove_too_long_edges_in_star(v);
+
+    typename Virtual_vertex_reverse_map::iterator reverse_it = virtual_vertices_reverse.find(v);
+    CGAL_triangulation_assertion(reverse_it != virtual_vertices_reverse.end());
+
+    const std::vector<Vertex_handle> &virtual_copies = reverse_it->second;
+    for(typename std::vector<Vertex_handle>::const_iterator it = virtual_copies.begin();
+        it != virtual_copies.end(); ++it)
+    {
+      virtual_vertices.erase(*it);
+      remove_degree_3_single_copy(*it);
+    }
+
+    virtual_vertices_reverse.erase(reverse_it);
+    remove_degree_3_single_copy(v);
   }
 
 public:
@@ -2576,7 +2680,7 @@ protected:
     {
       if(vit2->offset() != Offset())
       {
-        //TODO: use some binding, maybe boost instead of the Finder.
+        // @todo use some binding, maybe boost instead of the Finder.
         typename std::list<Vertex_handle>::iterator vlist_it
             = std::find_if(vlist.begin(), vlist.end(), Finder(this, vit2->point()));
         Offset off = vit2->offset();
@@ -3748,7 +3852,7 @@ protected:
   mutable std::vector<Vertex_handle> v_offsets;
 };
 
-#if 0
+#if 0 // @fixme
 
 namespace internal {
 
