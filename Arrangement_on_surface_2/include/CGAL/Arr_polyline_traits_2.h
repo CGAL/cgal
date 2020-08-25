@@ -36,6 +36,7 @@
 #include <CGAL/Arr_polycurve_traits_2.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
+#include <CGAL/Single.h>
 
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
@@ -600,10 +601,8 @@ public:
                                bool force_closed_polygon = false)
   {
     if (force_closed_polygon)
-    {
-      std::array<Point_2, 1> first_point = { *(points.begin()) };
-      return make_curve_2_impl (boost::range::join (points, first_point));
-    }
+      return make_curve_2_impl (boost::range::join (points,
+                                                    make_single(*(points.begin()))));
     else
       return make_curve_2_impl (points);
   }
