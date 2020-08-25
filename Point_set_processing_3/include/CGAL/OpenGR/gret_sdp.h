@@ -38,15 +38,13 @@ namespace OpenGR {
 
    \tparam PointRange is a model of `Range`. The value type of its iterator is
    the key type of the named parameter `point_map` in `NamedParameters`.
-   \tparam CorrespondencesRange is a model of `Range`. The value type of its iterator is
-   is another range of correspondences. The value type of the iterator of a correspondence range 
-   is `std::pair<size_t,size_t>`.
+   \tparam CorrespondencesRange is a model of `Range`. The value type of its iterator is std::tuple<size_t, size_t, size_t>.
    \tparam TransformRange is a model of `Range` whose size is the number of point clouds. The value type of its iterator is `geom_traits::Aff_transformation_3`.
 
    \param point_clouds vector of input point ranges of the point clouds to be registered.
-   \param correspondences input range of correspondences. Each entry in correspondences is a range itself that stores the indexes of the points that are 
-   considered to correspond to the same global coordinate. A points indexes are stores using `std::pair<size_t,size_t>` where `first` equals the point cloud index 
-   and `second` equals the index within this point cloud that this point belongs to (indexes with respect to `point_clouds`).  
+   \param correspondences input range of correspondences. Correspondences are represented using tuples of three indexes (in order):
+   point cloud index, point index, global coordinate index. The first two indexes with respect to `point_clouds`.   
+   \param num_global_coordinates number of global coordinates.
    \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
    \param transformations ouput range of the affine transformations where the i'th transformation should be applied to the i'th point cloud in order to register them.
 
@@ -64,8 +62,9 @@ namespace OpenGR {
 
 */
 template <class PointRange, class CorrespondencesRange, class NamedParameters, class TransformRange>
-void compute_registration_transformations(const std::vector<PointRange>& point_clouds, const CorrespondencesRange& correspondences, 
-                                        const NamedParameters& np, TransformRange& transformations)
+void compute_registration_transformations(  const std::vector<PointRange>& point_clouds, const CorrespondencesRange& correspondences, 
+                                            const int num_global_coordinates, const NamedParameters& np, 
+                                            TransformRange& transformations)
 {
     using PointMap = typename CGAL::GetPointMap<PointRange, NamedParameters>::type;
     using Kernel = typename CGAL::Kernel_traits<typename PointMap::value_type>::Kernel;
@@ -82,19 +81,16 @@ void compute_registration_transformations(const std::vector<PointRange>& point_c
     using parameters::get_parameter;
     
     const int num_point_clouds = point_clouds.size();
-    const int num_global_coordinates = std::distance(std::begin(correspondences),std::end(correspondences));
-
     PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
-
     // compute patches
     std::vector<GR_PatchType> patches(num_point_clouds);
-    auto correspond_it = std::begin(correspondences);
-    for (size_t i = 0; i < num_global_coordinates; i++, correspond_it++){
-        for(const auto& correspondence : *correspond_it){
-            const auto& p = get (point_map, *(std::begin(point_clouds[correspondence.first])+correspondence.second));
-            GR_PointType out(p.x(), p.y(), p.z());
-            patches[correspondence.first].emplace_back(out ,i);
-        }
+    for(const auto& correspondence : correspondences){
+        int pc = std::get<0>(correspondence); // point cloud index
+        int p = std::get<1>(correspondence); // point index
+        int gc = std::get<2>(correspondence); // global coordinate index
+        const auto& point = get (point_map, *(std::begin(point_clouds[pc])+p));
+        GR_PointType out(point.x(), point.y(), point.z());
+        patches[pc].emplace_back(out ,gc);
     }
     
     // initialize matcher
@@ -137,14 +133,12 @@ void compute_registration_transformations(const std::vector<PointRange>& point_c
 
    \tparam PointRange is a model of `Range`. The value type of its iterator is
    the key type of the named parameter `point_map` in `NamedParameters`.
-   \tparam CorrespondencesRange is a model of `Range`. The value type of its iterator is
-   is another range of correspondences. The value type of the iterator of a correspondences range 
-   is `std::pair<size_t,size_t>`.
+   \tparam CorrespondencesRange is a model of `Range`. The value type of its iterator is std::tuple<size_t, size_t, size_t>.
 
    \param point_clouds vector of input point ranges of the point clouds to be registered.
-   \param correspondences input range of correspondences. Each entry in correspondences is a range itself that stores the indexes of the points that are 
-   considered to correspond to the same global coordinate. A points indexes are stores using a `std::pair<size_t,size_t>` where `first` equals the point cloud index 
-   and `second` equals the index within this point cloud that it belongs to (indexes with respect to `point_clouds`).  
+   \param correspondences input range of correspondences. Correspondences are represented using tuples of three indexes (in order):
+   point cloud index, point index, global coordinate index. The first two indexes with respect to `point_clouds`.   
+   \param num_global_coordinates number of global coordinates.
    \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
    \param registered_points ouput point range of the registered point clouds whose size is the accumulated size of all point clouds.
 
@@ -163,7 +157,7 @@ void compute_registration_transformations(const std::vector<PointRange>& point_c
 */
 template <class PointRange, class CorrespondencesRange, class NamedParameters>
 void register_point_clouds( const std::vector<PointRange>& point_clouds, const CorrespondencesRange& correspondences, 
-                            const NamedParameters& np, PointRange& registered_points)
+                            const int num_global_coordinates, const NamedParameters& np, PointRange& registered_points)
 {
     namespace PSP = CGAL::Point_set_processing_3;
     // property map types
@@ -177,7 +171,7 @@ void register_point_clouds( const std::vector<PointRange>& point_clouds, const C
 
     // compute registration transformations
     std::vector<typename Kernel::Aff_transformation_3> transformations(point_clouds.size());
-    compute_registration_transformations(point_clouds, correspondences, np, transformations);
+    compute_registration_transformations(point_clouds, correspondences, num_global_coordinates, np, transformations);
 
     // get point and normal maps
     PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());

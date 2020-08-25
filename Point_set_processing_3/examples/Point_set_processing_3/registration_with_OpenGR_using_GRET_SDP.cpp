@@ -45,7 +45,7 @@ using Tree_ptr = std::unique_ptr<Tree>;
 using Fuzzy_sphere = CGAL::Fuzzy_sphere<Search_traits>;
 
 // convenience definitions for correspondences
-using Correspondence = std::pair<size_t, size_t>;
+using Correspondence = std::tuple<size_t, size_t, size_t>;
 using CorrespondenceRange = std::vector<Correspondence>;
 
 // extracts point clouds and transformations from a stanford config file
@@ -154,8 +154,8 @@ void constructKdTree(Point_range& point_range, Tree_ptr& tree, Distance& distanc
 }
 
 template <typename PointMap, typename TransformationRange>
-void computeCorrespondences(const std::vector<Pwn_range>& point_clouds, const PointMap& point_map, const TransformationRange& transformations, std::vector<CorrespondenceRange>& correspondences, 
-                            int sampling_number = 200, const double max_dist = 0.00001){
+int computeCorrespondences(const std::vector<Pwn_range>& point_clouds, const PointMap& point_map, const TransformationRange& transformations, 
+                            CorrespondenceRange& correspondences, int sampling_number = 200, const double max_dist = 0.00001){
   int num_point_clouds = point_clouds.size();
 
   Point_range merged_point_cloud;
@@ -184,20 +184,18 @@ void computeCorrespondences(const std::vector<Pwn_range>& point_clouds, const Po
     constructKdTree(transformed_point_clouds[i], trees[i], distances[i]);
 
   // construct correspondences
-  for (size_t i = 0; i < merged_point_cloud.size(); i++) {
-    CorrespondenceRange correspondence;
+  for (size_t i = 0; i < num_global_coordinates; i++) {
     const Point_3& query_point = merged_point_cloud[i];
     for (size_t j = 0; j < num_point_clouds; j++) {
       Knn knn(*trees[j], query_point, 1, 0, true, distances[j]);
       double dist = knn.begin()->second;
       if(dist < max_dist){
         std::size_t nn = knn.begin()->first;
-        correspondence.emplace_back(j, nn);
+        correspondences.emplace_back(j, nn, i);
       } 
     }
-    if(!correspondence.empty())
-      correspondences.push_back(std::move(correspondence));
-  }       
+  }      
+  return num_global_coordinates;
 }
 
 int main (int argc, char** argv)
@@ -211,17 +209,17 @@ int main (int argc, char** argv)
   extractPCAndTrFromStandfordConfFile(config_fname, ground_truth_transformations, point_clouds, point_map);
   int num_point_clouds = point_clouds.size();
 
-  std::vector<CorrespondenceRange> correspondences;
-  computeCorrespondences(point_clouds, point_map, ground_truth_transformations, correspondences);
+  CorrespondenceRange correspondences;
+  int num_global_coordinates = computeCorrespondences(point_clouds, point_map, ground_truth_transformations, correspondences);
 
   // EITHER call the registration method GRET-SDP from OpenGR to get the transfromations for registration
   std::vector<Kernel::Aff_transformation_3> transformations(num_point_clouds);
-  CGAL::OpenGR::compute_registration_transformations(point_clouds, correspondences, CGAL::parameters::point_map(point_map).normal_map(Normal_map()), transformations);
+  CGAL::OpenGR::compute_registration_transformations(point_clouds, correspondences, num_global_coordinates, CGAL::parameters::point_map(point_map).normal_map(Normal_map()), transformations);
 
   // OR call  the registration method GRET-SDP from OpenGR and apply transformations directly 
   int num_total_points = std::accumulate(point_clouds.begin(), point_clouds.end(), 0, [](int sum, const auto& pc){ return sum + pc.size(); });
   Pwn_range registered_point_cloud(num_total_points);
-  CGAL::OpenGR::register_point_clouds(point_clouds, correspondences, CGAL::parameters::point_map(point_map).normal_map(Normal_map()), registered_point_cloud);
+  CGAL::OpenGR::register_point_clouds(point_clouds, correspondences, num_global_coordinates, CGAL::parameters::point_map(point_map).normal_map(Normal_map()), registered_point_cloud);
 
   std::ofstream out("registered_point_clouds.ply");
   if (!out ||
