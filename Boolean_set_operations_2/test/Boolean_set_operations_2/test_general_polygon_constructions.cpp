@@ -49,5 +49,8 @@ int main()
   CGAL::General_polygon_2<Polyline_traits>
     gps_7 (Polyline_traits::make_curve_2 (points));
 
+  CGAL::General_polygon_2<Polyline_traits>
+    gps_8 (Polyline_traits::make_curve_2 (points, true));
+
   return EXIT_SUCCESS;
 }

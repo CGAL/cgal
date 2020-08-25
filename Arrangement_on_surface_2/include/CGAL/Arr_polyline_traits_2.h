@@ -39,6 +39,7 @@
 
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/range/join.hpp>
 
 namespace CGAL {
 
@@ -595,7 +596,20 @@ public:
 
   /*! Obtain a Curve_2 object from a range of points */
   template <typename PointRange>
-  static Curve_2 make_curve_2 (const PointRange& points)
+  static Curve_2 make_curve_2 (const PointRange& points,
+                               bool force_closed_polygon = false)
+  {
+    if (force_closed_polygon)
+    {
+      std::array<Point_2, 1> first_point = { *(points.begin()) };
+      return make_curve_2_impl (boost::range::join (points, first_point));
+    }
+    else
+      return make_curve_2_impl (points);
+  }
+
+  template <typename PointRange>
+  static Curve_2 make_curve_2_impl (const PointRange& points)
   {
     using Point_iterator = typename PointRange::const_iterator;
     using Zip_iterator = boost::zip_iterator<boost::tuple<Point_iterator,
@@ -621,6 +635,7 @@ public:
        (boost::make_zip_iterator (boost::make_tuple(end_minus_1, end)),
         point_pair_to_segment));
   }
+
 
   /*! Deprecated!
    * Obtain the segment traits.
