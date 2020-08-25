@@ -35,29 +35,19 @@ int main()
            boost::make_transform_iterator
            (points.end(), point_to_segment));
 
-  // Case 2: Segment-based GPS from
-  // Arr_segment_traits_2::X_monotone_curve_2 range with internal
-  // converter
-  CGAL::General_polygon_2<Segment_traits>
-    gps_2 (CGAL::points_to_x_monotone_curves_begin<Segment_traits>(points),
-           CGAL::points_to_x_monotone_curves_end<Segment_traits>(points));
-
-  // Case 3: Segment-based GPS from Point range
-  CGAL::General_polygon_2<Segment_traits>
-    gps_3 (points.cbegin(), points.cend());
-
-  // Case 4: Polyline-based GPS from
-  // Arr_polyline_traits_2::X_monotone_curve_2 range with internal
-  // converter
-  CGAL::General_polygon_2<Polyline_traits>
-    gps_4 (CGAL::points_to_x_monotone_curves_begin<Polyline_traits>(points),
-           CGAL::points_to_x_monotone_curves_end<Polyline_traits>(points));
 
   // Case 5: Polyline-based GPS from Point range with internal
   // converter
+  Polyline_traits::Curve_2 curve
+    (boost::make_transform_iterator
+     (points.begin(), point_to_segment),
+     boost::make_transform_iterator
+     (points.end(), point_to_segment));
   CGAL::General_polygon_2<Polyline_traits>
-    gps_5 (points.cbegin(), points.cend());
+    gps_6 (curve);
 
+  CGAL::General_polygon_2<Polyline_traits>
+    gps_7 (Polyline_traits::make_curve_2 (points));
 
   return EXIT_SUCCESS;
 }
