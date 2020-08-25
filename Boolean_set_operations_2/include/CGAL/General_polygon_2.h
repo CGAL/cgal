@@ -48,8 +48,8 @@ public:
   General_polygon_2(CurveIterator begin,
                     CurveIterator end,
                     typename std::enable_if
-                    <std::is_same<typename CurveIterator::value_type,
-                                  X_monotone_curve_2>::value>::type* = 0)
+                    <std::is_convertible<typename CurveIterator::value_type,
+                    X_monotone_curve_2>::value>::type* = 0)
     : m_xcurves (begin, end)
   {}
 
