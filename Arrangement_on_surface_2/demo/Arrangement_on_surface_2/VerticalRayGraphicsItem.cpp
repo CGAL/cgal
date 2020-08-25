@@ -29,6 +29,7 @@ void VerticalRayGraphicsItem::paint( QPainter* painter,
                                      QWidget* /* widget */ )
 {
   QPen rayPen( this->m_color, this->m_width );
+  rayPen.setCosmetic(true);
   painter->setPen( rayPen );
 
   if ( this->m_source.isNull( ) && this->m_targetY == 0.0 )

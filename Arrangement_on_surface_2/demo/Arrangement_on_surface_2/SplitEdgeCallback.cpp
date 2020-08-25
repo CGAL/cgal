@@ -10,8 +10,9 @@
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
 #include "SplitEdgeCallback.h"
-#include "Utils.h"
+#include "ArrangementTypes.h"
 #include "PointSnapper.h"
+#include "Utils.h"
 
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsScene>
@@ -34,7 +35,6 @@ QColor SplitEdgeCallbackBase::getColor( ) const
   return this->segmentInputMethod.getColor();
 }
 
-
 void SplitEdgeCallbackBase::setPointSnapper(PointSnapperBase* snapper_)
 {
   this->segmentInputMethod.setPointSnapper(snapper_);
@@ -44,9 +44,8 @@ template <typename Arr_>
 SplitEdgeCallback<Arr_>::SplitEdgeCallback(Arrangement* arr_, QObject* parent):
   SplitEdgeCallbackBase( parent ),
   arr( arr_ ),
-  traits( arr->geometry_traits() ),
-  intersectCurves( this->traits->intersect_2_object( ) ),
-  areEqual( this->traits->equal_2_object( ) )
+  intersectCurves( this->arr->traits()->intersect_2_object( ) ),
+  areEqual( this->arr->traits()->equal_2_object( ) )
 {
 }
 
@@ -79,27 +78,51 @@ template <typename Arr_>
 void SplitEdgeCallback<Arr_>::curveInputDoneEvent(
   const std::vector<Input_point_2>& clickedPoints, CGAL::Qt::CurveType)
 {
-  typedef typename ArrTraitsAdaptor<Traits>::CoordinateType CoordinateType;
-
-  auto pt1 = clickedPoints[0];
-  auto pt2 = clickedPoints[1];
-
-  this->splitEdges(
-    {CoordinateType{pt1.x()}, CoordinateType{pt1.y()}},
-    {CoordinateType{pt2.x()}, CoordinateType{pt2.y()}}, traits);
+  try
+  {
+    this->splitEdges(clickedPoints[0], clickedPoints[1], arr->traits());
+  }
+  catch (const std::exception& ex)
+  {
+    std::cerr << ex.what() << '\n';
+    return;
+  }
 }
 
 template <typename Traits_>
 struct ConstructSegment
 {
   using Traits = Traits_;
-  using Point_2 = typename Traits::Point_2;
 
+  template <typename Point_2>
   auto operator()(const Traits* traits, const Point_2& p1, const Point_2& p2)
   {
+    Arr_construct_point_2<Traits> toArrPoint{traits};
+
     auto construct_x_monotone_curve_2 =
       traits->construct_x_monotone_curve_2_object();
-    return construct_x_monotone_curve_2(p1, p2);
+    return construct_x_monotone_curve_2(toArrPoint(p1), toArrPoint(p2));
+  }
+};
+
+template <typename Coefficient_>
+struct ConstructSegment<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>
+{
+  using Traits = CGAL::Arr_algebraic_segment_traits_2<Coefficient_>;
+  using X_monotone_curve_2 = typename Traits::X_monotone_curve_2;
+
+  template <typename Point_2>
+  auto operator()(const Traits* traits, const Point_2& p1, const Point_2& p2)
+  {
+    Arr_construct_point_2<Traits> toArrPoint{traits};
+
+    auto construct_x_monotone_segment_2 =
+      traits->construct_x_monotone_segment_2_object();
+
+    std::vector<X_monotone_curve_2> curves;
+    construct_x_monotone_segment_2(
+      toArrPoint(p1), toArrPoint(p2), std::back_inserter(curves));
+    return curves[0];
   }
 };
 
@@ -111,11 +134,13 @@ struct ConstructSegment<
     CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>;
   using Curve_2 = typename Traits::Curve_2;
   using X_monotone_curve_2 = typename Traits::X_monotone_curve_2;
-  using Point_2 = typename Traits::Point_2;
 
+  template <typename Point_2>
   auto operator()(const Traits* traits, const Point_2& p1, const Point_2& p2)
   {
-    Point_2 points[] = {p1, p2};
+    Arr_construct_point_2<Traits> toArrPoint{traits};
+
+    typename Traits::Point_2 points[] = {toArrPoint(p1), toArrPoint(p2)};
     Curve_2 curve{points, points + 2};
     auto make_x_monotone = traits->make_x_monotone_2_object();
     std::vector<CGAL::Object> curves;
@@ -126,10 +151,59 @@ struct ConstructSegment<
   }
 };
 
+template <typename AlgebraicKernel_d_1>
+struct ConstructSegment<
+  CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>>
+{
+  using Traits = CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>;
+  using Rational = typename Traits::Rational;
+  using Integer = typename Traits::Integer;
+  using Polynomial_1 = typename Traits::Polynomial_1;
+  using Algebraic_real_1 = typename Traits::Algebraic_real_1;
+  using RationalTraits = CGAL::Rational_traits<typename Traits::Rational>;
+
+  template <typename Point_2>
+  auto operator()(const Traits* traits, const Point_2& p1, const Point_2& p2)
+  {
+    RationalTraits ratTraits;
+
+    Rational dx = p2.x() - p1.x();
+    Rational dy = p2.y() - p1.y();
+    Polynomial_1 x = CGAL::shift(Polynomial_1(1), 1, 0);
+    Polynomial_1 poly_num;
+    Polynomial_1 poly_den;
+
+    if (dx != 0)
+    {
+      Rational mRat = dy / dx;
+      Rational cRat = p1.y() - mRat * p1.x();
+      // y = (a/b) x + (e/f)
+      auto a = ratTraits.numerator(mRat);
+      auto b = ratTraits.denominator(mRat);
+      auto e = ratTraits.numerator(cRat);
+      auto f = ratTraits.denominator(cRat);
+
+      poly_num = f * a * x + b * e;
+      poly_den = Polynomial_1{b * f};
+    }
+    else
+    {
+      throw std::runtime_error(
+        "Vertical split segments are not allowed with rational traits!\n");
+    }
+
+    auto construct_x_monotone_curve_2 =
+      traits->construct_x_monotone_curve_2_object();
+
+    return construct_x_monotone_curve_2(
+      poly_num, poly_den, Algebraic_real_1{p1.x()}, Algebraic_real_1{p2.x()});
+  }
+};
+
 template <typename Arr_>
 template <typename TTraits>
 void SplitEdgeCallback<Arr_>::splitEdges(
-  const Point_2& p1, const Point_2& p2, const TTraits*)
+  const Input_point_2& p1, const Input_point_2& p2, const TTraits* traits)
 {
   X_monotone_curve_2 splitCurve = ConstructSegment<TTraits>{}(traits, p1, p2);
 
@@ -161,17 +235,10 @@ void SplitEdgeCallback<Arr_>::splitEdges(
 template <typename Arr_>
 template <typename Coefficient_>
 void SplitEdgeCallback<Arr_>::
-splitEdges(const Point_2& p1, const Point_2& p2,
-           const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>*)
+splitEdges(const Input_point_2& p1, const Input_point_2& p2,
+           const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>* traits)
 {
-  typename Traits::Construct_x_monotone_segment_2 constructSegment =
-    traits->construct_x_monotone_segment_2_object();
-
-  std::vector<X_monotone_curve_2> curves;
-
-  constructSegment(p1, p2, std::back_inserter(curves));
-
-  X_monotone_curve_2 splitCurve = curves[0];
+  X_monotone_curve_2 splitCurve = ConstructSegment<Traits>{}(traits, p1, p2);
 
   for (auto hei = this->arr->halfedges_begin();
        hei != this->arr->halfedges_end(); ++hei)

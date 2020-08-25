@@ -15,12 +15,7 @@
 #include <vector>
 
 #include <CGAL/Qt/PainterOstream.h>
-#include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arr_polyline_traits_2.h>
-#include <CGAL/Arr_conic_traits_2.h>
-#include <CGAL/Arr_linear_traits_2.h>
-#include <CGAL/Arr_algebraic_segment_traits_2.h>
-#include <CGAL/Arr_Bezier_curve_traits_2.h>
+#include "ForwardDeclarations.h"
 #include "GraphicsSceneMixin.h"
 #include "Utils.h"
 
@@ -40,9 +35,6 @@ public:
   typedef typename Kernel::Segment_2                    Segment_2;
   typedef typename Kernel::Ray_2                        Ray_2;
   typedef typename Kernel::Line_2                       Line_2;
-  typedef typename Kernel::Triangle_2                   Triangle_2;
-  typedef typename Kernel::Iso_rectangle_2              Iso_rectangle_2;
-  typedef typename Kernel::Circle_2                     Circle_2;
 
 public:
   /*! Constructor */
@@ -112,9 +104,6 @@ public: // typedefs
   typedef typename Superclass::Segment_2                Segment_2;
   typedef typename Superclass::Ray_2                    Ray_2;
   typedef typename Superclass::Line_2                   Line_2;
-  typedef typename Superclass::Triangle_2               Triangle_2;
-  typedef typename Superclass::Iso_rectangle_2          Iso_rectangle_2;
-  typedef typename Superclass::Circle_2                 Circle_2;
   typedef typename Traits::Curve_2                      Curve_2;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
 
@@ -152,9 +141,6 @@ public: // typedefs
   typedef typename Superclass::Segment_2                Segment_2;
   typedef typename Superclass::Ray_2                    Ray_2;
   typedef typename Superclass::Line_2                   Line_2;
-  typedef typename Superclass::Triangle_2               Triangle_2;
-  typedef typename Superclass::Iso_rectangle_2          Iso_rectangle_2;
-  typedef typename Superclass::Circle_2                 Circle_2;
   typedef typename Traits::Curve_2                      Curve_2;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
 
@@ -192,9 +178,6 @@ public: // typedefs
   typedef typename Superclass::Segment_2                Segment_2;
   typedef typename Superclass::Ray_2                    Ray_2;
   typedef typename Superclass::Line_2                   Line_2;
-  typedef typename Superclass::Triangle_2               Triangle_2;
-  typedef typename Superclass::Iso_rectangle_2          Iso_rectangle_2;
-  typedef typename Superclass::Circle_2                 Circle_2;
   typedef typename Traits::Curve_2                      Curve_2;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Traits::Construct_x_monotone_curve_2
@@ -224,8 +207,7 @@ public:
   /*! Constructor */
   ArrangementPainterOstream(QPainter* p, QRectF clippingRectangle = QRectF()) :
     Superclass( p, clippingRectangle ),
-    //intersect_2( this->traits.intersect_2_object( ) ),
-    // Why doesn't this work?
+    intersect_2( this->traits.intersect_2_object( ) ),
     construct_x_monotone_curve_2(this->
                                  traits.construct_x_monotone_curve_2_object())
   { }
@@ -239,7 +221,6 @@ public: // methods
   template < typename T >
   ArrangementPainterOstream& operator<<( const T& p )
   {
-    // std::cout<< "In ArrangementPainterOstream& operator T"<<std::endl;
     (*(static_cast< Superclass* >(this)) << p);
     return *this;
   }
@@ -256,35 +237,28 @@ protected: // methods
 
 protected: // members
   Traits traits;
-  //Intersect_2 intersect_2;
+  Intersect_2 intersect_2;
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
 };
 
-template <typename RatKernel, class AlgKernel, class NtTraits>
-class ArrangementPainterOstream<
-  CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>> :
-    public ArrangementPainterOstreamBase<
-      CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>
+template <
+  typename RatKernel, typename AlgKernel, typename NtTraits,
+  typename BoundingTraits>
+class ArrangementPainterOstream<CGAL::Arr_Bezier_curve_traits_2<
+  RatKernel, AlgKernel, NtTraits, BoundingTraits>> :
+    public ArrangementPainterOstreamBase<CGAL::Arr_Bezier_curve_traits_2<
+      RatKernel, AlgKernel, NtTraits, BoundingTraits>>
 {
 
 public: // typedefs
-  typedef CGAL::Arr_Bezier_curve_traits_2< RatKernel, AlgKernel, NtTraits >
+  typedef CGAL::Arr_Bezier_curve_traits_2<
+    RatKernel, AlgKernel, NtTraits, BoundingTraits>
                                                         Traits;
   typedef ArrangementPainterOstreamBase< Traits >       Superclass;
   typedef typename Superclass::Point_2                  Point_2;
-  typedef typename Superclass::Segment_2                Segment_2;
-  typedef typename Superclass::Ray_2                    Ray_2;
-  typedef typename Superclass::Line_2                   Line_2;
-  typedef typename Superclass::Triangle_2               Triangle_2;
-  typedef typename Superclass::Iso_rectangle_2          Iso_rectangle_2;
-  typedef typename Superclass::Circle_2                 Circle_2;
   typedef typename Traits::Curve_2                      Curve_2;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
-  typedef typename Traits::Point_2                      Intersection_point_2;
-  typedef typename Traits::Intersect_2                  Intersect_2;
-  typedef typename Traits::Multiplicity                 Multiplicity;
   typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
-  typedef typename Kernel::FT                           FT;
 
 public:
   /*! Constructor */
@@ -314,9 +288,6 @@ public: // typedefs
   typedef typename Superclass::Segment_2                Segment_2;
   typedef typename Superclass::Ray_2                    Ray_2;
   typedef typename Superclass::Line_2                   Line_2;
-  typedef typename Superclass::Triangle_2               Triangle_2;
-  typedef typename Superclass::Iso_rectangle_2          Iso_rectangle_2;
-  typedef typename Superclass::Circle_2                 Circle_2;
   typedef typename Traits::Curve_2                      Curve_2;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
 
@@ -351,7 +322,6 @@ public:
   typedef Coefficient_                                  Coefficient;
   typedef typename CGAL::Arr_algebraic_segment_traits_2< Coefficient >
                                                         Traits;
-  typedef ArrangementPainterOstreamBase<Traits>         Super;
   typedef ArrangementPainterOstreamBase< Traits >       Superclass;
   typedef typename Traits::CKvA_2                       CKvA_2;
   typedef typename Traits::Point_2                      Point_2;
@@ -368,7 +338,7 @@ public:
 
   void setScene(QGraphicsScene* scene_) override
   {
-    Super::setScene(scene_);
+    Superclass::setScene(scene_);
     this->setupFacade();
   }
 
@@ -379,6 +349,8 @@ public: // methods
 
   ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve );
 
+  // more efficient than repeatedly calling operator<< since we will only call
+  // remapFacadePainter once
   template <typename EdgesIterator>
   void paintEdges(EdgesIterator first, EdgesIterator last)
   {
@@ -393,10 +365,9 @@ public: // methods
   }
 
   // Maybe move these functions to someplace else?
-  std::list<Coord_vec_2> getPointsList(const X_monotone_curve_2& curve);
+  std::vector<Coord_vec_2> getPointsList(const X_monotone_curve_2& curve);
   QTransform getPointsListMapping();
-  QTransform getPointsListMapping(
-    const QTransform& worldTransform, const QGraphicsView* view);
+  QTransform getPointsListMapping(const QTransform& worldTransform);
   void setupFacade();
 
   template < typename T >
@@ -409,6 +380,37 @@ public: // methods
 protected:
   void paintCurve(const X_monotone_curve_2& curve);
   void remapFacadePainter();
+};
+
+template <typename AlgebraicKernel_d_1_>
+class ArrangementPainterOstream<
+  CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1_>> :
+    public ArrangementPainterOstreamBase<
+      CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1_>>
+{
+public:
+  typedef AlgebraicKernel_d_1_                             AlgebraicKernel_d_1;
+  typedef Arr_rational_function_traits_2<AlgebraicKernel_d_1>
+                                                           Traits;
+  typedef typename Traits::Rational                        Rational;
+  typedef ArrangementPainterOstreamBase<Traits>            Superclass;
+  typedef ArrangementPainterOstream<Traits>                Self;
+  typedef typename Traits::X_monotone_curve_2              X_monotone_curve_2;
+  typedef std::pair<double, double>                        Coord_2;
+  typedef std::vector<Coord_2>                             Coord_vec_2;
+
+public:
+  ArrangementPainterOstream(QPainter* p, QRectF clippingRectangle = {}) :
+      Superclass(p, clippingRectangle)
+  {
+  }
+
+  Self& operator<<(const X_monotone_curve_2& curve);
+  std::vector<Coord_vec_2> getPointsList(const X_monotone_curve_2& curve);
+
+protected:
+  template <typename Lambda>
+  void sample_points(const X_monotone_curve_2& curve, Lambda&& lambda);
 };
 
 } // namespace Qt

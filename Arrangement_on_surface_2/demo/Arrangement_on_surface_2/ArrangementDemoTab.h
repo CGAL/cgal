@@ -119,12 +119,12 @@ public:
     QWidget* parent, std::unique_ptr<Arrangement> arrangement_ = nullptr);
   ~ArrangementDemoTab();
   void adjustViewport() override;
+  CGAL::Object getArrangement() const override;
 
 private:
   void initArrangement();
   void initComponents();
   void setupCallbacks();
-  CGAL::Object getArrangement() const override;
 
 protected:
   void slotModelChanged() override;

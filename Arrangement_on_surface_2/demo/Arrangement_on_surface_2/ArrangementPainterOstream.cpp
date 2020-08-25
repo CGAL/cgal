@@ -1,5 +1,9 @@
 #include "ArrangementPainterOstream.h"
+#include "ArrangementTypes.h"
 #include <CGAL/Curved_kernel_via_analysis_2/Curve_renderer_facade.h>
+
+#include <QGraphicsView>
+
 
 namespace CGAL {
 namespace Qt {
@@ -44,12 +48,6 @@ operator<<( const X_monotone_curve_2& curve )
   }
 
   // TODO: implement polyline painting
-#if 0
-  const Point_2& p1 = curve.source( );
-  const Point_2& p2 = curve.target( );
-  Segment_2 seg( p1, p2 );
-  this->painterOstream << seg;
-#endif
   return *this;
 }
 
@@ -60,7 +58,6 @@ auto ArrangementPainterOstream<CGAL::Arr_conic_traits_2<
   -> std::vector<X_monotone_curve_2>
 {
   // see if we intersect the bottom edge of the viewport
-  Intersect_2 intersect_2 = this->traits.intersect_2_object( );
   Point_2 bottomLeft = this->convert( this->clippingRect.bottomLeft( ) );
   Point_2 bottomRight = this->convert( this->clippingRect.bottomRight( ) );
   Point_2 topLeft = this->convert( this->clippingRect.topLeft( ) );
@@ -80,15 +77,15 @@ auto ArrangementPainterOstream<CGAL::Arr_conic_traits_2<
   std::vector< CGAL::Object > rightIntersections;
   std::vector< CGAL::Object > intersections;
 
-  intersect_2( bottom, curve, std::back_inserter( bottomIntersections ) );
-  intersect_2( left, curve, std::back_inserter( leftIntersections ) );
-  intersect_2( top, curve, std::back_inserter( topIntersections ) );
-  intersect_2( right, curve, std::back_inserter( rightIntersections ) );
+  this->intersect_2( bottom, curve, std::back_inserter( bottomIntersections ) );
+  this->intersect_2( left, curve, std::back_inserter( leftIntersections ) );
+  this->intersect_2( top, curve, std::back_inserter( topIntersections ) );
+  this->intersect_2( right, curve, std::back_inserter( rightIntersections ) );
 
-  intersect_2( bottom, curve, std::back_inserter( intersections ) );
-  intersect_2( left, curve, std::back_inserter( intersections ) );
-  intersect_2( top, curve, std::back_inserter( intersections ) );
-  intersect_2( right, curve, std::back_inserter( intersections ) );
+  this->intersect_2( bottom, curve, std::back_inserter( intersections ) );
+  this->intersect_2( left, curve, std::back_inserter( intersections ) );
+  this->intersect_2( top, curve, std::back_inserter( intersections ) );
+  this->intersect_2( right, curve, std::back_inserter( intersections ) );
 
   this->filterIntersectionPoints( intersections );
 
@@ -127,7 +124,10 @@ auto ArrangementPainterOstream<CGAL::Arr_conic_traits_2<
     pointList.push_back( rightEndpt );
   }
 
-  Construct_x_monotone_subcurve_2< Traits > construct_x_monotone_subcurve_2;
+  // TODO: make ArrangementPainterOstream take traits object
+  Traits traits;
+  Construct_x_monotone_subcurve_2<Traits> construct_x_monotone_subcurve_2{
+    &traits};
   std::vector< X_monotone_curve_2 > clippings;
   typename std::list< Point_2 >::iterator pointListItr = pointList.begin( );
   for ( unsigned int i = 0; i < pointList.size( ); i += 2 )
@@ -255,10 +255,13 @@ operator<<( const X_monotone_curve_2& curve )
 }
 
 // Instantiation of Arr_Bezier_traits_2
-template <typename RatKernel, class AlgKernel, class NtTraits>
+template <
+  typename RatKernel, typename AlgKernel, typename NtTraits,
+  typename BoundingTraits>
 std::vector<std::pair<double, double>>
 ArrangementPainterOstream<CGAL::Arr_Bezier_curve_traits_2<
-  RatKernel, AlgKernel, NtTraits>>::getPoints(const X_monotone_curve_2& curve)
+  RatKernel, AlgKernel, NtTraits,
+  BoundingTraits>>::getPoints(const X_monotone_curve_2& curve)
 {
   std::pair<double, double> param_range = curve.parameter_range();
   auto&& supporting_curve = curve.supporting_curve();
@@ -274,11 +277,13 @@ ArrangementPainterOstream<CGAL::Arr_Bezier_curve_traits_2<
   return sampled_points;
 }
 
-template <typename RatKernel, class AlgKernel, class NtTraits>
-ArrangementPainterOstream<
-  CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>&
-ArrangementPainterOstream<CGAL::Arr_Bezier_curve_traits_2<
-  RatKernel, AlgKernel, NtTraits>>::operator<<(const X_monotone_curve_2& curve)
+template <
+  typename RatKernel, typename AlgKernel, typename NtTraits,
+  typename BoundingTraits>
+auto ArrangementPainterOstream<CGAL::Arr_Bezier_curve_traits_2<
+  RatKernel, AlgKernel, NtTraits,
+  BoundingTraits>>::operator<<(const X_monotone_curve_2& curve)
+  -> ArrangementPainterOstream<Traits>&
 {
   auto sampled_points = this->getPoints(curve);
   if (sampled_points.empty()) return *this;
@@ -365,16 +370,17 @@ QTransform ArrangementPainterOstream<
   CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::getPointsListMapping()
 {
   auto worldTransform = this->qp->transform();
-  return this->getPointsListMapping(worldTransform, this->getView());
+  return this->getPointsListMapping(worldTransform);
 }
 
 template <typename Coefficient_>
 QTransform
 ArrangementPainterOstream<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
   getPointsListMapping(
-    const QTransform& worldTransform, const QGraphicsView* view)
+    const QTransform& worldTransform)
 {
-  QRectF viewport = ArrangementDemoGraphicsView::viewportRect(view);
+  auto view = this->getView();
+  QRectF viewport = this->viewportRect();
 
   // (0, 0) ==> map(topLeft)
   QPointF dxdy = worldTransform.map(viewport.topLeft());
@@ -398,13 +404,13 @@ ArrangementPainterOstream<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
 template <typename Coefficient_>
 auto ArrangementPainterOstream<CGAL::Arr_algebraic_segment_traits_2<
   Coefficient_>>::getPointsList(const X_monotone_curve_2& curve)
-  -> std::list<Coord_vec_2>
+  -> std::vector<Coord_vec_2>
 {
   typedef Curve_renderer_facade<CKvA_2> Facade;
   typedef std::pair<double, double> Coord_2;
   typedef std::vector<Coord_2> Coord_vec_2;
 
-  std::list<Coord_vec_2> points;
+  std::vector<Coord_vec_2> points;
   Facade::instance().draw(curve, points);
   return points;
 }
@@ -425,7 +431,7 @@ template <typename Coefficient_>
 void ArrangementPainterOstream<CGAL::Arr_algebraic_segment_traits_2<
   Coefficient_>>::paintCurve(const X_monotone_curve_2& curve)
 {
-  std::list<Coord_vec_2> points = this->getPointsList(curve);
+  std::vector<Coord_vec_2> points = this->getPointsList(curve);
   for (auto& vec : points)
   {
     auto vit = vec.begin();
@@ -451,11 +457,235 @@ void ArrangementPainterOstream<
   CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
   setupFacade()
 {
-  QGraphicsView* view = this->getView();
   typedef Curve_renderer_facade<CKvA_2> Facade;
-  QRectF viewport = ArrangementDemoGraphicsView::viewportRect(view);
+  QGraphicsView* view = this->getView();
+  QRectF viewport = this->viewportRect();
   CGAL::Bbox_2 bbox = this->convert(viewport).bbox();
   Facade::setup(bbox, view->width(), view->height());
+}
+
+// Instantiation of Arr_rational_function_traits_2
+
+template <class T>
+constexpr const T& clamp(const T& v, const T& lo, const T& hi)
+{
+  return (v < lo) ? lo : (hi < v) ? hi : v;
+}
+
+template <typename AlgebraicKernel_d_1_>
+auto ArrangementPainterOstream<CGAL::Arr_rational_function_traits_2<
+  AlgebraicKernel_d_1_>>::operator<<(const X_monotone_curve_2& curve) -> Self&
+{
+  QPainterPath painterPath;
+  const QRectF viewport = this->viewportRect();
+  // overshoot so that the slope would be more accurate
+  double min_y = viewport.top() - 2 * viewport.height();
+  double max_y = viewport.bottom() + 2 * viewport.height();
+
+  bool disconnected = true;
+  bool first_point = true;
+
+  double last_x, last_y;
+
+  // TODO: this is ugly! clean up these conditions
+  auto path_filler = [&](double x, double y) {
+    if (y > max_y || y < min_y)
+    {
+      double x_ = x;
+      double y_ = clamp(y, min_y, max_y);
+
+      // make line to the first out of range point
+      if (!disconnected) { painterPath.lineTo(x_, y_); }
+      // connect between two out of range points when they cross different
+      // boundaries
+      else if (
+        (last_y == min_y && y == max_y) || (last_y == max_y && y == min_y))
+      {
+        painterPath.moveTo(last_x, last_y);
+        painterPath.lineTo(x_, y_);
+      }
+      last_x = x_;
+      last_y = y_;
+
+      disconnected = true;
+    }
+    else if (first_point)
+    {
+      painterPath.moveTo(x, y);
+      disconnected = false;
+    }
+    else
+    {
+      if (disconnected)
+      {
+        painterPath.moveTo(last_x, last_y);
+        disconnected = false;
+      }
+      painterPath.lineTo(x, y);
+    }
+    first_point = false;
+  };
+
+  this->sample_points(curve, path_filler);
+  this->qp->drawPath(painterPath);
+
+  return *this;
+}
+
+template <typename AlgebraicKernel_d_1_>
+auto ArrangementPainterOstream<CGAL::Arr_rational_function_traits_2<
+  AlgebraicKernel_d_1_>>::getPointsList(const X_monotone_curve_2& curve)
+  -> std::vector<Coord_vec_2>
+{
+  std::vector<Coord_vec_2> points_list;
+  Coord_vec_2* cur_list = nullptr;
+
+  const QRectF viewport = this->viewportRect();
+  // overshoot so that the slope would be more accurate
+  double min_y = viewport.top() - 2 * viewport.height();
+  double max_y = viewport.bottom() + 2 * viewport.height();
+
+  bool disconnected = true;
+
+  double last_x, last_y;
+  bool first_point = false;
+
+  // TODO: this is ugly! clean up these conditions
+  auto path_filler = [&](double x, double y) {
+    if (y > max_y || y < min_y)
+    {
+      double x_ = x;
+      double y_ = clamp(y, min_y, max_y);
+
+      if (!disconnected) cur_list->push_back({x_, y_});
+      else if (
+        (last_y == min_y && y == max_y) || (last_y == max_y && y == min_y))
+      {
+        cur_list->push_back({last_x, last_y});
+        cur_list->push_back({x_, y_});
+      }
+      last_x = x_;
+      last_y = y_;
+
+      disconnected = true;
+    }
+    else
+    {
+      if (disconnected)
+      {
+        points_list.emplace_back();
+        cur_list = &points_list.back();
+        if (!first_point)
+          cur_list->push_back({last_x, last_y});
+        disconnected = false;
+      }
+      cur_list->push_back({x, y});
+    }
+    first_point = false;
+  };
+  this->sample_points(curve, path_filler);
+
+  return points_list;
+}
+
+
+template <typename AlgebraicKernel_d_1_>
+template <typename Lambda>
+void ArrangementPainterOstream<
+  CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1_>>::
+  sample_points(const X_monotone_curve_2& curve, Lambda&& lambda)
+{
+  const QRectF viewport = this->viewportRect();
+  qreal min_x = viewport.left();
+  qreal max_x = viewport.right();
+
+  auto&& numer = curve._f.numer();
+  auto&& denom = curve._f.denom();
+  auto eval_at = [&](auto&& x) {
+    return numer.evaluate(x) / denom.evaluate(x);
+  };
+
+  if (  // be conservative and prefer this branch to avoid zero division
+    curve.left_parameter_space_in_x() == ARR_INTERIOR &&
+    curve.left_x().to_interval().second >= min_x)
+  {
+    min_x = curve.left_x().to_interval().second;
+    switch (curve.left_parameter_space_in_y())
+    {
+    case ARR_INTERIOR: {
+      auto left_pt = curve.left().to_double();
+      lambda(min_x, left_pt.second);
+      break;
+    }
+    case ARR_TOP_BOUNDARY: {
+      lambda(min_x, std::numeric_limits<double>::infinity());
+      break;
+    }
+    case ARR_BOTTOM_BOUNDARY: {
+      lambda(min_x, -std::numeric_limits<double>::infinity());
+      break;
+    }
+    default: {
+        CGAL_error();
+    }
+    }
+  }
+  else if (
+    curve.right_parameter_space_in_x() != ARR_INTERIOR ||
+    min_x < curve.right_x().to_interval().first)
+  {
+    lambda(min_x, CGAL::to_double(eval_at(Rational{min_x})));
+  }
+  else // outside of viewport
+  {
+    return;
+  }
+
+  std::pair<double, double> last_pt;
+
+  if (  // be conservative and prefer this branch to avoid zero division
+    curve.right_parameter_space_in_x() == ARR_INTERIOR &&
+    curve.right_x().to_interval().first <= max_x)
+  {
+    max_x = curve.right_x().to_interval().first;
+    switch (curve.right_parameter_space_in_y())
+    {
+    case ARR_INTERIOR: {
+      last_pt = {max_x, curve.right().to_double().second};
+      break;
+    }
+    case ARR_TOP_BOUNDARY: {
+      last_pt = {max_x, std::numeric_limits<double>::infinity()};
+      break;
+    }
+    case ARR_BOTTOM_BOUNDARY: {
+      last_pt = {max_x, -std::numeric_limits<double>::infinity()};
+      break;
+    }
+    default: {
+        CGAL_error();
+    }
+    }
+  }
+  else if (max_x > min_x) // this check is redundant
+  {
+    last_pt = {max_x, CGAL::to_double(eval_at(Rational{max_x}))};
+  }
+  else // outside of viewport
+  {
+    return;
+  }
+
+  static constexpr int dx_pixel = 2;
+  auto view = this->getView();
+  QTransform sceneTransform = view->transform();
+  QLineF ux_line = sceneTransform.map(QLineF{0, 0, 1, 0});
+  Rational dx = dx_pixel * Rational{1} / ux_line.length();
+
+  for (Rational cur_x = min_x + dx; cur_x < max_x - dx; cur_x += dx)
+    lambda(CGAL::to_double(cur_x), CGAL::to_double(eval_at(cur_x)));
+
+  lambda(last_pt.first, last_pt.second);
 }
 
 ARRANGEMENT_DEMO_SPECIALIZE_TRAITS(ArrangementPainterOstream)

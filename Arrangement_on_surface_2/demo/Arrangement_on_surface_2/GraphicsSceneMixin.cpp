@@ -1,5 +1,4 @@
 #include "GraphicsSceneMixin.h"
-#include "ArrangementDemoGraphicsView.h"
 #include <QGraphicsScene>
 #include <QGraphicsView>
 
@@ -18,9 +17,10 @@ QGraphicsScene* GraphicsSceneMixin::getScene() const { return this->scene; }
 
 QRectF GraphicsSceneMixin::viewportRect() const
 {
-  QGraphicsView* viewport = this->getView();
-  return viewport ? ArrangementDemoGraphicsView::viewportRect(viewport)
-                  : QRectF{};
+  QGraphicsView* view = this->getView();
+  return view ? view->mapToScene(QRect{0, 0, view->width(), view->height()})
+                  .boundingRect()
+              : QRectF{};
 }
 
 QPoint GraphicsSceneMixin::fromScene(QPointF p)

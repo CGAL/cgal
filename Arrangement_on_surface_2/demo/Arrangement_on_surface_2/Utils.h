@@ -10,8 +10,7 @@
 #ifndef CGAL_ARRANGEMENTS_DEMO_UTILS_H
 #define CGAL_ARRANGEMENTS_DEMO_UTILS_H
 
-#include "ArrangementDemoGraphicsView.h"
-#include "ArrangementTypes.h"
+#include "ForwardDeclarations.h"
 #include "GraphicsSceneMixin.h"
 #include "ArrTraitsAdaptor.h"
 
@@ -34,7 +33,7 @@ public:
                                                         IntersectionResult;
 
   /*! Constructor */
-  Arr_compute_y_at_x_2( );
+  Arr_compute_y_at_x_2( const Traits* );
 
   CoordinateType
   operator()(const X_monotone_curve_2& curve, const CoordinateType& x);
@@ -44,16 +43,16 @@ public:
 protected:
   template <typename TTraits>
   CoordinateType operator()(
-    const X_monotone_curve_2& curve, const CoordinateType& x, TTraits traits_,
-    CGAL::Arr_oblivious_side_tag);
+    const X_monotone_curve_2& curve, const CoordinateType& x,
+    const TTraits* traits_, CGAL::Arr_oblivious_side_tag);
 
   template <typename TTraits>
   CoordinateType operator()(
-    const X_monotone_curve_2& curve, const CoordinateType& x, TTraits traits_,
-    CGAL::Arr_open_side_tag);
+    const X_monotone_curve_2& curve, const CoordinateType& x,
+    const TTraits* traits_, CGAL::Arr_open_side_tag);
 
 protected:
-  Traits traits;
+  const Traits* traits;
   Intersect_2 intersectCurves;
 };
 
@@ -70,6 +69,8 @@ public:
   typedef typename Traits::Multiplicity                 Multiplicity;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
 
+  Arr_compute_y_at_x_2(const Traits* traits_) : traits(traits_) { }
+
   CoordinateType
   operator()(const X_monotone_curve_2& curve, const CoordinateType& x);
 
@@ -77,28 +78,52 @@ public:
 
 protected:
   X_monotone_curve_2 makeVerticalLine(const CoordinateType& x);
-  Traits traits;
+  const Traits* traits;
 };
 
-template <typename RatKernel, class AlgKernel, class NtTraits>
-struct Arr_compute_y_at_x_2<
-  CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>> :
-    public GraphicsSceneMixin
+template <
+  typename RatKernel, typename AlgKernel, typename NtTraits,
+  typename BoundingTraits>
+class Arr_compute_y_at_x_2<CGAL::Arr_Bezier_curve_traits_2<
+  RatKernel, AlgKernel, NtTraits, BoundingTraits>> : public GraphicsSceneMixin
 {
-  typedef CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>
-    Traits;
+public:
+  typedef CGAL::Arr_Bezier_curve_traits_2<
+    RatKernel, AlgKernel, NtTraits, BoundingTraits> Traits;
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
   typedef typename Traits::Rational Rational;
   typedef typename Traits::Algebraic Algebraic;
   typedef typename Traits::Point_2 Point_2;
 
-  Algebraic operator()(const X_monotone_curve_2& curve, const Rational& x);
+  Arr_compute_y_at_x_2(const Traits*) { }
 
+  Algebraic operator()(const X_monotone_curve_2& curve, const Rational& x);
+  double approx(const X_monotone_curve_2& curve, const Rational& x);
   Algebraic get_t(const X_monotone_curve_2& curve, const Rational& x);
+};
+
+template <typename AlgebraicKernel_d_1>
+class Arr_compute_y_at_x_2<
+  CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>> :
+    public GraphicsSceneMixin
+{
+public:
+  typedef CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1> Traits;
+  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+  typedef typename Traits::Algebraic_real_1 Algebraic_real_1;
+  typedef typename Traits::Point_2 Point_2;
+  typedef typename Traits::Rational Rational;
+
+  Arr_compute_y_at_x_2(const Traits*) { }
+
+  Algebraic_real_1
+  operator()(const X_monotone_curve_2& curve, const Algebraic_real_1& x);
+  Rational
+  operator()(const X_monotone_curve_2& curve, const Rational& x);
   double approx(const X_monotone_curve_2& curve, const Rational& x);
 };
 
-template <class ArrTraits>
+template <typename ArrTraits>
 class Compute_squared_distance_2_base : public GraphicsSceneMixin
 {
 };
@@ -184,26 +209,39 @@ public: // methods
   double operator() ( const Point_2& p, const X_monotone_curve_2& c ) const;
 };
 
-template <typename RatKernel, typename AlgKernel, typename NtTraits>
-class Compute_squared_distance_2<
-  CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>> :
-    public Compute_squared_distance_2_base<
-      CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>
+template <
+  typename RatKernel, typename AlgKernel, typename NtTraits,
+  typename BoundingTraits>
+class Compute_squared_distance_2<CGAL::Arr_Bezier_curve_traits_2<
+  RatKernel, AlgKernel, NtTraits, BoundingTraits>> :
+    public Compute_squared_distance_2_base<CGAL::Arr_Bezier_curve_traits_2<
+      RatKernel, AlgKernel, NtTraits, BoundingTraits>>
 {
 public:
-  typedef RatKernel Kernel;
-  typedef CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>
+  typedef CGAL::Arr_Bezier_curve_traits_2<
+    RatKernel, AlgKernel, NtTraits, BoundingTraits>
     Traits;
-  typedef Compute_squared_distance_2_base<Traits> Superclass;
-  // _Conic_point_2< AlgKernel > : public AlgKernel::Point_2
-  typedef typename Traits::Point_2 Conic_point_2;
-  typedef typename Kernel::FT FT;
+  typedef typename ArrTraitsAdaptor<Traits>::Kernel Kernel;
   typedef typename Kernel::Point_2 Point_2;
-  typedef typename Kernel::Segment_2 Segment_2;
-  typedef typename Traits::Curve_2 Curve_2;
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
 
 public: // methods
+  double operator()(const Point_2& p, const X_monotone_curve_2& c) const;
+};
+
+template <typename AlgebraicKernel_d_1>
+class Compute_squared_distance_2<
+  CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>> :
+    public Compute_squared_distance_2_base<
+      CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>>
+{
+public:
+  typedef CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1> Traits;
+  typedef typename ArrTraitsAdaptor<Traits>::Kernel Kernel;
+  typedef typename Kernel::Point_2 Point_2;
+  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+
+public:
   double operator()(const Point_2& p, const X_monotone_curve_2& c) const;
 };
 
@@ -236,7 +274,6 @@ public:
 
 public:
   double operator()(const Point_2& p, const X_monotone_curve_2& c) const;
-
 };
 
 template <typename ArrTraits>
@@ -257,7 +294,7 @@ public:
   typedef typename ArrTraits::Point_2                   Point_2;
   typedef typename Kernel::Point_2                      Kernel_point_2;
 
-  Construct_x_monotone_subcurve_2( );
+  Construct_x_monotone_subcurve_2( const ArrTraits* traits_ );
 
   /*
     Return the subcurve of curve bracketed by pLeft and pRight.
@@ -270,8 +307,7 @@ public:
                                   const boost::optional<Point_2>& pRight );
 
 protected:
-  ArrTraits traits;
-  Intersect_2 intersect_2;
+  const ArrTraits* traits;
   Split_2 split_2;
   Compare_x_2 compare_x_2;
   Arr_compute_y_at_x_2< ArrTraits > compute_y_at_x;
@@ -306,6 +342,10 @@ public:
   typedef typename ArrTraits::Point_2                   Point_2;
   typedef typename Kernel::Point_2                      Kernel_point_2;
 
+  Construct_x_monotone_subcurve_2( const ArrTraits* )
+  {
+  }
+
   /*
     Return the subcurve of curve bracketed by pLeft and pRight.
   */
@@ -315,12 +355,15 @@ public:
 
 }; // class Construct_x_monotone_subcurve_2 for Arr_conic_traits_2
 
-template <typename RatKernel, typename AlgKernel, typename NtTraits>
-class Construct_x_monotone_subcurve_2<
-  CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>
+template <
+  typename RatKernel, typename AlgKernel, typename NtTraits,
+  typename BoundingTraits>
+class Construct_x_monotone_subcurve_2<CGAL::Arr_Bezier_curve_traits_2<
+  RatKernel, AlgKernel, NtTraits, BoundingTraits>>
 {
 public:
-  typedef CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>
+  typedef CGAL::Arr_Bezier_curve_traits_2<
+    RatKernel, AlgKernel, NtTraits, BoundingTraits>
                                                         ArrTraits;
   typedef typename ArrTraits::X_monotone_curve_2        X_monotone_curve_2;
   typedef typename ArrTraits::Split_2                   Split_2;
@@ -331,7 +374,7 @@ public:
   typedef typename ArrTraits::Compare_x_2               Compare_x_2;
   typedef typename ArrTraits::Point_2                   Point_2;
 
-  Construct_x_monotone_subcurve_2();
+  Construct_x_monotone_subcurve_2(const ArrTraits* traits_);
 
   /*
     Return the subcurve of curve bracketed by pLeft and pRight.
@@ -341,14 +384,55 @@ public:
     const boost::optional<Point_2>& pRight);
 
 protected:
-  ArrTraits traits;
-  Intersect_2 intersect_2;
+  const ArrTraits* traits;
   Split_2 split_2;
   Compare_x_2 compare_x_2;
   Arr_compute_y_at_x_2< ArrTraits > compute_y_at_x;
   Construct_min_vertex_2 construct_min_vertex_2;
   Construct_max_vertex_2 construct_max_vertex_2;
 }; // class Construct_x_monotone_subcurve_2 for Arr_conic_traits_2
+
+template <typename AlgebraicKernel_d_1>
+class Construct_x_monotone_subcurve_2<
+  CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>>
+{
+public:
+  typedef CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>
+                                                        Traits;
+  typedef typename ArrTraitsAdaptor<Traits>::Kernel     Kernel;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
+  typedef typename Traits::Split_2                      Split_2;
+  typedef typename Traits::Intersect_2                  Intersect_2;
+  typedef typename Traits::Multiplicity                 Multiplicity;
+  typedef typename Traits::Construct_min_vertex_2       Construct_min_vertex_2;
+  typedef typename Traits::Construct_max_vertex_2       Construct_max_vertex_2;
+  typedef typename Traits::Compare_x_2                  Compare_x_2;
+  typedef typename Kernel::FT                           FT;
+  typedef typename ArrTraitsAdaptor< Traits >::CoordinateType
+                                                        CoordinateType;
+  typedef typename Traits::Point_2                      Point_2;
+  typedef typename Kernel::Point_2                      Kernel_point_2;
+
+  Construct_x_monotone_subcurve_2( const Traits* traits_ );
+
+  /*
+    Return the subcurve of curve bracketed by pLeft and pRight.
+
+    We assume pLeft and pRight don't lie on the curve and always do a vertical
+    projection.
+  */
+  X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve,
+                                  const boost::optional<Point_2>& pLeft,
+                                  const boost::optional<Point_2>& pRight );
+
+protected:
+  const Traits* traits;
+  Split_2 split_2;
+  Compare_x_2 compare_x_2;
+  Arr_compute_y_at_x_2< Traits > compute_y_at_x;
+  Construct_min_vertex_2 construct_min_vertex_2;
+  Construct_max_vertex_2 construct_max_vertex_2;
+}; // class Construct_x_monotone_subcurve_2
 
 /**
    Converts between Kernel points and Arrangement points.
@@ -358,20 +442,40 @@ protected:
 template <typename ArrTraits>
 class Arr_construct_point_2
 {
+  typedef ArrTraits                                              Traits;
   typedef typename ArrTraits::Point_2                            Point_2;
   typedef typename ArrTraitsAdaptor< ArrTraits >::CoordinateType CoordinateType;
   typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel         Kernel;
   typedef typename Kernel::Point_2                               Kernel_point_2;
+  typedef typename Kernel::FT                                    FT;
 
 public:
+  Arr_construct_point_2(const Traits* traits_) : traits(traits_) { }
+
   Point_2 operator()( const Kernel_point_2& pt );
 
-  template <typename T >
-  Point_2 operator()( const T& x, const T& y );
+  template <typename T, typename U>
+  Point_2 operator()(const T& x, const U& y)
+  {
+    return this->operator()(FT{x}, FT{y}, traits);
+  }
+
+  template <typename P>
+  Point_2 operator()(const P& p)
+  {
+    return this->operator()(FT{p.x()}, FT{p.y()}, traits);
+  }
 
 protected:
   template <typename T, typename TTraits >
-  Point_2 operator()(const T& x, const T& y, TTraits /* traits */);
+  Point_2 operator()(const T& x, const T& y, const TTraits*);
+
+  template <typename T, typename AlgebraicKernel_d_1>
+  Point_2 operator()(
+    const T& x, const T& y,
+    const CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>*);
+
+  const Traits* traits;
 };
 
 class Find_nearest_edge_base : public GraphicsSceneMixin
@@ -396,7 +500,6 @@ public: // typedefs
   typedef typename Arrangement::Vertex_const_handle     Vertex_const_handle;
   typedef typename Arrangement::Ccb_halfedge_const_circulator
     Ccb_halfedge_const_circulator;
-  typedef typename Point_curve_distance::FT             FT;
   typedef typename Arrangement::Hole_const_iterator     Hole_const_iterator;
   typedef typename Arrangement::Halfedge_around_vertex_const_circulator
     Halfedge_around_vertex_const_circulator;
@@ -426,7 +529,6 @@ protected: // member methods
 protected: // member fields
   Arrangement* arr;
   Point_curve_distance pointCurveDistance;
-  Arr_construct_point_2< ArrTraits > toArrPoint;
 
 }; // class Find_nearest_edge
 

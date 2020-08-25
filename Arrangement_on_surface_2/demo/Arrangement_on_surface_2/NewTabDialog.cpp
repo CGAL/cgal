@@ -34,6 +34,8 @@ NewTabDialog::NewTabDialog( QWidget* parent ) :
                                 ArrangementDemoWindow::ALGEBRAIC_TRAITS );
   this->buttonGroup->addButton( this->ui->bezierRadioButton,
                                 ArrangementDemoWindow::BEZIER_TRAITS );
+  this->buttonGroup->addButton( this->ui->rationalFunctionRadioButton,
+                                ArrangementDemoWindow::RATIONAL_FUNCTION_TRAITS );
 #endif
 }
 

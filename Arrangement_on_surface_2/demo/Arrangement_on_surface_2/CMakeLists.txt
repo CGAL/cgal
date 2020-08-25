@@ -9,6 +9,10 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
   cmake_policy(SET CMP0053 OLD)
 endif()
 
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
+
 find_package(Qt5 COMPONENTS Gui Widgets)
 find_package(CGAL COMPONENTS Core Qt5 )
 
@@ -24,7 +28,8 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
               NewTabDialog.ui
               OverlayDialog.ui
               ArrangementDemoPropertiesDialog.ui
-              AlgebraicCurveInputDialog.ui)
+              AlgebraicCurveInputDialog.ui
+              RationalCurveInputDialog.ui)
 
   qt5_wrap_cpp(CGAL_Qt5_MOC_FILES
                ArrangementDemoWindow.h
@@ -34,6 +39,7 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
                OverlayDialog.h
                ArrangementDemoPropertiesDialog.h
                AlgebraicCurveInputDialog.h
+               RationalCurveInputDialog.h
                ColorItemEditor.h
                DeleteCurveModeItemEditor.h
                PropertyValueDelegate.h)
@@ -59,6 +65,7 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
                  OverlayDialog.cpp
                  ArrangementDemoPropertiesDialog.cpp
                  AlgebraicCurveInputDialog.cpp
+                 RationalCurveInputDialog.cpp
                  ColorItemEditor.cpp
                  PropertyValueDelegate.cpp
                  DeleteCurveMode.cpp
@@ -74,6 +81,7 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
                  GridGraphicsItem.cpp
                  PointSnapper.cpp
                  CurveInputMethods.cpp
+                 FloodFill.cpp
                  ${CGAL_Qt5_MOC_FILES}
                  ${arrangement_2_uis}
                  ${CGAL_Qt5_RESOURCE_FILES})

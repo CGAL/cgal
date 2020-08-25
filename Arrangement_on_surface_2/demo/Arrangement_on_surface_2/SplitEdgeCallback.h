@@ -13,18 +13,13 @@
 #define SPLIT_EDGE_CALLBACK_H
 
 #include "GraphicsViewCurveInput.h"
+#include "ForwardDeclarations.h"
 
 class QGraphicsSceneMouseEvent;
 class QGraphicsScene;
 class QGraphicsLineItem;
 class PointSnapperBase;
 class QColor;
-
-namespace CGAL
-{
-template <typename Coefficient_>
-class Arr_algebraic_segment_traits_2;
-}
 
 class SplitEdgeCallbackBase :
     public CGAL::Qt::Callback,
@@ -70,15 +65,15 @@ protected:
     CGAL::Qt::CurveType type) override;
 
   template <class TTraits>
-  void splitEdges(const Point_2& p1, const Point_2& p2, const TTraits*);
+  void
+  splitEdges(const Input_point_2& p1, const Input_point_2& p2, const TTraits*);
 
   template <class Coefficient_>
   void splitEdges(
-    const Point_2& p1, const Point_2& p2,
+    const Input_point_2& p1, const Input_point_2& p2,
     const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>*);
 
   Arrangement* arr;
-  const Traits* traits;
   Intersect_2 intersectCurves;
   Equal_2 areEqual;
 }; // class SplitEdgeCallback

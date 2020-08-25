@@ -24,8 +24,6 @@ public:
 
   void setBackgroundColor( QColor color );
   QColor getBackgroundColor( ) const;
-  QRectF viewportRect() const;
-  static QRectF viewportRect(const QGraphicsView* view);
   void resetTransform();
 
 protected:

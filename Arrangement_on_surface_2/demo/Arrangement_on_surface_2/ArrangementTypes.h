@@ -24,6 +24,8 @@
   #include <CGAL/Arr_conic_traits_2.h>
   #include <CGAL/Arr_algebraic_segment_traits_2.h>
   #include <CGAL/Arr_Bezier_curve_traits_2.h>
+  #include <CGAL/Arr_rational_function_traits_2.h>
+  #include <CGAL/Algebraic_kernel_d_1.h>
 #else
   #include <CGAL/CORE_BigRat.h>
   #include <CGAL/Exact_rational.h>
@@ -127,18 +129,27 @@ typedef CGAL::Arrangement_with_history_2<Lin_traits, Lin_dcel>
   typedef Dcel<Bezier_traits>                           Bezier_dcel;
   typedef CGAL::Arrangement_with_history_2<Bezier_traits, Bezier_dcel>
                                                         Bezier_arr;
+
+  // Rational functions
+  typedef CGAL::Algebraic_kernel_d_1<Core_integer>      AK1;
+  typedef CGAL::Arr_rational_function_traits_2<AK1>     Rational_traits;
+  typedef Dcel<Rational_traits>                         Rational_dcel;
+  typedef CGAL::Arrangement_with_history_2<Rational_traits, Rational_dcel>
+                                                        Rational_arr;
 #endif
 }
 
 #ifdef CGAL_USE_CORE
   #define ARRANGEMENT_DEMO_SPECIALIZE_ARR_CORE(class_name)                     \
     template class class_name<demo_types::Conic_arr>;                          \
+    template class class_name<demo_types::Alg_seg_arr>;                        \
     template class class_name<demo_types::Bezier_arr>;                         \
-    template class class_name<demo_types::Alg_seg_arr>;
+    template class class_name<demo_types::Rational_arr>;
   #define ARRANGEMENT_DEMO_SPECIALIZE_TRAITS_CORE(class_name)                  \
     template class class_name<demo_types::Conic_traits>;                       \
+    template class class_name<demo_types::Alg_seg_traits>;                     \
     template class class_name<demo_types::Bezier_traits>;                      \
-    template class class_name<demo_types::Alg_seg_traits>;
+    template class class_name<demo_types::Rational_traits>;
 #else
   #define ARRANGEMENT_DEMO_SPECIALIZE_ARR_CORE(class_name)
   #define ARRANGEMENT_DEMO_SPECIALIZE_TRAITS_CORE(class_name)

@@ -11,29 +11,7 @@
 #define CGAL_ARRANGEMENTS_ARR_TRAITS_ADAPTOR_H
 
 #include <CGAL/Cartesian.h>
-
-namespace CGAL
-{
-template <typename Kernel_>
-class Arr_segment_traits_2;
-
-template <typename Kernel_>
-class Arr_linear_traits_2;
-
-template <typename SegmentTraits_2>
-class Arr_polyline_traits_2;
-
-template <class Rat_kernel_, class Alg_kernel_, class Nt_traits_>
-class Arr_conic_traits_2;
-
-template <
-  typename RatKernel_, typename AlgKernel_, typename NtTraits_,
-  typename BoundingTraits_>
-class Arr_Bezier_curve_traits_2;
-
-template <class Coefficient_>
-class Arr_algebraic_segment_traits_2;
-} // namespace CGAL
+#include "ForwardDeclarations.h"
 
 /**
  * Support for new ArrTraits should specify types:
@@ -110,7 +88,19 @@ class ArrTraitsAdaptor<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>
 public:
   typedef Coefficient_ Coefficient;
   typedef typename CGAL::Arr_algebraic_segment_traits_2<Coefficient> ArrTraits;
-  typedef typename ArrTraits::Point_2 Point_2; // CKvA_2
+  typedef typename ArrTraits::Point_2 Point_2;
+  typedef typename ArrTraits::Algebraic_real_1 CoordinateType;
+  typedef CGAL::Cartesian<typename ArrTraits::Bound> Kernel;
+};
+
+template <typename AlgebraicKernel_d_1>
+class ArrTraitsAdaptor<
+  CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>>
+{
+public:
+  typedef typename CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>
+    ArrTraits;
+  typedef typename ArrTraits::Point_2 Point_2;
   typedef typename ArrTraits::Algebraic_real_1 CoordinateType;
   typedef CGAL::Cartesian<typename ArrTraits::Bound> Kernel;
 };

@@ -464,6 +464,12 @@ CGAL::Bbox_2 curvesBbox(const std::unique_ptr<demo_types::Bezier_arr>&)
   return {};
 }
 
+template <>
+CGAL::Bbox_2 curvesBbox(const std::unique_ptr<demo_types::Rational_arr>&)
+{
+  return {};
+}
+
 template <typename Arr>
 static CGAL::Bbox_2 pointsBbox(const std::unique_ptr<Arr>& arr)
 {
@@ -485,6 +491,19 @@ CGAL::Bbox_2 pointsBbox<demo_types::Bezier_arr>(
   for (auto it = arr->vertices_begin(); it != arr->vertices_end(); it++)
   {
     std::pair<double, double> p = it->point().approximate();
+    bb += makeFinite({p.first, p.second, p.first, p.second});
+  }
+  return bb;
+}
+
+template <>
+CGAL::Bbox_2 pointsBbox<demo_types::Rational_arr>(
+  const std::unique_ptr<demo_types::Rational_arr>& arr)
+{
+  CGAL::Bbox_2 bb;
+  for (auto it = arr->vertices_begin(); it != arr->vertices_end(); it++)
+  {
+    std::pair<double, double> p = it->point().to_double();
     bb += makeFinite({p.first, p.second, p.first, p.second});
   }
   return bb;

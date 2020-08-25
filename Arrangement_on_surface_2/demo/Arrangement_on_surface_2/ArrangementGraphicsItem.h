@@ -17,27 +17,8 @@
 
 #include "GraphicsSceneMixin.h"
 #include "PointsGraphicsItem.h"
-
-template <typename T>
-class ArrangementPainterOstream;
-
-namespace CGAL
-{
-template <typename T, typename U, typename I, typename S>
-class Arr_Bezier_curve_traits_2;
-template <typename T, typename U, typename I>
-class Arr_conic_traits_2;
-template <typename T>
-class Arr_linear_traits_2;
-template <typename T>
-class Arr_algebraic_segment_traits_2;
-template <typename T>
-class Arr_segment_traits_2;
-template <typename T>
-class Arr_polyline_traits_2;
-template <typename RatK, typename AlgK, typename Nt, typename BoundingTratits>
-class Arr_Bezier_curve_traits_2;
-} // namespace CGAL
+#include "ForwardDeclarations.h"
+#include "FloodFill.h"
 
 namespace CGAL {
 namespace Qt {
@@ -102,6 +83,17 @@ protected:
   void
   paint(QPainter*, const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>*);
 
+  template <typename AlgebraicKernel_d_1>
+  void paint(
+    QPainter*,
+    const CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>*);
+
+  template <typename TTraits>
+  void paintWithFloodFill(QPainter*, const TTraits*);
+
+  // TODO: Move all the bounding box stuff to a separate class
+  // CurveGraphicsItem would benefit from that as well!
+
   void updateBoundingBox();
 
   template <typename TTraits>
@@ -114,9 +106,20 @@ protected:
   template <typename Kernel_>
   void updateBoundingBox(const CGAL::Arr_linear_traits_2<Kernel_>*);
 
+  template <typename AlgebraicKernel_d_1>
+  void updateBoundingBox(
+    const CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>*);
+
+  template <typename TTraits>
+  void paintEdges(QPainter*, const TTraits*);
+
+  template <typename Coefficient_>
+  void paintEdges(
+    QPainter*, const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>*);
+
   void paintFaces(QPainter* painter);
 
-  void paintFaces(QPainter*, QImage&);
+  void paintFacesFloodFill(QPainter*, QImage&);
 
   void paintFace(Face_handle f, QPainter* painter);
 
@@ -165,11 +168,9 @@ protected:
 
 protected:
   Arrangement* arr;
-
-  // related to painting algebraic faces
+  FloodFill flood_fill;
   QImage tempImage;
-  std::vector<std::pair<uint16_t, uint16_t>> fill_stack;
-  static constexpr int margin = 2;
+  static constexpr int margin = 3;
 }; // class ArrangementGraphicsItem
 
 } // namespace Qt

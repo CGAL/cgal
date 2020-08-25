@@ -48,35 +48,7 @@ void ArrangementDemoGraphicsView::paintEvent(QPaintEvent* event)
   QGraphicsView::paintEvent(event);
 }
 
-QRectF ArrangementDemoGraphicsView::viewportRect() const
-{
-  return ArrangementDemoGraphicsView::viewportRect(this);
-}
-
 void ArrangementDemoGraphicsView::resetTransform()
 {
   this->setTransform({1.0, 0.0, 0.0, -1.0, 0.0, 0.0});
-}
-
-QRectF
-ArrangementDemoGraphicsView::viewportRect(const QGraphicsView* view)
-{
-  QPointF p1 = view->mapToScene(0, 0);
-  QPointF p2 = view->mapToScene(view->width(), view->height());
-  // we also need those because view might rotate
-  // rotation of rectangle is a parallelogram
-  QPointF p3 = view->mapToScene(view->width(), 0);
-  QPointF p4 = view->mapToScene(0, view->height());
-
-  double xmin =
-    (std::min)((std::min)(p1.x(), p2.x()), (std::min)(p3.x(), p4.x()));
-  double xmax =
-    (std::max)((std::max)(p1.x(), p2.x()), (std::max)(p3.x(), p4.x()));
-  double ymin =
-    (std::min)((std::min)(p1.y(), p2.y()), (std::min)(p3.y(), p4.y()));
-  double ymax =
-    (std::max)((std::max)(p1.y(), p2.y()), (std::max)(p3.y(), p4.y()));
-
-  QRectF res = QRectF(QPointF(xmin, ymin), QPointF(xmax, ymax));
-  return res;
 }

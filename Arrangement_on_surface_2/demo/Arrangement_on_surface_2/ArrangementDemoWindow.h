@@ -42,6 +42,7 @@ public:
     CONIC_TRAITS,
     ALGEBRAIC_TRAITS,
     BEZIER_TRAITS,
+    RATIONAL_FUNCTION_TRAITS,
     NONE,
   } TraitsType;
 
@@ -81,6 +82,7 @@ public Q_SLOTS:
   void on_actionSplit_toggled(bool);
   void on_actionFill_toggled(bool);
   void on_actionAddAlgebraicCurve_triggered();
+  void on_actionAddRationalCurve_triggered();
 
 Q_SIGNALS:
   void modelChanged();

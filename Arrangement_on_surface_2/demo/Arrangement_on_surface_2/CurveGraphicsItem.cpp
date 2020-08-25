@@ -3,6 +3,8 @@
 #include "ArrangementTypes.h"
 #include "Utils.h"
 
+#include <limits>
+
 namespace CGAL
 {
 namespace Qt
@@ -174,6 +176,15 @@ void CurveGraphicsItem<demo_types::Bezier_traits>::updateBoundingBox()
   }
 
   this->boundingBox = remove_infs(this->boundingBox, this->viewportRect());
+}
+
+constexpr double max_double = std::numeric_limits<double>::max();
+
+template <>
+void CurveGraphicsItem<demo_types::Rational_traits>::updateBoundingBox()
+{
+  this->prepareGeometryChange();
+  this->boundingBox = {-max_double, -max_double, max_double, max_double};
 }
 
 ARRANGEMENT_DEMO_SPECIALIZE_TRAITS(CurveGraphicsItem)

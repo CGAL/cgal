@@ -49,23 +49,10 @@
     </rect>
    </property>
    <property name="text">
-    <string>Enter polynomial with terms in the format of  Σax^by^c,</string>
+    <string>Enter the polynomial representing the curve to insert</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>60</y>
-     <width>341</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Eg., To show the curve x^2-y+2=0, enter x^2-y+2</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -75,7 +62,20 @@
     </rect>
    </property>
    <property name="text">
-    <string>a, b, c are integers</string>
+    <string>Eg. for a circle at (10, 10) with radius 10 enter</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>60</y>
+     <width>341</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>(x - 10)^2 + (y - 10)^2 = 10^2</string>
    </property>
   </widget>
  </widget>

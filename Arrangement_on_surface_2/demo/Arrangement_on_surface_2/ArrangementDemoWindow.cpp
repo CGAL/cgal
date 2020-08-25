@@ -9,6 +9,7 @@
 
 #include "ArrangementDemoWindow.h"
 #include "AlgebraicCurveInputDialog.h"
+#include "RationalCurveInputDialog.h"
 #include "AlgebraicCurveParser.h"
 #include "ArrangementDemoPropertiesDialog.h"
 #include "ArrangementDemoTab.h"
@@ -122,12 +123,14 @@ static constexpr ArrangementDemoWindow::TraitsType traitFromType()
   else if (is_same<T, Conic_arr>::value) return TraitsType::CONIC_TRAITS;
   else if (is_same<T, Alg_seg_arr>::value) return TraitsType::ALGEBRAIC_TRAITS;
   else if (is_same<T, Bezier_arr>::value) return TraitsType::BEZIER_TRAITS;
+  else if (is_same<T, Rational_arr>::value) return TraitsType::RATIONAL_FUNCTION_TRAITS;
 #endif
   else return TraitsType::NONE;
 }
 
 template <class Lambda>
-static void visitTraitsType(ArrangementDemoWindow::TraitsType tt, Lambda lambda)
+static void
+visitArrangementType(ArrangementDemoWindow::TraitsType tt, Lambda lambda)
 {
   using TraitsType = ArrangementDemoWindow::TraitsType;
   using namespace demo_types;
@@ -154,12 +157,15 @@ static void visitTraitsType(ArrangementDemoWindow::TraitsType tt, Lambda lambda)
   case TraitsType::BEZIER_TRAITS:
     lambda(TypeHolder<Bezier_arr>{});
     break;
+  case TraitsType::RATIONAL_FUNCTION_TRAITS:
+    lambda(TypeHolder<Rational_arr>{});
+    break;
 #endif
   }
 }
 
 template <class Lambda>
-static void forEachTraitsType(Lambda lambda)
+static void forEachArrangementType(Lambda lambda)
 {
   using namespace demo_types;
 
@@ -170,13 +176,16 @@ static void forEachTraitsType(Lambda lambda)
   lambda(TypeHolder<Conic_arr>{});
   lambda(TypeHolder<Alg_seg_arr>{});
   lambda(TypeHolder<Bezier_arr>{});
+  lambda(TypeHolder<Rational_arr>{});
 #endif
 }
 
 QString ArrangementDemoWindow::makeTabLabel(TraitsType tt)
 {
-  static const char* typeNames[] = {"Segment", "Polyline",  "Conic",
-                                    "Linear",  "Algebraic", "Bezier"};
+  static const char* typeNames[] = {
+    "Segment", "Polyline", "Linear", "Conic", "Algebraic",
+    "Bezier",  "Rational Functions"
+  };
   return QString("%1 - %2").arg(this->tabLabelCounter++).arg(typeNames[tt]);
 }
 
@@ -184,7 +193,7 @@ ArrangementDemoTabBase* ArrangementDemoWindow::makeTab(TraitsType tt)
 {
   ArrangementDemoTabBase* demoTab;
   QString tabLabel = makeTabLabel(tt);
-  visitTraitsType(tt, [&](auto type_holder) {
+  visitArrangementType(tt, [&](auto type_holder) {
     demoTab =
       new ArrangementDemoTab<typename decltype(type_holder)::type>(this);
   });
@@ -255,6 +264,8 @@ void ArrangementDemoWindow::hideInsertMethods()
 {
   this->ui->actionAddAlgebraicCurve->setVisible(false);
   this->ui->actionAddAlgebraicCurve->setChecked(false);
+  this->ui->actionAddRationalCurve->setVisible(false);
+  this->ui->actionAddRationalCurve->setChecked(false);
   this->ui->actionSegment->setVisible(false);
   this->ui->actionSegment->setChecked(false);
   this->ui->actionCircle->setVisible(false);
@@ -315,7 +326,12 @@ void ArrangementDemoWindow::showInsertMethods()
     this->ui->actionBezier->setVisible(true);
     this->ui->actionBezier->activate(QAction::Trigger);
     break;
+  case RATIONAL_FUNCTION_TRAITS:
+    this->ui->actionAddRationalCurve->setVisible(true);
+    break;
 #endif
+  default:
+    CGAL_error();
   }
 }
 
@@ -359,8 +375,7 @@ void ArrangementDemoWindow::on_actionAddAlgebraicCurve_triggered()
   if (newDialog.exec() == QDialog::Accepted)
   {
     using namespace demo_types;
-
-    typedef Alg_seg_traits::Polynomial_2 Polynomial_2;
+    using Polynomial_2 = Alg_seg_traits::Polynomial_2;
 
     std::string algebraicExpression = newDialog.getLineEditText();
     auto poly = AlgebraicCurveParser<Polynomial_2>{}(algebraicExpression);
@@ -376,16 +391,64 @@ void ArrangementDemoWindow::on_actionAddAlgebraicCurve_triggered()
       return;
     }
 
+    auto currentTab = this->getCurrentTab().first;
+    Alg_seg_arr* arr;
+    if (!CGAL::assign(arr, currentTab->getArrangement()))
+      CGAL_error();
+
     // To create a curve
-    Alg_seg_traits alg_traits;
-    auto construct_curve = alg_traits.construct_curve_2_object();
+    auto construct_curve = arr->traits()->construct_curve_2_object();
+    auto cv = construct_curve(*poly);
 
     // adding curve to the arrangement
-    auto currentTab = this->getCurrentTab().first;
     auto algCurveInputCallback = currentTab->getCurveInputCallback();
-    auto cv = construct_curve(*poly);
     Q_EMIT algCurveInputCallback->generate(CGAL::make_object(cv));
     currentTab->adjustViewport();
+  }
+#endif
+}
+
+void ArrangementDemoWindow::on_actionAddRationalCurve_triggered()
+{
+#ifdef CGAL_USE_CORE
+  RationalCurveInputDialog newDialog;
+
+  if (newDialog.exec() == QDialog::Accepted)
+  {
+    using namespace demo_types;
+    using Polynomial_1 = Rational_traits::Polynomial_1;
+
+    std::string numeratorExpression = newDialog.getNumeratorText();
+    std::string denominatorExpression = newDialog.getDenominatorText();
+
+    auto poly_num = AlgebraicCurveParser<Polynomial_1>{}(numeratorExpression);
+    auto poly_den = AlgebraicCurveParser<Polynomial_1>{}(denominatorExpression);
+
+    if (!poly_num || !poly_den)
+    {
+      QMessageBox msgBox;
+      msgBox.setWindowTitle("Wrong Expression");
+      msgBox.setIcon(QMessageBox::Critical);
+      msgBox.setText(QString::fromStdString("Invalid Expression"));
+      msgBox.setStandardButtons(QMessageBox::Ok);
+      msgBox.exec();
+      return;
+    }
+
+    auto currentTab = this->getCurrentTab().first;
+    Rational_arr* arr;
+    if (!CGAL::assign(arr, currentTab->getArrangement()))
+      CGAL_error();
+
+    // To create a curve
+    auto construct_curve = arr->traits()->construct_curve_2_object();
+    auto cv = construct_curve(*poly_num, *poly_den);
+
+    // adding curve to the arrangement
+    auto algCurveInputCallback = currentTab->getCurveInputCallback();
+    Q_EMIT algCurveInputCallback->generate(CGAL::make_object(cv));
+    currentTab->adjustViewport();
+
   }
 #endif
 }
@@ -666,7 +729,7 @@ void ArrangementDemoWindow::on_actionOverlay_triggered()
     std::vector<CGAL::Object> arrs = overlayDialog.selectedArrangements();
     if (arrs.size() == 2)
     {
-      forEachTraitsType([&](auto type_holder) {
+      forEachArrangementType([&](auto type_holder) {
         using Arr = typename decltype(type_holder)::type;
         auto tt = traitFromType<Arr>();
 
@@ -720,9 +783,8 @@ struct ArrWriter
     conicReader.write_data(ofs, arr->curves_begin(), arr->curves_end());
   }
 
-  void operator()(demo_types::Bezier_arr*)
-  {
-  }
+  void operator()(demo_types::Bezier_arr*) { }
+  void operator()(demo_types::Rational_arr*) { }
 #endif
 
   std::ofstream& ofs;
@@ -750,7 +812,7 @@ void ArrangementDemoWindow::on_actionSaveAs_triggered()
   // write type info
   ofs << "# " << static_cast<int>(tt) << std::endl;
 
-  visitTraitsType(tt, [&](auto type_holder) {
+  visitArrangementType(tt, [&](auto type_holder) {
     using Arr = typename decltype(type_holder)::type;
     Arr* typed_arr;
     if (CGAL::assign(typed_arr, currentTab->getArrangement()))
@@ -809,6 +871,11 @@ struct ArrReader
   {
     return std::make_unique<demo_types::Bezier_arr>();
   }
+
+  auto operator()(TypeHolder<demo_types::Rational_arr>)
+  {
+    return std::make_unique<demo_types::Rational_arr>();
+  }
 #endif
 
   std::ifstream& ifs;
@@ -831,7 +898,7 @@ ArrangementDemoTabBase* ArrangementDemoWindow::openArrFile(QString filename)
 
   ArrangementDemoTabBase* createdTab = nullptr;
 
-  visitTraitsType(tt, [&](auto type_holder) {
+  visitArrangementType(tt, [&](auto type_holder) {
     auto arr = ArrReader{ifs}(type_holder);
     createdTab = this->makeTab(std::move(arr), this->makeTabLabel(tt), tt);
   });

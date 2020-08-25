@@ -6,6 +6,7 @@
 
 #include <QPointF>
 
+#include "ArrangementTypes.h"
 #include "PointLocationFunctions.h"
 #include "Utils.h"
 
@@ -50,7 +51,7 @@ CGAL::Object PointLocationFunctions<Arr_>::locate(
   using PointLocationStrategy =
     typename StrategyHelper<Arrangement, SupportsLandmarks>::type;
 
-  Arr_construct_point_2<Traits> toArrPoint;
+  Arr_construct_point_2<Traits> toArrPoint{arr->traits()};
   auto arr_point = toArrPoint(pt);
 
   PointLocationStrategy pointLocationStrategy{*arr};
@@ -99,7 +100,7 @@ CGAL::Object PointLocationFunctions<Arr_>::rayShootUp(
   using Walk_pl_strategy =
     typename CGAL::Arr_walk_along_line_point_location<Arrangement>;
 
-  Arr_construct_point_2<Traits> toArrPoint;
+  Arr_construct_point_2<Traits> toArrPoint{arr->traits()};
   Walk_pl_strategy pointLocationStrategy{*arr};
   return pointLocationStrategy.ray_shoot_up(
     toArrPoint(toKernelPoint<Traits>(pt)));
@@ -112,7 +113,7 @@ CGAL::Object PointLocationFunctions<Arr_>::rayShootDown(
   using Walk_pl_strategy =
     typename CGAL::Arr_walk_along_line_point_location<Arrangement>;
 
-  Arr_construct_point_2<Traits> toArrPoint;
+  Arr_construct_point_2<Traits> toArrPoint{arr->traits()};
   Walk_pl_strategy pointLocationStrategy{*arr};
   return pointLocationStrategy.ray_shoot_down(
     toArrPoint(toKernelPoint<Traits>(pt)));

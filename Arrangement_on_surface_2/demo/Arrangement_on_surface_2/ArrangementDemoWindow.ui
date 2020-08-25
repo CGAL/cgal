@@ -69,6 +69,7 @@
    <addaction name="actionConicThreePoint"/>
    <addaction name="actionConicFivePoint"/>
    <addaction name="actionAddAlgebraicCurve"/>
+   <addaction name="actionAddRationalCurve"/>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -429,6 +430,14 @@
    </property>
    <property name="toolTip">
     <string>Add Algebraic Curve Equation</string>
+   </property>
+  </action>
+  <action name="actionAddRationalCurve">
+   <property name="text">
+    <string>Add Curve</string>
+   </property>
+   <property name="toolTip">
+    <string>Add Rational Curve Equation</string>
    </property>
   </action>
   <action name="actionCloseTab">

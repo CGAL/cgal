@@ -65,8 +65,9 @@ void GridGraphicsItem::paint(
   QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
   // equivalent to m11() and m22() when there are no rotations
-  QLineF ux_line = painter->transform().map(QLineF{0, 0, 1, 0});
-  QLineF uy_line = painter->transform().map(QLineF{0, 0, 0, 1});
+  QTransform worldTransform = painter->transform();
+  QLineF ux_line = worldTransform.map(QLineF{0, 0, 1, 0});
+  QLineF uy_line = worldTransform.map(QLineF{0, 0, 0, 1});
   float scaleX = ux_line.length();
   float scaleY = uy_line.length();
 
@@ -160,7 +161,6 @@ void GridGraphicsItem::paint(
   axisPen.setCosmetic(true);
   painter->setPen(labelsPen);
 
-  QTransform worldTransform = painter->transform();
   painter->resetTransform();
 
   auto&& font = painter->font();

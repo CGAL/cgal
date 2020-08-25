@@ -11,8 +11,9 @@
 
 #include "VerticalRayShootCallback.h"
 #include "CurveGraphicsItem.h"
-#include "Utils.h"
 #include "PointLocationFunctions.h"
+#include "Utils.h"
+#include "ArrangementTypes.h"
 
 #include <CGAL/Arrangement_with_history_2.h>
 
@@ -158,7 +159,7 @@ void VerticalRayShootCallback<Arr_>::highlightPointLocation(
     this->highlightedCurves->insert(halfedge->curve());
 
     // draw a ray from the clicked point to the hit curve
-    Arr_compute_y_at_x_2<Traits> compute_y_at_x_2;
+    Arr_compute_y_at_x_2<Traits> compute_y_at_x_2{arr->traits()};
     compute_y_at_x_2.setScene(this->getScene());
     double yApprox = compute_y_at_x_2.approx(halfedge->curve(), queryQPt.x());
     this->rayGraphicsItem.setSource(queryQPt);

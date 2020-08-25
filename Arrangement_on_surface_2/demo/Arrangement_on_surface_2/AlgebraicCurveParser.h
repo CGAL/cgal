@@ -24,10 +24,10 @@
 #include <string>
 #include <boost/optional.hpp>
 
-template <typename Polynomial_2>
+template <typename Polynomial_d>
 struct AlgebraicCurveParser
 {
-  boost::optional<Polynomial_2> operator()(const std::string& expression);
+  boost::optional<Polynomial_d> operator()(const std::string& expression);
 };
 
 #endif //ARRANGEMENT_ON_SURFACE_2_DEMO_ALGEBRAICCURVEPARSERNEW_H

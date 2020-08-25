@@ -19,32 +19,17 @@
 #include <type_traits>
 #include <vector>
 
-#include "CurveInputMethods.h"
 #include "Callback.h"
+#include "CurveInputMethods.h"
+#include "ForwardDeclarations.h"
 #include "GraphicsSceneMixin.h"
-#include "PointsGraphicsItem.h"
 #include "PointSnapper.h"
+#include "PointsGraphicsItem.h"
 
 class QEvent;
 
 namespace CGAL
 {
-
-template <typename T>
-class Arr_segment_traits_2;
-template <typename T>
-class Arr_polyline_traits_2;
-template <typename T, typename U, typename I>
-class Arr_conic_traits_2;
-template <typename T, typename U, typename I, typename S>
-class Arr_Bezier_curve_traits_2;
-template <typename T>
-class Arr_linear_traits_2;
-template <typename T>
-class Arr_algebraic_segment_traits_2;
-template <typename T>
-class Rational_traits;
-
 namespace Qt
 {
 

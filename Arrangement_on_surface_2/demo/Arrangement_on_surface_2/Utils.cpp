@@ -14,6 +14,7 @@
 #include "ArrangementPainterOstream.h"
 #include "PointLocationFunctions.h"
 
+#include <QGraphicsView>
 #include <QScrollBar>
 
 template <typename Kernel_>
@@ -156,25 +157,27 @@ operator()(const Point_2& p, const X_monotone_curve_2& c) const
   }
 }
 
-template <typename RatKernel, typename AlgKernel, typename NtTraits>
-double Compute_squared_distance_2<
-  CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>::
+template <
+  typename RatKernel, typename AlgKernel, typename NtTraits,
+  typename BoundingTraits>
+double Compute_squared_distance_2<CGAL::Arr_Bezier_curve_traits_2<
+  RatKernel, AlgKernel, NtTraits, BoundingTraits>>::
 operator()(const Point_2& p, const X_monotone_curve_2& curve) const
 {
   // TODO: this should probably be cached!
   CGAL::Qt::ArrangementPainterOstream<Traits> painterOstream{nullptr};
   painterOstream.setScene(this->getScene());
 
-  auto view = this->getView();
-  QPoint p_viewport =
-    view->mapFromScene(QPointF{p.x().doubleValue(), p.y().doubleValue()});
+  std::pair<double, double> p_pair = {
+    CGAL::to_double(p.x()), CGAL::to_double(p.y())};
 
   double minDist = std::numeric_limits<double>::max();
   auto points = painterOstream.getPoints(curve);
   for (auto& vit : points)
   {
-    QPoint coord(vit.first, vit.second);
-    float curDist = QLineF{view->mapFromScene(coord), p_viewport}.length();
+    QPointF coord(vit.first, vit.second);
+    float curDist = (vit.first - p_pair.first) * (vit.first - p_pair.first) +
+                    (vit.second - p_pair.second) * (vit.second - p_pair.second);
     minDist = curDist < minDist ? curDist : minDist;
   }
   return minDist;
@@ -196,7 +199,7 @@ operator()(const Point_2& p, const X_monotone_curve_2& curve) const
   worldTransform = view->transform() * worldTransform;
 
   QTransform facadeToViewport =
-    painterOstream.getPointsListMapping(worldTransform, view);
+    painterOstream.getPointsListMapping(worldTransform);
 
   auto points = painterOstream.getPointsList(curve);
 
@@ -217,6 +220,34 @@ operator()(const Point_2& p, const X_monotone_curve_2& curve) const
   return minDist;
 }
 
+template <typename AlgebraicKernel_d_1>
+double Compute_squared_distance_2<
+  CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>>::
+operator()(const Point_2& p, const X_monotone_curve_2& curve) const
+{
+  // TODO: this should probably be cached!
+  CGAL::Qt::ArrangementPainterOstream<Traits> painterOstream{nullptr};
+  painterOstream.setScene(this->getScene());
+
+  std::pair<double, double> p_pair = {
+    CGAL::to_double(p.x()), CGAL::to_double(p.y())};
+
+  double minDist = std::numeric_limits<double>::max();
+  auto points_list = painterOstream.getPointsList(curve);
+  for (auto& points : points_list)
+  {
+    for (auto& vit : points)
+    {
+      QPointF coord(vit.first, vit.second);
+      float curDist =
+        (vit.first - p_pair.first) * (vit.first - p_pair.first) +
+        (vit.second - p_pair.second) * (vit.second - p_pair.second);
+      minDist = curDist < minDist ? curDist : minDist;
+    }
+  }
+  return minDist;
+}
+
 template <typename ArrTraits>
 auto Arr_construct_point_2<ArrTraits>::operator()(const Kernel_point_2& pt)
   -> Point_2
@@ -225,21 +256,38 @@ auto Arr_construct_point_2<ArrTraits>::operator()(const Kernel_point_2& pt)
 }
 
 template <typename ArrTraits>
-template <typename T>
-auto Arr_construct_point_2<ArrTraits>::operator()(const T& x, const T& y)
-  -> Point_2
-{
-  return (*this)(x, y, ArrTraits());
-}
-
-template <typename ArrTraits>
 template <typename T, typename TTraits>
 auto Arr_construct_point_2<ArrTraits>::operator()(
-  const T& x, const T& y, TTraits /* traits */) -> Point_2
+  const T& x, const T& y, const TTraits*) -> Point_2
 {
   CoordinateType xx(x);
   CoordinateType yy(y);
   Point_2 res(xx, yy);
+  return res;
+}
+
+template <typename ArrTraits>
+template <typename T, typename AlgebraicKernel_d_1>
+auto Arr_construct_point_2<ArrTraits>::operator()(
+  const T& x, const T& y,
+  const CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>*)
+  -> Point_2
+{
+  using Rational = typename ArrTraits::Rational;
+  using Rational_function = typename ArrTraits::Rational_function;
+  using Polynomial_1 = typename ArrTraits::Polynomial_1;
+  using RationalTraits = CGAL::Rational_traits<Rational>;
+
+  static AlgebraicKernel_d_1 algebraic_kernel;
+
+  Rational y_rat{y};
+  RationalTraits ratTraits;
+
+  CoordinateType xx(x);
+  Polynomial_1 y_num{ratTraits.numerator(y_rat)};
+  Polynomial_1 y_den{ratTraits.denominator(y_rat)};
+  Rational_function yy{y_num, y_den, &algebraic_kernel};
+  Point_2 res(yy, xx);
   return res;
 }
 
@@ -329,12 +377,14 @@ auto Find_nearest_edge<Arr_>::getFace(const CGAL::Object& obj)
 }
 
 template <typename ArrTraits>
-Construct_x_monotone_subcurve_2<ArrTraits>::Construct_x_monotone_subcurve_2() :
-    intersect_2(this->traits.intersect_2_object()),
-    split_2(this->traits.split_2_object()),
-    compare_x_2(this->traits.compare_x_2_object()),
-    construct_min_vertex_2(this->traits.construct_min_vertex_2_object()),
-    construct_max_vertex_2(this->traits.construct_max_vertex_2_object())
+Construct_x_monotone_subcurve_2<ArrTraits>::Construct_x_monotone_subcurve_2(
+  const ArrTraits* traits_) :
+    traits(traits_),
+    split_2(this->traits->split_2_object()),
+    compare_x_2(this->traits->compare_x_2_object()),
+    compute_y_at_x(this->traits),
+    construct_min_vertex_2(this->traits->construct_min_vertex_2_object()),
+    construct_max_vertex_2(this->traits->construct_max_vertex_2_object())
 {
 }
 
@@ -358,7 +408,8 @@ auto Construct_x_monotone_subcurve_2<ArrTraits>::operator()(
     pLeft && (unbounded_min || this->compare_x_2(*pLeft, pMin) == CGAL::LARGER))
   {
     auto y1 = this->compute_y_at_x(curve, pLeft->x());
-    Point_2 splitPoint(pLeft->x(), y1);
+
+    Point_2 splitPoint = {pLeft->x(), y1};
     this->split_2(curve, splitPoint, unusedTrimmings, subcurve);
   }
   else
@@ -371,7 +422,7 @@ auto Construct_x_monotone_subcurve_2<ArrTraits>::operator()(
     (unbounded_max || this->compare_x_2(*pRight, pMax) == CGAL::SMALLER))
   {
     auto y2 = this->compute_y_at_x(subcurve, pRight->x());
-    Point_2 splitPoint(pRight->x(), y2);
+    Point_2 splitPoint = {pRight->x(), y2};
     this->split_2(subcurve, splitPoint, finalSubcurve, unusedTrimmings);
   }
   else
@@ -408,20 +459,26 @@ operator()(
   return res;
 }
 
-template <typename RatKernel, typename AlgKernel, typename NtTraits>
+template <
+  typename RatKernel, typename AlgKernel, typename NtTraits,
+  typename BoundingTraits>
 Construct_x_monotone_subcurve_2<CGAL::Arr_Bezier_curve_traits_2<
-  RatKernel, AlgKernel, NtTraits>>::Construct_x_monotone_subcurve_2() :
-    intersect_2(this->traits.intersect_2_object()),
-    split_2(this->traits.split_2_object()),
-    compare_x_2(this->traits.compare_x_2_object()),
-    construct_min_vertex_2(this->traits.construct_min_vertex_2_object()),
-    construct_max_vertex_2(this->traits.construct_max_vertex_2_object())
+  RatKernel, AlgKernel, NtTraits,
+  BoundingTraits>>::Construct_x_monotone_subcurve_2(const ArrTraits* traits_) :
+    traits(traits_),
+    split_2(this->traits->split_2_object()),
+    compare_x_2(this->traits->compare_x_2_object()),
+    compute_y_at_x(this->traits),
+    construct_min_vertex_2(this->traits->construct_min_vertex_2_object()),
+    construct_max_vertex_2(this->traits->construct_max_vertex_2_object())
 {
 }
 
-template <typename RatKernel, typename AlgKernel, typename NtTraits>
-auto Construct_x_monotone_subcurve_2<
-  CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>::
+template <
+  typename RatKernel, typename AlgKernel, typename NtTraits,
+  typename BoundingTraits>
+auto Construct_x_monotone_subcurve_2<CGAL::Arr_Bezier_curve_traits_2<
+  RatKernel, AlgKernel, NtTraits, BoundingTraits>>::
 operator()(
   const X_monotone_curve_2& curve, const boost::optional<Point_2>& pLeft,
   const boost::optional<Point_2>& pRight) -> X_monotone_curve_2
@@ -469,9 +526,68 @@ operator()(
   return finalSubcurve;
 }
 
+template <typename AlgebraicKernel_d_1>
+Construct_x_monotone_subcurve_2<CGAL::Arr_rational_function_traits_2<
+  AlgebraicKernel_d_1>>::Construct_x_monotone_subcurve_2(const Traits*
+                                                           traits_) :
+    traits(traits_),
+    split_2(this->traits->split_2_object()),
+    compare_x_2(this->traits->compare_x_2_object()),
+    compute_y_at_x(this->traits),
+    construct_min_vertex_2(this->traits->construct_min_vertex_2_object()),
+    construct_max_vertex_2(this->traits->construct_max_vertex_2_object())
+{
+}
+
+template <typename AlgebraicKernel_d_1>
+auto Construct_x_monotone_subcurve_2<
+  CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>>::
+operator()(
+  const X_monotone_curve_2& curve, const boost::optional<Point_2>& pLeft,
+  const boost::optional<Point_2>& pRight) -> X_monotone_curve_2
+{
+  Point_2 pMin, pMax;
+  bool unbounded_min = false;
+  bool unbounded_max = false;
+  try { pMin = this->construct_min_vertex_2(curve); }
+  catch (...) { unbounded_min = true; }
+  try { pMax = this->construct_max_vertex_2(curve); }
+  catch (...) { unbounded_max = true; }
+
+  X_monotone_curve_2 subcurve;
+  X_monotone_curve_2 unusedTrimmings;
+  X_monotone_curve_2 finalSubcurve;
+  if (
+    pLeft && (unbounded_min || this->compare_x_2(*pLeft, pMin) == CGAL::LARGER))
+  {
+    Point_2 splitPoint{curve._f, pLeft->x()};
+    this->split_2(curve, splitPoint, unusedTrimmings, subcurve);
+  }
+  else
+  {
+    subcurve = curve;
+  }
+
+  if (
+    pRight &&
+    (unbounded_max || this->compare_x_2(*pRight, pMax) == CGAL::SMALLER))
+  {
+    auto y2 = this->compute_y_at_x(subcurve, pRight->x());
+    Point_2 splitPoint{curve._f, pRight->x()};
+    this->split_2(subcurve, splitPoint, finalSubcurve, unusedTrimmings);
+  }
+  else
+  {
+    finalSubcurve = subcurve;
+  }
+
+  return finalSubcurve;
+}
+
 template <typename ArrTraits>
-Arr_compute_y_at_x_2<ArrTraits>::Arr_compute_y_at_x_2() :
-    intersectCurves(this->traits.intersect_2_object())
+Arr_compute_y_at_x_2<ArrTraits>::Arr_compute_y_at_x_2(const Traits* traits_) :
+    traits(traits_),
+    intersectCurves(this->traits->intersect_2_object())
 {
 }
 
@@ -493,13 +609,13 @@ double Arr_compute_y_at_x_2<ArrTraits>::approx(
 template <typename ArrTraits>
 template <typename TTraits>
 auto Arr_compute_y_at_x_2<ArrTraits>::operator()(
-  const X_monotone_curve_2& curve, const CoordinateType& x, TTraits traits_,
-  CGAL::Arr_oblivious_side_tag) -> CoordinateType
+  const X_monotone_curve_2& curve, const CoordinateType& x,
+  const TTraits* traits_, CGAL::Arr_oblivious_side_tag) -> CoordinateType
 {
   typedef
     typename TTraits::Construct_x_monotone_curve_2 Construct_x_monotone_curve_2;
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2 =
-    traits_.construct_x_monotone_curve_2_object();
+    traits_->construct_x_monotone_curve_2_object();
   CoordinateType res(0);
   CGAL::Bbox_2 clipRect = curve.bbox();
   Point_2 p1c1(x, CoordinateType(clipRect.ymin() - 1)); // clicked point
@@ -525,11 +641,11 @@ auto Arr_compute_y_at_x_2<ArrTraits>::operator()(
 template <typename ArrTraits>
 template <typename TTraits>
 auto Arr_compute_y_at_x_2<ArrTraits>::operator()(
-  const X_monotone_curve_2& curve, const CoordinateType& x, TTraits traits_,
-  CGAL::Arr_open_side_tag) -> CoordinateType
+  const X_monotone_curve_2& curve, const CoordinateType& x,
+  const TTraits* traits_, CGAL::Arr_open_side_tag) -> CoordinateType
 {
   typename TTraits::Construct_x_monotone_curve_2 construct_x_monotone_curve_2 =
-    traits_.construct_x_monotone_curve_2_object();
+    traits_->construct_x_monotone_curve_2_object();
   CoordinateType res(0);
   // QRectF clipRect = this->viewportRect( );
   Line_2 line = curve.supporting_line();
@@ -560,7 +676,7 @@ operator()(const X_monotone_curve_2& curve, const CoordinateType& x)
 {
   CGAL::Object o;
   CGAL::Oneset_iterator<CGAL::Object> oi(o);
-  Intersect_2 intersect = traits.intersect_2_object();
+  Intersect_2 intersect = traits->intersect_2_object();
   X_monotone_curve_2 c2 = this->makeVerticalLine(x);
   intersect(curve, c2, oi);
   std::pair<Point_2, Multiplicity> res;
@@ -590,9 +706,9 @@ auto Arr_compute_y_at_x_2<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
   makeVerticalLine(const CoordinateType& x) -> X_monotone_curve_2
 {
   typename Traits::Construct_point_2 constructPoint =
-    traits.construct_point_2_object();
+    traits->construct_point_2_object();
   typename Traits::Construct_x_monotone_segment_2 constructSegment =
-    traits.construct_x_monotone_segment_2_object();
+    traits->construct_x_monotone_segment_2_object();
 
   std::vector<X_monotone_curve_2> curves;
   Point_2 p1 = constructPoint(x, CoordinateType(-1000000));
@@ -616,11 +732,12 @@ static inline auto get_t_range(const Bezier_x_monotone_2& curve)
     (pt_org->point_bound().t_min + pt_org->point_bound().t_max) / 2);
 }
 
-template <typename RatKernel, class AlgKernel, class NtTraits>
-auto Arr_compute_y_at_x_2<
-  CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>::
-operator()(const X_monotone_curve_2& curve, const Rational& x)
-  -> Algebraic
+template <
+  typename RatKernel, typename AlgKernel, typename NtTraits,
+  typename BoundingTraits>
+auto Arr_compute_y_at_x_2<CGAL::Arr_Bezier_curve_traits_2<
+  RatKernel, AlgKernel, NtTraits, BoundingTraits>>::
+operator()(const X_monotone_curve_2& curve, const Rational& x) -> Algebraic
 {
   auto&& supp_curve = curve.supporting_curve();
   auto t = this->get_t(curve, x);
@@ -629,9 +746,11 @@ operator()(const X_monotone_curve_2& curve, const Rational& x)
          nt_traits.convert(supp_curve.y_norm());
 }
 
-template <typename RatKernel, class AlgKernel, class NtTraits>
-auto Arr_compute_y_at_x_2<
-  CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>::
+template <
+  typename RatKernel, typename AlgKernel, typename NtTraits,
+  typename BoundingTraits>
+auto Arr_compute_y_at_x_2<CGAL::Arr_Bezier_curve_traits_2<
+  RatKernel, AlgKernel, NtTraits, BoundingTraits>>::
   get_t(const X_monotone_curve_2& curve, const Rational& x) -> Algebraic
 {
   std::vector<Algebraic> t_vals;
@@ -654,10 +773,37 @@ auto Arr_compute_y_at_x_2<
   return 0;
 }
 
-template <typename RatKernel, class AlgKernel, class NtTraits>
-double Arr_compute_y_at_x_2<
-  CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>::
-  approx(const X_monotone_curve_2& curve, const Rational& x)
+template <
+  typename RatKernel, typename AlgKernel, typename NtTraits,
+  typename BoundingTraits>
+double Arr_compute_y_at_x_2<CGAL::Arr_Bezier_curve_traits_2<
+  RatKernel, AlgKernel, NtTraits,
+  BoundingTraits>>::approx(const X_monotone_curve_2& curve, const Rational& x)
+{
+  return CGAL::to_double((*this)(curve, x));
+}
+
+template <typename AlgebraicKernel_d_1>
+auto Arr_compute_y_at_x_2<
+  CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>>::
+operator()(const X_monotone_curve_2& curve, const Algebraic_real_1& x)
+  -> Algebraic_real_1
+{
+  return Point_2{curve._f, x}.y();
+}
+
+template <typename AlgebraicKernel_d_1>
+auto Arr_compute_y_at_x_2<
+  CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>>::
+operator()(const X_monotone_curve_2& curve, const Rational& x) -> Rational
+{
+  return curve._f.numer().evaluate(x) / curve._f.denom().evaluate(x);
+}
+
+template <typename AlgebraicKernel_d_1>
+auto Arr_compute_y_at_x_2<
+  CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>>::
+approx(const X_monotone_curve_2& curve, const Rational& x) -> double
 {
   return CGAL::to_double((*this)(curve, x));
 }

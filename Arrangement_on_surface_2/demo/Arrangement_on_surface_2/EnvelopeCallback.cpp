@@ -12,6 +12,7 @@
 #include "EnvelopeCallback.h"
 #include "CurveGraphicsItem.h"
 #include "Utils.h"
+#include "ArrangementTypes.h"
 
 #include <CGAL/envelope_2.h>
 #include <CGAL/Envelope_diagram_1.h>
@@ -120,15 +121,23 @@ void EnvelopeCallback< Arr_>::updateEnvelope( bool lower )
   Diagram_1 diagram;
   CGAL::Qt::CurveGraphicsItem<Traits>* envelopeToUpdate;
 
-  if (lower)
+  try
   {
-    envelopeToUpdate = this->lowerEnvelope;
-    CGAL::lower_envelope_x_monotone_2(curves.begin(), curves.end(), diagram);
+    if (lower)
+    {
+      envelopeToUpdate = this->lowerEnvelope;
+      CGAL::lower_envelope_x_monotone_2(curves.begin(), curves.end(), diagram);
+    }
+    else
+    {
+      envelopeToUpdate = this->upperEnvelope;
+      CGAL::upper_envelope_x_monotone_2(curves.begin(), curves.end(), diagram);
+    }
   }
-  else
+  catch (const std::exception& ex)
   {
-    envelopeToUpdate = this->upperEnvelope;
-    CGAL::upper_envelope_x_monotone_2(curves.begin(), curves.end(), diagram);
+      std::cerr << ex.what() << '\n';
+      return;
   }
 
   envelopeToUpdate->clear( );
@@ -139,6 +148,8 @@ void EnvelopeCallback< Arr_>::updateEnvelope( bool lower )
     else   return nullptr;
   };
 
+  auto construct_x_monotone_subcurve_2 =
+    Construct_x_monotone_subcurve_2<Traits>{arr->traits()};
   for (Edge_const_handle e = diagram.leftmost(); e; e = next_edge(e))
   {
     if (!e->is_empty())
@@ -150,7 +161,6 @@ void EnvelopeCallback< Arr_>::updateEnvelope( bool lower )
       if (e->right())
         rightPoint = e->right()->point();
 
-      Construct_x_monotone_subcurve_2<Traits> construct_x_monotone_subcurve_2;
       X_monotone_curve_2 curve =
         construct_x_monotone_subcurve_2(e->curve(), leftPoint, rightPoint);
 

@@ -23,23 +23,14 @@ FillFaceCallbackBase::FillFaceCallbackBase(QObject* parent) :
 {
 }
 
-//! sets the color of the selected viewport
-/*!
-  \param c A QColor object
-*/
 void FillFaceCallbackBase::setColor(QColor c)
 {
   this->fillColor = c;
   Q_EMIT modelChanged();
 }
 
-//! gets the color of the fill color option.
-/*!
-  \return the color selected by the user
-*/
 QColor FillFaceCallbackBase::getColor() const { return this->fillColor; }
 
-/*! Constructor */
 template <class Arr_>
 FillFaceCallback<Arr_>::FillFaceCallback(Arrangement* arr_, QObject* parent_) :
     FillFaceCallbackBase(parent_),
@@ -65,11 +56,6 @@ void FillFaceCallback<Arr_>::mouseMoveEvent(
 {
 }
 
-//! A Template type
-//! Coloring the closed selected space
-/*!
-    \param event A QGrpahicsSceneMouseEvent pointer to the class
-*/
 template <class Arr_>
 void FillFaceCallback<Arr_>::fillFace(QGraphicsSceneMouseEvent* event)
 {

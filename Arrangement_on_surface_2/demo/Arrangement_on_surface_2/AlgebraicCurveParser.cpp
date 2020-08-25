@@ -29,12 +29,14 @@ namespace phx = boost::phoenix;
 namespace qi = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
 
-template <typename Polynomial_2, typename Iterator>
+template <typename Polynomial_d, typename Iterator>
 struct PolynomialParser :
-    qi::grammar<Iterator, Polynomial_2(), ascii::space_type>
+    qi::grammar<Iterator, Polynomial_d(), ascii::space_type>
 {
-  using Traits = CGAL::Polynomial_traits_d<Polynomial_2>;
+  using Traits = CGAL::Polynomial_traits_d<Polynomial_d>;
   using Coefficient = typename Traits::Innermost_coefficient_type;
+  using Innermost_leading_coefficient =
+    typename Traits::Innermost_leading_coefficient;
 
   PolynomialParser() : PolynomialParser::base_type(start)
   {
@@ -46,9 +48,10 @@ struct PolynomialParser :
       if (power.degree() != 0)
       {
         error = true;
-        return Polynomial_2{};
+        return Polynomial_d{};
       }
-      return CGAL::ipower(poly, power.begin()->begin()->intValue());
+      return CGAL::ipower(
+        poly, Innermost_leading_coefficient{}(power).intValue());
     };
 
     // expr = expr or expr
@@ -74,27 +77,28 @@ struct PolynomialParser :
     factor2 = (('(' >> expr >> ')') | factor3)[_val = qi::_1];
     // coefficients and variables
     factor3 =
-      coeff[_val = phx::construct<Polynomial_2>(qi::_1)] | var[_val = qi::_1];
+      coeff[_val = phx::construct<Polynomial_d>(qi::_1)] | var[_val = qi::_1];
     coeff = qi::as_string[qi::lexeme[+qi::digit]]
                          [_val = phx::construct<Coefficient>(qi::_1)];
     var = qi::char_('x')[_val = x] | qi::char_('y')[_val = y];
   }
 
-  Polynomial_2 x = CGAL::shift(Polynomial_2(1), 1, 0);
-  Polynomial_2 y = CGAL::shift(Polynomial_2(1), 1, 1);
-  qi::rule<Iterator, Polynomial_2(), ascii::space_type> start;
-  qi::rule<Iterator, Polynomial_2(), ascii::space_type> expr;
-  qi::rule<Iterator, Polynomial_2(), ascii::space_type> term;
-  qi::rule<Iterator, Polynomial_2(), ascii::space_type> pow_expr;
-  qi::rule<Iterator, Polynomial_2(), ascii::space_type> pow_expr2;
-  qi::rule<Iterator, Polynomial_2(), ascii::space_type> factor;
-  qi::rule<Iterator, Polynomial_2(), ascii::space_type> factor2;
-  qi::rule<Iterator, Polynomial_2(), ascii::space_type> factor3;
-  qi::rule<Iterator, Polynomial_2(), ascii::space_type> var;
+  Polynomial_d x = CGAL::shift(Polynomial_d(1), 1, 0);
+  Polynomial_d y = CGAL::shift(Polynomial_d(1), 1, 1);
+  qi::rule<Iterator, Polynomial_d(), ascii::space_type> start;
+  qi::rule<Iterator, Polynomial_d(), ascii::space_type> expr;
+  qi::rule<Iterator, Polynomial_d(), ascii::space_type> term;
+  qi::rule<Iterator, Polynomial_d(), ascii::space_type> pow_expr;
+  qi::rule<Iterator, Polynomial_d(), ascii::space_type> pow_expr2;
+  qi::rule<Iterator, Polynomial_d(), ascii::space_type> factor;
+  qi::rule<Iterator, Polynomial_d(), ascii::space_type> factor2;
+  qi::rule<Iterator, Polynomial_d(), ascii::space_type> factor3;
+  qi::rule<Iterator, Polynomial_d(), ascii::space_type> var;
   qi::rule<Iterator, Coefficient(), ascii::space_type> coeff;
   bool error = false;
 };
 
+template <int dimension>
 static inline bool hasValidChars(const std::string& expression)
 {
   const char valid_chars[] = {'x', 'y', '+', '-', '*', '(', ')', '^', '='};
@@ -105,21 +109,33 @@ static inline bool hasValidChars(const std::string& expression)
   });
 }
 
-template <typename Polynomial_2>
-boost::optional<Polynomial_2>
-AlgebraicCurveParser<Polynomial_2>::operator()(const std::string& expression)
+template <>
+bool hasValidChars<1>(const std::string& expression)
 {
+  const char valid_chars[] = {'x', '+', '-', '*', '(', ')', '^', '='};
+  return std::all_of(expression.begin(), expression.end(), [&](char c) {
+    return std::isspace(c) || std::isdigit(c) ||
+           std::find(std::begin(valid_chars), std::end(valid_chars), c) !=
+             std::end(valid_chars);
+  });
+}
+
+template <typename Polynomial_d>
+boost::optional<Polynomial_d>
+AlgebraicCurveParser<Polynomial_d>::operator()(const std::string& expression)
+{
+  using Traits = CGAL::Polynomial_traits_d<Polynomial_d>;
   using ascii::space;
   using iterator_type = std::string::const_iterator;
 
-  if (!hasValidChars(expression)) return {};
+  if (!hasValidChars<Traits{}.d>(expression)) return {};
 
-  PolynomialParser<Polynomial_2, iterator_type> pparser;
+  PolynomialParser<Polynomial_d, iterator_type> pparser;
   std::string::const_iterator iter = expression.begin();
   std::string::const_iterator end = expression.end();
 
   // parsing goes on here
-  Polynomial_2 poly;
+  Polynomial_d poly;
   bool r = qi::phrase_parse(iter, end, pparser, space, poly);
 
   if (r && iter == end && !pparser.error)
@@ -134,3 +150,6 @@ AlgebraicCurveParser<Polynomial_2>::operator()(const std::string& expression)
 // AlgebraicCurveParser<demo_types::Alg_seg_traits::Polynomial_2>;
 template struct AlgebraicCurveParser<
   CGAL::Arr_algebraic_segment_traits_2<CORE::BigInt>::Polynomial_2>;
+
+template struct AlgebraicCurveParser<
+  typename CGAL::Algebraic_kernel_d_1<CORE::BigInt>::Polynomial_1>;

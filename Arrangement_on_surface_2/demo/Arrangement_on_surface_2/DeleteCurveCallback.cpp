@@ -3,6 +3,7 @@
 
 #include "CurveGraphicsItem.h"
 #include "DeleteCurveCallback.h"
+#include "ArrangementTypes.h"
 #include "Utils.h"
 
 /*! Constructor */

@@ -55,19 +55,8 @@ public:
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Traits::Point_2                      Point_2;
 
-  /**
-     Construct an envelope callback observing the given arrangement.
-  */
   EnvelopeCallback( Arrangement* arr_, QObject* parent );
-
-  /**
-     Enable/disable drawing the lower envelope.
-  */
   void showLowerEnvelope( bool show ) override;
-
-  /**
-     Enable/disable drawing the lower envelope.
-  */
   void showUpperEnvelope( bool show ) override;
 
   /**
@@ -86,10 +75,6 @@ public:
 
 protected:
   void setScene( QGraphicsScene* scene_ ) override;
-
-  /**
-     Helper method to update the upper/lower envelope.
-  */
   void updateEnvelope( bool lower );
 
   Arrangement* arr;

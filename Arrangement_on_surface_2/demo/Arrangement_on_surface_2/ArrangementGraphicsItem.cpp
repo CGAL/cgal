@@ -86,40 +86,49 @@ paint(QPainter* painter,
 template <typename Arr_>
 template <typename TTraits>
 void ArrangementGraphicsItem<Arr_>::paint(
-  QPainter* painter, const TTraits* /* traits */)
+  QPainter* painter, const TTraits* traits)
 {
   this->paintFaces(painter);
-
-  auto painterOstream =
-    ArrangementPainterOstream<Traits>(painter, this->boundingRect());
-  painterOstream.setScene(this->getScene());
-
-  painter->setPen(this->edgesPen);
-  painter->setBrush(::Qt::transparent);
-  for (auto it = this->arr->edges_begin(); it != this->arr->edges_end(); ++it)
-  {
-    X_monotone_curve_2 curve = it->curve();
-    painterOstream << curve;
-  }
+  this->paintEdges(painter, traits);
 }
 
 template <typename Arr_>
 template <typename Coefficient_>
 void ArrangementGraphicsItem<Arr_>::paint(
-  QPainter* painter, const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>*)
+  QPainter* painter,
+  const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>* traits)
+{
+  this->paintWithFloodFill(painter, traits);
+}
+
+template <typename Arr_>
+template <typename AlgebraicKernel_d_1>
+void ArrangementGraphicsItem<Arr_>::paint(
+  QPainter* painter,
+  const CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>* traits)
+{
+  this->paintWithFloodFill(painter, traits);
+}
+
+template <typename Arr_>
+template <typename TTraits>
+void ArrangementGraphicsItem<Arr_>::paintWithFloodFill(
+  QPainter* painter, const TTraits* traits)
 {
   auto windowRect = painter->window();
   auto width = windowRect.width();
   auto height = windowRect.height();
-  if (tempImage.size() != windowRect.size())
+  if (tempImage.width() != width || tempImage.height() != height)
     tempImage = {width, height, QImage::Format_ARGB32};
 
-  // Transparent is used as a flag for an invalid color
-  tempImage.fill(::Qt::transparent);
   QRgb* st = reinterpret_cast<QRgb*>(tempImage.bits());
+  // Transparent (0) is used as a flag for an invalid color
+  std::fill(st, st + width * height, 0);
   // draw margins with white
-  // prevents the flood algorithm from coloring those
-  auto white = QColor{::Qt::white}.rgb();
+  // prevents the flood algorithm from going over the border
+  // also useful with algebraic curves as sometimes pixels on the borders
+  // aren't painted, and the flood algorithm 'leaks'
+  static constexpr QRgb white = 0xFFFFFFFF;
   for (uint16_t i = 0; i < margin; i++)
   {
     for (uint16_t j = 0; j < width; j++)
@@ -138,75 +147,118 @@ void ArrangementGraphicsItem<Arr_>::paint(
   painter2.setTransform(painter->transform());
   painter2.setPen(this->edgesPen);
 
-  this->paintFaces(&painter2);
+  // paint bounded faces normally?
+  // by experimenting it's faster to just paint all using the flood algo
+  // specially with algebraic faces since currenlty all edges have to
+  // be calculated/rendered again for faces
+  // this->paintFaces(&painter2);
+  this->paintEdges(&painter2, traits);
+  // paint unbounded faces using floodfill
+  this->paintFacesFloodFill(&painter2, tempImage);
 
-  auto painterOstream =
-    ArrangementPainterOstream<Traits>(&painter2, this->boundingRect());
-  painterOstream.setScene(this->getScene());
-  painterOstream.paintEdges(arr->edges_begin(), arr->edges_end());
-
-  this->paintFaces(&painter2, tempImage);
-
-  painter->save();
+  auto& painterTransform = painter->transform();
   painter->resetTransform();
   painter->drawImage(QPoint{0, 0}, tempImage);
-  painter->restore();
+  painter->setTransform(painterTransform);
 }
 
 template <typename Arr_>
-void ArrangementGraphicsItem<Arr_>::paintFaces(QPainter* painter, QImage& image)
+template <typename TTraits>
+void ArrangementGraphicsItem<Arr_>::paintEdges(
+  QPainter* painter, const TTraits*)
 {
-  QRgb* st = reinterpret_cast<QRgb*>(image.bits());
+  auto painterOstream =
+    ArrangementPainterOstream<TTraits>(painter, this->boundingRect());
 
+  painterOstream.setScene(this->getScene());
+  painter->setPen(this->edgesPen);
+  painter->setBrush(::Qt::transparent);
+
+  for (auto it = this->arr->edges_begin(); it != this->arr->edges_end(); ++it)
+  {
+    X_monotone_curve_2 curve = it->curve();
+    painterOstream << curve;
+  }
+}
+
+template <typename Arr_>
+template <typename Coefficient_>
+void ArrangementGraphicsItem<Arr_>::paintEdges(
+  QPainter* painter, const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>*)
+{
+  using TTraits = CGAL::Arr_algebraic_segment_traits_2<Coefficient_>;
+
+  auto painterOstream =
+    ArrangementPainterOstream<TTraits>(painter, this->boundingRect());
+
+  painterOstream.setScene(this->getScene());
+  painter->setPen(this->edgesPen);
+  painter->setBrush(::Qt::transparent);
+
+  painterOstream.paintEdges(arr->edges_begin(), arr->edges_end());
+}
+
+template <typename Arr_>
+void ArrangementGraphicsItem<Arr_>::paintFacesFloodFill(
+  QPainter* painter, QImage& image)
+{
+  static constexpr QRgb invalid_rgb = 0;
+
+  QRgb* raw_img = reinterpret_cast<QRgb*>(image.bits());
   uint16_t width = image.width();
   uint16_t height = image.height();
-
-  // same as QColorConstants::Transparent.rgb()
-  static constexpr QRgb invalid_rgb = 0;
 
   QTransform deviceToScene = painter->deviceTransform().inverted();
   auto get_face = [&](auto x, auto y) {
     QPointF point =
       deviceToScene.map(QPointF{static_cast<qreal>(x), static_cast<qreal>(y)});
-    return PointLocationFunctions<Arrangement>{}.getFace(arr, point);
+    return PointLocationFunctions<Arrangement>{}.getFace(this->arr, point);
   };
 
-  auto paint_face = [&](auto x_, auto y_) {
-    auto face = get_face(x_, y_);
+  auto paint_face = [this, raw_img, width, get_face](auto x, auto y) {
+    auto face = get_face(x, y);
     QRgb color = face->color().rgb();
-
-    this->fill_stack.clear();
-    this->fill_stack.push_back({x_, y_});
-    while (!this->fill_stack.empty())
-    {
-      auto xy = this->fill_stack.back();
-      this->fill_stack.pop_back();
-
-      auto x = xy.first;
-      auto y = xy.second;
-      auto j = y * width + x;
-      st[j] = color;
-
-      if (st[j - 1] == invalid_rgb) this->fill_stack.push_back({x - 1, y});
-      if (st[j + 1] == invalid_rgb) this->fill_stack.push_back({x + 1, y});
-      if (st[j - width] == invalid_rgb) this->fill_stack.push_back({x, y - 1});
-      if (st[j + width] == invalid_rgb) this->fill_stack.push_back({x, y + 1});
-    }
+    this->flood_fill(raw_img, width, x, y, color);
   };
 
-  for (uint16_t x = margin; x + 1 + margin < width; x++)
-    for (uint16_t y = margin; y + 1 + margin < height; y++)
+  static constexpr int tot_margin = margin + 2;
+  auto cur_img_line = raw_img + tot_margin * width;
+  for (uint16_t y = tot_margin; y + 1 + tot_margin < height; y++)
+  {
+    for (uint16_t x = tot_margin; x + 1 + tot_margin < width; x++)
+    {
+      // just to account for rendering errors
+      // make sure the pixel falls in the right face
       if (
-        st[y * width + x] == invalid_rgb &&
-        st[y * width + x + 1] == invalid_rgb &&
-        st[y * width + x - 1] == invalid_rgb &&
-        st[(y + 1) * width + x] == invalid_rgb &&
-        st[(y - 1) * width + x] == invalid_rgb &&
-        st[(y + 1) * width + x + 1] == invalid_rgb &&
-        st[(y + 1) * width + x - 1] == invalid_rgb &&
-        st[(y - 1) * width + x + 1] == invalid_rgb &&
-        st[(y - 1) * width + x - 1] == invalid_rgb)
+        cur_img_line[x] == invalid_rgb &&
+        cur_img_line[x + 1] == invalid_rgb &&
+        cur_img_line[x - 1] == invalid_rgb &&
+        cur_img_line[x + 2] == invalid_rgb &&
+        cur_img_line[x - 2] == invalid_rgb &&
+        cur_img_line[width + x] == invalid_rgb &&
+        cur_img_line[-width + x] == invalid_rgb &&
+        cur_img_line[2 * width + x] == invalid_rgb &&
+        cur_img_line[- 2 * width + x] == invalid_rgb &&
+        cur_img_line[width + x + 1] == invalid_rgb &&
+        cur_img_line[width + x - 1] == invalid_rgb &&
+        cur_img_line[-width + x + 1] == invalid_rgb &&
+        cur_img_line[-width + x - 1] == invalid_rgb &&
+        cur_img_line[width + x + 2] == invalid_rgb &&
+        cur_img_line[width + x - 2] == invalid_rgb &&
+        cur_img_line[-width + x + 2] == invalid_rgb &&
+        cur_img_line[-width + x - 2] == invalid_rgb &&
+        cur_img_line[2 * width + x + 1] == invalid_rgb &&
+        cur_img_line[2 * width + x - 1] == invalid_rgb &&
+        cur_img_line[-2 * width + x + 1] == invalid_rgb &&
+        cur_img_line[-2 * width + x - 1] == invalid_rgb &&
+        cur_img_line[2 * width + x + 2] == invalid_rgb &&
+        cur_img_line[2 * width + x - 2] == invalid_rgb &&
+        cur_img_line[-2 * width + x + 2] == invalid_rgb &&
+        cur_img_line[-2 * width + x - 2] == invalid_rgb)
         paint_face(x, y);
+    }
+    cur_img_line += width;
+  }
 }
 
 template < typename Arr_ >
@@ -295,6 +347,14 @@ void ArrangementGraphicsItem<Arr_>::updateBoundingBox(
         this->bb += Bbox_2{src_x, -max_double, max_double, src_y};
     }
   }
+}
+
+template <typename Arr_>
+template <typename AlgebraicKernel_d_1>
+void ArrangementGraphicsItem<Arr_>::updateBoundingBox(
+  const CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>*)
+{
+  this->bb += Bbox_2{-max_double, -max_double, max_double, max_double};
 }
 
 template <typename Arr_>
