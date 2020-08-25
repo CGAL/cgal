@@ -23,15 +23,18 @@
 
 namespace CGAL {
 
-template <typename Polygon>
-const Polygon& convert_polygon (const Polygon& polygon)
+template <typename Traits>
+const typename Traits::Polygon_2&
+convert_polygon (const typename Traits::Polygon_2& polygon,
+                 const Traits&)
 {
   return polygon;
 }
 
 template <typename Kernel>
 General_polygon_2<Arr_polyline_traits_2<Arr_segment_traits_2<Kernel> > >
-convert_polygon (const Polygon_2<Kernel>& polygon)
+convert_polygon (const Polygon_2<Kernel>& polygon,
+                 const Arr_polyline_traits_2<Arr_segment_traits_2<Kernel> >&)
 {
   using Polyline_traits = Arr_polyline_traits_2<Arr_segment_traits_2<Kernel> >;
   return General_polygon_2<Polyline_traits>
@@ -48,8 +51,8 @@ template <class Pgn1, class Pgn2, class Traits>
 inline bool _do_intersect(const Pgn1& pgn1, const Pgn2& pgn2, Traits& tr)
 {
   General_polygon_set_2<Traits> gps(tr);
-  gps.insert(convert_polygon(pgn1));
-  return (gps.do_intersect(convert_polygon(pgn2)));
+  gps.insert(convert_polygon(pgn1, Traits()));
+  return (gps.do_intersect(convert_polygon(pgn2, Traits())));
 }
 
 template <class Pgn1, class Pgn2>
