@@ -23,6 +23,24 @@
 
 namespace CGAL {
 
+template <typename Polygon>
+const Polygon& convert_polygon (const Polygon& polygon)
+{
+  return polygon;
+}
+
+template <typename Kernel>
+General_polygon_2<Arr_polyline_traits_2<Arr_segment_traits_2<Kernel> > >
+convert_polygon (const Polygon_2<Kernel>& polygon)
+{
+  using Polyline_traits = Arr_polyline_traits_2<Arr_segment_traits_2<Kernel> >;
+  return General_polygon_2<Polyline_traits>
+    (Polyline_traits::make_curve_2
+     (CGAL::make_range (polygon.vertices_begin(),
+                        polygon.vertices_end()),
+      true));
+}
+
 /// \name _do_intersect() functions.
 //@{
 
@@ -30,8 +48,8 @@ template <class Pgn1, class Pgn2, class Traits>
 inline bool _do_intersect(const Pgn1& pgn1, const Pgn2& pgn2, Traits& tr)
 {
   General_polygon_set_2<Traits> gps(tr);
-  gps.insert(pgn1);
-  return (gps.do_intersect(pgn2));
+  gps.insert(convert_polygon(pgn1));
+  return (gps.do_intersect(convert_polygon(pgn2)));
 }
 
 template <class Pgn1, class Pgn2>
