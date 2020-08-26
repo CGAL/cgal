@@ -1,4 +1,5 @@
 #include<vector>
+#include <cassert>
 
 #include<boost/shared_ptr.hpp>
 
@@ -33,6 +34,8 @@ int main()
   poly.push_back( Point(0,12) ) ;
   poly.push_back( Point(-1,1) ) ;
   poly.push_back( Point(-12,0) ) ;
+
+  assert(poly.is_counterclockwise_oriented());
 
   FT lOffset = 1 ;
 

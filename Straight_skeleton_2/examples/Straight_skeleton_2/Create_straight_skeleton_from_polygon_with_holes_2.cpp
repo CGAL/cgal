@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include<boost/shared_ptr.hpp>
 
 #include<CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -35,6 +37,9 @@ int main()
   hole.push_back( Point(0,1 ) ) ;
   hole.push_back( Point(1,0 ) ) ;
   hole.push_back( Point(0,-1) ) ;
+
+  assert(outer.is_counterclockwise_oriented());
+  assert(hole.is_clockwise_oriented());
 
   Polygon_with_holes poly( outer ) ;
 

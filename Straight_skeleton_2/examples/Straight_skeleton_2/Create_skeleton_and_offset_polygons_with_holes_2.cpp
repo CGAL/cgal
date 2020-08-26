@@ -1,4 +1,5 @@
 #include<vector>
+#include <cassert>
 
 #include<boost/shared_ptr.hpp>
 
@@ -42,6 +43,9 @@ int main()
   hole.push_back( Point(3.0,7.0) ) ;
   hole.push_back( Point(7.0,7.0) ) ;
   hole.push_back( Point(7.0,3.0) ) ;
+
+  assert(outer.is_counterclockwise_oriented());
+  assert(hole.is_clockwise_oriented());
 
   PolygonWithHoles poly( outer ) ;
 
