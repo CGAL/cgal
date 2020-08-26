@@ -156,7 +156,7 @@ struct Polygon_converter_output_iterator
 
 template <typename OutputIterator, typename Kernel>
 Polygon_converter_output_iterator<OutputIterator, Kernel>
-convert_polygon_back (OutputIterator output,
+convert_polygon_back (OutputIterator& output,
                       const Polygon_2<Kernel>&,
                       typename Gps_polyline_traits<Kernel>::Traits&)
 {
@@ -165,7 +165,7 @@ convert_polygon_back (OutputIterator output,
 
 template <typename OutputIterator, typename Kernel>
 Polygon_converter_output_iterator<OutputIterator, Kernel>
-convert_polygon_back (OutputIterator output,
+convert_polygon_back (OutputIterator& output,
                       const Polygon_with_holes_2<Kernel>&,
                       typename Gps_polyline_traits<Kernel>::Traits&)
 {
