@@ -81,7 +81,7 @@ convert_polygon (const Polygon_with_holes_2<Kernel>& pwh,
 template <typename OutputIterator, typename Traits>
 OutputIterator convert_polygon_back (OutputIterator output,
                                      const typename Traits::Polygon_2&,
-                                     const Traits&)
+                                     Traits&)
 {
   return output;
 }
@@ -89,7 +89,7 @@ OutputIterator convert_polygon_back (OutputIterator output,
 template <typename OutputIterator, typename Traits>
 OutputIterator convert_polygon_back (OutputIterator output,
                                      const typename Traits::Polygon_with_holes_2&,
-                                     const Traits&)
+                                     Traits&)
 {
   return output;
 }
@@ -98,11 +98,42 @@ template <typename OutputIterator, typename Kernel>
 struct Polygon_converter
 {
   using Polyline_traits = typename Gps_polyline_traits<Kernel>::Traits;
+
+  using Input_type = typename Polyline_traits::Polygon_with_holes_2;
+  using Input_polygon = typename Input_type::General_polygon_2;
+
+  using Output_type = Polygon_with_holes_2<Kernel>;
+  using Output_polygon = typename Output_type::Polygon_2;
+
   OutputIterator& output;
   Polygon_converter (OutputIterator& output) : output (output) { }
-  void operator() (const typename Polyline_traits::Polygon_with_holes_2& pwh) const
-  {
 
+  void operator() (const Input_type& pwh) const
+  {
+    Output_polygon outer_boundary;
+    convert_polygon (pwh.outer_boundary(), outer_boundary);
+
+    std::vector<Output_polygon> holes;
+
+    for (const Input_polygon& h : pwh.holes())
+    {
+      holes.emplace_back ();
+      convert_polygon (h, holes.back());
+    }
+
+    *(output ++) = Output_type (outer_boundary, holes.begin(), holes.end());
+  }
+
+private:
+
+  void convert_polygon (const Input_polygon& input,
+                        Output_polygon& out) const
+  {
+    for (typename Input_polygon::Curve_const_iterator
+           it = input.curves_begin(); it != input.curves_end(); ++ it)
+      for (typename Input_polygon::X_monotone_curve_2::Point_const_iterator
+             it2 = it->points_begin(); it2 != it->points_end(); ++ it2)
+        out.push_back (*it2);
   }
 };
 
@@ -127,7 +158,7 @@ template <typename OutputIterator, typename Kernel>
 Polygon_converter_output_iterator<OutputIterator, Kernel>
 convert_polygon_back (OutputIterator output,
                       const Polygon_2<Kernel>&,
-                      const typename Gps_polyline_traits<Kernel>::Traits&)
+                      typename Gps_polyline_traits<Kernel>::Traits&)
 {
   return Polygon_converter_output_iterator<OutputIterator, Kernel>(output);
 }
@@ -136,7 +167,7 @@ template <typename OutputIterator, typename Kernel>
 Polygon_converter_output_iterator<OutputIterator, Kernel>
 convert_polygon_back (OutputIterator output,
                       const Polygon_with_holes_2<Kernel>&,
-                      const typename Gps_polyline_traits<Kernel>::Traits&)
+                      typename Gps_polyline_traits<Kernel>::Traits&)
 {
   return Polygon_converter_output_iterator<OutputIterator, Kernel>(output);
 }
