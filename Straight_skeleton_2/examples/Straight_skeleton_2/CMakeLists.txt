@@ -8,6 +8,13 @@ project( Straight_skeleton_2_Examples )
 
 find_package(CGAL QUIET COMPONENTS Core )
 
+find_package(CGAL COMPONENTS Qt5)
+
+if(CGAL_Qt5_FOUND)
+  add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
+endif()
+
+
 if ( CGAL_FOUND )
 
   include(${CGAL_USE_FILE})
@@ -18,9 +25,14 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "${cppfile}" )
   endforeach()
 
+  if(CGAL_Qt5_FOUND)
+    target_link_libraries(draw_straight_skeleton_2 PUBLIC CGAL::CGAL_Qt5)
+  else()
+    message(STATUS "NOTICE: The example draw_straight_skeleton_2 requires Qt and will not be compiled.")
+  endif()
+
 else()
 
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
 
 endif()
-
