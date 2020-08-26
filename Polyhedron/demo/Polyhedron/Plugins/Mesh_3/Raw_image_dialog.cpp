@@ -55,3 +55,5 @@ SIGN Raw_image_dialog::image_sign() const
   else
     return SGN_UNSIGNED;
 }
+
+#include "moc_Raw_image_dialog.cpp"

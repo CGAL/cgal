@@ -9,3 +9,5 @@ void Callback_signaler::emit_signal (int value) const
 {
   Q_EMIT progressChanged(value);
 }
+
+#include "moc_Callback_signaler.cpp"

@@ -7,7 +7,6 @@
 #include <CGAL/Three/Scene_item.h>
 #include <queue>
 
-#include <QColor>
 
 //Make sure all the facets are triangles
 template<class Mesh, typename Kernel, typename Index_type>

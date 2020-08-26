@@ -19,10 +19,10 @@
 
 #include <QThread>
 #include <QObject>
-#include <QStringList>
-#include <QString>
-#include <QTimer>
 
+class QTimer;
+class QString;
+class QStringList;
 class Scene_c3t3_item;
 
 class Mesh_function_interface

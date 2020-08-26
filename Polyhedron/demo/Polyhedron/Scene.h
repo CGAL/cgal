@@ -6,17 +6,13 @@
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Scene_draw_interface.h>
 #include <CGAL/Three/Viewer_config.h>
-
-#include <QtOpenGL/qgl.h>
 #include <QStandardItemModel>
-#include <QString>
-#include <QColor>
 #include <QList>
 #include <QVector>
 #include <QMap>
 #include <QItemDelegate>
 #include <QPixmap>
-#include <QItemSelection>
+
 #include <CGAL/Qt/qglviewer.h>
 #include <QDebug>
 #include <iostream>
@@ -26,6 +22,7 @@
 class QEvent;
 class QMouseEvent;
 class QOpenGLFramebufferObject;
+class QItemSelection;
 namespace CGAL { namespace Three{ class Viewer_interface;}}
 
 //! This class is not supposed to be used by Plugins, but sometimes you may need access to

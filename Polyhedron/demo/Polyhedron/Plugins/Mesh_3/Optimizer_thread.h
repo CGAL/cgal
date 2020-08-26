@@ -19,9 +19,9 @@
 
 #include <QThread>
 #include <QObject>
-#include <QString>
-#include <QStringList>
-#include <QTimer>
+class QString;
+class QStringList;
+class QTimer;
 
 #include <CGAL/Mesh_optimization_return_code.h>
 

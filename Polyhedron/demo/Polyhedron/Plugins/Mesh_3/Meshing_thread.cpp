@@ -18,6 +18,9 @@
 
 #include <QElapsedTimer>
 #include <QApplication>
+#include <QTimer>
+#include <QString>
+#include <QStringList>
 
 #include "Meshing_thread.h"
 #include <CGAL/Three/Three.h>
@@ -76,3 +79,5 @@ emit_status()
 {
   Q_EMIT (status_report(f_->status(timer_period_)));
 }
+
+#include "moc_Meshing_thread.cpp"

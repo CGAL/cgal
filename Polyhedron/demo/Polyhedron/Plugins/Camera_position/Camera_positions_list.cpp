@@ -247,3 +247,5 @@ void Camera_positions_list::on_rightButton_pressed()
     Three::activeViewer()->moveCameraToCoordinates(rightCoord, 0.5f);
 
 }
+
+#include "moc_Camera_positions_list.cpp"

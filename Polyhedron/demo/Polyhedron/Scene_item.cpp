@@ -222,8 +222,6 @@ float Scene_item::alpha() const
 {
   return 1.0f;
 }
-
-void Scene_item::setAlpha(int )
+ void Scene_item::setAlpha(int )
 {
-
 }

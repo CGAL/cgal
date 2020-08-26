@@ -482,3 +482,5 @@ void Scene_textured_polyhedron_item::add_border_edges(std::vector<float> border_
   itemChanged();
 
 }
+
+#include "moc_Scene_textured_polyhedron_item.cpp"

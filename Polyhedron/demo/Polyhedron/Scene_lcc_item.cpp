@@ -613,3 +613,5 @@ QMenu* Scene_lcc_item::contextMenu()
 
   return menu;
 }
+
+#include "moc_Scene_lcc_item.cpp"

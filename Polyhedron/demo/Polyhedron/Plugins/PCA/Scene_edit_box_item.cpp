@@ -1308,3 +1308,4 @@ void Scene_edit_box_item::connectNewViewer(QObject *o)
     return;
   viewer->setMouseTracking(true);
 }
+#include "moc_Scene_edit_box_item.cpp"

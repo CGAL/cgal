@@ -3,13 +3,12 @@
 
 #include <CGAL/Three/Scene_item_rendering_helper.h>
 
-#include <QColor>
-#include <QString>
+
 #include <CGAL/Qt/qglviewer.h>
-#include <QOpenGLVertexArrayObject>
-#include <QOpenGLBuffer>
-#include <QOpenGLShaderProgram>
 #include <CGAL/Three/Viewer_interface.h>
+
+class QString;
+
 using namespace CGAL::Three;
 class Volume_plane_interface;
 struct Volume_plane_intersection_priv;

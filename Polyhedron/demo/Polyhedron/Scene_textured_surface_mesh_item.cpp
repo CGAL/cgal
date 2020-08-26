@@ -423,3 +423,4 @@ void Scene_textured_surface_mesh_item::computeElements() const
   QApplication::restoreOverrideCursor();
 }
 
+#include "moc_Scene_textured_surface_mesh_item.cpp"

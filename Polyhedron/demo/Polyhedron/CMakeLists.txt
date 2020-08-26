@@ -203,6 +203,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     message(STATUS "Qt5WebSockets was found. Using WebSockets is therefore possible.")
   endif()
 
+  #keep PUBLIC ? it will be exported and it is said to not be advised
+
   cgal_add_compilation_test(demo_framework)
   # Let's define `three_EXPORT` during the compilation of `demo_framework`,
   # in addition of `demo_framework_EXPORT` (defined automatically by

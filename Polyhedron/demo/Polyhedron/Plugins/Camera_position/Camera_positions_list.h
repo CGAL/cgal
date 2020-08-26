@@ -2,7 +2,7 @@
 #define CAMERA_POSITIONS_LIST_H
 
 #include <QDockWidget>
-#include <QModelIndex>
+class QModelIndex;
 
 namespace CGAL{namespace Three{class Viewer_interface;}}
 class QListView;

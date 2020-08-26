@@ -678,3 +678,5 @@ void Scene_polyhedron_shortest_path_item::connectNewViewer(QObject* o)
 {
   o->installEventFilter(this);
 }
+
+#include "moc_Scene_polyhedron_shortest_path_item.cpp"

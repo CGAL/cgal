@@ -11,9 +11,6 @@
 
 #include "Volume_plane_interface.h"
 #include "create_sphere.h"
-#include <QOpenGLVertexArrayObject>
-#include <QOpenGLBuffer>
-#include <QOpenGLShaderProgram>
 #include <QMouseEvent>
 #include <CGAL/Three/Three.h>
 #include <CGAL/Three/Viewer_interface.h>

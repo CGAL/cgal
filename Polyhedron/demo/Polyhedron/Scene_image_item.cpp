@@ -763,3 +763,5 @@ void Scene_image_item::computeElements() const
   setBuffersFilled(true);
   QApplication::restoreOverrideCursor();
 }
+
+#include "moc_Scene_image_item.cpp"

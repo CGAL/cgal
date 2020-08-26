@@ -213,3 +213,4 @@ SMesh *Scene_movable_sm_item::getFaceGraph()
 {
   return d->facegraph;
 }
+#include "moc_Scene_movable_sm_item.cpp"

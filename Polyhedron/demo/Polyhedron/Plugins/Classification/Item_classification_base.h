@@ -4,14 +4,13 @@
 #include <CGAL/Three/Scene_item.h>
 
 #include <QComboBox>
-#include <QLineEdit>
-#include <QSpinBox>
-#include <QMultipleInputDialog.h>
 
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
 #include <CGAL/Classification/Sum_of_weighted_features_classifier.h>
 #include <CGAL/Classification/ETHZ/Random_forest_classifier.h>
+
+class QMultipleInputDialog;
 
 #ifdef CGAL_LINKED_WITH_OPENCV
 #include <CGAL/Classification/OpenCV/Random_forest_classifier.h>

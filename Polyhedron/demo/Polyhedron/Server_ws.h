@@ -2,8 +2,9 @@
 #define SERVER_WS_H
 
 #include  <QObject>
-#include <QWebSocketServer>
-#include <QWebSocket>
+
+class QWebSocketServer;
+class QWebSocket;
 
 class EchoServer : public QObject
 {

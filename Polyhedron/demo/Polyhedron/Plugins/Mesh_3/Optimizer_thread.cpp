@@ -18,6 +18,8 @@
 
 #include <QElapsedTimer>
 #include <QTimer>
+#include <QString>
+#include <QStringList>
 #include "Optimizer_thread.h"
 #include "Scene_c3t3_item.h"
 
@@ -69,3 +71,5 @@ emit_status()
 {
   Q_EMIT (status_report(f_->status(timer_period_)));
 }
+
+#include "moc_Optimizer_thread.cpp"

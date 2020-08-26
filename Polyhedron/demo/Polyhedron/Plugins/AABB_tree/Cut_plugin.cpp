@@ -1,38 +1,10 @@
-
+#ifndef Q_MOC_RUN
 #include <fstream>
 #include <QtCore/qglobal.h>
-#include <CGAL/intersections.h>
-
-#include "Scene.h"
-#include "Color_ramp.h"
-#include "Messages_interface.h"
-#include "Scene_plane_item.h"
-#include "Scene_surface_mesh_item.h"
-#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-#include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
-#include <CGAL/Three/Scene_interface.h>
-#include <CGAL/Three/Scene_item_rendering_helper.h>
-#include <CGAL/Three/Viewer_interface.h>
-#include <CGAL/Three/Three.h>
-#include <CGAL/Three/Triangle_container.h>
-#include <CGAL/Three/Edge_container.h>
-
-#include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/AABB_halfedge_graph_segment_primitive.h>
-#include <CGAL/internal/AABB_tree/AABB_drawing_traits.h>
-//#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Simple_cartesian.h>
-
-#include <CGAL/bounding_box.h>
-
 #include <QElapsedTimer>
-
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
-#include <CGAL/Three/Scene_item.h>
 #include <QMouseEvent>
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -51,6 +23,36 @@
     std::size_t last;
   };
 #endif // CGAL_LINKED_WITH_TBB
+
+#endif // Q_MOC_RUN
+#include "Scene.h"
+#include "Color_ramp.h"
+#include "Messages_interface.h"
+#include "Scene_plane_item.h"
+#include "Scene_surface_mesh_item.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+#include <CGAL/Three/Scene_interface.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
+#include <CGAL/Three/Viewer_interface.h>
+#include <CGAL/Three/Three.h>
+#include <CGAL/Three/Triangle_container.h>
+#include <CGAL/Three/Edge_container.h>
+#include <CGAL/intersections.h>
+
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
+#include <CGAL/AABB_halfedge_graph_segment_primitive.h>
+#include <CGAL/internal/AABB_tree/AABB_drawing_traits.h>
+//#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Simple_cartesian.h>
+
+#include <CGAL/bounding_box.h>
+#include <CGAL/Three/Scene_item.h>
+
+
+
 #include <CGAL/Three/Three.h>
 
 using namespace CGAL::Three;

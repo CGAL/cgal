@@ -2119,4 +2119,5 @@ bool Scene_c3t3_item::get_detect_borders() { return d->detect_borders; }
 
 
 #include "Scene_c3t3_item.moc"
+#include "moc_Scene_c3t3_item.cpp"
 

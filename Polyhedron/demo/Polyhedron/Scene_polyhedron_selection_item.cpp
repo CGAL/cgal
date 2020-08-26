@@ -2610,3 +2610,5 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_selection_item::header() c
   data.titles.append(QString("Average"));
   return data;
 }
+
+#include "moc_Scene_polyhedron_selection_item.cpp"

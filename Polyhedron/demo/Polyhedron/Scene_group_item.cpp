@@ -264,3 +264,4 @@ void Scene_group_item::setAlpha(int )
     scene->item(id)->setAlpha(static_cast<int>(alpha()*255));
   }
 }
+

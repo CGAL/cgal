@@ -2,7 +2,6 @@
 #define CGAL_VOLUME_PLANE_INTERFACE_H_
 
 #include <QObject>
-#include <QAction>
 #include <QMenu>
 #include <QSlider>
 #include <QWidgetAction>

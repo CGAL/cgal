@@ -429,3 +429,4 @@ bool Scene_spheres_item::save(const std::string& file_name)const
   return true;
 }
 
+#include "moc_Scene_spheres_item.cpp"

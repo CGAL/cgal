@@ -88,3 +88,4 @@ bool Show_point_dialog::has_correct_coordinates() const
   return m_has_correct_coordinates;
 }
 
+#include "moc_Show_point_dialog.cpp"

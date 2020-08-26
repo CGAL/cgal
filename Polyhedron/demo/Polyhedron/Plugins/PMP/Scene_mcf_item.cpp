@@ -24,3 +24,5 @@ Scene_mcf_item::~Scene_mcf_item()
   if(meso_skeleton)
     delete meso_skeleton;
 }
+
+#include "moc_Scene_mcf_item.cpp"

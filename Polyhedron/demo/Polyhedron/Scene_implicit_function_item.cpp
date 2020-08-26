@@ -621,3 +621,5 @@ void Scene_implicit_function_item::computeElements() const
   setBuffersFilled(true);
   QApplication::restoreOverrideCursor();
 }
+
+#include "moc_Scene_implicit_function_item.cpp"

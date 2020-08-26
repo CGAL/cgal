@@ -4,22 +4,19 @@
 #define VIEWER_H
 
 #include <CGAL/Three/Viewer_config.h>
-#include <CGAL/Three/Scene_interface.h>
-#include <QOpenGLBuffer>
-#include <QOpenGLDebugMessage>
-#include <QOpenGLVertexArrayObject>
-#include <QOpenGLShaderProgram>
 #include <CGAL/Three/Viewer_interface.h>
-#include <QPoint>
-#include <QFont>
-#include <QOpenGLFramebufferObject>
-#include <CGAL/Three/TextRenderer.h>
+
 // forward declarations
+class QOpenGLFramebufferObject;
+class QPoint;
+class QOpenGLShaderProgram;
 class QWidget;
 class QMouseEvent;
 class QKeyEvent;
 class QContextMenuEvent;
+class QOpenGLDebugMessage;
 class Viewer_impl;
+class TextRenderer;
 namespace CGAL{
 namespace Three{
 class Scene_draw_interface;

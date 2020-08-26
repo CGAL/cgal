@@ -3,30 +3,30 @@
 #include "config.h"
 #include "MainWindow_config.h"
 
-#include <QtOpenGL/qgl.h>
 #include <CGAL/Qt/DemosMainWindow.h>
 #include <CGAL/Three/Three.h>
 
-#include <QScriptEngine>
 #include <QScriptable>
 
 
 #include <QVector>
 #include <QList>
-#include <QFileInfo>
-#include <QStringList>
 #include <QSet>
 #include <QMap>
-#include <QModelIndex>
 #include <QMdiSubWindow>
-#include <QLineEdit>
 
+class QStringList;
+class QScriptEngine;
+class QFileInfo;
+class QModelIndex;
+class QLineEdit;
+class QTreeView;
+class QMenu;
 class Scene;
 class Viewer;
 struct SubViewer;
-class QTreeView;
-class QMenu;
 class QWidgetAction;
+
 namespace CGAL {
 namespace Three{
 class Polyhedron_demo_io_plugin_interface;

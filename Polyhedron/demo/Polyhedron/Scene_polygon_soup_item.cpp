@@ -995,3 +995,5 @@ Scene_polygon_soup_item_priv::compute_stats()
 
   stats_computed = true;
 }
+
+#include "moc_Scene_polygon_soup_item.cpp"

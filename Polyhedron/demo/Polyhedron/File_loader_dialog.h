@@ -1,5 +1,4 @@
 #include <QFileInfo>
-#include <QLayout>
 #include <QDialogButtonBox>
 #include <QPushButton>
 

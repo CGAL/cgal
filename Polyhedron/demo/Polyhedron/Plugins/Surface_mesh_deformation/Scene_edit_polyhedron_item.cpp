@@ -1927,3 +1927,5 @@ void Scene_edit_polyhedron_item::init(Vi* viewer)const
     initializeBuffers(viewer);
   }
 }
+
+#include "moc_Scene_edit_polyhedron_item.cpp"

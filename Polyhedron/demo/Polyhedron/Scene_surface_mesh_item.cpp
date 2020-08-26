@@ -2395,3 +2395,4 @@ void Scene_surface_mesh_item::switchToGouraudPlusEdge(bool b)
     setGouraudPlusEdgesMode();
   }
 }
+#include "moc_Scene_surface_mesh_item.cpp"

@@ -5,7 +5,7 @@
 #include <CGAL/Surface_mesh_approximation/L2_metric_plane_proxy.h>
 #include <CGAL/Dynamic_property_map.h>
 
-#include <QColor>
+class QColor;
 
 #include "SMesh_type.h"
 //#include "Color_cheat_sheet.h"

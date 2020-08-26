@@ -4,6 +4,9 @@
 #include <QNetworkInterface>
 #include <QApplication>
 #include <QMessageBox>
+#include <QWebSocketServer>
+#include <QWebSocket>
+
 #include "Server_ws.h"
 
 #include <iostream>
@@ -98,3 +101,4 @@ int main(int argc, char *argv[])
   return a.exec();
 }
 
+#include "moc_Server_ws.cpp"

@@ -1085,3 +1085,6 @@ void Scene_points_with_normal_item::initializeBuffers(Viewer_interface * v) cons
 {
   d->initializeBuffers(v);
 }
+
+
+#include "moc_Scene_points_with_normal_item.cpp"

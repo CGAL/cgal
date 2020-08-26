@@ -1,8 +1,9 @@
 #ifndef MESSAGES_INTERFACE_H
 #define MESSAGES_INTERFACE_H
 
-#include <QString>
 #include <QObject>
+
+class QString;
 
 class Messages_interface {
 public:

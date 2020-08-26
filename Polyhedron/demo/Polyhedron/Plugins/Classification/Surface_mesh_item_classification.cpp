@@ -7,7 +7,7 @@
 #include <CGAL/Three/Viewer_interface.h>
 
 #include <QLineEdit>
-
+#include <QMultipleInputDialog.h>
 #include <set>
 #include <stack>
 #include <algorithm>

@@ -6,7 +6,6 @@
 
 #include <CGAL/Three/Scene_item.h>
 
-#include "Scene_surface_mesh_item.h"
 #include "Scene_polyhedron_selection_item.h"
 #include "Item_classification_base.h"
 #include "Kernel_type.h"
@@ -16,6 +15,7 @@
 
 #include <iostream>
 
+class Scene_surface_mesh_item;
 typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 class Surface_mesh_item_classification : public Item_classification_base

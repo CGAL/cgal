@@ -171,3 +171,5 @@ void Scene_facegraph_transform_item::initializeBuffers(Viewer_interface *v) cons
   d->positions_lines.clear();
   d->positions_lines.shrink_to_fit();
 }
+
+#include "moc_Scene_facegraph_transform_item.cpp"

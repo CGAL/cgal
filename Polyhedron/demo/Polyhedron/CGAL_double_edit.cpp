@@ -76,3 +76,5 @@ public:
   {
     return this->validator->top();
   }
+
+#include "moc_CGAL_double_edit.cpp"

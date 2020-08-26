@@ -714,3 +714,5 @@ void Scene_nef_polyhedron_item::initializeBuffers(Viewer_interface *v) const
   d->positions_points.clear();
   d->positions_points.shrink_to_fit();
 }
+
+#include "moc_Scene_nef_polyhedron_item.cpp"

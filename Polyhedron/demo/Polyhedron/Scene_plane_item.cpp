@@ -360,3 +360,4 @@ void Scene_plane_item::setPlaneOrientation()
   itemChanged();
 }
 
+#include "moc_Scene_plane_item.cpp"

@@ -25,6 +25,7 @@
 #include <CGAL/Three/Three.h>
 
 #include "ui_LightingDialog.h"
+#include <CGAL/Three/TextRenderer.h>
 
 #if defined(_WIN32)
 #include <QMimeData>
@@ -2035,3 +2036,4 @@ void Viewer::onTextMessageSocketReceived(QString message)
 }
 #endif
 #include "Viewer.moc"
+#include "moc_Viewer.cpp"

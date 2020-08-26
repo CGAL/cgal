@@ -86,3 +86,4 @@ void Scene_polyhedron_item_decorator::set_polyhedron_item(Scene_face_graph_item*
   this->poly_item = poly_item;
 }
 
+#include "moc_Scene_polyhedron_item_decorator.cpp"

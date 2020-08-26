@@ -18,9 +18,9 @@
 #define CGAL_MESH_3_IMPLICIT_FUNCTION_INTERFACE_H
 
 #include <QObject>
-#include <QString>
 #include <CGAL/Three/Scene_interface.h>
 
+class QString;
 class Implicit_function_interface
 {
 public:
