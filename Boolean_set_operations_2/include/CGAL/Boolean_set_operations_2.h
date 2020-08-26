@@ -38,25 +38,22 @@ namespace CGAL {
 
 template <class Kernel, class Container>
 inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
-                         const Polygon_2<Kernel, Container>& pgn2)
-{
-  return do_intersect(pgn1, pgn2, Tag_true());
-}
-
-template <class Kernel, class Container, class UsePolylineTraitsTag>
-inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
                          const Polygon_2<Kernel, Container>& pgn2,
-                         const UsePolylineTraitsTag&)
+                         Tag_true = Tag_true())
 {
-  typename std::conditional
-    <UsePolylineTraitsTag::value,
-     typename Gps_polyline_traits<Kernel>::Traits,
-     typename Gps_default_traits<Polygon_2<Kernel, Container> >::Traits>::type
-    traits;
+  typename Gps_polyline_traits<Kernel>::Traits traits;
   return (_do_intersect(pgn1, pgn2, traits));
 }
 
-#if 0
+template <class Kernel, class Container>
+inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
+                         const Polygon_2<Kernel, Container>& pgn2,
+                         Tag_false)
+{
+  typename Gps_default_traits<Polygon_2<Kernel, Container> >::Traits traits;
+  return (_do_intersect(pgn1, pgn2, traits));
+}
+
 template <class Kernel, class Container, class Traits>
 inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
                          const Polygon_2<Kernel, Container>& pgn2,
@@ -64,7 +61,6 @@ inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
 {
   return (_do_intersect(pgn1, pgn2, tr));
 }
-#endif
 
 template <class Kernel, class Container>
 inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
