@@ -226,14 +226,100 @@ void test()
 
   GPS new_gps(gps);
   GPS new_gps2 = gps;
-  }
+}
 
+void test_CGAL_Polygon_variants()
+{
+  typedef CGAL::Polygon_2<Kernel>               Polygon_2;
+  typedef CGAL::Polygon_with_holes_2<Kernel>    Polygon_with_holes_2;
+  typedef CGAL::Gps_default_traits<Polygon_2>::Traits Traits;
 
-  int main()
-  {
-    test<Gps>();
-    test<Ps>();
-    test<Gps_non_caching>();
+  Polygon_2 pgn1, pgn2;
+  Polygon_with_holes_2  pgn_with_holes1, pgn_with_holes2;
+  std::vector<Polygon_2>             polygons;
+  std::vector<Polygon_with_holes_2>  polygons_with_holes;
+  Polygon_with_holes_2 res;
+  std::vector<Polygon_with_holes_2>  result;
+  Traits tr;
 
-    return (0);
-  }
+  CGAL::join(pgn1, pgn2, res);
+  CGAL::join(pgn1, pgn2, res, CGAL::Tag_true());
+  CGAL::join(pgn1, pgn2, res, CGAL::Tag_false());
+  CGAL::join(pgn1, pgn2, res, tr);
+
+  CGAL::join(pgn1, pgn_with_holes2, res);
+  CGAL::join(pgn1, pgn_with_holes2, res, CGAL::Tag_true());
+  CGAL::join(pgn1, pgn_with_holes2, res, CGAL::Tag_false());
+  CGAL::join(pgn1, pgn_with_holes2, res, tr);
+
+  CGAL::join(pgn_with_holes1, pgn2, res);
+  CGAL::join(pgn_with_holes1, pgn2, res, CGAL::Tag_true());
+  CGAL::join(pgn_with_holes1, pgn2, res, CGAL::Tag_false());
+  CGAL::join(pgn_with_holes1, pgn2, res, tr);
+
+  CGAL::join(pgn_with_holes1, pgn_with_holes2, res);
+  CGAL::join(pgn_with_holes1, pgn_with_holes2, res, CGAL::Tag_true());
+  CGAL::join(pgn_with_holes1, pgn_with_holes2, res, CGAL::Tag_false());
+  CGAL::join(pgn_with_holes1, pgn_with_holes2, res, tr);
+
+  CGAL::difference(pgn1, pgn2, std::back_inserter(result));
+  CGAL::difference(pgn1, pgn2, std::back_inserter(result), CGAL::Tag_true());
+  CGAL::difference(pgn1, pgn2, std::back_inserter(result), CGAL::Tag_false());
+  CGAL::difference(pgn1, pgn2, std::back_inserter(result), tr);
+
+  CGAL::difference(pgn1, pgn_with_holes2, std::back_inserter(result));
+  CGAL::difference(pgn1, pgn_with_holes2, std::back_inserter(result), CGAL::Tag_true());
+  CGAL::difference(pgn1, pgn_with_holes2, std::back_inserter(result), CGAL::Tag_false());
+  CGAL::difference(pgn1, pgn_with_holes2, std::back_inserter(result), tr);
+
+  CGAL::difference(pgn_with_holes1, pgn2, std::back_inserter(result));
+  CGAL::difference(pgn_with_holes1, pgn2, std::back_inserter(result), CGAL::Tag_true());
+  CGAL::difference(pgn_with_holes1, pgn2, std::back_inserter(result), CGAL::Tag_false());
+  CGAL::difference(pgn_with_holes1, pgn2, std::back_inserter(result), tr);
+
+  CGAL::difference(pgn_with_holes1, pgn_with_holes2, std::back_inserter(result));
+  CGAL::difference(pgn_with_holes1, pgn_with_holes2, std::back_inserter(result), CGAL::Tag_true());
+  CGAL::difference(pgn_with_holes1, pgn_with_holes2, std::back_inserter(result), CGAL::Tag_false());
+  CGAL::difference(pgn_with_holes1, pgn_with_holes2, std::back_inserter(result), tr);
+
+  CGAL::symmetric_difference(pgn1, pgn2, std::back_inserter(result));
+  CGAL::symmetric_difference(pgn1, pgn2, std::back_inserter(result), CGAL::Tag_true());
+  CGAL::symmetric_difference(pgn1, pgn2, std::back_inserter(result), CGAL::Tag_false());
+  CGAL::symmetric_difference(pgn1, pgn2, std::back_inserter(result), tr);
+
+  CGAL::symmetric_difference(pgn1, pgn_with_holes2, std::back_inserter(result));
+  CGAL::symmetric_difference(pgn1, pgn_with_holes2, std::back_inserter(result), CGAL::Tag_true());
+  CGAL::symmetric_difference(pgn1, pgn_with_holes2, std::back_inserter(result), CGAL::Tag_false());
+  CGAL::symmetric_difference(pgn1, pgn_with_holes2, std::back_inserter(result), tr);
+
+  CGAL::symmetric_difference(pgn_with_holes1, pgn2, std::back_inserter(result));
+  CGAL::symmetric_difference(pgn_with_holes1, pgn2, std::back_inserter(result), CGAL::Tag_true());
+  CGAL::symmetric_difference(pgn_with_holes1, pgn2, std::back_inserter(result), CGAL::Tag_false());
+  CGAL::symmetric_difference(pgn_with_holes1, pgn2, std::back_inserter(result), tr);
+
+  CGAL::symmetric_difference(pgn_with_holes1, pgn_with_holes2, std::back_inserter(result));
+  CGAL::symmetric_difference(pgn_with_holes1, pgn_with_holes2, std::back_inserter(result), CGAL::Tag_true());
+  CGAL::symmetric_difference(pgn_with_holes1, pgn_with_holes2, std::back_inserter(result), CGAL::Tag_false());
+  CGAL::symmetric_difference(pgn_with_holes1, pgn_with_holes2, std::back_inserter(result), tr);
+
+  Polygon_with_holes_2 res2;
+  CGAL::complement(pgn1, res2);
+  CGAL::complement(pgn1, res2, CGAL::Tag_true());
+  CGAL::complement(pgn1, res2, CGAL::Tag_false());
+  CGAL::complement(pgn1, res2, tr);
+
+  CGAL::complement(pgn_with_holes1, std::back_inserter(result));
+  CGAL::complement(pgn_with_holes1, std::back_inserter(result), CGAL::Tag_true());
+  CGAL::complement(pgn_with_holes1, std::back_inserter(result), CGAL::Tag_false());
+  CGAL::complement(pgn_with_holes1, std::back_inserter(result), tr);
+}
+
+int main()
+{
+  test<Gps>();
+  test<Ps>();
+  test<Gps_non_caching>();
+  test_CGAL_Polygon_variants();
+
+  return (0);
+}
