@@ -41,7 +41,8 @@ struct Gps_default_traits<CGAL::Polygon_2<Kernel, Container> >
 template <class Kernel>
 struct Gps_polyline_traits
 {
-  typedef Gps_traits_2<Arr_polyline_traits_2<Arr_segment_traits_2<Kernel> > > Traits;
+  typedef Arr_polyline_traits_2<Arr_segment_traits_2<Kernel> > Base;
+  typedef Gps_traits_2<Base> Traits;
 };
 
 template <class Kernel, class Container>

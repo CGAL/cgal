@@ -26,22 +26,119 @@ namespace CGAL {
 template <typename Traits>
 const typename Traits::Polygon_2&
 convert_polygon (const typename Traits::Polygon_2& polygon,
-                 const Traits&)
+                 Traits&)
+{
+  return polygon;
+}
+
+template <typename Traits>
+const typename Traits::Polygon_with_holes_2&
+convert_polygon (const typename Traits::Polygon_with_holes_2& polygon,
+                 Traits&)
 {
   return polygon;
 }
 
 template <typename Kernel>
-General_polygon_2<Arr_polyline_traits_2<Arr_segment_traits_2<Kernel> > >
+General_polygon_2<typename Gps_polyline_traits<Kernel>::Base>
 convert_polygon (const Polygon_2<Kernel>& polygon,
-                 const Arr_polyline_traits_2<Arr_segment_traits_2<Kernel> >&)
+                 typename Gps_polyline_traits<Kernel>::Traits&)
 {
-  using Polyline_traits = Arr_polyline_traits_2<Arr_segment_traits_2<Kernel> >;
+  using Polyline_traits = typename Gps_polyline_traits<Kernel>::Base;
   return General_polygon_2<Polyline_traits>
     (Polyline_traits::make_curve_2
      (CGAL::make_range (polygon.vertices_begin(),
                         polygon.vertices_end()),
       true));
+}
+
+template <typename Kernel>
+General_polygon_with_holes_2<General_polygon_2
+                             <typename Gps_polyline_traits<Kernel>::Base> >
+convert_polygon (const Polygon_with_holes_2<Kernel>& pwh,
+                 typename Gps_polyline_traits<Kernel>::Traits&)
+{
+  using Polyline_traits = typename Gps_polyline_traits<Kernel>::Base;
+
+  General_polygon_with_holes_2<General_polygon_2<Polyline_traits> > out
+    (General_polygon_2<Polyline_traits>
+     (Polyline_traits::make_curve_2
+      (CGAL::make_range (pwh.outer_boundary().vertices_begin(),
+                         pwh.outer_boundary().vertices_end()),
+       true)));
+
+  for (const Polygon_2<Kernel>& h : pwh.holes())
+    out.add_hole
+      (General_polygon_2<Polyline_traits>
+       (Polyline_traits::make_curve_2
+        (CGAL::make_range (h.vertices_begin(),
+                           h.vertices_end()),
+         true)));
+
+  return out;
+}
+
+template <typename OutputIterator, typename Traits>
+OutputIterator convert_polygon_back (OutputIterator output,
+                                     const typename Traits::Polygon_2&,
+                                     const Traits&)
+{
+  return output;
+}
+
+template <typename OutputIterator, typename Traits>
+OutputIterator convert_polygon_back (OutputIterator output,
+                                     const typename Traits::Polygon_with_holes_2&,
+                                     const Traits&)
+{
+  return output;
+}
+
+template <typename OutputIterator, typename Kernel>
+struct Polygon_converter
+{
+  using Polyline_traits = typename Gps_polyline_traits<Kernel>::Traits;
+  OutputIterator& output;
+  Polygon_converter (OutputIterator& output) : output (output) { }
+  void operator() (const typename Polyline_traits::Polygon_with_holes_2& pwh) const
+  {
+
+  }
+};
+
+template <typename OutputIterator, typename Kernel>
+struct Polygon_converter_output_iterator
+  : boost::function_output_iterator<Polygon_converter<OutputIterator, Kernel> >
+{
+  using Base = boost::function_output_iterator<Polygon_converter<OutputIterator, Kernel> >;
+
+  OutputIterator& output;
+
+  Polygon_converter_output_iterator (OutputIterator& output)
+    : Base (output), output (output)
+  {
+
+  }
+
+  operator OutputIterator() const { return output; }
+};
+
+template <typename OutputIterator, typename Kernel>
+Polygon_converter_output_iterator<OutputIterator, Kernel>
+convert_polygon_back (OutputIterator output,
+                      const Polygon_2<Kernel>&,
+                      const typename Gps_polyline_traits<Kernel>::Traits&)
+{
+  return Polygon_converter_output_iterator<OutputIterator, Kernel>(output);
+}
+
+template <typename OutputIterator, typename Kernel>
+Polygon_converter_output_iterator<OutputIterator, Kernel>
+convert_polygon_back (OutputIterator output,
+                      const Polygon_with_holes_2<Kernel>&,
+                      const typename Gps_polyline_traits<Kernel>::Traits&)
+{
+  return Polygon_converter_output_iterator<OutputIterator, Kernel>(output);
 }
 
 /// \name _do_intersect() functions.
@@ -51,8 +148,8 @@ template <class Pgn1, class Pgn2, class Traits>
 inline bool _do_intersect(const Pgn1& pgn1, const Pgn2& pgn2, Traits& tr)
 {
   General_polygon_set_2<Traits> gps(tr);
-  gps.insert(convert_polygon(pgn1, Traits()));
-  return (gps.do_intersect(convert_polygon(pgn2, Traits())));
+  gps.insert(convert_polygon(pgn1, tr));
+  return (gps.do_intersect(convert_polygon(pgn2, tr)));
 }
 
 template <class Pgn1, class Pgn2>
@@ -71,7 +168,7 @@ inline
 Oriented_side _oriented_side(const Obj& obj, const Pgn& pgn, Traits& tr)
 {
   General_polygon_set_2<Traits> gps(tr);
-  gps.insert(pgn);
+  gps.insert(convert_polygon(pgn, tr));
   return (gps.oriented_side(obj));
 }
 
@@ -91,9 +188,9 @@ inline OutputIterator _intersection(const Pgn1& pgn1, const Pgn2& pgn2,
                                     OutputIterator out, Traits& tr)
 {
   General_polygon_set_2<Traits> gps(tr);
-  gps.insert(pgn1);
-  gps.intersection(pgn2);
-  return (gps.polygons_with_holes(out));
+  gps.insert(convert_polygon(pgn1, tr));
+  gps.intersection(convert_polygon(pgn2, tr));
+  return (gps.polygons_with_holes(convert_polygon_back(out, pgn1, tr)));
 }
 
 template <class Pgn1, class Pgn2, class OutputIterator>
@@ -123,20 +220,34 @@ inline bool _is_empty (const typename Traits::Polygon_with_holes_2&, Traits&)
   return false;
 }
 
-template <class Pgn1, class Pgn2, class Traits>
+template <typename Kernel>
+inline bool _is_empty (const Polygon_2<Kernel>& polygon,
+                       typename Gps_polyline_traits<Kernel>::Traits&)
+{
+  return (polygon.size() == 0);
+}
+
+template <typename Kernel>
+inline bool _is_empty (const Polygon_with_holes_2<Kernel>& pwh,
+                       typename Gps_polyline_traits<Kernel>::Traits&)
+{
+  return (pwh.outer_boundary().size() == 0);
+}
+
+template <class Pgn1, class Pgn2, class Pwh, class Traits>
 inline bool _join(const Pgn1& pgn1, const Pgn2& pgn2,
-                  typename Traits::Polygon_with_holes_2& res, Traits& tr)
+                  Pwh& res, Traits& tr)
 {
   if (_is_empty(pgn1, tr) || _is_empty(pgn2, tr))
     return false;
 
   General_polygon_set_2<Traits> gps(tr);
-  gps.insert(pgn1);
-  gps.join(pgn2);
+  gps.insert(convert_polygon(pgn1, tr));
+  gps.join(convert_polygon(pgn2, tr));
   if (gps.number_of_polygons_with_holes() == 1)
   {
-    Oneset_iterator<typename Traits::Polygon_with_holes_2> oi (res);
-    gps.polygons_with_holes(oi);
+    Oneset_iterator<Pwh> oi (res);
+    gps.polygons_with_holes(convert_polygon_back(oi, pgn1, tr));
     return true;
   }
 
@@ -160,9 +271,9 @@ inline OutputIterator _difference(const Pgn1& pgn1, const Pgn2& pgn2,
                                   OutputIterator oi, Traits& tr)
 {
   General_polygon_set_2<Traits> gps(tr);
-  gps.insert(pgn1);
-  gps.difference(pgn2);
-  return gps.polygons_with_holes(oi);
+  gps.insert(convert_polygon(pgn1, tr));
+  gps.difference(convert_polygon(pgn2, tr));
+  return gps.polygons_with_holes(convert_polygon_back(oi, pgn1, tr));
 }
 
 template <class Pgn1, class Pgn2, class OutputIterator>
@@ -182,9 +293,9 @@ inline OutputIterator _symmetric_difference(const Pgn1& pgn1, const Pgn2& pgn2,
                                             OutputIterator oi, Traits& tr)
 {
   General_polygon_set_2<Traits> gps(tr);
-  gps.insert(pgn1);
-  gps.symmetric_difference(pgn2);
-  return gps.polygons_with_holes(oi);
+  gps.insert(convert_polygon(pgn1, tr));
+  gps.symmetric_difference(convert_polygon(pgn2, tr));
+  return gps.polygons_with_holes(convert_polygon_back(oi, pgn1, tr));
 }
 
 template <class Pgn1, class Pgn2, class OutputIterator>
@@ -199,15 +310,15 @@ inline OutputIterator _symmetric_difference(const Pgn1& pgn1, const Pgn2& pgn2,
 /// \name _complement() functions.
 //@{
 
-template <class Pgn, class Traits>
-void _complement(const Pgn& pgn, typename Traits::Polygon_with_holes_2& res,
+template <class Pgn, class Pwh, class Traits>
+void _complement(const Pgn& pgn, Pwh& res,
                  Traits& tr)
 {
   General_polygon_set_2<Traits> gps(tr);
-  gps.insert(pgn);
+  gps.insert(convert_polygon(pgn, tr));
   gps.complement();
-  Oneset_iterator<typename Traits::Polygon_with_holes_2> oi(res);
-  gps.polygons_with_holes(oi);
+  Oneset_iterator<Pwh> oi(res);
+  gps.polygons_with_holes(convert_polygon_back(oi, pgn, tr));
 }
 
 template <class Pgn, class Pwh>
