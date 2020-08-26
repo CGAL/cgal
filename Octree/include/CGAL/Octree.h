@@ -503,7 +503,7 @@ public:
    * This function finds all the intersecting nodes and returns them as const pointers.
    *
    * \tparam Query the primitive class (e.g. Sphere_3, Ray_3)
-   * \tparam Node_output_iterator an output iterator type that will accept points
+   * \tparam Node_output_iterator an output iterator type that will accept node pointers
    * \param query the primitive to check for intersections
    * \param output the output iterator to add node references to
    */

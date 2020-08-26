@@ -105,11 +105,17 @@ calling the root node's parent accessor will return null.
 
 These accessors and operators can be chained to access any node in the tree in a single line of code.
 
-\todo I plan to add an enum for node indices, so I can refer to them by name (e.g. LEFT_TOP_FRONT)
-
 \cgalExample{Octree/Octree_traversal_manual.cpp}
 
 \subsubsection Section_Octree_Preorder_Traversal Preorder Traversal
+
+It's often useful to be able to iterate over the nodes of the tree in a particular order.
+For example, the stream operator `<<` uses a traversal to print out each node.
+A few traversals are provided, among them "Preorder" and "Postorder".
+To traverse a tree in preorder is to visit each parent immediately followed by its children,
+where in posterder traversal the children are visited first.
+
+\todo This could use a bit more detail
 
 \b Example
 
@@ -134,7 +140,16 @@ e.g. I've build a tree and I want to print it out, but layer by layer
 
 \subsection Section_Octree_Acceleration Acceleration
 
+Once an octree is built, its structure can be used to accelerate different tasks.
+
 \subsubsection Section_Octree_Nearest_Neighbor Finding the Nearest Neighbor of a Point
+
+The naive way of finding the nearest neighbor of a point requires finding the distance of every other point.
+An octree can be used to perform the same task in significantly less time.
+For large numbers of points, this can be a large enough difference to outweigh the time spent building the tree.
+
+Note that a kD-tree is expected to outperform the Octree for this task,
+it should be preferred unless features specific to the Octree are needed.
 
 \b Example
 
