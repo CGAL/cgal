@@ -28,7 +28,7 @@ We can use the `refine` method to subdivide space further.
 \subsubsection Section_Octree_Point_Vector Building an Octree from a Vector of Points
 
 The simplest way to create an octree is using a vector of points.
-The constructor generally expects a separate point-range and map, 
+The constructor generally expects a separate point-range and map,
 but the point-map defaults to CGAL's `Identity_property_map` if none is provided.
 That enables using a range that contains the points directly, because it's mapped directly to itself.
 
