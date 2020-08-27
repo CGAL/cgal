@@ -144,7 +144,6 @@ public:
   // Construct_triangle_2
 
 protected:
-  // @todo avoid having these (it includes a domain) when using Delaunay traits, somehow?
   Exact_traits traits_e;
   Filtering_traits traits_f;
 };

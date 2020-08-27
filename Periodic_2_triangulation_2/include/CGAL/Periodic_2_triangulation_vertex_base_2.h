@@ -93,7 +93,7 @@ inline
 std::istream& operator>>(std::istream &is, Periodic_2_triangulation_vertex_base_2<Gt, Vb> &)
 {
   // no combinatorial information.
-  // @todo should output offset?
+  // @todo should this also output the offset?
   return is;
 }
 

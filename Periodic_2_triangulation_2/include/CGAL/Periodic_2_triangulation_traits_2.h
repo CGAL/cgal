@@ -131,7 +131,7 @@ protected:
 
 // Forward declaration for the filtered traits
 
-// @exact disable filtering for Lattice-based Periodic
+// @exact filtering is currently disabled for Lattice-based Periodic because an exact kernel is required anyway
 template <class K,
           class O = CGAL::Periodic_2_offset_2,
           class D = typename K::Iso_rectangle_2,

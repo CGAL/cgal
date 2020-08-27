@@ -41,7 +41,7 @@
 /*
  * It's a temporary solution.
  * We avoid the structural filtering optimization, because it isn't
- * available with some periodic triangulation traits. (cf. Periodic_3_triangulation_remove_traits_3.h)
+ * available with some periodic triangulation traits. (cf. Periodic_3_triangulation_remove_traits_3)
  * Indeed, this feature needs the Triangulation_3::inexact_orientation() method.
  *
  * A better solution would be to make Triangulation_3 compatible 'any' traits.

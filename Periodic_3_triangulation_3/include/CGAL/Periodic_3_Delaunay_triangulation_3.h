@@ -431,10 +431,8 @@ public:
         if(&*(new_ch->vertex(i)) > &*(new_ch->vertex(j)))
           continue;
 
-        Point p1 = construct_point(new_ch->vertex(i)->point(),
-                                   get_offset(new_ch, i));
-        Point p2 = construct_point(new_ch->vertex(j)->point(),
-                                   get_offset(new_ch, j));
+        Point p1 = construct_point(new_ch->vertex(i)->point(), get_offset(new_ch, i));
+        Point p2 = construct_point(new_ch->vertex(j)->point(), get_offset(new_ch, j));
         Vertex_handle v_no = new_ch->vertex(i);
 
         if(squared_distance(p1, p2) > edge_length_threshold)
@@ -793,8 +791,7 @@ private:
 
     typedef std::map<Vertex_triple,Facet> Vertex_triple_Facet_map;
     typedef std::map<Vertex_triple, FacetE> Vertex_triple_FacetE_map;
-    typedef typename Vertex_triple_FacetE_map::iterator
-    Vertex_triple_FacetE_map_it;
+    typedef typename Vertex_triple_FacetE_map::iterator Vertex_triple_FacetE_map_it;
 
   Vertex_remover(const Self *t, Triangulation_R3 &tmp_) : _t(t),tmp(tmp_) {}
 

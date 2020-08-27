@@ -682,7 +682,7 @@ public:
     CGAL_triangulation_assertion((0 <= off1[1]) && (off1[1] < 2));
     CGAL_triangulation_assertion((0 <= off2[1]) && (off2[1] < 2));
 
-    // @gp2t2 correct to take min above?
+    // @fixme correct to take min above?
     f->set_offsets(Offset(off0[0], off0[1]), Offset(off1[0], off1[1]), Offset(off2[0], off2[1]));
   }
 
@@ -2293,7 +2293,7 @@ protected:
     if(b)
       return find_conflicts(f, off, tester, it);
 
-    CGAL_triangulation_assertion(false); // @tmp only true if we are in insert
+    CGAL_triangulation_assertion(false); // @fixme only true if we are in insert
     return it;
   }
 

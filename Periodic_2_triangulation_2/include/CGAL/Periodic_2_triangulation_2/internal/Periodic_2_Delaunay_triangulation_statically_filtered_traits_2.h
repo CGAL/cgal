@@ -49,7 +49,7 @@ public:
   }
 };
 
-// @todo static filters for lattices
+// @exact static filters for the generic case
 template<class Kernel_, class Offset_>
 class Periodic_2_Delaunay_triangulation_statically_filtered_traits_2<Kernel_, Offset_, Lattice_2<Kernel_> >
   : public Periodic_2_Delaunay_triangulation_filtered_traits_base_2<Kernel_, Offset_, Lattice_2<Kernel_> >

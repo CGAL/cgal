@@ -43,11 +43,12 @@
 namespace CGAL {
 
 // TODO
-// - Move p2_iterators to Square_flat_torus_2
-// - Don't document Finite iterators / functions (but keep them)
+// - Move P2T2/p2_iterators to Square_flat_torus_2/
+// - Don't document Finite iterators / functions (but add them)
 // - Get rid of P2Vertex_base_2 (?)
 // - Deal with stuff that is meaningless in this class (convert to 9 sheet, unique_vertex_iterator, ..)
 //   What to do if the goal is a common documentation?
+// - Double check iterators and circulators
 
 // This class is slightly different from other bases such as Triangulation_2/3
 // because it contains two triangulations (t2 / p2t2). As such, if simply using Triangulation_on_lattice_2,

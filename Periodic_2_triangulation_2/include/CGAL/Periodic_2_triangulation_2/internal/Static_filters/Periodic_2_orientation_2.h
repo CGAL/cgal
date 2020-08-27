@@ -76,7 +76,6 @@ namespace CGAL {
 namespace internal {
 namespace Static_filters_predicates {
 
-// @todo update it for lattices
 template <class K_, class Orientation_2_base_>
 class Periodic_2_orientation_2
   : public Orientation_2_base_

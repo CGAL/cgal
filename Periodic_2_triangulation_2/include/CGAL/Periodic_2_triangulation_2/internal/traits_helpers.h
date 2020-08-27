@@ -60,7 +60,7 @@ D get_default_domain(typename std::enable_if<std::is_same<D, typename K::Iso_rec
 template <typename K, typename D>
 D get_default_domain(typename std::enable_if<std::is_same<D, Lattice_2<K> >::value>::type* = nullptr)
 {
-  // @todo
+  CGAL_assertion(false); // @todo
   return D();
 }
 
