@@ -18,6 +18,32 @@
 namespace CGAL
 {
 
+template <typename InputIterator>
+struct Is_Kernel_Polygon_2_iterator
+{
+  static constexpr bool value = false;
+};
+
+template <typename Kernel>
+struct Is_Kernel_Polygon_2_iterator<Polygon_2<Kernel> >
+{
+  static constexpr bool value = true;
+};
+
+template <typename Kernel>
+struct Is_Kernel_Polygon_2_iterator<Polygon_with_holes_2<Kernel> >
+{
+  static constexpr bool value = true;
+};
+
+template <typename InputIterator>
+using Enable_if_Polygon_2_iterator
+= typename std::enable_if<Is_Kernel_Polygon_2_iterator<InputIterator>::value>::type;
+
+template <typename InputIterator>
+using Disable_if_Polygon_2_iterator
+= typename std::enable_if<!Is_Kernel_Polygon_2_iterator<InputIterator>::value>::type;
+
 // Default Polygon conversion (identity)
 template <typename Traits>
 const typename Traits::Polygon_2&
@@ -76,6 +102,28 @@ convert_polygon (const Polygon_with_holes_2<Kernel>& pwh,
 
   return out;
 }
+
+// Convert CGAL::Polygon_2 to General_polygon_2<Polyline_traits>
+template <typename InputIterator, typename Kernel>
+boost::transform_iterator
+<std::function
+ <General_polygon_2<typename Gps_polyline_traits<Kernel>::Base>
+  (typename std::iterator_traits<InputIterator>::reference)>,
+ InputIterator>
+convert_polygon_iterator (InputIterator it,
+                          typename Gps_polyline_traits<Kernel>::Traits& tr)
+{
+  using Polyline_traits = typename Gps_polyline_traits<Kernel>::Base;
+  using Input_type = typename std::iterator_traits<InputIterator>::reference;
+  using Return_type = General_polygon_2<Polyline_traits>;
+  using Function_type = std::function<Return_type(Input_type)>;
+
+  Function_type func = std::bind (convert_polygon<Kernel>, std::placeholders::_1, std::ref(tr));
+
+  return boost::transform_iterator<Function_type, InputIterator>
+    (it, func);
+}
+
 
 // Default Identity back conversion for Polygon_2
 template <typename OutputIterator, typename Traits>

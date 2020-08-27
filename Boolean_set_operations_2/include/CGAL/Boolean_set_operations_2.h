@@ -1118,9 +1118,33 @@ inline OutputIterator join(InputIterator begin, InputIterator end,
 
 template <typename InputIterator, typename OutputIterator>
 inline OutputIterator join(InputIterator begin, InputIterator end,
-                           OutputIterator oi, unsigned int k=5)
+                           OutputIterator oi, Tag_true = Tag_true(), unsigned int k=5,
+                           Enable_if_Polygon_2_iterator<InputIterator>* = 0)
 {
-  typename map_iterator_to_traits<InputIterator>::Traits          tr;
+  typedef typename std::iterator_traits<InputIterator>::value_type InputPolygon;
+  typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
+  typename Gps_polyline_traits<Kernel>::Traits tr;
+
+  return join(convert_polygon_iterator(begin, tr),
+              convert_polygon_iterator(end, tr),
+              convert_polygon_back(oi, *begin, tr), tr, k);
+}
+
+template <typename InputIterator, typename OutputIterator>
+inline OutputIterator join(InputIterator begin, InputIterator end,
+                           OutputIterator oi, Tag_false, unsigned int k=5,
+                           Enable_if_Polygon_2_iterator<InputIterator>* = 0)
+{
+  typename map_iterator_to_traits<InputIterator>::Traits  tr;
+  return join(begin, end, oi, tr, k);
+}
+
+template <typename InputIterator, typename OutputIterator>
+inline OutputIterator join(InputIterator begin, InputIterator end,
+                           OutputIterator oi, unsigned int k=5,
+                           Disable_if_Polygon_2_iterator<InputIterator>* = 0)
+{
+  typename map_iterator_to_traits<InputIterator>::Traits  tr;
   return join(begin, end, oi, tr, k);
 }
 
