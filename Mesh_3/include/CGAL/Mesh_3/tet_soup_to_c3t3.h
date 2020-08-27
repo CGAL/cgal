@@ -404,7 +404,7 @@ bool build_triangulation(Tr& tr,
 template<class Tr, bool c3t3_loader_failed>
 bool build_triangulation_from_file(std::istream& is,
                                    Tr& tr,
-                                   bool prevent_domain_0 = true)
+                                   bool prevent_domain_0)
 {
   typedef typename Tr::Point                                  Point_3;
 
@@ -497,6 +497,12 @@ bool build_triangulation_from_file(std::istream& is,
   return is_well_built;
 }
 
+template<class Tr, bool c3t3_loader_failed>
+bool build_triangulation_from_file(std::istream& is,
+                                   Tr& tr)
+{
+  return build_triangulation_from_file<Tr, c3t3_loader_failed>(is, tr, true);
+}
 }  // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
