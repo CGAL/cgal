@@ -417,11 +417,11 @@ void Polyhedron_demo_affine_transform_plugin::grid()
       Scene_item::Bbox b = item->bbox();
 
 
-      double x_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3((b.min)(0), (b.min)(1), (b.min)(2)),
+      double x_t(1.001*CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3((b.min)(0), (b.min)(1), (b.min)(2)),
                                                    Kernel::Point_3((b.max)(0), (b.min)(1), (b.min)(2))))),
-          y_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3((b.min)(0), (b.min)(1), (b.min)(2)),
+          y_t(CGAL::sqrt(1.001*CGAL::squared_distance(Kernel::Point_3((b.min)(0), (b.min)(1), (b.min)(2)),
                                                 Kernel::Point_3((b.min)(0), (b.max)(1), (b.min)(2))))),
-          z_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3((b.min)(0), (b.min)(1), (b.min)(2)),
+          z_t(CGAL::sqrt(1.001*CGAL::squared_distance(Kernel::Point_3((b.min)(0), (b.min)(1), (b.min)(2)),
                                                 Kernel::Point_3((b.min)(0), (b.min)(1), (b.max)(2)))));
 
       GridDialog dialog(mw);
