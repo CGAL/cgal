@@ -119,7 +119,16 @@ bool build_finite_cells(Tr& tr,
     typename Tr::Geom_traits::Construct_point_3 cp =
       tr.geom_traits().construct_point_3_object();
   )
-
+  int max_domain = -1;
+  if(!prevent_domain_0)
+  {
+    for(std::size_t i=0; i<finite_cells.size(); ++i)
+    {
+      const Tet_with_ref& tet = finite_cells[i];
+      if(tet[4] > max_domain)
+        max_domain=tet[4];
+    }
+  }
   // build the finite cells
   for(std::size_t i=0; i<finite_cells.size(); ++i)
   {
@@ -145,6 +154,11 @@ bool build_finite_cells(Tr& tr,
     c->info() = tet[4]; // the cell's info keeps the reference of the tetrahedron
     if(prevent_domain_0){
       CGAL_precondition(tet[4] > 0);
+    }
+    else
+    {
+      c->set_subdomain_index(max_domain+1); // the cell's info keeps the reference of the tetrahedron
+      c->info() = max_domain+1; // the cell's info keeps the reference of the tetrahedron
     }
     // assign cells to vertices
     for(int j=0; j<4; ++j)
