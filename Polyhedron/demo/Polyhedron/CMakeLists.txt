@@ -224,6 +224,14 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     demo_framework
     ${CGAL_LIBRARIES}
     Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
+
+  if(COMMAND target_precompile_headers)
+    target_precompile_headers(scene_basic_objects PUBLIC [["Scene_spheres_item.h"]]
+      [["Scene_plane_item.h"]]
+      <CGAL/Three/Three.h>
+      <QObject>)
+  endif()
+
   add_library(scene_color_ramp SHARED Color_ramp.cpp)
   target_link_libraries(scene_color_ramp PRIVATE Qt5::Core)
 
@@ -259,12 +267,20 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   endif()
   if(COMMAND target_precompile_headers)
     # Support for precompiled headers, for Mesh_3 (since CMake 3.16)
-    target_precompile_headers(scene_c3t3_item PUBLIC [["C3t3_type.h"]])
+    target_precompile_headers(scene_c3t3_item PUBLIC [["C3t3_type.h"]] <QObject>)
   endif()
   add_item(scene_transform_item Plugins/PCA/Scene_facegraph_transform_item.cpp )
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp )
   add_item(scene_image_item Scene_image_item.cpp)
   add_item(scene_surface_mesh_item Scene_surface_mesh_item.cpp)
+  if(COMMAND target_precompile_headers)
+    target_precompile_headers(scene_c3t3_item PUBLIC <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+      <QObject>
+      <CGAL/Three/Three.h>
+      [["Scene_surface_mesh_item.h"]]
+      )
+  endif()
+
 
   if(TBB_FOUND)
     target_link_libraries(scene_surface_mesh_item PUBLIC CGAL::TBB_support)
@@ -306,12 +322,22 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_item(scene_polygon_soup_item Scene_polygon_soup_item.cpp)
   target_link_libraries(scene_polygon_soup_item PUBLIC scene_surface_mesh_item)
 
+  if(COMMAND target_precompile_headers)
+    target_precompile_headers(scene_polygon_soup_item PUBLIC <CGAL/Three/Polyhedron_demo_plugin_helper.h> <QObject>
+      <CGAL/Three/Three.h>
+      [["Scene_polygon_soup_item.h"]])
+  endif()
+
   add_item(scene_nef_polyhedron_item Scene_nef_polyhedron_item.cpp)
   target_link_libraries(scene_nef_polyhedron_item PUBLIC scene_surface_mesh_item)
 
   add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
   if (TARGET CGAL::Eigen_support)
     target_link_libraries(scene_points_with_normal_item PUBLIC CGAL::Eigen_support)
+  endif()
+
+  if(COMMAND target_precompile_headers)
+    target_precompile_headers(scene_points_with_normal_item PUBLIC [["Scene_points_with_normal_item.h"]] <CGAL/Three/Three.h> <QObject>)
   endif()
 
   find_package(LASLIB)

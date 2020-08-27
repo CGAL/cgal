@@ -1,10 +1,10 @@
 #include <QApplication>
-#include <QMainWindow>
 #include <QAction>
-#include "Messages_interface.h"
+#include <QMainWindow>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Three.h>
 #include "Scene_surface_mesh_item.h"
+#include "Messages_interface.h"
 
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 

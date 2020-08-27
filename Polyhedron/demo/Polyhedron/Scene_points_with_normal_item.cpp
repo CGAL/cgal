@@ -1,6 +1,8 @@
 #define CGAL_data_type float
 #define CGAL_GL_data_type GL_FLOAT
 #include "Scene_points_with_normal_item.h"
+
+#ifndef Q_MOC_RUN
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/Point_set_3/IO.h>
@@ -16,7 +18,15 @@
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/algorithm.h>
+#include <CGAL/boost/graph/properties_Surface_mesh.h>
+#include <boost/array.hpp>
 
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+#include <tbb/scalable_allocator.h>
+#endif // CGAL_LINKED_WITH_TBB
+#endif // MOC
 #include <QObject>
 #include <QApplication>
 #include <QMenu>
@@ -27,15 +37,6 @@
 #include <set>
 #include <stack>
 #include <algorithm>
-#include <boost/array.hpp>
-
-#include <CGAL/boost/graph/properties_Surface_mesh.h>
-
-#ifdef CGAL_LINKED_WITH_TBB
-#include <tbb/parallel_for.h>
-#include <tbb/blocked_range.h>
-#include <tbb/scalable_allocator.h>
-#endif // CGAL_LINKED_WITH_TBB
 
 const std::size_t limit_fast_drawing = 300000; //arbitraty large value
 
