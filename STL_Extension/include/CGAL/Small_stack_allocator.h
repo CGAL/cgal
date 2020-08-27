@@ -125,12 +125,13 @@ public:
 
   Small_stack_allocator() { }
 
-  // Do not copy pool
+  // Allow copy from any rebound class (do not copy pool)
   Small_stack_allocator(const Small_stack_allocator&) { }
-  Small_stack_allocator& operator= (const Small_stack_allocator&)
-  {
-    return Small_stack_allocator();
-  }
+  template <typename T2>
+  Small_stack_allocator(const Small_stack_allocator<T2, MaxSize>&) { }
+
+  // Delete assignment
+  Small_stack_allocator& operator= (const Small_stack_allocator&) = delete;
 
   T* allocate (std::size_t n)
   {
