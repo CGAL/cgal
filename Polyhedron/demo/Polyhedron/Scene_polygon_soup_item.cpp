@@ -571,12 +571,14 @@ Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 
       if(d->soup->fcolors.empty())
         getTriangleContainer(Priv::Flat_facets)->setColor(this->color());
+      getTriangleContainer(Priv::Flat_facets)->setAlpha(alpha());
       getTriangleContainer(Priv::Flat_facets)->draw(viewer, d->soup->fcolors.empty());
     }
     else if(renderingMode() == Gouraud)
     {
       if(d->soup->vcolors.empty())
         getTriangleContainer(Priv::Smooth_facets)->setColor(this->color());
+      getTriangleContainer(Priv::Smooth_facets)->setAlpha(alpha());
       getTriangleContainer(Priv::Smooth_facets)->draw(viewer, d->soup->vcolors.empty());
     }
   }

@@ -450,7 +450,7 @@ void Polyhedron_demo_affine_transform_plugin::grid()
             Kernel::Aff_transformation_3 trans(CGAL::TRANSLATION, Kernel::Vector_3(i*x_t,j*y_t,k*z_t));
             CGAL::Polygon_mesh_processing::transform(trans, e);
             Facegraph_item* t_item = new Facegraph_item(e);
-            t_item->setName(tr("%1 %2%3%4")
+            t_item->setName(tr("%1 %2,%3,%4")
                             .arg(item->name())
                             .arg(i)
                             .arg(j)

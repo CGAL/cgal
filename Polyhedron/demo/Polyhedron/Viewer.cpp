@@ -367,6 +367,7 @@ Viewer::~Viewer()
                              .arg(d->specular.z()));
     viewer_settings.setValue("spec_power",
                              d->spec_power);
+    d->vao.destroy();
     if(d->_recentFunctions)
       delete d->_recentFunctions;
     if(d->painter)
@@ -1508,12 +1509,18 @@ void Viewer_impl::showDistance(QPoint pixel)
         TextItem *ACoord = new TextItem(float(APoint.x),
                                         float(APoint.y),
                                         float(APoint.z),
-                                        QString("A(%1,%2,%3)").arg(APoint.x-viewer->offset().x).arg(APoint.y-viewer->offset().y).arg(APoint.z-viewer->offset().z), true, font, Qt::red, true);
+                                        QString("A(%1,%2,%3)")
+                                        .arg(APoint.x-viewer->offset().x, 0, 'g', 10)
+                                        .arg(APoint.y-viewer->offset().y, 0, 'g', 10)
+                                        .arg(APoint.z-viewer->offset().z, 0, 'g', 10), true, font, Qt::red, true);
         distance_text.append(ACoord);
         TextItem *BCoord = new TextItem(float(BPoint.x),
                                         float(BPoint.y),
                                         float(BPoint.z),
-                                        QString("B(%1,%2,%3)").arg(BPoint.x-viewer->offset().x).arg(BPoint.y-viewer->offset().y).arg(BPoint.z-viewer->offset().z), true, font, Qt::red, true);
+                                        QString("B(%1,%2,%3)")
+                                        .arg(BPoint.x-viewer->offset().x, 0, 'g', 10)
+                                        .arg(BPoint.y-viewer->offset().y, 0, 'g', 10)
+                                        .arg(BPoint.z-viewer->offset().z, 0, 'g', 10), true, font, Qt::red, true);
         distance_text.append(BCoord);
         CGAL::qglviewer::Vec centerPoint = 0.5*(BPoint+APoint);
         TextItem *centerCoord = new TextItem(float(centerPoint.x),
@@ -1531,7 +1538,7 @@ void Viewer_impl::showDistance(QPoint pixel)
                   .arg(BPoint.x-viewer->offset().x)
                   .arg(BPoint.y-viewer->offset().y)
                   .arg(BPoint.z-viewer->offset().z)
-                  .arg(dist)));
+                  .arg(dist, 0, 'g', 10)));
     }
 
 }
