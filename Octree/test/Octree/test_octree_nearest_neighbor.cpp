@@ -8,6 +8,8 @@
 #include <CGAL/Point_set_3.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/squared_distance_3.h>
+#include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/Search_traits_3.h>
 
 #include <chrono>
 #include <cassert>
