@@ -150,6 +150,7 @@ foreach(cgal_lib ${CGAL_LIBRARIES})
   endif()
 endforeach()
 
+include(${CGAL_CONFIG_DIR}/CGALConfigVersion.cmake)
 
 #
 #
@@ -160,15 +161,6 @@ cgal_setup_module_path()
 
 set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_target_use_TBB.cmake)
-
-include("${CGAL_MODULES_DIR}/CGAL_parse_version_h.cmake")
-cgal_parse_version_h( "${CGAL_INSTALLATION_PACKAGE_DIR}/include/CGAL/version.h"
-  "CGAL_VERSION_NAME"
-  "CGAL_MAJOR_VERSION"
-  "CGAL_MINOR_VERSION"
-  "CGAL_BUGFIX_VERSION"
-  "CGAL_BUILD_VERSION")
-set(CGAL_VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUGFIX_VERSION}.${CGAL_BUILD_VERSION}")
 
 if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST )
   # Do not use -isystem for CGAL include paths

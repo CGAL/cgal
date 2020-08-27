@@ -821,7 +821,7 @@ void keep_connected_components(PolygonMesh& pmesh
 
 /*!
 * \ingroup keep_connected_components_grp
-* Removes in `pmesh` the connected components designated by theirs ids
+* removes in `pmesh` the connected components designated by theirs ids
 * in `components_to_remove` as well as all isolated vertices.
 * The connected component id of a face is given by `fcm`.
 *

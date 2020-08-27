@@ -393,7 +393,6 @@ edge_aware_upsample_point_set(
                                        &&sharpness_angle <= 90);
   CGAL_point_set_processing_precondition(edge_sensitivity >= 0
                                        &&edge_sensitivity <= 1);
-  CGAL_point_set_processing_precondition(neighbor_radius > 0);
 
   edge_sensitivity *= 10;  // just project [0, 1] to [0, 10].
 

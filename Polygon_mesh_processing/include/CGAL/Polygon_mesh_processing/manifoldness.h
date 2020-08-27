@@ -34,7 +34,7 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
 /// \ingroup PMP_repairing_grp
-/// checks whether a vertex of a polygon mesh is non-manifold.
+/// returns whether a vertex of a polygon mesh is non-manifold.
 ///
 /// @tparam PolygonMesh a model of `HalfedgeListGraph`
 ///

@@ -4,7 +4,7 @@ Release History
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 -----------
 
-Release date: July 2020
+Release date: September 2020
 
 ### [Tetrahedral Remeshing](https://doc.cgal.org/5.1/Manual/packages.html#PkgTetrahedralRemeshing) (new package)
 
@@ -29,6 +29,11 @@ Release date: July 2020
     (in terms of volume) bounding box that contains a given mesh or point set.
 
     See also the associated [blog entry](https://www.cgal.org/2020/04/20/Optimal_bounding_box/).
+
+### Installation
+
+-   The CGAL\_Core library no longer requires `Boost.Thread`, even if the g++ compiler is used.
+-   The minimal supported version of Boost is now 1.66.0.
 
 ### [Tutorials](https://doc.cgal.org/5.1/Manual/tutorials.html)
 
