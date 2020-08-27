@@ -22,8 +22,7 @@ supported for `PTr`.</I>
 This can be achieved for example by using `CGAL::Triangulation_hierarchy_vertex_base_2`
  templated by `CGAL::Periodic_2_triangulation_vertex_base_2`.
 
-\tparam PTr::Geom_traits has to be a model of the concept
-`Periodic_2DelaunayTriangulationTraits_2`.
+\tparam PTr::Geom_traits has to be a model of the concept `Periodic_2DelaunayTriangulationTraits_2`.
 
 \cgalHeading{Inheritance}
 
@@ -64,7 +63,10 @@ queries on real data.
 
 */
 template< typename PTr >
-class Periodic_2_triangulation_hierarchy_2 : public PTr
+class Periodic_2_triangulation_hierarchy_2
+  : public PTr
 {
-}; /* end Periodic_2_triangulation_hierarchy_2 */
+
+};
+
 } /* end namespace CGAL */

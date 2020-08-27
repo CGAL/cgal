@@ -1,8 +1,7 @@
 // Copyright (c) 1997-2013 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 
-namespace CGAL
-{
+namespace CGAL {
 
 /*!
 \ingroup PkgPeriodic2Triangulation2VertexFaceClasses
@@ -38,7 +37,7 @@ whether all offsets are zero.
 template< typename Gt, typename Fb = Triangulation_face_base_2<Gt> >
 class Periodic_2_triangulation_face_base_2
 {
-public:
 
-}; /* end Periodic_2_triangulation_face_base_2 */
+};
+
 } /* end namespace CGAL */

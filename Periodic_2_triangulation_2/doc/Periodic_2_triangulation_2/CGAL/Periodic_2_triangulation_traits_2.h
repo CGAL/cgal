@@ -1,8 +1,7 @@
 // Copyright (c) 1997-2013 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 
-namespace CGAL
-{
+namespace CGAL {
 
 /*!
 \ingroup PkgPeriodic2Triangulation2TraitsClasses
@@ -25,7 +24,10 @@ By default, this holds for `CGAL::Exact_predicates_inexact_constructions_kernel`
 
 */
 template< typename Traits, typename Periodic_2Offset_2 >
-class Periodic_2_triangulation_traits_2 : public Traits
+class Periodic_2_triangulation_traits_2
+  : public Traits
 {
-}; /* end Periodic_2_triangulation_traits_2 */
+
+};
+
 } /* end namespace CGAL */

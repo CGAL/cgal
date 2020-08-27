@@ -1,8 +1,7 @@
 // Copyright (c) 1997-2013 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 
-namespace CGAL
-{
+namespace CGAL {
 
 /*!
 \ingroup PkgPeriodic2Triangulation2VertexFaceClasses
@@ -18,7 +17,6 @@ instantiated by a model of the concept
 class to which the additional information for the periodic vertex is
 added and should be a model of `TriangulationDSVertexBase_2`
 
-
 \cgalModels `Periodic_2TriangulationVertexBase_2`
 
 \sa `CGAL::Periodic_2_triangulation_face_base_2`
@@ -29,7 +27,7 @@ added and should be a model of `TriangulationDSVertexBase_2`
 template< >
 class Periodic_2_triangulation_vertex_base_2
 {
-public:
 
-}; /* end Periodic_2_triangulation_vertex_base_2 */
+};
+
 } /* end namespace CGAL */

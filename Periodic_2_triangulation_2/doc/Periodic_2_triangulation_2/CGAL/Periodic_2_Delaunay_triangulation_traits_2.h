@@ -1,8 +1,7 @@
 // Copyright (c) 1997-2013 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 
-namespace CGAL
-{
+namespace CGAL {
 
 /*!
 \ingroup PkgPeriodic2Triangulation2TraitsClasses
@@ -26,6 +25,6 @@ instantiation of `CGAL::Filtered_kernel`.
 template< typename Traits, typename Periodic_2Offset_2 >
 class Periodic_2_Delaunay_triangulation_traits_2
   : public Periodic_2_triangulation_traits_2<Traits, Periodic_2Offset_2>
-{
-}; /* end Periodic_2_Delaunay_triangulation_traits_2 */
+{ };
+
 } /* end namespace CGAL */
