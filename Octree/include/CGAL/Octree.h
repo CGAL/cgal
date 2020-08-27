@@ -20,12 +20,8 @@
 #include <CGAL/Octree/Traversal_iterator.h>
 
 #include <CGAL/bounding_box.h>
-#include <CGAL/Aff_transformation_3.h>
-#include <CGAL/aff_transformation_tags.h>
 
-#include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/Search_traits_3.h>
-#include <CGAL/Search_traits_adapter.h>
+#include <CGAL/property_map.h>
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_3.h>
 
