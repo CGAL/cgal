@@ -8,6 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_P2T2_DELAUNAY_TRIANGULATION_ON_SQUARE_FLAT_TORUS_2_H
 #define CGAL_P2T2_DELAUNAY_TRIANGULATION_ON_SQUARE_FLAT_TORUS_2_H
@@ -17,23 +18,21 @@
 #include <CGAL/Periodic_2_triangulation_2/Square_flat_torus_2/Triangulation_on_square_flat_torus_2.h>
 #include <CGAL/Periodic_2_triangulation_2/Square_flat_torus_2/Triangulation_face_base_on_square_flat_torus_2.h>
 #include <CGAL/Periodic_2_triangulation_vertex_base_2.h>
+#include <CGAL/Periodic_2_triangulation_2/internal/Periodic_2_Delaunay_triangulation_remove_traits_2.h>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/Default.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Triangulation_utils_2.h>
 
-#ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
-
-#include <CGAL/Spatial_sort_traits_adapter_2.h>
-#include <CGAL/internal/info_check.h>
-#include <CGAL/tss.h>
-
-#include <boost/iterator/zip_iterator.hpp>
-#include <boost/mpl/and.hpp>
-
-#endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+#include <array>
+#include <iostream>
+#include <iterator>
+#include <set>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 
@@ -106,6 +105,124 @@ public:
   typedef Tag_true                                                Periodic_tag;
 
 private:
+  class Point_hider
+  {
+  public:
+    template <class InputIterator>
+    inline void set_vertices(InputIterator, InputIterator) const { }
+
+    inline void hide_point(Face_handle, const Point &) { CGAL_triangulation_assertion(false); }
+    inline void hide(Point&, Face_handle) const { CGAL_triangulation_assertion(false); }
+    inline void do_hide(const Point &, Face_handle) const { CGAL_triangulation_assertion(false); }
+
+    template <class Conflict_tester>
+    inline void hide_points(Vertex_handle, const Conflict_tester &) { CGAL_triangulation_assertion(false); }
+
+    template <class Tester>
+    inline bool replace_vertex(const Point&, Vertex_handle, const Tester&) const { return true; }
+    inline Vertex_handle replace_vertex(Face_handle f, int index, const Point &) { return f->vertex(index); }
+    inline void reinsert_vertices(Vertex_handle) { }
+  };
+
+  class Conflict_tester
+  {
+    const Self* tr_ptr;
+    Point p;
+    mutable Offset o;
+
+  public:
+    /// Constructor
+    Conflict_tester(const Self* tr_ptr) : tr_ptr(tr_ptr), p(Point()) { }
+    Conflict_tester(const Point &pt, const Self* tr_ptr) : tr_ptr(tr_ptr), p(pt) { }
+
+    /// returns true if the circumcircle of 'f' contains 'p'
+    bool operator()(const Face_handle f, const Offset& off) const
+    {
+      return (tr_ptr->side_of_circle(f, p, tr_ptr->combine_offsets(o, off), true) == ON_BOUNDED_SIDE);
+    }
+
+//    bool operator()(const Face_handle f, const Point& pt, const Offset& off) const
+//    {
+//      return (tr_ptr->side_of_circle(f, pt, o + off, true) == ON_BOUNDED_SIDE);
+//    }
+
+    int compare_weight(Point, Point) const { return 0; }
+
+    bool test_initial_face(Face_handle f, const Offset& off) const
+    {
+      if(!(operator()(f, off)))
+        CGAL_triangulation_assertion(false);
+      return true;
+    }
+
+    void set_point(const Point &_p) { p = _p; }
+    const Point& point() const { return p; }
+    void set_offset(const Offset& off) const { o = off; }
+    const Offset& get_offset() const { return o; }
+  };
+
+  class Cover_manager
+  {
+    Self& tr;
+
+  public:
+    Cover_manager(Self& tr) : tr(tr) { }
+
+    void create_initial_triangulation() { tr.create_initial_triangulation(); }
+
+    template <class FaceIt>
+    void insert_unsatisfying_elements(Vertex_handle v, const FaceIt begin, const FaceIt end) {
+      tr.insert_faces_with_too_big_circumradius(v, begin, end);
+    }
+
+    template <class FaceIt>
+    void delete_unsatisfying_elements(const FaceIt begin, const FaceIt end) {
+      tr.delete_faces_with_too_big_circumradius(begin, end);
+    }
+
+    bool can_be_converted_to_1_sheet() const { return tr.can_be_converted_to_1_sheet(); }
+
+    bool update_cover_data_during_management(Face_handle new_f,
+                                             const std::vector<Face_handle>& new_faces,
+                                             const bool abort_if_cover_change)
+    {
+      return tr.update_cover_data_during_management(new_f, new_faces, abort_if_cover_change);
+    }
+  };
+
+  template <class TriangulationR2>
+  struct Vertex_remover
+  {
+    typedef TriangulationR2                                          Triangulation_R2;
+    typedef typename std::vector<Point>::iterator                    Hidden_points_iterator;
+
+    typedef std::pair<Vertex_handle, Vertex_handle>                  Vertex_pair;
+    typedef std::map<Vertex_pair, Edge>                              Vertex_pair_Edge_map;
+
+    typedef typename Triangulation_R2::Triangulation_data_structure  TDSE;
+    typedef typename Triangulation_R2::Face_handle                   FaceE_handle;
+    typedef typename Triangulation_R2::Vertex_handle                 VertexE_handle;
+    typedef typename Triangulation_R2::Edge                          EdgeE;
+    typedef typename Triangulation_R2::Finite_faces_iterator         Finite_facesE_iterator;
+
+    typedef std::pair<VertexE_handle, VertexE_handle>                VertexE_pair;
+    typedef std::map<Vertex_pair, EdgeE>                             Vertex_pair_EdgeE_map;
+
+    typedef typename Vertex_pair_EdgeE_map::iterator                 Vertex_pair_EdgeE_map_it;
+
+    Vertex_remover(const Self* t, Triangulation_R2& tmp_) : _t(t), tmp(tmp_) { }
+
+    const Self* _t;
+    Triangulation_R2& tmp;
+
+    void add_hidden_points(Face_handle) { }
+    Hidden_points_iterator hidden_points_begin() { return hidden.begin(); }
+    Hidden_points_iterator hidden_points_end() { return hidden.end(); }
+
+    std::vector<Point> hidden;
+  };
+
+private:
   struct Face_handle_hash
     : public CGAL::cpp98::unary_function<Face_handle, std::size_t>
   {
@@ -115,8 +232,8 @@ private:
     }
   };
 
-  typedef std::unordered_set<Face_handle, Face_handle_hash>     Too_big_circumdisks_set;
-  typedef typename Too_big_circumdisks_set::const_iterator      Too_big_circumdisks_set_it;
+  typedef std::unordered_set<Face_handle, Face_handle_hash>       Too_big_circumdisks_set;
+  typedef typename Too_big_circumdisks_set::const_iterator        Too_big_circumdisks_set_it;
 
 public:
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
@@ -148,6 +265,70 @@ public:
   using Base::is_1_cover;
 #endif
 
+private:
+  /// This threshold should be chosen such that if all Delaunay balls have a squared radius smaller than this,
+  /// we can be sure that there are no self-edges anymore.
+  FT squared_circumradius_threshold;
+
+  /// This container stores all the faces whose circumdisk squared radius is larger
+  /// than the treshold `squared_circumradius_threshold`.
+  Too_big_circumdisks_set faces_with_too_big_circumradius;
+
+public:
+  /// \name Constructors
+  Delaunay_triangulation_on_square_flat_torus_2(const Gt& gt)
+    : Base(gt)
+  {
+    update_cover_data_after_setting_domain(gt.get_domain());
+  }
+
+  Delaunay_triangulation_on_square_flat_torus_2(const Domain& domain = Domain())
+    : Delaunay_triangulation_on_square_flat_torus_2(Gt(domain))
+  { }
+
+  /// Constructor with a range of points
+  template <class InputIterator>
+  Delaunay_triangulation_on_square_flat_torus_2(InputIterator first, InputIterator last,
+                                                const Gt& gt = Gt())
+    : Delaunay_triangulation_on_square_flat_torus_2(gt)
+  {
+    insert(first, last);
+  }
+
+  /// Copy
+  // @todo (can't be "= default" because some members are pointers)
+  Delaunay_triangulation_on_square_flat_torus_2(const Delaunay_triangulation_on_square_flat_torus_2<Gt, Tds>& tr) = delete;
+  Delaunay_triangulation_on_square_flat_torus_2& operator=(const Delaunay_triangulation_on_square_flat_torus_2&) = delete;
+  void swap(Delaunay_triangulation_on_square_flat_torus_2& tr) = delete;
+
+  void clear()
+  {
+    Base::clear();
+    clear_covering_data();
+  }
+
+  /// Domain setting
+public:
+  template <typename D> // that's domain, but need an abstract level to compile
+  void update_cover_data_after_setting_domain(const D& d)
+  {
+    squared_circumradius_threshold = 0.0625 * d.systole_sq_length(); // case of Lattice
+  }
+
+  void update_cover_data_after_setting_domain(const Iso_rectangle& d)
+  {
+    // the criterion is that the largest circumdisk must have a diameter smaller than c/2
+    // (c being the square side), thus we need a squared circumdisk radius smaller than c^2/16
+    squared_circumradius_threshold = 0.0625 * square(d.xmax() - d.xmin());
+  }
+
+  void set_domain(const Domain& domain) override
+  {
+    clear();
+    Base::set_domain(domain);
+    update_cover_data_after_setting_domain(geom_traits().get_domain());
+  }
+
 public:
   /// Determines whether the point p lies on the (un-)bounded side of
   /// the circle through the points p0, p1 and p2
@@ -167,7 +348,7 @@ public:
     // We successively look whether the leading monomial, then 2nd monomial
     // of the determinant has non null coefficient.
     // 2 iterations are enough (cf paper)
-    for(int i = 3; i > 0; --i)
+    for(int i=3; i>0; --i)
     {
       if(points[i] == &p)
         return ON_NEGATIVE_SIDE; // since p0 p1 p2 are non collinear and positively oriented
@@ -198,8 +379,7 @@ public:
     // We are now in a degenerate case => we do a symbolic perturbation.
     // We sort the points lexicographically.
     Periodic_point pts[4] = { std::make_pair(p0, o0), std::make_pair(p1, o1),
-                              std::make_pair(p2, o2), std::make_pair(p, o)
-                            };
+                              std::make_pair(p2, o2), std::make_pair(p, o) };
     const Periodic_point *points[4] = { &pts[0], &pts[1], &pts[2], &pts[3] };
 
     std::sort(points, points + 4, typename Base::Perturbation_order(this));
@@ -347,7 +527,7 @@ public:
                                                            threshold);
   }
 
-  Comparison_result compare_squared_circumradius_to_threshold(Face_handle face, const FT threshold) const
+  Comparison_result compare_squared_circumradius_to_threshold(const Face_handle face, const FT threshold) const
   {
     Periodic_point p0 = periodic_point(face, 0);
     Periodic_point p1 = periodic_point(face, 1);
@@ -357,11 +537,12 @@ public:
   }
 
   /// Constructs the circumcenter of the face f, respects the offset
-  Point circumcenter(Face_handle f) const
+  Point circumcenter(const Face_handle f) const
   {
     return construct_circumcenter(f->vertex(0)->point(), f->vertex(1)->point(), f->vertex(2)->point(),
                                   get_offset(f, 0), get_offset(f, 1), get_offset(f, 2));
   }
+
   Point construct_circumcenter(const Point& p1, const Point& p2, const Point& p3,
                                const Offset& o1, const Offset& o2, const Offset& o3) const
   {
@@ -369,392 +550,6 @@ public:
   }
 
 public:
-  /// \name Constructors
-  Delaunay_triangulation_on_square_flat_torus_2(const Gt& gt)
-    : Base(gt)
-  {
-    update_cover_data_after_setting_domain(gt.get_domain());
-  }
-
-  Delaunay_triangulation_on_square_flat_torus_2(const Domain& domain = Domain())
-    : Delaunay_triangulation_on_square_flat_torus_2(Gt(domain))
-  { }
-
-  /// Copy
-
-  // @todo (can't be "= default" because some members are pointers)
-  Delaunay_triangulation_on_square_flat_torus_2(const Delaunay_triangulation_on_square_flat_torus_2<Gt, Tds>& tr) = delete;
-  Delaunay_triangulation_on_square_flat_torus_2& operator=(const Delaunay_triangulation_on_square_flat_torus_2&) = delete;
-
-  /// Constructor with insertion of points
-  template <class InputIterator>
-  Delaunay_triangulation_on_square_flat_torus_2(InputIterator first, InputIterator last, const Gt& gt = Gt())
-    : Triangulation_on_square_flat_torus_2<Gt, Tds>(domain, gt)
-  {
-    insert(first, last);
-  }
-
-  void swap(Delaunay_triangulation_on_square_flat_torus_2& tr)
-  {
-    Base::swap(tr);
-
-    std::swap(squared_circumradius_threshold, tr.squared_circumradius_threshold);
-    std::swap(faces_with_too_big_circumdisk, tr.faces_with_too_big_circumdisk);
-  }
-
-  void clear()
-  {
-    Base::clear();
-    faces_with_too_big_circumdisk.clear();
-  }
-
-  template <typename D> // that's domain, but need an abstract level to compile
-  void update_cover_data_after_setting_domain(const D& d)
-  {
-    squared_circumradius_threshold = d.systole_sq_length(); // case of Lattice
-  }
-
-  void update_cover_data_after_setting_domain(const Iso_rectangle& d)
-  {
-    // the criterion is that the largest circumdisk must have a diameter smaller than c/2
-    // (c being the square side), thus we need a squared circumdisk radius smaller than c*c/16
-    squared_circumradius_threshold = square(d.xmax() - d.xmin()) / FT(16);
-  }
-
-  void set_domain(const Domain& domain) override
-  {
-    clear();
-    Base::set_domain(domain);
-    update_cover_data_after_setting_domain(geom_traits().get_domain());
-  }
-
-  /// \name Insertion-Removal
-  Vertex_handle insert(const Point& p,
-                       Face_handle start = Face_handle())
-  {
-    Conflict_tester tester(p, this);
-    Point_hider hider;
-    Cover_manager cover_manager(*this);
-
-    Vertex_handle v = Base::insert_in_conflict(p, start, tester, hider, cover_manager);
-    CGAL_assertion(v != Vertex_handle());
-
-    return v;
-  }
-
-  Vertex_handle insert(const Point& p,
-                       Locate_type lt,
-                       Face_handle f,
-                       int li)
-  {
-    Conflict_tester tester(p, this);
-    Point_hider hider;
-    Cover_manager cover_manager(*this);
-
-    Vertex_handle v = Base::insert_in_conflict(p, lt, f, li, tester, hider, cover_manager);
-    CGAL_assertion(v != Vertex_handle());
-
-    return v;
-  }
-
-  Vertex_handle push_back(const Point& p) { return insert(p); }
-
-  /// Insertion with info
-
-#if 0 // @todo need to introduce Periodic_2_Delaunay_triangulation_remove_traits_2, see 3D version
-
-#ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
-  template <class InputIterator>
-  std::ptrdiff_t
-  insert(InputIterator first, InputIterator last,
-         bool is_large_point_set = true,
-         typename boost::enable_if<
-                    boost::is_convertible<
-                      typename std::iterator_traits<InputIterator>::value_type, Point> >::type* = nullptr)
-#else
-  template <class InputIterator>
-  std::ptrdiff_t
-  insert(InputIterator first, InputIterator last,
-         bool is_large_point_set = true)
-#endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
-  {
-    if(first == last)
-      return 0;
-
-    size_type n = number_of_vertices();
-
-    // The heuristic discards the existing triangulation so it can only be
-    // applied to empty triangulations.
-    if(n != 0)
-      is_large_point_set = false;
-
-    std::vector<Point> points(first, last);
-    std::vector<Vertex_handle> dummy_points;
-    typename std::vector<Point>::iterator pbegin = points.begin();
-
-    if(is_large_point_set)
-    {
-      std::vector<Vertex_handle> dummy_points = this->insert_dummy_points();
-    }
-    else
-    {
-      CGAL::cpp98::random_shuffle(points.begin(), points.end());
-      pbegin = points.begin();
-
-      for(;;)
-      {
-        if(pbegin == points.end())
-          return number_of_vertices() - n;
-
-        insert(*pbegin);
-        ++pbegin;
-
-        if(is_1_cover())
-          break;
-      }
-    }
-
-    CGAL_assertion(is_1_cover());
-
-    // Organize the points
-    spatial_sort(pbegin, points.end(), geom_traits());
-
-    Face_handle hint;
-    Conflict_tester tester(*pbegin, this);
-    Point_hider hider;
-    Cover_manager cover_manager(*this);
-
-    // Actual insertion
-    std::vector<Vertex_handle> double_vertices =
-      Base::insert_in_conflict(points.begin(), points.end(), hint, tester, hider, cover_manager);
-
-    CGAL_assertion_code(for(Vertex_handle v : double_vertices))
-    CGAL_assertion(v != Vertex_handle());
-
-    if(is_large_point_set)
-    {
-      typedef CGAL::Periodic_2_Delaunay_triangulation_remove_traits_2<Gt> P2removeT;
-      typedef CGAL::Delaunay_triangulation_2<P2removeT> DT;
-      typedef Vertex_remover<DT> Remover;
-
-      P2removeT remove_traits(domain());
-      DT dt(remove_traits);
-      Remover remover(this, dt);
-      Conflict_tester t(this);
-
-      for(const Vertex_handle dummy_v : dummy_points)
-      {
-        if(std::find(double_vertices.begin(), double_vertices.end(), dummy_v) == double_vertices.end())
-          Base::remove(dummy_v, remover, t, cover_manager);
-      }
-    }
-
-    return number_of_vertices() - n;
-  }
-
-#ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
-private:
-  //top stands for tuple-or-pair
-  template <class Info>
-  const Point& top_get_first(const std::pair<Point, Info>& pair) const
-  {
-    return pair.first;
-  }
-  template <class Info>
-  const Info& top_get_second(const std::pair<Point, Info>& pair) const
-  {
-    return pair.second;
-  }
-  template <class Info>
-  const Point& top_get_first(const boost::tuple<Point, Info>& tuple) const
-  {
-    return boost::get<0>(tuple);
-  }
-  template <class Info>
-  const Info& top_get_second(const boost::tuple<Point, Info>& tuple) const
-  {
-    return boost::get<1>(tuple);
-  }
-
-  template <class Tuple_or_pair, class InputIterator>
-  std::ptrdiff_t insert_with_info(InputIterator first, InputIterator last,
-                                  bool is_large_point_set)
-  {
-    if(first == last)
-      return 0;
-
-    std::vector<std::size_t> indices;
-    std::vector<Point> points;
-    std::vector<typename Tds::Vertex::Info> infos;
-    std::size_t index = 0;
-    for(InputIterator it = first; it != last; ++it)
-    {
-      Tuple_or_pair value = *it;
-      points.push_back(top_get_first(value));
-      infos.push_back(top_get_second(value));
-      indices.push_back(index++);
-    }
-
-    typedef typename Pointer_property_map<Point>::type Pmap;
-    typedef Spatial_sort_traits_adapter_2<Geom_traits, Pmap> Search_traits;
-
-    size_type n = number_of_vertices();
-
-    // The heuristic discards the existing triangulation so it can only be
-    // applied to empty triangulations.
-    if(n != 0)
-      is_large_point_set = false;
-
-    std::set<Vertex_handle> dummy_points;
-    typename std::vector<std::size_t>::iterator ind_it = indices.begin();
-
-    if(is_large_point_set)
-    {
-      std::vector<Vertex_handle> dummy_points_vector = this->insert_dummy_points();
-      std::copy(dummy_points_vector.begin(), dummy_points_vector.end(),
-                std::inserter(dummy_points, dummy_points.begin()));
-    }
-    else
-    {
-      CGAL::cpp98::random_shuffle(indices.begin(), indices.end());
-      ind_it = indices.begin();
-
-      for(;;)
-      {
-        if(ind_it == indices.end())
-          return number_of_vertices() - n;
-
-        Vertex_handle v_new = insert(points[*ind_it]);
-        v_new->info() = infos[*ind_it];
-        ++ind_it;
-
-        if(is_1_cover())
-          break;
-      }
-    }
-
-    CGAL_assertion(is_1_cover());
-
-    // Insert the points
-    spatial_sort(indices.begin(), indices.end(),
-                 Search_traits(make_property_map(points), geom_traits()));
-
-    Face_handle f;
-    for(typename std::vector<std::size_t>::const_iterator it=ind_it, end=indices.end();
-        it != end; ++it)
-    {
-      Locate_type lt;
-      int li, lj;
-      Offset o;
-      f = locate(points[*it], o, lt, li, lj, f);
-
-      if(lt == Base::VERTEX)
-      {
-        // Always copy the info, it might be a dummy vertex
-        f->vertex(li)->info() = infos[*it];
-        dummy_points.erase(f->vertex(li));
-      }
-      else
-      {
-        Vertex_handle v_new = insert(points[*it], o, lt, f, li); // @fixme conflict_finder & stuff
-        v_new->info() = infos[*it];
-      }
-    }
-
-    if(is_large_point_set)
-    {
-      typedef CGAL::Periodic_2_Delaunay_triangulation_remove_traits_2<Gt> P2removeT;
-      typedef CGAL::Delaunay_triangulation_2<P2removeT> DT;
-      typedef Vertex_remover<DT> Remover;
-
-      P2removeT remove_traits(domain());
-      DT dt(remove_traits);
-      Remover remover(this, dt);
-      Conflict_tester t(this);
-
-      for(const Vertex_handle dummy_v : dummy_points)
-      {
-        if(std::find(double_vertices.begin(), double_vertices.end(), dummy_v) == double_vertices.end())
-          Base::remove(dummy_v, remover, t, cover_manager);
-      }
-    }
-
-    return number_of_vertices() - n;
-  }
-
-public:
-  template <class InputIterator>
-  std::ptrdiff_t
-  insert(InputIterator first, InputIterator last,
-         bool is_large_point_set = true,
-         typename boost::enable_if<
-                    boost::is_convertible<
-                      typename std::iterator_traits<InputIterator>::value_type,
-                      std::pair<Point, typename internal::Info_check<typename Tds::Vertex>::type> > >::type* = nullptr)
-  {
-    return insert_with_info<std::pair<Point, typename internal::Info_check<typename Tds::Vertex>::type> >(first, last, is_large_point_set);
-  }
-
-  template <class  InputIterator_1, class InputIterator_2>
-  std::ptrdiff_t
-  insert(boost::zip_iterator<boost::tuple<InputIterator_1, InputIterator_2> > first,
-         boost::zip_iterator<boost::tuple<InputIterator_1, InputIterator_2> > last,
-         bool is_large_point_set = true,
-         typename boost::enable_if<
-                    boost::mpl::and_<
-                      boost::is_convertible<
-                        typename std::iterator_traits<InputIterator_1>::value_type, Point>,
-                      boost::is_convertible<
-                        typename std::iterator_traits<InputIterator_2>::value_type,
-                        typename internal::Info_check<typename Tds::Vertex>::type> > >::type* = nullptr)
-  {
-    return insert_with_info<boost::tuple<Point, typename internal::Info_check<typename Tds::Vertex>::type> >(first, last, is_large_point_set);
-  }
-#endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
-#endif
-
-  void remove(Vertex_handle /*v*/) { CGAL_assertion(false); } // @todo
-
-  template <typename InputIterator>
-  std::ptrdiff_t remove(InputIterator first, InputIterator beyond)
-  {
-    std::size_t n = number_of_vertices();
-    while(first != beyond)
-      remove(*first++);
-
-    return n - number_of_vertices();
-  }
-
-  /// \name Displacement
-
-  Vertex_handle move_if_no_collision(Vertex_handle v, const Point& p)
-  {
-    Locate_type lt;
-    int li;
-    Vertex_handle inserted;
-    Face_handle loc = locate(p, lt, li, v->face());
-
-    if(lt == Base::VERTEX)
-      return v;
-    else
-      /// This can be optimized by checking whether we can move v->point() to p
-      return insert(p, lt, loc, li);
-  }
-
-  Vertex_handle move_point(Vertex_handle v, const Point& p)
-  {
-    if(v->point() == p)
-      return v;
-
-    Vertex_handle w = move_if_no_collision(v, p);
-    if(w != v)
-    {
-      remove(v);
-      return w;
-    }
-    return v;
-  }
-
   /// \name Conflict checking
 
   template <class OutputIteratorBoundaryEdges,
@@ -832,66 +627,170 @@ public:
   }
 
 public:
-  class Point_hider
+  /// \name Insertion-Removal
+  Vertex_handle insert(const Point& p,
+                       Face_handle start = Face_handle())
   {
-  public:
-    template <class InputIterator>
-    inline void set_vertices(InputIterator, InputIterator) const { }
+    Conflict_tester tester(p, this);
+    Point_hider hider;
+    Cover_manager cover_manager(*this);
 
-    inline void hide_point(Face_handle, const Point &) { CGAL_triangulation_assertion(false); }
-    inline void hide(Point&, Face_handle) const { CGAL_triangulation_assertion(false); }
-    inline void do_hide(const Point &, Face_handle) const { CGAL_triangulation_assertion(false); }
+    Vertex_handle v = Base::insert_in_conflict(p, start, tester, hider, cover_manager);
+    CGAL_assertion(v != Vertex_handle());
 
-    template <class Conflict_tester>
-    inline void hide_points(Vertex_handle, const Conflict_tester &) { CGAL_triangulation_assertion(false); }
+    return v;
+  }
 
-    template <class Tester>
-    inline bool replace_vertex(const Point&, Vertex_handle, const Tester&) const { return true; }
-    inline Vertex_handle replace_vertex(Face_handle f, int index, const Point &) { return f->vertex(index); }
-    inline void reinsert_vertices(Vertex_handle) { }
-  };
-
-  class Conflict_tester
+  Vertex_handle insert(const Point& p,
+                       Locate_type lt,
+                       Face_handle f,
+                       int li)
   {
-    // stores a pointer to the triangulation, a point, and an offset
-    const Self* tr_ptr;
-    Point p;
-    mutable Offset o;
+    Conflict_tester tester(p, this);
+    Point_hider hider;
+    Cover_manager cover_manager(*this);
 
-  public:
-    /// Constructor
-    Conflict_tester(const Self* tr_ptr) : tr_ptr(tr_ptr), p(Point()) { }
-    Conflict_tester(const Point &pt, const Self* tr_ptr) : tr_ptr(tr_ptr), p(pt) { }
+    Vertex_handle v = Base::insert_in_conflict(p, lt, f, li, tester, hider, cover_manager);
+    CGAL_assertion(v != Vertex_handle());
 
-    /// returns true if the circumcircle of 'f' contains 'p'
-    bool operator()(const Face_handle f, const Offset &off) const
+    return v;
+  }
+
+  Vertex_handle push_back(const Point& p) { return insert(p); }
+
+  /// Insertion with info
+  template <class InputIterator>
+  std::ptrdiff_t insert(InputIterator first, InputIterator last,
+                        bool is_large_point_set = true)
+  {
+    if(first == last)
+      return 0;
+
+    size_type n = number_of_vertices();
+
+    // The heuristic discards the existing triangulation so it can only be
+    // applied to empty triangulations.
+    if(n != 0)
+      is_large_point_set = false;
+
+    std::vector<Point> points(first, last);
+    std::vector<Vertex_handle> dummy_points;
+    typename std::vector<Point>::iterator pbegin = points.begin();
+
+    if(is_large_point_set)
     {
-      return (tr_ptr->side_of_circle(f, p, tr_ptr->combine_offsets(o, off), true) == ON_BOUNDED_SIDE);
+      std::vector<Vertex_handle> dummy_points = this->insert_dummy_points();
+    }
+    else if(!is_1_cover())
+    {
+      CGAL::cpp98::random_shuffle(points.begin(), points.end());
+      pbegin = points.begin();
+
+      for(;;)
+      {
+        if(pbegin == points.end())
+          return number_of_vertices() - n;
+
+        insert(*pbegin);
+        ++pbegin;
+
+        if(is_1_cover())
+          break;
+      }
     }
 
-//    bool operator()(const Face_handle f, const Point& pt, const Offset &off) const
-//    {
-//      return (tr_ptr->side_of_circle(f, pt, o + off, true) == ON_BOUNDED_SIDE);
-//    }
+    CGAL_triangulation_assertion(is_1_cover());
 
-    int compare_weight(Point, Point) const { return 0; }
+    // Organize the points to improve runtime
+    spatial_sort(pbegin, points.end(), geom_traits());
 
-    bool test_initial_face(Face_handle f, const Offset &off) const
+    Face_handle hint;
+    Conflict_tester tester(*pbegin, this);
+    Point_hider hider;
+    Cover_manager cover_manager(*this);
+
+    // Actual insertion
+    std::vector<Vertex_handle> double_vertices =
+      Base::insert_in_conflict(points.begin(), points.end(), hint, tester, hider, cover_manager);
+
+    CGAL_assertion_code(for(Vertex_handle v : double_vertices))
+    CGAL_assertion(v != Vertex_handle());
+
+    if(is_large_point_set)
     {
-      if(!(operator()(f, off)))
-        CGAL_triangulation_assertion(false);
-      return true;
+      typedef CGAL::Periodic_2_Delaunay_triangulation_remove_traits_2<Gt> P2removeT;
+      typedef CGAL::Delaunay_triangulation_2<P2removeT> DT;
+      typedef Vertex_remover<DT> Remover;
+
+      P2removeT remove_traits(domain());
+      DT dt(remove_traits);
+      Remover remover(this, dt);
+      Conflict_tester t(this);
+
+      for(const Vertex_handle dummy_v : dummy_points)
+      {
+        if(std::find(double_vertices.begin(), double_vertices.end(), dummy_v) == double_vertices.end())
+          Base::remove(dummy_v, remover, t, cover_manager);
+      }
     }
 
-    void set_point(const Point &_p) { p = _p; }
-    const Point& point() const { return p; }
-    void set_offset(const Offset &off) const { o = off; }
-    const Offset& get_offset() const { return o; }
-  };
+    return number_of_vertices() - n;
+  }
 
-  bool test_conflict(const Point& p, Face_handle f) const
+  void remove(Vertex_handle v)
   {
-    return side_of_oriented_circle(f, p, true) ==  ON_POSITIVE_SIDE;
+    typedef CGAL::Periodic_2_Delaunay_triangulation_remove_traits_2<Gt> P2removeT;
+    typedef CGAL::Delaunay_triangulation_2<P2removeT> Euclidean_triangulation;
+    typedef Vertex_remover<Euclidean_triangulation> Remover;
+
+    P2removeT remove_traits(geom_traits());
+    Euclidean_triangulation tmp(remove_traits);
+    Remover remover(this, tmp);
+    Conflict_tester ct(this);
+    Cover_manager cover_manager(*this);
+
+    Base::remove(v, remover, ct, cover_manager);
+    CGAL_triangulation_expensive_assertion(is_valid());
+  }
+
+  template <typename InputIterator>
+  std::ptrdiff_t remove(InputIterator first, InputIterator beyond)
+  {
+    std::size_t n = number_of_vertices();
+    while(first != beyond)
+      remove(*first++);
+
+    return n - number_of_vertices();
+  }
+
+  /// \name Displacement
+
+  Vertex_handle move_if_no_collision(Vertex_handle v, const Point& p)
+  {
+    Locate_type lt;
+    int li;
+    Vertex_handle inserted;
+    Face_handle loc = locate(p, lt, li, v->face());
+
+    if(lt == Base::VERTEX)
+      return v;
+    else
+      /// This can be optimized by checking whether we can move v->point() to p
+      return insert(p, lt, loc, li);
+  }
+
+  Vertex_handle move_point(Vertex_handle v, const Point& p)
+  {
+    if(v->point() == p)
+      return v;
+
+    Vertex_handle w = move_if_no_collision(v, p);
+    if(w != v)
+    {
+      remove(v);
+      return w;
+    }
+    return v;
   }
 
   /// \name Check - Query
@@ -903,7 +802,7 @@ public:
 
     typename Geom_traits::Compare_distance_2 compare_distance = geom_traits().compare_distance_2_object();
 
-    Vertex_handle nn =  f->vertex(0);
+    Vertex_handle nn = f->vertex(0);
     if(compare_distance(p, f->vertex(1)->point(), nn->point()) == SMALLER)
       nn = f->vertex(1);
     if(compare_distance(p, f->vertex(2)->point(), nn->point()) == SMALLER)
@@ -942,10 +841,11 @@ public:
     {
       case -2:
         return Vertex_handle();
-        //break;
       case 2:
         return nearest_vertex_2D(p, f);
-        //break;
+      default:
+        CGAL_triangulation_assertion(false);
+        break;
     }
 
     return Vertex_handle();
@@ -989,6 +889,110 @@ public:
     return ps;
   }
 
+  /// \name Methods regarding the covering
+  /// \{
+
+protected:
+  void create_initial_triangulation()
+  {
+    CGAL_triangulation_assertion(faces_with_too_big_circumradius.empty());
+
+    for(Face_iterator iter=faces_begin(), end_iter=faces_end(); iter!=end_iter; ++iter)
+    {
+      if(compare_squared_circumradius_to_threshold(iter, squared_circumradius_threshold) != CGAL::SMALLER)
+        faces_with_too_big_circumradius.insert(iter);
+    }
+  }
+
+  template <class FaceIt>
+  void insert_faces_with_too_big_circumradius(Vertex_handle /*v*/, FaceIt begin, const FaceIt end)
+  {
+    for(; begin != end; ++begin)
+      if(compare_squared_circumradius_to_threshold(*begin, squared_circumradius_threshold) != CGAL::SMALLER)
+        faces_with_too_big_circumradius.insert(*begin);
+  }
+
+  void insert_faces_with_too_big_circumradius(Face_iterator begin, Face_iterator end)
+  {
+    for(; begin != end; ++begin)
+      if(compare_squared_circumradius_to_threshold(begin, squared_circumradius_threshold) != CGAL::SMALLER)
+        faces_with_too_big_circumradius.insert(begin);
+  }
+
+  template <class FaceIt>
+  void delete_faces_with_too_big_circumradius(FaceIt begin, const FaceIt end)
+  {
+    for(; begin != end; ++begin)
+      faces_with_too_big_circumradius.erase(*begin);
+  }
+
+  // returns 'true/false' depending on whether the cover would (or has, if 'abort_if_cover_change'
+  // is set to 'false') change.
+  bool update_cover_data_during_management(Face_handle new_f,
+                                           const std::vector<Face_handle>& new_faces,
+                                           const bool abort_if_cover_change)
+  {
+    if(compare_squared_circumradius_to_threshold(new_f, squared_circumradius_threshold) != CGAL::SMALLER)
+    {
+      if(is_1_cover())
+      {
+        // Whether we are changing the cover or simply aborting, we need to get rid of the new faces
+        tds().delete_faces(new_faces.begin(), new_faces.end());
+
+        if(!abort_if_cover_change)
+          this->convert_to_9_sheeted_covering();
+
+        return true;
+      }
+      else
+      {
+        faces_with_too_big_circumradius.insert(new_f);
+      }
+    }
+
+    return false;
+  }
+
+  virtual void update_cover_data_after_converting_to_9_sheeted_covering() override
+  {
+    for(Face_iterator iter = faces_begin(), end_iter = faces_end(); iter != end_iter; ++iter)
+      if(compare_squared_circumradius_to_threshold(iter, squared_circumradius_threshold) != CGAL::SMALLER)
+        faces_with_too_big_circumradius.insert(iter);
+  }
+
+  virtual void clear_covering_data() override
+  {
+    faces_with_too_big_circumradius.clear();
+  }
+
+public:
+  bool can_be_converted_to_1_sheet() const { return faces_with_too_big_circumradius.empty(); }
+
+  /// Checks whether the triangulation is a valid simplicial complex in the one cover.
+  /// Uses an edge-length-criterion.
+  bool is_extensible_triangulation_in_1_sheet_h1() const
+  {
+    if(!is_1_cover())
+      return can_be_converted_to_1_sheet();
+
+    return is_extensible_triangulation_in_1_sheet_h2();
+  }
+
+  /// Checks whether the triangulation is a valid simplicial complex in the one cover.
+  /// Uses a criterion based on the maximal radius of the circumscribing circle.
+  bool is_extensible_triangulation_in_1_sheet_h2() const
+  {
+    for(Periodic_triangle_iterator tit = this->periodic_triangles_begin(Base::UNIQUE);
+        tit != this->periodic_triangles_end(Base::UNIQUE); ++tit)
+    {
+      if(compare_squared_circumradius_to_threshold(tit->at(0), tit->at(1), tit->at(2),
+                                                   squared_circumradius_threshold) != CGAL::SMALLER)
+        return false;
+    }
+
+    return true;
+  }
+
 public:
   /// \name Checking
   bool is_valid(bool verbose = false, int level = 0) const
@@ -1026,144 +1030,6 @@ public:
 
     return result;
   }
-
-private:
-  /// \name Methods regarding the covering
-  /// \{
-
-  class Cover_manager
-  {
-    Self& tr;
-
-  public:
-    Cover_manager(Self& tr) : tr(tr) { }
-
-    void create_initial_triangulation() { tr.create_initial_triangulation(); }
-
-    template <class FaceIt>
-    void insert_unsatisfying_elements(Vertex_handle v, const FaceIt begin, const FaceIt end) {
-      tr.insert_faces_with_too_big_orthoball(v, begin, end);
-    }
-
-    template <class FaceIt>
-    void delete_unsatisfying_elements(const FaceIt begin, const FaceIt end) {
-      tr.delete_faces_with_too_big_circumdisk(begin, end);
-    }
-
-    bool can_be_converted_to_1_sheet() const { return tr.can_be_converted_to_1_sheet(); }
-
-    bool update_cover_data_during_management(Face_handle new_f,
-                                             const std::vector<Face_handle>& new_faces)
-    {
-      return tr.update_cover_data_during_management(new_f, new_faces);
-    }
-  };
-
-public:
-  void create_initial_triangulation()
-  {
-    CGAL_triangulation_assertion(faces_with_too_big_circumdisk.empty());
-
-    for(Face_iterator iter=faces_begin(), end_iter = faces_end(); iter!=end_iter; ++iter)
-      faces_with_too_big_circumdisk.insert(iter);
-  }
-
-  template <class FaceIt>
-  void insert_faces_with_too_big_orthoball(Vertex_handle /*v*/, FaceIt begin, const FaceIt end)
-  {
-    for(; begin != end; ++begin)
-      if(compare_squared_circumradius_to_threshold(*begin, squared_circumradius_threshold) != CGAL::SMALLER)
-        faces_with_too_big_circumdisk.insert(*begin);
-  }
-
-  void insert_faces_with_too_big_orthoball(Face_iterator begin, Face_iterator end)
-  {
-    for(; begin != end; ++begin)
-      if(compare_squared_circumradius_to_threshold(begin, squared_circumradius_threshold) != CGAL::SMALLER)
-        faces_with_too_big_circumdisk.insert(begin);
-  }
-
-  template <class FaceIt>
-  void delete_faces_with_too_big_circumdisk(FaceIt begin, const FaceIt end)
-  {
-    for(; begin != end; ++begin)
-    {
-      Too_big_circumdisks_set_it iter = faces_with_too_big_circumdisk.find(*begin);
-      if(iter != faces_with_too_big_circumdisk.end())
-        faces_with_too_big_circumdisk.erase(iter);
-    }
-  }
-
-  bool can_be_converted_to_1_sheet() const { return faces_with_too_big_circumdisk.empty(); }
-
-  // returns 'true/false' depending on whether the cover would (or has, if 'abort_if_cover_change'
-  // is set to 'false') change.
-  bool update_cover_data_during_management(Face_handle new_f,
-                                           const std::vector<Face_handle>& new_faces)
-  {
-    if(compare_squared_circumradius_to_threshold(new_f, squared_circumradius_threshold) != CGAL::SMALLER)
-    {
-      if(is_1_cover())
-      {
-        // Whether we are changing the cover or simply aborting, we need to get rid of the new faces
-        tds().delete_faces(new_faces.begin(), new_faces.end());
-        return true;
-      }
-      else
-      {
-        faces_with_too_big_circumdisk.insert(new_f);
-      }
-    }
-
-    return false;
-  }
-
-  virtual void update_cover_data_after_converting_to_9_sheeted_covering() override
-  {
-    for(Face_iterator iter = faces_begin(), end_iter = faces_end(); iter != end_iter; ++iter)
-      if(compare_squared_circumradius_to_threshold(iter, squared_circumradius_threshold) != CGAL::SMALLER)
-        faces_with_too_big_circumdisk.insert(iter);
-  }
-
-  virtual void clear_covering_data() override
-  {
-    faces_with_too_big_circumdisk.clear();
-  }
-
-public:
-  /// Checks whether the triangulation is a valid simplicial complex in the one cover.
-  /// Uses an edge-length-criterion.
-  bool is_extensible_triangulation_in_1_sheet_h1() const
-  {
-    if(!is_1_cover())
-      return can_be_converted_to_1_sheet();
-
-    return is_extensible_triangulation_in_1_sheet_h2();
-  }
-
-  /// Checks whether the triangulation is a valid simplicial complex in the one cover.
-  /// Uses a criterion based on the maximal radius of the circumscribing circle.
-  bool is_extensible_triangulation_in_1_sheet_h2() const
-  {
-    for(Periodic_triangle_iterator tit = this->periodic_triangles_begin(Base::UNIQUE);
-        tit != this->periodic_triangles_end(Base::UNIQUE); ++tit)
-    {
-      if(compare_squared_circumradius_to_threshold(tit->at(0), tit->at(1), tit->at(2),
-                                                   squared_circumradius_threshold) != CGAL::SMALLER)
-        return false;
-    }
-
-    return true;
-  }
-
-private:
-  /// This threshold should be chosen such that if all Delaunay balls have a squared radius smaller than this,
-  /// we can be sure that there are no self-edges anymore.
-  FT squared_circumradius_threshold;
-
-  /// This container stores all the faces whose circumdisk squared radius is larger
-  /// than the treshold `squared_circumradius_threshold`.
-  Too_big_circumdisks_set faces_with_too_big_circumdisk;
 };
 
 } // namespace CGAL

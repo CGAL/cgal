@@ -96,12 +96,13 @@ struct Exact_domain_getter<K1, Lattice_2<K1>, K2>
 template <typename K1, typename K2>
 Lattice_2<K2> convert_domain(const Lattice_2<K1>& /*lattice*/)
 {
-  // @todo
+  // @exact
   // - what to do? Simply convert the members? What if the values (e.g. the basis reduction) obtained
   // with the input kernel are not correct (inexactness)
   // - Do the first computation with an exact kernel back into the double? There might be a loss
   // of precision on the way back to EK (AK->EK->AK-here->EK)
   // --> just do lattice computations in exact, and store the approximate and exact stuff in the lattice_2?
+  CGAL_assertion(false);
   return Lattice_2<K2>();
 }
 

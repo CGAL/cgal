@@ -40,13 +40,13 @@ public:
   Lattice_2() { }
 
   Lattice_2(const Vector& v0, const Vector& v1, const K& k = K())
-    : basis_(CGAL::make_array(v0, v1)), k(k)
+    : _basis(CGAL::make_array(v0, v1)), _k(k)
   {
     initialize();
   }
 
   Lattice_2(const Basis& basis, const K& k = K())
-    : basis_(basis), k(k)
+    : _basis(basis), _k(k)
   {
     initialize();
   }
@@ -54,11 +54,13 @@ public:
   Lattice_2(const Lattice_2& other) = default;
 
   // Access
-  Basis& basis() { return basis_; }
-  const Basis& basis() const { return basis_; }
+  Basis& basis() { return _basis; }
+  const Basis& basis() const { return _basis; }
 
-  const Voronoi_face_normals& Voronoi_vectors() const { return Vfn_; }
-  FT systole_sq_length() const { return systole_sq_length_; }
+  const std::array<std::array<int, 2>, 12>& overlapping_offsets() const { return _overlapping_offsets; }
+
+  const Voronoi_face_normals& Voronoi_vectors() const { return _Vfn; }
+  FT systole_sq_length() const { return _systole_sq_length; }
 
   // Initialization
   void initialize()
@@ -72,12 +74,12 @@ public:
     bool reduced = false;
     while(!reduced)
     {
-      FT c01 = k.compute_scalar_product_2_object()(basis_[0], basis_[1]);
-      FT c00 = k.compute_scalar_product_2_object()(basis_[0], basis_[0]);
-      FT c11 = k.compute_scalar_product_2_object()(basis_[1], basis_[1]);
+      FT c01 = _k.compute_scalar_product_2_object()(_basis[0], _basis[1]);
+      FT c00 = _k.compute_scalar_product_2_object()(_basis[0], _basis[0]);
+      FT c11 = _k.compute_scalar_product_2_object()(_basis[1], _basis[1]);
       if(c11 < c00)
       {
-        std::swap(basis_[0], basis_[1]);
+        std::swap(_basis[0], _basis[1]);
         std::swap(c00, c11);
       }
 
@@ -87,7 +89,7 @@ public:
         if(c01 > FT(0))
         {
           // Negate b1 if necessary to ensure obtuse angle between b0 and b1.
-          basis_[1] = k.construct_opposite_vector_2_object()(basis_[1]);
+          _basis[1] = _k.construct_opposite_vector_2_object()(_basis[1]);
         }
         reduced = true;
       }
@@ -97,40 +99,40 @@ public:
         if(c01 > 0)
         {
           // b1 -= b0
-          basis_[1] = k.construct_sum_of_vectors_2_object()(basis_[1],
-                        k.construct_opposite_vector_2_object()(basis_[0]));
+          _basis[1] = _k.construct_sum_of_vectors_2_object()(_basis[1],
+                        _k.construct_opposite_vector_2_object()(_basis[0]));
         }
         else
         {
           // b1 += b0
-          basis_[1] = k.construct_sum_of_vectors_2_object()(basis_[1], basis_[0]);
+          _basis[1] = _k.construct_sum_of_vectors_2_object()(_basis[1], _basis[0]);
         }
       }
     }
 
-    CGAL_postcondition(basis_is_reduced());
+    CGAL_postcondition(_basisis_reduced());
   }
 
   // Only used in assertion check.
-  bool basis_is_reduced()
+  bool _basisis_reduced()
   {
-    Vector ext = k.construct_opposite_vector_2_object()(
-                   k.construct_sum_of_vectors_2_object()(basis_[0], basis_[1]));
-    return k.compute_scalar_product_2_object()(basis_[0], basis_[1]) <= 0 &&
-           k.compute_scalar_product_2_object()(basis_[0], ext) <= 0 &&
-           k.compute_scalar_product_2_object()(basis_[1], ext) <= 0;
+    Vector ext = _k.construct_opposite_vector_2_object()(
+                   _k.construct_sum_of_vectors_2_object()(_basis[0], _basis[1]));
+    return _k.compute_scalar_product_2_object()(_basis[0], _basis[1]) <= 0 &&
+           _k.compute_scalar_product_2_object()(_basis[0], ext) <= 0 &&
+           _k.compute_scalar_product_2_object()(_basis[1], ext) <= 0;
   }
 
   void construct_Voronoi_face_normals()
   {
-    Vector third = k.construct_opposite_vector_2_object()(
-                     k.construct_sum_of_vectors_2_object()(basis_[0], basis_[1]));
+    Vector third = _k.construct_opposite_vector_2_object()(
+                     _k.construct_sum_of_vectors_2_object()(_basis[0], _basis[1]));
 
-    Vfn_ = CGAL::make_array(basis_[0], basis_[1], third);
+    _Vfn = CGAL::make_array(_basis[0], _basis[1], third);
 
     // @todo check the reduction algorithm, might not be needed to also check the third's length
-    systole_sq_length_ = (std::min)((std::min)(basis_[0].squared_length(),
-                                               basis_[1].squared_length()),
+    _systole_sq_length = (std::min)((std::min)(_basis[0].squared_length(),
+                                               _basis[1].squared_length()),
                                     third.squared_length());
   }
 
@@ -141,11 +143,11 @@ public:
   {
     for(int i=0; i<3; ++i)
     {
-      const Vector& vfn = Vfn_[i];
+      const Vector& vfn = _Vfn[i];
       const Vector ptv(CGAL::ORIGIN, p);
 
-      const FT sp = FT(2) * k.compute_scalar_product_2_object()(ptv, vfn) /
-                              k.compute_scalar_product_2_object()(vfn, vfn);
+      const FT sp = FT(2) * _k.compute_scalar_product_2_object()(ptv, vfn) /
+                              _k.compute_scalar_product_2_object()(vfn, vfn);
 
       if(scaling_factor <= sp || sp < -scaling_factor)
         return false;
@@ -157,21 +159,17 @@ public:
   // @exact
   Point construct_canonical_point(const Point& p) const
   {
-    // @fixme? It is fine to do constructions here because an approximation
-    // of the exact canonical position of 'p' is fine: we only care about
-    // consistency between that approximate position and its offsetted positions
-
     Point cp = p;
 
     // @todo factorize it with 'is_in_domain()' (somehow)
     int vfn_pos = 0;
     while(vfn_pos < 3)
     {
-      const Vector& vfn = Vfn_[vfn_pos];
+      const Vector& vfn = _Vfn[vfn_pos];
       const Vector ptv(CGAL::ORIGIN, cp);
 
-      const FT sp = k.compute_scalar_product_2_object()(ptv, vfn) /
-                      k.compute_scalar_product_2_object()(vfn, vfn);
+      const FT sp = _k.compute_scalar_product_2_object()(ptv, vfn) /
+                      _k.compute_scalar_product_2_object()(vfn, vfn);
 
       if(-0.5 <= sp && sp < 0.5)
       {
@@ -180,8 +178,8 @@ public:
       else
       {
         Vector tv = vfn;
-        tv = k.construct_scaled_vector_2_object()(tv, - std::floor(CGAL::to_double(sp + 0.5)));
-        cp = k.construct_translated_point_2_object()(cp, tv);
+        tv = _k.construct_scaled_vector_2_object()(tv, - std::floor(CGAL::to_double(sp + 0.5)));
+        cp = _k.construct_translated_point_2_object()(cp, tv);
         vfn_pos = 0;
       }
     }
@@ -193,20 +191,20 @@ public:
   {
 //    std::cout << "translate_by_offset(" << p << " Off: " << o << ") = ";
 
-//    std::cout << "Reduced basis b[0] = " << basis_[0] << std::endl;
-//    std::cout << "Reduced basis b[1] = " << basis_[1] << std::endl;
+//    std::cout << "Reduced basis b[0] = " << _basis[0] << std::endl;
+//    std::cout << "Reduced basis b[1] = " << _basis[1] << std::endl;
 
-    Vector translation = k.construct_sum_of_vectors_2_object()(
-                           k.construct_scaled_vector_2_object()(basis_[0], o.x()),
-                           k.construct_scaled_vector_2_object()(basis_[1], o.y()));
+    Vector translation = _k.construct_sum_of_vectors_2_object()(
+                           _k.construct_scaled_vector_2_object()(_basis[0], o.x()),
+                           _k.construct_scaled_vector_2_object()(_basis[1], o.y()));
 
-    return k.construct_translated_point_2_object()(p, translation);
+    return _k.construct_translated_point_2_object()(p, translation);
   }
 
 public:
   // A list of those offsets such that the domain translated along the offset
   // overlaps the scaled domain.
-  std::array<std::array<int, 2>, 12> overlapping_offsets =
+  std::array<std::array<int, 2>, 12> _overlapping_offsets =
   {{
     // entirely contained in scaled domains
     {-1, -1}, {0, 1}, {1, 0}, {-1, 0}, {0, -1}, {1, 1},
@@ -215,11 +213,11 @@ public:
   }};
 
 private:
-  FT systole_sq_length_;
-  std::array<Vector, 2> basis_;
-  std::array<Vector, 3> Vfn_;
+  FT _systole_sq_length;
+  std::array<Vector, 2> _basis;
+  std::array<Vector, 3> _Vfn;
 
-  K k;
+  K _k;
 };
 
 } // namespace CGAL

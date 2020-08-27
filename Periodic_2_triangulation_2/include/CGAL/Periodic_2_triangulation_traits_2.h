@@ -21,9 +21,14 @@
 
 #include <CGAL/internal/Has_boolean_tags.h>
 
+#include <boost/mpl/and.hpp>
+#include <boost/mpl/not.hpp>
+
+#include <type_traits>
+
 namespace CGAL {
 
-// defaults are defined in traits_helper.h's forward declaration
+// default template parameterss are defined in traits_helper.h's forward declaration
 template <class Kernel_, class Offset_, class Domain_>
 class Periodic_2_triangulation_traits_base_2
   : public Kernel_ // @todo should just be a member of the class
@@ -125,10 +130,14 @@ protected:
 };
 
 // Forward declaration for the filtered traits
+
+// @exact disable filtering for Lattice-based Periodic
 template <class K,
           class O = CGAL::Periodic_2_offset_2,
           class D = typename K::Iso_rectangle_2,
-          bool Has_filtered_predicates = internal::Has_filtered_predicates<K>::value>
+          bool Has_filtered_predicates =
+            boost::mpl::and_<internal::Has_filtered_predicates<K>,
+                             boost::mpl::not_<std::is_same<D, Lattice_2<K> > > >::value>
 class Periodic_2_triangulation_traits_2;
 
 } // namespace CGAL

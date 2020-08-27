@@ -8,6 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_P2T2_TRIANGULATION_ON_FLAT_TORUS_2_H
 #define CGAL_P2T2_TRIANGULATION_ON_FLAT_TORUS_2_H
@@ -253,32 +254,43 @@ private:
   };
 
 protected:
-  const Offset& extract_offset(const Offset& off) const { return off; }
+  /// \name Triangulation data members
 
-  /// Creates an offset from a bit pattern.
-  Offset extract_offset(const int i) const
-  {
-    return Offset((i >> 1) & 1, i & 1);
-  }
+  /// Geometric traits
+  Gt _gt;
+  /// Triangulation data structure
+  Tds _tds;
 
-  /// Converts an offset to a bit pattern where bit1 == offx and bit0 == offy.
-  int off_to_int(const Offset& off) const
-  {
-    CGAL_triangulation_assertion(off.x() == 0 || off.x() == 1);
-    CGAL_triangulation_assertion(off.y() == 0 || off.y() == 1);
-    int i = ((off.x() & 1) << 1) + (off.y() & 1);
-    return i;
-  }
+private:
+  /// \name Periodic members
+
+  /// Determines if we currently compute in 3-cover or 1-cover.
+  Covering_sheets _cover;
+
+private:
+  /// map of offsets for periodic copies of vertices
+  Virtual_vertex_map virtual_vertices;
+  /// map of a non-virtual vertex to its virtual copies
+  Virtual_vertex_reverse_map virtual_vertices_reverse;
+
+protected:
+  /// v_offsets temporarily stores all the vertices on the border of a conflict region.
+  mutable std::vector<Vertex_handle> v_offsets;
 
 public:
   /// \name Constructors
 
   /// Constructor
   Triangulation_on_square_flat_torus_2(const Gt& gt) : _gt(gt), _tds(), _cover(make_array(1, 1)) { }
-  Triangulation_on_square_flat_torus_2(const Domain& domain) : Triangulation_on_square_flat_torus_2(Gt(domain)) { }
+  Triangulation_on_square_flat_torus_2(const Domain& domain)
+    : Triangulation_on_square_flat_torus_2(Gt(domain))
+  { }
 
   /// Copy constructor
-  Triangulation_on_square_flat_torus_2(const Triangulation_on_square_flat_torus_2<Gt, Tds>& tr) { copy_triangulation(tr); }
+  Triangulation_on_square_flat_torus_2(const Triangulation_on_square_flat_torus_2<Gt, Tds>& tr)
+  {
+    copy_triangulation(tr);
+  }
 
   /// Assignment
   Triangulation_on_square_flat_torus_2 &operator=(const Triangulation_on_square_flat_torus_2& tr)
@@ -419,7 +431,25 @@ public:
   size_type number_of_finite_edges() const { return number_of_edges(); }
   size_type number_of_finite_faces() const { return number_of_faces(); }
 
-  /// \name Undocumented functions, needed by the geometric iterators
+  /// \name Offset helper functions
+
+public:
+  const Offset& extract_offset(const Offset& off) const { return off; }
+
+  /// Creates an offset from a bit pattern.
+  Offset extract_offset(const int i) const
+  {
+    return Offset((i >> 1) & 1, i & 1);
+  }
+
+  /// Converts an offset to a bit pattern where bit1 == offx and bit0 == offy.
+  int off_to_int(const Offset& off) const
+  {
+    CGAL_triangulation_assertion(off.x() == 0 || off.x() == 1);
+    CGAL_triangulation_assertion(off.y() == 0 || off.y() == 1);
+    int i = ((off.x() & 1) << 1) + (off.y() & 1);
+    return i;
+  }
 
   /// [Undoc] Combines two offsets, where the first offset is defined by the
   /// virtual vertex and the second by the face.
@@ -485,8 +515,6 @@ public:
     else
       return Offset();
   }
-
-  /// Periodic functions
 
   /// These functions give the pair (vertex, offset) that corresponds
   /// to the i-th vertex of face f. The vertex returned is not a virtual copy.
@@ -763,6 +791,22 @@ public:
 
   size_type degree(Vertex_handle v) const { return _tds.degree(v); }
 
+  bool is_vertex(const Point& p, Vertex_handle& v) const
+  {
+    Locate_type lt;
+    int li;
+    Face_handle f = locate(p, lt, li);
+    if(lt != VERTEX)
+      return false;
+
+    v = f->vertex(li);
+    return true;
+  }
+
+  bool is_vertex(Vertex_handle v) const
+  {
+    return _tds.is_vertex(v);
+  }
   bool is_edge(Vertex_handle va, Vertex_handle vb) const
   {
     return _tds.is_edge(va, vb);
@@ -1789,92 +1833,6 @@ public:
     return locate(p, Offset(), lt, li, start);
   }
 
-  /// \name Insertion
-  Vertex_handle create_initial_triangulation(const Point& p)
-  {
-    CGAL_triangulation_assertion(empty());
-
-    // The empty triangulation has a single sheeted cover
-    _cover = make_array(3, 3);
-
-    // Virtual vertices, one per periodic domain
-    Vertex_handle vir_vertices[3][3];
-
-    // Virtual faces, two per periodic domain
-    Face_handle faces[3][3][2];
-
-    // Initialise vertices:
-    vir_vertices[0][0] = _tds.create_vertex();
-    vir_vertices[0][0]->set_point(p);
-    virtual_vertices_reverse[vir_vertices[0][0]] = std::vector<Vertex_handle>();
-    for(int i=0; i<_cover[0]; ++i)
-    {
-      for(int j=0; j<_cover[1]; ++j)
-      {
-        if((i != 0) || (j != 0))
-        {
-          // Initialise virtual vertices out of the domain for debugging
-          vir_vertices[i][j] = _tds.create_vertex();
-          vir_vertices[i][j]->set_point(p); //+Offset(i,j));
-          virtual_vertices[vir_vertices[i][j]] = Virtual_vertex(vir_vertices[0][0], Offset(i, j));
-          virtual_vertices_reverse[vir_vertices[0][0]].push_back(vir_vertices[i][j]);
-        }
-      }
-    }
-
-    // Create faces:
-    for(int i=0; i<_cover[0]; ++i)
-      for(int j=0; j<_cover[1]; ++j)
-        for(int f = 0; f < 2; ++f)
-          faces[i][j][f] = _tds.create_face(); // f faces per 'rectangle'
-
-    // table containing the vertex information
-    // index to the right vertex: [number of faces][vertex][offset]
-    int vertex_ind[2][3][2] = { { { 0, 0 }, { 1, 1 }, { 0, 1 } },
-                                { { 0, 0 }, { 1, 0 }, { 1, 1 } } };
-    // Table containing the neighbor information
-    // [number of faces][neighbor][offset,face]
-    int neighb_ind[2][3][3] = { { { 0, 1, 1 }, { -1, 0, 1 }, { 0, 0, 1 } },
-                                { { 1, 0, 0 }, { 0, 0, 0 }, { 0, -1, 0 } } };
-
-    for(int i=0; i<_cover[0]; ++i)
-    {
-      for(int j=0; j<_cover[1]; ++j)
-      {
-        int offset = ((i == _cover[0] - 1 ? 2 : 0) | (j == _cover[1] - 1 ? 1 : 0));
-        for(int f=0; f<2; ++f)
-        {
-          faces[i][j][f]->set_vertices(
-            vir_vertices[(i + vertex_ind[f][0][0]) % _cover[0]][(j + vertex_ind[f][0][1]) % _cover[1]],
-            vir_vertices[(i + vertex_ind[f][1][0]) % _cover[0]][(j + vertex_ind[f][1][1]) % _cover[1]],
-            vir_vertices[(i + vertex_ind[f][2][0]) % _cover[0]][(j + vertex_ind[f][2][1]) % _cover[1]]);
-
-          set_offsets(faces[i][j][f],
-                      offset & (vertex_ind[f][0][0] * 2 + vertex_ind[f][0][1] * 1),
-                      offset & (vertex_ind[f][1][0] * 2 + vertex_ind[f][1][1] * 1),
-                      offset & (vertex_ind[f][2][0] * 2 + vertex_ind[f][2][1] * 1));
-
-          faces[i][j][f]->set_neighbors(
-            faces[(i + _cover[0] + neighb_ind[f][0][0]) % _cover[0]]
-                   [(j + _cover[1] + neighb_ind[f][0][1]) % _cover[1]][neighb_ind[f][0][2]],
-            faces[(i + _cover[0] + neighb_ind[f][1][0]) % _cover[0]]
-                   [(j + _cover[1] + neighb_ind[f][1][1]) % _cover[1]][neighb_ind[f][1][2]],
-            faces[(i + _cover[0] + neighb_ind[f][2][0]) % _cover[0]]
-                   [(j + _cover[1] + neighb_ind[f][2][1]) % _cover[1]][neighb_ind[f][2][2]]);
-        }
-      }
-    }
-
-    // set pointers from the vertices to incident faces.
-    for(int i=0; i<_cover[0]; ++i)
-      for(int j=0; j<_cover[1]; ++j)
-        vir_vertices[i][j]->set_face(faces[i][j][0]);
-
-    _tds.set_dimension(2);
-
-    return vir_vertices[0][0];
-  }
-
 public:
   template<class EdgeIt>
   Vertex_handle star_hole(const Point& p,
@@ -2109,7 +2067,322 @@ public:
   /// Insert periodic copies in all periodic copies of the domain
   Vertex_handle insert_in_face(const Point& p, Face_handle f) { return insert(p, FACE, f, 0); }
 
-  // Delaunay/regular insertion
+private:
+  /// Remove a vertex without removing it's possible periodic copies.
+  /// Helper functions
+  void remove_degree_3_single_copy(Vertex_handle vh)
+  {
+    Face_handle f = vh->face();
+    int i = ccw(f->index(vh));
+
+    Face_handle f2 = f->neighbor(i);
+    int j = f2->index(f);
+
+    // Get the offsets in ccw order
+    Offset off[3];
+    off[i] = get_offset(f, i);
+    off[ccw(i)] = get_offset(f, ccw(i));
+    off[cw(i)] = combine_offsets(get_offset(f2, j), get_neighbor_offset(f2, j, f, i));
+    if(off[0].x() < 0 || off[1].x() < 0 || off[2].x() < 0)
+    {
+      Offset o(number_of_sheets()[0], 0);
+      off[0] += o;
+      off[1] += o;
+      off[2] += o;
+    }
+
+    if(off[0].y() < 0 || off[1].y() < 0 || off[2].y() < 0)
+    {
+      Offset o(0, number_of_sheets()[1]);
+      off[0] += o;
+      off[1] += o;
+      off[2] += o;
+    }
+
+    // Remove the vertex, keep face f
+    _tds.remove_degree_3(vh, f);
+
+    // Reset the offsets
+    set_offsets(f,
+                (off[0].x() >= number_of_sheets()[0] ? 2 : 0) + (off[0].y() >= number_of_sheets()[1] ? 1 : 0),
+                (off[1].x() >= number_of_sheets()[0] ? 2 : 0) + (off[1].y() >= number_of_sheets()[1] ? 1 : 0),
+                (off[2].x() >= number_of_sheets()[0] ? 2 : 0) + (off[2].y() >= number_of_sheets()[1] ? 1 : 0));
+  }
+
+public:
+  void remove_degree_3(Vertex_handle v)
+  {
+    CGAL_triangulation_precondition(number_of_vertices() > 1);
+    CGAL_triangulation_precondition(degree(v) == 3);
+
+    if(is_1_cover())
+      return remove_degree_3_single_copy(v);
+
+    {
+      Virtual_vertex_map_it it = virtual_vertices.find(v);
+      if(it != virtual_vertices.end())
+        v = it->second.first;
+    }
+
+    remove_too_long_edges_in_star(v);
+
+    typename Virtual_vertex_reverse_map::iterator reverse_it = virtual_vertices_reverse.find(v);
+    CGAL_triangulation_assertion(reverse_it != virtual_vertices_reverse.end());
+
+    const std::vector<Vertex_handle> &virtual_copies = reverse_it->second;
+    for(typename std::vector<Vertex_handle>::const_iterator it = virtual_copies.begin();
+        it != virtual_copies.end(); ++it)
+    {
+      virtual_vertices.erase(*it);
+      remove_degree_3_single_copy(*it);
+    }
+
+    virtual_vertices_reverse.erase(reverse_it);
+    remove_degree_3_single_copy(v);
+  }
+
+  /// \name Delaunay/regular insertions and removal
+
+protected:
+  template <class Conflict_test,
+            class OutputIteratorBoundaryEdges,
+            class OutputIteratorFaces,
+            class OutputIteratorInternalEdges>
+  Triple<OutputIteratorBoundaryEdges,
+         OutputIteratorFaces,
+         OutputIteratorInternalEdges>
+  find_conflicts(Face_handle d,
+                 const Offset& current_off,
+                 const Conflict_test& tester,
+                 Triple<OutputIteratorBoundaryEdges,
+                        OutputIteratorFaces,
+                        OutputIteratorInternalEdges> it) const
+  {
+#ifdef CGAL_DEBUG_P2T2
+    std::cout << "find_conflicts: " << tester.point() << " off: " << current_off << std::endl;
+#endif
+
+    CGAL_triangulation_precondition(number_of_vertices() != 0);
+    CGAL_triangulation_precondition(tester(d, current_off));
+
+//    for(auto vit=all_vertices_begin(); vit!=all_vertices_end(); ++vit)
+//      vit->clear_offset();
+
+    std::stack<std::pair<Face_handle, Offset> > face_stack;
+    face_stack.emplace(d, current_off);
+    d->tds_data().mark_in_conflict();
+    *it.second++ = d;
+
+    do
+    {
+      Face_handle f = face_stack.top().first;
+
+#ifdef CGAL_DEBUG_P2T2
+    std::cout << "------" << std::endl;
+    std::cout << "current face: " << f->vertex(0)->point() << " (" << &*(f->vertex(0)) << ") / "
+                                  << f->vertex(1)->point() << " (" << &*(f->vertex(0)) << ") / "
+                                  << f->vertex(2)->point() << " (" << &*(f->vertex(0)) << ")" << std::endl;
+    std::cout << "vertex offs: " << get_offset(f->vertex(0)) << " / "
+                                 << get_offset(f->vertex(1)) << " / "
+                                 << get_offset(f->vertex(2)) << std::endl;
+    std::cout << "face offs: " << extract_offset(f->offset(0)) << " / "
+                               << extract_offset(f->offset(1)) << " / "
+                               << extract_offset(f->offset(2)) << std::endl;
+    std::cout << "face points: " << point(f, 0) << " 0 / "
+                                 << point(f, 1) << " 0 / "
+                                 << point(f, 2) << " 0 / "
+                                 << point(f, 0) << " 0" << std::endl;
+    std::cout << "current_off: " << current_off << std::endl;
+#endif
+
+      Offset current_off2 = face_stack.top().second;
+      face_stack.pop();
+
+      for(int i=0; i<3; ++i)
+      {
+        Face_handle test = f->neighbor(i);
+
+#ifdef CGAL_DEBUG_P2T2
+        std::cout << "neighbor: " << point(test, 0) << " 0 / "
+                                  << point(test, 1) << " 0 / "
+                                  << point(test, 2) << " 0 / "
+                                  << point(test, 0) << " 0" << std::endl;
+#endif
+
+        if(test->tds_data().is_in_conflict())
+        {
+          if(f < test)
+            *it.third++ = Edge(f, i); // Internal edge
+
+#ifdef CGAL_DEBUG_P2T2
+          std::cout << "already in conflict" << std::endl;
+#endif
+          continue; // test was already in conflict.
+        }
+
+        if(test->tds_data().is_clear())
+        {
+          Offset o_test = current_off2 + get_neighbor_offset(f, i);
+#ifdef CGAL_DEBUG_P2T2
+          std::cout << "o_test: " << current_off2 << " + " << get_neighbor_offset(f, i) << " = " << o_test << std::endl;
+#endif
+          if(tester(test, o_test))
+          {
+            if(f < test)
+              *it.third++ = Edge(f, i); // Internal edge
+
+#ifdef CGAL_DEBUG_P2T2
+            std::cout << "In conflict too!" << std::endl;
+#endif
+            face_stack.emplace(test, o_test);
+            test->tds_data().mark_in_conflict();
+            *it.second++ = test;
+            continue;
+          }
+
+#ifdef CGAL_DEBUG_P2T2
+          std::cout << "Not in conflict" << std::endl;
+#endif
+
+          test->tds_data().mark_on_boundary(); // test is on the boundary.
+        }
+
+        *it.first++ = Edge(f, i);
+        for(int j=0; j<3; ++j)
+        {
+          if(j == i)
+            continue;
+
+#ifdef CGAL_DEBUG_P2T2
+          std::cout << "marking " << f->vertex(j)->point() << " (" << point(f, j)
+                    << ") with offset " << extract_offset(f->offset(j)) << " - " << current_off2
+                    << " = " << extract_offset(f->offset(j)) - current_off2 << std::endl;
+#endif
+
+          if(!f->vertex(j)->get_offset_flag())
+          {
+#ifdef CGAL_DEBUG_P2T2
+            std::cout << "NEW MARK" << std::endl;
+#endif
+            f->vertex(j)->set_offset(extract_offset(f->offset(j)) - current_off2);
+            v_offsets.push_back(f->vertex(j));
+          }
+        }
+      }
+    }
+    while(!face_stack.empty());
+
+    return it;
+  }
+
+  template <class Conflict_test,
+            class OutputIteratorBoundaryEdges,
+            class OutputIteratorFaces,
+            class OutputIteratorInternalEdges>
+  Triple<OutputIteratorBoundaryEdges,
+         OutputIteratorFaces,
+         OutputIteratorInternalEdges>
+  find_conflicts(Face_handle f,
+                 const Conflict_test& tester,
+                 Triple<OutputIteratorBoundaryEdges,
+                        OutputIteratorFaces,
+                        OutputIteratorInternalEdges> it) const
+  {
+    bool b = false;
+    Offset off = get_location_offset(tester, f, b);
+    if(b)
+      return find_conflicts(f, off, tester, it);
+
+    CGAL_triangulation_assertion(false); // @tmp only true if we are in insert
+    return it;
+  }
+
+protected:
+  /// \name Insertion
+  Vertex_handle create_initial_triangulation(const Point& p)
+  {
+    CGAL_triangulation_assertion(empty());
+
+    // The empty triangulation has a single sheeted cover
+    _cover = make_array(3, 3);
+
+    // Virtual vertices, one per periodic domain
+    Vertex_handle vir_vertices[3][3];
+
+    // Virtual faces, two per periodic domain
+    Face_handle faces[3][3][2];
+
+    // Initialise vertices:
+    vir_vertices[0][0] = _tds.create_vertex();
+    vir_vertices[0][0]->set_point(p);
+    virtual_vertices_reverse[vir_vertices[0][0]] = std::vector<Vertex_handle>();
+    for(int i=0; i<_cover[0]; ++i)
+    {
+      for(int j=0; j<_cover[1]; ++j)
+      {
+        if((i != 0) || (j != 0))
+        {
+          // Initialise virtual vertices out of the domain for debugging
+          vir_vertices[i][j] = _tds.create_vertex();
+          vir_vertices[i][j]->set_point(p); //+Offset(i,j));
+          virtual_vertices[vir_vertices[i][j]] = Virtual_vertex(vir_vertices[0][0], Offset(i, j));
+          virtual_vertices_reverse[vir_vertices[0][0]].push_back(vir_vertices[i][j]);
+        }
+      }
+    }
+
+    // Create faces:
+    for(int i=0; i<_cover[0]; ++i)
+      for(int j=0; j<_cover[1]; ++j)
+        for(int f = 0; f < 2; ++f)
+          faces[i][j][f] = _tds.create_face(); // f faces per 'rectangle'
+
+    // table containing the vertex information
+    // index to the right vertex: [number of faces][vertex][offset]
+    int vertex_ind[2][3][2] = { { { 0, 0 }, { 1, 1 }, { 0, 1 } },
+                                { { 0, 0 }, { 1, 0 }, { 1, 1 } } };
+    // Table containing the neighbor information
+    // [number of faces][neighbor][offset,face]
+    int neighb_ind[2][3][3] = { { { 0, 1, 1 }, { -1, 0, 1 }, { 0, 0, 1 } },
+                                { { 1, 0, 0 }, { 0, 0, 0 }, { 0, -1, 0 } } };
+
+    for(int i=0; i<_cover[0]; ++i)
+    {
+      for(int j=0; j<_cover[1]; ++j)
+      {
+        int offset = ((i == _cover[0] - 1 ? 2 : 0) | (j == _cover[1] - 1 ? 1 : 0));
+        for(int f=0; f<2; ++f)
+        {
+          faces[i][j][f]->set_vertices(
+            vir_vertices[(i + vertex_ind[f][0][0]) % _cover[0]][(j + vertex_ind[f][0][1]) % _cover[1]],
+            vir_vertices[(i + vertex_ind[f][1][0]) % _cover[0]][(j + vertex_ind[f][1][1]) % _cover[1]],
+            vir_vertices[(i + vertex_ind[f][2][0]) % _cover[0]][(j + vertex_ind[f][2][1]) % _cover[1]]);
+
+          set_offsets(faces[i][j][f],
+                      offset & (vertex_ind[f][0][0] * 2 + vertex_ind[f][0][1] * 1),
+                      offset & (vertex_ind[f][1][0] * 2 + vertex_ind[f][1][1] * 1),
+                      offset & (vertex_ind[f][2][0] * 2 + vertex_ind[f][2][1] * 1));
+
+          faces[i][j][f]->set_neighbors(
+            faces[(i + _cover[0] + neighb_ind[f][0][0]) % _cover[0]]
+                   [(j + _cover[1] + neighb_ind[f][0][1]) % _cover[1]][neighb_ind[f][0][2]],
+            faces[(i + _cover[0] + neighb_ind[f][1][0]) % _cover[0]]
+                   [(j + _cover[1] + neighb_ind[f][1][1]) % _cover[1]][neighb_ind[f][1][2]],
+            faces[(i + _cover[0] + neighb_ind[f][2][0]) % _cover[0]]
+                   [(j + _cover[1] + neighb_ind[f][2][1]) % _cover[1]][neighb_ind[f][2][2]]);
+        }
+      }
+    }
+
+    // set pointers from the vertices to incident faces.
+    for(int i=0; i<_cover[0]; ++i)
+      for(int j=0; j<_cover[1]; ++j)
+        vir_vertices[i][j]->set_face(faces[i][j][0]);
+
+    _tds.set_dimension(2);
+
+    return vir_vertices[0][0];
+  }
 
 protected:
   template < class ConflictTester, class PointHider, class CoverManager >
@@ -2269,11 +2542,9 @@ protected:
     std::cout << "Insert: " << p << std::endl;
 #endif
 
-#ifndef CGAL_GENERIC_P2T2
-    // @todo enable this check for generic, with a kind of domain.is_canonical(p);
-    CGAL_triangulation_assertion((domain().xmin() <= p.x()) && (p.x() < domain().xmax()));
-    CGAL_triangulation_assertion((domain().ymin() <= p.y()) && (p.y() < domain().ymax()));
-#endif
+    // @todo re-enable this check, with a kind of domain.is_canonical(p);
+//    CGAL_triangulation_assertion((domain().xmin() <= p.x()) && (p.x() < domain().xmax()));
+//    CGAL_triangulation_assertion((domain().ymin() <= p.y()) && (p.y() < domain().ymax()));
 
     if(number_of_vertices() == 0)
     {
@@ -2327,18 +2598,12 @@ protected:
       }
     }
 
-    std::ofstream out("final.off");
-    CGAL::write_PD2T2_to_OFF(out, *this);
-    out.close();
-    std::cin.get();
-
     CGAL_triangulation_assertion(is_valid(true));
 
     // Fall back to 1-cover if the criterion that the largest circumradius is short-enough
     if(cover_manager.can_be_converted_to_1_sheet())
     {
       std::cout << "Can convert!!" << std::endl;
-      std::cin.get(); // @tmp
 
       convert_to_1_sheeted_covering();
       CGAL_triangulation_expensive_assertion(is_valid());
@@ -2403,231 +2668,243 @@ protected:
     return double_vertices;
   }
 
-  template <class Conflict_test,
-            class OutputIteratorBoundaryEdges,
-            class OutputIteratorFaces,
-            class OutputIteratorInternalEdges>
-  Triple<OutputIteratorBoundaryEdges,
-         OutputIteratorFaces,
-         OutputIteratorInternalEdges>
-  find_conflicts(Face_handle d,
-                 const Offset& current_off,
-                 const Conflict_test& tester,
-                 Triple<OutputIteratorBoundaryEdges,
-                        OutputIteratorFaces,
-                        OutputIteratorInternalEdges> it) const
+protected:
+  // This is just adapted from the 3D version, there is likely a simpler way in 2D
+  template <class PointRemover, class CoverManager>
+  bool periodic_remove(Vertex_handle v,
+                       PointRemover& remover,
+                       CoverManager& cover_manager,
+                       const bool abort_if_cover_change = false)
   {
-#ifdef CGAL_DEBUG_P2T2
-    std::cout << "find_conflicts: " << tester.point() << " off: " << current_off << std::endl;
-#endif
+    // Construct the set of vertex pairs on the boundary with the edge just behind
+    typedef PointRemover                                             Point_remover;
+    typedef typename Point_remover::FaceE_handle                     FaceE_handle;
+    typedef typename Point_remover::VertexE_handle                   VertexE_handle;
+    typedef typename Point_remover::EdgeE                            EdgeE;
+    typedef typename Point_remover::VertexE_pair                     VertexE_pair;
+    typedef typename Point_remover::Finite_facesE_iterator           Finite_facesE_iterator;
+    typedef typename Point_remover::Vertex_pair_EdgeE_map            Vertex_pair_EdgeE_map;
 
-    CGAL_triangulation_precondition(number_of_vertices() != 0);
-    CGAL_triangulation_precondition(tester(d, current_off));
+    typedef std::pair<Vertex_handle, Vertex_handle>                  Vertex_pair;
+    typedef std::map<Vertex_pair, Edge>                              Vertex_pair_Edge_map;
 
-//    for(auto vit=all_vertices_begin(); vit!=all_vertices_end(); ++vit)
-//      vit->clear_offset();
+    // First compute the hole and its boundary vertices
+    std::vector<Face_handle> hole;
+    hole.reserve(16);
+    Vertex_pair_Edge_map outer_map;
+    Vertex_pair_EdgeE_map inner_map;
 
-    std::stack<std::pair<Face_handle, Offset> > face_stack;
-    face_stack.emplace(d, current_off);
-    d->tds_data().mark_in_conflict();
-    *it.second++ = d;
+    make_hole(v, outer_map, hole);
 
-    do
+    CGAL_triangulation_assertion(outer_map.size() == hole.size());
+
+    if(!is_1_cover())
+      cover_manager.delete_unsatisfying_elements(hole.begin(), hole.end());
+
+    // Build up the map between Vertices on the boundary and offsets
+    // collect all vertices on the boundary
+    std::vector<Vertex_handle> vertices;
+    vertices.reserve(16);
+
+    // The set is needed to ensure that each vertex is inserted only once.
+    std::set<Vertex_handle> tmp_vertices;
+
+    // The map connects vertices to offsets in the hole
+    std::map<Vertex_handle, Offset> vh_off_map;
+
+    for(typename std::vector<Face_handle>::iterator fit=hole.begin(); fit!=hole.end(); ++fit)
     {
-      Face_handle f = face_stack.top().first;
-
-#ifdef CGAL_DEBUG_P2T2
-    std::cout << "------" << std::endl;
-    std::cout << "current face: " << f->vertex(0)->point() << " (" << &*(f->vertex(0)) << ") / "
-                                  << f->vertex(1)->point() << " (" << &*(f->vertex(0)) << ") / "
-                                  << f->vertex(2)->point() << " (" << &*(f->vertex(0)) << ")" << std::endl;
-    std::cout << "vertex offs: " << get_offset(f->vertex(0)) << " / "
-                                 << get_offset(f->vertex(1)) << " / "
-                                 << get_offset(f->vertex(2)) << std::endl;
-    std::cout << "face offs: " << extract_offset(f->offset(0)) << " / "
-                               << extract_offset(f->offset(1)) << " / "
-                               << extract_offset(f->offset(2)) << std::endl;
-    std::cout << "face points: " << point(f, 0) << " 0 / "
-                                 << point(f, 1) << " 0 / "
-                                 << point(f, 2) << " 0 / "
-                                 << point(f, 0) << " 0" << std::endl;
-    std::cout << "current_off: " << current_off << std::endl;
-#endif
-
-      Offset current_off2 = face_stack.top().second;
-      face_stack.pop();
-
-      for(int i=0; i<3; ++i)
+      // Put all incident vertices in tmp_vertices
+      for(int j=0; j<3; ++j)
       {
-        Face_handle test = f->neighbor(i);
-
-#ifdef CGAL_DEBUG_P2T2
-        std::cout << "neighbor: " << point(test, 0) << " 0 / "
-                                  << point(test, 1) << " 0 / "
-                                  << point(test, 2) << " 0 / "
-                                  << point(test, 0) << " 0" << std::endl;
-#endif
-
-        if(test->tds_data().is_in_conflict())
+        if((*fit)->vertex(j) != v)
         {
-          if(f < test)
-            *it.third++ = Edge(f, i); // Internal edge
-
-#ifdef CGAL_DEBUG_P2T2
-          std::cout << "already in conflict" << std::endl;
-#endif
-          continue; // test was already in conflict.
-        }
-
-        if(test->tds_data().is_clear())
-        {
-          Offset o_test = current_off2 + get_neighbor_offset(f, i);
-#ifdef CGAL_DEBUG_P2T2
-          std::cout << "o_test: " << current_off2 << " + " << get_neighbor_offset(f, i) << " = " << o_test << std::endl;
-#endif
-          if(tester(test, o_test))
-          {
-            if(f < test)
-              *it.third++ = Edge(f, i); // Internal edge
-
-#ifdef CGAL_DEBUG_P2T2
-            std::cout << "In conflict too!" << std::endl;
-#endif
-            face_stack.emplace(test, o_test);
-            test->tds_data().mark_in_conflict();
-            *it.second++ = test;
-            continue;
-          }
-
-#ifdef CGAL_DEBUG_P2T2
-          std::cout << "Not in conflict" << std::endl;
-#endif
-
-          test->tds_data().mark_on_boundary(); // test is on the boundary.
-        }
-
-        *it.first++ = Edge(f, i);
-        for(int j=0; j<3; ++j)
-        {
-          if(j == i)
-            continue;
-
-#ifdef CGAL_DEBUG_P2T2
-          std::cout << "marking " << f->vertex(j)->point() << " (" << point(f, j)
-                    << ") with offset " << extract_offset(f->offset(j)) << " - " << current_off2
-                    << " = " << extract_offset(f->offset(j)) - current_off2 << std::endl;
-#endif
-
-          if(!f->vertex(j)->get_offset_flag())
-          {
-#ifdef CGAL_DEBUG_P2T2
-            std::cout << "NEW MARK" << std::endl;
-#endif
-            f->vertex(j)->set_offset(extract_offset(f->offset(j)) - current_off2);
-            v_offsets.push_back(f->vertex(j));
-          }
+          tmp_vertices.insert((*fit)->vertex(j));
+          vh_off_map[(*fit)->vertex(j)] = int_to_off((*fit)->offset(j))
+                                          - int_to_off((*fit)->offset((*fit)->index(v)));
         }
       }
     }
-    while(!face_stack.empty());
 
-    return it;
+    // Now output the vertices
+    std::copy(tmp_vertices.begin(), tmp_vertices.end(), std::back_inserter(vertices));
+
+    // Create a Delaunay/regular triangulation of the points on the boundary
+    // in Euclidean space and make a map from the vertices in remover.tmp
+    // towards the vertices in *this
+
+    Unique_hash_map<VertexE_handle, Vertex_handle> vmap;
+    FaceE_handle fh;
+    remover.tmp.clear();
+
+    for(unsigned int i=0; i<vertices.size(); ++i)
+    {
+      typedef typename Point_remover::Triangulation_R2::Point TRPoint;
+      CGAL_triangulation_assertion(get_offset(vertices[i]) + combine_offsets(Offset(), vh_off_map[vertices[i]])
+                                   == combine_offsets(get_offset(vertices[i]), vh_off_map[vertices[i]]));
+      TRPoint trp = std::make_pair(vertices[i]->point(),
+                                   combine_offsets(get_offset(vertices[i]), vh_off_map[vertices[i]]));
+
+      VertexE_handle vh = remover.tmp.insert(trp, fh);
+      vmap[vh] = vertices[i];
+
+      CGAL_triangulation_assertion(vmap.is_defined(vh));
+    }
+
+    CGAL_triangulation_assertion(remover.tmp.number_of_vertices() != 0);
+
+    // Construct the set of vertex pairs of tmp
+    // We reorient the vertex pair so that it matches those from outer_map
+    // Also note that we use the vertices of *this, not of tmp
+    for(Finite_facesE_iterator it=remover.tmp.finite_cells_begin(); it!=remover.tmp.finite_cells_end(); ++it)
+    {
+      VertexE_pair vt_aux;
+      for(int i=0; i<3; ++i)
+      {
+        EdgeE e = std::make_pair(it, i);
+        vt_aux = std::make_pair(it->vertex(ccw(i)), it->vertex(cw(i)));
+        if(vmap.is_defined(vt_aux.first) && vmap.is_defined(vt_aux.second))
+        {
+          Vertex_pair vt(vmap[vt_aux.second], vmap[vt_aux.first]);
+          make_canonical(vt);
+          inner_map[vt] = e;
+        }
+      }
+    }
+
+    // A structure for storing the new neighboring relations
+    typedef std::tuple<Face_handle, int, Face_handle> Neighbor_relation;
+    std::vector<Neighbor_relation> nr_vec;
+    std::vector<Face_handle> new_faces;
+
+    // Grow inside the hole, by extending the surface
+    while(!outer_map.empty())
+    {
+      typename Vertex_pair_Edge_map::iterator oit = outer_map.begin();
+      typename Vertex_pair_Edge_map::value_type o_vp_e_pair = *oit;
+      Face_handle o_fh = o_vp_e_pair.second.first;
+      unsigned int o_i = o_vp_e_pair.second.second;
+
+      typename Vertex_pair_EdgeE_map::iterator iit = inner_map.find(o_vp_e_pair.first);
+
+      CGAL_triangulation_assertion(iit != inner_map.end());
+      typename Vertex_pair_EdgeE_map::value_type i_vt_f_pair = *iit;
+      FaceE_handle i_fh = i_vt_f_pair.second.first;
+      unsigned int i_i = i_vt_f_pair.second.second;
+
+      // create a new cell to glue to the outer surface
+      Face_handle new_fh = _tds.create_face();
+      new_faces.push_back(new_fh);
+      new_fh->set_vertices(vmap[i_fh->vertex(0)], vmap[i_fh->vertex(1)], vmap[i_fh->vertex(2)]);
+      set_offsets(new_fh, vh_off_map[vmap[i_fh->vertex(0)]],
+                          vh_off_map[vmap[i_fh->vertex(1)]],
+                          vh_off_map[vmap[i_fh->vertex(2)]]);
+
+      // Update the cover management
+      if(cover_manager.update_cover_data_during_management(new_fh, new_faces, abort_if_cover_change))
+      {
+        CGAL_triangulation_expensive_postcondition(is_valid());
+        return false; // removing would cause / has caused a cover change
+      }
+
+      // The neighboring relation needs to be stored temporarily in
+      // nr_vec. It cannot be applied directly because then we could not
+      // easily cancel the removing process if a cell is encountered
+      // that does not obey the edge-length criterion.
+      nr_vec.emplace_back(o_fh, o_i, new_fh);
+      nr_vec.emplace_back(new_fh, i_i, o_fh);
+
+      // for the other faces check, if they can also be glued
+      for(unsigned int i=0; i<3; ++i)
+      {
+        if(i != i_i)
+        {
+          Edge e = std::make_pair(new_fh, i);
+          Vertex_pair vt = std::make_pair(new_fh->vertex(ccw(i)), new_fh->vertex(cw(i)));
+          make_canonical(vt);
+          std::swap(vt.second, vt.third);
+          typename Vertex_pair_Edge_map::iterator oit2 = outer_map.find(vt);
+
+          if(oit2 == outer_map.end())
+          {
+            std::swap(vt.second, vt.third);
+            outer_map[vt] = e;
+          }
+          else
+          {
+            // glue the faces
+            typename Vertex_pair_Edge_map::value_type o_vp_e_pair2 = *oit2;
+            Face_handle o_fh2 = o_vp_e_pair2.second.first;
+            int o_i2 = o_vp_e_pair2.second.second;
+            nr_vec.emplace_back(o_fh2, o_i2, new_fh);
+            nr_vec.emplace_back(new_fh, i, o_fh2);
+            outer_map.erase(oit2);
+          }
+        }
+      }
+
+      outer_map.erase(oit);
+    }
+
+    // finally set the neighboring relations
+    for(unsigned int i=0; i<nr_vec.size(); ++i)
+      nr_vec[i].template get<0>()->set_neighbor(nr_vec[i].template get<1>(),
+                                                nr_vec[i].template get<2>());
+
+    // Output the hidden points.
+    for(typename std::vector<Face_handle>::iterator hi=hole.begin(), hend=hole.end(); hi!=hend; ++hi)
+      remover.add_hidden_points(*hi);
+
+    _tds.delete_vertex(v);
+    _tds.delete_faces(hole.begin(), hole.end());
+
+    CGAL_triangulation_expensive_assertion(is_valid());
+
+    return true; // sucessfully removed the vertex
   }
 
-  template <class Conflict_test,
-            class OutputIteratorBoundaryEdges,
-            class OutputIteratorFaces,
-            class OutputIteratorInternalEdges>
-  Triple<OutputIteratorBoundaryEdges,
-         OutputIteratorFaces,
-         OutputIteratorInternalEdges>
-  find_conflicts(Face_handle f,
-                 const Conflict_test& tester,
-                 Triple<OutputIteratorBoundaryEdges,
-                        OutputIteratorFaces,
-                        OutputIteratorInternalEdges> it) const
+  template <class PointRemover, class ConflictTester, class CoverManager>
+  void remove(Vertex_handle v,
+              PointRemover& remover,
+              ConflictTester& tester,
+              CoverManager& cover_manager)
   {
-    bool b = false;
-    Offset off = get_location_offset(tester, f, b);
-    if(b)
-      return find_conflicts(f, off, tester, it);
+    CGAL_expensive_precondition(is_vertex(v));
 
-    CGAL_triangulation_assertion(false); // @tmp only true if we are in insert
-    return it;
-  }
-
-private:
-  /// Remove a vertex without removing it's possible periodic copies.
-  /// Helper functions
-  void remove_degree_3_single_copy(Vertex_handle vh)
-  {
-    Face_handle f = vh->face();
-    int i = ccw(f->index(vh));
-
-    Face_handle f2 = f->neighbor(i);
-    int j = f2->index(f);
-
-    // Get the offsets in ccw order
-    Offset off[3];
-    off[i] = get_offset(f, i);
-    off[ccw(i)] = get_offset(f, ccw(i));
-    off[cw(i)] = combine_offsets(get_offset(f2, j), get_neighbor_offset(f2, j, f, i));
-    if(off[0].x() < 0 || off[1].x() < 0 || off[2].x() < 0)
+    if(!is_1_cover())
     {
-      Offset o(number_of_sheets()[0], 0);
-      off[0] += o;
-      off[1] += o;
-      off[2] += o;
-    }
+      std::vector<Vertex_handle> vhrem;
+      if(number_of_vertices() == 1)
+      {
+        clear();
+        return;
+      }
 
-    if(off[0].y() < 0 || off[1].y() < 0 || off[2].y() < 0)
+      Virtual_vertex_map_it vvmit = virtual_vertices.find(v);
+      if(vvmit != virtual_vertices.end())
+        v = vvmit->second.first;
+      CGAL_triangulation_assertion(virtual_vertices_reverse.find(v) != virtual_vertices_reverse.end());
+
+      vhrem = virtual_vertices_reverse.find(v)->second;
+      CGAL_triangulation_assertion(vhrem.size() == 8);
+
+      virtual_vertices_reverse.erase(v);
+
+      for(int i=0; i<8; ++i)
+      {
+        periodic_remove(vhrem[i], remover, cover_manager);
+        virtual_vertices.erase(vhrem[i]);
+        CGAL_triangulation_expensive_assertion(is_valid());
+      }
+
+      periodic_remove(v, remover, cover_manager);
+    }
+    else
     {
-      Offset o(0, number_of_sheets()[1]);
-      off[0] += o;
-      off[1] += o;
-      off[2] += o;
+      periodic_remove(v, remover, cover_manager);
+      if(!is_1_cover())
+        remove(v, remover, tester, cover_manager);
     }
-
-    // Remove the vertex, keep face f
-    _tds.remove_degree_3(vh, f);
-
-    // Reset the offsets
-    set_offsets(f,
-                (off[0].x() >= number_of_sheets()[0] ? 2 : 0) + (off[0].y() >= number_of_sheets()[1] ? 1 : 0),
-                (off[1].x() >= number_of_sheets()[0] ? 2 : 0) + (off[1].y() >= number_of_sheets()[1] ? 1 : 0),
-                (off[2].x() >= number_of_sheets()[0] ? 2 : 0) + (off[2].y() >= number_of_sheets()[1] ? 1 : 0));
-  }
-
-public:
-  void remove_degree_3(Vertex_handle v)
-  {
-    CGAL_triangulation_precondition(number_of_vertices() > 1);
-    CGAL_triangulation_precondition(degree(v) == 3);
-
-    if(is_1_cover())
-      return remove_degree_3_single_copy(v);
-
-    {
-      Virtual_vertex_map_it it = virtual_vertices.find(v);
-      if(it != virtual_vertices.end())
-        v = it->second.first;
-    }
-
-    remove_too_long_edges_in_star(v);
-
-    typename Virtual_vertex_reverse_map::iterator reverse_it = virtual_vertices_reverse.find(v);
-    CGAL_triangulation_assertion(reverse_it != virtual_vertices_reverse.end());
-
-    const std::vector<Vertex_handle> &virtual_copies = reverse_it->second;
-    for(typename std::vector<Vertex_handle>::const_iterator it = virtual_copies.begin();
-        it != virtual_copies.end(); ++it)
-    {
-      virtual_vertices.erase(*it);
-      remove_degree_3_single_copy(*it);
-    }
-
-    virtual_vertices_reverse.erase(reverse_it);
-    remove_degree_3_single_copy(v);
   }
 
 public:
@@ -2872,12 +3149,12 @@ public:
             }
           }
 
-          // Find the new neighbor by its 4 vertices
+          // Find the new neighbor by its 3 vertices
           new_neighbor = get_face(nbv);
 
           // Store the new neighbor relation. This cannot be applied yet because
           // it would disturb the functioning of get_face(...)
-          new_neighbor_relations.push_back(make_triple(it, i, new_neighbor));
+          new_neighbor_relations.emplace_back(it, i, new_neighbor);
         }
       }
 
@@ -3323,7 +3600,8 @@ public:
       CGAL_triangulation_assertion(false);
     }
 
-    if(orientation(*p[0], *p[1], *p[2], off[0], off[1], off[2]) != POSITIVE)
+    CGAL::Orientation o = orientation(*p[0], *p[1], *p[2], off[0], off[1], off[2]);
+    if(o != POSITIVE)
     {
       if(verbose)
       {
@@ -3331,9 +3609,13 @@ public:
                   << *p[0] << " \t" << off[0] << "\n"
                   << *p[1] << " \t" << off[1] << "\n"
                   << *p[2] << " \t" << off[2] << std::endl;
+        std::cout << "Result: " << o << std::endl;
         std::cout << construct_point(*p[0], off[0]) << " 0 "
                   << construct_point(*p[1], off[1]) << " 0 "
                   << construct_point(*p[2], off[2]) << " 0" << std::endl;
+        std::cout << "Check result without offset: " << orientation(construct_point(*p[0], off[0]),
+                                                                    construct_point(*p[1], off[1]),
+                                                                    construct_point(*p[2], off[2])) << std::endl;
       }
 
       result = false;
@@ -3826,33 +4108,7 @@ public:
 
     return os;
   }
-
-protected:
-  /// \name Triangulation data members
-
-  /// Geometric traits
-  Gt _gt;
-  /// Triangulation data structure
-  Tds _tds;
-
-private:
-  /// \name Periodic members
-
-  /// Determines if we currently compute in 3-cover or 1-cover.
-  Covering_sheets _cover;
-
-private:
-  /// map of offsets for periodic copies of vertices
-  Virtual_vertex_map virtual_vertices;
-  /// map of a non-virtual vertex to its virtual copies
-  Virtual_vertex_reverse_map virtual_vertices_reverse;
-
-protected:
-  /// v_offsets temporarily stores all the vertices on the border of a conflict region.
-  mutable std::vector<Vertex_handle> v_offsets;
 };
-
-#if 0 // @fixme
 
 namespace internal {
 
@@ -3999,11 +4255,11 @@ bool operator==(const Triangulation_on_square_flat_torus_2<GT, Tds1>& t1,
 
   // We pick one face of t1, and try to match it against the
   // faces of t2.
-  Face_handle1 c = v1->face();
+  Face_handle1 f = v1->face();
   Vertex_handle1 v2 = f->vertex(t1.cw(f->index(v1)));
   Vertex_handle1 v3 = f->vertex(t1.ccw(f->index(v1)));
-  Point p2 = v2->point();
-  Point p3 = v3->point();
+  const Point& p2 = v2->point();
+  const Point& p3 = v3->point();
   Offset o2 = t1.get_offset(v2);
   Offset o3 = t1.get_offset(v3);
 
@@ -4031,7 +4287,7 @@ bool operator==(const Triangulation_on_square_flat_torus_2<GT, Tds1>& t1,
       continue; // None matched v3.
 
     // Found it !
-    Cmap.insert(std::make_pair(c, fc));
+    Cmap.emplace(f, fc);
     break;
   }
   while(++fc != done);
@@ -4050,7 +4306,6 @@ bool operator!=(const Triangulation_on_square_flat_torus_2<GT, Tds1>& t1,
 {
   return ! (t1 == t2);
 }
-#endif //
 
 #define CGAL_INCLUDE_FROM_TRIANGULATION_ON_FLAT_TORUS_2_H
 #include <CGAL/Periodic_2_triangulation_2/Square_flat_torus_2/Periodic_2_triangulation_dummy_12.h>

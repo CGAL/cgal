@@ -30,6 +30,7 @@ namespace CGAL {
 
 // Distinguish based on whether the domain is an iso_rectangle or a lattice (generic)
 
+// Using CGAL::Default because the default is not the same for both specializations
 template <class Gt_,
           class Tds_ = CGAL::Default,
           class Domain_ = typename Gt_::Domain>

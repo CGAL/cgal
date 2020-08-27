@@ -14,29 +14,33 @@
 
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 
-#include <CGAL/Periodic_2_triangulation_2/internal/Lattice_2/Triangulation_on_lattice_2.h>
-#include <CGAL/Periodic_2_triangulation_2/internal/Square_flat_torus_2/Triangulation_on_square_flat_torus_2.h>
+#include <CGAL/Periodic_2_triangulation_2/Lattice_2/Triangulation_face_base_on_lattice_2.h>
+#include <CGAL/Periodic_2_triangulation_2/Lattice_2/Triangulation_on_lattice_2.h>
+
+#include <CGAL/Periodic_2_triangulation_2/Square_flat_torus_2/Triangulation_face_base_on_square_flat_torus_2.h>
+#include <CGAL/Periodic_2_triangulation_2/Square_flat_torus_2/Triangulation_on_square_flat_torus_2.h>
 
 #include <CGAL/Periodic_2_triangulation_vertex_base_2.h>
-#include <CGAL/Periodic_2_triangulation_face_base_2.h>
+
+#include <CGAL/Default.h>
+#include <CGAL/Iso_rectangle_2.h>
+#include <CGAL/Triangulation_data_structure_2.h>
 
 namespace CGAL {
 
-// There is no "Triangulation_on_lattice_2" so you really shouldn't be calling a
-template <class Gt,
-          class Tds = Triangulation_data_structure_2 <
-                        Periodic_2_triangulation_vertex_base_2<Gt>,
-                        Periodic_2_triangulation_face_base_2<Gt> >,
-          class Domain = typename Gt::Domain>
+// Using CGAL::Default because the default is not the same for both specializations
+template <class Gt_,
+          class Tds_ = CGAL::Default,
+          class Domain_ = typename Gt_::Domain>
 class Periodic_2_triangulation_2
-  : public Delaunay_triangulation_on_lattice_2<
+  : public Triangulation_on_lattice_2<
              Gt_, typename Default::Get<Tds_,
                     Triangulation_data_structure_2<
                       Periodic_2_triangulation_vertex_base_2<Gt_>,
                       Triangulation_face_base_on_lattice_2<Gt_> > >::type>
 {
 private:
-  typedef Delaunay_triangulation_on_lattice_2<
+  typedef Triangulation_on_lattice_2<
             Gt_, typename Default::Get<Tds_,
                    Triangulation_data_structure_2<
                      Periodic_2_triangulation_vertex_base_2<Gt_>,
@@ -44,10 +48,10 @@ private:
 
 public:
   template <typename ...Args>
-  Periodic_2_Delaunay_triangulation_2(const Args& ...args) : Base(args...) { }
+  Periodic_2_triangulation_2(const Args& ...args) : Base(args...) { }
 
   template <typename ...Args>
-  Periodic_2_Delaunay_triangulation_2(const Args&& ...args) : Base(std::forward<Args>(args)...) { }
+  Periodic_2_triangulation_2(const Args&& ...args) : Base(std::forward<Args>(args)...) { }
 };
 
 template <class Gt_, class Tds_, class K_>

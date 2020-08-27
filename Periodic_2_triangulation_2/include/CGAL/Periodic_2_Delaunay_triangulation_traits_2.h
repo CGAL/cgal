@@ -90,7 +90,9 @@ public:
 template <class K,
           class O = CGAL::Periodic_2_offset_2,
           class D = typename K::Iso_rectangle_2,
-          bool Has_filtered_predicates_ = internal::Has_filtered_predicates<K>::value>
+          bool Has_filtered_predicates =
+            boost::mpl::and_<internal::Has_filtered_predicates<K>,
+                             boost::mpl::not_<std::is_same<D, Lattice_2<K> > > >::value>
 class Periodic_2_Delaunay_triangulation_traits_2;
 
 } // namespace CGAL
