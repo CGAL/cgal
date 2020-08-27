@@ -693,12 +693,23 @@ template <class R_> struct Construct_circumcenter : Store_kernel<R_> {
         vecs.emplace_back(dp(*f,p0));
       // Only need to fill the lower half
       for(int i=0;i<k-1;++i){
-        for(int j=i;j<k-1;++j)
+        for(int j=i;j<k-1;++j) {
           m(j,i)=sp(vecs[i],vecs[j]);
+#if ! EIGEN_VERSION_AT_LEAST(3, 3, 5)
+          m(i,j)=m(j,i);
+#endif
+        }
         b[i]=m(i,i)/2;
       }
       // Assumes Eigen...
+#if EIGEN_VERSION_AT_LEAST(3, 3, 5)
       Vec res=m.ldlt().solve(b);
+#else
+      // Older versions of Eigen use 1/highest as tolerance,
+      // which we have no way to set to 0 for exact types.
+      // Use something slow but that should work.
+      Vec res=m.fullPivLu().solve(b);
+#endif
       Point center=p0;
       // Wasteful if we only want the radius
       for(int i=0;i<k-1;++i)

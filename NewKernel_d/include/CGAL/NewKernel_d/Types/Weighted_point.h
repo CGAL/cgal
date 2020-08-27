@@ -236,13 +236,24 @@ template <class R_> struct Power_center : Store_kernel<R_> {
       }
       // Only need to fill the lower half
       for(int i = 0; i < k-1; ++i){
-        for(int j = i; j < k-1; ++j)
+        for(int j = i; j < k-1; ++j){
           m(j, i) = sp(vecs[i], vecs[j]);
+#if ! EIGEN_VERSION_AT_LEAST(3, 3, 5)
+          m(i, j) = m(j, i);
+#endif
+        }
         b[i] += m(i, i);
         b[i] /= 2;
       }
       // Assumes Eigen...
+#if EIGEN_VERSION_AT_LEAST(3, 3, 5)
       Vec res = m.ldlt().solve(b);
+#else
+      // Older versions of Eigen use 1/highest as tolerance,
+      // which we have no way to set to 0 for exact types.
+      // Use something slow but that should work.
+      Vec res = m.fullPivLu().solve(b);
+#endif
       Vector to_center = sv(vecs[0], res[0]);
       for(int i=1;i<k-1;++i)
         to_center = pv(to_center, sv(vecs[i],res[i]));
