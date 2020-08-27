@@ -127,7 +127,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
       item->setName(fileinfo.baseName());
       item->set_valid(false);
 
-      if(CGAL::build_triangulation_from_file<C3t3::Triangulation, true>(in, item->c3t3().triangulation()))
+      if(CGAL::build_triangulation_from_file<C3t3::Triangulation, true>(in, item->c3t3().triangulation(), false))
       {
         item->c3t3().rescan_after_load_of_triangulation();
         for( C3t3::Triangulation::Finite_cells_iterator
@@ -135,13 +135,14 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
              cit != item->c3t3().triangulation().finite_cells_end();
              ++cit)
         {
+
             if(cit->subdomain_index() != C3t3::Triangulation::Cell::Subdomain_index())
-              item->c3t3().add_to_complex(cit, cit->subdomain_index());
+              item->c3t3().add_to_complex(cit, cit->subdomain_index() == 0 ? 1 : cit->subdomain_index());
             for(int i=0; i < 4; ++i)
             {
-              if(cit->surface_patch_index(i)>0)
+              if(cit->surface_patch_index(i)>=0)
               {
-                item->c3t3().add_to_complex(cit, i, cit->surface_patch_index(i));
+                item->c3t3().add_to_complex(cit, i, cit->surface_patch_index(i) == 0 ? 1 : cit->surface_patch_index(i));
               }
             }
         }

@@ -106,7 +106,8 @@ bool build_finite_cells(Tr& tr,
     boost::unordered_map<std::array<typename Tr::Vertex_handle, 3>,
                         std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map,
     const std::map<std::array<int,3>, typename Tr::Cell::Surface_patch_index>& border_facets,
-    const bool verbose)
+    const bool verbose,
+                        bool prevent_domain_0 = true)
 {
   typedef std::array<int, 5>              Tet_with_ref; // 4 ids + 1 reference
 
@@ -141,7 +142,10 @@ bool build_finite_cells(Tr& tr,
 
     Cell_handle c = tr.tds().create_cell(vs[0], vs[1], vs[2], vs[3]);
     c->set_subdomain_index(tet[4]); // the cell's info keeps the reference of the tetrahedron
-
+    c->info() = tet[4]; // the cell's info keeps the reference of the tetrahedron
+    if(prevent_domain_0){
+      CGAL_precondition(tet[4] > 0);
+    }
     // assign cells to vertices
     for(int j=0; j<4; ++j)
     {
@@ -328,7 +332,8 @@ bool build_triangulation(Tr& tr,
                          const std::vector<std::array<int,5> >& finite_cells,
                          const std::map<std::array<int,3>, typename Tr::Cell::Surface_patch_index>& border_facets,
                          std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
-                         const bool verbose = false)
+                         const bool verbose = false,
+                         bool prevent_domain_0 = true)
 {
   typedef typename Tr::Vertex_handle            Vertex_handle;
   typedef typename Tr::Cell_handle              Cell_handle;
@@ -360,7 +365,7 @@ bool build_triangulation(Tr& tr,
   if (!finite_cells.empty())
   {
     if(!build_finite_cells<Tr>(tr, finite_cells, vertex_handle_vector, incident_cells_map,
-                           border_facets, verbose))
+                           border_facets, verbose, prevent_domain_0))
       return false;
     if(!build_infinite_cells<Tr>(tr, incident_cells_map, verbose))
       return false;
@@ -384,7 +389,8 @@ bool build_triangulation(Tr& tr,
 
 template<class Tr, bool c3t3_loader_failed>
 bool build_triangulation_from_file(std::istream& is,
-                                   Tr& tr)
+                                   Tr& tr,
+                                   bool prevent_domain_0 = true)
 {
   typedef typename Tr::Point                                  Point_3;
 
@@ -473,7 +479,7 @@ bool build_triangulation_from_file(std::istream& is,
 
   std::vector<typename Tr::Vertex_handle> vertices(points.size() + 1);
   bool is_well_built = build_triangulation<Tr, c3t3_loader_failed>(tr,
-    points, finite_cells, border_facets, vertices);
+    points, finite_cells, border_facets, vertices, false, prevent_domain_0);
   return is_well_built;
 }
 
