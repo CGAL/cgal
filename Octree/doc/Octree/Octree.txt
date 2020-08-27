@@ -184,6 +184,13 @@ e.g. When is an octree the right choice?
 
 \subsection Subsection_Octree_Splitting_Rules Splitting Rules
 \subsection Subsection_Octree_Walker_Rules Walker Rules
+
+\section Section_Octree_History History
+
+This package was developed by Jackson Campolatarro as part of the Google Summer of Code 2020,
+based on a prototype code by Tong Zhao and Cédric Portaneri,
+under the supervision of Simon Giraudot
+and with the kind help and advice of Pierre Alliez
 */
 
 }
