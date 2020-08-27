@@ -25,7 +25,10 @@ namespace internal
 template <typename T, std::size_t MaxSize>
 class Small_stack_allocator_pool
 {
-  T m_pool[MaxSize];
+  static constexpr std::size_t m_type_size = sizeof(T);
+  static constexpr std::size_t m_pool_size = MaxSize * m_type_size;
+
+  char m_pool[m_pool_size];
   std::size_t m_next;
 
 public:
@@ -42,34 +45,39 @@ public:
   {
     CGAL_BRANCH_PROFILER("stack allocations / total allocations of Small_stack_allocator", prof);
 
+    std::size_t N = n * m_type_size;
+
     // If chunk to allocate does not exceed remaining stack size, use stack
-    if (m_next + n < MaxSize)
+    if (m_next + N < m_pool_size)
     {
       CGAL_BRANCH_PROFILER_BRANCH(prof);
-      T* out = m_pool + m_next;
-      m_next += n;
-      return out;
+      char* out = m_pool + m_next;
+      m_next += N;
+      return reinterpret_cast<T*>(out);
     }
 
     // Else, fallback to `new` allocation
-    return static_cast<T*>(::operator new(n * sizeof(T)));
+    return reinterpret_cast<T*>(::operator new(N));
   }
 
   void deallocate (T* p, std::size_t n)
   {
+    char* P = reinterpret_cast<char*>(p);
+    std::size_t N = n * m_type_size;
+
     // If pointer is part of the pool, nothing to do
-    if (m_pool <= p && p < m_pool + MaxSize)
+    if (m_pool <= P && P < m_pool + m_pool_size)
     {
-      std::size_t pos = static_cast<std::size_t>(p - m_pool);
+      std::size_t pos = static_cast<std::size_t>(P - m_pool);
 
       // If pointer was the last one allocated, we can use again this
       // chunk of memory
-      if (pos + n == m_next)
+      if (pos + N == m_next)
         m_next = pos;
     }
     // Else, delete it
     else
-      ::operator delete(p);
+      ::operator delete(P);
   }
 
 };
