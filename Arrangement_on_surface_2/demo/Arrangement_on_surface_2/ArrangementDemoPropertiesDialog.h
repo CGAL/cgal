@@ -38,7 +38,6 @@ class ArrangementDemoPropertiesDialog : public QDialog
     VERTICAL_RAY_EDGE_COLOR_KEY,  /*!< shooting ray color  */
     VERTICAL_RAY_EDGE_WIDTH_KEY,  /*!< shooting ray size  */
     DELETE_CURVE_MODE_KEY,        /*!< deletion of the curve  */
-    GRID_SIZE_KEY,                /*!< size of the gri  */
     GRID_COLOR_KEY                /*!< color of the grid  */
   };
 

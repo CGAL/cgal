@@ -137,6 +137,10 @@ void EnvelopeCallback< Arr_>::updateEnvelope( bool lower )
   catch (const std::exception& ex)
   {
       std::cerr << ex.what() << '\n';
+      if (lower)
+        this->showLowerEnvelope(false);
+      else
+        this->showUpperEnvelope(false);
       return;
   }
 
@@ -201,6 +205,25 @@ void EnvelopeCallback< Arr_>::showUpperEnvelope( bool show )
   {
     this->upperEnvelope->hide();
   }
+}
+
+template <typename Arr_>
+void EnvelopeCallback<Arr_>::reset()
+{
+  this->showLowerEnvelope(false);
+  this->showUpperEnvelope(false);
+}
+
+template <typename Arr_>
+bool EnvelopeCallback<Arr_>::isUpperEnvelopeShown()
+{
+  return this->showUpper;
+}
+
+template <typename Arr_>
+bool EnvelopeCallback<Arr_>::isLowerEnvelopeShown()
+{
+  return this->showLower;
 }
 
 ARRANGEMENT_DEMO_SPECIALIZE_ARR(EnvelopeCallback)

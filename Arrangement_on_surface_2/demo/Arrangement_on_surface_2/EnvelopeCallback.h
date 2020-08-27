@@ -34,10 +34,10 @@ public:
   virtual const QColor& getEnvelopeVertexColor( ) const = 0;
   virtual void setEnvelopeVertexRadius( int radius ) = 0;
   virtual int getEnvelopeVertexRadius( ) const = 0;
-
-public Q_SLOTS:
   virtual void showLowerEnvelope( bool b ) = 0;
   virtual void showUpperEnvelope( bool b ) = 0;
+  virtual bool isUpperEnvelopeShown() = 0;
+  virtual bool isLowerEnvelopeShown() = 0;
 
 protected:
   EnvelopeCallbackBase( QObject* parent );
@@ -58,6 +58,9 @@ public:
   EnvelopeCallback( Arrangement* arr_, QObject* parent );
   void showLowerEnvelope( bool show ) override;
   void showUpperEnvelope( bool show ) override;
+  bool isUpperEnvelopeShown() override;
+  bool isLowerEnvelopeShown() override;
+  void reset( ) override;
 
   /**
      Slot: Update and redraw the envelopes.

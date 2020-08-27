@@ -225,10 +225,14 @@ void ArrangementDemoWindow::resetActionGroups(
   this->ui->actionGridSnapMode->setChecked(tab->isSnapToGridEnabled());
   this->ui->actionArrangementSnapMode->setChecked(
     tab->isSnapToArrangementEnabled());
+  this->ui->actionLowerEnvelope->setChecked(tab->isLowerEnvelopeShown());
+  this->ui->actionUpperEnvelope->setChecked(tab->isUpperEnvelopeShown());
+
   if (tt != SEGMENT_TRAITS && tt != POLYLINE_TRAITS && tt != LINEAR_TRAITS)
     this->ui->actionArrangementSnapMode->setVisible(false);
   else
     this->ui->actionArrangementSnapMode->setVisible(true);
+
   // default action group is scrolling
   this->ui->actionDrag->activate(QAction::Trigger);
 }
@@ -249,15 +253,9 @@ void ArrangementDemoWindow::updateEnvelope(QAction* newMode)
 
   bool show = newMode->isChecked();
   if (newMode == this->ui->actionLowerEnvelope)
-  {
-    currentTab->getEnvelopeCallback()->showLowerEnvelope(show);
-    currentTab->update();
-  }
+    currentTab->showLowerEnvelope(show);
   else if (newMode == this->ui->actionUpperEnvelope)
-  {
-    currentTab->getEnvelopeCallback()->showUpperEnvelope(show);
-    currentTab->update();
-  }
+    currentTab->showUpperEnvelope(show);
 }
 
 void ArrangementDemoWindow::hideInsertMethods()
@@ -395,6 +393,7 @@ void ArrangementDemoWindow::on_actionAddAlgebraicCurve_triggered()
     Alg_seg_arr* arr;
     if (!CGAL::assign(arr, currentTab->getArrangement()))
       CGAL_error();
+    bool empty_arrangement = (arr->number_of_edges() == 0);
 
     // To create a curve
     auto construct_curve = arr->traits()->construct_curve_2_object();
@@ -403,7 +402,9 @@ void ArrangementDemoWindow::on_actionAddAlgebraicCurve_triggered()
     // adding curve to the arrangement
     auto algCurveInputCallback = currentTab->getCurveInputCallback();
     Q_EMIT algCurveInputCallback->generate(CGAL::make_object(cv));
-    currentTab->adjustViewport();
+
+    if (empty_arrangement)
+      currentTab->adjustViewport();
   }
 #endif
 }
@@ -439,6 +440,7 @@ void ArrangementDemoWindow::on_actionAddRationalCurve_triggered()
     Rational_arr* arr;
     if (!CGAL::assign(arr, currentTab->getArrangement()))
       CGAL_error();
+    bool empty_arrangement = (arr->number_of_edges() == 0);
 
     // To create a curve
     auto construct_curve = arr->traits()->construct_curve_2_object();
@@ -447,8 +449,9 @@ void ArrangementDemoWindow::on_actionAddRationalCurve_triggered()
     // adding curve to the arrangement
     auto algCurveInputCallback = currentTab->getCurveInputCallback();
     Q_EMIT algCurveInputCallback->generate(CGAL::make_object(cv));
-    currentTab->adjustViewport();
 
+    if (empty_arrangement)
+      currentTab->adjustViewport();
   }
 #endif
 }
@@ -908,57 +911,56 @@ ArrangementDemoTabBase* ArrangementDemoWindow::openArrFile(QString filename)
 
 void ArrangementDemoWindow::on_actionPreferences_triggered()
 {
-  unsigned int currentTabIndex = this->ui->tabWidget->currentIndex();
-  if (currentTabIndex == static_cast<unsigned int>(-1)) return;
-  ArrangementDemoTabBase* currentTab = this->tabs[currentTabIndex].first;
-  CGAL::Qt::ArrangementGraphicsItemBase* agi =
-    currentTab->getArrangementGraphicsItem();
-  EnvelopeCallbackBase* envelopeCallback = currentTab->getEnvelopeCallback();
-  VerticalRayShootCallbackBase* verticalRayShootCallback =
-    currentTab->getVerticalRayShootCallback();
-  SplitEdgeCallbackBase* splitEdgeCallback = currentTab->getSplitEdgeCallback();
-  GridGraphicsItem* gridGraphicsItem = currentTab->getGridGraphicsItem();
+  auto currentTab = this->getCurrentTab().first;
+  if (!currentTab) return;
 
-  ArrangementDemoPropertiesDialog* dialog =
-    new ArrangementDemoPropertiesDialog(this);
-  if (dialog->exec() == QDialog::Accepted)
+  auto agi = currentTab->getArrangementGraphicsItem();
+  auto envelopeCallback = currentTab->getEnvelopeCallback();
+  auto verticalRayShootCallback = currentTab->getVerticalRayShootCallback();
+  auto splitEdgeCallback = currentTab->getSplitEdgeCallback();
+  auto gridGraphicsItem = currentTab->getGridGraphicsItem();
+
+  ArrangementDemoPropertiesDialog dialog{this};
+
+  if (dialog.exec() == QDialog::Accepted)
   {
     typedef ArrangementDemoPropertiesDialog Dialog;
 
-    QColor edgeColor = dialog->property(Dialog::EDGE_COLOR_KEY).value<QColor>();
+    QColor edgeColor = dialog.property(Dialog::EDGE_COLOR_KEY).value<QColor>();
     unsigned int edgeWidth =
-      dialog->property(Dialog::EDGE_WIDTH_KEY).value<unsigned int>();
+      dialog.property(Dialog::EDGE_WIDTH_KEY).value<unsigned int>();
     QColor vertexColor =
-      dialog->property(Dialog::VERTEX_COLOR_KEY).value<QColor>();
+      dialog.property(Dialog::VERTEX_COLOR_KEY).value<QColor>();
     unsigned int vertexRadius =
-      dialog->property(Dialog::VERTEX_RADIUS_KEY).value<unsigned int>();
+      dialog.property(Dialog::VERTEX_RADIUS_KEY).value<unsigned int>();
     QColor envelopeEdgeColor =
-      dialog->property(Dialog::ENVELOPE_EDGE_COLOR_KEY).value<QColor>();
+      dialog.property(Dialog::ENVELOPE_EDGE_COLOR_KEY).value<QColor>();
     unsigned int envelopeEdgeWidth =
-      dialog->property(Dialog::ENVELOPE_EDGE_WIDTH_KEY).value<unsigned int>();
+      dialog.property(Dialog::ENVELOPE_EDGE_WIDTH_KEY).value<unsigned int>();
     QColor envelopeVertexColor =
-      dialog->property(Dialog::ENVELOPE_VERTEX_COLOR_KEY).value<QColor>();
+      dialog.property(Dialog::ENVELOPE_VERTEX_COLOR_KEY).value<QColor>();
     unsigned int envelopeVertexRadius =
-      dialog->property(Dialog::ENVELOPE_VERTEX_RADIUS_KEY)
+      dialog.property(Dialog::ENVELOPE_VERTEX_RADIUS_KEY)
         .value<unsigned int>();
     QColor verticalRayEdgeColor =
-      dialog->property(Dialog::VERTICAL_RAY_EDGE_COLOR_KEY).value<QColor>();
+      dialog.property(Dialog::VERTICAL_RAY_EDGE_COLOR_KEY).value<QColor>();
     unsigned int verticalRayEdgeWidth =
-      dialog->property(Dialog::VERTICAL_RAY_EDGE_WIDTH_KEY)
+      dialog.property(Dialog::VERTICAL_RAY_EDGE_WIDTH_KEY)
         .value<unsigned int>();
     DeleteCurveMode mode =
-      dialog->property(Dialog::DELETE_CURVE_MODE_KEY).value<DeleteCurveMode>();
-    QColor gridColor = dialog->property(Dialog::GRID_COLOR_KEY).value<QColor>();
-    // end new for Qt5 version !
+      dialog.property(Dialog::DELETE_CURVE_MODE_KEY).value<DeleteCurveMode>();
+    QColor gridColor = dialog.property(Dialog::GRID_COLOR_KEY).value<QColor>();
 
     QPen edgesPen(QBrush(edgeColor), edgeWidth);
+    edgesPen.setCosmetic(true);
     QPen verticesPen(QBrush(vertexColor), vertexRadius);
+    verticesPen.setCosmetic(true);
     agi->setEdgesPen(edgesPen);
     agi->setVerticesPen(verticesPen);
     agi->modelChanged();
     gridGraphicsItem->setAxesColor(gridColor);
     gridColor.setAlphaF(0.5);
-    gridGraphicsItem->setAxesColor(gridColor);
+    gridGraphicsItem->setGridColor(gridColor);
     envelopeCallback->setEnvelopeEdgeColor(envelopeEdgeColor);
     envelopeCallback->setEnvelopeEdgeWidth(envelopeEdgeWidth);
     envelopeCallback->setEnvelopeVertexColor(envelopeVertexColor);

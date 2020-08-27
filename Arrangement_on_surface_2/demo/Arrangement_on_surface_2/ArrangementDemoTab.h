@@ -81,6 +81,10 @@ public:
   void activateEnvelopeCallback();
   void activateFillFaceCallback();
   void activatePanCallback();
+  void showLowerEnvelope(bool);
+  void showUpperEnvelope(bool);
+  bool isUpperEnvelopeShown();
+  bool isLowerEnvelopeShown();
   void unhookCallbacks();
 
 protected Q_SLOTS:

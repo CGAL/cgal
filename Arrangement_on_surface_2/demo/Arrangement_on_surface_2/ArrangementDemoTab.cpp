@@ -166,6 +166,28 @@ void ArrangementDemoTabBase::activateCurveInputCallback(CGAL::Qt::CurveType type
   this->activeCallback = this->curveInputCallback.get();
 }
 
+void ArrangementDemoTabBase::showLowerEnvelope(bool show)
+{
+  this->envelopeCallback->showLowerEnvelope(show);
+  this->update();
+}
+
+void ArrangementDemoTabBase::showUpperEnvelope(bool show)
+{
+  this->envelopeCallback->showUpperEnvelope(show);
+  this->update();
+}
+
+bool ArrangementDemoTabBase::isUpperEnvelopeShown()
+{
+  return this->envelopeCallback->isUpperEnvelopeShown();
+}
+
+bool ArrangementDemoTabBase::isLowerEnvelopeShown()
+{
+  return this->envelopeCallback->isLowerEnvelopeShown();
+}
+
 void ArrangementDemoTabBase::unhookCallbacks()
 {
   if (this->activeCallback)
@@ -187,7 +209,7 @@ void ArrangementDemoTabBase::unhookAndInstallEventFilter(
 
 void ArrangementDemoTabBase::activateDeleteCurveCallback()
 {
-  // TODO(Ahmed Essam): Create different button for modes of delete
+  // TODO: Create different button for modes of delete
   if (
     this->activeCallback ==
     static_cast<CGAL::Qt::Callback*>(this->deleteCurveCallback.get()))
@@ -383,16 +405,20 @@ static CGAL::Bbox_2 addMargins(const CGAL::Bbox_2& box)
     box.xmax() + x_margin, box.ymax() + y_margin};
 }
 
-static const auto& getXyCurves()
+template <typename Coefficient_>
+static const auto&
+getXyCurves(const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>* traits)
 {
-  using Traits = demo_types::Alg_seg_traits;
+  // the traits object is only needed the first time
+  // this assumes that X_monotone_curves created from the first traits object
+  // will work with arrangements with a different object
+  using Traits = CGAL::Arr_algebraic_segment_traits_2<Coefficient_>;
   static std::vector<typename Traits::X_monotone_curve_2> xy_curves;
   if (xy_curves.empty())
   {
-    Traits traits{};
     typedef typename Traits::Polynomial_2 Polynomial_2;
-    auto construct_curve = traits.construct_curve_2_object();
-    auto make_x_monotone = traits.make_x_monotone_2_object();
+    auto construct_curve = traits->construct_curve_2_object();
+    auto make_x_monotone = traits->make_x_monotone_2_object();
 
     Polynomial_2 x = CGAL::shift(Polynomial_2(1), 1, 0);
     Polynomial_2 y = CGAL::shift(Polynomial_2(1), 1, 1);
@@ -428,7 +454,7 @@ CGAL::Bbox_2 findOtherInterestingPoints<demo_types::Alg_seg_arr>(
   std::vector<CGAL::Object> intersections;
   for (auto it = arr->edges_begin(); it != arr->edges_end(); ++it)
   {
-    for (auto& arc : getXyCurves())
+    for (auto& arc : getXyCurves(arr->traits()))
       if (arc.is_vertical() != it->curve().is_vertical())
         it->curve().intersections(arc, std::back_inserter(intersections));
   }
@@ -529,7 +555,6 @@ void ArrangementDemoTab<Arr_>::adjustViewport()
     QRectF(bb.xmin(), bb.ymin(), bb.xmax() - bb.xmin(), bb.ymax() - bb.ymin());
 
   this->graphicsView->resetTransform();
-  // TODO: Find suitable values
   double xmin = viewportRect.x() - MAX_WIDTH / 2;
   double ymin = viewportRect.y() - MAX_WIDTH / 2;
   double wh = MAX_WIDTH;

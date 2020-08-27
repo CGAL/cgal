@@ -595,12 +595,15 @@ void ArrangementPainterOstream<
   CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1_>>::
   sample_points(const X_monotone_curve_2& curve, Lambda&& lambda)
 {
+  // TODO: cache maximum and minimal points for each curve, and include them
+  // in the sampled points
   const QRectF viewport = this->viewportRect();
   qreal min_x = viewport.left();
   qreal max_x = viewport.right();
 
   auto&& numer = curve._f.numer();
   auto&& denom = curve._f.denom();
+
   auto eval_at = [&](auto&& x) {
     return numer.evaluate(x) / denom.evaluate(x);
   };
@@ -667,7 +670,7 @@ void ArrangementPainterOstream<
     }
     }
   }
-  else if (max_x > min_x) // this check is redundant
+  else if (max_x > min_x)
   {
     last_pt = {max_x, CGAL::to_double(eval_at(Rational{max_x}))};
   }
@@ -676,11 +679,12 @@ void ArrangementPainterOstream<
     return;
   }
 
-  static constexpr int dx_pixel = 2;
-  auto view = this->getView();
-  QTransform sceneTransform = view->transform();
-  QLineF ux_line = sceneTransform.map(QLineF{0, 0, 1, 0});
-  Rational dx = dx_pixel * Rational{1} / ux_line.length();
+  static constexpr int dx_pixel = 1;
+  static constexpr int min_num_points = 20;
+  QLineF ux_line = this->getView()->transform().map(QLineF{0, 0, 1, 0});
+  Rational dx = CGAL::min(
+    dx_pixel * Rational{1} / ux_line.length(),
+    Rational{max_x - min_x} / min_num_points);
 
   for (Rational cur_x = min_x + dx; cur_x < max_x - dx; cur_x += dx)
     lambda(CGAL::to_double(cur_x), CGAL::to_double(eval_at(cur_x)));
