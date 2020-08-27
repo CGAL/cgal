@@ -115,8 +115,7 @@ public:
   location query. See description of
   `Periodic_2_triangulation_2::locate()`. \pre `p` lies in the original domain `domain`.
   */
-  Vertex_handle insert(const Point & p, Locate_type lt,
-                       Face_handle loc, int li, int lj);
+  Vertex_handle insert(const Point & p, Locate_type lt, Face_handle loc, int li);
 
   /*!
   Equivalent to `insert(p)`.
