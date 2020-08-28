@@ -6,6 +6,8 @@ namespace CGAL {
 /*!
 \ingroup PkgPeriodic2Triangulation2VertexFaceClasses
 
+\cgalModels `Periodic_2TriangulationFaceBase_2`
+
 The class `Periodic_2_triangulation_face_base_2` is a model of
 the concept `Periodic_2TriangulationFaceBase_2` to be used by
 `Triangulation_data_structure_2` to represent faces of a periodic
@@ -27,8 +29,6 @@ the offset corresponding to vertex \f$ i\f$.
 
 The implementation of `has_zero_offsets()` results in checking
 whether all offsets are zero.
-
-\cgalModels `::Periodic_2TriangulationFaceBase_2`
 
 \sa `CGAL::Triangulation_face_base_2`
 \sa `CGAL::Triangulation_face_base_with_info_2`

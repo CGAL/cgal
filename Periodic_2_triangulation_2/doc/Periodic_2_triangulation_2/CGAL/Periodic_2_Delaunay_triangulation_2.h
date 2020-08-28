@@ -43,7 +43,7 @@ vertices distributed uniformly at random and any query point.
 */
 template<typename Traits, typename Tds>
 class Periodic_2_Delaunay_triangulation_2
-    : public Periodic_2_triangulation_2<Traits, Tds>
+  : public Periodic_2_triangulation_2<Traits, Tds>
 {
 public:
   /// \name Creation
@@ -54,7 +54,7 @@ public:
   `domain` as original domain and possibly specifying a traits class `traits`.
   \pre `domain` is a square.
   */
-  Periodic_2_Delaunay_triangulation_2(const Iso_rectangle& domain = Iso_rectangle(0, 0, 1, 1),
+  Periodic_2_Delaunay_triangulation_2(const Domain& domain,
                                       const Geom_traits& traits = Geom_traits());
 
   /*!
@@ -67,10 +67,29 @@ public:
   domain and traits class arguments and calling `insert(first,last)`.
   \pre The `value_type` of `first` and `last` are `Point`s lying inside `domain` and `domain` is a square.
   */
-  template < class InputIterator >
+  template <class InputIterator>
   Periodic_2_Delaunay_triangulation_2(InputIterator first, InputIterator last,
-                                      const Iso_rectangle& domain = Iso_rectangle(0, 0, 1, 1),
+                                      const Domain& domain,
                                       const Geom_traits& traits = Geom_traits());
+
+  /// @}
+
+  /// \name Predicates
+  /// @{
+
+  /*!
+  returns the side of `p` with respect to the circle circumscribing the triangle associated with `f`.
+  Periodic copies are checked if necessary.
+  */
+  Oriented_side side_of_oriented_circle(Face_handle f, const Point& p) const;
+
+  /*!
+  returns on which side of the circumcircle of face `f` lies the point `p`.
+  The circle is assumed to be counterclockwise oriented, so its positive side correspond to its bounded side.
+  This predicate is available only if the corresponding predicates on
+  points is provided in the geometric traits class.
+  */
+  Oriented_side side_of_oriented_circle(Face_handle f, const Point& p);
 
   /// @}
 
@@ -94,8 +113,7 @@ public:
   corresponding vertex. The optional argument `start` is used as a
   starting place for the point location. \pre `p` lies in the original domain `domain`.
   */
-  Vertex_handle insert(const Point & p, Face_handle start =
-      Face_handle() );
+  Vertex_handle insert(const Point&  p, Face_handle start = Face_handle());
 
   /*!
   inserts point `p` in the triangulation and returns the
@@ -104,7 +122,7 @@ public:
   location query. See description of
   `Periodic_2_triangulation_2::locate()`. \pre `p` lies in the original domain `domain`.
   */
-  Vertex_handle insert(const Point & p, Locate_type lt, Face_handle loc, int li);
+  Vertex_handle insert(const Point&  p, Locate_type lt, Face_handle loc, int li);
 
   /*!
   Equivalent to `insert(p)`.
@@ -130,29 +148,6 @@ public:
 
   /// @}
 
-  /// \name Point moving
-  /// @{
-
-  /*!
-  If there is not already another vertex placed on `p`, the
-  triangulation is modified such that the new position of vertex
-  `v` is `p`, and `v` is returned. Otherwise, the
-  triangulation is not modified and the vertex at point `p` is
-  returned. \pre `p` lies in the original domain `domain`.
-  */
-  Vertex_handle move_if_no_collision(Vertex_handle v, const Point& p);
-
-  /*!
-  moves the point stored in `v` to `p`, while preserving the Delaunay property.
-  This performs an action semantically equivalent to `remove(v)` followed by `insert(p)`,
-  but is supposedly faster to performing these two operations separately when the point
-  has not moved much. Returns the handle to the new vertex.
-  \pre `p` lies in the original domain `domain`.
-  */
-  Vertex_handle move_point(Vertex_handle v, const Point& p);
-
-  /// @}
-
   /// \name Queries
   /// @{
 
@@ -163,16 +158,7 @@ public:
   multiply sheeted covering space.
   \pre `f` is a face of `dt` and `p` lies in the original domain `domain`.
   */
-  Vertex_handle nearest_vertex(Point p, Face_handle f = Face_handle());
-
-  /*!
-  returns on which side of the circumcircle of face `f` lies the point `p`.
-  The circle is assumed to be counterclockwise oriented, so its positive side correspond to its bounded side.
-  This predicate is available only if the corresponding predicates on
-  points is provided in the geometric traits class.
-  */
-  Oriented_side
-  side_of_oriented_circle(Face_handle f, const Point & p);
+  Vertex_handle nearest_vertex(const Point& p, Face_handle f = Face_handle());
 
   /// @}
 
@@ -208,7 +194,7 @@ public:
   \pre `start` is in conflict with `p` and `p` lies in the original domain `domain`.
   */
   template <class OutputItFaces>
-  OutputItFaces get_conflicts(const Point &p, OutputItFaces fit, Face_handle start) const;
+  OutputItFaces get_conflicts(const Point& p, OutputItFaces fit, Face_handle start) const;
 
   /*!
   `OutputItBoundaryEdges` stands for an output iterator with `Edge` as value type.
@@ -219,8 +205,32 @@ public:
   \pre `start` is in conflict with `p` and `p` lies in the original domain `domain`.
   */
   template <class OutputItBoundaryEdges>
-  OutputItBoundaryEdges get_boundary_of_conflicts(const Point &p, OutputItBoundaryEdges eit,
+  OutputItBoundaryEdges get_boundary_of_conflicts(const Point& p,
+                                                  OutputItBoundaryEdges eit,
                                                   Face_handle start) const;
+
+  /// @}
+
+  /// \name Point moving
+  /// @{
+
+  /*!
+  If there is not already another vertex placed on `p`, the
+  triangulation is modified such that the new position of vertex
+  `v` is `p`, and `v` is returned. Otherwise, the
+  triangulation is not modified and the vertex at point `p` is
+  returned. \pre `p` lies in the original domain `domain`.
+  */
+  Vertex_handle move_if_no_collision(Vertex_handle v, const Point& p);
+
+  /*!
+  moves the point stored in `v` to `p`, while preserving the Delaunay property.
+  This performs an action semantically equivalent to `remove(v)` followed by `insert(p)`,
+  but is supposedly faster to performing these two operations separately when the point
+  has not moved much. Returns the handle to the new vertex.
+  \pre `p` lies in the original domain `domain`.
+  */
+  Vertex_handle move_point(Vertex_handle v, const Point& p);
 
   /// @}
 
@@ -242,13 +252,12 @@ public:
   Point dual(const Face_handle &f) const;
 
   /*!
-  returns a segment whose endpoints are the duals of both incident
-  faces.
+  returns a segment whose endpoints are the duals of both incident faces.
   */
   Segment dual(const Edge &e) const;
 
   /*!
-  Idem
+  Same as above.
   */
   Segment dual(const Edge_circulator& ec) const;
 
@@ -258,20 +267,10 @@ public:
   Segment dual(const Edge_iterator& ei) const;
 
   /*!
-  output the dual Voronoi diagram to stream `ps`.
+  outputs the dual Voronoi diagram to stream `ps`.
   */
-  template < class Stream> Stream& draw_dual(Stream & ps);
-
-  /// @}
-
-  /// \name Predicates
-  /// @{
-
-  /*!
-  returns the side of `p` with respect to the circle circumscribing the triangle associated with `f`.
-  Periodic copies are checked if necessary.
-  */
-  Oriented_side side_of_oriented_circle(Face_handle f, const Point& p) const;
+  template <class Stream>
+  Stream& draw_dual(Stream & ps);
 
   /// @}
 

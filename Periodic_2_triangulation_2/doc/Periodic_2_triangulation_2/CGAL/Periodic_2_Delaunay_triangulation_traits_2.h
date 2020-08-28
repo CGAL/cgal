@@ -6,6 +6,8 @@ namespace CGAL {
 /*!
 \ingroup PkgPeriodic2Triangulation2TraitsClasses
 
+\cgalModels `Periodic_2DelaunayTriangulationTraits_2`
+
 The class `Periodic_2_Delaunay_triangulation_traits_2`is designed as a default traits class for the
 class `Periodic_2_Delaunay_triangulation_2<Traits, Tds>`.
 
@@ -19,8 +21,6 @@ Note that this template class is specialized for
 predicates. This holds implicitly for
 `CGAL::Exact_predicates_inexact_constructions_kernel`, as it is an
 instantiation of `CGAL::Filtered_kernel`.
-
-\cgalModels `::Periodic_2DelaunayTriangulationTraits_2`
 */
 template< typename Traits, typename Periodic_2Offset_2 >
 class Periodic_2_Delaunay_triangulation_traits_2

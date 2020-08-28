@@ -130,21 +130,6 @@ public:
   typedef Tds Triangulation_data_structure;
 
   /*!
-  the offset type
-  */
-  typedef Geom_traits::Periodic_2_offset_2 Offset;
-
-  /*!
-  the iso rectangle type
-  */
-  typedef Geom_traits::Iso_rectangle_2 Iso_rectangle;
-
-  /*!
-  integer tuple to store the number of sheets in each direction of space
-  */
-  typedef std::array<int, 2> Covering_sheets;
-
-  /*!
   the point type
   */
   typedef Geom_traits::Point_2 Point;
@@ -160,19 +145,39 @@ public:
   typedef Geom_traits::Triangle_2 Triangle;
 
   /*!
+  the iso rectangle type
+  */
+  typedef Geom_traits::Iso_rectangle_2 Iso_rectangle;
+
+  /*!
+  the offset type
+  */
+  typedef Geom_traits::Periodic_2_offset_2 Offset;
+
+  /*!
+  the periodic domain type
+  */
+  typedef Geom_traits::Domain Domain;
+
+  /*!
+  integer tuple to store the number of sheets in each direction of space
+  */
+  typedef std::array<int, 2> Covering_sheets;
+
+  /*!
   represents a point-offset pair. The point in the pair lies in the original domain.
   */
-  typedef std::pair< Point, Offset > Periodic_point;
+  typedef std::pair<Point, Offset> Periodic_point;
 
   /*!
   a pair of periodic points representing a segment in the periodic domain
   */
-  typedef array< Periodic_point, 2> Periodic_segment;
+  typedef std::array<Periodic_point, 2> Periodic_segment;
 
   /*!
   a triple of periodic points representing a triangle in the periodic domain
   */
-  typedef array< Periodic_point, 3> Periodic_triangle;
+  typedef std::array<Periodic_point, 3> Periodic_triangle;
 
   /*!
   the vertex type
@@ -295,7 +300,7 @@ public:
   introduces an empty triangulation `t` with `domain` as original domain.
   \pre `domain` is a square.
   */
-  Periodic_2_triangulation_2(const Iso_rectangle& domain = Iso_rectangle(0, 0, 1, 1),
+  Periodic_2_triangulation_2(const Domain& domain,
                              const Geom_traits& traits = Geom_traits());
 
   /*!
@@ -323,6 +328,15 @@ public:
   */
   void clear();
 
+  /*!
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
+    changes the domain.
+    Note that this function calls `clear()`, i.e., it erases the existing triangulation.
+  \cgalAdvancedEnd
+  */
+  void set_domain(const Domain& dom);
+
   /// @}
 
   /// \name Access Functions
@@ -345,7 +359,7 @@ public:
   /*!
   returns the original domain.
   */
-  Iso_rectangle domain() const;
+  const Domain& domain() const;
 
   /*!
   returns the number of sheets of the covering space the triangulation is
@@ -399,7 +413,7 @@ public:
     returns a reference to the triangulation data structure.
   \cgalAdvancedEnd
   */
-  Triangulation_data_structure_2 & tds();
+  Triangulation_data_structure& tds();
 
   /// @}
 
@@ -539,17 +553,17 @@ public:
   converts the `Periodic_point` `pp` (point-offset pair) to the
   corresponding `Point` in \f$ \mathbb R^3\f$.
   */
-  Point point(const Periodic_point & pp ) const;
+  Point point(const Periodic_point& pp) const;
 
   /*!
   converts the `Periodic_segment` `s` to a `Segment`.
   */
-  Segment segment(const Periodic_segment & s) const;
+  Segment segment(const Periodic_segment& s) const;
 
   /*!
   converts the `Periodic_triangle` `this` to a `Triangle`.
   */
-  Triangle triangle(const Periodic_triangle & t) const;
+  Triangle triangle(const Periodic_triangle& t) const;
 
   /*!
   Equivalent to
@@ -571,8 +585,7 @@ public:
   /*!
   Equivalent to the call `t.segment(t.periodic_segment(ei->first, ei->second));`
   */
-  Segment
-  segment(const Edge_iterator& ei) const;
+  Segment segment(const Edge_iterator& ei) const;
 
   /*!
   Equivalent to the call `t.triangle(t.periodic_triangle(f));`
@@ -621,9 +634,13 @@ public:
   ///
   /// The class `Periodic_2_triangulation_2` provides methods to locate
   /// a given point with respect to a triangulation. It also provides
-  /// methods to locate a point with respect to a given face of the
-  /// triangulation.
+  /// methods to locate a point with respect to a given face of the triangulation.
   /// @{
+
+  /*!
+  returns on which side of the oriented boundary of `f` the point `p` lies.
+  */
+  Oriented_side oriented_side(Face_handle f, const Point& p) const;
 
   /*!
   If the triangulation is not empty, a face
@@ -646,11 +663,6 @@ public:
                      Locate_type& lt,
                      int& li,
                      Face_handle h = Face_handle() ) const;
-
-  /*!
-  returns on which side of the oriented boundary of `f` the point `p` lies.
-  */
-  Oriented_side oriented_side(Face_handle f, const Point& p) const;
 
   /// @}
 
@@ -847,26 +859,26 @@ public:
   The last argument `f` is an indication to the underlying locate algorithm of where to start.
   \pre `p` lies in the original domain.
   */
-  Vertex_handle insert(const Point& p, Face_handle f = Face_handle());
+//  Vertex_handle insert(const Point& p, Face_handle f = Face_handle());
 
   /*
   Same as above except that the location of the point `p` to be inserted
   is assumed to be given by `(lt,loc,i)` (see the description of the `locate` method above.)
   */
-  Vertex_handle insert(const Point& p, Locate_type lt, Face_handle loc, int li );
+//  Vertex_handle insert(const Point& p, Locate_type lt, Face_handle loc, int li );
 
   /*
   Equivalent to `insert(p)`.
   */
-  Vertex_handle push_back(const Point& p);
+//  Vertex_handle push_back(const Point& p);
 
   /*
   inserts the points in the range \f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$.
   Returns the number of inserted points. \pre The `value_type` of `InputIterator` is `Point`
   and all points lie in the original domain.
   */
-  template <class InputIterator>
-  int insert(InputIterator first, InputIterator last);
+//  template <class InputIterator>
+//  int insert(InputIterator first, InputIterator last);
 
   // @}
 
@@ -878,12 +890,12 @@ public:
   /// \name
   ///
   /// \cgalAdvancedBegin
-  /// The following member functions offer more specialized
-  /// versions of the insertion or removal operations to be used when
-  /// one knows to be in the corresponding case. The following functions
-  /// are mainly intended to be used in conjunction with the
-  /// `find_conflicts()` member functions of Delaunay and constrained
-  /// Delaunay triangulations to perform insertions.
+  ///   The following member functions offer more specialized
+  ///   versions of the insertion or removal operations to be used when
+  ///   one knows to be in the corresponding case. The following functions
+  ///   are mainly intended to be used in conjunction with the
+  ///   `find_conflicts()` member functions of Delaunay and constrained
+  ///   Delaunay triangulations to perform insertions.
   /// \cgalAdvancedEnd
   /// @{
 
@@ -921,20 +933,11 @@ public:
   \cgalAdvancedEnd
   */
   template<class EdgeIt, class FaceIt>
-  Vertex_handle star_hole( Point p,
-                           EdgeIt edge_begin,
-                           EdgeIt edge_end,
-                           FaceIt face_begin,
-                           FaceIt face_end);
-
-  /*!
-  \cgalAdvancedFunction
-  \cgalAdvancedBegin
-    changes the domain.
-    Note that this function calls `clear()`, i.e., it erases the existing triangulation.
-  \cgalAdvancedEnd
-  */
-  void set_domain(const Iso_rectangle& dom);
+  Vertex_handle star_hole(Point p,
+                          EdgeIt edge_begin,
+                          EdgeIt edge_end,
+                          FaceIt face_begin,
+                          FaceIt face_end);
 
   /// @}
 
@@ -973,17 +976,17 @@ public:
 }; /* end Periodic_2_triangulation_2 */
 
 /*!
-Writes the triangulation `t` into the stream `os`.
+writes the triangulation `t` into the stream `os`.
 \pre The output operator must be defined for `Point`.
 \relates Periodic_2_triangulation_2
 */
 ostream& operator<<(ostream& os, const Periodic_2_triangulation_2<Traits, Tds>& t);
 
 /*!
-Reads a triangulation from stream `is` and assigns it to `t`.
+reads a triangulation from stream `is` and assigns it to `t`.
 \pre The input operator must be defined for `Point`.
 \relates Periodic_2_triangulation_2
 */
-istream& operator>>(istream& is, Triangulation_2<Traits, Tds>& t);
+istream& operator>>(istream& is, Periodic_2_triangulation_2<Traits, Tds>& t);
 
 } /* end namespace CGAL */
