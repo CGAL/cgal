@@ -233,6 +233,35 @@ public:
   template<class T>
   bool is_infinite(const T&, int = 0, int = 0) const { return false; }
 
+  /// [Undoc] Returns the offset of nb==h->neighbor(i) with respect to f.
+  /// Get the offset between the origins of the internal offset coordinate
+  /// systems of two neighboring faces with respect from ch to nb.
+  ///
+  /// - Find two corresponding vertices from each face
+  /// - Return the difference of their offsets.
+  Offset get_neighbor_offset(const Face_handle f, const int i,
+                             const Face_handle nb, const int j) const
+  {
+    // Redundance in the signature
+    CGAL_triangulation_precondition(neighbor(f, i) == nb);
+    CGAL_triangulation_precondition(neighbor(nb, j) == f);
+    CGAL_triangulation_precondition(f->vertex(cw(i)) == nb->vertex(ccw(j)));
+
+    return nb->offset(ccw(j)) - f->offset(cw(i));
+  }
+
+  /// [Undoc] Returns the offset of nb == neighbor(f, i) with respect to f.
+  /// Get the offset between the origins of the internal offset coordinate
+  /// systems of two neighboring faces with respect from f to nb.
+  ///
+  /// - Find two corresponding vertices from each face
+  /// - Return the difference of their offsets.
+  Offset get_neighbor_offset(const Face_handle f, const int i) const
+  {
+    const Face_handle nb = neighbor(f, i);
+    return get_neighbor_offset(f, i, nb, nb->index(f));
+  }
+
   /// Canonicity
   Offset compute_offset(const Vertex_handle v1, const Vertex_handle v2) const
   {

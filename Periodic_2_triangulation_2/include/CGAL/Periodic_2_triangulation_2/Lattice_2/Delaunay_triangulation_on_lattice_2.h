@@ -96,8 +96,13 @@ public:
   using Base::t2;
   using Base::p2t2;
 
+  using Base::canonical_vertex;
+  using Base::construct_segment;
+  using Base::get_neighbor_offset;
+  using Base::get_canonical_face;
   using Base::is_canonical;
   using Base::is_1_cover;
+  using Base::neighbor;
   using Base::periodic_point;
 #endif
 
@@ -227,18 +232,18 @@ public:
                                         bool perturb) const
   {
     if(is_1_cover())
-      p2t2().side_of_oriented_circle(p0, p1, p2, p, perturb);
+      return p2t2().side_of_oriented_circle(p0, p1, p2, p, perturb);
     else
-      t2().side_of_oriented_circle(p0, p1, p2, p, perturb);
+      return t2().side_of_oriented_circle(p0, p1, p2, p, perturb);
   }
 
   Oriented_side side_of_oriented_circle(const Face_handle f, const Point& p,
                                         bool perturb = false) const
   {
     if(is_1_cover())
-      p2t2().side_of_oriented_circle(f, p, perturb);
+      return p2t2().side_of_oriented_circle(f, p, perturb);
     else
-      t2().side_of_oriented_circle(f, p, perturb);
+      return t2().side_of_oriented_circle(f, p, perturb);
   }
 
   FT compare_squared_circumradius_to_threshold(const Face_handle f, const FT threshold)
@@ -269,11 +274,13 @@ public:
     const Point cp = geom_traits().get_domain().construct_canonical_point(p);
 
     if(is_1_cover())
+    {
       return p2t2().nearest_vertex(cp, f);
+    }
     else
     {
       Vertex_handle nv = t2().nearest_vertex(cp, f);
-      return Base::canonical_vertex[nv];
+      return canonical_vertex(nv);
     }
   }
 
@@ -405,9 +412,9 @@ public:
     CGAL_triangulation_precondition(is_canonical(f));
 
     if(is_1_cover())
-      p2t2().circumcenter(f);
+      return p2t2().circumcenter(f);
     else
-      t2().circumcenter(f);
+      return t2().circumcenter(f);
   }
 
   Point dual(const Face_handle f) const
@@ -415,50 +422,66 @@ public:
     CGAL_triangulation_precondition(is_canonical(f));
 
     if(is_1_cover())
-      p2t2().dual(f);
+      return p2t2().dual(f);
     else
-      t2().dual(f);
+      return t2().dual(f);
   }
 
-  // @fixme, dual(edge) are wrong in the case of DT2
-  //because you need to take the circumcenter of the neighboring face, but canonicalized
   Segment dual(const Edge& e) const
   {
     CGAL_triangulation_precondition(is_canonical(e));
 
     if(is_1_cover())
-      p2t2().dual(e);
+    {
+      return p2t2().dual(e);
+    }
     else
-      t2().dual(e);
+    {
+      Face_handle f = e.first;
+      int i = e.second;
+
+      if(is_canonical(f))
+      {
+        Face_handle nb = neighbor(f, i);
+        CGAL_assertion(is_canonical(nb));
+        Point p0 = dual(f);
+        Point p1 = dual(nb);
+        Offset o = get_neighbor_offset(f, i);
+        return construct_segment(p0, p1, o, Offset());
+      }
+      else
+      {
+        // Find the edge again such that e.first is a canonical face
+        Vertex_handle v = f->vertex(ccw(i));
+        f = get_canonical_face(f);
+        for(int j=0; j<3; ++j)
+        {
+          if(canonical_vertex(v) == canonical_vertex(f->vertex(j)))
+          {
+            i = cw(j);
+            break;
+          }
+        }
+
+        return dual(Edge(f, i));
+      }
+    }
   }
 
-  Segment dual(const Edge_circulator& ec) const
-  {
-    CGAL_triangulation_precondition(*ec);
-
-    if(is_1_cover())
-      p2t2().dual(ec);
-    else
-      t2().dual(ec);
-  }
-
-  Segment dual(const Edge_iterator& ei) const
-  {
-    CGAL_triangulation_precondition(*ei);
-
-    if(is_1_cover())
-      p2t2().dual(ei);
-    else
-      t2().dual(ei);
-  }
+  Segment dual(const Edge_circulator& ec) const { return dual(*ec); }
+  Segment dual(const Edge_iterator& ei) const { return dual(*ei); }
 
   template<class Stream>
   Stream& draw_dual(Stream& ps)
   {
-    if(is_1_cover())
-      p2t2().draw_dual(ps);
-    else
-      t2().draw_dual(ps);
+    Edge_iterator eit = Base::edges_begin(), eend = Base::edges_end();
+    for(; eit!=eend; ++eit)
+    {
+      Segment d = dual(eit);
+      ps << "2 " << d.source() << " 0 " << d.target() << " 0\n";
+    }
+
+    return ps;
   }
 
   /// is_valid and IO
