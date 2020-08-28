@@ -43,11 +43,7 @@
 namespace CGAL {
 
 // TODO
-// - Move P2T2/p2_iterators to Square_flat_torus_2/
-// - Don't document Finite iterators / functions (but add them)
 // - Get rid of P2Vertex_base_2 (?)
-// - Deal with stuff that is meaningless in this class (convert to 9 sheet, unique_vertex_iterator, ..)
-//   What to do if the goal is a common documentation?
 // - Double check iterators and circulators
 
 // This class is slightly different from other bases such as Triangulation_2/3
@@ -538,6 +534,20 @@ public:
   Face_iterator faces_begin() const { return Face_iterator(this); }
   Face_iterator faces_end() const { return Face_iterator(this, 1); }
 
+  Vertex_iterator finite_vertices_begin() const { return vertices_begin(); }
+  Vertex_iterator finite_vertices_end() const { return vertices_end(); }
+  Edge_iterator finite_edges_begin() const { return edges_begin(); }
+  Edge_iterator finite_edges_end() const { return edges_end(); }
+  Face_iterator finite_faces_begin() const { return faces_begin(); }
+  Face_iterator finite_faces_end() const { return faces_end(); }
+
+  Vertex_iterator all_vertices_begin() const { return vertices_begin(); }
+  Vertex_iterator all_vertices_end() const { return vertices_end(); }
+  Edge_iterator all_edges_begin() const { return edges_begin(); }
+  Edge_iterator all_edges_end() const { return edges_end(); }
+  Face_iterator all_faces_begin() const { return faces_begin(); }
+  Face_iterator all_faces_end() const { return faces_end(); }
+
   Periodic_point_iterator periodic_points_begin() const { return Periodic_point_iterator(vertices_begin()); }
   Periodic_point_iterator periodic_points_end() const { return Periodic_point_iterator(vertices_end()); }
   Periodic_segment_iterator periodic_segments_begin() const { return Periodic_segment_iterator(edges_begin()); }
@@ -880,7 +890,6 @@ public:
   template <class InputIterator>
   void insert(InputIterator first, InputIterator beyond)
   {
-    // @todo spatial sorting
     while(first != beyond)
       insert(*first++);
 

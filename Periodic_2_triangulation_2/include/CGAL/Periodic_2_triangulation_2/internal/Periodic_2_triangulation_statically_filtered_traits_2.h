@@ -57,7 +57,6 @@ public:
   }
 };
 
-// @todo static filters for lattices
 template<class K, class O>
 class Periodic_2_triangulation_statically_filtered_traits_2<K, O, Lattice_2<K> >
   : public Periodic_2_triangulation_filtered_traits_base_2<K, O, Lattice_2<K> >

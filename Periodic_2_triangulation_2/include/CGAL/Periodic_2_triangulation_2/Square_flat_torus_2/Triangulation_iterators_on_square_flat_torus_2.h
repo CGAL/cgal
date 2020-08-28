@@ -9,8 +9,8 @@
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
 
-#ifndef CGAL_PERIODIC_2_TRIANGULATION_ITERATORS_2_H
-#define CGAL_PERIODIC_2_TRIANGULATION_ITERATORS_2_H
+#ifndef CGAL_P2T2_ITERATORS_ON_SQUARE_FLAT_TORUS_2_H
+#define CGAL_P2T2_ITERATORS_ON_SQUARE_FLAT_TORUS_2_H
 
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 
@@ -874,4 +874,4 @@ public:
 
 } //namespace CGAL
 
-#endif // CGAL_PERIODIC_2_TRIANGULATION_ITERATORS_2_H
+#endif // CGAL_P2T2_ITERATORS_ON_SQUARE_FLAT_TORUS_2_H

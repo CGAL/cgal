@@ -16,10 +16,9 @@
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 
 #include <CGAL/Periodic_2_triangulation_2/Square_flat_torus_2/Triangulation_face_base_on_square_flat_torus_2.h>
-#include <CGAL/Periodic_2_triangulation_2/IO/periodic_2_triangulation_2_io.h>
-
+#include <CGAL/Periodic_2_triangulation_2/Square_flat_torus_2/Triangulation_iterators_on_square_flat_torus_2.h>
 #include <CGAL/Periodic_2_triangulation_vertex_base_2.h>
-#include <CGAL/Periodic_2_triangulation_iterators_2.h>
+#include <CGAL/Periodic_2_triangulation_2/IO/periodic_2_triangulation_2_io.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Default.h>
@@ -75,8 +74,8 @@ public:
 
 private:
   // Just for convenience
-  typedef Geom_traits                                                       Gt;
-  typedef Triangulation_data_structure                                      Tds;
+  typedef Gt_                                                               Gt;
+  typedef Tds_                                                              Tds;
 
   typedef Triangulation_on_square_flat_torus_2<Gt, Tds>                     Self;
 
