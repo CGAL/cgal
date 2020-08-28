@@ -229,10 +229,6 @@ public:
 public:
   bool is_1_cover() const { return _is_1_cover; }
 
-public:
-  template<class T>
-  bool is_infinite(const T&, int = 0, int = 0) const { return false; }
-
   /// [Undoc] Returns the offset of nb==h->neighbor(i) with respect to f.
   /// Get the offset between the origins of the internal offset coordinate
   /// systems of two neighboring faces with respect from ch to nb.
@@ -486,6 +482,73 @@ public:
       return get_canonical_face(neighbor);
   }
 
+  //
+  template<class T>
+  bool is_infinite(const T&, int = 0, int = 0) const { return false; }
+
+  size_type degree(Vertex_handle v) const
+  {
+    int count = 0;
+    Vertex_circulator vc = adjacent_vertices(v), done(vc);
+    if (!vc.is_empty())
+    {
+      do
+      {
+        count += 1;
+      } while (++vc != done);
+    }
+
+    return count;
+  }
+
+  bool is_vertex(const Point& p, Vertex_handle& v) const
+  {
+    Locate_type lt;
+    int li;
+    Face_handle f = locate(p, lt, li);
+    if(lt != VERTEX)
+      return false;
+
+    v = f->vertex(li);
+    return true;
+  }
+
+  bool is_vertex(Vertex_handle v) const
+  {
+    if(is_1_cover())
+      return _p2t2.is_vertex(v);
+    else
+      return _t2.is_vertex(v);
+  }
+  bool is_edge(Vertex_handle va, Vertex_handle vb) const
+  {
+    if(is_1_cover())
+      return _p2t2.is_edge(va, vb);
+    else
+      return _t2.is_edge(va, vb);
+  }
+  bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, int& i) const
+  {
+    if(is_1_cover())
+      return _p2t2.is_edge(va, vb, fr, i);
+    else
+      return _t2.is_edge(va, vb, fr, i);
+  }
+  bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) const
+  {
+    if(is_1_cover())
+      return _p2t2.is_face(v1, v2, v3);
+    else
+      return _t2.is_face(v1, v2, v3);
+  }
+  bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3, Face_handle& fr) const
+  {
+    if(is_1_cover())
+      return _p2t2.is_face(v1, v2, v3, fr);
+    else
+      return _t2.is_face(v1, v2, v3, fr);
+  }
+
   // -----------------------------------------------------------------------------------------------
   /// Returns the number of vertices. Counts all vertices that are
   /// representatives of the same point in the 1-cover as one vertex.
@@ -619,14 +682,46 @@ public:
     return incident_faces(v, Face_handle());
   }
 
-  Vertex_handle mirror_vertex(Face_handle f, int i) const
+  int mirror_index(Face_handle f, int i) const
   {
-    CGAL_assertion(false); // @todo
+    CGAL_triangulation_precondition(dimension() == 2 && is_canonical(f));
+
+    if(is_1_cover())
+    {
+      return _p2t2.mirror_index(f, i);
+    }
+    else
+    {
+      Vertex_handle v = canonical_vertex(f->vertex(ccw(i)));
+      Face_handle nb = neighbor(f, i);
+      CGAL_triangulation_assertion(is_canonical(nb));
+
+      for(int j=0; j<3; ++j)
+        if(v == canonical_vertex(f->vertex(j)))
+          return ccw(j);
+    }
   }
 
-  int mirror_index(Face_handle v, int i) const
+  Vertex_handle mirror_vertex(Face_handle f, int i) const
   {
-    CGAL_assertion(false); // @todo
+    CGAL_triangulation_precondition(dimension() == 2 && is_canonical(f));
+
+    if(is_1_cover())
+    {
+      return _p2t2.mirror_vertex(f, i);
+    }
+    else
+    {
+      Vertex_handle v = canonical_vertex(f->vertex(ccw(i)));
+      Face_handle nb = neighbor(f, i);
+      CGAL_triangulation_assertion(is_canonical(nb));
+
+      for(int j=0; j<3; ++j)
+        if(v == canonical_vertex(f->vertex(j)))
+          return nb->vertex(ccw(j));
+    }
+
+    return neighbor(f, i)->vertex(mirror_index(f, i)); // @optimize
   }
 
   // -----------------------------------------------------------------------------------------------
