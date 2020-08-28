@@ -17,15 +17,13 @@ Octrees are most useful when implementing algorithms that require nodes without 
 Intersection and nearest-neighbor algorithms should be expected to perform worse than the kD-tree
 but they can be useful if the octree has already been constructed.
 
-\section Section_Usage Usage
-
-\subsection Section_Octree_Building Building
+\section Section_Octree_Building Building
 
 Before an octree can be used for anything, the tree itself must be created.
 By default, the constructor returns a tree with a single (root) node that contains all the points.
 We can use the `refine` method to subdivide space further.
 
-\subsubsection Section_Octree_Point_Vector Building an Octree from a Vector of Points
+\subsection Section_Octree_Point_Vector Building an Octree from a Vector of Points
 
 The simplest way to create an octree is using a vector of points.
 The constructor generally expects a separate point-range and map,
@@ -42,7 +40,7 @@ a `CGAL::Identity_property_map` is automatically set as the octree's map type, s
 
 \cgalExample{Octree/Octree_build_from_Point_vector.cpp}
 
-\subsubsection Section_Octree_Point_Set Building an Octree from a Point_set_3
+\subsection Section_Octree_Point_Set Building an Octree from a Point_set_3
 
 Using a `Point_set_3` is slightly more complicated, but it comes with a number of advantages.
 CGAL's Point set class has many useful features.
@@ -63,7 +61,7 @@ The split criterion is manually constructed and passed to the refine method.
 
 \cgalExample{Octree/Octree_build_from_Point_set.cpp}
 
-\subsubsection Section_Octree_Custom_Split_Criterion Building an Octree with a Custom Split Criterion
+\subsection Section_Octree_Custom_Split_Criterion Building an Octree with a Custom Split Criterion
 
 It's very easy to create your own criterion if the existing ones don't match your needs.
 For example, you might design a criterion which only splits nodes that contain exactly 4 points.
@@ -79,12 +77,12 @@ For example, for a ratio of 2, a node at depth 2 can hold 4 points, a node at de
 
 \cgalExample{Octree/Octree_build_with_custom_split.cpp}
 
-\subsection Section_Octree_Traversal Traversal
+\section Section_Octree_Traversal Traversal
 
 Traversal is the act of navigating among the nodes of the tree.
 The Octree and Node classes provide a number of different solutions for traversing the tree.
 
-\subsubsection Section_Octree_Manual_Traveral Manual Traversal
+\subsection Section_Octree_Manual_Traveral Manual Traversal
 
 Because our octree is a form of connected acyclic undirected graph, it's possible to navigate between any two nodes.
 What that means in practice, is that given a pointer or reference to one node on the tree, it's possible to
@@ -107,7 +105,7 @@ These accessors and operators can be chained to access any node in the tree in a
 
 \cgalExample{Octree/Octree_traversal_manual.cpp}
 
-\subsubsection Section_Octree_Preorder_Traversal Preorder Traversal
+\subsection Section_Octree_Preorder_Traversal Preorder Traversal
 
 It's often useful to be able to iterate over the nodes of the tree in a particular order.
 For example, the stream operator `<<` uses a traversal to print out each node.
@@ -128,7 +126,7 @@ In this case, we print out the nodes of the tree without indentation instead.
 \cgalExample{Octree/Octree_traversal_preorder.cpp}
 
 <!--
-\subsubsection Section_Octree_Custom_Traversal Using a Custom Traversal Method
+\subsection Section_Octree_Custom_Traversal Using a Custom Traversal Method
 
 \b Example
 
@@ -138,11 +136,11 @@ e.g. I've build a tree and I want to print it out, but layer by layer
 
 !-->
 
-\subsection Section_Octree_Acceleration Acceleration
+\section Section_Octree_Acceleration Acceleration
 
 Once an octree is built, its structure can be used to accelerate different tasks.
 
-\subsubsection Section_Octree_Nearest_Neighbor Finding the Nearest Neighbor of a Point
+\subsection Section_Octree_Nearest_Neighbor Finding the Nearest Neighbor of a Point
 
 The naive way of finding the nearest neighbor of a point requires finding the distance of every other point.
 An octree can be used to perform the same task in significantly less time.
@@ -162,7 +160,7 @@ Results are put in a vector, and then printed.
 
 \cgalExample{Octree/Octree_find_nearest_neighbor.cpp}
 
-\subsubsection Section_Octree_Grade Grading an octree
+\subsection Section_Octree_Grade Grading an octree
 
 \b Example
 
@@ -174,9 +172,7 @@ The tree is printed before and after grading, so that the differences are visibl
 
 \cgalExample{Octree/Octree_grade.cpp}
 
-\section Section_Octree_Performance Performance
-
-\subsection Section_Octree_Performance_Comparison Comparison with kD Tree
+\section Section_Octree_Performance_Comparison Performance Comparison with kD Tree
 
 e.g. When is an octree the right choice?
 
