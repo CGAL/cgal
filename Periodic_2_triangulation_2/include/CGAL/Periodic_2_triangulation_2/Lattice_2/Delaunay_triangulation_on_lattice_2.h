@@ -452,11 +452,11 @@ public:
       else
       {
         // Find the edge again such that e.first is a canonical face
-        Vertex_handle v = f->vertex(ccw(i));
+        Vertex_handle v = canonical_vertex(f->vertex(ccw(i)));
         f = get_canonical_face(f);
         for(int j=0; j<3; ++j)
         {
-          if(canonical_vertex(v) == canonical_vertex(f->vertex(j)))
+          if(v == canonical_vertex(f->vertex(j)))
           {
             i = cw(j);
             break;

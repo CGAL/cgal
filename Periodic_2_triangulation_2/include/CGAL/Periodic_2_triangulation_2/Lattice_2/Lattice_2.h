@@ -173,7 +173,6 @@ public:
   {
     Point cp = p;
 
-    // @todo factorize it with 'is_in_domain()' (somehow)
     int vfn_pos = 0;
     while(vfn_pos < 3)
     {

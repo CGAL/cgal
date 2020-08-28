@@ -18,7 +18,7 @@
 #include <CGAL/Periodic_2_triangulation_2/Lattice_2/Construct_point_on_lattice_2.h>
 #include <CGAL/Periodic_2_triangulation_2/Lattice_2/Lattice_2.h>
 
-#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Has_conversion.h>
 #include <CGAL/triangulation_assertions.h>
 
 #include <type_traits>
@@ -61,7 +61,7 @@ template <typename K, typename D>
 D get_default_domain(typename std::enable_if<std::is_same<D, Lattice_2<K> >::value>::type* = nullptr)
 {
   typename K::Vector_2 v0(1, 0), v1(0, 1);
-  return Lattice_2<K>(v0, v1);
+  return Lattice_2<K>(v0, v1); // centered at the origin
 }
 
 template <typename K, typename D>
@@ -109,8 +109,7 @@ Lattice_2<K2> convert_domain(const Lattice_2<K1>& /*lattice*/)
 template <typename K1, typename K2>
 typename K2::Iso_rectangle_2 convert_domain(const typename K1::Iso_rectangle_2& domain)
 {
-  // @fixme Homogeneous...
-  CGAL::Cartesian_converter<K1, K2> converter;
+  typename CGAL::internal::Converter_selector<K1, K2>::type converter;
   return converter(domain);
 }
 

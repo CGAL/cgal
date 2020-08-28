@@ -266,7 +266,7 @@ public:
   Offset compute_offset(const Vertex_handle v1, const Vertex_handle v2) const
   {
     CGAL_triangulation_precondition(!is_1_cover());
-    return min(v1->offset(), v2->offset()); // @todo proper min implementation
+    return min(v1->offset(), v2->offset());
   }
 
   Offset compute_offset(const Edge& e) const
@@ -456,6 +456,8 @@ public:
     if(is_canonical(f->neighbor(i)))
       return f->neighbor(i);
 
+    CGAL_triangulation_precondition(!is_1_cover());
+
     // Translate the face so that the corresponding edge is canonical.
     Offset edge_off = compute_offset(f, i);
     Face_handle f_trans = find_translated_face(f, -edge_off);
@@ -492,7 +494,7 @@ public:
     if(is_1_cover())
       return _p2t2.number_of_vertices();
     else
-      return _t2.number_of_vertices() / 9; // @fixme wrong
+      return _t2.number_of_vertices() / 9;
   }
 
   size_type number_of_edges() const
@@ -896,6 +898,8 @@ protected:
 
   void remove(Vertex_handle v)
   {
+    CGAL_triangulation_expensive_precondition(is_vertex(v));
+
     // @todo
     CGAL_triangulation_assertion(false);
   }

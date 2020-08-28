@@ -2064,7 +2064,10 @@ public:
 
   /// Inserts p in the face f and sets the offsets of the newly created faces
   /// Insert periodic copies in all periodic copies of the domain
-  Vertex_handle insert_in_face(const Point& p, Face_handle f) { return insert(p, FACE, f, 0); }
+  Vertex_handle insert_in_face(const Point& p, Face_handle f)
+  {
+    return insert(p, FACE, f, 0);
+  }
 
 private:
   /// Remove a vertex without removing it's possible periodic copies.
@@ -2122,8 +2125,6 @@ public:
       if(it != virtual_vertices.end())
         v = it->second.first;
     }
-
-    remove_too_long_edges_in_star(v);
 
     typename Virtual_vertex_reverse_map::iterator reverse_it = virtual_vertices_reverse.find(v);
     CGAL_triangulation_assertion(reverse_it != virtual_vertices_reverse.end());
@@ -2868,7 +2869,7 @@ protected:
               ConflictTester& tester,
               CoverManager& cover_manager)
   {
-    CGAL_expensive_precondition(is_vertex(v));
+    CGAL_triangulation_expensive_precondition(is_vertex(v));
 
     if(!is_1_cover())
     {
