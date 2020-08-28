@@ -3752,7 +3752,6 @@ public:
             (f->vertex(1) == f->vertex(2)));
   }
 
-#if 0
   /// Serialize the triangulation to an output stream
   std::ostream& save(std::ostream& os) const
   {
@@ -4096,7 +4095,6 @@ public:
     CGAL_triangulation_expensive_assertion(is_valid());
     return is;
   }
-#endif
 
   template<class Stream>
   Stream& draw_triangulation(Stream& os) const

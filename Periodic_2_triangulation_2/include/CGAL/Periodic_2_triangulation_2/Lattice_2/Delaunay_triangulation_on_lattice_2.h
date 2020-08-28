@@ -382,9 +382,10 @@ public:
   }
 
 private:
-  bool can_be_converted_to_1_sheet() const {
-    std::cout << faces_with_too_big_circumradius.size() << " bad facets" << std::endl;
-    return faces_with_too_big_circumradius.empty(); }
+  bool can_be_converted_to_1_sheet() const
+  {
+    return faces_with_too_big_circumradius.empty();
+  }
 
   void insert_face_with_too_big_circumradius(const Face_handle fh)
   {
