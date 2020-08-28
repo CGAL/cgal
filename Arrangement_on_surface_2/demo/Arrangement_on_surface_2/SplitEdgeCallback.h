@@ -29,6 +29,7 @@ public:
   void setColor( QColor c );
   QColor getColor( ) const;
   void setPointSnapper(PointSnapperBase*);
+  bool eventFilter(QObject* object, QEvent* event) override;
 
 protected:
   SplitEdgeCallbackBase( QObject* parent );
@@ -58,8 +59,6 @@ public:
   void reset() override;
 
 protected:
-  void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
-  void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
   void curveInputDoneEvent(
     const std::vector<Input_point_2>& clickedPoints,
     CGAL::Qt::CurveType type) override;

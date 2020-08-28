@@ -13,15 +13,13 @@ if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
-find_package(Qt5 COMPONENTS Gui Widgets)
 find_package(CGAL COMPONENTS Core Qt5 )
+find_package(Qt5 COMPONENTS Gui Widgets)
 
 if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
   include(${CGAL_USE_FILE})
   add_definitions(-DQT_NO_KEYWORDS)
-  include_directories( ./ )
-  # Arrangement package includes
-  include_directories(BEFORE ../../include)
+  include_directories( BEFORE ./ ../../include )
 
   qt5_wrap_ui(arrangement_2_uis
               ArrangementDemoWindow.ui
@@ -44,7 +42,7 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
                DeleteCurveModeItemEditor.h
                PropertyValueDelegate.h)
 
-  qt5_add_resources(CGAL_Qt5_RESOURCE_FILES ArrangementDemoWindow.qrc)
+  qt5_add_resources(CGAL_Qt5_RESOURCE_FILES Arrangement_on_surface_2.qrc)
 
   add_executable(arrangement_2
                  arrangement_2.cpp
@@ -82,9 +80,9 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
                  PointSnapper.cpp
                  CurveInputMethods.cpp
                  FloodFill.cpp
-                 ${CGAL_Qt5_MOC_FILES}
                  ${arrangement_2_uis}
-                 ${CGAL_Qt5_RESOURCE_FILES})
+                 ${CGAL_Qt5_RESOURCE_FILES}
+                 ${CGAL_Qt5_MOC_FILES})
 
   qt5_use_modules(arrangement_2 Core Gui Widgets)
   target_link_libraries(arrangement_2 CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Core)

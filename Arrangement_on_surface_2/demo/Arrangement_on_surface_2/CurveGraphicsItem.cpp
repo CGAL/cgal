@@ -28,10 +28,8 @@ void CurveGraphicsItem<ArrTraits>::paint(
   QPen edgesPen(this->m_edgeColor, this->m_edgeWidth);
   edgesPen.setCosmetic(true);
   painter->setPen(edgesPen);
-  QRectF clippingRectangle = this->viewportRect();
 
-  auto painterOstream =
-    ArrangementPainterOstream<Traits>(painter, clippingRectangle);
+  auto painterOstream = ArrangementPainterOstream<Traits>(painter);
   painterOstream.setScene(this->getScene());
 
   for (auto& curve : this->curves) { painterOstream << curve; }

@@ -25,10 +25,6 @@ VerticalRayShootCallbackBase::VerticalRayShootCallbackBase(QObject* parent_) :
 {
 }
 
-//! displays the direction of the arrow relative to the point being selected
-/*!
-  \param isShootingUp boolean value to determine the direction
-*/
 void VerticalRayShootCallbackBase::setShootingUp(bool isShootingUp)
 {
   this->shootingUp = isShootingUp;

@@ -4,11 +4,12 @@
 #include <QGraphicsLineItem>
 #include <vector>
 
-#include "GraphicsSceneMixin.h"
+#include "Callback.h"
 #include "PointSnapper.h"
 #include "PointsGraphicsItem.h"
 
 class QEvent;
+class QKeyEvent;
 class QGraphicsSceneMouseEvent;
 
 namespace CGAL
@@ -40,7 +41,7 @@ public:
     const std::vector<Point_2>& clickedPoints, CurveType type) = 0;
 };
 
-class CurveInputMethod : public GraphicsSceneMixin
+class CurveInputMethod : public Callback
 {
 public:
   using Point_2 = PointSnapperBase::Point_2;
@@ -52,9 +53,10 @@ public:
   void setPointSnapper(PointSnapperBase*);
   CurveType curveType() const;
 
-  virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
-  virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
-  void reset();
+  void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+  void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+  void keyPressEvent(QKeyEvent* event) override;
+  void reset() override;
   void beginInput_();
 
   void setColor(QColor);

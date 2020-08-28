@@ -682,7 +682,7 @@ operator()(const X_monotone_curve_2& curve, const CoordinateType& x)
   std::pair<Point_2, Multiplicity> res;
   if (CGAL::assign(res, o)) // TODO: handle failure case
   {
-    Point_2 p = res.first;
+    const Point_2& p = res.first;
     CoordinateType coord = p.y();
     return coord;
   }
@@ -711,8 +711,10 @@ auto Arr_compute_y_at_x_2<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
     traits->construct_x_monotone_segment_2_object();
 
   std::vector<X_monotone_curve_2> curves;
-  Point_2 p1 = constructPoint(x, CoordinateType(-1000000));
-  Point_2 p2 = constructPoint(x, CoordinateType(+1000000));
+  Point_2 p1 =
+    constructPoint(x, CoordinateType(-std::numeric_limits<int>::max()));
+  Point_2 p2 =
+    constructPoint(x, CoordinateType(std::numeric_limits<int>::max()));
   constructSegment(p1, p2, std::back_inserter(curves));
   return curves[0]; // by construction, there is one curve in curves
 }

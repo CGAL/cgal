@@ -11,8 +11,9 @@
 
 #include "GraphicsViewCurveInput.h"
 #include "ArrangementTypes.h"
-#include <QEvent>
 #include "QtMetaTypes.h"
+#include <QEvent>
+#include <QKeyEvent>
 
 // TODO: move these somewhere else!
 template <std::size_t I = 0, typename FuncT, typename... Tp>
@@ -41,6 +42,11 @@ GraphicsViewCurveInputBase::GraphicsViewCurveInputBase(
 {
 }
 
+void GraphicsViewCurveInputBase::setInputMethod(CurveInputMethod* inputMethod_)
+{
+  this->inputMethod = inputMethod_;
+}
+
 void GraphicsViewCurveInputBase::reset()
 {
   if (this->inputMethod)
@@ -50,35 +56,9 @@ void GraphicsViewCurveInputBase::reset()
   }
 }
 
-void GraphicsViewCurveInputBase::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
-{
-  if (this->inputMethod) this->inputMethod->mouseMoveEvent(event);
-}
-
-void GraphicsViewCurveInputBase::mousePressEvent(
-  QGraphicsSceneMouseEvent* event)
-{
-  if (this->inputMethod) this->inputMethod->mousePressEvent(event);
-}
-
 bool GraphicsViewCurveInputBase::eventFilter(QObject* obj, QEvent* event)
 {
-  if (event->type() == QEvent::GraphicsSceneMouseMove)
-  {
-    QGraphicsSceneMouseEvent* mouseEvent =
-      static_cast<QGraphicsSceneMouseEvent*>(event);
-    this->mouseMoveEvent(mouseEvent);
-    return true;
-  }
-  else if (event->type() == QEvent::GraphicsSceneMousePress)
-  {
-    QGraphicsSceneMouseEvent* mouseEvent =
-      static_cast<QGraphicsSceneMouseEvent*>(event);
-    this->mousePressEvent(mouseEvent);
-    return true;
-  }
-
-  return QObject::eventFilter(obj, event);
+  return this->inputMethod->eventFilter(obj, event);
 }
 
 void GraphicsViewCurveInputBase::setColor(QColor c)
@@ -109,7 +89,7 @@ void GraphicsViewCurveInput<ArrTraits>::setCurveType(CurveType type)
   this->reset();
   for_each(inputMethods, [&](auto&& it) {
     if (it.curveType() == type)
-      this->inputMethod = static_cast<CurveInputMethod*>(&it);
+      this->setInputMethod(static_cast<CurveInputMethod*>(&it));
   });
 }
 
@@ -124,8 +104,8 @@ template <typename ArrTraits>
 template <typename>
 void GraphicsViewCurveInput<ArrTraits>::setDefaultInputMethod(std::true_type)
 {
-  this->inputMethod =
-    static_cast<CurveInputMethod*>(&std::get<0>(inputMethods));
+  this->setInputMethod(
+    static_cast<CurveInputMethod*>(&std::get<0>(inputMethods)));
 }
 
 template <typename ArrTraits>

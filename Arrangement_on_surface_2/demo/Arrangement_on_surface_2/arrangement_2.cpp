@@ -18,6 +18,9 @@ int main(int argc, char* argv[])
   QCoreApplication::setOrganizationName("CGAL");
   QCoreApplication::setApplicationName("2D Arrangements Demo");
 
+  // Import resources from libCGAL (Qt5).
+  CGAL_QT_INIT_RESOURCES;
+
   ArrangementDemoWindow demoWindow;
   demoWindow.show();
 

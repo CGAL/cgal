@@ -160,7 +160,8 @@ public:
   GraphicsViewCurveInputBase(QObject* parent, QGraphicsScene* scene);
 
   void setColor(QColor c);
-  void reset();
+  void reset() override;
+  bool eventFilter(QObject* obj, QEvent* event) override;
   virtual void setCurveType(CurveType type) = 0;
   virtual void setPointSnapper(PointSnapperBase*) = 0;
 
@@ -168,11 +169,9 @@ Q_SIGNALS:
   void generate(CGAL::Object);
 
 protected:
-  GraphicsViewCurveInputBase(QObject* parent);
-  virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
-  virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
-  virtual bool eventFilter(QObject* obj, QEvent* event);
+  void setInputMethod(CurveInputMethod*);
 
+private:
   // active input method
   CurveInputMethod* inputMethod;
 }; // class GraphicsViewCurveInputBase

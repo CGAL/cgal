@@ -479,13 +479,13 @@ auto ArrangementPainterOstream<CGAL::Arr_rational_function_traits_2<
   QPainterPath painterPath;
   const QRectF viewport = this->viewportRect();
   // overshoot so that the slope would be more accurate
-  double min_y = viewport.top() - 2 * viewport.height();
-  double max_y = viewport.bottom() + 2 * viewport.height();
+  double min_y = viewport.top();
+  double max_y = viewport.bottom();
 
   bool disconnected = true;
   bool first_point = true;
 
-  double last_x, last_y;
+  double last_x = 0, last_y = 0;
 
   // TODO: this is ugly! clean up these conditions
   auto path_filler = [&](double x, double y) {
@@ -499,7 +499,7 @@ auto ArrangementPainterOstream<CGAL::Arr_rational_function_traits_2<
       // connect between two out of range points when they cross different
       // boundaries
       else if (
-        (last_y == min_y && y == max_y) || (last_y == max_y && y == min_y))
+        (last_y == min_y && y_ == max_y) || (last_y == max_y && y_ == min_y))
       {
         painterPath.moveTo(last_x, last_y);
         painterPath.lineTo(x_, y_);
@@ -542,12 +542,12 @@ auto ArrangementPainterOstream<CGAL::Arr_rational_function_traits_2<
 
   const QRectF viewport = this->viewportRect();
   // overshoot so that the slope would be more accurate
-  double min_y = viewport.top() - 2 * viewport.height();
-  double max_y = viewport.bottom() + 2 * viewport.height();
+  double min_y = viewport.top();
+  double max_y = viewport.bottom();
 
   bool disconnected = true;
 
-  double last_x, last_y;
+  double last_x = 0, last_y = 0;
   bool first_point = false;
 
   // TODO: this is ugly! clean up these conditions
@@ -559,7 +559,7 @@ auto ArrangementPainterOstream<CGAL::Arr_rational_function_traits_2<
 
       if (!disconnected) cur_list->push_back({x_, y_});
       else if (
-        (last_y == min_y && y == max_y) || (last_y == max_y && y == min_y))
+        (last_y == min_y && y_ == max_y) || (last_y == max_y && y_ == min_y))
       {
         cur_list->push_back({last_x, last_y});
         cur_list->push_back({x_, y_});

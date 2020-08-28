@@ -27,6 +27,7 @@
 #include "FillFaceCallback.h"
 #include "GridGraphicsItem.h"
 #include "ArrangementTypes.h"
+#include "Conic_reader.h"
 
 #include <QActionGroup>
 #include <QColorDialog>
@@ -40,10 +41,8 @@
 #include <CGAL/IO/Arr_with_history_text_formatter.h>
 #include <CGAL/Arr_default_overlay_traits.h>
 #include <CGAL/Arr_overlay_2.h>
-#include "Conic_reader.h"
 
 #include "ui_ArrangementDemoWindow.h"
-#include "ui_AlgebraicCurveInputDialog.h"
 
 
 ArrangementDemoWindow::ArrangementDemoWindow(QWidget* parent) :
@@ -65,7 +64,7 @@ ArrangementDemoWindow::ArrangementDemoWindow(QWidget* parent) :
   // Call inherited functions
   this->setupStatusBar();
   // this->setupOptionsMenu();
-  this->addAboutDemo(":/help/about.html");
+  this->addAboutDemo(":/cgal/Arrangement_on_surface_2/about.html");
   this->addAboutCGAL();
 }
 
@@ -233,6 +232,9 @@ void ArrangementDemoWindow::resetActionGroups(
   else
     this->ui->actionArrangementSnapMode->setVisible(true);
 
+  if (tt == RATIONAL_FUNCTION_TRAITS)
+    this->ui->actionGridSnapMode->setVisible(false);
+
   // default action group is scrolling
   this->ui->actionDrag->activate(QAction::Trigger);
 }
@@ -368,7 +370,6 @@ void ArrangementDemoWindow::on_actionAddAlgebraicCurve_triggered()
 {
 #ifdef CGAL_USE_CORE
   AlgebraicCurveInputDialog newDialog;
-  newDialog.getUi()->lineEdit->setFocus();
 
   if (newDialog.exec() == QDialog::Accepted)
   {

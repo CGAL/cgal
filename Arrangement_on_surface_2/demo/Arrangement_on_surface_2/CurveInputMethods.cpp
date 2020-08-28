@@ -1,5 +1,6 @@
 #include "CurveInputMethods.h"
 #include <QEvent>
+#include <QKeyEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsView>
 #include <QtGlobal>
@@ -10,7 +11,7 @@ namespace Qt
 {
 
 CurveInputMethod::CurveInputMethod(CurveType type_, int numPoints_) :
-    GraphicsSceneMixin(), numPoints{numPoints_}, callback{nullptr}, type{type_},
+    Callback(nullptr), numPoints{numPoints_}, callback{nullptr}, type{type_},
     itemsAdded{false}
 {
   if (numPoints > 0) clickedPoints.reserve(numPoints);
@@ -81,6 +82,12 @@ void CurveInputMethod::mousePressEvent(QGraphicsSceneMouseEvent* event)
       callback->curveInputDoneEvent(this->clickedBigPoints, this->type);
     this->reset();
   }
+}
+
+void CurveInputMethod::keyPressEvent(QKeyEvent* event)
+{
+  if (event->key() == ::Qt::Key_Escape)
+    this->reset();
 }
 
 void CurveInputMethod::beginInput_()

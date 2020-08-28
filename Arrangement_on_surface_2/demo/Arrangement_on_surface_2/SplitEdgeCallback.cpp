@@ -25,6 +25,11 @@ SplitEdgeCallbackBase::SplitEdgeCallbackBase( QObject* parent ) :
   segmentInputMethod.setCallback(this);
 }
 
+bool SplitEdgeCallbackBase::eventFilter(QObject* object, QEvent* event)
+{
+  return segmentInputMethod.eventFilter(object, event);
+}
+
 void SplitEdgeCallbackBase::setColor(QColor c)
 {
   this->segmentInputMethod.setColor(c);
@@ -60,18 +65,6 @@ template <typename Arr_>
 void SplitEdgeCallback<Arr_>::reset( )
 {
   this->segmentInputMethod.reset();
-}
-
-template <typename Arr_>
-void SplitEdgeCallback<Arr_>::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
-{
-  this->segmentInputMethod.mouseMoveEvent(event);
-}
-
-template <typename Arr_>
-void SplitEdgeCallback<Arr_>::mousePressEvent(QGraphicsSceneMouseEvent* event)
-{
-  this->segmentInputMethod.mousePressEvent(event);
 }
 
 template <typename Arr_>

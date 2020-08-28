@@ -30,6 +30,7 @@ Q_OBJECT
 public:
   Callback( QObject* parent, QGraphicsScene* scene_ = nullptr );
   virtual void reset( );
+  virtual bool eventFilter( QObject* object, QEvent* event );
 
 public Q_SLOTS:
   virtual void slotModelChanged( );
@@ -38,7 +39,6 @@ Q_SIGNALS:
   void modelChanged( );
 
 protected:
-  virtual bool eventFilter( QObject* object, QEvent* event );
   virtual void mousePressEvent( QGraphicsSceneMouseEvent* event );
   virtual void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
   virtual void mouseReleaseEvent( QGraphicsSceneMouseEvent* event );
