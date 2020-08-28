@@ -60,8 +60,8 @@ D get_default_domain(typename std::enable_if<std::is_same<D, typename K::Iso_rec
 template <typename K, typename D>
 D get_default_domain(typename std::enable_if<std::is_same<D, Lattice_2<K> >::value>::type* = nullptr)
 {
-  CGAL_assertion(false); // @todo
-  return D();
+  typename K::Vector_2 v0(1, 0), v1(0, 1);
+  return Lattice_2<K>(v0, v1);
 }
 
 template <typename K, typename D>

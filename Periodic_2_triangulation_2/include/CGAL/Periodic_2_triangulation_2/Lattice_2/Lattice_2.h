@@ -40,13 +40,25 @@ public:
   Lattice_2() { }
 
   Lattice_2(const Vector& v0, const Vector& v1, const K& k = K())
-    : _basis(CGAL::make_array(v0, v1)), _k(k)
+    : _origin(CGAL::ORIGIN), _basis(CGAL::make_array(v0, v1)), _k(k)
   {
     initialize();
   }
 
   Lattice_2(const Basis& basis, const K& k = K())
-    : _basis(basis), _k(k)
+    : _origin(CGAL::ORIGIN), _basis(basis), _k(k)
+  {
+    initialize();
+  }
+
+  Lattice_2(const Point& origin, const Vector& v0, const Vector& v1, const K& k = K())
+    : _origin(origin), _basis(CGAL::make_array(v0, v1)), _k(k)
+  {
+    initialize();
+  }
+
+  Lattice_2(const Point& origin, const Basis& basis, const K& k = K())
+    : _origin(origin), _basis(basis), _k(k)
   {
     initialize();
   }
@@ -144,7 +156,7 @@ public:
     for(int i=0; i<3; ++i)
     {
       const Vector& vfn = _Vfn[i];
-      const Vector ptv(CGAL::ORIGIN, p);
+      const Vector ptv(_origin, p);
 
       const FT sp = FT(2) * _k.compute_scalar_product_2_object()(ptv, vfn) /
                               _k.compute_scalar_product_2_object()(vfn, vfn);
@@ -166,7 +178,7 @@ public:
     while(vfn_pos < 3)
     {
       const Vector& vfn = _Vfn[vfn_pos];
-      const Vector ptv(CGAL::ORIGIN, cp);
+      const Vector ptv(_origin, cp);
 
       const FT sp = _k.compute_scalar_product_2_object()(ptv, vfn) /
                       _k.compute_scalar_product_2_object()(vfn, vfn);
@@ -213,9 +225,10 @@ public:
   }};
 
 private:
-  FT _systole_sq_length;
+  Point _origin;
   std::array<Vector, 2> _basis;
   std::array<Vector, 3> _Vfn;
+  FT _systole_sq_length;
 
   K _k;
 };
