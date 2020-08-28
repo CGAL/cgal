@@ -195,9 +195,8 @@ public:
   compare_weighted_squared_radius_3_object() const
   { return Compare_weighted_squared_radius_3(); }
 
-
   enum { Has_static_filters = true };
-
+  typedef Boolean_tag<Has_static_filters>           Has_static_filters_tag;
 
   typedef Static_filters_predicates::Compare_y_at_x_2<K_base,Self>          Compare_y_at_x_2;
 

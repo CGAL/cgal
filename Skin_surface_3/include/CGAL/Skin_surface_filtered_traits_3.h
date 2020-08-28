@@ -42,8 +42,10 @@ public:
                              C2E,
                              C2F >  Side_of_mixed_cell_3;
 
-  enum { Has_filtered_predicates=true };
-  enum { Has_static_filters=false };
+  enum { Has_filtered_predicates = true };
+  typedef Boolean_tag<Has_filtered_predicates> Has_filtered_predicates_tag;
+  enum { Has_static_filters = false };
+  typedef Boolean_tag<Has_static_filters> Has_static_filters_tag;
 
   Skin_surface_filtered_traits_3() {}
   Skin_surface_filtered_traits_3(typename Base::FT s) : Base(s) {}
