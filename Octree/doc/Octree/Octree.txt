@@ -17,7 +17,7 @@ Octrees are most useful when implementing algorithms that require nodes without 
 Intersection and nearest-neighbor algorithms should be expected to perform worse than the kD-tree
 but they can be useful if the octree has already been constructed.
 
-\section Section_Octree_Building Building
+\section Section_Octree_Building Building an Octree
 
 Before an octree can be used for anything, the tree itself must be created.
 By default, the constructor returns a tree with a single (root) node that contains all the points.
@@ -77,7 +77,7 @@ For example, for a ratio of 2, a node at depth 2 can hold 4 points, a node at de
 
 \cgalExample{Octree/Octree_build_with_custom_split.cpp}
 
-\section Section_Octree_Traversal Traversal
+\section Section_Octree_Traversal Traversal over an Octree
 
 Traversal is the act of navigating among the nodes of the tree.
 The Octree and Node classes provide a number of different solutions for traversing the tree.
@@ -136,7 +136,7 @@ e.g. I've build a tree and I want to print it out, but layer by layer
 
 !-->
 
-\section Section_Octree_Acceleration Acceleration
+\section Section_Octree_Acceleration Acceleration of Common Tasks
 
 Once an octree is built, its structure can be used to accelerate different tasks.
 
@@ -172,7 +172,9 @@ The tree is printed before and after grading, so that the differences are visibl
 
 \cgalExample{Octree/Octree_grade.cpp}
 
-\section Section_Octree_Performance_Comparison Performance Comparison with kD Tree
+\section Section_Octree_Performance Performance
+
+\subsection Section_Octree_Performance_Comparison Comparison with kD Tree
 
 e.g. When is an octree the right choice?
 
