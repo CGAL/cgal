@@ -354,7 +354,7 @@ namespace CGAL {
        * \pre Both endpoint lie on the given plane.
        */
       X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q,
-                                    const Direction_3& normal)
+                                    const Direction_3& normal);
       /// @} /* end of operations */
     };
 

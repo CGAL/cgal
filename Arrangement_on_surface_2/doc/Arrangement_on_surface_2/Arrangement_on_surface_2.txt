@@ -2633,7 +2633,7 @@ The image of the side is called a <em>contraction point</em>.
 
 The bottom and top sides of the domain (similarly for the left and
 right sides) are <em>identified</em>, if
-\f$\phi_S(x,y_{\rm min}) = \phi_S(x,y_{\rm max})\f$ for all
+\f$\phi_S(x,y_{\rm min}) = \phi_S(x, y_{\rm max})\f$ for all
 \f$x \in X \f$. The curve \f$x \mapsto \phi_S(x,y_{\rm min})\f$ is
 called an <em>identification curve</em>.
 
@@ -2758,7 +2758,7 @@ the parameter space being open, closed, constracted, or identified.
 
 At this point only one type of arrangements on non planar surfaces is
 supported, namely, arrangements embedded in the sphere and induced by
-arcs of great circles, aka geodesic arcs.
+arcs of great circles, also known as geodesic arcs.
 \cgalFigureRef{aos_fig-voronoi} shows various Voronoi diagrams the
 bisectors of which are geodesic arcs.  They are represented as
 arrangements induced by geodesic arcs embedded in the sphere.
@@ -2963,7 +2963,7 @@ to the type `Arr_oblivious_side_tag` for the class to be a model of
 the concept `ArrangementBasicTraits_2`.
 
 <!----------------------------------------------------------------------------->
-\subsubsection aos_sssec-geom_traits-concepts_intersecting Intersecting x-Monotone Curves
+\subsubsection aos_sssec-geom_traits-concepts_intersecting Intersectiobs
 <!----------------------------------------------------------------------------->
 
 Constructing an arrangement induced by \f$x\f$-monotone curves that
@@ -3041,7 +3041,7 @@ redundant vertices may be left in the arrangement due to the removal of
 edges.
 
 <!----------------------------------------------------------------------------->
-\subsubsection aos_sssec-geom_traits-concepts_arbitrary Arbitrary Curves
+\subsubsection aos_sssec-geom_traits-concepts_arbitrary Supporting Arbitrary Curves
 <!----------------------------------------------------------------------------->
 
 The concept `ArrangementTraits_2` refines the
@@ -3127,7 +3127,7 @@ Most traits classes model the `ArrangementTraits_2` concept, and some
 also model the `ArrangementLandmarkTraits_2` concept.
 
 <!----------------------------------------------------------------------------->
-\subsubsection aos_ssec-traits-curved Unbounded or Curved Surface Concepts
+\subsubsection aos_ssec-traits-curved Supporting Unbounded Curves or Curved Surfaces
 <!----------------------------------------------------------------------------->
 
 We descend to the bottom level of the hierarchy. The refinements
@@ -4665,97 +4665,148 @@ each; their resulting arrangement is depicted in
 \paragraph arr_sssectr_alg A Traits Class for Planar Algebraic Curves of Arbitrary Degree
 <!----------------------------------------------------------------------------->
 
-An algebraic curve \f$c\f$ in the plane is defined as the (real) zero
-locus of a polynomial \f$f(x,y)\f$ in two variables. The curve is
-uniquely defined by \f$f\f$ (although several polynomials might define
-the same curve).  We call \f$f\f$ a <em>defining polynomial</em> of
+The traits class, namely `Arr_algebraic_segment_traits_2`, is based on
+the `Algebraic_kernel_d_1` class template, which models the
+algebraic-kernel concept `AlgebraicKernel_d_1`; see Section \ref
+arr_sssectr_ratfunc. The traits class handles (i) algebraic curves and
+(ii) continuous (weakly) \f$x\f$-monotone segments of algebraic
+curves, which, however, are not necessarily maximal. (A formal
+definition is given below.)  Observe that non-\f$x\f$-monotone
+segments are not supported. Still, it is the traits class that
+supports the most general type of curves among the traits classes
+included in the package.
+
+Recall that an algebraic curve \f$c\f$ in the plane is defined as the
+(real) zero set of a bivariate polynomial \f$f(x,y)\f$. The curve is
+uniquely defined by \f$f\f$, although several polynomials might define
+the same curve.  We call \f$f\f$ a <em>defining polynomial</em> of
 \f$c\f$.
 
-We consider arrangements induced by algebraic curves or by (weakly)
-\f$x\f$-monotone segments for algebraic curves (Such a segment is not
-necessarily the maximal possible (weakly) x-monotone segment; see
-below.)  When talking about algebraic curves, we use the term
-"segment" for a continuous, possibly non-linear subset of an algebraic
-curve - see the definition below.  There are no restrictions on the
-algebraic curve, that means, we support unbounded curves, vertical
-curves or segments, and isolated points.
+A formal definition of (weakly) \f$x\f$-monotone segments of algebraic
+curves follows. A point \f$p\f$ on a curve \f$c_f \subset \Rtwo\f$
+(with defining polynomial \f$f\f$) is called <em>semi-regular</em> if,
+locally around \f$p\f$, the curve \f$c_f\f$ can be written as a
+function graph of some continuous function in \f$x\f$ or in
+\f$y\f$. (We also say that \f$p\f$ is parameterizable in \f$x\f$ or
+\f$y\f$, respectively.)  The only two cases of non-semi-regular points
+are isolated points and self-intersections. A <em>segment</em> of a
+curve in this context is a closed and continuous point set such that
+each interior point is semi-regular. It follows that a segment is
+either vertical or a closed connected point set, with all interior
+points parameterizable in \f$x\f$.
 
-The `Arr_algebraic_segment_traits_2<Coefficient>` class template
-is a model of the `ArrangementTraits_2` concept (but not of the
-`ArrangementLandmarkTraits_2` concept, so it is impossible
-to use the landmark point-location strategy for arrangements of
-algebraic curves).
-The template argument `Coefficient` determines
-the type of the scalar coefficients of the polynomial.
-Currently supported types are `leda_integer`, `CORE::BigInt`,
-and any instance of `Sqrt_extension<A,B>`
-instantiated with one of the integral types above.
+Every instance of the `Arr_algebraic_segment_traits_2<Coefficient>`
+class template models the `ArrangementTraits_2` and
+`ArrangementOpenBoundaryTraits_2` concepts (but it does not model the
+`ArrangementLandmarkTraits_2` concept).  The template argument
+`Coefficient` determines the type of the scalar coefficients of the
+polynomial.  Currently supported integral number types are `Gmpz`,
+`leda_integer`, and `CORE::BigInt`. This is reflected in the
+statements included in the header file `integer_type.h`, the listings
+of which are omitted here. This header file is used by the two example
+programs listed in this section. The template parameter `Coefficient`
+can be substituted in addition with an instance of the
+`Sqrt_extension<A,B>` class template, where the template parameters
+`NT` and `Root` are substituted in turn with one of the integral
+number types above. Finally, the template parameter `Coefficient` can
+be substituted also with a rational number type, where the type of the
+numerator and denominator is one of the types above.
 
-The traits class defines a type `Curve_2` for algebraic curves.
-Such a type can be constructed by the `Construct_curve_2` functor,
-which accepts an instance of `Polynomial_2` as an argument.
-This polynomial type is also available by the traits class
-and constitutes a valid model
-of the concept `Polynomial_d` with two variables (see ??).
+The type `Curve_2` nested in the `Arr_algebraic_segment_traits_2`
+class template defines an algebraic curve. An object of this type can
+be constructed by the `Construct_curve_2` functor also nested in the
+class template. Its function operator accepts as an argument an object
+of type `Polynomial_2`, nested as well in the traits class-template.
+The type `Polynomial_2` models the concept `Polynomial_d`. An object
+of the nested type `Polynomial_2` represents a bivariate
+polynomial. It can be constructed in a few convenient ways, some are
+exemplified by the programs listed below. Consult the reference guide
+for the complete set of options.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{arr_figex_alg_curves,algebraic_curves.png}
-An arrangement of algebraic curves of degrees \f$1\f$, \f$ 2\f$,
+An arrangement of algebraic curves of degrees \f$1\f$, \f$2\f$,
 \f$3\f$, and \f$6\f$, as constructed in `algebraic_curves.cpp`.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
-The following examples computes the arrangement induced by the four curves
-in \cgalFigureRef{arr_figex_alg_curves}
+The following examples computes the arrangement depicted in in
+\cgalFigureRef{arr_figex_alg_curves}. The arrangement is induced by
+four algebraic curves, \f$c_1\f$, \f$c_2\f$, \f$c_3\f$, and \f$c_4\f$,
+of degrees $1$, $2$, $3$, and $6$, respectively. For each curve the
+defining polynomial is constructed first. Then, the algebraic curve is
+constructed using the `Construct_curve_2` functor.  Finally, the curve
+is inserted into the arrangement.
 
 \cgalExample{Arrangement_on_surface_2/algebraic_curves.cpp}
 
-We first give a precise definition of segments of algebraic curves.  A
-point \f$p\f$ on a curve \f$c_f\subset\mathbb{R}^2\f$ (with \f$f\f$
-its defining equation) is called <em>semi-regular</em>, if locally
-around \f$p\f$, \f$ C_f\f$ can be written as a function graph of some
-continuous function in \f$x\f$ or in \f$ y\f$ (we also say that \f$
-p\f$ is parameterizable in \f$x\f$ or \f$y\f$, respectively).  The
-only two cases of non-semi-regular points are isolated points, and
-self-intersections.  A <em>segment</em> of a curve is a closed and
-continuous point set such that each interior point is semi-regular.
-It follows that a weakly \f$ x\f$-monotone segment is either a
-completely vertical segment, or a segment whose interior points are
-all parameterizable in \f$x\f$.
+The `Arr_algebraic_segment_traits_2` class template carries state to
+expedite some of its computations. Thus, it is essential to have only
+one copy of the traits object during the life time of a program that
+utilizes this traits class. To this end, the example above uses the
+constructor of the `Arrangement_2` data structure that accepts the traits
+object as input. Carrying state is not a unique property of the
+`Arr_algebraic_segment_traits_2` class template; it is common to many
+traits classes, especially to traits classes that handle algebraic
+curves.  Therefore, as a general rule, if your application requires
+direct access to a traits object, define it locally, and pass it to
+the constructor of the `Arrangement_2` data structure to avoid the
+construction of a duplicate traits-class object.
 
-The traits class allows to construct weakly \f$x\f$-monotone segments
-of a curve using the `Construct_x_monotone_segment_2` functor.  The
-`X_monotone_curve_2` type of the traits class represents weakly
-\f$x\f$-monotone segments of a curve; however, segments may need to be
-further subdivided into several (sub-)segments, for technical
-reasons. Therefore, `Construct_x_monotone_segment_2` constructs a
-sequence of `X_monotone_curve_2` objects, whose union represents the
-weakly \f$x\f$-monotone segment that was queried.  We call a segment
-<em>terminal</em> if it can be represented by the type
-`X_monotone_curve_2`.
+A weakly \f$x\f$-monotone segment of an algebraic curve is represented
+by the `X_monotone_curve_2` type nested in the traits
+class-template. You can construct such segments in two ways as
+follows: (i) using the `Make_x_monotone_2` functor or (ii) using the
+`Construct_x_monotone_segment_2` functor.  Both functors are nested in
+the traits class-template. The former is required by the concept
+`ArrangementTraits_2` our traits class models; see Section \ref
+aos_sssec-geom_traits-concepts_arbitrary. The latter enables the
+construction of individual segments. The `X_monotone_curve_2` type
+represents weakly \f$x\f$-monotone segments of a curve; however, for
+technical reasons, segments may need to be further subdivided into
+several sub-segments, called terminal segments. Therefore,
+`Construct_x_monotone_segment_2` constructs a sequence of
+`X_monotone_curve_2` objects, whose union represents the desired
+weakly $x$-monotone segment. The function operator of the
+`Construct_x_monotone_segment_2` functor accepts as arguments the
+underlying algebraic curve, the leftmost point of the segment, the
+rightmost point of the segment, and an output iterator associated with
+a container of output terminal segments. The function operator is
+overloaded. In addition to the variant above, there is one that
+accepts the underlying algebraic curve, a single point $p$, an
+enumerator that delimits the segment, and an output iterator. It
+returns the maximal \f$x\f$-monotone segment that contains
+\f$p\f$. The enumerator specifies whether \f$p\f$ is interior to the
+returned segment, its left endpoint, or its right endpoint. The third
+variant accepts only two delimiting points and an output iterator. It
+constructs line segments.
 
 \cgalAdvancedBegin
-The subdivision of segments is due to the internal representation of
-\f$x\f$-monotone segments, which is based on a vertical decomposition.
-We assume the defining polynomial \f$f\f$ of the curve \f$c\f$ to be
-<em>square-free</em>, that means, it contains no divisor \f$g^2\f$ of
-total degree greater than zero. We define a <em>(complex) critical
-point</em> \f$p\in\mathbb{C}^2\f$ by \f[ f(p)=0=\frac{\partial
-f}{\partial y}(p). \f] An \f$x\f$-coordinate \f$\alpha\in\mathbb{R}\f$
-is <em>critical</em> if either some critical point has
-\f$x\f$-coordinate \f$\alpha\f$, or if the leading coefficient of
-\f$f\f$, considered as a polynomial in \f$y\f$, vanishes. In
-particular, vertical lines of and isolated point of \f$c\f$ can only
-take place at critical \f$x\f$-coordinates.  Between two consecutive
-critical \f$x\f$-coordinates, the curve decomposes into a finite
-number of \f$x\f$-monotone segments (the same is true on the left of
-the leftmost, and on the right of the rightmost critical
-\f$x\f$-coordinate).  The type `X_monotone_curve_2` is only able to
-represent such segments (and sub-segments of them). See
+The subdivision terminal segments is due to the internal
+representation of \f$x\f$-monotone segments, which is based on a
+vertical decomposition.  We assume the defining polynomial \f$f\f$ of
+the curve \f$c\f$ to be <em>square-free</em>. That is, it contains no
+divisor \f$g^2\f$ of total degree greater than zero. We define a
+<em>(complex) critical point</em> \f$p\in\mathbb{C}^2\f$ by \f[
+f(p)=0=\frac{\partial f}{\partial y}(p). \f] An \f$x\f$-coordinate
+\f$\alpha\in\mathbb{R}\f$ is <em>critical</em> either if some critical
+point has \f$x\f$-coordinate \f$\alpha\f$, or if the leading
+coefficient of \f$f\f$, considered as a polynomial in \f$y\f$,
+vanishes. In particular, vertical lines and isolated points of \f$c\f$
+can only take place at critical \f$x\f$-coordinates.  Between two
+consecutive critical \f$x\f$-coordinates the curve decomposes into a
+finite number of \f$x\f$-monotone segments (the same holds to the left
+of the leftmost, and to the right of the rightmost critical
+\f$x\f$-coordinate).  The type `X_monotone_curve_2` is only capable of
+representing such segments (and sub-segments of them). Formally, a
+terminal segment is either a vertical line-segment or a segment of an
+\f$x\f$-monotone curve whose \f$x\f$-range does not contain critical
+points in its interior. See
 \cgalFigureRef{arr_figcylindrical_decomposition} for an example of a
-decomposition into terminal segments. Formally, a terminal segment is
-a weakly \f$x\f$-monotone segment that is either vertical, or its
-\f$x\f$-range contains no critical point in its interior.
+quartic curve and its decomposition into terminal segments.  Notice
+that six vertices split the curve into \f$x\f$-monotone segments, and
+four additional vertices further split the corresponding
+\f$x\f$-monotone segments into terminal segments.
 \cgalAdvancedEnd
 
 <!----------------------------------------------------------------------------->
@@ -4768,83 +4819,108 @@ of three terminal segments.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
-Coordinates of points are represented by the type `Algebraic_real_1`,
-which is defined in the traits class.  This type is taken from a model
-of the `AlgebraicKernel_1` concept, which is also available by the
-type `Algebraic_kernel_1`.  One can use this model to create algebraic
-numbers as roots of univariate polynomials, and process them, for
-instance, compare them, or approximate them to any precision. See the
-documentation of `AlgebraicKernel_1` for more information.  One can
-construct an object of type `%Point_2` by a triple \f$(x_0,c,i)\f$,
-which means that the \f$i\f$-th point (counted from below) in the
-fiber of \f$c\f$ at the \f$x\f$-coordinate \f$x_0\f$ is constructed.
-This is also how points are presented internally.  In the example
-displayed in \cgalFigureRef{arr_figcylindrical_decomposition}, if
-\f$x_1\f$ denotes the \f$x\f$-coordinate of \f$p\f$, and \f$c\f$
-represents the algebraic curve, then \f$p\f$ could be represented by
+The type `Algebraic_real_1` must be defined by any model of the
+`AlgebraicKernel_d_1` concept. The traits class-template
+`Arr_algebraic_segment_traits_2` exploits an instance of the
+`Algebraic_kernel_d_1` class template, which models the concept
+`AlgebraicKernel_d_1`. The exploited instance is nested in the traits
+class-template. You can use this model to create algebraic numbers as
+roots of univariate polynomials, and process them, for instance,
+compare them or approximate them to any precision. See the
+documentation of the concept `AlgebraicKernel_1` for more information.
+Coordinates of points are represented by the type `Algebraic_real_1`
+nested in the traits class-template. This type is defined as the
+corresponding type nested in the instance of `Algebraic_kernel_d_1`.
+
+You can construct an object of type `Point_2` using the
+`Construct_point_2` functor nested in the traits class-template. Its
+function operator is overloaded with a couple of variants that accepts
+the \f$x\f$ and \f$y\f$ coordinates of the point. Their types must be
+either `Algebraic_real_1` or `Coefficient`. Another efficient variant
+accepts a triple \f$(x_0,c,i)\f$, which identifies the \f$i\f$-th
+point (counted from below) in the fiber of \f$c\f$ at the
+\f$x\f$-coordinate \f$x_0\f$. \cgalFootnote{The fiber of a curve
+\f$c\f$ at some $x$-coordinate \f$x'\f$ is the set of all points on
+\f$c\f$ with \f$x\f$-coordinate \f$x'\f$.  Formally, for a curve
+\f$c\f$ and \f$x' \in \R\f$, the fiber of \f$c\f$ at \f$x'\f$ is \f$c
+\cap \{(x',b)\,|\,b \in \R\}\f$.} In the example depicted in
+\cgalFigureRef{arr_figcylindrical_decomposition}, if \f$x_1\f$ denotes
+the \f$x\f$-coordinate of \f$p\f$, and \f$c\f$ represents the
+algebraic curve, then \f$p\f$ could be represented by
 \f$(x_1,c,3)\f$. If \f$x_2\f$ is the \f$x\f$-coordinate of \f$q\f$,
-then \f$(x_2,c,1)\f$ is a valid representation of \f$q\f$.  Although
-the \f$y\f$-coordinate of an object of type `%Point_2` can be queried,
-we recommend to be careful with that option, since computing an
-explicit representation of the \f$y\f$-coordinate as an
-`Algebraic_real_1` object can become rather expensive.
+then \f$(x_2,c,1)\f$ is a valid representation of \f$q\f$. Points are
+represented internally using the triple described above. Although the
+\f$y\f$-coordinate of a point represented by an object of the nested
+type `Algebraic_real_1` can be obtained, we advise caution with
+that option, since computing an explicit representation of the
+$y$-coordinate can be rather expensive.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{arr_figex_alg_segments,algebraic_segments.png}
 An arrangement of algebraic segments (solid lines), as constructed in
-`algebraic_segments.cpp`. The supporting curves are drawn in dashed
+`algebraic_segments.cpp`. The supporting curves are drawn as dashed
 lines.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
-The following code exemplifies various methods to construct
-algebraic segments. The computed arrangement is displayed in
-\cgalFigureRef{arr_figex_alg_segments}.
+The following code exemplifies the method to construct points and the
+various methods to construct algebraic segments. The computed
+arrangement is depicted in \cgalFigureRef{arr_figex_alg_segments}.
 
 \cgalExample{Arrangement_on_surface_2/algebraic_segments.cpp}
 
 <!----------------------------------------------------------------------------->
-\subsubsection arr_ssectr_spherical Arcs of Great Circle Embedded in the Sphere
+\subsubsection arr_ssectr_spherical Arcs of Great Circles Embedded in the Sphere
 <!----------------------------------------------------------------------------->
 
-The `Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>` class template
-handles arcs of great circles (also known as geodesic arcs) that lie
-on the unit sphere (centered at the origin). It is a model of the
+A great circle of a sphere is the intersection of the sphere and a
+plane that passes through the center point of the sphere. For all
+pairs of distinct points on the sphere except for antipodal points,
+there is a unique great circle through the two points. There are
+infinitely many great circles through antipodal points. The minor arc
+of a great circle between two points is the shortest spherical-path
+between them. In this sense, the minor arc is analogous to line
+segments in Euclidean geometry.
+
+The `Arr_geodesic_arc_on_sphere_traits_2<Kernel,X,Y>` class template
+handles arcs of great circles (also known as geodesic arcs) of a unit
+sphere (centered at the origin in \f$R^3\f$). It is a model of the
 concept `ArrangementSphericalBoundaryTraits_2`; see Section \ref
 aos_ssec-traits-curved. An arrangement type (an instance of the
 template `Arrangement_on_surface_2<GeomTraits, TopolTraits>`) that
 uses an instance of this traits class as the geometry traits must use
 a matching topology traits.  Currently, this package provides one
 template, namely, `Arr_spherical_topology_traits_2<GeometryTraits_2,
-Dcel> an instance of which` can be used as the topology traits.
+Dcel>` an instance of which can be used as the topology traits.
 
 The unit sphere is defined over a parameter space \f$\Phi =
-[\alpha,2\pi+\alpha] \times [-\frac{\pi}{2}, \frac{\pi}{2}]\f$, where
-\f$\alpha = \arctan(X, Y)\f$. By deafult, \f$X = -1, Y = 0\f$, which
-implies \f$\alpha = \pi\f$, and a default parameterization \f$\Phi =
-[-\pi, \pi] \times [-\frac{\pi}{2}, \frac{\pi}{2}]\f$. The equator
-curve, for example, is given by \f$\gamma(t) = (\pi(2t - 1) + \alpha,
-0)\f$, for \f$t \in [0,1]\f$. The surface is given by \f$\phi_S(x,y) =
-(\cos x \cos y, \sin x \cos y, \sin y)\f$; see Section \ref
-aos_sec-curved_surfaces for more details. Naturally, the explicit
-expression for the surface above is not used at all in the
-implementation the traits. Indeed, all the required geometric
-operations listed in the traits concept are implemented using only
-rational arithmetic. This parameterization induces two contraction
-points \f$(0,0,-1) = \phi_S(y,-\frac{\pi}{2})\f$ and \f$(0,0,1) =
-\phi_S(y,\frac{\pi}{2})\f$, referred to as the south and north poles,
-respectively, and an identification curve \f$\{\phi_S(\pi +
-\alpha,x)\,|\,-\frac{\pi}{2} \leq v \leq \frac{\pi}{2}\}\f$, as
-\f$\phi_S(-\pi + \alpha,v) = \phi_S(+\pi + \alpha,v)\f$ for all
-\f$x\f$ (which coincides with the opposite Prime (Greenwich) Meridian
-when \f$\alpha = \pi\f$).  In other words, the left and right boundary
+[\tau,2\pi+\tau] \times [-\frac{\pi}{2}, \frac{\pi}{2}]\f$, where
+\f$\tau = \arctan(X, Y)\f$. By default, \f$X = -1, Y = 0\f$, which
+implies \f$\tau = -\pi\f$, which implies a default parameterization
+\f$\Phi = [-\pi, \pi] \times [-\frac{\pi}{2}, \frac{\pi}{2}]\f$. The
+equator curve, for example, is given by \f$\gamma(t) = (2t\pi + \tau,
+0)\f$, for \f$t \in [0,1]\f$. The surface is given by
+\f$\phi_S(\alpha,\beta) = (\cos \alpha \cos \beta, \sin \alpha \cos
+\beta, \sin \beta)\f$; see Section \ref aos_sec-curved_surfaces for
+more details. This parameterization induces two contraction points
+\f$(0,0,-1) = \phi_S(\alpha,-\frac{\pi}{2})\f$ and \f$(0,0,1) =
+\phi_S(\alpha,\frac{\pi}{2})\f$, for all \f$\alpha\f$, referred to as
+the south and north poles, respectively, and an identification curve
+\f$\{\phi_S(\alpha,\beta)\,|\,-\frac{\pi}{2} \leq \beta \leq
+\frac{\pi}{2}\}\f$, as \f$\phi_S(\alpha,\beta) = \phi_S(2\pi +
+\tau,\beta)\f$ for all \f$\beta\f$. When \f$\tau = -\pi\f$) (the
+default), the identification curve coincides with the opposite Prime
+(Greenwich) Meridian. In other words, the left and right boundary
 sides of the parameter space are identified and the top and bottom
-boundary sides are contracted.  The elements that substitutes the
+boundary sides are contracted.  The arguments that substitute the
 template parameters `X` and `Y` when
 `Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>` is instantiated
-must be integral values that define a not necessarily normalized
+must be integral values that define a not-necessarily normalized
 vector \f$(x,y)\f$ in the \f$xy\f$-plane that bisects the
-identification curve.
+identification curve. The explicit expression for the surface above is
+not used at all in the implementation of the traits. Indeed, all the
+required geometric operations listed in the traits concept are
+implemented using only rational arithmetic.
 
 The following example constructs an arrangement induced by 12 arcs of
 great circles embedded in the sphere. The arrangement is depicted in

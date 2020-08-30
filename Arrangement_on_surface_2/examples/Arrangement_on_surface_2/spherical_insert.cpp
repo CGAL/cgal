@@ -1,5 +1,5 @@
 //! \file examples/Arrangement_on_surface_2/spherical_insert.cpp
-// Using the global aggregated insertion functions.
+// Constructing an arrangement of arcs of great circles.
 
 #include <vector>
 #include <list>
