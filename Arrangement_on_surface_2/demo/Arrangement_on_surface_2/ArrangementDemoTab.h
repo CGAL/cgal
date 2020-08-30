@@ -36,9 +36,15 @@ class ArrangementGraphicsItemBase;
 class Callback;
 class ArrangementGraphicsItemBase;
 class GraphicsViewCurveInputBase;
+class GraphicsViewNavigation;
 enum class CurveType;
 } // namespace Qt
 } // namespace CGAL
+
+namespace demo_types
+{
+enum class TraitsType;
+}
 
 class ArrangementDemoTabBase : public QWidget, public GraphicsSceneMixin
 {
@@ -51,9 +57,11 @@ public:
   ArrangementDemoTabBase( QWidget* parent );
   virtual ~ArrangementDemoTabBase( );
 
-  QGraphicsView* getView() const;
   virtual CGAL::Object getArrangement() const = 0;
   virtual void adjustViewport() = 0;
+  virtual demo_types::TraitsType traitsType() const = 0;
+
+  QGraphicsView* getView() const;
   void showGrid(bool);
   bool isGridVisible();
   void setSnapToGrid(bool);
@@ -61,16 +69,18 @@ public:
   bool isSnapToGridEnabled();
   bool isSnapToArrangementEnabled();
 
-  CGAL::Qt::ArrangementGraphicsItemBase* getArrangementGraphicsItem() const;
-  GridGraphicsItem* getGridGraphicsItem() const;
-  CGAL::Qt::GraphicsViewCurveInputBase* getCurveInputCallback() const;
-  CGAL::Qt::Callback* getDeleteCurveCallback() const;
-  CGAL::Qt::Callback* getPointLocationCallback() const;
-  VerticalRayShootCallbackBase* getVerticalRayShootCallback() const;
-  CGAL::Qt::Callback* getMergeEdgeCallback() const;
-  SplitEdgeCallbackBase* getSplitEdgeCallback() const;
-  EnvelopeCallbackBase* getEnvelopeCallback() const;
-  FillFaceCallbackBase* getFillFaceCallback() const;
+  auto getArrangementGraphicsItem() const
+    -> CGAL::Qt::ArrangementGraphicsItemBase*;
+  auto getGridGraphicsItem() const -> GridGraphicsItem*;
+  auto getCurveInputCallback() const -> CGAL::Qt::GraphicsViewCurveInputBase*;
+  auto getDeleteCurveCallback() const -> CGAL::Qt::Callback*;
+  auto getPointLocationCallback() const -> CGAL::Qt::Callback*;
+  auto getVerticalRayShootCallback() const -> VerticalRayShootCallbackBase*;
+  auto getMergeEdgeCallback() const -> CGAL::Qt::Callback*;
+  auto getSplitEdgeCallback() const -> SplitEdgeCallbackBase*;
+  auto getEnvelopeCallback() const -> EnvelopeCallbackBase*;
+  auto getFillFaceCallback() const -> FillFaceCallbackBase*;
+  auto getGraphicsViewNavigation() const -> CGAL::Qt::GraphicsViewNavigation*;
 
   void activateCurveInputCallback(CGAL::Qt::CurveType);
   void activateDeleteCurveCallback();
@@ -106,6 +116,7 @@ protected:
   std::unique_ptr<EnvelopeCallbackBase> envelopeCallback;
   std::unique_ptr<FillFaceCallbackBase> fillFaceCallback;
   std::unique_ptr<PointSnapperBase> snapper;
+  std::unique_ptr<CGAL::Qt::GraphicsViewNavigation> navigation;
 
   CGAL::Qt::Callback* activeCallback;
   CGAL::Qt::ArrangementGraphicsItemBase* arrangementGraphicsItem;
@@ -125,6 +136,7 @@ public:
   ~ArrangementDemoTab();
   void adjustViewport() override;
   CGAL::Object getArrangement() const override;
+  demo_types::TraitsType traitsType() const override;
 
 private:
   void initArrangement();

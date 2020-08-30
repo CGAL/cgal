@@ -10,6 +10,7 @@
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
 #include "ArrangementTypes.h"
+#include "ArrangementTypesUtils.h"
 #include "ArrangementDemoTab.h"
 #include "ArrangementGraphicsItem.h"
 #include "ArrangementDemoGraphicsView.h"
@@ -25,6 +26,8 @@
 #include "PointSnapper.h"
 #include "ConstructBoundingBox.h"
 
+#include <CGAL/Qt/GraphicsViewNavigation.h>
+
 #include <QGridLayout>
 
 static constexpr double MAX_WIDTH =
@@ -35,14 +38,7 @@ ArrangementDemoTabBase::ArrangementDemoTabBase( QWidget* parent ) :
   GraphicsSceneMixin( new QGraphicsScene() ),
   graphicsView( new ArrangementDemoGraphicsView( this ) ),
   layout( new QGridLayout( this ) ),
-  curveInputCallback( nullptr ),
-  deleteCurveCallback( nullptr ),
-  pointLocationCallback( nullptr ),
-  verticalRayShootCallback( nullptr ),
-  mergeEdgeCallback( nullptr ),
-  splitEdgeCallback( nullptr ),
-  envelopeCallback( nullptr ),
-  fillFaceCallback( nullptr ),
+  navigation( std::make_unique<CGAL::Qt::GraphicsViewNavigation>() ),
   activeCallback( nullptr ),
   arrangementGraphicsItem( nullptr ),
   gridGraphicsItem( nullptr )
@@ -65,6 +61,8 @@ void ArrangementDemoTabBase::setupUi( )
   double xymin = -MAX_WIDTH / 2;
   double wh = MAX_WIDTH;
   scene->setSceneRect(xymin, xymin, wh, wh);
+
+  this->getView()->installEventFilter(this->navigation.get());
 }
 
 QGraphicsView* ArrangementDemoTabBase::getView() const
@@ -153,6 +151,12 @@ EnvelopeCallbackBase* ArrangementDemoTabBase::getEnvelopeCallback( ) const
 FillFaceCallbackBase* ArrangementDemoTabBase::getFillFaceCallback( ) const
 {
   return this->fillFaceCallback.get();
+}
+
+CGAL::Qt::GraphicsViewNavigation*
+ArrangementDemoTabBase::getGraphicsViewNavigation() const
+{
+  return this->navigation.get();
 }
 
 void ArrangementDemoTabBase::activateCurveInputCallback(CGAL::Qt::CurveType type)
@@ -260,6 +264,12 @@ ArrangementDemoTab<Arr_>::ArrangementDemoTab(
   if (!this->arrangement) this->initArrangement();
   this->initComponents();
   this->setupCallbacks();
+}
+
+template <class Arr_>
+demo_types::TraitsType ArrangementDemoTab<Arr_>::traitsType() const
+{
+  return demo_types::enumFromArrType<Arrangement>();
 }
 
 template <class Arr_>

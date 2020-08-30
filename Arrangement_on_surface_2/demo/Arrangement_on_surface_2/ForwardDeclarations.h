@@ -43,7 +43,6 @@ struct Arr_identified_side_tag;
 template <typename T>
 class Rational_traits;
 
-
 } // namespace CGAL
 
 #endif

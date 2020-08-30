@@ -27,6 +27,7 @@
 #include "FillFaceCallback.h"
 #include "GridGraphicsItem.h"
 #include "ArrangementTypes.h"
+#include "ArrangementTypesUtils.h"
 #include "Conic_reader.h"
 
 #include <QActionGroup>
@@ -44,6 +45,7 @@
 
 #include "ui_ArrangementDemoWindow.h"
 
+using TraitsType = demo_types::TraitsType;
 
 ArrangementDemoWindow::ArrangementDemoWindow(QWidget* parent) :
     CGAL::Qt::DemosMainWindow(parent), ui(new Ui::ArrangementDemoWindow),
@@ -59,7 +61,7 @@ ArrangementDemoWindow::ArrangementDemoWindow(QWidget* parent) :
     this->envelopeGroup, SIGNAL(triggered(QAction*)), this,
     SLOT(updateEnvelope(QAction*)));
 
-  this->makeTab(SEGMENT_TRAITS);
+  this->makeTab(TraitsType::SEGMENT_TRAITS);
 
   // Call inherited functions
   this->setupStatusBar();
@@ -102,97 +104,22 @@ void ArrangementDemoWindow::setupUi()
   this->inputTypeGroup->addAction(this->ui->actionBezier);
 }
 
-template <class T>
-struct TypeHolder
-{
-  using type = T;
-};
-
-template <typename T>
-static constexpr ArrangementDemoWindow::TraitsType traitFromType()
-{
-  using TraitsType = ArrangementDemoWindow::TraitsType;
-  using namespace std;
-  using namespace demo_types;
-
-  if (is_same<T, Seg_arr>::value) return TraitsType::SEGMENT_TRAITS;
-  else if (is_same<T, Pol_arr>::value) return TraitsType::POLYLINE_TRAITS;
-  else if (is_same<T, Lin_arr>::value) return TraitsType::LINEAR_TRAITS;
-#ifdef CGAL_USE_CORE
-  else if (is_same<T, Conic_arr>::value) return TraitsType::CONIC_TRAITS;
-  else if (is_same<T, Alg_seg_arr>::value) return TraitsType::ALGEBRAIC_TRAITS;
-  else if (is_same<T, Bezier_arr>::value) return TraitsType::BEZIER_TRAITS;
-  else if (is_same<T, Rational_arr>::value) return TraitsType::RATIONAL_FUNCTION_TRAITS;
-#endif
-  else return TraitsType::NONE;
-}
-
-template <class Lambda>
-static void
-visitArrangementType(ArrangementDemoWindow::TraitsType tt, Lambda lambda)
-{
-  using TraitsType = ArrangementDemoWindow::TraitsType;
-  using namespace demo_types;
-
-  switch (tt)
-  {
-  default:
-  case TraitsType::SEGMENT_TRAITS:
-    lambda(TypeHolder<Seg_arr>{});
-    break;
-  case TraitsType::POLYLINE_TRAITS:
-    lambda(TypeHolder<Pol_arr>{});
-    break;
-  case TraitsType::LINEAR_TRAITS:
-    lambda(TypeHolder<Lin_arr>{});
-    break;
-#ifdef CGAL_USE_CORE
-  case TraitsType::CONIC_TRAITS:
-    lambda(TypeHolder<Conic_arr>{});
-    break;
-  case TraitsType::ALGEBRAIC_TRAITS:
-    lambda(TypeHolder<Alg_seg_arr>{});
-    break;
-  case TraitsType::BEZIER_TRAITS:
-    lambda(TypeHolder<Bezier_arr>{});
-    break;
-  case TraitsType::RATIONAL_FUNCTION_TRAITS:
-    lambda(TypeHolder<Rational_arr>{});
-    break;
-#endif
-  }
-}
-
-template <class Lambda>
-static void forEachArrangementType(Lambda lambda)
-{
-  using namespace demo_types;
-
-  lambda(TypeHolder<Seg_arr>{});
-  lambda(TypeHolder<Pol_arr>{});
-  lambda(TypeHolder<Lin_arr>{});
-#ifdef CGAL_USE_CORE
-  lambda(TypeHolder<Conic_arr>{});
-  lambda(TypeHolder<Alg_seg_arr>{});
-  lambda(TypeHolder<Bezier_arr>{});
-  lambda(TypeHolder<Rational_arr>{});
-#endif
-}
-
 QString ArrangementDemoWindow::makeTabLabel(TraitsType tt)
 {
   static const char* typeNames[] = {
     "Segment", "Polyline", "Linear", "Conic", "Algebraic",
     "Bezier",  "Rational Functions"
   };
-  return QString("%1 - %2").arg(this->tabLabelCounter++).arg(typeNames[tt]);
+  return QString("%1 - %2")
+    .arg(this->tabLabelCounter++)
+    .arg(typeNames[static_cast<int>(tt)]);
 }
 
 ArrangementDemoTabBase* ArrangementDemoWindow::makeTab(TraitsType tt)
 {
   ArrangementDemoTabBase* demoTab;
   QString tabLabel = makeTabLabel(tt);
-  visitArrangementType(tt, [&](auto type_holder) {
+  demo_types::visitArrangementType(tt, [&](auto type_holder) {
     demoTab =
       new ArrangementDemoTab<typename decltype(type_holder)::type>(this);
   });
@@ -203,13 +130,16 @@ ArrangementDemoTabBase* ArrangementDemoWindow::makeTab(TraitsType tt)
 void ArrangementDemoWindow::addTab(
   ArrangementDemoTabBase* demoTab, QString tabLabel, TraitsType tt)
 {
-  this->tabs.push_back({demoTab, tt});
+  this->tabs.push_back(demoTab);
 
   this->ui->tabWidget->addTab(demoTab, tabLabel);
   this->ui->tabWidget->setCurrentWidget(demoTab);
-  // TODO: This causes memory leak because of the existence of multiple tabs
-  // fix it
-  this->addNavigation(demoTab->getView());
+
+  // avoid using addNavigation since it will cause memory leaks when there are
+  // multiple tabs (no way to delete the navigation item!)
+  QObject::connect(
+    demoTab->getGraphicsViewNavigation(), SIGNAL(mouseCoordinates(QString)),
+    xycoord, SLOT(setText(QString)));
 }
 
 void ArrangementDemoWindow::resetActionGroups(
@@ -227,12 +157,14 @@ void ArrangementDemoWindow::resetActionGroups(
   this->ui->actionLowerEnvelope->setChecked(tab->isLowerEnvelopeShown());
   this->ui->actionUpperEnvelope->setChecked(tab->isUpperEnvelopeShown());
 
-  if (tt != SEGMENT_TRAITS && tt != POLYLINE_TRAITS && tt != LINEAR_TRAITS)
+  if (
+    tt != TraitsType::SEGMENT_TRAITS && tt != TraitsType::POLYLINE_TRAITS &&
+    tt != TraitsType::LINEAR_TRAITS)
     this->ui->actionArrangementSnapMode->setVisible(false);
   else
     this->ui->actionArrangementSnapMode->setVisible(true);
 
-  if (tt == RATIONAL_FUNCTION_TRAITS)
+  if (tt == TraitsType::RATIONAL_FUNCTION_TRAITS)
     this->ui->actionGridSnapMode->setVisible(false);
 
   // default action group is scrolling
@@ -250,7 +182,7 @@ void ArrangementDemoWindow::resetCallbackState(ArrangementDemoTabBase* tab)
 
 void ArrangementDemoWindow::updateEnvelope(QAction* newMode)
 {
-  auto currentTab = this->getCurrentTab().first;
+  auto currentTab = this->getCurrentTab();
   if (!currentTab) return;
 
   bool show = newMode->isChecked();
@@ -286,47 +218,46 @@ void ArrangementDemoWindow::hideInsertMethods()
   this->ui->actionBezier->setChecked(false);
 }
 
-void ArrangementDemoWindow::showInsertMethods()
+void ArrangementDemoWindow::showInsertMethods(demo_types::TraitsType tabType)
 {
-  auto tabType = this->getCurrentTab().second;
   switch(tabType)
   {
-  case NONE:
+  case TraitsType::NONE:
     return;
-  case SEGMENT_TRAITS:
+  case TraitsType::SEGMENT_TRAITS:
     this->ui->actionSegment->setVisible(true);
     this->ui->actionSegment->activate(QAction::Trigger);
     break;
-  case POLYLINE_TRAITS:
+  case TraitsType::POLYLINE_TRAITS:
     this->ui->actionPolyline->setVisible(true);
     this->ui->actionPolyline->activate(QAction::Trigger);
     break;
-  case LINEAR_TRAITS:
+  case TraitsType::LINEAR_TRAITS:
     this->ui->actionSegment->setVisible(true);
     this->ui->actionSegment->activate(QAction::Trigger);
     this->ui->actionRay->setVisible(true);
     this->ui->actionLine->setVisible(true);
     break;
 #ifdef CGAL_USE_CORE
-  case CONIC_TRAITS:
+  case TraitsType::CONIC_TRAITS:
     this->ui->actionSegment->setVisible(true);
     this->ui->actionCircle->setVisible(true);
     this->ui->actionEllipse->setVisible(true);
     this->ui->actionConicThreePoint->setVisible(true);
     this->ui->actionConicFivePoint->setVisible(true);
     break;
-  case ALGEBRAIC_TRAITS:
+  case TraitsType::ALGEBRAIC_TRAITS:
     this->ui->actionCircle->setVisible(true);
     this->ui->actionCircle->activate(QAction::Trigger);
     this->ui->actionEllipse->setVisible(true);
     this->ui->actionLine->setVisible(true);
     this->ui->actionAddAlgebraicCurve->setVisible(true);
     break;
-  case BEZIER_TRAITS:
+  case TraitsType::BEZIER_TRAITS:
     this->ui->actionBezier->setVisible(true);
     this->ui->actionBezier->activate(QAction::Trigger);
     break;
-  case RATIONAL_FUNCTION_TRAITS:
+  case TraitsType::RATIONAL_FUNCTION_TRAITS:
     this->ui->actionAddRationalCurve->setVisible(true);
     break;
 #endif
@@ -337,7 +268,7 @@ void ArrangementDemoWindow::showInsertMethods()
 
 void ArrangementDemoWindow::updateInputType(QAction* a)
 {
-  auto tab = this->getCurrentTab().first;
+  auto tab = this->getCurrentTab();
   if (!tab) return;
 
   using namespace CGAL::Qt;
@@ -390,7 +321,7 @@ void ArrangementDemoWindow::on_actionAddAlgebraicCurve_triggered()
       return;
     }
 
-    auto currentTab = this->getCurrentTab().first;
+    auto currentTab = this->getCurrentTab();
     Alg_seg_arr* arr;
     if (!CGAL::assign(arr, currentTab->getArrangement()))
       CGAL_error();
@@ -437,7 +368,7 @@ void ArrangementDemoWindow::on_actionAddRationalCurve_triggered()
       return;
     }
 
-    auto currentTab = this->getCurrentTab().first;
+    auto currentTab = this->getCurrentTab();
     Rational_arr* arr;
     if (!CGAL::assign(arr, currentTab->getArrangement()))
       CGAL_error();
@@ -465,18 +396,16 @@ void ArrangementDemoWindow::on_actionNewTab_triggered()
   if (newTabDialog.exec() == QDialog::Accepted)
   {
     int id = newTabDialog.checkedId();
-    // this assumes that options have the same order as TraitsType
     this->makeTab(static_cast<TraitsType>(id));
   }
 }
 
 void ArrangementDemoWindow::on_tabWidget_currentChanged(int)
 {
-  auto tabPair = this->getCurrentTab();
-  auto currentTab = tabPair.first;
-  auto tt = tabPair.second;
+  auto currentTab = this->getCurrentTab();
   if (currentTab)
   {
+    auto tt = currentTab->traitsType();
     this->resetCallbackState(currentTab);
     this->resetActionGroups(currentTab, tt);
     this->updateFillColorSwatch(currentTab);
@@ -487,11 +416,11 @@ void ArrangementDemoWindow::on_actionInsert_toggled(bool checked)
 {
   this->hideInsertMethods();
 
-  auto currentTab = this->getCurrentTab().first;
+  auto currentTab = this->getCurrentTab();
   if (currentTab)
   {
     if (checked)
-      this->showInsertMethods();
+      this->showInsertMethods(currentTab->traitsType());
     else
       this->resetCallbackState(currentTab);
   }
@@ -499,7 +428,7 @@ void ArrangementDemoWindow::on_actionInsert_toggled(bool checked)
 
 void ArrangementDemoWindow::on_actionDrag_toggled(bool checked)
 {
-  auto currentTab = this->getCurrentTab().first;
+  auto currentTab = this->getCurrentTab();
   if (currentTab)
   {
     // TODO: Move this to DemoTab
@@ -513,21 +442,21 @@ void ArrangementDemoWindow::on_actionDrag_toggled(bool checked)
 
 void ArrangementDemoWindow::on_actionDelete_toggled(bool checked)
 {
-  auto currentTab = this->getCurrentTab().first;
+  auto currentTab = this->getCurrentTab();
   if (currentTab && !checked)
     this->resetCallbackState(currentTab);
 }
 
 void ArrangementDemoWindow::on_actionDelete_triggered()
 {
-  auto currentTab = this->getCurrentTab().first;
+  auto currentTab = this->getCurrentTab();
   if (currentTab)
     currentTab->activateDeleteCurveCallback();
 }
 
 void ArrangementDemoWindow::on_actionPointLocation_toggled(bool checked)
 {
-  auto currentTab = this->getCurrentTab().first;
+  auto currentTab = this->getCurrentTab();
   if (currentTab)
   {
     if (!checked)
@@ -539,7 +468,7 @@ void ArrangementDemoWindow::on_actionPointLocation_toggled(bool checked)
 
 void ArrangementDemoWindow::on_actionRayShootingUp_toggled(bool checked)
 {
-  auto currentTab = this->getCurrentTab().first;
+  auto currentTab = this->getCurrentTab();
   if (currentTab)
   {
     if (!checked)
@@ -551,7 +480,7 @@ void ArrangementDemoWindow::on_actionRayShootingUp_toggled(bool checked)
 
 void ArrangementDemoWindow::on_actionRayShootingDown_toggled(bool checked)
 {
-  auto currentTab = this->getCurrentTab().first;
+  auto currentTab = this->getCurrentTab();
   if (currentTab)
   {
     if (!checked)
@@ -563,7 +492,7 @@ void ArrangementDemoWindow::on_actionRayShootingDown_toggled(bool checked)
 
 void ArrangementDemoWindow::on_actionMerge_toggled(bool checked)
 {
-  auto currentTab = this->getCurrentTab().first;
+  auto currentTab = this->getCurrentTab();
   if (currentTab)
   {
     if (!checked)
@@ -575,7 +504,7 @@ void ArrangementDemoWindow::on_actionMerge_toggled(bool checked)
 
 void ArrangementDemoWindow::on_actionSplit_toggled(bool checked)
 {
-  auto currentTab = this->getCurrentTab().first;
+  auto currentTab = this->getCurrentTab();
   if (currentTab)
   {
     if (!checked)
@@ -587,7 +516,7 @@ void ArrangementDemoWindow::on_actionSplit_toggled(bool checked)
 
 void ArrangementDemoWindow::on_actionFill_toggled(bool checked)
 {
-  auto currentTab = this->getCurrentTab().first;
+  auto currentTab = this->getCurrentTab();
   if (currentTab)
   {
     if (!checked)
@@ -600,7 +529,7 @@ void ArrangementDemoWindow::on_actionFill_toggled(bool checked)
 
 void ArrangementDemoWindow::on_actionShowGrid_toggled(bool checked)
 {
-  auto currentTab = this->getCurrentTab().first;
+  auto currentTab = this->getCurrentTab();
   if (currentTab)
   {
     currentTab->showGrid(checked);
@@ -611,7 +540,7 @@ void ArrangementDemoWindow::on_actionShowGrid_toggled(bool checked)
 
 void ArrangementDemoWindow::on_actionGridSnapMode_toggled(bool checked)
 {
-  auto currentTab = this->getCurrentTab().first;
+  auto currentTab = this->getCurrentTab();
   if (currentTab)
   {
     currentTab->setSnapToGrid(checked);
@@ -622,7 +551,7 @@ void ArrangementDemoWindow::on_actionGridSnapMode_toggled(bool checked)
 
 void ArrangementDemoWindow::on_actionArrangementSnapMode_toggled(bool checked)
 {
-  auto currentTab = this->getCurrentTab().first;
+  auto currentTab = this->getCurrentTab();
   if (currentTab)
   {
     currentTab->setSnapToArrangement(checked);
@@ -631,7 +560,7 @@ void ArrangementDemoWindow::on_actionArrangementSnapMode_toggled(bool checked)
 
 void ArrangementDemoWindow::on_actionCloseTab_triggered()
 {
-  auto currentTab = this->getCurrentTab().first;
+  auto currentTab = this->getCurrentTab();
   if (!currentTab) return;
 
   // delete the tab
@@ -647,7 +576,7 @@ void ArrangementDemoWindow::on_actionCloseTab_triggered()
 
 void ArrangementDemoWindow::on_actionZoomIn_triggered()
 {
-  auto currentTab = this->getCurrentTab().first;
+  auto currentTab = this->getCurrentTab();
   if (currentTab)
   {
     QGraphicsView* view = currentTab->getView();
@@ -657,7 +586,7 @@ void ArrangementDemoWindow::on_actionZoomIn_triggered()
 
 void ArrangementDemoWindow::on_actionZoomOut_triggered()
 {
-  auto currentTab = this->getCurrentTab().first;
+  auto currentTab = this->getCurrentTab();
   if (currentTab)
   {
     QGraphicsView* view = currentTab->getView();
@@ -667,14 +596,14 @@ void ArrangementDemoWindow::on_actionZoomOut_triggered()
 
 void ArrangementDemoWindow::on_actionZoomReset_triggered()
 {
-  auto currentTab = this->getCurrentTab().first;
+  auto currentTab = this->getCurrentTab();
   if (currentTab)
     currentTab->adjustViewport();
 }
 
 void ArrangementDemoWindow::on_actionFillColor_triggered()
 {
-  auto currentTab = this->getCurrentTab().first;
+  auto currentTab = this->getCurrentTab();
   if (!currentTab) return;
 
   FillFaceCallbackBase* fillFaceCallback = currentTab->getFillFaceCallback();
@@ -701,11 +630,10 @@ void ArrangementDemoWindow::updateFillColorSwatch(ArrangementDemoTabBase* tab)
   this->ui->actionFillColor->setIcon(fillColorIcon);
 }
 
-auto ArrangementDemoWindow::getCurrentTab()
-  -> std::pair<ArrangementDemoTabBase*, TraitsType>
+ArrangementDemoTabBase* ArrangementDemoWindow::getCurrentTab()
 {
   int tabIndex = this->ui->tabWidget->currentIndex();
-  if (tabIndex == -1) return {nullptr, NONE};
+  if (tabIndex == -1) return nullptr;
 
   return this->tabs[tabIndex];
 }
@@ -721,7 +649,7 @@ std::vector<QString> ArrangementDemoWindow::getTabLabels() const
 std::vector<CGAL::Object> ArrangementDemoWindow::getArrangements() const
 {
   std::vector<CGAL::Object> res;
-  for (auto& tab : this->tabs) res.push_back(tab.first->getArrangement());
+  for (auto& tab : this->tabs) res.push_back(tab->getArrangement());
   return res;
 }
 
@@ -733,9 +661,9 @@ void ArrangementDemoWindow::on_actionOverlay_triggered()
     std::vector<CGAL::Object> arrs = overlayDialog.selectedArrangements();
     if (arrs.size() == 2)
     {
-      forEachArrangementType([&](auto type_holder) {
+      demo_types::forEachArrangementType([&](auto type_holder) {
         using Arr = typename decltype(type_holder)::type;
-        auto tt = traitFromType<Arr>();
+        auto tt = demo_types::enumFromArrType<Arr>();
 
         Arr* arr;
         Arr* arr2;
@@ -796,15 +724,13 @@ struct ArrWriter
 
 void ArrangementDemoWindow::on_actionSaveAs_triggered()
 {
-  auto tab_tt = this->getCurrentTab();
-  auto currentTab = tab_tt.first;
-  auto tt = tab_tt.second;
-
+  auto currentTab = this->getCurrentTab();
   if (!currentTab)
   {
     QMessageBox::information(this, "Oops", "Create a new tab first");
     return;
   }
+  auto tt = currentTab->traitsType();
 
   QString filename = QFileDialog::getSaveFileName(
     this, tr("Save file"), "", "Arrangement (*.arr)");
@@ -816,7 +742,7 @@ void ArrangementDemoWindow::on_actionSaveAs_triggered()
   // write type info
   ofs << "# " << static_cast<int>(tt) << std::endl;
 
-  visitArrangementType(tt, [&](auto type_holder) {
+  demo_types::visitArrangementType(tt, [&](auto type_holder) {
     using Arr = typename decltype(type_holder)::type;
     Arr* typed_arr;
     if (CGAL::assign(typed_arr, currentTab->getArrangement()))
@@ -846,7 +772,7 @@ void ArrangementDemoWindow::on_actionOpen_triggered()
 struct ArrReader
 {
   template <typename Arr>
-  auto operator()(TypeHolder<Arr>)
+  auto operator()(demo_types::TypeHolder<Arr>)
   {
     using Text_formatter = CGAL::Arr_text_formatter<Arr>;
     using ArrFormatter = CGAL::Arr_with_history_text_formatter<Text_formatter>;
@@ -858,7 +784,7 @@ struct ArrReader
   }
 
 #ifdef CGAL_USE_CORE
-  auto operator()(TypeHolder<demo_types::Conic_arr>)
+  auto operator()(demo_types::TypeHolder<demo_types::Conic_arr>)
   {
     using namespace demo_types;
 
@@ -871,12 +797,12 @@ struct ArrReader
     return arr;
   }
 
-  auto operator()(TypeHolder<demo_types::Bezier_arr>)
+  auto operator()(demo_types::TypeHolder<demo_types::Bezier_arr>)
   {
     return std::make_unique<demo_types::Bezier_arr>();
   }
 
-  auto operator()(TypeHolder<demo_types::Rational_arr>)
+  auto operator()(demo_types::TypeHolder<demo_types::Rational_arr>)
   {
     return std::make_unique<demo_types::Rational_arr>();
   }
@@ -902,7 +828,7 @@ ArrangementDemoTabBase* ArrangementDemoWindow::openArrFile(QString filename)
 
   ArrangementDemoTabBase* createdTab = nullptr;
 
-  visitArrangementType(tt, [&](auto type_holder) {
+  demo_types::visitArrangementType(tt, [&](auto type_holder) {
     auto arr = ArrReader{ifs}(type_holder);
     createdTab = this->makeTab(std::move(arr), this->makeTabLabel(tt), tt);
   });
@@ -912,7 +838,7 @@ ArrangementDemoTabBase* ArrangementDemoWindow::openArrFile(QString filename)
 
 void ArrangementDemoWindow::on_actionPreferences_triggered()
 {
-  auto currentTab = this->getCurrentTab().first;
+  auto currentTab = this->getCurrentTab();
   if (!currentTab) return;
 
   auto agi = currentTab->getArrangementGraphicsItem();

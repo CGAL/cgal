@@ -24,6 +24,15 @@ class ArrangementDemoWindow;
 namespace CGAL
 {
 class Object;
+namespace Qt
+{
+  class GraphicsViewNavigation;
+}
+}
+
+namespace demo_types
+{
+enum class TraitsType;
 }
 
 class ArrangementDemoTabBase;
@@ -34,24 +43,12 @@ class ArrangementDemoWindow : public CGAL::Qt::DemosMainWindow
   Q_OBJECT
 
 public:
-  typedef enum TraitsType
-  {
-    SEGMENT_TRAITS,
-    POLYLINE_TRAITS,
-    LINEAR_TRAITS,
-    CONIC_TRAITS,
-    ALGEBRAIC_TRAITS,
-    BEZIER_TRAITS,
-    RATIONAL_FUNCTION_TRAITS,
-    NONE,
-  } TraitsType;
-
   ArrangementDemoWindow(QWidget* parent = nullptr);
   ~ArrangementDemoWindow();
 
   std::vector<CGAL::Object> getArrangements() const;
   std::vector<QString> getTabLabels() const;
-  std::pair<ArrangementDemoTabBase*, TraitsType> getCurrentTab();
+  ArrangementDemoTabBase* getCurrentTab();
 
 public Q_SLOTS:
   void updateEnvelope(QAction*);
@@ -89,26 +86,26 @@ Q_SIGNALS:
 
 protected:
   void setupUi();
-  ArrangementDemoTabBase* makeTab(TraitsType);
-  void addTab(ArrangementDemoTabBase*, QString, TraitsType);
+  ArrangementDemoTabBase* makeTab(demo_types::TraitsType);
+  void addTab(ArrangementDemoTabBase*, QString, demo_types::TraitsType);
   void resetCallbackState(ArrangementDemoTabBase*);
-  void resetActionGroups(ArrangementDemoTabBase*, TraitsType);
+  void resetActionGroups(ArrangementDemoTabBase*, demo_types::TraitsType);
   void hideInsertMethods();
-  void showInsertMethods();
+  void showInsertMethods(demo_types::TraitsType);
   void updateFillColorSwatch(ArrangementDemoTabBase*);
-  QString makeTabLabel(TraitsType);
+  QString makeTabLabel(demo_types::TraitsType);
   ArrangementDemoTabBase* openArrFile(QString filename);
 
   template <class ArrType>
   ArrangementDemoTabBase*
-  makeTab(std::unique_ptr<ArrType> arr, QString, TraitsType);
+  makeTab(std::unique_ptr<ArrType> arr, QString, demo_types::TraitsType);
 
   template <class ArrType>
-  void makeOverlayTab(ArrType* arr1, ArrType* arr2, TraitsType);
+  void makeOverlayTab(ArrType* arr1, ArrType* arr2, demo_types::TraitsType);
 
 private:
   Ui::ArrangementDemoWindow* ui;
-  std::vector<std::pair<ArrangementDemoTabBase*, TraitsType>> tabs;
+  std::vector<ArrangementDemoTabBase*> tabs;
   QActionGroup* modeGroup;
   QActionGroup* envelopeGroup;
   QActionGroup* inputTypeGroup;

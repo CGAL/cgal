@@ -17,7 +17,6 @@
 //
 // Author(s): Saurabh Singh <ssingh@cs.iitr.ac.in>
 
-#include <CGAL/Arr_algebraic_segment_traits_2.h>
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/polynomial_utils.h>
 
@@ -149,8 +148,14 @@ AlgebraicCurveParser<Polynomial_d>::operator()(const std::string& expression)
 // makes compilation slower
 // template class
 // AlgebraicCurveParser<demo_types::Alg_seg_traits::Polynomial_2>;
+// AlgebraicCurveParser<demo_types::Rational_traits::Polynomial_1>;
+#ifdef CGAL_USE_CORE
+#include <CGAL/Arr_algebraic_segment_traits_2.h>
+#include <CGAL/Algebraic_kernel_d_1.h>
+
 template struct AlgebraicCurveParser<
   CGAL::Arr_algebraic_segment_traits_2<CORE::BigInt>::Polynomial_2>;
 
 template struct AlgebraicCurveParser<
   typename CGAL::Algebraic_kernel_d_1<CORE::BigInt>::Polynomial_1>;
+#endif
