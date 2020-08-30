@@ -6,6 +6,8 @@ RationalCurveInputDialog::RationalCurveInputDialog(QWidget *parent) :
     ui(new Ui::RationalCurveInputDialog)
 {
     ui->setupUi(this);
+    setTabOrder(ui->numeratorLineEdit, ui->denominatorLineEdit);
+    ui->numeratorLineEdit->setFocus();
 }
 
 RationalCurveInputDialog::~RationalCurveInputDialog()

@@ -6,6 +6,7 @@ AlgebraicCurveInputDialog::AlgebraicCurveInputDialog(QWidget *parent) :
     ui(new Ui::AlgebraicCurveInputDialog)
 {
     ui->setupUi(this);
+    ui->lineEdit->setFocus();
 }
 
 AlgebraicCurveInputDialog::~AlgebraicCurveInputDialog()
