@@ -488,8 +488,8 @@ public:
    */
   const Point_range &points() const { return m_points; }
 
-  const typename Point_range::iterator begin() const { return m_points.begin(); }
-  const typename Point_range::iterator end() const { return m_points.end(); }
+  typename Point_range::iterator begin() const { return m_points.begin(); }
+  typename Point_range::iterator end() const { return m_points.end(); }
 
   /*!
    * \brief check whether this node contains any points
