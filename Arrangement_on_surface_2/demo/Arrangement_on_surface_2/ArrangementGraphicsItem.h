@@ -63,9 +63,6 @@ public:
   /*! Constructor */
   ArrangementGraphicsItem( Arrangement* t_ );
 
-  /*! Destructor (virtual) */
-  ~ArrangementGraphicsItem() {}
-
 public:
   void modelChanged() override;
   QRectF boundingRect() const override;
@@ -90,9 +87,6 @@ protected:
 
   template <typename TTraits>
   void paintWithFloodFill(QPainter*, const TTraits*);
-
-  // TODO: Move all the bounding box stuff to a separate class
-  // CurveGraphicsItem would benefit from that as well!
 
   void updateBoundingBox();
 
@@ -156,7 +150,7 @@ protected:
   Arrangement* arr;
   FloodFill flood_fill;
   QImage tempImage;
-  static constexpr int margin = 3;
+  static constexpr int margin = 2;
 }; // class ArrangementGraphicsItem
 
 } // namespace Qt

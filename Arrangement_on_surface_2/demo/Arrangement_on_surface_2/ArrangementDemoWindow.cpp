@@ -164,9 +164,6 @@ void ArrangementDemoWindow::resetActionGroups(
   else
     this->ui->actionArrangementSnapMode->setVisible(true);
 
-  if (tt == TraitsType::RATIONAL_FUNCTION_TRAITS)
-    this->ui->actionGridSnapMode->setVisible(false);
-
   // default action group is scrolling
   this->ui->actionDrag->activate(QAction::Trigger);
 }

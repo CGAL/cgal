@@ -54,25 +54,21 @@ struct PolynomialParser :
         poly, Innermost_leading_coefficient{}(power).intValue());
     };
 
-    // expr = expr or expr
+    // { expr = expr } or { expr }
     start = (expr >> '=' >> expr)[_val = qi::_1 - qi::_2] | expr[_val = qi::_1];
     // addition and subtraction
     expr = term[_val = qi::_1] >>
            *('+' >> term[_val += qi::_1] | '-' >> term[_val -= qi::_1]);
     // multiplication using *, and implied multiplication as in (x+y)(x+y)
-    term = pow_expr[_val = qi::_1] >>
-           *((qi::char_('*') >> pow_expr[_val *= qi::_1]) |
-             pow_expr2[_val *= qi::_1]);
-    // power
-    pow_expr = factor[_val = qi::_1] >>
-               (('^' >> factor2[_val = phx::bind(raise, _val, qi::_1)]) | eps);
-    // to avoid ambiguity in a case like x^2+y
-    // which can be seen as implied multiplication (x^2)*(+y)
-    pow_expr2 = factor2[_val = qi::_1] >>
-                (('^' >> factor2[_val = phx::bind(raise, _val, qi::_1)]) | eps);
+    term =
+      factor[_val = qi::_1] >>
+      *((qi::char_('*') >> factor[_val *= qi::_1]) | pow_expr[_val *= qi::_1]);
     // uniary - and + operators
-    factor = qi::char_('-') >> factor2[_val = -qi::_1] |
-             -qi::char_('+') >> factor2[_val = qi::_1];
+    factor = qi::char_('-') >> pow_expr[_val = -qi::_1] |
+             -qi::char_('+') >> pow_expr[_val = qi::_1];
+    // power
+    pow_expr = factor2[_val = qi::_1] >>
+               (('^' >> factor2[_val = phx::bind(raise, _val, qi::_1)]) | eps);
     // ( expr )
     factor2 = (('(' >> expr >> ')') | factor3)[_val = qi::_1];
     // coefficients and variables
@@ -89,7 +85,6 @@ struct PolynomialParser :
   qi::rule<Iterator, Polynomial_d(), ascii::space_type> expr;
   qi::rule<Iterator, Polynomial_d(), ascii::space_type> term;
   qi::rule<Iterator, Polynomial_d(), ascii::space_type> pow_expr;
-  qi::rule<Iterator, Polynomial_d(), ascii::space_type> pow_expr2;
   qi::rule<Iterator, Polynomial_d(), ascii::space_type> factor;
   qi::rule<Iterator, Polynomial_d(), ascii::space_type> factor2;
   qi::rule<Iterator, Polynomial_d(), ascii::space_type> factor3;

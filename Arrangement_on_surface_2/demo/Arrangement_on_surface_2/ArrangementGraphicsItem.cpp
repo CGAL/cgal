@@ -152,10 +152,10 @@ void ArrangementGraphicsItem<Arr_>::paintWithFloodFill(
   // paint bounded faces normally?
   // by experimenting it's faster to just paint all using the flood algo
   // specially with algebraic faces since currenlty all edges have to
-  // be calculated/rendered again for faces
+  // be recalculated/rendered again for faces
   // this->paintFaces(&painter2);
   this->paintEdges(&painter2, traits);
-  // paint unbounded faces using floodfill
+  // paint remaining faces using floodfill
   this->paintFacesFloodFill(&painter2, tempImage);
 
   auto& painterTransform = painter->transform();

@@ -249,7 +249,55 @@ struct ConstructBoundingBox_impl<
   CGAL::Bbox_2
   operator()(const X_monotone_curve_2& curve)
   {
-    return inf_bbox;
+    double min_x, max_x, min_y, max_y;
+    if (curve.left_parameter_space_in_x() == CGAL::ARR_INTERIOR)
+      min_x = CGAL::to_double(curve.left_x());
+    else
+      min_x = -std::numeric_limits<double>::infinity();
+
+    if (curve.right_parameter_space_in_x() == CGAL::ARR_INTERIOR)
+      max_x = CGAL::to_double(curve.right_x());
+    else
+      max_x = std::numeric_limits<double>::infinity();
+
+    // TODO: this is wrong in the case of ARR_INERIOR left/right y
+    // if it causes any bugs let min_y=-inf and max_y=inf
+    // calculate min and max points of x_monotone_curves for rational functions
+    // the problem is where to store them?
+    // will also be useful for rendering
+    switch (curve.left_parameter_space_in_y())
+    {
+    case CGAL::ARR_INTERIOR:
+      min_y = CGAL::to_double(curve.left().y());
+      break;
+    case CGAL::ARR_TOP_BOUNDARY:
+      min_y = std::numeric_limits<double>::infinity();
+      break;
+    case CGAL::ARR_BOTTOM_BOUNDARY:
+      min_y = -std::numeric_limits<double>::infinity();
+      break;
+    default:
+      CGAL_error();
+    }
+    switch (curve.right_parameter_space_in_y())
+    {
+    case CGAL::ARR_INTERIOR:
+      max_y = CGAL::to_double(curve.right().y());
+      break;
+    case CGAL::ARR_TOP_BOUNDARY:
+      max_y = std::numeric_limits<double>::infinity();
+      break;
+    case CGAL::ARR_BOTTOM_BOUNDARY:
+      max_y = -std::numeric_limits<double>::infinity();
+      break;
+    default:
+      CGAL_error();
+    }
+
+    if (min_y > max_y)
+      std::swap(min_y, max_y);
+
+    return {min_x, min_y, max_x, max_y};
   }
 
   CGAL::Bbox_2
