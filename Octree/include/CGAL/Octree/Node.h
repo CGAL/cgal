@@ -75,7 +75,7 @@ public:
   /*!
    * \brief a collection of point indices represented by begin and end iterators
    */
-  typedef boost::iterator_range <Point_index> Point_range;
+  typedef boost::iterator_range<Point_index> Point_range;
 
   // TODO: Should I use enum classes?
 
@@ -178,7 +178,7 @@ private:
 
   Int_location m_location;
 
-  std::unique_ptr <Children> m_children;
+  std::unique_ptr<Children> m_children;
 
 public:
 
@@ -478,6 +478,9 @@ public:
    * \return a reference to the collection of point indices
    */
   Point_range &points() { return m_points; }
+
+  typename Point_range::iterator begin() { return m_points.begin(); }
+  typename Point_range::iterator end() { return m_points.end(); }
 
   /*!
    * \brief read-only access to the content held by this node
