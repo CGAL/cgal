@@ -62,7 +62,7 @@ void ArrangementDemoTabBase::setupUi( )
   double wh = MAX_WIDTH;
   scene->setSceneRect(xymin, xymin, wh, wh);
 
-  this->getView()->installEventFilter(this->navigation.get());
+  this->getView()->viewport()->installEventFilter(this->navigation.get());
 }
 
 QGraphicsView* ArrangementDemoTabBase::getView() const

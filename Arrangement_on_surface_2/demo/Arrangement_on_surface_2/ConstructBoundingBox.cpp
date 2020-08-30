@@ -38,7 +38,8 @@ struct ConstructBoundingBox_impl
 
 // We currently avoid using bbox function in Arr_sgegment_2 because it creates
 // its own kernel object
-// TODO: remove this class once it's fixed
+// TODO: remove this class and the polyline one once it's fixed
+// and use bbox directly
 template <typename Kernel_>
 struct ConstructBoundingBox_impl<CGAL::Arr_segment_traits_2<Kernel_>>
 {
@@ -50,11 +51,16 @@ struct ConstructBoundingBox_impl<CGAL::Arr_segment_traits_2<Kernel_>>
   CGAL::Bbox_2
   operator()(const X_monotone_curve_2& curve)
   {
+    return this->operator()(curve.source(), curve.target());
+  }
+
+  CGAL::Bbox_2 operator()(const Point_2& p1, const Point_2& p2)
+  {
     CGAL::Bbox_2 bbox;
-    double x1 = CGAL::to_double(curve.source().x());
-    double y1 = CGAL::to_double(curve.source().y());
-    double x2 = CGAL::to_double(curve.target().x());
-    double y2 = CGAL::to_double(curve.target().y());
+    double x1 = CGAL::to_double(p1.x());
+    double y1 = CGAL::to_double(p1.y());
+    double x2 = CGAL::to_double(p2.x());
+    double y2 = CGAL::to_double(p2.y());
 
     double min_x, max_x, min_y, max_y;
     if (x1 < x2)
@@ -89,14 +95,11 @@ struct ConstructBoundingBox_impl<CGAL::Arr_segment_traits_2<Kernel_>>
   }
 };
 
-template <
-  typename RatKernel_, typename AlgKernel_, typename NtTraits_,
-  typename BoundingTraits_>
-struct ConstructBoundingBox_impl<CGAL::Arr_Bezier_curve_traits_2<
-  RatKernel_, AlgKernel_, NtTraits_, BoundingTraits_>>
+template <typename SegmentTraits_2_>
+struct ConstructBoundingBox_impl<CGAL::Arr_polyline_traits_2<SegmentTraits_2_>>
 {
-  using Traits = typename CGAL::Arr_Bezier_curve_traits_2<
-    RatKernel_, AlgKernel_, NtTraits_, BoundingTraits_>;
+  using Traits = CGAL::Arr_polyline_traits_2<SegmentTraits_2_>;
+  using SegmentTraits_2 = SegmentTraits_2_;
   using X_monotone_curve_2 = typename Traits::X_monotone_curve_2;
   using Curve_2 = typename Traits::Curve_2;
   using Point_2 = typename Traits::Point_2;
@@ -104,16 +107,54 @@ struct ConstructBoundingBox_impl<CGAL::Arr_Bezier_curve_traits_2<
   CGAL::Bbox_2
   operator()(const X_monotone_curve_2& curve)
   {
-    // TODO: find a way to find bounding box of a X_monotone_curve of bezier
-    // arrangements
-    return curve.supporting_curve().bbox();
+    ConstructBoundingBox_impl<SegmentTraits_2> construct_bounding_box;
+
+    auto n = curve.number_of_subcurves();
+    CGAL::Bbox_2 bbox;
+    for (std::size_t i = 0; i < n; ++i)
+      bbox += construct_bounding_box(curve[i]);
+
+    return bbox;
+  }
+
+  CGAL::Bbox_2 operator()(const Point_2& p1, const Point_2& p2)
+  {
+    CGAL::Bbox_2 bbox;
+    double x1 = CGAL::to_double(p1.x());
+    double y1 = CGAL::to_double(p1.y());
+    double x2 = CGAL::to_double(p2.x());
+    double y2 = CGAL::to_double(p2.y());
+
+    double min_x, max_x, min_y, max_y;
+    if (x1 < x2)
+    {
+      min_x = x1;
+      max_x = x2;
+    }
+    else
+    {
+      min_x = x2;
+      max_x = x1;
+    }
+    if (y1 < y2)
+    {
+      min_y = y1;
+      max_y = y2;
+    }
+    else
+    {
+      min_y = y2;
+      max_y = y1;
+    }
+    return {min_x, min_y, max_x, max_y};
   }
 
   CGAL::Bbox_2
   operator()(const Point_2& point)
   {
-    std::pair<double, double> p = point.approximate();
-    return {p.first, p.second, p.first, p.second};
+    double x = CGAL::to_double(point.x());
+    double y = CGAL::to_double(point.y());
+    return {x, y, x, y};
   }
 };
 
@@ -130,7 +171,8 @@ struct ConstructBoundingBox_impl<CGAL::Arr_linear_traits_2<Kernel_>>
   {
     if (curve.is_segment())
     {
-      return curve.bbox();
+      return ConstructBoundingBox_impl<CGAL::Arr_segment_traits_2<Kernel_>>{}(
+        curve.source(), curve.target());
     }
     else if (curve.is_line())
     {
@@ -163,6 +205,35 @@ struct ConstructBoundingBox_impl<CGAL::Arr_linear_traits_2<Kernel_>>
     double x = CGAL::to_double(point.x());
     double y = CGAL::to_double(point.y());
     return {x, y, x, y};
+  }
+};
+
+
+template <
+  typename RatKernel_, typename AlgKernel_, typename NtTraits_,
+  typename BoundingTraits_>
+struct ConstructBoundingBox_impl<CGAL::Arr_Bezier_curve_traits_2<
+  RatKernel_, AlgKernel_, NtTraits_, BoundingTraits_>>
+{
+  using Traits = typename CGAL::Arr_Bezier_curve_traits_2<
+    RatKernel_, AlgKernel_, NtTraits_, BoundingTraits_>;
+  using X_monotone_curve_2 = typename Traits::X_monotone_curve_2;
+  using Curve_2 = typename Traits::Curve_2;
+  using Point_2 = typename Traits::Point_2;
+
+  CGAL::Bbox_2
+  operator()(const X_monotone_curve_2& curve)
+  {
+    // TODO: find a way to find bounding box of a X_monotone_curve of bezier
+    // arrangements
+    return curve.supporting_curve().bbox();
+  }
+
+  CGAL::Bbox_2
+  operator()(const Point_2& point)
+  {
+    std::pair<double, double> p = point.approximate();
+    return {p.first, p.second, p.first, p.second};
   }
 };
 

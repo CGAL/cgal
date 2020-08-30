@@ -93,5 +93,5 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
   cgal_add_compilation_test(arrangement_2)
 
 else()
-  message(STATUS "NOTICE: This demo requires CGAL, CGAL-Core and Qt5, and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
 endif()
