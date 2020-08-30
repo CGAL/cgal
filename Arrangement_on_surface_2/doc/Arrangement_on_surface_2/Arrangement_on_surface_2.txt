@@ -4591,18 +4591,18 @@ Using the `Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>`
 class template you can construct and maintain arrangements induced by
 B&eacute;zier curves (including self-intersecting B&eacute;zier
 curves) of arbitrary degree. The curves are given by rational control
-points (a sequence of objects of the `RatKernel::Point_2` type).
-<!--(In general, a sequence of \f$ n+1\f$ control points
-define a B&eacute;zier curve of degree \f$n\f$.)-->
-The three types that substitue the template parameters `RatKernel`,
-`AlgKernel`, and `NtTraits`, respectively, when the traits is
-instantiated must fulfil the same requirements of the corresponding
-types used to instantiate the `Arr_conic_traits_2` class
-template. Here, the use of the `CORE_algebraic_number_traits` class is
-also recommended with Cartesian kernels instantiated with the
-`Rational` and `Algebraic` number types defined by this class. The
-examples given in this manual use the type definitions listed
-below. These types are defined in the header file `arr_Bezier.h`.
+points, that is, a sequence of objects of the `RatKernel::Point_2`
+type.  (In general, a sequence of \f$n+1\f$ control points define a
+B&eacute;zier curve of degree \f$n\f$.)  The three types that
+substitue the template parameters `RatKernel`, `AlgKernel`, and
+`NtTraits`, respectively, when the traits is instantiated must fulfil
+the same requirements of the corresponding types used to instantiate
+the `Arr_conic_traits_2` class template. Here, the use of the
+`CORE_algebraic_number_traits` class is also recommended with
+Cartesian kernels instantiated with the `Rational` and `Algebraic`
+number types defined by this class. The examples given in this manual
+use the type definitions listed below. These types are defined in the
+header file `arr_Bezier.h`.
 
 \code{.cpp}
 #include <CGAL/Cartesian.h>
