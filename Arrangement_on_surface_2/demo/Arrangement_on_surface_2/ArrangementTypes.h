@@ -26,8 +26,8 @@
   #include <CGAL/Arr_Bezier_curve_traits_2.h>
   #include <CGAL/Arr_rational_function_traits_2.h>
   #include <CGAL/Algebraic_kernel_d_1.h>
-#else
   #include <CGAL/CORE_BigRat.h>
+#else
   #include <CGAL/Exact_rational.h>
 #endif
 

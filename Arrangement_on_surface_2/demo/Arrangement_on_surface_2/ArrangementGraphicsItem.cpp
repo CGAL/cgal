@@ -2,6 +2,8 @@
 #include "ArrangementPainterOstream.h"
 #include "ArrangementTypes.h"
 #include "PointLocationFunctions.h"
+#include "ConstructBoundingBox.h"
+
 #include <CGAL/Qt/Converter.h>
 #include <QPainter>
 #include <limits>
@@ -264,97 +266,16 @@ void ArrangementGraphicsItem<Arr_>::paintFacesFloodFill(
 template < typename Arr_ >
 void ArrangementGraphicsItem< Arr_ >::updateBoundingBox( )
 {
-  this->updateBoundingBox( arr->traits() );
-}
-
-constexpr double max_double = std::numeric_limits<double>::max();
-
-template < typename Arr_ >
-template < typename TTraits >
-void ArrangementGraphicsItem< Arr_ >::
-updateBoundingBox(const TTraits* /* traits */)
-{
-  this->prepareGeometryChange( );
+  this->prepareGeometryChange();
 
   this->bb = {};
+  ConstructBoundingBox<Traits> construct_bounding_box;
   for (auto it = this->arr->edges_begin(); it != this->arr->edges_end(); ++it)
-  {
-    // can throw CGAL::internal::Zero_resultant_exception with algebraic curves
-    // also horizontal lines with algebraic curves throw
-    try
-    {
-      this->bb += it->curve().bbox();
-    }
-    catch (const std::exception& ex)
-    {
-      std::cerr << ex.what() << '\n';
-      // in case an exception is thrown, make bbox to be unbounded just in case
-      this->bb = {-max_double, -max_double, max_double, max_double};
-      break;
-    }
-  }
-}
+    this->bb += construct_bounding_box(it->curve());
 
-template <typename Arr_>
-template <typename RatK, typename AlgK, typename Nt, typename BoundingTratits>
-void ArrangementGraphicsItem<Arr_>::updateBoundingBox(
-  const CGAL::Arr_Bezier_curve_traits_2<RatK, AlgK, Nt, BoundingTratits>*)
-{
-  this->prepareGeometryChange( );
-
-  this->bb = {};
-  for (auto it = this->arr->edges_begin(); it != this->arr->edges_end(); ++it)
-    this->bb += it->curve().supporting_curve().bbox();
-}
-
-template <typename Arr_>
-template <typename Kernel_>
-void ArrangementGraphicsItem<Arr_>::updateBoundingBox(
-  const CGAL::Arr_linear_traits_2<Kernel_>*)
-{
-  this->prepareGeometryChange( );
-
-  this->bb = {};
-  for (auto it = this->arr->edges_begin(); it != this->arr->edges_end(); ++it)
-  {
-    if (it->curve().is_segment())
-    {
-      this->bb += it->curve().bbox();
-    }
-    else if(it->curve().is_line())
-    {
-      this->bb += Bbox_2{-max_double, -max_double, max_double, max_double};
-      break;
-    }
-    // ray
-    else
-    {
-      auto&& ray = it->curve().ray();
-      auto&& src = ray.source();
-      double src_x = CGAL::to_double(src.x());
-      double src_y = CGAL::to_double(src.y());
-      auto&& dir = ray.direction();
-      bool dx = CGAL::is_positive(dir.dx());
-      bool dy = CGAL::is_positive(dir.dy());
-
-      if (dx && dy)
-        this->bb += Bbox_2{src_x, src_y, max_double, max_double};
-      else if (!dx && dy)
-        this->bb += Bbox_2{-max_double, src_y, src_x, max_double};
-      else if (!dx && !dy)
-        this->bb += Bbox_2{-max_double, -max_double, src_x, src_y};
-      else if (dx && !dy)
-        this->bb += Bbox_2{src_x, -max_double, max_double, src_y};
-    }
-  }
-}
-
-template <typename Arr_>
-template <typename AlgebraicKernel_d_1>
-void ArrangementGraphicsItem<Arr_>::updateBoundingBox(
-  const CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>*)
-{
-  this->bb += Bbox_2{-max_double, -max_double, max_double, max_double};
+  for (auto it = this->arr->vertices_begin(); it != this->arr->vertices_end();
+       ++it)
+    this->bb += construct_bounding_box(it->point());
 }
 
 template <typename Arr_>

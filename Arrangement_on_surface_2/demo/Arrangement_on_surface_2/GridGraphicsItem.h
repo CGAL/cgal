@@ -12,17 +12,17 @@ class GridGraphicsItem : public QGraphicsItem
 {
 public:
   GridGraphicsItem();
-  int getXPower5();
-  int getXPower2();
-  int getYPower5();
-  int getYPower2();
-  float getXUnit();
-  float getYUnit();
+  int getXPower5() const;
+  int getXPower2() const;
+  int getYPower5() const;
+  int getYPower2() const;
+  float getXUnit() const;
+  float getYUnit() const;
 
-  QColor getGridColor();
-  QColor getAxesColor();
-  QColor getLabelsColor();
-  int getSpacing();
+  QColor getGridColor() const;
+  QColor getAxesColor() const;
+  QColor getLabelsColor() const;
+  int getSpacing() const;
 
   void setGridColor(const QColor&);
   void setAxesColor(const QColor&);
@@ -31,7 +31,8 @@ public:
 
 protected:
   void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*) override;
-  QRectF viewportRect(QPainter*);
+  QRectF viewportRect(QPainter*) const;
+  QRectF viewportRect() const;
   QRectF boundingRect() const override;
 
 private:

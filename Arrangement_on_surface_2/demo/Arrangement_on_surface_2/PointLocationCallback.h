@@ -67,9 +67,9 @@ protected:
   void highlightPointLocation( QGraphicsSceneMouseEvent *event );
 
   void highlightPointLocation( QGraphicsSceneMouseEvent *event,
-                               const CGAL::Arr_oblivious_side_tag& );
+                               CGAL::Arr_oblivious_side_tag );
   void highlightPointLocation( QGraphicsSceneMouseEvent *event,
-                               const CGAL::Arr_open_side_tag& );
+                               CGAL::Arr_open_side_tag );
 
   Arrangement* arr;
   CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurves;

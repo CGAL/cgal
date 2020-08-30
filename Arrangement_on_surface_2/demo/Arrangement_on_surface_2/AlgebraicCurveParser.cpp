@@ -19,6 +19,7 @@
 
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
 #include <CGAL/Polynomial_traits_d.h>
+#include <CGAL/polynomial_utils.h>
 
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix.hpp>

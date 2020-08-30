@@ -1,11 +1,12 @@
 #include "FloodFill.h"
 
+
 void FloodFill::operator()(
   QRgb* raw_img, uint16_t width, uint16_t x, uint16_t y, QRgb color)
 {
-  QRgb old_val = raw_img[y * width + x];
+  const QRgb old_val = raw_img[y * width + x];
 
-  auto fill_line = [this, raw_img, old_val, width]
+  auto fill_line = [&fill_stack=(this->fill_stack), raw_img, old_val, width]
   (QRgb color, uint16_t prev_left, uint16_t prev_right, uint16_t y, int16_t dy)
   {
     QRgb* img_line = raw_img + y * width;
@@ -23,7 +24,7 @@ void FloodFill::operator()(
         uint16_t left = j + 1;
         uint16_t right = static_cast<uint16_t>(i - 1);
 
-        this->fill_stack.push_back({y, left, right, prev_left, prev_right, dy});
+        fill_stack.push_back({y, left, right, prev_left, prev_right, dy});
       }
     }
   };

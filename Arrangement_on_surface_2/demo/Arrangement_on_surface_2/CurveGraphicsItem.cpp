@@ -1,6 +1,7 @@
 #include "CurveGraphicsItem.h"
 #include "ArrangementPainterOstream.h"
 #include "ArrangementTypes.h"
+#include "ConstructBoundingBox.h"
 #include "Utils.h"
 
 #include <limits>
@@ -12,7 +13,7 @@ namespace Qt
 
 template <class ArrTraits>
 CurveGraphicsItem<ArrTraits>::CurveGraphicsItem() :
-    boundingBox(), m_edgeColor(::Qt::red), m_edgeWidth(2),
+    bb(), m_edgeColor(::Qt::red), m_edgeWidth(2),
     m_vertexColor(::Qt::red), m_vertexRadius(1)
 {
   this->setZValue(4);
@@ -38,9 +39,23 @@ void CurveGraphicsItem<ArrTraits>::paint(
 template <class ArrTraits>
 QRectF CurveGraphicsItem<ArrTraits>::boundingRect() const
 {
-  return {
-    QPointF{this->boundingBox.xmin(), this->boundingBox.ymin()},
-    QPointF{this->boundingBox.xmax(), this->boundingBox.ymax()}};
+  auto viewport = this->viewportRect();
+  qreal xmin = viewport.left();
+  qreal ymin = viewport.top();
+  qreal xmax = viewport.right();
+  qreal ymax = viewport.bottom();
+  if (this->bb.xmin() > xmin) xmin = this->bb.xmin();
+  if (this->bb.ymin() > ymin) ymin = this->bb.ymin();
+  if (this->bb.xmax() < xmax) xmax = this->bb.xmax();
+  if (this->bb.ymax() < ymax) ymax = this->bb.ymax();
+  if (xmin > xmax || ymin > ymax)
+  {
+    xmin = 0;
+    xmax = 0;
+    ymin = 0;
+    ymax = 0;
+  }
+  return {QPointF{xmin, ymin}, QPointF{xmax, ymax}};
 }
 
 template <class ArrTraits>
@@ -121,68 +136,15 @@ void CurveGraphicsItem<ArrTraits>::setVertexRadius(int radius)
   this->m_vertexRadius = radius;
 }
 
-static Bbox_2 remove_infs(const Bbox_2& box, const QRectF& rect)
-{
-  double xmin = std::min(rect.left(), box.xmax());
-  double ymin = std::min(rect.bottom(), box.ymax());
-  double xmax = std::max(rect.right(), box.xmin());
-  double ymax = std::max(rect.top(), box.ymin());
-  if (!std::isinf(box.xmin())) xmin = box.xmin();
-  if (!std::isinf(box.ymin())) ymin = box.ymin();
-  if (!std::isinf(box.xmax())) xmax = box.xmax();
-  if (!std::isinf(box.ymax())) ymax = box.ymax();
-  return CGAL::Bbox_2{xmin, ymin, xmax, ymax};
-}
-
 template <class ArrTraits>
 void CurveGraphicsItem<ArrTraits>::updateBoundingBox()
 {
   this->prepareGeometryChange();
 
-  this->boundingBox = {};
-  for (auto& curve : this->curves)
-  {
-    // some algebraic curves throw exceptions when asking about their bbox
-    try
-    {
-      this->boundingBox += curve.bbox();
-    }
-    catch (...)
-    {
-    }
-  }
-
-  this->boundingBox = remove_infs(this->boundingBox, this->viewportRect());
-}
-
-template <>
-void CurveGraphicsItem<demo_types::Bezier_traits>::updateBoundingBox()
-{
-  this->prepareGeometryChange();
-
-  this->boundingBox = {};
-  for (auto& curve : this->curves)
-  {
-    // some algebraic curves throw exceptions when asking about their bbox
-    try
-    {
-      this->boundingBox += curve.supporting_curve().bbox();
-    }
-    catch (...)
-    {
-    }
-  }
-
-  this->boundingBox = remove_infs(this->boundingBox, this->viewportRect());
-}
-
-constexpr double max_double = std::numeric_limits<double>::max();
-
-template <>
-void CurveGraphicsItem<demo_types::Rational_traits>::updateBoundingBox()
-{
-  this->prepareGeometryChange();
-  this->boundingBox = {-max_double, -max_double, max_double, max_double};
+  this->bb = {};
+  ConstructBoundingBox<Traits> construct_bounding_box;
+  for (auto& curve : curves)
+    this->bb += construct_bounding_box(curve);
 }
 
 ARRANGEMENT_DEMO_SPECIALIZE_TRAITS(CurveGraphicsItem)

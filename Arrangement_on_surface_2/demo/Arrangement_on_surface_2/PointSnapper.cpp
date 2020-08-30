@@ -68,7 +68,7 @@ auto PointSnapperBase::snapToGrid(const QPointF& qpt) -> Point_2
       lx *= CGAL::ipower(fifth, -b);
     else
       lx *= CGAL::ipower(five, b);
-    x = lx * std::lround(CORE::doubleValue(Rational(qpt.x()) / lx));
+    x = lx * std::lround(CGAL::to_double(Rational(qpt.x()) / lx));
   }
 
   Rational y;
@@ -85,7 +85,7 @@ auto PointSnapperBase::snapToGrid(const QPointF& qpt) -> Point_2
       ly *= CGAL::ipower(fifth, -b);
     else
       ly *= CGAL::ipower(five, b);
-    y = ly * std::lround(CORE::doubleValue(Rational(qpt.y()) / ly));
+    y = ly * std::lround(CGAL::to_double(Rational(qpt.y()) / ly));
   }
 
   return Point_2{x, y};

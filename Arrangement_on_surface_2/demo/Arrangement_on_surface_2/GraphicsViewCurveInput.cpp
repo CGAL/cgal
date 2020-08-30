@@ -12,6 +12,9 @@
 #include "GraphicsViewCurveInput.h"
 #include "ArrangementTypes.h"
 #include "QtMetaTypes.h"
+
+#include <CGAL/polynomial_utils.h>
+
 #include <QEvent>
 #include <QKeyEvent>
 

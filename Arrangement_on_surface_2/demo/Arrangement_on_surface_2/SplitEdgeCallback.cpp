@@ -14,6 +14,8 @@
 #include "PointSnapper.h"
 #include "Utils.h"
 
+#include <CGAL/polynomial_utils.h>
+
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsScene>
 
@@ -119,12 +121,14 @@ struct ConstructSegment<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>
   }
 };
 
-template <typename RatKernel, class AlgKernel, class NtTraits>
-struct ConstructSegment<
-  CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>
+template <
+  typename RatKernel, typename AlgKernel, typename NtTraits,
+  typename BoundingTraits>
+struct ConstructSegment<CGAL::Arr_Bezier_curve_traits_2<
+  RatKernel, AlgKernel, NtTraits, BoundingTraits>>
 {
-  using Traits =
-    CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>;
+  using Traits = CGAL::Arr_Bezier_curve_traits_2<
+    RatKernel, AlgKernel, NtTraits, BoundingTraits>;
   using Curve_2 = typename Traits::Curve_2;
   using X_monotone_curve_2 = typename Traits::X_monotone_curve_2;
 

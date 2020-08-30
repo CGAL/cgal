@@ -16,7 +16,7 @@ endif()
 find_package(CGAL COMPONENTS Core Qt5 )
 find_package(Qt5 COMPONENTS Gui Widgets)
 
-if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
+if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})
   add_definitions(-DQT_NO_KEYWORDS)
   include_directories( BEFORE ./ ../../include )
@@ -80,6 +80,7 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
                  PointSnapper.cpp
                  CurveInputMethods.cpp
                  FloodFill.cpp
+                 ConstructBoundingBox.cpp
                  ${arrangement_2_uis}
                  ${CGAL_Qt5_RESOURCE_FILES}
                  ${CGAL_Qt5_MOC_FILES})

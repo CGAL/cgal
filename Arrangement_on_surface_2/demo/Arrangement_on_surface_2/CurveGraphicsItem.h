@@ -64,13 +64,13 @@ protected: // methods
 
 protected: // fields
   std::vector< X_monotone_curve_2 > curves;
-  CGAL::Bbox_2 boundingBox;
+  PointsGraphicsItem pointsGraphicsItem;
+  CGAL::Bbox_2 bb;
 
   QColor m_edgeColor;
   int m_edgeWidth;
   QColor m_vertexColor;
   int m_vertexRadius;
-  PointsGraphicsItem pointsGraphicsItem;
 }; // class CurveGraphicsItem
 
 } // namespace Qt

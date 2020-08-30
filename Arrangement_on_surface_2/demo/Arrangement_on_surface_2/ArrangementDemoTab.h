@@ -118,6 +118,7 @@ class ArrangementDemoTab : public ArrangementDemoTabBase
 public:
   typedef ArrangementDemoTabBase Superclass;
   typedef Arr_ Arrangement;
+  typedef typename Arrangement::Geometry_traits_2 Traits;
 
   ArrangementDemoTab(
     QWidget* parent, std::unique_ptr<Arrangement> arrangement_ = nullptr);

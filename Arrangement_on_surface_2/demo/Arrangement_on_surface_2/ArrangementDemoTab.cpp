@@ -23,6 +23,7 @@
 #include "FillFaceCallback.h"
 #include "GridGraphicsItem.h"
 #include "PointSnapper.h"
+#include "ConstructBoundingBox.h"
 
 #include <QGridLayout>
 
@@ -85,9 +86,6 @@ GridGraphicsItem* ArrangementDemoTabBase::getGridGraphicsItem() const
 void ArrangementDemoTabBase::showGrid(bool val)
 {
   this->gridGraphicsItem->setVisible(val);
-  // this is to force showing/hiding the grid immediately
-  // TODO This forces the arrangement to upadte as well. Find a better way!
-  Q_EMIT modelChanged();
 }
 
 void ArrangementDemoTabBase::setSnapToGrid(bool val)
@@ -364,16 +362,18 @@ void ArrangementDemoTab<Arr_>::slotModelChanged()
 {
 }
 
-static CGAL::Bbox_2 makeFinite(const CGAL::Bbox_2& box)
+static CGAL::Bbox_2 reject_not_in_allowable_range(
+  const CGAL::Bbox_2& box, const CGAL::Bbox_2& allowable_range)
 {
   double xmin = std::numeric_limits<double>::infinity();
   double ymin = std::numeric_limits<double>::infinity();
   double xmax = -std::numeric_limits<double>::infinity();
   double ymax = -std::numeric_limits<double>::infinity();
-  if (!std::isinf(box.xmin())) xmin = box.xmin();
-  if (!std::isinf(box.ymin())) ymin = box.ymin();
-  if (!std::isinf(box.xmax())) xmax = box.xmax();
-  if (!std::isinf(box.ymax())) ymax = box.ymax();
+
+  if (box.xmin() > allowable_range.xmin()) xmin = box.xmin();
+  if (box.ymin() > allowable_range.ymin()) ymin = box.ymin();
+  if (box.xmax() < allowable_range.xmax()) xmax = box.xmax();
+  if (box.ymax() < allowable_range.ymax()) ymax = box.ymax();
   return {xmin, ymin, xmax, ymax};
 }
 
@@ -405,6 +405,15 @@ static CGAL::Bbox_2 addMargins(const CGAL::Bbox_2& box)
     box.xmax() + x_margin, box.ymax() + y_margin};
 }
 
+// TODO: clean this up, it's ugly!
+template <class Arr_>
+CGAL::Bbox_2
+findOtherInterestingPoints(const std::unique_ptr<Arr_>&, const CGAL::Bbox_2&)
+{
+  return {};
+}
+
+#ifdef CGAL_USE_CORE
 template <typename Coefficient_>
 static const auto&
 getXyCurves(const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>* traits)
@@ -438,16 +447,10 @@ getXyCurves(const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>* traits)
   return xy_curves;
 }
 
-template <class Arr_>
-CGAL::Bbox_2
-findOtherInterestingPoints(const std::unique_ptr<Arr_>&)
-{
-  return {};
-}
-
 template <>
 CGAL::Bbox_2 findOtherInterestingPoints<demo_types::Alg_seg_arr>(
-  const std::unique_ptr<demo_types::Alg_seg_arr>& arr)
+  const std::unique_ptr<demo_types::Alg_seg_arr>& arr,
+  const CGAL::Bbox_2& allowable_range)
 {
   using Traits = demo_types::Alg_seg_traits;
   CGAL::Bbox_2 bb = {};
@@ -466,86 +469,42 @@ CGAL::Bbox_2 findOtherInterestingPoints<demo_types::Alg_seg_arr>(
     if (point.location() == CGAL::ARR_INTERIOR)
     {
       auto xy = point.to_double();
-      bb += makeFinite({xy.first, xy.second, xy.first, xy.second});
+      bb += reject_not_in_allowable_range(
+        {xy.first, xy.second, xy.first, xy.second}, allowable_range);
     }
   }
   return bb;
 }
-
-template <typename Arr>
-static CGAL::Bbox_2 curvesBbox(const std::unique_ptr<Arr>& arr)
-{
-  CGAL::Bbox_2 bb;
-  for (auto it = arr->edges_begin(); it != arr->edges_end(); ++it)
-    // can throws "CGAL::internal::Zero_resultant_exception"
-    try { bb += makeFinite(it->curve().bbox()); }
-    catch (...) { }
-
-  return bb;
-}
-
-template <>
-CGAL::Bbox_2 curvesBbox(const std::unique_ptr<demo_types::Bezier_arr>&)
-{
-  return {};
-}
-
-template <>
-CGAL::Bbox_2 curvesBbox(const std::unique_ptr<demo_types::Rational_arr>&)
-{
-  return {};
-}
-
-template <typename Arr>
-static CGAL::Bbox_2 pointsBbox(const std::unique_ptr<Arr>& arr)
-{
-  CGAL::Bbox_2 bb;
-  for (auto it = arr->vertices_begin(); it != arr->vertices_end(); it++)
-  {
-    double x = CGAL::to_double(it->point().x());
-    double y = CGAL::to_double(it->point().y());
-    bb += makeFinite({x, y, x, y});
-  }
-  return bb;
-}
-
-template <>
-CGAL::Bbox_2 pointsBbox<demo_types::Bezier_arr>(
-  const std::unique_ptr<demo_types::Bezier_arr>& arr)
-{
-  CGAL::Bbox_2 bb;
-  for (auto it = arr->vertices_begin(); it != arr->vertices_end(); it++)
-  {
-    std::pair<double, double> p = it->point().approximate();
-    bb += makeFinite({p.first, p.second, p.first, p.second});
-  }
-  return bb;
-}
-
-template <>
-CGAL::Bbox_2 pointsBbox<demo_types::Rational_arr>(
-  const std::unique_ptr<demo_types::Rational_arr>& arr)
-{
-  CGAL::Bbox_2 bb;
-  for (auto it = arr->vertices_begin(); it != arr->vertices_end(); it++)
-  {
-    std::pair<double, double> p = it->point().to_double();
-    bb += makeFinite({p.first, p.second, p.first, p.second});
-  }
-  return bb;
-}
+#endif // CGAL_USE_CORE
 
 template <class Arr_>
 void ArrangementDemoTab<Arr_>::adjustViewport()
 {
+  QRectF scene_rect = this->getScene()->sceneRect();
+  CGAL::Bbox_2 scene_bbox = {
+    scene_rect.left(), scene_rect.top(), scene_rect.right(),
+    scene_rect.bottom()};
+
+  ConstructBoundingBox<Traits> construct_bounding_box;
   CGAL::Bbox_2 bb = {};
-  bb += pointsBbox(this->arrangement);
-  bb += curvesBbox(this->arrangement);
+  for (auto it = this->arrangement->edges_begin();
+       it != this->arrangement->edges_end(); ++it)
+  {
+    bb += reject_not_in_allowable_range(
+      construct_bounding_box(it->curve()), scene_bbox);
+  }
+  for (auto it = this->arrangement->vertices_begin();
+       it != this->arrangement->vertices_end(); ++it)
+  {
+    bb += reject_not_in_allowable_range(
+      construct_bounding_box(it->point()), scene_bbox);
+  }
 
   if (!isFinite(bb))
-    bb += findOtherInterestingPoints(this->arrangement);
+    bb += findOtherInterestingPoints(this->arrangement, scene_bbox);
 
-  // this should happen only if the arrangement is empty
+  // ideally this should happen only if the arrangement is empty
+  // (if findOtherInterestingPoints worked for all arrangement types)
   if (!isFinite(bb))
     bb += {0, 0, 0, 0};
 
@@ -555,10 +514,6 @@ void ArrangementDemoTab<Arr_>::adjustViewport()
     QRectF(bb.xmin(), bb.ymin(), bb.xmax() - bb.xmin(), bb.ymax() - bb.ymin());
 
   this->graphicsView->resetTransform();
-  double xmin = viewportRect.x() - MAX_WIDTH / 2;
-  double ymin = viewportRect.y() - MAX_WIDTH / 2;
-  double wh = MAX_WIDTH;
-  this->getScene()->setSceneRect(xmin, ymin, wh, wh);
   this->graphicsView->fitInView(viewportRect, Qt::KeepAspectRatio);
 
   Q_EMIT modelChanged();

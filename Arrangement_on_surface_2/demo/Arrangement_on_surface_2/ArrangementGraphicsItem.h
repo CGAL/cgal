@@ -97,20 +97,6 @@ protected:
   void updateBoundingBox();
 
   template <typename TTraits>
-  void updateBoundingBox(const TTraits*);
-
-  template <typename RatK, typename AlgK, typename Nt, typename BoundingTratits>
-  void updateBoundingBox(
-    const CGAL::Arr_Bezier_curve_traits_2<RatK, AlgK, Nt, BoundingTratits>*);
-
-  template <typename Kernel_>
-  void updateBoundingBox(const CGAL::Arr_linear_traits_2<Kernel_>*);
-
-  template <typename AlgebraicKernel_d_1>
-  void updateBoundingBox(
-    const CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>*);
-
-  template <typename TTraits>
   void paintEdges(QPainter*, const TTraits*);
 
   template <typename Coefficient_>

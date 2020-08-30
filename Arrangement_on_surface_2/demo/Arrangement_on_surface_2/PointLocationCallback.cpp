@@ -62,7 +62,7 @@ void PointLocationCallback<Arr_>::highlightPointLocation(
 
 template <typename Arr_>
 void PointLocationCallback<Arr_>::highlightPointLocation(
-  QGraphicsSceneMouseEvent* event, const CGAL::Arr_oblivious_side_tag&)
+  QGraphicsSceneMouseEvent* event, CGAL::Arr_oblivious_side_tag)
 {
   Face_const_handle face =
     PointLocationFunctions<Arrangement>{}.getFace(this->arr, event->scenePos());
@@ -93,7 +93,7 @@ void PointLocationCallback<Arr_>::highlightPointLocation(
 
 template <typename Arr_>
 void PointLocationCallback<Arr_>::highlightPointLocation(
-  QGraphicsSceneMouseEvent* event, const CGAL::Arr_open_side_tag&)
+  QGraphicsSceneMouseEvent* event, CGAL::Arr_open_side_tag)
 {
   Face_const_handle face =
     PointLocationFunctions<Arrangement>{}.getFace(this->arr, event->scenePos());

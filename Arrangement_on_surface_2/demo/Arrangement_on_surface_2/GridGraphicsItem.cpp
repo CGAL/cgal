@@ -1,8 +1,10 @@
 #include "GridGraphicsItem.h"
-#include <QPainter>
 #include <cmath>
 #include <limits>
+
 #include <QtGlobal>
+#include <QGraphicsView>
+#include <QPainter>
 
 GridGraphicsItem::GridGraphicsItem() :
     gridColor{::Qt::gray}, axesColor{::Qt::black},
@@ -10,25 +12,25 @@ GridGraphicsItem::GridGraphicsItem() :
 {
 }
 
-int GridGraphicsItem::getXPower5() { return x_power5; }
+int GridGraphicsItem::getXPower5() const { return x_power5; }
 
-int GridGraphicsItem::getXPower2() { return x_power2; }
+int GridGraphicsItem::getXPower2() const { return x_power2; }
 
-int GridGraphicsItem::getYPower5() { return y_power5; }
+int GridGraphicsItem::getYPower5() const { return y_power5; }
 
-int GridGraphicsItem::getYPower2() { return y_power2; }
+int GridGraphicsItem::getYPower2() const { return y_power2; }
 
-float GridGraphicsItem::getXUnit() { return x_unit; }
+float GridGraphicsItem::getXUnit() const { return x_unit; }
 
-float GridGraphicsItem::getYUnit() { return y_unit; }
+float GridGraphicsItem::getYUnit() const { return y_unit; }
 
-QColor GridGraphicsItem::getGridColor() { return this->gridColor; }
+QColor GridGraphicsItem::getGridColor() const { return this->gridColor; }
 
-QColor GridGraphicsItem::getAxesColor() { return this->axesColor; }
+QColor GridGraphicsItem::getAxesColor() const { return this->axesColor; }
 
-QColor GridGraphicsItem::getLabelsColor() { return this->labelsColor; }
+QColor GridGraphicsItem::getLabelsColor() const { return this->labelsColor; }
 
-int GridGraphicsItem::getSpacing() { return this->spacing; }
+int GridGraphicsItem::getSpacing() const { return this->spacing; }
 
 void GridGraphicsItem::setGridColor(const QColor& color)
 {
@@ -207,15 +209,21 @@ void GridGraphicsItem::paint(
 
 QRectF GridGraphicsItem::boundingRect() const
 {
-  qreal xmin = -std::numeric_limits<qreal>::max() / 4;
-  qreal ymin = -std::numeric_limits<qreal>::max() / 4;
-  qreal xmax = std::numeric_limits<qreal>::max() / 4;
-  qreal ymax = std::numeric_limits<qreal>::max() / 4;
-  return {QPointF{xmin, ymin}, QPointF{xmax, ymax}};
+  return this->viewportRect();
 }
 
-QRectF GridGraphicsItem::viewportRect(QPainter* painter)
+QRectF GridGraphicsItem::viewportRect(QPainter* painter) const
 {
   QRectF pixelViewport = painter->viewport();
   return painter->transform().inverted().mapRect(pixelViewport);
+}
+
+QRectF GridGraphicsItem::viewportRect() const
+{
+  QList<QGraphicsView*> views = this->scene()->views();
+  if (views.size() == 0) return {};
+  // assumes the first view is the right one
+  QGraphicsView* view = views.first();
+  return view->mapToScene(QRect{0, 0, view->width(), view->height()})
+    .boundingRect();
 }
