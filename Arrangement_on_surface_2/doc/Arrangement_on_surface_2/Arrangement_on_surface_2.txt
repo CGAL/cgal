@@ -2149,7 +2149,7 @@ vertex and the remaining one is vertical.
 \cgalFigureBegin{arr_fig_bounded_vd,bounded_vertical_decomposition.png}
 An arrangement of four line segments and its vertical decompisition
 into pseudo trapezoids, as constructed in
-`vertical_decomposition.cpp`.  The segments of \f${\mathcal S}_1\f$
+`bounded_vertical_decomposition.cpp`.  The segments of \f${\mathcal S}_1\f$
 are drawn in solid lines and the segments of \f${\mathcal S}_2\f$ are
 drawn in dark dashed lines. Note that the segment \f$ s\f$ (light
 dashed line) overlaps one of the segments in \f${\mathcal S}_1\f$.
@@ -2166,9 +2166,9 @@ and it may contain only non-vertical edges.  The resulting cells are
 therefore referred to as <em>pseudo trapezoids</em>. The
 \cgalFigureRef{arr_fig_bounded_vd} depicts the vertical decomposition
 of an arrangement induced by four line segments, as constructed in
-`vertical_decomposition.cpp` and listed below. The decomposition
-consists of 14 pseudo trapezoids, out of which two are bounded
-triangles, two are bounded trapezoids, and 10 are unbounded
+`bounded_vertical_decomposition.cpp` and listed below. The
+decomposition consists of 14 pseudo trapezoids, out of which two are
+bounded triangles, two are bounded trapezoids, and 10 are unbounded
 trapezoids.
 
 The function template `decompose()` accepts an arrangement \f$\cal
@@ -2193,6 +2193,20 @@ face, and there is no curve lying above (respectively below) it.
 upper) endpoint of a vertical edge in the arrangement.
 
 </UL>
+
+\cgalExample{Arrangement_on_surface_2/bounded_vertical_decomposition.cpp}
+
+As you might have noticed, the code above contains a call to an
+instance of a the function template `read_objects()`. It reads the
+description of geometric objects from a file and constructs them. It
+accepts the name of an input file that contains the plain-text
+description of the geometric objects and an output iterator for
+storing the newly constructed objects.  When the function is
+instantiated, the first template parameter, namely Type`, must be
+substituted with the type of objects to read. It is assumed that an
+extractor operator (`>>`) that extracts objects of the given type from
+the input stream is available. The listing of the function template,
+which is defined in the file `read_objects.h`, is omitted here
 
 \cgalAdvancedBegin
 
@@ -4193,7 +4207,7 @@ which I should choose one over the other
 -->
 
 <!----------------------------------------------------------------------------->
-\paragraph arr_sssectr_conic Traits class for Conic Arcs
+\paragraph arr_sssectr_conic A Traits Class for Conic Arcs
 <!----------------------------------------------------------------------------->
 
 A <em>conic curve</em> is an algebraic curve of degree 2. Namely, it
@@ -4382,7 +4396,7 @@ they have another intersection point at
 \cgalExample{Arrangement_on_surface_2/conic_multiplicities.cpp}
 
 <!----------------------------------------------------------------------------->
-\paragraph arr_sssectr_ratfunc Arcs of Rational Functions
+\paragraph arr_sssectr_ratfunc A Traits Class for Arcs of Rational Functions
 <!----------------------------------------------------------------------------->
 
 A <em>rational function</em> is given by the equation \f$y =
@@ -4406,7 +4420,7 @@ arcs. Every instance of the `Arr_rational_function_traits_2` class
 template models the concepts `ArrangementTraits_2` and
 `ArrangementOpenBoundaryTraits_2`, but it does not model the
 `ArrangementLandmarkTraits_2` concept. It also models the refined
-concept `ArrangementDirectionalXMonotoneTraits_2` which enables
+concept `ArrangementDirectionalXMonotoneTraits_2`, which enables
 Boolean set operations; see Package \ref PkgBooleanSetOperations2Ref.
 Note that it is not a model of `ArrangementLandmarkTraits_2` concept,
 so it is impossible to use the landmark point-location strategy with
@@ -4554,7 +4568,7 @@ the degrees of the corresponding variables starting from the constant
 term.
 
 <!----------------------------------------------------------------------------->
-\subsubsection arr_ssectr_bez Planar B&eacute;zier Curves
+\paragraph arr_sssectr_bez A Traits Class for Planar B&eacute;zier Curves
 <!----------------------------------------------------------------------------->
 
 A planar <em>B&eacute;zier curve</em> \f$B\f$ is a parametric curve
@@ -4567,44 +4581,68 @@ B(t) = \left(X(t), Y(t)\right)
 t^k (1-t)^{n-k}}\ .
 \f}
 
-where \f$t \in [0, 1]\f$. The degree of the curve is therefore \f$n\f$
-- namely, \f$ X(t)\f$ and \f$ Y(t)\f$ are polynomials of degree
+where \f$t \in [0, 1]\f$. The degree of the curve is therefore \f$n\f$;
+namely, \f$X(t)\f$ and \f$Y(t)\f$ are polynomials of degree
 \f$n\f$. B&eacute;zier curves have numerous applications in computer
 graphics and solid modelling. They are used, for example, in free-form
 sketches and for defining the true-type fonts.
 
 Using the `Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>`
-class template it is possible to construct and maintain arrangements
-of B&eacute;zier curves that are given by rational control points (a
-sequence of objects of the `RatKernel::Point_2` type). We can handle
-curves of arbitrary degree (in general, a sequence of \f$ n+1\f$
-control points define a B&eacute;zier curve of degree \f$ n\f$). The
-template parameters are the same ones used by the `Arr_conic_traits_2`
-class template, and here it is also recommended to use the
-`CORE_algebraic_number_traits` class, with %Cartesian kernels
-instantiated with the `Rational` and `Algebraic` number-types defined
-by this class.
+class template you can construct and maintain arrangements induced by
+B&eacute;zier curves (including self-intersecting B&eacute;zier
+curves) of arbitrary degree. The curves are given by rational control
+points (a sequence of objects of the `RatKernel::Point_2` type).
+<!--(In general, a sequence of \f$ n+1\f$ control points
+define a B&eacute;zier curve of degree \f$n\f$.)-->
+The three types that substitue the template parameters `RatKernel`,
+`AlgKernel`, and `NtTraits`, respectively, when the traits is
+instantiated must fulfil the same requirements of the corresponding
+types used to instantiate the `Arr_conic_traits_2` class
+template. Here, the use of the `CORE_algebraic_number_traits` class is
+also recommended with Cartesian kernels instantiated with the
+`Rational` and `Algebraic` number types defined by this class. The
+examples given in this manual use the type definitions listed
+below. These types are defined in the header file `arr_Bezier.h`.
+
+\code{.cpp}
+#include <CGAL/Cartesian.h>
+#include <CGAL/CORE_algebraic_number_traits.h>
+#include <CGAL/Arr_Bezier_curve_traits_2.h>
+#include <CGAL/Arrangement_2.h>
+
+typedef CGAL::CORE_algebraic_number_traits              Nt_traits;
+typedef Nt_traits::Rational                             NT;
+typedef Nt_traits::Rational                             Rational;
+typedef Nt_traits::Algebraic                            Algebraic;
+typedef CGAL::Cartesian<Rational>                       Rat_kernel;
+typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
+typedef Rat_kernel::Point_2                             Rat_point;
+typedef CGAL::Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
+                                                        Traits;
+typedef Traits::Curve_2                                 Bezier_curve;
+typedef CGAL::Arrangement_2<Traits>                     Arrangement;
+\endcode
 
 As mentioned above, we assume that the coordinates of all control
 points that define a B&eacute;zier curve are rational numbers, so both
 \f$X(t)\f$ and \f$Y(t)\f$ are polynomials with rational
-coefficients. The intersection points between curves are however
+coefficients. The intersection points between curves are, however,
 algebraic numbers, and their exact computation is time-consuming. The
 traits class therefore contains a layer of geometric filtering that
-performs all computation in an approximate manner whenever
+performs all computations in an approximate manner whenever
 possible. Thus, it resorts to exact computations only when the
-approximate computation fails to produce an unambiguous result.  Note
-that most arrangement vertices are therefore associated with
-approximated points. You cannot access the coordinates of such points
-and obtain them as algebraic numbers, and only access to the
-approximate coordinates is possible.  See the Reference Manual for the
-exact interface of the `%Point_2`, `Curve_2` and `X_monotone_curve_2`
-defined by the traits class.
+approximate computation fails to produce an unambiguous result. Most
+arrangement vertices are therefore associated with approximated
+points. You cannot access the coordinates of such points as algebraic
+numbers. However, access to the approximate coordinates is possible.
+See the Reference Manual for the exact interface of the `Point_2`,
+`Curve_2`, and `X_monotone_curve_2` types defined by the traits class.
 
-The `Arr_Bezier_curve_traits_2` is a model of the
-`ArrangementTraits_2` concept (but not of the
-`ArrangementLandmarkTraits_2` concept, so it is impossible to use the
-landmark point-location strategy for arrangements of rational arcs).
+Every instance of the `Arr_Bezier_curve_traits_2` class templates
+models the concept `ArrangementTraits_2` (but it does not model the
+`ArrangementLandmarkTraits_2` concept). It also models the refined
+concept `ArrangementDirectionalXMonotoneTraits_2`, which enables
+Boolean set operations; see Package \ref PkgBooleanSetOperations2Ref.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{arr_figex_bez,bezier_curves.png}
@@ -4615,8 +4653,8 @@ constructed in `Bezier_curves.cpp`.
 
 The following example reads a set of B&eacute;zier curves from an
 input file, where each file is specified by an integer stating its
-number of control points, followed by the sequence of control points,
-given in integer or rational coordinates. By default, the program uses
+number of control points, followed by the sequence of control points
+given as integer or rational coordinates. By default, the program uses
 the `Bezier.dat` file, which contains ten curves of degree \f$5\f$
 each; their resulting arrangement is depicted in
 \cgalFigureRef{arr_figex_bez}.
@@ -4624,7 +4662,7 @@ each; their resulting arrangement is depicted in
 \cgalExample{Arrangement_on_surface_2/Bezier_curves.cpp}
 
 <!----------------------------------------------------------------------------->
-\subsubsection arr_ssectr_alg Planar Algebraic Curves of Arbitrary Degree
+\paragraph arr_sssectr_alg A Traits Class for Planar Algebraic Curves of Arbitrary Degree
 <!----------------------------------------------------------------------------->
 
 An algebraic curve \f$c\f$ in the plane is defined as the (real) zero
