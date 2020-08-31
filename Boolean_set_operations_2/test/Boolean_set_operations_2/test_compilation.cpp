@@ -262,6 +262,72 @@ void test_CGAL_Polygon_variants()
   CGAL::do_intersect(pgn_with_holes1, pgn_with_holes2, CGAL::Tag_false());
   CGAL::do_intersect(pgn_with_holes1, pgn_with_holes2, tr);
 
+  CGAL::do_intersect(polygons.begin(), polygons.end());
+  CGAL::do_intersect(polygons.begin(), polygons.end(), CGAL::Tag_true());
+  CGAL::do_intersect(polygons.begin(), polygons.end(), CGAL::Tag_false());
+  CGAL::do_intersect(polygons.begin(), polygons.end(), tr);
+
+  CGAL::do_intersect(polygons_with_holes.begin(), polygons_with_holes.end());
+  CGAL::do_intersect(polygons_with_holes.begin(), polygons_with_holes.end(), CGAL::Tag_true());
+  CGAL::do_intersect(polygons_with_holes.begin(), polygons_with_holes.end(), CGAL::Tag_false());
+  CGAL::do_intersect(polygons_with_holes.begin(), polygons_with_holes.end(), tr);
+
+  CGAL::do_intersect(polygons.begin(), polygons.end(),
+                     polygons_with_holes.begin(), polygons_with_holes.end());
+  CGAL::do_intersect(polygons.begin(), polygons.end(),
+                     polygons_with_holes.begin(), polygons_with_holes.end(), CGAL::Tag_true());
+  CGAL::do_intersect(polygons.begin(), polygons.end(),
+                     polygons_with_holes.begin(), polygons_with_holes.end(), CGAL::Tag_false());
+  CGAL::do_intersect(polygons.begin(), polygons.end(),
+                     polygons_with_holes.begin(), polygons_with_holes.end(), tr);
+
+  CGAL::intersection(pgn1, pgn2, std::back_inserter(result));
+  CGAL::intersection(pgn1, pgn2, std::back_inserter(result), CGAL::Tag_true());
+  CGAL::intersection(pgn1, pgn2, std::back_inserter(result), CGAL::Tag_false());
+  CGAL::intersection(pgn1, pgn2, std::back_inserter(result), tr);
+
+  CGAL::intersection(pgn1, pgn_with_holes2, std::back_inserter(result));
+  CGAL::intersection(pgn1, pgn_with_holes2, std::back_inserter(result), CGAL::Tag_true());
+  CGAL::intersection(pgn1, pgn_with_holes2, std::back_inserter(result), CGAL::Tag_false());
+  CGAL::intersection(pgn1, pgn_with_holes2, std::back_inserter(result), tr);
+
+  CGAL::intersection(pgn_with_holes1, pgn2, std::back_inserter(result));
+  CGAL::intersection(pgn_with_holes1, pgn2, std::back_inserter(result), CGAL::Tag_true());
+  CGAL::intersection(pgn_with_holes1, pgn2, std::back_inserter(result), CGAL::Tag_false());
+  CGAL::intersection(pgn_with_holes1, pgn2, std::back_inserter(result), tr);
+
+  CGAL::intersection(pgn_with_holes1, pgn_with_holes2, std::back_inserter(result));
+  CGAL::intersection(pgn_with_holes1, pgn_with_holes2, std::back_inserter(result), CGAL::Tag_true());
+  CGAL::intersection(pgn_with_holes1, pgn_with_holes2, std::back_inserter(result), CGAL::Tag_false());
+  CGAL::intersection(pgn_with_holes1, pgn_with_holes2, std::back_inserter(result), tr);
+
+  CGAL::intersection(polygons.begin(), polygons.end(), std::back_inserter(result));
+  CGAL::intersection(polygons.begin(), polygons.end(), std::back_inserter(result), CGAL::Tag_true());
+  CGAL::intersection(polygons.begin(), polygons.end(), std::back_inserter(result), CGAL::Tag_false());
+  CGAL::intersection(polygons.begin(), polygons.end(), std::back_inserter(result), tr);
+
+  CGAL::intersection(polygons_with_holes.begin(), polygons_with_holes.end(),
+                     std::back_inserter(result));
+  CGAL::intersection(polygons_with_holes.begin(), polygons_with_holes.end(),
+                     std::back_inserter(result), CGAL::Tag_true());
+  CGAL::intersection(polygons_with_holes.begin(), polygons_with_holes.end(),
+                     std::back_inserter(result), CGAL::Tag_false());
+  CGAL::intersection(polygons_with_holes.begin(), polygons_with_holes.end(),
+                     std::back_inserter(result), tr);
+
+  CGAL::intersection(polygons.begin(), polygons.end(),
+                     polygons_with_holes.begin(), polygons_with_holes.end(),
+                     std::back_inserter(result));
+  CGAL::intersection(polygons.begin(), polygons.end(),
+                     polygons_with_holes.begin(), polygons_with_holes.end(),
+                     std::back_inserter(result), CGAL::Tag_true());
+  CGAL::intersection(polygons.begin(), polygons.end(),
+                     polygons_with_holes.begin(), polygons_with_holes.end(),
+                     std::back_inserter(result), CGAL::Tag_false());
+  CGAL::intersection(polygons.begin(), polygons.end(),
+                     polygons_with_holes.begin(), polygons_with_holes.end(),
+                     std::back_inserter(result), tr);
+
   CGAL::join(pgn1, pgn2, res);
   CGAL::join(pgn1, pgn2, res, CGAL::Tag_true());
   CGAL::join(pgn1, pgn2, res, CGAL::Tag_false());
@@ -291,6 +357,19 @@ void test_CGAL_Polygon_variants()
   CGAL::join(polygons_with_holes.begin(), polygons_with_holes.end(), std::back_inserter(result), CGAL::Tag_true());
   CGAL::join(polygons_with_holes.begin(), polygons_with_holes.end(), std::back_inserter(result), CGAL::Tag_false());
   CGAL::join(polygons_with_holes.begin(), polygons_with_holes.end(), std::back_inserter(result), tr);
+
+  CGAL::join(polygons.begin(), polygons.end(),
+             polygons_with_holes.begin(), polygons_with_holes.end(),
+             std::back_inserter(result));
+  CGAL::join(polygons.begin(), polygons.end(),
+             polygons_with_holes.begin(), polygons_with_holes.end(),
+             std::back_inserter(result), CGAL::Tag_true());
+  CGAL::join(polygons.begin(), polygons.end(),
+             polygons_with_holes.begin(), polygons_with_holes.end(),
+             std::back_inserter(result), CGAL::Tag_false());
+  CGAL::join(polygons.begin(), polygons.end(),
+             polygons_with_holes.begin(), polygons_with_holes.end(),
+             std::back_inserter(result), tr);
 
   CGAL::difference(pgn1, pgn2, std::back_inserter(result));
   CGAL::difference(pgn1, pgn2, std::back_inserter(result), CGAL::Tag_true());
@@ -331,6 +410,33 @@ void test_CGAL_Polygon_variants()
   CGAL::symmetric_difference(pgn_with_holes1, pgn_with_holes2, std::back_inserter(result), CGAL::Tag_true());
   CGAL::symmetric_difference(pgn_with_holes1, pgn_with_holes2, std::back_inserter(result), CGAL::Tag_false());
   CGAL::symmetric_difference(pgn_with_holes1, pgn_with_holes2, std::back_inserter(result), tr);
+
+  CGAL::symmetric_difference(polygons.begin(), polygons.end(), std::back_inserter(result));
+  CGAL::symmetric_difference(polygons.begin(), polygons.end(), std::back_inserter(result), CGAL::Tag_true());
+  CGAL::symmetric_difference(polygons.begin(), polygons.end(), std::back_inserter(result), CGAL::Tag_false());
+  CGAL::symmetric_difference(polygons.begin(), polygons.end(), std::back_inserter(result), tr);
+
+  CGAL::symmetric_difference(polygons_with_holes.begin(), polygons_with_holes.end(),
+                             std::back_inserter(result));
+  CGAL::symmetric_difference(polygons_with_holes.begin(), polygons_with_holes.end(),
+                             std::back_inserter(result), CGAL::Tag_true());
+  CGAL::symmetric_difference(polygons_with_holes.begin(), polygons_with_holes.end(),
+                             std::back_inserter(result), CGAL::Tag_false());
+  CGAL::symmetric_difference(polygons_with_holes.begin(), polygons_with_holes.end(),
+                             std::back_inserter(result), tr);
+
+  CGAL::symmetric_difference(polygons.begin(), polygons.end(),
+                             polygons_with_holes.begin(), polygons_with_holes.end(),
+                             std::back_inserter(result));
+  CGAL::symmetric_difference(polygons.begin(), polygons.end(),
+                             polygons_with_holes.begin(), polygons_with_holes.end(),
+                             std::back_inserter(result), CGAL::Tag_true());
+  CGAL::symmetric_difference(polygons.begin(), polygons.end(),
+                             polygons_with_holes.begin(), polygons_with_holes.end(),
+                             std::back_inserter(result), CGAL::Tag_false());
+  CGAL::symmetric_difference(polygons.begin(), polygons.end(),
+                             polygons_with_holes.begin(), polygons_with_holes.end(),
+                             std::back_inserter(result), tr);
 
   Polygon_with_holes_2 res2;
   CGAL::complement(pgn1, res2);
