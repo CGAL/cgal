@@ -180,8 +180,10 @@ e.g. When is an octree the right choice?
 
 \section Section_Octree_Software_Design Software Design
 
-\subsection Subsection_Octree_Splitting_Rules Splitting Rules
-\subsection Subsection_Octree_Walker_Rules Walker Rules
+\subsection Subsection_Octree_Design_Octree Octree
+\subsection Subsection_Octree_Design_Walker_Rules Walker Rules
+\subsection Subsection_Octree_Design_Splitting_Rules Splitting Rules
+\subsection Subsection_Octree_Design_Walker_Rules Walker Rules
 
 \section Section_Octree_History History
 
