@@ -55,6 +55,24 @@ Oriented_side _oriented_side(const Obj& obj, const Pgn& pgn, Traits& tr)
   return (gps.oriented_side(obj));
 }
 
+template <class Kernel, class Pgn, class Traits>
+inline
+Oriented_side _oriented_side(const Polygon_2<Kernel>& obj, const Pgn& pgn, Traits& tr)
+{
+  General_polygon_set_2<Traits> gps(tr);
+  gps.insert(convert_polygon(pgn, tr));
+  return (gps.oriented_side(convert_polygon(obj, tr)));
+}
+
+template <class Kernel, class Pgn, class Traits>
+inline
+Oriented_side _oriented_side(const Polygon_with_holes_2<Kernel>& obj, const Pgn& pgn, Traits& tr)
+{
+  General_polygon_set_2<Traits> gps(tr);
+  gps.insert(convert_polygon(pgn, tr));
+  return (gps.oriented_side(convert_polygon(obj, tr)));
+}
+
 template <class Obj, class Pgn>
 inline Oriented_side _oriented_side(const Obj& obj, const Pgn& pgn)
 {

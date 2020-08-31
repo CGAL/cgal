@@ -21,6 +21,7 @@
 #include <CGAL/General_polygon_with_holes_2.h>
 #include <CGAL/General_polygon_2.h>
 #include <CGAL/Gps_segment_traits_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Gps_traits_2.h>
 
 namespace CGAL {
