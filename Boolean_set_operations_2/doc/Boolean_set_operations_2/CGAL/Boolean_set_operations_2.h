@@ -27,9 +27,16 @@ the `complement function` writes them into an output iterator
 
 /*!
  writes the complement of the polygon `pgn` into the  polygon with holes `res`.
+
+ \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+ `General_polygon_set_2` is instantiated with polyline traits. If set
+ to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+ `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+ information.
  */
-template <class Kernel, class Container>
-void complement(const Polygon_2<Kernel, Container> & pgn, Polygon_with_holes_2<Kernel, Container> & res);
+template <class Kernel, class Container, typename UsePolylineTraits>
+void complement(const Polygon_2<Kernel, Container> & pgn, Polygon_with_holes_2<Kernel, Container> & res,
+                UsePolylineTraits = UsePolylineTraits());
 
 /*!
   writes the complement of the general polygon `pgn` into the  general polygon with holes `res`.
@@ -40,9 +47,16 @@ void complement(const General_polygon_2<Traits> & pgn, General_polygon_with_hole
 /*!
   writes the complement of the polygon with holes `pgn` into the  output iterator `oi`.
   The value type of `oi` is `Polygon_with_holes_2`.
+
+  \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+  `General_polygon_set_2` is instantiated with polyline traits. If set
+  to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+  `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+  information.
  */
-template <class Traits, class OutputIterator>
-OutputIterator complement(const Polygon_with_holes_2<Kernel, Container> & pgn, OutputIterator oi);
+template <class Traits, class OutputIterator, typename UsePolylineTraits>
+OutputIterator complement(const Polygon_with_holes_2<Kernel, Container> & pgn, OutputIterator oi,
+                          UsePolylineTraits = UsePolylineTraits());
 
 /*!
   writes the complement of the general polygon with holes `pgn` into the  output iterator `oi`.
@@ -102,38 +116,62 @@ The types of the parameters of the `difference()` function are any of the follow
 /*!
  writes the difference of the polygons `p1` and `p2` into the output iterator `oi`.
  The value type of `oi` is `Polygon_with_holes_2`.
+
+ \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+ `General_polygon_set_2` is instantiated with polyline traits. If set
+ to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+ `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+ information.
  */
-template <class Kernel, class Container, class OutputIterator>
+template <class Kernel, class Container, class OutputIterator, typename UsePolylineTraits>
 OutputIterator difference(const Polygon_2<Kernel, Container> & p1,
                           const Polygon_2<Kernel, Container> & p2,
-                          OutputIterator oi);
+                          OutputIterator oi, UsePolylineTraits = UsePolylineTraits());
 
 /*!
  writes the difference of the polygons `p1` and `p2` into the output iterator `oi`.
  The value type of `oi` is `Polygon_with_holes_2`.
+
+ \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+ `General_polygon_set_2` is instantiated with polyline traits. If set
+ to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+ `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+ information.
  */
-template <class Kernel, class Container, class OutputIterator>
+template <class Kernel, class Container, class OutputIterator, typename UsePolylineTraits>
 OutputIterator difference(const Polygon_2<Kernel, Container> & p1,
                           const Polygon_with_holes_2<Kernel,Container> & p2,
-                          OutputIterator oi);
+                          OutputIterator oi, UsePolylineTraits = UsePolylineTraits());
 
 /*!
  writes the difference of the polygons `p1` and `p2` into the output iterator `oi`.
  The value type of `oi` is `Polygon_with_holes_2`.
+
+ \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+ `General_polygon_set_2` is instantiated with polyline traits. If set
+ to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+ `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+ information.
  */
-template <class Kernel, class Container, class OutputIterator>
+template <class Kernel, class Container, class OutputIterator, typename UsePolylineTraits>
 OutputIterator difference(const Polygon_with_holes_2<Kernel, Container> & p1,
                           const Polygon_2<Kernel, Container> & p2,
-                          OutputIterator oi);
+                          OutputIterator oi, UsePolylineTraits = UsePolylineTraits());
 
 /*!
  writes the difference of the polygons `p1` and `p2` into the output iterator `oi`.
  The value type of `oi` is `Polygon_with_holes_2`.
+
+ \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+ `General_polygon_set_2` is instantiated with polyline traits. If set
+ to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+ `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+ information.
  */
-template <class Kernel, class Container, class OutputIterator>
+template <class Kernel, class Container, class OutputIterator, typename UsePolylineTraits>
 OutputIterator difference(const Polygon_with_holes_2<Kernel, Container> & p1,
                           const Polygon_with_holes_2<Kernel, Container> & p2,
-                          OutputIterator oi);
+                          OutputIterator oi, UsePolylineTraits = UsePolylineTraits());
 
 /*!
  writes the difference of the general polygons `p1` and `p2` into the output iterator `oi`.
@@ -220,33 +258,60 @@ The types of the parameters of the \link ref_bso_do_intersect `do_intersect()` \
 
 /*!
   returns `true` if the polygons `p1` and `p2` intersect in their interior.
+
+  \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+  `General_polygon_set_2` is instantiated with polyline traits. If set
+  to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+  `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+  information.
  */
-template <class Kernel, class Container>
+template <class Kernel, class Container, typename UsePolylineTraits>
 bool do_intersect(const Polygon_2<Kernel, Container> & p1,
-                  const Polygon_2<Kernel, Container> & p2);
+                  const Polygon_2<Kernel, Container> & p2,
+                  UsePolylineTraits = UsePolylineTraits());
 
 /*!
   returns `true` if the polygons `p1` and `p2` intersect in their interior.
+
+  \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+  `General_polygon_set_2` is instantiated with polyline traits. If set
+  to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+  `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+  information.
  */
-template <class Kernel, class Container>
+template <class Kernel, class Container, typename UsePolylineTraits>
 bool do_intersect(const Polygon_2<Kernel, Container> & p1,
-                  const Polygon_with_holes_2<Kernel, Container> & p2);
+                  const Polygon_with_holes_2<Kernel, Container> & p2,
+                  UsePolylineTraits = UsePolylineTraits());
 
 /*!
   returns `true` if the polygons `p1` and `p2` intersect in their interior.
   returns `true` if the interior of polygons `p1` and `p2` intersect.
+
+  \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+  `General_polygon_set_2` is instantiated with polyline traits. If set
+  to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+  `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+  information.
  */
-template <class Kernel, class Container>
+template <class Kernel, class Container, typename UsePolylineTraits>
 bool do_intersect(const Polygon_with_holes_2<Kernel, Container> & p1,
-                  const Polygon_2<Kernel, Container> & p2);
+                  const Polygon_2<Kernel, Container> & p2,
+                  UsePolylineTraits = UsePolylineTraits());
 
 /*!
   returns `true` if the polygons `p1` and `p2` intersect in their interior.
 
+  \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+  `General_polygon_set_2` is instantiated with polyline traits. If set
+  to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+  `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+  information.
  */
-template <class Kernel, class Container>
+template <class Kernel, class Container, typename UsePolylineTraits>
 bool do_intersect(const Polygon_with_holes_2<Kernel, Container> & p1,
-                  const Polygon_with_holes_2<Kernel, Container> & p2);
+                  const Polygon_with_holes_2<Kernel, Container> & p2,
+                  UsePolylineTraits = UsePolylineTraits());
 
 /*!
   returns `true` if the general polygons `p1` and `p2` intersect in their interior.
@@ -287,6 +352,22 @@ template <class InputIterator>
 bool do_intersect(InputIterator begin, InputIterator end);
 
   /*!
+    returns `true`, if the set of `Polygon_2` (or
+    `Polygon_with_holes_2`) in the given range intersect in their
+    interior, and `false` otherwise. (The value type of the input
+    iterator is used to distinguish between the two).
+
+    \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+    `General_polygon_set_2` is instantiated with polyline traits. If set
+    to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+    `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+    information.
+  */
+template <class InputIterator, typename UsePolylineTraits>
+bool do_intersect(InputIterator begin, InputIterator end,
+                  UsePolylineTraits = UsePolylineTraits());
+
+  /*!
     returns `true`, if the set of general polygons and general
     polygons with holes in the given two ranges respectively intersect in
     their interior, and `false` otherwise.
@@ -296,6 +377,24 @@ bool do_intersect(InputIterator1 pgn_begin1,
                   InputIterator1 pgn_end1,
                   InputIterator2 pgn_begin2,
                   InputIterator2 pgn_end2);
+
+  /*!
+    returns `true`, if the set of `Polygon_2` and
+    `Polygon_with_holes_2` in the given two ranges respectively
+    intersect in their interior, and `false` otherwise.
+
+    \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+    `General_polygon_set_2` is instantiated with polyline traits. If set
+    to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+    `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+    information.
+  */
+template <class InputIterator1, class InputIterator2, typename UsePolylineTraits>
+bool do_intersect(InputIterator1 pgn_begin1,
+                  InputIterator1 pgn_end1,
+                  InputIterator2 pgn_begin2,
+                  InputIterator2 pgn_end2,
+                  UsePolylineTraits = UsePolylineTraits());
 /// @}
 } /* namespace CGAL */
 
@@ -359,38 +458,62 @@ OutputIterator intersection(const Type1 & p1, const Type2 & p2,
 /*!
  writes the intersection of the polygons `p1` and `p2` into the output iterator `oi`.
  The value type of `oi` is `Polygon_with_holes_2`.
+
+ \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+ `General_polygon_set_2` is instantiated with polyline traits. If set
+ to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+ `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+ information.
  */
-template <class Kernel, class Container, class OutputIterator>
+template <class Kernel, class Container, class OutputIterator, typename UsePolylineTraits>
 OutputIterator intersection(const Polygon_2<Kernel, Container> & p1,
                             const Polygon_2<Kernel, Container> & p2,
-                            OutputIterator oi);
+                            OutputIterator oi, UsePolylineTraits = UsePolylineTraits());
 
 /*!
  writes the intersection of the polygons `p1` and `p2` into the output iterator `oi`.
  The value type of `oi` is `Polygon_with_holes_2`.
+
+ \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+ `General_polygon_set_2` is instantiated with polyline traits. If set
+ to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+ `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+ information.
  */
-template <class Kernel, class Container, class OutputIterator>
+template <class Kernel, class Container, class OutputIterator, typename UsePolylineTraits>
 OutputIterator intersection(const Polygon_2<Kernel, Container> & p1,
                             const Polygon_with_holes_2<Kernel, Container> & p2,
-                            OutputIterator oi);
+                            OutputIterator oi, UsePolylineTraits = UsePolylineTraits());
 
 /*!
  writes the intersection of the polygons `p1` and `p2` into the output iterator `oi`.
  The value type of `oi` is `Polygon_with_holes_2`.
+
+ \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+ `General_polygon_set_2` is instantiated with polyline traits. If set
+ to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+ `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+ information.
  */
-template <class Kernel, class Container, class OutputIterator>
+template <class Kernel, class Container, class OutputIterator, typename UsePolylineTraits>
 OutputIterator intersection(const Polygon_with_holes_2<Kernel, Container> & p1,
                             const Polygon_2<Kernel, Container> & p2,
-                            OutputIterator oi);
+                            OutputIterator oi, UsePolylineTraits = UsePolylineTraits());
 
 /*!
  writes the intersection of the polygons `p1` and `p2` into the output iterator `oi`.
  The value type of `oi` is `Polygon_with_holes_2`.
+
+ \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+ `General_polygon_set_2` is instantiated with polyline traits. If set
+ to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+ `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+ information.
  */
-template <class Kernel, class Container, class OutputIterator>
+template <class Kernel, class Container, class OutputIterator, typename UsePolylineTraits>
 OutputIterator intersection(const Polygon_with_holes_2<Kernel, Container> & p1,
                             const Polygon_with_holes_2<Kernel, Container> & p2,
-                            OutputIterator oi);
+                            OutputIterator oi, UsePolylineTraits = UsePolylineTraits());
 
 /*!
  writes the intersection of the general polygons `p1` and `p2` into the output iterator `oi`.
@@ -442,6 +565,25 @@ OutputIterator intersection(InputIterator begin, InputIterator end,
                             OutputIterator oi);
 
 /*!
+  computes the intersection of the `Polygon_2` objects (or
+  `Polygon_with_holes_2` objects) in the given range. (The value type
+  of the input iterator is used to distinguish between the two.) The
+  result, represented by a set of general polygon with holes, is
+  written into the output iterator `oi`.  The output iterator is
+  returned. The value type of the `OutputIterator` is
+  `Traits::Polygon_with_holes_2`.
+
+  \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+  `General_polygon_set_2` is instantiated with polyline traits. If set
+  to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+  `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+  information.
+*/
+template <class InputIterator, class OutputIterator, typename UsePolylineTraits>
+OutputIterator intersection(InputIterator begin, InputIterator end,
+                            OutputIterator oi, UsePolylineTraits = UsePolylineTraits());
+
+/*!
   computes the intersection of the general polygons and general polygons
   with holes in the given two ranges. The result, represented by a set
   of general polygon with holes, is written into the output iterator `oi`.
@@ -455,6 +597,29 @@ InputIterator1 pgn_end1,
 InputIterator2 pgn_begin2,
 InputIterator2 pgn_end2,
 OutputIterator oi);
+
+/*!
+  computes the intersection of the `Polygon_2` objects and
+  `Polygon_with_holes_2` object in the given two ranges. The result,
+  represented by a set of general polygon with holes, is written into
+  the output iterator `oi`.  The output iterator is returned. The
+  value type of the `OutputIterator` is
+  `Traits::Polygon_with_holes_2`.
+
+  \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+  `General_polygon_set_2` is instantiated with polyline traits. If set
+  to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+  `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+  information.
+*/
+template <class InputIterator1, class InputIterator2,
+          class OutputIterator, typename UsePolylineTraits>
+OutputIterator intersection(InputIterator1 pgn_begin1,
+InputIterator1 pgn_end1,
+InputIterator2 pgn_begin2,
+InputIterator2 pgn_end2,
+OutputIterator oi,
+UsePolylineTraits = UsePolylineTraits());
 
 /// @}
 
@@ -507,41 +672,69 @@ The types of the parameters of the `join()` function are any of the following co
 /*!
  writes the union of the polygons `p1` and `p2` into the polygon with holes `res`.
  Returns `true` if the two given polygons overlap.
+
+ \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+ `General_polygon_set_2` is instantiated with polyline traits. If set
+ to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+ `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+ information.
  */
-template <class Kernel, class Container>
+template <class Kernel, class Container, typename UsePolylineTraits>
 bool join(const Polygon_2<Kernel, Container> & p1,
           const Polygon_2<Kernel, Container> & p2,
-          General_polygon_with_holes_2<Polygon_2<Kernel, Container> > & res);
+          General_polygon_with_holes_2<Polygon_2<Kernel, Container> > & res,
+          UsePolylineTraits = UsePolylineTraits());
 
 
 /*!
  writes the union of the polygons `p1` and `p2` into the polygon with holes `res`.
  Returns `true` if the two given polygons overlap.
+
+ \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+ `General_polygon_set_2` is instantiated with polyline traits. If set
+ to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+ `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+ information.
  */
-template <class Kernel, class Container>
+template <class Kernel, class Container, typename UsePolylineTraits>
 bool join(const Polygon_2<Kernel, Container> & p1,
           const Polygon_with_holes_2<Kernel,Container> & p2,
-          General_polygon_with_holes_2<Polygon_2<Kernel, Container> > & res);
+          General_polygon_with_holes_2<Polygon_2<Kernel, Container> > & res,
+          UsePolylineTraits = UsePolylineTraits());
 
 
 /*!
  writes the union of the polygons `p1` and `p2` into the polygon with holes `res`.
  Returns `true` if the two given polygons overlap.
- */
-template <class Kernel, class Container>
+
+ \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+ `General_polygon_set_2` is instantiated with polyline traits. If set
+ to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+ `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+ information.
+*/
+template <class Kernel, class Container, typename UsePolylineTraits>
 bool join(const Polygon_with_holes_2<Kernel, Container> & p2,
           const Polygon_2<Kernel, Container> & p1,
-          General_polygon_with_holes_2<Polygon_2<Kernel, Container> > & res);
+          General_polygon_with_holes_2<Polygon_2<Kernel, Container> > & res,
+          UsePolylineTraits = UsePolylineTraits());
 
 
 /*!
  writes the union of the polygons `p1` and `p2` into the polygon with holes `res`.
  Returns `true` if the two given polygons overlap.
+
+ \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+ `General_polygon_set_2` is instantiated with polyline traits. If set
+ to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+ `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+ information.
  */
-template <class Kernel, class Container>
+template <class Kernel, class Container, typename UsePolylineTraits>
 bool join(const Polygon_with_holes_2<Kernel, Container> & p2,
           const Polygon_with_holes_2<Kernel, Container> & p1,
-          General_polygon_with_holes_2<Polygon_2<Kernel, Container> > & res);
+          General_polygon_with_holes_2<Polygon_2<Kernel, Container> > & res,
+          UsePolylineTraits = UsePolylineTraits());
 
 
 /*!
@@ -597,6 +790,25 @@ template <class InputIterator, class OutputIterator>
 OutputIterator join(InputIterator begin, InputIterator end,
 OutputIterator oi);
 
+/*!
+  computes the union of the `Polygon_2` objects (or
+  `Polygon_with_holes_2` objects) in the given range. (The value type
+  of the input iterator is used to distinguish between the two.) The
+  result, represented by a set of general polygon with holes, is
+  written into the output iterator `oi`.  The output iterator is
+  returned. The value type of the `OutputIterator` is
+  `Traits::Polygon_with_holes_2`.
+
+  \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+  `General_polygon_set_2` is instantiated with polyline traits. If set
+  to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+  `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+  information.
+*/
+template <class InputIterator, class OutputIterator, typename UsePolylineTraits>
+OutputIterator join(InputIterator begin, InputIterator end,
+OutputIterator oi, UsePolylineTraits = UsePolylineTraits());
+
   /*!
     computes the union of the general polygons and general polygons
     with holes in the given two ranges. The result, represented by a set
@@ -610,6 +822,26 @@ class OutputIterator>
 OutputIterator join(InputIterator1 pgn_begin1, InputIterator1 pgn_end1,
 InputIterator2 pgn_begin2, InputIterator2 pgn_end2,
 OutputIterator oi);
+
+  /*!
+    computes the union of the `Polygon_2` objects and
+    `Polygon_with_holes_2` objects in the given two ranges. The
+    result, represented by a set of general polygon with holes, is
+    written into the output iterator `oi`.  The output iterator is
+    returned. The value type of the `OutputIterator` is
+    `Traits::Polygon_with_holes_2`.
+
+    \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+    `General_polygon_set_2` is instantiated with polyline traits. If set
+    to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+    `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+    information.
+  */
+template <class InputIterator1, class InputIterator2,
+class OutputIterator, typename UsePolylineTraits>
+OutputIterator join(InputIterator1 pgn_begin1, InputIterator1 pgn_end1,
+InputIterator2 pgn_begin2, InputIterator2 pgn_end2,
+OutputIterator oi, UsePolylineTraits = UsePolylineTraits());
 
 /// @}
 } /* namespace CGAL */
@@ -654,24 +886,57 @@ The types of the parameters of the `oriented_side()` function are any of the fol
 
 /// @{
 
-template <class Kernel, class Container>
+
+/*!
+  \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+  `General_polygon_set_2` is instantiated with polyline traits. If set
+  to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+  `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+  information.
+*/
+template <class Kernel, class Container, typename UsePolylineTraits>
 Oriented_side oriented_side(const Polygon_2<Kernel, Container> & p1,
-                            const Polygon_2<Kernel, Container> & p2);
+                            const Polygon_2<Kernel, Container> & p2,
+                            UsePolylineTraits = UsePolylineTraits());
 
 
-template <class Kernel, class Container>
+/*!
+  \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+  `General_polygon_set_2` is instantiated with polyline traits. If set
+  to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+  `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+  information.
+*/
+template <class Kernel, class Container, typename UsePolylineTraits>
 Oriented_side oriented_side(const Polygon_2<Kernel, Container> & p1,
-                            const Polygon_with_holes_2<Kernel, Container> & p2);
+                            const Polygon_with_holes_2<Kernel, Container> & p2,
+                            UsePolylineTraits = UsePolylineTraits());
 
 
-template <class Kernel, class Container>
+/*!
+  \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+  `General_polygon_set_2` is instantiated with polyline traits. If set
+  to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+  `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+  information.
+*/
+template <class Kernel, class Container, typename UsePolylineTraits>
 Oriented_side oriented_side(const Polygon_with_holes_2<Kernel, Container> & p1,
-                            const Polygon_2<Kernel, Container> & p2);
+                            const Polygon_2<Kernel, Container> & p2,
+                            UsePolylineTraits = UsePolylineTraits());
 
 
-template <class Kernel, class Container>
+/*!
+  \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+  `General_polygon_set_2` is instantiated with polyline traits. If set
+  to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+  `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+  information.
+*/
+template <class Kernel, class Container, typename UsePolylineTraits>
 Oriented_side oriented_side(const Polygon_with_holes_2<Kernel, Container> & p1,
-                            const Polygon_with_holes_2<Kernel, Container> & p2);
+                            const Polygon_with_holes_2<Kernel, Container> & p2,
+                            UsePolylineTraits = UsePolylineTraits());
 
 
 template <class Traits>
@@ -745,30 +1010,59 @@ OutputIterator symmetric_difference(const Type1 & p1, const Type2 & p2,
                                     OutputIterator oi);
 
 
-template <class Kernel, class Container, class OutputIterator>
+/*!
+  \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+  `General_polygon_set_2` is instantiated with polyline traits. If set
+  to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+  `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+  information.
+*/
+template <class Kernel, class Container, class OutputIterator, typename UsePolylineTraits>
 OutputIterator symmetric_difference(const Polygon_2<Kernel, Container> & p1,
                                     const Polygon_2<Kernel, Container> & p2,
-                                    OutputIterator oi);
+                                    OutputIterator oi,
+                                    UsePolylineTraits = UsePolylineTraits());
 
 
-template <class Kernel, class Container, class OutputIterator>
+/*!
+  \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+  `General_polygon_set_2` is instantiated with polyline traits. If set
+  to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+  `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+  information.
+*/
+template <class Kernel, class Container, class OutputIterator, typename UsePolylineTraits>
 OutputIterator
 symmetric_difference(const Polygon_2<Kernel, Container> & p1,
                      const Polygon_with_holes_2<Kernel, Container> & p2,
-                     OutputIterator oi);
+                     OutputIterator oi, UsePolylineTraits = UsePolylineTraits());
 
-template <class Kernel, class Container, class OutputIterator>
+/*!
+  \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+  `General_polygon_set_2` is instantiated with polyline traits. If set
+  to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+  `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+  information.
+*/
+template <class Kernel, class Container, class OutputIterator, typename UsePolylineTraits>
 OutputIterator
 symmetric_difference(const Polygon_with_holes_2<Kernel, Container> & p1,
                      const Polygon_2<Kernel, Container> & p2,
-                     OutputIterator oi);
+                     OutputIterator oi, UsePolylineTraits = UsePolylineTraits());
 
 
-template <class Kernel, class Container, class OutputIterator>
+/*!
+  \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+  `General_polygon_set_2` is instantiated with polyline traits. If set
+  to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+  `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+  information.
+*/
+template <class Kernel, class Container, class OutputIterator, typename UsePolylineTraits>
 OutputIterator
 symmetric_difference(const Polygon_with_holes_2<Kernel, Container> & p1,
                      const Polygon_with_holes_2<Kernel, Container> & p2,
-                     OutputIterator oi);
+                     OutputIterator oi, UsePolylineTraits = UsePolylineTraits());
 
 
 template <class Traits, class OutputIterator>
@@ -813,6 +1107,27 @@ OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
                                     OutputIterator oi);
 
   /*!
+    computes the symmetric difference of the `Polygon_2` objects (or
+    `Polygon_with_holes_2` objects) in the given range. A point is
+    contained in the symmetric difference, if and only if it is
+    contained in an odd number of input polygons. (The value type of
+    the input iterator is used to distinguish between the two.) The
+    result, represented by a set of general polygon with holes, is
+    inserted into an output container through a given output iterator
+    `oi`. The output iterator is returned. The value type of the
+    `OutputIterator` is `Traits::Polygon_with_holes_2`.
+
+    \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+    `General_polygon_set_2` is instantiated with polyline traits. If set
+    to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+    `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+    information.
+  */
+template <class InputIterator, class OutputIterator, typename UsePolylineTraits>
+OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
+                                    OutputIterator oi, UsePolylineTraits = UsePolylineTraits());
+
+  /*!
     computes the symmetric difference of the general polygons and general polygons
     with holes in the given two ranges. A point is contained in the
     symmetric difference, if and only if it is contained in an odd number of
@@ -827,7 +1142,30 @@ OutputIterator symmetric_difference(InputIterator1 pgn_begin1,
                                     InputIterator2 pgn_begin2,
                                     InputIterator2 pgn_end2,
                                     OutputIterator oi);
+
+  /*!
+    computes the symmetric difference of the general polygons and general polygons
+    with holes in the given two ranges. A point is contained in the
+    symmetric difference, if and only if it is contained in an odd number of
+    input polygons. The result, represented by a set of general polygon with
+    holes, is inserted into an output container through a given output
+    iterator `oi`. The output iterator is returned. The value type of
+    the `OutputIterator` is `Traits::Polygon_with_holes_2`.
+
+    \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
+    `General_polygon_set_2` is instantiated with polyline traits. If set
+    to `CGAL::Tag_false`, it uses segment traits instead. Default value is
+    `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
+    information.
+  */
+template <class InputIterator1, class InputIterator2, class OutputIterator,
+          typename UsePolylineTraits>
+OutputIterator symmetric_difference(InputIterator1 pgn_begin1,
+                                    InputIterator1 pgn_end1,
+                                    InputIterator2 pgn_begin2,
+                                    InputIterator2 pgn_end2,
+                                    OutputIterator oi,
+                                    UsePolylineTraits = UsePolylineTraits());
 /// @}
 
 } /* namespace CGAL */
-

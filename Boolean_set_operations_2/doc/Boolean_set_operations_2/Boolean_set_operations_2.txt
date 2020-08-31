@@ -518,6 +518,35 @@ Polygon_set_2 S;
 S.join (begin, end);
 \endcode
 
+\subsection bso_ssectraits_sel Traits Selection
+
+When calling boolean set operations on `Polygon_2` or
+`Polygon_with_holes_2` objects, a `General_polygon_set_2` is
+instantiated internally. This polygon set is templated by a traits
+class that is automatically deduced from the polygon type and that can
+either be based on:
+
+- `Arr_polyline_traits_2`: in that case, the polygon is first
+decomposed into a set of \f$ x\f$-monotone polylines. This is the
+default behavior.
+
+- `Arr_segment_traits_2`: in that case, every edge of the polygon is
+considered as a single \f$ x\f$-monotone curve.
+
+The traits are selected via a template parameter `UsePolylineTraits`
+which is `CGAL::Tag_true` by default: the polyline version is
+generally significantly faster than the segment version as considering
+\f$ x\f$-monotone polylines reduces the number of events of the
+sweep-line algorithm.
+
+Nevertheless, in some specific cases, users can find the segment
+version to be faster: if a \f$ x\f$-monotone polyline from an input
+polygon intersects many times another \f$ x\f$-monotone polyline from
+another input polygon, then it becomes counter-productive to consider
+polylines instead of segments. In that case, users can fallback to the
+segment variant by using `CGAL::Tag_false` for the `UsePolylineTraits`
+template parameter.
+
 \section bso_secbso_gen Boolean Set-Operations on General Polygons
 
 \image html general_polygon.png
@@ -781,4 +810,3 @@ line.
 
 */
 } /* namespace CGAL */
-
