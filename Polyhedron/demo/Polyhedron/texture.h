@@ -9,7 +9,8 @@ email                : pierre.alliez@sophia.inria.fr
 #ifndef _TEXTURE_
 #define _TEXTURE_
 
-
+namespace Demo_priv
+{
 class Texture
 {
 private :
@@ -109,5 +110,5 @@ public :
     unsigned char b1,unsigned char r2, unsigned char g2,
     unsigned char b2);
 };
-
+}
 #endif // _TEXTURE_

@@ -50,7 +50,7 @@ struct Scene_textured_surface_mesh_item_priv
   void compute_normals_and_vertices(void) const;
 
   SMesh* sm;
-  ::Texture texture;
+  Demo_priv::Texture texture;
   SMesh::Property_map<halfedge_descriptor, float> umap;
   SMesh::Property_map<halfedge_descriptor, float> vmap;
 

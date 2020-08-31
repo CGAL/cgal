@@ -10,7 +10,8 @@ email                : pierre.alliez@sophia.inria.fr
 #include <string.h>
 #include "texture.h"
 
-
+namespace Demo_priv
+{
 //////////////////////////////////////////////
 // CONSTRUCTORS
 //////////////////////////////////////////////
@@ -1088,13 +1089,10 @@ void Texture::GenerateLines(unsigned int width,
       }
   }
 }
-
+}
 
 
 
 
 
 // ** EOF **
-
-
-

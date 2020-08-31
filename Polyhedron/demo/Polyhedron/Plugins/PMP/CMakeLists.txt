@@ -1,4 +1,6 @@
 include( polyhedron_demo_macros )
+
+
 if(TARGET CGAL::Eigen_support)
 
   polyhedron_demo_plugin(jet_fitting_plugin Jet_fitting_plugin)
