@@ -35,6 +35,24 @@ number of edges size type.
 */
 typedef unspecified_type Size;
 
+/*!
+a general planar curve.
+*/
+typedef typename ArrTraits::Curve_2 Curve_2;
+
+/// @}
+
+/// \name Construction
+/// @{
+
+/*!
+constructs a `General_polygon_2` from a curve.
+
+\note The curve is divided into \f$ x\f$-monotone curves using
+`ArrTraits::Make_x_monotone_2`.
+*/
+General_polygon_2 (const Curve_2& curve);
+
 /// @}
 
 /// \name Operations
