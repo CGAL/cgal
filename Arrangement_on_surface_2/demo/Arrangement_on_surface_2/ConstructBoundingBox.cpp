@@ -24,7 +24,35 @@ struct ConstructBoundingBox_impl
   CGAL::Bbox_2
   operator()(const X_monotone_curve_2& curve)
   {
-    return curve.bbox();
+    using Zero_resultant_exception = CGAL::internal::Zero_resultant_exception<
+      typename demo_types::Alg_seg_traits::Polynomial_2>;
+
+    CGAL::Bbox_2 bbox;
+    try
+    {
+      bbox= curve.bbox();
+    }
+    // algebraic traits sometimes when calling bbox
+    // example: xy=0
+    catch (std::exception& ex)
+    {
+      std::cerr << ex.what() << '\n';
+      std::cerr << __FILE__ << ':' << __LINE__ << '\n';
+      bbox = inf_bbox;
+    }
+    catch (Zero_resultant_exception& ex)
+    {
+      std::cerr << "Exception thrown of type \"Zero_resultant_exception\"\n";
+      std::cerr << __FILE__ << ':' << __LINE__ << '\n';
+      bbox = inf_bbox;
+    }
+    catch (...)
+    {
+      std::cerr << "Exception thrown of unknown type!\n";
+      std::cerr << __FILE__ << ':' << __LINE__ << '\n';
+      bbox = inf_bbox;
+    }
+    return bbox;
   }
 
   CGAL::Bbox_2

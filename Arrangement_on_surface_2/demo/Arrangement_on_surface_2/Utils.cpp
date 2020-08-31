@@ -384,7 +384,8 @@ Construct_x_monotone_subcurve_2<ArrTraits>::Construct_x_monotone_subcurve_2(
     compare_x_2(this->traits->compare_x_2_object()),
     compute_y_at_x(this->traits),
     construct_min_vertex_2(this->traits->construct_min_vertex_2_object()),
-    construct_max_vertex_2(this->traits->construct_max_vertex_2_object())
+    construct_max_vertex_2(this->traits->construct_max_vertex_2_object()),
+    parameter_space_in_x_2(this->traits)
 {
 }
 
@@ -396,10 +397,16 @@ auto Construct_x_monotone_subcurve_2<ArrTraits>::operator()(
   Point_2 pMin, pMax;
   bool unbounded_min = false;
   bool unbounded_max = false;
-  try { pMin = this->construct_min_vertex_2(curve); }
-  catch (...) { unbounded_min = true; }
-  try { pMax = this->construct_max_vertex_2(curve); }
-  catch (...) { unbounded_max = true; }
+
+  if (this->parameter_space_in_x_2(curve, CGAL::ARR_MIN_END) != CGAL::INTERIOR)
+    unbounded_min = true;
+  else
+    pMin = this->construct_min_vertex_2(curve);
+
+  if (this->parameter_space_in_x_2(curve, CGAL::ARR_MAX_END) != CGAL::INTERIOR)
+    unbounded_max = true;
+  else
+    pMax = this->construct_max_vertex_2(curve);
 
   X_monotone_curve_2 subcurve;
   X_monotone_curve_2 unusedTrimmings;

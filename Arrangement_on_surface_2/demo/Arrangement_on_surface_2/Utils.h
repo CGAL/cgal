@@ -14,6 +14,10 @@
 #include "GraphicsSceneMixin.h"
 #include "ArrTraitsAdaptor.h"
 
+#include <CGAL/tags.h>
+#include <CGAL/Arr_enums.h>
+#include <type_traits>
+
 class QGraphicsScene;
 
 template <typename ArrTraits >
@@ -276,23 +280,73 @@ public:
   double operator()(const Point_2& p, const X_monotone_curve_2& c) const;
 };
 
+// chcek if arrangement is a model of the concept ArrangementOpenBoundaryTraits_2
+template <typename ArrTraits>
+struct IsOpenBoundaryArrangement :
+    public CGAL::Boolean_tag<
+      std::is_convertible<
+        typename ArrTraits::Left_side_category,
+        CGAL::Arr_open_side_tag>::value &&
+      std::is_convertible<
+        typename ArrTraits::Bottom_side_category,
+        CGAL::Arr_open_side_tag>::value &&
+      std::is_convertible<
+        typename ArrTraits::Top_side_category,
+        CGAL::Arr_open_side_tag>::value &&
+      std::is_convertible<
+        typename ArrTraits::Right_side_category,
+        CGAL::Arr_open_side_tag>::value>
+{
+};
+
+template <typename ArrTraits, typename=void>
+class Param_space_in_x_2
+{
+public:
+  typedef typename ArrTraits::X_monotone_curve_2        X_monotone_curve_2;
+
+  Param_space_in_x_2(const ArrTraits*) {}
+  CGAL::Arr_parameter_space
+  operator()(const X_monotone_curve_2&, CGAL::Arr_curve_end)
+  {
+    return CGAL::INTERIOR;
+  }
+};
+
+template <typename ArrTraits>
+class Param_space_in_x_2<
+  ArrTraits, std::enable_if_t<IsOpenBoundaryArrangement<ArrTraits>::value>>
+{
+public:
+  typedef typename ArrTraits::X_monotone_curve_2        X_monotone_curve_2;
+  typedef typename ArrTraits::Parameter_space_in_x_2    Parameter_space_in_x_2;
+
+  Param_space_in_x_2(const ArrTraits* traits) :
+      parameter_space_in_x_2(traits->parameter_space_in_x_2_object())
+  {
+  }
+
+  CGAL::Arr_parameter_space
+  operator()(const X_monotone_curve_2& curve, CGAL::Arr_curve_end curve_end)
+  {
+    return this->parameter_space_in_x_2(curve, curve_end);
+  }
+
+private:
+  Parameter_space_in_x_2 parameter_space_in_x_2;
+};
+
 template <typename ArrTraits>
 class Construct_x_monotone_subcurve_2
 {
 public:
-  typedef typename ArrTraitsAdaptor<ArrTraits>::Kernel  Kernel;
   typedef typename ArrTraits::X_monotone_curve_2        X_monotone_curve_2;
   typedef typename ArrTraits::Split_2                   Split_2;
-  typedef typename ArrTraits::Intersect_2               Intersect_2;
-  typedef typename ArrTraits::Multiplicity              Multiplicity;
   typedef typename ArrTraits::Construct_min_vertex_2    Construct_min_vertex_2;
   typedef typename ArrTraits::Construct_max_vertex_2    Construct_max_vertex_2;
   typedef typename ArrTraits::Compare_x_2               Compare_x_2;
-  typedef typename Kernel::FT                           FT;
-  typedef typename ArrTraitsAdaptor< ArrTraits >::CoordinateType
-                                                        CoordinateType;
+  typedef Param_space_in_x_2<ArrTraits>                 Parameter_space_in_x_2;
   typedef typename ArrTraits::Point_2                   Point_2;
-  typedef typename Kernel::Point_2                      Kernel_point_2;
 
   Construct_x_monotone_subcurve_2( const ArrTraits* traits_ );
 
@@ -313,6 +367,7 @@ protected:
   Arr_compute_y_at_x_2< ArrTraits > compute_y_at_x;
   Construct_min_vertex_2 construct_min_vertex_2;
   Construct_max_vertex_2 construct_max_vertex_2;
+  Parameter_space_in_x_2 parameter_space_in_x_2;
 }; // class Construct_x_monotone_subcurve_2
 
 

@@ -136,12 +136,13 @@ void EnvelopeCallback< Arr_>::updateEnvelope( bool lower )
   }
   catch (const std::exception& ex)
   {
-      std::cerr << ex.what() << '\n';
-      if (lower)
-        this->showLowerEnvelope(false);
-      else
-        this->showUpperEnvelope(false);
-      return;
+    std::cerr << ex.what() << '\n';
+    std::cerr << __FILE__ << ':' << __LINE__ << '\n';
+    if (lower)
+      this->showLowerEnvelope(false);
+    else
+      this->showUpperEnvelope(false);
+    return;
   }
 
   envelopeToUpdate->clear( );

@@ -80,6 +80,7 @@ void SplitEdgeCallback<Arr_>::curveInputDoneEvent(
   catch (const std::exception& ex)
   {
     std::cerr << ex.what() << '\n';
+    std::cerr << __FILE__ << ':' << __LINE__ << '\n';
     return;
   }
 }
