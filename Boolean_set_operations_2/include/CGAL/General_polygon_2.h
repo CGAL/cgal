@@ -21,7 +21,6 @@
 #include <CGAL/Boolean_set_operations_2/Gps_traits_adaptor.h>
 #include <CGAL/Bbox_2.h>
 
-#include <CGAL/Boolean_set_operations_2/Points_to_x_monotone_curves_iterator.h>
 #include <boost/function_output_iterator.hpp>
 
 namespace CGAL {
