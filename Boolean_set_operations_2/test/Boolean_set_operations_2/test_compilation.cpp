@@ -242,6 +242,26 @@ void test_CGAL_Polygon_variants()
   std::vector<Polygon_with_holes_2>  result;
   Traits tr;
 
+  CGAL::do_intersect(pgn1, pgn2);
+  CGAL::do_intersect(pgn1, pgn2, CGAL::Tag_true());
+  CGAL::do_intersect(pgn1, pgn2, CGAL::Tag_false());
+  CGAL::do_intersect(pgn1, pgn2, tr);
+
+  CGAL::do_intersect(pgn1, pgn_with_holes2);
+  CGAL::do_intersect(pgn1, pgn_with_holes2, CGAL::Tag_true());
+  CGAL::do_intersect(pgn1, pgn_with_holes2, CGAL::Tag_false());
+  CGAL::do_intersect(pgn1, pgn_with_holes2, tr);
+
+  CGAL::do_intersect(pgn_with_holes1, pgn2);
+  CGAL::do_intersect(pgn_with_holes1, pgn2, CGAL::Tag_true());
+  CGAL::do_intersect(pgn_with_holes1, pgn2, CGAL::Tag_false());
+  CGAL::do_intersect(pgn_with_holes1, pgn2, tr);
+
+  CGAL::do_intersect(pgn_with_holes1, pgn_with_holes2);
+  CGAL::do_intersect(pgn_with_holes1, pgn_with_holes2, CGAL::Tag_true());
+  CGAL::do_intersect(pgn_with_holes1, pgn_with_holes2, CGAL::Tag_false());
+  CGAL::do_intersect(pgn_with_holes1, pgn_with_holes2, tr);
+
   CGAL::join(pgn1, pgn2, res);
   CGAL::join(pgn1, pgn2, res, CGAL::Tag_true());
   CGAL::join(pgn1, pgn2, res, CGAL::Tag_false());
@@ -261,6 +281,16 @@ void test_CGAL_Polygon_variants()
   CGAL::join(pgn_with_holes1, pgn_with_holes2, res, CGAL::Tag_true());
   CGAL::join(pgn_with_holes1, pgn_with_holes2, res, CGAL::Tag_false());
   CGAL::join(pgn_with_holes1, pgn_with_holes2, res, tr);
+
+  CGAL::join(polygons.begin(), polygons.end(), std::back_inserter(result));
+  CGAL::join(polygons.begin(), polygons.end(), std::back_inserter(result), CGAL::Tag_true());
+  CGAL::join(polygons.begin(), polygons.end(), std::back_inserter(result), CGAL::Tag_false());
+  CGAL::join(polygons.begin(), polygons.end(), std::back_inserter(result), tr);
+
+  CGAL::join(polygons_with_holes.begin(), polygons_with_holes.end(), std::back_inserter(result));
+  CGAL::join(polygons_with_holes.begin(), polygons_with_holes.end(), std::back_inserter(result), CGAL::Tag_true());
+  CGAL::join(polygons_with_holes.begin(), polygons_with_holes.end(), std::back_inserter(result), CGAL::Tag_false());
+  CGAL::join(polygons_with_holes.begin(), polygons_with_holes.end(), std::back_inserter(result), tr);
 
   CGAL::difference(pgn1, pgn2, std::back_inserter(result));
   CGAL::difference(pgn1, pgn2, std::back_inserter(result), CGAL::Tag_true());
