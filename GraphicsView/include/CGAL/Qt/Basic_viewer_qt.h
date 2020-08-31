@@ -1012,7 +1012,7 @@ protected:
       camera()->setType(CGAL::qglviewer::Camera::PERSPECTIVE);
       camera()->frame()->setConstraint(nullptr);
     }
-        
+
     QColor color;
     attrib_buffers(this);
 
