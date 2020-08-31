@@ -1,6 +1,132 @@
 include( polyhedron_demo_macros )
 
+add_library(PMP_headers dummy.cpp)
+add_library(PMP_headers_eigen dummy.cpp)
+add_library(PMP_headers_eigen_las dummy.cpp)
 
+target_precompile_headers(PMP_headers PUBLIC
+[["Scene.h"]]
+[["Scene_surface_mesh_item.h"]]
+[["Messages_interface.h"]]
+[["config.h"]]
+[["Scene_polyhedron_selection_item.h"]]
+<QApplication>
+<CGAL/Three/Three.h>
+<QMainWindow>
+<QAction>
+<CGAL/Three/Polyhedron_demo_plugin_interface.h>
+<QMessageBox>
+<CGAL/Three/Polyhedron_demo_plugin_helper.h>
+<QInputDialog>
+<QObject>
+<CGAL/Three/Viewer_interface.h>
+<fstream>
+<QElapsedTimer>
+<CGAL/Three/Triangle_container.h>
+<QtPlugin>
+<CGAL/Three/Edge_container.h>
+<CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+<QtCore/qglobal.h>
+<CGAL/Timer.h>
+<vector>
+<Kernel_type.h>
+<QMenu>
+<algorithm>
+<QString>
+)
+
+target_precompile_headers(PMP_headers_eigen PUBLIC
+[["Scene.h"]]
+[["Scene_surface_mesh_item.h"]]
+[["Messages_interface.h"]]
+[["Scene_polylines_item.h"]]
+[["config.h"]]
+[["Scene_polyhedron_selection_item.h"]]
+<QApplication>
+<CGAL/Three/Three.h>
+<QMainWindow>
+<QAction>
+<CGAL/Three/Polyhedron_demo_plugin_interface.h>
+<QMessageBox>
+<CGAL/Three/Polyhedron_demo_plugin_helper.h>
+<QInputDialog>
+<QObject>
+<CGAL/Three/Viewer_interface.h>
+<fstream>
+<QElapsedTimer>
+<CGAL/Three/Triangle_container.h>
+<QtPlugin>
+<CGAL/Three/Edge_container.h>
+<CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+<QtCore/qglobal.h>
+<CGAL/Timer.h>
+<vector>
+<Kernel_type.h>
+<QMenu>
+<algorithm>
+<QString>
+)
+
+
+target_precompile_headers(PMP_headers_eigen_las PUBLIC
+[["Scene.h"]]
+[["Scene_surface_mesh_item.h"]]
+[["Scene_points_with_normal_item.h"]]
+[["Messages_interface.h"]]
+[["Scene_polylines_item.h"]]
+[["config.h"]]
+[["Scene_polyhedron_selection_item.h"]]
+<QApplication>
+<CGAL/Three/Three.h>
+<QMainWindow>
+<QAction>
+<CGAL/Three/Polyhedron_demo_plugin_interface.h>
+<QMessageBox>
+<CGAL/Three/Polyhedron_demo_plugin_helper.h>
+<QInputDialog>
+<QObject>
+<CGAL/Three/Viewer_interface.h>
+<fstream>
+<QElapsedTimer>
+<CGAL/Three/Triangle_container.h>
+<QtPlugin>
+<CGAL/Three/Edge_container.h>
+<CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+<QtCore/qglobal.h>
+<CGAL/Timer.h>
+<vector>
+<Kernel_type.h>
+<QMenu>
+<algorithm>
+<QString>
+)
+
+
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(PMP_headers PUBLIC CGAL::TBB_support)
+endif()
+
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(PMP_headers_eigen PUBLIC CGAL::TBB_support)
+endif()
+if(TARGET CGAL::Eigen_support)
+  target_link_libraries(PMP_headers_eigen PUBLIC CGAL::Eigen_support)
+endif()
+
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(PMP_headers_eigen_las PUBLIC CGAL::TBB_support)
+endif()
+if(TARGET CGAL::Eigen_support)
+  target_link_libraries(PMP_headers_eigen_las PUBLIC CGAL::Eigen_support)
+endif()
+
+if (TARGET CGAL::LASLIB_support)
+  target_link_libraries(PMP_headers_eigen_las PUBLIC CGAL::LASLIB_support)
+  if (MSVC)
+    target_compile_definitions( PMP_headers_eigen_las PUBLIC "-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS")
+  endif()
+endif()
+#####
 if(TARGET CGAL::Eigen_support)
 
   polyhedron_demo_plugin(jet_fitting_plugin Jet_fitting_plugin)
@@ -126,3 +252,43 @@ target_link_libraries(degenerated_faces_plugin PUBLIC scene_surface_mesh_item sc
 qt5_wrap_ui( engravUI_FILES Engrave_dock_widget.ui )
 polyhedron_demo_plugin(engrave_text_plugin Engrave_text_plugin ${engravUI_FILES})
 target_link_libraries(engrave_text_plugin PUBLIC scene_surface_mesh_item scene_selection_item scene_polylines_item)
+
+foreach(tgt
+distance_plugin
+triangulate_facets_plugin
+join_and_split_plugin
+corefinement_plugin
+repair_polyhedron_plugin
+isotropic_remeshing_plugin
+distance_plugin
+detect_sharp_edges_plugin
+random_perturbation_plugin
+degenerated_faces_plugin
+inside_out_plugin
+)
+  target_precompile_headers(${tgt} REUSE_FROM PMP_headers)
+endforeach()
+
+foreach(tgt
+polyhedron_slicer_plugin
+polyhedron_stitching_plugin
+engrave_text_plugin
+mean_curvature_flow_skeleton_plugin
+jet_fitting_plugin
+hole_filling_plugin
+fairing_plugin
+hole_filling_polyline_plugin
+smoothing_plugin
+extrude_plugin
+)
+  target_precompile_headers(${tgt} REUSE_FROM PMP_headers_eigen)
+endforeach()
+
+foreach(tgt
+orient_soup_plugin
+point_inside_polyhedron_plugin
+selection_plugin
+surface_intersection_plugin
+)
+  target_precompile_headers(${tgt} REUSE_FROM PMP_headers_eigen_las)
+endforeach()

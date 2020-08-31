@@ -12,7 +12,6 @@
 #include "Polyhedron_demo_detect_sharp_edges.h"
 
 typedef Scene_surface_mesh_item Scene_facegraph_item;
-typedef CGAL::Kernel_traits<Scene_surface_mesh_item::Face_graph::Point>::Kernel Kernel;
 
 typedef Scene_facegraph_item::Face_graph FaceGraph;
 typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
@@ -59,7 +58,7 @@ public Q_SLOTS:
   void detectSharpEdgesWithInputDialog();
 
 protected:
-  Kernel::Vector_3 facet_normal(face_descriptor f);
+  EPICK::Vector_3 facet_normal(face_descriptor f);
   bool is_sharp(halfedge_descriptor he);
 
 private:

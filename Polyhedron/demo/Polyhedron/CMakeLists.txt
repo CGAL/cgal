@@ -211,32 +211,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     target_compile_definitions(demo_framework PRIVATE -DCGAL_USE_Qt5_RESOURCES)
   endif()
 
-target_precompile_headers(
-demo_framework PUBLIC
-#<CGAL/Three/Scene_interface.h>
-#<QApplication>
-#<QObject>
-#<QMainWindow>
-#<QMessageBox>
-#<CGAL/Three/Viewer_interface.h>
-#<QString>
-#<vector>
-#<QFileDialog>
-#<map>
-#<QStringList>
-#<QAction>
-#<CGAL/Three/Three.h>
-#[["Messages_interface.h"]]
-#<algorithm>
-#<iostream>
-#<CGAL/Three/Scene_item.h>
-#<QMenu>
-<fstream>
-#<CGAL/Polygon_mesh_processing/compute_normal.h>
-#<CGAL/Three/Triangle_container.h>
-#<CGAL/Three/Edge_container.h>
-#<CGAL/Three/Point_container.h>
-)
   add_library(scene_basic_objects SHARED
     Scene_plane_item.cpp
     Scene_spheres_item.cpp
@@ -273,7 +247,6 @@ demo_framework PUBLIC
     target_link_libraries(${item_name}
       PUBLIC demo_framework ${CGAL_LIBRARIES}
       Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
-      target_precompile_headers(${item_name} REUSE_FROM demo_framework)
     add_dependencies(all_scene_items ${item_name})
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${item_name} )
   endmacro(add_item)
