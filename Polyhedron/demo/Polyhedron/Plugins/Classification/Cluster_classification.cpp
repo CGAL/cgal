@@ -5,6 +5,7 @@
 
 #include "Cluster_classification.h"
 #include "Color_ramp.h"
+#include "QMultipleInputDialog.h"
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>

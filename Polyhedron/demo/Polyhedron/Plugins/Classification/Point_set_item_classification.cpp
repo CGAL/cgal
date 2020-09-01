@@ -4,6 +4,7 @@
 #endif
 
 #include "Point_set_item_classification.h"
+#include "QMultipleInputDialog.h"
 #include "Color_ramp.h"
 
 #include <CGAL/Timer.h>
@@ -15,6 +16,7 @@
 #include <stack>
 #include <algorithm>
 #include <boost/array.hpp>
+
 
 Point_set_item_classification::Point_set_item_classification(Scene_points_with_normal_item* points)
   : m_points (points)

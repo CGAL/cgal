@@ -6,6 +6,7 @@
 #include <CGAL/thread.h>
 
 #include "Callback_signaler.h"
+#include "QEventLoop"
 
 typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 

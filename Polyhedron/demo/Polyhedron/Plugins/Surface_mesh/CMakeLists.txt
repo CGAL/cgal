@@ -52,3 +52,5 @@ target_link_libraries(surface_mesh_approximation_plugin
   scene_surface_mesh_item
   scene_polygon_soup_item
   scene_polylines_item)
+
+#no offset meshing bc eigen

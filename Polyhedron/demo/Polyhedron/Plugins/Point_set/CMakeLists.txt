@@ -12,6 +12,26 @@ if(TARGET CGAL::Eigen_support)
     message(STATUS "NOTICE: SCIP and GLPK were not found. Polygonal surface reconstruction will not be available.")
   endif()
 
+### PCH ####
+add_library(PSP_headers dummy.cpp)
+target_precompile_headers(PSP_headers PUBLIC
+[["config.h"]]
+[["Scene_points_with_normal_item.h"]]
+[["run_with_qprogressdialog.h"]]
+<CGAL/Three/Polyhedron_demo_plugin_helper.h>
+<CGAL/Three/Polyhedron_demo_plugin_interface.h>
+<CGAL/Timer.h>
+<CGAL/Memory_sizer.h>
+<QApplication>
+<QMainWindow>
+<QAction>
+<QObject>
+<QMessageBox>
+<QtPlugin>
+)
+############
+
+
   qt5_wrap_ui( surface_reconstructionUI_FILES Surface_reconstruction_plugin.ui)
   polyhedron_demo_plugin(surface_reconstruction_plugin Surface_reconstruction_plugin Surface_reconstruction_poisson_impl Surface_reconstruction_advancing_front_impl Surface_reconstruction_scale_space_impl Surface_reconstruction_polygonal_impl ${surface_reconstructionUI_FILES} KEYWORDS PointSetProcessing)
   target_link_libraries(surface_reconstruction_plugin PUBLIC scene_polygon_soup_item scene_surface_mesh_item scene_points_with_normal_item CGAL::Eigen_support)
@@ -126,9 +146,35 @@ endif()
         merge_point_sets_plugin
         point_set_interference_plugin
         alpha_shape_plugin
-        point_set_to_mesh_distance_plugin)
+        point_set_to_mesh_distance_plugin
+        PSP_headers)
       if(TARGET ${plugin})
         target_link_libraries(${plugin} PUBLIC CGAL::TBB_support)
       endif()
     endforeach()
   endif()
+
+if(TARGET CGAL::Eigen_support)
+ target_link_libraries(PSP_headers PUBLIC CGAL::Eigen_support)
+endif()
+
+if(TARGET CGAL::LASLIB_support)
+ target_link_libraries(PSP_headers PUBLIC CGAL::LASLIB_support)
+endif()
+
+foreach(plugin
+    point_set_shape_detection_plugin
+    point_set_bilateral_smoothing_plugin
+    point_set_outliers_removal_plugin
+    point_set_selection_plugin
+    point_set_simplification_plugin
+    point_set_upsampling_plugin
+    point_set_wlop_plugin
+    merge_point_sets_plugin
+    point_set_interference_plugin
+    alpha_shape_plugin
+    point_set_to_mesh_distance_plugin
+    point_set_clustering_plugin)
+    target_precompile_headers(${plugin} REUSE_FROM PSP_headers)
+endforeach()
+

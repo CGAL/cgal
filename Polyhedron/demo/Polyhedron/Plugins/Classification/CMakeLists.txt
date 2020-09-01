@@ -52,7 +52,8 @@ if(TARGET CGAL::Eigen_support)
     if(TBB_FOUND)
       target_link_libraries(classification_plugin PUBLIC CGAL::TBB_support)
     endif()
-
+    target_precompile_headers(classification_plugin PRIVATE
+    <CGAL/Classification.h>)
     add_dependencies(classification_plugin point_set_selection_plugin selection_plugin)
   endif()
 
