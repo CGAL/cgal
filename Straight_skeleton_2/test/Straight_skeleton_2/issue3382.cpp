@@ -66,7 +66,7 @@ void print_polygon_in_double(const Polygon_2& poly) {
 
 void read_polygon_from_file(Polygon_2& pgn) {
 
-  std::ifstream in("issue2013.txt");
+  std::ifstream in("data/issue3382.txt");
 
   CGAL::Gmpq gx, gy;
   while(in >> gx  >> gy) {
