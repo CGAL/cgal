@@ -35,7 +35,7 @@
 #  define CGAL_STSKEL_TRACE(m) \
      { \
        std::ostringstream ss ; \
-       ss << m ; \
+       ss << std::setprecision(19) << m ; \
        std::string s = ss.str(); \
        Straight_skeleton_external_trace(s); \
      }
@@ -66,10 +66,9 @@ inline std::string ptr2str( boost::intrusive_ptr<T> const& ptr )
 template<class N>
 inline std::string n2str( N const& n )
 {
-  std::ostringstream ss ; ss << std::setprecision(19)  ;
-
-  ss << CGAL_NTS to_double(n) ;
-
+  std::ostringstream ss ;
+  ss << std::setprecision(19);
+  ss << CGAL_NTS to_double(n);
   return ss.str();
 }
 
