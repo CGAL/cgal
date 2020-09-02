@@ -221,8 +221,6 @@ public:
   /*!
     replaces the rgb values of the colors by the conversion to rgb of
     the hsv values given as parameters.
-
-    Double values given as parameters should take range between 0 and 1.
   */
   void set_hsv (double hue,
                 double saturation,
@@ -232,8 +230,8 @@ public:
     saturation /= 100.;
     value /= 100.;
     double C = value*saturation;
-    int hh = (int)(hue/60.);
-    double X = C * (1-std::abs (hh % 2 - 1));
+    double hh = (hue/60.);
+    double X = C * (1-std::abs(std::fmod(hh, 2) - 1));
     double r = 0, g = 0, b = 0;
 
     if( hh>=0 && hh<1 )
