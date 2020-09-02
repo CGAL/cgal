@@ -1,29 +1,31 @@
 include( polyhedron_demo_macros )
 
-add_library(PCA_headers dummy.cpp)
-target_precompile_headers(PCA_headers PUBLIC
-[["Scene_surface_mesh_item.h"]]
-[["Scene_points_with_normal_item.h"]]
-<QApplication>
-<CGAL/Three/Three.h>
-<QMainWindow>
-<QAction>
-<CGAL/Three/Viewer_interface.h>
-)
+if(${USE_PCH})
+  add_library(PCA_headers pca_headers.cpp)
+  target_precompile_headers(PCA_headers PUBLIC
+  [["Scene_surface_mesh_item.h"]]
+  [["Scene_points_with_normal_item.h"]]
+  <QApplication>
+  <CGAL/Three/Three.h>
+  <QMainWindow>
+  <QAction>
+  <CGAL/Three/Viewer_interface.h>
+  )
 
-if(TARGET CGAL::TBB_support)
-  target_link_libraries(PCA_headers PUBLIC CGAL::TBB_support)
-endif()
-if(TARGET CGAL::Eigen_support)
-  target_link_libraries(PCA_headers PUBLIC CGAL::Eigen_support)
-endif()
-
-if (TARGET CGAL::LASLIB_support)
-  target_link_libraries(PCA_headers PUBLIC CGAL::LASLIB_support)
-  if (MSVC)
-    target_compile_definitions( PCA_headers PUBLIC "-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS")
+  if(TARGET CGAL::TBB_support)
+    target_link_libraries(PCA_headers PUBLIC CGAL::TBB_support)
   endif()
-endif()
+  if(TARGET CGAL::Eigen_support)
+    target_link_libraries(PCA_headers PUBLIC CGAL::Eigen_support)
+  endif()
+
+  if (TARGET CGAL::LASLIB_support)
+    target_link_libraries(PCA_headers PUBLIC CGAL::LASLIB_support)
+    if (MSVC)
+      target_compile_definitions( PCA_headers PUBLIC "-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS")
+    endif()
+  endif()
+endif()#use pch
 
 
 
@@ -40,14 +42,16 @@ qt5_wrap_ui( volumesUI_FILES Basic_generator_widget.ui)
 polyhedron_demo_plugin(basic_generator_plugin Basic_generator_plugin ${volumesUI_FILES} KEYWORDS PolygonMesh PointSetProcessing)
 target_link_libraries(basic_generator_plugin PUBLIC scene_surface_mesh_item scene_points_with_normal_item scene_polylines_item)
 
-foreach(tgt
-pca_plugin
-affine_transform_plugin
-create_obb_mesh_plugin
-basic_generator_plugin
-)
-target_precompile_headers(${tgt} REUSE_FROM PCA_headers)
-endforeach()
+if(${USE_PCH})
+  foreach(tgt
+  pca_plugin
+  affine_transform_plugin
+  create_obb_mesh_plugin
+  basic_generator_plugin
+  )
+  target_precompile_headers(${tgt} REUSE_FROM PCA_headers)
+  endforeach()
+endif()#use pch
 
 
 polyhedron_demo_plugin(create_bbox_mesh_plugin Create_bbox_mesh_plugin)

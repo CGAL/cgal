@@ -17,6 +17,11 @@ if(POLICY CMP0074)
   cmake_policy(SET CMP0074 NEW)
 endif()
 
+if(${CMAKE_VERSION} VERSION_LESS "3.18.0")
+  set(USE_PCH FALSE)
+else()
+  set(USE_PCH TRUE)
+endif()
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -211,6 +216,17 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     target_compile_definitions(demo_framework PRIVATE -DCGAL_USE_Qt5_RESOURCES)
   endif()
 
+  target_precompile_headers(demo_framework PRIVATE
+  <QApplication>
+  <QMainWindow>
+  <QAction>
+  <QMessageBox>
+  <QObject>
+  <QMenu>
+  <QString>
+  <vector>
+  )
+
   add_library(scene_basic_objects SHARED
     Scene_plane_item.cpp
     Scene_spheres_item.cpp
@@ -220,7 +236,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     demo_framework
     ${CGAL_LIBRARIES}
     Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
-
 
 
   add_library(scene_color_ramp SHARED Color_ramp.cpp)
