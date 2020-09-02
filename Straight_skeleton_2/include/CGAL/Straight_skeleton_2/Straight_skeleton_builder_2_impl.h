@@ -1653,7 +1653,7 @@ Straight_skeleton_builder_2<Gt,Ss,V>::CreateMultinode( Halfedge_handle begin, Ha
 // coallison of exactly 4 edges (the union of 2 triedges with 2 common elements is a set of 4).
 //
 template<class Gt, class Ss, class V>
-void Straight_skeleton_builder_2<Gt,Ss,V>::MergeCoincidentNodes()
+bool Straight_skeleton_builder_2<Gt,Ss,V>::MergeCoincidentNodes()
 {
   //
   // NOTE: This code might be executed on a topologically incosistent HDS, thus the need to check
@@ -1728,6 +1728,9 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::MergeCoincidentNodes()
     }
   }
 
+  if(lMultinodes.empty())
+    return false;
+
   //
   // The merging loop removes all but one of the coincident skeleton nodes and the halfedges between them.
   // But it can't physically erase those from the HDS while looping, so the nodes/bisector to erase
@@ -1744,6 +1747,9 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::MergeCoincidentNodes()
   for ( typename MultinodeVector::iterator it = lMultinodes.begin(), eit = lMultinodes.end() ; it != eit ; ++ it )
     ProcessMultinode(**it,lBisectorsToRemove,lNodesToRemove);
 
+  if(lBisectorsToRemove.empty())
+    return false;
+
   for( Halfedge_handle_vector_iterator hi = lBisectorsToRemove.begin(), ehi = lBisectorsToRemove.end() ; hi != ehi ; ++ hi )
   {
     CGAL_STSKEL_BUILDER_TRACE(1, "B" << (*hi)->id() << " removed.");
@@ -1753,6 +1759,11 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::MergeCoincidentNodes()
 
   for( Vertex_handle_vector_iterator vi = lNodesToRemove.begin(), evi = lNodesToRemove.end() ; vi != evi ; ++ vi )
     EraseNode(*vi);
+
+  for( Vertex_iterator vit = mSSkel->SSkel::Base::vertices_begin(); vit != mSSkel->SSkel::Base::vertices_end(); ++vit)
+    GetVertexData(vit).mIsExcluded = false;
+
+  return true;
 }
 
 template<class Gt, class Ss, class V>
@@ -1772,7 +1783,11 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::FinishUp()
                 ,boost::bind(&Straight_skeleton_builder_2<Gt,Ss,V>::EraseBisector,this,_1)
                ) ;
 
-  MergeCoincidentNodes();
+  for(;;)
+  {
+    if(!MergeCoincidentNodes())
+      break;
+  }
 
   mVisitor.on_cleanup_finished();
 

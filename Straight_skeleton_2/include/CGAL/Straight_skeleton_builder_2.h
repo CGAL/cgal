@@ -743,7 +743,8 @@ private :
 
   MultinodePtr CreateMultinode( Halfedge_handle begin, Halfedge_handle end ) ;
 
-  void MergeCoincidentNodes() ;
+  // returns 'true' if something was merged
+  bool MergeCoincidentNodes() ;
 
   bool FinishUp();
 
