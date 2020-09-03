@@ -51,7 +51,7 @@ class Polyhedron_demo_mesh_plane_detection_plugin :
     this->scene = scene_interface;
     this->mw = mainWindow;
     actionPlaneDetection = new QAction("Mesh Plane Detection", mw);
-    actionPlaneDetection->setProperty("subMenuName", "Triangulated Surface Mesh Segmentation");
+    actionPlaneDetection->setProperty("subMenuName", "Shape Detection");
     actionPlaneDetection->setObjectName("actionPlaneDetection");
 
     // adding slot for itemAboutToBeDestroyed signal, aim is removing item from item-functor map.
