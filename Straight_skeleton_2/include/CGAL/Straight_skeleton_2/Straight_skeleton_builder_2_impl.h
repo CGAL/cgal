@@ -265,7 +265,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectNewEvents( Vertex_handle aNode
   // An 'edge wavefront' is a moving contour edge.
   // A 'vertex wavefront' is the wavefront of two consecutive edge wavefronts (sharing a moving vertex).
   //
-  // An 'Event' is the coallision of 2 wavefronts.
+  // An 'Event' is the collision of 2 wavefronts.
   // Each event changes the topology of the shrinking polygon; that is, at the event, the current polygon differs from the
   // inmediately previous polygon in the number of vertices.
   //
@@ -408,13 +408,13 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSimultaneousEdgeEvent( Vertex_h
 
   if ( lOAV->has_infinite_time() )
   {
-    CGAL_STSKEL_BUILDER_TRACE ( 2, "Ficticius N" << lOAV->id() << " erased." ) ;
+    CGAL_STSKEL_BUILDER_TRACE ( 2, "Fictitious N" << lOAV->id() << " erased." ) ;
     EraseNode(lOAV);
   }
 
   if ( lOBV->has_infinite_time() )
   {
-    CGAL_STSKEL_BUILDER_TRACE ( 2, "Ficticius N" << lOBV->id() << " erased." ) ;
+    CGAL_STSKEL_BUILDER_TRACE ( 2, "Fictitious N" << lOBV->id() << " erased." ) ;
     EraseNode(lOBV);
   }
 }
@@ -536,7 +536,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CreateContourBisectors()
 
     CGAL_STSKEL_BUILDER_TRACE(3
                              ,"Closing face of E" << lBorder->id()
-                             << " with a ficticious vertex. B" << lRBisector->id()
+                             << " with a fictitious vertex. B" << lRBisector->id()
                              << "->N" << lInfNode->id()
                              << "->B" << lLBisector->id()
                              ) ;
@@ -887,7 +887,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleEdgeEvent( EventPtr aEvent )
     SetBisectorSlope(lRSeed,lNewNode);
 
     CGAL_STSKEL_BUILDER_TRACE( 1, "E" << lRSeed->halfedge()->defining_contour_edge()->id() << " collapsed." );
-    CGAL_STSKEL_BUILDER_TRACE( 3, "Ficticious node along collapsed face is N" << lRIFicNode->id() << " between B" << lROBisector->id() << " and B" << lLIBisector->id() ) ;
+    CGAL_STSKEL_BUILDER_TRACE( 3, "fictitious node along collapsed face is N" << lRIFicNode->id() << " between B" << lROBisector->id() << " and B" << lLIBisector->id() ) ;
 
     if ( lLOFicNode->has_infinite_time() )
     {
@@ -918,7 +918,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleEdgeEvent( EventPtr aEvent )
       CGAL_STSKEL_BUILDER_TRACE( 2, newb2str("O",lNOBisector) ) ;
       CGAL_STSKEL_BUILDER_TRACE( 2, newb2str("I",lNIBisector) ) ;
 
-      CGAL_STSKEL_BUILDER_TRACE ( 2, "Ficticius N" << lRIFicNode->id() << " erased." ) ;
+      CGAL_STSKEL_BUILDER_TRACE ( 2, "Fictitious N" << lRIFicNode->id() << " erased." ) ;
       EraseNode(lRIFicNode);
 
       SetupNewNode(lNewNode) ;
@@ -930,7 +930,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleEdgeEvent( EventPtr aEvent )
     else
     {
       CGAL_STSKEL_BUILDER_TRACE( 2, newn2str("",lNewNode,lTri)
-                                    << ".\nThis is a multiple node (A node with these defining edges already exist in the LAV)"
+                                    << ".\nThis is a multiple node (A node with these defining edges already exists in the LAV)"
                                );
     }
 
@@ -974,7 +974,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSplitEvent( EventPtr aEvent, Ve
                                 << "->N" << lOppL->id()
                              ) ;
 
-    CGAL_STSKEL_BUILDER_TRACE(2,"Ficticious node for right half of opposite edge: N" << lOppFicNode->id() ) ;
+    CGAL_STSKEL_BUILDER_TRACE(2,"fictitious node for right half of opposite edge: N" << lOppFicNode->id() ) ;
 
     Halfedge_handle lOppBorder = lEvent.triedge().e2() ;
 
@@ -1002,8 +1002,8 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSplitEvent( EventPtr aEvent, Ve
     Vertex_handle lXOFicNode = lXOBisector->vertex() ;
     CGAL_assertion(lXOFicNode->has_infinite_time());
 
-    CGAL_STSKEL_BUILDER_TRACE(2,"Ficticious node for left reflex face: N" << lXOFicNode->id() ) ;
-    CGAL_STSKEL_BUILDER_TRACE(2,"Ficticious node for right reflex face: N" << lXIPrevBisector->vertex()->id() ) ;
+    CGAL_STSKEL_BUILDER_TRACE(2,"fictitious node for left reflex face: N" << lXOFicNode->id() ) ;
+    CGAL_STSKEL_BUILDER_TRACE(2,"fictitious node for right reflex face: N" << lXIPrevBisector->vertex()->id() ) ;
 
     Link(lNewNode_L,lXOBisector);
     Link(lNewNode_R,lNIBisector_L) ;
@@ -1041,7 +1041,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSplitEvent( EventPtr aEvent, Ve
     SetBisectorSlope(lNOBisector_R,POSITIVE);
     SetBisectorSlope(lNIBisector_R,NEGATIVE);
 
-    CGAL_STSKEL_BUILDER_TRACE(2,"(New) ficticious node for left half of opposite edge: N" << lNewFicNode->id() ) ;
+    CGAL_STSKEL_BUILDER_TRACE(2,"(New) fictitious node for left half of opposite edge: N" << lNewFicNode->id() ) ;
 
     Halfedge_handle lNewNode_L_DefiningBorderA = lNewNode_L->halfedge()->defining_contour_edge();
     Halfedge_handle lNewNode_L_DefiningBorderB = lNewNode_L->halfedge()->opposite()->prev()->opposite()->defining_contour_edge();
@@ -1578,7 +1578,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::PreprocessMultinode( Multinode& aMN )
 }
 
 //
-// Replaces a run of coincident nodes with a single one by removing all but the first, remvong node-to-node bisectors and
+// Replaces a run of coincident nodes with a single one by removing all but the first, removing node-to-node bisectors and
 // relinking the other bisectors.
 //
 template<class Gt, class Ss, class V>
@@ -1638,8 +1638,8 @@ Straight_skeleton_builder_2<Gt,Ss,V>::CreateMultinode( Halfedge_handle begin, Ha
 // (Ei,Ek) and (El,Ej) appear in the wavefront.
 //
 // In all those 3 cases, each new polygon vertex is represented in the straight skeleton as a skeleton node.
-// Every skeleton node is describing the coallision of at least 3 edges (called the "defining edges" of the node)
-// and it has at least 3 incident bisectors, each one pairing 2 out of the total number of defining egdes.
+// Every skeleton node is describing the collision of at least 3 edges (called the "defining edges" of the node)
+// and it has at least 3 incident bisectors, each one pairing 2 out of the total number of defining edges.
 //
 // Any skeleton node has a degree of at least 3, but if more than 3 edges collide simultaneously, the corresponding
 // skeleton node has a higher degree. (the degree of the node is exactly the number of colliding edges)
@@ -1668,7 +1668,7 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::MergeCoincidentNodes()
   // are or become consecutive to Ei during the wavefront propagation. Each bisector along the face:
   // (Ei,Ea), (Ei,Eb), (Ei,Ec), etcc pairs Ei with such other edge.
   // Between one bisector (Ei,Ea) and the next (Ei,Eb) there is skeleton node which represents
-  // the coallision between the 3 edges (Ei,Ea,Eb).
+  // the collision between the 3 edges (Ei,Ea,Eb).
   // It follows from the pairing that any skeleton node Ni, for example (Ei,Ea,Eb), neccesarily
   // shares two edges (Ei and Eb precisely) with any next skeleton node Ni+1 around the face.
   // That is, the triedge of defining edges that correspond to each skeleton node around the face follow this

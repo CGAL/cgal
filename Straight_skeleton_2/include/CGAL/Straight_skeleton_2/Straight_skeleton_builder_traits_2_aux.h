@@ -176,7 +176,7 @@ class Rational
 
 
 //
-// A straight skeleton event is the simultaneous coallision of 3 offseted oriented straight line segments
+// A straight skeleton event is the simultaneous collision of 3 offseted oriented straight line segments
 // e0*,e1*,e2* [e* denotes an _offseted_ edge].
 //
 // This record stores the segments corresponding to the INPUT edges (e0,e1,e2) whose offsets intersect

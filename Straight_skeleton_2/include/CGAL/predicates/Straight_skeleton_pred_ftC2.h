@@ -313,7 +313,7 @@ inline Uncertain<bool> is_edge_facing_offset_lines_isecC2 ( intrusive_ptr< Trise
 //
 // This predicate is used to determine the validity of a split or edge event.
 //
-// A split event is the coallision of a reflex wavefront and some opposite offset egde. Unless the three segments
+// A split event is the collision of a reflex wavefront and some opposite offset edge. Unless the three segments
 // don't actually collide (there is no event), the split point is along the supporting line of the offset edge.
 // Testing its validity amounts to determining if the split point is inside the closed offset segment instead of
 // the two open rays before and after the offset segment endpoints.
@@ -321,7 +321,7 @@ inline Uncertain<bool> is_edge_facing_offset_lines_isecC2 ( intrusive_ptr< Trise
 // of this edge and its previous/next adjacent edges (at the time of the event) detemine the offset vertices that
 // bound the opposite edge.
 // If the opposite edge is 'e' and its previous/next edges are "preve"/"nexte" then the split point is inside the offset
-// egde if it is NOT to the positive side of [preve,e] *and* NOT to the negative side o [e,nexte].
+// edge if it is NOT to the positive side of [preve,e] *and* NOT to the negative side o [e,nexte].
 // (so this predicate answer half the question, at one and other side independenty).
 // If the split point is exacty over any of this bisectors then the split point ocurres exactly and one (or both) endpoints
 // of the opposite edge (so it is a pseudo-split event since the opposite edge is not itself split in two halfeves)
@@ -331,8 +331,8 @@ inline Uncertain<bool> is_edge_facing_offset_lines_isecC2 ( intrusive_ptr< Trise
 // Likewise, primary_is_0 must be true when testing (e,nexte) to return negative if the split point is past the target endpoint of e*.
 // (in the other cases there is no need to discrminate which is 'e' in the call since the edjes do not overlap).
 //
-// An edge event is a coallision of three *consecutive* edges, say, e1,e2 and e3.
-// The coallision causes e2 (the edge in the middle) to collapse and e1,e3 to become consecutive and form a new vertex.
+// An edge event is a collision of three *consecutive* edges, say, e1,e2 and e3.
+// The collision causes e2 (the edge in the middle) to collapse and e1,e3 to become consecutive and form a new vertex.
 // In all cases there is an edge before e1, say e0, and after e3, say e4.
 // Testing for the validity of an edge event amounts to determine that (e1,e3) (the new vertex) is not before (e0,e1) nor
 // past (e3,e4).

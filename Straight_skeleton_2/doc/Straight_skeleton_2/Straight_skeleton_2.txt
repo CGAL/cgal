@@ -144,13 +144,13 @@ straight skeleton have degree \f$ >=3\f$.
 
 A <I>contour vertex</I> is a vertex for which 2 of its incident edges are contour edges.
 
-A <I>skeleton vertex</I> is a vertex who's incident edges are all skeleton edges.
+A <I>skeleton vertex</I> is a vertex whose incident edges are all skeleton edges.
 
-A <I>contour bisector</I> is a bisector who's defining contour edges
+A <I>contour bisector</I> is a bisector whose defining contour edges
 are consecutive. Such a bisector is incident upon 1 contour vertex and
 1 skeleton vertex and touches the input polygon at exactly 1 endpoint.
 
-An <I>inner bisector</I> is a bisector who's defining contour edges are
+An <I>inner bisector</I> is a bisector whose defining contour edges are
 not consecutive. Such a bisector is incident upon 2 skeleton vertices
 and is strictly contained in the interior of the polygon.
 
@@ -207,7 +207,7 @@ skeleton edge is defined by 2 contour edges, any vertex is itself
 defined by a unique set of contour edges. These are called the
 <I>defining contour edges</I> of the vertex.
 
-A vertex is identified by it's set of defining contour edges. Two
+A vertex is identified by its set of defining contour edges. Two
 vertices are distinct if they have differing sets of defining contour
 edges. Note that vertices can be distinct even if they are geometrically
 embedded at the same point.
