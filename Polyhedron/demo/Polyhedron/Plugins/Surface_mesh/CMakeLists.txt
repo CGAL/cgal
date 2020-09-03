@@ -20,10 +20,6 @@ qt5_wrap_ui( segmentationUI_FILES Mesh_segmentation_widget.ui)
 polyhedron_demo_plugin(mesh_segmentation_plugin Mesh_segmentation_plugin ${segmentationUI_FILES})
 target_link_libraries(mesh_segmentation_plugin PUBLIC scene_surface_mesh_item)
 
-qt5_wrap_ui( mesh_plane_detectionUI_FILES  Mesh_plane_detection_dialog.ui)
-polyhedron_demo_plugin(mesh_plane_detection_plugin Mesh_plane_detection_plugin ${mesh_plane_detectionUI_FILES})
-target_link_libraries(mesh_plane_detection_plugin PUBLIC scene_surface_mesh_item)
-
 qt5_wrap_ui( mesh_simplificationUI_FILES  Mesh_simplification_dialog.ui)
 polyhedron_demo_plugin(mesh_simplification_plugin Mesh_simplification_plugin ${mesh_simplificationUI_FILES})
 target_link_libraries(mesh_simplification_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
@@ -33,7 +29,6 @@ polyhedron_demo_plugin(offset_meshing_plugin Offset_meshing_plugin ${remeshingUI
 target_link_libraries(offset_meshing_plugin PUBLIC scene_surface_mesh_item scene_polygon_soup_item)
 if(TARGET CGAL::Eigen_support)
   target_link_libraries(offset_meshing_plugin PUBLIC CGAL::Eigen_support)
-  target_link_libraries(mesh_plane_detection_plugin PUBLIC CGAL::Eigen_support)
 endif()
 if(TARGET CGAL::TBB_support)
   target_link_libraries(offset_meshing_plugin PUBLIC CGAL::TBB_support)
