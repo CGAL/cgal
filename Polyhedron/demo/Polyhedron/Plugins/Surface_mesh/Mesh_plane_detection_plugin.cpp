@@ -20,6 +20,8 @@
 #include <CGAL/property_map.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Shape_detection/Region_growing/Region_growing.h>
+#include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh.h>
 
 #include "ui_Mesh_plane_detection_dialog.h"
 
@@ -75,100 +77,63 @@ private:
   QAction*                      actionPlaneDetection;
 
 
-  template <typename OutputIterator>
-  void detect_planes_in_mesh (SMesh& mesh, const double area_min,
-                              const double angle_max,
-                              OutputIterator output)
+  //template <typename OutputIterator>
+  void detect_planes_in_mesh (SMesh& polygon_mesh,
+                              const double max_distance_to_plane,
+                              const double max_accepted_angle,
+                              const std::size_t min_region_size,
+                              std::vector<std::size_t>& indices)
   {
-    typedef SMesh::size_type size_type;
+
+    typedef EPICK::FT FT;
+    using Polygon_mesh = SMesh;
+    using Face_range   = typename Polygon_mesh::Face_range;
+    using Neighbor_query = CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<Polygon_mesh>;
+    using Region_type    = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<EPICK, Polygon_mesh>;
+    using Sorting        = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<EPICK, Polygon_mesh, Neighbor_query>;
 
     std::cerr << "Detecting planes with:" << std::endl
-              << " * Area min = " << area_min << std::endl
-              << " * Min cos angle = " << angle_max << std::endl;
-    std::vector<int> label_region(mesh.number_of_faces(), 0);
-    int class_index = 0;
+              << " * Max distance to plane = " << max_distance_to_plane << std::endl
+              << " * Max angle = " << max_accepted_angle << std::endl
+              << " * Minimum region size = " << min_region_size << std::endl;
 
 
-    for (typename SMesh::Face_iterator f = mesh.faces_begin(); f != mesh.faces_end(); ++f)
-      {
-        if (label_region[*f] != 0)
-          continue;
-        class_index++;
-        label_region[*f] = class_index;
-        double area = PMP::face_area (*f, mesh, PMP::parameters::geom_traits(EPICK()));
+    using Region  = std::vector<std::size_t>;
+    using Regions = std::vector<Region>;
+    using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
+    using Region_growing = CGAL::Shape_detection::Region_growing<Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
+    const Face_range face_range = faces(polygon_mesh);
 
-        //characteristics of the seed
-        EPICK::Vector_3 normal_seed = PMP::compute_face_normal (*f, mesh, PMP::parameters::geom_traits(EPICK()));
-        EPICK::Point_3 pt_seed = mesh.point(target(halfedge(*f, mesh), mesh));
-        EPICK::Plane_3 optimal_plane(pt_seed, normal_seed);
-                   //        Kernel::Plane_3 optimal_plane = f->plane();
-
-        //initialization containers
-        std::vector<size_type> index_container (1,*f);
-        std::vector<size_type> index_container_former_ring (1, *f);
-        std::list<size_type> index_container_current_ring;
-
-        //propagation
-        bool propagation = true;
-        do{
-
-          propagation = false;
-
-          for (size_type k = 0; k < index_container_former_ring.size(); k++)
-            {
-              typename SMesh::Halfedge_around_face_circulator
-                circ( mesh.halfedge(SMesh::Face_index(index_container_former_ring[k])), mesh)
-                , start = circ;
-
-              do
-                {
-                  if (is_border(*circ, mesh))
-                    continue;
-
-                  typename SMesh::Face_index
-                    neighbor = mesh.face(opposite(*circ, mesh));
-                  size_type neighbor_index = neighbor;
-                  if (label_region[neighbor_index] == 0)
-                    {
-                      EPICK::Vector_3 normal
-                        = PMP::compute_face_normal (neighbor, mesh, PMP::parameters::geom_traits(EPICK()));
-
-                      if (std::fabs(normal * optimal_plane.orthogonal_vector()) > angle_max)
-                        {
-                          label_region[neighbor_index] = class_index;
-                          propagation = true;
-                          index_container_current_ring.push_back(neighbor_index);
-                          area += PMP::face_area (neighbor, mesh, PMP::parameters::geom_traits(EPICK()));
-                        }
-                    }
-                }
-              while (++ circ != start);
-            }
-
-          //update containers
-          index_container_former_ring.clear();
-          for (std::list<size_type>::iterator it = index_container_current_ring.begin();
-               it != index_container_current_ring.end(); ++it)
-            {
-              index_container_former_ring.push_back(*it);
-              index_container.push_back(*it);
-            }
-          index_container_current_ring.clear();
-
-        } while (propagation);
-
-        //Test the number of inliers -> reject if inferior to Nmin
-        if (area < area_min)
-          {
-            class_index--;
-            label_region[*f] = 0;
-            for (size_type k = 0; k < index_container.size(); k++)
-              label_region[index_container[k]] = 0;
-          }
+    // Create instances of the classes Neighbor_query and Region_type.
+    Neighbor_query neighbor_query(polygon_mesh);
+    const Vertex_to_point_map vertex_to_point_map(
+          get(CGAL::vertex_point, polygon_mesh));
+    Region_type region_type(
+          polygon_mesh,
+          max_distance_to_plane, max_accepted_angle, min_region_size,
+          vertex_to_point_map);
+    // Sort face indices.
+    Sorting sorting(
+          polygon_mesh, neighbor_query,
+          vertex_to_point_map);
+    sorting.sort();
+    // Create an instance of the region growing class.
+    Region_growing region_growing(
+          face_range, neighbor_query, region_type,
+          sorting.seed_map());
+    // Run the algorithm.
+    Regions regions;
+    region_growing.detect(std::back_inserter(regions));
+    std::cerr << regions.size()<< " planes detected" << std::endl;
+    indices.resize(polygon_mesh.number_of_faces());
+    for (std::size_t id = 0; id<regions.size(); ++id) {
+     const auto& region = regions[id];
+      for (const auto index : region){
+        indices[index] = id;
       }
-    std::cerr << class_index << " planes detected" << std::endl;
+    }
 
-    std::copy (label_region.begin(), label_region.end(), output);
+    //std::copy (regions.begin(), regions.end(), output);
   }
 
 };
@@ -191,7 +156,7 @@ void Polyhedron_demo_mesh_plane_detection_plugin::on_actionPlaneDetection_trigge
       QDialog dialog(mw);
       Ui::Mesh_plane_detection_dialog ui;
       ui.setupUi(&dialog);
-      ui.minimumAreaDoubleSpinBox->setMinimum(0.00001);
+      ui.maxDistanceToPlane->setMinimum(0.00001);
       // check user cancellation
       if(dialog.exec() == QDialog::Rejected)
         return;
@@ -203,11 +168,12 @@ void Polyhedron_demo_mesh_plane_detection_plugin::on_actionPlaneDetection_trigge
       QApplication::processEvents();
 
       //check_and_set_ids (&pmesh);
-      std::vector<int> indices;
+      std::vector<std::size_t> indices;
       detect_planes_in_mesh (pmesh,
-                             ui.minimumAreaDoubleSpinBox->value(),
-                             std::fabs(std::cos (CGAL_PI * ui.maximumDeviationFromNormalSpinBox->value() / 180.)),
-                             std::back_inserter (indices));
+                             ui.maxDistanceToPlane->value(),
+                             std::fabs(ui.maximumDeviationFromNormalSpinBox->value()),
+                             ui.minRegionSize->value(),
+                             indices);
 
       //poly_item->set_color_vector_read_only(true);
       colorize_segmentation (poly_item, indices, poly_item->color_vector());

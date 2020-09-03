@@ -33,6 +33,7 @@ polyhedron_demo_plugin(offset_meshing_plugin Offset_meshing_plugin ${remeshingUI
 target_link_libraries(offset_meshing_plugin PUBLIC scene_surface_mesh_item scene_polygon_soup_item)
 if(TARGET CGAL::Eigen_support)
   target_link_libraries(offset_meshing_plugin PUBLIC CGAL::Eigen_support)
+  target_link_libraries(mesh_plane_detection_plugin PUBLIC CGAL::Eigen_support)
 endif()
 if(TARGET CGAL::TBB_support)
   target_link_libraries(offset_meshing_plugin PUBLIC CGAL::TBB_support)
