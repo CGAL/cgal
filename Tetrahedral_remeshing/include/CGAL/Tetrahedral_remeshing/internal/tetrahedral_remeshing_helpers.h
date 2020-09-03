@@ -239,24 +239,24 @@ Dihedral_angle_cosine cos_dihedral_angle(const typename Gt::Point_3& i,
   typedef typename Gt::Vector_3 Vector_3;
   typedef typename Gt::FT FT;
 
-  const Vector_3 ji = vector(j, i);
-  const Vector_3 kj = vector(k, j);
-  const Vector_3 kl = vector(k, l);
+  const Vector_3 ij = vector(i, j);
+  const Vector_3 ik = vector(i, k);
+  const Vector_3 il = vector(i, l);
 
-  const Vector_3 jikj = cross_product(ji, kj);
-  if(CGAL::NULL_VECTOR == jikj)
+  const Vector_3 ijik = cross_product(ij, ik);
+  if(CGAL::NULL_VECTOR == ijik)
     return Dihedral_angle_cosine(CGAL::POSITIVE, 1.,1.);
 
-  const Vector_3 klkj = cross_product(kl, kj);
-  if (CGAL::NULL_VECTOR == klkj)
+  const Vector_3 ilij = cross_product(il, ij);
+  if (CGAL::NULL_VECTOR == ilij)
     return Dihedral_angle_cosine(CGAL::POSITIVE, 1.,1.);
 
-  const FT num = scalar_product(jikj, klkj);
+  const FT num = scalar_product(ijik, ilij);
   if(num == 0.)
     return Dihedral_angle_cosine(CGAL::ZERO, 0.,1.);
 
   const double sqden = CGAL::to_double(
-    scalar_product(jikj, jikj) * scalar_product(klkj, klkj));
+    scalar_product(ijik, ijik) * scalar_product(ilij, ilij));
 
   return Dihedral_angle_cosine(CGAL::sign(num), CGAL::square(num), sqden);
 }
