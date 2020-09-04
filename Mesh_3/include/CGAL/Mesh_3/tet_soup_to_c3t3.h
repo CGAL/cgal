@@ -151,14 +151,14 @@ bool build_finite_cells(Tr& tr,
 
     Cell_handle c = tr.tds().create_cell(vs[0], vs[1], vs[2], vs[3]);
     c->set_subdomain_index(tet[4]); // the cell's info keeps the reference of the tetrahedron
-    c->info() = tet[4]; // the cell's info keeps the reference of the tetrahedron
+    //c->info() = tet[4]; // the cell's info keeps the reference of the tetrahedron
     if(prevent_domain_0){
       CGAL_precondition(tet[4] > 0);
     }
     else
     {
       c->set_subdomain_index(max_domain+1); // the cell's info keeps the reference of the tetrahedron
-      c->info() = max_domain+1; // the cell's info keeps the reference of the tetrahedron
+//      c->info() = max_domain+1; // the cell's info keeps the reference of the tetrahedron
     }
     // assign cells to vertices
     for(int j=0; j<4; ++j)
