@@ -296,14 +296,19 @@ public:
       os << "  " ;
 
     if ( aTriPtr )
-         os << *aTriPtr ;
-    else os << "{null}" ;
+    {
+      os << *aTriPtr ;
 
-    if ( aTriPtr->child_l() )
-      recursive_print(os,aTriPtr->child_l(),aDepth+1);
+      if ( aTriPtr->child_l() )
+        recursive_print(os,aTriPtr->child_l(),aDepth+1);
 
-    if ( aTriPtr->child_r() )
-      recursive_print(os,aTriPtr->child_r(),aDepth+1);
+      if ( aTriPtr->child_r() )
+        recursive_print(os,aTriPtr->child_r(),aDepth+1);
+    }
+    else
+    {
+      os << "{null}" ;
+    }
   }
 
   std::size_t id;
