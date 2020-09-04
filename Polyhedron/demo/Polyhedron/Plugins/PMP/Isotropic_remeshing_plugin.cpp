@@ -734,12 +734,36 @@ public Q_SLOTS:
       return;
     }
 
+
+    //check non-triangulated surfaces
+    for (Scene_facegraph_item* poly_item : selection)
+    {
+      if (!CGAL::is_triangle_mesh(*poly_item->polyhedron()))
+      {
+        if (QMessageBox::Ok == QMessageBox::question(mw,
+              tr("Error - Triangulate Faces?"),
+              tr("The input mesh ").append(poly_item->name())
+               .append(tr(" is not a triangulated surface mesh.\n"
+                "Do you wish to triangulate faces first, or cancel remeshing ?")),
+              (QMessageBox::Ok | QMessageBox::Cancel),
+              QMessageBox::Ok))
+        {
+          QApplication::setOverrideCursor(Qt::WaitCursor);
+          CGAL::Polygon_mesh_processing::triangulate_faces(*poly_item->polyhedron());
+          QApplication::restoreOverrideCursor();
+        }
+        else
+        {
+          QApplication::restoreOverrideCursor();
+          return;
+        }
+      }
+    }
+
     // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
     int total_time = 0;
 
-
-    //     typedef boost::graph_traits<FaceGraph>::edge_descriptor edge_descriptor;
     std::map<FaceGraph*,Edge_set > edges_to_protect;
 
     if(preserve_duplicates)
