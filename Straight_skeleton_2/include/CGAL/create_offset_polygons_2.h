@@ -55,7 +55,8 @@ create_partial_interior_straight_skeleton_2 ( FT const&     aMaxTime
 
   Cartesian_converter<InputKernel, K> Converter ;
 
-  boost::optional<KFT> lMaxTime( Converter(aMaxTime) ) ;
+  KFT kMaxTime = aMaxTime;
+  boost::optional<KFT> lMaxTime(kMaxTime) ;
 
   SsBuilder ssb( lMaxTime ) ;
 
