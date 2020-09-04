@@ -272,6 +272,14 @@ public Q_SLOTS:
     is.close();
     dock_widget->frameSlider->setMaximum(frame_pos.size()-1);
     dock_widget->frameLabel->setText(QString("%1/%2").arg(frame).arg(frame_pos.size()-1));
+
+    connect(dock_widget->frameSlider, &QSlider::sliderMoved, [this](int i){
+      frame = i;
+      position = frame_pos[frame];
+      dock_widget->frameLabel->setText(QString("%1/%2").arg(frame).arg(frame_pos.size()-1));
+      read_frame();
+    });
+
     QApplication::restoreOverrideCursor();
   }
 
