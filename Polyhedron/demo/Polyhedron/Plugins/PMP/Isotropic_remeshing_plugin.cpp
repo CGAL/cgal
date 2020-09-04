@@ -608,6 +608,12 @@ public Q_SLOTS:
                .number_of_relaxation_steps(nb_smooth)
                .edge_is_constrained_map(ecm)
                .relax_constraints(smooth_features));
+
+          //recollect sharp edges
+          for(edge_descriptor e : edges(pmesh))
+            eif[e] = false;
+          for(edge_descriptor e : edges_to_protect)
+            eif[e] = true;
         }
         if (fpmap_valid)
         {
