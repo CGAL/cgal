@@ -33,6 +33,9 @@
         <file>resources/help_button.png</file>
         <file>resources/exit.png</file>
         <file>resources/menu.png</file>
+        <file>resources/play.jpeg</file>
+        <file>resources/pause.jpeg</file>
+        <file>resources/reset.jpg</file>
     </qresource>
     <qresource prefix="/cgal/Polyhedron_3">
         <file alias="about.html">resources/about.html</file>

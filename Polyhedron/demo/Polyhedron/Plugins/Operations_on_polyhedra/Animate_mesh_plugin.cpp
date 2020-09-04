@@ -220,6 +220,7 @@ public Q_SLOTS:
       dock_widget->prevButton->setEnabled(false);
       dock_widget->nextButton->setEnabled(false);
       dock_widget->stopButton->setEnabled(false);
+      dock_widget->frameSlider->setEnabled(false);
       initial_points.clear();
       initial_points.shrink_to_fit();
     });
@@ -242,16 +243,10 @@ public Q_SLOTS:
     dock_widget->prevButton->setEnabled(true);
     dock_widget->nextButton->setEnabled(true);
     dock_widget->stopButton->setEnabled(true);
+    dock_widget->frameSlider->setEnabled(true);
     if(!info.exists())
     {
       QMessageBox::warning(mw, "Error","File does not exist.");
-      return;
-    }
-    if(info.baseName() != sm_item->name())
-    {
-      QMessageBox::warning(mw, "Wrong Name",
-                           QString("The frame file must have the same name as the mesh file.(%1.trjs)")
-                           .arg(sm_item->name()));
       return;
     }
 

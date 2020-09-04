@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>444</width>
-    <height>150</height>
+    <width>202</width>
+    <height>151</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -97,36 +97,86 @@
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QPushButton" name="startButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
-         <string>Start</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/play.jpeg</normaloff>:/cgal/icons/resources/play.jpeg</iconset>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="stopButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
-         <string>Stop</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/pause.jpeg</normaloff>:/cgal/icons/resources/pause.jpeg</iconset>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="prevButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
-         <string>Prev</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/left_arrow.png</normaloff>:/cgal/icons/resources/left_arrow.png</iconset>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="nextButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
-         <string>Next</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/right_arrow.png</normaloff>:/cgal/icons/resources/right_arrow.png</iconset>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="resetButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
-         <string>Reset</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/reset.jpg</normaloff>:/cgal/icons/resources/reset.jpg</iconset>
         </property>
        </widget>
       </item>
@@ -135,6 +185,9 @@
    </layout>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../Polyhedron_3.qrc"/>
+  <include location="../../Polyhedron_3.qrc"/>
+ </resources>
  <connections/>
 </ui>
