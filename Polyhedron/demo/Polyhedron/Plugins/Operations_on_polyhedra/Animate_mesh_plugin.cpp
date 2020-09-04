@@ -72,7 +72,7 @@ public :
       timer.stop();
     });
     connect(&timer, SIGNAL (timeout()), this, SLOT (next_frame()));
-    frame = 0;
+    frame = -1;
   }
 
   bool applicable(QAction*) const override
@@ -168,15 +168,17 @@ public Q_SLOTS:
     }
     position = frame_pos[++frame];
     dock_widget->frameSlider->setValue(frame);
+    dock_widget->frameLabel->setText(QString("%1/%2").arg(frame).arg(frame_pos.size()-1));
     read_frame();
   }
 
   void prev_frame()
   {
-    if(frame == 0)
+    if(frame <= 0)
       return;
     position = frame_pos[--frame];
     dock_widget->frameSlider->setValue(frame);
+    dock_widget->frameLabel->setText(QString("%1/%2").arg(frame).arg(frame_pos.size()-1));
     read_frame();
   }
 
@@ -187,8 +189,10 @@ public Q_SLOTS:
 
   void reset_animation()
   {
-    frame=0;
+    timer.stop();
+    frame=-1;
     dock_widget->frameSlider->setValue(frame);
+    dock_widget->frameLabel->setText(QString("%1/%2").arg(frame).arg(frame_pos.size()-1));
     for(std::size_t id = 0; id<initial_points.size();++id)
     {
       sm_item->face_graph()->points()[SMesh::Vertex_index(id)]=initial_points[id];
@@ -210,7 +214,7 @@ public Q_SLOTS:
       position=0;
       frame_pos.clear();
       filepath="";
-      frame = 0;
+      frame = -1;
       dock_widget->resetButton->setEnabled(false);
       dock_widget->startButton->setEnabled(false);
       dock_widget->prevButton->setEnabled(false);
@@ -267,6 +271,7 @@ public Q_SLOTS:
     }
     is.close();
     dock_widget->frameSlider->setMaximum(frame_pos.size()-1);
+    dock_widget->frameLabel->setText(QString("%1/%2").arg(frame).arg(frame_pos.size()-1));
     QApplication::restoreOverrideCursor();
   }
 
@@ -285,7 +290,7 @@ private:
   Scene_surface_mesh_item* sm_item;
   std::vector<std::streampos> frame_pos;
   QTimer timer;
-  std::size_t frame;
+  int frame;
   std::vector<SMesh::Point> initial_points;
 }; //end of plugin class
 #include "Animate_mesh_plugin.moc"
