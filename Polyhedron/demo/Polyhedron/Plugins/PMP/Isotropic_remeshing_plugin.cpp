@@ -351,7 +351,6 @@ public Q_SLOTS:
         ? *poly_item->polyhedron()
         : *selection_item->polyhedron();
 
-
      Patch_id_pmap fpmap = get(CGAL::face_patch_id_t<int>(), pmesh);
      bool fpmap_valid = false;
      {
@@ -405,13 +404,31 @@ public Q_SLOTS:
               }
               else
               {
-                QApplication::setOverrideCursor(Qt::WaitCursor);
                 do_split_edges(selection_item, pmesh, target_length);
               }
             }
 
             if (selection_item->selected_facets.empty() && !selection_item->isEmpty())
             {
+              if (!CGAL::is_triangle_mesh(pmesh))
+              {
+                QApplication::restoreOverrideCursor();
+                if (QMessageBox::Ok ==
+                    QMessageBox::question(mw, tr("Error - Triangulate Faces?"),
+                      tr("The input mesh is not a triangulated surface mesh.\n"
+                         "Do you wish to triangulate faces first, or cancel remeshing ?"),
+                      (QMessageBox::Ok | QMessageBox::Cancel),
+                      QMessageBox::Ok))
+                {
+                  QApplication::setOverrideCursor(Qt::WaitCursor);
+                  CGAL::Polygon_mesh_processing::triangulate_faces(pmesh);
+                }
+                else
+                {
+                  return;
+                }
+              }
+
               if (fpmap_valid)
                 CGAL::Polygon_mesh_processing::isotropic_remeshing(faces(*selection_item->polyhedron())
                    , target_length
@@ -437,6 +454,20 @@ public Q_SLOTS:
             }
             else //selected_facets not empty
             {
+              for (auto f : selection_item->selected_facets)
+              {
+                if (!CGAL::is_triangle(halfedge(f, pmesh), pmesh))
+                {
+                  QApplication::restoreOverrideCursor();
+                  QMessageBox::warning(mw,
+                    tr("Error - Triangulate Faces"),
+                    tr("The input faces selected for remeshing are not all triangle faces.\n"
+                       "You should first triangulate faces, and restart remeshing.\n"
+                       "Remeshing aborted."));
+                  return;
+                }
+              }
+
               if (fpmap_valid)
                 CGAL::Polygon_mesh_processing::isotropic_remeshing(selection_item->selected_facets
                   , target_length
@@ -564,7 +595,6 @@ public Q_SLOTS:
           if (preserve_duplicates)
           {
             detect_and_split_duplicates(poly_items, edges_to_protect_map, target_length);
-
           }
           Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> ecm(&edges_to_protect);
           for(edge_descriptor e : edges(pmesh))
@@ -588,6 +618,25 @@ public Q_SLOTS:
                                     " Aborting."));
             return;
           }
+
+          if (!CGAL::is_triangle_mesh(pmesh))
+          {
+            QApplication::restoreOverrideCursor();
+            if (QMessageBox::Ok ==
+                QMessageBox::question(mw, tr("Error - Triangulate Faces?"),
+                  tr("The input mesh is not a triangulated surface mesh.\n"
+                     "Do you wish to triangulate faces first, or cancel remeshing ?"),
+                  (QMessageBox::Ok | QMessageBox::Cancel), QMessageBox::Ok))
+            {
+              QApplication::setOverrideCursor(Qt::WaitCursor);
+              CGAL::Polygon_mesh_processing::triangulate_faces(pmesh);
+            }
+            else
+            {
+              return;
+            }
+          }
+
           if (fpmap_valid)
             CGAL::Polygon_mesh_processing::isotropic_remeshing(
                  faces(*poly_item->polyhedron())
@@ -626,10 +675,9 @@ public Q_SLOTS:
         std::cout << "Can't remesh that type of thing" << std::endl;
       }
       std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
-
-      // default cursor
-      QApplication::restoreOverrideCursor();
     }
+    // default cursor
+    QApplication::restoreOverrideCursor();
   }
 
   void isotropic_remeshing_of_several_polyhedra()
