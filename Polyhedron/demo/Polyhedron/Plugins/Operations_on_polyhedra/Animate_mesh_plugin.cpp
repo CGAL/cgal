@@ -10,8 +10,6 @@
 #include <CGAL/Three/Three.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Three.h>
-#include <QMutex>
-#include <QWaitCondition>
 
 #include "ui_Animate_widget.h"
 #include <fstream>
@@ -51,14 +49,23 @@ public :
     this->mw = mw;
     actionAnimate = new QAction("Animate Surface Mesh", mw);
     actionAnimate->setProperty("subMenuName","Operations on Polyhedra");
-    connect(actionAnimate, &QAction::triggered,
-            this, &Animate_mesh_plugin::start_animation);
 
     dock_widget = new DockWidget("Mesh Animation", mw);
     dock_widget->setVisible(false); // do not show at the beginning
     addDockWidget(dock_widget);
-    position = 0;
+    connect(actionAnimate, &QAction::triggered,
+            this, &Animate_mesh_plugin::init_animation);
 
+    connect(dock_widget->startButton, &QPushButton::clicked,
+            this, &Animate_mesh_plugin::start_animation);
+
+    connect(dock_widget->resetButton, &QPushButton::clicked,
+            this, &Animate_mesh_plugin::reset_animation);
+
+    connect(dock_widget->readButton, &QPushButton::clicked,
+            this, &Animate_mesh_plugin::read_frame);
+    connect(&timer, SIGNAL (timeout()), this, SLOT (read_frame()));
+    reset_animation();
   }
 
   bool applicable(QAction*) const override
@@ -82,9 +89,17 @@ public Q_SLOTS:
     std::ifstream is(filepath.toUtf8());
     is.seekg(position);
     if(!is.good())
+    {
+      timer.stop();
       return;
+    }
     int nb_verts;
     is >> nb_verts;
+    if(!is.good())
+    {
+      timer.stop();
+      return;
+    }
 
     if(nb_verts != 0)
     {
@@ -93,9 +108,29 @@ public Q_SLOTS:
       {
         int id;
         is >> id;
+        if(!is.good())
+        {
+          timer.stop();
+          return;
+        }
         is >> x;
+        if(!is.good())
+        {
+          timer.stop();
+          return;
+        }
         is >> y;
+        if(!is.good())
+        {
+          timer.stop();
+          return;
+        }
         is >> z;
+        if(!is.good())
+        {
+          timer.stop();
+          return;
+        }
         SMesh::Vertex_index vh(id);
         VPmap vpm = get(CGAL::vertex_point, *sm_item->face_graph());
         put(vpm, vh, Point_3(x-offset.x,
@@ -104,13 +139,27 @@ public Q_SLOTS:
         sm_item->updateVertex(vh);
       }
     }
-    //for each id in frame:
 
     sm_item->redraw();
     position = is.tellg();
+    if(!is.good())
+    {
+      timer.stop();
+      return;
+    }
   }
 
   void start_animation()
+  {
+    timer.start(dock_widget->frame_time->value());
+  }
+
+  void reset_animation()
+  {
+    position = 0;
+  }
+
+  void init_animation()
   {
     Scene_item* item = scene->item(scene->mainSelectionIndex());
     if(!item)
@@ -127,8 +176,6 @@ public Q_SLOTS:
     QFileInfo info(dialog.selectedFiles().first());
     filepath = info.filePath();
     position = 0;
-    connect(dock_widget->readButton, &QPushButton::clicked,
-            this, &Animate_mesh_plugin::read_frame);
 
     //todo : warning box, especially for the name part
     if(!info.exists() || info.baseName() != sm_item->name())
@@ -136,13 +183,25 @@ public Q_SLOTS:
 
     if(!dock_widget->isVisible()) { dock_widget->show(); }
 
-    //todo: add a thread ticking every frame_time ms.
+    //pre-process to count frames
+    std::ifstream is(filepath.toUtf8());
+    nb_frames=0;
+    while(is.good())
+    {
+      std::string line;
+      std::getline(is, line);
+      if(line.length() >0 && line.find(" ") == std::string::npos)
+        ++nb_frames;
+    }
+    is.close();
 
   }
+
   void closure() override
   {
     dock_widget->hide();
   }
+
 private:
   QAction* actionAnimate;
   Messages_interface* messages;
@@ -151,5 +210,7 @@ private:
   QString filepath;
   std::streampos position;
   Scene_surface_mesh_item* sm_item;
+  int nb_frames;
+  QTimer timer;
 }; //end of plugin class
 #include "Animate_mesh_plugin.moc"
