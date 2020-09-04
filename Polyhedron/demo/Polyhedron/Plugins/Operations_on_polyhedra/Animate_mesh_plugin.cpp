@@ -73,6 +73,22 @@ public :
     });
     connect(&timer, SIGNAL (timeout()), this, SLOT (next_frame()));
     frame = -1;
+    connect(dock_widget->helpButton, &QPushButton::clicked,this, [this](){
+      QMessageBox::information(dock_widget, QString("Animation"),
+                             QString("The TRJS format contains informations for a succession of modifications on a Surface Mesh. "
+                                     "Such a modification is called a frame, and every frame is composed with a ligne for the "
+                                     "number of points modified, and one ligne per modified point and its index.\n\n"
+                                     "Example:\n\n"
+                                     "n \n"
+                                     "id1 x1 y1 z1 \n"
+                                     "...           \n"
+                                     "idn xn yn zn  \n"
+                                     "m             \n"
+                                     "id1 x1 y1 z1  \n"
+                                     "...           \n"
+                                     "idm xm ym zm"));
+  });
+
   }
 
   bool applicable(QAction*) const override
@@ -203,6 +219,7 @@ public Q_SLOTS:
 
   void init_animation()
   {
+    clean_up();
     Scene_item* item = scene->item(scene->mainSelectionIndex());
     if(!item)
       return;
@@ -210,19 +227,7 @@ public Q_SLOTS:
     sm_item->setGouraudPlusEdgesMode();
     connect(sm_item, &Scene_surface_mesh_item::aboutToBeDestroyed, this,
             [this](){
-      sm_item=nullptr;
-      position=0;
-      frame_pos.clear();
-      filepath="";
-      frame = -1;
-      dock_widget->resetButton->setEnabled(false);
-      dock_widget->startButton->setEnabled(false);
-      dock_widget->prevButton->setEnabled(false);
-      dock_widget->nextButton->setEnabled(false);
-      dock_widget->stopButton->setEnabled(false);
-      dock_widget->frameSlider->setEnabled(false);
-      initial_points.clear();
-      initial_points.shrink_to_fit();
+      clean_up();
     });
     initial_points.reserve(sm_item->face_graph()->number_of_vertices());
     for(const auto& p : sm_item->face_graph()->points())
@@ -244,6 +249,7 @@ public Q_SLOTS:
     dock_widget->nextButton->setEnabled(true);
     dock_widget->stopButton->setEnabled(true);
     dock_widget->frameSlider->setEnabled(true);
+    dock_widget->setWindowTitle(QString("Animate %1").arg(sm_item->name()));
     if(!info.exists())
     {
       QMessageBox::warning(mw, "Error","File does not exist.");
@@ -281,6 +287,24 @@ public Q_SLOTS:
   void closure() override
   {
     dock_widget->hide();
+  }
+
+  void clean_up()
+  {
+    sm_item=nullptr;
+    position=0;
+    frame_pos.clear();
+    filepath="";
+    frame = -1;
+    dock_widget->resetButton->setEnabled(false);
+    dock_widget->startButton->setEnabled(false);
+    dock_widget->prevButton->setEnabled(false);
+    dock_widget->nextButton->setEnabled(false);
+    dock_widget->stopButton->setEnabled(false);
+    dock_widget->frameSlider->setEnabled(false);
+    dock_widget->setWindowTitle(QString("Animate"));
+    initial_points.clear();
+    initial_points.shrink_to_fit();
   }
 
 private:
