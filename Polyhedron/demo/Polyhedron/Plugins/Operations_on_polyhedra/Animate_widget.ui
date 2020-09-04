@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>444</width>
+    <height>120</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,6 +43,16 @@
      </layout>
     </item>
     <item>
+     <widget class="QSlider" name="frameSlider">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="tickPosition">
+       <enum>QSlider::TicksAbove</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QPushButton" name="startButton">
@@ -52,9 +62,23 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="readButton">
+       <widget class="QPushButton" name="stopButton">
         <property name="text">
-         <string>One by one</string>
+         <string>Stop</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="prevButton">
+        <property name="text">
+         <string>Prev</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="nextButton">
+        <property name="text">
+         <string>Next</string>
         </property>
        </widget>
       </item>

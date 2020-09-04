@@ -63,10 +63,16 @@ public :
     connect(dock_widget->resetButton, &QPushButton::clicked,
             this, &Animate_mesh_plugin::reset_animation);
 
-    connect(dock_widget->readButton, &QPushButton::clicked,
-            this, &Animate_mesh_plugin::read_frame);
-    connect(&timer, SIGNAL (timeout()), this, SLOT (read_frame()));
-    reset_animation();
+    connect(dock_widget->nextButton, &QPushButton::clicked,
+            this, &Animate_mesh_plugin::next_frame);
+    connect(dock_widget->prevButton, &QPushButton::clicked,
+            this, &Animate_mesh_plugin::prev_frame);
+    connect(dock_widget->stopButton, &QPushButton::clicked,
+            this, [this](){
+      timer.stop();
+    });
+    connect(&timer, SIGNAL (timeout()), this, SLOT (next_frame()));
+    frame = 0;
   }
 
   bool applicable(QAction*) const override
@@ -82,6 +88,7 @@ public :
   }
 
 public Q_SLOTS:
+
   void read_frame()
   {
     typedef boost::property_map<SMesh,CGAL::vertex_point_t>::type VPmap;
@@ -145,12 +152,32 @@ public Q_SLOTS:
     }
 
     sm_item->redraw();
-    position = is.tellg();
     if(!is.good())
     {
       timer.stop();
       return;
     }
+  }
+
+  void next_frame()
+  {
+    if(frame == frame_pos.size()-1)
+    {
+      timer.stop();
+      return;
+    }
+    position = frame_pos[++frame];
+    dock_widget->frameSlider->setValue(frame);
+    read_frame();
+  }
+
+  void prev_frame()
+  {
+    if(frame == 0)
+      return;
+    position = frame_pos[--frame];
+    dock_widget->frameSlider->setValue(frame);
+    read_frame();
   }
 
   void start_animation()
@@ -160,7 +187,14 @@ public Q_SLOTS:
 
   void reset_animation()
   {
-    position = 0;
+    frame=0;
+    dock_widget->frameSlider->setValue(frame);
+    for(std::size_t id = 0; id<initial_points.size();++id)
+    {
+      sm_item->face_graph()->points()[SMesh::Vertex_index(id)]=initial_points[id];
+    }
+    sm_item->invalidateOpenGLBuffers();
+    sm_item->redraw();
   }
 
   void init_animation()
@@ -169,17 +203,26 @@ public Q_SLOTS:
     if(!item)
       return;
     sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
+    sm_item->setGouraudPlusEdgesMode();
     connect(sm_item, &Scene_surface_mesh_item::aboutToBeDestroyed, this,
             [this](){
       sm_item=nullptr;
       position=0;
-      nb_frames = 0;
+      frame_pos.clear();
       filepath="";
+      frame = 0;
       dock_widget->resetButton->setEnabled(false);
       dock_widget->startButton->setEnabled(false);
-      dock_widget->readButton->setEnabled(false);
+      dock_widget->prevButton->setEnabled(false);
+      dock_widget->nextButton->setEnabled(false);
+      dock_widget->stopButton->setEnabled(false);
+      initial_points.clear();
+      initial_points.shrink_to_fit();
     });
-    sm_item->setGouraudPlusEdgesMode();
+    initial_points.reserve(sm_item->face_graph()->number_of_vertices());
+    for(const auto& p : sm_item->face_graph()->points())
+      initial_points.push_back(p);
+
     //ask the file (*.trjs)
     QFileDialog dialog(mw);
     QStringList filters;
@@ -192,7 +235,9 @@ public Q_SLOTS:
     position = 0;
     dock_widget->resetButton->setEnabled(true);
     dock_widget->startButton->setEnabled(true);
-    dock_widget->readButton->setEnabled(true);
+    dock_widget->prevButton->setEnabled(true);
+    dock_widget->nextButton->setEnabled(true);
+    dock_widget->stopButton->setEnabled(true);
     if(!info.exists())
     {
       QMessageBox::warning(mw, "Error","File does not exist.");
@@ -200,7 +245,9 @@ public Q_SLOTS:
     }
     if(info.baseName() != sm_item->name())
     {
-      QMessageBox::warning(mw, "Wrong Name",QString("The frame file must have the same name as the mesh file.(%1.trjs)").arg(sm_item->name()));
+      QMessageBox::warning(mw, "Wrong Name",
+                           QString("The frame file must have the same name as the mesh file.(%1.trjs)")
+                           .arg(sm_item->name()));
       return;
     }
 
@@ -209,15 +256,17 @@ public Q_SLOTS:
     //pre-process to count frames
     QApplication::setOverrideCursor(Qt::WaitCursor);
     std::ifstream is(filepath.toUtf8());
-    nb_frames=0;
+    frame_pos.clear();
     while(is.good())
     {
       std::string line;
+      std::streampos pos = is.tellg();
       std::getline(is, line);
       if(line.length() > 0 && line.find(" ") == std::string::npos)
-        ++nb_frames;
+        frame_pos.push_back(pos);
     }
     is.close();
+    dock_widget->frameSlider->setMaximum(frame_pos.size()-1);
     QApplication::restoreOverrideCursor();
   }
 
@@ -234,7 +283,9 @@ private:
   QString filepath;
   std::streampos position;
   Scene_surface_mesh_item* sm_item;
-  int nb_frames;
+  std::vector<std::streampos> frame_pos;
   QTimer timer;
+  std::size_t frame;
+  std::vector<SMesh::Point> initial_points;
 }; //end of plugin class
 #include "Animate_mesh_plugin.moc"
