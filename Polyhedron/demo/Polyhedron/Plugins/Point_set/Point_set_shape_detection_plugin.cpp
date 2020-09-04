@@ -945,7 +945,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetectShapesSM_t
     dialog.m_min_pts_field->setValue((std::max)(static_cast<int>(0.01*nb_faces), 1));
     if(!dialog.exec()) return;
 
-    if(dialog.m_min_pts_field->value() > nb_faces)
+    if(dialog.min_points() > nb_faces)
       dialog.m_min_pts_field->setValue(nb_faces);
     QApplication::setOverrideCursor(Qt::WaitCursor);
     if (dialog.region_growing()) {
