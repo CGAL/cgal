@@ -10,6 +10,7 @@
 #include <CGAL/Three/Three.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Three.h>
+#include <QMessageBox>
 
 #include "ui_Animate_widget.h"
 #include <fstream>
@@ -131,12 +132,15 @@ public Q_SLOTS:
           timer.stop();
           return;
         }
-        SMesh::Vertex_index vh(id);
-        VPmap vpm = get(CGAL::vertex_point, *sm_item->face_graph());
-        put(vpm, vh, Point_3(x-offset.x,
-                             y-offset.y,
-                             z-offset.z));
-        sm_item->updateVertex(vh);
+        if(id <= sm_item->face_graph()->number_of_vertices())
+        {
+          SMesh::Vertex_index vh(id);
+          VPmap vpm = get(CGAL::vertex_point, *sm_item->face_graph());
+          put(vpm, vh, Point_3(x-offset.x,
+                               y-offset.y,
+                               z-offset.z));
+          sm_item->updateVertex(vh);
+        }
       }
     }
 
@@ -165,6 +169,16 @@ public Q_SLOTS:
     if(!item)
       return;
     sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
+    connect(sm_item, &Scene_surface_mesh_item::aboutToBeDestroyed, this,
+            [this](){
+      sm_item=nullptr;
+      position=0;
+      nb_frames = 0;
+      filepath="";
+      dock_widget->resetButton->setEnabled(false);
+      dock_widget->startButton->setEnabled(false);
+      dock_widget->readButton->setEnabled(false);
+    });
     sm_item->setGouraudPlusEdgesMode();
     //ask the file (*.trjs)
     QFileDialog dialog(mw);
@@ -176,25 +190,35 @@ public Q_SLOTS:
     QFileInfo info(dialog.selectedFiles().first());
     filepath = info.filePath();
     position = 0;
-
-    //todo : warning box, especially for the name part
-    if(!info.exists() || info.baseName() != sm_item->name())
+    dock_widget->resetButton->setEnabled(true);
+    dock_widget->startButton->setEnabled(true);
+    dock_widget->readButton->setEnabled(true);
+    if(!info.exists())
+    {
+      QMessageBox::warning(mw, "Error","File does not exist.");
       return;
+    }
+    if(info.baseName() != sm_item->name())
+    {
+      QMessageBox::warning(mw, "Wrong Name",QString("The frame file must have the same name as the mesh file.(%1.trjs)").arg(sm_item->name()));
+      return;
+    }
 
     if(!dock_widget->isVisible()) { dock_widget->show(); }
 
     //pre-process to count frames
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     std::ifstream is(filepath.toUtf8());
     nb_frames=0;
     while(is.good())
     {
       std::string line;
       std::getline(is, line);
-      if(line.length() >0 && line.find(" ") == std::string::npos)
+      if(line.length() > 0 && line.find(" ") == std::string::npos)
         ++nb_frames;
     }
     is.close();
-
+    QApplication::restoreOverrideCursor();
   }
 
   void closure() override
