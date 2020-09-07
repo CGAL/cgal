@@ -215,18 +215,18 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   if(CGAL_HEADER_ONLY)
     target_compile_definitions(demo_framework PRIVATE -DCGAL_USE_Qt5_RESOURCES)
   endif()
-
-  target_precompile_headers(demo_framework PRIVATE
-  <QApplication>
-  <QMainWindow>
-  <QAction>
-  <QMessageBox>
-  <QObject>
-  <QMenu>
-  <QString>
-  <vector>
-  )
-
+  if(COMMAND target_precompile_headers)
+    target_precompile_headers(demo_framework PRIVATE
+    <QApplication>
+    <QMainWindow>
+    <QAction>
+    <QMessageBox>
+    <QObject>
+    <QMenu>
+    <QString>
+    <vector>
+    )
+endif()#target_precompile_headers
   add_library(scene_basic_objects SHARED
     Scene_plane_item.cpp
     Scene_spheres_item.cpp
@@ -271,10 +271,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   if(TARGET CGAL::TBB_support)
     target_link_libraries(scene_c3t3_item PUBLIC CGAL::TBB_support)
   endif()
-  #if(COMMAND target_precompile_headers)
-  #  # Support for precompiled headers, for Mesh_3 (since CMake 3.16)
-  #  target_precompile_headers(scene_c3t3_item PUBLIC [["C3t3_type.h"]] <QObject>)
-  #endif()
+
   add_item(scene_transform_item Plugins/PCA/Scene_facegraph_transform_item.cpp )
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp )
   add_item(scene_image_item Scene_image_item.cpp)
