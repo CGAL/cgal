@@ -603,7 +603,7 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
     {
       boost::container::small_vector<Cell_handle, 64> inc_vec;
       tr.incident_cells(vh, std::back_inserter(inc_vec));
-      inc_cells[vh] = inc_vec;
+      o_inc_vh = inc_vec;
     }
 
     Facet_circulator facet_circulator = curr_fcirc;
@@ -622,7 +622,7 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
                                       indices(facet_circulator->second, i));
         if (curr_vertex != vh0  && curr_vertex != vh1)
         {
-          if (is_edge_uv(vh, curr_vertex, boost::get(inc_cells[vh])))
+          if (is_edge_uv(vh, curr_vertex, boost::get(o_inc_vh)))
           {
             is_edge = true;
             break;
@@ -764,7 +764,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   {
     boost::container::small_vector<Cell_handle, 64> inc_vec;
     tr.incident_cells(vh, std::back_inserter(inc_vec));
-    inc_cells[vh] = inc_vec;
+    o_inc_vh = inc_vec;
   }
 
   do
@@ -776,7 +776,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
                                     indices(facet_circulator->second, i));
       if (curr_vertex != vh0  && curr_vertex != vh1)
       {
-        if (is_edge_uv(vh, curr_vertex, boost::get(inc_cells[vh])))
+        if (is_edge_uv(vh, curr_vertex, boost::get(o_inc_vh)))
           return NOT_FLIPPABLE;
       }
     }
@@ -1191,12 +1191,12 @@ std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
     {
       boost::container::small_vector<Cell_handle, 64> inc_vec;
       tr.incident_cells(vp.first, std::back_inserter(inc_vec));
-      inc_cells[vp.first] = inc_vec;
+      o_inc_vh = inc_vec;
     }
 
     Cell_handle ch;
     int i0, i1;
-    if (is_edge_uv(vp.first, vp.second, boost::get(inc_cells[vp.first]), ch, i0, i1))
+    if (is_edge_uv(vp.first, vp.second, boost::get(o_inc_vh), ch, i0, i1))
     {
       Edge edge(ch, i0, i1);
 
