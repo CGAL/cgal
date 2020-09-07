@@ -108,31 +108,43 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateHook( FT                    
         {
           CGAL_stskel_intrinsic_test_assertion( !CGAL_SS_i::is_time_clearly_not_within_possibly_inexact_bisector_time_interval(aTime,aBisector) ) ;
 
-          bool lLocalPeak = false ;
-
           if ( aBisector->slope() == POSITIVE && lTimeWrtSrcTime == EQUAL )
           {
-            Halfedge_const_handle lPrev = aBisector->prev();
-            while ( lPrev->is_bisector() && ( lPrev->slope() == ZERO ) )
-             lPrev = lPrev->prev();
+            // The offset isovalue going through the halfedge's source is fine, as long as
+            // current->prev also has positive slope, otherwise we are not actually leaving
+            // the face. Thus, if current->prev has non-positive slope, keep walking the border
+            // until a halfedge with positive slope appears.
+            //
+            // Note that this doesn't garantee that this new halfedge will be the exit halfedge (it is
+            // possible that on the next 'aBisector', both extremities will have time > offset_time)
+            // and we might have to skip multiple such sections.
 
-            lLocalPeak = ( lPrev->slope() == NEGATIVE ) ;
+            if ( lPrev->is_bisector() && ( lPrev->slope() != POSITIVE ) )
+            {
+              do
+              {
+                CGAL_POLYOFFSET_TRACE(2, "\nlPrev: " << e2str(*lPrev)
+                                         << " is bisector? " << lPrev->is_bisector()
+                                         << " non-positive slope? " << ( lPrev->slope() != POSITIVE ) ) ;
+                lPrev = lPrev->prev();
+                CGAL_assertion(lPrev != aBisector) ; // what goes up must come down
+              }
+              while ( lPrev->is_bisector() && ( lPrev->slope() != POSITIVE ) );
+
+              CGAL_POLYOFFSET_TRACE(2,"\n post-walk lPrev: " << e2str(*lPrev) ) ;
+
+              aBisector = lPrev;
+              continue;
+            }
           }
 
-          if ( !lLocalPeak )
-          {
-            rPos = ( lTimeWrtTgtTime == EQUAL ? TARGET : lTimeWrtSrcTime == EQUAL ? SOURCE : INSIDE ) ;
+          rPos = ( lTimeWrtTgtTime == EQUAL ? TARGET : lTimeWrtSrcTime == EQUAL ? SOURCE : INSIDE ) ;
 
-            rHook = aBisector ;
+          rHook = aBisector ;
 
-            CGAL_POLYOFFSET_TRACE(2, "  Hook found here at " << Hook_position2Str(rPos) ) ;
+          CGAL_POLYOFFSET_TRACE(2, "  Hook found here at " << Hook_position2Str(rPos) ) ;
 
-            break ;
-          }
-          else
-          {
-            CGAL_POLYOFFSET_TRACE(2, "  Hook found here local peak. Ignored." ) ;
-          }
+          break ;
         }
         else
         {
@@ -263,8 +275,10 @@ OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::TraceOffsetPolygon(
 
     if ( handle_assigned(lHook) )
     {
+      CGAL_POLYOFFSET_TRACE(4, "returned Hook: " << e2str(*lHook));
+
       AddOffsetVertex(aTime,lHook, lPoly);
-      CGAL_POLYOFFSET_TRACE(1,"B" << lLastHook->id() << " and B" << lHook->id() << " visited." ) ;
+      CGAL_POLYOFFSET_TRACE(2,"B" << lLastHook->id() << " and B" << lHook->id() << " visited." ) ;
 
       lHook = lHook->opposite();
 
