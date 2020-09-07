@@ -123,7 +123,7 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateHook( FT                    
             {
               do
               {
-                CGAL_POLYOFFSET_TRACE(2, "\nlPrev: " << e2str(*lPrev)
+                CGAL_POLYOFFSET_TRACE(4, "\nlPrev: " << e2str(*lPrev)
                                          << " is bisector? " << lPrev->is_bisector()
                                          << " non-positive slope? " << ( lPrev->slope() != POSITIVE ) ) ;
                 lPrev = lPrev->prev();
@@ -131,7 +131,7 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateHook( FT                    
               }
               while ( lPrev->is_bisector() && ( lPrev->slope() != POSITIVE ) );
 
-              CGAL_POLYOFFSET_TRACE(2,"\n post-walk lPrev: " << e2str(*lPrev) ) ;
+              CGAL_POLYOFFSET_TRACE(4,"\n post-walk lPrev: " << e2str(*lPrev) ) ;
 
               aBisector = lPrev;
               continue;
