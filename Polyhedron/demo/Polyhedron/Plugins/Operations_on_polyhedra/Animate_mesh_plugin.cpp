@@ -224,7 +224,6 @@ public Q_SLOTS:
     if(!item)
       return;
     sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
-    sm_item->setGouraudPlusEdgesMode();
     connect(sm_item, &Scene_surface_mesh_item::aboutToBeDestroyed, this,
             [this](){
       clean_up();
