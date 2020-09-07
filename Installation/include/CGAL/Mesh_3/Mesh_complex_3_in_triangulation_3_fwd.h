@@ -25,7 +25,7 @@ class Mesh_complex_3_in_triangulation_3;
 template<class Tr, bool c3t3_loader_failed>
 bool build_triangulation_from_file(std::istream& is,
                                    Tr& tr,
-                                   bool prevent_domain_0);
+                                   bool replace_domain_0);
 
 template<class Tr, bool c3t3_loader_failed>
 bool build_triangulation_from_file(std::istream& is,
