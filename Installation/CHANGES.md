@@ -12,6 +12,8 @@ Release date: September 2020
     that improves the quality of tetrahedra in terms of dihedral angles,
     while targeting a given edge length.
 
+    See also the associated [blog entry](https://www.cgal.org/2020/08/07/Tetrahedral-remeshing/).
+
 ### [Surface Mesh Topology](https://doc.cgal.org/5.1/Manual/packages.html#PkgSurfaceMeshTopologySummary) (new package)
 
 -   This package enables the computation of some topological invariants of surfaces, such as:
