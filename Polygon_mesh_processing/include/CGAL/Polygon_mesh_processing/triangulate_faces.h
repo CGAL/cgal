@@ -533,7 +533,7 @@ bool triangulate_faces(FaceRange face_range,
 
   typedef typename GetSplitVisitor<NamedParameters>::type SplitVisitor;
   typedef typename GetSplitVisitor<NamedParameters>::DummySplitVisitor DummySplitVisitor;
-  SplitVisitor visitor = choose_param(get_param(np, internal_np::split_visitor),
+  SplitVisitor visitor = choose_parameter(get_parameter(np, internal_np::split_visitor),
                                       DummySplitVisitor());
 
   internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel, SplitVisitor> modifier(vpmap);

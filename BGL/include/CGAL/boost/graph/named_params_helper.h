@@ -303,7 +303,8 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
       > ::type  type;
   };
 
-    
+  namespace Polygon_mesh_processing
+  {
     template<typename NamedParameters>
     class GetSplitVisitor
     {
@@ -313,20 +314,20 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
         template <typename T>
         void start(const T&) const
         {}
-        
+
         template <typename T>
-        void operator()(const T&) const 
+        void operator()(const T&) const
         {}
-        
+
         void done() const
         {}
       };
 
-      typedef typename boost::lookup_named_param_def <
+      typedef typename internal_np::Lookup_named_param_def<
         internal_np::split_visitor_t,
         NamedParameters,
         DummySplitVisitor//default
-        > ::type  type;
+        >::type  type;
     };
 
   } // namespace Polygon_mesh_processing
@@ -336,7 +337,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
   }
 
   template<typename PointRange,
-           typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t>,
+           typename NamedParameters = CGAL::Named_function_parameters<bool, internal_np::all_default_t>,
            bool has_nested_iterator = internal::Has_nested_type_iterator<PointRange>::value>
   class GetPointMap
   {
