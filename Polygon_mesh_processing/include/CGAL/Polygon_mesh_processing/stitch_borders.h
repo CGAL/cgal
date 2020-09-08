@@ -990,6 +990,7 @@ std::size_t stitch_boundary_cycles(const BorderHalfedgeRange& boundary_cycle_rep
 }
 
 ///\cond SKIP_IN_MANUAL
+
 // convenience overloads
 template <typename PolygonMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
 std::size_t stitch_boundary_cycles(PolygonMesh& pmesh,
@@ -1038,6 +1039,7 @@ std::size_t stitch_borders(PolygonMesh& pmesh,
 
   return internal::stitch_halfedge_range(hedge_pairs_to_stitch, pmesh, vpm);
 }
+
 ///\endcond
 
 /*!
@@ -1065,7 +1067,13 @@ std::size_t stitch_borders(PolygonMesh& pmesh,
 template <typename PolygonMesh,
           typename HalfedgePairsRange>
 std::size_t stitch_borders(PolygonMesh& pmesh,
-                           const HalfedgePairsRange& hedge_pairs_to_stitch)
+                           const HalfedgePairsRange& hedge_pairs_to_stitch
+#ifndef DOXYGEN_RUNNING
+                           , typename boost::enable_if<
+                               typename boost::has_range_iterator<HalfedgePairsRange>
+                             >::type* = 0
+#endif
+                           )
 {
   return stitch_borders(pmesh, hedge_pairs_to_stitch, parameters::all_default());
 }
@@ -1193,7 +1201,7 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
                            const CGAL_PMP_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
                            , typename boost::enable_if<
-                             typename boost::has_range_iterator<BorderHalfedgeRange>
+                               typename boost::has_range_iterator<BorderHalfedgeRange>
                            >::type* = 0
 #endif
                            )
@@ -1204,9 +1212,13 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
 }
 
 /// \cond SKIP_IN_MANUAL
+
 template <typename BorderHalfedgeRange, typename PolygonMesh>
 std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representatives,
-                           PolygonMesh& pmesh)
+                           PolygonMesh& pmesh,
+                           typename boost::enable_if<
+                             typename boost::has_range_iterator<BorderHalfedgeRange>
+                           >::type* = 0)
 {
   // Need to keep track of the cycles since we are working on a subset of all the boundary cycles
   internal::Boundary_cycle_rep_maintainer<PolygonMesh> mv(pmesh);
@@ -1232,6 +1244,7 @@ std::size_t stitch_borders(PolygonMesh& pmesh)
 {
   return stitch_borders(pmesh, parameters::all_default());
 }
+
 /// \endcond
 
 } // namespace Polygon_mesh_processing
