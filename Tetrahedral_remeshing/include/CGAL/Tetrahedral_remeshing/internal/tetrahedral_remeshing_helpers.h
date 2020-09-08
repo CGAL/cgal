@@ -187,27 +187,27 @@ struct Dihedral_angle_cosine
     //if numerators have different signs
     if (l.m_sgn == CGAL::NEGATIVE && r.m_sgn != CGAL::NEGATIVE)
       return true;
-  
+
     else if (l.m_sgn == CGAL::POSITIVE && r.m_sgn != CGAL::POSITIVE)
       return false;
-  
+
     else if (l.m_sgn == CGAL::ZERO)
       return (r.m_sgn == CGAL::POSITIVE);
-  
+
     //else numerators have the same sign
     else if (l.m_sgn == CGAL::POSITIVE) //both angles are in [0; PI/2[
     {
       CGAL_assertion(r.m_sgn == CGAL::POSITIVE);
 
-      return  (l.m_sq_num * r.m_sq_den < r.m_sq_num* l.m_sq_den);;
+      return  (l.m_sq_num * r.m_sq_den < r.m_sq_num* l.m_sq_den);
     }
     else //both angles are in [PI/2; PI]
     {
       CGAL_assertion(l.m_sgn != CGAL::POSITIVE);
       CGAL_assertion(r.m_sgn != CGAL::POSITIVE);
 
-      return  (l.m_sq_num * r.m_sq_den >= r.m_sq_num* l.m_sq_den);;
-    } 
+      return (l.m_sq_num * r.m_sq_den >= r.m_sq_num* l.m_sq_den);
+    }
   }
 
   friend bool operator<=(const Dihedral_angle_cosine& l,
