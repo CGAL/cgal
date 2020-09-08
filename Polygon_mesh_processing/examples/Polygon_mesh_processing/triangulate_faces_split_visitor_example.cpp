@@ -32,13 +32,13 @@ public:
     container[p.second] = p.first;
     return *this;
   }
-  
+
   Insert_iterator&
   operator*() { return *this; }
 
   Insert_iterator
   operator++(int) { return *this; }
-  
+
 };
 
 
@@ -51,7 +51,7 @@ struct Visitor {
   Visitor(Container& container)
     : container(container)
   {}
-  
+
   void start(face_descriptor fd)
   {
     std::cout << "split : " << fd << " into:" << std::endl;
@@ -59,13 +59,13 @@ struct Visitor {
     qfd = it->second;
     container.erase(it);
   }
-  
+
   void operator()(face_descriptor fd)
   {
     std::cout << "  " << fd;
     container[fd]=qfd;
   }
-  
+
   void done()
   {
     std::cout << std::endl;
@@ -77,20 +77,20 @@ int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/P.off";
   std::ifstream input(filename);
-  
+
   Surface_mesh mesh;
   if (!input || !(input >> mesh) || mesh.is_empty())
   {
     std::cerr << "Not a valid off file." << std::endl;
     return 1;
   }
-  
+
   boost::unordered_map<face_descriptor,face_descriptor> t2q;
-  
+
   Surface_mesh copy;
-  
+
   copy_face_graph(mesh, copy, CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),Insert_iterator(t2q));
-  
+
   Visitor v(t2q);
   CGAL::Polygon_mesh_processing::triangulate_faces(copy,
                                                    CGAL::Polygon_mesh_processing::parameters::split_visitor(v));
