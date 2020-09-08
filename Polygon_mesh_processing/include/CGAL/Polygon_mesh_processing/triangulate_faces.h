@@ -129,7 +129,7 @@ public:
       }
       visitor.visit(face(res,pmesh));
       visitor.visit(face(opposite(res,pmesh),pmesh));
-      visitor.done();
+      visitor.end();
     }
     else
     {
@@ -279,7 +279,7 @@ public:
         visitor.visit(face(h0, pmesh));
       }
     }
-    visitor.done();
+    visitor.end();
     return true;
   }
 
@@ -358,7 +358,7 @@ public:
       set_halfedge(f, hedges[0], pmesh);
       hedges.clear();
     }
-    visitor.done();
+    visitor.end();
     return true;
   }
 
