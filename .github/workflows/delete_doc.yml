@@ -12,6 +12,7 @@ jobs:
     - uses: actions/checkout@v2.0.0
     - name: delete directory
       run: |
+         set -x
          mkdir -p ~/.ssh
          (
          cat <<EOF
@@ -32,5 +33,6 @@ jobs:
          EOF
          )>> ~/.ssh/known_hosts
          PR_NUMBER=$(python -c "import json; import os; y = json.load(open(os.environ['GITHUB_EVENT_PATH'])); print(y[\"number\"])")
-         ssh mgimeno@cgal.geometryfactory.com rm -rf /home/mgimeno/public_html/pr_doc/${PR_NUMBER}
+         #ssh mgimeno@cgal.geometryfactory.com rm -rf /home/mgimeno/public_html/cgal.github.io/${PR_NUMBER}
+         ssh mgimeno@cgal.geometryfactory.com "cd /home/mgimeno/public_html/cgal.github.io && rm -rf ${PR_NUMBER} && git rm -r ${PR_NUMBER} && git commit -a -m 'Remove a directory' && git push origin master"
          

@@ -46,4 +46,5 @@ jobs:
         set -e
         cd build_doc && make -j2 doc && make -j2 doc_with_postprocessing
         PR_NUMBER=$(python -c "import json; import os; y = json.load(open(os.environ['GITHUB_EVENT_PATH'])); print(y[\"number\"])")
-        rsync --compress -a doc_output/* ${{ secrets.ids }}/pr_doc/${PR_NUMBER}/
+        rsync --compress -a doc_output/* ${{ secrets.ids }}/cgal.github.io/${PR_NUMBER}/
+        ssh mgimeno@cgal.geometryfactory.com "cd /home/mgimeno/public_html/cgal.github.io && git add ${PR_NUMBER} && git commit -a -m 'Add a new directory' && git push origin master"
