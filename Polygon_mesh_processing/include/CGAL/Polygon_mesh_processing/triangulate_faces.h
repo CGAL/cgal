@@ -118,15 +118,10 @@ public:
       FT p1p3 = CGAL::cross_product(p2-p1,p3-p2) * CGAL::cross_product(p0-p3,p1-p0);
       FT p0p2 = CGAL::cross_product(p1-p0,p1-p2) * CGAL::cross_product(p3-p2,p3-p0);
       visitor.start(f);
-      halfedge_descriptor res;
-      if(p0p2>p1p3)
-      {
-        res = CGAL::Euler::split_face(v0, v2, pmesh);
-      }
-      else
-      {
-        res = CGAL::Euler::split_face(v1, v3, pmesh);
-      }
+      halfedge_descriptor res = (p0p2>p1p3)
+                              ?  CGAL::Euler::split_face(v0, v2, pmesh)
+                              :  CGAL::Euler::split_face(v1, v3, pmesh);
+
       visitor.visit(face(res,pmesh));
       visitor.visit(face(opposite(res,pmesh),pmesh));
       visitor.end();
