@@ -298,6 +298,7 @@
 \def\arrBlueVertex(#1)#2{\arrColorVertex(#1){#2}{blue}}
 \def\arrGrayVertex(#1)#2{\arrColorVertex(#1){#2}{gray}}
 \def\arrPurpleVertex(#1)#2{\arrColorVertex(#1){#2}{purple}}
+\def\arrBlackVertex(#1)#2{\arrColorVertex(#1){#2}{black}}
 
 \def\arrMainVertex(#1)#2{\arrRedVertex(#1){#2}}
 \def\arrMinorVertex(#1)#2{\arrCyanVertex(#1){#2}}
@@ -365,6 +366,16 @@
 }
 \def\arrMainIntersectionVertex(#1,#2)(#3,#4)(#5,#6)(#7,#8)#9{
   \arrMainVertex(!\arrIntersect\space
+    arrDict begin #8 #7 #6 #5 #4 #3 #2 #1 arrIntersect end
+  ){#9}
+}
+\def\arrMinorIntersectionVertex(#1,#2)(#3,#4)(#5,#6)(#7,#8)#9{
+  \arrMinorVertex(!\arrIntersect\space
+    arrDict begin #8 #7 #6 #5 #4 #3 #2 #1 arrIntersect end
+  ){#9}
+}
+\def\arrBlackIntersectionVertex(#1,#2)(#3,#4)(#5,#6)(#7,#8)#9{
+  \arrBlackVertex(!\arrIntersect\space
     arrDict begin #8 #7 #6 #5 #4 #3 #2 #1 arrIntersect end
   ){#9}
 }

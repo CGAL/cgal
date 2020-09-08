@@ -35,11 +35,13 @@ TARGETS = \
   compare_x_near_boundary.pdf \
   compare_y_near_boundary.pdf \
   identified_clusters.pdf \
-  generic_polyline.tex \
-  well_oriented_polyline.tex \
-  circular_arcs.tex \
-  conic_multiplicities.tex \
-  rational_function_singular.tex
+  generic_polyline.pdf \
+  well_oriented_polyline.pdf \
+  circular_arcs.pdf \
+  conic_multiplicities.pdf \
+  rational_function_singular.pdf \
+  consolidated_curve_data.pdf \
+  generic_curve_data.pdf
 
 .DEFAULT_GOAL = all
 .PHONY: all clean

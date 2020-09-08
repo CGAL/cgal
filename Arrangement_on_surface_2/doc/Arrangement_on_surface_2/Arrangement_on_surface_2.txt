@@ -1665,7 +1665,7 @@ location of the inserted \f$x\f$-monotone curve endpoints to be
 unknown at the time of insertion.
 
 <!----------------------------------------------------------------------------->
-\subsubsection arr_sssecinsert_non_x Inserting Non-Intersecting Curves
+\subsubsection arr_sssecinsert_non_x Inserting Pairwise Disjoint Curves
 <!----------------------------------------------------------------------------->
 
 We retain, for the moment, the requirement that the interior of the
@@ -4683,7 +4683,7 @@ the same curve.  We call \f$f\f$ a <em>defining polynomial</em> of
 \f$c\f$.
 
 A formal definition of (weakly) \f$x\f$-monotone segments of algebraic
-curves follows. A point \f$p\f$ on a curve \f$c_f \subset \Rtwo\f$
+curves follows. A point \f$p\f$ on a curve \f$c_f \subset \mathbb{R}^2\f$
 (with defining polynomial \f$f\f$) is called <em>semi-regular</em> if,
 locally around \f$p\f$, the curve \f$c_f\f$ can be written as a
 function graph of some continuous function in \f$x\f$ or in
@@ -4884,7 +4884,7 @@ segments in Euclidean geometry.
 
 The `Arr_geodesic_arc_on_sphere_traits_2<Kernel,X,Y>` class template
 handles arcs of great circles (also known as geodesic arcs) of a unit
-sphere (centered at the origin in \f$R^3\f$). It is a model of the
+sphere (centered at the origin in \f$\mathbb{R}^3\f$). It is a model of the
 concept `ArrangementSphericalBoundaryTraits_2`; see Section \ref
 aos_ssec-traits-curved. An arrangement type (an instance of the
 template `Arrangement_on_surface_2<GeomTraits, TopolTraits>`) that
@@ -4946,123 +4946,145 @@ identification curve is drawn as a gray tube.
 <!----------------------------------------------------------------------------->
 
 Geometric traits-class decorators allow you to attach auxiliary data
-to curves and to points. The data is automatically manipulated by the
-decorators and distributed to the constructed geometric entities.
-Note that additional information can alternatively be maintained by
-extending the vertex, halfedge, or face types provided by the
-\sc{Dcel} class used by the arrangement; see the details in Section
-\ref arr_secex_dcel.
+to the geometric objects (curves and to points). The data is
+automatically manipulated by the decorators and distributed to the
+constructed geometric entities. Additional information can
+alternatively be maintained by extending the vertex, halfedge, or face
+types provided by the \sc{Dcel} class used by the arrangement; see
+Section \ref arr_secex_dcel for details. In many cases, however, it is
+convenient to attach the data to the curve itself, exploiting the
+automatic proliferation of the additional data fields from each curve
+to all its induced subcurves. Moreover, as two halfedges are
+associated with a single curve, storing the data once in the curve
+record either saves space or avoids an indirect access from one
+halfedge to its twin.
 
-The arrangement package includes a generic traits-class decorator
-template named `Arr_curve_data_traits_2<BaseTraits,
-XMonotoneCurveData, Merge, CurveData, Convert>`.  This decorator is
-used to attach a data field to curves and to \f$x\f$-monotone
-curves. It is parameterized by a base-traits class, which is one of
-the geometric traits classes described in the previous subsections, or
-a user-defined traits class. The curve-data decorator derives itself
-from the base-traits class, and in particular inherits its `%Point_2`
-type.  In addition:
+The \ref PkgArrangementOnSurface2 package includes a traits-class
+decorator used to attach a data field to curves and to
+\f$x\f$-monotone curves. It is a class template named
+`Arr_curve_data_traits_2<BaseTraits, XMonotoneCurveData, Merge,
+CurveData, Convert>` parameterized by a base-traits class, which must
+be substituted with one of the geometric traits models described in
+the previous subsections or with a user-defined traits model, when the
+decorator is instantiated. The curve-data decorator derives from the
+base-traits class, and in particular inherits its `Point_2` type. The
+remaining nested types are defined as follows:
 
 <UL>
+
 <LI>`Curve_2` is derived from the basic `BaseTraits::Curve_2`
 class, extending it by an extra field of type `CurveData`.
 
 <LI>`X_monotone_curve_2` is derived from the basic
 `BaseTraits::X_monotone_curve_2` class, extending it by an extra field
-of type `XMonotoneCurveData`.
+of type `XMonotoneCurveData`, which must model the concepts
+CopyConstructible, EqualityComparable, and DefaultConstructible.  The
+latter ensures that every instance of the class template
+`Arr_curve_data_traits_2` obtained by substituting the `BaseTraits`
+template parameter with a model of the `ArrangementLandmarkTraits_2`
+concept models the ArrangementLandmarkTraits_2` concept as well
 
 </UL>
-Note that the `Curve_2` and `X_monotone_curve_2` are not the same,
-even if the `BaseTraits::Curve_2` and `BaseTraits::X_monotone_curve_2`
-are (as in the case of the segment-traits class for example). The
-extended curve types support the additional methods `data()` and
-`set_data()` for accessing and modifying the data field.
+
+Note that the nested `Curve_2` and `X_monotone_curve_2` are not the
+same, even if the `BaseTraits::Curve_2` and
+`BaseTraits::X_monotone_curve_2` are (as in the case of the
+segment-traits class, for example). The extended curve types support
+the additional methods
+\link CGAL::Arr_curve_data_traits_2<Tr, XData, Mrg, CData, Cnv>::Curve_2::data() `data()`\endlink and
+\link CGAL::Arr_curve_data_traits_2<Tr, XData, Mrg, CData, Cnv>::Curve_2::set_data() `set_data()`\endlink for accessing and
+modifying the data field.
 
 You can create an extended curve (or an extended \f$x\f$-monotone curve)
 from a basic curve and a curve-data object. When curves are
 inserted into an arrangement, they may be split, and the
-decorator handles their data fields automatically:
+decorator handles their data fields automatically  as follows:
+
 <UL>
 
 <LI>When a curve is subdivided into \f$x\f$-monotone subcurves, its
-data field of type `CurveData` is converted to an `XMonotoneCurveData`
-object \f$d\f$ using the `Convert` functor. The object \f$d\f$ is
-automatically associated with each of the resulting \f$x\f$-monotone
-subcurves.
+  data field of type `CurveData` is converted to an object of type
+  `XMonotoneCurveData` using the `Convert` functor. The object is
+  automatically associated with each of the resulting \f$x\f$-monotone
+  subcurves.
 
-Note that by default, the `CurveData` type is identical to the
-`XMonotoneCurveData` type (and the conversion functor `Convert` is
-trivially defined). Thus, the data field associated with the original
-curve is just duplicated and stored with the \f$x\f$-monotone
-subcurves.
+  Note that by default, the `CurveData` type is identical to the
+  `XMonotoneCurveData` type (and the conversion functor `Convert` is
+  trivially defined). Thus, the data field associated with the
+  original curve is just duplicated and stored with the
+  \f$x\f$-monotone subcurves.
 
-<LI>When an \f$x\f$-monotone curve is split into two, the decorator
-class automatically copies its data field to both resulting subcurves.
+<LI>When an \f$x\f$-monotone curve is split into two (typically, when
+  it intersects another curve), the decorator class automatically
+  copies its data field to both resulting subcurves.
 
-<LI>When intersecting two \f$x\f$-monotone curves \f$c_1\f$ and
-\f$c_2\f$, the result may include overlapping sections, represented as
-\f$x\f$-monotone curves. In this case the data fields of \f$c_1\f$
-and \f$c_2\f$ are merged into a single `XMonotoneCurveData` object,
-using the `Merge` functor, which is supplied as a parameter to the
-traits class-template. The resulting object is assigned to the data
-field of the overlapping subcurves.
+<LI>When two \f$x\f$-monotone curves, \f$c_1\f$ and \f$c_2\f$,
+intersect, the result may include overlapping sections represented as
+\f$x\f$-monotone curves. In this case the data fields of \f$c_1\f$ and
+\f$c_2\f$ are merged into a single `XMonotoneCurveData` object using
+the `Merge` functor, which is supplied as a parameter to the traits
+class-template. The resulting object is assigned to the data field of
+the overlapping subcurves.
 
 <LI>Merging two \f$x\f$-monotone curves is allowed only when (i) the
-two curves are geometrically mergeable - that is, the base-traits
-class allows to merge them - and (ii) the two curves store the same
+two curves are geometrically mergeable---that is, the base-traits
+class allows to merge them, and (ii) the two curves store the same
 data field.
+
 </UL>
 
-The `Arr_consolidated_curve_data_traits_2<BaseTraits, Data>` decorator
-specializes the generic curve-data decorator. It extends the basic
-`BaseTraits::Curve_2` by a single `Data` field, and the basic
-`BaseTraits::X_monotone_curve_2` with a <em>set</em> of (distinct)
-data objects. The `Data` type is required to support the equality
-operator, used to ensure that each set contains only distinct data
-objects with no duplicates.  When a curve with a data field \f$d\f$
-is subdivided into \f$x\f$-monotone subcurves, each subcurve is
-associated with a set \f$S = \{ d \}\f$. In case of an overlap
-between two \f$x\f$-monotone curves \f$c_1\f$ and \f$c_2\f$ with
-associated data sets \f$S_1\f$ and \f$S_2\f$, respectively, the
-overlapping subcurve is associated with the consolidated set \f$S_1
-\cup S_2\f$.
+Another decorator supported by the \ref PkgArrangementOnSurface2
+package is the `Arr_consolidated_curve_data_traits_2<BaseTraits,
+Data>` class template. It derives from the `Arr_curve_data_traits_2`
+class template, and it extends the basic type `BaseTraits::Curve_2` by
+a single `Data` field, and the basic `BaseTraits::X_monotone_curve_2`
+with a <em>set</em> of (distinct) data objects. The `Data` type must
+model the concept `EqualityComparable` to ensure that each set
+contains only distinct data objects with no duplicates. When a curve
+with a data field \f$d\f$ is subdivided into \f$x\f$-monotone
+subcurves, each subcurve is associated with a set \f$S = \{d\}\f$. In
+the case of an overlap between two \f$x\f$-monotone curves \f$c_1\f$
+and \f$c_2\f$ with associated data sets \f$S_1\f$ and \f$S_2\f$,
+respectively, the overlapping subcurve is associated with the
+consolidated set \f$S_1 \cup S_2\f$.
 
 <!----------------------------------------------------------------------------->
-\subsubsection Arrangement_on_surface_2Examples Examples
-<!----------------------------------------------------------------------------->
-
-<!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_17,ex_17.png}
+\cgalFigureBegin{arr_figex_consolidated_curve_data,consolidated_curve_data.png}
 An arrangement of six red and blue segments, as constructed in `consolidated_curve_data.cpp`. Disks correspond to red-blue intersection points, while circles mark the endpoints of red-blue overlaps.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
-In the following example, we use `Arr_segment_traits_2` as our
-base-traits class, attaching an additional <em>color</em> field to
-the segments using the consolidated curve-data traits class. A
-color may be either <em>blue</em> or <em>red</em>. Having constructed
-the arrangement of colored segments, as depicted in
-\cgalFigureRef{arr_figex_17}, we detect the vertices that have incident
-edges mapped to both blue and red segments. Thus, they correspond
-to red-blue intersection points. We also locate the edge that
-corresponds to overlaps between red and blue line segments:
+The following example uses `Arr_segment_traits_2` as the base-traits
+class, attaching an additional <em>color</em> field to the segments
+using the consolidated curve-data traits class. A color may be either
+<em>blue</em> or <em>red</em>. Having constructed the arrangement of
+colored segments, as depicted in
+\cgalFigureRef{arr_figex_consolidated_curve_data}, we detect the
+vertices that have incident edges mapped to both blue and red
+segments. These vertices, drawn as black discs in the figure,
+correspond to red-blue intersection points. We also locate the edge
+that corresponds to overlap between a red and a blue line segment (its
+endpoints are also drawn as black discs)
 
 \cgalExample{Arrangement_on_surface_2/consolidated_curve_data.cpp}
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_18,ex_18.png}
+\cgalFigureBegin{arr_figex_generic_curve_data,generic_curve_data.png}
 An arrangement of four polylines, named A-D, as constructed in
 `generic_curve_data.cpp`.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
-In the following example, we use `Arr_polyline_traits_2` as our
-base-traits class, attaching an additional <em>name</em> field to each
-polyline using the generic curve-data traits class. In case of
-overlaps, we simply concatenate the names of the overlapping
-polylines. Also notice how we replace the curve associated with the
-edges that correspond to overlapping polylines with geometrically
-equivalent curves, but with a different data fields:
+The following example uses `Arr_polyline_traits_2` as the base-traits
+class, attaching an additional <em>name</em> field to each polyline
+using the generic curve-data traits class. It constructs an
+arrangement of four polylines, named \f$A\f$, \f$B\f$, \f$c\f$, and
+\f$D\f$, as illustrated in
+\cgalFigureRef{arr_figex_generic_curve_data}.  In the case of
+overlaps, it simply concatenate the names of the overlapping
+polylines. At the end of the program the curve ssociated with the
+edges that correspond to overlapping polylines are replaced with
+geometrically equivalent curves, but with different data fields.
 
 \cgalExample{Arrangement_on_surface_2/generic_curve_data.cpp}
 
@@ -5075,10 +5097,10 @@ the file contains two distinct triplets of collinear points). Here we
 use the generic curve-data decorator to attach the index of the primal
 point to each of the lines.  Doing so, we can go over the incident
 edges of each vertex whose degree is greater than \f$4\f$ and report
-the subsets collinear points (if we have a vertex of degree \f$d\f$,
-we actually need to go over \f$\frac{d}{2}\f$ edges, as each incident
-line contributes exactly \f$2\f$ edges). Note that in this case the
-dual line cannot overlap, so we use a dummy merge functor to
+the subsets of collinear points (if we have a vertex of degree
+\f$d\f$, we actually need to go over \f$\frac{d}{2}\f$ edges, as each
+incident line contributes exactly \f$2\f$ edges). Note that in this
+case the dual line cannot overlap, so we use a dummy merge functor to
 instantiate the curve-data traits:
 
 \cgalExample{Arrangement_on_surface_2/dual_with_data.cpp}
