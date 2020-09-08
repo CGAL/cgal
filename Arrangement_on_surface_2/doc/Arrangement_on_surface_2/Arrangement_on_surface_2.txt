@@ -5111,8 +5111,8 @@ instantiate the curve-data traits:
 
 At this point we do not expose the topology traits concept. The
 package contains one topology traits, namely,
-`Arr_spherical_topology_traits_2`. It can be served as a topology
-traits for an arrangement embeded on a sphere. More precisely, for an
+`Arr_spherical_topology_traits_2`. It can serve as a topology traits
+for an arrangement embeded on a sphere. More precisely, for an
 arrangement embeded on a sphere defined over a parameter space the
 left and right boundary sides of which are identified and the top and
 bottom boundary sides are contracted.
