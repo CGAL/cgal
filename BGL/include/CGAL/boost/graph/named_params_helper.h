@@ -316,7 +316,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
         {}
 
         template <typename T>
-        void operator()(const T&) const
+        void visit(const T&) const
         {}
 
         void done() const

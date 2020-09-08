@@ -42,7 +42,8 @@ public:
 };
 
 
-struct Visitor {
+struct Visitor
+{
    typedef boost::unordered_map<face_descriptor,face_descriptor> Container;
 
   Container& container;
@@ -60,7 +61,7 @@ struct Visitor {
     container.erase(it);
   }
 
-  void operator()(face_descriptor fd)
+  void visit(face_descriptor fd)
   {
     std::cout << "  " << fd;
     container[fd]=qfd;

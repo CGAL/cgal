@@ -127,8 +127,8 @@ public:
       {
         res = CGAL::Euler::split_face(v1, v3, pmesh);
       }
-      visitor(face(res,pmesh));
-      visitor(face(opposite(res,pmesh),pmesh));
+      visitor.visit(face(res,pmesh));
+      visitor.visit(face(opposite(res,pmesh),pmesh));
       visitor.done();
     }
     else
@@ -276,7 +276,7 @@ public:
         set_next(h2, h0, pmesh);
 
         Euler::fill_hole(h0, pmesh);
-        visitor(face(h0, pmesh));
+        visitor.visit(face(h0, pmesh));
       }
     }
     visitor.done();
@@ -327,8 +327,8 @@ public:
         first=false;
       else
         f=add_face(pmesh);
-      visitor(f);
-      
+      visitor.visit(f);
+
       std::array<int, 4> indices =
         make_array( triangle.first,
                     triangle.second,
@@ -458,12 +458,12 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 
   //Option
   bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_delaunay_triangulation), true);
-  
+
   typedef typename GetSplitVisitor<NamedParameters>::type SplitVisitor;
   typedef typename GetSplitVisitor<NamedParameters>::DummySplitVisitor DummySplitVisitor;
   SplitVisitor visitor = choose_param(get_param(np, internal_np::split_visitor),
                                       DummySplitVisitor());
-  
+
   internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel, SplitVisitor> modifier(vpmap);
   return modifier.triangulate_face(f, pmesh, use_cdt, visitor);
 }
