@@ -435,6 +435,14 @@ public:
 *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
 *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 *   \cgalParamNEnd
+*
+*   \cgalParamNBegin{split_visitor}
+*     \cgalParamDescription{a visitor that allows track how faces are split}
+*     \cgalParamType{a class model of `SplitVisitor`}
+*     \cgalParamDefault{No visitor.}
+*     \cgalParamExtra{Note that the visitor will be copied, so
+*                     it should not have any data member that does have a reference-like type.}
+*  `\cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * @return `true` if the face has been triangulated.
