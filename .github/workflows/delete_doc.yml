@@ -1,7 +1,8 @@
-name: Documentation
+name: Documentation Removal
 
-on: [delete]
-
+on: 
+  pull_request_target:
+    types: [closed, removed]
 jobs:
   build:
 
@@ -30,5 +31,6 @@ jobs:
          |1|GMIJAmFHn7K7IaG3Uie0MfEo8sM=|2fzc+UO3J2GnlaV+0Mqc4I+mbXo= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
          EOF
          )>> ~/.ssh/known_hosts
+         PR_NUMBER=$(python -c "import json; import os; y = json.load(open(os.environ['GITHUB_EVENT_PATH'])); print(y[\"number\"])")
+         ssh mgimeno@cgal.geometryfactory.com rm -rf /home/mgimeno/public_html/pr_doc/${PR_NUMBER}
          
-        ssh ${{ secrets.ids }}/pr_doc/ rm -rf ${PR_NUMBER}/
