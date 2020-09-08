@@ -157,7 +157,6 @@ public:
   template<class CDT>
   bool triangulate_face_with_CDT(face_descriptor f, PM& pmesh, CDT& cdt, Visitor visitor)
   {
-    std::cout << "triangulate_face_with_CDT"<< std::endl;
     std::size_t original_size = CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh).size();
 
     // Halfedge_around_facet_circulator
