@@ -41,14 +41,25 @@ jobs:
     - name: configure all
       run: |
         git clone git@github.com:CGAL/cgal.github.io.git
-        mkdir build_doc && cd build_doc && cmake ../Documentation/doc
+        mkdir -p build_doc && cd build_doc && cmake ../Documentation/doc
     - name: Upload Doc
       run: |
         set -e
         PR_NUMBER=$(python -c "import json; import os; y = json.load(open(os.environ['GITHUB_EVENT_PATH'])); print(y[\"number\"])")
-        mkdir cgal.github.io/${PR_NUMBER}
+        mkdir -p cgal.github.io/${PR_NUMBER}
         cd build_doc && make -j2 doc && make -j2 doc_with_postprocessing
-        mv ./doc_output/* ../cgal.github.io/${PR_NUMBER}/
+        cp -r ./doc_output/* ../cgal.github.io/${PR_NUMBER}/
+        cd ../cgal.github.io
+        INDEX_EXISTS=""
+        while IFS= read -r line
+        do
+           if [[ $line == *" ${PR_NUMBER}."* ]]; then
+             INDEX_EXISTS="TRUE"
+           fi
+        done < "index.html"
+        if [ -z "$INDEX_EXISTS" ]; then 
+          echo "<li><a href=https://cgal.github.io/${PR_NUMBER}/Manual/index.html>Manual for PR ${PR_NUMBER}.</a></li>" >> ./index.html
+        fi
         #rsync --compress -a doc_output/* ${{ secrets.ids }}/cgal.github.io/${PR_NUMBER}/
-        cd ../cgal.github.io && git add ${PR_NUMBER} && git commit -a -m "Add ${PR_NUMBER}" && git push -u origin master
+        git add ${PR_NUMBER} && git commit -a -m "Add ${PR_NUMBER}" && git push -u origin master
         #ssh mgimeno@cgal.geometryfactory.com "cd /home/mgimeno/public_html/cgal.github.io && git add ${PR_NUMBER} && git commit -a -m 'Add a new directory' && git push origin master"
