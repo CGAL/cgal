@@ -1,0 +1,42 @@
+name: Documentation Removal
+
+on: 
+  pull_request_target:
+    types: [closed, removed]
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2.0.0
+    - name: delete directory
+      run: |
+         set -x
+         mkdir -p ~/.ssh
+         (
+         cat <<EOF
+         ${{ secrets.ssh_key }}
+         EOF
+         )>> ~/.ssh/id_rsa
+         chmod 600 /home/runner/.ssh/id_rsa 
+         (
+         cat <<EOF
+         ${{ secrets.ssh_key_pub }}
+         EOF
+         )>> ~/.ssh/id_rsa.pub
+         chmod 644 /home/runner/.ssh/id_rsa.pub
+         (
+         cat <<EOF
+         github.com,192.30.253.113 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
+         EOF
+         )>> ~/.ssh/known_hosts
+         git config --global user.email "maxime.gimeno@geometryfactory.com"
+         git config --global user.name "Maxime Gimeno"
+         git clone git@github.com:CGAL/cgal.github.io.git
+         PR_NUMBER=$(python -c "import json; import os; y = json.load(open(os.environ['GITHUB_EVENT_PATH'])); print(y[\"number\"])")
+         cd cgal.github.io/
+         git rm -r ${PR_NUMBER} && git commit -a -m "Remove ${PR_NUMBER}" && git push -u origin master
+         
+         #ssh mgimeno@cgal.geometryfactory.com "cd /home/mgimeno/public_html/cgal.github.io && rm -rf ${PR_NUMBER} && git rm -r ${PR_NUMBER} && git commit -a -m 'Remove a directory' && git push origin master"
+         
