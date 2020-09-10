@@ -1,6 +1,6 @@
 name: Documentation Removal
 
-on: 
+on:
   pull_request_target:
     types: [closed, removed]
 jobs:
@@ -19,7 +19,7 @@ jobs:
          ${{ secrets.ssh_key }}
          EOF
          )>> ~/.ssh/id_rsa
-         chmod 600 /home/runner/.ssh/id_rsa 
+         chmod 600 /home/runner/.ssh/id_rsa
          (
          cat <<EOF
          ${{ secrets.ssh_key_pub }}
@@ -43,7 +43,6 @@ jobs:
             fi
          done < "index.html"
          mv tmp.html index.html
-         git rm -r ${PR_NUMBER} && git commit -a -m "Remove ${PR_NUMBER}" && git push -u origin master
-         
-         #ssh mgimeno@cgal.geometryfactory.com "cd /home/mgimeno/public_html/cgal.github.io && rm -rf ${PR_NUMBER} && git rm -r ${PR_NUMBER} && git commit -a -m 'Remove a directory' && git push origin master"
-         
+         #git rm -r ${PR_NUMBER} && git commit -a -m "Remove ${PR_NUMBER}" && git push -u origin master
+         git commit -a -m "Remove ${PR_NUMBER}" && git push -u origin master
+
