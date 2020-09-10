@@ -334,10 +334,14 @@ class DisplayPropertyPlugin :
 
 public:
 
-  bool applicable(QAction*) const Q_DECL_OVERRIDE
+  bool applicable(QAction* action) const Q_DECL_OVERRIDE
   {
     CGAL::Three::Scene_item* item = scene->item(scene->mainSelectionIndex());
-    return qobject_cast<Scene_surface_mesh_item*>(item);
+    if(action == _actions.back())
+      return qobject_cast<Scene_surface_mesh_item*>(item);
+    else
+      return qobject_cast<Scene_surface_mesh_item*>(item)
+          || qobject_cast<Scene_points_with_normal_item*>(item);
   }
 
   QList<QAction*> actions() const Q_DECL_OVERRIDE
@@ -359,7 +363,7 @@ public:
     this->mw = mw;
     this->current_item = NULL;
 
-    QAction *actionDisplayAngles= new QAction(QString("Display Properties"), mw);
+    QAction *actionDisplayProperties= new QAction(QString("Display Properties"), mw);
     QAction *actionHeatMethod= new QAction(QString("Heat Method"), mw);
     actionHeatMethod->setProperty("submenuName", "Color");
 
@@ -369,10 +373,10 @@ public:
     gM = 1.0;
     bm = 0.0;
     bM = 0.0;
-    actionDisplayAngles->setProperty("submenuName", "Color");
+    actionDisplayProperties->setProperty("submenuName", "Color");
 
-    if(actionDisplayAngles) {
-      connect(actionDisplayAngles, SIGNAL(triggered()),
+    if(actionDisplayProperties) {
+      connect(actionDisplayProperties, SIGNAL(triggered()),
               this, SLOT(openDialog()));
       if(actionHeatMethod)
       {
@@ -382,7 +386,7 @@ public:
           this->dock_widget->show();
         });
       }
-      _actions << actionDisplayAngles;
+      _actions << actionDisplayProperties;
       _actions << actionHeatMethod;
 
     }
@@ -480,29 +484,57 @@ public:
 
 
   }
-private Q_SLOTS:
-  void detectScalarProperties(int i)
-  {
-    //keep first 4 items as they are hardcoded.
-    for(int i = dock_widget->propertyBox->count(); i>=4; --i)
-      dock_widget->propertyBox->removeItem(i);
+private:
 
-    Scene_surface_mesh_item* item =
-        qobject_cast<Scene_surface_mesh_item*>(scene->item(i));
-    if(!item)
-      return;
-    std::vector<std::string> vprop = item->face_graph()->properties<vertex_descriptor>();
-    std::vector<std::string> fprop = item->face_graph()->properties<face_descriptor>();
+  void detectSMScalarProperties(SMesh* smesh)
+  {
+    std::vector<std::string> vprop = smesh->properties<vertex_descriptor>();
+    std::vector<std::string> fprop = smesh->properties<face_descriptor>();
     for(auto s : vprop)
-      if(is_property_scalar<vertex_descriptor>(s, item->face_graph()))
+      if(is_property_scalar<vertex_descriptor>(s, smesh))
       {
         dock_widget->propertyBox->addItem(s.c_str());
       }
     for(auto s : fprop)
-      if(is_property_scalar<face_descriptor>(s, item->face_graph()))
+      if(is_property_scalar<face_descriptor>(s, smesh))
       {
         dock_widget->propertyBox->addItem(s.c_str());
       }
+  }
+
+  void detectPSScalarProperties(Point_set* ps)
+  {
+    //std::pair< std::string, std::type_info >
+    for(auto s : ps->properties())
+      if(is_property_scalar(s, ps))
+      {
+        dock_widget->propertyBox->addItem(s.c_str());
+      }
+  }
+private Q_SLOTS:
+  void detectScalarProperties(int i)
+  {
+    for(int j = dock_widget->propertyBox->count(); j>=0; --j)
+      dock_widget->propertyBox->removeItem(j);
+
+    Scene_surface_mesh_item* sm_item =
+        qobject_cast<Scene_surface_mesh_item*>(scene->item(i));
+    Scene_points_with_normal_item* p_item =
+        qobject_cast<Scene_points_with_normal_item*>(scene->item(i));
+
+    if(sm_item)
+    {
+        dock_widget->propertyBox->addItem("Smallest Angle Per Face");
+        dock_widget->propertyBox->addItem("Scaled Jacobian");
+        dock_widget->propertyBox->addItem("Heat Intensity");
+        dock_widget->propertyBox->addItem("Heat Intensity (Intrinsic Delaunay)");
+      detectSMScalarProperties(sm_item->face_graph());
+
+    }
+    else if(p_item)
+    {
+      detectPSScalarProperties(p_item->point_set());
+    }
   }
 
   void openDialog()
@@ -513,80 +545,91 @@ private Q_SLOTS:
       dock_widget->raise(); }
   }
 
+  void colorizePS(Point_set* ps)
+  {
+    std::string name = dock_widget->propertyBox->currentText().toStdString();
+
+  }
   void colorize()
   {
+    Scene_points_with_normal_item* p_item =
+        qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+    if(p_item)
+    {
+      colorizePS(p_item->point_set());
+    }
     Scene_heat_item* h_item = nullptr;
-    Scene_surface_mesh_item* item =
+    Scene_surface_mesh_item* sm_item =
         qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
-    if(!item)
+    if(!sm_item)
     {
       h_item = qobject_cast<Scene_heat_item*>(scene->item(scene->mainSelectionIndex()));
       if(!h_item)
         return;
-      item = h_item->getParent();
+      sm_item = h_item->getParent();
     }
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    item->face_graph()->collect_garbage();
+    sm_item->face_graph()->collect_garbage();
 
     switch(dock_widget->propertyBox->currentIndex()){
     case 0:
-      displayAngles(item);
+      displayAngles(sm_item);
       break;
       case 1:
-        displayScaledJacobian(item);
+        displayScaledJacobian(sm_item);
         break;
     case 2:
       dock_widget->colorChoiceWidget->setCurrentIndex(0);
-      if(!displayHeatIntensity(item)){
+      if(!displayHeatIntensity(sm_item)){
         QApplication::restoreOverrideCursor();
         return;
       }
-      item->setRenderingMode(Gouraud);
+      sm_item->setRenderingMode(Gouraud);
       break;
     case 3:// Heat Method (Intrinsic Delaunay)
       dock_widget->colorChoiceWidget->setCurrentIndex(0);
-      if(!displayHeatIntensity(item, true))
+      if(!displayHeatIntensity(sm_item, true))
         return;
-      item->setRenderingMode(Gouraud);
+      sm_item->setRenderingMode(Gouraud);
       break;
     default:
       if(dock_widget->propertyBox->currentText().contains("v:"))
       {
-        if(!treat_vertex_property(dock_widget->propertyBox->currentText().toStdString(), item->face_graph()))
+        if(!treat_vertex_property(dock_widget->propertyBox->currentText().toStdString(), sm_item->face_graph()))
         {
           QApplication::restoreOverrideCursor();
           return;
         }
-        item->setRenderingMode(Gouraud);
+        sm_item->setRenderingMode(Gouraud);
       }
       else if(dock_widget->propertyBox->currentText().contains("f:"))
       {
-        if(!treat_face_property(dock_widget->propertyBox->currentText().toStdString(), item->face_graph()))
+        if(!treat_face_property(dock_widget->propertyBox->currentText().toStdString(), sm_item->face_graph()))
         {
           QApplication::restoreOverrideCursor();
           return;
         }
-        item->setRenderingMode(Flat);
+        sm_item->setRenderingMode(Flat);
       }
       break;
     }
 
-    connect(item, &Scene_surface_mesh_item::itemChanged,
-            this, [item](){
+    connect(sm_item, &Scene_surface_mesh_item::itemChanged,
+            this, [sm_item](){
       bool does_exist;
       SMesh::Property_map<face_descriptor, double> pmap;
       std::tie(pmap, does_exist) =
-          item->face_graph()->property_map<face_descriptor,double>("f:jacobian");
+          sm_item->face_graph()->property_map<face_descriptor,double>("f:jacobian");
       if(does_exist)
-        item->face_graph()->remove_property_map(pmap);
+        sm_item->face_graph()->remove_property_map(pmap);
       std::tie(pmap, does_exist) =
-          item->face_graph()->property_map<face_descriptor,double>("f:angle");
+          sm_item->face_graph()->property_map<face_descriptor,double>("f:angle");
       if(does_exist)
-        item->face_graph()->remove_property_map(pmap);
+        sm_item->face_graph()->remove_property_map(pmap);
     });
     QApplication::restoreOverrideCursor();
-    item->invalidateOpenGLBuffers();
-    item->redraw();
+    sm_item->invalidateOpenGLBuffers();
+    sm_item->redraw();
     if(dock_widget->propertyBox->currentIndex() != 2){
       dock_widget->zoomToMinButton->setEnabled(true);
       dock_widget->zoomToMaxButton->setEnabled(true);}
@@ -1231,6 +1274,8 @@ private Q_SLOTS:
   }
 private:
   template<typename PM>
+  bool displayPSProperty(Point_set* ps, PM pm);
+  template<typename PM>
   bool displayVertexProperty(SMesh& smesh, PM pm);
   template<typename PM>
   bool displayFaceProperty(SMesh& smesh, PM pm);
@@ -1238,6 +1283,7 @@ private:
   bool treat_face_property(std::string name, SMesh* sm);
   template<typename Simplex>
   bool is_property_scalar(std::string name, const SMesh* sm);
+  bool is_property_scalar(std::string name, const Point_set* ps);
   template<typename Value_type>
   void displayMapLegend(const std::vector<Value_type>& values)
   {
@@ -1433,6 +1479,51 @@ private:
       return (double) (std::min)( min_scaled_jac, ARBITRARY_DBL_MAX );
     return (double) (std::max)( min_scaled_jac, -ARBITRARY_DBL_MAX );
 
+  }
+
+  bool DisplayPropertyPlugin::is_property_scalar(std::string name, const Point_set* ps)
+  {
+    if(ps->template property_map<boost::int8_t>(name).second)
+    {
+      return true;
+    }
+    if(ps->template property_map<boost::uint8_t>(name).second)
+    {
+      return true;
+    }
+    if(ps->template property_map<boost::int16_t>(name).second)
+    {
+      return true;
+    }
+    if(ps->template property_map<boost::uint16_t>(name).second)
+    {
+      return true;
+    }
+    if(ps->template property_map<boost::int32_t>(name).second)
+    {
+      return true;
+    }
+    if(ps->template property_map<boost::uint32_t>(name).second)
+    {
+      return true;
+    }
+    if(ps->template property_map<boost::int64_t>(name).second)
+    {
+      return true;
+    }
+    if(ps->template property_map<boost::uint64_t>(name).second)
+    {
+      return true;
+    }
+    if(ps->template property_map<float>(name).second)
+    {
+      return true;
+    }
+    if(ps->template property_map<double>(name).second)
+    {
+      return true;
+    }
+    return false;
   }
 
   template<typename Simplex>
@@ -1692,6 +1783,80 @@ private:
       }
     }
     return false;
+  }
+
+  template<typename PM>
+  bool DisplayPropertyPlugin::displayPSProperty(Point_set* ps, PM pm)
+  {
+    typedef typename PM::value_type Value_type;
+    minBox = ARBITRARY_DBL_MAX;
+    maxBox = -ARBITRARY_DBL_MAX;
+    std::vector<Value_type> values;
+    for(auto p : ps->points())
+    {
+      values.push_back(pm[p]);
+    }
+    std::sort(values.begin(), values.end());
+    auto end = std::unique(values.begin(), values.end());
+
+
+    minBox = *values.begin();
+    maxBox = *(end-1);
+    dock_widget->minBox->setValue(minBox);
+    dock_widget->maxBox->setValue(maxBox);
+    //fill color pmap
+    Point_set::Property_map<CGAL::Color> pcolors =
+        ps->add_property_map<CGAL::Color >("color", CGAL::Color()).first;
+
+    if(dock_widget->colorChoiceWidget->currentIndex() == 1)
+    {
+      std::unordered_map<Value_type, std::size_t> value_index_map;
+      //fill map
+      std::size_t counter = 0;
+      for(auto it = values.begin(); it != end; ++it)
+      {
+        value_index_map[*it] = counter++;
+      }
+      color_map.clear();
+      compute_color_map(QColor(rI, gI, bI),std::distance(values.begin(), end),
+                        std::back_inserter(color_map));
+      for(Point_set::iterator pit = ps->begin();
+          pit != ps->end();
+          ++pit)
+      {
+        CGAL::Color color(
+              color_map[value_index_map[pm[*pit]]].red(),
+              color_map[value_index_map[pm[*pit]]].green(),
+              color_map[value_index_map[pm[*pit]]].blue());
+        pcolors[*pit] = color;
+      }
+      displayMapLegend(values);
+    }
+    else
+    {
+      //scale a color ramp between min and max
+      replaceRamp();
+      float max = maxBox;
+      float min = minBox;
+      for(Point_set::iterator pit = ps->begin();
+          pit != ps->end();
+          ++pit)
+      {
+        if(min == max)
+          --min;
+        float f = (static_cast<float>(pm[*pit])-min)/(max-min);
+        if(f<0)
+          f = 0;
+        if(f>1)
+          f = 1;
+        CGAL::Color color(
+              255*color_ramp.r(f),
+              255*color_ramp.g(f),
+              255*color_ramp.b(f));
+        pcolors[*pit] = color;
+      }
+    }
+    return true;
   }
 
   template<typename PM>

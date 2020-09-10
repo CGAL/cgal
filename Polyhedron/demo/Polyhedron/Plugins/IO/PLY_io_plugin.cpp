@@ -156,8 +156,16 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     if(item->has_normals())
       item->setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
     item->setName(fileinfo.completeBaseName());
+    Point_set::Property_map<int> test_prop = item->point_set()->add_property_map<int> ("test", 0).first;
+    int test=0;
+    for(Point_set::iterator it = item->point_set()->begin();
+        it != item->point_set()->end();++it)
+    {
+      test_prop[*it]=test++;
+    }
     QApplication::restoreOverrideCursor();
     ok = true;
+
     if(add_to_scene)
       CGAL::Three::Three::scene()->addItem(item);
     return QList<Scene_item*>()<<item;
