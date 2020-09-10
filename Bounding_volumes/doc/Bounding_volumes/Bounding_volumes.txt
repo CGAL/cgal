@@ -17,6 +17,7 @@ Euclidean space and <i>best</i> is defined as having smallest radius,
 then we obtain the smallest enclosing sphere.
 
 
+
 \section SectBoundingIntroduction Introduction
 
 Bounding volumes can be used to obtain simple approximations of
@@ -42,15 +43,28 @@ this property.
 
 \section SectBoundingSphere Bounding Spheres in dD
 
-For arbitrary
-dimensions we provide smallest enclosing spheres for points as well as for spheres
-(`Min_sphere_of_spheres_d<Traits>`).
+We provide the class `Min_sphere_of_spheres_d<Traits>` for arbitrary dimensions
+to compute the smallest enclosing spheres for points as well as for spheres.
+The dimension as well as the input type depend on the chosen traits class.
 
-\todo Add example for 2D spheres and for 2D points.
-The examples will also show how to access the result.
+The following example is for 2D points
+
+\cgalExample{Min_circle_2/min_circle_2.cpp}
+
+The example for 2D circles as input looks rather similar.
+
+
+\cgalExample{Min_sphere_of_spheres_d/min_sphere_of_spheres_d_2.cpp}
+
 
 
 \subsection  SectBoundingSphereHomogeneous Bounding Spheres for the Homogeneous Kernel
+
+In the previous section we saw that we used `Min_sphere_of_spheres_d`
+to compute the smallest circle for points. This package also provides
+the classes `Min_circle_2` and `Min_sphere_d`, but they are slower,
+and they should only be used in case of homogeneous coordinates which
+are not supported by `Min_sphere_of_spheres_d`.
 
 In the following example a smallest enclosing circle
 (`Min_circle_2<Traits>`) is constructed from points
@@ -58,20 +72,19 @@ on a line and written to standard output. The example
 shows that it is advisable to switch on random shuffling
 in order to deal with a <i>bad</i> order of the input points.
 
-\cgalExample{Min_circle_2/min_circle_2.cpp}
+\cgalExample{Min_circle_2/min_circle_homogeneous_2.cpp}
 
 
 \section SectBoundingAnnulus Bounding Annulus in dD
 
-smallest enclosing annulus for a set of points (`Min_annulus_d<Traits>`),
+We provide the class `Min_annulus_d<Traits>` for arbitrary dimensions
+to compute the smalles enclosing annulus for a set of points.
+In 2D the annulus consists of two concentric circles, in 3D of
+two concentric spheres.
 
 \image html annulus.png
 
 
-\section SectBoundingEllipsoid Approximate Bounding Ellipsoid in dD
-
-Approximate minimum-volume enclosing ellipsoid with user-specified
-approximation ratio (`Approximate_min_ellipsoid_d<Traits>`).
 
 
 \section SectBounding2D Various Bounding Areas in 2D
@@ -81,6 +94,16 @@ Other classes for which we provide solutions are ellipses
 (`min_rectangle_2()`), parallelograms
 (`min_parallelogram_2()`) and strips (`min_strip_2()`)
 in the plane, with appropriate optimality criteria.
+
+
+\section SectBoundingEllipsoid Approximate Bounding Ellipsoid in dD
+
+While this package provides an exact smallest 2D ellipse, it also
+provides the class `Approximate_min_ellipsoid_d<Traits>` to compute
+an approximate minimum-volume enclosing ellipsoid with user-specified
+approximation ratio.
+
+
 
 
 \section SectBoundingPcenter Rectangular P-Center
