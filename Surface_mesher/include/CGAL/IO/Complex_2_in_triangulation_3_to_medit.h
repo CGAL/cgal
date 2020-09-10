@@ -63,8 +63,9 @@ output_surface_facets_to_medit (std::ostream& os, const C2t3& c2t3)
       vit != tr.finite_vertices_end();
       ++vit)
   {
-    if(V.find(vit) != V.end()){
-      V[vit] = inum++;
+    auto it = V.find(vit);
+    if(it != V.end()){
+      *it = inum++;
       Point p = static_cast<Point>(vit->point());
       os << p.x() << " " << p.y() << " " << p.z() << " 0 \n";
     }
