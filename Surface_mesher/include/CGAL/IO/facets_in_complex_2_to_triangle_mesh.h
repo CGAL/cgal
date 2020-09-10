@@ -19,7 +19,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/boost/graph/Euler_operations.h>
-#include <map>
+#include <unordered_map>
 #include <stack>
 
 namespace CGAL{
@@ -59,7 +59,7 @@ void facets_in_complex_2_to_triangle_mesh(const C2T3& c2t3, TriangleMesh& graph)
   const typename Tr::size_type number_of_facets = c2t3.number_of_facets();
   {
     //used to set indices of vertices
-    std::map<Vertex_handle, int> V;
+    std::unordered_map<Vertex_handle, int> V;
 
     // Finite vertices coordinates.
     Finite_facets_iterator fit = tr.finite_facets_begin();
@@ -135,7 +135,8 @@ void facets_in_complex_2_to_triangle_mesh(const C2T3& c2t3, TriangleMesh& graph)
         vit != tr.finite_vertices_end();
         ++vit)
     {
-      if(V.find(vit)!= V.end()){
+      auto it = V.find(vit);
+      if(it != V.end()){
         typename boost::graph_traits<TriangleMesh>::vertex_descriptor v = add_vertex(graph);
         vertices.push_back(v);
         put(vpmap,
@@ -145,7 +146,7 @@ void facets_in_complex_2_to_triangle_mesh(const C2T3& c2t3, TriangleMesh& graph)
                     vit->point().y(),
                     vit->point().z())
             );
-        V[vit] = inum++;
+        it->second = inum++;
       }
     }
     //add faces

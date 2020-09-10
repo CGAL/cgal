@@ -17,7 +17,7 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <map>
+#include <unordered_map>
 
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
@@ -39,7 +39,7 @@ vtkPolyData* output_c2t3_to_vtk_polydata(const C2T3& c2t3,
   vtkCellArray* const vtk_cells = vtkCellArray::New();
 
 
-  std::map<Vertex_handle, vtkIdType> V;
+  std::unordered_map<Vertex_handle, vtkIdType> V;
   vtkIdType inum = 0;
 
   for(typename C2T3::Facet_iterator
@@ -61,13 +61,14 @@ vtkPolyData* output_c2t3_to_vtk_polydata(const C2T3& c2t3,
       vit != end;
       ++vit)
   {
-    if(V.find(vit) != V.end()){
+    auto it = V.find(vit);
+    if(it != V.end()){
       typedef typename Triangulation::Point Point;
       const Point& p = vit->point();
       vtk_points->InsertNextPoint(CGAL::to_double(p.x()),
                                   CGAL::to_double(p.y()),
                                   CGAL::to_double(p.z()));
-      V[vit] = inum++;
+      it->second = inum++;
     }
   }
   for(typename C2T3::Facet_iterator

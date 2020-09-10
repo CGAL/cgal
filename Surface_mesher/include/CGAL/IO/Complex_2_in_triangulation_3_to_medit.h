@@ -19,6 +19,7 @@
 
 #include <iomanip>
 #include <stack>
+#include <unordered_map>
 
 namespace CGAL {
 
@@ -41,7 +42,7 @@ output_surface_facets_to_medit (std::ostream& os, const C2t3& c2t3)
 
   //os << std::setprecision(20);
 
-  std::map<Vertex_handle, int> V;
+  std::unordered_map<Vertex_handle, int> V;
 
   for(typename C2t3::Facet_iterator
         fit = c2t3.facets_begin(),
