@@ -53,7 +53,7 @@ struct Visitor
     : container(container)
   {}
 
-  void start(face_descriptor fd)
+  void before_subface_creations(face_descriptor fd)
   {
     std::cout << "split : " << fd << " into:" << std::endl;
     Container::iterator it = container.find(fd);
@@ -61,13 +61,13 @@ struct Visitor
     container.erase(it);
   }
 
-  void visit(face_descriptor fd)
+  void after_subface_created(face_descriptor fd)
   {
     std::cout << "  " << fd;
     container[fd]=qfd;
   }
 
-  void end()
+  void after_subface_creations()
   {
     std::cout << std::endl;
   }
@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
 
   Visitor v(t2q);
   CGAL::Polygon_mesh_processing::triangulate_faces(copy,
-                                                   CGAL::Polygon_mesh_processing::parameters::split_visitor(v));
+                                                   CGAL::Polygon_mesh_processing::parameters::triangulate_visitor(v));
 
 
   for(boost::unordered_map<face_descriptor,face_descriptor>::iterator it = t2q.begin(); it != t2q.end(); ++it){
