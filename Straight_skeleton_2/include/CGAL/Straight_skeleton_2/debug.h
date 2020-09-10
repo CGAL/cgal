@@ -169,7 +169,7 @@ template<class P>
 inline std::string s2str( P const& s, P const& t )
 {
   std::ostringstream ss ;
-  ss << "{" << p2str(s) << "-" << p2str(t) << "}" ;
+  ss << "{" << p2str(s) << " " << p2str(t) << "}" ;
   return ss.str();
 }
 
@@ -213,11 +213,13 @@ inline std::string newb2str( char const* name, BH const& b )
      << " is B" << b->id()
      << " [E" << b->defining_contour_edge()->id()
      << ",E" << b->opposite()->defining_contour_edge()->id()
-     << "] {B" << b->prev()->id()
+     << "] {N" << b->prev()->opposite()->vertex()->id()
+     << "->B" << b->prev()->id()
      << "->N"  << b->prev()->vertex()->id()
      << "->B" << b->id()
      << "->N" << b->vertex()->id()
      << "->B" << b->next()->id()
+     << "->N" << b->next()->vertex()->id()
      << "}" ;
 
   return ss.str();

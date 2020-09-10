@@ -83,7 +83,7 @@ is started.
 void on_propagation_started() const;
 
 /*!
-Called after an anhiliation event for nodes `node0` and `node1` has been processed.
+Called after an annihilation event for nodes `node0` and `node1` has been processed.
 A new skeleton edge between these nodes has been added.
 */
 void on_anihiliation_event_processed ( Vertex_const_handle const& node0
