@@ -48,8 +48,8 @@ vtkPolyData* output_c2t3_to_vtk_polydata(const C2T3& c2t3,
       fit != end; ++fit)
   {
     V[fit->first->vertex(tr.vertex_triple_index(fit->second, 0))] = 0;
-    V[fit->first->vertex(tr.vertex_triple_index(fit->second, 0))] = 0;
-    V[fit->first->vertex(tr.vertex_triple_index(fit->second, 0))] = 0;
+    V[fit->first->vertex(tr.vertex_triple_index(fit->second, 1))] = 0;
+    V[fit->first->vertex(tr.vertex_triple_index(fit->second, 2))] = 0;
   }
 
   vtk_points->Allocate(V.size());
