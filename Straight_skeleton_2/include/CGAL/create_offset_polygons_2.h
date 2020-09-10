@@ -39,7 +39,7 @@ create_partial_interior_straight_skeleton_2 ( FT const&     aMaxTime
                                             , PointIterator aOuterContour_VerticesEnd
                                             , HoleIterator  aHolesBegin
                                             , HoleIterator  aHolesEnd
-                                            , K const&
+                                            , K const& // aka 'SK'
                                             )
 {
   typedef Straight_skeleton_2<K> Ss ;
@@ -73,30 +73,34 @@ boost::shared_ptr< Straight_skeleton_2<K> >
 create_partial_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
                                             , PointIterator  aVerticesBegin
                                             , PointIterator  aVerticesEnd
-                                            , K const&       k
+                                            , K const&       k // aka 'SK'
                                             )
 {
-  typedef typename std::iterator_traits<PointIterator>::value_type Point_2 ;
+  typedef typename std::iterator_traits<PointIterator>::value_type   Point_2;
+  typedef typename Kernel_traits<Point_2>::Kernel                    IK;
+  typedef typename IK::FT                                            IFT;
 
-  typedef Straight_skeleton_2<K> Ss ;
-  typedef boost::shared_ptr<Ss>  SsPtr ;
+  boost::shared_ptr<Straight_skeleton_2<K> > rSkeleton;
 
-  SsPtr rSkeleton ;
+  // That's because we might not have FT == IK::FT (e.g. `double` and `Core`)
+  // Note that we can also have IK != K (e.g. `Simple_cartesian<Core>` and `EPICK`)
+  IFT lOffset = aMaxOffset;
 
-  boost::optional<FT> margin = compute_outer_frame_margin( aVerticesBegin
-                                                         , aVerticesEnd
-                                                         , aMaxOffset
-                                                         );
+  // @todo This likely should be done in the kernel K rather than the input kernel (i.e. the same
+  // converter stuff that is done in `create_partial_exterior_straight_skeleton_2`?).
+  boost::optional<IFT> margin = compute_outer_frame_margin(aVerticesBegin,
+                                                           aVerticesEnd,
+                                                           lOffset);
 
   if ( margin )
   {
-
+    double lm = CGAL::to_double(*margin);
     Bbox_2 bbox = bbox_2(aVerticesBegin, aVerticesEnd);
 
-    FT fxmin = bbox.xmin() - *margin ;
-    FT fxmax = bbox.xmax() + *margin ;
-    FT fymin = bbox.ymin() - *margin ;
-    FT fymax = bbox.ymax() + *margin ;
+    FT fxmin = bbox.xmin() - lm ;
+    FT fxmax = bbox.xmax() + lm ;
+    FT fymin = bbox.ymin() - lm ;
+    FT fymax = bbox.ymax() + lm ;
 
     Point_2 frame[4] ;
 

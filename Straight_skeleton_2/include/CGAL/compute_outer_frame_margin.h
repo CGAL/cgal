@@ -97,8 +97,9 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
 
 }
 
-template<class ForwardPointIterator, class FT>
-boost::optional<FT> compute_outer_frame_margin ( ForwardPointIterator aBegin, ForwardPointIterator aEnd, FT aOffset )
+template<class FT, class ForwardPointIterator>
+boost::optional<FT> compute_outer_frame_margin ( ForwardPointIterator aBegin, ForwardPointIterator aEnd,
+                                                 FT aOffset )
 {
   typedef typename std::iterator_traits<ForwardPointIterator>::value_type Point_2 ;
 
