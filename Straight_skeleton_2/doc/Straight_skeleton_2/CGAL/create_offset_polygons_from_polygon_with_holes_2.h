@@ -6,7 +6,7 @@ namespace CGAL {
 returns a container with all the outer offset polygons <I>with
 holes</I> at distance `offset` of the 2D polygon `poly`.
 
-This is equivalent to `arrange_offset_polygons_2(create_exterior_skeleton_and_offset_polygons_2(offset,poly,okk,ssk))`.
+This is equivalent to `arrange_offset_polygons_2(create_exterior_skeleton_and_offset_polygons_2(offset,poly,ofk,ssk))`.
 */
 template<class FT, class OffsettingK, class SkeletonK, class C>
 std::vector< boost::shared_ptr< Polygon_with_holes_2<OffsettingK,C> > >
@@ -53,7 +53,7 @@ create_interior_skeleton_and_offset_polygons_2 ( FT offset
 \ingroup PkgStraightSkeleton2Functions
 
 returns a container with all the inner offset polygons <I>with holes</I> at distance `offset` of the 2D polygon `poly`.
-This is equivalent to `arrange_offset_polygons_2(create_interior_skeleton_and_offset_polygons_2(offset,poly,okk,ssk))`.
+This is equivalent to `arrange_offset_polygons_2(create_interior_skeleton_and_offset_polygons_2(offset,poly,ofk,ssk))`.
 
 \tparam OffsettingK is the \cgal kernel used to instantiate
    `Polygon_offset_builder_traits_2<K>` for constructing
@@ -84,7 +84,7 @@ create_interior_skeleton_and_offset_polygons_with_holes_2
 \ingroup PkgStraightSkeleton2Functions
 
 returns a container with all the inner offset polygons <I>with holes</I> at distance `offset` of the 2D polygon with holes `poly_with_holes`.
-This is equivalent to `arrange_offset_polygons_2(create_interior_skeleton_and_offset_polygons_2(offset,poly_with_holes,okk,ssk))`.
+This is equivalent to `arrange_offset_polygons_2(create_interior_skeleton_and_offset_polygons_2(offset,poly_with_holes,ofk,ssk))`.
 
 \tparam OffsettingK is the \cgal kernel used to instantiate
    `Polygon_offset_builder_traits_2<K>` for constructing
