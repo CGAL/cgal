@@ -180,6 +180,27 @@ class Polyhedron_demo_isotropic_remeshing_plugin :
   typedef boost::unordered_set<edge_descriptor>    Edge_set;
   typedef Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> Edge_constrained_pmap;
 
+  struct Visitor
+  {
+    typedef typename Scene_polyhedron_selection_item::Selection_set_facet Container;
+    Container& faces;
+
+    Visitor(Container& container)
+      : faces(container)
+    {}
+
+    void before_subface_creations(face_descriptor fd)
+    {
+      Container::iterator it = faces.find(fd);
+      faces.erase(it);
+    }
+    void after_subface_created(face_descriptor fd)
+    {
+      faces.insert(fd);
+    }
+    void after_subface_creations(){}
+  };
+
 public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface*)
   {
@@ -459,12 +480,23 @@ public Q_SLOTS:
                 if (!CGAL::is_triangle(halfedge(f, pmesh), pmesh))
                 {
                   QApplication::restoreOverrideCursor();
-                  QMessageBox::warning(mw,
-                    tr("Error - Triangulate Faces"),
-                    tr("The input faces selected for remeshing are not all triangle faces.\n"
-                       "You should first triangulate faces, and restart remeshing.\n"
-                       "Remeshing aborted."));
-                  return;
+                  if(QMessageBox::Ok ==
+                     QMessageBox::question(mw, tr("Error - Triangulate Faces?"),
+                       tr("The input faces selected for remeshing are not all triangle faces.\n"
+                          "Do you wish to triangulate faces first, or cancel remeshing ?"),
+                       (QMessageBox::Ok | QMessageBox::Cancel),
+                       QMessageBox::Ok))
+                  {
+                    Visitor visitor(selection_item->selected_facets);
+                    CGAL::Polygon_mesh_processing::triangulate_faces(selection_item->selected_facets,
+                      pmesh,
+                      CGAL::Polygon_mesh_processing::parameters::triangulate_visitor(visitor));
+                    break;
+                  }
+                  else
+                  {
+                    return;
+                  }
                 }
               }
 
