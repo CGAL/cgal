@@ -450,11 +450,11 @@ public:
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{triangulate_visitor}
-*     \cgalParamDescription{a visitor that allows to track how faces are triangulated into subfaces}
+*     \cgalParamDescription{a visitor that enables to track how faces are triangulated into subfaces}
 *     \cgalParamType{a class model of `PMPTriangulateFaceVisitor`}
-*     \cgalParamDefault{`Triangulate_faces::Default_visitor<TriangleMesh>`}
+*     \cgalParamDefault{`Triangulate_faces::Default_visitor<PolygonMesh>`}
 *     \cgalParamExtra{Note that the visitor will be copied, so
-*                     it should not have any data member that does have a reference-like type.}
+*                     it must not have any data member that does not have a reference-like type.}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
@@ -532,11 +532,11 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{triangulate_visitor}
-*     \cgalParamDescription{a visitor that allows to track how faces are triangulated into subfaces}
+*     \cgalParamDescription{a visitor that enables to track how faces are triangulated into subfaces}
 *     \cgalParamType{a class model of `PMPTriangulateFaceVisitor`}
-*     \cgalParamDefault{`Triangulate_faces::Default_visitor<TriangleMesh>`}
+*     \cgalParamDefault{`Triangulate_faces::Default_visitor<PolygonMesh>`}
 *     \cgalParamExtra{Note that the visitor will be copied, so
-*                     it should not have any data member that does have a reference-like type.}
+*                     it must not have any data member that does not have a reference-like type.}
 *  `\cgalParamNEnd
 * \cgalNamedParamsEnd
 *
@@ -610,11 +610,11 @@ bool triangulate_faces(FaceRange face_range, PolygonMesh& pmesh)
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{triangulate_visitor}
-*     \cgalParamDescription{a visitor that allows to track how faces are triangulated into subfaces}
+*     \cgalParamDescription{a visitor that enables to track how faces are triangulated into subfaces}
 *     \cgalParamType{a class model of `PMPTriangulateFaceVisitor`}
-*     \cgalParamDefault{`Triangulate_faces::Default_visitor<TriangleMesh>`}
+*     \cgalParamDefault{`Triangulate_faces::Default_visitor<PolygonMesh>`}
 *     \cgalParamExtra{Note that the visitor will be copied, so
-*                     it should not have any data member that does have a reference-like type.}
+*                     it must not have any data member that does not have a reference-like type.}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *

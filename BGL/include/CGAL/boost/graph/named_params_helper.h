@@ -308,7 +308,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
   }
 
   template<typename PointRange,
-           typename NamedParameters = CGAL::Named_function_parameters<bool, internal_np::all_default_t>,
+           typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t>,
            bool has_nested_iterator = internal::Has_nested_type_iterator<PointRange>::value>
   class GetPointMap
   {
