@@ -76,8 +76,10 @@ protected:
   */
   void compute_edge(Halfedge_const_handle eh)
   {
-    add_segment(eh->opposite()->vertex()->point(),
-                eh->vertex()->point());
+    if(eh->is_bisector())
+      add_segment(eh->opposite()->vertex()->point(), eh->vertex()->point(), CGAL::red());
+    else
+      add_segment(eh->opposite()->vertex()->point(), eh->vertex()->point(), CGAL::black());
   }
   /*
   void compute_vertex(Vertex_const_handle vh)
