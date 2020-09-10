@@ -6,7 +6,7 @@
 /// the creation of new faces.
 ///
 /// \cgalRefines `CopyConstructible`
-/// \cgalHasModel `CGAL::Polygon_mesh_processing::Corefinement::Default_visitor`.
+/// \cgalHasModel `CGAL::Polygon_mesh_processing::Triangulate_faces::Default_visitor`.
 
 
 class PMPTriangulateFaceVisitor {
@@ -22,7 +22,7 @@ typedef unspecified_type face_descriptor;
   /// the creation of a new face of the triangulation of `f_split`.
   void before_subface_creations(face_descriptor f_split);
 
-  /// called when the triangulation of a face in `tm` is finished
+  /// called when the triangulation of a face in `tm` is finished.
   void after_subface_creations();
 
   /// called after creating a new triangle face `f_new` to triangulate the face passed to `before_subface_creations()`.

@@ -455,7 +455,7 @@ public:
 *     \cgalParamDefault{`Triangulate_faces::Default_visitor<TriangleMesh>`}
 *     \cgalParamExtra{Note that the visitor will be copied, so
 *                     it should not have any data member that does have a reference-like type.}
-*  `\cgalParamNEnd
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * @return `true` if the face has been triangulated.
@@ -607,6 +607,14 @@ bool triangulate_faces(FaceRange face_range, PolygonMesh& pmesh)
 *     \cgalParamType{a class model of `Kernel`}
 *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
 *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{triangulate_visitor}
+*     \cgalParamDescription{a visitor that allows to track how faces are triangulated into subfaces}
+*     \cgalParamType{a class model of `PMPTriangulateFaceVisitor`}
+*     \cgalParamDefault{`Triangulate_faces::Default_visitor<TriangleMesh>`}
+*     \cgalParamExtra{Note that the visitor will be copied, so
+*                     it should not have any data member that does have a reference-like type.}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
