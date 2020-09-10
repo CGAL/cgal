@@ -1573,6 +1573,112 @@ private:
     return false;
   }
 
+  bool DisplayPropertyPlugin::treat_point_property(std::string name, Point_set* sm)
+  {
+    typedef typename SMesh::template Property_map<vertex_descriptor, boost::int8_t>   Int8_map;
+    typedef typename SMesh::template Property_map<vertex_descriptor, boost::uint8_t>  Uint8_map;
+    typedef typename SMesh::template Property_map<vertex_descriptor, boost::int16_t>  Int16_map;
+    typedef typename SMesh::template Property_map<vertex_descriptor, boost::uint16_t> Uint16_map;
+    typedef typename SMesh::template Property_map<vertex_descriptor, boost::int32_t>  Int32_map;
+    typedef typename SMesh::template Property_map<vertex_descriptor, boost::uint32_t> Uint32_map;
+    typedef typename SMesh::template Property_map<vertex_descriptor, boost::int64_t>  Int64_map;
+    typedef typename SMesh::template Property_map<vertex_descriptor, boost::uint64_t> Uint64_map;
+    typedef typename SMesh::template Property_map<vertex_descriptor, float>           Float_map;
+    typedef typename SMesh::template Property_map<vertex_descriptor, double>          Double_map;
+
+    bool okay = false;
+    {
+      Int8_map pmap;
+      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::int8_t>(name);
+      if(okay)
+      {
+        return displayVertexProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Uint8_map pmap;
+      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::uint8_t>(name);
+      if(okay)
+      {
+        return displayVertexProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Int16_map pmap;
+      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::int16_t>(name);
+      if(okay)
+      {
+        return displayVertexProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Uint16_map pmap;
+      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::uint16_t>(name);
+      if(okay)
+      {
+        return displayVertexProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Int32_map pmap;
+      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::int32_t>(name);
+      if(okay)
+      {
+        return displayVertexProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Uint32_map pmap;
+      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::uint32_t>(name);
+      if(okay)
+      {
+        return displayVertexProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Int64_map pmap;
+      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::int64_t>(name);
+      if(okay)
+      {
+        return displayVertexProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Uint64_map pmap;
+      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::uint64_t>(name);
+      if(okay)
+      {
+        return displayVertexProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Float_map pmap;
+      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,float>(name);
+      if(okay)
+      {
+        return displayVertexProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Double_map pmap;
+      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,double>(name);
+      if(okay)
+      {
+        return displayVertexProperty(*sm, pmap);
+      }
+    }
+    return false;
+  }
+
   bool DisplayPropertyPlugin::treat_vertex_property(std::string name, SMesh* sm)
   {
     typedef typename SMesh::template Property_map<vertex_descriptor, boost::int8_t>   Int8_map;
