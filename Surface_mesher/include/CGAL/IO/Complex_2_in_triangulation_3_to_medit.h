@@ -41,19 +41,33 @@ output_surface_facets_to_medit (std::ostream& os, const C2t3& c2t3)
 
   //os << std::setprecision(20);
 
+  std::map<Vertex_handle, int> V;
+
+  for(typename C2t3::Facet_iterator
+        fit = c2t3.facets_begin(),
+        end = c2t3.facets_end();
+      fit != end; ++fit)
+  {
+    V[fit->first->vertex(tr.vertex_triple_index(fit->second, 0))] = 0;
+    V[fit->first->vertex(tr.vertex_triple_index(fit->second, 1))] = 0;
+    V[fit->first->vertex(tr.vertex_triple_index(fit->second, 2))] = 0;
+  }
+
   // Finite vertices coordinates.
   os << "Vertices\n"
-     << tr.number_of_vertices() << " \n";
+     << V.size() << " \n";
 
-  std::map<Vertex_handle, int> V;
+
   int inum = 0;
   for(Finite_vertices_iterator vit = tr.finite_vertices_begin();
       vit != tr.finite_vertices_end();
       ++vit)
   {
-    V[vit] = inum++;
-    Point p = static_cast<Point>(vit->point());
-    os << p.x() << " " << p.y() << " " << p.z() << " 0 \n";
+    if(V.find(vit) != V.end()){
+      V[vit] = inum++;
+      Point p = static_cast<Point>(vit->point());
+      os << p.x() << " " << p.y() << " " << p.z() << " 0 \n";
+    }
   }
 
 
