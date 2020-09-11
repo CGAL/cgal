@@ -324,6 +324,7 @@ namespace internal {
       halfedge_status_pmap_ = get(CGAL::dynamic_halfedge_property_t<Halfedge_status>(),
                                   pmesh);
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
+      CGAL_assertion_code(input_mesh_is_valid_ = CGAL::is_valid_polygon_mesh(pmesh));
     }
 
     ~Incremental_remesher()
@@ -1033,7 +1034,7 @@ namespace internal {
           put(vpmap_, vp.first, initial_pos);//cancel move
       }
 
-      CGAL_assertion(is_valid_polygon_mesh(mesh_));
+      CGAL_assertion(!input_mesh_is_valid_ || is_valid_polygon_mesh(mesh_));
       CGAL_assertion(is_triangle_mesh(mesh_));
       }//end for loop (nit == nb_iterations)
 
@@ -1067,7 +1068,7 @@ namespace internal {
         Point proj = trees[patch_id_to_index_map[get_patch_id(face(halfedge(v, mesh_), mesh_))]]->closest_point(get(vpmap_, v));
         put(vpmap_, v, proj);
       }
-      CGAL_assertion(is_valid_polygon_mesh(mesh_));
+      CGAL_assertion(!input_mesh_is_valid_ || is_valid_polygon_mesh(mesh_));
       CGAL_assertion(is_triangle_mesh(mesh_));
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_self_intersections();
@@ -1961,6 +1962,7 @@ private:
     EdgeIsConstrainedMap ecmap_;
     VertexIsConstrainedMap vcmap_;
     FaceIndexMap fimap_;
+    bool input_mesh_is_valid_;
 
   };//end class Incremental_remesher
 }//end namespace internal
