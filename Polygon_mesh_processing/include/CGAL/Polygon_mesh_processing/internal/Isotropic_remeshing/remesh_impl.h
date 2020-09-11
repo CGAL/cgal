@@ -325,6 +325,9 @@ namespace internal {
                                   pmesh);
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
       CGAL_assertion_code(input_mesh_is_valid_ = CGAL::is_valid_polygon_mesh(pmesh));
+      CGAL_warning_msg(input_mesh_is_valid_,
+        "The input mesh is not a valid polygon mesh. "
+        "It could lead PMP::isotropic_remeshing() to fail.");
     }
 
     ~Incremental_remesher()
@@ -1962,7 +1965,7 @@ private:
     EdgeIsConstrainedMap ecmap_;
     VertexIsConstrainedMap vcmap_;
     FaceIndexMap fimap_;
-    bool input_mesh_is_valid_;
+    CGAL_assertion_code(bool input_mesh_is_valid_;)
 
   };//end class Incremental_remesher
 }//end namespace internal
