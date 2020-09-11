@@ -107,6 +107,7 @@ public Q_SLOTS:
           CGAL::Three::Three::warning(tr("Some facets could not be triangulated."));
 
         sm_item = selection_item->polyhedron_item();
+        selection_item->set_num_faces(num_faces(*sm_item->face_graph()));
 
         selection_item->invalidateOpenGLBuffers();
         selection_item->itemChanged();
