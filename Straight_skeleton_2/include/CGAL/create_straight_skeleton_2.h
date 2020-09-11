@@ -16,7 +16,7 @@
 
 #include <CGAL/compute_outer_frame_margin.h>
 #include <CGAL/Straight_skeleton_builder_2.h>
-#include <CGAL/Polygon_2.h>
+#include <CGAL/Polygon_with_holes_2.h>
 
 #include <boost/optional/optional.hpp>
 #include <boost/shared_ptr.hpp>
@@ -29,13 +29,20 @@ namespace CGAL {
 
 namespace CGAL_SS_i {
 
+// Generic
 template<class Poly>
 inline typename Poly::const_iterator vertices_begin ( Poly const& aPoly ) { return aPoly.begin() ; }
 
 template<class Poly>
 inline typename Poly::const_iterator vertices_end ( Poly const& aPoly ) { return aPoly.end() ; }
 
+template<class Poly>
+inline typename Poly::const_iterator vertices_begin ( boost::shared_ptr<Poly> const& aPoly ) { return aPoly->begin() ; }
 
+template<class Poly>
+inline typename Poly::const_iterator vertices_end ( boost::shared_ptr<Poly> const& aPoly ) { return aPoly->end() ; }
+
+// Polygon_2
 template<class K, class C>
 inline typename Polygon_2<K,C>::Vertex_const_iterator vertices_begin ( Polygon_2<K,C> const& aPoly )
 { return aPoly.vertices_begin() ; }
@@ -44,11 +51,30 @@ template<class K, class C>
 inline typename Polygon_2<K,C>::Vertex_const_iterator vertices_end( Polygon_2<K,C> const& aPoly )
 { return aPoly.vertices_end() ; }
 
-template<class Poly>
-inline typename Poly::const_iterator vertices_begin ( boost::shared_ptr<Poly> const& aPoly ) { return aPoly->begin() ; }
+template<class K, class C>
+inline typename Polygon_2<K,C>::Vertex_const_iterator vertices_begin ( boost::shared_ptr<Polygon_2<K,C> > const& aPoly )
+{ return aPoly->vertices_begin() ; }
 
-template<class Poly>
-inline typename Poly::const_iterator vertices_end ( boost::shared_ptr<Poly> const& aPoly ) { return aPoly->end() ; }
+template<class K, class C>
+inline typename Polygon_2<K,C>::Vertex_const_iterator vertices_end( boost::shared_ptr<Polygon_2<K,C> > const& aPoly )
+{ return aPoly->vertices_end() ; }
+
+// Polygon_with_holes_2
+template<class K, class C>
+inline typename Polygon_with_holes_2<K,C>::Vertex_const_iterator vertices_begin ( Polygon_with_holes_2<K,C> const& aPoly )
+{ return aPoly.outer_boundary().vertices_begin() ; }
+
+template<class K, class C>
+inline typename Polygon_with_holes_2<K,C>::Vertex_const_iterator vertices_end( Polygon_with_holes_2<K,C> const& aPoly )
+{ return aPoly.outer_boundary().vertices_end() ; }
+
+template<class K, class C>
+inline typename Polygon_with_holes_2<K,C>::Vertex_const_iterator vertices_begin ( boost::shared_ptr<Polygon_with_holes_2<K,C> > const& aPoly )
+{ return aPoly->outer_boundary().vertices_begin() ; }
+
+template<class K, class C>
+inline typename Polygon_with_holes_2<K,C>::Vertex_const_iterator vertices_end( boost::shared_ptr<Polygon_with_holes_2<K,C> > const& aPoly )
+{ return aPoly->outer_boundary().vertices_end() ; }
 
 }
 
@@ -129,12 +155,23 @@ create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
                                             );
 }
 
-template<class Polygon, class K>
+template<class K, class C>
 boost::shared_ptr< Straight_skeleton_2<K> >
 inline
-create_interior_straight_skeleton_2 ( Polygon const& aOutContour, K const& k )
+create_interior_straight_skeleton_2 ( Polygon_2<K, C> const& aOutContour, K const& k )
 {
   CGAL_precondition(aOutContour.is_simple() || !"The input polygon is not simple.");
+  return create_interior_straight_skeleton_2(CGAL_SS_i::vertices_begin(aOutContour)
+                                            ,CGAL_SS_i::vertices_end(aOutContour)
+                                            ,k
+                                            );
+}
+
+template<class Polygon, class K, class C>
+boost::shared_ptr< Straight_skeleton_2<K> >
+inline
+create_interior_straight_skeleton_2 ( Polygon_with_holes_2<K, C> const& aOutContour, K const& k )
+{
   return create_interior_straight_skeleton_2(CGAL_SS_i::vertices_begin(aOutContour)
                                             ,CGAL_SS_i::vertices_end(aOutContour)
                                             ,k
@@ -148,6 +185,11 @@ create_interior_straight_skeleton_2 ( Polygon const& aOutContour )
 {
   return create_interior_straight_skeleton_2(aOutContour, Exact_predicates_inexact_constructions_kernel() );
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// EXTERIOR
 
 template<class FT, class PointIterator, class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
@@ -216,12 +258,24 @@ create_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
 }
 
 
+template<class FT, class K, class C>
+boost::shared_ptr< Straight_skeleton_2<K> >
+inline
+create_exterior_straight_skeleton_2 ( FT const& aMaxOffset, Polygon_2<K, C> const& aPoly, K const& k )
+{
+  CGAL_precondition(aPoly.is_simple() || !"The input polygon is not simple.");
+  return create_exterior_straight_skeleton_2(aMaxOffset
+                                            ,CGAL_SS_i::vertices_begin(aPoly)
+                                            ,CGAL_SS_i::vertices_end  (aPoly)
+                                            ,k
+                                            );
+}
+
 template<class FT, class Polygon, class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
 inline
 create_exterior_straight_skeleton_2 ( FT const& aMaxOffset, Polygon const& aPoly, K const& k )
 {
-  CGAL_precondition(aPoly.is_simple() || !"The input polygon is not simple.");
   return create_exterior_straight_skeleton_2(aMaxOffset
                                             ,CGAL_SS_i::vertices_begin(aPoly)
                                             ,CGAL_SS_i::vertices_end  (aPoly)
