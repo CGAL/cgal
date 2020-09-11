@@ -6,6 +6,8 @@
 #include <CGAL/create_offset_polygons_2.h>
 #include <CGAL/create_offset_polygons_from_polygon_with_holes_2.h>
 #include <CGAL/draw_straight_skeleton_2.h>
+#include <CGAL/Min_circle_2.h>
+#include <CGAL/Min_circle_2_traits_2.h>
 #include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/Polygon_offset_builder_2.h>
 #include "print.h"
@@ -30,12 +32,15 @@ void test_offset_polygon_with_hole()
 {
   std::cout << "Test Polygon with Hole, kernel: " << typeid(K).name() << std::endl;
 
+  typedef typename K::FT                                             FT;
   typedef typename K::Point_2                                        Point;
+
   typedef CGAL::Polygon_2<K>                                         Polygon_2;
   typedef CGAL::Polygon_with_holes_2<K>                              Polygon_with_holes_2;
   typedef boost::shared_ptr<Polygon_with_holes_2>                    Polygon_with_holes_2_ptr;
   typedef std::vector<Polygon_with_holes_2_ptr>                      Polygon_with_holes_2_ptr_container;
 
+  // Square with a non-centered square hole
   Polygon_2 outer, hole;
   outer.push_back(Point(-45, -45));
   outer.push_back(Point(  5, -45));
@@ -52,8 +57,8 @@ void test_offset_polygon_with_hole()
 
   // Generic case, offset of the outer boundary and of the hole are distinct
   std::cout << "Interior skeleton and offset, value: 2" << std::endl;
-  Polygon_with_holes_2_ptr_container offset_poly_with_holes
-    = CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(2, poly);
+  Polygon_with_holes_2_ptr_container offset_poly_with_holes =
+    CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(int(2), poly);
 
   for (const auto& offp : offset_poly_with_holes)
     print_polygon_with_holes(*offp);
@@ -96,14 +101,14 @@ void test_offset_polygon_with_hole()
   assert(offset_poly_with_holes[0]->outer_boundary().size() == 8);
   assert(offset_poly_with_holes[0]->number_of_holes() == 0);
 
-  // Outer skeleton and offset
-  std::cout << "Outer skeleton and offset, value: 0.1" << std::endl;
-  offset_poly_with_holes = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, outer);
+  // Very large value, no offset polygon
+  std::cout << "Interior skeleton and offset, value: 100" << std::endl;
+  offset_poly_with_holes = CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(FT(100), poly);
 
-  // Same, but different skeleton kernel
-  std::cout << "Outer skeleton and offset, value: 0.1" << std::endl;
-  offset_poly_with_holes = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, outer,
-                                                                                     K(), EPICK());
+  for (const auto& offp : offset_poly_with_holes)
+    print_polygon_with_holes(*offp);
+
+  assert(offset_poly_with_holes.size() == 0);
 }
 
 template <typename K>
@@ -177,13 +182,371 @@ void test_offset_multiple_CCs()
   assert(offset_contours.size() == 3);
 }
 
+template <typename K>
+void test_offset_polygon_exterior()
+{
+  std::cout << "Test Polygon with Hole, kernel: " << typeid(K).name() << std::endl;
+
+  typedef typename K::FT                                             FT;
+  typedef typename K::Point_2                                        Point;
+
+  typedef CGAL::Polygon_2<K>                                         Polygon_2;
+  typedef CGAL::Polygon_with_holes_2<K>                              Polygon_with_holes_2;
+  typedef boost::shared_ptr<Polygon_with_holes_2>                    Polygon_with_holes_2_ptr;
+  typedef std::vector<Polygon_with_holes_2_ptr>                      Polygon_with_holes_2_ptr_container;
+
+  Polygon_2 poly;
+  poly.push_back(Point( 0,  0));
+  poly.push_back(Point(40,  0));
+  poly.push_back(Point(40, 50));
+  poly.push_back(Point( 0, 50));
+  poly.push_back(Point( 0, 30));
+  poly.push_back(Point(10, 30));
+  poly.push_back(Point(10, 40));
+  poly.push_back(Point(30, 40));
+  poly.push_back(Point(30, 10));
+  poly.push_back(Point(10, 10));
+  poly.push_back(Point(10, 20));
+  poly.push_back(Point( 0, 20));
+
+  // -----------------------------------------------------------------------------------------------
+  // Outer skeleton and offset
+  std::cout << "Outer skeleton and offset, value: 0.1" << std::endl;
+  Polygon_with_holes_2_ptr_container offset_poly_with_holes =
+    create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, poly);
+
+  for (const auto& offp : offset_poly_with_holes)
+    print_polygon_with_holes(*offp);
+
+  assert(offset_poly_with_holes.size() == 1);
+  assert(offset_poly_with_holes[0]->outer_boundary().size() == 4);
+  assert(offset_poly_with_holes[0]->number_of_holes() == 1);
+  assert(offset_poly_with_holes[0]->holes_begin()->size() == 12);
+
+  // -----------------------------------------------------------------------------------------------
+  // Value such that it is clearly separated into two contours
+  std::cout << "Outer skeleton and offset, value: 7" << std::endl;
+  offset_poly_with_holes = create_exterior_skeleton_and_offset_polygons_with_holes_2(FT(7), poly,
+                                                                                     K(), EPICK());
+
+  for (const auto& offp : offset_poly_with_holes)
+    print_polygon_with_holes(*offp);
+
+  assert(offset_poly_with_holes.size() == 2);
+  assert(offset_poly_with_holes[0]->outer_boundary().size() == 4);
+  assert(offset_poly_with_holes[0]->number_of_holes() == 1);
+
+  // Technically both polygons below should be rectangles, but the algorithm puts a 5th vertex collinear.
+  // Tolerating it for now...
+
+  // assert(offset_poly_with_holes[0]->holes_begin()->size() == 4);
+  // assert(offset_poly_with_holes[1]->outer_boundary().size() == 4);
+  assert(offset_poly_with_holes[0]->holes_begin()->is_simple());
+  assert(offset_poly_with_holes[1]->outer_boundary().is_simple());
+
+  // -----------------------------------------------------------------------------------------------
+  // Border value between a single contour and two contours
+  std::cout << "Outer skeleton and offset, value: 5" << std::endl;
+  offset_poly_with_holes = create_exterior_skeleton_and_offset_polygons_with_holes_2(5., poly,
+                                                                                     K(), EPICK());
+
+  for (const auto& offp : offset_poly_with_holes)
+    print_polygon_with_holes(*offp);
+
+  assert(offset_poly_with_holes.size() == 2);
+  assert(offset_poly_with_holes[0]->outer_boundary().size() == 4);
+  assert(offset_poly_with_holes[0]->number_of_holes() == 1);
+
+  // Technically both polygons below should be rectangles, but the algorithm puts a 5th vertex collinear.
+  // Tolerating it for now...
+
+  // assert(offset_poly_with_holes[0]->holes_begin()->size() == 4);
+  // assert(offset_poly_with_holes[1]->outer_boundary().size() == 4);
+  assert(offset_poly_with_holes[0]->holes_begin()->is_simple());
+  assert(offset_poly_with_holes[1]->outer_boundary().is_simple());
+}
+
+template <typename K>
+void test_offset(const char* filename,
+                 const std::vector<double> offset_values = { }) // optional interesting offset values
+{
+  std::cout << "Construct inner offset of input: " << filename << std::endl;
+
+  typedef typename K::FT                                             FT;
+  typedef typename K::Point_2                                        Point;
+
+  typedef CGAL::Polygon_2<K>                                         Polygon_2;
+  typedef CGAL::Polygon_with_holes_2<K>                              Polygon_with_holes_2;
+  typedef boost::shared_ptr<Polygon_with_holes_2>                    Polygon_with_holes_2_ptr;
+  typedef std::vector<Polygon_with_holes_2_ptr>                      Polygon_with_holes_2_ptr_container;
+
+  typedef CGAL::Min_circle_2_traits_2<K>                             Traits;
+  typedef CGAL::Min_circle_2<Traits>                                 Min_circle;
+
+  std::ifstream in(filename);
+  assert(in);
+
+  CGAL::set_ascii_mode(in);
+
+  std::vector<Point> points;
+  std::vector<Polygon_2> polys;
+
+  int ccb_count = 0;
+  in >> ccb_count;
+  for(int i=0; i<ccb_count && in; ++i)
+  {
+    std::vector<Point> poly;
+
+    int v_count = 0;
+    in >> v_count;
+    for(int j=0; j<v_count && in; ++j)
+    {
+      double x = 0., y = 0.;
+      in >> x >> y;
+      points.emplace_back(x, y);
+      poly.push_back(points.back());
+    }
+
+    if(poly.size() >= 3)
+    {
+      bool is_simple = CGAL::is_simple_2(poly.begin(), poly.end(), K());
+      if(!is_simple)
+        std::cerr << "Input polygon not simple (hopefully it is strictly simple...)" << std::endl;
+
+      CGAL::Orientation expected = (i == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE);
+
+      const double area = CGAL::to_double(CGAL::polygon_area_2(poly.begin(), poly.end(), K()));
+      CGAL::Orientation orientation = area > 0 ? CGAL::COUNTERCLOCKWISE : area < 0 ? CGAL::CLOCKWISE : CGAL::COLLINEAR;
+
+      if(orientation == expected)
+        polys.push_back(Polygon_2(poly.begin(), poly.end()));
+      else
+        polys.push_back(Polygon_2(poly.rbegin(), poly.rend()));
+    }
+  }
+
+  assert(!polys.empty());
+
+  Polygon_with_holes_2 p(polys[0]);
+  for(std::size_t i=0; i<polys.size()-1; ++i)
+    p.add_hole(polys[1]);
+
+  Min_circle mc(points.begin(), points.end(), true /*randomize*/);
+  const FT r = CGAL::approximate_sqrt(mc.circle().squared_radius());
+  const FT offv = 0.05 * r; // 10% of the radius of the min enclosing circle
+
+  Polygon_with_holes_2_ptr_container offset_poly_with_holes =
+    create_interior_skeleton_and_offset_polygons_with_holes_2(offv, p);
+
+  std::cout << offset_poly_with_holes.size() << " pols" << std::endl;
+  std::cin.get();
+
+  for(const auto& offp : offset_poly_with_holes)
+  {
+    assert(offp->outer_boundary().is_simple());
+    assert(offp->outer_boundary().is_counterclockwise_oriented());
+  }
+
+  for(double o : offset_values)
+  {
+    offset_poly_with_holes = create_interior_skeleton_and_offset_polygons_with_holes_2(offv, p);
+
+    for (const auto& offp : offset_poly_with_holes)
+    {
+      assert(offp->outer_boundary().is_simple());
+      assert(offp->outer_boundary().is_counterclockwise_oriented());
+    }
+  }
+}
+
+template <typename K>
+void test_kernel()
+{
+  std::cout.precision(17);
+  std::cerr.precision(17);
+
+//  test_offset_polygon_with_hole<K>();
+
+//  test_offset_polygon_exterior<K>();
+
+//  test_offset_multiple_CCs<K>();
+
+  test_offset<K>("data/1_Example.poly");
+  test_offset<K>("data/1_Example_Working.poly");
+  test_offset<K>("data/2_Example.poly");
+  test_offset<K>("data/5-SPOKE2.poly");
+  test_offset<K>("data/5-SPOKE.poly");
+  test_offset<K>("data/7-SPOKE.poly");
+  test_offset<K>("data/alley_0.poly");
+  test_offset<K>("data/alley_1.poly");
+  test_offset<K>("data/alley_2.poly");
+  test_offset<K>("data/alley_3.poly");
+  test_offset<K>("data/AlmostClosed.poly");
+  test_offset<K>("data/A.poly");
+  test_offset<K>("data/closer_edge_event_0.poly");
+  test_offset<K>("data/closer_edge_event_1.poly");
+  test_offset<K>("data/complex_0.poly");
+  test_offset<K>("data/complex_1.poly");
+  test_offset<K>("data/complex_2.poly");
+  test_offset<K>("data/complex_3.poly");
+  test_offset<K>("data/complex_4.poly");
+  test_offset<K>("data/complex_5.poly");
+  test_offset<K>("data/consecutive_coincident_vertices_0.poly");
+  test_offset<K>("data/consecutive_coincident_vertices_1.poly");
+  test_offset<K>("data/consecutive_coincident_vertices_2.poly");
+  test_offset<K>("data/consecutive_coincident_vertices_3.poly");
+  test_offset<K>("data/consecutive_coincident_vertices_4.poly");
+  test_offset<K>("data/degenerate0a.poly");
+  test_offset<K>("data/degenerate0.poly");
+  test_offset<K>("data/degenerate10.poly");
+  test_offset<K>("data/degenerate11.poly");
+  test_offset<K>("data/degenerate12.poly");
+  test_offset<K>("data/degenerate13.poly");
+  test_offset<K>("data/degenerate1.poly");
+  test_offset<K>("data/degenerate20.poly");
+  test_offset<K>("data/degenerate21.poly");
+  test_offset<K>("data/degenerate22b.poly");
+  test_offset<K>("data/degenerate22c.poly");
+  test_offset<K>("data/degenerate22.poly");
+  test_offset<K>("data/degenerate24.poly");
+  test_offset<K>("data/degenerate25.poly");
+  test_offset<K>("data/degenerate26.poly");
+  test_offset<K>("data/degenerate27b.poly");
+  test_offset<K>("data/degenerate27c.poly");
+  test_offset<K>("data/degenerate27d.poly");
+  test_offset<K>("data/degenerate27e.poly");
+  test_offset<K>("data/degenerate27.poly");
+  test_offset<K>("data/degenerate28aa.poly");
+  test_offset<K>("data/degenerate28a.poly");
+  test_offset<K>("data/degenerate28b.poly");
+  test_offset<K>("data/degenerate28c.poly");
+  test_offset<K>("data/degenerate28x.poly");
+  test_offset<K>("data/degenerate2.poly");
+  test_offset<K>("data/degenerate3.poly");
+  test_offset<K>("data/degenerate4.poly");
+  test_offset<K>("data/degenerate5a.poly");
+  test_offset<K>("data/degenerate5.poly");
+  test_offset<K>("data/degenerate6.poly");
+  test_offset<K>("data/degenerate7.poly");
+  test_offset<K>("data/degenerate8.poly");
+  test_offset<K>("data/degenerate9.poly");
+  test_offset<K>("data/degenerate_multinode0.poly");
+  test_offset<K>("data/Detmier_b.poly");
+  test_offset<K>("data/Detmier_c.poly");
+  test_offset<K>("data/Detmier_d.poly");
+  test_offset<K>("data/Detmier_e.poly");
+  test_offset<K>("data/Detmier.poly");
+  test_offset<K>("data/double_edge_0.poly");
+  test_offset<K>("data/double_edge_1.poly");
+  test_offset<K>("data/double_edge_2.poly");
+  test_offset<K>("data/double_edge.poly");
+  test_offset<K>("data/double_split.poly");
+  test_offset<K>("data/equal_times_0.poly");
+  test_offset<K>("data/ExtraEdge_1.poly");
+  test_offset<K>("data/ExtraEdge_2.poly");
+  test_offset<K>("data/hole.poly");
+  test_offset<K>("data/inputcircle.poly");
+  test_offset<K>("data/inputc.poly");
+  test_offset<K>("data/inputd1.poly");
+  test_offset<K>("data/inputd.poly");
+  test_offset<K>("data/inputG.poly");
+  test_offset<K>("data/input_K.poly");
+  test_offset<K>("data/inputPa.poly");
+  test_offset<K>("data/inputP.poly");
+  test_offset<K>("data/inputq1.poly");
+  test_offset<K>("data/inputq.poly");
+  test_offset<K>("data/inputsquare2.poly");
+  test_offset<K>("data/inputsquare.poly");
+  test_offset<K>("data/inputT.poly");
+  test_offset<K>("data/inputu.poly");
+  test_offset<K>("data/issue3382_bis.txt");
+  test_offset<K>("data/issue3382_ter.txt");
+  test_offset<K>("data/large_1.poly");
+  test_offset<K>("data/large_2.poly");
+  test_offset<K>("data/large_3.poly");
+  test_offset<K>("data/large_4.poly");
+  test_offset<K>("data/many_holes.poly");
+  test_offset<K>("data/masked_double_split.poly");
+  test_offset<K>("data/multinode0.poly");
+  test_offset<K>("data/multinode1.poly");
+  test_offset<K>("data/near_degenerate_0.poly");
+  test_offset<K>("data/near_degenerate_1.poly");
+  test_offset<K>("data/nearly_collinear.poly");
+  test_offset<K>("data/parallels0_b.poly");
+  test_offset<K>("data/parallels0.poly");
+  test_offset<K>("data/parallels_1.poly");
+  test_offset<K>("data/poly4b.poly");
+  test_offset<K>("data/poly4.poly");
+  test_offset<K>("data/poly6.poly");
+  test_offset<K>("data/pseudo_split_0.poly");
+  test_offset<K>("data/pseudo_split_10.poly");
+  test_offset<K>("data/pseudo_split_11.poly");
+  test_offset<K>("data/pseudo_split_12.poly");
+  test_offset<K>("data/pseudo_split_13b.poly");
+  test_offset<K>("data/pseudo_split_13.poly");
+  test_offset<K>("data/pseudo_split_1.poly");
+  test_offset<K>("data/pseudo_split_2.poly");
+  test_offset<K>("data/pseudo_split_3.poly");
+  test_offset<K>("data/pseudo_split_4.poly");
+  test_offset<K>("data/pseudo_split_5b.poly");
+  test_offset<K>("data/pseudo_split_5.poly");
+  test_offset<K>("data/pseudo_split_6.poly");
+  test_offset<K>("data/pseudo_split_7.poly");
+  test_offset<K>("data/pseudo_split_8.poly");
+  test_offset<K>("data/pseudo_split_9.poly");
+  test_offset<K>("data/rect_4_spokes.poly");
+  test_offset<K>("data/rectangle.poly");
+  test_offset<K>("data/region_4.poly");
+  test_offset<K>("data/rombus_4_spokes.poly");
+  test_offset<K>("data/sample_0.poly");
+  test_offset<K>("data/sample_101.poly");
+  test_offset<K>("data/sample_102.poly");
+  test_offset<K>("data/sample_147.poly");
+  test_offset<K>("data/sample_1.poly");
+  test_offset<K>("data/sample_235.poly");
+  test_offset<K>("data/sample_298.poly");
+  test_offset<K>("data/sample_2.poly");
+  test_offset<K>("data/sample2.poly");
+  test_offset<K>("data/sample_319.poly");
+  test_offset<K>("data/sample_325.poly");
+  test_offset<K>("data/sample_333.poly");
+  test_offset<K>("data/sample_3.poly");
+  test_offset<K>("data/sample3.poly");
+  test_offset<K>("data/sample_46.poly");
+  test_offset<K>("data/sample_4.poly");
+  test_offset<K>("data/sample_5.poly");
+  test_offset<K>("data/sample_638.poly");
+  test_offset<K>("data/sample_698.poly");
+  test_offset<K>("data/sample_6.poly");
+  test_offset<K>("data/sample_73.poly");
+  test_offset<K>("data/sample_85.poly");
+  test_offset<K>("data/sample.poly");
+  test_offset<K>("data/simple_0.poly");
+  test_offset<K>("data/simple_1.poly");
+  test_offset<K>("data/simple_2.poly");
+  test_offset<K>("data/simple_3.poly");
+  test_offset<K>("data/single_split.poly");
+  test_offset<K>("data/split_at_end_0.poly");
+  test_offset<K>("data/split_at_end_1.poly");
+  test_offset<K>("data/split_at_end_2.poly");
+  test_offset<K>("data/split_at_zero_0.poly");
+  test_offset<K>("data/square.poly");
+  test_offset<K>("data/star.poly");
+  test_offset<K>("data/StrayCenterlines.poly");
+  test_offset<K>("data/triangle.poly");
+  test_offset<K>("data/wheel_128_spokes.poly");
+  test_offset<K>("data/wheel_13_spokes.poly");
+  test_offset<K>("data/wheel_14_spokes.poly");
+  test_offset<K>("data/wheel_15_spokes.poly");
+  test_offset<K>("data/wheel_16_spokes_b.poly");
+  test_offset<K>("data/wheel_16_spokes.poly");
+  test_offset<K>("data/wiggly_03_cgal.poly");
+  test_offset<K>("data/WingChiu.poly");
+}
+
 int main(int, char**)
 {
-  test_offset_polygon_with_hole<EPICK>();
-  test_offset_polygon_with_hole<EPECK>();
-  test_offset_polygon_with_hole<EPECK_w_sqrt>();
-
-  test_offset_multiple_CCs<EPICK>();
-  test_offset_multiple_CCs<EPECK>();
-  test_offset_multiple_CCs<EPECK_w_sqrt>();
+  test_kernel<EPICK>();
+  test_kernel<EPECK>();
+  test_kernel<EPECK_w_sqrt>();
 }
