@@ -176,14 +176,14 @@ Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2
 // not given by the collinear edges alone)
 //
 template<class K, class FT, class TimeCache>
-Uncertain<bool> exist_offset_lines_isec2 ( intrusive_ptr< Trisegment_2<K> > const& tri
-                                         , optional<FT> const& aMaxTime
+Uncertain<bool> exist_offset_lines_isec2 ( boost::intrusive_ptr< Trisegment_2<K> > const& tri
+                                         , boost::optional<FT> const& aMaxTime
                                          , TimeCache& time_cache )
 {
 
-  typedef Rational<FT>       Rational ;
-  typedef optional<Rational> Optional_rational ;
-  typedef Quotient<FT>       Quotient ;
+  typedef Rational<FT>              Rational ;
+  typedef boost::optional<Rational> Optional_rational ;
+  typedef Quotient<FT>              Quotient ;
 
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 
@@ -237,8 +237,8 @@ Uncertain<bool> exist_offset_lines_isec2 ( intrusive_ptr< Trisegment_2<K> > cons
 // That is, indicates which offset triple intersects first (closer to the source lines)
 // PRECONDITION: There exist distances mt and nt for which each offset triple intersect at a single point.
 template<class K, class TimeCache>
-Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( intrusive_ptr< Trisegment_2<K> > const& m
-                                                               , intrusive_ptr< Trisegment_2<K> > const& n
+Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( boost::intrusive_ptr< Trisegment_2<K> > const& m
+                                                               , boost::intrusive_ptr< Trisegment_2<K> > const& n
                                                                , TimeCache& time_cache
                                                                )
 {
@@ -246,7 +246,7 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( intrusive_ptr< 
 
   typedef Rational<FT>       Rational ;
   typedef Quotient<FT>       Quotient ;
-  typedef optional<Rational> Optional_rational ;
+  typedef boost::optional<Rational> Optional_rational ;
 
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
@@ -270,7 +270,7 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( intrusive_ptr< 
 // Returns true if the point aP is on the positive side of the line supporting the edge
 //
 template<class K>
-Uncertain<bool> is_edge_facing_pointC2 ( optional< Point_2<K> > const& aP, Segment_2<K> const& aEdge )
+Uncertain<bool> is_edge_facing_pointC2 ( boost::optional< Point_2<K> > const& aP, Segment_2<K> const& aEdge )
 {
   typedef typename K::FT FT ;
 
@@ -288,7 +288,7 @@ Uncertain<bool> is_edge_facing_pointC2 ( optional< Point_2<K> > const& aP, Segme
 // at some distance intersects in a point (x,y), returns true if (x,y) is on the positive side of the line supporting aEdge
 //
 template<class K>
-inline Uncertain<bool> is_edge_facing_offset_lines_isecC2 ( intrusive_ptr< Trisegment_2<K> > const& tri, Segment_2<K> const& aEdge )
+inline Uncertain<bool> is_edge_facing_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K> > const& tri, Segment_2<K> const& aEdge )
 {
   return is_edge_facing_pointC2(construct_offset_lines_isecC2(tri),aEdge);
 }
@@ -356,10 +356,10 @@ inline Uncertain<bool> is_edge_facing_offset_lines_isecC2 ( intrusive_ptr< Trise
 //
 template<class K>
 Uncertain<Oriented_side>
-oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2<K> > const& event
+oriented_side_of_event_point_wrt_bisectorC2 ( boost::intrusive_ptr< Trisegment_2<K> > const& event
                                             , Segment_2<K>                     const& e0
                                             , Segment_2<K>                     const& e1
-                                            , intrusive_ptr< Trisegment_2<K> > const& v01_event // can be null
+                                            , boost::intrusive_ptr< Trisegment_2<K> > const& v01_event // can be null
                                             , bool                                    primary_is_0
                                             )
 {
@@ -480,7 +480,9 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2<K> > c
 //   There exist single points at which the offset lines for 'l' and 'r' at 'tl', 'tr' intersect.
 //
 template<class K, class TimeCache>
-Uncertain<bool> are_events_simultaneousC2 ( intrusive_ptr< Trisegment_2<K> > const& l, intrusive_ptr< Trisegment_2<K> > const& r, TimeCache& time_cache )
+Uncertain<bool> are_events_simultaneousC2 ( boost::intrusive_ptr< Trisegment_2<K> > const& l,
+                                            boost::intrusive_ptr< Trisegment_2<K> > const& r,
+                                            TimeCache& time_cache )
 {
   typedef typename K::FT FT ;
 
@@ -489,8 +491,8 @@ Uncertain<bool> are_events_simultaneousC2 ( intrusive_ptr< Trisegment_2<K> > con
   typedef Rational<FT> Rational ;
   typedef Quotient<FT> Quotient ;
 
-  typedef optional<Rational> Optional_rational ;
-  typedef optional<Point_2>  Optional_point_2 ;
+  typedef boost::optional<Rational> Optional_rational ;
+  typedef boost::optional<Point_2>  Optional_point_2 ;
 
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 

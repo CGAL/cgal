@@ -281,13 +281,13 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
     FT      t(0) ;
     Point_2 i = ORIGIN ;
 
-    optional< Rational<FT> > ot = compute_offset_lines_isec_timeC2(aTrisegment, mTime_cache);
+    boost::optional< Rational<FT> > ot = compute_offset_lines_isec_timeC2(aTrisegment, mTime_cache);
 
     if ( !!ot && certainly( CGAL_NTS certified_is_not_zero(ot->d()) ) )
     {
       t = ot->n() / ot->d();
 
-      optional<Point_2> oi = construct_offset_lines_isecC2(aTrisegment);
+      boost::optional<Point_2> oi = construct_offset_lines_isecC2(aTrisegment);
       if ( oi )
       {
         i = *oi ;

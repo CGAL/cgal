@@ -40,9 +40,6 @@ namespace CGAL {
 
 namespace CGAL_SS_i {
 
-using boost::optional ;
-using boost::intrusive_ptr ;
-
 template<class T>
 T const& validate ( boost::optional<T> const& o )
 {
@@ -60,8 +57,17 @@ NT const& validate( NT const& n )
 }
 
 // boost::make_optional is provided in Boost >= 1.34, but not before, so we define our own versions here.
-template<class T> optional<T> cgal_make_optional( T const& v ) { return optional<T>(v) ; }
-template<class T> optional<T> cgal_make_optional( bool cond, T const& v ) { return cond ? optional<T>(v) : optional<T>() ; }
+template<class T>
+boost::optional<T> cgal_make_optional( T const& v )
+{
+  return boost::optional<T>(v) ;
+}
+
+template<class T>
+boost::optional<T> cgal_make_optional( bool cond, T const& v )
+{
+  return cond ? boost::optional<T>(v) : boost::optional<T>() ;
+}
 
 template<class K>
 struct Is_filtering_kernel
@@ -209,7 +215,7 @@ public:
 
   typedef typename K::Segment_2 Segment_2 ;
 
-  typedef intrusive_ptr<Trisegment_2> Self_ptr ;
+  typedef boost::intrusive_ptr<Trisegment_2> Self_ptr ;
 
 public:
 

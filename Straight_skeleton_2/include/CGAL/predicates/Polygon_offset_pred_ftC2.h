@@ -18,6 +18,7 @@
 #include <CGAL/Uncertain.h>
 
 #include <boost/optional/optional.hpp>
+#include <boost/intrusive_ptr.hpp>
 
 namespace CGAL {
 
@@ -51,14 +52,15 @@ struct No_cache
 // returns the relative order of 't' w.r.t 'et'.
 // PRECONDITION: There exist a positive distance et for which the offset triple intersect at a single point.
 template<class K>
-Uncertain<Comparison_result> compare_offset_against_isec_timeC2 ( typename K::FT const& t, intrusive_ptr< Trisegment_2<K> > const& tri )
+Uncertain<Comparison_result> compare_offset_against_isec_timeC2 ( typename K::FT const& t,
+                                                                  boost::intrusive_ptr< Trisegment_2<K> > const& tri )
 {
   typedef typename K::FT FT ;
 
   typedef Rational<FT> Rational ;
   typedef Quotient<FT> Quotient ;
 
-  typedef optional<Rational> Optional_rational ;
+  typedef boost::optional<Rational> Optional_rational ;
 
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 

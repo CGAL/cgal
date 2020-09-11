@@ -15,6 +15,9 @@
 
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
 
+#include <boost/optional/optional.hpp>
+#include <boost/intrusive_ptr.hpp>
+
 namespace CGAL {
 
 namespace CGAL_SS_i {
@@ -29,19 +32,18 @@ namespace CGAL_SS_i {
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
 template<class K>
-optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const&                   t
-                                                , Segment_2<K> const&                     e0
-                                                , Segment_2<K> const&                     e1
-                                                , intrusive_ptr< Trisegment_2<K> > const& tri
-                                                )
+boost::optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const&                   t
+                                                       , Segment_2<K> const&                     e0
+                                                       , Segment_2<K> const&                     e1
+                                                       , boost::intrusive_ptr< Trisegment_2<K> > const& tri)
 {
   typedef typename K::FT FT ;
 
   typedef Point_2<K>  Point_2 ;
   typedef Line_2<K>   Line_2 ;
 
-  typedef optional<Point_2> Optional_point_2 ;
-  typedef optional<Line_2>  Optional_line_2 ;
+  typedef boost::optional<Point_2> Optional_point_2 ;
+  typedef boost::optional<Line_2>  Optional_line_2 ;
 
   FT x(0.0),y(0.0) ;
 
