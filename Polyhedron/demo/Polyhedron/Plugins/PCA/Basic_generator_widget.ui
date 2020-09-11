@@ -1070,7 +1070,7 @@ p, li { white-space: pre-wrap; }
         <item>
          <widget class="QCheckBox" name="polygon_checkBox">
           <property name="text">
-           <string>From Polygon_2</string>
+           <string>2D coordinates</string>
           </property>
          </widget>
         </item>
