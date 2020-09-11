@@ -80,10 +80,15 @@ protected:
     else
       add_segment(eh->opposite()->vertex()->point(), eh->vertex()->point(), CGAL::black());
   }
-  /*
   void compute_vertex(Vertex_const_handle vh)
-  { add_point(vh->point()); }
-  */
+  {
+    if(vh->is_split())
+      add_point(vh->point(), CGAL::Color(10,10,180)); // blue, but not flashy
+    else if(vh->has_infinite_time())
+      add_point(vh->point(), CGAL::orange());
+    else
+      add_point(vh->point(), CGAL::Color(10,180,10)); // green, but not flashy
+  }
 
   void compute_elements()
   {
@@ -92,11 +97,9 @@ protected:
     for (typename SS2::Halfedge_const_iterator it=ss2.halfedges_begin();
          it!=ss2.halfedges_end(); ++it)
     { compute_edge(it); }
-    /*
-    for (typename SS2::Finite_vertices_iterator it=ss2.finite_vertices_begin();
-         it!=ss2.finite_vertices_end(); ++it)
+    for (typename SS2::Vertex_const_iterator it=ss2.vertices_begin();
+         it!=ss2.vertices_end(); ++it)
     { compute_vertex(it); }
-    */
   }
 
   virtual void keyPressEvent(QKeyEvent *e)
