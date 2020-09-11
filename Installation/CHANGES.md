@@ -1,6 +1,11 @@
 Release History
 ===============
 
+
+### [3D Convex Hulls](https://doc.cgal.org/5.1/Manual/packages.html#PkgConvexHull3)
+-   Added the function `CGAL::halfspace_intersection_interior_point_3()` that can be used to retrieve
+    the point that is the most interior a convex closed volume defined by the intersection of a set of halfspaces.
+
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 -----------
 
