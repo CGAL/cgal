@@ -1,10 +1,19 @@
 Release History
 ===============
 
-### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/5.1/Manual/packages.html#PkgBGL)
+[Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
+-----------
+
+Release date: December 2020
+
+### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/5.2/Manual/packages.html#PkgBGL)
 
 -   Added the convenience header `CGAL/boost/graph/graph_traits_inheritance_macros.h` that allows to easily
     make any class inheriting from a model of a face graph concept, a model of the same concept.
+
+### [3D Convex Hulls](https://doc.cgal.org/5.2/Manual/packages.html#PkgConvexHull3)
+-   Added the function `CGAL::halfspace_intersection_interior_point_3()` that can be used to retrieve
+    the point that is the most interior a convex closed volume defined by the intersection of a set of halfspaces.
 
 
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
