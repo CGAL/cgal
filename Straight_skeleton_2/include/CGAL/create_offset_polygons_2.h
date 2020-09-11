@@ -39,10 +39,10 @@ create_partial_interior_straight_skeleton_2 ( FT const&     aMaxTime
                                             , K const& // aka 'SK'
                                             )
 {
+  CGAL_precondition( aMaxTime > static_cast<FT>(0) ) ;
+
   typedef Straight_skeleton_2<K> Ss ;
-
   typedef Straight_skeleton_builder_traits_2<K> SsBuilderTraits;
-
   typedef Straight_skeleton_builder_2<SsBuilderTraits,Ss> SsBuilder;
 
   typedef typename K::FT KFT ;
@@ -73,6 +73,8 @@ create_partial_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
                                             , K const&       k // aka 'SK'
                                             )
 {
+  CGAL_precondition( aMaxOffset > static_cast<FT>(0) ) ;
+
   typedef typename std::iterator_traits<PointIterator>::value_type   Point_2;
   typedef typename Kernel_traits<Point_2>::Kernel                    IK;
   typedef typename IK::FT                                            IFT;

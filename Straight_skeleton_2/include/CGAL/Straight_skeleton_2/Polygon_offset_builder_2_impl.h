@@ -319,7 +319,7 @@ template<class Ss, class Gt, class Cont, class Visitor>
 template<class OutputIterator>
 OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::construct_offset_contours( FT aTime, OutputIterator aOut )
 {
-  CGAL_precondition( aTime > static_cast<FT>(0.0) ) ;
+  CGAL_precondition( aTime > static_cast<FT>(0) ) ;
 
   CGAL_POLYOFFSET_DEBUG_CODE( mStepID = 0 ) ;
 
