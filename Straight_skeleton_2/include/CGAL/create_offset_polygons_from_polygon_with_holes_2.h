@@ -14,9 +14,13 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
+#include <CGAL/arrange_offset_polygons_2.h>
 #include <CGAL/create_offset_polygons_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
-#include <CGAL/arrange_offset_polygons_2.h>
+
+#include <boost/shared_ptr.hpp>
+
+#include <vector>
 
 namespace CGAL {
 

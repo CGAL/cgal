@@ -14,16 +14,20 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-#include <CGAL/disable_warnings.h>
-
-#include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/compute_outer_frame_margin.h>
+#include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/Polygon_2.h>
+
+#include <boost/optional/optional.hpp>
+#include <boost/shared_ptr.hpp>
+
+#include <algorithm>
+#include <iterator>
+#include <vector>
 
 namespace CGAL {
 
-namespace CGAL_SS_i
-{
+namespace CGAL_SS_i {
 
 template<class Poly>
 inline typename Poly::const_iterator vertices_begin ( Poly const& aPoly ) { return aPoly.begin() ; }
@@ -237,8 +241,6 @@ create_exterior_straight_skeleton_2 ( FT const& aMaxOffset, Polygon const& aPoly
 }
 
 } // end namespace CGAL
-
-#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_H //
 // EOF //

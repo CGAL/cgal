@@ -13,6 +13,8 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
+#include <algorithm>
+#include <vector>
 
 namespace CGAL {
 

@@ -14,10 +14,10 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-#include <CGAL/disable_warnings.h>
-
 #include <CGAL/create_straight_skeleton_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
+
+#include <boost/shared_ptr.hpp>
 
 namespace CGAL {
 
@@ -35,8 +35,6 @@ create_interior_straight_skeleton_2 ( Polygon_with_holes_2<K,C> const& aPolyWith
 }
 
 } // end namespace CGAL
-
-#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_H //
 // EOF //

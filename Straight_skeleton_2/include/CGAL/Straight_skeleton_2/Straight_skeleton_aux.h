@@ -13,24 +13,22 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-
-#include <boost/optional/optional.hpp>
-#include <boost/none.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/mpl/or.hpp>
-
 #include <CGAL/Straight_skeleton_2/assertions.h>
 #include <CGAL/Straight_skeleton_2/debug.h>
 #include <CGAL/Straight_skeleton_2/test.h>
 
-//
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/or.hpp>
+#include <boost/none.hpp>
+#include <boost/optional/optional.hpp>
+#include <boost/type_traits/is_same.hpp>
+
+#include <iostream>
+
 // The heap objects used in this implementation are intrusively reference counted. Thus, they inherit from Ref_counted_base.
-//
 namespace CGAL {
 
-namespace CGAL_SS_i
-{
+namespace CGAL_SS_i {
 
 template<class K> struct Has_inexact_constructions
 {

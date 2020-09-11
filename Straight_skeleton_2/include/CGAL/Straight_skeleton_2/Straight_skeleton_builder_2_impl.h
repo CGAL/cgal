@@ -13,6 +13,9 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
+#include <CGAL/number_type_config.h>
+#include <CGAL/Real_timer.h>
+#include <CGAL/Unique_hash_map.h>
 
 #include <boost/bind.hpp>
 #include <boost/utility.hpp>
@@ -23,17 +26,16 @@
 #endif
 #include <boost/graph/adjacency_matrix.hpp>
 
-#include <CGAL/number_type_config.h>
-#include <CGAL/Real_timer.h>
-#include <CGAL/Unique_hash_map.h>
-
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
-#  pragma warning(disable:4355) // complaint about using 'this' to
-#endif                          // initialize a member
+#  pragma warning(disable:4355) // complaint about using 'this' to initialize a member
+#endif
+
+#include <algorithm>
+#include <iostream>
+#include <sstream>
 
 namespace CGAL {
-
 
 template<class Gt, class Ss, class V>
 Straight_skeleton_builder_2<Gt,Ss,V>::Straight_skeleton_builder_2 ( boost::optional<FT> aMaxTime, Traits const& aTraits, Visitor const& aVisitor )

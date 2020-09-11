@@ -12,12 +12,13 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_traits_2_aux.h>
 #include <CGAL/Straight_skeleton_builder_traits_2.h>
 #include <CGAL/predicates/Polygon_offset_pred_ftC2.h>
 #include <CGAL/constructions/Polygon_offset_cons_ftC2.h>
+
+#include <boost/optional/optional.hpp>
 
 namespace CGAL {
 

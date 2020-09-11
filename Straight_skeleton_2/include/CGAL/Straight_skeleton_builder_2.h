@@ -14,20 +14,6 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-#include <CGAL/disable_warnings.h>
-
-#include <list>
-#include <queue>
-#include <exception>
-#include <string>
-#include <map>
-
-#include <boost/tuple/tuple.hpp>
-#include <boost/intrusive_ptr.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/mpl/bool.hpp>
-
 #include <CGAL/algorithm.h>
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_events_2.h>
@@ -35,6 +21,22 @@
 #include <CGAL/Straight_skeleton_builder_traits_2.h>
 #include <CGAL/HalfedgeDS_const_decorator.h>
 #include <CGAL/enum.h>
+
+#include <boost/tuple/tuple.hpp>
+#include <boost/intrusive_ptr.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <boost/mpl/bool.hpp>
+
+#include <algorithm>
+#include <exception>
+#include <iostream>
+#include <map>
+#include <list>
+#include <queue>
+#include <string>
+#include <sstream>
+#include <utility>
 
 namespace CGAL {
 
@@ -987,8 +989,6 @@ public:
 } // end namespace CGAL
 
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_2_impl.h>
-
-#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_H //
 // EOF //

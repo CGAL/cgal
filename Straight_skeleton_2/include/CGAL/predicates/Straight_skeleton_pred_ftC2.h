@@ -13,15 +13,25 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-
-#include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
-#include <CGAL/Uncertain.h>
+#include <CGAL/certified_numeric_predicates.h>
 #include <CGAL/certified_quotient_predicates.h>
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_traits_2_aux.h>
+#include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
+
+#include <CGAL/Point_2.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/Uncertain.h>
+
+#include <boost/optional/optional.hpp>
+#include <boost/intrusive_ptr.hpp>
+
+#include <stdexcept>
 
 namespace CGAL {
 
-namespace CGAL_SS_i
-{
+namespace CGAL_SS_i {
 
 // Just like the uncertified collinear() returns true IFF r lies in the line p->q
 // NOTE: r might be in the ray from p or q containing q or p, that is, there is no ordering implied, just that

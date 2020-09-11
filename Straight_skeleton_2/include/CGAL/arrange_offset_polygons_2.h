@@ -14,9 +14,14 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
+#include <CGAL/Polygon_with_holes_2.h>
 
 #include <boost/shared_ptr.hpp>
-#include <CGAL/Polygon_with_holes_2.h>
+
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <vector>
 
 namespace CGAL {
 

@@ -15,8 +15,9 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-
 #include <CGAL/basic.h>
+
+#include <utility>
 
 namespace CGAL {
 

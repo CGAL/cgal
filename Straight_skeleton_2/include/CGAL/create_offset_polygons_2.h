@@ -15,10 +15,24 @@
 #include <CGAL/license/Straight_skeleton_2.h>
 
 #include <CGAL/create_straight_skeleton_2.h>
+#include <CGAL/compute_outer_frame_margin.h>
 #include <CGAL/Polygon_offset_builder_2.h>
 #include <CGAL/Straight_skeleton_converter_2.h>
-#include <CGAL/compute_outer_frame_margin.h>
+#include <CGAL/Straight_skeleton_builder_2.h>
+
+#include <CGAL/assertions.h>
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Kernel_traits.h>
 #include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/tags.h>
+
+#include <boost/optional/optional.hpp>
+#include <boost/shared_ptr.hpp>
+
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <vector>
 
 namespace CGAL {
 

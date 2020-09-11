@@ -13,12 +13,14 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-#include <CGAL/disable_warnings.h>
+#include <CGAL/Straight_skeleton_2.h>
 
-#include <boost/shared_ptr.hpp>
+#include <CGAL/assertions.h>
 #include <CGAL/Cartesian_converter.h>
 
-#include <CGAL/Straight_skeleton_2.h>
+#include <boost/shared_ptr.hpp>
+
+#include <vector>
 
 namespace CGAL {
 
@@ -294,8 +296,6 @@ convert_straight_skeleton_2 ( Source_skeleton const& aSrc )
 }
 
 } // end namespace CGAL
-
-#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_STRAIGHT_SKELETON_2_CONVERTER_H //
 // EOF //

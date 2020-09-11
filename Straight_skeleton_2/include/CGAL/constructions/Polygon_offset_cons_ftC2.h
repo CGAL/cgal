@@ -13,13 +13,11 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
 
 namespace CGAL {
 
-namespace CGAL_SS_i
-{
+namespace CGAL_SS_i {
 
 // Given an offset distance 't' and 2 oriented line segments e0 and e1, returns the coordinates (x,y)
 // of the intersection of their offsets at the given distance.

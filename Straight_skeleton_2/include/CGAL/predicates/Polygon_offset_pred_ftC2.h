@@ -13,13 +13,15 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_traits_2_aux.h>
+#include <CGAL/Uncertain.h>
+
+#include <boost/optional/optional.hpp>
 
 namespace CGAL {
 
-namespace CGAL_SS_i
-{
+namespace CGAL_SS_i {
 
 template <class K>
 struct No_cache

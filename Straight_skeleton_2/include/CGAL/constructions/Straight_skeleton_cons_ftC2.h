@@ -15,10 +15,11 @@
 
 #include <CGAL/Lazy.h>
 
+#include <cstddef>
+
 namespace CGAL {
 
-namespace CGAL_SS_i
-{
+namespace CGAL_SS_i {
 
 template<class K>
 bool are_edges_collinear( Segment_2<K> const& e0, Segment_2<K> const& e1 )

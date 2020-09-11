@@ -13,15 +13,15 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-
-#include<ostream>
-
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+
+#include <boost/intrusive_ptr.hpp>
+
+#include <ostream>
 
 namespace CGAL {
 
-namespace CGAL_SS_i
-{
+namespace CGAL_SS_i {
 
 template<class SSkel_, class Traits_>
 class Event_2 : public Ref_counted_base

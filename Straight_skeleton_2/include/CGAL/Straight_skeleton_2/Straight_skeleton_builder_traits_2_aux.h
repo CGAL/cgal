@@ -13,22 +13,28 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-
-#include <CGAL/tags.h>
-#include <CGAL/Handle.h>
-#include <CGAL/Uncertain.h>
 #include <CGAL/certified_numeric_predicates.h>
-#include <CGAL/Quotient.h>
 #include <CGAL/certified_quotient_predicates.h>
-#include <CGAL/Unfiltered_predicate_adaptor.h>
-#include <CGAL/Filtered_predicate.h>
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Filtered_predicate.h>
+#include <CGAL/Handle.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/tags.h>
+#include <CGAL/Uncertain.h>
+#include <CGAL/Unfiltered_predicate_adaptor.h>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/optional/optional.hpp>
 #include <boost/none.hpp>
 #include <boost/mpl/has_xxx.hpp>
+
+#include <algorithm>
+#include <iterator>
+#include <limits>
+#include <stdexcept>
 
 namespace CGAL {
 
