@@ -1856,7 +1856,11 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::FinishUp()
 
   mVisitor.on_cleanup_finished();
 
-  return mSSkel->is_valid() ;
+  // @todo if 'mMaxTime' is sufficiently large, it will be a full skeleton and should be validated as such
+  if(mMaxTime) // might be a partial skeleton
+    return mSSkel->is_valid(true);
+  else
+    return mSSkel->is_valid(false);
 }
 
 template<class Gt, class Ss, class V>

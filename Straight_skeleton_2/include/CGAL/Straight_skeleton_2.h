@@ -110,7 +110,9 @@ public :
       return h != null ? 0 : -1 ;
     }
 
-    bool is_valid() const
+    // Partial skeletons are used when constructing offsets, to avoid building larger-than-needed skeletons.
+    // In that case, fictitious vertices can exist, and we need to ignore them.
+    bool is_valid(const bool is_partial_skeleton = false) const
     {
       //
       // This is a copy of the validity code in Halfedge_const_decorator with a different reporting mechanism
@@ -174,7 +176,7 @@ public :
               CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"]->vertex() == nullptr!");
               break;
           }
-          if ( ! begin->vertex()->has_infinite_time() )
+          if ( !is_partial_skeleton || ! begin->vertex()->has_infinite_time() )
           {
             valid = valid && ( begin->vertex() == begin->next()->opposite()->vertex());
             if ( ! valid)
@@ -223,7 +225,6 @@ public :
 
       size_type v = 0;
       n = 0;
-      bool is_partial_skeleton = false ;
 
       for( ; valid && (vbegin != vend); ++vbegin)
       {
@@ -235,8 +236,19 @@ public :
             break;
           }
 
+          // Time check
+          if( ! is_partial_skeleton )
+          {
+            valid = valid && !vbegin->has_infinite_time();
+            if ( ! valid)
+            {
+              CGAL_STSKEL_VALIDITY_TRACE("ERROR: v["<< id(vbegin) << "] has infinite time in a full skeleton");
+              break;
+            }
+          }
+
           // cycle-around-vertex test.
-          if ( !vbegin->has_infinite_time() )
+          if ( !is_partial_skeleton || !vbegin->has_infinite_time() )
           {
             valid = valid && vbegin->halfedge()->vertex() == vbegin;
             if ( ! valid)
@@ -267,8 +279,6 @@ public :
               } while ( valid && (h != g));
             }
           }
-          else is_partial_skeleton = true ;
-
           ++v;
       }
 

@@ -122,10 +122,10 @@ struct Straight_skeleton_converter_2
 
   Target_skeleton_ptr operator() ( Source_skeleton const& aSkeleton ) const
   {
-    CGAL_assertion(aSkeleton.is_valid());
+    CGAL_assertion(aSkeleton.is_valid(true /*likely partial skeleton*/));
     Target_skeleton_ptr rResult = create_unconnected_copy(aSkeleton);
     connect_items(aSkeleton,*rResult);
-    CGAL_assertion(rResult->is_valid());
+    CGAL_assertion(rResult->is_valid(true /*likely partial skeleton*/));
     return rResult ;
   }
 
