@@ -144,6 +144,8 @@ public:
 
       visitor.after_subface_created(face(res,pmesh));
       visitor.after_subface_created(face(opposite(res,pmesh),pmesh));
+
+      visitor.after_subface_creations();
     }
     else
     {
