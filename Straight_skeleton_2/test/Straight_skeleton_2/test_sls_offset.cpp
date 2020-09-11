@@ -338,9 +338,6 @@ void test_offset(const char* filename,
   Polygon_with_holes_2_ptr_container offset_poly_with_holes =
     create_interior_skeleton_and_offset_polygons_with_holes_2(offv, p);
 
-  std::cout << offset_poly_with_holes.size() << " pols" << std::endl;
-  std::cin.get();
-
   for(const auto& offp : offset_poly_with_holes)
   {
     assert(offp->outer_boundary().is_simple());
@@ -365,11 +362,11 @@ void test_kernel()
   std::cout.precision(17);
   std::cerr.precision(17);
 
-//  test_offset_polygon_with_hole<K>();
+  test_offset_polygon_with_hole<K>();
 
-//  test_offset_polygon_exterior<K>();
+  test_offset_polygon_exterior<K>();
 
-//  test_offset_multiple_CCs<K>();
+  test_offset_multiple_CCs<K>();
 
   test_offset<K>("data/1_Example.poly");
   test_offset<K>("data/1_Example_Working.poly");
