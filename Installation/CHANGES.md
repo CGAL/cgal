@@ -1,6 +1,12 @@
 Release History
 ===============
 
+### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/5.1/Manual/packages.html#PkgBGL)
+
+-   Added the convenience header `CGAL/boost/graph/graph_traits_inheritance_macros.h` that allows to easily
+    make any class inheriting from a model of a face graph concept, a model of the same concept.
+
+
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 -----------
 
