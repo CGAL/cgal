@@ -20,6 +20,26 @@ class Polyhedron_demo_triangulate_facets_plugin :
   typedef Scene_surface_mesh_item::Face_graph FaceGraph;
   typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
 
+  struct Visitor
+  {
+    typedef typename Scene_polyhedron_selection_item::Selection_set_facet Container;
+    Container& faces;
+
+    Visitor(Container& container)
+      : faces(container)
+    {}
+    void before_subface_creations(face_descriptor fd)
+    {
+      Container::iterator it = faces.find(fd);
+      faces.erase(it);
+    }
+    void after_subface_created(face_descriptor fd)
+    {
+      faces.insert(fd);
+    }
+    void after_subface_creations() {}
+  };
+
 public:
 
   void init(QMainWindow* mainWindow,
@@ -79,10 +99,17 @@ public Q_SLOTS:
       }
       else if (selection_item)
       {
-        if (!CGAL::Polygon_mesh_processing::triangulate_faces(selection_item->selected_facets, *pMesh))
+        Visitor visitor(selection_item->selected_facets);
+        if (!CGAL::Polygon_mesh_processing::triangulate_faces(
+                 selection_item->selected_facets,
+                 *pMesh,
+                 CGAL::Polygon_mesh_processing::parameters::triangulate_visitor(visitor)))
           CGAL::Three::Three::warning(tr("Some facets could not be triangulated."));
 
         sm_item = selection_item->polyhedron_item();
+
+        selection_item->invalidateOpenGLBuffers();
+        selection_item->itemChanged();
       }
 
       sm_item->resetColors();
