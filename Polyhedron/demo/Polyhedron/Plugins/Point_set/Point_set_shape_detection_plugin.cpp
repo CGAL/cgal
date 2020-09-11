@@ -946,7 +946,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetectShapesSM_t
     if(!dialog.exec()) return;
 
     if(dialog.min_points() > static_cast<unsigned int>(nb_faces))
-      dialog.m_min_pts_field->setValue(nb_faces);
+      dialog.m_min_pts_field->setValue(static_cast<unsigned int>(nb_faces));
     QApplication::setOverrideCursor(Qt::WaitCursor);
     if (dialog.region_growing()) {
       detect_shapes_with_region_growing_sm(sm_item, dialog);
@@ -988,7 +988,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
       if(!dialog.exec())
         return;
       if(dialog.min_points() > static_cast<unsigned int>(points->size()))
-        dialog.m_min_pts_field->setValue(points->size());
+        dialog.m_min_pts_field->setValue(static_cast<unsigned int>(points->size()));
 
       QApplication::setOverrideCursor(Qt::WaitCursor);
       if (dialog.region_growing())
