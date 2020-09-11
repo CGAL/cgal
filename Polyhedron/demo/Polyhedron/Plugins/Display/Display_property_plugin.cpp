@@ -10,6 +10,7 @@
 #include <QColor>
 #include <QStyleFactory>
 #include <QMessageBox>
+#include <QAbstractItemView>
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -504,7 +505,6 @@ private:
 
   void detectPSScalarProperties(Point_set* ps)
   {
-    //std::pair< std::string, std::type_info >
     for(auto s : ps->properties())
       if(is_property_scalar(s, ps))
       {
@@ -535,6 +535,8 @@ private Q_SLOTS:
     {
       detectPSScalarProperties(p_item->point_set());
     }
+    int width = dock_widget->propertyBox->minimumSizeHint().width();
+    dock_widget->propertyBox->view()->setMinimumWidth(width);
   }
 
   void openDialog()
@@ -545,10 +547,16 @@ private Q_SLOTS:
       dock_widget->raise(); }
   }
 
-  void colorizePS(Point_set* ps)
+  void colorizePS(Scene_points_with_normal_item* ps_item)
   {
-    std::string name = dock_widget->propertyBox->currentText().toStdString();
-
+    if(!treat_point_property(dock_widget->propertyBox->currentText().toStdString(), ps_item->point_set()))
+    {
+      QApplication::restoreOverrideCursor();
+      return;
+    }
+    ps_item->setPointsMode();
+    ps_item->invalidateOpenGLBuffers();
+    ps_item->itemChanged();
   }
   void colorize()
   {
@@ -556,7 +564,8 @@ private Q_SLOTS:
         qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
     if(p_item)
     {
-      colorizePS(p_item->point_set());
+      colorizePS(p_item);
+      return;
     }
     Scene_heat_item* h_item = nullptr;
     Scene_surface_mesh_item* sm_item =
@@ -637,26 +646,37 @@ private Q_SLOTS:
 
   void enableButtons(int i)
   {
-    Scene_surface_mesh_item* item =
+    qDebug()<<i;
+    Scene_surface_mesh_item* sm_item =
         qobject_cast<Scene_surface_mesh_item*>(scene->item(i));
-    if(! item )
+
+    Scene_points_with_normal_item* ps_item =
+        qobject_cast<Scene_points_with_normal_item*>(scene->item(i));
+
+    if(! sm_item && ! ps_item)
     {
       dock_widget->zoomToMinButton->setEnabled(false);
       dock_widget->zoomToMaxButton->setEnabled(false);
     }
-
-    switch(dock_widget->propertyBox->currentIndex())
+    else if(ps_item)
     {
-    case 0:
-      dock_widget->zoomToMinButton->setEnabled(angles_max.count(item)>0 );
-      dock_widget->zoomToMaxButton->setEnabled(angles_max.count(item)>0 );
-      break;
-    case 1:
-      dock_widget->zoomToMinButton->setEnabled(jacobian_max.count(item)>0);
-      dock_widget->zoomToMaxButton->setEnabled(jacobian_max.count(item)>0);
-      break;
-    default:
-      break;
+      dock_widget->zoomToMinButton->setEnabled(false);
+      dock_widget->zoomToMaxButton->setEnabled(false);
+    }
+    else if(sm_item){
+      switch(dock_widget->propertyBox->currentIndex())
+      {
+      case 0:
+        dock_widget->zoomToMinButton->setEnabled(angles_max.count(sm_item)>0 );
+        dock_widget->zoomToMaxButton->setEnabled(angles_max.count(sm_item)>0 );
+        break;
+      case 1:
+        dock_widget->zoomToMinButton->setEnabled(jacobian_max.count(sm_item)>0);
+        dock_widget->zoomToMaxButton->setEnabled(jacobian_max.count(sm_item)>0);
+        break;
+      default:
+        break;
+      }
     }
   }
 
@@ -1008,53 +1028,54 @@ private Q_SLOTS:
   void on_propertyBox_currentIndexChanged(int)
   {
     dock_widget->sourcePointsButton->setEnabled(false);
-    switch(dock_widget->propertyBox->currentIndex())
-    {
-    case 0:
-    {
-      dock_widget->groupBox->  setEnabled(true);
-      dock_widget->groupBox_3->setEnabled(true);
+    Scene_surface_mesh_item* item =
+        qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+    if(! item )
+      dock_widget->maxBox->setValue(180);
+    else{
+      switch(dock_widget->propertyBox->currentIndex())
+      {
+      case 0:
+      {
+        dock_widget->groupBox->  setEnabled(true);
+        dock_widget->groupBox_3->setEnabled(true);
 
-      dock_widget->minBox->setMinimum(0);
-      dock_widget->minBox->setMaximum(360);
-      dock_widget->minBox->setValue(0);
-      dock_widget->maxBox->setMinimum(0);
-      dock_widget->maxBox->setMaximum(360);
-      Scene_surface_mesh_item* item =
-          qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
-      if(! item )
-        dock_widget->maxBox->setValue(180);
-      else if(is_triangle_mesh(*item->face_graph()))
-        dock_widget->maxBox->setValue(60);
-      else if(is_quad_mesh(*item->face_graph()))
-        dock_widget->maxBox->setValue(90);
-      replaceRamp();
-      break;
+        dock_widget->minBox->setMinimum(0);
+        dock_widget->minBox->setMaximum(360);
+        dock_widget->minBox->setValue(0);
+        dock_widget->maxBox->setMinimum(0);
+        dock_widget->maxBox->setMaximum(360);
+        if(is_triangle_mesh(*item->face_graph()))
+          dock_widget->maxBox->setValue(60);
+        else if(is_quad_mesh(*item->face_graph()))
+          dock_widget->maxBox->setValue(90);
+        replaceRamp();
+        break;
+      }
+      case 1:
+        dock_widget->groupBox->  setEnabled(true);
+        dock_widget->groupBox_3->setEnabled(true);
+
+        dock_widget->minBox->setMinimum(-1000);
+        dock_widget->minBox->setMaximum(1000);
+        dock_widget->minBox->setValue(0);
+
+        dock_widget->maxBox->setMinimum(-1000);
+        dock_widget->maxBox->setMaximum(1000);
+        dock_widget->maxBox->setValue(2);
+        break;
+      case 2:
+      case 3:
+        dock_widget->sourcePointsButton->setEnabled(true);
+      default:
+        dock_widget->maxBox->setMinimum(-99999999);
+        dock_widget->maxBox->setMaximum(99999999);
+        dock_widget->minBox->setMinimum(-99999999);
+        dock_widget->minBox->setMaximum(99999999);
+        dock_widget->groupBox->  setEnabled(false);
+        dock_widget->groupBox_3->setEnabled(false);
+      }
     }
-    case 1:
-      dock_widget->groupBox->  setEnabled(true);
-      dock_widget->groupBox_3->setEnabled(true);
-
-      dock_widget->minBox->setMinimum(-1000);
-      dock_widget->minBox->setMaximum(1000);
-      dock_widget->minBox->setValue(0);
-
-      dock_widget->maxBox->setMinimum(-1000);
-      dock_widget->maxBox->setMaximum(1000);
-      dock_widget->maxBox->setValue(2);
-      break;
-    case 2:
-    case 3:
-      dock_widget->sourcePointsButton->setEnabled(true);
-    default:
-      dock_widget->maxBox->setMinimum(-99999999);
-      dock_widget->maxBox->setMaximum(99999999);
-      dock_widget->minBox->setMinimum(-99999999);
-      dock_widget->minBox->setMaximum(99999999);
-      dock_widget->groupBox->  setEnabled(false);
-      dock_widget->groupBox_3->setEnabled(false);
-    }
-    enableButtons(scene->mainSelectionIndex());
   }
 
   void closure()Q_DECL_OVERRIDE
@@ -1064,6 +1085,7 @@ private Q_SLOTS:
 
   void on_zoomToMinButton_pressed()
   {
+
     Scene_surface_mesh_item* item =
         qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
     if(!item)
@@ -1281,6 +1303,7 @@ private:
   bool displayFaceProperty(SMesh& smesh, PM pm);
   bool treat_vertex_property(std::string name, SMesh* sm);
   bool treat_face_property(std::string name, SMesh* sm);
+  bool treat_point_property(std::string name, Point_set* sm);
   template<typename Simplex>
   bool is_property_scalar(std::string name, const SMesh* sm);
   bool is_property_scalar(std::string name, const Point_set* ps);
@@ -1483,6 +1506,13 @@ private:
 
   bool DisplayPropertyPlugin::is_property_scalar(std::string name, const Point_set* ps)
   {
+    if(name == "red"
+       || name == "green"
+       || name == "blue")
+    {
+      return false;
+    }
+
     if(ps->template property_map<boost::int8_t>(name).second)
     {
       return true;
@@ -1573,107 +1603,107 @@ private:
     return false;
   }
 
-  bool DisplayPropertyPlugin::treat_point_property(std::string name, Point_set* sm)
+  bool DisplayPropertyPlugin::treat_point_property(std::string name, Point_set* ps)
   {
-    typedef typename SMesh::template Property_map<vertex_descriptor, boost::int8_t>   Int8_map;
-    typedef typename SMesh::template Property_map<vertex_descriptor, boost::uint8_t>  Uint8_map;
-    typedef typename SMesh::template Property_map<vertex_descriptor, boost::int16_t>  Int16_map;
-    typedef typename SMesh::template Property_map<vertex_descriptor, boost::uint16_t> Uint16_map;
-    typedef typename SMesh::template Property_map<vertex_descriptor, boost::int32_t>  Int32_map;
-    typedef typename SMesh::template Property_map<vertex_descriptor, boost::uint32_t> Uint32_map;
-    typedef typename SMesh::template Property_map<vertex_descriptor, boost::int64_t>  Int64_map;
-    typedef typename SMesh::template Property_map<vertex_descriptor, boost::uint64_t> Uint64_map;
-    typedef typename SMesh::template Property_map<vertex_descriptor, float>           Float_map;
-    typedef typename SMesh::template Property_map<vertex_descriptor, double>          Double_map;
+    typedef typename Point_set::template Property_map<boost::int8_t>   Int8_map;
+    typedef typename Point_set::template Property_map<boost::uint8_t>  Uint8_map;
+    typedef typename Point_set::template Property_map<boost::int16_t>  Int16_map;
+    typedef typename Point_set::template Property_map<boost::uint16_t> Uint16_map;
+    typedef typename Point_set::template Property_map<boost::int32_t>  Int32_map;
+    typedef typename Point_set::template Property_map<boost::uint32_t> Uint32_map;
+    typedef typename Point_set::template Property_map<boost::int64_t>  Int64_map;
+    typedef typename Point_set::template Property_map<boost::uint64_t> Uint64_map;
+    typedef typename Point_set::template Property_map<float>           Float_map;
+    typedef typename Point_set::template Property_map<double>          Double_map;
 
     bool okay = false;
     {
       Int8_map pmap;
-      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::int8_t>(name);
+      std::tie(pmap, okay) = ps->property_map<boost::int8_t>(name);
       if(okay)
       {
-        return displayVertexProperty(*sm, pmap);
+        return displayPSProperty(ps, pmap);
       }
     }
 
     {
       Uint8_map pmap;
-      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::uint8_t>(name);
+      std::tie(pmap, okay) = ps->property_map<boost::uint8_t>(name);
       if(okay)
       {
-        return displayVertexProperty(*sm, pmap);
+        return displayPSProperty(ps, pmap);
       }
     }
 
     {
       Int16_map pmap;
-      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::int16_t>(name);
+      std::tie(pmap, okay) = ps->property_map<boost::int16_t>(name);
       if(okay)
       {
-        return displayVertexProperty(*sm, pmap);
+        return displayPSProperty(ps, pmap);
       }
     }
 
     {
       Uint16_map pmap;
-      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::uint16_t>(name);
+      std::tie(pmap, okay) = ps->property_map<boost::uint16_t>(name);
       if(okay)
       {
-        return displayVertexProperty(*sm, pmap);
+        return displayPSProperty(ps, pmap);
       }
     }
 
     {
       Int32_map pmap;
-      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::int32_t>(name);
+      std::tie(pmap, okay) = ps->property_map<boost::int32_t>(name);
       if(okay)
       {
-        return displayVertexProperty(*sm, pmap);
+        return displayPSProperty(ps, pmap);
       }
     }
 
     {
       Uint32_map pmap;
-      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::uint32_t>(name);
+      std::tie(pmap, okay) = ps->property_map<boost::uint32_t>(name);
       if(okay)
       {
-        return displayVertexProperty(*sm, pmap);
+        return displayPSProperty(ps, pmap);
       }
     }
 
     {
       Int64_map pmap;
-      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::int64_t>(name);
+      std::tie(pmap, okay) = ps->property_map<boost::int64_t>(name);
       if(okay)
       {
-        return displayVertexProperty(*sm, pmap);
+        return displayPSProperty(ps, pmap);
       }
     }
 
     {
       Uint64_map pmap;
-      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::uint64_t>(name);
+      std::tie(pmap, okay) = ps->property_map<boost::uint64_t>(name);
       if(okay)
       {
-        return displayVertexProperty(*sm, pmap);
+        return displayPSProperty(ps, pmap);
       }
     }
 
     {
       Float_map pmap;
-      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,float>(name);
+      std::tie(pmap, okay) = ps->property_map<float>(name);
       if(okay)
       {
-        return displayVertexProperty(*sm, pmap);
+        return displayPSProperty(ps, pmap);
       }
     }
 
     {
       Double_map pmap;
-      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,double>(name);
+      std::tie(pmap, okay) = ps->property_map<double>(name);
       if(okay)
       {
-        return displayVertexProperty(*sm, pmap);
+        return displayPSProperty(ps, pmap);
       }
     }
     return false;
@@ -1898,7 +1928,7 @@ private:
     minBox = ARBITRARY_DBL_MAX;
     maxBox = -ARBITRARY_DBL_MAX;
     std::vector<Value_type> values;
-    for(auto p : ps->points())
+    for(auto p : *ps)
     {
       values.push_back(pm[p]);
     }
@@ -1910,10 +1940,8 @@ private:
     maxBox = *(end-1);
     dock_widget->minBox->setValue(minBox);
     dock_widget->maxBox->setValue(maxBox);
+    ps->add_colors();
     //fill color pmap
-    Point_set::Property_map<CGAL::Color> pcolors =
-        ps->add_property_map<CGAL::Color >("color", CGAL::Color()).first;
-
     if(dock_widget->colorChoiceWidget->currentIndex() == 1)
     {
       std::unordered_map<Value_type, std::size_t> value_index_map;
@@ -1934,7 +1962,7 @@ private:
               color_map[value_index_map[pm[*pit]]].red(),
               color_map[value_index_map[pm[*pit]]].green(),
               color_map[value_index_map[pm[*pit]]].blue());
-        pcolors[*pit] = color;
+        ps->set_color(*pit, color.red(), color.green(), color.blue());
       }
       displayMapLegend(values);
     }
@@ -1959,7 +1987,7 @@ private:
               255*color_ramp.r(f),
               255*color_ramp.g(f),
               255*color_ramp.b(f));
-        pcolors[*pit] = color;
+        ps->set_color(*pit, color.red(), color.green(), color.blue());
       }
     }
     return true;
