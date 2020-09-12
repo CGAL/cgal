@@ -479,7 +479,16 @@ public:
    */
   Point_range &points() { return m_points; }
 
+  /*!
+   * \brief access to the points via iterator
+   * \return the iterator at the start of the collection of point indices held by this node
+   */
   typename Point_range::iterator begin() { return m_points.begin(); }
+
+  /*!
+    * \brief access to the points via iterator
+    * \return the iterator at the end of the collection of point indices held by this node
+    */
   typename Point_range::iterator end() { return m_points.end(); }
 
   /*!
@@ -488,7 +497,16 @@ public:
    */
   const Point_range &points() const { return m_points; }
 
+  /*!
+    * \brief read-only access to the points via iterator
+    * \return the iterator at the start of the collection of point indices held by this node
+    */
   typename Point_range::iterator begin() const { return m_points.begin(); }
+
+  /*!
+    * \brief read-only access to the points via iterator
+    * \return the iterator at the end of the collection of point indices held by this node
+    */
   typename Point_range::iterator end() const { return m_points.end(); }
 
   /*!
