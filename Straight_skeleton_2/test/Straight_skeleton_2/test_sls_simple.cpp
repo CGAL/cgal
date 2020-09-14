@@ -146,14 +146,15 @@ void test_kernel()
   std::cout.precision(17);
   std::cerr.precision(17);
 
-  test_skeleton<K>("data/1_Example.poly");
-  test_skeleton<K>("data/1_Example_Working.poly");
+  // Disk, NV + NF - 1 = NE
+  test_skeleton<K>("data/1_Example.poly", 119, 364, 64);
+  test_skeleton<K>("data/1_Example_Working.poly", 104, 318, 56);
   test_skeleton<K>("data/2_Example.poly", 37, 112, 20);
-  test_skeleton<K>("data/5-SPOKE2.poly");
-  test_skeleton<K>("data/5-SPOKE.poly");
-  test_skeleton<K>("data/7-SPOKE.poly");
-  test_skeleton<K>("data/alley_0.poly");
-  test_skeleton<K>("data/alley_1.poly");
+  test_skeleton<K>("data/5-SPOKE2.poly"/*, 32, 102, 22*/); // weird almost-duplicates
+  test_skeleton<K>("data/5-SPOKE.poly"/*, 32, 102, 22*/);
+  test_skeleton<K>("data/7-SPOKE.poly"); // @todo recompute
+  test_skeleton<K>("data/alley_0.poly", 18, 58, 12);
+  test_skeleton<K>("data/alley_1.poly", 20, 62, 12);
   test_skeleton<K>("data/alley_2.poly");
   test_skeleton<K>("data/alley_3.poly");
   test_skeleton<K>("data/AlmostClosed.poly");
