@@ -110,32 +110,20 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateHook( FT                    
         {
           CGAL_stskel_intrinsic_test_assertion( !CGAL_SS_i::is_time_clearly_not_within_possibly_inexact_bisector_time_interval(aTime,aBisector) ) ;
 
+          // If the slope is positive, and the isoline goes through the source, we have to distinguish
+          // two cases:
+          // - The slope of the next halfedge is (strictly) negative; in that case, we do not want
+          //   to interrupt the isoline at the source vertex, it should find a better exit point
+          //   farther in the face.
+          // - The slop of the next halfedge is zero or positive; in that case, we should leave the face.
           if ( aBisector->slope() == POSITIVE && lTimeWrtSrcTime == EQUAL )
           {
-            // The offset isovalue going through the halfedge's source is fine, as long as
-            // current->prev also has positive slope, otherwise we are not actually leaving
-            // the face. Thus, if current->prev has non-positive slope, keep walking the border
-            // until a halfedge with positive slope appears.
-            //
-            // Note that this doesn't garantee that this new halfedge will be the exit halfedge (it is
-            // possible that on the next 'aBisector', both extremities will have time > offset_time)
-            // and we might have to skip multiple such sections.
-
-            if ( lPrev->is_bisector() && ( lPrev->slope() != POSITIVE ) )
+            if ( lPrev->is_bisector() && ( lPrev->slope() == NEGATIVE ) )
             {
-              do
-              {
-                CGAL_POLYOFFSET_TRACE(4, "\nlPrev: " << e2str(*lPrev)
-                                         << " is bisector? " << lPrev->is_bisector()
-                                         << " non-positive slope? " << ( lPrev->slope() != POSITIVE ) ) ;
-                lPrev = lPrev->prev();
-                CGAL_assertion(lPrev != aBisector) ; // what goes up must come down
-              }
-              while ( lPrev->is_bisector() && ( lPrev->slope() != POSITIVE ) );
+              CGAL_POLYOFFSET_TRACE(4,"\n Local V: " << e2str(*lPrev) ) ;
 
-              CGAL_POLYOFFSET_TRACE(4,"\n post-walk lPrev: " << e2str(*lPrev) ) ;
-
-              aBisector = lPrev;
+              // prev() has the isoline passing through its target, but we don't want to exit there
+              aBisector = lPrev->prev()->prev();
               continue;
             }
           }
