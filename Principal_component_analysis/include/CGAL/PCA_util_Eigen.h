@@ -144,9 +144,9 @@ assemble_covariance_matrix_3(InputIterator first,
     FT x0 = t[0].x();
     FT y0 = t[0].y();
     FT z0 = t[0].z();
-    FT delta[9] = {t[0].x(), t[1].x(), t[2].x(),
-                   t[0].y(), t[1].y(), t[2].y(),
-                   t[0].z(), t[1].z(), t[2].z()};
+    FT delta[9] = {t[1].x()-x0, t[3].x()-x0, t[5].x()-x0,
+                   t[1].y()-y0, t[3].y()-y0, t[5].y()-y0,
+                   t[1].z()-z0, t[3].z()-z0, t[5].z()-z0};
     Matrix transformation (delta);
     FT volume = t.volume();
 
