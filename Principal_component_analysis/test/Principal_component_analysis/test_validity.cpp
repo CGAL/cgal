@@ -1,3 +1,29 @@
+/*
+  This test checks that the outputs of all variants of PCA are
+  correct.
+
+  To do so:
+  - N Point_3 objects are generated on a random line
+  - N*N Point_3 objects are generated on a random plane
+
+  For each variant of the PCA, we generate objects "centered" on the
+  reference points:
+  - Sphere_3 centered on each point with random radius
+  - Equilateral Triangle_3 centered on each point with random length
+  - Point_2 using first 2 coordinates of Point_3
+  - etc.
+
+  PCA is then computed for Line_2 in 2D or for Line_3 and Plane_3 in
+  3D. Then, the mean distance between the original points (or 2D
+  variants if 2D case) and the estimated support is computed: if it
+  higher than 0.01% of the diameter of the point cloud, an assertion
+  is raised.
+
+  This only tests an obvious case where the PCA is computed on a set
+  of exactly aligned objects, but it should help avoiding the
+  introduction of bugs.
+ */
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
@@ -25,6 +51,11 @@ typedef Kernel::Triangle_2 Triangle_2;
 typedef Kernel::Line_2 Line_2;
 
 CGAL::Random rnd;
+
+/*
+  Functions used to generate objects "centered" on points (objects
+  whose centers of mass are on the points).
+ */
 
 void generate_objects_centered_on_points (const std::vector<Point_3>& source,
                                           std::vector<Point_3>& target)
@@ -165,12 +196,20 @@ void generate_objects_centered_on_points (const std::vector<Point_3>& source,
   }
 }
 
+/*
+  Compute distances between original points to Line_3/Plane_3/Line_2
+ */
+
 double distance (const Point_3& p, const Line_3& l)
 { return std::sqrt (CGAL::squared_distance (p, l)); }
 double distance (const Point_3& p, const Plane_3& pl)
 { return std::sqrt (CGAL::squared_distance (p, pl)); }
 double distance (const Point_3& p, const Line_2& l)
 { return std::sqrt (CGAL::squared_distance (Point_2 (p.x(), p.y()), l)); }
+
+/*
+  Test quality of fit and raise assertion if too low.
+ */
 
 template <typename Fitted>
 void assert_quality (const std::vector<Point_3>& points, const Fitted& fitted)
@@ -188,6 +227,10 @@ void assert_quality (const std::vector<Point_3>& points, const Fitted& fitted)
   std::cerr << "mean distance = " << mean_dist << std::endl;
   CGAL_assertion (mean_dist < limit);
 }
+
+/*
+  Reference test functions, both in 2D and 3D.
+ */
 
 template <typename Fitted, typename Object, int dim>
 void test (const std::vector<Object>& objects,
@@ -221,6 +264,9 @@ void test (const std::vector<Point_3>& points)
   test<Fitted, Object, dim>
     (objects, points, typename CGAL::Ambient_dimension<Object, Kernel>::type());
 }
+
+
+
 
 int main()
 {
