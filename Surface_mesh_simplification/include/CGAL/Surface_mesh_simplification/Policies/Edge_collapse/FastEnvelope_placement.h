@@ -1,4 +1,4 @@
-// Copyright (c) 2019  GeometryFactory (France). All rights reserved.
+// Copyright (c) 2020  GeometryFactory (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
 //
@@ -6,11 +6,10 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Maxime Gimeno,
-//                 Mael Rouxel-Labbé
+// Author(s)     : Andreas Fabri
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_FAST_ENVELOPE_PLACEMENT_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_FAST_ENVELOPE_PLACEMENT_H
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_FAST_ENVELOPE_FILTER_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_FAST_ENVELOPE_FILTER_H
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
@@ -18,6 +17,7 @@
 #include <CGAL/Default.h>
 #include <CGAL/intersections.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include<CGAL/Surface_mesh_simplification/internal/common.h>
 
 #include <fastenvelope/FastEnvelope.h>
 #include <fastenvelope/Types.hpp>
@@ -30,8 +30,9 @@
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
-template<typename BasePlacement, typename GeomTraits>
-class FastEnvelope_placement
+
+template<typename GeomTraits,typename BaseFilter = internal::Dummy_filter>
+class FastEnvelope_filter
 {
   typedef GeomTraits                                                          Geom_traits;
   typedef typename Geom_traits::FT                                            FT;
@@ -79,15 +80,15 @@ private:
 
 
 public:
-  FastEnvelope_placement(const FT dist,
-                         const BasePlacement& placement = BasePlacement())
+  FastEnvelope_filter(const FT dist,
+                      const BaseFilter& filter = BaseFilter())
     :
       m_dist(dist),
       m_fast_envelope(nullptr),
-      m_base_placement(placement)
+      m_base_filter(filter)
   {}
 
-  ~FastEnvelope_placement()
+  ~FastEnvelope_filter()
   {
     if(m_fast_envelope != nullptr){
       delete m_fast_envelope;
@@ -97,16 +98,14 @@ public:
 
   template <typename Profile>
   boost::optional<typename Profile::Point>
-  operator()(const Profile& profile) const
+  operator()(const Profile& profile, boost::optional<typename Profile::Point> op) const
   {
     typedef typename Profile::Point Point;
     typedef typename Profile::vertex_descriptor_vector Link;
     typedef typename Profile::Triangle_mesh Triangle_mesh;
     typedef typename boost::graph_traits<Triangle_mesh>::vertex_descriptor vertex_descriptor;
 
-
-
-    boost::optional<typename Profile::Point> op = m_base_placement(profile);
+    op = m_base_filter(profile, op);
     if(op)
     {
       if(m_fast_envelope == nullptr){
@@ -116,8 +115,8 @@ public:
       Vector3 vecp(p.x(),p.y(),p.z());
 
       if(m_fast_envelope->is_outside(vecp)){
-        // refuse the placement
-        return boost::optional<Point>();
+        // the new placement is outside envelope
+        return boost::none;
       }
 
       const Link link = profile.link();
@@ -134,8 +133,8 @@ public:
         std::array<Vector3, 3> triangle = { vecp, vecv, vecw};
 
         if(m_fast_envelope->is_outside(triangle)){
-          // refuse the placement
-          return boost::optional<Point>();
+          // the triange intersects the envelope
+          return boost::none;
         }
         vecv = vecw;
 
@@ -144,13 +143,14 @@ public:
     return op;
   }
 
+
 private:
   const FT m_dist;
   mutable fastEnvelope::FastEnvelope* m_fast_envelope;
   mutable std::vector<Vector3> m_vertices;
   mutable std::vector<Vector3i> m_faces;
 
-  const BasePlacement m_base_placement;
+  const BaseFilter m_base_filter;
 };
 
 
@@ -158,4 +158,4 @@ private:
 } // namespace Surface_mesh_simplification
 } // namespace CGAL
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_FAST_ENVELOPE_PLACEMENT_H
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_FAST_ENVELOPE_FILTER_H
