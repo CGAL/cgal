@@ -12,7 +12,7 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h>
 
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_filter.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/FastEnvelope_placement.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/FastEnvelope_filter.h>
 
 //bbox
 #include <CGAL/Polygon_mesh_processing/bbox.h>
