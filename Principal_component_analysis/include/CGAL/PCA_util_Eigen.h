@@ -548,9 +548,9 @@ assemble_covariance_matrix_3(InputIterator first,
 
   // assemble 2nd order moment about the origin.
   Matrix moment;
-  moment << 1.0, 0.5, 0.0,
-            0.5, 1.0, 0.0,
-            0.0, 0.0, 0.0;
+  moment << 1.0/3.0, 0.5/3.0, 0.0,
+            0.5/3.0, 1.0/3.0, 0.0,
+            0.0,     0.0,     0.0;
 
   for(InputIterator it = first;
       it != beyond;
