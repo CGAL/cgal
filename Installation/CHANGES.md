@@ -1,6 +1,19 @@
 Release History
 ===============
 
+[Release 5.2](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.2)
+-----------
+
+Release date:
+
+### [Polygon Mesh Processing](https://doc.cgal.org/latest/Manual/packages.html#PkgPolygonMeshProcessing)
+
+- Added a visitor to the functions
+[`CGAL::Polygon_mesh_processing::triangulate_face()`](https://doc.cgal.org/5.1/Polygon_mesh_processing/group__PMP__meshing__grp.html#ga70d65044f8c7309c24ade88fa280124a)
+and [`CGAL::Polygon_mesh_processing::triangulate_faces()`](https://doc.cgal.org/5.1/Polygon_mesh_processing/group__PMP__meshing__grp.html#gacaaff4d520500c530d9c3d5ebe2a0760),
+that enables the user to keep track of the newly created faces through the triangulation process.
+
+
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 -----------
 
