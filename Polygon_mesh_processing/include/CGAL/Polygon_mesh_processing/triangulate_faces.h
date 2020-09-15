@@ -491,7 +491,7 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
                              get_parameter(np, internal_np::triangulate_visitor),
                              Triangulate_faces::Default_visitor<PolygonMesh>());
 
-  internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel, Visitor> modifier(vpmap);
+  internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel, Visitor> modifier(vpmap, traits);
   return modifier.triangulate_face(f, pmesh, use_cdt, visitor);
 }
 
@@ -575,7 +575,7 @@ bool triangulate_faces(FaceRange face_range,
                                   get_parameter(np, internal_np::triangulate_visitor),
                                   Triangulate_faces::Default_visitor<PolygonMesh>());
 
-  internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel, Visitor> modifier(vpmap);
+  internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel, Visitor> modifier(vpmap, traits);
   return modifier(face_range, pmesh, use_cdt, visitor);
 }
 
