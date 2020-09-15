@@ -11,7 +11,6 @@
 \example Min_quadrilateral_2/minimum_enclosing_strip_2.cpp
 \example Min_sphere_d/min_sphere_3.cpp
 \example Min_sphere_d/min_sphere_homogeneous_3.cpp
-\example Min_sphere_d/min_sphere_homogeneous_d.cpp
 \example Min_sphere_of_spheres_d/benchmark.cpp
 \example Min_sphere_of_spheres_d/min_sphere_of_spheres_d_2.cpp
 \example Min_sphere_of_spheres_d/min_sphere_of_spheres_d_3.cpp
