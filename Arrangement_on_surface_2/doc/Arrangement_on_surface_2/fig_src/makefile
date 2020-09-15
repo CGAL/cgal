@@ -42,7 +42,8 @@ TARGETS = \
   rational_function_singular.pdf \
   consolidated_curve_data.pdf \
   generic_curve_data.pdf \
-  observer.pdf
+  observer.pdf \
+  dcel_extension.pdf
 
 .DEFAULT_GOAL = all
 .PHONY: all clean

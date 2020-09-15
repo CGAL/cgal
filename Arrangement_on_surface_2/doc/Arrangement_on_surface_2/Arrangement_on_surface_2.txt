@@ -189,23 +189,23 @@ insertion-functions.  In Section \ref aos_sec-unbounded we explain how
 to construct and manipulate arrangements of unbounded curves.  Section
 \ref aos_sec-geom_traits contains detailed descriptions of the
 geometric traits concept hierarchy and the various geometric traits
-classes included in the arrangement package. The different traits
-classes enables the construction and manipulation of arrangements of
-different families of curves. Naturally, here, the embedding surface
-plays a significant role. In Section \ref arr_ssecnotif we review the
-notification mechanism that allows external classes to keep track of
-the changes that an arrangement instance goes through. Section \ref
-arr_ssecex_dcel explains how to extend the \sc{Dcel} records, to store
-extra data with them, and to efficiently update this data.  In Section
-\ref arr_ssecoverlay we introduce the fundamental operation of
-overlaying two arrangements.  Section \ref arr_ssecarr_with_hist
-describes a class-template that extends the arrangement by storing
-additional history records with its curves. In Section \ref aos_sec-io
-we review the arrangement input/output functions. In Section \ref
-aos_sec-bgl we describes how to apply the graph algorithms implemented
-in the Boost Graph Library to arrangement types. Finally, in Section
-\ref aos_sec-tips we provide some tips that can be applied to expedite
-computation.
+classes included in the \ref PkgArrangementOnSurface2 package. The
+different traits classes enables the construction and manipulation of
+arrangements of different families of curves. Naturally, here, the
+embedding surface plays a significant role. In Section \ref
+arr_ssecnotif we review the notification mechanism that allows
+external classes to keep track of the changes that an arrangement
+instance goes through. Section \ref arr_ssecex_dcel explains how to
+extend the \sc{Dcel} records, to store extra data with them, and to
+efficiently update this data.  In Section \ref arr_ssecoverlay we
+introduce the fundamental operation of overlaying two arrangements.
+Section \ref arr_ssecarr_with_hist describes a class-template that
+extends the arrangement by storing additional history records with its
+curves. In Section \ref aos_sec-io we review the arrangement
+input/output functions. In Section \ref aos_sec-bgl we describes how
+to apply the graph algorithms implemented in the Boost Graph Library
+to arrangement types. Finally, in Section \ref aos_sec-tips we provide
+some tips that can be applied to expedite computation.
 
 <!--=========================================================================-->
 \section aos_sec-basic Basic Arrangements
@@ -5302,28 +5302,29 @@ this data stored in these fields, as the following sections reveal.
 \subsection arr_ssecex_dcel Extending the DCEL
 <!----------------------------------------------------------------------------->
 
-For many applications of the arrangement package it is necessary to
-store additional information (perhaps of non-geometric nature) with
-the arrangement cells. As vertices are associated with `%Point_2`
-objects and edges (halfedge pairs) are associated with
-`X_monotone_curve_2` objects, both defined by the traits class,
-it is possible to extend the traits-class type by using a traits-class
-decorator, as explained in Section \ref arr_ssecmeta_tr, which may
-be a sufficient solution for some applications.
-However, the \sc{Dcel} faces are not associated with any geometric object,
-so it is impossible to extend them using a traits-class decorator.
-Extending the \sc{Dcel} face records comes handy is such cases. As a matter
-of fact, it is possible to conveniently extend all \sc{Dcel} records
-(namely vertices, halfedges and faces), which can also be advantageous
-for some applications.
+For many applications of the \ref PkgArrangementOnSurface2 package it
+is necessary to store additional information (perhaps of non-geometric
+nature) with the arrangement features. Vertices are associated with
+`Point_2` objects and edges (halfedge pairs) are associated with
+`X_monotone_curve_2` objects, both defined by the traits
+class. Extending the geometric traits-class types by using a
+traits-class decorator, as explained in Section \ref arr_ssecmeta_tr,
+might be a sufficient solution for some applications.  However, the
+\sc{Dcel} faces are not associated with any geometric object, so
+traits-class decorators cannot help here. Extending the \sc{Dcel} face
+records comes in handy is such cases. As a matter of fact, it is
+possible to conveniently extend all \sc{Dcel} records (namely
+vertices, halfedges, and faces), which is advantageous for some
+applications.
 
-All examples presented so far use the default
-`Arr_default_dcel<Traits>`.  This is done implicitly, as this class
-serves as a default parameter for the `Arrangement_2` template. The
-default \sc{Dcel} class just associates points with vertices and
-\f$x\f$-monotone curves with halfedge, but nothing more.  In this
-section we show how to use alternative \sc{Dcel} types to extend the
-desired \sc{Dcel} records.
+All examples presented so far use the default \sc{Dcel}; namely, they
+employ the `Arr_default_dcel<Traits>` instance. This is done
+implicitly, as an instance of this class template serves as the
+default parameter for the `Arrangement_2` class template; see Section
+\ref aos_ssec-basic-arr_class. The default \sc{Dcel} class associates
+points with vertices and \f$x\f$-monotone curves with halfedges, but
+nothing more.  In this section we show how to use alternative
+\sc{Dcel} types to extend the desired \sc{Dcel} records.
 
 <!----------------------------------------------------------------------------->
 \subsubsection arr_sssecex_dcel_face Extending the DCEL Faces
@@ -5331,25 +5332,24 @@ desired \sc{Dcel} records.
 
 The `Arr_face_extended_dcel<Traits, FaceData>` class-template is used
 to associate auxiliary data field of type `FaceData` to each face
-record in the \sc{Dcel}.
+record in the \sc{Dcel}.  When the `Arrangement_2<Traits,Dcel>` class
+template is instantiated, substituting the \sc{Dcel} parameter with an
+instance of this class template, the interface of the nested `Face`
+type is extended with the access function `data()` and with the
+modifier `set_data()`. Using these extra functions it is
+straightforward to access and maintain the auxiliary face-data field.
 
-When an `Arrangement_2` object is parameterized by this \sc{Dcel}
-class, its nested `Face` type is extended with the access function
-`data()` and with the modifier `set_data()`. Using these extra
-functions it is straightforward to access and maintain the auxiliary
-face-data field.
-
-Note that the extra data fields must be maintained by the application
-programmers. They may choose to construct their arrangement, and only
-then go over the faces and attach the appropriate data fields to the
-arrangement faces. However, in some cases the face data can only be
-computed when the face is created (split from another face, or merged
-with another face). In such cases one can use an arrangement observer
-tailored for this task, which receives updates whenever a face is
-modified and sets its data field accordingly.
+Note that the extra data-fields must be maintained by the user
+application. User may choose to construct their arrangement, and may
+only then go over the faces and store data in the appropriate
+data-fields of the arrangement faces. However, in some cases the face
+data can only be computed when the face is created (split from another
+face or merged with another face). In such cases one can use an
+arrangement observer tailored for this task, which receives updates
+whenever a face is modified and sets its data field accordingly.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_20,ex_20.png}
+\cgalFigureBegin{arr_figex_dcel_extension,dcel_extension.png}
 
 An arrangement of six line segments, as constructed in
 `face_extension.cpp` and `dcel_extension.cpp` (in `dcel_extension.cpp`
@@ -5360,13 +5360,14 @@ the halfedges in `face_extension.cpp` are shown in brackets.
 <!----------------------------------------------------------------------------->
 
 The next example constructs an arrangement that contains seven bounded
-faces induced by six line segments (see
-\cgalFigureRef{arr_figex_20}). An observer gets notified each time a
-new face \f$f\f$ is created and it associates \f$f\f$ with a running
-index, (where the index of the unbounded face is 0). As a result, the
-faces are numbered according to their creation order, as one can
-easily verify by examining the insertion order of the
-segments:\cgalFootnote{For simplicity, the particular observer used
+faces induced by six line segments, \f$s_1, \ldots, s_6\f$, as shown
+in \cgalFigureRef{arr_figex_dcel_extension}. An observer gets notified
+each time a new face \f$f\f$ is created, and it associates \f$f\f$
+with a running index, where the index of the unbounded face is 0. As a
+result, the faces are numbered according to their creation order,
+These numbers are shown in brackets, and their order can easily be
+verified by examining the insertion order of the
+segments.\cgalFootnote{For simplicity, the particular observer used
 must be attached to an empty arrangement. It is not difficult however
 to modify the program to handle the general case of attaching a
 similar observer to a non-empty arrangement.}
@@ -5377,31 +5378,40 @@ similar observer to a non-empty arrangement.}
 \subsubsection arr_sssecex_dcel_all Extending All DCEL Records
 <!----------------------------------------------------------------------------->
 
-The `Arr_extended_dcel<Traits, VertexData, HalfedgeData, FaceData>`
-class-template is used to associate auxiliary data fields of
-types `VertexData` `HalfedgeData`, and `FaceData` to
-each \sc{Dcel} vertex, halfedge, and face record types, respectively.
-
-When an `Arrangement_2` object is injected with this
-\sc{Dcel} class, each one of its nested `Vertex`, `Halfedge` and
-`Face` classes is extended by the access function `data()`
-and by the modifier `set_data()`.
+As you continue to use arrangements to solve various problems you will
+find out that the ability to extend the face records is
+crucial. Perhaps less common, but also important to satisfy, is the
+need to extend the vertex and halfedge records as well. The
+`Arr_extended_dcel<Traits, VertexData, HalfedgeData, FaceData>`
+class-template is used to associate auxiliary data fields of types
+`VertexData`, `HalfedgeData`, and `FaceData` with \sc{Dcel} vertex,
+halfedge, and face record types, respectively.  When the
+`Arrangement_2<Traits,Dcel>` class template is instantiated,
+substituting the `Dcel` parameter with an instance of this \sc{Dcel}
+class-template, the interfaces of the nested types Vertex, Halfedge,
+and Face are extended with the access function `data()` and with the
+modifier `set_data()`.
 
 The next example shows how to use a \sc{Dcel} with extended vertex,
 halfedge, and face records. In this example each vertex is associated
-with a color, which may be blue, red, or white, depending on whether the
-vertex is isolated, represents a segment endpoint, or whether it
-represents an intersection point. Each halfedge is associated with
-Boolean flag indicating whether its direction is the same as the
-direction of its associated segment (in this example segments are
-treated as directed objects). Each face is also extended to store the
-size of its outer boundary.
+with a color, which iseither blue, red, or white, depending on whether
+the vertex is isolated, represents a segment endpoint, or represents
+an intersection point. (Notice that the coloring rules suggested here
+apply only to non-degenerate arrangements, where the sets of isolated
+points, curve endpoints, and intersection points are mutually
+exclusive.) In this example segments are treated as directed objects.
+Each halfedge is associated with Boolean flag indicating whether its
+direction is the same as the direction of its associated segment. Each
+face is also extended to store the size of its outer boundary, that
+is, the number of halfedges along its outer boundary.
 
-The constructed arrangement, depicted in \cgalFigureRef{arr_figex_20},
-is similar to the arrangement constructed in the previous example.
-Note that all auxiliary data fields are set during the construction
-phase.  Also note that the data fields are properly maintained when
-the arrangement is copied to another arrangement instance:
+The constructed arrangement, depicted in
+\cgalFigureRef{arr_figex_dcel_extension}, is similar to the
+arrangement constructed in the previous example.  In this case,
+however, we do not use an observer; instead, all auxiliary data-fields
+are set after the construction phase.  Also note that the data fields
+are properly maintained when the arrangement is copied to another
+arrangement object.
 
 \cgalExample{Arrangement_on_surface_2/dcel_extension.cpp}
 
@@ -5828,9 +5838,10 @@ and faces, provided that the `VertexData`, `HalfedgeData` and
 </UL>
 
 The following example constructs the same arrangement as the example
-`dcel_extension` does (see Section \ref arr_sssecex_dcel_all), depicted
-in \cgalFigureRef{arr_figex_20}, and writes it to an output file. It
-also demonstrates how to re-read the arrangement from a file:
+`dcel_extension` does (see Section \ref arr_sssecex_dcel_all),
+depicted in \cgalFigureRef{arr_figex_dcel_extension}, and writes it to
+an output file. It also demonstrates how to re-read the arrangement
+from a file:
 
 \cgalExample{Arrangement_on_surface_2/dcel_extension_io.cpp}
 
