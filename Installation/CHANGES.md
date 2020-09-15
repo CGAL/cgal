@@ -1,29 +1,39 @@
 Release History
 ===============
 
-[Release 5.2](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.2)
------------
+[Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
 
 Release date: December 2020
 
+### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/5.2/Manual/packages.html#PkgBGL)
+
+-   Added the convenience header `CGAL/boost/graph/graph_traits_inheritance_macros.h` that allows to easily
+    make any class inheriting from a model of a face graph concept, a model of the same concept.
+
+### [3D Convex Hulls](https://doc.cgal.org/5.2/Manual/packages.html#PkgConvexHull3)
+-   Added the function `CGAL::halfspace_intersection_interior_point_3()` that can be used to retrieve
+    the point that is the most interior a convex closed volume defined by the intersection of a set of halfspaces.
+
 ### [2D Arrangements](https://doc.cgal.org/5.2/Manual/packages.html#PkgArrangementOnSurface2)
 
- -   Changed make-x-monotone return type from legacy [`CGAL::Object`](https://doc.cgal.org/5.2/STL_Extension/classCGAL_1_1Object.html)
-     to modern `boost::variant` in all traits concepts and models.
-     As there exists an implicit conversion from `boost::variant` to `CGAL::Object`, the
-     new code is backward compatible. However, it is recommended that all calls
-     to the make-x-monotone functions are fixed to use the new return type.
+-   Changed make-x-monotone return type from legacy [`CGAL::Object`](https://doc.cgal.org/5.2/STL_Extension/classCGAL_1_1Object.html)
+    to modern `boost::variant` in all traits concepts and models.
+    As there exists an implicit conversion from `boost::variant` to `CGAL::Object`, the
+    new code is backward compatible. However, it is recommended that all calls
+    to the make-x-monotone functions are fixed to use the new return type.
 
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 -----------
 
-Release date: July 2020
+Release date: September 2020
 
 ### [Tetrahedral Remeshing](https://doc.cgal.org/5.1/Manual/packages.html#PkgTetrahedralRemeshing) (new package)
 
 -   This package implements a tetrahedral isotropic remeshing algorithm,
     that improves the quality of tetrahedra in terms of dihedral angles,
     while targeting a given edge length.
+
+    See also the associated [blog entry](https://www.cgal.org/2020/08/07/Tetrahedral-remeshing/).
 
 ### [Surface Mesh Topology](https://doc.cgal.org/5.1/Manual/packages.html#PkgSurfaceMeshTopologySummary) (new package)
 
@@ -42,6 +52,11 @@ Release date: July 2020
     (in terms of volume) bounding box that contains a given mesh or point set.
 
     See also the associated [blog entry](https://www.cgal.org/2020/04/20/Optimal_bounding_box/).
+
+### Installation
+
+-   The CGAL\_Core library no longer requires `Boost.Thread`, even if the g++ compiler is used.
+-   The minimal supported version of Boost is now 1.66.0.
 
 ### [Tutorials](https://doc.cgal.org/5.1/Manual/tutorials.html)
 

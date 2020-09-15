@@ -40,6 +40,14 @@ public:
 
   using Base::operator();
 
+  template<typename F>
+  struct result : Base::template result<F> {};
+
+  template<typename F>
+  struct result<F(Point_3)> {
+    typedef const Point_3& type;
+  };
+
   const Point_3& operator()(const Point_3& p) const { return p; }
 };
 

@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Jane Tournois, Noura Faraj
+// Author(s)     : Jane Tournois, Noura Faraj, Jean-Marc Thiery, Tamy Boubekeur
 
 #ifndef CGAL_TET_ADAPTIVE_REMESHING_CELL_BASE_3_H
 #define CGAL_TET_ADAPTIVE_REMESHING_CELL_BASE_3_H

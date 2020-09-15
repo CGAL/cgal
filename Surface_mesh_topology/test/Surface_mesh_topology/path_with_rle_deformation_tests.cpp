@@ -5,6 +5,7 @@
 #include <CGAL/Surface_mesh_topology/internal/Path_on_surface_with_rle.h>
 #include <vector>
 #include <sstream>
+#include <tuple>
 
 #include "Creation_of_test_cases_for_paths.h"
 
@@ -22,7 +23,7 @@ struct MyItems
     typedef std::size_t Dart_info;
 #endif // CGAL_PWRLE_TURN_V3
     typedef CGAL::Cell_attribute_with_point<CMap> Vertex_attrib;
-    typedef CGAL::cpp11::tuple<Vertex_attrib> Attributes;
+    typedef std::tuple<Vertex_attrib> Attributes;
   };
 };
 

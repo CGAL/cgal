@@ -224,6 +224,7 @@ template<class R_> struct Scalar_product {
 };
 
 template<class R_> struct Squared_distance_to_origin_stored {
+        // What about weighted points, should they store sdo-w?
         CGAL_FUNCTOR_INIT_IGNORE(Squared_distance_to_origin_stored)
         typedef R_ R;
         typedef typename R::LA_vector LA;
