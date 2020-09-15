@@ -15,7 +15,7 @@ CGAL_add_named_parameter(halfedge_index_t, halfedge_index, halfedge_index_map)
 CGAL_add_named_parameter(edge_index_t, edge_index, edge_index_map)
 CGAL_add_named_parameter(face_index_t, face_index, face_index_map)
 CGAL_add_named_parameter(vertex_index_t, vertex_index, vertex_index_map)
-CGAL_add_named_parameter(graph_visitor_t, graph_visitor, visitor)
+CGAL_add_named_parameter(visitor_t, visitor, visitor)
 
 CGAL_add_named_parameter(point_t, point_map, point_map)
 

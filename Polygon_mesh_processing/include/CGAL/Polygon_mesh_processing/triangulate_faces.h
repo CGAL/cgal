@@ -483,12 +483,12 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
   bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_delaunay_triangulation), true);
 
   typedef typename internal_np::Lookup_named_param_def<
-    internal_np::graph_visitor_t,
+    internal_np::visitor_t,
     NamedParameters,
     Triangulate_faces::Default_visitor<PolygonMesh>//default
   >::type Visitor;
   Visitor visitor = choose_parameter<Visitor>(
-                             get_parameter(np, internal_np::graph_visitor),
+                             get_parameter(np, internal_np::visitor),
                              Triangulate_faces::Default_visitor<PolygonMesh>());
 
   internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel, Visitor> modifier(vpmap, traits);
@@ -567,12 +567,12 @@ bool triangulate_faces(FaceRange face_range,
   bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_delaunay_triangulation), true);
 
   typedef typename internal_np::Lookup_named_param_def<
-    internal_np::graph_visitor_t,
+    internal_np::visitor_t,
     NamedParameters,
     Triangulate_faces::Default_visitor<PolygonMesh>//default
   >::type Visitor;
   Visitor visitor = choose_parameter<Visitor>(
-                                  get_parameter(np, internal_np::graph_visitor),
+                                  get_parameter(np, internal_np::visitor),
                                   Triangulate_faces::Default_visitor<PolygonMesh>());
 
   internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel, Visitor> modifier(vpmap, traits);
