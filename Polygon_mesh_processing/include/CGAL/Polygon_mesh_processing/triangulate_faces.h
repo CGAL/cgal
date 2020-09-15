@@ -48,14 +48,14 @@ namespace Polygon_mesh_processing {
 namespace Triangulate_faces
 {
 /** \ingroup PMP_meshing_grp
-*   Default new face visitor model of `PMPTriangulateFaceVisitor`.
+*   %Default new face visitor model of `PMPTriangulateFaceVisitor`.
 *   All its functions have an empty body. This class can be used as a
 *   base class if only some of the functions of the concept require to be
 *   overriden.
 */
-template<class TriangleMesh>
+template<class PolygonMesh>
 struct Default_visitor {
-  typedef boost::graph_traits<TriangleMesh> GT;
+  typedef boost::graph_traits<PolygonMesh> GT;
   typedef typename GT::face_descriptor face_descriptor;
 
   void before_subface_creations(face_descriptor /*f_old*/) {}
