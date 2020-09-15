@@ -123,7 +123,8 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateHook( FT                    
               CGAL_POLYOFFSET_TRACE(4,"\n Local V: " << e2str(*lPrev) ) ;
 
               // prev() has the isoline passing through its target, but we don't want to exit there
-              aBisector = lPrev->prev()->prev();
+              aBisector = lPrev->prev();
+              CGAL_POLYOFFSET_TRACE(4,"\n aBisector to : " << e2str(*aBisector) ) ;
               continue;
             }
           }
