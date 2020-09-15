@@ -41,7 +41,8 @@ TARGETS = \
   conic_multiplicities.pdf \
   rational_function_singular.pdf \
   consolidated_curve_data.pdf \
-  generic_curve_data.pdf
+  generic_curve_data.pdf \
+  observer.pdf
 
 .DEFAULT_GOAL = all
 .PHONY: all clean

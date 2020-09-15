@@ -5265,7 +5265,7 @@ inheriting from the base observer class and overriding the relevant
 notification functions, as required by their applications.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_19,ex_19.png}
+\cgalFigureBegin{arr_figex_observer,observer.png}
 An arrangement of six line segments, as constructed in `observer.cpp`.
 The halfedge \f$e_v\f$ (dashed) is eventually removed, so that the
 final arrangement consists of four faces (one unbounded and three
@@ -5278,7 +5278,7 @@ class. The observer in the example responds to changes in the
 arrangement faces. It prints a message whenever a face is split into
 two due to the insertion of an edge and whenever two faces merge into
 one due to the removal of an edge. The layout of the arrangement is
-depicted in \cgalFigureRef{arr_figex_19}; it comprises six line
+depicted in \cgalFigureRef{arr_figex_observer}; it comprises six line
 segments and eight edges (the horizontal segment \f$s_h\f$ and the
 vertical segment \f$s_v\f$ induce two edges each).  The halfedge
 \f$e_v\f$ is induced by the vertical segment \f$s_v\f$. First, it is
