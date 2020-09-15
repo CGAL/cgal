@@ -387,8 +387,6 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   typedef typename C3t3::Facet          Facet;
   typedef typename Tr::Facet_circulator Facet_circulator;
   typedef typename Tr::Cell_circulator  Cell_circulator;
-  typedef typename Tr::Geom_traits      Gt;
-  typedef typename Gt::FT               FT;
 
   // std::cout << "find_best_flip_to_improve_dh boundary " << std::endl;
   Tr& tr = c3t3.triangulation();
@@ -566,8 +564,6 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   typedef typename C3t3::Facet          Facet;
   typedef typename Tr::Facet_circulator Facet_circulator;
   typedef typename Tr::Cell_circulator  Cell_circulator;
-  typedef typename Tr::Geom_traits      Gt;
-  typedef typename Gt::FT               FT;
 
   Tr& tr = c3t3.triangulation();
 
@@ -1022,8 +1018,6 @@ Sliver_removal_result flip_n_to_m(typename C3t3::Edge& edge,
 {
   typedef typename C3t3::Vertex_handle Vertex_handle;
   typedef typename C3t3::Triangulation::Cell_circulator Cell_circulator;
-  typedef typename C3t3::Triangulation::Geom_traits Gt;
-  typedef typename Gt::FT FT;
   typename C3t3::Triangulation& tr = c3t3.triangulation();
 
   Sliver_removal_result result = NOT_FLIPPABLE;

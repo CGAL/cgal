@@ -236,9 +236,8 @@ Dihedral_angle_cosine cos_dihedral_angle(const typename Gt::Point_3& i,
   typename Gt::Compute_scalar_product_3 scalar_product =
     gt.compute_scalar_product_3_object();
 
-  typedef typename Gt::Vector_3 Vector_3;
   typedef typename Gt::FT FT;
-
+  typedef typename Gt::Vector_3 Vector_3;
   const Vector_3 ij = vector(i, j);
   const Vector_3 ik = vector(i, k);
   const Vector_3 il = vector(i, l);
