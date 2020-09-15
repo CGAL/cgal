@@ -215,7 +215,7 @@ On the one hand, this dramatically saves on memory but on the other hand is
 a processing waste because when an edge is effectively collapsed, `GetPlacement`
 must be called <I>again</I> to know were to move the remaining vertex.
 
-Earlier prototypes shown that attaching the placement to the edge, thus avoiding one
+Earlier prototypes showed that attaching the placement to the edge, thus avoiding one
 redundant call to the placement function after the edge collapsed, has little
 impact on the total running time. This is because the cost of an each edge is not just
 computed once but changes several times during the process so the placement function

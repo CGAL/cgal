@@ -3,9 +3,7 @@
 \cgalConcept
 
 The concept `GetFilter` describes the requirements for the <I>policy
-function object</I> which gets the <I>collapse placement</I> of an edge,
-that is, the new position of the vertex that remains after a
-halfedge-collapse operation.
+function object</I> which gets the profile and placement of an edge.
 
 The placement returned is a `boost::optional` value (i.e., it can
 be absent). The value `boost::none` indicates that the edge should not be collapsed.
@@ -36,4 +34,4 @@ public:
 
   /// @}
 
-}; /* end GetPlacement */
+}; /* end Filter */
