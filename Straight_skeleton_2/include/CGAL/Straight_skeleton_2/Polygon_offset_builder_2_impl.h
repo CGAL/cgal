@@ -55,7 +55,8 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateHook( FT                    
                                                         , Hook_position&        rPos
                                                         )
 {
-  CGAL_POLYOFFSET_TRACE(2,"Searching for hook at " << aTime ) ;
+  CGAL_POLYOFFSET_TRACE(2,"Locate hook at " << aTime ) ;
+  CGAL_POLYOFFSET_TRACE(2,"Start halfedge: " << e2str(*aBisector) ) ;
 
   Halfedge_const_handle rHook ;
 
@@ -65,7 +66,6 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateHook( FT                    
     Halfedge_const_handle lNext = aBisector->next();
 
     CGAL_POLYOFFSET_TRACE(2,"Testing hook on " << e2str(*aBisector) ) ;
-
     CGAL_POLYOFFSET_TRACE(4, "Next: " << e2str(*lNext) << " - Prev: " << e2str(*lPrev) ) ;
 
     if ( !IsVisited(aBisector) )
@@ -133,7 +133,7 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateHook( FT                    
 
           rHook = aBisector ;
 
-          CGAL_POLYOFFSET_TRACE(2, "  Hook found here at " << Hook_position2Str(rPos) ) ;
+          CGAL_POLYOFFSET_TRACE(2, "  Hook found at " << Hook_position2Str(rPos) ) ;
 
           break ;
         }
@@ -163,7 +163,7 @@ template<class Ss, class Gt, class Cont, class Visitor>
 typename Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::Halfedge_const_handle
 Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateSeed( FT aTime, Halfedge_const_handle aBorder )
 {
-  CGAL_POLYOFFSET_TRACE(2,"\nLocating seed for face " << e2str(*aBorder) ) ;
+  CGAL_POLYOFFSET_TRACE(2,"\nSearching for a starting seed in face " << e2str(*aBorder) ) ;
 
   Hook_position lPos ;
   Halfedge_const_handle rSeed = LocateHook(aTime,aBorder->prev(),false,lPos);
@@ -173,13 +173,14 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateSeed( FT aTime, Halfedge_con
     {
       SetIsUsedSeed(rSeed);
 
-      CGAL_postcondition( rSeed->prev()->is_bisector() ) ;
+      CGAL_postcondition( handle_assigned(rSeed->prev()) && rSeed->prev()->is_bisector() ) ;
 
-      // If a seed hook is found right at a bisector source,
-      // the next hook will be found right at the prev bisector's target, which would be a mistake,
-      // so we ajust the seed as the (target) of the prev
+      // If a seed hook is found at a bisector's source,
+      // the next hook will be found at the previous bisector's target, which would be a mistake.
+      // So, we modify the seed to be the target() of the previous halfedge instead.
       if ( lPos == SOURCE )
         rSeed = rSeed->prev() ;
+      CGAL_POLYOFFSET_TRACE(2,"Pos at source switched to pos at target on " << e2str(*rSeed) ) ;
     }
     else
     {
@@ -195,7 +196,7 @@ template<class Ss, class Gt, class Cont, class Visitor>
 typename Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::Halfedge_const_handle
 Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateSeed( FT aTime )
 {
-  CGAL_POLYOFFSET_TRACE(2,"Searching for seed at " << aTime ) ;
+  CGAL_POLYOFFSET_TRACE(2,"Searching for a starting seed at " << aTime ) ;
 
   Halfedge_const_handle rSeed ;
 
@@ -205,7 +206,7 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateSeed( FT aTime )
       )
     rSeed = LocateSeed(aTime,*f);
 
-  CGAL_POLYOFFSET_TRACE(2,"Seed:" << eh2str(rSeed) ) ;
+  CGAL_POLYOFFSET_TRACE(2,"Found seed: " << eh2str(rSeed) ) ;
 
   return rSeed;
 }
@@ -288,7 +289,9 @@ OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::TraceOffsetPolygon(
   mVisitor.on_offset_contour_finished( lComplete );
 
   if ( lComplete )
+  {
     *aOut++ = lPoly ;
+  }
   else
   {
     for (std::size_t k=0;k<visited_hooks.size();++k)
@@ -397,7 +400,7 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::GetSeedVertex ( Vertex_const_handl
   {
     rSeed = aBisector->vertex();
 
-    CGAL_POLYOFFSET_TRACE(3,"Seed of N" << aNode->id() << " for vertex (E" << aEa->id() << ",E" << aEb->id() << ") directly found: V" << rSeed->id() ) ;
+    CGAL_POLYOFFSET_TRACE(3,"Seed of N" << aNode->id() << " for vertex (E" << aEa->id() << ",E" << aEb->id() << ") directly found: " << v2str(*rSeed) ) ;
   }
   else
   {

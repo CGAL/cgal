@@ -64,17 +64,17 @@ create_partial_interior_straight_skeleton_2 ( FT const&     aMaxTime
   typedef typename std::iterator_traits<PointIterator>::value_type InputPoint ;
   typedef typename Kernel_traits<InputPoint>::Kernel InputKernel ;
 
-  Cartesian_converter<InputKernel, K> Converter ;
+  Cartesian_converter<InputKernel, K> conv ;
 
-  KFT kMaxTime = aMaxTime;
-  boost::optional<KFT> lMaxTime(kMaxTime) ;
+  typename InputKernel::FT lMaxTime = aMaxTime;
+  boost::optional<KFT> lOptMaxTime(conv(lMaxTime)) ;
 
-  SsBuilder ssb( lMaxTime ) ;
+  SsBuilder ssb( lOptMaxTime ) ;
 
-  ssb.enter_contour( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, Converter ) ;
+  ssb.enter_contour( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, conv ) ;
 
   for ( HoleIterator hi = aHolesBegin ; hi != aHolesEnd ; ++ hi )
-    ssb.enter_contour( CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), Converter ) ;
+    ssb.enter_contour( CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), conv ) ;
 
   return ssb.construct_skeleton();
 }
@@ -161,7 +161,7 @@ create_offset_polygons_2 ( FT const& aOffset, Skeleton const& aSs, K const& , Ta
 }
 
 //
-// Kernel == Skeleton::kernel, no convertion
+// Kernel == Skeleton::kernel, no conversion
 //
 template<class OutPolygon, class FT, class Skeleton, class K>
 std::vector< boost::shared_ptr<OutPolygon> >
