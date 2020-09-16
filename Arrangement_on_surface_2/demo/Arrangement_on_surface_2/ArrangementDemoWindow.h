@@ -87,7 +87,7 @@ Q_SIGNALS:
 protected:
   void setupUi();
   ArrangementDemoTabBase* makeTab(demo_types::TraitsType);
-  void addTab(ArrangementDemoTabBase*, QString, demo_types::TraitsType);
+  void addTab(ArrangementDemoTabBase*, QString);
   void resetCallbackState(ArrangementDemoTabBase*);
   void resetActionGroups(ArrangementDemoTabBase*, demo_types::TraitsType);
   void hideInsertMethods();
@@ -98,10 +98,10 @@ protected:
 
   template <class ArrType>
   ArrangementDemoTabBase*
-  makeTab(std::unique_ptr<ArrType> arr, QString, demo_types::TraitsType);
+  makeTab(std::unique_ptr<ArrType> arr, QString);
 
   template <class ArrType>
-  void makeOverlayTab(ArrType* arr1, ArrType* arr2, demo_types::TraitsType);
+  void makeOverlayTab(ArrType* arr1, ArrType* arr2);
 
 private:
   Ui::ArrangementDemoWindow* ui;

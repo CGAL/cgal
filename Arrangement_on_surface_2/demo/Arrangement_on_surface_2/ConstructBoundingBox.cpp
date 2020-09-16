@@ -30,9 +30,9 @@ struct ConstructBoundingBox_impl
     CGAL::Bbox_2 bbox;
     try
     {
-      bbox= curve.bbox();
+      bbox = curve.bbox();
     }
-    // algebraic traits sometimes when calling bbox
+    // algebraic traits sometimes crash when calling bbox
     // example: xy=0
     catch (std::exception& ex)
     {
@@ -252,8 +252,7 @@ struct ConstructBoundingBox_impl<CGAL::Arr_Bezier_curve_traits_2<
   CGAL::Bbox_2
   operator()(const X_monotone_curve_2& curve)
   {
-    // TODO: find a way to find bounding box of a X_monotone_curve of bezier
-    // arrangements
+    // TODO: find a way to find the bounding box of a bezier X_monotone_curve
     return curve.supporting_curve().bbox();
   }
 

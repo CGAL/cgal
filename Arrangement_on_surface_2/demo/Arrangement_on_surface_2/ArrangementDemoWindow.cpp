@@ -123,12 +123,12 @@ ArrangementDemoTabBase* ArrangementDemoWindow::makeTab(TraitsType tt)
     demoTab =
       new ArrangementDemoTab<typename decltype(type_holder)::type>(this);
   });
-  this->addTab(demoTab, tabLabel, tt);
+  this->addTab(demoTab, tabLabel);
   return demoTab;
 }
 
 void ArrangementDemoWindow::addTab(
-  ArrangementDemoTabBase* demoTab, QString tabLabel, TraitsType tt)
+  ArrangementDemoTabBase* demoTab, QString tabLabel)
 {
   this->tabs.push_back(demoTab);
 
@@ -660,29 +660,27 @@ void ArrangementDemoWindow::on_actionOverlay_triggered()
     {
       demo_types::forEachArrangementType([&](auto type_holder) {
         using Arr = typename decltype(type_holder)::type;
-        auto tt = demo_types::enumFromArrType<Arr>();
 
         Arr* arr;
         Arr* arr2;
         if (CGAL::assign(arr, arrs[0]) && CGAL::assign(arr2, arrs[1]))
-          this->makeOverlayTab(arr, arr2, tt);
+          this->makeOverlayTab(arr, arr2);
       });
     }
   }
 }
 
 template <class ArrType>
-ArrangementDemoTabBase* ArrangementDemoWindow::makeTab(
-  std::unique_ptr<ArrType> arr, QString tabLabel, TraitsType tt)
+ArrangementDemoTabBase*
+ArrangementDemoWindow::makeTab(std::unique_ptr<ArrType> arr, QString tabLabel)
 {
   auto demoTab = new ArrangementDemoTab<ArrType>(this, std::move(arr));
-  this->addTab(demoTab, tabLabel, tt);
+  this->addTab(demoTab, tabLabel);
   return demoTab;
 }
 
 template <class ArrType>
-void ArrangementDemoWindow::makeOverlayTab(
-  ArrType* arr1, ArrType* arr2, TraitsType tt)
+void ArrangementDemoWindow::makeOverlayTab(ArrType* arr1, ArrType* arr2)
 {
   QString tabLabel = QString("Overlay Tab");
 
@@ -690,7 +688,7 @@ void ArrangementDemoWindow::makeOverlayTab(
   CGAL::Arr_default_overlay_traits<ArrType> defaultTraits;
 
   CGAL::overlay(*arr1, *arr2, *overlayArr, defaultTraits);
-  makeTab(std::move(overlayArr), tabLabel, tt);
+  makeTab(std::move(overlayArr), tabLabel);
 }
 
 struct ArrWriter
@@ -827,7 +825,7 @@ ArrangementDemoTabBase* ArrangementDemoWindow::openArrFile(QString filename)
 
   demo_types::visitArrangementType(tt, [&](auto type_holder) {
     auto arr = ArrReader{ifs}(type_holder);
-    createdTab = this->makeTab(std::move(arr), this->makeTabLabel(tt), tt);
+    createdTab = this->makeTab(std::move(arr), this->makeTabLabel(tt));
   });
 
   return createdTab;

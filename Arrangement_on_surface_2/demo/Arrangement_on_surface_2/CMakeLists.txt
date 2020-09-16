@@ -85,7 +85,7 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
                  ${CGAL_Qt5_RESOURCE_FILES}
                  ${CGAL_Qt5_MOC_FILES})
 
-  qt5_use_modules(arrangement_2 Core Gui Widgets)
+  target_link_libraries(arrangement_2 Qt5::Core Qt5::Gui Qt5::Widgets)
   target_link_libraries(arrangement_2 CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Core)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS arrangement_2)
 
