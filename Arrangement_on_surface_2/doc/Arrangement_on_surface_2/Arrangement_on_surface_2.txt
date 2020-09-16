@@ -1367,11 +1367,11 @@ vary according to the user choice.} for answering queries:
   unbounded face of the arrangement and moves downward toward the
   query point until it locates the arrangement cell containing it.
 
-<LI>`Arr_landmarks_point_location<Arrangement,Generator>`
-  uses a set of <em>landmark</em> points, the location of which in the
-  arrangement is known. It employs the <em>landmark</em> strategy. Given a
-  query point, it uses a nearest-neighbor search-structure (a
-  <span class="textsc">Kd</span>-tree is used by default) to find the
+<LI>`Arr_landmarks_point_location<Arrangement,Generator>` uses a set
+  of <em>landmark</em> points, the location of which in the
+  arrangement is known. It employs the <em>landmark</em>
+  strategy. Given a query point, it uses a nearest-neighbor
+  search-structure (a \sc{Kd}-tree is used by default) to find the
   nearest landmark, and then traverses the straight-line segment
   connecting this landmark to the query point.
 
@@ -1445,24 +1445,23 @@ trapezoidal map RIC strategy. In addition, although both resulting
 data structures are asymptotically linear in size, the actual amount
 of memory consumed by the landmark algorithm is typically smaller than
 to the amount used by the trapezoidal map RIC algorithm, due to the
-space-efficient <span class="textsc">Kd</span>-tree used by the
-landmark algorithm as the nearest-neighbor search-structure.  The
-trapezoidal map RIC algorithm has expected logarithmic query time,
-while the query time for the landmark algorithm may be as large as
-linear. In practice however, the query times of both strategies are
-competitive. For a detailed experimental comparison see
-\cgalCite{cgal:hh-eplca-05}.
+space-efficient \sc{Kd}-tree used by the landmark algorithm as the
+nearest-neighbor search-structure.  The trapezoidal map RIC algorithm
+has expected logarithmic query time, while the query time for the
+landmark algorithm may be as large as linear. In practice however, the
+query times of both strategies are competitive. For a detailed
+experimental comparison see \cgalCite{cgal:hh-eplca-05}.
 
 Updating the auxiliary data structures of the trapezoidal map RIC
 algorithm is done very efficiently. On the other hand, updating the
 nearest-neighbor search-structure of the landmark algorithm may
 consume significant time when the arrangement changes frequently,
-especially when a <span class="textsc">Kd</span>-tree is used, as it
-must be rebuilt each time the arrangement changes. It is therefore
-recommended that the `Arr_landmarks_point_location` class template be
-used when the application frequently issues point-location queries on
-an arrangement that only seldom changes. If the arrangement is more
-dynamic and is frequently going through changes, the
+especially when a \sc{Kd}-tree is used, as it must be rebuilt each
+time the arrangement changes. It is therefore recommended that the
+`Arr_landmarks_point_location` class template be used when the
+application frequently issues point-location queries on an arrangement
+that only seldom changes. If the arrangement is more dynamic and is
+frequently going through changes, the
 `Arr_trapezoid_ric_point_location` class template should be the
 selected point-location strategy.
 
@@ -4286,9 +4285,9 @@ these types, solving quadratic equations, and extracting the real
 roots of polynomials with integer coefficients. The use of the
 `CORE_algebraic_number_traits` class, which is included in the
 arrangement package, is highly recommended. The traits class-template
-relies on the multi-precision number types implemented in the <span
-class="textsc">Core</span> library and performs exact computations on
-the number types it defines.
+relies on the multi-precision number types implemented in the
+\sc{Core} library and performs exact computations on the number types
+it defines.
 
 </UL>
 
@@ -4296,11 +4295,10 @@ The instantiation of the conic traits class-template is slightly more
 complicated than the instantiation of the traits classes you have
 encountered so far. This instantiation is exemplified in the header
 file `arr_conics.h`. Note how we first define the rational and
-algebraic kernels using the number types given by the <span
-class="textsc">Core</span> number type traits-class, then use them to
-define the conic traits class-template. Also note the types defined by
-the rational kernels, which we need for conveniently constructing
-conic arcs.
+algebraic kernels using the number types given by the \sc{Core} number
+type traits-class, then use them to define the conic traits
+class-template. Also note the types defined by the rational kernels,
+which we need for conveniently constructing conic arcs.
 
 The `Arr_conic_traits_2` models the `ArrangementTraits_2` and
 `ArrangementLandmarkTraits_2` concepts. Its `Point_2` type is derived
@@ -5416,13 +5414,85 @@ arrangement object.
 \cgalExample{Arrangement_on_surface_2/dcel_extension.cpp}
 
 \cgalAdvancedBegin
-The various \sc{Dcel} classes presented in this section are perfectly
-sufficient for most applications based on the arrangement package.
-However, users may also use their own implementation of a \sc{Dcel} class
-to instantiate the `Arrangement_2` class-template, in case they need
-special functionality from their \sc{Dcel}. Such a class must be a model of the
-concept `ArrangementDcel`, whose exact specification is listed in the
-Reference Manual.
+
+The various \sc{Dcel} classes presented in this section are well
+suited for most applications based on the \ref
+PkgArrangementOnSurface2 package. They are all defined using helper
+constructs, and in particular the base \sc{Dcel} class-template
+`Arr_dcel_base}`.  However, there are cases where special
+requirements, not addressed by these \sc{Dcel} classes, are needed.
+In such cases you may explicitly extend the base \sc{Dcel}
+class-template, as described in the next paragraph, or implement your
+own \sc{Dcel} class from scratch and use the resulting \sc{Dcel} to
+instantiate the `Arrangement_2` class template. In any case such a
+class must model the concept `ArrangementDcel` or its refinement
+`ArrangementDcelWithRebind`. The latter requires a `rebind` struct
+template, which implements a policy-clone idiom. Here, the \sc{Dcel}
+class is the policy class and the `rebind` member template struct
+is used to pass a different traits type parameter to the policy class
+template.
+
+In some cases you may want to extend a certain feature type with
+several fields. You can gather all these fields (and perhaps methods
+that access and retrieve these fields) in a single construct, and
+substitute the appropriate parameter of the class template
+`Arr_extended_dcel<Traits, VertexData, HalfedgeData, FaceData>` with
+this construct. Naturally, you can define three constructs, one for
+each feature type, and substitute all the three corresponding template
+parameters appropriately. For example, consider an arrangement that
+represents a map where features of the same type represent different
+cartographic entities, e.g., an edge represents a road, a river, or a
+railway. We would like to associate two strings with each feature,
+namely, the name and the type of the feature. Following the solution
+above, accessing or retrieving a specific field will always require an
+indirection through one of the member functions `set_data()` and
+`data()`. While this indirection is typically resolved at compile
+time, and thus has no negative effect on the running time of the
+generated code, it may have some implication on the space consumption
+due to compiler padding.\cgalFootnote{Compilers add pad bytes into
+user-defined constructs to comply with alignment restrictions imposed
+by target microprocessors.} Moreover, the code may look cumbersome.
+
+The extended \sc{Dcel} class that addresses the problem raised above
+is listed below. Here, each feature type is explicitly extended with
+two strings, namely, `name` and `type`, eliminating the data
+constructs.
+
+\code{.cpp}
+#include <string>
+
+#include <CGAL/basic.h>
+#include <CGAL/Arr_dcel_base.h>
+
+// The map-extended dcel vertex.
+template <typename Point_2>
+class Arr_map_vertex : public CGAL::Arr_vertex_base<Point_2> {
+public:
+  std::string name, type;
+};
+
+// The map-extended dcel halfedge.
+template <typename X_monotone_curve_2>
+class Arr_map_halfedge : public CGAL::Arr_halfedge_base<X_monotone_curve_2> {
+public:
+  std::string name, type;
+};
+
+// The map-extended dcel face.
+class Arr_map_face : public CGAL::Arr_face_base {
+public:
+  std::string name, type;
+};
+
+// The map-extended dcel.
+template <typename Traits>
+class Arr_map_dcel : public
+  CGAL::Arr_dcel_base<Arr_map_vertex<typename Traits::Point_2>,
+                      Arr_map_halfedge<typename Traits::X_monotone_curve_2>,
+                      Arr_map_face>
+{};
+\endcode
+
 \cgalAdvancedEnd
 
 <!----------------------------------------------------------------------------->
@@ -5430,134 +5500,310 @@ Reference Manual.
 <!----------------------------------------------------------------------------->
 
 Assume that we are given two geographic maps represented as
-arrangements with some data objects attached to their faces,
-representing some geographic information - for example, a map of
-the annual precipitation in some country and a map of the vegetation
-in the same country. It is interesting to overlay the two maps to
-locate, for example, the regions where there is a pine forest and
-the annual precipitation is between 1000mm and 1500mm.
+arrangements, with some data objects attached to their faces,
+representing some geographic information---for instance, a map of the
+annual precipitation in some country and a map of the vegetation in
+the same country---and you are asked to locate, for example, places
+where there is a pine forest <em>and</em> the annual precipitation is
+between 1,000mm and 1,500mm. Overlaying the two maps may help you
+figure out the answer.  Computing the overlay of two planar
+arrangements is also useful for supporting Boolean set operations on
+polygons or general polygons; see e.g., \cgalCite{cgal:behhms-cbcab-02}).
 
-Computing the overlay of two planar arrangement is also useful for
-supporting Boolean set operations on polygons (or generalized
-polygons, see, e.g., \cgalCite{cgal:behhms-cbcab-02}).
+Formally, the <em>map overlay</em> of two planar subdivisions
+\f$\cal S_1\f$ and \f$\cal S_2\f$ is a planar subdivision \f$\cal S\f$,
+such that there is a face \f$f\f$ in \f$\cal S\f$ iff there are faces
+\f$f_1\f$ and \f$f_2\f$ in \f$\cal S_1\f$ and \f$\cal S_2\f$,
+respectively, such that \f$f\f$ is a maximal connected component of
+\f$f_1 \cap f_2\f$.
 
-The function `overlay (arr_a, arr_b, ovl_arr, ovl_traits)` accepts two
-input arrangement instances `arr_a` and `arr_b`, and constructs their
-overlay instance `ovl_arr`. All three arrangements must use the same
-geometric primitives. More precisely, let `arr_a` be of type
-`Arrangement_2<Traits_A,Dcel_A>`, `arr_b` be of type
-`Arrangement_2<Traits_B,Dcel_B>` and the resulting `ovl_arr` be of
-type `Arrangement_2<Traits_R,Dcel_R>`. All types nested in geometry
-traits `Traits_A`, e.g., `%Point_2` and `X_monotone_curve_2`, must be
-convertible to the corresponding types nested in geometry traits
-`Traits_R`. The same holds for all types nested in geometry traits
-`Traits_B`.  The `ovl_traits` parameter is an instance of an
-<em>overlay traits-class</em>, which enables the creation of `Dcel_R`
-records in the overlaid arrangement from the \sc{Dcel} features of
-`arr_a` and `arr_b` that they correspond to.
+The overlay of two given arrangements, conveniently referred to as the
+"blue" and the "red" arrangements, is implemented as a plane-sweep
+algorithm employing a dedicated visitor; see Section \ref
+arr_ssec_sweep.  The \f$x\f$-monotone curve type is extended with a
+color attribute (whose value is either blue or red); see Section \ref
+arr_ssecmeta_tr. With the help of the extended type unnecessary
+computations are filtered out while the plane is swept, yielding an
+efficient process. For example, monochromatic intersections are not
+computed.
 
-In principle, we distinguish between three levels of overlay:
-<DL>
-<DT><B>Simple overlay:</B>
+The plane-sweep visitor that concretizes the overlay operation needs
+to construct a \sc{Dcel} that properly represents the overlay of two
+input arrangements. A face in the overlay arrangement corresponds to
+overlapping regions of the blue and red faces. An edge in the overlay
+arrangement is due to a blue edge, a red edge, or an overlap of two
+differently colored edges. An overlay vertex is due to a blue vertex,
+a red vertex, a coincidence of two differently colored vertices, or an
+intersection of a blue and a red curve.
 
-<DD>An overlay of two arrangements that store no additional data with
-their \sc{Dcel} records. That is, they are defined using the default
-\sc{Dcel} class `Arr_default_dcel`. Typically, the overlaid
-arrangement in this case stores no extra data with its \sc{Dcel}
-records as well (or if it does, the additional data fields cannot be
-computed by the overlay operation), so by overlaying the two
-arrangement we just compute the arrangement of all curves that induce
-`arr_a` and `arr_b`.  Note that the same result can be obtained using
-the standard insertion operations, but users may choose to use overlay
-computation in order to achieve better running times.
+The function template `overlay(arr_r, arr_b, arr_o, ovl_traits)`
+accepts two input arrangement objects `arr_r` and `arr_b`, and
+constructs their overlay object `arr_o`. All three arrangements must
+use the same geometric primitives. In other words, their types are
+instances of the `Arrangement_2<Traits,Dcel>` class template, where
+the `Traits` parameter is substituted with three geometry-traits
+classes, respectively. The geometry-traits classes of the input
+arrangements must be convertible to the geometry-traits class of the
+resulting arrangement.\cgalFootnote{It is sufficient that all three
+geometry-traits classes used to instantiate the three types of
+arrangements derive from a common ancestor that models the
+geometry-traits concept.} Typically, all three arrangements use the
+same geometry-traits class.
 
-The `Arr_default_overlay_traits` class should be used as an overlay
-traits-class for such simple overlay operations.
-<DT><B>Face overlay:</B>
-<DD> An overlay of two arrangements that store additional
-data fields with their faces (e.g., the geographic-map example given
-in the beginning of this section). The resulting overlaid arrangement
-typically also stores extraneous data fields with its faces, where the
-data field that is attached to an overlaid face can be computed from
-the data fields of the two faces (in `arr_a` and `arr_b`) that induce
-the overlaid face.
-
-The `Arr_face_overlay_traits` class should be used as an overlay
-traits-class for face-overlay operations. It operates on arrangement, whose
-\sc{Dcel} representation is based on the `Arr_face_extended_dcel`
-class-template (see Section \ref arr_sssecex_dcel_face). The face-overlay
-traits-class is parameterized by a functor that is capable of combining two
-face-data fields of types `Dcel_A::Face_data` and
-`Dcel_B::Face_data`, and computing the output `Dcel_R::Face_data`
-object. The overlay traits-class uses this functor to properly construct
-the overlaid faces.
-
-<DT><B>Full overlay:</B>
-<DD>An overlay of two arrangements that store additional data fields
-with all their \sc{Dcel} records. That is, their \sc{Dcel} classes are
-instantiations of the `Arr_extended_dcel` class-template (see Section
-\ref arr_sssecex_dcel_all), where the resulting arrangement also
-extends it \sc{Dcel} records with data fields computed on the basis of
-the overlapping \sc{Dcel} features of the two input arrangements.
-</DL>
-
-In the following subsections we give some examples for the simple and the
-face-overlay operations and demonstrate how to use the auxiliary overlay
-traits-classes. For the full overlay operations users need to implement
-their specialized overlay traits-class, which models the `OverlayTraits`
-concept. The details of this concept are given in the Reference Manual.
+The `overlay(arr_r, arr_b, arr_o)` function template is suitable for
+arrangements that do not store any additional data with their
+\sc{Dcel} records; namely, arrangements defined using an instance of
+the default \sc{Dcel} class-template `Arr_default_dcel`. Typically,
+the overlay arrangement in this case does not store extra data with
+its \sc{Dcel} records as well (or if it does, the additional
+data-fields cannot be computed by the overlay operation). The overlay
+arrangement is equivalent to the arrangement induced by all curves of
+`arr_r` and `arr_b`. Indeed, it is possible to obtain the same result
+using the standard insertion-operations instead, but, as mentioned
+above, this is less efficient.
 
 <!----------------------------------------------------------------------------->
-<!-- \subsection arr_ssecsimp_ovl Example for a Simple Overlay ---------------->
-<!----------------------------------------------------------------------------->
-
-<!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_22,ex_22.png}
+\cgalFigureBegin{arr_figex_overlay,overlay.png}
 Overlaying two simple arrangements of line segments, as done in
-`overlay.cpp` and `ex_face_extension_overlay.cpp`. In
+`overlay.cpp` and `face_extension_overlay.cpp`. In
 `face_extension_overlay.cpp` the two bounded faces are considered as
 <em>marked</em>, and the octagonal face which is the intersection of
 the two marked faces is denoted by \f$f_0\f$.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
-The next program constructs two simple arrangements, as depicted in
-\cgalFigureRef{arr_figex_22} and computes their overlay:
+The next program constructs two simple arrangements; each comprises
+four line segments that form a square, as depicted in
+\cgalFigureRef{arr_figex_overlay}. The program computes the overlay of the
+two arrangements. The resulting arrangement has 16 vertices, 24
+edges, and 10 faces (including the unbounded one.
 
 \cgalExample{Arrangement_on_surface_2/overlay.cpp}
 
-<!----------------------------------------------------------------------------->
-<!-- \subsection arr_ssecface_ovl Examples for a Face Overlay ----------------->
-<!----------------------------------------------------------------------------->
+The `overlay()` function template is overloaded with a variant that
+accepts four arguments, that is, `overlay(arr_r, arr_b, arr_o,
+ovl_traits)`. The type of the `ovl_traits` additional argument,
+referred to as the overlay traits, must model the `OverlayTraits`
+concept described below. Assume that `arr_r` is of type
+`Arrangement_2<Traits,Dcel_R>`, `arr_b` is of type
+`Arrangement_2<Traits,Dcel_B>`, and the resulting `arr_o` is of type
+`Arrangement_2<Traits,Dcel_O>`. The overlay traits enables the
+creation of `Dcel_O` records in the overlay arrangement from the
+features of `Dcel_R` and `Dcel_B` records from the arrangements
+`arr_r` and `arr_b`, respectively.
+
+We distinguish between (i) an overlay of two arrangements that store
+additional data-fields only with their faces e.g., the geographic-map
+example given at the beginning of this section) and (ii) an overlay of
+two arrangements that store additional data fields with all their
+\sc{Dcel} records (or at least not only with their faces).  The
+arrangement that results from overlaying two face-extended
+arrangements typically also stores additional data-fields with its
+faces. The types of such arrangements, for example, could be instances
+of the `Arrangement_2<Traits,Dcel>` class template, where the `Dcel`
+parameters are substituted with instances of the
+`Arr_face_extended_dcel` class template (see Section \ref
+arr_sssecex_dcel_face). The data field that is attached to an overlay
+face can be computed from the data fields of the two faces (in `arr_r`
+and `arr_b`) that induce the overlay face. Similarly, the arrangement
+that results from overlaying two arrangements that store additional
+data fields with all their \sc{Dcel} records typically also stores
+additional data-fields with all its \sc{Dcel} records. The types of
+such arrangements, for example, could be instances of the
+`Arrangement_2<Traits,Dcel>` class template, where the `Dcel`
+parameters are substituted with instances of the `Arr_extended_dcel`
+class template (see Section \ref arr_sssecex_dcel_all). The data field
+attached to an overlay feature can be computed from the data fields of
+the two features (in `arr_r` and `arr_b`) that induce the overlay
+feature.
+
+As mentioned in the previous paragraph, if any of the \sc{Dcel}
+records of your arrangements are extended, you can pass a fourth
+argument to the `overlay()` call, also referred to as the overlay
+traits, to control the generation of the extended data in the
+resulting arrangement. If only the face records are extended, the type
+of the overlay traits can be an instance of the class template
+`Arr_face_overlay_traits<ArrangementR,ArrangementB,ArrangementO,OverlayFaceData>`,
+which models the concept `OverlayTraits`. An object of this type
+operates on face-extended arrangements. When instantiated, the
+`OverlayFaceData` parameter must be substituted with a functor that is
+capable of combining two face-data fields of types
+`ArrangementR::Dcel::Face_data` and `ArrangementB::Dcel::Face_data`
+and computing the output `ArrangementO::Dcel::Face_data` object. The
+face-overlay traits-class uses this functor to properly construct the
+overlay faces.
 
 The following example shows how to compute the intersection of two
-polygons using the `overlay()` function. It uses a face-extended
-\sc{Dcel} class to define our arrangement class. The \sc{Dcel} extends
-each face with a Boolean flag. A polygon is represented as a
-<em>marked</em> arrangement face, (whose flag is set). The example
-uses a face-overlay traits class, instantiated with a functor that
-simply performs a logical <em>and</em> operations on Boolean flags.
-As a result, a face in the overlaid arrangement is marked only when it
-corresponds to an overlapping region of two marked cells in the input
+polygons using the `overlay()` function template. It uses a
+face-extended \sc{Dcel} type to instantiate the arrangement
+classes. Each face of the the \sc{Dcel} is extended with a Boolean
+flag. A polygon is represented as a <em>marked</em> arrangement face
+(whose flag is set). The example uses an instance of the
+`Arr_face_overlay_traits<ArrR,ArrB,ArrO,OverlayFaceData>` class
+remplate as the face-overlay traits class where the `OverlayFaceData`
+template parameter is substituted with a functor that simply performs
+a logical <em>and</em> operation on Boolean flags. As a result, a face
+in the overlay arrangement is marked only when it corresponds to an
+overlapping region of two marked faces in the input
 arrangements. Namely, it is part of the intersection of the two
-polygons.
-
-The example computes the intersection between a square and a rhombus,
-(which is actually also a square). The resulting polygon is an
-octagon, denoted by \f$f_0\f$ in \cgalFigureRef{arr_figex_22} :
+polygons. The example computes the intersection between a
+parallel-axis square and a congruent square rotated
+\f$45^\circ\f$. The resulting polygon from the intersection operation
+is an octagon, which corresponds to the face~\f$\hat{f}\f$ in the
+arrangement depicted in \cgalFigureRef{arr_figex_overlay}.
 
 \cgalExample{Arrangement_on_surface_2/face_extension_overlay.cpp}
 
 The next example demonstrates the face overlay of two arrangements
-that have unbounded faces as well. The first arrangement is formed by
-the two lines \f$y = x\f$ and \f$y = -x\f$, that subdivide the plane
-into four unbounded faces, denoted \f$A\f$, \f$B\f$, \f$c\f$ and
-\f$D\f$. The second arrangement comprises four line segments that
-form a square-shaped face. When we overlay the two arrangements, each
-of the four faces \f$A\f$, \f$B\f$, \f$c\f$ and \f$D\f$ is split
-into an unbounded face (indexed 1) and a bounded face (indexed 2):
+that have unbounded faces as well as bounded ones. The first
+arrangement (blue) is induced by the two lines \f$y = x\f$ and \f$y =
+-x\f$, which subdivide the plane into four unbounded faces, labeled
+\f$A\f$, \f$B\f$, \f$C\f$ and \f$D\f$. The second arrangement (red)
+comprises four line segments that form a square-shaped face indexed
+1. The unbounded face is indexed 2. When the two arrangements are
+overlaid, each of the four faces \f$A\f$, \f$B\f$, \f$C\f$ and \f$D\f$
+is split into an unbounded face (indexed 2) and a bounded face
+(indexed 1), so the faces of the resulting arrangement are labeled
+\f$A_1, A_2, \ldots, D_1, D_2\f$. `boost::lexical_cast` is used to
+cast the integral indices into strings to produce the final labels..
 
 \cgalExample{Arrangement_on_surface_2/overlay_unbounded.cpp}
+
+If the red and blue arrangements store additional data-fields with all
+their \sc{dcel} records, and the data associated with the overlay
+\sc{dcel} features should be computed from the red and blue \sc{dcel}
+features that induce it, then an appropriate overlay-traits argument
+must be passed to the `overlay()` call. The overlay-traits type models
+the `OverlayTraits` concept, which requires the provision of ten
+functions that handle all possible cases as listed below. Let
+\f$v_r\f$, \f$e_r\f$, and \f$f_r\f$ denote input <span
+style="color:red;">red</span> features, i.e., a vertex, an edge, and a
+face, respectively, \f$v_b\f$, \f$e_b\f$, and \f$f_b\f$ denote input
+<span style="color:blue;">blue</span> features, and \f$v\f$, \f$e\f$,
+and \f$f\f$ denote output features.
+
+<OL compact>
+
+<LI> A new vertex \f$v\f$ is induced by coinciding vertices
+\f$v_r\f$ and \f$v_b\f$.</LI>
+
+<LI> A new vertex \f$v\f$ is induced by a vertex \f$v_r\f$ that lies
+on an edge \f$e_b\f$.</LI>
+
+<LI> An analogous case of a vertex \f$v_b\f$ that lies on an edge
+\f$e_r\f$.</LI>
+
+<LI> A new vertex \f$v\f$ is induced by a vertex \f$v_r\f$ that is
+  contained in a face \f$f_b\f$.</LI>
+
+<LI> An analogous case of a vertex \f$v_b\f$ contained in a face
+  \f$f_r\f$.</LI>
+
+<LI> A new vertex \f$v\f$ is induced by the intersection of two edges
+  \f$e_r\f$ and \f$e_b\f$.</LI>
+
+<LI> A new edge \f$e\f$ is induced by the (possibly partial) overlap
+  of two edges \f$e_r\f$ and \f$e_b\f$.</LI>
+
+<LI> A new edge \f$e\f$ is induced by the an edge \f$e_r\f$ that is
+  contained in a face \f$f_b\f$.</LI>
+
+<LI> An analogous case of an edge \f$e_b\f$ contained in a face
+  \f$f_r\f$.</LI>
+
+<LI> A new face \f$f\f$ is induced by the overlap of two faces
+  \f$f_r\f$ and \f$f_b\f$.</LI>
+
+</OL>
+
+The `Overlay_color_traits` class template listed below models the
+concept `OverlayTraits`.  It assumes that each feature of the input
+arrangements and of the overlay arrangement is extended with an RGB
+color stored as an `unsigned int`. It defines ten member functions
+that correspond to the ten cases listed above. Each of these functions
+accepts three handles as follows: two handles to the two features of
+the input arrangements, respectively, that induce a feature of the
+overlay arrangement and a handle to the induced overlay-arrangement
+feature. Each of these member functions blends the colors attached to
+the inducing features and assigns the resulting color to the induced
+feature. The `Overlay_color_traits` class template is defined in the
+header file `Overlay_color_traits.h`.
+
+\code{.cpp}
+template <typename Arrangement> struct Overlay_color_traits {
+  typedef unsigned int                                  Color;
+  typedef typename Arrangement::Vertex_const_handle     V_const_handle;
+  typedef typename Arrangement::Halfedge_const_handle   H_const_handle;
+  typedef typename Arrangement::Face_const_handle       F_const_handle;
+  typedef typename Arrangement::Vertex_handle           V_handle;
+  typedef typename Arrangement::Halfedge_handle         H_handle;
+  typedef typename Arrangement::Face_handle             F_handle;
+
+  // Compute the average of the red, green, and blue components separately.
+  Color blend(Color color1, Color color2) const
+  {
+    return
+      ((((color1 & 0x000000ff) + (color2 & 0x000000ff)) / 2) & 0x000000ff) |
+      ((((color1 & 0x0000ff00) + (color2 & 0x0000ff00)) / 2) & 0x0000ff00) |
+      ((((color1 & 0x00ff0000) + (color2 & 0x00ff0000)) / 2) & 0x00ff0000);
+  }
+
+  void create_face(F_const_handle f1, F_const_handle f2, F_handle f) const
+  { f->set_data(blend(f1->data(), f2->data())); }
+  void create_vertex(H_const_handle h1, H_const_handle h2, V_handle v) const
+  { v->set_data(blend(h1->data(), h2->data())); }
+  void create_vertex(V_const_handle v1, V_const_handle v2, V_handle v) const
+  { v->set_data(blend(v1->data(), v2->data())); }
+  void create_vertex(V_const_handle v1, H_const_handle h2, V_handle v) const
+  { v->set_data(blend(v1->data(), h2->data())); }
+  void create_vertex(H_const_handle h1, V_const_handle v2, V_handle v) const
+  { v->set_data(blend(h1->data(), v2->data())); }
+  void create_vertex(F_const_handle f1, V_const_handle v2, V_handle v) const
+  { v->set_data(blend(f1->data(), v2->data())); }
+  void create_vertex(V_const_handle v1, F_const_handle f2, V_handle v) const
+  { v->set_data(blend(v1->data(), f2->data())); }
+  void create_edge(H_const_handle h1, H_const_handle h2, H_handle h) const
+  {
+    h->set_data(blend(h1->data(), h2->data()));
+    h->twin()->set_data(blend(h1->data(), h2->data()));
+  }
+  void create_edge(H_const_handle h1, F_const_handle f2, H_handle h) const
+  {
+    h->set_data(blend(h1->data(), f2->data()));
+    h->twin()->set_data(blend(h1->data(), f2->data()));
+  }
+  void create_edge(F_const_handle f1, H_const_handle h2, H_handle h) const
+  {
+    h->set_data(blend(f1->data(), h2->data()));
+    h->twin()->set_data(blend(f1->data(), h2->data()));
+  }
+};
+\endcode
+
+<!----------------------------------------------------------------------------->
+\cgalFigureBegin{arr_figex_overlay_color,overlay_color.png}
+
+The overlay of two extended arrangements]{The overlay (c) of two
+arrangements (a) and (b). Each feature of the arrangements is extended
+with a color. The color of each feature of the overlay arrangement is
+the blend of the colors of the two inducing features.
+
+\cgalFigureEnd
+<!----------------------------------------------------------------------------->
+
+The example program listed below computes the overlay, depicted in
+\cgalFigureRef{arr_figex_overlay_color}, of the two arrangements
+depicted in (a) and (d). Each feature of the input arrangements and of
+the overlay arrangement is extended with an RGB color stored as an
+`unsigned int`. The vertices, halfedges, and faces of the red
+arrangement are assigned three different shades of red. Similarly, the
+vertices, halfedges, and faces of the blue arrangement are assigned
+three different shades of blue. Using an instance of the
+`Overlay_color_traits` class template as the overlay traits, each
+feature of the overlay arrangement is assigned a color that is a blend
+of the colors attached to the inducing features.
+
+\cgalExample{Arrangement_on_surface_2/overlay_color.cpp}
 
 <!----------------------------------------------------------------------------->
 \subsection arr_ssecarr_with_hist Storing the Curve History
@@ -5894,33 +6140,37 @@ and defines a simple textual input/output format.
 \section aos_sec-bgl Adapting to Boost Graphs
 <!--=========================================================================-->
 
-<span class="textsc">Boost</span>\cgalFootnote{See also <span class="textsc">Boost</span>'s homepage at: <TT>www.boost.org</TT>.}
-is a collection of portable \cpp libraries that extend the Standard Template Library (<span class="textsc">Stl</span>). The <span class="textsc">Boost</span> Graph Library (<span class="textsc">bgl</span>), which one of the libraries in the collection, offers an
-extensive set of generic graph algorithms parameterized through templates.
-As our arrangements are embedded as planar graphs, it is only
-natural to extend the underlying data structure with the interface that the
-<span class="textsc">bgl</span> expects, and gain the ability to perform the operations that the <span class="textsc">bgl</span> supports, such as shortest-path computation. This section describes how apply
-the graph algorithms implemented in the <span class="textsc">bgl</span> to `Arrangement_2` instances.
+\sc{Boost}\cgalFootnote{See also \sc{Boost}'s homepage at:
+<TT>www.boost.org</TT>.}  is a collection of portable \cpp libraries
+that extend the Standard Template Library (\sc{Stl}). The \sc{Boost}
+Graph Library (\sc{bgl}), which one of the libraries in the
+collection, offers an extensive set of generic graph algorithms
+parameterized through templates.  As our arrangements are embedded as
+planar graphs, it is only natural to extend the underlying data
+structure with the interface that the <\sc{bgl} expects, and gain the
+ability to perform the operations that the \sc{bgl} supports, such as
+shortest-path computation. This section describes how apply the graph
+algorithms implemented in the \sc{bgl} to `Arrangement_2` instances.
 
-An instance of `Arrangement_2` is adapted to a <span
-class="textsc">Boost</span> graph through the provision of a set of
-free functions that operate on the arrangement features and conform
-with the relevant BGL concepts. Besides the straightforward
-adaptation, which associates a vertex with each \sc{Dcel} vertex and
-an edge with each \sc{Dcel} halfedge, the package also offer a
-<em>dual</em> adaptor, which associates a graph vertex with each
-\sc{Dcel} face, such that two vertices are connected, iff there is a
-\sc{Dcel} halfedge that connects the two corresponding faces.
+An instance of `Arrangement_2` is adapted to a \sc{Boost} graph
+through the provision of a set of free functions that operate on the
+arrangement features and conform with the relevant BGL
+concepts. Besides the straightforward adaptation, which associates a
+vertex with each \sc{Dcel} vertex and an edge with each \sc{Dcel}
+halfedge, the package also offer a <em>dual</em> adaptor, which
+associates a graph vertex with each \sc{Dcel} face, such that two
+vertices are connected, iff there is a \sc{Dcel} halfedge that
+connects the two corresponding faces.
 
 <!----------------------------------------------------------------------------->
 \subsection arr_ssecbgl_primal The Primal Arrangement Representation
 <!----------------------------------------------------------------------------->
 
-Arrangement instances are adapted to <span class="textsc">Boost</span>
-graphs by specializing the \link BGLArgtGT `boost:graph_traits`
-\endlink template for `Arrangement_2` instances. The graph-traits
-states the graph concepts that the arrangement class models (see
-below) and defines the types required by these concepts.
+Arrangement instances are adapted to \sc{Boost} graphs by specializing
+the \link BGLArgtGT `boost:graph_traits` \endlink template for
+`Arrangement_2` instances. The graph-traits states the graph concepts
+that the arrangement class models (see below) and defines the types
+required by these concepts.
 
 In this specialization the `Arrangement_2` vertices correspond to the
 graph vertices, where two vertices are adjacent if there is at least
@@ -5932,13 +6182,13 @@ directed, we consider the graph to be directed as well. Moreover, as
 several interior-disjoint \f$x\f$-monotone curves (say circular arcs)
 may share two common endpoints, inducing an arrangement with two
 vertices that are connected with several edges, we allow parallel
-edges in our <span class="textsc">Boost</span> graph.
+edges in our \sc{Boost} graph.
 
 Given an `Arrangement_2` instance, we can efficiently traverse its
 vertices and halfedges. Thus, the arrangement graph is a model of the
-concepts `VertexListGraph` and `EdgeListGraph` introduced by the <span
-class="textsc">bgl</span>.  At the same time, we use an iterator
-adapter of the circulator over the halfedges incident to a vertex
+concepts `VertexListGraph` and `EdgeListGraph` introduced by the
+\sc{bgl}.  At the same time, we use an iterator adapter of the
+circulator over the halfedges incident to a vertex
 (`Halfedge_around_vertex_circulator` - see Section \ref
 arr_sssectr_vertex), so it is possible to go over the ingoing and
 outgoing edges of a vertex in linear time. Thus, our arrangement graph
@@ -5949,25 +6199,24 @@ edges).
 It is important to notice that the vertex descriptors we use are \link
 Arrangement_2 Vertex_handle `Vertex_handle`\endlink objects and
 <em>not</em> vertex indices. However, in order to gain more efficiency
-in most <span class="textsc">bgl</span> algorithms, it is better to
-have them indexed \f$0, 1, \ldots, (n-1)\f$, where \f$n\f$ is the
-number of vertices. We therefore introduce the
-`Arr_vertex_index_map<Arrangement>` class-template, which maintains a
-mapping of vertex handles to indices, as required by the <span
-class="textsc">bgl</span>. An instance of this class must be attached
-to a valid arrangement vertex when it is created. It uses the
-notification mechanism (see Section \ref arr_ssecnotif) to
+in most \sc{bgl} algorithms, it is better to have them indexed \f$0,
+1, \ldots, (n-1)\f$, where \f$n\f$ is the number of vertices. We
+therefore introduce the `Arr_vertex_index_map<Arrangement>`
+class-template, which maintains a mapping of vertex handles to
+indices, as required by the \sc{bgl}. An instance of this class must
+be attached to a valid arrangement vertex when it is created. It uses
+the notification mechanism (see Section \ref arr_ssecnotif) to
 automatically maintain the mapping of vertices to indices, even when
 new vertices are inserted into the arrangement or existing vertices
 are removed.
 
-In most algorithm provided by the <span class="textsc">bgl</span>, the
-output is given by <em>property maps</em>, such that each map entry
-corresponds to a vertex.  For example, when we compute the shortest
-paths from a given source vertex \f$s\f$ to all other vertices we can
-obtain a map of distances and a map of predecessors - namely for each
-\f$v\f$ vertex we have its distance from \f$s\f$ and a descriptor of
-the vertex that precedes \f$v\f$ in the shortest path from \f$s\f$.
+In most algorithm provided by the \sc{bgl}, the output is given by
+<em>property maps</em>, such that each map entry corresponds to a
+vertex.  For example, when we compute the shortest paths from a given
+source vertex \f$s\f$ to all other vertices we can obtain a map of
+distances and a map of predecessors - namely for each \f$v\f$ vertex
+we have its distance from \f$s\f$ and a descriptor of the vertex that
+precedes \f$v\f$ in the shortest path from \f$s\f$.
 
 If the vertex descriptors are simply indices, boost supplies tools to
 easily represent property maps using vectors.
@@ -5978,8 +6227,8 @@ for an efficient mapping of \link Arrangement_2::Vertex_handle
 however that unlike the `Arr_vertex_index_map` class, the vertex
 property-map class is not kept synchronized with the number of
 vertices in the arrangement, so it should not be reused in calls to
-<span class="textsc">bgl</span> functions in case the arrangement is
-modified in between these calls.
+\sc{bgl} functions in case the arrangement is modified in between
+these calls.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{arr_figex_bgl,ex_bgl.png}
@@ -5992,10 +6241,10 @@ the unbounded face \f$f_0\f$, are shown is brackets.
 
 In the following example we construct an arrangement of 7 line
 segments, as shown in \cgalFigureRef{arr_figex_bgl}, then use
-Dijkstra's shortest-paths algorithm from the <span
-class="textsc">bgl</span> to compute the graph distance of all
-vertices from the leftmost vertex in the arrangement \f$v_0\f$. Note
-the usage of the `boost::vector_property_map<Type, IndexMap>` and the
+Dijkstra's shortest-paths algorithm from the \sc{bgl} to compute the
+graph distance of all vertices from the leftmost vertex in the
+arrangement \f$v_0\f$. Note the usage of the
+`boost::vector_property_map<Type, IndexMap>` and the
 `Arr_vertex_property_map` classes. The latter one, instantiated by the
 type `double` is used to map vertices to their distances from
 \f$v_0\f$.
@@ -6021,10 +6270,10 @@ graph-edge type. We treat the graph edges as directed, such that a
 halfedge `e` is directed from \f$f_1\f$, which is its incident face,
 to \f$f_2\f$, which is the incident face of its twin halfedge. As two
 arrangement faces may share more than a single edge on their boundary,
-we allow parallel edges in our <span class="textsc">Boost</span>
-graph. As is the case in the primal graph, the dual arrangement graph
-is also a model of the concepts `VertexListGraph`, `EdgeListGraph` and
-`BidirectionalGraph` (thus also of `IncidenceGraph`).
+we allow parallel edges in our \sc{Boost} graph. As is the case in the
+primal graph, the dual arrangement graph is also a model of the
+concepts `VertexListGraph`, `EdgeListGraph` and `BidirectionalGraph`
+(thus also of `IncidenceGraph`).
 
 Since we use \link Arrangement_2::Face_handle `Face_handle`\endlink
 objects as the vertex descriptors, we define the
@@ -6072,8 +6321,7 @@ On rare occasions the traits class `Arr_non_caching_segment_traits_2`
 exhibits slightly better performance than the default one
 (`Arr_segment_traits_2` even when the segments intersect each other,
 due to the small overhead of the latter (optimized) traits class. (For
-example, when the so-called <span class="textsc">Leda</span> rational
-kernel is used).
+example, when the so-called \sc{Leda} rational kernel is used).
 
 <LI>Prior knowledge of the combinatorial structure of the arrangement
 can be used to accelerate operations that insert \f$x\f$-monotone

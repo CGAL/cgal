@@ -43,7 +43,9 @@ TARGETS = \
   consolidated_curve_data.pdf \
   generic_curve_data.pdf \
   observer.pdf \
-  dcel_extension.pdf
+  dcel_extension.pdf \
+  overlay.pdf \
+  overlay_color.pdf
 
 .DEFAULT_GOAL = all
 .PHONY: all clean

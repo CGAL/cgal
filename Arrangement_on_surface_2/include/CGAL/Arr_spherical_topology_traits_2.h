@@ -9,7 +9,6 @@
 //
 // Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
 //                 Eric Berberich    <ericb@post.tau.ac.il>
-//                 Efi Fogel         <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_SPHERICAL_TOPOLOGY_TRAITS_2_H
 #define CGAL_ARR_SPHERICAL_TOPOLOGY_TRAITS_2_H
@@ -293,7 +292,16 @@ public:
    */
   Vertex* discontinuity_vertex(const Point_2& pt)
   {
-    typename Vertex_map::iterator it = m_boundary_vertices.find(pt);
+    auto it = m_boundary_vertices.find(pt);
+    return (it != m_boundary_vertices.end()) ? it->second : nullptr;
+  }
+
+  /*! Obtain a vertex on the line of discontinuity that corresponds to
+   *  the given point (or return NULL if no such vertex exists).
+   */
+  const Vertex* discontinuity_vertex(const Point_2& pt) const
+  {
+    auto it = m_boundary_vertices.find(pt);
     return (it != m_boundary_vertices.end()) ? it->second : nullptr;
   }
 
