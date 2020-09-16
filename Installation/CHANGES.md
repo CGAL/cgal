@@ -16,11 +16,19 @@ Release date: December 2020
 
 ### [2D Arrangements](https://doc.cgal.org/5.2/Manual/packages.html#PkgArrangementOnSurface2)
 
--   Changed make-x-monotone return type from legacy [`CGAL::Object`](https://doc.cgal.org/5.2/STL_Extension/classCGAL_1_1Object.html)
-    to modern `boost::variant` in all traits concepts and models.
-    As there exists an implicit conversion from `boost::variant` to `CGAL::Object`, the
-    new code is backward compatible. However, it is recommended that all calls
-    to the make-x-monotone functions are fixed to use the new return type.
+-   Replaced the use of legacy
+      [`CGAL::Object`](https://doc.cgal.org/5.2/STL_Extension/classCGAL_1_1Object.html)
+      to modern `boost::variant`
+    - Changed make-x-monotone return type from legacy
+      [`CGAL::Object`](https://doc.cgal.org/5.2/STL_Extension/classCGAL_1_1Object.html)
+      to `boost::variant` in all traits concepts and models.
+      As there exists an implicit conversion from `boost::variant` to `CGAL::Object`,
+      the new code is backward compatible. However, it is recommended that all calls
+      to the make-x-monotone functions are fixed to use the new return type.
+    - Changed `decompose()` interface to use `boost::variant` instead of legacy
+      [`CGAL::Object`](https://doc.cgal.org/5.1/STL_Extension/classCGAL_1_1Object.html)
+      As exaplained above, the code is backward compatible. However, it is recommended
+      that all calls to `decompose()` are fixed to use the new interface.
 
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 -----------
@@ -116,13 +124,6 @@ Release date: September 2020
      As there exists an implicit conversion from `boost::variant` to `CGAL::Object`, the
      new code is backward compatible. However, it is recommended that all calls
      to the intersection functions are fixed to use the new return type.
- -   Changed `Make_x_monotone_2::operator()(`) return type from legacy [`CGAL::Object`](https://doc.cgal.org/5.1/STL_Extension/classCGAL_1_1Object.html)
-     to modern `boost::variant` in all traits concepts and models. As exaplained
-     above, the code is backward compatible. However, it is recommended that all
-     calls to `Make_x_monotone_2::operator()()` are fixed to use the new return type.
- -   Changed `decompose()` interface to use modern `boost::variant` instead of legacy [`CGAL::Object`](https://doc.cgal.org/5.1/STL_Extension/classCGAL_1_1Object.html)
-     As exaplained above, the code is backward compatible. However, it is recommended that all
-     calls to `decompose()` are fixed to use the new interface.
 
 ### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/5.1/Manual/packages.html#PkgBooleanSetOperations2)
 
