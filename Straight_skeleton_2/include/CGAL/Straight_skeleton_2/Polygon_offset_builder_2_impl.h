@@ -199,8 +199,6 @@ void Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::AddOffsetVertex( FT          
                                                                   , ContainerPtr          aPoly
                                                                   )
 {
-  Visit(aHook);
-
   OptionalPoint_2 lP = Construct_offset_point(aTime,aHook);
 
   if ( !lP )
@@ -242,29 +240,35 @@ OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::TraceOffsetPolygon(
     CGAL_POLYOFFSET_TRACE(1,"STEP " << mStepID ) ;
 
     Halfedge_const_handle lLastHook = lHook ;
+
     Hook_position lPos ;
     lHook = LocateHook(aTime,lHook->prev(),true,lPos) ;
-    Visit(lLastHook);
 
     if ( handle_assigned(lHook) )
     {
       CGAL_POLYOFFSET_TRACE(4, "returned Hook: " << e2str(*lHook));
 
+      CGAL_assertion( lHook->slope() != ZERO );
       AddOffsetVertex(aTime,lHook, lPoly);
-      CGAL_POLYOFFSET_TRACE(2,"B" << lLastHook->id() << " and B" << lHook->id() << " visited." ) ;
+
+      Visit(lHook);
+      visited_hooks.push_back(lHook);
+
+      CGAL_POLYOFFSET_TRACE(2,"Marking hook, B" << lHook->id() << ", as visited." ) ;
 
       lHook = lHook->opposite();
-
-      visited_hooks.push_back(lLastHook);
     }
 
+    Visit(lLastHook);
+    visited_hooks.push_back(lLastHook);
+
+    CGAL_POLYOFFSET_TRACE(2,"Marking last hook, B" << lLastHook->id() << ", as visited." ) ;
   }
-  while ( handle_assigned(lHook) && lHook != aSeed  && !IsVisited(lHook)) ;
+  while ( handle_assigned(lHook) && lHook != aSeed && !IsVisited(lHook)) ;
 
   bool lComplete = ( lHook == aSeed )  ;
 
   CGAL_POLYOFFSET_TRACE(1,"Offset polygon of " << lPoly->size() << " vertices traced." << ( lComplete ? "COMPLETE" : "INCOMPLETE" ) ) ;
-
   CGAL_assertion ( !lComplete || ( lComplete && lPoly->size() >= 3 ) ) ;
 
   mVisitor.on_offset_contour_finished( lComplete );
