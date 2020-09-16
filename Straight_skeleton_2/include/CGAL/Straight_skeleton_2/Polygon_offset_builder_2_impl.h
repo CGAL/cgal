@@ -110,30 +110,11 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateHook( FT                    
         {
           CGAL_stskel_intrinsic_test_assertion( !CGAL_SS_i::is_time_clearly_not_within_possibly_inexact_bisector_time_interval(aTime,aBisector) ) ;
 
-          // If the slope is positive, and the isoline goes through the source, we have to distinguish
-          // two cases:
-          // - The slope of the next halfedge is (strictly) negative; in that case, we do not want
-          //   to interrupt the isoline at the source vertex, it should find a better exit point
-          //   farther in the face.
-          // - The slop of the next halfedge is zero or positive; in that case, we should leave the face.
-          if ( aBisector->slope() == POSITIVE && lTimeWrtSrcTime == EQUAL )
-          {
-            if ( lPrev->is_bisector() && ( lPrev->slope() == NEGATIVE ) )
-            {
-              CGAL_POLYOFFSET_TRACE(4,"\n Local V: " << e2str(*lPrev) ) ;
-
-              // prev() has the isoline passing through its target, but we don't want to exit there
-              aBisector = lPrev->prev();
-              CGAL_POLYOFFSET_TRACE(4,"\n aBisector to : " << e2str(*aBisector) ) ;
-              continue;
-            }
-          }
-
           rPos = ( lTimeWrtTgtTime == EQUAL ? TARGET : lTimeWrtSrcTime == EQUAL ? SOURCE : INSIDE ) ;
 
           rHook = aBisector ;
 
-          CGAL_POLYOFFSET_TRACE(2, "  Hook found at " << Hook_position2Str(rPos) ) ;
+          CGAL_POLYOFFSET_TRACE(2, "  Hook found here at " << Hook_position2Str(rPos) ) ;
 
           break ;
         }
@@ -146,7 +127,7 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateHook( FT                    
       }
       else
       {
-        CGAL_POLYOFFSET_TRACE(2,"Bisector is a roof peak.");
+        CGAL_POLYOFFSET_TRACE(2,"Bisector is a roof peak (zero slope).");
       }
     }
     else
