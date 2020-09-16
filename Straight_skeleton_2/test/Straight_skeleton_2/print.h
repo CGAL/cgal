@@ -4,7 +4,7 @@
 template<class K>
 void print_point ( CGAL::Point_2<K> const& p )
 {
-  std::cout << "(" << p.x() << "," << p.y() << ")" ;
+  std::cout << p.x() << " " << p.y();
 }
 
 template<class K, class C>
@@ -16,7 +16,8 @@ void print_polygon ( CGAL::Polygon_2<K,C> const& poly )
 
   for( typename Polygon::Vertex_const_iterator vi = poly.vertices_begin() ; vi != poly.vertices_end() ; ++ vi )
   {
-    print_point(*vi); std::cout << std::endl ;
+    print_point(*vi);
+    std::cout << std::endl ;
   }
 }
 
