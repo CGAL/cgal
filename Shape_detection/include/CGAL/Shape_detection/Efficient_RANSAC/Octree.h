@@ -81,7 +81,7 @@ public:
           m_input_range(boost::counting_iterator<std::size_t>(0),
                         boost::counting_iterator<std::size_t>(end - begin)),
           m_index_map(begin, point_map),
-          m_octree(m_input_range, m_index_map),
+          m_octree(m_input_range, m_index_map, 1.0),
           m_offset(offset) {}
 
   std::size_t size() const {
@@ -94,7 +94,8 @@ public:
 
   std::size_t offset() const { return m_offset; }
 
-  void refine(double cluster_epsilon_for_max_level_recomputation = -1., std::size_t bucketSize = 2,
+  void refine(double cluster_epsilon_for_max_level_recomputation = -1.,
+              std::size_t bucketSize = 20,
               std::size_t maxLevel = 10) {
 
     if (cluster_epsilon_for_max_level_recomputation > 0.) {
