@@ -1057,8 +1057,8 @@ private:
         std::vector<std::size_t> indices;
         indices.reserve(cell->size());
         for (std::size_t i = 0; i < cell->size(); i++) {
-          if (shapeIndex[*(cell->points().begin() + i)] == -1) {
-            indices.push_back(*(cell->points().begin() + i));
+          if (shapeIndex[octree->index(cell, i)] == -1) {
+            indices.push_back(octree->index(cell, i));
           }
         }
 
@@ -1144,7 +1144,7 @@ private:
       std::size_t p = CGAL::get_default_random().
               uniform_int<std::size_t>(0, cur->size() - 1);
       // TODO: I'm not sure if dereferencing this is working correctly
-      std::size_t j = *(cur->points().begin() + p);
+      std::size_t j = octree->index(cur, p);
 
       if (shapeIndex[j] == -1)
         indices.insert(j);

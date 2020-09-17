@@ -84,6 +84,11 @@ public:
           m_octree(m_input_range, m_index_map, 1.0),
           m_offset(offset) {}
 
+  std::size_t index (const Node* node, std::size_t i) const
+  {
+    return m_offset + *(node->points().begin() + i);
+  }
+
   std::size_t size() const {
     return m_octree.root().size();
   }
