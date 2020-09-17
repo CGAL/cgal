@@ -1697,7 +1697,9 @@ bool remove_degenerate_faces(const FaceRange& face_range,
     std::map<edge_descriptor, bool> are_degenerate_edges;
 
     // use a copy of the set to avoid iterator invalidation
-    std::set<face_descriptor> degenerate_face_set_copy(degenerate_face_set);
+    std::vector<face_descriptor> degenerate_face_set_copy(degenerate_face_set.size());
+    std::copy(degenerate_face_set.begin(), degenerate_face_set.end(),
+              degenerate_face_set_copy.begin());
     for(face_descriptor fd : degenerate_face_set_copy)
     {
       for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, tmesh), tmesh))
