@@ -24,6 +24,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_3.h>
+#include <CGAL/Dimension.h>
 
 #include <boost/function.hpp>
 #include <boost/iterator/iterator_facade.hpp>
@@ -81,6 +82,8 @@ public:
    */
   typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
 
+  typedef typename Ambient_dimension<Point, Kernel>::type Dimension;
+
   /*!
    * \brief The floating point type is decided by the Kernel
    */
@@ -89,7 +92,7 @@ public:
   /*!
    * \brief The Sub-tree / Octant type
    */
-  typedef CGAL::Octree::Node<typename Point_range::iterator> Node;
+  typedef CGAL::Octree::Node<typename Point_range::iterator, Dimension> Node;
 
   /*!
    * \brief A function that determines whether a node needs to be split when refining a tree
@@ -110,10 +113,26 @@ public:
 
 private: // Private types
 
-  typedef typename Kernel::Vector_3 Vector;
-  typedef typename Kernel::Iso_cuboid_3 Iso_cuboid;
-  typedef typename Kernel::Sphere_3 Sphere;
-  typedef typename CGAL::Bbox_3 Bbox;
+  typedef typename Kernel::Vector_2 Vector_2;
+  typedef typename Kernel::Vector_3 Vector_3;
+  typedef typename Kernel::Iso_rectangle_2 Iso_rectangle_2;
+  typedef typename Kernel::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename Kernel::Circle_2 Circle_2;
+  typedef typename Kernel::Sphere_3 Sphere_3;
+  typedef Aff_transformation_2<Kernel> Aff_transform_2;
+  typedef Aff_transformation_3<Kernel> Aff_transform_3;
+
+  constexpr static int dim = Dimension::value;
+  constexpr static int degree = (2 << (dim-1));
+
+  constexpr static bool is_quadtree = std::is_same<Dimension, Dimension_tag<2> >::value;
+  typedef typename std::conditional<is_quadtree, Vector_2, Vector_3>::type Vector;
+  typedef typename std::conditional<is_quadtree, Iso_rectangle_2, Iso_cuboid_3>::type Iso_cuboid;
+  typedef typename std::conditional<is_quadtree, Circle_2, Sphere_3>::type Sphere;
+  typedef typename std::conditional<is_quadtree, Bbox_2, Bbox_3>::type Bbox;
+  typedef typename std::conditional<is_quadtree, Aff_transform_2, Aff_transform_3>::type
+  Aff_transform;
+
   typedef typename Point_range::iterator Range_iterator;
   typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
 
@@ -167,19 +186,16 @@ public:
     Point bbox_centroid = midpoint(bbox.min(), bbox.max());
 
     // scale bounding box to add padding
-    bbox = bbox.transform(Aff_transformation_3<Kernel>(SCALING, enlarge_ratio));
+    bbox = bbox.transform(Aff_transform(SCALING, enlarge_ratio));
 
     // Convert the bounding box into a cube
-    FT x_len = bbox.xmax() - bbox.xmin();
-    FT y_len = bbox.ymax() - bbox.ymin();
-    FT z_len = bbox.zmax() - bbox.zmin();
-    FT max_len = (std::max)({x_len, y_len, z_len});
+    FT max_len = max_length(bbox);
     bbox = Iso_cuboid(bbox.min(), bbox.min() + max_len * Vector(1.0, 1.0, 1.0));
 
     // Shift the squared box to make sure it's centered in the original place
     Point bbox_transformed_centroid = midpoint(bbox.min(), bbox.max());
     Vector diff_centroid = bbox_centroid - bbox_transformed_centroid;
-    bbox = bbox.transform(Aff_transformation_3<Kernel>(TRANSLATION, diff_centroid));
+    bbox = bbox.transform(Aff_transform(TRANSLATION, diff_centroid));
 
     // save octree attributes
     m_bbox_min = bbox.min();
@@ -236,7 +252,7 @@ public:
         split((*current));
 
         // Process each of its children
-        for (int i = 0; i < 8; ++i)
+        for (int i = 0; i < degree; ++i)
           todo.push(&(*current)[i]);
 
       }
@@ -313,7 +329,7 @@ public:
           split(*neighbor);
 
           // Add newly created children to the queue
-          for (int i = 0; i < 8; ++i) {
+          for (int i = 0; i < degree; ++i) {
             leaf_nodes.push(&(*neighbor)[i]);
           }
         }
@@ -367,7 +383,7 @@ public:
 
     const Node *first = traversal_method.first(&m_root);
 
-    Node_traversal_method_const next = std::bind(&Traversal::template next<typename Point_range::iterator>,
+    Node_traversal_method_const next = std::bind(&Traversal::template next<typename Point_range::iterator, Dimension>,
                                                  traversal_method, _1);
 
     return boost::make_iterator_range(Traversal_iterator<const Node>(first, next),
@@ -399,7 +415,7 @@ public:
 
       // Find the index of the correct sub-node
       typename Node::Index index;
-      for (int dimension = 0; dimension < 3; ++dimension) {
+      for (int dimension = 0; dimension < dim; ++dimension) {
 
         index[dimension] = center[dimension] < p[dimension];
       }
@@ -429,9 +445,9 @@ public:
     FT size = m_side_per_depth[node.depth()];
 
     // Determine the location this node should be split
-    FT min_corner[3];
-    FT max_corner[3];
-    for (int i = 0; i < 3; i++) {
+    FT min_corner[dim];
+    FT max_corner[dim];
+    for (int i = 0; i < dim; i++) {
 
       min_corner[i] = m_bbox_min[i] + (node.location()[i] * size);
       max_corner[i] = min_corner[i] + size;
@@ -557,8 +573,8 @@ public:
     FT size = m_side_per_depth[node.depth()];
 
     // Determine the location this node should be split
-    FT bary[3];
-    for (int i = 0; i < 3; i++)
+    FT bary[dim];
+    for (int i = 0; i < dim; i++)
       bary[i] = node.location()[i] * size + (size / 2.0) + m_bbox_min[i];
 
     // Convert that location into a point
@@ -567,12 +583,27 @@ public:
 
 private: // functions :
 
+  FT max_length (const Iso_rectangle_2& bbox) const
+  {
+    FT x_len = bbox.xmax() - bbox.xmin();
+    FT y_len = bbox.ymax() - bbox.ymin();
+    return (std::max)({x_len, y_len});
+  }
+
+  FT max_length (const Iso_cuboid_3& bbox) const
+  {
+    FT x_len = bbox.xmax() - bbox.xmin();
+    FT y_len = bbox.ymax() - bbox.ymin();
+    FT z_len = bbox.zmax() - bbox.zmin();
+    return (std::max)({x_len, y_len, z_len});
+  }
+
   void reassign_points(Node &node, Range_iterator begin, Range_iterator end, const Point &center,
-                       std::bitset<3> coord = {},
+                       std::bitset<dim> coord = {},
                        std::size_t dimension = 0) {
 
     // Root case: reached the last dimension
-    if (dimension == 3) {
+    if (dimension == dim) {
 
       node[coord.to_ulong()].points() = {begin, end};
 
@@ -586,12 +617,12 @@ private: // functions :
                                                 });
 
     // Further subdivide the first side of the split
-    std::bitset<3> coord_left = coord;
+    std::bitset<dim> coord_left = coord;
     coord_left[dimension] = false;
     reassign_points(node, begin, split_point, center, coord_left, dimension + 1);
 
     // Further subdivide the second side of the split
-    std::bitset<3> coord_right = coord;
+    std::bitset<dim> coord_right = coord;
     coord_right[dimension] = true;
     reassign_points(node, split_point, end, center, coord_right, dimension + 1);
 
@@ -687,10 +718,10 @@ private: // functions :
 
       // Create a list to map children to their distances
       std::vector<Node_index_with_distance> children_with_distances;
-      children_with_distances.reserve(8);
+      children_with_distances.reserve(degree);
 
       // Fill the list with child nodes
-      for (int index = 0; index < 8; ++index) {
+      for (int index = 0; index < degree; ++index) {
         auto &child_node = node[index];
 
         // Add a child to the list, with its distance
@@ -732,7 +763,7 @@ private: // functions :
       }
 
       // Otherwise, each of the children need to be checked
-      for (int i = 0; i < 8; ++i) {
+      for (int i = 0; i < degree; ++i) {
         intersecting_nodes_recursive(query, node[i], output);
       }
 

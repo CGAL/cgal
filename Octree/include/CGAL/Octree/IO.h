@@ -22,8 +22,8 @@
 
 using std::ostream;
 
-template<typename Value>
-ostream &operator<<(ostream &os, const CGAL::Octree::Node<Value> &node) {
+template<typename Value, typename Dim>
+ostream &operator<<(ostream &os, const CGAL::Octree::Node<Value, Dim> &node) {
 
   // Show the depth of the node
 //  for (int i = 0; i < node.depth(); ++i)

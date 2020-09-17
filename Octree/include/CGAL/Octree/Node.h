@@ -34,8 +34,11 @@ namespace Octree {
  *
  * \tparam Point_index is the datatype the node will contain
  */
-template<typename Point_index>
+template<typename Point_index, typename Dimension>
 class Node {
+
+  constexpr static int dim = Dimension::value;
+  constexpr static int degree = (2 << (dim-1));
 
 public:
 
@@ -45,12 +48,12 @@ public:
   /*!
    * \brief self typedef for convenience
    */
-  typedef Node<Point_index> Self;
+  typedef Node<Point_index, Dimension> Self;
 
   /*!
    * \brief array for containing the child nodes of this node
    */
-  typedef std::array<Self, 8> Children;
+  typedef std::array<Self, degree> Children;
 
   /*!
    * \brief set of bits representing this node's relationship to its parent
@@ -61,7 +64,7 @@ public:
    * and index[2] is whether z is greater.
    * Used to represent a node's relationship to the center of its parent.
    */
-  typedef std::bitset<3> Index;
+  typedef std::bitset<dim> Index;
 
   /*!
    * \brief coordinate location representing this node's relationship with the rest of the tree
@@ -70,7 +73,7 @@ public:
    * and adding the Index.
    * \todo Maybe I should add an example?
    */
-  typedef std::array<uint32_t, 3> Int_location;
+  typedef std::array<uint32_t, dim> Int_location;
 
   /*!
    * \brief a collection of point indices represented by begin and end iterators
@@ -198,14 +201,14 @@ public:
    * \param parent A reference to the node containing this one
    * \param index This node's relationship to its parent
    */
-  explicit Node(Self *parent = nullptr, Index index = 0) : m_parent(parent), m_depth(0),
-                                                           m_location({0, 0, 0}) {
+  explicit Node(Self *parent = nullptr, Index index = 0) : m_parent(parent), m_depth(0)
+                                                           /* , m_location({0, 0, 0}) */ {
 
     if (parent) {
 
       m_depth = parent->m_depth + 1;
 
-      for (int i = 0; i < 3; i++)
+      for (int i = 0; i < dim; i++)
         m_location[i] = (2 * parent->m_location[i]) + index[i];
 
     }
@@ -230,7 +233,7 @@ public:
     assert(is_leaf());
 
     m_children = std::make_unique<Children>();
-    for (int index = 0; index < 8; index++) {
+    for (int index = 0; index < degree; index++) {
 
       (*m_children)[index] = std::move(Self(this, {Index(index)}));
     }
@@ -269,7 +272,7 @@ public:
   Self &operator[](int index) {
 
     assert(!is_leaf());
-    assert(0 <= index && index < 8);
+    assert(0 <= index && index < degree);
 
     return (*m_children)[index];
   }
@@ -283,7 +286,7 @@ public:
   const Self &operator[](int index) const {
 
     assert(!is_leaf());
-    assert(0 <= index && index < 8);
+    assert(0 <= index && index < degree);
 
     return (*m_children)[index];
   }
@@ -400,7 +403,7 @@ public:
    * \param direction which way to find the adjacent node relative to this one
    * \return a pointer to the adjacent node if it exists
    */
-  const Self *adjacent_node(std::bitset<3> direction) const {
+  const Self *adjacent_node(std::bitset<dim> direction) const {
 
     // Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
     // direction:    000    001   010   011   100   101
@@ -451,13 +454,13 @@ public:
    * \brief equivalent to adjacent_node, with a Direction rather than a bitset
    */
   const Self *adjacent_node(Direction direction) const {
-    return adjacent_node(std::bitset<3>(static_cast<int>(direction)));
+    return adjacent_node(std::bitset<dim>(static_cast<int>(direction)));
   }
 
   /*!
    * \brief equivalent to adjacent_node, except non-const
    */
-  Self *adjacent_node(std::bitset<3> direction) {
+  Self *adjacent_node(std::bitset<dim> direction) {
     return const_cast<Self *>(const_cast<const Self *>(this)->adjacent_node(direction));
   }
 
@@ -465,7 +468,7 @@ public:
    * \brief equivalent to adjacent_node, with a Direction rather than a bitset and non-const
    */
   Self *adjacent_node(Direction direction) {
-    return adjacent_node(std::bitset<3>(static_cast<int>(direction)));
+    return adjacent_node(std::bitset<dim>(static_cast<int>(direction)));
   }
 
   /// @}
@@ -552,7 +555,7 @@ public:
     if (!is_leaf()) {
 
       // Check all the children
-      for (int i = 0; i < 8; ++i) {
+      for (int i = 0; i < degree; ++i) {
 
         // If any child cell is different, they're not the same
         if ((*m_children)[i] != rhs[i])
