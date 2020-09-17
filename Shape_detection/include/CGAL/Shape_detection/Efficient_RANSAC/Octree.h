@@ -89,7 +89,7 @@ public:
   }
 
   std::size_t maxLevel() const {
-    return m_octree.max_depth_reached();
+    return m_octree.max_depth_reached() - 1;
   }
 
   std::size_t offset() const { return m_offset; }
