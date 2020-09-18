@@ -30,6 +30,10 @@ Release date: December 2020
       As exaplained above, the code is backward compatible. However, it is recommended
       that all calls to `decompose()` are fixed to use the new interface.
 
+### [Polygon Mesh Processing](https://doc.cgal.org/5.2/Manual/packages.html#PkgPolygonMeshProcessing)
+-   Added an option in `corefine()`, `split()` and `clip()` functions that enables the operation to be done on a mesh with
+    self-intersections present in the intersection area.
+
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 -----------
 
