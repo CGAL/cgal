@@ -267,7 +267,6 @@ Dihedral_angle_cosine max_cos_dihedral_angle(const Point& p,
                                              const Point& s,
                                              const Geom_traits& gt)
 {
-  typedef typename Geom_traits::FT FT;
   Dihedral_angle_cosine a = cos_dihedral_angle(p, q, r, s, gt);
   Dihedral_angle_cosine max_cos_dh = a;
   if(max_cos_dh.is_one()) return max_cos_dh;
