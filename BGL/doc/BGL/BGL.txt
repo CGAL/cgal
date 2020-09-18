@@ -634,6 +634,12 @@ Seam meshes are for example used in Chapter \ref PkgSurfaceMeshParameterization
 to parameterize a topological sphere by first virtually cutting it into a topological
 disk.
 
+\subsection BGLInheriting Inheriting from a Model of a Face Graph Concept
+In order for a type `FG` to be a model of one of the face graph concepts, a specialization of
+`boost::graph_traits<FG>` must exist. When you derive a class from `FG` this graph traits class specialization does not match.
+For such cases, a header file consuming some user defined macros is provided to make the derived class a valid model
+of the same concept. See `CGAL/boost/graph/graph_traits_inheritance_macros.h` for more details.
+
 \section BGLPartitioning Graph Partitioning
 
 For algorithms that operate locally, partitioning is often an easy way to parallelize

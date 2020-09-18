@@ -1,17 +1,31 @@
 Release History
 ===============
 
-[Release 5.2](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.2)
+[Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
 -----------
 
+Release date: December 2020
+
+### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/5.2/Manual/packages.html#PkgBGL)
+
+-   Added the convenience header `CGAL/boost/graph/graph_traits_inheritance_macros.h` that allows to easily
+    make any class inheriting from a model of a face graph concept, a model of the same concept.
+
+### [3D Convex Hulls](https://doc.cgal.org/5.2/Manual/packages.html#PkgConvexHull3)
+-   Added the function `CGAL::halfspace_intersection_interior_point_3()` that can be used to retrieve
+    the point that is the most interior a convex closed volume defined by the intersection of a set of halfspaces.
+
+### [Polygon Mesh Processing](https://doc.cgal.org/5.2/Manual/packages.html#PkgPolygonMeshProcessing)
+-   Added an option in `corefine()`, `split()` and `clip()` functions that enables the operation to be done on a mesh with
+    self-intersections present in the intersection area.
+
 ### Surface Mesh Topology
-- Added the function `CGAL::Surface_mesh_topology::Curves_on_surface_topology::is_homotopic_to_simple_cycle()`, which can be used to determine whehter a closed path
-  on a surface mesh can be continously transformed to a cycle without self intersection.
+-   Added the function `CGAL::Surface_mesh_topology::Curves_on_surface_topology::is_homotopic_to_simple_cycle()`, which can be used to determine whehter a closed path
+    on a surface mesh can be continously transformed to a cycle without self intersection.
 
 
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 -----------
-
 
 Release date: September 2020
 
@@ -20,6 +34,8 @@ Release date: September 2020
 -   This package implements a tetrahedral isotropic remeshing algorithm,
     that improves the quality of tetrahedra in terms of dihedral angles,
     while targeting a given edge length.
+
+    See also the associated [blog entry](https://www.cgal.org/2020/08/07/Tetrahedral-remeshing/).
 
 ### [Surface Mesh Topology](https://doc.cgal.org/5.1/Manual/packages.html#PkgSurfaceMeshTopologySummary) (new package)
 
