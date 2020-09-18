@@ -101,6 +101,7 @@ CGAL_add_named_parameter(area_threshold_t, area_threshold, area_threshold)
 CGAL_add_named_parameter(halfedges_keeper_t, halfedges_keeper, halfedges_keeper)
 CGAL_add_named_parameter(volume_threshold_t, volume_threshold, volume_threshold)
 CGAL_add_named_parameter(dry_run_t, dry_run, dry_run)
+CGAL_add_named_parameter(do_not_modify_t, do_not_modify, do_not_modify)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
