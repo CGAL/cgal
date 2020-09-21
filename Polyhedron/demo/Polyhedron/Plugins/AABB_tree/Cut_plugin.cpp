@@ -722,9 +722,9 @@ private:
              int lvl)
    {
      //traversed lvl by lvl, so one push_back should be enough.
-     if(boxes.size() <= lvl )
+     if(static_cast<int>(boxes.size()) <= lvl )
        boxes.push_back(std::vector<Bbox>());
-     CGAL_assertion(boxes.size() > lvl);
+     CGAL_assertion(static_cast<int>(boxes.size()) > lvl);
      boxes[lvl].push_back(node.bbox());
 
      // Recursive traversal
@@ -1425,7 +1425,7 @@ void Polyhedron_demo_cut_plugin::cut()
   if(!plane_item)
     return;
 
-  for(std::size_t id =0; id < CGAL::Three::Three::scene()->numberOfEntries(); ++id)
+  for(int id =0; id < CGAL::Three::Three::scene()->numberOfEntries(); ++id)
   {
     Scene_item* item = CGAL::Three::Three::scene()->item(id);
     Scene_aabb_item* aabb_item = qobject_cast<Scene_aabb_item*>(item);
