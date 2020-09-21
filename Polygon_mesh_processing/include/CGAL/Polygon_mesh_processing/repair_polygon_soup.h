@@ -301,27 +301,26 @@ std::size_t split_pinched_polygons_in_polygon_soup(PointRange& points,
 // \ingroup PMP_repairing_grp
 //
 // removes polygons with fewer than 2 points from the soup.
+// This function does not require a range of points as an argument
+// since the check is purely topological. To each vertex of the mesh
+// is associated an index that is used in the description of the
+// boundaries of the polygons provided in `polygons`.
 //
-// \tparam PointRange a model of the concept `Container` whose value type is the point type.
 // \tparam PolygonRange a model of the concept `SequenceContainer`
 //                      whose value_type is itself a model of the concept `Container`
 //                      whose value_type is `std::size_t`.
 // \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 //
-// \param points points of the soup of polygons.
 // \param polygons a vector of polygons. Each element in the vector describes a polygon
-//        using the indices of the points in `points`.
+//        using the indices to some vector of points.
 //
-template <typename PointRange, typename PolygonRange>
-std::size_t remove_invalid_polygons_in_polygon_soup(PointRange& /*points*/,
-                                                    PolygonRange& polygons)
-{
+template <typename PolygonRange>
+std::size_t remove_invalid_polygons_in_polygon_soup(PolygonRange& polygons) {
   std::vector<std::size_t> to_remove;
   const std::size_t ini_polygons_size = polygons.size();
-  for(std::size_t polygon_index=0; polygon_index!=ini_polygons_size; ++polygon_index)
-  {
-    if(polygons[polygon_index].size() <= 2)
-    {
+  for (std::size_t polygon_index = 0; polygon_index != ini_polygons_size;
+       ++polygon_index) {
+    if (polygons[polygon_index].size() <= 2) {
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
       std::cout << "Invalid polygon:";
       print_polygon(std::cout, polygons[polygon_index]);
@@ -330,8 +329,7 @@ std::size_t remove_invalid_polygons_in_polygon_soup(PointRange& /*points*/,
     }
   }
 
-  while(!to_remove.empty())
-  {
+  while (!to_remove.empty()) {
     polygons.erase(polygons.begin() + to_remove.back());
     to_remove.pop_back();
   }
@@ -339,20 +337,25 @@ std::size_t remove_invalid_polygons_in_polygon_soup(PointRange& /*points*/,
   const std::size_t removed_polygons_n = ini_polygons_size - polygons.size();
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
-  if(removed_polygons_n > 0)
-    std::cout << "Removed " << removed_polygons_n << " invalid polygon(s)" << std::endl;
+  if (removed_polygons_n > 0)
+    std::cout << "Removed " << removed_polygons_n << " invalid polygon(s)"
+              << std::endl;
 #endif
 
   return removed_polygons_n;
 }
 
-} // end namespace internal
+template <typename PointRange, typename PolygonRange>
+std::size_t remove_invalid_polygons_in_polygon_soup(PointRange& /*points*/,
+                                                    PolygonRange& polygons) {
+  return remove_invalid_polygons_in_polygon_soup(polygons);
+}
+
+}  // end namespace internal
 
 template <typename PointRange, typename PolygonRange>
-std::size_t remove_invalid_polygons_in_polygon_soup(PointRange& points,
-                                                    PolygonRange& polygons) {
-  return remove_invalid_polygons_in_polygon_soup(
-      points, polygons, CGAL::parameters::all_default());
+std::size_t remove_invalid_polygons_in_polygon_soup(PolygonRange& polygons) {
+  return internal::remove_invalid_polygons_in_polygon_soup(polygons);
 }
 
 /// \ingroup PMP_repairing_grp
@@ -1074,7 +1077,7 @@ void repair_polygon_soup(PointRange& points,
   merge_duplicate_points_in_polygon_soup(points, polygons, np);
   internal::simplify_polygons_in_polygon_soup(points, polygons, traits);
   internal::split_pinched_polygons_in_polygon_soup(points, polygons, traits);
-  internal::remove_invalid_polygons_in_polygon_soup(points, polygons);
+  internal::remove_invalid_polygons_in_polygon_soup(polygons);
   merge_duplicate_polygons_in_polygon_soup(points, polygons, np);
   remove_isolated_points_in_polygon_soup(points, polygons);
 }
