@@ -1,10 +1,21 @@
+// Copyright (c) 2020 GeometryFactory Sarl (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s): Ahmed Essam <theartful.ae@gmail.com>
+
 #include "GridGraphicsItem.h"
 #include <cmath>
 #include <limits>
 
-#include <QtGlobal>
 #include <QGraphicsView>
 #include <QPainter>
+#include <QtGlobal>
 
 GridGraphicsItem::GridGraphicsItem() :
     gridColor{::Qt::gray}, axesColor{::Qt::black},
@@ -207,10 +218,7 @@ void GridGraphicsItem::paint(
   painter->setTransform(worldTransform);
 }
 
-QRectF GridGraphicsItem::boundingRect() const
-{
-  return this->viewportRect();
-}
+QRectF GridGraphicsItem::boundingRect() const { return this->viewportRect(); }
 
 QRectF GridGraphicsItem::viewportRect(QPainter* painter) const
 {

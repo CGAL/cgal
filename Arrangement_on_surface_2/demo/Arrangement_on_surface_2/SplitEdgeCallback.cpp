@@ -1,4 +1,4 @@
-// Copyright (c) 2012  Tel-Aviv University (Israel).
+// Copyright (c) 2012, 2020 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,7 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+// Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #include "SplitEdgeCallback.h"
 #include "ArrangementTypes.h"
@@ -75,7 +76,7 @@ void SplitEdgeCallback<Arr_>::curveInputDoneEvent(
 {
   try
   {
-    this->splitEdges(clickedPoints[0], clickedPoints[1], arr->traits());
+    this->splitEdges(clickedPoints[0], clickedPoints[1]);
   }
   catch (const std::exception& ex)
   {
@@ -199,11 +200,11 @@ struct ConstructSegment<
 };
 
 template <typename Arr_>
-template <typename TTraits>
 void SplitEdgeCallback<Arr_>::splitEdges(
-  const Input_point_2& p1, const Input_point_2& p2, const TTraits* traits)
+  const Input_point_2& p1, const Input_point_2& p2)
 {
-  X_monotone_curve_2 splitCurve = ConstructSegment<TTraits>{}(traits, p1, p2);
+  X_monotone_curve_2 splitCurve =
+    ConstructSegment<Traits>{}(this->arr->traits(), p1, p2);
 
   for (auto hei = this->arr->halfedges_begin();
        hei != this->arr->halfedges_end(); ++hei)
@@ -214,38 +215,6 @@ void SplitEdgeCallback<Arr_>::splitEdges(
     this->intersectCurves(splitCurve, curve, oi);
     std::pair<Point_2, Multiplicity> pair;
     if (hei == this->arr->halfedges_end()) continue;
-    if (CGAL::assign(pair, res))
-    {
-      Point_2 splitPoint = pair.first;
-      if (
-        (!hei->source()->is_at_open_boundary() &&
-         this->areEqual(hei->source()->point(), splitPoint)) ||
-        (!hei->target()->is_at_open_boundary() &&
-         this->areEqual(hei->target()->point(), splitPoint)))
-      { continue; }
-      this->arr->split_edge(hei, splitPoint);
-    }
-  }
-  this->reset();
-  Q_EMIT modelChanged();
-}
-
-template <typename Arr_>
-template <typename Coefficient_>
-void SplitEdgeCallback<Arr_>::
-splitEdges(const Input_point_2& p1, const Input_point_2& p2,
-           const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>* traits)
-{
-  X_monotone_curve_2 splitCurve = ConstructSegment<Traits>{}(traits, p1, p2);
-
-  for (auto hei = this->arr->halfedges_begin();
-       hei != this->arr->halfedges_end(); ++hei)
-  {
-    X_monotone_curve_2 curve = hei->curve();
-    CGAL::Object res;
-    CGAL::Oneset_iterator<CGAL::Object> oi(res);
-    this->intersectCurves(splitCurve, curve, oi);
-    std::pair<Point_2, Multiplicity> pair;
     if (CGAL::assign(pair, res))
     {
       Point_2 splitPoint = pair.first;

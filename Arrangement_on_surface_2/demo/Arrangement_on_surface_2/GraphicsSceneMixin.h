@@ -1,3 +1,13 @@
+// Copyright (c) 2012, 2020 Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
+
 #ifndef CGAL_ARRANGEMENTS_DEMO_GRAPHICS_SCENE_MIXIN_H
 #define CGAL_ARRANGEMENTS_DEMO_GRAPHICS_SCENE_MIXIN_H
 

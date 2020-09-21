@@ -1,4 +1,4 @@
-// Copyright (c) 2012  Tel-Aviv University (Israel).
+// Copyright (c) 2012, 2020 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,8 +7,9 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Alex Tsui <alextsui05@gmail.com>,
-//                 Saurabh Singh <ssingh@cs.iitr.ac.in>
+// Author(s): Alex Tsui <alextsui05@gmail.com>,
+//            Saurabh Singh <ssingh@cs.iitr.ac.in>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #ifndef CGAL_QT_GRAPHICS_VIEW_CURVE_INPUT_H
 #define CGAL_QT_GRAPHICS_VIEW_CURVE_INPUT_H
@@ -24,7 +25,6 @@
 #include "ForwardDeclarations.h"
 #include "GraphicsSceneMixin.h"
 #include "PointSnapper.h"
-#include "PointsGraphicsItem.h"
 
 class QEvent;
 
@@ -58,34 +58,45 @@ Q_SIGNALS:
 };
 
 template <typename ArrTraits_>
-struct CurveGenerator : public CurveGeneratorBase
+struct CurveGeneratorTypedBase : public CurveGeneratorBase
+{
+  using ArrTraits = ArrTraits_;
+  void setTraits(const ArrTraits* traits_);
+  const ArrTraits* traits;
+};
+
+template <typename ArrTraits_>
+struct CurveGenerator : public CurveGeneratorTypedBase<ArrTraits_>
 {
 };
 
 template <typename Kernel_>
 struct CurveGenerator<CGAL::Arr_segment_traits_2<Kernel_>> :
-    public CurveGeneratorBase
+    public CurveGeneratorTypedBase<CGAL::Arr_segment_traits_2<Kernel_>>
 {
   using ArrTraits = CGAL::Arr_segment_traits_2<Kernel_>;
   using Curve_2 = typename ArrTraits::Curve_2;
   using Kernel = Kernel_;
+  using Point_2 = CurveGeneratorBase::Point_2;
 
   CGAL::Object generateSegment(const std::vector<Point_2>&) override;
 };
 
 template <typename SegmentTraits>
 struct CurveGenerator<CGAL::Arr_polyline_traits_2<SegmentTraits>> :
-    public CurveGeneratorBase
+    public CurveGeneratorTypedBase<CGAL::Arr_polyline_traits_2<SegmentTraits>>
 {
   using ArrTraits = CGAL::Arr_polyline_traits_2<SegmentTraits>;
   using Curve_2 = typename ArrTraits::Curve_2;
+  using Point_2 = CurveGeneratorBase::Point_2;
 
   CGAL::Object generatePolyline(const std::vector<Point_2>&) override;
 };
 
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
 struct CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>> :
-    public CurveGeneratorBase
+    public CurveGeneratorTypedBase<
+      Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>
 {
   using ArrTraits = Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>;
   using Curve_2 = typename ArrTraits::Curve_2;
@@ -95,6 +106,7 @@ struct CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>> :
   using Rat_point_2 = typename RatKernel::Point_2;
   using Rat_segment_2 = typename RatKernel::Segment_2;
   using Rat_circle_2 = typename RatKernel::Circle_2;
+  using Point_2 = CurveGeneratorBase::Point_2;
 
   CGAL::Object generateSegment(const std::vector<Point_2>&) override;
   CGAL::Object generateCircle(const std::vector<Point_2>&) override;
@@ -106,7 +118,7 @@ struct CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>> :
 
 template <typename Kernel_>
 struct CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>> :
-    public CurveGeneratorBase
+    public CurveGeneratorTypedBase<CGAL::Arr_linear_traits_2<Kernel_>>
 {
   using Kernel = Kernel_;
   using KernelPoint = typename Kernel::Point_2;
@@ -115,6 +127,7 @@ struct CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>> :
   using Segment_2 = typename Kernel::Segment_2;
   using Ray_2 = typename Kernel::Ray_2;
   using Line_2 = typename Kernel::Line_2;
+  using Point_2 = CurveGeneratorBase::Point_2;
 
   CGAL::Object generateSegment(const std::vector<Point_2>&) override;
   CGAL::Object generateRay(const std::vector<Point_2>&) override;
@@ -123,7 +136,8 @@ struct CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>> :
 
 template <typename Coefficient_>
 struct CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>> :
-    public CurveGeneratorBase
+    public CurveGeneratorTypedBase<
+      CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>
 {
   using Coefficient = Coefficient_;
   using ArrTraits = CGAL::Arr_algebraic_segment_traits_2<Coefficient>;
@@ -133,6 +147,7 @@ struct CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>> :
   using Algebraic_real_1 = typename ArrTraits::Algebraic_real_1;
   using Rational = typename Algebraic_real_1::Rational;
   using RationalTraits = Rational_traits<Rational>;
+  using Point_2 = CurveGeneratorBase::Point_2;
 
   CGAL::Object generateLine(const std::vector<Point_2>&) override;
   CGAL::Object generateCircle(const std::vector<Point_2>&) override;
@@ -147,8 +162,11 @@ template <
   typename BoundingTraits>
 struct CurveGenerator<
   Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits, BoundingTraits>> :
-    public CurveGeneratorBase
+    public CurveGeneratorTypedBase<
+      Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits, BoundingTraits>>
 {
+  using Point_2 = CurveGeneratorBase::Point_2;
+
   CGAL::Object generateBezier(const std::vector<Point_2>&) override;
 };
 
@@ -228,14 +246,16 @@ struct GraphicsViewCurveInputTypeHelper<CGAL::Arr_Bezier_curve_traits_2<
   using InputMethodTuple = std::tuple<BezierInputMethod>;
 };
 
-template <typename ArrTraits>
+template <typename ArrTraits_>
 class GraphicsViewCurveInput : public GraphicsViewCurveInputBase
 {
+  using ArrTraits = ArrTraits_;
   using InputMethodTuple =
     typename GraphicsViewCurveInputTypeHelper<ArrTraits>::InputMethodTuple;
 
 public:
-  GraphicsViewCurveInput(QObject* parent, QGraphicsScene* scene);
+  GraphicsViewCurveInput(
+    const ArrTraits* traits, QObject* parent, QGraphicsScene* scene);
   void setCurveType(CurveType type) override;
   void setPointSnapper(PointSnapperBase*) override;
 

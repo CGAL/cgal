@@ -1,4 +1,4 @@
-// Copyright (c) 2012  Tel-Aviv University (Israel).
+// Copyright (c) 2012, 2020 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,7 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+// Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #include "Utils.h"
 #include "ArrangementTypes.h"
@@ -252,13 +253,20 @@ template <typename ArrTraits>
 auto Arr_construct_point_2<ArrTraits>::operator()(const Kernel_point_2& pt)
   -> Point_2
 {
-  return (*this)(pt.x(), pt.y());
+  return (*this)(FT{pt.x()}, FT{pt.y()}, traits);
 }
 
 template <typename ArrTraits>
-template <typename T, typename TTraits>
+auto Arr_construct_point_2<ArrTraits>::operator()(const FT& x, const FT& y)
+  -> Point_2
+{
+  return (*this)(x, y, traits);
+}
+
+template <typename ArrTraits>
+template <typename TTraits>
 auto Arr_construct_point_2<ArrTraits>::operator()(
-  const T& x, const T& y, const TTraits*) -> Point_2
+  const FT& x, const FT& y, const TTraits*) -> Point_2
 {
   CoordinateType xx(x);
   CoordinateType yy(y);
@@ -267,9 +275,9 @@ auto Arr_construct_point_2<ArrTraits>::operator()(
 }
 
 template <typename ArrTraits>
-template <typename T, typename AlgebraicKernel_d_1>
+template <typename AlgebraicKernel_d_1>
 auto Arr_construct_point_2<ArrTraits>::operator()(
-  const T& x, const T& y,
+  const FT& x, const FT& y,
   const CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>*)
   -> Point_2
 {

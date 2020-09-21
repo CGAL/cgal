@@ -1,3 +1,14 @@
+// Copyright (c) 2020 GeometryFactory Sarl (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s): Ahmed Essam <theartful.ae@gmail.com>
+
 #ifndef ARRANGEMENT_DEMO_POINT_SNAPPER_H
 #define ARRANGEMENT_DEMO_POINT_SNAPPER_H
 
@@ -15,9 +26,9 @@ class QGraphicsScene;
 class PointSnapperBase : public GraphicsSceneMixin
 {
 public:
-  using Rat_kernel = demo_types::Rat_kernel;
   using Rational = demo_types::Rational;
-  using Point_2 = CGAL::Point_2<Rat_kernel>;
+  using Rat_kernel = demo_types::Rat_kernel;
+  using Point_2 = demo_types::Rat_point_2;
   using Compute_squared_distance_2 = Rat_kernel::Compute_squared_distance_2;
 
 public:

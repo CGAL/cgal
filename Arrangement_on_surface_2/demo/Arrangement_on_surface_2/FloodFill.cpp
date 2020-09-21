@@ -1,5 +1,20 @@
+// Copyright (c) 2020 GeometryFactory Sarl (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s): Ahmed Essam <theartful.ae@gmail.com>
+
 #include "FloodFill.h"
 
+namespace CGAL
+{
+namespace Qt
+{
 
 void FloodFill::operator()(
   QRgb* raw_img, uint16_t width, uint16_t x, uint16_t y, QRgb color)
@@ -66,3 +81,6 @@ void FloodFill::operator()(
     fill_line(color, ll, lpl - 1, ly - ldy, -ldy);
   }
 }
+
+} // namespace Qt
+} // namespace CGAL

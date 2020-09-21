@@ -1,3 +1,13 @@
+// Copyright (c) 2008, 2012, 2020 GeometryFactory Sarl (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
+
 #include "ArrangementGraphicsItem.h"
 #include "ArrangementPainterOstream.h"
 #include "ArrangementTypes.h"
@@ -82,13 +92,13 @@ paint(QPainter* painter,
       const QStyleOptionGraphicsItem* /* option */,
       QWidget*  /*widget*/)
 {
-  this->paint( painter, arr->traits() );
+  this->paint(painter, *(arr->traits()));
 }
 
 template <typename Arr_>
 template <typename TTraits>
 void ArrangementGraphicsItem<Arr_>::paint(
-  QPainter* painter, const TTraits* traits)
+  QPainter* painter, const TTraits& traits)
 {
   this->paintFaces(painter);
   this->paintEdges(painter, traits);
@@ -98,7 +108,7 @@ template <typename Arr_>
 template <typename Coefficient_>
 void ArrangementGraphicsItem<Arr_>::paint(
   QPainter* painter,
-  const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>* traits)
+  const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>& traits)
 {
   this->paintWithFloodFill(painter, traits);
 }
@@ -107,7 +117,7 @@ template <typename Arr_>
 template <typename AlgebraicKernel_d_1>
 void ArrangementGraphicsItem<Arr_>::paint(
   QPainter* painter,
-  const CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>* traits)
+  const CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>& traits)
 {
   this->paintWithFloodFill(painter, traits);
 }
@@ -115,7 +125,7 @@ void ArrangementGraphicsItem<Arr_>::paint(
 template <typename Arr_>
 template <typename TTraits>
 void ArrangementGraphicsItem<Arr_>::paintWithFloodFill(
-  QPainter* painter, const TTraits* traits)
+  QPainter* painter, const TTraits& traits)
 {
   auto windowRect = painter->window();
   auto width = windowRect.width();
@@ -167,7 +177,7 @@ void ArrangementGraphicsItem<Arr_>::paintWithFloodFill(
 template <typename Arr_>
 template <typename TTraits>
 void ArrangementGraphicsItem<Arr_>::paintEdges(
-  QPainter* painter, const TTraits*)
+  QPainter* painter, const TTraits&)
 {
   auto painterOstream =
     ArrangementPainterOstream<TTraits>(painter, this->boundingRect());
@@ -186,7 +196,7 @@ void ArrangementGraphicsItem<Arr_>::paintEdges(
 template <typename Arr_>
 template <typename Coefficient_>
 void ArrangementGraphicsItem<Arr_>::paintEdges(
-  QPainter* painter, const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>*)
+  QPainter* painter, const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>&)
 {
   using TTraits = CGAL::Arr_algebraic_segment_traits_2<Coefficient_>;
 
@@ -306,7 +316,7 @@ paintFace( Face_handle f, QPainter* painter )
   if (f->visited()) return;
 
   Holes_iterator hit; // holes iterator
-  this->paintFace(f, painter, arr->traits());
+  this->paintFace(f, painter, *(arr->traits()));
   f->set_visited(true);
 
   for (hit = f->holes_begin(); hit != f->holes_end(); ++hit)
@@ -325,12 +335,10 @@ paintFace( Face_handle f, QPainter* painter )
   }
 }
 
-template < typename Arr_ >
-template < typename Kernel_ >
-void
-ArrangementGraphicsItem< Arr_ >::
-paintFace( Face_handle f, QPainter* painter,
-           const CGAL::Arr_segment_traits_2< Kernel_ >* )
+template <typename Arr_>
+template <typename Kernel_>
+void ArrangementGraphicsItem<Arr_>::paintFace(
+  Face_handle f, QPainter* painter, const CGAL::Arr_segment_traits_2<Kernel_>&)
 {
   if (!f->is_unbounded())  // f is not the unbounded face
   {
@@ -366,7 +374,7 @@ paintFace( Face_handle f, QPainter* painter,
 template <typename Arr_>
 template <typename Kernel_>
 void ArrangementGraphicsItem<Arr_>::paintFace(
-  Face_handle f, QPainter* painter, const CGAL::Arr_polyline_traits_2<Kernel_>*)
+  Face_handle f, QPainter* painter, const CGAL::Arr_polyline_traits_2<Kernel_>&)
 {
   if (!f->is_unbounded())
   {
@@ -429,11 +437,11 @@ void ArrangementGraphicsItem<Arr_>::paintFace(
   }
 }
 
-template < typename Arr_ >
+template <typename Arr_>
 template <typename Coefficient_>
 void ArrangementGraphicsItem<Arr_>::paintFace(
   Face_handle f, QPainter* painter,
-  const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>* /* traits */)
+  const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>& /* traits */)
 {
   if (f->is_unbounded()) return;
 
@@ -533,7 +541,7 @@ template <typename Arr_>
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
 void ArrangementGraphicsItem<Arr_>::paintFace(
   Face_handle f, QPainter* painter,
-  const CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>*)
+  const CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>&)
 {
   if (!f->is_unbounded()) // f is not the unbounded face
   {
@@ -631,7 +639,7 @@ template <
 void ArrangementGraphicsItem<Arr_>::paintFace(
   Face_handle f, QPainter* painter,
   const CGAL::Arr_Bezier_curve_traits_2<
-    RatKernel, AlgKernel, NtTraits, BoundingTraits>*)
+    RatKernel, AlgKernel, NtTraits, BoundingTraits>&)
 {
   if (!f->is_unbounded())
   {
@@ -674,7 +682,7 @@ template <typename Arr_>
 template <typename Kernel_>
 void ArrangementGraphicsItem<Arr_>::paintFace(
   Face_handle f, QPainter* painter,
-  const CGAL::Arr_linear_traits_2<Kernel_>* /* traits */)
+  const CGAL::Arr_linear_traits_2<Kernel_>& /* traits */)
 {
   QVector<QPointF> pts; // holds the points of the polygon
   QColor color = f->color();

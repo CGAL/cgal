@@ -1,4 +1,4 @@
-// Copyright (c) 2008, 2012  GeometryFactory Sarl (France).
+// Copyright (c) 2008, 2012, 2020 GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #ifndef CGAL_QT_ARRANGEMENT_GRAPHICS_ITEM_H
 #define CGAL_QT_ARRANGEMENT_GRAPHICS_ITEM_H
@@ -74,28 +75,28 @@ protected:
   void updatePointsItem();
 
   template <typename TTraits>
-  void paint(QPainter*, const TTraits*);
+  void paint(QPainter*, const TTraits&);
 
   template <typename Coefficient_>
   void
-  paint(QPainter*, const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>*);
+  paint(QPainter*, const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>&);
 
   template <typename AlgebraicKernel_d_1>
   void paint(
     QPainter*,
-    const CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>*);
+    const CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>&);
 
   template <typename TTraits>
-  void paintWithFloodFill(QPainter*, const TTraits*);
+  void paintWithFloodFill(QPainter*, const TTraits&);
 
   void updateBoundingBox();
 
   template <typename TTraits>
-  void paintEdges(QPainter*, const TTraits*);
+  void paintEdges(QPainter*, const TTraits&);
 
   template <typename Coefficient_>
   void paintEdges(
-    QPainter*, const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>*);
+    QPainter*, const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>&);
 
   void paintFaces(QPainter* painter);
 
@@ -116,17 +117,17 @@ protected:
   template <typename Kernel_>
   void paintFace(
     Face_handle f, QPainter* painter,
-    const CGAL::Arr_segment_traits_2<Kernel_>*);
+    const CGAL::Arr_segment_traits_2<Kernel_>&);
 
   template <typename Kernel_>
   void paintFace(
     Face_handle f, QPainter* painter,
-    const CGAL::Arr_polyline_traits_2<Kernel_>*);
+    const CGAL::Arr_polyline_traits_2<Kernel_>&);
 
   template <typename RatKernel, typename AlgKernel, typename NtTraits>
   void paintFace(
     Face_handle f, QPainter* painter,
-    const CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>*);
+    const CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>&);
 
   template <
     typename RatKernel, typename AlgKernel, typename NtTraits,
@@ -134,17 +135,17 @@ protected:
   void paintFace(
     Face_handle f, QPainter* painter,
     const CGAL::Arr_Bezier_curve_traits_2<
-      RatKernel, AlgKernel, NtTraits, BoundingTraits>*);
+      RatKernel, AlgKernel, NtTraits, BoundingTraits>&);
 
   template <typename Coefficient_>
   void paintFace(
     Face_handle f, QPainter* painter,
-    const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>*);
+    const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>&);
 
   template <typename Kernel_>
   void paintFace(
     Face_handle f, QPainter* painter,
-    const CGAL::Arr_linear_traits_2<Kernel_>*);
+    const CGAL::Arr_linear_traits_2<Kernel_>&);
 
 protected:
   Arrangement* arr;

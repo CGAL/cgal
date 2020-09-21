@@ -1,4 +1,4 @@
-// Copyright (c) 2012  Tel-Aviv University (Israel).
+// Copyright (c) 2012, 2020 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,7 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+// Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #include "GraphicsViewCurveInput.h"
 #include "ArrangementTypes.h"
@@ -18,7 +19,6 @@
 #include <QEvent>
 #include <QKeyEvent>
 
-// TODO: move these somewhere else!
 template <std::size_t I = 0, typename FuncT, typename... Tp>
 inline typename std::enable_if<I == sizeof...(Tp), void>::type
 for_each(std::tuple<Tp...>&, FuncT)
@@ -71,7 +71,7 @@ void GraphicsViewCurveInputBase::setColor(QColor c)
 
 template <typename ArrTraits>
 GraphicsViewCurveInput<ArrTraits>::GraphicsViewCurveInput(
-  QObject* parent, QGraphicsScene* scene) :
+  const ArrTraits* traits, QObject* parent, QGraphicsScene* scene) :
     GraphicsViewCurveInputBase(parent, scene)
 {
   this->setDefaultInputMethod(
@@ -84,6 +84,7 @@ GraphicsViewCurveInput<ArrTraits>::GraphicsViewCurveInput(
     it.setScene(scene);
     it.setCallback(&curveGenerator);
   });
+  curveGenerator.setTraits(traits);
 }
 
 template <typename ArrTraits>
@@ -107,8 +108,7 @@ template <typename ArrTraits>
 template <typename>
 void GraphicsViewCurveInput<ArrTraits>::setDefaultInputMethod(std::true_type)
 {
-  this->setInputMethod(
-    static_cast<CurveInputMethod*>(&std::get<0>(inputMethods)));
+  this->setInputMethod(&std::get<0>(inputMethods));
 }
 
 template <typename ArrTraits>
@@ -194,6 +194,12 @@ CGAL::Object CurveGeneratorBase::generateBezier(const std::vector<Point_2>&)
   return {};
 }
 
+template <typename ArrTraits_>
+void CurveGeneratorTypedBase<ArrTraits_>::setTraits(const ArrTraits* traits_)
+{
+  this->traits = traits_;
+}
+
 // Curve Generator Segment Traits
 template <typename Kernel_>
 CGAL::Object
@@ -212,8 +218,7 @@ CurveGenerator<CGAL::Arr_polyline_traits_2<SegmentTraits>>::generatePolyline(
 {
   if (clickedPoints.size() < 2) return {};
 
-  ArrTraits poly_tr;
-  auto construct_poly = poly_tr.construct_curve_2_object();
+  auto construct_poly = this->traits->construct_curve_2_object();
   Curve_2 res = construct_poly(clickedPoints.begin(), clickedPoints.end());
   return CGAL::make_object(res);
 }
@@ -262,8 +267,7 @@ CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
   auto sq_rad =
     (points[0].x() - points[1].x()) * (points[0].x() - points[1].x()) +
     (points[0].y() - points[1].y()) * (points[0].y() - points[1].y());
-  Curve_2 res =
-    Curve_2(Rat_circle_2(points[0], sq_rad));
+  Curve_2 res = Curve_2(Rat_circle_2(points[0], sq_rad));
   return CGAL::make_object(res);
 }
 
@@ -357,7 +361,6 @@ CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
   generateLine(const std::vector<Point_2>& points)
 {
   RationalTraits ratTraits;
-  ArrTraits arrTraits;
 
   Rational dx = points[1].x() - points[0].x();
   Rational dy = points[1].y() - points[0].y();
@@ -386,7 +389,7 @@ CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
     poly = b * x - a;
   }
 
-  auto construct_curve = arrTraits.construct_curve_2_object();
+  auto construct_curve = this->traits->construct_curve_2_object();
   auto res = construct_curve(poly);
   return CGAL::make_object(res);
 }
@@ -422,7 +425,6 @@ CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
   generateEllipse_(const Point_2& center, Rational rxRat, Rational ryRat)
 {
   RationalTraits ratTraits;
-  ArrTraits arrTraits;
 
   Polynomial_2 x = CGAL::shift(Polynomial_2(1), 1, 0);
   Polynomial_2 y = CGAL::shift(Polynomial_2(1), 1, 1);
@@ -443,7 +445,7 @@ CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
                       e * h * CGAL::ipower(b * d * y - b * c, 2) -
                       e * g * b * b * d * d;
 
-  auto construct_curve = arrTraits.construct_curve_2_object();
+  auto construct_curve = this->traits->construct_curve_2_object();
   auto res = construct_curve(poly);
   return CGAL::make_object(res);
 }

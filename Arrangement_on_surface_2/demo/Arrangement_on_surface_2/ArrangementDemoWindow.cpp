@@ -1,4 +1,4 @@
-// Copyright (c) 2012  Tel-Aviv University (Israel).
+// Copyright (c) 2012, 2020  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #include "ArrangementDemoWindow.h"
 #include "AlgebraicCurveInputDialog.h"
@@ -15,20 +16,10 @@
 #include "ArrangementDemoTab.h"
 #include "NewTabDialog.h"
 #include "OverlayDialog.h"
-#include "DeleteCurveCallback.h"
-#include "EnvelopeCallback.h"
-#include "MergeEdgeCallback.h"
-#include "PointLocationCallback.h"
-#include "SplitEdgeCallback.h"
-#include "VerticalRayShootCallback.h"
-#include "ArrangementGraphicsItem.h"
-#include "DeleteCurveMode.h"
 #include "GraphicsViewCurveInput.h"
-#include "FillFaceCallback.h"
-#include "GridGraphicsItem.h"
 #include "ArrangementTypes.h"
 #include "ArrangementTypesUtils.h"
-#include "Conic_reader.h"
+#include "ArrangementIO.h"
 
 #include <QActionGroup>
 #include <QColorDialog>
@@ -36,12 +27,9 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QString>
+#include <QGraphicsView>
 
-#include <CGAL/IO/Arr_text_formatter.h>
-#include <CGAL/IO/Arr_with_history_iostream.h>
-#include <CGAL/IO/Arr_with_history_text_formatter.h>
-#include <CGAL/Arr_default_overlay_traits.h>
-#include <CGAL/Arr_overlay_2.h>
+#include <CGAL/Qt/GraphicsViewNavigation.h>
 
 #include "ui_ArrangementDemoWindow.h"
 
@@ -603,13 +591,12 @@ void ArrangementDemoWindow::on_actionFillColor_triggered()
   auto currentTab = this->getCurrentTab();
   if (!currentTab) return;
 
-  FillFaceCallbackBase* fillFaceCallback = currentTab->getFillFaceCallback();
-  QColor fillColor = fillFaceCallback->getColor();
+  QColor fillColor = currentTab->getFillFaceColor();
 
   QColor selectedColor = QColorDialog::getColor(fillColor);
   if (selectedColor.isValid())
   {
-    fillFaceCallback->setColor(selectedColor);
+    currentTab->setFillFaceColor(selectedColor);
     this->updateFillColorSwatch(currentTab);
   }
 }
@@ -618,7 +605,7 @@ void ArrangementDemoWindow::updateFillColorSwatch(ArrangementDemoTabBase* tab)
 {
   if (!tab) return;
 
-  QColor fillColor = tab->getFillFaceCallback()->getColor();
+  QColor fillColor = tab->getFillFaceColor();
   if (!fillColor.isValid()) { fillColor = ::Qt::black; }
 
   QPixmap fillColorPixmap(16, 16);
@@ -656,66 +643,18 @@ void ArrangementDemoWindow::on_actionOverlay_triggered()
   if (overlayDialog.exec() == QDialog::Accepted)
   {
     std::vector<CGAL::Object> arrs = overlayDialog.selectedArrangements();
-    if (arrs.size() == 2)
+    auto* tab = makeOverlayTab(arrs);
+    if (tab)
     {
-      demo_types::forEachArrangementType([&](auto type_holder) {
-        using Arr = typename decltype(type_holder)::type;
+      QString tabLabel =
+        QString("%1 (Overlay)").arg(makeTabLabel(tab->traitsType()));
 
-        Arr* arr;
-        Arr* arr2;
-        if (CGAL::assign(arr, arrs[0]) && CGAL::assign(arr2, arrs[1]))
-          this->makeOverlayTab(arr, arr2);
-      });
+      tab->setParent(this);
+      this->addTab(tab, tabLabel);
+      tab->adjustViewport();
     }
   }
 }
-
-template <class ArrType>
-ArrangementDemoTabBase*
-ArrangementDemoWindow::makeTab(std::unique_ptr<ArrType> arr, QString tabLabel)
-{
-  auto demoTab = new ArrangementDemoTab<ArrType>(this, std::move(arr));
-  this->addTab(demoTab, tabLabel);
-  return demoTab;
-}
-
-template <class ArrType>
-void ArrangementDemoWindow::makeOverlayTab(ArrType* arr1, ArrType* arr2)
-{
-  QString tabLabel = QString("Overlay Tab");
-
-  auto overlayArr = std::make_unique<ArrType>();
-  CGAL::Arr_default_overlay_traits<ArrType> defaultTraits;
-
-  CGAL::overlay(*arr1, *arr2, *overlayArr, defaultTraits);
-  makeTab(std::move(overlayArr), tabLabel);
-}
-
-struct ArrWriter
-{
-  template <typename Arr>
-  void operator()(Arr* arr)
-  {
-    using TextFormatter = CGAL::Arr_text_formatter<Arr>;
-    using ArrFormatter = CGAL::Arr_with_history_text_formatter<TextFormatter>;
-
-    ArrFormatter arrFormatter;
-    CGAL::write(*arr, ofs, arrFormatter);
-  }
-
-#ifdef CGAL_USE_CORE
-  void operator()(demo_types::Conic_arr* arr)
-  {
-    Conic_reader<demo_types::Conic_arr::Geometry_traits_2> conicReader;
-    conicReader.write_data(ofs, arr->curves_begin(), arr->curves_end());
-  }
-
-  void operator()(demo_types::Bezier_arr*) { }
-  void operator()(demo_types::Rational_arr*) { }
-#endif
-
-  std::ofstream& ofs;
-};
 
 void ArrangementDemoWindow::on_actionSaveAs_triggered()
 {
@@ -725,7 +664,6 @@ void ArrangementDemoWindow::on_actionSaveAs_triggered()
     QMessageBox::information(this, "Oops", "Create a new tab first");
     return;
   }
-  auto tt = currentTab->traitsType();
 
   QString filename = QFileDialog::getSaveFileName(
     this, tr("Save file"), "", "Arrangement (*.arr)");
@@ -733,18 +671,8 @@ void ArrangementDemoWindow::on_actionSaveAs_triggered()
 
   QByteArray ba = filename.toLocal8Bit();
   std::ofstream ofs(ba.data());
-
-  // write type info
-  ofs << "# " << static_cast<int>(tt) << std::endl;
-
-  demo_types::visitArrangementType(tt, [&](auto type_holder) {
-    using Arr = typename decltype(type_holder)::type;
-    Arr* typed_arr;
-    if (CGAL::assign(typed_arr, currentTab->getArrangement()))
-      ArrWriter{ofs}(typed_arr);
-    else
-      QMessageBox::information(this, "Oops", "Error saving file!");
-  });
+  if (!ArrangementIO{}.write(currentTab, ofs))
+    QMessageBox::information(this, "Oops", "Error saving file!");
 }
 
 void ArrangementDemoWindow::on_actionOpen_triggered()
@@ -756,55 +684,18 @@ void ArrangementDemoWindow::on_actionOpen_triggered()
   if (filename.endsWith(".arr"))
   {
     auto tab = this->openArrFile(filename);
-    tab->adjustViewport();
+    if (tab)
+    {
+      tab->setParent(this);
+      this->addTab(tab, this->makeTabLabel(tab->traitsType()));
+      tab->adjustViewport();
+    }
   }
   else
   {
     QMessageBox::information(this, "Oops", "Unsupported file format");
   }
 }
-
-struct ArrReader
-{
-  template <typename Arr>
-  auto operator()(demo_types::TypeHolder<Arr>)
-  {
-    using Text_formatter = CGAL::Arr_text_formatter<Arr>;
-    using ArrFormatter = CGAL::Arr_with_history_text_formatter<Text_formatter>;
-
-    ArrFormatter arrFormatter;
-    auto arr = std::make_unique<Arr>();
-    CGAL::read(*arr, ifs, arrFormatter);
-    return arr;
-  }
-
-#ifdef CGAL_USE_CORE
-  auto operator()(demo_types::TypeHolder<demo_types::Conic_arr>)
-  {
-    using namespace demo_types;
-
-    Conic_reader<Conic_arr::Geometry_traits_2> conicReader;
-    std::vector<Conic_arr::Curve_2> curve_list;
-    CGAL::Bbox_2 bbox;
-    conicReader.read_data(ifs, std::back_inserter(curve_list), bbox);
-    auto arr = std::make_unique<Conic_arr>();
-    CGAL::insert(*arr, curve_list.begin(), curve_list.end());
-    return arr;
-  }
-
-  auto operator()(demo_types::TypeHolder<demo_types::Bezier_arr>)
-  {
-    return std::make_unique<demo_types::Bezier_arr>();
-  }
-
-  auto operator()(demo_types::TypeHolder<demo_types::Rational_arr>)
-  {
-    return std::make_unique<demo_types::Rational_arr>();
-  }
-#endif
-
-  std::ifstream& ifs;
-};
 
 ArrangementDemoTabBase* ArrangementDemoWindow::openArrFile(QString filename)
 {
@@ -813,22 +704,8 @@ ArrangementDemoTabBase* ArrangementDemoWindow::openArrFile(QString filename)
   QByteArray filename_ba = filename.toLocal8Bit();
   std::ifstream ifs(filename_ba.data());
 
-  // read type info
-  while (ifs.peek() == '#' || std::isspace(ifs.peek()))
-    ifs.get();
-
-  int tt_int;
-  ifs >> tt_int;
-  auto tt = static_cast<TraitsType>(tt_int);
-
-  ArrangementDemoTabBase* createdTab = nullptr;
-
-  demo_types::visitArrangementType(tt, [&](auto type_holder) {
-    auto arr = ArrReader{ifs}(type_holder);
-    createdTab = this->makeTab(std::move(arr), this->makeTabLabel(tt));
-  });
-
-  return createdTab;
+  ArrangementDemoTabBase* tab = ArrangementIO{}.read(ifs);
+  return tab;
 }
 
 void ArrangementDemoWindow::on_actionPreferences_triggered()
@@ -836,59 +713,36 @@ void ArrangementDemoWindow::on_actionPreferences_triggered()
   auto currentTab = this->getCurrentTab();
   if (!currentTab) return;
 
-  auto agi = currentTab->getArrangementGraphicsItem();
-  auto envelopeCallback = currentTab->getEnvelopeCallback();
-  auto verticalRayShootCallback = currentTab->getVerticalRayShootCallback();
-  auto splitEdgeCallback = currentTab->getSplitEdgeCallback();
-  auto gridGraphicsItem = currentTab->getGridGraphicsItem();
-
   ArrangementDemoPropertiesDialog dialog{this};
 
   if (dialog.exec() == QDialog::Accepted)
   {
     typedef ArrangementDemoPropertiesDialog Dialog;
+    ArrangementDemoTabBase::Preferences pref;
 
-    QColor edgeColor = dialog.property(Dialog::EDGE_COLOR_KEY).value<QColor>();
-    unsigned int edgeWidth =
+    pref.edgeColor = dialog.property(Dialog::EDGE_COLOR_KEY).value<QColor>();
+    pref.edgeWidth =
       dialog.property(Dialog::EDGE_WIDTH_KEY).value<unsigned int>();
-    QColor vertexColor =
+    pref.vertexColor =
       dialog.property(Dialog::VERTEX_COLOR_KEY).value<QColor>();
-    unsigned int vertexRadius =
+    pref.vertexRadius =
       dialog.property(Dialog::VERTEX_RADIUS_KEY).value<unsigned int>();
-    QColor envelopeEdgeColor =
+    pref.envelopeEdgeColor =
       dialog.property(Dialog::ENVELOPE_EDGE_COLOR_KEY).value<QColor>();
-    unsigned int envelopeEdgeWidth =
+    pref.envelopeEdgeWidth =
       dialog.property(Dialog::ENVELOPE_EDGE_WIDTH_KEY).value<unsigned int>();
-    QColor envelopeVertexColor =
+    pref.envelopeVertexColor =
       dialog.property(Dialog::ENVELOPE_VERTEX_COLOR_KEY).value<QColor>();
-    unsigned int envelopeVertexRadius =
-      dialog.property(Dialog::ENVELOPE_VERTEX_RADIUS_KEY)
-        .value<unsigned int>();
-    QColor verticalRayEdgeColor =
+    pref.envelopeVertexRadius =
+      dialog.property(Dialog::ENVELOPE_VERTEX_RADIUS_KEY).value<unsigned int>();
+    pref.verticalRayEdgeColor =
       dialog.property(Dialog::VERTICAL_RAY_EDGE_COLOR_KEY).value<QColor>();
-    unsigned int verticalRayEdgeWidth =
+    pref.verticalRayEdgeWidth =
       dialog.property(Dialog::VERTICAL_RAY_EDGE_WIDTH_KEY)
         .value<unsigned int>();
-    DeleteCurveMode mode =
-      dialog.property(Dialog::DELETE_CURVE_MODE_KEY).value<DeleteCurveMode>();
-    QColor gridColor = dialog.property(Dialog::GRID_COLOR_KEY).value<QColor>();
-
-    QPen edgesPen(QBrush(edgeColor), edgeWidth);
-    edgesPen.setCosmetic(true);
-    QPen verticesPen(QBrush(vertexColor), vertexRadius);
-    verticesPen.setCosmetic(true);
-    agi->setEdgesPen(edgesPen);
-    agi->setVerticesPen(verticesPen);
-    agi->modelChanged();
-    gridGraphicsItem->setAxesColor(gridColor);
-    gridColor.setAlphaF(0.5);
-    gridGraphicsItem->setGridColor(gridColor);
-    envelopeCallback->setEnvelopeEdgeColor(envelopeEdgeColor);
-    envelopeCallback->setEnvelopeEdgeWidth(envelopeEdgeWidth);
-    envelopeCallback->setEnvelopeVertexColor(envelopeVertexColor);
-    envelopeCallback->setEnvelopeVertexRadius(envelopeVertexRadius);
-    verticalRayShootCallback->setEdgeColor(verticalRayEdgeColor);
-    verticalRayShootCallback->setEdgeWidth(verticalRayEdgeWidth);
-    splitEdgeCallback->setColor(edgeColor);
+    pref.axesColor = dialog.property(Dialog::GRID_COLOR_KEY).value<QColor>();
+    pref.gridColor = pref.axesColor;
+    pref.gridColor.setAlphaF(0.5);
+    currentTab->updatePreferences(pref);
   }
 }

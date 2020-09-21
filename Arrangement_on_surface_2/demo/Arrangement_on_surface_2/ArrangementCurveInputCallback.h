@@ -1,4 +1,4 @@
-// Copyright (c) 2012  Tel-Aviv University (Israel).
+// Copyright (c) 2012, 2020  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,13 +7,15 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+// Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #ifndef ARRANGEMENT_CURVE_INPUT_CALLBACK_H
 #define ARRANGEMENT_CURVE_INPUT_CALLBACK_H
 
 #include "GraphicsViewCurveInput.h"
 
+// TODO: we can probably get rid of this class
 template <typename Arr_>
 class ArrangementCurveInputCallback:
   public CGAL::Qt::GraphicsViewCurveInput< typename Arr_::Geometry_traits_2 >
@@ -25,9 +27,10 @@ public:
   typedef typename Traits::Curve_2                      Curve_2;
   typedef ArrangementCurveInputCallback<Arrangement>    Self;
 
-  ArrangementCurveInputCallback(Arrangement* arrangement_, QObject* parent, QGraphicsScene* scene):
-    Superclass( parent, scene ),
-    arrangement( arrangement_)
+  ArrangementCurveInputCallback(
+    Arrangement* arrangement_, QObject* parent, QGraphicsScene* scene) :
+      Superclass(arrangement_->traits(), parent, scene),
+      arrangement(arrangement_)
   {
     QObject::connect(this, &Superclass::generate, this, &Self::processInput);
   }

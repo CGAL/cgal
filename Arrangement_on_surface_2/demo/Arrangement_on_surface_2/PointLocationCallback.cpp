@@ -1,9 +1,21 @@
+// Copyright (c) 2012, 2020 Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
+
+
 #include "PointLocationCallback.h"
 #include "PointLocationFunctions.h"
 #include "CurveGraphicsItem.h"
 #include "ArrangementTypes.h"
 
-#include <CGAL/Arrangement_with_history_2.h>
 #include <CGAL/Qt/Converter.h>
 
 #include <QGraphicsScene>

@@ -1,11 +1,12 @@
-// Copyright (c) 2012  Tel-Aviv University (Israel).
+// Copyright (c) 2012, 2020 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
 //
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+// Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #ifndef ARRANGEMENT_DEMO_WINDOW_H
 #define ARRANGEMENT_DEMO_WINDOW_H
@@ -95,13 +96,6 @@ protected:
   void updateFillColorSwatch(ArrangementDemoTabBase*);
   QString makeTabLabel(demo_types::TraitsType);
   ArrangementDemoTabBase* openArrFile(QString filename);
-
-  template <class ArrType>
-  ArrangementDemoTabBase*
-  makeTab(std::unique_ptr<ArrType> arr, QString);
-
-  template <class ArrType>
-  void makeOverlayTab(ArrType* arr1, ArrType* arr2);
 
 private:
   Ui::ArrangementDemoWindow* ui;

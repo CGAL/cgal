@@ -1,4 +1,4 @@
-// Copyright (c) 2012  Tel-Aviv University (Israel).
+// Copyright (c) 2012, 2020 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,6 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #ifndef SPLIT_EDGE_CALLBACK_H
 #define SPLIT_EDGE_CALLBACK_H
@@ -63,14 +64,7 @@ protected:
     const std::vector<Input_point_2>& clickedPoints,
     CGAL::Qt::CurveType type) override;
 
-  template <class TTraits>
-  void
-  splitEdges(const Input_point_2& p1, const Input_point_2& p2, const TTraits*);
-
-  template <class Coefficient_>
-  void splitEdges(
-    const Input_point_2& p1, const Input_point_2& p2,
-    const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>*);
+  void splitEdges(const Input_point_2& p1, const Input_point_2& p2);
 
   Arrangement* arr;
   Intersect_2 intersectCurves;

@@ -1,4 +1,4 @@
-// Copyright (c) 2012  Tel-Aviv University (Israel).
+// Copyright (c) 2012, 2020 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,7 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+// Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #ifndef ARRANGEMENT_DEMO_PROPERTIES_DIALOG_H
 #define ARRANGEMENT_DEMO_PROPERTIES_DIALOG_H
@@ -37,7 +38,6 @@ class ArrangementDemoPropertiesDialog : public QDialog
     ENVELOPE_VERTEX_RADIUS_KEY,   /*!< color key  */
     VERTICAL_RAY_EDGE_COLOR_KEY,  /*!< shooting ray color  */
     VERTICAL_RAY_EDGE_WIDTH_KEY,  /*!< shooting ray size  */
-    DELETE_CURVE_MODE_KEY,        /*!< deletion of the curve  */
     GRID_COLOR_KEY                /*!< color of the grid  */
   };
 

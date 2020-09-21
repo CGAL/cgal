@@ -1,4 +1,4 @@
-// Copyright (c) 2012  Tel-Aviv University (Israel).
+// Copyright (c) 2012, 2020 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,7 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+// Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #ifndef POINTS_GRAPHICS_ITEM_H
 #define POINTS_GRAPHICS_ITEM_H
@@ -42,7 +43,6 @@ public:
 
   void setPointRadius( double d );
   double getPointRadius( ) const;
-
 protected:
   std::vector< QPointF > points;
   double pointRadius;

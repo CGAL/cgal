@@ -1,4 +1,4 @@
-// Copyright (c) 2012  Tel-Aviv University (Israel).
+// Copyright (c) 2012, 2020 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,7 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+// Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #ifndef ARRANGEMENT_DEMO_TAB_H
 #define ARRANGEMENT_DEMO_TAB_H
@@ -15,6 +16,7 @@
 #include "GraphicsSceneMixin.h"
 #include <CGAL/Object.h>
 #include <QWidget>
+#include <QColor>
 #include <memory>
 
 class QGraphicsScene;
@@ -81,7 +83,8 @@ public:
   auto getEnvelopeCallback() const -> EnvelopeCallbackBase*;
   auto getFillFaceCallback() const -> FillFaceCallbackBase*;
   auto getGraphicsViewNavigation() const -> CGAL::Qt::GraphicsViewNavigation*;
-
+  auto getFillFaceColor() const -> QColor;
+  void setFillFaceColor(QColor);
   void activateCurveInputCallback(CGAL::Qt::CurveType);
   void activateDeleteCurveCallback();
   void activatePointLocationCallback();
@@ -96,6 +99,23 @@ public:
   bool isUpperEnvelopeShown();
   bool isLowerEnvelopeShown();
   void unhookCallbacks();
+
+  struct Preferences
+  {
+    QColor edgeColor = {};
+    QColor vertexColor = {};
+    QColor envelopeEdgeColor = {};
+    QColor envelopeVertexColor = {};
+    QColor verticalRayEdgeColor = {};
+    QColor axesColor = {};
+    QColor gridColor = {};
+    uint32_t edgeWidth = 0;
+    uint32_t vertexRadius = 0;
+    uint32_t envelopeEdgeWidth = 0;
+    uint32_t envelopeVertexRadius = 0;
+    uint32_t verticalRayEdgeWidth = 0;
+  };
+  void updatePreferences(const Preferences&);
 
 protected Q_SLOTS:
   virtual void slotModelChanged() = 0;

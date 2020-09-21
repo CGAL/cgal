@@ -13,13 +13,13 @@ if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
-find_package(CGAL COMPONENTS Core Qt5 )
-find_package(Qt5 COMPONENTS Gui Widgets)
+find_package(CGAL QUIET COMPONENTS Core Qt5)
+find_package(Qt5 QUIET COMPONENTS Gui Widgets)
 
 if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})
   add_definitions(-DQT_NO_KEYWORDS)
-  include_directories( BEFORE ./ ../../include )
+  include_directories( BEFORE ./ )
 
   qt5_wrap_ui(arrangement_2_uis
               ArrangementDemoWindow.ui
@@ -39,7 +39,6 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
                AlgebraicCurveInputDialog.h
                RationalCurveInputDialog.h
                ColorItemEditor.h
-               DeleteCurveModeItemEditor.h
                PropertyValueDelegate.h)
 
   qt5_add_resources(CGAL_Qt5_RESOURCE_FILES Arrangement_on_surface_2.qrc)
@@ -66,8 +65,6 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
                  RationalCurveInputDialog.cpp
                  ColorItemEditor.cpp
                  PropertyValueDelegate.cpp
-                 DeleteCurveMode.cpp
-                 DeleteCurveModeItemEditor.cpp
                  PointsGraphicsItem.cpp
                  VerticalRayGraphicsItem.cpp
                  DeleteCurveCallback.cpp
@@ -81,12 +78,17 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
                  CurveInputMethods.cpp
                  FloodFill.cpp
                  ConstructBoundingBox.cpp
+                 ArrangementIO.cpp
                  ${arrangement_2_uis}
                  ${CGAL_Qt5_RESOURCE_FILES}
                  ${CGAL_Qt5_MOC_FILES})
 
   target_link_libraries(arrangement_2 Qt5::Core Qt5::Gui Qt5::Widgets)
-  target_link_libraries(arrangement_2 CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Core)
+  target_link_libraries(arrangement_2 CGAL::CGAL CGAL::CGAL_Qt5)
+  if(CGAL_Core_FOUND)
+    target_link_libraries(arrangement_2 CGAL::CGAL_Core)
+  endif()
+
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS arrangement_2)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)

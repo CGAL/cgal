@@ -1,4 +1,4 @@
-// Copyright (c) 2012  Tel-Aviv University (Israel).
+// Copyright (c) 2012, 2020 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,13 +7,13 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+// Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #include "ArrangementDemoPropertiesDialog.h"
 #include "ui_ArrangementDemoPropertiesDialog.h"
 #include "ArrangementDemoWindow.h"
 #include "PropertyValueDelegate.h"
-#include "DeleteCurveMode.h"
 #include "ArrangementDemoGraphicsView.h"
 #include "VerticalRayShootCallback.h"
 #include "ArrangementGraphicsItem.h"
@@ -48,27 +48,8 @@ QVariant ArrangementDemoPropertiesDialog::property( int index )
 
   // return user data, if it is set
   QVariant myData = item->data( Qt::UserRole );
- /*
-  if ( qVariantCanConvert< QColor >( myData ) ||
-     qVariantCanConvert< DeleteCurveMode >( myData ) )
-  {
-  return myData;
-  }
-  else
-  {
   res = item->data( Qt::DisplayRole );
-  }
- */
 
-  if ( myData.canConvert<QColor>() ||
-     myData.canConvert<DeleteCurveMode>())
-  {
-    return myData;
-  }
-  else
-  {
-    res = item->data( Qt::DisplayRole );
-  }
   return res;
 }
 
@@ -92,7 +73,6 @@ void ArrangementDemoPropertiesDialog::setupUi( )
   QTableWidgetItem* envelopeVertexRadiusItem = new QTableWidgetItem;
   QTableWidgetItem* verticalRayEdgeColorItem = new QTableWidgetItem;
   QTableWidgetItem* verticalRayEdgeWidthItem = new QTableWidgetItem;
-  QTableWidgetItem* deleteCurveModeItem = new QTableWidgetItem;
   QTableWidgetItem* gridColorItem = new QTableWidgetItem;
 
   this->ui->tableWidget->setItem( int(EDGE_COLOR_KEY), 0, edgeColorItem );
@@ -111,8 +91,6 @@ void ArrangementDemoPropertiesDialog::setupUi( )
                   verticalRayEdgeColorItem );
   this->ui->tableWidget->setItem( int(VERTICAL_RAY_EDGE_WIDTH_KEY), 0,
                   verticalRayEdgeWidthItem );
-  this->ui->tableWidget->setItem( int(DELETE_CURVE_MODE_KEY), 0,
-                  deleteCurveModeItem );
   this->ui->tableWidget->setItem( int(GRID_COLOR_KEY), 0, gridColorItem );
 
   // fill in the items with data
@@ -169,8 +147,6 @@ void ArrangementDemoPropertiesDialog::updateUi( )
   this->ui->tableWidget->item( int(VERTEX_COLOR_KEY), 0 );
   QTableWidgetItem* vertexRadiusItem =
   this->ui->tableWidget->item( int(VERTEX_RADIUS_KEY), 0 );
-  QTableWidgetItem* deleteCurveModeItem =
-  this->ui->tableWidget->item( int(DELETE_CURVE_MODE_KEY), 0 );
   QTableWidgetItem* gridColorItem =
   this->ui->tableWidget->item( int( GRID_COLOR_KEY ), 0 );
   QTableWidgetItem* envelopeEdgeColorItem =
@@ -221,13 +197,6 @@ void ArrangementDemoPropertiesDialog::updateUi( )
                    QVariant::fromValue(verticalRayEdgeColor));
 
   verticalRayEdgeWidthItem->setData( Qt::DisplayRole, verticalRayEdgeWidth );
-
-  // delete curve properties
-  DeleteCurveMode deleteCurveMode;
-  deleteCurveModeItem->setData( Qt::DisplayRole,
-                DeleteCurveMode::ToString( deleteCurveMode ) );
-  deleteCurveModeItem->setData( Qt::UserRole,
-                QVariant::fromValue( deleteCurveMode ) );
 
   // grid properties
   gridColorItem->setData( Qt::DisplayRole, gridColor );

@@ -1,4 +1,4 @@
-// Copyright (c) 2012  Tel-Aviv University (Israel).
+// Copyright (c) 2012, 2020 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #ifndef CGAL_ARRANGEMENTS_DEMO_UTILS_H
 #define CGAL_ARRANGEMENTS_DEMO_UTILS_H
@@ -507,27 +508,28 @@ class Arr_construct_point_2
 public:
   Arr_construct_point_2(const Traits* traits_) : traits(traits_) { }
 
-  Point_2 operator()( const Kernel_point_2& pt );
+  template <typename P>
+  Point_2 operator()(const P& p)
+  {
+    return this->operator()(p.x(), p.y());
+  }
 
   template <typename T, typename U>
   Point_2 operator()(const T& x, const U& y)
   {
-    return this->operator()(FT{x}, FT{y}, traits);
+    return this->operator()(FT{x}, FT{y});
   }
 
-  template <typename P>
-  Point_2 operator()(const P& p)
-  {
-    return this->operator()(FT{p.x()}, FT{p.y()}, traits);
-  }
+  Point_2 operator()(const Kernel_point_2& pt);
+  Point_2 operator()(const FT& x, const FT& y);
 
 protected:
-  template <typename T, typename TTraits >
-  Point_2 operator()(const T& x, const T& y, const TTraits*);
+  template <typename TTraits >
+  Point_2 operator()(const FT& x, const FT& y, const TTraits*);
 
-  template <typename T, typename AlgebraicKernel_d_1>
+  template <typename AlgebraicKernel_d_1>
   Point_2 operator()(
-    const T& x, const T& y,
+    const FT& x, const FT& y,
     const CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>*);
 
   const Traits* traits;

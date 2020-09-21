@@ -1,4 +1,4 @@
-// Copyright (c) 2012  Tel-Aviv University (Israel).
+// Copyright (c) 2012, 2020 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,7 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+// Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #include "ArrangementTypes.h"
 #include "ArrangementTypesUtils.h"
@@ -154,6 +155,16 @@ FillFaceCallbackBase* ArrangementDemoTabBase::getFillFaceCallback( ) const
   return this->fillFaceCallback.get();
 }
 
+auto ArrangementDemoTabBase::getFillFaceColor() const -> QColor
+{
+  return this->fillFaceCallback->getColor();
+}
+
+void ArrangementDemoTabBase::setFillFaceColor(QColor color)
+{
+  this->fillFaceCallback->setColor(color);
+}
+
 CGAL::Qt::GraphicsViewNavigation*
 ArrangementDemoTabBase::getGraphicsViewNavigation() const
 {
@@ -254,6 +265,33 @@ void ArrangementDemoTabBase::activateSplitEdgeCallback()
 void ArrangementDemoTabBase::activateFillFaceCallback()
 {
   this->unhookAndInstallEventFilter(this->fillFaceCallback.get());
+}
+
+void ArrangementDemoTabBase::updatePreferences(const Preferences& pref)
+{
+  auto agi = this->getArrangementGraphicsItem();
+  auto envelopeCallback = this->getEnvelopeCallback();
+  auto verticalRayShootCallback = this->getVerticalRayShootCallback();
+  auto splitEdgeCallback = this->getSplitEdgeCallback();
+  auto gridGraphicsItem = this->getGridGraphicsItem();
+
+  QPen edgesPen(QBrush(pref.edgeColor), pref.edgeWidth);
+  edgesPen.setCosmetic(true);
+  QPen verticesPen(QBrush(pref.vertexColor), pref.vertexRadius);
+  verticesPen.setCosmetic(true);
+  agi->setEdgesPen(edgesPen);
+  agi->setVerticesPen(verticesPen);
+  gridGraphicsItem->setAxesColor(pref.axesColor);
+  gridGraphicsItem->setGridColor(pref.gridColor);
+  envelopeCallback->setEnvelopeEdgeColor(pref.envelopeEdgeColor);
+  envelopeCallback->setEnvelopeEdgeWidth(pref.envelopeEdgeWidth);
+  envelopeCallback->setEnvelopeVertexColor(pref.envelopeVertexColor);
+  envelopeCallback->setEnvelopeVertexRadius(pref.envelopeVertexRadius);
+  verticalRayShootCallback->setEdgeColor(pref.verticalRayEdgeColor);
+  verticalRayShootCallback->setEdgeWidth(pref.verticalRayEdgeWidth);
+  splitEdgeCallback->setColor(pref.edgeColor);
+
+  Q_EMIT modelChanged();
 }
 
 template <class Arr_>

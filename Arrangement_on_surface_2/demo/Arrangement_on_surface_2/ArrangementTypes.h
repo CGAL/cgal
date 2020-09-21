@@ -1,13 +1,14 @@
-// Copyright (c) 2005,2012 Tel-Aviv University (Israel).
+// Copyright (c) 2005, 2012, 2020 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
 //
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Alex Tsui <alextsui05@gmail.com>
-//                 Saurabh Singh <ssingh@cs.iitr.ac.in>
+// Author(s): Baruch Zukerman <baruchzu@post.tau.ac.il>
+//            Alex Tsui <alextsui05@gmail.com>
+//            Saurabh Singh <ssingh@cs.iitr.ac.in>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #ifndef ARRANGEMENT_DEMO_TYPES_H
 #define ARRANGEMENT_DEMO_TYPES_H
@@ -81,6 +82,7 @@ public:
 #endif
 
 typedef CGAL::Cartesian<Rational>                       Rat_kernel;
+typedef CGAL::Point_2<Rat_kernel>                       Rat_point_2;
 
 // Segments:
 typedef CGAL::Arr_segment_traits_2<Rat_kernel>          Seg_traits;

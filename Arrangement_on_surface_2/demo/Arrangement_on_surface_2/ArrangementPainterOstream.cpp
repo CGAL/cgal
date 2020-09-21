@@ -1,31 +1,41 @@
+// Copyright (c) 2012, 2020  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Saurabh Singh <ssingh@cs.iitr.ac.in>
+//            Ahmed Essam <theartful.ae@gmail.com>
+
 #include "ArrangementPainterOstream.h"
 #include "ArrangementTypes.h"
 #include <CGAL/Curved_kernel_via_analysis_2/Curve_renderer_facade.h>
 
 #include <QGraphicsView>
 
-
-namespace CGAL {
-namespace Qt {
+namespace CGAL
+{
+namespace Qt
+{
 
 // Instantiation of Arr_segment_traits_2
-template < typename Kernel_ >
-ArrangementPainterOstream<CGAL::Arr_segment_traits_2< Kernel_> >&
-ArrangementPainterOstream<CGAL::Arr_segment_traits_2< Kernel_> > ::
-operator<<( const X_monotone_curve_2& curve )
+template <typename Kernel_>
+ArrangementPainterOstream<CGAL::Arr_segment_traits_2<Kernel_>>&
+ArrangementPainterOstream<CGAL::Arr_segment_traits_2<Kernel_>>::operator<<(
+  const X_monotone_curve_2& curve)
 {
-  const Point_2& p1 = curve.source( );
-  const Point_2& p2 = curve.target( );
-  Segment_2 seg( p1, p2 );
+  const Point_2& p1 = curve.source();
+  const Point_2& p2 = curve.target();
+  Segment_2 seg(p1, p2);
 
   // skip segments outside our view
-  QRectF seg_bb = this->convert( seg.bbox( ) );
-  if ( this->clippingRect.isValid( ) &&
-       ! this->clippingRect.intersects( seg_bb )
-       && (!seg.is_horizontal() && !seg.is_vertical()))
-  {
-    return *this;
-  }
+  QRectF seg_bb = this->convert(seg.bbox());
+  if (
+    this->clippingRect.isValid() && !this->clippingRect.intersects(seg_bb) &&
+    (!seg.is_horizontal() && !seg.is_vertical()))
+  { return *this; }
 
   this->painterOstream << seg;
   return *this;
@@ -33,10 +43,10 @@ operator<<( const X_monotone_curve_2& curve )
 
 // Instantiation of Arr_polyline_traits_2
 
-template < typename SegmentTraits >
-ArrangementPainterOstream<CGAL::Arr_polyline_traits_2<SegmentTraits> >&
-ArrangementPainterOstream<CGAL::Arr_polyline_traits_2<SegmentTraits> >::
-operator<<( const X_monotone_curve_2& curve )
+template <typename SegmentTraits>
+ArrangementPainterOstream<CGAL::Arr_polyline_traits_2<SegmentTraits>>&
+ArrangementPainterOstream<CGAL::Arr_polyline_traits_2<SegmentTraits>>::
+operator<<(const X_monotone_curve_2& curve)
 {
   int cnt = 0;
   for (typename X_monotone_curve_2::Subcurve_const_iterator it =
@@ -47,7 +57,6 @@ operator<<( const X_monotone_curve_2& curve )
     this->painterOstream << *it;
   }
 
-  // TODO: implement polyline painting
   return *this;
 }
 
@@ -58,85 +67,76 @@ auto ArrangementPainterOstream<CGAL::Arr_conic_traits_2<
   -> std::vector<X_monotone_curve_2>
 {
   // see if we intersect the bottom edge of the viewport
-  Point_2 bottomLeft = this->convert( this->clippingRect.bottomLeft( ) );
-  Point_2 bottomRight = this->convert( this->clippingRect.bottomRight( ) );
-  Point_2 topLeft = this->convert( this->clippingRect.topLeft( ) );
-  Point_2 topRight = this->convert( this->clippingRect.topRight( ) );
+  Point_2 bottomLeft = this->convert(this->clippingRect.bottomLeft());
+  Point_2 bottomRight = this->convert(this->clippingRect.bottomRight());
+  Point_2 topLeft = this->convert(this->clippingRect.topLeft());
+  Point_2 topRight = this->convert(this->clippingRect.topRight());
   X_monotone_curve_2 bottom =
-    this->construct_x_monotone_curve_2( bottomLeft, bottomRight );
+    this->construct_x_monotone_curve_2(bottomLeft, bottomRight);
   X_monotone_curve_2 left =
-    this->construct_x_monotone_curve_2( bottomLeft, topLeft );
+    this->construct_x_monotone_curve_2(bottomLeft, topLeft);
   X_monotone_curve_2 top =
-    this->construct_x_monotone_curve_2( topLeft, topRight );
+    this->construct_x_monotone_curve_2(topLeft, topRight);
   X_monotone_curve_2 right =
-    this->construct_x_monotone_curve_2( topRight, bottomRight );
+    this->construct_x_monotone_curve_2(topRight, bottomRight);
 
-  std::vector< CGAL::Object > bottomIntersections;
-  std::vector< CGAL::Object > leftIntersections;
-  std::vector< CGAL::Object > topIntersections;
-  std::vector< CGAL::Object > rightIntersections;
-  std::vector< CGAL::Object > intersections;
+  std::vector<CGAL::Object> bottomIntersections;
+  std::vector<CGAL::Object> leftIntersections;
+  std::vector<CGAL::Object> topIntersections;
+  std::vector<CGAL::Object> rightIntersections;
+  std::vector<CGAL::Object> intersections;
 
-  this->intersect_2( bottom, curve, std::back_inserter( bottomIntersections ) );
-  this->intersect_2( left, curve, std::back_inserter( leftIntersections ) );
-  this->intersect_2( top, curve, std::back_inserter( topIntersections ) );
-  this->intersect_2( right, curve, std::back_inserter( rightIntersections ) );
+  this->intersect_2(bottom, curve, std::back_inserter(bottomIntersections));
+  this->intersect_2(left, curve, std::back_inserter(leftIntersections));
+  this->intersect_2(top, curve, std::back_inserter(topIntersections));
+  this->intersect_2(right, curve, std::back_inserter(rightIntersections));
 
-  this->intersect_2( bottom, curve, std::back_inserter( intersections ) );
-  this->intersect_2( left, curve, std::back_inserter( intersections ) );
-  this->intersect_2( top, curve, std::back_inserter( intersections ) );
-  this->intersect_2( right, curve, std::back_inserter( intersections ) );
+  this->intersect_2(bottom, curve, std::back_inserter(intersections));
+  this->intersect_2(left, curve, std::back_inserter(intersections));
+  this->intersect_2(top, curve, std::back_inserter(intersections));
+  this->intersect_2(right, curve, std::back_inserter(intersections));
 
-  this->filterIntersectionPoints( intersections );
+  this->filterIntersectionPoints(intersections);
 
-  Point_2 leftEndpt = curve.source( );
-  Point_2 rightEndpt = curve.target( );
+  Point_2 leftEndpt = curve.source();
+  Point_2 rightEndpt = curve.target();
 
-  if ( leftEndpt.x( ) > rightEndpt.x( ) )
+  if (leftEndpt.x() > rightEndpt.x()) { std::swap(leftEndpt, rightEndpt); }
+
+  QPointF qendpt1 = this->convert(leftEndpt);
+  QPointF qendpt2 = this->convert(rightEndpt);
+
+  std::list<Point_2> pointList;
+  for (unsigned int i = 0; i < intersections.size(); ++i)
   {
-    std::swap( leftEndpt, rightEndpt );
-  }
-
-  QPointF qendpt1 = this->convert( leftEndpt );
-  QPointF qendpt2 = this->convert( rightEndpt );
-
-  std::list< Point_2 > pointList;
-  for ( unsigned int i = 0; i < intersections.size( ); ++i )
-  {
-    CGAL::Object o = intersections[ i ];
-    std::pair< Intersection_point_2, Multiplicity > pair;
-    if ( CGAL::assign( pair, o ) )
+    CGAL::Object o = intersections[i];
+    std::pair<Intersection_point_2, Multiplicity> pair;
+    if (CGAL::assign(pair, o))
     {
       Point_2 pt = pair.first;
-      pointList.push_back( pt );
+      pointList.push_back(pt);
     }
   }
 
-  bool includeLeftEndpoint = this->clippingRect.contains( qendpt1 );
-  bool includeRightEndpoint = this->clippingRect.contains( qendpt2 );
-  if ( includeLeftEndpoint )
-  {
-    pointList.push_front( leftEndpt );
-  }
+  bool includeLeftEndpoint = this->clippingRect.contains(qendpt1);
+  bool includeRightEndpoint = this->clippingRect.contains(qendpt2);
+  if (includeLeftEndpoint) { pointList.push_front(leftEndpt); }
 
-  if ( includeRightEndpoint )
-  {
-    pointList.push_back( rightEndpt );
-  }
+  if (includeRightEndpoint) { pointList.push_back(rightEndpt); }
 
   // TODO: make ArrangementPainterOstream take traits object
   Traits traits;
   Construct_x_monotone_subcurve_2<Traits> construct_x_monotone_subcurve_2{
     &traits};
-  std::vector< X_monotone_curve_2 > clippings;
-  typename std::list< Point_2 >::iterator pointListItr = pointList.begin( );
-  for ( unsigned int i = 0; i < pointList.size( ); i += 2 )
+  std::vector<X_monotone_curve_2> clippings;
+  typename std::list<Point_2>::iterator pointListItr = pointList.begin();
+  for (unsigned int i = 0; i < pointList.size(); i += 2)
   {
     typename Traits::Point_2 p1 = *pointListItr++;
     typename Traits::Point_2 p2 = *pointListItr++;
     X_monotone_curve_2 subcurve =
-      construct_x_monotone_subcurve_2( curve, p1, p2 );
-    clippings.push_back( subcurve );
+      construct_x_monotone_subcurve_2(curve, p1, p2);
+    clippings.push_back(subcurve);
   }
 
   return clippings;
@@ -147,30 +147,27 @@ void ArrangementPainterOstream<
   CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
   filterIntersectionPoints(std::vector<CGAL::Object>& res)
 {
-  std::vector< std::pair< Intersection_point_2, Multiplicity > > tmp;
+  std::vector<std::pair<Intersection_point_2, Multiplicity>> tmp;
 
   // filter out the non-intersection point results
-  for ( unsigned int i = 0; i < res.size( ); ++i )
+  for (unsigned int i = 0; i < res.size(); ++i)
   {
-    CGAL::Object obj = res[ i ];
-    std::pair< Intersection_point_2, Multiplicity > pair;
-    if ( CGAL::assign( pair, obj ) )
-    {
-      tmp.push_back( pair );
-    }
+    CGAL::Object obj = res[i];
+    std::pair<Intersection_point_2, Multiplicity> pair;
+    if (CGAL::assign(pair, obj)) { tmp.push_back(pair); }
   }
-  res.clear( );
+  res.clear();
 
   // sort the intersection points by x-coord
   Compare_intersection_point_result compare_intersection_point_result;
-  std::sort( tmp.begin( ), tmp.end( ), compare_intersection_point_result );
+  std::sort(tmp.begin(), tmp.end(), compare_intersection_point_result);
 
   // box up the sorted elements
-  for ( unsigned int i = 0; i < tmp.size( ); ++i )
+  for (unsigned int i = 0; i < tmp.size(); ++i)
   {
-    std::pair< Intersection_point_2, Multiplicity > pair = tmp[ i ];
-    CGAL::Object o = CGAL::make_object( pair );
-    res.push_back( o );
+    std::pair<Intersection_point_2, Multiplicity> pair = tmp[i];
+    CGAL::Object o = CGAL::make_object(pair);
+    res.push_back(o);
   }
 }
 
@@ -179,33 +176,31 @@ void ArrangementPainterOstream<
   CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
   printIntersectResult(const std::vector<CGAL::Object>& res)
 {
-  for ( std::vector< CGAL::Object >::const_iterator it = res.begin( );
-        it != res.end( ); ++it )
+  for (std::vector<CGAL::Object>::const_iterator it = res.begin();
+       it != res.end(); ++it)
   {
     CGAL::Object obj = *it;
-    std::pair< Intersection_point_2, Multiplicity > pair;
-    if ( CGAL::assign( pair, obj ) )
+    std::pair<Intersection_point_2, Multiplicity> pair;
+    if (CGAL::assign(pair, obj))
     {
       Point_2 pt = pair.first;
-      /* QPointF qpt = */ this->convert( pt );
+      /* QPointF qpt = */ this->convert(pt);
       // std::cout << "(" << pt.x( ) << " " << pt.y( ) < ")" << std::endl;
     }
   }
 }
-template < typename RatKernel, class AlgKernel, class NtTraits >
-ArrangementPainterOstream<CGAL::Arr_conic_traits_2<RatKernel, AlgKernel,
-                                                   NtTraits > >&
-ArrangementPainterOstream<CGAL::Arr_conic_traits_2<RatKernel, AlgKernel,
-                                                   NtTraits > >::
-operator<<( const X_monotone_curve_2& curve )
+template <typename RatKernel, class AlgKernel, class NtTraits>
+ArrangementPainterOstream<
+  CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>&
+ArrangementPainterOstream<CGAL::Arr_conic_traits_2<
+  RatKernel, AlgKernel, NtTraits>>::operator<<(const X_monotone_curve_2& curve)
 {
-  CGAL::Bbox_2 bb = curve.bbox( );
-  QRectF qbb = this->convert( bb );
+  CGAL::Bbox_2 bb = curve.bbox();
+  QRectF qbb = this->convert(bb);
 
   // quick cull
-  if (this->clippingRect.isValid() && ! this->clippingRect.intersects(qbb)) {
-    return *this;
-  }
+  if (this->clippingRect.isValid() && !this->clippingRect.intersects(qbb))
+  { return *this; }
 
   // get number of segments
   QGraphicsView* view = this->scene->views().first();
@@ -235,16 +230,15 @@ operator<<( const X_monotone_curve_2& curve )
     } while (p_next != end_pts);
   };
 
-  if ( this->clippingRect.isValid( ) )
+  if (this->clippingRect.isValid())
   {
-    std::vector< X_monotone_curve_2 > visibleParts;
-    if ( this->clippingRect.contains( qbb ) )
-      visibleParts.push_back( curve );
+    std::vector<X_monotone_curve_2> visibleParts;
+    if (this->clippingRect.contains(qbb))
+      visibleParts.push_back(curve);
     else
-      visibleParts = this->visibleParts( curve );
+      visibleParts = this->visibleParts(curve);
 
-    for (auto& visiblePart : visibleParts)
-      paintCurve(visiblePart);
+    for (auto& visiblePart : visibleParts) paintCurve(visiblePart);
   }
   else
   { // draw the whole curve
@@ -291,8 +285,7 @@ auto ArrangementPainterOstream<CGAL::Arr_Bezier_curve_traits_2<
   QPainterPath painterPath;
   painterPath.moveTo(sampled_points[0].first, sampled_points[0].second);
 
-  for (auto& p : sampled_points)
-    painterPath.lineTo(p.first, p.second);
+  for (auto& p : sampled_points) painterPath.lineTo(p.first, p.second);
 
   this->qp->drawPath(painterPath);
   return *this;
@@ -300,55 +293,54 @@ auto ArrangementPainterOstream<CGAL::Arr_Bezier_curve_traits_2<
 
 // Instantiation of Arr_linear_traits_2
 
-template < typename Kernel_ >
-ArrangementPainterOstream< CGAL::Arr_linear_traits_2< Kernel_ > >&
-ArrangementPainterOstream< CGAL::Arr_linear_traits_2< Kernel_ > >::
-operator<<( const X_monotone_curve_2& curve )
+template <typename Kernel_>
+ArrangementPainterOstream<CGAL::Arr_linear_traits_2<Kernel_>>&
+ArrangementPainterOstream<CGAL::Arr_linear_traits_2<Kernel_>>::operator<<(
+  const X_monotone_curve_2& curve)
 {
-  if ( curve.is_segment( ) )
+  if (curve.is_segment())
   {
-    Segment_2 seg = curve.segment( );
+    Segment_2 seg = curve.segment();
 
     // skip segments outside our view
-    QRectF seg_bb = this->convert( seg.bbox( ) );
-    if ( this->clippingRect.isValid( ) &&
-         ! this->clippingRect.intersects( seg_bb )
-         & (!seg.is_horizontal() && !seg.is_vertical()))
-    {
-      return *this;
-    }
+    QRectF seg_bb = this->convert(seg.bbox());
+    if (
+      this->clippingRect.isValid() &&
+      !this->clippingRect.intersects(seg_bb) &
+        (!seg.is_horizontal() && !seg.is_vertical()))
+    { return *this; }
 
     this->painterOstream << seg;
   }
-  else if ( curve.is_ray( ) )
+  else if (curve.is_ray())
   {
-    Ray_2 ray = curve.ray( );
-    QLineF qseg = this->convert( ray );
-    if ( qseg.isNull( ) )
+    Ray_2 ray = curve.ray();
+    QLineF qseg = this->convert(ray);
+    if (qseg.isNull())
     { // it's out of view
       return *this;
     }
-    Segment_2 seg = this->convert( qseg );
-    this-> painterOstream << seg;
+    Segment_2 seg = this->convert(qseg);
+    this->painterOstream << seg;
   }
   else // curve.is_line( )
   {
-    Line_2 line = curve.line( );
-    QLineF qseg = this->convert( line );
-    if ( qseg.isNull( ) )
+    Line_2 line = curve.line();
+    QLineF qseg = this->convert(line);
+    if (qseg.isNull())
     { // it's out of view
       return *this;
     }
-    Segment_2 seg = this->convert( qseg );
-    this-> painterOstream << seg;
+    Segment_2 seg = this->convert(qseg);
+    this->painterOstream << seg;
   }
   return *this;
 }
 
 // Instantiation of Arr_algebraic_segment_traits_2
 template <typename Traits>
-static bool lies_on_border(const ArrangementPainterOstream<Traits> *apo,
-                           const QPointF &point)
+static bool lies_on_border(
+  const ArrangementPainterOstream<Traits>* apo, const QPointF& point)
 {
   QGraphicsView* view = apo->getScene()->views().first();
   qreal width = view->width();
@@ -376,8 +368,7 @@ QTransform ArrangementPainterOstream<
 template <typename Coefficient_>
 QTransform
 ArrangementPainterOstream<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
-  getPointsListMapping(
-    const QTransform& worldTransform)
+  getPointsListMapping(const QTransform& worldTransform)
 {
   auto view = this->getView();
   QRectF viewport = this->viewportRect();
@@ -415,10 +406,10 @@ auto ArrangementPainterOstream<CGAL::Arr_algebraic_segment_traits_2<
   return points;
 }
 
-template < typename Coefficient_ >
-ArrangementPainterOstream<CGAL::Arr_algebraic_segment_traits_2<Coefficient_> >&
-ArrangementPainterOstream<CGAL::Arr_algebraic_segment_traits_2<Coefficient_> >::
-operator<<( const X_monotone_curve_2& curve )
+template <typename Coefficient_>
+ArrangementPainterOstream<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>&
+ArrangementPainterOstream<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
+operator<<(const X_monotone_curve_2& curve)
 {
   this->qp->save();
   this->remapFacadePainter();
@@ -454,8 +445,7 @@ void ArrangementPainterOstream<CGAL::Arr_algebraic_segment_traits_2<
 
 template <typename Coefficient_>
 void ArrangementPainterOstream<
-  CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
-  setupFacade()
+  CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::setupFacade()
 {
   typedef Curve_renderer_facade<CKvA_2> Facade;
   QGraphicsView* view = this->getView();
@@ -557,7 +547,8 @@ auto ArrangementPainterOstream<CGAL::Arr_rational_function_traits_2<
       double x_ = x;
       double y_ = clamp(y, min_y, max_y);
 
-      if (!disconnected) cur_list->push_back({x_, y_});
+      if (!disconnected)
+        cur_list->push_back({x_, y_});
       else if (
         (last_y == min_y && y_ == max_y) || (last_y == max_y && y_ == min_y))
       {
@@ -575,8 +566,7 @@ auto ArrangementPainterOstream<CGAL::Arr_rational_function_traits_2<
       {
         points_list.emplace_back();
         cur_list = &points_list.back();
-        if (!first_point)
-          cur_list->push_back({last_x, last_y});
+        if (!first_point) cur_list->push_back({last_x, last_y});
         disconnected = false;
       }
       cur_list->push_back({x, y});
@@ -587,7 +577,6 @@ auto ArrangementPainterOstream<CGAL::Arr_rational_function_traits_2<
 
   return points_list;
 }
-
 
 template <typename AlgebraicKernel_d_1_>
 template <typename Lambda>
@@ -608,7 +597,7 @@ void ArrangementPainterOstream<
     return numer.evaluate(x) / denom.evaluate(x);
   };
 
-  if (  // be conservative and prefer this branch to avoid zero division
+  if ( // be conservative and prefer this branch to avoid zero division
     curve.left_parameter_space_in_x() == ARR_INTERIOR &&
     curve.left_x().to_interval().second >= min_x)
   {
@@ -629,7 +618,7 @@ void ArrangementPainterOstream<
       break;
     }
     default: {
-        CGAL_error();
+      CGAL_error();
     }
     }
   }
@@ -646,7 +635,7 @@ void ArrangementPainterOstream<
 
   std::pair<double, double> last_pt;
 
-  if (  // be conservative and prefer this branch to avoid zero division
+  if ( // be conservative and prefer this branch to avoid zero division
     curve.right_parameter_space_in_x() == ARR_INTERIOR &&
     curve.right_x().to_interval().first <= max_x)
   {
@@ -666,7 +655,7 @@ void ArrangementPainterOstream<
       break;
     }
     default: {
-        CGAL_error();
+      CGAL_error();
     }
     }
   }

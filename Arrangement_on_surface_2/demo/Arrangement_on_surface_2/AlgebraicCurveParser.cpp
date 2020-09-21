@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012  Tel-Aviv University (Israel).
+// Copyright (c) 2012, 2020 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -16,12 +16,13 @@
 // SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s): Saurabh Singh <ssingh@cs.iitr.ac.in>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/polynomial_utils.h>
 
-#include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix.hpp>
+#include <boost/spirit/include/qi.hpp>
 
 #include "AlgebraicCurveParser.h"
 
@@ -29,30 +30,20 @@ namespace phx = boost::phoenix;
 namespace qi = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
 
-template <typename Polynomial_d, typename Iterator>
-struct PolynomialParser :
-    qi::grammar<Iterator, Polynomial_d(), ascii::space_type>
+template <typename Polynomial_d, typename Iterator, typename Skipper>
+struct PolynomialParser : qi::grammar<Iterator, Polynomial_d(), Skipper>
 {
+  using Self = PolynomialParser<Polynomial_d, Iterator, Skipper>;
   using Traits = CGAL::Polynomial_traits_d<Polynomial_d>;
   using Coefficient = typename Traits::Innermost_coefficient_type;
   using Innermost_leading_coefficient =
     typename Traits::Innermost_leading_coefficient;
+  using Total_degree = typename Traits::Total_degree;
 
   PolynomialParser() : PolynomialParser::base_type(start)
   {
-    using ascii::space;
     using qi::_val;
     using qi::eps;
-
-    auto raise = [&](auto&& poly, auto&& power) {
-      if (power.degree() != 0)
-      {
-        error = true;
-        return Polynomial_d{};
-      }
-      return CGAL::ipower(
-        poly, Innermost_leading_coefficient{}(power).intValue());
-    };
 
     // { expr = expr } or { expr }
     start = (expr >> '=' >> expr)[_val = qi::_1 - qi::_2] | expr[_val = qi::_1];
@@ -60,15 +51,16 @@ struct PolynomialParser :
     expr = term[_val = qi::_1] >>
            *('+' >> term[_val += qi::_1] | '-' >> term[_val -= qi::_1]);
     // multiplication using *, and implied multiplication as in (x+y)(x+y)
-    term =
-      factor[_val = qi::_1] >>
-      *((qi::char_('*') >> factor[_val *= qi::_1]) | pow_expr[_val *= qi::_1]);
+    term = factor[_val = qi::_1] >>
+           *(('*' >> factor[_val *= qi::_1]) | pow_expr[_val *= qi::_1]);
     // uniary - and + operators
     factor = qi::char_('-') >> pow_expr[_val = -qi::_1] |
              -qi::char_('+') >> pow_expr[_val = qi::_1];
     // power
-    pow_expr = factor2[_val = qi::_1] >>
-               (('^' >> factor2[_val = phx::bind(raise, _val, qi::_1)]) | eps);
+    pow_expr =
+      factor2[_val = qi::_1] >>
+      (('^' >> factor2[_val = phx::bind(&Self::raise, this, _val, qi::_1)]) |
+       eps);
     // ( expr )
     factor2 = (('(' >> expr >> ')') | factor3)[_val = qi::_1];
     // coefficients and variables
@@ -79,17 +71,33 @@ struct PolynomialParser :
     var = qi::char_('x')[_val = x] | qi::char_('y')[_val = y];
   }
 
+  Polynomial_d raise(const Polynomial_d& poly, const Polynomial_d& power)
+  {
+    if (total_degree(power) != 0)
+    {
+      this->error = true;
+      return {};
+    }
+
+    return CGAL::ipower(
+      poly, std::lround(CGAL::to_double(innermost_leading_coefficient(power))));
+  }
+
+  Innermost_leading_coefficient innermost_leading_coefficient;
+  Total_degree total_degree;
+
   Polynomial_d x = CGAL::shift(Polynomial_d(1), 1, 0);
   Polynomial_d y = CGAL::shift(Polynomial_d(1), 1, 1);
-  qi::rule<Iterator, Polynomial_d(), ascii::space_type> start;
-  qi::rule<Iterator, Polynomial_d(), ascii::space_type> expr;
-  qi::rule<Iterator, Polynomial_d(), ascii::space_type> term;
-  qi::rule<Iterator, Polynomial_d(), ascii::space_type> pow_expr;
-  qi::rule<Iterator, Polynomial_d(), ascii::space_type> factor;
-  qi::rule<Iterator, Polynomial_d(), ascii::space_type> factor2;
-  qi::rule<Iterator, Polynomial_d(), ascii::space_type> factor3;
-  qi::rule<Iterator, Polynomial_d(), ascii::space_type> var;
-  qi::rule<Iterator, Coefficient(), ascii::space_type> coeff;
+  qi::rule<Iterator, Polynomial_d(), Skipper> start;
+  qi::rule<Iterator, Polynomial_d(), Skipper> expr;
+  qi::rule<Iterator, Polynomial_d(), Skipper> term;
+  qi::rule<Iterator, Polynomial_d(), Skipper> pow_expr;
+  qi::rule<Iterator, Polynomial_d(), Skipper> factor;
+  qi::rule<Iterator, Polynomial_d(), Skipper> factor2;
+  qi::rule<Iterator, Polynomial_d(), Skipper> factor3;
+  qi::rule<Iterator, Polynomial_d(), Skipper> var;
+  qi::rule<Iterator, Coefficient(), Skipper> coeff;
+
   bool error = false;
 };
 
@@ -120,18 +128,17 @@ boost::optional<Polynomial_d>
 AlgebraicCurveParser<Polynomial_d>::operator()(const std::string& expression)
 {
   using Traits = CGAL::Polynomial_traits_d<Polynomial_d>;
-  using ascii::space;
   using iterator_type = std::string::const_iterator;
 
   if (!hasValidChars<Traits{}.d>(expression)) return {};
 
-  PolynomialParser<Polynomial_d, iterator_type> pparser;
+  PolynomialParser<Polynomial_d, iterator_type, ascii::space_type> pparser;
   std::string::const_iterator iter = expression.begin();
   std::string::const_iterator end = expression.end();
 
   // parsing goes on here
   Polynomial_d poly;
-  bool r = qi::phrase_parse(iter, end, pparser, space, poly);
+  bool r = qi::phrase_parse(iter, end, pparser, ascii::space, poly);
 
   if (r && iter == end && !pparser.error)
     return poly;
@@ -139,14 +146,14 @@ AlgebraicCurveParser<Polynomial_d>::operator()(const std::string& expression)
     return {};
 }
 
+#ifdef CGAL_USE_CORE
 // don't want to include ArrangementTypes.h
 // makes compilation slower
 // template class
 // AlgebraicCurveParser<demo_types::Alg_seg_traits::Polynomial_2>;
 // AlgebraicCurveParser<demo_types::Rational_traits::Polynomial_1>;
-#ifdef CGAL_USE_CORE
-#include <CGAL/Arr_algebraic_segment_traits_2.h>
 #include <CGAL/Algebraic_kernel_d_1.h>
+#include <CGAL/Arr_algebraic_segment_traits_2.h>
 
 template struct AlgebraicCurveParser<
   CGAL::Arr_algebraic_segment_traits_2<CORE::BigInt>::Polynomial_2>;
