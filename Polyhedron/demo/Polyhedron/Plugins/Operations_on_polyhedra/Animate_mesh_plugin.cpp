@@ -155,7 +155,7 @@ public Q_SLOTS:
           timer.stop();
           return;
         }
-        if(id <= sm_item->face_graph()->number_of_vertices())
+        if(id <= static_cast<int>(sm_item->face_graph()->number_of_vertices()))
         {
           SMesh::Vertex_index vh(id);
           VPmap vpm = get(CGAL::vertex_point, *sm_item->face_graph());
@@ -177,7 +177,7 @@ public Q_SLOTS:
 
   void next_frame()
   {
-    if(frame == frame_pos.size()-1)
+    if(frame == static_cast<int>(frame_pos.size()-1))
     {
       timer.stop();
       return;
