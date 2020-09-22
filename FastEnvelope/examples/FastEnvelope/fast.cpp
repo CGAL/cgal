@@ -4,7 +4,7 @@
 #include <Eigen/Dense>
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
 #include <CGAL/Timer.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -12,6 +12,8 @@
 #include <boost/iterator/counting_iterator.hpp>
 #include <fstream>
 #include <string>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 namespace CGAL {
 template <typename K>
@@ -86,6 +88,9 @@ struct Envelope {
 
   static const bool OUT_PRISM = 1;
   static const bool IN_PRISM = 0;
+	static const int CUT_COPLANAR = 4;
+	static const int CUT_EMPTY = -1;
+	static const int CUT_FACE = 3;
 
 
   std::vector<Point_3> env_vertices;
@@ -165,6 +170,20 @@ struct Envelope {
     std::vector<int> FACES;
   };
 
+  // was marked todo???
+  bool box_box_intersection(const Iso_cuboid_3 ic1, const Iso_cuboid_3 ic2) const
+  {
+    const Point_3& min1 = min_vertex(ic1);
+    const Point_3& min2 = min_vertex(ic2);
+    const Point_3& max1 = max_vertex(ic1);
+    const Point_3& max2 = max_vertex(ic2);
+
+    if ((compare_x(max1, min2) == CGAL::SMALLER) ||(compare_y(max1, min2) == CGAL::SMALLER) ||(compare_z(max1, min2) == CGAL::SMALLER))
+      return 0;
+      if ((compare_x(max2, min1) == CGAL::SMALLER) ||(compare_y(max2, min1) == CGAL::SMALLER) ||(compare_z(max2, min1) == CGAL::SMALLER))
+      return 0;
+    return 1;
+  }
 
   bool
   point_out_prism(const ePoint_3 &point, const std::vector<unsigned int> &prismindex, int jump) const
@@ -241,9 +260,9 @@ struct Envelope {
                        const eLine_3& line,
                        std::vector<int>& cid) const
   {
+    const Prism& prism = halfspace[cindex];
     cid.clear();
     std::vector<bool> cut;
-    const Prism& prism = halfspace[cindex];
 
     cut.resize(prism.size());
     for (int i = 0; i < prism.size(); i++){
@@ -315,7 +334,6 @@ struct Envelope {
     */
 
 
-    // todo: Use a lazy plane
     for (int i = 0; i < cutp.size(); i++){
       const Plane& plane_i = prism[cutp[i]];
 
@@ -486,6 +504,891 @@ struct Envelope {
 
     return false; // fully inside the envelope
   }
+
+
+  int is_triangle_cut_envelope_polyhedra(const int &cindex,//the triangle is not degenerated
+                                         const ePoint_3 &tri0, const ePoint_3 &tri1, const ePoint_3 &tri2, std::vector<int> &cid) const
+  {
+    const Prism& prism = halfspace[cindex];
+    cid.clear();
+    cid.reserve(3);
+    std::vector<bool> cut;
+    cut.resize(prism.size());
+    for (int i = 0; i < prism.size(); i++)
+      {
+        cut[i] = false;
+      }
+    std::vector<int> o1, o2, o3, cutp;
+    o1.resize(prism.size());
+    o2.resize(prism.size());
+    o3.resize(prism.size());
+    int  ori = 0, ct1 = 0, ct2 = 0, ct3 = 0;
+
+
+    for (int i = 0; i < prism.size(); i++)
+      {
+        const Plane& plane = prism[i];
+        o1[i] = int(oriented_side(plane.eplane, tri0));
+        o2[i] = int(oriented_side(plane.eplane, tri1));
+        o3[i] = int(oriented_side(plane.eplane, tri2));
+        if (o1[i] + o2[i] + o3[i] >= 2){ //1,1,0 case
+          return 0;
+        }
+        if (o1[i] == 1) ct1++;
+        if (o2[i] == 1) ct2++;
+        if (o3[i] == 1) ct3++;// if ct1 or ct2 or ct3 >0, then NOT totally inside, otherwise, totally inside
+        if (o1[i] == 0 && o2[i] == 0 && o3[i] == 1){
+            return 0;
+          }
+        if (o1[i] == 1 && o2[i] == 0 && o3[i] == 0){
+            return 0;
+          }
+        if (o1[i] == 0 && o2[i] == 1 && o3[i] == 0){
+            return 0;
+          }
+
+
+        if (o1[i] * o2[i] == -1 || o1[i] * o3[i] == -1 || o3[i] * o2[i] == -1){
+          cutp.emplace_back(i);
+        }else if (o1[i] + o2[i] + o3[i] == -1 && o1[i] * o2[i] == 0) {//0,0,-1 case, we also want this face,really rare to happen
+          cutp.emplace_back(i);
+        }
+      }
+    if (cutp.size() == 0) {
+      if (ct1 == 0 && ct2 == 0 && ct3 == 0) {
+        return 2;// totally inside, or not any edge is on the facet
+      }
+    }
+
+    if (cutp.size() == 0){
+        return 0;
+      }
+
+    std::array<ePoint_3*,2> seg0, seg1;
+
+    for (int i = 0; i < cutp.size(); i++)
+      {
+        int tmp = 0;
+        if (o1[cutp[i]] * o2[cutp[i]] == -1|| o1[cutp[i]] + o2[cutp[i]] == -1) {
+          seg0[tmp] = const_cast<ePoint_3*>(&tri0);
+          seg1[tmp] = const_cast<ePoint_3*>(&tri1);
+
+          tmp++;
+        }
+        if (o1[cutp[i]] * o3[cutp[i]] == -1|| o1[cutp[i]] + o3[cutp[i]] == -1) {
+          seg0[tmp] = const_cast<ePoint_3*>(&tri0);
+          seg1[tmp] = const_cast<ePoint_3*>(&tri1);
+
+          tmp++;
+        }
+        if (o2[cutp[i]] * o3[cutp[i]] == -1|| o2[cutp[i]] + o3[cutp[i]] == -1) {
+          seg0[tmp] = const_cast<ePoint_3*>(&tri0);
+          seg1[tmp] = const_cast<ePoint_3*>(&tri1);
+
+          tmp++;
+        }
+
+
+        for (int k = 0; k < 2; k++){
+          const Plane& plane_i = prism[cutp[i]];
+
+          eLine_3 eline(*(seg0[k]), *(seg1[k]));
+          CGAL::cpp11::result_of<eIntersect_3(eLine_3, ePlane_3)>::type
+            result = CGAL::intersection(eline, plane_i.eplane);
+          if(! result){
+            std::cout <<  "there must be an intersection" << std::endl;
+          }
+
+          const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
+          CGAL_assertion(ipp != nullptr);
+          const ePoint_3& ip = *ipp;
+
+          for (int j = 0; j < cutp.size(); j++){
+            if (i == j){
+                  continue;
+            }
+            const Plane& plane_j = prism[cutp[j]];
+            ori = oriented_side(plane_j.eplane, ip); //  todo:  check  if it must be positive or negative
+            if (ori == 1){
+              break;
+            }
+          }
+          if (ori != 1){
+            cut[cutp[i]] = true;
+            break;
+          }
+        }
+
+        ori = 0;// initialize the orientation to avoid the j loop doesn't happen because cutp.size()==1
+      }
+
+    if (cutp.size() <= 2){
+        for (int i = 0; i < prism.size(); i++){
+          if (cut[i] == true){
+              cid.emplace_back(i);
+          }
+        }
+        return 1;
+    }
+    // triangle-facet-facet intersection
+
+    ePlane_3 tri_eplane(tri0, tri1, tri2); // todo change to a query triangle with 3 points and a plane
+    for (int i = 0; i < cutp.size(); i++)
+      {
+        for (int j = i + 1; j < cutp.size(); j++)// two facets and the triangle generate a point
+          {
+            if (cut[cutp[i]] == true && cut[cutp[j]] == true)
+              continue;
+            /*
+            if (USE_ADJACENT_INFORMATION) {
+              bool neib = is_two_facets_neighbouring(cindex, cutp[i], cutp[j]);
+              if (neib == false) continue;
+            }
+            */
+
+            bool inter = do_intersect(tri_eplane,prism[cutp[i]].eplane, prism[cutp[j]].eplane);
+
+              /*
+                // this was for a fast float check
+            if (inter == 2)
+              { //we dont know if point exist or if inside of triangle
+                cut[cutp[i]] = true;
+                cut[cutp[j]] = true;
+                continue;
+              }
+              */
+            if (inter == false){
+              continue; // sure not inside
+            }
+
+            CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
+              result = CGAL::intersection(tri_eplane, prism[cutp[i]].eplane, prism[cutp[j]].eplane);
+            if(! result){
+              std::cout <<  "there must be an intersection" << std::endl;
+            }
+
+            const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
+            CGAL_assertion(ipp != nullptr);
+
+            const ePoint_3& ip = *ipp;
+
+
+            for (int k = 0; k < cutp.size(); k++){
+
+              if (k == i || k == j){
+                  continue;
+              }
+              ori = int(oriented_side(prism[cutp[k]].eplane, ip));
+
+              if (ori == 1){
+                  break;
+              }
+            }
+
+            if (ori != 1) {
+              cut[cutp[i]] = true;
+              cut[cutp[j]] = true;
+            }
+          }
+      }
+
+    for (int i = 0; i < prism.size(); i++){
+      if (cut[i] == true){
+          cid.emplace_back(i);
+      }
+      }
+    if (cid.size() == 0){
+      return 0;// not cut and facets, and not totally inside, then not intersected
+    }
+    return 1;
+  }
+
+
+  int seg_cut_plane(const ePoint_3 &seg0, const ePoint_3 &seg1, const ePoint_3 &t0, const ePoint_3 &t1, const ePoint_3 &t2) const
+  {
+    int o1, o2;
+    o1 = int(CGAL::orientation(seg0, t0, t1, t2));
+    o2 = int(CGAL::orientation(seg1, t0, t1, t2));
+    int op = o1 * o2;
+    if (op >= 0)
+      {
+        return CUT_COPLANAR; //in fact, coplanar and not cut this plane
+      }
+    return CUT_FACE;
+  }
+
+
+
+
+  bool is_tpp_on_polyhedra(const ePlane_3 &triangle,
+                           const ePlane_3 &facet1,
+                           const ePlane_3 &facet2,
+                           const int &prismid, const int &faceid)const
+  {
+      CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
+      result = CGAL::intersection(triangle, facet1, facet2);
+      if(! result){
+        std::cout <<  "there must be an intersection" << std::endl;
+      }
+
+      const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
+      CGAL_assertion(ipp != nullptr);
+
+      const ePoint_3& ip = *ipp;
+
+       for (int i = 0; i < halfspace[prismid].size(); i++) {
+        /*bool neib = is_two_facets_neighbouring(prismid, i, faceid);// this works only when the polyhedron is convex and no two neighbour facets are coplanar
+          if (neib == false) continue;*/
+        if (i == faceid) continue;
+        if(oriented_side(halfspace[prismid][i].eplane, ip) == CGAL::ON_POSITIVE_SIDE){ //todo check positive/negative
+          return false;
+        }
+       }
+       return true;
+  }
+
+
+
+  int Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order(
+		const ePoint_3 &segpoint0, const ePoint_3 &segpoint1,
+                const ePlane_3 &eplane,
+                const std::vector<unsigned int> &prismindex,
+		const std::vector<std::vector<int>>& intersect_face, const int &jump, int &id) const
+  {
+    eLine_3 eline(segpoint0,segpoint1); // todo replace parameter of function
+
+    CGAL::cpp11::result_of<eIntersect_3(eLine_3, ePlane_3)>::type
+      result = CGAL::intersection(eline, eplane);
+    if(! result){
+      std::cout <<  "there must be an intersection" << std::endl;
+    }
+
+    const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
+    CGAL_assertion(ipp != nullptr);
+
+    const ePoint_3& ip = *ipp;
+    int tot, fid, ori;
+    for (int i = 0; i < prismindex.size(); i++){
+      if (prismindex[i] == jump){
+          continue;
+        }
+      tot = 0; fid = 0;
+      ori = -1;
+      const Prism& prism = halfspace[prismindex[i]];
+      for (int j = 0; j < halfspace[prismindex[i]].size(); j++) {
+
+        if (intersect_face[i][fid] == j)
+          {
+            if (fid + 1 < intersect_face[i].size()) fid++;
+          }
+        else continue;
+        ori = int(oriented_side(prism[j].eplane, ip));
+
+        if (ori == 1 || ori == 0)
+          {
+            break;
+          }
+
+        if (ori == -1)
+          {
+            tot++;
+          }
+      }
+      if (ori == 1 || ori == 0) continue;
+      fid = 0;
+      ori = -1;
+      for (int j = 0; j < halfspace[prismindex[i]].size(); j++) {
+        if (intersect_face[i][fid] == j)
+          {
+            if (fid + 1 < intersect_face[i].size()) fid++;
+            continue;
+          }
+
+        ori = int(oriented_side(prism[j].eplane, ip));
+        if (ori == 1 || ori == 0)
+          {
+            break;
+          }
+
+        if (ori == -1)
+          {
+            tot++;
+          }
+      }
+      if (ori == 1 || ori == 0) continue;
+      if (tot == halfspace[prismindex[i]].size())
+        {
+          id = i;
+          return IN_PRISM;
+        }
+    }
+
+
+      return OUT_PRISM;
+  }
+
+
+  int Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(
+		const ePoint_3 &segpoint0, const ePoint_3 &segpoint1,
+                const ePlane_3 &eplane,
+                const std::vector<unsigned int> &prismindex,
+		const std::vector<std::vector<int>>& intersect_face,
+                const std::vector<bool>& coverlist,
+                const int &jump,
+                int &id) const
+  {
+    eLine_3 eline(segpoint0,segpoint1); // todo replace parameter of function
+
+    CGAL::cpp11::result_of<eIntersect_3(eLine_3, ePlane_3)>::type
+      result = CGAL::intersection(eline, eplane);
+    if(! result){
+      std::cout <<  "there must be an intersection" << std::endl;
+    }
+
+    const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
+    CGAL_assertion(ipp != nullptr);
+
+    const ePoint_3& ip = *ipp;
+
+    int tot, ori, fid;
+
+    for (int i = 0; i < prismindex.size(); i++){
+      if (prismindex[i] == jump){
+        continue;
+      }
+      if (coverlist[i] == true){
+        continue;
+      }
+      tot = 0; fid = 0;
+      ori = -1;
+      const Prism& prism = halfspace[prismindex[i]];
+
+      for (int j = 0; j < halfspace[prismindex[i]].size(); j++) {
+        if (intersect_face[i][fid] == j)   {
+          if (fid + 1 < intersect_face[i].size()) fid++;
+        }else{
+          continue;
+        }
+        ori = int(oriented_side(prism[j].eplane,ip));
+        if (ori == 1 || ori == 0){
+          break;
+        }
+
+        if (ori == -1){
+          tot++;
+        }
+      }
+      if (ori == 1 || ori == 0){
+        continue;
+      }
+      fid = 0;
+      ori = -1;
+
+      for (int j = 0; j < halfspace[prismindex[i]].size(); j++) {
+        if (intersect_face[i][fid] == j){
+          if (fid + 1 < intersect_face[i].size()) fid++;{
+            continue;
+          }
+        }
+
+        ori = int(oriented_side(prism[j].eplane,ip));
+        if (ori == 1 || ori == 0){
+          break;
+        }
+
+        if (ori == -1){
+          tot++;
+        }
+      }
+      if (ori == 1 || ori == 0){
+        continue;
+      }
+      if (tot == halfspace[prismindex[i]].size()) {
+        id = i;
+        return IN_PRISM;
+      }
+    }
+
+    return OUT_PRISM;
+  }
+
+
+  int Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order(
+		const ePlane_3& triangle,
+		const ePlane_3& facet1,
+                const ePlane_3& facet2,
+		const std::vector<unsigned int> &prismindex,
+                const std::vector<std::vector<int>>&intersect_face,
+                const int &jump1,
+                const int &jump2,
+		int &id) const
+  {
+      CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
+      result = CGAL::intersection(triangle, facet1, facet2);
+      if(! result){
+        std::cout <<  "there must be an intersection" << std::endl;
+      }
+
+      const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
+      CGAL_assertion(ipp != nullptr);
+
+      const ePoint_3& ip = *ipp;
+      int tot, ori, fid;
+      for (int i = 0; i < prismindex.size(); i++)
+        {
+
+          if (prismindex[i] == jump1 || prismindex[i] == jump2)	continue;
+          if (!box_box_intersection(bounding_boxes[prismindex[i]], bounding_boxes[jump1])) continue;
+          if (!box_box_intersection(bounding_boxes[prismindex[i]], bounding_boxes[jump2])) continue;
+
+          tot = 0;
+          fid = 0;
+          ori = -1;
+          const Prism& prism = halfspace[prismindex[i]];
+          for (int j = 0; j < prism.size(); j++) {
+            if (intersect_face[i][fid] == j)
+              {
+                if (fid + 1 < intersect_face[i].size()) fid++;
+              }
+            else continue;
+
+            ori = int(oriented_side(prism[j].eplane, ip));
+
+            if (ori == 1 || ori == 0)
+              {
+                break;
+              }
+
+            if (ori == -1)
+              {
+                tot++;
+              }
+          }
+          if (ori == 1 || ori == 0) continue;
+          fid = 0;
+          ori = -1;
+          for (int j = 0; j < halfspace[prismindex[i]].size(); j++) {
+            if (intersect_face[i][fid] == j)
+              {
+                if (fid + 1 < intersect_face[i].size()) fid++;
+                continue;
+              }
+
+
+            ori = int(oriented_side(prism[j].eplane, ip));
+
+            if (ori == 1 || ori == 0)
+              {
+                break;
+              }
+
+            if (ori == -1)
+              {
+                tot++;
+              }
+          }
+          if (ori == 1 || ori == 0) continue;
+          if (tot == prism.size())
+            {
+              id = i;
+              return IN_PRISM;
+            }
+
+        }
+
+      return OUT_PRISM;
+    }
+
+
+
+  int Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(
+		const ePlane_3 &triangle,
+		const ePlane_3 &facet1,
+                const ePlane_3 &facet2,
+		const std::vector<unsigned int>& prismindex,
+                const std::vector<std::vector<int>>& intersect_face,
+                const std::vector<bool>& coverlist,
+                const int &jump1,
+                const int &jump2,
+		int &id) const
+  {
+      CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
+      result = CGAL::intersection(triangle, facet1, facet2);
+      if(! result){
+        std::cout <<  "there must be an intersection" << std::endl;
+      }
+
+      const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
+      CGAL_assertion(ipp != nullptr);
+
+      const ePoint_3& ip = *ipp;
+
+      int tot, ori, fid;
+      for (int i = 0; i < prismindex.size(); i++)
+        {
+
+          if (prismindex[i] == jump1 || prismindex[i] == jump2)	continue;
+          if (!box_box_intersection(bounding_boxes[prismindex[i]], bounding_boxes[jump1])) continue;
+          if (!box_box_intersection(bounding_boxes[prismindex[i]], bounding_boxes[jump2])) continue;
+          if (coverlist[i] == true) continue;
+          tot = 0;
+          fid = 0;
+          ori = -1;
+          const Prism& prism = halfspace[prismindex[i]];
+          for (int j = 0; j < prism.size(); j++) {
+            if (intersect_face[i][fid] == j)
+              {
+                if (fid + 1 < intersect_face[i].size()) fid++;
+              }
+            else continue;
+
+            ori = int(oriented_side(prism[j].eplane, ip));
+
+            if (ori == 1 || ori == 0)
+              {
+                break;
+              }
+
+            if (ori == -1)
+              {
+                tot++;
+              }
+          }
+          if (ori == 1 || ori == 0) continue;
+          fid = 0;
+          ori = -1;
+          for (int j = 0; j < halfspace[prismindex[i]].size(); j++) {
+            if (intersect_face[i][fid] == j)
+              {
+                if (fid + 1 < intersect_face[i].size()) fid++;
+                continue;
+              }
+
+            ori = int(oriented_side(prism[j].eplane, ip));
+
+            if (ori == 1 || ori == 0)
+              {
+                break;
+              }
+
+            if (ori == -1)
+              {
+                tot++;
+              }
+          }
+          if (ori == 1 || ori == 0) continue;
+          if (tot == halfspace[prismindex[i]].size())
+            {
+              id = i;
+              return IN_PRISM;
+            }
+
+        }
+
+      return OUT_PRISM;
+    }
+
+
+
+  bool triangle_out_of_envelope(const std::array<Point_3,3>& triangle, const std::vector<unsigned int> &prismindex) const
+  {
+    if (prismindex.size() == 0)
+      {
+        return true;
+      }
+
+    std::array<ePoint_3,3> etriangle = { ePoint_3(triangle[0].x(),triangle[0].y(),triangle[0].z()), ePoint_3(triangle[1].x(),triangle[1].y(),triangle[1].z()), ePoint_3(triangle[2].x(),triangle[2].y(),triangle[2].z()) };
+
+    int jump1, jump2;
+    static const std::array<std::array<int, 2>, 3> triseg = {
+      {{{0, 1}}, {{0, 2}}, {{1, 2}}}
+    };
+
+
+    std::vector<unsigned int> filtered_intersection;
+    filtered_intersection.reserve(prismindex.size() / 3);
+    std::vector<std::vector<int>>intersect_face;
+    intersect_face.reserve(prismindex.size() / 3);
+    bool out, cut;
+
+    int inter, inter1, record1, record2,
+
+      tti; //triangle-triangle intersection
+
+    jump1 = -1;
+
+    int check_id;
+
+    for (int i = 0; i < 3; i++) {
+      out = point_out_prism_return_local_id(triangle[i], etriangle[i], prismindex, jump1, check_id);
+
+      if (out) {
+        return true;
+      }
+    }
+
+    if (prismindex.size() == 1)
+      return false;
+
+
+#ifdef DEGENERATION_FIX
+
+    int degeneration = algorithms::is_triangle_degenerated(triangle[0], triangle[1], triangle[2]);
+
+    if (degeneration == DEGENERATED_POINT){ //case 1 degenerate to a point
+      return false;
+    }
+
+    if (degeneration == DEGENERATED_SEGMENT){
+      std::vector<unsigned int > queue, idlist;
+      queue.emplace_back(check_id);//queue contains the id in prismindex
+      idlist.emplace_back(prismindex[check_id]);
+
+      std::vector<int> cidl; cidl.reserve(8);
+      for (int i = 0; i < queue.size(); i++) {
+
+        jump1 = prismindex[queue[i]];
+        int seg_inside = 0;
+        for (int k = 0; k < 3; k++) {
+          eLine_3 eline(etriangle[triseg[k][0]], etriangle[triseg[k][1]]);  // todo: store 3 lines in a triangle query object
+          cut = is_seg_cut_polyhedra(jump1, etriangle[triseg[k][0]], etriangle[triseg[k][1]], eline, cidl);
+          if (cut&&cidl.size() == 0) {
+            seg_inside++;
+            if (seg_inside == 3) return false;// 3 segs are all totally inside of some polyhedrons
+            continue;// means this seg is inside, check next seg
+          }
+          if (!cut) continue;
+
+          for (int j = 0; j < cidl.size(); j++) {
+            inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id(etriangle[triseg[k][0]], etriangle[triseg[k][1]],
+                                                                            eline,
+                                                                            halfspace[prismindex[queue[i]]][cidl[j]],
+                                                                            idlist, jump1, check_id);
+
+
+            if (inter == 1){
+                inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id(etriangle[triseg[k][0]], etriangle[triseg[k][1]],
+                                                                                eline,
+                                                                                halfspace[prismindex[queue[i]]][cidl[j]],
+                                                                                prismindex, jump1, check_id);
+
+
+
+                if (inter == 1) {
+                  return true;
+                }
+                if (inter == 0) {
+                  queue.emplace_back(check_id);
+                  idlist.emplace_back(prismindex[check_id]);
+                }
+              }
+          }
+        }
+      }
+
+      return false;
+    }
+    //
+#endif // DEGENERATION_FIX
+
+
+    std::vector<int> cidl; cidl.reserve(8);
+    for (int i = 0; i < prismindex.size(); i++) {
+      tti = is_triangle_cut_envelope_polyhedra(prismindex[i],
+                                               etriangle[0], etriangle[1], etriangle[2], cidl);
+      if (tti == 2) {
+
+        return false;//totally inside of this polyhedron
+      }
+      else if (tti == 1 && cidl.size() > 0) {
+
+        filtered_intersection.emplace_back(prismindex[i]);
+        intersect_face.emplace_back(cidl);
+
+
+      }
+    }
+
+    if (filtered_intersection.size() == 0) {
+      return false;
+    }
+
+    std::vector<unsigned int > queue, idlist;
+    std::vector<bool> coverlist;
+    coverlist.resize(filtered_intersection.size());
+    for (int i = 0; i < coverlist.size(); i++) {
+      coverlist[i] = false;// coverlist shows if the element in filtered_intersection is one of the current covers
+    }
+    queue.emplace_back(0);//queue contains the id in filtered_intersection
+    idlist.emplace_back(filtered_intersection[queue[0]]);// idlist contains the id in prismid//it is fine maybe it is not really intersected
+    coverlist[queue[0]] = true;//when filtered_intersection[i] is already in the cover list, coverlist[i]=true
+
+    std::vector<unsigned int> neighbours;//local id
+    std::vector<unsigned int > list;
+    std::vector<std::vector<int>> neighbour_facets, idlistorder;
+    std::vector<bool> neighbour_cover;
+    idlistorder.emplace_back(intersect_face[queue[0]]);
+
+    for (int i = 0; i < queue.size(); i++) {
+
+      jump1 = filtered_intersection[queue[i]];
+
+      for (int k = 0; k < 3; k++) {
+        for (int j = 0; j < intersect_face[queue[i]].size(); j++) {
+          tti = seg_cut_plane(etriangle[triseg[k][0]],
+                                          etriangle[triseg[k][1]],
+                                          halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].ep,
+                                          halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].eq,
+                                          halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].er);
+
+          if (tti != CUT_FACE) continue;
+
+          inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order(etriangle[triseg[k][0]],
+                                                                                          etriangle[triseg[k][1]],
+                                                                                          halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].eplane,
+                                                                                          idlist, idlistorder, jump1, check_id);
+
+
+
+          if (inter == 1)
+            {
+
+              inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(etriangle[triseg[k][0]], etriangle[triseg[k][1]],
+                                                                                                        halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].eplane,
+                                                                                                        filtered_intersection, intersect_face, coverlist, jump1, check_id);
+
+
+              assert(inter != 2);// the point must exist because it is a seg-halfplane intersection
+              if (inter == 1) {
+
+                return true;
+              }
+              if (inter == 0) {
+                idlistorder.emplace_back(intersect_face[check_id]);
+                queue.emplace_back(check_id);
+                idlist.emplace_back(filtered_intersection[check_id]);
+                coverlist[check_id] = true;
+              }
+            }
+        }
+      }
+    }
+
+
+
+
+    //tpi part
+
+    //tree
+
+    Tree localtree;
+
+    std::vector<Iso_cuboid_3> local_bounding_boxes;
+    local_bounding_boxes.resize(filtered_intersection.size());
+
+    for (int i = 0; i < filtered_intersection.size(); i++) {
+      local_bounding_boxes[i] = bounding_boxes[filtered_intersection[i]];
+    }
+
+    Datum_map<K> datum_map(local_bounding_boxes);
+    Point_map<K> point_map(local_bounding_boxes);
+
+    // constructs AABB tree
+    localtree.insert(boost::counting_iterator<std::size_t>(0),
+                      boost::counting_iterator<std::size_t>(local_bounding_boxes.size()),
+                      datum_map,
+                      point_map);
+    localtree.build();
+
+    //tree end
+
+    for (int i = 1; i < queue.size(); i++){
+      jump1 = filtered_intersection[queue[i]];
+
+      localtree.all_intersected_primitives(bounding_boxes[jump1], std::back_inserter(list));
+      neighbours.clear();
+      neighbour_cover.clear();
+      neighbour_facets.clear();
+
+      neighbours.resize(list.size());
+      neighbour_facets.resize(list.size());
+      neighbour_cover.resize(list.size());
+      for (int j = 0; j < list.size(); j++) {
+        neighbours[j] = filtered_intersection[list[j]];
+        neighbour_facets[j] = intersect_face[list[j]];
+        if (coverlist[list[j]] == true) neighbour_cover[j] = true;
+        else neighbour_cover[j] = false;
+      }
+
+
+      ePlane_3 etriangle_eplane(etriangle[0],etriangle[1],etriangle[2]);
+
+      for (int j = 0; j < i; j++) {
+        jump2 = filtered_intersection[queue[j]];
+        if (! box_box_intersection(bounding_boxes[jump1], bounding_boxes[jump2]))
+          continue;
+        for (int k = 0; k < intersect_face[queue[i]].size(); k++) {
+          for (int h = 0; h < intersect_face[queue[j]].size(); h++) {
+            // todo: move the intersection here
+            cut = CGAL::do_intersect(etriangle_eplane,
+                                     halfspace[jump1][intersect_face[queue[i]][k]].eplane,
+                                     halfspace[jump2][intersect_face[queue[j]][h]].eplane);
+
+            if (!cut) continue;
+
+
+            cut = is_tpp_on_polyhedra(etriangle_eplane,
+                                      halfspace[jump1][intersect_face[queue[i]][k]].eplane,
+                                      halfspace[jump2][intersect_face[queue[j]][h]].eplane,
+                                      jump1, intersect_face[queue[i]][k]);
+
+            if (!cut) continue;
+
+
+            cut = is_tpp_on_polyhedra(etriangle_eplane,
+                                      halfspace[jump1][intersect_face[queue[i]][k]].eplane,
+                                      halfspace[jump2][intersect_face[queue[j]][h]].eplane,
+                                      jump2, intersect_face[queue[j]][h]);
+
+            if (!cut) continue;
+
+
+
+            inter = Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order(etriangle_eplane,
+                                                                                                  halfspace[jump1][intersect_face[queue[i]][k]].eplane,
+                                                                                                  halfspace[jump2][intersect_face[queue[j]][h]].eplane,
+                                                                                                  idlist, idlistorder, jump1, jump2, check_id);
+
+            if (inter == 1) {
+
+
+              inter = Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(etriangle_eplane,
+                                                                                                              halfspace[jump1][intersect_face[queue[i]][k]].eplane,
+
+                                                                                                              halfspace[jump2][intersect_face[queue[j]][h]].eplane,
+                                                                                                              neighbours, neighbour_facets, neighbour_cover, jump1, jump2, check_id);
+
+
+
+              if (inter == 1) {
+
+                return true;
+              }
+              if (inter == 0) {
+                idlistorder.emplace_back(intersect_face[list[check_id]]);
+                queue.emplace_back(list[check_id]);
+                idlist.emplace_back(filtered_intersection[list[check_id]]);
+                coverlist[list[check_id]] = true;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
 
 
 
@@ -719,19 +1622,20 @@ struct Envelope {
     return true;
   }
 
-#ifdef TRIANGLE_OUT_OF_ENVELOPE
+
   // \returns `true` if the query segment is inside the envelope
   bool operator()(const Point_3& t0, const Point_3& t1, const Point_3& t2) const
   {
     std::vector<unsigned int> prismindex;
     Triangle_3 query(t0, t1, t2);
     tree.all_intersected_primitives(query, std::back_inserter(prismindex));
-    if(triangle_out_of_envelope(source,target, prismindex)){
+    std::array<Point_3,3> triangle = { t0, t1, t2 };
+    if(triangle_out_of_envelope(triangle, prismindex)){
       return false;
     }
     return true;
   }
-#endif
+
 
 }; // class Envelope
 
@@ -792,6 +1696,13 @@ int main(int argc, char* argv[])
       out << "2 " << v0 << " " << vi << std::endl;
     }
   }
+
+   Point_3 v1 = env_vertices[1];
+
+   envelope(v0, v1, v44);
+
   std::cout << count << " inside in " << t.time() << " sec." << std::endl;
   return 0;
 }
+
+#endif
