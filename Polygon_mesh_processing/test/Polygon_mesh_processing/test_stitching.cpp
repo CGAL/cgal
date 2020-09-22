@@ -11,9 +11,12 @@
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 
+#include <algorithm>
+#include <deque>
 #include <iostream>
 #include <iterator>
 #include <fstream>
+#include <set>
 #include <unordered_map>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
@@ -151,7 +154,8 @@ void test_stitch_borders(const char* fname,
 
   // Just to test the API
   Mesh dummy_mesh;
-  PMP::stitch_borders(std::deque<halfedge_descriptor>(), dummy_mesh);
+  std::deque<halfedge_descriptor> empty_deque;
+  PMP::stitch_borders(empty_deque, dummy_mesh);
   PMP::stitch_borders(dummy_mesh, params::apply_per_connected_component(true));
   PMP::stitch_borders(dummy_mesh);
 }
