@@ -32,7 +32,7 @@ NewTabDialog::NewTabDialog( QWidget* parent ) :
     static_cast<int>(TraitsType::POLYLINE_TRAITS));
   this->buttonGroup->addButton(
     this->ui->linearRadioButton, static_cast<int>(TraitsType::LINEAR_TRAITS));
-#ifdef CGAL_USE_CORE
+#ifdef CGAL_USE_Core
   this->buttonGroup->addButton(
     this->ui->conicRadioButton, static_cast<int>(TraitsType::CONIC_TRAITS));
   this->buttonGroup->addButton(

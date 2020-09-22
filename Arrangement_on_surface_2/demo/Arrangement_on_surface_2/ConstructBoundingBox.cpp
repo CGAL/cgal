@@ -35,8 +35,10 @@ struct ConstructBoundingBox_impl
   CGAL::Bbox_2
   operator()(const X_monotone_curve_2& curve)
   {
+#ifdef CGAL_USE_Core
     using Zero_resultant_exception = CGAL::internal::Zero_resultant_exception<
       typename demo_types::Alg_seg_traits::Polynomial_2>;
+#endif
 
     CGAL::Bbox_2 bbox;
     try
@@ -51,12 +53,14 @@ struct ConstructBoundingBox_impl
       std::cerr << __FILE__ << ':' << __LINE__ << '\n';
       bbox = inf_bbox;
     }
+#ifdef CGAL_USE_Core
     catch (Zero_resultant_exception& ex)
     {
       std::cerr << "Exception thrown of type \"Zero_resultant_exception\"\n";
       std::cerr << __FILE__ << ':' << __LINE__ << '\n';
       bbox = inf_bbox;
     }
+#endif
     catch (...)
     {
       std::cerr << "Exception thrown of unknown type!\n";

@@ -146,7 +146,7 @@ AlgebraicCurveParser<Polynomial_d>::operator()(const std::string& expression)
     return {};
 }
 
-#ifdef CGAL_USE_CORE
+#ifdef CGAL_USE_Core
 // don't want to include ArrangementTypes.h
 // makes compilation slower
 // template class
