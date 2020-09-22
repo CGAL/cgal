@@ -23,6 +23,7 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/internal/Corefinement/Generic_clip_output_builder.h>
 #include <CGAL/iterator.h>
 
 #include <CGAL/AABB_triangle_primitive.h>
@@ -400,6 +401,97 @@ void split_along_edges(TriangleMesh& tm,
   CGAL_assertion(is_valid_polygon_mesh(tm));
 }
 
+template <class TriangleMesh,
+          class NamedParameters1,
+          class NamedParameters2>
+void
+generic_clip_impl(
+        TriangleMesh& tm1,
+        TriangleMesh& tm2,
+  const NamedParameters1& np1,
+  const NamedParameters2& np2)
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+// Vertex point maps
+  //for input meshes
+  typedef typename GetVertexPointMap<TriangleMesh,
+                                     NamedParameters1>::type Vpm;
+  typedef typename GetVertexPointMap<TriangleMesh,
+                                     NamedParameters2>::type Vpm2;
+  CGAL_USE_TYPE(Vpm2);
+  CGAL_assertion_code(
+    static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value); )
+  CGAL_static_assertion(same_vpm);
+
+  Vpm vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                              get_property_map(boost::vertex_point, tm1));
+
+  Vpm vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                              get_property_map(boost::vertex_point, tm2));
+
+  if (&tm1==&tm2)
+  {
+    // TODO mark all edges
+    return;
+  }
+
+  // handle case of empty meshes (isolated vertices are ignored)
+  if (faces(tm1).empty())
+    return;
+
+// Edge is-constrained maps
+  //for input meshes
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::edge_is_constrained_t,
+    NamedParameters1,
+    Corefinement::No_mark<TriangleMesh>//default
+  > ::type User_ecm1;
+
+  // User and internal edge is-constrained map
+  typedef typename boost::template property_map<TriangleMesh, CGAL::dynamic_edge_property_t<bool> >::type Algo_ecm1;
+  typedef Corefinement::No_mark<TriangleMesh> Ecm2;
+  typedef OR_property_map<Algo_ecm1, User_ecm1> Ecm1;
+  typedef Corefinement::Ecm_bind<TriangleMesh, Ecm1, Ecm2> Ecm_in;
+
+  Algo_ecm1 algo_ecm1  = get(CGAL::dynamic_edge_property_t<bool>(), tm1);
+  Ecm1 ecm1 = Ecm1(algo_ecm1, choose_parameter<User_ecm1>(get_parameter(np1, internal_np::edge_is_constrained)));
+  Ecm2 ecm2;
+
+  // Face index point maps
+  typedef typename CGAL::GetInitializedFaceIndexMap<TriangleMesh, NamedParameters1>::type FaceIndexMap1;
+  FaceIndexMap1 fid_map1 = get_initialized_face_index_map(tm1, np1);
+
+  const bool use_compact_clipper =
+    choose_parameter(get_parameter(np1, internal_np::use_compact_clipper), true);
+
+
+  // User visitor
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::graph_visitor_t,
+    NamedParameters1,
+    Corefinement::Default_visitor<TriangleMesh>//default
+  > ::type User_visitor;
+  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::graph_visitor)));
+
+  // surface intersection algorithm call
+  typedef Corefinement::Generic_clip_output_builder<TriangleMesh,
+                                                    Vpm,
+                                                    Algo_ecm1,
+                                                    FaceIndexMap1,
+                                                    Default> Ob;
+
+  typedef Corefinement::Surface_intersection_visitor_for_corefinement<
+    TriangleMesh, Vpm, Ob, Ecm_in, User_visitor> Algo_visitor;
+  Ecm_in ecm_in(tm1,tm2,ecm1,ecm2);
+  Ob ob(tm1, tm2, vpm1, vpm2, algo_ecm1, fid_map1, use_compact_clipper);
+
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, Vpm, Algo_visitor >
+    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm_in,&tm2));
+  functor(CGAL::Emptyset_iterator(), false, true);
+}
+
 } // end of internal namespace
 
 /**
@@ -473,6 +565,14 @@ void split_along_edges(TriangleMesh& tm,
   *     \cgalParamExtra{This option has an effect only if a surface and not a volume is clipped,
   *                     (i.e., if `clip_volume` is `false` or if `tm` is open).}
   *   \cgalParamNEnd
+  *   \cgalParamNBegin{do_not_modify}
+  *     \cgalParamDescription{(`np_c` only) if `true`, `clipper` will not be modified.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *     \cgalParamExtra{If this option is set to `true`, `tm` is no longer required to be without self-intersection.
+  *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
+  *                     and `clip_volume` to `false`.}
+  *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @return `true` if the output surface mesh is manifold.
@@ -487,6 +587,14 @@ clip(TriangleMesh& tm,
      const NamedParameters1& np_tm,
      const NamedParameters2& np_c)
 {
+  if (parameters::choose_parameter(parameters::get_parameter(np_c, internal_np::do_not_modify), false))
+  {
+    CGAL_assertion(is_closed(clipper));
+
+    internal::generic_clip_impl(tm, clipper, np_tm, np_c);
+    return true;
+  }
+
   const bool clip_volume =
     parameters::choose_parameter(parameters::get_parameter(np_tm, internal_np::clip_volume), false);
 
@@ -710,6 +818,13 @@ bool clip(TriangleMesh& tm,
   *                           will be thrown if at least one self-intersection is found.}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`false`}
+  *   \cgalParamNBegin{do_not_modify}
+  *     \cgalParamDescription{(`np_s` only) if `true`, `splitter` will not be modified.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *     \cgalParamExtra{If this option is set to `true`, `tm` is no longer required to be without self-intersection.
+  *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
+  *                     and `clip_volume` to `false`.}
   *   \cgalParamNEnd
   *
   * \cgalNamedParamsEnd
@@ -742,9 +857,11 @@ void split(TriangleMesh& tm,
   // create a constrained edge map and corefine input mesh with the splitter,
   // and mark edges
 
+  const bool do_not_modify_splitter = choose_parameter(get_parameter(np_s, internal_np::do_not_modify), false);
+
   PMP::corefine(tm, splitter,
                 CGAL::parameters::vertex_point_map(vpm_tm).edge_is_constrained_map(ecm),
-                CGAL::parameters::vertex_point_map(vpm_s));
+                CGAL::parameters::vertex_point_map(vpm_s).do_not_modify(do_not_modify_splitter));
 
   //split mesh along marked edges
   internal::split_along_edges(tm, ecm, vpm_tm);
