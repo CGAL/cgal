@@ -486,7 +486,7 @@ public:
     // clear nodes
     void clear_nodes()
     {
-      m_p_nodes.clear();
+      m_nodes.clear();
     }
 
     // clears internal KD tree
@@ -597,7 +597,7 @@ public:
     // set of input primitives
     Primitives m_primitives;
     // tree nodes. first node is the root node
-    std::vector<Node> m_p_nodes;
+    std::vector<Node> m_nodes;
     #ifdef CGAL_HAS_THREADS
     mutable CGAL_MUTEX build_mutex; // mutex used to protect const calls inducing build() and build_kd_tree()
     #endif
@@ -617,13 +617,13 @@ public:
 #endif
         const_cast< AABB_tree<AABBTraits>* >(this)->build();
       }
-      return std::addressof(m_p_nodes[0]);
+      return std::addressof(m_nodes[0]);
     }
 
     Node& new_node()
     {
-      m_p_nodes.emplace_back();
-      return m_p_nodes.back();
+      m_nodes.emplace_back();
+      return m_nodes.back();
     }
 
     const Primitive& singleton_data() const {
@@ -661,7 +661,7 @@ public:
   {
     m_traits = std::move(tree.m_traits);
     m_primitives = std::move(tree.m_primitives);
-    m_p_nodes = std::move(tree.m_p_nodes);
+    m_nodes = std::move(tree.m_nodes);
     m_p_search_tree = std::move(tree.m_p_search_tree);
     m_use_default_search_tree = std::exchange(tree.m_use_default_search_tree, true);
 #ifdef CGAL_HAS_THREADS
@@ -806,7 +806,7 @@ public:
     if(m_primitives.size() > 1) {
 
       // allocates tree nodes
-      m_p_nodes.reserve(m_primitives.size()-1);
+      m_nodes.reserve(m_primitives.size()-1);
 
       // constructs the tree
       expand(new_node(),
