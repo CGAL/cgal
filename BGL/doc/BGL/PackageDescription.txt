@@ -713,6 +713,7 @@ user might encounter.
 - `CGAL::Graph_with_descriptor_with_graph`
 - `CGAL::Graph_with_descriptor_with_graph_property_map`
 - `CGAL::Seam_mesh`
+- `CGAL/boost/graph/graph_traits_inheritance_macros.h`
 
 \cgalCRPSection{Partitioning Methods}
 - `CGAL::METIS::partition_graph()`

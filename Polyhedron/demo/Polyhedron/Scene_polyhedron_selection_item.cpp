@@ -2610,3 +2610,17 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_selection_item::header() c
   data.titles.append(QString("Average"));
   return data;
 }
+
+
+void Scene_polyhedron_selection_item::updateDisplayedIds(QEvent* e)
+{
+  if(e->type() == QEvent::MouseButtonRelease )
+  {
+    QMouseEvent* mouse_event = static_cast<QMouseEvent*>(e);
+    if((mouse_event->button() == Qt::RightButton || mouse_event->button() == Qt::MiddleButton)
+       && temp_selected_vertices.size() == 1) {
+      fg_vertex_descriptor vh = *temp_selected_vertices.begin();
+      poly_item->updateIds(vh);
+    }
+  }
+}
