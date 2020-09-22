@@ -127,7 +127,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
       item->setName(fileinfo.baseName());
       item->set_valid(false);
 
-      if(CGAL::build_triangulation_from_file<C3t3::Triangulation, true>(in, item->c3t3().triangulation()))
+      if(CGAL::build_triangulation_from_file<C3t3::Triangulation, true>(in, item->c3t3().triangulation(), true))
       {
         item->c3t3().rescan_after_load_of_triangulation();
         for( C3t3::Triangulation::Finite_cells_iterator

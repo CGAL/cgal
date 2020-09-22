@@ -74,41 +74,85 @@ namespace CGAL
 *             and vertex base model of `RemeshingVertexBase_3`.
 * @tparam SLDS is an optional parameter for `Triangulation_3`, that
 *             specifies the type of the spatial lock data structure.
-* @tparam NamedParameters a sequence of \ref Remeshing_namedparameters "Named Parameters"
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param tr the triangulation to be remeshed, of type `Triangulation_3<Traits, TDS, SLDS>`.
 *           `Remeshing_triangulation` is a helper class that satisfies all the requirements
 *           of its template parameters.
 * @param target_edge_length the uniform target edge length. This parameter provides a
 *          mesh density target for the remeshing algorithm.
-* @param np optional sequence of \ref Remeshing_namedparameters "Named Parameters"
+* @param np optional sequence of \ref bgl_namedparameters "Named Parameters"
 *          among the ones listed below
 *
 * \cgalNamedParamsBegin
-*  \cgalParamBegin{number_of_iterations} the number of iterations for the full
-*     sequence of atomic operations
-*     performed (listed in the above description)
-*  \cgalParamEnd
-*  \cgalParamBegin{remesh_boundaries} If `false`, none of the input volume boundaries
-*     can be modified.
-*     Otherwise, the topology is preserved, but atomic operations can be performed on the
-*     surfaces, and along feature polylines, such that boundaries are remeshed.
-*  \cgalParamEnd
-*  \cgalParamBegin{edge_is_constrained_map} a property map containing the
-*    constrained - or - not status of each edge of `tr`. A constrained edge can be split
-*    or collapsed, but not flipped.
-*  \cgalParamEnd
-*  \cgalParamBegin{facet_is_constrained_map} a property map containing the
-*    constrained - or - not status of each facet of `tr`. A constrained facet can be split
-*    or collapsed, but not flipped.
-*  \cgalParamEnd
-*  \cgalParamBegin{cell_is_selected_map} a property map containing the
-*    selected - or - not status for each cell of `tr` for remeshing.
-*    Only selected cells are modified (and possibly their neighbors if surfaces are
-*    modified) by remeshing.
-*    By default, all cells with a non-zero `Subdomain_index` are selected.
-*  \cgalParamEnd
-* \cgalNamedParamsEnd
+*   \cgalParamNBegin{number_of_iterations}
+*     \cgalParamDescription{the number of iterations for the full sequence of atomic operations
+*                           performed (listed in the above description)}
+*     \cgalParamType{unsigned int}
+*     \cgalParamDefault{`1`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{remesh_boundaries}
+*     \cgalParamDescription{If `false`, none of the input volume boundaries can be modified.
+*                           Otherwise, the topology is preserved, but atomic operations
+*                           can be performed on the surfaces, and along feature polylines,
+*                           such that boundaries are remeshed.}
+*     \cgalParamType{`bool`}
+*     \cgalParamDefault{`true`}
+*     \cgalParamExtra{Boundaries are between the exterior and the interior,
+*                     between two subdomains, between the areas selected or not for remeshing
+*                     (cf `Remeshing_cell_is_selected_map`), or defined
+*                     by `Remeshing_edge_is_constrained_map` and `Remeshing_facet_is_constrained_map`.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{edge_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tr`.}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `std::pair<Triangulation_3::Vertex_handle, Triangulation_3::Vertex_handle>`
+*                    as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no edge is constrained}
+*     \cgalParamExtra{A constrained edge can be split or collapsed, but not flipped.}
+*     \cgalParamExtra{The pairs must be ordered to ensure consistency.}
+*     \cgalParamExtra{During the meshing process, the set of constrained edges evolves consistently
+*                     with edge splits and collapses, so the property map must be writable.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{facet_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each facet of `tr`.}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `Triangulation_3::Facet`
+*                    as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no facet is constrained}
+*     \cgalParamExtra{A constrained facet can be split or collapsed, but not flipped.}
+*     \cgalParamExtra{This map, contrary to the others, is not updated throughout the remeshing process.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{cell_is_selected_map}
+*     \cgalParamDescription{a property map containing the selected - or - not status for each cell of `tr` for remeshing.
+*                           Only selected cells are modified (and possibly their neighbors if surfaces are modified) by remeshing.}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `Triangulation_3::Cell_handle`
+*                    as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where all cells of the domain
+*                       (i.e. with a non-zero `Subdomain_index`) are selected.}
+*     \cgalParamExtra{During the meshing process, the set of selected cells evolves consistently with
+*                     the atomic operations that are performed, so the property map must be writable.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{smooth_constrained_edges}
+*     \cgalParamDescription{If `true`, the end vertices of the edges set as
+*                           constrained in `edge_is_constrained_map` move along the
+*                           constrained polylines they belong to.}
+*     \cgalParamType{`bool`}
+*     \cgalParamDefault{`false`}
+*     \cgalParamExtra{The endvertices of constraints listed
+*                     by `edge_is_constrained_map`, and edges incident to at least three subdomains
+*                     are made eligible to one dimensional smoothing, along the constrained polylines they belong to.
+*                     Corners (i.e. vertices incident to more than 2 constrained edges) are not allowed
+*                     to move at all.\n
+*                     Note that activating the smoothing step on polyline constraints tends to reduce
+*                     the quality of the minimal dihedral angle in the mesh.\n
+*                     If `remesh_boundaries` is set to `false`, this parameter is ignored.}
+*   \cgalParamNEnd
+*
+*  \cgalNamedParamsEnd
 *
 * \sa `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3`
 *
@@ -166,6 +210,9 @@ void tetrahedral_isotropic_remeshing(
   //                              false);
   std::size_t max_it = choose_parameter(get_parameter(np, internal_np::number_of_iterations),
                                         1);
+  bool smooth_constrained_edges
+    = choose_parameter(get_parameter(np, internal_np::smooth_constrained_edges),
+                       false);
 
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::cell_selector_t,
@@ -219,6 +266,7 @@ void tetrahedral_isotropic_remeshing(
     Tr, SizingFunction, ECMap, FCMap, SelectionFunctor, Visitor> Remesher;
   Remesher remesher(tr, sizing, protect
                   , ecmap, fcmap
+                  , smooth_constrained_edges
                   , cell_select
                   , visitor);
 
@@ -232,12 +280,10 @@ void tetrahedral_isotropic_remeshing(
   std::size_t nb_extra_iterations = 3;
   remesher.remesh(max_it, nb_extra_iterations);
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   const double angle_bound = 5.0;
   Tetrahedral_remeshing::debug::dump_cells_with_small_dihedral_angle(tr,
     angle_bound, cell_select, "bad_cells.mesh");
-#endif
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   Tetrahedral_remeshing::internal::compute_statistics(tr,
     cell_select, "statistics_end.txt");
 #endif
@@ -359,6 +405,10 @@ void tetrahedral_isotropic_remeshing(
   bool protect = !remesh_surfaces;
   std::size_t max_it = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
 
+  bool smooth_constrained_edges
+    = choose_parameter(get_parameter(np, internal_np::smooth_constrained_edges),
+      false);
+
   typedef typename internal_np::Lookup_named_param_def <
   internal_np::cell_selector_t,
               NamedParameters,
@@ -414,6 +464,7 @@ void tetrahedral_isotropic_remeshing(
   > Remesher;
   Remesher remesher(c3t3, sizing, protect
                     , ecmap, fcmap
+                    , smooth_constrained_edges
                     , cell_select
                     , visitor);
 
@@ -428,7 +479,7 @@ void tetrahedral_isotropic_remeshing(
   std::size_t nb_extra_iterations = 3;
   remesher.remesh(max_it, nb_extra_iterations);
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   const double angle_bound = 5.0;
   Tetrahedral_remeshing::debug::dump_cells_with_small_dihedral_angle(
     c3t3.triangulation(),

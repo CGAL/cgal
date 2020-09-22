@@ -409,32 +409,18 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
 
 void addActionToMenu(QAction* action, QMenu* menu)
 {
-  bool added = false;
-  QString atxt = action->text().remove("&");
-  if(atxt.isEmpty())
-    return;
-  for(QAction* it : menu->actions())
-  {
-    QString btxt = it->text().remove("&");
-    int i = 0;
-    if(btxt.isEmpty())
-    {
-      continue;
-    }
-    while(i < atxt.size()
-          && i < btxt.size()
-          && atxt[i] == btxt[i])
-      ++i;
-    bool res = (i == atxt.size() || i == btxt.size() || atxt[i] < btxt[i]);
-    if (res)
-    {
-      menu->insertAction(it, action);
-      added = true;
-      break;
-    }
-  }
-  if(!added)
+  auto actions = menu->actions();
+  auto it = std::lower_bound(actions.begin(), actions.end(),
+                             action->text().remove("&"),
+                             [](QAction* a, QString text) {
+                               return a->text().remove("&").compare(text) < 0;
+                             });
+  if(it == actions.end()) {
     menu->addAction(action);
+  }
+  else {
+    menu->insertAction(*it, action);
+  }
 }
 
 //Recursive function that do a pass over a menu and its sub-menus(etc.) and hide them when they are empty
@@ -1337,6 +1323,8 @@ void MainWindow::selectSceneItem(int i)
   else {
     QItemSelection s =
         proxyModel->mapSelectionFromSource(scene->createSelection(i));
+    if(s.empty())
+      return;
     QModelIndex mi = proxyModel->mapFromSource(scene->getModelIndexFromId(i).first());
     sceneView->setCurrentIndex(mi);
     sceneView->selectionModel()->select(s,
@@ -1361,7 +1349,8 @@ void MainWindow::selectSceneItems(QList<int> is)
     sceneView->setCurrentIndex(i);
     sceneView->selectionModel()->select(s,
                                         QItemSelectionModel::ClearAndSelect);
-    sceneView->scrollTo(s.indexes().first());
+    if(!s.empty())
+      sceneView->scrollTo(s.indexes().first());
   }
 }
 
@@ -1406,10 +1395,7 @@ void MainWindow::removeSceneItemFromSelection(int i)
 
 void MainWindow::selectAll()
 {
-  QItemSelection s =
-      proxyModel->mapSelectionFromSource(scene->createSelectionAll());
-  sceneView->selectionModel()->select(s,
-                                      QItemSelectionModel::ClearAndSelect);
+  sceneView->selectAll();
 }
 
 int MainWindow::getSelectedSceneItemIndex() const
@@ -1803,12 +1789,12 @@ void MainWindow::updateInfo() {
     CGAL::Bbox_3 bbox = item->bbox();
     if(bbox !=CGAL::Bbox_3())
       item_text += QString("<div>Bounding box: min (%1,%2,%3), max (%4,%5,%6)</div>")
-          .arg(bbox.xmin())
-          .arg(bbox.ymin())
-          .arg(bbox.zmin())
-          .arg(bbox.xmax())
-          .arg(bbox.ymax())
-          .arg(bbox.zmax());
+          .arg(bbox.xmin(),0, 'g', 17)
+          .arg(bbox.ymin(),0, 'g', 17)
+          .arg(bbox.zmin(),0, 'g', 17)
+          .arg(bbox.xmax(),0, 'g', 17)
+          .arg(bbox.ymax(),0, 'g', 17)
+          .arg(bbox.zmax(),0, 'g', 17);
     if(!item_filename.isEmpty()) {
       item_text += QString("<div>File:<i> %1</div>").arg(item_filename);
     }
