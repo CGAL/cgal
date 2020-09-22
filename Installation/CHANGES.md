@@ -12,12 +12,16 @@ Release date: December 2020
     make any class inheriting from a model of a face graph concept, a model of the same concept.
 
 ### [3D Convex Hulls](https://doc.cgal.org/5.2/Manual/packages.html#PkgConvexHull3)
+
 -   Added the function `CGAL::halfspace_intersection_interior_point_3()` that can be used to retrieve
     the point that is the most interior a convex closed volume defined by the intersection of a set of halfspaces.
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.2/Manual/packages.html#PkgPolygonMeshProcessing)
+
 -   Added an option in `corefine()`, `split()` and `clip()` functions that enables the operation to be done on a mesh with
     self-intersections present in the intersection area.
+-   Added an optional range parameter to `CGAL::Polygon_mesh_processing::stitch_borders()`,
+    which can be used to specify which boundary cycles are eligible for stitching.
 
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 -----------
