@@ -183,13 +183,15 @@ bool is_collapse_geometrically_valid(typename boost::graph_traits<TriangleMesh>:
 */
 
 template <class TriangleMesh, typename VPM, typename Traits>
-boost::optional<double> get_collapse_volume(typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h,
-                                            const TriangleMesh& tmesh,
-                                            const VPM& vpm,
-                                            const Traits& gt)
+boost::optional<typename Traits::FT>
+get_collapse_volume(typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h,
+                    const TriangleMesh& tmesh,
+                    const VPM& vpm,
+                    const Traits& gt)
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor         halfedge_descriptor;
 
+  typedef typename Traits::FT                                                     FT;
   typedef typename boost::property_traits<VPM>::reference                         Point_ref;
   typedef typename Traits::Vector_3                                               Vector_3;
 
@@ -204,8 +206,8 @@ boost::optional<double> get_collapse_volume(typename boost::graph_traits<Triangl
   Point_ref removed= get(vpm, target(h, tmesh));
 
   // init volume with incident triangles (reversed orientation
-  double delta_vol = volume(removed, kept, get(vpm, target(next(h, tmesh), tmesh)), origin) +
-                     volume(kept, removed, get(vpm, target(next(opposite(h, tmesh), tmesh), tmesh)), origin);
+  FT delta_vol = volume(removed, kept, get(vpm, target(next(h, tmesh), tmesh)), origin) +
+                 volume(kept, removed, get(vpm, target(next(opposite(h, tmesh), tmesh), tmesh)), origin);
 
   // consider triangles incident to the vertex removed
   halfedge_descriptor stop = prev(opposite(h, tmesh), tmesh);
@@ -248,13 +250,14 @@ get_best_edge_orientation(typename boost::graph_traits<TriangleMesh>::edge_descr
                           const Traits& gt)
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename Traits::FT                                             FT;
 
   halfedge_descriptor h = halfedge(e, tmesh), ho = opposite(h, tmesh);
 
   CGAL_assertion(!get(vcm, source(h, tmesh)) || !get(vcm, target(h, tmesh)));
 
-  boost::optional<double> dv1 = get_collapse_volume(h, tmesh, vpm, gt);
-  boost::optional<double> dv2 = get_collapse_volume(ho, tmesh, vpm, gt);
+  boost::optional<FT> dv1 = get_collapse_volume(h, tmesh, vpm, gt);
+  boost::optional<FT> dv2 = get_collapse_volume(ho, tmesh, vpm, gt);
 
   // the resulting point of the collapse of a halfedge is the target of the halfedge before collapse
   if(get(vcm, source(h, tmesh)))
@@ -288,6 +291,7 @@ bool should_flip(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
+  typedef typename Traits::FT                                             FT;
   typedef typename boost::property_traits<VPM>::reference                 Point_ref;
   typedef typename Traits::Vector_3                                       Vector_3;
 
@@ -318,16 +322,16 @@ bool should_flip(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
   const Vector_3 v23 = gt.construct_vector_3_object()(p2, p3);
   const Vector_3 v30 = gt.construct_vector_3_object()(p3, p0);
 
-  const double p1p3 = gt.compute_scalar_product_3_object()(
-                        gt.construct_cross_product_vector_3_object()(v12, v23),
-                        gt.construct_cross_product_vector_3_object()(v30, v01));
+  const FT p1p3 = gt.compute_scalar_product_3_object()(
+                    gt.construct_cross_product_vector_3_object()(v12, v23),
+                    gt.construct_cross_product_vector_3_object()(v30, v01));
 
   const Vector_3 v21 = gt.construct_opposite_vector_3_object()(v12);
   const Vector_3 v03 = gt.construct_opposite_vector_3_object()(v30);
 
-  const double p0p2 = gt.compute_scalar_product_3_object()(
-                        gt.construct_cross_product_vector_3_object()(v01, v21),
-                        gt.construct_cross_product_vector_3_object()(v23, v03));
+  const FT p0p2 = gt.compute_scalar_product_3_object()(
+                    gt.construct_cross_product_vector_3_object()(v01, v21),
+                    gt.construct_cross_product_vector_3_object()(v23, v03));
 
   return p0p2 <= p1p3;
 }
