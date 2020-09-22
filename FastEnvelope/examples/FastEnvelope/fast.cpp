@@ -4,7 +4,7 @@
 #include <Eigen/Dense>
 
 #include <CGAL/Simple_cartesian.h>
-
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Timer.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -13,8 +13,14 @@
 #include <fstream>
 #include <string>
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+int main()
+{
+  CGAL::Simple_cartesian<double>::Plane_3 a, b,c;
 
+  CGAL::do_intersect(a,b,c);
+
+}
+#if 0
 namespace CGAL {
 template <typename K>
 int obtuse_angle(const Point_3<K>& p, const Point_3<K>& q, const Point_3<K>& r)
@@ -1704,5 +1710,6 @@ int main(int argc, char* argv[])
   std::cout << count << " inside in " << t.time() << " sec." << std::endl;
   return 0;
 }
+
 
 #endif

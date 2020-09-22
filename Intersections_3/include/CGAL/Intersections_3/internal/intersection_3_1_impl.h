@@ -1572,10 +1572,10 @@ do_intersect(const Plane_3<R>& plane1, const Plane_3<R>& plane2, const R&)
 
 template <class R>
 inline bool
-do_intersect(const Plane_3<R> &plane1, const Plane_3<R> &plane2,
+do_intersect_ppp(const Plane_3<R> &plane1, const Plane_3<R> &plane2,
              const Plane_3<R> &plane3, const R&)
 {
-  return bool(intersection(plane1, plane2, plane3));
+  return bool(CGAL::intersection(plane1, plane2, plane3));
 }
 
 

@@ -3010,7 +3010,7 @@ namespace CommonKernelFunctors {
 
     result_type
     operator()(const typename K::Plane_3& pl1, const typename K::Plane_3& pl2, const typename K::Plane_3& pl3) const
-    { return Intersections::internal::do_intersect(pl1, pl2, pl3, K() ); }
+    { return Intersections::internal::do_intersect_ppp(pl1, pl2, pl3, K() ); }
 
   };
 
