@@ -6,41 +6,24 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v2.0.0
     - name: install dependencies
       run: |
          set -x
-         sudo apt-get install -y graphviz ssh rsync
+         sudo apt-get install -y graphviz ssh
          sudo pip install lxml pyquery
          wget -O doxygen_exe https://cgal.geometryfactory.com/~mgimeno/doxygen/build_1_8_13/bin/doxygen
          sudo mv doxygen_exe /usr/bin/doxygen
          sudo chmod +x /usr/bin/doxygen
-         mkdir -p ~/.ssh
-         (
-         cat <<EOF
-         ${{ secrets.ssh_key }}
-         EOF
-         )>> ~/.ssh/id_rsa
-         chmod 600 /home/runner/.ssh/id_rsa 
-         (
-         cat <<EOF
-         ${{ secrets.ssh_key_pub }}
-         EOF
-         )>> ~/.ssh/id_rsa.pub
-         chmod 644 /home/runner/.ssh/id_rsa.pub
-         (
-         cat <<EOF
-         github.com,192.30.253.113 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
-         EOF
-         )>> ~/.ssh/known_hosts
+
          git config --global user.email "maxime.gimeno@geometryfactory.com"
          git config --global user.name "Maxime Gimeno"
-         
+
     - name: configure all
       run: |
-        git clone git@github.com:CGAL/cgal.github.io.git
+        git clone https://maxGimeno:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git --depth=5
         mkdir -p build_doc && cd build_doc && cmake ../Documentation/doc
     - name: Upload Doc
       run: |
@@ -50,14 +33,7 @@ jobs:
         cd build_doc && make -j2 doc && make -j2 doc_with_postprocessing
         cp -r ./doc_output/* ../cgal.github.io/${PR_NUMBER}/
         cd ../cgal.github.io
-        INDEX_EXISTS=""
-        while IFS= read -r line
-        do
-           if [[ $line == *" ${PR_NUMBER}."* ]]; then
-             INDEX_EXISTS="TRUE"
-           fi
-        done < "index.html"
-        if [ -z "$INDEX_EXISTS" ]; then 
+        if ! egrep -q " ${PR_NUMBER}\."; then
           echo "<li><a href=https://cgal.github.io/${PR_NUMBER}/Manual/index.html>Manual for PR ${PR_NUMBER}.</a></li>" >> ./index.html
         fi
         #rsync --compress -a doc_output/* ${{ secrets.ids }}/cgal.github.io/${PR_NUMBER}/
