@@ -2194,8 +2194,6 @@ _place_and_set_curve_end(DFace* f,
                          Arr_parameter_space ps_x, Arr_parameter_space ps_y,
                          DHalfedge** p_pred)
 {
-  typedef boost::variant<DVertex*, DHalfedge*>  Non_optional_result;
-  typedef boost::optional<Non_optional_result>  Result;
   // Use the topology traits to locate the DCEL feature that contains the
   // given curve end.
   auto obj = m_topol_traits.place_boundary_vertex(f, cv, ind, ps_x, ps_y);

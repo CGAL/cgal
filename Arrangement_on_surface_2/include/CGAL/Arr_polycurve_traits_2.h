@@ -192,7 +192,6 @@ public:
         Make_x_monotone_subresult;
       typedef boost::variant<Point_2, X_monotone_curve_2>
         Make_x_monotone_result;
-      typedef typename Curve_2::Subcurve_const_iterator const_seg_iterator;
 
       // If the polycurve is empty, return.
       if (cv.number_of_subcurves() == 0) return oi;
@@ -326,7 +325,6 @@ public:
         Make_x_monotone_subresult;
       typedef boost::variant<Point_2, X_monotone_curve_2>
         Make_x_monotone_result;
-      typedef typename Curve_2::Subcurve_const_iterator const_seg_iterator;
 
       // If the polycurve is empty, return.
       if (cv.number_of_subcurves() == 0) return oi;
