@@ -1,4 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
@@ -16,9 +17,7 @@
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     EPICK;
-
-typedef CGAL::Surface_mesh<EPICK::Point_3>                      Surface_mesh;
-typedef CGAL::Polyhedron_3<EPICK>                               Polyhedron;
+typedef CGAL::Exact_predicates_exact_constructions_kernel       EPECK;
 
 template <typename K, typename EdgeRange, typename FaceRange, typename Mesh>
 void detect_degeneracies(const EdgeRange& edge_range,
@@ -38,7 +37,7 @@ void detect_degeneracies(const EdgeRange& edge_range,
 
   dedges.clear();
   PMP::degenerate_edges(edge_range, mesh, std::inserter(dedges, dedges.begin()), CGAL::parameters::all_default());
-  std::cout << "\t" << dedges.size() << " degenerate edges vs " <<  expected_dedges_n << std::endl;
+  std::cout << "\t" << dedges.size() << " degenerate edges, expected " <<  expected_dedges_n << std::endl;
   assert(dedges.size() == expected_dedges_n);
 
   // API tests
@@ -49,7 +48,7 @@ void detect_degeneracies(const EdgeRange& edge_range,
 
   dfaces.clear();
   PMP::degenerate_faces(face_range, mesh, std::back_inserter(dfaces), CGAL::parameters::all_default());
-  std::cout << "\t" << dfaces.size() << " degenerate faces vs " << expected_dfaces_n << std::endl;
+  std::cout << "\t" << dfaces.size() << " degenerate faces, expected " << expected_dfaces_n << std::endl;
   assert(dfaces.size() == expected_dfaces_n);
 }
 
@@ -238,10 +237,16 @@ void test()
 int main()
 {
   std::cout << "EPICK SM TESTS" << std::endl;
-  test<EPICK, Surface_mesh>();
+  test<EPICK, CGAL::Surface_mesh<EPICK::Point_3> >();
 
   std::cout << "EPICK POLYHEDRON TESTS" << std::endl;
-  test<EPICK, Polyhedron>();
+  test<EPICK, CGAL::Polyhedron_3<EPICK>>();
+
+  std::cout << "EPICK SM TESTS" << std::endl;
+  test<EPECK, CGAL::Surface_mesh<EPECK::Point_3> >();
+
+  std::cout << "EPECK POLYHEDRON TESTS" << std::endl;
+  test<EPECK, CGAL::Polyhedron_3<EPECK> >();
 
   return EXIT_SUCCESS;
 }
