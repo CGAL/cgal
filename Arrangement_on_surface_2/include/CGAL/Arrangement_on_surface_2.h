@@ -46,6 +46,8 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Iterator_transform.h>
 
+#include <boost/pool/pool_alloc.hpp>
+
 namespace CGAL {
 
 /*! \class Arrangement_on_surface_2
@@ -64,7 +66,7 @@ class Arrangement_on_surface_2 {
 public:
   typedef GeomTraits_                                     Geometry_traits_2;
   typedef TopTraits_                                      Topology_traits;
-  typedef CGAL_ALLOCATOR(int)                             Allocator;
+  typedef boost::fast_pool_allocator<int>                 Allocator;
 
   // first define adaptor ...
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
@@ -308,6 +310,10 @@ public:
       Base(iter, iend, pred)
     {}
 
+    Edge_iterator(const Base& base) :
+      Base(base)
+    {}
+
     // Casting to a halfedge iterator.
     operator Halfedge_iterator() const
     {
@@ -340,6 +346,10 @@ public:
     Edge_const_iterator(DEdge_const_iter iter, DEdge_const_iter iend,
                         const _Is_valid_halfedge& pred) :
       Base(iter, iend, pred)
+    {}
+
+    Edge_const_iterator(const Base& base) :
+      Base(base)
     {}
 
     // Casting to a halfedge iterator.
@@ -430,6 +440,10 @@ public:
                                   DFace_const_iter iend,
                                   const _Is_unbounded_face& is_unbounded) :
       Base(iter, iend, is_unbounded)
+    {}
+
+    Unbounded_face_const_iterator(const Base& base) :
+      Base(base)
     {}
 
     // Casting to a face iterator.

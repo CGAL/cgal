@@ -408,6 +408,7 @@ Viewer::~Viewer()
                              .arg(d->back_color.greenF())
                              .arg(d->back_color.blueF()));
 
+    d->vao.destroy();
     if(d->_recentFunctions)
       delete d->_recentFunctions;
     if(d->painter)
@@ -852,7 +853,7 @@ void Viewer::postSelection(const QPoint& pixel)
 }
 bool CGAL::Three::Viewer_interface::readFrame(QString s, CGAL::qglviewer::Frame& frame)
 {
-  QStringList list = s.split(" ", QString::SkipEmptyParts);
+  QStringList list = s.split(" ", CGAL_QT_SKIP_EMPTY_PARTS);
   if(list.size() != 7)
     return false;
   float vec[3];
@@ -1422,7 +1423,7 @@ void Viewer::wheelEvent(QWheelEvent* e)
 {
   if(e->modifiers().testFlag(Qt::ShiftModifier))
   {
-    double delta = e->delta();
+    double delta = e->angleDelta().y();
     if(delta>0)
     {
       switch(camera()->type())
@@ -1559,12 +1560,18 @@ void Viewer_impl::showDistance(QPoint pixel)
         TextItem *ACoord = new TextItem(float(APoint.x),
                                         float(APoint.y),
                                         float(APoint.z),
-                                        QString("A(%1,%2,%3)").arg(APoint.x-viewer->offset().x).arg(APoint.y-viewer->offset().y).arg(APoint.z-viewer->offset().z), true, font, Qt::red, true);
+                                        QString("A(%1,%2,%3)")
+                                        .arg(APoint.x-viewer->offset().x, 0, 'g', 10)
+                                        .arg(APoint.y-viewer->offset().y, 0, 'g', 10)
+                                        .arg(APoint.z-viewer->offset().z, 0, 'g', 10), true, font, Qt::red, true);
         distance_text.append(ACoord);
         TextItem *BCoord = new TextItem(float(BPoint.x),
                                         float(BPoint.y),
                                         float(BPoint.z),
-                                        QString("B(%1,%2,%3)").arg(BPoint.x-viewer->offset().x).arg(BPoint.y-viewer->offset().y).arg(BPoint.z-viewer->offset().z), true, font, Qt::red, true);
+                                        QString("B(%1,%2,%3)")
+                                        .arg(BPoint.x-viewer->offset().x, 0, 'g', 10)
+                                        .arg(BPoint.y-viewer->offset().y, 0, 'g', 10)
+                                        .arg(BPoint.z-viewer->offset().z, 0, 'g', 10), true, font, Qt::red, true);
         distance_text.append(BCoord);
         CGAL::qglviewer::Vec centerPoint = 0.5*(BPoint+APoint);
         TextItem *centerCoord = new TextItem(float(centerPoint.x),
@@ -1582,7 +1589,7 @@ void Viewer_impl::showDistance(QPoint pixel)
                   .arg(BPoint.x-viewer->offset().x)
                   .arg(BPoint.y-viewer->offset().y)
                   .arg(BPoint.z-viewer->offset().z)
-                  .arg(dist)));
+                  .arg(dist, 0, 'g', 10)));
     }
 
 }
@@ -1781,7 +1788,7 @@ void Viewer::setLighting()
   connect(dialog->position_lineEdit, &QLineEdit::editingFinished,
           [this, dialog]()
   {
-    QStringList list = dialog->position_lineEdit->text().split(QRegExp(","), QString::SkipEmptyParts);
+    QStringList list = dialog->position_lineEdit->text().split(QRegExp(","), CGAL_QT_SKIP_EMPTY_PARTS);
     if (list.isEmpty()) return;
     if (list.size()!=3){
       QMessageBox *msgBox = new QMessageBox;

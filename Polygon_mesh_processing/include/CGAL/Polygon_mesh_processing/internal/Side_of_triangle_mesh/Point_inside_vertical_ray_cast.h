@@ -75,13 +75,6 @@ public:
   {
     typename Traits::Bounding_box bbox = m_helper.get_tree_bbox(tree);
 
-    if(   point.x() < bbox.xmin() || point.x() > bbox.xmax()
-      || point.y() < bbox.ymin() || point.y() > bbox.ymax()
-      || point.z() < bbox.zmin() || point.z() > bbox.zmax() )
-    {
-      return ON_UNBOUNDED_SIDE;
-    }
-
     //the direction of the vertical ray depends on the position of the point in the bbox
     //in order to limit the expected number of nodes visited.
     Ray query = ray_functor(point, vector_functor(0,0,(2*point.z() <  bbox.zmax()+bbox.zmin()?-1:1)));
