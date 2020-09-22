@@ -36,6 +36,8 @@
 #define ARBITRARY_DBL_MIN 1.0E-30
 #define ARBITRARY_DBL_MAX 1.0E+30
 
+
+
 //Item for heat values
 typedef CGAL::Three::Triangle_container Tri;
 typedef CGAL::Three::Viewer_interface VI;
@@ -549,6 +551,7 @@ private Q_SLOTS:
 
   void colorizePS(Scene_points_with_normal_item* ps_item)
   {
+    ps_item->point_set()->add_colors();
     if(!treat_point_property(dock_widget->propertyBox->currentText().toStdString(), ps_item->point_set()))
     {
       QApplication::restoreOverrideCursor();
@@ -604,7 +607,7 @@ private Q_SLOTS:
     default:
       if(dock_widget->propertyBox->currentText().contains("v:"))
       {
-        if(!treat_vertex_property(dock_widget->propertyBox->currentText().toStdString(), sm_item->face_graph()))
+        if(!treat_sm_property<vertex_descriptor>(dock_widget->propertyBox->currentText().toStdString(), sm_item->face_graph()))
         {
           QApplication::restoreOverrideCursor();
           return;
@@ -613,7 +616,7 @@ private Q_SLOTS:
       }
       else if(dock_widget->propertyBox->currentText().contains("f:"))
       {
-        if(!treat_face_property(dock_widget->propertyBox->currentText().toStdString(), sm_item->face_graph()))
+        if(!treat_sm_property<face_descriptor>(dock_widget->propertyBox->currentText().toStdString(), sm_item->face_graph()))
         {
           QApplication::restoreOverrideCursor();
           return;
@@ -646,7 +649,6 @@ private Q_SLOTS:
 
   void enableButtons(int i)
   {
-    qDebug()<<i;
     Scene_surface_mesh_item* sm_item =
         qobject_cast<Scene_surface_mesh_item*>(scene->item(i));
 
@@ -738,7 +740,7 @@ private Q_SLOTS:
       connect(item, &Scene_surface_mesh_item::itemChanged,
               this, &DisplayPropertyPlugin::resetProperty);
     }
-    treat_face_property("f:jacobian", item->face_graph());
+    treat_sm_property<face_descriptor>("f:jacobian", item->face_graph());
   }
 
   bool resetScaledJacobian(Scene_surface_mesh_item* item)
@@ -854,7 +856,7 @@ private Q_SLOTS:
       connect(item, &Scene_surface_mesh_item::itemChanged,
               this, &DisplayPropertyPlugin::resetProperty);
     }
-    treat_face_property("f:angle", item->face_graph());
+    treat_sm_property<face_descriptor>("f:angle", item->face_graph());
   }
 
   bool resetAngles(Scene_surface_mesh_item* item)
@@ -1298,14 +1300,16 @@ private:
   template<typename PM>
   bool displayPSProperty(Point_set* ps, PM pm);
   template<typename PM>
-  bool displayVertexProperty(SMesh& smesh, PM pm);
+  bool displaySMProperty(SMesh& smesh, PM pm, vertex_descriptor);
   template<typename PM>
-  bool displayFaceProperty(SMesh& smesh, PM pm);
-  bool treat_vertex_property(std::string name, SMesh* sm);
-  bool treat_face_property(std::string name, SMesh* sm);
+  bool displaySMProperty(SMesh& smesh, PM pm, face_descriptor);
+  template<typename TAG>
+  bool treat_sm_property(std::string name, SMesh* sm);
+  //cannot be treated as a sm_property because the property_map<>() function takes only 1 template arg.
   bool treat_point_property(std::string name, Point_set* sm);
   template<typename Simplex>
   bool is_property_scalar(std::string name, const SMesh* sm);
+  //same problem of number of templates
   bool is_property_scalar(std::string name, const Point_set* ps);
   template<typename Value_type>
   void displayMapLegend(const std::vector<Value_type>& values)
@@ -1446,6 +1450,243 @@ private:
 
   boost::unordered_map<Scene_surface_mesh_item*, Heat_method*> mesh_heat_method_map;
   boost::unordered_map<Scene_surface_mesh_item*, Heat_method_idt*> mesh_heat_method_idt_map;
+
+  template<typename, typename, typename> friend class PropertyDisplayer;
+
+  //CRTP used to display properties of surface meshes(vertex and face) and point set.
+  template <class DataSet, class PM, class CRTP_derived_class>
+  struct PropertyDisplayer
+  {
+    typedef typename PM::value_type Value_type;
+    PropertyDisplayer(DataSet& ds, PM pm, DisplayPropertyPlugin* parent)
+      :dataset(ds), property_map(pm), parent(parent)
+    {}
+
+    virtual void fill_values(){}
+    virtual void set_colors_map(std::unordered_map<Value_type, std::size_t> &value_index_map){}
+    virtual void set_colors_ramp(){}
+    bool operator()()
+    {
+      parent->minBox = ARBITRARY_DBL_MAX;
+      parent->maxBox = -ARBITRARY_DBL_MAX;
+      static_cast<CRTP_derived_class*>(this)->fill_values();
+      std::sort(values.begin(), values.end());
+      auto end = std::unique(values.begin(), values.end());
+
+
+      parent->minBox = *values.begin();
+      parent->maxBox = *(end-1);
+      parent->dock_widget->minBox->setValue(parent->minBox);
+      parent->dock_widget->maxBox->setValue(parent->maxBox);
+
+      //fill color pmap
+      if(parent->dock_widget->colorChoiceWidget->currentIndex() == 1)
+      {
+        std::unordered_map<Value_type, std::size_t> value_index_map;
+        //fill map
+        std::size_t counter = 0;
+        for(auto it = values.begin(); it != end; ++it)
+        {
+          value_index_map[*it] = counter++;
+        }
+        parent->color_map.clear();
+        compute_color_map(QColor(parent->rI, parent->gI, parent->bI),std::distance(values.begin(), end),
+                          std::back_inserter(parent->color_map));
+        static_cast<CRTP_derived_class*>(this)->set_colors_map(value_index_map);
+        parent->displayMapLegend(values);
+      }
+      else
+      {
+        //scale a color ramp between min and max
+        parent->replaceRamp();
+        static_cast<CRTP_derived_class*>(this)->set_colors_ramp();
+      }
+      return true;
+    }
+
+
+    DataSet& dataset;
+    PM property_map;
+    std::vector<Value_type> values;
+    DisplayPropertyPlugin* parent;
+  };
+
+  template <class PM>
+  struct PSDisplayer
+    : public PropertyDisplayer<Point_set, PM, PSDisplayer<PM> >
+  {
+    typedef typename PM::value_type Value_type;
+    typedef PropertyDisplayer<Point_set, PM, PSDisplayer<PM> > Base;
+    PSDisplayer(Point_set& ds, PM pm, DisplayPropertyPlugin* parent)
+      :Base(ds, pm, parent)
+    {}
+    void fill_values()
+    {
+      for(auto p : this->dataset)
+      {
+        this->values.push_back(this->property_map[p]);
+      }
+    }
+
+    void set_colors_map(std::unordered_map<Value_type, std::size_t> &value_index_map)
+    {
+      for(Point_set::iterator pit = this->dataset.begin();
+          pit != this->dataset.end();
+          ++pit)
+      {
+        CGAL::Color color(
+              this->parent->color_map[value_index_map[this->property_map[*pit]]].red(),
+              this->parent->color_map[value_index_map[this->property_map[*pit]]].green(),
+              this->parent->color_map[value_index_map[this->property_map[*pit]]].blue());
+        this->dataset.set_color(*pit, color.red(), color.green(), color.blue());
+      }
+    }
+
+    void set_colors_ramp()
+    {
+      float max = this->parent->maxBox;
+      float min = this->parent->minBox;
+      for(Point_set::iterator pit = this->dataset.begin();
+          pit != this->dataset.end();
+          ++pit)
+      {
+        if(min == max)
+          --min;
+        float f = (static_cast<float>(this->property_map[*pit])-min)/(max-min);
+        if(f<0)
+          f = 0;
+        if(f>1)
+          f = 1;
+        CGAL::Color color(
+              255*this->parent->color_ramp.r(f),
+              255*this->parent->color_ramp.g(f),
+              255*this->parent->color_ramp.b(f));
+        this->dataset.set_color(*pit, color.red(), color.green(), color.blue());
+      }
+    }
+
+  };
+
+
+  template <class PM>
+  struct SMVertexDisplayer
+    : public PropertyDisplayer<SMesh, PM, SMVertexDisplayer<PM> >
+  {
+    typedef typename PM::value_type Value_type;
+    typedef PropertyDisplayer<SMesh, PM, SMVertexDisplayer<PM> > Base;
+    SMVertexDisplayer(SMesh& ds, PM pm, DisplayPropertyPlugin* parent)
+      :Base(ds, pm, parent)
+    {}
+
+    void fill_values()
+    {
+      for(auto v : vertices(this->dataset))
+      {
+        this->values.push_back(this->property_map[v]);
+      }
+    }
+
+    void set_colors_map(std::unordered_map<Value_type, std::size_t> &value_index_map)
+    {
+      SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
+          this->dataset.template add_property_map<vertex_descriptor, CGAL::Color >("v:color", CGAL::Color()).first;
+      for(boost::graph_traits<SMesh>::vertex_iterator vit = vertices(this->dataset).begin();
+          vit != vertices(this->dataset).end();
+          ++vit)
+      {
+        CGAL::Color color(
+              this->parent->color_map[value_index_map[this->property_map[*vit]]].red(),
+              this->parent->color_map[value_index_map[this->property_map[*vit]]].green(),
+              this->parent->color_map[value_index_map[this->property_map[*vit]]].blue());
+        vcolors[*vit] = color;
+      }
+    }
+
+    void set_colors_ramp()
+    {
+      SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
+          this->dataset.template add_property_map<vertex_descriptor, CGAL::Color >("v:color", CGAL::Color()).first;
+      float max = this->parent->maxBox;
+      float min = this->parent->minBox;
+      for(boost::graph_traits<SMesh>::vertex_iterator vit = vertices(this->dataset).begin();
+          vit != vertices(this->dataset).end();
+          ++vit)
+      {
+        if(min == max)
+          --min;
+        float f = (static_cast<float>(this->property_map[*vit])-min)/(max-min);
+        if(f<0)
+          f = 0;
+        if(f>1)
+          f = 1;
+        CGAL::Color color(
+              255*this->parent->color_ramp.r(f),
+              255*this->parent->color_ramp.g(f),
+              255*this->parent->color_ramp.b(f));
+        vcolors[*vit] = color;
+      }
+    }
+  };
+
+  template <class PM>
+  struct SMFaceDisplayer
+    : public PropertyDisplayer<SMesh, PM, SMFaceDisplayer<PM> >
+  {
+    typedef PropertyDisplayer<SMesh, PM, SMFaceDisplayer<PM> > Base;
+    typedef typename PM::value_type Value_type;
+    SMFaceDisplayer(SMesh& ds, PM pm, DisplayPropertyPlugin* parent)
+      :Base(ds, pm, parent)
+    {}
+    void fill_values()
+    {
+      for(auto f : faces(this->dataset))
+      {
+        this->values.push_back(this->property_map[f]);
+      }
+    }
+
+    void set_colors_map(std::unordered_map<Value_type, std::size_t> &value_index_map)
+    {
+      SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
+          this->dataset.template add_property_map<face_descriptor, CGAL::Color >("f:color", CGAL::Color()).first;
+      for(boost::graph_traits<SMesh>::face_iterator fit = faces(this->dataset).begin();
+          fit != faces(this->dataset).end();
+          ++fit)
+      {
+        CGAL::Color color(
+              this->parent->color_map[value_index_map[this->property_map[*fit]]].red(),
+              this->parent->color_map[value_index_map[this->property_map[*fit]]].green(),
+              this->parent->color_map[value_index_map[this->property_map[*fit]]].blue());
+        fcolors[*fit] = color;
+      }
+    }
+
+    void set_colors_ramp()
+    {
+      SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
+          this->dataset.template add_property_map<face_descriptor, CGAL::Color >("f:color", CGAL::Color()).first;
+      float max = this->parent->maxBox;
+      float min = this->parent->minBox;
+      for(boost::graph_traits<SMesh>::face_iterator fit = faces(this->dataset).begin();
+          fit != faces(this->dataset).end();
+          ++fit)
+      {
+        if(min == max)
+          --min;
+        float f = (static_cast<float>(this->property_map[*fit])-min)/(max-min);
+        if(f<0)
+          f = 0;
+        if(f>1)
+          f = 1;
+        CGAL::Color color(
+              255*this->parent->color_ramp.r(f),
+              255*this->parent->color_ramp.g(f),
+              255*this->parent->color_ramp.b(f));
+        fcolors[*fit] = color;
+      }
+    }
+  };
+
 };
 
   /// Code based on the verdict module of vtk
@@ -1709,213 +1950,108 @@ private:
     return false;
   }
 
-  bool DisplayPropertyPlugin::treat_vertex_property(std::string name, SMesh* sm)
+  template<typename TAG>
+  bool DisplayPropertyPlugin::treat_sm_property(std::string name, SMesh* sm)
   {
-    typedef typename SMesh::template Property_map<vertex_descriptor, boost::int8_t>   Int8_map;
-    typedef typename SMesh::template Property_map<vertex_descriptor, boost::uint8_t>  Uint8_map;
-    typedef typename SMesh::template Property_map<vertex_descriptor, boost::int16_t>  Int16_map;
-    typedef typename SMesh::template Property_map<vertex_descriptor, boost::uint16_t> Uint16_map;
-    typedef typename SMesh::template Property_map<vertex_descriptor, boost::int32_t>  Int32_map;
-    typedef typename SMesh::template Property_map<vertex_descriptor, boost::uint32_t> Uint32_map;
-    typedef typename SMesh::template Property_map<vertex_descriptor, boost::int64_t>  Int64_map;
-    typedef typename SMesh::template Property_map<vertex_descriptor, boost::uint64_t> Uint64_map;
-    typedef typename SMesh::template Property_map<vertex_descriptor, float>           Float_map;
-    typedef typename SMesh::template Property_map<vertex_descriptor, double>          Double_map;
+    typedef typename SMesh::template Property_map<TAG, boost::int8_t>   Int8_map;
+    typedef typename SMesh::template Property_map<TAG, boost::uint8_t>  Uint8_map;
+    typedef typename SMesh::template Property_map<TAG, boost::int16_t>  Int16_map;
+    typedef typename SMesh::template Property_map<TAG, boost::uint16_t> Uint16_map;
+    typedef typename SMesh::template Property_map<TAG, boost::int32_t>  Int32_map;
+    typedef typename SMesh::template Property_map<TAG, boost::uint32_t> Uint32_map;
+    typedef typename SMesh::template Property_map<TAG, boost::int64_t>  Int64_map;
+    typedef typename SMesh::template Property_map<TAG, boost::uint64_t> Uint64_map;
+    typedef typename SMesh::template Property_map<TAG, float>           Float_map;
+    typedef typename SMesh::template Property_map<TAG, double>          Double_map;
 
     bool okay = false;
     {
       Int8_map pmap;
-      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::int8_t>(name);
+      std::tie(pmap, okay) = sm->property_map<TAG,boost::int8_t>(name);
       if(okay)
       {
-        return displayVertexProperty(*sm, pmap);
+        return displaySMProperty(*sm, pmap, TAG());
       }
     }
 
     {
       Uint8_map pmap;
-      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::uint8_t>(name);
+      std::tie(pmap, okay) = sm->property_map<TAG,boost::uint8_t>(name);
       if(okay)
       {
-        return displayVertexProperty(*sm, pmap);
+        return displaySMProperty(*sm, pmap, TAG());
       }
     }
 
     {
       Int16_map pmap;
-      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::int16_t>(name);
+      std::tie(pmap, okay) = sm->property_map<TAG,boost::int16_t>(name);
       if(okay)
       {
-        return displayVertexProperty(*sm, pmap);
+        return displaySMProperty(*sm, pmap, TAG());
       }
     }
 
     {
       Uint16_map pmap;
-      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::uint16_t>(name);
+      std::tie(pmap, okay) = sm->property_map<TAG,boost::uint16_t>(name);
       if(okay)
       {
-        return displayVertexProperty(*sm, pmap);
+        return displaySMProperty(*sm, pmap, TAG());
       }
     }
 
     {
       Int32_map pmap;
-      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::int32_t>(name);
+      std::tie(pmap, okay) = sm->property_map<TAG,boost::int32_t>(name);
       if(okay)
       {
-        return displayVertexProperty(*sm, pmap);
+        return displaySMProperty(*sm, pmap, TAG());
       }
     }
 
     {
       Uint32_map pmap;
-      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::uint32_t>(name);
+      std::tie(pmap, okay) = sm->property_map<TAG,boost::uint32_t>(name);
       if(okay)
       {
-        return displayVertexProperty(*sm, pmap);
+        return displaySMProperty(*sm, pmap, TAG());
       }
     }
 
     {
       Int64_map pmap;
-      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::int64_t>(name);
+      std::tie(pmap, okay) = sm->property_map<TAG,boost::int64_t>(name);
       if(okay)
       {
-        return displayVertexProperty(*sm, pmap);
+        return displaySMProperty(*sm, pmap, TAG());
       }
     }
 
     {
       Uint64_map pmap;
-      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::uint64_t>(name);
+      std::tie(pmap, okay) = sm->property_map<TAG,boost::uint64_t>(name);
       if(okay)
       {
-        return displayVertexProperty(*sm, pmap);
+        return displaySMProperty(*sm, pmap, TAG());
       }
     }
 
     {
       Float_map pmap;
-      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,float>(name);
+      std::tie(pmap, okay) = sm->property_map<TAG,float>(name);
       if(okay)
       {
-        return displayVertexProperty(*sm, pmap);
+        return displaySMProperty(*sm, pmap, TAG());
       }
     }
 
     {
       Double_map pmap;
-      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,double>(name);
+      std::tie(pmap, okay) = sm->property_map<TAG,double>(name);
       if(okay)
       {
-        return displayVertexProperty(*sm, pmap);
-      }
-    }
-    return false;
-  }
-
-  bool DisplayPropertyPlugin::treat_face_property(std::string name, SMesh* sm)
-  {
-    typedef typename SMesh::template Property_map<face_descriptor, boost::int8_t>   Int8_map;
-    typedef typename SMesh::template Property_map<face_descriptor, boost::uint8_t>  Uint8_map;
-    typedef typename SMesh::template Property_map<face_descriptor, boost::int16_t>  Int16_map;
-    typedef typename SMesh::template Property_map<face_descriptor, boost::uint16_t> Uint16_map;
-    typedef typename SMesh::template Property_map<face_descriptor, boost::int32_t>  Int32_map;
-    typedef typename SMesh::template Property_map<face_descriptor, boost::uint32_t> Uint32_map;
-    typedef typename SMesh::template Property_map<face_descriptor, boost::int64_t>  Int64_map;
-    typedef typename SMesh::template Property_map<face_descriptor, boost::uint64_t> Uint64_map;
-    typedef typename SMesh::template Property_map<face_descriptor, float>           Float_map;
-    typedef typename SMesh::template Property_map<face_descriptor, double>          Double_map;
-
-    bool okay = false;
-    {
-      Int8_map pmap;
-      std::tie(pmap, okay) = sm->property_map<face_descriptor,boost::int8_t>(name);
-      if(okay)
-      {
-        return displayFaceProperty(*sm, pmap);
-      }
-    }
-
-    {
-      Uint8_map pmap;
-      std::tie(pmap, okay) = sm->property_map<face_descriptor,boost::uint8_t>(name);
-      if(okay)
-      {
-        return displayFaceProperty(*sm, pmap);
-      }
-    }
-
-    {
-      Int16_map pmap;
-      std::tie(pmap, okay) = sm->property_map<face_descriptor,boost::int16_t>(name);
-      if(okay)
-      {
-        return displayFaceProperty(*sm, pmap);
-      }
-    }
-
-    {
-      Uint16_map pmap;
-      std::tie(pmap, okay) = sm->property_map<face_descriptor,boost::uint16_t>(name);
-      if(okay)
-      {
-        return displayFaceProperty(*sm, pmap);
-      }
-    }
-
-    {
-      Int32_map pmap;
-      std::tie(pmap, okay) = sm->property_map<face_descriptor,boost::int32_t>(name);
-      if(okay)
-      {
-        return displayFaceProperty(*sm, pmap);
-      }
-    }
-
-    {
-      Uint32_map pmap;
-      std::tie(pmap, okay) = sm->property_map<face_descriptor,boost::uint32_t>(name);
-      if(okay)
-      {
-        return displayFaceProperty(*sm, pmap);
-      }
-    }
-
-    {
-      Int64_map pmap;
-      std::tie(pmap, okay) = sm->property_map<face_descriptor,boost::int64_t>(name);
-      if(okay)
-      {
-        return displayFaceProperty(*sm, pmap);
-      }
-    }
-
-    {
-      Uint64_map pmap;
-      std::tie(pmap, okay) = sm->property_map<face_descriptor,boost::uint64_t>(name);
-      if(okay)
-      {
-        return displayFaceProperty(*sm, pmap);
-      }
-    }
-
-    {
-      Float_map pmap;
-      std::tie(pmap, okay) = sm->property_map<face_descriptor,float>(name);
-      if(okay)
-      {
-        return displayFaceProperty(*sm, pmap);
-      }
-    }
-
-    {
-      Double_map pmap;
-      std::tie(pmap, okay) = sm->property_map<face_descriptor,double>(name);
-      if(okay)
-      {
-        return displayFaceProperty(*sm, pmap);
+        return displaySMProperty(*sm, pmap, TAG());
       }
     }
     return false;
@@ -1924,219 +2060,22 @@ private:
   template<typename PM>
   bool DisplayPropertyPlugin::displayPSProperty(Point_set* ps, PM pm)
   {
-    typedef typename PM::value_type Value_type;
-    minBox = ARBITRARY_DBL_MAX;
-    maxBox = -ARBITRARY_DBL_MAX;
-    std::vector<Value_type> values;
-    for(auto p : *ps)
-    {
-      values.push_back(pm[p]);
-    }
-    std::sort(values.begin(), values.end());
-    auto end = std::unique(values.begin(), values.end());
-
-
-    minBox = *values.begin();
-    maxBox = *(end-1);
-    dock_widget->minBox->setValue(minBox);
-    dock_widget->maxBox->setValue(maxBox);
-    ps->add_colors();
-    //fill color pmap
-    if(dock_widget->colorChoiceWidget->currentIndex() == 1)
-    {
-      std::unordered_map<Value_type, std::size_t> value_index_map;
-      //fill map
-      std::size_t counter = 0;
-      for(auto it = values.begin(); it != end; ++it)
-      {
-        value_index_map[*it] = counter++;
-      }
-      color_map.clear();
-      compute_color_map(QColor(rI, gI, bI),std::distance(values.begin(), end),
-                        std::back_inserter(color_map));
-      for(Point_set::iterator pit = ps->begin();
-          pit != ps->end();
-          ++pit)
-      {
-        CGAL::Color color(
-              color_map[value_index_map[pm[*pit]]].red(),
-              color_map[value_index_map[pm[*pit]]].green(),
-              color_map[value_index_map[pm[*pit]]].blue());
-        ps->set_color(*pit, color.red(), color.green(), color.blue());
-      }
-      displayMapLegend(values);
-    }
-    else
-    {
-      //scale a color ramp between min and max
-      replaceRamp();
-      float max = maxBox;
-      float min = minBox;
-      for(Point_set::iterator pit = ps->begin();
-          pit != ps->end();
-          ++pit)
-      {
-        if(min == max)
-          --min;
-        float f = (static_cast<float>(pm[*pit])-min)/(max-min);
-        if(f<0)
-          f = 0;
-        if(f>1)
-          f = 1;
-        CGAL::Color color(
-              255*color_ramp.r(f),
-              255*color_ramp.g(f),
-              255*color_ramp.b(f));
-        ps->set_color(*pit, color.red(), color.green(), color.blue());
-      }
-    }
-    return true;
+    PSDisplayer<PM> display_property(*ps, pm, this);
+    return display_property();
   }
 
   template<typename PM>
-  bool DisplayPropertyPlugin::displayVertexProperty(SMesh& smesh, PM pm)
+  bool DisplayPropertyPlugin::displaySMProperty(SMesh& smesh, PM pm, vertex_descriptor)
   {
-    typedef typename PM::value_type Value_type;
-    minBox = ARBITRARY_DBL_MAX;
-    maxBox = -ARBITRARY_DBL_MAX;
-    std::vector<Value_type> values;
-    for(auto v : vertices(smesh))
-    {
-      values.push_back(pm[v]);
-    }
-    std::sort(values.begin(), values.end());
-    auto end = std::unique(values.begin(), values.end());
-
-
-    minBox = *values.begin();
-    maxBox = *(end-1);
-    dock_widget->minBox->setValue(minBox);
-    dock_widget->maxBox->setValue(maxBox);
-    //fill v:color pmap
-    SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
-        smesh.add_property_map<vertex_descriptor, CGAL::Color >("v:color", CGAL::Color()).first;
-
-    if(dock_widget->colorChoiceWidget->currentIndex() == 1)
-    {
-      std::unordered_map<Value_type, std::size_t> value_index_map;
-      //fill map
-      std::size_t counter = 0;
-      for(auto it = values.begin(); it != end; ++it)
-      {
-        value_index_map[*it] = counter++;
-      }
-      color_map.clear();
-      compute_color_map(QColor(rI, gI, bI),std::distance(values.begin(), end),
-                        std::back_inserter(color_map));
-      for(boost::graph_traits<SMesh>::vertex_iterator vit = vertices(smesh).begin();
-          vit != vertices(smesh).end();
-          ++vit)
-      {
-        CGAL::Color color(
-              color_map[value_index_map[pm[*vit]]].red(),
-              color_map[value_index_map[pm[*vit]]].green(),
-              color_map[value_index_map[pm[*vit]]].blue());
-        vcolors[*vit] = color;
-      }
-      displayMapLegend(values);
-    }
-    else
-    {
-      //scale a color ramp between min and max
-      replaceRamp();
-      float max = maxBox;
-      float min = minBox;
-      for(boost::graph_traits<SMesh>::vertex_iterator vit = vertices(smesh).begin();
-          vit != vertices(smesh).end();
-          ++vit)
-      {
-        if(min == max)
-          --min;
-        float f = (static_cast<float>(pm[*vit])-min)/(max-min);
-        if(f<0)
-          f = 0;
-        if(f>1)
-          f = 1;
-        CGAL::Color color(
-              255*color_ramp.r(f),
-              255*color_ramp.g(f),
-              255*color_ramp.b(f));
-        vcolors[*vit] = color;
-      }
-    }
-    return true;
+    SMVertexDisplayer<PM> display_property(smesh, pm, this);
+    return display_property();
   }
 
   template<typename PM>
-  bool DisplayPropertyPlugin::displayFaceProperty(SMesh& smesh, PM pm)
+  bool DisplayPropertyPlugin::displaySMProperty(SMesh& smesh, PM pm, face_descriptor)
   {
-    typedef typename PM::value_type Value_type;
-    minBox = ARBITRARY_DBL_MAX;
-    maxBox = -ARBITRARY_DBL_MAX;
-    std::vector<Value_type> values;
-    for(auto f : faces(smesh))
-    {
-      values.push_back(pm[f]);
-    }
-    std::sort(values.begin(), values.end());
-    auto end = std::unique(values.begin(), values.end());
-    minBox = *values.begin();
-    maxBox = *(end-1);
-    dock_widget->minBox->setValue(minBox);
-    dock_widget->maxBox->setValue(maxBox);
-    //fill f:color pmap
-    SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
-        smesh.add_property_map<face_descriptor, CGAL::Color >("f:color", CGAL::Color()).first;
-
-    if(dock_widget->colorChoiceWidget->currentIndex() == 1)
-    {
-      std::unordered_map<Value_type, std::size_t> value_index_map;
-      //fill map
-      std::size_t counter = 0;
-      for(auto it = values.begin(); it != end; ++it)
-      {
-        value_index_map[*it] = counter++;
-      }
-      color_map.clear();
-      compute_color_map(QColor(rI, gI, bI),std::distance(values.begin(), end),
-                        std::back_inserter(color_map));
-      for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
-          fit != faces(smesh).end();
-          ++fit)
-      {
-        CGAL::Color color(
-              color_map[value_index_map[pm[*fit]]].red(),
-              color_map[value_index_map[pm[*fit]]].green(),
-              color_map[value_index_map[pm[*fit]]].blue());
-        fcolors[*fit] = color;
-      }
-      displayMapLegend(values);
-    }
-    else
-    {
-      //scale a color ramp between min and max
-      replaceRamp();
-      float max = maxBox;
-      float min = minBox;
-      for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
-          fit != faces(smesh).end();
-          ++fit)
-      {
-        if(min == max)
-          --min;
-        float f = (static_cast<float>(pm[*fit])-min)/(max-min);
-        if(f<0)
-          f = 0;
-        if(f>1)
-          f = 1;
-        CGAL::Color color(
-              255*color_ramp.r(f),
-              255*color_ramp.g(f),
-              255*color_ramp.b(f));
-        fcolors[*fit] = color;
-      }
-    }
-    return true;
+    SMFaceDisplayer<PM> display_property(smesh, pm, this);
+    return display_property();
   }
 
 #include "Display_property_plugin.moc"
