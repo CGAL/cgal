@@ -989,7 +989,7 @@ add_featured_edges_to_graph(const Polyhedron_type& p,
     }
   }
 
-#if CGAL_MESH_3_PROTECTION_DEBUG > 1
+#if CGAL_MESH_3_PROTECTION_DEBUG & 2
   {// DEBUG
     Mesh_3::internal::dump_graph_edges("edges-graph.polylines.txt", g_copy);
   }

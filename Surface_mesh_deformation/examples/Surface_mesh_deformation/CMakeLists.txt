@@ -12,7 +12,8 @@ find_package(CGAL QUIET)
 if ( CGAL_FOUND )
 
   find_package(Eigen3 3.1.91) #(requires 3.2.0 or greater)
-  if (EIGEN3_FOUND)
+  include(CGAL_Eigen_support)
+  if (TARGET CGAL::Eigen_support)
     create_single_source_cgal_program( "all_roi_assign_example.cpp" )
     create_single_source_cgal_program( "all_roi_assign_example_custom_polyhedron.cpp" )
     create_single_source_cgal_program( "all_roi_assign_example_Surface_mesh.cpp" )
@@ -31,15 +32,14 @@ if ( CGAL_FOUND )
         k_ring_roi_translate_rotate_example
         k_ring_roi_translate_rotate_Surface_mesh
         deform_mesh_for_botsch08_format_sre_arap)
-      CGAL_target_use_Eigen(${target})
+      target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
     endforeach()
 
     find_package( OpenMesh QUIET )
     if ( OpenMesh_FOUND )
     include( UseOpenMesh )
       create_single_source_cgal_program( "all_roi_assign_example_with_OpenMesh.cpp" )
-      target_link_libraries( all_roi_assign_example_with_OpenMesh PRIVATE ${OPENMESH_LIBRARIES} )
-      CGAL_target_use_Eigen(all_roi_assign_example_with_OpenMesh)
+      target_link_libraries( all_roi_assign_example_with_OpenMesh PRIVATE ${OPENMESH_LIBRARIES} CGAL::Eigen_support)
     else()
       message(STATUS "Example that use OpenMesh will not be compiled.")
     endif()
@@ -52,4 +52,3 @@ else()
     message(STATUS "NOTICE: These exmaples require the CGAL library, and will not be compiled.")
 
 endif()
-

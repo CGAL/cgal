@@ -128,7 +128,7 @@ struct Triangle_Line_visitor {
 
   result_type
   operator()(const typename K::Point_3& p, const typename K::Segment_3& s) const {
-    if ( s.has_on(p) )
+    if ( typename K::Has_on_3()(s,p) )
       return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(p);
     else
       return result_type();

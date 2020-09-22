@@ -52,11 +52,11 @@ public:
   /// \name Type definitions for the intersection-point mapping.
   //@{
 
-  /*! \struct Intersection_point_2
+  /*! \struct Intersection_point
    * Representation of an intersection point (in both parameter and physical
    * spaces).
    */
-  struct Intersection_point_2
+  struct Intersection_point
   {
     Algebraic          s;      // The parameter for the first curve.
     Algebraic          t;      // The parameter for the second curve.
@@ -64,7 +64,7 @@ public:
     Algebraic          y;      // The y-coordinate.
 
     /*! Constructor. */
-    Intersection_point_2 (const Algebraic& _s, const Algebraic& _t,
+    Intersection_point (const Algebraic& _s, const Algebraic& _t,
                           const Algebraic& _x, const Algebraic& _y) :
       s(_s), t(_t),
       x(_x), y(_y)
@@ -73,7 +73,7 @@ public:
 
   typedef std::pair<Curve_id, Curve_id>              Curve_pair;
   typedef std::pair<Algebraic, Algebraic>            Parameter_pair;
-  typedef std::list<Intersection_point_2>            Intersection_list;
+  typedef std::list<Intersection_point>            Intersection_list;
   typedef
     typename Intersection_list::const_iterator       Intersection_iter;
 
@@ -251,7 +251,7 @@ private:
                              const Polynomial& polyY_1, const Integer& normY_1,
                              const Polynomial& polyX_2, const Integer& normX_2,
                              const Polynomial& polyY_2, const Integer& normY_2,
-                             Parameter_list& s_vals) const;
+                             Parameter_list& s_vals, bool find_out_of_range=false) const;
 
   /*!
    * Compute all s-parameter values of the self intersection of (X(s), Y(s))
@@ -378,7 +378,7 @@ _Bezier_cache<NtTraits>::get_intersections
             CGAL::compare (nt_traits.evaluate_at (polyY_1, *t_it),
                            y) == EQUAL)
         {
-          info.first.push_back (Intersection_point_2 (*s_it, *t_it,
+          info.first.push_back (Intersection_point (*s_it, *t_it,
                                                       x / denX, y / denY));
         }
       }
@@ -407,7 +407,7 @@ _Bezier_cache<NtTraits>::get_intersections
 
   do_ovlp = _intersection_params (polyX_2, normX_2, polyY_2, normY_2,
                                   polyX_1, normX_1, polyY_1, normY_1,
-                                  t_vals);
+                                  t_vals, true);
 
   CGAL_assertion (! do_ovlp);
 
@@ -457,21 +457,14 @@ _Bezier_cache<NtTraits>::get_intersections
   const Algebraic           one (1);
   unsigned int              k;
 
-  //pointers are used to set the list pts1_ptr as the one with the less values
-  Point_list* pts1_ptr=&pts1;
-  Point_list* pts2_ptr=&pts2;
-  bool swapt=pts1.size() > pts2.size();
-  if (swapt)
-    std::swap(pts1_ptr,pts2_ptr);
-
-  for (pit1 = pts1_ptr->begin(); pit1 != pts1_ptr->end(); ++pit1)
+  for (pit1 = pts1.begin(); pit1 != pts1.end(); ++pit1)
   {
     // Construct a vector of distances from the current point to all other
     // points in the pts2 list.
-    const int                     n_pts2 = static_cast<int>(pts2_ptr->size());
+    const int                     n_pts2 = static_cast<int>(pts2.size());
     std::vector<Distance_iter>    dist_vec (n_pts2);
 
-    for (k = 0, pit2 = pts2_ptr->begin(); pit2 != pts2_ptr->end(); k++, ++pit2)
+    for (k = 0, pit2 = pts2.begin(); pit2 != pts2.end(); k++, ++pit2)
     {
       // Compute the approximate distance between the teo current points.
       dx = pit1->app_x - pit2->app_x;
@@ -508,7 +501,7 @@ _Bezier_cache<NtTraits>::get_intersections
           pit1->y = pit2->y;
 
         // Remove this point from pts2, as we found a match for it.
-        pts2_ptr->erase (pit2);
+        pts2.erase (pit2);
         found = true;
       }
     }
@@ -528,17 +521,15 @@ _Bezier_cache<NtTraits>::get_intersections
         pit1->y = pit2->y;
 
       // Remove this point from pts2, as we found a match for it.
-      pts2_ptr->erase (pit2);
+      pts2.erase (pit2);
     }
 
     // Check that  s- and t-values both lie in the legal range of [0,1].
-    CGAL_assertion(CGAL::sign (s) != NEGATIVE && CGAL::compare (s, one) != LARGER &&
-                   CGAL::sign (t) != NEGATIVE && CGAL::compare (t, one) != LARGER);
-
-    if (!swapt)
-      info.first.push_back (Intersection_point_2 (s, t,pit1->x, pit1->y));
-    else
-      info.first.push_back (Intersection_point_2 (t, s,pit1->x, pit1->y));
+    if(CGAL::sign (s) != NEGATIVE && CGAL::compare (s, one) != LARGER &&
+      CGAL::sign (t) != NEGATIVE && CGAL::compare (t, one) != LARGER)
+    {
+      info.first.push_back(Intersection_point(s, t,pit1->x, pit1->y));
+    }
   }
 
   info.second = false;
@@ -582,7 +573,7 @@ bool _Bezier_cache<NtTraits>::_intersection_params
          const Polynomial& polyY_1, const Integer& normY_1,
          const Polynomial& polyX_2, const Integer& normX_2,
          const Polynomial& polyY_2, const Integer& normY_2,
-         Parameter_list& s_vals) const
+         Parameter_list& s_vals, bool find_out_of_range) const
 {
   // Clear the output parameter list.
   if (! s_vals.empty())
@@ -633,8 +624,12 @@ bool _Bezier_cache<NtTraits>::_intersection_params
   }
 
   // Compute the roots of the resultant polynomial and mark that the curves do
-  // not overlap. The roots we are interested in must be in the interval [0,1].
-  nt_traits.compute_polynomial_roots (res,0,1,std::back_inserter (s_vals));
+  // not overlap. The roots we are interested in are usually in the interval [0,1].
+  if (find_out_of_range)
+    nt_traits.compute_polynomial_roots (res,std::back_inserter (s_vals));
+  else
+    nt_traits.compute_polynomial_roots (res,0,1,std::back_inserter (s_vals));
+
   return (false);
 }
 
@@ -658,7 +653,7 @@ void _Bezier_cache<NtTraits>::_self_intersection_params
   //   II: Y(t) - Y(s) / (t - s) = 0
   //
   Integer                 *coeffs;
-  int                      i, k;
+  int                      i;
 
   // Consruct the bivariate polynomial that corresponds to Equation I.
   // Note that we represent a bivariate polynomial as a vector of univariate
@@ -672,12 +667,11 @@ void _Bezier_cache<NtTraits>::_self_intersection_params
   coeffs = new Integer [degX];
 
   for (i = 0; i < degX; i++)
-  {
-    for (k = i + 1; k < degX; k++)
-      coeffs[k - i - 1] = nt_traits.get_coefficient (polyX, k);
+    coeffs[i] = nt_traits.get_coefficient(polyX, i + 1);
 
-    coeffsX_st[i] = nt_traits.construct_polynomial (coeffs, degX - i - 1);
-  }
+  for (i = 0; i < degX; i++)
+    coeffsX_st[degX - i - 1] =
+        nt_traits.construct_polynomial(coeffs + i, degX - i - 1);
 
   delete[] coeffs;
 
@@ -690,12 +684,11 @@ void _Bezier_cache<NtTraits>::_self_intersection_params
   coeffs = new Integer [degY];
 
   for (i = 0; i < degY; i++)
-  {
-    for (k = i + 1; k < degY; k++)
-      coeffs[k - i - 1] = nt_traits.get_coefficient (polyY, k);
+    coeffs[i] = nt_traits.get_coefficient(polyY, i + 1);
 
-    coeffsY_st[i] = nt_traits.construct_polynomial (coeffs, degY - i - 1);
-  }
+  for (i = 0; i < degY; i++)
+    coeffsY_st[degY - i - 1] =
+        nt_traits.construct_polynomial(coeffs + i, degY - i - 1);
 
   delete[] coeffs;
 

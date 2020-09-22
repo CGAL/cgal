@@ -312,15 +312,12 @@ class ConicCPA2
     PT center () const
     {
         CGAL_kernel_precondition (type != PARABOLA);
-        // PT p;
-        // replaced previous line by following hack (no idea
-        // why original version doesn't work)
-        typename DA::Point p;
-        FT two = FT(2);
-        FT div = -det();
-        dao.set( p, (two*s()*u() - t()*v()) / div,
-                    (two*r()*v() - t()*u()) / div);
-        return p;
+
+        const FT two = FT(2);
+        const FT div = -det();
+
+        return PT((two*s()*u() - t()*v()) / div,
+                  (two*r()*v() - t()*u()) / div);
     }
 
     Conic_type conic_type () const

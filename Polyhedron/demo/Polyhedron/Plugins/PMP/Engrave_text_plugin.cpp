@@ -249,12 +249,17 @@ protected:
     }
     case QEvent::Wheel: {
       QWheelEvent* event = static_cast<QWheelEvent*>(ev);
-      QPointF old_pos = v->mapToScene(event->pos());
-      if(event->delta() <0)
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+      QPoint pos = event->pos();
+#else
+      QPointF pos = event->position();
+#endif
+      QPointF old_pos = v->mapToScene(pos.x(), pos.y());
+      if(event->angleDelta().y() <0)
         v->scale(1.2, 1.2);
       else
         v->scale(0.8, 0.8);
-      QPointF new_pos = v->mapToScene(event->pos());
+      QPointF new_pos = v->mapToScene(pos.x(), pos.y());
       QPointF delta = new_pos - old_pos;
       v->translate(delta.x(), delta.y());
       v->update();
@@ -490,10 +495,10 @@ public Q_SLOTS:
       }
 
       std::cout << "Parameterized with ARAP (SM) computed." << std::endl;
-      xmin = std::numeric_limits<double>::max();
-      xmax = std::numeric_limits<double>::min();
-      ymin = std::numeric_limits<double>::max();
-      ymax = std::numeric_limits<double>::min();
+      xmin = (std::numeric_limits<double>::max)();
+      xmax = (std::numeric_limits<double>::min)();
+      ymin = (std::numeric_limits<double>::max)();
+      ymax = (std::numeric_limits<double>::min)();
       uv_map_3 =
           sm->add_property_map<SMesh::Vertex_index, Point_3>("v:uv3").first;
       for(SMesh::Vertex_index v : sm->vertices())

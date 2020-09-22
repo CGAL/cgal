@@ -25,10 +25,9 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 
-#include <CGAL/internal/boost/function_property_map.hpp>
-
 #include <boost/mpl/identity.hpp>
 #include <boost/mpl/if.hpp>
+#include <boost/property_map/function_property_map.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/geometric_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -37,6 +36,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <array>
 
 namespace CGAL {
 
@@ -83,12 +83,24 @@ public:
 
  private:
   // here is the stack of triangulations which form the hierarchy
-  Tr_Base*   hierarchy[Triangulation_hierarchy_2__maxlevel];
+  std::array<Tr_Base*,Triangulation_hierarchy_2__maxlevel> hierarchy;
   boost::rand48  random;
 
 public:
   Triangulation_hierarchy_2(const Geom_traits& traits = Geom_traits());
   Triangulation_hierarchy_2(const Triangulation_hierarchy_2& tr);
+
+  Triangulation_hierarchy_2(Triangulation_hierarchy_2&& other)
+    noexcept( noexcept(Tr_Base(std::move(other))) )
+    : Tr_Base(std::move(other))
+    , random(std::move(other.random))
+  {
+    hierarchy[0] = this;
+    for(int i=1; i<Triangulation_hierarchy_2__maxlevel; ++i) {
+      hierarchy[i] = other.hierarchy[i];
+      other.hierarchy[i] = nullptr;
+    }
+  }
 
   template<class InputIterator>
   Triangulation_hierarchy_2(InputIterator first, InputIterator beyond,
@@ -103,6 +115,19 @@ public:
   }
 
   Triangulation_hierarchy_2 &operator=(const  Triangulation_hierarchy_2& tr);
+
+  Triangulation_hierarchy_2 & operator=(Triangulation_hierarchy_2&& other)
+    noexcept( noexcept(Triangulation_hierarchy_2(std::move(other))) )
+  {
+    static_cast<Tr_Base&>(*this) = std::move(other);
+    hierarchy[0] = this;
+    for(int i=1; i<Triangulation_hierarchy_2__maxlevel; ++i) {
+      hierarchy[i] = other.hierarchy[i];
+      other.hierarchy[i] = nullptr;
+    }
+    return *this;
+  }
+
   ~Triangulation_hierarchy_2();
 
   //Helping
@@ -130,12 +155,12 @@ public:
       // Spatial sort can only be used with Gt::Point_2: we need an adapter
       typedef typename Geom_traits::Construct_point_2 Construct_point_2;
       typedef typename boost::result_of<const Construct_point_2(const Point&)>::type Ret;
-      typedef CGAL::internal::boost_::function_property_map<Construct_point_2, Point, Ret> fpmap;
+      typedef boost::function_property_map<Construct_point_2, Point, Ret> fpmap;
       typedef CGAL::Spatial_sort_traits_adapter_2<Geom_traits, fpmap> Search_traits_2;
 
       spatial_sort(points.begin(), points.end(),
                    Search_traits_2(
-                     CGAL::internal::boost_::make_function_property_map<Point, Ret, Construct_point_2>(
+                     boost::make_function_property_map<Point, Ret, Construct_point_2>(
                        geom_traits().construct_point_2_object()), geom_traits()));
 
       // hints[i] is the face of the previously inserted point in level i.
@@ -391,8 +416,8 @@ void
 Triangulation_hierarchy_2<Tr_>::
 clear()
 {
-        for(int i=0;i<Triangulation_hierarchy_2__maxlevel;++i)
-        hierarchy[i]->clear();
+  for(int i=0;i<Triangulation_hierarchy_2__maxlevel;++i)
+    if(hierarchy[i]) hierarchy[i]->clear();
 }
 
 
@@ -724,7 +749,7 @@ locate_in_all(const Point& p,
     level--;
   }
 
-  for (int i=level+1; i<Triangulation_hierarchy_2__maxlevel;++i) pos[i]=0;
+  for (int i=level+1; i<Triangulation_hierarchy_2__maxlevel;++i) pos[i]=nullptr;
   while(level > 0) {
     pos[level]=position=hierarchy[level]->locate(p, position);
     // locate at that level from "position"

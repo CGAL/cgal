@@ -39,7 +39,7 @@ public:
 
     typedef typename Algebraic_kernel_d_1::Algebraic_real_1 Algebraic_real_1;
 
-    Bitstream_coefficient_kernel_at_alpha_rep() {}
+    Bitstream_coefficient_kernel_at_alpha_rep() : _m_kernel(nullptr) {}
 
     Bitstream_coefficient_kernel_at_alpha_rep(Algebraic_kernel_d_1* kernel,
                                               Algebraic_real_1 alpha)

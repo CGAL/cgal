@@ -71,6 +71,8 @@ create_single_source_cgal_program( "graph_concept_Linear_cell_complex.cpp" )
 
 create_single_source_cgal_program( "graph_concept_Arrangement_2.cpp" )
 
+create_single_source_cgal_program( "graph_concept_Derived.cpp" )
+
 create_single_source_cgal_program( "test_clear.cpp" )
 
 create_single_source_cgal_program( "test_helpers.cpp" )
@@ -87,6 +89,8 @@ create_single_source_cgal_program( "graph_concept_Face_filtered_graph.cpp" )
 
 create_single_source_cgal_program( "test_Manifold_face_removal.cpp")
 
+create_single_source_cgal_program( "test_Regularize_face_selection_borders.cpp")
+
 create_single_source_cgal_program( "test_Face_filtered_graph.cpp" )
 
 create_single_source_cgal_program( "test_Euler_operations.cpp" )
@@ -98,6 +102,10 @@ create_single_source_cgal_program( "test_graph_traits.cpp" )
 create_single_source_cgal_program( "test_Properties.cpp" )
 
 create_single_source_cgal_program( "test_wrl.cpp" )
+
+create_single_source_cgal_program( "bench_read_from_stream_vs_add_face_and_add_faces.cpp" )
+
+create_single_source_cgal_program( "graph_traits_inheritance.cpp" )
 
 if(OpenMesh_FOUND)
   target_link_libraries( test_clear PRIVATE ${OPENMESH_LIBRARIES})

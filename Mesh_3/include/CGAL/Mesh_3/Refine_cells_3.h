@@ -434,6 +434,7 @@ public:
    && !defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
     this->remove_element(c);
   #endif
+    CGAL_USE(c);
   }
   // Parallel: it's always lazy, so do nothing
   void remove_element_from_refinement_queue(Cell_handle, Parallel_tag) {}

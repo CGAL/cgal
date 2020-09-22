@@ -29,7 +29,8 @@ endif()
 
 # Use Eigen (for PCA)
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
-if (NOT EIGEN3_FOUND)
+include(CGAL_Eigen_support)
+if (NOT TARGET CGAL::Eigen_support)
   message(STATUS "This project requires the Eigen library, and will not be compiled.")
   return()
 endif()
@@ -41,30 +42,28 @@ endif()
 include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "vsa_class_interface_test.cpp" )
-CGAL_target_use_Eigen(vsa_class_interface_test)
+target_link_libraries(vsa_class_interface_test PUBLIC CGAL::Eigen_support)
 
 create_single_source_cgal_program( "vsa_correctness_test.cpp" )
-CGAL_target_use_Eigen(vsa_correctness_test)
+target_link_libraries(vsa_correctness_test PUBLIC CGAL::Eigen_support)
 
 create_single_source_cgal_program( "vsa_error_decrease_test.cpp" )
-CGAL_target_use_Eigen(vsa_error_decrease_test)
+target_link_libraries(vsa_error_decrease_test PUBLIC CGAL::Eigen_support)
 
 create_single_source_cgal_program( "vsa_kernel_test.cpp" )
-CGAL_target_use_Eigen(vsa_kernel_test)
+target_link_libraries(vsa_kernel_test PUBLIC CGAL::Eigen_support)
 
 create_single_source_cgal_program( "vsa_approximation_test.cpp" )
-CGAL_target_use_Eigen(vsa_approximation_test)
+target_link_libraries(vsa_approximation_test PUBLIC CGAL::Eigen_support)
 
 create_single_source_cgal_program( "vsa_segmentation_test.cpp" )
-CGAL_target_use_Eigen(vsa_segmentation_test)
+target_link_libraries(vsa_segmentation_test PUBLIC CGAL::Eigen_support)
 
 create_single_source_cgal_program( "vsa_meshing_manifold_test.cpp" )
-CGAL_target_use_Eigen(vsa_meshing_manifold_test)
+target_link_libraries(vsa_meshing_manifold_test PUBLIC CGAL::Eigen_support)
 
 create_single_source_cgal_program( "vsa_metric_test.cpp" )
-CGAL_target_use_Eigen(vsa_metric_test)
+target_link_libraries(vsa_metric_test PUBLIC CGAL::Eigen_support)
 
 create_single_source_cgal_program( "vsa_teleportation_test.cpp" )
-CGAL_target_use_Eigen(vsa_teleportation_test)
-
-
+target_link_libraries(vsa_teleportation_test PUBLIC CGAL::Eigen_support)

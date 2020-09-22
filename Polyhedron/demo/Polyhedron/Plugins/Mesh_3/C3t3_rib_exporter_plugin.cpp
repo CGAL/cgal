@@ -755,8 +755,8 @@ write_surface_cells(const C3t3& c3t3, const Plane& /* plane */, std::ofstream& o
 
     //const int TRANSPARENCY_ALPHA_VALUE = 100;
     CGAL::Bbox_3 bbox = c3t3.bbox();
-    float relPos = (c->weighted_circumcenter().x() - bbox.xmin())
-                   / (bbox.xmax() - bbox.xmin());
+    float relPos = static_cast<float>((c->weighted_circumcenter().x() - bbox.xmin())
+                                      / (bbox.xmax() - bbox.xmin()));
     float TRANSPARENCY_ALPHA_VALUE =
       1.f -
       (relPos < 0.25f ?
@@ -842,7 +842,7 @@ write_surface_cells(const C3t3& c3t3, const Plane& /* plane */, std::ofstream& o
       {
         if (i == last_2D_vertex_index)
         {
-          edgecolor.setAlpha(TRANSPARENCY_ALPHA_VALUE);
+          edgecolor.setAlphaF(TRANSPARENCY_ALPHA_VALUE);
         }
         else
         {

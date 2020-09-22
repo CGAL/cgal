@@ -98,12 +98,28 @@ struct Test
   {
     if (p.size() != q.size())
       return false;
-
+    if (CGAL::Intersections::internal::Is_cw<K,
+        typename CGAL::Algebraic_structure_traits<typename K::FT>::Is_exact>()(p))
+      return false;
     for(typename Pol::const_iterator itp = p.begin(), itq = q.begin(); itp != p.end(); ++itp, ++itq)
       if (!approx_equal(*itp, *itq))
         return false;
 
     return true;
+  }
+
+  bool approx_equal(const T& p, const T& q)
+  {
+    if(p.size() != q.size())
+      return false;
+
+    std::vector<P> vec { p[0], p[1], p[2] };
+
+    if (CGAL::Intersections::internal::Is_cw<K,
+        typename CGAL::Algebraic_structure_traits<typename K::FT>::Is_exact>(vec))
+      return false;
+
+    return approx_equal(p[0], q[0]) && approx_equal(p[1], q[1]) && approx_equal(p[2], q[2]);
   }
 
   template <typename O1, typename O2>
@@ -318,6 +334,48 @@ struct Test
     check_intersection<P>  (C(p( 0,  0), 25)                , p( 5, 0));
   }
 
+  void C_S()
+  {
+    std::cout << "Circle - Segment" << std::endl;
+
+    check_no_do_intersect  (C(p( 2, 8), 6), S(p(-3, -2), p( 2,  -4)));
+    check_no_do_intersect  (C(p( 2, 8), 6), S(p(-3, 22), p( 2, 34)));
+    check_no_do_intersect  (C(p( 4, 16), 18), S(p(5, 7), p(6, 8)));
+
+    check_do_intersect     (C(p( 3, 4), 0), S(p(-3,  8), p( 6,  2)));
+    check_do_intersect     (C(p( 4, 3), 4), S(p( 6, -7), p( 5, 2)));
+
+    check_do_intersect     (C(p(-3, 1), 7), S(p(-1, -3), p(-6,  7)));
+
+    check_do_intersect     (C(p(1, 1), 4), S(p(-1, 1), p(-6,  -8)));
+    check_do_intersect     (C(p(1, 1), 4), S(p(-1, 4), p(-1,  -4)));
+  }
+
+  void C_R()
+  {
+    std::cout << "Circle - Ray" << std::endl;
+
+    check_no_do_intersect  (C(p( 2, 8), 6), R(p(-3, -2), p( 2,  -4)));
+    check_no_do_intersect  (C(p( 2, 8), 6), R(p(-3, 22), p( 2, 34)));
+
+    check_do_intersect     (C(p( 3, 4), 0), R(p(-3,  8), p( 6,  2)));
+    check_do_intersect     (C(p( 4, 3), 4), R(p( 6, -7), p( 5, 2)));
+
+    check_do_intersect     (C(p(-3, 1), 7), R(p(-1, -3), p(-6,  7)));
+  }
+
+  void C_T()
+  {
+    std::cout << "Circle - Triangle" << std::endl;
+    check_no_do_intersect  (C(p( 2, 8), 6), T(p( 6,  0), p( 8,  0), p(8, 2)));
+    check_no_do_intersect  (C(p( 0, 0), 9), T(p( 1,  1), p( 1, -1), p(0, 0)));
+
+    check_do_intersect     (C(p( 3, 4), 0), T(p(-3,  8), p( 6, 2), p(4,6)));
+    check_do_intersect     (C(p( 4, 3), 4), T(p( 6, -7), p( 5, 2), p(2,-3)));
+
+    check_do_intersect     (C(p( 4, 3), 4), T(p( 6, -7), p( 4, 6), p(2,-3)));
+  }
+
   void L_L()
   {
     std::cout << "Line - Line" << std::endl;
@@ -478,18 +536,12 @@ struct Test
 
     // polygon intersection
     Pol pol0;
-    pol0.push_back(P(-6, -4));
-    pol0.push_back(P( -5.11111, -0.222222 ));
-    pol0.push_back(P( 0, 10 ));
     pol0.push_back(P( 8, 4 ));
+    pol0.push_back(P( 0, 10 ));
+    pol0.push_back(P( -5.11111, -0.222222 ));
+    pol0.push_back(P(-6, -4));
     check_intersection     (T(p(   0, 10), p(-10, -10), p( 20, -5)), T(p(   2,  30), p( -6,  -4), p(15, 8)), pol0, false);
-
-    Pol pol1;
-    pol1.push_back(P( 8,  4));
-    pol1.push_back(P( 0, 10 ));
-    pol1.push_back(P( -5.11111, -0.222222 ));
-    pol1.push_back(P(-6, -4));
-    check_intersection     (T(p( -10,-10), p(  0,  10), p( 20, -5)), T(p(   2,  30), p( -6,  -4), p(15, 8)), pol1, false);
+    check_intersection     (T(p( -10,-10), p(  0,  10), p( 20, -5)), T(p(   2,  30), p( -6,  -4), p(15, 8)), pol0, false);
 
     Pol pol2;
     pol2.push_back(P( 10.2222, 2.33333 ));
@@ -761,6 +813,9 @@ struct Test
     C_Rec();
     C_L();
     C_P();
+    C_S();
+    C_R();
+    C_T();
 
     Rec_Rec();
     Rec_L();

@@ -33,8 +33,7 @@
 #include <CGAL/Triangulation_hierarchy_vertex_base_3.h>
 #include <CGAL/Location_policy.h>
 
-#include <CGAL/internal/boost/function_property_map.hpp>
-
+#include <boost/property_map/function_property_map.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/geometric_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -50,6 +49,8 @@
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/identity.hpp>
 #include <boost/mpl/if.hpp>
+
+#include <array>
 
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
@@ -92,7 +93,7 @@ public:
 private:
 
   // here is the stack of triangulations which form the hierarchy
-  Tr_Base*       hierarchy[maxlevel];
+  std::array<Tr_Base*,maxlevel> hierarchy;
   boost::rand48  random;
 
   void set_up_down(Vertex_handle up, Vertex_handle down)
@@ -106,6 +107,18 @@ public:
   Triangulation_hierarchy_3(const Geom_traits& traits = Geom_traits());
 
   Triangulation_hierarchy_3(const Triangulation_hierarchy_3& tr);
+
+  Triangulation_hierarchy_3(Triangulation_hierarchy_3&& other)
+    noexcept( noexcept(Tr_Base(std::move(other))) )
+    : Tr_Base(std::move(other))
+    , random(std::move(other.random))
+  {
+    hierarchy[0] = this;
+    for(int i=1; i<maxlevel; ++i) {
+      hierarchy[i] = other.hierarchy[i];
+      other.hierarchy[i] = nullptr;
+    }
+  }
 
   template < typename InputIterator >
   Triangulation_hierarchy_3(InputIterator first, InputIterator last,
@@ -125,9 +138,32 @@ public:
     return *this;
   }
 
-  ~Triangulation_hierarchy_3();
+  Triangulation_hierarchy_3 & operator=(Triangulation_hierarchy_3&& other)
+    noexcept( noexcept(Triangulation_hierarchy_3(std::move(other))) )
+  {
+    static_cast<Tr_Base&>(*this) = std::move(other);
+    hierarchy[0] = this;
+    for(int i=1; i<maxlevel; ++i) {
+      hierarchy[i] = other.hierarchy[i];
+      other.hierarchy[i] = nullptr;
+    }
+    return *this;
+  }
 
-  void swap(Triangulation_hierarchy_3 &tr);
+  ~Triangulation_hierarchy_3()
+  {
+    clear();
+    for(int i=1; i<maxlevel; ++i) {
+      delete hierarchy[i];
+    }
+  };
+
+  void swap(Triangulation_hierarchy_3 &tr)
+  {
+    Tr_Base::swap(tr);
+    for(int i=1; i<maxlevel; ++i)
+      std::swap(hierarchy[i], tr.hierarchy[i]);
+  };
 
   void clear();
 
@@ -169,12 +205,12 @@ public:
       // Spatial sort can only be used with Geom_traits::Point_3: we need an adapter
       typedef typename Geom_traits::Construct_point_3 Construct_point_3;
       typedef typename boost::result_of<const Construct_point_3(const Point&)>::type Ret;
-      typedef CGAL::internal::boost_::function_property_map<Construct_point_3, Point, Ret> fpmap;
+      typedef boost::function_property_map<Construct_point_3, Point, Ret> fpmap;
       typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
 
       spatial_sort(points.begin(), points.end(),
                    Search_traits_3(
-                     CGAL::internal::boost_::make_function_property_map<Point, Ret, Construct_point_3>(
+                     boost::make_function_property_map<Point, Ret, Construct_point_3>(
                        geom_traits().construct_point_3_object()), geom_traits()));
 
       // hints[i] is the vertex of the previously inserted point in level i.
@@ -246,13 +282,13 @@ private:
     typedef Index_to_Bare_point<Construct_point_3,
                                 std::vector<Point> > Access_bare_point;
     typedef typename boost::result_of<const Construct_point_3(const Point&)>::type Ret;
-    typedef CGAL::internal::boost_::function_property_map<Access_bare_point, std::size_t, Ret> fpmap;
+    typedef boost::function_property_map<Access_bare_point, std::size_t, Ret> fpmap;
     typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
 
     Access_bare_point accessor(points, geom_traits().construct_point_3_object());
     spatial_sort(indices.begin(), indices.end(),
                  Search_traits_3(
-                   CGAL::internal::boost_::make_function_property_map<
+                   boost::make_function_property_map<
                      std::size_t, Ret, Access_bare_point>(accessor),
                    geom_traits()));
 
@@ -459,26 +495,6 @@ Triangulation_hierarchy_3(const Triangulation_hierarchy_3<Tr> &tr)
         if (it->up() != Vertex_handle())
             V[ it->up()->down() ] = it;
     }
-  }
-}
-
-template <class Tr>
-void
-Triangulation_hierarchy_3<Tr>::
-swap(Triangulation_hierarchy_3<Tr> &tr)
-{
-  Tr_Base::swap(tr);
-  for(int i=1; i<maxlevel; ++i)
-      std::swap(hierarchy[i], tr.hierarchy[i]);
-}
-
-template <class Tr>
-Triangulation_hierarchy_3<Tr>::
-~Triangulation_hierarchy_3()
-{
-  clear();
-  for(int i=1; i<maxlevel; ++i) {
-    delete hierarchy[i];
   }
 }
 

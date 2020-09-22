@@ -259,9 +259,9 @@ inserts a polyline defined by the points in the range `[first,last)`
 and returns the constraint id.
 The polyline is considered as a closed curve if the first and last point are equal or if  `close == true`. This enables for example passing the vertex range of a `Polygon_2`.
 When traversing the vertices of a closed polyline constraint with a  `Vertices_in_constraint_iterator` the first and last vertex are the same.
-In case the range is empty `Constraint_id()`is returned.
+In case the range is empty `Constraint_id()` is returned.
 In case all points are equal the point is inserted but no constraint,
-and `Constraint_id()`is returned.
+and `Constraint_id()` is returned.
 \tparam PointIterator must be an `InputIterator` with the value type `Point`.
 */
 template < class PointIterator>
@@ -292,6 +292,30 @@ template <class PointIterator, class IndicesIterator>
 std::size_t insert_constraints(PointIterator points_first, PointIterator points_last,
                                IndicesIterator indices_first, IndicesIterator indices_last);
 
+
+/*!
+splits into constraints the graph of subconstraints.
+
+Consider the graph `g={V,E}` where `V` is the set of vertices of the
+triangulation and `E` is the set of all subconstraints of all
+constraints of the triangulation.
+
+This function splits into polylines the graph `g` at vertices of
+degree greater than 2 and at vertices for which
+`is_terminal(v)==true`.
+
+Each computed polyline is stored as a constraint of the triangulation.
+
+\warning all existing constraints will be discarded.
+
+\param is_terminal An optional function returning `true` if the vertex
+`v` of degree 2 is a polyline endpoint and `false` otherwise. If
+omitted, a function always returning `false` will be used, that is no
+degree 2 vertex will be considered as a polyline endpoint.
+
+\sa `split_graph_into_polylines()`
+*/
+void split_subconstraint_graph_into_constraints(const std::function<bool(Vertex_handle)>& is_terminal);
 
 /*!
 removes the constraint `cid`, without removing the points from the triangulation.

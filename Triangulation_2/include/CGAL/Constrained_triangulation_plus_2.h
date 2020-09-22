@@ -21,6 +21,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>
+#include <CGAL/Triangulation_2/internal/CTP2_subconstraint_graph.h>
 #include <boost/tuple/tuple.hpp>
 #include <boost/type_traits/is_same.hpp>
 
@@ -216,6 +217,8 @@ public:
     , hierarchy(Vh_less_xy(this))
   { copy_triangulation(ctp);}
 
+  Constrained_triangulation_plus_2(Constrained_triangulation_plus_2&&) = default;
+
   virtual ~Constrained_triangulation_plus_2() {}
 
   Constrained_triangulation_plus_2 & operator=(const Constrained_triangulation_plus_2& ctp)
@@ -223,6 +226,8 @@ public:
     copy_triangulation(ctp);
     return *this;
   }
+
+  Constrained_triangulation_plus_2& operator=(Constrained_triangulation_plus_2&&) = default;
 
   template<class InputIterator>
   Constrained_triangulation_plus_2(InputIterator first,
@@ -315,6 +320,22 @@ public:
     return n;
   }
   */
+
+  void split_subconstraint_graph_into_constraints(const std::function<bool(Vertex_handle)>& is_terminal
+                                                  = std::function<bool(Vertex_handle)>())
+  {
+    internal::CTP2_graph_visitor<Self> visitor(*this);
+    if (is_terminal)
+      CGAL::split_graph_into_polylines (internal::CTP2_subconstraint_graph<Self>(*this), visitor,
+                                        [&is_terminal](Vertex_handle vh,
+                                                       const internal::CTP2_subconstraint_graph<Self>&) -> bool
+                                        {
+                                          return is_terminal(vh);
+                                        });
+    else
+      CGAL::split_graph_into_polylines (internal::CTP2_subconstraint_graph<Self>(*this), visitor);
+  }
+
   Vertex_handle push_back(const Point& p)
   {
     return insert(p);
@@ -398,7 +419,7 @@ public:
     ++beg;
     Face_container<Constrained_triangulation_plus_2> fc(*this);
 
-    Constraint_id head = 0, tail = 0;
+    Constraint_id head = nullptr, tail = nullptr;
     if(pos != beg){
       // split off head
       --pos;
@@ -479,7 +500,7 @@ public:
       return pos;
 
     }
-    Constraint_id head = 0, tail = 0;
+    Constraint_id head = nullptr, tail = nullptr;
     Vertices_in_constraint_iterator bit = vertices_in_constraint_begin(cid);
     Vertices_in_constraint_iterator pred = pos;
     --pred;

@@ -204,7 +204,7 @@ namespace CGAL {
       FT get_z(const Point_3& p){ return m_traits.compute_z_3_object()(p); }
       FT get_coord(const Point_3& p, unsigned int d)
       {
-        CGAL_assertion(d >= 0 && d < 3);
+        CGAL_assertion(d < 3);
         switch (d)
         {
           case 0: return get_x(p);

@@ -512,7 +512,7 @@ Scene_polygon_soup_item::toolTip() const
     return QString();
 
   QString str = QObject::tr("<p><b>%1</b> (mode: %5, color: %6)<br />"
-                     "<i>Polygons soup</i></p>"
+                     "<i>Polygon soup</i></p>"
                      "<p>Number of vertices: %2<br />"
                      "Number of polygons: %3</p>")
     .arg(this->name())
@@ -546,12 +546,14 @@ Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 
       if(d->soup->fcolors.empty())
         getTriangleContainer(Priv::Flat_facets)->setColor(this->color());
+      getTriangleContainer(Priv::Flat_facets)->setAlpha(alpha());
       getTriangleContainer(Priv::Flat_facets)->draw(viewer, d->soup->fcolors.empty());
     }
     else if(renderingMode() == Gouraud)
     {
       if(d->soup->vcolors.empty())
         getTriangleContainer(Priv::Smooth_facets)->setColor(this->color());
+      getTriangleContainer(Priv::Smooth_facets)->setAlpha(alpha());
       getTriangleContainer(Priv::Smooth_facets)->draw(viewer, d->soup->vcolors.empty());
     }
   }

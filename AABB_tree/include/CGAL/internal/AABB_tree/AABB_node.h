@@ -111,6 +111,7 @@ private:
 
 };  // end class AABB_node
 
+
 template<typename Tr>
 template<class Traversal_traits, class Query>
 void

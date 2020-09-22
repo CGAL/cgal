@@ -460,9 +460,9 @@ public:
   static void add_point_in_buffer(const KPoint& kp, std::vector<float>& buffer)
   {
     Local_point p=get_local_point(kp);
-    buffer.push_back(p.x());
-    buffer.push_back(p.y());
-    buffer.push_back(p.z());
+    buffer.push_back(static_cast<float>(p.x()));
+    buffer.push_back(static_cast<float>(p.y()));
+    buffer.push_back(static_cast<float>(p.z()));
   }
 
   /// adds `kv` coordinates to `buffer`
@@ -471,9 +471,9 @@ public:
                                    bool inverse_normal=false)
   {
     Local_vector n=(inverse_normal?-get_local_vector(kv):get_local_vector(kv));
-    buffer.push_back(n.x());
-    buffer.push_back(n.y());
-    buffer.push_back(n.z());
+    buffer.push_back(static_cast<float>(n.x()));
+    buffer.push_back(static_cast<float>(n.y()));
+    buffer.push_back(static_cast<float>(n.z()));
   }
 
   ///adds `acolor` RGB components to `buffer`

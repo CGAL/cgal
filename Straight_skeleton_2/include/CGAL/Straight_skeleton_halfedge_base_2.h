@@ -125,8 +125,6 @@ public:
 
   Straight_skeleton_halfedge_base_2( int aID, Sign aSlope ) : Base_base(aID,aSlope) {}
 
-private:
-
   void set_opposite( Halfedge_handle h )  { Base_base::opposite(h)  ; }
   void set_next    ( Halfedge_handle h )  { Base_base::set_next(h)  ; }
   void set_prev    ( Halfedge_handle h )  { Base_base::set_prev(h)  ; }

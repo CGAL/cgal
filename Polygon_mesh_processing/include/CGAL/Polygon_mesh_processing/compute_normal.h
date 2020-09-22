@@ -98,6 +98,12 @@ void sum_normals(const PM& pmesh,
     const Point_ref pvnn = get(vpmap, target(next(he, pmesh), pmesh));
 
     const Vector n = internal::triangle_normal(pv, pvn, pvnn, traits);
+
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
+    std::cout << "Normal of " << f << " pts: " << pv << " ; " << pvn << " ; " << pvnn << std::endl;
+    std::cout << " --> " << n << std::endl;
+#endif
+
     sum = traits.construct_sum_of_vectors_3_object()(sum, n);
 
     he = next(he, pmesh);
@@ -110,27 +116,38 @@ void sum_normals(const PM& pmesh,
 * \ingroup PMP_normal_grp
 * computes the outward unit vector normal to face `f`.
 * @tparam PolygonMesh a model of `FaceGraph`
-* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* @param f the face on which the normal is computed
+* @param f the face whose normal is computed
 * @param pmesh the polygon mesh containing `f`
-* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-*   If this parameter is omitted, an internal property map for
-*   `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
-*    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+*   \cgalParamNBegin{vertex_point_map}
+*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `%Point_3` as value type}
+*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+*                     must be available in `PolygonMesh`.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * @return the computed normal. The return type is a 3D vector type. It is
-* either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+* either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
 * or from the geometric traits class deduced from the point property map
 * of `pmesh`.
 *
 * \warning This function involves a square root computation.
-* If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
-* will be done approximately.
+* If the field type (`FT`) of the traits does not support the `sqrt()` operation,
+* the square root computation will be performed approximately.
 */
 template <typename PolygonMesh, typename NamedParameters>
 #ifdef DOXYGEN_RUNNING
@@ -182,18 +199,29 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 *
 * @param pmesh the polygon mesh
 * @param face_normals the property map in which the normals are written
-* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-*   If this parameter is omitted, an internal property map for
-*   `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
-*    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+*   \cgalParamNBegin{vertex_point_map}
+*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `%Point_3` as value type}
+*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+*                     must be available in `PolygonMesh`.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * \warning This function involves a square root computation.
-* If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
-* will be done approximately.
+* If the field type (`FT`) of the traits does not support the `sqrt()` operation,
+* the square root computation will be performed approximately.
 */
 template <typename PolygonMesh, typename Face_normal_map, typename NamedParameters>
 void compute_face_normals(const PolygonMesh& pmesh,
@@ -206,7 +234,7 @@ void compute_face_normals(const PolygonMesh& pmesh,
   {
     typename Kernel::Vector_3 vec = compute_face_normal(f, pmesh, np);
     put(face_normals, f, vec);
-#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
     std::cout << "normal at face " << f << " is " << get(face_normals, f) << std::endl;
 #endif
   }
@@ -522,6 +550,10 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
   typename GT::Construct_vector_3 cv_3 = traits.construct_vector_3_object();
   typename GT::Compute_squared_length_3 csl_3 = traits.compute_squared_length_3_object();
 
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
+  std::cout << "Compute normal as weighted sums; type: " << vn_type << std::endl;
+#endif
+
   Vector_3 normal = cv_3(CGAL::NULL_VECTOR);
 
   halfedge_descriptor h = halfedge(v, pmesh);
@@ -548,7 +580,13 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
         const FT den = CGAL::approximate_sqrt(csl_3(v1) * csl_3(v2));
 
         if(den == FT(0))
+        {
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
+          std::cout << "Null denominator, switching to no weights" << std::endl;
+#endif
+
           return compute_vertex_normal_as_sum_of_weighted_normals(v, NO_WEIGHT, face_normals, vpmap, pmesh, traits);
+        }
 
         n = traits.construct_scaled_vector_3_object()(n, FT(1) / den);
         normal = traits.construct_sum_of_vectors_3_object()(normal, n);
@@ -575,25 +613,36 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
 * computes the unit normal at vertex `v` as the average of the normals of incident faces.
 * @tparam PolygonMesh a model of `FaceGraph`
 *
-* @param v the vertex at which the normal is computed
+* @param v the vertex whose normal is computed
 * @param pmesh the polygon mesh containing `v`
-* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-*   If this parameter is omitted, an internal property map for
-*   `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
-*    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+*   \cgalParamNBegin{vertex_point_map}
+*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `%Point_3` as value type}
+*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+*                     must be available in `PolygonMesh`.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * @return the computed normal. The return type is a 3D vector type. It is
-* either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+* either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
 * or the geometric traits class deduced from the point property map
 * of `pmesh`.
 *
 * \warning This function involves a square root computation.
-* If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
-* will be done approximately.
+* If the field type (`FT`) of the traits does not support the `sqrt()` operation,
+* the square root computation will be performed approximately.
 */
 template<typename PolygonMesh, typename NamedParameters>
 #ifdef DOXYGEN_RUNNING
@@ -632,9 +681,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   const bool must_compute_face_normals = is_default_parameter(get_parameter(np, internal_np::face_normal));
 
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
-  std::cout << std::endl << std::endl;
-  std::cout << "----------------------------------------------------------------------" << std::endl;
-  std::cout << "compute vertex at " << get(vpmap, v)
+  std::cout << "<----- compute vertex normal at " << get(vpmap, v)
             << ", must compute face normals? " << must_compute_face_normals << std::endl;
 #endif
 
@@ -654,7 +701,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
     }
   }
 
-#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
   std::cout << "Incident face normals:" << std::endl;
   for(halfedge_descriptor h : CGAL::halfedges_around_target(v, pmesh))
   {
@@ -698,18 +745,29 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 *
 * @param pmesh the polygon mesh
 * @param vertex_normals the property map in which the normals are written
-* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-*   If this parameter is omitted, an internal property map for
-*   `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
-*    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+*   \cgalParamNBegin{vertex_point_map}
+*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `%Point_3` as value type}
+*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+*                     must be available in `PolygonMesh`.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * \warning This function involves a square root computation.
-* If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
-* will be done approximately.
+* If the field type (`FT`) of the traits does not support the `sqrt()` operation,
+* the square root computation will be performed approximately.
 */
 template <typename PolygonMesh, typename VertexNormalMap, typename NamedParameters>
 void compute_vertex_normals(const PolygonMesh& pmesh,
@@ -787,18 +845,29 @@ void compute_vertex_normals(const PolygonMesh& pmesh, VertexNormalMap vertex_nor
 * @param pmesh the polygon mesh
 * @param vertex_normals the property map in which the vertex normals are written
 * @param face_normals the property map in which the face normals are written
-* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-*   If this parameter is omitted, an internal property map for
-*   `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
-*    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+*   \cgalParamNBegin{vertex_point_map}
+*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `%Point_3` as value type}
+*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+*                     must be available in `PolygonMesh`.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * \warning This function involves a square root computation.
-* If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
-* will be done approximately.
+* If the field type (`FT`) of the traits does not support the `sqrt()` operation,
+* the square root computation will be performed approximately.
 */
 template <typename PolygonMesh,
           typename VertexNormalMap, typename FaceNormalMap,

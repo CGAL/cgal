@@ -3333,8 +3333,7 @@ namespace CommonKernelFunctors {
       CGAL_kernel_assertion_msg(bool(optional) == true,
                                 "the segment does not intersect the supporting"
                                 " plane");
-      using boost::get;
-      const Point_3* p = get<Point_3>(&*optional);
+      const Point_3* p = boost::get<Point_3>(&*optional);
       CGAL_kernel_assertion_msg(p != 0,
                                 "the segment intersection with the plane is "
                                 "not a point");

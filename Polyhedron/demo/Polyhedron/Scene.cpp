@@ -598,6 +598,10 @@ void Scene::renderWireScene(const QList<Scene_interface::Item_id> &items,
           || item.renderingMode() == PointsPlusNormals
           || item.renderingMode() == GouraudPlusEdges)
        {
+         if(with_names) {
+           viewer->glClearDepthf(1.0);
+           viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+         }
          viewer->setGlPointSize(2.f);
          item.drawEdges(viewer);
        }
@@ -656,6 +660,10 @@ void Scene::renderPointScene(const QList<Scene_interface::Item_id> &items,
          (item.renderingMode() == PointsPlusNormals)  ||
          (item.renderingMode() == ShadedPoints))
       {
+        if(with_names) {
+          viewer->glClearDepthf(1.0);
+          viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        }
         viewer->setGlPointSize(3.0f);
         item.drawPoints(viewer);
       }
@@ -696,7 +704,22 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
     Q_FOREACH(Item_id id, children)
     {
       Scene_item* item = m_entries[id];
-      if(item->alpha() == 1.0f)
+      Scene_group_item* group = qobject_cast<Scene_group_item*>(item);
+      bool is_transparent=false;
+      if(item->alpha() != 1.0f)
+        is_transparent = true;
+      else if(group)
+      {
+        for(const auto& child : group->getChildren())
+        {
+          if(group->getChild(child)->alpha() < 1.0f)
+          {
+            is_transparent = true;
+            break;
+          }
+        }
+      }
+      if(!is_transparent)
         opaque_items.push_back(id);
       else
         transparent_items.push_back(id);
@@ -826,9 +849,9 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       //blending
       program.bind();
       vaos[viewer]->bind();
-      viewer->glClearColor(background.redF(),
-                           background.greenF(),
-                           background.blueF(),
+      viewer->glClearColor((GLclampf)background.redF(),
+                           (GLclampf)background.greenF(),
+                           (GLclampf)background.blueF(),
                            0.0f);
       viewer->glDisable(GL_DEPTH_TEST);
       viewer->glClear(GL_COLOR_BUFFER_BIT);
@@ -1192,6 +1215,8 @@ bool Scene::sort_lists(QVector<QList<int> >&sorted_lists, bool up)
 }
 void Scene::moveRowUp()
 {
+  if(selectionIndices().isEmpty())
+    return;
   QVector<QList<int> >sorted_lists(1);
   QList<int> to_select;
   //sort lists according to the indices of each item in its container (scene or group)
@@ -1243,6 +1268,8 @@ void Scene::moveRowUp()
 }
 void Scene::moveRowDown()
 {
+  if(selectionIndices().isEmpty())
+    return;
   QVector<QList<int> >sorted_lists(1);
   QList<int> to_select;
   //sort lists according to the indices of each item in its container (scene or group)
@@ -1292,7 +1319,9 @@ void Scene::moveRowDown()
       }
     }
   }
-  selectionChanged(to_select);
+  if(!to_select.isEmpty()){
+    selectionChanged(to_select);
+  }
 }
 Scene::Item_id Scene::mainSelectionIndex() const {
     return (selectionIndices().size() == 1) ? selected_item : -1;
