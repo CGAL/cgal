@@ -38,7 +38,7 @@ struct ArrReader
     return arr;
   }
 
-#ifdef CGAL_USE_Core
+#ifdef CGAL_USE_CORE
   auto operator()(demo_types::TypeHolder<demo_types::Conic_arr>)
   {
     using namespace demo_types;
@@ -99,7 +99,7 @@ struct ArrWriter
     CGAL::write(*arr, ofs, arrFormatter);
   }
 
-#ifdef CGAL_USE_Core
+#ifdef CGAL_USE_CORE
   void operator()(demo_types::Conic_arr* arr)
   {
     Conic_reader<demo_types::Conic_arr::Geometry_traits_2> conicReader;

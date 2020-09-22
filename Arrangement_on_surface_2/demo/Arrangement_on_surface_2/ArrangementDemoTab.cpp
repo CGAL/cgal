@@ -462,7 +462,7 @@ findOtherInterestingPoints(const std::unique_ptr<Arr_>&, const CGAL::Bbox_2&)
   return {};
 }
 
-#ifdef CGAL_USE_Core
+#ifdef CGAL_USE_CORE
 template <typename Coefficient_>
 static const auto&
 getXyCurves(const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>* traits)
@@ -524,7 +524,7 @@ CGAL::Bbox_2 findOtherInterestingPoints<demo_types::Alg_seg_arr>(
   }
   return bb;
 }
-#endif // CGAL_USE_Core
+#endif // CGAL_USE_CORE
 
 template <class Arr_>
 void ArrangementDemoTab<Arr_>::adjustViewport()

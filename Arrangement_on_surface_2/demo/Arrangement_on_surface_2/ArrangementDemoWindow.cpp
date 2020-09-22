@@ -223,7 +223,7 @@ void ArrangementDemoWindow::showInsertMethods(demo_types::TraitsType tabType)
     this->ui->actionRay->setVisible(true);
     this->ui->actionLine->setVisible(true);
     break;
-#ifdef CGAL_USE_Core
+#ifdef CGAL_USE_CORE
   case TraitsType::CONIC_TRAITS:
     this->ui->actionSegment->setVisible(true);
     this->ui->actionCircle->setVisible(true);
@@ -284,7 +284,7 @@ void ArrangementDemoWindow::updateInputType(QAction* a)
 // should refactor this to GraphicsViewCurveInput if any other use case arises
 void ArrangementDemoWindow::on_actionAddAlgebraicCurve_triggered()
 {
-#ifdef CGAL_USE_Core
+#ifdef CGAL_USE_CORE
   AlgebraicCurveInputDialog newDialog;
 
   if (newDialog.exec() == QDialog::Accepted)
@@ -328,7 +328,7 @@ void ArrangementDemoWindow::on_actionAddAlgebraicCurve_triggered()
 
 void ArrangementDemoWindow::on_actionAddRationalCurve_triggered()
 {
-#ifdef CGAL_USE_Core
+#ifdef CGAL_USE_CORE
   RationalCurveInputDialog newDialog;
 
   if (newDialog.exec() == QDialog::Accepted)

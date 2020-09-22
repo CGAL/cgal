@@ -20,7 +20,7 @@
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 
-#ifdef CGAL_USE_Core
+#ifdef CGAL_USE_CORE
   #include <CGAL/CORE_algebraic_number_traits.h>
   #include <CGAL/Arr_conic_traits_2.h>
   #include <CGAL/Arr_algebraic_segment_traits_2.h>
@@ -75,7 +75,7 @@ public:
 
 // use same rational type across arrangements
 // less specializations, and makes PointSnapper untemplated
-#ifdef CGAL_USE_Core
+#ifdef CGAL_USE_CORE
   typedef CORE::BigRat                                  Rational;
 #else
   typedef CGAL::Exact_rational                          Rational;
@@ -102,7 +102,7 @@ typedef Dcel<Lin_traits>                                Lin_dcel;
 typedef CGAL::Arrangement_with_history_2<Lin_traits, Lin_dcel>
                                                         Lin_arr;
 
-#ifdef CGAL_USE_Core
+#ifdef CGAL_USE_CORE
   typedef CGAL::CORE_algebraic_number_traits            Core_nt_traits;
   typedef Core_nt_traits::Integer                       Core_integer;
   typedef Core_nt_traits::Rational                      Core_rational;
@@ -141,7 +141,7 @@ typedef CGAL::Arrangement_with_history_2<Lin_traits, Lin_dcel>
 #endif
 }
 
-#ifdef CGAL_USE_Core
+#ifdef CGAL_USE_CORE
   #define ARRANGEMENT_DEMO_SPECIALIZE_ARR_CORE(class_name)                     \
     template class class_name<demo_types::Conic_arr>;                          \
     template class class_name<demo_types::Alg_seg_arr>;                        \

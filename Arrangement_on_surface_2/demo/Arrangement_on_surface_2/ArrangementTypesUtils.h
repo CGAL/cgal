@@ -23,7 +23,7 @@ enum class TraitsType : int
   SEGMENT_TRAITS,
   POLYLINE_TRAITS,
   LINEAR_TRAITS,
-#ifdef CGAL_USE_Core
+#ifdef CGAL_USE_CORE
   CONIC_TRAITS,
   ALGEBRAIC_TRAITS,
   BEZIER_TRAITS,
@@ -46,7 +46,7 @@ static constexpr TraitsType enumFromArrType()
   if (is_same<T, Seg_arr>::value) return TraitsType::SEGMENT_TRAITS;
   else if (is_same<T, Pol_arr>::value) return TraitsType::POLYLINE_TRAITS;
   else if (is_same<T, Lin_arr>::value) return TraitsType::LINEAR_TRAITS;
-#ifdef CGAL_USE_Core
+#ifdef CGAL_USE_CORE
   else if (is_same<T, Conic_arr>::value) return TraitsType::CONIC_TRAITS;
   else if (is_same<T, Alg_seg_arr>::value) return TraitsType::ALGEBRAIC_TRAITS;
   else if (is_same<T, Bezier_arr>::value) return TraitsType::BEZIER_TRAITS;
@@ -70,7 +70,7 @@ static void visitArrangementType(TraitsType tt, Lambda lambda)
   case TraitsType::LINEAR_TRAITS:
     lambda(TypeHolder<Lin_arr>{});
     break;
-#ifdef CGAL_USE_Core
+#ifdef CGAL_USE_CORE
   case TraitsType::CONIC_TRAITS:
     lambda(TypeHolder<Conic_arr>{});
     break;
@@ -93,7 +93,7 @@ static void forEachArrangementType(Lambda lambda)
   lambda(TypeHolder<Seg_arr>{});
   lambda(TypeHolder<Pol_arr>{});
   lambda(TypeHolder<Lin_arr>{});
-#ifdef CGAL_USE_Core
+#ifdef CGAL_USE_CORE
   lambda(TypeHolder<Conic_arr>{});
   lambda(TypeHolder<Alg_seg_arr>{});
   lambda(TypeHolder<Bezier_arr>{});
