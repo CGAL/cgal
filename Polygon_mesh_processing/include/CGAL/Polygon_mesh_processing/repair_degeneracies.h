@@ -1698,37 +1698,23 @@ bool remove_degenerate_faces(const FaceRange& face_range,
   // Ignore faces with null edges
   if(!all_removed)
   {
-    std::map<edge_descriptor, bool> are_degenerate_edges;
-
-    for(face_descriptor fd : degenerate_face_set)
+    typename std::set<face_descriptor>::iterator it = degenerate_face_set.begin();
+    while(it != degenerate_face_set.end())
     {
-      for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, tmesh), tmesh))
+      bool has_degenerate_edge = false;
+      for(halfedge_descriptor hd : halfedges_around_face(halfedge(*it, tmesh), tmesh))
       {
-        edge_descriptor ed = edge(hd, tmesh);
-        std::pair<typename std::map<edge_descriptor, bool>::iterator, bool> is_insert_successful =
-            are_degenerate_edges.insert(std::make_pair(ed, false));
-
-        bool is_degenerate = false;
-        if(is_insert_successful.second)
+        const edge_descriptor ed = edge(hd, tmesh);
+        if(is_degenerate_edge(ed, tmesh, np))
         {
-          // did not previously exist in the map, so actually have to check if it is degenerate
-          if(traits.equal_3_object()(get(vpmap, target(ed, tmesh)), get(vpmap, source(ed, tmesh))))
-            is_degenerate = true;
-        }
-
-        is_insert_successful.first->second = is_degenerate;
-
-        if(is_degenerate)
-        {
-          halfedge_descriptor h = halfedge(ed, tmesh);
-          if(!is_border(h, tmesh))
-            degenerate_face_set.erase(face(h, tmesh));
-
-          h = opposite(h, tmesh);
-          if(!is_border(h, tmesh))
-            degenerate_face_set.erase(face(h, tmesh));
+          has_degenerate_edge = true;
+          it = degenerate_face_set.erase(it);
+          break;
         }
       }
+
+      if(!has_degenerate_edge)
+        ++it;
     }
   }
 
