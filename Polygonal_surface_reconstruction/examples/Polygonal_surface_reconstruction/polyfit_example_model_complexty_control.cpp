@@ -111,7 +111,6 @@ int main()
        const std::string& output_file = "data/building_result-0.5.off";
        if (CGAL::write_OFF(output_file, model))
            std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
-       }
        else {
            std::cerr << " Failed saving file." << std::endl;
            return EXIT_FAILURE;
