@@ -62,9 +62,8 @@ void print_point_location
 // Perform a point-location query and print the result.
 //
 template <typename PointLocation>
-void point_location_query(const PointLocation& pl,
-                          const typename
-                          PointLocation::Arrangement_2::Point_2& q)
+void locate_point(const PointLocation& pl,
+                  const typename PointLocation::Arrangement_2::Point_2& q)
 {
   // Perform the point-location query.
   typedef PointLocation                                 Point_location;

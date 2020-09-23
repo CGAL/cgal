@@ -29,8 +29,8 @@ typedef CGAL::Arr_face_overlay_traits<Arrangement_blue, Arrangement_red,
 
 int main()
 {
-  // Construct the first arrangement, induced by two line y = x and y = -x.
-  Arrangement_blue          arr1;
+  // Construct the first arrangement, induced by two lines y = x and y = -x.
+  Arrangement_blue arr1;
   insert(arr1, Line(Point(0, 0), Point(1, 1)));
   insert(arr1, Line(Point(0, 0), Point(1, -1)));
 
@@ -45,10 +45,10 @@ int main()
 
   // Construct the second arrangement, containing a single square-shaped face.
   Arrangement_red arr2;
-  insert(arr2, Segment(Point(-3, -3), Point(3, -3)));
-  insert(arr2, Segment(Point(3, -3), Point(3, 3)));
-  insert(arr2, Segment(Point(3, 3), Point(-3, 3)));
-  insert(arr2, Segment(Point(-3, 3), Point(-3, -3)));
+  insert_non_intersecting_curve(arr2, Segment(Point(-3, -3), Point(3, -3)));
+  insert_non_intersecting_curve(arr2, Segment(Point(3, -3), Point(3, 3)));
+  insert_non_intersecting_curve(arr2, Segment(Point(3, 3), Point(-3, 3)));
+  insert_non_intersecting_curve(arr2, Segment(Point(-3, 3), Point(-3, -3)));
 
   // Give the unbounded face the index 1, and the bounded face the index 2.
   for (auto fit = arr2.faces_begin(); fit != arr2.faces_end(); ++fit)

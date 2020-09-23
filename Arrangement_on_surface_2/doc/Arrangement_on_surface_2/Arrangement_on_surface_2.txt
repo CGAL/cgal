@@ -5510,12 +5510,12 @@ figure out the answer.  Computing the overlay of two planar
 arrangements is also useful for supporting Boolean set operations on
 polygons or general polygons; see e.g., \cgalCite{cgal:behhms-cbcab-02}).
 
-Formally, the <em>map overlay</em> of two planar subdivisions
-\f$\cal S_1\f$ and \f$\cal S_2\f$ is a planar subdivision \f$\cal S\f$,
-such that there is a face \f$f\f$ in \f$\cal S\f$ iff there are faces
-\f$f_1\f$ and \f$f_2\f$ in \f$\cal S_1\f$ and \f$\cal S_2\f$,
-respectively, such that \f$f\f$ is a maximal connected component of
-\f$f_1 \cap f_2\f$.
+Formally, the <em>map overlay</em> of two two-dimensional subdivisions
+\f$\cal S_1\f$ and \f$\cal S_2\f$ is a two-dimensional subdivision
+\f$\cal S\f$, such that there is a face \f$f\f$ in \f$\cal S\f$ iff
+there are faces \f$f_1\f$ and \f$f_2\f$ in \f$\cal S_1\f$ and \f$\cal
+S_2\f$, respectively, such that \f$f\f$ is a maximal connected
+component of \f$f_1 \cap f_2\f$.
 
 The overlay of two given arrangements, conveniently referred to as the
 "blue" and the "red" arrangements, is implemented as a plane-sweep
@@ -5654,18 +5654,27 @@ arrangement depicted in \cgalFigureRef{arr_figex_overlay}.
 
 \cgalExample{Arrangement_on_surface_2/face_extension_overlay.cpp}
 
-The next example demonstrates the face overlay of two arrangements
-that have unbounded faces as well as bounded ones. The first
-arrangement (blue) is induced by the two lines \f$y = x\f$ and \f$y =
--x\f$, which subdivide the plane into four unbounded faces, labeled
-\f$A\f$, \f$B\f$, \f$C\f$ and \f$D\f$. The second arrangement (red)
-comprises four line segments that form a square-shaped face indexed
-1. The unbounded face is indexed 2. When the two arrangements are
-overlaid, each of the four faces \f$A\f$, \f$B\f$, \f$C\f$ and \f$D\f$
-is split into an unbounded face (indexed 2) and a bounded face
-(indexed 1), so the faces of the resulting arrangement are labeled
-\f$A_1, A_2, \ldots, D_1, D_2\f$. `boost::lexical_cast` is used to
-cast the integral indices into strings to produce the final labels..
+<!----------------------------------------------------------------------------->
+\cgalFigureBegin{arr_figex_overlay_unbounded,overlay_unbounded.png}
+Overlaying two arrangements of lines that have unbounded faces, as
+done in `overlay_unbounded.cpp`.
+\cgalFigureEnd
+<!----------------------------------------------------------------------------->
+
+The next example, depicted in
+\cgalFigureRef{arr_figex_overlay_unbounded}, demonstrates the face
+overlay of two arrangements that have unbounded faces as well as
+bounded ones.  The first arrangement (blue) is induced by the two
+lines \f$y = x\f$ and \f$y = -x\f$, which subdivide the plane into
+four unbounded faces, labeled \f$A\f$, \f$B\f$, \f$C\f$ and
+\f$D\f$. The second arrangement (red) comprises four line segments
+that form a square-shaped face indexed \f$1\f$. The unbounded face is
+indexed 2. When the two arrangements are overlaid, each of the four
+faces \f$A\f$, \f$B\f$, \f$C\f$ and \f$D\f$ is split into an unbounded
+face (indexed 2) and a bounded face (indexed 1), so the faces of the
+resulting arrangement are labeled \f$A_1, A_2, \ldots, D_1,
+D_2\f$. `boost::lexical_cast` is used to cast the integral indices
+into strings to produce the final labels.
 
 \cgalExample{Arrangement_on_surface_2/overlay_unbounded.cpp}
 
@@ -5809,167 +5818,204 @@ of the colors attached to the inducing features.
 \subsection arr_ssecarr_with_hist Storing the Curve History
 <!----------------------------------------------------------------------------->
 
-As stated at the beginning of this chapter (Section \ref
-aos_sec-intro), when one constructs an arrangement induced by a set
-\f$\cal C\f$ of arbitrary planar curves, she or he constructs a
-collection \f$\cal C''\f$ of \f$x\f$-monotone subcurves of \f$\cal
-C\f$ that are pairwise disjoint in their interior, and these subcurves
-are associated with the arrangement edges (more precisely, with the
-\sc{Dcel} halfedges). Doing so, the connection between the originating
-input curves and the arrangement edges is lost. This loss might be
-acceptable for some applications. However, in many practical cases it
-is important to determine the input curves that give rise to the final
-subcurves.
+When you constructs an arrangement induced by a set \f$\cal C\f$ of
+arbitrary two-dimensional curves, you end up with a collection \f$\cal
+C''\f$ of \f$x\f$-monotone subcurves of \f$\cal C\f$ that are pairwise
+disjoint in their interior; see Section \ref aos_sec-intro. These
+subcurves are associated with the arrangement edges (more precisely,
+with pairs of \sc{Dcel} halfedges). The connection between the
+originating input curves and the arrangement edges is lost during the
+construction process. This loss might be acceptable for some
+applications. However, in many practical cases it is important to
+determine the input curves that give rise to the final subcurves.
 
-The `Arrangement_with_history_2<Traits,Dcel>` class-template extends
-the `Arrangement_2` class by keeping an additional container of input
-curves representing \f$\cal C\f$, and by maintaining a cross-mapping
-between these curves and the arrangement edges they induce. The traits
-class that is used for instantiating the template should be a model of
-the `ArrangementTraits_2` concept (see Section \ref
-aos_ssec-insert_gen).  That is, it should define the `Curve_2` type
-(and not just the `X_monotone_curve_2` type). The `Dcel` parameter
-should model the `ArrangementDcel` concept. Users can use the default
-\sc{Dcel} class or an extended \sc{Dcel} class according to their
-needs.
+The
+`Arrangement_on_surface_with_history_2<GeometryTraits,TopologyTraits>`
+class-template extends the
+`Arrangement_on_surface_2<GeometryTraits,TopologyTraots>` class
+template by keeping an additional container of input curves
+representing \f$\cal C\f$, and by maintaining a cross-mapping between
+these curves and the arrangement edges they induce. Similarly, the
+`Arrangement_with_history_2<GeometryTraits,Dcel>` class-template
+extends the `Arrangement_2<GeometryTraits,Dcel>` class template. The
+`GeometryTraits` template parameter, of either class templates, must
+be substituted with a model of the `ArrangementTraits_2` concept; see
+Section \ref aos_ssec-insert_gen. It should define the `Curve_2` type
+and support its subdivision into `X_monotone_curve_2` objects, among
+the others.  The `Dcel` parameter must be substituted with a model of
+the `ArrangementDcel` concept. You can use either the default
+\sc{Dcel} class or an extended \sc{Dcel} class (see Section \ref
+arr_ssecex_dcel) based on your needs. An arrangement that support the
+cross-mapping mentioned above is referred to as an arrangement with
+history. In the following we use the `Arrangement_with_history_2<>`
+class template to demonstrate arrangements with history. However, the
+explanation applies also to `Arrangement_on_surface_with_history_2<>`,
+as the type of the embedding surface is irrelevant to the discussion.
 
 <!----------------------------------------------------------------------------->
 \subsubsection arr_sssecarrwh_traverse Traversing an Arrangement with History
 <!----------------------------------------------------------------------------->
 
-The `Arrangement_with_history_2` class extends the `Arrangement_2`
-class, thus all the iterator and circulator types that are defined by
-the arrangement class are also available in
-`Arrangement_with_history_2`.  The reader is referred to Section \ref
-arr_ssectraverse for a comprehensive review of these functions.
+The `Arrangement_with_history_2` class template extends the
+`Arrangement_2` class template. Thus, all the iterator and circulator
+types that are defined in the base class are also available in
+`Arrangement_with_history_2`.  (Refer to Section \ref
+arr_ssectraverse for a comprehensive review of this functionality.)
 
-As mentioned above, the `Arrangement_with_history_2` class maintains
-a container of input curves, which can be accessed using curve handles.
-The member function `number_of_curves()` returns the number of input
-curves stored in the container, while `curves_begin()` and
-`curves_end()` return `Arrangement_with_history_2::Curve_iterator`
-objects that define the valid range of curves that induce the arrangement.
-The value type of this iterator is `Curve_2`. Moreover, the curve-iterator
-type is equivalent to `Arrangement_with_history_2::Curve_handle`, which
-is used for accessing the stored curves. Conveniently, the corresponding
-constant-iterator and constant-handle types are also defined.
+As mentioned above, the `Arrangement_with_history_2` class template
+maintains a container of input curves, which can be accessed using
+curve handles.  Let `arr` identify an object, the type of which is an
+instance of this template. The call \link
+Arrangement_with_history_2::number_of_curves()
+`arr.number_of_curves()`\endlink returns the number of input curves
+stored in the container, while \link
+Arrangement_with_history_2::curves_begin()
+`arr.curves_begin()`\endlink and \link
+Arrangement_with_history_2::curves_end() `arr.curves_end()`\endlink
+return `Arrangement_with_history_2::Curve_iterator` objects that
+define the range of curves that induce the arrangement.  The value
+type of this iterator is `Curve_2`. Moreover, the curve-iterator type
+is convertible to `Arrangement_with_history_2::Curve_handle`, which is
+used for accessing the stored curves. For convenience, the
+corresponding constant-iterator and constant-handle types are also
+defined.
 
 As mentioned in the previous paragraph, a `Curve_handle` object `ch`
 serves as a pointer to a curve stored in an arrangement-with-history
-instance `arr`. Using this handle, it is possible to obtain the number
-of arrangement edges this curve induces by calling
-`arr.number_of_induced_edges(ch)`. The functions
-`arr.induced_edges_begin(ch)` and `arr.induced_edges_end(ch)` return
-iterators of type `Arrangement_with_history_2::Induced_edges_iterator`
-that define the valid range of edges induced by `ch`. The value type
-of these iterators is \link Arrangement_2::Halfedge_handle
-`Halfedge_handle`\endlink. It is thus possible to traverse all
-arrangement edges induced by an input curve.
+object `arr`. Using this handle, it is possible to obtain the number
+of arrangement edges this curve induces by calling \link
+Arrangement_with_history_2::number_of_induced_edges()
+`arr.number_of_induced_edges(ch)`\endlink. The functions \link
+Arrangement_with_history_2::induced_edges_begin()
+`arr.induced_edges_begin(ch)`\endlink and \link
+Arrangement_with_history_2::induced_edges_end()
+`arr.induced_edges_end(ch)`\endlink return iterators of type
+`Arrangement_with_history_2::Induced_edges_iterator` that define the
+range of edges induced by `ch`. The value type of these iterators is
+\link Arrangement_2::Halfedge_handle `Halfedge_handle`\endlink. It is
+thus possible to traverse all arrangement edges induced by an input
+curve.
 
-It is also important to be able to perform the inverse mapping. Given an
-arrangement edge, we would like to be able to determine which input curve
-induces it. In case the edge represents an overlap of several curves, we
-should be able to trace all input curves that overlap over this edge.
-The `Arrangement_with_history_2` class is extended by several member
-functions that enable such an inverse mapping. Given a halfedge handle `e`
-in an arrangement with history `arr`, then
-`arr.number_of_originating_curves(e)` returns the number of curves that
-induce the edge (which should be 1 in non-degenerate cases, and 2 or more
-in case of overlaps), while `arr.originating_curves_begin(e)` and
-`arr.originating_curves_end(e)` return
+The ability to perform the inverse mapping is also important. Given an
+arrangement edge, you may want to determine which input curve induces
+it. In case the edge represents an overlap of several curves, you
+should be able to trace all input curves that overlap in this edge.
+The `Arrangement_with_history_2` class template is extended by several
+member functions that enable such an inverse mapping. Given a handle
+to halfedge `e` in an arrangement with history object `arr`, the call
+\link Arrangement_with_history_2::number_of_originating_curves()
+`arr.number_of_originating_curves(e)`\endlink returns the number of
+curves that induce the edge (which should be 1 in non-degenerate
+cases, and 2 or more in case of overlaps), while \link
+Arrangement_with_history_2::originating_curves_begin()
+`arr.originating_curves_begin(e)`\endlink and \link
+Arrangement_with_history_2::originating_curves_end()
+`arr.originating_curves_end(e)`\endlink return
 `Arrangement_with_history_2::Originating_curve_iterator` objects that
 define the range of curves that induce `e`. The value type of these
-iterator is `Curve_2`.
+iterators is `Curve_2`.
 
-It is possible to overlay two `Arrangement_with_history_2` instances
-instantiated by the same traits class. In this case, the resulting
-arrangement will store a consolidated container of input curves, and
-automatically preserve the cross-mapping between the arrangement edges
-and the consolidated curve set. Users can employ an overlay-traits class
-to maintain any type of auxiliary data stored with the \sc{Dcel} features
-(see Section \ref arr_ssecoverlay).
+Overlaying two arrangement-with-history objects is possible only if
+their types are instances of the
+`Arrangement_with_history_2<Traits,Dcel>` class template, where the
+respective `Traits` parameters are substituted with two traits classes
+that are convertible to one another. In this case, the resulting
+arrangement stores a consolidated container of input curves, and
+automatically preserves the cross-mapping between the arrangement
+edges and the consolidated curve-set. You may also employ an
+overlay-traits class to maintain any type of auxiliary data stored
+with the \sc{Dcel} cells; see Section \ref arr_ssecoverlay.
 
 <!----------------------------------------------------------------------------->
 \subsubsection arr_sssecmodif_traverse Modifying an Arrangement with History
 <!----------------------------------------------------------------------------->
 
-As the `Arrangement_with_history_2` class extends the `Arrangement_2`
-class, it inherits the fundamental modification operations, such as
-`assign()` and `clear()`, from it. The vertex-manipulation functions
-are also inherited and supported (see Sections \ref
-arr_sssecmf_iso_verts and \ref arr_sssecinsert_point for the
-details). However, there are some fundamental differences between the
-interfaces of the two classes, which we highlight in this subsection.
+The `Arrangement_with_history_2` class template extends the
+`Arrangement_2` class template; thus, it inherits the fundamental
+modification operations, such as \link Arrangement_2::assign()
+`assign()`\endlink and \link Arrangement_2::clear() `clear()`\endlink,
+from it. The vertex-manipulation functions are also inherited and
+supported; see Sections \ref arr_sssecmf_iso_verts and \ref
+arr_sssecinsert_point for details. However, there are some
+fundamental differences between the interfaces of the two class
+templates, which we highlight next.
 
 The most significant difference between the arrangement-with-history
-class and the basic arrangement class is the way they handle their
-input curves.  `Arrangement_with_history_2` always stores the
-`Curve_2` objects that induce it, thus it is impossible to insert
-\f$x\f$-monotone curves into an arrangement with history. The free
-`insert_non_intersecting_curve()` and `insert()` that receives
-\f$x\f$-monotone curve (as well as their aggregated versions) are
-therefore not available for arrangement-with-history instances and
-only the free `insert()` and `insert()` functions that receive
-`Curve_2` (the incremental insertion function and the aggregated
-insertion function) are supported - see also Section \ref
-aos_ssec-insert_gen. Notice however that while the incremental
-insertion function `insert(arr,c)` for an `Arrangement_2` object `arr`
-does not have a return value, the corresponding
-arrangement-with-history function returns a `Curve_handle` to the
-inserted curve.
+class template and the basic arrangement class template is the way
+they handle their input curves.  `Arrangement_with_history_2` always
+stores the `Curve_2` objects that induce it. Thus, it is impossible to
+insert \f$x\f$-monotone curves into an arrangement with history. The
+free functions `insert_non_intersecting_curve()` and the version of
+`insert()` that accept \f$x\f$-monotone curves, as well as their
+aggregated versions), are therefore not available for
+arrangement-with-history instances. Only the free overloaded functions
+`insert()` that accept general curves, namely, the incremental
+insertion function and the aggregate insertion function, are
+supported; see Section \ref aos_ssec-insert_gen for a review of these
+functions. Notice however that while the incremental insertion
+function `insert(arr, c)` for an `Arrangement_2` object `arr` does not
+have a return value, the corresponding arrangement-with-history
+function returns a `Curve_handle` object that points to the inserted
+curve.
 
 As we are able to keep track of all edges induced by an input curve,
 we also provide a free function that removes a curve from an
-arrangement. By calling `remove(arr,ch)`, where `ch` is a valid curve
-handle, the given curve is deleted from the curve container, and all
-edges induced solely by this curve (i.e., excluding overlapping edges)
-are removed from the arrangement. The function returns the number of
-edges that have been removed.
+arrangement. By calling `remove_curve(arr,ch)`, where `ch` is a valid
+curve handle, the given curve is deleted from the curve container, and
+all edges induced solely by this curve (i.e., excluding overlapping
+edges) are removed from the arrangement. The function returns the
+number of edges that have been removed.
 
 In some cases, users may need to operate directly on the arrangement
 edges.  We first mention that the specialized insertion functions (see
 Section \ref arr_sssecmf_insert_cv) are not supported, as they accept
 \f$x\f$-monotone curves. Insertion can only be performed via the free
 insertion-functions. The other edge-manipulation functions (see
-Section \ref arr_sssecmf_halfedges) are however available, but have a
-different interface that does not use \f$x\f$-monotone curves:
+Section \ref arr_sssecmf_halfedges) are, however, available, but have
+a different interface that does not use \f$x\f$-monotone curves.
 
 <UL>
 
-<LI>Invoking `split_edge(e,p)` splits the edge `e` at a given point
-`p` that lies in its interior.  <LI>Invoking `merge_edge(e1,e2)`
-merges the two given edges. There is a precondition that `e1` and `e2`
-shared a common end-vertex of degree 2, and that the \f$x\f$-monotone
-subcurves associated with these edges are mergeable.  <LI>It is
-possible to remove an edge by simply invoking `remove_edge(e)`.</LI>
+<LI>Invoking \link Arrangement_with_history_2::split_edge()
+  `split_edge(e,p)`\endlink splits the edge `e` at a given point `p`
+  that lies in its interior.
+
+<LI>Invoking \link Arrangement_with_history_2::merge_edge()
+  `merge_edge(e1,e2)`\endlink merges the two given edges. There is a
+  precondition that `e1` and `e2` shared a common end-vertex of degree
+  2 prior to the merge, and that the \f$x\f$-monotone subcurves
+  associated with these edges are mergeable.
+
+<LI>It is possible to remove an edge by simply invoking \link
+  Arrangement_with_history_2::remove_edge()
+  `remove_edge(e)`\endlink.</LI>
+
 </UL>
 
 In all cases, the maintenance of cross-pointers for the appropriate
 input curves will be done automatically.
 
-It should be noted that it is possible to attach observers to an
-arrangement-with-history instance in order to get detailed notifications of
-the changes the arrangements undergoes (see Section \ref arr_ssecnotif for
-the details).
-
-<!----------------------------------------------------------------------------->
-<!-- \subsection arr_ssecarr_hist_ex Examples --------------------------------->
-<!----------------------------------------------------------------------------->
+Note that it is possible to attach observers to an
+arrangement-with-history object in order to get detailed notifications
+of the changes the arrangements undergoes; see Section \ref
+arr_ssecnotif for the details).
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{arr_figex_24,curve_history.png}
 An arrangement with history as constructed in
 `curve_history.cpp`. Note that \f$s_1\f$ and \f$s_3\f$ overlap over
-two edges. The point-location query points are drawn as lightly shaded
-dots.
+two edges. The point-location query points \f$q_1\f$, \f$q_2\f$, and
+\f$q_3\f$ are drawn as lightly shaded dots.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
 In the following example we construct a simple arrangement of six line
 segments, as depicted in \cgalFigureRef{arr_figex_24}, while
-maintaining the curve history. The example demonstrates the usage of
-the special traversal functions. It also shows how to issue
-point-location queries on the resulting arrangement, using the
+maintaining the curve history. Note that the input segments \f$s_1\f$
+and \f$s_3\f$ overlap over two edges. The example demonstrates the
+usage of the special traversal functions. It also shows how to issue
+point-location queries on the resulting arrangement (the query points
+\f$q_1\f$, \f$q_2\f$, and \f$q_3\f$ are drawn as crosses), using the
 auxiliary function `locate_point()` defined in the header file
 `point_location_utils.h`; see also Section \ref arr_ssecpl.
 
@@ -5977,7 +6023,7 @@ auxiliary function `locate_point()` defined in the header file
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{arr_figex_25,edge_manipulation_curve_history.png}
-An arrangement with history of nine circle as constructed in
+An arrangement with history of nine circles as constructed in
 `edge_manipulation_curve_history.cpp`. Note the vertical tangency
 points of \f$c_0\f$, marked as dark dots, which subdivide this circle
 into an upper half and a lower half, each consists of 9 edges. The
@@ -5986,13 +6032,15 @@ with all 18 edges it induces.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
-The following example demonstrates the usage of the free `remove()`
-function. We construct an arrangement of nine circles, while keeping a
-handle to each inserted circle. We then remove the large circle
-\f$c_0\f$, which induces \f$18\f$ edges, as depicted in
-\cgalFigureRef{arr_figex_25}. The example also shows how to use the
-`split_edge()` and `merge_edge()` functions when operating on an
-arrangement-with-history instance:
+The following example demonstrates the usage of the free
+`remove_curve()` function. We construct an arrangement of nine
+circles, while keeping a handle to each inserted circle. We then
+remove the large circle \f$c_0\f$, which induces \f$18\f$ edges, as
+depicted in \cgalFigureRef{arr_figex_25}. The example also shows how
+to use the \link Arrangement_with_history_2::split_edge()
+`split_edge()`\endlink and \link
+Arrangement_with_history_2::merge_edge() `merge_edge()`\endlink member
+functions when operating on an arrangement-with-history object.
 
 \cgalExample{Arrangement_on_surface_2/edge_manipulation_curve_history.cpp}
 

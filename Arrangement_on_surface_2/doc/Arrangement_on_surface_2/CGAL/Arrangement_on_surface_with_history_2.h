@@ -25,31 +25,36 @@ namespace CGAL {
  * The `Arrangement_on_surface_with_history_2` template has two parameters:
  *
  * <UL>
- * <LI>The `Traits` template-parameter should be instantiated with a model of
- * the `ArrangementGeometry_traits_2` concept. The traits class defines the
+ * <LI>The `GeometryTraits` template-parameter should be instantiated with a
+ * model of the `ArrangementTraits_2` concept. The traits class defines the
  * `Curve_2` type, which represents an input curve.  It also defines the types
  * of \f$ x\f$-monotone curves and two-dimensional points, namely
- * `ArrangementGeometry_traits_2::X_monotone_curve_2` and
- * `ArrangementGeometry_traits_2::Point_2`, respectively, and supports basic
+ * `ArrangementTraits_2::X_monotone_curve_2` and
+ * `ArrangementTraits_2::Point_2`, respectively, and supports basic
  * geometric predicates on them.
  * <LI>The `Dcel` template-parameter should be instantiated with a class that is
  * a model of the `ArrangementDcelWithRebind` concept. The value of this
  * parameter is by default `Arr_default_dcel<Traits>`.
  * </UL>
  *
- * \sa `ArrangementDcel`
- * \sa `Arr_default_dcel<Traits>`
- * \sa `ArrangementGeometry_traits_2`
- * \sa `Arrangement_2<Traits,Dcel>`
- * \sa `insertion functions`
- * \sa `removal functions`
- * \sa `overlaying arrangements`
+ * \sa `Arrangement_with_history_2<GeometryTraits,Dcel>`
+ * \sa `Arrangement_on_surface_2<GeometryTraits,TopologyTraits>`
+ * \sa `ArrangementTraits_2`
+ * \sa `ArrangementTopologyTraits`
  */
-template <typename Geometry_traits_2, typename TopologyTraits>
-class Arrangement_on_surface_with_history_2 : public Arrangement_on_surface_2<Geometry_traits_2, TopologyTraits> {
+template <typename GeometryTraits, typename TopologyTraits>
+class Arrangement_on_surface_with_history_2 :
+    public Arrangement_on_surface_2<GeometryTraits, TopologyTraits>
+{
 public:
   /// \name Types
   /// @{
+
+  //! the geometry traits class in use.
+  typedef GeometryTraits                                 Geometry_traits_2;
+
+  //! the topology traits class in use.
+  typedef TopologyTraits                                 Topology_traits;
 
   /*! a private type used as an abbreviation of the
    * `Arrangement_on_surface_with_history_2` type hereafter.
@@ -57,23 +62,17 @@ public:
   typedef Arrangement_on_surface_with_history_2<Geometry_traits_2,
                                                 TopologyTraits> Self;
 
-  //! the geometry traits class in use.
-  typedef Geometry_traits_2                     Geometry_traits_2;
-
-  //! the topology traits class in use.
-  typedef Geometry_traits_2                     Topology_traits;
-
   //! the <span class="textsc">Dcel</span> representation of the arrangement.
-  typedef typename Topology_traits::Dcel        Dcel;
+  typedef typename Topology_traits::Dcel                 Dcel;
 
   //! the point type, as defined by the traits class.
-  typedef typename Geometry_traits_2::Point_2             Point_2;
+  typedef typename Geometry_traits_2::Point_2            Point_2;
 
   //! the \f$ x\f$-monotone curve type, as defined by the traits class.
-  typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
+  typedef typename Geometry_traits_2::X_monotone_curve_2 X_monotone_curve_2;
 
   //! the curve type, as defined by the traits class.
-  typedef typename Geometry_traits_2::Curve_2             Curve_2;
+  typedef typename Geometry_traits_2::Curve_2            Curve_2;
 
   /// @}
 
@@ -230,11 +229,11 @@ public:
  *
  * \pre If provided, `pl` is attached to the given arrangement `arr`.
  */
-template<typename GeometryTraits_2, typename TopologyTraits,
+template<typename GeometryTraits, typename TopologyTraits,
          typename PointLocation>
-typename Arrangement_on_surface_with_history_2<Geometry_traits_2, TopologyTraits>::Curve_handle
+typename Arrangement_on_surface_with_history_2<GeometryTraits, TopologyTraits>::Curve_handle
 insert
-(Arrangement_on_surface_with_history_2<Geometry_traits_2, TopologyTraits>& arr,
+(Arrangement_on_surface_with_history_2<GeometryTraits, TopologyTraits>& arr,
  const typename Traits::Curve_2& c,
  const PointLocation& pl = walk_pl);
 
@@ -242,9 +241,9 @@ insert
  * Aggregately inserts the curves in the range `[first,last)` into the
  * arrangement with history `arr` using the sweep-line framework.
  */
-template <typename GeometryTraits_2, typename TopologyTraits,
+template <typename GeometryTraits, typename TopologyTraits,
           typename InputIterator>
-void insert(Arrangement_on_surface_with_history_2<GeometryTraits_2, TopologyTraits>& arr,
+void insert(Arrangement_on_surface_with_history_2<GeometryTraits, TopologyTraits>& arr,
             InputIterator first, InputIterator last);
 
 /*! \ingroup PkgArrangementOnSurface2Funcs
@@ -255,10 +254,10 @@ void insert(Arrangement_on_surface_with_history_2<GeometryTraits_2, TopologyTrai
  * deleting all the edges it induces. The function returns the number of
  * deleted edges.
  */
-template <typename GeometryTraits_2, typename TopologyTraits>
+template <typename GeometryTraits, typename TopologyTraits>
 Size remove_curve
-(Arrangement_on_surface_with_history_2<GeometryTraits_2, TopologyTraits>& arr,
- typename Arrangement_on_surface_with_history_2<Geometry_traits_2, TopologyTraits>::Curve_handle ch);
+(Arrangement_on_surface_with_history_2<GeometryTraits, TopologyTraits>& arr,
+ typename Arrangement_on_surface_with_history_2<GeometryTraits, TopologyTraits>::Curve_handle ch);
 
 
 /*! \addtogroup PkgArrangementOnSurface2Overlay
@@ -271,13 +270,13 @@ Size remove_curve
  * \pre `res` does not refer to either `arr1` or `arr2` (that is, "self overlay"
  * is not supported).
  */
-template <typename GeometryTraits_2, typename TopologyTraits1,
+template <typename GeometryTraits, typename TopologyTraits1,
           typename TopologyTraits12, typename ResTopologyTraits,
           typename OverlayTraits>
 void overlay
-(const Arrangement_on_surface_with_history_2<GeometryTraits_2, TopologyTraits1>& arr1,
- const Arrangement_on_surface_with_history_2<GeometryTraits_2, TopologyTraits12>& arr2,
- Arrangement_on_surface_with_history_2<GeometryTraits_2, ResTopologyTraits>& res,
+(const Arrangement_on_surface_with_history_2<GeometryTraits, TopologyTraits1>& arr1,
+ const Arrangement_on_surface_with_history_2<GeometryTraits, TopologyTraits12>& arr2,
+ Arrangement_on_surface_with_history_2<GeometryTraits, ResTopologyTraits>& res,
  OverlayTraits& ovl_tr);
 
 
@@ -292,11 +291,11 @@ void overlay
  * \pre `res` does not refer to either `arr1` or `arr2` (that is, "self overlay"
  *is not supported).
  */
-template <typename GeometryTraits_2, typename TopologyTraits1,
+template <typename GeometryTraits, typename TopologyTraits1,
           typename TopologyTraits2, typename ResTopologyTraits>
 void overlay
-(const Arrangement_on_surface_with_history_2<GeometryTraits_2, TopologyTraits1>& arr1,
- const Arrangement_on_surface_with_history_2<GeometryTraits_2, TopologyTraits2>& arr2,
- Arrangement_on_surface_with_history_2<GeometryTraits_2, ResTopologyTraits>& res);
+(const Arrangement_on_surface_with_history_2<GeometryTraits, TopologyTraits1>& arr1,
+ const Arrangement_on_surface_with_history_2<GeometryTraits, TopologyTraits2>& arr2,
+ Arrangement_on_surface_with_history_2<GeometryTraits, ResTopologyTraits>& res);
 
 } /* namespace CGAL */

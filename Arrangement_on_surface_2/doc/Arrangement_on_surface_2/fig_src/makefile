@@ -45,6 +45,7 @@ TARGETS = \
   observer.pdf \
   dcel_extension.pdf \
   overlay.pdf \
+  overlay_unbounded.pdf \
   overlay_color.pdf
 
 .DEFAULT_GOAL = all
