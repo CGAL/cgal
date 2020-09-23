@@ -1168,6 +1168,7 @@ public:
 //! \brief constructs default.
 template <typename Kernel>
 Arr_segment_traits_2<Kernel>::_Segment_cached_2::_Segment_cached_2() :
+  m_is_directed_right(false),
   m_is_vert(false),
   m_is_degen(true)
 {}
