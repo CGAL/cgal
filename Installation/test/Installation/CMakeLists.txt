@@ -86,6 +86,10 @@ if ( CGAL_FOUND )
     target_link_libraries(test_gmp_mpfr_dll version)
     CGAL_add_test(test_gmp_mpfr_dll)
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS test_gmp_mpfr_dll )
+    string(RANDOM RDM_DIR)#5 random chars to avoid conflicts in parallel testsuites
+    set(NON_STANDARD_INSTALL_PREFIX $ENV{TEMP}/${RDM_DIR})
+  else()
+    set(NON_STANDARD_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
   endif()
 
   find_package( LEDA QUIET)
@@ -162,14 +166,14 @@ set_tests_properties(
 
 find_package(CGAL COMPONENTS Qt5)
 
-file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/non_standard_install")
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/non_standard_build)
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/test_config_file)
+file(MAKE_DIRECTORY "${NON_STANDARD_INSTALL_PREFIX}/non_standard_install")
+file(MAKE_DIRECTORY ${NON_STANDARD_INSTALL_PREFIX}/non_standard_build)
+file(MAKE_DIRECTORY ${NON_STANDARD_INSTALL_PREFIX}/test_config_file)
 
 if(CGAL_Qt5_FOUND)
-  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/non_standard_install_qt5)
-  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/non_standard_build_qt5)
-  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/test_config_file_qt5)
+  file(MAKE_DIRECTORY ${NON_STANDARD_INSTALL_PREFIX}/non_standard_install_qt5)
+  file(MAKE_DIRECTORY ${NON_STANDARD_INSTALL_PREFIX}/non_standard_build_qt5)
+  file(MAKE_DIRECTORY ${NON_STANDARD_INSTALL_PREFIX}/test_config_file_qt5)
   configure_file(test_configuration_qt5.cmake.in ${CMAKE_BINARY_DIR}/test_config_file_qt5/CMakeLists.txt @ONLY)
 endif()#CGAL_Qt5_FOUND
 
@@ -211,17 +215,17 @@ endif()#CGAL_BRANCH_BUILD
 list(APPEND test_config_lst "test_config_file_2")
 
 #configure cgal for a non standard install without qt5
-get_filename_component(CORRECT_INSTALL_PATH "${CMAKE_BINARY_DIR}/non_standard_install/dummy.txt" DIRECTORY)
+get_filename_component(CORRECT_INSTALL_PATH "${NON_STANDARD_INSTALL_PREFIX}/non_standard_install/dummy.txt" DIRECTORY)
 add_test(NAME config_non_standard_cgal
   COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${CORRECT_INSTALL_PATH} -DCGAL_INSTALL_LIB_DIR=lib
   "${CGAL_SOURCE_DIR}"
-  WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/non_standard_build")
+  WORKING_DIRECTORY "${NON_STANDARD_INSTALL_PREFIX}/non_standard_build")
 #install cgal in the non standard place
 add_test(NAME install_non_standard_cgal
-  COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}/non_standard_build" --target "install" --config "$<CONFIG>")
+  COMMAND ${CMAKE_COMMAND} --build "${NON_STANDARD_INSTALL_PREFIX}/non_standard_build" --target "install" --config "$<CONFIG>")
 
 #test CGAL_DIR=non standard place without cgal_qt5
-get_filename_component(CGAL_DIR_CORRECT_PATH "${CMAKE_BINARY_DIR}/non_standard_install/lib/cmake/CGAL/CGALConfig.cmake" DIRECTORY)
+get_filename_component(CGAL_DIR_CORRECT_PATH "${NON_STANDARD_INSTALL_PREFIX}/non_standard_install/lib/cmake/CGAL/CGALConfig.cmake" DIRECTORY)
 add_test(NAME test_config_file_3
 COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCGAL_DIR=${CGAL_DIR_CORRECT_PATH} -DCGAL_GIVEN_DIR=${CGAL_DIR_CORRECT_PATH}
 "${CMAKE_BINARY_DIR}/test_config_file"
@@ -231,15 +235,15 @@ list(APPEND test_config_lst "test_config_file_3")
 if(CGAL_Qt5_FOUND)
   #configure cgal for a non standard install with qt5
   add_test(NAME config_non_standard_cgal_qt5
-    COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/non_standard_install_qt5 -DCGAL_INSTALL_LIB_DIR=lib -DWITH_CGAL_Qt5=ON
+    COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${NON_STANDARD_INSTALL_PREFIX}/non_standard_install_qt5 -DCGAL_INSTALL_LIB_DIR=lib -DWITH_CGAL_Qt5=ON
     "${CGAL_SOURCE_DIR}"
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/non_standard_build_qt5")
+    WORKING_DIRECTORY "${NON_STANDARD_INSTALL_PREFIX}/non_standard_build_qt5")
   #install cgal in the non standard place
   add_test(NAME install_non_standard_cgal_qt5
-    COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}/non_standard_build_qt5" --target "install" --config "$<CONFIG>")
+    COMMAND ${CMAKE_COMMAND} --build "${NON_STANDARD_INSTALL_PREFIX}/non_standard_build_qt5" --target "install" --config "$<CONFIG>")
 
   #test CGAL_DIR=non standard place with cgal_qt5
-  get_filename_component(CGAL_DIR_CORRECT_PATH "${CMAKE_BINARY_DIR}/non_standard_install_qt5/lib/cmake/CGAL/CGALConfig.cmake" DIRECTORY)
+  get_filename_component(CGAL_DIR_CORRECT_PATH "${NON_STANDARD_INSTALL_PREFIX}/non_standard_install_qt5/lib/cmake/CGAL/CGALConfig.cmake" DIRECTORY)
   add_test(NAME test_config_file_4
     COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCGAL_DIR=${CGAL_DIR_CORRECT_PATH} -DCGAL_GIVEN_DIR=${CGAL_DIR_CORRECT_PATH}
     "${CMAKE_BINARY_DIR}/test_config_file_qt5"
@@ -248,7 +252,7 @@ if(CGAL_Qt5_FOUND)
 endif()#CGAL_Qt5_FOUND
 
 #test CGAL_DIR=non standard build
-get_filename_component(CGAL_DIR_CORRECT_PATH "${CMAKE_BINARY_DIR}/non_standard_build/CGALConfig.cmake" DIRECTORY)
+get_filename_component(CGAL_DIR_CORRECT_PATH "${NON_STANDARD_INSTALL_PREFIX}/non_standard_build/CGALConfig.cmake" DIRECTORY)
 add_test(NAME test_config_file_5
 COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCGAL_DIR=${CGAL_DIR_CORRECT_PATH} -DCGAL_GIVEN_DIR=${CGAL_DIR_CORRECT_PATH}
  "${CMAKE_BINARY_DIR}/test_config_file"
