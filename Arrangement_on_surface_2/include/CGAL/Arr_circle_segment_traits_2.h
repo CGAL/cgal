@@ -409,7 +409,7 @@ public:
 
       // Increment the serial number of the curve cv, which will serve as its
       // unique identifier.
-      size_t index = 0;
+      unsigned int index = 0;
       if (m_use_cache) index = Self::get_index();
 
       if (cv.orientation() == COLLINEAR) {
