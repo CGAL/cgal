@@ -15,11 +15,11 @@ int main ()
   int dim = 4;
   double size = 5.0;
   std::cout << "Generating "<<nb_points<<" grid points in "
-	      <<dim<<"D" << std::endl;
-  std::vector<Point> v; 
+              <<dim<<"D" << std::endl;
+  std::vector<Point> v;
   v.reserve(nb_points);
-  CGAL::points_on_cube_grid_d (dim, size, (std::size_t) nb_points, 
-			       std::back_inserter(v), Creator_d(dim) );
+  CGAL::points_on_cube_grid_d (dim, size, (std::size_t) nb_points,
+                               std::back_inserter(v), Creator_d(dim) );
   for (int i = 0; i < nb_points; ++i) std::cout<<"  "<<v[i]<<std::endl;
   return 0;
 }

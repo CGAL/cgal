@@ -50,7 +50,11 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
       ${rc_file}
       ${ADDITIONAL_FILES})
     #  add_library (${LIBRARY_NAME} ${CGAL_LIBRARY_SOURCE_FILES} ${rc_file} ${ADDITIONAL_FILES}) # builing not creating temporary all_files.cpp
-    if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
+    if(${LIBRARY_NAME}_SOVERSION AND ${LIBRARY_NAME}_SONAME_VERSION)
+      set_target_properties(${LIBRARY_NAME} PROPERTIES
+        VERSION "${${LIBRARY_NAME}_SOVERSION}"
+        SOVERSION "${${LIBRARY_NAME}_SONAME_VERSION}")
+    elseif(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
       set_target_properties(${LIBRARY_NAME} PROPERTIES
         VERSION "${CGAL_SOVERSION}"
         SOVERSION "${CGAL_SONAME_VERSION}")
@@ -68,7 +72,10 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
   # CMakeLists.txt can be the target like if it was an imported
   # target.
   add_library(CGAL::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
-
+  if(NOT TARGET ALL_CGAL_TARGETS)
+    add_custom_target( ALL_CGAL_TARGETS )
+  endif()
+  add_dependencies( ALL_CGAL_TARGETS ${LIBRARY_NAME} )
   if(CGAL_AUTO_LINK_ENABLED)
     if (NOT CGAL_HEADER_ONLY)
       set_target_properties( ${LIBRARY_NAME} PROPERTIES

@@ -74,6 +74,6 @@ int main()
     }
 
     cout << endl << "WP_triangle_test: PASSED." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

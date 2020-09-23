@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -43,7 +34,7 @@ namespace CGAL {
 
 
   private:
-    FaceHandle fh_; 
+    FaceHandle fh_;
     Value inf_;
     Value sup_;  // left and right boundary values
   public:
@@ -56,15 +47,15 @@ namespace CGAL {
     bool contains(const Value& V) const;
 
     // true iff this contains (l,r)
-    bool contains_interval(const Value& l, const Value& r) const;  
+    bool contains_interval(const Value& l, const Value& r) const;
 
-    bool operator==(const Level_interval& I) const 
+    bool operator==(const Level_interval& I) const
     {
       // there is no need to compare inf and sup, as these are derived from the face
       return face_handle() == I.face_handle();
     }
 
-    bool operator!=(const Level_interval& I) const 
+    bool operator!=(const Level_interval& I) const
     {
       return face_handle() != I.face_handle();
     }
@@ -73,12 +64,12 @@ namespace CGAL {
 
 
   template <class V>
-  std::ostream& operator<<(std::ostream& os, 
-			   const Level_interval<V>& i)
+  std::ostream& operator<<(std::ostream& os,
+                           const Level_interval<V>& i)
   {
-    os << i.face_handle()->vertex(0)->point() << ", " << 
-      i.face_handle()->vertex(1)->point() << ", " << 
-      i.face_handle()->vertex(2)->point() << std::endl; 
+    os << i.face_handle()->vertex(0)->point() << ", " <<
+      i.face_handle()->vertex(1)->point() << ", " <<
+      i.face_handle()->vertex(2)->point() << std::endl;
     return os;
   }
 
@@ -98,8 +89,8 @@ namespace CGAL {
 
   template <class FaceHandle>
   bool
-  Level_interval<FaceHandle>::contains_interval(const Value& i, 
-					       const Value& s) const
+  Level_interval<FaceHandle>::contains_interval(const Value& i,
+                                               const Value& s) const
     // true iff this contains (l,r)
   {
     return( (inf() <= i) && (sup() >= s) );

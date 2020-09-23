@@ -1,26 +1,17 @@
 // Copyright (c) 2005-2009  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sebastien Loriot, Sylvain Pion
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/CGAL_Ipelet_base.h> 
+#include <CGAL/CGAL_Ipelet_base.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -50,7 +41,7 @@ const std::string  helpmsg[] = {
 };
 
 
-class ASphapeIpelet 
+class ASphapeIpelet
   : public CGAL::Ipelet_base<Kernel,2> {
 public:
   ASphapeIpelet()
@@ -70,10 +61,10 @@ void ASphapeIpelet::protected_run(int fn)
 
   std::list<Circle_2> cir_list;
   std::list<Point_2> pt_list;
-  
-  
-  
-  
+
+
+
+
   read_active_objects(
     CGAL::dispatch_or_drop_output<Point_2,Circle_2>(std::back_inserter(pt_list),
                                                     std::back_inserter(cir_list))
@@ -95,19 +86,19 @@ void ASphapeIpelet::protected_run(int fn)
   int alpha=-1;
   int nb_ret;
   boost::tie(nb_ret,alpha)=request_value_from_user<int>((boost::format("# Spectral critical value (0-%d)") % A.number_of_alphas()).str() );
-  if (nb_ret == -1) return;  
-  
+  if (nb_ret == -1) return;
+
   if(alpha<0 || (std::size_t) alpha>A.number_of_alphas()){
     print_error_message("Not a good value");
     return;
   }
-  
-  
-  A.set_alpha(alpha==0?std::max(std::numeric_limits<double>::epsilon(),A.get_nth_alpha(0)/2.):
+
+
+  A.set_alpha(alpha==0?(std::max)(std::numeric_limits<double>::epsilon(),A.get_nth_alpha(0)/2.):
               (std::size_t) alpha==A.number_of_alphas()?A.get_nth_alpha(alpha-1)+1:A.get_nth_alpha(alpha-1)/2.+A.get_nth_alpha(alpha)/2.);
   for ( Alpha_shape_2::Alpha_shape_edges_iterator it=A.alpha_shape_edges_begin();it!=A.alpha_shape_edges_end();++it)
     draw_in_ipe(A.segment(*it));
-  
+
   for (Alpha_shape_2::Finite_faces_iterator it=A.finite_faces_begin();it!=A.finite_faces_end();++it){
     if (A.classify(it)==Alpha_shape_2::INTERIOR){
       std::list<Point_2> LP;

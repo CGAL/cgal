@@ -1,0 +1,3 @@
+Package 2D hyperbolic triangulation: provides Delaunay triangulations
+in the Poincaré disk model of the hyperbolic plane, with demos,
+examples, and tests.

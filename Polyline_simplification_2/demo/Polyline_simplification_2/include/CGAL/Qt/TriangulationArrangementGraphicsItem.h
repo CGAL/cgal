@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -38,11 +38,11 @@ public:
   {
     constraints_pen = this->edgesPen();
     constraints_pen.setColor(::Qt::red);
-    
+
     fixed_vertices_pen = this->verticesPen();
     fixed_vertices_pen.setColor(::Qt::blue);
   }
-  
+
   void operator()(typename T::Face_handle fh);
 
   const QPen& constraintsPen() const
@@ -91,16 +91,16 @@ private:
 };
 
 template <typename T>
-void 
+void
 TriangulationArrangementGraphicsItem<T>::drawAll(QPainter *painter)
 {
   this->painterostream = PainterOstream<Geom_traits>(painter);
-  
+
   for(typename T::Finite_edges_iterator eit = this->t->finite_edges_begin();
       eit != this->t->finite_edges_end();
       ++eit)
   {
-     
+
     if (   !eit->first->vertex(this->t->ccw(eit->second))->is_corner()
         || !eit->first->vertex(this->t->cw (eit->second))->is_corner()
        )
@@ -109,7 +109,7 @@ TriangulationArrangementGraphicsItem<T>::drawAll(QPainter *painter)
      {
        painter->setPen(constraintsPen());
        this->painterostream << this->t->segment(*eit);
-     } 
+     }
      else if( this->visibleEdges() )
      {
        painter->setPen(this->edgesPen());
@@ -117,22 +117,22 @@ TriangulationArrangementGraphicsItem<T>::drawAll(QPainter *painter)
      }
     }
   }
-  
+
   this->paintVertices(painter);
 }
 
 template <typename T>
-void 
+void
 TriangulationArrangementGraphicsItem<T>::operator()(typename T::Face_handle fh)
 {
   for (int i=0; i<3; i++) {
     if ( fh < fh->neighbor(i) || this->t->is_infinite(fh->neighbor(i)) )  {
       if(this->visibleConstraints() && this->t->is_constrained(typename T::Edge(fh,i)) && (! this->t->is_infinite(fh->neighbor(i)))){
         this->m_painter->setPen(constraintsPen());
-	this->painterostream << this->t->segment(fh,i);
+        this->painterostream << this->t->segment(fh,i);
       } else if( this->visibleEdges() ){
-	this->m_painter->setPen(this->edgesPen());
-	this->painterostream << this->t->segment(fh,i);
+        this->m_painter->setPen(this->edgesPen());
+        this->painterostream << this->t->segment(fh,i);
       }
     }
     if(this->visibleVertices()) {
@@ -143,35 +143,35 @@ TriangulationArrangementGraphicsItem<T>::operator()(typename T::Face_handle fh)
 
 
 template <typename T>
-void 
+void
 TriangulationArrangementGraphicsItem<T>::paintVertex(typename T::Vertex_handle vh)
 {
   if ( ! vh->is_corner() ) {
     Converter<Geom_traits> convert;
-    
-    if ( vh->is_fixed() ) {     
+
+    if ( vh->is_fixed() ) {
       this->m_painter->setPen(this->fixedVerticesPen());
     } else {
       this->m_painter->setPen(this->verticesPen());
     }
-    QMatrix matrix = this->m_painter->matrix();
-    this->m_painter->resetMatrix();
+    QTransform matrix = this->m_painter->worldTransform();
+    this->m_painter->resetTransform();
     this->m_painter->drawPoint(matrix.map(convert(vh->point())));
-    this->m_painter->setMatrix(matrix);
+    this->m_painter->setWorldTransform(matrix);
   }
 }
 
 
 template <typename T>
-void 
+void
 TriangulationArrangementGraphicsItem<T>::paintVertices(QPainter *painter)
 {
-  if(this->visibleVertices()) 
+  if(this->visibleVertices())
   {
     Converter<Geom_traits> convert;
 
-    QMatrix matrix = painter->matrix();
-    painter->resetMatrix();
+    QTransform matrix = painter->worldTransform();
+    painter->resetTransform();
     for(typename T::Finite_vertices_iterator it = this->t->finite_vertices_begin();
         it != this->t->finite_vertices_end();
         it++)
@@ -180,10 +180,10 @@ TriangulationArrangementGraphicsItem<T>::paintVertices(QPainter *painter)
       {
         QPointF point = matrix.map(convert(it->point()));
 
-        if ( it->is_fixed() )       
+        if ( it->is_fixed() )
              painter->setPen(this->fixedVerticesPen());
         else painter->setPen(this->verticesPen());
-        
+
         painter->drawPoint(point);
       }
     }

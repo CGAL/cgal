@@ -1,24 +1,15 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -35,16 +26,16 @@
 namespace CGAL {
 
 //
-// Using the provided point generator, generates a set of n points and 
-// produces  a simple polygon from the unique subset of points within this 
+// Using the provided point generator, generates a set of n points and
+// produces  a simple polygon from the unique subset of points within this
 // set.
-// 
-// Each of the p possible simple polygons for the unique point set is 
-// generated with probability greater than 0 but the polygons are not 
+//
+// Each of the p possible simple polygons for the unique point set is
+// generated with probability greater than 0 but the polygons are not
 // generated with uniform probability.
 //
 template <class PointGenerator, class OutputIterator, class Traits>
-OutputIterator random_polygon_2(std::size_t n,  OutputIterator result, 
+OutputIterator random_polygon_2(std::size_t n,  OutputIterator result,
                                 const PointGenerator& pg, const Traits& traits)
 {
    typedef typename Traits::Point_2           Point_2;
@@ -71,7 +62,7 @@ OutputIterator random_polygon_2(std::size_t n,  OutputIterator result,
 
 template <class PointGenerator, class OutputIterator>
 inline
-OutputIterator random_polygon_2( std::size_t n,  OutputIterator result, 
+OutputIterator random_polygon_2( std::size_t n,  OutputIterator result,
                                  const PointGenerator& pg )
 {
    typedef typename std::iterator_traits<PointGenerator>::value_type  Point_2;
@@ -80,7 +71,7 @@ OutputIterator random_polygon_2( std::size_t n,  OutputIterator result,
 }
 
 template <class ForwardIterator, class Traits>
-bool duplicate_points(ForwardIterator first, ForwardIterator beyond, 
+bool duplicate_points(ForwardIterator first, ForwardIterator beyond,
                       const Traits& )
 {
    typedef typename Traits::Point_2      Point_2;
@@ -104,7 +95,7 @@ bool duplicate_points(ForwardIterator first, ForwardIterator beyond)
 // removing any duplicates.  Thus fewer than n points may be inserted into
 // the output iterator.
 template <class InputIterator, class Size, class OutputIterator, class Traits>
-OutputIterator copy_n_unique(InputIterator first, Size n, 
+OutputIterator copy_n_unique(InputIterator first, Size n,
                              OutputIterator result,
                              const Traits& )
 {
@@ -118,7 +109,7 @@ OutputIterator copy_n_unique(InputIterator first, Size n,
       {
           *result = *first;
           result++;
-      }   
+      }
       first++;
    }
    return result;
@@ -126,7 +117,7 @@ OutputIterator copy_n_unique(InputIterator first, Size n,
 
 template <class InputIterator, class Size, class OutputIterator>
 inline
-OutputIterator copy_n_unique(InputIterator first, Size n, 
+OutputIterator copy_n_unique(InputIterator first, Size n,
                              OutputIterator result)
 {
    typedef typename std::iterator_traits<InputIterator>::value_type  Point_2;

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s) : Philipp Moeller
@@ -188,7 +179,14 @@ private:
 
   struct as_ray_param_visitor {
     typedef FT result_type;
-    as_ray_param_visitor(const Ray* ray) : ray(ray) {}
+    as_ray_param_visitor(const Ray* ray)
+     : ray(ray), max_i(0)
+    {
+      typename AABB_traits::Geom_traits::Vector_3 v = ray->to_vector();
+      for (int i=1; i<3; ++i)
+        if( CGAL::abs(v[i]) > CGAL::abs(v[max_i]) )
+          max_i = i;
+    }
 
     template<typename T>
     FT operator()(const T& s)
@@ -204,16 +202,11 @@ private:
       typename AABB_traits::Geom_traits::Vector_3 x(ray->source(), point);
       typename AABB_traits::Geom_traits::Vector_3 v = ray->to_vector();
 
-      for(int i = 0; i < 3; ++i) {
-        if(v[i] != FT(0.)) {
-          return x[i] / v[i];
-        }
-      }
-      CGAL_assertion(false); // should never end-up here
-      return FT(0.);
+      return x[max_i] / v[max_i];
     }
 
     const Ray* ray;
+    int max_i;
   };
 };
 
@@ -222,7 +215,7 @@ template<typename Ray, typename SkipFunctor>
 boost::optional< typename AABB_tree<AABBTraits>::template Intersection_and_primitive_id<Ray>::Type >
 AABB_tree<AABBTraits>::first_intersection(const Ray& query,
                                           const SkipFunctor& skip) const {
-  CGAL_static_assertion_msg((boost::is_same<Ray, typename AABBTraits::Ray_3>::value), 
+  CGAL_static_assertion_msg((boost::is_same<Ray, typename AABBTraits::Ray_3>::value),
                             "Ray and Ray_3 must be the same type");
 
   switch(size()) // copy-paste from AABB_tree::traversal

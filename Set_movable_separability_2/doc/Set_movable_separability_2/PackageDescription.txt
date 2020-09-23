@@ -51,12 +51,12 @@ At this point this package consists of the implementations of various predicates
 
 \cgalClassifedRefPages
 
-## Casting Functions ##
+\cgalCRPSection{Casting Functions}
 - `CGAL::Set_movable_separability_2::Single_mold_translational_casting::top_edges()`
 - `CGAL::Set_movable_separability_2::Single_mold_translational_casting::pullout_directions()`
 - `CGAL::Set_movable_separability_2::Single_mold_translational_casting::is_pullout_direction()`
 
-## Casting Concepts ##
+\cgalCRPSection{Casting Concepts}
 - `CastingTraits_2`
 
 */

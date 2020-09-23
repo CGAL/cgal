@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel        <seel@mpi-sb.mpg.de>
 //                 Miguel Granados     <granados@mpi-sb.mpg.de>
@@ -68,11 +59,11 @@ class Halfedge_base
 
   Vertex_handle      center_vertex_;
   Mark               mark_;
-  SVertex_handle     twin_;              
-  SHalfedge_handle   out_sedge_;           
-  SFace_handle       incident_sface_;    
-  GenPtr             info_;                 
-  Sphere_point       point_;   
+  SVertex_handle     twin_;
+  SHalfedge_handle   out_sedge_;
+  SFace_handle       incident_sface_;
+  GenPtr             info_;
+  Sphere_point       point_;
 
  public:
 
@@ -85,29 +76,29 @@ class Halfedge_base
       info_(), point_() {}
 
       ~Halfedge_base() {
-	CGAL_NEF_TRACEN("  destroying Halfedge item "<<&*this);
+        CGAL_NEF_TRACEN("  destroying Halfedge item "<<&*this);
       }
 
-      Halfedge_base(const Halfedge_base<Refs>& e) 
-	{ center_vertex_ = e.center_vertex_;
-	  point_ = e.point_;
-	  mark_ = e.mark_;
-	  twin_ = e.twin_;
-	  out_sedge_ = e.out_sedge_;
-	  incident_sface_ = e.incident_sface_;
-	  info_ = 0;
-	}
+      Halfedge_base(const Halfedge_base<Refs>& e)
+        { center_vertex_ = e.center_vertex_;
+          point_ = e.point_;
+          mark_ = e.mark_;
+          twin_ = e.twin_;
+          out_sedge_ = e.out_sedge_;
+          incident_sface_ = e.incident_sface_;
+          info_ = 0;
+        }
 
-      Halfedge_base<Refs>& operator=(const Halfedge_base<Refs>& e) 
-	{ center_vertex_ = e.center_vertex_;
-	  point_ = e.point_;
-	  mark_ = e.mark_;
-	  twin_ = e.twin_;
-	  out_sedge_ = e.out_sedge_;
-	  incident_sface_ = e.incident_sface_;
-	  info_ = 0;
-	  return *this;
-	}
+      Halfedge_base<Refs>& operator=(const Halfedge_base<Refs>& e)
+        { center_vertex_ = e.center_vertex_;
+          point_ = e.point_;
+          mark_ = e.mark_;
+          twin_ = e.twin_;
+          out_sedge_ = e.out_sedge_;
+          incident_sface_ = e.incident_sface_;
+          info_ = 0;
+          return *this;
+        }
 
       Vertex_handle& center_vertex() { return center_vertex_; }
       Vertex_const_handle center_vertex() const { return center_vertex_; }
@@ -131,8 +122,8 @@ class Halfedge_base
       SHalfedge_handle& out_sedge() { return out_sedge_; }
       SHalfedge_const_handle out_sedge() const { return out_sedge_; }
 
-      SFace_handle& incident_sface() { return incident_sface_; } 
-      SFace_const_handle incident_sface() const { return incident_sface_; } 
+      SFace_handle& incident_sface() { return incident_sface_; }
+      SFace_const_handle incident_sface() const { return incident_sface_; }
 
       bool is_isolated() const { return (out_sedge() == SHalfedge_handle()); }
 
@@ -141,39 +132,39 @@ class Halfedge_base
 
  public:
       std::string debug() const
-	{ std::stringstream os; 
-	  set_pretty_mode(os);
-	  os<<"sv [ "<<point_
+        { std::stringstream os;
+          set_pretty_mode(os);
+          os<<"sv [ "<<point_
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
       <<info_
     #endif
       <<" ] ";
-	  return os.str();
-	}
+          return os.str();
+        }
 
       bool is_twin() const { return (&*twin_ < this); }
 
       bool is_valid( bool verb = false, int level = 0) const {
-      
-	Verbose_ostream verr(verb);
-	verr << "begin CGAL::SNC_items<...>::Halfedge_base::is_valid( verb=true, "
-	  "level = " << level << "):" << std::endl;
 
-	bool valid = (center_vertex_ != NULL && center_vertex_ != Vertex_handle());
-	valid = valid && (twin_ != NULL && twin_ != SVertex_handle() &&
-			  twin_ != SVertex_handle());
-	//      valid = valid && (out_sedge_ != NULL);
-	//      valid = valid && (incident_sface_ != SFace_handle());
-      
-	//      valid = valid &&((out_sedge_ != NULL && incident_sface_ == NULL) ||
-	//		       (out_sedge_ == NULL && incident_sface_ != NULL));
-      
-	valid = valid && (out_sedge_ != NULL || incident_sface_ != NULL);
+        Verbose_ostream verr(verb);
+        verr << "begin CGAL::SNC_items<...>::Halfedge_base::is_valid( verb=true, "
+          "level = " << level << "):" << std::endl;
 
-	verr << "end of CGAL::SNC_items<...>::Halfedge_base::is_valid(): structure is "
-	     << ( valid ? "valid." : "NOT VALID.") << std::endl;
+        bool valid = (center_vertex_ != nullptr && center_vertex_ != Vertex_handle());
+        valid = valid && (twin_ != nullptr && twin_ != SVertex_handle() &&
+                          twin_ != SVertex_handle());
+        //      valid = valid && (out_sedge_ != nullptr);
+        //      valid = valid && (incident_sface_ != SFace_handle());
 
-	return valid;
+        //      valid = valid &&((out_sedge_ != nullptr && incident_sface_ == nullptr) ||
+        //                       (out_sedge_ == nullptr && incident_sface_ != nullptr));
+
+        valid = valid && (out_sedge_ != nullptr || incident_sface_ != nullptr);
+
+        verr << "end of CGAL::SNC_items<...>::Halfedge_base::is_valid(): structure is "
+             << ( valid ? "valid." : "NOT VALID.") << std::endl;
+
+        return valid;
       }
 
 }; // Halfedge_base

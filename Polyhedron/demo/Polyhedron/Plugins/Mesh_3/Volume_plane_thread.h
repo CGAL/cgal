@@ -21,7 +21,7 @@ struct Clamp_to_one_zero_range {
 };
 
 class Volume_plane_thread : public QThread {
-Q_OBJECT  
+Q_OBJECT
 public:
   Volume_plane_thread(const CGAL::Image_3* img, const Clamp_to_one_zero_range& clamp, const QString& name)
     : img(img), clamper(clamp), item(NULL), name(name) { _type = 'n';}
@@ -82,6 +82,8 @@ void X_plane_thread<Word>::run() {
                                                                i, j, k));
           x = clamper(x);
           buffer.push_back(x);
+          buffer.push_back(x);
+          buffer.push_back(x);
         }
       }
     }
@@ -103,6 +105,8 @@ void Y_plane_thread<Word>::run() {
                                                                j, i, k));
           x = clamper(x);
           buffer.push_back(x);
+          buffer.push_back(x);
+          buffer.push_back(x);
         }
       }
     }
@@ -121,6 +125,8 @@ void Z_plane_thread<Word>::run() {
         float x = float(CGAL::IMAGEIO::static_evaluate<Word>(img->image(),
                                                              j, k, i));
         x = clamper(x);
+        buffer.push_back(x);
+        buffer.push_back(x);
         buffer.push_back(x);
       }
     }

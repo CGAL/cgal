@@ -26,12 +26,11 @@ int main()
     Polyhedron polyhedron;
     polyhedron.make_tetrahedron(p, q, r, s);
 
-    // constructs the AABB tree and the internal search tree for 
+    // constructs the AABB tree and the internal search tree for
     // efficient distance queries.
     Tree tree( CGAL::edges(polyhedron).first,
                CGAL::edges(polyhedron).second,
                polyhedron);
-    tree.accelerate_distance_queries();
 
     // counts #intersections with a triangle query
     Triangle triangle_query(p,q,r);

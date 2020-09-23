@@ -34,8 +34,8 @@ struct Sort_volumes_by_smallest_vertex {
 
 template<typename Nef_polyhedron>
 Nef_polyhedron
-bipartite_nary_union_sorted_separately(Nef_polyhedron& N0,  
-				       Nef_polyhedron& N1) {
+bipartite_nary_union_sorted_separately(Nef_polyhedron& N0,
+                                       Nef_polyhedron& N1) {
 
   typedef typename Nef_polyhedron::Kernel Kernel;
   typedef typename Nef_polyhedron::Volume_const_iterator  Volume_const_iterator;
@@ -65,7 +65,7 @@ bipartite_nary_union_sorted_separately(Nef_polyhedron& N0,
   t1.start();
   std::list<Volume_const_handle> volumes;
   for(Volume_const_iterator c = ++N0.volumes_begin();
-      c!=N0.volumes_end();++c) {  
+      c!=N0.volumes_end();++c) {
     if(c->mark())
       volumes.push_back(c);
   }
@@ -75,7 +75,7 @@ bipartite_nary_union_sorted_separately(Nef_polyhedron& N0,
   t2.start();
   std::list<Gausian_map> GM;
   int shells = volumes.size();
-  typename std::list<Volume_const_handle>::iterator 
+  typename std::list<Volume_const_handle>::iterator
     lci(volumes.begin());
   for(;lci!=volumes.end();++lci) {
     std::cerr << "noch " << --shells << " sorted shells" << std::endl;
@@ -86,7 +86,7 @@ bipartite_nary_union_sorted_separately(Nef_polyhedron& N0,
   t1.start();
   volumes.clear();
   for(Volume_const_iterator c = ++N1.volumes_begin();
-      c!=N1.volumes_end();++c) {  
+      c!=N1.volumes_end();++c) {
     if(c->mark())
       volumes.push_back(c);
   }
@@ -102,8 +102,8 @@ bipartite_nary_union_sorted_separately(Nef_polyhedron& N0,
     typename std::list<Gausian_map>::const_iterator gi;
     for(gi = GM.begin(); gi != GM.end(); ++gi) {
       std::cerr << "noch "
-		<< shells << ", " 
-		<< --maps << " convex sums" << std::endl;
+                << shells << ", "
+                << --maps << " convex sums" << std::endl;
       Gausian_map GcG;
       GcG.minkowski_sum(G,*gi);
       Nef_polyhedron Ntmp;

@@ -38,24 +38,24 @@ int main(int argc, char** argv)
   unsigned nbpts=100000;
   unsigned repeat=0;
   unsigned seed=0;
-  
+
   if (argc>1)  nbpts=atoi(argv[1]);
 
   if (argc>2)  repeat=atoi(argv[2]);
   if (argc>3)  seed=atoi(argv[3]);
-  
+
   Points points, result;
-  
+
   CGAL::Random r(seed);
   CGAL::Random_points_in_disc_2<Point_2,Creator> g( 150.0,r);
-  CGAL::cpp11::copy_n( g, nbpts, std::back_inserter(points));
-  
+  std::copy_n( g, nbpts, std::back_inserter(points));
+
   //the following code is for testing when there is only two extreme points, affine hull is 2D
   /*
   CGAL::Bbox_2 bbox=points.begin()->bbox();
   for (Points::iterator it=points.begin();it!=points.end();++it)
     bbox=bbox+it->bbox();
-  
+
   points.push_back( Point_2(bbox.xmin()-1,bbox.ymin()-1) );
   points.push_back( Point_2(bbox.xmax()+1,bbox.ymax()+1) );
   */
@@ -65,12 +65,12 @@ int main(int argc, char** argv)
   CGAL::Bbox_2 bbox=points.begin()->bbox();
   for (Points::iterator it=points.begin();it!=points.end();++it)
     bbox=bbox+it->bbox();
-  
+
   points.push_back( Point_2(bbox.xmin()-1,bbox.ymin()-1) );
   points.push_back( Point_2(bbox.xmax()+1,bbox.ymax()+1) );
   points.push_back( Point_2(bbox.xmax(),bbox.ymax()+2) );
-  */ 
-  
+  */
+
   //the following code is for testing when there is only two extreme points, affine hull is 1D
   /*
   points.clear();
@@ -78,12 +78,12 @@ int main(int argc, char** argv)
     points.push_back(Point_2(i,i));
   */
 
-  
-  
-  
-  
-  std::cout << "seed is " << seed << "; using " << nbpts << " pts; on " << repeat+1 <<  " run(s).\n";   
-  
+
+
+
+
+  std::cout << "seed is " << seed << "; using " << nbpts << " pts; on " << repeat+1 <<  " run(s).\n";
+
   std::cout << "Using vector" << std::endl;
   bench(CGAL::convex_hull_2,points)
   //bench(CGAL::ch_akl_toussaint,points)
@@ -91,7 +91,7 @@ int main(int argc, char** argv)
   //bench(CGAL::ch_eddy,points)
   //bench(CGAL::ch_graham_andrew,points)
   //bench(CGAL::ch_jarvis,points)
-  
+
   {
     std::list<Point_2> pt_list;
     std::copy(points.begin(),points.end(),std::back_inserter(pt_list));

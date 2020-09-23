@@ -5,6 +5,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/minkowski_sum_2.h>
 #include <CGAL/Polygon_vertical_decomposition_2.h>
+
 #include <iostream>
 #include <fstream>
 

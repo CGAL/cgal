@@ -204,7 +204,7 @@ int main()
   // Array of the functions
   const int functions_count = 11;
 
-  CGAL::cpp11::array<Periodic_function, functions_count> implicit_functions =
+  std::array<Periodic_function, functions_count> implicit_functions =
   {{
     Periodic_function(cylinder, canonical_cube),
     Periodic_function(D_prime, canonical_cube),

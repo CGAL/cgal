@@ -48,9 +48,10 @@ sub sort_releases($$)
     my $b = $_[0];
     my $a = $_[1];
 
-    #take only the numbers from release id, skipping I and Ic
-    my @A = ($a =~ /\d+/g);
-    my @B = ($b =~ /\d+/g);
+    #take only the numbers from release id, skipping the bug-fix
+    #number, and I and Ic
+    my @A = ($a =~ /(\d+)\.(\d+)\.?(:?\d+)?(:?-Ic?-)?(\d+)?/a);
+    my @B = ($b =~ /(\d+)\.(\d+)\.?(:?\d+)?(:?-Ic?-)?(\d+)?/a);
 
     while(@A and @B) {
         my $av = shift(@A);
@@ -67,8 +68,8 @@ sub write_selects()
     print OUTPUTV "<p>You can browse the test results of a different version :</p>";
     my %releases;
     foreach $_  (glob("results-*.shtml")) {
-        $_ =~ /results-([^I]*)((-Ic?)-([^I].*))\.shtml/;
-        $releases{"$1$3"}=1;
+        $_ =~ /results-(\d+.\d+)([^I]*)((-Ic?)-([^I].*))\.shtml/a;
+        $releases{"$1"}=1;
     }
     print OUTPUTV "<table><tr>\n";
     print OUTPUTV "  <th>All releases (<a href=\"${test_results_url}\">last one</a>)</th>\n";
@@ -79,7 +80,7 @@ sub write_selects()
     }
     print OUTPUTV "</tr>\n";
     print OUTPUTV "<tr>\n";
-    write_select("sel", ".*");
+    write_select("sel");
     $count = 0;
     foreach $_ (sort sort_releases (keys %releases)) {
         write_select("sel" . $count, $_);
@@ -91,19 +92,28 @@ sub write_selects()
 sub write_select()
 {
   my $id = shift(@_);
-  my $pattern = shift(@_);
+  my $pattern = ".*";
+  if (@_ != 0)  {
+      $pattern = quotemeta(shift(@_));
+  }
   my($filename, @result);
   print OUTPUTV "  <td><select id=\"$id\" onchange=\"sel=document.getElementById(\'$id\'); top.location.href=sel.options[sel.selectedIndex].value\">\n";
 
-  print OUTPUTV '<option value="">', "</option>\n";
-  foreach $_ (sort sort_releases (glob("results-*.shtml"))) {
-      $_ =~ /results-${pattern}(-.*|)\.shtml/ || next;
+  print OUTPUTV '<option disabled selected value="">(select a release)', "</option>\n";
+  my %results;
+  foreach $_ (glob("results-*.shtml")) {
+      my $ctime = (stat($_))[10];
+      $results{$_} = $ctime;
+  }
+  foreach $_ (sort { $results{$b} <=> $results{$a} } keys %results) {
+      $_ =~ /results-${pattern}(\.\d+)?(-.*|)\.shtml/ || next;
       my $ctime = (stat($_))[10];
       my $date = time2str('%a %Y/%m/%d', $ctime);
      print OUTPUTV '<option value="', $_, '">';
      ($filename) = m/results-(.*?)\.shtml\s*/;
 #     printf OUTPUTV "%-20s (last modified: %s)</option>\n", $filename, $date;
-     printf OUTPUTV '%2$s: %1$s</option>\n', $filename, $date;
+     printf OUTPUTV '%1$s  (%2$s)</option>
+', $filename, $date;
   }
   print OUTPUTV "</select></td>";
 }
@@ -248,7 +258,7 @@ EOF
 		print OUTPUT ' class="error"';
 	    } elsif ($resulttext eq 'r') {
 		print OUTPUT ' class="requirements"';
-	    } 
+	    }
 	    else {
 		print OUTPUT ' class="na"';
 	    }
@@ -281,7 +291,7 @@ EOF
     print_result_table();
 
     if ($PLATFORMS_BESIDE_RESULTS) {
-    	print OUTPUT "<td>\n<table border=\"0\" cellspacing=\"2\" cellpadding=\"0\">\n";
+    	print OUTPUT "<td>\n<table class=\"beside\" border=\"0\" cellspacing=\"2\" cellpadding=\"0\">\n";
     	if ($platform_count > 0) {
     	    my $repeat_count = (1 + 1.1/16.5)*scalar(keys %test_directories)/($platform_count+0.25);
 	    while ($repeat_count >= 1) {
@@ -298,11 +308,11 @@ EOF
 sub sort_pf
 {
     # MSVS first
-    if($a =~ m/^MS/) { 
+    if($a =~ m/^MS/) {
         if($b =~ m/^MS/) {
             return $a cmp $b;
         }
-        else 
+        else
         {
             return -1;
         }
@@ -310,11 +320,11 @@ sub sort_pf
     if($b =~ m/^MS/) { return 1; }
 
     # g++/gcc second
-    if($a =~ m/^g[c+][c+]/) { 
+    if($a =~ m/^g[c+][c+]/) {
         if($b =~ m/^g[c+][c+]/) {
             return $a cmp $b;
         }
-        else 
+        else
         {
             return -1;
         }
@@ -322,11 +332,11 @@ sub sort_pf
     if($b =~ m/^g[c+][c+]/) { return 1; }
 
     # Intel third
-    if($a =~ m/^[iI]/) { 
+    if($a =~ m/^[iI]/) {
         if($b =~ m/^[iI]/) {
             return $a cmp $b;
         }
-        else 
+        else
         {
             return -1;
         }
@@ -334,11 +344,11 @@ sub sort_pf
     if($b =~ m/^[iI]/) { return 1; }
 
     # SunPro last
-    if($a =~ m/^[Ss][uU[Nn]/) { 
+    if($a =~ m/^[Ss][uU[Nn]/) {
         if($b =~ m/^[Ss][uU[Nn]/) {
             return $a cmp $b;
         }
-        else 
+        else
         {
             return 1;
         }
@@ -463,13 +473,16 @@ EOF
 	$pf_no++;
 	# my $pf_short = join('_',parse_platform_2($pf));
 	(my $pf_short) = ($pf =~ m/_(.*)/);
-	print OUTPUT "<td><a href=\"$release_name/Installation/TestReport_$pf.gz\">$pf_short</a>";
+	print OUTPUT "<td><a href=\"$release_name/Installation/TestReport_$pf.gz\"";
 
         ($platform_is_64bits{$pf}) = ! ($pf =~ m/32/);
 
         if (open (PLATFORM_INFO, "results_${pf}.info")) {
 	    $_ = <PLATFORM_INFO>; # CGAL_VERSION
-	    $_ = <PLATFORM_INFO>; # TESTER
+	    $_ = <PLATFORM_INFO>; # COMPILER
+            chomp;
+            my $compiler = $_;
+            print OUTPUT " title=\"$compiler\">$pf_short</a>";
 	    $_ = <PLATFORM_INFO>; # TESTER_NAME
 	    chomp;
 	    my $tester_name = $_;
@@ -495,10 +508,10 @@ EOF
 	    chomp;
 	    print OUTPUT "</td>\n";
 	    print OUTPUT "<td><a href=\"mailto:$tester_address\">$tester_name</a></td>\n";
-	    print OUTPUT "<td>$county</td>\n"; 
-	    print OUTPUT "<td>$countw</td>\n"; 
- 	    print OUTPUT "<td>$countn</td>\n"; 
- 	    print OUTPUT "<td>$countr</td>\n"; 
+	    print OUTPUT "<td>$county</td>\n";
+	    print OUTPUT "<td>$countw</td>\n";
+ 	    print OUTPUT "<td>$countn</td>\n";
+ 	    print OUTPUT "<td>$countr</td>\n";
 	    $index = 8;
 	    while ($index) {
 	        $index--;
@@ -507,9 +520,10 @@ EOF
                     print OUTPUT "<td align=\"center\">$_</td>\n";
                 } else {
                     print OUTPUT "<td>$_</td>\n";
-                }                    
+                }
 	    }
 	} else {
+            print OUTPUT ">$pf_short</a>";
 	    my $index = 12;
 	    while ($index) {
 		print OUTPUT "<td>?</td>\n";
@@ -532,12 +546,12 @@ sub print_platforms_numbers()
 	{
 	    $class = " class=\"";
 	    $tag = " ( ";
-            if($platform_is_64bits{$platform}) { 
-                $class = "$class os64bits"; 
+            if($platform_is_64bits{$platform}) {
+                $class = "$class os64bits";
                 $tag = $tag . "64 bits ";
             }
-            if($platform_is_optimized{$platform}) { 
-                $class = "$class highlight"; 
+            if($platform_is_optimized{$platform}) {
+                $class = "$class highlight";
                 $tag = $tag ." optimized: $platform_is_optimized{$platform}";
             }
             $class = $class . "\"";

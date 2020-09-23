@@ -5,7 +5,7 @@ void compute_distribution(const Qualities& qualities,
                           Distribution& distribution)
 {
   const int number_of_classes = distribution.size();
-  
+
   const int qualities_size = qualities.size();
 
   for(int j = 0; j < qualities_size; ++j)
@@ -26,7 +26,7 @@ void display_distribution(Distribution_displayer* display,
 
   if( number_of_classes == 0 ) return;
   const double width = 1.0 / number_of_classes;
-  
+
   display->fill_rectangle(0., 0., 1., 1., CGAL::Color(200, 200, 200));
   for(int k = 0; k < number_of_classes; ++k)
     if(distribution[k]>0)
@@ -34,10 +34,10 @@ void display_distribution(Distribution_displayer* display,
       const double height = ( distribution[k]+0. ) * echelle;
       display->fill_rectangle(k    * width, 0,
                               (k+1)* width, height,
-                              CGAL::BLACK);
+                              CGAL::black());
     }
     else
       display->segment(k     * width, 0.,
                        (k+1) * width, 0.,
-                       CGAL::RED);
+                       CGAL::red());
 }

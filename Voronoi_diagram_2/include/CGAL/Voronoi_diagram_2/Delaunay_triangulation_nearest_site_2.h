@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -77,29 +68,29 @@ class Delaunay_triangulation_nearest_site_2
       Comparison_result cr;
 
       do {
-	Edge e = *ec;
-	Vertex_handle v1 = e.first->vertex(CW_CCW_2::ccw(e.second));
-	Vertex_handle v2 = e.first->vertex(CW_CCW_2::cw(e.second) );
+        Edge e = *ec;
+        Vertex_handle v1 = e.first->vertex(CW_CCW_2::ccw(e.second));
+        Vertex_handle v2 = e.first->vertex(CW_CCW_2::cw(e.second) );
 
-	if ( v == v1 ) {
-	  if ( !dg.is_infinite(v2) ) {
-	    cr = compare_distance(p, v2->point(), v->point());
-	    CGAL_assertion( cr != SMALLER );
-	    if ( cr == EQUAL ) {
-	      return e;
-	    }
-	  }
-	} else {
-	  CGAL_assertion( v == v2 );
-	  if ( !dg.is_infinite(v1) ) {
-	    cr = compare_distance(p, v1->point(), v->point());
-	    CGAL_assertion( cr != SMALLER );
-	    if ( cr == EQUAL ) {
-	      return e;
-	    }
-	  }
-	}
-	++ec;
+        if ( v == v1 ) {
+          if ( !dg.is_infinite(v2) ) {
+            cr = compare_distance(p, v2->point(), v->point());
+            CGAL_assertion( cr != SMALLER );
+            if ( cr == EQUAL ) {
+              return e;
+            }
+          }
+        } else {
+          CGAL_assertion( v == v2 );
+          if ( !dg.is_infinite(v1) ) {
+            cr = compare_distance(p, v1->point(), v->point());
+            CGAL_assertion( cr != SMALLER );
+            if ( cr == EQUAL ) {
+              return e;
+            }
+          }
+        }
+        ++ec;
       } while ( ec != ec_start );
 
       return v;
@@ -120,17 +111,17 @@ class Delaunay_triangulation_nearest_site_2
 
       // do the generic check now
       if ( !dg.is_infinite(v1) ) {
-	cr1 = compare_distance(p, v1->point(), v->point());
+        cr1 = compare_distance(p, v1->point(), v->point());
       }
       if ( !dg.is_infinite(v2) ) {
-	cr2 = compare_distance(p, v2->point(), v->point());
+        cr2 = compare_distance(p, v2->point(), v->point());
       }
 
       CGAL_assertion( cr1 != SMALLER );
       CGAL_assertion( cr2 != SMALLER );
 
       if ( cr1 == EQUAL && cr2 == EQUAL ) {
-	return Face_handle(fc);
+        return Face_handle(fc);
       }
 
       ++fc;
@@ -148,10 +139,10 @@ class Delaunay_triangulation_nearest_site_2
 
       // do the generic check now
       if ( !dg.is_infinite(v1) ) {
-	cr1 = compare_distance(p, v1->point(), v->point());
+        cr1 = compare_distance(p, v1->point(), v->point());
       }
       if ( !dg.is_infinite(v2) ) {
-	cr2 = compare_distance(p, v2->point(), v->point());
+        cr2 = compare_distance(p, v2->point(), v->point());
       }
 
       CGAL_assertion( cr1 != SMALLER );
@@ -159,11 +150,11 @@ class Delaunay_triangulation_nearest_site_2
       CGAL_assertion( cr1 != EQUAL || cr2 != EQUAL );
 
       if ( cr1 == EQUAL ) {
-	Face_handle f(fc);
-	return Edge(f, CW_CCW_2::cw(index) );
+        Face_handle f(fc);
+        return Edge(f, CW_CCW_2::cw(index) );
       } else if ( cr2 == EQUAL ) {
-	Face_handle f(fc);
-	return Edge(f, CW_CCW_2::ccw(index) );
+        Face_handle f(fc);
+        return Edge(f, CW_CCW_2::ccw(index) );
       }
 
       ++fc;

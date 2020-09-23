@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Maxime Gimeno
 
@@ -53,6 +44,7 @@ struct DEMO_FRAMEWORK_EXPORT Point_container :public Primitive_container
     Vertices = 0, //!< Designates the buffer that contains the vertex coordinates.
     Indices,      //!< Designates the buffer that contains the vertex indices.
     Colors,       //!< Designates the buffer that contains the color components.
+    Normals,      //!<  Designates the buffer that contains the normals components (for shaded points).
     NbOfVbos      //!< Designates the size of the VBOs vector for `Point_container`s
   };
 
@@ -87,13 +79,17 @@ struct DEMO_FRAMEWORK_EXPORT Point_container :public Primitive_container
   /// If the shaders of this program doesn't need one, you can ignore it.
   /// The others should be filled at each `draw()` from the item.
   ///@{
-  
+
   //! getter for the "plane" parameter
   QVector4D getPlane()const;
   //! getter for the "f_matrix" parameter
   QMatrix4x4 getFrameMatrix()const;
 //! setter for the "f_matrix" parameter
   void setFrameMatrix(const QMatrix4x4&);
+  //! setter for the "plane" parameter
+  void setPlane(const QVector4D&);
+  //! setter for the "is_surface" attribute. Used in PROGRAM_C3T3_EDGES
+  void setIsSurface  (const bool);
   ///@}
 
 private:

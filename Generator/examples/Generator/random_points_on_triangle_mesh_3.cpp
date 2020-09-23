@@ -24,7 +24,7 @@ int main()
       g(polyhedron);
 
   // Get 100 random points in cdt
-  CGAL::cpp11::copy_n(g, 100, std::back_inserter(points));
+  std::copy_n(g, 100, std::back_inserter(points));
 
   // Check that we have really created 100 points.
   assert( points.size() == 100);

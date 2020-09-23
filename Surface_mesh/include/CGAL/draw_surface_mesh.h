@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 
@@ -35,12 +26,13 @@ template<class SM>
 void draw(const SM& asm);
 
 #else // DOXYGEN_RUNNING
-  
+
 #include <CGAL/license/Surface_mesh.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
@@ -111,7 +103,7 @@ protected:
   {
     add_segment(sm.point(sm.source(sm.halfedge(e))),
                 sm.point(sm.target(sm.halfedge(e))));
-  } 
+  }
 
   void compute_vertex(vertex_descriptor vh)
   { add_point(sm.point(vh)); }
@@ -129,7 +121,7 @@ protected:
         { compute_face(*f); }
       }
     }
-    
+
     for (typename SM::Edge_range::iterator e=sm.edges().begin();
          e!=sm.edges().end(); ++e)
     { compute_edge(*e); }
@@ -144,7 +136,7 @@ protected:
     // Test key pressed:
     //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
     //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
-    
+
     // Call: * compute_elements() if the model changed, followed by
     //       * redraw() if some viewing parameters changed that implies some
     //                  modifications of the buffers
@@ -164,8 +156,8 @@ protected:
     do
     {
       internal::newell_single_step_3
-        (internal::Geom_utils<Kernel>::get_local_point(sm.point(sm.source(he))),
-         internal::Geom_utils<Kernel>::get_local_point(sm.point(sm.target(he))), normal);
+        (this->get_local_point(sm.point(sm.source(he))),
+         this->get_local_point(sm.point(sm.target(he))), normal);
       ++nb;
       he=sm.next(he);
     }
@@ -173,7 +165,7 @@ protected:
     assert(nb>0);
     return (typename Local_kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
   }
-  
+
   Local_vector get_vertex_normal(halfedge_descriptor he)
   {
     Local_vector normal=CGAL::NULL_VECTOR;
@@ -188,11 +180,11 @@ protected:
       he=sm.next(sm.opposite(he));
     }
     while (he!=end);
-    
+
     if (!typename Local_kernel::Equal_3()(normal, CGAL::NULL_VECTOR))
     { normal=(typename Local_kernel::Construct_scaled_vector_3()
               (normal, 1.0/CGAL::sqrt(normal.squared_length()))); }
-    
+
     return normal;
   }
 
@@ -202,16 +194,16 @@ protected:
   const ColorFunctor& m_fcolor;
 };
 
-template<class SM, class ColorFunctor>
-void draw(const SM& amesh,
-          const char* title,
-          bool nofill,
-          const ColorFunctor& fcolor)
+// Specialization of draw function.
+template<class K>
+void draw(const Surface_mesh<K>& amesh,
+          const char* title="Surface_mesh Basic Viewer",
+          bool nofill=false)
 {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else
-  bool cgal_test_suite=false;
+  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
 
   if (!cgal_test_suite)
@@ -219,30 +211,13 @@ void draw(const SM& amesh,
     int argc=1;
     const char* argv[2]={"surface_mesh_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
-    SimpleSurfaceMeshViewerQt<SM, ColorFunctor> mainwindow(app.activeWindow(),
-                                                           amesh,
-                                                           title,
-                                                           nofill,
-                                                           fcolor);
+    DefaultColorFunctorSM fcolor;
+    SimpleSurfaceMeshViewerQt<Surface_mesh<K>, DefaultColorFunctorSM>
+      mainwindow(app.activeWindow(), amesh, title, nofill, fcolor);
     mainwindow.show();
     app.exec();
   }
 }
-
-template<class SM>
-void draw(const SM& amesh, const char* title, bool nofill)
-{
-  DefaultColorFunctorSM c;
-  draw(amesh, title, nofill, c);
-}
-
-template<class SM>
-void draw(const SM& amesh, const char* title)
-{ draw(amesh, title, false); }
-
-template<class SM>
-void draw(const SM& amesh)
-{ draw(amesh, "Basic Surface_mesh Viewer"); }
 
 } // End namespace CGAL
 

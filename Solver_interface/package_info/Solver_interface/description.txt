@@ -1,2 +1,2 @@
-Solver_interface: contains classes to interface third party linear algebra solvers
-to CGAL (such as Eigen for example)
+Solver_interface: contains classes to interface third party linear algebra solvers (such as Eigen for example),
+mixed integer program solvers (such as SCIP for example) to CGAL.

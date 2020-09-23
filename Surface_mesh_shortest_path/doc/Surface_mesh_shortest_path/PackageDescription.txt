@@ -30,16 +30,16 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `SurfaceMeshShortestPathTraits`
 - `SurfaceMeshShortestPathVisitor`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Surface_mesh_shortest_path<SurfaceMeshShortestPathTraits,VertexIndexMap, HalfedgeIndexMap, FaceIndexMap, VertexPointMap>`
 - `CGAL::Surface_mesh_shortest_path_traits<Kernel, FaceListGraph>`
 
-## Enums ##
+\cgalCRPSection{Enums}
 
 - `CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinates_type`
 

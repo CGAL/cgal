@@ -1,22 +1,16 @@
-// Copyright (c) 2003  
+// Copyright (c) 2003
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -104,10 +98,10 @@ _test_fct_plane_3(const R& )
  assert( ! CGAL::parallel(h1, h5) );
 
  // More tests, that require sqrt().
- typedef ::CGAL::Algebraic_structure_traits<FT> AST; 
- static const bool has_sqrt = 
+ typedef ::CGAL::Algebraic_structure_traits<FT> AST;
+ static const bool has_sqrt =
      ! ::boost::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
- _test_fct_plane_sqrt_3(R(), ::CGAL::Boolean_tag<has_sqrt>()); 
+ _test_fct_plane_sqrt_3(R(), ::CGAL::Boolean_tag<has_sqrt>());
 
  std::cout << "done" << std::endl;
  return true;

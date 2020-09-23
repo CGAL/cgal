@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>631</width>
-    <height>526</height>
+    <height>628</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -59,8 +59,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>278</width>
-             <height>432</height>
+             <width>275</width>
+             <height>534</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -117,6 +117,9 @@
               </property>
               <property name="prefix">
                <string>Transparency Pass Number: </string>
+              </property>
+              <property name="minimum">
+               <number>4</number>
               </property>
               <property name="value">
                <number>4</number>
@@ -283,6 +286,23 @@
              </widget>
             </item>
             <item>
+             <widget class="QPushButton" name="sshButton">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="text">
+               <string>Network Settings</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="backFrontColor_pushButton">
+              <property name="text">
+               <string>Change Back/Front Colors...</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="verticalSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -311,7 +331,7 @@
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>Tick plugins you don't want to load at start up</string>
+           <string>Tick plugins you want to load at start up</string>
           </property>
          </widget>
         </item>

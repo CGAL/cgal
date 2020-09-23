@@ -2,27 +2,17 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef VDA_TEST_H
 #define VDA_TEST_H 1
 
-#include <CGAL/basic.h>
 #include <CGAL/tags.h>
 #include <CGAL/Timer.h>
 #include <iostream>
@@ -50,7 +40,7 @@ class VDA_Tester
       *it++ = s;
     }
 
-    ifs.close();    
+    ifs.close();
     return it;
   }
 
@@ -64,7 +54,7 @@ class VDA_Tester
       dg.insert(*it);
       for (eit = dg.all_edges_begin(); eit != dg.all_edges_end(); ++eit) {}
       for (vit = dg.all_vertices_begin();
-	   vit != dg.all_vertices_end(); ++vit) {}
+           vit != dg.all_vertices_end(); ++vit) {}
     }
 
     typename DG::size_type counter = 0;
@@ -107,7 +97,7 @@ class VDA_Tester
 
   template<class Iterator>
   VD* compute_vd(const DG& , Iterator first, Iterator beyond,
-		 CGAL::Tag_true) const
+                 CGAL::Tag_true) const
   {
     // insertion is supported
     VD* vd = new VD();
@@ -128,7 +118,7 @@ class VDA_Tester
     test_dual_graph_concept( vd.dual(), vd.adaptation_traits() );
     test_adaptation_traits_concept( vd.dual(), vd.adaptation_traits() );
     test_adaptation_policy_concept( vd.dual(), vd.adaptation_traits(),
-				    vd.adaptation_policy() );
+                                    vd.adaptation_policy() );
 
     std::ofstream nos("");
 
@@ -151,10 +141,10 @@ class VDA_Tester
   }
 
   void test_loc(const char* fname, const char* qfname, const CGAL::Tag_true&,
-		bool print_sites) const
+                bool print_sites) const
   {
     std::cout << "*** Testing data file (for point location): "
-	      << fname << std::endl << std::endl;
+              << fname << std::endl << std::endl;
 
     std::vector<typename VD::Adaptation_traits::Site_2> vec_s;
     read_from_file(fname, std::back_inserter(vec_s));
@@ -179,21 +169,21 @@ class VDA_Tester
   {
     std::cout << std::endl << std::endl;
     std::cout << "================================="
-	      << "=================================" << std::endl;
+              << "=================================" << std::endl;
     std::cout << "================================="
-	      << "=================================" << std::endl;
+              << "=================================" << std::endl;
     std::cout << std::endl << std::endl;
   }
 
  public:
   VDA_Tester(const Projector& project,
-	     const Dual_primal_projector& dp_project)
+             const Dual_primal_projector& dp_project)
     : project_(project), dp_project_(dp_project) {}
 
   void operator()(const char* fname) const
   {
     std::cout << "*** Testing data file: " << fname << std::endl
-	      << std::endl;
+              << std::endl;
 
     std::vector<typename VD::Adaptation_traits::Site_2> vec_s;
     read_from_file(fname, std::back_inserter(vec_s));
@@ -208,7 +198,7 @@ class VDA_Tester
 
     vda_timer_.start();
     VD* vd = compute_vd(dg, vec_s.begin(), vec_s.end(),
-			typename VD::Adaptation_traits::Has_insert());
+                        typename VD::Adaptation_traits::Has_insert());
     vda_timer_.stop();
 
     std::cout << std::endl << std::endl;
@@ -224,9 +214,9 @@ class VDA_Tester
     assert( b_vd );
 #else
     vda_timer_.start();
-    
+
     VD* vd = compute_vd(dg, vec_s.begin(), vec_s.end(),
-			typename VD::Adaptation_policy::Has_site_inserter());
+                        typename VD::Adaptation_policy::Has_site_inserter());
     vda_timer_.stop();
 
     test_vd(*vd);
@@ -255,20 +245,20 @@ class VDA_Tester
 
   void print_times() const {
     std::cerr << "Elapsed time for the Delaunay graph (sec): "
-	      << dg_time() << std::endl << std::endl;
+              << dg_time() << std::endl << std::endl;
     std::cerr << "Elapsed time for the Voronoi diagram adaptor (sec): "
-	      << vda_time() << std::endl << std::endl;
+              << vda_time() << std::endl << std::endl;
     std::cerr << "Total elapsed time (sec): " << total_time()
-	      << std::endl << std::endl;
+              << std::endl << std::endl;
   }
 
   void print_loc_times() const {
     std::cerr << "Elapsed time for the Delaunay graph (sec): "
-	      << dg_time() << std::endl << std::endl;
+              << dg_time() << std::endl << std::endl;
     std::cerr << "Elapsed time for point location (sec): "
-	      << loc_time() << std::endl << std::endl;
+              << loc_time() << std::endl << std::endl;
     std::cerr << "Total elapsed time (sec): " << dg_time() + loc_time()
-	      << std::endl << std::endl;
+              << std::endl << std::endl;
   }
 
  private:

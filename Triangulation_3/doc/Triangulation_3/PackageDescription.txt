@@ -13,12 +13,15 @@
 /// \defgroup PkgTriangulation3VertexCellClasses Vertex and Cell Classes
 /// \ingroup PkgTriangulation3Ref
 
-/*! Draw.
+/*!
   \code
    #include <CGAL/draw_triangulation_3.h>
   \endcode
 */
 /// \defgroup PkgDrawTriangulation3 Draw a Triangulation 3
+/// \ingroup PkgTriangulation3Ref
+
+/// \defgroup PkgIOTriangulation3 I/O for a Triangulation 3
 /// \ingroup PkgTriangulation3Ref
 
 /*!
@@ -32,7 +35,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{2.1}
-\cgalPkgDependsOn{\ref PkgTDS3} 
+\cgalPkgDependsOn{\ref PkgTDS3}
 \cgalPkgBib{cgal:pt-t3}
 \cgalPkgLicense{\ref licensesGPL "GPL" }
 \cgalPkgDemo{3D Triangulations,triangulation_3.zip}
@@ -74,7 +77,7 @@ is opposite to the vertex with the same index. See
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `TriangulationTraits_3`
 - `DelaunayTriangulationTraits_3`
@@ -90,9 +93,9 @@ is opposite to the vertex with the same index. See
 - `TriangulationDataStructure_3`
 - `WeightedPoint`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
-### Main Classes ###
+\cgalCRPSubsection{Main Classes}
 
 - `CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3,SurjectiveLockDataStructure>`
 - `CGAL::Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3,LocationPolicy,SurjectiveLockDataStructure>`
@@ -108,17 +111,21 @@ is opposite to the vertex with the same index. See
 - `CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<RegularTriangulationTraits_3,Cb>`
 - `CGAL::Triangulation_simplex_3<Triangulation_3>`
 
-### Traits Classes ###
+\cgalCRPSubsection{Traits Classes}
 
 - `CGAL::Regular_triangulation_euclidean_traits_3<K,Weight>`
 - `CGAL::Robust_weighted_circumcenter_filtered_traits_3<K>`
 
-## Enums ##
+\cgalCRPSection{Enums}
 
 - `CGAL::Triangulation_3::Locate_type`
 
-### Draw a Triangulation 3 ###
-- `CGAL::draw<T3>`
+\cgalCRPSection{Draw a Triangulation 3}
 
+- \link PkgDrawTriangulation3 CGAL::draw<T3>() \endlink
+
+\cgalCRPSection{I/O}
+ - \link PkgIOTriangulation3 CGAL:Triangulation_3::file_input<Tr_src, ConvertVertex, ConvertCell>()\endlink
+ - \link PkgIOTriangulation3 CGAL::file_input<Tr_src, Tr_tgt, ConvertVertex, ConvertCell>()\endlink
 */
 

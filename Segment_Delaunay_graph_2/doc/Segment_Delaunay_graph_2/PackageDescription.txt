@@ -40,7 +40,7 @@ the class
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `SegmentDelaunayGraphSite_2`
 - `SegmentDelaunayGraphStorageSite_2`
@@ -49,7 +49,7 @@ the class
 - `SegmentDelaunayGraphTraits_2`
 - `SegmentDelaunayGraphHierarchyVertexBase_2`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 - `CGAL::Segment_Delaunay_graph_2<Gt,DS>`
 - `CGAL::Segment_Delaunay_graph_site_2<K>`

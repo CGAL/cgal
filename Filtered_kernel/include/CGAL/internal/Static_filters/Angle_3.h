@@ -1,20 +1,11 @@
 // Copyright (c) 2011 GeometryFactory Sarl (France)
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau
@@ -89,7 +80,7 @@ public:
         fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
         fit_in_double(get_approx(q).z(), qz) &&
         fit_in_double(get_approx(r).x(), rx) && fit_in_double(get_approx(r).y(), ry) &&
-        fit_in_double(get_approx(r).z(), rz) )      
+        fit_in_double(get_approx(r).z(), rz) )
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
@@ -146,14 +137,14 @@ public:
     //   ((t1 - t1) * (t1 - t1));
     F t1 = F(1, F::ulp()/2);         // First translation
     F f = t1*t1 + t1*t1 + t1*t1;
-      
+
     double err = f.error();
     err += err * 2 * F::ulp(); // Correction due to "eps * m * m ".
     std::cerr << "*** epsilon for Angle_3(Point_3, Point_3, Point_3) = "
               << err << std::endl;
     std::cerr << "\n"
               << "Now for underflow/overflows...\n"
-              << "       min_double/eps  = " 
+              << "       min_double/eps  = "
               << (std::numeric_limits<double>::min)() / err << std::endl
               << "  sqrt(min_double/eps) = "
               << CGAL::sqrt((std::numeric_limits<double>::min)() / err) << std::endl

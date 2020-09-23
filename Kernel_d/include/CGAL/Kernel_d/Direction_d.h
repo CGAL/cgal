@@ -1,25 +1,16 @@
-// Copyright (c) 2000,2001  
+// Copyright (c) 2000,2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel
 
@@ -58,9 +49,9 @@ class Direction_d : public pR::Direction_d_base
   Direction_d (int d, InputIterator first, InputIterator last)
     : Base(d, first, last) {}
 
-  Direction_d(const Direction_d<R> &d) : Base(d) {}
+
   Direction_d(const Vector_d<R> &v) : Base(v) {}
-  Direction_d(int d, Base_direction, int i) : 
+  Direction_d(int d, Base_direction, int i) :
     Base(d,Base_direction(),i) {}
   Direction_d(const Base& p) : Base(p) {}
 
@@ -70,6 +61,10 @@ class Direction_d : public pR::Direction_d_base
   bool operator==(const Self& w) const
   { return Base::operator==(w); }
   bool operator!=(const Self& w) const
+  { return Base::operator!=(w); }
+  bool operator==(const Base& w) const
+  { return Base::operator==(w); }
+  bool operator!=(const Base& w) const
   { return Base::operator!=(w); }
 };
 

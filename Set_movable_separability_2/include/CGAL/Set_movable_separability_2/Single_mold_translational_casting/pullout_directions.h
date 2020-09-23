@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s): Shahar    <shasha94@gmail.com>
 //            Efi Fogel <efif@gmail.com>
@@ -37,40 +28,40 @@ namespace Single_mold_translational_casting {
  * \param[in] traits the traits to use.
  *
  *   algorithm:
- *   	this function implements a very simple algorithm... it just keep at any stage the current
- *   	intersection in  [firstClockwise,secondClockwise].
- *   	When a new semicircle appear the possible cases are as such:
- *   	(let f:=firstClockwise, s:=secondClockwise, a:=newSemicircleFirstClockwise , b:=newSemicircleSecondClockwise)
- *	REMEBER THAT THIS ARE SEGMENTS ON A CIRCLE! NOT ON A LINE!
+ *           this function implements a very simple algorithm... it just keep at any stage the current
+ *           intersection in  [firstClockwise,secondClockwise].
+ *           When a new semicircle appear the possible cases are as such:
+ *           (let f:=firstClockwise, s:=secondClockwise, a:=newSemicircleFirstClockwise , b:=newSemicircleSecondClockwise)
+ *        REMEBER THAT THIS ARE SEGMENTS ON A CIRCLE! NOT ON A LINE!
  * 1. [f,s] contained in [a,b]
- *   	     f	   s	  	  *      f		s   *          f	s  *     f	s
- *   	a		b	  *      a		b   *     a		b  *     a		b
- *   	_________________     	  *      _________________  *     _________________*     _________________
- *   	     f	   s		  *      f		s   *          f	s  *     f	s
+ *                f           s                    *      f                s   *          f        s  *     f        s
+ *           a                b          *      a                b   *     a                b  *     a                b
+ *           _________________               *      _________________  *     _________________*     _________________
+ *                f           s                  *      f                s   *          f        s  *     f        s
  * %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  * 2.  a contained in (f,s] and b is not  /  or in other words / s in [a,b) and f is not in [a,b] (it is enough to ask if s is in [a,b] since fs+ab is less than 2*pi)
- * 		   f		s	  *	 f	s
- *   		a		b *   		a	b
- *   	_________________ 	  *   	_________________
- *   		f	s	  *   		fs
+ *                    f                s          *         f        s
+ *                   a                b *                   a        b
+ *           _________________           *           _________________
+ *                   f        s          *                   fs
  * %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  * 3. b contained in [f,s) and a is not /  or in other words / f in (a,b] and s is not in [a,b] (it is enough to ask if f is in [a,b] since fs is shorter the ab)
- * 	    	   f	    s	  * 	    	f	s
- *       a		b	  *   a		b
- *   	_________________ *   	_________________
- *   	   f	s	  *    		fs
+ *                        f            s          *                     f        s
+ *       a                b          *   a                b
+ *           _________________ *           _________________
+ *              f        s          *                    fs
  * %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- * 4. 	no intersection between [f,s] and [a,b] / case a: or in other words /  f,s are not in [a,b]
- *   	     f	   s  	    *  	f		s
- *   	b		a   *	b		a
- *   	_________________   * 	_________________
- *   	NO INTERSECTION!    *  	NO INTERSECTION! (the only case in which this is possible is if (f,s) was not changes, and then (f,s) is an open arc)
+ * 4.         no intersection between [f,s] and [a,b] / case a: or in other words /  f,s are not in [a,b]
+ *                f           s              *          f                s
+ *           b                a   *        b                a
+ *           _________________   *         _________________
+ *           NO INTERSECTION!    *          NO INTERSECTION! (the only case in which this is possible is if (f,s) was not changes, and then (f,s) is an open arc)
  * %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  * 5. Illegal cases
- *  	f		s *  	f		s
- *   	     a	   b	  *    	     b	  a
- *   	__________________*	__________________
- *   	THIS CASE CANT HAPPEN!! [a,b] is an semicircle, and (f,s) is a semicircle or less
+ *          f                s *          f                s
+ *                a           b          *                 b          a
+ *           __________________*        __________________
+ *           THIS CASE CANT HAPPEN!! [a,b] is an semicircle, and (f,s) is a semicircle or less
  */
 template <typename CastingTraits_2>
 std::pair<bool, std::pair<typename CastingTraits_2::Direction_2,

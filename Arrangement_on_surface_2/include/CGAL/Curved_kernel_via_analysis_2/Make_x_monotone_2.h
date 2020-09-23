@@ -1,20 +1,11 @@
 // Copyright (c) 2007,2008,2009,2010,2011 Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
@@ -108,7 +99,7 @@ struct Make_x_monotone_2 :
      */
     Make_x_monotone_2(Curved_kernel_via_analysis_2 *kernel) :
         _m_curved_kernel(kernel) {
-        CGAL_assertion(kernel != NULL);
+        CGAL_assertion(kernel != nullptr);
     }
 
     //!@}
@@ -297,7 +288,7 @@ private:
                     *oi++ = CGAL::make_object(construct_arc_2(pts[j], pts[j+1],
                                                               _m_curve));
                 // the last vertical ray
-                *oi++ = CGAL::make_object(construct_arc_2(pts[n-1], 
+                *oi++ = CGAL::make_object(construct_arc_2(pts[n-1],
                     CGAL::ARR_MAX_END, _m_curve));
             } else // unbounded vertical line
                 *oi++ = CGAL::make_object(construct_arc_2(x, _m_curve));

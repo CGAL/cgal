@@ -25,15 +25,15 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #if 1
-struct K : public CGAL::Filtered_kernel<CGAL::Cartesian<double> > {};
+typedef CGAL::Filtered_kernel<CGAL::Cartesian<double> > K;
 #else
 typedef CGAL::Homogeneous<int> K1;
 typedef CGAL::Homogeneous<CGAL::MP_Float> K2;
 typedef CGAL::Homogeneous<CGAL::Interval_nt_advanced> K3;
 
 typedef CGAL::Filtered_kernel<K1, K2, K3,
-			      CGAL::Homogeneous_converter<K1, K2>,
-			      CGAL::Homogeneous_converter<K1, K3> > K ;
+                              CGAL::Homogeneous_converter<K1, K2>,
+                              CGAL::Homogeneous_converter<K1, K3> > K ;
 #endif
 
 typedef K::RT  NT;
@@ -60,6 +60,6 @@ int main()
   for (int i=0; i<100; i++)
     D.insert(K::Point_3(NT(my_rand()), NT(my_rand()), NT(my_rand()),
                           NT(my_rand()) // for homogeneous
-			));
+                        ));
   return 0;
 }

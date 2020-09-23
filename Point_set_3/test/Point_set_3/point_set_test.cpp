@@ -13,7 +13,7 @@ typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 
 typedef CGAL::Point_set_3<Point> Point_set;
-typedef CGAL::cpp11::array<unsigned char, 3> Color;
+typedef std::array<unsigned char, 3> Color;
 
 std::size_t nb_test = 0;
 std::size_t nb_success = 0;
@@ -38,7 +38,7 @@ int main (int, char**)
 
   std::ifstream f ("data/oni.pwn");
   CGAL::read_xyz_point_set(f, point_set);
-  
+
   f.close ();
 
   Point_set::iterator
@@ -48,7 +48,7 @@ int main (int, char**)
   std::size_t size = point_set.size ();
   point_set.remove_from (first_to_remove);
   test ((point_set.size() + point_set.garbage_size() == size), "sizes before and after removal do not match.");
- 
+
   Point_set::Point_range
     range = point_set.points();
 
@@ -72,11 +72,11 @@ int main (int, char**)
   test (!(point_set.has_garbage()), "point set shouldn't have garbage.");
 
   point_set.remove (*(point_set.begin()));
-  
+
   test (point_set.has_garbage(), "point set should have garbage.");
   point_set.collect_garbage();
   test (!(point_set.has_garbage()), "point set shouldn't have garbage.");
-  
+
   test (!(point_set.has_property_map<Color> ("color")), "point set shouldn't have colors.");
   Point_set::Property_map<Color> color_prop;
   bool garbage;
@@ -95,10 +95,10 @@ int main (int, char**)
   Point_set::Property_map<Color> color_prop_2;
   boost::tie (color_prop_2, garbage) = point_set.property_map<Color>("color");
   test ((color_prop_2 == color_prop), "color property not recovered correctly.");
-  
+
   point_set.remove_normal_map ();
   test (!(point_set.has_normal_map()), "point set shouldn't have normals.");
-  
+
   test (point_set.has_property_map<Color> ("color"), "point set should have colors.");
   point_set.remove_property_map<Color> (color_prop);
   test (!(point_set.has_property_map<Color> ("color")), "point set shouldn't have colors.");
@@ -107,7 +107,7 @@ int main (int, char**)
   point_set.add_property_map<double> ("intensity", 0.0);
 
   test (point_set.base().n_properties() == 4, "point set should have 4 properties.");
-  
+
   Point p_before = *(point_set.points().begin());
   point_set.clear_properties();
 
@@ -121,6 +121,6 @@ int main (int, char**)
   test (p_before == p_after, "points should not change when clearing properties.");
 
   std::cerr << nb_success << "/" << nb_test << " test(s) succeeded." << std::endl;
-  
+
   return EXIT_SUCCESS;
 }

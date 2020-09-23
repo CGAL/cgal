@@ -1,26 +1,17 @@
 // Copyright (c) 2013  INRIA Sophia Antipolis -  Mediterranee (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Olivier Devillers
- 
+
 #include <CGAL/Cartesian.h>
-#include <CGAL/CGAL_Ipelet_base.h> 
+#include <CGAL/CGAL_Ipelet_base.h>
 #include <CGAL/Object.h>
 
 #include "include/CGAL_ipelets/pencils.h"
@@ -40,10 +31,10 @@ const std::string helpmsg[] = {
   "Draw the circle orthogonal to three circles"
 };
 
-class pencilIpelet 
+class pencilIpelet
   : public CGAL::Ipelet_base<Kernel,3> {
 public:
-  pencilIpelet() 
+  pencilIpelet()
     :CGAL::Ipelet_base<Kernel,3>("Pencils of circles",sublabel,helpmsg){}
   void protected_run(int);
 };
@@ -52,18 +43,18 @@ public:
 void pencilIpelet::protected_run(int fn)
 {
   Circle_2 circ;     //constructed circle:
-  
+
   if (fn==2) {
     show_help();
     return;
-  } 
-  
+  }
+
   Circle_2  c,c0,c1,c2;
   std::list<Point_2> pt_list,pt_list1;
   std::list<Circle_2> cir_list,cir_list1;
 
 
-  int i=get_IpePage()->primarySelection(); 
+  int i=get_IpePage()->primarySelection();
 
   if (i<0) {
     print_error_message(("No mark or circle selected"));
@@ -72,8 +63,8 @@ void pencilIpelet::protected_run(int fn)
 
   read_one_active_object(get_IpePage()->object(i),CGAL::dispatch_or_drop_output<Point_2,Circle_2>(
        std::back_inserter(pt_list1),
-       std::back_inserter(cir_list1))); 
-  
+       std::back_inserter(cir_list1)));
+
   std::list<Point_2>::iterator it1=pt_list1.begin();
   std::list<Circle_2>::iterator cit1=cir_list1.begin();
 
@@ -85,7 +76,7 @@ void pencilIpelet::protected_run(int fn)
 
   Iso_rectangle_2 bbox=
   read_active_objects(
-		      CGAL::dispatch_or_drop_output<Point_2,Circle_2>(
+                      CGAL::dispatch_or_drop_output<Point_2,Circle_2>(
       std::back_inserter(pt_list),
       std::back_inserter(cir_list)
     )
@@ -109,7 +100,7 @@ void pencilIpelet::protected_run(int fn)
   else {print_error_message(("Not enough marks or circles selected")); return;}
   if ((it!=pt_list.end())||(cit!=cir_list.end()))
     {print_error_message(("Warning: more than three marks or circles selected"));}
-  
+
   // c is the primary selection
   if (c==c1) c1=c0;
   if (c==c2) c2=c0;
@@ -123,17 +114,17 @@ void pencilIpelet::protected_run(int fn)
   case 1:
     // Circle orthogonal to three circles
     circ = compute_circle_orthogonal<Kernel>(c,c1,c2);
-    break;    
-    
+    break;
+
   }     //end of switch
 
 
   // detect degenerate case
-  if (circ==Circle_2()){ 
+  if (circ==Circle_2()){
     Kernel::Vector_2  v;
     if(fn==0)
       v=Kernel::Vector_2(
-	  c2.center().y()-c1.center().y(),c2.center().x()-c1.center().x());
+          c2.center().y()-c1.center().y(),c2.center().x()-c1.center().x());
     else v=c2.center()-c1.center();
       Kernel::FT sqr_length= 1 / v.squared_length();
       double length = 600 * sqrt( sqr_length);
@@ -141,7 +132,7 @@ void pencilIpelet::protected_run(int fn)
       Point_2 q1=c.center()+ v;
       Point_2 q2=c.center()- v;
       print_error_message(
-	 "degenerate case, circle is a line");
+         "degenerate case, circle is a line");
       Kernel::Segment_2 s(q1,q2);
       draw_in_ipe(s);
       return;

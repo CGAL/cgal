@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Stéphane Tayeb, Andreas Fabri
 //
@@ -29,7 +20,7 @@
 #ifndef CGAL_COMPACT_MESH_VERTEX_BASE_3_H
 #define CGAL_COMPACT_MESH_VERTEX_BASE_3_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 
 #include <CGAL/Regular_triangulation_vertex_base_3.h>
@@ -39,7 +30,7 @@
 #include <CGAL/tags.h>
 
 namespace CGAL {
-  
+
 // Without erase counter
 template <typename Concurrency_tag>
 class Mesh_vertex_base_3_base
@@ -61,7 +52,7 @@ public:
   {
     ++this->m_erase_counter;
   }
-  
+
 protected:
   typedef unsigned int              Erase_counter_type;
   Erase_counter_type                m_erase_counter;
@@ -74,7 +65,7 @@ template <>
 class Mesh_vertex_base_3_base<Parallel_tag>
 {
 public:
-  
+
   // Erase counter (cf. Compact_container)
   unsigned int erase_counter() const
   {
@@ -88,7 +79,7 @@ public:
   {
     ++this->m_erase_counter;
   }
-  
+
 protected:
   typedef tbb::atomic<unsigned int> Erase_counter_type;
   Erase_counter_type                m_erase_counter;
@@ -144,7 +135,7 @@ public:
   // complex that contains the vertex
   int in_dimension() const {
     if(dimension_ < -1) return -2-dimension_;
-    else return dimension_; 
+    else return dimension_;
   }
 
   // Sets the dimension of the lowest dimensional face of the input 3D complex
@@ -178,14 +169,14 @@ public:
 #ifdef CGAL_INTRUSIVE_LIST
   Vertex_handle next_intrusive() const { return next_intrusive_; }
   void set_next_intrusive(Vertex_handle v)
-  { 
+  {
     next_intrusive_ = v;
   }
 
   Vertex_handle previous_intrusive() const { return previous_intrusive_; }
   void set_previous_intrusive(Vertex_handle v)
   {
-    previous_intrusive_ = v; 
+    previous_intrusive_ = v;
   }
 #endif
 
@@ -221,7 +212,7 @@ public:
   {
     return number_of_incident_facets_;
   }
-    
+
   std::size_t cached_number_of_components() const
   {
     return number_of_components_;
@@ -230,7 +221,7 @@ public:
   static
   std::string io_signature()
   {
-    return 
+    return
       Get_io_signature<Vb>()() + "+" +
       Get_io_signature<int>()() + "+" +
       Get_io_signature<Index>()();

@@ -58,7 +58,7 @@ circulators as well as with iterators.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `Handle`
 - `Range`
 - `ConstRange`
@@ -67,7 +67,7 @@ circulators as well as with iterators.
 - `BidirectionalCirculator`
 - `RandomAccessCirculator`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Container_from_circulator<C>`
 - `CGAL::Circulator_from_iterator<I>`
 - `CGAL::Circulator_from_container<C>`

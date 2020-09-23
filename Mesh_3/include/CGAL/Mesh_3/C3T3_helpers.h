@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -35,7 +26,7 @@
 
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
-#include <CGAL/Hash_handles_with_or_without_timestamps.h>
+#include <CGAL/Time_stamper.h>
 #include <CGAL/tuple.h>
 #include <CGAL/iterator.h>
 #include <CGAL/array.h>
@@ -45,7 +36,6 @@
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
-#include <boost/foreach.hpp>
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
 #include <boost/optional.hpp>
@@ -57,7 +47,7 @@
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/parallel_do.h>
-# include <tbb/mutex.h>
+# include <mutex>
 #endif
 
 #include <functional>
@@ -605,7 +595,7 @@ public:
 protected:
   Lock_data_structure *m_lock_ds;
 
-  typedef tbb::mutex  Mutex_type;
+  typedef std::mutex  Mutex_type;
   mutable Mutex_type  m_mut_outdated_cells;
   mutable Mutex_type  m_mut_moving_vertices;
   mutable Mutex_type  m_mut_vertex_to_proj;
@@ -715,7 +705,7 @@ public:
    * Constructor
    */
   C3T3_helpers(C3T3& c3t3, const MeshDomain& domain,
-               Lock_data_structure *lock_ds = NULL)
+               Lock_data_structure *lock_ds = nullptr)
     : Base(lock_ds)
     , c3t3_(c3t3)
     , tr_(c3t3.triangulation())
@@ -744,7 +734,7 @@ public:
               const Weighted_point& new_position,
               const SliverCriterion& criterion,
               OutputIterator modified_vertices,
-              bool *could_lock_zone = NULL);
+              bool *could_lock_zone = nullptr);
 
   /** @brief tries to move \c old_vertex to \c new_position in the mesh
    *
@@ -758,7 +748,7 @@ public:
                           const Weighted_point& new_position,
                           const SliverCriterion& criterion,
                           OutputIterator modified_vertices,
-                          bool *could_lock_zone = NULL);
+                          bool *could_lock_zone = nullptr);
 
   /**
    * Updates mesh moving vertex \c old_vertex to \c new_position. Returns the
@@ -848,16 +838,6 @@ public:
                            Outdated_cell_set& outdated_cells_set,
                            Moving_vertices_set& moving_vertices,
                            bool *could_lock_zone) const;
-
-  /**
-   * Try to lock the incident cells and return them in \c cells
-   * Return value:
-   * - false: everything is unlocked and \c cells is empty
-   * - true: incident cells are locked and \c cells contains all of them
-   */
-  bool
-  try_lock_and_get_incident_cells(const Vertex_handle& v,
-                                  Cell_vector &cells) const;
 
   /**
    * Try to lock ALL the incident cells and return in \c cells the ones
@@ -1234,9 +1214,9 @@ private:
 
       Intersection intersection = construct_intersection(dual);
       Surface_patch surface =
-        (CGAL::cpp0x::get<2>(intersection) == 0) ? Surface_patch() :
+        (std::get<2>(intersection) == 0) ? Surface_patch() :
         Surface_patch(
-          domain_.surface_patch_index(CGAL::cpp0x::get<1>(intersection)));
+          domain_.surface_patch_index(std::get<1>(intersection)));
 
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
@@ -1244,8 +1224,8 @@ private:
       if(update_c3t3)
       {
         // Update status in c3t3
-        if(surface != boost::none)
-          c3t3_.add_to_complex(facet, surface.get());
+        if((bool)surface)
+          c3t3_.add_to_complex(facet, *surface);
         else
           c3t3_.remove_from_complex(facet);
       }
@@ -1260,13 +1240,13 @@ private:
 #endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
           // Update facet surface center
-          Bare_point surface_center = CGAL::cpp0x::get<0>(intersection);
+          Bare_point surface_center = std::get<0>(intersection);
           facet.first->set_facet_surface_center(facet.second, surface_center);
           facet_m.first->set_facet_surface_center(facet_m.second, surface_center);
         }
       }
 
-      return surface;
+      return surface ? surface : Surface_patch();
     }
 
 
@@ -1277,6 +1257,7 @@ private:
 
   class Facet_updater
   {
+    const Self& m_c3t3_helpers;
     Vertex_set& vertex_to_proj;
     C3T3& c3t3_;
     Update_c3t3& c3t3_updater_;
@@ -1285,8 +1266,10 @@ private:
     typedef Facet& reference;
     typedef const Facet& const_reference;
 
-    Facet_updater(C3T3& c3t3, Vertex_set& vertex_to_proj, Update_c3t3& c3t3_updater_)
-      : vertex_to_proj(vertex_to_proj), c3t3_(c3t3), c3t3_updater_(c3t3_updater_)
+    Facet_updater(const Self& c3t3_helpers,
+      C3T3& c3t3, Vertex_set& vertex_to_proj, Update_c3t3& c3t3_updater_)
+      : m_c3t3_helpers(c3t3_helpers),
+      vertex_to_proj(vertex_to_proj), c3t3_(c3t3), c3t3_updater_(c3t3_updater_)
     {}
 
     void
@@ -1306,9 +1289,9 @@ private:
           const Vertex_handle& v = f.first->vertex((k+i)&3);
           if ( c3t3_.in_dimension(v) > 2 )
           {
-            //lock_vertex_to_proj();
+            m_c3t3_helpers.lock_vertex_to_proj();
             vertex_to_proj.insert(v);
-            //unlock_vertex_to_proj();
+            m_c3t3_helpers.unlock_vertex_to_proj();
           }
         }
       }
@@ -1383,7 +1366,6 @@ private:
 
     std::size_t vertex_id(const std::size_t& i) const
     {
-      CGAL_precondition(i >= 0);
       CGAL_precondition((infinite_ && i < 3) || i < 4);
       return vertices_[i];
     }
@@ -1497,7 +1479,7 @@ private:
     }
 
   private:
-    typedef CGAL::cpp11::array<std::size_t, 4> IndexMap;
+    typedef std::array<std::size_t, 4> IndexMap;
 
     void restore(Cell_handle c,
                  const IndexMap& index_map,//new_to_old_indices
@@ -1565,9 +1547,9 @@ private:
     Cell_from_ids cell_ids_;
     FT sliver_value_;
     Subdomain_index subdomain_index_;
-    CGAL::cpp11::array<Surface_patch_index, 4> surface_index_table_;
-    CGAL::cpp11::array<Bare_point, 4> facet_surface_center_;
-    CGAL::cpp11::array<Index, 4> surface_center_index_table_;
+    std::array<Surface_patch_index, 4> surface_index_table_;
+    std::array<Bare_point, 4> facet_surface_center_;
+    std::array<Index, 4> surface_center_index_table_;
   };
 
 private:
@@ -1590,10 +1572,17 @@ private:
   Cell_vector c3t3_cells(const Cell_vector& cells) const
   {
     Cell_vector c3t3_cells;
+#ifdef CGAL_CXX17
+    std::remove_copy_if(cells.begin(),
+                        cells.end(),
+                        std::back_inserter(c3t3_cells),
+                        std::not_fn(Is_in_c3t3<Cell_handle>(c3t3_)));
+#else
     std::remove_copy_if(cells.begin(),
                         cells.end(),
                         std::back_inserter(c3t3_cells),
                         std::not1(Is_in_c3t3<Cell_handle>(c3t3_)) );
+#endif
     return c3t3_cells;
   }
 
@@ -1667,7 +1656,7 @@ private:
   move_point_topo_change(const Vertex_handle& old_vertex,
                          const Weighted_point& new_position,
                          Outdated_cell_set& outdated_cells_set,
-                         bool *could_lock_zone = NULL) const;
+                         bool *could_lock_zone = nullptr) const;
 
   template < typename OutdatedCellsOutputIterator,
              typename DeletedCellsOutputIterator >
@@ -1800,7 +1789,7 @@ private:
                                 CellsOutputIterator insertion_conflict_cells,
                                 FacetsOutputIterator insertion_conflict_boundary,
                                 CellsOutputIterator removal_conflict_cells,
-                                bool *could_lock_zone = NULL) const;
+                                bool *could_lock_zone = nullptr) const;
 
 
   template < typename ConflictCellsInputIterator,
@@ -2065,7 +2054,7 @@ private:
                                        true); /* update surface centers */
       // false means "do not update the c3t3"
       if ( c3t3_.is_in_complex(*fit) != (bool)sp ||
-           ((bool)sp && !(c3t3_.surface_patch_index(*fit) == sp.get()) ) )
+           ((bool)sp && !(c3t3_.surface_patch_index(*fit) == *sp) ) )
         return false;
     }
 
@@ -2742,7 +2731,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
     // Note: ~42% of rebuild_restricted_delaunay time
     //  Facet_vector facets;
     lock_vertex_to_proj();
-    Facet_updater facet_updater(c3t3_,vertex_to_proj, updater);
+    Facet_updater facet_updater(*this, c3t3_,vertex_to_proj, updater);
     unlock_vertex_to_proj();
     update_facets(outdated_cells_vector, facet_updater);
 
@@ -2771,7 +2760,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
     // Get facets (returns each canonical facet only once)
     // Note: ~42% of rebuild_restricted_delaunay time
     //  Facet_vector facets;
-    Facet_updater facet_updater(c3t3_,vertex_to_proj, updater);
+    Facet_updater facet_updater(*this, c3t3_,vertex_to_proj, updater);
     update_facets(outdated_cells, facet_updater);
 
     // now we can clear
@@ -2959,7 +2948,19 @@ move_point(const Vertex_handle& old_vertex,
 
   Cell_vector incident_cells_;
   incident_cells_.reserve(64);
-  tr_.incident_cells(old_vertex, std::back_inserter(incident_cells_));
+
+# ifdef CGAL_LINKED_WITH_TBB
+  // Parallel
+  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  {
+    tr_.incident_cells_threadsafe(old_vertex, std::back_inserter(incident_cells_));
+  }
+  // Sequential
+  else
+# endif // CGAL_LINKED_WITH_TBB
+  {
+    tr_.incident_cells(old_vertex, std::back_inserter(incident_cells_));
+  }
 
   const Weighted_point& position = tr_.point(old_vertex);
   const Weighted_point& new_position = cwp(translate(cp(position), move));
@@ -3035,7 +3036,7 @@ move_point(const Vertex_handle& old_vertex,
            Moving_vertices_set& moving_vertices,
            bool *could_lock_zone) const
 {
-  CGAL_assertion(could_lock_zone != NULL);
+  CGAL_assertion(could_lock_zone != nullptr);
   *could_lock_zone = true;
 
   if (!try_lock_vertex(old_vertex)) // LOCK
@@ -3048,9 +3049,10 @@ move_point(const Vertex_handle& old_vertex,
   //======= Get incident cells ==========
   Cell_vector incident_cells_;
   incident_cells_.reserve(64);
-  if (try_lock_and_get_incident_cells(old_vertex, incident_cells_) == false)
+  if (tr_.try_lock_and_get_incident_cells(old_vertex, incident_cells_) == false)
   {
     *could_lock_zone = false;
+    unlock_all_elements();
     return Vertex_handle();
   }
   //======= /Get incident cells ==========
@@ -3077,10 +3079,11 @@ move_point(const Vertex_handle& old_vertex,
     lock_outdated_cells();
     std::copy(incident_cells_.begin(),incident_cells_.end(),
       std::inserter(outdated_cells_set, outdated_cells_set.end()));
-    unlock_outdated_cells();
 
     Vertex_handle new_vertex =
       move_point_no_topo_change(old_vertex, move, new_position);
+
+    unlock_outdated_cells();
 
     // Don't "unlock_all_elements" here, the caller may need it to do it himself
     return new_vertex;
@@ -3393,7 +3396,7 @@ project_on_surface_aux(const Bare_point& p,
     domain_.do_intersect_surface_object();
 
   if ( do_intersect(proj_segment) )
-    return CGAL::cpp0x::get<0>(construct_intersection(proj_segment));
+    return std::get<0>(construct_intersection(proj_segment));
   else
     return ref_point;
 
@@ -3401,8 +3404,8 @@ project_on_surface_aux(const Bare_point& p,
 
   typedef typename MD::Intersection Intersection;
   Intersection intersection = construct_intersection(proj_segment);
-  if(CGAL::cpp0x::get<2>(intersection) == 2)
-    return CGAL::cpp0x::get<0>(intersection);
+  if(std::get<2>(intersection) == 2)
+    return std::get<0>(intersection);
   else
     return ref_point;
 
@@ -3593,61 +3596,6 @@ get_incident_slivers_without_using_tds_data(const Vertex_handle& v,
   tr_.incident_cells_threadsafe(v, boost::make_function_output_iterator(f));
 }
 
-// CJTODO: call tr_.try_lock_and_get_incident_cells instead?
-template <typename C3T3, typename MD>
-bool
-C3T3_helpers<C3T3,MD>::
-try_lock_and_get_incident_cells(const Vertex_handle& v,
-                                Cell_vector &cells) const
-  {
-    // We need to lock v individually first, to be sure v->cell() is valid
-    if (!try_lock_vertex(v))
-      return false;
-
-    Cell_handle d = v->cell();
-    if (!try_lock_element(d)) // LOCK
-    {
-      unlock_all_elements();
-      return false;
-    }
-    cells.push_back(d);
-    d->tds_data().mark_in_conflict();
-    int head=0;
-    int tail=1;
-    do {
-      Cell_handle c = cells[head];
-
-      for (int i=0; i<4; ++i) {
-        if (c->vertex(i) == v)
-          continue;
-        Cell_handle next = c->neighbor(i);
-
-        if (!try_lock_element(next)) // LOCK
-        {
-          BOOST_FOREACH(Cell_handle& ch,
-            std::make_pair(cells.begin(), cells.end()))
-          {
-            ch->tds_data().clear();
-          }
-          cells.clear();
-          unlock_all_elements();
-          return false;
-        }
-        if (! next->tds_data().is_clear())
-          continue;
-        cells.push_back(next);
-        ++tail;
-        next->tds_data().mark_in_conflict();
-      }
-      ++head;
-    } while(head != tail);
-    BOOST_FOREACH(Cell_handle& ch, std::make_pair(cells.begin(), cells.end()))
-    {
-      ch->tds_data().clear();
-    }
-    return true;
-  }
-
 template <typename C3T3, typename MD>
 template <typename Filter>
 bool
@@ -3658,16 +3606,17 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
 {
   std::vector<Cell_handle> tmp_cells;
   tmp_cells.reserve(64);
-  bool ret = try_lock_and_get_incident_cells(v, tmp_cells);
+  bool ret = tr_.try_lock_and_get_incident_cells(v, tmp_cells);
   if (ret)
   {
-    BOOST_FOREACH(Cell_handle& ch,
-                  std::make_pair(tmp_cells.begin(), tmp_cells.end()))
+    for(Cell_handle ch : tmp_cells)
     {
       if (filter(ch))
         cells.push_back(ch);
     }
   }
+  else
+    tr_.unlock_all_elements();
   return ret;
 }
 
@@ -3885,7 +3834,19 @@ get_conflict_zone_topo_change(const Vertex_handle& v,
   // Get triangulation_vertex incident cells : removal conflict zone
   // TODO: hasn't it already been computed in "perturb_vertex" (when getting the slivers)?
   // We don't try to lock the incident cells since they've already been locked
-  tr_.incident_cells(v, removal_conflict_cells);
+
+# ifdef CGAL_LINKED_WITH_TBB
+// Parallel
+  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  {
+    tr_.incident_cells_threadsafe(v, removal_conflict_cells);
+  }
+  // Sequential
+  else
+# endif // CGAL_LINKED_WITH_TBB
+  {
+    tr_.incident_cells(v, removal_conflict_cells);
+  }
 
   // Get conflict_point conflict zone
   int li=0;

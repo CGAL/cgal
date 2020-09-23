@@ -22,7 +22,7 @@ int main()
   // Create the generator, input is the vector of Triangle_2
   Random_points_in_triangles_2<Point> g(triangles);
   // Get 100 random points in cdt
-  CGAL::cpp11::copy_n(g, 1000, std::back_inserter(points));
+  std::copy_n(g, 1000, std::back_inserter(points));
 
   // Check that we have really created 100 points.
   assert( points.size() == 1000);

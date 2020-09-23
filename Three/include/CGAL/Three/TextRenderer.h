@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent RINEAU, Maxime Gimeno
@@ -30,6 +21,7 @@
 
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Scene_interface.h>
+#include <QtGlobal>
 
 class QVector3D;
 namespace CGAL{
@@ -60,7 +52,12 @@ public :
         :x(p_x), y(p_y), z(p_z),_3D(p_3D), _is_always_visible(always_visible), m_text(p_text), m_font(font), m_color(p_color)
     {
        QFontMetrics fm(m_font);
-       _width = float(fm.width(m_text));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+       _width = float(fm.horizontalAdvance(m_text)+2);
+#else
+       _width = float(fm.width(m_text)+2);
+#endif
+
        _height = float(fm.height());
     }
     //!\brief Accessor for the string

@@ -2,20 +2,11 @@
 // INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -131,30 +122,30 @@ public:
     public:
         std::pair<double, double> operator()( const Type& x ) const {
 #if MPFR_VERSION_MAJOR >= 3
-	  MPFR_DECL_INIT (y, 53); /* Assume IEEE-754 */
-	  int r = mpfr_set_z (y, x.mpz(), MPFR_RNDA);
-	  double i = mpfr_get_d (y, MPFR_RNDA); /* EXACT but can overflow */
-	  if (r == 0 && is_finite (i))
-	    return std::pair<double, double>(i, i);
-	  else
-	  {
-	    double s = nextafter (i, 0);
-	    if (i < 0)
-	      return std::pair<double, double>(i, s);
-	    else
-	      return std::pair<double, double>(s, i);
-	  }
+          MPFR_DECL_INIT (y, 53); /* Assume IEEE-754 */
+          int r = mpfr_set_z (y, x.mpz(), MPFR_RNDA);
+          double i = mpfr_get_d (y, MPFR_RNDA); /* EXACT but can overflow */
+          if (r == 0 && is_finite (i))
+            return std::pair<double, double>(i, i);
+          else
+          {
+            double s = nextafter (i, 0);
+            if (i < 0)
+              return std::pair<double, double>(i, s);
+            else
+              return std::pair<double, double>(s, i);
+          }
 #else
-	  mpfr_t y;
-	  mpfr_init2 (y, 53); /* Assume IEEE-754 */
-	  mpfr_set_z (y, x.mpz(), GMP_RNDD);
-	  double i = mpfr_get_d (y, GMP_RNDD); /* EXACT but can overflow */
-	  mpfr_set_z (y, x.mpz(), GMP_RNDU);
-	  double s = mpfr_get_d (y, GMP_RNDU); /* EXACT but can overflow */
-	  mpfr_clear (y);
-	  return std::pair<double, double>(i, s);
+          mpfr_t y;
+          mpfr_init2 (y, 53); /* Assume IEEE-754 */
+          mpfr_set_z (y, x.mpz(), GMP_RNDD);
+          double i = mpfr_get_d (y, GMP_RNDD); /* EXACT but can overflow */
+          mpfr_set_z (y, x.mpz(), GMP_RNDU);
+          double s = mpfr_get_d (y, GMP_RNDU); /* EXACT but can overflow */
+          mpfr_clear (y);
+          return std::pair<double, double>(i, s);
 #endif
-	}
+        }
     };
 };
 
@@ -194,8 +185,8 @@ struct Needs_parens_as_product<Gmpz> {
 
 
 /*! \ingroup NiX_Modular_traits_spec
- *  \brief a model of concept ModularTraits, 
- *  specialization of NiX::Modular_traits. 
+ *  \brief a model of concept ModularTraits,
+ *  specialization of NiX::Modular_traits.
  */
 template<>
 class Modular_traits< Gmpz > {
@@ -215,7 +206,7 @@ class Modular_traits< Gmpz > {
         NT operator()(const Residue_type& x){
           return NT(x.get_value());
         }
-    };    
+    };
 };
 
 } //namespace CGAL
@@ -227,7 +218,7 @@ class Modular_traits< Gmpz > {
 namespace Eigen {
   template<class> struct NumTraits;
   template<> struct NumTraits<CGAL::Gmpz>
-  {     
+  {
     typedef CGAL::Gmpz Real;
     typedef CGAL::Gmpq NonInteger;
     typedef CGAL::Gmpz Nested;

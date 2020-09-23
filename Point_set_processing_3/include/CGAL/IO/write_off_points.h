@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Pierre Alliez and Laurent Saboret
 
@@ -41,23 +32,37 @@ namespace CGAL {
    The function writes for each point a line with the x y z position
    followed by the nx ny nz normal (if available).
 
+   \note The <A HREF="https://en.cppreference.com/w/cpp/io/ios_base/precision">`precision()`</A>
+         of the output stream might not be sufficient depending on the data to be written.
+
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
    \param stream output stream.
    \param points input point range.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{normal_map} a model of `ReadablePropertyMap` with value type
-     `geom_traits::Vector_3`.\cgalParamEnd If this parameter is omitted, normals are not written to the
-     output stream.\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the poing range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDefault{If this parameter is omitted, normals are not written in the output stream.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \return true on success.
+   \return `true` on success.
 */
 template <typename PointRange,
           typename NamedParameters
@@ -68,18 +73,19 @@ write_off_points(
   const PointRange& points,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   // basic geometric types
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
 
   bool has_normals = !(boost::is_same<NormalMap,
                        typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value);
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
-  
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+  NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+
   CGAL_point_set_processing_precondition(points.begin() != points.end());
 
   if(!stream)
@@ -117,7 +123,7 @@ write_off_points(
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API  
+// deprecated API
 template <typename ForwardIterator,
           typename PointMap,
           typename NormalMap,
@@ -219,7 +225,7 @@ write_off_points(
      CGAL::parameters::point_map (point_map));
 }
 
-// deprecated API  
+// deprecated API
 template <typename ForwardIterator
 >
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_off_points(), please update your code")

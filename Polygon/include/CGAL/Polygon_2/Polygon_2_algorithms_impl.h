@@ -1,25 +1,16 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Wieger Wesselink <wieger@cs.ruu.nl>
 
@@ -74,7 +65,7 @@ OutputForwardIterator filter_collinear_points(InputForwardIterator first,
   typedef typename K::FT                              FT;
   typedef typename K::Point_2                         Point;
 
-  InputForwardIterator last = cpp11::prev(beyond);
+  InputForwardIterator last = std::prev(beyond);
 
   InputForwardIterator vit = first, vit_next = vit, vit_next_2 = vit, vend = vit;
   ++vit_next;
@@ -254,7 +245,7 @@ bool is_convex_2(ForwardIterator first,
   if (next == last) return true;
 
   typename Traits::Equal_2 equal = traits.equal_2_object();
-  
+
   while(equal(*previous, *current)) {
     current = next;
     ++next;
@@ -279,16 +270,16 @@ bool is_convex_2(ForwardIterator first,
         HasCounterClockwiseTriples = true;
         break;
       case ZERO:
-	if(equal(*current, *next)) {
-	  if(next == first) {
-	    first = current;
-	  }
-	  ++next;
-	  if (next == last)
-	    next = first;
-	  goto switch_orient;
-	}
-	break;
+        if(equal(*current, *next)) {
+          if(next == first) {
+            first = current;
+          }
+          ++next;
+          if (next == last)
+            next = first;
+          goto switch_orient;
+        }
+        break;
     }
 
     bool NewOrder = less_xy_2(*current, *next);
@@ -384,13 +375,13 @@ int which_side_in_slab(Point const &point, Point const &low, Point const &high,
     Comparison_result high_x_comp_res = compare_x_2(point, high);
     if (low_x_comp_res == SMALLER) {
         if (high_x_comp_res == SMALLER)
-	    return -1;
+            return -1;
     } else {
         switch (high_x_comp_res) {
-	  case LARGER: return 1;
-	  case SMALLER: break;
-	  case EQUAL: return (low_x_comp_res == EQUAL) ? 0 : 1;
-	}
+          case LARGER: return 1;
+          case SMALLER: break;
+          case EQUAL: return (low_x_comp_res == EQUAL) ? 0 : 1;
+        }
     }
     switch (orientation_2(low, point, high)) {
       case LEFT_TURN: return 1;
@@ -407,7 +398,7 @@ Bounded_side bounded_side_2(ForwardIterator first,
                                       const Point& point,
                                       const PolygonTraits& traits)
 {
-  
+
   ForwardIterator current = first;
   if (current == last) return ON_UNBOUNDED_SIDE;
 
@@ -438,11 +429,11 @@ Bounded_side bounded_side_2(ForwardIterator first,
             }
             break;
           case LARGER:
-	    switch (i_polygon::which_side_in_slab(point, *current, *next,
-	                orientation_2, compare_x_2)) {
-	      case -1: IsInside = !IsInside; break;
-	      case  0: return ON_BOUNDARY;
-	    }
+            switch (i_polygon::which_side_in_slab(point, *current, *next,
+                        orientation_2, compare_x_2)) {
+              case -1: IsInside = !IsInside; break;
+              case  0: return ON_BOUNDARY;
+            }
             break;
         }
         break;
@@ -456,17 +447,17 @@ Bounded_side bounded_side_2(ForwardIterator first,
             }
             break;
           case EQUAL:
-	    switch (compare_x_2(point, *current)) {
-	      case SMALLER:
-		if (compare_x_2(point, *next) != SMALLER)
-		    return ON_BOUNDARY;
-	        break;
-	      case EQUAL: return ON_BOUNDARY;
-	      case LARGER:
-		if (compare_x_2(point, *next) != LARGER)
-		    return ON_BOUNDARY;
-	        break;
-	    }
+            switch (compare_x_2(point, *current)) {
+              case SMALLER:
+                if (compare_x_2(point, *next) != SMALLER)
+                    return ON_BOUNDARY;
+                break;
+              case EQUAL: return ON_BOUNDARY;
+              case LARGER:
+                if (compare_x_2(point, *next) != LARGER)
+                    return ON_BOUNDARY;
+                break;
+            }
             break;
           case LARGER:
             if (compare_x_2(point, *current) == EQUAL) {
@@ -478,11 +469,11 @@ Bounded_side bounded_side_2(ForwardIterator first,
       case LARGER:
         switch (next_y_comp_res) {
           case SMALLER:
-	    switch (i_polygon::which_side_in_slab(point, *next, *current,
-	                orientation_2, compare_x_2)) {
-	      case -1: IsInside = !IsInside; break;
-	      case  0: return ON_BOUNDARY;
-	    }
+            switch (i_polygon::which_side_in_slab(point, *next, *current,
+                        orientation_2, compare_x_2)) {
+              case -1: IsInside = !IsInside; break;
+              case  0: return ON_BOUNDARY;
+            }
             break;
           case EQUAL:
             if (compare_x_2(point, *next) == EQUAL) {
@@ -498,7 +489,7 @@ Bounded_side bounded_side_2(ForwardIterator first,
     current = next;
     cur_y_comp_res = next_y_comp_res;
     ++next;
-    if (next == last) next = first;   
+    if (next == last) next = first;
   }
   while (current != first);
 

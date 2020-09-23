@@ -87,18 +87,9 @@
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="vertices_threshold_spin_box">
-           <property name="decimals">
-            <number>0</number>
-           </property>
-           <property name="maximum">
-            <double>999999999.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="value">
-            <double>10.000000000000000</double>
+          <widget class="DoubleEdit" name="vertices_threshold_spin_box">
+           <property name="text">
+            <string>10.0</string>
            </property>
           </widget>
          </item>
@@ -123,15 +114,18 @@
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="Density_control_factor_spin_box">
-           <property name="maximum">
-            <double>96.989999999999995</double>
+          <widget class="DoubleEdit" name="Density_control_factor_spin_box">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
-           <property name="singleStep">
-            <double>0.200000000000000</double>
+           <property name="text">
+            <string>1.41</string>
            </property>
-           <property name="value">
-            <double>1.410000000000000</double>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -333,6 +327,13 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header>CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

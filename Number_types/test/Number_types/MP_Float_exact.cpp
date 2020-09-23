@@ -1,4 +1,4 @@
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <iostream>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Test/_test_algebraic_structure.h>
@@ -20,7 +20,7 @@ int main() {
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(6), NT(15));
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(4),NT(-6),NT(-15));
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(-6),NT(-15));
-  
+
     CGAL::test_real_embeddable<NT>();
 
   return 0;

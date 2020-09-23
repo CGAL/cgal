@@ -2,13 +2,17 @@
 
 \mainpage
 
-The goal of the \cgal Open Source Project is to provide easy access to
-efficient and reliable geometric algorithms in the form of a C++
-library. 
+The Computational Geometry Algorithms Library (\cgal) is a software project
+that provides easy access to efficient and reliable geometric algorithms
+in the form of a C++ library.
 
-The Computational Geometry Algorithms Library offers data structures
-and algorithms like \ref PartTriangulationsAndDelaunayTriangulations "triangulations", \ref PartVoronoiDiagrams "Voronoi diagrams",  \ref PartPolygons,  \ref PartPolyhedra, \ref PartArrangements "arrangements of curves", \ref PartMeshing "mesh generation", \ref PartGeometryProcessing "geometry processing", \ref PartConvexHullAlgorithms "convex hull algorithms", to name just
-a few.
+<h2>Package Overview</h2>
+
+\cgal offers data structures and algorithms like \ref PartTriangulationsAndDelaunayTriangulations "triangulations",
+\ref PartVoronoiDiagrams "Voronoi diagrams", \ref PartPolygons, \ref PartPolyhedra,
+\ref PartArrangements "arrangements of curves", \ref PartMeshing "mesh generation",
+\ref PartGeometryProcessing "geometry processing", \ref PartConvexHullAlgorithms "convex hull algorithms",
+to name just a few.
 
 All these data structures and algorithms operate on geometric objects
 like points and segments, and perform geometric tests on them. These
@@ -20,34 +24,33 @@ solver for linear and quadratic programs. It further offers interfaces
 to third party software such as the GUI libraries Qt, Geomview, and
 the Boost Graph Library.
 
-Demos and Examples
-==================
+The complete list of packages is available on the page \ref packages.
 
-In the distribution of the library  you find the two directories *demo*
-and *examples*. They contain subdirectories for the \cgal packages.  
-The demos use third party libraries for the graphical user interface. The 
-examples don't have this dependency and most examples are refered to in the 
-user manual.
+<h2>Getting Started</h2>
 
-License
-=======
+Head over to \ref general_intro to learn how to obtain, install, and use \cgal.
+
+<h2>License</h2>
+
 %CGAL is distributed under a dual-license scheme. %CGAL can be used
 together with Open Source software free of charge. Using %CGAL in
 other contexts can be done by obtaining a commercial license from
 [GeometryFactory](http://www.geometryfactory.com). For more details
-see the \ref licenseIssues "License" page.
+see the \ref license "License" page.
 
-Manuals for the Previous Releases
-=================================
+<h2>Acknowledgement</h2>
+
+We provide bibtex entries for each package so that you can cite \cgal correctly in your publications,
+see the page \ref how_to_cite_cgal.
+
+<h2>Manuals for the Previous Releases</h2>
 
 For releases >= 4.2, visit [https://doc.cgal.org/X.Y](https://doc.cgal.org/4.2)
 
 For releases X.Y, with 3.1 <= X.Y <= 4.1 visit
 [https://doc.cgal.org/Manual/X.Y/doc_html/cgal_manual/packages.html](https://doc.cgal.org/Manual/3.1/doc_html/cgal_manual/packages.html)
 
-
-
-\htmlonly
+\htmlonly[block]
 <div style="display:none">
 \endhtmlonly
 
@@ -55,8 +58,9 @@ For releases X.Y, with 3.1 <= X.Y <= 4.1 visit
 \subpage tutorials
 \subpage packages
 \subpage dev_manual
+\subpage license
 
-\htmlonly
+\htmlonly[block]
 </div>
 \endhtmlonly
 

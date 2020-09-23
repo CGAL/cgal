@@ -44,11 +44,13 @@ int main(int argc, char* argv[])
     CGAL::Polygon_mesh_processing::orient_to_bound_a_volume(mesh);
 
   std::ofstream out("tet-oriented1.off");
+  out.precision(17);
   out << mesh;
   out.close();
 
   CGAL::Polygon_mesh_processing::reverse_face_orientations(mesh);
   std::ofstream out2("tet-oriented2.off");
+  out2.precision(17);
   out2 << mesh;
   out2.close();
 

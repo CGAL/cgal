@@ -2,25 +2,16 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado, 
+// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado,
 //             Julien Hazebrouck, Damien Leroy
 
-// Partially supported by the IST Programme of the EU as a 
-// STREP (FET Open) Project under Contract No  IST-006413 
+// Partially supported by the IST Programme of the EU as a
+// STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_CIRCULAR_ARC_POINT_3_H
@@ -39,7 +30,7 @@ template < typename SphericalKernel >
 class Circular_arc_point_3
   : public SphericalKernel::Kernel_base::Circular_arc_point_3
 {
-  typedef typename SphericalKernel::Kernel_base::Circular_arc_point_3 
+  typedef typename SphericalKernel::Kernel_base::Circular_arc_point_3
                                            RCircular_arc_point_3;
 
   typedef typename SphericalKernel::Root_of_2             Root_of_2;
@@ -50,9 +41,9 @@ class Circular_arc_point_3
   typedef typename SphericalKernel::Sphere_3              Sphere_3;
 
 public:
-  typedef typename SphericalKernel::Root_for_spheres_2_3 
+  typedef typename SphericalKernel::Root_for_spheres_2_3
     Root_for_spheres_2_3;
-  typedef SphericalKernel   R; 
+  typedef SphericalKernel   R;
   typedef RCircular_arc_point_3 Rep;
 
   const Rep& rep() const
@@ -71,12 +62,12 @@ public:
   {}
 
   Circular_arc_point_3(const Root_of_2 & x,
-		       const Root_of_2 & y,
-		       const Root_of_2 & z)
+                       const Root_of_2 & y,
+                       const Root_of_2 & z)
   : RCircular_arc_point_3(
     typename R::Construct_circular_arc_point_3()(x,y,z))
   {}
-    
+
 
   Circular_arc_point_3(const Root_for_spheres_2_3 & np)
   : RCircular_arc_point_3(
@@ -203,8 +194,8 @@ public:
     typename R::Construct_circular_arc_point_3()(s,p,less_xyz))
   {}
 
-      
-      
+
+
   typename cpp11::result_of<typename R::Compute_circular_x_3(Circular_arc_point_3)>::type
   x() const
   { return typename R::Compute_circular_x_3()(*this);}
@@ -234,7 +225,7 @@ public:
   operator>>(std::istream & is, Circular_arc_point_3<SK> &p)
   {
     typedef typename SK::Root_for_spheres_2_3    Root_for_spheres_2_3;
-    
+
     Root_for_spheres_2_3 r;
     is >> r;
     if(is)
@@ -246,16 +237,16 @@ public:
   inline
   bool
   operator==(const Circular_arc_point_3<SK> &p,
-	     const Circular_arc_point_3<SK> &q)
+             const Circular_arc_point_3<SK> &q)
   {
     return SK().equal_3_object()(p, q);
   }
-  
+
   template < typename SK >
   inline
   bool
   operator!=(const Circular_arc_point_3<SK> &p,
-	     const Circular_arc_point_3<SK> &q)
+             const Circular_arc_point_3<SK> &q)
   {
     return ! (p == q);
   }
@@ -264,7 +255,7 @@ public:
   inline
   bool
   operator<(const Circular_arc_point_3<SK> &p,
-	     const Circular_arc_point_3<SK> &q)
+             const Circular_arc_point_3<SK> &q)
   {
     return SK().compare_xyz_3_object()(p, q) == CGAL::SMALLER;
   }
@@ -273,7 +264,7 @@ public:
   inline
   bool
   operator>(const Circular_arc_point_3<SK> &p,
-	     const Circular_arc_point_3<SK> &q)
+             const Circular_arc_point_3<SK> &q)
   {
     return SK().compare_xyz_3_object()(p, q) == CGAL::LARGER;
   }
@@ -282,17 +273,17 @@ public:
   inline
   bool
   operator<=(const Circular_arc_point_3<SK> &p,
-	     const Circular_arc_point_3<SK> &q)
-	{
-		CGAL::Comparison_result c = SK().compare_xyz_3_object()(p, q);
+             const Circular_arc_point_3<SK> &q)
+        {
+                CGAL::Comparison_result c = SK().compare_xyz_3_object()(p, q);
     return (c == CGAL::SMALLER) || (c == CGAL::EQUAL);
-	}
+        }
 
   template < typename SK >
   inline
   bool
   operator>=(const Circular_arc_point_3<SK> &p,
-	     const Circular_arc_point_3<SK> &q)
+             const Circular_arc_point_3<SK> &q)
   {
     CGAL::Comparison_result c = SK().compare_xyz_3_object()(p, q);
     return (c == CGAL::LARGER) || (c == CGAL::EQUAL);

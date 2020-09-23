@@ -15,7 +15,7 @@ typedef CGAL::Delaunay_triangulation_3<K, Tds>                      Delaunay;
 typedef Delaunay::Point                                             Point;
 
 //a functor that returns a std::pair<Point,unsigned>.
-//the unsigned integer is incremented at each call to 
+//the unsigned integer is incremented at each call to
 //operator()
 struct Auto_count : public CGAL::cpp98::unary_function<const Point&,std::pair<Point,unsigned> >{
   mutable unsigned i;
@@ -41,9 +41,8 @@ int main()
   CGAL_assertion( T.number_of_vertices() == 6 );
 
   // check that the info was correctly set.
-  Delaunay::Finite_vertices_iterator vit;
-  for (vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit)
-    if( points[ vit->info() ] != vit->point() ){
+  for (Delaunay::Vertex_handle v : T.finite_vertex_handles())
+    if( points[ v->info() ] != v->point() ){
       std::cerr << "Error different info" << std::endl;
       exit(EXIT_FAILURE);
     }

@@ -29,16 +29,19 @@ if( NOT CGAL_TweakFindBoost )
     cmake_policy(SET CMP0077 NEW)
   endif()
   if(DEFINED CGAL_Boost_USE_STATIC_LIBS)
-    # If the option is loaded from CGALConfig.h, use its value as default
+    # If the option is loaded from CGALConfig.cmake, use its value as default
     # value.  But the user will still have the choice to change the
     # value. That means that we can build the CGAL libraries using static
     # or shared Boost libraries, and after build programs using CGAL with a
     # different setting for Boost libraries.
     set(CGAL_Boost_USE_STATIC_LIBS_DEFAULT ${CGAL_Boost_USE_STATIC_LIBS})
   else()
-    # Else the option is OFF by default. That means the use of shared Boost
-    # libraries is the default.
-    set(CGAL_Boost_USE_STATIC_LIBS_DEFAULT OFF)
+    # Else the option default is related to BUILD_SHARED_LIBS.
+    if(BUILD_SHARED_LIBS OR NOT DEFINED BUILD_SHARED_LIBS)
+      set(CGAL_Boost_USE_STATIC_LIBS_DEFAULT OFF)
+    else()
+      set(CGAL_Boost_USE_STATIC_LIBS_DEFAULT ON)
+    endif()
   endif()
 
   option(Boost_DEBUG "Activate the debug messages of the script FindBoost" OFF)
@@ -62,6 +65,26 @@ if( NOT CGAL_TweakFindBoost )
   endif()
 
   set(Boost_ADDITIONAL_VERSIONS
+    "1.89.1" "1.89.0" "1.89"
+    "1.88.1" "1.88.0" "1.88"
+    "1.87.1" "1.87.0" "1.87"
+    "1.86.1" "1.86.0" "1.86"
+    "1.85.1" "1.85.0" "1.85"
+    "1.84.1" "1.84.0" "1.84"
+    "1.83.1" "1.83.0" "1.83"
+    "1.82.1" "1.82.0" "1.82"
+    "1.81.1" "1.81.0" "1.81"
+    "1.80.1" "1.80.0" "1.80"
+    "1.79.1" "1.79.0" "1.79"
+    "1.78.1" "1.78.0" "1.78"
+    "1.77.1" "1.77.0" "1.77"
+    "1.76.1" "1.76.0" "1.76"
+    "1.75.1" "1.75.0" "1.75"
+    "1.74.1" "1.74.0" "1.74"
+    "1.73.1" "1.73.0" "1.73"
+    "1.72.1" "1.72.0" "1.72"
+    "1.71.1" "1.71.0" "1.71"
+    "1.70.1" "1.70.0" "1.70"
     "1.69.1" "1.69.0" "1.69"
     "1.68.1" "1.68.0" "1.68"
     "1.67.1" "1.67.0" "1.67"
@@ -75,27 +98,8 @@ if( NOT CGAL_TweakFindBoost )
     "1.59.1" "1.59.0" "1.59"
     "1.58.1" "1.58.0" "1.58"
     "1.57.1" "1.57.0" "1.57"
-    "1.56.1" "1.56.0" "1.56"
-    "1.55.1" "1.55.0" "1.55"
-    "1.54.1" "1.54.0" "1.54"
-    "1.53.1" "1.53.0" "1.53"
-    "1.52.1" "1.52.0" "1.52"
-    "1.51.1" "1.51.0" "1.51"
-    "1.50.1" "1.50.0" "1.50"
-    "1.49.1" "1.49.0" "1.49"
-    "1.48.1" "1.48.0" "1.48"
-    "1.47.1" "1.47.0" "1.47"
-    "1.46.1" "1.46.0" "1.46"
-    "1.45.1" "1.45.0" "1.45"
-    "1.44.1" "1.44.0" "1.44"
-    "1.43.1" "1.43.0" "1.43"
-    "1.42.1" "1.42.0" "1.42"
-    "1.41.1" "1.41.0" "1.41"
-    "1.40.1" "1.40.0" "1.40"
-    "1.39.1" "1.39.0" "1.39"
-    "1.38.1" "1.38.0" "1.38"
-    "1.37.1" "1.37.0" "1.37")
+    )
 
 
-  set(CGAL_TweakFindBoost)
+  set(CGAL_TweakFindBoost ON)
 endif()

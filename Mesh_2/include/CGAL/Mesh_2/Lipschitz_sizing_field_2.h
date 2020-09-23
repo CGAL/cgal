@@ -3,20 +3,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s) : Lakulish Antani, Christophe Delage, Jane Tournois, Pierre Alliez
 //
@@ -50,21 +41,21 @@ class Lipschitz_sizing_field_2
 public:
   typedef typename Tr::Geom_traits      Geom_traits;
   typedef typename Geom_traits::Point_2 Point;
-    
+
   typedef Delaunay_triangulation_2<Geom_traits> Delaunay_triangulation;
   typedef typename Delaunay_triangulation::All_faces_iterator Face_iterator;
   typedef typename Delaunay_triangulation::Finite_vertices_iterator Vertex_iterator;
   typedef typename Delaunay_triangulation::Face_circulator Face_circulator;
-    
+
   typedef Search_traits_2<Geom_traits> Tree_traits;
   typedef Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Search_tree;
-    
+
   typedef Apollonius_graph_traits_2<Geom_traits> Apollonius_traits;
   typedef Apollonius_graph_2<Apollonius_traits> Apollonius_graph;
   typedef typename Apollonius_traits::Site_2 Site;
 
-public:    
+public:
   typedef std::list<Site> Site_set_2;
 
 public:
@@ -91,12 +82,12 @@ public:
     generate_sites();
     generate_apollonius();
   }
-    
+
   // constructor with point set and K as parameters
   template <typename InputIterator>
   Lipschitz_sizing_field_2(InputIterator first,
-			   InputIterator beyond,
-			   const double k = 1.0)
+                           InputIterator beyond,
+                           const double k = 1.0)
     : K(k)
   {
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
@@ -192,10 +183,10 @@ protected:
       return;
 
     for(typename std::list<Point>::iterator ppi = points.begin();
-	ppi != points.end();ppi++)
+        ppi != points.end();ppi++)
       dt.insert(*ppi);
   }
-    
+
 
   // pole extraction
   void extract_poles()
@@ -205,41 +196,41 @@ protected:
     Vertex_iterator vi;
     for (vi = dt.finite_vertices_begin(); vi != dt.finite_vertices_end(); vi++)
       {
-	Face_circulator fc = dt.incident_faces(vi);
-	Face_circulator c = fc;
-	std::list<Point> vv;
-			    
-	if (fc != NULL)
-	  {
-	    do
-	      {
-		if (!dt.is_infinite(c) && dt.triangle(c).area() != 0)
-		  vv.push_back(dt.dual(c));
-	      } while (++c != fc);
-	  }
-			    
-	// find the farthest voronoi vertex from this point
-	typename std::list<Point>::iterator maxp = vv.begin();
-	for (typename std::list<Point>::iterator pi = vv.begin(); pi != vv.end(); pi++)
-	  {
-	    if (squared_distance(*pi, (*vi).point()) > squared_distance(*maxp, (*vi).point()))
-	      {
-		maxp = pi;
-	      }
-	  }
-	poles.push_back(*maxp);
-			    
-	// find the farthest voronoi vertex from this point in the other half-plane
-	typename std::list<Point>::iterator maxp2 = vv.begin();
-	for (typename std::list<Point>::iterator pi = vv.begin(); pi != vv.end(); pi++)
-	  {
-	    if (angle((Point) *pi, (Point) (*vi).point(), (Point) *maxp) == OBTUSE &&
-		squared_distance(*pi, (*vi).point()) > squared_distance(*maxp2, (*vi).point()))
-	      {
-		maxp2 = pi;
-	      }
-	  }
-	poles.push_back(*maxp2);
+        Face_circulator fc = dt.incident_faces(vi);
+        Face_circulator c = fc;
+        std::list<Point> vv;
+
+        if (fc != nullptr)
+          {
+            do
+              {
+                if (!dt.is_infinite(c) && dt.triangle(c).area() != 0)
+                  vv.push_back(dt.dual(c));
+              } while (++c != fc);
+          }
+
+        // find the farthest voronoi vertex from this point
+        typename std::list<Point>::iterator maxp = vv.begin();
+        for (typename std::list<Point>::iterator pi = vv.begin(); pi != vv.end(); pi++)
+          {
+            if (squared_distance(*pi, (*vi).point()) > squared_distance(*maxp, (*vi).point()))
+              {
+                maxp = pi;
+              }
+          }
+        poles.push_back(*maxp);
+
+        // find the farthest voronoi vertex from this point in the other half-plane
+        typename std::list<Point>::iterator maxp2 = vv.begin();
+        for (typename std::list<Point>::iterator pi = vv.begin(); pi != vv.end(); pi++)
+          {
+            if (angle((Point) *pi, (Point) (*vi).point(), (Point) *maxp) == OBTUSE &&
+                squared_distance(*pi, (*vi).point()) > squared_distance(*maxp2, (*vi).point()))
+              {
+                maxp2 = pi;
+              }
+          }
+        poles.push_back(*maxp2);
       }
   }
 
@@ -252,24 +243,24 @@ protected:
     Search_tree tree_points(points.begin(), points.end());
 
     for(typename std::list<Point>::iterator pi = points.begin();
-	pi != points.end();
-	pi++)
+        pi != points.end();
+        pi++)
       {
 
-	// estimate lfs (distance to medial axis estimate)
-	Neighbor_search search_poles(tree_poles, *pi, 1);
-	double lfs = std::sqrt((search_poles.begin())->second);
+        // estimate lfs (distance to medial axis estimate)
+        Neighbor_search search_poles(tree_poles, *pi, 1);
+        double lfs = std::sqrt((search_poles.begin())->second);
 
-	// compute distance to nearest input point
-	Neighbor_search search_points(tree_points, *pi, 2); // notice 2
-	typename Neighbor_search::iterator it = search_points.begin();
-	it++; // the first one is...itself
-	double d = std::sqrt(it->second);
-					
-	// take min(lfs,distance to nearest point) as sizing
-	double sizing = (std::min)(lfs,d);
+        // compute distance to nearest input point
+        Neighbor_search search_points(tree_points, *pi, 2); // notice 2
+        typename Neighbor_search::iterator it = search_points.begin();
+        it++; // the first one is...itself
+        double d = std::sqrt(it->second);
 
-	sites.push_back(Site(*pi, -sizing / K));
+        // take min(lfs,distance to nearest point) as sizing
+        double sizing = (std::min)(lfs,d);
+
+        sites.push_back(Site(*pi, -sizing / K));
       }
   }
 
@@ -282,9 +273,9 @@ protected:
     sites.sort(Compare_site_2());
     ag.insert(sites.begin(),sites.end());
   }
-			    
+
   double weighted_distance(const Point p,
-			   const Site s) const
+                           const Site s) const
   {
     return std::sqrt(squared_distance(p, s.point())) - s.weight();
   }

@@ -9,7 +9,7 @@
 #include <CGAL/boost/graph/graph_traits_TriMesh_ArrayKernelT.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
-typedef K::Point_3  
+typedef K::Point_3
                               Point_3;
 typedef OpenMesh::TriMesh_ArrayKernelT</* MyTraits*/> Mesh;
 
@@ -24,13 +24,13 @@ int main(int argc, char* argv[])
 
   // define polyhedron to hold convex hull
   Mesh poly;
-  
+
   // compute convex hull of non-collinear points
   CGAL::convex_hull_3(points.begin(), points.end(), poly);
 
 
   Mesh sm;
-  
+
   CGAL::convex_hull_3(points.begin(), points.end(), sm);
 
   CGAL::write_off((argc>2)?argv[2]:"out.off", sm);

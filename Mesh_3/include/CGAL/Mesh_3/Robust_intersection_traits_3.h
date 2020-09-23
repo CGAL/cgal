@@ -2,25 +2,16 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #ifndef CGAL_MESH_3_ROBUST_INTERSECTION_TRAITS_3_H
@@ -47,7 +38,7 @@ struct Vector_plane_orientation_3 {
 
   typedef CGAL::Orientation result_type;
 
-  Orientation 
+  Orientation
   operator()(const Point_3& p, const Point_3& q,
              const Point_3& a, const Point_3& b, const Point_3& c) const
   {
@@ -70,7 +61,7 @@ struct Vector_plane_orientation_3_filtered_predicate
     Cartesian_converter<K, Simple_cartesian<Interval_nt_advanced> >
   >
 {}; // end struct template Vector_plane_orientation_3_filtered_predicate
-                                                               
+
 template <typename K>
 struct Vector_plane_orientation_3_static_filter :
     public Vector_plane_orientation_3_filtered_predicate<K>
@@ -78,7 +69,7 @@ struct Vector_plane_orientation_3_static_filter :
   typedef typename K::Point_3 Point_3;
   typedef Vector_plane_orientation_3_filtered_predicate<K> Base;
 
-  Orientation 
+  Orientation
   operator()(const Point_3& p, const Point_3& q,
              const Point_3& a, const Point_3& b, const Point_3& c) const
   {
@@ -130,7 +121,7 @@ struct Vector_plane_orientation_3_static_filter :
     double apsz = CGAL::abs(pqz);
 
 #ifdef CGAL_USE_SSE2_MAX
-    CGAL::Max<double> mmax; 
+    CGAL::Max<double> mmax;
 
     maxx = mmax(maxx, aprx, apsx);
     maxy = mmax(maxy, apry, apsy);
@@ -148,14 +139,14 @@ struct Vector_plane_orientation_3_static_filter :
                                    pqx, pqy, pqz);
 
     double eps = 5.1107127829973299e-15 * maxx * maxy * maxz;
-          
+
 #ifdef CGAL_USE_SSE2_MAX
 #if 0
-    CGAL::Min<double> mmin; 
+    CGAL::Min<double> mmin;
     double tmp = mmin(maxx, maxy, maxz);
     maxz = mmax(maxx, maxy, maxz);
     maxx = tmp;
-#else 
+#else
     sse2minmax(maxx,maxy,maxz);
     // maxy can contain ANY element
 #endif
@@ -189,7 +180,7 @@ struct Vector_plane_orientation_3_static_filter :
 
 // An exact line-plane intersection that returns always a point.
 // The line it (pq), and the plane is (abc).
-// 
+//
 // Precondition: [pq] and [abc] are not coplanar.
 template <typename K>
 typename K::Point_3
@@ -214,7 +205,7 @@ lp_intersection(const typename K::Point_3& p, const typename K::Point_3& q,
     // (intervals as number type).
     Protect_FPU_rounding<true> protect;
     const typename FK::Point_3 fp = to_filtering(p), fq = to_filtering(q);
-    const typename FK::Point_3 
+    const typename FK::Point_3
       fa = to_filtering(a), fb = to_filtering(b), fc = to_filtering(c);
 
     const typename FK::Vector_3 ap = fp - fa;
@@ -233,8 +224,8 @@ lp_intersection(const typename K::Point_3& p, const typename K::Point_3& q,
 
       // ...and check that its coordinates intervals are precise enough.
       const double prec = EPEC::FT::get_relative_precision_of_to_double();
-      if(has_smaller_relative_precision(result.x(),prec) && 
-         has_smaller_relative_precision(result.y(),prec) && 
+      if(has_smaller_relative_precision(result.x(),prec) &&
+         has_smaller_relative_precision(result.y(),prec) &&
          has_smaller_relative_precision(result.z(),prec))
       {
         // Then return the intersection point as a K::Point_3.
@@ -279,7 +270,7 @@ ts_intersection(const typename K::Triangle_3 &t,
   typedef typename cpp11::result_of<
     typename K::Intersect_3(typename K::Segment_3, typename K::Triangle_3)
   >::type result_type;
-  
+
   CGAL_MESH_3_BRANCH_PROFILER(std::string("coplanar/calls in   : ") +
                               std::string(CGAL_PRETTY_FUNCTION), tmp);
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(t) ) ;
@@ -320,11 +311,7 @@ ts_intersection(const typename K::Triangle_3 &t,
               && orientation(p,q,c,a) != POSITIVE )
           {
             // The intersection is a point
-#if CGAL_INTERSECTION_VERSION > 1
             return result_type( lp_intersection(p, q, a, b, c, k) );
-#else
-            return make_object( lp_intersection(p, q, a, b, c, k) );
-#endif
           }
           else
             return result_type();
@@ -336,11 +323,7 @@ ts_intersection(const typename K::Triangle_3 &t,
              && orientation(p,q,b,c) != POSITIVE
              && orientation(p,q,c,a) != POSITIVE)
           {
-#if CGAL_INTERSECTION_VERSION > 1
             return result_type(q);
-#else
-            return make_object(q);
-#endif
           }
           else return result_type();
       }
@@ -353,11 +336,7 @@ ts_intersection(const typename K::Triangle_3 &t,
             && orientation(q,p,c,a) != POSITIVE )
           {
             // The intersection is a point
-#if CGAL_INTERSECTION_VERSION > 1
             return result_type( lp_intersection(p, q, a, b, c, k) );
-#else
-            return make_object( lp_intersection(p, q, a, b, c, k) );
-#endif
           }
           else
             return result_type();
@@ -374,11 +353,7 @@ ts_intersection(const typename K::Triangle_3 &t,
              && orientation(q,p,b,c) != POSITIVE
              && orientation(q,p,c,a) != POSITIVE)
           {
-#if CGAL_INTERSECTION_VERSION > 1
             return result_type(q);
-#else
-            return make_object(q);
-#endif
           }
           else return result_type();
       }
@@ -390,11 +365,7 @@ ts_intersection(const typename K::Triangle_3 &t,
            && orientation(q,p,b,c) != POSITIVE
            && orientation(q,p,c,a) != POSITIVE)
         {
-#if CGAL_INTERSECTION_VERSION > 1
           return result_type(p);
-#else
-          return make_object(p);
-#endif
         } else
           return result_type();
       case NEGATIVE:
@@ -403,11 +374,7 @@ ts_intersection(const typename K::Triangle_3 &t,
            && orientation(p,q,b,c) != POSITIVE
            && orientation(p,q,c,a) != POSITIVE)
         {
-#if CGAL_INTERSECTION_VERSION > 1
           return result_type(p);
-#else
-          return make_object(p);
-#endif
         } else
           return result_type();
       case COPLANAR:
@@ -446,7 +413,7 @@ tr_intersection(const typename K::Triangle_3  &t,
   typedef typename cpp11::result_of<
     typename K::Intersect_3(typename K::Ray_3, typename K::Triangle_3)
   >::type result_type;
-  
+
   typedef typename K::Point_3 Point_3;
 
   typename K::Construct_vertex_3 vertex_on =
@@ -478,7 +445,7 @@ tr_intersection(const typename K::Triangle_3  &t,
   if(abcp == COPLANAR) return result_type(); // p belongs to the triangle's
                                         // supporting plane
 
-  if(ray_direction == abcp) return result_type();          
+  if(ray_direction == abcp) return result_type();
   // The ray lies entirely in one of the two open halfspaces defined by the
   // triangle's supporting plane.
 
@@ -487,11 +454,7 @@ tr_intersection(const typename K::Triangle_3  &t,
   if ( orientation(p,q,a,b) != abcp
        && orientation(p,q,b,c) != abcp
        && orientation(p,q,c,a) != abcp )
-#if CGAL_INTERSECTION_VERSION > 1
     return result_type(lp_intersection(p, q, a, b, c, k));
-#else
-    return make_object(lp_intersection(p, q, a, b, c, k));
-#endif
   else
     return result_type();
 }
@@ -503,7 +466,7 @@ class Robust_intersection_3_new
 {
 public:
   typedef typename K_::FT                             FT;
-  
+
   typedef typename K_::Triangle_3                     Triangle_3;
   typedef typename K_::Segment_3                      Segment_3;
   typedef typename K_::Ray_3                          Ray_3;
@@ -515,11 +478,11 @@ public:
   struct result<F(A, B)> {
     typedef typename cpp11::result_of<typename K_::Intersect_3(A, B)>::type type;
   };
-  
+
   typedef Exact_predicates_exact_constructions_kernel     EK;
   typedef Cartesian_converter<typename K_::Kernel, EK>    To_exact;
   typedef Cartesian_converter<EK, typename K_::Kernel>    Back_from_exact;
-  
+
   template<class T1, class T2>
   typename cpp11::result_of<typename K_::Intersect_3(T1, T2)>::type
   operator() (const T1& t, const T2& s) const
@@ -528,35 +491,35 @@ public:
     To_exact to_exact;
     Back_from_exact back_from_exact;
     EK::Intersect_3 exact_intersection = EK().intersect_3_object();
-    
+
     // Cartesian converters have an undocumented, optional< variant > operator
     return typename cpp11::result_of<typename K_::Intersect_3(T1, T2)>::type
       (back_from_exact(exact_intersection(to_exact(t), to_exact(s))));
   }
-  
+
   typename cpp11::result_of<typename K_::Intersect_3(Segment_3, Triangle_3)>::type
   operator()(const Segment_3& s, const Triangle_3& t) const
   {
     return ts_intersection(t, s, K_());
   }
-  
+
   typename cpp11::result_of<typename K_::Intersect_3(Segment_3, Triangle_3)>::type
   operator()(const Triangle_3& t, const Segment_3& s) const
   {
     return ts_intersection(t, s, K_());
   }
-  
+
   typename cpp11::result_of<typename K_::Intersect_3(Ray_3, Triangle_3)>::type
   operator()(const Ray_3& r, const Triangle_3& t) const  {
     return tr_intersection(t, r, K_());
   }
-  
+
   typename cpp11::result_of<typename K_::Intersect_3(Ray_3, Triangle_3)>::type
   operator()(const Triangle_3& t, const Ray_3& r) const
   {
     return tr_intersection(t, r, K_());
   }
-  
+
 };
 
 template < typename K_ >
@@ -564,13 +527,13 @@ class Robust_intersection_3
 {
 public:
   typedef typename K_::FT                             FT;
-  
+
   typedef typename K_::Triangle_3                     Triangle_3;
   typedef typename K_::Segment_3                      Segment_3;
-  
+
   template <typename>
   struct result;
-  
+
   template <typename F, typename A, typename B>
   struct result<F(A, B)> {
     typedef typename cpp11::result_of<typename K_::Intersect_3(A, B)>::type type;
@@ -579,7 +542,7 @@ public:
   typedef Exact_predicates_exact_constructions_kernel   EK;
   typedef Cartesian_converter<typename K_::Kernel, EK>    To_exact;
   typedef Cartesian_converter<EK, typename K_::Kernel>    Back_from_exact;
-  
+
   template<class T1, class T2>
   typename cpp11::result_of<typename K_::Intersect_3(T1, T2)>::type
   operator() (const T1& t, const T2& s) const
@@ -588,7 +551,7 @@ public:
     To_exact to_exact;
     Back_from_exact back_from_exact;
     EK::Intersect_3 exact_intersection = EK().intersect_3_object();
-    
+
     // Cartesian converters have an undocumented, optional< variant > operator
     return typename cpp11::result_of<typename K_::Intersect_3(T1, T2)>::type
       (back_from_exact(exact_intersection(to_exact(t), to_exact(s))));
@@ -611,7 +574,7 @@ struct Robust_intersection_traits_3
   {
     return Intersect_3();
   }
-  
+
 };
 
 template<class K_>
@@ -625,11 +588,11 @@ struct Robust_intersection_traits_3_new
   {
     return Intersect_3();
   }
-  
+
 };
 
 } // end namespace Mesh_3
-  
+
 } //namespace CGAL
 
 #endif // CGAL_MESH_3_ROBUST_INTERSECTION_TRAITS_3_H

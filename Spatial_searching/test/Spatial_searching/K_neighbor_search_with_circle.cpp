@@ -1,5 +1,5 @@
 // file: K_neighbor_search_with_circle.cpp
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <cassert>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_2.h>
@@ -11,7 +11,7 @@
 #include <vector>
 #include <algorithm>
 
-typedef CGAL::Cartesian<double> Kernel;
+typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_2 Point;
 typedef Kernel::Circle_2 Circle;
 typedef Kernel::FT NT;
@@ -51,7 +51,7 @@ void run(std::vector<Point> points)
   double max_dist = -1;
   for (typename K_search::iterator it = search.begin();
        it != search.end();
-       it++){ 
+       it++){
     result.push_back(get_point(it->first));
     if(CGAL::squared_distance(center, get_point(it->first)) > max_dist){
       max_dist = it->second;
@@ -60,11 +60,11 @@ void run(std::vector<Point> points)
   assert(result.size() == K);
   std::sort(points.begin(), points.end());
   std::sort(result.begin(), result.end());
-  
+
   std::vector<Point> diff;
   std::set_difference(points.begin(), points.end(),
-		      result.begin(), result.end(),
-		      std::back_inserter(diff));
+                      result.begin(), result.end(),
+                      std::back_inserter(diff));
 
   assert(diff.size() == N-K);
   for(std::vector<Point>::iterator it = diff.begin();
@@ -72,7 +72,7 @@ void run(std::vector<Point> points)
       it++){
     assert(CGAL::squared_distance(center, *it) >= max_dist);
   }
-  
+
   std::cout << "done" << std::endl;
 }
 
@@ -85,14 +85,14 @@ int main() {
   for(unsigned int i=0; i < N; i++){
     points.push_back(*g++);
   }
-  
+
   run<Neighbor_search>(points);
   run<Neighbor_search_with_info>(points);
- 
+
 
   return 0;
-} 
-  
- 
+}
+
+
 
 

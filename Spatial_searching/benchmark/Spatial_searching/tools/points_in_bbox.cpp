@@ -24,7 +24,7 @@ int main() {
   double dx = bb.xmax() - bb.xmin();
   double dy = bb.ymax() - bb.ymin();
   double dz = bb.zmax() - bb.zmin();
-  
+
   for(int i = 0; i < points.size(); i++){
     double  rx  = CGAL::get_default_random().get_double();
     double  ry  = CGAL::get_default_random().get_double();
@@ -32,9 +32,9 @@ int main() {
     std::cout << bb.xmin() + dx * rx << " ";
     std::cout << bb.ymin() + dy * ry << " ";
     std::cout << bb.zmin() + dz * rz << std::endl;
-  } 
-  
+  }
+
   return 0;
 }
 
-  
+

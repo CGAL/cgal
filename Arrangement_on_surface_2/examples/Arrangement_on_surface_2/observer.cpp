@@ -70,15 +70,15 @@ int main ()
 
   std::cout << "The initial arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   // Now remove a portion of the vertical segment.
   remove_edge (arr, e_vert);
- 
+
   std::cout << "The final arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   return 0;

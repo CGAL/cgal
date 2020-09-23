@@ -1,20 +1,11 @@
 // Copyright (c) 2010-2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -33,7 +24,7 @@ namespace CGAL
 
 /** Insert a vertex in a given edge.
  * @param amap the used combinatorial map.
- * @param adart a dart of the edge (!=NULL && !=null_dart_handle).
+ * @param adart a dart of the edge (!=nullptr && !=null_dart_handle).
  * @param update_attributes a boolean to update the enabled attributes
  *        (deprecated, now we use are_attributes_automatically_managed())
  * @return a dart of the new vertex.
@@ -48,7 +39,7 @@ insert_cell_0_in_cell_1( CMap& amap, typename CMap::Dart_handle adart,
   return amap.insert_cell_0_in_cell_1(adart, ah, update_attributes);
 }
 
-/** Insert a vertex in the given 2-cell which is splitted in triangles,
+/** Insert a vertex in the given 2-cell which is split in triangles,
  * once for each inital edge of the facet.
  * @param amap the used combinatorial map.
  * @param adart a dart of the facet to triangulate.
@@ -67,7 +58,7 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
 }
 /** Insert a dangling edge in a 2-cell between given by a dart.
  * @param amap the used combinatorial map.
- * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
+ * @param adart1 a first dart of the facet (!=nullptr && !=null_dart_handle).
  * @param update_attributes a boolean to update the enabled attributes
  *        (deprecated, now we use are_attributes_automatically_managed())
  * @return a dart of the new edge, not incident to the vertex of adart1.
@@ -100,8 +91,8 @@ CGAL_DEPRECATED bool is_insertable_cell_1_in_cell_2
 
 /** Insert an edge in a 2-cell between two given darts.
  * @param amap the used combinatorial map.
- * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
- * @param adart2 a second dart of the facet. If NULL insert a dangling edge.
+ * @param adart1 a first dart of the facet (!=nullptr && !=null_dart_handle).
+ * @param adart2 a second dart of the facet. If nullptr insert a dangling edge.
  * @param update_attributes a boolean to update the enabled attributes
  *        (deprecated, now we use are_attributes_automatically_managed())
  * @return a dart of the new edge, and not incident to the
@@ -121,7 +112,7 @@ insert_cell_1_in_cell_2(CMap& amap,
 /** Test if a 2-cell can be inserted onto a given 3-cell along
  * a path of edges.
  * @param amap the used combinatorial map.
- * @param afirst iterator on the begining of the path.
+ * @param afirst iterator on the beginning of the path.
  * @param alast  iterator on the end of the path.
  * @return true iff a 2-cell can be inserted along the path.
  */
@@ -134,7 +125,7 @@ CGAL_DEPRECATED bool is_insertable_cell_2_in_cell_3
 
 /** Insert a 2-cell in a given 3-cell along a path of darts.
  * @param amap the used combinatorial map.
- * @param afirst iterator on the begining of the path.
+ * @param afirst iterator on the beginning of the path.
  * @param alast  iterator on the end of the path.
  * @param update_attributes a boolean to update the enabled attributes
  *        (deprecated, now we use are_attributes_automatically_managed())

@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot, Florent Lafarge
 
@@ -24,15 +15,16 @@
 
 #include <CGAL/license/Classification.h>
 
-#include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
+#include <CGAL/boost/graph/alpha_expansion_graphcut.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Classification/Label_set.h>
+#include <CGAL/property_map.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>
-#include <tbb/mutex.h>
+#include <mutex>
 #endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
@@ -49,7 +41,7 @@ namespace internal {
     const Label_set& m_labels;
     const Classifier& m_classifier;
     LabelIndexRange& m_out;
-    
+
   public:
 
     Classify_functor (const Label_set& labels,
@@ -57,7 +49,7 @@ namespace internal {
                       LabelIndexRange& out)
       : m_labels (labels), m_classifier (classifier), m_out (out)
     { }
-    
+
 #ifdef CGAL_LINKED_WITH_TBB
     void operator()(const tbb::blocked_range<std::size_t>& r) const
     {
@@ -65,16 +57,63 @@ namespace internal {
         apply(s);
     }
 #endif // CGAL_LINKED_WITH_TBB
-    
+
     inline void apply (std::size_t s) const
     {
-      std::size_t nb_class_best=0; 
+      std::size_t nb_class_best=0;
       std::vector<float> values;
       m_classifier (s, values);
-        
+
       float val_class_best = 0.f;
       for(std::size_t k = 0; k < m_labels.size(); ++ k)
       {
+        if(val_class_best < values[k])
+        {
+          val_class_best = values[k];
+          nb_class_best = k;
+        }
+      }
+
+      m_out[s] = static_cast<typename LabelIndexRange::iterator::value_type>(nb_class_best);
+    }
+
+  };
+
+  template <typename Classifier, typename LabelIndexRange, typename ProbabilitiesRanges>
+  class Classify_detailed_output_functor
+  {
+    const Label_set& m_labels;
+    const Classifier& m_classifier;
+    LabelIndexRange& m_out;
+    ProbabilitiesRanges& m_prob;
+
+  public:
+
+    Classify_detailed_output_functor (const Label_set& labels,
+                                      const Classifier& classifier,
+                                      LabelIndexRange& out,
+                                      ProbabilitiesRanges& prob)
+      : m_labels (labels), m_classifier (classifier), m_out (out), m_prob (prob)
+    { }
+
+#ifdef CGAL_LINKED_WITH_TBB
+    void operator()(const tbb::blocked_range<std::size_t>& r) const
+    {
+      for (std::size_t s = r.begin(); s != r.end(); ++ s)
+        apply(s);
+    }
+#endif // CGAL_LINKED_WITH_TBB
+
+    inline void apply (std::size_t s) const
+    {
+      std::size_t nb_class_best=0;
+      std::vector<float> values;
+      m_classifier (s, values);
+
+      float val_class_best = 0.f;
+      for(std::size_t k = 0; k < m_labels.size(); ++ k)
+      {
+        m_prob[k][s] = values[k];
         if(val_class_best < values[k])
         {
           val_class_best = values[k];
@@ -93,7 +132,7 @@ namespace internal {
     const Label_set& m_labels;
     const Classifier& m_classifier;
     std::vector<std::vector<float> >& m_values;
-    
+
   public:
 
     Classify_functor_local_smoothing_preprocessing
@@ -103,7 +142,7 @@ namespace internal {
       : m_labels (labels), m_classifier (classifier), m_values (values)
     { }
 
-#ifdef CGAL_LINKED_WITH_TBB    
+#ifdef CGAL_LINKED_WITH_TBB
     void operator()(const tbb::blocked_range<std::size_t>& r) const
     {
       for (std::size_t s = r.begin(); s != r.end(); ++ s)
@@ -119,7 +158,7 @@ namespace internal {
         m_values[k][s] = values[k];
     }
   };
-  
+
   template <typename ItemRange, typename ItemMap, typename NeighborQuery, typename LabelIndexRange>
   class Classify_functor_local_smoothing
   {
@@ -129,7 +168,7 @@ namespace internal {
     const std::vector<std::vector<float> >& m_values;
     const NeighborQuery& m_neighbor_query;
     LabelIndexRange& m_out;
-    
+
   public:
 
     Classify_functor_local_smoothing (const ItemRange& input,
@@ -144,7 +183,7 @@ namespace internal {
         m_out (out)
     { }
 
-#ifdef CGAL_LINKED_WITH_TBB    
+#ifdef CGAL_LINKED_WITH_TBB
     void operator()(const tbb::blocked_range<std::size_t>& r) const
     {
       for (std::size_t s = r.begin(); s != r.end(); ++ s)
@@ -162,7 +201,7 @@ namespace internal {
         for (std::size_t j = 0; j < m_values.size(); ++ j)
           mean[j] += m_values[j][neighbors[n]];
 
-      std::size_t nb_class_best=0; 
+      std::size_t nb_class_best=0;
       float val_class_best = 0.f;
       for(std::size_t k = 0; k < mean.size(); ++ k)
       {
@@ -195,12 +234,6 @@ namespace internal {
     const std::vector<std::pair<std::size_t, std::size_t> >& m_input_to_indices;
     LabelIndexRange& m_out;
 
-#ifdef CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
-    typedef CGAL::internal::Alpha_expansion_graph_cut_boost             Alpha_expansion;
-#else
-    typedef CGAL::internal::Alpha_expansion_graph_cut_boykov_kolmogorov Alpha_expansion;
-#endif
-    
   public:
 
     Classify_functor_graphcut (const ItemRange& input,
@@ -225,12 +258,12 @@ namespace internal {
     }
 #endif // CGAL_LINKED_WITH_TBB
 
-    
+
     inline void apply (std::size_t sub) const
     {
       if (m_indices[sub].empty())
         return;
-        
+
       std::vector<std::pair<std::size_t, std::size_t> > edges;
       std::vector<double> edge_weights;
       std::vector<std::vector<double> > probability_matrix
@@ -240,7 +273,7 @@ namespace internal {
       for (std::size_t j = 0; j < m_indices[sub].size(); ++ j)
       {
         std::size_t s = m_indices[sub][j];
-            
+
         std::vector<std::size_t> neighbors;
 
         m_neighbor_query (get(m_item_map, *(m_input.begin()+s)), std::back_inserter (neighbors));
@@ -261,7 +294,7 @@ namespace internal {
         {
           float value = values[k];
           probability_matrix[k][j] = -std::log(value);
-            
+
           if(val_class_best < value)
           {
             val_class_best = value;
@@ -270,9 +303,8 @@ namespace internal {
         }
         assigned_label[j] = nb_class_best;
       }
-    
-      Alpha_expansion graphcut;
-      graphcut(edges, edge_weights, probability_matrix, assigned_label);
+
+      CGAL::alpha_expansion_graphcut (edges, edge_weights, probability_matrix, assigned_label);
 
       for (std::size_t i = 0; i < assigned_label.size(); ++ i)
         m_out[m_indices[sub][i]] = static_cast<typename LabelIndexRange::iterator::value_type>(assigned_label[i]);
@@ -281,11 +313,11 @@ namespace internal {
   };
 
 } // namespace internal
-  
-/// \endcond
-  
 
-  /*! 
+/// \endcond
+
+
+  /*!
     \ingroup PkgClassificationMain
 
     \brief Runs the classification algorithm without any regularization.
@@ -295,8 +327,8 @@ namespace internal {
     suboptimal results.
 
     \tparam ConcurrencyTag enables sequential versus parallel
-    algorithm. Possible values are `Parallel_tag` or `Sequential_tag`.
-    
+    algorithm. Possible values are `Parallel_if_available_tag`, `Parallel_tag` or `Sequential_tag`.
+
     \tparam ItemRange model of `ConstRange`. Its iterator type is
     `RandomAccessIterator`. Its value type depends on the data that is
     classified (for example, `CGAL::Point_3` or `CGAL::Triangle_3`).
@@ -323,8 +355,6 @@ namespace internal {
                  const Classifier& classifier,
                  LabelIndexRange& output)
   {
-    output.resize(input.size());
-    
     internal::Classify_functor<Classifier, LabelIndexRange>
       f (labels, classifier, output);
 
@@ -344,7 +374,40 @@ namespace internal {
     }
   }
 
-  /*! 
+  /// \cond SKIP_IN_MANUAL
+  // variant to get a detailed output (not documented yet)
+  template <typename ConcurrencyTag,
+            typename ItemRange,
+            typename Classifier,
+            typename LabelIndexRange,
+            typename ProbabilitiesRanges>
+  void classify (const ItemRange& input,
+                 const Label_set& labels,
+                 const Classifier& classifier,
+                 LabelIndexRange& output,
+                 ProbabilitiesRanges& probabilities)
+  {
+    internal::Classify_detailed_output_functor<Classifier, LabelIndexRange, ProbabilitiesRanges>
+      f (labels, classifier, output, probabilities);
+
+#ifndef CGAL_LINKED_WITH_TBB
+    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                               "Parallel_tag is enabled but TBB is unavailable.");
+#else
+    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+    {
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, input.size ()), f);
+    }
+    else
+#endif
+    {
+      for (std::size_t i = 0; i < input.size(); ++ i)
+        f.apply(i);
+    }
+  }
+  /// \endcond
+
+  /*!
     \ingroup PkgClassificationMain
 
     \brief Runs the classification algorithm with a local smoothing.
@@ -354,7 +417,7 @@ namespace internal {
     efficiency and better quality results.
 
     \tparam ConcurrencyTag enables sequential versus parallel
-    algorithm. Possible values are `Parallel_tag` or `Sequential_tag`.
+    algorithm. Possible values are `Parallel_if_available_tag`, `Parallel_tag` or `Sequential_tag`.
     \tparam ItemRange model of `ConstRange`. Its iterator type is
     `RandomAccessIterator`.
     \tparam ItemMap model of `ReadablePropertyMap` whose key
@@ -388,15 +451,13 @@ namespace internal {
                                       const NeighborQuery& neighbor_query,
                                       LabelIndexRange& output)
   {
-    output.resize(input.size());
-    
     std::vector<std::vector<float> > values
       (labels.size(), std::vector<float> (input.size(), -1.));
     internal::Classify_functor_local_smoothing_preprocessing<Classifier>
       f1 (labels, classifier, values);
     internal::Classify_functor_local_smoothing<ItemRange, ItemMap, NeighborQuery, LabelIndexRange>
       f2 (input, item_map, labels, values, neighbor_query, output);
-    
+
 #ifndef CGAL_LINKED_WITH_TBB
     CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
@@ -416,7 +477,7 @@ namespace internal {
     }
   }
 
-  /*! 
+  /*!
     \ingroup PkgClassificationMain
 
     \brief Runs the classification algorithm with a global
@@ -434,7 +495,7 @@ namespace internal {
     results.
 
     \tparam ConcurrencyTag enables sequential versus parallel
-    algorithm. Possible values are `Parallel_tag` or `Sequential_tag`.
+    algorithm. Possible values are `Parallel_if_available_tag`, `Parallel_tag` or `Sequential_tag`.
     \tparam ItemRange model of `ConstRange`. Its iterator type is
     `RandomAccessIterator`.
     \tparam ItemMap model of `ReadablePropertyMap` whose key
@@ -480,11 +541,11 @@ namespace internal {
       (boost::make_transform_iterator (input.begin(), CGAL::Property_map_to_unary_function<ItemMap>(item_map)),
        boost::make_transform_iterator (input.end(), CGAL::Property_map_to_unary_function<ItemMap>(item_map)));
 
-    float Dx = float(bbox.xmax() - bbox.xmin());
-    float Dy = float(bbox.ymax() - bbox.ymin());
-    float A = Dx * Dy;
-    float a = A / min_number_of_subdivisions;
-    float l = std::sqrt(a);
+    double Dx = double(bbox.xmax() - bbox.xmin());
+    double Dy = double(bbox.ymax() - bbox.ymin());
+    double A = Dx * Dy;
+    double a = A / min_number_of_subdivisions;
+    double l = std::sqrt(a);
     std::size_t nb_x = std::size_t(Dx / l) + 1;
     std::size_t nb_y = std::size_t((A / nb_x) / a) + 1;
     std::size_t nb = nb_x * nb_y;
@@ -495,11 +556,11 @@ namespace internal {
       for (std::size_t y = 0; y < nb_y; ++ y)
       {
         bboxes.push_back
-          (CGAL::Bbox_3 (bbox.xmin() + Dx * (x / float(nb_x)),
-                         bbox.ymin() + Dy * (y / float(nb_y)),
+          (CGAL::Bbox_3 (bbox.xmin() + Dx * (x / double(nb_x)),
+                         bbox.ymin() + Dy * (y / double(nb_y)),
                          bbox.zmin(),
-                         bbox.xmin() + Dx * ((x+1) / float(nb_x)),
-                         bbox.ymin() + Dy * ((y+1) / float(nb_y)),
+                         (x == nb_x - 1 ? bbox.xmax() : bbox.xmin() + Dx * ((x+1) / double(nb_x))),
+                         (y == nb_y - 1 ? bbox.ymax() : bbox.ymin() + Dy * ((y+1) / double(nb_y))),
                          bbox.zmax()));
       }
 
@@ -510,23 +571,25 @@ namespace internal {
 
     std::vector<std::vector<std::size_t> > indices (nb);
     std::vector<std::pair<std::size_t, std::size_t> > input_to_indices(input.size());
-    
+
     for (std::size_t s = 0; s < input.size(); ++ s)
     {
       CGAL::Bbox_3 b = get(item_map, *(input.begin() + s)).bbox();
-        
-      for (std::size_t i = 0; i < bboxes.size(); ++ i)
+
+      std::size_t i = 0;
+      for (; i < bboxes.size(); ++ i)
         if (CGAL::do_overlap (b, bboxes[i]))
         {
           input_to_indices[s] = std::make_pair (i, indices[i].size());
           indices[i].push_back (s);
           break;
         }
+      CGAL_assertion_msg (i != bboxes.size(), "Point was not assigned to any subdivision.");
     }
 
     internal::Classify_functor_graphcut<ItemRange, ItemMap, Classifier, NeighborQuery, LabelIndexRange>
       f (input, item_map, labels, classifier, neighbor_query, strength, indices, input_to_indices, output);
-    
+
 #ifndef CGAL_LINKED_WITH_TBB
     CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");

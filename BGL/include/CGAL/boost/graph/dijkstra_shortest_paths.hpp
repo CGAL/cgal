@@ -10,7 +10,7 @@
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
+// https://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 //
 // $URL$
@@ -62,7 +62,7 @@ namespace boost {
    * @param old_distance  the previous distance to @p vertex
    */
   template<typename Buffer, typename Vertex, typename DistanceType>
-  inline void 
+  inline void
   dijkstra_queue_update(Buffer& Q, Vertex vertex, DistanceType old_distance)
   {
     (void)old_distance;
@@ -197,7 +197,7 @@ namespace boost {
         // The test here is equivalent to e_weight < 0 if m_combine has a
         // cancellation law, but always returns false when m_combine is a
         // projection operator.
-        if (m_compare(m_combine(m_zero, get(m_weight, e)), m_zero)) 
+        if (m_compare(m_combine(m_zero, get(m_weight, e)), m_zero))
             boost::throw_exception(negative_edge());
         // End of test for negative-weight edges.
 
@@ -416,7 +416,7 @@ namespace boost {
   template <class VertexListGraph, class SourceInputIter, class DijkstraVisitor,
             class PredecessorMap, class DistanceMap,
             class WeightMap, class IndexMap, class Compare, class Combine,
-            class DistInf, class DistZero, typename T, typename Tag, 
+            class DistInf, class DistZero, typename T, typename Tag,
             typename Base>
   inline void
   dijkstra_shortest_paths
@@ -439,7 +439,7 @@ namespace boost {
   template <class VertexListGraph, class DijkstraVisitor,
             class PredecessorMap, class DistanceMap,
             class WeightMap, class IndexMap, class Compare, class Combine,
-            class DistInf, class DistZero, typename T, typename Tag, 
+            class DistInf, class DistZero, typename T, typename Tag,
             typename Base>
   inline void
   dijkstra_shortest_paths

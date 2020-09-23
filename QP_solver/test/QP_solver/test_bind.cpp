@@ -1,12 +1,12 @@
 #include <iostream>
-#include <CGAL/basic.h>
+
 #include <CGAL/Quotient.h>
 #include <CGAL/function_objects.h>
 #include <boost/bind.hpp>
 
 // functor int x int -> Quotient<int>, (a,b) -> a/b
 // ------------------------------------------------
-typedef CGAL::Creator_2<int, int, CGAL::Quotient<int> > 
+typedef CGAL::Creator_2<int, int, CGAL::Quotient<int> >
 Quotient_creator;
 
 // functor Quotient<int> ->  Quotient<int>, a/b -> b/a
@@ -18,9 +18,9 @@ struct Quotient_inverter
   {
     return CGAL::Quotient<int> (q.denominator(), q.numerator());
   }
-}; 
+};
 
-int main() 
+int main()
 {
   // create composed functor (a,b) -> b/a...
   // ---------------------------------------

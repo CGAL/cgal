@@ -2,31 +2,22 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Constantinos Tsirogiannis , Pedro Machado
 
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 
-#ifndef CGAL_BBOX_FILTERED_PREDICATES_H  
-#define CGAL_BBOX_FILTERED_PREDICATES_H  
+#ifndef CGAL_BBOX_FILTERED_PREDICATES_H
+#define CGAL_BBOX_FILTERED_PREDICATES_H
 
 #include <CGAL/license/Circular_kernel_2.h>
 
@@ -44,7 +35,7 @@ class Compare_x_2 : public BK::Circular_kernel:: template Base< BK >::Type::Comp
 {
   typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
   typedef typename BK::Point_2                                 Point_2;
-  typedef typename BK::Circular_kernel:: 
+  typedef typename BK::Circular_kernel::
     template Base< BK >::Type::Compare_x_2                     CK_Compare_x_2;
   typedef CK_Compare_x_2 Base;
 
@@ -76,8 +67,8 @@ public:
   }
 
 #endif
-  
-	
+
+
   result_type
   operator()( const Circular_arc_point_2 &a, const Circular_arc_point_2 &b) const
   {
@@ -100,7 +91,7 @@ class Compare_y_2 : public BK::Circular_kernel:: template Base< BK >::Type::Comp
 {
   typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
   typedef typename BK::Point_2                                 Point_2;
-  typedef typename BK::Circular_kernel:: 
+  typedef typename BK::Circular_kernel::
     template Base< BK >::Type::Compare_y_2                     CK_Compare_y_2;
   typedef CK_Compare_y_2 Base;
 public:
@@ -137,7 +128,7 @@ public:
     return Base()(t1,t2,t3,t4);
   }
 #endif
-  
+
   result_type
   operator()( const Circular_arc_point_2 &a, const Circular_arc_point_2 &b) const
   {
@@ -199,7 +190,7 @@ public:
 template <class BK>
 class In_x_range_2 : public BK::Circular_kernel:: template Base< BK >::Type::In_x_range_2
 {
-  typedef typename BK::Circular_kernel:: 
+  typedef typename BK::Circular_kernel::
     template Base< BK >::Type::In_x_range_2                    CK_In_x_range_2;
   typedef CK_In_x_range_2 Base;
   typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
@@ -224,12 +215,12 @@ private:
 
   template <class Arc_2>
   result_type
-  _in_x_range_2(const Arc_2 &a, const Circular_arc_point_2 &p) const 
+  _in_x_range_2(const Arc_2 &a, const Circular_arc_point_2 &p) const
   {
 
     Bbox_2 bb11 = a.source().bbox(),
       bb12 = a.target().bbox(),
-      bb2=p.bbox();      
+      bb2=p.bbox();
     if(bb11.xmin() > bb12.xmax()) {
       if(bb2.xmax() < bb12.xmin()) return false;
       else if(bb2.xmin() > bb11.xmax()) return false;
@@ -244,7 +235,7 @@ private:
       if(bb2.xmin() > (std::max)(bb11.xmax(),bb12.xmax())) return false;
       if(bb2.xmax() < (std::min)(bb11.xmin(),bb12.xmin())) return false;
     }
-    
+
     CK_In_x_range_2 Range;
 
     return Range(a,p);
@@ -255,7 +246,7 @@ public:
 
   result_type
   operator()( const Circular_arc_2 &a, const Circular_arc_point_2 &p) const
-  { 
+  {
     CGAL_precondition( a.is_x_monotone());
     return _in_x_range_2(a,p);
   }
@@ -263,7 +254,7 @@ public:
   result_type
   operator()( const Line_arc_2 &a, const Circular_arc_point_2 &p) const
   { return _in_x_range_2(a,p);}
-    
+
 
 };
 
@@ -271,7 +262,7 @@ public:
 template <class BK>
 class Compare_y_at_x_2 : public BK::Circular_kernel:: template Base< BK >::Type::Compare_y_at_x_2
 {
-  typedef typename BK::Circular_kernel:: 
+  typedef typename BK::Circular_kernel::
     template Base< BK >::Type::Compare_y_at_x_2                         CK_Compare_y_at_x_2;
   typedef CK_Compare_y_at_x_2 Base;
   typedef typename BK::Circular_arc_2                                   Circular_arc_2;
@@ -290,7 +281,7 @@ public:
   operator()(const T1& t1, const T2& t2) const
   {
     return Base()(t1,t2);
-  } 
+  }
 
   template <typename T1, typename T2, typename T3>
   result_type
@@ -337,7 +328,7 @@ public:
 
   result_type
   operator()( const Circular_arc_point_2 &p,const Circular_arc_2 &a ) const
-  {   
+  {
     CGAL_precondition( a.is_x_monotone());
     return _compare_y_at_x_2(p,a);
   }
@@ -352,7 +343,7 @@ public:
 template <class BK>
 class Has_on_2 : public BK::Circular_kernel:: template Base< BK >::Type::Has_on_2
 {
-  typedef typename BK::Circular_kernel:: 
+  typedef typename BK::Circular_kernel::
     template Base< BK >::Type::Has_on_2                                 CK_Has_on_2;
   typedef CK_Has_on_2 Base;
   typedef typename BK::Circular_arc_2                                   Circular_arc_2;
@@ -390,7 +381,7 @@ public:
 
   result_type
   operator()( const Circular_arc_2 &a,const Circular_arc_point_2 &p ) const
-  {     
+  {
     CGAL_precondition( a.is_x_monotone());
     return _has_on_2(a,p);
   }
@@ -408,7 +399,7 @@ class Equal_2
   : public BK::Circular_kernel:: template Base< BK >::Type::Equal_2
 #endif
 {
-  typedef typename BK::Circular_kernel:: 
+  typedef typename BK::Circular_kernel::
     template Base< BK >::Type::Equal_2                                  CK_Equal_2;
   typedef typename BK::Circular_arc_2                                   Circular_arc_2;
   typedef typename BK::Point_2                                          Point_2;
@@ -431,7 +422,7 @@ public:
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else  
+#else
  template <typename T1, typename T2>
   result_type
   operator()(const T1& t1, const T2& t2) const
@@ -470,7 +461,7 @@ public:
   result_type
   operator()( const Circular_arc_point_2 &a ,
               const Circular_arc_point_2 &b) const
-  { 
+  {
     Bbox_2 bb1=a.bbox(),bb2=b.bbox();
     if(bb1.xmin() > bb2.xmax()) return false;
     if(bb1.xmax() < bb2.xmin()) return false;
@@ -484,7 +475,7 @@ public:
   result_type
   operator()( const Point_2 &a ,
   const Point_2 &b) const
-  { 
+  {
   return CK_Equal_2()( a, b);
   }
   */
@@ -494,7 +485,7 @@ public:
     CGAL_precondition( a.is_x_monotone());
     CGAL_precondition( b.is_x_monotone());
 
-    return _equal_2(a,b);      
+    return _equal_2(a,b);
   }
 
   result_type
@@ -518,7 +509,7 @@ public:
 template <class BK>
 class Do_overlap_2 : public BK::Circular_kernel:: template Base< BK >::Type::Do_overlap_2
 {
-  typedef typename BK::Circular_kernel:: 
+  typedef typename BK::Circular_kernel::
     template Base< BK >::Type::Do_overlap_2                           CK_Do_overlap_2;
   typedef CK_Do_overlap_2 Base;
   typedef typename BK::Circular_arc_2                                 Circular_arc_2;
@@ -545,23 +536,23 @@ private:
   result_type
   _do_overlap_2(const Arc_2 &a, const Arc_2 &b) const
   {
-    Bbox_2 bb1=a.bbox(),bb2=b.bbox();  
+    Bbox_2 bb1=a.bbox(),bb2=b.bbox();
 
     if(do_overlap(bb1,bb2))
       return CK_Do_overlap_2()(a,b);
-        
-    return false;        
+
+    return false;
   }
 
 
 public:
-    
+
   result_type
   operator()( const Circular_arc_2 &a , const Circular_arc_2 &b ) const
   {
     CGAL_precondition( a.is_x_monotone());
     CGAL_precondition( b.is_x_monotone());
-    return _do_overlap_2(a,b); 
+    return _do_overlap_2(a,b);
   }
 
   result_type
@@ -586,7 +577,7 @@ template < class BK >
 class Intersect_2 : public BK::Circular_kernel:: template Base< BK >::Type::Intersect_2
 {
 public:
-  typedef typename BK::Circular_kernel:: 
+  typedef typename BK::Circular_kernel::
     template Base< BK >::Type::Intersect_2      CK_Intersect_2;
 
   typedef typename BK::Circular_arc_2           Circular_arc_2;
@@ -603,12 +594,12 @@ public:
   {
     return CK_Intersect_2()(c1,c2,res);
   }
-	
+
   template < class OutputIterator >
   OutputIterator
   operator()(const Circle & c1, const Line_2 & c2, OutputIterator res)
   {
-    return CK_Intersect_2()(c1,c2,res); 
+    return CK_Intersect_2()(c1,c2,res);
   }
 
   template < class OutputIterator >
@@ -627,111 +618,111 @@ public:
   {
     if(!do_overlap(c1.bbox(),c2.bbox()))
       return res;
-    return CK_Intersect_2()(c1,c2,res); 
+    return CK_Intersect_2()(c1,c2,res);
   }
 
   template < class OutputIterator >
   OutputIterator
-  operator()(const Line_2 & c1, const Circular_arc_2 & c2, 
+  operator()(const Line_2 & c1, const Circular_arc_2 & c2,
              OutputIterator res)
   {
-    return CK_Intersect_2()(c1,c2,res); 
+    return CK_Intersect_2()(c1,c2,res);
   }
 
   template < class OutputIterator >
   OutputIterator
-  operator()(const Line_2 & c1, const Line_arc_2 & c2, 
+  operator()(const Line_2 & c1, const Line_arc_2 & c2,
              OutputIterator res)
   {
-    return CK_Intersect_2()(c1,c2,res); 
+    return CK_Intersect_2()(c1,c2,res);
   }
 
   template < class OutputIterator >
   OutputIterator
   operator()(const Circle & c1, const Circle & c2, OutputIterator res)
-  { 
+  {
     if(!do_overlap(c1.bbox(),c2.bbox()))
       return res;
 
-    return CK_Intersect_2()(c1,c2,res); 
+    return CK_Intersect_2()(c1,c2,res);
   }
 
   template < class OutputIterator >
   OutputIterator
   operator()(const Circle & c1, const Circular_arc_2 & c2, OutputIterator res)
-  { 
+  {
     return operator()(Circular_arc(c1),c2,res);
   }
 
   template < class OutputIterator >
   OutputIterator
   operator()(const Circular_arc_2 & c1, const Circle & c2, OutputIterator res)
-  { 
+  {
     return operator()(c1,Circular_arc_2(c2),res);
   }
 
   template < class OutputIterator >
   OutputIterator
-  operator()(const Circular_arc_2 & c1, const Circular_arc_2 & c2, 
+  operator()(const Circular_arc_2 & c1, const Circular_arc_2 & c2,
              OutputIterator res)
-  { 
-    Bbox_2 bb1=c1.bbox(),bb2=c2.bbox();
-
-    if(!do_overlap(bb1,bb2 ))
-      return res;
-	
-    return CK_Intersect_2()(c1,c2,res); 
-  }
-
-  template < class OutputIterator >
-  OutputIterator
-  operator()(const Line_arc_2 & c1, const Line_arc_2 & c2, 
-             OutputIterator res)
-  { 
+  {
     Bbox_2 bb1=c1.bbox(),bb2=c2.bbox();
 
     if(!do_overlap(bb1,bb2 ))
       return res;
 
-    return CK_Intersect_2()(c1,c2,res); 
+    return CK_Intersect_2()(c1,c2,res);
   }
 
   template < class OutputIterator >
   OutputIterator
-  operator()(const Circular_arc_2 & c1, const Line_arc_2 & c2, 
+  operator()(const Line_arc_2 & c1, const Line_arc_2 & c2,
              OutputIterator res)
-  { 
+  {
     Bbox_2 bb1=c1.bbox(),bb2=c2.bbox();
 
     if(!do_overlap(bb1,bb2 ))
       return res;
 
-    return CK_Intersect_2()(c1,c2,res); 
+    return CK_Intersect_2()(c1,c2,res);
   }
 
   template < class OutputIterator >
   OutputIterator
-  operator()(const Line_arc_2 & c1, const Circular_arc_2 & c2, 
+  operator()(const Circular_arc_2 & c1, const Line_arc_2 & c2,
              OutputIterator res)
-  {	return operator()(c2,c1,res);}
+  {
+    Bbox_2 bb1=c1.bbox(),bb2=c2.bbox();
+
+    if(!do_overlap(bb1,bb2 ))
+      return res;
+
+    return CK_Intersect_2()(c1,c2,res);
+  }
 
   template < class OutputIterator >
   OutputIterator
-  operator()(const Circular_arc_2 & c1, const Line_2 & c2, 
+  operator()(const Line_arc_2 & c1, const Circular_arc_2 & c2,
              OutputIterator res)
-  {	return operator()(c2,c1,res);}
+  {        return operator()(c2,c1,res);}
 
   template < class OutputIterator >
   OutputIterator
-  operator()(const Line_arc_2 & c1, const Line_2 & c2, 
+  operator()(const Circular_arc_2 & c1, const Line_2 & c2,
              OutputIterator res)
-  {	return operator()(c2,c1,res);}
-   
+  {        return operator()(c2,c1,res);}
+
+  template < class OutputIterator >
+  OutputIterator
+  operator()(const Line_arc_2 & c1, const Line_2 & c2,
+             OutputIterator res)
+  {        return operator()(c2,c1,res);}
+
 };
 
-  
+
 } //Bbox_functors
 
-} //namespace CGAL  
+} //namespace CGAL
 
-#endif // CGAL_BBOX_FILTERED_PREDICATES_H  
+#endif // CGAL_BBOX_FILTERED_PREDICATES_H

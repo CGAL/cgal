@@ -1,0 +1,256 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_HeatMethod
+\cgalAutoToc
+\author Christina Vaz, Keenan Crane, Andreas Fabri
+
+\image html octopus.png
+
+\section sec_HM_introduction Introduction
+
+The <em>heat method</em> is an algorithm that solves the single- or
+multiple-source shortest path problem by returning an approximation of the
+<em>geodesic distance</em> for all vertices of a triangle mesh to the closest vertex in a given set of
+source vertices. The geodesic distance between two vertices of a mesh
+is the distance when walking on the surface, potentially through the interior of faces.
+Two vertices that are close in 3D space may be far away on the surface, for example
+on neighboring arms of the octopus. In the figures we color code the distance
+as a gradient red/green corresponding to close/far from the source vertices.
+
+The heat method is highly efficient, since the algorithm
+boils down to two standard sparse linear algebra problems.  It is especially
+useful in situations where one wishes to perform repeated distance queries
+on a fixed domain, since precomputation done for the first query can be re-used.
+
+As a rule of thumb, the method works well on triangle meshes, which are
+Delaunay, though in practice may also work fine for meshes that are far from
+Delaunay.  In order to ensure good behavior, we enable a
+preprocessing step that constructs an <em>intrinsic Delaunay triangulation
+(iDT)</em>; this triangulation does not change the input geometry, but
+generally improves the quality of the solution.  The cost of this preprocessing
+step roughly doubles the overall preprocessing cost.
+
+\cgalFigureBegin{landscape_meshes, landscape.jpg}
+  Isolines placed on a mesh without and with iDT remeshing.
+\cgalFigureEnd
+
+In the next section we give some examples. Section \ref sec_HM_definitions presents
+the mathematical theory of the Heat method. The last section is about the \ref sec_HM_history.
+
+Note that this package depends on the third party \ref thirdpartyEigen library (3.3 or greater), or another
+model of the concept `SparseLinearAlgebraWithFactorTraits_d`.
+This implementation is based on \cgalCite{cgal:cww-ghnac-13} and \cgalCite{cgal:fsbs-acidt-06}
+
+This package is related to the package \ref PkgSurfaceMeshShortestPath. Both deal with geodesic distances.
+The heat method package computes for every vertex of a mesh an approximate distance to one or several source vertices.
+The geodesic shortest path package computes the exact shortest path between any two points on the surface.
+
+
+
+\section sec_HM_examples Examples
+
+We give examples for the free function `CGAL::Heat_method_3::estimate_geodesic_distances()`,
+for the class template `CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3`, with and without the use
+of intrinsic Delaunay triangulation.
+
+\subsection HM_example_Free_function Using a Free Function
+
+The first example calls the free function `Heat_method_3::estimate_geodesic_distances()`,
+which computes for all vertices of a triangle mesh the distances to a single source vertex.
+
+The distances are written into an internal property map of the surface mesh.
+
+\cgalExample{Heat_method_3/heat_method.cpp}
+
+For a `Polyhedron_3` you can either add a data field to the vertex type, or, as shown
+in the following example, create a `boost::unordered_map` and pass it to the function
+`boost::make_assoc_property_map()`, which generates a vertex distance property map.
+
+\cgalExample{Heat_method_3/heat_method_polyhedron.cpp}
+
+
+\subsection HM_example_Class Using the Heat Method Class
+
+The following example shows the heat method class. It can be used
+when one adds and removes source vertices. It performs a precomputation,
+which depend only on the input mesh and not the particular
+set of source vertices.  In the example we compute the distances to one
+source, add the farthest vertex as a second source vertex, and then compute
+the distances with respect to these two sources.
+
+\cgalExample{Heat_method_3/heat_method_surface_mesh.cpp}
+
+
+\subsection HM_example_Intrinsic Switching off the Intrinsic Delaunay Triangulation
+
+The following example shows the heat method on a triangle mesh without using the
+intrinsic Delaunay triangulation (iDT) algorithm, for example because by construction
+your meshes have a good quality (Poor quality in this case means that the input
+is far from Delaunay, though even in this case one may still get good results without iDT,
+depending on the specific geometry of the surface). The iDT algorithm is switched off
+by the template parameter `Heat_method_3::Direct`.
+
+\cgalExample{Heat_method_3/heat_method_surface_mesh_direct.cpp}
+
+
+
+\section sec_HM_definitions Theoretical Background
+
+Section \ref Subsection_HM_Definitions_Intro gives an overview of the theory needed by the Heat method.
+Section \ref Subsection_HM_IDT_Definitions gives the background needed for the Intrinsic Delaunay triangulation.
+
+\subsection Subsection_HM_Definitions_Intro The Heat Method Algorithm
+
+For a detailed overview of the heat method, the reader may consult
+\cgalCite{cgal:cww-ghnac-13} to read the original article. In the
+sequel, we introduce the basic notions so as to explain our
+algorithms. In general, the heat method is applicable to any setting
+if there exists a gradient operator \f$ \nabla\f$, a divergence
+operator \f$\nabla \cdot\f$ and a Laplace operator \f$\Delta = \nabla \cdot
+\nabla\f$, which are standard derivatives from vector calculus.
+
+The Heat Method consists of three main steps:
+           -# Integrate the heat flow \f$ \dot u = \Delta u\f$ for some fixed time \f$t\f$.
+           -# Evaluate the vector field   \f$ X = -\nabla u_t / |\nabla u_t| \f$.
+           -# Solve the Poisson Equation \f$ \Delta \phi = \nabla \cdot X \f$.
+
+
+The function \f$ \phi \f$ is an approximation of the distance to the given source set and approaches the true distance as t goes to zero.
+The algorithm must then be translated in to a discrete algorithm by replacing the derivatives in space and time with approximations.
+
+The heat equation can be discretized in time using a single backward Euler step. This means the following equation must be solved:
+
+\f$(id-t\Delta)u_t = \delta_{\gamma}(x) \f$ where \f$\delta_{\gamma}(x)\f$ is a Dirac delta encoding an "infinite" spike of heat (1 if x is in the source set \f$\gamma\f$, 0 otherwise), where id is the identity operator.
+
+The spatial discretization depends on the choice of discrete surface representation.
+For this package, we use triangle meshes exclusively.
+Let \f$ u \in \R^{|V|}\f$ specify a piecewise linear function on a
+triangulated surface with vertices \f$V\f$, edges \f$E\f$ and faces
+\f$F\f$.  A standard discretization of the Laplacian at vertex \f$i\f$
+is:
+
+\f$ {Lu}_i = \frac{1}{2A_i} \sum_{j}(cot \alpha_{ij} + cot \beta_{ij})(u_j-u_i)\f$ where \f$A_i\f$ is one third the area of all triangles incident on vertex \f$i\f$.
+
+The sum is taken over all of the neighboring vertices
+\f$j\f$. Further, \f$\alpha_{ij}\f$ and \f$\beta_{ij}\f$ are the
+angles opposing the corresponding edge \f$ij\f$. We express this
+operation via a matrix \f$L = M^{-1}L_c\f$ where \f$M \in
+R^{|V|x|V|}\f$ is a diagonal matrix containing the vertex areas and
+\f$L_c \in R^{|V|x|V|} \f$ is the cotan operator representing the
+remaining sum.
+
+From this, the symmetric positive-definite system
+\f$(M-tL_C)u = \delta_{\gamma}\f$ can be solved to find
+\f$u\f$ where \f$\delta_{\gamma}\f$ is the Kronecker delta over \f$\gamma\f$.
+
+Next, the gradient in a given triangle can be expressed as
+
+\f$\nabla u = \frac{1}{2 A_f} \sum_i u_i ( N \times e_i ) \f$
+
+where \f$A_f\f$ is the area of the triangle, \f$N\f$ is its outward unit normal, \f$e_i\f$ is the \f$i\f$th edge vector (oriented counter-clockwise), and \f$u_i\f$ is the value of \f$u\f$ at the opposing vertex. The integrated divergence associated with vertex \f$i\f$ can be written as
+
+\f$\nabla \cdot X = \frac{1}{2} \sum_j cot\theta_1 (e_1 \cdot X_j) + cot \theta_2 (e_2 \cdot X_j)\f$
+
+where the sum is taken over incident triangles \f$j\f$ each with a vector \f$X_j\f$,
+\f$e_1\f$ and \f$e_2\f$ are the two edge vectors of triangle \f$j\f$
+containing \f$i\f$ and \f$\theta_1\f$, \f$\theta_2\f$ are the opposing angles.
+
+Finally, let \f$b \in R^{|V|}\f$ be the integrated divergences of the normalized vector field X.
+Thus, solving the symmetric Poisson problem \f$ L_c \phi = b\f$ computes the final distance function.
+
+\subsection Subsection_HM_IDT_Definitions Intrinsic Delaunay Triangulation
+
+The standard discretization of the cotan Laplace operator uses the cotangents of the angles in the triangle mesh.
+The intrinsic Delaunay algorithm constructs an alternative triangulation of the same polyhedral surface, which
+in turn yields a different (typically more accurate) cotan Laplace operator.  Conceptually, the edges of the iDT
+still connect pairs of vertices from the original (input) surface, but are now allowed to be geodesic paths along
+the polyhedron and do not have to correspond to edges of the input triangulation.  These paths are not stored
+explicitly; instead, we simply keep track of their lengths as the triangulation is updated.  These lengths are
+sufficient to determine areas and angles of the intrinsic triangles, and in turn, the new cotan Laplace matrix.
+
+An edge of a mesh is locally Delaunay if the sum of opposite angles is not smaller than pi, or equivalently,
+if the cotangents of the opposing angles are non-negative. A mesh is Delaunay if all of its edges are locally Delaunay.
+
+A standard algorithm to convert a given planar triangulation into a Delaunay triangulation is
+to flip non-Delaunay edges in a mesh until the mesh is Delaunay.
+Similarly, the intrinsic Delaunay triangulation of a simplicial surface
+is constructed by performing intrinsic edge flips.
+
+Let \f$ K = (V,E,T) \f$ be a 2-manifold triangle mesh, where \f$V\f$ is the vertex set,
+\f$ E \f$ is the edge set and \f$ T \f$ is the face set (triangle set).
+Let \f$ L \f$ be the set of Euclidean distances, where \f$ L(e_{ij}) = l_{ij} = || p_i - p_j || \f$ ,
+where \f$ p_i \f$ and \f$ p_j \f$ are the point positions \f$ \in R^3 \f$ of vertices \f$ i \f$ and \f$ j \f$ respectively.
+Then, let the pair \f$ (K,L) \f$ be the input to the iDT algorithm, which returns the pair \f$(\tilde K, \tilde L)\f$,
+which are the intrinsic Delaunay mesh and the intrinsic lengths.
+The algorithm is as follows:
+
+            \code
+             for all edge e in E : Mark(e)
+             Stack s <-- E
+             while !Empty(s) do
+               edge(ij) = Pop(s) and Unmark(edge(ij))
+                if !Delaunay(edge(ij)) then
+                  edge(kl) = Flip(edge(ij)) and compute the new length length(kl) using the Cosine Theorem
+                   for all edge e in {edge(kj), edge(jl), edge(li), edge(ik)} do
+                     if !Mark(e) then
+                       Mark(e) and Push(s,e)
+                     end if
+                  end for
+                end if
+              end while
+            return (~K,~L)
+            \endcode
+
+
+  The new \f$(\tilde K, \tilde L)\f$ are then used to implement the heat method as usual.
+
+  We already in the beginning gave an example where the intrinsic Delaunay triangulation improves the results.
+  The mesh was obtained by giving elevation to a 2D triangulation, which lead to highly elongated triangles.
+
+  The situation is similar for any triangle mesh that has faces with very small angles as can be seen in the figures  below.
+
+  \cgalFigureBegin{circle_box, red_circle_box_without_idt_bottom.png}
+    Isolines placed on a mesh without iDT remeshing
+  \cgalFigureEnd
+  \cgalFigureBegin{circle_box_idt, red_circle_box_with_idt_bottom.png}
+    Isolines placed on a mesh with iDT remeshing
+  \cgalFigureEnd
+
+
+\section sec_HM_Performance Performance
+
+The time complexity of the algorithm is determined primarily by the
+choice of linear solver.  In the current implementation, Cholesky
+prefactorization is roughly \f$ O(N^{1.5})\f$ and computation of distances is
+roughly \f$ O(N)\f$, where \f$ N\f$ is the number of vertices in the triangulation.
+The algorithm uses two \f$ N \times N\f$ matrices, both with the same pattern of
+non-zeros (in average 7 non-zeros
+per row/column).  The cost of computation is independent of the size
+of the source set.  Primitive operations include sparse numerical
+linear algebra (in double precision), and basic arithmetic operations
+(including square roots).
+
+We perform the benchmark on an Intel Core i7-7700HQ, 2.8HGz, and compiled with Visual Studio 2013.
+
+<center>
+Number of triangles  | Initialization iDT (sec) | Distance computation iDT (sec) | Initialization Direct (sec) | Distance computation Direct (sec)
+--------------------:| ----------- :            | ---------------- :             | ------------------:         | --------------:
+30,000               |  0.18                    |  0.02                          |  0.12                       |  0.01
+200,000              |  1.82                    |  1.31                          |  1.32                       |  0.11
+500,000              | 10.45                    |  0.75                          |  8.07                       |  0.55
+1,800,000            | 38.91                    |  2.24                          | 35.68                       |  1.1
+
+</center>
+
+
+\section sec_HM_history Implementation History
+
+This package was developed by Christina Vaz, Keenan Crane and Andreas
+Fabri as a project of the Google Summer of Code 2018.
+
+
+
+*/
+} /* namespace CGAL */

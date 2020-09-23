@@ -26,7 +26,7 @@ public:
     {
         setupUi(this);
     }
-    
+
     void set_all_ranges()
     {
         verbose_spinbox->setRange(0, 2);
@@ -35,30 +35,30 @@ public:
         relocation_spinbox->setRange(0, 50);
         relevance_spinbox->setRange(0., 100000.);
     }
-    
+
     int get_verbose() const { return verbose_spinbox->value(); }
-    void set_verbose(int verbose) { verbose_spinbox->setValue(verbose); }    
-    
+    void set_verbose(int verbose) { verbose_spinbox->setValue(verbose); }
+
     int get_mchoice() const { return mchoice_spinbox->value(); }
     void set_random_sample_size(const int mchoice) { mchoice_spinbox->setValue(mchoice); }
-    
+
     double get_percent() const { return percent_spinbox->value(); }
     void set_percent(const double percent) { percent_spinbox->setValue(percent); }
-    
+
     int get_relocation() const { return relocation_spinbox->value(); }
     void set_relocation(const int value) {
       return relocation_spinbox->setValue(value);
     }
-    
+
     double get_relevance() const { return relevance_spinbox->value(); }
     void set_relevance(double ghost) { relevance_spinbox->setValue(ghost); }
-    
+
     bool get_use_flip() const { return use_flip_checkbox->isChecked(); }
     void set_use_flip(const bool flip) {
       return use_flip_checkbox->setChecked(flip);
     }
 
-    bool get_multiple_choice_checkbox() const { 
+    bool get_multiple_choice_checkbox() const {
       return multiple_choice_checkbox->isChecked(); }
     void set_multiple_choice_checkbox(const bool mc) {
       return multiple_choice_checkbox->setChecked(mc);

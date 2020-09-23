@@ -31,52 +31,52 @@ achieve random permutations for otherwise regular generators (
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `PointGenerator`
 - `RandomConvexSetTraits_2`
 - `RandomPolygonTraits_2`
 - `RandomConvexHullTraits_2`
 
-## Functions ##
+\cgalCRPSection{Functions}
 
-- `CGAL::perturb_points_2()` 
-- `CGAL::points_on_segment_2()` 
-- `CGAL::points_on_square_grid_2()` 
-- `CGAL::points_on_cube_grid_3()` 
-- `CGAL::points_on_cube_grid_d()` 
-- `CGAL::random_collinear_points_2()` 
-- `CGAL::random_convex_set_2()` 
-- `CGAL::random_polygon_2()` 
-- `CGAL::random_selection()` 
+- `CGAL::perturb_points_2()`
+- `CGAL::points_on_segment_2()`
+- `CGAL::points_on_square_grid_2()`
+- `CGAL::points_on_cube_grid_3()`
+- `CGAL::points_on_cube_grid_d()`
+- `CGAL::random_collinear_points_2()`
+- `CGAL::random_convex_set_2()`
+- `CGAL::random_polygon_2()`
+- `CGAL::random_selection()`
 - `CGAL::random_convex_hull_in_disc_2()`
-- `CGAL::get_default_random()` 
+- `CGAL::get_default_random()`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
-- `CGAL::Random` 
-- `CGAL::Points_on_segment_2<Point_2>` 
-- `CGAL::Random_points_in_ball_d<Point_d>` 
-- `CGAL::Random_points_in_cube_3<Point_3, Creator>` 
-- `CGAL::Random_points_in_cube_d<Point_d>` 
-- `CGAL::Random_points_in_disc_2<Point_2, Creator>` 
+- `CGAL::Random`
+- `CGAL::Points_on_segment_2<Point_2>`
+- `CGAL::Random_points_in_ball_d<Point_d>`
+- `CGAL::Random_points_in_cube_3<Point_3, Creator>`
+- `CGAL::Random_points_in_cube_d<Point_d>`
+- `CGAL::Random_points_in_disc_2<Point_2, Creator>`
 - `CGAL::Random_points_in_triangle_2<Point_2, Creator>`
-- `CGAL::Random_points_in_sphere_3<Point_3, Creator>` 
-- `CGAL::Random_points_in_triangle_3<Point_3, Creator>` 
-- `CGAL::Random_points_in_tetrahedron_3<Point_3, Creator>` 
+- `CGAL::Random_points_in_sphere_3<Point_3, Creator>`
+- `CGAL::Random_points_in_triangle_3<Point_3, Creator>`
+- `CGAL::Random_points_in_tetrahedron_3<Point_3, Creator>`
 - `CGAL::Random_points_in_tetrahedral_mesh_3<C3t3>`
-- `CGAL::Random_points_in_square_2<Point_2, Creator>` 
-- `CGAL::Random_points_on_circle_2<Point_2, Creator>` 
+- `CGAL::Random_points_in_square_2<Point_2, Creator>`
+- `CGAL::Random_points_on_circle_2<Point_2, Creator>`
 - `CGAL::Random_points_in_triangle_mesh_2<Point_2, Triangulation>`
 - `CGAL::Random_points_in_triangle_mesh_3<Point_3, Mesh>`
 - `CGAL::Random_points_in_tetrahedral_mesh_boundary_3<C3t3>`
-- `CGAL::Random_points_on_segment_2<Point_2, Creator>` 
-- `CGAL::Random_points_on_sphere_3<Point_3, Creator>` 
-- `CGAL::Random_points_on_sphere_d<Point_d>` 
-- `CGAL::Random_points_on_square_2<Point_2, Creator>` 
+- `CGAL::Random_points_on_segment_2<Point_2, Creator>`
+- `CGAL::Random_points_on_sphere_3<Point_3, Creator>`
+- `CGAL::Random_points_on_sphere_d<Point_d>`
+- `CGAL::Random_points_on_square_2<Point_2, Creator>`
 
-## Traits Class ##
+\cgalCRPSection{Traits Class}
 
-- `CGAL::Random_convex_set_traits_2<Kernel>` 
+- `CGAL::Random_convex_set_traits_2<Kernel>`
 
 */

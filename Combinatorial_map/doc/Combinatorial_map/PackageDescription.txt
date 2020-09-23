@@ -41,26 +41,26 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `GenericMap`
 - `GenericMapItems`
 - `CellAttribute`
 - `CombinatorialMap`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Combinatorial_map<d,Items,Alloc>`
 - `CGAL::Cell_attribute<CMap,Info_,Tag,OnMerge,OnSplit>`
 - `CGAL::Cell_attribute_with_id<CMap,Info_,Tag,OnMerge,OnSplit>`
 - `CGAL::Generic_map_min_items`
 
-## Global Functions ##
-### Constructions for Combinatorial Maps ###
+\cgalCRPSection{Global Functions}
+\cgalCRPSubsection{Constructions for Combinatorial Maps}
 - `CGAL::make_edge<CMap>`
 - `CGAL::make_combinatorial_polygon<CMap>`
 - `CGAL::make_combinatorial_tetrahedron<CMap>`
 - `CGAL::make_combinatorial_hexahedron<CMap>`
 
-### Operations for Combinatorial Maps ###
+\cgalCRPSubsection{Operations for Combinatorial Maps}
 - `CGAL::is_removable<CMap,i>`
 - `CGAL::remove_cell<CMap,i>`
 - `CGAL::is_insertable_cell_1_in_cell_2<CMap>`

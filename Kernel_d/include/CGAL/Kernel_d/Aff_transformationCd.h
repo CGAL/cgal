@@ -1,24 +1,15 @@
-// Copyright (c) 2000,2001  
+// Copyright (c) 2000,2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Michael Seel
 
@@ -36,7 +27,7 @@ template <class FT, class LA > class Aff_transformationCd;
 template <class FT, class LA > class Aff_transformationCd_rep;
 
 template <class FT, class LA>
-class Aff_transformationCd_rep 
+class Aff_transformationCd_rep
 {
   friend class Aff_transformationCd<FT,LA>;
   typedef typename LA::Matrix Matrix;
@@ -48,8 +39,8 @@ public:
 };
 
 template <class _FT, class _LA>
-class Aff_transformationCd : 
-  public Handle_for< Aff_transformationCd_rep<_FT,_LA> > { 
+class Aff_transformationCd :
+  public Handle_for< Aff_transformationCd_rep<_FT,_LA> > {
 
   typedef Aff_transformationCd_rep<_FT,_LA> Rep;
   typedef Handle_for<Rep> Base;
@@ -57,7 +48,7 @@ class Aff_transformationCd :
 
   using Base::ptr;
 
-public: 
+public:
 typedef _FT RT;
 typedef _FT FT;
 typedef _LA LA;
@@ -81,8 +72,8 @@ template <typename Forward_iterator>
 Aff_transformationCd(Scaling, Forward_iterator start, Forward_iterator end) :
   Base( Rep(static_cast<int>(std::distance(start,end))-1) )
 /*{\Mcreate introduces the transformation of $d$-space specified by a
-diagonal matrix with entries |set [start,end)| on the diagonal 
-(a scaling of the space). \precond |set [start,end)| is a vector of 
+diagonal matrix with entries |set [start,end)| on the diagonal
+(a scaling of the space). \precond |set [start,end)| is a vector of
 dimension $d+1$.}*/
 { int i=0; while (start != end) { ptr()->M_(i,i) = *start++;++i; } }
 
@@ -97,20 +88,20 @@ Aff_transformationCd(Translation, const VectorCd<RT,LA>& v) :
   ptr()->M_(d,d) = FT(1);
 }
 
-Aff_transformationCd(int d, Scaling, const RT& num, const RT& den) 
-  : Base( Rep(d) ) 
+Aff_transformationCd(int d, Scaling, const RT& num, const RT& den)
+  : Base( Rep(d) )
 { Matrix& M = ptr()->M_;
   for (int i = 0; i < d; ++i) M(i,i) = num/den;
   M(d,d) = FT(1);
 }
 
-Aff_transformationCd(int d, Rotation,  
-  const RT& sin_num, const RT& cos_num, const RT& den, 
+Aff_transformationCd(int d, Rotation,
+  const RT& sin_num, const RT& cos_num, const RT& den,
   int e1 = 0, int e2 = 1) : Base( Rep(d) )
 {
   CGAL_assertion_msg((sin_num*sin_num + cos_num*cos_num == den*den),
     "planar_rotation: rotation parameters disobey precondition.");
-  CGAL_assertion_msg((0<=e1 && e1<=e2 && e2<d), 
+  CGAL_assertion_msg((0<=e1 && e1<=e2 && e2<d),
     "planar_rotation: base vector indices wrong.");
   Matrix& M = ptr()->M_;
   for (int i=0; i<d; i++) M(i,i) = 1;
@@ -120,7 +111,7 @@ Aff_transformationCd(int d, Rotation,
 }
 
 Aff_transformationCd(int d, Rotation, const DirectionCd<RT,LA>& dir,
-  const RT& eps_num, const RT& eps_den, int e1 = 0, int e2 = 1) 
+  const RT& eps_num, const RT& eps_den, int e1 = 0, int e2 = 1)
   : Base( Rep(d) )
 {
   CGAL_assertion(dir.dimension()==2);
@@ -136,12 +127,12 @@ Aff_transformationCd(int d, Rotation, const DirectionCd<RT,LA>& dir,
   M(d,d) = FT(1);
 }
 
-int dimension() const 
+int dimension() const
 { return ptr()->M_.row_dimension()-1; }
 
 const Matrix& matrix() const { return ptr()->M_; }
 
-bool is_odd() const 
+bool is_odd() const
 { return LA::sign_of_determinant(matrix())<0; }
 
 Vector operator()(const Vector& v) const
@@ -150,12 +141,12 @@ Vector operator()(const Vector& v) const
   int i,j,d(v.dimension());
   Vector res(d);
   for (i=0; i<d; ++i) { // all rows
-    FT cres(0); 
+    FT cres(0);
     for (j=0; j<d; ++j) cres+=M(i,j)*v[j]; // per row
     cres += M(i,d);
     res[i]=cres;
   }
-  return res; 
+  return res;
 }
 
 Vector transform_linearly(const Vector& v) const
@@ -164,28 +155,28 @@ Vector transform_linearly(const Vector& v) const
   int i,j,d(v.dimension());
   Vector res(d);
   for (i=0; i<d; ++i) { // all rows
-    FT cres(0); 
+    FT cres(0);
     for (j=0; j<d; ++j) cres+=M(i,j)*v[j]; // per row
     res[i]=cres;
   }
-  return res; 
+  return res;
 }
 
 
 Aff_transformationCd<RT,LA> inverse() const
-{ Aff_transformationCd<RT,LA> Inv; RT D; 
+{ Aff_transformationCd<RT,LA> Inv; RT D;
   Vector dummy;
-  if ( !LA::inverse(matrix(),Inv.ptr()->M_,D,dummy) ) 
-  CGAL_error_msg("Aff_transformationCd::inverse: not invertible."); 
+  if ( !LA::inverse(matrix(),Inv.ptr()->M_,D,dummy) )
+  CGAL_error_msg("Aff_transformationCd::inverse: not invertible.");
   if ( D < FT(0) ) Inv.ptr()->M_ = -Inv.ptr()->M_;
   return Inv;
 }
-  
-Aff_transformationCd<RT,LA>  
+
+Aff_transformationCd<RT,LA>
 operator*(const Aff_transformationCd<RT,LA>& s) const
 { CGAL_assertion_msg((dimension()==s.dimension()),
   "Aff_transformationCd::operator*: dimensions disagree.");
-  return Aff_transformationCd<RT,LA>(matrix()*s.matrix()); 
+  return Aff_transformationCd<RT,LA>(matrix()*s.matrix());
 }
 
 bool operator==(const Aff_transformationCd<RT,LA>& a1) const
@@ -199,14 +190,14 @@ bool operator!=(const Aff_transformationCd<RT,LA>& a1) const
 
 template <class FT, class LA>
 std::ostream& operator<<(
-  std::ostream& os, const Aff_transformationCd<FT,LA>& t) 
+  std::ostream& os, const Aff_transformationCd<FT,LA>& t)
 { os << t.matrix(); return os; }
 
 template <class FT, class LA>
 std::istream& operator>>(
   std::istream& is, Aff_transformationCd<FT,LA>& t)
 { typename LA::Matrix M(t.dimension());
-  is >> M; t = Aff_transformationCd<FT,LA>(M); 
+  is >> M; t = Aff_transformationCd<FT,LA>(M);
   return is;
 }
 

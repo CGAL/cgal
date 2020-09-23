@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -26,7 +17,7 @@ namespace CGAL {
 
 // makes *p the rightmost child of *q
 template<class Traits>
-void Rotation_tree_2<Traits>::set_rightmost_child(Self_iterator p, 
+void Rotation_tree_2<Traits>::set_rightmost_child(Self_iterator p,
                                                   Self_iterator q)
 {
    CGAL_assertion(q != this->end());
@@ -52,11 +43,11 @@ void Rotation_tree_2<Traits>::set_rightmost_child(Self_iterator p,
 
 // makes *p the left sibling of *q
 template <class Traits>
-void Rotation_tree_2<Traits>::set_left_sibling(Self_iterator p, 
+void Rotation_tree_2<Traits>::set_left_sibling(Self_iterator p,
                                                Self_iterator q)
 {
    if (q == this->end()) return;
-       
+
    if (p != this->end())
    {
       if (left_sibling(q) != this->end())
@@ -81,11 +72,11 @@ void Rotation_tree_2<Traits>::set_left_sibling(Self_iterator p,
 
 // makes p the right sibling of q
 template <class Traits>
-void Rotation_tree_2<Traits>::set_right_sibling(Self_iterator p, 
+void Rotation_tree_2<Traits>::set_right_sibling(Self_iterator p,
                                                 Self_iterator q)
 {
    if (q == this->end()) return;
-       
+
    if (p != this->end())
    {
       if (right_sibling(q) != this->end())

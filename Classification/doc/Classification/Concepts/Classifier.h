@@ -13,8 +13,9 @@ Concept describing a classifier used by classification functions (see
 `CGAL::Classification::classify_with_graphcut()`).
 
 \cgalHasModel `CGAL::Classification::Sum_of_weighted_features_classifier`
-\cgalHasModel `CGAL::Classification::ETHZ_random_forest_classifier`
-\cgalHasModel `CGAL::Classification::OpenCV_random_forest_classifier`
+\cgalHasModel `CGAL::Classification::ETHZ::Random_forest_classifier`
+\cgalHasModel `CGAL::Classification::OpenCV::Random_forest_classifier`
+\cgalHasModel `CGAL::Classification::TensorFlow::Neural_network_classifier`
 
 */
 class Classifier

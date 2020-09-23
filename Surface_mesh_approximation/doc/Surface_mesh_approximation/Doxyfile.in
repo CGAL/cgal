@@ -1,0 +1,10 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Triangulated Surface Mesh Approximation"
+
+# custom options for this package
+EXTRACT_ALL                =  false
+HIDE_UNDOC_MEMBERS         =  true
+HIDE_UNDOC_CLASSES         =  true
+
+EXCLUDE = ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/internal

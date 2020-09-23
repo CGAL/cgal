@@ -3,17 +3,8 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent RINEAU, Pierre ALLIEZ
 
@@ -69,9 +60,9 @@ public:
   void finish_open() {
     CGAL_IMAGE_IO_CASE(image_ptr.get(),
                        Word *min; Word *max;
-                       (boost::tie(min, max)) = 
+                       (boost::tie(min, max)) =
                          (CGAL::min_max_element((Word*)(data()),
-                                                (Word*)(data()) + 
+                                                (Word*)(data()) +
                                                 xdim() * ydim() * zdim()));
                         min_value = *min;
                         max_value = *max;)
@@ -92,7 +83,7 @@ public:
     return (float)(((image_ptr->zdim) - 1.0)*(image_ptr->vz));
   }
 
-  Point center() 
+  Point center()
   {
     FT cx = 0.5 * xmax();
     FT cy = 0.5 * ymax();
@@ -116,12 +107,12 @@ public:
 
 public:
   bool inside(const float x,
-              const float y, 
+              const float y,
               const float z) const
   {
-    return ( x >= 0.0f && 
-             y >= 0.0f && 
-             z >= 0.0f && 
+    return ( x >= 0.0f &&
+             y >= 0.0f &&
+             z >= 0.0f &&
              x <= xmax() &&
              y <= ymax() &&
              z <= zmax() );
@@ -154,15 +145,15 @@ public:
     const float x = static_cast<float>(CGAL::to_double(p.x()));
     const float y = static_cast<float>(CGAL::to_double(p.y()));
     const float z = static_cast<float>(CGAL::to_double(p.z()));
-      
+
     if(interpolation()) {
       if(labellized()) {
-	CGAL_IMAGE_IO_CASE(image_ptr.get(),
-			   return (this->labellized_trilinear_interpolation<Word, double>(x, y, z, min_value));)
+        CGAL_IMAGE_IO_CASE(image_ptr.get(),
+                           return (this->labellized_trilinear_interpolation<Word, double>(x, y, z, min_value));)
       }
       else {
-	CGAL_IMAGE_IO_CASE(image_ptr.get(),
- 			   return (this->trilinear_interpolation<Word, double>(x, y, z, min_value));)
+        CGAL_IMAGE_IO_CASE(image_ptr.get(),
+                            return (this->trilinear_interpolation<Word, double>(x, y, z, min_value));)
       }
     }
     else {
@@ -170,30 +161,30 @@ public:
       const std::ptrdiff_t j = static_cast<std::ptrdiff_t>(y/image()->vy + 0.5f);
       const std::ptrdiff_t k = static_cast<std::ptrdiff_t>(z/image()->vz + 0.5f);
       if( i < 0 ||
-	  j < 0 ||
-	  k < 0 )
+          j < 0 ||
+          k < 0 )
       {
-	return 0;
+        return 0;
       }
       else
-      {    
-	const std::size_t ui = static_cast<std::size_t>(i);
-	const std::size_t uj = static_cast<std::size_t>(j);
-	const std::size_t uk = static_cast<std::size_t>(k);
-	if( ui >= image()->xdim ||
-	    uj >= image()->ydim ||
-	    uk >= image()->zdim )
-	{
-	  return 0;
-	}
-	else
-	{
-	  return this->value(ui, uj, uk);
-	}
+      {
+        const std::size_t ui = static_cast<std::size_t>(i);
+        const std::size_t uj = static_cast<std::size_t>(j);
+        const std::size_t uk = static_cast<std::size_t>(k);
+        if( ui >= image()->xdim ||
+            uj >= image()->ydim ||
+            uk >= image()->zdim )
+        {
+          return 0;
+        }
+        else
+        {
+          return this->value(ui, uj, uk);
+        }
       }
     }
     return FT();
   }
 }; // end CBinary_image_3
- 
+
 #endif // BINARY_IMAGE_3

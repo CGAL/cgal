@@ -1,25 +1,16 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
 
@@ -101,6 +92,15 @@ public:
 
   Vector_3(const RT& x, const RT& y, const RT& z, const RT& w)
     : Rep(typename R::Construct_vector_3()(Return_base_tag(), x, y, z, w)) {}
+
+  friend void swap(Self& a, Self& b)
+#ifdef __cpp_lib_is_swappable
+    noexcept(std::is_nothrow_swappable_v<Rep>)
+#endif
+  {
+    using std::swap;
+    swap(a.rep(), b.rep());
+  }
 
   Direction_3 direction() const
   {
@@ -266,7 +266,7 @@ public:
 
 template <class R >
 std::ostream&
-insert(std::ostream& os, const Vector_3<R>& v, const Cartesian_tag&) 
+insert(std::ostream& os, const Vector_3<R>& v, const Cartesian_tag&)
 {
   switch(get_mode(os)) {
     case IO::ASCII :
@@ -314,7 +314,7 @@ operator<<(std::ostream& os, const Vector_3<R>& v)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Vector_3<R>& v, const Cartesian_tag&) 
+extract(std::istream& is, Vector_3<R>& v, const Cartesian_tag&)
 {
   typename R::FT x(0), y(0), z(0);
   switch(get_mode(is)) {
@@ -339,7 +339,7 @@ extract(std::istream& is, Vector_3<R>& v, const Cartesian_tag&)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Vector_3<R>& v, const Homogeneous_tag&) 
+extract(std::istream& is, Vector_3<R>& v, const Homogeneous_tag&)
 {
   typename R::RT hx, hy, hz, hw;
   switch(get_mode(is))

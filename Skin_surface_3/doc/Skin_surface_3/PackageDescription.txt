@@ -22,17 +22,17 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `SkinSurface_3`
 - `SkinSurfaceTraits_3`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Skin_surface_3<SkinSurfaceTraits_3>`
 - `CGAL::Union_of_balls_3<SkinSurfaceTraits_3>`
 
 - `CGAL::Skin_surface_traits_3<K>`
 
-## Functions ##
+\cgalCRPSection{Functions}
 - `CGAL::make_skin_surface_mesh_3<Polyhedron_3>()`
 - `CGAL::mesh_skin_surface_3<SkinSurface_3, Polyhedron_3>()`
 - `CGAL::subdivide_skin_surface_mesh_3<SkinSurface_3, Polyhedron_3>()`

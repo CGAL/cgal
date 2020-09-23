@@ -1,25 +1,16 @@
-// Copyright (c) 1997,1998,1999,2000,2001  
+// Copyright (c) 1997,1998,1999,2000,2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri, Sylvain Pion
 
@@ -49,8 +40,8 @@ namespace CGAL {
 class CGAL_EXPORT Geomview_stream {
 public:
     Geomview_stream(const Bbox_3 &bbox = Bbox_3(0,0,0, 1,1,1),
-		    const char *machine = NULL,
-		    const char *login = NULL);
+                    const char *machine = nullptr,
+                    const char *login = nullptr);
 
     ~Geomview_stream();
 
@@ -95,62 +86,62 @@ public:
 
     double get_vertex_radius() const
     {
-	return radius;
+        return radius;
     }
     double set_vertex_radius(double r)
     {
-	std::swap(r, radius);
-	return r;
+        std::swap(r, radius);
+        return r;
     }
 
     int get_line_width() const
     {
-	return line_width;
+        return line_width;
     }
     int set_line_width(int w)
     {
-	std::swap(w, line_width);
+        std::swap(w, line_width);
         return w;
     }
 
     bool set_wired(bool b)
     {
-	std::swap(b, wired_flag);
-	return b;
+        std::swap(b, wired_flag);
+        return b;
     }
     bool get_wired() const
     {
-	return wired_flag;
+        return wired_flag;
     }
 
     bool set_echo(bool b)
     {
-	std::swap(b, echo_flag);
-	return b;
+        std::swap(b, echo_flag);
+        return b;
     }
     bool get_echo() const
     {
-	return echo_flag;
+        return echo_flag;
     }
 
     bool set_raw(bool b)
     {
-	std::swap(b, raw_flag);
-	return b;
+        std::swap(b, raw_flag);
+        return b;
     }
     bool get_raw() const
     {
-	return raw_flag;
+        return raw_flag;
     }
 
     bool set_trace(bool b)
     {
-	std::swap(b, trace_flag);
-	return b;
+        std::swap(b, trace_flag);
+        return b;
     }
     bool get_trace() const
     {
-	return trace_flag;
+        return trace_flag;
     }
 
     void trace(const std::string s) const
@@ -176,27 +167,27 @@ public:
 
     bool set_binary_mode(bool b = true)
     {
-	std::swap(b, binary_flag);
-	return b;
+        std::swap(b, binary_flag);
+        return b;
     }
     bool set_ascii_mode(bool b = true)
     {
-	return !set_binary_mode(!b);
+        return !set_binary_mode(!b);
     }
     bool get_binary_mode() const
     {
-	return binary_flag;
+        return binary_flag;
     }
     bool get_ascii_mode() const
     {
-	return !binary_flag;
+        return !binary_flag;
     }
 
     std::string get_new_id(const std::string & s);
 
     const Bbox_3 & get_bbox()
     {
-	return bb;
+        return bb;
     }
 
     void pickplane()
@@ -206,7 +197,7 @@ public:
 
     static char* nth(char* s, int count);
     static void parse_point(const char* pickpoint,
-		     double &x, double &y, double &z, double &w);
+                     double &x, double &y, double &z, double &w);
 private:
     void setup_geomview(const char *machine, const char *login);
     void frame(const Bbox_3 &bbox);
@@ -233,9 +224,9 @@ output_point(Geomview_stream &gv, const FT &x, const FT &y, const FT &z)
 {
     bool ascii_bak = true; // the initialization value shuts up the compiler.
     if (!gv.get_raw()) {
-    	ascii_bak = gv.set_ascii_mode();
-    	gv << "(geometry " << gv.get_new_id("P")
-       	   << " {appearance {linewidth 5 material {edgecolor "
+            ascii_bak = gv.set_ascii_mode();
+            gv << "(geometry " << gv.get_new_id("P")
+                  << " {appearance {linewidth 5 material {edgecolor "
            << gv.vcr() << gv.vcg() << gv.vcb() << "}}{SKEL 1 1 ";
     }
 
@@ -243,7 +234,7 @@ output_point(Geomview_stream &gv, const FT &x, const FT &y, const FT &z)
 
     if (!gv.get_raw()) {
         gv << "1 0\n}})";
-    	gv.set_ascii_mode(ascii_bak);
+            gv.set_ascii_mode(ascii_bak);
     }
 }
 
@@ -368,8 +359,8 @@ Geomview_stream::draw_triangles(InputIterator begin, InputIterator end)
     std::vector<Point>  points;
     for (Tit i = triangles.begin(); i != triangles.end(); ++i)
         for (int j = 0; j < 3; ++j)
-	    if (point_map.insert(typename Point_map::value_type(i->vertex(j),
-					        points.size())).second)
+            if (point_map.insert(typename Point_map::value_type(i->vertex(j),
+                                                points.size())).second)
                 points.push_back(i->vertex(j));
 
     bool ascii_bak = get_ascii_mode();
@@ -388,8 +379,8 @@ Geomview_stream::draw_triangles(InputIterator begin, InputIterator end)
     // Triangles vertices indices.
     for (Tit tit = triangles.begin(); tit != triangles.end(); ++tit) {
         (*this) << 3;
-	for (int j = 0; j < 3; ++j)
-	    (*this) << point_map[tit->vertex(j)];
+        for (int j = 0; j < 3; ++j)
+            (*this) << point_map[tit->vertex(j)];
         (*this) << 0; // without color.
     }
     // Footer.
@@ -492,14 +483,14 @@ operator<<(Geomview_stream &gv, const Ray_2<R> &r)
     // Note: it won't work if double is not convertible to an RT...
     const Bbox_3 & bb = gv.get_bbox();
     Object result = intersection(Iso_rectangle_2<R>(
-		                    Point_2<R>(bb.xmin(), bb.ymin()),
-		                    Point_2<R>(bb.xmax(), bb.ymax())), r);
+                                    Point_2<R>(bb.xmin(), bb.ymin()),
+                                    Point_2<R>(bb.xmax(), bb.ymax())), r);
     Point_2<R> ipoint;
     Segment_2<R> iseg;
     if (assign(ipoint, result))
-	gv << ipoint;
+        gv << ipoint;
     else if (assign(iseg, result))
-	gv << iseg;
+        gv << iseg;
     return gv;
 }
 #endif
@@ -514,14 +505,14 @@ operator<<(Geomview_stream &gv, const Line_2<R> &r)
     // Note: it won't work if double is not convertible to an RT...
     const Bbox_3 & bb = gv.get_bbox();
     Object result = intersection(Iso_rectangle_2<R>(
-		                    Point_2<R>(bb.xmin(), bb.ymin()),
-		                    Point_2<R>(bb.xmax(), bb.ymax())), r);
+                                    Point_2<R>(bb.xmin(), bb.ymin()),
+                                    Point_2<R>(bb.xmax(), bb.ymax())), r);
     Point_2<R> ipoint;
     Segment_2<R> iseg;
     if (assign(ipoint, result))
-	gv << ipoint;
+        gv << ipoint;
     else if (assign(iseg, result))
-	gv << iseg;
+        gv << iseg;
     return gv;
 }
 #endif
@@ -568,7 +559,7 @@ Geomview_stream&
 operator>>(Geomview_stream &gv, Point_3<R> &point)
 {
     const char *gclpick =
-	"(pick world pickplane * nil nil nil nil nil nil nil)";
+        "(pick world pickplane * nil nil nil nil nil nil nil)";
 
     bool ascii_bak = gv.set_ascii_mode();
     gv << "(pickable pickplane yes) (ui-target pickplane yes)"
@@ -585,7 +576,7 @@ operator>>(Geomview_stream &gv, Point_3<R> &point)
 
     // we echo the input
     if (gv.get_echo())
-	gv << point;
+        gv << point;
 
     // we are done and tell geomview to stop sending pick events
     gv << "(uninterest " << gclpick << ") (pickable pickplane no)";

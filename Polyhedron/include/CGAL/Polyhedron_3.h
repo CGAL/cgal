@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>)
@@ -561,7 +552,7 @@ public:
     typedef N_step_adaptor_derived<Halfedge_const_iterator, 2>
                                                   Edge_const_iterator;
   */
-  
+
     // All face related types get a related facet type name.
     typedef Face                                  Facet;
     typedef Face_handle                           Facet_handle;
@@ -1423,7 +1414,7 @@ public:
         // number of border halfedges. An edge with no incident facet
         // counts as two border halfedges. Precondition: `normalize_border
         // ()' has been called and no halfedge insertion or removal and no
-        // change in border status of the halfedges have occured since
+        // change in border status of the halfedges have occurred since
         // then.
         return hds_.size_of_border_halfedges();
     }
@@ -1434,7 +1425,7 @@ public:
         // facet on one side and to a hole on the other side.
         // Precondition: `normalize_border()' has been called and no
         // halfedge insertion or removal and no change in border status of
-        // the halfedges have occured since then.
+        // the halfedges have occurred since then.
         return hds_.size_of_border_edges();
     }
 
@@ -1445,7 +1436,7 @@ public:
         // halfedges_end()') denotes all border edges. Precondition:
         // `normalize_border()' has been called and no halfedge insertion
         // or removal and no change in border status of the halfedges have
-        // occured since then.
+        // occurred since then.
         return hds_.border_halfedges_begin();
     }
     Halfedge_const_iterator border_halfedges_begin() const {

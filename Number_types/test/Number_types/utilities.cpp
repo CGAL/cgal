@@ -1,15 +1,16 @@
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 // TODO: solve conflict of CORE with GMPXX
 #ifdef CGAL_USE_CORE
 #undef CGAL_USE_GMPXX
-#endif 
+#endif
 
-#include <CGAL/Quotient.h> 
-#include <CGAL/MP_Float.h> 
-#include <CGAL/Lazy_exact_nt.h> 
-#include <CGAL/Interval_nt.h> 
-#include <CGAL/Sqrt_extension.h> 
+#include <CGAL/Quotient.h>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Lazy_exact_nt.h>
+#include <CGAL/Interval_nt.h>
+#include <CGAL/Sqrt_extension.h>
+#include <CGAL/boost_mp.h>
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
@@ -58,7 +59,7 @@ typedef CGAL::Quotient<CGAL::MP_Float>            QMPF;
 }
 
 int main()
-{ 
+{
   // builtin NTs
   TESTIT(int, "int")
   TESTIT(long int, "long int")
@@ -82,6 +83,12 @@ int main()
   TESTIT(CGAL::Lazy_exact_nt<QMPF>, "Lazy_exact_nt<Quotient<MP_Float> >")
   TESTIT(CGAL::Interval_nt<>, "Interval_nt<>")
 
+  // Boost.Multiprecision
+#ifdef CGAL_USE_BOOST_MP
+  TESTIT(boost::multiprecision::cpp_int, "cpp_int")
+  TESTIT(boost::multiprecision::cpp_rational, "cpp_rational")
+#endif
+
   // GMP based NTs
 #ifdef CGAL_USE_GMP
   TESTIT(CGAL::Gmpz, "Gmpz")
@@ -90,6 +97,10 @@ int main()
   TESTIT(CGAL::Mpzf, "Mpzf")
 # endif
   TESTIT(CGAL::Gmpq, "Gmpq")
+# ifdef CGAL_USE_BOOST_MP
+  TESTIT(boost::multiprecision::mpz_int, "mpz_int")
+  TESTIT(boost::multiprecision::mpq_rational, "mpq_rational")
+# endif
 #endif // CGAL_USE_GMP
 #ifdef CGAL_USE_GMPXX
   TESTIT(mpz_class, "mpz_class")
@@ -98,7 +109,7 @@ int main()
 #endif
 
   // CORE
-#ifdef CGAL_USE_CORE 
+#ifdef CGAL_USE_CORE
       TESTIT(CORE::BigInt, "CORE::BigInt")
       TESTIT(CORE::BigRat, "CORE::BigRat")
       TESTIT(CORE::BigFloat, "CORE::BigFloat")
@@ -115,7 +126,7 @@ int main()
       TESTIT(leda_real, "leda_real")
 #endif // CGAL_USE_LEDA
 
-       // TEST Sqrt_extension 
+       // TEST Sqrt_extension
 #ifdef CGAL_USE_GMP
       typedef CGAL::Sqrt_extension<int,int> Ext_int;
       TESTIT(Ext_int     , "CGAL::Sqrt_extension<CGAL::Gmpz,CGAL::Gmpz>");

@@ -1,38 +1,38 @@
-/*! 
+/*!
 
 \page devman_debugging Debugging Tips
 \author Oren Nechushtan (<TT>theoren@math.tau.ac.il </TT>)
 
-Efficient debugging techniques can become an asset when writing geometric 
-libraries such as \cgal. 
-This chapter discusses debugging-related issues, like how to use 
-the demo as a powerful debugger (Section  \ref secgraphical_debugging ), 
-why and how to check your geometric predicates 
-(Section  \ref secdebugging_cross_checker ), and what 
+Efficient debugging techniques can become an asset when writing geometric
+libraries such as \cgal.
+This chapter discusses debugging-related issues, like how to use
+the demo as a powerful debugger (Section  \ref secgraphical_debugging ),
+why and how to check your geometric predicates
+(Section  \ref secdebugging_cross_checker ), and what
 to do in order to evaluate handles and iterators during the debugging phase
 (Section  \ref secdebugging_handles_and_it ).
 
-\section secgraphical_debugging Graphical debugging 
+\section secgraphical_debugging Graphical debugging
 
-\cgal packages usually provide a graphical demo that demonstrates the 
+\cgal packages usually provide a graphical demo that demonstrates the
 functionality in the package.  Many times this demo is simply a fancier
 version of a program that was used in the early stages of development as a
 (graphical) debugging tool.  In many cases, the output of a geometric
 algorithm is much easier to interpret in graphical form than numeric
 form.  Thus you should use the powerful graphical output capabilities
-of \cgal (see the \link PartSupportLibrary Support Library documentation \endlink) 
-to develop 
+of \cgal (see the \link PartSupportLibrary Support Library documentation \endlink)
+to develop
 <UL>
    <LI>programs that can be used for debugging the internal workings
          of your package (<I>i.e.</I>, things a user may not have access to)
-   <LI>interesting and informative demos that highlight the features and, 
-         at the same time, the absence or presence of bugs in your package.  
-         Other demo/debugging programs can be found in the <TT>demo</TT> 
-         directory 
+   <LI>interesting and informative demos that highlight the features and,
+         at the same time, the absence or presence of bugs in your package.
+         Other demo/debugging programs can be found in the <TT>demo</TT>
+         directory
          of every internal release and \cgal installation.
 </UL>
 
-\section secdebugging_cross_checker Cross-checkers 
+\section secdebugging_cross_checker Cross-checkers
 
 A cross-checker is a powerful means to allow for efficient
 maintenance of your code.  A cross-checker for a given concept is a
@@ -57,14 +57,14 @@ instantiations.
 
 \subsection Developer_manualAnexampleTraitsclassbinary An example: Traits class binary cross-checker
 
-As a more concrete example, assume that you have a traits class concept 
+As a more concrete example, assume that you have a traits class concept
 that requires a nested type `X_curve` and a function
 
 \code{.cpp}
 bool curve_is_vertical(const X_curve & cv) const;
 \endcode
 
-A binary cross-checker for this concept might look like 
+A binary cross-checker for this concept might look like
 \code{.cpp}
 template <class Traits1,class Traits2,class Adapter>
 class Binary_traits_checker{
@@ -85,7 +85,7 @@ bool curve_is_vertical(const X_curve & cv) const;
 }
 \endcode
 
-and possibly be implemented as 
+and possibly be implemented as
 
 \code{.cpp}
 bool curve_is_vertical(const X_curve & cv) const
@@ -95,18 +95,18 @@ bool curve_is_vertical(const X_curve & cv) const
 }
 \endcode
 
-Notice that the class `Binary_traits_checker` has template parameters 
-named `Traits1` and `Traits2`, and a third parameter named 
+Notice that the class `Binary_traits_checker` has template parameters
+named `Traits1` and `Traits2`, and a third parameter named
 `Adapter`. One of the traits classes is the one to be tested and the
 other is (presumably) a traits class that always gives the right answer.
-The `Adapter` is needed since the `X_curve` types 
-for `Traits1` and `Traits2` might be different. 
-This cross-checker does nothing other then asserting that the two traits 
-classes return the same values by calling the 
-the counterparts in the member traits classes 
+The `Adapter` is needed since the `X_curve` types
+for `Traits1` and `Traits2` might be different.
+This cross-checker does nothing other then asserting that the two traits
+classes return the same values by calling the
+the counterparts in the member traits classes
 (`tr1`,`tr2`) and comparing the results.
 
-\section secdebugging_handles_and_it Examining the values of variables 
+\section secdebugging_handles_and_it Examining the values of variables
 
 When using an interactive debugger, one often wishes to see the value of
 a variable, such as the \f$ y\f$-value of a segment's source point. Thus one
@@ -118,21 +118,21 @@ This most often produces disappointingly unrevealing results, <I>e.g.</I>, an
 error message saying the value cannot be evaluated because functions may
 be inlined.
 
-We recommend the following approaches to work around (or avoid) this 
+We recommend the following approaches to work around (or avoid) this
 and similar problems:
 <UL>
-   <LI>Use the `Simple_cartesian` kernel 
-         
+   <LI>Use the `Simple_cartesian` kernel
+
          (Chapter  \ref devman_kernels ), which does not do reference
          counting and uses no handles so data member values can be inspected
          directly.
-         
-   <LI>Print the values by following the pointers in the handles used to 
+
+   <LI>Print the values by following the pointers in the handles used to
          represent objects.  For example, for the segment above, the statement
          \code{.cpp}
             print s.ptr->start->ptr->e1
          \endcode
-         is likely to work.  This technique can also work for non-kernel 
+         is likely to work.  This technique can also work for non-kernel
          handles, such as `Halfedge_handle` and `Vertex_handle`.
          One must know, of course, the right names for the data members,
          but this you can find out by printing the things that pointers
@@ -140,31 +140,31 @@ and similar problems:
          \code{.cpp}
             print *s.ptr
          \endcode
-         In the case of the planar map package, these handles are actually 
-         polyhedron iterators. 
-         If \f$ h\f$ is a halfedge of a planar map and you want to know the curve 
+         In the case of the planar map package, these handles are actually
+         polyhedron iterators.
+         If \f$ h\f$ is a halfedge of a planar map and you want to know the curve
          associated with it, then if
          \code{.cpp}
           print h->curve()
          \endcode
-         fails, try using 
+         fails, try using
          \code{.cpp}
           print h.nt.node->cv
          \endcode
          instead.
 
-For a vertex \f$ v\f$ of a planar map, if 
+For a vertex \f$ v\f$ of a planar map, if
          \code{.cpp}
           print v->point()
          \endcode
-         fails, use  
+         fails, use
          \code{.cpp}
            print v.nt.node->p
          \endcode
          instead.
 </UL>
 
-Note: You can also use watches to continuously examine such values during 
+Note: You can also use watches to continuously examine such values during
 execution.
 
 */

@@ -1,12 +1,16 @@
 # Top level CMakeLists.txt for CGAL-branchbuild
-message( "== CMake setup ==" )
-project(CGAL CXX C)
 
 # Minimal version of CMake:
 cmake_minimum_required(VERSION 3.1)
 
+message( "== CMake setup ==" )
+cmake_minimum_required(VERSION 3.1...3.15)
+project(CGAL CXX C)
+export(PACKAGE CGAL)
+
 set( CGAL_BRANCH_BUILD ON CACHE INTERNAL "Create CGAL from a Git branch" FORCE)
 
+include(${CMAKE_SOURCE_DIR}/CGALConfigVersion.cmake)
 include(${CMAKE_SOURCE_DIR}/Installation/cmake/modules/CGAL_SCM.cmake)
 CGAL_detect_git(${CMAKE_SOURCE_DIR})
 
@@ -37,10 +41,12 @@ message( "== CMake setup (DONE) ==\n" )
 
 # Enable testing with BUILD_TESTING
 option(BUILD_TESTING "Build the testing tree." OFF)
-include(CTest)
 if(BUILD_TESTING AND NOT POLICY CMP0064)
   message(FATAL_ERROR "CGAL support of CTest requires CMake version 3.4 or later.
 The variable BUILD_TESTING must be set of OFF.")
+endif()
+if(BUILD_TESTING)
+  enable_testing()
 endif()
 
 # and finally start actual build

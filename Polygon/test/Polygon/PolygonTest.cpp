@@ -1,7 +1,7 @@
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 
-typedef CGAL::Cartesian<double> K;
+typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_2 Point;
 typedef K::Segment_2 Segment;
 
@@ -283,7 +283,7 @@ void test_update_operations(const ListPolygon& p,
 
   VC c = q.vertices_circulator();
   q.set(c, *middle);
-  q.insert(c, Point(2,3)); 
+  q.insert(c, Point(2,3));
   q.erase(q.vertices_circulator());
 
   pgn.push_back(Point(pgn.vertices_begin()->x(), 3));

@@ -1,0 +1,51 @@
+/// \defgroup PkgTSMARef Triangulated Surface Mesh Approximation Reference
+
+/// \defgroup PkgTSMAConcepts Concepts
+/// \ingroup PkgTSMARef
+
+/*!
+\addtogroup PkgTSMARef
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Approximation,PkgTSMA}
+\cgalPkgPicture{sma-pkg-small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Pierre Alliez, David Cohen-Steiner, Lingjie Zhu}
+\cgalPkgDesc{This package implements the Variational Shape Approximation method to approximate an input surface triangle mesh by a simpler surface triangle mesh. The algorithm proceeds by iterative clustering of triangles, the clustering process being seeded randomly, incrementally or hierarchically. While the default function runs an automated version of the algorithm, interactive control is possible via a class interface.
+The API is flexible and can be extended to user-defined proxies and error metrics.}
+\cgalPkgManuals{Chapter_Triangulated_Surface_Mesh_Approximation,PkgTSMARef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.14}
+\cgalPkgBib{cgal:az-tsma}
+\cgalPkgDependsOn{\ref thirdpartyEigen}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Parameters}
+Optional parameters of the functions of this package
+are implemented as BGL named parameters.
+The page \ref bgl_namedparameters describes their usage.
+
+\cgalCRPSection{Concepts}
+- `ErrorMetricProxy`
+
+\cgalCRPSection{Main Functions}
+- `CGAL::Surface_mesh_approximation::approximate_triangle_mesh()`
+
+\cgalCRPSection{Classes}
+- `CGAL::Surface_mesh_approximation::L21_metric_plane_proxy`
+- `CGAL::Surface_mesh_approximation::L2_metric_plane_proxy`
+- `CGAL::Variational_shape_approximation`
+
+\todo add option to enforce guarantee of 2-manifold and oriented output mesh
+\todo add option to smooth frontiers of the partition
+\todo add option to smooth and mutual tessellate frontiers of the partition
+\todo add function in the class interface to optimize, after meshing, the anchor point locations to minimize a user-defined metric (two-sided L1, two-sided L2, Wasserstein distance, etc).
+\todo add simulated annealing and combined operations to reach better minima.
+
+*/

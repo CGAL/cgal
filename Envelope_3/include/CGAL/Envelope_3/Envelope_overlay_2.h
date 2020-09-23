@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 //                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
@@ -33,13 +24,13 @@
 
 namespace CGAL {
 
-template <class MinimizationDiagram_2, 
+template <class MinimizationDiagram_2,
           class OverlayFunctor = Envelope_overlay_functor<MinimizationDiagram_2> >
 class Envelope_overlay_2
 {
 public:
   typedef MinimizationDiagram_2                                  Minimization_diagram_2;
-  
+
   typedef typename Minimization_diagram_2::Face_handle           Face_handle;
   typedef typename Minimization_diagram_2::Face_iterator         Face_iterator;
 
@@ -55,7 +46,7 @@ protected:
   typedef typename Traits::Xy_monotone_surface_3                 Xy_monotone_surface_3;
 
 public:
-  
+
   void operator()(Minimization_diagram_2& md1,
                   Minimization_diagram_2& md2,
                   Minimization_diagram_2& result)
@@ -65,18 +56,18 @@ public:
 
     Overlay_functor overlay_func(md1, md2, result);
     overlay(md1, md2, result, overlay_func);
-        
+
     CGAL_assertion_code(post_test_assertions(result));
   }
 
 
 public:
-  
+
   /*
   void print_face(Face_handle fh)
   {
     std::cout << (fh->is_unbounded() ? "unbounded" : "bounded");
-    
+
     if (fh->get_is_set())
     {
       std::cout << " #data= " << fh->number_of_data_objects();
@@ -140,7 +131,7 @@ public:
       }
       std::cout << std::endl;
     }
-    std::cout << std::endl;  
+    std::cout << std::endl;
   }
 
   void print_edges(Minimization_diagram_2& md)
@@ -215,38 +206,38 @@ protected:
 
     Halfedge_handle h;
     Vertex_handle v;
-  	Face_handle f;
-  	if (assign(v, o))
-  	  data = v->get_data();
-  	else if (assign(h, o))
-  	  data = h->get_data();
-  	else
-  	{
-  	  CGAL_assertion(assign(f, o));
+          Face_handle f;
+          if (assign(v, o))
+            data = v->get_data();
+          else if (assign(h, o))
+            data = h->get_data();
+          else
+          {
+            CGAL_assertion(assign(f, o));
       assign(f, o);
-  	  data = f->get_data();
-  	}
+            data = f->get_data();
+          }
     return data;
   }
   template <class FeatureHandle>
   int get_number_of_aux_data_objects(FeatureHandle fh, unsigned int id)
   {
-	  const Object& o = fh->get_aux_source(id);
+          const Object& o = fh->get_aux_source(id);
     int data;
 
     Halfedge_handle h;
     Vertex_handle v;
-  	Face_handle f;
-  	if (assign(v, o))
-  	  data = v->number_of_data_objects();
-  	else if (assign(h, o))
-  	  data = h->number_of_data_objects();
-  	else
-  	{
-  	  CGAL_assertion(assign(f, o));
+          Face_handle f;
+          if (assign(v, o))
+            data = v->number_of_data_objects();
+          else if (assign(h, o))
+            data = h->number_of_data_objects();
+          else
+          {
+            CGAL_assertion(assign(f, o));
       assign(f, o);
-  	  data = f->number_of_data_objects();
-  	}
+            data = f->number_of_data_objects();
+          }
     return data;
   }
 

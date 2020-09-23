@@ -20,7 +20,7 @@ mark_sharp_edge(const TriangleMesh& tm,
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
   std::size_t nb_sharp_edges = 0;
 
-  BOOST_FOREACH(edge_descriptor ed, edges(tm))
+  for(edge_descriptor ed : edges(tm))
   {
     halfedge_descriptor hd = halfedge(ed, tm);
 
@@ -58,14 +58,14 @@ void read_input(Triangle_mesh& tm)
 void translate(Triangle_mesh& tm,
                K::Vector_3 tslt = K::Vector_3(0.2, 0.2, 0.2))
 {
-  BOOST_FOREACH(Triangle_mesh::Vertex_index vi, tm.vertices())
+  for(Triangle_mesh::Vertex_index vi : tm.vertices())
     tm.point(vi) = tm.point(vi)+tslt;
 }
 
 // void dump_constrained_edges(const Triangle_mesh& tm, const Constrained_edge_map& ecm, const char* fname)
 // {
 //  std::ofstream output(fname);
-// BOOST_FOREACH(Triangle_mesh::Edge_index e, tm.edges())
+// for(Triangle_mesh::Edge_index e : tm.edges())
 //  {
 //    if ( get(ecm, e) )
 //      output << "2 " << tm.point( tm.vertex(e, 0) )
@@ -77,7 +77,7 @@ std::size_t
 count_constrained_edges(const Triangle_mesh& tm, const Constrained_edge_map& ecm)
 {
   std::size_t n=0;
-  BOOST_FOREACH(Triangle_mesh::Edge_index e, tm.edges())
+  for(Triangle_mesh::Edge_index e : tm.edges())
   {
     if ( ecm[e] ) ++n;
   }
@@ -165,16 +165,16 @@ void test_bool_op_no_copy(
   assert( count_constrained_edges(tm2, ecm2)==307 );
 
   typedef boost::optional<Triangle_mesh*> OTM;
-  OTM none;
-  const CGAL::cpp11::array<OTM,4> output =
-    reverse ? CGAL::make_array(OTM(&tm2), OTM(&tm1), none, none)
-            : CGAL::make_array(OTM(&tm1), OTM(&tm2), none, none);
+  Triangle_mesh *ptr = NULL;
+  const std::array<OTM,4> output =
+    reverse ? CGAL::make_array(OTM(&tm2), OTM(&tm1), boost::make_optional(false,ptr), boost::make_optional(false,ptr))
+            : CGAL::make_array(OTM(&tm1), OTM(&tm2), boost::make_optional(false,ptr), boost::make_optional(false,ptr));
   PMP::corefine_and_compute_boolean_operations(tm1,
                                                tm2,
                                                output,
                                                params::edge_is_constrained_map(ecm1),
                                                params::edge_is_constrained_map(ecm2),
-                                               CGAL::cpp11::make_tuple(params::edge_is_constrained_map(ecm_out_union),
+                                               std::make_tuple(params::edge_is_constrained_map(ecm_out_union),
                                                                        params::edge_is_constrained_map(ecm_out_inter),
                                                                        params::no_parameters(params::edge_is_constrained_map(ecm_out_union)),
                                                                        params::no_parameters(params::edge_is_constrained_map(ecm_out_union))));

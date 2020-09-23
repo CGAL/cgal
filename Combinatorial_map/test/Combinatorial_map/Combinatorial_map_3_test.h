@@ -1,20 +1,11 @@
 // Copyright (c) 2010-2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -485,10 +476,10 @@ bool test3D()
     {
       if (!map.is_marked(it1, mark))
         {
-	  ++nbc;
-	  for (typename Map::template Dart_of_orbit_range<1,2,3>::const_iterator it2(map, it1);
-	       it2.cont(); ++it2)
-	    { map.mark(it2, mark); }
+          ++nbc;
+          for (typename Map::template Dart_of_orbit_range<1,2,3>::const_iterator it2(map, it1);
+               it2.cont(); ++it2)
+            { map.mark(it2, mark); }
         }
     }
   cout << nbc << endl;
@@ -502,32 +493,32 @@ bool test3D()
     unsigned int nbtest=0;
     cout << "Iterator stl like: #cellules=" << flush;
    for (typename Map::Dart_range::const_iterator it1(map.darts().begin());
-	it1!=map.darts().end(); ++it1)
+        it1!=map.darts().end(); ++it1)
       {
-	++nb2;
-	if (!map.is_marked(it1, mark))
-	  {
-	    ++nbc;
-	    for (typename Map::template Dart_of_orbit_range<2>::const_iterator
-		   it2(map.template darts_of_orbit<2>(it1).begin());
-		 it2 != map.template darts_of_orbit<2>(it1).end(); ++it2)
-	      { map.mark(it2, mark); }
-	    for (typename Map::template Dart_of_cell_range<2>::const_iterator
-		   it2(map.template darts_of_cell<2>(it1).begin());
-		 it2 != map.template darts_of_cell<2>(it1).end(); ++it2)
-	      { ++nbtest; }
-	    for (typename Map::template Dart_of_involution_range<2>::const_iterator
-		   it2(map.template darts_of_involution<2>(it1).begin());
-		 it2 != map.template darts_of_involution<2>(it1).end(); ++it2)
-	      { ++nbtest; }
-	    for (typename Map::template One_dart_per_incident_cell_range<2,0>::const_iterator
-		   it2(map.template one_dart_per_incident_cell<2,0>(it1).begin());
-		 it2 != map.template one_dart_per_incident_cell<2,0>(it1).end(); ++it2)
-	      { ++nbtest; }
-	  }
+        ++nb2;
+        if (!map.is_marked(it1, mark))
+          {
+            ++nbc;
+            for (typename Map::template Dart_of_orbit_range<2>::const_iterator
+                   it2(map.template darts_of_orbit<2>(it1).begin());
+                 it2 != map.template darts_of_orbit<2>(it1).end(); ++it2)
+              { map.mark(it2, mark); }
+            for (typename Map::template Dart_of_cell_range<2>::const_iterator
+                   it2(map.template darts_of_cell<2>(it1).begin());
+                 it2 != map.template darts_of_cell<2>(it1).end(); ++it2)
+              { ++nbtest; }
+            for (typename Map::template Dart_of_involution_range<2>::const_iterator
+                   it2(map.template darts_of_involution<2>(it1).begin());
+                 it2 != map.template darts_of_involution<2>(it1).end(); ++it2)
+              { ++nbtest; }
+            for (typename Map::template One_dart_per_incident_cell_range<2,0>::const_iterator
+                   it2(map.template one_dart_per_incident_cell<2,0>(it1).begin());
+                 it2 != map.template one_dart_per_incident_cell<2,0>(it1).end(); ++it2)
+              { ++nbtest; }
+          }
       }
     cout << nbc << "." << ", #brins=" << nb2 << "." << endl
-	 << "All the darts marked ? " << map.is_whole_map_marked(mark) << endl;
+         << "All the darts marked ? " << map.is_whole_map_marked(mark) << endl;
     {
       for (typename Map::template One_dart_per_cell_range<0>::const_iterator
              it2(map.template one_dart_per_cell<0>().begin());
@@ -765,15 +756,15 @@ bool test3D()
     std::vector<Dart_handle> V;
     {
       for ( typename Map::template Dart_of_cell_range<0,2>::iterator
-	      it =  map.template darts_of_cell<0,2>(d3).begin();
-	    it!=map.template darts_of_cell<0,2>(d3).end(); ++it)
-	V.push_back(it);
+              it =  map.template darts_of_cell<0,2>(d3).begin();
+            it!=map.template darts_of_cell<0,2>(d3).end(); ++it)
+        V.push_back(it);
     }
 
     typedef typename std::vector<Dart_handle>::iterator vector_it;
     for ( vector_it it=V.begin(); it!=V.end(); ++it)
       {
-	cout << "remove edge15: " << flush; map.template remove_cell<1>(*it);
+        cout << "remove edge15: " << flush; map.template remove_cell<1>(*it);
         map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
       }
   }
@@ -858,14 +849,14 @@ bool test3D()
     std::vector<Dart_handle> V;
     {
       for ( typename Map::template Dart_of_cell_range<0,2>::iterator it =
-	      map.template darts_of_cell<0,2>(d3).begin();
-	    it!=map.template darts_of_cell<0,2>(d3).end(); ++it)
-	V.push_back(it);
+              map.template darts_of_cell<0,2>(d3).begin();
+            it!=map.template darts_of_cell<0,2>(d3).end(); ++it)
+        V.push_back(it);
     }
 
     for (typename std::vector<Dart_handle>::iterator it=V.begin(); it!=V.end(); ++it)
       {
-	cout << "remove facet13: " << flush; map.template remove_cell<2>(*it);
+        cout << "remove facet13: " << flush; map.template remove_cell<2>(*it);
         map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
       }
   }
@@ -1143,35 +1134,35 @@ bool test3D()
     assert(false);
     return false;
   }
-  
+
   if (CGAL::degree<Map, 1>(map2, d1)!=3)
   {
     std::cout<<"Error: 1-degree is wrong: "<<CGAL::degree<Map, 1>(map2, d1)<<" instead of 3."<<std::endl;
     assert(false);
     return false;
   }
-  
+
   if (CGAL::degree<Map, 2>(map2, d1)!=2)
   {
     std::cout<<"Error: 2-degree is wrong: "<<CGAL::degree<Map, 2>(map2, d1)<<" instead of 2."<<std::endl;
     assert(false);
     return false;
   }
-  
+
   if (CGAL::codegree<Map, 1>(map2, d1)!=2)
   {
     std::cout<<"Error: 1-codegree is wrong: "<<CGAL::codegree<Map, 1>(map2, d1)<<" instead of 2."<<std::endl;
     assert(false);
     return false;
   }
-  
+
   if (CGAL::codegree<Map, 2>(map2, d1)!=4)
   {
     std::cout<<"Error: 2-codegree is wrong: "<<CGAL::codegree<Map, 2>(map2, d1)<<" instead of 4."<<std::endl;
     assert(false);
     return false;
   }
-  
+
   if (CGAL::codegree<Map, 3>(map2, d1)!=6)
   {
     std::cout<<"Error: 3-codegree is wrong: "<<CGAL::codegree<Map, 3>(map2, d1)<<" instead of 6."<<std::endl;

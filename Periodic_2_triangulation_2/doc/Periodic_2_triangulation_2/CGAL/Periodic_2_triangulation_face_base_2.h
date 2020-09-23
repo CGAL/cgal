@@ -29,7 +29,7 @@ the offset corresponding to vertex \f$ i\f$.
 The implementation of `has_zero_offsets()` results in checking
 whether all offsets are zero.
 
-\cgalModels ::Periodic_2TriangulationFaceBase_2
+\cgalModels `::Periodic_2TriangulationFaceBase_2`
 
 \sa `CGAL::Triangulation_face_base_2`
 \sa `CGAL::Triangulation_face_base_with_info_2`
@@ -39,8 +39,6 @@ template< typename Gt, typename Fb = Triangulation_face_base_2<Gt> >
 class Periodic_2_triangulation_face_base_2
 {
 public:
-
-/// @}
 
 }; /* end Periodic_2_triangulation_face_base_2 */
 } /* end namespace CGAL */

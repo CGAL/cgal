@@ -13,7 +13,7 @@ char * Option_parser::s_type_opts[] = {
 };
 
 char * Option_parser::s_strategy_opts[] = {
-  "RIC", "naive", "walk", "simple", "triangle", "landmarks", 
+  "RIC", "naive", "walk", "simple", "triangle", "landmarks",
   "R",   "n",     "w",    "s",      "t",        "l"
 };
 
@@ -88,7 +88,7 @@ Option_parser::Option_parser() :
     ("license,l", "print licence information")
     ("version,v", "print version string")
     ;
-    
+
   // Options allowed on the command line, config file, or env. variables
   m_config_opts.add_options()
     ("input-path,P", po::value<Input_path>()->composing(), "input path")
@@ -122,7 +122,7 @@ Option_parser::Option_parser() :
      po::value<unsigned int>(&m_win_height)->default_value(DEF_WIN_HEIGHT),
      "window height")
     ;
-  
+
   // Options hidden to the user. Allowed only on the command line:
   m_hidden_opts.add_options()
     ("input-file", po::value<Input_path>()->composing(), "input file")
@@ -133,7 +133,7 @@ Option_parser::Option_parser() :
   m_config_file_opts.add(m_bench_opts).add(m_config_opts);
   m_environment_opts.add(m_bench_opts).add(m_config_opts);
 
-  m_positional_opts.add("input-file", -1);  
+  m_positional_opts.add("input-file", -1);
 }
 
 /*! Parse the options */
@@ -142,7 +142,7 @@ void Option_parser::operator()(int argc, char * argv[])
   po::store(po::command_line_parser(argc, argv).
             options(m_cmd_line_opts).positional(m_positional_opts).run(),
             m_variable_map);
-  
+
   std::ifstream ifs(".bench.cfg");
   po::store(parse_config_file(ifs, m_config_file_opts), m_variable_map);
   po::notify(m_variable_map);
@@ -179,7 +179,7 @@ void Option_parser::operator()(int argc, char * argv[])
       m_type_mask |= 0x1 << ((*it).m_id % size);
     }
   }
-  
+
   if (m_variable_map.count("strategy")) {
     Vector_strategy_id strategys =
       m_variable_map["strategy"].as<Vector_strategy_id>();
@@ -193,7 +193,7 @@ void Option_parser::operator()(int argc, char * argv[])
 
   // Add directories specified on the command line via the "input-path" opt.:
   Add_dir tmp = for_each_dir(Add_dir(m_dirs));
-  
+
   if (!m_variable_map.count("input-file")) {
     std::string str("input file missing!");
     throw Input_file_missing_error(str);
@@ -216,7 +216,7 @@ void Option_parser::operator()(int argc, char * argv[])
         break;
       }
     }
-    if (m_full_names[m_number_files].empty()) {      
+    if (m_full_names[m_number_files].empty()) {
       std::cerr << "cannot find file " << (*it).c_str() << "!" << std::endl;
       throw Error_exception(FILE_NOT_FOUND);
       return;

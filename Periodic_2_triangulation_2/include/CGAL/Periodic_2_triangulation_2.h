@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
 
@@ -51,6 +42,7 @@
 #include <boost/random/variate_generator.hpp>
 
 #include <CGAL/utility.h>
+#include <array>
 
 namespace CGAL
 {
@@ -81,7 +73,7 @@ public:
   /// The iso rectangle type
   typedef typename Gt::Iso_rectangle_2 Iso_rectangle;
   /// Integer tuple to store the number of sheets in each direction of space.
-  typedef array<int, 2> Covering_sheets;
+  typedef std::array<int, 2> Covering_sheets;
 
   /// The point type
   typedef typename Gt::Point_2 Point;
@@ -95,9 +87,9 @@ public:
   /// Represents a point-offset pair. The point in the pair lies in the original domain.
   typedef std::pair<Point, Offset> Periodic_point;
   /// A pair of periodic points representing a segment in the periodic domain.
-  typedef array<std::pair<Point, Offset>, 2> Periodic_segment;
+  typedef std::array<std::pair<Point, Offset>, 2> Periodic_segment;
   /// A triple of periodic points representing a triangle in the periodic domain.
-  typedef array<std::pair<Point, Offset>, 3> Periodic_triangle;
+  typedef std::array<std::pair<Point, Offset>, 3> Periodic_triangle;
 
   /// The vertex type
   typedef typename Tds::Vertex Vertex;
@@ -673,7 +665,7 @@ public:
   /// begin iterator over the non-virtual vertices
   Unique_vertex_iterator unique_vertices_begin() const
   {
-    return CGAL::filter_iterator(vertices_end(), 
+    return CGAL::filter_iterator(vertices_end(),
                                  Periodic_2_triangulation_2_internal::Domain_tester<Self>(this),
                                  vertices_begin());
   }
@@ -1968,10 +1960,10 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip(Face_handle f, int i)
             vh2_copy = v2s[i2 - 1];
 
           bool found = is_edge(vh1_copy, vh2_copy, fh, index);
-	  CGAL_USE(found);
+          CGAL_USE(found);
           CGAL_assertion(found);
-	  if (found)
-	    flip_single_edge(fh, index);
+          if (found)
+            flip_single_edge(fh, index);
         }
     }
 
@@ -3281,11 +3273,11 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_9_sheeted_covering()
     }
 
   // Store neighboring offsets in a separate data structure
-  std::list<array<Offset, 3> > off_nb;
+  std::list<std::array<Offset, 3> > off_nb;
   for (typename std::list<Face_handle>::iterator fit = original_faces.begin(); fit
        != original_faces.end(); ++fit)
     {
-      array<Offset, 3> off_nb_f;
+      std::array<Offset, 3> off_nb_f;
       for (int i = 0; i < 3; i++)
         {
           Face_handle fff = *fit;
@@ -3354,7 +3346,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_9_sheeted_covering()
     }
 
   // Set neighboring relations of face copies
-  typename std::list<array<Offset, 3> >::iterator oit = off_nb.begin();
+  typename std::list<std::array<Offset, 3> >::iterator oit = off_nb.begin();
   for (typename std::list<Face_handle>::iterator fit = original_faces.begin(); fit
        != original_faces.end(); ++fit, ++oit)
     {

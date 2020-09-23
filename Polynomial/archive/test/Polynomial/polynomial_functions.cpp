@@ -4,15 +4,6 @@
 // All rights reserved.
 //
 // This file is part of EXACUS (http://www.mpi-inf.mpg.de/projects/EXACUS/).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // ----------------------------------------------------------------------------
 //
@@ -21,7 +12,7 @@
 // CGAL_release   : $Name:  $
 // Revision      : $Revision$
 // Revision_date : $Date$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
 //                 Arno Eigenwillig <arno@mpi-inf.mpg.de>
@@ -50,7 +41,7 @@ template <class AK>
 void bivariate_polynomial_test() {
 
     BIPOLY f0;
-    
+
     // f = xy^2 + 3x^2y + 2x - 1
     BIPOLY f = BIPOLY(UNPOLY(NT(-1), NT(2)), UNPOLY(NT(0), NT(0), NT(3)),
                       UNPOLY(NT(0), NT(1))
@@ -71,11 +62,11 @@ void bivariate_polynomial_test() {
 
 template <class AK>
 void trivariate_polynomial_test() {
-    
-    
+
+
     TRIPOLY f0;
     assert(CGAL::check_leadcoeff(f0) == true);
-    
+
     // f1 = xz^2 + 4yz - 2x^2z + 5x - 3y + 8z -6
     TRIPOLY f1 = TRIPOLY(
             BIPOLY(UNPOLY(NT(-6), NT(5)), UNPOLY(NT(-3))),
@@ -90,7 +81,7 @@ void trivariate_polynomial_test() {
             BIPOLY(UNPOLY(NT(0))),
             BIPOLY(UNPOLY(NT(9)))
     );
-    
+
     // LCC
     assert(CGAL::check_leadcoeff(f1) == false);
     assert(CGAL::check_leadcoeff(f2) == true);
@@ -100,8 +91,8 @@ void trivariate_polynomial_test() {
 template <class AK>
 void polynomial_functions_test() {
     ::CGAL::set_pretty_mode(std::cout);
-    
-    //std::cout<<" univariate "<<std::endl;    
+
+    //std::cout<<" univariate "<<std::endl;
     //univariate_polynomial_test<AK>();
     std::cout<<" bivariate "<<std::endl;
     bivariate_polynomial_test<AK>();

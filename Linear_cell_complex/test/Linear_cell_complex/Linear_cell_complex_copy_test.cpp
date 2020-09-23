@@ -19,7 +19,7 @@ struct Map_2_dart_items
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
     typedef CGAL::Cell_attribute_with_point< Refs, double > Double_attrib_wp;
 
-    typedef CGAL::cpp11::tuple<Double_attrib_wp, void, Double_attrib> Attributes;
+    typedef std::tuple<Double_attrib_wp, void, Double_attrib> Attributes;
   };
 };
 
@@ -35,7 +35,7 @@ struct Map_2_dart_max_items_3
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
 
-    typedef CGAL::cpp11::tuple<Int_attrib_wp, Int_attrib,
+    typedef std::tuple<Int_attrib_wp, Int_attrib,
           Double_attrib> Attributes;
   };
 };
@@ -52,7 +52,7 @@ struct Map_3_dart_items_3
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
     typedef CGAL::Cell_attribute_with_point< Refs, double > Double_attrib_wp;
 
-    typedef CGAL::cpp11::tuple<Double_attrib_wp, void,
+    typedef std::tuple<Double_attrib_wp, void,
           Int_attrib, Double_attrib> Attributes;
   };
 };
@@ -69,7 +69,7 @@ struct Map_3_dart_max_items_3
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
 
-    typedef CGAL::cpp11::tuple<Int_attrib_wp, Int_attrib,
+    typedef std::tuple<Int_attrib_wp, Int_attrib,
           Int_attrib, Double_attrib> Attributes;
   };
 };
@@ -86,7 +86,7 @@ public:
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
 
-    typedef CGAL::cpp11::tuple<Int_attrib_wp, void, Int_attrib> Attributes;
+    typedef std::tuple<Int_attrib_wp, void, Int_attrib> Attributes;
   };
 };
 
@@ -114,7 +114,7 @@ struct Map_dart_items_4
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
 
-    typedef CGAL::cpp11::tuple<Int_attrib_wp, void,
+    typedef std::tuple<Int_attrib_wp, void,
           Int_attrib, void, Int_attrib>
     Attributes;
   };
@@ -131,7 +131,7 @@ struct Map_dart_max_items_4
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
 
-    typedef CGAL::cpp11::tuple<Int_attrib_wp, Int_attrib,
+    typedef std::tuple<Int_attrib_wp, Int_attrib,
           Int_attrib, Int_attrib, Double_attrib>
     Attributes;
   };
@@ -775,7 +775,7 @@ bool testCopy()
     CGAL::Default_converter_cmap_attributes<Map9,Map5,2> c2;
     CGAL::Cast_converter_cmap_attributes<Map9,Map5,3> c3;
 
-    CGAL::cpp11::tuple<CGAL::Cast_converter_cmap_attributes<Map9,Map5,0>,
+    std::tuple<CGAL::Cast_converter_cmap_attributes<Map9,Map5,0>,
         CGAL::Default_converter_cmap_attributes<Map9,Map5,1>,
         CGAL::Default_converter_cmap_attributes<Map9,Map5,2>,
         CGAL::Cast_converter_cmap_attributes<Map9,Map5,3> > myconverters
@@ -808,7 +808,7 @@ bool testCopy()
     CGAL::Default_converter_cmap_attributes<Map5,Map9,2> cb2;
     CGAL::Cast_converter_cmap_attributes<Map5,Map9,3> cb3;
 
-    CGAL::cpp11::tuple<CGAL::Cast_converter_cmap_attributes<Map5,Map9,0>,
+    std::tuple<CGAL::Cast_converter_cmap_attributes<Map5,Map9,0>,
         CGAL::Default_converter_cmap_attributes<Map5,Map9,1>,
         CGAL::Default_converter_cmap_attributes<Map5,Map9,2>,
         CGAL::Cast_converter_cmap_attributes<Map5,Map9,3> > myconverters2

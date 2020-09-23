@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -45,7 +36,7 @@ class Orientation_C2
 {
 private:
   typedef Basic_predicates_C2<K>              Base;
-  
+
 public:
   typedef typename Base::Orientation          Orientation;
 
@@ -81,20 +72,20 @@ private:
   }
 
   bool have_common_support(const Site_2& p, const Site_2& q,
-			   Site_2& support) const
+                           Site_2& support) const
   {
     CGAL_precondition( !p.is_input() && !q.is_input() );
 
     if ( same_segments(p.supporting_site(0),
-		       q.supporting_site(0)) ||
-	 same_segments(p.supporting_site(0),
-		       q.supporting_site(1)) ) {
+                       q.supporting_site(0)) ||
+         same_segments(p.supporting_site(0),
+                       q.supporting_site(1)) ) {
       support = p.supporting_site(0);
       return true;
     } else if ( same_segments(p.supporting_site(1),
-			      q.supporting_site(0)) ||
-		same_segments(p.supporting_site(1),
-			      q.supporting_site(1)) ) {
+                              q.supporting_site(0)) ||
+                same_segments(p.supporting_site(1),
+                              q.supporting_site(1)) ) {
       support =  p.supporting_site(1);
       return true;
     }
@@ -110,13 +101,13 @@ private:
   //-------------------------------------------------------------
 
   Orientation predicate(const Site_2& p, const Site_2& q,
-			const Site_2& r, const Tag_false&) const
+                        const Site_2& r, const Tag_false&) const
   {
     return Orientation_2()(p.point(), q.point(), r.point());
   }
 
   Orientation predicate(const Site_2& p, const Site_2& q,
-			const Site_2& r, const Tag_true&) const
+                        const Site_2& r, const Tag_true&) const
   {
 #if 1
     // do geometric filtering
@@ -126,44 +117,44 @@ private:
     Site_2 support;
     if ( !pe && !qe && !re ) {
       if ( have_common_support(p, q, support) &&
-	   have_common_support(support, r) ) {
-	return COLLINEAR;
+           have_common_support(support, r) ) {
+        return COLLINEAR;
       }
     } else if ( !pe && !qe ) {
       if ( have_common_support(p, q, support) &&
-	   is_endpoint(r, support) ) {
-	return COLLINEAR;
+           is_endpoint(r, support) ) {
+        return COLLINEAR;
       }
     } else if ( !pe && !re ) {
       if ( have_common_support(p, r, support) &&
-	   is_endpoint(q, support) ) {
-	return COLLINEAR;
+           is_endpoint(q, support) ) {
+        return COLLINEAR;
       }
     } else if ( !qe && !re ) {
       if ( have_common_support(q, r, support) &&
-	   is_endpoint(p, support) ) {
-	return COLLINEAR;
+           is_endpoint(p, support) ) {
+        return COLLINEAR;
       }
     } else if ( !pe ) {
       Site_2 s0 = p.supporting_site(0);
       Site_2 s1 = p.supporting_site(1);
       if ( (is_endpoint(q, s0) && is_endpoint(r, s0)) ||
-	   (is_endpoint(q, s1) && is_endpoint(r, s1)) ) {
-	return COLLINEAR;
+           (is_endpoint(q, s1) && is_endpoint(r, s1)) ) {
+        return COLLINEAR;
       }
     } else if ( !qe ) {
       Site_2 s0 = q.supporting_site(0);
       Site_2 s1 = q.supporting_site(1);
       if ( (is_endpoint(p, s0) && is_endpoint(r, s0)) ||
-	   (is_endpoint(p, s1) && is_endpoint(r, s1)) ) {
-	return COLLINEAR;
+           (is_endpoint(p, s1) && is_endpoint(r, s1)) ) {
+        return COLLINEAR;
       }
     } else if ( !re ) {
       Site_2 s0 = r.supporting_site(0);
       Site_2 s1 = r.supporting_site(1);
       if ( (is_endpoint(q, s0) && is_endpoint(p, s0)) ||
-	   (is_endpoint(q, s1) && is_endpoint(p, s1)) ) {
-	return COLLINEAR;
+           (is_endpoint(q, s1) && is_endpoint(p, s1)) ) {
+        return COLLINEAR;
       }
     }
 #endif
@@ -176,7 +167,7 @@ public:
   typedef Site_2                       argument_type;
 
   Orientation operator()(const Site_2& p, const Site_2& q,
-			 const Site_2& r) const
+                         const Site_2& r) const
   {
     CGAL_precondition( p.is_point() && q.is_point() && r.is_point() );
 

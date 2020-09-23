@@ -9,13 +9,13 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 using namespace CGAL::Three;
-class Polyhedron_demo_inside_out_plugin : 
+class Polyhedron_demo_inside_out_plugin :
   public QObject,
   public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "inside_out_plugin.json")
 
 public:
 
@@ -68,11 +68,11 @@ private:
 void Polyhedron_demo_inside_out_plugin::on_actionInsideOut_triggered()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polygon_soup_item* soup_item = 
+
+  Scene_polygon_soup_item* soup_item =
     qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
 
-  Scene_surface_mesh_item* sm_item = 
+  Scene_surface_mesh_item* sm_item =
     qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
 
   if(soup_item || sm_item)
@@ -120,9 +120,9 @@ void Polyhedron_demo_inside_out_plugin::on_actionOrientCC_triggered()
       SMesh* pMesh = sm_item->polyhedron();
       if(pMesh){
         if(is_closed(*pMesh))
-          CGAL::Polygon_mesh_processing::orient_to_bound_a_volume(*pMesh, item==items.first());
+          CGAL::Polygon_mesh_processing::orient_to_bound_a_volume(*pMesh);
         else
-          CGAL::Polygon_mesh_processing::orient(*pMesh, item==items.first());
+          CGAL::Polygon_mesh_processing::orient(*pMesh);
         sm_item->invalidateOpenGLBuffers();
       }
     }

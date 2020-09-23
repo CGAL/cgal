@@ -24,7 +24,7 @@ int main() {
 
   // Insert N points in the tree
   Tree tree(N_Random_points_iterator(rpit,0),
-	    N_Random_points_iterator(rpit,N));
+            N_Random_points_iterator(rpit,N));
 
   // define range query objects
   double  pcoord[D] = { 300, 300, 300, 300 };

@@ -43,8 +43,8 @@ int main()
   while(j!=OutputList.end())
   {
     std::cerr << (*j).first.x() << "," << (*j).first.y() << "," << (*j).first.z()
-	 <<", " << (*j).second.x() << "," << (*j).second.y() << ","
-	 << (*j).second.z() << std::endl;
+         <<", " << (*j).second.x() << "," << (*j).second.y() << ","
+         << (*j).second.z() << std::endl;
     j++;
   }
   Interval b(Key(6,10,7),Key(7,11,8));
@@ -54,8 +54,8 @@ int main()
   while(j!=N.end())
   {
     std::cerr << (*j).first.x() << "," << (*j).first.y() << "," << (*j).first.z()
-	 <<", " << (*j).second.x() << "," << (*j).second.y() << ","
-	 << (*j).second.z() << std::endl;
+         <<", " << (*j).second.x() << "," << (*j).second.y() << ","
+         << (*j).second.z() << std::endl;
     j++;
   }
   if(Segment_tree_3.segment_tree_3->is_valid())

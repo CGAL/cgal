@@ -1,20 +1,11 @@
 //r Copyright (c) 2005,2006,2008  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sylvain Pion
@@ -40,7 +31,7 @@
 //   the ratios corresponding to the number of times 2 branches are taken.
 //
 //  If CGAL_CONCURRENT_PROFILE is defined, the counters can be concurrently updated
-//  
+//
 // See also CGAL/Profile_timer.h
 
 // TODO :
@@ -99,17 +90,17 @@ namespace CGAL {
 struct Profile_counter
 {
     Profile_counter(const std::string & ss)
-      : s(ss) 
+      : s(ss)
     {
-      i = 0; // needed here because of tbb::atomic 
+      i = 0; // needed here because of tbb::atomic
     }
 
     void operator++() { ++i; }
 
     ~Profile_counter()
     {
-     
-      
+
+
       std::cerr << "[CGAL::Profile_counter] "
                 << std::setw(10) << internal::dot_it(i) << " " << s << std::endl;
     }
@@ -138,14 +129,14 @@ public:
     Profile_histogram_counter(const std::string & ss)
       : s(ss) {}
 
-    void operator()(unsigned i) 
-    { 
+    void operator()(unsigned i)
+    {
 #ifdef CGAL_CONCURRENT_PROFILE
       Counters::accessor a;
       counters.insert(a, i);
       ++a->second;
 #else
-      ++counters[i]; 
+      ++counters[i];
 #endif
     }
 
@@ -176,7 +167,7 @@ struct Profile_branch_counter
     Profile_branch_counter(const std::string & ss)
       : s(ss)
     {
-      i = j = 0; // needed here because of tbb::atomic 
+      i = j = 0; // needed here because of tbb::atomic
     }
 
     void operator++() { ++i; }
@@ -203,9 +194,9 @@ private:
 struct Profile_branch_counter_3
 {
     Profile_branch_counter_3(const std::string & ss)
-      : s(ss) 
+      : s(ss)
     {
-      i = j = k = 0; // needed here because of tbb::atomic 
+      i = j = k = 0; // needed here because of tbb::atomic
     }
 
     void operator++() { ++i; }
@@ -251,9 +242,9 @@ private:
 #  define CGAL_HISTOGRAM_PROFILER(Y, Z)
 #  define CGAL_BRANCH_PROFILER(Y, NAME)
 #  define CGAL_BRANCH_PROFILER_BRANCH(NAME)
-#  define CGAL_BRANCH_PROFILER_3(Y, NAME) 
+#  define CGAL_BRANCH_PROFILER_3(Y, NAME)
 #  define CGAL_BRANCH_PROFILER_BRANCH_1(NAME)
-#  define CGAL_BRANCH_PROFILER_BRANCH_2(NAME) 
+#  define CGAL_BRANCH_PROFILER_BRANCH_2(NAME)
 #endif
 
 } //namespace CGAL

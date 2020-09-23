@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
 
   CGAL::Polygon_mesh_processing::stitch_borders(mesh,
                                                 CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, mesh)));
-  
+
   mesh.garbage_collection();
   std::cout << "Stitching done : " << std::endl;
   std::cout << "\t Number of vertices  :\t" << num_vertices(mesh) << std::endl;

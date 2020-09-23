@@ -2,9 +2,9 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Snap_rounding_2_Tests )
 
-cmake_minimum_required(VERSION 3.1)
 
 find_package(CGAL QUIET)
 
@@ -37,8 +37,8 @@ if ( CGAL_FOUND )
     add_Snap_rounding_tests( test_snap_rounding_2 )
   endif()
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

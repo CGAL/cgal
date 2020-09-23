@@ -1,6 +1,6 @@
 // Copyright (c) 2005, 2006 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
-// Copyright (c) 2007 Geometrica Project, INRIA Sophia-Antipolis (France) 
-// Copyright (c) 2008 GeometryFactory, Sophia-Antipolis (France) 
+// Copyright (c) 2007 Geometrica Project, INRIA Sophia-Antipolis (France)
+// Copyright (c) 2008 GeometryFactory, Sophia-Antipolis (France)
 // All rights reserved.
 //
 // The files in this directory are part of the ImageIO Library.
@@ -16,7 +16,7 @@
 // $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/branches/releases/CGAL-4.1-branch/CGALimageIO/include/CGAL/ImageIO.h $
 // $Id: ImageIO.h 67097 2012-01-13 13:36:56Z lrineau $
 //
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 
 #ifndef IMAGEIO_H

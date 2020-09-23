@@ -2,26 +2,17 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Pedro Machado
 
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_CIRCULAR_ARC_2_H
@@ -35,9 +26,9 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/enum.h>
 namespace CGAL {
-  
-template <class CircularKernel> 
-class Circular_arc_2 
+
+template <class CircularKernel>
+class Circular_arc_2
   : public CircularKernel::Kernel_base::Circular_arc_2
 {
   typedef typename CircularKernel::RT             RT;
@@ -47,13 +38,13 @@ class Circular_arc_2
   typedef typename CircularKernel::Circle_2       Circle_2;
   typedef typename CircularKernel::Circular_arc_point_2
                                                 Circular_arc_point_2;
-  
-  typedef typename CircularKernel::Kernel_base::Circular_arc_2 RCircular_arc_2; 
-  // RCircular_arc_2 to avoid clash with self 
+
+  typedef typename CircularKernel::Kernel_base::Circular_arc_2 RCircular_arc_2;
+  // RCircular_arc_2 to avoid clash with self
 public:
   typedef  RCircular_arc_2 Rep;
-  typedef  CircularKernel   R; 
-  
+  typedef  CircularKernel   R;
+
 
   const Rep& rep() const
   {
@@ -75,42 +66,42 @@ public:
   {}
 
   // Not Documented
-  Circular_arc_2(const Circle_2 &support, 
+  Circular_arc_2(const Circle_2 &support,
                  const Line_2 &l1, const bool b_l1,
                  const Line_2 &l2, const bool b_l2)
-    : RCircular_arc_2(typename 
-		      R::Construct_circular_arc_2()(support,l1,b_l1,l2,b_l2))
+    : RCircular_arc_2(typename
+                      R::Construct_circular_arc_2()(support,l1,b_l1,l2,b_l2))
   {}
 
   // Not Documented
-  Circular_arc_2(const Circle_2 &c, 
-		 const Circle_2 &c1, const bool b_1,
-		 const Circle_2 &c2, const bool b_2)
-    : RCircular_arc_2(typename 
-		      R::Construct_circular_arc_2()(c,c1,b_1,c2,b_2))
+  Circular_arc_2(const Circle_2 &c,
+                 const Circle_2 &c1, const bool b_1,
+                 const Circle_2 &c2, const bool b_2)
+    : RCircular_arc_2(typename
+                      R::Construct_circular_arc_2()(c,c1,b_1,c2,b_2))
   {}
 
   Circular_arc_2(const Point_2 &start,
                  const Point_2 &middle,
                  const Point_2 &end)
-    : RCircular_arc_2(typename 
-		      R::Construct_circular_arc_2()(start, middle, end)) 
+    : RCircular_arc_2(typename
+                      R::Construct_circular_arc_2()(start, middle, end))
   {}
-  
+
   Circular_arc_2(const Circle_2 &support,
                  const Circular_arc_point_2 &begin,
                  const Circular_arc_point_2 &end)
-    : RCircular_arc_2(typename 
-		      R::Construct_circular_arc_2()(support, begin, end)) 
+    : RCircular_arc_2(typename
+                      R::Construct_circular_arc_2()(support, begin, end))
   {}
 
   Circular_arc_2(const Point_2 &start,
                  const Point_2 &end,
-		 const FT &bulge)
-    : RCircular_arc_2(typename 
-		      R::Construct_circular_arc_2()(start, end, bulge)) 
+                 const FT &bulge)
+    : RCircular_arc_2(typename
+                      R::Construct_circular_arc_2()(start, end, bulge))
   {}
-  
+
  Circular_arc_2(const RCircular_arc_2 & a)
     : RCircular_arc_2(a)
   {}
@@ -179,16 +170,16 @@ public:
   inline
   bool
   operator==(const Circular_arc_2<CircularKernel> &p,
-	     const Circular_arc_2<CircularKernel> &q)
+             const Circular_arc_2<CircularKernel> &q)
   {
     return CircularKernel().equal_2_object()(p, q);
   }
-  
+
   template < typename CircularKernel >
   inline
   bool
   operator!=(const Circular_arc_2<CircularKernel> &p,
-	     const Circular_arc_2<CircularKernel> &q)
+             const Circular_arc_2<CircularKernel> &q)
   {
     return ! (p == q);
   }
@@ -204,10 +195,10 @@ public:
     // - circle c2
     // - bool b2
     return os << a.supporting_circle() << " "
-	      << a.source() << " "
-	      << a.target() << " ";
+              << a.source() << " "
+              << a.target() << " ";
   }
-  
+
   template < typename CK >
   std::istream &
   operator>>(std::istream & is, Circular_arc_2<CK> &a)

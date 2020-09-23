@@ -16,7 +16,7 @@ typedef SM::Halfedge_around_target_circulator Face_around_target_circulator;
 typedef SM::Halfedge_around_target_circulator Halfedge_around_face_circulator;
 typedef SM::Halfedge_around_target_circulator Vertex_around_face_circulator;
 typedef SM::Halfedge_around_target_circulator Face_around_face_circulator;
- 
+
 
 template <typename Circ>
 void test()
@@ -37,6 +37,6 @@ int main()
   test<Halfedge_around_face_circulator>();
   test<Vertex_around_face_circulator>();
   test<Face_around_face_circulator>();
-  
+
   return 0;
 }

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s): Sebastian Morr    <sebastian@morr.cc>
 
@@ -83,22 +74,34 @@ public:
 
     // If t_q is inside of P, or t_p is inside of Q, one polygon is completely
     // inside of the other.
-    Point_2 t_q = *m_q.outer_boundary().vertices_begin() - Vector_2(ORIGIN, t);
-    Point_2 t_p = *m_p.outer_boundary().vertices_begin() + Vector_2(ORIGIN, t);
+
+    // Obtain a point on the boundary of m_q:
+    Point_2 t_q = (! m_q.outer_boundary().is_empty()) ?
+      *m_q.outer_boundary().vertices_begin() - Vector_2(ORIGIN, t) :
+      *m_q.holes_begin()->vertices_begin() - Vector_2(ORIGIN, t);
+
+    // Obtain a point on the boundary of m_p:
+    Point_2 t_p = (! m_p.outer_boundary().is_empty()) ?
+      *m_p.outer_boundary().vertices_begin() + Vector_2(ORIGIN, t) :
+      *m_p.holes_begin()->vertices_begin() + Vector_2(ORIGIN, t);
 
     // Use bounded_side_2() instead of on_bounded_side() because the latter
     // checks vor simplicity every time.
-    bool in_mp =
-      bounded_side_2(m_p.outer_boundary().vertices_begin(),
-                     m_p.outer_boundary().vertices_end(), t_q,
-                     m_p.outer_boundary().traits_member()) == ON_BOUNDED_SIDE;
+    bool in_mp(true);
+    if (! m_p.outer_boundary().is_empty())
+      in_mp =
+        bounded_side_2(m_p.outer_boundary().vertices_begin(),
+                       m_p.outer_boundary().vertices_end(), t_q,
+                       m_p.outer_boundary().traits_member()) == ON_BOUNDED_SIDE;
     if (m_p.number_of_holes() == 0) {
       if (in_mp) return true;
     }
-    bool in_mq =
-      bounded_side_2(m_q.outer_boundary().vertices_begin(),
-                     m_q.outer_boundary().vertices_end(), t_p,
-                     m_q.outer_boundary().traits_member()) == ON_BOUNDED_SIDE;
+    bool in_mq(true);
+    if (! m_q.outer_boundary().is_empty())
+      in_mq =
+        bounded_side_2(m_q.outer_boundary().vertices_begin(),
+                       m_q.outer_boundary().vertices_end(), t_p,
+                       m_q.outer_boundary().traits_member()) == ON_BOUNDED_SIDE;
     if (m_q.number_of_holes() == 0) {
       if (in_mq) return true;
     }

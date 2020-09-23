@@ -1,23 +1,14 @@
 // Copyright (c) 2008 Max-Planck-Institute Saarbruecken (Germany)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Arno Eigenwillig <arno@mpi-inf.mpg.de>
-//                 Michael Hemmer <hemmer@informatik.uni-mainz.de> 
+//                 Michael Hemmer <hemmer@informatik.uni-mainz.de>
 //
 // ============================================================================
 
@@ -63,13 +54,13 @@ public:
         typedef Scalar result_type;
         //! returns the gcd of a polynomials coefficients
         Scalar operator()(const NT& p, const Scalar& d_=Scalar(0)) const {
-            
+
             typename Scalar_factor_traits<Coeff>::Scalar_factor sfac;
             const Scalar unity(1);
-            
+
             Scalar d(d_);
             if (p.is_zero()) return d;
-            
+
             int i = p.degree();
             while((d != unity) && (i >= 0)) {
                 d = sfac(p[i--],d);
@@ -84,9 +75,9 @@ public:
          //! second argument type
         typedef Scalar second_argument_type;
         //! divides a polynomial \c p by a scalar factor \c b
-        void operator () (NT& p, const Scalar& b) const { 
+        void operator () (NT& p, const Scalar& b) const {
             CGAL_precondition(b != Scalar(0));
-            p.scalar_div(b); 
+            p.scalar_div(b);
         }
     };
 };

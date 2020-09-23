@@ -633,6 +633,8 @@ A translation in accordance with `offset` is applied on the point-offet pairs.
 */
 Periodic_tetrahedron periodic_tetrahedron(const Cell_handle c, Offset offset) const;
 
+/// @}
+
 /// \name
 /// \warning The following functions were renamed with %CGAL 4.11 to clarify
 /// that they return geometric objects with inner type `Point_3`.

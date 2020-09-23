@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -56,43 +47,43 @@ private:
   {
     if ( t.is_point() ) {
       if ( t.is_input() ) {
-	return K2_Site_2::construct_site_2( Base::operator()(t.point()) );
+        return K2_Site_2::construct_site_2( Base::operator()(t.point()) );
       } else {
-	return K2_Site_2::construct_site_2
-	  ( Base::operator()(t.source_of_supporting_site(0)),
-	    Base::operator()(t.target_of_supporting_site(0)),
-	    Base::operator()(t.source_of_supporting_site(1)),
-	    Base::operator()(t.target_of_supporting_site(1)) );
+        return K2_Site_2::construct_site_2
+          ( Base::operator()(t.source_of_supporting_site(0)),
+            Base::operator()(t.target_of_supporting_site(0)),
+            Base::operator()(t.source_of_supporting_site(1)),
+            Base::operator()(t.target_of_supporting_site(1)) );
       }
     }
 
     if ( t.is_input() ) {
       return K2_Site_2::construct_site_2
-	( Base::operator()(t.source_of_supporting_site()),
-	  Base::operator()(t.target_of_supporting_site()) );
+        ( Base::operator()(t.source_of_supporting_site()),
+          Base::operator()(t.target_of_supporting_site()) );
     } else {
       if ( t.is_input(0) ) {
-	return K2_Site_2::construct_site_2
-	  ( Base::operator()(t.source_of_supporting_site()),
-	    Base::operator()(t.target_of_supporting_site()),
-	    Base::operator()(t.source_of_crossing_site(1)),
-	    Base::operator()(t.target_of_crossing_site(1)),
-	    true );
+        return K2_Site_2::construct_site_2
+          ( Base::operator()(t.source_of_supporting_site()),
+            Base::operator()(t.target_of_supporting_site()),
+            Base::operator()(t.source_of_crossing_site(1)),
+            Base::operator()(t.target_of_crossing_site(1)),
+            true );
       } else if ( t.is_input(1) ) {
-	return K2_Site_2::construct_site_2
-	  ( Base::operator()(t.source_of_supporting_site()),
-	    Base::operator()(t.target_of_supporting_site()),
-	    Base::operator()(t.source_of_crossing_site(0)),
-	    Base::operator()(t.target_of_crossing_site(0)),
-	    false );
+        return K2_Site_2::construct_site_2
+          ( Base::operator()(t.source_of_supporting_site()),
+            Base::operator()(t.target_of_supporting_site()),
+            Base::operator()(t.source_of_crossing_site(0)),
+            Base::operator()(t.target_of_crossing_site(0)),
+            false );
       } else {
-	return K2_Site_2::construct_site_2
-	  ( Base::operator()(t.source_of_supporting_site()),
-	    Base::operator()(t.target_of_supporting_site()),
-	    Base::operator()(t.source_of_crossing_site(0)),
-	    Base::operator()(t.target_of_crossing_site(0)),
-	    Base::operator()(t.source_of_crossing_site(1)),
-	    Base::operator()(t.target_of_crossing_site(1)) );
+        return K2_Site_2::construct_site_2
+          ( Base::operator()(t.source_of_supporting_site()),
+            Base::operator()(t.target_of_supporting_site()),
+            Base::operator()(t.source_of_crossing_site(0)),
+            Base::operator()(t.target_of_crossing_site(0)),
+            Base::operator()(t.source_of_crossing_site(1)),
+            Base::operator()(t.target_of_crossing_site(1)) );
       }
     }
   }
@@ -107,7 +98,7 @@ private:
     // t is a segment
     return K2_Site_2::construct_site_2
       ( Base::operator()(t.source_of_supporting_site()),
-	Base::operator()(t.target_of_supporting_site()) );    
+        Base::operator()(t.target_of_supporting_site()) );
   }
 
 public:

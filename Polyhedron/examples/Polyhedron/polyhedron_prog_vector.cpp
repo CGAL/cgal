@@ -19,6 +19,6 @@ int main() {
     P.make_tetrahedron( p, q, r, s);
     CGAL::set_ascii_mode( std::cout);
     std::copy( P.points_begin(), P.points_end(),
-	       std::ostream_iterator<Point_3>( std::cout, "\n"));
+               std::ostream_iterator<Point_3>( std::cout, "\n"));
     return 0;
 }

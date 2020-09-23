@@ -2,9 +2,9 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Minkowski_sum_2_Tests )
 
-cmake_minimum_required(VERSION 3.1)
 
 # Commented out C++11 for now
 # list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_generalized_initializers has_cpp11)

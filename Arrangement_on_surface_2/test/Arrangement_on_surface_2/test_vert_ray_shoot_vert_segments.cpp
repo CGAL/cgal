@@ -11,12 +11,12 @@ void vertical_ray_shooting_query
      const typename VerticalRayShoot::Arrangement_2::Point_2& q)
 {
   // Perform the point-location query.
-  CGAL::Object    obj = (shoot_up) ? vrs.ray_shoot_up (q) : 
+  CGAL::Object    obj = (shoot_up) ? vrs.ray_shoot_up (q) :
                                      vrs.ray_shoot_down (q);
 
   // Print the result.
   typedef typename VerticalRayShoot::Arrangement_2  Arrangement_2;
-  
+
   typename Arrangement_2::Vertex_const_handle    v;
   typename Arrangement_2::Halfedge_const_handle  e;
   typename Arrangement_2::Face_const_handle      f;
@@ -43,8 +43,8 @@ void vertical_ray_shooting_query
   {
     // We did not hit anything:
     assert (f->is_unbounded());
-    
-    std::cout << "hit nothing." << std::endl; 
+
+    std::cout << "hit nothing." << std::endl;
   }
   else
   {

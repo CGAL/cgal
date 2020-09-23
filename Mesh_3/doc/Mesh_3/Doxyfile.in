@@ -1,5 +1,8 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
+# macros to be used inside the code
+ALIASES += "cgalDescribePolylineType=A polyline is defined as a sequence of points, each pair of contiguous points defines a segment of the polyline. If the first and last points of the polyline are identical, the polyline is closed."
+
 INPUT += \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Polyhedral_complex_mesh_domain_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_domain_with_polyline_features_3.h

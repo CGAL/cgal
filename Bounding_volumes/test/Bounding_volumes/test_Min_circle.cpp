@@ -433,15 +433,15 @@ main( int argc, char* argv[])
     // external test sets
     // -------------------
     while ( argc > 1) {
-    
+
         typedef  CGAL::Min_circle_2< TraitsH >  Min_circle;
         typedef  Min_circle::Point              Point;
-    
+
         CGAL::Verbose_ostream verr( verbose);
-    
+
         // read points from file
         verr << std::endl << "input file: `" << argv[ 1] << "'" << std::flush;
-    
+
         std::list<Point>  points;
         int               n, x, y;
         std::ifstream     in( argv[ 1]);
@@ -451,12 +451,12 @@ main( int argc, char* argv[])
             in >> x >> y;
             assert( in);
             points.push_back( Point( x, y)); }
-    
+
         // compute and check min_circle
         Min_circle  mc2( points.begin(), points.end(), false);
         bool  is_valid = mc2.is_valid( verbose);
         assert( is_valid);
-    
+
         // next file
         --argc;
         ++argv; }

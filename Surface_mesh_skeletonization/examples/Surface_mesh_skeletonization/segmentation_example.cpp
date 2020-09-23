@@ -62,10 +62,10 @@ int main(int argc, char* argv[])
 
   //for each input vertex compute its distance to the skeleton
   std::vector<double> distances(num_vertices(tmesh));
-  BOOST_FOREACH(Skeleton_vertex v, vertices(skeleton) )
+  for(Skeleton_vertex v : CGAL::make_range(vertices(skeleton)) )
   {
     const Point& skel_pt = skeleton[v].point;
-    BOOST_FOREACH(vertex_descriptor mesh_v, skeleton[v].vertices)
+    for(vertex_descriptor mesh_v : skeleton[v].vertices)
     {
       const Point& mesh_pt = mesh_v->point();
       distances[mesh_v->id()] = std::sqrt(CGAL::squared_distance(skel_pt, mesh_pt));
@@ -77,10 +77,10 @@ int main(int argc, char* argv[])
   Facet_with_id_pmap<double> sdf_property_map(sdf_values);
 
   // compute sdf values with skeleton
-  BOOST_FOREACH(face_descriptor f, faces(tmesh))
+  for(face_descriptor f : faces(tmesh))
   {
     double dist = 0;
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(f, tmesh), tmesh))
+    for(halfedge_descriptor hd : halfedges_around_face(halfedge(f, tmesh), tmesh))
       dist+=distances[target(hd, tmesh)->id()];
     sdf_property_map[f] = dist / 3.;
   }

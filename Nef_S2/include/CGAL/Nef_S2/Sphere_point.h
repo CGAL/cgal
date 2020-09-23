@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel  <seel@mpi-sb.mpg.de>
 
@@ -48,7 +39,7 @@ the great circle that underlies also the direction.)
 Note that we have to consider special geometric properties of the
 objects. For example two points that are part of a great circle define
 two |Sphere_segment|s, and two arbitrary |Sphere_segment|s can
-intersect in two points. 
+intersect in two points.
 
 If we restrict our geometric objects to a so-called perfect hemisphere
 of $S_2$\cgalFootnote{A perfect hemisphere of $S_2$ is an open half-sphere
@@ -59,16 +50,16 @@ two segments intersect in at most one interior point
 (non-degenerately), or three non-cocircular sphere points can be
 qualified as being positively or negatively oriented.}*/
 
-/*{\Moptions print_title=yes }*/ 
-/*{\Manpage{Sphere_point}{R}{Points on the unit sphere}{p}}*/ 
- 
-template <class R_> 
+/*{\Moptions print_title=yes }*/
+/*{\Manpage{Sphere_point}{R}{Points on the unit sphere}{p}}*/
+
+template <class R_>
 class Sphere_point : public R_::Point_3 {
 
 /*{\Mdefinition An object |\Mvar| of type |\Mname| is a point on the
 surface of a unit sphere. Such points correspond to the nontrivial
 directions in space and similarly to the equivalence classes of all
-nontrivial vectors under normalization.}*/ 
+nontrivial vectors under normalization.}*/
 
 public:
 /*{\Mtypes 5}*/
@@ -96,10 +87,10 @@ intersection of the ray starting at the origin in direction $(x,y,z)$
 and the surface of $S_2$.}*/
   Base(x,y,z,1) { CGAL_assertion(x!=0 || y!=0 || z!=0); }
 
-Sphere_point(const Base& p) : Base(p) {} 
-Sphere_point(const Vector_3& v) : Base(CGAL::ORIGIN+v) {} 
-Sphere_point(const Direction_3& d) : 
-  Base(CGAL::ORIGIN+d.vector()) {} 
+Sphere_point(const Base& p) : Base(p) {}
+Sphere_point(const Vector_3& v) : Base(CGAL::ORIGIN+v) {}
+Sphere_point(const Direction_3& d) :
+  Base(CGAL::ORIGIN+d.vector()) {}
 
 /*{\Moperations 4 2}*/
 
@@ -113,7 +104,7 @@ RT y() const { return ((Base*) this)->hy(); }
 RT z() const { return ((Base*) this)->hz(); }
 /*{\Mop the $z$-coordinate.}*/
 
-bool operator==(const Sphere_point<R>& q) const 
+bool operator==(const Sphere_point<R>& q) const
 /*{\Mbinop Equality.}*/
 { return Direction_3(Base(*this)-ORIGIN)==
          Direction_3(q-ORIGIN); }
@@ -122,7 +113,7 @@ bool operator!=(const Sphere_point<R>& q) const
 /*{\Mbinop Inequality.}*/
 { return !operator==(q); }
 
-Sphere_point<R> antipode() const 
+Sphere_point<R> antipode() const
 /*{\Mop returns the antipode of |\Mvar|.}*/
 { return ORIGIN + -(Base(*this)-ORIGIN); }
 

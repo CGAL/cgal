@@ -1,8 +1,6 @@
 //! \file examples/Arrangement_on_surface_2/edge_manipulation.cpp
 // Using the edge-manipulation functions.
 
-#include <CGAL/basic.h>
-
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>

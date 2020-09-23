@@ -7,10 +7,10 @@ struct Node {
 };
 
 
-struct Plane_separator{ 
+struct Plane_separator{
   unsigned int cutting_dim;
   double cutting_val;
-  
+
 };
 
 
@@ -59,7 +59,7 @@ int main()
 
   Leaf  leafs[10];
   std::cerr << sizeof(leafs) << std::endl;
-  
+
   Node nodes[10];
   std::cerr << sizeof(nodes) << std::endl;
   return 0;

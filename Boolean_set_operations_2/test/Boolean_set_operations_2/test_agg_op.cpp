@@ -17,10 +17,8 @@
 // leda_rational, or Gmpq, or Quotient<MP_float>
 typedef CGAL::Exact_rational        Number_type;
 
-// instead of
-//typedef CGAL::Simple_cartesian<Number_type>            Kernel;
-// workaround for VC++ 
-struct Kernel : public CGAL::Simple_cartesian<Number_type> {};
+
+typedef CGAL::Simple_cartesian<Number_type>            Kernel;
 
 typedef CGAL::Polygon_2<Kernel>                       Polygon_2;
 typedef CGAL::Polygon_with_holes_2<Kernel>            Polygon_with_holes_2;
@@ -206,10 +204,10 @@ int main(int argc, char **argv)
       --tmp;
       if(*itr == 't')
         break;
-      
+
       str.erase(itr);
       itr = tmp;
-      
+
     }
     if(str.size() <= 1)
       continue;
@@ -231,6 +229,6 @@ int main(int argc, char **argv)
     }
     inp.close();
   }
-  
+
   return success;
 }

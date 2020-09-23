@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
 //philaris@gmail.com, sandeep.kr.dey@gmail.com, evanthia.papadopoulou@usi.ch
@@ -48,7 +39,7 @@ public:
 
   // BASIC TYPES
   //------------
-  
+
   typedef Segment_Delaunay_graph_traits_base_2<R, MTag, ITag> Base;
 
   typedef typename Base::Kernel Kernel;
@@ -96,7 +87,7 @@ public:
   // PREDICATES
   //-----------
 
-  // used by triangulation 
+  // used by triangulation
   //typedef
   //CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Orientation_Linf_C2<K>
   //Orientation_2;
@@ -129,7 +120,7 @@ public:
   // CONSTRUCTIONS
   //--------------
   Construct_svd_vertex_2
-  construct_svd_vertex_2_object() const { 
+  construct_svd_vertex_2_object() const {
     return Construct_svd_vertex_2();
   }
 

@@ -2,25 +2,16 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #ifndef CGAL_DEMO_MESH_3_MESHING_THREAD_H
@@ -38,13 +29,13 @@ class Mesh_function_interface
 {
 public:
   virtual ~Mesh_function_interface() {}
-  
+
   // Launch
   virtual void launch() = 0;
-  
+
   // Stop
   virtual void stop() = 0;
-  
+
   // Logs
   virtual QStringList parameters_log() const = 0;
   virtual QString status(double time_period) const = 0;
@@ -58,34 +49,34 @@ public:
   // Constructor / Destructor
   Meshing_thread(Mesh_function_interface* f, Scene_c3t3_item* item);
   virtual ~Meshing_thread();
-  
+
   // Scene item
   Scene_c3t3_item* item() const { return item_; }
-  
+
   // Infos about meshing
   double time() const { return time_; }
-  
+
   // Logs
   QStringList parameters_log() const { return f_->parameters_log(); }
-  
+
 public Q_SLOTS:
   // Stop
   void stop();
-  
+
 private Q_SLOTS:
   // emit signal status report
   void emit_status();
-  
+
 Q_SIGNALS:
   // Emitted at the end of the process
   void done(Meshing_thread*);
   // Informs about status of meshing
   void status_report(QString);
-  
+
 protected:
   // Overload of QThread function
   virtual void run();
-  
+
 private:
   Mesh_function_interface* f_;
   Scene_c3t3_item* item_;

@@ -19,7 +19,7 @@ int main()
   for( int i = 1; i <= 5; ++i )
       V[i] = S.insert_increase_dimension(V[0]);
   // the first 6 vertices have created a triangulation
-  // of the 4-dimensional topological sphere 
+  // of the 4-dimensional topological sphere
   // (the boundary of a five dimensional simplex).
   CGAL_assertion( 4 == S.current_dimension() );
   CGAL_assertion( 6 == S.number_of_vertices() );
@@ -39,7 +39,7 @@ int main()
   CGAL_assertion( 16 == S.number_of_full_cells() );
 
   c = V[3]->full_cell();
-  TDS::Face face(c);  
+  TDS::Face face(c);
   // meant to contain the edge joining vertices 2 and 4 of full_cell c
   face.set_index(0, 2); // namely vertex 2
   face.set_index(1, 4); // and vertex 4

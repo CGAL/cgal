@@ -53,7 +53,7 @@ int main()
   std::cout << "Number of finite faces: " << cdt.number_of_faces() << std::endl;
   int mesh_faces_counter = 0;
   for(CDT::Finite_faces_iterator fit = cdt.finite_faces_begin();
-      fit != cdt.finite_faces_end(); ++fit) 
+      fit != cdt.finite_faces_end(); ++fit)
   {
     if(fit->is_in_domain()) ++mesh_faces_counter;
   }

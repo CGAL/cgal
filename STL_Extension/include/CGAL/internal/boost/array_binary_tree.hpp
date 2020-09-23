@@ -5,7 +5,7 @@
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
+// https://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 //
 // $URL$
@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: BSL-1.0
 //
 // NOTE: this file have been taken from boost 1.46.1 for using
-//       with Modificable_priority_queue (to enhance the 
+//       with Modificable_priority_queue (to enhance the
 //       non-documented mutable_queue).
 //       original file is <boost/graph/detail/array_binary_tree.hpp>
 //

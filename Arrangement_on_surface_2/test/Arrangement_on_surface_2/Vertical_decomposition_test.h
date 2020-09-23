@@ -5,7 +5,7 @@
 #include <list>
 #include <utility>
 
-#include <CGAL/basic.h>
+
 #include <CGAL/Arr_vertical_decomposition_2.h>
 #include <CGAL/Arr_point_location_result.h>
 

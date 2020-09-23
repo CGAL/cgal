@@ -1,4 +1,4 @@
-// Example: assess the solver performance under any of the available 
+// Example: assess the solver performance under any of the available
 // pricing strategies, in the convex-hull-containment problem
 // NOTE: in order to see meaningful results, compile with -DNDEBUG
 #include <vector>
@@ -30,11 +30,11 @@ int main()
   std::vector<Point_d> points;
   for (int j =0; j<n; ++j) {
     std::vector<double> coords;
-    for (int i=0; i<d; ++i) 
+    for (int i=0; i<d; ++i)
       coords.push_back(rd.get_double());
     points.push_back (Point_d (d, coords.begin(), coords.end()));
   }
-  
+
   // benchmark all pricing strategies in turn
   CGAL::Quadratic_program_pricing_strategy strategy[] = {
     CGAL::QP_CHOOSE_DEFAULT,              // QP_PARTIAL_FILTERED_DANTZIG
@@ -44,7 +44,7 @@ int main()
     CGAL::QP_FILTERED_DANTZIG,            // Dantzig's filtered pivot rule...
     CGAL::QP_PARTIAL_FILTERED_DANTZIG     // ... with partial pricing
   };
-  
+
   CGAL::Timer t;
   for (int i=0; i<6; ++i) {
     // test strategy i
@@ -52,8 +52,8 @@ int main()
     options.set_pricing_strategy (strategy[i]);
     t.reset(); t.start();
     // is origin in convex hull of the points? (most likely, not)
-    solve_convex_hull_containment_lp 
-      (Point_d (d, CGAL::ORIGIN), points.begin(), points.end(), 
+    solve_convex_hull_containment_lp
+      (Point_d (d, CGAL::ORIGIN), points.begin(), points.end(),
        ET(0), options);
     t.stop();
     std::cout << "Time (s) = " << t.time() << std::endl;

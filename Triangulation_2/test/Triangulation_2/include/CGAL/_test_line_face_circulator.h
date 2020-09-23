@@ -3,10 +3,10 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
+//
 // package       : Triangulation/test/Triangulation
 // file          : include/CGAL/_test_cls_triangulation_2.
 // source        : $URL$
@@ -90,7 +90,7 @@ _test_line_face_circulator( const Tri & )
  typename std::vector<Point>::iterator qit;
  typename std::vector<Point>::iterator mit;
  typename std::vector<Point>::iterator tit;
- int i; 
+ int i;
  Locate_type lt;
 
  // insert points p - create Vertex_handle vector
@@ -150,7 +150,7 @@ _test_line_face_circulator( const Tri & )
    tr.locate(*tit, lt,i);
    assert(lt == Tri::OUTSIDE_CONVEX_HULL);
  }
- 
+
  // test creator from two point
  lfc = tr.line_walk(p0,t0); assert(lfc != 0);
  lfc = tr.line_walk(p0,m4); assert(lfc == 0);
@@ -162,13 +162,13 @@ _test_line_face_circulator( const Tri & )
  lfc = tr.line_walk(p0,m1); assert(lfc != 0);
 
  lfc = tr.line_walk(p1,p2); assert(lfc != 0);
- assert( lfc->has_vertex(v[0]) && 
-	 lfc->has_vertex(v[1]) &&
-	 lfc->has_vertex(v[2]));
+ assert( lfc->has_vertex(v[0]) &&
+         lfc->has_vertex(v[1]) &&
+         lfc->has_vertex(v[2]));
  lfc = tr.line_walk(p0,p1); assert(lfc != 0);
- assert (lfc->has_vertex(v[0]) && 
-	 lfc->has_vertex(v[1]) &&
-	 lfc->has_vertex(v[2]));
+ assert (lfc->has_vertex(v[0]) &&
+         lfc->has_vertex(v[1]) &&
+         lfc->has_vertex(v[2]));
 
  lfc = tr.line_walk(t0,p0); assert(lfc != 0);
  lfc = tr.line_walk(m4,p0); assert(lfc != 0);

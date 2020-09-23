@@ -1,6 +1,6 @@
 // file: test/Spatial_searching/K_neighbor_search_manhattan_distance_isobox_point.C
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <cassert>
 #include <CGAL/Manhattan_distance_iso_box_point.h>
 #include <CGAL/K_neighbor_search.h>
@@ -8,7 +8,7 @@
 #include <CGAL/Search_traits_adapter.h>
 #include "Point_with_info.h"
 
-typedef CGAL::Cartesian<double> Kernel;
+typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_2 Point_d;
 typedef Kernel::Iso_rectangle_2 Iso_box_d;
 typedef CGAL::Search_traits_2<Kernel> TreeTraits;
@@ -38,16 +38,16 @@ void run(std::list<Point_d> points)
 
   Distance tr_dist;
   K_search N1(tree, query, K); // eps=10.0, nearest=false
-  
-  for (typename K_search::iterator it = N1.begin();it != N1.end();it++) { 
+
+  for (typename K_search::iterator it = N1.begin();it != N1.end();it++) {
     assert( get_point(it->first) == points.front());
     points.pop_front();
-  } 
-  std::cout << "done" << std::endl;  
+  }
+  std::cout << "done" << std::endl;
 }
 
 int  main() {
-  
+
 
   std::list<Point_d> points;
   points.push_back(Point_d(3,4));

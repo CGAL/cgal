@@ -3,17 +3,18 @@
 #include <QAction>
 #include "Messages_interface.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include "Scene_surface_mesh_item.h"
 
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 using namespace CGAL::Three;
-class Polyhedron_demo_triangulate_facets_plugin : 
+class Polyhedron_demo_triangulate_facets_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "triangulate_facets_plugin.json")
 
 public:
 
@@ -27,7 +28,7 @@ public:
     actionTriangulateFacets->setProperty("subMenuName","Polygon Mesh Processing");
     if(actionTriangulateFacets) {
       connect(actionTriangulateFacets, SIGNAL(triggered()),
-              this, SLOT(triangulate())); 
+              this, SLOT(triangulate()));
     }
   };
 
@@ -47,27 +48,27 @@ public Q_SLOTS:
    void triangulate() {
       QApplication::setOverrideCursor(Qt::WaitCursor);
     Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())  {
-      
+
       Scene_surface_mesh_item* sm_item =
           qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
       SMesh* pMesh = sm_item->polyhedron();
       if(!pMesh) continue;
       if(is_triangle_mesh(*pMesh)) {
-        messages->warning(tr("The polyhedron  \"%1\"  is already triangulated.")
+        CGAL::Three::Three::warning(tr("The polyhedron  \"%1\"  is already triangulated.")
                           .arg(sm_item->name()) );
         continue;
       }
       if(!CGAL::Polygon_mesh_processing::triangulate_faces(*pMesh))
-        messages->warning(tr("Some facets could not be triangulated."));
-      
+        CGAL::Three::Three::warning(tr("Some facets could not be triangulated."));
+      sm_item->resetColors();
       sm_item->invalidateOpenGLBuffers();
       scene->itemChanged(sm_item);
-    } // end of the loop on the selected items   
+    } // end of the loop on the selected items
 
     // default cursor
     QApplication::restoreOverrideCursor();
   }
-  
+
 private:
   QAction* actionTriangulateFacets;
   Messages_interface* messages;

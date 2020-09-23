@@ -11,6 +11,14 @@ A {
 TABLE.result { font-weight: bold; background-color: white; padding: 1em; table-layout: fixed;}
 
 TABLE.summary TD { white-space: nowrap }
+TABLE.result,TABLE.summary { border-collapse: collapse; }
+TABLE.result TD,TABLE.summary TD { border-width: 1px; border-style: solid; }
+TABLE.result TD { padding: 0;}
+TABLE.result TD > a { font-weight: normal; font-family: monospace; display: block; padding: 0.2ex 0.5ex 0.2ex 0.5ex;}
+
+TABLE.beside TABLE { border-collapse: collapse; font-family: monospace; }
+
+TABLE.beside TABLE TD { padding: 0.2ex 0.5ex 0.2ex 0.5ex; }
 
 TD.highlight {background-color: rgb(80%,80%,80%)}
 TD.os64bits {font-style:italic}
@@ -57,6 +65,7 @@ SELECT { font-family: monospace; }
     content: ")"
 }
 
-.package_name {
+TABLE.result TD > a.package_name {
     color: black;
+    font-weight: bold;
 }

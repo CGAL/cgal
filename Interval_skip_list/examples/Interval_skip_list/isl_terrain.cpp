@@ -21,7 +21,7 @@ int main()
   Delaunay dt;
 
   dt.insert(std::istream_iterator<Point_3>(fin),
-	    std::istream_iterator<Point_3>());
+            std::istream_iterator<Point_3>());
 
   Interval_skip_list isl;
   for(Finite_faces_iterator fh = dt.finite_faces_begin();

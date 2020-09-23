@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
@@ -30,15 +21,15 @@
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Marching_tetrahedra_observer_default_3.h>
 
-namespace CGAL { 
+namespace CGAL {
 
 // If TriangulationDataStructure_3 only gets a Cell_handle range
 // it is not possible to derive the Vertex_handle type.
 template <class Vertex_iterator,
-	  class Cell_iterator,
-	  class HalfedgeDS_3,
-	  class MarchingTetrahedraTraits_3,
-	  class MarchingTetrahedraObserver_3 >
+          class Cell_iterator,
+          class HalfedgeDS_3,
+          class MarchingTetrahedraTraits_3,
+          class MarchingTetrahedraObserver_3 >
 class Marching_tetrahedra_builder : public Modifier_base<HalfedgeDS_3> {
 public:
   typedef HalfedgeDS_3                          HDS;
@@ -49,8 +40,11 @@ private:
   typedef Vertex_iterator                               T_Vertex_iterator;
   typedef Cell_iterator                                 T_Cell_iterator;
   typedef typename T_Cell_iterator::value_type          T_Cell;
-  typedef typename T_Cell::Vertex_handle                T_Vertex_handle;
   typedef typename T_Vertex_iterator::value_type        T_Vertex;
+
+  typedef typename T_Vertex::Cell_handle                T_Cell_handle;
+  typedef typename T_Cell::Vertex_handle                T_Vertex_handle;
+
   typedef typename T_Vertex_iterator::value_type *      T_Vertex_pointer;
   typedef typename T_Cell_iterator::value_type *        T_Cell_pointer;
 
@@ -67,13 +61,13 @@ private:
 
   typedef Polyhedron_incremental_builder_3<HDS>         Polyh_incr_builder;
 public:
-  
+
   Marching_tetrahedra_builder(
     T_Vertex_iterator vertices_begin,
     T_Vertex_iterator vertices_end,
     T_Cell_iterator cells_begin,
     T_Cell_iterator cells_end,
-    const Traits &traits, 
+    const Traits &traits,
     Observer &observer)
     : vertices_begin(vertices_begin),
       vertices_end(vertices_end),
@@ -113,23 +107,23 @@ public:
       // Construct triangles:
       CGAL_assertion(!B.error());
       if (nIn==1) {
-	process_cell(B, cellV, (sortedV[0]%2)==1, cit);
-	CGAL_assertion(!B.error());
+        process_cell(B, cellV, (sortedV[0]%2)==1, cit);
+        CGAL_assertion(!B.error());
       } else if (nIn==2) {
-	bool change_orientation =
-	  (((sortedV[0] == 0) && (sortedV[1]==1)) || 
-	    ((sortedV[0] == 0) && (sortedV[1]==3)) || 
-	    ((sortedV[0] == 1) && (sortedV[1]==2)) || 
-	    ((sortedV[0] == 2) && (sortedV[1]==3)));
-	
-	process_cell(B, cellV, !change_orientation, cit);
- 	process_cell(B, cellV+1, change_orientation, cit);
-	CGAL_assertion(!B.error());
+        bool change_orientation =
+          (((sortedV[0] == 0) && (sortedV[1]==1)) ||
+            ((sortedV[0] == 0) && (sortedV[1]==3)) ||
+            ((sortedV[0] == 1) && (sortedV[1]==2)) ||
+            ((sortedV[0] == 2) && (sortedV[1]==3)));
+
+        process_cell(B, cellV, !change_orientation, cit);
+         process_cell(B, cellV+1, change_orientation, cit);
+        CGAL_assertion(!B.error());
       } else if (nIn==3) {
-	process_cell(B, cellV, (sortedV[3]%2) == 1, cit);
-	CGAL_assertion(!B.error());
+        process_cell(B, cellV, (sortedV[3]%2) == 1, cit);
+        CGAL_assertion(!B.error());
       }
-      
+
     }
 
     CGAL_assertion(!B.error());
@@ -138,18 +132,18 @@ public:
 
 
   bool is_inside(T_Cell_iterator ch, int i) {
-    CGAL_assertion(&*ch != NULL);
+    CGAL_assertion(ch.operator->() != nullptr);
     //return (traits.sign(ch,i) == POSITIVE);
     T_vertex_map_it it = triang_vertex_signs.find((ch->vertex(i)));
-    
+
     if (it == triang_vertex_signs.end()) {
       bool side = (traits.sign(ch,i) == POSITIVE);
       CGAL_assertion(triang_vertex_signs.find((ch->vertex(i))) ==
-		     triang_vertex_signs.end());
-      CGAL_assertion(&*ch != NULL);
+                     triang_vertex_signs.end());
+      CGAL_assertion(ch.operator->() != nullptr);
       triang_vertex_signs[(ch->vertex(i))] = side;
       CGAL_assertion(triang_vertex_signs.find((ch->vertex(i))) !=
-		     triang_vertex_signs.end());
+                     triang_vertex_signs.end());
       CGAL_assertion(triang_vertex_signs[(ch->vertex(i))] == side);
       return side;
     } else {
@@ -160,7 +154,7 @@ public:
     T_Cell_iterator ch, int i, int j) {
     CGAL_assertion(is_inside(ch, i));
     CGAL_assertion(!is_inside(ch, j));
-    
+
     T_edge edge = T_edge(ch->vertex(i),ch->vertex(j));
     T_edge_map_it edge_it = polyh_vert.find(edge);
 
@@ -174,7 +168,7 @@ public:
       return edge_it->second;
     }
   }
-  
+
   // Orientation is right
   void process_cell(
     Polyh_incr_builder &B,
@@ -209,32 +203,32 @@ private:
 
 
 template <class Triangulation_3,
-	  class Polyhedron_3,
-	  class MarchingTetrahedraTraits_3>
+          class Polyhedron_3,
+          class MarchingTetrahedraTraits_3>
 void marching_tetrahedra_3(
   const Triangulation_3 &triangulation,
   Polyhedron_3 &polyhedron,
   const MarchingTetrahedraTraits_3 &traits) {
-  
+
   typedef Marching_tetrahedra_observer_default_3
     <typename Triangulation_3::Finite_vertices_iterator,
-    typename Triangulation_3::Finite_cells_iterator, 
+    typename Triangulation_3::Finite_cells_iterator,
     Polyhedron_3>
-                                                                Observer; 
+                                                                Observer;
 
   marching_tetrahedra_3(triangulation.finite_vertices_begin(),
-			triangulation.finite_vertices_end(),
-			triangulation.finite_cells_begin(),
-			triangulation.finite_cells_end(),
-			polyhedron,
-			traits,
-			Observer());
+                        triangulation.finite_vertices_end(),
+                        triangulation.finite_cells_begin(),
+                        triangulation.finite_cells_end(),
+                        polyhedron,
+                        traits,
+                        Observer());
 }
 
 template <class Triangulation_3,
-	  class Polyhedron_3,
-	  class MarchingTetrahedraTraits_3,
-	  class MarchingTetrahedraObserver_3>
+          class Polyhedron_3,
+          class MarchingTetrahedraTraits_3,
+          class MarchingTetrahedraObserver_3>
 void marching_tetrahedra_3(
   const Triangulation_3 &triangulation,
   Polyhedron_3 &polyhedron,
@@ -242,19 +236,19 @@ void marching_tetrahedra_3(
   MarchingTetrahedraObserver_3 &observer) {
 
   marching_tetrahedra_3(triangulation.finite_vertices_begin(),
-			triangulation.finite_vertices_end(),
-			triangulation.finite_cells_begin(),
-			triangulation.finite_cells_end(),
-			polyhedron,
-			traits,
-			observer);
+                        triangulation.finite_vertices_end(),
+                        triangulation.finite_cells_begin(),
+                        triangulation.finite_cells_end(),
+                        polyhedron,
+                        traits,
+                        observer);
 }
 
 template <class Vertex_iterator,
-	  class Cell_iterator,
-	  class Polyhedron_3,
-	  class MarchingTetrahedraTraits_3,
-	  class MarchingTetrahedraObserver_3>
+          class Cell_iterator,
+          class Polyhedron_3,
+          class MarchingTetrahedraTraits_3,
+          class MarchingTetrahedraObserver_3>
 void marching_tetrahedra_3(
   Vertex_iterator finite_vertices_begin,
   Vertex_iterator finite_vertices_end,
@@ -263,18 +257,18 @@ void marching_tetrahedra_3(
   Polyhedron_3 &polyhedron,
   const MarchingTetrahedraTraits_3 &traits,
   MarchingTetrahedraObserver_3 &observer) {
-  
+
   typedef typename Polyhedron_3::HalfedgeDS                   HDS;
   typedef Marching_tetrahedra_builder<
     Vertex_iterator, Cell_iterator, HDS,
     MarchingTetrahedraTraits_3, MarchingTetrahedraObserver_3> Builder;
-  
+
   Builder builder(finite_vertices_begin, finite_vertices_end,
-		  finite_cells_begin, finite_cells_end,
-		  traits, observer);
+                  finite_cells_begin, finite_cells_end,
+                  traits, observer);
   polyhedron.delegate(builder);
 }
 
-} //namespace CGAL 
+} //namespace CGAL
 
 #endif // CGAL_MARCHING_TETRAHEDRA_H

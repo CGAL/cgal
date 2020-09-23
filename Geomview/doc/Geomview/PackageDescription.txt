@@ -18,7 +18,7 @@
 
 \cgalClassifedRefPages
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Geomview_stream`
 
 */

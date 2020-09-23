@@ -40,13 +40,13 @@ point set class.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `PointSetTraits`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Point_set_2`
 
-## Functions ##
+\cgalCRPSection{Functions}
 - `CGAL::nearest_neighbor()`
 - `CGAL::nearest_neighbors()`
 - `CGAL::range_search()`

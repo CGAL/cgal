@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 //                 Christophe Delage <Christophe.Delage@sophia.inria.fr>
@@ -69,39 +60,39 @@ protected:
 
         // order of a line
         bool oolQ24 = this->ordered_on_line(q, p2, p4);
-        bool oolQ23 = this->ordered_on_line(q, p2, p3); 
+        bool oolQ23 = this->ordered_on_line(q, p2, p3);
 
         if ( b )
         {
-	  if ( CGAL::sign(q.p()) != POSITIVE ) { return true; }
-	  // degenerate case
-	  if (orient234 == ZERO && orient23Q == ZERO && orient42Q == ZERO) {
-	    return (oolQ23 || oolQ24);
-	  } else if (! ((radInt23Q != NEGATIVE && radSid2Q3 == NEGATIVE) && 
-			(radInt24Q != NEGATIVE && radSid2Q4 == NEGATIVE))) {
-	    // non degenerate case
-	    return true;
-	  }  else if (orient234 != NEGATIVE) {
-	    return orient23Q != POSITIVE && orient42Q != POSITIVE;
-	  } else {
-	    return orient23Q != POSITIVE || orient42Q != POSITIVE;
-	  }
+          if ( CGAL::sign(q.p()) != POSITIVE ) { return true; }
+          // degenerate case
+          if (orient234 == ZERO && orient23Q == ZERO && orient42Q == ZERO) {
+            return (oolQ23 || oolQ24);
+          } else if (! ((radInt23Q != NEGATIVE && radSid2Q3 == NEGATIVE) &&
+                        (radInt24Q != NEGATIVE && radSid2Q4 == NEGATIVE))) {
+            // non degenerate case
+            return true;
+          }  else if (orient234 != NEGATIVE) {
+            return orient23Q != POSITIVE && orient42Q != POSITIVE;
+          } else {
+            return orient23Q != POSITIVE || orient42Q != POSITIVE;
+          }
         }
         else
         {
-	  CGAL_assertion ( CGAL::sign(q.p()) == POSITIVE );
-	  // degenerate case
-	  if (orient234 == ZERO && orient23Q == ZERO && orient42Q == ZERO) {
-	    return (oolQ23 && oolQ24);
-	  } else if (! ((radInt23Q != NEGATIVE && radSid2Q3 == NEGATIVE) && 
+          CGAL_assertion ( CGAL::sign(q.p()) == POSITIVE );
+          // degenerate case
+          if (orient234 == ZERO && orient23Q == ZERO && orient42Q == ZERO) {
+            return (oolQ23 && oolQ24);
+          } else if (! ((radInt23Q != NEGATIVE && radSid2Q3 == NEGATIVE) &&
                         (radInt24Q != NEGATIVE && radSid2Q4 == NEGATIVE))) {
-            // non degenerate case	
-	    return false;
-	  } else if (orient234 != NEGATIVE) {
-	    return orient23Q != POSITIVE || orient42Q != POSITIVE;
-	  } else {
-	    return orient23Q != POSITIVE && orient42Q != POSITIVE;
-	  }
+            // non degenerate case
+            return false;
+          } else if (orient234 != NEGATIVE) {
+            return orient23Q != POSITIVE || orient42Q != POSITIVE;
+          } else {
+            return orient23Q != POSITIVE && orient42Q != POSITIVE;
+          }
         }
     }
 };

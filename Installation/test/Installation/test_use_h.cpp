@@ -2,7 +2,7 @@
 
 template <typename T>
 struct Foo {
-  typedef typename T::fake fake; 
+  typedef typename T::fake fake;
   // Fake typedef to check that Foo<double> is not instantiated.
 };
 

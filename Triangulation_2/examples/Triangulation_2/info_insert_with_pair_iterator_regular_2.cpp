@@ -13,6 +13,7 @@ typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                    Tds;
 typedef CGAL::Regular_triangulation_2<K, Tds>                          Regular;
 typedef K::Point_2                                                     Point;
 typedef K::Weighted_point_2                                            Wpoint;
+typedef Regular::Vertex_handle                                         Vertex_handle;
 
 int main()
 {
@@ -30,9 +31,8 @@ int main()
   CGAL_assertion( rt.number_of_vertices() == 6 );
 
   // check that the info was correctly set.
-  Regular::Finite_vertices_iterator vit;
-  for (vit = rt.finite_vertices_begin(); vit != rt.finite_vertices_end(); ++vit)
-    if( points[ vit->info() ].first != vit->point() ){
+  for (Vertex_handle v : rt.finite_vertex_handles())
+    if( points[ v->info() ].first != v->point() ){
       std::cerr << "Error different info" << std::endl;
       exit(EXIT_FAILURE);
     }

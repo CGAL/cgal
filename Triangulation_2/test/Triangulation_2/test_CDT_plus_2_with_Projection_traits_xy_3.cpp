@@ -30,7 +30,7 @@ int main()
   segments.push_back(std::make_pair(Point( 210.13500000, 169.20200000, 0),
                                     Point(232.65300000, 167.91200000, 0)));
   segments.push_back(std::make_pair(Point( 210.13500000, 169.20200000, 0),
-                                    Point(232.69100000, 189.32500000, 0))); 
+                                    Point(232.69100000, 189.32500000, 0)));
 
   Point p, q;
   for(unsigned int i=0;i< segments.size(); i++){

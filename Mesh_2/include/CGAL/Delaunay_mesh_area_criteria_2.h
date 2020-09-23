@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -30,7 +21,7 @@
 namespace CGAL {
 
 template <class Tr>
-class Delaunay_mesh_area_criteria_2 
+class Delaunay_mesh_area_criteria_2
   : public virtual Delaunay_mesh_criteria_2<Tr>,
     private Delaunay_mesh_size_criteria_2<Tr>
 /* This class "is a" Delaunay_mesh_criteria_2<Tr> and is implemented by
@@ -47,7 +38,7 @@ public:
 
   typedef typename Delaunay_mesh_size_criteria_2<Tr>::Quality Quality;
 
-  Delaunay_mesh_area_criteria_2(const double aspect_bound = 0.125, 
+  Delaunay_mesh_area_criteria_2(const double aspect_bound = 0.125,
                                 const double area_bound = 0,
                                 const Geom_traits& traits = Geom_traits())
     : Private_base(aspect_bound, area_bound, traits), traits(traits) {}
@@ -68,7 +59,7 @@ public:
     typedef typename Tr::Face_handle Face_handle;
 
     Is_bad(const double aspect_bound,
-	   const double area_bound,
+           const double area_bound,
            const Geom_traits& traits)
       : Is_bad_base(aspect_bound, area_bound, traits) {}
 
@@ -78,7 +69,7 @@ public:
     }
 
     Mesh_2::Face_badness operator()(const Face_handle& fh,
-				    Quality& q) const
+                                    Quality& q) const
     {
       typedef typename Tr::Geom_traits Geom_traits;
 
@@ -86,13 +77,13 @@ public:
       typedef typename Geom_traits::Triangle_2 Triangle_2;
       typedef typename Geom_traits::Compute_area_2 Compute_area_2;
       typedef typename Geom_traits::Compute_squared_distance_2
-	Compute_squared_distance_2;
+        Compute_squared_distance_2;
 
       Geom_traits geom_traits;
 
       Compute_area_2 area_2 = geom_traits.compute_area_2_object();
-      Compute_squared_distance_2 squared_distance = 
-	geom_traits.compute_squared_distance_2_object();
+      Compute_squared_distance_2 squared_distance =
+        geom_traits.compute_squared_distance_2_object();
 
       const Point_2& pa = fh->vertex(0)->point();
       const Point_2& pb = fh->vertex(1)->point();
@@ -103,34 +94,34 @@ public:
       area=area*area; // squared area
 
       double
-	a = CGAL::to_double(squared_distance(pb, pc)),
-	b = CGAL::to_double(squared_distance(pc, pa)),
-	c = CGAL::to_double(squared_distance(pa, pb));
+        a = CGAL::to_double(squared_distance(pb, pc)),
+        b = CGAL::to_double(squared_distance(pc, pa)),
+        c = CGAL::to_double(squared_distance(pa, pb));
 
       double min_sine; // squared minimum sine
 
       if(a<b)
-	if(a<c)
-	  min_sine = area/(b*c);
-	else
-	  min_sine = area/(a*b);
+        if(a<c)
+          min_sine = area/(b*c);
+        else
+          min_sine = area/(a*b);
       else
-	if(b<c)
-	  min_sine = area/(a*c);
-	else
-	  min_sine = area/(a*b);
-      
+        if(b<c)
+          min_sine = area/(a*c);
+        else
+          min_sine = area/(a*b);
+
       q.first = min_sine;
       q.second = area;
 
       if( this->squared_size_bound != 0 &&
-	  area > this->squared_size_bound ) 
-	return Mesh_2::IMPERATIVELY_BAD;
+          area > this->squared_size_bound )
+        return Mesh_2::IMPERATIVELY_BAD;
       else
-	if( min_sine < this->B )
-	  return Mesh_2::BAD;
-	else
-	  return Mesh_2::NOT_BAD;
+        if( min_sine < this->B )
+          return Mesh_2::BAD;
+        else
+          return Mesh_2::NOT_BAD;
     };
   }; // end class Is_bad
 

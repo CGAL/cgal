@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
@@ -36,7 +27,7 @@
 
 namespace CGAL {
 
-/*{\Manpage{Pluecker_line_3}{R}{Straight lines in 3-space}{pl}}*/  
+/*{\Manpage{Pluecker_line_3}{R}{Straight lines in 3-space}{pl}}*/
 
 /*{\Mdefinition An instance |\Mvar| of the data type |\Mname| is a
 directed straight line in the three-dimensional plane. Its
@@ -66,7 +57,7 @@ typedef const RT* const_iterator;
 RT c_[6];
 
 public:
-/*{\Mcreation 3}*/     
+/*{\Mcreation 3}*/
 Pluecker_line_3() {}
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname| and
 initializes it to some line.}*/
@@ -98,7 +89,7 @@ initializes it to the oriented line through |p| and |q|.}*/
 }
 
 template <typename Forward_iterator>
-Pluecker_line_3(Forward_iterator s, Forward_iterator e) 
+Pluecker_line_3(Forward_iterator s, Forward_iterator e)
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname| and
 initializes it to line with the parameters |tuple [s,e)|.}*/
 { int i=0;
@@ -110,48 +101,48 @@ initializes it to line with the parameters |tuple [s,e)|.}*/
 
 const_iterator begin() const { return c_; }
 /*{\Mop returns an iterator pointing to the first
-Pluecker coefficient.}*/                                                   
+Pluecker coefficient.}*/
 const_iterator end() const { return c_+6; }
 /*{\Mop returns an iterator pointing beyond the last
-Pluecker coefficient.}*/                                                   
+Pluecker coefficient.}*/
 
-Pluecker_line_3(const Self& l) 
+Pluecker_line_3(const Self& l)
 { std::copy(l.begin(),l.end(),c_); }
 
-Self& operator=(const Self& l) 
-{ if (&l!=this) std::copy(l.begin(),l.end(),c_); 
+Self& operator=(const Self& l)
+{ if (&l!=this) std::copy(l.begin(),l.end(),c_);
   return *this; }
 
 const RT& operator[](unsigned i) const
-/*{\Marrop returns constant access to the $i$th Pluecker coefficient.}*/    
+/*{\Marrop returns constant access to the $i$th Pluecker coefficient.}*/
 { CGAL_assertion(i<6); return c_[i]; }
 
 int sign() const
 /*{\Mop returns the sign of the first nonzero Pluecker coefficient
 within the ordered tuple of coefficients.}*/
-{ for (unsigned i=0; i<6; ++i) 
-    if (c_[i]!=RT(0)) return CGAL_NTS sign(c_[i]); 
- CGAL_error_msg("Pluecker line 0 0 0 0 0 0 shouldn't appear!!!"); 
-  return CGAL_NTS sign(c_[5]); 
+{ for (unsigned i=0; i<6; ++i)
+    if (c_[i]!=RT(0)) return CGAL_NTS sign(c_[i]);
+ CGAL_error_msg("Pluecker line 0 0 0 0 0 0 shouldn't appear!!!");
+  return CGAL_NTS sign(c_[5]);
 }
 
 void normalize()
-//{\Mop reduces the Pluecker coefficients to a minimal 
-//representation. This is done by dividing all Pluecker 
+//{\Mop reduces the Pluecker coefficients to a minimal
+//representation. This is done by dividing all Pluecker
 //coefficients by their common gcd.}
-{ 
+{
   CGAL_NEF_TRACEN("normalize");
   int i=0;
   while(i<6 && c_[i]==0)
     i++;
-    
+
   if(i>5)
     return;
 
   RT D = c_[i];
   CGAL_assertion(D!=0);
 
-  for(++i; i<6; ++i) 
+  for(++i; i<6; ++i)
     D = (c_[i]==0 ? D : CGAL_NTS gcd(D, c_[i]));
   if (D==0) return;
   CGAL_NEF_TRACEN("gcd" << D);
@@ -205,7 +196,7 @@ typedef const FT* const_iterator;
 FT c_[6];
 
 public:
-/*{\Mcreation 3}*/     
+/*{\Mcreation 3}*/
 Pluecker_line_3() {}
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname| and
 initializes it to some line.}*/
@@ -237,7 +228,7 @@ Pluecker_line_3(const Point_3& p, const Point_3& q)
 }
 
 template <typename Forward_iterator>
-Pluecker_line_3(Forward_iterator s, Forward_iterator e) 
+Pluecker_line_3(Forward_iterator s, Forward_iterator e)
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname| and
 initializes it to line with the parameters |tuple [s,e)|.}*/
 { int i=0;
@@ -249,41 +240,41 @@ initializes it to line with the parameters |tuple [s,e)|.}*/
 
 const_iterator begin() const { return c_; }
 /*{\Mop returns an iterator pointing to the first
-Pluecker coefficient.}*/                                                   
+Pluecker coefficient.}*/
 const_iterator end() const { return c_+6; }
 /*{\Mop returns an iterator pointing beyond the last
-Pluecker coefficient.}*/                                                   
+Pluecker coefficient.}*/
 
-Pluecker_line_3(const Self& l) 
+Pluecker_line_3(const Self& l)
 { std::copy(l.begin(),l.end(),c_); }
 
-Self& operator=(const Self& l) 
-{ if (&l!=this) std::copy(l.begin(),l.end(),c_); 
+Self& operator=(const Self& l)
+{ if (&l!=this) std::copy(l.begin(),l.end(),c_);
   return *this; }
 
 const FT& operator[](unsigned i) const
-/*{\Marrop returns constant access to the $i$th Pluecker coefficient.}*/    
+/*{\Marrop returns constant access to the $i$th Pluecker coefficient.}*/
 { CGAL_assertion(i<6); return c_[i]; }
 
 int sign() const
 /*{\Mop returns the sign of the first nonzero Pluecker coefficient
 within the ordered tuple of coefficients.}*/
-{ for (unsigned i=0; i<6; ++i) 
-    if (c_[i]!=FT(0)) return CGAL_NTS sign(c_[i]); 
- CGAL_error_msg("Pluecker line 0 0 0 0 0 0 shouldn't appear!!!"); 
-  return CGAL_NTS sign(c_[5]); 
+{ for (unsigned i=0; i<6; ++i)
+    if (c_[i]!=FT(0)) return CGAL_NTS sign(c_[i]);
+ CGAL_error_msg("Pluecker line 0 0 0 0 0 0 shouldn't appear!!!");
+  return CGAL_NTS sign(c_[5]);
 }
 
 void normalize()
-//{\Mop reduces the Pluecker coefficients to a minimal 
-//representation. This is done by dividing all Pluecker 
+//{\Mop reduces the Pluecker coefficients to a minimal
+//representation. This is done by dividing all Pluecker
 //coefficients by their common gcd.}
 {
   CGAL_NEF_TRACEN("normalize");
   int i=0;
   while(i<6 && c_[i]==FT(0))
     ++i;
-    
+
   if(i>5)
     return;
 
@@ -324,17 +315,17 @@ on their Pluecker coefficient tuples.}*/
 
 template <typename Tag, typename R>
 std::ostream& operator<<(std::ostream& os, const Pluecker_line_3<Tag,R>& l)
-{ 
+{
   switch( get_mode(os) ) {
     case CGAL::IO::ASCII :
-      for (unsigned i=0; i<6; ++i) os << l[i] << " "; 
-      return os; 
+      for (unsigned i=0; i<6; ++i) os << l[i] << " ";
+      return os;
     case CGAL::IO::BINARY :
       for (unsigned i=0; i<6; ++i) CGAL::write(os, l[i]);
       return os;
     default:
       os << "Pluecker_line_3(";
-      for (unsigned i=0; i<5; ++i) os << l[i] << ", "; 
+      for (unsigned i=0; i<5; ++i) os << l[i] << ", ";
       os << l[5] << ")";
   } return os;
 }

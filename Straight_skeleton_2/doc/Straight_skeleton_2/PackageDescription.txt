@@ -25,13 +25,12 @@
 \cgalPkgDependsOn{\ref PkgHalfedgeDS}
 \cgalPkgBib{cgal:c-sspo2}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{2D Straight Skeleton,straight_skeleton_2.zip,Operations on Polygons,polygon.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `StraightSkeletonVertex_2`
 - `StraightSkeletonHalfedge_2`
 - `StraightSkeletonFace_2`
@@ -42,7 +41,7 @@
 - `PolygonOffsetBuilderTraits_2`
 - `VertexContainer_2`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Straight_skeleton_vertex_base_2`
 - `CGAL::Straight_skeleton_halfedge_base_2`
 - `CGAL::Straight_skeleton_face_base_2`
@@ -57,7 +56,7 @@
 - `CGAL::Polygon_offset_builder_2`
 - `CGAL::Dummy_straight_skeleton_builder_2_visitor`
 
-## Functions ##
+\cgalCRPSection{Functions}
 - `CGAL::create_exterior_straight_skeleton_2()`
 - `CGAL::create_interior_straight_skeleton_2()`
 - `CGAL::create_offset_polygons_2()`

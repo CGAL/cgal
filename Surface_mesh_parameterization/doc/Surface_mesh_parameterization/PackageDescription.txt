@@ -28,15 +28,15 @@ The code is generic and works with any model of the `FaceGraph` concept.}
 
 \cgalClassifedRefPages
 
-## Main Function ##
+\cgalCRPSection{Main Function}
 
 - `CGAL::Surface_mesh_parameterization::parameterize()`
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `Parameterizer_3`
 
-## Surface Parameterization Methods ##
+\cgalCRPSection{Surface Parameterization Methods}
 
 This \cgal package implements several parameterization methods:
 
@@ -64,7 +64,7 @@ The following classes implement the methods listed above:
 - `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 - `CGAL::Surface_mesh_parameterization::Orbifold_Tutte_parameterizer_3<TriangleMesh, SolverTraits>`
 
-## Border Parameterization Methods ##
+\cgalCRPSection{Border Parameterization Methods}
 
 Border parameterization methods define a
 set of constraints (a constraint specifies two (u,v) coordinates for
@@ -85,14 +85,14 @@ The following classes implement the methods listed above:
 - `CGAL::Surface_mesh_parameterization::Square_border_arc_length_parameterizer_3<TriangleMesh>`
 - `CGAL::Surface_mesh_parameterization::Two_vertices_parameterizer_3<TriangleMesh>`
 
-## Mesh ##
+\cgalCRPSection{Mesh}
 
 The general definition of input meshes handled directly by
 `CGAL::Surface_mesh_parameterization::parameterize()` is a triangulated surface
 mesh model of `FaceGraph` that is homeomorphic to a disc (may have holes). In
 particular, it means that it must be 2-manifold and oriented.
 
-## Checks and Assertions ##
+\cgalCRPSection{Checks and Assertions}
 
 The package performs the next checks:
 

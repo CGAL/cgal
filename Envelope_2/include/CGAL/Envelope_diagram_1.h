@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
 
@@ -62,15 +53,15 @@ public:
   public:
     /*! Constructor. */
     Vertex () :
-      _leftP(NULL),
-      _rightP(NULL)
+      _leftP(nullptr),
+      _rightP(nullptr)
     {}
 
     /*! Constructor with a point. */
     Vertex (const Point_2& p) :
       _p(p),
-      _leftP(NULL),
-      _rightP(NULL)
+      _leftP(nullptr),
+      _rightP(nullptr)
     {}
 
     /*! Get the point. */
@@ -175,8 +166,8 @@ public:
   public:
     /*! Constructor. */
     Edge () :
-      _leftP(NULL),
-      _rightP(NULL)
+      _leftP(nullptr),
+      _rightP(nullptr)
     {}
 
     /*! Check if the edge represents an empty interval. */
@@ -278,21 +269,11 @@ public:
 private:
 
   // Vertex allocator.
-#ifdef CGAL_CXX11
-    typedef std::allocator_traits<Allocator> Allocator_traits;
-    typedef typename Allocator_traits::template rebind_alloc<Vertex> Vertex_allocator;
-#else
-  typedef typename Allocator::template rebind<Vertex>    Vertex_alloc_rebind;
-  typedef typename Vertex_alloc_rebind::other            Vertex_allocator;
-#endif
+  typedef std::allocator_traits<Allocator> Allocator_traits;
+  typedef typename Allocator_traits::template rebind_alloc<Vertex> Vertex_allocator;
 
   // Halfedge allocator.
-#ifdef CGAL_CXX11
-    typedef typename Allocator_traits::template rebind_alloc<Edge> Edge_allocator;
-#else
-  typedef typename Allocator::template rebind<Edge>      Edge_alloc_rebind;
-  typedef typename Edge_alloc_rebind::other              Edge_allocator;
-#endif
+  typedef typename Allocator_traits::template rebind_alloc<Edge> Edge_allocator;
 
   Edge* _leftmostP;                   // The leftmost edge of the diagram
                                       // (representing the range from -oo).
@@ -384,11 +365,7 @@ public:
   Vertex_handle new_vertex (const Point_2& p)
   {
     Vertex* v = vertex_alloc.allocate (1);
-#ifdef CGAL_CXX11
     std::allocator_traits<Vertex_allocator>::construct(vertex_alloc, v, p);
-#else
-    vertex_alloc.construct (v, Vertex(p));
-#endif
     return (v);
   }
 
@@ -396,36 +373,24 @@ public:
   Edge_handle new_edge ()
   {
     Edge* e = edge_alloc.allocate (1);
-#ifdef CGAL_CXX11
     std::allocator_traits<Edge_allocator>::construct(edge_alloc, e);
-#else
-    edge_alloc.construct (e, Edge());
-#endif
     return (e);
   }
-   
+
   /*! Delete an existing vertex. */
   void delete_vertex (Vertex_handle v)
   {
-#ifdef CGAL_CXX11
     std::allocator_traits<Vertex_allocator>::destroy(vertex_alloc, v);
-#else
-    vertex_alloc.destroy (v);
-#endif
     vertex_alloc.deallocate (v, 1);
   }
-  
+
   /*! Delete an existing edge. */
   void delete_edge (Edge_handle e)
   {
-#ifdef CGAL_CXX11
     std::allocator_traits<Edge_allocator>::destroy(edge_alloc, e);
-#else
-    edge_alloc.destroy (e);
-#endif
     edge_alloc.deallocate (e, 1);
   }
-  
+
 private:
   /*!
    * Free all diagram elements.
@@ -435,14 +400,14 @@ private:
     Vertex* v;
     Edge* e = _leftmostP;
 
-    while (e != NULL) {
+    while (e != nullptr) {
       // Get a pointer to the next vertex.
       v = e->right();
 
       // Free the edge and update it to be the next one after v.
       delete_edge (e);
 
-      if (v != NULL) {
+      if (v != nullptr) {
         e = v->right();
 
         // Free the current vertex.
@@ -450,12 +415,12 @@ private:
       }
       else
       {
-        e = NULL;
+        e = nullptr;
       }
     }
-     
-    _leftmostP = NULL;
-    _rightmostP = NULL;
+
+    _leftmostP = nullptr;
+    _rightmostP = nullptr;
   }
 };
 

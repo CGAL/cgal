@@ -17,7 +17,7 @@ main( int, char**)
     Point P[n];
 
     for ( int i = 0; i < n; ++i)
-	P[ i] = Point( (i%2 == 0 ? i : -i), 0);
+        P[ i] = Point( (i%2 == 0 ? i : -i), 0);
     // (0,0), (-1,0), (2,0), (-3,0), ...
 
     Min_circle  mc1( P, P+n, false);    // very slow

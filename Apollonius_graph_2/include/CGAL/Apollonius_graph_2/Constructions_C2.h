@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -58,15 +49,15 @@ template < class Gt >
 inline
 typename Gt::Point_2
 ad_circumcenter_2(const typename Gt::Site_2& p,
-		  const typename Gt::Site_2& q,
-		  const typename Gt::Site_2& r)
+                  const typename Gt::Site_2& q,
+                  const typename Gt::Site_2& r)
 {
   typedef typename Gt::Point_2  Point_2;
 
   typename Gt::FT     x,y;
   ad_circumcenterC2(p.x(),p.y(),p.weight(),
-	       	    q.x(),q.y(),q.weight(),
-		    r.x(),r.y(),r.weight(),x,y);
+                           q.x(),q.y(),q.weight(),
+                    r.x(),r.y(),r.weight(),x,y);
   return Point_2(x,y);
 }
 
@@ -103,8 +94,8 @@ ad_circumcircle_2(const typename Gt::Site_2& p,
 
   typename Gt::FT x, y, wt;
   ad_circumcircleC2(p.x(),p.y(),p.weight(),
-		    q.x(),q.y(),q.weight(),
-		    r.x(),r.y(),r.weight(),x,y,wt);
+                    q.x(),q.y(),q.weight(),
+                    r.x(),r.y(),r.weight(),x,y,wt);
   return Site_2(Point_2(x,y), wt);
 }
 
@@ -112,14 +103,14 @@ template < class Gt >
 inline
 typename Gt::Line_2
 ad_left_bitangent_line_2(const typename Gt::Site_2& p,
-			 const typename Gt::Site_2& q)
+                         const typename Gt::Site_2& q)
 {
   typedef typename Gt::Line_2  Line_2;
 
   typename Gt::FT a, b, c;
   ad_left_bitangent_lineC2(p.x(),p.y(),p.weight(),
-			   q.x(),q.y(),q.weight(),
-			   a,b,c);
+                           q.x(),q.y(),q.weight(),
+                           a,b,c);
   return Line_2(a, b, c);
 }
 
@@ -139,15 +130,15 @@ public:
 #endif
 
   inline Site_2 operator()(const Site_2& p,
-			   const Site_2& q,
-			   const Site_2& r) const
+                           const Site_2& q,
+                           const Site_2& r) const
   {
     //      CGAL_precondition( ! collinear(p, q, r) );
     return ad_circumcircle_2< Gt >(p,q,r);
   }
 
   inline Line_2 operator()(const Site_2 &p,
-			   const Site_2 &q) const
+                           const Site_2 &q) const
   {
     return ad_left_bitangent_line_2< Gt >(p, q);
   }
@@ -178,7 +169,7 @@ private:
   }
 
 public:
-  Object_2 operator() (const Site_2& p,	const Site_2& q) const
+  Object_2 operator() (const Site_2& p,        const Site_2& q) const
   {
     Comparison_result cr = CGAL::compare(p.weight(), q.weight());
     if ( cr == EQUAL ) {
@@ -221,9 +212,9 @@ private:
 public:
   Object_2
   operator() (const Site_2& p,
-	      const Site_2& q,
-	      const Point_2& r,
-	      const Hyperbola_direction& direction) const {
+              const Site_2& q,
+              const Point_2& r,
+              const Hyperbola_direction& direction) const {
     //
     Comparison_result cr = CGAL::compare(p.weight(), q.weight());
     if ( cr == EQUAL ) {
@@ -238,8 +229,8 @@ public:
 
   Object_2
   operator() (const Site_2& p,
-	      const Site_2& q,
-	      const Site_2& r) const {
+              const Site_2& q,
+              const Site_2& r) const {
     Point_2 c = Apollonius_vertex_2()(p, q, r);
     Comparison_result cr = CGAL::compare(p.weight(), q.weight());
     if ( cr == EQUAL ) {
@@ -274,12 +265,12 @@ private:
   Object_2 make_object(const T& t) const
   {
     return Construct_object_2()(t);
-  } 
+  }
 
 public:
   inline Object_2 operator() (const Site_2& p,
-			      const Site_2& q,
-			      const Point_2& r, const Point_2& s) const {
+                              const Site_2& q,
+                              const Point_2& r, const Point_2& s) const {
     //
     Comparison_result cr = CGAL::compare(p.weight(), q.weight());
     if ( cr == EQUAL ) {
@@ -291,9 +282,9 @@ public:
   }
 
   inline Object_2 operator() (const Site_2& p,
-			      const Site_2& q,
-			      const Site_2& r,
-			      const Site_2& s) const {
+                              const Site_2& q,
+                              const Site_2& r,
+                              const Site_2& s) const {
     Apollonius_vertex_2 apollonius_vertex_2;
     Point_2 c_pqr = apollonius_vertex_2(p,q,r);
     Point_2 c_qps = apollonius_vertex_2(q,p,s);
@@ -328,8 +319,8 @@ public:
   typedef typename Gt::Construct_Apollonius_site_2    Apollonius_circle_2;
 
   inline Ray_2 operator() (const Site_2& p,
-			   const Site_2& r,
-			   const Site_2& s) const {
+                           const Site_2& r,
+                           const Site_2& s) const {
     //
     Apollonius_circle_2 apollonius_circle_2;
     Line_2 l1 = apollonius_circle_2(r, p);
@@ -376,15 +367,15 @@ public:
 
   inline Segment_2
   operator() (const Site_2& p,
-	      const Site_2& q) const {
+              const Site_2& q) const {
     //
     return Segment_2(p.point(), q.point());
   }
 
   inline Object_2
   operator() (const Site_2& p,
-	      const Site_2& q,
-	      const Point_2& r, const Point_2& s) const {
+              const Site_2& q,
+              const Point_2& r, const Point_2& s) const {
     //
     Comparison_result cr = CGAL::compare(p.weight(), q.weight());
     if ( cr == EQUAL ) {
@@ -397,9 +388,9 @@ public:
 
   inline Object_2
   operator() (const Site_2& p,
-	      const Site_2& q,
-	      const Site_2& r,
-	      const Site_2& s) const {
+              const Site_2& q,
+              const Site_2& r,
+              const Site_2& s) const {
     if ( Is_degenerate_edge_2()(p, q, r, s) ) {
       Point_2 v = Apollonius_vertex_2()(p, q, r);
       Segment_2 seg1(p.point(), v);
@@ -421,8 +412,8 @@ public:
 
   inline Parabola_segment_2
   operator() (const Site_2& p,
-	      const Site_2& q,
-	      const Site_2& r) const {
+              const Site_2& q,
+              const Site_2& r) const {
     //
     Apollonius_circle_2 apollonius_circle_2;
     Site_2 c = apollonius_circle_2(p, q, r);

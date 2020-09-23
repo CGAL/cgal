@@ -20,7 +20,7 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-## Assertions ##
+\cgalCRPSection{Assertions}
 
 The optimization code uses infix `OPTIMISATION` in the assertions,
 e.g. defining the compiler flag
@@ -29,7 +29,7 @@ checking off, cf. Section  \ref secchecks.
 
 \cgalClassifedRefPages
 
-## Bounding Areas and Volumes ##
+\cgalCRPSection{Bounding Areas and Volumes}
 
 - `CGAL::Min_circle_2<Traits>`
 - `CGAL::Min_circle_2_traits_2<K>`

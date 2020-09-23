@@ -2,8 +2,8 @@ namespace CGAL {
 
 /*!
 
-The class `Random_convex_set_traits_2` serves as a traits class 
-for the function `random_convex_set_2()`. 
+The class `Random_convex_set_traits_2` serves as a traits class
+for the function `random_convex_set_2()`.
 
 \cgalModels `RandomConvexSetTraits_2`
 
@@ -11,63 +11,63 @@ for the function `random_convex_set_2()`.
 template< typename Kernel >
 struct Random_convex_set_traits_2 {
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
 
-*/ 
-typedef Kernel::Point_2 Point_2; 
+*/
+typedef Kernel::Point_2 Point_2;
 
 /*!
 
-*/ 
-typedef Kernel::FT FT; 
+*/
+typedef Kernel::FT FT;
 
 /*!
-function object class derived from 
+function object class derived from
 `CGAL::cpp98::binary_function<Point_2, Point_2, Point_2>`
 
-*/ 
-typedef unspecified_type Sum; 
+*/
+typedef unspecified_type Sum;
 
 /*!
-function object class derived from 
+function object class derived from
 `CGAL::cpp98::binary_function<Point_2, Point_2, Point_2>`
-*/ 
-typedef unspecified_type Scale; 
+*/
+typedef unspecified_type Scale;
 
 /*!
-function object class derived from 
-`CGAL::cpp98::unary_function<Point_2, FT>` 
-*/ 
-typedef unspecified_type Max_coordinate; 
+function object class derived from
+`CGAL::cpp98::unary_function<Point_2, FT>`
+*/
+typedef unspecified_type Max_coordinate;
 
 /*!
-function object class derived from 
+function object class derived from
 `CGAL::cpp98::binary_function<Point_2, Point_2, bool>`
-*/ 
-typedef unspecified_type Angle_less; 
+*/
+typedef unspecified_type Angle_less;
 
-/// @} 
+/// @}
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
-default constructor 
-*/ 
-Random_convex_set_traits_2(); 
+default constructor
+*/
+Random_convex_set_traits_2();
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-returns CGAL::ORIGIN. 
-*/ 
-Point_2 origin() const; 
+returns CGAL::ORIGIN.
+*/
+Point_2 origin() const;
 
 /// @}
 

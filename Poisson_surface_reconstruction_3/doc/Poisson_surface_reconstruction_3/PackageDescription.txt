@@ -10,7 +10,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}
-\cgalPkgDependsOn{\ref PkgSolverInterface} 
+\cgalPkgDependsOn{\ref PkgSolverInterface}
 \cgalPkgBib{cgal:asg-srps}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
@@ -18,7 +18,7 @@
 \cgalPkgDescriptionEnd
 
 \cgalClassifedRefPages
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Poisson_reconstruction_function<GeomTraits>`
 
 */

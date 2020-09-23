@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -116,9 +107,9 @@ public:
   Arr_unb_planar_construction_helper(Arrangement_2* arr) :
     m_top_traits(arr->topology_traits()),
     m_arr_access(*arr),
-    m_prev_minus_inf_x_event(NULL),
-    m_prev_plus_inf_y_event(NULL),
-    m_he_ind_map_p(NULL)
+    m_prev_minus_inf_x_event(nullptr),
+    m_prev_plus_inf_y_event(nullptr),
+    m_he_ind_map_p(nullptr)
   {}
 
   /*! Destructor. */
@@ -155,7 +146,7 @@ public:
     // The last event at y = +oo may be deallocated if it has no incident
     // right subcurves, so we should not keep a pointer to it.
     if (event == m_prev_plus_inf_y_event)
-      m_prev_plus_inf_y_event = NULL;
+      m_prev_plus_inf_y_event = nullptr;
   }
   //@}
 
@@ -278,7 +269,7 @@ before_handle_event(Event* event)
 
     // Update the incident halfedge of the previous vertex at x = -oo
     // (m_lh used to be incident to it, but now we have split it).
-    if (m_prev_minus_inf_x_event != NULL)
+    if (m_prev_minus_inf_x_event != nullptr)
       m_prev_minus_inf_x_event->set_halfedge_handle(m_lh->next());
     m_prev_minus_inf_x_event = event;
     return;
@@ -311,13 +302,13 @@ before_handle_event(Event* event)
 
       // Update the incident halfedge of the previous vertex at y = +oo
       // (m_th used to be incident to it, but now we have split it).
-      if (m_prev_plus_inf_y_event != NULL)
+      if (m_prev_plus_inf_y_event != nullptr)
         m_prev_plus_inf_y_event->set_halfedge_handle(m_th->next());
       m_prev_plus_inf_y_event = event;
 
       // Associate all curve indices of subcurves that "see" m_th from
       // below with the left portion of the split halfedge (m_th->next()).
-      if (m_he_ind_map_p != NULL)
+      if (m_he_ind_map_p != nullptr)
       {
         Indices_list& list_ref = (*m_he_ind_map_p)[m_th->next()];
         list_ref.clear();

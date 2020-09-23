@@ -1,20 +1,11 @@
 // Copyright (c) 2017  GeometryFactory
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Laurent Rineau
@@ -25,7 +16,7 @@
 #include <CGAL/Epic_converter.h>
 
 namespace CGAL {
-  
+
 template <typename AK, typename FP, typename EpicP>
 class Static_filtered_predicate {
 public:
@@ -33,7 +24,7 @@ public:
   EpicP epicp;
   typedef typename AK::FT IA;
   typedef typename FP::result_type result_type;
-  
+
   template <typename A1>
   result_type operator()(const A1& a1) const
   {
@@ -44,10 +35,10 @@ public:
     if(! aa1.second){
       return fp(a1);
     }
-    
+
     return epicp(aa1.first);
   }
-  
+
   template <typename A1>
   result_type operator()(const A1& a1, const Null_vector& v) const
   {
@@ -58,10 +49,10 @@ public:
     if(! aa1.second){
       return fp(a1, v);
     }
-    
+
     return epicp(aa1.first, v);
   }
-    
+
   template <typename A1, typename A2>
   result_type operator()(const A1& a1, const A2& a2) const
   {
@@ -131,7 +122,7 @@ public:
     return epicp(aa1.first, aa2.first, aa3.first);
   }
 
-    
+
   template <typename A1, typename A2, typename A3, typename A4>
   result_type operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4) const
   {
@@ -159,7 +150,7 @@ public:
     }
     return epicp(aa1.first, aa2.first, aa3.first, aa4.first);
   }
-  
+
   template <typename A1, typename A2, typename A3, typename A4, typename A5>
   result_type operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4, const A5& a5) const
   {
@@ -274,7 +265,7 @@ public:
     return epicp(aa1.first, aa2.first, aa3.first, aa4.first, aa5.first, aa6.first, aa7.first);
   }
 
-  
+
   template <typename A1, typename A2, typename A3, typename A4, typename A5, typename A6, typename A7, typename A8>
   result_type operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4, const A5& a5, const A6& a6, const A7& a7, const A8& a8) const
   {

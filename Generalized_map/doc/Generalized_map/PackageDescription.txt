@@ -24,13 +24,13 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `GenericMap`
 - `GenericMapItems`
 - `CellAttribute`
 - `GeneralizedMap`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Generalized_map<d,Items,Alloc>`
 - `CGAL::Cell_attribute<GMap,Info_,Tag,OnMerge,OnSplit>`
 - `CGAL::Generic_map_min_items<d>`

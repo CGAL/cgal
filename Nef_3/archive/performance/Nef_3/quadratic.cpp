@@ -81,7 +81,7 @@ bool cgal_nef3_timer_on = false;
 int main(int argc, char* argv[]) {
 
   assert(argc>1 && argc < 5);
-  
+
   int nx = argc>2 ? std::atoi(argv[2]) : 2;
   int ny = argc>3 ? std::atoi(argv[3]) : nx;
 
@@ -98,8 +98,8 @@ int main(int argc, char* argv[]) {
   CGAL_assertion(N1.is_valid());
 
   Nin.transform(Aff_transformation_3(0,-1,0,
-				     1,0,0,
-				     0,0,1,1));
+                                     1,0,0,
+                                     0,0,1,1));
 
   std::ostringstream out2;
   ggen g2(out2, Nin,false);
@@ -119,5 +119,5 @@ int main(int argc, char* argv[]) {
   N1=N1.difference(N2);
 #else
   N1=N1.symmetric_difference(N2);
-#endif  
+#endif
 }
