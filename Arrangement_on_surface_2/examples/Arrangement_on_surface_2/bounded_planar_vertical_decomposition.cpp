@@ -58,7 +58,7 @@ int main()
         else {
           auto* fh = boost::get<Face_const_handle>(&*(curr.first));
           CGAL_assertion(fh);
-          std::cout << "NONE";
+          std::cout << "NONE (" << (*fh)->is_unbounded() << ")";
         }
       }
     }
@@ -74,7 +74,7 @@ int main()
         else {
           auto* fh = boost::get<Face_const_handle>(&*(curr.second));
           CGAL_assertion(fh);
-          std::cout << "NONE" << std::endl;
+          std::cout << "NONE (" << (*fh)->is_unbounded() << ")" << std::endl;
         }
       }
     }
