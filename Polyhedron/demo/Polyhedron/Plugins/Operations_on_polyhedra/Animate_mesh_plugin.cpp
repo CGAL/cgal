@@ -5,12 +5,14 @@
 #include <QVector>
 #include <QByteArray>
 #include <QThread>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QFileInfo>
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Three.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Three.h>
-#include <QMessageBox>
 
 #include "ui_Animate_widget.h"
 #include <fstream>
@@ -211,7 +213,9 @@ public Q_SLOTS:
     dock_widget->frameLabel->setText(QString("%1/%2").arg(frame).arg(frame_pos.size()-1));
     for(std::size_t id = 0; id<initial_points.size();++id)
     {
-      sm_item->face_graph()->points()[SMesh::Vertex_index(id)]=initial_points[id];
+      sm_item->face_graph()->points()[SMesh::Vertex_index(
+            static_cast<CGAL::SM_Index<CGAL::SM_Vertex_index>::size_type>(id))]//not size_t on windows.
+          =initial_points[id];
     }
     sm_item->invalidateOpenGLBuffers();
     sm_item->redraw();
@@ -270,7 +274,7 @@ public Q_SLOTS:
         frame_pos.push_back(pos);
     }
     is.close();
-    dock_widget->frameSlider->setMaximum(frame_pos.size()-1);
+    dock_widget->frameSlider->setMaximum(static_cast<int>(frame_pos.size())-1);
     dock_widget->frameLabel->setText(QString("%1/%2").arg(frame).arg(frame_pos.size()-1));
 
     connect(dock_widget->frameSlider, &QSlider::sliderMoved, [this](int i){
