@@ -30,9 +30,8 @@
 #include <CGAL/Qt/GraphicsViewNavigation.h>
 
 #include <QGridLayout>
+#include <limits>
 
-static constexpr double MAX_WIDTH =
-  std::numeric_limits<double>::max() / 1048576;
 
 ArrangementDemoTabBase::ArrangementDemoTabBase( QWidget* parent ) :
   QWidget( parent ),
@@ -58,6 +57,8 @@ void ArrangementDemoTabBase::setupUi( )
 
   this->layout->addWidget( this->graphicsView, 0, 0 );
   this->graphicsView->setScene( scene );
+
+  double MAX_WIDTH = std::numeric_limits<double>::max() / 1048576;
 
   double xymin = -MAX_WIDTH / 2;
   double wh = MAX_WIDTH;
@@ -435,8 +436,8 @@ static bool isFinite(const CGAL::Bbox_2& box)
 static CGAL::Bbox_2 addMargins(const CGAL::Bbox_2& box)
 {
   // add margin to bounding box
-  float x_margin;
-  float y_margin;
+  double x_margin;
+  double y_margin;
   if (box.xmin() == box.xmax() || box.ymin() == box.ymax())
   {
     static constexpr float const_margin = 50;
@@ -445,7 +446,7 @@ static CGAL::Bbox_2 addMargins(const CGAL::Bbox_2& box)
   }
   else
   {
-    static constexpr float prop_margin = 0.10;
+    static constexpr double prop_margin = 0.10;
     x_margin = (box.xmax() - box.xmin()) * prop_margin;
     y_margin = (box.ymax() - box.ymin()) * prop_margin;
   }

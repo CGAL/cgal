@@ -28,6 +28,7 @@
 #include <QMessageBox>
 #include <QString>
 #include <QGraphicsView>
+#include <QLabel>
 
 #include <CGAL/Qt/GraphicsViewNavigation.h>
 

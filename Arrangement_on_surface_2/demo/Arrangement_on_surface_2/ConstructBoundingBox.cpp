@@ -54,7 +54,7 @@ struct ConstructBoundingBox_impl
       bbox = inf_bbox;
     }
 #ifdef CGAL_USE_CORE
-    catch (Zero_resultant_exception& ex)
+    catch (Zero_resultant_exception&)
     {
       std::cerr << "Exception thrown of type \"Zero_resultant_exception\"\n";
       std::cerr << __FILE__ << ':' << __LINE__ << '\n';

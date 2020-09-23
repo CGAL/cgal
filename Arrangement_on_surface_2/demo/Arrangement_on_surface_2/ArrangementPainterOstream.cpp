@@ -11,7 +11,10 @@
 
 #include "ArrangementPainterOstream.h"
 #include "ArrangementTypes.h"
+
+#ifdef CGAL_USE_CORE
 #include <CGAL/Curved_kernel_via_analysis_2/Curve_renderer_facade.h>
+#endif
 
 #include <QGraphicsView>
 
@@ -262,7 +265,8 @@ ArrangementPainterOstream<CGAL::Arr_Bezier_curve_traits_2<
 
   std::vector<std::pair<double, double>> sampled_points;
   // TODO: get adaptive number of samples
-  size_t number_of_samples = 100 * (param_range.second - param_range.first);
+  unsigned int number_of_samples =
+    100 * (param_range.second - param_range.first);
   sampled_points.reserve(number_of_samples);
 
   supporting_curve.sample(
@@ -397,6 +401,7 @@ auto ArrangementPainterOstream<CGAL::Arr_algebraic_segment_traits_2<
   Coefficient_>>::getPointsList(const X_monotone_curve_2& curve)
   -> std::vector<Coord_vec_2>
 {
+#ifdef CGAL_USE_CORE
   typedef Curve_renderer_facade<CKvA_2> Facade;
   typedef std::pair<double, double> Coord_2;
   typedef std::vector<Coord_2> Coord_vec_2;
@@ -404,6 +409,9 @@ auto ArrangementPainterOstream<CGAL::Arr_algebraic_segment_traits_2<
   std::vector<Coord_vec_2> points;
   Facade::instance().draw(curve, points);
   return points;
+#else
+  return {};
+#endif
 }
 
 template <typename Coefficient_>
@@ -447,11 +455,13 @@ template <typename Coefficient_>
 void ArrangementPainterOstream<
   CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::setupFacade()
 {
+#ifdef CGAL_USE_CORE
   typedef Curve_renderer_facade<CKvA_2> Facade;
   QGraphicsView* view = this->getView();
   QRectF viewport = this->viewportRect();
   CGAL::Bbox_2 bbox = this->convert(viewport).bbox();
   Facade::setup(bbox, view->width(), view->height());
+#endif
 }
 
 // Instantiation of Arr_rational_function_traits_2
