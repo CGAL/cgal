@@ -560,7 +560,7 @@ public:
     traversal(tree.size(), *tree.root_node(), 0);
     lvlSlider = new QSlider(Qt::Horizontal);
     lvlSlider->setMinimum(-1);
-    lvlSlider->setMaximum(boxes.size()-1);
+    lvlSlider->setMaximum(static_cast<int>(boxes.size())-1);
     lvlSlider->setValue(-1);
     lvlSlider->setPageStep(1);
     const CGAL::Bbox_3 bbox = tree.bbox();
