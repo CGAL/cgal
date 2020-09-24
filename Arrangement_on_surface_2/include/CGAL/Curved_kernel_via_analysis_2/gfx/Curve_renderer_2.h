@@ -1750,7 +1750,7 @@ void segment_clip_points(const Rational& x_lower, const Rational& x_upper,
 //                     high = ubound_y(xy);
     //TODO: no need to refine y-intervals: you need only to check whether
     // polynomial vanishes at y_clip, since algebraic real you specify is exact
-                    if((_.first < y_clip && _.second > y_clip)||
+                    if(( (_.first < y_clip) && (_.second > y_clip) ) ||
                             _.first == y_clip || _.second == y_clip) {
                         //event.refine_to(i, engine.pixel_h_r/CGAL_REFINE_Y);
                         Rational _1, _2;
