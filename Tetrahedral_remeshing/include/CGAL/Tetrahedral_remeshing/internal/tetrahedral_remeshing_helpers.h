@@ -955,7 +955,7 @@ void dump_edges(const Bimap& edges, const char* filename)
   std::ofstream ofs(filename);
   ofs.precision(17);
 
-  BOOST_FOREACH(typename Bimap::left_const_reference it, edges.left)
+  for(typename Bimap::left_const_reference it : edges.left)
   {
     ofs << "2 " << point(it.first.first->point())
         << " " << point(it.first.second->point()) << std::endl;

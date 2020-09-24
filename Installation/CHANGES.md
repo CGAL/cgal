@@ -1,7 +1,7 @@
 Release History
 ===============
 
-[Release 5.1](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
+[Release 5.1](https://github.com/CGAL/cgal/releases/tag/v5.1)
 -----------
 
 Release date: September 2020
