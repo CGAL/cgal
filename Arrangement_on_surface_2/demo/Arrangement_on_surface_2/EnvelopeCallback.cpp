@@ -127,12 +127,14 @@ void EnvelopeCallback< Arr_>::updateEnvelope( bool lower )
     if (lower)
     {
       envelopeToUpdate = this->lowerEnvelope;
-      CGAL::lower_envelope_x_monotone_2(curves.begin(), curves.end(), diagram);
+      CGAL::lower_envelope_x_monotone_2(
+        curves.begin(), curves.end(), diagram, *(arr->traits()));
     }
     else
     {
       envelopeToUpdate = this->upperEnvelope;
-      CGAL::upper_envelope_x_monotone_2(curves.begin(), curves.end(), diagram);
+      CGAL::upper_envelope_x_monotone_2(
+        curves.begin(), curves.end(), diagram, *(arr->traits()));
     }
   }
   catch (const std::exception& ex)
