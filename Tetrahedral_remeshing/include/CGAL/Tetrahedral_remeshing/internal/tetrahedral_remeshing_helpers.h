@@ -153,16 +153,6 @@ struct Dihedral_angle_cosine
     , m_sq_den(sq_den)
   {}
 
-  Dihedral_angle_cosine& operator=(const Dihedral_angle_cosine& r)
-  {
-    if (this != &r) { // self-assignment check
-      this->m_sgn = r.m_sgn;
-      this->m_sq_num = r.m_sq_num;
-      this->m_sq_den = r.m_sq_den;
-    }
-    return *this;
-  }
-
   bool is_one() const
   {
     return m_sgn == CGAL::POSITIVE && m_sq_num == m_sq_den;
