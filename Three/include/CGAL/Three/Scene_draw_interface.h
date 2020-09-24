@@ -16,6 +16,7 @@
 #include <CGAL/license/Three.h>
 
 #include <QPoint>
+#include <QVector3D>
 class QKeyEvent;
 class QPoint;
 namespace CGAL

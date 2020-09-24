@@ -695,6 +695,14 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *     \cgalParamDefault{`false`}
  *     \cgalParamExtra{`np1` only}
  *   \cgalParamNEnd
+ *   \cgalParamNBegin{do_not_modify}
+ *     \cgalParamDescription{if `true`, the corresponding mesh will not be updated.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *     \cgalParamExtra{If this parameter is set to `true` for both meshes nothing will be done.
+ *                      If this option is set to `true` for one mesh,
+ *                      the other mesh is no longer required to be without self-intersection.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  */
@@ -709,6 +717,19 @@ corefine(      TriangleMesh& tm1,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+
+  TriangleMesh* const_mesh_ptr=nullptr;
+  if (choose_parameter(get_parameter(np1, internal_np::do_not_modify), false))
+  {
+    if (choose_parameter(get_parameter(np2, internal_np::do_not_modify), false))
+      return;
+    const_mesh_ptr=&tm1;
+  }
+  else
+  {
+    if (choose_parameter(get_parameter(np2, internal_np::do_not_modify), false))
+      const_mesh_ptr=&tm2;
+  }
 
   const bool throw_on_self_intersection =
     choose_parameter(get_parameter(np1, internal_np::throw_on_self_intersection), false);
@@ -769,7 +790,7 @@ corefine(      TriangleMesh& tm1,
   Ob ob;
   Ecm ecm(tm1,tm2,ecm1,ecm2);
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, Vpm, Algo_visitor>
-    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm));
+    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm,const_mesh_ptr));
   functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
 }
 

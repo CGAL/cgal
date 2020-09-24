@@ -153,7 +153,7 @@ public :
       alphaSlider->setMaximum(255);
       alphaSlider->setValue(255);
     }
-    viewer->makeCurrent();
+    //viewer->makeCurrent();
     const EPICK::Plane_3& plane = qobject_cast<Scene_c3t3_item*>(this->parent())->plane();
     float shrink_factor = qobject_cast<Scene_c3t3_item*>(this->parent())->getShrinkFactor();
     QVector4D cp = cgal_plane_to_vector4d(plane);

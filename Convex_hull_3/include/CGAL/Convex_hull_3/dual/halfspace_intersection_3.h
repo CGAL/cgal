@@ -26,7 +26,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 // For interior_polyhedron_3
-#include <CGAL/Convex_hull_3/dual/interior_polyhedron_3.h>
+#include <CGAL/Convex_hull_3/dual/halfspace_intersection_interior_point_3.h>
 #include <CGAL/internal/Exact_type_selector.h>
 
 #include <boost/unordered_map.hpp>
@@ -241,16 +241,12 @@ namespace CGAL
 
         // if a point inside is not provided find one using linear programming
         if (!origin) {
-          // choose exact integral type
-          typedef typename internal::Exact_field_selector<void*>::Type ET;
-
           // find a point inside the intersection
-          typedef Interior_polyhedron_3<K, ET> Interior_polyhedron;
-          Interior_polyhedron interior;
-          CGAL_assertion_code(bool interior_point_found = )
-          interior.find(begin, end);
-          CGAL_assertion_msg(interior_point_found, "halfspace_intersection_3: problem when determing a point inside the intersection");
-          origin = boost::make_optional(interior.inside_point());
+          origin = halfspace_intersection_interior_point_3(begin, end);
+
+          CGAL_assertion_msg(origin!=boost::none, "halfspace_intersection_3: problem when determing a point inside the intersection");
+          if (origin==boost::none)
+            return;
         }
 
         // make sure the origin is on the negative side of all the planes
