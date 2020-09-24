@@ -43,17 +43,7 @@
      <property name="title">
       <string>Tetrahedral remeshing</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0" columnstretch="0,0">
-      <item row="3" column="0">
-       <widget class="QLabel" name="protect_label">
-        <property name="text">
-         <string>Protect boundaries</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
+     <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0" columnstretch="0,0">
       <item row="1" column="1">
        <widget class="QSpinBox" name="nbIterations_spinbox">
         <property name="minimumSize">
@@ -70,10 +60,23 @@
       <item row="3" column="1">
        <widget class="QCheckBox" name="protect_checkbox">
         <property name="text">
-         <string/>
+         <string>Protect boundaries</string>
         </property>
         <property name="checked">
          <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="nbIterations_label">
+        <property name="text">
+         <string>Number of Main iterations</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>nbIterations_spinbox</cstring>
         </property>
        </widget>
       </item>
@@ -93,16 +96,19 @@
         </property>
        </spacer>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="nbIterations_label">
-        <property name="text">
-         <string>Number of Main iterations</string>
+      <item row="0" column="1">
+       <widget class="QDoubleSpinBox" name="edgeLength_dspinbox">
+        <property name="minimumSize">
+         <size>
+          <width>110</width>
+          <height>0</height>
+         </size>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        <property name="maximum">
+         <double>1000.000000000000000</double>
         </property>
-        <property name="buddy">
-         <cstring>nbIterations_spinbox</cstring>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
         </property>
        </widget>
       </item>
@@ -119,19 +125,23 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QDoubleSpinBox" name="edgeLength_dspinbox">
-        <property name="minimumSize">
-         <size>
-          <width>110</width>
-          <height>0</height>
-         </size>
+      <item row="4" column="1">
+       <widget class="QCheckBox" name="smoothEdges_checkBox">
+        <property name="toolTip">
+         <string extracomment="Smoothing of constrained polylines.\nWarning : this may reduce quality of dihedral angles."/>
         </property>
-        <property name="maximum">
-         <double>1000.000000000000000</double>
+        <property name="text">
+         <string>Smooth constrained edges</string>
         </property>
-        <property name="singleStep">
-         <double>0.100000000000000</double>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="options_label">
+        <property name="text">
+         <string>Options :</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>

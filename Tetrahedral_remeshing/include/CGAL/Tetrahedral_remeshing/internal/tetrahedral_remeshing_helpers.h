@@ -17,6 +17,7 @@
 
 #include <utility>
 #include <array>
+#include <iterator>
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Weighted_point_3.h>
@@ -24,6 +25,9 @@
 #include <CGAL/utility.h>
 
 #include <CGAL/IO/File_binary_mesh_3.h>
+
+#include <boost/container/flat_set.hpp>
+#include <boost/container/small_vector.hpp>
 
 namespace CGAL
 {
@@ -135,6 +139,41 @@ typename Tr::Geom_traits::FT min_dihedral_angle(const Tr& tr,
                             c->vertex(1),
                             c->vertex(2),
                             c->vertex(3));
+}
+
+template<typename C3t3>
+bool is_peelable(const C3t3& c3t3,
+                 const typename C3t3::Cell_handle ch,
+                 std::array<bool, 4>& facets_on_surface)
+{
+  typedef typename C3t3::Triangulation::Geom_traits::FT FT;
+  typedef typename C3t3::Facet                          Facet;
+
+  if(!c3t3.is_in_complex(ch))
+    return false;
+
+  bool on_surface = false;
+  for (int i = 0; i < 4; ++i)
+  {
+    facets_on_surface[i] = !c3t3.is_in_complex(ch->neighbor(i));
+    on_surface = on_surface || facets_on_surface[i];
+  }
+  if(!on_surface)
+    return false;
+
+  FT area_on_surface = 0.;
+  FT area_inside = 0.;
+  for (int i = 0; i < 4; ++i)
+  {
+    Facet f(ch, i);
+    const FT facet_area = CGAL::approximate_sqrt(c3t3.triangulation().triangle(f).squared_area());
+    if(facets_on_surface[i])
+      area_on_surface += facet_area;
+    else
+      area_inside += facet_area;
+  }
+
+  return (area_inside < 1.5 * area_on_surface);
 }
 
 template<typename Tr>
@@ -725,31 +764,35 @@ Subdomain_relation compare_subdomains(const typename C3t3::Vertex_handle v0,
                                       const C3t3& c3t3)
 {
   typedef typename C3t3::Subdomain_index Subdomain_index;
+  typedef boost::container::flat_set<Subdomain_index,
+    std::less<Subdomain_index>,
+    boost::container::small_vector<Subdomain_index, 30> > Set_of_subdomains;
 
-  std::vector<Subdomain_index> subdomains_v0;
-  incident_subdomains(v0, c3t3, std::back_inserter(subdomains_v0));
-  std::sort(subdomains_v0.begin(), subdomains_v0.end());
+  Set_of_subdomains subdomains_v0;
+  incident_subdomains(v0, c3t3,
+    std::inserter(subdomains_v0, subdomains_v0.begin()));
 
-  std::vector<Subdomain_index> subdomains_v1;
-  incident_subdomains(v1, c3t3, std::back_inserter(subdomains_v1));
-  std::sort(subdomains_v1.begin(), subdomains_v1.end());
+  Set_of_subdomains subdomains_v1;
+  incident_subdomains(v1, c3t3,
+    std::inserter(subdomains_v1, subdomains_v1.begin()));
 
   if (subdomains_v0.size() == subdomains_v1.size())
   {
-    for (unsigned int i = 0; i < subdomains_v0.size(); i++)
-      if (subdomains_v0[i] != subdomains_v1[i])
-        return DIFFERENT;
-    return EQUAL;
+    if(std::equal(subdomains_v0.begin(), subdomains_v0.end(), subdomains_v1.begin()))
+      return EQUAL;
+    else
+      return DIFFERENT;
   }
   else
   {
-    std::vector<Subdomain_index>
-    intersection((std::min)(subdomains_v0.size(), subdomains_v1.size()), -1);
-    typename std::vector<Subdomain_index>::iterator
+    boost::container::small_vector<Subdomain_index, 30>
+      intersection((std::min)(subdomains_v0.size(), subdomains_v1.size()), -1);
+    typename boost::container::small_vector<Subdomain_index, 30>::iterator
     end_it = std::set_intersection(subdomains_v0.begin(), subdomains_v0.end(),
                                    subdomains_v1.begin(), subdomains_v1.end(),
                                    intersection.begin());
-    std::ptrdiff_t intersection_size = (end_it - intersection.begin());
+    std::ptrdiff_t intersection_size =
+      std::distance(intersection.begin(), end_it);
 
     if (subdomains_v0.size() > subdomains_v1.size()
         && intersection_size == std::ptrdiff_t(subdomains_v1.size()))
@@ -806,15 +849,16 @@ void get_edge_info(const typename C3t3::Edge& edge,
   //feature edges and feature vertices
   if (dim0 < 2 || dim1 < 2)
   {
+    if (!topology_test(edge, c3t3, cell_selector))
+    {
+#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
+      nb_topology_test++;
+#endif
+      return;
+    }
+
     if (c3t3.is_in_complex(edge))
     {
-      if (!topology_test(edge, c3t3, cell_selector))
-      {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-        nb_topology_test++;
-#endif
-        return;
-      }
       const std::size_t nb_si_v0 = nb_incident_subdomains(v0, c3t3);
       const std::size_t nb_si_v1 = nb_incident_subdomains(v1, c3t3);
 
@@ -831,6 +875,19 @@ void get_edge_info(const typename C3t3::Edge& edge,
           update_v0 = true;
         if (!c3t3.is_in_complex(v1))
           update_v1 = true;
+      }
+    }
+    else
+    {
+      if (dim0 == 2 && is_boundary_edge(v0, v1, c3t3, cell_selector))
+      {
+        update_v0 = true;
+        return;
+      }
+      else if(dim1 == 2 && is_boundary_edge(v0, v1, c3t3, cell_selector))
+      {
+        update_v1 = true;
+        return;
       }
     }
     return;
@@ -1334,17 +1391,19 @@ void dump_cells_with_small_dihedral_angle(const Tr& tr,
        cit != tr.finite_cells_end(); ++cit)
   {
     Cell_handle c = cit;
-    if ( c->subdomain_index() != Subdomain_index()
-         && cell_select(c)
-         && min_dihedral_angle(tr, c) < angle_bound)
+    if (c->subdomain_index() != Subdomain_index() && cell_select(c))
     {
-
-      cells.push_back(c);
-      indices.push_back(c->subdomain_index());
+      double dh = min_dihedral_angle(tr, c);
+      if (dh < angle_bound)
+      {
+        cells.push_back(c);
+        indices.push_back(c->subdomain_index());
+      }
     }
   }
   std::cout << "bad cells : " << cells.size() << std::endl;
   dump_cells<Tr>(cells, indices, filename);
+  dump_cells_off(cells, tr, "bad_cells.off");
 }
 
 template<typename Tr>

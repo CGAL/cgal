@@ -1,0 +1,41 @@
+name: Documentation
+
+on: [pull_request_target]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2.0.0
+    - name: install dependencies
+      run: |
+         set -x
+         sudo apt-get install -y graphviz ssh
+         sudo pip install lxml pyquery
+         wget -O doxygen_exe https://cgal.geometryfactory.com/~mgimeno/doxygen/build_1_8_13/bin/doxygen
+         sudo mv doxygen_exe /usr/bin/doxygen
+         sudo chmod +x /usr/bin/doxygen
+
+         git config --global user.email "maxime.gimeno@geometryfactory.com"
+         git config --global user.name "Maxime Gimeno"
+
+    - name: configure all
+      run: |
+        git clone https://maxGimeno:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git --depth=5
+        mkdir -p build_doc && cd build_doc && cmake ../Documentation/doc
+    - name: Upload Doc
+      run: |
+        set -e
+        PR_NUMBER=$(python -c "import json; import os; y = json.load(open(os.environ['GITHUB_EVENT_PATH'])); print(y[\"number\"])")
+        mkdir -p cgal.github.io/${PR_NUMBER}
+        cd build_doc && make -j2 doc && make -j2 doc_with_postprocessing
+        cp -r ./doc_output/* ../cgal.github.io/${PR_NUMBER}/
+        cd ../cgal.github.io
+        if ! egrep -q " ${PR_NUMBER}\."; then
+          echo "<li><a href=https://cgal.github.io/${PR_NUMBER}/Manual/index.html>Manual for PR ${PR_NUMBER}.</a></li>" >> ./index.html
+        fi
+        #rsync --compress -a doc_output/* ${{ secrets.ids }}/cgal.github.io/${PR_NUMBER}/
+        git add ${PR_NUMBER} && git commit -a -m "Add ${PR_NUMBER}" && git push -u origin master
+        #ssh mgimeno@cgal.geometryfactory.com "cd /home/mgimeno/public_html/cgal.github.io && git add ${PR_NUMBER} && git commit -a -m 'Add a new directory' && git push origin master"

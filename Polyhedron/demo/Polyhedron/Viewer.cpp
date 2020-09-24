@@ -1596,6 +1596,7 @@ void Viewer_impl::showDistance(QPoint pixel)
                                         .arg(BPoint.x/scaler.x()-viewer->offset().x, 0, 'g', 10)
                                         .arg(BPoint.y/scaler.y()-viewer->offset().y, 0, 'g', 10)
                                         .arg(BPoint.z/scaler.z()-viewer->offset().z, 0, 'g', 10), true, font, Qt::red, true);
+
         distance_text.append(BCoord);
         CGAL::qglviewer::Vec centerPoint = 0.5*(BPoint+APoint);
         TextItem *centerCoord = new TextItem(float(centerPoint.x),
