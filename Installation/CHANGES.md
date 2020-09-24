@@ -1,6 +1,7 @@
 Release History
 ===============
 
+<<<<<<< HEAD
 [Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
 -----------
 
@@ -20,6 +21,9 @@ Release date: December 2020
     self-intersections present in the intersection area.
 
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
+=======
+[Release 5.1](https://github.com/CGAL/cgal/releases/tag/v5.1)
+>>>>>>> 6db27e5db6787ffe75c4a833644c69f9ed4baedc
 -----------
 
 Release date: September 2020
