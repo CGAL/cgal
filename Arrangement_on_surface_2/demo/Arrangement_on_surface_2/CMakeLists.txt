@@ -2,7 +2,9 @@
 
 cmake_minimum_required(VERSION 3.1...3.15)
 project( Arrangement_on_surface_2_Demo )
+
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
@@ -13,7 +15,7 @@ if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
-find_package(CGAL QUIET COMPONENTS Core Qt5)
+find_package(CGAL QUIET COMPONENTS Qt5 OPTIONAL_COMPONENTS Core)
 find_package(Qt5 QUIET COMPONENTS Gui Widgets)
 
 if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
@@ -95,5 +97,18 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
   cgal_add_compilation_test(arrangement_2)
 
 else()
-  message(STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
+  set(MISSING_DEPS "")
+
+  if(NOT CGAL_FOUND)
+    set(MISSING_DEPS "CGAL, ${MISSING_DEPS}")
+  endif()
+  if(NOT CGAL_Qt5_FOUND)
+    set(MISSING_DEPS "the CGAL Qt5 library, ${MISSING_DEPS}")
+  endif()
+  if(NOT Qt5_FOUND)
+    set(MISSING_DEPS "Qt5, ${MISSING_DEPS}")
+  endif()
+
+  message(STATUS
+          "NOTICE: This demo requires ${MISSING_DEPS} and will not be compiled.")
 endif()
