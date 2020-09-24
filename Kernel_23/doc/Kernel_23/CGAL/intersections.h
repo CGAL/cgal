@@ -66,6 +66,12 @@ Also, `Type1` and `Type2` can be respectively of types
 - `Iso_cuboid_3<Kernel>` and `Iso_cuboid_3<Kernel>`.
 */
 bool do_intersect(Type1<Kernel> obj1, Type2<Kernel> obj2);
+
+/*!
+checks whether `obj1`, `obj2` and `obj3` intersect.
+*/
+bool do_intersect(Plane_3<Kernel> obj1, Plane_3<Kernel> obj2, Plane_3<Kernel> obj3);
+
 /// @}
 
 
