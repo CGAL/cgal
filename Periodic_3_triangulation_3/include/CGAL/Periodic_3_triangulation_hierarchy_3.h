@@ -523,7 +523,7 @@ random_level()
        && hierarchy[level_mult_cover]->number_of_sheets() == make_array(1,1,1) )
     ++level_mult_cover;
 
-  boost::geometric_distribution<> proba(1.0/ratio);
+  boost::geometric_distribution<> proba(1.0/static_cast<double>(ratio));
   boost::variate_generator<boost::rand48&, boost::geometric_distribution<> >
       die(random, proba);
   return (std::min)(die()-1, level_mult_cover);
