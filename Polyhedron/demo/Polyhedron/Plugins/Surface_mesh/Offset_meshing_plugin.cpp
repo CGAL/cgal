@@ -518,9 +518,8 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
                       .arg(approx)
                       .arg(offset_value));
     new_item->setColor(Qt::magenta);
-    new_item->setRenderingMode(item->renderingMode());
+    new_item->setWireframeMode();
     CGAL::Three::Three::scene()->addItem(new_item);
-    item->setVisible(false);
     CGAL::Three::Three::scene()->itemChanged(index);
     QApplication::restoreOverrideCursor();
 
