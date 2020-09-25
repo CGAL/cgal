@@ -267,6 +267,18 @@ public:
   // PRECONDITION: Exactly 2 out of 3 edges are collinear
   Segment_2 const& collinear_edge    () const { return e(mCSIdx) ; }
   Segment_2 const& non_collinear_edge() const { return e(mNCSIdx) ; }
+  Segment_2 const& other_collinear_edge() const
+  {
+    switch ( mCollinearity )
+    {
+      case TRISEGMENT_COLLINEARITY_01:
+        return e(1);
+      case TRISEGMENT_COLLINEARITY_12:
+        return e(2);
+      case TRISEGMENT_COLLINEARITY_02:
+        return e(2);
+    }
+  }
 
   Self_ptr child_l() const { return mChildL ; }
   Self_ptr child_r() const { return mChildR ; }
