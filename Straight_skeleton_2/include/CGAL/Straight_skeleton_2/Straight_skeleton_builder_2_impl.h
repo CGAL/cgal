@@ -1478,13 +1478,17 @@ template<class Halfedge_handle>
 void TraceMultinode( char const* t, Halfedge_handle b, Halfedge_handle e )
 {
   std::ostringstream ss ;
+  ss.precision(19);
   ss << t ;
 
+  ss << "before: B" << b->prev()->id() << " N" << b->prev()->vertex()->id() << " Pt: " << b->prev()->vertex()->point() << "\n" ;
   do
   {
-    ss << "B" << b->id() << " N" << b->vertex()->id() << " " ;
+    ss << "B" << b->id() << " N" << b->vertex()->id() << " Pt: " << b->vertex()->point() << "\n" ;
   }
   while ( b = b->next(), b != e ) ;
+
+  ss << "after: B" << b->id() << " N" << b->vertex()->id() << " Pt: " << b->vertex()->point() << "\n" ;
 
   std::string s = ss.str();
   CGAL_STSKEL_BUILDER_TRACE(0, s);
@@ -1604,6 +1608,8 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::PreprocessMultinode( Multinode& aMN )
 
   // Halfedge_handle oend = validate(aMN.end->opposite());
 
+  CGAL_STSKEL_DEBUG_CODE( TraceMultinode("Preprocessing multinode:\n", aMN.begin,aMN.end) ) ;
+
   Halfedge_handle h = aMN.begin ;
 
   aMN.bisectors_to_relink.push_back(h);
@@ -1640,8 +1646,6 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::PreprocessMultinode( Multinode& aMN )
   while ( h != aMN.end ) ;
 
   aMN.bisectors_to_relink.push_back(aMN.end->opposite());
-
-  CGAL_STSKEL_DEBUG_CODE( TraceMultinode("Preprocessing multinode: ", aMN.begin,aMN.end) ) ;
 }
 
 //
