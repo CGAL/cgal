@@ -158,6 +158,13 @@ public :
                                       );
             break;
           }
+          // Non degeneracy.
+          valid = valid && ( begin->vertex() != begin->opposite()->vertex() );
+          if ( ! valid)
+          {
+            CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"] has same source/target: v[" << id(begin->vertex()) << "]" );
+            break;
+          }
           // previous integrity.
           valid = valid && begin->next()->prev() == begin;
           if ( ! valid)
