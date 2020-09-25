@@ -149,17 +149,12 @@ namespace CGAL {
 
     template <class CircularKernel, class Arc1, class Arc2>
     class Equal_2
-#ifndef CGAL_CFG_MATCHING_BUG_6
-      : public
-      CircularKernel::Equal_2
-#endif
+      : public CircularKernel::Equal_2
     {
     public:
       typedef boost::variant< Arc1, Arc2 >  Curve_2;
       typedef bool result_type;
-#ifndef CGAL_CFG_MATCHING_BUG_6
       using CircularKernel::Equal_2::operator();
-#else
       typedef typename CircularKernel::Circular_arc_point_2
                                                   Circular_arc_point_2;
       typedef typename CircularKernel::Line_arc_2     Line_arc_2;
@@ -186,8 +181,6 @@ namespace CGAL {
     result_type
     operator() ( const Circular_arc_2 &a0, const Line_arc_2 &a1) const
     { return false; }
-
-#endif
 
       result_type
       operator()(const Curve_2 &a0, const Curve_2 &a1) const
