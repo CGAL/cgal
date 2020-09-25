@@ -80,6 +80,14 @@ protected:
     else
       add_segment(eh->opposite()->vertex()->point(), eh->vertex()->point(), CGAL::black());
   }
+  void print_halfedge_labels(Halfedge_const_handle h)
+  {
+    std::stringstream label;
+    label << "H" << h->id() << " (V" << h->vertex()->id() << ") ";
+    label << "H" << h->opposite()->id() << " (V" << h->opposite()->vertex()->id() << ") ";
+    add_text(CGAL::midpoint(h->opposite()->vertex()->point(), h->vertex()->point()), label.str());
+  }
+
   void compute_vertex(Vertex_const_handle vh)
   {
     if(vh->is_split())
@@ -89,17 +97,30 @@ protected:
     else
       add_point(vh->point(), CGAL::Color(10,180,10)); // green, but not flashy
   }
+  void print_vertex_label(Vertex_const_handle vh)
+  {
+    std::stringstream label;
+    label << "V" << vh->id() << std::ends;
+    add_text(vh->point(), label.str());
+  }
 
   void compute_elements()
   {
     clear();
 
-    for (typename SS2::Halfedge_const_iterator it=ss2.halfedges_begin();
-         it!=ss2.halfedges_end(); ++it)
-    { compute_edge(it); }
-    for (typename SS2::Vertex_const_iterator it=ss2.vertices_begin();
-         it!=ss2.vertices_end(); ++it)
-    { compute_vertex(it); }
+    for (typename SS2::Halfedge_const_iterator it=ss2.halfedges_begin(); it!=ss2.halfedges_end(); ++it)
+    {
+      if(it->id() < it->opposite()->id())
+      {
+        compute_edge(it);
+        print_halfedge_labels(it);
+      }
+    }
+    for (typename SS2::Vertex_const_iterator it=ss2.vertices_begin(); it!=ss2.vertices_end(); ++it)
+    {
+      compute_vertex(it);
+      print_vertex_label(it);
+    }
   }
 
   virtual void keyPressEvent(QKeyEvent *e)
