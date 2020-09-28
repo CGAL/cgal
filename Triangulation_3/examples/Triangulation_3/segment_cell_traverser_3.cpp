@@ -89,16 +89,10 @@ int main(int argc, char* argv[])
   ////////////////////////////////////////////////////////////
   // Construct a traverser and use range-iterator
   ////////////////////////////////////////////////////////////
-  Point_3 p3(rng.get_double(xmin, xmax),
-             rng.get_double(ymin, ymax),
-             rng.get_double(zmin, zmax));
-  Point_3 p4(rng.get_double(xmin, xmax),
-             rng.get_double(ymin, ymax),
-             rng.get_double(zmin, zmax));
 
   // Count the number of finite cells traversed.
   inf = 0, fin = 0;
-  for (const Cell_handle ch : dt.segment_traverser_cell_handles(p3, p4))
+  for (const Cell_handle ch : dt.segment_traverser_cell_handles(p1, p2))
   {
     if (dt.is_infinite(ch))
       ++inf;
@@ -106,7 +100,7 @@ int main(int argc, char* argv[])
       ++fin;
   }
 
-  std::cout << "While traversing from " << p3 << " to " << p4 << std::endl;
+  std::cout << "While traversing from " << p1 << " to " << p2 << std::endl;
   std::cout << inf << " infinite and "
             << fin << " finite cells were visited." << std::endl;
   std::cout << std::endl << std::endl;

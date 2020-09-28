@@ -75,15 +75,9 @@ int main(int argc, char* argv[])
   ////////////////////////////////////////////////////////////
   // Construct a traverser and use range-iterator
   ////////////////////////////////////////////////////////////
-  Point_3 p3(rng.get_double(-0.48, 0.31),
-             rng.get_double(-0.22, 0.22),
-             rng.get_double(-0.19, 0.19));
-  Point_3 p4(rng.get_double(-0.48, 0.31),
-             rng.get_double(-0.22, 0.22),
-             rng.get_double(-0.19, 0.19));
 
   nb_cells = 0, nb_facets = 0, nb_edges = 0, nb_vertex = 0;
-  for (const Simplex& s : dt.segment_traverser_simplices(p3, p4))
+  for (const Simplex& s : dt.segment_traverser_simplices(p1, p2))
   {
     if (s.dimension() == 3)          ++nb_cells;
     else if (s.dimension() == 2)     ++nb_facets;
@@ -92,7 +86,7 @@ int main(int argc, char* argv[])
   }
 
 #ifdef CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
-  std::cout << "While traversing from " << p3 << " to " << p4 << std::endl;
+  std::cout << "While traversing from " << p1 << " to " << p2 << std::endl;
   std::cout << "\tcells    : " << nb_cells << std::endl;
   std::cout << "\tfacets   : " << nb_facets << std::endl;
   std::cout << "\tedges    : " << nb_edges << std::endl;
