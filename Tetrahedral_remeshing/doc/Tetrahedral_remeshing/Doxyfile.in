@@ -6,18 +6,6 @@ EXTRACT_ALL          = false
 HIDE_UNDOC_CLASSES   = true
 WARN_IF_UNDOCUMENTED = false
 
-# macros to be used inside the code
-ALIASES += "cgalNamedParamsBegin=<dl class=\"params\"><dt>Named Parameters</dt><dd> <table class=\"params\">"
-ALIASES += "cgalNamedParamsEnd=</table> </dd> </dl>"
-ALIASES += "cgalParamBegin{1}=<tr><td class=\"paramname\">\ref Remeshing_\1 \"\1\"</td><td>"
-ALIASES += "cgalParamEnd=</td></tr>"
-
-#macros for NamedParameters.txt
-ALIASES += "cgalNPTableBegin=<dl class=\"params\"><dt></dt><dd> <table class=\"params\">"
-ALIASES += "cgalNPTableEnd=</table> </dd> </dl>"
-ALIASES += "cgalNPBegin{1}=<tr><td class=\"paramname\">\1 </td><td>"
-ALIASES += "cgalNPEnd=</td></tr>"
-
 EXAMPLE_PATH += ${CGAL_Tetrahedral_remeshing_EXAMPLE_DIR}
 
 EXCLUDE = ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Tetrahedral_remeshing/internal
@@ -25,4 +13,4 @@ EXCLUDE = ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Tetrahedral_remeshing/internal
 #MACRO_EXPANSION        = YES
 #EXPAND_ONLY_PREDEF     = YES
 #EXPAND_AS_DEFINED      = CGAL_PMP_NP_TEMPLATE_PARAMETERS \
-#                        CGAL_PMP_NP_CLASS
+#                         CGAL_PMP_NP_CLASS

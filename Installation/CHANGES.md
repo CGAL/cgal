@@ -4,20 +4,50 @@ Release History
 [Release 5.2](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.2)
 -----------
 
-### [3D Triangulations](https://doc.cgal.org/5.1/Manual/packages.html#PkgTriangulation3)
+### [3D Triangulations](https://doc.cgal.org/5.2/Manual/packages.html#PkgTriangulation3)
  - Add `Segment_cell_iterator` to iterate over cells intersected by a line segment.
  - Add `Segment_simplex_iterator` to iterate over simplices intersected by a line segment.
  
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 -----------
 
-Release date: July 2020
+Release date: December 2020
+
+### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/5.2/Manual/packages.html#PkgBGL)
+
+-   Added the convenience header `CGAL/boost/graph/graph_traits_inheritance_macros.h` that allows to easily
+    make any class inheriting from a model of a face graph concept, a model of the same concept.
+
+### [3D Convex Hulls](https://doc.cgal.org/5.2/Manual/packages.html#PkgConvexHull3)
+-   Added the function `CGAL::halfspace_intersection_interior_point_3()` that can be used to retrieve
+    the point that is the most interior a convex closed volume defined by the intersection of a set of halfspaces.
+
+
+### [Polygon Mesh Processing](https://doc.cgal.org/5.2/Manual/packages.html#PkgPolygonMeshProcessing)
+-   Added an option in `corefine()`, `split()` and `clip()` functions that enables the operation to be done on a mesh with
+    self-intersections present in the intersection area.
+
+### [dD Geometry Kernel](https://doc.cgal.org/5.2/Manual/packages.html#PkgKernelD)
+
+-   The kernels [`Epick_d`](https://doc.cgal.org/5.2/Kernel_d/structCGAL_1_1Epick__d.html)
+    and [`Epeck_d`](https://doc.cgal.org/5.2/Kernel_d/structCGAL_1_1Epeck__d.html) gain two new functors:
+    [`Compute_power_product_d`](https://doc.cgal.org/5.2/Kernel_d/classCGAL_1_1Epeck__d_1_1Compute__power__product__d.html)
+    and [`Construct_power_sphere_d`](https://doc.cgal.org/5.2/Kernel_d/classCGAL_1_1Epeck__d_1_1Construct__power__sphere__d.html),
+    to deal with weighted points.
+
+
+[Release 5.1](https://github.com/CGAL/cgal/releases/tag/v5.1)
+-----------
+
+Release date: September 2020
 
 ### [Tetrahedral Remeshing](https://doc.cgal.org/5.1/Manual/packages.html#PkgTetrahedralRemeshing) (new package)
 
 -   This package implements a tetrahedral isotropic remeshing algorithm,
     that improves the quality of tetrahedra in terms of dihedral angles,
     while targeting a given edge length.
+
+    See also the associated [blog entry](https://www.cgal.org/2020/08/07/Tetrahedral-remeshing/).
 
 ### [Surface Mesh Topology](https://doc.cgal.org/5.1/Manual/packages.html#PkgSurfaceMeshTopologySummary) (new package)
 
@@ -36,6 +66,11 @@ Release date: July 2020
     (in terms of volume) bounding box that contains a given mesh or point set.
 
     See also the associated [blog entry](https://www.cgal.org/2020/04/20/Optimal_bounding_box/).
+
+### Installation
+
+-   The CGAL\_Core library no longer requires `Boost.Thread`, even if the g++ compiler is used.
+-   The minimal supported version of Boost is now 1.66.0.
 
 ### [Tutorials](https://doc.cgal.org/5.1/Manual/tutorials.html)
 

@@ -171,9 +171,11 @@ class AABB_tree;
 /// \sa `AABBPrimitiveWithSharedData`
 
   template<typename GeomTraits, typename AABBPrimitive, typename BboxMap = Default>
-class AABB_traits:
-  public internal::AABB_tree::AABB_traits_base<AABBPrimitive>,
+class AABB_traits
+#ifndef DOXYGEN_RUNNING
+: public internal::AABB_tree::AABB_traits_base<AABBPrimitive>,
   public internal::AABB_tree::AABB_traits_base_2<GeomTraits>
+#endif
 {
   typedef typename CGAL::Object Object;
 public:
