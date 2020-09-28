@@ -15,7 +15,6 @@ int main (int argc, char** argv)
     CGAL::Classification::ETHZ::Random_forest_classifier::
       convert_deprecated_configuration_to_new_format(ifile, ofile);
   }
-  
+
   return EXIT_SUCCESS;
 }
-
