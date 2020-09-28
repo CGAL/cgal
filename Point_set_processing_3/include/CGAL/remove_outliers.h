@@ -257,9 +257,9 @@ remove_outliers(
     std::nth_element (f2r,
                       sorted_points.begin() + first_index_to_remove,
                       sorted_points.end(),
-                      [&point_map](const std::pair<FT, value_type>& v1, const std::pair<FT, value_type>& v2)
+                      [](const std::pair<FT, value_type>& v1, const std::pair<FT, value_type>& v2)
                       {
-                        return get(point_map, v1.second) < get(point_map, v2.second);
+                        return v1.first<v2.first;
                       });
     f2r = sorted_points.begin() + first_index_to_remove;
   }
