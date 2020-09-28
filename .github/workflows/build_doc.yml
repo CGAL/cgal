@@ -79,11 +79,17 @@ jobs:
         run: |
           set -e
           PR_NUMBER=${{ steps.get_pr_number.outputs.result }}
-          mkdir -p cgal.github.io/${PR_NUMBER}/${{ steps.get_round.outputs.result }}
-          cd build_doc && make -j2 doc && make -j2 doc_with_postprocessing
-          cp -r ./doc_output/* ../cgal.github.io/${PR_NUMBER}/${{ steps.get_round.outputs.result }}
-          cd ../cgal.github.io
-          egrep -v " ${PR_NUMBER}\." index.html > tmp.html
-          echo "<li><a href=https://cgal.github.io/${PR_NUMBER}/${{ steps.get_round.outputs.result }}/Manual/index.html>Manual for PR ${PR_NUMBER} (${{ steps.get_round.outputs.result }}).</a></li>" >> ./tmp.html
-          mv tmp.html index.html
-          git add ${PR_NUMBER}/${{ steps.get_round.outputs.result }} && git commit -a -m "Add ${PR_NUMBER} round ${{ steps.get_round.outputs.result }}" && git push -u origin master
+          ROUND=${{ steps.get_round.outputs.result }}
+          wget cgal.github.io -O tmp.html
+          if $(cat tmp.html |egrep -q "\/$PR_NUMBER\/$ROUND"); then
+            mkdir -p cgal.github.io/${PR_NUMBER}/$ROUND
+            cd build_doc && make -j2 doc && make -j2 doc_with_postprocessing
+            cp -r ./doc_output/* ../cgal.github.io/${PR_NUMBER}/$ROUND
+            cd ../cgal.github.io
+            egrep -v " ${PR_NUMBER}\." index.html > tmp.html
+            echo "<li><a href=https://cgal.github.io/${PR_NUMBER}/$ROUND/Manual/index.html>Manual for PR ${PR_NUMBER} ($ROUND).</a></li>" >> ./tmp.html
+            mv tmp.html index.html
+            git add ${PR_NUMBER}/$ROUND && git commit -a -m "Add ${PR_NUMBER} $ROUND" && git push -u origin master
+          else
+            exit 1
+          fi
