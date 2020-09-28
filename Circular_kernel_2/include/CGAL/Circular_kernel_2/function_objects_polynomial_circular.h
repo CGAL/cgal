@@ -908,7 +908,7 @@ namespace CircularFunctors {
     typedef typename CK::Linear_kernel::Bounded_side_2::result_type result_type;
 
     using CK::Linear_kernel::Bounded_side_2::operator();
-  
+
     result_type
     operator()(const Circle_2& c, const Circular_arc_point_2& p) const
     { return CircularFunctors::bounded_side<CK>(c,p); }
@@ -944,7 +944,7 @@ namespace CircularFunctors {
     typedef typename CK::Linear_kernel::Has_on_unbounded_side_2::result_type result_type;
 
     using CK::Linear_kernel::Has_on_unbounded_side_2::operator();
-  
+
     result_type
     operator()(const Circle_2& c, const Circular_arc_point_2& p) const
     { return CK().bounded_side_2_object()(c,p) == ON_UNBOUNDED_SIDE; }
