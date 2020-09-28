@@ -1,26 +1,32 @@
 
 // #define CGAL_PROFILE
 
+
+// #define TRACE
+
+// fast.cpp and fastE.cpp produce the same trace output to see where the executables take different paths
+// As fastE operates on reordered faces it is important to use as input an off file
+// where the faces are ordered in such a way that they do not get reordered.
+// Therefore fastE.cpp writess the indices into a file named "sorted.off" which can be used
+// to replace the faces in the original input.
+
+
 #include <Eigen/Dense>
 
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Timer.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_primitive.h>
 #include <boost/iterator/counting_iterator.hpp>
-#include <fstream>
+
 #include <string>
+#include <fstream>
 
-int main()
-{
-  CGAL::Simple_cartesian<double>::Plane_3 a, b,c;
 
-  CGAL::do_intersect(a,b,c);
 
-}
-#if 0
 namespace CGAL {
 template <typename K>
 int obtuse_angle(const Point_3<K>& p, const Point_3<K>& q, const Point_3<K>& r)
@@ -49,7 +55,7 @@ Vector_3<K> normalize(const Vector_3<K>& v)
 
 typedef Eigen::Matrix<int, 3, 1> Vector3i;
 
-typedef CGAL::Simple_cartesian<double> Kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 
 
@@ -71,7 +77,11 @@ struct Envelope {
   typedef typename EK::Plane_3 ePlane_3;
   typedef typename EK::Intersect_3 eIntersect_3;
   typedef typename EK::Oriented_side_3 eOriented_side_3;
+  typedef typename EK::Are_parallel_3 eAre_parallel_3;
 
+  // The class  `Plane` is used for the 7-8 walls of a prism.
+  // We store at the same  time threee points and a plane.
+  // That is easier than retrieving the 3 points of a lazy plane.
   struct Plane {
     Plane()
     {}
@@ -102,6 +112,8 @@ struct Envelope {
   std::vector<Point_3> env_vertices;
   std::vector<Vector3i> env_faces;
 
+
+  // For a query object the envelope test uses an AABB tree to find the relevant prisms
 
   // property maps for the primitive
   template <class Kernel>
@@ -151,6 +163,7 @@ struct Envelope {
 
   eOriented_side_3 oriented_side;
 
+
   Envelope(const std::vector<Point_3>& env_vertices,
            std::vector<Vector3i> env_faces,
            double epsilon)
@@ -176,6 +189,7 @@ struct Envelope {
     std::vector<int> FACES;
   };
 
+
   // was marked todo???
   bool box_box_intersection(const Iso_cuboid_3 ic1, const Iso_cuboid_3 ic2) const
   {
@@ -190,6 +204,21 @@ struct Envelope {
       return 0;
     return 1;
   }
+
+
+  bool do_intersect(const ePlane_3& ep0, const ePlane_3& ep1, const ePlane_3& ep2) const
+  {
+
+  CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
+    result = CGAL::intersection(ep0,ep1,ep2);
+  if(! result){
+    return false;
+  }
+
+  const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
+  return ipp != nullptr;
+  }
+
 
   bool
   point_out_prism(const ePoint_3 &point, const std::vector<unsigned int> &prismindex, int jump) const
@@ -220,6 +249,7 @@ struct Envelope {
 
     return true;
   }
+
 
   // \param jump is the index of the prism that shall be ignored
   // \param id is a return parameter for the prism with `point` inside
@@ -346,7 +376,7 @@ struct Envelope {
       CGAL::cpp11::result_of<eIntersect_3(eLine_3, ePlane_3)>::type
         result = CGAL::intersection(line, plane_i.eplane);
       if(! result){
-        std::cout <<  "there must be an intersection" << std::endl;
+        std::cout <<  "there must be an intersection 2" << std::endl;
       }
 
       const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
@@ -391,9 +421,11 @@ struct Envelope {
     CGAL::Oriented_side ori;
     CGAL::cpp11::result_of<eIntersect_3(eLine_3, ePlane_3)>::type
       result = CGAL::intersection(eline, plane.eplane);
+#ifdef TRACE
     if(! result){
-      std::cout <<  "there must be an intersection" << std::endl;
+      std::cout <<  "there must be an intersection 3" << std::endl;
     }
+#endif
 
     const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
     CGAL_assertion(ipp != nullptr);
@@ -424,8 +456,9 @@ struct Envelope {
 
 
 
-  bool segment_out_of_envelope(const Point_3& source, const Point_3& target,
-                               const std::vector<unsigned int>& prismindex) const
+  bool
+  segment_out_of_envelope(const Point_3& source, const Point_3& target,
+                          const std::vector<unsigned int>& prismindex) const
   {
     if (prismindex.size() == 0) {
       return true;
@@ -512,8 +545,133 @@ struct Envelope {
   }
 
 
-  int is_triangle_cut_envelope_polyhedra(const int &cindex,//the triangle is not degenerated
-                                         const ePoint_3 &tri0, const ePoint_3 &tri1, const ePoint_3 &tri2, std::vector<int> &cid) const
+
+  int
+  is_3_triangle_cut_float_fast(const ePoint_3& tp,
+                               const ePoint_3& tq,
+                               const ePoint_3& tr,
+                               const ePlane_3 &tri,
+                               const ePlane_3 &facet1,
+                               const ePlane_3 &facet2) const
+  {
+    // todo:  what do we test here with n ?
+    // todo : do this not with Epeck
+    ePoint_3 n = tp + CGAL::cross_product((tp - tq), (tp - tr));
+
+    if (CGAL::orientation(n, tp, tq, tr) == 0){
+        std::cout << "todo degeneration handling" << std::endl;
+        //n = Point_3(rand(), rand(), rand())} };
+      }
+
+    CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
+      result = CGAL::intersection(tri, facet1, facet2);
+    if(! result){
+#ifdef TRACE
+      std::cout <<  "there must be an intersection 4" << std::endl;
+#endif
+        return 0;
+    }
+    const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
+    CGAL_assertion(ipp != nullptr);
+
+    const ePoint_3& ip = *ipp;
+
+    int o1 = int(CGAL::orientation(n,tp,tq, ip));
+    int o2 = int(CGAL::orientation(n,tq,tr, ip));
+
+    if (o1 * o2 == -1){
+      return 0;
+    }
+    int o3 = int(CGAL::orientation(n, tr, tp, ip));
+
+    if (o1 * o3 == -1 || o2 * o3 == -1)
+      return 0;
+    if (o1 * o2 * o3 == 0)
+      return 2; // means we dont know
+    return 1;
+  }
+
+
+  bool
+  is_3_triangle_cut(const ePoint_3& tp,
+                    const ePoint_3& tq,
+                    const ePoint_3& tr,
+                    const ePlane_3 &tri,
+                    const ePlane_3 &facet1,
+                    const ePlane_3 &facet2) const
+  {
+
+    CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
+      result = CGAL::intersection(tri, facet1, facet2);
+    if(! result){
+      // todo:  what to do?
+#ifdef TRACE
+      std::cout <<  "there must be an intersection 5" << std::endl;
+#endif
+    }
+    const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
+    if(ipp != nullptr){
+      // todo:  what to do?
+#ifdef TRACE
+      std::cout <<  "the intersection must be a point" << std::endl;
+#endif
+    }
+
+    const ePoint_3& ip = *ipp;
+
+
+    ePoint_3 n = tp + CGAL::cross_product((tp - tq), (tp - tr));
+
+    if (Predicates::orient_3d(n, tp, q, tr) == 0)
+      {
+        //logger().debug("Degeneration happens");
+#ifdef TRACE
+        std::cout << "todo degeneration handling" << std::endl;
+#endif
+        //n = { {Vector3(rand(), rand(), rand())} };
+      }
+
+    int o1 = int(orient(n,tp,tq, ip));
+    if (o1 == 0){
+      return false;
+    }
+
+    int o2 = int(orientation(n, tq, tr, ip));
+
+    if (o2 == 0 || o1 + o2 == 0){
+      return false;
+    }
+
+    int o3 = int(orientation(n, tr, tp, ip));
+
+    if (o3 == 0 || o1 + o3 == 0 || o2 + o3 == 0){
+      return false;
+    }
+
+    return true;
+  }
+
+
+  bool
+  is_two_facets_neighbouring(const int & pid, const int &i, const int &j)const
+  {
+    int facesize = halfspace[pid].size();
+    if (i == j) return false;
+    if (i == 0 && j != 1) return true;
+    if (i == 1 && j != 0) return true;
+    if (j == 0 && i != 1) return true;
+    if (j == 1 && i != 0) return true;
+    if (i - j == 1 || j - i == 1) return true;
+    if (i == 2 && j == facesize - 1) return true;
+    if (j == 2 && i == facesize - 1) return true;
+    return false;
+  }
+
+
+  int
+  is_triangle_cut_envelope_polyhedra(const int &cindex,//the triangle is not degenerated
+                                     const ePoint_3 &tri0, const ePoint_3 &tri1, const ePoint_3 &tri2,
+                                     std::vector<int> &cid) const
   {
     const Prism& prism = halfspace[cindex];
     cid.clear();
@@ -569,7 +727,9 @@ struct Envelope {
     if (cutp.size() == 0){
         return 0;
       }
-
+#ifdef TRACE
+    std::cout << "A" << std::endl;
+#endif
     std::array<ePoint_3*,2> seg0, seg1;
 
     for (int i = 0; i < cutp.size(); i++)
@@ -583,13 +743,13 @@ struct Envelope {
         }
         if (o1[cutp[i]] * o3[cutp[i]] == -1|| o1[cutp[i]] + o3[cutp[i]] == -1) {
           seg0[tmp] = const_cast<ePoint_3*>(&tri0);
-          seg1[tmp] = const_cast<ePoint_3*>(&tri1);
+          seg1[tmp] = const_cast<ePoint_3*>(&tri2);
 
           tmp++;
         }
         if (o2[cutp[i]] * o3[cutp[i]] == -1|| o2[cutp[i]] + o3[cutp[i]] == -1) {
-          seg0[tmp] = const_cast<ePoint_3*>(&tri0);
-          seg1[tmp] = const_cast<ePoint_3*>(&tri1);
+          seg0[tmp] = const_cast<ePoint_3*>(&tri1);
+          seg1[tmp] = const_cast<ePoint_3*>(&tri2);
 
           tmp++;
         }
@@ -598,11 +758,16 @@ struct Envelope {
         for (int k = 0; k < 2; k++){
           const Plane& plane_i = prism[cutp[i]];
 
+          //         std::cout <<  plane_i.ep << "  " <<  plane_i.eq << "  " <<  plane_i.er << "  " <<  plane_i.ep << std::endl;
+          // std::cout << *(seg0[k]) << "       " <<   *(seg1[k]) << std::endl;
+
           eLine_3 eline(*(seg0[k]), *(seg1[k]));
           CGAL::cpp11::result_of<eIntersect_3(eLine_3, ePlane_3)>::type
             result = CGAL::intersection(eline, plane_i.eplane);
           if(! result){
-            std::cout <<  "there must be an intersection" << std::endl;
+#ifdef TRACE
+            std::cout <<  "there must be an intersection 6" << std::endl;
+#endif
           }
 
           const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
@@ -620,6 +785,7 @@ struct Envelope {
             }
           }
           if (ori != 1){
+            int cutpi = cutp[i];
             cut[cutp[i]] = true;
             break;
           }
@@ -628,6 +794,9 @@ struct Envelope {
         ori = 0;// initialize the orientation to avoid the j loop doesn't happen because cutp.size()==1
       }
 
+#ifdef TRACE
+    std::cout << "B" << std::endl;
+#endif
     if (cutp.size() <= 2){
         for (int i = 0; i < prism.size(); i++){
           if (cut[i] == true){
@@ -636,6 +805,10 @@ struct Envelope {
         }
         return 1;
     }
+
+#ifdef TRACE
+      std::cout << "C" << std::endl;
+#endif
     // triangle-facet-facet intersection
 
     ePlane_3 tri_eplane(tri0, tri1, tri2); // todo change to a query triangle with 3 points and a plane
@@ -643,36 +816,46 @@ struct Envelope {
       {
         for (int j = i + 1; j < cutp.size(); j++)// two facets and the triangle generate a point
           {
+#ifdef TRACE
+            std::cout << "T :\n "<< tri0 << "    "  << tri1 << "    " << tri2 << std::endl;
+            std::cout << "I : "<< i << " " << cutp[i] << "\n" <<  prism[cutp[i]].ep << std::endl <<  prism[cutp[i]].eq << std::endl <<  prism[cutp[i]].er << std::endl;
+            std::cout << "J : "<< j << " " << cutp[j] << "\n" <<  prism[cutp[j]].ep << std::endl <<  prism[cutp[j]].eq << std::endl <<  prism[cutp[j]].er << std::endl;
+#endif
             if (cut[cutp[i]] == true && cut[cutp[j]] == true)
               continue;
-            /*
-            if (USE_ADJACENT_INFORMATION) {
+
+            if (true /* USE_ADJACENT_INFORMATION*/ ) {
               bool neib = is_two_facets_neighbouring(cindex, cutp[i], cutp[j]);
               if (neib == false) continue;
             }
-            */
 
-            bool inter = do_intersect(tri_eplane,prism[cutp[i]].eplane, prism[cutp[j]].eplane);
 
-              /*
-                // this was for a fast float check
+            //            bool inter = this->do_intersect(tri_eplane,prism[cutp[i]].eplane, prism[cutp[j]].eplane);
+            int inter = is_3_triangle_cut_float_fast(tri0, tri1,tri2,tri_eplane,prism[cutp[i]].eplane, prism[cutp[j]].eplane);
+#ifdef TRACE
+            std::cout << "is_3_triangle_cut_float_fast: " << inter << std::endl;
+#endif
+            // this was for a fast float check
             if (inter == 2)
               { //we dont know if point exist or if inside of triangle
+                int cutpi = cutp[i];
+                int cutpj = cutp[j];
                 cut[cutp[i]] = true;
                 cut[cutp[j]] = true;
                 continue;
               }
-              */
-            if (inter == false){
+
+            if (inter == 0){
               continue; // sure not inside
             }
 
             CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
               result = CGAL::intersection(tri_eplane, prism[cutp[i]].eplane, prism[cutp[j]].eplane);
             if(! result){
-              std::cout <<  "there must be an intersection" << std::endl;
+#ifdef TRACE
+              std::cout <<  "there must be an intersection 7" << std::endl;
+#endif
             }
-
             const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
             CGAL_assertion(ipp != nullptr);
 
@@ -684,7 +867,13 @@ struct Envelope {
               if (k == i || k == j){
                   continue;
               }
+#ifdef TRACE
+              std::cout << k << " " << cutp[k] << "\n" <<  prism[cutp[k]].ep << std::endl <<  prism[cutp[k]].eq << std::endl <<  prism[cutp[k]].er << std::endl;
+#endif
               ori = int(oriented_side(prism[cutp[k]].eplane, ip));
+#ifdef TRACE
+              std::cout << ori << std::endl;
+#endif
 
               if (ori == 1){
                   break;
@@ -692,17 +881,26 @@ struct Envelope {
             }
 
             if (ori != 1) {
+              int cutpi = cutp[i];
+              int cutpj = cutp[j];
               cut[cutp[i]] = true;
               cut[cutp[j]] = true;
             }
           }
       }
+#ifdef TRACE
+    std::cout << "D" << std::endl;
+#endif
 
     for (int i = 0; i < prism.size(); i++){
       if (cut[i] == true){
+#ifdef TRACE
+             std::cout << "cut " << i << " is true" << std::endl;
+#endif
           cid.emplace_back(i);
       }
       }
+    //    std::cout << "cid.size()= " << cid.size() << std::endl;
     if (cid.size() == 0){
       return 0;// not cut and facets, and not totally inside, then not intersected
     }
@@ -710,7 +908,9 @@ struct Envelope {
   }
 
 
-  int seg_cut_plane(const ePoint_3 &seg0, const ePoint_3 &seg1, const ePoint_3 &t0, const ePoint_3 &t1, const ePoint_3 &t2) const
+  int
+  seg_cut_plane(const ePoint_3 &seg0, const ePoint_3 &seg1,
+                const ePoint_3 &t0, const ePoint_3 &t1, const ePoint_3 &t2) const
   {
     int o1, o2;
     o1 = int(CGAL::orientation(seg0, t0, t1, t2));
@@ -724,17 +924,18 @@ struct Envelope {
   }
 
 
-
-
-  bool is_tpp_on_polyhedra(const ePlane_3 &triangle,
-                           const ePlane_3 &facet1,
-                           const ePlane_3 &facet2,
-                           const int &prismid, const int &faceid)const
+  bool
+  is_tpp_on_polyhedra(const ePlane_3 &triangle,
+                      const ePlane_3 &facet1,
+                      const ePlane_3 &facet2,
+                      const int &prismid, const int &faceid)const
   {
       CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
       result = CGAL::intersection(triangle, facet1, facet2);
       if(! result){
-        std::cout <<  "there must be an intersection" << std::endl;
+#ifdef TRACE
+        std::cout <<  "there must be an intersection 8" << std::endl;
+#endif
       }
 
       const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
@@ -755,7 +956,8 @@ struct Envelope {
 
 
 
-  int Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order(
+  int
+  Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order(
 		const ePoint_3 &segpoint0, const ePoint_3 &segpoint1,
                 const ePlane_3 &eplane,
                 const std::vector<unsigned int> &prismindex,
@@ -766,7 +968,9 @@ struct Envelope {
     CGAL::cpp11::result_of<eIntersect_3(eLine_3, ePlane_3)>::type
       result = CGAL::intersection(eline, eplane);
     if(! result){
-      std::cout <<  "there must be an intersection" << std::endl;
+ #ifdef TRACE
+      std::cout <<  "there must be an intersection 9" << std::endl;
+ #endif
     }
 
     const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
@@ -834,7 +1038,8 @@ struct Envelope {
   }
 
 
-  int Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(
+  int
+  Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(
 		const ePoint_3 &segpoint0, const ePoint_3 &segpoint1,
                 const ePlane_3 &eplane,
                 const std::vector<unsigned int> &prismindex,
@@ -848,7 +1053,9 @@ struct Envelope {
     CGAL::cpp11::result_of<eIntersect_3(eLine_3, ePlane_3)>::type
       result = CGAL::intersection(eline, eplane);
     if(! result){
-      std::cout <<  "there must be an intersection" << std::endl;
+#ifdef TRACE
+      std::cout <<  "there must be an intersection 10" << std::endl;
+#endif
     }
 
     const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
@@ -919,7 +1126,8 @@ struct Envelope {
   }
 
 
-  int Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order(
+  int
+  Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order(
 		const ePlane_3& triangle,
 		const ePlane_3& facet1,
                 const ePlane_3& facet2,
@@ -932,7 +1140,9 @@ struct Envelope {
       CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
       result = CGAL::intersection(triangle, facet1, facet2);
       if(! result){
-        std::cout <<  "there must be an intersection" << std::endl;
+ #ifdef TRACE
+        std::cout <<  "there must be an intersection 11" << std::endl;
+ #endif
       }
 
       const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
@@ -1007,7 +1217,8 @@ struct Envelope {
 
 
 
-  int Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(
+  int
+  Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(
 		const ePlane_3 &triangle,
 		const ePlane_3 &facet1,
                 const ePlane_3 &facet2,
@@ -1021,7 +1232,9 @@ struct Envelope {
       CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
       result = CGAL::intersection(triangle, facet1, facet2);
       if(! result){
-        std::cout <<  "there must be an intersection" << std::endl;
+ #ifdef TRACE
+        std::cout <<  "there must be an intersection 12" << std::endl;
+#endif
       }
 
       const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
@@ -1096,14 +1309,18 @@ struct Envelope {
 
 
 
-  bool triangle_out_of_envelope(const std::array<Point_3,3>& triangle, const std::vector<unsigned int> &prismindex) const
+  bool
+  triangle_out_of_envelope(const std::array<Point_3,3>& triangle,
+                           const std::vector<unsigned int> &prismindex) const
   {
     if (prismindex.size() == 0)
       {
         return true;
       }
 
-    std::array<ePoint_3,3> etriangle = { ePoint_3(triangle[0].x(),triangle[0].y(),triangle[0].z()), ePoint_3(triangle[1].x(),triangle[1].y(),triangle[1].z()), ePoint_3(triangle[2].x(),triangle[2].y(),triangle[2].z()) };
+    std::array<ePoint_3,3> etriangle = { ePoint_3(triangle[0].x(),triangle[0].y(),triangle[0].z()),
+                                         ePoint_3(triangle[1].x(),triangle[1].y(),triangle[1].z()),
+                                         ePoint_3(triangle[2].x(),triangle[2].y(),triangle[2].z()) };
 
     int jump1, jump2;
     static const std::array<std::array<int, 2>, 3> triseg = {
@@ -1207,7 +1424,7 @@ struct Envelope {
         return false;//totally inside of this polyhedron
       }
       else if (tti == 1 && cidl.size() > 0) {
-
+        //        std::cout << "prismindex: " << prismindex[i] << std::endl;
         filtered_intersection.emplace_back(prismindex[i]);
         intersect_face.emplace_back(cidl);
 
@@ -1218,6 +1435,8 @@ struct Envelope {
     if (filtered_intersection.size() == 0) {
       return false;
     }
+
+    //    std::cout << filtered_intersection.size() << " filtered" << std::endl;
 
     std::vector<unsigned int > queue, idlist;
     std::vector<bool> coverlist;
@@ -1336,7 +1555,7 @@ struct Envelope {
         for (int k = 0; k < intersect_face[queue[i]].size(); k++) {
           for (int h = 0; h < intersect_face[queue[j]].size(); h++) {
             // todo: move the intersection here
-            cut = CGAL::do_intersect(etriangle_eplane,
+            cut = this->do_intersect(etriangle_eplane,
                                      halfspace[jump1][intersect_face[queue[i]][k]].eplane,
                                      halfspace[jump2][intersect_face[queue[j]][h]].eplane);
 
@@ -1396,11 +1615,11 @@ struct Envelope {
   }
 
 
-
-
-
   Plane
-  get_corner_plane(const Point_3& p0, const Point_3& midp, const Vector_3 &normal, const double distance,
+  get_corner_plane(const Point_3& p0,
+                   const Point_3& midp,
+                   const Vector_3 &normal,
+                   const double distance,
                    const bool robust) const
   {
     Point_3 plane0, plane1, plane2;
@@ -1418,9 +1637,10 @@ struct Envelope {
 
 
   // build prisms for a list of triangles. each prism is represented by 7-8 planes, which are represented by 3 points
-  void halfspace_generation(const std::vector<Point_3> &ver, const std::vector<Vector3i> &faces,
-                            std::vector<Prism>& halfspace,
-                            std::vector<Iso_cuboid_3>& bounding_boxes, const double &epsilon)
+  void
+  halfspace_generation(const std::vector<Point_3> &ver, const std::vector<Vector3i> &faces,
+                       std::vector<Prism>& halfspace,
+                       std::vector<Iso_cuboid_3>& bounding_boxes, const double &epsilon)
   {
     double tolerance = epsilon / sqrt(3);// the envelope thickness, to be conservative
     double bbox_tolerance = epsilon *(1 + 1e-6);
@@ -1458,7 +1678,7 @@ struct Envelope {
         AC = ver[faces[i][2]] - ver[faces[i][0]];
         BC = ver[faces[i][2]] - ver[faces[i][1]];
 
-#if 0
+#ifdef TRACE
         de = algorithms::is_triangle_degenerated(ver[faces[i][0]], ver[faces[i][1]], ver[faces[i][2]]);
 
         if (de == DEGENERATED_POINT)
@@ -1587,20 +1807,23 @@ struct Envelope {
           halfspace[i].emplace_back(plane);// number 7;
 
         }
-        /*
+#ifdef TRACE
+        std::cout << "face "<< i << std::endl;
         for(int j = 0; j < halfspace[i].size(); j++){
           const Plane& p =  halfspace[i][j];
-          CGAL::Orientation ori = orientation(p.ep, p.eq, p.er, ver[faces[i][0]]);
+          std::cout << p.ep << " | "  << p.eq << " | "  << p.er << std::endl;
+          ePoint_3 pv(ver[faces[i][0]].x(), ver[faces[i][0]].y(),ver[faces[i][0]].z());
+          CGAL::Orientation ori = CGAL::orientation(p.ep, p.eq, p.er, pv);
           assert(ori == CGAL::NEGATIVE);
         }
-        */
-
+#endif
 
       }
   }
 
   // \returns `true` if the query point is inside the envelope
-  bool operator()(const Point_3& query) const
+  bool
+  operator()(const Point_3& query) const
   {
     std::vector<unsigned int> prismindex;
     tree.all_intersected_primitives(query, std::back_inserter(prismindex));
@@ -1616,7 +1839,8 @@ struct Envelope {
 
 
   // \returns `true` if the query segment is inside the envelope
-  bool operator()(const Point_3& source, const Point_3& target) const
+  bool
+  operator()(const Point_3& source, const Point_3& target) const
   {
     std::vector<unsigned int> prismindex;
     Segment_3 query(source,target);
@@ -1629,12 +1853,20 @@ struct Envelope {
   }
 
 
-  // \returns `true` if the query segment is inside the envelope
-  bool operator()(const Point_3& t0, const Point_3& t1, const Point_3& t2) const
+  // \returns `true` if the query triangle is inside the envelope
+  bool
+  operator()(const Point_3& t0, const Point_3& t1, const Point_3& t2) const
   {
     std::vector<unsigned int> prismindex;
     Triangle_3 query(t0, t1, t2);
     tree.all_intersected_primitives(query, std::back_inserter(prismindex));
+    std::sort(prismindex.begin(), prismindex.end());
+#ifdef TRACE
+    for(int i=0; i < prismindex.size(); i++){
+      std::cout << prismindex[i] << " ";
+    }
+    std::cout << std::endl;
+#endif
     std::array<Point_3,3> triangle = { t0, t1, t2 };
     if(triangle_out_of_envelope(triangle, prismindex)){
       return false;
@@ -1646,7 +1878,10 @@ struct Envelope {
 }; // class Envelope
 
 
-
+// `fast` takes an off file and an offset as arguments
+//  If called additionally with 3 more vertex indices it performs the envelope test with the triangle
+//  Otherwise it tests for all vertex triples forming a non-degenerate trianges
+//  and writes the triple in the file inside.txt or outside.txt
 
 int main(int argc, char* argv[])
 {
@@ -1654,18 +1889,23 @@ int main(int argc, char* argv[])
   std::vector<Point_3> env_vertices;
   std::vector<Vector3i> env_faces;
 
-
   std::ifstream in(argv[1]);
 
   double eps = std::stod(std::string(argv[2]));
 
+  int ii, ij, ik;
+
+  if(argc == 6){
+    ii = std::stoi(std::string(argv[3]));
+    ij = std::stoi(std::string(argv[4]));
+    ik = std::stoi(std::string(argv[5]));
+  }
   std::string off;
   int V, F, E;
   in >> off >> V >> F >> E;
   env_vertices.reserve(V);
   env_faces.reserve(F);
 
-  std::ofstream vert("vertices.txt");
   Kernel::Point_3 p;
   for(int i =0; i < V; i++){
     in >> p;
@@ -1689,27 +1929,45 @@ int main(int argc, char* argv[])
   std::cout << t.time() << " sec." << std::endl;
   t.reset();
 
-  Point_3 v0 = env_vertices[0];
-  Point_3 v44 = env_vertices[44];
-  bool b0_44 = envelope(v0,v44);
 
-  std::ofstream out("inside.polylines.txt");
-  int count = 0;
-  for(int i = 0; i < env_vertices.size(); i++){
-    Point_3 vi = env_vertices[i];
-    if(envelope(v0,vi)){
-      count++;
-      out << "2 " << v0 << " " << vi << std::endl;
+  if(argc == 6){
+    Point_3 v0 = env_vertices[ii];
+    Point_3 v1 = env_vertices[ij];
+    Point_3 v2 = env_vertices[ik];
+
+    {
+      std::ofstream query("query.off");
+      query << "OFF\n" << "3 1 0\n" << v0 << std::endl << v1 << std::endl << v2 << std::endl << "3 0 1 2" << std::endl;
     }
+
+    bool bbb = envelope(v0, v1, v2);
+    if(bbb){
+      std::cout <<  "inside the envelope" << std::endl;
+    }else{
+      std::cout <<  "outside the envelope" << std::endl;
+    }
+    return 0;
   }
 
-   Point_3 v1 = env_vertices[1];
 
-   envelope(v0, v1, v44);
+  std::ofstream inside("inside.txt");
+  std::ofstream outside("outside.txt");
+  for(int i = 0; i < env_vertices.size(); i+=10){
+      for(int j = 0; j < env_vertices.size(); j+= 10){
+        for(int k = 0; k < env_vertices.size(); k+=10){
+          if( ( i != j) && (i != k) && (j != k)){
+            if(! CGAL::collinear(env_vertices[i], env_vertices[j],env_vertices[k])){
+              if(envelope(env_vertices[i],  env_vertices[j], env_vertices[k])){
+                inside << i << " " << j << " "<< k <<std::endl;
+              } else{
+                outside << i << " " << j << " "<< k <<std::endl;
+              }
+            }
+          }
+        }
+      }
+  }
 
-  std::cout << count << " inside in " << t.time() << " sec." << std::endl;
+
   return 0;
 }
-
-
-#endif

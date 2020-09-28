@@ -2,16 +2,25 @@
 #include <fastenvelope/Types.hpp>
 #include <fstream>
 #include <CGAL/Timer.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
- int main(int argc, char* argv[])
- {
- std::vector<fastEnvelope::Vector3> env_vertices;
+int main(int argc, char* argv[]) {
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+  typedef typename K::Point_3 Point_3;
+
+  std::vector<fastEnvelope::Vector3> env_vertices;
   std::vector<fastEnvelope::Vector3i> env_faces;
-
 
   std::ifstream in(argv[1]);
 
   double eps = std::stod(std::string(argv[2]));
+
+  int ii, ij, ik;
+  if(argc == 6){
+    ii = std::stoi(std::string(argv[3]));
+    ij = std::stoi(std::string(argv[4]));
+    ik = std::stoi(std::string(argv[5]));
+  }
 
   std::string off;
   int V, F, E;
@@ -38,20 +47,44 @@
   std::cout << t.time() << " sec." << std::endl;
   t.reset();
 
-  fastEnvelope::Vector3 v0 = env_vertices[0];
-  fastEnvelope::Vector3 v44 = env_vertices[44];
-  bool b0_44 = envelope.is_outside(v0,v44);
-
-  std::ofstream out("insideF.polylines.txt");
-  int count = 0;
-  for(int i = 0; i < env_vertices.size(); i++){
-    fastEnvelope::Vector3 vi = env_vertices[i];
-    if(! envelope.is_outside(v0,vi)){
-      count++;
-      //out << "2 " << v0 << " " << vi << std::endl;
+  if(argc == 6){
+    fastEnvelope::Vector3 v0 = env_vertices[ii];
+    fastEnvelope::Vector3 v1 = env_vertices[ij];
+    fastEnvelope::Vector3 v2 = env_vertices[ik];
+    std::array<fastEnvelope::Vector3, 3> tria = {v0, v1, v2};
+    bool bbb = envelope.is_outside(tria);
+  if(bbb){
+      std::cout <<  "outside the envelope" << std::endl;
+    }else{
+      std::cout <<  "inside the envelope" << std::endl;
     }
+    return 0;
   }
-  std::cout << count << " inside in " << t.time() << " sec." << std::endl;
+
+
+  std::ofstream inside("insideE.txt");
+  std::ofstream outside("outsideE.txt");
+  for(int i = 0; i < env_vertices.size(); i+=10){
+      for(int j = 0; j < env_vertices.size(); j+=10){
+        for(int k = 0; k < env_vertices.size(); k+=10){
+          if( ( i != j) && (i != k) && (j != k)){
+            Point_3 p(env_vertices[i][0],env_vertices[i][1], env_vertices[i][2]);
+            Point_3 q(env_vertices[j][0],env_vertices[j][1], env_vertices[j][2]);
+            Point_3 r(env_vertices[k][0],env_vertices[k][1], env_vertices[k][2]);
+            if(! CGAL::collinear(p,q,r)){
+            std::array<fastEnvelope::Vector3, 3> f = { env_vertices[i],  env_vertices[j], env_vertices[k] };
+              if(! envelope.is_outside(f)){
+                inside << i << " " << j << " "<< k <<std::endl;
+              } else{
+                outside << i << " " << j << " "<< k <<std::endl;
+              }
+              }
+        }
+        }
+      }
+  }
+
+
 
   return 0;
 }
