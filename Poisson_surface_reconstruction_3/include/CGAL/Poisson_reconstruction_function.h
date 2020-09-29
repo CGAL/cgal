@@ -216,6 +216,32 @@ private:
   typedef typename Triangulation::All_cells_iterator       All_cells_iterator;
   typedef typename Triangulation::Locate_type Locate_type;
 
+  enum Cache_state { UNINITIALIZED, BUSY, INITIALIZED };
+  // Thread-safe cache for barycentric coordinates of a cell
+  class Cached_bary_coord
+  {
+  private:
+    std::atomic<Cache_state> m_state;
+    std::array<double, 9> m_bary;
+  public:
+    Cached_bary_coord() : m_state (UNINITIALIZED) { }
+    Cached_bary_coord(const Cached_bary_coord& other)
+      : m_state (other.m_state.load()) // not atomic
+    { }
+
+    Cached_bary_coord& operator= (const Cached_bary_coord& other)
+    {
+      m_state.store (other.m_state.load()); // not atomic
+    }
+
+    Cache_state exchange_state(const Cache_state& s) { return m_state.exchange(s); }
+    Cache_state get_state() { return m_state; }
+    void set_state(const Cache_state& s) { m_state = s; }
+
+    const double& operator[] (const std::size_t& idx) const { return m_bary[idx]; }
+    double& operator[] (const std::size_t& idx) { return m_bary[idx]; }
+  };
+
 // Data members.
 // Warning: the Surface Mesh Generation package makes copies of implicit functions,
 // thus this class must be lightweight and stateless.
@@ -224,8 +250,7 @@ private:
   // operator() is pre-computed on vertices of *m_tr by solving
   // the Poisson equation Laplacian(f) = divergent(normals field).
   boost::shared_ptr<Triangulation> m_tr;
-
-  mutable boost::shared_ptr<std::vector<boost::array<double,9> > > m_Bary;
+  mutable std::shared_ptr<std::vector<Cached_bary_coord> > m_bary;
   mutable std::vector<Point> Dual;
   mutable std::vector<Vector> Normal;
 
@@ -295,7 +320,7 @@ public:
     PointPMap point_pmap, ///< property map: `value_type of InputIterator` -> `Point` (the position of an input point).
     NormalPMap normal_pmap ///< property map: `value_type of InputIterator` -> `Vector` (the *oriented* normal of an input point).
   )
-    : m_tr(new Triangulation), m_Bary(new std::vector<boost::array<double,9> > )
+    : m_tr(new Triangulation), m_bary(new std::vector<Cached_bary_coord>)
     , average_spacing(CGAL::compute_average_spacing<CGAL::Sequential_tag>
                       (CGAL::make_range(first, beyond), 6,
                        CGAL::parameters::point_map(point_pmap)))
@@ -315,7 +340,7 @@ public:
     PointPMap point_pmap, ///< property map: `value_type of InputIterator` -> `Point` (the position of an input point).
     NormalPMap normal_pmap, ///< property map: `value_type of InputIterator` -> `Vector` (the *oriented* normal of an input point).
     Visitor visitor)
-    : m_tr(new Triangulation), m_Bary(new std::vector<boost::array<double,9> > )
+    : m_tr(new Triangulation), m_bary(new std::vector<Cached_bary_coord>)
     , average_spacing(CGAL::compute_average_spacing<CGAL::Sequential_tag>(CGAL::make_range(first, beyond), 6,
                                                                           CGAL::parameters::point_map(point_pmap)))
   {
@@ -334,7 +359,7 @@ public:
       boost::is_convertible<typename std::iterator_traits<InputIterator>::value_type, Point>
     >::type* = 0
   )
-  : m_tr(new Triangulation), m_Bary(new std::vector<boost::array<double,9> > )
+    : m_tr(new Triangulation), m_bary(new std::vector<Cached_bary_coord>)
   , average_spacing(CGAL::compute_average_spacing<CGAL::Sequential_tag>(CGAL::make_range(first, beyond), 6))
   {
     forward_constructor(first, beyond,
@@ -590,11 +615,8 @@ public:
 
   void initialize_barycenters() const
   {
-    m_Bary->resize(m_tr->number_of_cells());
-
-    for(std::size_t i=0; i< m_Bary->size();i++){
-      (*m_Bary)[i][0]=-1;
-    }
+    m_bary->clear();
+    m_bary->resize(m_tr->number_of_cells());
   }
 
   void initialize_cell_normals() const
@@ -637,20 +659,44 @@ public:
 
   void initialize_matrix_entry(Cell_handle ch) const
   {
-    boost::array<double,9> & entry = (*m_Bary)[ch->info()];
-    const Point& pa = ch->vertex(0)->point();
-    const Point& pb = ch->vertex(1)->point();
-    const Point& pc = ch->vertex(2)->point();
-    const Point& pd = ch->vertex(3)->point();
+    Cached_bary_coord& bary = (*m_bary)[ch->info()];
+    Cache_state s = bary.exchange_state(BUSY);
 
-    Vector va = pa - pd;
-    Vector vb = pb - pd;
-    Vector vc = pc - pd;
+    // If the cache was already initialized, then let's just restore
+    // the value
+    if (s == INITIALIZED)
+      bary.set_state (INITIALIZED);
 
-    internal::invert(va.x(), va.y(), va.z(),
-           vb.x(), vb.y(), vb.z(),
-           vc.x(), vc.y(), vc.z(),
-           entry[0],entry[1],entry[2],entry[3],entry[4],entry[5],entry[6],entry[7],entry[8]);
+    // If the cache was uninitialized, this thread is in charge of
+    // initializing it
+    else if (s == UNINITIALIZED)
+    {
+      const Point& pa = ch->vertex(0)->point();
+      const Point& pb = ch->vertex(1)->point();
+      const Point& pc = ch->vertex(2)->point();
+      const Point& pd = ch->vertex(3)->point();
+
+      Vector va = pa - pd;
+      Vector vb = pb - pd;
+      Vector vc = pc - pd;
+
+      internal::invert(va.x(), va.y(), va.z(),
+                       vb.x(), vb.y(), vb.z(),
+                       vc.x(), vc.y(), vc.z(),
+                       bary[0],bary[1],bary[2],
+                       bary[3],bary[4],bary[5],
+                       bary[6],bary[7],bary[8]);
+
+      bary.set_state (INITIALIZED);
+    }
+
+    // Else, the cache is busy, let's just wait for it to be
+    // initialized
+    else
+    {
+      CGAL_assertion (s == BUSY);
+      while (bary.get_state() != INITIALIZED) { }
+    }
   }
   /// \endcond
 
@@ -857,10 +903,9 @@ private:
     //       vb.x(), vb.y(), vb.z(),
     //       vc.x(), vc.y(), vc.z(),
     //       i00, i01, i02, i10, i11, i12, i20, i21, i22);
-    const boost::array<double,9> & i = (*m_Bary)[cell->info()];
-    if(i[0]==-1){
-      initialize_matrix_entry(cell);
-    }
+    initialize_matrix_entry(cell);
+    const Cached_bary_coord& i = (*m_bary)[cell->info()];
+
     //    UsedBary[cell->info()] = true;
     a = i[0] * vp.x() + i[3] * vp.y() + i[6] * vp.z();
     b = i[1] * vp.x() + i[4] * vp.y() + i[7] * vp.z();
