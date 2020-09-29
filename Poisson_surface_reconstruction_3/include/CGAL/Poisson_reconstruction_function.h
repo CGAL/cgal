@@ -242,6 +242,30 @@ private:
     double& operator[] (const std::size_t& idx) { return m_bary[idx]; }
   };
 
+  // Wrapper for thread safety of maintained cell hint for fast
+  // locate, with conversions atomic<Cell*>/Cell_handle
+  class Cell_hint
+  {
+    std::atomic<Cell*> m_cell;
+  public:
+
+    Cell_hint() : m_cell(nullptr) { }
+    Cell_hint(const Cell_hint& other)
+      : m_cell (other.m_cell.load()) // not atomic
+    { }
+
+    Cell_hint& operator= (const Cell_hint& other)
+    {
+      m_cell.store (other.m_cell.load()); // not atomic
+    }
+
+    Cell_handle get() const
+    {
+      return Triangulation_data_structure::Cell_range::s_iterator_to(*m_cell);
+    }
+    void set (Cell_handle ch) { m_cell = ch.operator->(); }
+  };
+
 // Data members.
 // Warning: the Surface Mesh Generation package makes copies of implicit functions,
 // thus this class must be lightweight and stateless.
@@ -256,7 +280,7 @@ private:
 
   // contouring and meshing
   Point m_sink; // Point with the minimum value of operator()
-  mutable Cell_handle m_hint; // last cell found = hint for next search
+  mutable Cell_hint m_hint; // last cell found = hint for next search
 
   FT average_spacing;
 
@@ -562,21 +586,23 @@ public:
 
   boost::tuple<FT, Cell_handle, bool> special_func(const Point& p) const
   {
-    m_hint = m_tr->locate(p  ,m_hint  ); // no hint when we use hierarchy
+    Cell_handle hint = m_hint.get();
+    hint = m_tr->locate(p, hint); // no hint when we use hierarchy
+    m_hint.set(hint);
 
-    if(m_tr->is_infinite(m_hint)) {
-      int i = m_hint->index(m_tr->infinite_vertex());
-      return boost::make_tuple(m_hint->vertex((i+1)&3)->f(),
-                               m_hint, true);
+    if(m_tr->is_infinite(hint)) {
+      int i = hint->index(m_tr->infinite_vertex());
+      return boost::make_tuple(hint->vertex((i+1)&3)->f(),
+                               hint, true);
     }
 
     FT a,b,c,d;
-    barycentric_coordinates(p,m_hint,a,b,c,d);
-    return boost::make_tuple(a * m_hint->vertex(0)->f() +
-                             b * m_hint->vertex(1)->f() +
-                             c * m_hint->vertex(2)->f() +
-                             d * m_hint->vertex(3)->f(),
-                             m_hint, false);
+    barycentric_coordinates(p,hint,a,b,c,d);
+    return boost::make_tuple(a * hint->vertex(0)->f() +
+                             b * hint->vertex(1)->f() +
+                             c * hint->vertex(2)->f() +
+                             d * hint->vertex(3)->f(),
+                             hint, false);
   }
   /// \endcond
 
@@ -587,19 +613,21 @@ public:
   */
   FT operator()(const Point& p) const
   {
-    m_hint = m_tr->locate(p ,m_hint);
+    Cell_handle hint = m_hint.get();
+    hint = m_tr->locate(p, hint);
+    m_hint.set(hint);
 
-    if(m_tr->is_infinite(m_hint)) {
-      int i = m_hint->index(m_tr->infinite_vertex());
-      return m_hint->vertex((i+1)&3)->f();
+    if(m_tr->is_infinite(hint)) {
+      int i = hint->index(m_tr->infinite_vertex());
+      return hint->vertex((i+1)&3)->f();
     }
 
     FT a,b,c,d;
-    barycentric_coordinates(p,m_hint,a,b,c,d);
-    return a * m_hint->vertex(0)->f() +
-           b * m_hint->vertex(1)->f() +
-           c * m_hint->vertex(2)->f() +
-           d * m_hint->vertex(3)->f();
+    barycentric_coordinates(p,hint,a,b,c,d);
+    return a * hint->vertex(0)->f() +
+           b * hint->vertex(1)->f() +
+           c * hint->vertex(2)->f() +
+           d * hint->vertex(3)->f();
   }
 
   /// \cond SKIP_IN_MANUAL
