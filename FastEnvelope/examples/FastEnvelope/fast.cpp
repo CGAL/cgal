@@ -1686,7 +1686,7 @@ struct Envelope {
         AC = ver[faces[i][2]] - ver[faces[i][0]];
         BC = ver[faces[i][2]] - ver[faces[i][1]];
 
-#ifdef TRACE
+#if 0
         de = algorithms::is_triangle_degenerated(ver[faces[i][0]], ver[faces[i][1]], ver[faces[i][2]]);
 
         if (de == DEGENERATED_POINT)
