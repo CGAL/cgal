@@ -1429,7 +1429,6 @@ struct Envelope {
         return false;//totally inside of this polyhedron
       }
       else if (tti == 1 && cidl.size() > 0) {
-        //        std::cout << "prismindex: " << prismindex[i] << std::endl;
         filtered_intersection.emplace_back(prismindex[i]);
         intersect_face.emplace_back(cidl);
 
@@ -1442,6 +1441,10 @@ struct Envelope {
     }
 
     //    std::cout << filtered_intersection.size() << " filtered" << std::endl;
+
+    for(int i = 0; i < filtered_intersection.size(); i++){
+      prism_to_off(filtered_intersection[i], "filtered");
+    }
 
     std::vector<unsigned int > queue, idlist;
     std::vector<bool> coverlist;
@@ -1827,7 +1830,7 @@ struct Envelope {
       }
   }
 
-  void prism_to_off(unsigned int i) const
+  void prism_to_off(unsigned int i, std::string fname) const
   {
     std::vector<ePlane_3> eplanes;
     for(int j = 0; j < halfspace[i].size(); j++){
@@ -1840,7 +1843,7 @@ struct Envelope {
     CGAL::Surface_mesh<typename CGAL::Exact_predicates_inexact_constructions_kernel::Point_3> sm;
     CGAL::copy_face_graph(esm,sm);
     CGAL::Polygon_mesh_processing::triangulate_faces(sm);
-    std::string fname("prism_");
+    fname += "_";
     fname += std::to_string(i);
     fname += ".off";
     std::ofstream out(fname.c_str());
@@ -1895,7 +1898,7 @@ struct Envelope {
     std::cout << std::endl;
 #endif
     for(int i = 0; i < prismindex.size(); i++){
-      prism_to_off(prismindex[i]);
+      prism_to_off(prismindex[i], "prism");
     }
     std::array<Point_3,3> triangle = { t0, t1, t2 };
     if(triangle_out_of_envelope(triangle, prismindex)){
