@@ -165,6 +165,29 @@ struct Compare_ss_event_times_2 : Functor_base_2<K>
 };
 
 template<class K>
+struct Compare_ss_event_angles_2 : Functor_base_2<K>
+{
+  typedef Functor_base_2<K> Base ;
+
+  typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
+  typedef typename Base::FT FT ;
+  typedef typename Base::Vector_2 Vector_2 ;
+
+  typedef Uncertain<Comparison_result> result_type ;
+
+  // Two triedges with common e0 and e1 (BV1 and BV2)
+  Uncertain<Comparison_result> operator() ( Vector_2 const& aBV1, Vector_2 const& aBV2,
+                                            Vector_2 const& aLV, Vector_2 const& aRV ) const
+  {
+    Uncertain<Comparison_result> rResult = compare_isec_anglesC2(aBV1,aBV2,aLV,aRV) ;
+
+    CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Compare_event_angles","Dump, @tmp");
+
+    return rResult ;
+  }
+};
+
+template<class K>
 struct Oriented_side_of_event_point_wrt_bisector_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
@@ -363,6 +386,7 @@ struct Straight_skeleton_builder_traits_2_functors
 {
   typedef CGAL_SS_i::Do_ss_event_exist_2                        <K> Do_ss_event_exist_2 ;
   typedef CGAL_SS_i::Compare_ss_event_times_2                   <K> Compare_ss_event_times_2 ;
+  typedef CGAL_SS_i::Compare_ss_event_angles_2                  <K> Compare_ss_event_angles_2 ;
   typedef CGAL_SS_i::Is_edge_facing_ss_node_2                   <K> Is_edge_facing_ss_node_2 ;
   typedef CGAL_SS_i::Oriented_side_of_event_point_wrt_bisector_2<K> Oriented_side_of_event_point_wrt_bisector_2 ;
   typedef CGAL_SS_i::Are_ss_events_simultaneous_2               <K> Are_ss_events_simultaneous_2 ;
@@ -409,6 +433,9 @@ public:
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Compare_ss_event_times_2>
     Compare_ss_event_times_2 ;
 
+  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Compare_ss_event_angles_2>
+    Compare_ss_event_angles_2 ;
+
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Is_edge_facing_ss_node_2>
      Is_edge_facing_ss_node_2 ;
 
@@ -440,6 +467,12 @@ public:
   get(Compare_ss_event_times_2 const* = 0 ) const
   {
     return Compare_ss_event_times_2(const_cast<CGAL_SS_i::Time_cache<K>&>(time_cache));
+  }
+
+  Compare_ss_event_angles_2
+  get(Compare_ss_event_angles_2 const* = 0 ) const
+  {
+    return Compare_ss_event_angles_2();
   }
 
   Do_ss_event_exist_2
@@ -505,6 +538,13 @@ public:
                             >
                             Compare_ss_event_times_2 ;
 
+  typedef Filtered_predicate< typename Exact    ::Compare_ss_event_angles_2
+                            , typename Filtering::Compare_ss_event_angles_2
+                            , C2E
+                            , C2F
+                            >
+                            Compare_ss_event_angles_2 ;
+
   typedef Filtered_predicate< typename Exact    ::Is_edge_facing_ss_node_2
                             , typename Filtering::Is_edge_facing_ss_node_2
                             , C2E
@@ -560,6 +600,13 @@ public:
   {
     return Compare_ss_event_times_2( typename Exact::Compare_ss_event_times_2(const_cast<CGAL_SS_i::Time_cache<EK>&>(mExact_traits.time_cache)),
                                      typename Filtering::Compare_ss_event_times_2(const_cast<CGAL_SS_i::Time_cache<FK>&>(mApproximate_traits.time_cache)) );
+  }
+
+  Compare_ss_event_angles_2
+  get(Compare_ss_event_angles_2 const* = 0 ) const
+  {
+    return Compare_ss_event_angles_2( typename Exact::Compare_ss_event_angles_2(),
+                                      typename Filtering::Compare_ss_event_angles_2() );
   }
 
   Do_ss_event_exist_2
@@ -713,6 +760,7 @@ class Straight_skeleton_builder_traits_2
 
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Do_ss_event_exist_2)
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Compare_ss_event_times_2)
+CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Compare_ss_event_angles_2)
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Is_edge_facing_ss_node_2)
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Oriented_side_of_event_point_wrt_bisector_2)
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Are_ss_events_simultaneous_2)

@@ -352,6 +352,7 @@ struct Functor_base_2
 {
   typedef typename K::FT        FT ;
   typedef typename K::Point_2   Point_2 ;
+  typedef typename K::Vector_2 Vector_2 ;
   typedef typename K::Segment_2 Segment_2 ;
 
   typedef CGAL_SS_i::Trisegment_2<K> Trisegment_2 ;
@@ -370,6 +371,9 @@ struct SS_converter : Converter
 
   typedef typename Source_kernel::Point_2 Source_point_2 ;
   typedef typename Target_kernel::Point_2 Target_point_2 ;
+
+  typedef typename Source_kernel::Vector_2 Source_vector_2 ;
+  typedef typename Target_kernel::Vector_2 Target_vector_2 ;
 
   typedef typename Source_kernel::Segment_2 Source_segment_2 ;
   typedef typename Target_kernel::Segment_2 Target_segment_2 ;
@@ -407,6 +411,10 @@ struct SS_converter : Converter
   }
 
   Target_point_2   cvt_p(Source_point_2 const& p) const  { return this->Converter::operator()(p); }
+
+  Target_vector_2 cvt_v( Source_vector_2 const& v) const {
+    return Target_vector_2(cvt_p(Source_point_2(CGAL::ORIGIN)), cvt_p(Source_point_2(CGAL::ORIGIN) + v) ) ;
+  }
 
   Target_segment_2 cvt_s( Source_segment_2 const& e) const { return Target_segment_2(cvt_p(e.source()), cvt_p(e.target()) ) ; }
 
@@ -460,6 +468,8 @@ struct SS_converter : Converter
   Target_opt_FT    operator()(Source_opt_FT const& n) const { return cvt_n(n) ; }
 
   Target_point_2   operator()( Source_point_2 const& p) const { return cvt_p(p) ; }
+
+  Target_vector_2 operator()( Source_vector_2 const& v) const { return cvt_v(v); }
 
   Target_segment_2 operator()( Source_segment_2 const& s) const { return cvt_s(s); }
 

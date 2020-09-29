@@ -223,13 +223,287 @@ public:
   SSkelPtr construct_skeleton(  bool aNull_if_failed = true ) ;
 
 private :
+  double ComputeApproximateAngle ( Vector_2 const& u, Vector_2 const& v) const
+  {
+    typename K::Compute_scalar_product_2 sp = K().compute_scalar_product_2_object();
 
+    double product = CGAL::sqrt(to_double(sp(u,u)) * to_double(sp(v,v)));
 
-  class Event_compare : public CGAL::cpp98::binary_function<bool,EventPtr,EventPtr>
+    if(product == FT(0))
+      return 0;
+
+    // cosine
+    double dot = to_double(sp(u,v));
+    double cosine = dot / product;
+
+    if(cosine > 1.)
+      cosine = 1.;
+    if(cosine < -1.)
+      cosine = -1.;
+
+    return std::acos(cosine) * 180. / CGAL_PI;
+  }
+
+  double ComputeSupportsAngleSplit ( EventPtr const& aEvent )
+  {
+    SplitEvent& lEvent = dynamic_cast<SplitEvent&>(*aEvent) ;
+
+    Vector_2 lV1 ( aEvent->point(), lEvent.seed0()->point() ); // @fixme ? is this correct?
+    Vector_2 lV2 ( aEvent->point(), aEvent->point() + CreateVector(aEvent->triedge().e2()) ) ;
+
+//    std::cout << "aEvent->point(): " << aEvent->point() << std::endl;
+//    std::cout << "S LV1: " << lV1 << std::endl;
+//    std::cout << "S LV2: " << lV2 << std::endl;
+
+    return ComputeApproximateAngle(lV1, lV2) ;
+  }
+
+  double ComputeSupportsAnglePseudoSplit ( EventPtr const& aEvent )
+  {
+    PseudoSplitEvent& lEvent = dynamic_cast<PseudoSplitEvent&>(*aEvent) ;
+
+    Vector_2 lV1 ;
+    Vector_2 lV2 ;
+
+    if(lEvent.is_at_source_vertex())
+    {
+      // is_at_source_vertex <=> opposite node is seed0
+//      std::cout << "seed1: " << lEvent.seed1()->point() << std::endl;
+      lV1 = Vector_2( aEvent->point(), lEvent.seed1()->point() );
+      lV2 = Vector_2( aEvent->point(), aEvent->point() + CreateVector(aEvent->triedge().e2()) ) ;
+    }
+    else
+    {
+//      std::cout << "seed0: " << lEvent.seed0()->point() << std::endl;
+      lV1 = Vector_2( aEvent->point(), lEvent.seed0()->point() );
+      lV2 = Vector_2( aEvent->point(), aEvent->point() - CreateVector(aEvent->triedge().e2()) ) ;
+    }
+
+//    std::cout << "aEvent->point(): " << aEvent->point() << std::endl;
+//    std::cout << "PS LV1: " << lV1 << std::endl;
+//    std::cout << "PS LV2: " << lV2 << std::endl;
+
+    return ComputeApproximateAngle(lV1, lV2) ;
+  }
+
+  double ComputeSupportsAngle ( EventPtr const& aEvent )
+  {
+    // CGAL_STSKEL_DISABLE_TRACE
+
+    if ( aEvent->type() == Event::cSplitEvent )
+    {
+      Halfedge_handle lOppEdge = aEvent->triedge().e2() ;
+      Site lSite;
+      Vertex_handle_pair lOpp = LookupOnSLAV(lOppEdge,aEvent,lSite);
+      if ( handle_assigned(lOpp.first) )
+      {
+        EventPtr lPseudoSplitEvent = IsPseudoSplitEvent(aEvent,lOpp,lSite);
+        if ( lPseudoSplitEvent )
+          return ComputeSupportsAnglePseudoSplit ( lPseudoSplitEvent ) ;
+        else
+          return ComputeSupportsAngleSplit ( aEvent ) ;
+      }
+      else
+      {
+        return 2 * CGAL_PI; // event isn't valid anymore
+      }
+    }
+    else
+    {
+      CGAL_assertion ( aEvent->type() == Event::cPseudoSplitEvent );
+      return ComputeSupportsAngleSplit ( aEvent ) ;
+    }
+
+    // CGAL_STSKEL_ENABLE_TRACE
+  }
+
+  // Real stuff
+
+  Comparison_result CompareEventsSupportAnglesSplitSplit ( EventPtr const& aA, EventPtr const& aB )
+  {
+//    std::cout << "SS" << std::endl;
+    CGAL_precondition ( aA->triedge().e0() == aB->triedge().e0() && aA->triedge().e1() == aB->triedge().e1() ) ;
+    return Compare_ss_event_angles_2(mTraits)( CreateVector(aA->triedge().e0()),
+                                               CreateVector(aA->triedge().e1()),
+                                               CreateVector(aA->triedge().e2()),
+                                               CreateVector(aB->triedge().e2()) );
+  }
+
+  Comparison_result CompareEventsSupportAnglesSplitPseudoSplit ( EventPtr const& aA, EventPtr const& aB )
+  {
+//    std::cout << "SPS" << std::endl;
+    CGAL_precondition ( aA->triedge().e0() == aB->triedge().e0() && aA->triedge().e1() == aB->triedge().e1() ) ;
+
+    PseudoSplitEvent& lPSEvent = dynamic_cast<PseudoSplitEvent&>(*aB) ;
+    if(lPSEvent.is_at_source_vertex())
+    {
+      return Compare_ss_event_angles_2(mTraits)( CreateVector(aA->triedge().e0()),
+                                                 CreateVector(aA->triedge().e1()),
+                                                 CreateVector(aA->triedge().e2()),
+                                                 CreateVector(aB->triedge().e2()) );
+    }
+    else
+    {
+      return Compare_ss_event_angles_2(mTraits)( CreateVector(aA->triedge().e0()),
+                                                 CreateVector(aA->triedge().e1()),
+                                                 CreateVector(aA->triedge().e2()),
+                                                 K().construct_opposite_vector_2_object()( CreateVector(aB->triedge().e2())) );
+    }
+  }
+
+  Comparison_result CompareEventsSupportAnglesPseudoSplitPseudoSplit ( EventPtr const& aA, EventPtr const& aB )
+  {
+//    std::cout << "PSPS" << std::endl;
+    CGAL_precondition ( aA->triedge().e0() == aB->triedge().e0() && aA->triedge().e1() == aB->triedge().e1() ) ;
+
+    PseudoSplitEvent& lPSEventA = dynamic_cast<PseudoSplitEvent&>(*aA) ;
+    PseudoSplitEvent& lPSEventB = dynamic_cast<PseudoSplitEvent&>(*aB) ;
+
+    if(lPSEventA.is_at_source_vertex())
+    {
+      if(lPSEventB.is_at_source_vertex())
+      {
+        return Compare_ss_event_angles_2(mTraits)( CreateVector(aA->triedge().e0()),
+                                                   CreateVector(aA->triedge().e1()),
+                                                   CreateVector(aA->triedge().e2()),
+                                                   CreateVector(aB->triedge().e2()) );
+      }
+      else
+      {
+        return Compare_ss_event_angles_2(mTraits)( CreateVector(aA->triedge().e0()),
+                                                   CreateVector(aA->triedge().e1()),
+                                                   CreateVector(aA->triedge().e2()),
+                                                   K().construct_opposite_vector_2_object()( CreateVector(aB->triedge().e2())) );
+      }
+    }
+    else // aA is a Pseudo-split Event at the target
+    {
+      if(lPSEventB.is_at_source_vertex())
+      {
+        return Compare_ss_event_angles_2(mTraits)( CreateVector(aA->triedge().e0()),
+                                                   CreateVector(aA->triedge().e1()),
+                                                   K().construct_opposite_vector_2_object()( CreateVector(aA->triedge().e2()) ),
+                                                   CreateVector(aB->triedge().e2()) );
+      }
+      else
+      {
+        return Compare_ss_event_angles_2(mTraits)( CreateVector(aA->triedge().e0()),
+                                                   CreateVector(aA->triedge().e1()),
+                                                   K().construct_opposite_vector_2_object()( CreateVector(aA->triedge().e2())),
+                                                   K().construct_opposite_vector_2_object()( CreateVector(aB->triedge().e2())) );
+      }
+    }
+  }
+
+  Comparison_result CompareEventsSupportAnglesSplitX ( EventPtr const& aA, EventPtr const& aB )
+  {
+    if ( aB->type() == Event::cSplitEvent )
+    {
+      Halfedge_handle lOppEdge = aB->triedge().e2() ;
+      Site lSite;
+      Vertex_handle_pair lOpp = LookupOnSLAV(lOppEdge,aB,lSite);
+      if ( handle_assigned(lOpp.first) )
+      {
+        EventPtr lPseudoSplitEvent = IsPseudoSplitEvent(aB,lOpp,lSite);
+        if ( lPseudoSplitEvent )
+          return CompareEventsSupportAnglesSplitPseudoSplit ( aA,lPseudoSplitEvent ) ;
+        else
+          return CompareEventsSupportAnglesSplitSplit ( aA,aB ) ;
+      }
+      else
+      {
+        // Event B does not exist, so give it the lower priority by returning SMALLER
+        // (meaning, operator() == false and A has higher priority than B)
+        return CGAL::SMALLER;
+      }
+    }
+    else
+    {
+      CGAL_assertion ( aB->type() == Event::cPseudoSplitEvent );
+      return CompareEventsSupportAnglesSplitPseudoSplit ( aA,aB ) ;
+    }
+  }
+
+  Comparison_result CompareEventsSupportAnglesPseudoSplitX ( EventPtr const& aA, EventPtr const& aB )
+  {
+    if ( aB->type() == Event::cSplitEvent )
+    {
+      Halfedge_handle lOppEdge = aB->triedge().e2() ;
+      Site lSite;
+      Vertex_handle_pair lOpp = LookupOnSLAV(lOppEdge,aB,lSite);
+      if ( handle_assigned(lOpp.first) )
+      {
+        EventPtr lPseudoSplitEvent = IsPseudoSplitEvent(aB,lOpp,lSite);
+        if ( lPseudoSplitEvent )
+        {
+          return CompareEventsSupportAnglesPseudoSplitPseudoSplit ( aA,lPseudoSplitEvent ) ;
+        }
+        else
+        {
+          Comparison_result lRes = CompareEventsSupportAnglesSplitPseudoSplit ( aB,aA ) ;
+          if ( lRes == LARGER )
+            return SMALLER ;
+          else if ( lRes == SMALLER )
+            return LARGER ;
+          else
+            return EQUAL ;
+        }
+      }
+      else
+      {
+        // Event B does not exist, so give it the lower priority by returning SMALLER
+        // (meaning, operator() == false and A has higher priority than B)
+        return CGAL::SMALLER;
+      }
+    }
+    else
+    {
+      CGAL_assertion ( aB->type() == Event::cPseudoSplitEvent );
+      return CompareEventsSupportAnglesPseudoSplitPseudoSplit ( aA,aB ) ;
+    }
+  }
+
+  Comparison_result CompareEventsSupportAngles ( EventPtr const& aA, EventPtr const& aB )
+  {
+    CGAL_precondition ( aA->type() != Event::cEdgeEvent && aB->type() != Event::cEdgeEvent ) ;
+
+    if(aA->triedge() == aB->triedge())
+      return EQUAL;
+
+    if ( aA->type() == Event::cSplitEvent )
+    {
+      Halfedge_handle lOppEdge = aA->triedge().e2() ;
+      Site lSite;
+      Vertex_handle_pair lOpp = LookupOnSLAV(lOppEdge,aA,lSite);
+      if ( handle_assigned(lOpp.first) )
+      {
+        EventPtr lPseudoSplitEvent = IsPseudoSplitEvent(aA,lOpp,lSite);
+        if ( lPseudoSplitEvent )
+          return CompareEventsSupportAnglesPseudoSplitX ( lPseudoSplitEvent,aB ) ;
+        else
+          return CompareEventsSupportAnglesSplitX ( aA,aB ) ;
+      }
+      else
+      {
+        // Event A does not exist, so give it the lower priority by returning LARGER
+        // (meaning, operator() == true and A has lower priority than B)
+        return CGAL::LARGER;
+      }
+    }
+    else
+    {
+      CGAL_assertion ( aA->type() == Event::cPseudoSplitEvent );
+      return CompareEventsSupportAnglesPseudoSplitX ( aA,aB ) ;
+    }
+  }
+
+public:
+  // Event compare for the main queue
+  class Event_compare
+    : public CGAL::cpp98::binary_function<bool,EventPtr,EventPtr>
   {
   public:
-
-    Event_compare ( Self const* aBuilder ) : mBuilder(aBuilder) {}
+    Event_compare ( Self* aBuilder ) : mBuilder(aBuilder) {}
 
     bool operator() ( EventPtr const& aA, EventPtr const& aB ) const
     {
@@ -237,16 +511,57 @@ private :
     }
 
   private:
-
-    Self const* mBuilder ;
+    Self* mBuilder ;
   } ;
 
-  typedef std::priority_queue<EventPtr,std::vector<EventPtr>,Event_compare> PQ ;
+  // Event compare for the local queues
+  //
+  // Special ordering for simultaneous split events (i.e. both (pseudo)splits + same time + same point)
+  // to prevent impossible-to-untangle knots
+  class Split_event_compare
+#if 0
+    : public Event_compare
+  {
+  public:
+    Split_event_compare ( Self* aBuilder ) : Event_compare(aBuilder) {}
+  } ;
+#else
+    : public CGAL::cpp98::binary_function<bool,EventPtr,EventPtr>
+  {
+  public:
+    Split_event_compare ( Self* aBuilder ) : mBuilder(aBuilder) {}
 
+    bool operator() ( EventPtr const& aA, EventPtr const& aB ) const
+    {
+      CGAL_precondition( aA->type() != Event::cEdgeEvent || aB->type() != Event::cEdgeEvent ) ;
+
+      mBuilder->SetEventTimeAndPoint(*aA); // @fixme cache this
+      mBuilder->SetEventTimeAndPoint(*aB);
+
+      // Below is a bit redundant since we recompute (certified) times if events are not simultaneous
+      if ( ! mBuilder->AreEventsSimultaneous(aA,aB) )
+        return ( mBuilder->CompareEvents(aA,aB) == LARGER ) ;
+
+//      std::cout << "Multi split at time " << aA->time() << " and point " << aA->point() << std::endl;
+//      std::cout << "aA: " << aA->triedge() << " time: " << aA->time() << " Point: " << aA->point() << std::endl;
+//      std::cout << "aB: " << aB->triedge() << " time: " << aB->time() << " Point: " << aB->point() << std::endl;
+
+      // Priority queue comparison: A has higher priority than B if `operator()(A, B)` is `false`.
+      // We want to give priority to smaller angles, so we must return `false` if the angle is smaller
+      // i.e. `true` if the angle is larger
+      return ( mBuilder->CompareEventsSupportAngles(aA, aB) == LARGER ) ;
+    }
+
+  private:
+    Self* mBuilder ;
+  } ;
+#endif
+
+  typedef std::priority_queue<EventPtr,std::vector<EventPtr>,Split_event_compare> SplitPQ ;
 
   struct Vertex_data : public Ref_counted_base
   {
-    Vertex_data ( Vertex_handle aVertex, Event_compare const& aComparer )
+    Vertex_data ( Vertex_handle aVertex, Split_event_compare const& aComparer )
       :
         mVertex(aVertex)
       , mIsReflex(false)
@@ -267,12 +582,14 @@ private :
     int               mPrevInLAV ;
     int               mNextInLAV ;
     bool              mNextSplitEventInMainPQ;
-    PQ                mSplitEvents ;
+    SplitPQ           mSplitEvents ;
     Triedge           mTriedge ; // Here, E0,E1 corresponds to the vertex (unlike *event* triedges)
     Trisegment_2_ptr  mTrisegment ; // Skeleton nodes cache the full trisegment tree that defines the originating event
   } ;
 
   typedef boost::intrusive_ptr<Vertex_data> Vertex_data_ptr ;
+
+  typedef std::priority_queue<EventPtr,std::vector<EventPtr>,Event_compare> PQ ;
 
 private :
 
@@ -292,7 +609,7 @@ private :
 
   void InitVertexData( Vertex_handle aV )
   {
-    mVertexData.push_back( Vertex_data_ptr( new Vertex_data(aV,mEventCompare) ) ) ;
+    mVertexData.push_back( Vertex_data_ptr( new Vertex_data(aV,mSplitEventCompare) ) ) ;
   }
 
   Vertex_data const& GetVertexData( Vertex_const_handle aV ) const
@@ -483,7 +800,7 @@ private :
     Vertex_data& lData = GetVertexData(aV) ;
     if ( !lData.mNextSplitEventInMainPQ )
     {
-      PQ& lPQ = lData.mSplitEvents ;
+      SplitPQ& lPQ = lData.mSplitEvents ;
       if ( !lPQ.empty() )
       {
         rEvent = lPQ.top();
@@ -771,6 +1088,7 @@ private:
 
   Vertex_handle_pair_vector mSplitNodes ;
 
+  Split_event_compare mSplitEventCompare ;
   Event_compare mEventCompare ;
 
   int mVertexID ;

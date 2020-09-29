@@ -263,7 +263,43 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( boost::intrusiv
   }
 
   return rResult ;
+}
 
+template<class K>
+Uncertain<Comparison_result> compare_isec_anglesC2 ( Vector_2<K> const& aBV1
+                                                   , Vector_2<K> const& aBV2
+                                                   , Vector_2<K> aLV
+                                                   , Vector_2<K> aRV
+                                                   )
+{
+  typedef typename K::FT FT ;
+  typedef typename K::Vector_2 Vector_2 ;
+
+  Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
+
+//  std::cout << "compare_isec_anglesC2: " << aBV1 << " " << aBV2 << " " << aLV << " " << aRV << std::endl;
+
+  const Vector_2 lBisectorDirection = aBV2 - aBV1 ;
+  const FT lLNorm = CGAL_SS_i::inexact_sqrt ( K().compute_scalar_product_2_object()( aLV, aLV ) ) ;
+  const FT lRNorm = CGAL_SS_i::inexact_sqrt ( K().compute_scalar_product_2_object()( aRV, aRV ) ) ;
+
+  if (! CGAL_NTS certified_is_positive( lLNorm ) ||
+      ! CGAL_NTS certified_is_positive( lRNorm ) )
+    return rResult ;
+
+  aLV = aLV / lLNorm ; // @todo optimize this
+  aRV = aRV / lRNorm ;
+
+  const FT lLSp = K().compute_scalar_product_2_object()( lBisectorDirection, aLV ) ;
+  const FT lRSp = K().compute_scalar_product_2_object()( lBisectorDirection, aRV ) ;
+
+//  std::cout << "lBisectorDirection: " << lBisectorDirection << std::endl;
+//  std::cout << "lLSp / lRSp: " << lLSp << " " << lRSp << std::endl;
+
+  // Smaller if the scalar product is larger, so swapping
+  rResult = CGAL_NTS certified_compare(lRSp, lLSp) ;
+
+  return rResult;
 }
 
 
