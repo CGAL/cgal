@@ -225,18 +225,33 @@ private:
     std::array<double, 9> m_bary;
   public:
     Cached_bary_coord() : m_state (UNINITIALIZED) { }
-    Cached_bary_coord(const Cached_bary_coord& other)
-      : m_state (other.m_state.load()) // not atomic
-    { }
 
-    Cached_bary_coord& operator= (const Cached_bary_coord& other)
+    // Copy operator to satisfy vector, shouldn't be used
+    Cached_bary_coord(const Cached_bary_coord&)
     {
-      m_state.store (other.m_state.load()); // not atomic
+      CGAL_error();
     }
 
-    Cache_state exchange_state(const Cache_state& s) { return m_state.exchange(s); }
-    Cache_state get_state() { return m_state; }
-    void set_state(const Cache_state& s) { m_state = s; }
+    bool is_initialized()
+    {
+      Cache_state s = m_state;
+      if (s == UNINITIALIZED)
+      {
+        // If the following line successfully replaces UNINITIALIZED
+        // by BUSY, then the current thread in charge of initialization
+        if (m_state.compare_exchange_weak(s, BUSY))
+          return false;
+      }
+      // Otherwise, either the thread is BUSY by another thread, or
+      // it's already INITIALIZED. Either way, we way until it's INITIALIZED
+      else
+        while (m_state != INITIALIZED) { }
+
+      // At this point, it's always INITIALIZED
+      return true;
+    }
+
+    void set_initialized() { m_state = INITIALIZED; }
 
     const double& operator[] (const std::size_t& idx) const { return m_bary[idx]; }
     double& operator[] (const std::size_t& idx) { return m_bary[idx]; }
@@ -250,14 +265,10 @@ private:
   public:
 
     Cell_hint() : m_cell(nullptr) { }
-    Cell_hint(const Cell_hint& other)
-      : m_cell (other.m_cell.load()) // not atomic
-    { }
 
-    Cell_hint& operator= (const Cell_hint& other)
-    {
-      m_cell.store (other.m_cell.load()); // not atomic
-    }
+    // Poisson_reconstruction_function should be copyable, although we
+    // don't need to copy that
+    Cell_hint(const Cell_hint&) : m_cell(nullptr) { }
 
     Cell_handle get() const
     {
@@ -688,43 +699,29 @@ public:
   void initialize_matrix_entry(Cell_handle ch) const
   {
     Cached_bary_coord& bary = (*m_bary)[ch->info()];
-    Cache_state s = bary.exchange_state(BUSY);
 
-    // If the cache was already initialized, then let's just restore
-    // the value
-    if (s == INITIALIZED)
-      bary.set_state (INITIALIZED);
+    if (bary.is_initialized())
+      return;
 
     // If the cache was uninitialized, this thread is in charge of
     // initializing it
-    else if (s == UNINITIALIZED)
-    {
-      const Point& pa = ch->vertex(0)->point();
-      const Point& pb = ch->vertex(1)->point();
-      const Point& pc = ch->vertex(2)->point();
-      const Point& pd = ch->vertex(3)->point();
+    const Point& pa = ch->vertex(0)->point();
+    const Point& pb = ch->vertex(1)->point();
+    const Point& pc = ch->vertex(2)->point();
+    const Point& pd = ch->vertex(3)->point();
 
-      Vector va = pa - pd;
-      Vector vb = pb - pd;
-      Vector vc = pc - pd;
+    Vector va = pa - pd;
+    Vector vb = pb - pd;
+    Vector vc = pc - pd;
 
-      internal::invert(va.x(), va.y(), va.z(),
-                       vb.x(), vb.y(), vb.z(),
-                       vc.x(), vc.y(), vc.z(),
-                       bary[0],bary[1],bary[2],
-                       bary[3],bary[4],bary[5],
-                       bary[6],bary[7],bary[8]);
+    internal::invert(va.x(), va.y(), va.z(),
+                     vb.x(), vb.y(), vb.z(),
+                     vc.x(), vc.y(), vc.z(),
+                     bary[0],bary[1],bary[2],
+                     bary[3],bary[4],bary[5],
+                     bary[6],bary[7],bary[8]);
 
-      bary.set_state (INITIALIZED);
-    }
-
-    // Else, the cache is busy, let's just wait for it to be
-    // initialized
-    else
-    {
-      CGAL_assertion (s == BUSY);
-      while (bary.get_state() != INITIALIZED) { }
-    }
+    bary.set_initialized();
   }
   /// \endcond
 
