@@ -21,7 +21,10 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_primitive.h>
 #include <boost/iterator/counting_iterator.hpp>
-
+#include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
 #include <string>
 #include <fstream>
 
@@ -198,10 +201,12 @@ struct Envelope {
     const Point_3& max1 = max_vertex(ic1);
     const Point_3& max2 = max_vertex(ic2);
 
-    if ((compare_x(max1, min2) == CGAL::SMALLER) ||(compare_y(max1, min2) == CGAL::SMALLER) ||(compare_z(max1, min2) == CGAL::SMALLER))
+    if ((compare_x(max1, min2) == CGAL::SMALLER) ||(compare_y(max1, min2) == CGAL::SMALLER) ||(compare_z(max1, min2) == CGAL::SMALLER)){
       return 0;
-      if ((compare_x(max2, min1) == CGAL::SMALLER) ||(compare_y(max2, min1) == CGAL::SMALLER) ||(compare_z(max2, min1) == CGAL::SMALLER))
+    }
+    if ((compare_x(max2, min1) == CGAL::SMALLER) ||(compare_y(max2, min1) == CGAL::SMALLER) ||(compare_z(max2, min1) == CGAL::SMALLER)){
       return 0;
+    }
     return 1;
   }
 
@@ -1807,6 +1812,7 @@ struct Envelope {
           halfspace[i].emplace_back(plane);// number 7;
 
         }
+
 #ifdef TRACE
         std::cout << "face "<< i << std::endl;
         for(int j = 0; j < halfspace[i].size(); j++){
@@ -1820,6 +1826,27 @@ struct Envelope {
 
       }
   }
+
+  void prism_to_off(unsigned int i) const
+  {
+    std::vector<ePlane_3> eplanes;
+    for(int j = 0; j < halfspace[i].size(); j++){
+      eplanes.push_back(halfspace[i][j].eplane);
+    }
+    ePoint_3 origin(env_vertices[env_faces[i][0]].x(), env_vertices[env_faces[i][0]].y(),env_vertices[env_faces[i][0]].z());
+    CGAL::Surface_mesh<ePoint_3> esm;
+    CGAL::halfspace_intersection_3(eplanes.begin(),eplanes.end(),esm , boost::make_optional(origin));
+
+    CGAL::Surface_mesh<typename CGAL::Exact_predicates_inexact_constructions_kernel::Point_3> sm;
+    CGAL::copy_face_graph(esm,sm);
+    CGAL::Polygon_mesh_processing::triangulate_faces(sm);
+    std::string fname("prism_");
+    fname += std::to_string(i);
+    fname += ".off";
+    std::ofstream out(fname.c_str());
+    out << sm << std::endl << std::endl;
+  }
+
 
   // \returns `true` if the query point is inside the envelope
   bool
@@ -1867,6 +1894,9 @@ struct Envelope {
     }
     std::cout << std::endl;
 #endif
+    for(int i = 0; i < prismindex.size(); i++){
+      prism_to_off(prismindex[i]);
+    }
     std::array<Point_3,3> triangle = { t0, t1, t2 };
     if(triangle_out_of_envelope(triangle, prismindex)){
       return false;
