@@ -1,3 +1,4 @@
+#define TRACE
 #include <fastenvelope/FastEnvelope.h>
 #include <fastenvelope/Types.hpp>
 #include <fstream>
@@ -65,8 +66,8 @@ int main(int argc, char* argv[]) {
   std::ofstream inside("insideE.txt");
   std::ofstream outside("outsideE.txt");
   for(int i = 0; i < env_vertices.size(); i+=10){
-      for(int j = 0; j < env_vertices.size(); j+=10){
-        for(int k = 0; k < env_vertices.size(); k+=10){
+      for(int j = i+1; j < env_vertices.size(); j+=10){
+        for(int k = j+1; k < env_vertices.size(); k+=10){
           if( ( i != j) && (i != k) && (j != k)){
             Point_3 p(env_vertices[i][0],env_vertices[i][1], env_vertices[i][2]);
             Point_3 q(env_vertices[j][0],env_vertices[j][1], env_vertices[j][2]);

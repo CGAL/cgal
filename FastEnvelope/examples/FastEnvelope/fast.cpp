@@ -2,7 +2,7 @@
 // #define CGAL_PROFILE
 
 
-// #define TRACE
+//#define TRACE
 
 // fast.cpp and fastE.cpp produce the same trace output to see where the executables take different paths
 // As fastE operates on reordered faces it is important to use as input an off file
@@ -559,6 +559,7 @@ struct Envelope {
                                const ePlane_3 &facet1,
                                const ePlane_3 &facet2) const
   {
+    // return 2;
     // todo:  what do we test here with n ?
     // todo : do this not with Epeck
     ePoint_3 n = tp + CGAL::cross_product((tp - tq), (tp - tr));
@@ -618,7 +619,7 @@ struct Envelope {
     if(ipp != nullptr){
       // todo:  what to do?
 #ifdef TRACE
-      std::cout <<  "the intersection must be a point" << std::endl;
+      std::cout <<  "the intersection must be a point 1" << std::endl;
 #endif
     }
 
@@ -626,7 +627,7 @@ struct Envelope {
 
 
     ePoint_3 n = tp + CGAL::cross_product((tp - tq), (tp - tr));
-
+#if 0
     if (Predicates::orient_3d(n, tp, q, tr) == 0)
       {
         //logger().debug("Degeneration happens");
@@ -635,8 +636,8 @@ struct Envelope {
 #endif
         //n = { {Vector3(rand(), rand(), rand())} };
       }
-
-    int o1 = int(orient(n,tp,tq, ip));
+#endif
+    int o1 = int(orientation(n,tp,tq, ip));
     if (o1 == 0){
       return false;
     }
@@ -1237,7 +1238,7 @@ struct Envelope {
       CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
       result = CGAL::intersection(triangle, facet1, facet2);
       if(! result){
- #ifdef TRACE
+#ifdef TRACE
         std::cout <<  "there must be an intersection 12" << std::endl;
 #endif
       }
@@ -1441,11 +1442,11 @@ struct Envelope {
     }
 
     //    std::cout << filtered_intersection.size() << " filtered" << std::endl;
-
+#ifdef TRACE
     for(int i = 0; i < filtered_intersection.size(); i++){
       prism_to_off(filtered_intersection[i], "filtered");
     }
-
+#endif
     std::vector<unsigned int > queue, idlist;
     std::vector<bool> coverlist;
     coverlist.resize(filtered_intersection.size());
@@ -1537,7 +1538,9 @@ struct Envelope {
 
     for (int i = 1; i < queue.size(); i++){
       jump1 = filtered_intersection[queue[i]];
-
+#ifdef TRACE
+      std::cout << "jump1 = "<< jump1 << std::endl;
+#endif
       localtree.all_intersected_primitives(bounding_boxes[jump1], std::back_inserter(list));
       neighbours.clear();
       neighbour_cover.clear();
@@ -1558,24 +1561,41 @@ struct Envelope {
 
       for (int j = 0; j < i; j++) {
         jump2 = filtered_intersection[queue[j]];
-        if (! box_box_intersection(bounding_boxes[jump1], bounding_boxes[jump2]))
+#ifdef TRACE
+        std::cout << "jump2 = "<< jump2 << std::endl;
+#endif
+        if (! box_box_intersection(bounding_boxes[jump1], bounding_boxes[jump2])){
           continue;
+        }
         for (int k = 0; k < intersect_face[queue[i]].size(); k++) {
           for (int h = 0; h < intersect_face[queue[j]].size(); h++) {
+#ifdef TRACE
+            std::cout << "k = " << k <<  "  h = "<< h << std::endl;
+#endif
             // todo: move the intersection here
-            cut = this->do_intersect(etriangle_eplane,
-                                     halfspace[jump1][intersect_face[queue[i]][k]].eplane,
-                                     halfspace[jump2][intersect_face[queue[j]][h]].eplane);
+            cut = is_3_triangle_cut(etriangle[0], etriangle[1], etriangle[2],
+                                    etriangle_eplane,
+                                    halfspace[jump1][intersect_face[queue[i]][k]].eplane,
+                                    halfspace[jump2][intersect_face[queue[j]][h]].eplane);
 
-            if (!cut) continue;
-
+            if (!cut){
+#ifdef TRACE
+              std::cout << "continue 1" << std::endl;
+#endif
+              continue;
+            }
 
             cut = is_tpp_on_polyhedra(etriangle_eplane,
                                       halfspace[jump1][intersect_face[queue[i]][k]].eplane,
                                       halfspace[jump2][intersect_face[queue[j]][h]].eplane,
                                       jump1, intersect_face[queue[i]][k]);
 
-            if (!cut) continue;
+            if (!cut){
+#ifdef TRACE
+              std::cout << "continue 2" << std::endl;
+#endif
+              continue;
+            }
 
 
             cut = is_tpp_on_polyhedra(etriangle_eplane,
@@ -1583,15 +1603,19 @@ struct Envelope {
                                       halfspace[jump2][intersect_face[queue[j]][h]].eplane,
                                       jump2, intersect_face[queue[j]][h]);
 
-            if (!cut) continue;
-
-
-
+            if (!cut){
+#ifdef TRACE
+              std::cout << "continue 3" << std::endl;
+#endif
+              continue;
+            }
+#ifdef TRACE
+            std::cout << "Call Implicit" << std::endl;
+#endif
             inter = Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order(etriangle_eplane,
                                                                                                   halfspace[jump1][intersect_face[queue[i]][k]].eplane,
                                                                                                   halfspace[jump2][intersect_face[queue[j]][h]].eplane,
                                                                                                   idlist, idlistorder, jump1, jump2, check_id);
-
             if (inter == 1) {
 
 
@@ -1600,7 +1624,6 @@ struct Envelope {
 
                                                                                                               halfspace[jump2][intersect_face[queue[j]][h]].eplane,
                                                                                                               neighbours, neighbour_facets, neighbour_cover, jump1, jump2, check_id);
-
 
 
               if (inter == 1) {
@@ -1897,9 +1920,12 @@ struct Envelope {
     }
     std::cout << std::endl;
 #endif
+
+#ifdef TRACE
     for(int i = 0; i < prismindex.size(); i++){
       prism_to_off(prismindex[i], "prism");
     }
+#endif
     std::array<Point_3,3> triangle = { t0, t1, t2 };
     if(triangle_out_of_envelope(triangle, prismindex)){
       return false;
@@ -2008,8 +2034,8 @@ int main(int argc, char* argv[])
   std::ofstream inside("inside.txt");
   std::ofstream outside("outside.txt");
   for(int i = 0; i < env_vertices.size(); i+=10){
-      for(int j = 0; j < env_vertices.size(); j+= 10){
-        for(int k = 0; k < env_vertices.size(); k+=10){
+      for(int j = i+1; j < env_vertices.size(); j+= 10){
+        for(int k = j+1; k < env_vertices.size(); k+=10){
           if( ( i != j) && (i != k) && (j != k)){
             if(! CGAL::collinear(env_vertices[i], env_vertices[j],env_vertices[k])){
               if(envelope(env_vertices[i],  env_vertices[j], env_vertices[k])){
