@@ -58,7 +58,7 @@ void ArrangementDemoTabBase::setupUi( )
   this->layout->addWidget( this->graphicsView, 0, 0 );
   this->graphicsView->setScene( scene );
 
-  double MAX_WIDTH = std::numeric_limits<double>::max() / 1048576;
+  double MAX_WIDTH = (std::numeric_limits<double>::max)() / 1048576;
 
   double xymin = -MAX_WIDTH / 2;
   double wh = MAX_WIDTH;

@@ -276,10 +276,10 @@ CGAL::Object
 CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
   generateEllipse(const std::vector<Point_2>& points)
 {
-  auto x1 = CGAL::min(points[0].x(), points[1].x());
-  auto y1 = CGAL::min(points[0].y(), points[1].y());
-  auto x2 = CGAL::max(points[0].x(), points[1].x());
-  auto y2 = CGAL::max(points[0].y(), points[1].y());
+  auto x1 = (CGAL::min)(points[0].x(), points[1].x());
+  auto y1 = (CGAL::min)(points[0].y(), points[1].y());
+  auto x2 = (CGAL::max)(points[0].x(), points[1].x());
+  auto y2 = (CGAL::max)(points[0].y(), points[1].y());
 
   Rat_FT a = CGAL::abs(Rat_FT(x1) - Rat_FT(x2)) / 2;
   Rat_FT b = CGAL::abs(Rat_FT(y1) - Rat_FT(y2)) / 2;

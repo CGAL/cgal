@@ -114,7 +114,7 @@ MergeEdgeCallback<Arr_>::getNearestMergeableCurve(
   typedef typename Kernel::Point_2                      Kernel_point_2;
 
   Kernel_point_2 p = CGAL::Qt::Converter<Kernel>{}(event->scenePos());
-  double minDist = std::numeric_limits<double>::max();
+  double minDist = (std::numeric_limits<double>::max)();
   Halfedge_iterator nearestHei;
   bool found = false;
 

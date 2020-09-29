@@ -672,7 +672,7 @@ void ArrangementPainterOstream<
   static constexpr int dx_pixel = 1;
   static constexpr int min_num_points = 20;
   QLineF ux_line = this->getView()->transform().map(QLineF{0, 0, 1, 0});
-  Rational dx = CGAL::min(
+  Rational dx = (CGAL::min)(
     dx_pixel * Rational{1} / ux_line.length(),
     Rational{max_x - min_x} / min_num_points);
 

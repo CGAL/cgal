@@ -407,7 +407,7 @@ static void updateBezierPainterPath(
 
   float pixel_len = approx_pixel_length(controlPoints, worldTransform);
   static constexpr int PIXEL_DIV = 4;
-  int num_segs = std::max(1, static_cast<int>(pixel_len / PIXEL_DIV));
+  int num_segs = (std::max)(1, static_cast<int>(pixel_len / PIXEL_DIV));
 
   painterPath.moveTo(controlPoints[0]);
   for (int i = 0; i < num_segs; i++)

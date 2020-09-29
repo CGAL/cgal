@@ -172,7 +172,7 @@ operator()(const Point_2& p, const X_monotone_curve_2& curve) const
   std::pair<double, double> p_pair = {
     CGAL::to_double(p.x()), CGAL::to_double(p.y())};
 
-  double minDist = std::numeric_limits<double>::max();
+  double minDist = (std::numeric_limits<double>::max)();
   auto points = painterOstream.getPoints(curve);
   for (auto& vit : points)
   {
@@ -207,7 +207,7 @@ operator()(const Point_2& p, const X_monotone_curve_2& curve) const
   QPoint p_viewport =
     view->mapFromScene(QPointF{p.x().doubleValue(), p.y().doubleValue()});
 
-  double minDist = std::numeric_limits<double>::max();
+  double minDist = (std::numeric_limits<double>::max)();
   for (auto& vec : points)
   {
     for (auto vit = vec.begin(); vit != vec.end(); ++vit)
@@ -233,7 +233,7 @@ operator()(const Point_2& p, const X_monotone_curve_2& curve) const
   std::pair<double, double> p_pair = {
     CGAL::to_double(p.x()), CGAL::to_double(p.y())};
 
-  double minDist = std::numeric_limits<double>::max();
+  double minDist = (std::numeric_limits<double>::max)();
   auto points_list = painterOstream.getPointsList(curve);
   for (auto& points : points_list)
   {
@@ -727,9 +727,9 @@ auto Arr_compute_y_at_x_2<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
 
   std::vector<X_monotone_curve_2> curves;
   Point_2 p1 =
-    constructPoint(x, CoordinateType(-std::numeric_limits<int>::max()));
+    constructPoint(x, CoordinateType(-(std::numeric_limits<int>::max)()));
   Point_2 p2 =
-    constructPoint(x, CoordinateType(std::numeric_limits<int>::max()));
+    constructPoint(x, CoordinateType((std::numeric_limits<int>::max)()));
   constructSegment(p1, p2, std::back_inserter(curves));
   return curves[0]; // by construction, there is one curve in curves
 }

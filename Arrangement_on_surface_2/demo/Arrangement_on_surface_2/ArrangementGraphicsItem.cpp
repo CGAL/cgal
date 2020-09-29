@@ -67,10 +67,10 @@ QRectF
 ArrangementGraphicsItem< Arr_ >::
 boundingRect( ) const
 {
-  qreal xmin = -std::numeric_limits<qreal>::max() / 4;
-  qreal ymin = -std::numeric_limits<qreal>::max() / 4;
-  qreal xmax = std::numeric_limits<qreal>::max() / 4;
-  qreal ymax = std::numeric_limits<qreal>::max() / 4;
+  qreal xmin = -(std::numeric_limits<qreal>::max)() / 4;
+  qreal ymin = -(std::numeric_limits<qreal>::max)() / 4;
+  qreal xmax = (std::numeric_limits<qreal>::max)() / 4;
+  qreal ymax = (std::numeric_limits<qreal>::max)() / 4;
   if (this->bb.xmin() > xmin) xmin = this->bb.xmin();
   if (this->bb.ymin() > ymin) ymin = this->bb.ymin();
   if (this->bb.xmax() < xmax) xmax = this->bb.xmax();
