@@ -35,10 +35,13 @@ namespace internal {
 template <class K>
 class Ray_2_Line_2_pair {
 public:
-    enum Intersection_results {NO_INTERSECTION, POINT, RAY};
+    enum Intersection_results {NOT_COMPUTED_YET, NO_INTERSECTION, POINT, RAY};
+    typedef typename K::FT FT;
     Ray_2_Line_2_pair(typename K::Ray_2 const *ray,
                       typename K::Line_2 const *line)
-      : _ray(ray), _line(line), _known(false) {}
+      : _ray(ray), _line(line), _result(NOT_COMPUTED_YET),
+        _intersection_point(typename K::Point_2(FT(0), FT(0)))
+    {}
 
     Intersection_results intersection_type() const;
 
@@ -47,7 +50,6 @@ public:
 protected:
     typename K::Ray_2 const *   _ray;
     typename K::Line_2 const *  _line;
-    mutable bool                    _known;
     mutable Intersection_results    _result;
     mutable typename K::Point_2         _intersection_point;
 };
@@ -94,7 +96,7 @@ intersection(const typename K::Line_2 &line,
              const typename K::Ray_2 &ray,
              const K& k)
 {
-  return internal::intersection(ray, line, k);
+    return internal::intersection(ray, line, k);
 }
 
 
@@ -115,10 +117,9 @@ template <class K>
 typename Ray_2_Line_2_pair<K>::Intersection_results
 Ray_2_Line_2_pair<K>::intersection_type() const
 {
-    if (_known)
+    if (_result != NOT_COMPUTED_YET)
         return _result;
     // The non const this pointer is used to cast away const.
-    _known = true;
     const typename K::Line_2 &l1 = _ray->supporting_line();
     Line_2_Line_2_pair<K> linepair(&l1, _line);
     switch ( linepair.intersection_type()) {
@@ -142,7 +143,7 @@ template <class K>
 typename K::Point_2
 Ray_2_Line_2_pair<K>::intersection_point() const
 {
-    if (!_known)
+    if (_result == NOT_COMPUTED_YET)
         intersection_type();
     CGAL_kernel_assertion(_result == POINT);
     return _intersection_point;
@@ -152,7 +153,7 @@ template <class K>
 typename K::Ray_2
 Ray_2_Line_2_pair<K>::intersection_ray() const
 {
-    if (!_known)
+    if (_result == NOT_COMPUTED_YET)
         intersection_type();
     CGAL_kernel_assertion(_result == RAY);
     return *_ray;
