@@ -443,7 +443,7 @@ the requirement for traversal of all faces in a graph.
 /// \defgroup PkgBGLPropertiesDynamic Dynamic Properties
 /// \ingroup PkgBGLRef
 
-/// \defgroup PkgBGLGraphExternalIndices External Indices
+/// \defgroup BGLGraphExternalIndices External Indices
 /// \ingroup PkgBGLRef
 
 /// \defgroup PkgBGLHelperFct Helper Functions
