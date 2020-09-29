@@ -1212,6 +1212,38 @@ public:
 /*!
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalConcept
+\cgalRefines `AdaptableFunctor`
+\sa `ComputePowerProduct_2` for the definition of of orthogonality for power distances.
+*/
+class CompareWeightedSquaredRadius_2
+{
+public:
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    compares the weight of the smallest circle orthogonal to the
+    input weighted point(s) with the input weight.
+    */
+    Comparison_result operator()(const Kernel::Weighted_point_2& pw,
+                                 const Kernel::Weighted_point_2& qw,
+                                 const Kernel::Weighted_point_2& rw,
+                                 const Kernel::FT& w);
+
+    Comparison_result operator()(const Kernel::Weighted_point_2& pw,
+                                 const Kernel::Weighted_point_2& qw,
+                                 const Kernel::FT& w);
+
+    Comparison_result operator()(const Kernel::Weighted_point_2& pw,
+                                 const Kernel::FT& w);
+
+    /// @}
+}; /* end Kernel::CompareWeightedSquaredRadius_2 */
+
+/*!
+\ingroup PkgKernel23ConceptsFunctionObjects
+\cgalConcept
 
 \cgalRefines `AdaptableFunctor`
 

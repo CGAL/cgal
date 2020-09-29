@@ -120,7 +120,7 @@ public:
 #endif
 
   /// Normal static orientation test, copied from Orientation_2
-  result_type operator()(const Point_2 &p, const Point_2 &q, const Point_2 &r) const
+  result_type operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
   {
     CGAL_PROFILER("Periodic_2_orientation_2 calls");
 
@@ -175,8 +175,8 @@ public:
 
 
   /// Static orientation test with offsets
-  result_type operator()(const Point_2 &p, const Point_2 &q, const Point_2 &r,
-                         const Offset_2 &o_p, const Offset_2 &o_q, const Offset_2 &o_r) const
+  result_type operator()(const Point_2& p, const Point_2& q, const Point_2& r,
+                         const Offset_2& o_p, const Offset_2& o_q, const Offset_2& o_r) const
   {
 
     CGAL_PROFILER("Periodic_2_orientation_2 with offset calls");

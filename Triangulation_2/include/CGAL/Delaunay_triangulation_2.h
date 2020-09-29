@@ -134,7 +134,7 @@ public:
 //                            Face_handle start) const;
 
   // DUAL
-  Point dual (Face_handle f) const;
+  Point dual(Face_handle f) const;
   Object dual(const Edge &e) const;
   Object dual(const Edge_circulator& ec) const;
   Object dual(const Finite_edges_iterator& ei) const;

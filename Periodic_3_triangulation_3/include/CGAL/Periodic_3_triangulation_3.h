@@ -122,6 +122,8 @@ public:
   typedef GT                                   Geometric_traits;
   typedef TDS                                  Triangulation_data_structure;
 
+  typedef typename GT::Domain                  Domain;
+
   typedef typename GT::Periodic_3_offset_3     Offset;
   typedef typename GT::Iso_cuboid_3            Iso_cuboid;
   typedef std::array<int, 3>           Covering_sheets;
@@ -256,25 +258,26 @@ protected:
 
 public:
   /** @name Creation */
-  Periodic_3_triangulation_3(const Iso_cuboid& domain = Iso_cuboid(0,0,0, 1,1,1),
-                             const Geometric_traits& gt = Geometric_traits())
-    : _gt(gt), _tds()
-  {
-    typedef typename internal::Exact_field_selector<FT>::Type EFT;
-    typedef NT_converter<FT,EFT> NTC;
-    CGAL_USE_TYPE(NTC);
-    CGAL_triangulation_precondition_code( NTC ntc; )
-    CGAL_triangulation_precondition(ntc(domain.xmax())-ntc(domain.xmin())
-                                    == ntc(domain.ymax())-ntc(domain.ymin()));
-    CGAL_triangulation_precondition(ntc(domain.ymax())-ntc(domain.ymin())
-                                    == ntc(domain.zmax())-ntc(domain.zmin()));
-    CGAL_triangulation_precondition(ntc(domain.zmax())-ntc(domain.zmin())
-                                    == ntc(domain.xmax())-ntc(domain.xmin()));
+  Periodic_3_triangulation_3(const GT& gt) : _gt(gt), _tds(), _cover(make_array(1, 1, 1)) { }
+  Periodic_3_triangulation_3(const Domain& domain) : Periodic_3_triangulation_3(GT(domain)) { }
 
-    _gt.set_domain(domain);
-    _cover = CGAL::make_array(3,3,3);
-    init_tds();
-  }
+  // @tmp
+//  Periodic_3_triangulation_3(const Iso_cuboid& domain = Iso_cuboid(0,0,0, 1,1,1),
+//                             const Geometric_traits& gt = Geometric_traits())
+//    : _gt(gt), _tds()
+//  {
+//    typedef typename internal::Exact_field_selector<FT>::Type EFT;
+//    typedef NT_converter<FT,EFT> NTC;
+//    CGAL_USE_TYPE(NTC);
+//    CGAL_triangulation_precondition_code( NTC ntc; )
+//    CGAL_triangulation_precondition(ntc(domain.xmax())-ntc(domain.xmin()) == ntc(domain.ymax())-ntc(domain.ymin()));
+//    CGAL_triangulation_precondition(ntc(domain.ymax())-ntc(domain.ymin()) == ntc(domain.zmax())-ntc(domain.zmin()));
+//    CGAL_triangulation_precondition(ntc(domain.zmax())-ntc(domain.zmin()) == ntc(domain.xmax())-ntc(domain.xmin()));
+
+//    _gt.set_domain(domain);
+//    _cover = CGAL::make_array(3,3,3);
+//    init_tds();
+//  }
 
 protected:
   // Copy constructor helpers
@@ -371,7 +374,7 @@ public:
     virtual_vertices_reverse.clear();
     v_offsets.clear();
 
-    _cover = CGAL::make_array(3,3,3);
+    _cover = make_array(1, 1, 1);
     init_tds();
   }
 
@@ -394,7 +397,7 @@ public:
   virtual void gather_cell_hidden_points(const Cell_handle /*cit*/, std::vector<Point>& /* hidden_points*/) { }
   virtual void reinsert_hidden_points_after_converting_to_1_sheeted(const std::vector<Point>& /* hidden_points*/) { }
 
-  const Iso_cuboid& domain() const { return _gt.get_domain(); }
+  const Domain& domain() const { return _gt.get_domain(); }
 
   virtual void update_cover_data_after_setting_domain() {}
 
@@ -422,9 +425,12 @@ public:
 
   bool is_triangulation_in_1_sheet() const;
 
+#ifndef CGAL_GENERIC_P3T3
   void convert_to_1_sheeted_covering();
-  virtual void update_cover_data_after_converting_to_27_sheeted_covering() { }
   void convert_to_27_sheeted_covering();
+#endif
+
+  virtual void update_cover_data_after_converting_to_27_sheeted_covering() { }
 
   size_type number_of_cells() const {
     if(is_1_cover()) return _tds.number_of_cells();
@@ -479,6 +485,7 @@ public:
 
 public:
   // Offset converters
+#ifndef CGAL_GENERIC_P3T3
   int off_to_int(const Offset& off) const
   {
     CGAL_triangulation_assertion( off.x() == 0 || off.x() == 1 );
@@ -492,7 +499,12 @@ public:
   {
     return Offset((i>>2)&1,(i>>1)&1,i&1);
   }
+#else // CGAL_P2T2_USE_COMPACT_OFFSET
+  Offset off_to_int(const Offset& off) { return off; }
+  Offset int_to_off(const Offset& off) const { return off; }
+#endif // CGAL_P2T2_USE_COMPACT_OFFSET
 
+#ifndef CGAL_GENERIC_P3T3
   void set_offsets(Cell_handle c, int o0,int o1,int o2,int o3)
   {
     int off0[3] = {(o0>>2)&1,(o0>>1)&1,(o0&1)};
@@ -513,20 +525,23 @@ public:
     o3 = ((off3[0]&1)<<2)+((off3[1]&1)<<1)+(off3[2]&1);
     c->set_offsets(o0,o1,o2,o3);
   }
+#endif // CGAL_GENERIC_P3T3
 
   template <class Offset>
-  void set_offsets(Cell_handle c, Offset o0,Offset o1,Offset o2,Offset o3)
+  void set_offsets(Cell_handle c, const Offset& o0, const Offset& o1, const Offset& o2, const Offset& o3)
   {
-    int off0[3] = {o0.x(),o0.y(),o0.z()};
-    int off1[3] = {o1.x(),o1.y(),o1.z()};
-    int off2[3] = {o2.x(),o2.y(),o2.z()};
-    int off3[3] = {o3.x(),o3.y(),o3.z()};
+    int off0[3] = {o0.x(), o0.y(), o0.z()};
+    int off1[3] = {o1.x(), o1.y(), o1.z()};
+    int off2[3] = {o2.x(), o2.y(), o2.z()};
+    int off3[3] = {o3.x(), o3.y(), o3.z()};
     for(int i=0; i<3; i++) {
       int min_off = (std::min)((std::min)(off0[i],off1[i]),
                                (std::min)(off2[i],off3[i]));
       if(min_off != 0) {
-        off0[i] -= min_off; off1[i] -= min_off;
-        off2[i] -= min_off; off3[i] -= min_off;
+        off0[i] -= min_off;
+        off1[i] -= min_off;
+        off2[i] -= min_off;
+        off3[i] -= min_off;
       }
     }
 
@@ -536,6 +551,7 @@ public:
                                             (std::min)(off2[1],off3[1])) == 0);
     CGAL_triangulation_assertion((std::min)((std::min)(off0[2],off1[2]),
                                             (std::min)(off2[2],off3[2])) == 0);
+#ifndef CGAL_GENERIC_P3T3
     CGAL_triangulation_assertion((0 <= off0[0]) && (off0[0] < 2));
     CGAL_triangulation_assertion((0 <= off1[0]) && (off1[0] < 2));
     CGAL_triangulation_assertion((0 <= off2[0]) && (off2[0] < 2));
@@ -554,6 +570,12 @@ public:
     int o2i = ((off2[0]&1)<<2)+((off2[1]&1)<<1)+(off2[2]&1);
     int o3i = ((off3[0]&1)<<2)+((off3[1]&1)<<1)+(off3[2]&1);
     c->set_offsets(o0i,o1i,o2i,o3i);
+#else
+    c->set_offsets(Offset(off0[0], off0[1], off0[2]),
+                   Offset(off1[0], off1[1], off1[2]),
+                   Offset(off2[0], off2[1], off2[2]),
+                   Offset(off3[0], off3[1], off3[2]));
+#endif
   }
 
 public:
@@ -1273,6 +1295,13 @@ public:
 private:
   /** @name Insertion helpers */
   template < class Conflict_tester, class Point_hider, class CoverManager >
+  Vertex_handle periodic_insert(const Point& p, const Offset& o,
+                                Locate_type lt, const Offset& l_o,
+                                Cell_handle c, const Conflict_tester& tester,
+                                Point_hider& hider, CoverManager& cover_manager,
+                                Vertex_handle vh = Vertex_handle());
+
+  template < class Conflict_tester, class Point_hider, class CoverManager >
   Vertex_handle periodic_insert(const Point& p, const Offset& o, Locate_type lt,
                                 Cell_handle c, const Conflict_tester& tester,
                                 Point_hider& hider, CoverManager& cover_manager,
@@ -1284,7 +1313,9 @@ private:
     std::cout << "Periodic_sort not yet implemented" << std::endl;
   }
 
+#ifndef CGAL_GENERIC_P3T3 // @tmp, just because set_offsets(c, int, ...) is used in that function
   Vertex_handle create_initial_triangulation(const Point& p);
+#endif
 
 public:
   std::vector<Vertex_handle> insert_dummy_points();
@@ -1320,6 +1351,101 @@ protected:
 protected:
 
   // COMMON INSERTION for DELAUNAY and REGULAR TRIANGULATION
+
+  /*! \brief Insert point into triangulation.
+   *
+   * Inserts the point p into the triangulation. It expects
+   * - a cell to start the point location
+   * - a testing function to determine cells in conflict
+   * - a testing function to determine if a vertex is hidden.
+   *
+   * Implementation:
+   * - If the triangulation is empty call a special function
+   * (create_initial_triangulation) to construct the basic
+   * triangulation.
+   * - Run point location to get the cell c containing point p.
+   * - Call periodic_insert to insert p into the 3-cover.
+   * - Also insert the eight periodic copies of p.
+   */
+  template < class Conflict_tester, class Point_hider, class CoverManager >
+  Vertex_handle insert_in_conflict(const Point& p,
+                                   Locate_type lt, const Offset& lo,
+                                   Cell_handle c, int li, int lj,
+                                   const Conflict_tester& tester,
+                                   Point_hider& hider,
+                                   CoverManager& cover_manager)
+  {
+#ifndef CGAL_GENERIC_P3T3
+    // @todo enable this check for generic, with a kind of pt.is_canonical(p);
+    CGAL_triangulation_assertion((domain().xmin() <= p.x()) && (p.x() < domain().xmax()));
+    CGAL_triangulation_assertion((domain().ymin() <= p.y()) && (p.y() < domain().ymax()));
+    CGAL_triangulation_assertion((domain().zmin() <= p.z()) && (p.z() < domain().zmax()));
+
+    if(number_of_vertices() == 0)
+    {
+      Vertex_handle vh = create_initial_triangulation(p);
+      cover_manager.create_initial_triangulation();
+      return vh;
+    }
+#endif
+
+    if((lt == VERTEX) && (tester.compare_weight(c->vertex(li)->point(),p) == 0))
+      return c->vertex(li);
+
+    Vertex_handle vstart;
+    if(!is_1_cover())
+    {
+      Virtual_vertex_map_it vvmit = virtual_vertices.find(c->vertex(0));
+      if(vvmit == virtual_vertices.end())
+        vstart = c->vertex(0);
+      else
+        vstart = vvmit->second.first;
+
+      CGAL_triangulation_assertion(virtual_vertices.find(vstart) == virtual_vertices.end());
+      CGAL_triangulation_assertion(virtual_vertices_reverse.find(vstart) != virtual_vertices_reverse.end());
+    }
+
+    CGAL_triangulation_assertion( number_of_vertices() != 0 );
+    CGAL_triangulation_expensive_assertion(is_valid());
+    hider.set_original_cube(true);
+    Vertex_handle vh = periodic_insert(p, Offset(), lt, lo, c, tester, hider, cover_manager);
+
+  //  CGAL_assertion(is_valid(true));
+
+    if(is_1_cover()) {
+      return vh;
+    }
+
+    hider.set_original_cube(false);
+
+    virtual_vertices_reverse[vh] = std::vector<Vertex_handle>();
+    // insert 26 periodic copies
+    for(int i=0; i<_cover[0]; i++) {
+      for(int j=0; j<_cover[1]; j++) {
+        for(int k=0; k<_cover[2]; k++) {
+          if((i!=0)||(j!=0)||(k!=0)) {
+            Offset plo;
+            c = periodic_locate(p, Offset(i,j,k), plo, lt, li, lj, Cell_handle());
+            periodic_insert(p, Offset(i,j,k), lt, plo, c, tester, hider,cover_manager,vh);
+          }
+        }
+      }
+    }
+    CGAL_triangulation_expensive_assertion(is_valid());
+
+#ifndef CGAL_GENERIC_P3T3 // @tmp because convert_1 has additional flag shenanigans
+    // Fall back to 1-cover if the criterion that the longest edge is shorter
+    // than sqrt(0.166) is fulfilled.
+    if( cover_manager.can_be_converted_to_1_sheet() ) {
+      CGAL_triangulation_expensive_assertion(is_valid());
+      convert_to_1_sheeted_covering();
+      CGAL_triangulation_expensive_assertion( is_valid() );
+    }
+#endif
+
+    return vh;
+  }
+
   template < class Conflict_tester, class Point_hider, class CoverManager >
   Vertex_handle insert_in_conflict(const Point& p, Cell_handle start,
                                    const Conflict_tester& tester,
@@ -1330,21 +1456,16 @@ protected:
     int li=0, lj=0;
     Offset lo;
     Cell_handle c = periodic_locate(p, Offset(), lo, lt, li, lj, start);
-    return insert_in_conflict(p,lt,c,li,lj,tester,hider, cover_manager);
+    return insert_in_conflict(p, lt, lo, c, li, lj, tester, hider, cover_manager);
   }
-
-  template < class Conflict_tester, class Point_hider, class CoverManager >
-  Vertex_handle insert_in_conflict(const Point& p, Locate_type lt,
-                                   Cell_handle c, int li, int lj,
-                                   const Conflict_tester& tester,
-                                   Point_hider& hider,
-                                   CoverManager& cover_manager);
 
   template < class InputIterator, class Conflict_tester,
              class Point_hider, class CoverManager>
-  std::vector<Vertex_handle> insert_in_conflict(
-      InputIterator begin, InputIterator end, Cell_handle start,
-      Conflict_tester& tester, Point_hider& hider, CoverManager& cover_manager)
+  std::vector<Vertex_handle> insert_in_conflict(InputIterator begin, InputIterator end,
+                                                Cell_handle start,
+                                                Conflict_tester& tester,
+                                                Point_hider& hider,
+                                                CoverManager& cover_manager)
   {
     Vertex_handle new_vertex;
     std::vector<Vertex_handle> double_vertices;
@@ -1367,7 +1488,7 @@ protected:
         CGAL_triangulation_assertion_code( }
       );
 
-      new_vertex = insert_in_conflict(*begin,lt,hint,li,lj,tester,hider, cover_manager);
+      new_vertex = insert_in_conflict(*begin, lt, lo, hint, li, lj, tester, hider, cover_manager);
       if(lt == VERTEX)
         double_vertices.push_back(new_vertex);
       if(new_vertex != Vertex_handle())
@@ -1735,11 +1856,10 @@ protected:
 
   template<class Conflict_tester>
   Offset get_location_offset(const Conflict_tester& tester,
-                             Cell_handle c) const;
+                             Cell_handle c, bool& found) const;
 
   template<class Conflict_tester>
-  Offset get_location_offset(const Conflict_tester& tester,
-                             Cell_handle c, bool& found) const;
+  Offset get_location_offset(const Conflict_tester& tester, Cell_handle c) const;
 
   Offset neighbor_offset(Cell_handle ch, int i, Cell_handle nb) const;
 
@@ -1821,6 +1941,7 @@ protected:
   bool canonical_dual_segment(Cell_handle c, int i, Periodic_segment_3& ps,
                               ConstructCircumcenter construct_circumcenter) const
   {
+#ifndef CGAL_GENERIC_P3T3 // @tmp
     CGAL_triangulation_precondition(c != Cell_handle());
     Offset off = neighbor_offset(c,i,c->neighbor(i));
     Periodic_point_3 p1 = periodic_circumcenter(c, construct_circumcenter);
@@ -1834,6 +1955,9 @@ protected:
     const Periodic_point_3 pp2 = std::make_pair(construct_point(p2), o2-cumm_off);
     ps = CGAL::make_array(pp1, pp2);
     return (cumm_off == Offset(0,0,0));
+#else
+    return false; // @tmp
+#endif
   }
 
   template <class OutputIterator, class ConstructCircumcenter>
@@ -1981,7 +2105,7 @@ protected:
     y /= ( 4 * vol );
     z /= ( 4 * vol );
 
-    Iso_cuboid d = domain();
+    const Domain& d = domain();
     x = (x < d.xmin() ? x+d.xmax()-d.xmin()
   : (x >= d.xmax() ? x-d.xmax()+d.xmin() : x));
     y = (y < d.ymin() ? y+d.ymax()-d.ymin()
@@ -2090,8 +2214,8 @@ exact_periodic_locate
 (const Point& p, const Offset& o_p, Offset& lo,
  Locate_type& lt, int& li, int& lj, Cell_handle start) const
 {
-  int cumm_off = 0;
   Offset off_query = o_p;
+
   if(number_of_vertices() == 0) {
     lo = Offset();
     lt = EMPTY;
@@ -2103,8 +2227,8 @@ exact_periodic_locate
     start = cells_begin();
   }
 
-  cumm_off = start->offset(0) | start->offset(1)
-           | start->offset(2) | start->offset(3);
+#ifndef CGAL_GENERIC_P3T3
+  int cumm_off = start->offset(0) | start->offset(1) | start->offset(2) | start->offset(3);
   if(is_1_cover() && cumm_off != 0) {
     if(((cumm_off & 4) == 4) && (FT(2)*p.x()<(domain().xmax()+domain().xmin())))
       off_query += Offset(1,0,0);
@@ -2113,6 +2237,7 @@ exact_periodic_locate
     if(((cumm_off & 1) == 1) && (FT(2)*p.z()<(domain().zmax()+domain().zmin())))
       off_query += Offset(0,0,1);
   }
+#endif
 
   CGAL_triangulation_postcondition(start!=Cell_handle());
   CGAL_triangulation_assertion(start->neighbor(0)->neighbor(
@@ -2140,15 +2265,33 @@ exact_periodic_locate
 
   // Now treat the cell c.
 try_next_cell:
+
+#ifdef CGAL_DEBUG_P3T3
+  std::cout << "------" << std::endl;
+  std::cout << "current cell: " << c->vertex(0)->point() << " "
+                                << c->vertex(1)->point() << " "
+                                << c->vertex(2)->point() << " "
+                                << c->vertex(3)->point() << std::endl;
+  std::cout << "current offs: " << int_to_off(c->offset(0)) << " "
+                                << int_to_off(c->offset(1)) << " "
+                                << int_to_off(c->offset(2)) << " "
+                                << int_to_off(c->offset(3)) << std::endl;
+  std::cout << "cell points: " << point(c, 0, geom_traits().construct_point_3_object()) << " "
+                               << point(c, 1, geom_traits().construct_point_3_object()) << " "
+                               << point(c, 2, geom_traits().construct_point_3_object()) << " "
+                               << point(c, 3, geom_traits().construct_point_3_object()) << std::endl;
+  std::cout << "off_query: " << off_query << std::endl;
+  std::cout << "point: " << p << std::endl;
+  std::cout << "point(p, off):" << construct_point(p, off_query) << std::endl;
+#endif
+
   // For the remembering stochastic walk,
   // we need to start trying with a random index :
   int i = die4();
   // For the remembering visibility walk (Delaunay only), we don't :
   // int i = 0;
 
-  cumm_off = c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
-
-  bool simplicity_criterion = (cumm_off == 0) && (off_query.is_null());
+  bool simplicity_criterion = c->has_zero_offsets() && off_query.is_null();
 
   // We know that the 4 vertices of c are positively oriented.
   // So, in order to test if p is seen outside from one of c's facets,
@@ -2198,11 +2341,19 @@ try_next_cell:
     }
     else {
       Offset backup_off;
-
       backup_off = off[i];
       off[i] = off_query;
+
       o[i] = orientation(*pts[0], *pts[1], *pts[2], *pts[3],
-          off[0], off[1], off[2], off[3]);
+                         off[0], off[1], off[2], off[3]);
+
+#ifdef CGAL_DEBUG_P3T3
+      std::cout << "Orientation check" << std::endl;
+      std::cout << *pts[0] << " " << off[0] << std::endl;
+      std::cout << *pts[1] << " " << off[1] << std::endl;
+      std::cout << *pts[2] << " " << off[2] << std::endl;
+      std::cout << *pts[3] << " " << off[3] << std::endl;
+#endif
 
       if( o[i] != NEGATIVE ) {
         pts[i] = backup;
@@ -2218,7 +2369,6 @@ try_next_cell:
     c = next;
     goto try_next_cell;
   }
-
 
   // Ok, now we have found the cell. It remains to find the dimension of the
   // intersected simplex.
@@ -2268,7 +2418,6 @@ inexact_periodic_locate(const Point& p, const Offset& o_p,
                         Cell_handle start,
                         int n_of_turns) const
 {
-  int cumm_off = 0;
   Offset off_query = o_p;
   if(number_of_vertices() == 0) {
     return Cell_handle();
@@ -2279,8 +2428,8 @@ inexact_periodic_locate(const Point& p, const Offset& o_p,
     start = cells_begin();
   }
 
-  cumm_off = start->offset(0) | start->offset(1)
-          | start->offset(2) | start->offset(3);
+#ifndef CGAL_GENERIC_P3T3
+  int cumm_off = start->offset(0) | start->offset(1) | start->offset(2) | start->offset(3);
   if(is_1_cover() && cumm_off != 0) {
     if(((cumm_off & 4) == 4) && (FT(2)*p.x()<(domain().xmax()+domain().xmin())))
       off_query += Offset(1,0,0);
@@ -2289,6 +2438,7 @@ inexact_periodic_locate(const Point& p, const Offset& o_p,
     if(((cumm_off & 1) == 1) && (FT(2)*p.z()<(domain().zmax()+domain().zmin())))
       off_query += Offset(0,0,1);
   }
+#endif
 
   CGAL_triangulation_postcondition(start!=Cell_handle());
   CGAL_triangulation_assertion(start->neighbor(0)->neighbor(
@@ -2309,9 +2459,8 @@ inexact_periodic_locate(const Point& p, const Offset& o_p,
   // Now treat the cell c.
 try_next_cell:
   --n_of_turns;
-  cumm_off = c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
 
-  bool simplicity_criterion = (cumm_off == 0) && (off_query.is_null());
+  bool simplicity_criterion = c->has_zero_offsets() && off_query.is_null();
 
   // We know that the 4 vertices of c are positively oriented.
   // So, in order to test if p is seen outside from one of c's facets,
@@ -2397,11 +2546,14 @@ inline Bounded_side Periodic_3_triangulation_3<GT,TDS>::side_of_cell(
 {
   CGAL_triangulation_precondition( number_of_vertices() != 0 );
 
+//  std::cout << "side_of_cell(" << q << ")" << std::endl;
+//  std::cout << "has zero off: " << c->has_zero_offsets() << std::endl;
+
   Orientation o0,o1,o2,o3;
   o0 = o1 = o2 = o3 = ZERO;
 
-  int cumm_off = c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
-  if((cumm_off == 0) && (is_1_cover())) {
+  if(c->has_zero_offsets() && is_1_cover())
+  {
     CGAL_triangulation_assertion(off == Offset());
     const Point& p0  = c->vertex(0)->point();
     const Point& p1  = c->vertex(1)->point();
@@ -2414,7 +2566,10 @@ inline Bounded_side Periodic_3_triangulation_3<GT,TDS>::side_of_cell(
         ((o3 = orientation(p0,p1,p2,q )) == NEGATIVE) ) {
       return ON_UNBOUNDED_SIDE;
     }
-  } else { // Special case for the periodic space.
+  }
+  else
+  {
+    // Special case for the periodic space.
     Offset off_q;
     Offset offs[4];
     const Point *p[4];
@@ -2422,9 +2577,14 @@ inline Bounded_side Periodic_3_triangulation_3<GT,TDS>::side_of_cell(
       p[i] = &(c->vertex(i)->point());
       offs[i] = get_offset(c,i);
     }
+
+    bool found = false;
+
     CGAL_triangulation_assertion(orientation(*p[0], *p[1], *p[2], *p[3],
-                               offs[0], offs[1], offs[2], offs[3]) == POSITIVE);
-    bool found=false;
+                                             offs[0], offs[1], offs[2], offs[3]) == POSITIVE);
+
+#ifndef CGAL_GENERIC_P3T3
+    int cumm_off = c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
     for(int i=0; (i<8)&&(!found); i++) {
       if((cumm_off | ((~i)&7)) == 7) {
         o0 = o1 = o2 = o3 = NEGATIVE;
@@ -2442,7 +2602,51 @@ inline Bounded_side Periodic_3_triangulation_3<GT,TDS>::side_of_cell(
         }
       }
     }
-    if(!found) return ON_UNBOUNDED_SIDE;
+#else
+    int min_off_x = c->offset(3).x(),
+        max_off_x = c->offset(3).x(),
+        min_off_y = c->offset(3).y(),
+        max_off_y = c->offset(3).y(),
+        min_off_z = c->offset(3).z(),
+        max_off_z = c->offset(3).z();
+    for(int i=0; i<3; ++i)
+    {
+      min_off_x = (std::min)(min_off_x, c->offset(i).x());
+      max_off_x = (std::max)(max_off_x, c->offset(i).x());
+      min_off_y = (std::min)(min_off_y, c->offset(i).y());
+      max_off_y = (std::max)(max_off_y, c->offset(i).y());
+      min_off_z = (std::min)(min_off_z, c->offset(i).z());
+      max_off_z = (std::max)(max_off_z, c->offset(i).z());
+    }
+
+//    std::cout << "min/max x: " << min_off_x << " " << max_off_x << std::endl;
+//    std::cout << "min/max y: " << min_off_y << " " << max_off_y << std::endl;
+//    std::cout << "min/max z: " << min_off_z << " " << max_off_z << std::endl;
+
+    for(int i=min_off_x; i<=max_off_x && (!found); ++i)
+    {
+      for(int j=min_off_y; j<=max_off_y && (!found); ++j)
+      {
+        for(int k=min_off_z; k<=max_off_z && (!found); ++k)
+        {
+          o0 = o1 = o2 = o3 = NEGATIVE;
+          off_q = combine_offsets(off, Offset(i, j, k));
+
+          if(((o0 = orientation(q, *p[1], *p[2], *p[3], off_q, offs[1], offs[2], offs[3])) != NEGATIVE) &&
+             ((o1 = orientation(*p[0], q, *p[2], *p[3], offs[0], off_q, offs[2], offs[3])) != NEGATIVE) &&
+             ((o2 = orientation(*p[0], *p[1], q, *p[3], offs[0], offs[1], off_q, offs[3])) != NEGATIVE) &&
+             ((o3 = orientation(*p[0], *p[1], *p[2], q, offs[0], offs[1], offs[2], off_q)) != NEGATIVE))
+          {
+            found = true;
+            // we also quit the double loop now, so that the oi's are the correct ones
+          }
+        }
+      }
+    }
+#endif
+
+    if(!found)
+      return ON_UNBOUNDED_SIDE;
   }
 
   // now all the oi's are >=0
@@ -2521,28 +2725,27 @@ template < class Conflict_tester, class Point_hider, class CoverManager >
 inline typename Periodic_3_triangulation_3<GT,TDS>::Vertex_handle
 Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
     const Point& p, const Offset& o,
-    Locate_type /*lt*/, Cell_handle c, const Conflict_tester& tester,
+    Locate_type /*lt*/, const Offset& current_off,
+    Cell_handle c, const Conflict_tester& tester,
     Point_hider& hider, CoverManager& cover_manager, Vertex_handle vh)
 {
-  Vertex_handle v;
+#ifdef CGAL_DEBUG_P3T3
+  std::cout << "Point to insert: " << p << " (" << number_of_vertices() << ")" << std::endl;
+  std::cout << "Location found cell " << std::endl
+            << point(c, 0, geom_traits().construct_point_3_object()) << " "
+            << point(c, 1, geom_traits().construct_point_3_object()) << " "
+            << point(c, 2, geom_traits().construct_point_3_object()) << " "
+            << point(c, 3, geom_traits().construct_point_3_object()) << std::endl;
+#endif
+
   CGAL_triangulation_precondition(number_of_vertices() != 0);
-  CGAL_triangulation_assertion_code(
-      Locate_type lt_assert; int i_assert; int j_assert;);
-  CGAL_triangulation_precondition(side_of_cell(tester.point(),o, c,
-      lt_assert, i_assert, j_assert) != ON_UNBOUNDED_SIDE);
+  CGAL_assertion(tester.point() == p);
 
   tester.set_offset(o);
 
-  // Choose the periodic copy of tester.point() that is in conflict with c.
-  bool found = false;
-  Offset current_off = get_location_offset(tester, c, found);
-
-  CGAL_triangulation_assertion(side_of_cell(tester.point(),
-      combine_offsets(o,current_off),c,lt_assert,i_assert,j_assert)
-      != ON_UNBOUNDED_SIDE);
-
   // If the new point is not in conflict with its cell, it is hidden.
-  if(!found || !tester.test_initial_cell(c, current_off)) {
+  if(!tester.test_initial_cell(c, current_off))
+  {
     hider.hide_point(c,p);
     return Vertex_handle();
   }
@@ -2569,7 +2772,7 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
   // Insertion. Warning: facets[0].first MUST be in conflict!
   // Compute the star and put it into the data structure.
   // Store the new cells from the star in nbs.
-  v = _tds._insert_in_hole(cells.begin(), cells.end(), facet.first, facet.second);
+  Vertex_handle v = _tds._insert_in_hole(cells.begin(), cells.end(), facet.first, facet.second);
   v->set_point(p);
 
   //TODO: this could be done within the _insert_in_hole without losing any
@@ -2609,6 +2812,39 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
   return v;
 }
 
+template < class GT, class TDS >
+template < class Conflict_tester, class Point_hider, class CoverManager >
+inline typename Periodic_3_triangulation_3<GT,TDS>::Vertex_handle
+Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
+    const Point& p, const Offset& o,
+    Locate_type lt, Cell_handle c, const Conflict_tester& tester,
+    Point_hider& hider, CoverManager& cover_manager, Vertex_handle vh)
+{
+  CGAL_triangulation_assertion_code(Locate_type lt_assert; int i_assert; int j_assert;);
+  CGAL_triangulation_assertion(side_of_cell(tester.point(), o, c,
+                                            lt_assert, i_assert, j_assert) != ON_UNBOUNDED_SIDE);
+
+  tester.set_offset(o);
+
+  // Choose the periodic copy of tester.point() that is in conflict with c.
+  bool found = false;
+  const Offset current_off = get_location_offset(tester, c, found);
+
+  if(!found)
+  {
+    hider.hide_point(c, p);
+    return Vertex_handle();
+  }
+
+  // Choose the periodic copy of tester.point() that is in conflict with c.
+  // @fixme broken for generic P3T3?
+  CGAL_triangulation_assertion(side_of_cell(tester.point(), combine_offsets(o, current_off),
+                                            c, lt_assert, i_assert, j_assert) != ON_UNBOUNDED_SIDE);
+
+  return periodic_insert(p, o, lt, current_off, c, tester, hider, cover_manager, vh);
+}
+
+#ifndef CGAL_GENERIC_P3T3
 /** Inserts the first point to a triangulation.
   *
   * With inserting the first point the 3-sheeted covering is constructed.
@@ -2752,6 +2988,8 @@ Periodic_3_triangulation_3<GT,TDS>::create_initial_triangulation(const Point& p)
 
   return vir_vertices[0][0][0];
 }
+#endif
+
 #define CGAL_INCLUDE_FROM_PERIODIC_3_TRIANGULATION_3_H
 #include <CGAL/internal/Periodic_3_triangulation_dummy_36.h>
 #undef CGAL_INCLUDE_FROM_PERIODIC_3_TRIANGULATION_3_H
@@ -2829,93 +3067,6 @@ find_conflicts(Cell_handle d, const Offset& current_off,
   return it;
 }
 
-/*! \brief Insert point into triangulation.
- *
- * Inserts the point p into the triangulation. It expects
- * - a cell to start the point location
- * - a testing function to determine cells in conflict
- * - a testing function to determine if a vertex is hidden.
- *
- * Implementation:
- * - If the triangulation is empty call a special function
- * (create_initial_triangulation) to construct the basic
- * triangulation.
- * - Run point location to get the cell c containing point p.
- * - Call periodic_insert to insert p into the 3-cover.
- * - Also insert the eight periodic copies of p.
- */
-template < class GT, class TDS >
-template < class Conflict_tester, class Point_hider, class CoverManager >
-inline typename Periodic_3_triangulation_3<GT,TDS>::Vertex_handle
-Periodic_3_triangulation_3<GT,TDS>::insert_in_conflict(const Point& p,
-    Locate_type lt, Cell_handle c, int li, int lj,
-    const Conflict_tester& tester, Point_hider& hider, CoverManager& cover_manager) {
-  CGAL_triangulation_assertion((domain().xmin() <= p.x())
-                               && (p.x() < domain().xmax()));
-  CGAL_triangulation_assertion((domain().ymin() <= p.y())
-                               && (p.y() < domain().ymax()));
-  CGAL_triangulation_assertion((domain().zmin() <= p.z())
-                               && (p.z() < domain().zmax()));
-
-  if(number_of_vertices() == 0) {
-    Vertex_handle vh = create_initial_triangulation(p);
-    cover_manager.create_initial_triangulation();
-    return vh;
-  }
-
-  if((lt == VERTEX) &&
-      (tester.compare_weight(c->vertex(li)->point(),p) == 0) ) {
-    return c->vertex(li);
-  }
-
-  Vertex_handle vstart;
-  if(!is_1_cover()) {
-    Virtual_vertex_map_it vvmit = virtual_vertices.find(c->vertex(0));
-    if(vvmit == virtual_vertices.end())
-      vstart = c->vertex(0);
-    else
-      vstart = vvmit->second.first;
-    CGAL_triangulation_assertion(virtual_vertices.find(vstart)
-                                 == virtual_vertices.end());
-    CGAL_triangulation_assertion(virtual_vertices_reverse.find(vstart)
-                                 != virtual_vertices_reverse.end());
-  }
-
-  CGAL_triangulation_assertion( number_of_vertices() != 0 );
-  CGAL_triangulation_expensive_assertion(is_valid());
-  hider.set_original_cube(true);
-  Vertex_handle vh = periodic_insert(p, Offset(), lt, c, tester, hider, cover_manager);
-  if(is_1_cover()) {
-    return vh;
-  }
-
-  hider.set_original_cube(false);
-
-  virtual_vertices_reverse[vh] = std::vector<Vertex_handle>();
-  Offset lo;
-  // insert 26 periodic copies
-  for(int i=0; i<_cover[0]; i++) {
-    for(int j=0; j<_cover[1]; j++) {
-      for(int k=0; k<_cover[2]; k++) {
-        if((i!=0)||(j!=0)||(k!=0)) {
-          c = periodic_locate(p, Offset(i,j,k), lo, lt, li, lj, Cell_handle());
-          periodic_insert(p, Offset(i,j,k), lt, c, tester, hider,cover_manager,vh);
-        }
-      }
-    }
-  }
-  CGAL_triangulation_expensive_assertion(is_valid());
-
-  // Fall back to 1-cover if the criterion that the longest edge is shorter
-  // than sqrt(0.166) is fulfilled.
-  if( cover_manager.can_be_converted_to_1_sheet() ) {
-    CGAL_triangulation_expensive_assertion(is_valid());
-    convert_to_1_sheeted_covering();
-    CGAL_triangulation_expensive_assertion( is_valid() );
-  }
-  return vh;
-}
-
 /// tests if two vertices of one cell are just periodic copies of each other
 template < class GT, class TDS >
 inline bool Periodic_3_triangulation_3<GT,TDS>::has_self_edges(Cell_handle c) const {
@@ -2960,13 +3111,13 @@ is_valid(bool verbose, int level) const
          iter != end_iter;
          ++iter)
     {
-      for(typename Virtual_vertex_reverse_map::mapped_type::const_iterator iter_2 = iter->second.begin(),
-           end_iter_2 = iter->second.end();
-           iter_2 != end_iter_2;
-           ++iter_2)
+      for(typename Virtual_vertex_reverse_map::mapped_type::const_iterator iter_3 = iter->second.begin(),
+           end_iter_3 = iter->second.end();
+           iter_3 != end_iter_3;
+           ++iter_3)
       {
-        CGAL_triangulation_assertion(virtual_vertices.find(*iter_2) != virtual_vertices.end());
-        CGAL_triangulation_assertion(virtual_vertices.at(*iter_2).first == iter->first);
+        CGAL_triangulation_assertion(virtual_vertices.find(*iter_3) != virtual_vertices.end());
+        CGAL_triangulation_assertion(virtual_vertices.at(*iter_3).first == iter->first);
       }
     }
   }
@@ -3340,6 +3491,7 @@ periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_mana
 // ############################################################################
 // ############################################################################
 
+#ifndef CGAL_GENERIC_P3T3
 /** \brief Delete each redundant cell and the not anymore needed data
  *  structures.
  *
@@ -3813,6 +3965,7 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_27_sheeted_covering()
 
   update_cover_data_after_converting_to_27_sheeted_covering();
 }
+#endif // CGAL_GENERIC_P3T3
 
 template < class GT, class TDS >
 class Periodic_3_triangulation_3<GT,TDS>::Finder
@@ -3868,46 +4021,20 @@ template < class GT, class TDS >
 template < class Conflict_tester >
 inline typename Periodic_3_triangulation_3<GT,TDS>::Offset
 Periodic_3_triangulation_3<GT,TDS>::get_location_offset(
-    const Conflict_tester& tester, Cell_handle c) const
-{
-  CGAL_triangulation_precondition( number_of_vertices() != 0 );
-
-  int cumm_off = c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
-  if(cumm_off == 0) {
-    // default case:
-    CGAL_triangulation_assertion(tester(c, Offset()));
-    return Offset();
-  } else {
-    // Main idea seems to just test all possibilities.
-    for(int i=0; i<8; i++) {
-      if(((cumm_off | (~i))&7) == 7) {
-        if(tester(c,int_to_off(i))) {
-          return int_to_off(i);
-        }
-      }
-    }
-  }
-  CGAL_triangulation_assertion(false);
-  return Offset();
-}
-
-template < class GT, class TDS >
-template < class Conflict_tester >
-inline typename Periodic_3_triangulation_3<GT,TDS>::Offset
-Periodic_3_triangulation_3<GT,TDS>::get_location_offset(
     const Conflict_tester& tester, Cell_handle c, bool& found) const
 {
   CGAL_triangulation_precondition( number_of_vertices() != 0 );
 
-  found = false;
-
-  int cumm_off = c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
-  if(cumm_off == 0 && tester(c, Offset())) {
-    // default case:
+  if(c->has_zero_offsets() && tester(c, Offset()))
+  {
     found = true;
     return Offset();
-  } else {
+  }
+  else
+  {
+#ifndef CGAL_GENERIC_P3T3
     // Main idea seems to just test all possibilities.
+    int cumm_off = c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
     for(int i=0; i<8; i++) {
       if(((cumm_off | (~i))&7) == 7) {
         if(tester(c,int_to_off(i))) {
@@ -3916,9 +4043,55 @@ Periodic_3_triangulation_3<GT,TDS>::get_location_offset(
         }
       }
     }
+#else // @fixme doesn't work actually
+    int min_off_x = c->offset(3).x(),
+        max_off_x = c->offset(3).x(),
+        min_off_y = c->offset(3).y(),
+        max_off_y = c->offset(3).y(),
+        min_off_z = c->offset(3).z(),
+        max_off_z = c->offset(3).z();
+    for(int i=0; i<3; ++i)
+    {
+      min_off_x = (std::min)(min_off_x, c->offset(i).x());
+      max_off_x = (std::max)(max_off_x, c->offset(i).x());
+      min_off_y = (std::min)(min_off_y, c->offset(i).y());
+      max_off_y = (std::max)(max_off_y, c->offset(i).y());
+      min_off_z = (std::min)(min_off_z, c->offset(i).z());
+      max_off_z = (std::max)(max_off_z, c->offset(i).z());
+    }
+
+    for(int i=min_off_x; i<=max_off_x; ++i)
+    {
+      for(int j=min_off_y; j<=max_off_y; ++j)
+      {
+        for(int k=min_off_z; k<=max_off_z; ++k)
+        {
+          const Offset oijk(i, j, k);
+          if(tester(c, oijk))
+          {
+            found = true;
+            return oijk;
+          }
+        }
+      }
+    }
+#endif
   }
 
+  CGAL_triangulation_assertion(false);
   return Offset();
+}
+
+template < class GT, class TDS >
+template < class Conflict_tester >
+inline typename Periodic_3_triangulation_3<GT,TDS>::Offset
+Periodic_3_triangulation_3<GT,TDS>::get_location_offset(
+    const Conflict_tester& tester, Cell_handle c) const
+{
+  bool found = false;
+  Offset o = get_location_offset(tester, c, found);
+  CGAL_triangulation_assertion(false);
+  return o;
 }
 
 /** Get the offset between the origins of the internal offset coordinate
@@ -3939,7 +4112,7 @@ Periodic_3_triangulation_3<GT,TDS>::neighbor_offset(
   Vertex_handle vertex_ch;
   int index_ch, index_nb;
   // ensure that vertex_ch \in nb and vertex_nb \in ch
-  index_ch = (i==0? 1 : 0);
+  index_ch = (i==0? 1 : 0); // get a random vertex of the face common to both ch and nb
   vertex_ch = ch->vertex(index_ch);
   index_nb = nb->index(vertex_ch);
 
@@ -3984,12 +4157,12 @@ inline void Periodic_3_triangulation_3<GT, TDS>::get_vertex(
     // otherwise it has to be looked up as well as its offset.
     vh = it->second.first;
     off += it->second.second;
-    CGAL_triangulation_assertion(vh->point().x() < domain().xmax());
-    CGAL_triangulation_assertion(vh->point().y() < domain().ymax());
-    CGAL_triangulation_assertion(vh->point().z() < domain().zmax());
-    CGAL_triangulation_assertion(vh->point().x() >= domain().xmin());
-    CGAL_triangulation_assertion(vh->point().y() >= domain().ymin());
-    CGAL_triangulation_assertion(vh->point().z() >= domain().zmin());
+//    CGAL_triangulation_assertion(vh->point().x() < domain().xmax());
+//    CGAL_triangulation_assertion(vh->point().y() < domain().ymax());
+//    CGAL_triangulation_assertion(vh->point().z() < domain().zmax());
+//    CGAL_triangulation_assertion(vh->point().x() >= domain().xmin());
+//    CGAL_triangulation_assertion(vh->point().y() >= domain().ymin());
+//    CGAL_triangulation_assertion(vh->point().z() >= domain().zmin());
   }
 }
 

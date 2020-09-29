@@ -60,6 +60,7 @@ public:
   typedef Gt                                    Geometric_traits;
   typedef Tds                                   Triangulation_data_structure;
 
+  typedef typename Gt::Domain                            Domain;
 
   ///Compatibility typedef:
   typedef Geometric_traits                      Geom_traits;
@@ -113,7 +114,7 @@ public:
   // Tag to distinguish periodic triangulations from others
   typedef Tag_true                              Periodic_tag;
 
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
   using Base::cw;
   using Base::ccw;
   using Base::domain;
@@ -148,7 +149,6 @@ public:
   using Base::adjacent_vertices;
   using Base::combine_offsets;
   using Base::construct_point;
-  using Base::convert_to_27_sheeted_covering;
   using Base::draw_dual;
   using Base::incident_edges;
   using Base::incident_facets;
@@ -212,22 +212,21 @@ private:
 
 public:
   /** @name Creation */
-  Periodic_3_Delaunay_triangulation_3(const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
-                                      const Geometric_traits& gt = Geometric_traits())
-    : Base(domain, gt), too_long_edge_counter(0)
+  Periodic_3_Delaunay_triangulation_3(const Gt& gt)
+    : Base(gt), too_long_edge_counter(0)
   {
-    edge_length_threshold = FT(0.166) * (domain.xmax()-domain.xmin())
-                                      * (domain.xmax()-domain.xmin());
+    update_cover_data_after_setting_domain();
   }
+
+  Periodic_3_Delaunay_triangulation_3(const Domain& domain = Domain())
+    : Periodic_3_Delaunay_triangulation_3(Gt(domain))
+  { }
 
   template < typename InputIterator >
   Periodic_3_Delaunay_triangulation_3(InputIterator first, InputIterator last,
-                                      const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
-                                      const Geometric_traits& gt = Geometric_traits())
-    : Base(domain, gt), too_long_edge_counter(0)
+                                      const Domain& domain = Domain())
+    : Periodic_3_Delaunay_triangulation_3(domain)
   {
-    edge_length_threshold = FT(0.166) * (domain.xmax()-domain.xmin())
-                                      * (domain.xmax()-domain.xmin());
     insert(first, last);
   }
 
@@ -265,11 +264,13 @@ public:
 
   virtual void update_cover_data_after_setting_domain ()
   {
+#ifndef CGAL_GENERIC_P3T3
     edge_length_threshold = FT(0.166) * (domain().xmax()-domain().xmin())
                                       * (domain().xmax()-domain().xmin());
+#endif
   }
 
-  virtual void update_cover_data_after_converting_to_27_sheeted_covering()
+  virtual void update_cover_data_after_converting_to_37_sheeted_covering()
   {
     compute_too_long_edges();
   }
@@ -419,6 +420,7 @@ public:
                                            const std::vector<Cell_handle>& new_cells,
                                            const bool abort_if_cover_change)
   {
+#ifndef CGAL_GENERIC_P3T3 // @tmp
     for(int i=0; i < 4; i++)
     {
       for(int j=0; j < 4; j++)
@@ -429,10 +431,8 @@ public:
         if(&*(new_ch->vertex(i)) > &*(new_ch->vertex(j)))
           continue;
 
-        Point p1 = construct_point(new_ch->vertex(i)->point(),
-                                   get_offset(new_ch, i));
-        Point p2 = construct_point(new_ch->vertex(j)->point(),
-                                   get_offset(new_ch, j));
+        Point p1 = construct_point(new_ch->vertex(i)->point(), get_offset(new_ch, i));
+        Point p2 = construct_point(new_ch->vertex(j)->point(), get_offset(new_ch, j));
         Vertex_handle v_no = new_ch->vertex(i);
 
         if(squared_distance(p1, p2) > edge_length_threshold)
@@ -446,7 +446,7 @@ public:
               return true;
 
             tds().delete_cells(new_cells.begin(), new_cells.end());
-            convert_to_27_sheeted_covering();
+            Base::convert_to_37_sheeted_covering();
             return true;
           }
           else if(find(too_long_edges[v_no].begin(),
@@ -459,6 +459,8 @@ public:
         }
       }
     }
+#endif
+
     return false;
   }
 
@@ -520,6 +522,7 @@ public:
       points.begin(), points.end(), hint, tester, hider, cover_manager);
 
     if(is_large_point_set) {
+#ifdef WIP // @fixme
       typedef CGAL::Periodic_3_Delaunay_triangulation_remove_traits_3<Gt> P3removeT;
       typedef CGAL::Delaunay_triangulation_3< P3removeT > DT;
       typedef Vertex_remover< DT > Remover;
@@ -532,6 +535,7 @@ public:
                       dummy_points[i]) == double_vertices.end())
           Base::remove(dummy_points[i],remover,t, cover_manager);
       }
+#endif
     }
 
     return number_of_vertices() - n;
@@ -787,8 +791,7 @@ private:
 
     typedef std::map<Vertex_triple,Facet> Vertex_triple_Facet_map;
     typedef std::map<Vertex_triple, FacetE> Vertex_triple_FacetE_map;
-    typedef typename Vertex_triple_FacetE_map::iterator
-    Vertex_triple_FacetE_map_it;
+    typedef typename Vertex_triple_FacetE_map::iterator Vertex_triple_FacetE_map_it;
 
   Vertex_remover(const Self *t, Triangulation_R3 &tmp_) : _t(t),tmp(tmp_) {}
 

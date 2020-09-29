@@ -332,6 +332,69 @@ compare_squared_distance(const typename K::Point_2 &p,
   return k.compare_squared_distance_2_object()(p, q, d2);
 }
 
+template < class K >
+inline
+typename K::Comparison_result
+compare_squared_radius(const typename K::Point_2 &p,
+                       const typename K::FT &sr,
+                       const K& k)
+{
+  return k.compare_squared_radius_2_object()(p, sr);
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_squared_radius(const typename K::Point_2 &p,
+                       const typename K::Point_2 &q,
+                       const typename K::FT &sr,
+                       const K& k)
+{
+  return k.compare_squared_radius_2_object()(p, q, sr);
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_squared_radius(const typename K::Point_2 &p,
+                       const typename K::Point_2 &q,
+                       const typename K::Point_2 &r,
+                       const typename K::FT &sr,
+                       const K& k)
+{
+  return k.compare_squared_radius_2_object()(p, q, r, sr);
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_weighted_squared_radius(const typename K::Weighted_point_2 &p,
+                                const typename K::FT &w, const K &k)
+{
+  return k.compare_weighted_squared_radius_2_object()(p, w);
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_weighted_squared_radius(const typename K::Weighted_point_2 &p,
+                                const typename K::Weighted_point_2 &q,
+                                const typename K::FT &w, const K &k)
+{
+  return k.compare_weighted_squared_radius_2_object()(p, q, w);
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_weighted_squared_radius(const typename K::Weighted_point_2 &p,
+                                const typename K::Weighted_point_2 &q,
+                                const typename K::Weighted_point_2 &r,
+                                const typename K::FT &w, const K &k)
+{
+  return k.compare_weighted_squared_radius_2_object()(p, q, r, w);
+}
+
 template <class K>
 inline
 typename K::Comparison_result

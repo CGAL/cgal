@@ -560,6 +560,36 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
+  class Compare_squared_radius_2
+  {
+    typedef typename K::Point_2            Point_2;
+    typedef typename K::FT                 FT;
+
+  public:
+    typedef typename K::Comparison_result  result_type;
+
+    result_type operator()(const Point_2& p, const Point_2& q, const Point_2& r, const FT& ft) const
+    {
+      return CGAL::compare(squared_radiusC2(p.x(), p.y(),
+                                            q.x(), q.y(),
+                                            r.x(), r.y()),
+                           ft);
+    }
+
+    result_type operator()(const Point_2& p, const Point_2& q, const FT& ft) const
+    {
+      return CGAL::compare(squared_radiusC2(p.x(), p.y(),
+                                            q.x(), q.y()),
+                           ft);
+    }
+
+    result_type operator()(const Point_2&, const FT& ft) const
+    {
+      return - CGAL_NTS sign(ft);
+    }
+  };
+
+  template <typename K>
   class Compare_squared_radius_3
   {
     typedef typename K::Point_3            Point_3;

@@ -289,7 +289,7 @@ public:
   /*!
   Returns the fundamental domain.
   */
-  Iso_rectangle_2 get_domain() const;
+  const Iso_rectangle_2& get_domain() const;
 
 /// @}
 

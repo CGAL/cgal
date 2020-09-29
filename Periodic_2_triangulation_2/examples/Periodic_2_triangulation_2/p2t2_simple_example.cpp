@@ -1,5 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
+#define CGAL_DEBUG_P2T2
+
 #include <CGAL/Periodic_2_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
 
@@ -9,15 +11,15 @@
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<K> GT;
 
+typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<K> GT;
 typedef CGAL::Periodic_2_Delaunay_triangulation_2<GT>       PDT;
 
 typedef PDT::Face_handle                                    Face_handle;
 typedef PDT::Vertex_handle                                  Vertex_handle;
 typedef PDT::Locate_type                                    Locate_type;
 typedef PDT::Point                                          Point;
-typedef PDT::Iso_rectangle                                  Iso_rectangle;
+typedef PDT::Domain                                         Iso_rectangle;
 
 int main()
 {
@@ -25,23 +27,36 @@ int main()
 
   // construction from a list of points :
   std::list<Point> L;
-  L.push_front(Point(0, 0));
-  L.push_front(Point(1, 0));
-  L.push_front(Point(0, 1));
+  PDT T(domain); // Put the domain with the constructor
 
-  PDT T(L.begin(), L.end(), domain); // Put the domain with the constructor
+  L.push_front(Point(0, 0));
+  T.insert(L.front());
+
+  std::cout << T.number_of_vertices() << " nv" << std::endl;
+  std::cout << T.number_of_faces() << " nf" << std::endl;
+
+  L.push_front(Point(1, 0));
+  T.insert(L.front());
+
+  std::cout << T.number_of_vertices() << " nv" << std::endl;
+
+  L.push_front(Point(0, 1));
+  T.insert(L.front());
 
   size_t n = T.number_of_vertices();
 
   // insertion from a vector :
   std::vector<Point> V(3);
   V[0] = Point(0, 0);
+  T.insert(V[0]);
   V[1] = Point(1, 1);
+  T.insert(V[1]);
   V[2] = Point(-1, -1);
+  T.insert(V[2]);
 
-  n = n + T.insert(V.begin(), V.end());
+//  n = n + T.insert(V.begin(), V.end());
 
-  assert( n == 5 );       // 6 points have been inserted, one is a duplicate
+  assert( T.number_of_vertices() == 5 );       // 6 points have been inserted, one is a duplicate
   assert( T.is_valid() ); // checking validity of T
 
   Locate_type lt;
@@ -61,6 +76,7 @@ int main()
   assert( nb->has_vertex( v, nli ) );
   // nli is the index of v in nc
 
+#if 0
   std::ofstream oFileT("output.tri", std::ios::out);
   // writing file output;
   oFileT << T;
@@ -72,6 +88,7 @@ int main()
   assert( T1.is_valid() );
   assert( T1.number_of_vertices() == T.number_of_vertices() );
   assert( T1.number_of_faces() == T.number_of_faces() );
+#endif
 
   return 0;
 }

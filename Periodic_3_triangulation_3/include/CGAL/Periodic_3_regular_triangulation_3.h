@@ -272,7 +272,8 @@ public:
     CGAL_triangulation_assertion( cells_with_too_big_orthoball.empty() );
 
     for(Cell_iterator iter = cells_begin(), end_iter = cells_end(); iter != end_iter; ++iter)
-      cells_with_too_big_orthoball.insert(iter);
+      if(compare_orthsphere_radius_to_threshold(*iter, orthosphere_radius_threshold) != CGAL::SMALLER)
+        cells_with_too_big_orthoball.insert(iter);
   }
 
   template <class CellIt>
@@ -464,15 +465,17 @@ public:
     );
 
     size_type n = number_of_vertices();
+
     // The heuristic discards the existing triangulation so it can only be
     // applied to empty triangulations.
     if(n != 0)
       is_large_point_set = false;
 
     std::vector<Weighted_point> points(first, last);
-    std::vector<Vertex_handle> dummy_points_vhs, double_vertices;
+    std::vector<Vertex_handle> dummy_points_vhs;
     std::vector<Weighted_point> dummy_points;
     typename std::vector<Weighted_point>::iterator pbegin = points.begin();
+
     if(is_large_point_set)
     {
       dummy_points_vhs = insert_dummy_points();
@@ -480,7 +483,7 @@ public:
       for(typename std::vector<Vertex_handle>::iterator iter = dummy_points_vhs.begin(), end_iter = dummy_points_vhs.end(); iter != end_iter; ++iter)
         dummy_points.push_back((*iter)->point());
     }
-    else
+    else if(!is_1_cover())
     {
       CGAL::cpp98::random_shuffle(points.begin(), points.end());
       pbegin = points.begin();
@@ -510,11 +513,12 @@ public:
     Conflict_tester tester(*pbegin, this);
     Point_hider hider(this);
     Cover_manager cover_manager(*this);
-    double_vertices = Tr_Base::insert_in_conflict(pbegin, points.end(), hint, tester, hider, cover_manager);
+    std::vector<Vertex_handle> double_vertices =
+      Tr_Base::insert_in_conflict(pbegin, points.end(), hint, tester, hider, cover_manager);
 
     if(is_large_point_set)
     {
-      for(unsigned int i = 0; i < dummy_points_vhs.size(); ++i)
+      for(unsigned int i=0; i<dummy_points_vhs.size(); ++i)
       {
         bool is_hidden = false;
         for(Cell_iterator iter = this->cells_begin(); iter != this->cells_end(); ++iter)
@@ -526,6 +530,7 @@ public:
             iter->unhide_point(it);
           }
         }
+
         if(!is_hidden)
           if(std::find(double_vertices.begin(), double_vertices.end(), dummy_points_vhs[i]) == double_vertices.end())
             remove(dummy_points_vhs[i]);

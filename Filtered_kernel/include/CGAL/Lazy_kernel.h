@@ -129,8 +129,9 @@ public:
   typedef typename Exact_kernel::Rep_tag                          Rep_tag;
 
   enum { Has_filtered_predicates = true };
+  typedef Boolean_tag<Has_filtered_predicates>                    Has_filtered_predicates_tag;
   enum { Has_static_filters = false };
-  typedef Boolean_tag<Has_filtered_predicates> Has_filtered_predicates_tag;
+  typedef Boolean_tag<Has_static_filters>                         Has_static_filters_tag;
 
   // Types
   typedef CGAL::Lazy_exact_nt<typename Exact_kernel::FT>  FT;

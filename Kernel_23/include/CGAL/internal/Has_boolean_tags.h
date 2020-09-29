@@ -14,12 +14,10 @@
 #ifndef CGAL_INTERNAL_HAS_BOOLEAN_TAGS_H
 #define CGAL_INTERNAL_HAS_BOOLEAN_TAGS_H
 
-#include <boost/mpl/has_xxx.hpp>
 #include <CGAL/tags.h>
 
-namespace CGAL{
-
-namespace internal{
+namespace CGAL {
+namespace internal {
 
 #define CGAL_HAS_XXX_MEMBER_NAMED_DEF(CLASS,MEMBER) \
 template<typename T> struct CLASS { \
@@ -43,32 +41,29 @@ template<class Traits, bool has_tag = Has_nested_type_Has_filtered_predicates<Tr
 struct Has_filtered_predicates;
 
 template<class Traits>
-struct Has_filtered_predicates<Traits,false>
-{
-  static const bool value = false;
-};
+struct Has_filtered_predicates<Traits, false>
+  : public CGAL::Tag_false
+{ };
 
 template<class Traits>
-struct Has_filtered_predicates<Traits,true>
-{
-  static const bool value = Traits::Has_filtered_predicates;
-};
+struct Has_filtered_predicates<Traits, true>
+  : public Traits::Has_filtered_predicates_tag
+{ };
 
 template<class Traits, bool has_tag = Has_nested_type_Has_static_filters<Traits>::value >
 struct Has_static_filters;
 
 template<class Traits>
-struct Has_static_filters<Traits,false>
-{
-  static const bool value = false;
-};
+struct Has_static_filters<Traits, false>
+  : public CGAL::Tag_false
+{ };
 
 template<class Traits>
-struct Has_static_filters<Traits,true>
-{
-  static const bool value = Traits::Has_static_filters;
-};
+struct Has_static_filters<Traits, true>
+  : public Traits::Has_static_filters_tag
+{ };
 
-} } //namespace CGAL::internal
+} // namespace internal
+} // namespace CGAL
 
 #endif //CGAL_INTERNAL_HAS_BOOLEAN_TAGS_H

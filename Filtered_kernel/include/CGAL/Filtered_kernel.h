@@ -112,14 +112,16 @@ template < typename CK, bool UseStaticFilters = true >
 struct Filtered_kernel_adaptor
   : public Filtered_kernel_base<CK>
 {
-        enum { Has_static_filters = false };
+  enum { Has_static_filters = false };
+  typedef Boolean_tag<Has_static_filters> Has_static_filters_tag;
 };
 
 template < typename CK >
 struct Filtered_kernel_adaptor<CK, true>
   : public Static_filters_base<CK>
 {
-        enum { Has_static_filters = true };
+  enum { Has_static_filters = true };
+  typedef Boolean_tag<Has_static_filters> Has_static_filters_tag;
 };
 
 // UseStaticFilters has a default value, depending on

@@ -9,39 +9,35 @@
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
 
-#ifndef CGAL_PERIODIC_2_TRIANGULATION_ITERATORS_2_H
-#define CGAL_PERIODIC_2_TRIANGULATION_ITERATORS_2_H
+#ifndef CGAL_P2T2_ITERATORS_ON_SQUARE_FLAT_TORUS_2_H
+#define CGAL_P2T2_ITERATORS_ON_SQUARE_FLAT_TORUS_2_H
 
 #include <CGAL/license/Periodic_2_triangulation_2.h>
-
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/iterator.h>
 #include <CGAL/array.h>
 
-namespace CGAL
-{
+namespace CGAL {
 
+// Iterates over the primitives in a periodic triangulation.
+// Options:
+// - STORED: output each primitive from the Tds exactly once
+// - UNIQUE: output exactly one periodic copy of each primitive, no matter
+//     whether the current tds stores a n-sheeted covering for n!=1.
+// - STORED_COVER_DOMAIN: output each primitive whose intersection with the
+//     actually used periodic domain is non-zero.
+// - UNIQUE_COVER_DOMAIN: output each primitive whose intersection
+//     with the original domain that the user has given is non-zero
+//
+// Comments:
+// When computing in 1-sheeted covering, there will be no difference in the
+// result of STORED and UNIQUE as well as STORED_COVER_DOMAIN and
+// UNIQUE_COVER_DOMAIN.
 template < class T >
 class Periodic_2_triangulation_triangle_iterator_2
 {
-  // Iterates over the primitives in a periodic triangulation.
-  // Options:
-  // - STORED: output each primitive from the Tds exactly once
-  // - UNIQUE: output exactly one periodic copy of each primitive, no matter
-  //     whether the current tds stores a n-sheeted covering for n!=1.
-  // - STORED_COVER_DOMAIN: output each primitive whose intersection with the
-  //     actually used periodic domain is non-zero.
-  // - UNIQUE_COVER_DOMAIN: output each primitive whose intersection
-  //     with the original domain that the user has given is non-zero
-  //
-  // Comments:
-  // When computing in 1-sheeted covering, there will be no difference in the
-  // result of STORED and UNIQUE as well as STORED_COVER_DOMAIN and
-  // UNIQUE_COVER_DOMAIN.
-
 public:
-
   typedef typename T::Periodic_triangle                   value_type;
   typedef const typename T::Periodic_triangle *           pointer;
   typedef const typename T::Periodic_triangle &           reference;
@@ -61,33 +57,34 @@ public:
     : _t(nullptr), _it(it), _off(0) {}
 
   Periodic_2_triangulation_triangle_iterator_2(const T * t,
-      Iterator_type it = T::STORED)
+                                               Iterator_type it = T::STORED)
     : _t(t), pos(_t->faces_begin()), _it(it), _off(0)
   {
     if (_it == T::UNIQUE || _it == T::UNIQUE_COVER_DOMAIN)
-      {
-        while (pos != _t->faces_end() && !is_canonical() )
-          ++pos;
-      }
+    {
+      while (pos != _t->faces_end() && !is_canonical() )
+        ++pos;
+    }
   }
 
   // used to initialize the past-the-end iterator
   Periodic_2_triangulation_triangle_iterator_2(const T* t, int,
-      Iterator_type it = T::STORED)
-    : _t(t), pos(_t->faces_end()), _it(it), _off(0) {}
+                                               Iterator_type it = T::STORED)
+    : _t(t), pos(_t->faces_end()), _it(it), _off(0)
+  { }
 
   Periodic_triangle_iterator& operator++()
   {
     switch (_it)
-      {
+    {
       case T::STORED:
         ++pos;
         break;
       case T::UNIQUE:
         do
-          {
-            ++pos;
-          }
+        {
+          ++pos;
+        }
         while (pos != _t->faces_end() && !is_canonical());
         break;
       case T::STORED_COVER_DOMAIN:
@@ -96,28 +93,28 @@ public:
         break;
       default:
         CGAL_triangulation_assertion(false);
-      };
+    };
     return *this;
   }
 
   Periodic_triangle_iterator& operator--()
   {
     switch (_it)
-      {
+    {
       case T::STORED:
         --pos;
         break;
       case T::UNIQUE:
         do
-          {
-            --pos;
-          }
+        {
+          --pos;
+        }
         while (pos != _t->faces_begin() && !is_canonical());
         break;
       case T::STORED_COVER_DOMAIN:
       case T::UNIQUE_COVER_DOMAIN:
         decrement_domain();
-      };
+    };
     return *this;
   }
 
@@ -182,17 +179,17 @@ private:
     get_edge_offsets(off0, off1, off2);
 
     if (_t->number_of_sheets() != make_array(1, 1))
-      {
-        // If there is one offset with entries larger than 1 then we are
-        // talking about a vertex that is too far away from the original
-        // domain to belong to a canonical triangle.
-        if (off0.x() > 1) return false;
-        if (off0.y() > 1) return false;
-        if (off1.x() > 1) return false;
-        if (off1.y() > 1) return false;
-        if (off2.x() > 1) return false;
-        if (off2.y() > 1) return false;
-      }
+    {
+      // If there is one offset with entries larger than 1 then we are
+      // talking about a vertex that is too far away from the original
+      // domain to belong to a canonical triangle.
+      if (off0.x() > 1) return false;
+      if (off0.y() > 1) return false;
+      if (off1.x() > 1) return false;
+      if (off1.y() > 1) return false;
+      if (off2.x() > 1) return false;
+      if (off2.y() > 1) return false;
+    }
 
     // If there is one direction of space for which all offsets are
     // non-zero then the edge is not canonical because we can
@@ -210,24 +207,24 @@ private:
     int off = get_drawing_offsets();
     CGAL_triangulation_assertion(_off <= off);
     if (_off == off)
+    {
+      _off = 0;
+      do
       {
-        _off = 0;
-        do
-          {
-            ++pos;
-          }
-        while (_it == T::UNIQUE_COVER_DOMAIN
-               && pos != _t->faces_end() && !is_canonical());
+        ++pos;
       }
+      while (_it == T::UNIQUE_COVER_DOMAIN
+             && pos != _t->faces_end() && !is_canonical());
+    }
     else
+    {
+      do
       {
-        do
-          {
-            ++_off;
-          }
-        while ((((~_off) | off) & 3) != 3); // Increment until a valid
-        // offset has been found
+        ++_off;
       }
+      while ((((~_off) | off) & 3) != 3); // Increment until a valid
+      // offset has been found
+    }
   }
 
   // Artificial decrementation function that takes periodic
@@ -235,25 +232,25 @@ private:
   void decrement_domain()
   {
     if (_off == 0)
+    {
+      if (pos == _t->faces_begin()) return;
+      do
       {
-        if (pos == _t->faces_begin()) return;
-        do
-          {
-            --pos;
-          }
-        while (_it == T::UNIQUE_COVER_DOMAIN && !is_canonical());
-        _off = get_drawing_offsets();
+        --pos;
       }
+      while (_it == T::UNIQUE_COVER_DOMAIN && !is_canonical());
+      _off = get_drawing_offsets();
+    }
     else
+    {
+      int off = get_drawing_offsets();
+      do
       {
-        int off = get_drawing_offsets();
-        do
-          {
-            --_off;
-          }
-        while ((((~_off) | off) & 3) != 3); // Decrement until a valid
-        // offset has been found
+        --_off;
       }
+      while ((((~_off) | off) & 3) != 3); // Decrement until a valid
+      // offset has been found
+    }
   }
 
   // Get the canonicalized offsets of an edge.
@@ -289,12 +286,12 @@ private:
     if (_it == T::UNIQUE_COVER_DOMAIN)
       get_edge_offsets(off0, off1, off2);
     else
-      {
-        CGAL_triangulation_assertion(_it == T::STORED_COVER_DOMAIN);
-        off0 = _t->int_to_off(pos->offset(0));
-        off1 = _t->int_to_off(pos->offset(1));
-        off2 = _t->int_to_off(pos->offset(2));
-      }
+    {
+      CGAL_triangulation_assertion(_it == T::STORED_COVER_DOMAIN);
+      off0 = _t->int_to_off(pos->offset(0));
+      off1 = _t->int_to_off(pos->offset(1));
+      off2 = _t->int_to_off(pos->offset(2));
+    }
 
     CGAL_triangulation_assertion(off0.x() == 0 || off0.x() == 1);
     CGAL_triangulation_assertion(off0.y() == 0 || off0.y() == 1);
@@ -323,17 +320,17 @@ private:
     Offset transl_off = Offset((((_off >> 1) & 1) == 1 ? -1 : 0),
                                (((_off   ) & 1) == 1 ? -1 : 0));
     if (_it == T::STORED_COVER_DOMAIN)
-      {
-        off0 = _t->combine_offsets(off0, transl_off);
-        off1 = _t->combine_offsets(off1, transl_off);
-        off2 = _t->combine_offsets(off2, transl_off);
-      }
+    {
+      off0 = _t->combine_offsets(off0, transl_off);
+      off1 = _t->combine_offsets(off1, transl_off);
+      off2 = _t->combine_offsets(off2, transl_off);
+    }
     if (_it == T::UNIQUE_COVER_DOMAIN)
-      {
-        off0 += transl_off;
-        off1 += transl_off;
-        off2 += transl_off;
-      }
+    {
+      off0 += transl_off;
+      off1 += transl_off;
+      off2 += transl_off;
+    }
     return make_array(std::make_pair(pos->vertex(0)->point(), off0),
                       std::make_pair(pos->vertex(1)->point(), off1),
                       std::make_pair(pos->vertex(2)->point(), off2));
@@ -380,33 +377,33 @@ public:
     : _t(nullptr), _it(it), _off(0) {}
 
   Periodic_2_triangulation_segment_iterator_2(const T * t,
-      Iterator_type it = T::STORED)
+                                              Iterator_type it = T::STORED)
     : _t(t), pos(_t->edges_begin()), _it(it), _off(0)
   {
     if (_it == T::UNIQUE || _it == T::UNIQUE_COVER_DOMAIN)
-      {
-        while (pos != _t->edges_end() && !is_canonical() )
-          ++pos;
-      }
+    {
+      while (pos != _t->edges_end() && !is_canonical() )
+        ++pos;
+    }
   }
 
   // used to initialize the past-the-end iterator
   Periodic_2_triangulation_segment_iterator_2(const T* t, int,
-      Iterator_type it = T::STORED)
+                                              Iterator_type it = T::STORED)
     : _t(t), pos(_t->edges_end()), _it(it), _off(0) {}
 
   Periodic_segment_iterator& operator++()
   {
     switch (_it)
-      {
+    {
       case T::STORED:
         ++pos;
         break;
       case T::UNIQUE:
         do
-          {
-            ++pos;
-          }
+        {
+          ++pos;
+        }
         while (pos != _t->edges_end() && !is_canonical());
         break;
       case T::STORED_COVER_DOMAIN:
@@ -415,28 +412,28 @@ public:
         break;
       default:
         CGAL_triangulation_assertion(false);
-      };
+    };
     return *this;
   }
 
   Periodic_segment_iterator& operator--()
   {
     switch (_it)
-      {
+    {
       case T::STORED:
         --pos;
         break;
       case T::UNIQUE:
         do
-          {
-            --pos;
-          }
+        {
+          --pos;
+        }
         while (pos != _t->edges_begin() && !is_canonical());
         break;
       case T::STORED_COVER_DOMAIN:
       case T::UNIQUE_COVER_DOMAIN:
         decrement_domain();
-      };
+    };
     return *this;
   }
 
@@ -500,15 +497,15 @@ private:
     get_edge_offsets(off0, off1);
 
     if (_t->number_of_sheets() != make_array(1, 1))
-      {
-        // If there is one offset with entries larger than 1 then we are
-        // talking about a vertex that is too far away from the original
-        // domain to belong to a canonical triangle.
-        if (off0.x() > 1) return false;
-        if (off0.y() > 1) return false;
-        if (off1.x() > 1) return false;
-        if (off1.y() > 1) return false;
-      }
+    {
+      // If there is one offset with entries larger than 1 then we are
+      // talking about a vertex that is too far away from the original
+      // domain to belong to a canonical triangle.
+      if (off0.x() > 1) return false;
+      if (off0.y() > 1) return false;
+      if (off1.x() > 1) return false;
+      if (off1.y() > 1) return false;
+    }
 
     // If there is one direction of space for which all offsets are
     // non-zero then the edge is not canonical because we can
@@ -526,24 +523,24 @@ private:
     int off = get_drawing_offsets();
     CGAL_triangulation_assertion(_off <= off);
     if (_off == off)
+    {
+      _off = 0;
+      do
       {
-        _off = 0;
-        do
-          {
-            ++pos;
-          }
-        while (_it == T::UNIQUE_COVER_DOMAIN
-               && pos != _t->edges_end() && !is_canonical());
+        ++pos;
       }
+      while (_it == T::UNIQUE_COVER_DOMAIN
+             && pos != _t->edges_end() && !is_canonical());
+    }
     else
+    {
+      do
       {
-        do
-          {
-            ++_off;
-          }
-        while ((((~_off) | off) & 3) != 3); // Increment until a valid
-        // offset has been found
+        ++_off;
       }
+      while ((((~_off) | off) & 3) != 3); // Increment until a valid
+      // offset has been found
+    }
   }
 
   // Artificial decrementation function that takes periodic
@@ -551,25 +548,25 @@ private:
   void decrement_domain()
   {
     if (_off == 0)
+    {
+      if (pos == _t->edges_begin()) return;
+      do
       {
-        if (pos == _t->edges_begin()) return;
-        do
-          {
-            --pos;
-          }
-        while (_it == T::UNIQUE_COVER_DOMAIN && !is_canonical());
-        _off = get_drawing_offsets();
+        --pos;
       }
+      while (_it == T::UNIQUE_COVER_DOMAIN && !is_canonical());
+      _off = get_drawing_offsets();
+    }
     else
+    {
+      int off = get_drawing_offsets();
+      do
       {
-        int off = get_drawing_offsets();
-        do
-          {
-            --_off;
-          }
-        while ((((~_off) | off) & 3) != 3); // Decrement until a valid
-        // offset has been found
+        --_off;
       }
+      while ((((~_off) | off) & 3) != 3); // Decrement until a valid
+      // offset has been found
+    }
   }
 
   // Get the canonicalized offsets of an edge.
@@ -600,11 +597,11 @@ private:
     if (_it == T::UNIQUE_COVER_DOMAIN)
       get_edge_offsets(off0, off1);
     else
-      {
-        CGAL_triangulation_assertion(_it == T::STORED_COVER_DOMAIN);
-        off0 = _t->int_to_off(pos->first->offset(_t->cw(pos->second)));
-        off1 = _t->int_to_off(pos->first->offset(_t->ccw(pos->second)));
-      }
+    {
+      CGAL_triangulation_assertion(_it == T::STORED_COVER_DOMAIN);
+      off0 = _t->int_to_off(pos->first->offset(_t->cw(pos->second)));
+      off1 = _t->int_to_off(pos->first->offset(_t->ccw(pos->second)));
+    }
     Offset diff_off = off0 - off1;
 
     CGAL_triangulation_assertion(diff_off.x() >= -1 || diff_off.x() <= 1);
@@ -622,18 +619,18 @@ private:
     Offset transl_off = Offset((((_off >> 1) & 1) == 1 ? -1 : 0),
                                (( _off    & 1) == 1 ? -1 : 0));
     if (_it == T::STORED_COVER_DOMAIN)
-      {
-        off0 = _t->combine_offsets(off0, transl_off);
-        off1 = _t->combine_offsets(off1, transl_off);
-      }
+    {
+      off0 = _t->combine_offsets(off0, transl_off);
+      off1 = _t->combine_offsets(off1, transl_off);
+    }
     if (_it == T::UNIQUE_COVER_DOMAIN)
-      {
-        off0 += transl_off;
-        off1 += transl_off;
-      }
+    {
+      off0 += transl_off;
+      off1 += transl_off;
+    }
     return make_array(
-             std::make_pair(pos->first->vertex(_t->cw(pos->second))->point(), off0),
-             std::make_pair(pos->first->vertex(_t->ccw(pos->second))->point(), off1));
+          std::make_pair(pos->first->vertex(_t->cw(pos->second))->point(), off0),
+          std::make_pair(pos->first->vertex(_t->ccw(pos->second))->point(), off1));
   }
 };
 
@@ -675,26 +672,24 @@ public:
   Periodic_2_triangulation_point_iterator_2(Iterator_type it = T::STORED)
     : _t(nullptr), _it(it) {}
 
-  Periodic_2_triangulation_point_iterator_2(const T * t,
-      Iterator_type it = T::STORED)
+  Periodic_2_triangulation_point_iterator_2(const T * t, Iterator_type it = T::STORED)
     : _t(t), pos(_t->vertices_begin()), _it(it)
   {
-    if (_it == T::UNIQUE || _it == T::UNIQUE_COVER_DOMAIN)
-      {
-        while (pos != _t->vertices_end() && !is_canonical() )
-          ++pos;
-      }
+    if(_it == T::UNIQUE || _it == T::UNIQUE_COVER_DOMAIN)
+    {
+      while(pos != _t->vertices_end() && !is_canonical() )
+        ++pos;
+    }
   }
 
   // used to initialize the past-the-end iterator
-  Periodic_2_triangulation_point_iterator_2(const T* t, int,
-      Iterator_type it = T::STORED)
+  Periodic_2_triangulation_point_iterator_2(const T* t, int, Iterator_type it = T::STORED)
     : _t(t), pos(_t->vertices_end()), _it(it) {}
 
   Periodic_point_iterator& operator++()
   {
     switch (_it)
-      {
+    {
       case T::STORED:
       case T::STORED_COVER_DOMAIN:
         ++pos;
@@ -702,21 +697,21 @@ public:
       case T::UNIQUE:
       case T::UNIQUE_COVER_DOMAIN:
         do
-          {
-            ++pos;
-          }
+        {
+          ++pos;
+        }
         while (pos != _t->vertices_end() && !is_canonical());
         break;
       default:
         CGAL_triangulation_assertion(false);
-      };
+    };
     return *this;
   }
 
   Periodic_point_iterator& operator--()
   {
     switch (_it)
-      {
+    {
       case T::STORED:
       case T::STORED_COVER_DOMAIN:
         --pos;
@@ -724,14 +719,14 @@ public:
       case T::UNIQUE:
       case T::UNIQUE_COVER_DOMAIN:
         do
-          {
-            --pos;
-          }
+        {
+          --pos;
+        }
         while (pos != _t->vertices_begin() && !is_canonical());
         break;
       default:
         CGAL_triangulation_assertion(false);
-      };
+    };
     return *this;
   }
 
@@ -777,11 +772,11 @@ public:
   {
     return pos;
   }
+
 private:
   const T*  _t;
   Vertex_iterator pos; // current vertex.
   Iterator_type _it;
-  int _off; // current offset
   mutable Periodic_point periodic_point; // current point.
 
 private:
@@ -801,23 +796,26 @@ private:
   }
 };
 
-namespace Periodic_2_triangulation_2_internal
-{
+namespace P2T2 {
+namespace internal {
+
 template <class T>
 class Domain_tester
 {
-    const T *t;
+  const T *t;
 
-  public:
-    Domain_tester() {}
-    Domain_tester(const T *tr) : t(tr) {}
+public:
+  Domain_tester() {}
+  Domain_tester(const T *tr) : t(tr) {}
 
-    bool operator()(const typename T::Vertex_iterator & v) const
-    {
-        return (t->get_offset(v) != typename T::Offset(0, 0));
-    }
+  bool operator()(const typename T::Vertex_iterator & v) const
+  {
+    return (t->get_offset(v) != typename T::Offset(0, 0));
+  }
 };
-}
+
+} // namespace internal
+} // namespace P2T2
 
 // Iterates over the vertices in a periodic triangulation that are
 // located inside the original cube.
@@ -828,18 +826,17 @@ class Domain_tester
 // between a normal Vertex_iterator and this iterator
 template <class T>
 class Periodic_2_triangulation_unique_vertex_iterator_2
-        : public Filter_iterator<typename T::Vertex_iterator, Periodic_2_triangulation_2_internal::Domain_tester<T> >
+    : public Filter_iterator<typename T::Vertex_iterator, P2T2::internal::Domain_tester<T> >
 {
-
   typedef typename T::Vertex_handle Vertex_handle;
   typedef typename T::Vertex_iterator Vertex_iterator;
 
-  typedef typename Periodic_2_triangulation_2_internal::Domain_tester<T> Tester;
+  typedef typename P2T2::internal::Domain_tester<T> Tester;
 
   typedef Filter_iterator<Vertex_iterator, Tester > Base;
   typedef Periodic_2_triangulation_unique_vertex_iterator_2 Self;
-public:
 
+public:
   Periodic_2_triangulation_unique_vertex_iterator_2() : Base() {}
   Periodic_2_triangulation_unique_vertex_iterator_2(const Base &b) : Base(b) {}
 
@@ -848,17 +845,20 @@ public:
     Base::operator++();
     return *this;
   }
+
   Self & operator--()
   {
     Base::operator--();
     return *this;
   }
+
   Self operator++(int)
   {
     Self tmp(*this);
     ++(*this);
     return tmp;
   }
+
   Self operator--(int)
   {
     Self tmp(*this);
@@ -874,4 +874,4 @@ public:
 
 } //namespace CGAL
 
-#endif // CGAL_PERIODIC_2_TRIANGULATION_ITERATORS_2_H
+#endif // CGAL_P2T2_ITERATORS_ON_SQUARE_FLAT_TORUS_2_H

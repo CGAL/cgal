@@ -23,10 +23,12 @@
 namespace CGAL {
 
 // Default color functor; user can change it to have its own face color
-struct DefaultColorFunctorP2T2 {
+struct DefaultColorFunctorP2T2
+{
   template <typename P2T2>
   static CGAL::Color run(const P2T2 &,
-                         const typename P2T2::Periodic_triangle_iterator /*ti*/) {
+                         const typename P2T2::Periodic_triangle_iterator /*ti*/)
+  {
     //CGAL::Random random((unsigned int)(std::size_t)(&*ti));
     //return get_random_color(random);
     return CGAL::Color(73, 250, 117);
@@ -35,11 +37,12 @@ struct DefaultColorFunctorP2T2 {
 
 // Viewer class for P2T2
 template <class P2T2, class ColorFunctor>
-class SimplePeriodic2Triangulation2ViewerQt : public Basic_viewer_qt
+class SimplePeriodic2Triangulation2ViewerQt
+  : public Basic_viewer_qt
 {
-  typedef Basic_viewer_qt                         Base;
+  typedef Basic_viewer_qt                             Base;
 
-  typedef typename P2T2::Iterator_type            Iterator_type;
+  typedef typename P2T2::Iterator_type                Iterator_type;
 
   // Vertex iterators
   typedef typename P2T2::Periodic_point_iterator      Periodic_point_iterator;
@@ -61,16 +64,17 @@ public:
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
   SimplePeriodic2Triangulation2ViewerQt(QWidget* parent, const P2T2& ap2t2,
-                               const char* title="Basic P2T2 Viewer",
-                               bool anofaces=false,
-                               const ColorFunctor& fcolor=ColorFunctor()) :
-    // First draw: vertices; edges, faces; multi-color; no inverse normal
-    Base(parent, title, true, true, true, false, false),
-    p2t2(ap2t2),
-    m_nofaces(anofaces),
-    m_fcolor(fcolor),
-    m_display_type(STORED_COVER_DOMAIN),
-    m_domain(true)
+                                        const char* title="Basic P2T2 Viewer",
+                                        bool anofaces=false,
+                                        const ColorFunctor& fcolor=ColorFunctor())
+    :
+      // First draw: vertices; edges, faces; multi-color; no inverse normal
+      Base(parent, title, true, true, true, false, false),
+      p2t2(ap2t2),
+      m_nofaces(anofaces),
+      m_fcolor(fcolor),
+      m_display_type(STORED_COVER_DOMAIN),
+      m_domain(true)
   {
     // Add custom key description (see keyPressEvent).
     setKeyDescription(::Qt::Key_1, "STORED: Display all geometric primitives as they are stored in "
@@ -87,6 +91,7 @@ public:
 
     compute_elements();
   }
+
 protected:
   void compute_vertex(Periodic_point_iterator pi)
   {
@@ -125,8 +130,10 @@ protected:
     Kernel::Iso_rectangle_2 orig_domain =  p2t2.domain();
     std::array<int, 2> covering_sheets = p2t2.number_of_sheets();
 
-    for(int i = 0; i < covering_sheets[0]; i++){
-      for(int j = 0; j < covering_sheets[1]; j++){
+    for(int i = 0; i < covering_sheets[0]; ++i)
+    {
+      for(int j = 0; j < covering_sheets[1]; ++j)
+      {
         Kernel::Vector_2 shift(i * (orig_domain.xmax() - orig_domain.xmin()),
                                j * orig_domain.ymax() - orig_domain.ymin());
         Kernel::Point_2 p1((orig_domain.min)());
@@ -198,31 +205,37 @@ protected:
       displayMessage(QString("Display type= UNIQUE"));
       compute_elements();
       redraw();
-    } else if (e->text()=="2")
+    }
+    else if (e->text()=="2")
     {
       m_display_type = Display_type::UNIQUE_COVER_DOMAIN;
       displayMessage(QString("Display type= UNIQUE_COVER_DOMAIN"));
       compute_elements();
       redraw();
-    } else if (e->text()=="3")
+    }
+    else if (e->text()=="3")
     {
       m_display_type = Display_type::STORED;
       displayMessage(QString("Display type= STORED"));
       compute_elements();
       redraw();
-    } else if (e->text()=="4")
+    }
+    else if (e->text()=="4")
     {
       m_display_type = Display_type::STORED_COVER_DOMAIN;
       displayMessage(QString("Display type= STORED_COVER_DOMAIN"));
       compute_elements();
       redraw();
-    } else if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton))
+    }
+    else if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton))
     {
       m_domain=!m_domain;
       displayMessage(QString("Draw domain=%1.").arg(m_domain?"true":"false"));
       compute_elements();
       redraw();
-    } else {
+    }
+    else
+    {
       Base::keyPressEvent(e);
     }
   }

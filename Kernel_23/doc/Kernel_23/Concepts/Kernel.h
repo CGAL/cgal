@@ -643,6 +643,16 @@ public:
   typedef unspecified_type Compare_square_distance_2;
 
   /*!
+    a model of `Kernel::CompareSquaredRadius_2`
+  */
+  typedef unspecified_type Compare_squared_radius_2;
+
+  /*!
+    a model of `Kernel::CompareWeightedSquaredRadius_2`
+  */
+  typedef unspecified_type Compare_weighted_squared_radius_2;
+
+  /*!
     a model of `Kernel::CompareAngleWithXAxis_2`
   */
   typedef unspecified_type Compare_angle_with_x_axis_2;
@@ -1419,11 +1429,6 @@ public:
   typedef unspecified_type Less_xyz_3;
 
   /*!
-    a model of `Kernel::CompareWeightedSquaredRadius_3`
-  */
-  typedef unspecified_type Compare_weighted_squared_radius_3;
-
-  /*!
     a model of `Kernel::CompareX_3`
   */
   typedef unspecified_type Compare_x_3;
@@ -1457,6 +1462,16 @@ public:
     a model of `Kernel::CompareSquaredDistance_3`
   */
   typedef unspecified_type Compare_squared_distance_3;
+
+  /*!
+    a model of `Kernel::CompareSquaredRadius_3`
+  */
+  typedef unspecified_type Compare_squared_radius_3;
+
+  /*!
+    a model of `Kernel::CompareWeightedSquaredRadius_3`
+  */
+  typedef unspecified_type Compare_weighted_squared_radius_3;
 
   /*!
     a model of `Kernel::LessSignedDistanceToPlane_3`
