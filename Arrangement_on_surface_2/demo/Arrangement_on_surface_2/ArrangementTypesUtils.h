@@ -14,7 +14,6 @@
 
 #include "ArrangementTypes.h"
 #include <CGAL/assertions.h>
-#include <type_traits>
 
 namespace demo_types
 {
