@@ -811,6 +811,52 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::IsProcessed( EventPtr aEvent )
 }
 
 template<class Gt, class Ss, class V>
+bool Straight_skeleton_builder_2<Gt,Ss,V>::IsValidEvent( EventPtr aEvent )
+{
+  if ( IsProcessed(aEvent) )
+    return false;
+
+  SetEventTimeAndPoint(*aEvent) ; // @todo redundant?
+
+  if ( aEvent->type() == Event::cEdgeEvent)
+  {
+    EdgeEvent& lEvent = dynamic_cast<EdgeEvent&>(*aEvent) ;
+    return IsValidEdgeEvent(lEvent) ;
+  }
+  else if ( aEvent->type() == Event::cSplitEvent)
+  {
+    Halfedge_handle lOppEdge = aEvent->triedge().e2() ;
+    Site lSite;
+    Vertex_handle_pair lOpp = LookupOnSLAV(lOppEdge,aEvent,lSite);
+
+    if ( handle_assigned(lOpp.first) )
+    {
+      EventPtr lPseudoSplitEvent = IsPseudoSplitEvent(aEvent,lOpp,lSite);
+      if ( lPseudoSplitEvent )
+      {
+        PseudoSplitEvent& lEvent = dynamic_cast<PseudoSplitEvent&>(*lPseudoSplitEvent) ;
+        return IsValidPseudoSplitEvent ( lEvent );
+      }
+      else
+      {
+        SplitEvent& lEvent = dynamic_cast<SplitEvent&>(*aEvent) ;
+        return IsValidSplitEvent(lEvent);
+      }
+    }
+    else
+    {
+      return false;
+    }
+  }
+  else
+  {
+    CGAL_assertion( aEvent->type() == Event::cPseudoSplitEvent ) ;
+    PseudoSplitEvent& lEvent = dynamic_cast<PseudoSplitEvent&>(*aEvent) ;
+    return IsValidPseudoSplitEvent(lEvent);
+  }
+}
+
+template<class Gt, class Ss, class V>
 bool Straight_skeleton_builder_2<Gt,Ss,V>::IsValidEdgeEvent( EdgeEvent const& aEvent )
 {
   bool rResult = false ;
@@ -1363,7 +1409,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSplitOrPseudoSplitEvent( EventP
 template<class Gt, class Ss, class V>
 void Straight_skeleton_builder_2<Gt,Ss,V>::InsertNextSplitEventInPQ( Vertex_handle v )
 {
-  CGAL_STSKEL_BUILDER_TRACE(2,"Insert split event from " << v->id() << ", "
+  CGAL_STSKEL_BUILDER_TRACE(2,"Insert split event from N" << v->id() << ", "
                             << GetVertexData(v).mSplitEvents.size() << " potential splits");
 
   EventPtr lSplitEvent = PopNextSplitEvent(v);
@@ -1392,6 +1438,19 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::Propagate()
 
     if ( !mPQ.empty() )
     {
+#ifdef CGAL_SLS_PRINT_QUEUE_BEFORE_EACH_POP
+      std::cout << "MAIN QUEUE -------------------------------------------------- " << std::endl;
+      std::cout << "Queue size: " << mPQ.size() << std::endl;
+      auto mpq = mPQ;
+      while(!mpq.empty())
+      {
+        EventPtr event = mpq.top();
+        mpq.pop();
+        std::cout << *event << std::endl;
+      }
+      std::cout << "END MAIN QUEUE --------------------------------------------- " << std::endl;
+#endif
+
       EventPtr lEvent = PopEventFromPQ();
 
       if ( lEvent->type() != Event::cEdgeEvent )

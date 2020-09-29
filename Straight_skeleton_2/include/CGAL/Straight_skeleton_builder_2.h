@@ -717,6 +717,7 @@ private :
   Vertex_handle_pair ConstructSplitEventNodes       ( SplitEvent&  aEvent, Vertex_handle aOppR ) ;
   Vertex_handle_pair ConstructPseudoSplitEventNodes ( PseudoSplitEvent& aEvent ) ;
 
+  bool IsValidEvent            ( EventPtr                aEvent ) ;
   bool IsValidEdgeEvent        ( EdgeEvent        const& aEvent ) ;
   bool IsValidSplitEvent       ( SplitEvent       const& aEvent ) ;
   bool IsValidPseudoSplitEvent ( PseudoSplitEvent const& aEvent ) ;

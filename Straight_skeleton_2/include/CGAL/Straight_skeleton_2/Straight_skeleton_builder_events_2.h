@@ -129,7 +129,7 @@ private :
   virtual void dump ( std::ostream& ss ) const
   {
     this->Base::dump(ss);
-    ss << " (LSeed=" << mLSeed->id() << " RSeed=" << mRSeed->id() << ')' ;
+    ss << " (Edge Event, LSeed=" << mLSeed->id() << " RSeed=" << mRSeed->id() << ')' ;
   }
 
 private :
@@ -178,7 +178,7 @@ private :
   virtual void dump ( std::ostream& ss ) const
   {
     this->Base::dump(ss);
-    ss << " (Seed=" << mSeed->id() << " (" << mSeed->point() << ") OppBorder=" << this->triedge().e2()->id() << ')' ;
+    ss << " (Split Event, Seed=" << mSeed->id() << " (" << mSeed->point() << ") OppBorder=" << this->triedge().e2()->id() << ')' ;
   }
 
 private :
@@ -234,7 +234,7 @@ private :
   {
     this->Base::dump(ss);
 
-    ss << " ("
+    ss << " (Pseudo-split Event, "
        << "Seed0=" << mSeed0->id() << (  mOppositeIs0 ? " {Opp} " : " " )
        << "Seed1=" << mSeed1->id() << ( !mOppositeIs0 ? " {Opp}"  : "" )
        << ")" ;

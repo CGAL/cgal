@@ -26,12 +26,15 @@
     || defined(CGAL_STRAIGHT_SKELETON_ENABLE_INTRINSIC_TESTING)
 #
 #  define CGAL_STSKEL_TRACE_ON
-#
+bool sEnableTrace = true ;
+#  define CGAL_STSKEL_ENABLE_TRACE sEnableTrace = true ;
+#  define CGAL_STSKEL_DISABLE_TRACE sEnableTrace = false ;
 #  include<string>
 #  include<iostream>
 #  include<sstream>
 #  include<iomanip>
 #  define CGAL_STSKEL_TRACE(m) \
+     if ( sEnableTrace ) \
      { \
        std::ostringstream ss ; \
        ss << std::setprecision(19) << m ; \
@@ -341,8 +344,6 @@ template<> char const* kernel_type<CORE::Expr>          () { return "Expr" ;    
 #define CGAL_STSKEL_ASSERT_CONSTRUCTION_RESULT(expr,K,cons,error)
 
 #endif
-
-#undef CGAL_STSKEL_ENABLE_TRACE
 
 #endif // CGAL_STRAIGHT_SKELETON_DEBUG_H //
 // EOF //
