@@ -17,7 +17,6 @@ const int d = 3;                         // dimension of points
 int main ()
 {
     Point         P[n];                  // n points
-    double        coord[d];              // d coordinates
     CGAL::Random  r;                     // random number generator
 
     for (int i=0; i<n; ++i) {
