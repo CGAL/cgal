@@ -1928,9 +1928,20 @@ int main(int argc, char* argv[])
 
   int ii, ij, ik;
 
-  if(argc == 6){
+  int query_dim = -1;
+
+  if(argc >= 4){
+    query_dim++;
     ii = std::stoi(std::string(argv[3]));
+  }
+
+  if(argc >= 5){
+    query_dim++;
     ij = std::stoi(std::string(argv[4]));
+  }
+
+  if(argc == 6){
+    query_dim++;
     ik = std::stoi(std::string(argv[5]));
   }
   std::string off;
@@ -1963,17 +1974,28 @@ int main(int argc, char* argv[])
   t.reset();
 
 
-  if(argc == 6){
-    Point_3 v0 = env_vertices[ii];
-    Point_3 v1 = env_vertices[ij];
-    Point_3 v2 = env_vertices[ik];
+  if(query_dim != -1){
 
-    {
-      std::ofstream query("query.off");
-      query << "OFF\n" << "3 1 0\n" << v0 << std::endl << v1 << std::endl << v2 << std::endl << "3 0 1 2" << std::endl;
+    bool bbb;
+
+    if(query_dim == 0){
+    Point_3 v0 = env_vertices[ii];
+    bbb = envelope(v0);
+    } else if (query_dim == 1){
+      Point_3 v0 = env_vertices[ii];
+      Point_3 v1 = env_vertices[ij];
+      bbb = envelope(v0, v1);
+    } else {
+      Point_3 v0 = env_vertices[ii];
+      Point_3 v1 = env_vertices[ij];
+      Point_3 v2 = env_vertices[ik];
+      {
+        std::ofstream query("query.off");
+        query << "OFF\n" << "3 1 0\n" << v0 << std::endl << v1 << std::endl << v2 << std::endl << "3 0 1 2" << std::endl;
+      }
+      bbb = envelope(v0, v1, v2);
     }
 
-    bool bbb = envelope(v0, v1, v2);
     if(bbb){
       std::cout <<  "inside the envelope" << std::endl;
     }else{
