@@ -770,7 +770,6 @@ struct Base_helper<TriangleMesh, Traits, Intrinsic_Delaunay, LA, VertexPointMap>
  *         is used as default
  * \tparam Traits a model of `HeatMethodTraits_3`. The default is the Kernel of the value type
  *         of the vertex point map (extracted using `Kernel_traits`).
- * \pre
  */
 template <typename TriangleMesh,
           typename Mode = Direct,
