@@ -21,12 +21,12 @@
  * Definition of the Surface_sweep_2 class.
  */
 
-#include <list>
 #include <vector>
 
 #include <CGAL/Object.h>
 #include <CGAL/No_intersection_surface_sweep_2.h>
 #include <CGAL/Surface_sweep_2/Curve_pair.h>
+#include <CGAL/Small_list.h>
 #include <boost/unordered_set.hpp>
 #include <CGAL/algorithm.h>
 
@@ -96,7 +96,7 @@ public:
 
   typedef typename Event::Attribute                     Attribute;
 
-  typedef std::list<Subcurve*>                          Subcurve_container;
+  typedef Small_list<Subcurve*, 4>                      Subcurve_container;
   typedef typename Subcurve_container::iterator         Subcurve_iterator;
 
   typedef typename Base::Status_line_iterator           Status_line_iterator;

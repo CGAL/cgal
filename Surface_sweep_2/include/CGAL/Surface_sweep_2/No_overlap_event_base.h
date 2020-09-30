@@ -22,7 +22,8 @@
  * Defintion of the No_overlap_event_base class.
  */
 
-#include <list>
+#include <CGAL/Small_list.h>
+
 
 namespace CGAL {
 namespace Surface_sweep_2 {
@@ -65,7 +66,7 @@ public:
   typedef typename internal::Arr_complete_right_side_category<Gt2>::Category
                                                         Right_side_category;
 
-  typedef std::list<Subcurve*>                          Subcurve_container;
+  typedef Small_list<Subcurve*, 4>                      Subcurve_container;
   typedef typename Subcurve_container::iterator         Subcurve_iterator;
   typedef typename Subcurve_container::const_iterator   Subcurve_const_iterator;
   typedef typename Subcurve_container::reverse_iterator
