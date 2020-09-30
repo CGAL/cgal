@@ -12,13 +12,11 @@
 #ifndef ARRANGEMENT_DEMO_POINT_SNAPPER_H
 #define ARRANGEMENT_DEMO_POINT_SNAPPER_H
 
-#include "GridGraphicsItem.h"
-#include "GraphicsSceneMixin.h"
-
-#include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
-#include <boost/optional.hpp>
 #include "ArrangementTypes.h"
+#include "GraphicsSceneMixin.h"
+#include "GridGraphicsItem.h"
+
+#include <boost/optional.hpp>
 
 class GridGraphicsItem;
 class QGraphicsScene;
@@ -35,7 +33,7 @@ public:
   PointSnapperBase(QGraphicsScene* scene, GridGraphicsItem* grid);
 
   Point_2 snapPoint(const QPointF& qpt);
-  Point_2 snapToGrid(const QPointF& qpt);;
+  Point_2 snapToGrid(const QPointF& qpt);
   virtual boost::optional<Point_2> snapToArrangement(const QPointF& qpt) = 0;
   void setSnapToGrid(bool val);
   void setSnapToArrangement(bool val);
