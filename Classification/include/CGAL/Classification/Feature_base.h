@@ -15,7 +15,7 @@
 #include <CGAL/license/Classification.h>
 
 #include <memory>
-
+#include <string>
 #include <vector>
 
 namespace CGAL {

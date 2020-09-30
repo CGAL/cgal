@@ -21,6 +21,7 @@
 #endif // CGAL_LINKED_WITH_TBB
 
 #include <vector>
+#include <string>
 #include <utility>
 #include <memory>
 
