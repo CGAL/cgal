@@ -211,18 +211,6 @@ struct Envelope {
   }
 
 
-  bool do_intersect(const ePlane_3& ep0, const ePlane_3& ep1, const ePlane_3& ep2) const
-  {
-
-  CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
-    result = CGAL::intersection(ep0,ep1,ep2);
-  if(! result){
-    return false;
-  }
-
-  const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
-  return ipp != nullptr;
-  }
 
 
   bool
@@ -555,9 +543,13 @@ struct Envelope {
   is_3_triangle_cut_float_fast(const ePoint_3& tp,
                                const ePoint_3& tq,
                                const ePoint_3& tr,
-                               const ePlane_3 &tri,
+                               const ePoint_3& ip
+                               /*
+                               , const ePlane_3 &tri,
                                const ePlane_3 &facet1,
-                               const ePlane_3 &facet2) const
+                               const ePlane_3 &facet2
+                               */
+                               ) const
   {
     // return 2;
     // todo:  what do we test here with n ?
@@ -568,7 +560,7 @@ struct Envelope {
         std::cout << "todo degeneration handling" << std::endl;
         //n = Point_3(rand(), rand(), rand())} };
       }
-
+    /*
     CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
       result = CGAL::intersection(tri, facet1, facet2);
     if(! result){
@@ -581,7 +573,7 @@ struct Envelope {
     CGAL_assertion(ipp != nullptr);
 
     const ePoint_3& ip = *ipp;
-
+    */
     int o1 = int(CGAL::orientation(n,tp,tq, ip));
     int o2 = int(CGAL::orientation(n,tq,tr, ip));
 
@@ -835,12 +827,18 @@ struct Envelope {
               if (neib == false) continue;
             }
 
+            int inter = 0;
+            ePoint_3* ipp;
+            CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
+              result = CGAL::intersection(tri_eplane, prism[cutp[i]].eplane, prism[cutp[j]].eplane);
+            if(result){
+              ipp = boost::get<ePoint_3>(&*result);
+              if(ipp != nullptr){
 
-            //            bool inter = this->do_intersect(tri_eplane,prism[cutp[i]].eplane, prism[cutp[j]].eplane);
-            int inter = is_3_triangle_cut_float_fast(tri0, tri1,tri2,tri_eplane,prism[cutp[i]].eplane, prism[cutp[j]].eplane);
-#ifdef TRACE
-            std::cout << "is_3_triangle_cut_float_fast: " << inter << std::endl;
-#endif
+                const ePoint_3& ip = *ipp;
+                inter = is_3_triangle_cut_float_fast(tri0, tri1, tri2, ip );
+              }
+            }
             // this was for a fast float check
             if (inter == 2)
               { //we dont know if point exist or if inside of triangle
@@ -855,19 +853,6 @@ struct Envelope {
               continue; // sure not inside
             }
 
-            CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
-              result = CGAL::intersection(tri_eplane, prism[cutp[i]].eplane, prism[cutp[j]].eplane);
-            if(! result){
-#ifdef TRACE
-              std::cout <<  "there must be an intersection 7" << std::endl;
-#endif
-            }
-            const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
-            CGAL_assertion(ipp != nullptr);
-
-            const ePoint_3& ip = *ipp;
-
-
             for (int k = 0; k < cutp.size(); k++){
 
               if (k == i || k == j){
@@ -876,7 +861,7 @@ struct Envelope {
 #ifdef TRACE
               std::cout << k << " " << cutp[k] << "\n" <<  prism[cutp[k]].ep << std::endl <<  prism[cutp[k]].eq << std::endl <<  prism[cutp[k]].er << std::endl;
 #endif
-              ori = int(oriented_side(prism[cutp[k]].eplane, ip));
+              ori = int(oriented_side(prism[cutp[k]].eplane, *ipp));
 #ifdef TRACE
               std::cout << ori << std::endl;
 #endif
