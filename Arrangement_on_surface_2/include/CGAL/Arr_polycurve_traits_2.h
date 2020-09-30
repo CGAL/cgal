@@ -851,8 +851,11 @@ public:
               boost::get<X_monotone_subcurve_2>(&item);
             if (x_seg != nullptr) {
               X_monotone_subcurve_2 seg = *x_seg;
-              if (cmp_seg_endpts(seg) == LARGER && !invert_ocv)
-                seg = construct_opposite(seg);
+
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+              // Check whether the resulting segment is directed to the left
+              if (cmp_seg_endpts(seg) == LARGER) seg = construct_opposite(seg);
+#endif
               ocv.push_back(seg);
             }
 
