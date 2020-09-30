@@ -49,14 +49,14 @@ int main(int, char**)
     return EXIT_FAILURE;
   }
 
-	Poisson poisson (points.begin(), points.end(), Point_map(), Vector_map());
-	if (!poisson.compute_implicit_function())
+  Poisson poisson (points.begin(), points.end(), Point_map(), Vector_map());
+  if (!poisson.compute_implicit_function())
   {
     std::cerr << "Error: cannot compute implicit function" << std::endl;
     return EXIT_FAILURE;
   }
 
-	CGAL::Bbox_3 bbox
+  CGAL::Bbox_3 bbox
     = CGAL::bbox_3 (boost::make_transform_iterator
                     (points.begin(),
                      CGAL::Property_map_to_unary_function<Point_map>()),
@@ -64,14 +64,14 @@ int main(int, char**)
                     (points.end(),
                      CGAL::Property_map_to_unary_function<Point_map>()));
 
-	Implicit_domain domain
+  Implicit_domain domain
     = Implicit_domain::create_implicit_mesh_domain
     (poisson, bbox);
 
-	Mesh_criteria criteria (CGAL::parameters::facet_angle = 30,
+  Mesh_criteria criteria (CGAL::parameters::facet_angle = 30,
                           CGAL::parameters::facet_size = 4,
                           CGAL::parameters::facet_distance = 0.1);
-	C3t3 c3t3 = CGAL::make_mesh_3<C3t3> (domain, criteria,
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3> (domain, criteria,
                                        CGAL::parameters::manifold());
 
   return EXIT_SUCCESS;
