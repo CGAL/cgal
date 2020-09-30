@@ -2115,7 +2115,7 @@ void Camera::initFromDOMElement(const QDomElement &element) {
   while (!child.isNull()) {
     if (child.tagName() == "Parameters") {
       // #CONNECTION# Default values set in constructor
-      setFieldOfView(DomUtils::qrealFromDom(child, "fieldOfView", CGAL_PI / 4.0));
+      //setFieldOfView(DomUtils::qrealFromDom(child, "fieldOfView", CGAL_PI / 4.0));
       setZNearCoefficient(
           DomUtils::qrealFromDom(child, "zNearCoefficient", 0.005));
       setZClippingCoefficient(
