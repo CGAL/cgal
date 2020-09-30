@@ -75,10 +75,10 @@ class Point_set_neighborhood
     { return get(ppmap.point_map, *(ppmap.input->begin()+std::size_t(i))); }
   };
 
-  using Search_traits_3 = Search_traits_3<GeomTraits>;
-  using Search_traits =  Search_traits_adapter<std::uint32_t, My_point_property_map, Search_traits_3>;
+  using Search_traits_base = Search_traits_3<GeomTraits>;
+  using Search_traits =  Search_traits_adapter<std::uint32_t, My_point_property_map, Search_traits_base>;
   using Splitter = Sliding_midpoint<Search_traits>;
-  using Distance = Distance_adapter<std::uint32_t, My_point_property_map, Euclidean_distance<Search_traits_3> >;
+  using Distance = Distance_adapter<std::uint32_t, My_point_property_map, Euclidean_distance<Search_traits_base> >;
   using Tree = Kd_tree<Search_traits, Splitter, Tag_true, Tag_true>;
   using Sphere = Fuzzy_sphere<Search_traits>;
   using Knn = Orthogonal_k_neighbor_search<Search_traits, Distance, Splitter, Tree>;
