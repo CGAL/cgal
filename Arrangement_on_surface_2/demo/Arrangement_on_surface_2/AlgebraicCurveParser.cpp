@@ -124,10 +124,8 @@ static inline bool hasValidChars(const std::string& expression, int dimension)
 {
   if (dimension == 1)
     return hasValidChars1D(expression);
-  else if (dimension == 2)
-    return hasValidChars2D(expression);
   else
-    CGAL_error();
+    return hasValidChars2D(expression);
 }
 
 template <typename Polynomial_d>
