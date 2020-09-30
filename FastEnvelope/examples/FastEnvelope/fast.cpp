@@ -594,30 +594,8 @@ struct Envelope {
   is_3_triangle_cut(const ePoint_3& tp,
                     const ePoint_3& tq,
                     const ePoint_3& tr,
-                    const ePlane_3 &tri,
-                    const ePlane_3 &facet1,
-                    const ePlane_3 &facet2) const
+                    const ePoint_3& ip) const
   {
-
-    CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
-      result = CGAL::intersection(tri, facet1, facet2);
-    if(! result){
-      // todo:  what to do?
-#ifdef TRACE
-      std::cout <<  "there must be an intersection 5" << std::endl;
-#endif
-    }
-    const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
-    if(ipp != nullptr){
-      // todo:  what to do?
-#ifdef TRACE
-      std::cout <<  "the intersection must be a point 1" << std::endl;
-#endif
-    }
-
-    const ePoint_3& ip = *ipp;
-
-
     ePoint_3 n = tp + CGAL::cross_product((tp - tq), (tp - tr));
 #if 0
     if (Predicates::orient_3d(n, tp, q, tr) == 0)
@@ -916,24 +894,9 @@ struct Envelope {
 
 
   bool
-  is_tpp_on_polyhedra(const ePlane_3 &triangle,
-                      const ePlane_3 &facet1,
-                      const ePlane_3 &facet2,
+  is_tpp_on_polyhedra(const ePoint_3& ip,
                       const int &prismid, const int &faceid)const
   {
-      CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
-      result = CGAL::intersection(triangle, facet1, facet2);
-      if(! result){
-#ifdef TRACE
-        std::cout <<  "there must be an intersection 8" << std::endl;
-#endif
-      }
-
-      const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
-      CGAL_assertion(ipp != nullptr);
-
-      const ePoint_3& ip = *ipp;
-
        for (int i = 0; i < halfspace[prismid].size(); i++) {
         /*bool neib = is_two_facets_neighbouring(prismid, i, faceid);// this works only when the polyhedron is convex and no two neighbour facets are coplanar
           if (neib == false) continue;*/
@@ -1119,27 +1082,13 @@ struct Envelope {
 
   int
   Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order(
-		const ePlane_3& triangle,
-		const ePlane_3& facet1,
-                const ePlane_3& facet2,
+		const ePoint_3& ip,
 		const std::vector<unsigned int> &prismindex,
                 const std::vector<std::vector<int>>&intersect_face,
                 const int &jump1,
                 const int &jump2,
 		int &id) const
   {
-      CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
-      result = CGAL::intersection(triangle, facet1, facet2);
-      if(! result){
- #ifdef TRACE
-        std::cout <<  "there must be an intersection 11" << std::endl;
- #endif
-      }
-
-      const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
-      CGAL_assertion(ipp != nullptr);
-
-      const ePoint_3& ip = *ipp;
       int tot, ori, fid;
       for (int i = 0; i < prismindex.size(); i++)
         {
@@ -1210,9 +1159,7 @@ struct Envelope {
 
   int
   Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(
-		const ePlane_3 &triangle,
-		const ePlane_3 &facet1,
-                const ePlane_3 &facet2,
+		const ePoint_3& ip,
 		const std::vector<unsigned int>& prismindex,
                 const std::vector<std::vector<int>>& intersect_face,
                 const std::vector<bool>& coverlist,
@@ -1220,19 +1167,6 @@ struct Envelope {
                 const int &jump2,
 		int &id) const
   {
-      CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
-      result = CGAL::intersection(triangle, facet1, facet2);
-      if(! result){
-#ifdef TRACE
-        std::cout <<  "there must be an intersection 12" << std::endl;
-#endif
-      }
-
-      const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
-      CGAL_assertion(ipp != nullptr);
-
-      const ePoint_3& ip = *ipp;
-
       int tot, ori, fid;
       for (int i = 0; i < prismindex.size(); i++)
         {
@@ -1557,11 +1491,26 @@ struct Envelope {
 #ifdef TRACE
             std::cout << "k = " << k <<  "  h = "<< h << std::endl;
 #endif
-            // todo: move the intersection here
-            cut = is_3_triangle_cut(etriangle[0], etriangle[1], etriangle[2],
-                                    etriangle_eplane,
-                                    halfspace[jump1][intersect_face[queue[i]][k]].eplane,
-                                    halfspace[jump2][intersect_face[queue[j]][h]].eplane);
+
+            // AF: We moved the intersection here
+            // In case there is no intersection point we continue
+            CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
+              result = CGAL::intersection(etriangle_eplane,
+                                          halfspace[jump1][intersect_face[queue[i]][k]].eplane,
+                                          halfspace[jump2][intersect_face[queue[j]][h]].eplane);
+            if(! result){
+              continue;
+            }
+
+            const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
+            if(ipp == nullptr){
+              continue;
+            }
+
+            const ePoint_3& ip = *ipp;
+
+
+            cut = is_3_triangle_cut(etriangle[0], etriangle[1], etriangle[2], ip);
 
             if (!cut){
 #ifdef TRACE
@@ -1570,10 +1519,7 @@ struct Envelope {
               continue;
             }
 
-            cut = is_tpp_on_polyhedra(etriangle_eplane,
-                                      halfspace[jump1][intersect_face[queue[i]][k]].eplane,
-                                      halfspace[jump2][intersect_face[queue[j]][h]].eplane,
-                                      jump1, intersect_face[queue[i]][k]);
+            cut = is_tpp_on_polyhedra(ip, jump1, intersect_face[queue[i]][k]);
 
             if (!cut){
 #ifdef TRACE
@@ -1583,10 +1529,7 @@ struct Envelope {
             }
 
 
-            cut = is_tpp_on_polyhedra(etriangle_eplane,
-                                      halfspace[jump1][intersect_face[queue[i]][k]].eplane,
-                                      halfspace[jump2][intersect_face[queue[j]][h]].eplane,
-                                      jump2, intersect_face[queue[j]][h]);
+            cut = is_tpp_on_polyhedra(ip, jump2, intersect_face[queue[j]][h]);
 
             if (!cut){
 #ifdef TRACE
@@ -1597,18 +1540,11 @@ struct Envelope {
 #ifdef TRACE
             std::cout << "Call Implicit" << std::endl;
 #endif
-            inter = Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order(etriangle_eplane,
-                                                                                                  halfspace[jump1][intersect_face[queue[i]][k]].eplane,
-                                                                                                  halfspace[jump2][intersect_face[queue[j]][h]].eplane,
-                                                                                                  idlist, idlistorder, jump1, jump2, check_id);
+            inter = Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order(ip, idlist, idlistorder, jump1, jump2, check_id);
             if (inter == 1) {
 
 
-              inter = Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(etriangle_eplane,
-                                                                                                              halfspace[jump1][intersect_face[queue[i]][k]].eplane,
-
-                                                                                                              halfspace[jump2][intersect_face[queue[j]][h]].eplane,
-                                                                                                              neighbours, neighbour_facets, neighbour_cover, jump1, jump2, check_id);
+              inter = Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(ip, neighbours, neighbour_facets, neighbour_cover, jump1, jump2, check_id);
 
 
               if (inter == 1) {
