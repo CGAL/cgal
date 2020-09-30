@@ -1461,9 +1461,6 @@ struct Envelope {
       std::cout << "jump1 = "<< jump1 << std::endl;
 #endif
       localtree.all_intersected_primitives(bounding_boxes[jump1], std::back_inserter(list));
-      neighbours.clear();
-      neighbour_cover.clear();
-      neighbour_facets.clear();
 
       neighbours.resize(list.size());
       neighbour_facets.resize(list.size());
