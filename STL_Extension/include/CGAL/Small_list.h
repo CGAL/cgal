@@ -72,8 +72,11 @@ public:
 
   T* allocate()
   {
+    CGAL_BRANCH_PROFILER("allocations on Small_list exceeding stack size", tmp);
     if (m_next < StackSize)
       return m_pool + (m_next ++);
+
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
     return new T;
   }
 
