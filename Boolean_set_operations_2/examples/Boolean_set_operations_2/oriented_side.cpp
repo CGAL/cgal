@@ -14,19 +14,19 @@ typedef CGAL::Polygon_with_holes_2<Kernel>                Polygon_with_holes_2;
                    (os == CGAL::POSITIVE) ? "inside" : "outside")
 
 int main() {
-  Polygon_2 hole_pgn;
-  hole_pgn.push_back(Point_2(1, 1));
-  hole_pgn.push_back(Point_2(1, 2));
-  hole_pgn.push_back(Point_2(2, 2));
-  hole_pgn.push_back(Point_2(2, 1));
+  Polygon_2 hole;
+  hole.push_back(Point_2(1, 1));
+  hole.push_back(Point_2(1, 2));
+  hole.push_back(Point_2(2, 2));
+  hole.push_back(Point_2(2, 1));
 
-  Polygon_2 out_pgn;
-  out_pgn.push_back(Point_2(0, 0));
-  out_pgn.push_back(Point_2(3, 0));
-  out_pgn.push_back(Point_2(3, 3));
-  out_pgn.push_back(Point_2(0, 3));
+  Polygon_2 out;
+  out.push_back(Point_2(0, 0));
+  out.push_back(Point_2(3, 0));
+  out.push_back(Point_2(3, 3));
+  out.push_back(Point_2(0, 3));
 
-  Polygon_with_holes_2 pwh(out_pgn, &hole_pgn, &hole_pgn+1);
+  Polygon_with_holes_2 pwh(out, &hole, &hole+1);
   std::cout << pwh << std::endl;
 
   auto os = CGAL::oriented_side(Point_2(0, 0), pwh);
