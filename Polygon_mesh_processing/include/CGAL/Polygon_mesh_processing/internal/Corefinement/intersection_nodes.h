@@ -125,7 +125,13 @@ public:
   }
 
   void all_nodes_created(){}
-  void finalize() {}
+  template <class Mesh_to_map_node>
+  void finalize(const Mesh_to_map_node&) {}
+
+  void check_no_duplicates()
+  {
+    CGAL_assertion(nodes.size() == std::set<Point_3>(nodes.begin(), nodes.end()).size());
+  }
 
 }; // end specialization
      // Intersection_nodes<Polyhedron,Kernel,No_predicates_on_constructions,false>
@@ -158,7 +164,6 @@ private:
   Exact_to_double exact_to_double;
   Exact_kernel        ek;
   Exact_kernel::Intersect_3 exact_intersection;
-  std::vector<vertex_descriptor> tm1_vertices, tm2_vertices;
   const bool doing_autorefinement;
 public:
   const TriangleMesh &tm1, &tm2;
@@ -268,39 +273,45 @@ public:
   }
 
   void all_nodes_created()
+  {}
+
+  void call_put(const VertexPointMap& vpm, vertex_descriptor vd, std::size_t i, TriangleMesh&)
   {
-    tm1_vertices.resize(enodes.size(), GT::null_vertex());
-    tm2_vertices.resize(enodes.size(), GT::null_vertex());
+    put(vpm, vd, exact_to_double(enodes[i])); // Note this call is useless and only useful to see something in debug for intermediate results
   }
 
-  void call_put(const VertexPointMap& vpm, vertex_descriptor vd, std::size_t i, TriangleMesh& tm)
+  template <class Node_id_to_vertex>
+  void finalize(const std::map<const TriangleMesh*, Node_id_to_vertex>& mesh_to_node_id_to_vertex)
   {
-    put(vpm, vd, exact_to_double(enodes[i]));
-    if (&tm1==&tm)
+    if (!doing_autorefinement)
     {
-      if (  tm1_vertices[i] == GT::null_vertex() )
+      const Node_id_to_vertex& tm1_vertices = mesh_to_node_id_to_vertex.find(&tm1)->second;
+      const Node_id_to_vertex& tm2_vertices = mesh_to_node_id_to_vertex.find(&tm2)->second;
+      for (std::size_t i=0, e=enodes.size(); i!=e; ++i)
       {
-        tm1_vertices[i] = vd;
-        return;
+        Point_3 pt = exact_to_double(enodes[i]);
+        if ( tm1_vertices[i] != GT::null_vertex() )
+          put(vpm1, tm1_vertices[i], pt);
+        if ( tm2_vertices[i] != GT::null_vertex() )
+          put(vpm2, tm2_vertices[i], pt);
       }
-      if (doing_autorefinement)
-        tm2_vertices[i] = vd;
     }
-    else
-      tm2_vertices[i] = vd;
+    else{
+      const Node_id_to_vertex& tm1_vertices = mesh_to_node_id_to_vertex.find(&tm1)->second;
+      for (std::size_t i=0, e=enodes.size(); i!=e; ++i)
+      {
+        Point_3 pt = exact_to_double(enodes[i]);
+        if ( tm1_vertices[i] != GT::null_vertex() )
+          put(vpm1, tm1_vertices[i], pt);
+      }
+    }
   }
 
-  void finalize()
+  void check_no_duplicates()
   {
-    for (std::size_t i=0, e=enodes.size(); i!=e; ++i)
-    {
-      Point_3 pt = exact_to_double(enodes[i]);
-      if ( tm1_vertices[i] != GT::null_vertex() )
-        put(vpm1, tm1_vertices[i], pt);
-      if ( tm2_vertices[i] != GT::null_vertex() )
-        put(vpm2, tm2_vertices[i], pt);
-    }
+    CGAL_assertion(enodes.size() == std::set<typename Exact_kernel::Point_3>(enodes.begin(), enodes.end()).size());
   }
+
 }; // end specialization
      // Intersection_nodes<Polyhedron,Kernel,Predicates_on_constructions,false>
 
@@ -413,9 +424,16 @@ public:
   }
 
   void all_nodes_created(){}
-  void finalize() {}
+
+  template <class Node_id_to_vertex>
+  void finalize(const std::map<const TriangleMesh*, Node_id_to_vertex>&)
+  {}
 
 
+  void check_no_duplicates()
+  {
+    CGAL_assertion(nodes.size() == std::set<Point_3>(nodes.begin(), nodes.end()).size());
+  }
 }; // end specialization
 
 
