@@ -598,6 +598,14 @@ void CGAL::QGLViewer::postDraw() {
   if (displayMessage_)
     drawText(10, height() - 10, message_);
 
+  //zoom region
+  if(camera()->frame()->action_ == qglviewer::ZOOM_ON_REGION)
+  {
+    QPainter painter(this);
+    painter.setPen(QColor(120,120,120));
+    painter.drawRect(QRect(camera()->frame()->pressPos_, mapFromGlobal(QCursor::pos())));
+    painter.end();
+  }
 }
 
 
