@@ -5,7 +5,7 @@
 #include <list>
 
 constexpr std::size_t nb_tests = 1000000;
-constexpr std::size_t max_size = 2;
+constexpr std::size_t max_size = 10;
 
 typedef std::list<int> Standard_list;
 typedef CGAL::Small_list<int, max_size> Small_list;
