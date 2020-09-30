@@ -40,7 +40,7 @@ public:
     Ray_2_Line_2_pair(typename K::Ray_2 const *ray,
                       typename K::Line_2 const *line)
       : _ray(ray), _line(line), _result(NOT_COMPUTED_YET),
-        _intersection_point(typename K::Point_2(ORIGIN))
+        _intersection_point(K().construct_point_2_object()(ORIGIN))
     {}
 
     Intersection_results intersection_type() const;
