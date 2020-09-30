@@ -70,8 +70,8 @@ int main()
       std::cerr << *it << " ";
     std::cerr << std::endl;
 
-    std::cerr << "insert(begin(), 6)" << std::endl;
-    list.insert(list.begin(), 6);
+    std::cerr << "insert(begin()+1, 6)" << std::endl;
+    list.insert(++ list.begin(), 6);
     std::cerr << "begin() / end()" << std::endl;
     for (const int& i : list)
       std::cerr << i << " ";
@@ -89,28 +89,28 @@ int main()
 
   std::cerr << "[Speed test with all insertions smaller than max_size]" << std::endl
             << " * Standard list:   "
-            << speed_test<Standard_list>(max_size - 2, max_size)
+            << speed_test<Standard_list>(max_size - 4, max_size)
             << "s" << std::endl
             << " * List with stack: "
-            << speed_test<Small_list>(max_size - 2, max_size)
+            << speed_test<Small_list>(max_size - 4, max_size)
             << "s" << std::endl
             << "   (should be much faster)" << std::endl;
 
   std::cerr << "[Speed test with ~50% insertions smaller than max_size]" << std::endl
             << " * Standard list:   "
-            << speed_test<Standard_list>(max_size - 2, max_size + 2)
+            << speed_test<Standard_list>(max_size - 2, max_size + 3)
             << "s" << std::endl
             << " * List with stack: "
-            << speed_test<Small_list>(max_size - 2, max_size + 2)
+            << speed_test<Small_list>(max_size - 2, max_size + 3)
             << "s" << std::endl
             << "   (should still be slightly faster)" << std::endl;
 
   std::cerr << "[Speed test with all insertions greater than max_size]" << std::endl
             << " * Standard list:   "
-            << speed_test<Standard_list>(max_size + 2, max_size + 4)
+            << speed_test<Standard_list>(max_size + 10, max_size + 20)
             << "s" << std::endl
             << " * List with stack: "
-            << speed_test<Small_list>(max_size + 2, max_size + 4)
+            << speed_test<Small_list>(max_size + 10, max_size + 20)
             << "s" << std::endl
             << "   (shouldn't be faster)" << std::endl;
 
