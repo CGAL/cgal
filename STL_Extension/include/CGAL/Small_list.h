@@ -226,7 +226,10 @@ public:
     if (next == m_first)
       push_front(t);
     else if (next == nullptr)
+    {
       push_back(t);
+      return iterator(m_last, m_last);
+    }
     else
     {
       Node* n = m_pool.allocate();
@@ -238,7 +241,7 @@ public:
       ++ m_size;
     }
 
-    return next->prev();
+    return iterator(m_last, next->prev());
   }
 
   iterator erase(iterator first, iterator last)
