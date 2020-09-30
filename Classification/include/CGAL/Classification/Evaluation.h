@@ -127,8 +127,8 @@ public:
            (boost::make_zip_iterator(boost::make_tuple(ground_truth.begin(), result.begin())),
             boost::make_zip_iterator(boost::make_tuple(ground_truth.end(), result.end()))))
     {
-      int gt = static_cast<int>(get<0>(p));
-      int res = static_cast<int>(get<1>(p));
+      int gt = static_cast<int>(boost::get<0>(p));
+      int res = static_cast<int>(boost::get<1>(p));
       if (gt == -1 || res == -1)
         continue;
 
