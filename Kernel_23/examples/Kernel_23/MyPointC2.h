@@ -21,6 +21,13 @@ public:
     *(vec+1) = 0;
   }
 
+  MyPointC2(const CGAL::Origin &)
+    :col(0)
+  {
+    *vec = 0;
+    *(vec+1) = 0;
+  }
+
 
   MyPointC2(const double x, const double y, int c = 0)
     : col(c)
