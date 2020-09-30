@@ -103,7 +103,7 @@ public:
      * \param seg The segment.
      * \pre The segment is not degenerate.
      */
-    _Segment_cached_2(const Segment_2& seg) : is_vertex(UNKNOWN)
+    _Segment_cached_2(const Segment_2& seg) : is_vert(UNKNOWN)
     {
       Kernel   kernel;
 
