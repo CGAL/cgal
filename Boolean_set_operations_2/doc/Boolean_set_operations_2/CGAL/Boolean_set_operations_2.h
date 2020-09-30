@@ -22,6 +22,7 @@ namespace CGAL {
 
 /// @{
 
+// Traits-less
 /*! writes the complement of the polygon `pgn` into the polygon with holes `res`.
  */
 template <typename Kernel, typename Container>
@@ -49,6 +50,41 @@ OutputIterator complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator complement(const General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& pgn, OutputIterator oi);
+
+// With Traits
+/*! writes the complement of the polygon `pgn` into the polygon with holes `res`.
+ */
+  template <typename Kernel, typename Container, typename GpsTraits>
+void complement(const Polygon_2<Kernel, Container>& pgn,
+                Polygon_with_holes_2<Kernel, Container>& res,
+                const GpsTraits& traits);
+
+/*! writes the complement of the general polygon `pgn` into the  general polygon
+ * with holes `res`.
+ */
+template <typename ArrTraits, typename GpsTraits>
+void complement(const General_polygon_2<ArrTraits>& pgn,
+                General_polygon_with_holes_2<ArrTraits>& res,
+                const GpsTraits& traits);
+
+/*! writes the complement of the polygon with holes `pgn` into the  output
+ * iterator `oi`.
+ * The value type of `oi` is `Polygon_with_holes_2`.
+ */
+template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
+OutputIterator complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
+                          OutputIterator oi,
+                          const GpsTraits& traits);
+
+/*! writes the complement of the general polygon with holes `pgn` into the
+ * output iterator `oi`.
+ * The value type of `oi` is `General_polygon_with_holes_2`.
+ */
+template <typename ArrTraits, typename OutputIterato, typename GpsTraitsr>
+OutputIterator complement(const General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& pgn,
+                          OutputIterator oi,
+                          const GpsTraits& traits);
+
 /// @}
 
 } /* namespace CGAL */
@@ -568,7 +604,7 @@ namespace CGAL {
  * \ingroup PkgBooleanSetOperations2Ref
  * \anchor ref_bso_oriented_side
  *
- * `Oriented_side()` refers to a group of overloaded functions, divided into
+ * `Oriented_side()` refers to a group of overloaded functions divided into
  * two subgroups.
  *
  * \cgalHeading{Oriented Side of two Polygons}
