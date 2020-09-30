@@ -214,8 +214,6 @@ double distance (const Point_3& p, const Line_2& l)
 template <typename Fitted>
 void assert_quality (const std::vector<Point_3>& points, const Fitted& fitted)
 {
-  double limit = 1e-4 * std::sqrt (CGAL::squared_distance (points.front(), points.back()));
-
   double mean_dist = 0;
   for (std::size_t i = 0; i < points.size(); ++ i)
   {
@@ -225,6 +223,9 @@ void assert_quality (const std::vector<Point_3>& points, const Fitted& fitted)
   mean_dist /= points.size();
 
   std::cerr << "mean distance = " << mean_dist << std::endl;
+
+  CGAL_assertion_code
+    (double limit = 1e-4 * std::sqrt (CGAL::squared_distance (points.front(), points.back())));
   CGAL_assertion (mean_dist < limit);
 }
 
