@@ -852,9 +852,11 @@ public:
             if (x_seg != nullptr) {
               X_monotone_subcurve_2 seg = *x_seg;
 
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
               // If for some reason the subcurve intersection
               // results in left oriented curve.
               if (cmp_seg_endpts(seg) == LARGER) seg = construct_opposite(seg);
+#endif
               ocv.push_back(seg);
             }
 
