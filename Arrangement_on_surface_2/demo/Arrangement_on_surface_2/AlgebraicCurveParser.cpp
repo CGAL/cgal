@@ -1,4 +1,3 @@
-//
 // Copyright (c) 2012, 2020 Tel-Aviv University (Israel).
 // All rights reserved.
 //
@@ -101,8 +100,7 @@ struct PolynomialParser : qi::grammar<Iterator, Polynomial_d(), Skipper>
   bool error = false;
 };
 
-template <int dimension>
-static inline bool hasValidChars(const std::string& expression)
+static bool hasValidChars2D(const std::string& expression)
 {
   const char valid_chars[] = {'x', 'y', '+', '-', '*', '(', ')', '^', '='};
   return std::all_of(expression.begin(), expression.end(), [&](char c) {
@@ -112,8 +110,7 @@ static inline bool hasValidChars(const std::string& expression)
   });
 }
 
-template <>
-bool hasValidChars<1>(const std::string& expression)
+static bool hasValidChars1D(const std::string& expression)
 {
   const char valid_chars[] = {'x', '+', '-', '*', '(', ')', '^', '='};
   return std::all_of(expression.begin(), expression.end(), [&](char c) {
@@ -123,6 +120,16 @@ bool hasValidChars<1>(const std::string& expression)
   });
 }
 
+static inline bool hasValidChars(const std::string& expression, int dimension)
+{
+  if (dimension == 1)
+    return hasValidChars1D(expression);
+  else if (dimension == 2)
+    return hasValidChars2D(expression);
+  else
+    CGAL_error();
+}
+
 template <typename Polynomial_d>
 boost::optional<Polynomial_d>
 AlgebraicCurveParser<Polynomial_d>::operator()(const std::string& expression)
@@ -130,7 +137,7 @@ AlgebraicCurveParser<Polynomial_d>::operator()(const std::string& expression)
   using Traits = CGAL::Polynomial_traits_d<Polynomial_d>;
   using iterator_type = std::string::const_iterator;
 
-  if (!hasValidChars<Traits{}.d>(expression)) return {};
+  if (!hasValidChars(expression, Traits::d)) return {};
 
   PolynomialParser<Polynomial_d, iterator_type, ascii::space_type> pparser;
   std::string::const_iterator iter = expression.begin();
