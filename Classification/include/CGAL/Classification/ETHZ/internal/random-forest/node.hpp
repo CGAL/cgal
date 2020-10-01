@@ -22,6 +22,8 @@
 #include "../dataview.h"
 #include "common-libraries.hpp"
 
+#include <CGAL/IO/binary_file_io.h>
+
 #if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
 #include <boost/serialization/scoped_ptr.hpp>
 #include <boost/serialization/vector.hpp>
@@ -255,13 +257,13 @@ public:
 
     void write (std::ostream& os)
     {
-      os.write((char*)(&is_leaf), sizeof(bool));
-      os.write((char*)(&n_samples), sizeof(size_t));
-      os.write((char*)(&depth), sizeof(size_t));
+      I_Binary_write_bool (os, is_leaf);
+      I_Binary_write_size_t (os, n_samples);
+      I_Binary_write_size_t (os, depth);
       splitter.write(os);
 
       for (const float& f : node_dist)
-        os.write((char*)(&f), sizeof(float));
+        I_Binary_write_float32 (os, f);
 
       if (!is_leaf)
       {
@@ -272,14 +274,14 @@ public:
 
     void read (std::istream& is)
     {
-      is.read((char*)(&is_leaf), sizeof(bool));
-      is.read((char*)(&n_samples), sizeof(size_t));
-      is.read((char*)(&depth), sizeof(size_t));
+      I_Binary_read_bool (is, is_leaf);
+      I_Binary_read_size_t (is, n_samples);
+      I_Binary_read_size_t (is, depth);
       splitter.read(is);
 
       node_dist.resize(params->n_classes, 0.0f);
       for (std::size_t i = 0; i < node_dist.size(); ++ i)
-        is.read((char*)(&node_dist[i]), sizeof(float));
+        I_Binary_read_float32 (is, node_dist[i]);
 
       if (!is_leaf)
       {

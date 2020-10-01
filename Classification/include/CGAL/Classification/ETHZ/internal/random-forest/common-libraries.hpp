@@ -29,6 +29,7 @@
 #include <numeric>
 #include <limits>
 #include <list>
+#include <CGAL/IO/binary_file_io.h>
 #include <boost/version.hpp>
 #include <boost/bind.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
@@ -112,26 +113,26 @@ struct ForestParams {
 
     void write (std::ostream& os)
     {
-      os.write((char*)(&n_classes), sizeof(size_t));
-      os.write((char*)(&n_features), sizeof(size_t));
-      os.write((char*)(&n_samples), sizeof(size_t));
-      os.write((char*)(&n_in_bag_samples), sizeof(size_t));
-      os.write((char*)(&max_depth), sizeof(size_t));
-      os.write((char*)(&n_trees), sizeof(size_t));
-      os.write((char*)(&min_samples_per_node), sizeof(size_t));
-      os.write((char*)(&sample_reduction), sizeof(float));
+      I_Binary_write_size_t (os, n_classes);
+      I_Binary_write_size_t (os, n_features);
+      I_Binary_write_size_t (os, n_samples);
+      I_Binary_write_size_t (os, n_in_bag_samples);
+      I_Binary_write_size_t (os, max_depth);
+      I_Binary_write_size_t (os, n_trees);
+      I_Binary_write_size_t (os, min_samples_per_node);
+      I_Binary_write_float32 (os, sample_reduction);
     }
 
     void read (std::istream& is)
     {
-      is.read((char*)(&n_classes), sizeof(size_t));
-      is.read((char*)(&n_features), sizeof(size_t));
-      is.read((char*)(&n_samples), sizeof(size_t));
-      is.read((char*)(&n_in_bag_samples), sizeof(size_t));
-      is.read((char*)(&max_depth), sizeof(size_t));
-      is.read((char*)(&n_trees), sizeof(size_t));
-      is.read((char*)(&min_samples_per_node), sizeof(size_t));
-      is.read((char*)(&sample_reduction), sizeof(float));
+      I_Binary_read_size_t (is, n_classes);
+      I_Binary_read_size_t (is, n_features);
+      I_Binary_read_size_t (is, n_samples);
+      I_Binary_read_size_t (is, n_in_bag_samples);
+      I_Binary_read_size_t (is, max_depth);
+      I_Binary_read_size_t (is, n_trees);
+      I_Binary_read_size_t (is, min_samples_per_node);
+      I_Binary_read_float32 (is, sample_reduction);
     }
 };
 
