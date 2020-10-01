@@ -560,20 +560,7 @@ struct Envelope {
         std::cout << "todo degeneration handling" << std::endl;
         //n = Point_3(rand(), rand(), rand())} };
       }
-    /*
-    CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
-      result = CGAL::intersection(tri, facet1, facet2);
-    if(! result){
-#ifdef TRACE
-      std::cout <<  "there must be an intersection 4" << std::endl;
-#endif
-        return 0;
-    }
-    const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
-    CGAL_assertion(ipp != nullptr);
 
-    const ePoint_3& ip = *ipp;
-    */
     int o1 = int(CGAL::orientation(n,tp,tq, ip));
     int o2 = int(CGAL::orientation(n,tq,tr, ip));
 
@@ -806,16 +793,10 @@ struct Envelope {
             }
 
             int inter = 0;
-            ePoint_3* ipp;
-            CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
-              result = CGAL::intersection(tri_eplane, prism[cutp[i]].eplane, prism[cutp[j]].eplane);
-            if(result){
-              ipp = boost::get<ePoint_3>(&*result);
-              if(ipp != nullptr){
 
-                const ePoint_3& ip = *ipp;
-                inter = is_3_triangle_cut_float_fast(tri0, tri1, tri2, ip );
-              }
+            boost::optional<ePoint_3>  ipp = CGAL::intersection_point(tri_eplane, prism[cutp[i]].eplane, prism[cutp[j]].eplane);
+            if(ipp){
+                inter = is_3_triangle_cut_float_fast(tri0, tri1, tri2, *ipp);
             }
             // this was for a fast float check
             if (inter == 2)
@@ -1933,11 +1914,15 @@ int main(int argc, char* argv[])
       Point_3 v0 = env_vertices[ii];
       Point_3 v1 = env_vertices[ij];
       Point_3 v2 = env_vertices[ik];
+      /*
       {
         std::ofstream query("query.off");
         query << "OFF\n" << "3 1 0\n" << v0 << std::endl << v1 << std::endl << v2 << std::endl << "3 0 1 2" << std::endl;
       }
+      */
       bbb = envelope(v0, v1, v2);
+
+      std::cout << t.time() << " sec." << std::endl;
     }
 
     if(bbb){
@@ -1948,17 +1933,21 @@ int main(int argc, char* argv[])
     return 0;
   }
 
+  int inside_count = 0;
+  int outside_count = 0;
 
   std::ofstream inside("inside.txt");
   std::ofstream outside("outside.txt");
-  for(int i = 0; i < env_vertices.size(); i+=10){
+  for(int i = 0; i <   env_vertices.size()  ; i+=10){
       for(int j = i+1; j < env_vertices.size(); j+= 10){
         for(int k = j+1; k < env_vertices.size(); k+=10){
           if( ( i != j) && (i != k) && (j != k)){
             if(! CGAL::collinear(env_vertices[i], env_vertices[j],env_vertices[k])){
               if(envelope(env_vertices[i],  env_vertices[j], env_vertices[k])){
+                inside_count++;
                 inside << i << " " << j << " "<< k <<std::endl;
               } else{
+                outside_count++;
                 outside << i << " " << j << " "<< k <<std::endl;
               }
             }
@@ -1966,7 +1955,8 @@ int main(int argc, char* argv[])
         }
       }
   }
-
+  std::cout << inside_count << " " << outside_count << std::endl;
+  std::cout << t.time() << " sec." << std::endl;
 
   return 0;
 }

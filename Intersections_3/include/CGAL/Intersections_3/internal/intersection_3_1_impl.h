@@ -182,6 +182,49 @@ intersection(const typename K::Plane_3 &plane1,
     return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Plane_3>(plane1);
 }
 
+
+  //  triple plane intersection
+template <class K>
+boost::optional<typename K::Point_3>
+intersection_point(const typename K::Plane_3 &plane1,
+                   const typename K::Plane_3 &plane2,
+                   const typename K::Plane_3 &plane3,
+                   const K& k)
+{
+  typedef typename boost::optional<typename K::Point_3> result_type;
+   typedef typename K::FT FT;
+    const FT &m00 = plane1.a();
+    const FT &m01 = plane1.b();
+    const FT &m02 = plane1.c();
+    const FT &b0 =  plane1.d();
+    const FT &m10 = plane2.a();
+    const FT &m11 = plane2.b();
+    const FT &m12 = plane2.c();
+    const FT &b1 =  plane2.d();
+    const FT &m20 = plane3.a();
+    const FT &m21 = plane3.b();
+    const FT &m22 = plane3.c();
+    const FT &b2 = plane3.d();
+
+    const FT den = - determinant(m00, m01, m02,
+                                 m10, m11, m12,
+                                 m20, m21, m22);
+    if(den == FT(0)){
+      return boost::none;
+    }
+    const FT num1 = determinant(b0, m01, m02,
+                               b1, m11, m12,
+                               b2, m21, m22);
+    const FT num2 = determinant(m00, b0, m02,
+                               m10, b1, m12,
+                               m20, b2, m22);
+    const FT num3 = determinant(m00, m01, b0,
+                               m10, m11, b1,
+                               m20, m21, b2);
+    return boost::make_optional(typename K::Point_3(num1/den, num2/den, num3/den));
+}
+
+
 template <class K>
 boost::optional< boost::variant<typename K::Point_3,
                                 typename K::Line_3,

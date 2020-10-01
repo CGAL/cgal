@@ -54,6 +54,7 @@ int main(int argc, char* argv[]) {
     fastEnvelope::Vector3 v2 = env_vertices[ik];
     std::array<fastEnvelope::Vector3, 3> tria = {v0, v1, v2};
     bool bbb = envelope.is_outside(tria);
+    std::cout << t.time() << " sec." << std::endl;
   if(bbb){
       std::cout <<  "outside the envelope" << std::endl;
     }else{
@@ -62,6 +63,8 @@ int main(int argc, char* argv[]) {
     return 0;
   }
 
+  int inside_count = 0;
+  int outside_count = 0;
 
   std::ofstream inside("insideE.txt");
   std::ofstream outside("outsideE.txt");
@@ -75,14 +78,18 @@ int main(int argc, char* argv[]) {
             if(! CGAL::collinear(p,q,r)){
             std::array<fastEnvelope::Vector3, 3> f = { env_vertices[i],  env_vertices[j], env_vertices[k] };
               if(! envelope.is_outside(f)){
-                inside << i << " " << j << " "<< k <<std::endl;
+                inside_count++;
+                //inside << i << " " << j << " "<< k <<std::endl;
               } else{
-                outside << i << " " << j << " "<< k <<std::endl;
+                outside_count++;
+                //outside << i << " " << j << " "<< k <<std::endl;
               }
-              }
-        }
+            }
+          }
         }
       }
+  std::cout << inside_count << " " << outside_count << std::endl;
+  std::cout << t.time() << " sec." << std::endl;
   }
 
 
