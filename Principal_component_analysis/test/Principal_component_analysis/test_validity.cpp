@@ -285,13 +285,13 @@ int main()
   std::vector<Point_3> points_on_line;
   points_on_line.reserve (nb_points_on_line);
   for (std::size_t i = 0; i < nb_points_on_line; ++ i)
-    points_on_line.push_back (Point_3 (origin + i * base1));
+    points_on_line.push_back (Point_3 (origin + double(i) * base1));
 
   std::vector<Point_3> points_on_plane;
   points_on_plane.reserve (nb_points_on_line * nb_points_on_line);
   for (std::size_t i = 0; i < nb_points_on_line; ++ i)
     for (std::size_t j = 0; j < nb_points_on_line; ++ j)
-      points_on_plane.push_back (Point_3 (origin + i * base1 + j * base2));
+      points_on_plane.push_back (Point_3 (origin + double(i) * base1 + double(j) * base2));
 
   std::cerr << std::endl << "=== 2D ===" << std::endl << std::endl;
 
