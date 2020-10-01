@@ -269,6 +269,11 @@ void LineInputMethod::beginInput()
 void LineInputMethod::updateVisualGuideMouseMoved(
   const std::vector<QPointF>& clickedPoints, const QPointF& movePoint)
 {
+  if (clickedPoints[0] == movePoint)
+  {
+     this->lineGuide.setLine({});
+     return;
+  }
   float length = QLineF{clickedPoints[0], movePoint}.length();
   float dx = (clickedPoints[0].x() - movePoint.x()) / length;
   float dy = (clickedPoints[0].y() - movePoint.y()) / length;
