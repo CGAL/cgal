@@ -1665,6 +1665,8 @@ QString CGAL::QGLViewer::mouseActionString(qglviewer::MouseAction ma) {
                          "SCREEN_TRANSLATE mouse action");
   case CGAL::qglviewer::ZOOM_ON_REGION:
     return CGAL::QGLViewer::tr("Zooms on region for", "ZOOM_ON_REGION mouse action");
+  case CGAL::qglviewer::ZOOM_FOV:
+    return CGAL::QGLViewer::tr("Changes the FOV to emulate an optical zoom for ", "ZOOM_FOV mouse action");
   }
   return QString();
 }
