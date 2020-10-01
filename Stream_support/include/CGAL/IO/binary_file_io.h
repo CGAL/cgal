@@ -31,7 +31,7 @@ I_Binary_write_uinteger32(std::ostream& out, std::uint32_t u) {
 // Special function to write size_t in 32b integer to ensure files
 // written by 64b systems are still readable by 32b ones
 inline void
-I_Binary_write_size_t(std::ostream& out, std::size_t s) {
+I_Binary_write_size_t_into_uinteger32 (std::ostream& out, std::size_t s) {
     CGAL_assertion_msg
       (i <= static_cast<std::size_t>(std::numeric_limits<std::uint32_t>::max()),
        "Trying to write size_t that does not fit in uint32_t");
@@ -58,7 +58,7 @@ I_Binary_read_uinteger32(std::istream& in, std::uint32_t& u) {
 }
 // written by 64b systems are still readable by 32b ones
 inline void
-I_Binary_read_size_t(std::istream& in, std::size_t& s) {
+I_Binary_read_size_t_from_uinteger32(std::istream& in, std::size_t& s) {
     std::uint32_t s32;
     I_Binary_read_uinteger32 (in, s32);
     s = static_cast<std::size_t>(s32);

@@ -236,7 +236,7 @@ public:
     {
       params.write(os);
 
-      I_Binary_write_size_t (os, trees.size());
+      I_Binary_write_size_t_into_uinteger32 (os, trees.size());
       for (std::size_t i_tree = 0; i_tree < trees.size(); ++i_tree)
         trees[i_tree].write(os);
     }
@@ -246,7 +246,7 @@ public:
       params.read(is);
 
       std::size_t nb_trees;
-      I_Binary_read_size_t (is, nb_trees);
+      I_Binary_read_size_t_from_uinteger32 (is, nb_trees);
       for (std::size_t i = 0; i < nb_trees; ++ i)
       {
         trees.push_back (new TreeType(&params));

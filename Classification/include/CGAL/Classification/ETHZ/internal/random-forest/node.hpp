@@ -258,8 +258,8 @@ public:
     void write (std::ostream& os)
     {
       I_Binary_write_bool (os, is_leaf);
-      I_Binary_write_size_t (os, n_samples);
-      I_Binary_write_size_t (os, depth);
+      I_Binary_write_size_t_into_uinteger32 (os, n_samples);
+      I_Binary_write_size_t_into_uinteger32 (os, depth);
       splitter.write(os);
 
       for (const float& f : node_dist)
@@ -275,8 +275,8 @@ public:
     void read (std::istream& is)
     {
       I_Binary_read_bool (is, is_leaf);
-      I_Binary_read_size_t (is, n_samples);
-      I_Binary_read_size_t (is, depth);
+      I_Binary_read_size_t_from_uinteger32 (is, n_samples);
+      I_Binary_read_size_t_from_uinteger32 (is, depth);
       splitter.read(is);
 
       node_dist.resize(params->n_classes, 0.0f);
