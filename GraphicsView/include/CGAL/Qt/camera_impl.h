@@ -895,13 +895,17 @@ Vec Camera::pointUnderPixel(const QPoint &pixel, bool &found) const {
 
 /*! Moves the Camera so that the entire scene is visible.
 
- Simply calls fitSphere() on a sphere defined by sceneCenter() and
- sceneRadius().
+ Calls fitSphere() on a sphere defined by sceneCenter() and
+ sceneRadius(), and resets the default FOV.
 
  You will typically use this method in CGAL::QGLViewer::init() after you defined a new
  sceneRadius(). */
 CGAL_INLINE_FUNCTION
-void Camera::showEntireScene() { fitSphere(sceneCenter(), sceneRadius()); }
+void Camera::showEntireScene()
+{
+  setFieldOfView(CGAL_PI/4.0);
+  fitSphere(sceneCenter(), sceneRadius());
+}
 
 /*! Moves the Camera so that its sceneCenter() is projected on the center of the
  window. The orientation() and fieldOfView() are unchanged.
