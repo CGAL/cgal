@@ -882,11 +882,46 @@ struct Lazy_construction_optional
 
     } catch (Uncertain_conversion_exception&) {
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
-      boost::optional<typename EK::Point_3> oep = ec(CGAL::exact(l1),CGAL::exact(l2),CGAL::exact(l3));
+      boost::optional<typename EK::Point_3> oep = ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3));
       if(oep == boost::none){
         return boost::none;
       }
-      typedef Lazy_rep_0<typename AK::Point_3, typename EK::Point_3,E2A> LazyPointRep;
+      typedef Lazy_rep_0<typename AK::Point_3, typename EK::Point_3, E2A> LazyPointRep;
+      const typename EK::Point_3 ep = *oep;
+      LazyPointRep *rep = new LazyPointRep(ep);
+      typename LK::Point_3 lp(rep);
+      return boost::make_optional(lp);
+    }
+    // AF can we get here??
+    return boost::none;
+  }
+
+  // for Intersect_point_3 with  Plane_3  Line_3
+  template <typename L1, typename L2>
+  result_type operator()(const L1& l1, const L2& l2) const
+  {
+    Protect_FPU_rounding<Protection> P;
+
+    try {
+      boost::optional<typename AK::Point_3> oap = ac(CGAL::approx(l1),CGAL::approx(l2));
+      if(oap == boost::none){
+        return boost::none;
+      }
+      // Now we have to construct a rep for a lazy point with the three lazy planes.
+      typedef Lazy_rep_optional_n<typename AK::Point_3, typename EK::Point_3, AC, EC, E2A, L1, L2> LazyPointRep;
+      const typename AK::Point_3 ap = *oap;
+      LazyPointRep *rep = new LazyPointRep(ap, ec, l1, l2);
+      typename LK::Point_3 lp(rep);
+      return boost::make_optional(lp);
+
+
+    } catch (Uncertain_conversion_exception&) {
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+      boost::optional<typename EK::Point_3> oep = ec(CGAL::exact(l1), CGAL::exact(l2));
+      if(oep == boost::none){
+        return boost::none;
+      }
+      typedef Lazy_rep_0<typename AK::Point_3, typename EK::Point_3, E2A> LazyPointRep;
       const typename EK::Point_3 ep = *oep;
       LazyPointRep *rep = new LazyPointRep(ep);
       typename LK::Point_3 lp(rep);

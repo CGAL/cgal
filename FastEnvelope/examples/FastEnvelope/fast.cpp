@@ -366,16 +366,12 @@ struct Envelope {
     for (int i = 0; i < cutp.size(); i++){
       const Plane& plane_i = prism[cutp[i]];
 
-      CGAL::cpp11::result_of<eIntersect_3(eLine_3, ePlane_3)>::type
-        result = CGAL::intersection(line, plane_i.eplane);
-      if(! result){
+      boost::optional<ePoint_3> op = CGAL::intersection_point(line, plane_i.eplane);
+      if(! op){
         std::cout <<  "there must be an intersection 2" << std::endl;
       }
 
-      const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
-      CGAL_assertion(ipp != nullptr);
-
-      const ePoint_3& ip = *ipp;
+      const ePoint_3& ip = *op;
 
       for(int j = 0; j < cutp.size(); j++) {
         if (i == j){
@@ -412,18 +408,14 @@ struct Envelope {
                                                           const std::vector<unsigned int> &prismindex, const int &jump, int &id) const
   {
     CGAL::Oriented_side ori;
-    CGAL::cpp11::result_of<eIntersect_3(eLine_3, ePlane_3)>::type
-      result = CGAL::intersection(eline, plane.eplane);
+    boost::optional<ePoint_3> op = CGAL::intersection_point(eline, plane.eplane);
 #ifdef TRACE
-    if(! result){
+    if(! op){
       std::cout <<  "there must be an intersection 3" << std::endl;
     }
 #endif
 
-    const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
-    CGAL_assertion(ipp != nullptr);
-
-    const ePoint_3& ip = *ipp;
+    const ePoint_3& ip = *op;
     for (int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
         continue;
@@ -551,10 +543,16 @@ struct Envelope {
                                */
                                ) const
   {
+
+    Point_3 itp(CGAL::approx(tp).x().inf(), CGAL::approx(tp).y().inf(), CGAL::approx(tp).z().inf());
+    Point_3 itq(CGAL::approx(tq).x().inf(), CGAL::approx(tq).y().inf(), CGAL::approx(tq).z().inf());
+    Point_3 itr(CGAL::approx(tr).x().inf(), CGAL::approx(tr).y().inf(), CGAL::approx(tr).z().inf());
+    Point_3 in = itp + CGAL::cross_product((itp - itq), (itp - itr));
+    ePoint_3 n(in.x(),in.y(),in.z());
     // return 2;
     // todo:  what do we test here with n ?
     // todo : do this not with Epeck
-    ePoint_3 n = tp + CGAL::cross_product((tp - tq), (tp - tr));
+    // ePoint_3 n = tp + CGAL::cross_product((tp - tq), (tp - tr));
 
     if (CGAL::orientation(n, tp, tq, tr) == 0){
         std::cout << "todo degeneration handling" << std::endl;
@@ -583,7 +581,13 @@ struct Envelope {
                     const ePoint_3& tr,
                     const ePoint_3& ip) const
   {
-    ePoint_3 n = tp + CGAL::cross_product((tp - tq), (tp - tr));
+    Point_3 itp(CGAL::approx(tp).x().inf(), CGAL::approx(tp).y().inf(), CGAL::approx(tp).z().inf());
+    Point_3 itq(CGAL::approx(tq).x().inf(), CGAL::approx(tq).y().inf(), CGAL::approx(tq).z().inf());
+    Point_3 itr(CGAL::approx(tr).x().inf(), CGAL::approx(tr).y().inf(), CGAL::approx(tr).z().inf());
+    Point_3 in = itp + CGAL::cross_product((itp - itq), (itp - itr));
+    ePoint_3 n(in.x(),in.y(),in.z());
+
+    //ePoint_3 n = tp + CGAL::cross_product((tp - tq), (tp - tr));
 #if 0
     if (Predicates::orient_3d(n, tp, q, tr) == 0)
       {
@@ -725,17 +729,14 @@ struct Envelope {
           // std::cout << *(seg0[k]) << "       " <<   *(seg1[k]) << std::endl;
 
           eLine_3 eline(*(seg0[k]), *(seg1[k]));
-          CGAL::cpp11::result_of<eIntersect_3(eLine_3, ePlane_3)>::type
-            result = CGAL::intersection(eline, plane_i.eplane);
-          if(! result){
+          boost::optional<ePoint_3> op = CGAL::intersection_point(eline, plane_i.eplane);
+          if(! op){
 #ifdef TRACE
             std::cout <<  "there must be an intersection 6" << std::endl;
 #endif
           }
 
-          const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
-          CGAL_assertion(ipp != nullptr);
-          const ePoint_3& ip = *ipp;
+          const ePoint_3& ip = *op;
 
           for (int j = 0; j < cutp.size(); j++){
             if (i == j){
@@ -900,18 +901,14 @@ struct Envelope {
   {
     eLine_3 eline(segpoint0,segpoint1); // todo replace parameter of function
 
-    CGAL::cpp11::result_of<eIntersect_3(eLine_3, ePlane_3)>::type
-      result = CGAL::intersection(eline, eplane);
-    if(! result){
+     boost::optional<ePoint_3> op = CGAL::intersection_point(eline, eplane);
+    if(! op){
  #ifdef TRACE
       std::cout <<  "there must be an intersection 9" << std::endl;
  #endif
     }
 
-    const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
-    CGAL_assertion(ipp != nullptr);
-
-    const ePoint_3& ip = *ipp;
+    const ePoint_3& ip = *op;
     int tot, fid, ori;
     for (int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
@@ -985,18 +982,14 @@ struct Envelope {
   {
     eLine_3 eline(segpoint0,segpoint1); // todo replace parameter of function
 
-    CGAL::cpp11::result_of<eIntersect_3(eLine_3, ePlane_3)>::type
-      result = CGAL::intersection(eline, eplane);
-    if(! result){
+    boost::optional<ePoint_3> op = CGAL::intersection_point(eline, eplane);
+    if(! op){
 #ifdef TRACE
       std::cout <<  "there must be an intersection 10" << std::endl;
 #endif
     }
 
-    const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
-    CGAL_assertion(ipp != nullptr);
-
-    const ePoint_3& ip = *ipp;
+    const ePoint_3& ip = *op;
 
     int tot, ori, fid;
 
@@ -1472,20 +1465,15 @@ struct Envelope {
 
             // AF: We moved the intersection here
             // In case there is no intersection point we continue
-            CGAL::cpp11::result_of<eIntersect_3(ePlane_3, ePlane_3, ePlane_3)>::type
-              result = CGAL::intersection(etriangle_eplane,
-                                          halfspace[jump1][intersect_face[queue[i]][k]].eplane,
-                                          halfspace[jump2][intersect_face[queue[j]][h]].eplane);
-            if(! result){
+            boost::optional<ePoint_3>
+              op = CGAL::intersection_point(etriangle_eplane,
+                                            halfspace[jump1][intersect_face[queue[i]][k]].eplane,
+                                            halfspace[jump2][intersect_face[queue[j]][h]].eplane);
+            if(! op){
               continue;
             }
 
-            const ePoint_3* ipp = boost::get<ePoint_3>(&*result);
-            if(ipp == nullptr){
-              continue;
-            }
-
-            const ePoint_3& ip = *ipp;
+            const ePoint_3& ip = *op;
 
 
             cut = is_3_triangle_cut(etriangle[0], etriangle[1], etriangle[2], ip);
@@ -1938,17 +1926,17 @@ int main(int argc, char* argv[])
 
   std::ofstream inside("inside.txt");
   std::ofstream outside("outside.txt");
-  for(int i = 0; i <   env_vertices.size()  ; i+=10){
+  for(int i = 0; i <  env_vertices.size()   ; i+=10){
       for(int j = i+1; j < env_vertices.size(); j+= 10){
         for(int k = j+1; k < env_vertices.size(); k+=10){
           if( ( i != j) && (i != k) && (j != k)){
             if(! CGAL::collinear(env_vertices[i], env_vertices[j],env_vertices[k])){
               if(envelope(env_vertices[i],  env_vertices[j], env_vertices[k])){
                 inside_count++;
-                inside << i << " " << j << " "<< k <<std::endl;
+                // inside << i << " " << j << " "<< k <<std::endl;
               } else{
                 outside_count++;
-                outside << i << " " << j << " "<< k <<std::endl;
+                // outside << i << " " << j << " "<< k <<std::endl;
               }
             }
           }

@@ -88,10 +88,10 @@ int main(int argc, char* argv[]) {
           }
         }
       }
+
+  }
   std::cout << inside_count << " " << outside_count << std::endl;
   std::cout << t.time() << " sec." << std::endl;
-  }
-
 
 
   return 0;
