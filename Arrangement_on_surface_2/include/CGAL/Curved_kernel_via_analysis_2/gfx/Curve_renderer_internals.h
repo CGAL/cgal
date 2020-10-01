@@ -1028,7 +1028,7 @@ void precompute(const Polynomial_2& in) {
 }
 
 //! \brief activates the cache entry \c cache_id
-void select_cache_entry(int cache_id)
+void select_cache_entry(std::size_t cache_id)
 {
     coeffs_x = coeffs_x_ + cache_id;
     coeffs_y = coeffs_y_ + cache_id;
