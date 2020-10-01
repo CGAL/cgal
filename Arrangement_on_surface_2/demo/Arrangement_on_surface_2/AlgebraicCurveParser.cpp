@@ -44,6 +44,9 @@ struct PolynomialParser : qi::grammar<Iterator, Polynomial_d(), Skipper>
     using qi::_val;
     using qi::eps;
 
+    for (int i = 0; i < Traits::d; i++)
+        vars[i] = CGAL::shift(Polynomial_d(1), 1, i);
+
     // { expr = expr } or { expr }
     start = (expr >> '=' >> expr)[_val = qi::_1 - qi::_2] | expr[_val = qi::_1];
     // addition and subtraction
@@ -67,7 +70,10 @@ struct PolynomialParser : qi::grammar<Iterator, Polynomial_d(), Skipper>
       coeff[_val = phx::construct<Polynomial_d>(qi::_1)] | var[_val = qi::_1];
     coeff = qi::as_string[qi::lexeme[+qi::digit]]
                          [_val = phx::construct<Coefficient>(qi::_1)];
-    var = qi::char_('x')[_val = x] | qi::char_('y')[_val = y];
+    if (Traits::d == 1)
+      var = qi::char_('x')[_val = vars[0]];
+    else
+      var = qi::char_('x')[_val = vars[0]] | qi::char_('y')[_val = vars[1]];
   }
 
   Polynomial_d raise(const Polynomial_d& poly, const Polynomial_d& power)
@@ -85,8 +91,8 @@ struct PolynomialParser : qi::grammar<Iterator, Polynomial_d(), Skipper>
   Innermost_leading_coefficient innermost_leading_coefficient;
   Total_degree total_degree;
 
-  Polynomial_d x = CGAL::shift(Polynomial_d(1), 1, 0);
-  Polynomial_d y = CGAL::shift(Polynomial_d(1), 1, 1);
+  Polynomial_d vars[Traits::d];
+
   qi::rule<Iterator, Polynomial_d(), Skipper> start;
   qi::rule<Iterator, Polynomial_d(), Skipper> expr;
   qi::rule<Iterator, Polynomial_d(), Skipper> term;
@@ -112,7 +118,7 @@ static bool hasValidChars2D(const std::string& expression)
 
 static bool hasValidChars1D(const std::string& expression)
 {
-  const char valid_chars[] = {'x', '+', '-', '*', '(', ')', '^', '='};
+  const char valid_chars[] = {'x', '+', '-', '*', '(', ')', '^'};
   return std::all_of(expression.begin(), expression.end(), [&](char c) {
     return std::isspace(c) || std::isdigit(c) ||
            std::find(std::begin(valid_chars), std::end(valid_chars), c) !=
