@@ -1102,15 +1102,6 @@ public:
     Base(source,target)
   {}
 
-  /*! Construct a segment from a pair of points.
-   * \param seg The source and target points
-   * \pre The two points are not the same.
-   */
-  Arr_segment_2(const std::pair<std::reference_wrapper<const Point_2>,
-                                std::reference_wrapper<const Point_2> >& seg) :
-    Base(seg.first, seg.second)
-  {}
-
   /*! Construct a segment from a line and two end-points.
    * \param line The supporting line.
    * \param source The source point.

@@ -78,7 +78,7 @@ public:
 
     X_monotone_curve_2 operator*()
     {
-      return X_monotone_curve_2(*m_curr_edge);
+      return X_monotone_curve_2(m_curr_edge->first, m_curr_edge->second);
     }
 
     Polygon_2_curve_ptr<X_monotone_curve_2> operator->()
