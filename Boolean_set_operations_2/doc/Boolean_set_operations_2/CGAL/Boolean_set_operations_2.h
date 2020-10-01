@@ -4,14 +4,19 @@ namespace CGAL {
  * \ingroup PkgBooleanSetOperations2Ref
  * \anchor ref_bso_complement
  *
- * The `complement` function is overloaded. Depending on the type of polygon
+ * There are several overloaded functions called `complement` that computes
+ * the complement of a given polygon `pgn` . Depending on the type of polygon
  * `pgn` the complement is either a single (general) polygon with holes, or
  * several (general) poylgons with holes. In the latter case the `complement
  * function` writes them into an output iterator `oi`.
  *
- * \param pgn The input polygon for the `complement` function. It may be of the
- * type `Polygon_2`, `General_polygon_2`, `Polygon_with_holes_2`, or
- * `General_polygon_with_holes_2`.
+ * \param pgn The input polygon for the `complement` function. Its type must
+ *        be convertible to one of the types `Polygon_2`, `General_polygon_2`,
+ *        `Polygon_with_holes_2`, or `General_polygon_with_holes_2`.
+ *
+ * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
+ * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
+ * \pre A model of `GpsTraits` must derive from a type that is convertible to a model of `%ArrTraits`.
  *
  * \sa \link boolean_do_intersect `CGAL::do_intersect()` \endlink
  * \sa \link boolean_intersection `CGAL::intersection()` \endlink
@@ -23,62 +28,86 @@ namespace CGAL {
 /// @{
 
 // Traits-less
-/*! writes the complement of the polygon `pgn` into the polygon with holes `res`.
+
+/*! Computes the complement of a polygon.
+ * \param pgn the input polygon
+ * \param res the complement of \p pgn.
  */
 template <typename Kernel, typename Container>
 void complement(const Polygon_2<Kernel, Container>& pgn,
                 Polygon_with_holes_2<Kernel, Container>& res);
 
-/*! writes the complement of the general polygon `pgn` into the  general polygon
- * with holes `res`.
+/*! Computes the complement of a general polygon.
+ * \param pgn the input polygon
+ * \param res the complement of \p pgn
  */
 template <typename ArrTraits>
 void complement(const General_polygon_2<ArrTraits>& pgn,
                 General_polygon_with_holes_2<ArrTraits>& res);
 
-/*! writes the complement of the polygon with holes `pgn` into the  output
- * iterator `oi`.
- * The value type of `oi` is `Polygon_with_holes_2`.
+/*! Computes the complement of a polygon with holes.
+ * \param pgn the input polygon
+ * \param oi the output iterator for the result.
+ *           Its dereference type is `Polygon_with_holes_2<Kernel, Container>`.
+ * \return the past-the-end iterator of the output container.
  */
-template <typename ArrTraits, typename OutputIterator>
+template <typename Kernel, typename Container, typename OutputIterator>
 OutputIterator complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
                           OutputIterator oi);
 
-/*! writes the complement of the general polygon with holes `pgn` into the
- * output iterator `oi`.
- * The value type of `oi` is `General_polygon_with_holes_2`.
+/*! Computes the complement of a general polygon with holes.
+ * \param pgn the input polygon
+ * \param oi the output iterator for the result.
+ *           Its dereference type is
+ *             `General_polygon_with_holes_2<<General_polygon_2<ArrTraits> >`.
+ * \return the past-the-end iterator of the output container.
  */
 template <typename ArrTraits, typename OutputIterator>
-OutputIterator complement(const General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& pgn, OutputIterator oi);
+OutputIterator complement(const General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& pgn,
+                          OutputIterator oi);
 
 // With Traits
-/*! writes the complement of the polygon `pgn` into the polygon with holes `res`.
+
+/*! Computes the complement of a polygon.
+ * \param pgn the input polygon
+ * \param res the complement of \p pgn
+ * \param traits a model of `GeneralPolygonSetTraits_2`
  */
-  template <typename Kernel, typename Container, typename GpsTraits>
+template <typename Kernel, typename Container, typename GpsTraits>
 void complement(const Polygon_2<Kernel, Container>& pgn,
                 Polygon_with_holes_2<Kernel, Container>& res,
                 const GpsTraits& traits);
 
-/*! writes the complement of the general polygon `pgn` into the  general polygon
- * with holes `res`.
+/*! Computes the complement of a general polygon.
+ * \param pgn the input polygon
+ * \param res the complement of \p pgn
+ * \param traits a model of `GeneralPolygonSetTraits_2`
  */
 template <typename ArrTraits, typename GpsTraits>
 void complement(const General_polygon_2<ArrTraits>& pgn,
                 General_polygon_with_holes_2<ArrTraits>& res,
                 const GpsTraits& traits);
 
-/*! writes the complement of the polygon with holes `pgn` into the  output
- * iterator `oi`.
- * The value type of `oi` is `Polygon_with_holes_2`.
+/*! Computes the complement of a polygon with holes.
+ * \param pgn the input polygon
+ * \param oi the output iterator for the result.
+ *           Its dereference type is `Polygon_with_holes_2<Kernel, Container>`.
+ * \param traits a model of `GeneralPolygonSetTraits_2`
+ * \return the past-the-end iterator of the output container.
  */
-template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
+template <typename Kernel, typename Container, typename OutputIterator,
+          typename GpsTraits>
 OutputIterator complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
                           OutputIterator oi,
                           const GpsTraits& traits);
 
-/*! writes the complement of the general polygon with holes `pgn` into the
- * output iterator `oi`.
- * The value type of `oi` is `General_polygon_with_holes_2`.
+/*! Computes the complement of the general polygon with holes.
+ * \param pgn the input polygon
+ * \param oi the output iterator for the result.
+ *           Its dereference type is
+ *             `General_polygon_with_holes_2<<General_polygon_2<ArrTraits> >`.
+ * \param traits a model of `GeneralPolygonSetTraits_2`
+ * \return the past-the-end iterator of the output container.
  */
 template <typename ArrTraits, typename OutputIterato, typename GpsTraitsr>
 OutputIterator complement(const General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& pgn,
@@ -123,6 +152,10 @@ namespace CGAL {
  * <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
  * </table>
  * </div>
+ *
+ * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
+ * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
+ * \pre A model of `GpsTraits` must derive from a type that is convertible to a model of `%ArrTraits`.
  *
  * \sa \link boolean_do_intersect `CGAL::do_intersect()` \endlink
  * \sa \link boolean_intersection `CGAL::intersection()` \endlink
@@ -237,6 +270,10 @@ namespace CGAL {
  * <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
  * </table>
  * </div>
+ *
+ * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
+ * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
+ * \pre A model of `GpsTraits` must derive from a type that is convertible to a model of `%ArrTraits`.
  *
  * \sa \link boolean_intersection `CGAL::intersection()` \endlink
  * \sa \link boolean_join `CGAL::join()` \endlink
@@ -354,6 +391,10 @@ namespace CGAL {
  * <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
  * </table>
  * </div>
+ *
+ * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
+ * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
+ * \pre A model of `GpsTraits` must derive from a type that is convertible to a model of `%ArrTraits`.
  *
  * \sa \link boolean_do_intersect `CGAL::do_intersect()` \endlink
  * \sa \link boolean_join `CGAL::join()` \endlink
@@ -495,6 +536,10 @@ namespace CGAL {
  * </table>
  * </div>
  *
+ * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
+ * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
+ * \pre A model of `GpsTraits` must derive from a type that is convertible to a model of `%ArrTraits`.
+ *
  * \sa \link boolean_do_intersect `CGAL::do_intersect()` \endlink
  * \sa \link boolean_intersection `CGAL::intersection()` \endlink
  * \sa \link boolean_difference `CGAL::difference()` \endlink
@@ -604,8 +649,9 @@ namespace CGAL {
  * \ingroup PkgBooleanSetOperations2Ref
  * \anchor ref_bso_oriented_side
  *
- * `Oriented_side()` refers to a group of overloaded functions divided into
- * two subgroups.
+ * There are several overloaded functions called `Oriented_side()` that computes
+ * the relative position of two polygons or of a point and a polygon. This group
+ * of functions is  divided into two subgroups.
  *
  * \cgalHeading{Oriented Side of two Polygons}
  *
@@ -824,6 +870,10 @@ namespace CGAL {
  * <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
  * </table>
  * </div>
+ *
+ * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
+ * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
+ * \pre A model of `GpsTraits` must derive from a type that is convertible to a model of `%ArrTraits`.
  *
  * \sa \link boolean_do_intersect `CGAL::do_intersect()` \endlink
  * \sa \link boolean_intersection `CGAL::intersection()` \endlink
