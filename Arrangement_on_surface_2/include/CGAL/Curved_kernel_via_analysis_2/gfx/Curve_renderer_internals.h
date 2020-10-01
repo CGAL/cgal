@@ -288,7 +288,8 @@ public:
         const_iterator_1 poly_it = poly.end() - 1;
         der_iterator_1 der_it = der_coeffs.end() - 1;
         NT y(extract(*poly_it--) * (*der_it));
-        while((der_it--) != der_coeffs.begin()) {
+        while(der_it != der_coeffs.begin()) {
+            --der_it;
             y = y * x + extract(*poly_it--) * (*der_it);
         }
         return y;
@@ -342,8 +343,10 @@ public:
         Rat_coercion_type r = rit->evaluate(x),
             yc = typename Coercion::Cast()(y);
 
-        while((rit--) != poly.begin())
+        while(rit != poly.begin()) {
+            --rit;
             r = r * yc + rit->evaluate(x);
+        }
         return r;
     }
 
@@ -546,7 +549,8 @@ bool get_range_AF1_1(int var,
     make_exact(x1);
     NT x0_abs = CGAL_ABS(x0), x1_abs = CGAL_ABS(x1);
 
-    while((der_it_2--) != der->begin()) {
+    while(der_it_2 != der->begin()) {
+        --der_it_2;
         // iterate through derivative coefficients
         der_it = der_it_2->end() - 1;
         der_begin = der_it_2->begin();
@@ -556,7 +560,9 @@ bool get_range_AF1_1(int var,
         if(low * up >= 0) {
             v1 = v2 = extract(*cache_it--) * (*der_it);
             // calculate the ith derivative at xa and xb
-            while((der_it--) != der_begin) {
+            while(der_it != der_begin) {
+                --der_it;
+
                 NT cc1 = extract(*cache_it--) * (*der_it);
                 v1 = v1 * l1 + cc1;
                 v2 = v2 * r1 + cc1;
@@ -566,7 +572,9 @@ bool get_range_AF1_1(int var,
 
             NT y0 = extract(*cache_it) * (*der_it), y1(0), e1(0);
             cache_it--;
-            while((der_it--)!=der_begin) {
+            while(der_it!=der_begin) {
+                --der_it;
+
                 e1 = x0_abs*e1 + x1_abs*(CGAL_ABS(y1) + CGAL_ABS(e1));
                 y1 = y1*x0 + x1*y0;
                 y0 = x0*y0 + extract(*cache_it) * (*der_it);
@@ -587,7 +595,8 @@ bool get_range_AF1_1(int var,
         begin = poly.begin();
 
         NT y0 = extract(*cache_it), y1(0), e1(0);
-        while((cache_it--) != begin) {
+        while(cache_it != begin) {
+            --cache_it;
             e1 = x0_abs*e1 + x1_abs*(CGAL_ABS(y1) + CGAL_ABS(e1));
             y1 = y1*x0 + x1*y0;
             y0 = x0*y0 + extract(*cache_it);
@@ -664,8 +673,8 @@ bool get_range_QF_1(int var, const NT& l_, const NT& r_, const NT& key,
     make_exact(x1);
     NT x0_abs = CGAL_ABS(x0), xsum_abs = CGAL_ABS(x1) + x0_abs;
 
-    while((der_it_2--)!=der->begin()) {
-
+    while(der_it_2!=der->begin()) {
+        --der_it_2;
         // iterate through derivative coefficients
         der_it = (*der_it_2).end()-1;
         der_begin = (*der_it_2).begin();
@@ -676,7 +685,9 @@ bool get_range_QF_1(int var, const NT& l_, const NT& r_, const NT& key,
         if(low * up >= 0) {
             v1 = v2 = extract(*cache_it--)* (*der_it);
             // calculate the ith derivative at xa and xb
-            while((der_it--) != der_begin) {
+            while(der_it != der_begin) {
+                --der_it;
+
                 NT cc1 = extract(*cache_it--)* (*der_it);
                 v1 = v1 * l1 + cc1;
                 v2 = v2 * r1 + cc1;
@@ -687,7 +698,9 @@ bool get_range_QF_1(int var, const NT& l_, const NT& r_, const NT& key,
 
             NT y0 = extract(*cache_it) * (*der_it), y1(0), z1(0), e1(0);
             cache_it--;
-            while((der_it--)!=der_begin) {
+            while(der_it != der_begin) {
+                --der_it;
+
                 e1 = xsum_abs * e1 + CGAL_ABS(x1 * z1);
                 z1 = x0*z1 + x1*y1;
                 y1 = y1*x0 + x1*y0;
@@ -717,7 +730,8 @@ bool get_range_QF_1(int var, const NT& l_, const NT& r_, const NT& key,
         cache_it = poly.end()-1;
         begin = poly.begin();
         NT y0 = extract(*cache_it), y1(0), z1(0), e1(0);
-        while((cache_it--) != begin) {
+        while(cache_it != begin) {
+            --cache_it;
             e1 = xsum_abs * e1 + CGAL_ABS(x1*z1);
             z1 = x0*z1 + x1*y1;
             y1 = y1*x0 + x1*y0;
@@ -866,8 +880,9 @@ bool get_range_MAA_1(int var, const NT& l_, const NT& r_, const NT& key,
             return (eval1*eval2 < 0);
         }
         d--; der_it_2--;
-        if((eval_it--) == der_cache.begin())
+        if(eval_it == der_cache.begin())
             break;
+        eval_it--;
     }
     return true;
 }
