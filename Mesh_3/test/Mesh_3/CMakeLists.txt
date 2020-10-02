@@ -118,6 +118,12 @@ if ( CGAL_FOUND )
     endforeach()
   endif()
 
+  if(BUILD_TESTING)
+    set_tests_properties(
+      execution___of__test_meshing_polyhedron_with_features
+      execution___of__test_meshing_verbose
+      PROPERTIES RESOURCE_LOCK Mesh_3_Tests_IO)
+  endif()
 else()
 
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
