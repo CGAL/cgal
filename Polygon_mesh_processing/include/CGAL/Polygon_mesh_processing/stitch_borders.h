@@ -35,11 +35,14 @@
 #include <boost/range.hpp>
 #include <boost/utility/enable_if.hpp>
 
+#include <iostream>
 #include <iterator>
 #include <map>
-#include <vector>
-#include <utility>
+#include <set>
 #include <unordered_set>
+#include <unordered_map>
+#include <utility>
+#include <vector>
 
 #ifdef DOXYGEN_RUNNING
 #define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
