@@ -30,16 +30,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
   public:
     typedef typename Base::result_type result_type;
 
-    #ifndef CGAL_CFG_MATCHING_BUG_6
     using Base::operator();
-    #else
-    result_type
-    operator()(const Point_3& p, const FT& w) const
-    {
-      return Base::operator()(p,w);
-    }
-    #endif
-
 
     result_type operator() (
         const Point_3& p,
