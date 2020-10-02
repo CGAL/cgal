@@ -894,14 +894,12 @@ struct Envelope {
 
   int
   Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order(
-		const ePoint_3 &segpoint0, const ePoint_3 &segpoint1,
+                const eLine_3& eline,
                 const ePlane_3 &eplane,
                 const std::vector<unsigned int> &prismindex,
 		const std::vector<std::vector<int>>& intersect_face, const int &jump, int &id) const
   {
-    eLine_3 eline(segpoint0,segpoint1); // todo replace parameter of function
-
-     boost::optional<ePoint_3> op = CGAL::intersection_point(eline, eplane);
+    boost::optional<ePoint_3> op = CGAL::intersection_point(eline, eplane);
     if(! op){
  #ifdef TRACE
       std::cout <<  "there must be an intersection 9" << std::endl;
@@ -972,7 +970,7 @@ struct Envelope {
 
   int
   Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(
-		const ePoint_3 &segpoint0, const ePoint_3 &segpoint1,
+		const eLine_3& eline,
                 const ePlane_3 &eplane,
                 const std::vector<unsigned int> &prismindex,
 		const std::vector<std::vector<int>>& intersect_face,
@@ -980,8 +978,6 @@ struct Envelope {
                 const int &jump,
                 int &id) const
   {
-    eLine_3 eline(segpoint0,segpoint1); // todo replace parameter of function
-
     boost::optional<ePoint_3> op = CGAL::intersection_point(eline, eplane);
     if(! op){
 #ifdef TRACE
@@ -1356,22 +1352,31 @@ struct Envelope {
     std::vector<bool> neighbour_cover;
     idlistorder.emplace_back(intersect_face[queue[0]]);
 
+    std::array<eLine_3, 3> elines;
+    for (int k = 0; k < 3; k++) {
+      elines[k] = eLine_3(etriangle[triseg[k][0]],etriangle[triseg[k][1]]);
+    }
+
     for (int i = 0; i < queue.size(); i++) {
 
       jump1 = filtered_intersection[queue[i]];
 
       for (int k = 0; k < 3; k++) {
+        const ePoint_3& etriangle_triseg_k_0 = etriangle[triseg[k][0]];
+        const ePoint_3& etriangle_triseg_k_1 = etriangle[triseg[k][1]];
+
+        const eLine_3& eline = elines[k];
+
         for (int j = 0; j < intersect_face[queue[i]].size(); j++) {
           tti = seg_cut_plane(etriangle[triseg[k][0]],
-                                          etriangle[triseg[k][1]],
-                                          halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].ep,
-                                          halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].eq,
-                                          halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].er);
+                              etriangle[triseg[k][1]],
+                              halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].ep,
+                              halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].eq,
+                              halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].er);
 
           if (tti != CUT_FACE) continue;
 
-          inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order(etriangle[triseg[k][0]],
-                                                                                          etriangle[triseg[k][1]],
+          inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order(eline,
                                                                                           halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].eplane,
                                                                                           idlist, idlistorder, jump1, check_id);
 
@@ -1380,7 +1385,7 @@ struct Envelope {
           if (inter == 1)
             {
 
-              inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(etriangle[triseg[k][0]], etriangle[triseg[k][1]],
+              inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(eline,
                                                                                                         halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].eplane,
                                                                                                         filtered_intersection, intersect_face, coverlist, jump1, check_id);
 
@@ -1926,7 +1931,8 @@ int main(int argc, char* argv[])
 
   std::ofstream inside("inside.txt");
   std::ofstream outside("outside.txt");
-  for(int i = 0; i <  env_vertices.size()   ; i+=10){
+
+  for(int i = 0; i < env_vertices.size(); i+=10){
       for(int j = i+1; j < env_vertices.size(); j+= 10){
         for(int k = j+1; k < env_vertices.size(); k+=10){
           if( ( i != j) && (i != k) && (j != k)){
