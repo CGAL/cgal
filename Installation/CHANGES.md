@@ -2,7 +2,6 @@ Release History
 ===============
 
 [Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
------------
 
 Release date: December 2020
 
@@ -15,6 +14,21 @@ Release date: December 2020
 -   Added the function `CGAL::halfspace_intersection_interior_point_3()` that can be used to retrieve
     the point that is the most interior a convex closed volume defined by the intersection of a set of halfspaces.
 
+### [2D Arrangements](https://doc.cgal.org/5.2/Manual/packages.html#PkgArrangementOnSurface2)
+
+-   Replaced the use of legacy
+      [`CGAL::Object`](https://doc.cgal.org/5.2/STL_Extension/classCGAL_1_1Object.html)
+      to modern `boost::variant`
+    - Changed make-x-monotone return type from legacy
+      [`CGAL::Object`](https://doc.cgal.org/5.2/STL_Extension/classCGAL_1_1Object.html)
+      to `boost::variant` in all traits concepts and models.
+      As there exists an implicit conversion from `boost::variant` to `CGAL::Object`,
+      the new code is backward compatible. However, it is recommended that all calls
+      to the make-x-monotone functions are fixed to use the new return type.
+    - Changed `decompose()` interface to use `boost::variant` instead of legacy
+      [`CGAL::Object`](https://doc.cgal.org/5.1/STL_Extension/classCGAL_1_1Object.html)
+      As exaplained above, the code is backward compatible. However, it is recommended
+      that all calls to `decompose()` are fixed to use the new interface.
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.2/Manual/packages.html#PkgPolygonMeshProcessing)
 -   Added an option in `corefine()`, `split()` and `clip()` functions that enables the operation to be done on a mesh with
