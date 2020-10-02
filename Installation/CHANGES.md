@@ -9,6 +9,7 @@ Release date: December 2020
 
 -   Added the convenience header `CGAL/boost/graph/graph_traits_inheritance_macros.h` that allows to easily
     make any class inheriting from a model of a face graph concept, a model of the same concept.
+- Added the function `can_add_face()`, which tests whether a new face defined by a range of vertices can be added.
 
 ### [3D Convex Hulls](https://doc.cgal.org/5.2/Manual/packages.html#PkgConvexHull3)
 -   Added the function `CGAL::halfspace_intersection_interior_point_3()` that can be used to retrieve
@@ -27,7 +28,7 @@ Release date: December 2020
       to the make-x-monotone functions are fixed to use the new return type.
     - Changed `decompose()` interface to use `boost::variant` instead of legacy
       [`CGAL::Object`](https://doc.cgal.org/5.1/STL_Extension/classCGAL_1_1Object.html)
-      As exaplained above, the code is backward compatible. However, it is recommended
+      As explained above, the code is backward compatible. However, it is recommended
       that all calls to `decompose()` are fixed to use the new interface.
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.2/Manual/packages.html#PkgPolygonMeshProcessing)
