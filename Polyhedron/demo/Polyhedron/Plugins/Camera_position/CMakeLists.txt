@@ -3,7 +3,8 @@ include( polyhedron_demo_macros )
   polyhedron_demo_plugin(camera_positions_plugin
     Camera_positions_plugin
     Camera_positions_list
-    ${cameraUI_FILES})
+    ${cameraUI_FILES}
+    KEYWORDS Viewer)
 
   target_link_libraries( camera_positions_plugin PUBLIC demo_framework)
 

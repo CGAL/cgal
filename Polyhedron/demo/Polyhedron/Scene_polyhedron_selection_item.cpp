@@ -67,7 +67,6 @@ public:
   {
     undo_();
     item->compute_normal_maps();
-    item->polyhedron_item()->invalidateOpenGLBuffers();
     item->invalidateOpenGLBuffers();
     item->redraw();
   }
