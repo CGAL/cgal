@@ -1239,7 +1239,7 @@ protected:
     setKeyDescription(::Qt::Key_Minus+::Qt::ControlModifier, "Decrease size of vertices");
     setKeyDescription(::Qt::Key_PageDown, "Increase light (all colors, use shift/alt/ctrl for one rgb component)");
     setKeyDescription(::Qt::Key_PageUp, "Decrease light (all colors, use shift/alt/ctrl for one rgb component)");
-    setKeyDescription(::Qt::Key_Less, "Toggles 2D mode only");
+    setKeyDescription(::Qt::Key_O, "Toggles 2D mode only");
 
     // Light default parameters
     glLineWidth(m_size_edges);
@@ -1448,7 +1448,7 @@ protected:
                      arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
       update();
     }
-    else if ((e->key()==::Qt::Key_Less) && (modifiers==::Qt::NoButton))
+    else if ((e->key()==::Qt::Key_O) && (modifiers==::Qt::NoButton))
     {
       bool old_2D=is_two_dimensional();
       m_no_2D_mode=!m_no_2D_mode;

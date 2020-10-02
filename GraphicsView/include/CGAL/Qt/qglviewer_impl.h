@@ -3840,18 +3840,13 @@ void CGAL::QGLViewer::initFromDOMElement(const QDomElement &element) {
       setAxisIsDrawn(DomUtils::boolFromDom(child, "axisIsDrawn", false));
       setGridIsDrawn(DomUtils::boolFromDom(child, "gridIsDrawn", false));
       setFPSIsDisplayed(DomUtils::boolFromDom(child, "FPSIsDisplayed", false));
-      // See comment below.
-      tmpCameraIsEdited = DomUtils::boolFromDom(child, "cameraIsEdited", false);
-      // setTextIsEnabled(DomUtils::boolFromDom(child, "textIsEnabled", true));
     }
 
     if (child.tagName() == "Geometry") {
       setFullScreen(DomUtils::boolFromDom(child, "fullScreen", false));
 
-      if (isFullScreen()) {
-        prevPos_.setX(DomUtils::intFromDom(child, "prevPosX", 0));
-        prevPos_.setY(DomUtils::intFromDom(child, "prevPosY", 0));
-      } else {
+      if (!isFullScreen())
+      {
         int width = DomUtils::intFromDom(child, "width", 600);
         int height = DomUtils::intFromDom(child, "height", 400);
         topLevelWidget()->resize(width, height);
@@ -3863,15 +3858,6 @@ void CGAL::QGLViewer::initFromDOMElement(const QDomElement &element) {
         topLevelWidget()->move(pos);
       }
     }
-
-    if (child.tagName() == "Camera") {
-      connectAllCameraKFIInterpolatedSignals(false);
-      camera()->initFromDOMElement(child);
-      connectAllCameraKFIInterpolatedSignals();
-    }
-
-    if ((child.tagName() == "ManipulatedFrame") && (manipulatedFrame()))
-      manipulatedFrame()->initFromDOMElement(child);
 
     child = child.nextSibling().toElement();
   }
