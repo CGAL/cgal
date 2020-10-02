@@ -353,17 +353,17 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor           edge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor           face_descriptor;
 
-  typedef Constant_property_map<vertex_descriptor, bool>                        Default_VCM;
+  typedef Static_boolean_property_map<vertex_descriptor, false>                 Default_VCM;
   typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_is_constrained_t,
                                                        NamedParameters,
                                                        Default_VCM>::type       VCM;
-  VCM vcm_np = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained), Default_VCM(false));
+  VCM vcm_np = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained), Default_VCM());
 
-  typedef Constant_property_map<edge_descriptor, bool>                          Default_ECM;
+  typedef Static_boolean_property_map<edge_descriptor, false>                   Default_ECM;
   typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_constrained_t,
                                                        NamedParameters,
                                                        Default_ECM>::type       ECM;
-  ECM ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), Default_ECM(false));
+  ECM ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), Default_ECM());
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPM;
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
