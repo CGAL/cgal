@@ -14,43 +14,32 @@
 #define FILL_FACE_CALLBACK_H
 
 #include "Callback.h"
+#include <CGAL/Object.h>
 #include <QColor>
+
+namespace demo_types
+{
+enum class TraitsType : int;
+}
 
 class QGraphicsSceneMouseEvent;
 
+/**
+   Supports visualization of point location on arrangements.
+*/
 class FillFaceCallbackBase : public CGAL::Qt::Callback
 {
 public:
-  FillFaceCallbackBase( QObject* parent );
+  static FillFaceCallbackBase*
+  create(demo_types::TraitsType, CGAL::Object arr_obj, QObject* parent);
 
   void setColor( QColor c );
   QColor getColor( ) const;
 
 protected:
+  FillFaceCallbackBase( QObject* parent );
+
   QColor fillColor;
 };
-
-/**
-   Supports visualization of point location on arrangements.
-   The template parameter is a CGAL::Arrangement_with_history_2 of some type.
-*/
-template < class Arr_ >
-class FillFaceCallback : public FillFaceCallbackBase
-{
-public:
-  typedef Arr_ Arrangement;
-  typedef typename Arrangement::Face_handle Face_handle;
-  typedef typename Arrangement::Face_const_handle Face_const_handle;
-
-  FillFaceCallback( Arrangement* arr_, QObject* parent_ );
-  void reset( );
-
-protected:
-  void mousePressEvent( QGraphicsSceneMouseEvent *event );
-  void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
-  void fillFace( QGraphicsSceneMouseEvent* event );
-
-  Arrangement* arr;
-}; // class FillFaceCallback
 
 #endif // FILL_FACE_CALLBACK_H

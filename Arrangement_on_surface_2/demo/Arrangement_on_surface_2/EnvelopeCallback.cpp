@@ -12,27 +12,81 @@
 
 #include "EnvelopeCallback.h"
 #include "CurveGraphicsItem.h"
-#include "Utils.h"
+#include "Utils/EnvelopeFunctions.h"
+#include "Utils/Utils.h"
 #include "ArrangementTypes.h"
+#include "ArrangementTypesUtils.h"
 
 #include <CGAL/envelope_2.h>
 #include <CGAL/Envelope_diagram_1.h>
 
 #include <vector>
 
+template <typename Arr_>
+class EnvelopeCallback : public EnvelopeCallbackBase
+{
+public:
+  typedef Arr_ Arrangement;
+  typedef typename Arrangement::Geometry_traits_2 Traits;
+  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+  typedef typename Traits::Point_2 Point_2;
+
+  EnvelopeCallback(Arrangement* arr_, QObject* parent);
+  void showLowerEnvelope(bool show) override;
+  void showUpperEnvelope(bool show) override;
+  bool isUpperEnvelopeShown() override;
+  bool isLowerEnvelopeShown() override;
+  void reset() override;
+
+  /**
+     Slot: Update and redraw the envelopes.
+  */
+  void slotModelChanged() override;
+
+  void setEnvelopeEdgeColor(const QColor& color) override;
+  const QColor& getEnvelopeEdgeColor() const override;
+  void setEnvelopeEdgeWidth(int width) override;
+  int getEnvelopeEdgeWidth() const override;
+  void setEnvelopeVertexColor(const QColor& color) override;
+  const QColor& getEnvelopeVertexColor() const override;
+  void setEnvelopeVertexRadius(int radius) override;
+  int getEnvelopeVertexRadius() const override;
+
+protected:
+  void setScene(QGraphicsScene* scene_) override;
+  void updateEnvelope(bool lower);
+
+  Arrangement* arr;
+  CGAL::Qt::CurveGraphicsItem<Traits>* lowerEnvelope;
+  CGAL::Qt::CurveGraphicsItem<Traits>* upperEnvelope;
+  bool showLower;
+  bool showUpper;
+}; // class EnvelopeCallback
+
 EnvelopeCallbackBase::EnvelopeCallbackBase( QObject* parent ) :
   CGAL::Qt::Callback( parent )
 { }
 
-template < typename Arr_>
-EnvelopeCallback<Arr_>::EnvelopeCallback(Arrangement* arr_,
-                                                 QObject* parent) :
-  EnvelopeCallbackBase( parent ),
-  arr( arr_ ),
-  lowerEnvelope( new CGAL::Qt::CurveGraphicsItem< Traits >( ) ),
-  upperEnvelope( new CGAL::Qt::CurveGraphicsItem< Traits >( ) ),
-  showLower( false ),
-  showUpper( false )
+EnvelopeCallbackBase* EnvelopeCallbackBase::create(
+  demo_types::TraitsType tt, CGAL::Object arr_obj, QObject* parent)
+{
+  EnvelopeCallbackBase* res;
+  demo_types::visitArrangementType(tt, [&](auto type_holder) {
+    using Arrangement = typename decltype(type_holder)::type;
+
+    Arrangement* arr = nullptr;
+    CGAL::assign(arr, arr_obj);
+    res = new EnvelopeCallback<Arrangement>(arr, parent);
+  });
+  return res;
+}
+
+template <typename Arr_>
+EnvelopeCallback<Arr_>::EnvelopeCallback(Arrangement* arr_, QObject* parent) :
+    EnvelopeCallbackBase(parent), arr(arr_),
+    lowerEnvelope(new CGAL::Qt::CurveGraphicsItem<Traits>()),
+    upperEnvelope(new CGAL::Qt::CurveGraphicsItem<Traits>()), showLower(false),
+    showUpper(false)
 {
   this->lowerEnvelope->hide();
   this->upperEnvelope->hide();
@@ -110,31 +164,24 @@ void EnvelopeCallback< Arr_>::slotModelChanged( )
 template < typename Arr_ >
 void EnvelopeCallback< Arr_>::updateEnvelope( bool lower )
 {
-  std::vector<X_monotone_curve_2> curves;
-  for (auto it = this->arr->edges_begin(); it != this->arr->edges_end(); ++it)
-  {
-    curves.push_back(it->curve());
-  }
-
   typedef CGAL::Envelope_diagram_1<Traits> Diagram_1;
   typedef typename Diagram_1::Edge_const_handle Edge_const_handle;
 
   Diagram_1 diagram;
   CGAL::Qt::CurveGraphicsItem<Traits>* envelopeToUpdate;
 
+  EnvelopeFunctions<Arrangement> envelope_functions;
   try
   {
     if (lower)
     {
       envelopeToUpdate = this->lowerEnvelope;
-      CGAL::lower_envelope_x_monotone_2(
-        curves.begin(), curves.end(), diagram, *(arr->traits()));
+      envelope_functions.lowerEnvelope(this->arr, diagram);
     }
     else
     {
       envelopeToUpdate = this->upperEnvelope;
-      CGAL::upper_envelope_x_monotone_2(
-        curves.begin(), curves.end(), diagram, *(arr->traits()));
+      envelope_functions.upperEnvelope(this->arr, diagram);
     }
   }
   catch (const std::exception& ex)
@@ -229,5 +276,3 @@ bool EnvelopeCallback<Arr_>::isLowerEnvelopeShown()
 {
   return this->showLower;
 }
-
-ARRANGEMENT_DEMO_SPECIALIZE_ARR(EnvelopeCallback)

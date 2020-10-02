@@ -22,29 +22,30 @@ class QPainter;
 /**
    Add a set of points to the QGraphicsScene.
 */
-class PointsGraphicsItem: public QGraphicsItem
+class PointsGraphicsItem : public QGraphicsItem
 {
 public:
-  PointsGraphicsItem( );
+  PointsGraphicsItem(QGraphicsItem* parent = nullptr);
 
   void paint(
     QPainter* painter, const QStyleOptionGraphicsItem* option = nullptr,
     QWidget* widget = nullptr) override;
 
-  QRectF boundingRect( ) const override;
+  QRectF boundingRect() const override;
 
-  template < class Point >
-  inline void insert( const Point& point );
+  template <class Point>
+  inline void insert(const Point& point);
 
-  void clear( );
+  void clear();
 
-  void setColor( QColor c );
-  QColor getColor( ) const;
+  void setColor(QColor c);
+  QColor getColor() const;
 
-  void setPointRadius( double d );
-  double getPointRadius( ) const;
+  void setPointRadius(double d);
+  double getPointRadius() const;
+
 protected:
-  std::vector< QPointF > points;
+  std::vector<QPointF> points;
   double pointRadius;
   QColor color;
 

@@ -106,7 +106,7 @@ void ArrangementDemoPropertiesDialog::updateUi( )
   {
     return;
   }
-  ArrangementDemoTabBase* currentTab = this->parent->getCurrentTab();
+  ArrangementDemoTab* currentTab = this->parent->getCurrentTab();
   if ( currentTab == NULL )
   {
     return;

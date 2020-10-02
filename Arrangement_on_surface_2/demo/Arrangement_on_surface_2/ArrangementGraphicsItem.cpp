@@ -9,28 +9,46 @@
 //            Ahmed Essam <theartful.ae@gmail.com>
 
 #include "ArrangementGraphicsItem.h"
+#include "ArrangementGraphicsItemTyped.h"
 #include "ArrangementPainterOstream.h"
 #include "ArrangementTypes.h"
-#include "PointLocationFunctions.h"
-#include "ConstructBoundingBox.h"
+#include "ArrangementTypesUtils.h"
+#include "PointsGraphicsItem.h"
+#include "Utils/ConstructBoundingBox.h"
+#include "Utils/PointLocationFunctions.h"
 
 #include <CGAL/Qt/Converter.h>
+#include <QGraphicsScene>
 #include <QPainter>
 #include <limits>
 
 namespace CGAL {
 namespace Qt {
 
+static constexpr int margin = 2;
+
 ArrangementGraphicsItemBase::ArrangementGraphicsItemBase() :
-    bb(0, 0, 0, 0), verticesPen(QPen(::Qt::blue, 3.)),
-    edgesPen(QPen(::Qt::blue, 1.))
+    verticesPen(QPen(::Qt::blue, 3.)), edgesPen(QPen(::Qt::blue, 1.))
 {
   this->verticesPen.setCosmetic(true);
   this->edgesPen.setCosmetic(true);
   this->edgesPen.setWidth(2);
   this->facesPen.setCosmetic(true);
   this->facesPen.setColor(::Qt::transparent);
-  this->pointsGraphicsItem.setParentItem(this);
+}
+
+ArrangementGraphicsItemBase* ArrangementGraphicsItemBase::create(
+  demo_types::TraitsType tt, CGAL::Object arr_obj)
+{
+  ArrangementGraphicsItemBase* agi;
+  demo_types::visitArrangementType(tt, [&](auto type_holder) {
+    using Arrangement = typename decltype(type_holder)::type;
+
+    Arrangement* arr = nullptr;
+    CGAL::assign(arr, arr_obj);
+    agi = new ArrangementGraphicsItem<Arrangement>(arr);
+  });
+  return agi;
 }
 
 const QPen& ArrangementGraphicsItemBase::getVerticesPen() const
@@ -53,13 +71,12 @@ void ArrangementGraphicsItemBase::setEdgesPen(const QPen& pen)
   this->edgesPen = pen;
 }
 
-template < typename Arr_>
-ArrangementGraphicsItem< Arr_>::
-ArrangementGraphicsItem( Arrangement* arr_ ):
-  arr( arr_ )
+template <typename Arr_>
+ArrangementGraphicsItem<Arr_>::ArrangementGraphicsItem(Arrangement* arr_) :
+    arr(arr_), pointsGraphicsItem(new PointsGraphicsItem(this))
 {
   this->updatePointsItem();
-  this->updateBoundingBox( );
+  this->updateBoundingBox();
 }
 
 template < typename Arr_ >
@@ -221,10 +238,12 @@ void ArrangementGraphicsItem<Arr_>::paintFacesFloodFill(
   uint16_t height = image.height();
 
   QTransform deviceToScene = painter->deviceTransform().inverted();
+
+  PointLocationFunctions<Arrangement> point_location_functions;
   auto get_face = [&](auto x, auto y) {
     QPointF point =
       deviceToScene.map(QPointF{static_cast<qreal>(x), static_cast<qreal>(y)});
-    return PointLocationFunctions<Arrangement>{}.getFace(this->arr, point);
+    return point_location_functions.getFace(this->arr, point);
   };
 
   auto paint_face = [this, raw_img, width, get_face](auto x, auto y) {
@@ -291,12 +310,12 @@ void ArrangementGraphicsItem< Arr_ >::updateBoundingBox( )
 template <typename Arr_>
 void ArrangementGraphicsItem<Arr_>::updatePointsItem()
 {
-  this->pointsGraphicsItem.clear();
+  this->pointsGraphicsItem->clear();
   for (auto it = this->arr->vertices_begin(); it != this->arr->vertices_end();
        ++it)
   {
     Point_2 p = it->point();
-    this->pointsGraphicsItem.insert(p);
+    this->pointsGraphicsItem->insert(p);
   }
 }
 
@@ -315,7 +334,7 @@ paintFace( Face_handle f, QPainter* painter )
 {
   if (f->visited()) return;
 
-  Holes_iterator hit; // holes iterator
+  Hole_iterator hit; // holes iterator
   this->paintFace(f, painter, *(arr->traits()));
   f->set_visited(true);
 
@@ -886,7 +905,159 @@ void ArrangementGraphicsItem<Arr_>::paintFace(
   }
 }
 
-ARRANGEMENT_DEMO_SPECIALIZE_ARR(ArrangementGraphicsItem)
+// TODO: clean all this portion up (move it somewhere?), it's ugly!
+static CGAL::Bbox_2 reject_not_in_allowable_range(
+  const CGAL::Bbox_2& box, const CGAL::Bbox_2& allowable_range)
+{
+  double xmin = std::numeric_limits<double>::infinity();
+  double ymin = std::numeric_limits<double>::infinity();
+  double xmax = -std::numeric_limits<double>::infinity();
+  double ymax = -std::numeric_limits<double>::infinity();
+
+  if (box.xmin() > allowable_range.xmin()) xmin = box.xmin();
+  if (box.ymin() > allowable_range.ymin()) ymin = box.ymin();
+  if (box.xmax() < allowable_range.xmax()) xmax = box.xmax();
+  if (box.ymax() < allowable_range.ymax()) ymax = box.ymax();
+  return {xmin, ymin, xmax, ymax};
+}
+
+static bool isFinite(const CGAL::Bbox_2& box)
+{
+  return !std::isinf(box.xmin()) && !std::isinf(box.xmax()) &&
+         !std::isinf(box.ymin()) && !std::isinf(box.ymax());
+}
+
+static CGAL::Bbox_2 addMargins(const CGAL::Bbox_2& box)
+{
+  // add margin to bounding box
+  double x_margin;
+  double y_margin;
+  if (box.xmin() == box.xmax() || box.ymin() == box.ymax())
+  {
+    static constexpr float const_margin = 50;
+    x_margin = const_margin;
+    y_margin = const_margin;
+  }
+  else
+  {
+    static constexpr double prop_margin = 0.10;
+    x_margin = (box.xmax() - box.xmin()) * prop_margin;
+    y_margin = (box.ymax() - box.ymin()) * prop_margin;
+  }
+  return {
+    box.xmin() - x_margin, box.ymin() - y_margin, box.xmax() + x_margin,
+    box.ymax() + y_margin};
+}
+
+template <class Arr_>
+CGAL::Bbox_2
+findOtherInterestingPoints(const Arr_*, const CGAL::Bbox_2&)
+{
+  return {};
+}
+
+#ifdef CGAL_USE_CORE
+template <typename Coefficient_>
+static const auto&
+getXyCurves(const CGAL::Arr_algebraic_segment_traits_2<Coefficient_>* traits)
+{
+  // the traits object is only needed the first time
+  // this assumes that X_monotone_curves created from the first traits object
+  // will work with arrangements with a different object
+  using Traits = CGAL::Arr_algebraic_segment_traits_2<Coefficient_>;
+  static std::vector<typename Traits::X_monotone_curve_2> xy_curves;
+  if (xy_curves.empty())
+  {
+    typedef typename Traits::Polynomial_2 Polynomial_2;
+    auto construct_curve = traits->construct_curve_2_object();
+    auto make_x_monotone = traits->make_x_monotone_2_object();
+
+    Polynomial_2 x = CGAL::shift(Polynomial_2(1), 1, 0);
+    Polynomial_2 y = CGAL::shift(Polynomial_2(1), 1, 1);
+    auto x_cv = construct_curve(x);
+    auto y_cv = construct_curve(y);
+
+    std::vector<CGAL::Object> arcs;
+    make_x_monotone(x_cv, std::back_inserter(arcs));
+    make_x_monotone(y_cv, std::back_inserter(arcs));
+    for (auto& arc_obj : arcs)
+    {
+      typename Traits::X_monotone_curve_2 arc;
+      CGAL::assign(arc, arc_obj);
+      xy_curves.push_back(arc);
+    }
+  }
+  return xy_curves;
+}
+
+template <>
+CGAL::Bbox_2 findOtherInterestingPoints<demo_types::DemoTypes::Alg_seg_arr>(
+  const demo_types::DemoTypes::Alg_seg_arr* arr,
+  const CGAL::Bbox_2& allowable_range)
+{
+  using Traits = demo_types::DemoTypes::Alg_seg_traits;
+  CGAL::Bbox_2 bb = {};
+  std::vector<CGAL::Object> intersections;
+  for (auto it = arr->edges_begin(); it != arr->edges_end(); ++it)
+  {
+    for (auto& arc : getXyCurves(arr->traits()))
+      if (arc.is_vertical() != it->curve().is_vertical())
+        it->curve().intersections(arc, std::back_inserter(intersections));
+  }
+  for (auto it = intersections.begin(); it != intersections.end(); it++)
+  {
+    std::pair<typename Traits::Point_2, unsigned int> point_multiplicity;
+    CGAL::assign(point_multiplicity, *it);
+    auto& point = point_multiplicity.first;
+    if (point.location() == CGAL::ARR_INTERIOR)
+    {
+      auto xy = point.to_double();
+      bb += reject_not_in_allowable_range(
+        {xy.first, xy.second, xy.first, xy.second}, allowable_range);
+    }
+  }
+  return bb;
+}
+#endif // CGAL_USE_CORE
+
+
+template <typename Arr_>
+QRectF ArrangementGraphicsItem<Arr_>::getInterestingViewport() const
+{
+  QRectF scene_rect = this->getScene()->sceneRect();
+  CGAL::Bbox_2 scene_bbox = {
+    scene_rect.left(), scene_rect.top(), scene_rect.right(),
+    scene_rect.bottom()};
+
+  ConstructBoundingBox<Traits> construct_bounding_box;
+  CGAL::Bbox_2 bounding_box = {};
+  for (auto it = this->arr->edges_begin();
+       it != this->arr->edges_end(); ++it)
+  {
+    bounding_box += reject_not_in_allowable_range(
+      construct_bounding_box(it->curve()), scene_bbox);
+  }
+  for (auto it = this->arr->vertices_begin();
+       it != this->arr->vertices_end(); ++it)
+  {
+    bounding_box += reject_not_in_allowable_range(
+      construct_bounding_box(it->point()), scene_bbox);
+  }
+
+  if (!isFinite(bounding_box))
+    bounding_box += findOtherInterestingPoints(this->arr, scene_bbox);
+
+  // ideally this should happen only if the arrangement is empty
+  // (if findOtherInterestingPoints worked for all arrangement types)
+  if (!isFinite(bounding_box)) bounding_box += {0, 0, 0, 0};
+
+  bounding_box = addMargins(bounding_box);
+
+  return QRectF(
+    bounding_box.xmin(), bounding_box.ymin(),
+    bounding_box.xmax() - bounding_box.xmin(),
+    bounding_box.ymax() - bounding_box.ymin());
+}
 
 } // namespace QT
 } // namespace CGAL

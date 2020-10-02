@@ -11,15 +11,15 @@
 #include "ArrangementDemoWindow.h"
 #include "AlgebraicCurveInputDialog.h"
 #include "RationalCurveInputDialog.h"
-#include "AlgebraicCurveParser.h"
 #include "ArrangementDemoPropertiesDialog.h"
 #include "ArrangementDemoTab.h"
 #include "NewTabDialog.h"
 #include "OverlayDialog.h"
 #include "GraphicsViewCurveInput.h"
-#include "ArrangementTypes.h"
+#include "CurveInputMethods.h"
 #include "ArrangementTypesUtils.h"
 #include "ArrangementIO.h"
+#include "Utils/Utils.h"
 
 #include <QActionGroup>
 #include <QColorDialog>
@@ -104,20 +104,18 @@ QString ArrangementDemoWindow::makeTabLabel(TraitsType tt)
     .arg(typeNames[static_cast<int>(tt)]);
 }
 
-ArrangementDemoTabBase* ArrangementDemoWindow::makeTab(TraitsType tt)
+ArrangementDemoTab* ArrangementDemoWindow::makeTab(
+  TraitsType tt, QString tabLabel, CGAL::Object arr_obj)
 {
-  ArrangementDemoTabBase* demoTab;
-  QString tabLabel = makeTabLabel(tt);
-  demo_types::visitArrangementType(tt, [&](auto type_holder) {
-    demoTab =
-      new ArrangementDemoTab<typename decltype(type_holder)::type>(this);
-  });
+  ArrangementDemoTab* demoTab = new ArrangementDemoTab(this, tt, arr_obj);
+  if (tabLabel.isNull())
+    tabLabel = makeTabLabel(tt);
   this->addTab(demoTab, tabLabel);
   return demoTab;
 }
 
 void ArrangementDemoWindow::addTab(
-  ArrangementDemoTabBase* demoTab, QString tabLabel)
+  ArrangementDemoTab* demoTab, QString tabLabel)
 {
   this->tabs.push_back(demoTab);
 
@@ -132,7 +130,7 @@ void ArrangementDemoWindow::addTab(
 }
 
 void ArrangementDemoWindow::resetActionGroups(
-  ArrangementDemoTabBase* tab, TraitsType tt)
+  ArrangementDemoTab* tab, TraitsType tt)
 {
   this->hideInsertMethods();
   this->ui->actionInsert->setChecked(false);
@@ -157,7 +155,7 @@ void ArrangementDemoWindow::resetActionGroups(
   this->ui->actionDrag->activate(QAction::Trigger);
 }
 
-void ArrangementDemoWindow::resetCallbackState(ArrangementDemoTabBase* tab)
+void ArrangementDemoWindow::resetCallbackState(ArrangementDemoTab* tab)
 {
   if (tab)
   {
@@ -282,97 +280,74 @@ void ArrangementDemoWindow::updateInputType(QAction* a)
   tab->activateCurveInputCallback(curveType);
 }
 
-// should refactor this to GraphicsViewCurveInput if any other use case arises
+#ifdef CGAL_USE_CORE
 void ArrangementDemoWindow::on_actionAddAlgebraicCurve_triggered()
 {
-#ifdef CGAL_USE_CORE
   AlgebraicCurveInputDialog newDialog;
 
   if (newDialog.exec() == QDialog::Accepted)
   {
-    using namespace demo_types;
-    using Polynomial_2 = Alg_seg_traits::Polynomial_2;
+    auto currentTab = this->getCurrentTab();
 
-    std::string algebraicExpression = newDialog.getLineEditText();
-    auto poly = AlgebraicCurveParser<Polynomial_2>{}(algebraicExpression);
+    std::string expression = newDialog.getLineEditText();
+    bool is_first_curve = false;
 
-    if (!poly)
+    auto cv = algebraicCurveFromExpression(
+      currentTab->getArrangement(), expression,
+      is_first_curve);
+
+    if (!cv)
     {
       QMessageBox msgBox;
-      msgBox.setWindowTitle("Wrong Expression");
+      msgBox.setWindowTitle("Invalid Expression");
       msgBox.setIcon(QMessageBox::Critical);
-      msgBox.setText(QString::fromStdString("Invalid Expression"));
+      msgBox.setText(QString::fromStdString("Unable to parse expression!"));
       msgBox.setStandardButtons(QMessageBox::Ok);
       msgBox.exec();
       return;
     }
 
-    auto currentTab = this->getCurrentTab();
-    Alg_seg_arr* arr;
-    if (!CGAL::assign(arr, currentTab->getArrangement()))
-      CGAL_error();
-    bool empty_arrangement = (arr->number_of_edges() == 0);
-
-    // To create a curve
-    auto construct_curve = arr->traits()->construct_curve_2_object();
-    auto cv = construct_curve(*poly);
-
     // adding curve to the arrangement
     auto algCurveInputCallback = currentTab->getCurveInputCallback();
-    Q_EMIT algCurveInputCallback->generate(CGAL::make_object(cv));
-
-    if (empty_arrangement)
-      currentTab->adjustViewport();
+    if (is_first_curve) currentTab->adjustViewport();
+    algCurveInputCallback->generate(cv);
   }
-#endif
 }
 
 void ArrangementDemoWindow::on_actionAddRationalCurve_triggered()
 {
-#ifdef CGAL_USE_CORE
   RationalCurveInputDialog newDialog;
 
   if (newDialog.exec() == QDialog::Accepted)
   {
-    using namespace demo_types;
-    using Polynomial_1 = Rational_traits::Polynomial_1;
+    auto currentTab = this->getCurrentTab();
 
-    std::string numeratorExpression = newDialog.getNumeratorText();
-    std::string denominatorExpression = newDialog.getDenominatorText();
+    std::string num = newDialog.getNumeratorText();
+    std::string den = newDialog.getDenominatorText();
 
-    auto poly_num = AlgebraicCurveParser<Polynomial_1>{}(numeratorExpression);
-    auto poly_den = AlgebraicCurveParser<Polynomial_1>{}(denominatorExpression);
+    bool is_first_curve = false;
 
-    if (!poly_num || !poly_den)
+    auto cv = rationalCurveFromExpression(
+      currentTab->getArrangement(), num, den, is_first_curve);
+
+    if (!cv)
     {
       QMessageBox msgBox;
-      msgBox.setWindowTitle("Wrong Expression");
+      msgBox.setWindowTitle("Invalid Expression");
       msgBox.setIcon(QMessageBox::Critical);
-      msgBox.setText(QString::fromStdString("Invalid Expression"));
+      msgBox.setText(QString::fromStdString("Unable to parse expression!"));
       msgBox.setStandardButtons(QMessageBox::Ok);
       msgBox.exec();
       return;
     }
 
-    auto currentTab = this->getCurrentTab();
-    Rational_arr* arr;
-    if (!CGAL::assign(arr, currentTab->getArrangement()))
-      CGAL_error();
-    bool empty_arrangement = (arr->number_of_edges() == 0);
-
-    // To create a curve
-    auto construct_curve = arr->traits()->construct_curve_2_object();
-    auto cv = construct_curve(*poly_num, *poly_den);
-
     // adding curve to the arrangement
     auto algCurveInputCallback = currentTab->getCurveInputCallback();
-    Q_EMIT algCurveInputCallback->generate(CGAL::make_object(cv));
-
-    if (empty_arrangement)
-      currentTab->adjustViewport();
+    if (is_first_curve) currentTab->adjustViewport();
+    Q_EMIT algCurveInputCallback->generate(cv);
   }
-#endif
 }
+#endif
 
 void ArrangementDemoWindow::on_actionQuit_triggered() { qApp->exit(); }
 
@@ -602,7 +577,7 @@ void ArrangementDemoWindow::on_actionFillColor_triggered()
   }
 }
 
-void ArrangementDemoWindow::updateFillColorSwatch(ArrangementDemoTabBase* tab)
+void ArrangementDemoWindow::updateFillColorSwatch(ArrangementDemoTab* tab)
 {
   if (!tab) return;
 
@@ -615,7 +590,7 @@ void ArrangementDemoWindow::updateFillColorSwatch(ArrangementDemoTabBase* tab)
   this->ui->actionFillColor->setIcon(fillColorIcon);
 }
 
-ArrangementDemoTabBase* ArrangementDemoWindow::getCurrentTab()
+ArrangementDemoTab* ArrangementDemoWindow::getCurrentTab()
 {
   int tabIndex = this->ui->tabWidget->currentIndex();
   if (tabIndex == -1) return nullptr;
@@ -623,35 +598,44 @@ ArrangementDemoTabBase* ArrangementDemoWindow::getCurrentTab()
   return this->tabs[tabIndex];
 }
 
-std::vector<QString> ArrangementDemoWindow::getTabLabels() const
-{
-  std::vector<QString> res;
-  for (int i = 0; i < this->ui->tabWidget->count(); ++i)
-    res.push_back(this->ui->tabWidget->tabText(i));
-  return res;
-}
-
-std::vector<CGAL::Object> ArrangementDemoWindow::getArrangements() const
-{
-  std::vector<CGAL::Object> res;
-  for (auto& tab : this->tabs) res.push_back(tab->getArrangement());
-  return res;
-}
-
 void ArrangementDemoWindow::on_actionOverlay_triggered()
 {
-  OverlayDialog overlayDialog{this};
+  std::vector<OverlayDialog::ArrangementInfo> arr_infos;
+  for (int i = 0; i < this->ui->tabWidget->count(); ++i)
+  {
+    // this assumes that all tabs are of type ArrangementDemoTab
+    ArrangementDemoTab* tab =
+      static_cast<ArrangementDemoTab*>(this->ui->tabWidget->widget(i));
+
+    arr_infos.push_back({this->ui->tabWidget->tabText(i), tab->traitsType()});
+  }
+
+  OverlayDialog overlayDialog{this, arr_infos};
   if (overlayDialog.exec() == QDialog::Accepted)
   {
-    std::vector<CGAL::Object> arrs = overlayDialog.selectedArrangements();
-    auto* tab = makeOverlayTab(arrs);
-    if (tab)
-    {
-      QString tabLabel =
-        QString("%1 (Overlay)").arg(makeTabLabel(tab->traitsType()));
+    std::vector<CGAL::Object> arrs;
+    auto selected_arrs = overlayDialog.selectedArrangements();
+    if (selected_arrs.empty()) return;
 
-      tab->setParent(this);
-      this->addTab(tab, tabLabel);
+    demo_types::TraitsType overlay_tt =
+      static_cast<ArrangementDemoTab*>(
+        this->ui->tabWidget->widget(selected_arrs[0]))
+        ->traitsType();
+
+    for (auto idx : selected_arrs)
+    {
+      ArrangementDemoTab* tab =
+        static_cast<ArrangementDemoTab*>(this->ui->tabWidget->widget(idx));
+
+      arrs.push_back(tab->getArrangement());
+    }
+
+    auto arr_obj = makeOverlayArrangement(arrs);
+    if (arr_obj)
+    {
+      QString tab_label = QString("%1 (Overlay)").arg(makeTabLabel(overlay_tt));
+      auto tab = makeTab(overlay_tt, tab_label, arr_obj);
+
       tab->adjustViewport();
     }
   }
@@ -666,13 +650,17 @@ void ArrangementDemoWindow::on_actionSaveAs_triggered()
     return;
   }
 
+  std::pair<CGAL::Object, demo_types::TraitsType> arr_pair = {
+    currentTab->getArrangement(), currentTab->traitsType()
+  };
+
   QString filename = QFileDialog::getSaveFileName(
     this, tr("Save file"), "", "Arrangement (*.arr)");
   if (filename.isNull()) return;
 
   QByteArray ba = filename.toLocal8Bit();
   std::ofstream ofs(ba.data());
-  if (!ArrangementIO{}.write(currentTab, ofs))
+  if (!ArrangementIO{}.write(arr_pair, ofs))
     QMessageBox::information(this, "Oops", "Error saving file!");
 }
 
@@ -698,14 +686,21 @@ void ArrangementDemoWindow::on_actionOpen_triggered()
   }
 }
 
-ArrangementDemoTabBase* ArrangementDemoWindow::openArrFile(QString filename)
+ArrangementDemoTab* ArrangementDemoWindow::openArrFile(QString filename)
 {
   if (filename.isNull()) return nullptr;
 
   QByteArray filename_ba = filename.toLocal8Bit();
   std::ifstream ifs(filename_ba.data());
 
-  ArrangementDemoTabBase* tab = ArrangementIO{}.read(ifs);
+  ArrangementDemoTab* tab = nullptr;
+
+  std::pair<CGAL::Object, demo_types::TraitsType> arr_pair =
+    ArrangementIO{}.read(ifs);
+  if (arr_pair.first)
+    tab =
+      makeTab(arr_pair.second, makeTabLabel(arr_pair.second), arr_pair.first);
+
   return tab;
 }
 
@@ -719,7 +714,7 @@ void ArrangementDemoWindow::on_actionPreferences_triggered()
   if (dialog.exec() == QDialog::Accepted)
   {
     typedef ArrangementDemoPropertiesDialog Dialog;
-    ArrangementDemoTabBase::Preferences pref;
+    ArrangementDemoTab::Preferences pref;
 
     pref.edgeColor = dialog.property(Dialog::EDGE_COLOR_KEY).value<QColor>();
     pref.edgeWidth =

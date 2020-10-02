@@ -18,7 +18,8 @@
 #include <CGAL/Qt/PainterOstream.h>
 #include "ForwardDeclarations.h"
 #include "GraphicsSceneMixin.h"
-#include "Utils.h"
+#include "Utils/Utils.h"
+#include "Utils/IntersectCurves.h"
 
 class QPainter;
 
@@ -208,7 +209,7 @@ public:
   /*! Constructor */
   ArrangementPainterOstream(QPainter* p, QRectF clippingRectangle = QRectF()) :
     Superclass( p, clippingRectangle ),
-    intersect_2( this->traits.intersect_2_object( ) ),
+    intersect_2( &this->traits ),
     construct_x_monotone_curve_2(this->
                                  traits.construct_x_monotone_curve_2_object())
   { }
@@ -238,7 +239,7 @@ protected: // methods
 
 protected: // members
   Traits traits;
-  Intersect_2 intersect_2;
+  Intersect_curves<Traits> intersect_2;
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
 };
 

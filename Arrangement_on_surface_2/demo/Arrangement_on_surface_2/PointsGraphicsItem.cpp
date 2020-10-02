@@ -17,10 +17,10 @@
 #include <QPainter>
 
 //! A constructor.
-PointsGraphicsItem::PointsGraphicsItem( ) :
-  pointRadius( 3.0 ),
-  color( ::Qt::blue )
-{ }
+PointsGraphicsItem::PointsGraphicsItem(QGraphicsItem* parent) :
+    QGraphicsItem(parent), pointRadius(3.0), color(::Qt::blue)
+{
+}
 
 void PointsGraphicsItem::paint(
   QPainter* painter, const QStyleOptionGraphicsItem* /* option */,

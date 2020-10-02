@@ -13,8 +13,8 @@
 #include "CurveGraphicsItem.h"
 #include "ArrangementPainterOstream.h"
 #include "ArrangementTypes.h"
-#include "ConstructBoundingBox.h"
-#include "Utils.h"
+#include "Utils/ConstructBoundingBox.h"
+#include "Utils/Utils.h"
 
 #include <limits>
 

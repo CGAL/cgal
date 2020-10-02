@@ -9,19 +9,50 @@
 //
 // Author(s): Ahmed Essam <theartful.ae@gmail.com>
 
-#include <QGraphicsView>
 #include <CGAL/ipower.h>
+#include <QGraphicsView>
 
-#include "PointSnapper.h"
 #include "ArrangementTypes.h"
+#include "ArrangementTypesUtils.h"
+#include "PointSnapper.h"
+
+#include <boost/optional.hpp>
+
+template <typename Arr_>
+class PointSnapper : public PointSnapperBase
+{
+  using Arrangement = Arr_;
+  using Compute_squared_distance_2 = Rat_kernel::Compute_squared_distance_2;
+
+public:
+  PointSnapper(QGraphicsScene*, GridGraphicsItem*, Arrangement*);
+  boost::optional<Point_2> snapToArrangement(const QPointF& qpt) override;
+
+private:
+  Arrangement* arr;
+};
 
 PointSnapperBase::PointSnapperBase(
   QGraphicsScene* scene, GridGraphicsItem* grid) :
     GraphicsSceneMixin(scene),
-    gridGraphicsItem{grid},
-    snapToGridEnabled{false},
+    gridGraphicsItem{grid}, snapToGridEnabled{false},
     snapToArrangementEnabled{false}
 {
+}
+
+PointSnapperBase* PointSnapperBase::create(
+  demo_types::TraitsType tt, QGraphicsScene* scene, GridGraphicsItem* grid,
+  CGAL::Object arr_obj)
+{
+  PointSnapperBase* res;
+  demo_types::visitArrangementType(tt, [&](auto type_holder) {
+    using Arrangement = typename decltype(type_holder)::type;
+
+    Arrangement* arr = nullptr;
+    CGAL::assign(arr, arr_obj);
+    res = new PointSnapper<Arrangement>(scene, grid, arr);
+  });
+  return res;
 }
 
 auto PointSnapperBase::snapPoint(const QPointF& qpt) -> Point_2
@@ -221,5 +252,3 @@ auto PointSnapper<Arr_>::snapToArrangement(const QPointF& qpt)
   else
     return {};
 }
-
-ARRANGEMENT_DEMO_SPECIALIZE_ARR(PointSnapper)

@@ -15,22 +15,21 @@
 #include <fstream>
 #include <vector>
 
-class ArrangementDemoTabBase;
+namespace demo_types
+{
+enum class TraitsType : int;
+}
+
 namespace CGAL
 {
-    class Object;
+class Object;
 }
 
 struct ArrangementIO
 {
-  ArrangementDemoTabBase* read(std::ifstream&);
-  bool write(ArrangementDemoTabBase*, std::ofstream&);
+  std::pair<CGAL::Object, demo_types::TraitsType> read(std::ifstream&);
+  bool
+  write(const std::pair<CGAL::Object, demo_types::TraitsType>&, std::ofstream&);
 };
-
-// removed from ArrangementDemoWindow to speed up its compilation speed
-// ArrangementDemoWindow doesn't have to specialize any arrangement related
-// functions and now only deals with GUI logic
-// TODO: move this somewhere else?
-ArrangementDemoTabBase* makeOverlayTab(const std::vector<CGAL::Object>&);
 
 #endif // ARRANGEMENT_DEMO_IO_H

@@ -37,7 +37,7 @@ struct ConstructBoundingBox_impl
   {
 #ifdef CGAL_USE_CORE
     using Zero_resultant_exception = CGAL::internal::Zero_resultant_exception<
-      typename demo_types::Alg_seg_traits::Polynomial_2>;
+      typename demo_types::DemoTypes::Alg_seg_traits::Polynomial_2>;
 #endif
 
     CGAL::Bbox_2 bbox;

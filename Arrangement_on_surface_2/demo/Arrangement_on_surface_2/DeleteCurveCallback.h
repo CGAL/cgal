@@ -14,17 +14,10 @@
 
 #include "Callback.h"
 
-class QGraphicsScene;
-class QGraphicsMouseEvent;
-
-namespace CGAL
+namespace demo_types
 {
-namespace Qt
-{
-template <typename T>
-class CurveGraphicsItem;
+enum class TraitsType : int;
 }
-} // namespace CGAL
 
 enum class DeleteMode
 {
@@ -40,39 +33,16 @@ enum class DeleteMode
 class DeleteCurveCallbackBase : public CGAL::Qt::Callback
 {
 public:
-  using CGAL::Qt::Callback::Callback;
+  static DeleteCurveCallbackBase*
+  create(demo_types::TraitsType, CGAL::Object arr_obj, QObject* parent);
 
   void setDeleteMode(DeleteMode deleteMode_) { this->deleteMode = deleteMode_; }
   DeleteMode getDeleteMode() { return this->deleteMode; }
 
 protected:
+  using CGAL::Qt::Callback::Callback;
+
   DeleteMode deleteMode;
 };
-
-template < typename Arr_ >
-class DeleteCurveCallback : public DeleteCurveCallbackBase
-{
-public:
-  typedef Arr_ Arrangement;
-  typedef typename Arrangement::Halfedge_handle         Halfedge_handle;
-  typedef typename Arrangement::Geometry_traits_2       Traits;
-  typedef typename Arrangement::Curve_handle            Curve_handle;
-  typedef typename Arrangement::Originating_curve_iterator
-  Originating_curve_iterator;
-  typedef typename Arrangement::Induced_edge_iterator   Induced_edge_iterator;
-
-  DeleteCurveCallback( Arrangement* arr_, QObject* parent_ );
-  void setScene(QGraphicsScene* scene_) override;
-  void reset() override;
-
-protected:
-  void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
-  void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
-  void highlightNearestCurve(QGraphicsSceneMouseEvent* event);
-
-  CGAL::Qt::CurveGraphicsItem<Traits>* highlightedCurve;
-  Arrangement* arr;
-  Halfedge_handle removableHalfedge;
-}; // class DeleteCurveCallback
 
 #endif // DELETE_CURVE_CALLBACK_H

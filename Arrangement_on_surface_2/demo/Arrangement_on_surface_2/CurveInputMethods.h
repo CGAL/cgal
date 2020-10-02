@@ -28,7 +28,7 @@ namespace CGAL
 
 namespace Qt
 {
-enum class CurveType
+enum class CurveType : int
 {
   Segment,
   Polyline,
@@ -38,7 +38,6 @@ enum class CurveType
   Ellipse,
   ThreePointCircularArc,
   FivePointConicArc,
-  AlgebraicEquation,
   Bezier,
   None,
 };

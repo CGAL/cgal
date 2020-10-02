@@ -28,15 +28,17 @@
   #include <CGAL/Arr_rational_function_traits_2.h>
   #include <CGAL/Algebraic_kernel_d_1.h>
   #include <CGAL/CORE_BigRat.h>
-#else
-  #include <CGAL/Exact_rational.h>
 #endif
+
+#include "RationalTypes.h"
 
 #include <QColor>
 
 // avoid polluting global namespace
 // caused multiple bugs before!
 namespace demo_types
+{
+struct DemoTypes
 {
 class Face_with_color : public CGAL::Arr_face_base
 {
@@ -75,14 +77,9 @@ public:
 
 // use same rational type across arrangements
 // less specializations, and makes PointSnapper untemplated
-#ifdef CGAL_USE_CORE
-  typedef CORE::BigRat                                  Rational;
-#else
-  typedef CGAL::Exact_rational                          Rational;
-#endif
-
-typedef CGAL::Cartesian<Rational>                       Rat_kernel;
-typedef CGAL::Point_2<Rat_kernel>                       Rat_point_2;
+typedef typename RationalTypes::Rational                Rational;
+typedef typename RationalTypes::Rat_kernel              Rat_kernel;
+typedef typename RationalTypes::Rat_point_2             Rat_point_2;
 
 // Segments:
 typedef CGAL::Arr_segment_traits_2<Rat_kernel>          Seg_traits;
@@ -139,34 +136,35 @@ typedef CGAL::Arrangement_with_history_2<Lin_traits, Lin_dcel>
   typedef CGAL::Arrangement_with_history_2<Rational_traits, Rational_dcel>
                                                         Rational_arr;
 #endif
+};
 }
 
 #ifdef CGAL_USE_CORE
   #define ARRANGEMENT_DEMO_SPECIALIZE_ARR_CORE(class_name)                     \
-    template class class_name<demo_types::Conic_arr>;                          \
-    template class class_name<demo_types::Alg_seg_arr>;                        \
-    template class class_name<demo_types::Bezier_arr>;                         \
-    template class class_name<demo_types::Rational_arr>;
+    template class class_name<demo_types::DemoTypes::Conic_arr>;               \
+    template class class_name<demo_types::DemoTypes::Alg_seg_arr>;             \
+    template class class_name<demo_types::DemoTypes::Bezier_arr>;              \
+    template class class_name<demo_types::DemoTypes::Rational_arr>;
   #define ARRANGEMENT_DEMO_SPECIALIZE_TRAITS_CORE(class_name)                  \
-    template class class_name<demo_types::Conic_traits>;                       \
-    template class class_name<demo_types::Alg_seg_traits>;                     \
-    template class class_name<demo_types::Bezier_traits>;                      \
-    template class class_name<demo_types::Rational_traits>;
+    template class class_name<demo_types::DemoTypes::Conic_traits>;            \
+    template class class_name<demo_types::DemoTypes::Alg_seg_traits>;          \
+    template class class_name<demo_types::DemoTypes::Bezier_traits>;           \
+    template class class_name<demo_types::DemoTypes::Rational_traits>;
 #else
   #define ARRANGEMENT_DEMO_SPECIALIZE_ARR_CORE(class_name)
   #define ARRANGEMENT_DEMO_SPECIALIZE_TRAITS_CORE(class_name)
 #endif
 
 #define ARRANGEMENT_DEMO_SPECIALIZE_ARR(class_name)                            \
-  template class class_name<demo_types::Seg_arr>;                              \
-  template class class_name<demo_types::Pol_arr>;                              \
-  template class class_name<demo_types::Lin_arr>;                              \
+  template class class_name<demo_types::DemoTypes::Seg_arr>;                   \
+  template class class_name<demo_types::DemoTypes::Pol_arr>;                   \
+  template class class_name<demo_types::DemoTypes::Lin_arr>;                   \
   ARRANGEMENT_DEMO_SPECIALIZE_ARR_CORE(class_name)
 
 #define ARRANGEMENT_DEMO_SPECIALIZE_TRAITS(class_name)                         \
-  template class class_name<demo_types::Seg_traits>;                           \
-  template class class_name<demo_types::Pol_traits>;                           \
-  template class class_name<demo_types::Lin_traits>;                           \
+  template class class_name<demo_types::DemoTypes::Seg_traits>;                \
+  template class class_name<demo_types::DemoTypes::Pol_traits>;                \
+  template class class_name<demo_types::DemoTypes::Lin_traits>;                \
   ARRANGEMENT_DEMO_SPECIALIZE_TRAITS_CORE(class_name)
 
 #endif // ARRANGEMENT_DEMO_TYPES_H

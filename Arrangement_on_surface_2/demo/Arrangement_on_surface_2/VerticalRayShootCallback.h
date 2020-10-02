@@ -14,22 +14,25 @@
 #define VERTICAL_RAY_SHOOT_CALLBACK_H
 
 #include "Callback.h"
-#include "VerticalRayGraphicsItem.h"
+#include <CGAL/Object.h>
 
-namespace CGAL
+namespace demo_types
 {
-namespace Qt
-{
-template <typename T>
-class CurveGraphicsItem;
+enum class TraitsType : int;
 }
-}
+
 class QGraphicsSceneMouseEvent;
 class QGraphicsScene;
 
+/*
+ * Supports visualization of vertical ray shooting on arrangements.
+ */
 class VerticalRayShootCallbackBase : public CGAL::Qt::Callback
 {
 public:
+  static VerticalRayShootCallbackBase*
+  create(demo_types::TraitsType, CGAL::Object arr_obj, QObject* parent);
+
   void setShootingUp( bool isShootingUp );
 
   virtual void setEdgeWidth( int width ) = 0;
@@ -41,40 +44,5 @@ protected:
   VerticalRayShootCallbackBase( QObject* parent_ );
   bool shootingUp;
 }; // class VerticalRayShootCallbackBase
-
-/*
- * Supports visualization of vertical ray shooting on arrangements.
- *
- * The template parameter is a CGAL::Arrangement_with_history_2 of some type.
- */
-template < typename Arr_ >
-class VerticalRayShootCallback : public VerticalRayShootCallbackBase
-{
-public:
-  typedef VerticalRayShootCallbackBase                  Superclass;
-  typedef Arr_                                          Arrangement;
-  typedef typename Arrangement::Halfedge_const_handle   Halfedge_const_handle;
-  typedef typename Arrangement::Face_const_handle       Face_const_handle;
-  typedef typename Arrangement::Vertex_const_handle     Vertex_const_handle;
-  typedef typename Arrangement::Geometry_traits_2       Traits;
-
-  VerticalRayShootCallback( Arrangement* arr_, QObject* parent_ );
-  void reset() override;
-  void setScene(QGraphicsScene* scene_) override;
-  void slotModelChanged() override;
-  void setEdgeWidth(int width) override;
-  void setEdgeColor(const QColor& color) override;
-  const QColor& edgeColor() const override;
-  int edgeWidth() const override;
-
-protected:
-  void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
-  void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
-  void highlightPointLocation(QGraphicsSceneMouseEvent* event);
-
-  Arrangement* arr;
-  CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurves;
-  VerticalRayGraphicsItem rayGraphicsItem;
-}; // class VerticalRayShootCallback
 
 #endif // VERTICAL_RAY_SHOOT_CALLBACK_H

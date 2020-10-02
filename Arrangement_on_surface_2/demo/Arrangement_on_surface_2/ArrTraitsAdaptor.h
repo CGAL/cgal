@@ -11,7 +11,6 @@
 #ifndef CGAL_ARRANGEMENTS_ARR_TRAITS_ADAPTOR_H
 #define CGAL_ARRANGEMENTS_ARR_TRAITS_ADAPTOR_H
 
-#include <CGAL/Cartesian.h>
 #include "ForwardDeclarations.h"
 
 /**

@@ -11,6 +11,7 @@
 #ifndef ARRANGEMENT_DEMO_WINDOW_H
 #define ARRANGEMENT_DEMO_WINDOW_H
 
+#include <CGAL/Object.h>
 #include <CGAL/Qt/DemosMainWindow.h>
 
 #include <Qt>
@@ -27,16 +28,16 @@ namespace CGAL
 class Object;
 namespace Qt
 {
-  class GraphicsViewNavigation;
+class GraphicsViewNavigation;
 }
-}
+} // namespace CGAL
 
 namespace demo_types
 {
 enum class TraitsType;
 }
 
-class ArrangementDemoTabBase;
+class ArrangementDemoTab;
 class QActionGroup;
 
 class ArrangementDemoWindow : public CGAL::Qt::DemosMainWindow
@@ -47,9 +48,7 @@ public:
   ArrangementDemoWindow(QWidget* parent = nullptr);
   ~ArrangementDemoWindow();
 
-  std::vector<CGAL::Object> getArrangements() const;
-  std::vector<QString> getTabLabels() const;
-  ArrangementDemoTabBase* getCurrentTab();
+  ArrangementDemoTab* getCurrentTab();
 
 public Q_SLOTS:
   void updateEnvelope(QAction*);
@@ -79,27 +78,30 @@ public Q_SLOTS:
   void on_actionMerge_toggled(bool);
   void on_actionSplit_toggled(bool);
   void on_actionFill_toggled(bool);
+#ifdef CGAL_USE_CORE
   void on_actionAddAlgebraicCurve_triggered();
   void on_actionAddRationalCurve_triggered();
+#endif
 
 Q_SIGNALS:
   void modelChanged();
 
 protected:
   void setupUi();
-  ArrangementDemoTabBase* makeTab(demo_types::TraitsType);
-  void addTab(ArrangementDemoTabBase*, QString);
-  void resetCallbackState(ArrangementDemoTabBase*);
-  void resetActionGroups(ArrangementDemoTabBase*, demo_types::TraitsType);
+  ArrangementDemoTab* makeTab(
+    demo_types::TraitsType, QString label = {}, CGAL::Object arr_obj = {});
+  void addTab(ArrangementDemoTab*, QString);
+  void resetCallbackState(ArrangementDemoTab*);
+  void resetActionGroups(ArrangementDemoTab*, demo_types::TraitsType);
   void hideInsertMethods();
   void showInsertMethods(demo_types::TraitsType);
-  void updateFillColorSwatch(ArrangementDemoTabBase*);
+  void updateFillColorSwatch(ArrangementDemoTab*);
   QString makeTabLabel(demo_types::TraitsType);
-  ArrangementDemoTabBase* openArrFile(QString filename);
+  ArrangementDemoTab* openArrFile(QString filename);
 
 private:
   Ui::ArrangementDemoWindow* ui;
-  std::vector<ArrangementDemoTabBase*> tabs;
+  std::vector<ArrangementDemoTab*> tabs;
   QActionGroup* modeGroup;
   QActionGroup* envelopeGroup;
   QActionGroup* inputTypeGroup;

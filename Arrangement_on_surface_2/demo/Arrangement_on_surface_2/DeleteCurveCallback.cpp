@@ -13,10 +13,51 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 
+#include "ArrangementTypes.h"
+#include "ArrangementTypesUtils.h"
 #include "CurveGraphicsItem.h"
 #include "DeleteCurveCallback.h"
-#include "ArrangementTypes.h"
-#include "Utils.h"
+#include "Utils/Utils.h"
+
+template <typename Arr_>
+class DeleteCurveCallback : public DeleteCurveCallbackBase
+{
+public:
+  typedef Arr_ Arrangement;
+  typedef typename Arrangement::Halfedge_handle Halfedge_handle;
+  typedef typename Arrangement::Geometry_traits_2 Traits;
+  typedef typename Arrangement::Curve_handle Curve_handle;
+  typedef
+    typename Arrangement::Originating_curve_iterator Originating_curve_iterator;
+  typedef typename Arrangement::Induced_edge_iterator Induced_edge_iterator;
+
+  DeleteCurveCallback(Arrangement* arr_, QObject* parent_);
+  void setScene(QGraphicsScene* scene_) override;
+  void reset() override;
+
+protected:
+  void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+  void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+  void highlightNearestCurve(QGraphicsSceneMouseEvent* event);
+
+  CGAL::Qt::CurveGraphicsItem<Traits>* highlightedCurve;
+  Arrangement* arr;
+  Halfedge_handle removableHalfedge;
+}; // class DeleteCurveCallback
+
+DeleteCurveCallbackBase* DeleteCurveCallbackBase::create(
+  demo_types::TraitsType tt, CGAL::Object arr_obj, QObject* parent)
+{
+  DeleteCurveCallbackBase* res;
+  demo_types::visitArrangementType(tt, [&](auto type_holder) {
+    using Arrangement = typename decltype(type_holder)::type;
+
+    Arrangement* arr = nullptr;
+    CGAL::assign(arr, arr_obj);
+    res = new DeleteCurveCallback<Arrangement>(arr, parent);
+  });
+  return res;
+}
 
 /*! Constructor */
 template <typename Arr_>
@@ -136,5 +177,3 @@ void DeleteCurveCallback<Arr_>::highlightNearestCurve(
 
   Q_EMIT modelChanged();
 }
-
-ARRANGEMENT_DEMO_SPECIALIZE_ARR(DeleteCurveCallback)

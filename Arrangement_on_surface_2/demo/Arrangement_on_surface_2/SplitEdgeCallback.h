@@ -13,8 +13,8 @@
 #ifndef SPLIT_EDGE_CALLBACK_H
 #define SPLIT_EDGE_CALLBACK_H
 
-#include "GraphicsViewCurveInput.h"
-#include "ForwardDeclarations.h"
+#include <CGAL/Object.h>
+#include "Callback.h"
 
 class QGraphicsSceneMouseEvent;
 class QGraphicsScene;
@@ -22,53 +22,27 @@ class QGraphicsLineItem;
 class PointSnapperBase;
 class QColor;
 
-class SplitEdgeCallbackBase :
-    public CGAL::Qt::Callback,
-    public CGAL::Qt::CurveInputMethodCallback
+namespace demo_types
 {
-public:
-  void setColor( QColor c );
-  QColor getColor( ) const;
-  void setPointSnapper(PointSnapperBase*);
-  bool eventFilter(QObject* object, QEvent* event) override;
-
-protected:
-  SplitEdgeCallbackBase( QObject* parent );
-  CGAL::Qt::SegmentInputMethod segmentInputMethod;
-}; // SplitEdgeCallbackBase
+enum class TraitsType : int;
+}
 
 /**
    Handles splitting of arrangement curves selected from the scene.
-
-   The template parameter is a CGAL::Arrangement_with_history_2 of some type.
 */
-template <typename Arr_>
-class SplitEdgeCallback : public SplitEdgeCallbackBase
+class SplitEdgeCallbackBase : public CGAL::Qt::Callback
+
 {
 public:
-  typedef Arr_ Arrangement;
-  typedef typename Arrangement::Geometry_traits_2 Traits;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename Traits::Intersect_2 Intersect_2;
-  typedef typename Traits::Equal_2 Equal_2;
-  typedef typename Traits::Multiplicity Multiplicity;
-  typedef typename Traits::Point_2 Point_2;
-  typedef typename CGAL::Qt::CurveInputMethod::Point_2 Input_point_2;
+  static SplitEdgeCallbackBase*
+  create(demo_types::TraitsType, CGAL::Object arr_obj, QObject* parent);
 
-  SplitEdgeCallback( Arrangement* arr_, QObject* parent );
-  void setScene(QGraphicsScene* scene_) override;
-  void reset() override;
+  virtual void setColor(QColor c) = 0;
+  virtual QColor getColor() const = 0;
+  virtual void setPointSnapper(PointSnapperBase*) = 0;
 
 protected:
-  void curveInputDoneEvent(
-    const std::vector<Input_point_2>& clickedPoints,
-    CGAL::Qt::CurveType type) override;
-
-  void splitEdges(const Input_point_2& p1, const Input_point_2& p2);
-
-  Arrangement* arr;
-  Intersect_2 intersectCurves;
-  Equal_2 areEqual;
-}; // class SplitEdgeCallback
+  SplitEdgeCallbackBase(QObject* parent);
+}; // SplitEdgeCallbackBase
 
 #endif // SPLIT_EDGE_CALLBACK_H

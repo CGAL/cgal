@@ -86,15 +86,15 @@ auto ArrangementPainterOstream<CGAL::Arr_conic_traits_2<
   std::vector<CGAL::Object> rightIntersections;
   std::vector<CGAL::Object> intersections;
 
-  this->intersect_2(bottom, curve, std::back_inserter(bottomIntersections));
-  this->intersect_2(left, curve, std::back_inserter(leftIntersections));
-  this->intersect_2(top, curve, std::back_inserter(topIntersections));
-  this->intersect_2(right, curve, std::back_inserter(rightIntersections));
+  this->intersect_2(bottom, curve, bottomIntersections);
+  this->intersect_2(left, curve, leftIntersections);
+  this->intersect_2(top, curve, topIntersections);
+  this->intersect_2(right, curve, rightIntersections);
 
-  this->intersect_2(bottom, curve, std::back_inserter(intersections));
-  this->intersect_2(left, curve, std::back_inserter(intersections));
-  this->intersect_2(top, curve, std::back_inserter(intersections));
-  this->intersect_2(right, curve, std::back_inserter(intersections));
+  this->intersect_2(bottom, curve, intersections);
+  this->intersect_2(left, curve, intersections);
+  this->intersect_2(top, curve, intersections);
+  this->intersect_2(right, curve, intersections);
 
   this->filterIntersectionPoints(intersections);
 
@@ -171,24 +171,6 @@ void ArrangementPainterOstream<
   }
 }
 
-template <typename RatKernel, class AlgKernel, class NtTraits>
-void ArrangementPainterOstream<
-  CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
-  printIntersectResult(const std::vector<CGAL::Object>& res)
-{
-  for (std::vector<CGAL::Object>::const_iterator it = res.begin();
-       it != res.end(); ++it)
-  {
-    CGAL::Object obj = *it;
-    std::pair<Intersection_point_2, Multiplicity> pair;
-    if (CGAL::assign(pair, obj))
-    {
-      Point_2 pt = pair.first;
-      /* QPointF qpt = */ this->convert(pt);
-      // std::cout << "(" << pt.x( ) << " " << pt.y( ) < ")" << std::endl;
-    }
-  }
-}
 template <typename RatKernel, class AlgKernel, class NtTraits>
 ArrangementPainterOstream<
   CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>&

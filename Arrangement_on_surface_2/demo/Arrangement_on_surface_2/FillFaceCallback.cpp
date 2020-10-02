@@ -12,15 +12,48 @@
 
 #include "FillFaceCallback.h"
 #include "ArrangementTypes.h"
-#include "PointLocationFunctions.h"
-#include "Utils.h"
+#include "ArrangementTypesUtils.h"
+#include "Utils/PointLocationFunctions.h"
+#include "Utils/Utils.h"
 
 #include <QGraphicsSceneMouseEvent>
 
+template <class Arr_>
+class FillFaceCallback : public FillFaceCallbackBase
+{
+public:
+  typedef Arr_ Arrangement;
+  typedef typename Arrangement::Face_handle Face_handle;
+  typedef typename Arrangement::Face_const_handle Face_const_handle;
+
+  FillFaceCallback(Arrangement* arr_, QObject* parent_);
+  void reset();
+
+protected:
+  void mousePressEvent(QGraphicsSceneMouseEvent* event);
+  void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+  void fillFace(QGraphicsSceneMouseEvent* event);
+
+  Arrangement* arr;
+}; // class FillFaceCallback
 
 FillFaceCallbackBase::FillFaceCallbackBase(QObject* parent) :
     CGAL::Qt::Callback(parent), fillColor(::Qt::black)
 {
+}
+
+FillFaceCallbackBase* FillFaceCallbackBase::create(
+  demo_types::TraitsType tt, CGAL::Object arr_obj, QObject* parent)
+{
+  FillFaceCallbackBase* res;
+  demo_types::visitArrangementType(tt, [&](auto type_holder) {
+    using Arrangement = typename decltype(type_holder)::type;
+
+    Arrangement* arr = nullptr;
+    CGAL::assign(arr, arr_obj);
+    res = new FillFaceCallback<Arrangement>(arr, parent);
+  });
+  return res;
 }
 
 void FillFaceCallbackBase::setColor(QColor c)
@@ -72,5 +105,3 @@ void FillFaceCallback<Arr_>::fillFace(QGraphicsSceneMouseEvent* event)
   else
     f->set_color(::Qt::white);
 }
-
-ARRANGEMENT_DEMO_SPECIALIZE_ARR(FillFaceCallback)

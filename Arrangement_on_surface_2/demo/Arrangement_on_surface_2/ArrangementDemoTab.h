@@ -26,7 +26,9 @@ class VerticalRayShootCallbackBase;
 class EnvelopeCallbackBase;
 class FillFaceCallbackBase;
 class SplitEdgeCallbackBase;
+class MergeEdgeCallbackBase;
 class DeleteCurveCallbackBase;
+class PointLocationCallbackBase;
 class GridGraphicsItem;
 class PointSnapperBase;
 
@@ -34,8 +36,8 @@ namespace CGAL
 {
 namespace Qt
 {
-class ArrangementGraphicsItemBase;
 class Callback;
+class ArrangementGraphicsItemBase;
 class ArrangementGraphicsItemBase;
 class GraphicsViewCurveInputBase;
 class GraphicsViewNavigation;
@@ -48,7 +50,7 @@ namespace demo_types
 enum class TraitsType;
 }
 
-class ArrangementDemoTabBase : public QWidget, public GraphicsSceneMixin
+class ArrangementDemoTab : public QWidget, public GraphicsSceneMixin
 {
   Q_OBJECT
 
@@ -56,12 +58,13 @@ Q_SIGNALS:
   void modelChanged( );
 
 public:
-  ArrangementDemoTabBase( QWidget* parent );
-  virtual ~ArrangementDemoTabBase( );
+  ArrangementDemoTab(
+    QWidget* parent, demo_types::TraitsType tt, CGAL::Object arrangement_);
 
-  virtual CGAL::Object getArrangement() const = 0;
-  virtual void adjustViewport() = 0;
-  virtual demo_types::TraitsType traitsType() const = 0;
+  virtual ~ArrangementDemoTab();
+
+  CGAL::Object getArrangement() const;
+  demo_types::TraitsType traitsType() const;
 
   QGraphicsView* getView() const;
   void showGrid(bool);
@@ -70,15 +73,16 @@ public:
   void setSnapToArrangement(bool);
   bool isSnapToGridEnabled();
   bool isSnapToArrangementEnabled();
+  void adjustViewport();
 
   auto getArrangementGraphicsItem() const
     -> CGAL::Qt::ArrangementGraphicsItemBase*;
   auto getGridGraphicsItem() const -> GridGraphicsItem*;
   auto getCurveInputCallback() const -> CGAL::Qt::GraphicsViewCurveInputBase*;
   auto getDeleteCurveCallback() const -> CGAL::Qt::Callback*;
-  auto getPointLocationCallback() const -> CGAL::Qt::Callback*;
+  auto getPointLocationCallback() const -> PointLocationCallbackBase*;
   auto getVerticalRayShootCallback() const -> VerticalRayShootCallbackBase*;
-  auto getMergeEdgeCallback() const -> CGAL::Qt::Callback*;
+  auto getMergeEdgeCallback() const -> MergeEdgeCallbackBase*;
   auto getSplitEdgeCallback() const -> SplitEdgeCallbackBase*;
   auto getEnvelopeCallback() const -> EnvelopeCallbackBase*;
   auto getFillFaceCallback() const -> FillFaceCallbackBase*;
@@ -117,10 +121,11 @@ public:
   };
   void updatePreferences(const Preferences&);
 
-protected Q_SLOTS:
-  virtual void slotModelChanged() = 0;
-
 protected:
+  void initArrangement();
+  void initComponents();
+  void setupCallbacks();
+
   virtual void setupUi( );
   void unhookAndInstallEventFilter(CGAL::Qt::Callback*);
 
@@ -129,9 +134,9 @@ protected:
 
   std::unique_ptr<CGAL::Qt::GraphicsViewCurveInputBase> curveInputCallback;
   std::unique_ptr<DeleteCurveCallbackBase> deleteCurveCallback;
-  std::unique_ptr<CGAL::Qt::Callback> pointLocationCallback;
+  std::unique_ptr<PointLocationCallbackBase> pointLocationCallback;
   std::unique_ptr<VerticalRayShootCallbackBase> verticalRayShootCallback;
-  std::unique_ptr<CGAL::Qt::Callback> mergeEdgeCallback;
+  std::unique_ptr<MergeEdgeCallbackBase> mergeEdgeCallback;
   std::unique_ptr<SplitEdgeCallbackBase> splitEdgeCallback;
   std::unique_ptr<EnvelopeCallbackBase> envelopeCallback;
   std::unique_ptr<FillFaceCallbackBase> fillFaceCallback;
@@ -141,34 +146,9 @@ protected:
   CGAL::Qt::Callback* activeCallback;
   CGAL::Qt::ArrangementGraphicsItemBase* arrangementGraphicsItem;
   GridGraphicsItem* gridGraphicsItem;
+
+  demo_types::TraitsType ttype;
+  CGAL::Object arrangement;
 }; // class ArrangementDemoTabBase
-
-template < class Arr_ >
-class ArrangementDemoTab : public ArrangementDemoTabBase
-{
-public:
-  typedef ArrangementDemoTabBase Superclass;
-  typedef Arr_ Arrangement;
-  typedef typename Arrangement::Geometry_traits_2 Traits;
-
-  ArrangementDemoTab(
-    QWidget* parent, std::unique_ptr<Arrangement> arrangement_ = nullptr);
-  ~ArrangementDemoTab();
-  void adjustViewport() override;
-  CGAL::Object getArrangement() const override;
-  demo_types::TraitsType traitsType() const override;
-
-private:
-  void initArrangement();
-  void initComponents();
-  void setupCallbacks();
-
-protected:
-  void slotModelChanged() override;
-
-protected:
-  std::unique_ptr<Arrangement> arrangement;
-
-}; // class ArrangementDemoTab
 
 #endif // ARRANGEMENT_DEMO_TAB_H

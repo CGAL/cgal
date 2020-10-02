@@ -11,17 +11,63 @@
 //            Ahmed Essam <theartful.ae@gmail.com>
 
 #include "VerticalRayShootCallback.h"
-#include "CurveGraphicsItem.h"
-#include "PointLocationFunctions.h"
-#include "Utils.h"
+#include "VerticalRayGraphicsItem.h"
 #include "ArrangementTypes.h"
+#include "ArrangementTypesUtils.h"
+#include "CurveGraphicsItem.h"
+#include "Utils/PointLocationFunctions.h"
+#include "Utils/Utils.h"
 
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 
+template <typename Arr_>
+class VerticalRayShootCallback : public VerticalRayShootCallbackBase
+{
+public:
+  typedef VerticalRayShootCallbackBase Superclass;
+  typedef Arr_ Arrangement;
+  typedef typename Arrangement::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Arrangement::Face_const_handle Face_const_handle;
+  typedef typename Arrangement::Vertex_const_handle Vertex_const_handle;
+  typedef typename Arrangement::Geometry_traits_2 Traits;
+
+  VerticalRayShootCallback(Arrangement* arr_, QObject* parent_);
+  void reset() override;
+  void setScene(QGraphicsScene* scene_) override;
+  void slotModelChanged() override;
+  void setEdgeWidth(int width) override;
+  void setEdgeColor(const QColor& color) override;
+  const QColor& edgeColor() const override;
+  int edgeWidth() const override;
+
+protected:
+  void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+  void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+  void highlightPointLocation(QGraphicsSceneMouseEvent* event);
+
+  Arrangement* arr;
+  CGAL::Qt::CurveGraphicsItem<Traits>* highlightedCurves;
+  VerticalRayGraphicsItem rayGraphicsItem;
+}; // class VerticalRayShootCallback
+
 VerticalRayShootCallbackBase::VerticalRayShootCallbackBase(QObject* parent_) :
     CGAL::Qt::Callback(parent_), shootingUp(true)
 {
+}
+
+VerticalRayShootCallbackBase* VerticalRayShootCallbackBase::create(
+  demo_types::TraitsType tt, CGAL::Object arr_obj, QObject* parent)
+{
+  VerticalRayShootCallbackBase* res;
+  demo_types::visitArrangementType(tt, [&](auto type_holder) {
+    using Arrangement = typename decltype(type_holder)::type;
+
+    Arrangement* arr = nullptr;
+    CGAL::assign(arr, arr_obj);
+    res = new VerticalRayShootCallback<Arrangement>(arr, parent);
+  });
+  return res;
 }
 
 void VerticalRayShootCallbackBase::setShootingUp(bool isShootingUp)
@@ -172,5 +218,3 @@ void VerticalRayShootCallback<Arr_>::highlightPointLocation(
 
   Q_EMIT modelChanged();
 }
-
-ARRANGEMENT_DEMO_SPECIALIZE_ARR(VerticalRayShootCallback)

@@ -54,6 +54,22 @@ struct Arr_identified_side_tag;
 template <typename T>
 class Rational_traits;
 
+template <typename FT_>
+struct Cartesian;
+
+class Object;
+
+namespace Qt
+{
+class CurveInputMethod;
+}
+
 } // namespace CGAL
+
+namespace demo_types
+{
+enum class TraitsType : int;
+struct DemoTypes;
+}
 
 #endif

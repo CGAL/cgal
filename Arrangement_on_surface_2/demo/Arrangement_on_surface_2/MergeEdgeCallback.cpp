@@ -12,17 +12,63 @@
 
 #include "MergeEdgeCallback.h"
 #include "ArrangementTypes.h"
+#include "ArrangementTypesUtils.h"
 #include "CurveGraphicsItem.h"
+#include "Utils/SplitAndMerge.h"
+#include "Utils/Utils.h"
+
 #include <CGAL/Qt/Converter.h>
 #include <QGraphicsSceneMouseEvent>
 
-#include "Utils.h"
+template <typename Arr_>
+class MergeEdgeCallback : public MergeEdgeCallbackBase
+{
+public:
+  typedef Arr_ Arrangement;
+  typedef typename Arrangement::Halfedge_handle Halfedge_handle;
+  typedef typename Arrangement::Halfedge_iterator Halfedge_iterator;
+  typedef typename Arrangement::Vertex_iterator Vertex_iterator;
+  typedef typename Arrangement::Geometry_traits_2 Traits;
+  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+
+  MergeEdgeCallback(Arrangement* arr_, QObject* parent_);
+  void setScene(QGraphicsScene* scene_) override;
+  void reset() override;
+
+protected:
+  void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+  void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+  Halfedge_handle getNearestMergeableCurve(QGraphicsSceneMouseEvent* event);
+  Halfedge_handle
+  getNearestMergeableCurve(Halfedge_handle h, QGraphicsSceneMouseEvent* event);
+
+  CGAL::Qt::CurveGraphicsItem<Traits>* highlightedCurve;
+  CGAL::Qt::CurveGraphicsItem<Traits>* highlightedCurve2;
+  Arrangement* arr;
+  Merge_edge<Arrangement> mergeEdge;
+  Halfedge_handle mergeableHalfedge;
+  bool isFirst;
+}; // class MergeEdgeCallback
+
+MergeEdgeCallbackBase* MergeEdgeCallbackBase::create(
+  demo_types::TraitsType tt, CGAL::Object arr_obj, QObject* parent)
+{
+  MergeEdgeCallbackBase* res;
+  demo_types::visitArrangementType(tt, [&](auto type_holder) {
+    using Arrangement = typename decltype(type_holder)::type;
+
+    Arrangement* arr = nullptr;
+    CGAL::assign(arr, arr_obj);
+    res = new MergeEdgeCallback<Arrangement>(arr, parent);
+  });
+  return res;
+}
 
 /*! Constructor */
 template <typename Arr_>
 MergeEdgeCallback<Arr_>::MergeEdgeCallback(
   Arrangement* arr_, QObject* parent_) :
-    CGAL::Qt::Callback(parent_),
+    MergeEdgeCallbackBase(parent_),
     highlightedCurve(new CGAL::Qt::CurveGraphicsItem<Traits>()),
     highlightedCurve2(new CGAL::Qt::CurveGraphicsItem<Traits>()), arr(arr_),
     isFirst(true)
@@ -71,7 +117,7 @@ void MergeEdgeCallback<Arr_>::mousePressEvent(QGraphicsSceneMouseEvent* event)
   {
     Halfedge_handle nextHalfedge =
       this->getNearestMergeableCurve(this->mergeableHalfedge, event);
-    this->arr->merge_edge(this->mergeableHalfedge, nextHalfedge);
+    this->mergeEdge.mergeEdge(this->arr, this->mergeableHalfedge, nextHalfedge);
     this->reset();
   }
 
@@ -110,8 +156,8 @@ MergeEdgeCallback<Arr_>::getNearestMergeableCurve(
 {
   // find the nearest curve to the cursor that is adjacent to a curve that
   // can be merged with it
-  typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
-  typedef typename Kernel::Point_2                      Kernel_point_2;
+  typedef typename ArrTraitsAdaptor<Traits>::Kernel Kernel;
+  typedef typename Kernel::Point_2 Kernel_point_2;
 
   Kernel_point_2 p = CGAL::Qt::Converter<Kernel>{}(event->scenePos());
   double minDist = (std::numeric_limits<double>::max)();
@@ -130,12 +176,12 @@ MergeEdgeCallback<Arr_>::getNearestMergeableCurve(
     Halfedge_handle h1 = hei->prev();
     Halfedge_handle h2 = hei->next();
     if (
-      (!this->arr->are_mergeable(hei, h1)) &&
-      (!this->arr->are_mergeable(hei, h2)))
+      (!this->mergeEdge.areMergeable(this->arr, hei, h1)) &&
+      (!this->mergeEdge.areMergeable(this->arr, hei, h2)))
     { continue; }
 
     X_monotone_curve_2 curve = hei->curve();
-    Compute_squared_distance_2< Traits > squaredDistance;
+    Compute_squared_distance_2<Traits> squaredDistance;
     squaredDistance.setScene(this->getScene());
     double dist = CGAL::to_double(squaredDistance(p, curve));
     if (!found || dist < minDist)
@@ -160,8 +206,8 @@ MergeEdgeCallback<Arr_>::getNearestMergeableCurve(
 {
   // find the nearest curve to the cursor that is adjacent to a curve that
   // can be merged with it
-  typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
-  typedef typename Kernel::Point_2                      Kernel_point_2;
+  typedef typename ArrTraitsAdaptor<Traits>::Kernel Kernel;
+  typedef typename Kernel::Point_2 Kernel_point_2;
 
   Kernel_point_2 p = CGAL::Qt::Converter<Kernel>{}(event->scenePos());
   Halfedge_handle h1 = h->prev();
@@ -175,23 +221,23 @@ MergeEdgeCallback<Arr_>::getNearestMergeableCurve(
     return h2;
   else if (target->degree() != 2)
     return h1;
-  else if (this->arr->are_mergeable(h, h1) && this->arr->are_mergeable(h, h2))
+  else if (
+    this->mergeEdge.areMergeable(arr, h, h1) &&
+    this->mergeEdge.areMergeable(arr, h, h2))
   {
     X_monotone_curve_2 c1 = h1->curve();
     X_monotone_curve_2 c2 = h2->curve();
-    Compute_squared_distance_2< Traits > squaredDistance;
+    Compute_squared_distance_2<Traits> squaredDistance;
     squaredDistance.setScene(this->getScene());
     double d1 = CGAL::to_double(squaredDistance(p, c1));
     double d2 = CGAL::to_double(squaredDistance(p, c2));
 
     return (d1 < d2) ? h1 : h2;
   }
-  else if (this->arr->are_mergeable(h, h2))
+  else if (this->mergeEdge.areMergeable(arr, h, h2))
     return h2;
-  else if (this->arr->are_mergeable(h, h1))
+  else if (this->mergeEdge.areMergeable(arr, h, h1))
     return h1;
   else
     return Halfedge_handle();
 }
-
-ARRANGEMENT_DEMO_SPECIALIZE_ARR(MergeEdgeCallback)

@@ -19,9 +19,11 @@
 
 #include "ui_OverlayDialog.h"
 
-OverlayDialog::OverlayDialog( ArrangementDemoWindow* parent ) :
-  QDialog( parent ),
-  ui( new Ui::OverlayDialog )
+OverlayDialog::OverlayDialog(
+  QWidget* parent, const std::vector<ArrangementInfo>& arr_infos_) :
+    QDialog(parent),
+    arr_infos(arr_infos_),
+    ui(new Ui::OverlayDialog)
 {
   using namespace demo_types;
 
@@ -33,50 +35,35 @@ OverlayDialog::OverlayDialog( ArrangementDemoWindow* parent ) :
   QBrush conicColor( ( QColor( ::Qt::blue ) ) );
   this->ui->setupUi( this );
 
-  std::vector< QString > labels = parent->getTabLabels( );
-  std::vector< CGAL::Object > arrangements = parent->getArrangements( );
-
-  for ( unsigned int i = 0; i < labels.size( ); ++i )
+  for (std::size_t i = 0; i < arr_infos.size(); i++)
   {
+    auto& arr = arr_infos[i];
+
     QListWidgetItem* item =
       new QListWidgetItem( this->ui->arrangementsListWidget );
-    item->setText( labels[ i ] );
-    item->setData( ARRANGEMENT, QVariant::fromValue( arrangements[ i ] ) );
-    QIcon icon;
-
-    TraitsType traitsType = TraitsType::NONE;
-    forEachArrangementType([&](auto type_holder) {
-      using Arrangement = typename decltype(type_holder)::type;
-      Arrangement* arr;
-      if (CGAL::assign(arr, arrangements[i]))
-        traitsType = enumFromArrType<Arrangement>();
-    });
-
-    if (traitsType == TraitsType::NONE)
-      CGAL_error();
+    item->setText(arr.label);
+    item->setData(ARRANGEMENT, QVariant::fromValue(i));
 
     static constexpr std::array<const char*, 5> icons = {
       ":/cgal/icons/green_icon.xpm", ":/cgal/icons/yellow_icon.xpm",
       ":/cgal/icons/blue_icon.xpm", ":/cgal/icons/red_icon.xpm",
       ":/cgal/icons/pink_icon.xpm"};
 
+    QIcon icon;
     icon.addFile(
-      QString::fromUtf8(icons[static_cast<int>(traitsType) % icons.size()]));
+      QString::fromUtf8(icons[static_cast<int>(arr.ttype) % icons.size()]));
 
-    item->setIcon( icon );
+    item->setIcon(icon);
   }
 }
 
-std::vector< CGAL::Object >
-OverlayDialog::selectedArrangements( ) const
+std::vector<std::size_t> OverlayDialog::selectedArrangements() const
 {
-  std::vector< CGAL::Object > res;
-  for ( int i = 0; i < this->ui->overlayListWidget->count( ); ++i )
+  std::vector<std::size_t> res;
+  for (int i = 0; i < this->ui->overlayListWidget->count(); ++i)
   {
-    QListWidgetItem* item = this->ui->overlayListWidget->item( i );
-    QVariant data = item->data( ARRANGEMENT );
-    CGAL::Object arr = data.value< CGAL::Object >( );
-    res.push_back( arr );
+    QListWidgetItem* item = this->ui->overlayListWidget->item(i);
+    res.push_back(item->data(ARRANGEMENT).value<std::size_t>());
   }
   return res;
 }
@@ -136,26 +123,21 @@ void OverlayDialog::restrictSelection( QListWidgetItem* item )
 {
   using namespace demo_types;
 
-  CGAL::Object o = item->data( ARRANGEMENT ).value< CGAL::Object >( );
+  auto& arr1 = arr_infos[item->data(ARRANGEMENT).value<std::size_t>()];
 
-  forEachArrangementType([&](auto type_holder) {
-    using Arrangement = typename decltype(type_holder)::type;
-    Arrangement* arr;
-    if (CGAL::assign(arr, o))
-    {
-      for (int i = 0; i < this->ui->arrangementsListWidget->count(); ++i)
-      {
-        auto* otherItem = this->ui->arrangementsListWidget->item(i);
-        auto o2 = otherItem->data(ARRANGEMENT).value<CGAL::Object>();
-        bool enabled = CGAL::assign(arr, o2);
-        Qt::ItemFlags flags = otherItem->flags();
-        if (!enabled) { flags &= ~(Qt::ItemIsEnabled); }
-        else { flags |= Qt::ItemIsEnabled; }
+  for (int i = 0; i < this->ui->arrangementsListWidget->count(); ++i)
+  {
+    auto* otherItem = this->ui->arrangementsListWidget->item(i);
+    auto& arr2 = arr_infos[otherItem->data(ARRANGEMENT).value<std::size_t>()];
+    bool enabled = (arr1.ttype == arr2.ttype);
 
-        otherItem->setFlags(flags);
-      }
-    }
-  });
+    Qt::ItemFlags flags = otherItem->flags();
+    if (!enabled)
+      flags &= ~(Qt::ItemIsEnabled);
+    else
+      flags |= Qt::ItemIsEnabled;
+    otherItem->setFlags(flags);
+  }
 }
 
 void OverlayDialog::unrestrictSelection( )

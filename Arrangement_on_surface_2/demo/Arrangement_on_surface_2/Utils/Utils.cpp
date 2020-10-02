@@ -10,13 +10,18 @@
 // Author(s): Alex Tsui <alextsui05@gmail.com>
 //            Ahmed Essam <theartful.ae@gmail.com>
 
-#include "Utils.h"
-#include "ArrangementTypes.h"
 #include "ArrangementPainterOstream.h"
+#include "ArrangementTypes.h"
+#include "ArrangementTypesUtils.h"
+
 #include "PointLocationFunctions.h"
+#include "Utils.h"
 
 #include <QGraphicsView>
 #include <QScrollBar>
+
+#include <CGAL/Arr_default_overlay_traits.h>
+#include <CGAL/Arr_overlay_2.h>
 
 template <typename Kernel_>
 double
@@ -343,10 +348,9 @@ auto Find_nearest_edge<Arr_>::operator()(const Point_2& queryPt)
       }
     } while (++cc != face->outer_ccb());
   }
-  Hole_const_iterator hit;
-  Hole_const_iterator eit = face->holes_end();
   // int counter = 0;
-  for (hit = face->holes_begin(); hit != eit; ++hit)
+  for (auto hit = face->holes_begin(), eit = face->holes_end(); hit != eit;
+       ++hit)
   { // check any holes inside this face
     Ccb_halfedge_const_circulator cc = *hit;
     do
@@ -380,7 +384,7 @@ auto Find_nearest_edge<Arr_>::getFace(const CGAL::Object& obj)
   CGAL_assertion(CGAL::assign(v, obj));
   CGAL::assign(v, obj);
   if (v->is_isolated()) return v->face();
-  Halfedge_around_vertex_const_circulator eit = v->incident_halfedges();
+  auto eit = v->incident_halfedges();
   return (eit->face());
 }
 
@@ -825,8 +829,77 @@ approx(const X_monotone_curve_2& curve, const Rational& x) -> double
   return CGAL::to_double((*this)(curve, x));
 }
 
+CGAL::Object createArrangement(demo_types::TraitsType tt)
+{
+  CGAL::Object res;
+  demo_types::visitArrangementType(tt, [&](auto type_holder) {
+    using Arrangement = typename decltype(type_holder)::type;
+    res = CGAL::make_object(new Arrangement());
+  });
+  return res;
+}
+
+// Insert_curve
+template <typename Arr_>
+void Insert_curve<Arr_>::operator()(Arrangement* arr, const Curve_2& curve)
+{
+    CGAL::insert(*arr, curve);
+}
+
+// free functions
+void deleteArrangement(demo_types::TraitsType tt, const CGAL::Object& arr_obj)
+{
+  demo_types::visitArrangementType(tt, [&](auto type_holder) {
+    using Arrangement = typename decltype(type_holder)::type;
+    Arrangement* arr = nullptr;
+    CGAL::assign(arr, arr_obj);
+    delete arr;
+  });
+}
+
+CGAL::Object makeOverlayArrangement(const std::vector<CGAL::Object>& arrs)
+{
+  CGAL::Object arr_obj;
+  if (arrs.size() == 2)
+  {
+    demo_types::forEachArrangementType([&](auto type_holder) {
+      using Arrangement = typename decltype(type_holder)::type;
+
+      Arrangement* arr1;
+      Arrangement* arr2;
+      if (CGAL::assign(arr1, arrs[0]) && CGAL::assign(arr2, arrs[1]))
+      {
+        auto overlay_arr = new Arrangement();
+        CGAL::Arr_default_overlay_traits<Arrangement> overlay_traits;
+
+        CGAL::overlay(*arr1, *arr2, *overlay_arr, overlay_traits);
+        arr_obj = CGAL::make_object(overlay_arr);
+      }
+    });
+  }
+  return arr_obj;
+}
+
+void insertCurve(
+  demo_types::TraitsType tt, const CGAL::Object& arr_obj,
+  const CGAL::Object& curve_obj)
+{
+  demo_types::visitArrangementType(tt, [&](auto type_holder) {
+    using Arrangement = typename decltype(type_holder)::type;
+    using Curve_2 = typename Arrangement::Curve_2;
+
+    Curve_2 curve;
+    Arrangement* arr;
+    if (!CGAL::assign(arr, arr_obj)) CGAL_error();
+    if (!CGAL::assign(curve, curve_obj)) CGAL_error();
+
+    Insert_curve<Arrangement>{}(arr, curve);
+  });
+}
+
 ARRANGEMENT_DEMO_SPECIALIZE_TRAITS(Compute_squared_distance_2)
 ARRANGEMENT_DEMO_SPECIALIZE_TRAITS(Arr_construct_point_2)
 ARRANGEMENT_DEMO_SPECIALIZE_TRAITS(Construct_x_monotone_subcurve_2)
 ARRANGEMENT_DEMO_SPECIALIZE_TRAITS(Arr_compute_y_at_x_2)
 ARRANGEMENT_DEMO_SPECIALIZE_ARR(Find_nearest_edge)
+ARRANGEMENT_DEMO_SPECIALIZE_ARR(Insert_curve)

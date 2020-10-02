@@ -12,11 +12,16 @@
 #ifndef ARRANGEMENT_DEMO_TYPE_UTILS
 #define ARRANGEMENT_DEMO_TYPE_UTILS
 
-#include "ArrangementTypes.h"
+
+#include "ForwardDeclarations.h"
 #include <CGAL/assertions.h>
 
 namespace demo_types
 {
+
+// avoid including "ArrangementTypes.h" at all costs for better compilation
+// speed
+struct DemoTypes;
 
 enum class TraitsType : int
 {
@@ -95,32 +100,32 @@ static constexpr TraitsType enumFromArrType()
   return details::EnumFromTraits<typename T::Geometry_traits_2>::value;
 }
 
-template <class Lambda>
+template <class Lambda, class Types=DemoTypes>
 static void visitArrangementType(TraitsType tt, Lambda lambda)
 {
   switch (tt)
   {
   case TraitsType::SEGMENT_TRAITS:
-    lambda(TypeHolder<Seg_arr>{});
+    lambda(TypeHolder<typename Types::Seg_arr>{});
     break;
   case TraitsType::POLYLINE_TRAITS:
-    lambda(TypeHolder<Pol_arr>{});
+    lambda(TypeHolder<typename Types::Pol_arr>{});
     break;
   case TraitsType::LINEAR_TRAITS:
-    lambda(TypeHolder<Lin_arr>{});
+    lambda(TypeHolder<typename Types::Lin_arr>{});
     break;
 #ifdef CGAL_USE_CORE
   case TraitsType::CONIC_TRAITS:
-    lambda(TypeHolder<Conic_arr>{});
+    lambda(TypeHolder<typename Types::Conic_arr>{});
     break;
   case TraitsType::ALGEBRAIC_TRAITS:
-    lambda(TypeHolder<Alg_seg_arr>{});
+    lambda(TypeHolder<typename Types::Alg_seg_arr>{});
     break;
   case TraitsType::BEZIER_TRAITS:
-    lambda(TypeHolder<Bezier_arr>{});
+    lambda(TypeHolder<typename Types::Bezier_arr>{});
     break;
   case TraitsType::RATIONAL_FUNCTION_TRAITS:
-    lambda(TypeHolder<Rational_arr>{});
+    lambda(TypeHolder<typename Types::Rational_arr>{});
     break;
 #endif
   default:
@@ -128,17 +133,17 @@ static void visitArrangementType(TraitsType tt, Lambda lambda)
   }
 }
 
-template <class Lambda>
+template <class Lambda, class Types=DemoTypes>
 static void forEachArrangementType(Lambda lambda)
 {
-  lambda(TypeHolder<Seg_arr>{});
-  lambda(TypeHolder<Pol_arr>{});
-  lambda(TypeHolder<Lin_arr>{});
+  lambda(TypeHolder<typename Types::Seg_arr>{});
+  lambda(TypeHolder<typename Types::Pol_arr>{});
+  lambda(TypeHolder<typename Types::Lin_arr>{});
 #ifdef CGAL_USE_CORE
-  lambda(TypeHolder<Conic_arr>{});
-  lambda(TypeHolder<Alg_seg_arr>{});
-  lambda(TypeHolder<Bezier_arr>{});
-  lambda(TypeHolder<Rational_arr>{});
+  lambda(TypeHolder<typename Types::Conic_arr>{});
+  lambda(TypeHolder<typename Types::Alg_seg_arr>{});
+  lambda(TypeHolder<typename Types::Bezier_arr>{});
+  lambda(TypeHolder<typename Types::Rational_arr>{});
 #endif
 }
 }

@@ -14,50 +14,24 @@
 #define MERGE_EDGE_CALLBACK_H
 
 #include "Callback.h"
+#include <CGAL/Object.h>
 
-namespace CGAL
+namespace demo_types
 {
-namespace Qt
-{
-template <typename T>
-class CurveGraphicsItem;
-} // namespace Qt
-} // namespace CGAL
-
-class QGraphicsScene;
+enum class TraitsType : int;
+}
 
 /**
    Handles merging of arrangement curves selected from the scene.
-
-   The template parameter is a CGAL::Arrangement_with_history_2 of some type.
 */
-template < typename Arr_ >
-class MergeEdgeCallback : public CGAL::Qt::Callback
+class MergeEdgeCallbackBase : public CGAL::Qt::Callback
 {
 public:
-  typedef Arr_ Arrangement;
-  typedef typename Arrangement::Halfedge_handle         Halfedge_handle;
-  typedef typename Arrangement::Halfedge_iterator       Halfedge_iterator;
-  typedef typename Arrangement::Vertex_iterator         Vertex_iterator;
-  typedef typename Arrangement::Geometry_traits_2       Traits;
-  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
-
-  MergeEdgeCallback( Arrangement* arr_, QObject* parent_ );
-  void setScene(QGraphicsScene* scene_) override;
-  void reset() override;
+  static MergeEdgeCallbackBase*
+  create(demo_types::TraitsType, CGAL::Object arr_obj, QObject* parent);
 
 protected:
-  void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
-  void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
-  Halfedge_handle getNearestMergeableCurve( QGraphicsSceneMouseEvent* event );
-  Halfedge_handle getNearestMergeableCurve( Halfedge_handle h,
-                                            QGraphicsSceneMouseEvent* event );
-
-  CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurve;
-  CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurve2;
-  Arrangement* arr;
-  Halfedge_handle mergeableHalfedge;
-  bool isFirst;
-}; // class MergeEdgeCallback
+  using CGAL::Qt::Callback::Callback;
+};
 
 #endif // MERGE_EDGE_CALLBACK_H

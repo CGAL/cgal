@@ -557,9 +557,6 @@ public: // typedefs
   typedef typename Arrangement::Vertex_const_handle     Vertex_const_handle;
   typedef typename Arrangement::Ccb_halfedge_const_circulator
     Ccb_halfedge_const_circulator;
-  typedef typename Arrangement::Hole_const_iterator     Hole_const_iterator;
-  typedef typename Arrangement::Halfedge_around_vertex_const_circulator
-    Halfedge_around_vertex_const_circulator;
 
 public:
   /*! constructor */
@@ -588,5 +585,24 @@ protected: // member fields
   Point_curve_distance pointCurveDistance;
 
 }; // class Find_nearest_edge
+
+template <typename Arr_>
+class Insert_curve
+{
+public:
+  typedef Arr_                                                   Arrangement;
+  typedef typename Arrangement::Geometry_traits_2                ArrTraits;
+  typedef typename ArrTraits::Curve_2                            Curve_2;
+
+  void operator()(Arrangement*, const Curve_2&);
+};
+
+// free functions gathered here to speed up compilation of other files
+// specializing once in one file is better than in multiple files
+CGAL::Object createArrangement(demo_types::TraitsType);
+void deleteArrangement(demo_types::TraitsType, const CGAL::Object&);
+CGAL::Object makeOverlayArrangement(const std::vector<CGAL::Object>&);
+void insertCurve(
+  demo_types::TraitsType, const CGAL::Object& arr, const CGAL::Object& curve);
 
 #endif // CGAL_ARRANGEMENTS_DEMO_UTILS_H

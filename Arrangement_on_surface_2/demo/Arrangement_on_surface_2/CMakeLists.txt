@@ -20,8 +20,36 @@ find_package(Qt5 QUIET COMPONENTS Gui Widgets)
 
 if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})
-  add_definitions(-DQT_NO_KEYWORDS)
+  add_compile_definitions(QT_NO_KEYWORDS)
   include_directories( BEFORE ./ )
+
+  option(COMPILE_UTILS_INCREMENTALLY
+    "Compile files in Utils directory incrementally, or compile them all as a unit. \
+    Incremental compilation will be better for debugging and consumes less \
+    memory but slower"
+    OFF)
+
+  set(UTILS_SOURCE_FILES
+       "Utils/Utils.cpp"
+       "Utils/PointLocationFunctions.cpp"
+       "Utils/ConstructBoundingBox.cpp"
+       "Utils/EnvelopeFunctions.cpp"
+       "Utils/ConstructSegment.cpp"
+       "Utils/IntersectCurves.cpp"
+       "Utils/SplitAndMerge.cpp"
+  )
+
+  if (COMPILE_UTILS_INCREMENTALLY)
+    set(UTILS_COMPILE_FILES ${UTILS_SOURCE_FILES})
+  else()
+    set(UTILS_CPP_FILES_INCLUDES "")
+    foreach(utils_src IN LISTS UTILS_SOURCE_FILES)
+      string(APPEND UTILS_CPP_FILES_INCLUDES "#include \"${utils_src}\"\n")
+    endforeach()
+    file(WRITE "${CMAKE_BINARY_DIR}/CombinedUtils.cpp" ${UTILS_CPP_FILES_INCLUDES})
+    set(UTILS_COMPILE_FILES "${CMAKE_BINARY_DIR}/CombinedUtils.cpp")
+  endif()
+
 
   qt5_wrap_ui(arrangement_2_uis
               ArrangementDemoWindow.ui
@@ -57,9 +85,7 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
                  SplitEdgeCallback.cpp
                  FillFaceCallback.cpp
                  MergeEdgeCallback.cpp
-                 PointLocationFunctions.cpp
                  PointLocationCallback.cpp
-                 Utils.cpp
                  NewTabDialog.cpp
                  OverlayDialog.cpp
                  ArrangementDemoPropertiesDialog.cpp
@@ -79,8 +105,8 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
                  PointSnapper.cpp
                  CurveInputMethods.cpp
                  FloodFill.cpp
-                 ConstructBoundingBox.cpp
                  ArrangementIO.cpp
+                 ${UTILS_COMPILE_FILES}
                  ${arrangement_2_uis}
                  ${CGAL_Qt5_RESOURCE_FILES}
                  ${CGAL_Qt5_MOC_FILES})

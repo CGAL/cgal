@@ -19,7 +19,7 @@
 
 #include "ArrangementTypes.h"
 #include "PointLocationFunctions.h"
-#include "Utils.h"
+#include "Utils/Utils.h"
 
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Approximate_2)
 
