@@ -68,7 +68,7 @@ int main(int argc, char* argv[]) {
 
   std::ofstream inside("insideE.txt");
   std::ofstream outside("outsideE.txt");
-  for(int i = 0; i < env_vertices.size(); i+=10){
+  for(int i = 0; i <  env_vertices.size()  ; i+=10){
       for(int j = i+1; j < env_vertices.size(); j+=10){
         for(int k = j+1; k < env_vertices.size(); k+=10){
           if( ( i != j) && (i != k) && (j != k)){

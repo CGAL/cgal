@@ -28,7 +28,7 @@
 #include <string>
 #include <fstream>
 
-
+int CALLS, FAST;
 
 namespace CGAL {
 template <typename K>
@@ -530,11 +530,14 @@ struct Envelope {
   }
 
 
+  // This predicate checks if the intersection point of t/facet1/facet2   lies in the triangle
 
   int
   is_3_triangle_cut_float_fast(const ePoint_3& tp,
                                const ePoint_3& tq,
                                const ePoint_3& tr,
+                               const Plane& facet1,
+                               const Plane& facet2,
                                const ePoint_3& ip
                                /*
                                , const ePlane_3 &tri,
@@ -543,6 +546,26 @@ struct Envelope {
                                */
                                ) const
   {
+#if 0
+    // This checks if the triangle is completely on a side of facet1   or facet2
+    // If this is  the case the intersection line of the facets cannot be in the triangle
+    // But this case gets altready filtered ealier
+    bool fast_exit = false;
+    CGAL::Orientation ori = orientation(facet1.ep, facet1.eq, facet1.er, tp);
+    if(ori != CGAL::COPLANAR){
+      if( (ori == CGAL::orientation(facet1.ep, facet1.eq, facet1.er, tq))
+          && (ori == CGAL::orientation(facet1.ep, facet1.eq, facet1.er, tr)) ){
+        return 0;
+      }
+    }
+    ori = orientation(facet2.ep, facet2.eq, facet2.er, tp);
+    if(ori != CGAL::COPLANAR){
+      if( (ori == CGAL::orientation(facet2.ep, facet2.eq, facet2.er, tq))
+          && (ori == CGAL::orientation(facet2.ep, facet2.eq, facet2.er, tr))){
+        return 0;
+      }
+    }
+#endif
 
     Point_3 itp(CGAL::approx(tp).x().inf(), CGAL::approx(tp).y().inf(), CGAL::approx(tp).z().inf());
     Point_3 itq(CGAL::approx(tq).x().inf(), CGAL::approx(tq).y().inf(), CGAL::approx(tq).z().inf());
@@ -563,14 +586,18 @@ struct Envelope {
     int o2 = int(CGAL::orientation(n,tq,tr, ip));
 
     if (o1 * o2 == -1){
+
       return 0;
     }
     int o3 = int(CGAL::orientation(n, tr, tp, ip));
 
-    if (o1 * o3 == -1 || o2 * o3 == -1)
+    if (o1 * o3 == -1 || o2 * o3 == -1){
+
       return 0;
-    if (o1 * o2 * o3 == 0)
+    }
+    if (o1 * o2 * o3 == 0){
       return 2; // means we dont know
+    }
     return 1;
   }
 
@@ -659,9 +686,19 @@ struct Envelope {
     for (int i = 0; i < prism.size(); i++)
       {
         const Plane& plane = prism[i];
+#if 1
+        // As the orientation test operates on point with inf==sup of the coordinate intervals
+        // we can profit from the static filters.
+        // The oriented side test being made with interval arithmetic is more expensive
+        o1[i] =  CGAL::orientation(plane.ep, plane.eq, plane.er, tri0);
+        o2[i] =  CGAL::orientation(plane.ep, plane.eq, plane.er, tri1);
+        o3[i] =  CGAL::orientation(plane.ep, plane.eq, plane.er, tri2);
+#else
         o1[i] = int(oriented_side(plane.eplane, tri0));
         o2[i] = int(oriented_side(plane.eplane, tri1));
         o3[i] = int(oriented_side(plane.eplane, tri2));
+#endif
+
         if (o1[i] + o2[i] + o3[i] >= 2){ //1,1,0 case
           return 0;
         }
@@ -797,7 +834,10 @@ struct Envelope {
 
             boost::optional<ePoint_3>  ipp = CGAL::intersection_point(tri_eplane, prism[cutp[i]].eplane, prism[cutp[j]].eplane);
             if(ipp){
-                inter = is_3_triangle_cut_float_fast(tri0, tri1, tri2, *ipp);
+                inter = is_3_triangle_cut_float_fast(tri0, tri1, tri2,
+                                                     prism[cutp[i]],
+                                                     prism[cutp[j]],
+                                                     *ipp);
             }
             // this was for a fast float check
             if (inter == 2)
@@ -1434,6 +1474,8 @@ struct Envelope {
 
     //tree end
 
+    ePlane_3 etriangle_eplane(etriangle[0],etriangle[1],etriangle[2]);
+
     for (int i = 1; i < queue.size(); i++){
       jump1 = filtered_intersection[queue[i]];
 #ifdef TRACE
@@ -1450,9 +1492,6 @@ struct Envelope {
         if (coverlist[list[j]] == true) neighbour_cover[j] = true;
         else neighbour_cover[j] = false;
       }
-
-
-      ePlane_3 etriangle_eplane(etriangle[0],etriangle[1],etriangle[2]);
 
       for (int j = 0; j < i; j++) {
         jump2 = filtered_intersection[queue[j]];
@@ -1929,6 +1968,7 @@ int main(int argc, char* argv[])
   int inside_count = 0;
   int outside_count = 0;
 
+  CALLS = FAST = 0;
   std::ofstream inside("inside.txt");
   std::ofstream outside("outside.txt");
 
@@ -1950,6 +1990,7 @@ int main(int argc, char* argv[])
       }
   }
   std::cout << inside_count << " " << outside_count << std::endl;
+  std::cout << CALLS << " " << FAST << std::endl;
   std::cout << t.time() << " sec." << std::endl;
 
   return 0;
