@@ -23,6 +23,7 @@
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/container/small_vector.hpp>
+#include <boost/optional.hpp>
 
 #include <limits>
 #include <queue>
@@ -86,11 +87,12 @@ void update_c3t3_facets(C3t3& c3t3,
   }
 }
 
-template<typename C3t3>
+template<typename C3t3, typename IncCellsVectorMap>
 Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
                                   C3t3& c3t3,
                                   const std::vector<typename C3t3::Vertex_handle>& vertices_around_edge,
-                                  const Flip_Criterion& criterion)
+                                  const Flip_Criterion& criterion,
+                                  IncCellsVectorMap& inc_cells)
 {
   typedef typename C3t3::Triangulation Tr;
   typedef typename C3t3::Facet         Facet;
@@ -186,19 +188,19 @@ Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
   if (criterion == MIN_ANGLE_BASED)
   {
     //Current worst dihedral angle
-    FT curr_min_dh = min_dihedral_angle(tr, ch0);
-    curr_min_dh = (std::min)(curr_min_dh, min_dihedral_angle(tr, ch1));
-    curr_min_dh = (std::min)(curr_min_dh, min_dihedral_angle(tr, cell_to_remove));
+    Dihedral_angle_cosine curr_max_cosdh = max_cos_dihedral_angle(tr, ch0);
+    curr_max_cosdh = (std::max)(curr_max_cosdh, max_cos_dihedral_angle(tr, ch1));
+    curr_max_cosdh = (std::max)(curr_max_cosdh, max_cos_dihedral_angle(tr, cell_to_remove));
 
     //Result worst dihedral angle
-    if (curr_min_dh > min_dihedral_angle(tr, vh2,
+    if (curr_max_cosdh < max_cos_dihedral_angle(tr, vh2,
                                          ch0->vertex(indices(vh0_id, 0)),
                                          ch0->vertex(indices(vh0_id, 1)),
                                          ch0->vertex(indices(vh0_id, 2)))
-        || curr_min_dh > min_dihedral_angle(tr, vh3,
-                                            ch1->vertex(indices(vh1_id, 0)),
-                                            ch1->vertex(indices(vh1_id, 1)),
-                                            ch1->vertex(indices(vh1_id, 2))))
+        || curr_max_cosdh < max_cos_dihedral_angle(tr, vh3,
+                                         ch1->vertex(indices(vh1_id, 0)),
+                                         ch1->vertex(indices(vh1_id, 1)),
+                                         ch1->vertex(indices(vh1_id, 2))))
       return NO_BEST_CONFIGURATION;
   }
   else if (criterion == AVERAGE_ANGLE_BASED)
@@ -214,7 +216,7 @@ Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
                             (min_dihedral_angle(tr, vh2, ch0->vertex(indices(vh0_id, 0)),
                                 ch0->vertex(indices(vh0_id, 1)),
                                 ch0->vertex(indices(vh0_id, 2)))
-                             + min_dihedral_angle(tr, vh3, ch1->vertex(indices(vh1_id, 0)),
+                           + min_dihedral_angle(tr, vh3, ch1->vertex(indices(vh1_id, 0)),
                                  ch1->vertex(indices(vh1_id, 1)),
                                  ch1->vertex(indices(vh1_id, 2))));
     //Result worst dihedral angle
@@ -312,6 +314,9 @@ Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
         ch->set_neighbor(v, mirror_facet.first);
       }
       ch->vertex(v)->set_cell(ch);
+
+      inc_cells[ch->vertex(v)] = boost::none;
+      ch->reset_cache_validity();
     }
   }
 
@@ -372,7 +377,7 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
                                   typename C3t3::Vertex_handle vh2,
                                   typename C3t3::Vertex_handle vh3,
                                   CandidatesQueue& candidates,
-                                  double curr_min_dh,
+                                  const Dihedral_angle_cosine& curr_max_cos_dh,
                                   bool is_sliver_well_oriented = true,
                                   int e_id = 0)
 {
@@ -382,8 +387,6 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   typedef typename C3t3::Facet          Facet;
   typedef typename Tr::Facet_circulator Facet_circulator;
   typedef typename Tr::Cell_circulator  Cell_circulator;
-  typedef typename Tr::Geom_traits      Gt;
-  typedef typename Gt::FT               FT;
 
   // std::cout << "find_best_flip_to_improve_dh boundary " << std::endl;
   Tr& tr = c3t3.triangulation();
@@ -451,12 +454,12 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   Cell_circulator cell_circulator = tr.incident_cells(edge);
   Cell_circulator done = cell_circulator;
 
+  boost::container::small_vector<Facet, 60> facets;
   for (std::size_t i = 0; i < opposite_vertices.size(); ++i)
   {
     Vertex_handle vh = opposite_vertices[i];
     bool keep = true;
 
-    std::vector<Facet> facets;
     do
     {
       //Store it if it do not have vh
@@ -474,7 +477,7 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
     } while (++cell_circulator != done);
 
 
-    FT min_flip_dihedral_angle = (std::numeric_limits<FT>::max)();
+    Dihedral_angle_cosine max_flip_cos_dh(CGAL::NEGATIVE, 1., 1.);
     for (const Facet& fi : facets)
     {
       if (!tr.is_infinite(fi.first))
@@ -483,32 +486,75 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
                              fi.first->vertex(indices(fi.second, 1)),
                              fi.first->vertex(indices(fi.second, 2))))
         {
-          min_flip_dihedral_angle = (std::min)(min_flip_dihedral_angle,
-                                               min_dihedral_angle(tr, vh, fi.first->vertex(indices(fi.second, 0)),
-                                                   fi.first->vertex(indices(fi.second, 1)),
-                                                   fi.first->vertex(indices(fi.second, 2))));
+          max_flip_cos_dh = (std::max)(
+            max_flip_cos_dh,
+            max_cos_dihedral_angle(tr, vh, fi.first->vertex(indices(fi.second, 0)),
+                                           fi.first->vertex(indices(fi.second, 1)),
+                                           fi.first->vertex(indices(fi.second, 2))));
         }
         else
         {
           keep = false;
           break;
         }
+
+        if (max_flip_cos_dh.is_one())//it will not get worse than 1.
+        {
+          keep = false;
+          break;
+        }
       }
     }
+    facets.clear();
 
-    if (keep && (curr_min_dh  < min_flip_dihedral_angle || !is_sliver_well_oriented))
+    if (keep && (max_flip_cos_dh < curr_max_cos_dh  || !is_sliver_well_oriented))
     {
-      //std::cout << "vh " << vh->info() <<" old " << curr_min_dh << " min " << min_flip_dihedral_angle << std::endl;
-      candidates.push(std::make_pair(min_flip_dihedral_angle, std::make_pair(vh, e_id)));
+      //std::cout << "vh " << vh->info() <<" old " << curr_max_cos_dh << " min " << min_flip_tan_dh << std::endl;
+      candidates.push(std::make_pair(max_flip_cos_dh, std::make_pair(vh, e_id)));
     }
   }
 }
 
-template<typename C3t3, typename CandidatesQueue>
+template<typename Vertex_handle, typename CellVector, typename Cell_handle>
+bool is_edge_uv(Vertex_handle u,
+                Vertex_handle v,
+                const CellVector& cells_incident_to_u,
+                Cell_handle& cell,
+                int& i,
+                int& j)
+{
+  if (u == v)
+    return false;
+
+  for (typename CellVector::value_type c : cells_incident_to_u)
+  {
+    if (c->has_vertex(v, j))
+    {
+      cell = c;
+      i = cell->index(u);
+      return true;
+    }
+  }
+  return false;
+}
+
+template<typename Vertex_handle, typename CellVector>
+bool is_edge_uv(Vertex_handle u,
+                Vertex_handle v,
+                const CellVector& cells_incident_to_u)
+{
+  typename CellVector::value_type c;
+  int i, j;
+  return is_edge_uv(u, v, cells_incident_to_u, c, i, j);
+}
+
+template<typename C3t3, typename CandidatesQueue,
+         typename IncCellsVectorMap>
 void find_best_flip_to_improve_dh(C3t3& c3t3,
                                   typename C3t3::Edge& edge,
                                   CandidatesQueue& candidates,
-                                  double curr_min_dh,
+                                  const Dihedral_angle_cosine& curr_max_cosdh,
+                                  IncCellsVectorMap& inc_cells,
                                   bool is_sliver_well_oriented = true,
                                   int e_id = 0)
 {
@@ -518,8 +564,6 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   typedef typename C3t3::Facet          Facet;
   typedef typename Tr::Facet_circulator Facet_circulator;
   typedef typename Tr::Cell_circulator  Cell_circulator;
-  typedef typename Tr::Geom_traits      Gt;
-  typedef typename Gt::FT               FT;
 
   Tr& tr = c3t3.triangulation();
 
@@ -547,6 +591,17 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
       }
     }
 
+    if(tr.is_infinite(vh))
+      continue;
+
+    boost::optional<boost::container::small_vector<Cell_handle, 64>>& o_inc_vh = inc_cells[vh];
+    if (o_inc_vh == boost::none)
+    {
+      boost::container::small_vector<Cell_handle, 64> inc_vec;
+      tr.incident_cells(vh, std::back_inserter(inc_vec));
+      o_inc_vh = inc_vec;
+    }
+
     Facet_circulator facet_circulator = curr_fcirc;
     Facet_circulator facet_done = curr_fcirc;
 
@@ -563,15 +618,16 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
                                       indices(facet_circulator->second, i));
         if (curr_vertex != vh0  && curr_vertex != vh1)
         {
-          Cell_handle ch;
-          int i0, i1;
-          if (tr.is_edge(curr_vertex, vh, ch, i0, i1))
+          if (is_edge_uv(vh, curr_vertex, boost::get(o_inc_vh)))
+          {
             is_edge = true;
+            break;
+          }
         }
       }
     } while (++facet_circulator != facet_done);
 
-    if (!is_edge && !tr.is_infinite(vh))
+    if (!is_edge)
       opposite_vertices.push_back(vh);
 
     nb_cells_around_edge++;
@@ -589,12 +645,10 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   Cell_circulator cell_circulator = tr.incident_cells(edge);
   Cell_circulator done = cell_circulator;
 
-  for (std::size_t i = 0; i < opposite_vertices.size(); ++i)
+  boost::container::small_vector<Facet, 60> facets;
+  for (Vertex_handle vh : opposite_vertices)
   {
-    Vertex_handle vh = opposite_vertices[i];
     bool keep = true;
-
-    std::vector<Facet> facets;
     do
     {
       //Store it if it do not have vh
@@ -612,7 +666,7 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
     }
     while (++cell_circulator != done);
 
-    FT min_flip_dihedral_angle = (std::numeric_limits<FT>::max)();
+    Dihedral_angle_cosine max_flip_cos_dh(CGAL::NEGATIVE, 1., 1.);
     for (const Facet& fi : facets)
     {
       if (!tr.is_infinite(fi.first))
@@ -621,31 +675,39 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
                              fi.first->vertex(indices(fi.second, 1)),
                              fi.first->vertex(indices(fi.second, 2))))
         {
-          min_flip_dihedral_angle = (std::min)(min_flip_dihedral_angle,
-                                               min_dihedral_angle(tr, vh, fi.first->vertex(indices(fi.second, 0)),
-                                                   fi.first->vertex(indices(fi.second, 1)),
-                                                   fi.first->vertex(indices(fi.second, 2))));
+          max_flip_cos_dh = (std::max)(max_flip_cos_dh,
+            max_cos_dihedral_angle(tr, vh, fi.first->vertex(indices(fi.second, 0)),
+                                           fi.first->vertex(indices(fi.second, 1)),
+                                           fi.first->vertex(indices(fi.second, 2))));
         }
         else
         {
           keep = false;
           break;
         }
+
+        if (max_flip_cos_dh.is_one())//it will not get worse than 1.
+        {
+          keep = false;
+          break;
+        }
       }
     }
+    facets.clear();
 
-    if (keep && (curr_min_dh  < min_flip_dihedral_angle || !is_sliver_well_oriented))
+    if (keep && (max_flip_cos_dh < curr_max_cosdh || !is_sliver_well_oriented))
     {
-      //std::cout << "vh " << vh->info() <<" old " << curr_min_dh << " min " << min_flip_dihedral_angle << std::endl;
-      candidates.push(std::make_pair(min_flip_dihedral_angle, std::make_pair(vh, e_id)));
+      //std::cout << "vh " << vh->info() <<" old " << curr_max_cosdh << " min " << min_flip_tan_dh << std::endl;
+      candidates.push(std::make_pair(max_flip_cos_dh, std::make_pair(vh, e_id)));
     }
   }
 }
 
-template<typename C3t3, typename Visitor>
+template<typename C3t3, typename IncCellsVectorMap, typename Visitor>
 Sliver_removal_result flip_n_to_m(C3t3& c3t3,
                                   typename C3t3::Edge& edge,
                                   typename C3t3::Vertex_handle vh,
+                                  IncCellsVectorMap& inc_cells,
                                   Visitor& visitor,
                                   bool check_validity = false)
 {
@@ -693,7 +755,14 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   facet_circulator++;
   facet_circulator++;
 
-  std::vector<Vertex_handle> vertices_around_edge;
+  boost::optional<boost::container::small_vector<Cell_handle, 64>>& o_inc_vh = inc_cells[vh];
+  if (o_inc_vh == boost::none)
+  {
+    boost::container::small_vector<Cell_handle, 64> inc_vec;
+    tr.incident_cells(vh, std::back_inserter(inc_vec));
+    o_inc_vh = inc_vec;
+  }
+
   do
   {
     //Get the ids of the opposite vertices
@@ -703,18 +772,13 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
                                     indices(facet_circulator->second, i));
       if (curr_vertex != vh0  && curr_vertex != vh1)
       {
-        Cell_handle ch;
-        int i0, i1;
-        if (tr.is_edge(curr_vertex, vh, ch, i0, i1))
+        if (is_edge_uv(vh, curr_vertex, boost::get(o_inc_vh)))
           return NOT_FLIPPABLE;
-
-        vertices_around_edge.push_back(curr_vertex);
       }
     }
   } while (++facet_circulator != facet_done);
 
 
-  std::vector<Cell_handle> cells_around_edge;
   boost::container::small_vector<Cell_handle, 20> to_remove;
 
   //Neighbors that will need to be updated after flip
@@ -733,8 +797,6 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   Cell_circulator done = cell_circulator;
   do
   {
-    cells_around_edge.push_back(cell_circulator);
-
     //Facets opposite to vh0
     Facet facet_vh0(cell_circulator, cell_circulator->index(vh0));
     neighbor_facets.insert(tr.mirror_facet(facet_vh0));
@@ -877,6 +939,9 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
         ch->set_neighbor(v, facet.first);
       }
       ch->vertex(v)->set_cell(ch);
+
+      inc_cells[ch->vertex(v)] = boost::none;
+      ch->reset_cache_validity();
     }
   }
 
@@ -943,54 +1008,61 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
 }
 
 
-template<typename C3t3, typename Visitor>
+template<typename C3t3, typename IncCellsVectorMap, typename Visitor>
 Sliver_removal_result flip_n_to_m(typename C3t3::Edge& edge,
                                   C3t3& c3t3,
-                                  std::vector<typename C3t3::Vertex_handle>& boundary_vertices,
+                                  const std::vector<typename C3t3::Vertex_handle>& boundary_vertices,
                                   const Flip_Criterion& criterion,
+                                  IncCellsVectorMap& inc_cells,
                                   Visitor& visitor)
 {
   typedef typename C3t3::Vertex_handle Vertex_handle;
   typedef typename C3t3::Triangulation::Cell_circulator Cell_circulator;
-  typedef typename C3t3::Triangulation::Geom_traits Gt;
-  typedef typename Gt::FT FT;
   typename C3t3::Triangulation& tr = c3t3.triangulation();
 
   Sliver_removal_result result = NOT_FLIPPABLE;
 
-  typedef std::pair<double, std::pair<Vertex_handle, int> > Angle_and_vertex;
+  typedef std::pair<Dihedral_angle_cosine, std::pair<Vertex_handle, int> > CosAngle_and_vertex;
 
   //std::cout << "n_to_m_flip " << boundary_vertices.size() << std::endl;
   if (criterion == MIN_ANGLE_BASED)
   {
-    std::priority_queue<Angle_and_vertex> candidates;
+    std::priority_queue<CosAngle_and_vertex,
+                        std::vector<CosAngle_and_vertex>,
+                        std::greater<CosAngle_and_vertex>
+                      > candidates;
 
     Cell_circulator circ = c3t3.triangulation().incident_cells(edge);
     Cell_circulator done = circ;
 
-    FT curr_min_dh = min_dihedral_angle(tr, circ++);
+    Dihedral_angle_cosine curr_max_cosdh = max_cos_dihedral_angle(tr, circ++);
     while (circ != done)
     {
-      curr_min_dh = (std::min)(curr_min_dh, min_dihedral_angle(tr, circ++));
+      curr_max_cosdh = (std::max)(curr_max_cosdh, max_cos_dihedral_angle(tr, circ++));
     }
     if (boundary_vertices.size() == 2)
       find_best_flip_to_improve_dh(c3t3, edge, boundary_vertices[0], boundary_vertices[1],
-                                   candidates, curr_min_dh);
+                                   candidates, curr_max_cosdh);
     else
-      find_best_flip_to_improve_dh(c3t3, edge, candidates, curr_min_dh);
+      find_best_flip_to_improve_dh(c3t3, edge, candidates, curr_max_cosdh,
+                                   inc_cells);
 
     bool flip_performed = false;
     while (!candidates.empty() && !flip_performed)
     {
-      Angle_and_vertex curr_cost_vpair = candidates.top();
+      CosAngle_and_vertex curr_cost_vpair = candidates.top();
       candidates.pop();
 
-      //std::cout << curr_min_dh << " old, current " << curr_cost_vpair.second.first->info() <<" and angle " << curr_cost_vpair.first << std::endl;
+//      std::cout << "\tcurrent   cos = " << curr_max_cosdh
+//        << "\t angle = " << std::acos(curr_max_cosdh) * 180./CGAL_PI << std::endl;
+//      std::cout << "\tcandidate cos = " << curr_cost_vpair.first
+//        << "\t angle = " << std::acos(curr_cost_vpair.first) * 180./CGAL_PI << std::endl;
+//      std::cout << std::endl;
 
-      if (curr_min_dh >= curr_cost_vpair.first)
+      if (curr_max_cosdh <= curr_cost_vpair.first)
         return NO_BEST_CONFIGURATION;
 
-      result = flip_n_to_m(c3t3, edge, curr_cost_vpair.second.first, visitor);
+      result = flip_n_to_m(c3t3, edge, curr_cost_vpair.second.first, inc_cells, visitor);
 
       if (result != NOT_FLIPPABLE)
         flip_performed = true;
@@ -1000,10 +1072,11 @@ Sliver_removal_result flip_n_to_m(typename C3t3::Edge& edge,
   return result;
 }
 
-template<typename C3t3, typename Visitor>
+template<typename C3t3, typename IncCellsVectorMap, typename Visitor>
 Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
                                      C3t3& c3t3,
                                      const Flip_Criterion& criterion,
+                                     IncCellsVectorMap& inc_cells,
                                      Visitor& visitor)
 {
   typedef typename C3t3::Triangulation        Tr;
@@ -1066,7 +1139,7 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
     {
       std::vector<Vertex_handle> vertices;
       vertices.insert(vertices.end(), vertices_around_edge.begin(), vertices_around_edge.end());
-      res = flip_3_to_2(edge, c3t3, vertices, criterion);
+      res = flip_3_to_2(edge, c3t3, vertices, criterion, inc_cells);
     }
   }
   else
@@ -1078,11 +1151,10 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
     {
       std::vector<Vertex_handle> vertices;
       vertices.insert(vertices.end(), boundary_vertices.begin(), boundary_vertices.end());
-      res = flip_n_to_m(edge, c3t3, vertices, criterion, visitor);
+      res = flip_n_to_m(edge, c3t3, vertices, criterion, inc_cells, visitor);
       //return n_to_m_flip(edge, boundary_vertices, flip_criterion);
     }
   }
-
 
   return res;
 }
@@ -1096,20 +1168,33 @@ std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
 {
   typedef typename C3t3::Triangulation Tr;
   typedef typename Tr::Cell_handle   Cell_handle;
+  typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Edge          Edge;
 
   Tr& tr = c3t3.triangulation();
 
+  std::unordered_map<Vertex_handle,
+    boost::optional<boost::container::small_vector<Cell_handle, 64> > > inc_cells;
+
   std::size_t count = 0;
   for (const VertexPair vp : edges)
   {
+    boost::optional<boost::container::small_vector<Cell_handle, 64>>&
+      o_inc_vh = inc_cells[vp.first];
+    if (o_inc_vh == boost::none)
+    {
+      boost::container::small_vector<Cell_handle, 64> inc_vec;
+      tr.incident_cells(vp.first, std::back_inserter(inc_vec));
+      o_inc_vh = inc_vec;
+    }
+
     Cell_handle ch;
     int i0, i1;
-    if (tr.is_edge(vp.first, vp.second, ch, i0, i1))
+    if (is_edge_uv(vp.first, vp.second, boost::get(o_inc_vh), ch, i0, i1))
     {
       Edge edge(ch, i0, i1);
 
-      Sliver_removal_result res = find_best_flip(edge, c3t3, criterion, visitor);
+      Sliver_removal_result res = find_best_flip(edge, c3t3, criterion, inc_cells, visitor);
       if (res == INVALID_CELL || res == INVALID_VERTEX || res == INVALID_ORIENTATION)
       {
         std::cout << "FLIP PROBLEM!!!!" << std::endl;
@@ -1126,6 +1211,10 @@ std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
       }
     }
   }
+
+  for(Cell_handle c : c3t3.triangulation().finite_cell_handles())
+    c->reset_cache_validity();
+
   return count;
 }
 

@@ -15,7 +15,7 @@ CGAL_add_named_parameter(halfedge_index_t, halfedge_index, halfedge_index_map)
 CGAL_add_named_parameter(edge_index_t, edge_index, edge_index_map)
 CGAL_add_named_parameter(face_index_t, face_index, face_index_map)
 CGAL_add_named_parameter(vertex_index_t, vertex_index, vertex_index_map)
-CGAL_add_named_parameter(graph_visitor_t, graph_visitor, visitor)
+CGAL_add_named_parameter(visitor_t, visitor, visitor)
 
 CGAL_add_named_parameter(point_t, point_map, point_map)
 
@@ -172,7 +172,6 @@ CGAL_add_named_parameter(pca_plane_t, pca_plane, pca_plane)
 CGAL_add_named_parameter(remesh_boundaries_t, remesh_boundaries, remesh_boundaries)
 CGAL_add_named_parameter(cell_selector_t, cell_selector, cell_selector)
 CGAL_add_named_parameter(facet_is_constrained_t, facet_is_constrained, facet_is_constrained_map)
-CGAL_add_named_parameter(remeshing_visitor_t, remeshing_visitor, remeshing_visitor)
 CGAL_add_named_parameter(smooth_constrained_edges_t, smooth_constrained_edges, smooth_constrained_edges)
 
 // output parameters

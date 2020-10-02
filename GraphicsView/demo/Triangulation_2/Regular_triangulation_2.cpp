@@ -94,6 +94,7 @@ MainWindow::MainWindow()
                    dgi, SLOT(modelChanged()));
 
   dgi->setVerticesPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  dgi->setEdgesPen(QPen(Qt::black, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(dgi);
 
   // Add a GraphicItem for the Powerdiagram diagram

@@ -149,15 +149,15 @@ public:
   bool printFaceIds()const Q_DECL_OVERRIDE;
   void printAllIds() Q_DECL_OVERRIDE;
   bool shouldDisplayIds(CGAL::Three::Scene_item *current_item) const Q_DECL_OVERRIDE;
-  bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+  bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*, const QVector3D &scaler)const Q_DECL_OVERRIDE;
   float alpha() const Q_DECL_OVERRIDE;
   void setAlpha(int alpha) Q_DECL_OVERRIDE;
   QSlider* alphaSlider();
   void computeElements() const Q_DECL_OVERRIDE;
   void initializeBuffers(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
   void updateVertex(vertex_descriptor vh);
+  void fill_flat_vertex_map();
   void updateIds(vertex_descriptor vh);
-  void switchToGouraudPlusEdge(bool b); //replace flatPlusEdge by gouraudPlusEdge and ban Flat.
 Q_SIGNALS:
   void item_is_about_to_be_changed();
   void selection_done();

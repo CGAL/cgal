@@ -34,7 +34,7 @@
 #include <algorithm>
 
 #ifdef CGAL_LINKED_WITH_TBB
-# include <tbb/task.h>
+# include <tbb/task_group.h>
 #endif
 
 #include <string>
@@ -748,7 +748,7 @@ public:
     Concurrent_mesher_config::get().refinement_batch_size)
     , m_lock_ds(0)
     , m_worksharing_ds(0)
-    , m_empty_root_task(0)
+    , m_task_group(0)
 #ifndef CGAL_NO_ATOMIC
     , m_stop_ptr(0)
 #endif
@@ -875,13 +875,13 @@ public:
   void enqueue_task(
     const Container_element &ce, const Quality &quality, Mesh_visitor visitor)
   {
-    CGAL_assertion(m_empty_root_task != 0);
+    CGAL_assertion(m_task_group != 0);
 
     m_worksharing_ds->enqueue_work(
       Enqueue_element<Self, Container_element, Quality, Mesh_visitor>(
         *this, ce, quality, visitor),
       quality,
-      *m_empty_root_task
+      *m_task_group
       // NOTE: if you uncomment this line (Load_based_worksharing_ds), the element may
       // be a zombie at this point => thus, it may be "infinite" and cause an assertion error
       // in debug mode when computing the circumcenter
@@ -905,8 +905,7 @@ public:
     previous_level.add_to_TLS_lists(true);
     add_to_TLS_lists(true);
 
-    m_empty_root_task = new( tbb::task::allocate_root() ) tbb::empty_task;
-    m_empty_root_task->set_ref_count(1);
+    m_task_group = new tbb::task_group;
 
     while (!no_longer_element_to_refine())
     {
@@ -915,7 +914,7 @@ public:
       enqueue_task(qe.second, qe.first, visitor);
     }
 
-    m_empty_root_task->wait_for_all();
+    m_task_group->wait();
 
 #if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << " Flushing";
@@ -923,16 +922,15 @@ public:
     bool keep_flushing = true;
     while (keep_flushing)
     {
-      m_empty_root_task->set_ref_count(1);
-      keep_flushing = m_worksharing_ds->flush_work_buffers(*m_empty_root_task);
-      m_empty_root_task->wait_for_all();
+      keep_flushing = m_worksharing_ds->flush_work_buffers(*m_task_group);
+      m_task_group->wait();
 #if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
       std::cerr << ".";
 #endif
     }
 
-    tbb::task::destroy(*m_empty_root_task);
-    m_empty_root_task = 0;
+    delete m_task_group;
+    m_task_group = 0;
 
     splice_local_lists();
     //previous_level.splice_local_lists(); // useless
@@ -1160,8 +1158,8 @@ public:
     if(m_stop_ptr != 0 &&
        m_stop_ptr->load(CGAL::cpp11::memory_order_acquire) == true)
     {
-      CGAL_assertion(m_empty_root_task != 0);
-      m_empty_root_task->cancel_group_execution();
+      CGAL_assertion(m_task_group != 0);
+      m_task_group->cancel();
       return true;
     }
 #endif // not defined CGAL_NO_ATOMIC
@@ -1177,7 +1175,7 @@ protected:
   Lock_data_structure *m_lock_ds;
   WorksharingDataStructureType *m_worksharing_ds;
 
-  tbb::task *m_empty_root_task;
+  tbb::task_group *m_task_group;
 #ifndef CGAL_NO_ATOMIC
   CGAL::cpp11::atomic<bool>* m_stop_ptr;
 #endif

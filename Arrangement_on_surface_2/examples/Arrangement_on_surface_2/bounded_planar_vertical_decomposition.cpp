@@ -8,16 +8,20 @@
 #include <list>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel>              Traits_2;
-typedef Traits_2::Point_2                               Point_2;
-typedef Traits_2::X_monotone_curve_2                    Segment_2;
-typedef CGAL::Arrangement_2<Traits_2>                   Arrangement_2;
-typedef Arrangement_2::Vertex_const_handle              Vertex_const_handle;
-typedef Arrangement_2::Halfedge_const_handle            Halfedge_const_handle;
-typedef Arrangement_2::Face_const_handle                Face_const_handle;
-typedef std::pair<CGAL::Object, CGAL::Object>           Object_pair;
-typedef std::pair<Vertex_const_handle, Object_pair>     Vert_decomp_entry;
-typedef std::list<Vert_decomp_entry>                    Vert_decomp_list;
+typedef CGAL::Arr_segment_traits_2<Kernel>               Traits_2;
+typedef Traits_2::Point_2                                Point_2;
+typedef Traits_2::X_monotone_curve_2                     Segment_2;
+typedef CGAL::Arrangement_2<Traits_2>                    Arrangement_2;
+typedef Arrangement_2::Vertex_const_handle               Vertex_const_handle;
+typedef Arrangement_2::Halfedge_const_handle             Halfedge_const_handle;
+typedef Arrangement_2::Face_const_handle                 Face_const_handle;
+
+typedef boost::variant<Vertex_const_handle, Halfedge_const_handle,
+                         Face_const_handle>              Cell_type;
+typedef boost::optional<Cell_type>                       Vert_decomp_type;
+typedef std::pair<Vert_decomp_type, Vert_decomp_type>    Vert_decomp_pair;
+typedef std::pair<Vertex_const_handle, Vert_decomp_pair> Vert_decomp_entry;
+typedef std::list<Vert_decomp_entry>                     Vert_decomp_list;
 
 int main()
 {
@@ -39,34 +43,41 @@ int main()
   CGAL::decompose(arr, std::back_inserter(vd_list));
 
   // Print the results.
-  Vert_decomp_list::const_iterator vd_iter;
-  for (vd_iter = vd_list.begin(); vd_iter != vd_list.end(); ++vd_iter) {
-    const Object_pair& curr = vd_iter->second;
+  for (auto vd_iter = vd_list.begin(); vd_iter != vd_list.end(); ++vd_iter) {
+    const Vert_decomp_pair& curr = vd_iter->second;
     std::cout << "Vertex (" << vd_iter->first->point() << ") : ";
 
-    Vertex_const_handle vh;
-    Halfedge_const_handle hh;
-    Face_const_handle fh;
-
     std::cout << " feature below: ";
-    if (CGAL::assign(hh, curr.first))
-      std::cout << '[' << hh->curve() << ']';
-    else if (CGAL::assign(vh, curr.first))
-      std::cout << '(' << vh->point() << ')';
-    else if (CGAL::assign(fh, curr.first))
-      std::cout << "NONE";
-    else
-      std::cout << "EMPTY";
+    if (! curr.first) std::cout << "EMPTY";
+    else {
+      auto* vh = boost::get<Vertex_const_handle>(&*(curr.first));
+      if (vh) std::cout << '(' << (*vh)->point() << ')';
+      else {
+        auto* hh = boost::get<Halfedge_const_handle>(&*(curr.first));
+        if (hh) std::cout << '[' << (*hh)->curve() << ']';
+        else {
+          auto* fh = boost::get<Face_const_handle>(&*(curr.first));
+          CGAL_assertion(fh);
+          std::cout << "NONE (" << (*fh)->is_unbounded() << ")";
+        }
+      }
+    }
 
     std::cout << "   feature above: ";
-    if (CGAL::assign(hh, curr.second))
-      std::cout << '[' << hh->curve() << ']' << std::endl;
-    else if (CGAL::assign(vh, curr.second))
-      std::cout << '(' << vh->point() << ')' << std::endl;
-    else if (CGAL::assign(fh, curr.second))
-      std::cout << "NONE" << std::endl;
-    else
-      std::cout << "EMPTY" << std::endl;
+    if (! curr.second) std::cout << "EMPTY" << std::endl;
+    else {
+      auto* vh = boost::get<Vertex_const_handle>(&*(curr.second));
+      if (vh) std::cout << '(' << (*vh)->point() << ')' << std::endl;
+      else {
+        auto* hh = boost::get<Halfedge_const_handle>(&*(curr.second));
+        if (hh) std::cout << '[' << (*hh)->curve() << ']' << std::endl;
+        else {
+          auto* fh = boost::get<Face_const_handle>(&*(curr.second));
+          CGAL_assertion(fh);
+          std::cout << "NONE (" << (*fh)->is_unbounded() << ")" << std::endl;
+        }
+      }
+    }
   }
 
   return 0;
