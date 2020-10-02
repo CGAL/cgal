@@ -8,8 +8,8 @@ namespace CGAL {
  * compute the \e complement of a given polygon `pgn`. Depending on the type of
  * the polygon `pgn` the complement is either a single (general) polygon with
  * holes, or several (general) poylgons with holes. In the latter case the
- * `complement()` function template inserts the resulting poylgons with holes into
- * a container via an output iterator.
+ * `complement()` function template inserts the resulting poylgons with holes
+ * into a container via an output iterator.
  *
  * \param pgn The input polygon. Its type must be convertible to one of the
  *        types `Polygon_2`, `General_polygon_2`, `Polygon_with_holes_2`, or
@@ -37,7 +37,8 @@ void complement(const Polygon_2<Kernel, Container>& pgn,
 /*! Computes the complement of a general polygon.
  * \param pgn the input polygon.
  * \param res the complement of \p pgn.
- * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
+ * \pre `%ArrTraits` must be a model of the concept
+ *      `ArrangementDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 void complement(const General_polygon_2<ArrTraits>& pgn,
@@ -60,7 +61,8 @@ OutputIterator complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
  *           Its dereference type must be convertible to
  *             `General_polygon_with_holes_2<<General_polygon_2<ArrTraits> >`.
  * \return the past-the-end iterator of the output container.
- * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
+ * \pre `%ArrTraits` must be a model of the concept
+ *      `ArrangementDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator complement(const General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& pgn,
@@ -83,9 +85,9 @@ void complement(const Polygon_2<Kernel, Container>& pgn,
  * \param pgn the input polygon.
  * \param res the resulting complement of \p pgn
  * \param traits a traits object.
- * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
+ * \pre `%ArrTraits` must be a model of the concept
+ *      `ArrangementDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
- * \pre A model of `GpsTraits` must derive from a type that is convertible to a model of `%ArrTraits`.
  */
 template <typename ArrTraits, typename GpsTraits>
 void complement(const General_polygon_2<ArrTraits>& pgn,
@@ -114,9 +116,9 @@ OutputIterator complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
  *             `General_polygon_with_holes_2<<General_polygon_2<ArrTraits> >`.
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
- * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
+ * \pre `%ArrTraits` must be a model of the concept
+ *      `ArrangementDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
- * \pre A model of `GpsTraits` must derive from a type that is convertible to a model of `%ArrTraits`.
  */
 template <typename Polygon, typename OutputIterato, typename GpsTraitsr>
 OutputIterator complement(const General_polygon_with_holes_2<Polygon>& pgn,
@@ -135,12 +137,20 @@ namespace CGAL {
  *
  * There are several overloaded function templates called `difference()` that
  * computes the \e difference between two polygons `pgn1` and `pgn2` and inserts
- * the resulting polygons with holes into a container via the output iterator `oi`.
+ * the resulting polygons with holes into a container via the output iterator
+ * `oi`.
  *
  * \param oi the output iterator for the result.
  *
- * The types `Type1` and `Type2` of the parameters must be convertible to the types specified in a row in the table below, respectively.
- * The 3rd column specifies the corresponding dereference type of the output iterator.
+ * A function template in this subgroup has one of the two following signatures:
+ *   - `OutputIterator difference(const Type1& pgn1, const Type2& pgn2,
+ *                                OutputIterator oi);`
+ *   - `OutputIterator difference(const Type1& pgn1, const Type2& pgn2,
+ *                                OutputIterator oi, const GpsTraits& traits);`
+ *
+ * The types `Type1` and `Type2` of the parameters must be convertible to the
+ * types specified in a row in the table below, respectively.  The 3rd column
+ * specifies the corresponding dereference type of the output iterator.
  *
  * <div align="left">
  * <table cellpadding=3 border="1">
@@ -166,7 +176,7 @@ namespace CGAL {
 
 //////// Traits-less
 
-/*! computes the difference of the polygons and inserts the resulting polygon
+/*! computes the difference of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
@@ -180,7 +190,7 @@ OutputIterator difference(const Polygon_2<Kernel, Container>& pgn1,
                           const Polygon_2<Kernel, Container>& pgn2,
                           OutputIterator oi);
 
-/*! computes the difference of the polygons and inserts the resulting polygon
+/*! computes the difference of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
@@ -194,7 +204,7 @@ OutputIterator difference(const Polygon_2<Kernel, Container>& pgn1,
                           const Polygon_with_holes_2<Kernel,Container>& pgn2,
                           OutputIterator oi);
 
-/*! computes the difference of the polygons and inserts the resulting polygon
+/*! computes the difference of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
@@ -208,7 +218,7 @@ OutputIterator difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                           const Polygon_2<Kernel, Container>& pgn2,
                           OutputIterator oi);
 
-/*! computes the difference of the polygons and inserts the resulting polygon
+/*! computes the difference of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
@@ -222,50 +232,56 @@ OutputIterator difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                           const Polygon_with_holes_2<Kernel, Container>& pgn2,
                           OutputIterator oi);
 
-/*! computes the difference of the polygons and inserts the resulting polygon
- * with holes into a container via an output iterator.
+/*! computes the difference of two general polygons and inserts the resulting
+ * general polygons with holes into a container via an output iterator.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertibe to
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits> >`.
  * \return the past-the-end iterator of the output container.
+ * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator difference(const General_polygon_2<ArrTraits>& pgn1,
                           const General_polygon_2<ArrTraits>& pgn2,
                           OutputIterator oi);
 
-/*! computes the difference of the polygons and inserts the resulting polygon
- * with holes into a container via an output iterator.
+/*! computes the difference of two general polygons and inserts the resulting
+ * general polygons with holes into a container via an output iterator.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertibe to
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits> >`.
  * \return the past-the-end iterator of the output container.
+ * \pre `%ArrTraits` must be a model of the concept
+ *      `ArrangementDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator difference(const General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& pgn1,
                           const General_polygon_2<ArrTraits>& pgn2,
                           OutputIterator oi);
 
-/*! computes the difference of the polygons and inserts the resulting polygon
- * with holes into a container via an output iterator.
+/*! computes the difference of two polygons and inserts the resulting
+ * general polygons with holes into a container via an output iterator.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertibe to
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits> >`.
  * \return the past-the-end iterator of the output container.
+ * \pre `%ArrTraits` must be a model of the concept
+ *      `ArrangementDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator difference(const General_polygon_2<ArrTraits>& pgn1,
                           const General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& pgn2,
                           OutputIterator oi);
 
-/*! computes the difference of the polygons and inserts the resulting polygon
- * with holes into a container via an output iterator.
+/*! computes the difference of two general polygons with holes and inserts the
+ * resulting general polygons with holes into a container via an output
+ * iterator.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
@@ -280,7 +296,7 @@ OutputIterator difference(const General_polygon_with_holes_2<Polygon>& pgn1,
 
 //////// With Traits
 
-/*! computes the difference of the polygons and inserts the resulting polygon
+/*! computes the difference of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
@@ -297,7 +313,7 @@ OutputIterator difference(const Polygon_2<Kernel, Container>& pgn1,
                           OutputIterator oi,
                           const GpsTraits& traits);
 
-/*! computes the difference of the polygons and inserts the resulting polygon
+/*! computes the difference of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
@@ -314,7 +330,7 @@ OutputIterator difference(const Polygon_2<Kernel, Container>& pgn1,
                           OutputIterator oi,
                           const GpsTraits& traits);
 
-/*! computes the difference of the polygons and inserts the resulting polygon
+/*! computes the difference of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
@@ -331,8 +347,8 @@ OutputIterator difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                           OutputIterator oi,
                           const GpsTraits& traits);
 
-/*! computes the difference of the polygons and inserts the resulting polygon
- * with holes into a container via an output iterator.
+/*! computes the difference of two polygons with holes and inserts the resulting
+ * polygons with holes into a container via an output iterator.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
@@ -348,8 +364,8 @@ OutputIterator difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                           OutputIterator oi,
                           const GpsTraits& traits);
 
-/*! computes the difference of the polygons and inserts the resulting polygon
- * with holes into a container via an output iterator.
+/*! computes the difference of two general polygons and inserts the resulting
+ * general polygons with holes into a container via an output iterator.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
@@ -357,6 +373,8 @@ OutputIterator difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits> >`.
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
+ * \pre `%ArrTraits` must be a model of the concept
+ *      `ArrangementDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
@@ -365,8 +383,8 @@ OutputIterator difference(const General_polygon_2<ArrTraits>& pgn1,
                           OutputIterator oi,
                           const GpsTraits& traits);
 
-/*! computes the difference of the polygons and inserts the resulting polygon
- * with holes into a container via an output iterator.
+/*! computes the difference of two general polygons and inserts the resulting
+ * general polygons with holes into a container via an output iterator.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
@@ -374,6 +392,8 @@ OutputIterator difference(const General_polygon_2<ArrTraits>& pgn1,
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits> >`.
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
+ * \pre `%ArrTraits` must be a model of the concept
+ *      `ArrangementDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
@@ -382,8 +402,8 @@ OutputIterator difference(const General_polygon_with_holes_2<General_polygon_2<A
                           OutputIterator oi,
                           const GpsTraits& traits);
 
-/*! computes the difference of the polygons and inserts the resulting polygon
- * with holes into a container via an output iterator.
+/*! computes the difference of two general polygons and inserts the resulting
+ * general polygons with holes into a container via an output iterator.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
@@ -391,6 +411,8 @@ OutputIterator difference(const General_polygon_with_holes_2<General_polygon_2<A
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits> >`.
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
+ * \pre `%ArrTraits` must be a model of the concept
+ *      `ArrangementDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
@@ -399,8 +421,8 @@ OutputIterator difference(const General_polygon_2<ArrTraits>& pgn1,
                           OutputIterator oi,
                           const GpsTraits& traits);
 
-/*! computes the difference of the polygons and inserts the resulting polygon
- * with holes into a container via an output iterator.
+/*! computes the difference of two general polygons and inserts the resulting
+ * general polygons with holes into a container via an output iterator.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
@@ -438,21 +460,17 @@ namespace CGAL {
  *
  * <div align="left">
  * <table cellpadding=3 border="1">
- * <tr><th> Type1 </th><th>Type2</th></tr>
- * <tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr>
- * <tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr>
- * <tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr>
- * <tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr>
- * <tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr>
- * <tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+ * <tr><th> Type1 </th>                                     <th>Type2</th></tr>
+ * <tr><td valign="center">Polygon_2</td>                   <td valign="center">Polygon_2</td></tr>
+ * <tr><td valign="center">Polygon_2</td>                   <td valign="center">Polygon_with_holes_2</td></tr>
+ * <tr><td valign="center">Polygon_with_holes_2</td>        <td valign="center">Polygon_2</td></tr>
+ * <tr><td valign="center">Polygon_with_holes_2</td>        <td valign="center">Polygon_with_holes_2</td></tr>
+ * <tr><td valign="center">General_polygon_2</td>           <td valign="center">General_polygon_2</td></tr>
+ * <tr><td valign="center">General_polygon_2</td>           <td valign="center">General_polygon_with_holes_2</td></tr>
  * <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr>
  * <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
  * </table>
  * </div>
- *
- * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
- * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
- * \pre A model of `GpsTraits` must derive from a type that is convertible to a model of `%ArrTraits`.
  *
  * \sa \link boolean_intersection `CGAL::intersection()` \endlink
  * \sa \link boolean_join `CGAL::join()` \endlink
@@ -462,76 +480,125 @@ namespace CGAL {
 
 /// @{
 
-/*! returns `true` if the polygons `pgn1` and `pgn2` intersect in their interior.
+/*! determines whether two polygons intersect in their interior.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ *         otherwise.
  */
 template <typename Kernel, typename Container>
 bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
                   const Polygon_2<Kernel, Container>& pgn2);
 
-/*! returns `true` if the polygons `pgn1` and `pgn2` intersect in their interior.
+/*! determines whether two polygons intersect in their interior.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ *         otherwise.
  */
 template <typename Kernel, typename Container>
 bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
                   const Polygon_with_holes_2<Kernel, Container>& pgn2);
 
-/*! returns `true` if the polygons `pgn1` and `pgn2` intersect in their interior.
+/*! determines whether two polygons intersect in their interior.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ *         otherwise.
  */
 template <typename Kernel, typename Container>
 bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                   const Polygon_2<Kernel, Container>& pgn2);
 
-/*! returns `true` if the polygons `pgn1` and `pgn2` intersect in their interior.
+/*! determines whether two polygons with holes intersect in their interior.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ *         otherwise.
  */
 template <typename Kernel, typename Container>
 bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                   const Polygon_with_holes_2<Kernel, Container>& pgn2);
 
-/*! returns `true` if the general polygons `pgn1` and `pgn2` intersect in their
- * interior.
+/*! determines whether two general polygons intersect in their interior.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ *         otherwise.
  */
 template <typename ArrTraits>
 bool do_intersect(const General_polygon_2<ArrTraits>& pgn1,
                   const General_polygon_2<ArrTraits>& pgn2);
 
-/*! returns `true` if the general polygons `pgn1` and `pgn2` intersect in their
- * interior.
+/*! determines whether two general polygons intersect in their interior.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ *         otherwise.
  */
 template <typename ArrTraits>
 bool do_intersect(const General_polygon_2<ArrTraits>& pgn1,
                   const General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& pgn2);
 
-/*! returns `true` if the general polygons `pgn1` and `pgn2` intersect in their
- * interior.
+/*! determines whether two general polygons intersect in their interior.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ *         otherwise.
  */
 template <typename ArrTraits>
 bool do_intersect(const General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& pgn1,
                   const General_polygon_2<ArrTraits>& pgn2);
 
-
-/*! returns `true` if the general polygons `pgn1` and `pgn2` intersect in their
+/*! determines whether two general polygons with holes intersect in their
  * interior.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ *         otherwise.
  */
 template <typename Polygon>
 bool do_intersect(const General_polygon_with_holes_2<Polygon>& pgn1,
                   const General_polygon_with_holes_2<Polygon>& pgn2);
 
-/*! returns `true`, if the set of general polygons (or general polygons with
- * holes) in the given range intersect in their interior, and `false`
- * otherwise. (The value type of the input iterator is used to distinguish
- * between the two).
+/*! Given a range of polygons or a range of polygons with holes (resp. a range
+ * of general polygons or a range of general polygons with holes) determines
+ * whether the open polygons (resp. general polygons) in the range have a common
+ * point.
+ * \param begin the first iterator of the input range. It's value type is
+ *        either Polygon_2 (resp. General_polygon_2) or Polygon_with_holes
+ *        (resp. General_polygon_with_holes_2).
+ * \param end the past-the-end iterator of the input range. It's value type is
+ *        either Polygon_2 (resp. General_polygon_2) or Polygon_with_holes
+ *        (resp. General_polygon_with_holes_2).
+ * \return `true` if the pairwise intersections of all open polygons or polygons
+ *         with holes (resp. general polygons or general polygons with holes) in
+ *         the range [*begin,*end) overlap, and `false` otherwise.
  */
 template <typename InputIterator>
 bool do_intersect(InputIterator begin, InputIterator end);
 
-/*! returns `true`, if the set of general polygons and general polygons with
- * holes in the given two ranges respectively intersect in their interior, and
- * `false` otherwise.
+/*! Given a range of polygons (resp. general polygons) and a range of polygons
+ * with holes (resp. general polygons with holes) determines whether the open
+ * polygons (resp. general polygons) in the two ranges have a common point.
+ * \param begin1 the first iterator of the 1st input range. It's value type is
+ *        Polygon_2 (resp. General_polygon_2).
+ * \param end1 the past-the-end iterator of the 1st input range. It's value
+ *        type is Polygon_2 (resp. General_polygon_2).
+ * \param begin2 the first iterator of the 2nd input range. It's value type
+ *        is Polygon_with_holes_2 (resp. General_polygon_with_holes_2).
+ * \param end2 the past-the-end iterator of the 2nd input range. It's value
+ *        type is Polygon_with_holes_2 (resp. General_polygon_with_holes_2).
+ * \return `true` if the pairwise intersections of all open polygons (resp.
+ *        general polygons) and polygons with holes (resp. general polygons with
+ *        holes) in the ranges [*begin1,*end1) and [*begin2,*end2),
+ *        respectively, overlap, and `false` otherwise.
  */
 template <typename InputIterator1, typename InputIterator2>
-bool do_intersect(InputIterator1 pgn_begin1,
-                  InputIterator1 pgn_end1,
-                  InputIterator2 pgn_begin2,
-                  InputIterator2 pgn_end2);
+bool do_intersect(InputIterator1 begin1,
+                  InputIterator1 end1,
+                  InputIterator2 begin2,
+                  InputIterator2 end2);
 /// @}
 } /* namespace CGAL */
 
@@ -559,21 +626,17 @@ namespace CGAL {
  *
  * <div align="left">
  * <table cellpadding=3 border="1">
- * <tr><th> Type1</th><th> Type2</th></tr>
- * <tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr>
- * <tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr>
- * <tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr>
- * <tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr>
- * <tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr>
- * <tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+ * <tr><th>Type1</th>                                       <th>Type2</th></tr>
+ * <tr><td valign="center">Polygon_2</td>                   <td valign="center">Polygon_2</td></tr>
+ * <tr><td valign="center">Polygon_2</td>                   <td valign="center">Polygon_with_holes_2</td></tr>
+ * <tr><td valign="center">Polygon_with_holes_2</td>        <td valign="center">Polygon_2</td></tr>
+ * <tr><td valign="center">Polygon_with_holes_2</td>        <td valign="center">Polygon_with_holes_2</td></tr>
+ * <tr><td valign="center">General_polygon_2</td>           <td valign="center">General_polygon_2</td></tr>
+ * <tr><td valign="center">General_polygon_2</td>           <td valign="center">General_polygon_with_holes_2</td></tr>
  * <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr>
  * <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
  * </table>
  * </div>
- *
- * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
- * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
- * \pre A model of `GpsTraits` must derive from a type that is convertible to a model of `%ArrTraits`.
  *
  * \sa \link boolean_do_intersect `CGAL::do_intersect()` \endlink
  * \sa \link boolean_join `CGAL::join()` \endlink
@@ -584,70 +647,112 @@ namespace CGAL {
 
 /// @{
 
-/*! computes the intersection of the polygons `pgn1` and `pgn2` into the output iterator `oi`.
- *  The value type of `oi` is `Polygon_with_holes_2`.
- */
-OutputIterator intersection(const Type1& pgn1, const Type2& pgn2,
-                            OutputIterator oi);
-
-/*! computes the intersection of the polygons `pgn1` and `pgn2` into the output iterator `oi`.
- * The value type of `oi` is `Polygon_with_holes_2`.
+/*! computes the intersection of two polygons and inserts the resulting polygons
+ * with holes into a container via an output iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `Polygon_with_holes_2<Kernel, Container>`.
+ * \return the past-the-end iterator of the output container.
  */
 template <typename Kernel, typename Container, typename OutputIterator>
 OutputIterator intersection(const Polygon_2<Kernel, Container>& pgn1,
                             const Polygon_2<Kernel, Container>& pgn2,
                             OutputIterator oi);
 
-/*! computes the intersection of the polygons `pgn1` and `pgn2` into the output iterator `oi`.
- * The value type of `oi` is `Polygon_with_holes_2`.
+/*! computes the intersection of two polygons and inserts the resulting polygons
+ * with holes into a container via an output iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `Polygon_with_holes_2<Kernel, Container>`.
+ * \return the past-the-end iterator of the output container.
  */
 template <typename Kernel, typename Container, typename OutputIterator>
 OutputIterator intersection(const Polygon_2<Kernel, Container>& pgn1,
                             const Polygon_with_holes_2<Kernel, Container>& pgn2,
                             OutputIterator oi);
 
-/*! computes the intersection of the polygons `pgn1` and `pgn2` into the output iterator `oi`.
- * The value type of `oi` is `Polygon_with_holes_2`.
+/*! computes the intersection of two polygons and inserts the resulting polygons
+ * with holes into a container via an output iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `Polygon_with_holes_2<Kernel, Container>`.
+ * \return the past-the-end iterator of the output container.
  */
 template <typename Kernel, typename Container, typename OutputIterator>
 OutputIterator intersection(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                             const Polygon_2<Kernel, Container>& pgn2,
                             OutputIterator oi);
 
-/*! computes the intersection of the polygons `pgn1` and `pgn2` into the output iterator `oi`.
- * The value type of `oi` is `Polygon_with_holes_2`.
+/*! computes the intersection of two polygons and inserts the resulting polygons
+ * with holes into a container via an output iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `Polygon_with_holes_2<Kernel, Container>`.
+ * \return the past-the-end iterator of the output container.
  */
 template <typename Kernel, typename Container, typename OutputIterator>
 OutputIterator intersection(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                             const Polygon_with_holes_2<Kernel, Container>& pgn2,
                             OutputIterator oi);
 
-/*! computes the intersection of the general polygons `pgn1` and `pgn2` into the output iterator `oi`.
- * The value type of `oi` is `General_polygon_with_holes_2`.
+/*! computes the intersection of two general polygons and inserts the resulting
+ * general polygons with holes into a container via an output iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits> >`.
+ * \return the past-the-end iterator of the output container.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator intersection(const General_polygon_2<ArrTraits>& pgn1,
                             const General_polygon_2<ArrTraits>& pgn2,
                             OutputIterator oi);
 
-/*! computes the intersection of the general polygons `pgn1` and `pgn2` into the output iterator `oi`.
- * The value type of `oi` is `General_polygon_with_holes_2`.
+/*! computes the intersection of two general polygons and inserts the resulting
+ * general polygons with holes into a container via an output iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits> >`.
+ * \return the past-the-end iterator of the output container.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator intersection(const General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& pgn1,
                             const General_polygon_2<ArrTraits>& pgn2,
                             OutputIterator oi);
 
-/*! computes the intersection of the general polygons `pgn1` and `pgn2` into the output iterator `oi`.
- * The value type of `oi` is `General_polygon_with_holes_2`.
+/*! computes the intersection of two general polygons and inserts the resulting
+ * general polygons with holes into a container via an output iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits> >`.
+ * \return the past-the-end iterator of the output container.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator intersection(const General_polygon_2<ArrTraits>& pgn1,
                             const General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& pgn2,
                             OutputIterator oi);
 
-/*! computes the intersection of the general polygons `pgn1` and `pgn2` into the output iterator `oi`.
- * The value type of `oi` is `General_polygon_with_holes_2`.
+/*! computes the intersection of two general polygons with holes and inserts the
+ * resulting general polygons with holes into a container via an output iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `General_polygon_with_holes_2<Polygon>`.
+ * \return the past-the-end iterator of the output container.
  */
 template <typename Polygon, typename OutputIterator>
 OutputIterator intersection(const General_polygon_with_holes_2<Polygon>& pgn1,
@@ -655,29 +760,50 @@ OutputIterator intersection(const General_polygon_with_holes_2<Polygon>& pgn1,
                             OutputIterator oi);
 
 
-/*! computes the intersection of the general polygons (or general polygons with
- * holes) in the given range. (The value type of the input iterator is used to
- * distinguish between the two.) The result, represented by a set of general
- * polygon with holes, is written into the output iterator `oi`.  The output
- * iterator is returned. The value type of the `OutputIterator` is
- * `Traits::Polygon_with_holes_2`.
+/*! Given a range of polygons (resp. general polygons) or a range of general
+ * polygons with holes (resp. general polygons with holes) computes the
+ * intersection of all polygons in the range and inserts the resulting polygons
+ * with holes (resp. general polygons with holes) into a container via an output
+ * iterator.
+ * \param begin the first iterator of the input range. It's value type is
+ *        either Polygon_2 (resp. General_polygon_2) or Polygon_with_holes
+ *        (resp. General_polygon_with_holes_2).
+ * \param end the past-the-end iterator of the input range. It's value type is
+ *        either Polygon_2 (resp. General_polygon_2) or Polygon_with_holes
+ *        (resp. General_polygon_with_holes_2).
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ * \return the past-the-end iterator of the output container.
  */
 template <typename InputIterator, typename OutputIterator>
 OutputIterator intersection(InputIterator begin, InputIterator end,
                             OutputIterator oi);
 
-/*! computes the intersection of the general polygons and general polygons with
- * holes in the given two ranges. The result, represented by a set of general
- * polygon with holes, is written into the output iterator `oi`.  The output
- * iterator is returned. The value type of the `OutputIterator` is
- * `Traits::Polygon_with_holes_2`.
+/*! Given a range of polygons (resp. general polygons) and a range of general
+ * polygons with holes (resp. general polygons with holes) computes the
+ * intersection of all polygons in the two ranges and inserts the resulting
+ * polygons with holes (resp. general polygons with holes) into a container via
+ * an output iterator.
+ * \param begin1 the first iterator of the 1st input range. It's value type is
+ *        Polygon_2 (resp. General_polygon_2).
+ * \param end1 the past-the-end iterator of the 1st input range. It's value
+ *        type is Polygon_2 (resp. General_polygon_2).
+ * \param begin2 the first iterator of the 2nd input range. It's value type
+ *        is Polygon_with_holes_2 (resp. General_polygon_with_holes_2).
+ * \param end2 the past-the-end iterator of the 2nd input range. It's value
+ *        type is Polygon_with_holes_2 (resp. General_polygon_with_holes_2).
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ * \return the past-the-end iterator of the output container.
  */
 template <typename InputIterator1, typename InputIterator2,
 typename OutputIterator>
-OutputIterator intersection(InputIterator1 pgn_begin1,
-                            InputIterator1 pgn_end1,
-                            InputIterator2 pgn_begin2,
-                            InputIterator2 pgn_end2,
+OutputIterator intersection(InputIterator1 begin1,
+                            InputIterator1 end1,
+                            InputIterator2 begin2,
+                            InputIterator2 end2,
                             OutputIterator oi);
 
 /// @}
@@ -703,21 +829,17 @@ namespace CGAL {
  *
  * <div align="left">
  * <table cellpadding=3 border="1">
- * <tr><th> Type1</th><th> Type2</th></tr>
- * <tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr>
- * <tr><td valign="center">Polygon_2</td><td valign="center">polygon_with_holes_2</td></tr>
- * <tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr>
- * <tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr>
- * <tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr>
- * <tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+ * <tr><th> Type1</th>                                      <th>Type2</th></tr>
+ * <tr><td valign="center">Polygon_2</td>                   <td valign="center">Polygon_2</td></tr>
+ * <tr><td valign="center">Polygon_2</td>                   <td valign="center">polygon_with_holes_2</td></tr>
+ * <tr><td valign="center">Polygon_with_holes_2</td>        <td valign="center">Polygon_2</td></tr>
+ * <tr><td valign="center">Polygon_with_holes_2</td>        <td valign="center">Polygon_with_holes_2</td></tr>
+ * <tr><td valign="center">General_polygon_2</td>           <td valign="center">General_polygon_2</td></tr>
+ * <tr><td valign="center">General_polygon_2</td>           <td valign="center">General_polygon_with_holes_2</td></tr>
  * <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr>
  * <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
  * </table>
  * </div>
- *
- * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
- * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
- * \pre A model of `GpsTraits` must derive from a type that is convertible to a model of `%ArrTraits`.
  *
  * \sa \link boolean_do_intersect `CGAL::do_intersect()` \endlink
  * \sa \link boolean_intersection `CGAL::intersection()` \endlink
@@ -849,15 +971,15 @@ namespace CGAL {
  *
  * <div align="left">
  * <table cellpadding=3 border="1">
- * <tr><th>Type1</th>                                       <th>Type2</th></tr>
- * <tr><td valign="center">Polygon_2</td>                   <td valign="center">Polygon_2</td></tr>
- * <tr><td valign="center">Polygon_2</td>                   <td valign="center">Polygon_with_holes_2</td></tr>
- * <tr><td valign="center">Polygon_with_holes_2</td>        <td valign="center">Polygon_2</td></tr>
- * <tr><td valign="center">Polygon_with_holes_2</td>        <td valign="center">Polygon_with_holes_2</td></tr>
- * <tr><td valign="center">General_polygon_2</td>           <td valign="center">General_polygon_2</td></tr>
- * <tr><td valign="center">General_polygon_2</td>           <td valign="center">General_polygon_with_holes_2</td></tr>
- * <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr>
- * <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+ * <tr><th>Type1</th>                                         <th>Type2</th></tr>
+ * <tr><td valign="center">`Polygon_2`</td>                   <td valign="center">`Polygon_2`</td></tr>
+ * <tr><td valign="center">`Polygon_2`</td>                   <td valign="center">`Polygon_with_holes_2`</td></tr>
+ * <tr><td valign="center">`Polygon_with_holes_2`</td>        <td valign="center">`Polygon_2`</td></tr>
+ * <tr><td valign="center">`Polygon_with_holes_2`</td>        <td valign="center">`Polygon_with_holes_2`</td></tr>
+ * <tr><td valign="center">`General_polygon_2`</td>           <td valign="center">`General_polygon_2`</td></tr>
+ * <tr><td valign="center">`General_polygon_2`</td>           <td valign="center">`General_polygon_with_holes_2`</td></tr>
+ * <tr><td valign="center">`General_polygon_with_holes_2`</td><td valign="center">`General_polygon_2`</td></tr>
+ * <tr><td valign="center">`General_polygon_with_holes_2`</td><td valign="center">`General_polygon_with_holes_2`</td></tr>
  * </table>
  * </div>
  *
@@ -1004,7 +1126,6 @@ Oriented_side oriented_side(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \param traits a traits object.
  * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
- * \pre A model of `GpsTraits` must derive from a type that is convertible to a model of `%ArrTraits`.
  *
  */
 template <typename ArrTraits, typename GpsTraits>
@@ -1018,7 +1139,6 @@ Oriented_side oriented_side(const General_polygon_2<ArrTraits>& pgn1,
  * \param traits a traits object.
  * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
- * \pre A model of `GpsTraits` must derive from a type that is convertible to a model of `%ArrTraits`.
  *
  */
 template <typename ArrTraits, typename GpsTraits>
@@ -1032,7 +1152,6 @@ Oriented_side oriented_side(const General_polygon_2<ArrTraits>& pgn1,
  * \param traits a traits object.
  * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
- * \pre A model of `GpsTraits` must derive from a type that is convertible to a model of `%ArrTraits`.
  *
  */
 template <typename ArrTraits, typename GpsTraits>
@@ -1116,8 +1235,6 @@ Oriented_side oriented_side(const Point_2& p,
  * \param traits a traits object.
  * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
- * \pre A model of `GpsTraits` must derive from a type that is convertible to a model of `%ArrTraits`.
- *
  */
 template <typename ArrTraits, typename GpsTraits>
 Oriented_side oriented_side(const Point_2& p,
@@ -1172,35 +1289,52 @@ namespace CGAL {
  * </table>
  * </div>
  *
- * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
- * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
- * \pre A model of `GpsTraits` must derive from a type that is convertible to a model of `%ArrTraits`.
- *
  * \sa \link boolean_do_intersect `CGAL::do_intersect()` \endlink
  * \sa \link boolean_intersection `CGAL::intersection()` \endlink
  * \sa \link boolean_join `CGAL::join()` \endlink
  * \sa \link boolean_difference `CGAL::difference()` \endlink
- *
  */
 
 /// @{
 
-OutputIterator symmetric_difference(const Type1& pgn1, const Type2& pgn2,
-                                    OutputIterator oi);
-
-
+/*! computes the symmetric difference between two polygons and inserts the
+ * resulting polygons with holes into a container via an output iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `Polygon_with_holes_2<Kernel, Container>`.
+ * \return the past-the-end iterator of the output container.
+ */
 template <typename Kernel, typename Container, typename OutputIterator>
 OutputIterator symmetric_difference(const Polygon_2<Kernel, Container>& pgn1,
                                     const Polygon_2<Kernel, Container>& pgn2,
                                     OutputIterator oi);
 
-
+/*! computes the symmetric difference between two polygons and inserts the
+ * resulting polygons with holes into a container via an output iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `Polygon_with_holes_2<Kernel, Container>`.
+ * \return the past-the-end iterator of the output container.
+ */
 template <typename Kernel, typename Container, typename OutputIterator>
 OutputIterator
 symmetric_difference(const Polygon_2<Kernel, Container>& pgn1,
                      const Polygon_with_holes_2<Kernel, Container>& pgn2,
                      OutputIterator oi);
 
+/*! computes the symmetric difference between two polygons and inserts the
+ * resulting polygons with holes into a container via an output iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `Polygon_with_holes_2<Kernel, Container>`.
+ * \return the past-the-end iterator of the output container.
+ */
 template <typename Kernel, typename Container, typename OutputIterator>
 OutputIterator
 symmetric_difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
@@ -1208,19 +1342,48 @@ symmetric_difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                      OutputIterator oi);
 
 
+/*! computes the symmetric difference between two polygons with holes and
+ * inserts the resulting polygons with holes into a container via an output
+ * iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `Polygon_with_holes_2<Kernel, Container>`.
+ * \return the past-the-end iterator of the output container.
+ */
 template <typename Kernel, typename Container, typename OutputIterator>
 OutputIterator
 symmetric_difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                      const Polygon_with_holes_2<Kernel, Container>& pgn2,
                      OutputIterator oi);
 
-
+/*! computes the symmetric difference between two general polygons and inserts
+ * the resulting general  polygons with holes into a container via an output
+ * iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits> >`.
+ * \return the past-the-end iterator of the output container.
+ */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator symmetric_difference(const General_polygon_2<ArrTraits>& pgn1,
                                     const General_polygon_2<ArrTraits>& pgn2,
                                     OutputIterator oi);
 
 
+/*! computes the symmetric difference between two general polygons and inserts
+ * the resulting general  polygons with holes into a container via an output
+ * iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits> >`.
+ * \return the past-the-end iterator of the output container.
+ */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator
 symmetric_difference(const General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& pgn1,
@@ -1228,6 +1391,16 @@ symmetric_difference(const General_polygon_with_holes_2<General_polygon_2<ArrTra
                      OutputIterator oi);
 
 
+/*! computes the symmetric difference between two general polygons and inserts
+ * the resulting general  polygons with holes into a container via an output
+ * iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits> >`.
+ * \return the past-the-end iterator of the output container.
+ */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator
 symmetric_difference(const General_polygon_2<ArrTraits>& pgn1,
@@ -1235,6 +1408,16 @@ symmetric_difference(const General_polygon_2<ArrTraits>& pgn1,
                      OutputIterator oi);
 
 
+/*! computes the symmetric difference between two general polygons and inserts
+ * the resulting general  polygons with holes into a container via an output
+ * iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `General_polygon_with_holes_2<Polygon>`.
+ * \return the past-the-end iterator of the output container.
+ */
 template <typename Polygon, typename OutputIterator>
 OutputIterator
 symmetric_difference(const General_polygon_with_holes_2<Polygon>& pgn1,
