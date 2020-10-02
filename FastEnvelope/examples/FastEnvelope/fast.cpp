@@ -216,8 +216,7 @@ struct Envelope {
   bool
   point_out_prism(const ePoint_3 &point, const std::vector<unsigned int> &prismindex, int jump) const
   {
-    //CGAL::Orientation ori;
-    CGAL::Oriented_side ori;
+    CGAL::Orientation ori;
 
     for (int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
@@ -226,8 +225,10 @@ struct Envelope {
 
       for (int j = 0; j < halfspace[prismindex[i]].size(); j++) {
         const Plane& plane = halfspace[prismindex[i]][j];
-        ori = oriented_side(plane.eplane, point);
-        //ori = CGAL::orientation(plane.ep, plane.eq, plane.er, point);
+        // As all points have coordinates with intervals with inf==sup the orientation test is faster
+        // as it can exploit the static filters
+        ori = CGAL::orientation(plane.ep, plane.eq, plane.er, point);
+        // ori = oriented_side(plane.eplane, point);
         if (ori != CGAL::ON_NEGATIVE_SIDE){
           // if for a prism we are on the wrong side of one halfspace we are outside this prism
           // so no need to look at the other halfspaces
@@ -251,7 +252,7 @@ struct Envelope {
   {
     Vector_3 bmin, bmax;
 
-    CGAL::Oriented_side ori;
+    CGAL::Orientation ori;
 
     for (int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
@@ -262,7 +263,7 @@ struct Envelope {
       }
       for (int j = 0; j < halfspace[prismindex[i]].size(); j++){
         const Plane& plane = halfspace[prismindex[i]][j];
-        ori = oriented_side(plane.eplane, epoint);
+        ori = orientation(plane.ep, plane.eq, plane.er, epoint);
         if (ori != CGAL::ON_NEGATIVE_SIDE){
           break;
         }
@@ -297,7 +298,7 @@ struct Envelope {
     for (int i = 0; i < prism.size(); i++){
       cut[i] = false;
     }
-    std::vector<CGAL::Oriented_side> o1, o2;
+    std::vector<CGAL::Orientation> o1, o2;
     o1.resize(prism.size());
     o2.resize(prism.size());
     int ori = 0, ct1 = 0, ct2 = 0;//ori=0 to avoid the case that there is only one cut plane
@@ -306,8 +307,8 @@ struct Envelope {
     for (int i = 0; i < prism.size(); i++){
       const Plane& plane = prism[i];
       // POSITIVE is outside the prism
-      o1[i] = oriented_side(plane.eplane, source);// CGAL::orientation(plane.ep, plane.eq, plane.er, source); // todo use plane.eplane
-      o2[i] = oriented_side(plane.eplane, target);// CGAL::orientation(plane.ep, plane.eq, plane.er, target);
+      o1[i] = CGAL::orientation(plane.ep, plane.eq, plane.er, source); // todo use plane.eplane
+      o2[i] = CGAL::orientation(plane.ep, plane.eq, plane.er, target);
 
       if (int(o1[i]) + int(o2[i]) >= 1)
         {
@@ -1972,7 +1973,7 @@ int main(int argc, char* argv[])
   std::ofstream inside("inside.txt");
   std::ofstream outside("outside.txt");
 
-  for(int i = 0; i < env_vertices.size(); i+=10){
+  for(int i = 0; i <  env_vertices.size()  ; i+=10){
       for(int j = i+1; j < env_vertices.size(); j+= 10){
         for(int k = j+1; k < env_vertices.size(); k+=10){
           if( ( i != j) && (i != k) && (j != k)){
