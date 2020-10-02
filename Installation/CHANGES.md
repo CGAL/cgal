@@ -1,6 +1,7 @@
 Release History
 ===============
 
+
 [Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
 
 Release date: December 2020
@@ -32,6 +33,11 @@ Release date: December 2020
       that all calls to `decompose()` are fixed to use the new interface.
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.2/Manual/packages.html#PkgPolygonMeshProcessing)
+-   Added a visitor to the functions
+    [`CGAL::Polygon_mesh_processing::triangulate_face()`](https://doc.cgal.org/5.2/Polygon_mesh_processing/group__PMP__meshing__grp.html#ga70d65044f8c7309c24ade88fa280124a)
+    and [`CGAL::Polygon_mesh_processing::triangulate_faces()`](https://doc.cgal.org/5.2/Polygon_mesh_processing/group__PMP__meshing__grp.html#gacaaff4d520500c530d9c3d5ebe2a0760),
+    that enables the user to keep track of the newly created faces through the triangulation process.
+
 -   Added an option in `corefine()`, `split()` and `clip()` functions that enables the operation to be done on a mesh with
     self-intersections present in the intersection area.
 

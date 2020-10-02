@@ -367,11 +367,11 @@ corefine_and_compute_boolean_operations(
 
   // User visitor
   typedef typename internal_np::Lookup_named_param_def <
-    internal_np::graph_visitor_t,
+    internal_np::visitor_t,
     NamedParameters1,
     Corefinement::Default_visitor<TriangleMesh>//default
   > ::type User_visitor;
-  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::graph_visitor)));
+  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::visitor)));
 
   // surface intersection algorithm call
   typedef Corefinement::Face_graph_output_builder<TriangleMesh,
@@ -777,11 +777,11 @@ corefine(      TriangleMesh& tm1,
 
   // User visitor
   typedef typename internal_np::Lookup_named_param_def <
-    internal_np::graph_visitor_t,
+    internal_np::visitor_t,
     NamedParameters1,
     Corefinement::Default_visitor<TriangleMesh>//default
   > ::type User_visitor;
-  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::graph_visitor)));
+  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::visitor)));
 
 // surface intersection algorithm call
   typedef Corefinement::No_extra_output_from_corefinement<TriangleMesh> Ob;
@@ -867,11 +867,11 @@ autorefine(      TriangleMesh& tm,
 
 // User visitor
   typedef typename internal_np::Lookup_named_param_def <
-    internal_np::graph_visitor_t,
+    internal_np::visitor_t,
     NamedParameters,
     Corefinement::Default_visitor<TriangleMesh>//default
   > ::type User_visitor;
-  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np, internal_np::graph_visitor)));
+  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np, internal_np::visitor)));
 
 
 // surface intersection algorithm call
@@ -964,11 +964,11 @@ autorefine_and_remove_self_intersections(      TriangleMesh& tm,
 
 // User visitor
   typedef typename internal_np::Lookup_named_param_def <
-    internal_np::graph_visitor_t,
+    internal_np::visitor_t,
     NamedParameters,
     Corefinement::Default_visitor<TriangleMesh>//default
   > ::type User_visitor;
-  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np, internal_np::graph_visitor)));
+  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np, internal_np::visitor)));
 
 // surface intersection algorithm call
   typedef Corefinement::Output_builder_for_autorefinement<TriangleMesh,

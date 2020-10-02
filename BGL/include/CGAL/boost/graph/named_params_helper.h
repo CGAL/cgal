@@ -293,7 +293,6 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
       > ::type  type;
   };
 
-
   namespace internal {
     BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_iterator, iterator, false)
   }
