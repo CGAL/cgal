@@ -245,6 +245,10 @@ public:
   Lazy_rep (A&& a)
       : at(std::forward<A>(a)), et(nullptr){}
 
+  template<class A>
+  Lazy_rep (int count, A&& a)
+    : Rep(count), at(std::forward<A>(a)), et(nullptr){}
+
   template<class A, class E>
   Lazy_rep (A&& a, E&& e)
       : at(std::forward<A>(a)), et(new ET(std::forward<E>(e))) {}
@@ -362,7 +366,9 @@ class Lazy_rep_optional_n :
   static_assert(sizeof...(L)>0, "Use Lazy_rep_0 instead");
   template <class Ei, class Ai, class E2Ai, class Ki> friend class Lazy_kernel_base;
   mutable std::tuple<L...> l; // L...l; is not yet allowed.
+
   const EC& ec() const { return *this; }
+
   template<std::size_t...I>
   void update_exact_helper(std::index_sequence<I...>) const {
     this->et = new ET( * ec()( CGAL::exact( std::get<I>(l) ) ... ) );
@@ -370,12 +376,24 @@ class Lazy_rep_optional_n :
     l = std::tuple<L...>{};
   }
   public:
+
+  Lazy_rep_optional_n()
+  {}
+
   void update_exact() const {
     update_exact_helper(std::make_index_sequence<sizeof...(L)>{});
   }
+
   template<class...LL>
   Lazy_rep_optional_n(const AT& a, const EC& ec, LL&&...ll) :
     Lazy_rep<AT, ET, E2A>(a), EC(ec), l(std::forward<LL>(ll)...)
+  {
+    this->set_depth((std::max)({ -1, (int)CGAL::depth(ll)...}) + 1);
+  }
+
+  template<class...LL>
+  Lazy_rep_optional_n(int count, const AT& a, const EC& ec, LL&&...ll) :
+    Lazy_rep<AT, ET, E2A>(count, a), EC(ec), l(std::forward<LL>(ll)...)
   {
     this->set_depth((std::max)({ -1, (int)CGAL::depth(ll)...}) + 1);
   }
@@ -393,6 +411,7 @@ class Lazy_rep_optional_n :
       expander{0,(CGAL::print_dag(std::get<I>(l), os, level+1),0)...};
     }
   }
+
   public:
   void print_dag(std::ostream& os, int level) const {
     print_dag_helper(os, level, std::make_index_sequence<sizeof...L>{});
@@ -874,9 +893,11 @@ struct Lazy_construction_optional
       }
       // Now we have to construct a rep for a lazy point with the three lazy planes.
       typedef Lazy_rep_optional_n<typename AK::Point_3, typename EK::Point_3, AC, EC, E2A, L1, L1, L1> LazyPointRep;
+      static LazyPointRep rep;
+
       const typename AK::Point_3 ap = *oap;
-      LazyPointRep *rep = new LazyPointRep(ap, ec, l1, l2, l3);
-      typename LK::Point_3 lp(rep);
+      rep = LazyPointRep(2,ap, ec, l1, l2, l3);
+      typename LK::Point_3 lp(&rep);
       return boost::make_optional(lp);
 
 
@@ -900,6 +921,7 @@ struct Lazy_construction_optional
   template <typename L1, typename L2>
   result_type operator()(const L1& l1, const L2& l2) const
   {
+    typedef Lazy_rep_optional_n<typename AK::Point_3, typename EK::Point_3, AC, EC, E2A, L1, L2> LazyPointRep;
     Protect_FPU_rounding<Protection> P;
 
     try {
@@ -907,8 +929,8 @@ struct Lazy_construction_optional
       if(oap == boost::none){
         return boost::none;
       }
-      // Now we have to construct a rep for a lazy point with the three lazy planes.
-      typedef Lazy_rep_optional_n<typename AK::Point_3, typename EK::Point_3, AC, EC, E2A, L1, L2> LazyPointRep;
+      // Now we have to construct a rep for a lazy point with the line and the plane.
+
       const typename AK::Point_3 ap = *oap;
       LazyPointRep *rep = new LazyPointRep(ap, ec, l1, l2);
       typename LK::Point_3 lp(rep);

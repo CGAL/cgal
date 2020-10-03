@@ -537,6 +537,7 @@ struct Envelope {
   is_3_triangle_cut_float_fast(const ePoint_3& tp,
                                const ePoint_3& tq,
                                const ePoint_3& tr,
+                               const ePoint_3& n,
                                const Plane& facet1,
                                const Plane& facet2,
                                const ePoint_3& ip
@@ -567,12 +568,13 @@ struct Envelope {
       }
     }
 #endif
-
+#if 0
     Point_3 itp(CGAL::approx(tp).x().inf(), CGAL::approx(tp).y().inf(), CGAL::approx(tp).z().inf());
     Point_3 itq(CGAL::approx(tq).x().inf(), CGAL::approx(tq).y().inf(), CGAL::approx(tq).z().inf());
     Point_3 itr(CGAL::approx(tr).x().inf(), CGAL::approx(tr).y().inf(), CGAL::approx(tr).z().inf());
     Point_3 in = itp + CGAL::cross_product((itp - itq), (itp - itr));
     ePoint_3 n(in.x(),in.y(),in.z());
+#endif
     // return 2;
     // todo:  what do we test here with n ?
     // todo : do this not with Epeck
@@ -607,14 +609,16 @@ struct Envelope {
   is_3_triangle_cut(const ePoint_3& tp,
                     const ePoint_3& tq,
                     const ePoint_3& tr,
+                    const ePoint_3& n,
                     const ePoint_3& ip) const
   {
+#if 0
     Point_3 itp(CGAL::approx(tp).x().inf(), CGAL::approx(tp).y().inf(), CGAL::approx(tp).z().inf());
     Point_3 itq(CGAL::approx(tq).x().inf(), CGAL::approx(tq).y().inf(), CGAL::approx(tq).z().inf());
     Point_3 itr(CGAL::approx(tr).x().inf(), CGAL::approx(tr).y().inf(), CGAL::approx(tr).z().inf());
     Point_3 in = itp + CGAL::cross_product((itp - itq), (itp - itr));
     ePoint_3 n(in.x(),in.y(),in.z());
-
+#endif
     //ePoint_3 n = tp + CGAL::cross_product((tp - tq), (tp - tr));
 #if 0
     if (Predicates::orient_3d(n, tp, q, tr) == 0)
@@ -666,6 +670,7 @@ struct Envelope {
   int
   is_triangle_cut_envelope_polyhedra(const int &cindex,//the triangle is not degenerated
                                      const ePoint_3 &tri0, const ePoint_3 &tri1, const ePoint_3 &tri2,
+                                     const ePoint_3 &n,
                                      std::vector<int> &cid) const
   {
     const Prism& prism = halfspace[cindex];
@@ -836,6 +841,7 @@ struct Envelope {
             boost::optional<ePoint_3>  ipp = CGAL::intersection_point(tri_eplane, prism[cutp[i]].eplane, prism[cutp[j]].eplane);
             if(ipp){
                 inter = is_3_triangle_cut_float_fast(tri0, tri1, tri2,
+                                                     n,
                                                      prism[cutp[i]],
                                                      prism[cutp[j]],
                                                      *ipp);
@@ -1246,17 +1252,24 @@ struct Envelope {
 
 
   bool
-  triangle_out_of_envelope(const std::array<Point_3,3>& triangle,
+  triangle_out_of_envelope(const Point_3 & t0,
+                           const Point_3 & t1,
+                           const Point_3 & t2,
                            const std::vector<unsigned int> &prismindex) const
   {
+
     if (prismindex.size() == 0)
       {
         return true;
       }
 
-    std::array<ePoint_3,3> etriangle = { ePoint_3(triangle[0].x(),triangle[0].y(),triangle[0].z()),
-                                         ePoint_3(triangle[1].x(),triangle[1].y(),triangle[1].z()),
-                                         ePoint_3(triangle[2].x(),triangle[2].y(),triangle[2].z()) };
+    std::array<Point_3,3> triangle = { t0, t1, t2 };
+    std::array<ePoint_3,3> etriangle = { ePoint_3(t0.x(), t0.y(), t0.z()),
+                                         ePoint_3(t1.x(), t1.y(), t1.z()),
+                                         ePoint_3(t2.x(), t2.y(), t2.z()) };
+
+    Point_3 in = t0 + CGAL::cross_product((t0 - t1), (t0 - t2));
+    ePoint_3 n(in.x(), in.y(), in.z());
 
     int jump1, jump2;
     static const std::array<std::array<int, 2>, 3> triseg = {
@@ -1354,7 +1367,9 @@ struct Envelope {
     std::vector<int> cidl; cidl.reserve(8);
     for (int i = 0; i < prismindex.size(); i++) {
       tti = is_triangle_cut_envelope_polyhedra(prismindex[i],
-                                               etriangle[0], etriangle[1], etriangle[2], cidl);
+                                               etriangle[0], etriangle[1], etriangle[2],
+                                               n,
+                                               cidl);
       if (tti == 2) {
 
         return false;//totally inside of this polyhedron
@@ -1521,7 +1536,7 @@ struct Envelope {
             const ePoint_3& ip = *op;
 
 
-            cut = is_3_triangle_cut(etriangle[0], etriangle[1], etriangle[2], ip);
+            cut = is_3_triangle_cut(etriangle[0], etriangle[1], etriangle[2], n, ip);
 
             if (!cut){
 #ifdef TRACE
@@ -1858,8 +1873,7 @@ struct Envelope {
       prism_to_off(prismindex[i], "prism");
     }
 #endif
-    std::array<Point_3,3> triangle = { t0, t1, t2 };
-    if(triangle_out_of_envelope(triangle, prismindex)){
+    if(triangle_out_of_envelope(t0, t1, t2, prismindex)){
       return false;
     }
     return true;
@@ -1973,7 +1987,7 @@ int main(int argc, char* argv[])
   std::ofstream inside("inside.txt");
   std::ofstream outside("outside.txt");
 
-  for(int i = 0; i <  env_vertices.size()  ; i+=10){
+  for(int i = 0; i <  env_vertices.size()   ; i+=10){
       for(int j = i+1; j < env_vertices.size(); j+= 10){
         for(int k = j+1; k < env_vertices.size(); k+=10){
           if( ( i != j) && (i != k) && (j != k)){
