@@ -11,11 +11,24 @@ namespace CGAL {
  * `complement()` function template inserts the resulting poylgons with holes
  * into a container via an output iterator.
  *
+ * A function template in this group has one of the two following signatures:
+ *   - `void complement(const Type1& pgn, Type2& res);`
+ *   - `void complement(const Type1& pgn, Type2& res, const GpsTraits& traits);`
+ *
  * \cgalHeading{Parameters}
  *
- * \param pgn The input polygon. Its type must be convertible to one of the
- *        types `Polygon_2`, `General_polygon_2`, `Polygon_with_holes_2`, or
- *        `General_polygon_with_holes_2`.
+ * The types `Type` and `Type2` of the parameters must be convertible to the
+ * types specified in a row in the table below, respectively.
+ *
+ * <div align="left">
+ * <table cellpadding=3 border="1">
+ * <tr><th> Type1 </th>                                     <th>Type2</th></tr>
+ * <tr><td valign="center">Polygon_2</td>                   <td valign="center">Polygon_with_holes_2</td></tr>
+ * <tr><td valign="center">Polygon_with_holes_2</td>        <td valign="center">Polygon_with_holes_2</td></tr>
+ * <tr><td valign="center">General_polygon_2</td>           <td valign="center">General_polygon_with_holes_2</td></tr>
+ * <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+ * </table>
+ * </div>
  *
  * \sa \link boolean_do_intersect `CGAL::do_intersect()` \endlink
  * \sa \link boolean_intersection `CGAL::intersection()` \endlink
@@ -149,8 +162,6 @@ namespace CGAL {
  *                                OutputIterator oi);`
  *   - `OutputIterator difference(const Type1& pgn1, const Type2& pgn2,
  *                                OutputIterator oi, const GpsTraits& traits);`
- *
- * \cgalHeading{Parameters}
  *
  * \param oi the output iterator for the result.
  *
@@ -807,8 +818,6 @@ namespace CGAL {
  *   - `OutputIterator %intersection(const Type1& pgn1, const Type2& pgn2,
  *                                   OutputIterator oi, const GpsTraits& traits);`
  *
- * \cgalHeading{Parameters}
- *
  * \param oi the output iterator for the result.
  *
  * The types `Type1` and `Type2` of the parameters must be convertible to the
@@ -1400,7 +1409,10 @@ namespace CGAL {
  *
  * A function template in this subgroup has one of the two following signatures:
  *   - `Oriented_side oriented_side(const Type1& pgn1, const Type2& pgn2);`
- *   - `Oriented_side oriented_side(const Type1& pgn1, const Type2& pgn2, const GpsTraits& traits);`
+ *   - `Oriented_side oriented_side(const Type1& pgn1, const Type2& pgn2,
+ *                                  const GpsTraits& traits);`
+ *
+ * \cgalHeading{Parameters}
  *
  * The types `Type1` and `Type2` of the parameters must be convertible to the types specified in a row in the following table, respectively.
  *
@@ -1427,7 +1439,10 @@ namespace CGAL {
  *
  * A function in this subgroup has one of the two following signatures:
  *   - `Oriented_side oriented_side(const Point_2& p, const Type& pgn);`
- *   - `Oriented_side oriented_side(const Point_2& p, const Type& pgn, const GpsTraits& traits);`
+ *   - `Oriented_side oriented_side(const Point_2& p, const Type& pgn,
+ *                                  const GpsTraits& traits);`
+ *
+ * \cgalHeading{Parameters}
  *
  * `Type` must be convertible to one of
  *   `Polygon_2`,
@@ -1722,12 +1737,6 @@ namespace CGAL {
  *                                          OutputIterator oi);`
  *   - `OutputIterator symmetric_difference(const Type1& pgn1, const Type2& pgn2,
  *                                          OutputIterator oi, const GpsTraits& traits);`
- *
- * \cgalHeading{Parameters}
- *
- * The types `Type1` and `Type2` of the parameters must be convertible to the
- * types specified in a row in the table below, respectively.  The 3rd column
- * specifies the corresponding dereference type of the output iterator.
  *
  * \param oi the output iterator for the result.
  *
