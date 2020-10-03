@@ -1,7 +1,5 @@
 // Copyright (c) 2007-09  INRIA Sophia-Antipolis (France).
 // Copyright (c) 2017 GeometryFactory (France).
-
-
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -11,6 +9,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Maxime Gimeno, Pierre Alliez
+
 #ifndef CGAL_FACETS_IN_COMPLEX_2_TO_TRIANGLE_MESH_H
 #define CGAL_FACETS_IN_COMPLEX_2_TO_TRIANGLE_MESH_H
 

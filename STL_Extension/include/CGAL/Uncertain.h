@@ -612,26 +612,12 @@ Uncertain<T> operator*(Uncertain<T> a, T b)
 
 // enum_cast overload
 
-#ifdef CGAL_CFG_MATCHING_BUG_5
-
-template < typename T, typename U >
-inline
-Uncertain<T> enum_cast_bug(Uncertain<U> u, const T*)
-{
-  return Uncertain<T>(static_cast<const T>(u.inf()),
-                      static_cast<const T>(u.sup()));
-}
-
-#else
-
 template < typename T, typename U >
 inline
 Uncertain<T> enum_cast(Uncertain<U> u)
 {
   return Uncertain<T>(static_cast<T>(u.inf()), static_cast<T>(u.sup()));
 }
-
-#endif
 
 } //namespace CGAL
 

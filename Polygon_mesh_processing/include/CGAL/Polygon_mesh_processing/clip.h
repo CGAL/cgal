@@ -469,11 +469,11 @@ generic_clip_impl(
 
   // User visitor
   typedef typename internal_np::Lookup_named_param_def <
-    internal_np::graph_visitor_t,
+    internal_np::visitor_t,
     NamedParameters1,
     Corefinement::Default_visitor<TriangleMesh>//default
   > ::type User_visitor;
-  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::graph_visitor)));
+  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::visitor)));
 
   // surface intersection algorithm call
   typedef Corefinement::Generic_clip_output_builder<TriangleMesh,

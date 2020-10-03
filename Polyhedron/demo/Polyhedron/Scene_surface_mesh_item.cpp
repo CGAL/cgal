@@ -1629,7 +1629,7 @@ QString Scene_surface_mesh_item::computeStats(int type)
   {
     boost::vector_property_map<int,
       boost::property_map<SMesh, boost::face_index_t>::type>
-      fccmap(get(boost::face_index, *(d->smesh_)));
+      fccmap(static_cast<unsigned>(num_faces(*(d->smesh_))), get(boost::face_index, *(d->smesh_)));
     return QString::number(CGAL::Polygon_mesh_processing::connected_components(*(d->smesh_), fccmap));
   }
   case NB_BORDER_EDGES:
@@ -2130,7 +2130,7 @@ void Scene_surface_mesh_item::printAllIds()
   d->killIds();
 }
 
-bool Scene_surface_mesh_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)const
+bool Scene_surface_mesh_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer, const QVector3D& scaler)const
 {
   const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   EPICK::Point_3 src(x - offset.x,
@@ -2138,13 +2138,14 @@ bool Scene_surface_mesh_item::testDisplayId(double x, double y, double z, CGAL::
                       z - offset.z);
 
   CGAL::qglviewer::Camera* cam = viewer->camera();
-  EPICK::Point_3 dest( cam->position().x - offset.x,
-                       cam->position().y - offset.y,
-                       cam->position().z - offset.z);
+  EPICK::Point_3 dest( cam->position().x/scaler.x() - offset.x,
+                       cam->position().y/scaler.y() - offset.y,
+                       cam->position().z/scaler.z() - offset.z);
   EPICK::Vector_3 v(src,dest);
   EPICK::Vector_3 dir(cam->viewDirection().x,
                       cam->viewDirection().y,
                       cam->viewDirection().z);
+
   if(-CGAL::scalar_product(v, dir) < cam->zNear()) //if src is behind the near plane, don't display.
     return false;
   v = 0.01*v;

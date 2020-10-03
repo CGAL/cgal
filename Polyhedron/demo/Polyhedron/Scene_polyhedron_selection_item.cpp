@@ -67,7 +67,6 @@ public:
   {
     undo_();
     item->compute_normal_maps();
-    item->polyhedron_item()->invalidateOpenGLBuffers();
     item->invalidateOpenGLBuffers();
     item->redraw();
   }
@@ -2255,9 +2254,9 @@ void Scene_polyhedron_selection_item::printAllIds()
 {
   d->item->polyhedron_item()->printAllIds();
 }
-bool Scene_polyhedron_selection_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)const
+bool Scene_polyhedron_selection_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer, const QVector3D& scaler)const
 {
-  return d->item->polyhedron_item()->testDisplayId(x, y, z, viewer);
+  return d->item->polyhedron_item()->testDisplayId(x, y, z, viewer, scaler);
   return false;
 }
 
