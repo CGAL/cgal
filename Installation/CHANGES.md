@@ -28,6 +28,8 @@ Release date: December 2020
     and [`Construct_power_sphere_d`](https://doc.cgal.org/5.2/Kernel_d/classCGAL_1_1Epeck__d_1_1Construct__power__sphere__d.html),
     to deal with weighted points.
 
+### 2D Regularized Boolean Set Operations
+-   Added documentation for the free functions `oriented_side(const Point_2& p, ....)` that accept a point and a polygon, and improved the documentation of all other functions
 
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/v5.1)
 -----------
