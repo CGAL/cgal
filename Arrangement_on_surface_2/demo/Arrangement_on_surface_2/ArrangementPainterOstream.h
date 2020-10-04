@@ -235,8 +235,6 @@ protected: // methods
   // keep only the intersection points ie. throw out overlapping curve segments
   void filterIntersectionPoints( std::vector< CGAL::Object >& res );
 
-  void printIntersectResult( const std::vector< CGAL::Object >& res );
-
 protected: // members
   Traits traits;
   Intersect_curves<Traits> intersect_2;

@@ -348,9 +348,10 @@ auto Find_nearest_edge<Arr_>::operator()(const Point_2& queryPt)
       }
     } while (++cc != face->outer_ccb());
   }
+  Hole_const_iterator hit;
+  Hole_const_iterator eit = face->holes_end();
   // int counter = 0;
-  for (auto hit = face->holes_begin(), eit = face->holes_end(); hit != eit;
-       ++hit)
+  for (hit = face->holes_begin(); hit != eit; ++hit)
   { // check any holes inside this face
     Ccb_halfedge_const_circulator cc = *hit;
     do

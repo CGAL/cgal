@@ -607,7 +607,8 @@ void ArrangementDemoWindow::on_actionOverlay_triggered()
     ArrangementDemoTab* tab =
       static_cast<ArrangementDemoTab*>(this->ui->tabWidget->widget(i));
 
-    arr_infos.push_back({this->ui->tabWidget->tabText(i), tab->traitsType()});
+    arr_infos.push_back({
+        i, tab->traitsType(), this->ui->tabWidget->tabText(i)});
   }
 
   OverlayDialog overlayDialog{this, arr_infos};

@@ -36,12 +36,13 @@ public:
 
   struct ArrangementInfo
   {
-    QString label;
+    int id;
     demo_types::TraitsType ttype;
+    QString label;
   };
   OverlayDialog(QWidget* parent, const std::vector<ArrangementInfo>&);
 
-  std::vector<std::size_t> selectedArrangements() const;
+  std::vector<int> selectedArrangements() const;
 
 public Q_SLOTS:
   void on_pickPushButton_pressed( );

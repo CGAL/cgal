@@ -57,13 +57,14 @@ OverlayDialog::OverlayDialog(
   }
 }
 
-std::vector<std::size_t> OverlayDialog::selectedArrangements() const
+std::vector<int> OverlayDialog::selectedArrangements() const
 {
-  std::vector<std::size_t> res;
+  std::vector<int> res;
   for (int i = 0; i < this->ui->overlayListWidget->count(); ++i)
   {
     QListWidgetItem* item = this->ui->overlayListWidget->item(i);
-    res.push_back(item->data(ARRANGEMENT).value<std::size_t>());
+    size_t arr_idx = item->data(ARRANGEMENT).value<std::size_t>();
+    res.push_back(this->arr_infos[arr_idx].id);
   }
   return res;
 }

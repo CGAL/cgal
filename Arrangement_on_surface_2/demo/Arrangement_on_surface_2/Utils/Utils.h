@@ -555,6 +555,7 @@ public: // typedefs
   typedef typename Arrangement::Face_const_handle       Face_const_handle;
   typedef typename Arrangement::Halfedge_const_handle   Halfedge_const_handle;
   typedef typename Arrangement::Vertex_const_handle     Vertex_const_handle;
+  typedef typename Arrangement::Hole_const_iterator     Hole_const_iterator;
   typedef typename Arrangement::Ccb_halfedge_const_circulator
     Ccb_halfedge_const_circulator;
 
