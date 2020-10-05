@@ -300,7 +300,7 @@ private:
       Index j = get(edge_id_map, edge(hd2,m_intrinsic_tm));
       Index k = get(edge_id_map, edge(hd3,m_intrinsic_tm));
       double ineq = edge_lengths[j] + edge_lengths[k] - edge_lengths[i];
-      epsilon = std::max(epsilon, std::max(0., delta-ineq));
+      epsilon = (std::max)(epsilon, (std::max)(0., delta-ineq));
     }
     // update edge lengths
     for(edge_descriptor ed : edges(m_intrinsic_tm)) {
