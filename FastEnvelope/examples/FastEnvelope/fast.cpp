@@ -324,15 +324,17 @@ struct Envelope {
   {
     const Prism& prism = halfspace[cindex];
     cid.clear();
-    std::vector<bool> cut;
-
+    std::array<bool,8> cut = { false, false,  false, false,  false, false,  false, false };
+    /*
     cut.resize(prism.size());
     for (int i = 0; i < prism.size(); i++){
       cut[i] = false;
     }
-    std::vector<CGAL::Orientation> o1, o2;
-    o1.resize(prism.size());
-    o2.resize(prism.size());
+    */
+
+    std::array<CGAL::Orientation,8> o1, o2;
+    //    o1.resize(prism.size());
+    //    o2.resize(prism.size());
     int ori = 0, ct1 = 0, ct2 = 0;//ori=0 to avoid the case that there is only one cut plane
     std::vector<int> cutp;
 
