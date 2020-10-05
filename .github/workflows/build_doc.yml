@@ -31,28 +31,12 @@ jobs:
            //get pullrequest url
            const pr_number = context.payload.issue.number
            return pr_number
-      - uses: actions/github-script@v3
-        if: steps.get_round.outputs.result != 'stop'
-        id: get_pr_branch
-        with:
-          result-encoding: string
-          script: |
-            //get pullrequest url
-            const pr_number = context.payload.issue.number
-            //get upstream branch
-            const pr = await github.pulls.get({
-              owner: "CGAL",
-              repo: "cgal",
-              pull_number: pr_number,
-            });
-            const result = pr.data.head.label
-            return result.replace(/(.*):(.*)/, '$2')
       - uses: actions/checkout@v2
         name: "checkout branch"
         if: steps.get_round.outputs.result != 'stop'
         with:
-          repository: CGAL/cgal
-          ref: ${{ steps.get_pr_branch.outputs.result }}
+          repository: ${{ github.repository }}
+          ref: refs/pull/${{ steps.get_pr_number.outputs.result }}/merge
           token: ${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}
 
 
