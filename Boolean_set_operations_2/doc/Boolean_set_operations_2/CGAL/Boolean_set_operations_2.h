@@ -127,7 +127,7 @@ OutputIterator complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
                           OutputIterator oi,
                           const GpsTraits& traits);
 
-/*! Computes the complement of the general polygon with holes.
+/*! computes the complement of the general polygon with holes.
  * \param pgn the input polygon.
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
