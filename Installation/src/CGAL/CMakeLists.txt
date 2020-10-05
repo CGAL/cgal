@@ -4,15 +4,9 @@ collect_cgal_library(CGAL "")
 
 include(CGAL_SetupCGALDependencies)
 
-if(CGAL_HEADER_ONLY)
-  set(keyword "INTERFACE")
-endif()
+set(keyword "INTERFACE")
 
 CGAL_setup_CGAL_dependencies(CGAL ${keyword})
-
-if(NOT CGAL_HEADER_ONLY)
-  target_compile_definitions(CGAL INTERFACE CGAL_NOT_HEADER_ONLY=1)
-endif()
 
 if(NOT CGAL_DISABLE_GMP)
   get_dependency_version(GMP)

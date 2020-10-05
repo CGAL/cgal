@@ -4,9 +4,7 @@ collect_cgal_library( CGAL_ImageIO "")
 
 include(CGAL_SetupCGAL_ImageIODependencies)
 
-if(CGAL_HEADER_ONLY)
-  set(keyword "INTERFACE")
-endif()
+set(keyword "INTERFACE")
 
 CGAL_setup_CGAL_ImageIO_dependencies(CGAL_ImageIO ${keyword})
 

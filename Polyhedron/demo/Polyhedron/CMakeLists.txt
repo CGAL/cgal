@@ -209,9 +209,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   # CMake). That is to deal with the visibility of symbols of
   # `Three.h`/`Three.cpp`.
   target_compile_definitions(demo_framework PRIVATE three_EXPORTS=1)
-  if(CGAL_HEADER_ONLY)
-    target_compile_definitions(demo_framework PRIVATE -DCGAL_USE_Qt5_RESOURCES)
-  endif()
+  target_compile_definitions(demo_framework PRIVATE -DCGAL_USE_Qt5_RESOURCES)
 
   add_library(scene_basic_objects SHARED
     Scene_plane_item.cpp

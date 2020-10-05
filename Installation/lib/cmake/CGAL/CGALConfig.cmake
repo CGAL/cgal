@@ -9,8 +9,6 @@ set(CGAL_LIBRARIES CGAL)
 
 get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
-set(CGAL_HEADER_ONLY TRUE)
-
 function(cgal_detect_branch_build VAR_NAME)
   if(IS_DIRECTORY ${CGAL_CONFIG_DIR}/../../../../Installation/package_info/Installation/)
     set(${VAR_NAME} TRUE PARENT_SCOPE)

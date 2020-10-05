@@ -23,11 +23,6 @@
 #    If set, the `LEDA` library will be searched and used to provide
 #    the exact number types used by CGAL kernels.
 #
-# .. variable:: CGAL_HEADER_ONLY
-#
-#    Set this variable if you are using the CGAL libraries as
-#    header-only libraries.
-#
 if(CGAL_SetupCGALDependencies_included)
   return()
 endif()
@@ -94,10 +89,6 @@ function(CGAL_setup_CGAL_dependencies target)
 
   if(WITH_LEDA)
     use_CGAL_LEDA_support(${target} ${keyword})
-  endif()
-
-  if (NOT CGAL_HEADER_ONLY)
-    target_compile_definitions(${target} ${keyword} CGAL_NOT_HEADER_ONLY=1)
   endif()
   if (RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
     target_compile_definitions(${target} ${keyword} CGAL_TEST_SUITE=1)
