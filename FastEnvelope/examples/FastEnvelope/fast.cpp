@@ -1081,7 +1081,7 @@ struct Envelope {
                 const ePlane_3 &eplane,
                 const std::vector<unsigned int> &prismindex,
 		const std::vector<std::vector<int>>& intersect_face,
-                const std::vector<bool>& coverlist,
+                const std::vector<int>& coverlist,
                 const int &jump,
                 int &id) const
   {
@@ -1100,7 +1100,7 @@ struct Envelope {
       if (prismindex[i] == jump){
         continue;
       }
-      if (coverlist[i] == true){
+      if (coverlist[i] == 1){
         continue;
       }
       tot = 0; fid = 0;
@@ -1239,7 +1239,7 @@ struct Envelope {
 		const ePoint_3& ip,
 		const std::vector<unsigned int>& prismindex,
                 const std::vector<std::vector<int>*>& intersect_face,
-                const std::vector<bool>& coverlist,
+                const std::vector<int>& coverlist,
                 const int &jump1,
                 const int &jump2,
 		int &id) const
@@ -1251,7 +1251,7 @@ struct Envelope {
           if (prismindex[i] == jump1 || prismindex[i] == jump2)	continue;
           if (!box_box_intersection(bounding_boxes[prismindex[i]], bounding_boxes[jump1])) continue;
           if (!box_box_intersection(bounding_boxes[prismindex[i]], bounding_boxes[jump2])) continue;
-          if (coverlist[i] == true) continue;
+          if (coverlist[i] == 1) continue;
           tot = 0;
           fid = 0;
           ori = -1;
@@ -1447,10 +1447,10 @@ struct Envelope {
     }
 #endif
     std::vector<unsigned int > queue, idlist;
-    std::vector<bool> coverlist;
+    std::vector<int> coverlist;
     coverlist.resize(filtered_intersection.size());
     for (int i = 0; i < coverlist.size(); i++) {
-      coverlist[i] = false;// coverlist shows if the element in filtered_intersection is one of the current covers
+      coverlist[i] = 0;// coverlist shows if the element in filtered_intersection is one of the current covers
     }
     queue.emplace_back(0);//queue contains the id in filtered_intersection
     idlist.emplace_back(filtered_intersection[queue[0]]);// idlist contains the id in prismid//it is fine maybe it is not really intersected
@@ -1460,7 +1460,7 @@ struct Envelope {
     std::vector<unsigned int > list;
     std::vector<std::vector<int>*> neighbour_facets;
     std::vector<std::vector<int>>  idlistorder;
-    std::vector<bool> neighbour_cover;
+    std::vector<int> neighbour_cover;
     idlistorder.emplace_back(intersect_face[queue[0]]);
 
     //std::array<eLine_3, 3> elines;
@@ -1510,7 +1510,7 @@ struct Envelope {
                 idlistorder.emplace_back(intersect_face[check_id]);
                 queue.emplace_back(check_id);
                 idlist.emplace_back(filtered_intersection[check_id]);
-                coverlist[check_id] = true;
+                coverlist[check_id] = 1;
               }
             }
         }
@@ -1560,8 +1560,8 @@ struct Envelope {
       for (int j = 0; j < list.size(); j++) {
         neighbours[j] = filtered_intersection[list[j]];
         neighbour_facets[j] = &(intersect_face[list[j]]);
-        if (coverlist[list[j]] == true) neighbour_cover[j] = true;
-        else neighbour_cover[j] = false;
+        if (coverlist[list[j]] == 1) neighbour_cover[j] = 1;
+        else neighbour_cover[j] = 0;
       }
 
       for (int j = 0; j < i; j++) {
@@ -1637,7 +1637,7 @@ struct Envelope {
                 idlistorder.emplace_back(intersect_face[list[check_id]]);
                 queue.emplace_back(list[check_id]);
                 idlist.emplace_back(filtered_intersection[list[check_id]]);
-                coverlist[list[check_id]] = true;
+                coverlist[list[check_id]] = 1;
               }
             }
           }
