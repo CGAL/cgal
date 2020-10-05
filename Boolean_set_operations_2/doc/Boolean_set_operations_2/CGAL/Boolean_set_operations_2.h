@@ -609,7 +609,7 @@ bool do_intersect(const General_polygon_with_holes_2<Polygon>& pgn1,
  *        (resp. `General_polygon_with_holes_2`).
  * \param end the past-the-end iterator of the input range. It's value type is
  *        either `Polygon_2` (resp. `General_polygon_2`) or `Polygon_with_holes`
- *        (resp. General_polygon_with_holes_2).
+ *        (resp. `General_polygon_with_holes_2`).
  * \return `true` if the pairwise intersections of all open polygons or polygons
  *         with holes (resp. general polygons or general polygons with holes) in
  *         the range [*begin,*end) overlap, and `false` otherwise.
