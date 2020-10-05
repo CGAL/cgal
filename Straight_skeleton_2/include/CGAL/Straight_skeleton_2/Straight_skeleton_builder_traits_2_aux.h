@@ -156,7 +156,7 @@ public:
 
 
 //
-// This number type is provided because unlike Quotient<> is allows you to create it
+// This number type is provided because unlike Quotient<> it allows you to create it
 // with a zero denominator. Of course you can't evaluate it in that case, but is convenient because it allows client code
 // to handle the "error" itself, which in this context is useful.
 //

@@ -223,6 +223,7 @@ public:
   SSkelPtr construct_skeleton(  bool aNull_if_failed = true ) ;
 
 private :
+  // Only used to debug
   double ComputeApproximateAngle ( Vector_2 const& u, Vector_2 const& v) const
   {
     typename K::Compute_scalar_product_2 sp = K().compute_scalar_product_2_object();
@@ -659,7 +660,6 @@ private :
                             typename std::enable_if<
                               ! CGAL_SS_i::has_Segment_2_with_ID<GT>::value>::type* = nullptr ) const
   {
-    CGAL_assertion(false);
     return Segment_2(CreateRawSegment(aH)) ;
   }
 

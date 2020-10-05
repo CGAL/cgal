@@ -1737,13 +1737,13 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::PreprocessMultinode( Multinode& aMN )
     {
       ccw = validate(ccw->opposite()->prev()) ;
       if ( ccw != ccw_end )
-           aMN.bisectors_to_relink.push_back(ccw);
-      else break ;
+        aMN.bisectors_to_relink.push_back(ccw);
+      else
+        break ;
     }
+
     if ( h != aMN.begin )
-    {
       aMN.nodes_to_remove.push_back(h->vertex());
-    }
 
     h = nx;
   }
@@ -1870,6 +1870,7 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::MergeCoincidentNodes()
 
     Halfedge_handle h0 = h ;
     Vertex_handle   v0 = validate(h0->vertex()) ;
+    CGAL_assertion(handle_assigned(v0));
 
     if ( ! v0->has_infinite_time() )
     {

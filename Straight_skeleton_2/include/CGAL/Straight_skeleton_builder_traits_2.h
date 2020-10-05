@@ -512,8 +512,6 @@ public:
   template <class EventPtr>
   bool CanSafelyIgnoreSplitEvent(const EventPtr& lEvent)
   {
-    return false;
-
     // filter event
     if ( ! mFilteringBound )
       return false;

@@ -263,7 +263,7 @@ inline std::string newn2str( char const* name, VH const& v, Triedge const& aTrie
 #endif
 
 #ifdef CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE
-bool sEnableTraitsTrace = false ;
+bool sEnableTraitsTrace = false;
 #  define CGAL_STSKEL_TRAITS_ENABLE_TRACE sEnableTraitsTrace = true ;
 #  define CGAL_STSKEL_TRAITS_ENABLE_TRACE_IF(cond) if ((cond)) sEnableTraitsTrace = true ;
 #  define CGAL_STSKEL_TRAITS_DISABLE_TRACE sEnableTraitsTrace = false;

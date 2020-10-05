@@ -26,7 +26,7 @@ namespace CGAL_SS_i {
 // of the intersection of their offsets at the given distance.
 //
 // PRECONDITIONS:
-// The line coefficients must be normalized: a�+b�==1 and (a,b) being the leftward normal vector
+// The line coefficients must be normalized: a²+b²==1 and (a,b) being the leftward normal vector
 // The offsets at the given distance do intersect in a single point.
 //
 // POSTCONDITION: In case of overflow an empty optional is returned.

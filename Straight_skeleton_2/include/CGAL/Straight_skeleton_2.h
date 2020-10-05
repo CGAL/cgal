@@ -365,7 +365,7 @@ public :
 
       valid = valid && fvalid && fnvalid ;
 
-      CGAL_STSKEL_VALIDITY_TRACE ("end of Straight_skeleton_2>::is_valid(): " << ( valid ? "valid." : "NOT VALID.") );
+      CGAL_STSKEL_VALIDITY_TRACE ("end of Straight_skeleton_2::is_valid(): " << ( valid ? "valid." : "NOT VALID.") );
 
       return valid;
     }
