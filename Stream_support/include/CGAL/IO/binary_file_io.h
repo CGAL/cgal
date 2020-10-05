@@ -33,7 +33,7 @@ I_Binary_write_uinteger32(std::ostream& out, std::uint32_t u) {
 inline void
 I_Binary_write_size_t_into_uinteger32 (std::ostream& out, std::size_t s) {
     CGAL_assertion_msg
-      (i <= static_cast<std::size_t>(std::numeric_limits<std::uint32_t>::max()),
+      (s <= static_cast<std::size_t>(std::numeric_limits<std::uint32_t>::max()),
        "Trying to write size_t that does not fit in uint32_t");
     I_Binary_write_uinteger32 (out, static_cast<std::uint32_t>(s));
 }
