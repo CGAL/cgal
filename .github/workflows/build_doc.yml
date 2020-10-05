@@ -15,7 +15,7 @@ jobs:
          result-encoding: string
          script: |
            const asso = context.payload.comment.author_association
-           if(asso == 'OWNER' || asso == 'COLLABORATOR') {
+           if(asso == 'OWNER' || asso == 'MEMBER') {
              const body = context.payload.comment.body
              if(body.includes("build:")) {
                return body.replace('build:','')
