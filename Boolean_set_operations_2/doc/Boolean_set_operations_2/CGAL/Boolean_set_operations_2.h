@@ -605,7 +605,7 @@ bool do_intersect(const General_polygon_with_holes_2<Polygon>& pgn1,
  * whether the open polygons (resp. general polygons) in the range have a common
  * point.
  * \param begin the first iterator of the input range. It's value type is
- *        either Polygon_2 (resp. General_polygon_2) or Polygon_with_holes
+ *        either `Polygon_2` (resp. `General_polygon_2`) or `Polygon_with_holes`
  *        (resp. General_polygon_with_holes_2).
  * \param end the past-the-end iterator of the input range. It's value type is
  *        either Polygon_2 (resp. General_polygon_2) or Polygon_with_holes
