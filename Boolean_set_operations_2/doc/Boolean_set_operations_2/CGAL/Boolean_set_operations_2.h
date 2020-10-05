@@ -60,7 +60,7 @@ void
 complement(const General_polygon_2<ArrTraits>& pgn,
            General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& res);
 
-/*! Computes the complement of a polygon with holes.
+/*! computes the complement of a polygon with holes.
  * \param pgn the input polygon.
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
