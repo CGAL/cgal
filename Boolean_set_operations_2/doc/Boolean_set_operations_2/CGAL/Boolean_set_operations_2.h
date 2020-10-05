@@ -71,7 +71,7 @@ template <typename Kernel, typename Container, typename OutputIterator>
 OutputIterator complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
                           OutputIterator oi);
 
-/*! Computes the complement of a general polygon with holes.
+/*! computes the complement of a general polygon with holes.
  * \param pgn the input polygon.
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
