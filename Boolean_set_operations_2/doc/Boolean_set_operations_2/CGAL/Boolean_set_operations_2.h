@@ -1394,7 +1394,7 @@ namespace CGAL {
  * \ingroup PkgBooleanSetOperations2Ref
  * \anchor ref_bso_oriented_side
  *
- * There are several overloaded function templatess called `Oriented_side()`
+ * There are several overloaded function templates called `Oriented_side()`
  * that compute the relative position of either (i) two polygons or (ii) a
  * point and a polygon. This group of function templates is divided into two
  * subgroups.
