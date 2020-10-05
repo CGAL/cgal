@@ -610,8 +610,6 @@ endforeach()
 # The following variables are in the cache just so subdirectories can set them persistently.
 # But they are not intended to persist from run to run as normal cache variables.
 # Similar variables are created when a library is detected.
-#
-cache_set(CGAL_3RD_PARTY_PRECONFIGURED  "" )
 
 cache_set(CGAL_3RD_PARTY_DEFINITIONS    "" )
 cache_set(CGAL_3RD_PARTY_INCLUDE_DIRS   "" )
@@ -619,7 +617,6 @@ cache_set(CGAL_3RD_PARTY_LIBRARIES      "" )
 cache_set(CGAL_3RD_PARTY_LIBRARIES_DIRS "" )
 
 # default is on, but some use-cases need to set it to off, e.g., debian packages
-option( CGAL_ENABLE_PRECONFIG "Select to allow to preconfiguration of external libraries" ON)
 
 # additional info: some header files in CGAL add additional code if
 # certain optional libs are installed, and some examples/tests rely on
@@ -752,8 +749,6 @@ foreach (package ${CGAL_CONFIGURED_PACKAGES})
 endforeach()
 
 include_directories (${CGAL_INCLUDE_DIRS})
-
-cache_get(CGAL_3RD_PARTY_PRECONFIGURED )
 
 cache_get(CGAL_3RD_PARTY_DEFINITIONS   )
 cache_get(CGAL_3RD_PARTY_INCLUDE_DIRS  )
