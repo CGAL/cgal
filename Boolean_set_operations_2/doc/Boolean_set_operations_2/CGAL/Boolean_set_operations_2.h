@@ -41,7 +41,7 @@ namespace CGAL {
 
 //////// Traits-less
 
-/*! Computes the complement of a polygon.
+/*! computes the complement of a polygon.
  * \param pgn the input polygon.
  * \param res the resulting complement of \p pgn.
  */
