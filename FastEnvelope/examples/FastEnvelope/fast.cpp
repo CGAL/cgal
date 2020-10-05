@@ -337,6 +337,7 @@ struct Envelope {
     //    o2.resize(prism.size());
     int ori = 0, ct1 = 0, ct2 = 0;//ori=0 to avoid the case that there is only one cut plane
     std::vector<int> cutp;
+    cutp.reserve(8);
 
     for (int i = 0; i < prism.size(); i++){
       const Plane& plane = prism[i];
@@ -730,6 +731,7 @@ struct Envelope {
     std::array<bool,8> cut = { false, false,  false, false,  false, false,  false, false };
     std::array<int,8> o1, o2, o3;
     std::vector<int>  cutp;
+    cutp.reserve(8);
     // o1.resize(prism.size());
     // o2.resize(prism.size());
     // o3.resize(prism.size());
