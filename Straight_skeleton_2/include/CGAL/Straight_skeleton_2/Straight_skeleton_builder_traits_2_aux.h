@@ -186,7 +186,24 @@ class Rational
     NT mN, mD ;
 } ;
 
+template <class K>
+struct Segment_2_with_ID
+  : public Segment_2<K>
+{
+  typedef Segment_2<K> Base;
+  typedef typename K::Point_2 Point_2;
 
+public:
+  Segment_2_with_ID() : Base(), mID(-1) { }
+  Segment_2_with_ID(Base const& aS) : Base(aS), mID(-1) { }
+  Segment_2_with_ID(Base const& aS, const std::size_t aID) : Base(aS), mID(aID) { }
+  Segment_2_with_ID(Point_2 const& aP, Point_2 const& aQ, const std::size_t aID) : Base(aP, aQ), mID(aID) { }
+
+public:
+  std::size_t mID;
+};
+
+// @fixme this has to somehow be documented for the traits concept to make sense
 //
 // A straight skeleton event is the simultaneous collision of 3 offseted oriented straight line segments
 // e0*,e1*,e2* [e* denotes an _offseted_ edge].
@@ -211,21 +228,19 @@ class Rational
 template<class K>
 class Trisegment_2 : public Ref_counted_base
 {
+  typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2_with_ID;
+  typedef Trisegment_2<K> Self;
+
 public:
-
-  typedef typename K::Segment_2 Segment_2 ;
-
   typedef boost::intrusive_ptr<Trisegment_2> Self_ptr ;
 
-public:
-
-  Trisegment_2 ( Segment_2 const&        aE0
-               , Segment_2 const&        aE1
-               , Segment_2 const&        aE2
+  Trisegment_2 ( Segment_2_with_ID const&        aE0
+               , Segment_2_with_ID const&        aE1
+               , Segment_2_with_ID const&        aE2
                , Trisegment_collinearity aCollinearity
-               , std::size_t id
+               , std::size_t aID
                )
-    : id(id)
+    : mID(aID)
   {
     mCollinearity = aCollinearity ;
 
@@ -252,22 +267,25 @@ public:
     }
   }
 
+  std::size_t& id() { return mID; }
+  const std::size_t& id() const { return mID; }
+
   static Trisegment_2 null() { return Self_ptr() ; }
 
   Trisegment_collinearity collinearity() const { return mCollinearity ; }
 
-  Segment_2 const& e( unsigned idx ) const { CGAL_precondition(idx<3) ; return mE[idx] ; }
+  Segment_2_with_ID const& e( unsigned idx ) const { CGAL_precondition(idx<3) ; return mE[idx] ; }
 
-  Segment_2 const& e0() const { return e(0) ; }
-  Segment_2 const& e1() const { return e(1) ; }
-  Segment_2 const& e2() const { return e(2) ; }
+  Segment_2_with_ID const& e0() const { return e(0) ; }
+  Segment_2_with_ID const& e1() const { return e(1) ; }
+  Segment_2_with_ID const& e2() const { return e(2) ; }
 
   // If 2 out of the 3 edges are collinear they can be reclassified as 1 collinear edge (any of the 2) and 1 non-collinear.
   // These methods returns the edges according to that classification.
   // PRECONDITION: Exactly 2 out of 3 edges are collinear
-  Segment_2 const& collinear_edge    () const { return e(mCSIdx) ; }
-  Segment_2 const& non_collinear_edge() const { return e(mNCSIdx) ; }
-  Segment_2 const& other_collinear_edge() const
+  Segment_2_with_ID const& collinear_edge    () const { return e(mCSIdx) ; }
+  Segment_2_with_ID const& non_collinear_edge() const { return e(mNCSIdx) ; }
+  Segment_2_with_ID const& other_collinear_edge() const
   {
     switch ( mCollinearity )
     {
@@ -297,7 +315,7 @@ public:
     return c == TRISEGMENT_COLLINEARITY_01 ? LEFT : c == TRISEGMENT_COLLINEARITY_12 ? RIGHT : UNKNOWN  ;
   }
 
-  friend std::ostream& operator << ( std::ostream& os, Trisegment_2<K> const& aTrisegment )
+  friend std::ostream& operator << ( std::ostream& os, Self const& aTrisegment )
   {
     return os << "[" << s2str(aTrisegment.e0())
               << " " << s2str(aTrisegment.e1())
@@ -335,11 +353,11 @@ public:
     }
   }
 
-  std::size_t id;
+  std::size_t mID;
 
 private :
 
-  Segment_2               mE[3];
+  Segment_2_with_ID       mE[3];
   Trisegment_collinearity mCollinearity ;
   unsigned                mCSIdx, mNCSIdx ;
 
@@ -347,13 +365,72 @@ private :
   Self_ptr mChildR ;
 } ;
 
+template <class Info>
+struct No_cache
+{
+  bool IsCached ( std::size_t ) { return false; }
+
+  Info const& Get ( std::size_t )
+  {
+    CGAL_error();
+    return Info();
+  }
+
+  void Set ( std::size_t, Info const& ) { }
+  void Reset ( std::size_t ) { }
+};
+
+//TODO: call reserve, but how? #input vertices + n*m estimation?
+template <class Info>
+struct Info_cache
+{
+  std::vector<Info> mValues ;
+  std::vector<bool> mAlreadyComputed ;
+
+  bool IsCached ( std::size_t i )
+  {
+    return ( (mAlreadyComputed.size() > i) && mAlreadyComputed[i] ) ;
+  }
+
+  Info const& Get(std::size_t i)
+  {
+    CGAL_precondition ( IsCached(i) ) ;
+    return mValues[i] ;
+  }
+
+  void Set ( std::size_t i, Info const& aValue)
+  {
+    if (mValues.size() <= i )
+    {
+      mValues.resize(i+1) ;
+      mAlreadyComputed.resize(i+1, false) ;
+    }
+
+    mAlreadyComputed[i] = true ;
+    mValues[i] = aValue ;
+  }
+
+  void Reset ( std::size_t i )
+  {
+    if ( IsCached(i) ) // needed if approx info is set but not exact info
+      mAlreadyComputed[i] = false ;
+  }
+};
+
+template <typename K>
+using Time_cache = Info_cache< boost::optional< CGAL_SS_i::Rational< typename K::FT > > > ;
+
+template <typename K>
+using Coeff_cache = Info_cache< boost::optional< Line_2<K> > > ;
+
 template<class K>
 struct Functor_base_2
 {
   typedef typename K::FT        FT ;
   typedef typename K::Point_2   Point_2 ;
-  typedef typename K::Vector_2 Vector_2 ;
   typedef typename K::Segment_2 Segment_2 ;
+  typedef typename K::Vector_2 Vector_2 ;
+  typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2_with_ID ;
 
   typedef CGAL_SS_i::Trisegment_2<K> Trisegment_2 ;
 
@@ -377,6 +454,9 @@ struct SS_converter : Converter
 
   typedef typename Source_kernel::Segment_2 Source_segment_2 ;
   typedef typename Target_kernel::Segment_2 Target_segment_2 ;
+
+  typedef Segment_2_with_ID<Source_kernel> Source_segment_2_with_ID ;
+  typedef Segment_2_with_ID<Target_kernel> Target_segment_2_with_ID ;
 
   typedef Trisegment_2<Source_kernel> Source_trisegment_2 ;
   typedef Trisegment_2<Target_kernel> Target_trisegment_2 ;
@@ -416,7 +496,13 @@ struct SS_converter : Converter
     return Target_vector_2(cvt_p(Source_point_2(CGAL::ORIGIN)), cvt_p(Source_point_2(CGAL::ORIGIN) + v) ) ;
   }
 
-  Target_segment_2 cvt_s( Source_segment_2 const& e) const { return Target_segment_2(cvt_p(e.source()), cvt_p(e.target()) ) ; }
+  Target_segment_2 cvt_s( Source_segment_2 const& e) const {
+    return Target_segment_2(cvt_p(e.source()), cvt_p(e.target())) ;
+  }
+
+  Target_segment_2_with_ID cvt_s( Source_segment_2_with_ID const& e) const {
+    return Target_segment_2_with_ID(cvt_p(e.source()), cvt_p(e.target()), e.mID) ;
+  }
 
   Target_time_and_point_2 cvt_t_p( Source_time_and_point_2 const& v ) const
   {
@@ -434,7 +520,7 @@ struct SS_converter : Converter
                                                             ,cvt_s(tri->e1())
                                                             ,cvt_s(tri->e2())
                                                             ,tri->collinearity()
-                                                            ,tri->id
+                                                            ,tri->id()
                                                             )
                                    ) ;
   }
@@ -473,6 +559,8 @@ struct SS_converter : Converter
 
   Target_segment_2 operator()( Source_segment_2 const& s) const { return cvt_s(s); }
 
+  Target_segment_2_with_ID operator()( Source_segment_2_with_ID const& s) const { return cvt_s(s); }
+
   Target_trisegment_2_ptr operator()( Source_trisegment_2_ptr const& tri ) const
   {
     return cvt_trisegment(tri);
@@ -507,6 +595,7 @@ struct SS_converter : Converter
 };
 
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Filters_split_events_tag)
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Segment_2_with_ID)
 
 } // namespace CGAL_SS_i
 

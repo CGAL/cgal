@@ -251,10 +251,6 @@ private :
     Vector_2 lV1 ( aEvent->point(), lEvent.seed0()->point() ); // @fixme ? is this correct?
     Vector_2 lV2 ( aEvent->point(), aEvent->point() + CreateVector(aEvent->triedge().e2()) ) ;
 
-//    std::cout << "aEvent->point(): " << aEvent->point() << std::endl;
-//    std::cout << "S LV1: " << lV1 << std::endl;
-//    std::cout << "S LV2: " << lV2 << std::endl;
-
     return ComputeApproximateAngle(lV1, lV2) ;
   }
 
@@ -268,20 +264,14 @@ private :
     if(lEvent.is_at_source_vertex())
     {
       // is_at_source_vertex <=> opposite node is seed0
-//      std::cout << "seed1: " << lEvent.seed1()->point() << std::endl;
       lV1 = Vector_2( aEvent->point(), lEvent.seed1()->point() );
       lV2 = Vector_2( aEvent->point(), aEvent->point() + CreateVector(aEvent->triedge().e2()) ) ;
     }
     else
     {
-//      std::cout << "seed0: " << lEvent.seed0()->point() << std::endl;
       lV1 = Vector_2( aEvent->point(), lEvent.seed0()->point() );
       lV2 = Vector_2( aEvent->point(), aEvent->point() - CreateVector(aEvent->triedge().e2()) ) ;
     }
-
-//    std::cout << "aEvent->point(): " << aEvent->point() << std::endl;
-//    std::cout << "PS LV1: " << lV1 << std::endl;
-//    std::cout << "PS LV2: " << lV2 << std::endl;
 
     return ComputeApproximateAngle(lV1, lV2) ;
   }
@@ -535,10 +525,6 @@ public:
     {
       CGAL_precondition( aA->type() != Event::cEdgeEvent || aB->type() != Event::cEdgeEvent ) ;
 
-      mBuilder->SetEventTimeAndPoint(*aA); // @fixme cache this
-      mBuilder->SetEventTimeAndPoint(*aB);
-
-      // Below is a bit redundant since we recompute (certified) times if events are not simultaneous
       if ( ! mBuilder->AreEventsSimultaneous(aA,aB) )
         return ( mBuilder->CompareEvents(aA,aB) == LARGER ) ;
 
@@ -661,11 +647,28 @@ private :
     GetHalfedgeLAVList(GetVertexData(aV).mTriedge.e0()).remove(aV);
   }
 
-  Segment_2 CreateSegment ( Halfedge_const_handle aH ) const
+  typename K::Segment_2 CreateRawSegment ( Halfedge_const_handle aH ) const
   {
     Point_2 s = aH->opposite()->vertex()->point() ;
     Point_2 t = aH->vertex()->point() ;
     return K().construct_segment_2_object()(s,t);
+  }
+
+  template <typename GT> // actually just equal to 'Traits', but gotta template for SFINAE to work
+  Segment_2 CreateSegment ( Halfedge_const_handle aH,
+                            typename std::enable_if<
+                              ! CGAL_SS_i::has_Segment_2_with_ID<GT>::value>::type* = nullptr ) const
+  {
+    CGAL_assertion(false);
+    return Segment_2(CreateRawSegment(aH)) ;
+  }
+
+  template <typename GT> // actually just equal to 'Traits', but gotta template for SFINAE to work
+  Segment_2 CreateSegment ( Halfedge_const_handle aH,
+                            typename std::enable_if<
+                              CGAL_SS_i::has_Segment_2_with_ID<GT>::value>::type* = nullptr ) const
+  {
+    return Segment_2(CreateRawSegment(aH), aH->id());
   }
 
   Vector_2 CreateVector ( Halfedge_const_handle aH ) const
@@ -684,9 +687,9 @@ private :
   {
     CGAL_precondition(aTriedge.is_valid() && aTriedge.is_skeleton());
 
-    Trisegment_2_ptr r = Construct_ss_trisegment_2(mTraits)(CreateSegment(aTriedge.e0())
-                                                           ,CreateSegment(aTriedge.e1())
-                                                           ,CreateSegment(aTriedge.e2())
+    Trisegment_2_ptr r = Construct_ss_trisegment_2(mTraits)(CreateSegment<Traits>(aTriedge.e0())
+                                                           ,CreateSegment<Traits>(aTriedge.e1())
+                                                           ,CreateSegment<Traits>(aTriedge.e2())
                                                            );
 
     CGAL_STSKEL_BUILDER_TRACE(5,"Trisegment for " << aTriedge << ":" << r ) ;
@@ -828,8 +831,8 @@ private :
   bool IsOppositeEdgeFacingTheSplitSeed( Vertex_handle aSeed, Halfedge_handle aOpposite ) const
   {
     if ( aSeed->is_skeleton() )
-         return Is_edge_facing_ss_node_2(mTraits)( GetTrisegment(aSeed), CreateSegment(aOpposite) ) ;
-    else return Is_edge_facing_ss_node_2(mTraits)( aSeed->point()      , CreateSegment(aOpposite) ) ;
+         return Is_edge_facing_ss_node_2(mTraits)( GetTrisegment(aSeed), CreateSegment<Traits>(aOpposite) ) ;
+    else return Is_edge_facing_ss_node_2(mTraits)( aSeed->point()      , CreateSegment<Traits>(aOpposite) ) ;
   }
 
   Oriented_side EventPointOrientedSide( Event const&          aEvent
@@ -840,8 +843,8 @@ private :
                                       ) const
   {
     return Oriented_side_of_event_point_wrt_bisector_2(mTraits)( aEvent.trisegment()
-                                                               , CreateSegment(aE0)
-                                                               , CreateSegment(aE1)
+                                                               , CreateSegment<Traits>(aE0)
+                                                               , CreateSegment<Traits>(aE1)
                                                                , GetTrisegment(aV01) // Can be null
                                                                , aE0isPrimary
                                                                ) ;
@@ -1012,9 +1015,9 @@ private :
 
   EventPtr IsPseudoSplitEvent( EventPtr const& aEvent, Vertex_handle_pair aOpp, Site const& aSite ) ;
 
-  void CollectSplitEvent( Vertex_handle aNode, Triedge const& aTriedge, boost::optional<FT> bound=boost::none) ;
+  void CollectSplitEvent( Vertex_handle aNode, Triedge const& aTriedge ) ;
 
-  void CollectSplitEvents( Vertex_handle aNode, Triedge const& aPrevEventTriedge  ) ;
+  void CollectSplitEvents( Vertex_handle aNode, Triedge const& aPrevEventTriedge ) ;
 
   EventPtr FindEdgeEvent( Vertex_handle aLNode, Vertex_handle aRNode, Triedge const& aPrevEventTriedge  ) ;
 
@@ -1024,6 +1027,9 @@ private :
   void UpdatePQ( Vertex_handle aV, Triedge const& aPrevEventTriedge ) ;
   void CreateInitialEvents();
   void CreateContourBisectors();
+  void HarmonizeSpeeds(boost::mpl::bool_<false>) { }
+  void HarmonizeSpeeds(boost::mpl::bool_<true>);
+  void HarmonizeSpeeds() { return HarmonizeSpeeds(typename CGAL_SS_i::has_Segment_2_with_ID<Traits>::type()); }
   void InitPhase();
 
   void SetupNewNode( Vertex_handle aNode );
@@ -1206,43 +1212,41 @@ private :
   }
 
 // internal function to filter split event in case the traits is Filtered
-  bool CanSafelyIgnoreSplitEventImpl(const EventPtr& lEvent, const boost::optional<FT>& bound, boost::mpl::bool_<false>)
+  bool CanSafelyIgnoreSplitEventImpl(const EventPtr&, boost::mpl::bool_<false>)
   {
     return false;
   }
 
-  bool CanSafelyIgnoreSplitEventImpl(const EventPtr& lEvent, const boost::optional<FT>& bound, boost::mpl::bool_<true>)
+  bool CanSafelyIgnoreSplitEventImpl(const EventPtr& lEvent, boost::mpl::bool_<true>)
   {
-    return mTraits.can_safely_ignore_split_event(lEvent, bound);
+    return mTraits.CanSafelyIgnoreSplitEvent(lEvent);
   }
 
-  bool CanSafelyIgnoreSplitEvent(const EventPtr& lEvent, const boost::optional<FT>& bound)
+  bool CanSafelyIgnoreSplitEvent(const EventPtr& lEvent)
   {
-    return CanSafelyIgnoreSplitEventImpl(lEvent, bound, typename CGAL_SS_i::has_Filters_split_events_tag<Traits>::type());
+    return CanSafelyIgnoreSplitEventImpl(lEvent, typename CGAL_SS_i::has_Filters_split_events_tag<Traits>::type());
   }
 
-  boost::optional<FT> UpperBoundForValidSplitEventsImpl(Vertex_handle, Vertex_handle, Vertex_handle,
-                                                        Halfedge_handle_vector_iterator , Halfedge_handle_vector_iterator,
-                                                        boost::mpl::bool_<false>)
+  void ComputeUpperBoundForValidSplitEventsImpl(Vertex_handle, Vertex_handle, Vertex_handle,
+                                                Halfedge_handle_vector_iterator, Halfedge_handle_vector_iterator,
+                                                boost::mpl::bool_<false>)
   {
-    return boost::none;
   }
 
-  boost::optional<FT> UpperBoundForValidSplitEventsImpl(Vertex_handle lPrev, Vertex_handle aNode, Vertex_handle lNext,
-                                                        Halfedge_handle_vector_iterator contour_halfedges_begin,
-                                                        Halfedge_handle_vector_iterator contour_halfedges_end,
-                                                        boost::mpl::bool_<true>)
+  void ComputeUpperBoundForValidSplitEventsImpl(Vertex_handle lPrev, Vertex_handle aNode, Vertex_handle lNext,
+                                                Halfedge_handle_vector_iterator contour_halfedges_begin,
+                                                Halfedge_handle_vector_iterator contour_halfedges_end,
+                                                boost::mpl::bool_<true>)
   {
-    return mTraits.upper_bound_for_valid_split_events(lPrev, aNode, lNext, contour_halfedges_begin, contour_halfedges_end);
+    return mTraits.ComputeFilteringBound(lPrev, aNode, lNext, contour_halfedges_begin, contour_halfedges_end);
   }
 
-  boost::optional<FT>
-  UpperBoundForValidSplitEvents(Vertex_handle lPrev, Vertex_handle aNode, Vertex_handle lNext,
-                                Halfedge_handle_vector_iterator contour_halfedges_begin,
-                                Halfedge_handle_vector_iterator contour_halfedges_end)
+  void ComputeUpperBoundForValidSplitEvents(Vertex_handle lPrev, Vertex_handle aNode, Vertex_handle lNext,
+                                            Halfedge_handle_vector_iterator contour_halfedges_begin,
+                                            Halfedge_handle_vector_iterator contour_halfedges_end)
   {
-    return UpperBoundForValidSplitEventsImpl(lPrev, aNode, lNext, contour_halfedges_begin, contour_halfedges_end,
-                                             typename CGAL_SS_i::has_Filters_split_events_tag<Traits>::type());
+    return ComputeUpperBoundForValidSplitEventsImpl(lPrev, aNode, lNext, contour_halfedges_begin, contour_halfedges_end,
+                                                    typename CGAL_SS_i::has_Filters_split_events_tag<Traits>::type());
   }
 
 public:

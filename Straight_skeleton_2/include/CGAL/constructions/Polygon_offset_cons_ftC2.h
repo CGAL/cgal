@@ -31,11 +31,12 @@ namespace CGAL_SS_i {
 //
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
-template<class K>
-boost::optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const&                   t
-                                                       , Segment_2<K> const&                     e0
-                                                       , Segment_2<K> const&                     e1
-                                                       , boost::intrusive_ptr< Trisegment_2<K> > const& tri)
+template<class K, class CoeffCache>
+boost::optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const&                          t
+                                                       , Segment_2_with_ID<K> const&                    e0
+                                                       , Segment_2_with_ID<K> const&                    e1
+                                                       , boost::intrusive_ptr< Trisegment_2<K> > const& tri
+                                                       , CoeffCache& aCoeff_cache)
 {
   typedef typename K::FT FT ;
 
@@ -49,8 +50,8 @@ boost::optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const&  
 
   CGAL_STSKEL_TRAITS_TRACE("Constructing offset point for t=" << t << " e0=" << s2str(e0) << " e1=" << s2str(e1) << " tri=" << tri ) ;
 
-  Optional_line_2 l0 = compute_normalized_line_ceoffC2(e0) ;
-  Optional_line_2 l1 = compute_normalized_line_ceoffC2(e1) ;
+  Optional_line_2 l0 = compute_normalized_line_ceoffC2(e0, aCoeff_cache) ;
+  Optional_line_2 l1 = compute_normalized_line_ceoffC2(e1, aCoeff_cache) ;
 
   bool ok = false ;
 

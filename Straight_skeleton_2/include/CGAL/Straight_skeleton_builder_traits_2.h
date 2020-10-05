@@ -31,64 +31,27 @@ namespace CGAL {
 
 namespace CGAL_SS_i {
 
-//TODO: call reserve, but how? #input vertices + n*m estimation?
-template <class K>
-struct Time_cache
-{
-  typedef boost::optional< Rational< typename K::FT > > Event_time;
-  std::vector<Event_time> event_times;
-  std::vector<bool> already_computed;
-
-  bool is_time_cached(std::size_t i)
-  {
-    return already_computed.size()>i && already_computed[i];
-  }
-
-  const Event_time& time(std::size_t i)
-  {
-    CGAL_assertion(is_time_cached(i));
-    return event_times[i];
-  }
-
-  void set_time(std::size_t i, const Event_time& time)
-  {
-    if (event_times.size()<=i){
-      event_times.resize(i+1);
-      already_computed.resize(i+1, false);
-    }
-    already_computed[i]=true;
-    event_times[i]=time;
-  }
-
-  void reset(std::size_t i)
-  {
-    if (is_time_cached(i)) // needed if approx time is set but not exact time
-      already_computed[i]=false;
-  }
-};
-
 template<class K>
 struct Construct_ss_trisegment_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
-  typedef typename Base::Segment_2        Segment_2 ;
-  typedef typename Base::Trisegment_2     Trisegment_2 ;
+  typedef typename Base::Segment_2_with_ID        Segment_2_with_ID ;
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
   typedef Trisegment_2_ptr result_type ;
 
   template <class Traits>
   Construct_ss_trisegment_2(const Traits& traits)
-    : nextID(traits.trisegment_id)
+    : mNext_ID(traits.trisegment_ID())
   {}
 
-  result_type operator() ( Segment_2 const& aS0, Segment_2 const& aS1, Segment_2 const& aS2 ) const
+  result_type operator() ( Segment_2_with_ID const& aS0, Segment_2_with_ID const& aS1, Segment_2_with_ID const& aS2 ) const
   {
-    return construct_trisegment(aS0,aS1,aS2,nextID++);
+    return construct_trisegment(aS0,aS1,aS2,mNext_ID++) ;
   }
 
-  std::size_t& nextID;
+  std::size_t& mNext_ID ;
 };
 
 template<class K>
@@ -101,20 +64,22 @@ struct Do_ss_event_exist_2 : Functor_base_2<K>
 
   typedef Uncertain<bool> result_type ;
 
-  Do_ss_event_exist_2(Time_cache<K>& time_cache)
-    : mTime_cache(time_cache)
+  Do_ss_event_exist_2(Time_cache<K>& aTime_cache, Coeff_cache<K>& aCoeff_cache)
+    : mTime_cache(aTime_cache), mCoeff_cache(aCoeff_cache)
   {}
 
   Uncertain<bool> operator() ( Trisegment_2_ptr const& aTrisegment, boost::optional<FT> aMaxTime ) const
   {
-    Uncertain<bool> rResult = exist_offset_lines_isec2(aTrisegment,aMaxTime, mTime_cache) ;
+    Uncertain<bool> rResult = exist_offset_lines_isec2(aTrisegment,aMaxTime,mTime_cache,mCoeff_cache) ;
 
     CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Exist_event",aTrisegment);
 
     return rResult ;
   }
 
-  Time_cache<K>& mTime_cache;
+private:
+  Time_cache<K>& mTime_cache ;
+  Coeff_cache<K>& mCoeff_cache ;
 };
 
 template<class K>
@@ -123,20 +88,27 @@ struct Is_edge_facing_ss_node_2 : Functor_base_2<K>
   typedef Functor_base_2<K> Base ;
 
   typedef typename Base::Point_2          Point_2 ;
-  typedef typename Base::Segment_2        Segment_2 ;
+  typedef typename Base::Segment_2_with_ID        Segment_2_with_ID ;
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
   typedef Uncertain<bool> result_type ;
 
-  Uncertain<bool> operator() ( Point_2 const& aContourNode, Segment_2 const& aEdge ) const
+  Is_edge_facing_ss_node_2(Coeff_cache<K>& aCoeff_cache)
+    : mCoeff_cache(aCoeff_cache)
+  { }
+
+  Uncertain<bool> operator() ( Point_2 const& aContourNode, Segment_2_with_ID const& aEdge ) const
   {
     return is_edge_facing_pointC2(cgal_make_optional(aContourNode),aEdge) ;
   }
 
-  Uncertain<bool> operator() ( Trisegment_2_ptr const& aSkeletonNode, Segment_2 const& aEdge ) const
+  Uncertain<bool> operator() ( Trisegment_2_ptr const& aSkeletonNode, Segment_2_with_ID const& aEdge ) const
   {
-    return is_edge_facing_offset_lines_isecC2(aSkeletonNode,aEdge) ;
+    return is_edge_facing_offset_lines_isecC2(aSkeletonNode,aEdge,mCoeff_cache) ;
   }
+
+private:
+  Coeff_cache<K>& mCoeff_cache ;
 };
 
 template<class K>
@@ -148,20 +120,22 @@ struct Compare_ss_event_times_2 : Functor_base_2<K>
 
   typedef Uncertain<Comparison_result> result_type ;
 
-  Compare_ss_event_times_2(Time_cache<K>& time_cache)
-    : mTime_cache(time_cache)
+  Compare_ss_event_times_2(Time_cache<K>& aTime_cache, Coeff_cache<K>& aCoeff_cache)
+    : mTime_cache(aTime_cache), mCoeff_cache(aCoeff_cache)
   {}
 
   Uncertain<Comparison_result> operator() ( Trisegment_2_ptr const& aL, Trisegment_2_ptr const& aR ) const
   {
-    Uncertain<Comparison_result> rResult = compare_offset_lines_isec_timesC2(aL,aR, mTime_cache) ;
+    Uncertain<Comparison_result> rResult = compare_offset_lines_isec_timesC2(aL,aR,mTime_cache,mCoeff_cache) ;
 
     CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Compare_event_times","L: " << aL << "\nR:" << aR );
 
     return rResult ;
   }
 
-  Time_cache<K>& mTime_cache;
+private:
+  Time_cache<K>& mTime_cache ;
+  Coeff_cache<K>& mCoeff_cache ;
 };
 
 template<class K>
@@ -192,25 +166,32 @@ struct Oriented_side_of_event_point_wrt_bisector_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
-  typedef typename Base::Segment_2        Segment_2 ;
+  typedef typename Base::Segment_2_with_ID        Segment_2_with_ID ;
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
   typedef typename Base::Point_2          Point_2 ;
 
   typedef Uncertain<Oriented_side> result_type ;
 
+  Oriented_side_of_event_point_wrt_bisector_2(Coeff_cache<K>& aCoeff_cache)
+    : mCoeff_cache(aCoeff_cache)
+  {}
+
   Uncertain<Oriented_side> operator() ( Trisegment_2_ptr const& aEvent
-                                      , Segment_2        const& aE0
-                                      , Segment_2        const& aE1
+                                      , Segment_2_with_ID        const& aE0
+                                      , Segment_2_with_ID        const& aE1
                                       , Trisegment_2_ptr const& aE01Event
                                       , bool                    aE0isPrimary
                                       ) const
   {
-    Uncertain<Oriented_side> rResult = oriented_side_of_event_point_wrt_bisectorC2(aEvent,aE0,aE1,aE01Event,aE0isPrimary) ;
+    Uncertain<Oriented_side> rResult = oriented_side_of_event_point_wrt_bisectorC2(aEvent,aE0,aE1,aE01Event,aE0isPrimary,mCoeff_cache) ;
 
     CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Oriented_side_of_event_point_wrt_bisector_2","Event=" << aEvent << " E0=" << aE0 << " E1=" << aE1 );
 
     return rResult ;
   }
+
+private:
+  Coeff_cache<K>& mCoeff_cache ;
 };
 
 
@@ -223,21 +204,22 @@ struct Are_ss_events_simultaneous_2 : Functor_base_2<K>
 
   typedef Uncertain<bool> result_type ;
 
-
-  Are_ss_events_simultaneous_2(Time_cache<K>& time_cache)
-    : mTime_cache(time_cache)
+  Are_ss_events_simultaneous_2(Time_cache<K>& aTime_cache, Coeff_cache<K>& aCoeff_cache)
+    : mTime_cache(aTime_cache), mCoeff_cache(aCoeff_cache)
   {}
 
   Uncertain<bool> operator() ( Trisegment_2_ptr const& aA, Trisegment_2_ptr const& aB ) const
   {
-    Uncertain<bool> rResult = are_events_simultaneousC2(aA,aB,mTime_cache);
+    Uncertain<bool> rResult = are_events_simultaneousC2(aA,aB,mTime_cache,mCoeff_cache);
 
     CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Are_events_simultaneous","A=" << aA << "\nB=" << aB);
 
     return rResult ;
   }
 
-  Time_cache<K>& mTime_cache;
+private:
+  Time_cache<K>& mTime_cache ;
+  Coeff_cache<K>& mCoeff_cache ;
 };
 
 template<class K>
@@ -245,11 +227,11 @@ struct Are_ss_edges_collinear_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
-  typedef typename Base::Segment_2 Segment_2 ;
+  typedef typename Base::Segment_2_with_ID Segment_2_with_ID ;
 
   typedef Uncertain<bool> result_type ;
 
-  Uncertain<bool> operator() ( Segment_2 const& aA, Segment_2 const& aB ) const
+  Uncertain<bool> operator() ( Segment_2_with_ID const& aA, Segment_2_with_ID const& aB ) const
   {
     Uncertain<bool> rResult = are_edges_collinearC2(aA,aB);
 
@@ -264,11 +246,11 @@ struct Are_ss_edges_parallel_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
-  typedef typename Base::Segment_2 Segment_2 ;
+  typedef typename Base::Segment_2_with_ID Segment_2_with_ID ;
 
   typedef Uncertain<bool> result_type ;
 
-  Uncertain<bool> operator() ( Segment_2 const& aA, Segment_2 const& aB ) const
+  Uncertain<bool> operator() ( Segment_2_with_ID const& aA, Segment_2_with_ID const& aB ) const
   {
     Uncertain<bool> rResult = are_edges_parallelC2(aA,aB);
 
@@ -286,15 +268,15 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
 
   typedef typename Base::FT               FT ;
   typedef typename Base::Point_2          Point_2 ;
-  typedef typename Base::Segment_2        Segment_2 ;
+  typedef typename Base::Segment_2_with_ID        Segment_2_with_ID ;
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
   typedef boost::tuple<FT,Point_2> rtype ;
 
   typedef boost::optional<rtype> result_type ;
 
-  Construct_ss_event_time_and_point_2(Time_cache<K>& time_cache)
-    :mTime_cache(time_cache)
+  Construct_ss_event_time_and_point_2(Time_cache<K>& aTime_cache, Coeff_cache<K>& aCoeff_cache)
+    : mTime_cache(aTime_cache), mCoeff_cache(aCoeff_cache)
   {}
 
   result_type operator() ( Trisegment_2_ptr const& aTrisegment ) const
@@ -304,13 +286,13 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
     FT      t(0) ;
     Point_2 i = ORIGIN ;
 
-    boost::optional< Rational<FT> > ot = compute_offset_lines_isec_timeC2(aTrisegment, mTime_cache);
+    boost::optional< Rational<FT> > ot = compute_offset_lines_isec_timeC2(aTrisegment,mTime_cache,mCoeff_cache);
 
     if ( !!ot && certainly( CGAL_NTS certified_is_not_zero(ot->d()) ) )
     {
       t = ot->n() / ot->d();
 
-      boost::optional<Point_2> oi = construct_offset_lines_isecC2(aTrisegment);
+      boost::optional<Point_2> oi = construct_offset_lines_isecC2(aTrisegment,mCoeff_cache);
       if ( oi )
       {
         i = *oi ;
@@ -329,9 +311,9 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
 
     if ( is_possibly_inexact_time_clearly_not_zero(t) )
     {
-      Segment_2 const& e0 = aTrisegment->e0() ;
-      Segment_2 const& e1 = aTrisegment->e1() ;
-      Segment_2 const& e2 = aTrisegment->e2() ;
+      Segment_2_with_ID const& e0 = aTrisegment->e0() ;
+      Segment_2_with_ID const& e1 = aTrisegment->e1() ;
+      Segment_2_with_ID const& e2 = aTrisegment->e2() ;
 
       Point_2 const& e0s = e0.source();
       Point_2 const& e0t = e0.target();
@@ -376,7 +358,9 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
     return rR ;
   }
 
-  Time_cache<K>& mTime_cache;
+private:
+  Time_cache<K>& mTime_cache ;
+  Coeff_cache<K>& mCoeff_cache ;
 };
 
 } // namespace CGAL_SS_i
@@ -405,10 +389,10 @@ struct Straight_skeleton_builder_traits_2_base
   typedef typename K::Point_2     Point_2 ;
   typedef typename K::Vector_2    Vector_2 ;
   typedef typename K::Direction_2 Direction_2 ;
-  typedef typename K::Segment_2   Segment_2 ;
 
-  typedef CGAL_SS_i::Trisegment_2<K> Trisegment_2 ;
-
+  typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2 ;
+  typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2_with_ID ; // used in BOOST_MPL_HAS_XXX_TRAIT_DEF
+  typedef CGAL_SS_i::Trisegment_2<K>      Trisegment_2 ;
   typedef typename Trisegment_2::Self_ptr Trisegment_2_ptr ;
 
   template<class F> F get( F const* = 0 ) const { return F(); }
@@ -416,17 +400,17 @@ struct Straight_skeleton_builder_traits_2_base
 } ;
 
 
-template<class Is_filtered_kernel, class K> class Straight_skeleton_builder_traits_2_impl ;
+template<class Is_filtered_kernel, class K>
+class Straight_skeleton_builder_traits_2_impl ;
 
 template<class K>
-class Straight_skeleton_builder_traits_2_impl<Tag_false,K> : public Straight_skeleton_builder_traits_2_base<K>
+class Straight_skeleton_builder_traits_2_impl<Tag_false /*Is_filtered_kernel*/, K>
+  : public Straight_skeleton_builder_traits_2_base<K>
 {
   typedef Straight_skeleton_builder_traits_2_functors<K> Unfiltering ;
+  typedef Straight_skeleton_builder_traits_2_base<K>     Base ;
 
 public:
-
-  mutable std::size_t trisegment_id = 0;
-
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Do_ss_event_exist_2>
     Do_ss_event_exist_2 ;
 
@@ -454,43 +438,43 @@ public:
   typedef typename Unfiltering::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
   typedef typename Unfiltering::Construct_ss_trisegment_2           Construct_ss_trisegment_2 ;
 
-  mutable CGAL_SS_i::Time_cache<K> time_cache;
-
-  void reset_trisegment(std::size_t i) const
-  {
-    time_cache.reset(i);
-  }
-
   using Straight_skeleton_builder_traits_2_base<K>::get;
+
+  Is_edge_facing_ss_node_2
+  get(Is_edge_facing_ss_node_2 const* = 0 ) const
+  {
+    return Is_edge_facing_ss_node_2(mCoeff_cache);
+  }
 
   Compare_ss_event_times_2
   get(Compare_ss_event_times_2 const* = 0 ) const
   {
-    return Compare_ss_event_times_2(const_cast<CGAL_SS_i::Time_cache<K>&>(time_cache));
+    return Compare_ss_event_times_2(mTime_cache, mCoeff_cache);
   }
 
-  Compare_ss_event_angles_2
-  get(Compare_ss_event_angles_2 const* = 0 ) const
+
+  Oriented_side_of_event_point_wrt_bisector_2
+  get(Oriented_side_of_event_point_wrt_bisector_2 const* = 0 ) const
   {
-    return Compare_ss_event_angles_2();
+    return Oriented_side_of_event_point_wrt_bisector_2(mCoeff_cache);
   }
 
   Do_ss_event_exist_2
   get(Do_ss_event_exist_2 const* = 0 ) const
   {
-    return Do_ss_event_exist_2(const_cast<CGAL_SS_i::Time_cache<K>&>(time_cache));
+    return Do_ss_event_exist_2(mTime_cache, mCoeff_cache);
   }
 
   Are_ss_events_simultaneous_2
   get(Are_ss_events_simultaneous_2 const* = 0 ) const
   {
-    return Are_ss_events_simultaneous_2(const_cast<CGAL_SS_i::Time_cache<K>&>(time_cache));
+    return Are_ss_events_simultaneous_2(mTime_cache, mCoeff_cache);
   }
 
   Construct_ss_event_time_and_point_2
   get(Construct_ss_event_time_and_point_2 const* = 0 ) const
   {
-    return Construct_ss_event_time_and_point_2(const_cast<CGAL_SS_i::Time_cache<K>&>(time_cache));
+    return Construct_ss_event_time_and_point_2(mTime_cache, mCoeff_cache);
   }
 
   Construct_ss_trisegment_2
@@ -498,10 +482,124 @@ public:
   {
     return Construct_ss_trisegment_2(*this);
   }
+
+// ID functions
+  std::size_t& trisegment_ID() const { return mTrisegment_ID ; }
+
+  void reset_trisegment(std::size_t i) const
+  {
+    --mTrisegment_ID ;
+    mTime_cache.Reset(i) ;
+  }
+
+// functions to initialize (and harmonize) and cache speeds
+  void InitializeLineCoeffs ( CGAL_SS_i::Segment_2_with_ID<K> const& aBorderS )
+  {
+    CGAL_SS_i::compute_normalized_line_ceoffC2 ( aBorderS, mCoeff_cache ) ;
+  }
+
+  void InitializeLineCoeffs ( std::size_t aID, std::size_t aOtherID )
+  {
+    if ( mCoeff_cache.Get( aOtherID ) )
+      mCoeff_cache.Set( aID, CGAL_SS_i::cgal_make_optional(*(mCoeff_cache.Get(aOtherID))) ) ;
+    else
+      mCoeff_cache.Set( aID, boost::none ) ;
+  }
+
+  // functions and tag for filtering split events
+  struct Filters_split_events_tag{};
+
+  template <class EventPtr>
+  bool CanSafelyIgnoreSplitEvent(const EventPtr& lEvent)
+  {
+    return false;
+
+    // filter event
+    if ( ! mFilteringBound )
+      return false;
+
+    typename Base::Trisegment_2_ptr tri = lEvent->trisegment() ;
+    boost::optional<CGAL_SS_i::Rational<typename K::FT> > lOptTime =
+        CGAL_SS_i::compute_offset_lines_isec_timeC2(tri, mTime_cache, mCoeff_cache);
+
+    if ( lOptTime && lOptTime->to_nt() > *mFilteringBound )
+    {
+      // avoid filling the cache vectors with times of trisegments that will be removed
+      reset_trisegment(tri->id());
+      return true;
+    }
+
+    return false;
+  }
+
+  // @todo there shouldn't be any combinatorial structures such as vertices in the traits
+  template <class Vertex_handle, class Halfedge_handle_vector_iterator>
+  void ComputeFilteringBound(Vertex_handle lPrev, Vertex_handle aNode, Vertex_handle lNext,
+                             Halfedge_handle_vector_iterator contour_halfedges_begin,
+                             Halfedge_handle_vector_iterator contour_halfedges_end)
+  {
+    mFilteringBound = boost::none;
+
+    if ( ! aNode->is_contour() )
+      return ;
+
+    typedef typename K::Vector_2 Vector_2;
+    typedef typename K::Segment_2 Segment_2;
+    typedef typename K::Ray_2 Ray_2;
+    typedef typename K::Line_2 Line_2;
+
+    Segment_2 s1(lPrev->point(), aNode->point());
+    Segment_2 s2(aNode->point(), lNext->point());
+
+    // @todo? These are not input segments, but it might still worth caching (just gotta assign them an ID)
+    boost::optional< Line_2 > l1 = CGAL_SS_i::compute_normalized_line_ceoffC2(s1);
+    boost::optional< Line_2 > l2 = CGAL_SS_i::compute_normalized_line_ceoffC2(s2);
+
+    Vector_2 lV1(l1->a(), l1->b()) ;
+    Vector_2 lV2(l2->a(), l2->b()) ;
+    Vector_2 lV12 = lV1 + lV2 ;
+    Ray_2 bisect_ray(aNode->point(), lV12) ;
+
+    // F2C to_input;
+    // std::cout << "bisect " << aNode->point() << " " << aNode->point() + to_input(lV12) << "\n";
+
+    for ( Halfedge_handle_vector_iterator i = contour_halfedges_begin; i != contour_halfedges_end; ++ i )
+    {
+      CGAL_assertion((*i)->vertex()->is_contour() && (*i)->opposite()->vertex()->is_contour() );
+      Segment_2 s_h((*i)->opposite()->vertex()->point(), (*i)->vertex()->point());
+
+      auto inter = K().do_intersect_2_object()(s_h, bisect_ray);
+      auto orient = K().orientation_2_object()(s_h[0], s_h[1], aNode->point());
+
+      // we use segments of the input polygon intersected by the bisector and such that
+      // they are oriented such that the reflex vertex is on the left side of the segment
+      if (!is_certain(inter) || !is_certain(orient) || !inter || orient != LEFT_TURN)
+        continue;
+
+      // Note that we don't need the normalization
+      boost::optional< Line_2 > lh = CGAL_SS_i::compute_normalized_line_ceoffC2(s_h);
+
+      typename K::FT lBound = ( - lh->c() - lh->a()*aNode->point().x() - lh->b()*aNode->point().y() ) /
+                                ( lh->a()*lV12.x() + lh->b()*lV12.y() );
+
+      if( ! is_finite(lBound) )
+        continue;
+
+      if ( ! mFilteringBound || *mFilteringBound > lBound )
+        mFilteringBound = lBound;
+    }
+  }
+
+public:
+  mutable std::size_t mTrisegment_ID = 0 ;
+  mutable CGAL_SS_i::Time_cache<K> mTime_cache ;
+  mutable CGAL_SS_i::Coeff_cache<K> mCoeff_cache ;
+  boost::optional< typename K::FT > mFilteringBound ;
 } ;
 
 template<class K>
-class Straight_skeleton_builder_traits_2_impl<Tag_true,K> : public Straight_skeleton_builder_traits_2_base<K>
+class Straight_skeleton_builder_traits_2_impl<Tag_true /*Is_filtered_kernel*/, K>
+  : public Straight_skeleton_builder_traits_2_base<K>
 {
   typedef typename K::Exact_kernel       EK ;
   typedef typename K::Approximate_kernel FK ;
@@ -598,36 +696,53 @@ public:
   Compare_ss_event_times_2
   get(Compare_ss_event_times_2 const* = 0 ) const
   {
-    return Compare_ss_event_times_2( typename Exact::Compare_ss_event_times_2(const_cast<CGAL_SS_i::Time_cache<EK>&>(mExact_traits.time_cache)),
-                                     typename Filtering::Compare_ss_event_times_2(const_cast<CGAL_SS_i::Time_cache<FK>&>(mApproximate_traits.time_cache)) );
+    return Compare_ss_event_times_2( typename Exact::Compare_ss_event_times_2(
+                                       mExact_traits.mTime_cache, mExact_traits.mCoeff_cache),
+                                     typename Filtering::Compare_ss_event_times_2(
+                                       mApproximate_traits.mTime_cache, mApproximate_traits.mCoeff_cache) );
   }
 
-  Compare_ss_event_angles_2
-  get(Compare_ss_event_angles_2 const* = 0 ) const
+  Is_edge_facing_ss_node_2
+  get(Is_edge_facing_ss_node_2 const* = 0 ) const
   {
-    return Compare_ss_event_angles_2( typename Exact::Compare_ss_event_angles_2(),
-                                      typename Filtering::Compare_ss_event_angles_2() );
+    return Is_edge_facing_ss_node_2( typename Exact::Is_edge_facing_ss_node_2(mExact_traits.mCoeff_cache),
+                                     typename Filtering::Is_edge_facing_ss_node_2(mApproximate_traits.mCoeff_cache) );
+  }
+
+  Oriented_side_of_event_point_wrt_bisector_2
+  get(Oriented_side_of_event_point_wrt_bisector_2 const* = 0 ) const
+  {
+    return Oriented_side_of_event_point_wrt_bisector_2( typename Exact::Oriented_side_of_event_point_wrt_bisector_2(
+                                                          mExact_traits.mCoeff_cache),
+                                                        typename Filtering::Oriented_side_of_event_point_wrt_bisector_2(
+                                                          mApproximate_traits.mCoeff_cache) );
   }
 
   Do_ss_event_exist_2
   get(Do_ss_event_exist_2 const* = 0 ) const
   {
-    return Do_ss_event_exist_2( typename Exact::Do_ss_event_exist_2(const_cast<CGAL_SS_i::Time_cache<EK>&>(mExact_traits.time_cache)),
-                                typename Filtering::Do_ss_event_exist_2(const_cast<CGAL_SS_i::Time_cache<FK>&>(mApproximate_traits.time_cache)) );
+    return Do_ss_event_exist_2( typename Exact::Do_ss_event_exist_2(
+                                  mExact_traits.mTime_cache, mExact_traits.mCoeff_cache),
+                                typename Filtering::Do_ss_event_exist_2(
+                                  mApproximate_traits.mTime_cache, mApproximate_traits.mCoeff_cache) );
   }
 
   Are_ss_events_simultaneous_2
   get(Are_ss_events_simultaneous_2 const* = 0 ) const
   {
-    return Are_ss_events_simultaneous_2( typename Exact::Are_ss_events_simultaneous_2(const_cast<CGAL_SS_i::Time_cache<EK>&>(mExact_traits.time_cache)),
-                                         typename Filtering::Are_ss_events_simultaneous_2(const_cast<CGAL_SS_i::Time_cache<FK>&>(mApproximate_traits.time_cache)) );
+    return Are_ss_events_simultaneous_2( typename Exact::Are_ss_events_simultaneous_2(
+                                           mExact_traits.mTime_cache, mExact_traits.mCoeff_cache),
+                                         typename Filtering::Are_ss_events_simultaneous_2(
+                                           mApproximate_traits.mTime_cache, mApproximate_traits.mCoeff_cache) );
   }
 
   Construct_ss_event_time_and_point_2
   get(Construct_ss_event_time_and_point_2 const* = 0 ) const
   {
-    return Construct_ss_event_time_and_point_2( typename Exact::Construct_ss_event_time_and_point_2(const_cast<CGAL_SS_i::Time_cache<EK>&>(mExact_traits.time_cache)),
-                                                typename Filtering::Construct_ss_event_time_and_point_2(const_cast<CGAL_SS_i::Time_cache<FK>&>(mApproximate_traits.time_cache)) );
+    return Construct_ss_event_time_and_point_2( typename Exact::Construct_ss_event_time_and_point_2(
+                                                  mExact_traits.mTime_cache, mExact_traits.mCoeff_cache),
+                                                typename Filtering::Construct_ss_event_time_and_point_2(
+                                                  mApproximate_traits.mTime_cache, mApproximate_traits.mCoeff_cache) );
   }
 // constructor of trisegments using global id stored in the traits
   Construct_ss_trisegment_2
@@ -636,121 +751,165 @@ public:
     return Construct_ss_trisegment_2(*this);
   }
 
-// functions and tag for filtering split events
-  struct Filters_split_events_tag{};
-
-  template <class EventPtr>
-  bool
-  can_safely_ignore_split_event(const EventPtr& lEvent, const boost::optional<double>& bound)
-  {
-    // filter event
-    if (bound)
-    {
-      typedef FK Interval_kernel;
-      typename Interval_kernel::FT::Protector p;
-      Cartesian_converter<K, Interval_kernel> to_interval;
-      typedef CGAL_SS_i::Trisegment_2<Interval_kernel> Target_trisegment_2 ;
-      typedef typename Target_trisegment_2::Self_ptr Target_trisegment_2_ptr;
-      Target_trisegment_2_ptr tri = new Target_trisegment_2(to_interval(lEvent->trisegment()->e0())
-                                                           ,to_interval(lEvent->trisegment()->e1())
-                                                           ,to_interval(lEvent->trisegment()->e2())
-                                                           ,lEvent->trisegment()->collinearity()
-                                                           ,lEvent->trisegment()->id
-                                                           );
-      try
-      {
-        boost::optional<CGAL_SS_i::Rational<typename FK::FT> > opt_time = CGAL_SS_i::compute_offset_lines_isec_timeC2(tri, const_cast<CGAL_SS_i::Time_cache<FK>&>(mApproximate_traits.time_cache));
-
-        if (opt_time && opt_time->to_nt().inf() > *bound)
-        {
-          reset_trisegment(tri->id); // avoid filling the cache vectors with times of trisegments that will be removed
-          return true;
-        }
-      }
-      catch(Uncertain_conversion_exception&)
-      {}
-    }
-    return false;
-  }
-
-  template <class Vertex_handle, class Halfedge_handle_vector_iterator>
-  boost::optional<double>
-  upper_bound_for_valid_split_events(Vertex_handle lPrev, Vertex_handle aNode, Vertex_handle lNext,
-                                     Halfedge_handle_vector_iterator contour_halfedges_begin,
-                                     Halfedge_handle_vector_iterator contour_halfedges_end)
-  {
-    boost::optional<double> bound;
-    if ( aNode->is_contour())
-    {
-
-      typedef FK Interval_kernel;
-      Cartesian_converter<K, Interval_kernel> to_interval;
-      typedef typename Interval_kernel::Line_2 Line_2;
-      typedef typename Interval_kernel::Ray_2 Ray_2;
-      typedef typename Interval_kernel::Vector_2 Vector_2;
-      typedef typename Interval_kernel::Segment_2 Segment_2;
-
-      typename Interval_kernel::FT::Protector protector;
-
-      Segment_2 s1(to_interval(lPrev->point()), to_interval(aNode->point()));
-      Segment_2 s2(to_interval(aNode->point()), to_interval(lNext->point()));
-
-      boost::optional< Line_2 > l1 = CGAL_SS_i::compute_normalized_line_ceoffC2(s1);
-      boost::optional< Line_2 > l2 = CGAL_SS_i::compute_normalized_line_ceoffC2(s2);
-
-      Vector_2 v1(l1->a(), l1->b());
-      Vector_2 v2(l2->a(), l2->b());
-      Ray_2 bisect_ray(to_interval(aNode->point()), v1+v2);
-
-      // Cartesian_converter<Interval_kernel, K> to_input;
-      // std::cout << "bisect " << aNode->point() << " " << aNode->point() + to_input(v1+v2) << "\n";
-
-      for ( Halfedge_handle_vector_iterator i = contour_halfedges_begin; i != contour_halfedges_end; ++ i )
-      {
-        try{
-          CGAL_assertion((*i)->vertex()->is_contour() && (*i)->opposite()->vertex()->is_contour() );
-          Segment_2 s_h(to_interval((*i)->opposite()->vertex()->point()),
-                        to_interval((*i)->vertex()->point()));
-
-          Uncertain<bool> inter =  do_intersect(s_h, bisect_ray);
-          Uncertain<Oriented_side> orient =  orientation(s_h[0], s_h[1], to_interval(aNode->point()));
-
-          // we use segments of the input polygon intersected by the bisector and such that
-          // they are oriented such that the reflex vertex is on the left side of the segment
-          if (!is_certain(inter) || !is_certain(orient) || !inter ||  orient!=LEFT_TURN) continue;
-
-          boost::optional< Line_2 > lh = CGAL_SS_i::compute_normalized_line_ceoffC2(s_h); // Note that we don't need the normalization
-
-          typename Interval_kernel::FT h_bound =
-            ( - lh->c() -lh->a() * to_interval(aNode->point().x()) - lh->b() * to_interval(aNode->point().y()) ) /
-            (lh->a() * ( (v1+v2).x() ) + lh->b() * ( (v1+v2).y() ));
-
-          if (!bound || *bound>h_bound.sup())
-            bound=h_bound.sup();
-        }
-        catch(CGAL::Uncertain_conversion_exception&)
-        {}
-      }
-    }
-    // if (bound) std::cout << "bound is " << *bound << "\n";
-    return bound;
-  }
-
-  // TODO: as soon as an exact value we could refine the interval one. Not sure if it is worth it
-  Exact mExact_traits;
-  Straight_skeleton_builder_traits_2_impl<Tag_false, FK> mApproximate_traits; // only used for the time_cache variable not the functor types
-
-  mutable std::size_t trisegment_id = 0;
+// ID functions
+  std::size_t& trisegment_ID() const { return mApproximate_traits.mTrisegment_ID ; }
 
   void reset_trisegment(std::size_t i) const
   {
-    if (i+1==trisegment_id)
+    if ( i+1 == trisegment_ID() )
     {
-      --trisegment_id;
-      mExact_traits.time_cache.reset(i);
-      mApproximate_traits.time_cache.reset(i);
+      --trisegment_ID() ;
+      mExact_traits.mTime_cache.Reset(i) ;
+      mApproximate_traits.mTime_cache.Reset(i) ;
     }
   }
+
+// functions to initialize (and harmonize) and cache speeds
+  void InitializeLineCoeffs ( CGAL_SS_i::Segment_2_with_ID<K> const& aBorderS )
+  {
+//    std::cout << "Initialize " << aBorderS.mID << std::endl;
+
+    C2E lToExact ;
+    C2F lToFiltered ;
+
+    mApproximate_traits.InitializeLineCoeffs( lToFiltered(aBorderS) );
+//    if ( mApproximate_traits.mCoeff_cache.Get ( aBorderS.mID ) )
+//      std::cout << "Initialized (F) to: " << *(mApproximate_traits.mCoeff_cache.Get ( aBorderS.mID ) ) << std::endl;
+
+    mExact_traits.InitializeLineCoeffs( lToExact(aBorderS) );
+//    if ( mExact_traits.mCoeff_cache.Get ( aBorderS.mID ) )
+//      std::cout << "Initialized (E) to: " << *(mExact_traits.mCoeff_cache.Get ( aBorderS.mID ) ) << std::endl;
+  }
+
+  // This overload copies the coefficients from the halfedge `aOtherID` and caches them for the halfedge `aID`
+  void InitializeLineCoeffs ( std::size_t aID, std::size_t aOtherID )
+  {
+//    std::cout << "Initialize (copy) " << aBorderS.mID << " using " << aOtherID << std::endl;
+    mApproximate_traits.InitializeLineCoeffs(aID, aOtherID) ;
+    mExact_traits.InitializeLineCoeffs(aID, aOtherID) ;
+  }
+
+// functions and tag for filtering split events
+  struct Filters_split_events_tag{};
+
+  // The kernel is filtered, and only the filtered part is used in the check (to avoid computing
+  // exact stuff and losing time in a check that is there to gain speed)
+  template <class EventPtr>
+  bool CanSafelyIgnoreSplitEvent(const EventPtr& lEvent)
+  {
+    // filter event
+    if ( ! mApproximate_traits.mFilteringBound )
+      return false;
+
+    typename FK::FT::Protector p;
+
+    typedef CGAL_SS_i::Trisegment_2<K> Source_trisegment_2 ;
+    typedef typename Source_trisegment_2::Self_ptr Source_trisegment_2_ptr;
+    typedef CGAL_SS_i::Trisegment_2<FK> Target_trisegment_2 ;
+    typedef typename Target_trisegment_2::Self_ptr Target_trisegment_2_ptr;
+
+    C2F to_FK ;
+    Source_trisegment_2_ptr src_tri = lEvent->trisegment() ;
+    CGAL_assertion( src_tri != nullptr ) ;
+    Target_trisegment_2_ptr tri = to_FK.cvt_single_trisegment(src_tri) ;
+
+    CGAL_postcondition( src_tri->collinearity() == tri->collinearity() ) ;
+    CGAL_postcondition( src_tri->id() == tri->id() ) ;
+
+    try
+    {
+      boost::optional<CGAL_SS_i::Rational<typename FK::FT> > lOptTime =
+          CGAL_SS_i::compute_offset_lines_isec_timeC2(
+            tri, mApproximate_traits.mTime_cache, mApproximate_traits.mCoeff_cache);
+
+      if ( lOptTime && lOptTime->to_nt() > *mApproximate_traits.mFilteringBound )
+      {
+        // avoid filling the cache vectors with times of trisegments that will be removed
+        reset_trisegment(tri->id());
+        return true;
+      }
+    }
+    catch(Uncertain_conversion_exception&)
+    {}
+
+    return false;
+  }
+
+  // @todo there shouldn't be any combinatorial structures such as vertices in the traits
+  template <class Vertex_handle, class Halfedge_handle_vector_iterator>
+  void ComputeFilteringBound(Vertex_handle lPrev, Vertex_handle aNode, Vertex_handle lNext,
+                             Halfedge_handle_vector_iterator contour_halfedges_begin,
+                             Halfedge_handle_vector_iterator contour_halfedges_end)
+  {
+    mApproximate_traits.mFilteringBound = boost::none;
+
+    if ( ! aNode->is_contour() )
+      return ;
+
+    typedef typename FK::Point_2 Target_Point_2;
+    typedef typename FK::Vector_2 Target_Vector_2;
+    typedef typename FK::Segment_2 Target_Segment_2;
+    typedef typename FK::Ray_2 Target_Ray_2;
+    typedef typename FK::Line_2 Target_Line_2;
+
+    typename FK::FT::Protector protector;
+
+    C2F to_FK;
+
+    Target_Point_2 laP = to_FK(aNode->point());
+    Target_Segment_2 s1(to_FK(lPrev->point()), laP);
+    Target_Segment_2 s2(laP, to_FK(lNext->point()));
+
+    // @todo? These are not input segments, but it might still worth caching (just gotta assign them an ID)
+    boost::optional< Target_Line_2 > l1 = CGAL_SS_i::compute_normalized_line_ceoffC2(s1);
+    boost::optional< Target_Line_2 > l2 = CGAL_SS_i::compute_normalized_line_ceoffC2(s2);
+
+    Target_Vector_2 lV1(l1->a(), l1->b()) ;
+    Target_Vector_2 lV2(l2->a(), l2->b()) ;
+    Target_Vector_2 lV12 = lV1 + lV2 ;
+    Target_Ray_2 bisect_ray(laP, lV12) ;
+
+    // F2C to_input;
+    // std::cout << "bisect " << aNode->point() << " " << aNode->point() + to_input(lV12) << "\n";
+
+    for ( Halfedge_handle_vector_iterator i = contour_halfedges_begin; i != contour_halfedges_end; ++ i )
+    {
+      try
+      {
+        CGAL_assertion((*i)->vertex()->is_contour() && (*i)->opposite()->vertex()->is_contour() );
+        Target_Segment_2 s_h(to_FK((*i)->opposite()->vertex()->point()), to_FK((*i)->vertex()->point()));
+
+        Uncertain<bool> inter = FK().do_intersect_2_object()(s_h, bisect_ray);
+        Uncertain<Oriented_side> orient = FK().orientation_2_object()(s_h[0], s_h[1], laP);
+
+        // we use segments of the input polygon intersected by the bisector and such that
+        // they are oriented such that the reflex vertex is on the left side of the segment
+        if (!is_certain(inter) || !is_certain(orient) || !inter || orient != LEFT_TURN)
+          continue;
+
+        // Note that we don't need the normalization
+        boost::optional< Target_Line_2 > lh = CGAL_SS_i::compute_normalized_line_ceoffC2(s_h);
+
+        typename FK::FT lBound = ( - lh->c() - lh->a()*laP.x() - lh->b()*laP.y() ) /
+                                   ( lh->a()*lV12.x() + lh->b()*lV12.y() );
+
+        if ( ! is_finite(lBound) )
+          continue;
+
+        if ( ! mApproximate_traits.mFilteringBound || *mApproximate_traits.mFilteringBound > lBound )
+          mApproximate_traits.mFilteringBound = lBound ;
+      }
+      catch(CGAL::Uncertain_conversion_exception&)
+      {}
+    }
+  }
+
+public:
+  // TODO: as soon as an exact value we could refine the interval one. Not sure if it is worth it
+  Exact mExact_traits ;
+
+  // Below is only used for the cached variables not the functor types
+  Straight_skeleton_builder_traits_2_impl<Tag_false, FK> mApproximate_traits ;
 } ;
 
 template<class K>

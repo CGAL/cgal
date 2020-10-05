@@ -189,7 +189,7 @@ Straight_skeleton_builder_2<Gt,Ss,V>::IsPseudoSplitEvent( EventPtr const& aEvent
 // contains aNode as a vertex.
 //
 template<class Gt, class Ss, class V>
-void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvent( Vertex_handle aNode, Triedge const& aTriedge, boost::optional<FT> bound)
+void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvent( Vertex_handle aNode, Triedge const& aTriedge )
 {
   CGAL_STSKEL_BUILDER_TRACE(3, "Collect SplitEvent for N" << aNode->id() << " triedge: " << aTriedge);
 
@@ -204,7 +204,8 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvent( Vertex_handle aNod
         EventPtr lEvent = EventPtr( new SplitEvent (aTriedge,lTrisegment,aNode) ) ;
 
         // filter split event
-        if (CanSafelyIgnoreSplitEvent(lEvent, bound)) return;
+        if (CanSafelyIgnoreSplitEvent(lEvent))
+          return;
 
         mVisitor.on_split_event_created(aNode) ;
 
@@ -218,7 +219,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvent( Vertex_handle aNod
 
 // Tests the reflex wavefront emerging from 'aNode' against the other contour edges in search for split events.
 template<class Gt, class Ss, class V>
-void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvents( Vertex_handle aNode, Triedge const& aPrevEventTriedge  )
+void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvents( Vertex_handle aNode, Triedge const& aPrevEventTriedge )
 {
   // lLBorder and lRBorder are the consecutive contour edges forming the reflex wavefront.
   Triedge const& lTriedge = GetVertexTriedge(aNode);
@@ -231,9 +232,8 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvents( Vertex_handle aNo
                       << " LBorder: E" << lLBorder->id() << " RBorder: E" << lRBorder->id()
                       );
 
-  boost::optional<FT> bound =
-    UpperBoundForValidSplitEvents(GetPrevInLAV(aNode), aNode, GetNextInLAV(aNode),
-                                  mContourHalfedges.begin(), mContourHalfedges.end());
+  ComputeUpperBoundForValidSplitEvents(GetPrevInLAV(aNode), aNode, GetNextInLAV(aNode),
+                                       mContourHalfedges.begin(), mContourHalfedges.end());
 
   for ( Halfedge_handle_vector_iterator i = mContourHalfedges.begin(); i != mContourHalfedges.end(); ++ i )
   {
@@ -245,7 +245,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvents( Vertex_handle aNo
 
       if ( lEventTriedge != aPrevEventTriedge )
       {
-        CollectSplitEvent(aNode, lEventTriedge, bound ) ;
+        CollectSplitEvent(aNode, lEventTriedge) ;
       }
     }
   }
@@ -556,11 +556,55 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CreateContourBisectors()
   }
 }
 
+// @todo certify calls to K() instead of supposing exact predicates from K
+template<class Gt, class Ss, class V>
+void Straight_skeleton_builder_2<Gt,Ss,V>::HarmonizeSpeeds(boost::mpl::bool_<true>)
+{
+  auto comparer = [&](Halfedge_handle lLH, Halfedge_handle lRH) -> bool
+  {
+    const Direction_2 lLD = CreateDirection(lLH) ;
+    const Direction_2 lRD = CreateDirection(lRH) ;
+    Comparison_result rRes = K().compare_angle_with_x_axis_2_object()(lLD, lRD) ;
+
+    if ( rRes == EQUAL )
+    {
+      if ( K().orientation_2_object()(lLH->vertex()->point(),
+                                      lLH->opposite()->vertex()->point(),
+                                      lRH->vertex()->point()) == EQUAL )
+        return false; // collinear
+
+      // parallel but not collinear, order arbitrarily (but consistently)
+      return K().less_xy_2_object()(lLH->vertex()->point(), lRH->vertex()->point()) ;
+    }
+    else
+    {
+      // not parallel
+      return ( rRes == SMALLER ) ;
+    }
+  } ;
+
+  typedef std::set<Halfedge_handle, decltype(comparer)> Ordered_halfedges;
+  Ordered_halfedges lOrdered_halfedges(comparer);
+
+  for( Face_iterator fit = mSSkel->SSkel::Base::faces_begin(); fit != mSSkel->SSkel::Base::faces_end(); ++fit)
+  {
+    Halfedge_handle lBorder = fit->halfedge() ;
+    Segment_2 lS = CreateSegment<Traits> ( lBorder ) ;
+
+    std::pair<typename Ordered_halfedges::iterator, bool> rRes = lOrdered_halfedges.insert ( lBorder ) ;
+    if ( ! rRes.second ) // some collinear edge is already in the set
+      mTraits.InitializeLineCoeffs ( lBorder->id(), (*rRes.first)->id() );
+    else
+      mTraits.InitializeLineCoeffs ( lS );
+  }
+}
+
 template<class Gt, class Ss, class V>
 void Straight_skeleton_builder_2<Gt,Ss,V>::InitPhase()
 {
   mVisitor.on_initialization_started(static_cast<int>(mSSkel->size_of_vertices()));
   CreateContourBisectors();
+  HarmonizeSpeeds();
   CreateInitialEvents();
   mVisitor.on_initialization_finished();
 }
