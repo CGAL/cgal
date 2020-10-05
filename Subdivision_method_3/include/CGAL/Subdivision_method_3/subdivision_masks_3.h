@@ -1,5 +1,3 @@
-// ======================================================================
-//
 // Copyright (c) 2005-2017 GeometryFactory (France).  All Rights Reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -11,7 +9,6 @@
 //
 // Author(s): Le-Jeng Shiue <Andy.Shiue@gmail.com>
 //
-// ======================================================================
 
 #ifndef CGAL_SUBDIVISION_MASKS_3_H
 #define CGAL_SUBDIVISION_MASKS_3_H

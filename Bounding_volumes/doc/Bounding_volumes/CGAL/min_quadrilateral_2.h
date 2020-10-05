@@ -3,6 +3,11 @@ namespace CGAL {
 /*!
 \ingroup PkgBoundingVolumesRef
 
+computes a minimum area enclosing parallelogram of the point set
+described by [`points_begin`, `points_end`), writes its
+vertices (counterclockwise) to `o` and returns the past-the-end
+iterator of this sequence.
+
 The function computes a minimum area enclosing
 parallelogram \f$ A(P)\f$ of a given convex point set \f$ P\f$. Note that
 \f$ R(P)\f$ is not necessarily axis-parallel, and it is in general not
@@ -11,10 +16,6 @@ parallelogram enclosing \f$ P\f$ - as a convex set - contains the convex
 hull of \f$ P\f$. For general point sets one has to compute the convex hull
 as a preprocessing step.
 
-computes a minimum area enclosing parallelogram of the point set
-described by [`points_begin`, `points_end`), writes its
-vertices (counterclockwise) to `o` and returns the past-the-end
-iterator of this sequence.
 If the input range is empty, `o` remains unchanged.
 
 If the input range consists of one element only, this point is written
@@ -74,6 +75,11 @@ namespace CGAL {
 /*!
 \ingroup PkgBoundingVolumesRef
 
+computes a minimum area enclosing rectangle of the point set described
+by [`points_begin`, `points_end`), writes its vertices
+(counterclockwise) to `o`, and returns the past-the-end iterator
+of this sequence.
+
 The function computes a minimum area enclosing rectangle
 \f$ R(P)\f$ of a given convex point set \f$ P\f$. Note that \f$ R(P)\f$ is not
 necessarily axis-parallel, and it is in general not unique. The focus
@@ -81,10 +87,6 @@ on convex sets is no restriction, since any rectangle enclosing
 \f$ P\f$ - as a convex set - contains the convex hull of \f$ P\f$. For general
 point sets one has to compute the convex hull as a preprocessing step.
 
-computes a minimum area enclosing rectangle of the point set described
-by [`points_begin`, `points_end`), writes its vertices
-(counterclockwise) to `o`, and returns the past-the-end iterator
-of this sequence.
 
 If the input range is empty, `o` remains unchanged.
 
@@ -143,6 +145,10 @@ namespace CGAL {
 /*!
 \ingroup PkgBoundingVolumesRef
 
+computes a minimum enclosing strip of the point set described by
+[`points_begin`, `points_end`), writes its two bounding lines
+to `o` and returns the past-the-end iterator of this sequence.
+
 The function computes a minimum width enclosing strip
 \f$ S(P)\f$ of a given convex point set \f$ P\f$. A strip is the closed region
 bounded by two parallel lines in the plane. Note that \f$ S(P)\f$ is not
@@ -150,10 +156,6 @@ unique in general. The focus on convex sets is no restriction, since any
 parallelogram enclosing \f$ P\f$ - as a convex set - contains the convex
 hull of \f$ P\f$. For general point sets one has to compute the convex hull
 as a preprocessing step.
-
-computes a minimum enclosing strip of the point set described by
-[`points_begin`, `points_end`), writes its two bounding lines
-to `o` and returns the past-the-end iterator of this sequence.
 
 If the input range is empty or consists of one element only, `o`
 remains unchanged.
@@ -205,4 +207,3 @@ OutputIterator o,
 Traits& t = Default_traits);
 
 } /* namespace CGAL */
-

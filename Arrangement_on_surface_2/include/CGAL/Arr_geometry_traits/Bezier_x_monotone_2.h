@@ -1139,10 +1139,11 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_left
     Originator_iterator  org = p.get_originator(_curve, _xid);
 
     CGAL_assertion(org != p.originators_end());
-    CGAL_assertion(_inc_to_right != cv._inc_to_right);
 
     if (org->point_bound().type == Bez_point_bound::VERTICAL_TANGENCY_PT)
     {
+      CGAL_assertion(_inc_to_right != cv._inc_to_right);
+
       if (! p.is_exact())
       {
         // Comparison based on the control polygon of the bounded vertical

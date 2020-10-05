@@ -180,6 +180,11 @@ public:
 
   }
 
+  ~Alpha_shape_mesher ()
+  {
+    clear_surface();
+  }
+
   /// \cond SKIP_IN_MANUAL
   template <typename InputIterator, typename OutputIterator>
   void operator() (InputIterator begin, InputIterator end, OutputIterator output)

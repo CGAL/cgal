@@ -367,11 +367,11 @@ corefine_and_compute_boolean_operations(
 
   // User visitor
   typedef typename internal_np::Lookup_named_param_def <
-    internal_np::graph_visitor_t,
+    internal_np::visitor_t,
     NamedParameters1,
     Corefinement::Default_visitor<TriangleMesh>//default
   > ::type User_visitor;
-  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::graph_visitor)));
+  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::visitor)));
 
   // surface intersection algorithm call
   typedef Corefinement::Face_graph_output_builder<TriangleMesh,
@@ -695,6 +695,14 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *     \cgalParamDefault{`false`}
  *     \cgalParamExtra{`np1` only}
  *   \cgalParamNEnd
+ *   \cgalParamNBegin{do_not_modify}
+ *     \cgalParamDescription{if `true`, the corresponding mesh will not be updated.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *     \cgalParamExtra{If this parameter is set to `true` for both meshes nothing will be done.
+ *                      If this option is set to `true` for one mesh,
+ *                      the other mesh is no longer required to be without self-intersection.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  */
@@ -709,6 +717,19 @@ corefine(      TriangleMesh& tm1,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+
+  TriangleMesh* const_mesh_ptr=nullptr;
+  if (choose_parameter(get_parameter(np1, internal_np::do_not_modify), false))
+  {
+    if (choose_parameter(get_parameter(np2, internal_np::do_not_modify), false))
+      return;
+    const_mesh_ptr=&tm1;
+  }
+  else
+  {
+    if (choose_parameter(get_parameter(np2, internal_np::do_not_modify), false))
+      const_mesh_ptr=&tm2;
+  }
 
   const bool throw_on_self_intersection =
     choose_parameter(get_parameter(np1, internal_np::throw_on_self_intersection), false);
@@ -756,11 +777,11 @@ corefine(      TriangleMesh& tm1,
 
   // User visitor
   typedef typename internal_np::Lookup_named_param_def <
-    internal_np::graph_visitor_t,
+    internal_np::visitor_t,
     NamedParameters1,
     Corefinement::Default_visitor<TriangleMesh>//default
   > ::type User_visitor;
-  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::graph_visitor)));
+  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::visitor)));
 
 // surface intersection algorithm call
   typedef Corefinement::No_extra_output_from_corefinement<TriangleMesh> Ob;
@@ -769,7 +790,7 @@ corefine(      TriangleMesh& tm1,
   Ob ob;
   Ecm ecm(tm1,tm2,ecm1,ecm2);
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, Vpm, Algo_visitor>
-    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm));
+    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm,const_mesh_ptr));
   functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
 }
 
@@ -846,11 +867,11 @@ autorefine(      TriangleMesh& tm,
 
 // User visitor
   typedef typename internal_np::Lookup_named_param_def <
-    internal_np::graph_visitor_t,
+    internal_np::visitor_t,
     NamedParameters,
     Corefinement::Default_visitor<TriangleMesh>//default
   > ::type User_visitor;
-  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np, internal_np::graph_visitor)));
+  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np, internal_np::visitor)));
 
 
 // surface intersection algorithm call
@@ -943,11 +964,11 @@ autorefine_and_remove_self_intersections(      TriangleMesh& tm,
 
 // User visitor
   typedef typename internal_np::Lookup_named_param_def <
-    internal_np::graph_visitor_t,
+    internal_np::visitor_t,
     NamedParameters,
     Corefinement::Default_visitor<TriangleMesh>//default
   > ::type User_visitor;
-  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np, internal_np::graph_visitor)));
+  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np, internal_np::visitor)));
 
 // surface intersection algorithm call
   typedef Corefinement::Output_builder_for_autorefinement<TriangleMesh,

@@ -48,7 +48,7 @@ public:
   //!
   //! \returns true if the Id should be displayed
   //! \returns false if the Id should not be displayed (if it is hidden for example)
-  virtual bool testDisplayId(double, double, double, CGAL::Three::Viewer_interface*)const = 0;
+  virtual bool testDisplayId(double, double, double, CGAL::Three::Viewer_interface*, const QVector3D& scaler)const = 0;
 
   //! \brief Tests if this item should display its ids.
   //!
