@@ -88,6 +88,6 @@ jobs:
             github.issues.createComment({
               owner: "CGAL",
               repo: "cgal",
-              issue_number: pr_number,
+              issue_number: ${{ github.payload.issue.number }},
               body: address
             });
