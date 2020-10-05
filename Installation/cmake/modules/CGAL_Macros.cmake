@@ -333,45 +333,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
   endmacro()
 
-  macro( use_essential_libs )
-
-    # Comment: This is subject to be changed in the future
-    #          - either more specific (giving precise include_dir- and link-order)
-    #          - or even less specific if order becomes less relevant
-    # Eric Berberich 2012/06/29
-
-    if(NOT CGAL_DISABLE_GMP)
-      if(RS_FOUND)
-        use_component( RS )
-      endif()
-
-      if(MPFI_FOUND)
-        use_component( MPFI )
-      endif()
-
-      if(MPFR_FOUND)
-        use_component( MPFR )
-      endif()
-
-      if (GMPXX_FOUND)
-        use_component( GMPXX )
-      endif()
-
-      if(GMP_FOUND)
-        use_component( GMP )
-      endif()
-    endif(NOT CGAL_DISABLE_GMP)
-
-    if(LEDA_FOUND)
-      use_component( LEDA )
-    endif()
-
-    if(NTL_FOUND)
-      use_component( NTL )
-    endif()
-  endmacro()
-
-
   function( cgal_setup_module_path )
     # Avoid to modify the modules path twice
     if(NOT CGAL_MODULE_PATH_IS_SET)
