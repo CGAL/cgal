@@ -82,6 +82,38 @@ struct Envelope {
   typedef typename EK::Oriented_side_3 eOriented_side_3;
   typedef typename EK::Are_parallel_3 eAre_parallel_3;
 
+
+  // The class Triangle represents a query triangle
+  struct Triangle {
+    Triangle(const Triangle&) = delete;  // no need for making copies
+
+    Triangle(const Point_3& t0, const Point_3& t1, const Point_3& t2)
+    {
+      triangle = { t0, t1, t2 };
+      etriangle = { ePoint_3(t0.x(), t0.y(), t0.z()),
+                    ePoint_3(t1.x(), t1.y(), t1.z()),
+                    ePoint_3(t2.x(), t2.y(), t2.z()) };
+      Point_3 in = t0 + CGAL::cross_product((t0 - t1), (t0 - t2));
+      n = ePoint_3(in.x(), in.y(), in.z());
+    }
+
+    void init_elines()
+    {
+      elines = { eLine_3(etriangle[1], etriangle[2]),
+                 eLine_3(etriangle[0], etriangle[2]),
+                 eLine_3(etriangle[0], etriangle[1]) };
+      eplane = ePlane_3(etriangle[0], etriangle[1], etriangle[2]);
+    }
+
+
+    std::array<Point_3,3> triangle;
+    std::array<ePoint_3,3> etriangle;
+    ePlane_3 eplane;
+    std::array<eLine_3,3> elines;  // the i'th line is opposite to vertex i
+    ePoint_3 n; // triangle[0] offsetted by the triangle normal
+  };
+
+
   // The class  `Plane` is used for the 7-8 walls of a prism.
   // We store at the same  time threee points and a plane.
   // That is easier than retrieving the 3 points of a lazy plane.
@@ -669,10 +701,14 @@ struct Envelope {
 
   int
   is_triangle_cut_envelope_polyhedra(const int &cindex,//the triangle is not degenerated
-                                     const ePoint_3 &tri0, const ePoint_3 &tri1, const ePoint_3 &tri2,
-                                     const ePoint_3 &n,
+                                     const Triangle& query,
                                      std::vector<int> &cid) const
   {
+    const ePoint_3 &tri0 = query.etriangle[0];
+    const ePoint_3 &tri1 = query.etriangle[1];
+    const ePoint_3 &tri2 = query.etriangle[2];
+    const ePoint_3 &n = query.n;
+
     const Prism& prism = halfspace[cindex];
     cid.clear();
     cid.reserve(3);
@@ -736,30 +772,42 @@ struct Envelope {
 
     if (cutp.size() == 0){
         return 0;
-      }
+    }
 #ifdef TRACE
     std::cout << "A" << std::endl;
 #endif
-    std::array<ePoint_3*,2> seg0, seg1;
+
+    // todo:  Compute the three lines through the edges
+    //        Do  not compute them before this function call, but store them
+    //        in variables defined before this function call and passed in as a (non const) reference
+    //        and use bool to mark them as computed
+    //std::array<ePoint_3*,2> seg0, seg1;
+    std::array<eLine_3*,2> seg;
+
+    // the i'th line is opposite to vertex i
+    //std::array<eLine_3,3> lines = { eLine_3(tri1, tri2), eLine_3(tri0,tri2), eLine_3(tri0,tri1) }; //todo: what is elines (line 1424)  about ??
+
 
     for (int i = 0; i < cutp.size(); i++)
       {
         int tmp = 0;
         if (o1[cutp[i]] * o2[cutp[i]] == -1|| o1[cutp[i]] + o2[cutp[i]] == -1) {
-          seg0[tmp] = const_cast<ePoint_3*>(&tri0);
-          seg1[tmp] = const_cast<ePoint_3*>(&tri1);
-
+          //seg0[tmp] = const_cast<ePoint_3*>(&tri0);
+          //seg1[tmp] = const_cast<ePoint_3*>(&tri1);
+          seg[tmp] = const_cast<eLine_3*>(&(query.elines[2]));
           tmp++;
         }
         if (o1[cutp[i]] * o3[cutp[i]] == -1|| o1[cutp[i]] + o3[cutp[i]] == -1) {
-          seg0[tmp] = const_cast<ePoint_3*>(&tri0);
-          seg1[tmp] = const_cast<ePoint_3*>(&tri2);
+          //seg0[tmp] = const_cast<ePoint_3*>(&tri0);
+          //seg1[tmp] = const_cast<ePoint_3*>(&tri2);
+          seg[tmp] = const_cast<eLine_3 *>(&(query.elines[1]));
 
           tmp++;
         }
         if (o2[cutp[i]] * o3[cutp[i]] == -1|| o2[cutp[i]] + o3[cutp[i]] == -1) {
-          seg0[tmp] = const_cast<ePoint_3*>(&tri1);
-          seg1[tmp] = const_cast<ePoint_3*>(&tri2);
+          //seg0[tmp] = const_cast<ePoint_3*>(&tri1);
+          //seg1[tmp] = const_cast<ePoint_3*>(&tri2);
+          seg[tmp] = const_cast<eLine_3 *>(&(query.elines[0]));
 
           tmp++;
         }
@@ -771,7 +819,8 @@ struct Envelope {
           //         std::cout <<  plane_i.ep << "  " <<  plane_i.eq << "  " <<  plane_i.er << "  " <<  plane_i.ep << std::endl;
           // std::cout << *(seg0[k]) << "       " <<   *(seg1[k]) << std::endl;
 
-          eLine_3 eline(*(seg0[k]), *(seg1[k]));
+          const eLine_3& eline = *(seg[k]); // (*(seg0[k]), *(seg1[k]));
+
           boost::optional<ePoint_3> op = CGAL::intersection_point(eline, plane_i.eplane);
           if(! op){
 #ifdef TRACE
@@ -1263,17 +1312,11 @@ struct Envelope {
         return true;
       }
 
-    std::array<Point_3,3> triangle = { t0, t1, t2 };
-    std::array<ePoint_3,3> etriangle = { ePoint_3(t0.x(), t0.y(), t0.z()),
-                                         ePoint_3(t1.x(), t1.y(), t1.z()),
-                                         ePoint_3(t2.x(), t2.y(), t2.z()) };
-
-    Point_3 in = t0 + CGAL::cross_product((t0 - t1), (t0 - t2));
-    ePoint_3 n(in.x(), in.y(), in.z());
+    Triangle query(t0, t1, t2);
 
     int jump1, jump2;
     static const std::array<std::array<int, 2>, 3> triseg = {
-      {{{0, 1}}, {{0, 2}}, {{1, 2}}}
+      {{{1, 2}}, {{2, 0}}, {{0, 1}}}
     };
 
 
@@ -1292,7 +1335,7 @@ struct Envelope {
     int check_id;
 
     for (int i = 0; i < 3; i++) {
-      out = point_out_prism_return_local_id(triangle[i], etriangle[i], prismindex, jump1, check_id);
+      out = point_out_prism_return_local_id(query.triangle[i], query.etriangle[i], prismindex, jump1, check_id);
 
       if (out) {
         return true;
@@ -1302,6 +1345,7 @@ struct Envelope {
     if (prismindex.size() == 1)
       return false;
 
+    query.init_elines();
 
 #ifdef DEGENERATION_FIX
 
@@ -1322,7 +1366,7 @@ struct Envelope {
         jump1 = prismindex[queue[i]];
         int seg_inside = 0;
         for (int k = 0; k < 3; k++) {
-          eLine_3 eline(etriangle[triseg[k][0]], etriangle[triseg[k][1]]);  // todo: store 3 lines in a triangle query object
+          const eLine_3& eline = query.elines[k]; // (etriangle[triseg[k][0]], etriangle[triseg[k][1]]);
           cut = is_seg_cut_polyhedra(jump1, etriangle[triseg[k][0]], etriangle[triseg[k][1]], eline, cidl);
           if (cut&&cidl.size() == 0) {
             seg_inside++;
@@ -1367,8 +1411,7 @@ struct Envelope {
     std::vector<int> cidl; cidl.reserve(8);
     for (int i = 0; i < prismindex.size(); i++) {
       tti = is_triangle_cut_envelope_polyhedra(prismindex[i],
-                                               etriangle[0], etriangle[1], etriangle[2],
-                                               n,
+                                               query,
                                                cidl);
       if (tti == 2) {
 
@@ -1408,24 +1451,24 @@ struct Envelope {
     std::vector<bool> neighbour_cover;
     idlistorder.emplace_back(intersect_face[queue[0]]);
 
-    std::array<eLine_3, 3> elines;
-    for (int k = 0; k < 3; k++) {
-      elines[k] = eLine_3(etriangle[triseg[k][0]],etriangle[triseg[k][1]]);
-    }
+    //std::array<eLine_3, 3> elines;
+    // for (int k = 0; k < 3; k++) {
+    //  elines[k] = eLine_3(query.etriangle[triseg[k][0]],etriangle[triseg[k][1]]);
+    // }
 
     for (int i = 0; i < queue.size(); i++) {
 
       jump1 = filtered_intersection[queue[i]];
 
       for (int k = 0; k < 3; k++) {
-        const ePoint_3& etriangle_triseg_k_0 = etriangle[triseg[k][0]];
-        const ePoint_3& etriangle_triseg_k_1 = etriangle[triseg[k][1]];
+        const ePoint_3& etriangle_triseg_k_0 = query.etriangle[triseg[k][0]];
+        const ePoint_3& etriangle_triseg_k_1 = query.etriangle[triseg[k][1]];
 
-        const eLine_3& eline = elines[k];
+        const eLine_3& eline = query.elines[k];
 
         for (int j = 0; j < intersect_face[queue[i]].size(); j++) {
-          tti = seg_cut_plane(etriangle[triseg[k][0]],
-                              etriangle[triseg[k][1]],
+          tti = seg_cut_plane(query.etriangle[triseg[k][0]],
+                              query.etriangle[triseg[k][1]],
                               halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].ep,
                               halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].eq,
                               halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].er);
@@ -1490,7 +1533,7 @@ struct Envelope {
 
     //tree end
 
-    ePlane_3 etriangle_eplane(etriangle[0],etriangle[1],etriangle[2]);
+    const ePlane_3& etriangle_eplane = query.eplane; //  (etriangle[0],etriangle[1],etriangle[2]);
 
     for (int i = 1; i < queue.size(); i++){
       jump1 = filtered_intersection[queue[i]];
@@ -1536,7 +1579,8 @@ struct Envelope {
             const ePoint_3& ip = *op;
 
 
-            cut = is_3_triangle_cut(etriangle[0], etriangle[1], etriangle[2], n, ip);
+            cut = is_3_triangle_cut(query.etriangle[0], query.etriangle[1],
+                                    query.etriangle[2], query.n, ip);
 
             if (!cut){
 #ifdef TRACE
@@ -1987,7 +2031,7 @@ int main(int argc, char* argv[])
   std::ofstream inside("inside.txt");
   std::ofstream outside("outside.txt");
 
-  for(int i = 0; i <  env_vertices.size()   ; i+=10){
+  for(int i = 0; i <  env_vertices.size()    ; i+=10){
       for(int j = i+1; j < env_vertices.size(); j+= 10){
         for(int k = j+1; k < env_vertices.size(); k+=10){
           if( ( i != j) && (i != k) && (j != k)){
