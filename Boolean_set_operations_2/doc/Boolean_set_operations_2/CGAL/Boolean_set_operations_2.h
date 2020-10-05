@@ -22,11 +22,11 @@ namespace CGAL {
  *
  * <div align="left">
  * <table cellpadding=3 border="1">
- * <tr><th> Type1 </th>                                     <th>Type2</th></tr>
- * <tr><td valign="center">Polygon_2</td>                   <td valign="center">Polygon_with_holes_2</td></tr>
- * <tr><td valign="center">Polygon_with_holes_2</td>        <td valign="center">Polygon_with_holes_2</td></tr>
- * <tr><td valign="center">General_polygon_2</td>           <td valign="center">General_polygon_with_holes_2</td></tr>
- * <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+ * <tr><th>`Type1`</th>                                       <th>`Type2`</th></tr>
+ * <tr><td valign="center">`Polygon_2`</td>                   <td valign="center">`Polygon_with_holes_2`</td></tr>
+ * <tr><td valign="center">`Polygon_with_holes_2`</td>        <td valign="center">`Polygon_with_holes_2`</td></tr>
+ * <tr><td valign="center">`General_polygon_2`</td>           <td valign="center">`General_polygon_with_holes_2`</td></tr>
+ * <tr><td valign="center">`General_polygon_with_holes_2`</td><td valign="center">`General_polygon_with_holes_2`</td></tr>
  * </table>
  * </div>
  *
@@ -489,15 +489,15 @@ namespace CGAL {
  *
  * <div align="left">
  * <table cellpadding=3 border="1">
- * <tr><th> Type1 </th>                                     <th>Type2</th></tr>
- * <tr><td valign="center">Polygon_2</td>                   <td valign="center">Polygon_2</td></tr>
- * <tr><td valign="center">Polygon_2</td>                   <td valign="center">Polygon_with_holes_2</td></tr>
- * <tr><td valign="center">Polygon_with_holes_2</td>        <td valign="center">Polygon_2</td></tr>
- * <tr><td valign="center">Polygon_with_holes_2</td>        <td valign="center">Polygon_with_holes_2</td></tr>
- * <tr><td valign="center">General_polygon_2</td>           <td valign="center">General_polygon_2</td></tr>
- * <tr><td valign="center">General_polygon_2</td>           <td valign="center">General_polygon_with_holes_2</td></tr>
- * <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr>
- * <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+ * <tr><th>`Type1`</th>                                       <th>`Type2`</th></tr>
+ * <tr><td valign="center">`Polygon_2`</td>                   <td valign="center">`Polygon_2`</td></tr>
+ * <tr><td valign="center">`Polygon_2`</td>                   <td valign="center">`Polygon_with_holes_2`</td></tr>
+ * <tr><td valign="center">`Polygon_with_holes_2`</td>        <td valign="center">`Polygon_2`</td></tr>
+ * <tr><td valign="center">`Polygon_with_holes_2`</td>        <td valign="center">`Polygon_with_holes_2`</td></tr>
+ * <tr><td valign="center">`General_polygon_2`</td>           <td valign="center">`General_polygon_2`</td></tr>
+ * <tr><td valign="center">`General_polygon_2`</td>           <td valign="center">`General_polygon_with_holes_2`</td></tr>
+ * <tr><td valign="center">`General_polygon_with_holes_2`</td><td valign="center">`General_polygon_2`</td></tr>
+ * <tr><td valign="center">`General_polygon_with_holes_2`</td><td valign="center">`General_polygon_with_holes_2`</td></tr>
  * </table>
  * </div>
  *
@@ -604,11 +604,11 @@ bool do_intersect(const General_polygon_with_holes_2<Polygon>& pgn1,
  * of general polygons or a range of general polygons with holes) determines
  * whether the open polygons (resp. general polygons) in the range have a common
  * point.
- * \param begin the first iterator of the input range. It's value type is
- *        either `Polygon_2` (resp. `General_polygon_2`) or `Polygon_with_holes`
+ * \param begin the first iterator of the input range. Its value type is
+ *        either `Polygon_2` (resp. `General_polygon_2`) or `Polygon_with_holes_2`
  *        (resp. `General_polygon_with_holes_2`).
- * \param end the past-the-end iterator of the input range. It's value type is
- *        either `Polygon_2` (resp. `General_polygon_2`) or `Polygon_with_holes`
+ * \param end the past-the-end iterator of the input range. Its value type is
+ *        either `Polygon_2` (resp. `General_polygon_2`) or `Polygon_with_holes_2`
  *        (resp. `General_polygon_with_holes_2`).
  * \return `true` if the pairwise intersections of all open polygons or polygons
  *         with holes (resp. general polygons or general polygons with holes) in
@@ -620,14 +620,14 @@ bool do_intersect(InputIterator begin, InputIterator end);
 /*! Given a range of polygons (resp. general polygons) and a range of polygons
  * with holes (resp. general polygons with holes) determines whether the open
  * polygons (resp. general polygons) in the two ranges have a common point.
- * \param begin1 the first iterator of the 1st input range. It's value type is
- *        Polygon_2 (resp. General_polygon_2).
- * \param end1 the past-the-end iterator of the 1st input range. It's value
- *        type is Polygon_2 (resp. General_polygon_2).
- * \param begin2 the first iterator of the 2nd input range. It's value type
- *        is Polygon_with_holes_2 (resp. General_polygon_with_holes_2).
- * \param end2 the past-the-end iterator of the 2nd input range. It's value
- *        type is Polygon_with_holes_2 (resp. General_polygon_with_holes_2).
+ * \param begin1 the first iterator of the 1st input range. Its value type is
+ *        `Polygon_2` (resp. `General_polygon_2`).
+ * \param end1 the past-the-end iterator of the 1st input range. Its value
+ *        type is `Polygon_2` (resp. `General_polygon_2`).
+ * \param begin2 the first iterator of the 2nd input range. Its value type
+ *        is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
+ * \param end2 the past-the-end iterator of the 2nd input range. Its value
+ *        type is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \return `true` if the pairwise intersections of all open polygons (resp.
  *        general polygons) and polygons with holes (resp. general polygons with
  *        holes) in the ranges [*begin1,*end1) and [*begin2,*end2),
@@ -760,12 +760,12 @@ bool do_intersect(const General_polygon_with_holes_2<Polygon>& pgn1,
  * of general polygons or a range of general polygons with holes) determines
  * whether the open polygons (resp. general polygons) in the range have a common
  * point.
- * \param begin the first iterator of the input range. It's value type is
- *        either Polygon_2 (resp. General_polygon_2) or Polygon_with_holes
- *        (resp. General_polygon_with_holes_2).
- * \param end the past-the-end iterator of the input range. It's value type is
- *        either Polygon_2 (resp. General_polygon_2) or Polygon_with_holes
- *        (resp. General_polygon_with_holes_2).
+ * \param begin the first iterator of the input range. Its value type is
+ *        either `Polygon_2` (resp. `General_polygon_2`) or `Polygon_with_holes_2`
+ *        (resp. `General_polygon_with_holes_2`).
+ * \param end the past-the-end iterator of the input range. Its value type is
+ *        either `Polygon_2` (resp. `General_polygon_2`) or `Polygon_with_holes_2`
+ *        (resp. `General_polygon_with_holes_2`).
  * \param traits a traits object.
  * \return `true` if the pairwise intersections of all open polygons or polygons
  *         with holes (resp. general polygons or general polygons with holes) in
@@ -779,14 +779,14 @@ bool do_intersect(InputIterator begin, InputIterator end,
 /*! Given a range of polygons (resp. general polygons) and a range of polygons
  * with holes (resp. general polygons with holes) determines whether the open
  * polygons (resp. general polygons) in the two ranges have a common point.
- * \param begin1 the first iterator of the 1st input range. It's value type is
- *        Polygon_2 (resp. General_polygon_2).
- * \param end1 the past-the-end iterator of the 1st input range. It's value
- *        type is Polygon_2 (resp. General_polygon_2).
- * \param begin2 the first iterator of the 2nd input range. It's value type
- *        is Polygon_with_holes_2 (resp. General_polygon_with_holes_2).
- * \param end2 the past-the-end iterator of the 2nd input range. It's value
- *        type is Polygon_with_holes_2 (resp. General_polygon_with_holes_2).
+ * \param begin1 the first iterator of the 1st input range. Its value type is
+ *        `Polygon_2` (resp. `General_polygon_2`).
+ * \param end1 the past-the-end iterator of the 1st input range. Its value
+ *        type is `Polygon_2` (resp. `General_polygon_2`).
+ * \param begin2 the first iterator of the 2nd input range. Its value type
+ *        is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
+ * \param end2 the past-the-end iterator of the 2nd input range. Its value
+ *        type is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param traits a traits object.
  * \return `true` if the pairwise intersections of all open polygons (resp.
  *        general polygons) and polygons with holes (resp. general polygons with
@@ -973,12 +973,12 @@ OutputIterator intersection(const General_polygon_with_holes_2<Polygon>& pgn1,
  * intersection of all polygons in the range and inserts the resulting polygons
  * with holes (resp. general polygons with holes) into a container via an output
  * iterator.
- * \param begin the first iterator of the input range. It's value type is
- *        either Polygon_2 (resp. General_polygon_2) or Polygon_with_holes
- *        (resp. General_polygon_with_holes_2).
- * \param end the past-the-end iterator of the input range. It's value type is
- *        either Polygon_2 (resp. General_polygon_2) or Polygon_with_holes
- *        (resp. General_polygon_with_holes_2).
+ * \param begin the first iterator of the input range. Its value type is
+ *        either `Polygon_2` (resp. `General_polygon_2`) or `Polygon_with_holes_2`
+ *        (resp. `General_polygon_with_holes_2`).
+ * \param end the past-the-end iterator of the input range. Its value type is
+ *        either `Polygon_2` (resp. `General_polygon_2`) or `Polygon_with_holes_2`
+ *        (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
  *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
@@ -993,14 +993,14 @@ OutputIterator intersection(InputIterator begin, InputIterator end,
  * intersection of all polygons in the two ranges and inserts the resulting
  * polygons with holes (resp. general polygons with holes) into a container via
  * an output iterator.
- * \param begin1 the first iterator of the 1st input range. It's value type is
- *        Polygon_2 (resp. General_polygon_2).
- * \param end1 the past-the-end iterator of the 1st input range. It's value
- *        type is Polygon_2 (resp. General_polygon_2).
- * \param begin2 the first iterator of the 2nd input range. It's value type
- *        is Polygon_with_holes_2 (resp. General_polygon_with_holes_2).
- * \param end2 the past-the-end iterator of the 2nd input range. It's value
- *        type is Polygon_with_holes_2 (resp. General_polygon_with_holes_2).
+ * \param begin1 the first iterator of the 1st input range. Its value type is
+ *        `Polygon_2` (resp. `General_polygon_2`).
+ * \param end1 the past-the-end iterator of the 1st input range. Its value
+ *        type is `Polygon_2` (resp. `General_polygon_2`).
+ * \param begin2 the first iterator of the 2nd input range. Its value type
+ *        is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
+ * \param end2 the past-the-end iterator of the 2nd input range. Its value
+ *        type is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
  *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
@@ -1170,12 +1170,12 @@ bool join(const General_polygon_with_holes_2<Polygon>& pgn1,
  * union of all polygons in the range and inserts the resulting polygons
  * with holes (resp. general polygons with holes) into a container via an output
  * iterator.
- * \param begin the first iterator of the input range. It's value type is
- *        either Polygon_2 (resp. General_polygon_2) or Polygon_with_holes
- *        (resp. General_polygon_with_holes_2).
- * \param end the past-the-end iterator of the input range. It's value type is
- *        either Polygon_2 (resp. General_polygon_2) or Polygon_with_holes
- *        (resp. General_polygon_with_holes_2).
+ * \param begin the first iterator of the input range. Its value type is
+ *        either `Polygon_2` (resp. `General_polygon_2`) or `Polygon_with_holes_2`
+ *        (resp. `General_polygon_with_holes_2`).
+ * \param end the past-the-end iterator of the input range. Its value type is
+ *        either `Polygon_2` (resp. `General_polygon_2`) or `Polygon_with_holes_2`
+ *        (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
  *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
@@ -1190,14 +1190,14 @@ OutputIterator join(InputIterator begin, InputIterator end,
  * union of all polygons in the two ranges and inserts the resulting
  * polygons with holes (resp. general polygons with holes) into a container via
  * an output iterator.
- * \param begin1 the first iterator of the 1st input range. It's value type is
- *        Polygon_2 (resp. General_polygon_2).
- * \param end1 the past-the-end iterator of the 1st input range. It's value
- *        type is Polygon_2 (resp. General_polygon_2).
- * \param begin2 the first iterator of the 2nd input range. It's value type
- *        is Polygon_with_holes_2 (resp. General_polygon_with_holes_2).
- * \param end2 the past-the-end iterator of the 2nd input range. It's value
- *        type is Polygon_with_holes_2 (resp. General_polygon_with_holes_2).
+ * \param begin1 the first iterator of the 1st input range. Its value type is
+ *        `Polygon_2` (resp. `General_polygon_2`).
+ * \param end1 the past-the-end iterator of the 1st input range. Its value
+ *        type is `Polygon_2` (resp. `General_polygon_2`).
+ * \param begin2 the first iterator of the 2nd input range. Its value type
+ *        is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
+ * \param end2 the past-the-end iterator of the 2nd input range. Its value
+ *        type is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
  *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
@@ -1342,12 +1342,12 @@ bool join(const General_polygon_with_holes_2<Polygon>& pgn1,
  * union of all polygons in the range and inserts the resulting polygons
  * with holes (resp. general polygons with holes) into a container via an output
  * iterator.
- * \param begin the first iterator of the input range. It's value type is
- *        either Polygon_2 (resp. General_polygon_2) or Polygon_with_holes
- *        (resp. General_polygon_with_holes_2).
- * \param end the past-the-end iterator of the input range. It's value type is
- *        either Polygon_2 (resp. General_polygon_2) or Polygon_with_holes
- *        (resp. General_polygon_with_holes_2).
+ * \param begin the first iterator of the input range. Its value type is
+ *        either `Polygon_2` (resp. `General_polygon_2`) or `Polygon_with_holes_2`
+ *        (resp. `General_polygon_with_holes_2`).
+ * \param end the past-the-end iterator of the input range. Its value type is
+ *        either `Polygon_2` (resp. `General_polygon_2`) or `Polygon_with_holes_2`
+ *        (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
  *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
@@ -1365,14 +1365,14 @@ OutputIterator join(InputIterator begin, InputIterator end,
  * union of all polygons in the two ranges and inserts the resulting
  * polygons with holes (resp. general polygons with holes) into a container via
  * an output iterator.
- * \param begin1 the first iterator of the 1st input range. It's value type is
- *        Polygon_2 (resp. General_polygon_2).
- * \param end1 the past-the-end iterator of the 1st input range. It's value
- *        type is Polygon_2 (resp. General_polygon_2).
- * \param begin2 the first iterator of the 2nd input range. It's value type
- *        is Polygon_with_holes_2 (resp. General_polygon_with_holes_2).
- * \param end2 the past-the-end iterator of the 2nd input range. It's value
- *        type is Polygon_with_holes_2 (resp. General_polygon_with_holes_2).
+ * \param begin1 the first iterator of the 1st input range. Its value type is
+ *        `Polygon_2` (resp. `General_polygon_2`).
+ * \param end1 the past-the-end iterator of the 1st input range. Its value
+ *        type is `Polygon_2` (resp. `General_polygon_2`).
+ * \param begin2 the first iterator of the 2nd input range. Its value type
+ *        is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
+ * \param end2 the past-the-end iterator of the 2nd input range. Its value
+ *        type is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
  *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
@@ -1907,12 +1907,12 @@ symmetric_difference(const General_polygon_with_holes_2<Polygon>& pgn1,
  * polygons with holes (resp. general polygons with holes) into a container via
  * an output iterator. A point is contained in the symmetric difference, if and
  * only if it is contained in an odd number of input polygons.
- * \param begin the first iterator of the input range. It's value type is
- *        either Polygon_2 (resp. General_polygon_2) or Polygon_with_holes
- *        (resp. General_polygon_with_holes_2).
- * \param end the past-the-end iterator of the input range. It's value type is
- *        either Polygon_2 (resp. General_polygon_2) or Polygon_with_holes
- *        (resp. General_polygon_with_holes_2).
+ * \param begin the first iterator of the input range. Its value type is
+ *        either `Polygon_2` (resp. `General_polygon_2`) or `Polygon_with_holes_2`
+ *        (resp. `General_polygon_with_holes_2`).
+ * \param end the past-the-end iterator of the input range. Its value type is
+ *        either `Polygon_2` (resp. `General_polygon_2`) or `Polygon_with_holes_2`
+ *        (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
  *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
@@ -1928,14 +1928,14 @@ OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
  * polygons with holes (resp. general polygons with holes) into a container via
  * an output iterator. A point is contained in the symmetric difference, if and
  * only if it is contained in an odd number of input polygons.
- * \param begin1 the first iterator of the 1st input range. It's value type is
- *        Polygon_2 (resp. General_polygon_2).
- * \param end1 the past-the-end iterator of the 1st input range. It's value
- *        type is Polygon_2 (resp. General_polygon_2).
- * \param begin2 the first iterator of the 2nd input range. It's value type
- *        is Polygon_with_holes_2 (resp. General_polygon_with_holes_2).
- * \param end2 the past-the-end iterator of the 2nd input range. It's value
- *        type is Polygon_with_holes_2 (resp. General_polygon_with_holes_2).
+ * \param begin1 the first iterator of the 1st input range. Its value type is
+ *        `Polygon_2` (resp. `General_polygon_2`).
+ * \param end1 the past-the-end iterator of the 1st input range. Its value
+ *        type is `Polygon_2` (resp. `General_polygon_2`).
+ * \param begin2 the first iterator of the 2nd input range. Its value type
+ *        is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
+ * \param end2 the past-the-end iterator of the 2nd input range. Its value
+ *        type is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
  *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
@@ -2115,12 +2115,12 @@ symmetric_difference(const General_polygon_with_holes_2<Polygon>& pgn1,
  * polygons with holes (resp. general polygons with holes) into a container via
  * an output iterator. A point is contained in the symmetric difference, if and
  * only if it is contained in an odd number of input polygons.
- * \param begin the first iterator of the input range. It's value type is
- *        either Polygon_2 (resp. General_polygon_2) or Polygon_with_holes
- *        (resp. General_polygon_with_holes_2).
- * \param end the past-the-end iterator of the input range. It's value type is
- *        either Polygon_2 (resp. General_polygon_2) or Polygon_with_holes
- *        (resp. General_polygon_with_holes_2).
+ * \param begin the first iterator of the input range. Its value type is
+ *        either `Polygon_2` (resp. `General_polygon_2`) or `Polygon_with_holes_2`
+ *        (resp. `General_polygon_with_holes_2`).
+ * \param end the past-the-end iterator of the input range. Its value type is
+ *        either `Polygon_2` (resp. `General_polygon_2`) or `Polygon_with_holes_2`
+ *        (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
  *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
@@ -2139,14 +2139,14 @@ OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
  * polygons with holes (resp. general polygons with holes) into a container via
  * an output iterator. A point is contained in the symmetric difference, if and
  * only if it is contained in an odd number of input polygons.
- * \param begin1 the first iterator of the 1st input range. It's value type is
- *        Polygon_2 (resp. General_polygon_2).
- * \param end1 the past-the-end iterator of the 1st input range. It's value
- *        type is Polygon_2 (resp. General_polygon_2).
- * \param begin2 the first iterator of the 2nd input range. It's value type
- *        is Polygon_with_holes_2 (resp. General_polygon_with_holes_2).
- * \param end2 the past-the-end iterator of the 2nd input range. It's value
- *        type is Polygon_with_holes_2 (resp. General_polygon_with_holes_2).
+ * \param begin1 the first iterator of the 1st input range. Its value type is
+ *        `Polygon_2` (resp. `General_polygon_2`).
+ * \param end1 the past-the-end iterator of the 1st input range. Its value
+ *        type is `Polygon_2` (resp. `General_polygon_2`).
+ * \param begin2 the first iterator of the 2nd input range. Its value type
+ *        is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
+ * \param end2 the past-the-end iterator of the 2nd input range. Its value
+ *        type is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
  *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
