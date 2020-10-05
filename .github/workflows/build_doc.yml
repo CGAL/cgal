@@ -46,8 +46,7 @@ jobs:
           set -x
           sudo apt-get install -y graphviz ssh
           sudo pip install lxml pyquery
-          wget -O doxygen_exe https://cgal.geometryfactory.com/~mgimeno/doxygen/build_1_8_13/bin/doxygen
-          sudo mv doxygen_exe /usr/bin/doxygen
+          wget --no-verbose -O /usr/bin/doxygen https://cgal.geometryfactory.com/~mgimeno/doxygen/build_1_8_13/bin/doxygen
           sudo chmod +x /usr/bin/doxygen
           git config --global user.email "maxime.gimeno@geometryfactory.com"
           git config --global user.name "Maxime Gimeno"
@@ -55,6 +54,7 @@ jobs:
       - name: configure all
         if: steps.get_round.outputs.result != 'stop'
         run: |
+          set -ex
           git clone https://CGAL:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git --depth=5
           mkdir -p build_doc && cd build_doc && cmake ../Documentation/doc
 
@@ -64,7 +64,7 @@ jobs:
           set -ex
           PR_NUMBER=${{ steps.get_pr_number.outputs.result }}
           ROUND=${{ steps.get_round.outputs.result }}
-          wget cgal.github.io -O tmp.html
+          wget --no-verbose cgal.github.io -O tmp.html
           if ! egrep -q "\/$PR_NUMBER\/$ROUND" tmp.html; then
             mkdir -p cgal.github.io/${PR_NUMBER}/$ROUND
             cd build_doc && make -j2 doc && make -j2 doc_with_postprocessing
