@@ -49,7 +49,7 @@ template <typename Kernel, typename Container>
 void complement(const Polygon_2<Kernel, Container>& pgn,
                 Polygon_with_holes_2<Kernel, Container>& res);
 
-/*! Computes the complement of a general polygon.
+/*! computes the complement of a general polygon.
  * \param pgn the input polygon.
  * \param res the complement of \p pgn.
  * \pre `%ArrTraits` must be a model of the concept
