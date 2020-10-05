@@ -87,7 +87,7 @@ complement(const General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& pg
 
 //////// With Traits
 
-/*! Computes the complement of a polygon.
+/*! computes the complement of a polygon.
  * \param pgn the input polygon.
  * \param res the resulting complement of \p pgn
  * \param traits a traits object.
