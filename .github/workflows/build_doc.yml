@@ -65,7 +65,7 @@ jobs:
           PR_NUMBER=${{ steps.get_pr_number.outputs.result }}
           ROUND=${{ steps.get_round.outputs.result }}
           wget cgal.github.io -O tmp.html
-          if ! egrep -q "\/$PR_NUMBER\/$ROUND") tmp.html; then
+          if ! egrep -q "\/$PR_NUMBER\/$ROUND" tmp.html; then
             mkdir -p cgal.github.io/${PR_NUMBER}/$ROUND
             cd build_doc && make -j2 doc && make -j2 doc_with_postprocessing
             cp -r ./doc_output/* ../cgal.github.io/${PR_NUMBER}/$ROUND
