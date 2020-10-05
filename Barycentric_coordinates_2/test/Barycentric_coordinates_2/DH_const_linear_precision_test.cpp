@@ -87,6 +87,6 @@ int main()
     }
 
     cout << endl << "DH_const_linear_precision_test: PASSED." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

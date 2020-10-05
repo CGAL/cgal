@@ -1,18 +1,18 @@
 ﻿namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_CGAL_and_Solvers
 \anchor chapterSolvers
 \cgalAutoToc
 \authors Simon Giraudot, Pierre Alliez, Frédéric Cazals, Gaël Guennebaud, Bruno Lévy, Marc Pouget, Laurent Saboret, and Liangliang Nan
 
 Several \cgal packages have to solve linear systems with dense or
-sparse matrices, linear integer programs. This package provides 
+sparse matrices, linear integer programs. This package provides
 concepts and models for that purpose.
 
-For linear systems, we generally provide models using the 
-\ref thirdpartyEigen library. Wrappers for the Eigen classes 
+For linear systems, we generally provide models using the
+\ref thirdpartyEigen library. Wrappers for the Eigen classes
 `Eigen_matrix` and `Eigen_vector` are also provided when needed.
 It is straightforward to develop equivalent models for
 other solvers, for example those found in the <a
@@ -22,9 +22,10 @@ Library (MKL)</a>.
 For mixed integer programs (either constrained or unconstrained),
 we provide models using \ref thirdpartySCIP and \ref thirdpartyGLPK
 libraries. It is also possible to derive new models from other
-high performance libraries, e.g., 
-<a href = "https://projects.coin-or.org/Cbc"> CBC </a>, 
+high performance libraries, e.g.,
+<a href = "https://projects.coin-or.org/Cbc"> CBC </a>,
 <a href = "http://www.gurobi.com/"> Gurobi </a>.
+
 
 
 \section SectionSolverDiagonalize Matrix Diagonalization
@@ -41,6 +42,7 @@ class:
 \cgalExample{Solver_interface/diagonalize_matrix.cpp}
 
 
+
 \section SectionSolverSVD Singular Value Decomposition
 
 The concept `SvdTraits` defines an interface for solving in the least
@@ -52,7 +54,6 @@ Here is a simple example that shows how to handle matrices, vectors
 and this solver:
 
 \cgalExample{Solver_interface/singular_value_decomposition.cpp}
-
 
 
 
@@ -73,17 +74,17 @@ specific solver to be used must be given as template parameter.
 Each \cgal package using a sparse solver specifies which type of matrix
 and solver is required:
 
-\code{.cpp} 
+\code{.cpp}
 
 typedef CGAL::Eigen_sparse_matrix<double>::EigenType EigenMatrix;
 
-//iterative general solver 
+//iterative general solver
 typedef CGAL::Eigen_solver_traits< Eigen::BiCGSTAB<EigenMatrix> > Iterative_general_solver;
 
-//iterative symmetric solver 
+//iterative symmetric solver
 typedef CGAL::Eigen_solver_traits< Eigen::ConjugateGradient<EigenMatrix> > Iterative_symmetric_solver;
 
-//direct symmetric solver 
+//direct symmetric solver
 typedef CGAL::Eigen_solver_traits< Eigen::SimplicialCholesky<EigenMatrix> > Direct_symmetric_solver;
 
 \endcode
@@ -97,19 +98,18 @@ the solver:
 
 \section SectionMIPSolver Mixed Integer Program Solvers
 
-The concept `MixedIntegerProgramTraits` defines an interface for 
-formulating and solving (constrained or unconstrained) mixed integer 
-programs. It can also be used for general linear programs. 
+The concept `MixedIntegerProgramTraits` defines an interface for
+formulating and solving (constrained or unconstrained) mixed integer
+programs. It can also be used for general linear programs.
 
-The field type is `double`. We provide two models of this concept: 
-`GLPK_mixed_integer_program_traits` using \ref thirdpartyGLPK and 
-`SCIP_mixed_integer_program_traits` using \ref thirdpartySCIP.
+The field type is `double`. We provide two models of this concept:
+`CGAL::GLPK_mixed_integer_program_traits` using \ref thirdpartyGLPK and
+`CGAL::SCIP_mixed_integer_program_traits` using \ref thirdpartySCIP.
 
-Here is an example that shows how to formulate and solve a simple 
-mixed integer programs using this solver.
+Here is an example that shows how to formulate and solve a simple
+mixed integer program using this solver.
 
 \cgalExample{Solver_interface/mixed_integer_program.cpp}
-
 
 
 
@@ -130,6 +130,5 @@ package.
 Simon Giraudot was responsible for gathering all concepts and classes, and also wrote this user manual
 with the help of Andreas Fabri.
 
-*/ 
+*/
 } /* namespace CGAL */
-

@@ -65,7 +65,7 @@ double set_arg(const std::string& param_name,
                const po::variables_map& vm)
 {
   T param_value(0);
-  
+
   if ( vm.count(param_name) )
   {
     param_value = vm[param_name].as<T>();
@@ -75,7 +75,7 @@ double set_arg(const std::string& param_name,
   {
     std::cout << param_string << " ignored.\n";
   }
-  
+
   return param_value;
 }
 
@@ -97,14 +97,14 @@ int main(int argc, char* argv[])
 {
   po::options_description generic("Generic options");
   generic.add_options() ("help", "Produce help message");
-  
+
   po::options_description mesh("Mesh generation parameters");
   mesh.add_options()("facet_angle", po::value<double>(), "Set facet angle bound")
   ("facet_size", po::value<double>(), "Set facet size bound")
   ("facet_error", po::value<double>(), "Set facet approximation error bound")
   ("tet_shape", po::value<double>(), "Set tet radius-edge bound")
   ("tet_size", po::value<double>(), "Set tet size bound");
-  
+
   po::options_description functions("Implicit functions");
   functions.add_options()("torus", "Mesh torus function")
   ("sphere", "Mesh sphere function")
@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
   ("ellipsoid", "Mesh ellipsoid function")
   ("heart", "Mesh heart function")
   ("octic", "Mesh octic function");
-  
+
   po::options_description desc("Options");
   desc.add_options()
   ("exude", po::value<double>(), "Exude mesh after refinement. arg is time_limit.")
@@ -123,11 +123,11 @@ int main(int argc, char* argv[])
   ("odt", po::value<int>(), "ODT-smoothing after refinement. arg is max_iteration_nb")
   ("convergence", po::value<double>()->default_value(0.02), "Convergence ratio for smoothing functions")
   ("min_displacement", po::value<double>()->default_value(0.01), "Minimal displacement ratio for smoothing functions (moves that are below that ratio will not be done)")
-  ("time_limit", po::value<double>()->default_value(0), "Max time for smoothing functions")    
+  ("time_limit", po::value<double>()->default_value(0), "Max time for smoothing functions")
   ("no_label_rebind", "Don't rebind cell labels in medit output")
   ("show_patches", "Show surface patches in medit output");
 
-  
+
   po::options_description cmdline_options("Usage",1);
   cmdline_options.add(generic).add(mesh).add(functions).add(desc);
 
@@ -142,16 +142,16 @@ int main(int argc, char* argv[])
   }
 
   std::cout << "=========== Params ==========="<< std::endl;
-  
+
   double facet_angle = set_arg<double>("facet_angle","Facet angle",vm);
   double facet_size = set_arg<double>("facet_size","Facet size",vm);
   double facet_error = set_arg<double>("facet_error","Facet approximation error",vm);
 
   double tet_shape = set_arg<double>("tet_shape","Tet shape (radius-edge)",vm);
   double tet_size = set_arg<double>("tet_size","Tet size",vm);
-  
 
-  
+
+
   // Define functions
   Function f1(&torus_function);
   Function f2(&sphere_function<3>);
@@ -163,9 +163,9 @@ int main(int argc, char* argv[])
   Function f8(&octic_function);
 
   Function_vector v;
-  
+
   std::cout << "\nFunction(s): ";
-  
+
   set_function(v,f1,"torus",vm);
   set_function(v,f2,"sphere",vm);
   set_function(v,f3,"chair",vm);
@@ -174,16 +174,16 @@ int main(int argc, char* argv[])
   set_function(v,f6,"ellipsoid",vm);
   set_function(v,f7,"heart",vm);
   set_function(v,f8,"octic",vm);
-    
+
   std::cout << "\n=============================="<< std::endl;
   std::cout << std::endl;
-  
+
   if ( v.empty() )
   {
     std::cout << "No function set. Exit.\n";
     return 0;
   }
-  
+
   // Domain (Warning: Sphere_3 constructor uses square radius !)
   Mesh_domain domain(v, K::Sphere_3(CGAL::ORIGIN, 7.*7.), 1e-8);
 
@@ -204,7 +204,7 @@ int main(int argc, char* argv[])
                               sliver_bound=vm["min_displacement"].as<double>(),
                               time_limit=vm["time_limit"].as<double>());
   }
-  
+
   // Lloyd
   if ( vm.count("lloyd") )
   {
@@ -214,19 +214,19 @@ int main(int argc, char* argv[])
                                 sliver_bound=vm["min_displacement"].as<double>(),
                                 time_limit=vm["time_limit"].as<double>());
   }
-  
+
   // Perturbation
   if ( vm.count("perturb") )
   {
     CGAL::perturb_mesh_3(c3t3, domain, time_limit = vm["perturb"].as<double>() );
   }
-  
+
   // Exudation
   if ( vm.count("exude") )
-  { 
+  {
     CGAL::exude_mesh_3(c3t3, time_limit = vm["exude"].as<double>());
   }
-  
+
   double min_angle = 181.;
   for ( C3t3::Cell_iterator cit = c3t3.cells_begin() ;
        cit != c3t3.cells_end() ;
@@ -235,7 +235,7 @@ int main(int argc, char* argv[])
     min_angle = (std::min)(min_angle,
                            CGAL::to_double(CGAL::Mesh_3::minimum_dihedral_angle(c3t3.triangulation().tetrahedron(cit))));
   }
-  
+
   std::cerr << "Min angle: " << min_angle << std::endl;
 
   // Output

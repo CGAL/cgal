@@ -37,11 +37,11 @@ public:
     actionStitchBorders= new QAction(tr("Stitch Duplicated Boundaries"), mainWindow);
     actionStitchBorders->setObjectName("actionStitchBorders");
     actionStitchBorders->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
-    
+
     actionStitchByCC= new QAction(tr("Stitch Borders Per Connected Components"), mainWindow);
     actionStitchByCC->setObjectName("actionStitchByCC");
     actionStitchByCC->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
-    
+
     autoConnectActions();
   }
 
@@ -59,7 +59,7 @@ public:
 
   template <typename Item>
   void on_actionStitchBorders_triggered(Scene_interface::Item_id index);
-  
+
   template <typename Item>
   void on_actionStitchByCC_triggered(Scene_interface::Item_id index);
 
@@ -142,7 +142,7 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchByCC_triggered(
 {
   Item* item =
       qobject_cast<Item*>(scene->item(index));
-  
+
   if(!item)
     return;
   CGAL::Polygon_mesh_processing::stitch_borders(*item->polyhedron(),

@@ -24,20 +24,20 @@ int main()
   Dual dual(primal);
   face_descriptor fd = *faces(dual).first;
   halfedge_descriptor hd = halfedge(fd,dual);
-  assert(face(hd,dual) == fd); 
+  assert(face(hd,dual) == fd);
   halfedge_descriptor nhd = next(hd,dual);
   assert(hd != nhd);
   assert(hd == prev(nhd,dual));
   assert(face(nhd,dual) == fd);
   for(halfedge_descriptor lhd : halfedges_around_face(hd,dual)){
-    assert(face(lhd,dual) == fd); 
+    assert(face(lhd,dual) == fd);
   }
-  
+
   vertex_descriptor vd = *vertices(dual).first;
-  
+
   assert(target(halfedge(vd,dual),dual) == vd);
   for(halfedge_descriptor lhd : halfedges_around_target(halfedge(vd,dual),dual)){
-    assert(target(lhd,dual) == vd); 
+    assert(target(lhd,dual) == vd);
   }
 
   {

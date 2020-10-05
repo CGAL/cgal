@@ -5,7 +5,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 

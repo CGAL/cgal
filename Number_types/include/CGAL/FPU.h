@@ -75,8 +75,8 @@ extern "C" {
 // Pure and safe SSE2 mode (g++ -mfpmath=sse && (-msse2 || -march=pentium4))
 // can be detected by :
 // TODO : see what Intel and VC++ have to say about this.
-#if defined __FLT_EVAL_METHOD__ && defined __SSE2_MATH__ && \
-      (__FLT_EVAL_METHOD__ == 0 || __FLT_EVAL_METHOD__ == 1)
+#if defined _M_X64 || ( defined __FLT_EVAL_METHOD__ && defined __SSE2_MATH__ && \
+                        (__FLT_EVAL_METHOD__ == 0 || __FLT_EVAL_METHOD__ == 1) )
 #  define CGAL_SAFE_SSE2
 #  include <xmmintrin.h>
 #endif
@@ -90,7 +90,7 @@ extern "C" {
 #if !defined CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT && \
   (((defined __i386__ || defined __x86_64__) && !defined CGAL_SAFE_SSE2) \
    || defined __ia64__ \
-   || defined _M_IX86 || defined _M_X64 || defined _M_IA64 \
+   || defined _M_IX86 || defined _M_IA64 \
    || (defined FLT_EVAL_METHOD && FLT_EVAL_METHOD != 0 && FLT_EVAL_METHOD != 1))
 #  define CGAL_FPU_HAS_EXCESS_PRECISION
 #endif
@@ -408,7 +408,7 @@ typedef unsigned int FPU_CW_t;
 
 #elif defined __mips__
 #define CGAL_IA_SETFPCW(CW) asm volatile ("ctc1 %0,$31" : :"r" (CW))
-#define CGAL_IA_GETFPCW(CW) asm volatile ("cfc1 %0,$31" : "=r" (CW))
+#define CGAL_IA_GETFPCW(CW) asm volatile ("cfc1 %0,$31" : "=r" (CW)); CW &= 3
 typedef unsigned int FPU_CW_t;
 #define CGAL_FE_TONEAREST    (0x0)
 #define CGAL_FE_TOWARDZERO   (0x1)

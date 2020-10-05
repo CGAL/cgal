@@ -36,7 +36,7 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Sphere_3 &sp,
              const typename K::Triangle_3 &tr,
-	     const K & /* k */)
+             const K & /* k */)
 {
   return squared_distance(sp.center(), tr) <= sp.squared_radius();
 }
@@ -46,7 +46,7 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Triangle_3 &tr,
              const typename K::Sphere_3 &sp,
-	     const K & /* k */)
+             const K & /* k */)
 {
   return squared_distance(sp.center(), tr) <= sp.squared_radius();
 }
@@ -55,7 +55,7 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Sphere_3 &sp,
              const typename K::Line_3 &lin,
-	     const K & /* k */)
+             const K & /* k */)
 {
   return squared_distance(sp.center(), lin) <= sp.squared_radius();
 }
@@ -65,8 +65,8 @@ template <class K>
 inline
 typename K::Boolean
 do_intersect(const typename K::Line_3 &lin,
-	     const typename K::Sphere_3 &sp,
-	     const K & /* k */)
+             const typename K::Sphere_3 &sp,
+             const K & /* k */)
 {
   return squared_distance(sp.center(), lin) <= sp.squared_radius();
 }
@@ -78,7 +78,7 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Sphere_3 &sp,
              const typename K::Ray_3 &lin,
-	     const K & /* k */)
+             const K & /* k */)
 {
   return squared_distance(sp.center(), lin) <= sp.squared_radius();
 }
@@ -88,8 +88,8 @@ template <class K>
 inline
 typename K::Boolean
 do_intersect(const typename K::Ray_3 &lin,
-	     const typename K::Sphere_3 &sp,
-	     const K & /* k */)
+             const typename K::Sphere_3 &sp,
+             const K & /* k */)
 {
   return squared_distance(sp.center(), lin) <= sp.squared_radius();
 }
@@ -99,7 +99,7 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Sphere_3 &sp,
              const typename K::Segment_3 &lin,
-	     const K & /* k */)
+             const K & /* k */)
 {
   return squared_distance(sp.center(), lin) <= sp.squared_radius();
 }
@@ -109,8 +109,8 @@ template <class K>
 inline
 typename K::Boolean
 do_intersect(const typename K::Segment_3 &lin,
-	     const typename K::Sphere_3 &sp,
-	     const K & /* k */)
+             const typename K::Sphere_3 &sp,
+             const K & /* k */)
 {
   return squared_distance(sp.center(), lin) <= sp.squared_radius();
 }

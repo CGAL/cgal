@@ -42,38 +42,47 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
   std::ifstream in(argc > 1 ? argv[1] : "data/cube.off");
   CGAL::set_ascii_mode(in);
 
+  if (!in) {
+    std::cout <<
+    "Error: cannot read the file cube.off!" << std::endl;
+    std::cout <<
+    "You can either create a symlink to the data folder or provide this file by hand."
+    << std::endl << std::endl;
+    return false;
+  }
+
   Polyhedron polyhedron;
   in >> polyhedron;
-    
+
   in.close();
   const Face_range face_range = faces(polyhedron);
 
   assert(face_range.size() == 6);
-  if (face_range.size() != 6) 
+  if (face_range.size() != 6)
     return false;
 
   // Create parameter classes.
   Neighbor_query neighbor_query(polyhedron);
-  
+
   Region_type region_type(
-    polyhedron, 
+    polyhedron,
     distance_threshold, angle_threshold, min_region_size);
 
   // Run region growing.
   Region_growing region_growing(
     face_range, neighbor_query, region_type);
-  
+
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
 
   // Test data.
   assert(regions.size() == 6);
-  
-  if (regions.size() != 6) 
+
+  if (regions.size() != 6)
     return false;
 
   for (const auto& region : regions)
-    if (!region_type.is_valid_region(region)) 
+    if (!region_type.is_valid_region(region))
       return false;
 
   std::vector<std::size_t> unassigned_faces;
@@ -81,7 +90,7 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
 
   assert(unassigned_faces.size() == 0);
 
-  if (unassigned_faces.size() != 0) 
+  if (unassigned_faces.size() != 0)
     return false;
 
   return true;
@@ -92,27 +101,27 @@ int main(int argc, char *argv[]) {
   // ------>
 
   bool cartesian_double_test_success = true;
-  if (!test_region_growing_on_cube< CGAL::Simple_cartesian<double> >(argc, argv)) 
+  if (!test_region_growing_on_cube< CGAL::Simple_cartesian<double> >(argc, argv))
     cartesian_double_test_success = false;
-    
+
   std::cout << "cartesian_double_test_success: " << cartesian_double_test_success << std::endl;
   assert(cartesian_double_test_success);
 
   // ------>
 
   bool exact_inexact_test_success = true;
-  if (!test_region_growing_on_cube<CGAL::Exact_predicates_inexact_constructions_kernel>(argc, argv)) 
+  if (!test_region_growing_on_cube<CGAL::Exact_predicates_inexact_constructions_kernel>(argc, argv))
     exact_inexact_test_success = false;
-    
+
   std::cout << "exact_inexact_test_success: " << exact_inexact_test_success << std::endl;
   assert(exact_inexact_test_success);
 
   // ------>
 
   bool exact_exact_test_success = true;
-  if (!test_region_growing_on_cube<CGAL::Exact_predicates_exact_constructions_kernel>(argc, argv)) 
+  if (!test_region_growing_on_cube<CGAL::Exact_predicates_exact_constructions_kernel>(argc, argv))
     exact_exact_test_success = false;
-    
+
   std::cout << "exact_exact_test_success: " << exact_exact_test_success << std::endl;
   assert(exact_exact_test_success);
 

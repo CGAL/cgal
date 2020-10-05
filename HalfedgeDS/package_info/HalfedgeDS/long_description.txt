@@ -33,9 +33,9 @@ HalfedgeDS_2 Package
 -  CGAL/HalfedgeDS_decorator.h
 -  CGAL/HalfedgeDS_const_decorator.h
 
-     Helper classes to implement high level operations and 
+     Helper classes to implement high level operations and
      adaptive operations on top of a halfedge data structure.
-     Adaptive operations provide the flexibility to work with 
+     Adaptive operations provide the flexibility to work with
      the optional features of the halfedge data structure design.
 
 -  CGAL/HalfedgeDS_iterator_adaptor.h

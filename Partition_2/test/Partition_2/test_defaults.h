@@ -25,7 +25,7 @@ void test_defaults()
    // this calls y_monotone_partition_is_valid_2 for postcondition checking
    // with a traits class specified, which calls partition_is_valid_2
    // with Is_y_monotone and supplied traits
-   CGAL::y_monotone_partition_2(polygon.vertices_begin(), 
+   CGAL::y_monotone_partition_2(polygon.vertices_begin(),
                                 polygon.vertices_end(),
                                 std::back_inserter(partition_polys));
 
@@ -39,7 +39,7 @@ void test_defaults()
    assert(CGAL::is_y_monotone_2((*partition_polys.begin()).vertices_begin(),
                                 (*partition_polys.begin()).vertices_end(),
                                 Traits()));
-   // check y-monotone with default traits 
+   // check y-monotone with default traits
    assert(CGAL::is_y_monotone_2((*partition_polys.begin()).vertices_begin(),
                                 (*partition_polys.begin()).vertices_end()));
 
@@ -64,7 +64,7 @@ void test_defaults()
    // this calls convex_partition_is_valid_2 for postcondition checking
    // with a traits class specified, which calls partition_is_valid_2
    // with Is_convex_2 and supplied traits
-   CGAL::approx_convex_partition_2(polygon.vertices_begin(), 
+   CGAL::approx_convex_partition_2(polygon.vertices_begin(),
                                    polygon.vertices_end(),
                                    std::back_inserter(partition_polys));
 

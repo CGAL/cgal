@@ -37,9 +37,9 @@
 
 CGAL_INLINE_FUNCTION
 int readMincHeader(_image *im, const char* filename,
-		   double *startx, double *starty, double *startz,
-		   double *stepx, double *stepy, double *stepz,
-		   double *Xcosines, double *Ycosines, double *Zcosines) {
+                   double *startx, double *starty, double *startz,
+                   double *stepx, double *stepy, double *stepz,
+                   double *Xcosines, double *Ycosines, double *Zcosines) {
   int fin, varid, minc_icv, id, ndims, i, dim[256], length,
     minfound = 0, maxfound = 0;
   long start[3] = {0, 0, 0}, count[3];
@@ -63,15 +63,15 @@ int readMincHeader(_image *im, const char* filename,
 
   /* get sign */
   if ((miattgetstr(fin, id, MIsigntype, MI_MAX_ATTSTR_LEN, sign_type)
-       == nullptr) || ((strcmp(sign_type, MI_UNSIGNED)!=0) && 
-		    (strcmp(sign_type, MI_SIGNED)!=0))) {
+       == nullptr) || ((strcmp(sign_type, MI_UNSIGNED)!=0) &&
+                    (strcmp(sign_type, MI_SIGNED)!=0))) {
     if (type == NC_BYTE)
       (void) strcpy(sign_type, MI_UNSIGNED);
     else
       (void) strcpy(sign_type, MI_SIGNED);
   }
   im->sign = (!strcmp(sign_type, MI_UNSIGNED)) ? SGN_UNSIGNED : SGN_SIGNED;
-  
+
   switch(type) {
   case NC_CHAR:
   case NC_BYTE:
@@ -112,43 +112,43 @@ int readMincHeader(_image *im, const char* filename,
     if(!strcmp(name, MIxspace)) {
       im->xdim = count[i];
       if(miattget1(fin, varid, MIstep, NC_DOUBLE, stepx) == MI_ERROR)
-	*stepx = 1.0;
+        *stepx = 1.0;
       im->vx = fabs(*stepx);
       if(miattget1(fin, varid, MIstart, NC_DOUBLE, startx) == MI_ERROR)
-	*startx = 0.0;
+        *startx = 0.0;
       if(miattget(fin, varid, MIdirection_cosines, NC_DOUBLE, 3,
-		  (void *) Xcosines, (int *) 0) == MI_ERROR ) {
-	Xcosines[0] = 0.0;
-	Xcosines[1] = 0.0;
-	Xcosines[2] = 0.0;
+                  (void *) Xcosines, (int *) 0) == MI_ERROR ) {
+        Xcosines[0] = 0.0;
+        Xcosines[1] = 0.0;
+        Xcosines[2] = 0.0;
       }
     }
     else if(!strcmp(name, MIyspace)) {
       im->ydim = count[i];
       if(miattget1(fin, varid, MIstep, NC_DOUBLE, stepy) == MI_ERROR)
-	*stepy = 1.0;
+        *stepy = 1.0;
       im->vy = fabs(*stepy);
       if(miattget1(fin, varid, MIstart, NC_DOUBLE, starty) == MI_ERROR)
-	*starty = 0.0;
+        *starty = 0.0;
       if(miattget(fin, varid, MIdirection_cosines, NC_DOUBLE, 3,
-		  (void *) Ycosines, (int *) 0) == MI_ERROR ) {
-	Ycosines[0] = 0.0;
-	Ycosines[1] = 0.0;
-	Ycosines[2] = 0.0;
+                  (void *) Ycosines, (int *) 0) == MI_ERROR ) {
+        Ycosines[0] = 0.0;
+        Ycosines[1] = 0.0;
+        Ycosines[2] = 0.0;
       }
     }
     else if(!strcmp(name, MIzspace)) {
       im->zdim = count[i];
       if(miattget1(fin, varid, MIstep, NC_DOUBLE, stepz) == MI_ERROR)
-	*stepz = 1.0;
+        *stepz = 1.0;
       im->vz = fabs(*stepz);
       if(miattget1(fin, varid, MIstart, NC_DOUBLE, startz) == MI_ERROR)
-	*startz = 0.0;
+        *startz = 0.0;
       if(miattget(fin, varid, MIdirection_cosines, NC_DOUBLE, 3,
-		  (void *) Zcosines, (int *) 0) == MI_ERROR ) {
-	Zcosines[0] = 0.0;
-	Zcosines[1] = 0.0;
-	Zcosines[2] = 0.0;
+                  (void *) Zcosines, (int *) 0) == MI_ERROR ) {
+        Zcosines[0] = 0.0;
+        Zcosines[1] = 0.0;
+        Zcosines[2] = 0.0;
       }
     } else {
       fprintf(stderr, "unsupported dimension %s\n", name);
@@ -158,12 +158,12 @@ int readMincHeader(_image *im, const char* filename,
 
 
   if( miattget( fin, id, MIvalid_range, NC_DOUBLE, 2,
-		(void *) range, &length) == MI_ERROR || length != 2 ) {
+                (void *) range, &length) == MI_ERROR || length != 2 ) {
     if( miattget1( fin, id, MIvalid_min, NC_DOUBLE,
-		   (void *) &range[0] ) != MI_ERROR )
+                   (void *) &range[0] ) != MI_ERROR )
       minfound = 1;
     if( miattget1( fin, id, MIvalid_max, NC_DOUBLE,
-		   (void *) &range[1] ) != MI_ERROR )
+                   (void *) &range[1] ) != MI_ERROR )
       maxfound = 1;
   }
   else {
@@ -175,7 +175,7 @@ int readMincHeader(_image *im, const char* filename,
     minfound = 1;
     maxfound = 1;
   }
-  
+
   if(!minfound) {
     switch(type) {
     case NC_CHAR:
@@ -220,7 +220,7 @@ int readMincHeader(_image *im, const char* filename,
 
   /* read data bytes */
   im->data = ImageIO_alloc(im->xdim * im->ydim * im->zdim * im->vdim *
-			   im->wdim);
+                           im->wdim);
 
   minc_icv = miicv_create();
   (void) miicv_setint( minc_icv, MI_ICV_TYPE, type );
@@ -297,18 +297,18 @@ int readMincHeader(_image *im, const char* filename,
       line = im->ydim;
     }
   }
-  
+
   data = ImageIO_alloc(im->xdim * im->ydim * im->zdim * im->vdim * im->wdim);
   plane1 = im->xdim * im->ydim;
-  
+
   for(ct[0] = 0; ct[0] < im->zdim; ct[0]++) {
     for(ct[1] = 0; ct[1] < im->ydim; ct[1]++) {
       for(ct[2] = 0; ct[2] < im->xdim; ct[2]++) {
-	memcpy((unsigned char *) data +
-	       (ct[0] * plane1 + ct[1] * im->xdim + ct[2]) * im->wdim,
-	       (unsigned char *) im->data +
-	       (ct[shift[0]] * plane2 + ct[shift[1]] * line + ct[shift[2]])
-	       * im->wdim, im->wdim);
+        memcpy((unsigned char *) data +
+               (ct[0] * plane1 + ct[1] * im->xdim + ct[2]) * im->wdim,
+               (unsigned char *) im->data +
+               (ct[shift[0]] * plane2 + ct[shift[1]] * line + ct[shift[2]])
+               * im->wdim, im->wdim);
       }
     }
   }
@@ -325,11 +325,11 @@ int readMincHeader(_image *im, const char* filename,
 
 CGAL_INLINE_FUNCTION
 int writeMincFile( const _image* im, const char *filename,
-		   const char *sourcename,
-		   double startx, double starty, double startz,
-		   double stepx, double stepy, double stepz,
-		   const double *Xcosine, const double *Ycosine,
-		   const double *Zcosine, const double *range ) {
+                   const char *sourcename,
+                   double startx, double starty, double startz,
+                   double stepx, double stepy, double stepz,
+                   const double *Xcosine, const double *Ycosine,
+                   const double *Zcosine, const double *range ) {
   int i, cdfid, minc_icv, dim_vars[3], dim_ids[3], img_var_id, min_id, max_id,
     src_cdfid, src_img_var, varid, n_excluded, excluded_vars[10],
     src_min_id, src_max_id, src_root_id, old_att_length, same_file = 0;
@@ -338,7 +338,7 @@ int writeMincFile( const _image* im, const char *filename,
        *excluded_list[3] = { MIxspace, MIyspace, MIzspace }, *newname;
   nc_type type, datatype;
   double start[3] = { startz, starty, startx },
-	    vx[3] = { stepz, stepy, stepx };
+            vx[3] = { stepz, stepy, stepx };
 
   /* if filename is the same file that sourcename, it is needed to create
      a temporary file for output */
@@ -351,14 +351,14 @@ int writeMincFile( const _image* im, const char *filename,
       newname = (char *) malloc((strlen(filename) + 10) * sizeof(char));
       for(i = strlen(filename) - 1; i > 0 && filename[i] != '/'; i--) ;
       if(filename[i] == '/') {
-	strncpy(newname, filename, i + 1);
-	newname[i+1] = '\0';
-	strcat(newname, "#TMP#");
-	strcat(newname, filename + i + 1);
+        strncpy(newname, filename, i + 1);
+        newname[i+1] = '\0';
+        strcat(newname, "#TMP#");
+        strcat(newname, filename + i + 1);
       }
       else
-	sprintf(newname, "#TMP#%s", filename);
-    } 
+        sprintf(newname, "#TMP#%s", filename);
+    }
   }
 
   /* open file */
@@ -378,7 +378,7 @@ int writeMincFile( const _image* im, const char *filename,
   case WK_FLOAT:
   default:
     if(im->wdim == 4) type = NC_FLOAT;
-    else type = NC_DOUBLE;    
+    else type = NC_DOUBLE;
     break;
   }
 
@@ -388,20 +388,20 @@ int writeMincFile( const _image* im, const char *filename,
 
   for(i = 0; i < 3; i++ ) {
     dim_ids[i] = micreate_std_variable( cdfid, dim_names[i], NC_DOUBLE,
-					0, nullptr);
+                                        0, nullptr);
     if( dim_ids[i] < 0 ) return -1;
     (void) miattputdbl( cdfid, dim_ids[i], MIstep, vx[i]);
     (void) miattputdbl( cdfid, dim_ids[i], MIstart, start[i]);
   }
   if(Zcosine[0] != 0.0 || Zcosine[1] != 0.0 || Zcosine[2] != 0.0)
     (void) ncattput(cdfid, dim_ids[0], MIdirection_cosines, NC_DOUBLE, 3,
-		    Zcosine);
+                    Zcosine);
   if(Ycosine[0] != 0.0 || Ycosine[1] != 0.0 || Ycosine[2] != 0.0)
     (void) ncattput(cdfid, dim_ids[1], MIdirection_cosines, NC_DOUBLE, 3,
-		    Ycosine);
+                    Ycosine);
   if(Xcosine[0] != 0.0 || Xcosine[1] != 0.0 || Xcosine[2] != 0.0)
     (void) ncattput(cdfid, dim_ids[2], MIdirection_cosines, NC_DOUBLE, 3,
-		    Xcosine);
+                    Xcosine);
 
   /* create image variable */
   img_var_id = micreate_std_variable( cdfid, MIimage, type, 3, dim_vars );
@@ -411,7 +411,7 @@ int writeMincFile( const _image* im, const char *filename,
   else
     (void) miattputstr( cdfid, img_var_id, MIsigntype, MI_UNSIGNED );
   (void) ncattput(cdfid, img_var_id, MIvalid_range ,NC_DOUBLE, 2, range);
-    
+
   min_id = micreate_std_variable(cdfid, MIimagemin, NC_DOUBLE, 0, 0 );
   max_id = micreate_std_variable(cdfid, MIimagemax, NC_DOUBLE, 0, 0 );
 
@@ -425,9 +425,9 @@ int writeMincFile( const _image* im, const char *filename,
     n_excluded = 0;
     for( i = 0; i < 3; i++ ) {
       if( (varid = ncvarid(src_cdfid, excluded_list[i] )) != MI_ERROR )
-	excluded_vars[n_excluded++] = varid;
+        excluded_vars[n_excluded++] = varid;
     }
-    
+
     if( (src_img_var = ncvarid(src_cdfid, MIimage )) != MI_ERROR )
       excluded_vars[n_excluded++] = src_img_var;
     if( (src_max_id = ncvarid(src_cdfid, MIimagemax )) != MI_ERROR )
@@ -436,28 +436,28 @@ int writeMincFile( const _image* im, const char *filename,
       excluded_vars[n_excluded++] = src_min_id;
     if( (src_root_id = ncvarid(src_cdfid, MIrootvariable )) != MI_ERROR )
       excluded_vars[n_excluded++] = src_root_id;
-    
+
     (void) micopy_all_var_defs( src_cdfid, cdfid, n_excluded, excluded_vars );
-    
+
     if( src_img_var != MI_ERROR )
       (void) micopy_all_atts( src_cdfid, src_img_var, cdfid, img_var_id );
     if( src_root_id != MI_ERROR )
       (void) micopy_all_atts( src_cdfid, src_root_id, cdfid,
-			      ncvarid( cdfid, MIrootvariable) );
+                              ncvarid( cdfid, MIrootvariable) );
 
     ncopts = 0;
     if(ncattinq(cdfid, NC_GLOBAL, MIhistory, &datatype, &old_att_length)
        == MI_ERROR || datatype != NC_CHAR )
       old_att_length = 0;
-   
+
     history = (char *) malloc(sizeof(char) * old_att_length);
     history[0] = (char) 0;
     (void) miattgetstr( cdfid, NC_GLOBAL, MIhistory, old_att_length+1,
-			history );
+                        history );
     ncopts = NC_VERBOSE | NC_FATAL;
     (void) miattputstr( cdfid, NC_GLOBAL, MIhistory, history );
     free(history);
-    
+
     (void) miclose( src_cdfid );
   }
 
@@ -467,7 +467,7 @@ int writeMincFile( const _image* im, const char *filename,
   minc_icv = miicv_create();
   (void) miicv_setint( minc_icv, MI_ICV_TYPE, type);
   (void) miicv_setstr( minc_icv, MI_ICV_SIGN,
-		       (im->sign == SGN_SIGNED) ? MI_SIGNED : MI_UNSIGNED );
+                       (im->sign == SGN_SIGNED) ? MI_SIGNED : MI_UNSIGNED );
   (void) miicv_setint( minc_icv, MI_ICV_DO_NORM, 1 );
   (void) miicv_setint( minc_icv, MI_ICV_USER_NORM, 1 );
   (void) miicv_attach( minc_icv, cdfid, img_var_id );

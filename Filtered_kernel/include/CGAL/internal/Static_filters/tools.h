@@ -6,10 +6,10 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sylvain Pion
- 
+
 #ifndef CGAL_INTERNAL_STATIC_FILTERS_TOOLS_H
 #define CGAL_INTERNAL_STATIC_FILTERS_TOOLS_H
 

@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Optimal_Distances
 \anchor chapOptimalDistances
 \cgalAutoToc
@@ -29,6 +29,6 @@ point sets are not explicitly computed. This avoids a runtime which
 grows exponentially in \f$ d\f$. In fact, the runtime is almost always
 linear in the size of the two point sets.
 
-*/ 
+*/
 } /* namespace CGAL */
 

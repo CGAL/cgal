@@ -105,7 +105,7 @@ struct AABB_traits_base_2<GeomTraits,true>{
         } else {
           FT t1 = ((bbox.min)(i) - *source_iter) / *direction_iter;
           FT t2 = ((bbox.max)(i) - *source_iter) / *direction_iter;
- 
+
           t_near = (std::max)(t_near, (std::min)(t1, t2));
           t_far = (std::min)(t_far, (std::max)(t1, t2));
 
@@ -171,9 +171,11 @@ class AABB_tree;
 /// \sa `AABBPrimitiveWithSharedData`
 
   template<typename GeomTraits, typename AABBPrimitive, typename BboxMap = Default>
-class AABB_traits:
-  public internal::AABB_tree::AABB_traits_base<AABBPrimitive>,
+class AABB_traits
+#ifndef DOXYGEN_RUNNING
+: public internal::AABB_tree::AABB_traits_base<AABBPrimitive>,
   public internal::AABB_tree::AABB_traits_base_2<GeomTraits>
+#endif
 {
   typedef typename CGAL::Object Object;
 public:
@@ -300,7 +302,7 @@ public:
   public:
     Compute_bbox(const AABB_traits<GeomTraits,AABBPrimitive, BboxMap>& traits)
       :m_traits (traits) {}
-    
+
     template<typename ConstPrimitiveIterator>
     typename AT::Bounding_box operator()(ConstPrimitiveIterator first,
                                          ConstPrimitiveIterator beyond) const
@@ -312,7 +314,7 @@ public:
         }
       return bbox;
     }
-    
+
   };
 
   Compute_bbox compute_bbox_object() const {return Compute_bbox(*this);}
@@ -444,7 +446,7 @@ private:
   {
     return internal::Primitive_helper<AT>::get_datum(pr,*this).bbox();
   }
-  
+
 
   typedef enum { CGAL_AXIS_X = 0,
                  CGAL_AXIS_Y = 1,

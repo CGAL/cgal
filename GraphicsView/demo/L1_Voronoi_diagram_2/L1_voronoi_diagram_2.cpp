@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Ophir Setter <ophirset@post.tau.ac.il>
-//                 
+//
 
 // CGAL headers
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -37,7 +37,7 @@
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
-  
+
 // the two base classes
 #include "ui_L1_voronoi_diagram_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -63,7 +63,7 @@ namespace CGAL {
       os << obj.ray();
     else
       os << obj.line();
-    
+
     return os;
   }
 }
@@ -73,11 +73,11 @@ class MainWindow :
   public Ui::L1_voronoi_diagram_2
 {
   Q_OBJECT
-  
+
 private:
   Points m_sites;
   Envelope_diagram_2 *m_envelope_diagram;
-  QGraphicsScene m_scene;  
+  QGraphicsScene m_scene;
 
   CGAL::Qt::ArrangementGraphicsItem<Envelope_diagram_2> *m_graphics_item;
   CGAL::Qt::SetGraphicsItem<Points> * m_sites_graphics_item;
@@ -124,49 +124,49 @@ MainWindow::MainWindow()
   m_envelope_diagram = new Envelope_diagram_2();
   m_graphics_item = new CGAL::Qt::ArrangementGraphicsItem<Envelope_diagram_2>
     (m_envelope_diagram);
-  
+
   QObject::connect(this, SIGNAL(changed()),
-		   m_graphics_item, SLOT(modelChanged()));
+                   m_graphics_item, SLOT(modelChanged()));
 
   m_graphics_item->
-    setVerticesPen(QPen(Qt::red, 
+    setVerticesPen(QPen(Qt::red,
                         3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   m_scene.addItem(m_graphics_item);
-  
+
   // Add a GraphicItem for the sites
   m_sites_graphics_item = new CGAL::Qt::SetGraphicsItem<Points>
     (&m_sites);
-  
+
   QObject::connect(this, SIGNAL(changed()),
-		   m_sites_graphics_item, SLOT(modelChanged()));
+                   m_sites_graphics_item, SLOT(modelChanged()));
 
   m_sites_graphics_item->
-    setPen(QPen(Qt::blue, 
+    setPen(QPen(Qt::blue,
                 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   m_scene.addItem(m_sites_graphics_item);
 
-  
+
   // Setup input handlers. They get events before the scene gets them
-  // and the input they generate is passed to the triangulation with 
+  // and the input they generate is passed to the triangulation with
   // the signal/slot mechanism
   // ophir
   m_pi = new CGAL::Qt::ArrangementPointInput<Envelope_diagram_2>(this);
-  
+
   QObject::connect(m_pi, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(processInput(CGAL::Object)));
-  
-  // 
+                   this, SLOT(processInput(CGAL::Object)));
+
+  //
   // Manual handling of actions
   //
 
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()),
+                   this, SLOT(close()));
 
   // We put mutually exclusive actions in an QActionGroup
   QActionGroup* ag = new QActionGroup(this);
   ag->addAction(this->actionInsertPoint);
 
-  // Check two actions 
+  // Check two actions
   this->actionInsertPoint->setChecked(true);
 
   //
@@ -178,8 +178,8 @@ MainWindow::MainWindow()
   this->graphicsView->setMouseTracking(true);
 
   // Turn the vertical axis upside down
-  this->graphicsView->matrix().scale(1, -1);
-                                                      
+  this->graphicsView->transform().scale(1, -1);
+
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
   this->addNavigation(this->graphicsView);
@@ -191,7 +191,7 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
-	  this, SLOT(open(QString)));
+          this, SLOT(open(QString)));
 }
 
 
@@ -207,10 +207,10 @@ MainWindow::processInput(CGAL::Object o)
 }
 
 
-/* 
+/*
  *  Qt Automatic Connections
  *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
- * 
+ *
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
  */
@@ -237,20 +237,20 @@ void
 MainWindow::on_actionInsertRandomPoints_triggered()
 {
   QRectF rect = CGAL::Qt::viewportsBbox(&m_scene);
-  CGAL::Qt::Converter<Kernel> convert;  
+  CGAL::Qt::Converter<Kernel> convert;
   Iso_rectangle_2 isor = convert(rect);
   CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((isor.min)(), (isor.max)());
   bool ok = false;
 
-  const int number_of_points = 
-    QInputDialog::getInt(this, 
+  const int number_of_points =
+    QInputDialog::getInt(this,
                              tr("Number of random points"),
                              tr("Enter number of random points"),
-			     100,
-			     0,
-			     (std::numeric_limits<int>::max)(),
-			     1,
-			     &ok);
+                             100,
+                             0,
+                             (std::numeric_limits<int>::max)(),
+                             1,
+                             &ok);
 
   if(!ok) {
     return;
@@ -272,7 +272,7 @@ void
 MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open Points file"),
+                                                  tr("Open Points file"),
                                                   ".",
                                                   tr("CGAL files (*.pts.cgal);;"
                                                    #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
@@ -291,7 +291,7 @@ MainWindow::open(QString fileName)
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
   m_sites.clear();
-  
+
   std::ifstream ifs(qPrintable(fileName));
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
   {
@@ -319,7 +319,7 @@ void
 MainWindow::on_actionSavePoints_triggered()
 {
   QString fileName = QFileDialog::getSaveFileName(this,
-						  tr("Save points"),
+                                                  tr("Save points"),
                                                   ".",
                                                   tr("CGAL files (*.pts.cgal);;"
                                                    #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
@@ -346,7 +346,7 @@ void
 MainWindow::on_actionRecenter_triggered()
 {
   this->graphicsView->setSceneRect(bounding_rect());
-  this->graphicsView->fitInView(bounding_rect(), Qt::KeepAspectRatio);  
+  this->graphicsView->fitInView(bounding_rect(), Qt::KeepAspectRatio);
 }
 
 void
@@ -363,10 +363,10 @@ MainWindow::calculate_envelope() {
     delete m_envelope_diagram;
     m_envelope_diagram = NULL;
   }
-  
+
   m_envelope_diagram = new Envelope_diagram_2();
   m_graphics_item->setArrangement(m_envelope_diagram);
-    
+
   CGAL::lower_envelope_3 (m_sites.begin(), m_sites.end(), *m_envelope_diagram);
 }
 
@@ -375,7 +375,7 @@ MainWindow::bounding_rect() {
   CGAL::Bbox_2 bbox(0, 0, 0, 0);
 
   if (m_envelope_diagram != NULL) {
-    for (Envelope_diagram_2::Vertex_iterator it = 
+    for (Envelope_diagram_2::Vertex_iterator it =
            m_envelope_diagram->vertices_begin();
          it != m_envelope_diagram->vertices_end(); ++it) {
       double x = CGAL::to_double(it->point().x());
@@ -384,12 +384,12 @@ MainWindow::bounding_rect() {
       bbox = bbox + temp;
     }
   }
-  
+
   QRectF rect(bbox.xmin(),
-              bbox.ymin(), 
+              bbox.ymin(),
               bbox.xmax() - bbox.xmin(),
               bbox.ymax() - bbox.ymin());
-  
+
   return rect;
 }
 

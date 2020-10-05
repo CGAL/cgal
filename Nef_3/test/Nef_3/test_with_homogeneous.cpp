@@ -34,9 +34,9 @@
 int main() {
   typedef CGAL::Exact_integer NT;
   typedef CGAL::Homogeneous<NT>              H_kernel;
-  
+
 #ifdef CGAL_CFG_ISTREAM_INT_BUG
-  std::locale::global(std::locale("C")); 
+  std::locale::global(std::locale("C"));
 #endif
 
   CGAL::test_Nef_3<H_kernel>  test_H;
@@ -45,7 +45,7 @@ int main() {
   t.start();
   test_H.run_test();
   t.stop();
-  std::cout << "Homogeneous kernel successful in: " << t.time() 
+  std::cout << "Homogeneous kernel successful in: " << t.time()
             << " seconds " << std::endl;
 }
 

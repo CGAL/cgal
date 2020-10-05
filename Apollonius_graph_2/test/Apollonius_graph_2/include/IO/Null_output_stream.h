@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 
+// release       :
+// release_date  :
 //
 // file          : include/CGAL/IO/Null_output_stream.h
 // package       : IO

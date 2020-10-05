@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
     for(Polygon p : polys)
       std::cout<<p<<std::endl;
   }
-  
+
   {
     std::ifstream  is((argc>2)?argv[2]:"data/multipolygon.wkt");
     MultiPolygon mp;

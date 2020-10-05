@@ -24,14 +24,14 @@ endif()
 # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 
 # To use valgrind, we must disable rounding math ckeck.
-# add_definition(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
+# add_definitions(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
 
 if (CGAL_FOUND)
 
   create_single_source_cgal_program("gmap_linear_cell_complex_3.cpp")
   create_single_source_cgal_program("linear_cell_complex_3.cpp")
   create_single_source_cgal_program("linear_cell_complex_3_attributes_management.cpp")
-  create_single_source_cgal_program("linear_cell_complex_3_operations.cpp")  
+  create_single_source_cgal_program("linear_cell_complex_3_operations.cpp")
   create_single_source_cgal_program("linear_cell_complex_3_with_colored_vertices.cpp")
   create_single_source_cgal_program("linear_cell_complex_3_with_mypoint.cpp")
   create_single_source_cgal_program("linear_cell_complex_4.cpp")

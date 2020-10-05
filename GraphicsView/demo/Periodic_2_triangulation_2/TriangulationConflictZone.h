@@ -57,7 +57,7 @@ TriangulationConflictZone<T>::TriangulationConflictZone(QGraphicsScene* s,
 }
 
 template <typename T>
-void 
+void
 TriangulationConflictZone<T>::localize_and_insert_point(QPointF qt_point)
 {
   Point p(m_convert(qt_point));
@@ -90,12 +90,12 @@ TriangulationConflictZone<T>::localize_and_insert_point(QPointF qt_point)
       qfaces.push_back(item);
     }
   }
-}  
-  
+}
+
 
 
 template <typename T>
-void 
+void
 TriangulationConflictZone<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
   if(m_tr->number_of_vertices() == 0 ||
@@ -119,7 +119,7 @@ TriangulationConflictZone<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 
 template <typename T>
-void 
+void
 TriangulationConflictZone<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
 {
   faces.clear();
@@ -136,7 +136,7 @@ TriangulationConflictZone<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
 
 
 template <typename T>
-bool 
+bool
 TriangulationConflictZone<T>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
@@ -155,7 +155,7 @@ TriangulationConflictZone<T>::eventFilter(QObject *obj, QEvent *event)
     // standard event processing
     return QObject::eventFilter(obj, event);
   }
-} 
+}
 
 
 } // namespace Qt

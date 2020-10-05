@@ -25,7 +25,7 @@ void _test_intersection_construct(K k)
   // Testing the case where it overlaps, or do not intersect
   for(int vx=0;vx<4;vx++) {
     for(int vy=1;vy<4;vy++) {
-      for(int vz=0;vz<4;vz++) { 
+      for(int vz=0;vz<4;vz++) {
         if(vx == 0 && vy == 0 && vz == 0) continue;
         const FT a = FT(vx);
         const FT b = FT(vy);

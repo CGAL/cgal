@@ -101,9 +101,8 @@ public:
   {
       return Scene_item::bbox();
   }
-  Scene_c3t3_item* clone() const  Q_DECL_OVERRIDE{
-    return 0;
-  }
+
+  Scene_c3t3_item* clone() const  Q_DECL_OVERRIDE;
 
   bool load_binary(std::istream& is);
 
@@ -156,12 +155,18 @@ public:
 
   QColor get_histogram_color(const double v) const;
 
+  void set_sharp_edges_angle(double d);
+  double get_sharp_edges_angle();
+
+  void set_detect_borders(bool b);
+  bool get_detect_borders();
+
   void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
 
   void initializeBuffers(Viewer_interface *) const Q_DECL_OVERRIDE;
   void computeElements() const Q_DECL_OVERRIDE;
   void newViewer(Viewer_interface *viewer) Q_DECL_OVERRIDE;
-  
+
   protected:
     friend struct Scene_c3t3_item_priv;
     Scene_c3t3_item_priv* d;

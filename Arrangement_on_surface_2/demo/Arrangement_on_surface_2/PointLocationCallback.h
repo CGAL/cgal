@@ -103,7 +103,7 @@ PointLocationCallback( Arrangement* arr_, QObject* parent_ ) :
   pointLocationStrategy( CGAL::make_object( new Walk_pl_strategy( *arr_ ) ) ),
   arr( arr_ ),
   highlightedCurves( new CGAL::Qt::CurveGraphicsItem< Traits >( ) )
-{ 
+{
   QObject::connect( this, SIGNAL( modelChanged( ) ),
                     this->highlightedCurves, SLOT( modelChanged( ) ) );
 }
@@ -131,7 +131,7 @@ reset( )
 }
 
 template < typename Arr_ >
-void 
+void
 PointLocationCallback< Arr_ >::
 mousePressEvent( QGraphicsSceneMouseEvent* event )
 {
@@ -172,7 +172,7 @@ highlightPointLocation( QGraphicsSceneMouseEvent *event,
       this->highlightedCurves->insert( curve );
     } while ( ++cc != face->outer_ccb( ) );
   }
-  Hole_const_iterator hit; 
+  Hole_const_iterator hit;
   Hole_const_iterator eit = face->holes_end( );
   for ( hit = face->holes_begin( ); hit != eit; ++hit )
   { // highlight any holes inside this face
@@ -205,7 +205,7 @@ highlightPointLocation( QGraphicsSceneMouseEvent *event,
       this->highlightedCurves->insert( curve );
     }
   } while ( ++cc != face->outer_ccb( ) );
-  Hole_const_iterator hit; 
+  Hole_const_iterator hit;
   Hole_const_iterator eit = face->holes_end( );
   for ( hit = face->holes_begin( ); hit != eit; ++hit )
   { // highlight any holes inside this face

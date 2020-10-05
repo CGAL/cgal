@@ -34,10 +34,10 @@ int main(int argc, char* argv[])
 
   Vector v(0, 0, 0);
   for(vertex_descriptor vd : vertices(mesh)){
-      put(vnormals, vd, v); 
+      put(vnormals, vd, v);
     }
   for(face_descriptor fd : faces(mesh)){
-      put(fnormals, fd, v); 
+      put(fnormals, fd, v);
     }
   CGAL::Polygon_mesh_processing::compute_normals
     (mesh,

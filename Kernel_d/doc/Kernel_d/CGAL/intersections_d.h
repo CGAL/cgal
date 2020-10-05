@@ -11,15 +11,15 @@ as the set of all points `p` that are part of both `obj1` and
 
 \pre The objects are of the same dimension.
 
-The types `Type1` and `Type2` can be any of the following: 
+The types `Type1` and `Type2` can be any of the following:
 
-- `Point_d<R>` 
-- `Line_d<R>` 
-- `Ray_d<R>` 
-- `Segment_d<R>` 
-- `Hyperplane_d<R>` 
+- `Point_d<R>`
+- `Line_d<R>`
+- `Ray_d<R>`
+- `Segment_d<R>`
+- `Hyperplane_d<R>`
 
-\sa `intersection` 
+\sa `intersection`
 */
 bool do_intersect(Type1<R> obj1, Type2<R> obj2);
 
@@ -31,7 +31,7 @@ returns the intersection between `f1` and `f2`.
 \pre The objects are of the same dimension.
 
 The same functionality is also available through the functor `Kernel::Intersect_d`.
- 
+
 The following table gives the possible values for `Type1` and `Type2`.
 
 The return type can be obtained through `cpp11::result_of<Kernel::Intersect_d(A, B)>::%type`.
@@ -39,110 +39,110 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
 
 
 
-<DIV ALIGN="CENTER"> 
-<TABLE CELLPADDING=3 BORDER="1"> 
-<TR> <TH> Type1 </TH> 
-<TH> Type2 </TH> 
-<TH> `T...` </TH> 
-</TR> 
-<TR> 
-<TD VALIGN="CENTER" > Line_d </TD> 
-<TD VALIGN="CENTER" > Line_d </TD> 
-<TD><TABLE BORDER="0"> 
-<TR><TD>Point_d</TD></TR> 
-<TR><TD>Line_d</TD></TR> 
-</TABLE></TD> 
-</TR> 
-<TR> 
-<TD VALIGN="CENTER" > Segment_d </TD> 
-<TD VALIGN="CENTER" > Line_d </TD> 
-<TD><TABLE BORDER="0"> 
-<TR><TD>Point_d</TD></TR> 
-<TR><TD>Segment_d</TD></TR> 
-</TABLE></TD> 
-</TR> 
-<TR> 
-<TD VALIGN="CENTER" > Segment_d </TD> 
-<TD VALIGN="CENTER" > Segment_d </TD> 
-<TD><TABLE BORDER="0"> 
-<TR><TD>Point_d</TD></TR> 
-<TR><TD>Segment_d</TD></TR> 
-</TABLE></TD> 
-</TR> 
-<TR> 
-<TD VALIGN="CENTER" > Ray_d </TD> 
-<TD VALIGN="CENTER" > Line_d </TD> 
-<TD><TABLE BORDER="0"> 
-<TR><TD>Point_d</TD></TR> 
-<TR><TD>Ray_d</TD></TR> 
-</TABLE></TD> 
-</TR> 
-<TR> 
-<TD VALIGN="CENTER" > Ray_d </TD> 
-<TD VALIGN="CENTER" > Segment_d </TD> 
-<TD><TABLE BORDER="0"> 
-<TR><TD>Point_d</TD></TR> 
-<TR><TD>Segment_d</TD></TR> 
-</TABLE></TD> 
-</TR> 
-<TR> 
-<TD VALIGN="CENTER" > Ray_d </TD> 
-<TD VALIGN="CENTER" > Ray_d </TD> 
-<TD><TABLE BORDER="0"> 
-<TR><TD>Point_d</TD></TR> 
-<TR><TD>Segment_d</TD></TR> 
-<TR><TD>Ray_d</TD></TR> 
-</TABLE></TD> 
-</TR> 
-<TR> 
-<TD VALIGN="CENTER" > Hyperplane_d </TD> 
-<TD VALIGN="CENTER" > Line_d </TD> 
-<TD><TABLE BORDER="0"> 
-<TR><TD>Point_d</TD></TR> 
-<TR><TD>Line_d</TD></TR> 
-</TABLE></TD> 
-</TR> 
-<TR> 
-<TD VALIGN="CENTER" > Hyperplane_d </TD> 
-<TD VALIGN="CENTER" > Ray_d </TD> 
-<TD><TABLE BORDER="0"> 
-<TR><TD>Point_d</TD></TR> 
-<TR><TD>Ray_d</TD></TR> 
-</TABLE></TD> 
-</TR> 
-<TR> 
-<TD VALIGN="CENTER" > Hyperplane_d </TD> 
-<TD VALIGN="CENTER" > Segment_d </TD> 
-<TD><TABLE BORDER="0"> 
-<TR><TD>Point_d</TD></TR> 
-<TR><TD>Segment_d</TD></TR> 
-</TABLE></TD> 
-</TR> 
-</TABLE> 
-</DIV> 
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3 BORDER="1">
+<TR> <TH> Type1 </TH>
+<TH> Type2 </TH>
+<TH> `T...` </TH>
+</TR>
+<TR>
+<TD VALIGN="CENTER" > Line_d </TD>
+<TD VALIGN="CENTER" > Line_d </TD>
+<TD><TABLE BORDER="0">
+<TR><TD>Point_d</TD></TR>
+<TR><TD>Line_d</TD></TR>
+</TABLE></TD>
+</TR>
+<TR>
+<TD VALIGN="CENTER" > Segment_d </TD>
+<TD VALIGN="CENTER" > Line_d </TD>
+<TD><TABLE BORDER="0">
+<TR><TD>Point_d</TD></TR>
+<TR><TD>Segment_d</TD></TR>
+</TABLE></TD>
+</TR>
+<TR>
+<TD VALIGN="CENTER" > Segment_d </TD>
+<TD VALIGN="CENTER" > Segment_d </TD>
+<TD><TABLE BORDER="0">
+<TR><TD>Point_d</TD></TR>
+<TR><TD>Segment_d</TD></TR>
+</TABLE></TD>
+</TR>
+<TR>
+<TD VALIGN="CENTER" > Ray_d </TD>
+<TD VALIGN="CENTER" > Line_d </TD>
+<TD><TABLE BORDER="0">
+<TR><TD>Point_d</TD></TR>
+<TR><TD>Ray_d</TD></TR>
+</TABLE></TD>
+</TR>
+<TR>
+<TD VALIGN="CENTER" > Ray_d </TD>
+<TD VALIGN="CENTER" > Segment_d </TD>
+<TD><TABLE BORDER="0">
+<TR><TD>Point_d</TD></TR>
+<TR><TD>Segment_d</TD></TR>
+</TABLE></TD>
+</TR>
+<TR>
+<TD VALIGN="CENTER" > Ray_d </TD>
+<TD VALIGN="CENTER" > Ray_d </TD>
+<TD><TABLE BORDER="0">
+<TR><TD>Point_d</TD></TR>
+<TR><TD>Segment_d</TD></TR>
+<TR><TD>Ray_d</TD></TR>
+</TABLE></TD>
+</TR>
+<TR>
+<TD VALIGN="CENTER" > Hyperplane_d </TD>
+<TD VALIGN="CENTER" > Line_d </TD>
+<TD><TABLE BORDER="0">
+<TR><TD>Point_d</TD></TR>
+<TR><TD>Line_d</TD></TR>
+</TABLE></TD>
+</TR>
+<TR>
+<TD VALIGN="CENTER" > Hyperplane_d </TD>
+<TD VALIGN="CENTER" > Ray_d </TD>
+<TD><TABLE BORDER="0">
+<TR><TD>Point_d</TD></TR>
+<TR><TD>Ray_d</TD></TR>
+</TABLE></TD>
+</TR>
+<TR>
+<TD VALIGN="CENTER" > Hyperplane_d </TD>
+<TD VALIGN="CENTER" > Segment_d </TD>
+<TD><TABLE BORDER="0">
+<TR><TD>Point_d</TD></TR>
+<TR><TD>Segment_d</TD></TR>
+</TABLE></TD>
+</TR>
+</TABLE>
+</DIV>
 
 \cgalHeading{Example}
 
-The following example demonstrates the most common use of 
-`intersection` routines. 
+The following example demonstrates the most common use of
+`intersection` routines.
 
 \code
-#include <CGAL/intersections_d.h> 
+#include <CGAL/intersections_d.h>
 
 template<typename R>
 struct Intersection_visitor {
   typedef void result_type;
-  void operator()(const Point_d<R>& p) const { 
+  void operator()(const Point_d<R>& p) const {
   // handle point
   }
-  void operator()(const Segment_d<R>& s) const { 
-  // handle segment 
+  void operator()(const Segment_d<R>& s) const {
+  // handle segment
   }
 };
 
-template <class R> 
-void foo(Segment_d<R> seg, Line_d<R> lin) 
-{ 
+template <class R>
+void foo(Segment_d<R> seg, Line_d<R> lin)
+{
   // with C++11 support
   // auto result = intersection(seg, lin);
 
@@ -150,10 +150,10 @@ void foo(Segment_d<R> seg, Line_d<R> lin)
   typename cpp11::result_of<R::Intersect_d(Segment_d<R>, Line_d<R>)>::type
     result = intersection(seg, lin);
 
-  if(result) { boost::apply_visitor(Intersection_visitor<R>(), *result); } 
-  else { // no intersection  
+  if(result) { boost::apply_visitor(Intersection_visitor<R>(), *result); }
+  else { // no intersection
   }
-} 
+}
 \endcode
 
 \sa `do_intersect`

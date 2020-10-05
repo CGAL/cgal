@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -41,23 +41,23 @@ class PolylineSimplificationGraphicsItem : public TriangulationGraphicsItem<PCT 
   Vertices_in_constraint_iterator
   decrement(Vertices_in_constraint_iterator it)
   {
-    do{ 
+    do{
       --it;
     } while(it->removed);
     return it;
   }
-  
+
   Vertices_in_constraint_iterator
   increment(Vertices_in_constraint_iterator it)
   {
-    do{ 
+    do{
       ++it;
     } while(it->removed);
     return it;
   }
-  
 
-  
+
+
 public:
 
   PolylineSimplificationGraphicsItem(PCT  * pct)
@@ -65,11 +65,11 @@ public:
   {
     constraints_pen = this->edgesPen();
     constraints_pen.setColor(::Qt::red);
-    
+
     unremovable_vertices_pen = this->verticesPen();
     unremovable_vertices_pen.setColor(::Qt::blue);
   }
-  
+
   void operator()(typename PCT::Face_handle fh);
 
   const QPen& constraintsPen() const
@@ -118,11 +118,11 @@ private:
 };
 
 template <typename PCT>
-void 
+void
 PolylineSimplificationGraphicsItem<PCT>::drawAll(QPainter *painter)
 {
   this->painterostream = PainterOstream<Geom_traits>(painter);
-  
+
   for(typename PCT::Finite_edges_iterator eit = this->t->finite_edges_begin();
       eit != this->t->finite_edges_end();
       ++eit)
@@ -131,19 +131,19 @@ PolylineSimplificationGraphicsItem<PCT>::drawAll(QPainter *painter)
      {
        painter->setPen(constraintsPen());
        this->painterostream << this->t->segment(*eit);
-     } 
+     }
      else if( this->visibleEdges() )
      {
        painter->setPen(this->edgesPen());
        this->painterostream << this->t->segment(*eit);
-     }    
+     }
   }
-  
+
   this->paintVertices(painter);
 }
 
 template <typename PCT>
-void 
+void
 PolylineSimplificationGraphicsItem<PCT>::operator()( typename PCT::Face_handle fh )
 {
   for (int i=0; i<3; i++) {
@@ -151,10 +151,10 @@ PolylineSimplificationGraphicsItem<PCT>::operator()( typename PCT::Face_handle f
 //      if(this->visibleConstraints() && this->t->is_constrained(typename PCT::Edge(fh,i)) && (! this->t->is_infinite(fh->neighbor(i)))){
       if(this->visibleConstraints() && this->t->is_constrained(typename PCT::Edge(fh,i)) ){
         this->m_painter->setPen(constraintsPen());
-	this->painterostream << this->t->segment(fh,i);
+        this->painterostream << this->t->segment(fh,i);
       } else if( this->visibleEdges() ){
-	this->m_painter->setPen(this->edgesPen());
-	this->painterostream << this->t->segment(fh,i);
+        this->m_painter->setPen(this->edgesPen());
+        this->painterostream << this->t->segment(fh,i);
       }
     }
     if(this->visibleVertices()) {
@@ -165,12 +165,12 @@ PolylineSimplificationGraphicsItem<PCT>::operator()( typename PCT::Face_handle f
 
 
 template <typename PCT>
-void 
+void
 PolylineSimplificationGraphicsItem<PCT>::paintVertex( typename PCT::Vertex_handle vh )
 {
   Converter<Geom_traits> convert;
-  
-  //  if ( vh->is_unremovable() || vh->is_shared() ) {     
+
+  //  if ( vh->is_unremovable() || vh->is_shared() ) {
   //    this->m_painter->setPen(this->unremovableVerticesPen());
   // } else {
     this->m_painter->setPen(this->verticesPen());
@@ -183,10 +183,10 @@ PolylineSimplificationGraphicsItem<PCT>::paintVertex( typename PCT::Vertex_handl
 
 
 template <typename PCT>
-void 
+void
 PolylineSimplificationGraphicsItem<PCT>::paintVertices(QPainter *painter)
 {
-  if(this->visibleVertices()) 
+  if(this->visibleVertices())
   {
     Converter<Geom_traits> convert;
 
@@ -198,10 +198,10 @@ PolylineSimplificationGraphicsItem<PCT>::paintVertices(QPainter *painter)
       for(Vertices_in_constraint_iterator it = this->t->vertices_in_constraint_begin(*cit);
         it != this->t->vertices_in_constraint_end(*cit);
         it++){
-        QPointF point = matrix.map(convert((*it)->point()));  
-        if ( (*it)->is_removable() )       
+        QPointF point = matrix.map(convert((*it)->point()));
+        if ( (*it)->is_removable() )
           painter->setPen(this->verticesPen());
-        else 
+        else
           painter->setPen(this->unremovableVerticesPen());
 
         painter->drawPoint(point);
@@ -209,7 +209,7 @@ PolylineSimplificationGraphicsItem<PCT>::paintVertices(QPainter *painter)
     }
   }
 }
-  
+
 } // namespace Qt
 } // namespace CGAL
 

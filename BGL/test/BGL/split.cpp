@@ -9,7 +9,7 @@ typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_2 Point_2;
 
 typedef boost::adjacency_list < boost::listS,
-                                boost::vecS, 
+                                boost::vecS,
                                 boost::undirectedS,
                                 Point_2 > G;
 
@@ -27,7 +27,7 @@ struct Is_terminal
 };
 
 
-template <typename Graph> 
+template <typename Graph>
 struct Polyline_visitor
 {
   std::list<Polyline_2>& polylines;
@@ -57,7 +57,7 @@ int main()
 {
   G g;
 
-  std::list<Polyline_2> polylines;  
+  std::list<Polyline_2> polylines;
   Polyline_visitor<G> polyline_visitor(polylines, g);
   std::map<Point_2, vertex_descriptor> p2vd;
 
@@ -66,10 +66,10 @@ int main()
 
 
   Point_2 p, q;
-  vertex_descriptor  vdp, vdq; 
+  vertex_descriptor  vdp, vdq;
   for(int i=0; i < n; i++){
     std::cin >> p >> q;
-   
+
     if(p2vd.find(p) == p2vd.end()){
       vdp = add_vertex(g);
       g[vdp] = p;
@@ -92,7 +92,7 @@ int main()
                                      Is_terminal() );
    std::cout.precision(17);
 
-   
+
    for(std::list<Polyline_2>::iterator it = polylines.begin(); it!= polylines.end(); ++it){
      Polyline_2& poly = *it;
      std::size_t n;
@@ -108,6 +108,6 @@ int main()
      }
      std::cout << std::endl;
    }
-   
+
   return 0;
 }

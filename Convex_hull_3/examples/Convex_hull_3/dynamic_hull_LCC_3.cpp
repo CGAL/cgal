@@ -43,7 +43,7 @@ int main()
   //to get the number of points on the convex hull
   LCC chull;
   CGAL::convex_hull_3_to_face_graph(T, chull);
-  
+
   std::cout << "After removal of 25 points, there are "
             << num_vertices(chull) << " points on the convex hull." << std::endl;
 

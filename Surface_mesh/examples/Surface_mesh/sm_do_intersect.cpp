@@ -88,14 +88,14 @@ unsigned int intersect(const Mesh& P, const Mesh& Q) {
 
   // build boxes and pointers to boxes
   boost::transform(P.faces(),
-                 std::back_inserter(P_boxes), 
+                 std::back_inserter(P_boxes),
                  boost::bind(boost::value_factory<Box>(), _1, boost::cref(P)));
 
 
-  std::transform(P_boxes.begin(), P_boxes.end(), std::back_inserter(P_box_ptr), 
+  std::transform(P_boxes.begin(), P_boxes.end(), std::back_inserter(P_box_ptr),
                  &address_of_box);
   boost::transform(Q.faces(),
-                 std::back_inserter(Q_boxes), 
+                 std::back_inserter(Q_boxes),
                  boost::bind(boost::value_factory<Box>(), _1, boost::cref(Q)));
   std::transform(Q_boxes.begin(), Q_boxes.end(), std::back_inserter(Q_box_ptr),
                  &address_of_box);
@@ -117,17 +117,17 @@ int main(int argc, char* argv[])
     std::cerr << "Usage: do_intersect <mesh_1.off> <mesh_2.off>" << std::endl;
     return EXIT_FAILURE;
   }
-  
+
   std::ifstream inP(argv[1]);
   inP >> P;
-  
+
   std::ifstream inQ(argv[2]);
   inQ >> Q;
   Timer timer;
   timer.start();
   unsigned int num_intersections = intersect(P,Q);
   timer.stop();
-  std::cout << "Counted " << num_intersections << " in " 
+  std::cout << "Counted " << num_intersections << " in "
             << timer.time() << " seconds." << std::endl;
 
   return 0;

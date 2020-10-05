@@ -81,7 +81,7 @@ int main(int, char**)
   FT r5;
   std::vector<double> size_bounds(5);
   std::vector<double> radii(5);
-  
+
   std::cout << "Input r1, r2, r3, r4, r5:" << std::endl;
   std::cin >> r1 >> r2 >> r3 >> r4 >> r5;
   std::cout << "Input the corresponding 5 size bounds:" << std::endl;
@@ -100,7 +100,7 @@ int main(int, char**)
   radii[4] = CGAL::to_double(r5);
 
   const int number_of_initial_points = 20;
-  
+
   const double facets_uniform_size_bound = 0.5; // mm
   const double facets_aspect_ratio_bound = 30; // degres
 
@@ -110,7 +110,7 @@ int main(int, char**)
   Sphere_3 sphere4(CGAL::ORIGIN, r4*r4);
   Sphere_3 sphere5(CGAL::ORIGIN, r5*r5);
 
-//   const Sphere_3 bounding_sphere(CGAL::ORIGIN, 
+//   const Sphere_3 bounding_sphere(CGAL::ORIGIN,
 //                                  bounding_sphere_radius*bounding_sphere_radius);
 
 //   Implicit_sphere sphere1(Sphere(r1), bounding_sphere, precision);
@@ -139,7 +139,7 @@ int main(int, char**)
   Tr tr;
   C2t3 c2t3(tr);
 
-//   Single_oracle 
+//   Single_oracle
 //     single_oracle_1 (sphere1,
 //                      K::Point_3(CGAL::ORIGIN), // center of the bounding sphere
 //                      bounding_sphere_radius,   // its radius (in mm)
@@ -159,7 +159,7 @@ int main(int, char**)
   Oracle_5 oracle(oracle_4, single_oracle_5);
 
   CGAL::Surface_mesher::Uniform_size_criterion<Tr>
-    uniform_size_criterion (facets_uniform_size_bound); 
+    uniform_size_criterion (facets_uniform_size_bound);
   CGAL::Surface_mesher::Aspect_ratio_criterion<Tr>
     aspect_ratio_criterion (facets_aspect_ratio_bound);
   CGAL::Surface_mesher::Vertices_on_the_same_surface_criterion<Tr>

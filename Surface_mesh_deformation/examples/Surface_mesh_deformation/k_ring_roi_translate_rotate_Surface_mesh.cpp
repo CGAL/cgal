@@ -7,7 +7,7 @@
 
 
 typedef CGAL::Simple_cartesian<double>                                   Kernel;
-typedef Kernel::Point_3 Point_3; 
+typedef Kernel::Point_3 Point_3;
 typedef CGAL::Surface_mesh<Point_3>  Mesh;
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor   vertex_descriptor;

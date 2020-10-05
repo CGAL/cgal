@@ -7,7 +7,7 @@
 #include <iostream>
 int main ()
 {
-  std::cout << "Sorry, this example needs CORE ..." << std::endl; 
+  std::cout << "Sorry, this example needs CORE ..." << std::endl;
   return 0;
 }
 
@@ -19,7 +19,7 @@ int main ()
 #include <CGAL/Arrangement_2.h>                    // Arrangement
 
 typedef CORE::BigInt                               Number_type;
-typedef CGAL::Algebraic_kernel_d_1<Number_type>	   AK1;
+typedef CGAL::Algebraic_kernel_d_1<Number_type>           AK1;
 typedef CGAL::Arr_rational_function_traits_2<AK1>  Traits_2;
 
 typedef Traits_2::Polynomial_1                     Polynomial_1;
@@ -34,14 +34,14 @@ int main ()
   // create a polynomial representing x .-)
   Polynomial_1 x = CGAL::shift(Polynomial_1(1),1);
 
-  // Traits class object 
-  Traits_2 traits; 
+  // Traits class object
+  Traits_2 traits;
   Traits_2::Construct_x_monotone_curve_2 construct_arc
-    = traits.construct_x_monotone_curve_2_object(); 
+    = traits.construct_x_monotone_curve_2_object();
 
-  // container storing all arcs 
+  // container storing all arcs
   std::vector<Traits_2::X_monotone_curve_2>  arcs;
-  
+
   // Create an arc supported by the polynomial y = x^4 - 6x^2 + 8,
   // defined over the interval [-2.1, 2.1]:
   Polynomial_1 P1 = x*x*x*x - 6*x*x + 8;
@@ -53,19 +53,19 @@ int main ()
   // defined over the interval [-3, 3]:
   Polynomial_1 P2 = x;
   Polynomial_1 Q2 = 1+x*x;
-  
+
   arcs.push_back(construct_arc(P2, Q2, Alg_real_1(-3), Alg_real_1(3)));
 
   // Create an arc supported by the parabola y = 8 - x^2,
   // defined over the interval [-2, 3]:
-  Polynomial_1 P3 = 8 - x*x; 
+  Polynomial_1 P3 = 8 - x*x;
   arcs.push_back(construct_arc(P3, Alg_real_1(-2), Alg_real_1(3)));
-  
+
   // Create an arc supported by the line y = -2x,
   // defined over the interval [-3, 0]:
   Polynomial_1 P4 = -2*x;
   arcs.push_back(construct_arc(P4, Alg_real_1(-3), Alg_real_1(0)));
-  
+
   // Construct the arrangement of the four arcs.
 
   // Print the arcs.

@@ -27,7 +27,7 @@ namespace Visibility_2 {
 
   template <class Arrangement_2>
 int count_edges_in_face(typename Arrangement_2::Face_const_handle fch) {
-  typedef typename Arrangement_2::Ccb_halfedge_const_circulator 
+  typedef typename Arrangement_2::Ccb_halfedge_const_circulator
                                                   Ccb_halfedge_const_circulator;
 
   Ccb_halfedge_const_circulator circ = fch->outer_ccb();
@@ -53,7 +53,7 @@ void print_simple_face(Face_const_handle fh) {
   } while (++ curr != cir);
 }
 
-template <class Arrangement_2> 
+template <class Arrangement_2>
 void print_arrangement(const Arrangement_2& arr) {
   typedef typename Arrangement_2::Edge_const_iterator Edge_const_iterator;
   Edge_const_iterator eit;
@@ -65,7 +65,7 @@ void print_arrangement(const Arrangement_2& arr) {
 template <class Arrangement_2>
 void print_arrangement_by_face(const Arrangement_2& arr) {
   typedef typename Arrangement_2::Face_const_iterator     Face_const_iterator;
-  typedef typename Arrangement_2::Ccb_halfedge_const_circulator 
+  typedef typename Arrangement_2::Ccb_halfedge_const_circulator
                                                  Ccb_halfedge_const_circulator;
   Face_const_iterator f;
   for (f = arr.faces_begin() ; f != arr.faces_end() ; f++) {
@@ -77,24 +77,24 @@ void print_arrangement_by_face(const Arrangement_2& arr) {
   }
 }
 
-template <class Geometry_traits_2> 
+template <class Geometry_traits_2>
 Orientation orientation_2(const Geometry_traits_2 *geom_traits,
-                          const typename Geometry_traits_2::Point_2& p, 
-                          const typename Geometry_traits_2::Point_2& q, 
+                          const typename Geometry_traits_2::Point_2& p,
+                          const typename Geometry_traits_2::Point_2& q,
                           const typename Geometry_traits_2::Point_2& r) {
 
-  typename Geometry_traits_2::Orientation_2 orient = 
+  typename Geometry_traits_2::Orientation_2 orient =
                                           geom_traits->orientation_2_object();
   return orient(p, q, r);
 }
 
 template <class Geometry_traits_2>
 bool less_distance_to_point_2(const Geometry_traits_2 *geom_traits,
-                           const typename Geometry_traits_2::Point_2& p, 
-                           const typename Geometry_traits_2::Point_2& q, 
+                           const typename Geometry_traits_2::Point_2& p,
+                           const typename Geometry_traits_2::Point_2& q,
                            const typename Geometry_traits_2::Point_2& r) {
 
-  typename Geometry_traits_2::Less_distance_to_point_2 less_dist = 
+  typename Geometry_traits_2::Less_distance_to_point_2 less_dist =
                                 geom_traits->less_distance_to_point_2_object();
   return less_dist(p, q, r);
 }
@@ -105,7 +105,7 @@ bool collinear(const Geometry_traits_2 *geom_traits,
                const typename Geometry_traits_2::Point_2& q,
                const typename Geometry_traits_2::Point_2& r) {
 
-    typename Geometry_traits_2::Collinear_2 collinear_fnct = 
+    typename Geometry_traits_2::Collinear_2 collinear_fnct =
                                 geom_traits->collinear_2_object();
     return collinear_fnct(p, q, r);
 }
@@ -130,33 +130,33 @@ CGAL::Comparison_result compare_xy_2(
         const typename Geometry_traits_2::Point_2 &q)
 {
 
-  typename Geometry_traits_2::Compare_xy_2 cmp = 
+  typename Geometry_traits_2::Compare_xy_2 cmp =
                             geom_traits->compare_xy_2_object();
   return cmp(p, q);
 }
 
 template <class Geometry_traits_2, class Type1, class Type2>
-typename Geometry_traits_2::FT compute_squared_distance_2(  
+typename Geometry_traits_2::FT compute_squared_distance_2(
                             const Geometry_traits_2 *geom_traits,
-                            const Type1& p, 
+                            const Type1& p,
                             const Type2& seg) {
 
-  typename Geometry_traits_2::Compute_squared_distance_2 compute_dist = 
+  typename Geometry_traits_2::Compute_squared_distance_2 compute_dist =
                               geom_traits->compute_squared_distance_2_object();
   return compute_dist(p, seg);
 }
 
 template <class Geometry_traits_2, class Type1, class Type2>
 bool do_intersect_2(const Geometry_traits_2 *geom_traits,
-                    const Type1& c1, 
+                    const Type1& c1,
                     const Type2& c2) {
 
-  typename Geometry_traits_2::Do_intersect_2 intersect = 
+  typename Geometry_traits_2::Do_intersect_2 intersect =
                               geom_traits->do_intersect_2_object();
   return intersect(c1, c2);
 }
 
-template <class Geometry_traits_2> 
+template <class Geometry_traits_2>
 bool collinear_are_ordered_along_line_2(
         const Geometry_traits_2 *geom_traits,
         const typename Geometry_traits_2::Point_2 &p,
@@ -164,7 +164,7 @@ bool collinear_are_ordered_along_line_2(
         const typename Geometry_traits_2::Point_2 &r)
 {
 
-  typename Geometry_traits_2::Collinear_are_ordered_along_line_2 coll = 
+  typename Geometry_traits_2::Collinear_are_ordered_along_line_2 coll =
                       geom_traits->collinear_are_ordered_along_line_2_object();
   return coll(p, q, r);
 }
@@ -172,7 +172,7 @@ bool collinear_are_ordered_along_line_2(
 template <class Geometry_traits_2, class Type1, class Type2>
 typename Geometry_traits_2::Point_2 construct_projected_point_2(
                                 const Geometry_traits_2 *geom_traits,
-                                const Type1& s, 
+                                const Type1& s,
                                 const Type2& p) {
 
   typedef typename Geometry_traits_2::Point_2         Point_2;
@@ -187,7 +187,7 @@ typename Geometry_traits_2::Point_2 construct_projected_point_2(
     Number_type d_to_src = compute_squared_distance_2
         <Geometry_traits_2, Point_2, Point_2>(geom_traits, proj_pt, s.source());
     Number_type d_to_trg = compute_squared_distance_2
-        <Geometry_traits_2, Point_2, Point_2>(geom_traits, proj_pt, s.target());              
+        <Geometry_traits_2, Point_2, Point_2>(geom_traits, proj_pt, s.target());
     if (d_to_src < d_to_trg) {
       return s.source();
     }

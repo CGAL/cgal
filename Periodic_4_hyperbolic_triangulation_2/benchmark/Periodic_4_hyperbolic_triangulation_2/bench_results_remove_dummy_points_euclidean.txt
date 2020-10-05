@@ -8,6 +8,6 @@ Average number of points inserted: 61.66
 
 Context
 =================================================
-There were some doubts about how correct it is to say that we used random points 
-uniformly distributed in the hyperbolic metric. I ran the test with points 
+There were some doubts about how correct it is to say that we used random points
+uniformly distributed in the hyperbolic metric. I ran the test with points
 distributed uniformly in the Euclidean metric, and these are the results.

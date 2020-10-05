@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.1...3.15)
 project(CGAL_EXAMPLES)
 
 
-if (CGAL_BRANCH_BUILD) 
+if (CGAL_BRANCH_BUILD)
 
 foreach (package ${CGAL_CONFIGURED_PACKAGES})
   #message (STATUS "Current package: ${package}")
@@ -31,12 +31,12 @@ foreach( entry ${list} )
     file(GLOB files "${entry}/*.cpp")
 
     # If there is no .cpp files, ignore the sub-directory
-    if(files)  
+    if(files)
      process_CGAL_subdirectory("${entry}" examples example)
       # Note: process_CGAL_subdirectory is defined in cmake/modules/CGAL_Macros.cmake
    endif()
 
   endif()
-  
+
 endforeach()
 message("== Generating build files for examples (DONE) ==\n")

@@ -383,7 +383,7 @@ private:
   }
   virtual void lindstrom_test(const char* _filename)
   {
-  
+
   }
 
 };

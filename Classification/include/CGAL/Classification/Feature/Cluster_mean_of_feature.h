@@ -36,7 +36,7 @@ namespace Feature {
 class Cluster_mean_of_feature : public CGAL::Classification::Feature_base
 {
   std::vector<float> m_values;
-    
+
 public:
 
   /*!

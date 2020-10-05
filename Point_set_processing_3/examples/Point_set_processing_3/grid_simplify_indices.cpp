@@ -23,7 +23,7 @@ int main(int argc, char*argv[])
   while(stream >> p >> v){
     points.push_back(p);
     normals.push_back(v);
-  } 
+  }
 
   std::cout << points.size() << " input points" << std::endl;
   std::vector<std::size_t> indices(points.size());

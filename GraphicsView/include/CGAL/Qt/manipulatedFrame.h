@@ -21,6 +21,7 @@
 #include <QDateTime>
 #include <QString>
 #include <QTimer>
+#include <QElapsedTimer>
 
 namespace CGAL{
 namespace qglviewer {
@@ -348,7 +349,7 @@ private:
   qreal zoomSensitivity_;
 
   // Mouse speed and spinning
-  QTime last_move_time;
+  QElapsedTimer last_move_time;
   qreal mouseSpeed_;
   int delay_;
   bool isSpinning_;

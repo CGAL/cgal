@@ -30,7 +30,7 @@
   #include <CGAL/Timer.h>
   #ifdef CGAL_LINKED_WITH_TBB
     #include <tbb/enumerable_thread_specific.h>
-    #include <tbb/atomic.h>
+    #include <atomic>
   #endif
 #endif
 
@@ -193,7 +193,7 @@ public:
 #endif
   {
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE
-    // Initialized here in case it's some tbb::atomic
+    // Initialized here in case it's some std::atomic
     total_counter_ = 0;
     total_time_ = 0;
 #endif
@@ -354,8 +354,8 @@ private:
   mutable int counter_;
 #ifdef CGAL_LINKED_WITH_TBB
   mutable tbb::enumerable_thread_specific<CGAL::Timer> timer_;
-  tbb::atomic<int> total_counter_;
-  tbb::atomic<std::size_t> total_time_;
+  std::atomic<int> total_counter_;
+  std::atomic<std::size_t> total_time_;
 #else
   mutable CGAL::Timer timer_;
   int total_counter_;

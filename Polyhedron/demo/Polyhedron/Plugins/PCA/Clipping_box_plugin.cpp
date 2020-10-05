@@ -80,8 +80,8 @@ void Clipping_box_plugin::init(QMainWindow* mainWindow, CGAL::Three::Scene_inter
   dock_widget = new ClipWidget("Clip box", mw);
   dock_widget->setVisible(false); // do not show at the beginning
   addDockWidget(dock_widget);
-  
-  
+
+
   connect(actionClipbox, &QAction::triggered,
           this, [this](){
     dock_widget->show();
@@ -90,7 +90,7 @@ void Clipping_box_plugin::init(QMainWindow* mainWindow, CGAL::Three::Scene_inter
   });
   connect(dock_widget->pushButton, SIGNAL(toggled(bool)),
           this, SLOT(clip(bool)));
-  
+
   item = NULL;
   connect(mw, SIGNAL(newViewerCreated(QObject*)),
           this, SLOT(connectNewViewer(QObject*)));
@@ -132,10 +132,10 @@ void Clipping_box_plugin::clipbox()
           this, &Clipping_box_plugin::tab_change);
   item->setName("Clipping box");
   item->setRenderingMode(FlatPlusEdges);
-  
+
   Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
     viewer->installEventFilter(item);
-  
+
   scene->addItem(item);
   actionClipbox->setEnabled(false);
 
@@ -151,10 +151,10 @@ void Clipping_box_plugin::clip(bool b)
 {
   typedef CGAL::Epick Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Mesh;
-  
+
   Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
   {
-    CGAL::Three::Viewer_interface* viewer = 
+    CGAL::Three::Viewer_interface* viewer =
         qobject_cast<CGAL::Three::Viewer_interface*>(v);
     if(b)
     {
@@ -228,7 +228,7 @@ void Clipping_box_plugin::tab_change()
     action->setChecked(false);
     clipbox();
   }
-  
+
 }
 
 bool Clipping_box_plugin::eventFilter(QObject *, QEvent *event) {
@@ -236,12 +236,12 @@ bool Clipping_box_plugin::eventFilter(QObject *, QEvent *event) {
   if (dock_widget->isHidden() || !(dock_widget->isActiveWindow()) || dock_widget->tabWidget->currentIndex() != 1
       || (dock_widget->tabWidget->currentIndex() == 1 && !dock_widget->clipButton->isChecked()))
     return false;
-  
+
   if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)
   {
     QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
     Qt::KeyboardModifiers modifiers = keyEvent->modifiers();
-    
+
     shift_pressing = modifiers.testFlag(Qt::ShiftModifier);
   }
   CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(
@@ -250,7 +250,7 @@ bool Clipping_box_plugin::eventFilter(QObject *, QEvent *event) {
   if(shift_pressing && event->type() == QEvent::MouseButtonPress)
   {
     background = static_cast<CGAL::Three::Viewer_interface*>(viewer)->grabFramebuffer();
-    
+
     QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
     // Start selection
     if (mouseEvent->button() == Qt::LeftButton)
@@ -261,10 +261,10 @@ bool Clipping_box_plugin::eventFilter(QObject *, QEvent *event) {
         QApplication::setOverrideCursor(Qt::CrossCursor);
         if (viewer->camera()->frame()->isSpinning())
           viewer->camera()->frame()->stopSpinning();
-        
+
         visualizer = new Selection_visualizer(true,
                                               scene->bbox());
-        
+
         visualizer->sample_mouse_path(background);
         return true;
       }
@@ -288,27 +288,27 @@ bool Clipping_box_plugin::eventFilter(QObject *, QEvent *event) {
     QVector4D planes[6];
     GLdouble coefs[6][4];
     viewer->camera()->getFrustumPlanesCoefficients(coefs);
-    
+
     Kernel::Plane_3 plane(coefs[2][0], coefs[2][1], coefs[2][2], -coefs[2][3]);
     planes[0] = QVector4D(plane.a(), plane.b(), plane.c(), plane.d());
     plane = Kernel::Plane_3(coefs[3][0], coefs[3][1], coefs[3][2],- coefs[3][3]);
     planes[1] = QVector4D(plane.a(), plane.b(), plane.c(), plane.d());
-    
+
     Kernel::Vector_3 right_vector(viewer->camera()->rightVector().x,
                                   viewer->camera()->rightVector().y,
                                   viewer->camera()->rightVector().z);
-    
+
     Kernel::Vector_3 front_vector(viewer->camera()->viewDirection().x,
                                   viewer->camera()->viewDirection().y,
                                   viewer->camera()->viewDirection().z);
-    
+
     Kernel::Vector_3 up_vector = CGAL::cross_product(right_vector, front_vector);
-    
+
     Point_2 left_point(visualizer->domain_rectangle.xmin(),
             visualizer->domain_rectangle.ymin());
     Point_2 right_point(visualizer->domain_rectangle.xmax(),
             visualizer->domain_rectangle.ymax());
-    
+
     CGAL::qglviewer::Vec left_vec = viewer->camera()->unprojectedCoordinatesOf(CGAL::qglviewer::Vec(
                                                  left_point.x(),
                                                  left_point.y(),
@@ -317,31 +317,31 @@ bool Clipping_box_plugin::eventFilter(QObject *, QEvent *event) {
                                                  right_point.x(),
                                                  right_point.y(),
                                                  0));
-    plane = Kernel::Plane_3(Point_3(left_vec.x, left_vec.y, left_vec.z), 
+    plane = Kernel::Plane_3(Point_3(left_vec.x, left_vec.y, left_vec.z),
                           -right_vector);
     planes[2] = QVector4D(plane.a(),
                           plane.b(),
                           plane.c(),
                           plane.d());
-    plane = Kernel::Plane_3(Point_3(left_vec.x, left_vec.y, left_vec.z), 
+    plane = Kernel::Plane_3(Point_3(left_vec.x, left_vec.y, left_vec.z),
                           up_vector);
     planes[3] = QVector4D(plane.a(),
                           plane.b(),
                           plane.c(),
                           plane.d());
-    plane = Kernel::Plane_3(Point_3(right_vec.x, right_vec.y, right_vec.z), 
+    plane = Kernel::Plane_3(Point_3(right_vec.x, right_vec.y, right_vec.z),
                           right_vector);
     planes[4] = QVector4D(plane.a(),
                           plane.b(),
                           plane.c(),
                           plane.d());
-    plane = Kernel::Plane_3(Point_3(right_vec.x, right_vec.y, right_vec.z), 
+    plane = Kernel::Plane_3(Point_3(right_vec.x, right_vec.y, right_vec.z),
                           -up_vector);
     planes[5] = QVector4D(plane.a(),
                           plane.b(),
                           plane.c(),
                           plane.d());
-    
+
     viewer->enableClippingBox(planes);
     dock_widget->unclipButton->setEnabled(true);
     dock_widget->clipButton->setChecked(false);

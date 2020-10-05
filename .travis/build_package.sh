@@ -28,7 +28,7 @@ function build_demo {
       EXTRA_CXX_FLAGS="-Werror=inconsistent-missing-override"
       ;;
   esac
-  mytime cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" ..
+  mytime cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}"  ..
   mytime make -j2 VERBOSE=1
 }
 old_IFS=$IFS
@@ -41,6 +41,7 @@ do
     continue
   fi
 cd $ROOT
+
 #install openmesh only if necessary
   if [ "$ARG" = "CHECK" ] || [ "$ARG" = BGL ] || [ "$ARG" = Convex_hull_3 ] ||\
      [ "$ARG" = Polygon_mesh_processing ] || [ "$ARG" = Property_map ] ||\
@@ -57,63 +58,62 @@ cd $ROOT
     cd ..
     IFS=$old_IFS
     mytime zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
-    #test dependencies 
+    #test dependencies
     cd $ROOT
     mytime bash Scripts/developer_scripts/cgal_check_dependencies.sh --check_headers /usr/bin/doxygen
 
     cd .travis
-  	#parse current matrix and check that no package has been forgotten
+    #parse current matrix and check that no package has been forgotten
 
-	  IFS=$'\n'
-	  COPY=0
-	  MATRIX=()
-	  for LINE in $(cat "$PWD/packages.txt")
-	  do
-	        MATRIX+="$LINE "
-	  done
-	
-	  PACKAGES=()
-	  cd ..
-  	for f in *
-	  do
-	    if [ -d  "$f/package_info/$f" ]
-	        then
-	                PACKAGES+="$f "
-	        fi
-	  done	
-	
-	  DIFFERENCE=$(echo ${MATRIX[@]} ${PACKAGES[@]} | tr ' ' '\n' | sort | uniq -u)
-	  IFS=$' '
-	  if [ "${DIFFERENCE[0]}" != "" ]
-	  then
-	        echo "The matrix and the actual package list differ : ."
-					echo ${DIFFERENCE[*]}
-            echo "You should run generate_travis.sh."
-	        exit 1
-	  fi
-	  echo "Matrix is up to date."
-    #check if non standard cgal installation works
-    cd $ROOT
-    mkdir build_test
-    cd build_test
-    mytime cmake -DCMAKE_INSTALL_PREFIX=install/ ..
-    mytime make install
-    # test install with minimal downstream example
-    mkdir installtest
-    cd installtest
-    touch main.cpp
-    mkdir build
-    echo 'project(Example)' >> CMakeLists.txt
-    echo 'set(PROJECT_SRCS ${PROJECT_SOURCE_DIR}/main.cpp)' >> CMakeLists.txt
-    echo 'find_package(CGAL REQUIRED)' >> CMakeLists.txt
-    echo 'add_executable(${PROJECT_NAME} ${PROJECT_SRCS})' >> CMakeLists.txt
-    echo 'target_link_libraries(${PROJECT_NAME} CGAL::CGAL)' >> CMakeLists.txt
-    echo '#include "CGAL/remove_outliers.h"' >> main.cpp
-    cd build
-    mytime cmake -DCMAKE_INSTALL_PREFIX=../../install ..
+    IFS=$'\n'
+    COPY=0
+    MATRIX=()
+    for LINE in $(cat "$PWD/packages.txt")
+    do
+          MATRIX+="$LINE "
+    done
+
+    PACKAGES=()
     cd ..
+    for f in *
+    do
+      if [ -d  "$f/package_info/$f" ]
+          then
+                  PACKAGES+="$f "
+          fi
+    done
+
+    DIFFERENCE=$(echo ${MATRIX[@]} ${PACKAGES[@]} | tr ' ' '\n' | sort | uniq -u)
+    IFS=$' '
+    if [ "${DIFFERENCE[0]}" != "" ]
+    then
+          echo "The matrix and the actual package list differ : ."
+          echo ${DIFFERENCE[*]}
+            echo "You should run generate_travis.sh."
+          exit 1
+    fi
+    echo "Matrix is up to date."
     exit 0
   fi
+
+  if [ "$ARG" = "Installation" ]
+  then
+  mkdir build_dir
+  cd build_dir
+  cmake -DWITH_tests=ON -DBUILD_TESTING=ON ..
+  ctest -j2 -L CGAL_cmake_testsuite --output-on-failure
+  cd ..
+  rm -rf ./build_dir
+  #==-- configure all CGAL with -DWITH_examples=ON -DWITH_demos=ON -DWITH_tests=ON, and then launch CTest on a few labels. --==
+  mkdir config_dir
+  cd config_dir
+  cmake -DWITH_examples=ON -DWITH_demos=ON -DWITH_tests=ON -DBUILD_TESTING=ON ..
+  ctest -j2 -L AABB_tree --output-on-failure
+  cd ..
+  rm -rf ./config_dir
+    exit 0
+  fi
+
   IFS=$old_IFS
 
   if [ -n "$TRAVIS_PULL_REQUEST_BRANCH" ] && [ "$ARG" != Polyhedron_demo ]; then
@@ -126,7 +126,7 @@ cd $ROOT
   fi
   IFS=$' '
   EXAMPLES="$ARG/examples/$ARG"
-  TEST="$ARG/test/$ARG" 
+  TEST="$ARG/test/$ARG"
   DEMOS=$ROOT/$ARG/demo/*
 
   if [ -d "$ROOT/$EXAMPLES" ]
@@ -168,23 +168,24 @@ cd $ROOT
   for DEMO in $DEMOS; do
     DEMO=${DEMO#"$ROOT"}
     echo $DEMO
-  	#If there is no demo subdir, try in GraphicsView
+    #If there is no demo subdir, try in GraphicsView
     if [ ! -d "$ROOT/$DEMO" ] || [ ! -f "$ROOT/$DEMO/CMakeLists.txt" ]; then
      DEMO="GraphicsView/demo/$ARG"
     fi
-	  if [ "$ARG" != Polyhedron ] && [ -d "$ROOT/$DEMO" ]
-  	then
+    if [ "$ARG" != Polyhedron ] && [ -d "$ROOT/$DEMO" ]
+    then
       cd $ROOT/$DEMO
       build_demo
     elif [ "$ARG" != Polyhedron_demo ]; then
       echo "No demo found for $ARG"
-	  fi
+    fi
   done
   if [ "$ARG" = Polyhedron_demo ]; then
     DEMO=Polyhedron/demo/Polyhedron
     cd "$ROOT/$DEMO"
     build_demo
   fi
+
 done
 IFS=$old_IFS
 # Local Variables:

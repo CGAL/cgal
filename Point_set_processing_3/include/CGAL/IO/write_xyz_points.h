@@ -40,15 +40,26 @@ namespace CGAL {
 
    \param stream output stream.
    \param points input point range.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{normal_map} a model of `ReadablePropertyMap` with value type
-     `geom_traits::Vector_3`.\cgalParamEnd If this parameter is omitted, normals are not written to the
-     output stream.\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the poing range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDefault{If this parameter is omitted, normals are not written in the output stream.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
    \cgalNamedParamsEnd
 
    \return true on success.
@@ -66,15 +77,15 @@ write_xyz_points(
   using parameters::get_parameter;
 
   // basic geometric types
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
 
   bool has_normals = !(boost::is_same<NormalMap,
                        typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value);
 
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
-  NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
-  
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+  NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+
   CGAL_point_set_processing_precondition(points.begin() != points.end());
 
   if(!stream)
@@ -108,7 +119,7 @@ write_xyz_points(
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API  
+// deprecated API
 template <typename ForwardIterator,
           typename PointMap,
           typename NormalMap,
@@ -132,7 +143,7 @@ write_xyz_points_and_normals(
      geom_traits(Kernel()));
 }
 
-// deprecated API  
+// deprecated API
 template <typename ForwardIterator,
           typename PointMap,
           typename NormalMap
@@ -153,7 +164,7 @@ write_xyz_points_and_normals(
      normal_map (normal_map));
 }
 
-// deprecated API  
+// deprecated API
 template <typename ForwardIterator,
           typename NormalMap
 >
@@ -171,7 +182,7 @@ write_xyz_points_and_normals(
      CGAL::parameters::normal_map(normal_map));
 }
 
-// deprecated API  
+// deprecated API
 template <typename ForwardIterator,
           typename PointMap,
           typename Kernel
@@ -191,7 +202,7 @@ write_xyz_points(
      CGAL::parameters::point_map(point_map).
      geom_traits (kernel));
 }
-// deprecated API  
+// deprecated API
 template <typename ForwardIterator,
           typename PointMap
 >
@@ -209,7 +220,7 @@ write_xyz_points(
      CGAL::parameters::point_map(point_map));
 }
 
-// deprecated API  
+// deprecated API
 template <typename ForwardIterator
 >
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_xyz_points(), please update your code")

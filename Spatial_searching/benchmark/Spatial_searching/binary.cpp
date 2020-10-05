@@ -16,9 +16,9 @@ int main(int argc, char* argv[])
   int d;
   int N;
   Point_3 p;
-  
+
   std::ifstream ascii(argv[1]);
-  ascii >> d >> N; 
+  ascii >> d >> N;
   std::ofstream binary(argv[2], std::ios::out | std::ios::binary);
   CGAL::set_binary_mode(binary);
   CGAL::write(binary, d);
@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
   int d=0;
   int N=0;
   Point_3 p;
-  
+
   std::ifstream binary(argv[1], std::ios::in | std::ios::binary);
   std::ofstream bbox(argv[2], std::ios::out | std::ios::binary);
   CGAL::set_binary_mode(binary);
@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
   int d=0;
   int N=0;
   Point_3 p;
-  
+
   std::ifstream binary(argv[1], std::ios::in | std::ios::binary);
   std::ofstream ascii(argv[2]);
   CGAL::set_binary_mode(binary);
@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
   }
   ascii.close();
   binary.close();
-  
+
 #endif
   return 0;
 }

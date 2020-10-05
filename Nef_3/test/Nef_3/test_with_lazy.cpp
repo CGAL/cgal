@@ -35,9 +35,9 @@
 int main() {
   typedef CGAL::Exact_rational NT;
   typedef CGAL::Lazy_kernel<CGAL::Simple_cartesian<NT> > LC_kernel;
-  
+
 #ifdef CGAL_CFG_ISTREAM_INT_BUG
-  std::locale::global(std::locale("C")); 
+  std::locale::global(std::locale("C"));
 #endif
 
   CGAL::test_Nef_3<LC_kernel>  test_LC;
@@ -46,7 +46,7 @@ int main() {
   t.start();
   test_LC.run_test();
   t.stop();
-  std::cout << "Lazy kernel successful in: " << t.time() 
+  std::cout << "Lazy kernel successful in: " << t.time()
             << " seconds " << std::endl;
 }
 

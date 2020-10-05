@@ -85,7 +85,7 @@ function(CGAL_setup_CGAL_dependencies target)
     set(keyword PUBLIC)
   endif()
   if(CGAL_DISABLE_GMP)
-    target_compile_definitions(${target} ${keyword} CGAL_DISABLE_GMP=1)    
+    target_compile_definitions(${target} ${keyword} CGAL_DISABLE_GMP=1)
   else()
     use_CGAL_GMP_support(${target} ${keyword})
     set(CGAL_USE_GMP  TRUE CACHE INTERNAL "CGAL library is configured to use GMP")
@@ -95,7 +95,7 @@ function(CGAL_setup_CGAL_dependencies target)
   if(WITH_LEDA)
     use_CGAL_LEDA_support(${target} ${keyword})
   endif()
-  
+
   if (NOT CGAL_HEADER_ONLY)
     target_compile_definitions(${target} ${keyword} CGAL_NOT_HEADER_ONLY=1)
   endif()
@@ -119,12 +119,29 @@ function(CGAL_setup_CGAL_dependencies target)
   # Now setup compilation flags
   if(MSVC)
     target_compile_options(${target} ${keyword}
-      "-D_SCL_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_WARNINGS"
-      "/fp:strict"
-      "/fp:except-"
-      "/wd4503"  # Suppress warnings C4503 about "decorated name length exceeded"
-      "/bigobj"  # Use /bigobj by default
-      )
+      "-D_SCL_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_WARNINGS")
+    if(CMAKE_VERSION VERSION_LESS 3.11)
+      target_compile_options(${target} ${keyword}
+        /fp:strict
+        /fp:except-
+        /wd4503  # Suppress warnings C4503 about "decorated name length exceeded"
+        /bigobj  # Use /bigobj by default
+        )
+    else()
+      # The MSVC generator supports `$<COMPILE_LANGUAGE: >` since CMake 3.11.
+      target_compile_options(${target} ${keyword}
+        $<$<COMPILE_LANGUAGE:CXX>:/fp:strict>
+        $<$<COMPILE_LANGUAGE:CXX>:/fp:except->
+        $<$<COMPILE_LANGUAGE:CXX>:/wd4503>  # Suppress warnings C4503 about "decorated name length exceeded"
+        $<$<COMPILE_LANGUAGE:CXX>:/bigobj>  # Use /bigobj by default
+        )
+    endif()
+  elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "AppleClang")
+    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 11.0.3)
+      message(STATUS "Apple Clang version ${CMAKE_CXX_COMPILER_VERSION} compiler detected")
+      message(STATUS "Boost MP is turned off for all Apple Clang versions below 11.0.3!")
+      target_compile_options(${target} ${keyword} "-DCGAL_DO_NOT_USE_BOOST_MP")
+    endif()
   elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
     message( STATUS "Using Intel Compiler. Adding -fp-model strict" )
     if(WIN32)
@@ -155,7 +172,7 @@ function(CGAL_setup_CGAL_dependencies target)
     endif()
     if ( "${CMAKE_SYSTEM_PROCESSOR}" MATCHES "alpha" )
       message( STATUS "Using gcc on alpha. Adding -mieee -mfp-rounding-mode=d" )
-      target_compile_options(${target} ${keyword} "-mieee -mfp-rounding-mode=d" )
+      target_compile_options(${target} ${keyword} "-mieee" "-mfp-rounding-mode=d" )
     endif()
   endif()
 endfunction()

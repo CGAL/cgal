@@ -15,14 +15,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-inf.mpg.de>
-//                 
+//
 // ============================================================================
 
 /*!\brief
  * declares miscellaneous routines in a separate file (to speed-up
  * compilation)
  */
-   
+
 #define NDEBUG 1
 
 //#define CGAL_NO_LEDA
@@ -87,18 +87,18 @@ void Graphic_layer::draw()
 {
     QPainter *ppnt = &widget->get_painter();
     QPen old_pen = ppnt->pen();
-    
+
     if(index == -2) {
         CGAL::Bbox_2 new_box(widget->x_min(), widget->y_min(),
                              widget->x_max(), widget->y_max());
         if(bbox != new_box) {
             bbox = new_box;
-    
+
             //subdiv_renderer.setup(bbox,
                 // widget->width(), widget->height());
             subdiv_layer_changed = true;
         }
-        
+
         if(subdiv_layer_changed) {
             QPainter offscreen(subdiv_plot);
             //offscreen.setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::SquareCap,
@@ -108,10 +108,10 @@ void Graphic_layer::draw()
             subdiv_layer_changed = false;
             typedef std::pair<int, int> Int_pair;
             std::list<Int_pair> points;
-           
+
             //subdiv_renderer.draw(std::back_inserter(points));
             if(!points.empty()) {
-                
+
                 offscreen.setPen(QPen(Qt::black ,1));
                 std::list<Int_pair>::iterator it = points.begin();
                 while(it != points.end()) {
@@ -122,16 +122,16 @@ void Graphic_layer::draw()
             subdiv_layer_changed = false;
         }
         ppnt->drawPixmap(0,0,*subdiv_plot);
-        
+
     } else if(index == -1) { // this layer is dedicated to axis drawing
 
 #if !CGAL_CKvA_NO_AXES
         RasterOp old_raster = widget->rasterOp();
         widget->setRasterOp(XorROP);
         ppnt->setPen(QPen(QColor(150,150,0),1,Qt::DashDotDotLine));
-        ppnt->moveTo(0,widget->y_pixel(0));           
+        ppnt->moveTo(0,widget->y_pixel(0));
         ppnt->lineTo(widget->width(),widget->y_pixel(0));
-        ppnt->moveTo(widget->x_pixel(0),0);           
+        ppnt->moveTo(widget->x_pixel(0),0);
         ppnt->lineTo(widget->x_pixel(0),widget->height());
         widget->setRasterOp(old_raster);
 #endif
@@ -152,9 +152,9 @@ void Graphic_layer::draw()
         QBrush b1(Qt::NoBrush);
 #endif*/
         ppnt->setBrush(b1);
-        
+
         timer.start();
-        if(CGAL::assign(arc, obj)) 
+        if(CGAL::assign(arc, obj))
            *widget << arc;
         else if(CGAL::assign(pt, obj))
            *widget << pt;
@@ -173,15 +173,15 @@ void xAlci_main_window::arr_activate_layers() {
     for(Layers::iterator it = arr_layers.begin(); it != arr_layers.end();
             it++, i++) {
         /*if(i < n_nodes) {
-            if(arr_node_list->isSelected(i)||arr_complete_check->isChecked()) 
+            if(arr_node_list->isSelected(i)||arr_complete_check->isChecked())
                 (*it)->activate();
-            else if((*it)->is_active()) 
+            else if((*it)->is_active())
                 (*it)->deactivate();
         } else {*/
-        if(arr_edge_list->isSelected(i) || arr_complete_check->isChecked()) 
+        if(arr_edge_list->isSelected(i) || arr_complete_check->isChecked())
             (*it)->activate();
-        else if((*it)->is_active()) 
-            (*it)->deactivate();        
+        else if((*it)->is_active())
+            (*it)->deactivate();
     }
 }
 
@@ -216,7 +216,7 @@ void xAlci_main_window::oc_activate_layers()
 
 void xAlci_main_window::arr_rasterize_click() {
   arr_activate_layers();
-    
+
   timer.reset();
   widget->redraw();
   std::cout << "\n\nRasterize elapsed time: " << timer.time() << std::endl;
@@ -225,7 +225,7 @@ void xAlci_main_window::arr_rasterize_click() {
 void xAlci_main_window::cad_rasterize_click()
 {
   cad_activate_layers();
-    
+
   timer.reset();
   widget->redraw();
   std::cout << "\n\nRasterize elapsed time: " << timer.time() << std::endl;
@@ -242,14 +242,14 @@ void xAlci_main_window::oc_rasterize_click()
 
         if(!input_poly(f, oc_input->text().ascii()))
             return;
-        
+
         //subdiv_renderer.set_polynomial(f);
         subdiv_layer_changed = true;
     }
 
     refine_timer.reset();
     timer.reset();
-   
+
     widget->redraw();
     refine_timer.stop();
 
@@ -257,7 +257,7 @@ void xAlci_main_window::oc_rasterize_click()
         std::endl;
     std::cout << "\n\nRasterize elapsed time: " << timer.time() << std::endl;
 }
-   
+
 bool xAlci_main_window::input_poly(Poly_int2& p, const char *ascii) {
 
     if(ascii == NULL)
@@ -270,7 +270,7 @@ bool xAlci_main_window::input_poly(Poly_int2& p, const char *ascii) {
 
     Poly_rat_2 prat;
     if(parser(str, prat)) {
-        
+
         typedef CGAL::Fraction_traits< Poly_rat_2 > FTraits;
         FTraits::Denominator_type det(1);
         FTraits::Decompose decompose;
@@ -292,7 +292,7 @@ bool xAlci_main_window::input_poly(Poly_int2& p, const char *ascii) {
         p = make_square_free(p);
         std::cout << "squarefree part: " << p << std::endl;
     }
-#endif    
+#endif
     return true;
 }
 
@@ -318,7 +318,7 @@ void xAlci_main_window::print_endpoint(const Arc_2& arc,
         os << "-oo";
     else if(loc == CGAL::ARR_RIGHT_BOUNDARY)
         os << "+oo";
-    else 
+    else
         os << CGAL::to_double(arc.curve_end_x(end));
 
     switch(loc) {
@@ -329,26 +329,26 @@ void xAlci_main_window::print_endpoint(const Arc_2& arc,
     case CGAL::ARR_TOP_BOUNDARY:
         os << "; y: +oo)";
         break;
-        
+
     case CGAL::ARR_LEFT_BOUNDARY:
     case CGAL::ARR_RIGHT_BOUNDARY: {
 
         CGAL::Object obj =
             arc.curve().asymptotic_value_of_arc(loc, arc.arcno());
-            
+
         CGAL::Arr_parameter_space loc2;
-        if(CGAL::assign(loc2, obj)) 
+        if(CGAL::assign(loc2, obj))
             os << (loc2 == CGAL::ARR_BOTTOM_BOUNDARY ? "; y: -oo)" :
                 "; y: +oo)");
         else {
             Kernel_2::Coordinate_1 y;
-            if(CGAL::assign(y, obj)) 
+            if(CGAL::assign(y, obj))
                 os << "; y: " << CGAL::to_double(y) << " (asym))";
             else
                 CGAL_error_msg("Ill-typed object returned..\n");
         }
         break;
-    }    
+    }
     default:
         os << "; arcno: " << arc.curve_end(end).arcno() << ')';
     }
@@ -409,7 +409,7 @@ void xAlci_main_window::cad_file_search_click() {
 void xAlci_main_window::arr_file_search_click() {
     QFileDialog file_dialog("", QString::null, central_widget, 0, true);
 
-    if(file_dialog.exec() == QDialog::Accepted) 
+    if(file_dialog.exec() == QDialog::Accepted)
         arr_input->setText(file_dialog.selectedFile());
 }
 
@@ -451,14 +451,14 @@ void xAlci_main_window::setup(int w, int h)
     arcs_plot = new QPixmap(w, h);
     subdiv_plot->fill();
     arcs_plot->fill();
-    
+
     subdiv_layer = NULL;
     QBoxLayout *hbox = new QHBoxLayout(central_widget, 10, 10);
     widget = new CGAL::Qt_widget(central_widget);
     hbox->addWidget(widget,8);
-        //QBoxLayout *vbox = new QVBoxLayout(0,0,5);    
+        //QBoxLayout *vbox = new QVBoxLayout(0,0,5);
         //hbox->addLayout(vbox);
-       
+
     tab_widget = new QTabWidget(central_widget);
     hbox->addWidget(tab_widget,4);
     one_curve_tab = new QFrame(tab_widget,"one_curve");
@@ -489,13 +489,13 @@ void xAlci_main_window::setup(int w, int h)
     cad_file_search = new QPushButton("Browse",cad_hbox1);
     cad_vbox->addWidget(cad_hbox1);
     QHBox* cad_hbox2 = new QHBox(cad_tab);
-    
+
     cad_analyse_btn = new QPushButton("Analyse",cad_hbox2);
     cad_partial_selection = new QPushButton("Choose polynomials",cad_hbox2);
 
     cad_vbox->addWidget(cad_hbox2);
     cad_vbox->addWidget(new QLabel("<b>Curve segments:</b>",cad_tab));
-             
+
     cad_seg_list = new QListBox(cad_tab);
     cad_seg_list->setSelectionMode(QListBox::Multi);
     cad_vbox->addWidget(cad_seg_list,6);
@@ -507,7 +507,7 @@ void xAlci_main_window::setup(int w, int h)
     cad_vbox->addWidget(cad_curve_list,6);
     cad_complete_check = new QCheckBox("rasterize complete cad",cad_tab);
     cad_vbox->addWidget(cad_complete_check);
-        
+
     cad_rasterize_btn = new QPushButton("Rasterize",cad_tab);
     cad_vbox->addWidget(cad_rasterize_btn);
 
@@ -519,7 +519,7 @@ void xAlci_main_window::setup(int w, int h)
     arr_input = new QLineEdit("", QString::null,arr_hbox1);
     arr_file_search = new QPushButton("Browse",arr_hbox1);
     arr_vbox->addWidget(arr_hbox1);
-        
+
     arr_method = new QHButtonGroup(arr_tab);
     arr_method->setTitle("Arrangement data structure");
     arr_leda = new QRadioButton(arr_method);
@@ -527,7 +527,7 @@ void xAlci_main_window::setup(int w, int h)
     arr_cgal = new QRadioButton(arr_method);
     arr_cgal->setText("CGAL");
     arr_method->setExclusive(true);
-        
+
     arr_vbox->addWidget(arr_method);
     QHBox* arr_hbox2 = new QHBox(arr_tab);
 
@@ -537,7 +537,7 @@ void xAlci_main_window::setup(int w, int h)
     arr_vbox->addWidget(arr_hbox2);
     arr_node_label = new QLabel("<b>Nodes:</b>",arr_tab);
     arr_vbox->addWidget(arr_node_label);
-               
+
     arr_node_list = new QListBox(arr_tab);
     arr_node_list->setSelectionMode(QListBox::Multi);
 
@@ -553,20 +553,20 @@ void xAlci_main_window::setup(int w, int h)
         new QCheckBox("rasterize complete arrangement", arr_tab);
     //        complete_check->setChecked(true);
     arr_vbox->addWidget(arr_complete_check);
-        
+
     arr_rasterize_btn = new QPushButton("Rasterize",arr_tab);
     arr_vbox->addWidget(arr_rasterize_btn);
 
         // ONE CURVE TAB
     QBoxLayout* oc_vbox = new QVBoxLayout(one_curve_tab,10,10);
     oc_vbox->addWidget(new QLabel("<b>Input polynomial:</b>",one_curve_tab));
-    
+
     oc_input = new QTextEdit("", QString::null,one_curve_tab);
     oc_vbox->addWidget(oc_input,6);
     oc_analyse_btn = new QPushButton("Analyse",one_curve_tab);
     oc_vbox->addWidget(oc_analyse_btn);
     oc_vbox->addWidget(new QLabel("<b>Curve segments:</b>",one_curve_tab));
-               
+
     oc_seg_list = new QListBox(one_curve_tab);
     oc_seg_list->setSelectionMode(QListBox::Multi);
     oc_vbox->addWidget(oc_seg_list,6);
@@ -574,17 +574,17 @@ void xAlci_main_window::setup(int w, int h)
     oc_complete_check =
         new QCheckBox("rasterize complete curve",one_curve_tab);
     oc_vbox->addWidget(oc_complete_check);
-    
+
     oc_method_box = new QComboBox("Rasterization method", one_curve_tab);
     oc_method_box->insertItem("Segment Renderer");
     oc_method_box->insertItem("Space Subdivision");
     oc_method_box->setEditable(false);
-        
+
     oc_vbox->addWidget(oc_method_box);
     oc_rasterize_btn = new QPushButton("Rasterize",one_curve_tab);
     oc_vbox->addWidget(oc_rasterize_btn);
 
-            
+
     QPopupMenu * file = new QPopupMenu( this );
     menuBar()->insertItem( "&File", file );
     file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
@@ -594,16 +594,16 @@ void xAlci_main_window::setup(int w, int h)
     file->insertItem("Print", widget, SLOT(print_to_ps()), CTRL+Key_P);
     file->insertSeparator();
     file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
-    file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), 
-        CTRL+Key_Q );   
+    file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ),
+        CTRL+Key_Q );
     QPopupMenu * help = new QPopupMenu( this );
     menuBar()->insertItem( "&Help", help );
     help->insertItem("How To", this, SLOT(howto()), Key_F1);
     help->insertSeparator();
     help->insertItem("&About", this, SLOT(about()), 0);
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
- 
-    QToolBar *layers_toolbar = 
+
+    QToolBar *layers_toolbar =
     new QToolBar("Tools", this, QMainWindow::DockTop, TRUE, "Tools");
     QToolButton *axis_button = new QToolButton(QPixmap(axis_xpm),
                "Show axis", 0, this, SLOT(axis_toggle()), layers_toolbar);
@@ -618,12 +618,12 @@ void xAlci_main_window::setup(int w, int h)
     connect(cad_analyse_btn, SIGNAL(clicked()), SLOT(cad_analyse_click()));
     connect(cad_partial_selection,SIGNAL(clicked()),
          SLOT(cad_partial_selection_click()));
-         
+
     connect(cad_rasterize_btn, SIGNAL(clicked()), SLOT(cad_rasterize_click()));
     connect(cad_file_search,SIGNAL(clicked()), SLOT(cad_file_search_click()));
-    connect(cad_complete_check, SIGNAL(toggled(bool)), 
+    connect(cad_complete_check, SIGNAL(toggled(bool)),
         SLOT(cad_complete_toggle(bool)));
-        
+
     connect(cad_seg_list, SIGNAL(selectionChanged()),
         SLOT(cad_seg_list_click()));
     connect(cad_curve_list, SIGNAL(selectionChanged()),
@@ -635,10 +635,10 @@ void xAlci_main_window::setup(int w, int h)
 
     connect(arr_rasterize_btn, SIGNAL(clicked()), SLOT(arr_rasterize_click()));
     connect(arr_file_search,SIGNAL(clicked()), SLOT(arr_file_search_click()));
-    
+
     connect(arr_complete_check, SIGNAL(toggled(bool)),
         SLOT(arr_complete_toggle(bool)));
-        
+
     connect(arr_node_list, SIGNAL(selectionChanged()),
         SLOT(arr_node_list_click()));
     connect(arr_edge_list, SIGNAL(selectionChanged()),
@@ -646,7 +646,7 @@ void xAlci_main_window::setup(int w, int h)
 
     connect(oc_analyse_btn, SIGNAL(clicked()), SLOT(oc_analyse_click()));
     connect(oc_rasterize_btn, SIGNAL(clicked()), SLOT(oc_rasterize_click()));
-    connect(oc_complete_check, SIGNAL(toggled(bool)), 
+    connect(oc_complete_check, SIGNAL(toggled(bool)),
         SLOT(oc_complete_toggle(bool)));
     connect(oc_seg_list, SIGNAL(selectionChanged()),
         SLOT(oc_seg_list_click()));

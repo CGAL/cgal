@@ -2,12 +2,12 @@
   typedef Triangulation::Full_cell_handle Full_cell_handle;
   typedef Triangulation::Facet Facet;
   typedef std::vector<Full_cell_handle> Full_cells;
-  
+
   Full_cells infinite_full_cells;
   std::back_insert_iterator<Full_cells> out(infinite_full_cells);
-  
+
   t.incident_full_cells(t.infinite_vertex(), out);
-  
+
   for( Full_cells::iterator sit = infinite_full_cells.begin();
        sit != infinite_full_cells.end(); ++sit )
     {

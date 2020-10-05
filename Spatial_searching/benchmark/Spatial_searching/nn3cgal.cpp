@@ -21,7 +21,7 @@ typedef CGAL::Timer Timer;
 
 
 typedef std::vector<Point_3> Points;
-		 
+
 
 void read(Points& points, char* argv)
 {
@@ -36,7 +36,7 @@ void read(Points& points, char* argv)
     points.push_back(p);
   }
   data.close();
-    
+
 #else
  std::ifstream data(argv, std::ios::in | std::ios::binary);
   CGAL::set_binary_mode(data);
@@ -54,7 +54,7 @@ void read(Points& points, char* argv)
   data.close();
 }
 
-int main(int argc,char *argv[]) 
+int main(int argc,char *argv[])
 {
   Points query_points_3, data_points_3;
 
@@ -66,7 +66,7 @@ int main(int argc,char *argv[])
 
   int runs = (argc>3) ? boost::lexical_cast<int>(argv[3]) : 1;
   std::cerr << "runs = "  << runs <<std::endl;
- 
+
   int bucketsize = (argc>4) ? boost::lexical_cast<int>(argv[4]) : 10;
   std::cerr << "bucketsize = "  << bucketsize <<std::endl;
 
@@ -88,7 +88,7 @@ int main(int argc,char *argv[])
 
   for(int i = 0 ; i<runs; ++i){
 
-   
+
     for(Points::iterator it = query_points_3.begin(); it != query_points_3.end(); ++it) {
       // Initialize the search structure, and search all NN_number neighbors
        t.reset();t.start();
@@ -107,7 +107,7 @@ int main(int argc,char *argv[])
        leafs+=search.leafs_visited();
        internals+=search.internals_visited();
     }
-   
+
   }
 
   std::cerr << items <<" items\n";

@@ -86,8 +86,8 @@ namespace CGAL {
   protected:
     void set_id(std::size_t id)
     { m_id=id; }
-    
-  protected:    
+
+  protected:
     /// id of the cell
     std::size_t m_id;
   };
@@ -96,7 +96,7 @@ namespace CGAL {
   template <>
   class Add_id<Tag_false>
   {};
-  
+
   /// Cell_attribute_without_info
   template <class Refs, class Tag=Tag_true, class OnMerge=Null_functor,
             class OnSplit=Null_functor, class WithID=Tag_false>
@@ -197,8 +197,8 @@ namespace CGAL {
 
     void * for_compact_container() const
     { return vp; }
-    void * & for_compact_container()
-    { return vp; }
+    void for_compact_container(void *p)
+    { vp = p; }
 
   private:
     /// Reference counting: the number of darts linked to this cell.
@@ -310,8 +310,8 @@ namespace CGAL {
 
     void * for_compact_container() const
     { return mdart.for_compact_container(); }
-    void * & for_compact_container()
-    { return mdart.for_compact_container(); }
+    void for_compact_container(void *p)
+    { mdart.for_compact_container(p); }
 
   private:
     /// The dart handle associated with the cell.

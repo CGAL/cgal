@@ -34,7 +34,7 @@ int main(int ac, char *av[])
 
   po::variables_map vm;
   po::store(po::parse_command_line(ac, av, desc), vm);
-  po::notify(vm);    
+  po::notify(vm);
 
   if (vm.count("help")) {
     std::cout << "Help" << "\n";

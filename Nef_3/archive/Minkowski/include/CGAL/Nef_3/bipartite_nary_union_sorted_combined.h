@@ -31,7 +31,7 @@ template<typename Point_3>
 struct L2_sort {
   bool operator()(Point_3 p0, Point_3 p1) {
     return
-      p0.x()*p0.x() + p0.y()*p0.y() + p0.z()*p0.z() < 
+      p0.x()*p0.x() + p0.y()*p0.y() + p0.z()*p0.z() <
       p1.x()*p1.x() + p1.y()*p1.y() + p1.z()*p1.z();
   }
 };
@@ -39,9 +39,9 @@ struct L2_sort {
 #endif
 
 template<typename Nef_polyhedron>
-Nef_polyhedron 
-bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,  
-				     Nef_polyhedron& N1) {
+Nef_polyhedron
+bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
+                                     Nef_polyhedron& N1) {
 
   typedef typename Nef_polyhedron::Kernel Kernel;
   typedef typename Nef_polyhedron::Point_3 Point_3;
@@ -83,7 +83,7 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
   GM_list GM0;
   int shells = N0.number_of_volumes();
   Volume_const_iterator c0;
-  for(c0 = ++N0.volumes_begin(); 
+  for(c0 = ++N0.volumes_begin();
       c0 != N0.volumes_end(); ++c0) {
     if(!c0->mark()) continue;
     std::cerr << "noch " << --shells << " shells" << std::endl;
@@ -97,7 +97,7 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
   GM_list GM1;
   shells = N1.number_of_volumes();
   Volume_const_iterator c1;
-  for(c1 = ++N1.volumes_begin(); 
+  for(c1 = ++N1.volumes_begin();
       c1 != N1.volumes_end(); ++c1) {
     if(!c1->mark()) continue;
     std::cerr << "noch " << --shells << " shells" << std::endl;
@@ -105,7 +105,7 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
     GM1.push_back(Gaussian_map(N1, c1));
     t2.stop();
   }
-  
+
   std::cerr << "GM1 done" << std::endl;
 
   PQ pq;
@@ -121,7 +121,7 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
       Point_3 p0(SFace_const_handle(c0->shells_begin())->center_vertex()->point());
       Point_3 p1(SFace_const_handle(c1->shells_begin())->center_vertex()->point());
       pq.insert(std::make_pair(p0 + (p1-CGAL::ORIGIN),
-			       std::make_pair(gi0, gi1)));
+                               std::make_pair(gi0, gi1)));
 
     }
   }
@@ -134,8 +134,8 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
 
     t1.start();
     Gaussian_map GcG;
-    GcG.minkowski_sum(*pqi->second.first, 
-		      *pqi->second.second);
+    GcG.minkowski_sum(*pqi->second.first,
+                      *pqi->second.second);
     t1.stop();
     pq.erase(pqi);
     Nef_polyhedron Ntmp(empty);
@@ -148,7 +148,7 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
     nary_union.add_polyhedron(Ntmp);
     t4.stop();
   }
-  
+
   t4.start();
   Nef_polyhedron result = nary_union.get_union();
   t4.stop();

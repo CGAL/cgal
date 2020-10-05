@@ -20,8 +20,9 @@ or can be intentionally returned to prevent the edge from being collapsed.
 \cgalHasModel `CGAL::Surface_mesh_simplification::GarlandHeckbert_policies<TriangleMesh, GeomTraits>`
 \cgalHasModel `CGAL::Surface_mesh_simplification::Bounded_normal_change_placement<Placement>`
 \cgalHasModel `CGAL::Surface_mesh_simplification::Constrained_placement<Placement>`
-
 */
+
+
 class GetPlacement
 {
 public:

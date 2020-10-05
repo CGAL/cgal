@@ -2,7 +2,7 @@
 /*
  * author:  Bruno Levy, INRIA, project ALICE
  * website: http://www.loria.fr/~levy/software
- * 
+ *
  * This file is part of CGAL (www.cgal.org)
  *
  * Scientific work that use this software can reference the website and
@@ -90,7 +90,7 @@ public:
         //
         // Optimization:
         // - Caller can optimize this call by setting 'new_coef' to true
-        //   if the coefficient does not already exists in the matrix. 
+        //   if the coefficient does not already exists in the matrix.
         void set_coef(unsigned int index, T val, bool new_coef)
         {
             if (!new_coef)
@@ -203,7 +203,7 @@ public:
     //
     // Optimization:
     // - Caller can optimize this call by setting 'new_coef' to true
-    //   if the coefficient does not already exists in the matrix. 
+    //   if the coefficient does not already exists in the matrix.
     //
     // Preconditions:
     // - 0 <= i < row_dimension().
@@ -235,7 +235,7 @@ private:
 } ;
 
 /** y <- M*x */
-template <class T> 
+template <class T>
 void mult(const SparseMatrix<T>& M, const FullVector<T>& x, FullVector<T>& y) {
     unsigned int N = M.dimension() ;
     CGAL_assertion(x.dimension() == N) ;

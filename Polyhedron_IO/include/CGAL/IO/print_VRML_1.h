@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
@@ -33,7 +33,7 @@ template < class Traits,
            template < class T, class I, class A>
            class HDS, class Alloc>
 void
-print_VRML_1( std::ostream& out, 
+print_VRML_1( std::ostream& out,
               const Polyhedron_3<Traits,Items,HDS,Alloc>& P) {
     VRML_1_ostream os( out);
     os << P;

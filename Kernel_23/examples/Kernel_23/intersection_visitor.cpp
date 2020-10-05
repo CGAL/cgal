@@ -31,11 +31,11 @@ int main()
   // without C++11
   CGAL::cpp11::result_of<Intersect_2(Segment_2, Line_2)>::type
     result = intersection(seg, lin);
-  if (result) { 
-    boost::apply_visitor(Intersection_visitor(), *result); 
+  if (result) {
+    boost::apply_visitor(Intersection_visitor(), *result);
   } else {
     // no intersection
   }
-  
+
   return 0;
 }

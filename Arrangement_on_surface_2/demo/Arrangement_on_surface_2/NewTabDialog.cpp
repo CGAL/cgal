@@ -14,13 +14,13 @@
 #include "ui_NewTabDialog.h"
 #include <QButtonGroup>
 
-NewTabDialog::NewTabDialog( QWidget* parent, Qt::WindowFlags f ) :
+NewTabDialog::NewTabDialog( QWidget* parent, Qt::WindowFlags f) :
   QDialog( parent, f ),
   ui( new Ui::NewTabDialog ),
   buttonGroup( new QButtonGroup )
 {
   this->ui->setupUi( this );
-    
+
   this->buttonGroup->addButton( this->ui->segmentRadioButton,
                                 ArrangementDemoWindow::SEGMENT_TRAITS );
   this->buttonGroup->addButton( this->ui->polylineRadioButton,

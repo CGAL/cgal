@@ -46,7 +46,7 @@ bool Polyhedron_demo_gocad_plugin::canLoad(QFileInfo) const {
 
 QList<Scene_item*>
 Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
-  
+
   // Open file
   std::ifstream in(fileinfo.filePath().toUtf8());
   if(!in) {
@@ -54,8 +54,8 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_sce
     ok = false;
     return QList<Scene_item*>();
   }
-  
-  
+
+
   CGAL::Timer t;
   t.start();
   // Try to read GOCAD file in a surface_mesh
@@ -69,7 +69,7 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_sce
     return QList<Scene_item*>()<<item;
   }
   SMesh& P = * const_cast<SMesh*>(item->polyhedron());
-  
+
   std::string name, color;
   if(! read_gocad(P, in, name, color)){
     std::cerr << "Error: Invalid polyhedron" << std::endl;
@@ -77,7 +77,7 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_sce
     ok = false;
     return QList<Scene_item*>();
   }
-  
+
   t.stop();
   std::cerr << "Reading took " << t.time() << " sec." << std::endl;
   if(name.size() == 0){
@@ -110,10 +110,10 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   // This plugin supports polyhedrons
   const Scene_surface_mesh_item* sm_item =
       qobject_cast<const Scene_surface_mesh_item*>(item);
-  
+
   if(!sm_item)
     return false;
-  
+
   std::ofstream out(fileinfo.filePath().toUtf8());
   out.precision (std::numeric_limits<double>::digits10 + 2);
   SMesh* poly = const_cast<SMesh*>(sm_item->polyhedron());

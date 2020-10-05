@@ -39,9 +39,9 @@ int main()
     typedef std::vector<Face> Faces;
     Faces edges;
     std::back_insert_iterator<Faces> out(edges);
-    t.tds().incident_faces(t.infinite_vertex(), 1, out);  
+    t.tds().incident_faces(t.infinite_vertex(), 1, out);
     // collect faces of dimension 1 (edges) incident to the infinite vertex
-    std::cout << "There are " << edges.size() 
+    std::cout << "There are " << edges.size()
               << " vertices on the convex hull." << std::endl;
 
 #include "triangulation1.cpp" // See below

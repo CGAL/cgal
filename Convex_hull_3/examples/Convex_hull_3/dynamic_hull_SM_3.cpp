@@ -42,7 +42,7 @@ int main()
   //to get the number of points on the convex hull
   Polyhedron_3 chull;
   CGAL::link_to_face_graph(T, T.infinite_vertex(), chull);
-  
+
   std::cout << "After removal of 25 points, there are "
             << num_vertices(chull) << " points on the convex hull." << std::endl;
 

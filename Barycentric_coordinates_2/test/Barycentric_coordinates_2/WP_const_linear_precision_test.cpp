@@ -31,8 +31,8 @@ int main()
 {
     Point_vector vertices(6);
 
-    vertices[0] = Point(0, 0); vertices[1] = Point(1, 0); 
-    vertices[2] = Point(Scalar(7)/Scalar(4), Scalar(3)/Scalar(4)); vertices[3] = Point(Scalar(5) /Scalar(4), Scalar(3)/Scalar(2)); 
+    vertices[0] = Point(0, 0); vertices[1] = Point(1, 0);
+    vertices[2] = Point(Scalar(7)/Scalar(4), Scalar(3)/Scalar(4)); vertices[3] = Point(Scalar(5) /Scalar(4), Scalar(3)/Scalar(2));
     vertices[4] = Point(Scalar(1)/Scalar(4), Scalar(3)/Scalar(2)); vertices[5] = Point(Scalar(-1)/Scalar(2), Scalar(5)/Scalar(4));
 
     Wachspress_coordinates wachspress_coordinates(vertices.begin(), vertices.end());
@@ -88,6 +88,6 @@ int main()
     }
 
     cout << endl << "WP_const_linear_precision_test: PASSED." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

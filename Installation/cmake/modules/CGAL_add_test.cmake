@@ -16,6 +16,9 @@ if(NOT POLICY CMP0064)
   # Add a fake function to avoid CMake errors
   function(cgal_add_compilation_test)
   endfunction()
+  # Add a fake function to avoid CMake errors
+  function(cgal_setup_test_properties)
+  endfunction()
 
   # Then return, to exit the file
   return()
@@ -104,12 +107,10 @@ function(cgal_add_compilation_test exe_name)
   if(NOT TARGET cgal_check_build_system)
     add_custom_target(cgal_check_build_system)
     add_dependencies( ALL_CGAL_TARGETS cgal_check_build_system )
-  endif()
-  if(NOT TEST check_build_system)
     add_test(NAME "check_build_system"
       COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "cgal_check_build_system" --config "$<CONFIG>")
     set_property(TEST "check_build_system"
-      APPEND PROPERTY LABELS "Installation")
+      APPEND PROPERTY LABELS "${PROJECT_NAME}")
     if(POLICY CMP0066) # cmake 3.7 or later
       set_property(TEST "check_build_system"
         PROPERTY FIXTURES_SETUP "check_build_system_SetupFixture")
@@ -215,7 +216,7 @@ function(cgal_setup_test_properties test_name)
         PROPERTY
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir)
     endif()
-    
+
     set_property(TEST "${test_name}"
       APPEND PROPERTY FIXTURES_REQUIRED "${PROJECT_NAME}")
     if(exe_name)

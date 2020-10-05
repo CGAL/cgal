@@ -17,43 +17,43 @@ polyhedral surface renames faces to facets.
 \cgalHasModel `CGAL::Polyhedron_min_items_3`
 
 \sa `CGAL::Polyhedron_3<Traits>`
-\sa `HalfedgeDSItems` 
-\sa `CGAL::HalfedgeDS_items_2` 
-\sa `CGAL::HalfedgeDS_vertex_base<Refs>` 
-\sa `CGAL::HalfedgeDS_halfedge_base<Refs>` 
-\sa `CGAL::HalfedgeDS_face_base<Refs>` 
+\sa `HalfedgeDSItems`
+\sa `CGAL::HalfedgeDS_items_2`
+\sa `CGAL::HalfedgeDS_vertex_base<Refs>`
+\sa `CGAL::HalfedgeDS_halfedge_base<Refs>`
+\sa `CGAL::HalfedgeDS_face_base<Refs>`
 
 \cgalHeading{Example}
 
-We define our own items class based on the available 
-`CGAL::HalfedgeDS_face_base` base class for faces. We derive the 
-the `Halfedge_wrapper` without further modifications from the 
-`CGAL::HalfedgeDS_items_2`, replace the `Face_wrapper` 
-definition with our new definition, and also replace the 
-`Vertex_wrapper` with a definition that uses `Point_3` instead 
-of `Point_2` as point type. The result is a model for the 
-`PolyhedronItems_3` concept similar to the available 
-`CGAL::Polyhedron_items_3` class. See also there for another 
-illustrative example. 
+We define our own items class based on the available
+`CGAL::HalfedgeDS_face_base` base class for faces. We derive the
+the `Halfedge_wrapper` without further modifications from the
+`CGAL::HalfedgeDS_items_2`, replace the `Face_wrapper`
+definition with our new definition, and also replace the
+`Vertex_wrapper` with a definition that uses `Point_3` instead
+of `Point_2` as point type. The result is a model for the
+`PolyhedronItems_3` concept similar to the available
+`CGAL::Polyhedron_items_3` class. See also there for another
+illustrative example.
 
-\code{.cpp} 
+\code{.cpp}
 
-#include <CGAL/HalfedgeDS_bases.h> 
+#include <CGAL/HalfedgeDS_bases.h>
 
-struct My_items : public CGAL::HalfedgeDS_items_2 { 
-template < class Refs, class Traits> 
-struct Vertex_wrapper { 
-typedef typename Traits::Point_3 Point; 
-typedef CGAL::HalfedgeDS_vertex_base< Refs, CGAL::Tag_true, Point> Vertex; 
-}; 
-template < class Refs, class Traits> 
-struct Face_wrapper { 
-typedef typename Traits::Plane_3 Plane; 
-typedef CGAL::HalfedgeDS_face_base< Refs, CGAL::Tag_true, Plane> Face; 
-}; 
-}; 
+struct My_items : public CGAL::HalfedgeDS_items_2 {
+template < class Refs, class Traits>
+struct Vertex_wrapper {
+typedef typename Traits::Point_3 Point;
+typedef CGAL::HalfedgeDS_vertex_base< Refs, CGAL::Tag_true, Point> Vertex;
+};
+template < class Refs, class Traits>
+struct Face_wrapper {
+typedef typename Traits::Plane_3 Plane;
+typedef CGAL::HalfedgeDS_face_base< Refs, CGAL::Tag_true, Plane> Face;
+};
+};
 
-\endcode 
+\endcode
 
 */
 
@@ -112,7 +112,7 @@ public:
       an arbitrary dummy type, such as `void*` or `Tag_false`.
     */
     /// @{
-    
+
     /// plane type stored in faces. A `HalfedgeDS` has no
     /// dimension, so this type is named `Plane` and not
     /// `Plane_3`.

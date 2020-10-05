@@ -24,7 +24,7 @@ typedef CGAL::Gps_segment_traits_2<Kernel>             Traits_2;
 
 typedef std::vector<Polygon_2>               Polygons_vec;
 typedef std::vector<Polygon_with_holes_2>    Polygons_with_holes_vec;
-typedef std::back_insert_iterator<Polygons_with_holes_vec>  
+typedef std::back_insert_iterator<Polygons_with_holes_vec>
                                              Output_itr;
 
 template <class Vec>
@@ -35,12 +35,12 @@ bool are_polygons_valid(Vec& vec)
   for(; i < vec.size(); ++i)
   {
     if(!is_valid_unknown_polygon(vec[i], tr))
-      return false; 
+      return false;
   }
   return true;
 }
 
-void write_result_to_file(Polygons_with_holes_vec& result, 
+void write_result_to_file(Polygons_with_holes_vec& result,
                           std::ofstream& out)
 {
   std::ostream_iterator<Polygon_with_holes_2> ostream_itr(out, "\n");
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
       char c = std::cin.get();
       if(c != 'y')
         return 0;
-   
+
   }
   std::ofstream out (argv[2]);
   if(!out.is_open())
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
   Polygons_with_holes_vec result;
 
   Output_itr oi(result);
-  
+
 
   int n;
   // read polygons

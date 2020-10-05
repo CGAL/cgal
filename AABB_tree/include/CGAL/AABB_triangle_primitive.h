@@ -88,7 +88,7 @@ class AABB_triangle_primitive
                           Tag_false,
                           CacheDatum > Base;
 public:
-  ///Constructor from an iterator
+  ///constructor from an iterator
   AABB_triangle_primitive(Iterator it) : Base(it){}
 };
 

@@ -94,6 +94,7 @@ int main(int argc, char* argv[])
   {
     std::cout << "Union was successfully computed\n";
     std::ofstream output("union.off");
+    output.precision(17);
     output << out;
     return 0;
   }

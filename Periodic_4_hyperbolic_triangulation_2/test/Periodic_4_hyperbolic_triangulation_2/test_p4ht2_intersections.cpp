@@ -21,7 +21,7 @@ int main(int /*argc*/, char** /*argv*/)
 
   Line ell1(NT(1),  sqrt(F2 - sqrt(F2)), NT(0));
   Line ell2(NT(1), -sqrt(F2 + sqrt(F2)), NT(0));
-  
+
   // In the Poincaré disk, all Euclidean lines pass through the origin
   NT sx = NT(0);
   NT sy = NT(0);
@@ -44,7 +44,7 @@ int main(int /*argc*/, char** /*argv*/)
   NT sol1x( nsq*(NT(2438)+NT(1451)*nsq-sqrt(NT(3933846)-NT(31801)*sq+NT(7075076)*nsq))/(-NT(4320)+NT(1440)*sq) );
   NT sol1y( (-NT(2438)-NT(1451)*nsq+sqrt(NT(3933846)-NT(31801)*sq+NT(7075076)*nsq))/(-NT(4320)+NT(1440)*sq) );
   Point solution1(sol1x, sol1y);
-  
+
   std::cout << "Intersection of circle and line: " << ip1 << " and " << ip2 << std::endl;
   std::cout << "Solution: " << solution1 << std::endl;
   assert(ip1 == solution1 || ip2 == solution1);

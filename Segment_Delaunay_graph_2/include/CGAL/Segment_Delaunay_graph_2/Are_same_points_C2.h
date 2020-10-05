@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -49,14 +49,14 @@ private:
   {
     return
       ( are_same(s.source(), t.source()) &&
-	are_same(s.target(), t.target()) ) ||
+        are_same(s.target(), t.target()) ) ||
       ( are_same(s.source(), t.target()) &&
-	are_same(s.target(), t.source()) );
+        are_same(s.target(), t.source()) );
   }
 
   Boolean   predicate(const Site_2& p, const Site_2& q, const Tag_false&) const
   {
-    return are_same(p.point(), q.point()); 
+    return are_same(p.point(), q.point());
   }
 
   Boolean   predicate(const Site_2& p, const Site_2& q, const Tag_true&) const
@@ -66,8 +66,8 @@ private:
       Site_2 t[2] = { q.supporting_site(0), q.supporting_site(1) };
 
       if (  ( are_same(s[0], t[0]) && are_same(s[1], t[1]) ) ||
-	    ( are_same(s[0], t[1]) && are_same(s[1], t[0]) )  ) {
-	return true;
+            ( are_same(s[0], t[1]) && are_same(s[1], t[0]) )  ) {
+        return true;
       }
     }
 

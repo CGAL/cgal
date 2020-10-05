@@ -18,35 +18,35 @@
 #define CGAL_RANDOM_CONVEX_HULL_TRAITS_2_H
 
 namespace CGAL{
-	template<class R_>
-class Random_convex_hull_traits_2 
+        template<class R_>
+class Random_convex_hull_traits_2
 {
   public:
     typedef R_                            R;
     typedef typename R::FT                FT;
     typedef typename R::Point_2           Point_2;
-    typedef typename R::Segment_2		  Segment_2;
-   	typedef typename R::Compare_x_2		  Compare_x_2;
-   	typedef typename R::Compare_y_2		  Compare_y_2;
-   	typedef typename R::Orientation_2	  Orientation_2;
+    typedef typename R::Segment_2                  Segment_2;
+           typedef typename R::Compare_x_2                  Compare_x_2;
+           typedef typename R::Compare_y_2                  Compare_y_2;
+           typedef typename R::Orientation_2          Orientation_2;
 
 
     Compare_x_2
     compare_x_2_object() const
     {
-    	return Compare_x_2(); 
+            return Compare_x_2();
     }
 
     Compare_y_2
     compare_y_2_object() const
     {
-    	return Compare_y_2();
+            return Compare_y_2();
     }
 
     Orientation_2
-    orientation_2_object() const 
+    orientation_2_object() const
     {
-    	return Orientation_2();
+            return Orientation_2();
     }
 
 };

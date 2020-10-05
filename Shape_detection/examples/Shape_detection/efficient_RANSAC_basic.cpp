@@ -26,7 +26,7 @@ typedef CGAL::Shape_detection::Efficient_RANSAC<Traits> Efficient_ransac;
 typedef CGAL::Shape_detection::Plane<Traits>            Plane;
 
 int main (int argc, char** argv) {
-  
+
   std::cout << "Efficient RANSAC" << std::endl;
   const char* filename = (argc > 1) ? argv[1] : "data/cube.pwn";
 
@@ -36,13 +36,13 @@ int main (int argc, char** argv) {
   // Load point set from a file.
   std::ifstream stream(filename);
 
-  if (!stream || 
+  if (!stream ||
     !CGAL::read_xyz_points(
       stream,
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).
       normal_map(Normal_map()))) {
-      
+
     std::cerr << "Error: cannot read file cube.pwn!" << std::endl;
     return EXIT_FAILURE;
   }
@@ -60,7 +60,7 @@ int main (int argc, char** argv) {
   ransac.detect();
 
   // Print number of detected shapes.
-  std::cout << ransac.shapes().end() - ransac.shapes().begin() 
+  std::cout << ransac.shapes().end() - ransac.shapes().begin()
   << " shapes detected." << std::endl;
 
   return EXIT_SUCCESS;

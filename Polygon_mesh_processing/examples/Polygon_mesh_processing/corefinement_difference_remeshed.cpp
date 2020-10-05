@@ -67,6 +67,7 @@ int main(int argc, char* argv[])
   {
     std::cout << "Difference was successfully computed\n";
     std::ofstream output("difference.off");
+    output.precision(17);
     output << mesh1;
   }
   else{
@@ -111,6 +112,7 @@ int main(int argc, char* argv[])
     params::edge_is_constrained_map(is_constrained_map) );
 
   std::ofstream output("difference_remeshed.off");
+  output.precision(17);
   output << mesh1;
 
   return 0;

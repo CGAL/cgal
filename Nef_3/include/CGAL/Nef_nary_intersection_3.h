@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s): Peter Hachenberger
 
@@ -31,7 +31,7 @@ class Nef_nary_intersection_3 {
 
  public:
   Nef_nary_intersection_3() : inserted(0) {}
-  
+
   void intersect() {
     pit i1(queue.begin()), i2(i1);
     ++i2;
@@ -52,7 +52,8 @@ class Nef_nary_intersection_3 {
   }
 
   Polyhedron get_intersection() {
-
+    if (queue.empty())
+      return empty;
     while(queue.size() > 1)
       intersect();
     inserted = 0;

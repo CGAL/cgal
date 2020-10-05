@@ -418,7 +418,7 @@ struct property_map<CGAL::Polyhedron_3<Gt,I,HDS,A>, CGAL::dynamic_edge_property_
   typedef CGAL::internal::Dynamic_property_map<edge_descriptor,T> type;
   typedef type const_type;
 };
-  
+
 template<class Gt, class I, CGAL_HDS_PARAM_, class A, class T>
 struct property_map<CGAL::Polyhedron_3<Gt,I,HDS,A>, CGAL::dynamic_face_property_t<T> >
 {
@@ -427,7 +427,7 @@ struct property_map<CGAL::Polyhedron_3<Gt,I,HDS,A>, CGAL::dynamic_face_property_
   typedef CGAL::internal::Dynamic_property_map<face_descriptor,T> type;
   typedef type const_type;
 };
-  
+
 // What are those needed for ???
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 struct edge_property_type<CGAL::Polyhedron_3<Gt,I,HDS,A> >

@@ -2,7 +2,7 @@
 /*
  * author:  Bruno Levy, INRIA, project ALICE
  * website: http://www.loria.fr/~levy/software
- * 
+ *
  * This file is part of CGAL (www.cgal.org)
  *
  * Scientific work that use this software can reference the website and
@@ -42,7 +42,7 @@ namespace OpenNL {
  * Base class for some preconditioners.
  */
 
-template <class T> 
+template <class T>
 class Preconditioner {
 public:
     typedef T CoeffType ;
@@ -54,7 +54,7 @@ public:
     Preconditioner(
         const SparseMatrix<T>& A, CoeffType omega = 1.0
     ) ;
-    
+
     const SparseMatrix<T>& A() const { return A_ ; }
     CoeffType omega() const { return omega_ ; }
 
@@ -70,20 +70,20 @@ public:
 
     void mult_diagonal(FullVector<T>& xy) const ;
     void mult_diagonal_inverse(FullVector<T>& xy) const ;
-    
+
 private:
     const SparseMatrix<T>& A_ ;
     CoeffType omega_ ;
 } ;
 
-template <class T> 
+template <class T>
 Preconditioner<T>::Preconditioner(
     const SparseMatrix<T>& A, CoeffType omega
 ) : A_(A), omega_(omega) {
     //CGAL_assertion(A.is_square()) ;
 }
 
-template <class T> 
+template <class T>
 void Preconditioner<T>::mult_lower_inverse(
     const FullVector<T>& x, FullVector<T>& y
 ) const {
@@ -101,7 +101,7 @@ void Preconditioner<T>::mult_lower_inverse(
         y[i] = (x[i] - S) * omega_ / A_.get_coef(i,i) ;
     }
 }
-template <class T> 
+template <class T>
 void Preconditioner<T>::mult_upper_inverse(
     const FullVector<T>& x, FullVector<T>& y
 ) const {
@@ -120,7 +120,7 @@ void Preconditioner<T>::mult_upper_inverse(
     }
 }
 
-template <class T> 
+template <class T>
 void Preconditioner<T>::mult_diagonal(FullVector<T>& xy) const {
     int n = A_.dimension() ;
     for(int i=0; i<n; i++) {
@@ -128,19 +128,19 @@ void Preconditioner<T>::mult_diagonal(FullVector<T>& xy) const {
     }
 }
 
-template <class T> 
+template <class T>
 void Preconditioner<T>::mult_diagonal_inverse(FullVector<T>& xy) const {
     int n = A_.dimension() ;
     for(int i=0; i<n; i++) {
         xy[i] *= ( omega_ / A_.get_coef(i,i) ) ;
     }
 }
-    
+
 /**
  * Jacobi preconditioner
  */
 
-template <class T> 
+template <class T>
 class Jacobi_Preconditioner : public Preconditioner<T> {
 public:
     typedef T CoeffType ;
@@ -151,13 +151,13 @@ public:
     ) ;
 } ;
 
-template <class T> 
+template <class T>
 Jacobi_Preconditioner<T>::Jacobi_Preconditioner(
     const SparseMatrix<T>& A, CoeffType omega
 ) : Preconditioner<T>(A, omega) {
 }
 
-template <class T> 
+template <class T>
 void mult(const Jacobi_Preconditioner<T>& M, const FullVector<T>& x, FullVector<T>& y) {
     BLAS< FullVector<T> >::copy(x, y) ;
     M.mult_diagonal_inverse(y) ;
@@ -167,8 +167,8 @@ void mult(const Jacobi_Preconditioner<T>& M, const FullVector<T>& x, FullVector<
 /**
  * The SSOR preconditioner, sharing storage with the matrix.
  */
- 
-template <class T> 
+
+template <class T>
 class SSOR_Preconditioner : public Preconditioner<T> {
 public:
     typedef T CoeffType ;
@@ -182,14 +182,14 @@ public:
     ) ;
 } ;
 
-template <class T> 
+template <class T>
 SSOR_Preconditioner<T>::SSOR_Preconditioner(
     const SparseMatrix<T>& A, CoeffType omega
 ) : Preconditioner<T>(A, omega) {
 }
 
 /** y <- M*x */
-template <class T> 
+template <class T>
 void mult(const SSOR_Preconditioner<T>& M, const FullVector<T>& x, FullVector<T>& y) {
 
     CGAL_STATIC_THREAD_LOCAL_VARIABLE(FullVector<T>, work,0) ;

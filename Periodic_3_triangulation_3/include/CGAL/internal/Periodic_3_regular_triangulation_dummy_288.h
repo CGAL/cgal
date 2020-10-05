@@ -5531,7 +5531,7 @@ static const unsigned C[288] = {
   1726,
   1727
 };
- 
+
   this->clear();
 
   std::vector<Vertex_handle> vertices;

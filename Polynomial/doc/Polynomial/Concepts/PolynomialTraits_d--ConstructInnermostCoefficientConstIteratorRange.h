@@ -3,12 +3,12 @@
 \ingroup PkgPolynomialConcepts
 \cgalConcept
 
-This `AdaptableUnaryFunction` returns a const iterator range over all 
-innermost coefficients of the given polynomial. 
+This `AdaptableUnaryFunction` returns a const iterator range over all
+innermost coefficients of the given polynomial.
 
-\cgalRefines `AdaptableUnaryFunction` 
-\cgalRefines `CopyConstructible` 
-\cgalRefines `DefaultConstructible` 
+\cgalRefines `AdaptableUnaryFunction`
+\cgalRefines `CopyConstructible`
+\cgalRefines `DefaultConstructible`
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`
@@ -18,30 +18,30 @@ innermost coefficients of the given polynomial.
 class PolynomialTraits_d::ConstructInnermostCoefficientConstIteratorRange {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
 
-*/ 
-typedef std::pair< 
-PolynomialTraits_d::Innermost_coefficient_const_iterator, 
-PolynomialTraits_d::Innermost_coefficient_const_iterator > result_type; 
+*/
+typedef std::pair<
+PolynomialTraits_d::Innermost_coefficient_const_iterator,
+PolynomialTraits_d::Innermost_coefficient_const_iterator > result_type;
 
 /*!
 
-*/ 
-typedef PolynomialTraits_d::Polynomial_d argument_type; 
+*/
+typedef PolynomialTraits_d::Polynomial_d argument_type;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-Returns a const iterator range over all innermost coefficients of \f$ p\f$. 
-*/ 
-result_type operator()(argument_type p); 
+Returns a const iterator range over all innermost coefficients of \f$ p\f$.
+*/
+result_type operator()(argument_type p);
 
 /// @}
 

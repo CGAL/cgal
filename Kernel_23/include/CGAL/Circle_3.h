@@ -4,9 +4,9 @@
 // This file is part of CGAL (www.cgal.org)
 //
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 //
 // $URL$
@@ -31,7 +31,7 @@
 
 namespace CGAL {
 
-template <class R_> 
+template <class R_>
   class Circle_3
   : public R_::Kernel_base::Circle_3
 {
@@ -53,7 +53,7 @@ public:
 
   typedef typename R_::Kernel_base::Circle_3 Rep;
   typedef R_                                 R;
- 
+
   const Rep& rep() const
   {
     return *this;
@@ -72,10 +72,10 @@ public:
   Circle_3(const Point_3& c, const FT& sr, const Plane_3& p)
     : Rep(typename R::Construct_circle_3()(c,sr,p)) {}
 
-  Circle_3(const Point_3& c, const FT& sr, const Direction_3& d) 
+  Circle_3(const Point_3& c, const FT& sr, const Direction_3& d)
     : Rep(typename R::Construct_circle_3()(c,sr,d)) {}
 
-  Circle_3(const Point_3& c, const FT& sr, const Vector_3& v) 
+  Circle_3(const Point_3& c, const FT& sr, const Vector_3& v)
     : Rep(typename R::Construct_circle_3()(c,sr,v)) {}
 
   Circle_3(const Sphere_3& s1, const Sphere_3& s2)
@@ -119,30 +119,30 @@ public:
 
   Bbox_3 bbox() const
   {
-    return typename R::Construct_bbox_3()(*this); 
+    return typename R::Construct_bbox_3()(*this);
   }
 
-	FT area_divided_by_pi() const
-	{
-	  return typename R::Compute_area_divided_by_pi_3()(*this);
+        FT area_divided_by_pi() const
+        {
+          return typename R::Compute_area_divided_by_pi_3()(*this);
   }
 
   double approximate_area() const
   {
-	  return typename R::Compute_approximate_area_3()(*this);
-	}
+          return typename R::Compute_approximate_area_3()(*this);
+        }
 
-	FT squared_length_divided_by_pi_square() const
-	{
-	  return typename R::Compute_squared_length_divided_by_pi_square_3()(*this);
+        FT squared_length_divided_by_pi_square() const
+        {
+          return typename R::Compute_squared_length_divided_by_pi_square_3()(*this);
   }
 
   double approximate_squared_length() const
   {
-	  return typename R::Compute_approximate_squared_length_3()(*this);
-	}
-	
-	typename R::Boolean
+          return typename R::Compute_approximate_squared_length_3()(*this);
+        }
+
+        typename R::Boolean
   has_on(const Point_3 &p) const
   {
     return typename R::Has_on_3()(*this, p);

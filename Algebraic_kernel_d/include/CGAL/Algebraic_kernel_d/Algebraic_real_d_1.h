@@ -6,9 +6,9 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
 //
-// Author(s)     :  Michael Hemmer <hemmer@mpi-inf.mpg.de> 
+//
+// Author(s)     :  Michael Hemmer <hemmer@mpi-inf.mpg.de>
 //
 // ============================================================================
 
@@ -63,18 +63,18 @@ namespace internal {
 
   THIS CLASS IS CONSIDERED AS EXPERIMENTAL !
 */
-template < class Coefficient_, 
+template < class Coefficient_,
            class Rational_,
            class HandlePolicy = ::CGAL::Handle_policy_no_union,
            class AlgebraicRealRep_d_1 = internal::Algebraic_real_rep< Coefficient_, Rational_ > >
 class Algebraic_real_d_1 :
     public ::CGAL::Handle_with_policy< AlgebraicRealRep_d_1, HandlePolicy > {
 
-  // currently Rational is the only supported Bound type. 
+  // currently Rational is the only supported Bound type.
   CGAL_static_assertion(
-      (   ::boost::is_same <Rational_, 
+      (   ::boost::is_same <Rational_,
           typename Get_arithmetic_kernel<Coefficient_>::Arithmetic_kernel::Rational>::value));
-    
+
 
 
 public :
@@ -82,26 +82,26 @@ public :
   typedef Algebraic_real_d_1<Coefficient_,Rational_, HandlePolicy, AlgebraicRealRep_d_1>  Self;
 
   typedef Coefficient_                                  Coefficient;
-  typedef Rational_                                     Bound; 
+  typedef Rational_                                     Bound;
   typedef HandlePolicy                                  Handle_policy;
-  typedef AlgebraicRealRep_d_1                          Algebraic_real_rep_d_1; 
-  typedef typename Algebraic_real_rep_d_1::Polynomial_1 Polynomial_1; 
+  typedef AlgebraicRealRep_d_1                          Algebraic_real_rep_d_1;
+  typedef typename Algebraic_real_rep_d_1::Polynomial_1 Polynomial_1;
 
   // These public typedefs should be removed in the long run
-  // typedef typename Algebraic_real_rep_d_1::Polynomial_1 Polynomial; 
+  // typedef typename Algebraic_real_rep_d_1::Polynomial_1 Polynomial;
   typedef Rational_                                     Rational;
-  
+
 private:
   typedef CGAL::Fraction_traits<Rational> FT_rational;
   typedef typename FT_rational::Numerator_type Integer;
-  
-private: 
+
+private:
   static inline Self& get_default_instance(){
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE(Self, x,0); 
-    return x; 
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(Self, x,0);
+    return x;
   }
 public:
-  
+
   //! Default constructor
   Algebraic_real_d_1() : Base(static_cast<const Base&>(get_default_instance())) {}
 
@@ -130,7 +130,7 @@ public:
   int degree() const {
     return CGAL::degree(this->ptr()->polynomial());
   }
-  
+
   //! returns the lower endpoint of the isolating interval
   Rational low() const { return this->ptr()->low(); }
   Rational lower() const { return this->ptr()->low(); }
@@ -435,8 +435,8 @@ template<class Coefficient, class Rational, class HandlePolicy, class RepClass >
 std::ostream&
 operator << (std::ostream& os,
     const CGAL::internal::Algebraic_real_d_1<Coefficient, Rational, HandlePolicy, RepClass >& x){
-  os << "["   << x.polynomial() 
-     << ",["  << oformat(x.low()) 
+  os << "["   << x.polynomial()
+     << ",["  << oformat(x.low())
      << " , " << oformat(x.high()) << " ]]";
   return os;
 }
@@ -448,12 +448,12 @@ template<class Coefficient, class Rational, class HandlePolicy, class RepClass>
 std::istream&
 operator >> (std::istream& is,
     CGAL::internal::Algebraic_real_d_1<Coefficient, Rational, HandlePolicy, RepClass>& x){
-  
+
   typedef  CGAL::internal::Algebraic_real_d_1<Coefficient, Rational, HandlePolicy, RepClass > ALGNUM;
- 
+
   Rational low, high;
   typename CGAL::Polynomial_type_generator<Coefficient,1>::Type poly;
-  
+
   swallow(is, '[');// read the "["
   is >> poly;
   swallow(is, ',');// read the ","

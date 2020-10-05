@@ -7,7 +7,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories( ${CMAKE_BINARY_DIR} )
 
 # Instruct CMake to run moc automatically when needed.
-set(CMAKE_AUTOMOC ON) 
+set(CMAKE_AUTOMOC ON)
 
 find_package(CGAL QUIET COMPONENTS Core Qt5)
 include(${CGAL_USE_FILE})

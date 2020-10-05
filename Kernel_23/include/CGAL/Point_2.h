@@ -48,12 +48,12 @@ public:
   typedef RPoint_2 Rep;
   typedef typename R_::Cartesian_const_iterator_2 Cartesian_const_iterator;
 
-  const Rep& rep() const
+  const Rep& rep() const noexcept
   {
     return *this;
   }
 
-  Rep& rep()
+  Rep& rep() noexcept
   {
     return *this;
   }
@@ -83,6 +83,15 @@ public:
   Point_2(const RT& hx, const RT& hy, const RT& hw)
     : RPoint_2(typename R::Construct_point_2()(Return_base_tag(), hx, hy, hw))
   {}
+
+  friend void swap(Self& a, Self& b)
+#ifdef __cpp_lib_is_swappable
+    noexcept(std::is_nothrow_swappable_v<Rep>)
+#endif
+  {
+    using std::swap;
+    swap(a.rep(), b.rep());
+  }
 
   typename cpp11::result_of<typename R::Compute_x_2(Point_2)>::type
   x() const

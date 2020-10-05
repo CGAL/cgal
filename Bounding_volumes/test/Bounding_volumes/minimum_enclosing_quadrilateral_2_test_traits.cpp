@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch> and
 //                 Emo Welzl <emo@inf.ethz.ch>
@@ -50,7 +50,7 @@ struct MyTraits {
   };
   struct Orientation_2 {
     typedef CGAL::Orientation result_type;
-  
+
     result_type
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const {
       return CGAL::orientationC2(p.xc, p.yc, q.xc, q.yc, r.xc, r.yc);
@@ -255,54 +255,54 @@ struct MyTraits {
   Equal_2      equal_2_object()   const { return Equal_2(); }
   Less_xy_2    less_xy_2_object() const { return Less_xy_2(); }
   Less_yx_2    less_yx_2_object() const { return Less_yx_2(); }
-  
+
   Has_on_negative_side_2 has_on_negative_side_2_object() const
   { return Has_on_negative_side_2(); }
-  
+
   Compare_angle_with_x_axis_2 compare_angle_with_x_axis_2_object() const
   { return Compare_angle_with_x_axis_2(); }
-  
+
   Area_less_rectangle_2 area_less_rectangle_2_object() const
   { return Area_less_rectangle_2(); }
-  
+
   Area_less_parallelogram_2 area_less_parallelogram_2_object() const
   { return Area_less_parallelogram_2(); }
-  
+
   Width_less_strip_2 width_less_strip_2_object() const
   { return Width_less_strip_2(); }
-  
+
   Construct_vector_2 construct_vector_2_object() const
   { return Construct_vector_2(); }
-  
+
   Construct_vector_from_direction_2
   construct_vector_from_direction_2_object() const
   { return Construct_vector_from_direction_2(); }
-  
+
   Construct_perpendicular_vector_2
   construct_perpendicular_vector_2_object() const
   { return Construct_perpendicular_vector_2(); }
-  
+
   Construct_direction_2 construct_direction_2_object() const
   { return Construct_direction_2(); }
-  
+
   Construct_opposite_direction_2
   construct_opposite_direction_2_object() const
   { return Construct_opposite_direction_2(); }
-  
+
   Construct_line_2 construct_line_2_object() const
   { return Construct_line_2(); }
-  
+
   Construct_rectangle_2 construct_rectangle_2_object() const
   { return Construct_rectangle_2(); }
-  
+
   Construct_parallelogram_2 construct_parallelogram_2_object() const
   { return Construct_parallelogram_2(); }
-  
+
   Construct_strip_2 construct_strip_2_object() const
   { return Construct_strip_2(); }
-  
+
   Orientation_2 orientation_2_object() const { return Orientation_2(); }
-  
+
 
   friend struct Data;
 };

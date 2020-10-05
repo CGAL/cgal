@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Mariette Yvinec, Jean-Daniel Boissonnat
 
@@ -22,7 +22,7 @@
 #include <exception>
 
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_2.h> 
+#include <CGAL/Triangulation_2.h>
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Default.h>
@@ -51,6 +51,25 @@ struct CGAL_DEPRECATED No_intersection_tag :
 
 namespace internal {
 
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  struct Indentation_level {
+    int n;
+    Indentation_level() : n(0) {}
+    friend std::ostream& operator<<(std::ostream& os, Indentation_level level) {
+      return os << std::string(2*level.n, ' ');
+    }
+    Indentation_level& operator++() { ++n; return *this; }
+    Indentation_level& operator--() { --n; return *this; }
+    struct Exit_guard {
+      Exit_guard(Indentation_level& level): level(level) { ++level; }
+      Exit_guard(const Exit_guard& other) : level(other.level) { ++level; }
+      Indentation_level& level;
+      ~Exit_guard() { --level; }
+    };
+    Exit_guard open_new_scope() { return Exit_guard(*this); }
+  } cdt_2_indent_level;
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
+
 template <typename K>
 struct Itag {
   typedef typename boost::mpl::if_<typename Algebraic_structure_traits<typename K::FT>::Is_exact,
@@ -60,10 +79,10 @@ struct Itag {
 
 } // namespace internal
 
-template < class Gt, 
+template < class Gt,
            class Tds_ = Default ,
            class Itag_ = Default >
-class Constrained_triangulation_2  
+class Constrained_triangulation_2
   : public Triangulation_2<Gt,typename Default::Get< Tds_,
                                                      Triangulation_data_structure_2 <
                                                        Triangulation_vertex_base_2<Gt>,
@@ -79,7 +98,7 @@ public:
 
   typedef Triangulation_2<Gt,Tds> Triangulation;
   typedef Constrained_triangulation_2<Gt,Tds_,Itag_>  Constrained_triangulation;
-  
+
   typedef typename Triangulation::Edge Edge;
   typedef typename Triangulation::Vertex Vertex;
   typedef typename Triangulation::Vertex_handle Vertex_handle;
@@ -87,6 +106,7 @@ public:
   typedef typename Triangulation::size_type size_type;
   typedef typename Triangulation::Locate_type Locate_type;
   typedef typename Triangulation::All_faces_iterator All_faces_iterator;
+  typedef typename Triangulation::Finite_edges_iterator Finite_edges_iterator;
   typedef typename Triangulation::Face_circulator Face_circulator;
   typedef typename Triangulation::Edge_circulator Edge_circulator;
   typedef typename Triangulation::Vertex_circulator Vertex_circulator;
@@ -129,6 +149,8 @@ public:
   using Triangulation::geom_traits;
   using Triangulation::all_faces_begin;
   using Triangulation::all_faces_end;
+  using Triangulation::finite_edges_begin;
+  using Triangulation::finite_edges_end;
   using Triangulation::side_of_oriented_circle;
   using Triangulation::is_infinite;
   using Triangulation::collinear_between;
@@ -148,6 +170,7 @@ public:
   using Triangulation::all_edges_begin;
   using Triangulation::all_edges_end;
   using Triangulation::mirror_index;
+  using Triangulation::mirror_edge;
   using Triangulation::orientation;
 #endif
 
@@ -170,10 +193,6 @@ public:
   // Tag to distinguish periodic triangulations from others
   typedef Tag_false                          Periodic_tag;
 
-  class Less_edge;
-  typedef std::set<Edge,Less_edge> Edge_set;
-
-
   Constrained_triangulation_2(const Gt& gt = Gt()) : Triangulation(gt) { }
 
   Constrained_triangulation_2(std::list<Constraint>& lc, const Gt& gt=Gt())
@@ -188,18 +207,29 @@ public:
 
   template<class InputIterator>
   Constrained_triangulation_2(InputIterator it,
-			      InputIterator last,
-			      const Gt& gt=Gt() )
+                              InputIterator last,
+                              const Gt& gt=Gt() )
      : Triangulation_2<Gt,Tds>(gt)
   {
     for ( ; it != last; it++) {
-      	insert_constraint((*it).first, (*it).second);
+              insert_constraint((*it).first, (*it).second);
       }
       CGAL_triangulation_postcondition( is_valid() );
   }
 
   //TODO Is that destructor correct ?
   virtual ~Constrained_triangulation_2() {}
+
+  // Ensure rule-of-five: define the copy- and move- constructors
+  // as well as the copy- and move- assignment operators.
+  Constrained_triangulation_2(const Constrained_triangulation_2 &) = default;
+  Constrained_triangulation_2(Constrained_triangulation_2 &&) = default;
+
+  Constrained_triangulation_2 &
+  operator=(const Constrained_triangulation_2 &) = default;
+
+  Constrained_triangulation_2 &
+  operator=(Constrained_triangulation_2 &&) = default;
 
 
   Constrained_edges_iterator constrained_edges_begin() const
@@ -222,14 +252,14 @@ public:
   {
     return Constrained_edges(constrained_edges_begin(),constrained_edges_end());
   }
-  
+
   // INSERTION
-  Vertex_handle insert(const Point& p, 
-			       Face_handle start = Face_handle() );
   Vertex_handle insert(const Point& p,
-		       Locate_type lt,
-		       Face_handle loc, 
-		       int li );
+                               Face_handle start = Face_handle() );
+  Vertex_handle insert(const Point& p,
+                       Locate_type lt,
+                       Face_handle loc,
+                       int li );
   Vertex_handle push_back(const Point& a);
 //   template < class InputIterator >
 //   std::ptrdiff_t insert(InputIterator first, InputIterator last);
@@ -243,7 +273,7 @@ public:
   template <class InputIterator, class OutputIterator>
   void
   get_bounded_faces(InputIterator edge_it, InputIterator edge_pteit,
-		    OutputIterator faces_it) const
+                    OutputIterator faces_it) const
   {
     Edge e;
     Unique_hash_map<Face_handle,bool> visited;
@@ -258,16 +288,16 @@ public:
     while(! st.empty()){
       Face_handle fh = st.top();
       st.pop();
-      typename CGAL::Unique_hash_map<Face_handle, bool>::Data& data = visited[fh];    
+      typename CGAL::Unique_hash_map<Face_handle, bool>::Data& data = visited[fh];
       if(! data) {
-	data = true;
-	*faces_it++ = fh;
-	for(int i = 0 ; i < 3 ; ++i){
-	  Face_handle n = fh->neighbor(i);
-	  if(! visited[n]) {
-	    st.push(n);
-	  }
-	}
+        data = true;
+        *faces_it++ = fh;
+        for(int i = 0 ; i < 3 ; ++i){
+          Face_handle n = fh->neighbor(i);
+          if(! visited[n]) {
+            st.push(n);
+          }
+        }
       }
     }
 
@@ -293,13 +323,13 @@ public:
 
   // A version of insert_constraint, that additionally writes
   // the new faces in an output iterator
-  // We duplicate code, as to run this one with an Emptyset_iterator 
-  // is still too much overhead 
+  // We duplicate code, as to run this one with an Emptyset_iterator
+  // is still too much overhead
 template <class OutputIterator>
 void
 insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
 // forces the constrained [va,vb]
-// [va,vb] will eventually be splitted into several edges
+// [va,vb] will eventually be split into several edges
 // if a vertex vc of t lies on segment ab
 // of if ab intersect some constrained edges
 {
@@ -334,14 +364,14 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
   List_edges conflict_boundary_ab, conflict_boundary_ba;
 
   bool intersection  = find_intersected_faces( vaa, vbb,
-			                       intersected_faces,
-					       conflict_boundary_ab,
-					       conflict_boundary_ba,
-					       vi);
+                                               intersected_faces,
+                                               conflict_boundary_ab,
+                                               conflict_boundary_ba,
+                                               vi);
   if ( intersection) {
     if (vi != vaa && vi != vbb) {
-      insert_constraint(vaa,vi,out); 
-      insert_constraint(vi,vbb,out); 
+      insert_constraint(vaa,vi,out);
+      insert_constraint(vi,vbb,out);
      }
     else {
       insert_constraint(vaa,vbb,out);
@@ -368,20 +398,20 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
     it = n;
   }
   triangulate_hole(intersected_faces,
-		   conflict_boundary_ab,
-		   conflict_boundary_ba);
+                   conflict_boundary_ab,
+                   conflict_boundary_ba);
 
   get_bounded_faces(edges.begin(),
-		    edges.end(),
-		    out);
-  
+                    edges.end(),
+                    out);
+
   if (vi != vbb) {
-    insert_constraint(vi,vbb,out); 
+    insert_constraint(vi,vbb,out);
   }
   return;
 
 }
- 
+
   void insert_constraint(const Point& a, const Point& b);
   void insert_constraint(Vertex_handle va, Vertex_handle  vb);
   void push_back(const Constraint& c);
@@ -416,8 +446,8 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
   void remove_incident_constraints(Vertex_handle  v);
   // to be used by Constrained_triangulation_plus_2
  template <class OutputItFaces>
- OutputItFaces 
- remove_constrained_edge(Face_handle f, int i, OutputItFaces out) 
+ OutputItFaces
+ remove_constrained_edge(Face_handle f, int i, OutputItFaces out)
  {
    remove_constrained_edge(f, i);
    return out;
@@ -433,37 +463,22 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
   bool are_there_incident_constraints(Vertex_handle v) const;
   bool is_valid(bool verbose = false, int level = 0) const;
   // template<class OutputItEdges>
-  // OutputItEdges incident_constraints(Vertex_handle v, 
+  // OutputItEdges incident_constraints(Vertex_handle v,
   //                                     OutputItEdges out) const;
-  
-
-  class Less_edge 
-    :  public CGAL::cpp98::binary_function<Edge, Edge, bool>
-  {
-  public:
-    Less_edge() {}
-    bool operator() (const Edge& e1, const Edge& e2) const
-      {
-	int ind1=e1.second, ind2=e2.second;
- 	return( (&(*e1.first) < &(*e2.first))
- 		|| ( (&(*e1.first) == &(*e2.first)) && (ind1 < ind2)));
-      } 
-  };
-
 
   void file_output(std::ostream& os) const;
 
 protected:
-  virtual Vertex_handle virtual_insert(const Point& a, 
-				       Face_handle start = Face_handle());
   virtual Vertex_handle virtual_insert(const Point& a,
-				       Locate_type lt,
-				       Face_handle loc, 
-				       int li );
+                                       Face_handle start = Face_handle());
+  virtual Vertex_handle virtual_insert(const Point& a,
+                                       Locate_type lt,
+                                       Face_handle loc,
+                                       int li );
 //Vertex_handle special_insert_in_edge(const Point & a, Face_handle f, int i);
-  void update_constraints_incident(Vertex_handle va, 
-				   Vertex_handle c1,
-				   Vertex_handle c2);
+  void update_constraints_incident(Vertex_handle va,
+                                   Vertex_handle c1,
+                                   Vertex_handle c2);
   void clear_constraints_incident(Vertex_handle va);
   void update_constraints_opposite(Vertex_handle va);
   void update_constraints(const List_edges &hole);
@@ -499,26 +514,26 @@ private:
 
 public:
 // made public for Laurent  to find out deleted faces
-// when inserting a constraint with most probably 
+// when inserting a constraint with most probably
 // no intersection
-  bool find_intersected_faces(Vertex_handle va, 
-			      Vertex_handle vb,
-			      List_faces & intersected_faces,
-			      List_edges & list_ab, 
-			      List_edges & list_ba,
-			      Vertex_handle& vi);
+  bool find_intersected_faces(Vertex_handle va,
+                              Vertex_handle vb,
+                              List_faces & intersected_faces,
+                              List_edges & list_ab,
+                              List_edges & list_ba,
+                              Vertex_handle& vi);
 protected:
   virtual void triangulate_hole(List_faces& intersected_faces,
-				List_edges& conflict_boundary_ab,
-				List_edges& conflict_boundary_ba);
-  
+                                List_edges& conflict_boundary_ab,
+                                List_edges& conflict_boundary_ba);
+
   void triangulate_hole(List_faces& intersected_faces,
-			List_edges& conflict_boundary_ab,
-			List_edges& conflict_boundary_ba,
-			List_edges& new_edges);
-  
-  void triangulate_half_hole(List_edges & list_edges, 
-			     List_edges & new_edges);
+                        List_edges& conflict_boundary_ab,
+                        List_edges& conflict_boundary_ba,
+                        List_edges& new_edges);
+
+  void triangulate_half_hole(List_edges & list_edges,
+                             List_edges & new_edges);
 
   void remove_1D(Vertex_handle v);
   void remove_2D(Vertex_handle v);
@@ -530,13 +545,13 @@ public:
 #if defined(_MSC_VER)
   std::ptrdiff_t insert(InputIterator first, InputIterator last, int i = 0)
 #else
-    std::ptrdiff_t insert(InputIterator first, InputIterator last) 
+    std::ptrdiff_t insert(InputIterator first, InputIterator last)
 #endif
     {
 #if defined(_MSC_VER)
       CGAL_USE(i);
-#endif      
-      size_type n = number_of_vertices(); 
+#endif
+      size_type n = number_of_vertices();
 
       std::vector<Point> points (first, last);
       CGAL::spatial_sort (points.begin(), points.end(), geom_traits());
@@ -551,61 +566,61 @@ public:
 
   //deprecated
  template<class OutputIterator>
-  bool are_there_incident_constraints(Vertex_handle v, 
-				      OutputIterator out) const
+  bool are_there_incident_constraints(Vertex_handle v,
+                                      OutputIterator out) const
     {
       Edge_circulator ec=incident_edges(v), done(ec);
       bool are_there = false;
-      if (ec == 0) return are_there;
+      if (ec == nullptr) return are_there;
       do {
-	if(is_constrained(*ec)) {
-	  *out++ = *ec;
-	  are_there = true;
-	}
-	ec++;
+        if(is_constrained(*ec)) {
+          *out++ = *ec;
+          are_there = true;
+        }
+        ec++;
       } while (ec != done);
       return are_there;
     }
 
-  
+
  template<class OutputItEdges>
- OutputItEdges  incident_constraints(Vertex_handle v, 
-				      OutputItEdges out) const {
+ OutputItEdges  incident_constraints(Vertex_handle v,
+                                      OutputItEdges out) const {
    Edge_circulator ec=incident_edges(v), done(ec);
-   if (ec == 0) return  out;
+   if (ec == nullptr) return  out;
    do {
      if(is_constrained(*ec))    *out++ = *ec;
      ec++;
    } while (ec != done);
    return out;
  }
- 
-  // the following fonctions are overloaded 
-  // to take care of constraint marks 
+
+  // the following fonctions are overloaded
+  // to take care of constraint marks
   template<class EdgeIt>
-  Vertex_handle star_hole( const Point& p, 
-			   EdgeIt edge_begin,  
-			   EdgeIt edge_end) {
+  Vertex_handle star_hole( const Point& p,
+                           EdgeIt edge_begin,
+                           EdgeIt edge_end) {
     std::list<Face_handle> empty_list;
-    return star_hole(p, 
-		     edge_begin, 
-		     edge_end, 
-		     empty_list.begin(),
-		     empty_list.end());
+    return star_hole(p,
+                     edge_begin,
+                     edge_end,
+                     empty_list.begin(),
+                     empty_list.end());
   }
 
   template<class EdgeIt, class FaceIt>
-  Vertex_handle star_hole( const Point& p, 
-			   EdgeIt edge_begin,
-			   EdgeIt edge_end,
-			   FaceIt face_begin,
-			   FaceIt face_end)
+  Vertex_handle star_hole( const Point& p,
+                           EdgeIt edge_begin,
+                           EdgeIt edge_end,
+                           FaceIt face_begin,
+                           FaceIt face_end)
 {
-    Vertex_handle v =  Triangulation::star_hole(p, 
-						edge_begin, 
-						edge_end, 
-						face_begin,
-						face_end);
+    Vertex_handle v =  Triangulation::star_hole(p,
+                                                edge_begin,
+                                                edge_end,
+                                                face_begin,
+                                                face_end);
     // restore constraint status for new faces.
     int vindex;
     Face_handle fh;
@@ -621,7 +636,7 @@ public:
     } while (++fc != done);
     return v;
 }
- 
+
 };
 
 template < class Gt, class Tds, class Itag >
@@ -639,20 +654,20 @@ inline
 typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds,Itag>::
 virtual_insert(const Point& a,
-	       Locate_type lt,
-	       Face_handle loc, 
-	       int li )
+               Locate_type lt,
+               Face_handle loc,
+               int li )
 // virtual version of insert
 {
   return insert(a,lt,loc,li);
 }
-    
+
 template < class Gt, class Tds, class Itag >
 inline
 typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds,Itag>::
 insert(const Point& a, Face_handle start)
-// inserts point a 
+// inserts point a
 // in addition to what is done for non constrained triangulations
 // constrained edges are updated
 {
@@ -675,6 +690,19 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   Vertex_handle v1, v2;
   bool insert_in_constrained_edge = false;
 
+  std::list<std::pair<Vertex_handle,Vertex_handle> > constrained_edges;
+  bool one_dimensional = false;
+  if(dimension() == 1){
+    one_dimensional = true;
+    for(Finite_edges_iterator it = finite_edges_begin();
+        it != finite_edges_end();
+        ++it){
+      if(is_constrained(*it)){
+        constrained_edges.emplace_back(it->first->vertex(cw(it->second)),
+                                       it->first->vertex(ccw(it->second)));
+      }
+    }
+  }
   if ( lt == Triangulation::EDGE && loc->is_constrained(li) )
   {
     if(boost::is_same<Itag, No_constraint_intersection_tag>::value)
@@ -687,6 +715,18 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 
   va = Triangulation::insert(a,lt,loc,li);
 
+  if(one_dimensional && (dimension() == 2)){
+    for(const std::pair<Vertex_handle,Vertex_handle>& vp : constrained_edges){
+      Face_handle fh;
+      int i;
+      if(this->is_edge(vp.first, vp.second, fh,i)){
+        fh->set_constraint(i,true);
+        boost::tie(fh,i) = mirror_edge(Edge(fh,i));
+        fh->set_constraint(i,true);
+      }
+    }
+  }
+
   if (insert_in_constrained_edge)
     update_constraints_incident(va, v1,v2);
   else if(lt != Triangulation::VERTEX)
@@ -698,8 +738,8 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   return va;
 }
 
-// template < class Gt, class Tds, class Itag >  
-// typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle 
+// template < class Gt, class Tds, class Itag >
+// typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle
 // Constrained_triangulation_2<Gt, Tds, Itag>::
 // special_insert_in_edge(const Point & a, Face_handle f, int i)
 //   // insert  point p in edge(f,i)
@@ -711,7 +751,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 //   c1 = f->vertex(cw(i));  //endpoint of edge
 //   c2 = f->vertex(ccw(i)); //endpoint of edge
 //   bool insert_in_constrained_edge = f->is_constrained(i);
- 
+
 //   va = this->_tds.insert_in_edge(f, i);
 //   va->set_point(a);
 
@@ -726,7 +766,7 @@ template < class Gt, class Tds, class Itag >
 inline void
 Constrained_triangulation_2<Gt,Tds,Itag>::
 insert_constraint(const Point& a, const Point& b)
-// the algorithm first inserts a and b, 
+// the algorithm first inserts a and b,
 // and then forces the constraint [va,vb]
 {
   Vertex_handle va= virtual_insert(a);
@@ -747,10 +787,25 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
   std::stack<std::pair<Vertex_handle, Vertex_handle> > stack;
   stack.push(std::make_pair(vaa,vbb));
 
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  std::cerr << CGAL::internal::cdt_2_indent_level
+            << "CT_2::insert_constraint( #" << vaa->time_stamp() << "= " << vaa->point()
+            << " , #" << vbb->time_stamp() << "= " << vbb->point()
+            << " )\n";
+  internal::Indentation_level::Exit_guard exit_guard = CGAL::internal::cdt_2_indent_level.open_new_scope();
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   while(! stack.empty()){
     boost::tie(vaa,vbb) = stack.top();
     stack.pop();
     CGAL_triangulation_precondition( vaa != vbb);
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+    std::cerr << CGAL::internal::cdt_2_indent_level
+              << "CT_2::insert_constraint, stack pop=( #" << vaa->time_stamp() << "= " << vaa->point()
+              << " , #" << vbb->time_stamp() << "= " << vbb->point()
+              << " ) remaining stack size: "
+              << stack.size() << '\n';
+    CGAL_assertion(this->is_valid());
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
     Vertex_handle vi;
 
     Face_handle fr;
@@ -776,7 +831,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
       }
       continue;
     }
-      
+
     List_faces intersected_faces;
     List_edges conflict_boundary_ab, conflict_boundary_ba;
     bool intersection  = find_intersected_faces( vaa, vbb,
@@ -786,10 +841,26 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
                                                  vi);
     if ( intersection) {
       if (vi != vaa && vi != vbb) {
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  std::cerr << CGAL::internal::cdt_2_indent_level
+            << "CT_2::insert_constraint stask push [vaa, vi] ( #" << vaa->time_stamp() << "= " << vaa->point()
+            << " , #" << vi->time_stamp() << "= " << vi->point()
+            << " )\n";
+  std::cerr << CGAL::internal::cdt_2_indent_level
+            << "CT_2::insert_constraint stask push [vi, vbb] ( #" << vi->time_stamp() << "= " << vi->point()
+            << " , #" << vbb->time_stamp() << "= " << vbb->point()
+            << " )\n";
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
         stack.push(std::make_pair(vaa,vi));
         stack.push(std::make_pair(vi,vbb));
       }
       else{
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  std::cerr << CGAL::internal::cdt_2_indent_level
+            << "CT_2::insert_constraint stask push [vaa, vbb]( #" << vaa->time_stamp() << "= " << vaa->point()
+            << " , #" << vbb->time_stamp() << "= " << vbb->point()
+            << " )\n";
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
         stack.push(std::make_pair(vaa,vbb));
       }
       continue;
@@ -811,15 +882,15 @@ template <class Gt, class Tds, class Itag >
 bool
 Constrained_triangulation_2<Gt,Tds,Itag>::
 find_intersected_faces(Vertex_handle vaa,
-		       Vertex_handle vbb,
-		       List_faces & intersected_faces,
-		       List_edges & list_ab, 
-		       List_edges & list_ba,
-		       Vertex_handle & vi) 
+                       Vertex_handle vbb,
+                       List_faces & intersected_faces,
+                       List_edges & list_ab,
+                       List_edges & list_ba,
+                       Vertex_handle & vi)
   // vi is set to the first vertex of the triangulation on [vaa,vbb].
   // Return true if an intersection with a constrained edge is
   // encountered, false otherwise
-  // When false : 
+  // When false :
   // intersected_faces contains the list if faces intersected by [va,vi]
   // list_ab and list_ba represents the boundary of the union
   // of the intersected faces oriented cw
@@ -830,74 +901,98 @@ find_intersected_faces(Vertex_handle vaa,
   const Point& bb = vbb->point();
   Line_face_circulator current_face=Line_face_circulator(vaa, this, bb);
   int ind=current_face->index(vaa);
-      
+
   // to deal with the case where the first crossed edge
   // is constrained
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  std::cerr << CGAL::internal::cdt_2_indent_level
+            << "CT_2::find_intersected_faces ( #" << vaa->time_stamp() << "= " << vaa->point()
+            << " , #" << vbb->time_stamp() << "= " << vbb->point()
+            << " )\n"
+            << CGAL::internal::cdt_2_indent_level
+            << "> current constrained edges are:\n";
+  for(Constrained_edges_iterator edge_it = this->constrained_edges_begin(),
+        end = this->constrained_edges_end();
+      edge_it != end; ++edge_it)
+  {
+    std::cerr <<CGAL::internal::cdt_2_indent_level
+              << "> (#"
+              << edge_it->first->vertex(cw(edge_it->second))->time_stamp()
+              << ", #"
+              << edge_it->first->vertex(ccw(edge_it->second))->time_stamp()
+              << ")\n";
+  }
+  std::cerr << CGAL::internal::cdt_2_indent_level
+            << "> current face is ( #" << current_face->vertex(0)->time_stamp()
+            << " #" << current_face->vertex(1)->time_stamp()
+            << " #" << current_face->vertex(2)->time_stamp() << " )\n";
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
+
   if(current_face->is_constrained(ind)) {
     vi=intersect(current_face, ind, vaa, vbb);
     return true;
   }
 
-  Face_handle lf= current_face->neighbor(ccw(ind)); 
+  Face_handle lf= current_face->neighbor(ccw(ind));
   Face_handle rf= current_face->neighbor(cw(ind));
   Orientation orient;
   Face_handle previous_face;
-  Vertex_handle current_vertex;	
+  Vertex_handle current_vertex;
 
   list_ab.push_back(Edge(lf, lf->index(current_face)));
   list_ba.push_front(Edge(rf, rf->index(current_face)));
   intersected_faces.push_front(current_face);
 
   // initcd
-  previous_face=current_face; 
+  previous_face=current_face;
   ++current_face;
-  ind=current_face->index(previous_face);  
-  current_vertex=current_face->vertex(ind);  
+  ind=current_face->index(previous_face);
+  current_vertex=current_face->vertex(ind);
 
   // loop over triangles intersected by ab
   bool done = false;
-  while (current_vertex != vbb && !done)  { 
+  while (current_vertex != vbb && !done)  {
     orient = orientation(aa,bb,current_vertex->point());
     int i1, i2;
     switch (orient) {
-    case COLLINEAR :  
+    case COLLINEAR :
       done = true; // current_vertex is the new endpoint
       break;
     case LEFT_TURN :
     case RIGHT_TURN :
       if (orient == LEFT_TURN) {
-	i1 = ccw(ind) ; //index of second intersected edge of current_face
-	i2 = cw(ind); //index of non intersected edge of current_face
+        i1 = ccw(ind) ; //index of second intersected edge of current_face
+        i2 = cw(ind); //index of non intersected edge of current_face
       }
       else {
-	i1 = cw(ind) ; //index of second intersected edge of current_face
-	i2 = ccw(ind); //index of non intersected edge of current_face
+        i1 = cw(ind) ; //index of second intersected edge of current_face
+        i2 = ccw(ind); //index of non intersected edge of current_face
       }
       if(current_face->is_constrained(i1)) {
-	vi = intersect(current_face, i1, vaa,vbb);
-	return true;
+        vi = intersect(current_face, i1, vaa,vbb);
+        return true;
       }
       else {
-	lf= current_face->neighbor(i2);
-	intersected_faces.push_front(current_face);
-	if (orient == LEFT_TURN) 
-	  list_ab.push_back(Edge(lf, lf->index(current_face)));
-	else // orient == RIGHT_TURN
-	  list_ba.push_front(Edge(lf, lf->index(current_face)));
-	previous_face=current_face;
-	++current_face;
-	ind=current_face->index(previous_face); 
-	current_vertex=current_face->vertex(ind);
+        lf= current_face->neighbor(i2);
+        intersected_faces.push_front(current_face);
+        if (orient == LEFT_TURN)
+          list_ab.push_back(Edge(lf, lf->index(current_face)));
+        else // orient == RIGHT_TURN
+          list_ba.push_front(Edge(lf, lf->index(current_face)));
+        previous_face=current_face;
+        ++current_face;
+        ind=current_face->index(previous_face);
+        current_vertex=current_face->vertex(ind);
       }
       break;
     }
   }
-    
-  // last triangle 
+
+  // last triangle
   vi = current_vertex;
   intersected_faces.push_front(current_face);
   lf= current_face->neighbor(cw(ind));
-  list_ab.push_back(Edge(lf, lf->index(current_face))); 
+  list_ab.push_back(Edge(lf, lf->index(current_face)));
   rf= current_face->neighbor(ccw(ind));
   list_ba.push_front(Edge(rf, rf->index(current_face)));
   return false;
@@ -905,11 +1000,11 @@ find_intersected_faces(Vertex_handle vaa,
 
 
 template <class Gt, class Tds, class Itag >
-typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle 
+typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds,Itag>::
-intersect(Face_handle f, int i, 
-	  Vertex_handle vaa,
-	  Vertex_handle vbb) 
+intersect(Face_handle f, int i,
+          Vertex_handle vaa,
+          Vertex_handle vbb)
 {
   return intersect(f, i, vaa, vbb, Itag());
 }
@@ -939,18 +1034,18 @@ intersect(Face_handle , int ,
 }
 
 template <class Gt, class Tds, class Itag >
-typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle 
+typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds,Itag>::
-intersect(Face_handle f, int i, 
-	  Vertex_handle vaa,
-	  Vertex_handle vbb,
-	  Exact_intersections_tag)
-// compute the intersection of the constraint edge (f,i) 
+intersect(Face_handle f, int i,
+          Vertex_handle vaa,
+          Vertex_handle vbb,
+          Exact_intersections_tag)
+// compute the intersection of the constraint edge (f,i)
 // with the subconstraint (vaa,vbb) being inserted
 // insert the intersection point
-// split constraint edge (f,i) 
+// split constraint edge (f,i)
 // and return the Vertex_handle of the new Vertex
-{ 
+{
 #ifndef CGAL_NO_CDT_2_WARNING
   CGAL_warning_msg(false,
   "You are using an exact number type,\n"
@@ -970,16 +1065,16 @@ intersect(Face_handle f, int i,
   intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
   CGAL_triangulation_assertion(ok);
   Vertex_handle vi = virtual_insert(pi, Triangulation::EDGE, f, i);
-  return vi; 
+  return vi;
 }
 
 template <class Gt, class Tds, class Itag >
-typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle 
+typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds,Itag>::
-intersect(Face_handle f, int i, 
-	  Vertex_handle vaa,
-	  Vertex_handle vbb,
-	  Exact_predicates_tag)
+intersect(Face_handle f, int i,
+          Vertex_handle vaa,
+          Vertex_handle vbb,
+          Exact_predicates_tag)
 {
   Vertex_handle  vcc, vdd;
   vcc = f->vertex(cw(i));
@@ -990,18 +1085,26 @@ intersect(Face_handle f, int i,
   const Point& pc = vcc->point();
   const Point& pd = vdd->point();
 
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  std::cerr << CGAL::internal::cdt_2_indent_level
+            << "CT_2::intersect segment ( #" << vaa->time_stamp() << "= " << vaa->point()
+            << " , #" << vbb->time_stamp() << "= " << vbb->point()
+            << " ) with edge ( #"<< vcc->time_stamp() << "= " << vcc->point()
+            << " , #" << vdd->time_stamp() << "= " << vdd->point()
+            << " )\n";
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   Point pi; //creator for point is required here
   Itag itag = Itag();
   bool ok  = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
 
   Vertex_handle vi;
   if ( !ok) {  //intersection detected but not computed
-    int i = limit_intersection(geom_traits(), pa, pb, pc, pd, itag);
-    switch(i){
+    int int_index = limit_intersection(geom_traits(), pa, pb, pc, pd, itag);
+    switch(int_index){
     case 0 : vi = vaa; break;
     case 1 : vi = vbb; break;
     case 2 : vi = vcc; break;
-    case 3 : vi = vdd; break; 
+    case 3 : vi = vdd; break;
     }
     if(vi == vaa || vi == vbb) {
       remove_constrained_edge(f, i);
@@ -1011,17 +1114,22 @@ intersect(Face_handle f, int i,
     remove_constrained_edge(f, i);
     vi = virtual_insert(pi, f);
   }
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  std::cerr << CGAL::internal::cdt_2_indent_level
+            << "CT_2::intersect, `vi` is ( #" << vi->time_stamp() << "= " << vi->point()
+            << " )\n";
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
 
   // vi == vc or vi == vd may happen even if intersection==true
   // due to approximate construction of the intersection
-  if (vi != vcc && vi != vdd) { 
-    insert_constraint(vcc,vi); 
+  if (vi != vcc && vi != vdd) {
+    insert_constraint(vcc,vi);
     insert_constraint(vi, vdd);
-  } 
+  }
   else {
     insert_constraint(vcc,vdd);
   }
-  return vi; 
+  return vi;
 }
 
 template <class Gt, class Tds, class Itag >
@@ -1047,10 +1155,10 @@ push_back(const Constraint &c)
 template < class Gt, class Tds, class Itag >
 void
 Constrained_triangulation_2<Gt,Tds,Itag>::
-update_constraints_incident(Vertex_handle va, 
-			    Vertex_handle c1,
-			    Vertex_handle c2)
-  // update status of edges incident to a 
+update_constraints_incident(Vertex_handle va,
+                            Vertex_handle c1,
+                            Vertex_handle c2)
+  // update status of edges incident to a
   // after insertion in the  constrained edge c1c2
 {
   if (dimension() == 0) return;
@@ -1063,21 +1171,21 @@ update_constraints_incident(Vertex_handle va,
   else{
     //dimension() ==2
     int cwi, ccwi, indf;
-    Face_circulator fc=incident_faces(va), done(fc);  
-    CGAL_triangulation_assertion(fc != 0);
+    Face_circulator fc=incident_faces(va), done(fc);
+    CGAL_triangulation_assertion(fc != nullptr);
     do {
       indf = fc->index(va);
       cwi=cw(indf);
-      ccwi=ccw(indf); 
+      ccwi=ccw(indf);
       if ((fc->vertex(cwi) == c1)||(fc->vertex(cwi) == c2)) {
-	  fc->set_constraint(ccwi,true);
-	  fc->set_constraint(cwi,false);
-	}	
-	else {
-	  fc->set_constraint(ccwi,false);
-	  fc->set_constraint(cwi,true);
-	}
-	++fc;
+          fc->set_constraint(ccwi,true);
+          fc->set_constraint(cwi,false);
+        }
+        else {
+          fc->set_constraint(ccwi,false);
+          fc->set_constraint(cwi,true);
+        }
+        ++fc;
       } while (fc != done);
   }
 }
@@ -1091,13 +1199,13 @@ clear_constraints_incident(Vertex_handle va)
  Edge_circulator ec=incident_edges(va), done(ec);
  Face_handle f;
  int indf;
-  if ( ec != 0){
+  if ( ec != nullptr){
     do {
       f = (*ec).first ;
       indf = (*ec).second;
       f->set_constraint(indf,false);
       if (dimension() == 2) {
-	f->neighbor(indf)->set_constraint(mirror_index(f,indf),false);
+        f->neighbor(indf)->set_constraint(mirror_index(f,indf),false);
       }
     } while (++ec != done);
   }
@@ -1107,12 +1215,12 @@ clear_constraints_incident(Vertex_handle va)
 
 template < class Gt, class Tds, class Itag >
 void
-Constrained_triangulation_2<Gt,Tds,Itag>::  
+Constrained_triangulation_2<Gt,Tds,Itag>::
 update_constraints_opposite(Vertex_handle va)
   // update status of edges opposite to a
   // after insertion of a
 {
-  CGAL_triangulation_assertion(dimension()==2); 
+  CGAL_triangulation_assertion(dimension()==2);
   Face_handle f=va->face(), start=f;
   int indf;
   do {
@@ -1123,14 +1231,14 @@ update_constraints_opposite(Vertex_handle va)
     else {
       f->set_constraint(indf,false);
     }
-    f= f->neighbor(ccw(indf)); // turns ccw around va 
+    f= f->neighbor(ccw(indf)); // turns ccw around va
   } while (f != start);
   return;
 }
 
 template < class Gt, class Tds, class Itag >
 void
-Constrained_triangulation_2<Gt,Tds,Itag>:: 
+Constrained_triangulation_2<Gt,Tds,Itag>::
 update_constraints( const List_edges &hole)
 {
   typename List_edges::const_iterator it = hole.begin();
@@ -1139,7 +1247,7 @@ update_constraints( const List_edges &hole)
   for ( ; it != hole.end(); it ++) {
     f =(*it).first;
     i = (*it).second;
-    if ( f->is_constrained(i) ) 
+    if ( f->is_constrained(i) )
       (f->neighbor(i))->set_constraint(mirror_index(f,i),true);
     else (f->neighbor(i))->set_constraint(mirror_index(f,i),false);
   }
@@ -1163,14 +1271,14 @@ template < class Gt, class Tds, class Itag >
 inline void
 Constrained_triangulation_2<Gt,Tds,Itag>::
 triangulate_hole(List_faces& intersected_faces,
-		 List_edges& conflict_boundary_ab,
-		 List_edges& conflict_boundary_ba)
+                 List_edges& conflict_boundary_ab,
+                 List_edges& conflict_boundary_ba)
 {
   List_edges new_edges;
   triangulate_hole(intersected_faces,
-		   conflict_boundary_ab,
-		   conflict_boundary_ba,
-		   new_edges);
+                   conflict_boundary_ab,
+                   conflict_boundary_ba,
+                   new_edges);
 }
 
 
@@ -1179,18 +1287,18 @@ template < class Gt, class Tds, class Itag >
 void
 Constrained_triangulation_2<Gt,Tds,Itag>::
 triangulate_hole(List_faces& intersected_faces,
-		 List_edges& conflict_boundary_ab,
-		 List_edges& conflict_boundary_ba,
-		 List_edges& new_edges)
+                 List_edges& conflict_boundary_ab,
+                 List_edges& conflict_boundary_ba,
+                 List_edges& new_edges)
   // triangulate the hole limited by conflict_boundary_ab
   // and conflict_boundary_ba
-  // insert the new edges in new-edges 
+  // insert the new edges in new-edges
   // delete the faces of intersected_faces
 {
   if ( !conflict_boundary_ab.empty() ) {
     triangulate_half_hole(conflict_boundary_ab, new_edges);
     triangulate_half_hole(conflict_boundary_ba, new_edges);
-	
+
     // the two faces that share edge ab are neighbors
     // their common edge ab is a constraint
     Face_handle fr,fl;
@@ -1200,7 +1308,7 @@ triangulate_hole(List_faces& intersected_faces,
     fr->set_neighbor(2, fl);
     fl->set_constraint(2, true);
     fr->set_constraint(2, true);
-   
+
     // delete intersected faces
     while( ! intersected_faces.empty()) {
       fl = intersected_faces.front();
@@ -1222,7 +1330,7 @@ remove(Vertex_handle  v)
   CGAL_triangulation_precondition( v != Vertex_handle() );
   CGAL_triangulation_precondition( ! is_infinite(v));
   CGAL_triangulation_precondition( ! are_there_incident_constraints(v));
-    
+
   if  (number_of_vertices() == 1)     remove_first(v);
   else if (number_of_vertices() == 2) remove_second(v);
   else   if ( dimension() == 1) remove_1D(v);
@@ -1257,7 +1365,7 @@ remove_2D(Vertex_handle v)
     update_constraints(shell);
     delete_vertex(v);
   }
-  return;       
+  return;
 }
 
 
@@ -1266,6 +1374,14 @@ void
 Constrained_triangulation_2<Gt,Tds,Itag>::
 remove_constrained_edge(Face_handle f, int i)
 {
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  std::cerr << CGAL::internal::cdt_2_indent_level
+            << "CT_2::remove_constrained_edge ( #"
+            << f->vertex(cw(i))->time_stamp()
+            << ", #"
+            << f->vertex(ccw(i))->time_stamp()
+            << ")\n";
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   f->set_constraint(i, false);
   if (dimension() == 2)
     (f->neighbor(i))->set_constraint(mirror_index(f,i), false);
@@ -1278,17 +1394,17 @@ Constrained_triangulation_2<Gt,Tds,Itag>::
 remove_incident_constraints(Vertex_handle v)
 {
    Edge_circulator ec=incident_edges(v), done(ec);
-   if (ec == 0) return;
+   if (ec == nullptr) return;
    do {
-	if(is_constrained(*ec)) { remove_constrained_edge((*ec).first,
-						   (*ec).second);}
-	ec++;
+        if(is_constrained(*ec)) { remove_constrained_edge((*ec).first,
+                                                   (*ec).second);}
+        ec++;
    } while (ec != done);
-   return;	
+   return;
 }
 
 template < class Gt, class Tds, class Itag >
-inline  bool 
+inline  bool
 Constrained_triangulation_2<Gt,Tds,Itag>::
 are_there_incident_constraints(Vertex_handle v) const
 {
@@ -1296,30 +1412,30 @@ are_there_incident_constraints(Vertex_handle v) const
 }
 
 template < class Gt, class Tds, class Itag >
-inline  bool 
+inline  bool
 Constrained_triangulation_2<Gt,Tds,Itag>::
 is_valid(bool verbose, int level) const
 {
     bool result = Triangulation::is_valid(verbose,level);
-    for( All_faces_iterator it = all_faces_begin(); 
-	                    it != all_faces_end() ; it++) {
+    for( All_faces_iterator it = all_faces_begin();
+                            it != all_faces_end() ; it++) {
       for(int i=0; i<3; i++) {
-	Face_handle n = it->neighbor(i);
-	result = result && 
-	  it->is_constrained(i) == n->is_constrained(n->index(it));
+        Face_handle n = it->neighbor(i);
+        result = result &&
+          it->is_constrained(i) == n->is_constrained(n->index(it));
       }
     }
     return result;
 }
 
 template < class Gt, class Tds, class Itag >
-inline  bool 
+inline  bool
 Constrained_triangulation_2<Gt,Tds,Itag>::
 is_constrained(Edge e) const
 {
   return (e.first)->is_constrained(e.second);
 }
-    
+
 template < class Gt, class Tds, class Itag >
 void
 Constrained_triangulation_2<Gt,Tds,Itag>::
@@ -1333,17 +1449,17 @@ triangulate_half_hole(List_edges & list_edges,  List_edges & new_edges)
   // the edges that are created are put in list new_edges
   // takes linear time
 {
-  Vertex_handle va; // first vertex of list_edges 
+  Vertex_handle va; // first vertex of list_edges
   Face_handle newlf;
   Face_handle n1,n2,n;
   int ind1, ind2,ind;
   Orientation orient;
-    
+
   typename List_edges::iterator current, next, tempo;
   current=list_edges.begin();
 
   va=((*current).first)->vertex(ccw((*current).second));
-  next=current; 
+  next=current;
   ++next;
 
   do
@@ -1352,23 +1468,23 @@ triangulate_half_hole(List_edges & list_edges,  List_edges & new_edges)
       ind1=(*current).second;
       // in case n1 is no longer a triangle of the new triangulation
       if ( n1->neighbor(ind1) != Face_handle() ) {
-	n=n1->neighbor(ind1);
-	//ind=mirror_index(n1,ind1); 
-	// mirror_index does not work in this case
-	ind = cw(n->index(n1->vertex(cw(ind1))));
-	n1=n->neighbor(ind); 
-	ind1= mirror_index(n,ind);
+        n=n1->neighbor(ind1);
+        //ind=mirror_index(n1,ind1);
+        // mirror_index does not work in this case
+        ind = cw(n->index(n1->vertex(cw(ind1))));
+        n1=n->neighbor(ind);
+        ind1= mirror_index(n,ind);
       }
       n2=(*next).first;
       ind2=(*next).second;
       // in case n2 is no longer a triangle of the new triangulation
       if (n2->neighbor(ind2) != Face_handle() ) {
-	n=n2->neighbor(ind2); 
-	// ind=mirror_index(n2,ind2);
-	// mirror_index does not work in this case
-	ind = cw(n->index(n2->vertex(cw(ind2))));
-	n2=n->neighbor(ind); 
-	ind2= mirror_index(n,ind);
+        n=n2->neighbor(ind2);
+        // ind=mirror_index(n2,ind2);
+        // mirror_index does not work in this case
+        ind = cw(n->index(n2->vertex(cw(ind2))));
+        n2=n->neighbor(ind);
+        ind2= mirror_index(n,ind);
       }
 
       Vertex_handle v0=n1->vertex(ccw(ind1));
@@ -1376,41 +1492,41 @@ triangulate_half_hole(List_edges & list_edges,  List_edges & new_edges)
       Vertex_handle v2=n2->vertex(cw(ind2));
       orient = orientation(v0->point(),v1->point(),v2->point());
       switch (orient) {
-      case RIGHT_TURN : 	  		
-	// creates the new triangle v0v1v2
-	// updates the neighbors, the constraints 
-	//and the list of new edges
-	newlf = create_face(v0,v2,v1);
-	new_edges.push_back(Edge(newlf,2));
-	newlf->set_neighbor(1, n1);
-	newlf->set_neighbor(0, n2);
-	n1->set_neighbor(ind1, newlf);
-	n2->set_neighbor(ind2, newlf);
-	if (n1->is_constrained(ind1)) {
-	  newlf->set_constraint(1,true);
-	}
-	if (n2->is_constrained(ind2)) {
-	  newlf->set_constraint(0,true);
-	}
-	// v0, v1 or v2.face() may have been removed
-	v0->set_face(newlf); 
-	v1->set_face(newlf);
-	v2->set_face(newlf);
-	// update list_edges
-	tempo=current;
-	current=list_edges.insert(current, Edge(newlf,2));
-	list_edges.erase(tempo);
-	list_edges.erase(next);
-	next=current;
-	if (v0 != va) {--current;} 
-	else {++next;} 
-	break;
-      case LEFT_TURN : 	  
-	++current; ++next;
-	break;
-      case COLLINEAR : 
-	++current; ++next;
-	break;
+      case RIGHT_TURN :
+        // creates the new triangle v0v1v2
+        // updates the neighbors, the constraints
+        //and the list of new edges
+        newlf = create_face(v0,v2,v1);
+        new_edges.push_back(Edge(newlf,2));
+        newlf->set_neighbor(1, n1);
+        newlf->set_neighbor(0, n2);
+        n1->set_neighbor(ind1, newlf);
+        n2->set_neighbor(ind2, newlf);
+        if (n1->is_constrained(ind1)) {
+          newlf->set_constraint(1,true);
+        }
+        if (n2->is_constrained(ind2)) {
+          newlf->set_constraint(0,true);
+        }
+        // v0, v1 or v2.face() may have been removed
+        v0->set_face(newlf);
+        v1->set_face(newlf);
+        v2->set_face(newlf);
+        // update list_edges
+        tempo=current;
+        current=list_edges.insert(current, Edge(newlf,2));
+        list_edges.erase(tempo);
+        list_edges.erase(next);
+        next=current;
+        if (v0 != va) {--current;}
+        else {++next;}
+        break;
+      case LEFT_TURN :
+        ++current; ++next;
+        break;
+      case COLLINEAR :
+        ++current; ++next;
+        break;
       }
     } while (next != list_edges.end());
 }
@@ -1429,11 +1545,11 @@ file_output(std::ostream& os) const
       if (ib->is_constrained(j)) { os << "C";}
       else { os << "N";}
       if(is_ascii(os)){
-	if(j==2) {
-	  os << "\n";
-	} else {
-	  os <<  ' ';
-	}
+        if(j==2) {
+          os << "\n";
+        } else {
+          os <<  ' ';
+        }
       }
     }
   }
@@ -1441,8 +1557,8 @@ file_output(std::ostream& os) const
 
 template < class Gt, class Tds, class Itag >
 std::ostream &
-operator<<(std::ostream& os, 
-	   const Constrained_triangulation_2<Gt,Tds,Itag> &ct)
+operator<<(std::ostream& os,
+           const Constrained_triangulation_2<Gt,Tds,Itag> &ct)
 {
   ct.file_output(os);
   return os ;
@@ -1450,8 +1566,8 @@ operator<<(std::ostream& os,
 
 template < class Gt, class Tds, class Itag >
 std::istream &
-operator>>(std::istream& is, 
-	         Constrained_triangulation_2<Gt,Tds,Itag> &ct)
+operator>>(std::istream& is,
+                 Constrained_triangulation_2<Gt,Tds,Itag> &ct)
 {
   typedef Constrained_triangulation_2<Gt,Tds,Itag> CDT;
   ct.clear();
@@ -1463,7 +1579,7 @@ operator>>(std::istream& is,
     for (int k=0;k<3;++k){
       fit->set_constraint(k,c[k]=='C');
     }
-  }  
+  }
   return is;
 }
 
@@ -1497,12 +1613,12 @@ intersection(const Gt& ,
 template<class Gt>
 bool
 intersection(const Gt& gt,
-	     const typename Gt::Point_2& pa, 
-	     const typename Gt::Point_2& pb, 
-	     const typename Gt::Point_2& pc, 
-	     const typename Gt::Point_2& pd,
-	     typename Gt::Point_2& pi,
-	     Exact_intersections_tag)
+             const typename Gt::Point_2& pa,
+             const typename Gt::Point_2& pb,
+             const typename Gt::Point_2& pc,
+             const typename Gt::Point_2& pd,
+             typename Gt::Point_2& pi,
+             Exact_intersections_tag)
 {
   return compute_intersection(gt,pa,pb,pc,pd,pi);
 }
@@ -1511,13 +1627,13 @@ intersection(const Gt& gt,
 template<class Gt>
 inline bool
 intersection(const Gt& gt,
-	     const typename Gt::Point_2& pa, 
-	     const typename Gt::Point_2& pb, 
-	     const typename Gt::Point_2& pc, 
-	     const typename Gt::Point_2& pd,
-	     typename Gt::Point_2& pi,
-	     Exact_predicates_tag,
-	     CGAL::Tag_false /* not a FT is not floating-point */)
+             const typename Gt::Point_2& pa,
+             const typename Gt::Point_2& pb,
+             const typename Gt::Point_2& pc,
+             const typename Gt::Point_2& pd,
+             typename Gt::Point_2& pi,
+             Exact_predicates_tag,
+             CGAL::Tag_false /* not a FT is not floating-point */)
 {
   return compute_intersection(gt,pa,pb,pc,pd,pi);
 }
@@ -1525,19 +1641,20 @@ intersection(const Gt& gt,
 template<class Gt>
 inline bool
 intersection(const Gt& gt,
-	     const typename Gt::Point_2& pa,
-	     const typename Gt::Point_2& pb,
-	     const typename Gt::Point_2& pc,
-	     const typename Gt::Point_2& pd,
-	     typename Gt::Point_2& pi,
-	     Exact_predicates_tag,
-	     CGAL::Tag_true /* FT is a floating-point type */)
+             const typename Gt::Point_2& pa,
+             const typename Gt::Point_2& pb,
+             const typename Gt::Point_2& pc,
+             const typename Gt::Point_2& pd,
+             typename Gt::Point_2& pi,
+             Exact_predicates_tag,
+             CGAL::Tag_true /* FT is a floating-point type */)
 {
   const bool result = compute_intersection(gt,pa,pb,pc,pd,pi);
   if(!result) return result;
   if(pi == pa || pi == pb || pi == pc || pi == pd) {
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
-    std::cerr << "  CT_2::intersection: intersection is an existing point "
+    std::cerr << CGAL::internal::cdt_2_indent_level
+              << "  CT_2::intersection: intersection is an existing point "
               << pi << std::endl;
 #endif
     return result;
@@ -1559,7 +1676,8 @@ intersection(const Gt& gt,
   if(do_overlap(bb, bbox(pd))) pi = pd;
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   if(pi == pa || pi == pb || pi == pc || pi == pd) {
-    std::cerr << "  CT_2::intersection: intersection SNAPPED to an existing point "
+    std::cerr << CGAL::internal::cdt_2_indent_level
+              << "  CT_2::intersection: intersection SNAPPED to an existing point "
               << pi << std::endl;
   }
 #endif
@@ -1569,12 +1687,12 @@ intersection(const Gt& gt,
 template<class Gt>
 inline bool
 intersection(const Gt& gt,
-	     const typename Gt::Point_2& pa,
-	     const typename Gt::Point_2& pb,
-	     const typename Gt::Point_2& pc,
-	     const typename Gt::Point_2& pd,
-	     typename Gt::Point_2& pi,
-	     Exact_predicates_tag exact_predicates_tag)
+             const typename Gt::Point_2& pa,
+             const typename Gt::Point_2& pb,
+             const typename Gt::Point_2& pc,
+             const typename Gt::Point_2& pd,
+             typename Gt::Point_2& pi,
+             Exact_predicates_tag exact_predicates_tag)
 {
   typedef typename Gt::FT FT;
   return intersection(gt,pa,pb,pc,pd,pi,
@@ -1586,17 +1704,28 @@ intersection(const Gt& gt,
 template<class Gt>
 bool
 compute_intersection(const Gt& gt,
-	     const typename Gt::Point_2& pa, 
-	     const typename Gt::Point_2& pb, 
-	     const typename Gt::Point_2& pc, 
-	     const typename Gt::Point_2& pd,
-	     typename Gt::Point_2& pi)
+             const typename Gt::Point_2& pa,
+             const typename Gt::Point_2& pb,
+             const typename Gt::Point_2& pc,
+             const typename Gt::Point_2& pd,
+             typename Gt::Point_2& pi)
 {
   typename Gt::Intersect_2 compute_intersec=gt.intersect_2_object();
-   typename Gt::Construct_segment_2  
+   typename Gt::Construct_segment_2
     construct_segment=gt.construct_segment_2_object();
   Object result = compute_intersec(construct_segment(pa,pb),
-				   construct_segment(pc,pd));
+                                   construct_segment(pc,pd));
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  typename Gt::Segment_2 s;
+  if(assign(s, result)) {
+    std::cerr << CGAL::internal::cdt_2_indent_level
+              << "compute_intersection: " << s << '\n';
+  }
+  if(assign(pi, result)) {
+    std::cerr << CGAL::internal::cdt_2_indent_level
+              << "compute_intersection: " << pi << '\n';
+  }
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   return assign(pi, result);
 }
 
@@ -1628,11 +1757,11 @@ limit_intersection(const Gt& ,
 template<class Gt>
 int
 limit_intersection(const Gt& ,
-		   const typename Gt::Point_2& , 
-		   const typename Gt::Point_2& , 
-		   const typename Gt::Point_2& , 
-		   const typename Gt::Point_2& ,
-		   Exact_intersections_tag)
+                   const typename Gt::Point_2& ,
+                   const typename Gt::Point_2& ,
+                   const typename Gt::Point_2& ,
+                   const typename Gt::Point_2& ,
+                   Exact_intersections_tag)
 {
   return 0;
 }
@@ -1640,14 +1769,14 @@ limit_intersection(const Gt& ,
 template<class Gt>
 int
 limit_intersection(const Gt& gt,
-	     const typename Gt::Point_2& pa, 
-	     const typename Gt::Point_2& pb, 
-	     const typename Gt::Point_2& pc, 
-	     const typename Gt::Point_2& pd,
-	     Exact_predicates_tag)
+             const typename Gt::Point_2& pa,
+             const typename Gt::Point_2& pb,
+             const typename Gt::Point_2& pc,
+             const typename Gt::Point_2& pd,
+             Exact_predicates_tag)
 {
   typename Gt::Construct_line_2 line = gt.construct_line_2_object();
-  typename Gt::Compute_squared_distance_2 
+  typename Gt::Compute_squared_distance_2
     distance = gt.compute_squared_distance_2_object();
   typename Gt::Line_2 l1 = line(pa,pb);
   typename Gt::Line_2 l2 = line(pc,pd);

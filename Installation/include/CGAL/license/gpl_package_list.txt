@@ -32,6 +32,7 @@ Minkowski_sum_3 3D Minkowski Sum of Polyhedra
 Nef_2 2D Boolean Operations on Nef Polygons
 Nef_3 3D Boolean Operations on Nef Polyhedra
 Nef_S2 2D Boolean Operations on Nef Polygons Embedded on the Sphere
+Optimal_bounding_box Optimal Bounding Box
 Optimal_transportation_reconstruction_2 Optimal Transportation Curve Reconstruction
 Partition_2 2D Polygon Partitioning
 Periodic_2_triangulation_2 2D Periodic Triangulations
@@ -82,6 +83,7 @@ Surface_mesh_segmentation Triangulated Surface Mesh Segmentation
 Surface_mesh_shortest_path Triangulated Surface Mesh Shortest Paths
 Surface_mesh_simplification Triangulated Surface Mesh Simplification
 Surface_mesh_skeletonization Triangulated Surface Mesh Skeletonization
+Surface_mesh_topology Surface Mesh Topology
 Surface_sweep_2 2D Intersection of Curves
 TDS_2 2D Triangulation Data Structure
 TDS_3 3D Triangulation Data Structure
@@ -91,3 +93,4 @@ Triangulation_3 3D Triangulations
 Triangulation dD Triangulations
 Visibility_2 2D Visibility Computation
 Voronoi_diagram_2 2D Voronoi Diagram Adaptor
+Tetrahedral_remeshing Tetrahedral Remeshing

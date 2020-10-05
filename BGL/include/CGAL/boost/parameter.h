@@ -5,7 +5,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -57,7 +57,7 @@ struct Base
 private:
   T t_;
 };
-  
+
 #define CGAL_BOOLEAN_PARAMETER(Class, function_true, function_false)     \
   struct Class : public Base<bool> { Class(bool b) : Base<bool>(b){} };       \
   inline Class function_true() { return Class(true); }                        \
@@ -86,10 +86,10 @@ BOOST_PARAMETER_NAME( (time_limit, tag) time_limit_ )
 BOOST_PARAMETER_NAME( (convergence, tag) convergence_)
 BOOST_PARAMETER_NAME( (max_iteration_number, tag) max_iteration_number_ )
 BOOST_PARAMETER_NAME( (freeze_bound, tag) freeze_bound_)
-  
+
 BOOST_PARAMETER_NAME( (sliver_bound, tag) sliver_bound_)
 BOOST_PARAMETER_NAME( (sliver_criterion, tag) sliver_criterion_)
-BOOST_PARAMETER_NAME( (perturbation_vector, tag) perturbation_vector_) 
+BOOST_PARAMETER_NAME( (perturbation_vector, tag) perturbation_vector_)
 BOOST_PARAMETER_NAME( (do_freeze, tag) do_freeze_)
 
 BOOST_PARAMETER_NAME( (mesh_topology, tag) mesh_topology_)

@@ -2,9 +2,9 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/Modifiable_priority_queue.h>
 #include <iostream>
-#include <functional> 
+#include <functional>
 
-//first is the index (id) and second the value compared, 
+//first is the index (id) and second the value compared,
 typedef std::pair<std::size_t,int> Type;
 
 //property map
@@ -47,69 +47,69 @@ int main()
   Queue q(45,Queue::Compare(),Queue::ID());
   assert( queue_size(q,45) == 0 );
   assert( q.empty() );
-  
+
   std::vector<Type> data;
-  
+
   data.push_back(Type(0,10));
   data.push_back(Type(1,20));
   data.push_back(Type(2,30));
   data.push_back(Type(3,40));
   data.push_back(Type(4,1));
   data.push_back(Type(5,2));
-  
+
   q.push(&data[0]);
   q.push(&data[0]+1);
   q.push(&data[0]+2);
   q.push(&data[0]+3);
-  
+
   assert( q.top()->first == 0 );
   assert( queue_size(q,45) == 4 );
-  
+
   q.pop();
   assert( q.top()->first == 1 );
   assert( queue_size(q,45) == 3 );
-  
+
   q.push(&data[0]+4);
   assert( q.top()->first == 4 );
   assert( queue_size(q,45) == 4 );
-  
+
   q.erase(&data[0]+4,false);
   assert( q.top()->first == 1 );
-  assert( queue_size(q,45) == 3 ); 
-  
+  assert( queue_size(q,45) == 3 );
+
   q.push(&data[0]+5);
   assert( q.top()->first == 5 );
   assert( queue_size(q,45) == 4 );
-  
+
   data[5].second=43;
   q.update(&data[0]+5,true);
   assert( q.top()->first == 1 );
-  assert( queue_size(q,45) == 4 );  
-  
+  assert( queue_size(q,45) == 4 );
+
   q.pop();
   assert( q.top()->first == 2 );
-  assert( queue_size(q,45) == 3 );  
+  assert( queue_size(q,45) == 3 );
 
   q.pop();
   assert( q.top()->first == 3 );
-  assert( queue_size(q,45) == 2 );  
+  assert( queue_size(q,45) == 2 );
 
   q.pop();
   assert( q.top()->first == 5 );
-  assert( queue_size(q,45) == 1 );  
-  
+  assert( queue_size(q,45) == 1 );
+
   q.pop();
   assert( queue_size(q,45) == 0 );
   assert( q.empty() );
-  
+
   q.push(&data[0]);
   q.push(&data[0]+1);
   q.push(&data[0]+2);
   q.push(&data[0]+3);
-  
+
   assert( q.top()->first == 0 );
   assert( queue_size(q,45) == 4 );
-  
+
   q.erase(&data[0]+1,true);
   assert( q.top()->first == 0 );
   assert( queue_size(q,45) == 3 );
@@ -121,10 +121,10 @@ int main()
   q.erase(&data[0],true);
   assert( q.top()->first == 3 );
   assert( queue_size(q,45) == 1 );
-  
+
   q.erase(&data[0]+3,true);
   assert( queue_size(q,45) == 0 );
-  assert( q.empty() );  
+  assert( q.empty() );
 
 //testing correctness of the order
   int array[10] = {0,1,2,3,4,5,6,7,8,9};
@@ -135,13 +135,13 @@ int main()
     data.push_back(Type(i,array[i]));
     q.push(&data[0]+i);
   }
-  
+
   for (int i=0;i<10;++i){
     assert(q.top()->second==i);
     q.pop();
   }
   assert( q.empty() );
-  
+
 //testing update (increase key)
   data.clear();
   data.reserve(10);
@@ -161,7 +161,7 @@ int main()
     q.erase(&data[0]+i,true);
     assert(queue_size(q,45)==9-i);
   }
-  
+
 //testing update (decrease key of top)
   data.clear();
   data.reserve(10);
@@ -175,20 +175,20 @@ int main()
     q.update(&data[0]+i,true);
     assert(q.top()->first==i+1);
   }
-  
+
 //revert order
   for (unsigned int i=0;i<10;++i){
     data[9-i].second=i;
     q.update(&data[0]+9-i,true);
     assert(q.top()->first==9);
-  }  
-//testing remove (emulate pop)  
+  }
+//testing remove (emulate pop)
   for (std::size_t i=0;i<10;++i){
     assert(q.top()->first==9-i);
     q.erase(&data[0]-i+9,true);
   }
   assert( q.empty() );
-  
+
   //testing remove+contains
   data.clear();
   data.reserve(10);
@@ -196,7 +196,7 @@ int main()
     data.push_back(Type(i,i));
     q.push(&data[0]+i);
   }
-  
+
   for (std::size_t i=0;i<10;++i){
     assert(q.top()->first==0);
     q.erase(&data[0]-i+9,true);
@@ -206,9 +206,9 @@ int main()
       assert(q.contains(&data[0]+9-k)==false);
   }
   assert( q.empty() );
-  
+
   std::cout << "OK" << std::endl;
- 
+
   return 0;
   #else
   std::cerr << "ERROR: Nothing is tested" << std::endl;

@@ -4,28 +4,28 @@ namespace CGAL {
 /*!
 \ingroup PkgStreamSupportRef
 
-The class `Ostream_iterator` is an output iterator adaptor for the 
-output stream class `Stream` and value type `T`. 
+The class `Ostream_iterator` is an output iterator adaptor for the
+output stream class `Stream` and value type `T`.
 
 
 \cgalModels `OutputIterator`
 
 \cgalHeading{Implementation}
 
-The `operator*()` in class `Ostream_iterator` uses a proxy class. 
+The `operator*()` in class `Ostream_iterator` uses a proxy class.
 
 */
 template< typename T, typename Stream >
 class Ostream_iterator {
 public:
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
-creates an output iterator writing to `s`. 
-*/ 
-Ostream_iterator( Stream& s); 
+creates an output iterator writing to `s`.
+*/
+Ostream_iterator( Stream& s);
 
 /// @}
 

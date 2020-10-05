@@ -6,13 +6,13 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sebastien Loriot, Sylvain Pion
 
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/CGAL_Ipelet_base.h> 
+#include <CGAL/CGAL_Ipelet_base.h>
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
@@ -30,7 +30,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel               Kernel
 typedef CGAL::Apollonius_graph_traits_2<Kernel>                           AT;
 typedef CGAL::Apollonius_graph_2<AT>                                      Apollonius;
 typedef Apollonius::Site_2                                                ASite;
-//Delaunay  
+//Delaunay
 typedef CGAL::Triangulation_vertex_base_with_info_2<bool,Kernel>          Vb;
 typedef CGAL::Triangulation_face_base_2<Kernel>                           Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                       Tds;
@@ -51,7 +51,7 @@ const std::string helpmsg[] = {
 
 // --------------------------------------------------------------------
 
-class enveloppeIpelet 
+class enveloppeIpelet
   : public CGAL::Ipelet_base<Kernel,3>{
 public:
   enveloppeIpelet()
@@ -70,7 +70,7 @@ public:
     else
       angle = angle - f * CGAL_PI/2.;
     return IpeVector((current_pt.x()+c_radius*cos(angle)),(current_pt.y()+c_radius*sin(angle)));
-  }      
+  }
 
 };
 
@@ -85,7 +85,7 @@ void enveloppeIpelet::protected_run(int fn)
     case 0:{//Convex hull using apollonius
       std::list<Point_2> pt_list;
       std::list<Circle_2> cir_list;
-      
+
       read_active_objects(
         CGAL::dispatch_or_drop_output<Point_2,Circle_2,Segment_2,Polygon_2>(
           std::back_inserter(pt_list),
@@ -94,24 +94,24 @@ void enveloppeIpelet::protected_run(int fn)
           point_grabber(std::back_inserter(pt_list))
         )
      );
-      
+
       if (pt_list.empty() && cir_list.empty()) {
         print_error_message("No mark nor circle nor segment selected");
         return;
       }
 
       Apollonius apo;     //apollonius
-      
+
       for (std::list<Point_2>::iterator it=pt_list.begin();it!=pt_list.end();++it)
         apo.insert(ASite(*it,0));
-      for (std::list<Circle_2>::iterator it=cir_list.begin();it!=cir_list.end();++it)  
+      for (std::list<Circle_2>::iterator it=cir_list.begin();it!=cir_list.end();++it)
         apo.insert(ASite(it->center(),sqrt(it->squared_radius())));
-      
+
       if (apo.number_of_vertices()==1) {
         print_error_message("Need more than one mark or one circle");
         return;
       }
-    
+
       Apollonius::Vertex_circulator Cvert = apo.incident_vertices(apo.infinite_vertex()); //take points incident to infinte vertex
       Apollonius::Vertex_circulator Cvert0 = Cvert;
       std::vector<ASite> Vsite0;
@@ -119,7 +119,7 @@ void enveloppeIpelet::protected_run(int fn)
         Vsite0.push_back(Cvert->site());
         ++Cvert;
       }while(Cvert0!=Cvert);
-      
+
       IpeVector pt_ipe1=IpeVector(0,0);
       IpeSegmentSubPath* SSPseg_ipe = new IpeSegmentSubPath;
       Vsite0.insert(Vsite0.begin(),Vsite0.back());
@@ -133,11 +133,11 @@ void enveloppeIpelet::protected_run(int fn)
           Point_2 p_pt = (it-1)->point();  //previous neighbor
           Point_2 c_pt = it->point();
           Point_2 n_pt = (it+1)->point(); //next neighbor
-          double p_rad = (it-1)->weight();   
+          double p_rad = (it-1)->weight();
           double n_rad = (it+1)->weight();
           IpeVector pt_ipe=tangency_point(c_rad,p_rad,c_pt,p_pt);
           IpeVector pt_ipe0=tangency_point(c_rad,n_rad,c_pt,n_pt,-1);
-          
+
           if(it!=Vsiteite00)
             SSPseg_ipe->appendSegment(pt_ipe1,pt_ipe0);
           SSPseg_ipe->appendArc(IpeMatrix(c_rad,0,0,c_rad,c_pt.x(),c_pt.y()),pt_ipe0,pt_ipe);
@@ -153,7 +153,7 @@ void enveloppeIpelet::protected_run(int fn)
       }
       SSPseg_ipe->setClosed(true);
       ipe::Shape shape;
-      shape.appendSubPath(SSPseg_ipe);      
+      shape.appendSubPath(SSPseg_ipe);
       get_IpePage()->append(ipe::EPrimarySelected,CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,shape));
       #else
       for(std::vector<ASite>::iterator it=Vsiteite00 ; it!=Vsiteite0 ; --it){//draw precise convex hull computing tangency point to circles
@@ -162,11 +162,11 @@ void enveloppeIpelet::protected_run(int fn)
           Point_2 p_pt = (it-1)->point();  //previous neighbor
           Point_2 c_pt = it->point();
           Point_2 n_pt = (it+1)->point(); //next neighbor
-          double p_rad = (it-1)->weight();   
+          double p_rad = (it-1)->weight();
           double n_rad = (it+1)->weight();
           IpeVector pt_ipe=tangency_point(c_rad,p_rad,c_pt,p_pt);
           IpeVector pt_ipe0=tangency_point(c_rad,n_rad,c_pt,n_pt,-1);
-          
+
           if(it!=Vsiteite00)
             SSPseg_ipe->AppendSegment(pt_ipe1,pt_ipe0);
           SSPseg_ipe->AppendArc(IpeMatrix(c_rad,0,0,c_rad,c_pt.x(),c_pt.y()),pt_ipe0,pt_ipe);
@@ -187,7 +187,7 @@ void enveloppeIpelet::protected_run(int fn)
       #endif
     }
     break;
-    
+
     case 1:{          //CRUST
       std::list<Point_2> pt_list;
       read_active_objects( CGAL::dispatch_or_drop_output<Point_2>(std::back_inserter(pt_list)) );
@@ -199,7 +199,7 @@ void enveloppeIpelet::protected_run(int fn)
       }
 
       Delaunay triang;
-      
+
       for(std::list<Point_2>::iterator it = pt_list.begin();it!=pt_list.end();++it){
         Vertex_handle vI_cgal = triang.insert(*it);
         vI_cgal -> info() = true;
@@ -209,15 +209,15 @@ void enveloppeIpelet::protected_run(int fn)
       pt_list.clear();
       for (Face_iterator itt=triang.finite_faces_begin();itt!=triang.finite_faces_end();++itt)
         pt_list.push_back(triang.dual(itt));
-      
+
       for (std::list<Point_2>::iterator it=pt_list.begin();it!=pt_list.end();++it){
         Vertex_handle vI_cgal = triang.insert(*it);
         vI_cgal -> info() = false;
       }
-      
+
       //keep delaunay segments which endpoints are original points
       for(Delaunay::Finite_edges_iterator it= triang.finite_edges_begin();it!=triang.finite_edges_end();++it){
-        if (it->first->vertex(Delaunay::cw(it->second))->info()==true && 
+        if (it->first->vertex(Delaunay::cw(it->second))->info()==true &&
               it->first->vertex(Delaunay::ccw(it->second))->info()==true)
           draw_in_ipe(Segment_2( it->first->vertex(Delaunay::cw(it->second))->point(),
                                       it->first->vertex(Delaunay::ccw(it->second))->point()

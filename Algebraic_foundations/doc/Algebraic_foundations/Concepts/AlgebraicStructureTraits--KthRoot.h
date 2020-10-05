@@ -5,9 +5,9 @@ namespace AlgebraicStructureTraits_{
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
-`AdaptableBinaryFunction` providing the k-th root. 
+`AdaptableBinaryFunction` providing the k-th root.
 
-\cgalRefines `AdaptableBinaryFunction` 
+\cgalRefines `AdaptableBinaryFunction`
 
 \sa `FieldWithRootOf`
 \sa `AlgebraicStructureTraits`
@@ -17,35 +17,35 @@ namespace AlgebraicStructureTraits_{
 class KthRoot {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-Is `AlgebraicStructureTraits::Type`. 
-*/ 
-typedef unspecified_type result_type; 
+Is `AlgebraicStructureTraits::Type`.
+*/
+typedef unspecified_type result_type;
 
 /*!
-Is int. 
-*/ 
-typedef unspecified_type first_argument; 
+Is int.
+*/
+typedef unspecified_type first_argument;
 
 /*!
-Is `AlgebraicStructureTraits::Type`. 
-*/ 
-typedef unspecified_type second_argument; 
+Is `AlgebraicStructureTraits::Type`.
+*/
+typedef unspecified_type second_argument;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-returns the \f$ k\f$-th root of \f$ x\f$. 
-\pre \f$ k \geq1\f$ 
+returns the \f$ k\f$-th root of \f$ x\f$.
+\pre \f$ k \geq1\f$
 
-*/ 
-result_type operator()(int k, second_argument_type x); 
+*/
+result_type operator()(int k, second_argument_type x);
 
 /// @}
 

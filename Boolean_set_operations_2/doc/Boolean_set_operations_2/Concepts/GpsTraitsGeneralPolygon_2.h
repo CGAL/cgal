@@ -3,18 +3,18 @@
 \ingroup PkgBooleanSetOperations2Concepts
 \cgalConcept
 
-A model of this concept represents a simple general polygon. 
+A model of this concept represents a simple general polygon.
 
 \cgalRefines `DefaultConstructible`
 \cgalRefines `CopyConstructible`
 \cgalRefines `Assignable`
 
-\cgalGeneralizes `GeneralPolygon_2` 
+\cgalGeneralizes `GeneralPolygon_2`
 
-\cgalHasModel `GeneralPolygonSetTraits_2::Polygon_2` 
-\cgalHasModel `CGAL::Polygon_2<PolygonTraits_2, Container>` 
+\cgalHasModel `GeneralPolygonSetTraits_2::Polygon_2`
+\cgalHasModel `CGAL::Polygon_2<PolygonTraits_2, Container>`
 
-\sa `GeneralPolygon_2` 
+\sa `GeneralPolygon_2`
 
 */
 

@@ -11,7 +11,7 @@
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
@@ -32,7 +32,7 @@
 #include <QLibrary>
 using namespace CGAL::Three;
 class Io_implicit_function_plugin :
-  public QObject, 
+  public QObject,
   protected Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
@@ -48,24 +48,24 @@ public:
   QString name() const { return "implicit functions"; }
   // QString nameFilters() const { return ""; }
   // bool canLoad() const { return false; }
-  
+
 
   typedef Polyhedron_demo_plugin_helper Plugin_helper;
-  
+
   using Plugin_helper::init;
   virtual void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*);
-  
+
   QList<QAction*> actions() const
   {
     return QList<QAction*>();
   }
-  
+
 public Q_SLOTS:
   void load_function() const;
-  
+
 private:
   void load_function_plugins();
-  
+
 private:
   QList<Implicit_function_interface*> functions_;
 };
@@ -85,18 +85,18 @@ init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Mes
 {
   this->scene = scene_interface;
   this->mw = mainWindow;
-  
+
   QAction* actionLoadFunction = new QAction("Generate &Implicit Function", mw);
   if( NULL != actionLoadFunction )
   {
     connect(actionLoadFunction, SIGNAL(triggered()), this, SLOT(load_function()));
   }
-  
+
   QMenu* menuFile = mw->findChild<QMenu*>("menuFile");
   QMenu* menu = menuFile->findChild<QMenu*>("menuGenerateObject");
   if(!menu){
     QAction* actionLoad = mw->findChild<QAction*>("actionLoadPlugin");
-    menu = new QMenu(tr("Generate &Objet"), menuFile);
+    menu = new QMenu(tr("Generate &Object"), menuFile);
     menu->setObjectName("menuGenerateObject");
     menuFile->insertMenu(actionLoad, menu);
   }
@@ -115,7 +115,7 @@ load_function() const
   dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
   connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
-  
+
   // Add loaded functions to the dialog
   int i=0;
   Q_FOREACH( Implicit_function_interface* f, functions_ )
@@ -126,21 +126,21 @@ load_function() const
   // Open window
   int return_code = dialog.exec();
   if(return_code == QDialog::Rejected) { return; }
-  
+
   // Get selected function
   i = ui.functionList->currentIndex();
   Implicit_function_interface* function = functions_[i];
-  
+
   // Create Scene_implicit_function object and add it to the framework
   Scene_implicit_function_item* item =
     new Scene_implicit_function_item(function);
-  
+
   item->setName(tr("%1").arg(function->name()));
   item->setRenderingMode(FlatPlusEdges);
 
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   scene->itemChanged(index);
-    
+
   CGAL::Three::Scene_interface::Item_id new_item_id = scene->addItem(item);
   scene->setSelectedItem(new_item_id);
 }
@@ -151,14 +151,14 @@ load_function_plugins()
 {
   QDir pluginsDir(qApp->applicationDirPath());
   QString dirname = pluginsDir.dirName();
-  if ( !pluginsDir.cd("implicit_functions") ) { 
+  if ( !pluginsDir.cd("implicit_functions") ) {
     // In that case, dirname may be "Debug" or "Release" and one has to
     // search in ../implicit_functions/Debug or
     // ../implicit_functions/Release
     QString newDir = QString("../implicit_functions/") + dirname;
-    if( !pluginsDir.cd(newDir) ) return; 
+    if( !pluginsDir.cd(newDir) ) return;
   }
-  
+
   Q_FOREACH (QString fileName, pluginsDir.entryList(QDir::Files))
   {
     if ( fileName.contains("plugin") && QLibrary::isLibrary(fileName) )
@@ -171,7 +171,7 @@ load_function_plugins()
       {
         Implicit_function_interface* function =
           qobject_cast<Implicit_function_interface*>(function_plugin);
-        
+
         if ( NULL != function )
         {
           functions_ << function;

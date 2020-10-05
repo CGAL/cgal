@@ -22,7 +22,7 @@ int main() {
 #include "gmp.h"
 #include <mpfr.h>
 
-bool get_version_info(const LPCTSTR name, 
+bool get_version_info(const LPCTSTR name,
                       int& major,
                       int& minor,
                       int& patch,

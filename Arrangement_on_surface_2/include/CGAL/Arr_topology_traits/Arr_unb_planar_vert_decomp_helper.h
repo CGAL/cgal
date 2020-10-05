@@ -7,9 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
-//                 Efi Fogel  <efif@post.tau.ac.il>
+// Author(s): Ron Wein   <wein@post.tau.ac.il>
+//            Efi Fogel  <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_UNB_PLANAR_VERT_DECOMP_HELPER_H
 #define CGAL_ARR_UNB_PLANAR_VERT_DECOMP_HELPER_H
@@ -43,12 +42,16 @@ private:
   typedef Geometry_traits_2                             Gt2;
 
 public:
+  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
+  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+
+  typedef boost::variant<Vertex_const_handle, Halfedge_const_handle,
+                         Face_const_handle>             Cell_type;
+  typedef boost::optional<Cell_type>                    Vert_type;
 
 protected:
   typedef typename Arrangement_2::Topology_traits       Topology_traits;
-  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
 
   // Data members:
   const Topology_traits* m_top_traits;  // The topology-traits class.
@@ -77,10 +80,10 @@ public:
   //@}
 
   /*! Get the current top object. */
-  CGAL::Object top_object() const { return CGAL::make_object(m_top_fict); }
+  Vert_type top_object() const { return Vert_type(m_top_fict); }
 
   /*! Get the current bottom object. */
-  CGAL::Object bottom_object() const { return CGAL::make_object(m_bottom_fict); }
+  Vert_type bottom_object() const { return Vert_type(m_bottom_fict); }
 };
 
 //-----------------------------------------------------------------------------

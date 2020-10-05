@@ -7,11 +7,11 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado, 
+// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado,
 //             Sebastien Loriot, Julien Hazebrouck, Damien Leroy
 
-// Partially supported by the IST Programme of the EU as a 
-// STREP (FET Open) Project under Contract No  IST-006413 
+// Partially supported by the IST Programme of the EU as a
+// STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_CIRCULAR_ARC_3_H
@@ -24,11 +24,11 @@
 #include <CGAL/Bbox_3.h>
 
 namespace CGAL {
-  template <class SK> 
+  template <class SK>
     class Circular_arc_3
     : public SK::Kernel_base::Circular_arc_3
   {
-    
+
     typedef typename SK::RT                          RT;
     typedef typename SK::FT                          FT;
     typedef typename SK::Line_3                      Line_3;
@@ -38,28 +38,28 @@ namespace CGAL {
     typedef typename SK::Sphere_3                    Sphere_3;
     typedef typename SK::Segment_3                   Segment_3;
     typedef typename SK::Circular_arc_point_3        Circular_arc_point_3;
-    typedef typename SK::Kernel_base::Circular_arc_3 RCircular_arc_3; 
-   
-  
+    typedef typename SK::Kernel_base::Circular_arc_3 RCircular_arc_3;
+
+
   public:
     typedef  RCircular_arc_3 Rep;
-    typedef  SK   R; 
-    
+    typedef  SK   R;
+
     const Rep& rep() const
       {
-	return *this;
+        return *this;
       }
-    
+
     Rep& rep()
       {
-	return *this;
+        return *this;
       }
-    
+
     Circular_arc_3()
       {}
 
-    Circular_arc_3(const Circle_3& c, 
-               const Circular_arc_point_3& s, 
+    Circular_arc_3(const Circle_3& c,
+               const Circular_arc_point_3& s,
                const Circular_arc_point_3& t)
       : RCircular_arc_3(typename R::Construct_circular_arc_3()(c,s,t))
       {}
@@ -67,15 +67,15 @@ namespace CGAL {
     explicit Circular_arc_3(const Circle_3& c)
       : RCircular_arc_3(typename R::Construct_circular_arc_3()(c))
       {}
-        
+
     Circular_arc_3(const Circle_3& c,const Circular_arc_point_3& pt)
       : RCircular_arc_3(typename R::Construct_circular_arc_3()(c,pt))
-      {}        
+      {}
 
     // Not Documented
-    Circular_arc_3(const Circle_3 &c, 
+    Circular_arc_3(const Circle_3 &c,
                    const Sphere_3 &s1, bool less_xyz_s1,
-                   const Sphere_3 &s2, bool less_xyz_s2) 
+                   const Sphere_3 &s2, bool less_xyz_s2)
       : RCircular_arc_3(typename R::Construct_circular_arc_3()(c,s1,less_xyz_s1,
                                                                  s2,less_xyz_s2))
       {}
@@ -83,16 +83,16 @@ namespace CGAL {
     // Not Documented
     Circular_arc_3(const Sphere_3 &s1, bool less_xyz_s1,
                    const Sphere_3 &s2, bool less_xyz_s2,
-                   const Circle_3 &c) 
+                   const Circle_3 &c)
       : RCircular_arc_3(typename R::Construct_circular_arc_3()(s1,less_xyz_s1,
                                                                s2,less_xyz_s2,
                                                                c))
       {}
 
     // Not Documented
-    Circular_arc_3(const Circle_3 &c, 
+    Circular_arc_3(const Circle_3 &c,
                    const Plane_3 &p1, bool less_xyz_p1,
-                   const Plane_3 &p2, bool less_xyz_p2) 
+                   const Plane_3 &p2, bool less_xyz_p2)
       : RCircular_arc_3(typename R::Construct_circular_arc_3()(c,p1,less_xyz_p1,
                                                                  p2,less_xyz_p2))
       {}
@@ -100,18 +100,18 @@ namespace CGAL {
     // Not Documented
     Circular_arc_3(const Plane_3 &p1, bool less_xyz_p1,
                    const Plane_3 &p2, bool less_xyz_p2,
-                   const Circle_3 &c) 
+                   const Circle_3 &c)
       : RCircular_arc_3(typename R::Construct_circular_arc_3()(p1,less_xyz_p1,
                                                                p2,less_xyz_p2,
                                                                c))
       {}
 
-	  Circular_arc_3(const Point_3 &start,
-	                 const Point_3 &middle,
-	                 const Point_3 &end)
-	    : RCircular_arc_3(typename 
-			      R::Construct_circular_arc_3()(start, middle, end)) 
-	  {}
+          Circular_arc_3(const Point_3 &start,
+                         const Point_3 &middle,
+                         const Point_3 &end)
+            : RCircular_arc_3(typename
+                              R::Construct_circular_arc_3()(start, middle, end))
+          {}
 
     Circular_arc_3(const RCircular_arc_3 &a)
      : RCircular_arc_3(a)
@@ -164,29 +164,29 @@ namespace CGAL {
   inline
   bool
   operator==(const Circular_arc_3<SK> &p,
-	     const Circular_arc_3<SK> &q)
+             const Circular_arc_3<SK> &q)
   {
     return SK().equal_3_object()(p, q);
   }
-  
+
   template < typename SK >
   inline
   bool
   operator!=(const Circular_arc_3<SK> &p,
-	     const Circular_arc_3<SK> &q)
+             const Circular_arc_3<SK> &q)
   {
     return ! (p == q);
   }
-  
+
   template < typename SK >
   std::ostream &
   operator<<(std::ostream & os, const Circular_arc_3<SK> &a)
   {
     return os << a.supporting_circle() << " "
-	      << a.source() << " "
-	      << a.target() << " ";
+              << a.source() << " "
+              << a.target() << " ";
   }
-  
+
   template < typename SK >
   std::istream &
   operator>>(std::istream & is, Circular_arc_3<SK> &a)

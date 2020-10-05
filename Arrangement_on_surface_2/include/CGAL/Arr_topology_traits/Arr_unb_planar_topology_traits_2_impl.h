@@ -8,8 +8,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Ron Wein  <wein@post.tau.ac.il>
-//                 Efi Fogel <efif@post.tau.ac.il>
+// Author(s): Ron Wein  <wein@post.tau.ac.il>
+//            Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_UNB_PLANAR_TOPOLOGY_TRAITS_2_IMPL_H
 #define CGAL_ARR_UNB_PLANAR_TOPOLOGY_TRAITS_2_IMPL_H
@@ -296,27 +296,31 @@ are_equal(const Vertex *v,
 // represent the curve end along the face boundary.
 //
 template <typename GeomTraits, typename Dcel_>
-CGAL::Object
+boost::optional
+  <boost::variant
+    <typename Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::Vertex*,
+     typename Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::Halfedge*> >
 Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
-place_boundary_vertex(Face *f,
+place_boundary_vertex(Face* f,
                       const X_monotone_curve_2& cv, Arr_curve_end ind,
                       Arr_parameter_space ps_x, Arr_parameter_space ps_y)
 {
-  // Get a halfedge on the outer CCB of f and start traversing the CCB.
-  Halfedge           *first = *(f->outer_ccbs_begin());
-  Halfedge           *curr = first;
-  bool                eq_source, eq_target;
+  typedef boost::variant<Vertex*, Halfedge*>    Non_optional_result;
+  typedef boost::optional<Non_optional_result>  Result;
 
-  do
-  {
+  // Get a halfedge on the outer CCB of f and start traversing the CCB.
+  Halfedge* first = *(f->outer_ccbs_begin());
+  Halfedge* curr = first;
+  bool eq_source, eq_target;
+
+  do {
     // Note we consider only fictitious halfedges and check whether they
     // contain the relevant curve end.
     if (curr->has_null_curve() &&
-        _is_on_fictitious_edge (cv, ind, ps_x, ps_y, curr,
-                                eq_source, eq_target))
+        _is_on_fictitious_edge(cv, ind, ps_x, ps_y, curr, eq_source, eq_target))
     {
-      CGAL_assertion (! eq_source && ! eq_target);
-      return (CGAL::make_object (curr));
+      CGAL_assertion(! eq_source && ! eq_target);
+      return Result(curr);
     }
 
     // Move to the next halfegde along the CCB.
@@ -327,59 +331,58 @@ place_boundary_vertex(Face *f,
   // If we reached here, we did not find a suitable halfegde, which should
   // never happen.
   CGAL_error();
-  return CGAL::Object();
+  return boost::none;
 }
 
 //-----------------------------------------------------------------------------
 // Locate a DCEL feature that contains the given unbounded curve end.
 //
 template <typename GeomTraits, typename Dcel_>
-CGAL::Object Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
+boost::variant
+<typename Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::Vertex*,
+ typename Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::Halfedge*,
+ typename Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::Face*>
+Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
 locate_curve_end (const X_monotone_curve_2& cv, Arr_curve_end ind,
                   Arr_parameter_space ps_x, Arr_parameter_space ps_y)
 {
+  typedef boost::variant<Vertex*, Halfedge*, Face*>     Result;
+
   // Start traversing the inner CCB of the fictitious face and try to locate
   // a feature that contains the curve end.
-  Halfedge   *first = *(fict_face->inner_ccbs_begin());
-  Halfedge   *curr = first;
-  bool        eq_source, eq_target;
+  Halfedge* first = *(fict_face->inner_ccbs_begin());
+  Halfedge* curr = first;
+  bool eq_source, eq_target;
 
-  do
-  {
-    if (_is_on_fictitious_edge (cv, ind, ps_x, ps_y, curr,
-                                eq_source, eq_target))
+  do {
+    if (_is_on_fictitious_edge(cv, ind, ps_x, ps_y, curr, eq_source, eq_target))
     {
-      if (eq_source)
-      {
+      if (eq_source) {
         // cv's end coincides with the source vertex of the current
         // fictitious halfedge. This means that cv overlaps the curve that
         // is associated with the only non-fictitious halfedge incident to
         // this vertex. We therefore return a pointer to this halfedge.
-        Halfedge     *he = curr->opposite()->next();
-
-        CGAL_assertion (! he->has_null_curve());
-        return (CGAL::make_object (he));
+        Halfedge* he = curr->opposite()->next();
+        CGAL_assertion(! he->has_null_curve());
+        return Result(he);
       }
-      else if (eq_target)
-      {
+      else if (eq_target) {
         // cv's end coincides with the target vertex of the current
         // fictitious halfedge. This means that cv overlaps the curve that
         // is associated with the only non-fictitious halfedge incident to
         // this vertex. We therefore return a pointer to this halfedge.
-        Halfedge     *he = curr->opposite()->prev();
-
-        CGAL_assertion (! he->has_null_curve());
-        return (CGAL::make_object (he));
+        Halfedge* he = curr->opposite()->prev();
+        CGAL_assertion(! he->has_null_curve());
+        return Result(he);
       }
 
       // The current ficitious edge contains cv's end in its interior.
       // Note we use curr's twin, whose incident face is a valid
       // unbounded face (whereas the incident face of curr is the fictitious
       // face).
-      Face      *uf = curr->opposite()->outer_ccb()->face();
-
+      Face* uf = curr->opposite()->outer_ccb()->face();
       CGAL_assertion (uf->is_unbounded() && ! uf->is_fictitious());
-      return (CGAL::make_object (uf));
+      return Result(uf);
     }
 
     curr = curr->next();
@@ -388,7 +391,8 @@ locate_curve_end (const X_monotone_curve_2& cv, Arr_curve_end ind,
 
   // We should never reach here.
   CGAL_error();
-  return Object();
+  Vertex* v(nullptr);
+  return Result(v);
 }
 
 //-----------------------------------------------------------------------------

@@ -10,7 +10,7 @@
 void from_opt_var() {
   int i = 0;
   double j = 0.0;
-  CGAL_USE(i);   CGAL_USE(j); 
+  CGAL_USE(i);   CGAL_USE(j);
   boost::optional< boost::variant<int, char, double> > v(23);
   CGAL::Object o = v;
   CGAL_assertion(!o.empty());
@@ -30,7 +30,7 @@ void from_opt_var() {
 
 void from_var() {
   int i = 0;
-  CGAL_USE(i); 
+  CGAL_USE(i);
   boost::variant<int, char, double> v(23);
   CGAL::Object o = v;
   CGAL_assertion(!o.empty());
@@ -43,7 +43,7 @@ struct Foo {
 
 void make_object_and_assign() {
   int i = 23, j = 0;
-  CGAL_USE(j); 
+  CGAL_USE(j);
   CGAL::Object o = CGAL::make_object(i);
   CGAL_assertion(CGAL::assign(j, o));
   CGAL_assertion(j == i);
@@ -56,7 +56,7 @@ void safe_bool() {
   CGAL_assertion(!o);
   CGAL::Object o2 = CGAL::make_object(23);
   CGAL_assertion(o2);
-  
+
   // dummy code, we want to bork on this
   // if(o == o2) ;
   // if(o < 0) ;

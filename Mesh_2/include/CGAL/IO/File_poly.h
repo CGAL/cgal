@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -137,7 +137,7 @@ write_triangle_poly_file(const CDT& t, std::ostream &f,
 
   f << std::endl;
 
-  
+
   // write seeds, assuming that the seeds unmarks faces
   f << std::distance(begin, end) << std::endl;
   unsigned int seeds_counter = 0;
@@ -152,7 +152,7 @@ void
 write_triangle_poly_file(const CDT& t, std::ostream &f)
 {
   std::list<int> l;
-  
+
   write_triangle_poly_file(t, f, l.begin(), l.end());
 }
 

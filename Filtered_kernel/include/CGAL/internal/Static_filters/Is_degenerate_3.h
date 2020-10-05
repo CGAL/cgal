@@ -38,33 +38,22 @@ public:
 
   typedef typename Base::result_type  result_type;
 
-
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else // CGAL_CFG_MATCHING_BUG_6
-  template <typename T>
+
   result_type
-  operator()(const T& t) const
-  {
-    return Base()(t);
-  }
-#endif // end CGAL_CFG_MATCHING_BUG_6
-
-
-  result_type 
   operator()(const Segment_3& s) const
   {
     return Equal_3()(Construct_source_3()(s), Construct_target_3()(s));
   }
 
 
-  result_type 
+  result_type
   operator()(const Ray_3& r) const
   {
     return Equal_3()(Construct_source_3()(r), Construct_second_point_3()(r));
   }
 
-  result_type 
+  result_type
   operator()(const Plane_3& p) const
   {
     CGAL_BRANCH_PROFILER(std::string("semi-static attempts/calls to   : ") +

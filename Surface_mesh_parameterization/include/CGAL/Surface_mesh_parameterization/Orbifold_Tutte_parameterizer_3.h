@@ -25,6 +25,7 @@
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/orbifold_shortest_path.h>
 
+#include <CGAL/assertions.h>
 #include <CGAL/Polygon_mesh_processing/Weights.h>
 
 #include <CGAL/assertions.h>
@@ -42,6 +43,7 @@
 
 #include <boost/array.hpp>
 #include <boost/tuple/tuple.hpp>
+#include <boost/type_traits/is_same.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 
@@ -383,6 +385,11 @@ class Orbifold_Tutte_parameterizer_3
 {
 public:
 #ifndef DOXYGEN_RUNNING
+  #if !defined(CGAL_EIGEN3_ENABLED)
+  CGAL_static_assertion_msg(!(boost::is_same<SolverTraits_, Default>::value),
+                            "Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
+  #endif
+
   typedef typename Default::Get<
     SolverTraits_,
   #if defined(CGAL_EIGEN3_ENABLED)
@@ -394,7 +401,6 @@ public:
         Eigen::SparseLU<Eigen_sparse_matrix<double>::EigenType> >
     #endif
   #else
-    #pragma message("Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library")
     SolverTraits_ // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
   >::type                                                     Solver_traits;

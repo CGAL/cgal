@@ -1,16 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Herve Bronnimann, Sylvain Pion
 
@@ -31,7 +31,7 @@ CGAL_KERNEL_LARGE_INLINE
 PlaneC3<R>
 plane_from_points(const typename R::Point_3 &p,
                   const typename R::Point_3 &q,
-		  const typename R::Point_3 &r)
+                  const typename R::Point_3 &r)
 {
   typename R::FT a, b, c, d;
   plane_from_pointsC3(p.x(), p.y(), p.z(),

@@ -20,7 +20,7 @@ int main() {
 
   // Insert number_of_data_points in the tree
   Tree tree(N_Random_points_iterator(rpit,0),
-	    N_Random_points_iterator(N));
+            N_Random_points_iterator(N));
 
   Point query(0.0, 0.0, 0.0);
   Distance tr_dist;
@@ -29,14 +29,14 @@ int main() {
   K_neighbor_search search(tree, query, K);
   for(K_neighbor_search::iterator it = search.begin(); it != search.end(); it++){
     std::cout << " d(q, nearest neighbor)=  "
-	      << tr_dist.inverse_of_transformed_distance(it->second) << std::endl;
+              << tr_dist.inverse_of_transformed_distance(it->second) << std::endl;
   }
   // search K furthest neighbour searching, with eps=0, search_nearest=false
   K_neighbor_search search2(tree, query, K, 0.0, false);
 
   for(K_neighbor_search::iterator it = search2.begin(); it != search2.end(); it++){
     std::cout << " d(q, furthest neighbor)=  "
-	      << tr_dist.inverse_of_transformed_distance(it->second) << std::endl;
+              << tr_dist.inverse_of_transformed_distance(it->second) << std::endl;
   }
   return 0;
 }

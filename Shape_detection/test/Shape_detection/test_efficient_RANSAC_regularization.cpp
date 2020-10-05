@@ -74,7 +74,7 @@ void rotate_vector (Vector& vector, int axis, double angle)
     abort();
 
   vector = trans (vector);
-  
+
 }
 
 std::vector<Plane> get_ransac_planes (const Efficient_ransac& ransac)
@@ -118,26 +118,26 @@ void check_planes_changed (const std::vector<Plane>& before, const std::vector<P
   std::cerr << "Error: no plane has been altered by regularization while at least one should have." << std::endl;
 }
 
-int main() 
+int main()
 {
   Vector vx (1., 0., 0.),
          vy (0., 1., 0.),
          vz (0., 0., 1.);
-  
+
   Vector dvx = vx;
   rotate_vector (dvx, 1, to_rad(10.));
 
   Efficient_ransac ransac;
-  
+
   const std::size_t nb_pts = 5000;
-  
+
   Efficient_ransac::Parameters op;
   op.probability = 0.05;
   op.min_points = nb_pts / 2;
   op.epsilon = 0.02;
   op.cluster_epsilon = 0.2;
   op.normal_threshold = 0.8;
-  
+
   // Test parallelism.
   std::cerr << "Testing parallelism..." << std::endl;
   {
@@ -146,7 +146,7 @@ int main()
     generate_random_points (Point (0., 0., 0.), vx, vy,
                             5000, std::back_inserter (points));
 
-      
+
     generate_random_points (Point (0., 0., 0.5), dvx, vy,
                             5000, std::back_inserter (points));
 
@@ -156,7 +156,7 @@ int main()
     check_ransac_size (ransac, 2);
 
     std::vector<Plane> before = get_ransac_planes(ransac);
-    
+
     // Test regularization.
     Efficient_ransac::Plane_range planes = ransac.planes();
     CGAL::regularize_planes (points,
@@ -165,19 +165,19 @@ int main()
                              CGAL::Shape_detection::Plane_map<Traits>(),
                              CGAL::Shape_detection::Point_to_shape_index_map<Traits>(points, planes),
                              true, false, false, false, 5.);
-    
+
     std::vector<Plane> after = get_ransac_planes(ransac);
 
     std::cerr << " * Nothing should change now..." << std::endl;
     check_planes_unchanged (before, after);
-    
+
     CGAL::regularize_planes (points,
                              Point_map(),
                              planes,
                              CGAL::Shape_detection::Plane_map<Traits>(),
                              CGAL::Shape_detection::Point_to_shape_index_map<Traits>(points, planes),
                              true, false, false, false, 15.);
-    
+
     after = get_ransac_planes(ransac);
 
     std::cerr << " * Something should change now..." << std::endl;
@@ -192,11 +192,11 @@ int main()
 
     generate_random_points (Point (0., 0., 0.), vy, vz,
                             5000, std::back_inserter (points));
-      
+
     generate_random_points (Point (0.5, 0., 0.), dvx, vy,
                             5000, std::back_inserter (points));
 
-    
+
     ransac.set_input(points);
     ransac.add_shape_factory<CGAL::Shape_detection::Plane<Traits> >();
     ransac.detect(op);
@@ -216,7 +216,7 @@ int main()
 
     std::cerr << " * Nothing should change now..." << std::endl;
     check_planes_unchanged (before, after);
-    
+
     CGAL::regularize_planes (points,
                              Point_map(),
                              planes,
@@ -238,7 +238,7 @@ int main()
 
     generate_random_points (Point (0., 0., 0.), vx, vy,
                             5000, std::back_inserter (points));
-      
+
     generate_random_points (Point (1., 1., 0.2), vx, vy,
                             5000, std::back_inserter (points));
 
@@ -261,7 +261,7 @@ int main()
 
     std::cerr << " * Nothing should change now..." << std::endl;
     check_planes_unchanged (before, after);
-    
+
     CGAL::regularize_planes (points,
                              Point_map(),
                              planes,
@@ -280,7 +280,7 @@ int main()
   std::cerr << "Testing symmetry..." << std::endl;
   {
     Pwn_vector points;
-    
+
     Vector dvx1 = vx;
     Vector dvx2 = vx;
     rotate_vector (dvx1, 1, to_rad(40.));
@@ -288,7 +288,7 @@ int main()
 
     generate_random_points (Point (0., 0., -0.5), dvx1, vy,
                             5000, std::back_inserter (points));
-      
+
     generate_random_points (Point (0., 0., 0.5), dvx2, vy,
                             5000, std::back_inserter (points));
 
@@ -310,7 +310,7 @@ int main()
 
     std::cerr << " * Nothing should change now..." << std::endl;
     check_planes_unchanged (before, after);
-    
+
     CGAL::regularize_planes (points,
                              Point_map(),
                              planes,

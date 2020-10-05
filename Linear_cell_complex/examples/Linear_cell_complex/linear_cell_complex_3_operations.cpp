@@ -24,9 +24,9 @@ void run_test()
 {
   typedef typename LCC::Point Point;
   typedef typename LCC::Dart_handle Dart_handle;
-  
+
   LCC lcc;
-  
+
   Dart_handle dh1 = lcc.
     make_hexahedron(Point(0,0,0),Point(1,0,0),
                     Point(1,2,0),Point(0,2,0),
@@ -42,7 +42,7 @@ void run_test()
                     Point(0,2,5),Point(1,2,6),
                     Point(1,3,8),Point(0,0,8),
                     Point(5,0,9),Point(7,3,9));
-  
+
   lcc.template sew<3>(dh1,lcc.other_orientation
                       (lcc.template opposite<2>
                        (lcc.next(lcc.next(lcc.template opposite<2>(dh2))))));
@@ -63,14 +63,14 @@ void run_test()
   path.push_back(lcc.next(lcc.template opposite<2>(dh2)));
   lcc.insert_cell_2_in_cell_3(path.begin(),path.end());
 
-  lcc.display_characteristics(std::cout) << ", valid=" 
-                                         << lcc.is_valid() << std::endl;  
+  lcc.display_characteristics(std::cout) << ", valid="
+                                         << lcc.is_valid() << std::endl;
 }
 
 int main()
 {
   run_test<LCC_3_cmap>();
   run_test<LCC_3_gmap>();
-  
+
   return EXIT_SUCCESS;
 }

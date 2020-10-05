@@ -286,7 +286,7 @@ distributed inside a triangle. The default `Creator` is
 template< typename Point_2, typename Creator >
 class Random_points_in_triangle_2 {
 public:
-	
+
 /// \name Types
 /// @{
 

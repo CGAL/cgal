@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -125,14 +125,14 @@ public:
   has_on(const Point_3_ &p) const
   {
     return R().has_on_3_object()(*this, p);
-  }  
+  }
 
   typename R::Boolean
   has_on(const Circle_3 &c) const
   {
     return R().has_on_3_object()(*this, c);
   }
-  
+
   typename R::Boolean
   has_on_boundary(const Point_3_ &p) const
   {

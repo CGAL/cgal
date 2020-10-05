@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
@@ -44,14 +44,14 @@ namespace CGAL {
 template <class Traits_, class Data_>
 class Arr_consolidated_curve_data_traits_2 :
   public Arr_curve_data_traits_2<Traits_,
-                                 _Unique_list<Data_>, 
+                                 _Unique_list<Data_>,
                                  _Consolidate_unique_lists<Data_>,
                                  Data_>
 {
 private:
 
   typedef Arr_curve_data_traits_2<Traits_,
-                                  _Unique_list<Data_>, 
+                                  _Unique_list<Data_>,
                                   _Consolidate_unique_lists<Data_>,
                                   Data_>            Base;
 
@@ -71,7 +71,7 @@ public:
   typedef typename Base_traits_2::Multiplicity        Multiplicity;
 
   typedef typename Base_traits_2::Has_left_category   Has_left_category;
-  
+
   typedef typename Base_traits_2::Has_merge_category  Base_has_merge_category;
   typedef Tag_true                                    Has_merge_category;
   typedef typename Base_traits_2::Has_do_intersect_category

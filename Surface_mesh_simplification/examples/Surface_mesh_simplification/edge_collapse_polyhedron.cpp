@@ -42,7 +42,7 @@ int main(int argc, char** argv)
   // The surface mesh and stop conditions are mandatory arguments.
   // The index maps are needed because the vertices and edges
   // of this surface mesh lack an "id()" field.
-  std::cout << "Collapsing edges of LCC: " << filename << ", aiming for " << edge_count_treshold << " final edges..." << std::endl;
+  std::cout << "Collapsing edges of Polyhedron: " << filename << ", aiming for " << edge_count_treshold << " final edges..." << std::endl;
   int r = SMS::edge_collapse(surface_mesh, stop,
                              CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index, surface_mesh))
                                               .halfedge_index_map(get(CGAL::halfedge_external_index, surface_mesh)));

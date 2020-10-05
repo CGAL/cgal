@@ -23,8 +23,8 @@ void run(const HalfedgeGraph& graph){
   typename Kernel::Point_3 q(0.0, 1.0, 0.0);
   typename Kernel::Point_3 r(0.0, 0.0, 1.0);
 
-  // constructs the AABB tree and the internal search tree for 
-  // efficient distance queries.  
+  // constructs the AABB tree and the internal search tree for
+  // efficient distance queries.
   Tree tree( CGAL::edges(graph).first,
              CGAL::edges(graph).second, graph);
 
@@ -39,7 +39,7 @@ void run(const HalfedgeGraph& graph){
   typename Kernel::Point_3 point_query(2.0, 2.0, 2.0);
   typename Kernel::Point_3 closest = tree.closest_point(point_query);
 
-  std::cerr << "closest point is: " << closest << std::endl;  
+  std::cerr << "closest point is: " << closest << std::endl;
 }
 
 int main()
@@ -50,7 +50,7 @@ int main()
   Point s(0.0, 0.0, 0.0);
   Polyhedron polyhedron;
   polyhedron.make_tetrahedron(p, q, r, s);
-  
+
   run<K>(polyhedron);
   return EXIT_SUCCESS;
 }

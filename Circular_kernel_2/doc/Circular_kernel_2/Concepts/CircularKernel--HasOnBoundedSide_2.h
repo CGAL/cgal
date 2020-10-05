@@ -3,7 +3,7 @@
 \ingroup PkgCircularKernel2GeometricConcepts
 \cgalConcept
 
-\cgalRefines `Kernel::HasOnBoundedSide_2` 
+\cgalRefines `Kernel::HasOnBoundedSide_2`
 
 \sa `CircularKernel::BoundedSide_2`
 \sa `CircularKernel::HasOnUnboundedSide_2`
@@ -19,11 +19,11 @@ public:
 
 /*!
 
-*/ 
-bool 
-operator() 
-(const CircularKernel::Circle_2& s, 
-const CircularKernel::Circular_arc_point_2& p); 
+*/
+bool
+operator()
+(const CircularKernel::Circle_2& s,
+const CircularKernel::Circular_arc_point_2& p);
 
 /// @}
 

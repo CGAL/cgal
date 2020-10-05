@@ -27,7 +27,7 @@
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
-  
+
 // the two base classes
 #include "ui_Apollonius_graph_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -51,10 +51,10 @@ class MainWindow :
   public Ui::Apollonius_graph_2
 {
   Q_OBJECT
-  
-private:  
-  Apollonius ag; 
-  QGraphicsScene scene;  
+
+private:
+  Apollonius ag;
+  QGraphicsScene scene;
 
   CGAL::Qt::ApolloniusGraphGraphicsItem<Apollonius,K> * agi;
   CGAL::Qt::GraphicsViewCircleInput<K> * ci;
@@ -65,7 +65,7 @@ public:
 public Q_SLOTS:
 
   void processInput(CGAL::Object o);
-  
+
   void on_actionInsertRandomPoints_triggered();
 
   void on_actionLoadPoints_triggered();
@@ -93,28 +93,28 @@ MainWindow::MainWindow()
   agi = new CGAL::Qt::ApolloniusGraphGraphicsItem<Apollonius, K>(&ag);
 
   QObject::connect(this, SIGNAL(changed()),
-		   agi, SLOT(modelChanged()));
+                   agi, SLOT(modelChanged()));
 
   agi->setSitesPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   agi->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(agi);
 
   // Setup input handlers. They get events before the scene gets them
-  // and the input they generate is passed to the triangulation with 
-  // the signal/slot mechanism    
+  // and the input they generate is passed to the triangulation with
+  // the signal/slot mechanism
 
   ci = new CGAL::Qt::GraphicsViewCircleInput<K>(this, &scene);
   QObject::connect(ci, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(processInput(CGAL::Object)));
+                   this, SLOT(processInput(CGAL::Object)));
 
   scene.installEventFilter(ci);
 
-  // 
+  //
   // Manual handling of actions
   //
 
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()),
+                   this, SLOT(close()));
 
   //
   // Setup the scene and the view
@@ -125,8 +125,8 @@ MainWindow::MainWindow()
   this->graphicsView->setMouseTracking(true);
 
   // Turn the vertical axis upside down
-  this->graphicsView->matrix().scale(1, -1);
-                                                      
+  this->graphicsView->transform().scale(1, -1);
+
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
   this->addNavigation(this->graphicsView);
@@ -138,7 +138,7 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
-	  this, SLOT(open(QString)));
+          this, SLOT(open(QString)));
 }
 
 
@@ -153,10 +153,10 @@ MainWindow::processInput(CGAL::Object o)
 }
 
 
-/* 
+/*
  *  Qt Automatic Connections
  *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
- * 
+ *
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
  */
@@ -174,22 +174,22 @@ void
 MainWindow::on_actionInsertRandomPoints_triggered()
 {
   QRectF rect = CGAL::Qt::viewportsBbox(&scene);
-  CGAL::Qt::Converter<K> convert;  
+  CGAL::Qt::Converter<K> convert;
   Iso_rectangle_2 isor = convert(rect);
   double width = isor.xmax() - isor.xmin();
-  
+
   CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((isor.min)(), (isor.max)());
   bool ok = false;
 
-  const int number_of_points = 
-    QInputDialog::getInt(this, 
+  const int number_of_points =
+    QInputDialog::getInt(this,
                              tr("Number of random points"),
                              tr("Enter number of random points"),
-							 100,
-							 0,
-							(std::numeric_limits<int>::max)(),
-							1,
-							&ok);
+                                                         100,
+                                                         0,
+                                                        (std::numeric_limits<int>::max)(),
+                                                        1,
+                                                        &ok);
 
   if(!ok) {
     return;
@@ -217,7 +217,7 @@ void
 MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open Points file"),
+                                                  tr("Open Points file"),
                                                   ".",
                                                   tr("CGAL files (*.wpts.cgal);;"
                                                    #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
@@ -308,7 +308,7 @@ void
 MainWindow::on_actionRecenter_triggered()
 {
   this->graphicsView->setSceneRect(agi->boundingRect());
-  this->graphicsView->fitInView(agi->boundingRect(), Qt::KeepAspectRatio);  
+  this->graphicsView->fitInView(agi->boundingRect(), Qt::KeepAspectRatio);
 }
 
 

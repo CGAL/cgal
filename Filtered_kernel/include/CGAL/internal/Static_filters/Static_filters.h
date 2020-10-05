@@ -6,10 +6,10 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sylvain Pion
- 
+
 #ifndef CGAL_INTERNAL_STATIC_FILTERS_H
 #define CGAL_INTERNAL_STATIC_FILTERS_H
 
@@ -41,7 +41,6 @@
 
 #endif // CGAL_DISABLE_STATIC_FILTERS_ADDED_2011
 
-
 #ifndef CGAL_NO_EQUAL_3_STATIC_FILTERS
 #  include <CGAL/internal/Static_filters/Equal_3.h>
 #  include <CGAL/internal/Static_filters/Equal_2.h>
@@ -65,6 +64,7 @@
 #  include <CGAL/internal/Static_filters/Do_intersect_2.h>
 #endif // NOT NOT CGAL_NO_DO_INTERSECT_STATIC_FILTERS
 
+#include <CGAL/internal/Static_filters/Coplanar_3.h>
 #include <CGAL/internal/Static_filters/Compare_y_at_x_2.h>
 #include <CGAL/internal/Static_filters/Side_of_oriented_circle_2.h>
 #include <CGAL/internal/Static_filters/Side_of_oriented_sphere_3.h>
@@ -121,6 +121,7 @@ public:
   typedef Static_filters_predicates::Side_of_oriented_circle_2<K_base>      Side_of_oriented_circle_2;
   typedef Static_filters_predicates::Side_of_oriented_sphere_3<K_base>      Side_of_oriented_sphere_3;
   typedef Static_filters_predicates::Compare_squared_radius_3<K_base>       Compare_squared_radius_3;
+  typedef Static_filters_predicates::Coplanar_3<K_base,Self>                Coplanar_3;
 
   typedef Static_filters_predicates::Compare_weighted_squared_radius_3<K_base>     Compare_weighted_squared_radius_3;
   typedef Static_filters_predicates::Power_side_of_oriented_power_sphere_3<K_base>                          Power_side_of_oriented_power_sphere_3;
@@ -138,28 +139,28 @@ public:
   { return Collinear_3(); }
 
 #ifndef CGAL_NO_EQUAL_3_STATIC_FILTERS
- Equal_2
+  Equal_2
   equal_2_object() const
   { return Equal_2(); }
 
- Equal_3
+  Equal_3
   equal_3_object() const
   { return Equal_3(); }
 #endif // NOT CGAL_NO_EQUAL_3_STATIC_FILTERS
 
 #ifndef CGAL_NO_COMPARE_X_2_STATIC_FILTERS
- Compare_x_2
+  Compare_x_2
   compare_x_2_object() const
   { return Compare_x_2(); }
 
-Compare_y_2
+  Compare_y_2
   compare_y_2_object() const
   { return Compare_y_2(); }
 
 #endif // NOT CGAL_NO_COMPARE_Y_2_STATIC_FILTERS
 
 #ifndef CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
- Is_degenerate_3
+  Is_degenerate_3
   is_degenerate_3_object() const
   { return Is_degenerate_3(); }
 #endif // NOT CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
@@ -182,7 +183,12 @@ Compare_y_2
   compare_squared_radius_3_object() const
   { return Compare_squared_radius_3(); }
 
-  Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere_3_object() const
+  Coplanar_3
+  coplanar_3_object() const
+  { return Coplanar_3(); }
+
+  Power_side_of_oriented_power_sphere_3
+  power_side_of_oriented_power_sphere_3_object() const
   { return Power_side_of_oriented_power_sphere_3();}
 
   Compare_weighted_squared_radius_3
@@ -297,11 +303,11 @@ Compare_y_2
   Do_intersect_3
   do_intersect_3_object() const
   { return Do_intersect_3(); }
-  
+
   Do_intersect_2
   do_intersect_2_object() const
   { return Do_intersect_2(); }
-  
+
 #endif // NOT CGAL_NO_DO_INTERSECT_STATIC_FILTERS
 
   // The two following are for degenerate cases, so I'll update them later.

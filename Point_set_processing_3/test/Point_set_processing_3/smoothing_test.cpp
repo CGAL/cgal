@@ -36,11 +36,7 @@ typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 
 // Concurrency
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 // ----------------------------------------------------------------------------
 // Tests

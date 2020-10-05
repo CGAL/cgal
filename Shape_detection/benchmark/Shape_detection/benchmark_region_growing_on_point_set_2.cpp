@@ -36,22 +36,22 @@ using Timer  = CGAL::Timer;
 using Region = std::vector<std::size_t>;
 
 void benchmark_region_growing_on_point_set_2(
-  const std::size_t test_count, 
-  const Input_range& input_range, 
-  const FT sphere_radius, 
-  const FT distance_threshold, 
-  const FT angle_threshold, 
+  const std::size_t test_count,
+  const Input_range& input_range,
+  const FT sphere_radius,
+  const FT distance_threshold,
+  const FT angle_threshold,
   const std::size_t min_region_size) {
 
   // Create instances of the parameter classes.
   Neighbor_query neighbor_query(
-    input_range, 
+    input_range,
     sphere_radius);
 
   Region_type region_type(
-    input_range, 
+    input_range,
     distance_threshold, angle_threshold, min_region_size);
-    
+
   // Create an instance of the region growing class.
   Region_growing region_growing(
     input_range, neighbor_query, region_type);
@@ -59,7 +59,7 @@ void benchmark_region_growing_on_point_set_2(
   // Run the algorithm.
   Timer timer;
   std::vector<Region> regions;
-  
+
   timer.start();
   region_growing.detect(std::back_inserter(regions));
   timer.stop();
@@ -87,15 +87,24 @@ void benchmark_region_growing_on_point_set_2(
 }
 
 int main(int argc, char *argv[]) {
-    
+
   // Load xyz data either from a local folder or a user-provided file.
   std::ifstream in(argc > 1 ? argv[1] : "data/point_set_2.xyz");
   CGAL::set_ascii_mode(in);
 
+  if (!in) {
+    std::cout <<
+    "Error: cannot read the file point_set_2.xyz!" << std::endl;
+    std::cout <<
+    "You can either create a symlink to the data folder or provide this file by hand."
+    << std::endl << std::endl;
+    return EXIT_FAILURE;
+  }
+
   Input_range input_range;
   FT a, b, c, d, e, f;
 
-  while (in >> a >> b >> c >> d >> e >> f) 
+  while (in >> a >> b >> c >> d >> e >> f)
     input_range.push_back(std::make_pair(Point_2(a, b), Vector_2(d, e)));
   in.close();
 
@@ -105,16 +114,16 @@ int main(int argc, char *argv[]) {
   const std::size_t min_region_size    = 5;
 
   // Run benchmarks.
-  benchmark_region_growing_on_point_set_2(1, input_range, FT(1), 
+  benchmark_region_growing_on_point_set_2(1, input_range, FT(1),
   distance_threshold, angle_threshold, min_region_size);
 
-  benchmark_region_growing_on_point_set_2(2, input_range, FT(3), 
+  benchmark_region_growing_on_point_set_2(2, input_range, FT(3),
   distance_threshold, angle_threshold, min_region_size);
 
-  benchmark_region_growing_on_point_set_2(3, input_range, FT(6), 
+  benchmark_region_growing_on_point_set_2(3, input_range, FT(6),
   distance_threshold, angle_threshold, min_region_size);
 
-  benchmark_region_growing_on_point_set_2(4, input_range, FT(9), 
+  benchmark_region_growing_on_point_set_2(4, input_range, FT(9),
   distance_threshold, angle_threshold, min_region_size);
 
   return EXIT_SUCCESS;

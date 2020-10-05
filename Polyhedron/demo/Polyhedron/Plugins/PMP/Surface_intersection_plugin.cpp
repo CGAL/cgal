@@ -15,7 +15,7 @@
 #include <QMenu>
 #include <QMainWindow>
 #include <QApplication>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QMessageBox>
 
 typedef Scene_surface_mesh_item Scene_face_graph_item;
@@ -130,7 +130,7 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfaces()
 
       Scene_polylines_item* new_item = new Scene_polylines_item();
      // perform Boolean operation
-      QTime time;
+      QElapsedTimer time;
       time.start();
 
       try{
@@ -193,7 +193,7 @@ void Polyhedron_demo_intersection_plugin::intersectionPolylines()
       Scene_points_with_normal_item* new_point_item = new Scene_points_with_normal_item();
       Scene_polylines_item* new_pol_item = new Scene_polylines_item();
      // perform Boolean operation
-      QTime time;
+      QElapsedTimer time;
       time.start();
       std::vector<Polyline_3> polyA, polyB;
       Q_FOREACH(const Polyline_3& poly, itemA->polylines)
@@ -289,7 +289,7 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfacePolyline()
   Scene_points_with_normal_item* new_point_item = new Scene_points_with_normal_item();
   Scene_polylines_item* new_pol_item = new Scene_polylines_item();
   // perform Boolean operation
-  QTime time;
+  QElapsedTimer time;
   time.start();
   Scene_face_graph_item::Face_graph tm = *itemA->face_graph();
   std::vector<face_descriptor> Afaces;

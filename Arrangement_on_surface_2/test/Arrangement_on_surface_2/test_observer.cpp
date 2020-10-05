@@ -69,13 +69,13 @@ public:
   /// \name Notification functions on global arrangement operations.
   //@{
 
-  /*! 
+  /*!
    * Notification before the arrangement is assigned with another
    * arrangement.
    * \param arr The arrangement to be copied.
    */
   virtual void before_assign (const Arrangement_2& /* arr */)
-  { 
+  {
     compare_results("before_assign");
   }
 
@@ -84,13 +84,13 @@ public:
    * arrangement.
    */
   virtual void after_assign ()
-  { 
+  {
     compare_results("after_assign");
   }
 
   /*! Notification before the arrangement is cleared. */
   virtual void before_clear ()
-  { 
+  {
     compare_results("before_clear");
   }
 
@@ -118,12 +118,12 @@ public:
   /// \name Notification functions on observer attachment or detachment.
   //@{
 
-  /*! 
+  /*!
    * Notification before the observer is attached to an arrangement.
    * \param arr The arrangement we are about to attach the observer to.
    */
   virtual void before_attach (const Arrangement_2& /* arr */)
-  { 
+  {
     compare_results("before_attach");
   }
 
@@ -135,7 +135,7 @@ public:
     compare_results("after_attach");
   }
 
-  /*! 
+  /*!
    * Notification before the observer is detached from the arrangement.
    */
   virtual void before_detach ()
@@ -148,7 +148,7 @@ public:
    */
   virtual void after_detach ()
 
-  { 
+  {
     compare_results("after_detach");
   }
   //@}
@@ -171,7 +171,7 @@ public:
    * \param v A handle to the created vertex.
    */
   virtual void after_create_vertex (Vertex_handle /* v */)
-  { 
+  {
     compare_results("after_create_vertex");
   }
 
@@ -208,7 +208,7 @@ public:
   virtual void before_create_edge (const X_monotone_curve_2& /* c */,
                                    Vertex_handle /* v1 */,
                                    Vertex_handle /* v2 */)
-  { 
+  {
     compare_results("before_create_edge");
   }
 
@@ -217,7 +217,7 @@ public:
    * \param e A handle to one of the twin halfedges that were created.
    */
   virtual void after_create_edge (Halfedge_handle /* e */)
-  { 
+  {
     compare_results("after_create_edge");
   }
 
@@ -228,7 +228,7 @@ public:
    */
   virtual void before_modify_vertex (Vertex_handle /* v */,
                                      const Point_2& /* p */)
-  { 
+  {
     compare_results("before_modify_vertex");
   }
 
@@ -237,7 +237,7 @@ public:
    * \param v A handle to the updated vertex.
    */
   virtual void after_modify_vertex (Vertex_handle /* v */)
-  { 
+  {
     compare_results("after_modify_vertex");
   }
 
@@ -248,7 +248,7 @@ public:
    */
   virtual void before_modify_edge (Halfedge_handle /* e */,
                                    const X_monotone_curve_2& /* c */)
-  { 
+  {
     compare_results("before_modify_edge");
   }
 
@@ -257,7 +257,7 @@ public:
    * \param e A handle to one of the twin halfedges that were updated.
    */
   virtual void after_modify_edge (Halfedge_handle /* e */)
-  { 
+  {
     compare_results("after_modify_edge");
   }
 
@@ -272,7 +272,7 @@ public:
                                   Vertex_handle /* v */,
                                   const X_monotone_curve_2& /* c1 */,
                                   const X_monotone_curve_2& /* c2 */)
-  { 
+  {
     compare_results("before_split_edge");
   }
 
@@ -283,7 +283,7 @@ public:
    */
   virtual void after_split_edge (Halfedge_handle /* e1 */,
                                  Halfedge_handle /* e2 */)
-  { 
+  {
     compare_results("after_split_edge");
   }
 
@@ -294,7 +294,7 @@ public:
    */
   virtual void before_split_fictitious_edge (Halfedge_handle /* e */,
                                              Vertex_handle /* v */)
-  { 
+  {
     compare_results("before_split_fictitious_edge");
   }
 
@@ -305,7 +305,7 @@ public:
    */
   virtual void after_split_fictitious_edge (Halfedge_handle /* e1 */,
                                             Halfedge_handle /* e2 */)
-  { 
+  {
     compare_results("after_split_fictitious_edge");
   }
 
@@ -316,7 +316,7 @@ public:
    */
   virtual void before_split_face (Face_handle /* f */,
                                   Halfedge_handle /* e */)
-  { 
+  {
     compare_results("before_split_face");
   }
 
@@ -329,7 +329,7 @@ public:
   virtual void after_split_face (Face_handle /* f */,
                                  Face_handle /* new_f */,
                                  bool /* is_hole */)
-  { 
+  {
     compare_results("after_split_face");
   }
 
@@ -342,7 +342,7 @@ public:
   virtual void before_split_outer_ccb (Face_handle /* f */,
                                        Ccb_halfedge_circulator /* h */,
                                        Halfedge_handle /* e */)
-  { 
+  {
     compare_results("before_split_outer_ccb");
   }
 
@@ -355,7 +355,7 @@ public:
   virtual void after_split_outer_ccb (Face_handle /* f */,
                                       Ccb_halfedge_circulator /* h1 */,
                                       Ccb_halfedge_circulator /* h2 */)
-  { 
+  {
     compare_results("after_split_outer_ccb");
   }
 
@@ -368,7 +368,7 @@ public:
   virtual void before_split_inner_ccb (Face_handle /* f */,
                                        Ccb_halfedge_circulator /* h */,
                                        Halfedge_handle /* e */)
-  { 
+  {
     compare_results("before_split_inner_ccb");
   }
 
@@ -381,7 +381,7 @@ public:
   virtual void after_split_inner_ccb (Face_handle /* f */,
                                       Ccb_halfedge_circulator /* h1 */,
                                       Ccb_halfedge_circulator /* h2 */)
-  { 
+  {
     compare_results("after_split_inner_ccb");
   }
 
@@ -392,7 +392,7 @@ public:
    */
   virtual void before_add_outer_ccb (Face_handle /* f */,
                                      Halfedge_handle /* e */)
-  { 
+  {
     compare_results("before_add_outer_ccb");
   }
 
@@ -401,7 +401,7 @@ public:
    * \param h A circulator representing the boundary of the new outer CCB.
    */
   virtual void after_add_outer_ccb (Ccb_halfedge_circulator /* h */)
-  { 
+  {
     compare_results("after_add_outer_ccb");
   }
 
@@ -412,7 +412,7 @@ public:
    */
   virtual void before_add_inner_ccb (Face_handle /* f */,
                                      Halfedge_handle /* e */)
-  { 
+  {
     compare_results("before_add_inner_ccb");
   }
 
@@ -421,7 +421,7 @@ public:
    * \param h A circulator representing the boundary of the new inner CCB.
    */
   virtual void after_add_inner_ccb (Ccb_halfedge_circulator /* h */)
-  { 
+  {
     compare_results("after_add_inner_ccb");
   }
 
@@ -432,7 +432,7 @@ public:
    */
   virtual void before_add_isolated_vertex (Face_handle /* f */,
                                            Vertex_handle /* v */)
-  { 
+  {
     compare_results("before_add_isolated_vertex");
   }
 
@@ -441,7 +441,7 @@ public:
    * \param v The isolated vertex.
    */
   virtual void after_add_isolated_vertex (Vertex_handle /* v */)
-  { 
+  {
     compare_results("after_add_isolated_vertex");
   }
 
@@ -454,7 +454,7 @@ public:
   virtual void before_merge_edge (Halfedge_handle /* e1 */,
                                   Halfedge_handle /* e2 */,
                                   const X_monotone_curve_2& /* c */)
-  { 
+  {
     compare_results("before_merge_edge");
   }
 
@@ -463,7 +463,7 @@ public:
    * \param e A handle to one of the twin halfedges forming the merged edge.
    */
   virtual void after_merge_edge (Halfedge_handle /* e */)
-  { 
+  {
     compare_results("after_merge_edge");
   }
 
@@ -474,7 +474,7 @@ public:
    */
   virtual void before_merge_fictitious_edge (Halfedge_handle /* e1 */,
                                              Halfedge_handle /* e2 */)
-  { 
+  {
     compare_results("before_merge_fictitious_edge");
   }
 
@@ -483,7 +483,7 @@ public:
    * \param e A handle to one of the twin halfedges forming the merged edge.
    */
   virtual void after_merge_fictitious_edge (Halfedge_handle /* e */)
-  { 
+  {
     compare_results("after_merge_fictitious_edge");
   }
 
@@ -496,7 +496,7 @@ public:
   virtual void before_merge_face (Face_handle /* f1 */,
                                   Face_handle /* f2 */,
                                   Halfedge_handle /* e */)
-  { 
+  {
     compare_results("before_merge_face");
   }
 
@@ -505,7 +505,7 @@ public:
    * \param f A handle to the merged face.
    */
   virtual void after_merge_face (Face_handle /* f */)
-  { 
+  {
     compare_results("after_merge_face");
   }
 
@@ -520,7 +520,7 @@ public:
                                        Ccb_halfedge_circulator /* h1 */,
                                        Ccb_halfedge_circulator /* h2 */,
                                        Halfedge_handle /* e */)
-  { 
+  {
     compare_results("before_merge_outer_ccb");
   }
 
@@ -531,7 +531,7 @@ public:
    */
   virtual void after_merge_outer_ccb (Face_handle /* f */,
                                       Ccb_halfedge_circulator /* h */)
-  { 
+  {
     compare_results("after_merge_outer_ccb");
   }
 
@@ -546,7 +546,7 @@ public:
                                        Ccb_halfedge_circulator /* h1 */,
                                        Ccb_halfedge_circulator /* h2 */,
                                        Halfedge_handle /* e */)
-  { 
+  {
     compare_results("before_merge_inner_ccb");
   }
 
@@ -557,7 +557,7 @@ public:
    */
   virtual void after_merge_inner_ccb (Face_handle /* f */,
                                       Ccb_halfedge_circulator /* h */)
-  { 
+  {
     compare_results("after_merge_inner_ccb");
   }
 
@@ -570,7 +570,7 @@ public:
   virtual void before_move_outer_ccb (Face_handle /* from_f */,
                                       Face_handle /* to_f */,
                                       Ccb_halfedge_circulator /* h */)
-  { 
+  {
     compare_results("before_move_outer_ccb");
   }
 
@@ -579,7 +579,7 @@ public:
    * \param h A circulator representing the boundary of the component.
    */
   virtual void after_move_outer_ccb (Ccb_halfedge_circulator /* h */)
-  { 
+  {
     compare_results("after_move_outer_ccb");
   }
 
@@ -593,7 +593,7 @@ public:
   virtual void before_move_inner_ccb (Face_handle /* from_f */,
                                       Face_handle /* to_f */,
                                       Ccb_halfedge_circulator /* h */)
-  { 
+  {
     compare_results("before_move_inner_ccb");
   }
 
@@ -602,7 +602,7 @@ public:
    * \param h A circulator representing the boundary of the component.
    */
   virtual void after_move_inner_ccb (Ccb_halfedge_circulator /* h */)
-  { 
+  {
     compare_results("after_move_inner_ccb");
   }
 
@@ -615,7 +615,7 @@ public:
   virtual void before_move_isolated_vertex (Face_handle /* from_f */,
                                             Face_handle /* to_f */,
                                             Vertex_handle /* v */)
-  { 
+  {
     compare_results("before_move_isolated_vertex");
   }
 
@@ -624,7 +624,7 @@ public:
    * \param v The isolated vertex.
    */
   virtual void after_move_isolated_vertex (Vertex_handle /* v */)
-  { 
+  {
     compare_results("after_move_isolated_vertex");
   }
 
@@ -633,7 +633,7 @@ public:
    * \param v A handle to the vertex to be deleted.
    */
   virtual void before_remove_vertex (Vertex_handle /* v */)
-  { 
+  {
     compare_results("before_remove_vertex");
   }
 
@@ -641,7 +641,7 @@ public:
    * Notificaion after the removal of a vertex.
    */
   virtual void after_remove_vertex ()
-  { 
+  {
     compare_results("after_remove_vertex");
   }
 
@@ -650,7 +650,7 @@ public:
    * \param e A handle to one of the twin halfedges to be deleted.
    */
   virtual void before_remove_edge (Halfedge_handle /* e */)
-  { 
+  {
     compare_results("before_remove_edge");
   }
 
@@ -658,7 +658,7 @@ public:
    * Notificaion after the removal of an edge.
    */
   virtual void after_remove_edge ()
-  { 
+  {
     compare_results("after_remove_edge");
   }
 
@@ -669,7 +669,7 @@ public:
    */
   virtual void before_remove_outer_ccb (Face_handle /* f */,
                                         Ccb_halfedge_circulator /* h */)
-  { 
+  {
     compare_results("before_remove_outer_ccb");
   }
 
@@ -678,7 +678,7 @@ public:
    * \param f The face that used to own the outer CCB.
    */
   virtual void after_remove_outer_ccb (Face_handle /* f */)
-  { 
+  {
     compare_results("after_remove_outer_ccb");
   }
 
@@ -689,7 +689,7 @@ public:
    */
   virtual void before_remove_inner_ccb (Face_handle /* f */,
                                         Ccb_halfedge_circulator /* h */)
-  { 
+  {
     compare_results("before_remove_inner_ccb");
   }
 
@@ -698,7 +698,7 @@ public:
    * \param f The face that used to contain the inner CCB.
    */
   virtual void after_remove_inner_ccb (Face_handle /* f */)
-  { 
+  {
     compare_results("after_remove_inner_ccb");
   }
 

@@ -9,7 +9,7 @@ project( Nef_3_Examples )
 find_package(CGAL COMPONENTS Qt5)
 
 if(CGAL_Qt5_FOUND)
-	add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
+        add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
 endif()
 
 if ( CGAL_FOUND )
@@ -21,12 +21,12 @@ if ( CGAL_FOUND )
   endforeach()
 
   if(CGAL_Qt5_FOUND)
-  	target_link_libraries(draw_nef_3 PUBLIC CGAL::CGAL_Qt5)
+          target_link_libraries(draw_nef_3 PUBLIC CGAL::CGAL_Qt5)
   endif()
 
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

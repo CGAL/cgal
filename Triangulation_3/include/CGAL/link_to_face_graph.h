@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 //
@@ -30,7 +30,7 @@ template<class Triangulation_3,class FG>
 typename boost::graph_traits<FG>::vertex_descriptor
 link_to_face_graph(const Triangulation_3& t,
                    typename Triangulation_3::Vertex_handle vh,
-                   FG& fg, 
+                   FG& fg,
                    bool no_infinite_faces = true)
 {
   typedef typename Triangulation_3::Cell_handle Cell_handle;
@@ -59,7 +59,7 @@ link_to_face_graph(const Triangulation_3& t,
       if(no_infinite_faces && t.is_infinite(vhj)){
         infinite_face = true;
       } else {
-        std::pair<typename Vertex_map::iterator,bool> res 
+        std::pair<typename Vertex_map::iterator,bool> res
           = vertex_map.insert(std::make_pair(vhj,nullvertex));
         if(res.second){
           res.first->second = add_vertex(fg);

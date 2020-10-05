@@ -97,11 +97,11 @@ struct Polygon_soup
 
 class Scene_surface_mesh_item;
 
-class SCENE_POLYGON_SOUP_ITEM_EXPORT Scene_polygon_soup_item 
+class SCENE_POLYGON_SOUP_ITEM_EXPORT Scene_polygon_soup_item
         : public CGAL::Three::Scene_item_rendering_helper
 {
     Q_OBJECT
-public:  
+public:
     typedef EPICK::Point_3 Point_3;
     typedef Polygon_soup::Points Points;
     typedef Polygon_soup::Polygons Polygons;
@@ -115,7 +115,7 @@ public:
 
     template <class Point, class Polygon>
     void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons);
-    
+
     template <class Point, class Polygon>
     void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons,
               const std::vector<CGAL::Color>& fcolors,

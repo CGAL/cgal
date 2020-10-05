@@ -3,14 +3,14 @@ struct Point {
 
   Point() { vec[0]= vec[1] = 0; }
   Point (double x, double y) { vec[0]=x; vec[1]=y; }
- 
+
   double x() const { return vec[ 0 ]; }
   double y() const { return vec[ 1 ]; }
 
   double& x() { return vec[ 0 ]; }
   double& y() { return vec[ 1 ]; }
-  
-  bool operator==(const Point& p) const 
+
+  bool operator==(const Point& p) const
   {
     return (x() == p.x()) && (y() == p.y())  ;
   }

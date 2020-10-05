@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sven Schoenherr
 //                 Bernd Gaertner <gaertner@inf.ethz.ch>
@@ -55,7 +55,7 @@ ET QP_solver<Q, ET, Tags>::upper_bound(int i) const
   // Given an index of an original variable, returns its upper bound.
 {
   CGAL_qpe_assertion(i < qp_n); // Note: slack variables cannot have
-				// finite upper bounds.
+                                // finite upper bounds.
   CGAL_qpe_assertion(has_finite_upper_bound(i));
   return *(qp_u+i);
 }
