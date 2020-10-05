@@ -132,7 +132,7 @@ template <typename Kernel>
 inline bool _is_empty (const Polygon_with_holes_2<Kernel>& pwh,
                        typename Gps_polyline_traits<Kernel>::Traits&)
 {
-  return (pwh.outer_boundary().size() == 0);
+  return false;
 }
 
 template <class Pgn1, class Pgn2, class Pwh, class Traits>
