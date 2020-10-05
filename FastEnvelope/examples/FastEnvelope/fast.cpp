@@ -1232,7 +1232,7 @@ struct Envelope {
   Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(
 		const ePoint_3& ip,
 		const std::vector<unsigned int>& prismindex,
-                const std::vector<std::vector<int>>& intersect_face,
+                const std::vector<std::vector<int>*>& intersect_face,
                 const std::vector<bool>& coverlist,
                 const int &jump1,
                 const int &jump2,
@@ -1251,9 +1251,9 @@ struct Envelope {
           ori = -1;
           const Prism& prism = halfspace[prismindex[i]];
           for (int j = 0; j < prism.size(); j++) {
-            if (intersect_face[i][fid] == j)
+            if ((*intersect_face[i])[fid] == j)
               {
-                if (fid + 1 < intersect_face[i].size()) fid++;
+                if (fid + 1 < intersect_face[i]->size()) fid++;
               }
             else continue;
 
@@ -1273,9 +1273,9 @@ struct Envelope {
           fid = 0;
           ori = -1;
           for (int j = 0; j < halfspace[prismindex[i]].size(); j++) {
-            if (intersect_face[i][fid] == j)
+            if ((*intersect_face[i])[fid] == j)
               {
-                if (fid + 1 < intersect_face[i].size()) fid++;
+                if (fid + 1 < intersect_face[i]->size()) fid++;
                 continue;
               }
 
@@ -1452,7 +1452,8 @@ struct Envelope {
 
     std::vector<unsigned int> neighbours;//local id
     std::vector<unsigned int > list;
-    std::vector<std::vector<int>> neighbour_facets, idlistorder;
+    std::vector<std::vector<int>*> neighbour_facets;
+    std::vector<std::vector<int>>  idlistorder;
     std::vector<bool> neighbour_cover;
     idlistorder.emplace_back(intersect_face[queue[0]]);
 
@@ -1552,7 +1553,7 @@ struct Envelope {
       neighbour_cover.resize(list.size());
       for (int j = 0; j < list.size(); j++) {
         neighbours[j] = filtered_intersection[list[j]];
-        neighbour_facets[j] = intersect_face[list[j]];
+        neighbour_facets[j] = &(intersect_face[list[j]]);
         if (coverlist[list[j]] == true) neighbour_cover[j] = true;
         else neighbour_cover[j] = false;
       }
@@ -2036,7 +2037,7 @@ int main(int argc, char* argv[])
   std::ofstream inside("inside.txt");
   std::ofstream outside("outside.txt");
 
-  for(int i = 0; i < env_vertices.size()    ; i+=10){
+  for(int i = 0; i < env_vertices.size() ; i+=10){
       for(int j = i+1; j < env_vertices.size(); j+= 10){
         for(int k = j+1; k < env_vertices.size(); k+=10){
           if( ( i != j) && (i != k) && (j != k)){
