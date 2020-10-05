@@ -921,7 +921,7 @@ struct Lazy_construction_optional
   template <typename L1, typename L2>
   result_type operator()(const L1& l1, const L2& l2) const
   {
-    typedef Lazy_rep_optional_n<typename AK::Point_3, typename EK::Point_3, AC, EC, E2A, L1, L2> LazyPointRep;
+
     Protect_FPU_rounding<Protection> P;
 
     try {
@@ -930,10 +930,12 @@ struct Lazy_construction_optional
         return boost::none;
       }
       // Now we have to construct a rep for a lazy point with the line and the plane.
+      typedef Lazy_rep_optional_n<typename AK::Point_3, typename EK::Point_3, AC, EC, E2A, L1, L2> LazyPointRep;
 
+      static LazyPointRep rep;
       const typename AK::Point_3 ap = *oap;
-      LazyPointRep *rep = new LazyPointRep(ap, ec, l1, l2);
-      typename LK::Point_3 lp(rep);
+      rep = LazyPointRep(2, ap, ec, l1, l2);
+      typename LK::Point_3 lp(&rep);
       return boost::make_optional(lp);
 
 

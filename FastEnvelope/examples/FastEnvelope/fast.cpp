@@ -93,8 +93,8 @@ struct Envelope {
       etriangle = { ePoint_3(t0.x(), t0.y(), t0.z()),
                     ePoint_3(t1.x(), t1.y(), t1.z()),
                     ePoint_3(t2.x(), t2.y(), t2.z()) };
-      Point_3 in = t0 + CGAL::cross_product((t0 - t1), (t0 - t2));
-      n = ePoint_3(in.x(), in.y(), in.z());
+      n = etriangle[0] + CGAL::cross_product((etriangle[0] - etriangle[1]), (etriangle[0] - etriangle[2]));
+      //n = ePoint_3(in.x(), in.y(), in.z());
     }
 
     void init_elines()
@@ -614,6 +614,11 @@ struct Envelope {
 
     if (CGAL::orientation(n, tp, tq, tr) == 0){
         std::cout << "todo degeneration handling" << std::endl;
+        std::cout << CGAL::approx(tp) << std::endl;
+        std::cout << CGAL::approx(tq) << std::endl;
+        std::cout << CGAL::approx(tr) << std::endl;
+        std::cout << n << std::endl;
+        exit (0);
         //n = Point_3(rand(), rand(), rand())} };
       }
 
@@ -2031,7 +2036,7 @@ int main(int argc, char* argv[])
   std::ofstream inside("inside.txt");
   std::ofstream outside("outside.txt");
 
-  for(int i = 0; i <  env_vertices.size()    ; i+=10){
+  for(int i = 0; i < env_vertices.size()    ; i+=10){
       for(int j = i+1; j < env_vertices.size(); j+= 10){
         for(int k = j+1; k < env_vertices.size(); k+=10){
           if( ( i != j) && (i != k) && (j != k)){
