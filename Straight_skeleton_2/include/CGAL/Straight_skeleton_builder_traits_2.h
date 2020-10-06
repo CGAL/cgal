@@ -391,7 +391,7 @@ struct Straight_skeleton_builder_traits_2_base
   typedef typename K::Direction_2 Direction_2 ;
 
   typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2 ;
-  typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2_with_ID ; // used in BOOST_MPL_HAS_XXX_TRAIT_DEF
+  typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2_with_ID ; // for BOOST_MPL_HAS_XXX_TRAIT_DEF
   typedef CGAL_SS_i::Trisegment_2<K>      Trisegment_2 ;
   typedef typename Trisegment_2::Self_ptr Trisegment_2_ptr ;
 
@@ -510,7 +510,7 @@ public:
   struct Filters_split_events_tag{};
 
   template <class EventPtr>
-  bool CanSafelyIgnoreSplitEvent(const EventPtr& lEvent)
+  bool CanSafelyIgnoreSplitEvent(const EventPtr& lEvent) const
   {
     // filter event
     if ( ! mFilteringBound )
@@ -534,7 +534,7 @@ public:
   template <class Vertex_handle, class Halfedge_handle_vector_iterator>
   void ComputeFilteringBound(Vertex_handle lPrev, Vertex_handle aNode, Vertex_handle lNext,
                              Halfedge_handle_vector_iterator contour_halfedges_begin,
-                             Halfedge_handle_vector_iterator contour_halfedges_end)
+                             Halfedge_handle_vector_iterator contour_halfedges_end) const
   {
     mFilteringBound = boost::none;
 
@@ -592,7 +592,7 @@ public:
   mutable std::size_t mTrisegment_ID = 0 ;
   mutable CGAL_SS_i::Time_cache<K> mTime_cache ;
   mutable CGAL_SS_i::Coeff_cache<K> mCoeff_cache ;
-  boost::optional< typename K::FT > mFilteringBound ;
+  mutable boost::optional< typename K::FT > mFilteringBound ;
 } ;
 
 template<class K>
@@ -742,6 +742,7 @@ public:
                                                 typename Filtering::Construct_ss_event_time_and_point_2(
                                                   mApproximate_traits.mTime_cache, mApproximate_traits.mCoeff_cache) );
   }
+
 // constructor of trisegments using global id stored in the traits
   Construct_ss_trisegment_2
   get( Construct_ss_trisegment_2 const* = 0 ) const
@@ -765,24 +766,16 @@ public:
 // functions to initialize (and harmonize) and cache speeds
   void InitializeLineCoeffs ( CGAL_SS_i::Segment_2_with_ID<K> const& aBorderS )
   {
-//    std::cout << "Initialize " << aBorderS.mID << std::endl;
-
     C2E lToExact ;
     C2F lToFiltered ;
 
     mApproximate_traits.InitializeLineCoeffs( lToFiltered(aBorderS) );
-//    if ( mApproximate_traits.mCoeff_cache.Get ( aBorderS.mID ) )
-//      std::cout << "Initialized (F) to: " << *(mApproximate_traits.mCoeff_cache.Get ( aBorderS.mID ) ) << std::endl;
-
     mExact_traits.InitializeLineCoeffs( lToExact(aBorderS) );
-//    if ( mExact_traits.mCoeff_cache.Get ( aBorderS.mID ) )
-//      std::cout << "Initialized (E) to: " << *(mExact_traits.mCoeff_cache.Get ( aBorderS.mID ) ) << std::endl;
   }
 
   // This overload copies the coefficients from the halfedge `aOtherID` and caches them for the halfedge `aID`
   void InitializeLineCoeffs ( std::size_t aID, std::size_t aOtherID )
   {
-//    std::cout << "Initialize (copy) " << aBorderS.mID << " using " << aOtherID << std::endl;
     mApproximate_traits.InitializeLineCoeffs(aID, aOtherID) ;
     mExact_traits.InitializeLineCoeffs(aID, aOtherID) ;
   }
@@ -793,7 +786,7 @@ public:
   // The kernel is filtered, and only the filtered part is used in the check (to avoid computing
   // exact stuff and losing time in a check that is there to gain speed)
   template <class EventPtr>
-  bool CanSafelyIgnoreSplitEvent(const EventPtr& lEvent)
+  bool CanSafelyIgnoreSplitEvent(const EventPtr& lEvent) const
   {
     // filter event
     if ( ! mApproximate_traits.mFilteringBound )
@@ -837,7 +830,7 @@ public:
   template <class Vertex_handle, class Halfedge_handle_vector_iterator>
   void ComputeFilteringBound(Vertex_handle lPrev, Vertex_handle aNode, Vertex_handle lNext,
                              Halfedge_handle_vector_iterator contour_halfedges_begin,
-                             Halfedge_handle_vector_iterator contour_halfedges_end)
+                             Halfedge_handle_vector_iterator contour_halfedges_end) const
   {
     mApproximate_traits.mFilteringBound = boost::none;
 

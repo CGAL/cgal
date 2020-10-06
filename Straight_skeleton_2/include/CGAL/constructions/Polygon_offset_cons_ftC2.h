@@ -75,7 +75,8 @@ boost::optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const&  
       {
         CGAL_STSKEL_TRAITS_TRACE("  DEGENERATE case: Collinear segments involved. Seed event " << ( !tri ? " ABSENT" : " exists." ) ) ;
 
-        Optional_point_2 q = tri ? construct_offset_lines_isecC2(tri) : compute_oriented_midpoint(e0,e1) ;
+        Optional_point_2 q = tri ? construct_offset_lines_isecC2(tri, aCoeff_cache)
+                                 : compute_oriented_midpoint(e0,e1) ;
 
         if ( q )
         {

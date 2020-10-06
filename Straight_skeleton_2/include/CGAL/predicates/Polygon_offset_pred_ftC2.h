@@ -41,21 +41,19 @@ Uncertain<Comparison_result> compare_offset_against_isec_timeC2 ( typename K::FT
 
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
-  typedef boost::optional< CGAL_SS_i::Rational< typename K::FT > > Event_time;
-  No_cache<Event_time> time_cache;
+  No_cache<boost::optional<CGAL_SS_i::Rational<typename K::FT> > > lTime_cache ;
+  No_cache<boost::optional<Line_2<K> > > lCoeff_cache ;
 
-  Optional_rational et_ = compute_offset_lines_isec_timeC2(tri, time_cache);
+  Optional_rational et_ = compute_offset_lines_isec_timeC2(tri, lTime_cache, lCoeff_cache);
   if ( et_ )
   {
     Quotient et = et_->to_quotient();
-
     CGAL_assertion ( CGAL_NTS certified_is_positive(et) ) ;
 
     rResult = CGAL_NTS certified_compare( Quotient(t), et);
   }
 
   return rResult ;
-
 }
 
 } // namespace CGAL_SS_i

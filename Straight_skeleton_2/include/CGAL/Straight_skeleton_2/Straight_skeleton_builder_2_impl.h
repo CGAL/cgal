@@ -249,6 +249,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvents( Vertex_handle aNo
       }
     }
   }
+
 #ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
   std::cout << "  local queue size --> " << GetVertexData(aNode).mSplitEvents.size() << std::endl;
 #endif

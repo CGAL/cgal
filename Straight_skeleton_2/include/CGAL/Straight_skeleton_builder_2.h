@@ -791,7 +791,7 @@ private :
     return GetVertexData(aV).mIsProcessed ;
   }
 
-  void AddSplitEvent ( Vertex_handle aV, EventPtr aEvent )
+  void AddSplitEvent ( Vertex_handle aV, EventPtr const& aEvent )
   {
     CGAL_STSKEL_BUILDER_TRACE(2, "V" << aV->id() << " PQ: " << *aEvent);
     GetVertexData(aV).mSplitEvents.push(aEvent);
@@ -860,6 +860,13 @@ private :
     return aA->triedge() != aB->triedge() ? CompareEvents( aA->trisegment(), aB->trisegment() ) : EQUAL ;
   }
 
+  Comparison_result CompareEvents( Trisegment_2_ptr const& aTrisegment, Vertex_handle aSeedNode ) const
+  {
+    return aSeedNode->is_skeleton() ? aSeedNode->has_infinite_time() ? SMALLER
+                                                                     : CompareEvents( aTrisegment, GetTrisegment(aSeedNode) )
+                                    : LARGER  ;
+  }
+
   bool AreEventsSimultaneous( Trisegment_2_ptr const& x, Trisegment_2_ptr const& y ) const
   {
     return Are_ss_events_simultaneous_2(mTraits)(x,y) ;
@@ -886,13 +893,6 @@ private :
     CGAL_precondition( !aY->has_infinite_time() );
 
     return AreEventsSimultaneous( GetTrisegment(aX),  GetTrisegment(aY) ) ;
-  }
-
-  Comparison_result CompareEvents( Trisegment_2_ptr const& aTrisegment, Vertex_handle aSeedNode ) const
-  {
-    return aSeedNode->is_skeleton() ? aSeedNode->has_infinite_time() ? SMALLER
-                                                                     : CompareEvents( aTrisegment, GetTrisegment(aSeedNode) )
-                                    : LARGER  ;
   }
 
   void SetBisectorSlope ( Halfedge_handle aBisector, Sign aSlope )
@@ -1212,38 +1212,38 @@ private :
   }
 
 // internal function to filter split event in case the traits is Filtered
-  bool CanSafelyIgnoreSplitEventImpl(const EventPtr&, boost::mpl::bool_<false>)
+  bool CanSafelyIgnoreSplitEventImpl(const EventPtr&, boost::mpl::bool_<false>) const
   {
     return false;
   }
 
-  bool CanSafelyIgnoreSplitEventImpl(const EventPtr& lEvent, boost::mpl::bool_<true>)
+  bool CanSafelyIgnoreSplitEventImpl(const EventPtr& lEvent, boost::mpl::bool_<true>) const
   {
     return mTraits.CanSafelyIgnoreSplitEvent(lEvent);
   }
 
-  bool CanSafelyIgnoreSplitEvent(const EventPtr& lEvent)
+  bool CanSafelyIgnoreSplitEvent(const EventPtr& lEvent) const
   {
     return CanSafelyIgnoreSplitEventImpl(lEvent, typename CGAL_SS_i::has_Filters_split_events_tag<Traits>::type());
   }
 
   void ComputeUpperBoundForValidSplitEventsImpl(Vertex_handle, Vertex_handle, Vertex_handle,
                                                 Halfedge_handle_vector_iterator, Halfedge_handle_vector_iterator,
-                                                boost::mpl::bool_<false>)
+                                                boost::mpl::bool_<false>) const
   {
   }
 
   void ComputeUpperBoundForValidSplitEventsImpl(Vertex_handle lPrev, Vertex_handle aNode, Vertex_handle lNext,
                                                 Halfedge_handle_vector_iterator contour_halfedges_begin,
                                                 Halfedge_handle_vector_iterator contour_halfedges_end,
-                                                boost::mpl::bool_<true>)
+                                                boost::mpl::bool_<true>) const
   {
     return mTraits.ComputeFilteringBound(lPrev, aNode, lNext, contour_halfedges_begin, contour_halfedges_end);
   }
 
   void ComputeUpperBoundForValidSplitEvents(Vertex_handle lPrev, Vertex_handle aNode, Vertex_handle lNext,
                                             Halfedge_handle_vector_iterator contour_halfedges_begin,
-                                            Halfedge_handle_vector_iterator contour_halfedges_end)
+                                            Halfedge_handle_vector_iterator contour_halfedges_end) const
   {
     return ComputeUpperBoundForValidSplitEventsImpl(lPrev, aNode, lNext, contour_halfedges_begin, contour_halfedges_end,
                                                     typename CGAL_SS_i::has_Filters_split_events_tag<Traits>::type());

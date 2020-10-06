@@ -203,8 +203,6 @@ template<class K, class CoeffCache>
 boost::optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2_with_ID<K> const& e,
                                                               CoeffCache& aCoeff_cache )
 {
-  CGAL_precondition ( e.mID != std::size_t(-1) ) ;
-
   if ( aCoeff_cache.IsCached(e.mID) )
     return aCoeff_cache.Get(e.mID) ;
 

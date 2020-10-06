@@ -353,10 +353,8 @@ public:
     }
   }
 
-  std::size_t mID;
-
 private :
-
+  std::size_t             mID;
   Segment_2_with_ID       mE[3];
   Trisegment_collinearity mCollinearity ;
   unsigned                mCSIdx, mNCSIdx ;

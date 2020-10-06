@@ -30,7 +30,6 @@ struct Compare_offset_against_event_time_2 : Functor_base_2<K>
   typedef Functor_base_2<K> Base ;
 
   typedef typename Base::FT               FT ;
-  typedef typename Base::Segment_2        Segment_2 ;
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
   typedef Uncertain<Comparison_result> result_type ;
@@ -49,26 +48,30 @@ struct Construct_offset_point_2 : Functor_base_2<K>
 
   typedef typename Base::FT               FT ;
   typedef typename Base::Point_2          Point_2 ;
-  typedef typename Base::Segment_2        Segment_2 ;
+  typedef typename Base::Segment_2_with_ID Segment_2_with_ID ;
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
   typedef boost::optional<Point_2> result_type ;
 
 
-  result_type operator() ( FT               const& aT
-                         , Segment_2        const& aE0
-                         , Segment_2        const& aE1
-                         , Trisegment_2_ptr const& aNode
+  result_type operator() ( FT                const& aT
+                         , Segment_2_with_ID const& aE0
+                         , Segment_2_with_ID const& aE1
+                         , Trisegment_2_ptr  const& aNode
                          ) const
   {
-    result_type p = construct_offset_pointC2(aT,aE0,aE1,aNode);
+    typedef boost::optional< Line_2<K> > Optional_line;
+    No_cache<Optional_line> lCoeff_cache;
+
+    result_type p = construct_offset_pointC2(aT,aE0,aE1,aNode,lCoeff_cache);
 
     CGAL_stskel_intrinsic_test_assertion(!p || (p && !is_point_calculation_clearly_wrong(aT,*p,aE0,aE1)));
 
     return p ;
   }
 
-  bool is_point_calculation_clearly_wrong( FT const& t, Point_2 const& p, Segment_2 const& aE0, Segment_2 const& aE1 ) const
+  bool is_point_calculation_clearly_wrong( FT const& t, Point_2 const& p,
+                                           Segment_2_with_ID const& aE0, Segment_2_with_ID const& aE1 ) const
   {
     bool rR = false ;
 
@@ -126,13 +129,13 @@ struct Polygon_offset_builder_traits_2_functors
   {
     typedef CGAL_SS_i::Functor_base_2<K> Base ;
 
-    typedef typename Base::Segment_2        Segment_2 ;
+    typedef typename Base::Segment_2_with_ID Segment_2_with_ID ;
     typedef typename Base::Trisegment_2     Trisegment_2 ;
     typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
     typedef Trisegment_2_ptr result_type ;
 
-    result_type operator() ( Segment_2 const& aS0, Segment_2 const& aS1, Segment_2 const& aS2 ) const
+    result_type operator() ( Segment_2_with_ID const& aS0, Segment_2_with_ID const& aS1, Segment_2_with_ID const& aS2 ) const
     {
       return CGAL_SS_i::construct_trisegment(aS0,aS1,aS2,0);
     }
@@ -146,10 +149,10 @@ struct Polygon_offset_builder_traits_2_base
 
   typedef typename K::FT        FT ;
   typedef typename K::Point_2   Point_2 ;
-  typedef typename K::Segment_2 Segment_2 ;
 
+  typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2 ;
+  typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2_with_ID ; // for BOOST_MPL_HAS_XXX_TRAIT_DEF
   typedef CGAL_SS_i::Trisegment_2<K> Trisegment_2 ;
-
   typedef typename Trisegment_2::Self_ptr Trisegment_2_ptr ;
 
   template<class F> F get( F const* = 0 ) const { return F(); }
