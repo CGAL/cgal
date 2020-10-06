@@ -36,8 +36,6 @@ if ( CGAL_FOUND )
   find_package(IPE 6)
 
   if ( IPE_FOUND )
-    include_directories(BEFORE ${IPE_INCLUDE_DIR})
-
     if (${IPE_VERSION} EQUAL "7")
       set(WITH_IPE_7 ON)
     elseif(${IPE_VERSION} EQUAL "6")
@@ -66,10 +64,6 @@ if ( CGAL_FOUND )
   endif()
 
   if ( IPE_FOUND AND IPE_VERSION)
-    if (WITH_IPE_7)
-      add_definitions(-DCGAL_USE_IPE_7)
-    endif()
-
     message("-- Using IPE version ${IPE_VERSION} compatibility.")
 
     #setting installation directory
@@ -140,6 +134,11 @@ if ( CGAL_FOUND )
 
     foreach(IPELET ${CGAL_IPELETS})
       add_library(CGAL_${IPELET} MODULE ${IPELET}.cpp)
+      target_include_directories(CGAL_${IPELET} BEFORE PRIVATE ${IPE_INCLUDE_DIR})
+      if (WITH_IPE_7)
+        target_compile_definitions(CGAL_${IPELET} PRIVATE CGAL_USE_IPE_7)
+      endif()
+
       add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_${IPELET})
       target_link_libraries(CGAL_${IPELET} PRIVATE CGAL::CGAL CGAL::Eigen_support ${IPE_LIBRARIES})
       if ( IPELET_INSTALL_DIR )
@@ -152,11 +151,19 @@ if ( CGAL_FOUND )
     endforeach(IPELET)
     if(CGAL_Core_FOUND)
       target_link_libraries(CGAL_cone_spanners PRIVATE CGAL::CGAL_Core CGAL::Eigen_support)
+      target_include_directories(CGAL_cone_spanners BEFORE PRIVATE ${IPE_INCLUDE_DIR})
+      if (WITH_IPE_7)
+        target_compile_definitions(CGAL_cone_spanners PRIVATE CGAL_USE_IPE_7)
+      endif()
     endif()
     #example in doc not installed
     add_library(simple_triangulation MODULE simple_triangulation.cpp)
     add_to_cached_list(CGAL_EXECUTABLE_TARGETS simple_triangulation)
     target_link_libraries(simple_triangulation CGAL::Eigen_support ${IPE_LIBRARIES})
+    target_include_directories(simple_triangulation BEFORE PRIVATE ${IPE_INCLUDE_DIR})
+    if (WITH_IPE_7)
+      target_compile_definitions(simple_triangulation PRIVATE CGAL_USE_IPE_7)
+    endif()
     cgal_add_compilation_test(simple_triangulation)
 
   else()

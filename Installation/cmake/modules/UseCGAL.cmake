@@ -28,7 +28,7 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   endforeach()
 
 
-  include_directories( "${CMAKE_CURRENT_BINARY_DIR}" )
+  target_include_directories(CGAL INTERFACE "${CMAKE_CURRENT_BINARY_DIR}" )
 
   if(TARGET CGAL::CGAL)
     add_to_list( CGAL_LIBRARIES CGAL::CGAL )
@@ -38,15 +38,7 @@ if(NOT USE_CGAL_FILE_INCLUDED)
     add_to_list( CGAL_LIBRARIES ${CGAL_LIBRARY} )
   endif()
 
-  #message (STATUS "LIB: ${CGAL_LIBRARY}")
-  #message (STATUS "LIBS: ${CGAL_LIBRARIES}")
-
-  include_directories ( ${CGAL_INCLUDE_DIRS})
-  include_directories ( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
-  add_definitions     ( ${CGAL_3RD_PARTY_DEFINITIONS}  ${CGAL_DEFINITIONS}  )
-
-  if(NOT CGAL_NO_BLANKET_LINKING)
-    link_directories    ( ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
-    link_libraries      ( ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}      )
-  endif()
+  target_include_directories (CGAL INTERFACE ${CGAL_INCLUDE_DIRS})
+  target_include_directories (CGAL SYSTEM INTERFACE ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
+  target_compile_definitions (CGAL INTERFACE ${CGAL_3RD_PARTY_DEFINITIONS}  ${CGAL_DEFINITIONS}  )
 endif()

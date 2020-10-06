@@ -18,7 +18,6 @@ find_package(LEDA QUIET)
 find_package(Qt5 QUIET COMPONENTS OpenGL Gui)
 
 if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND (CGAL_Core_FOUND OR LEDA_FOUND))
-  include_directories( BEFORE ./ ./include )
   # ui files, created with Qt Designer
   qt5_wrap_ui( UIS HDT2.ui )
 
