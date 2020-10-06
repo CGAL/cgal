@@ -228,6 +228,7 @@ struct Test {
     Pl pl3(0,0,1,0);
 
     // Generic intersection.
+    assert(CGAL::do_intersect(pl1, pl2, pl3));
     CGAL::Object o = CGAL::intersection(pl1, pl2, pl3);
     P p;
     assert(assign(p, o));
@@ -236,9 +237,11 @@ struct Test {
     // Empty intersection.
     Pl pl4(1,0,0,1); // pl4 is // to pl1.
 
+    assert(!CGAL::do_intersect(pl1, pl2, pl4));
     CGAL::Object o2 = CGAL::intersection(pl1, pl2, pl4);
     assert(o2.is_empty());
 
+    assert(!CGAL::do_intersect(pl1, pl4, pl2));
     CGAL::Object o3 = CGAL::intersection(pl1, pl4, pl2);
     assert(o3.is_empty());
 
@@ -246,12 +249,14 @@ struct Test {
     Pl pl5(1,1,0,0); // pl1, pl2, pl5 intersect in the line l.
     L l;
 
+    assert(CGAL::do_intersect(pl1, pl2, pl5));
     CGAL::Object o4 = CGAL::intersection(pl1, pl2, pl5);
     assert(assign(l, o4));
 
     assert(l == L(P(0,0,0), P(0,0,1)));
 
     // Intersection in a plane.
+    assert(CGAL::do_intersect(pl1, pl1, pl1));
     CGAL::Object o5 = CGAL::intersection(pl1, pl1, pl1);
     Pl pl;
     assert(assign(pl, o5));
