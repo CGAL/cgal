@@ -444,20 +444,33 @@ auto CurveGenerator<
   return Curve_2{clickedPoints.begin(), clickedPoints.end()};
 }
 
-ARRANGEMENT_DEMO_SPECIALIZE_ARR(GraphicsViewCurveInput)
+// msvc2015 doesn't play well with polymorphic lambdas
+namespace
+{
+struct ExplicitLambda
+{
+  template <typename Arrangement>
+  void operator()(demo_types::TypeHolder<Arrangement>)
+  {
+    Arrangement* arr = nullptr;
+    CGAL::assign(arr, arr_obj);
+    res = new GraphicsViewCurveInput<Arrangement>(arr, parent, scene);
+  }
+
+  GraphicsViewCurveInputBase*& res;
+  CGAL::Object& arr_obj;
+  QObject* parent;
+  QGraphicsScene* scene;
+};
+} // anonymous namespace
 
 GraphicsViewCurveInputBase* GraphicsViewCurveInputBase::create(
   demo_types::TraitsType tt, CGAL::Object arr_obj, QObject* parent,
   QGraphicsScene* scene)
 {
   GraphicsViewCurveInputBase* res;
-  demo_types::visitArrangementType(tt, [&](auto type_holder) {
-    using Arrangement = typename decltype(type_holder)::type;
-
-    Arrangement* arr = nullptr;
-    CGAL::assign(arr, arr_obj);
-    res = new GraphicsViewCurveInput<Arrangement>(arr, parent, scene);
-  });
+  ExplicitLambda explicit_lambda{res, arr_obj, parent, scene};
+  demo_types::visitArrangementType(tt, explicit_lambda);
   return res;
 }
 

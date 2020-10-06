@@ -50,17 +50,31 @@ protected:
   bool isFirst;
 }; // class MergeEdgeCallback
 
+// msvc2015 doesn't play well with polymorphic lambdas
+namespace
+{
+struct ExplicitLambda
+{
+  template <typename Arrangement>
+  void operator()(demo_types::TypeHolder<Arrangement>)
+  {
+    Arrangement* arr = nullptr;
+    CGAL::assign(arr, arr_obj);
+    res = new MergeEdgeCallback<Arrangement>(arr, parent);
+  }
+
+  MergeEdgeCallbackBase*& res;
+  CGAL::Object& arr_obj;
+  QObject* parent;
+};
+} // anonymous namespace
+
 MergeEdgeCallbackBase* MergeEdgeCallbackBase::create(
   demo_types::TraitsType tt, CGAL::Object arr_obj, QObject* parent)
 {
   MergeEdgeCallbackBase* res;
-  demo_types::visitArrangementType(tt, [&](auto type_holder) {
-    using Arrangement = typename decltype(type_holder)::type;
-
-    Arrangement* arr = nullptr;
-    CGAL::assign(arr, arr_obj);
-    res = new MergeEdgeCallback<Arrangement>(arr, parent);
-  });
+  ExplicitLambda explicit_lambda{res, arr_obj, parent};
+  demo_types::visitArrangementType(tt, explicit_lambda);
   return res;
 }
 

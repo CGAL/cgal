@@ -101,7 +101,7 @@ static constexpr TraitsType enumFromArrType()
 }
 
 template <class Lambda, class Types=DemoTypes>
-static void visitArrangementType(TraitsType tt, Lambda lambda)
+static void visitArrangementType(TraitsType tt, Lambda&& lambda)
 {
   switch (tt)
   {
@@ -134,7 +134,7 @@ static void visitArrangementType(TraitsType tt, Lambda lambda)
 }
 
 template <class Lambda, class Types=DemoTypes>
-static void forEachArrangementType(Lambda lambda)
+static void forEachArrangementType(Lambda&& lambda)
 {
   lambda(TypeHolder<typename Types::Seg_arr>{});
   lambda(TypeHolder<typename Types::Pol_arr>{});

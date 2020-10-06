@@ -37,17 +37,30 @@ ArrangementGraphicsItemBase::ArrangementGraphicsItemBase() :
   this->facesPen.setColor(::Qt::transparent);
 }
 
+// msvc2015 doesn't play well with polymorphic lambdas
+namespace
+{
+struct ExplicitLambda
+{
+  template <typename Arrangement>
+  void operator()(demo_types::TypeHolder<Arrangement>)
+  {
+    Arrangement* arr = nullptr;
+    CGAL::assign(arr, arr_obj);
+    agi = new ArrangementGraphicsItem<Arrangement>(arr);
+  }
+
+  ArrangementGraphicsItemBase*& agi;
+  CGAL::Object& arr_obj;
+};
+} // anonymous namespace
+
 ArrangementGraphicsItemBase* ArrangementGraphicsItemBase::create(
   demo_types::TraitsType tt, CGAL::Object arr_obj)
 {
   ArrangementGraphicsItemBase* agi;
-  demo_types::visitArrangementType(tt, [&](auto type_holder) {
-    using Arrangement = typename decltype(type_holder)::type;
-
-    Arrangement* arr = nullptr;
-    CGAL::assign(arr, arr_obj);
-    agi = new ArrangementGraphicsItem<Arrangement>(arr);
-  });
+  ExplicitLambda explicit_lambda{agi, arr_obj};
+  demo_types::visitArrangementType(tt, explicit_lambda);
   return agi;
 }
 

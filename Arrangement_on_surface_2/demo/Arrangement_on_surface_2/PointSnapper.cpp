@@ -40,18 +40,32 @@ PointSnapperBase::PointSnapperBase(
 {
 }
 
+namespace
+{
+struct ExplicitLambda
+{
+  template <typename Arrangement>
+  void operator()(demo_types::TypeHolder<Arrangement>)
+  {
+    Arrangement* arr = nullptr;
+    CGAL::assign(arr, arr_obj);
+    res = new PointSnapper<Arrangement>(scene, grid, arr);
+  }
+
+  PointSnapperBase*& res;
+  QGraphicsScene* scene;
+  GridGraphicsItem* grid;
+  CGAL::Object& arr_obj;
+};
+} // anonymous namespace
+
 PointSnapperBase* PointSnapperBase::create(
   demo_types::TraitsType tt, QGraphicsScene* scene, GridGraphicsItem* grid,
   CGAL::Object arr_obj)
 {
   PointSnapperBase* res;
-  demo_types::visitArrangementType(tt, [&](auto type_holder) {
-    using Arrangement = typename decltype(type_holder)::type;
-
-    Arrangement* arr = nullptr;
-    CGAL::assign(arr, arr_obj);
-    res = new PointSnapper<Arrangement>(scene, grid, arr);
-  });
+  ExplicitLambda explicit_lambda{res, scene, grid, arr_obj};
+  demo_types::visitArrangementType(tt, explicit_lambda);
   return res;
 }
 
