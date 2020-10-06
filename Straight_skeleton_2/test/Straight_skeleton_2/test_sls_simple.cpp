@@ -1,3 +1,26 @@
+// #define MAEL_FIRST_VALID_QUEUE_PATCH
+// #define MAEL_ALL_QUEUE_PATCH
+//#define CGAL_SLS_PRINT_QUEUE_BEFORE_EACH_POP
+
+#include <iostream>
+#include <iomanip>
+#include <string>
+
+//#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 100
+//#define CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE 10000000
+//#define CGAL_STRAIGHT_SKELETON_ENABLE_VALIDITY_TRACE
+//#define CGAL_POLYGON_OFFSET_ENABLE_TRACE 10000000
+
+void Straight_skeleton_external_trace(std::string m)
+{
+  std::cout << std::setprecision(19) << m << std::endl << std::endl ;
+}
+
+void Straight_skeleton_traits_external_trace(std::string m)
+{
+  std::cout << std::setprecision(19) << m << std::endl << std::endl ;
+}
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
@@ -45,7 +68,7 @@ void test_API()
   // @todo test API range
 }
 
-template <typename StraightSkeleton>
+template <typename K, typename StraightSkeleton>
 bool is_valid(const boost::shared_ptr<StraightSkeleton>& ss)
 {
   typedef typename StraightSkeleton::Traits::Point_2 Point;
@@ -53,17 +76,35 @@ bool is_valid(const boost::shared_ptr<StraightSkeleton>& ss)
   if(!ss->is_valid())
     return false;
 
-  assert(std::distance(ss->vertices_begin(), ss->vertices_end()) == ss->size_of_vertices());
+  assert(static_cast<std::size_t>(std::distance(ss->vertices_begin(), ss->vertices_end())) ==
+           static_cast<std::size_t>(ss->size_of_vertices()));
 
   std::set<Point> unique_vertices;
   for(auto vit=ss->vertices_begin(); vit!=ss->vertices_end(); ++vit)
+  {
+//    std::cout << vit->point() << " 0" << std::endl;
     unique_vertices.insert(vit->point());
-  if(unique_vertices.size() != ss->size_of_vertices())
-    return false;
+  }
 
-  for(auto hit=ss->halfedges_begin(); hit!=ss->halfedges_end(); ++hit)
-    if(hit->vertex()->point() == hit->opposite()->vertex()->point())
+//  std::ofstream out("/home/mrouxell/tmp.polylines.txt");
+//  out.precision(17);
+//  for(auto hit=ss->halfedges_begin(); hit!=ss->halfedges_end(); ++hit)
+//    out << "2 " << hit->vertex()->point() << " 0 " << hit->opposite()->vertex()->point() << " 0"
+//             << " " << CGAL::squared_distance(hit->vertex()->point(), hit->opposite()->vertex()->point())
+//        << std::endl;
+
+  std::cout << unique_vertices.size() << " unique vertices (" << ss->size_of_vertices() << ")" << std::endl;
+
+  // Can't guarantee that the embedding is correct with EPICK
+  if(!std::is_same<K, EPICK>::value)
+  {
+    if(unique_vertices.size() != ss->size_of_vertices())
       return false;
+
+    for(auto hit=ss->halfedges_begin(); hit!=ss->halfedges_end(); ++hit)
+      if(hit->vertex()->point() == hit->opposite()->vertex()->point())
+        return false;
+  }
 
   return true;
 }
@@ -137,9 +178,11 @@ void test_skeleton(const char* filename,
   for(std::size_t i=0; i<polys.size()-1; ++i)
     p.add_hole(polys[i+1]);
 
-  std::cout << "Input: " << filename << std::endl;
+  std::cout << p.outer_boundary().size() << " vertices" << std::endl;
+
   Straight_skeleton_Ptr ss = CGAL::create_interior_straight_skeleton_2(p);
-  assert(is_valid(ss));
+  assert(ss);
+  assert(is_valid<K>(ss));
 
   std::cout << ss->size_of_vertices() << " vertices" << std::endl;
   std::cout << ss->size_of_halfedges() << " halfedges" << std::endl;
@@ -161,16 +204,33 @@ void test_skeleton(const char* filename,
 template <typename K>
 void test_kernel()
 {
-  std::cout.precision(19);
-  std::cerr.precision(19);
+//  CGAL_STSKEL_TRAITS_ENABLE_TRACE
 
-  test_API<K>();
+//  test_API<K>();
+
+  test_skeleton<K>("data/pseudo_split_0.poly", 13, 40, 8);
+  test_skeleton<K>("data/pseudo_split_1.poly", 21, 68, 12);
+  test_skeleton<K>("data/pseudo_split_2.poly", 21, 68, 12);
+  test_skeleton<K>("data/pseudo_split_3.poly", 25, 86, 16);
+  test_skeleton<K>("data/pseudo_split_4.poly", 25, 86, 16);
+  test_skeleton<K>("data/pseudo_split_5.poly"/*, 29, 104, 20*/); // almost duplicates
+  test_skeleton<K>("data/pseudo_split_5b.poly"/*, 29, 104, 20*/); // almost duplicates
+  test_skeleton<K>("data/pseudo_split_6.poly", 13, 40, 8);
+  test_skeleton<K>("data/pseudo_split_7.poly", 65, 216, 44);
+  test_skeleton<K>("data/pseudo_split_8.poly");
+  test_skeleton<K>("data/pseudo_split_9.poly");
+  test_skeleton<K>("data/pseudo_split_10.poly", 13, 40, 8);
+  test_skeleton<K>("data/pseudo_split_11.poly", 14, 44, 9);
+  test_skeleton<K>("data/pseudo_split_12.poly");
+  test_skeleton<K>("data/pseudo_split_13b.poly", 11, 34, 7);
+  test_skeleton<K>("data/pseudo_split_13.poly", 11, 34, 7);
 
   test_skeleton<K>("data/1_Example.poly", 119, 364, 64);
   test_skeleton<K>("data/1_Example_Working.poly", 104, 318, 56);
   test_skeleton<K>("data/2_Example.poly", 37, 112, 20);
   test_skeleton<K>("data/5-SPOKE2.poly"/*, 32, 102, 22*/); // weird almost-duplicates
   test_skeleton<K>("data/5-SPOKE.poly"/*, 32, 102, 22*/);
+  test_skeleton<K>("data/7-SPOKE.poly");
   test_skeleton<K>("data/alley_0.poly", 18, 58, 12);
   test_skeleton<K>("data/alley_1.poly", 20, 62, 12);
   test_skeleton<K>("data/alley_2.poly", 26, 78, 12);
@@ -179,24 +239,27 @@ void test_kernel()
   test_skeleton<K>("data/A.poly", 58, 174, 29);
   test_skeleton<K>("data/closer_edge_event_0.poly", 11, 34, 7);
   test_skeleton<K>("data/closer_edge_event_1.poly", 11, 34, 7);
-  test_skeleton<K>("data/complex_0.poly");
-  test_skeleton<K>("data/complex_1.poly");
-  test_skeleton<K>("data/complex_2.poly");
-  test_skeleton<K>("data/complex_3.poly");
-  test_skeleton<K>("data/complex_4.poly");
-  test_skeleton<K>("data/complex_5.poly");
   test_skeleton<K>("data/consecutive_coincident_vertices_0.poly", 6, 18, 4);
   test_skeleton<K>("data/consecutive_coincident_vertices_1.poly", 6, 18, 4);
   test_skeleton<K>("data/consecutive_coincident_vertices_2.poly", 6, 18, 4);
   test_skeleton<K>("data/consecutive_coincident_vertices_3.poly", 6, 18, 4);
   test_skeleton<K>("data/consecutive_coincident_vertices_4.poly", 6, 18, 4);
-  test_skeleton<K>("data/degenerate0a.poly", 8, 24, 5);
   test_skeleton<K>("data/degenerate0.poly", 8, 24, 5);
+  test_skeleton<K>("data/degenerate0a.poly", 8, 24, 5);
+  test_skeleton<K>("data/degenerate1.poly", 9, 28, 6);
+  test_skeleton<K>("data/degenerate2.poly", 7, 22, 5);
+  test_skeleton<K>("data/degenerate3.poly", 10, 32, 7);
+  test_skeleton<K>("data/degenerate4.poly", 11, 36, 8);
+  test_skeleton<K>("data/degenerate5a.poly", 10, 30, 6);
+  test_skeleton<K>("data/degenerate5.poly", 10, 30, 6);
+  test_skeleton<K>("data/degenerate6.poly", 8, 26, 6);
+  test_skeleton<K>("data/degenerate7.poly", 12, 36, 7);
+  test_skeleton<K>("data/degenerate8.poly", 15, 52, 12);
+  test_skeleton<K>("data/degenerate9.poly", 16, 48, 9);
   test_skeleton<K>("data/degenerate10.poly", 19, 58, 11);
   test_skeleton<K>("data/degenerate11.poly", 17, 56, 12);
   test_skeleton<K>("data/degenerate12.poly", 17, 52, 10);
   test_skeleton<K>("data/degenerate13.poly", 9, 32, 8);
-  test_skeleton<K>("data/degenerate1.poly", 9, 28, 6);
   test_skeleton<K>("data/degenerate20.poly");
   test_skeleton<K>("data/degenerate21.poly");
   test_skeleton<K>("data/degenerate22.poly", 36, 108, 18);
@@ -212,17 +275,10 @@ void test_kernel()
   test_skeleton<K>("data/degenerate27.poly", 18, 56, 11);
   test_skeleton<K>("data/degenerate28aa.poly"/*, 58, 178, 32*/); // should be 58, but almost-duplicate so 59
   test_skeleton<K>("data/degenerate28a.poly"/*, 58, 178, 32*/); // same as above
+  test_skeleton<K>("data/degenerate28bb.poly");
+  test_skeleton<K>("data/degenerate28b.poly");
   test_skeleton<K>("data/degenerate28c.poly");
   test_skeleton<K>("data/degenerate28x.poly");
-  test_skeleton<K>("data/degenerate2.poly", 7, 22, 5);
-  test_skeleton<K>("data/degenerate3.poly", 10, 32, 7);
-  test_skeleton<K>("data/degenerate4.poly", 11, 36, 8);
-  test_skeleton<K>("data/degenerate5a.poly", 10, 30, 6);
-  test_skeleton<K>("data/degenerate5.poly", 10, 30, 6);
-  test_skeleton<K>("data/degenerate6.poly", 8, 26, 6);
-  test_skeleton<K>("data/degenerate7.poly", 12, 36, 7);
-  test_skeleton<K>("data/degenerate8.poly", 15, 52, 12);
-  test_skeleton<K>("data/degenerate9.poly", 16, 48, 9);
   test_skeleton<K>("data/degenerate_multinode0.poly", 41, 136, 28);
   test_skeleton<K>("data/double_edge.poly", 7, 22, 5);
   test_skeleton<K>("data/double_edge_0.poly", 7, 22, 5);
@@ -247,10 +303,6 @@ void test_kernel()
   test_skeleton<K>("data/inputq1.poly", 21, 64, 12);
   test_skeleton<K>("data/inputsquare.poly", 29, 104, 20);
   test_skeleton<K>("data/inputsquare2.poly", 21, 68, 12);
-  test_skeleton<K>("data/large_1.poly");
-  test_skeleton<K>("data/large_2.poly");
-  test_skeleton<K>("data/large_3.poly");
-  test_skeleton<K>("data/large_4.poly");
   test_skeleton<K>("data/many_holes.poly");
   test_skeleton<K>("data/masked_double_split.poly", 10, 30, 6);
   test_skeleton<K>("data/multinode0.poly", 29, 96, 20);
@@ -262,22 +314,6 @@ void test_kernel()
   test_skeleton<K>("data/parallels0.poly");
   test_skeleton<K>("data/parallels_1.poly", 30, 106, 20);
   test_skeleton<K>("data/poly6.poly"/*, 15, 48, 10*/); // almost duplicates
-  test_skeleton<K>("data/pseudo_split_0.poly", 13, 40, 8);
-  test_skeleton<K>("data/pseudo_split_10.poly", 13, 40, 8);
-  test_skeleton<K>("data/pseudo_split_11.poly", 14, 44, 9);
-  test_skeleton<K>("data/pseudo_split_12.poly");
-  test_skeleton<K>("data/pseudo_split_13b.poly", 11, 34, 7);
-  test_skeleton<K>("data/pseudo_split_13.poly", 11, 34, 7);
-  test_skeleton<K>("data/pseudo_split_1.poly", 21, 68, 12);
-  test_skeleton<K>("data/pseudo_split_2.poly", 21, 68, 12);
-  test_skeleton<K>("data/pseudo_split_3.poly", 25, 86, 16);
-  test_skeleton<K>("data/pseudo_split_4.poly", 25, 86, 16);
-  test_skeleton<K>("data/pseudo_split_5.poly"/*, 29, 104, 20*/); // almost duplicates
-  test_skeleton<K>("data/pseudo_split_5b.poly"/*, 29, 104, 20*/); // almost duplicates
-  test_skeleton<K>("data/pseudo_split_6.poly", 13, 40, 8);
-  test_skeleton<K>("data/pseudo_split_7.poly", 65, 216, 44);
-  test_skeleton<K>("data/pseudo_split_8.poly");
-  test_skeleton<K>("data/pseudo_split_9.poly");
   test_skeleton<K>("data/rect_4_spokes.poly", 21, 72, 16);
   test_skeleton<K>("data/rectangle.poly", 6, 18, 4);
   test_skeleton<K>("data/region_4.poly", 4, 12, 3);
@@ -318,31 +354,47 @@ void test_kernel()
   test_skeleton<K>("data/triangle.poly", 4, 12, 3);
   test_skeleton<K>("data/star.poly", 9, 32, 8);
   test_skeleton<K>("data/StrayCenterlines.poly");
-  test_skeleton<K>("data/wheel_128_spokes.poly");
   test_skeleton<K>("data/wheel_13_spokes.poly");
   test_skeleton<K>("data/wheel_14_spokes.poly");
   test_skeleton<K>("data/wheel_15_spokes.poly");
+  test_skeleton<K>("data/wheel_16_spokes.poly");
   test_skeleton<K>("data/wheel_16_spokes_b.poly");
+  test_skeleton<K>("data/wheel_128_spokes.poly");
   test_skeleton<K>("data/wiggly_03_cgal.poly");
   test_skeleton<K>("data/WingChiu.poly");
 
-  //  test_skeleton<K>("data/poly4.poly"/*, 15, 48, 10*/); // almost duplicates // @fixme broken (EPICK)
-  //  test_skeleton<K>("data/poly4b.poly"/*, 15, 48, 10*/); // almost duplicates // @fixme broken (EPICK)
-  //  test_skeleton<K>("data/Detmier_b.poly"/*, 28, 86, 16*/); // almost duplicates // @fixme broken (EPICK)
-  //  test_skeleton<K>("data/Detmier_c.poly"); // @fixme broken (EPICK)
-  //  test_skeleton<K>("data/Detmier_d.poly"/*, 27, 84, 16*/); // almost duplicates // @fixme broken (EPICK)
-  //  test_skeleton<K>("data/Detmier_e.poly"); // @fixme broken (EPICK)
+  test_skeleton<K>("data/large_1.poly");
+  test_skeleton<K>("data/large_2.poly");
+  test_skeleton<K>("data/large_3.poly");
+  test_skeleton<K>("data/large_4.poly");
 
+  test_skeleton<K>("data/complex_0.poly");
+  test_skeleton<K>("data/complex_1.poly");
+  test_skeleton<K>("data/complex_2.poly");
+  test_skeleton<K>("data/complex_3.poly");
+  test_skeleton<K>("data/complex_4.poly");
+  test_skeleton<K>("data/complex_5.poly");
 
-  //  test_skeleton<K>("data/degenerate28b.poly"); // @fixme broken (EPECK)
-  //  test_skeleton<K>("data/7-SPOKE.poly"); // @fixme broken (EPECK)
-  //  test_skeleton<K>("data/Detmier.poly"); // @fixme broken (EPICK)
-  //  test_skeleton<K>("data/wheel_16_spokes.poly"); // @fixme broken (EPECK)
+  // The embedding of those below is bad when using EPICK
+  test_skeleton<K>("data/poly4.poly"/*, 15, 48, 10*/); // almost duplicates
+  test_skeleton<K>("data/poly4b.poly"/*, 15, 48, 10*/); // almost duplicates
+  test_skeleton<K>("data/Detmier.poly");
+  test_skeleton<K>("data/Detmier_b.poly"/*, 28, 86, 16*/); // almost duplicates
+  test_skeleton<K>("data/Detmier_c.poly");
+  test_skeleton<K>("data/Detmier_d.poly"/*, 27, 84, 16*/); // almost duplicates
+  test_skeleton<K>("data/Detmier_e.poly");
 }
 
 int main(int, char**)
 {
+  std::cout.precision(19);
+  std::cerr.precision(19);
+
   test_kernel<EPICK>();
-  test_kernel<EPECK>();
-  test_kernel<EPECK_w_sqrt>();
+//  test_kernel<EPECK>();
+//  test_kernel<EPECK_w_sqrt>();
+
+  std::cout << "Done!" << std::endl;
+
+  return EXIT_SUCCESS;
 }

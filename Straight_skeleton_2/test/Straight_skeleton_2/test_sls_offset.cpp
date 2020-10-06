@@ -1,3 +1,21 @@
+#include <iostream>
+#include <iomanip>
+#include <string>
+
+//#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 100
+//#define CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE 10000000
+//#define CGAL_POLYGON_OFFSET_ENABLE_TRACE 10000000
+
+void Straight_skeleton_external_trace(std::string m)
+{
+  std::cout << std::setprecision(19) << m << std::endl << std::endl ;
+}
+
+void Straight_skeleton_traits_external_trace(std::string m)
+{
+  std::cout << std::setprecision(19) << m << std::endl << std::endl ;
+}
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
@@ -58,7 +76,6 @@ void test_offset_square()
 {
   std::cout << "Test Square, kernel: " << typeid(K).name() << std::endl;
 
-  typedef typename K::FT                                                       FT;
   typedef typename K::Point_2                                                  Point;
   typedef CGAL::Polygon_2<K>                                                   Polygon_2;
   typedef boost::shared_ptr<Polygon_2>                                         Polygon_ptr;
@@ -91,13 +108,73 @@ void test_offset_square()
   assert(offset_polys.empty());
 }
 
+// Test what happens when the offset is a single point
+template <typename K>
+void test_offset_four_square_holes()
+{
+  std::cout << "Test square with four holes, kernel: " << typeid(K).name() << std::endl;
+
+  typedef typename K::Point_2                                        Point;
+
+  typedef CGAL::Polygon_2<K>                                         Polygon_2;
+  typedef CGAL::Polygon_with_holes_2<K>                              Polygon_with_holes_2;
+  typedef boost::shared_ptr<Polygon_with_holes_2>                    Polygon_with_holes_2_ptr;
+  typedef std::vector<Polygon_with_holes_2_ptr>                      Polygon_with_holes_2_ptr_container;
+
+  Polygon_2 outer, hole1, hole2, hole3, hole4;
+  outer.push_back(Point( 0,  0));
+  outer.push_back(Point(10,  0));
+  outer.push_back(Point(10, 10));
+  outer.push_back(Point(0,  10));
+
+  hole1.push_back(Point(1, 1));
+  hole1.push_back(Point(1, 4.5));
+  hole1.push_back(Point(4.5, 4.5));
+  hole1.push_back(Point(4.5, 1));
+
+  hole2.push_back(Point(5.5, 1));
+  hole2.push_back(Point(5.5, 4.5));
+  hole2.push_back(Point(9, 4.5));
+  hole2.push_back(Point(9, 1));
+
+  hole3.push_back(Point(1, 5.5));
+  hole3.push_back(Point(1, 9));
+  hole3.push_back(Point(4.5, 9));
+  hole3.push_back(Point(4.5, 5.5));
+
+  hole4.push_back(Point(5.5, 5.5));
+  hole4.push_back(Point(5.5, 9));
+  hole4.push_back(Point(9, 9));
+  hole4.push_back(Point(9, 5.5));
+
+  Polygon_with_holes_2 poly(outer);
+  poly.add_hole(hole1);
+  poly.add_hole(hole2);
+  poly.add_hole(hole3);
+  poly.add_hole(hole4);
+
+  // Generic case, offset of the outer boundary and of the hole are distinct
+  std::cout << "Interior skeleton and offset, value: 2" << std::endl;
+  Polygon_with_holes_2_ptr_container offset_poly_with_holes =
+    CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(0.5, poly);
+
+  std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
+//  for(const auto& offp : offset_poly_with_holes)
+//    print_polygon_with_holes(*offp);
+
+  // @todo
+//  assert(offset_poly_with_holes.size() == 1);
+//  assert(offset_poly_with_holes[0]->outer_boundary().size() == 4);
+//  assert(offset_poly_with_holes[0]->number_of_holes() == 1);
+//  assert(offset_poly_with_holes[0]->holes_begin()->size() == 4);
+}
+
 // Test what happens when part an offset polygon collapses
 template <typename K>
 void test_offset_L()
 {
   std::cout << "Test L, kernel: " << typeid(K).name() << std::endl;
 
-  typedef typename K::FT                                                       FT;
   typedef typename K::Point_2                                                  Point;
   typedef CGAL::Polygon_2<K>                                                   Polygon_2;
   typedef boost::shared_ptr<Polygon_2>                                         Polygon_ptr;
@@ -128,8 +205,8 @@ void test_offset_L()
     CGAL::create_interior_skeleton_and_offset_polygons_2(int(1), Polygon_2(L.begin(), L.end()));
 
   std::cout << offset_polys.size() << " polygons" << std::endl;
-  for(const auto& offp : offset_polys)
-    print_polygon(*offp);
+//  for(const auto& offp : offset_polys)
+//    print_polygon(*offp);
 
   assert(offset_polys.size() == 1);
   assert(offset_polys[0]->size() == 4);
@@ -169,8 +246,8 @@ void test_offset_polygon_with_hole()
     CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(int(2), poly);
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
-  for(const auto& offp : offset_poly_with_holes)
-    print_polygon_with_holes(*offp);
+//  for(const auto& offp : offset_poly_with_holes)
+//    print_polygon_with_holes(*offp);
 
   assert(offset_poly_with_holes.size() == 1);
   assert(offset_poly_with_holes[0]->outer_boundary().size() == 4);
@@ -184,8 +261,8 @@ void test_offset_polygon_with_hole()
   offset_poly_with_holes = CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(2.5, poly);
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
-  for(const auto& offp : offset_poly_with_holes)
-    print_polygon_with_holes(*offp);
+//  for(const auto& offp : offset_poly_with_holes)
+//    print_polygon_with_holes(*offp);
 
   assert(offset_poly_with_holes.size() == 1);
   assert(offset_poly_with_holes[0]->outer_boundary().size() == 8);
@@ -197,8 +274,8 @@ void test_offset_polygon_with_hole()
                                                                                      K(), EPICK());
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
-  for(const auto& offp : offset_poly_with_holes)
-    print_polygon_with_holes(*offp);
+//  for(const auto& offp : offset_poly_with_holes)
+//    print_polygon_with_holes(*offp);
 
   assert(offset_poly_with_holes.size() == 1);
   assert(offset_poly_with_holes[0]->outer_boundary().size() == 8);
@@ -209,8 +286,8 @@ void test_offset_polygon_with_hole()
   offset_poly_with_holes = CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(3.5, poly);
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
-  for(const auto& offp : offset_poly_with_holes)
-    print_polygon_with_holes(*offp);
+//  for(const auto& offp : offset_poly_with_holes)
+//    print_polygon_with_holes(*offp);
 
   assert(offset_poly_with_holes.size() == 1);
   assert(offset_poly_with_holes[0]->outer_boundary().size() == 8);
@@ -221,8 +298,8 @@ void test_offset_polygon_with_hole()
   offset_poly_with_holes = CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(FT(100), poly);
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
-  for(const auto& offp : offset_poly_with_holes)
-    print_polygon_with_holes(*offp);
+//  for(const auto& offp : offset_poly_with_holes)
+//    print_polygon_with_holes(*offp);
 
   assert(offset_poly_with_holes.size() == 0);
 }
@@ -230,6 +307,8 @@ void test_offset_polygon_with_hole()
 template <typename K>
 void test_offset_pinched()
 {
+  std::cout << "Test Pinched, kernel: " << typeid(K).name() << std::endl;
+
   typedef typename K::FT                                                       FT;
   typedef typename K::Point_2                                                  Point;
   typedef CGAL::Polygon_2<K>                                                   Polygon_2;
@@ -287,8 +366,8 @@ void test_offset_pinched()
   // Before, 1 polygon
   ob.construct_offset_contours(time_at_split - FT(1), std::back_inserter(offset_polys));
 
-  for(const Polygon_ptr p : offset_polys)
-    print_polygon(*p);
+//  for(const Polygon_ptr p : offset_polys)
+//    print_polygon(*p);
 
   assert(offset_polys.size() == 1);
   assert(offset_polys[0]->size() == 10);
@@ -297,8 +376,8 @@ void test_offset_pinched()
   offset_polys.clear();
   ob.construct_offset_contours(time_at_split, std::back_inserter(offset_polys));
 
-  for(const Polygon_ptr p : offset_polys)
-    print_polygon(*p);
+//  for(const Polygon_ptr p : offset_polys)
+//    print_polygon(*p);
 
   // This splits into two polygons, but might have just created a pinched polygon too...
 //  assert(offset_polys.size() == 2);
@@ -309,6 +388,8 @@ void test_offset_pinched()
 template <typename K>
 void test_offset_multiple_CCs()
 {
+  std::cout << "Test Multi CC, kernel: " << typeid(K).name() << std::endl;
+
   typedef typename K::FT                                                       FT;
   typedef typename K::Point_2                                                  Point_2;
   typedef CGAL::Polygon_2<K>                                                   Contour;
@@ -371,8 +452,8 @@ void test_offset_multiple_CCs()
   Offset_builder ob(*ss);
   ob.construct_offset_contours(offset, std::back_inserter(offset_contours));
 
-  for(const ContourPtr p : offset_contours)
-    print_polygon(*p);
+//  for(const ContourPtr p : offset_contours)
+//    print_polygon(*p);
 
   assert(offset_contours.size() == 3);
 }
@@ -380,6 +461,8 @@ void test_offset_multiple_CCs()
 template <typename K>
 void test_offset_non_manifold()
 {
+  std::cout << "Test Non Manifold #1, kernel: " << typeid(K).name() << std::endl;
+
   typedef typename K::FT                                                       FT;
   typedef typename K::Point_2                                                  Point;
   typedef CGAL::Polygon_2<K>                                                   Polygon_2;
@@ -432,8 +515,8 @@ void test_offset_non_manifold()
     CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, poly);
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
-  for(const auto& offp : offset_poly_with_holes)
-    print_polygon_with_holes(*offp);
+//  for(const auto& offp : offset_poly_with_holes)
+//    print_polygon_with_holes(*offp);
 
   // The way the algorithm currently works, this creates a non-simple polygon
   // and not a square offset with a diamond-hole tangent to its border
@@ -447,8 +530,8 @@ void test_offset_non_manifold()
   offset_poly_with_holes = CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(time_at_split, poly);
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
-  for(const auto& offp : offset_poly_with_holes)
-    print_polygon_with_holes(*offp);
+//  for(const auto& offp : offset_poly_with_holes)
+//    print_polygon_with_holes(*offp);
 
   // The way the algorithm currently works, this creates a non-simple polygon
   // and not a square offset with a diamond-hole tangent to its border
@@ -460,6 +543,8 @@ void test_offset_non_manifold()
 template <typename K>
 void test_offset_non_manifold_2()
 {
+  std::cout << "Test Non Manifold #2, kernel: " << typeid(K).name() << std::endl;
+
   typedef typename K::FT                                                       FT;
   typedef typename K::Point_2                                                  Point;
   typedef CGAL::Polygon_2<K>                                                   Polygon_2;
@@ -517,8 +602,8 @@ void test_offset_non_manifold_2()
     CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, poly);
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
-  for(const auto& offp : offset_poly_with_holes)
-    print_polygon_with_holes(*offp);
+//  for(const auto& offp : offset_poly_with_holes)
+//    print_polygon_with_holes(*offp);
 
   assert(offset_poly_with_holes.size() == 1);
   assert(offset_poly_with_holes[0]->outer_boundary().size() == 9);
@@ -530,8 +615,8 @@ void test_offset_non_manifold_2()
   offset_poly_with_holes = CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(time_at_split, poly);
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
-  for(const auto& offp : offset_poly_with_holes)
-    print_polygon_with_holes(*offp);
+//  for(const auto& offp : offset_poly_with_holes)
+//    print_polygon_with_holes(*offp);
 
   // Current implementation will give a pinched polygon, but it could be a polygon with one incident hole
   assert(offset_poly_with_holes.size() == 1);
@@ -573,8 +658,8 @@ void test_offset_polygon_exterior()
     create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, poly);
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
-  for(const auto& offp : offset_poly_with_holes)
-    print_polygon_with_holes(*offp);
+//  for(const auto& offp : offset_poly_with_holes)
+//    print_polygon_with_holes(*offp);
 
   assert(offset_poly_with_holes.size() == 1);
   assert(offset_poly_with_holes[0]->outer_boundary().size() == 4);
@@ -587,8 +672,8 @@ void test_offset_polygon_exterior()
   offset_poly_with_holes = create_exterior_skeleton_and_offset_polygons_with_holes_2(FT(7), poly,
                                                                                      K(), EPICK());
 
-  for(const auto& offp : offset_poly_with_holes)
-    print_polygon_with_holes(*offp);
+//  for(const auto& offp : offset_poly_with_holes)
+//    print_polygon_with_holes(*offp);
 
   assert(offset_poly_with_holes.size() == 2);
   assert(offset_poly_with_holes[0]->outer_boundary().size() == 4);
@@ -609,8 +694,8 @@ void test_offset_polygon_exterior()
                                                                                      K(), EPICK());
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
-  for(const auto& offp : offset_poly_with_holes)
-    print_polygon_with_holes(*offp);
+//  for(const auto& offp : offset_poly_with_holes)
+//    print_polygon_with_holes(*offp);
 
   assert(offset_poly_with_holes.size() == 2);
   assert(offset_poly_with_holes[0]->outer_boundary().size() == 4);
@@ -714,19 +799,21 @@ void test_offset(const char* filename)
   offset_times.insert(offt);
 
   // Offset construction
-  for(std::size_t i=0; i<offset_times.size(); ++i)
+  int i = 0;
+  for(const FT ot : offset_times)
   {
+    std::cout << "Offset: " << ot << std::endl;
     Polygon_with_holes_2_ptr_container offset_poly_with_holes =
-      CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(offset_times[i], p);
+      CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(ot, p);
 
     std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
-    for(const auto& offp : offset_poly_with_holes)
-      print_polygon_with_holes(*offp);
+//    for(const auto& offp : offset_poly_with_holes)
+//      print_polygon_with_holes(*offp);
 
     for(const auto& offp : offset_poly_with_holes)
       assert(offp->outer_boundary().is_counterclockwise_oriented());
 
-    if(i > 5)
+    if(i++ > 5)
       break;
   }
 }
@@ -739,6 +826,7 @@ void test_kernel()
 
   // Artificial data
   test_offset_square<K>();
+  test_offset_four_square_holes<K>();
   test_offset_L<K>();
   test_offset_polygon_with_hole<K>();
   test_offset_pinched<K>();
@@ -924,6 +1012,10 @@ void test_kernel()
 int main(int, char**)
 {
   test_kernel<EPICK>();
-  test_kernel<EPECK>();
-  test_kernel<EPECK_w_sqrt>();
+//  test_kernel<EPECK>();
+//  test_kernel<EPECK_w_sqrt>();
+
+  std::cout << "Done!" << std::endl;
+
+  return EXIT_SUCCESS;
 }
