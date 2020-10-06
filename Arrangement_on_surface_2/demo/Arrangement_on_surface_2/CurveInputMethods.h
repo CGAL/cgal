@@ -67,7 +67,6 @@ public:
   void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
   void keyPressEvent(QKeyEvent* event) override;
   void reset() override;
-  void beginInput_();
 
   void setColor(QColor);
   QColor getColor() const;
@@ -76,6 +75,7 @@ public:
   QPointF snapQPoint(QGraphicsSceneMouseEvent* event);
 
 protected:
+  void beginInput_();
   virtual void beginInput();
   virtual void resetInput();
   virtual void updateVisualGuideNewPoint(const std::vector<QPointF>&);

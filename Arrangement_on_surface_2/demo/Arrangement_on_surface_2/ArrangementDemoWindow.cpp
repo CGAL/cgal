@@ -309,8 +309,8 @@ void ArrangementDemoWindow::on_actionAddAlgebraicCurve_triggered()
 
     // adding curve to the arrangement
     auto algCurveInputCallback = currentTab->getCurveInputCallback();
-    if (is_first_curve) currentTab->adjustViewport();
     algCurveInputCallback->generate(cv);
+    if (is_first_curve) currentTab->adjustViewport();
   }
 }
 
@@ -343,8 +343,8 @@ void ArrangementDemoWindow::on_actionAddRationalCurve_triggered()
 
     // adding curve to the arrangement
     auto algCurveInputCallback = currentTab->getCurveInputCallback();
+    algCurveInputCallback->generate(cv);
     if (is_first_curve) currentTab->adjustViewport();
-    Q_EMIT algCurveInputCallback->generate(cv);
   }
 }
 #endif

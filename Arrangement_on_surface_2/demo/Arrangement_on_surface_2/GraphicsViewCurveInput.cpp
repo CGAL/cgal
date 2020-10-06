@@ -499,9 +499,9 @@ CGAL::Object rationalCurveFromExpression(
 
   auto curve_parser = AlgebraicCurveParser<Polynomial_1>{};
   auto poly_num = curve_parser(numerator);
-  if (poly_num) return {};
+  if (!poly_num) return {};
   auto poly_den = curve_parser(denominator);
-  if (poly_den) return {};
+  if (!poly_den) return {};
 
   auto construct_curve = arr->traits()->construct_curve_2_object();
   auto cv = construct_curve(*poly_num, *poly_den);
