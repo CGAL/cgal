@@ -371,8 +371,7 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
     break;
   }
 
-  case ZOOM_ON_REGION:
-  case NO_MOUSE_ACTION:
+  default:
     break;
   }
 
