@@ -19,6 +19,7 @@
 #define CGAL_IO_BINARY_FILE_IO_H
 
 #include <CGAL/config.h>
+#include <CGAL/assertions.h>
 #include <iostream>
 #include <cstdint>
 
