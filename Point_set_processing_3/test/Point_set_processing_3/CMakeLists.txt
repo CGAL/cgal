@@ -42,8 +42,9 @@ if ( CGAL_FOUND )
 
   #Use LAS
   find_package(LASLIB)
-  if (LASLIB_FOUND)
-    CGAL_target_use_LASLIB(test_read_write_point_set)
+  include(CGAL_LASLIB_support)
+  if (TARGET CGAL::LASLIB_support)
+    target_link_libraries(test_read_write_point_set PUBLIC ${CGAL_libs} CGAL::LASLIB_support)
   else()
     message(STATUS "NOTICE : the LAS reader test requires LASlib and will not be compiled.")
   endif()
