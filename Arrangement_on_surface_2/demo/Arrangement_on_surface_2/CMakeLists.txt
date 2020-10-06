@@ -25,8 +25,8 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   option(COMPILE_UTILS_INCREMENTALLY
     "Compile files in Utils directory incrementally, or compile them all as a unit. \
-    Incremental compilation will be better for debugging and consumes less \
-    memory but slower"
+    Incremental compilation will be better for development and consume less \
+    memory while compiling but will take longer to compile."
     OFF)
 
   set(UTILS_SOURCE_FILES
