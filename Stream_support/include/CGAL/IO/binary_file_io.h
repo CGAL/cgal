@@ -22,6 +22,7 @@
 #include <CGAL/assertions.h>
 #include <iostream>
 #include <cstdint>
+#include <limits>
 
 namespace CGAL {
 
@@ -34,7 +35,7 @@ I_Binary_write_uinteger32(std::ostream& out, std::uint32_t u) {
 inline void
 I_Binary_write_size_t_into_uinteger32 (std::ostream& out, std::size_t s) {
     CGAL_assertion_msg
-      (s <= static_cast<std::size_t>(std::numeric_limits<std::uint32_t>::max()),
+      (s <= static_cast<std::size_t>((std::numeric_limits<std::uint32_t>::max)()),
        "Trying to write size_t that does not fit in uint32_t");
     I_Binary_write_uinteger32 (out, static_cast<std::uint32_t>(s));
 }
@@ -48,7 +49,7 @@ I_Binary_write_float32(std::ostream& out, float f) {
 }
 inline void
 I_Binary_write_bool(std::ostream& out, bool b) {
-    char c = static_cast<char>(b);
+    char c = (b ? 1 : 0);
     out.write(&c, 1);
 }
 
@@ -76,7 +77,7 @@ inline void
 I_Binary_read_bool(std::istream& in, bool& b) {
     char c;
     in.read(&c, 1);
-    b = static_cast<bool>(c);
+    b = (c != 0);
 }
 
 inline void
