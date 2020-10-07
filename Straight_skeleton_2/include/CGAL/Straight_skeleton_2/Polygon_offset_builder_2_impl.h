@@ -269,7 +269,12 @@ OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::TraceOffsetPolygon(
   bool lComplete = ( lHook == aSeed )  ;
 
   CGAL_POLYOFFSET_TRACE(1,"Offset polygon of " << lPoly->size() << " vertices traced." << ( lComplete ? "COMPLETE" : "INCOMPLETE" ) ) ;
-  CGAL_assertion ( !lComplete || ( lComplete && lPoly->size() >= 3 ) ) ;
+
+  // On paper, lComplete == true should imply that lPoly->size() >= 3, but since the constructions
+  // might not be exact, you can have cases where the offset points are actually duplicates
+  // and so the end polygon has size < 3. It is ignored in that case.
+  if ( lComplete && lPoly->size() < 3 )
+    lComplete = false;
 
   mVisitor.on_offset_contour_finished( lComplete );
 
