@@ -16,10 +16,14 @@ if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
 
   find_package( TBB QUIET )
+  include(CGAL_TBB_support)
+
+  find_package( ITT QUIET )
 
   # Use Eigen
   find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
-  if (NOT EIGEN3_FOUND)
+  include(CGAL_Eigen_support)
+  if (NOT TARGET CGAL::Eigen_support)
     message(STATUS "This project requires the Eigen library, and will not be compiled.")
     return()
   endif()
@@ -91,32 +95,45 @@ if ( CGAL_FOUND )
       test_mesh_polyhedral_domain_with_features_deprecated
       test_meshing_with_one_step.cpp)
     if(TARGET ${target})
-      CGAL_target_use_Eigen(${target})
+      target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
     endif()
   endforeach()
 
-  foreach(target
-      test_meshing_verbose
-      test_meshing_polyhedron_with_features
-      test_meshing_utilities.h
-      test_meshing_implicit_function
-      test_meshing_3D_image
-      test_meshing_3D_gray_image
-      test_meshing_unit_tetrahedron
-      test_meshing_polyhedron
-      test_meshing_polyhedral_complex
-      test_mesh_capsule_var_distance_bound
-      test_mesh_3_issue_1554
-      test_mesh_polyhedral_domain_with_features_deprecated
-      )
-    if(TBB_FOUND AND TARGET ${target})
-      CGAL_target_use_TBB(${target})
-    endif()
-  endforeach()
+  if(TARGET CGAL::TBB_support)
+    foreach(target
+        test_meshing_verbose
+        test_meshing_polyhedron_with_features
+        test_meshing_utilities.h
+        test_meshing_implicit_function
+        test_meshing_3D_image
+        test_meshing_3D_gray_image
+        test_meshing_unit_tetrahedron
+        test_meshing_polyhedron
+        test_meshing_polyhedral_complex
+        test_mesh_capsule_var_distance_bound
+        test_mesh_3_issue_1554
+        test_mesh_polyhedral_domain_with_features_deprecated
+        )
+      if(TARGET ${target})
+        target_link_libraries(${target} PUBLIC CGAL::TBB_support)
+      endif()
+    endforeach()
+  endif()
+  if(TARGET ITT::ITT)
+    target_link_libraries(test_meshing_polyhedron_with_features PRIVATE ITT::ITT)
+    target_compile_definitions(test_meshing_polyhedron_with_features PRIVATE CGAL_MESH_3_USE_INTEL_ITT)
+    target_link_libraries(test_meshing_verbose PRIVATE ITT::ITT)
+    target_compile_definitions(test_meshing_verbose PRIVATE CGAL_MESH_3_USE_INTEL_ITT)
+  endif()
 
+  if(BUILD_TESTING)
+    set_tests_properties(
+      execution___of__test_meshing_polyhedron_with_features
+      execution___of__test_meshing_verbose
+      PROPERTIES RESOURCE_LOCK Mesh_3_Tests_IO)
+  endif()
 else()
 
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
 
 endif()
-

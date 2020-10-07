@@ -353,17 +353,17 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor           edge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor           face_descriptor;
 
-  typedef Constant_property_map<vertex_descriptor, bool>                        Default_VCM;
+  typedef Static_boolean_property_map<vertex_descriptor, false>                 Default_VCM;
   typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_is_constrained_t,
                                                        NamedParameters,
                                                        Default_VCM>::type       VCM;
-  VCM vcm_np = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained), Default_VCM(false));
+  VCM vcm_np = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained), Default_VCM());
 
-  typedef Constant_property_map<edge_descriptor, bool>                          Default_ECM;
+  typedef Static_boolean_property_map<edge_descriptor, false>                   Default_ECM;
   typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_constrained_t,
                                                        NamedParameters,
                                                        Default_ECM>::type       ECM;
-  ECM ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), Default_ECM(false));
+  ECM ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), Default_ECM());
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPM;
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -1514,26 +1514,33 @@ bool remove_degenerate_edges(TriangleMesh& tmesh)
 // @pre `CGAL::is_triangle_mesh(tmesh)`
 //
 // @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
-// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 //
 // @param tmesh the  triangulated surface mesh to be repaired
-// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 //
 // \cgalNamedParamsBegin
-//    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-//                                      The type of this map is model of `ReadWritePropertyMap`.
-//                                      If this parameter is omitted, an internal property map for
-//                                      `CGAL::vertex_point_t` must be available in `TriangleMesh`
-//    \cgalParamEnd
-//    \cgalParamBegin{geom_traits} a geometric traits class instance.
-//       The traits class must provide the nested type `Point_3`,
-//       and the nested functors:
-//         - `Compare_distance_3` to compute the distance between 2 points
-//         - `Collinear_3` to check whether 3 points are collinear
-//         - `Less_xyz_3` to compare lexicographically two points
-//         - `Equal_3` to check whether 2 points are identical.
-//       For each functor Foo, a function `Foo foo_object()` must be provided.
-//   \cgalParamEnd
+//   \cgalParamNBegin{vertex_point_map}
+//     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+//     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+//                    as key type and `%Point_3` as value type}
+//     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+//     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+//                     must be available in `TriangleMesh`.}
+//   \cgalParamNEnd
+//
+//   \cgalParamNBegin{geom_traits}
+//     \cgalParamDescription{an instance of a geometric traits class}
+//     \cgalParamType{The traits class must provide the nested type `Point_3`,
+//                    and the nested functors:
+//                    - `Compare_distance_3` to compute the distance between 2 points
+//                    - `Collinear_3` to check whether 3 points are collinear
+//                    - `Less_xyz_3` to compare lexicographically two points
+//                    - `Equal_3` to check whether 2 points are identical.
+//                    For each functor Foo, a function `Foo foo_object()` must be provided.}
+//     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+//     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+//   \cgalParamNEnd
 // \cgalNamedParamsEnd
 //
 // \todo the function might not be able to remove all degenerate faces.

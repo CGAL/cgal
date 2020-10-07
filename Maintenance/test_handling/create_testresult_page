@@ -258,7 +258,7 @@ EOF
 		print OUTPUT ' class="error"';
 	    } elsif ($resulttext eq 'r') {
 		print OUTPUT ' class="requirements"';
-	    } 
+	    }
 	    else {
 		print OUTPUT ' class="na"';
 	    }
@@ -308,11 +308,11 @@ EOF
 sub sort_pf
 {
     # MSVS first
-    if($a =~ m/^MS/) { 
+    if($a =~ m/^MS/) {
         if($b =~ m/^MS/) {
             return $a cmp $b;
         }
-        else 
+        else
         {
             return -1;
         }
@@ -320,11 +320,11 @@ sub sort_pf
     if($b =~ m/^MS/) { return 1; }
 
     # g++/gcc second
-    if($a =~ m/^g[c+][c+]/) { 
+    if($a =~ m/^g[c+][c+]/) {
         if($b =~ m/^g[c+][c+]/) {
             return $a cmp $b;
         }
-        else 
+        else
         {
             return -1;
         }
@@ -332,11 +332,11 @@ sub sort_pf
     if($b =~ m/^g[c+][c+]/) { return 1; }
 
     # Intel third
-    if($a =~ m/^[iI]/) { 
+    if($a =~ m/^[iI]/) {
         if($b =~ m/^[iI]/) {
             return $a cmp $b;
         }
-        else 
+        else
         {
             return -1;
         }
@@ -344,11 +344,11 @@ sub sort_pf
     if($b =~ m/^[iI]/) { return 1; }
 
     # SunPro last
-    if($a =~ m/^[Ss][uU[Nn]/) { 
+    if($a =~ m/^[Ss][uU[Nn]/) {
         if($b =~ m/^[Ss][uU[Nn]/) {
             return $a cmp $b;
         }
-        else 
+        else
         {
             return 1;
         }
@@ -473,13 +473,16 @@ EOF
 	$pf_no++;
 	# my $pf_short = join('_',parse_platform_2($pf));
 	(my $pf_short) = ($pf =~ m/_(.*)/);
-	print OUTPUT "<td><a href=\"$release_name/Installation/TestReport_$pf.gz\">$pf_short</a>";
+	print OUTPUT "<td><a href=\"$release_name/Installation/TestReport_$pf.gz\"";
 
         ($platform_is_64bits{$pf}) = ! ($pf =~ m/32/);
 
         if (open (PLATFORM_INFO, "results_${pf}.info")) {
 	    $_ = <PLATFORM_INFO>; # CGAL_VERSION
-	    $_ = <PLATFORM_INFO>; # TESTER
+	    $_ = <PLATFORM_INFO>; # COMPILER
+            chomp;
+            my $compiler = $_;
+            print OUTPUT " title=\"$compiler\">$pf_short</a>";
 	    $_ = <PLATFORM_INFO>; # TESTER_NAME
 	    chomp;
 	    my $tester_name = $_;
@@ -505,10 +508,10 @@ EOF
 	    chomp;
 	    print OUTPUT "</td>\n";
 	    print OUTPUT "<td><a href=\"mailto:$tester_address\">$tester_name</a></td>\n";
-	    print OUTPUT "<td>$county</td>\n"; 
-	    print OUTPUT "<td>$countw</td>\n"; 
- 	    print OUTPUT "<td>$countn</td>\n"; 
- 	    print OUTPUT "<td>$countr</td>\n"; 
+	    print OUTPUT "<td>$county</td>\n";
+	    print OUTPUT "<td>$countw</td>\n";
+ 	    print OUTPUT "<td>$countn</td>\n";
+ 	    print OUTPUT "<td>$countr</td>\n";
 	    $index = 8;
 	    while ($index) {
 	        $index--;
@@ -517,9 +520,10 @@ EOF
                     print OUTPUT "<td align=\"center\">$_</td>\n";
                 } else {
                     print OUTPUT "<td>$_</td>\n";
-                }                    
+                }
 	    }
 	} else {
+            print OUTPUT ">$pf_short</a>";
 	    my $index = 12;
 	    while ($index) {
 		print OUTPUT "<td>?</td>\n";
@@ -542,12 +546,12 @@ sub print_platforms_numbers()
 	{
 	    $class = " class=\"";
 	    $tag = " ( ";
-            if($platform_is_64bits{$platform}) { 
-                $class = "$class os64bits"; 
+            if($platform_is_64bits{$platform}) {
+                $class = "$class os64bits";
                 $tag = $tag . "64 bits ";
             }
-            if($platform_is_optimized{$platform}) { 
-                $class = "$class highlight"; 
+            if($platform_is_optimized{$platform}) {
+                $class = "$class highlight";
                 $tag = $tag ." optimized: $platform_is_optimized{$platform}";
             }
             $class = $class . "\"";

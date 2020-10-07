@@ -218,7 +218,7 @@ public:
   bool printEdgeIds() const;
   bool printFaceIds() const;
   void printAllIds();
-  bool testDisplayId(double, double, double, CGAL::Three::Viewer_interface*)const;
+  bool testDisplayId(double, double, double, CGAL::Three::Viewer_interface*, const QVector3D&)const;
   bool shouldDisplayIds(CGAL::Three::Scene_item *current_item) const;
   QString defaultSaveName() const
   {
@@ -799,6 +799,7 @@ public:
   }
 
   void selection_changed(bool);
+  void updateDisplayedIds(QEvent *e);
 
 Q_SIGNALS:
   void updateInstructions(QString);
@@ -874,6 +875,8 @@ protected:
         return true;
       }
     }
+
+    updateDisplayedIds(gen_event);
 
     if(!visible() || !k_ring_selector.state.shift_pressing) { return false; }
     if(gen_event->type() == QEvent::Wheel)

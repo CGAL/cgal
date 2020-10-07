@@ -40,7 +40,7 @@ namespace CGAL {
 // - Some caching could be done at the Point_2 level.
 
 
-template <class EP, class AP, class C2E, class C2A, bool Protection = true>
+template <class K, class EP, class AP, class C2E, class C2A, bool Protection = true>
 class Filtered_predicate2
 {
 //TODO: pack (at least use a tuple)
@@ -65,7 +65,6 @@ public:
   Filtered_predicate2()
   {}
 
-  template <class K>
   Filtered_predicate2(const K& k)
     : ep(k.exact_kernel()), ap(k.approximate_kernel()), c2e(k,k.exact_kernel()), c2a(k,k.approximate_kernel())
   {}

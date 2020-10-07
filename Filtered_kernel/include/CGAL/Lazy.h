@@ -25,10 +25,8 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
-#include <vector>
-#include <type_traits>
 #include <CGAL/Default.h>
-#include<CGAL/tss.h>
+#include <CGAL/tss.h>
 #include <CGAL/is_iterator.h>
 #include <CGAL/transforming_iterator.h>
 
@@ -46,6 +44,14 @@
 #include <boost/preprocessor/repetition/enum_params.hpp>
 #include <boost/preprocessor/repetition/enum_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum.hpp>
+
+#include <iostream>
+#include <iterator>
+#include <string>
+#include <tuple>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 
@@ -718,17 +724,17 @@ public :
 
   Lazy(Self_rep *r)
   {
-    PTR.p = r;
+    PTR = r;
   }
 
   Lazy(const ET& e)
   {
-    PTR.p = new Lazy_rep_0<AT,ET,E2A>(e);
+    PTR = new Lazy_rep_0<AT,ET,E2A>(e);
   }
 
   Lazy(ET&& e)
   {
-    PTR.p = new Lazy_rep_0<AT,ET,E2A>(std::move(e));
+    PTR = new Lazy_rep_0<AT,ET,E2A>(std::move(e));
   }
 
   friend void swap(Lazy& a, Lazy& b) noexcept
@@ -768,7 +774,7 @@ public :
     return z;
   }
 
-  Self_rep * ptr() const { return (Self_rep*) PTR.p; }
+  Self_rep * ptr() const { return (Self_rep*) PTR; }
 };
 
 // The magic functor for Construct_bbox_[2,3], as there is no Lazy<Bbox>

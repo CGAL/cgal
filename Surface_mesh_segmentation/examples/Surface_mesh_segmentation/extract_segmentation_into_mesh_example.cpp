@@ -40,11 +40,10 @@ int main(int argc, char** argv )
 
   typedef CGAL::Face_filtered_graph<SM> Filtered_graph;
   //print area of each segment and then put it in a Mesh and print it in an OFF file
-  Filtered_graph segment_mesh(mesh, 0, segment_property_map);
+  Filtered_graph segment_mesh(mesh);
   for(std::size_t id = 0; id < number_of_segments; ++id)
   {
-    if(id > 0)
-      segment_mesh.set_selected_faces(id, segment_property_map);
+    segment_mesh.set_selected_faces(id, segment_property_map);
     std::cout << "Segment "<<id<<"'s area is : "<<CGAL::Polygon_mesh_processing::area(segment_mesh)<<std::endl;
     SM out;
     CGAL::copy_face_graph(segment_mesh, out);

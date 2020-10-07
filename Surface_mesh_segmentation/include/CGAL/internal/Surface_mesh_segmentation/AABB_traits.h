@@ -1,4 +1,3 @@
-#ifndef CGAL_INTERNAL_SURFACE_MESH_SEGMENTATION_AABB_TRAITS_H
 // Copyright (c) 2014  GeometryFactory Sarl (France).
 // All rights reserved.
 //
@@ -11,6 +10,7 @@
 // Author(s)     : Ilker O. Yaz
 
 
+#ifndef CGAL_INTERNAL_SURFACE_MESH_SEGMENTATION_AABB_TRAITS_H
 #define CGAL_INTERNAL_SURFACE_MESH_SEGMENTATION_AABB_TRAITS_H
 
 #include <CGAL/license/Surface_mesh_segmentation.h>

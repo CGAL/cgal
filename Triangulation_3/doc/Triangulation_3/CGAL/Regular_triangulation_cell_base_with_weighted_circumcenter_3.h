@@ -68,7 +68,7 @@ Swaps the Regular_triangulation_cell_base_with_weighted_circumcenter_3 and `othe
 This function should be preferred to an assignment or the copy constructor
 if `other` is deleted thereafter.
 */
-void swap (Regular_triangulation_cell_base_with_weighted_circumcenter_3& other) throw();
+void swap (Regular_triangulation_cell_base_with_weighted_circumcenter_3& other) noexcept;
 
 /// @}
 

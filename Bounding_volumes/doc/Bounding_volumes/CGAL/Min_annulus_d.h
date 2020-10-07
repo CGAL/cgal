@@ -24,17 +24,17 @@ The underlying algorithm can cope with all kinds of input, e.g. \f$ P\f$ may be
 empty or points may occur more than once. The algorithm computes a support
 set \f$ S\f$ which remains fixed until the next set, insert, or clear operation.
 
-\tparam Traits must be a model for `OptimisationDTraits`.
+\tparam Traits must be a model for `MinSphereAnnulusDTraits`.
 
-We provide the models `Optimisation_d_traits_2`,
-`Optimisation_d_traits_3`, and `Optimisation_d_traits_d` using the
+We provide the models `Min_sphere_annulus_d_traits_2`,
+`Min_sphere_annulus_d_traits_3`, and `Min_sphere_annulus_d_traits_d` using the
 two-, three-, and \f$ d\f$-dimensional \cgal kernel, respectively.
 
 \sa `CGAL::Min_sphere_d<Traits>`
-\sa `CGAL::Optimisation_d_traits_2<K,ET,NT>`
-\sa `CGAL::Optimisation_d_traits_3<K,ET,NT>`
-\sa `CGAL::Optimisation_d_traits_d<K,ET,NT>`
-\sa `OptimisationDTraits`
+\sa `CGAL::Min_sphere_annulus_d_traits_2<K,ET,NT>`
+\sa `CGAL::Min_sphere_annulus_d_traits_3<K,ET,NT>`
+\sa `CGAL::Min_sphere_annulus_d_traits_d<K,ET,NT>`
+\sa `MinSphereAnnulusDTraits`
 
 \cgalHeading{Implementation}
 

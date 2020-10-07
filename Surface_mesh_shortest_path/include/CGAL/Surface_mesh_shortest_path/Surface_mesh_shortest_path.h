@@ -257,12 +257,12 @@ public:
       return temp;
     }
 
-    bool operator==(const Source_point_iterator& other)
+    bool operator==(const Source_point_iterator& other) const
     {
       return m_iterator == other.m_iterator;
     }
 
-    bool operator!=(const Source_point_iterator& other)
+    bool operator!=(const Source_point_iterator& other) const
     {
       return m_iterator != other.m_iterator;
     }

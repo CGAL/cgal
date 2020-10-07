@@ -64,6 +64,7 @@ public:
   int numberOfEntries() const Q_DECL_OVERRIDE;
   // returns the list of items.
   const QList<CGAL::Three::Scene_item*>& entries() const { return m_entries; }
+
   Q_INVOKABLE CGAL::Three::Scene_item* item(int) const Q_DECL_OVERRIDE;
   int item_id(CGAL::Three::Scene_item*) const Q_DECL_OVERRIDE;
 
@@ -94,7 +95,7 @@ public:
   void printAllIds() Q_DECL_OVERRIDE;
   //!Re-computes the primitiveIds for `item`
   void updatePrimitiveIds(Scene_item *item) Q_DECL_OVERRIDE;
-  bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer) Q_DECL_OVERRIDE;
+  bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer, const QVector3D& scaler) Q_DECL_OVERRIDE;
   Bbox bbox() const Q_DECL_OVERRIDE;
   void computeBbox();
   double len_diagonal() const Q_DECL_OVERRIDE
@@ -280,6 +281,7 @@ private:
   typedef QList<CGAL::Three::Scene_item*> Entries;
   //List containing all the scene_items.
   Entries m_entries;
+  QList<Item_id> m_groups; //used to optimize createSelectionAll()
   QList<Item_id> children;
   // Index of the currently selected item.
   int selected_item;

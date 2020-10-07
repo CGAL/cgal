@@ -94,6 +94,7 @@ MainWindow::MainWindow()
                    dgi, SLOT(modelChanged()));
 
   dgi->setVerticesPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  dgi->setEdgesPen(QPen(Qt::black, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(dgi);
 
   // Add a GraphicItem for the Powerdiagram diagram
@@ -142,7 +143,7 @@ MainWindow::MainWindow()
   this->graphicsView->setMouseTracking(true);
 
   // Turn the vertical axis upside down
-  this->graphicsView->matrix().scale(1, -1);
+  this->graphicsView->transform().scale(1, -1);
 
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView

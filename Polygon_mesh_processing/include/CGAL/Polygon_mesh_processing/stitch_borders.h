@@ -622,16 +622,21 @@ std::size_t stitch_borders_impl(PolygonMesh& pmesh,
 /// the same as those of the target and source vertices of `h2` respectively.
 ///
 /// \tparam PolygonMesh a model of `MutableFaceGraph`
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param h a border halfedge of the polygon mesh `pm`
 /// \param pm the polygon mesh to be stitched
-/// \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-///     If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `PolygonMesh`.
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+///                     must be available in `PolygonMesh`.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \returns the number of pairs of halfedges that were stitched.
@@ -820,15 +825,20 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
 /// the same as those of the target and source vertices of `h2` respectively.
 ///
 /// \tparam PolygonMesh a model of `MutableFaceGraph`
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param pm the polygon mesh to be stitched
-/// \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-///     If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `PolygonMesh`.
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+///                     must be available in `PolygonMesh`.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \returns the number of pairs of halfedges that were stitched.
@@ -916,24 +926,33 @@ std::size_t stitch_borders(PolygonMesh& pmesh,
 /// the same as those of the target and source vertices of `h2` respectively.
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-/// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// @param pmesh the polygon mesh to be modified by stitching
-/// @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+/// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_point_map}
-///     the property map with the points associated to the vertices of `pmesh`.
-///     If this parameter is omitted, an internal property map for
-///     `CGAL::vertex_point_t` must be available in `PolygonMesh`.
-///   \cgalParamEnd
-///   \cgalParamBegin{apply_per_connected_component}
-///     specifies if the borders should only be stitched inside their own connected component.
-///     Default value is `false`.
-///   \cgalParamEnd
-///   \cgalParamBegin{face_index_map}
-///     a property map containing for each face of `pmesh` a unique index between `0` and `num_faces(pmesh)-1`
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+///                     must be available in `PolygonMesh`.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{apply_per_connected_component}
+///     \cgalParamDescription{specifies if the borders should only be stitched only within their own connected component.}
+///     \cgalParamType{Boolean}
+///     \cgalParamDefault{`false`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{face_index_map}
+///     \cgalParamDescription{a property map associating to each face of `pmesh` a unique index between `0` and `num_faces(pmesh) - 1`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
+///                    as key type and `std::size_t` as value type}
+///     \cgalParamDefault{an automatically indexed internal map}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// @return the number of pairs of halfedges that were stitched.

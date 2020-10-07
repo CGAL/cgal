@@ -223,7 +223,7 @@ public:
   Gmpq& operator/=(const Gmpq &q);
 
   bool operator==(const Gmpq &q) const noexcept { return mpq_equal(this->mpq(), q.mpq()) != 0;}
-  bool operator< (const Gmpq &q) const noexcept { return mpq_cmp(this->mpq(), q.mpq()) < 0; }
+  bool operator< (const Gmpq &q) const { return mpq_cmp(this->mpq(), q.mpq()) < 0; }
 
   double to_double() const noexcept;
   Sign sign() const noexcept;

@@ -1155,6 +1155,7 @@ insert_balls(const Vertex_handle& vp,
   //   n = 2(d-sq) / (sp+sq)
   // =======================
 
+  const FT d_signF = static_cast<FT>(d_sign);
   int n = static_cast<int>(std::floor(FT(2)*(d-sq) / (sp+sq))+.5);
   // if( minimal_weight_ != 0 && n == 0 ) return;
 
@@ -1180,7 +1181,7 @@ insert_balls(const Vertex_handle& vp,
       const Bare_point new_point =
         domain_.construct_point_on_curve(cp(vp_wp),
                                          curve_index,
-                                         d_sign * d / 2);
+                                         d_signF * d / 2);
       const int dim = 1; // new_point is on edge
       const Index index = domain_.index_from_curve_index(curve_index);
       const FT point_weight = CGAL::square(size_(new_point, dim, index));
@@ -1230,7 +1231,6 @@ insert_balls(const Vertex_handle& vp,
   FT norm_step_size = dleft_frac * step_size;
 
   // Initial distance
-  FT d_signF = static_cast<FT>(d_sign);
   FT pt_dist = d_signF * norm_step_size;
   Vertex_handle prev = vp;
   const Bare_point& p = cp(c3t3_.triangulation().point(vp));

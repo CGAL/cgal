@@ -18,8 +18,9 @@
 #ifndef CGAL_MESH_COMPLEX_3_IN_TRIANGULATION_3_H
 #define CGAL_MESH_COMPLEX_3_IN_TRIANGULATION_3_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
+#include <CGAL/Mesh_3/Mesh_complex_3_in_triangulation_3_fwd.h>
 #include <CGAL/disable_warnings.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Mesh_3/utilities.h>
@@ -38,8 +39,8 @@ namespace CGAL {
 
 
 template <typename Tr,
-          typename CornerIndex = int,
-          typename CurveIndex = int>
+          typename CornerIndex,
+          typename CurveIndex>
 class Mesh_complex_3_in_triangulation_3 :
   public Mesh_3::Mesh_complex_3_in_triangulation_3_base<
     Tr, typename Tr::Concurrency_tag>
@@ -101,10 +102,7 @@ public:
   /**
    * Constructor
    */
-  Mesh_complex_3_in_triangulation_3()
-    : Base()
-    , edges_()
-    , corners_() {}
+  Mesh_complex_3_in_triangulation_3() = default;
 
   /**
    * Copy constructor
@@ -112,12 +110,17 @@ public:
   Mesh_complex_3_in_triangulation_3(const Self& rhs);
 
   /**
-   * Destructor
+   * Move constructor
    */
-  virtual ~Mesh_complex_3_in_triangulation_3() {}
+  Mesh_complex_3_in_triangulation_3(Self&& rhs)
+    : Base(std::move(rhs))
+    , edges_(std::move(rhs.edges_))
+    , corners_(std::move(rhs.corners_))
+    , far_vertices_(std::move(rhs.far_vertices_))
+  {}
 
   /**
-   * Assignement operator
+   * Assignement operator, also serves as move-assignement
    */
   Self& operator=(Self rhs)
   {
@@ -144,6 +147,7 @@ public:
     Base::clear();
     edges_.clear();
     corners_.clear();
+    far_vertices_.clear();
   }
 
   /// Import Base functions
