@@ -2,7 +2,7 @@
 #include <CGAL/IO/read_las_points.h>
 #include <CGAL/IO/write_ply_points.h>
 #include <CGAL/jet_estimate_normals.h>
-#include <CGAL/lidar_orient_normals.h>
+#include <CGAL/scanline_orient_normals.h>
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using Point_3 = Kernel::Point_3;
@@ -54,7 +54,7 @@ int main (int argc, char** argv)
      normal_map (Normal_map()));
 
   std::cerr << "Orienting normals using scan angle and direction flag" << std::endl;
-  CGAL::lidar_orient_normals
+  CGAL::scanline_orient_normals
     (points,
      CGAL::parameters::point_map (Point_map()).
      normal_map (Normal_map()).
@@ -63,7 +63,7 @@ int main (int argc, char** argv)
   dump("out_angle_and_flag.ply", points);
 
   std::cerr << "Orienting normals using scan direction flag only" << std::endl;
-  CGAL::lidar_orient_normals
+  CGAL::scanline_orient_normals
     (points,
      CGAL::parameters::point_map (Point_map()).
      normal_map (Normal_map()).
@@ -71,7 +71,7 @@ int main (int argc, char** argv)
   dump("out_flag.ply", points);
 
   std::cerr << "Orienting normals using scan angle only" << std::endl;
-  CGAL::lidar_orient_normals
+  CGAL::scanline_orient_normals
     (points,
      CGAL::parameters::point_map (Point_map()).
      normal_map (Normal_map()).
@@ -79,7 +79,7 @@ int main (int argc, char** argv)
   dump("out_angle.ply", points);
 
   std::cerr << "Orienting normals using no additional info" << std::endl;
-  CGAL::lidar_orient_normals
+  CGAL::scanline_orient_normals
     (points,
      CGAL::parameters::point_map (Point_map()).
      normal_map (Normal_map()));

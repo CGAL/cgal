@@ -9,8 +9,8 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_LIDAR_ORIENT_NORMALS_H
-#define CGAL_LIDAR_ORIENT_NORMALS_H
+#ifndef CGAL_SCANLINE_ORIENT_NORMALS_H
+#define CGAL_SCANLINE_ORIENT_NORMALS_H
 
 #include <CGAL/license/Point_set_processing_3.h>
 
@@ -220,7 +220,7 @@ void orient_scanline (Iterator begin, Iterator end,
 // ----------------------------------------------------------------------------
 
 template <typename PointRange, typename NamedParameters>
-void lidar_orient_normals (PointRange& points, const NamedParameters& np)
+void scanline_orient_normals (PointRange& points, const NamedParameters& np)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -290,13 +290,13 @@ void lidar_orient_normals (PointRange& points, const NamedParameters& np)
 }
 
 template <typename PointRange>
-void lidar_orient_normals (PointRange& points)
+void scanline_orient_normals (PointRange& points)
 {
-  return lidar_orient_normals (points,
+  return scanline_orient_normals (points,
                                CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
 } // namespace CGAL
 
 
-#endif // CGAL_LIDAR_ORIENT_NORMALS_H
+#endif // CGAL_SCANLINE_ORIENT_NORMALS_H

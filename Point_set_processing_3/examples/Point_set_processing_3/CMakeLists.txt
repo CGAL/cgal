@@ -69,8 +69,8 @@ if ( CGAL_FOUND )
     add_executable( read_las_example "read_las_example.cpp" )
     target_link_libraries(read_las_example ${CGAL_libs} CGAL::LASLIB_support)
     if (TARGET CGAL::Eigen_support)
-      add_executable( orient_lidar_example "orient_lidar_example.cpp" )
-      target_link_libraries(orient_lidar_example ${CGAL_libs}
+      add_executable( orient_scanlines_example "orient_scanlines_example.cpp" )
+      target_link_libraries(orient_scanlines_example ${CGAL_libs}
         CGAL::Eigen_support CGAL::LASLIB_support)
     endif()
   else()
