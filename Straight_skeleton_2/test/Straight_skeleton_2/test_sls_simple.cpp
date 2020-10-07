@@ -81,17 +81,7 @@ bool is_valid(const boost::shared_ptr<StraightSkeleton>& ss)
 
   std::set<Point> unique_vertices;
   for(auto vit=ss->vertices_begin(); vit!=ss->vertices_end(); ++vit)
-  {
-//    std::cout << vit->point() << " 0" << std::endl;
     unique_vertices.insert(vit->point());
-  }
-
-//  std::ofstream out("/home/mrouxell/tmp.polylines.txt");
-//  out.precision(17);
-//  for(auto hit=ss->halfedges_begin(); hit!=ss->halfedges_end(); ++hit)
-//    out << "2 " << hit->vertex()->point() << " 0 " << hit->opposite()->vertex()->point() << " 0"
-//             << " " << CGAL::squared_distance(hit->vertex()->point(), hit->opposite()->vertex()->point())
-//        << std::endl;
 
   std::cout << unique_vertices.size() << " unique vertices (" << ss->size_of_vertices() << ")" << std::endl;
 

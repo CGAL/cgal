@@ -45,7 +45,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel          EPICK;
 typedef CGAL::Exact_predicates_exact_constructions_kernel            EPECK;
 typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt  EPECK_w_sqrt;
 
-template <typename StraightSkeleton>
+template <typename K, typename StraightSkeleton>
 bool is_valid(const boost::shared_ptr<StraightSkeleton>& ss)
 {
   typedef typename StraightSkeleton::Traits::Point_2 Point;
@@ -53,19 +53,25 @@ bool is_valid(const boost::shared_ptr<StraightSkeleton>& ss)
   if(!ss->is_valid())
     return false;
 
+  assert(static_cast<std::size_t>(std::distance(ss->vertices_begin(), ss->vertices_end())) ==
+           static_cast<std::size_t>(ss->size_of_vertices()));
+
   std::set<Point> unique_vertices;
   for(auto vit=ss->vertices_begin(); vit!=ss->vertices_end(); ++vit)
-  {
-    std::cout << vit->point() << " 0" << std::endl;
     unique_vertices.insert(vit->point());
-  }
 
-  if(unique_vertices.size() != ss->size_of_vertices())
-    return false;
+  std::cout << unique_vertices.size() << " unique vertices (" << ss->size_of_vertices() << ")" << std::endl;
 
-  for(auto hit=ss->halfedges_begin(); hit!=ss->halfedges_end(); ++hit)
-    if(hit->vertex()->point() == hit->opposite()->vertex()->point())
+  // Can't guarantee that the embedding is correct with EPICK
+  if(!std::is_same<K, EPICK>::value)
+  {
+    if(unique_vertices.size() != ss->size_of_vertices())
       return false;
+
+    for(auto hit=ss->halfedges_begin(); hit!=ss->halfedges_end(); ++hit)
+      if(hit->vertex()->point() == hit->opposite()->vertex()->point())
+        return false;
+  }
 
   return true;
 }
@@ -96,7 +102,7 @@ void test_offset_square()
   ssb.enter_contour(square.begin(), square.end());
 
   boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
-  assert(is_valid(ss));
+  assert(is_valid<K>(ss));
 
   Polygon_ptr_container offset_polys =
     CGAL::create_interior_skeleton_and_offset_polygons_2(0.5, Polygon_2(square.begin(), square.end()));
@@ -199,7 +205,7 @@ void test_offset_L()
   ssb.enter_contour(L.begin(), L.end());
 
   boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
-  assert(is_valid(ss));
+  assert(is_valid<K>(ss));
 
   Polygon_ptr_container offset_polys =
     CGAL::create_interior_skeleton_and_offset_polygons_2(int(1), Polygon_2(L.begin(), L.end()));
@@ -351,7 +357,7 @@ void test_offset_pinched()
   ssb.enter_contour(input.begin(), input.end());
 
   boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
-  assert(is_valid(ss));
+  assert(is_valid<K>(ss));
 
   // The two splitting fronts meet in the middle, and at that time,
   // we go from a single offset polygon to two polygons
@@ -446,7 +452,7 @@ void test_offset_multiple_CCs()
   ssb.enter_contour(input.rbegin(), input.rend());
 
   boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
-  assert(is_valid(ss));
+  assert(is_valid<K>(ss));
 
   Contour_sequence offset_contours;
   Offset_builder ob(*ss);
@@ -492,7 +498,7 @@ void test_offset_non_manifold()
   ssb.enter_contour(hole.begin(), hole.end());
 
   boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
-  assert(is_valid(ss));
+  assert(is_valid<K>(ss));
 
   // The two splitting fronts meet in the middle, and at that time,
   // we go from a single offset polygon to two polygons
@@ -582,7 +588,7 @@ void test_offset_non_manifold_2()
   ssb.enter_contour(hole.begin(), hole.end());
 
   boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
-  assert(is_valid(ss));
+  assert(is_valid<K>(ss));
 
   // Similar to the previous function, a split event happens and at that particular time,
   // the offset of the hole and of the outer border merge into a single polygon
@@ -786,7 +792,7 @@ void test_offset(const char* filename)
   }
 
   boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
-  assert(is_valid(ss));
+  assert(is_valid<K>(ss));
 
   std::set<FT> offset_times;
   for(auto vit=ss->vertices_begin(); vit!=ss->vertices_end(); ++vit)
@@ -802,7 +808,7 @@ void test_offset(const char* filename)
   int i = 0;
   for(const FT ot : offset_times)
   {
-    std::cout << "Offset: " << ot << std::endl;
+    std::cout << "Offset #" << i << " = " << ot << std::endl;
     Polygon_with_holes_2_ptr_container offset_poly_with_holes =
       CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(ot, p);
 

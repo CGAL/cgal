@@ -161,7 +161,7 @@ Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2
 
 
 // Given 3 oriented straight line segments: e0, e1, e2
-// returns true if there exist some positive offset distance 't' for which the
+// returns true if there exists some positive offset distance 't' for which the
 // leftward-offsets of their supporting lines intersect at a single point.
 //
 // NOTE: This function can handle the case of collinear and/or parallel segments.
@@ -518,7 +518,7 @@ oriented_side_of_event_point_wrt_bisectorC2 ( boost::intrusive_ptr< Trisegment_2
 // the offsets at time 'tr' for triple 'r' intersects in a point (rx,ry)
 // returns true if "tl==tr" and "(lx,ly)==(rx,ry)"
 // PRECONDITIONS:
-//   There exist single points at which the offset lines for 'l' and 'r' at 'tl', 'tr' intersect.
+//   There exists single points at which the offset lines for 'l' and 'r' at 'tl', 'tr' intersect.
 //
 template<class K, class TimeCache, class CoeffCache>
 Uncertain<bool> are_events_simultaneousC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& l,

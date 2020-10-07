@@ -30,7 +30,7 @@ create_interior_straight_skeleton_2 ( Polygon_with_holes_2<K,C> const& aPolyWith
                                             ,aPolyWithHoles.outer_boundary().vertices_end  ()
                                             ,aPolyWithHoles.holes_begin   ()
                                             ,aPolyWithHoles.holes_end     ()
-                                            ,K()
+                                            ,k
                                             );
 }
 
