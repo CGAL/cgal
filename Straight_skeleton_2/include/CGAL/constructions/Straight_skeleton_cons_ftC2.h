@@ -233,13 +233,13 @@ Rational<FT> squared_distance_from_point_to_lineC2( FT const& px, FT const& py, 
 // NOTE: If the collinearity cannot be determined reliably, a null trisegment is returned.
 //
 template<class K>
-boost::intrusive_ptr< Trisegment_2<K> > construct_trisegment ( Segment_2_with_ID<K> const& e0
-                                                             , Segment_2_with_ID<K> const& e1
-                                                             , Segment_2_with_ID<K> const& e2
-                                                             , std::size_t id
-                                                             )
+boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > >
+construct_trisegment ( Segment_2_with_ID<K> const& e0,
+                       Segment_2_with_ID<K> const& e1,
+                       Segment_2_with_ID<K> const& e2,
+                       std::size_t id )
 {
-  typedef Trisegment_2<K>                 Trisegment_2 ;
+  typedef Trisegment_2<K, Segment_2_with_ID<K> >Trisegment_2 ;
   typedef typename Trisegment_2::Self_ptr Trisegment_2_ptr ;
 
   Trisegment_collinearity lCollinearity = trisegment_collinearity_no_exact_constructions(e0,e1,e2);
@@ -266,7 +266,7 @@ boost::intrusive_ptr< Trisegment_2<K> > construct_trisegment ( Segment_2_with_ID
 //
 template <class K, class CoeffCache>
 boost::optional< Rational< typename K::FT> >
-compute_normal_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K> > const& tri,
+compute_normal_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                                           CoeffCache& aCoeff_cache )
 {
   typedef typename K::FT  FT ;
@@ -390,13 +390,14 @@ boost::optional< Point_2<K> > compute_oriented_midpoint ( Segment_2_with_ID<K> c
 // If you request the point of such degenerate pseudo seed the oriented midpoint bettwen e0 and e2 is returned.
 //
 template <class K, class CoeffCache>
-boost::optional< Point_2<K> > compute_seed_pointC2 ( boost::intrusive_ptr< Trisegment_2<K> > const& tri,
-                                                     typename Trisegment_2<K>::SEED_ID sid,
-                                                     CoeffCache& aCoeff_cache)
+boost::optional< Point_2<K> >
+compute_seed_pointC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
+                       typename Trisegment_2<K, Segment_2_with_ID<K> >::SEED_ID sid,
+                       CoeffCache& aCoeff_cache)
 {
   boost::optional< Point_2<K> > p ;
 
-  typedef Trisegment_2<K> Trisegment_2 ;
+  typedef Trisegment_2<K, Segment_2_with_ID<K> > Trisegment_2 ;
 
   switch ( sid )
   {
@@ -427,8 +428,9 @@ boost::optional< Point_2<K> > compute_seed_pointC2 ( boost::intrusive_ptr< Trise
 // of the degenerate seed.
 // A normal collinearity occurs when e0,e1 or e1,e2 are collinear.
 template <class K, class CoeffCache>
-boost::optional< Point_2<K> > compute_degenerate_seed_pointC2 ( boost::intrusive_ptr< Trisegment_2<K> > const& tri,
-                                                                CoeffCache& aCoeff_cache )
+boost::optional< Point_2<K> >
+compute_degenerate_seed_pointC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
+                                  CoeffCache& aCoeff_cache )
 {
   return compute_seed_pointC2( tri, tri->degenerate_seed_id(), aCoeff_cache ) ;
 }
@@ -445,7 +447,7 @@ boost::optional< Point_2<K> > compute_degenerate_seed_pointC2 ( boost::intrusive
 //
 template <class K, class CoeffCache>
 boost::optional< Rational< typename K::FT> >
-compute_degenerate_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K> > const& tri,
+compute_degenerate_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
                                               CoeffCache& aCoeff_cache )
 {
   typedef typename K::FT FT ;
@@ -536,9 +538,10 @@ compute_degenerate_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2
 // Calls the appropiate function depending on the collinearity of the edges.
 //
 template<class K, class TimeCache, class CoeffCache>
-boost::optional< Rational< typename K::FT > > compute_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K> > const& tri,
-                                                                                 TimeCache& aTime_cache,
-                                                                                 CoeffCache& aCoeff_cache)
+boost::optional< Rational< typename K::FT > >
+compute_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
+                                   TimeCache& aTime_cache,
+                                   CoeffCache& aCoeff_cache)
 {
   if ( aTime_cache.IsCached(tri->id()) )
     return aTime_cache.Get(tri->id()) ;
@@ -566,8 +569,9 @@ boost::optional< Rational< typename K::FT > > compute_offset_lines_isec_timeC2 (
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
 template<class K, class CoeffCache>
-boost::optional< Point_2<K> > construct_normal_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K> > const& tri,
-                                                                     CoeffCache& aCoeff_cache)
+boost::optional< Point_2<K> >
+construct_normal_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
+                                       CoeffCache& aCoeff_cache)
 {
   typedef typename K::FT  FT ;
 
@@ -626,8 +630,9 @@ boost::optional< Point_2<K> > construct_normal_offset_lines_isecC2 ( boost::intr
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
 template <class K, class CoeffCache>
-boost::optional< Point_2<K> > construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K> > const& tri,
-                                                                         CoeffCache& aCoeff_cache)
+boost::optional< Point_2<K> >
+construct_degenerate_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
+                                           CoeffCache& aCoeff_cache)
 {
   typedef typename K::FT FT ;
 
@@ -687,8 +692,9 @@ boost::optional< Point_2<K> > construct_degenerate_offset_lines_isecC2 ( boost::
 // Calls the appropiate function depending on the collinearity of the edges.
 //
 template <class K, class CoeffCache>
-boost::optional< Point_2<K> > construct_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K> > const& tri,
-                                                              CoeffCache& aCoeff_cache)
+boost::optional< Point_2<K> >
+construct_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
+                                CoeffCache& aCoeff_cache)
 {
   CGAL_precondition ( tri->collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
 

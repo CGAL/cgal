@@ -208,7 +208,7 @@ inline
 create_offset_polygons_2(const FT& aOffset,
                          const Skeleton& aSs)
 {
-  return create_offset_polygons_2<Polygon_2<OfK, C> >(aOffset, aSs, OfK());
+  return create_offset_polygons_2<Polygon_2<OfK, C> >(aOffset, aSs, OfK()); // @fixme EPICK
 }
 
 template<class OfK, class C, class FT, class Skeleton>

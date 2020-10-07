@@ -156,43 +156,6 @@ private:
 
 } // namespace CGAL_SS_i
 
-enum Trisegment_collinearity
-{
-    TRISEGMENT_COLLINEARITY_NONE
-  , TRISEGMENT_COLLINEARITY_01
-  , TRISEGMENT_COLLINEARITY_12
-  , TRISEGMENT_COLLINEARITY_02
-  , TRISEGMENT_COLLINEARITY_ALL
-} ;
-
-
-inline char const* trisegment_collinearity_to_string( Trisegment_collinearity c )
-{
-  switch ( c )
-  {
-    case TRISEGMENT_COLLINEARITY_NONE : return "<>" ;
-    case TRISEGMENT_COLLINEARITY_01   : return "<0,1>" ;
-    case TRISEGMENT_COLLINEARITY_12   : return "<1,2>" ;
-    case TRISEGMENT_COLLINEARITY_02   : return "<0,2>" ;
-    case TRISEGMENT_COLLINEARITY_ALL  : return "<0,1,2>" ;
-  }
-
-  return "!!UNKNOWN COLLINEARITY!!" ;
-}
-
-
-namespace internal
-{
-
-template <>
-struct Minmax_traits< Trisegment_collinearity >
-{
-  static const Trisegment_collinearity min = TRISEGMENT_COLLINEARITY_NONE;
-  static const Trisegment_collinearity max = TRISEGMENT_COLLINEARITY_ALL;
-};
-
-}
-
 class Ref_counted_base
 {
 private:

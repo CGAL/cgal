@@ -175,11 +175,10 @@ Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2
 // not given by the collinear edges alone)
 //
 template<class K, class FT, class TimeCache, class CoeffCache>
-Uncertain<bool> exist_offset_lines_isec2 ( boost::intrusive_ptr< Trisegment_2<K> > const& tri
-                                         , boost::optional<FT> const& aMaxTime
-                                         , TimeCache& aTime_cache
-                                         , CoeffCache& aCoeff_cache
-                                         )
+Uncertain<bool> exist_offset_lines_isec2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
+                                           boost::optional<FT> const& aMaxTime,
+                                           TimeCache& aTime_cache,
+                                           CoeffCache& aCoeff_cache )
 {
 
   typedef Rational<FT>              Rational ;
@@ -236,13 +235,13 @@ Uncertain<bool> exist_offset_lines_isec2 ( boost::intrusive_ptr< Trisegment_2<K>
 // for each triple there exists distances 'mt' and 'nt' for which the offsets lines (at mt and nt resp.),
 // (m0',m1',m2') and (n0',n1',n2') intersect each in a single point; returns the relative order of mt w.r.t nt.
 // That is, indicates which offset triple intersects first (closer to the source lines)
-// PRECONDITION: There exist distances mt and nt for which each offset triple intersect at a single point.
+// PRECONDITION: There exists distances mt and nt for which each offset triple intersect at a single point.
 template<class K, class TimeCache, class CoeffCache>
-Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( boost::intrusive_ptr< Trisegment_2<K> > const& m
-                                                               , boost::intrusive_ptr< Trisegment_2<K> > const& n
-                                                               , TimeCache& aTime_cache
-                                                               , CoeffCache& aCoeff_cache
-                                                               )
+Uncertain<Comparison_result>
+compare_offset_lines_isec_timesC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& m,
+                                    boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& n,
+                                    TimeCache& aTime_cache,
+                                    CoeffCache& aCoeff_cache )
 {
   typedef typename K::FT FT ;
 
@@ -327,9 +326,10 @@ Uncertain<bool> is_edge_facing_pointC2 ( boost::optional< Point_2<K> > const& aP
 // at some distance intersects in a point (x,y), returns true if (x,y) is on the positive side of the line supporting aEdge
 //
 template<class K, class CoeffCache>
-inline Uncertain<bool> is_edge_facing_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K> > const& tri,
-                                                            Segment_2_with_ID<K> const& aEdge,
-                                                            CoeffCache& aCoeff_cache)
+inline Uncertain<bool>
+is_edge_facing_offset_lines_isecC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
+                                     Segment_2_with_ID<K> const& aEdge,
+                                     CoeffCache& aCoeff_cache)
 {
   return is_edge_facing_pointC2(construct_offset_lines_isecC2(tri, aCoeff_cache), aEdge);
 }
@@ -390,20 +390,19 @@ inline Uncertain<bool> is_edge_facing_offset_lines_isecC2 ( boost::intrusive_ptr
 // Thus, and edge event is valid if the new vertex NOT to the positive side of [e0,e1] *and* NOT to the negative side o [e3,e4].
 //
 // PRECONDITIONS:
-//   There exist a single point 'p' corresponding to the event as given by the trisegment
+//   There exists a single point 'p' corresponding to the event as given by the trisegment
 //   e0 and e1 are known to be consectuve at the time of the event (even if they are not consecutive in the input polygon)
 //   If e0 and e1 are not consecutive in the input, v01_event is the event that defined they very first offset vertex.
 //   If e0 and e1 are consecutive, v01_event is null.
 //
 template<class K, class CoeffCache>
 Uncertain<Oriented_side>
-oriented_side_of_event_point_wrt_bisectorC2 ( boost::intrusive_ptr< Trisegment_2<K> > const& event
-                                            , Segment_2_with_ID<K>                    const& e0
-                                            , Segment_2_with_ID<K>                    const& e1
-                                            , boost::intrusive_ptr< Trisegment_2<K> > const& v01_event // can be null
-                                            , bool                                    primary_is_0
-                                            , CoeffCache& aCoeff_cache
-                                            )
+oriented_side_of_event_point_wrt_bisectorC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& event,
+                                              Segment_2_with_ID<K> const& e0,
+                                              Segment_2_with_ID<K> const& e1,
+                                              boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& v01_event, // can be null
+                                              bool primary_is_0,
+                                              CoeffCache& aCoeff_cache )
 {
   typedef typename K::FT FT ;
 
@@ -522,8 +521,8 @@ oriented_side_of_event_point_wrt_bisectorC2 ( boost::intrusive_ptr< Trisegment_2
 //   There exist single points at which the offset lines for 'l' and 'r' at 'tl', 'tr' intersect.
 //
 template<class K, class TimeCache, class CoeffCache>
-Uncertain<bool> are_events_simultaneousC2 ( boost::intrusive_ptr< Trisegment_2<K> > const& l,
-                                            boost::intrusive_ptr< Trisegment_2<K> > const& r,
+Uncertain<bool> are_events_simultaneousC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& l,
+                                            boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& r,
                                             TimeCache& aTime_cache,
                                             CoeffCache& aCoeff_cache )
 {

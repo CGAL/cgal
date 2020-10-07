@@ -16,6 +16,7 @@
 #include <CGAL/certified_numeric_predicates.h>
 #include <CGAL/certified_quotient_predicates.h>
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+#include <CGAL/Trisegment_2.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Filtered_predicate.h>
@@ -203,166 +204,6 @@ public:
   std::size_t mID;
 };
 
-// @fixme this has to somehow be documented for the traits concept to make sense
-//
-// A straight skeleton event is the simultaneous collision of 3 offseted oriented straight line segments
-// e0*,e1*,e2* [e* denotes an _offseted_ edge].
-//
-// This record stores the segments corresponding to the INPUT edges (e0,e1,e2) whose offsets intersect
-// at the event along with their collinearity.
-//
-// If the event is an edge-event, then e0*->e1*->e2* must be consecutive right before the event so that
-// after the event e0* and e2* become consecutive. Thus, there are _offset_ vertices (e0*,e1*) and (e1*,e2*)
-// in the offset polygon which not necessarily exist in the original polygon.
-//
-// If the event is a split-event, e0*->e1* must be consecutive right before the event so that after the event
-// e0*->right(e2*) and left(e2*)->e1* become consecutive. Thus, there is an offset vertex (e0*,e1*) in the
-// offset polygon which does not necessarily exist in the original polygon.
-//
-// The offset vertices (e0*,e1*) and (e1*,e2*) are called the left and right seeds for the event.
-// A seed is a contour node if the vertex is already present in the input polygon, otherwise is a skeleton node.
-// If a seed is a skeleton node it is produced by a previous event so it is itself defined as a trisegment, thus,
-// a trisegment is actually a node in a binary tree.
-// Since trisegments are tree nodes they must always be handled via the nested smart pointer type: Self_ptr.
-//
-template<class K>
-class Trisegment_2 : public Ref_counted_base
-{
-  typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2_with_ID;
-  typedef Trisegment_2<K> Self;
-
-public:
-  typedef boost::intrusive_ptr<Trisegment_2> Self_ptr ;
-
-  Trisegment_2 ( Segment_2_with_ID const&        aE0
-               , Segment_2_with_ID const&        aE1
-               , Segment_2_with_ID const&        aE2
-               , Trisegment_collinearity aCollinearity
-               , std::size_t aID
-               )
-    : mID(aID)
-  {
-    mCollinearity = aCollinearity ;
-
-    mE[0] = aE0 ;
-    mE[1] = aE1 ;
-    mE[2] = aE2 ;
-
-    switch ( mCollinearity )
-    {
-      case TRISEGMENT_COLLINEARITY_01:
-        mCSIdx=0; mNCSIdx=2; break ;
-
-      case TRISEGMENT_COLLINEARITY_12:
-        mCSIdx=1; mNCSIdx=0; break ;
-
-      case TRISEGMENT_COLLINEARITY_02:
-        mCSIdx=0; mNCSIdx=1; break ;
-
-      case TRISEGMENT_COLLINEARITY_ALL:
-        mCSIdx = mNCSIdx = (std::numeric_limits<unsigned>::max)(); break ;
-
-      case TRISEGMENT_COLLINEARITY_NONE:
-        mCSIdx = mNCSIdx = (std::numeric_limits<unsigned>::max)(); break ;
-    }
-  }
-
-  std::size_t& id() { return mID; }
-  const std::size_t& id() const { return mID; }
-
-  static Trisegment_2 null() { return Self_ptr() ; }
-
-  Trisegment_collinearity collinearity() const { return mCollinearity ; }
-
-  Segment_2_with_ID const& e( unsigned idx ) const { CGAL_precondition(idx<3) ; return mE[idx] ; }
-
-  Segment_2_with_ID const& e0() const { return e(0) ; }
-  Segment_2_with_ID const& e1() const { return e(1) ; }
-  Segment_2_with_ID const& e2() const { return e(2) ; }
-
-  // If 2 out of the 3 edges are collinear they can be reclassified as 1 collinear edge (any of the 2) and 1 non-collinear.
-  // These methods returns the edges according to that classification.
-  // PRECONDITION: Exactly 2 out of 3 edges are collinear
-  Segment_2_with_ID const& collinear_edge    () const { return e(mCSIdx) ; }
-  Segment_2_with_ID const& non_collinear_edge() const { return e(mNCSIdx) ; }
-  Segment_2_with_ID const& other_collinear_edge() const
-  {
-    switch ( mCollinearity )
-    {
-      case TRISEGMENT_COLLINEARITY_01:
-        return e(1);
-      case TRISEGMENT_COLLINEARITY_12:
-        return e(2);
-      case TRISEGMENT_COLLINEARITY_02:
-        return e(2);
-    }
-  }
-
-  Self_ptr child_l() const { return mChildL ; }
-  Self_ptr child_r() const { return mChildR ; }
-
-  void set_child_l( Self_ptr const& aChild ) { mChildL = aChild ; }
-  void set_child_r( Self_ptr const& aChild ) { mChildR = aChild ; }
-
-  enum SEED_ID { LEFT, RIGHT, UNKNOWN } ;
-
-  // Indicates which of the seeds is collinear for a normal collinearity case.
-  // PRECONDITION: The collinearity is normal.
-  SEED_ID degenerate_seed_id() const
-  {
-    Trisegment_collinearity c = collinearity();
-
-    return c == TRISEGMENT_COLLINEARITY_01 ? LEFT : c == TRISEGMENT_COLLINEARITY_12 ? RIGHT : UNKNOWN  ;
-  }
-
-  friend std::ostream& operator << ( std::ostream& os, Self const& aTrisegment )
-  {
-    return os << "[" << s2str(aTrisegment.e0())
-              << " " << s2str(aTrisegment.e1())
-              << " " << s2str(aTrisegment.e2())
-              << " " << trisegment_collinearity_to_string(aTrisegment.collinearity())
-              << "]";
-  }
-
-  friend std::ostream& operator << ( std::ostream& os, Self_ptr const& aPtr )
-  {
-    recursive_print(os,aPtr,0);
-    return os ;
-  }
-
-  static void recursive_print ( std::ostream& os, Self_ptr const& aTriPtr, int aDepth )
-  {
-    os << "\n" ;
-
-    for ( int i = 0 ; i < aDepth ; ++ i )
-      os << "  " ;
-
-    if ( aTriPtr )
-    {
-      os << *aTriPtr ;
-
-      if ( aTriPtr->child_l() )
-        recursive_print(os,aTriPtr->child_l(),aDepth+1);
-
-      if ( aTriPtr->child_r() )
-        recursive_print(os,aTriPtr->child_r(),aDepth+1);
-    }
-    else
-    {
-      os << "{null}" ;
-    }
-  }
-
-private :
-  std::size_t             mID;
-  Segment_2_with_ID       mE[3];
-  Trisegment_collinearity mCollinearity ;
-  unsigned                mCSIdx, mNCSIdx ;
-
-  Self_ptr mChildL ;
-  Self_ptr mChildR ;
-} ;
-
 template <class Info>
 struct No_cache
 {
@@ -430,7 +271,7 @@ struct Functor_base_2
   typedef typename K::Vector_2 Vector_2 ;
   typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2_with_ID ;
 
-  typedef CGAL_SS_i::Trisegment_2<K> Trisegment_2 ;
+  typedef Trisegment_2<K, Segment_2_with_ID> Trisegment_2 ;
 
   typedef typename Trisegment_2::Self_ptr Trisegment_2_ptr ;
 };
@@ -456,8 +297,8 @@ struct SS_converter : Converter
   typedef Segment_2_with_ID<Source_kernel> Source_segment_2_with_ID ;
   typedef Segment_2_with_ID<Target_kernel> Target_segment_2_with_ID ;
 
-  typedef Trisegment_2<Source_kernel> Source_trisegment_2 ;
-  typedef Trisegment_2<Target_kernel> Target_trisegment_2 ;
+  typedef Trisegment_2<Source_kernel, Source_segment_2_with_ID> Source_trisegment_2 ;
+  typedef Trisegment_2<Target_kernel, Target_segment_2_with_ID> Target_trisegment_2 ;
 
   typedef boost::tuple<Source_FT,Source_point_2> Source_time_and_point_2 ;
   typedef boost::tuple<Target_FT,Target_point_2> Target_time_and_point_2 ;

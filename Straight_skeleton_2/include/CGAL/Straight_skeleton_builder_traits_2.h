@@ -392,7 +392,7 @@ struct Straight_skeleton_builder_traits_2_base
 
   typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2 ;
   typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2_with_ID ; // for BOOST_MPL_HAS_XXX_TRAIT_DEF
-  typedef CGAL_SS_i::Trisegment_2<K>      Trisegment_2 ;
+  typedef Trisegment_2<K, Segment_2_with_ID> Trisegment_2 ;
   typedef typename Trisegment_2::Self_ptr Trisegment_2_ptr ;
 
   template<class F> F get( F const* = 0 ) const { return F(); }
@@ -794,9 +794,9 @@ public:
 
     typename FK::FT::Protector p;
 
-    typedef CGAL_SS_i::Trisegment_2<K> Source_trisegment_2 ;
+    typedef Trisegment_2<K, CGAL_SS_i::Segment_2_with_ID<K> > Source_trisegment_2 ;
     typedef typename Source_trisegment_2::Self_ptr Source_trisegment_2_ptr;
-    typedef CGAL_SS_i::Trisegment_2<FK> Target_trisegment_2 ;
+    typedef Trisegment_2<FK, CGAL_SS_i::Segment_2_with_ID<FK> > Target_trisegment_2 ;
     typedef typename Target_trisegment_2::Self_ptr Target_trisegment_2_ptr;
 
     C2F to_FK ;
