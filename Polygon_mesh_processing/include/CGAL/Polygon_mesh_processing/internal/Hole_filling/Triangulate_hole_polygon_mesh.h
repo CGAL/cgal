@@ -96,8 +96,7 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
             bool use_delaunay_triangulation,
             const Kernel& k,
             const bool use_cdt,
-            const typename Kernel::FT max_squared_distance =
-            typename Kernel::FT(4) / typename Kernel::FT(10000))
+            const typename Kernel::FT max_squared_distance)
 {
   typedef Halfedge_around_face_circulator<PolygonMesh>   Hedge_around_face_circulator;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
