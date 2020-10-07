@@ -45,7 +45,6 @@ int main (int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  points.resize(100000);
 
   std::cerr << "Estimating normals" << std::endl;
   CGAL::jet_estimate_normals<CGAL::Parallel_if_available_tag>

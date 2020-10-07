@@ -219,6 +219,97 @@ void orient_scanline (Iterator begin, Iterator end,
 // Public section
 // ----------------------------------------------------------------------------
 
+/**
+   \ingroup PkgPointSetProcessing3Algorithms
+
+   Orients the normals of the range of `points` by estimating a line
+   of sight and checking its consistency with the current normal orientation.
+
+   \warning this function requires the input `points` to be ordered
+   along scanlines aligned on the XY-plane. It is typically designed
+   for 2.5D urban datasets acquired through, for example, airborne
+   LIDAR devices.
+
+   First, scanlines are estimated as subranges of `points` by
+   iterating on `points`:
+
+   - if the named parameter `scan_direction_flag` is provided, the
+     range is cutted everytime the flag (which tells if the scanner
+     was moving in the positive or negative direction) changes.
+
+   - if no direction flag map is provided, a fallback method simply
+     cuts the range everytime 3 consecutive points form an acute angle
+     on the projected XY-plane. This fallback method gives suboptimal
+     results.
+
+   Then, the line of sight (estimated vector between a point and the
+   position of the scanner at its time of acquisition) is estimated:
+
+   - if both `scan_direction_flag` and `scan_angle` are provided, the
+     line of sight can be directly computed as a combination of the 2D
+     vector of the projected scanline, the vertical vector and the
+     scan angle.
+
+   - if only `scan_angle` is provided, then for each scanline, the
+     position of the scanner is estimated as being above the point of
+     the scanline which has the minimum scan angle absolute
+     value. This method is less optimal than the one using
+     `scan_direction_flag`.
+
+   - if none of these property maps are provided, then for each
+     scanline, the position of the scanner is estimated as being above
+     of the barycenter of the points of the scanline projected on the
+     XY-plane. This fallback method gives suboptimal results.
+
+   Once the line of sight is estimated for each point, the normals are
+   oriented by checking if, for one each, the line of sight and the
+   normal vector give a positive scalar product. If they don't, then
+   the normal vector is inverted.
+
+   \note this method gives optimal results when `scan_direction_flag`
+   and `scan_angle` are provided. Correct results may still be
+   produced in the absence of either one or both of these properties,
+   as long as the point set is ordered in 2.5D scanlines.
+
+   \tparam PointRange is a model of `Range`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+
+   \param points input point range.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+   \cgalNamedParamsBegin
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
+       \cgalParamType{a model of `WritablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Vector_3`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{scan_angle_map}
+       \cgalParamDescription{a property map associating the angle of acquisition to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `float`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{scan_direction_flag}
+       \cgalParamDescription{a property map associating a flag describing the direction of the acquisition to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `unsigned char`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+   \cgalNamedParamsEnd
+*/
 template <typename PointRange, typename NamedParameters>
 void scanline_orient_normals (PointRange& points, const NamedParameters& np)
 {
