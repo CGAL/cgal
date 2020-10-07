@@ -53,14 +53,17 @@ Vector_3<K> normalize(const Vector_3<K>& v)
 }// namespace CGAL
 
 
-typedef std::array<int, 3> Vector3i;
-
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 
+
+namespace CGAL {
+
+namespace Polygon_mesh_processing {
 
 template <typename K>
 struct Envelope {
+
+  typedef std::array<int, 3> Vector3i;
 
   typedef typename K::Point_3 Point_3;
   typedef typename K::Vector_3 Vector_3;
@@ -69,9 +72,9 @@ struct Envelope {
   typedef typename K::Plane_3 Plane_3;
   typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
 
-  typedef CGAL::Bbox_3 Bbox_3;
+  typedef Bbox_3 Bbox_3;
 
-  typedef CGAL::Exact_predicates_exact_constructions_kernel EK;
+  typedef Exact_predicates_exact_constructions_kernel EK;
   typedef typename EK::Point_3 ePoint_3;
   typedef typename EK::Line_3 eLine_3;
   typedef typename EK::Plane_3 ePlane_3;
@@ -90,7 +93,7 @@ struct Envelope {
       etriangle = { ePoint_3(t0.x(), t0.y(), t0.z()),
                     ePoint_3(t1.x(), t1.y(), t1.z()),
                     ePoint_3(t2.x(), t2.y(), t2.z()) };
-      n = etriangle[0] + CGAL::cross_product((etriangle[0] - etriangle[1]), (etriangle[0] - etriangle[2]));
+      n = etriangle[0] + cross_product((etriangle[0] - etriangle[1]), (etriangle[0] - etriangle[2]));
     }
 
     void init_elines()
@@ -185,9 +188,9 @@ struct Envelope {
     }
   };
 
-  typedef CGAL::AABB_primitive<std::size_t, Datum_map<K>, Point_map<K>, CGAL::Tag_true /*UseSharedData*/, CGAL::Tag_false /*CacheDatum*/> Primitive;
-  typedef CGAL::AABB_traits<K, Primitive> AABB_traits;
-  typedef CGAL::AABB_tree<AABB_traits> Tree;
+  typedef AABB_primitive<std::size_t, Datum_map<K>, Point_map<K>, Tag_true /*UseSharedData*/, Tag_false /*CacheDatum*/> Primitive;
+  typedef AABB_traits<K, Primitive> AABB_traits;
+  typedef AABB_tree<AABB_traits> Tree;
 
 
   Tree tree;
@@ -229,10 +232,10 @@ struct Envelope {
     const Point_3& max1 = max_vertex(ic1);
     const Point_3& max2 = max_vertex(ic2);
 
-    if ((compare_x(max1, min2) == CGAL::SMALLER) ||(compare_y(max1, min2) == CGAL::SMALLER) ||(compare_z(max1, min2) == CGAL::SMALLER)){
+    if ((compare_x(max1, min2) == SMALLER) ||(compare_y(max1, min2) == SMALLER) ||(compare_z(max1, min2) == SMALLER)){
       return 0;
     }
-    if ((compare_x(max2, min1) == CGAL::SMALLER) ||(compare_y(max2, min1) == CGAL::SMALLER) ||(compare_z(max2, min1) == CGAL::SMALLER)){
+    if ((compare_x(max2, min1) == SMALLER) ||(compare_y(max2, min1) == SMALLER) ||(compare_z(max2, min1) == SMALLER)){
       return 0;
     }
     return 1;
@@ -242,7 +245,7 @@ struct Envelope {
   bool
   point_out_prism(const ePoint_3 &point, const std::vector<unsigned int> &prismindex, int jump) const
   {
-    CGAL::Orientation ori;
+    Orientation ori;
 
     for (int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
@@ -253,9 +256,9 @@ struct Envelope {
         const Plane& plane = halfspace[prismindex[i]][j];
         // As all points have coordinates with intervals with inf==sup the orientation test is faster
         // as it can exploit the static filters
-        ori = CGAL::orientation(plane.ep, plane.eq, plane.er, point);
+        ori = orientation(plane.ep, plane.eq, plane.er, point);
         // ori = oriented_side(plane.eplane, point);
-        if (ori != CGAL::ON_NEGATIVE_SIDE){
+        if (ori != ON_NEGATIVE_SIDE){
           // if for a prism we are on the wrong side of one halfspace we are outside this prism
           // so no need to look at the other halfspaces
           break;
@@ -278,7 +281,7 @@ struct Envelope {
   {
     Vector_3 bmin, bmax;
 
-    CGAL::Orientation ori;
+    Orientation ori;
 
     for (int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
@@ -290,12 +293,12 @@ struct Envelope {
       for (int j = 0; j < halfspace[prismindex[i]].size(); j++){
         const Plane& plane = halfspace[prismindex[i]][j];
         ori = orientation(plane.ep, plane.eq, plane.er, epoint);
-        if (ori != CGAL::ON_NEGATIVE_SIDE){
+        if (ori != ON_NEGATIVE_SIDE){
           break;
         }
 
       }
-      if (ori == CGAL::ON_NEGATIVE_SIDE){
+      if (ori == ON_NEGATIVE_SIDE){
         id = i;
         return false;
       }
@@ -319,7 +322,7 @@ struct Envelope {
     cid.clear();
     std::array<bool,8> cut = { false, false,  false, false,  false, false,  false, false };
 
-    std::array<CGAL::Orientation,8> o1, o2;
+    std::array<Orientation,8> o1, o2;
 
     int ori = 0, ct1 = 0, ct2 = 0;  //ori=0 to avoid the case that there is only one cut plane
     std::vector<int> cutp;
@@ -328,15 +331,15 @@ struct Envelope {
     for (int i = 0; i < prism.size(); i++){
       const Plane& plane = prism[i];
       // POSITIVE is outside the prism
-      o1[i] = CGAL::orientation(plane.ep, plane.eq, plane.er, source); // todo use plane.eplane
-      o2[i] = CGAL::orientation(plane.ep, plane.eq, plane.er, target);
+      o1[i] = orientation(plane.ep, plane.eq, plane.er, source); // todo use plane.eplane
+      o2[i] = orientation(plane.ep, plane.eq, plane.er, target);
 
       if (int(o1[i]) + int(o2[i]) >= 1)
         {
           return false;
         }
 
-      if (o1[i] == CGAL::ON_ORIENTED_BOUNDARY && o2[i] == CGAL::ON_ORIENTED_BOUNDARY)
+      if (o1[i] == ON_ORIENTED_BOUNDARY && o2[i] == ON_ORIENTED_BOUNDARY)
         {
           return false;
         }
@@ -344,8 +347,8 @@ struct Envelope {
       if (int(o1[i]) * int(o2[i]) == -1){
         cutp.emplace_back(i);
       }
-      if (o1[i] == CGAL::ON_POSITIVE_SIDE) ct1++;
-      if (o2[i] == CGAL::ON_POSITIVE_SIDE) ct2++; // if ct1 or ct2 >0, then NOT totally inside
+      if (o1[i] == ON_POSITIVE_SIDE) ct1++;
+      if (o2[i] == ON_POSITIVE_SIDE) ct2++; // if ct1 or ct2 >0, then NOT totally inside
     }
 
     if (cutp.size() == 0 && ct1 == 0 && ct2 == 0){
@@ -388,7 +391,7 @@ struct Envelope {
     for (int i = 0; i < cutp.size(); i++){
       const Plane& plane_i = prism[cutp[i]];
 
-      boost::optional<ePoint_3> op = CGAL::intersection_point(line, plane_i.eplane);
+      boost::optional<ePoint_3> op = intersection_point(line, plane_i.eplane);
       if(! op){
         std::cout <<  "there must be an intersection 2" << std::endl;
       }
@@ -402,11 +405,11 @@ struct Envelope {
         const Plane& plane_j = prism[cutp[j]];
         ori = oriented_side(plane_j.eplane, ip);
 
-        if(ori == CGAL::ON_POSITIVE_SIDE){
+        if(ori == ON_POSITIVE_SIDE){
           break;
         }
       }
-      if (ori != CGAL::ON_POSITIVE_SIDE) {
+      if (ori != ON_POSITIVE_SIDE) {
         cut[cutp[i]] = true;
       }
     }
@@ -429,8 +432,8 @@ struct Envelope {
                                                           const Plane& plane,
                                                           const std::vector<unsigned int> &prismindex, const int &jump, int &id) const
   {
-    CGAL::Oriented_side ori;
-    boost::optional<ePoint_3> op = CGAL::intersection_point(eline, plane.eplane);
+    Oriented_side ori;
+    boost::optional<ePoint_3> op = intersection_point(eline, plane.eplane);
 #ifdef TRACE
     if(! op){
       std::cout <<  "there must be an intersection 3" << std::endl;
@@ -447,11 +450,11 @@ struct Envelope {
         const Plane& plane = halfspace[prismindex[i]][j];
         ori = oriented_side(plane.eplane, ip);
 
-        if (ori != CGAL::ON_NEGATIVE_SIDE){
+        if (ori != ON_NEGATIVE_SIDE){
           break;
         }
       }
-      if (ori == CGAL::ON_NEGATIVE_SIDE){
+      if (ori == ON_NEGATIVE_SIDE){
         id = i;
         return IN_PRISM;
       }
@@ -564,30 +567,30 @@ struct Envelope {
     // If this is  the case the intersection line of the facets cannot be in the triangle
     // But this case gets altready filtered ealier
     bool fast_exit = false;
-    CGAL::Orientation ori = orientation(facet1.ep, facet1.eq, facet1.er, tp);
-    if(ori != CGAL::COPLANAR){
-      if( (ori == CGAL::orientation(facet1.ep, facet1.eq, facet1.er, tq))
-          && (ori == CGAL::orientation(facet1.ep, facet1.eq, facet1.er, tr)) ){
+    Orientation ori = orientation(facet1.ep, facet1.eq, facet1.er, tp);
+    if(ori != COPLANAR){
+      if( (ori == orientation(facet1.ep, facet1.eq, facet1.er, tq))
+          && (ori == orientation(facet1.ep, facet1.eq, facet1.er, tr)) ){
         return 0;
       }
     }
     ori = orientation(facet2.ep, facet2.eq, facet2.er, tp);
-    if(ori != CGAL::COPLANAR){
-      if( (ori == CGAL::orientation(facet2.ep, facet2.eq, facet2.er, tq))
-          && (ori == CGAL::orientation(facet2.ep, facet2.eq, facet2.er, tr))){
+    if(ori != COPLANAR){
+      if( (ori == orientation(facet2.ep, facet2.eq, facet2.er, tq))
+          && (ori == orientation(facet2.ep, facet2.eq, facet2.er, tr))){
         return 0;
       }
     }
 #endif
 
-    int o1 = int(CGAL::orientation(n,tp,tq, ip));
-    int o2 = int(CGAL::orientation(n,tq,tr, ip));
+    int o1 = int(orientation(n,tp,tq, ip));
+    int o2 = int(orientation(n,tq,tr, ip));
 
     if (o1 * o2 == -1){
 
       return 0;
     }
-    int o3 = int(CGAL::orientation(n, tr, tp, ip));
+    int o3 = int(orientation(n, tr, tp, ip));
 
     if (o1 * o3 == -1 || o2 * o3 == -1){
 
@@ -672,9 +675,9 @@ struct Envelope {
         // As the orientation test operates on point with inf==sup of the coordinate intervals
         // we can profit from the static filters.
         // The oriented side test being made with interval arithmetic is more expensive
-        o1[i] =  CGAL::orientation(plane.ep, plane.eq, plane.er, tri0);
-        o2[i] =  CGAL::orientation(plane.ep, plane.eq, plane.er, tri1);
-        o3[i] =  CGAL::orientation(plane.ep, plane.eq, plane.er, tri2);
+        o1[i] =  orientation(plane.ep, plane.eq, plane.er, tri0);
+        o2[i] =  orientation(plane.ep, plane.eq, plane.er, tri1);
+        o3[i] =  orientation(plane.ep, plane.eq, plane.er, tri2);
 
         if (o1[i] + o2[i] + o3[i] >= 2){ //1,1,0 case
           return 0;
@@ -730,7 +733,7 @@ struct Envelope {
           const Plane& plane_i = prism[cutp[i]];
           const eLine_3& eline = *(seg[k]); // (*(seg0[k]), *(seg1[k]));
 
-          boost::optional<ePoint_3> op = CGAL::intersection_point(eline, plane_i.eplane);
+          boost::optional<ePoint_3> op = intersection_point(eline, plane_i.eplane);
           if(! op){
 #ifdef TRACE
             std::cout <<  "there must be an intersection 6" << std::endl;
@@ -785,7 +788,7 @@ struct Envelope {
 
             int inter = 0;
 
-            boost::optional<ePoint_3>  ipp = CGAL::intersection_point(tri_eplane, prism[cutp[i]].eplane, prism[cutp[j]].eplane);
+            boost::optional<ePoint_3>  ipp = intersection_point(tri_eplane, prism[cutp[i]].eplane, prism[cutp[j]].eplane);
             if(ipp){
                 inter = is_3_triangle_cut_float_fast(tri0, tri1, tri2,
                                                      n,
@@ -846,8 +849,8 @@ struct Envelope {
                 const ePoint_3 &t0, const ePoint_3 &t1, const ePoint_3 &t2) const
   {
     int o1, o2;
-    o1 = int(CGAL::orientation(seg0, t0, t1, t2));
-    o2 = int(CGAL::orientation(seg1, t0, t1, t2));
+    o1 = int(orientation(seg0, t0, t1, t2));
+    o2 = int(orientation(seg1, t0, t1, t2));
     int op = o1 * o2;
     if (op >= 0)
       {
@@ -865,7 +868,7 @@ struct Envelope {
       /*bool neib = is_two_facets_neighbouring(prismid, i, faceid);// this works only when the polyhedron is convex and no two neighbour facets are coplanar
         if (neib == false) continue;*/
       if (i == faceid) continue;
-      if(oriented_side(halfspace[prismid][i].eplane, ip) == CGAL::ON_POSITIVE_SIDE){
+      if(oriented_side(halfspace[prismid][i].eplane, ip) == ON_POSITIVE_SIDE){
         return false;
       }
     }
@@ -881,7 +884,7 @@ struct Envelope {
                 const std::vector<unsigned int> &prismindex,
 		const std::vector<std::vector<int>>& intersect_face, const int &jump, int &id) const
   {
-    boost::optional<ePoint_3> op = CGAL::intersection_point(eline, eplane); // todo: was that not computed already??
+    boost::optional<ePoint_3> op = intersection_point(eline, eplane); // todo: was that not computed already??
     if(! op){
  #ifdef TRACE
       std::cout <<  "there must be an intersection 9" << std::endl;
@@ -958,7 +961,7 @@ struct Envelope {
                 const int &jump,
                 int &id) const
   {
-    boost::optional<ePoint_3> op = CGAL::intersection_point(eline, eplane); // todo: was that not computed?
+    boost::optional<ePoint_3> op = intersection_point(eline, eplane); // todo: was that not computed?
     if(! op){
 #ifdef TRACE
       std::cout <<  "there must be an intersection 10" << std::endl;
@@ -1426,7 +1429,7 @@ struct Envelope {
             // We moved the intersection here
             // In case there is no intersection point we continue
             boost::optional<ePoint_3>
-              op = CGAL::intersection_point(etriangle_eplane,
+              op = intersection_point(etriangle_eplane,
                                             halfspace[jump1][intersect_face[queue[i]][k]].eplane,
                                             halfspace[jump2][intersect_face[queue[j]][h]].eplane);
             if(! op){
@@ -1489,12 +1492,12 @@ struct Envelope {
   {
     Point_3 plane0, plane1, plane2;
     double distance_small = distance * 1;// to be conservative to reduce numerical error, can set the Scalar as 0.999
-    Vector_3 direction = CGAL::normalize(p0 - midp);
+    Vector_3 direction = normalize(p0 - midp);
     plane0 = p0 + direction * distance_small;
     plane1 = plane0 + normal;
     Vector_3 axis =
-      //(robust) ? robust_CGAL::cross_product_direction(midp, p0, CGAL::ORIGIN, normal) :
-      CGAL::normalize(CGAL::cross_product(direction, normal));
+      //(robust) ? robust_cross_product_direction(midp, p0, ORIGIN, normal) :
+      normalize(cross_product(direction, normal));
     plane2 = plane0 + axis;
 
     return Plane(plane0, plane1,plane2);
@@ -1505,9 +1508,9 @@ struct Envelope {
   void
   halfspace_generation(const std::vector<Point_3> &ver, const std::vector<Vector3i> &faces,
                        std::vector<Prism>& halfspace,
-                       std::vector<Iso_cuboid_3>& bounding_boxes, const double &epsilon)
+                       std::vector<Iso_cuboid_3>& bounding_boxes, const double epsilon)
   {
-    double tolerance = epsilon / sqrt(3);// the envelope thickness, to be conservative
+    double tolerance = epsilon / std::sqrt(3);// the envelope thickness, to be conservative
     double bbox_tolerance = epsilon *(1 + 1e-6);
     Vector_3 AB, AC, BC, normal;
     int de;
@@ -1600,10 +1603,10 @@ struct Envelope {
           }
         else
           {
-            normal = CGAL::normalize(CGAL::cross_product(AB, AC));
+            normal = normalize(cross_product(AB, AC));
           }
 #endif
-        normal = CGAL::normalize(CGAL::cross_product(AB, AC)); // remove as soon as #if 1 above
+        normal = normalize(cross_product(AB, AC)); // remove as soon as #if 1 above
 
         halfspace[i].reserve(8);
         Vector_3 normaldist = normal * tolerance;
@@ -1618,13 +1621,13 @@ struct Envelope {
                       ver[faces[i][1]] - normaldist);// order: 0, 2, 1
         halfspace[i].emplace_back(plane);// number 1
 
-        int obtuse = CGAL::obtuse_angle(ver[faces[i][0]], ver[faces[i][1]], ver[faces[i][2]]);
+        int obtuse = obtuse_angle(ver[faces[i][0]], ver[faces[i][1]], ver[faces[i][2]]);
 
 
-        edgedire = CGAL::normalize(AB);
-        // if (use_accurate_cross)edgenormaldist = accurate_cross_product_direction(CGAL::ORIGIN, edgedire, CGAL::ORIGIN, normal)*tolerance;
+        edgedire = normalize(AB);
+        // if (use_accurate_cross)edgenormaldist = accurate_cross_product_direction(ORIGIN, edgedire, ORIGIN, normal)*tolerance;
         // else
-        edgenormaldist = CGAL::normalize(CGAL::cross_product(edgedire,normal))*tolerance;
+        edgenormaldist = normalize(cross_product(edgedire,normal))*tolerance;
         plane = Plane(ver[faces[i][0]] + edgenormaldist,
                       ver[faces[i][1]] + edgenormaldist,
                       ver[faces[i][0]] + edgenormaldist + normal);
@@ -1632,16 +1635,16 @@ struct Envelope {
 
 
         if (obtuse != 1) {
-          plane = get_corner_plane(ver[faces[i][1]], CGAL::midpoint(ver[faces[i][0]], ver[faces[i][2]]) , normal,
+          plane = get_corner_plane(ver[faces[i][1]], midpoint(ver[faces[i][0]], ver[faces[i][2]]) , normal,
                            tolerance, use_accurate_cross);
           halfspace[i].emplace_back(plane);// number 3;
 
         }
 
-        edgedire = CGAL::normalize(BC);
-        // if (use_accurate_cross)edgenormaldist = accurate_cross_product_direction(CGAL::ORIGIN, edgedire, CGAL::ORIGIN, normal)*tolerance;
+        edgedire = normalize(BC);
+        // if (use_accurate_cross)edgenormaldist = accurate_cross_product_direction(ORIGIN, edgedire, ORIGIN, normal)*tolerance;
         // else
-        edgenormaldist = CGAL::normalize(CGAL::cross_product(edgedire, normal))*tolerance;
+        edgenormaldist = normalize(cross_product(edgedire, normal))*tolerance;
 
         plane = Plane(ver[faces[i][1]] + edgenormaldist,
                       ver[faces[i][2]] + edgenormaldist,
@@ -1649,16 +1652,16 @@ struct Envelope {
         halfspace[i].emplace_back(plane);// number 4
 
         if (obtuse != 2) {
-          plane = get_corner_plane(ver[faces[i][2]], CGAL::midpoint(ver[faces[i][0]], ver[faces[i][1]]), normal,
+          plane = get_corner_plane(ver[faces[i][2]], midpoint(ver[faces[i][0]], ver[faces[i][1]]), normal,
                            tolerance,use_accurate_cross);
           halfspace[i].emplace_back(plane);// number 5;
 
         }
 
-        edgedire = -CGAL::normalize(AC);
-        // if (use_accurate_cross)edgenormaldist = accurate_cross_product_direction(CGAL::ORIGIN, edgedire, CGAL::ORIGIN , normal)*tolerance;
+        edgedire = -normalize(AC);
+        // if (use_accurate_cross)edgenormaldist = accurate_cross_product_direction(ORIGIN, edgedire, ORIGIN , normal)*tolerance;
         // else
-        edgenormaldist = CGAL::normalize(CGAL::cross_product(edgedire, normal))*tolerance;
+        edgenormaldist = normalize(cross_product(edgedire, normal))*tolerance;
 
         plane = Plane(ver[faces[i][2]] + edgenormaldist,
                       ver[faces[i][0]] + edgenormaldist,
@@ -1666,7 +1669,7 @@ struct Envelope {
         halfspace[i].emplace_back(plane);// number 6
 
         if (obtuse != 0) {
-          plane = get_corner_plane(ver[faces[i][0]], CGAL::midpoint(ver[faces[i][1]], ver[faces[i][2]]) , normal,
+          plane = get_corner_plane(ver[faces[i][0]], midpoint(ver[faces[i][1]], ver[faces[i][2]]) , normal,
                            tolerance,use_accurate_cross);
           halfspace[i].emplace_back(plane);// number 7;
 
@@ -1678,8 +1681,8 @@ struct Envelope {
           const Plane& p =  halfspace[i][j];
           std::cout << p.ep << " | "  << p.eq << " | "  << p.er << std::endl;
           ePoint_3 pv(ver[faces[i][0]].x(), ver[faces[i][0]].y(),ver[faces[i][0]].z());
-          CGAL::Orientation ori = CGAL::orientation(p.ep, p.eq, p.er, pv);
-          assert(ori == CGAL::NEGATIVE);
+          Orientation ori = orientation(p.ep, p.eq, p.er, pv);
+          assert(ori == NEGATIVE);
         }
 #endif
 
@@ -1693,12 +1696,12 @@ struct Envelope {
       eplanes.push_back(halfspace[i][j].eplane);
     }
     ePoint_3 origin(env_vertices[env_faces[i][0]].x(), env_vertices[env_faces[i][0]].y(),env_vertices[env_faces[i][0]].z());
-    CGAL::Surface_mesh<ePoint_3> esm;
-    CGAL::halfspace_intersection_3(eplanes.begin(),eplanes.end(),esm , boost::make_optional(origin));
+    Surface_mesh<ePoint_3> esm;
+    halfspace_intersection_3(eplanes.begin(),eplanes.end(),esm , boost::make_optional(origin));
 
-    CGAL::Surface_mesh<typename CGAL::Exact_predicates_inexact_constructions_kernel::Point_3> sm;
-    CGAL::copy_face_graph(esm,sm);
-    CGAL::Polygon_mesh_processing::triangulate_faces(sm);
+    Surface_mesh<typename Exact_predicates_inexact_constructions_kernel::Point_3> sm;
+    copy_face_graph(esm,sm);
+    Polygon_mesh_processing::triangulate_faces(sm);
     fname += "_";
     fname += std::to_string(i);
     fname += ".off";
@@ -1768,6 +1771,10 @@ struct Envelope {
 
 }; // class Envelope
 
+} // namespace Polygon_mesh_processing
+} // namespace CGAL
+
+
 
 // `fast` takes an off file and an offset as arguments
 //  If called additionally with 3 more vertex indices it performs the envelope test with the triangle
@@ -1776,6 +1783,8 @@ struct Envelope {
 
 int main(int argc, char* argv[])
 {
+  typedef std::array<int, 3> Vector3i;
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef Kernel::Point_3 Point_3;
   std::vector<Point_3> env_vertices;
   std::vector<Vector3i> env_faces;
@@ -1825,7 +1834,7 @@ int main(int argc, char* argv[])
 
   //  CGAL::Protect_FPU_rounding<true> pr;
 
-  Envelope<Kernel> envelope(env_vertices, env_faces, eps);
+  CGAL::Polygon_mesh_processing::Envelope<Kernel> envelope(env_vertices, env_faces, eps);
 
 
   std::cout << t.time() << " sec." << std::endl;
@@ -1865,6 +1874,7 @@ int main(int argc, char* argv[])
     }
     return 0;
   }
+
 
   int inside_count = 0;
   int outside_count = 0;
