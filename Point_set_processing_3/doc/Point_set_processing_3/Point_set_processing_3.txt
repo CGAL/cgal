@@ -832,6 +832,8 @@ of nearest neighbors or a fixed spherical neighborhood radius.
 
 \section Point_set_processing_3NormalOrientation Normal Orientation
 
+\subsection Point_set_processing_3Mst_orient_normals Minimum Spanning Tree
+
 Function `mst_orient_normals()` orients the normals of a set of
 points with unoriented normals using the method described by Hoppe et
 al. in <I>Surface reconstruction from unorganized points</I> \cgalCite{cgal:hddms-srup-92}.
@@ -846,7 +848,7 @@ the normals which cannot be successfully oriented.
 Normal orientation of a sampled cube surface. Left: unoriented normals. Right: orientation of right face normals is propagated to bottom face.
 \cgalFigureEnd
 
-\subsection Point_set_processing_3Example_normals Example
+\subsubsection Point_set_processing_3Example_normals Example
 
 The following example reads a point set from a file, estimates the
 normals through PCA (either over the 18 nearest neighbors or using a
@@ -854,8 +856,31 @@ spherical neighborhood radius of twice the average spacing) and
 orients the normals:
 \cgalExample{Point_set_processing_3/normals_example.cpp}
 
+\subsection Point_set_processing_3Scanline_orient_normals Scanline
 
+The minimum spanning tree results can give suboptimal results on point
+clouds with many sharp features and occlusions, which typically
+happens on airborne acquired urban datasets.
 
+`scanline_orient_normals()` is an alternative method specialized for
+point sets which are ordered in scanline aligned on the XY-plane. It
+can take advantage of LAS properties provided by some LIDAR scanner
+and is the best choice of normal orientation when dealing with 2.5D
+urban scenes.
+
+\cgalFigureBegin{Point_set_processing_3figmst_scanline_orient_normals,scanline_orient_normals.png}
+Normal orientation of a LIDAR scanline. The point cloud is a typical
+airborne LIDAR input, sampling a building without normal information
+and with many occlusions (especially on vertical walls).
+\cgalFigureEnd
+
+\subsubsection Point_set_processing_3Example_scanline_normals Example
+
+The following example reads a point set from a LAS file, estimates the
+normals through Jet Fitting and outputs in PLY format the orientation
+results of all the variants of `scanline_orient_normals()`:
+
+\cgalExample{Point_set_processing_3/orient_scanlines_example.cpp}
 
 \section Point_set_processing_3Upsampling Upsampling
 
