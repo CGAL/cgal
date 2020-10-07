@@ -87,7 +87,7 @@ namespace Polygon_mesh_processing {
       \cgalParamDescription{If `true`, use the 2D constrained Delaunay triangulation facet search space.}
       \cgalParamType{Boolean}
       \cgalParamDefault{`true`}
-      \cgalParamExtra{If no valid 2D triangulation can be found in this search space, the algorithm
+      \cgalParamExtra{If no valid 2D triangulation can be found, the algorithm
                       falls back to the 3D Delaunay triangulation search space and/or the general search space to find a solution.
                       This parameter is a good choice for near planar holes.}
     \cgalParamNEnd
