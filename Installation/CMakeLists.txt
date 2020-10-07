@@ -8,18 +8,14 @@ if(NOT PROJECT_NAME)
   project(CGAL CXX C)
 endif()
 
-
-if(POLICY CMP0056)
-  # https://cmake.org/cmake/help/v3.2/policy/CMP0056.html
-  #
-  # Fix a bug: `try_compile` should use `CMAKE_EXE_LINKER_FLAGS`.
-  # That variable can contain important flags like
-  #
-  #     -static-libstdc++ -static-libgcc
-  #
-  cmake_policy(SET CMP0056 NEW)
-endif()
-
+# https://cmake.org/cmake/help/v3.2/policy/CMP0056.html
+#
+# Fix a bug: `try_compile` should use `CMAKE_EXE_LINKER_FLAGS`.
+# That variable can contain important flags like
+#
+#     -static-libstdc++ -static-libgcc
+#
+cmake_policy(SET CMP0056 NEW)
 # Use GNUInstallDirs to get canonical paths
 include(GNUInstallDirs)
 
@@ -97,10 +93,6 @@ else ( CGAL_BRANCH_BUILD )
 
   # Enable testing with BUILD_TESTING
   option(BUILD_TESTING "Build the testing tree." OFF)
-  if(BUILD_TESTING AND NOT POLICY CMP0064)
-    message(FATAL_ERROR "CGAL support of CTest requires CMake version 3.4 or later.
-The variable BUILD_TESTING must be set of OFF.")
-  endif()
   if(BUILD_TESTING)
     enable_testing()
   endif()
@@ -1048,20 +1040,71 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
         WORKING_DIRECTORY "${DOC_DIR}" )
 
   #Get the list of the documented headers
+  file(GLOB check_example_files RELATIVE "${CMAKE_SOURCE_DIR}/" "${CMAKE_SOURCE_DIR}/*/examples/*/*.cpp")
+  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/list_of_documented_examples.cmake)
+  list(SORT example_files)
+  list(SORT check_example_files)
+  foreach( example ${example_files})
+    if(NOT ${example} IN_LIST check_example_files)
+    list(APPEND not_in_list "${example}")
+  endif()
+  endforeach()
+  foreach( example ${check_example_files})
+    if(NOT ${example} IN_LIST example_files)
+    list(APPEND list_in_not "${example}")
+  endif()
+  endforeach()
+  if(not_in_list OR list_in_not)
+    message("Example files list do not match : ")
+    if(not_in_list)
+      message ("${not_in_list} do not exist.")
+    endif()
+    if(list_in_not)
+      message("${list_in_not} are not in ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/list_of_documented_examples.cmake")
+    endif()
+    message (FATAL_ERROR "")
+  endif()
 
-  file(GLOB html_files RELATIVE "${DOC_DIR}/doc_output/" "${DOC_DIR}/doc_output/*/*.html")
-  file(GLOB example_files RELATIVE "${CMAKE_SOURCE_DIR}/" "${CMAKE_SOURCE_DIR}/*/examples/*/*.cpp")
+
   find_program(AWK awk)
   set(awk_arguments [=[{ match($0, /# *include *(&lt;|[<"])(CGAL\/[^>&"]*)([>"]|&gt;)| (CGAL\/[^>&"]*\.h)/,arr); if(arr[2]!="") print arr[2]; if(arr[4]!="") print arr[4] }]=])
   message("listing headers from html files")
+  file(GLOB html_files RELATIVE "${DOC_DIR}/doc_output/" "${DOC_DIR}/doc_output/*/*.html")
+  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/list_of_documented_headers.cmake)
   foreach(f ${html_files})
     execute_process(COMMAND "${AWK}" "${awk_arguments}" "${DOC_DIR}/doc_output/${f}"
       OUTPUT_VARIABLE tmp_list)
     if (NOT "${tmp_list}" STREQUAL "")
       string(REPLACE "\n" ";" tmp_list ${tmp_list})
-      LIST( APPEND list_of_documented_headers ${tmp_list})
+      LIST( APPEND check_list_of_documented_headers ${tmp_list})
     endif()
   endforeach()
+  #compare the computed list of headers with the stored one to check for changes
+  list(SORT check_list_of_documented_headers)
+  list(REMOVE_DUPLICATES check_list_of_documented_headers)
+  foreach( hdr ${list_of_documented_headers})
+    if(NOT hdr IN_LIST check_list_of_documented_headers)
+    list(APPEND not_in_list "${hdr}")
+  endif()
+  endforeach()
+  foreach( hdr ${check_list_of_documented_headers})
+    if(NOT hdr IN_LIST list_of_documented_headers)
+    list(APPEND list_in_not "${hdr}")
+  endif()
+  endforeach()
+  if(not_in_list OR list_in_not)
+    message("Header files list do not match : ")
+    if(not_in_list)
+      message ("${not_in_list} do not exist.")
+    endif()
+    if(list_in_not)
+      message("${list_in_not} are not in ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/list_of_documented_headers.cmake")
+    endif()
+    message (FATAL_ERROR "")
+  endif()
+
+
+
   message("listing headers from examples files")
   foreach(f ${example_files})
     execute_process(COMMAND "${AWK}" "${awk_arguments}" "${CMAKE_SOURCE_DIR}/${f}"
@@ -1076,43 +1119,27 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
   message("sorting:")
   list(SORT list_of_documented_headers)
   #string(REPLACE ";" " \n" list_of_documented_headers "${list_of_documented_headers}")
-  if (NOT "${list_of_documented_headers}" STREQUAL "")
-    set(has_list_of_documented_headers TRUE)
-  else()
-    set(has_list_of_documented_headers FALSE)
-  endif()
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/list_of_whitelisted_headers.cmake
       OPTIONAL RESULT_VARIABLE has_list_of_whitelisted_headers)
     message("list_of_whitelisted_headers: ${list_of_whitelisted_headers}")
     ## Loop on package and headers
     set(check_pkg_target_list)
-    if(POLICY CMP0057)
-      cmake_policy(SET CMP0057 NEW)
-    endif()
+    cmake_policy(SET CMP0057 NEW)
     #get build dir for removal from deps
     get_filename_component(BUILD_DIR ${CMAKE_BINARY_DIR} NAME)
     foreach (package ${CGAL_CONFIGURED_PACKAGES_NAMES})
       if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include)
         set(check_pkg_headers_depends "")
-        if(has_list_of_documented_headers AND POLICY CMP0057)
-          # Then recurse2
-          file(GLOB_RECURSE ${package}_HEADERS
-            RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h*")
-        else() # do not recurse
-          file(GLOB ${package}_HEADERS
-            RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h*")
-        endif()
+        # Then recurse2
+        file(GLOB_RECURSE ${package}_HEADERS
+          RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include"
+          "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h*")
         list(SORT ${package}_HEADERS)
         foreach(header ${${package}_HEADERS})
           set(skip_hdr FALSE)
-          if(POLICY CMP0057)
-            if(has_list_of_documented_headers
-                AND NOT header IN_LIST list_of_documented_headers)
-#              message(STATUS "Skip non-documented header \"${header}\".")
-              set(skip_hdr TRUE)
-            endif()
+          if(NOT header IN_LIST list_of_documented_headers)
+#            message(STATUS "Skip non-documented header \"${header}\".")
+            set(skip_hdr TRUE)
           endif()
           if(NOT VTK_FOUND)
             string(REGEX MATCH ".*vtk.*" is_a_vtk_header ${header})
@@ -1128,12 +1155,10 @@ VTK_FOUND is false.")
 LEDA_FOUND is false.")
             set(skip_hdr TRUE)
           endif()
-          if(POLICY CMP0057)
-            if(has_list_of_whitelisted_headers
-                AND header IN_LIST list_of_whitelisted_headers)
-              message(STATUS "Skip whitelisted header \"${header}\".")
-              set(skip_hdr TRUE)
-            endif()
+          if(has_list_of_whitelisted_headers
+              AND header IN_LIST list_of_whitelisted_headers)
+            message(STATUS "Skip whitelisted header \"${header}\".")
+            set(skip_hdr TRUE)
           endif()
           if(NOT skip_hdr)
             LIST( APPEND list_of_headers_to_test ${header})
@@ -1201,7 +1226,6 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
         list(REMOVE_DUPLICATES packages_deps)
       endif()
     endforeach() # loop on packages
-
     #Now check that a cpp file including all documented headers compiles
     file(WRITE ${CGAL_BINARY_DIR}/test_headers.cpp "#define  BOOST_PARAMETER_MAX_ARITY 12 \n")
     foreach(header ${list_of_headers_to_test})
