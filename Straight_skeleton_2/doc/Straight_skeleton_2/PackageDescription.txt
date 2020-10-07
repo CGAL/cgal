@@ -11,6 +11,12 @@
 /// \defgroup PkgStraightSkeleton2Functions Functions
 /// \ingroup PkgStraightSkeleton2Ref
 
+/// \defgroup PkgStraightSkeleton2SkeletonFunctions Straight Skeleton Construction Functions
+/// \ingroup PkgStraightSkeleton2Functions
+
+/// \defgroup PkgStraightSkeleton2OffsetFunctions Offset Construction Functions
+/// \ingroup PkgStraightSkeleton2Functions
+
 /*!
 \addtogroup PkgStraightSkeleton2Ref
 \cgalPkgDescriptionBegin{2D Straight Skeleton and Polygon Offsetting,PkgStraightSkeleton2}
@@ -39,15 +45,12 @@
 - `StraightSkeletonBuilderTraits_2`
 - `StraightSkeletonItemsConverter_2`
 - `PolygonOffsetBuilderTraits_2`
-- `VertexContainer_2`
 
 \cgalCRPSection{Classes}
 - `CGAL::Straight_skeleton_vertex_base_2`
 - `CGAL::Straight_skeleton_halfedge_base_2`
 - `CGAL::Straight_skeleton_face_base_2`
 - `CGAL::Straight_skeleton_2`
-- `CGAL::create_interior_straight_skeleton_2`
-- `CGAL::create_exterior_straight_skeleton_2`
 - `CGAL::Straight_skeleton_builder_traits_2`
 - `CGAL::Straight_skeleton_builder_2`
 - `CGAL::Straight_skeleton_items_converter_2`
@@ -55,6 +58,7 @@
 - `CGAL::Polygon_offset_builder_traits_2`
 - `CGAL::Polygon_offset_builder_2`
 - `CGAL::Dummy_straight_skeleton_builder_2_visitor`
+- `CGAL::Trisegment_2`
 
 \cgalCRPSection{Functions}
 - `CGAL::create_exterior_straight_skeleton_2()`
