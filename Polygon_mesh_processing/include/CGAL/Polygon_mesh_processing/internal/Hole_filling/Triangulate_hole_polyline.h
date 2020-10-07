@@ -1301,7 +1301,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   const Collinear_3 collinear_3 =
     traits.collinear_3_object();
 
-  std::vector<Point_3> P(boost::begin(points), boost::end(points));
+  std::vector<Point_3> P(std::begin(points), std::end(points));
   CGAL_assertion(P.size() >= 3);
   if (P.front() != P.back()) {
     P.push_back(P.front());
