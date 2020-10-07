@@ -42,9 +42,10 @@ namespace Polygon_mesh_processing {
   /*!
   \ingroup hole_filling_grp
   triangulates a hole in a polygon mesh.
-  The hole must not contain any non-manifold vertex, nor self-intersections.
-  When using the 2D constrained Delaunay triangulation, the non-manifold vertex is
-  not an issue. The patch generated does not introduce non-manifold edges nor degenerate triangles.
+  When using the 2D constrained Delaunay triangulation, the hole must not contain any
+  self-intersections. However, this option can be applied only for near planar holes.
+  In other cases, the hole must not contain any non-manifold vertex as well.
+  The patch generated does not introduce non-manifold edges nor degenerate triangles.
   If a hole cannot be triangulated, `pmesh` is not modified and nothing is recorded in `out`.
 
   @tparam PolygonMesh a model of `MutableFaceGraph`
@@ -80,6 +81,15 @@ namespace Polygon_mesh_processing {
       \cgalParamDefault{`true`}
       \cgalParamExtra{If no valid triangulation can be found in this search space, the algorithm
                       falls back to the non-Delaunay triangulations search space to find a solution.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{use_2d_constrained_delaunay_triangulation}
+      \cgalParamDescription{If `true`, use the 2D constrained Delaunay triangulation facet search space.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+      \cgalParamExtra{If no valid 2D triangulation can be found in this search space, the algorithm
+                      falls back to the non-Delaunay triangulations search space to find a solution.
+                      This parameter is a good choice for near planar holes.}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -198,6 +208,15 @@ namespace Polygon_mesh_processing {
                       falls back to the non-Delaunay triangulations search space to find a solution.}
     \cgalParamNEnd
 
+    \cgalParamNBegin{use_2d_constrained_delaunay_triangulation}
+      \cgalParamDescription{If `true`, use the 2D constrained Delaunay triangulation facet search space.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+      \cgalParamExtra{If no valid 2D triangulation can be found in this search space, the algorithm
+                      falls back to the non-Delaunay triangulations search space to find a solution.
+                      This parameter is a good choice for near planar holes.}
+    \cgalParamNEnd
+
     \cgalParamNBegin{density_control_factor}
       \cgalParamDescription{factor to control density of the ouput mesh,
                             where larger values cause denser refinements, as in `refine()`}
@@ -287,6 +306,15 @@ namespace Polygon_mesh_processing {
       \cgalParamDefault{`true`}
       \cgalParamExtra{If no valid triangulation can be found in this search space, the algorithm
                       falls back to the non-Delaunay triangulations search space to find a solution.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{use_2d_constrained_delaunay_triangulation}
+      \cgalParamDescription{If `true`, use the 2D constrained Delaunay triangulation facet search space.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+      \cgalParamExtra{If no valid 2D triangulation can be found in this search space, the algorithm
+                      falls back to the non-Delaunay triangulations search space to find a solution.
+                      This parameter is a good choice for near planar holes.}
     \cgalParamNEnd
 
     \cgalParamNBegin{density_control_factor}
@@ -414,6 +442,15 @@ namespace Polygon_mesh_processing {
       \cgalParamDefault{`true`}
       \cgalParamExtra{If no valid triangulation can be found in this search space, the algorithm
                       falls back to the non-Delaunay triangulations search space to find a solution.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{use_2d_constrained_delaunay_triangulation}
+      \cgalParamDescription{If `true`, use the 2D constrained Delaunay triangulation facet search space.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+      \cgalParamExtra{If no valid 2D triangulation can be found in this search space, the algorithm
+                      falls back to the non-Delaunay triangulations search space to find a solution.
+                      This parameter is a good choice for near planar holes.}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 

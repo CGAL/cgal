@@ -1410,7 +1410,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
     }
 
     fh->info() = true;
-    for (std::size_t i = 0; i < 3; ++i) {
+    for (int i = 0; i < 3; ++i) {
       if (!cdt.is_constrained(typename CDT::Edge(fh, i))) {
         face_queue.push(fh->neighbor(i));
       }
@@ -1426,8 +1426,8 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
     end = cdt.finite_faces_end(); fit != end; ++fit) {
     if (!fit->info()) { // if it is not external
 
-      std::vector<std::size_t> is(3);
-      for (std::size_t i = 0; i < 3; ++i) {
+      std::vector<int> is(3);
+      for (int i = 0; i < 3; ++i) {
         is[i] = fit->vertex(i)->info();
       }
 
@@ -1441,7 +1441,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
 
   // Call the tracer. It correctly orients the patch faces.
   // std::cout << "CDT is being used!" << std::endl;
-  tracer(lambda, 0, size - 1);
+  tracer(lambda, 0, static_cast<int>(size) - 1);
   return true;
 }
 
