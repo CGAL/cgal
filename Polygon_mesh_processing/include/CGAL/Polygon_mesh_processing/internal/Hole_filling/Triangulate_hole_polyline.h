@@ -1215,7 +1215,7 @@ template <typename Traits>
 bool is_planar_2(
   const std::vector<typename Traits::Point_3>& points,
   const typename Traits::Vector_3& avg_normal,
-  const typename Traits::FT max_sq_distance,
+  const typename Traits::FT max_squared_distance,
   const Traits& traits) {
 
   typedef typename Traits::FT FT;
@@ -1263,16 +1263,16 @@ bool is_planar_2(
   }
 
   const Plane_3 plane = Plane_3(centroid, avg_normal);
-  FT avg_sq_distance = FT(0);
+  FT avg_squared_distance = FT(0);
   for (std::size_t i = 0; i < n; ++i) {
     const Point_3& p = points[i];
     const Point_3  q = projection_3(plane, p);
-    avg_sq_distance += squared_distance_3(p, q);
+    avg_squared_distance += squared_distance_3(p, q);
   }
-  avg_sq_distance /= static_cast<FT>(n);
-  // std::cout << "avg squared distance: " << avg_sq_distance << std::endl;
+  avg_squared_distance /= static_cast<FT>(n);
+  // std::cout << "avg squared distance: " << avg_squared_distance << std::endl;
 
-  if (avg_sq_distance > max_sq_distance) {
+  if (avg_squared_distance > max_squared_distance) {
     return false; // the user distance criteria are not satisfied!
   }
 
@@ -1290,7 +1290,8 @@ bool
 triangulate_hole_polyline_with_cdt(const PointRange& points,
                                    Tracer& tracer,
                                    const Validity_checker& is_valid,
-                                   const Traits& traits)
+                                   const Traits& traits,
+                                   const typename Traits::FT max_squared_distance)
 {
   typedef typename Traits::FT FT;
   typedef typename Traits::Point_3 Point_3;
@@ -1338,6 +1339,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   }
 
   if (num_normals < 1) {
+    // std::cerr << "WARNING: num normals, cdt 2 falls back to the original solution!" << std::endl;
     return false;
   }
 
@@ -1349,8 +1351,8 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   // std::cout << "avg normal: " << avg_normal << std::endl;
 
   // Checking the hole planarity.
-  const FT max_sq_distance = FT(4) / FT(10000);
-  if (!is_planar_2(P, avg_normal, max_sq_distance, traits)) {
+  if (!is_planar_2(P, avg_normal, max_squared_distance, traits)) {
+    // std::cerr << "WARNING: planarity, cdt 2 falls back to the original solution!" << std::endl;
     return false;
   }
 
@@ -1358,6 +1360,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   typedef Triangulation_2_projection_traits_3<Traits> P_traits;
   const P_traits p_traits(avg_normal);
   if (!is_simple_2(P.begin(), P.end() - 1, p_traits)) {
+    // std::cerr << "WARNING: simplicity, cdt 2 falls back to the original solution!" << std::endl;
     return false;
   }
 
@@ -1418,6 +1421,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   }
 
   if (cdt.dimension() != 2 || cdt.number_of_vertices() != size) {
+    // std::cerr << "WARNING: dim + num vertices, cdt 2 falls back to the original solution!" << std::endl;
     return false;
   }
 
@@ -1434,6 +1438,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
       std::sort(is.begin(), is.end());
       lambda.put(is[0], is[2], is[1]);
       if (!is_valid(P, is[0], is[1], is[2])) {
+        // std::cerr << "WARNING: validity, cdt 2 falls back to the original solution!" << std::endl;
         return false;
       }
     }

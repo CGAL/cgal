@@ -91,6 +91,15 @@ namespace Polygon_mesh_processing {
                       falls back to the 3D Delaunay triangulation search space and/or the general search space to find a solution.
                       This parameter is a good choice for near planar holes.}
     \cgalParamNEnd
+
+    \cgalParamNBegin{max_squared_distance}
+      \cgalParamDescription{The maximum squared distance between the vertices of
+                            the hole boundary and the least squares plane fitted to this boundary.}
+      \cgalParamType{double}
+      \cgalParamDefault{0.0004}
+      \cgalParamExtra{This parameter is used only in conjunction with
+                      the parameter `use_2d_constrained_delaunay_triangulation`.}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   @return `out`
@@ -137,7 +146,9 @@ namespace Polygon_mesh_processing {
       out,
       choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(vertex_point, pmesh)),
       use_dt3,
-      choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits)),use_cdt).first;
+      choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits)),use_cdt,
+      choose_parameter(get_parameter(np, internal_np::max_squared_distance),
+      typename GeomTraits::FT(4) / typename GeomTraits::FT(10000))).first;
   }
 
   template<typename PolygonMesh, typename OutputIterator>
@@ -215,6 +226,15 @@ namespace Polygon_mesh_processing {
       \cgalParamExtra{If no valid 2D triangulation can be found in this search space, the algorithm
                       falls back to the non-Delaunay triangulations search space to find a solution.
                       This parameter is a good choice for near planar holes.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{max_squared_distance}
+      \cgalParamDescription{The maximum squared distance between the vertices of
+                            the hole boundary and the least squares plane fitted to this boundary.}
+      \cgalParamType{double}
+      \cgalParamDefault{0.0004}
+      \cgalParamExtra{This parameter is used only in conjunction with
+                      the parameter `use_2d_constrained_delaunay_triangulation`.}
     \cgalParamNEnd
 
     \cgalParamNBegin{density_control_factor}
@@ -315,6 +335,15 @@ namespace Polygon_mesh_processing {
       \cgalParamExtra{If no valid 2D triangulation can be found in this search space, the algorithm
                       falls back to the non-Delaunay triangulations search space to find a solution.
                       This parameter is a good choice for near planar holes.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{max_squared_distance}
+      \cgalParamDescription{The maximum squared distance between the vertices of
+                            the hole boundary and the least squares plane fitted to this boundary.}
+      \cgalParamType{double}
+      \cgalParamDefault{0.0004}
+      \cgalParamExtra{This parameter is used only in conjunction with
+                      the parameter `use_2d_constrained_delaunay_triangulation`.}
     \cgalParamNEnd
 
     \cgalParamNBegin{density_control_factor}
@@ -452,6 +481,15 @@ namespace Polygon_mesh_processing {
                       falls back to the non-Delaunay triangulations search space to find a solution.
                       This parameter is a good choice for near planar holes.}
     \cgalParamNEnd
+
+    \cgalParamNBegin{max_squared_distance}
+      \cgalParamDescription{The maximum squared distance between the vertices of
+                            the hole boundary and the least squares plane fitted to this boundary.}
+      \cgalParamType{double}
+      \cgalParamDefault{0.0004}
+      \cgalParamExtra{This parameter is used only in conjunction with
+                      the parameter `use_2d_constrained_delaunay_triangulation`.}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \todo handle islands
@@ -509,7 +547,9 @@ bool use_dt3 =
          points,
          tracer,
          is_valid,
-         choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits))))
+         choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)),
+         choose_parameter(get_parameter(np, internal_np::max_squared_distance),
+         typename Kernel::FT(4) / typename Kernel::FT(10000))))
 #endif
     triangulate_hole_polyline(points, third_points, tracer, WC(),
                               use_dt3,
