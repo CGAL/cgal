@@ -11,8 +11,6 @@
 // to replace the faces in the original input.
 
 
-#include <Eigen/Dense>
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -28,7 +26,6 @@
 #include <string>
 #include <fstream>
 
-int CALLS, FAST;
 
 namespace CGAL {
 template <typename K>
@@ -56,7 +53,7 @@ Vector_3<K> normalize(const Vector_3<K>& v)
 }// namespace CGAL
 
 
-typedef Eigen::Matrix<int, 3, 1> Vector3i;
+typedef std::array<int, 3> Vector3i;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
@@ -94,7 +91,6 @@ struct Envelope {
                     ePoint_3(t1.x(), t1.y(), t1.z()),
                     ePoint_3(t2.x(), t2.y(), t2.z()) };
       n = etriangle[0] + CGAL::cross_product((etriangle[0] - etriangle[1]), (etriangle[0] - etriangle[2]));
-      //n = ePoint_3(in.x(), in.y(), in.z());
     }
 
     void init_elines()
@@ -243,8 +239,6 @@ struct Envelope {
   }
 
 
-
-
   bool
   point_out_prism(const ePoint_3 &point, const std::vector<unsigned int> &prismindex, int jump) const
   {
@@ -312,7 +306,6 @@ struct Envelope {
   }
 
 
-
   // \param cindex  the index of a prism
   // \param cid     a return parameter where the indices of the faces that intersect the segment `(source,target)`get inserted
   bool
@@ -325,17 +318,10 @@ struct Envelope {
     const Prism& prism = halfspace[cindex];
     cid.clear();
     std::array<bool,8> cut = { false, false,  false, false,  false, false,  false, false };
-    /*
-    cut.resize(prism.size());
-    for (int i = 0; i < prism.size(); i++){
-      cut[i] = false;
-    }
-    */
 
     std::array<CGAL::Orientation,8> o1, o2;
-    //    o1.resize(prism.size());
-    //    o2.resize(prism.size());
-    int ori = 0, ct1 = 0, ct2 = 0;//ori=0 to avoid the case that there is only one cut plane
+
+    int ori = 0, ct1 = 0, ct2 = 0;  //ori=0 to avoid the case that there is only one cut plane
     std::vector<int> cutp;
     cutp.reserve(8);
 
@@ -359,7 +345,7 @@ struct Envelope {
         cutp.emplace_back(i);
       }
       if (o1[i] == CGAL::ON_POSITIVE_SIDE) ct1++;
-      if (o2[i] == CGAL::ON_POSITIVE_SIDE) ct2++;// if ct1 or ct2 >0, then NOT totally inside
+      if (o2[i] == CGAL::ON_POSITIVE_SIDE) ct2++; // if ct1 or ct2 >0, then NOT totally inside
     }
 
     if (cutp.size() == 0 && ct1 == 0 && ct2 == 0){
@@ -472,9 +458,7 @@ struct Envelope {
     }
 
     return OUT_PRISM;
-
   }
-
 
 
   bool
@@ -484,7 +468,6 @@ struct Envelope {
     if (prismindex.size() == 0) {
       return true;
     }
-
 
     ePoint_3 esource(source.x(),source.y(),source.z());
     ePoint_3 etarget(target.x(),target.y(),target.z());
@@ -515,8 +498,8 @@ struct Envelope {
       return false;
     }
     eLine_3 line(esource,etarget);
-    std::vector<unsigned int > queue, idlist;
-    queue.emplace_back(check_id);//queue contains the id in prismindex
+    std::vector<unsigned int> queue, idlist;
+    queue.emplace_back(check_id); //queue contains the id in prismindex
     idlist.emplace_back(prismindex[check_id]);
 
     std::vector<int> cidl;
@@ -561,13 +544,11 @@ struct Envelope {
         }
       }
     }
-
     return false; // fully inside the envelope
   }
 
 
   // This predicate checks if the intersection point of t/facet1/facet2   lies in the triangle
-
   int
   is_3_triangle_cut_float_fast(const ePoint_3& tp,
                                const ePoint_3& tq,
@@ -576,11 +557,6 @@ struct Envelope {
                                const Plane& facet1,
                                const Plane& facet2,
                                const ePoint_3& ip
-                               /*
-                               , const ePlane_3 &tri,
-                               const ePlane_3 &facet1,
-                               const ePlane_3 &facet2
-                               */
                                ) const
   {
 #if 0
@@ -603,27 +579,6 @@ struct Envelope {
       }
     }
 #endif
-#if 0
-    Point_3 itp(CGAL::approx(tp).x().inf(), CGAL::approx(tp).y().inf(), CGAL::approx(tp).z().inf());
-    Point_3 itq(CGAL::approx(tq).x().inf(), CGAL::approx(tq).y().inf(), CGAL::approx(tq).z().inf());
-    Point_3 itr(CGAL::approx(tr).x().inf(), CGAL::approx(tr).y().inf(), CGAL::approx(tr).z().inf());
-    Point_3 in = itp + CGAL::cross_product((itp - itq), (itp - itr));
-    ePoint_3 n(in.x(),in.y(),in.z());
-#endif
-    // return 2;
-    // todo:  what do we test here with n ?
-    // todo : do this not with Epeck
-    // ePoint_3 n = tp + CGAL::cross_product((tp - tq), (tp - tr));
-
-    if (CGAL::orientation(n, tp, tq, tr) == 0){
-        std::cout << "todo degeneration handling" << std::endl;
-        std::cout << CGAL::approx(tp) << std::endl;
-        std::cout << CGAL::approx(tq) << std::endl;
-        std::cout << CGAL::approx(tr) << std::endl;
-        std::cout << n << std::endl;
-        exit (0);
-        //n = Point_3(rand(), rand(), rand())} };
-      }
 
     int o1 = int(CGAL::orientation(n,tp,tq, ip));
     int o2 = int(CGAL::orientation(n,tq,tr, ip));
@@ -652,24 +607,6 @@ struct Envelope {
                     const ePoint_3& n,
                     const ePoint_3& ip) const
   {
-#if 0
-    Point_3 itp(CGAL::approx(tp).x().inf(), CGAL::approx(tp).y().inf(), CGAL::approx(tp).z().inf());
-    Point_3 itq(CGAL::approx(tq).x().inf(), CGAL::approx(tq).y().inf(), CGAL::approx(tq).z().inf());
-    Point_3 itr(CGAL::approx(tr).x().inf(), CGAL::approx(tr).y().inf(), CGAL::approx(tr).z().inf());
-    Point_3 in = itp + CGAL::cross_product((itp - itq), (itp - itr));
-    ePoint_3 n(in.x(),in.y(),in.z());
-#endif
-    //ePoint_3 n = tp + CGAL::cross_product((tp - tq), (tp - tr));
-#if 0
-    if (Predicates::orient_3d(n, tp, q, tr) == 0)
-      {
-        //logger().debug("Degeneration happens");
-#ifdef TRACE
-        std::cout << "todo degeneration handling" << std::endl;
-#endif
-        //n = { {Vector3(rand(), rand(), rand())} };
-      }
-#endif
     int o1 = int(orientation(n,tp,tq, ip));
     if (o1 == 0){
       return false;
@@ -708,7 +645,7 @@ struct Envelope {
 
 
   int
-  is_triangle_cut_envelope_polyhedra(const int &cindex,//the triangle is not degenerated
+  is_triangle_cut_envelope_polyhedra(const int &cindex, //the triangle is not degenerated
                                      const Triangle& query,
                                      std::vector<int> &cid) const
   {
@@ -720,46 +657,31 @@ struct Envelope {
     const Prism& prism = halfspace[cindex];
     cid.clear();
     cid.reserve(3);
-    /*
-    std::vector<bool> cut;
-    cut.resize(prism.size());
-    for (int i = 0; i < prism.size(); i++)
-      {
-        cut[i] = false;
-      }
-    */
+
     std::array<bool,8> cut = { false, false,  false, false,  false, false,  false, false };
     std::array<int,8> o1, o2, o3;
     std::vector<int>  cutp;
     cutp.reserve(8);
-    // o1.resize(prism.size());
-    // o2.resize(prism.size());
-    // o3.resize(prism.size());
-    int  ori = 0, ct1 = 0, ct2 = 0, ct3 = 0;
 
+    int  ori = 0, ct1 = 0, ct2 = 0, ct3 = 0;
 
     for (int i = 0; i < prism.size(); i++)
       {
         const Plane& plane = prism[i];
-#if 1
+
         // As the orientation test operates on point with inf==sup of the coordinate intervals
         // we can profit from the static filters.
         // The oriented side test being made with interval arithmetic is more expensive
         o1[i] =  CGAL::orientation(plane.ep, plane.eq, plane.er, tri0);
         o2[i] =  CGAL::orientation(plane.ep, plane.eq, plane.er, tri1);
         o3[i] =  CGAL::orientation(plane.ep, plane.eq, plane.er, tri2);
-#else
-        o1[i] = int(oriented_side(plane.eplane, tri0));
-        o2[i] = int(oriented_side(plane.eplane, tri1));
-        o3[i] = int(oriented_side(plane.eplane, tri2));
-#endif
 
         if (o1[i] + o2[i] + o3[i] >= 2){ //1,1,0 case
           return 0;
         }
         if (o1[i] == 1) ct1++;
         if (o2[i] == 1) ct2++;
-        if (o3[i] == 1) ct3++;// if ct1 or ct2 or ct3 >0, then NOT totally inside, otherwise, totally inside
+        if (o3[i] == 1) ct3++; // if ct1 or ct2 or ct3 >0, then NOT totally inside, otherwise, totally inside
         if (o1[i] == 0 && o2[i] == 0 && o3[i] == 1){
             return 0;
           }
@@ -770,68 +692,42 @@ struct Envelope {
             return 0;
           }
 
-
         if (o1[i] * o2[i] == -1 || o1[i] * o3[i] == -1 || o3[i] * o2[i] == -1){
           cutp.emplace_back(i);
-        }else if (o1[i] + o2[i] + o3[i] == -1 && o1[i] * o2[i] == 0) {//0,0,-1 case, we also want this face,really rare to happen
+        }else if (o1[i] + o2[i] + o3[i] == -1 && o1[i] * o2[i] == 0) { //0,0,-1 case, we also want this face,really rare to happen
           cutp.emplace_back(i);
         }
       }
     if (cutp.size() == 0) {
       if (ct1 == 0 && ct2 == 0 && ct3 == 0) {
-        return 2;// totally inside, or not any edge is on the facet
+        return 2; // totally inside, or not any edge is on the facet
       }
     }
 
     if (cutp.size() == 0){
         return 0;
     }
-#ifdef TRACE
-    std::cout << "A" << std::endl;
-#endif
 
-    // todo:  Compute the three lines through the edges
-    //        Do  not compute them before this function call, but store them
-    //        in variables defined before this function call and passed in as a (non const) reference
-    //        and use bool to mark them as computed
-    //std::array<ePoint_3*,2> seg0, seg1;
     std::array<eLine_3*,2> seg;
-
-    // the i'th line is opposite to vertex i
-    //std::array<eLine_3,3> lines = { eLine_3(tri1, tri2), eLine_3(tri0,tri2), eLine_3(tri0,tri1) }; //todo: what is elines (line 1424)  about ??
-
 
     for (int i = 0; i < cutp.size(); i++)
       {
         int tmp = 0;
         if (o1[cutp[i]] * o2[cutp[i]] == -1|| o1[cutp[i]] + o2[cutp[i]] == -1) {
-          //seg0[tmp] = const_cast<ePoint_3*>(&tri0);
-          //seg1[tmp] = const_cast<ePoint_3*>(&tri1);
           seg[tmp] = const_cast<eLine_3*>(&(query.elines[2]));
           tmp++;
         }
         if (o1[cutp[i]] * o3[cutp[i]] == -1|| o1[cutp[i]] + o3[cutp[i]] == -1) {
-          //seg0[tmp] = const_cast<ePoint_3*>(&tri0);
-          //seg1[tmp] = const_cast<ePoint_3*>(&tri2);
           seg[tmp] = const_cast<eLine_3 *>(&(query.elines[1]));
-
           tmp++;
         }
         if (o2[cutp[i]] * o3[cutp[i]] == -1|| o2[cutp[i]] + o3[cutp[i]] == -1) {
-          //seg0[tmp] = const_cast<ePoint_3*>(&tri1);
-          //seg1[tmp] = const_cast<ePoint_3*>(&tri2);
           seg[tmp] = const_cast<eLine_3 *>(&(query.elines[0]));
-
           tmp++;
         }
 
-
         for (int k = 0; k < 2; k++){
           const Plane& plane_i = prism[cutp[i]];
-
-          //         std::cout <<  plane_i.ep << "  " <<  plane_i.eq << "  " <<  plane_i.er << "  " <<  plane_i.ep << std::endl;
-          // std::cout << *(seg0[k]) << "       " <<   *(seg1[k]) << std::endl;
-
           const eLine_3& eline = *(seg[k]); // (*(seg0[k]), *(seg1[k]));
 
           boost::optional<ePoint_3> op = CGAL::intersection_point(eline, plane_i.eplane);
@@ -848,7 +744,7 @@ struct Envelope {
                   continue;
             }
             const Plane& plane_j = prism[cutp[j]];
-            ori = oriented_side(plane_j.eplane, ip); //  todo:  check  if it must be positive or negative
+            ori = oriented_side(plane_j.eplane, ip);
             if (ori == 1){
               break;
             }
@@ -863,9 +759,6 @@ struct Envelope {
         ori = 0;// initialize the orientation to avoid the j loop doesn't happen because cutp.size()==1
       }
 
-#ifdef TRACE
-    std::cout << "B" << std::endl;
-#endif
     if (cutp.size() <= 2){
         for (int i = 0; i < prism.size(); i++){
           if (cut[i] == true){
@@ -875,21 +768,13 @@ struct Envelope {
         return 1;
     }
 
-#ifdef TRACE
-      std::cout << "C" << std::endl;
-#endif
     // triangle-facet-facet intersection
 
-    ePlane_3 tri_eplane(tri0, tri1, tri2); // todo change to a query triangle with 3 points and a plane
+    const ePlane_3& tri_eplane = query.eplane;
     for (int i = 0; i < cutp.size(); i++)
       {
         for (int j = i + 1; j < cutp.size(); j++)// two facets and the triangle generate a point
           {
-#ifdef TRACE
-            std::cout << "T :\n "<< tri0 << "    "  << tri1 << "    " << tri2 << std::endl;
-            std::cout << "I : "<< i << " " << cutp[i] << "\n" <<  prism[cutp[i]].ep << std::endl <<  prism[cutp[i]].eq << std::endl <<  prism[cutp[i]].er << std::endl;
-            std::cout << "J : "<< j << " " << cutp[j] << "\n" <<  prism[cutp[j]].ep << std::endl <<  prism[cutp[j]].eq << std::endl <<  prism[cutp[j]].er << std::endl;
-#endif
             if (cut[cutp[i]] == true && cut[cutp[j]] == true)
               continue;
 
@@ -927,13 +812,8 @@ struct Envelope {
               if (k == i || k == j){
                   continue;
               }
-#ifdef TRACE
-              std::cout << k << " " << cutp[k] << "\n" <<  prism[cutp[k]].ep << std::endl <<  prism[cutp[k]].eq << std::endl <<  prism[cutp[k]].er << std::endl;
-#endif
+
               ori = int(oriented_side(prism[cutp[k]].eplane, *ipp));
-#ifdef TRACE
-              std::cout << ori << std::endl;
-#endif
 
               if (ori == 1){
                   break;
@@ -948,19 +828,12 @@ struct Envelope {
             }
           }
       }
-#ifdef TRACE
-    std::cout << "D" << std::endl;
-#endif
 
     for (int i = 0; i < prism.size(); i++){
       if (cut[i] == true){
-#ifdef TRACE
-             std::cout << "cut " << i << " is true" << std::endl;
-#endif
-          cid.emplace_back(i);
+        cid.emplace_back(i);
       }
-      }
-    //    std::cout << "cid.size()= " << cid.size() << std::endl;
+    }
     if (cid.size() == 0){
       return 0;// not cut and facets, and not totally inside, then not intersected
     }
@@ -988,15 +861,15 @@ struct Envelope {
   is_tpp_on_polyhedra(const ePoint_3& ip,
                       const int &prismid, const int &faceid)const
   {
-       for (int i = 0; i < halfspace[prismid].size(); i++) {
-        /*bool neib = is_two_facets_neighbouring(prismid, i, faceid);// this works only when the polyhedron is convex and no two neighbour facets are coplanar
-          if (neib == false) continue;*/
-        if (i == faceid) continue;
-        if(oriented_side(halfspace[prismid][i].eplane, ip) == CGAL::ON_POSITIVE_SIDE){ //todo check positive/negative
-          return false;
-        }
-       }
-       return true;
+    for (int i = 0; i < halfspace[prismid].size(); i++) {
+      /*bool neib = is_two_facets_neighbouring(prismid, i, faceid);// this works only when the polyhedron is convex and no two neighbour facets are coplanar
+        if (neib == false) continue;*/
+      if (i == faceid) continue;
+      if(oriented_side(halfspace[prismid][i].eplane, ip) == CGAL::ON_POSITIVE_SIDE){
+        return false;
+      }
+    }
+    return true;
   }
 
 
@@ -1008,7 +881,7 @@ struct Envelope {
                 const std::vector<unsigned int> &prismindex,
 		const std::vector<std::vector<int>>& intersect_face, const int &jump, int &id) const
   {
-    boost::optional<ePoint_3> op = CGAL::intersection_point(eline, eplane);
+    boost::optional<ePoint_3> op = CGAL::intersection_point(eline, eplane); // todo: was that not computed already??
     if(! op){
  #ifdef TRACE
       std::cout <<  "there must be an intersection 9" << std::endl;
@@ -1071,9 +944,7 @@ struct Envelope {
           return IN_PRISM;
         }
     }
-
-
-      return OUT_PRISM;
+    return OUT_PRISM;
   }
 
 
@@ -1087,7 +958,7 @@ struct Envelope {
                 const int &jump,
                 int &id) const
   {
-    boost::optional<ePoint_3> op = CGAL::intersection_point(eline, eplane);
+    boost::optional<ePoint_3> op = CGAL::intersection_point(eline, eplane); // todo: was that not computed?
     if(! op){
 #ifdef TRACE
       std::cout <<  "there must be an intersection 10" << std::endl;
@@ -1168,71 +1039,65 @@ struct Envelope {
                 const int &jump2,
 		int &id) const
   {
-      int tot, ori, fid;
-      for (int i = 0; i < prismindex.size(); i++)
-        {
+    int tot, ori, fid;
+    for (int i = 0; i < prismindex.size(); i++){
 
-          if (prismindex[i] == jump1 || prismindex[i] == jump2)	continue;
-          if (!box_box_intersection(bounding_boxes[prismindex[i]], bounding_boxes[jump1])) continue;
-          if (!box_box_intersection(bounding_boxes[prismindex[i]], bounding_boxes[jump2])) continue;
+      if (prismindex[i] == jump1 || prismindex[i] == jump2)	continue;
+      if (!box_box_intersection(bounding_boxes[prismindex[i]], bounding_boxes[jump1])) continue;
+      if (!box_box_intersection(bounding_boxes[prismindex[i]], bounding_boxes[jump2])) continue;
 
-          tot = 0;
-          fid = 0;
-          ori = -1;
-          const Prism& prism = halfspace[prismindex[i]];
-          for (int j = 0; j < prism.size(); j++) {
-            if (intersect_face[i][fid] == j)
-              {
-                if (fid + 1 < intersect_face[i].size()) fid++;
-              }
-            else continue;
+      tot = 0;
+      fid = 0;
+      ori = -1;
+      const Prism& prism = halfspace[prismindex[i]];
+      for (int j = 0; j < prism.size(); j++) {
+        if (intersect_face[i][fid] == j){
+          if (fid + 1 < intersect_face[i].size()) fid++;
+        }
+        else continue;
 
-            ori = int(oriented_side(prism[j].eplane, ip));
+        ori = int(oriented_side(prism[j].eplane, ip));
 
-            if (ori == 1 || ori == 0)
-              {
-                break;
-              }
-
-            if (ori == -1)
-              {
-                tot++;
-              }
-          }
-          if (ori == 1 || ori == 0) continue;
-          fid = 0;
-          ori = -1;
-          for (int j = 0; j < halfspace[prismindex[i]].size(); j++) {
-            if (intersect_face[i][fid] == j)
-              {
-                if (fid + 1 < intersect_face[i].size()) fid++;
-                continue;
-              }
-
-
-            ori = int(oriented_side(prism[j].eplane, ip));
-
-            if (ori == 1 || ori == 0)
-              {
-                break;
-              }
-
-            if (ori == -1)
-              {
-                tot++;
-              }
-          }
-          if (ori == 1 || ori == 0) continue;
-          if (tot == prism.size())
-            {
-              id = i;
-              return IN_PRISM;
-            }
-
+        if (ori == 1 || ori == 0){
+          break;
         }
 
-      return OUT_PRISM;
+        if (ori == -1){
+          tot++;
+        }
+      }
+      if (ori == 1 || ori == 0) continue;
+      fid = 0;
+      ori = -1;
+      for (int j = 0; j < halfspace[prismindex[i]].size(); j++) {
+        if (intersect_face[i][fid] == j){
+          if (fid + 1 < intersect_face[i].size()){
+            fid++;
+          }
+          continue;
+        }
+
+        ori = int(oriented_side(prism[j].eplane, ip));
+
+        if (ori == 1 || ori == 0){
+          break;
+        }
+
+        if (ori == -1){
+          tot++;
+        }
+      }
+      if (ori == 1 || ori == 0) continue;
+      if (tot == prism.size()){
+
+        id = i;
+        return IN_PRISM;
+      }
+
     }
+
+    return OUT_PRISM;
+  }
 
 
 
@@ -1246,70 +1111,68 @@ struct Envelope {
                 const int &jump2,
 		int &id) const
   {
-      int tot, ori, fid;
-      for (int i = 0; i < prismindex.size(); i++)
-        {
+    int tot, ori, fid;
+    for (int i = 0; i < prismindex.size(); i++){
 
-          if (prismindex[i] == jump1 || prismindex[i] == jump2)	continue;
-          if (!box_box_intersection(bounding_boxes[prismindex[i]], bounding_boxes[jump1])) continue;
-          if (!box_box_intersection(bounding_boxes[prismindex[i]], bounding_boxes[jump2])) continue;
-          if (coverlist[i] == 1) continue;
-          tot = 0;
-          fid = 0;
-          ori = -1;
-          const Prism& prism = halfspace[prismindex[i]];
-          for (int j = 0; j < prism.size(); j++) {
-            if ((*intersect_face[i])[fid] == j)
-              {
-                if (fid + 1 < intersect_face[i]->size()) fid++;
-              }
-            else continue;
 
-            ori = int(oriented_side(prism[j].eplane, ip));
+      if (prismindex[i] == jump1 || prismindex[i] == jump2)	continue;
+      if (!box_box_intersection(bounding_boxes[prismindex[i]], bounding_boxes[jump1])) continue;
+      if (!box_box_intersection(bounding_boxes[prismindex[i]], bounding_boxes[jump2])) continue;
+      if (coverlist[i] == 1) continue;
+      tot = 0;
+      fid = 0;
+      ori = -1;
+      const Prism& prism = halfspace[prismindex[i]];
+      for (int j = 0; j < prism.size(); j++) {
+        if ((*intersect_face[i])[fid] == j){
+          if (fid + 1 < intersect_face[i]->size()) fid++;
+        }
+        else continue;
 
-            if (ori == 1 || ori == 0)
-              {
-                break;
-              }
+        ori = int(oriented_side(prism[j].eplane, ip));
 
-            if (ori == -1)
-              {
-                tot++;
-              }
-          }
-          if (ori == 1 || ori == 0) continue;
-          fid = 0;
-          ori = -1;
-          for (int j = 0; j < halfspace[prismindex[i]].size(); j++) {
-            if ((*intersect_face[i])[fid] == j)
-              {
-                if (fid + 1 < intersect_face[i]->size()) fid++;
-                continue;
-              }
-
-            ori = int(oriented_side(prism[j].eplane, ip));
-
-            if (ori == 1 || ori == 0)
-              {
-                break;
-              }
-
-            if (ori == -1)
-              {
-                tot++;
-              }
-          }
-          if (ori == 1 || ori == 0) continue;
-          if (tot == halfspace[prismindex[i]].size())
-            {
-              id = i;
-              return IN_PRISM;
-            }
-
+        if (ori == 1 || ori == 0){
+          break;
         }
 
-      return OUT_PRISM;
+        if (ori == -1){
+
+          tot++;
+        }
+      }
+      if (ori == 1 || ori == 0) continue;
+      fid = 0;
+      ori = -1;
+      for (int j = 0; j < halfspace[prismindex[i]].size(); j++) {
+        if ((*intersect_face[i])[fid] == j)
+          {
+            if (fid + 1 < intersect_face[i]->size()){
+              fid++;
+            }
+            continue;
+          }
+
+        ori = int(oriented_side(prism[j].eplane, ip));
+
+        if (ori == 1 || ori == 0){
+
+          break;
+        }
+
+        if (ori == -1){
+          tot++;
+        }
+      }
+      if (ori == 1 || ori == 0) continue;
+      if (tot == halfspace[prismindex[i]].size()){
+        id = i;
+        return IN_PRISM;
+      }
+
     }
+
+    return OUT_PRISM;
+  }
 
 
 
@@ -1320,10 +1183,9 @@ struct Envelope {
                            const std::vector<unsigned int> &prismindex) const
   {
 
-    if (prismindex.size() == 0)
-      {
-        return true;
-      }
+    if (prismindex.size() == 0) {
+      return true;
+    }
 
     Triangle query(t0, t1, t2);
 
@@ -1396,21 +1258,21 @@ struct Envelope {
 
 
             if (inter == 1){
-                inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id(etriangle[triseg[k][0]], etriangle[triseg[k][1]],
-                                                                                eline,
-                                                                                halfspace[prismindex[queue[i]]][cidl[j]],
-                                                                                prismindex, jump1, check_id);
+              inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id(etriangle[triseg[k][0]], etriangle[triseg[k][1]],
+                                                                              eline,
+                                                                              halfspace[prismindex[queue[i]]][cidl[j]],
+                                                                              prismindex, jump1, check_id);
 
 
 
-                if (inter == 1) {
-                  return true;
-                }
-                if (inter == 0) {
-                  queue.emplace_back(check_id);
-                  idlist.emplace_back(prismindex[check_id]);
-                }
+              if (inter == 1) {
+                return true;
               }
+              if (inter == 0) {
+                queue.emplace_back(check_id);
+                idlist.emplace_back(prismindex[check_id]);
+              }
+            }
           }
         }
       }
@@ -1421,20 +1283,17 @@ struct Envelope {
 #endif // DEGENERATION_FIX
 
 
-    std::vector<int> cidl; cidl.reserve(8);
+    std::vector<int> cidl; cidl.reserve(8); // todo: std::array??
     for (int i = 0; i < prismindex.size(); i++) {
       tti = is_triangle_cut_envelope_polyhedra(prismindex[i],
                                                query,
                                                cidl);
       if (tti == 2) {
-
-        return false;//totally inside of this polyhedron
+        return false; //totally inside of this polyhedron
       }
       else if (tti == 1 && cidl.size() > 0) {
         filtered_intersection.emplace_back(prismindex[i]);
         intersect_face.emplace_back(cidl);
-
-
       }
     }
 
@@ -1442,7 +1301,6 @@ struct Envelope {
       return false;
     }
 
-    //    std::cout << filtered_intersection.size() << " filtered" << std::endl;
 #ifdef TRACE
     for(int i = 0; i < filtered_intersection.size(); i++){
       prism_to_off(filtered_intersection[i], "filtered");
@@ -1464,11 +1322,6 @@ struct Envelope {
     std::vector<std::vector<int>>  idlistorder;
     std::vector<int> neighbour_cover;
     idlistorder.emplace_back(intersect_face[queue[0]]);
-
-    //std::array<eLine_3, 3> elines;
-    // for (int k = 0; k < 3; k++) {
-    //  elines[k] = eLine_3(query.etriangle[triseg[k][0]],etriangle[triseg[k][1]]);
-    // }
 
     for (int i = 0; i < queue.size(); i++) {
 
@@ -1519,9 +1372,6 @@ struct Envelope {
       }
     }
 
-
-
-
     //tpi part
 
     //tree
@@ -1540,20 +1390,18 @@ struct Envelope {
 
     // constructs AABB tree
     localtree.insert(boost::counting_iterator<std::size_t>(0),
-                      boost::counting_iterator<std::size_t>(local_bounding_boxes.size()),
-                      datum_map,
-                      point_map);
+                     boost::counting_iterator<std::size_t>(local_bounding_boxes.size()),
+                     datum_map,
+                     point_map);
     localtree.build();
 
     //tree end
 
-    const ePlane_3& etriangle_eplane = query.eplane; //  (etriangle[0],etriangle[1],etriangle[2]);
+    const ePlane_3& etriangle_eplane = query.eplane;
 
     for (int i = 1; i < queue.size(); i++){
       jump1 = filtered_intersection[queue[i]];
-#ifdef TRACE
-      std::cout << "jump1 = "<< jump1 << std::endl;
-#endif
+
       localtree.all_intersected_primitives(bounding_boxes[jump1], std::back_inserter(list));
 
       neighbours.resize(list.size());
@@ -1568,19 +1416,14 @@ struct Envelope {
 
       for (int j = 0; j < i; j++) {
         jump2 = filtered_intersection[queue[j]];
-#ifdef TRACE
-        std::cout << "jump2 = "<< jump2 << std::endl;
-#endif
+
         if (! box_box_intersection(bounding_boxes[jump1], bounding_boxes[jump2])){
           continue;
         }
         for (int k = 0; k < intersect_face[queue[i]].size(); k++) {
           for (int h = 0; h < intersect_face[queue[j]].size(); h++) {
-#ifdef TRACE
-            std::cout << "k = " << k <<  "  h = "<< h << std::endl;
-#endif
 
-            // AF: We moved the intersection here
+            // We moved the intersection here
             // In case there is no intersection point we continue
             boost::optional<ePoint_3>
               op = CGAL::intersection_point(etriangle_eplane,
@@ -1592,38 +1435,25 @@ struct Envelope {
 
             const ePoint_3& ip = *op;
 
-
             cut = is_3_triangle_cut(query.etriangle[0], query.etriangle[1],
                                     query.etriangle[2], query.n, ip);
 
             if (!cut){
-#ifdef TRACE
-              std::cout << "continue 1" << std::endl;
-#endif
               continue;
             }
 
             cut = is_tpp_on_polyhedra(ip, jump1, intersect_face[queue[i]][k]);
 
             if (!cut){
-#ifdef TRACE
-              std::cout << "continue 2" << std::endl;
-#endif
               continue;
             }
-
 
             cut = is_tpp_on_polyhedra(ip, jump2, intersect_face[queue[j]][h]);
 
             if (!cut){
-#ifdef TRACE
-              std::cout << "continue 3" << std::endl;
-#endif
               continue;
             }
-#ifdef TRACE
-            std::cout << "Call Implicit" << std::endl;
-#endif
+
             inter = Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order(ip, idlist, idlistorder, jump1, jump2, check_id);
             if (inter == 1) {
 
@@ -1632,7 +1462,6 @@ struct Envelope {
 
 
               if (inter == 1) {
-
                 return true;
               }
               if (inter == 0) {
@@ -1719,7 +1548,6 @@ struct Envelope {
 
         if (de == DEGENERATED_POINT)
           {
-            //logger().debug("Envelope Triangle Degeneration- Point");
             for (int j = 0; j < 8; j++)
               {
                 box[j] = ver[faces[i][0]] + boxorder[j] * tolerance;
@@ -2041,7 +1869,6 @@ int main(int argc, char* argv[])
   int inside_count = 0;
   int outside_count = 0;
 
-  CALLS = FAST = 0;
   std::ofstream inside("inside.txt");
   std::ofstream outside("outside.txt");
 
@@ -2063,7 +1890,6 @@ int main(int argc, char* argv[])
       }
   }
   std::cout << inside_count << " " << outside_count << std::endl;
-  std::cout << CALLS << " " << FAST << std::endl;
   std::cout << t.time() << " sec." << std::endl;
 
   return 0;

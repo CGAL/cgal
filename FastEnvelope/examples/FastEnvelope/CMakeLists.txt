@@ -19,8 +19,6 @@ include(CGAL_Eigen_support)
     create_single_source_cgal_program( "fast.cpp" )
     create_single_source_cgal_program( "fastE.cpp" )
 
-    target_link_libraries( fast PUBLIC CGAL::Eigen_support)
-
     target_link_libraries( fastE PUBLIC CGAL::Eigen_support)
   target_link_libraries( fastE PUBLIC ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} FastEnvelope IndirectPredicates geogram)
 else()
