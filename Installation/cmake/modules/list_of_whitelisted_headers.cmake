@@ -34,4 +34,4 @@ set(list_of_whitelisted_headers_txt [=[
 
 ]=])
 
-separate_arguments(example_files UNIX_COMMAND ${list_of_whitelisted_headers_txt})
+separate_arguments(list_of_whitelisted_headers UNIX_COMMAND ${list_of_whitelisted_headers_txt})

@@ -1131,7 +1131,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
       if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include)
         set(check_pkg_headers_depends "")
         # Then recurse2
-        file(GLOB_RECURSE ${package}_HEADERS
+        file(GLOB_RECURSE ${package}_HEADERS #don't use a hard coded list because the ones for the documented headers is enough.
           RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include"
           "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h*")
         list(SORT ${package}_HEADERS)
