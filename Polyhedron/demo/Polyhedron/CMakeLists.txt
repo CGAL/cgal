@@ -351,8 +351,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   target_link_libraries(polyhedron_demo PUBLIC
     demo_framework point_dialog Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Script)
   if(LIBSSH_FOUND)
-    add_definitions(-DCGAL_USE_SSH)
+    target_compile_definitions(polyhedron_demo PUBLIC -DCGAL_USE_SSH)
     target_link_libraries(polyhedron_demo PUBLIC ${LIBSSH_LIBRARIES})
+    target_include_directories(polyhedron_demo PUBLIC ${LIBSSH_INCLUDE_DIR})
   endif() #libssh
   if(TARGET Qt5::WebSockets)
     add_definitions(-DCGAL_USE_WEBSOCKETS)
