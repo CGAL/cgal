@@ -45,6 +45,96 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel          EPICK;
 typedef CGAL::Exact_predicates_exact_constructions_kernel            EPECK;
 typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt  EPECK_w_sqrt;
 
+template <typename K>
+void test_API()
+{
+  typedef CGAL::Polygon_2<K>                                         Polygon_2;
+  typedef CGAL::Polygon_with_holes_2<K>                              Polygon_with_holes_2;
+  typedef CGAL::Straight_skeleton_2<K>                               Straight_skeleton;
+  typedef boost::shared_ptr<Straight_skeleton>                       Straight_skeleton_Ptr;
+
+  typedef CGAL::Polygon_2<EPICK>                                     Polygon_2_EPICK;
+  typedef CGAL::Polygon_with_holes_2<EPICK>                          Polygon_with_holes_2_EPICK;
+  typedef CGAL::Straight_skeleton_2<EPICK>                           Straight_skeleton_EPICK;
+  typedef boost::shared_ptr<Straight_skeleton_EPICK>                 Straight_skeleton_Ptr_EPICK;
+
+  Polygon_2 p;
+  Polygon_with_holes_2 pwh;
+
+  std::vector< boost::shared_ptr<Polygon_2> > res;
+  std::vector< boost::shared_ptr<Polygon_2_EPICK> > res_EPICK;
+  std::vector< boost::shared_ptr<Polygon_with_holes_2> > res_w;
+  std::vector< boost::shared_ptr<Polygon_with_holes_2_EPICK> > res_w_EPICK;
+
+  // First kernel is the offset construction (and thus output kernel), second kernel is the skeleton construction
+
+  // simple interior, no holes
+  res_EPICK = create_interior_skeleton_and_offset_polygons_2(0.1, p) ;
+  res_EPICK = create_interior_skeleton_and_offset_polygons_2(0.1, p, EPICK()) ;
+  res_EPICK = create_interior_skeleton_and_offset_polygons_2(0, p, EPICK(), K()) ;
+  res = create_interior_skeleton_and_offset_polygons_2(0.1, p, K()) ;
+  res = create_interior_skeleton_and_offset_polygons_2(0, p, K(), EPICK()) ;
+  res = create_interior_skeleton_and_offset_polygons_2(0.1, p, K(), K()) ;
+
+  // simple interior, holes
+  res_EPICK = create_interior_skeleton_and_offset_polygons_2(0.1, pwh) ;
+  res_EPICK = create_interior_skeleton_and_offset_polygons_2(0.1, pwh, EPICK()) ;
+  res_EPICK = create_interior_skeleton_and_offset_polygons_2(0, pwh, EPICK(), K()) ;
+  res = create_interior_skeleton_and_offset_polygons_2(0.1, pwh, K()) ;
+  res = create_interior_skeleton_and_offset_polygons_2(0, pwh, K(), EPICK()) ;
+  res = create_interior_skeleton_and_offset_polygons_2(0.1, pwh, K(), K()) ;
+
+  // simple exterior, no holes
+  res_EPICK = create_exterior_skeleton_and_offset_polygons_2(0.1, p) ;
+  res_EPICK = create_exterior_skeleton_and_offset_polygons_2(0.1, p, EPICK()) ;
+  res_EPICK = create_exterior_skeleton_and_offset_polygons_2(0, p, EPICK(), K()) ;
+  res = create_exterior_skeleton_and_offset_polygons_2(0.1, p, K()) ;
+  res = create_exterior_skeleton_and_offset_polygons_2(0, p, K(), EPICK()) ;
+  res = create_exterior_skeleton_and_offset_polygons_2(0.1, p, K(), K()) ;
+
+  // simple exterior, holes
+  res_EPICK = create_exterior_skeleton_and_offset_polygons_2(0.1, pwh) ;
+  res_EPICK = create_exterior_skeleton_and_offset_polygons_2(0.1, pwh, EPICK()) ;
+  res_EPICK = create_exterior_skeleton_and_offset_polygons_2(0, pwh, EPICK(), K()) ;
+  res = create_exterior_skeleton_and_offset_polygons_2(0.1, pwh, K()) ;
+  res = create_exterior_skeleton_and_offset_polygons_2(0, pwh, K(), EPICK()) ;
+  res = create_exterior_skeleton_and_offset_polygons_2(0.1, pwh, K(), K()) ;
+
+  // Same, but the result has holes --------------------
+
+  // arranged interior, no holes
+  res_w_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, p) ;
+  res_w_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, p, EPICK()) ;
+  res_w_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2(0, p, EPICK(), K()) ;
+  res_w = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, p, K()) ;
+  res_w = create_interior_skeleton_and_offset_polygons_with_holes_2(0, p, K(), EPICK()) ;
+  res_w = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, p, K(), K()) ;
+
+  // arranged interior, holes
+  res_w_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh) ;
+  res_w_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, EPICK()) ;
+  res_w_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2(0, pwh, EPICK(), K()) ;
+  res_w = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, K()) ;
+  res_w = create_interior_skeleton_and_offset_polygons_with_holes_2(0, pwh, K(), EPICK()) ;
+  res_w = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, K(), K()) ;
+
+  // arranged exterior, no holes
+  res_w_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, p) ;
+  res_w_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, p, EPICK()) ;
+  res_w_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2(0, p, EPICK(), K()) ;
+  res_w = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, p, K()) ;
+  res_w = create_exterior_skeleton_and_offset_polygons_with_holes_2(0, p, K(), EPICK()) ;
+  res_w = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, p, K(), K()) ;
+
+  // arranged exterior, holes
+  res_w_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh) ;
+  res_w_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, EPICK()) ;
+  res_w_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2(0, pwh, EPICK(), K()) ;
+  res_w = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, K()) ;
+  res_w = create_exterior_skeleton_and_offset_polygons_with_holes_2(0, pwh, K(), EPICK()) ;
+  res_w = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, K(), K()) ;
+}
+
 template <typename K, typename StraightSkeleton>
 bool is_valid(const boost::shared_ptr<StraightSkeleton>& ss)
 {
@@ -105,7 +195,7 @@ void test_offset_square()
   assert(is_valid<K>(ss));
 
   Polygon_ptr_container offset_polys =
-    CGAL::create_interior_skeleton_and_offset_polygons_2(0.5, Polygon_2(square.begin(), square.end()));
+    CGAL::create_interior_skeleton_and_offset_polygons_2(0.5, Polygon_2(square.begin(), square.end()), K());
 
   std::cout << offset_polys.size() << " polygons" << std::endl;
   for(const auto& offp : offset_polys)
@@ -162,7 +252,7 @@ void test_offset_four_square_holes()
   // Generic case, offset of the outer boundary and of the hole are distinct
   std::cout << "Interior skeleton and offset, value: 2" << std::endl;
   Polygon_with_holes_2_ptr_container offset_poly_with_holes =
-    CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(0.5, poly);
+    CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(0.5, poly, K());
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
 //  for(const auto& offp : offset_poly_with_holes)
@@ -208,7 +298,7 @@ void test_offset_L()
   assert(is_valid<K>(ss));
 
   Polygon_ptr_container offset_polys =
-    CGAL::create_interior_skeleton_and_offset_polygons_2(int(1), Polygon_2(L.begin(), L.end()));
+    CGAL::create_interior_skeleton_and_offset_polygons_2(int(1), Polygon_2(L.begin(), L.end()), K());
 
   std::cout << offset_polys.size() << " polygons" << std::endl;
 //  for(const auto& offp : offset_polys)
@@ -249,7 +339,7 @@ void test_offset_polygon_with_hole()
   // Generic case, offset of the outer boundary and of the hole are distinct
   std::cout << "Interior skeleton and offset, value: 2" << std::endl;
   Polygon_with_holes_2_ptr_container offset_poly_with_holes =
-    CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(int(2), poly);
+    CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(int(2), poly, K());
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
 //  for(const auto& offp : offset_poly_with_holes)
@@ -264,7 +354,7 @@ void test_offset_polygon_with_hole()
   // - skeleton bisectors and offset edge overlap
   // - switch from 2 CCs to 1 CC
   std::cout << "Interior skeleton and offset, value: 2.5" << std::endl;
-  offset_poly_with_holes = CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(2.5, poly);
+  offset_poly_with_holes = CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(2.5, poly, K());
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
 //  for(const auto& offp : offset_poly_with_holes)
@@ -276,8 +366,7 @@ void test_offset_polygon_with_hole()
 
   // Same, but using a different skeleton kernel
   std::cout << "Interior skeleton and offset, value: 2.5 (EPICK)" << std::endl;
-  offset_poly_with_holes = create_interior_skeleton_and_offset_polygons_with_holes_2(2.5, poly,
-                                                                                     K(), EPICK());
+  offset_poly_with_holes = create_interior_skeleton_and_offset_polygons_with_holes_2(2.5, poly, K(), EPICK());
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
 //  for(const auto& offp : offset_poly_with_holes)
@@ -289,7 +378,7 @@ void test_offset_polygon_with_hole()
 
   // Single CC in the offset
   std::cout << "Interior skeleton and offset, value: 3.5" << std::endl;
-  offset_poly_with_holes = CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(3.5, poly);
+  offset_poly_with_holes = CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(3.5, poly, K());
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
 //  for(const auto& offp : offset_poly_with_holes)
@@ -301,7 +390,7 @@ void test_offset_polygon_with_hole()
 
   // Very large value, no offset polygon
   std::cout << "Interior skeleton and offset, value: 100" << std::endl;
-  offset_poly_with_holes = CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(FT(100), poly);
+  offset_poly_with_holes = CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(FT(100), poly, K());
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
 //  for(const auto& offp : offset_poly_with_holes)
@@ -518,7 +607,7 @@ void test_offset_non_manifold()
 
   // Basic, one polygon with a hole
   Polygon_with_holes_ptrs offset_poly_with_holes =
-    CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, poly);
+    CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, poly, K());
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
 //  for(const auto& offp : offset_poly_with_holes)
@@ -533,7 +622,8 @@ void test_offset_non_manifold()
 
   // Outer and hole polygons merge into a single polygon
   std::cout << "time_at_split: " << time_at_split << std::endl;
-  offset_poly_with_holes = CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(time_at_split, poly);
+  offset_poly_with_holes =
+    CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(time_at_split, poly, K());
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
 //  for(const auto& offp : offset_poly_with_holes)
@@ -605,7 +695,7 @@ void test_offset_non_manifold_2()
 
   // Before, one polygon with a hole
   Polygon_with_holes_ptrs offset_poly_with_holes =
-    CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, poly);
+    CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, poly, K());
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
 //  for(const auto& offp : offset_poly_with_holes)
@@ -618,7 +708,8 @@ void test_offset_non_manifold_2()
 
   // At the split
   std::cout << "time_at_split: " << time_at_split << std::endl;
-  offset_poly_with_holes = CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(time_at_split, poly);
+  offset_poly_with_holes =
+    CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(time_at_split, poly, K());
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
 //  for(const auto& offp : offset_poly_with_holes)
@@ -633,7 +724,7 @@ void test_offset_non_manifold_2()
 template <typename K>
 void test_offset_polygon_exterior()
 {
-  std::cout << "Test Polygon with Hole, kernel: " << typeid(K).name() << std::endl;
+  std::cout << "Test Polygon exterior, kernel: " << typeid(K).name() << std::endl;
 
   typedef typename K::FT                                             FT;
   typedef typename K::Point_2                                        Point;
@@ -661,7 +752,7 @@ void test_offset_polygon_exterior()
   // Outer skeleton and offset
   std::cout << "Outer skeleton and offset, value: 0.1" << std::endl;
   Polygon_with_holes_2_ptr_container offset_poly_with_holes =
-    create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, poly);
+    create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, poly, K());
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
 //  for(const auto& offp : offset_poly_with_holes)
@@ -675,8 +766,8 @@ void test_offset_polygon_exterior()
   // -----------------------------------------------------------------------------------------------
   // Value such that it is clearly separated into two contours
   std::cout << "Outer skeleton and offset, value: 7" << std::endl;
-  offset_poly_with_holes = create_exterior_skeleton_and_offset_polygons_with_holes_2(FT(7), poly,
-                                                                                     K(), EPICK());
+  offset_poly_with_holes =
+    create_exterior_skeleton_and_offset_polygons_with_holes_2(FT(7), poly, K(), EPICK());
 
 //  for(const auto& offp : offset_poly_with_holes)
 //    print_polygon_with_holes(*offp);
@@ -696,8 +787,8 @@ void test_offset_polygon_exterior()
   // -----------------------------------------------------------------------------------------------
   // Border value between a single contour and two contours
   std::cout << "Outer skeleton and offset, value: 5" << std::endl;
-  offset_poly_with_holes = create_exterior_skeleton_and_offset_polygons_with_holes_2(5., poly,
-                                                                                     K(), EPICK());
+  offset_poly_with_holes =
+    create_exterior_skeleton_and_offset_polygons_with_holes_2(5., poly, K(), EPICK());
 
   std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
 //  for(const auto& offp : offset_poly_with_holes)
@@ -810,7 +901,7 @@ void test_offset(const char* filename)
   {
     std::cout << "Offset #" << i << " = " << ot << std::endl;
     Polygon_with_holes_2_ptr_container offset_poly_with_holes =
-      CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(ot, p);
+      CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(ot, p, K());
 
     std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
 //    for(const auto& offp : offset_poly_with_holes)
@@ -829,6 +920,8 @@ void test_kernel()
 {
   std::cout.precision(17);
   std::cerr.precision(17);
+
+  test_API<K>();
 
   // Artificial data
   test_offset_square<K>();
@@ -869,6 +962,15 @@ void test_kernel()
   test_offset<K>("data/consecutive_coincident_vertices_4.poly");
   test_offset<K>("data/degenerate0a.poly");
   test_offset<K>("data/degenerate0.poly");
+  test_offset<K>("data/degenerate2.poly");
+  test_offset<K>("data/degenerate3.poly");
+  test_offset<K>("data/degenerate4.poly");
+  test_offset<K>("data/degenerate5a.poly");
+  test_offset<K>("data/degenerate5.poly");
+  test_offset<K>("data/degenerate6.poly");
+  test_offset<K>("data/degenerate7.poly");
+  test_offset<K>("data/degenerate8.poly");
+  test_offset<K>("data/degenerate9.poly");
   test_offset<K>("data/degenerate10.poly");
   test_offset<K>("data/degenerate11.poly");
   test_offset<K>("data/degenerate12.poly");
@@ -892,15 +994,6 @@ void test_kernel()
   test_offset<K>("data/degenerate28b.poly");
   test_offset<K>("data/degenerate28c.poly");
   test_offset<K>("data/degenerate28x.poly");
-  test_offset<K>("data/degenerate2.poly");
-  test_offset<K>("data/degenerate3.poly");
-  test_offset<K>("data/degenerate4.poly");
-  test_offset<K>("data/degenerate5a.poly");
-  test_offset<K>("data/degenerate5.poly");
-  test_offset<K>("data/degenerate6.poly");
-  test_offset<K>("data/degenerate7.poly");
-  test_offset<K>("data/degenerate8.poly");
-  test_offset<K>("data/degenerate9.poly");
   test_offset<K>("data/degenerate_multinode0.poly");
   test_offset<K>("data/Detmier_b.poly");
   test_offset<K>("data/Detmier_c.poly");
@@ -930,8 +1023,6 @@ void test_kernel()
   test_offset<K>("data/inputsquare.poly");
   test_offset<K>("data/inputT.poly");
   test_offset<K>("data/inputu.poly");
-  test_offset<K>("data/issue3382_bis.txt");
-  test_offset<K>("data/issue3382_ter.txt");
   test_offset<K>("data/large_1.poly");
   test_offset<K>("data/large_2.poly");
   test_offset<K>("data/large_3.poly");
@@ -1005,12 +1096,12 @@ void test_kernel()
   test_offset<K>("data/star.poly");
   test_offset<K>("data/StrayCenterlines.poly");
   test_offset<K>("data/triangle.poly");
-  test_offset<K>("data/wheel_128_spokes.poly");
   test_offset<K>("data/wheel_13_spokes.poly");
   test_offset<K>("data/wheel_14_spokes.poly");
   test_offset<K>("data/wheel_15_spokes.poly");
   test_offset<K>("data/wheel_16_spokes_b.poly");
   test_offset<K>("data/wheel_16_spokes.poly");
+  test_offset<K>("data/wheel_128_spokes.poly");
   test_offset<K>("data/wiggly_03_cgal.poly");
   test_offset<K>("data/WingChiu.poly");
 }
@@ -1018,8 +1109,8 @@ void test_kernel()
 int main(int, char**)
 {
   test_kernel<EPICK>();
-//  test_kernel<EPECK>();
-//  test_kernel<EPECK_w_sqrt>();
+  test_kernel<EPECK>();
+  test_kernel<EPECK_w_sqrt>();
 
   std::cout << "Done!" << std::endl;
 

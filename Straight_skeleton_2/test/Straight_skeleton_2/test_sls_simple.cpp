@@ -1,11 +1,11 @@
 // #define MAEL_FIRST_VALID_QUEUE_PATCH
 // #define MAEL_ALL_QUEUE_PATCH
-//#define CGAL_SLS_PRINT_QUEUE_BEFORE_EACH_POP
 
 #include <iostream>
 #include <iomanip>
 #include <string>
 
+//#define CGAL_SLS_PRINT_QUEUE_BEFORE_EACH_POP
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 100
 //#define CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE 10000000
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_VALIDITY_TRACE
@@ -50,22 +50,26 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt  EPECK_w_sqr
 template <typename K>
 void test_API()
 {
-  typedef typename K::FT                                             FT;
-  typedef typename K::Point_2                                        Point;
-
   typedef CGAL::Polygon_2<K>                                         Polygon_2;
   typedef CGAL::Polygon_with_holes_2<K>                              Polygon_with_holes_2;
-  typedef boost::shared_ptr<Polygon_with_holes_2>                    Polygon_with_holes_2_ptr;
-  typedef std::vector<Polygon_with_holes_2_ptr>                      Polygon_with_holes_2_ptr_container;
+
+  typedef CGAL::Straight_skeleton_2<EPICK>                           Straight_skeleton_EPICK;
+  typedef boost::shared_ptr<Straight_skeleton_EPICK>                 Straight_skeleton_Ptr_EPICK;
 
   typedef CGAL::Straight_skeleton_2<K>                               Straight_skeleton;
   typedef boost::shared_ptr<Straight_skeleton>                       Straight_skeleton_Ptr;
 
-  Polygon_with_holes_2 p;
+  Polygon_2 p;
+  Straight_skeleton_Ptr_EPICK ss0 = CGAL::create_interior_straight_skeleton_2(p);
+  Straight_skeleton_Ptr ss1 = CGAL::create_interior_straight_skeleton_2(p, K());
+  Straight_skeleton_Ptr_EPICK ss2 = CGAL::create_exterior_straight_skeleton_2(double(1.01), p);
+  Straight_skeleton_Ptr ss3 = CGAL::create_exterior_straight_skeleton_2(int(2), p, K());
 
-  Straight_skeleton_Ptr ss = CGAL::create_interior_straight_skeleton_2(p, K());
-
-  // @todo test API range
+  Polygon_with_holes_2 pwh;
+  Straight_skeleton_Ptr_EPICK ss4 = CGAL::create_interior_straight_skeleton_2(pwh);
+  Straight_skeleton_Ptr ss5 = CGAL::create_interior_straight_skeleton_2(pwh, K());
+  Straight_skeleton_Ptr_EPICK ss6 = CGAL::create_exterior_straight_skeleton_2(double(1.01), p);
+  Straight_skeleton_Ptr ss7 = CGAL::create_exterior_straight_skeleton_2(int(2), p, K());
 }
 
 template <typename K, typename StraightSkeleton>
@@ -107,13 +111,10 @@ void test_skeleton(const char* filename,
 {
   std::cout << "Construct straight skeleton of input: " << filename << std::endl;
 
-  typedef typename K::FT                                             FT;
   typedef typename K::Point_2                                        Point;
 
   typedef CGAL::Polygon_2<K>                                         Polygon_2;
   typedef CGAL::Polygon_with_holes_2<K>                              Polygon_with_holes_2;
-  typedef boost::shared_ptr<Polygon_with_holes_2>                    Polygon_with_holes_2_ptr;
-  typedef std::vector<Polygon_with_holes_2_ptr>                      Polygon_with_holes_2_ptr_container;
 
   typedef CGAL::Straight_skeleton_2<K>                               Straight_skeleton;
   typedef boost::shared_ptr<Straight_skeleton>                       Straight_skeleton_Ptr;
@@ -170,7 +171,7 @@ void test_skeleton(const char* filename,
 
   std::cout << p.outer_boundary().size() << " vertices" << std::endl;
 
-  Straight_skeleton_Ptr ss = CGAL::create_interior_straight_skeleton_2(p);
+  Straight_skeleton_Ptr ss = CGAL::create_interior_straight_skeleton_2(p, K());
   assert(ss);
   assert(is_valid<K>(ss));
 
@@ -189,6 +190,10 @@ void test_skeleton(const char* filename,
       assert(false);
     }
   }
+
+  Straight_skeleton_Ptr ss_ext = CGAL::create_exterior_straight_skeleton_2(1., p, K());
+  assert(ss_ext);
+  assert(is_valid<K>(ss_ext));
 }
 
 template <typename K>
