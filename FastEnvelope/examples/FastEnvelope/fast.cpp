@@ -28,6 +28,7 @@ int main(int argc, char* argv[])
   typedef std::array<int, 3> Vector3i;
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef Kernel::Point_3 Point_3;
+  typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
   std::vector<Point_3> env_vertices;
   std::vector<Vector3i> env_faces;
 
@@ -78,6 +79,8 @@ int main(int argc, char* argv[])
 
   CGAL::Polygon_mesh_processing::Envelope<Kernel> envelope(env_vertices, env_faces, eps);
 
+  Surface_mesh sm;
+  CGAL::Polygon_mesh_processing::Envelope<Kernel> envelope2(sm,eps);
 
   std::cout << t.time() << " sec." << std::endl;
   t.reset();
