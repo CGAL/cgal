@@ -20,7 +20,6 @@
 
 #ifndef CGAL_CONFIG_H
 #define CGAL_CONFIG_H
-
 // CGAL is header-only by default since CGAL-5.0.
 #if !defined(CGAL_HEADER_ONLY) && ! CGAL_NOT_HEADER_ONLY
 #  define CGAL_HEADER_ONLY 1
@@ -39,6 +38,11 @@
 #ifdef _MSC_VER
 #define _SILENCE_CXX17_ALLOCATOR_VOID_DEPRECATION_WARNING 1
 #define _SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING 1
+#endif
+
+#ifdef CGAL_USE_SSH
+//to avoid clashing between windows.h and winsock2.h
+#define _WINSOCKAPI_
 #endif
 
 #ifdef CGAL_INCLUDE_WINDOWS_DOT_H
