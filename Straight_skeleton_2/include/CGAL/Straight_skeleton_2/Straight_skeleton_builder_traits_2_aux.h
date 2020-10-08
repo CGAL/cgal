@@ -271,7 +271,7 @@ struct Functor_base_2
   typedef typename K::Vector_2 Vector_2 ;
   typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2_with_ID ;
 
-  typedef Trisegment_2<K, Segment_2_with_ID> Trisegment_2 ;
+  typedef CGAL::Trisegment_2<K, Segment_2_with_ID> Trisegment_2 ;
 
   typedef typename Trisegment_2::Self_ptr Trisegment_2_ptr ;
 };

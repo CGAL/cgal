@@ -392,7 +392,7 @@ struct Straight_skeleton_builder_traits_2_base
 
   typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2 ;
   typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2_with_ID ; // for BOOST_MPL_HAS_XXX_TRAIT_DEF
-  typedef Trisegment_2<K, Segment_2_with_ID> Trisegment_2 ;
+  typedef CGAL::Trisegment_2<K, Segment_2_with_ID> Trisegment_2 ;
   typedef typename Trisegment_2::Self_ptr Trisegment_2_ptr ;
 
   template<class F> F get( F const* = 0 ) const { return F(); }
