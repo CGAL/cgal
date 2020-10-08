@@ -1720,6 +1720,9 @@ struct Envelope {
   bool
   operator()(const Point_3& source, const Point_3& target) const
   {
+    if(source == target){
+      return (*this)(source);
+    }
     std::vector<unsigned int> prismindex;
     Segment_3 query(source,target);
     tree.all_intersected_primitives(query, std::back_inserter(prismindex));
@@ -1735,16 +1738,25 @@ struct Envelope {
   bool
   operator()(const Point_3& t0, const Point_3& t1, const Point_3& t2) const
   {
+    if (collinear(t0,t1,t2)){
+      Point_3 p0(t0), p1(t1), p2(t2);
+      if(lexicographically_xyz_smaller(p1,p0)){
+        std::swap(p1,p0);
+      }
+      if(lexicographically_xyz_smaller(p2,p1)){
+        std::swap(p2,p1);
+      }
+      if(lexicographically_xyz_smaller(p1,p0)){
+        std::swap(p1,p0);
+      }
+      return (*this)(p0,p2);
+    }
     std::vector<unsigned int> prismindex;
     Triangle_3 query(t0, t1, t2);
     tree.all_intersected_primitives(query, std::back_inserter(prismindex));
-    std::sort(prismindex.begin(), prismindex.end());
-#ifdef CGAL_ENVELOPE_DEBUG
-    for(int i=0; i < prismindex.size(); i++){
-      std::cout << prismindex[i] << " ";
-    }
-    std::cout << std::endl;
-#endif
+
+    // only needed when we want to compare runs with FastEnvelope
+    // std::sort(prismindex.begin(), prismindex.end());
 
 #ifdef CGAL_ENVELOPE_DEBUG
     for(int i = 0; i < prismindex.size(); i++){

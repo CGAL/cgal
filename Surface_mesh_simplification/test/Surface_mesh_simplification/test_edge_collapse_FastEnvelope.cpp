@@ -96,7 +96,7 @@ int main(int argc, char** argv)
   std::ifstream is(argc > 1 ? argv[1] : "data/helmet.off");
   is >> ref_mesh;
 
-  SMS::Count_stop_predicate<Surface> stop(num_halfedges(ref_mesh)/10);
+  SMS::Count_stop_predicate<Surface> stop(num_halfedges(ref_mesh)/100);
 
   Stats stats;
   My_visitor vis(&stats);
