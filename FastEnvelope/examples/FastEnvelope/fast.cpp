@@ -13,6 +13,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/Envelope.h>
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/Timer.h>
 
 #include <fstream>

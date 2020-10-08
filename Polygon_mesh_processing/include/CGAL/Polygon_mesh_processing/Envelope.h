@@ -52,6 +52,8 @@
 #include <CGAL/boost/graph/copy_face_graph.h>
 #endif
 
+#include <CGAL/boost/graph/named_params_helper.h>
+
 #include <boost/iterator/counting_iterator.hpp>
 
 #include <string>
@@ -232,22 +234,21 @@ struct Envelope {
     init(epsilon);
   }
 
-#if 0
-  template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+  template <typename TriangleMesh, typename NamedParameters>
   Envelope(const TriangleMesh& tmesh,
            double epsilon,
-           const CGAL_PMP_NP_CLASS& np)
+           const NamedParameters& np)
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
 
-    typename GetVertexPointMap<PolygonMesh, CGAL_PMP_NP_CLASS>::const_type
+    typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, tmesh));
 
-    typedef typename GetInitializedVertexIndexMap<TriangleMesh, NamedParameters>::type VertexIndexMap;
-    VertexIndexMap vim = CGAL::get_initialized_face_index_map(tmesh, np);
+    typedef typename GetInitializedVertexIndexMap<TriangleMesh, NamedParameters>::const_type VertexIndexMap;
+    VertexIndexMap vim = CGAL::get_initialized_vertex_index_map(tmesh, np);
 
     env_vertices.reserve(num_vertices(tmesh));
     env_faces.reserve(num_faces(tmesh));
@@ -267,7 +268,12 @@ struct Envelope {
     }
     init(epsilon);
   }
-#endif
+
+  template <typename TriangleMesh>
+  Envelope(const TriangleMesh& tmesh,
+           double epsilon)
+    : Envelope(tmesh, epsilon, parameters::all_default())
+  {}
 
   void init(double epsilon)
   {
