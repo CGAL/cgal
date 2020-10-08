@@ -426,20 +426,11 @@ struct Envelope {
 
 
   int
-  Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id(const ePoint_3 &source, const ePoint_3 &target,
-                                                          const eLine_3& eline,
-                                                          const Plane& plane,
+  Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id(const ePoint_3 &ip,
                                                           const std::vector<unsigned int> &prismindex, const int &jump, int &id) const
   {
     Oriented_side ori;
-    boost::optional<ePoint_3> op = intersection_point(eline, plane.eplane);
-#ifdef TRACE
-    if(! op){
-      std::cout <<  "there must be an intersection 3" << std::endl;
-    }
-#endif
 
-    const ePoint_3& ip = *op;
     for (int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
         continue;
@@ -520,21 +511,15 @@ struct Envelope {
       }
 
       for (int j = 0; j < cidl.size(); j++) {
-
+        boost::optional<ePoint_3> op = intersection_point(line,
+                                                          halfspace[prismindex[queue[i]]][cidl[j]].eplane);
+        const ePoint_3& ip = *op;
         inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id
-          (esource,
-           etarget,
-           line,
-           halfspace[prismindex[queue[i]]][cidl[j]],
-           idlist, jump1, check_id);
+          (ip, idlist, jump1, check_id);
 
         if (inter == 1){
           inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id
-            (esource,
-             etarget,
-             line,
-             halfspace[prismindex[queue[i]]][cidl[j]],
-             prismindex, jump1, check_id);
+            (ip, prismindex, jump1, check_id);
 
           if (inter == 1) {
             return true; // outside envelope
@@ -730,7 +715,7 @@ struct Envelope {
 
         for (int k = 0; k < 2; k++){
           const Plane& plane_i = prism[cutp[i]];
-          const eLine_3& eline = *(seg[k]); // (*(seg0[k]), *(seg1[k]));
+          const eLine_3& eline = *(seg[k]);
 
           boost::optional<ePoint_3> op = intersection_point(eline, plane_i.eplane);
           if(! op){
@@ -1234,19 +1219,14 @@ struct Envelope {
           if (!cut) continue;
 
           for (int j = 0; j < cidl.size(); j++) {
-            inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id(etriangle[triseg[k][0]], etriangle[triseg[k][1]],
-                                                                            eline,
-                                                                            halfspace[prismindex[queue[i]]][cidl[j]],
-                                                                            idlist, jump1, check_id);
+            boost::optional<ePoint_3> op = intersection_point(eline,
+                                                              halfspace[prismindex[queue[i]]][cidl[j]].eplane);
+            const ePoint_3& ip = *op;
+            inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id(ip, idlist, jump1, check_id);
 
 
             if (inter == 1){
-              inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id(etriangle[triseg[k][0]], etriangle[triseg[k][1]],
-                                                                              eline,
-                                                                              halfspace[prismindex[queue[i]]][cidl[j]],
-                                                                              prismindex, jump1, check_id);
-
-
+              inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id(ip, prismindex, jump1, check_id);
 
               if (inter == 1) {
                 return true;
@@ -1332,16 +1312,14 @@ struct Envelope {
                                                             halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].eplane);
           const ePoint_3& ip = *op;
 
-          inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order(ip,
-                                                                                          idlist, idlistorder, jump1, check_id);
+          inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order(ip, idlist, idlistorder, jump1, check_id);
 
 
 
           if (inter == 1)
             {
 
-              inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(ip,
-                                                                                                        filtered_intersection, intersect_face, coverlist, jump1, check_id);
+              inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(ip, filtered_intersection, intersect_face, coverlist, jump1, check_id);
 
 
               assert(inter != 2);// the point must exist because it is a seg-halfplane intersection
