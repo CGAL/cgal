@@ -44,7 +44,10 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_primitive.h>
 
+#ifdef CGAL_EVELOPE_DEBUG
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
+#include <CGAL/Surface_mesh.h>
+#endif
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 
@@ -71,7 +74,7 @@ struct Envelope {
   typedef typename K::Plane_3 Plane_3;
   typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
 
-  typedef Bbox_3 Bbox_3;
+  typedef Bbox_3 Bbox;
 
   typedef Exact_predicates_exact_constructions_kernel EK;
   typedef typename EK::Point_3 ePoint_3;
@@ -188,8 +191,8 @@ struct Envelope {
   };
 
   typedef AABB_primitive<std::size_t, Datum_map<K>, Point_map<K>, Tag_true /*UseSharedData*/, Tag_false /*CacheDatum*/> Primitive;
-  typedef AABB_traits<K, Primitive> AABB_traits;
-  typedef AABB_tree<AABB_traits> Tree;
+  typedef AABB_traits<K, Primitive> Tree_traits;
+  typedef AABB_tree<Tree_traits> Tree;
 
 
   Tree tree;
@@ -719,7 +722,7 @@ struct Envelope {
 
           boost::optional<ePoint_3> op = intersection_point(eline, plane_i.eplane);
           if(! op){
-#ifdef TRACE
+#ifdef CGAL_EVELOPE_DEBUG
             std::cout <<  "there must be an intersection 6" << std::endl;
 #endif
           }
@@ -1264,7 +1267,7 @@ struct Envelope {
       return false;
     }
 
-#ifdef TRACE
+#ifdef CGAL_EVELOPE_DEBUG
     for(int i = 0; i < filtered_intersection.size(); i++){
       prism_to_off(filtered_intersection[i], "filtered");
     }
@@ -1500,8 +1503,8 @@ struct Envelope {
     bounding_boxes.resize(faces.size());
     for (int i = 0; i < faces.size(); ++i)
       {
-        Bbox_3 bb = ver[faces[i][0]].bbox () + ver[faces[i][1]].bbox() + ver[faces[i][2]].bbox();
-        // todo: Add a grow() function to Bbox_3
+        Bbox bb = ver[faces[i][0]].bbox () + ver[faces[i][1]].bbox() + ver[faces[i][2]].bbox();
+        // todo: Add a grow() function to Bbox
         bounding_boxes[i] = Iso_cuboid_3(Point_3(bb.xmin()-bbox_tolerance, bb.ymin()-bbox_tolerance, bb.zmin()-bbox_tolerance),
                                          Point_3(bb.xmax()+bbox_tolerance, bb.ymax()+bbox_tolerance, bb.zmax()+bbox_tolerance));
 
@@ -1638,7 +1641,7 @@ struct Envelope {
 
         }
 
-#ifdef TRACE
+#ifdef CGAL_EVELOPE_DEBUG
         std::cout << "face "<< i << std::endl;
         for(int j = 0; j < halfspace[i].size(); j++){
           const Plane& p =  halfspace[i][j];
@@ -1652,6 +1655,7 @@ struct Envelope {
       }
   }
 
+#ifdef CGAL_EVELOPE_DEBUG
   void prism_to_off(unsigned int i, std::string fname) const
   {
     std::vector<ePlane_3> eplanes;
@@ -1671,6 +1675,7 @@ struct Envelope {
     std::ofstream out(fname.c_str());
     out << sm << std::endl << std::endl;
   }
+#endif
 
 
   // \returns `true` if the query point is inside the envelope
@@ -1713,14 +1718,14 @@ struct Envelope {
     Triangle_3 query(t0, t1, t2);
     tree.all_intersected_primitives(query, std::back_inserter(prismindex));
     std::sort(prismindex.begin(), prismindex.end());
-#ifdef TRACE
+#ifdef CGAL_EVELOPE_DEBUG
     for(int i=0; i < prismindex.size(); i++){
       std::cout << prismindex[i] << " ";
     }
     std::cout << std::endl;
 #endif
 
-#ifdef TRACE
+#ifdef CGAL_EVELOPE_DEBUG
     for(int i = 0; i < prismindex.size(); i++){
       prism_to_off(prismindex[i], "prism");
     }
