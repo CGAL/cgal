@@ -46,7 +46,7 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
 
   typedef boost::optional<Point_2> OptionalPoint_2 ;
 
-  FT lMaxSDist(0.0) ;
+  FT lMaxSDist(0) ;
 
   ForwardPointIterator lLast = std::prev(aEnd) ;
 

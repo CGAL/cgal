@@ -16,15 +16,23 @@
 
 #include <CGAL/create_straight_skeleton_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/Straight_skeleton_2/Polygon_iterators.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <boost/shared_ptr.hpp>
 
+#include <type_traits>
+
 namespace CGAL {
 
-template<class K, class C>
+template<class K, class Polygon>
 boost::shared_ptr< Straight_skeleton_2<K> >
 inline
-create_interior_straight_skeleton_2 ( Polygon_with_holes_2<K,C> const& aPolyWithHoles, K const& k )
+create_interior_straight_skeleton_2 ( Polygon const& aPolyWithHoles,
+                                      K const& k,
+                                      typename std::enable_if<
+                                        CGAL_SS_i::has_Hole_const_iterator<Polygon>::value>::type* = nullptr)
 {
   return create_interior_straight_skeleton_2(aPolyWithHoles.outer_boundary().vertices_begin()
                                             ,aPolyWithHoles.outer_boundary().vertices_end  ()
@@ -34,28 +42,9 @@ create_interior_straight_skeleton_2 ( Polygon_with_holes_2<K,C> const& aPolyWith
                                             );
 }
 
-template<class K, class C>
-boost::shared_ptr< Straight_skeleton_2<K> >
-inline
-create_interior_straight_skeleton_2 ( Polygon_with_holes_2<K,C> const& aPolyWithHoles )
-{
-  return create_interior_straight_skeleton_2(aPolyWithHoles, K());
-}
-
-template<class FT, class K, class C>
-boost::shared_ptr< Straight_skeleton_2<K> >
-inline
-create_exterior_straight_skeleton_2 ( FT const& aMaxOffset, Polygon_with_holes_2<K, C> const& aPoly, K const& k )
-{
-  CGAL_precondition(aPoly.outer_boundary().is_simple() || !"The input polygon is not simple.");
-  return create_exterior_straight_skeleton_2(aMaxOffset
-                                            ,CGAL_SS_i::vertices_begin(aPoly)
-                                            ,CGAL_SS_i::vertices_end  (aPoly)
-                                            ,k
-                                            );
-}
+// create_exterior_straight_skeleton_2() for polygon with holes is simply in create_straight_skeleton_2.h
+// as the holes do not matter.
 
 } // end namespace CGAL
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_H //
-// EOF //
