@@ -63,19 +63,26 @@
 
 namespace CGAL {
 
-namespace Polygon_mesh_processing {
+/**
+ * \ingroup PkgPolygonMeshProcessingRef
+ * This class provides a test whether a query point, segment, or triangle
+ * is inside or outside a polyhedral envelope of a triangle soup.
+ *
+ * @tparam GeomTraits a geometric traits class, model of `Kernel`
+ */
 
-template <typename K>
+
+template <typename GeomTraits>
 struct Envelope {
 
   typedef std::array<int, 3> Vector3i;
 
-  typedef typename K::Point_3 Point_3;
-  typedef typename K::Vector_3 Vector_3;
-  typedef typename K::Segment_3 Segment_3;
-  typedef typename K::Triangle_3 Triangle_3;
-  typedef typename K::Plane_3 Plane_3;
-  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename GeomTraits::Point_3 Point_3;
+  typedef typename GeomTraits::Vector_3 Vector_3;
+  typedef typename GeomTraits::Segment_3 Segment_3;
+  typedef typename GeomTraits::Triangle_3 Triangle_3;
+  typedef typename GeomTraits::Plane_3 Plane_3;
+  typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
 
   typedef Bbox_3 Bbox;
 
@@ -234,6 +241,36 @@ struct Envelope {
     init(epsilon);
   }
 
+
+   /**
+   * Constructor with a triangulated surface mesh.
+    * @tparam TriangleMesh a model of `HalfedgeListGraph`
+    * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+    *
+    * @param tmesh a triangle mesh
+    * @param epsilon
+    * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+    *
+    * \cgalNamedParamsBegin
+    *   \cgalParamNBegin{vertex_point_map}
+    *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+    *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+    *                    as key type and `%Point_3` as value type}
+    *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+    *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+    *                     must be available in `PolygonMesh`.}
+    *   \cgalParamNEnd
+    *
+    *   \cgalParamNBegin{vertex_index_map}
+    *     \cgalParamDescription{a property map associating to each vertex of `tmesh` a unique index between `0` and `num_vertices(tmesh) - 1`}
+    *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+    *                    as key type and `std::size_t` as value type}
+    *     \cgalParamDefault{an automatically indexed internal map}
+    *   \cgalParamNEnd
+    *
+    * \cgalNamedParamsEnd
+   */
+
   template <typename TriangleMesh, typename NamedParameters>
   Envelope(const TriangleMesh& tmesh,
            double epsilon,
@@ -269,15 +306,18 @@ struct Envelope {
     init(epsilon);
   }
 
+
   template <typename TriangleMesh>
   Envelope(const TriangleMesh& tmesh,
            double epsilon)
     : Envelope(tmesh, epsilon, parameters::all_default())
   {}
 
+
+private:
+
   void init(double epsilon)
   {
-    std::cout << "init: " <<  env_vertices.size() << " " << env_faces.size() << std::endl;
     halfspace_generation(env_vertices, env_faces, halfspace, bounding_boxes, epsilon);
 
     Datum_map<K> datum_map(bounding_boxes);
@@ -1748,8 +1788,12 @@ struct Envelope {
   }
 #endif
 
+public:
 
-  // \returns `true` if the query point is inside the envelope
+  /*!
+   * \returns `true` if the query point is inside the polygonal envelope.
+   */
+
   bool
   operator()(const Point_3& query) const
   {
@@ -1766,7 +1810,9 @@ struct Envelope {
   }
 
 
-  // \returns `true` if the query segment is inside the envelope
+  /*!
+   * \returns `true` if the query segment is inside the polygonal envelope.
+   */
   bool
   operator()(const Point_3& source, const Point_3& target) const
   {
@@ -1784,7 +1830,9 @@ struct Envelope {
   }
 
 
-  // \returns `true` if the query triangle is inside the envelope
+  /*!
+   * \returns `true` if the query triangle is inside the envelope.
+   */
   bool
   operator()(const Point_3& t0, const Point_3& t1, const Point_3& t2) const
   {
@@ -1822,7 +1870,6 @@ struct Envelope {
 
 }; // class Envelope
 
-} // namespace Polygon_mesh_processing
 } // namespace CGAL
 
 #include <CGAL/enable_warnings.h>

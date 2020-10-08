@@ -61,6 +61,7 @@ if (TARGET CGAL::Eigen_support)
   target_link_libraries(mesh_smoothing_example PUBLIC CGAL::Eigen_support)
 endif()
 
+create_single_source_cgal_program( "polyhedral_envelope.cpp" )
 create_single_source_cgal_program( "self_intersections_example.cpp" )
 create_single_source_cgal_program( "stitch_borders_example.cpp" )
 create_single_source_cgal_program( "compute_normals_example_Polyhedron.cpp"  CXX_FEATURES cxx_range_for )

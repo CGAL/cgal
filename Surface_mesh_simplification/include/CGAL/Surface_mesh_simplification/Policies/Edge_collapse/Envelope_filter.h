@@ -19,7 +19,7 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include<CGAL/Surface_mesh_simplification/internal/common.h>
 
-#include <CGAL/Polygon_mesh_processing/Envelope.h>
+#include <CGAL/Envelope.h>
 
 #include <boost/optional.hpp>
 
@@ -37,7 +37,7 @@ class Envelope_filter
   typedef typename Geom_traits::FT                                            FT;
   typedef typename Geom_traits::Point_3                                       Point_3;
 
-  typedef Polygon_mesh_processing::Envelope<GeomTraits>                       Envelope;
+  typedef CGAL::::Envelope<GeomTraits>                                        Envelope;
   typedef typename Envelope::Vector3i                                         Vector3i;
 
 private:
