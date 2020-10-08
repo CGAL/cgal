@@ -232,33 +232,42 @@ struct Envelope {
     init(epsilon);
   }
 
-
-  template <typename TriangleMesh>
-  Envelope(const TriangleMesh& tm,
-           double epsilon)
+#if 0
+  template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+  Envelope(const TriangleMesh& tmesh,
+           double epsilon,
+           const CGAL_PMP_NP_CLASS& np)
   {
-    env_vertices.reserve(num_vertices(tm));
-    env_faces.reserve(num_faces(tm));
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
 
-    auto vpm = get(vertex_point, tm);
-    for(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v : vertices(tm)){
+
+    typename GetVertexPointMap<PolygonMesh, CGAL_PMP_NP_CLASS>::const_type
+      vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(CGAL::vertex_point, tmesh));
+
+    typedef typename GetInitializedVertexIndexMap<TriangleMesh, NamedParameters>::type VertexIndexMap;
+    VertexIndexMap vim = CGAL::get_initialized_face_index_map(tmesh, np);
+
+    env_vertices.reserve(num_vertices(tmesh));
+    env_faces.reserve(num_faces(tmesh));
+
+    for(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v : vertices(tmesh)){
       env_vertices.emplace_back(get(vpm, v));
     }
 
-    auto vim = get(vertex_index, tm);
-    for(typename boost::graph_traits<TriangleMesh>::face_descriptor f : faces(tm))
-    {
-      typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h = halfedge(f, tm);
-      int i = get(vim, source(h, tm));
-      int j = get(vim, target(h, tm));
-      int k = get(vim, target(next(h, tm), tm));
+    for(typename boost::graph_traits<TriangleMesh>::face_descriptor f : faces(tmesh)){
+      typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h = halfedge(f, tmesh);
+      int i = get(vim, source(h, tmesh));
+      int j = get(vim, target(h, tmesh));
+      int k = get(vim, target(next(h, tmesh), tmesh));
 
       Vector3i face = { i, j, k };
       env_faces.push_back(face);
     }
     init(epsilon);
   }
-
+#endif
 
   void init(double epsilon)
   {
