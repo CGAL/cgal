@@ -1,4 +1,4 @@
-// Copyright (c) 2019 geometryprocessing
+// Copyright (c) 2019 Bolun Wang, Teseo Schneider, Yixin Hu, Marco Attene, and Daniele Panozzo
 // Copyright (c) 2020 GeometryFactory (France).
 // All rights reserved.
 //
@@ -12,7 +12,7 @@
 
 // This work is derived work from
 //
-// https://github.com/wangbolun300/fast-envelope
+// https://github.com/wangbolun300/fast-envelope  avaiable on 7th of October 2020
 //
 // and the original work is distributed under the MIT License
 //
@@ -27,9 +27,9 @@
 //     publisher = {ACM}
 // }
 //
-// but it does only use the high level algorithms of checking that a query
-// is covered by a set of prisms, where each prism is an offset for an input triangle
-
+// The code below only use the high level algorithms of checking that a query
+// is covered by a set of prisms, where each prism is an offset for an input triangle.
+// That is, we do not use indirect predicates
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_ENVELOPE_H
 #define CGAL_POLYGON_MESH_PROCESSING_ENVELOPE_H
@@ -45,11 +45,12 @@
 #include <CGAL/AABB_primitive.h>
 
 #ifdef CGAL_ENVELOPE_DEBUG
+// This is for computing the surface mesh of a prism
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
 #include <CGAL/Surface_mesh.h>
-#endif
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
+#endif
 
 #include <boost/iterator/counting_iterator.hpp>
 
@@ -228,6 +229,40 @@ struct Envelope {
            double epsilon)
     : env_vertices(env_vertices), env_faces(env_faces)
   {
+    init(epsilon);
+  }
+
+
+  template <typename TriangleMesh>
+  Envelope(const TriangleMesh& tm,
+           double epsilon)
+  {
+    env_vertices.reserve(num_vertices(tm));
+    env_faces.reserve(num_faces(tm));
+
+    auto vpm = get(vertex_point, tm);
+    for(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v : vertices(tm)){
+      env_vertices.emplace_back(get(vpm, v));
+    }
+
+    auto vim = get(vertex_index, tm);
+    for(typename boost::graph_traits<TriangleMesh>::face_descriptor f : faces(tm))
+    {
+      typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h = halfedge(f, tm);
+      int i = get(vim, source(h, tm));
+      int j = get(vim, target(h, tm));
+      int k = get(vim, target(next(h, tm), tm));
+
+      Vector3i face = { i, j, k };
+      env_faces.push_back(face);
+    }
+    init(epsilon);
+  }
+
+
+  void init(double epsilon)
+  {
+    std::cout << "init: " <<  env_vertices.size() << " " << env_faces.size() << std::endl;
     halfspace_generation(env_vertices, env_faces, halfspace, bounding_boxes, epsilon);
 
     Datum_map<K> datum_map(bounding_boxes);
