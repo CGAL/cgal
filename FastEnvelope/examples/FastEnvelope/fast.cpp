@@ -18,36 +18,6 @@
 #include <fstream>
 
 
-namespace CGAL {
-template <typename K>
-int obtuse_angle(const Point_3<K>& p, const Point_3<K>& q, const Point_3<K>& r)
-{
-  if(angle(r,p,q) == OBTUSE){
-    return 0;
-  }
-  if(angle(p,q,r) == OBTUSE){
-    return 1;
-  }
-  if(angle(q,r,p) == OBTUSE){
-    return 2;
-  }
-  return -1;
-}
-
-template <typename K>
-Vector_3<K> normalize(const Vector_3<K>& v)
-{
-  return v / approximate_sqrt(v*v);
-}
-
-
-}// namespace CGAL
-
-
-
-
-
-
 // `fast` takes an off file and an offset as arguments
 //  If called additionally with 3 more vertex indices it performs the envelope test with the triangle
 //  Otherwise it tests for all vertex triples forming a non-degenerate trianges

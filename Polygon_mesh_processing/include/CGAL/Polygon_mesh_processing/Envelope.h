@@ -44,7 +44,7 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_primitive.h>
 
-#ifdef CGAL_EVELOPE_DEBUG
+#ifdef CGAL_ENVELOPE_DEBUG
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
 #include <CGAL/Surface_mesh.h>
 #endif
@@ -83,6 +83,29 @@ struct Envelope {
   typedef typename EK::Intersect_3 eIntersect_3;
   typedef typename EK::Oriented_side_3 eOriented_side_3;
   typedef typename EK::Are_parallel_3 eAre_parallel_3;
+
+
+  template <typename K2>
+  static int obtuse_angle(const CGAL::Point_3<K2>& p, const CGAL::Point_3<K2>& q, const CGAL::Point_3<K2>& r)
+  {
+    if(angle(r,p,q) == OBTUSE){
+      return 0;
+    }
+    if(angle(p,q,r) == OBTUSE){
+      return 1;
+    }
+    if(angle(q,r,p) == OBTUSE){
+      return 2;
+    }
+    return -1;
+  }
+
+
+  template <typename K2>
+  static CGAL::Vector_3<K2> normalize(const CGAL::Vector_3<K2>& v)
+  {
+    return v / approximate_sqrt(v*v);
+  }
 
 
   // The class Triangle represents a query triangle
@@ -333,7 +356,7 @@ struct Envelope {
     for (int i = 0; i < prism.size(); i++){
       const Plane& plane = prism[i];
       // POSITIVE is outside the prism
-      o1[i] = orientation(plane.ep, plane.eq, plane.er, source); // todo use plane.eplane
+      o1[i] = orientation(plane.ep, plane.eq, plane.er, source); // orientation exploits static filter as inf()==sup()
       o2[i] = orientation(plane.ep, plane.eq, plane.er, target);
 
       if (int(o1[i]) + int(o2[i]) >= 1)
@@ -722,7 +745,7 @@ struct Envelope {
 
           boost::optional<ePoint_3> op = intersection_point(eline, plane_i.eplane);
           if(! op){
-#ifdef CGAL_EVELOPE_DEBUG
+#ifdef CGAL_ENVELOPE_DEBUG
             std::cout <<  "there must be an intersection 6" << std::endl;
 #endif
           }
@@ -1267,20 +1290,18 @@ struct Envelope {
       return false;
     }
 
-#ifdef CGAL_EVELOPE_DEBUG
+#ifdef CGAL_ENVELOPE_DEBUG
     for(int i = 0; i < filtered_intersection.size(); i++){
       prism_to_off(filtered_intersection[i], "filtered");
     }
 #endif
     std::vector<unsigned int > queue, idlist;
-    std::vector<int> coverlist;
-    coverlist.resize(filtered_intersection.size());
-    for (int i = 0; i < coverlist.size(); i++) {
-      coverlist[i] = 0;// coverlist shows if the element in filtered_intersection is one of the current covers
-    }
+    // coverlist shows if the element in filtered_intersection is one of the current covers
+    std::vector<int> coverlist(filtered_intersection.size());
+
     queue.emplace_back(0);//queue contains the id in filtered_intersection
     idlist.emplace_back(filtered_intersection[queue[0]]);// idlist contains the id in prismid//it is fine maybe it is not really intersected
-    coverlist[queue[0]] = true;//when filtered_intersection[i] is already in the cover list, coverlist[i]=true
+    coverlist[queue[0]] = 1 ;//when filtered_intersection[i] is already in the cover list, coverlist[i]=true
 
     std::vector<unsigned int> neighbours;//local id
     std::vector<unsigned int > list;
@@ -1641,7 +1662,7 @@ struct Envelope {
 
         }
 
-#ifdef CGAL_EVELOPE_DEBUG
+#ifdef CGAL_ENVELOPE_DEBUG
         std::cout << "face "<< i << std::endl;
         for(int j = 0; j < halfspace[i].size(); j++){
           const Plane& p =  halfspace[i][j];
@@ -1655,7 +1676,7 @@ struct Envelope {
       }
   }
 
-#ifdef CGAL_EVELOPE_DEBUG
+#ifdef CGAL_ENVELOPE_DEBUG
   void prism_to_off(unsigned int i, std::string fname) const
   {
     std::vector<ePlane_3> eplanes;
@@ -1718,14 +1739,14 @@ struct Envelope {
     Triangle_3 query(t0, t1, t2);
     tree.all_intersected_primitives(query, std::back_inserter(prismindex));
     std::sort(prismindex.begin(), prismindex.end());
-#ifdef CGAL_EVELOPE_DEBUG
+#ifdef CGAL_ENVELOPE_DEBUG
     for(int i=0; i < prismindex.size(); i++){
       std::cout << prismindex[i] << " ";
     }
     std::cout << std::endl;
 #endif
 
-#ifdef CGAL_EVELOPE_DEBUG
+#ifdef CGAL_ENVELOPE_DEBUG
     for(int i = 0; i < prismindex.size(); i++){
       prism_to_off(prismindex[i], "prism");
     }
