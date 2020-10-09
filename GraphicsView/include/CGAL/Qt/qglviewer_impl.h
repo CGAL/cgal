@@ -598,6 +598,33 @@ void CGAL::QGLViewer::postDraw() {
   if (displayMessage_)
     drawText(10, height() - 10, message_);
 
+  //zoom region
+  if(camera()->frame()->action_ == qglviewer::ZOOM_ON_REGION)
+  {
+    QPainter painter(this);
+    painter.setPen(QColor(120,120,120));
+    painter.drawRect(QRect(camera()->frame()->pressPos_, mapFromGlobal(QCursor::pos())));
+    painter.end();
+  }
+
+  //zoom_fov indicator
+  if(camera()->frame()->action_ == qglviewer::ZOOM_FOV)
+  {
+    QPainter painter(this);
+    QPoint bot(width()-30,height()/2-0.33*height()),
+           top(width()-30, height()/2+0.33*height());
+    int fov_height = (top.y()-bot.y())*camera()->fieldOfView()*4.0/CGAL_PI + bot.y();
+
+
+    painter.setPen(QColor(120,120,120));
+    painter.drawLine(bot, top);
+    painter.fillRect(QRect(QPoint(width()-40, fov_height+10),
+                           QPoint(width()-20, fov_height-10)),
+                     QColor(120,120,120));
+    painter.end();
+    camera()->frame()->action_= qglviewer::NO_MOUSE_ACTION;
+  }
+
 }
 
 
@@ -732,6 +759,7 @@ void CGAL::QGLViewer::setDefaultMouseBindings() {
 
     setWheelBinding(modifiers, mh, qglviewer::ZOOM);
   }
+  setWheelBinding(::Qt::Key_Z, ::Qt::NoModifier, qglviewer::CAMERA, qglviewer::ZOOM_FOV);
 
   // Z o o m   o n   r e g i o n
   setMouseBinding(::Qt::ShiftModifier, ::Qt::MidButton, qglviewer::CAMERA, qglviewer::ZOOM_ON_REGION);
@@ -752,6 +780,7 @@ void CGAL::QGLViewer::setDefaultMouseBindings() {
   // A c t i o n s   w i t h   k e y   m o d i f i e r s
   setMouseBinding(::Qt::Key_Z, ::Qt::NoModifier, ::Qt::LeftButton, qglviewer::ZOOM_ON_PIXEL);
   setMouseBinding(::Qt::Key_Z, ::Qt::NoModifier, ::Qt::RightButton, qglviewer::ZOOM_TO_FIT);
+
 
 #ifdef Q_OS_MAC
   // Specific Mac bindings for touchpads. Two fingers emulate a wheelEvent which
@@ -1636,6 +1665,8 @@ QString CGAL::QGLViewer::mouseActionString(qglviewer::MouseAction ma) {
                          "SCREEN_TRANSLATE mouse action");
   case CGAL::qglviewer::ZOOM_ON_REGION:
     return CGAL::QGLViewer::tr("Zooms on region for", "ZOOM_ON_REGION mouse action");
+  case CGAL::qglviewer::ZOOM_FOV:
+    return CGAL::QGLViewer::tr("Changes the FOV to emulate an optical zoom for ", "ZOOM_FOV mouse action");
   }
   return QString();
 }
@@ -2722,14 +2753,16 @@ void CGAL::QGLViewer::setWheelBinding(::Qt::Key key, ::Qt::KeyboardModifiers mod
                                 bool withConstraint) {
   //#CONNECTION# ManipulatedFrame::wheelEvent and
   // ManipulatedCameraFrame::wheelEvent switches
-  if ((action != qglviewer::ZOOM) && (action != qglviewer::MOVE_FORWARD) &&
-      (action != qglviewer::MOVE_BACKWARD) && (action != qglviewer::NO_MOUSE_ACTION)) {
+  if ((action != qglviewer::ZOOM) && (action != qglviewer::ZOOM_FOV) &&
+      (action != qglviewer::MOVE_FORWARD) && (action != qglviewer::MOVE_BACKWARD)
+      && (action != qglviewer::NO_MOUSE_ACTION)) {
     qWarning("Cannot bind %s to wheel",
              mouseActionString(action).toLatin1().constData());
     return;
   }
 
-  if ((handler == qglviewer::FRAME) && (action != qglviewer::ZOOM) && (action != qglviewer::NO_MOUSE_ACTION)) {
+  if ((handler == qglviewer::FRAME) && (action != qglviewer::ZOOM)
+      && (action != qglviewer::NO_MOUSE_ACTION)) {
     qWarning("Cannot bind %s to FRAME wheel",
              mouseActionString(action).toLatin1().constData());
     return;
