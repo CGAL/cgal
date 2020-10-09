@@ -1,9 +1,8 @@
-// #define MAEL_FIRST_VALID_QUEUE_PATCH
-// #define MAEL_ALL_QUEUE_PATCH
-
 #include <iostream>
 #include <iomanip>
 #include <string>
+
+#define CGAL_SLS_TEST_SPEED_THINGS_UP_FOR_THE_TESTSUITE
 
 //#define CGAL_SLS_PRINT_QUEUE_BEFORE_EACH_POP
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 100
@@ -191,6 +190,7 @@ void test_skeleton(const char* filename,
     }
   }
 
+  std::cout << "Exterior..." << std::endl;
   Straight_skeleton_Ptr ss_ext = CGAL::create_exterior_straight_skeleton_2(1., p, K());
   assert(ss_ext);
   assert(is_valid<K>(ss_ext));
@@ -201,7 +201,9 @@ void test_kernel()
 {
 //  CGAL_STSKEL_TRAITS_ENABLE_TRACE
 
-//  test_API<K>();
+#ifndef CGAL_SLS_TEST_SPEED_THINGS_UP_FOR_THE_TESTSUITE
+  // test_API<K>();
+#endif
 
   test_skeleton<K>("data/pseudo_split_0.poly", 13, 40, 8);
   test_skeleton<K>("data/pseudo_split_1.poly", 21, 68, 12);
@@ -285,17 +287,6 @@ void test_kernel()
   test_skeleton<K>("data/ExtraEdge_2.poly"/*, 41, 130, 25*/); // almost duplicates
   test_skeleton<K>("data/hole.poly", 16, 48, 8);
   test_skeleton<K>("data/inputcircle.poly"/* 61, 188, 34*/); // almost duplicates
-  test_skeleton<K>("data/inputc.poly");
-  test_skeleton<K>("data/inputd1.poly");
-  test_skeleton<K>("data/inputd.poly");
-  test_skeleton<K>("data/inputG.poly");
-  test_skeleton<K>("data/input_K.poly");
-  test_skeleton<K>("data/inputPa.poly");
-  test_skeleton<K>("data/inputP.poly");
-  test_skeleton<K>("data/inputq.poly");
-  test_skeleton<K>("data/inputT.poly");
-  test_skeleton<K>("data/inputu.poly");
-  test_skeleton<K>("data/inputq1.poly", 21, 64, 12);
   test_skeleton<K>("data/inputsquare.poly", 29, 104, 20);
   test_skeleton<K>("data/inputsquare2.poly", 21, 68, 12);
   test_skeleton<K>("data/many_holes.poly");
@@ -313,6 +304,17 @@ void test_kernel()
   test_skeleton<K>("data/rectangle.poly", 6, 18, 4);
   test_skeleton<K>("data/region_4.poly", 4, 12, 3);
   test_skeleton<K>("data/rombus_4_spokes.poly", 17, 56, 12);
+
+  // The embedding of those below is bad when using EPICK
+  test_skeleton<K>("data/poly4.poly"/*, 15, 48, 10*/); // almost duplicates
+  test_skeleton<K>("data/poly4b.poly"/*, 15, 48, 10*/); // almost duplicates
+  test_skeleton<K>("data/Detmier.poly");
+  test_skeleton<K>("data/Detmier_b.poly"/*, 28, 86, 16*/); // almost duplicates
+  test_skeleton<K>("data/Detmier_c.poly");
+  test_skeleton<K>("data/Detmier_d.poly"/*, 27, 84, 16*/); // almost duplicates
+  test_skeleton<K>("data/Detmier_e.poly");
+
+#ifndef CGAL_SLS_TEST_SPEED_THINGS_UP_FOR_THE_TESTSUITE
   test_skeleton<K>("data/sample_0.poly");
   test_skeleton<K>("data/sample_101.poly");
   test_skeleton<K>("data/sample_102.poly");
@@ -362,32 +364,34 @@ void test_kernel()
   test_skeleton<K>("data/large_2.poly");
   test_skeleton<K>("data/large_3.poly");
   test_skeleton<K>("data/large_4.poly");
-
   test_skeleton<K>("data/complex_0.poly");
   test_skeleton<K>("data/complex_1.poly");
   test_skeleton<K>("data/complex_2.poly");
   test_skeleton<K>("data/complex_3.poly");
   test_skeleton<K>("data/complex_4.poly");
   test_skeleton<K>("data/complex_5.poly");
-
-  // The embedding of those below is bad when using EPICK
-  test_skeleton<K>("data/poly4.poly"/*, 15, 48, 10*/); // almost duplicates
-  test_skeleton<K>("data/poly4b.poly"/*, 15, 48, 10*/); // almost duplicates
-  test_skeleton<K>("data/Detmier.poly");
-  test_skeleton<K>("data/Detmier_b.poly"/*, 28, 86, 16*/); // almost duplicates
-  test_skeleton<K>("data/Detmier_c.poly");
-  test_skeleton<K>("data/Detmier_d.poly"/*, 27, 84, 16*/); // almost duplicates
-  test_skeleton<K>("data/Detmier_e.poly");
+  test_skeleton<K>("data/inputc.poly");
+  test_skeleton<K>("data/inputd1.poly");
+  test_skeleton<K>("data/inputd.poly");
+  test_skeleton<K>("data/inputG.poly");
+  test_skeleton<K>("data/input_K.poly");
+  test_skeleton<K>("data/inputPa.poly");
+  test_skeleton<K>("data/inputP.poly");
+  test_skeleton<K>("data/inputq.poly");
+  test_skeleton<K>("data/inputT.poly");
+  test_skeleton<K>("data/inputu.poly");
+  test_skeleton<K>("data/inputq1.poly", 21, 64, 12);
+#endif
 }
 
 int main(int, char**)
 {
-  std::cout.precision(19);
-  std::cerr.precision(19);
+  std::cout.precision(17);
+  std::cerr.precision(17);
 
   test_kernel<EPICK>();
-//  test_kernel<EPECK>();
-//  test_kernel<EPECK_w_sqrt>();
+  test_kernel<EPECK>();
+  test_kernel<EPECK_w_sqrt>();
 
   std::cout << "Done!" << std::endl;
 

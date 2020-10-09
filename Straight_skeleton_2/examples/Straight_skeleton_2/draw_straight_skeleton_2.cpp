@@ -1,11 +1,12 @@
-#include<boost/shared_ptr.hpp>
-#include <cassert>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include<CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include<CGAL/Polygon_2.h>
-#include<CGAL/create_straight_skeleton_2.h>
+#include <CGAL/Polygon_2.h>
+#include <CGAL/create_straight_skeleton_2.h>
 #include <CGAL/draw_straight_skeleton_2.h>
 
+#include<boost/shared_ptr.hpp>
+
+#include <cassert>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K ;
 
@@ -18,7 +19,6 @@ typedef boost::shared_ptr<Ss> SsPtr ;
 int main()
 {
   Polygon_2 poly ;
-
   poly.push_back( Point(-1,-1) ) ;
   poly.push_back( Point(0,-12) ) ;
   poly.push_back( Point(1,-1) ) ;

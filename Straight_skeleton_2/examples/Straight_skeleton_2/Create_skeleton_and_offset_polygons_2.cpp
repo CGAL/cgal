@@ -1,13 +1,13 @@
-#include<vector>
-#include <cassert>
-
-#include<boost/shared_ptr.hpp>
-
 #include<CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include<CGAL/Polygon_2.h>
-#include<CGAL/create_offset_polygons_2.h>
 
+#include <CGAL/Polygon_2.h>
+#include <CGAL/create_offset_polygons_2.h>
 #include "print.h"
+
+#include <boost/shared_ptr.hpp>
+
+#include <cassert>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K ;
 
@@ -20,7 +20,6 @@ typedef boost::shared_ptr<Polygon_2> PolygonPtr ;
 typedef boost::shared_ptr<Ss> SsPtr ;
 
 typedef std::vector<PolygonPtr> PolygonPtrVector ;
-
 
 int main()
 {

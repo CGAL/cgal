@@ -1,18 +1,16 @@
-#include<vector>
-#include<iterator>
-#include<iostream>
-#include<iomanip>
-#include<string>
-#include <fstream>
-#include <cassert>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include<boost/shared_ptr.hpp>
-
-#include<CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include<CGAL/Polygon_with_holes_2.h>
-#include<CGAL/create_offset_polygons_from_polygon_with_holes_2.h>
-
+#include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/create_offset_polygons_from_polygon_with_holes_2.h>
 #include "dump_to_eps.h"
+
+#include <boost/shared_ptr.hpp>
+
+#include <cassert>
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K ;
 
