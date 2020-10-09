@@ -20,6 +20,7 @@
 
 #ifndef CGAL_CONFIG_H
 #define CGAL_CONFIG_H
+
 // CGAL is header-only by default since CGAL-5.0.
 #if !defined(CGAL_HEADER_ONLY) && ! CGAL_NOT_HEADER_ONLY
 #  define CGAL_HEADER_ONLY 1
@@ -158,9 +159,6 @@
 
 #if CGAL_HEADER_ONLY
 #  include <CGAL/internal/enable_third_party_libraries.h>
-#  if(BOOST_MSVC)
-#    include <CGAL/MSVC_compiler_config.h>
-#  endif
 #else
 #  include <CGAL/compiler_config.h>
 #endif
