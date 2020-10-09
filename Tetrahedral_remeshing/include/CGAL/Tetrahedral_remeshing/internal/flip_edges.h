@@ -1101,7 +1101,7 @@ std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
   Tr& tr = c3t3.triangulation();
 
   std::size_t count = 0;
-  for (const VertexPair vp : edges)
+  for (const VertexPair& vp : edges)
   {
     Cell_handle ch;
     int i0, i1;
