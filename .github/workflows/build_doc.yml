@@ -74,7 +74,7 @@ jobs:
             egrep -v " ${PR_NUMBER}\." index.html > tmp.html
             echo "<li><a href=https://cgal.github.io/${PR_NUMBER}/$ROUND/Manual/index.html>Manual for PR ${PR_NUMBER} ($ROUND).</a></li>" >> ./tmp.html
             mv tmp.html index.html
-            git add ${PR_NUMBER}/$ROUND && git commit -a -m "Add ${PR_NUMBER} $ROUND" && git push -u origin master
+            git add ${PR_NUMBER}/$ROUND && git commit -q -a -m "Add ${PR_NUMBER} $ROUND" && git push -q -u origin master
           else
             exit 1
           fi
