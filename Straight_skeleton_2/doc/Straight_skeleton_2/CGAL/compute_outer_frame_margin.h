@@ -44,7 +44,7 @@ the kernel in which the type `InputIterator::value_type` is defined.
 \pre The range [`first`,`beyond`) contains the vertices of a non-degenerate strictly-simple 2D polygon.
 
 \sa `PolygonOffsetBuilderTraits_2`
-\sa `Polygon_offset_builder_traits_2`
+\sa `CGAL::Polygon_offset_builder_traits_2<K>`
 */
 template <class InputIterator, class Traits>
 boost::optional< typename Traits::FT >

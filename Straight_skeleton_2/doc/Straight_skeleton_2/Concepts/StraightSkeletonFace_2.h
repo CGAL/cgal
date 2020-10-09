@@ -8,12 +8,10 @@ The concept `StraightSkeletonFace_2` describes the requirements for the face typ
 `StraightSkeleton_2` concept. It is a refinement of the `HalfedgeDSFace` concept
 with support for storage of the incident halfedge.
 
-\cgalHasModel CGAL::Straight_skeleton_face_base_2
+\cgalHasModel `CGAL::Straight_skeleton_face_base_2`
 
-\sa `StraightSkeleton_2`
-\sa `CGAL::Straight_skeleton_face_base_2<Refs>`
-\sa `CGAL::Straight_skeleton_vertex_base_2<Refs,Point,FT>`
-\sa `CGAL::Straight_skeleton_halfedge_base_2<Refs>`
+\sa `StraightSkeletonVertex_2`
+\sa `StraightSkeletonHalfedge_2`
 */
 class StraightSkeletonFace_2 {
 public:

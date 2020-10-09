@@ -9,12 +9,10 @@ The concept `StraightSkeletonVertex_2` describes the requirements for the vertex
 with support for storage of the incident halfedge. The `StraightSkeletonVertex_2` concept
 requires the geometric embedding to be a 2D point.
 
-\cgalHasModel CGAL::Straight_skeleton_vertex_base_2
+\cgalHasModel `CGAL::Straight_skeleton_vertex_base_2`
 
-\sa `StraightSkeleton_2`
 \sa `StraightSkeletonHalfedge_2`
-\sa `CGAL::Straight_skeleton_vertex_base_2<Refs,Point,FT>`
-\sa `CGAL::Straight_skeleton_halfedge_base_2<Refs>`
+\sa `StraightSkeletonFace_2`
 */
 class StraightSkeletonVertex_2 {
 public:
@@ -65,12 +63,12 @@ StraightSkeletonVertex_2();
 /*!
 constructs a contour vertex with ID number `id`, at the point `p`
 */
-StraightSkeletonVertex_2(int id, Point_2 const& p);
+StraightSkeletonVertex_2(int id, const Point_2& p);
 
 /*!
 constructs a skeleton vertex with ID number `id`, at point `p` and time `time`.
 */
-StraightSkeletonVertex_2(int id, Point_2 const& p, FT time );
+StraightSkeletonVertex_2(int id, const Point_2& p, FT time );
 
 /// @}
 
@@ -98,7 +96,7 @@ FT time() const;
 Halfedge_handle primary_bisector();
 
 /*!
-Returns the skeleton halfedge incident upon the vertex (called the <I>primary</I> bisector).
+returns the skeleton halfedge incident upon the vertex (called the <I>primary</I> bisector).
 */
 Halfedge_const_handle primary_bisector() const;
 
@@ -126,7 +124,7 @@ Halfedge_around_vertex_const_circulator halfedge_around_vertex_begin() const;
 Defining_contour_halfedge_circulator defining_contour_halfedges_begin();
 
 /*!
-Returns a bi-directional circulator pointing to one of the defining contour halfedges of the vertex (which one is unspecified).
+returns a bi-directional circulator pointing to one of the defining contour halfedges of the vertex (which one is unspecified).
 
 There will always be as many incident defining contour halfedges as the degree of the vertex.
 
@@ -141,12 +139,12 @@ Defining_contour_halfedge_const_circulator defining_contour_halfedges_begin() co
 /// @{
 
 /*!
-Returns `true` iff this is a contour vertex.
+returns `true` iff this is a contour vertex.
 */
 bool is_contour() const;
 
 /*!
-Returns `true` iff this is a skeleton vertex.
+returns `true` iff this is a skeleton vertex.
 */
 bool is_skeleton() const;
 

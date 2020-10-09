@@ -13,7 +13,6 @@ This class is the default visitor parameter of the straight skeleton builder.
 All its methods are empty.
 
 \cgalModels `StraightSkeletonBuilder_2_Visitor`
-\cgalModels `DefaultConstructible`
 
 \sa `Straight_skeleton_builder_2`
 */
@@ -138,6 +137,11 @@ The visitor (third template parameter)
 typedef Visitor_ Visitor;
 
 /*!
+The model of `FieldWithSqrt` used to specify the desired offset distance, provided by the geometric traits `Traits`.
+*/
+typedef Traits::FT FT;
+
+/*!
 The 2D point type as defined by the geometric traits
 */
 typedef Traits::Point_2 Point_2;
@@ -149,8 +153,6 @@ typedef Traits::Point_2 Point_2;
 
 /*!
 constructs the builder class.
-
-
 */
 Straight_skeleton_builder_2(boost::optional<FT> max_time = boost::none,
                             const Traits& traits = Traits(),

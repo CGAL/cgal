@@ -2,13 +2,13 @@
 \ingroup PkgStraightSkeleton2Concepts
 \cgalConcept
 
+\cgalRefines `DefaultConstructible`
+\cgalRefines `CopyConstructible`
+
 The concept `StraightSkeletonBuilderTraits_2` describes the requirements
-for the geometric traits class required by the algorithm class `Straight_skeleton_builder_2<Gt,Ss>`.
+for the geometric traits class required by the algorithm class `CGAL::Straight_skeleton_builder_2`.
 
-\cgalHasModel CGAL::Straight_skeleton_builder_traits_2
-
-\sa `CGAL::Straight_skeleton_builder_2<Gt,Ss>`
-\sa `CGAL::Straight_skeleton_builder_traits_2<K>`
+\cgalHasModel `CGAL::Straight_skeleton_builder_traits_2<K>`
 */
 class StraightSkeletonBuilderTraits_2 {
 public:
@@ -33,23 +33,23 @@ A model of the `Kernel::Point_2` concept
 typedef unspecified_type Point_2;
 
 /*!
-A model of the `Kernel::Point_2` concept
+A model of the `Kernel::Segment_2` concept
 */
 typedef unspecified_type Segment_2;
 
 /*!
-A model of the `Kernel::Point_2` concept
+A model of the `Kernel::Vector_2` concept
 */
 typedef unspecified_type Vector_2;
 
 /*!
-A model of the `Kernel::Point_2` concept
+A model of the `Kernel::Direction_2` concept
 */
 typedef unspecified_type Direction_2;
 
 /*!
 */
-typedef Trisegment_2<K> Trisegment_2;
+typedef CGAL::Trisegment_2<Kernel> Trisegment_2;
 
 /*!
 */
@@ -75,7 +75,7 @@ typedef unspecified_type Do_ss_event_exist_2;
 /*!
 A predicate object type.
 
-Must provide `Comparison_result operator()(const Trisegment_2_ptr& l, const Trisegment_2_ptr& r) const`,
+Must provide `CGAL::Comparison_result operator()(const Trisegment_2_ptr& l, const Trisegment_2_ptr& r) const`,
 which compares the times for the events determined by the edge-triples `l` and `r`.
 
 The time of an event given by an edge triple (which defines three oriented lines) is the Euclidean distance `t`
@@ -126,7 +126,7 @@ Must provide
 `bool operator()( const Point_2& contour_node, const Segment_2& opposite_edge ) const`,
 and
 `bool operator()( const Trisegment_2_ptr& skeleton_node, const Segment_2& opposite_edge ) const`,
-which returns whether the point (either defined directly as a `Point_2` if it is a contour node,
+which return whether the point (either defined directly as a `Point_2` if it is a contour node,
 or indirectly by its edge triple if it is a skeleton node) lies in the halfplane to the left
 of the directed edge `opposite_edge`.
 
@@ -138,7 +138,7 @@ typedef unspecified_type Is_edge_facing_ss_node_2;
 /*!
 A predicate object type.
 
-Must provide `Oriented_side operator()( const Trisegment_2_ptr& e, const Segment_2& e0, const Segment_2& e1, const Trisegment_2_ptr& e01_event, bool e0_is_primary) const`,
+Must provide `CGAL::Oriented_side operator()( const Trisegment_2_ptr& e, const Segment_2& e0, const Segment_2& e1, const Trisegment_2_ptr& e01_event, bool e0_is_primary) const`,
 which returns the oriented side of the event point described by the edge triple `e`
 w.r.t the (positive) bisector `[e0,e1]`.
 

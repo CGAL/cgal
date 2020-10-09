@@ -5,12 +5,11 @@
 \cgalRefines `StraightSkeletonBuilderTraits_2`
 
 The concept `PolygonOffsetBuilderTraits_2` describes the requirements for the geometric traits class
-required by the algorithm class `Polygon_offset_builder_2<Ss,Gt,Polygon_2>`.
+required by the algorithm class `CGAL::Polygon_offset_builder_2`.
 
-\cgalHasModel CGAL::Polygon_offset_builder_traits_2
+\cgalHasModel `CGAL::Polygon_offset_builder_traits_2`
 
-\sa `CGAL::Polygon_offset_builder_2<Ss,Gt,Polygon_2>`
-\sa `CGAL::Polygon_offset_builder_traits_2<K>`
+\sa `CGAL::Polygon_offset_builder_2<Ss,Traits,Container>`
 */
 class PolygonOffsetBuilderTraits_2 {
 public:

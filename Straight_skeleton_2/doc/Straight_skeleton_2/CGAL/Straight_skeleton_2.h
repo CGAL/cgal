@@ -19,7 +19,6 @@ modifying operations, it must call the required methods through the
 
 \sa `StraightSkeletonVertex_2`
 \sa `StraightSkeletonHalfedge_2`
-\sa `StraightSkeleton_2`
 */
 template< typename Traits_>
 class Straight_skeleton_2

@@ -22,16 +22,15 @@ A seed is a contour node if the vertex is already present in the input polygon, 
 If a seed is a skeleton node it is produced by a previous event so it is itself defined as a trisegment, thus,
 a trisegment is actually a node in a binary tree.
 
-Since trisegments are tree nodes they must always be handled via the nested smart pointer type.
+Since trisegments are tree nodes they must always be handled via the nested smart pointer type `Self_ptr`.
 
 \tparam K_ must be a model of `Kernel`
 \tparam Segment_ must be a model of `Kernel::Segment_2`
 
-\note Objects of this type should be constructed using the traits' functor `Construct_ss_trisegment_2`.
+\note Objects of this type should be constructed using the traits' functor `Construct_ss_trisegment_2`
+(see the concept `StraightSkeletonBuilderTraits_2`).
 
-\sa `StraightSkeletonVertex_2`
-\sa `StraightSkeletonHalfedge_2`
-\sa `StraightSkeleton_2`
+\sa `PolygonOffsetBuilderTraits_2`
 */
 template< typename K_, typename Segment_ >
 class Trisegment_2
@@ -40,13 +39,13 @@ public:
   typedef boost::intrusive_ptr<Trisegment_2<K_, Segment_> > Self_ptr ;
 
   /// returns `e0`.
-  const Segment& e0() const;
+  const Segment_& e0() const;
 
   /// returns `e1`.
-  const Segment& e1() const;
+  const Segment_& e1() const;
 
   /// returns `e2`.
-  const Segment& e2() const;
+  const Segment_& e2() const;
 
 }; /* end Trisegment_2 */
 

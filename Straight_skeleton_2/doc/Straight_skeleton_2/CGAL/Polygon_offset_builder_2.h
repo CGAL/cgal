@@ -51,7 +51,7 @@ The model of `FieldWithSqrt` used to specify the desired offset distance, provid
 /*!
 Constructs the builder class using the given Straight Skeleton instance.
 */
-Polygon_offset_builder_2( Ss const& ss, Traits const& traits = Traits() );
+Polygon_offset_builder_2( const Ss& ss, const Traits& traits = Traits() );
 
 /// @}
 

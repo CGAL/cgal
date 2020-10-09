@@ -12,7 +12,7 @@ The only geometric embedding used by the Straight Skeleton Data Structure are th
 in the contour and skeleton vertices. However, for any halfedge, there is a 2D segment implicitly
 given by its `source` and `target` vertices.
 
-\cgalHasModel CGAL::Straight_skeleton_halfedge_base_2
+\cgalHasModel `CGAL::Straight_skeleton_halfedge_base_2`
 
 \sa `StraightSkeleton_2`
 \sa `StraightSkeletonHalfedge_2`
@@ -31,7 +31,7 @@ public:
 StraightSkeletonHalfedge_2();
 
 /*!
-Constructs a halfedge with ID `id`.
+constructs a halfedge with ID `id`.
 
 It is the links to other halfedges that determines if this is a contour edge,
 a contour-skeleton edge, or an inner-skeleton edge.
@@ -61,12 +61,12 @@ Halfedge_const_handle defining_contour_edge() const;
 /// @{
 
 /*!
-Returns `true` iff this is a bisector (or skeleton) halfedge (i.e.\ is not a contour halfedge).
+returns `true` iff this is a bisector (or skeleton) halfedge (i.e.\ is not a contour halfedge).
 */
 bool is_bisector() const;
 
 /*!
-Returns `true` iff this is a bisector and is inner (i.e.\ is not incident upon a contour vertex).
+returns `true` iff this is a bisector and is inner (i.e.\ is not incident upon a contour vertex).
 */
 bool is_inner_bisector() const;
 

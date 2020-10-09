@@ -10,9 +10,8 @@ using the items converter `ic` to convert the geometric embedding to the types o
 \tparam Source_skeleton must be a model of `StraightSkeleton_2`
 \tparam Items_converter must be a model of `StraightSkeletonItemsConverter_2`
 
-\sa `StraightSkeletonItemsConverter_2`
-\sa `Straight_skeleton_items_converter_2`
-\sa `Straight_skeleton_converter_2`
+\sa `CGAL::Straight_skeleton_items_converter_2<SrcSs,TgtSs,NTCV>`
+\sa `CGAL::Straight_skeleton_converter_2<SrcSs,TgtSs,ItemsCV>`
 */
 template <class Target_skeleton, class Source_skeleton, class Items_converter>
 boost::shared_ptr<Target_skeleton>
@@ -37,8 +36,6 @@ with a slower kernel (such as `Exact_predicates_exact_constructions_kernel`)
 thus obtaining only simple offset polygons without paying the runtime overhead
 of exact constructions for the straight skeleton itself.
 
-\sa `StraightSkeletonItemsConverter_2`
-\sa `Straight_skeleton_items_converter_2`
 \sa `convert_straight_skeleton_2()`
 */
 template< typename Source_skeleton_, typename Target_skeleton_, typename Items_converter_ >
@@ -101,8 +98,8 @@ boost::shared_ptr<Target_skeleton> operator()( const Source_skeleton& s) const;
                       that converts `n` to an `Target_skeleton_::Traits::FT` which has the same value.
                       The default value of this parameter is `NT_converter<Source_skeleton_::Traits::FT, Target_skeleton_::Traits::FT>`.
 
-\sa `Straight_skeleton_converter_2`
 \sa `convert_straight_skeleton_2()`
+\sa `CGAL::Straight_skeleton_converter_2<SrcSs,TgtSs,ItemCV>`
 */
 template< typename Source_skeleton_, typename Target_skeleton_, typename NT_converter_ >
 struct Straight_skeleton_items_converter_2 {

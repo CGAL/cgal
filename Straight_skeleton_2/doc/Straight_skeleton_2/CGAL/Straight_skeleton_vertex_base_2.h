@@ -23,7 +23,7 @@ for the `Straight_skeleton_2` concept.
 \sa `StraightSkeletonHalfedge_2`
 \sa `StraightSkeleton_2`
 \sa `CGAL::Straight_skeleton_halfedge_base_2`
-\sa `Straight_skeleton_face_base_2`
+\sa `CGAL::Straight_skeleton_face_base_2`
 */
 template< typename Refs, typename Point, typename FT >
 class Straight_skeleton_vertex_base_2 {
