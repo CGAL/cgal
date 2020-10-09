@@ -275,6 +275,7 @@ cut_right_off(typename K::Line_2 const & cutter)
     Line_2_Line_2_pair<K> pair(&support_, &cutter);
     switch (pair.intersection_type()) {
     case Line_2_Line_2_pair<K>::NO_INTERSECTION:
+    default:
         if (cutter.has_on_negative_side(support_.point()))
             bound_state_ = LINE_EMPTY;
         break;

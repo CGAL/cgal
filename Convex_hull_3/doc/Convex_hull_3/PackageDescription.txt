@@ -84,7 +84,8 @@ defining `CGAL_CH_CHECK_EXPENSIVE`.
 
 \cgalCRPSection{Halfspace Intersection Functions}
 
-- `CGAL::halfspace_intersection_3`
-- `CGAL::halfspace_intersection_with_constructions_3`
+- `CGAL::halfspace_intersection_3()`
+- `CGAL::halfspace_intersection_with_constructions_3()`
+- `CGAL::halfspace_intersection_interior_point_3()`
 
 */

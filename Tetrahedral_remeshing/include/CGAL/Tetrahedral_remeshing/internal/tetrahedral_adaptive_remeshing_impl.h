@@ -126,6 +126,7 @@ public:
                     , const bool protect_boundaries
                     , EdgeIsConstrainedMap ecmap
                     , FacetIsConstrainedMap fcmap
+                    , bool smooth_constrained_edges
                     , CellSelector cell_selector
                     , Visitor& visitor
                    )
@@ -140,7 +141,7 @@ public:
     m_c3t3.triangulation().swap(tr);
 
     init_c3t3(ecmap, fcmap);
-    m_vertex_smoother.init(m_c3t3, m_cell_selector);
+    m_vertex_smoother.init(m_c3t3, m_cell_selector, smooth_constrained_edges);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
@@ -154,6 +155,7 @@ public:
                     , const bool protect_boundaries
                     , EdgeIsConstrainedMap ecmap
                     , FacetIsConstrainedMap fcmap
+                    , bool smooth_constrained_edges
                     , CellSelector cell_selector
                     , Visitor& visitor
                    )
@@ -168,7 +170,7 @@ public:
     m_c3t3.swap(c3t3);
 
     init_c3t3(ecmap, fcmap);
-    m_vertex_smoother.init(m_c3t3, m_cell_selector);
+    m_vertex_smoother.init(m_c3t3, m_cell_selector, smooth_constrained_edges);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
@@ -366,8 +368,18 @@ public:
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "99-postprocess");
 #endif
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-    std::cout << "(peeling removed " << nb_slivers_peel << " slivers)" << std::endl;
-    std::cout << "done." << std::endl;
+    mindh = 180.;
+    for (Cell_handle cit : tr().finite_cell_handles())
+    {
+      if (m_c3t3.is_in_complex(cit))
+      {
+        const double dh = min_dihedral_angle(tr(), cit);
+        mindh = (std::min)(dh, mindh);
+      }
+    }
+    std::cout << "Peeling done (removed " << nb_slivers_peel << " slivers, "
+      << "min dihedral angle = " << mindh << ")." << std::endl;
+
 #endif
     return nb_slivers_peel;
   }

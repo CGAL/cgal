@@ -1,4 +1,3 @@
-#ifndef CGAL_BOOST_GRAPH_ALPHA_EXPANSION_GRAPHCUT_H
 // Copyright (c) 2014  GeometryFactory (France).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -10,6 +9,7 @@
 //
 // Author(s)     : Ilker O. Yaz, Simon Giraudot
 
+#ifndef CGAL_BOOST_GRAPH_ALPHA_EXPANSION_GRAPHCUT_H
 #define CGAL_BOOST_GRAPH_ALPHA_EXPANSION_GRAPHCUT_H
 
 #include <CGAL/Iterator_range.h>
