@@ -444,10 +444,6 @@ set(list_of_examples_txt [=[
   Point_set_3/examples/Point_set_3/point_set_property.cpp
   Point_set_3/examples/Point_set_3/point_set_read_ply.cpp
   Point_set_3/examples/Point_set_3/point_set_read_xyz.cpp
-  Point_set_3/examples/build-Point_set_3-GCC-Debug/qrc_CGAL.cpp
-  Point_set_3/examples/build-Point_set_3-GCC-Debug/qrc_File.cpp
-  Point_set_3/examples/build-Point_set_3-GCC-Debug/qrc_Input.cpp
-  Point_set_3/examples/build-Point_set_3-GCC-Debug/qrc_Triangulation_2.cpp
   Point_set_processing_3/examples/Point_set_processing_3/average_spacing_example.cpp
   Point_set_processing_3/examples/Point_set_processing_3/bilateral_smooth_point_set_example.cpp
   Point_set_processing_3/examples/Point_set_processing_3/callback_example.cpp
@@ -548,10 +544,6 @@ set(list_of_examples_txt [=[
   Polyhedron/examples/Polyhedron/polyhedron_prog_vertex_color.cpp
   Polyhedron/examples/Polyhedron/polyhedron_prog_vertex_normal.cpp
   Polyhedron/examples/Polyhedron/polyhedron_self_intersection.cpp
-  Polyhedron/examples/build/qrc_CGAL.cpp
-  Polyhedron/examples/build/qrc_File.cpp
-  Polyhedron/examples/build/qrc_Input.cpp
-  Polyhedron/examples/build/qrc_Triangulation_2.cpp
   Polyhedron_IO/examples/Polyhedron_IO/iv2off.cpp
   Polyhedron_IO/examples/Polyhedron_IO/off2iv.cpp
   Polyhedron_IO/examples/Polyhedron_IO/off2off.cpp
@@ -863,10 +855,6 @@ set(list_of_examples_txt [=[
   Triangulation_2/examples/Triangulation_2/terrain_with_info.cpp
   Triangulation_2/examples/Triangulation_2/triangulation_prog1.cpp
   Triangulation_2/examples/Triangulation_2/voronoi.cpp
-  Triangulation_2/examples/build-Triangulation_2-Desktop_Qt_GCC_64bit-Debug/qrc_CGAL.cpp
-  Triangulation_2/examples/build-Triangulation_2-Desktop_Qt_GCC_64bit-Debug/qrc_File.cpp
-  Triangulation_2/examples/build-Triangulation_2-Desktop_Qt_GCC_64bit-Debug/qrc_Input.cpp
-  Triangulation_2/examples/build-Triangulation_2-Desktop_Qt_GCC_64bit-Debug/qrc_Triangulation_2.cpp
   Triangulation_3/examples/Triangulation_3/adding_handles_3.cpp
   Triangulation_3/examples/Triangulation_3/color.cpp
   Triangulation_3/examples/Triangulation_3/copy_triangulation_3.cpp
