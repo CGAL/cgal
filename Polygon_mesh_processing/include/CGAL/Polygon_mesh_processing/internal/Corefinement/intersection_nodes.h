@@ -28,23 +28,26 @@ namespace Corefinement {
 // polylines. Different specializations are available depending whether
 // predicates on constructions are needed.
 template <class TriangleMesh,
-          class VertexPointMap,
+          class VertexPointMap1, class VertexPointMap2,
           bool Predicates_on_constructions_needed,
-          bool Has_exact_constructions=
+          bool Has_exact_constructions =
           !boost::is_floating_point<
             typename Kernel_traits<
-              typename boost::property_traits<VertexPointMap>::value_type
+              typename boost::property_traits<VertexPointMap1>::value_type
             >::Kernel::FT
            >::value >
 class Intersection_nodes;
 
 //Store only the double version of the intersection points.
 template <class TriangleMesh,
-          class VertexPointMap>
-class Intersection_nodes<TriangleMesh,VertexPointMap,false,false>
+          class VertexPointMap1, class VertexPointMap2>
+class Intersection_nodes<TriangleMesh, VertexPointMap1, VertexPointMap2, false, false>
 {
 //typedefs
-  typedef typename boost::property_traits<VertexPointMap>::value_type   Point_3;
+  typedef typename boost::property_traits<VertexPointMap1>::value_type  Point_3;
+  CGAL_static_assertion((std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
+                                      typename boost::property_traits<VertexPointMap2>::value_type>::value));
+
   typedef typename Kernel_traits<Point_3>::Kernel                  Input_kernel;
   typedef std::vector <Point_3>                                    Nodes_vector;
   typedef CGAL::Exact_predicates_exact_constructions_kernel        Exact_kernel;
@@ -67,12 +70,13 @@ class Intersection_nodes<TriangleMesh,VertexPointMap,false,false>
 
 public:
   const TriangleMesh &tm1, &tm2;
-  VertexPointMap vpm1, vpm2;
+  const VertexPointMap1& vpm1;
+  const VertexPointMap2& vpm2;
 
   Intersection_nodes(const TriangleMesh& tm1_,
                      const TriangleMesh& tm2_,
-                     const VertexPointMap& vpm1_,
-                     const VertexPointMap& vpm2_)
+                     const VertexPointMap1& vpm1_,
+                     const VertexPointMap2& vpm2_)
   : tm1(tm1_)
   , tm2(tm2_)
   , vpm1(vpm1_)
@@ -97,12 +101,13 @@ public:
 
   //add a new node in the final graph.
   //it is the intersection of the triangle with the segment
+  template <class VPM_A, class VPM_B> // VertexPointMap1 or VertexPointMap2
   void add_new_node(halfedge_descriptor h_a,
                     face_descriptor f_b,
                     const TriangleMesh& tm_a,
                     const TriangleMesh& tm_b,
-                    const VertexPointMap vpm_a,
-                    const VertexPointMap& vpm_b)
+                    const VPM_A& vpm_a,
+                    const VPM_B& vpm_b)
   {
     halfedge_descriptor h_b = halfedge(f_b, tm_b);
     add_new_node(
@@ -114,12 +119,8 @@ public:
         to_exact( get(vpm_a, target(h_a,tm_a)) ) ) );
   }
 
-  void add_new_node(halfedge_descriptor edge_1, face_descriptor face_2)
-  {
-    add_new_node(edge_1, face_2, tm1, tm2, vpm1, vpm2);
-  }
-
-  void call_put(const VertexPointMap& vpm, vertex_descriptor vd, std::size_t i, TriangleMesh&)
+  template <class VPM> // VertexPointMap1 or VertexPointMap2
+  void call_put(const VPM& vpm, vertex_descriptor vd, std::size_t i, TriangleMesh&)
   {
     put(vpm, vd, nodes[i]);
   }
@@ -132,14 +133,18 @@ public:
 
 // second specializations: store an exact copy of the points so
 // that we can answer exactly predicates
-template <class TriangleMesh, class VertexPointMap>
-class Intersection_nodes<TriangleMesh,VertexPointMap,true,false>
+template <class TriangleMesh, class VertexPointMap1, class VertexPointMap2>
+class Intersection_nodes<TriangleMesh, VertexPointMap1, VertexPointMap2, true, false>
 {
 //typedefs
 public:
   typedef CGAL::Exact_predicates_exact_constructions_kernel        Exact_kernel;
+
 private:
-  typedef typename boost::property_traits<VertexPointMap>::value_type   Point_3;
+  typedef typename boost::property_traits<VertexPointMap1>::value_type  Point_3;
+  CGAL_static_assertion((std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
+                                      typename boost::property_traits<VertexPointMap2>::value_type>::value));
+
   typedef typename Kernel_traits<Point_3>::Kernel                  Input_kernel;
 
   typedef Cartesian_converter<Input_kernel,Exact_kernel>        Double_to_exact;
@@ -160,14 +165,16 @@ private:
   Exact_kernel::Intersect_3 exact_intersection;
   std::vector<vertex_descriptor> tm1_vertices, tm2_vertices;
   const bool doing_autorefinement;
+
 public:
   const TriangleMesh &tm1, &tm2;
-  VertexPointMap vpm1, vpm2;
+  const VertexPointMap1& vpm1;
+  const VertexPointMap2& vpm2;
 
   Intersection_nodes(const TriangleMesh& tm1_,
                      const TriangleMesh& tm2_,
-                     const VertexPointMap& vpm1_,
-                     const VertexPointMap& vpm2_)
+                     const VertexPointMap1& vpm1_,
+                     const VertexPointMap2& vpm2_)
   : doing_autorefinement(&tm1_ == &tm2_)
   , tm1(tm1_)
   , tm2(tm2_)
@@ -211,12 +218,13 @@ public:
 
   //add a new node in the final graph.
   //it is the intersection of the triangle with the segment
+  template <class VPM_A, class VPM_B> // VertexPointMap1 or VertexPointMap2
   void add_new_node(halfedge_descriptor h_a,
                     face_descriptor f_b,
                     const TriangleMesh& tm_a,
                     const TriangleMesh& tm_b,
-                    const VertexPointMap vpm_a,
-                    const VertexPointMap& vpm_b)
+                    const VPM_A vpm_a,
+                    const VPM_B vpm_b)
   {
     halfedge_descriptor h_b = halfedge(f_b, tm_b);
     add_new_node(
@@ -229,11 +237,12 @@ public:
   }
 
   // use to resolve intersection of 3 faces in autorefinement only
+  template <class VPM>
   void add_new_node(halfedge_descriptor h1,
                     halfedge_descriptor h2,
                     halfedge_descriptor h3,
                     const TriangleMesh& tm,
-                    const VertexPointMap& vpm)
+                    const VPM& vpm)
   {
     // TODO Far from optimal!
     typedef Exact_kernel::Plane_3 Plane_3;
@@ -257,11 +266,6 @@ public:
     add_new_node(*pt);
   }
 
-  void add_new_node(halfedge_descriptor edge_1, face_descriptor face_2)
-  {
-    add_new_node(edge_1, face_2, tm1, tm2, vpm1, vpm2);
-  }
-
   //the point is an input
   void add_new_node(const Point_3& p){
     enodes.push_back(to_exact(p));
@@ -273,7 +277,8 @@ public:
     tm2_vertices.resize(enodes.size(), GT::null_vertex());
   }
 
-  void call_put(const VertexPointMap& vpm, vertex_descriptor vd, std::size_t i, TriangleMesh& tm)
+  template <class VPM> // VertexPointMap1 or VertexPointMap2
+  void call_put(const VPM& vpm, vertex_descriptor vd, std::size_t i, TriangleMesh& tm)
   {
     put(vpm, vd, exact_to_double(enodes[i]));
     if (&tm1==&tm)
@@ -306,11 +311,16 @@ public:
 
 
 //Third specialization: The kernel already has exact constructions.
-template <class TriangleMesh,class VertexPointMap,bool Predicates_on_constructions_needed>
-class Intersection_nodes<TriangleMesh,VertexPointMap,Predicates_on_constructions_needed,true>
+template <class TriangleMesh, class VertexPointMap1, class VertexPointMap2,
+          bool Predicates_on_constructions_needed>
+class Intersection_nodes<TriangleMesh, VertexPointMap1, VertexPointMap2,
+                         Predicates_on_constructions_needed, true>
 {
 //typedefs
-  typedef typename boost::property_traits<VertexPointMap>::value_type   Point_3;
+  typedef typename boost::property_traits<VertexPointMap1>::value_type  Point_3;
+  CGAL_static_assertion((std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
+                                      typename boost::property_traits<VertexPointMap2>::value_type>::value));
+
   typedef typename Kernel_traits<Point_3>::Kernel                  Input_kernel;
   typedef std::vector <Point_3>                                    Nodes_vector;
 
@@ -326,12 +336,13 @@ public:
   typedef Input_kernel                                             Exact_kernel;
 
   const TriangleMesh &tm1, &tm2;
-  VertexPointMap vpm1, vpm2;
+  const VertexPointMap1& vpm1;
+  const VertexPointMap2& vpm2;
 
   Intersection_nodes(const TriangleMesh& tm1_,
                      const TriangleMesh& tm2_,
-                     const VertexPointMap& vpm1_,
-                     const VertexPointMap& vpm2_)
+                     const VertexPointMap1& vpm1_,
+                     const VertexPointMap2& vpm2_)
   : tm1(tm1_)
   , tm2(tm2_)
   , vpm1(vpm1_)
@@ -346,11 +357,12 @@ public:
   size_t size() const {return nodes.size();}
   const Point_3& exact_node(std::size_t i) const {return nodes[i];}
 
+  template <class VPM>
   void add_new_node(halfedge_descriptor h1,
                     halfedge_descriptor h2,
                     halfedge_descriptor h3,
                     const TriangleMesh& tm,
-                    const VertexPointMap& vpm)
+                    const VPM& vpm)
   {
     // TODO Far from optimal!
     typedef typename Exact_kernel::Plane_3 Plane_3;
@@ -376,12 +388,13 @@ public:
 
   //add a new node in the final graph.
   //it is the intersection of the triangle with the segment
+  template <class VPM_A, class VPM_B> // VertexPointMap1 or VertexPointMap2
   void add_new_node(halfedge_descriptor h_a,
                     face_descriptor f_b,
                     const TriangleMesh& tm_a,
                     const TriangleMesh& tm_b,
-                    const VertexPointMap vpm_a,
-                    const VertexPointMap& vpm_b)
+                    const VPM_A& vpm_a,
+                    const VPM_B& vpm_b)
   {
     halfedge_descriptor h_b=halfedge(f_b,tm_b);
 
@@ -394,12 +407,6 @@ public:
         get(vpm_a, target(h_a,tm_a)) ) );
   }
 
-  void add_new_node(halfedge_descriptor edge_1, face_descriptor face_2)
-  {
-    add_new_node(edge_1, face_2, tm1, tm2, vpm1, vpm2);
-  }
-
-
   void add_new_node(const Point_3& p)
   {
     nodes.push_back(p);
@@ -407,7 +414,8 @@ public:
 
   const Point_3& to_exact(const Point_3& p) const { return p; }
 
-  void call_put(const VertexPointMap& vpm, vertex_descriptor vd, std::size_t i, TriangleMesh&)
+  template <class VPM> // VertexPointMap1 or VertexPointMap2
+  void call_put(const VPM& vpm, vertex_descriptor vd, std::size_t i, TriangleMesh&)
   {
     put(vpm, vd, nodes[i]);
   }
