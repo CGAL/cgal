@@ -378,17 +378,15 @@ create_exterior_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                typename std::enable_if<
                                                  ! CGAL_SS_i::has_Hole_const_iterator<APolygon>::value>::type* = nullptr)
 {
-  std::cout << typeid(OutPolygon).name() << std::endl;
-//  return create_offset_polygons_2<OutPolygon>(
-//           aOffset,
-//           CGAL_SS_i::dereference(
-//             CGAL_SS_i::create_partial_exterior_straight_skeleton_2(
-//               aOffset,
-//               CGAL_SS_i::vertices_begin(aPoly),
-//               CGAL_SS_i::vertices_end  (aPoly),
-//               ssk)),
-//           ofk);
-  return std::vector< boost::shared_ptr<OutPolygon> >();
+  return create_offset_polygons_2<OutPolygon>(
+           aOffset,
+           CGAL_SS_i::dereference(
+             CGAL_SS_i::create_partial_exterior_straight_skeleton_2(
+               aOffset,
+               CGAL_SS_i::vertices_begin(aPoly),
+               CGAL_SS_i::vertices_end  (aPoly),
+               ssk)),
+           ofk);
 }
 
 // Overloads common to both polygons with and without holes, a simple polygon is returned in any case

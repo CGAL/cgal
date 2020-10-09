@@ -166,7 +166,7 @@ create_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
 
   if ( margin )
   {
-    double lm = CGAL::to_double(*margin);
+    const double lm = CGAL::to_double(*margin);
     Bbox_2 bbox = bbox_2(aVerticesBegin, aVerticesEnd);
 
     FT fxmin = bbox.xmin() - lm ;

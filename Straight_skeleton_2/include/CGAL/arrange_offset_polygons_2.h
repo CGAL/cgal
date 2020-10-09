@@ -16,6 +16,7 @@
 
 #include <CGAL/Straight_skeleton_2/Polygon_iterators.h>
 
+#include <CGAL/assertions.h>
 #include <CGAL/Polygon_with_holes_2.h>
 
 #include <boost/range/value_type.hpp>
@@ -96,6 +97,7 @@ bool arrange_offset_polygons_2 ( InputPolygonPtrIterator           aBegin
       lParent->add_hole(*lPoly);
     }
   }
+
   return true;
 }
 
@@ -131,6 +133,4 @@ arrange_offset_polygons_2 ( std::vector<boost::shared_ptr<Polygon> > const& aPol
 
 } // end namespace CGAL
 
-
-#endif
-// EOF //
+#endif // CGAL_ARRANGE_OFFSET_POLYGONS_2_H

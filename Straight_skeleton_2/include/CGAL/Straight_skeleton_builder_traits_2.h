@@ -222,6 +222,7 @@ private:
   Coeff_cache<K>& mCoeff_cache ;
 };
 
+// Not actually in use
 template<class K>
 struct Are_ss_edges_collinear_2 : Functor_base_2<K>
 {
@@ -241,6 +242,7 @@ struct Are_ss_edges_collinear_2 : Functor_base_2<K>
   }
 };
 
+// Not actually in use
 template<class K>
 struct Are_ss_edges_parallel_2 : Functor_base_2<K>
 {

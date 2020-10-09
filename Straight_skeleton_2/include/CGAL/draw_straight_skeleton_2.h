@@ -20,6 +20,8 @@
 #include <CGAL/Straight_skeleton_2.h>
 #include <CGAL/Random.h>
 
+#include <sstream>
+
 namespace CGAL {
 
 // Default color functor; user can change it to have its own face color

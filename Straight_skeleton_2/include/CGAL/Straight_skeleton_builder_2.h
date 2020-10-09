@@ -510,13 +510,6 @@ public:
   // Special ordering for simultaneous split events (i.e. both (pseudo)splits + same time + same point)
   // to prevent impossible-to-untangle knots
   class Split_event_compare
-#if 0
-    : public Event_compare
-  {
-  public:
-    Split_event_compare ( Self* aBuilder ) : Event_compare(aBuilder) {}
-  } ;
-#else
     : public CGAL::cpp98::binary_function<bool,EventPtr,EventPtr>
   {
   public:
@@ -529,10 +522,6 @@ public:
       if ( ! mBuilder->AreEventsSimultaneous(aA,aB) )
         return ( mBuilder->CompareEvents(aA,aB) == LARGER ) ;
 
-//      std::cout << "Multi split at time " << aA->time() << " and point " << aA->point() << std::endl;
-//      std::cout << "aA: " << aA->triedge() << " time: " << aA->time() << " Point: " << aA->point() << std::endl;
-//      std::cout << "aB: " << aB->triedge() << " time: " << aB->time() << " Point: " << aB->point() << std::endl;
-
       // Priority queue comparison: A has higher priority than B if `operator()(A, B)` is `false`.
       // We want to give priority to smaller angles, so we must return `false` if the angle is smaller
       // i.e. `true` if the angle is larger
@@ -542,7 +531,6 @@ public:
   private:
     Self* mBuilder ;
   } ;
-#endif
 
   typedef std::priority_queue<EventPtr,std::vector<EventPtr>,Split_event_compare> SplitPQ ;
 
