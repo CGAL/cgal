@@ -259,9 +259,15 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(selectionChanged()));
   // setup menu filtering
+  #ifndef CGAL_CXX20
   connect(sceneView->selectionModel(),
           QOverload<const QItemSelection & , const QItemSelection &>::of(&QItemSelectionModel::selectionChanged),
           this, [=](){filterOperations(false);});
+  #else
+  connect(sceneView->selectionModel(),
+          QOverload<const QItemSelection & , const QItemSelection &>::of(&QItemSelectionModel::selectionChanged),
+          this, [=,this](){filterOperations(false);});
+  #endif
 
   sceneView->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(sceneView, SIGNAL(customContextMenuRequested(const QPoint & )),
@@ -364,8 +370,15 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   // Load plugins, and re-enable actions that need it.
   operationSearchBar.setPlaceholderText("Filter...");
   searchAction->setDefaultWidget(&operationSearchBar);
+  
+  #ifndef CGAL_CXX20
   connect(&operationSearchBar, &QLineEdit::textChanged,
           this, [=](){filterOperations(true);});
+  #else
+  connect(&operationSearchBar, &QLineEdit::textChanged,
+          this, [=,this](){filterOperations(true);});
+  #endif
+
   loadPlugins();
   accepted_keywords.clear();
 

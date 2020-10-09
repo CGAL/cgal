@@ -191,8 +191,13 @@ void box_intersection_segment_tree_d(
 
         // Specify "copy by value" otherwise the values of iterators for next (i,j) iterations
         // become shared with different lambdas being run in parallel, and things go wrong
+        #ifndef CGAL_CXX20
         g.run([=]{ Box_intersection_d::segment_tree( r1_start, r1_end, r2_start, r2_end,
                                                      inf, sup, callback, traits, cutoff, dim, in_order); });
+        #else
+        g.run([=,this]{ Box_intersection_d::segment_tree( r1_start, r1_end, r2_start, r2_end,
+                                                            inf, sup, callback, traits, cutoff, dim, in_order); });
+        #endif
       }
     }
 
