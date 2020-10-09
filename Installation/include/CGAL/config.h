@@ -40,11 +40,6 @@
 #define _SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING 1
 #endif
 
-#ifdef CGAL_USE_SSH
-//to avoid clashing between windows.h and winsock2.h
-#define _WINSOCKAPI_
-#endif
-
 #ifdef CGAL_INCLUDE_WINDOWS_DOT_H
 // Mimic users including this file which defines min max macros
 // and other names leading to name clashes

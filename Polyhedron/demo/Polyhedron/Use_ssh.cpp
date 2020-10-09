@@ -10,7 +10,7 @@
 // Author(s)     : Maxime Gimeno
 
 #ifdef CGAL_USE_SSH
-
+#include "config.h"
 #include <CGAL/Three/Three.h>
 
 #include "CGAL/Use_ssh.h"
