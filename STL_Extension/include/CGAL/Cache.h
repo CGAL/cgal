@@ -1,5 +1,3 @@
-// =============================================================================
-//
 // Copyright (c) 2001-2007 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
@@ -11,7 +9,6 @@
 //
 // Author(s)     : Michael Hemmer    <hemmer@mpi-inf.mpg.de>
 //
-// =============================================================================
 
 #ifndef CGAL_CACHE_H
 #define CGAL_CACHE_H 1

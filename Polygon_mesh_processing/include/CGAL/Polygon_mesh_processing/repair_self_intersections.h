@@ -15,8 +15,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
-#include <CGAL/Polygon_mesh_processing/detect_features.h>
-#include <CGAL/Polygon_mesh_processing/distance.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>

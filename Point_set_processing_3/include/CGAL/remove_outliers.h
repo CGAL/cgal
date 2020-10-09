@@ -256,7 +256,11 @@ remove_outliers(
   {
     std::nth_element (f2r,
                       sorted_points.begin() + first_index_to_remove,
-                      sorted_points.end());
+                      sorted_points.end(),
+                      [](const std::pair<FT, value_type>& v1, const std::pair<FT, value_type>& v2)
+                      {
+                        return v1.first<v2.first;
+                      });
     f2r = sorted_points.begin() + first_index_to_remove;
   }
 

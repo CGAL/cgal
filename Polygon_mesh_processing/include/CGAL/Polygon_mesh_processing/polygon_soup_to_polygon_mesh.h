@@ -292,6 +292,17 @@ void polygon_soup_to_polygon_mesh(const PointRange& points,
 
 /// \cond SKIP_IN_MANUAL
 
+template<typename PolygonMesh,
+         typename PointRange, typename PolygonRange,
+         typename NamedParameters_PS>
+void polygon_soup_to_polygon_mesh(const PointRange& points,
+                                  const PolygonRange& polygons,
+                                  PolygonMesh& out,
+                                  const NamedParameters_PS& np_ps)
+{
+  return polygon_soup_to_polygon_mesh(points, polygons, out, np_ps, parameters::all_default());
+}
+
 template<typename PolygonMesh, typename PointRange, typename PolygonRange>
 void polygon_soup_to_polygon_mesh(const PointRange& points,
                                   const PolygonRange& polygons,

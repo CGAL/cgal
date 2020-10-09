@@ -5,6 +5,7 @@
 
 #include <CGAL/IO/PLY.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+#include <CGAL/Surface_mesh/IO/PLY.h>
 #include <CGAL/Three/Three.h>
 
 #include <QInputDialog>
@@ -99,12 +100,16 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
   if (input_is_mesh) // Open mesh or polygon soup
   {
     // First try mesh
-    SMesh *surface_mesh = new SMesh();
     std::string comments;
-
-    if (CGAL::read_PLY(in, *surface_mesh, comments))
+    Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item();
+    if (CGAL::read_PLY(in, *sm_item->face_graph(), comments))
     {
-      Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item(surface_mesh);
+      if(sm_item->face_graph()->property_map<face_descriptor, int >("f:patch_id").second)
+      {
+        sm_item->setItemIsMulticolor(true);
+        sm_item->computeItemColorVectorAutomatically(true);
+      }
+      sm_item->invalidateOpenGLBuffers();
       sm_item->setName(fileinfo.completeBaseName());
       sm_item->comments() = comments;
       QApplication::restoreOverrideCursor();
@@ -112,6 +117,10 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
       if(add_to_scene)
         CGAL::Three::Three::scene()->addItem(sm_item);
       return QList<Scene_item*>()<<sm_item;
+    }
+    else
+    {
+      delete sm_item;
     }
 
     in.clear();
@@ -153,8 +162,10 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     if(item->has_normals())
       item->setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
     item->setName(fileinfo.completeBaseName());
+
     QApplication::restoreOverrideCursor();
     ok = true;
+
     if(add_to_scene)
       CGAL::Three::Three::scene()->addItem(item);
     return QList<Scene_item*>()<<item;

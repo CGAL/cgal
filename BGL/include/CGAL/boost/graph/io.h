@@ -20,13 +20,6 @@
 #include <CGAL/boost/graph/IO/STL.h>
 #include <CGAL/boost/graph/IO/VTK.h>
 #include <CGAL/boost/graph/IO/WRL.h>
-  \param os the output stream
-  \param g the graph to be written
-  \param os the output stream
-  \param g the graph to be written
- \param is the input stream
- \param g the graph to be read
-
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 
 #endif // CGAL_BOOST_GRAPH_IO_H
