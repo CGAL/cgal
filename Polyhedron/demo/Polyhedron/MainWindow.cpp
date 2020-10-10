@@ -370,7 +370,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   // Load plugins, and re-enable actions that need it.
   operationSearchBar.setPlaceholderText("Filter...");
   searchAction->setDefaultWidget(&operationSearchBar);
-  
+
   #ifndef CGAL_CXX20
   connect(&operationSearchBar, &QLineEdit::textChanged,
           this, [=](){filterOperations(true);});
