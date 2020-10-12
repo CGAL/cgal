@@ -1040,13 +1040,13 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
         WORKING_DIRECTORY "${DOC_DIR}" )
 
   #Get the list of the documented headers
+  file(GLOB html_files RELATIVE "${DOC_DIR}/doc_output/" "${DOC_DIR}/doc_output/*/*.html")
   file(GLOB example_files RELATIVE "${CMAKE_SOURCE_DIR}/" "${CMAKE_SOURCE_DIR}/*/examples/*/*.cpp")
   list(SORT example_files)
 
   find_program(AWK awk)
   set(awk_arguments [=[{ match($0, /# *include *(&lt;|[<"])(CGAL\/[^>&"]*)([>"]|&gt;)| (CGAL\/[^>&"]*\.h)/,arr); if(arr[2]!="") print arr[2]; if(arr[4]!="") print arr[4] }]=])
   message("listing headers from html files")
-  file(GLOB html_files RELATIVE "${DOC_DIR}/doc_output/" "${DOC_DIR}/doc_output/*/*.html")
   foreach(f ${html_files})
     execute_process(COMMAND "${AWK}" "${awk_arguments}" "${DOC_DIR}/doc_output/${f}"
       OUTPUT_VARIABLE tmp_list)
@@ -1055,10 +1055,6 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
       LIST( APPEND list_of_documented_headers ${tmp_list})
     endif()
   endforeach()
-  #compare the computed list of headers with the stored one to check for changes
-
-  list(SORT list_of_documented_headers)
-  list(REMOVE_DUPLICATES list_of_documented_headers)
 
   message("listing headers from examples files")
   foreach(f ${example_files})
@@ -1074,6 +1070,13 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
   message("sorting:")
   list(SORT list_of_documented_headers)
   #string(REPLACE ";" " \n" list_of_documented_headers "${list_of_documented_headers}")
+  if (NOT "${list_of_documented_headers}" STREQUAL "")
+    set(has_list_of_documented_headers TRUE)
+  else()
+    set(has_list_of_documented_headers FALSE)
+  endif()
+  list(SORT list_of_documented_headers)
+  list(REMOVE_DUPLICATES list_of_documented_headers)
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/list_of_whitelisted_headers.cmake
       OPTIONAL RESULT_VARIABLE has_list_of_whitelisted_headers)
     message("list_of_whitelisted_headers: ${list_of_whitelisted_headers}")
@@ -1085,14 +1088,20 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
     foreach (package ${CGAL_CONFIGURED_PACKAGES_NAMES})
       if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include)
         set(check_pkg_headers_depends "")
-        # Then recurse2
-        file(GLOB_RECURSE ${package}_HEADERS #don't use a hard coded list because the ones for the documented headers is enough.
-          RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include"
-          "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h*")
+        if(has_list_of_documented_headers)
+          # Then recurse2
+          file(GLOB_RECURSE ${package}_HEADERS #don't use a hard coded list because the ones for the documented headers is enough.
+            RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h*")
+        else()
+        file(GLOB ${package}_HEADERS
+                    RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h*")
+        endif()
         list(SORT ${package}_HEADERS)
         foreach(header ${${package}_HEADERS})
           set(skip_hdr FALSE)
-          if(NOT header IN_LIST list_of_documented_headers)
+          if(has_list_of_documented_headers AND NOT header IN_LIST list_of_documented_headers)
 #            message(STATUS "Skip non-documented header \"${header}\".")
             set(skip_hdr TRUE)
           endif()
