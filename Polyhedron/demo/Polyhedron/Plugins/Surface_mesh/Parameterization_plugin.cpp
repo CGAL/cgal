@@ -815,7 +815,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       std::cout << "Parameterize (IAP)..." << std::endl;
       typedef SMP::Iterative_authalic_parameterizer_3<Seam_mesh> Parameterizer;
       Parameterizer parameterizer;
-      status = parameterizer.parameterize(sMesh, uv_pm, 15 /*iterations*/);
+      status = parameterizer.parameterize(sMesh, bhd, uv_pm, 15 /*iterations*/);
       break;
     }
     case PARAM_ARAP:
