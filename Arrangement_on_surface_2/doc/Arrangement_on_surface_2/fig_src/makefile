@@ -46,7 +46,9 @@ TARGETS = \
   dcel_extension.pdf \
   overlay.pdf \
   overlay_unbounded.pdf \
-  overlay_color.pdf
+  overlay_color.pdf \
+  bgl_primal_adapter.pdf \
+  bgl_dual_adapter.pdf
 
 .DEFAULT_GOAL = all
 .PHONY: all clean

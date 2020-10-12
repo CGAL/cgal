@@ -6279,24 +6279,67 @@ vertices in the arrangement, so it should not be reused in calls to
 \sc{bgl} functions in case the arrangement is modified in between
 these calls.
 
+The first example of this section demonstrates the application of
+Dijkstra's shortest path algorithm to compute the shortest-path length
+between a given vertex of an arrangement of linear curves and all
+other vertices. The length of a path is defined as the sum of squared
+Euclidean lengths of its segments. It uses an instance of the functor
+template `Edge_length<Arrangement>}` to compute the squared Euclidean
+length of the linear curve associated with a given halfedge of the
+arrangement. The functor implements a \sc{Boost} property-map that
+attaches square lengths to edges; when the \sc{bgl} algorithm queries
+the property map for a squared length of an edge the property map
+computes and returns it. The functor template is defined in the header
+file `Edge_length.h`.
+
+\code
+#ifndef EDGE_LENGTH_H
+#define EDGE_LENGTH_H
+
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/property_map.h>
+
+typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
+typedef Kernel::FT                                        Number_type;
+
+template <typename Arrangement> struct Edge_length {
+  // Boost property-type definitions.
+  typedef boost::readable_property_map_tag      category;
+  typedef Number_type                           value_type;
+  typedef value_type                            reference;
+  typedef typename Arrangement::Halfedge_handle key_type;
+
+  value_type operator()(typename Arrangement::Halfedge_handle e) const {
+    const auto diff_x = e->target()->point().x() - e->source()->point().x();
+    const auto diff_y = e->target()->point().y() - e->source()->point().y();
+    return diff_x * diff_x + diff_y * diff_y;
+  }
+
+  friend value_type get(const Edge_length& edge_length, key_type key)
+  { return edge_length(key); }
+};
+
+#endif
+\endcode
+
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_bgl,ex_bgl.png}
-An arrangement of 7 line segments, as constructed by
-`bgl_primal_adapter.cpp` and `bgl_dual_adapter.cpp`. The
-breadth-first visit times for the arrangement faces, starting from
-the unbounded face \f$f_0\f$, are shown is brackets.
+\cgalFigureBegin{arr_figex_bgl_primal_adapter,bgl_primal_adapter.png}
+An arrangement of seven line segments, as constructed by
+`bgl_primal_adapter.cpp` and `bgl_dual_adapter.cpp`.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
-In the following example we construct an arrangement of 7 line
-segments, as shown in \cgalFigureRef{arr_figex_bgl}, then use
-Dijkstra's shortest-paths algorithm from the \sc{bgl} to compute the
-graph distance of all vertices from the leftmost vertex in the
-arrangement \f$v_0\f$. Note the usage of the
-`boost::vector_property_map<Type, IndexMap>` and the
-`Arr_vertex_property_map` classes. The latter one, instantiated by the
-type `double` is used to map vertices to their distances from
-\f$v_0\f$.
+In the following example we construct an arrangement of seven line
+segments, as shown in \cgalFigureRef{arr_figex_bgl_primal_adapter}.
+Then, it uses the \sc{bgl} generic implementation of Dijkstra's
+shortest-paths algorithm to compute the sum of squared distances to
+all vertices from the lexicographically smallest vertex \f$v_0\f$ in
+the arrangement. Note the usage of the `Arr_vertex_property_map` class
+template in the call to `boost::dijkstra_shortest_paths()` and in the
+definition of the distance property-map. We instantiate a property map
+that attaches a number of type `Number_type` (which is a type of
+unlimited precision) to each vertex. The number represents the sum of
+squared distances of the vertex from $v_0$.
 
 \cgalExample{Arrangement_on_surface_2/bgl_primal_adapter.cpp}
 
@@ -6331,13 +6374,24 @@ efficient mapping of face handles to indices.  Like vertices,
 `boost::vector_property_map<Type, IndexMap>` can be used for
 associating arbitrary data with the arrangement faces.
 
+<!----------------------------------------------------------------------------->
+\cgalFigureBegin{arr_figex_bgl_dual_adapter,bgl_dual_adapter.png}
+An arrangement of seven line segments, as constructed by
+`bgl_dual_adapter.cpp` and its dual face graph, where every
+arrangement face is a vertex of the graph. The index of a dual
+vertex is the discovery time of a breadth-first search applied to
+the face graph, starting from the unbounded face \f$f_0\f$.
+\cgalFigureEnd
+<!----------------------------------------------------------------------------->
+
 In the following example we construct the same arrangement as in
-example `bgl_primal_adapter.cpp` (see \cgalFigureRef{arr_figex_bgl}),
-and perform breadth-first search on the graph faces, starting from the
-unbounded face. We extend the \sc{Dcel} faces with an unsigned
-integer, marking the discovery time of the face using `boost` visitors
-and a property-map class that directly accesses the extended data of
-the faces:
+example `bgl_primal_adapter.cpp` (see
+\cgalFigureRef{arr_figex_bgl_primal_adapter}), and perform
+breadth-first search on the graph faces, starting from the unbounded
+face. We extend the \sc{Dcel} faces with an unsigned integer, marking
+the discovery time of the face using `boost` visitors and a
+property-map class that directly accesses the extended data of the
+faces.
 
 \cgalExample{Arrangement_on_surface_2/bgl_dual_adapter.cpp}
 
