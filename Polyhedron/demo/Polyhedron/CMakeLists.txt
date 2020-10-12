@@ -353,7 +353,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   if(LIBSSH_FOUND)
     target_compile_definitions(polyhedron_demo PRIVATE -DCGAL_USE_SSH)
     target_link_libraries(polyhedron_demo PRIVATE ${LIBSSH_LIBRARIES})
-    target_include_directories(polyhedron_demo PRIVATE ${LIBSSH_INCLUDE_DIR})
+    target_include_directories(polyhedron_demo SYSTEM PRIVATE ${LIBSSH_INCLUDE_DIR})
   endif() #libssh
   if(TARGET Qt5::WebSockets)
     target_compile_definitions(polyhedron_demo PRIVATE -DCGAL_USE_WEBSOCKETS)
