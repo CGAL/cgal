@@ -526,7 +526,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     };
 
     template<typename PointRange, typename NamedParameters>
-    class GetScanDirectionFlag
+    class GetScanlineIDMap
     {
     public:
       struct NoMap
@@ -541,7 +541,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
         friend void put(const Self&, const key_type&, const value_type&) { }
       };
       typedef typename internal_np::Lookup_named_param_def <
-        internal_np::scan_direction_flag_t,
+        internal_np::scanline_id_t,
         NamedParameters,
         NoMap//default
         > ::type  type;

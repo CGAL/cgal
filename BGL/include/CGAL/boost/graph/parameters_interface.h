@@ -150,8 +150,8 @@ CGAL_add_named_parameter(inspector_t, inspector, inspector)
 CGAL_add_named_parameter(logger_t, logger, logger)
 CGAL_add_named_parameter(pointmatcher_config_t, pointmatcher_config, pointmatcher_config)
 CGAL_add_named_parameter(adjacencies_t, adjacencies, adjacencies)
-CGAL_add_named_parameter(scan_angle_t, scan_angle, scan_angle)
-CGAL_add_named_parameter(scan_direction_flag_t, scan_direction_flag, scan_direction_flag)
+CGAL_add_named_parameter(scan_angle_t, scan_angle_map, scan_angle_map)
+CGAL_add_named_parameter(scanline_id_t, scanline_id_map, scanline_id_map)
 
 // List of named parameters used in Surface_mesh_approximation package
 CGAL_add_named_parameter(verbose_level_t, verbose_level, verbose_level)

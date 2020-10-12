@@ -429,22 +429,22 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalOrientat
         std::cerr << "  using scan direction flag" << std::endl;
         CGAL::scanline_orient_normals(points->all_or_selection_if_not_empty(),
                                       points->parameters().
-                                      scan_direction_flag (scan_direction_flag));
+                                      scanline_id_map (scan_direction_flag));
       }
       else if (angle_found && !flag_found)
       {
         std::cerr << "  using scan angle" << std::endl;
         CGAL::scanline_orient_normals(points->all_or_selection_if_not_empty(),
                                       points->parameters().
-                                      scan_angle (scan_angle));
+                                      scan_angle_map (scan_angle));
       }
       else // if (angle_found && flag_found)
       {
         std::cerr << "  using scan angle and direction flag" << std::endl;
         CGAL::scanline_orient_normals(points->all_or_selection_if_not_empty(),
                                       points->parameters().
-                                      scan_angle (scan_angle).
-                                      scan_direction_flag (scan_direction_flag));
+                                      scan_angle_map (scan_angle).
+                                      scanline_id_map (scan_direction_flag));
       }
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << "Orient normals: "

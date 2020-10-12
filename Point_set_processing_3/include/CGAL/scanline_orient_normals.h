@@ -43,21 +43,21 @@ const Vector_3& vertical_vector()
 }
 
 template <typename Iterator, typename PointMap,
-          typename ScanDirectionFlagMap>
+          typename ScanlineIDMap>
 bool is_end_of_scanline (Iterator scanline_begin, Iterator it,
                          PointMap,
-                         ScanDirectionFlagMap scan_direction_flag_map,
+                         ScanlineIDMap scanline_id_map,
                          const Tag_false&) // no fallback
 {
-  return (get (scan_direction_flag_map, *scanline_begin)
-          != get (scan_direction_flag_map, *it));
+  return (get (scanline_id_map, *scanline_begin)
+          != get (scanline_id_map, *it));
 }
 
 template <typename Iterator, typename PointMap,
-          typename ScanDirectionFlagMap>
+          typename ScanlineIDMap>
 bool is_end_of_scanline (Iterator scanline_begin, Iterator it,
                          PointMap point_map,
-                         ScanDirectionFlagMap,
+                         ScanlineIDMap,
                          const Tag_true&) // fallback
 {
   using Point_3 = typename boost::property_traits<PointMap>::value_type;
@@ -219,7 +219,7 @@ void orient_scanline (Iterator begin, Iterator end,
   double mean_z = 0;
   for (Iterator it = begin; it != end; ++ it)
   {
-    double angle = CGAL_PI * double(get (scan_angle_map, *it)) / 180.;
+    double angle = CGAL_PI * static_cast<double>(get (scan_angle_map, *it)) / 180.;
     Vector_3 los = direction * std::sin(angle) + vertical * std::cos(angle);
     lines_of_sight.push_back (los);
     mean_z += get (point_map, *it).z();
@@ -267,7 +267,7 @@ void orient_scanline (Iterator begin, Iterator end,
     std::size_t idx = 0;
     for (Iterator it = begin; it != end; ++ it, ++ idx)
     {
-      double angle = CGAL_PI * double(get (scan_angle_map, *it)) / 180.;
+      double angle = CGAL_PI * static_cast<double>(get (scan_angle_map, *it)) / 180.;
       Vector_3 los = direction * std::sin(angle) + vertical * std::cos(angle);
       lines_of_sight[idx] = los;
     }
@@ -367,7 +367,7 @@ void orient_scanline (Iterator begin, Iterator end,
    First, scanlines are estimated as subranges of `points` by
    iterating on `points`:
 
-   - if the named parameter `scan_direction_flag` is provided, the
+   - if the named parameter `scanline_id_map` is provided, the
      range is cutted everytime the flag (which tells if the scanner
      was moving in the positive or negative direction) changes.
 
@@ -389,11 +389,11 @@ void orient_scanline (Iterator begin, Iterator end,
      XY-plane. This fallback method gives suboptimal results.
 
    Once the line of sight is estimated for each point, the normals are
-   oriented by checking if, for one each, the line of sight and the
+   oriented by checking, for each of them, if the line of sight and the
    normal vector give a positive scalar product. If they don't, then
    the normal vector is inverted.
 
-   \note this method gives optimal results when `scan_direction_flag`
+   \note this method gives optimal results when `scanline_id_map`
    and `scan_angle` are provided. Correct results may still be
    produced in the absence of either one or both of these properties,
    as long as the point set is ordered in 2.5D scanlines.
@@ -419,15 +419,15 @@ void orient_scanline (Iterator begin, Iterator end,
      \cgalParamNEnd
 
      \cgalParamNBegin{scan_angle_map}
-       \cgalParamDescription{a property map associating the angle of acquisition to the elements of the point set `points`}
+       \cgalParamDescription{a property map associating the angle of acquisition (in degrees) to the elements of the point set `points`}
        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
-                      of the iterator of `PointRange` and whose value type is `float`}
+                      of the iterator of `PointRange` and whose value type is convertible to `double`}
      \cgalParamNEnd
 
-     \cgalParamNBegin{scan_direction_flag}
-       \cgalParamDescription{a property map associating a flag describing the direction of the acquisition to the elements of the point set `points`}
+     \cgalParamNBegin{scanline_id_map}
+       \cgalParamDescription{a property map associating a scanline ID to the elements of the point set `points`. A scanline is detected as a consecutive subrange of items in the input range `point` whose ID. IDs do not need to be unique, they just need to be different for two consecutive scanlines. The LAS property `scan_direction_flag` (whose values are either 0 or 1 depending on the direction of the scanner) can be used.}
        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
-                      of the iterator of `PointRange` and whose value type is `unsigned char`}
+                      of the iterator of `PointRange` and whose value type is a model of `EqualityComparable`}
      \cgalParamNEnd
 
      \cgalParamNBegin{geom_traits}
@@ -451,7 +451,7 @@ void scanline_orient_normals (PointRange& points, const NamedParameters& np)
   using Vector_3 = typename Kernel::Vector_3;
   using ScanAngleMap = typename Point_set_processing_3::GetScanAngleMap
     <PointRange, NamedParameters>::type;
-  using ScanDirectionFlagMap = typename Point_set_processing_3::GetScanDirectionFlag
+  using ScanlineIDMap = typename Point_set_processing_3::GetScanlineIDMap
     <PointRange, NamedParameters>::type;
 
   CGAL_static_assertion_msg(!(std::is_same<NormalMap,
@@ -464,19 +464,19 @@ void scanline_orient_normals (PointRange& points, const NamedParameters& np)
     <std::is_same<ScanAngleMap,
                   typename Point_set_processing_3::GetScanAngleMap
                   <PointRange, NamedParameters>::NoMap>::value>;
-  using Fallback_scan_direction_flag
+  using Fallback_scanline_ID
     = Boolean_tag
-    <std::is_same<ScanDirectionFlagMap,
-                  typename Point_set_processing_3::GetScanDirectionFlag
+    <std::is_same<ScanlineIDMap,
+                  typename Point_set_processing_3::GetScanlineIDMap
                   <PointRange, NamedParameters>::NoMap>::value>;
 
 
   PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
   NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
   ScanAngleMap scan_angle_map = choose_parameter<ScanAngleMap>
-    (get_parameter(np, internal_np::scan_angle));
-  ScanDirectionFlagMap scan_direction_flag_map = choose_parameter<ScanDirectionFlagMap>
-    (get_parameter(np, internal_np::scan_direction_flag));
+    (get_parameter(np, internal_np::scan_angle_map));
+  ScanlineIDMap scanline_id_map = choose_parameter<ScanlineIDMap>
+    (get_parameter(np, internal_np::scanline_id_map));
 
   std::size_t nb_scanlines = 1;
 
@@ -509,8 +509,8 @@ void scanline_orient_normals (PointRange& points, const NamedParameters& np)
     }
 
     if (Point_set_processing_3::internal::is_end_of_scanline
-        (scanline_begin, it, point_map, scan_direction_flag_map,
-         Fallback_scan_direction_flag()) || force_cut)
+        (scanline_begin, it, point_map, scanline_id_map,
+         Fallback_scanline_ID()) || force_cut)
     {
       Point_set_processing_3::internal::orient_scanline
         (scanline_begin, it, point_map, normal_map,

@@ -11,7 +11,7 @@ using Point_with_info = std::tuple<Point_3, Vector_3, float, unsigned char>;
 using Point_map = CGAL::Nth_of_tuple_property_map<0, Point_with_info>;
 using Normal_map = CGAL::Nth_of_tuple_property_map<1, Point_with_info>;
 using Scan_angle_map = CGAL::Nth_of_tuple_property_map<2, Point_with_info>;
-using Scan_direction_flag_map = CGAL::Nth_of_tuple_property_map<3, Point_with_info>;
+using Scanline_id_map = CGAL::Nth_of_tuple_property_map<3, Point_with_info>;
 
 void dump (const char* filename, const std::vector<Point_with_info>& points)
 {
@@ -38,7 +38,7 @@ int main (int argc, char** argv)
        CGAL::make_las_point_reader (Point_map()),
        std::make_pair (Scan_angle_map(),
                        CGAL::LAS_property::Scan_angle()),
-       std::make_pair (Scan_direction_flag_map(),
+       std::make_pair (Scanline_id_map(),
                        CGAL::LAS_property::Scan_direction_flag())))
   {
     std::cerr << "Can't read " << fname << std::endl;
@@ -57,8 +57,8 @@ int main (int argc, char** argv)
     (points,
      CGAL::parameters::point_map (Point_map()).
      normal_map (Normal_map()).
-     scan_angle (Scan_angle_map()).
-     scan_direction_flag (Scan_direction_flag_map()));
+     scan_angle_map (Scan_angle_map()).
+     scanline_id_map (Scanline_id_map()));
   dump("out_angle_and_flag.ply", points);
 
   std::cerr << "Orienting normals using scan direction flag only" << std::endl;
@@ -66,7 +66,7 @@ int main (int argc, char** argv)
     (points,
      CGAL::parameters::point_map (Point_map()).
      normal_map (Normal_map()).
-     scan_direction_flag (Scan_direction_flag_map()));
+     scanline_id_map (Scanline_id_map()));
   dump("out_flag.ply", points);
 
   std::cerr << "Orienting normals using scan angle only" << std::endl;
@@ -74,7 +74,7 @@ int main (int argc, char** argv)
     (points,
      CGAL::parameters::point_map (Point_map()).
      normal_map (Normal_map()).
-     scan_angle (Scan_angle_map()));
+     scan_angle_map (Scan_angle_map()));
   dump("out_angle.ply", points);
 
   std::cerr << "Orienting normals using no additional info" << std::endl;
