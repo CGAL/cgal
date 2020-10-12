@@ -312,6 +312,10 @@ the \f$ L_2\f$ stretch - as defined by Sander et al. \cgalCite{cgal:ssgh-tmpm-01
 Iterative Authalic Parameterization (the blue line depicts the cut graph). Rightmost: parameter space.
 \cgalFigureCaptionEnd
 
+Although this is a fixed border parameterization method, it does not guarantee a one-to-one mapping.
+However, it will in practice yield valid results with less distortion than other authalic
+parameterization methods.
+
 \subsubsection secBorderParameterizationsforFixedMethods Border Parameterizations for Fixed Methods
 
 Parameterization methods for borders are used as traits classes modifying the
