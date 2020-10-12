@@ -1077,6 +1077,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
   endif()
   list(SORT list_of_documented_headers)
   list(REMOVE_DUPLICATES list_of_documented_headers)
+
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/list_of_whitelisted_headers.cmake
       OPTIONAL RESULT_VARIABLE has_list_of_whitelisted_headers)
     message("list_of_whitelisted_headers: ${list_of_whitelisted_headers}")
