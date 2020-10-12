@@ -183,6 +183,7 @@ namespace CGAL {
  *   `ArrangementPointLocation_2` concept.
  * </UL>
  */
+
 /// @{
 
 /*! Inserts the given curve `c` into the arrangement `arr`.
@@ -203,7 +204,7 @@ void insert(Arrangement_2<Traits,Dcel>& arr, const Curve& c,
             const PointLocation& pl = walk_pl);
 
 /*! Inserts the<I>\f$ x\f$-monotone (only)</I> curve `xc` into the arrangement
- * `arr`. The object `obj`, which either wraps a `Vertex_const_handle`, a
+ * `arr`. The object `obj`, which wraps a `Vertex_const_handle`, a
  * `Halfedge_const_handle`, or a `Face_const_handle`, represents the location of
  * `xc`'s left endpoint in the arrangement. The zone of `xc` is computed
  * starting from the feature represented by `obj`. As in the case above, the
@@ -211,11 +212,15 @@ void insert(Arrangement_2<Traits,Dcel>& arr, const Curve& c,
  * point-location is not required.
  */
 template <typename Traits, typename Dcel>
-void insert(Arrangement_2<Traits,Dcel>& arr,
-            const typename Traits::X_monotone_curve_2& xc, const Object& obj);
+void insert(Arrangement_2<Traits, Dcel>& arr,
+            const typename Traits::X_monotone_curve_2& xc,
+            typename Arr_point_location_result<Arrangement_2<Traits, Dcel> >::type obj);
 
 /*! Aggregately inserts the curves or \f$ x\f$-monotone curves in the range
  * `[first,last)` into the arrangement `arr` using the sweep-line framework.
+ * \param arr the target arrangement.
+ * \param first the iterator to the first element in the range of curves.
+ * \param last the past-the-end iterator of the range of curves.
  */
 template <typename Traits, typename Dcel, class InputIterator>
 void insert(Arrangement_2<Traits,Dcel>& arr,

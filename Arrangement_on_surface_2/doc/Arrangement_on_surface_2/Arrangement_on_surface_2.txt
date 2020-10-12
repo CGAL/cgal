@@ -427,8 +427,8 @@ measures of a given arrangement. While in what follows it is used only
 by examples, it demonstrates well the use of the member functions
 \link Arrangement_2::number_of_vertices()
 `number_of_vertices`\endlink, \link Arrangement_2::number_of_edges()
-`number_of_edges`\endlink, and \link Arrangement_2::number_of_faces()
-`number_of_faces`\endlink, which return the number of vertices, edges,
+`number_of_edges()`\endlink, and \link Arrangement_2::number_of_faces()
+`number_of_faces()`\endlink, which return the number of vertices, edges,
 and faces of an arrangement, respectively.
 
 \anchor lst_paz
@@ -445,7 +445,7 @@ void print_arrangement_size(const Arrangement& arr)
 
 You can also obtain the number of halfedges of an arrangement using
 the member function \link Arrangement_2::number_of_halfedges()
-`number_of_halfedges`\endlink. Recall that the number of halfedges is
+`number_of_halfedges()`\endlink. Recall that the number of halfedges is
 always twice the number of edges.
 
 \image html triangle.png
@@ -5506,7 +5506,7 @@ annual precipitation in some country and a map of the vegetation in
 the same country---and you are asked to locate, for example, places
 where there is a pine forest <em>and</em> the annual precipitation is
 between 1,000mm and 1,500mm. Overlaying the two maps may help you
-figure out the answer.  Computing the overlay of two planar
+figure out the answer.  Computing the overlay of two two-dimensional
 arrangements is also useful for supporting Boolean set operations on
 polygons or general polygons; see e.g., \cgalCite{cgal:behhms-cbcab-02}).
 
@@ -6068,11 +6068,11 @@ that other applications can read.
 
 This package provides an <em>inserter</em> (the `<<` operator) and an
 <em>extractor</em> (the `>>` operator) for the
-`Arrangement_2<Traits,Dcel>` class that inserts and an arrangement
-object into an output stream and extracts an arrangement object from
-an input stream, respectively. The arrangement is written using a
-simple predefined ASCII format that encodes the arrangement topology,
-as well as all geometric entities associated with vertices and edges.
+`Arrangement_2<Traits,Dcel>` class that inserts an arrangement object
+into an output stream and extracts an arrangement object from an input
+stream, respectively. The arrangement is written using a simple
+predefined ASCII format that encodes the arrangement topology, as well
+as all geometric entities associated with vertices and edges.
 
 The ability to use the input/output operators, requires that the
 `%Point_2` type and the `X_monotone_curve_2` type defined by the traits
@@ -6174,13 +6174,13 @@ arrangement-with-history from a file:
 \cgalExample{Arrangement_on_surface_2/io_curve_history.cpp}
 
 \cgalAdvancedBegin
-The arrangement package also includes the free functions
-`write(arr, os, formatter)` and `read(arr, os, formatter)` that
-operate on a given arrangement-with-history instance `arr`.
-Both functions are parameterized by a `formatter` object, which define
-the I/O format. The package contains a template called,
-`Arr_with_hist_text_formatter<ArranagmentFormatter>`, which extends
-an arrangement formatter class (see Section \ref arr_ssecarr_io_aux_data)
+The arrangement package also includes the free functions `write(arr,
+os, formatter)` and `read(arr, os, formatter)` that operate on a given
+arrangement-with-history instance `arr`.  Both functions are
+parameterized by a `formatter` object, which defines the I/O
+format. The package contains a template called,
+`Arr_with_hist_text_formatter<ArranagmentFormatter>`, which extends an
+arrangement formatter class (see Section \ref arr_ssecarr_io_aux_data)
 and defines a simple textual input/output format.
 \cgalAdvancedEnd
 
@@ -6190,15 +6190,15 @@ and defines a simple textual input/output format.
 
 \sc{Boost}\cgalFootnote{See also \sc{Boost}'s homepage at:
 <TT>www.boost.org</TT>.}  is a collection of portable \cpp libraries
-that extend the Standard Template Library (\sc{Stl}). The \sc{Boost}
-Graph Library (\sc{bgl}), which one of the libraries in the
-collection, offers an extensive set of generic graph algorithms
-parameterized through templates.  As our arrangements are embedded as
-planar graphs, it is only natural to extend the underlying data
-structure with the interface that the <\sc{bgl} expects, and gain the
-ability to perform the operations that the \sc{bgl} supports, such as
-shortest-path computation. This section describes how apply the graph
-algorithms implemented in the \sc{bgl} to `Arrangement_2` instances.
+that extend the \cpp Standard Library. The \sc{Boost} Graph Library
+(\sc{bgl}), which one of the libraries in the collection, offers an
+extensive set of generic graph algorithms parameterized through
+templates.  As our arrangements are embedded as planar graphs, it is
+only natural to extend the underlying data structure with the
+interface that the <\sc{bgl} expects, and gain the ability to perform
+the operations that the \sc{bgl} supports, such as shortest-path
+computation. This section describes how to apply the graph algorithms
+implemented in the \sc{bgl} to `Arrangement_2` instances.
 
 An instance of `Arrangement_2` is adapted to a \sc{Boost} graph
 through the provision of a set of free functions that operate on the
@@ -6258,22 +6258,23 @@ automatically maintain the mapping of vertices to indices, even when
 new vertices are inserted into the arrangement or existing vertices
 are removed.
 
-In most algorithm provided by the \sc{bgl}, the output is given by
+In most algorithms provided by the \sc{bgl}, the output is given by
 <em>property maps</em>, such that each map entry corresponds to a
 vertex.  For example, when we compute the shortest paths from a given
 source vertex \f$s\f$ to all other vertices we can obtain a map of
 distances and a map of predecessors - namely for each \f$v\f$ vertex
 we have its distance from \f$s\f$ and a descriptor of the vertex that
-precedes \f$v\f$ in the shortest path from \f$s\f$.
+precedes \f$v\f$ in a shortest path from \f$s\f$.
 
 If the vertex descriptors are simply indices, boost supplies tools to
-easily represent property maps using vectors.
-`Arr_vertex_index_map<Arrangement>` class allows create such indices,
-and together with `boost::vector_property_map<Type, IndexMap>` allows
-for an efficient mapping of \link Arrangement_2::Vertex_handle
+easily represent property maps using vectors.  The
+`Arr_vertex_index_map<Arrangement>` class template enables the
+creation of such indices, and together with
+`boost::vector_property_map<Type, IndexMap>` it generates an efficient
+mapping from \link Arrangement_2::Vertex_handle
 `Vertex_handle`\endlink objects to properties of type `Type`. Note
-however that unlike the `Arr_vertex_index_map` class, the vertex
-property-map class is not kept synchronized with the number of
+however that unlike the `Arr_vertex_index_map` class template, the
+vertex property-map class is not kept synchronized with the number of
 vertices in the arrangement, so it should not be reused in calls to
 \sc{bgl} functions in case the arrangement is modified in between
 these calls.
@@ -6311,17 +6312,17 @@ a common edge on their boundaries. This is done by specializing the
 where `Dual<Arrangement_2>` is a template specialization that gives a
 dual interpretation to an arrangement instance.
 
-In dual representation, \link Arrangement_2::Face_handle
+In a dual representation, \link Arrangement_2::Face_handle
 `Face_handle`\endlink is the graph-vertex type, while \link
 Arrangement_2::Halfedge_handle `Halfedge_handle`\endlink is the
 graph-edge type. We treat the graph edges as directed, such that a
 halfedge `e` is directed from \f$f_1\f$, which is its incident face,
 to \f$f_2\f$, which is the incident face of its twin halfedge. As two
 arrangement faces may share more than a single edge on their boundary,
-we allow parallel edges in our \sc{Boost} graph. As is the case in the
-primal graph, the dual arrangement graph is also a model of the
-concepts `VertexListGraph`, `EdgeListGraph` and `BidirectionalGraph`
-(thus also of `IncidenceGraph`).
+we allow parallel edges (loops) in our \sc{Boost} graph. As is the
+case in the primal graph, the dual arrangement graph is also a model
+of the concepts `VertexListGraph`, `EdgeListGraph` and
+`BidirectionalGraph` (thus also of `IncidenceGraph`).
 
 Since we use \link Arrangement_2::Face_handle `Face_handle`\endlink
 objects as the vertex descriptors, we define the
@@ -6334,7 +6335,7 @@ In the following example we construct the same arrangement as in
 example `bgl_primal_adapter.cpp` (see \cgalFigureRef{arr_figex_bgl}),
 and perform breadth-first search on the graph faces, starting from the
 unbounded face. We extend the \sc{Dcel} faces with an unsigned
-integer, marking the discover time of the face using `boost` visitors
+integer, marking the discovery time of the face using `boost` visitors
 and a property-map class that directly accesses the extended data of
 the faces:
 
@@ -6353,7 +6354,7 @@ reduces the running time.
 <LI>When the curves to be inserted into an arrangement are
 \f$x\f$-monotone and pairwise disjoint in their interior to start
 with, then it is more efficient (in running time) and less demanding
-(in traits-class functionality) to use the non-intersection
+(in traits-class functionality) to use the non-intersecting
 insertion-functions instead of the general ones; e.g., `insert()`.
 
 <LI>When the curves to be inserted into an arrangement are segments that
@@ -6369,7 +6370,7 @@ On rare occasions the traits class `Arr_non_caching_segment_traits_2`
 exhibits slightly better performance than the default one
 (`Arr_segment_traits_2` even when the segments intersect each other,
 due to the small overhead of the latter (optimized) traits class. (For
-example, when the so-called \sc{Leda} rational kernel is used).
+example, when the so-called \sc{Leda} rational kernel is used.)
 
 <LI>Prior knowledge of the combinatorial structure of the arrangement
 can be used to accelerate operations that insert \f$x\f$-monotone
@@ -6395,7 +6396,7 @@ of the segments except for the last, which is inserted using
 `Arrangement_2::insert_at_vertices()`, as both endpoints of which are
 the mapping of known vertices.
 
-<LI>The main trade-off among point-location strategies, is between
+<LI>The main trade-off among point-location strategies is between
 time and storage. Using the naive or walk strategies, for example,
 takes more query time but does not require preprocessing or
 maintenance of auxiliary structures and saves storage space.
@@ -6417,12 +6418,13 @@ performed.
 <LI>When the curves to be inserted into an arrangement are available
 in advance (as opposed to supplied on-line), it is advised to use the
 more efficient aggregate (sweep-based) insertion over the incremental
-insertion; e.g., `insert()`.
+insertion; e.g., \link insert<Traits,Dcel,InputIterator>()
+`insert(arr, first, last)`\endlink.
 
 <LI>The various traits classes should be instantiated with an exact
-number type to ensure robustness, when the input of the operations to
-be carried out might be degenerate, although inexact number types
-could be used at the user's own risk.
+number type to ensure robustness when the input of the operations to
+be carried out might be degenerate. Inexact number types can be used
+at the user's own risk.
 
 <LI>Maintaining short bit-lengths of coordinate representations may
 drastically decrease the time consumption of arithmetic operations on

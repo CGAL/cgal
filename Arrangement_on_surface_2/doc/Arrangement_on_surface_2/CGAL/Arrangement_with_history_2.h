@@ -142,16 +142,17 @@ insert(Arrangement_with_history_2<Traits,Dcel>& arr,
        const PointLocation& pl = walk_pl);
 
 /*! \ingroup PkgArrangementOnSurface2Insert
- *
  * Aggregately inserts the curves in the range `[first,last)` into the
  * arrangement with history `arr` using the sweep-line framework.
+ * \param arr the target arrangement with history.
+ * \param first the iterator to the first element in the range of curves.
+ * \param last the past-the-end iterator of the range of curves.
  */
 template <typename Traits, typename Dcel, typename InputIterator>
 void insert(Arrangement_with_history_2<Traits,Dcel>& arr,
             InputIterator first, InputIterator last);
 
 /*! \ingroup PkgArrangementOnSurface2Funcs
- *
  * Removes a given curvespecified by its handle `ch`, from a given arrangement
  * `arr`, deleting all the edges it induces. The function returns the number
  * of deleted edges.
@@ -162,7 +163,6 @@ Size remove_curve(Arrangement_with_history_2<Traits,Dcel>& arr,
 
 
 /*! \addtogroup PkgArrangementOnSurface2Overlay
- *
  * Computes the overlay of two arrangements with history `arr1` and `arr2`, and
  * sets the output arrangement with history `res` to represent the overlaid
  * arrangement. The function also constructs a consolidated set of curves that

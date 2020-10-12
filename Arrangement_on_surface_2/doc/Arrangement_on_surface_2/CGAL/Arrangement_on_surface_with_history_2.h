@@ -240,6 +240,9 @@ insert
 /*! \ingroup PkgArrangementOnSurface2Insert
  * Aggregately inserts the curves in the range `[first,last)` into the
  * arrangement with history `arr` using the sweep-line framework.
+ * \param arr the target arrangement with history.
+ * \param first the iterator to the first element in the range of curves.
+ * \param last the past-the-end iterator of the range of curves.
  */
 template <typename GeometryTraits, typename TopologyTraits,
           typename InputIterator>

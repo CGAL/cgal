@@ -1022,7 +1022,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
             const PointLocation& pl = walk_pl);
 
 /*! Inserts the<I>\f$ x\f$-monotone (only)</I> curve `xc` into the arrangement
- * `arr`. The object `obj`, which either wraps a `Vertex_const_handle`, a
+ * `arr`. The object `obj`, which wraps a `Vertex_const_handle`, a
  * `Halfedge_const_handle`, or a `Face_const_handle`, represents the location of
  * `xc`'s left endpoint in the arrangement. The zone of `xc` is computed
  * starting from the feature represented by `obj`. As in the case above, the
@@ -1032,11 +1032,14 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 template <typename GeometryTraits_2, typename TopologyTraits>
 void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
             const typename Traits::X_monotone_curve_2& xc,
-            const Object& obj);
+            typename Arr_point_location_result<Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits> >::type obj);
 
 
 /*! Aggregately inserts the curves or \f$ x\f$-monotone curves in the range
  * `[first,last)` into the arrangement `arr` using the sweep-line framework.
+ * \param arr the target arrangement.
+ * \param first the iterator to the first element in the range of curves.
+ * \param last the past-the-end iterator of the range of curves.
  */
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename InputIterator>
