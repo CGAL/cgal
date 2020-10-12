@@ -379,20 +379,13 @@ void orient_scanline (Iterator begin, Iterator end,
    Then, the line of sight (estimated vector between a point and the
    position of the scanner at its time of acquisition) is estimated:
 
-   - if both `scan_direction_flag` and `scan_angle` are provided, the
-     line of sight can be directly computed as a combination of the 2D
-     vector of the projected scanline, the vertical vector and the
+   - if `scan_angle` is provided, the line of sight can be directly
+     computed as a combination of the estimated scanline and of the
      scan angle.
 
-   - if only `scan_angle` is provided, then for each scanline, the
-     position of the scanner is estimated as being above the point of
-     the scanline which has the minimum scan angle absolute
-     value. This method is less optimal than the one using
-     `scan_direction_flag`.
-
-   - if none of these property maps are provided, then for each
-     scanline, the position of the scanner is estimated as being above
-     of the barycenter of the points of the scanline projected on the
+   - if no scan angle map is provided, then for each scanline, the
+     position of the scanner is estimated as being above of the
+     barycenter of the points of the scanline projected on the
      XY-plane. This fallback method gives suboptimal results.
 
    Once the line of sight is estimated for each point, the normals are
