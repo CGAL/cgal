@@ -144,7 +144,7 @@ foreach(cgal_lib ${CGAL_LIBRARIES})
     if(NOT TARGET CGAL::${cgal_lib})
       add_library(CGAL::${cgal_lib} ALIAS ${cgal_lib})
     endif()
-    CGAL_setup_target_dependencies(${cgal_lib} INTERFACE)
+    CGAL_setup_target_dependencies(${cgal_lib})
   endif()
 endforeach()
 

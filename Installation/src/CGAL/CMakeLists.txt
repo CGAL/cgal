@@ -4,9 +4,7 @@ collect_cgal_library(CGAL "")
 
 include(CGAL_SetupCGALDependencies)
 
-set(keyword "INTERFACE")
-
-CGAL_setup_CGAL_dependencies(CGAL ${keyword})
+CGAL_setup_CGAL_dependencies(CGAL)
 
 if(NOT CGAL_DISABLE_GMP)
   get_dependency_version(GMP)

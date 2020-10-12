@@ -4,9 +4,7 @@ collect_cgal_library( CGAL_ImageIO "")
 
 include(CGAL_SetupCGAL_ImageIODependencies)
 
-set(keyword "INTERFACE")
-
-CGAL_setup_CGAL_ImageIO_dependencies(CGAL_ImageIO ${keyword})
+CGAL_setup_CGAL_ImageIO_dependencies(CGAL_ImageIO)
 
 if(COMMAND add_config_flag)
   set( CGAL_HAS_IMAGEIO TRUE )

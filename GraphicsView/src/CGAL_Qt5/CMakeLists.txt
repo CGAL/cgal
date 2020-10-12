@@ -16,9 +16,7 @@ message( STATUS "USING Qt5_VERSION = '${Qt5Core_VERSION_STRING}'" )
 
 collect_cgal_library( CGAL_Qt5 "")
 
-set(keyword "INTERFACE")
-
-CGAL_setup_CGAL_Qt5_dependencies( CGAL_Qt5 ${keyword})
+CGAL_setup_CGAL_Qt5_dependencies( CGAL_Qt5 )
 
 if(COMMAND add_config_flag)
   set( CGAL_HAS_QT5 TRUE )
