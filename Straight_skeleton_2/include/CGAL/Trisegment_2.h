@@ -15,6 +15,10 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+
+#include <CGAL/assertions.h>
+
 #include <boost/intrusive_ptr.hpp>
 
 #include <limits>
@@ -188,7 +192,7 @@ public:
 
 private :
   std::size_t             mID;
-  Segment       mE[3];
+  Segment                 mE[3];
   Trisegment_collinearity mCollinearity ;
   unsigned                mCSIdx, mNCSIdx ;
 
