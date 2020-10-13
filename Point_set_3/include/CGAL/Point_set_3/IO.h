@@ -129,7 +129,7 @@ bool read_point_set(const std::string& fname,
 {
   const std::string ext = IO::internal::get_file_extension(fname);
 
-  if(ext == "xyz")
+  if(ext == "xyz" || ext == "pwn")
     return read_XYZ(fname, ps);
   else if(ext == "off")
     return read_OFF(fname, ps);
