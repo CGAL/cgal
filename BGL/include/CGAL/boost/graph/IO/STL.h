@@ -279,6 +279,7 @@ bool write_STL(std::ostream& os,
         os.write(reinterpret_cast<const char *>(&coords[i]), sizeof(coords[i]));
       os << "  ";
     }
+    os << std::flush;
   }
   else
   {
@@ -295,7 +296,7 @@ bool write_STL(std::ostream& os,
       os << "vertex " << p << "\n";
       os << "vertex " << q << "\n";
       os << "vertex " << r << "\n";
-      os << "endloop\nendfacet" << std::endl;
+      os << "endloop\nendfacet" << "\n";
     }
     os << "endsolid" << std::endl;
   }

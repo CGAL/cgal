@@ -473,7 +473,7 @@ bool write_VTP(std::ostream& os,
     IO::internal::write_polys_points(os, g, np);
     IO::internal::write_polys(os, g, np);
   }
-  os << "</VTKFile>\n";
+  os << "</VTKFile>" << std::endl;
 
   return os.good();
 }

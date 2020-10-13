@@ -305,7 +305,7 @@ bool write_GOCAD(std::ostream& os,
   os << "GOCAD TSurf 1\n"
         "HEADER {\n"
         "name:";
-  os << fname << std::endl;
+  os << fname << "\n";
   os << "*border:on\n"
         "*border*bstone:on\n"
         "}\n"

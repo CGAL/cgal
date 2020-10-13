@@ -434,7 +434,7 @@ bool write_VTP(std::ostream& os,
     IO::internal::write_soup_polys_points(os, points);
     IO::internal::write_soup_polys(os, polygons,size_map, cell_type);
   }
-  os << "</VTKFile>\n";
+  os << "</VTKFile>" << std::endl;
 }
 
 /// \cond SKIP_IN_MANUAL

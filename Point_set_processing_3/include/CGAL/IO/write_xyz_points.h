@@ -76,8 +76,10 @@ bool write_XYZ_PSP(std::ostream& os,
     os << get(point_map, *it);
     if(has_normals)
       os << " " << get(normal_map, *it);
-    os << std::endl;
+    os << "\n";
   }
+
+  os << std::flush;
 
   return !os.fail();
 }

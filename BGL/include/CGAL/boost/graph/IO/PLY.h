@@ -439,6 +439,8 @@ bool write_PLY(std::ostream& os,
     }
   }
 
+  os << std::flush; // write() doesn't flush
+
   return os.good();
 }
 
