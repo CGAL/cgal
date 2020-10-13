@@ -344,7 +344,7 @@ public:
     setKeyDescription(::Qt::Key_PageDown, "Increase light (all colors, use shift/alt/ctrl for one rgb component)");
     setKeyDescription(::Qt::Key_PageUp, "Decrease light (all colors, use shift/alt/ctrl for one rgb component)");
     setKeyDescription(::Qt::Key_O, "Toggles 2D mode only");
-    
+
     if (title[0]==0)
       setWindowTitle("CGAL Basic Viewer");
     else
@@ -1265,7 +1265,7 @@ protected:
     // Restore previous viewer state.
     restoreStateFromFile();
     initializeOpenGLFunctions();
-    
+
     // Light default parameters
     glLineWidth(m_size_edges);
     glEnable(GL_POLYGON_OFFSET_FILL);
