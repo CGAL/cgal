@@ -356,10 +356,10 @@ void orient_scanline (Iterator begin, Iterator end,
 /**
    \ingroup PkgPointSetProcessing3Algorithms
 
-   Orients the normals of the range of `points` by estimating a line
+   orients the normals of the range of `points` by estimating a line
    of sight and checking its consistency with the current normal orientation.
 
-   \warning this function requires the input `points` to be ordered
+   \warning This function requires the input `points` to be ordered
    along scanlines aligned on the XY-plane. It is typically designed
    for 2.5D urban datasets acquired through, for example, airborne
    LIDAR devices.
@@ -367,13 +367,12 @@ void orient_scanline (Iterator begin, Iterator end,
    First, scanlines are estimated as subranges of `points` by
    iterating on `points`:
 
-   - if the named parameter `scanline_id_map` is provided, the
-     range is cutted everytime the flag (which tells if the scanner
-     was moving in the positive or negative direction) changes.
+   - if the named parameter `scanline_id_map` is provided, the range
+     is cutted everytime the id changes.
 
-   - if no direction flag map is provided, a fallback method simply
-     cuts the range everytime 3 consecutive points form an acute angle
-     on the projected XY-plane. This fallback method gives suboptimal
+   - if no scanline ID map is provided, a fallback method simply cuts
+     the range everytime 3 consecutive points form an acute angle on
+     the projected XY-plane. This fallback method gives suboptimal
      results.
 
    Then, the line of sight (estimated vector between a point and the
@@ -393,7 +392,7 @@ void orient_scanline (Iterator begin, Iterator end,
    normal vector give a positive scalar product. If they don't, then
    the normal vector is inverted.
 
-   \note this method gives optimal results when `scanline_id_map`
+   \note This method gives optimal results when `scanline_id_map`
    and `scan_angle` are provided. Correct results may still be
    produced in the absence of either one or both of these properties,
    as long as the point set is ordered in 2.5D scanlines.
@@ -413,21 +412,37 @@ void orient_scanline (Iterator begin, Iterator end,
      \cgalParamNEnd
 
      \cgalParamNBegin{normal_map}
-       \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
-       \cgalParamType{a model of `WritablePropertyMap` whose key type is the value type
-                      of the iterator of `PointRange` and whose value type is `geom_traits::Vector_3`}
+       \cgalParamDescription{a property map associating normals to the
+       elements of the point set `points`}
+       \cgalParamType{a model of `WritablePropertyMap` whose key type
+                      is the value type of the iterator of
+                      `PointRange` and whose value type is
+                      `geom_traits::Vector_3`}
      \cgalParamNEnd
 
      \cgalParamNBegin{scan_angle_map}
-       \cgalParamDescription{a property map associating the angle of acquisition (in degrees) to the elements of the point set `points`}
-       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
-                      of the iterator of `PointRange` and whose value type is convertible to `double`}
+       \cgalParamDescription{a property map associating the angle of
+       acquisition (in degrees) to the elements of the point set
+       `points`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type
+                      is the value type of the iterator of
+                      `PointRange` and whose value type is convertible
+                      to `double`}
      \cgalParamNEnd
 
      \cgalParamNBegin{scanline_id_map}
-       \cgalParamDescription{a property map associating a scanline ID to the elements of the point set `points`. A scanline is detected as a consecutive subrange of items in the input range `point` whose ID. IDs do not need to be unique, they just need to be different for two consecutive scanlines. The LAS property `scan_direction_flag` (whose values are either 0 or 1 depending on the direction of the scanner) can be used.}
-       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
-                      of the iterator of `PointRange` and whose value type is a model of `EqualityComparable`}
+       \cgalParamDescription{a property map associating a scanline ID
+       to the elements of the point set `points`. A scanline is
+       detected as a consecutive subrange of items in the input range
+       `point` whose ID is identical. IDs do not need to be unique,
+       they just need to be different for two consecutive
+       scanlines. The LAS property `scan_direction_flag` (whose values
+       are either 0 or 1 depending on the direction of the scanner)
+       can be used.}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type
+                      is the value type of the iterator of
+                      `PointRange` and whose value type is a model of
+                      `EqualityComparable`}
      \cgalParamNEnd
 
      \cgalParamNBegin{geom_traits}
