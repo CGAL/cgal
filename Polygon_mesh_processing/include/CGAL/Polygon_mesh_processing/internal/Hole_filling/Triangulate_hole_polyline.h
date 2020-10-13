@@ -1432,7 +1432,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
 
       std::vector<int> is(3);
       for (int i = 0; i < 3; ++i) {
-        is[i] = fit->vertex(i)->info();
+        is[i] = static_cast<int>(fit->vertex(i)->info());
       }
 
       std::sort(is.begin(), is.end());
