@@ -66,6 +66,10 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
   vtkIdType nb_points = poly_data->GetNumberOfPoints();
   vtkIdType nb_cells = poly_data->GetNumberOfCells();
 
+  reserve(g, num_vertices(g) + static_cast<typename boost::graph_traits<Graph>::vertices_size_type>(nb_points),
+             num_edges(g) + static_cast<typename boost::graph_traits<Graph>::edges_size_type>(nb_points + nb_cells),
+             num_faces(g) + static_cast<typename boost::graph_traits<Graph>::faces_size_type>(nb_cells));
+
   // extract points
   std::vector<vertex_descriptor> vertex_map(nb_points);
   for(vtkIdType i=0; i<nb_points; ++i)
