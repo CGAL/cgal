@@ -91,9 +91,7 @@ bool test(const DT& dt,
   using std::get;
   const auto& p1 = query.first;
   const auto& p2 = query.second;
-#ifdef CGAL_T3_TEST_SIMPLEX_TRAVERSER
   unsigned int nb_cells = 0, nb_collinear = 0;
-#endif
   unsigned int nb_facets = 0, nb_edges = 0, nb_vertex = 0;
 
   std::cout << "\n#\n# Query segment: ( " << p1 << " , "
@@ -111,7 +109,6 @@ bool test(const DT& dt,
     else {
       ++fin;
 
-#ifdef CGAL_T3_TEST_SIMPLEX_TRAVERSER
       switch (st->dimension()) {
       case 2: {
         ++nb_facets;
@@ -150,7 +147,6 @@ bool test(const DT& dt,
       default:
         CGAL_assume(false);
       } // end switch
-#endif
   }
 }
 
@@ -165,7 +161,6 @@ bool test(const DT& dt,
       std::cout << std::endl << std::endl;
 #endif
 
-#ifdef CGAL_T3_TEST_SIMPLEX_TRAVERSER
     auto check_expected = [](unsigned value, unsigned expected) {
       if(value != expected) {
         std::cout << "\t  ERROR: expected " << expected << '\n';
@@ -182,6 +177,6 @@ bool test(const DT& dt,
     std::cout << "\tnb vertices  : " << nb_vertex << std::endl;
     result = result && check_expected(nb_vertex, expected_result[0]);
     std::cout << "\tnb collinear : " << nb_collinear << std::endl;
-#endif
+
     return result;
 }
