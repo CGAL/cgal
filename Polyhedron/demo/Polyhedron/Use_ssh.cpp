@@ -73,6 +73,8 @@ bool establish_ssh_session(ssh_session &session,
   //retry 4 times max each time the connection asks to be retried.
   for(int k = 0; k < 4; ++k)
   {
+    if(session)
+      ssh_free(session);
     session = ssh_new();
     ssh_options_set( session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity );
     ssh_options_set( session, SSH_OPTIONS_PORT, &port );
@@ -110,8 +112,11 @@ bool establish_ssh_session(ssh_session &session,
     ssh_key pubkey = ssh_key_new();
     ssh_pki_import_pubkey_file(pub_key_path, &pubkey);
     res = ssh_userauth_try_publickey(session, NULL, pubkey);
+    ssh_key_free(pubkey);
     if(res == SSH_AUTH_AGAIN)
+    {
       ssh_disconnect(session);
+    }
     else
       break;
   }
@@ -119,6 +124,7 @@ bool establish_ssh_session(ssh_session &session,
   if(!test_result(res))
   {
     ssh_disconnect(session);
+
     return false;
   }
 
@@ -127,9 +133,11 @@ bool establish_ssh_session(ssh_session &session,
   if (!test_result(res))
   {
     ssh_disconnect(session);
+    ssh_key_free(privkey);
     return false;
   }
   res = ssh_userauth_publickey(session, NULL, privkey);
+  ssh_key_free(privkey);
   if(!test_result(res))
   {
     ssh_disconnect(session);
@@ -153,6 +161,8 @@ bool establish_ssh_session_from_agent(ssh_session& session,
   //retry 4 times max each time the connection asks to be retried.
   for(int k = 0; k < 4; ++k)
   {
+    if(session)
+      ssh_free(session);
     session = ssh_new();
     ssh_options_set( session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity );
     ssh_options_set( session, SSH_OPTIONS_PORT, &port );
@@ -190,6 +200,7 @@ bool establish_ssh_session_from_agent(ssh_session& session,
     ssh_key pubkey = ssh_key_new();
     ssh_pki_import_pubkey_file(pub_key_path, &pubkey);
     res = ssh_userauth_try_publickey(session, NULL, pubkey);
+    ssh_key_free(pubkey);
     if(res == SSH_AUTH_AGAIN)
       ssh_disconnect(session);
     else
@@ -263,6 +274,7 @@ bool push_file(ssh_session &session,
   if (!file.read(buffer.data(), size))
   {
     std::cerr<<"error while reading file."<<std::endl;
+    ssh_scp_free(scp);
     ssh_disconnect(session);
     return false;
   }
@@ -272,6 +284,7 @@ bool push_file(ssh_session &session,
   {
     std::cerr<<"Can't create remote directory: %s\n"
             <<ssh_get_error(session)<<std::endl;
+    ssh_scp_free(scp);
     ssh_disconnect(session);
     return false;
   }
@@ -281,6 +294,7 @@ bool push_file(ssh_session &session,
   {
     std::cerr<< "Can't open remote file: %s\n"
              << ssh_get_error(session)<<std::endl;
+    ssh_scp_free(scp);
     ssh_disconnect(session);
     return false;
   }
@@ -293,9 +307,11 @@ bool push_file(ssh_session &session,
   {
     std::cerr<< "Can't write to remote file: %s\n"
              << ssh_get_error(session)<<std::endl;
+    ssh_scp_free(scp);
     ssh_disconnect(session);
     return false;
   }
+  ssh_scp_free(scp);
   return true;
 }
 
