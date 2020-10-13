@@ -44,7 +44,7 @@ jobs:
         if: steps.get_round.outputs.result != 'stop'
         run: |
           set -x
-          sudo apt-get install -y graphviz ssh
+          sudo apt-get install -y graphviz ssh bibtex2html
           sudo pip install lxml pyquery
           wget --no-verbose -O doxygen_exe https://cgal.geometryfactory.com/~mgimeno/doxygen/build_1_8_13/bin/doxygen
           sudo mv doxygen_exe /usr/bin/doxygen
