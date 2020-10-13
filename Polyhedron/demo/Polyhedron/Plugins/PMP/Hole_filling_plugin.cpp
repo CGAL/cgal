@@ -28,6 +28,7 @@
 #include <QApplication>
 #include <QDockWidget>
 #include <QInputDialog>
+#include <QMessageBox>
 
 #include <QEvent>
 #include <QKeyEvent>
