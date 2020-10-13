@@ -193,7 +193,7 @@ void write_polys(std::ostream& os,
 
   std::vector<std::size_t> connectivity_table;
   std::vector<std::size_t> offsets;
-  std::vector<unsigned char> cell_type(num_faces(g), 5);  // triangle == 5
+  std::vector<unsigned char> cell_type(faces(g).size(), 5);  // triangle == 5
 
   std::size_t off = 0;
 
@@ -243,7 +243,7 @@ void write_polys_tag(std::ostream& os,
   if(binary)
   {
     os << " offset=\"" << offset << "\"/>\n";
-    offset += (3 * num_faces(g)+ 1) * sizeof(std::size_t);
+    offset += (3 * faces(g).size() + 1) * sizeof(std::size_t);
     // 3 indices (size_t) per triangle + length of the encoded data (size_t)
   }
   else
@@ -264,7 +264,7 @@ void write_polys_tag(std::ostream& os,
 
   if(binary) {  // if binary output, just write the xml tag
     os << " offset=\"" << offset << "\"/>\n";
-    offset += (num_faces(g) + 1) * sizeof(std::size_t);
+    offset += (faces(g).size() + 1) * sizeof(std::size_t);
     // 1 offset (size_t) per triangle + length of the encoded data (size_t)
   }
   else
@@ -287,13 +287,13 @@ void write_polys_tag(std::ostream& os,
   if(binary)
   {
     os << " offset=\"" << offset << "\"/>\n";
-    offset += num_faces(g) + sizeof(std::size_t);
+    offset += faces(g).size() + sizeof(std::size_t);
     // 1 unsigned char per cell + length of the encoded data (size_t)
   }
   else
   {
     os << ">\n";
-    for(std::size_t i = 0; i< num_faces(g); ++i)
+    for(std::size_t i=0; i<faces(g).size(); ++i)
       os << "5 ";
     os << "      </DataArray>\n";
   }
@@ -332,7 +332,7 @@ void write_points_tag(std::ostream& os,
   if(binary)
   {
     os << "\" offset=\"" << offset << "\"/>\n";
-    offset += 3 * num_vertices(g) * sizeof(FT) + sizeof(std::size_t);
+    offset += 3 * vertices(g).size() * sizeof(FT) + sizeof(std::size_t);
     // 3 coords per points + length of the encoded data (size_t)
   }
   else
@@ -456,8 +456,8 @@ bool write_VTP(std::ostream& os,
 
   os << ">\n"
      << "  <PolyData>" << "\n";
-  os << "  <Piece NumberOfPoints=\"" << num_vertices(g)
-     << "\" NumberOfPolys=\"" << num_faces(g) << "\">\n";
+  os << "  <Piece NumberOfPoints=\"" << vertices(g).size()
+     << "\" NumberOfPolys=\"" << faces(g).size() << "\">\n";
 
   std::size_t offset = 0;
   const bool binary = choose_parameter(get_parameter(np, internal_np::use_binary_mode), true);

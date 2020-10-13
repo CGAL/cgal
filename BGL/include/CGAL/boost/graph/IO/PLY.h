@@ -380,7 +380,7 @@ bool write_PLY(std::ostream& os,
     }
   }
 
-  os << "element vertex " << num_vertices(g) << std::endl;
+  os << "element vertex " << vertices(g).size() << std::endl;
   IO::internal::output_property_header(os, make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
   //if vcm is not default add v:color property
   if(has_vcolor)
@@ -391,7 +391,7 @@ bool write_PLY(std::ostream& os,
        << "property uchar alpha" << std::endl;
   }
 
-  os << "element face " << num_faces(g) << std::endl;
+  os << "element face " << faces(g).size() << std::endl;
   IO::internal::output_property_header(
         os, std::make_pair(CGAL::Identity_property_map<std::vector<std::size_t> >(),
                             PLY_property<std::vector<int> >("vertex_indices")));
