@@ -148,7 +148,7 @@ bool read_point_set(const std::string& fname,
 template <typename Point, typename Vector>
 bool read_point_set(const std::string& fname, CGAL::Point_set_3<Point, Vector>& ps)
 {
-  return write_point_set(fname, ps, parameters::all_default());
+  return read_point_set(fname, ps, parameters::all_default());
 }
 
 /// \endcond
