@@ -64,13 +64,11 @@ bool read_OBJ(std::istream& is,
   set_ascii_mode(is); // obj is ASCII only
 
   int mini(1), maxi(-1);
-  bool first_o = true;
   std::string s;
   Point p;
 
   std::string line;
   bool tex_found(false), norm_found(false);
-  std::size_t offset_idx=0;
   while(getline(is, line))
   {
     if(line.empty())
@@ -79,32 +77,6 @@ bool read_OBJ(std::istream& is,
     std::istringstream iss(line);
     if(!(iss >> s))
       continue; // can't read anything on the line, whitespace only?
-    if(s == "o")
-    {
-      if(!first_o)
-      {
-        if(maxi == static_cast<int>(offset_idx -1 ) && mini == static_cast<int>(offset_idx + 1))
-        {
-          if(verbose)
-            std::cerr << "No face detected." << std::endl;
-          return false;
-        }
-
-        if(maxi > static_cast<int>(points.size()-offset_idx) || mini < -static_cast<int>(points.size()-offset_idx))
-        {
-          if(verbose)
-            std::cerr << "a face index is invalid " << std::endl;
-          return false;
-        }
-        mini = 1;
-        maxi = -1;
-      }
-      else
-      {
-        first_o = false;
-      }
-      offset_idx = points.size();
-    }
 
     if(s == "v")
     {
@@ -135,7 +107,7 @@ bool read_OBJ(std::istream& is,
         {
           const std::size_t n = polygons.back().size();
           ::CGAL::internal::resize(polygons.back(), n + 1);
-          polygons.back()[n] = points.size() + offset_idx + i; // negative indices are relative references
+          polygons.back()[n] = points.size() + i; // negative indices are relative references
           if(i < mini)
             mini = i;
         }
@@ -143,7 +115,7 @@ bool read_OBJ(std::istream& is,
         {
           const std::size_t n = polygons.back().size();
           ::CGAL::internal::resize(polygons.back(), n + 1);
-          polygons.back()[n] = i + offset_idx - 1;
+          polygons.back()[n] = i - 1;
           if(i-1 > maxi)
             maxi = i-1;
         }
@@ -156,27 +128,51 @@ bool read_OBJ(std::istream& is,
       if(iss.bad())
         return false;
     }
+    else if(s.front() == '#')
+    {
+      // this is a commented line, ignored
+    }
+    else if(s == "vp" ||
+            // Display
+            s == "bevel" || s == "lod" || s == "ctech" || s == "c_interp" || s == "usemap" || s == "usemtl" ||
+            s == "stech" || s == "d_interp" || s == "mtllib" || s == "shadow_obj" || s == "trace_obj" ||
+            // groups
+            s == "o" || s == "g" || s == "s" ||
+            // Free
+            s == "p" || s == "cstype" || s == "deg" || s == "step" || s == "bmat" || s == "con" ||
+            s == "curv" || s == "curv2" || s == "surf" || s == "parm" || s == "trim" || s == "hole" ||
+            s == "scrv" || s == "sp" || s == "end" ||
+            s == "con" || s == "surf_1" || s == "q0_1" || s == "q1_1" || s == "curv2d_1" ||
+            s == "surf_2" || s == "q0_2" || s == "q1_2" || s == "curv2d_2" ||
+            // supersed statements
+            s == "bsp" || s == "bzp" || s == "cdc" || s == "cdp" || s == "res")
+    {
+      // valid, but unsupported
+    }
     else
     {
-      // std::cerr << "ERROR : Cannnot read line beginning with " << line[0] << std::endl;
-     continue;
+      if(verbose)
+        std::cerr << "error: unrecognized line: " << s << std::endl;
+      return false;
     }
   }
+
   if(norm_found && verbose)
     std::cout<<"WARNING: normals were found in this file, but were discarded."<<std::endl;
   if(tex_found && verbose)
     std::cout<<"WARNING: textures were found in this file, but were discarded."<<std::endl;
-  if(maxi == static_cast<int>(offset_idx - 1) && mini == static_cast<int>(offset_idx + 1))
+
+  if(points.empty() || polygons.empty())
   {
     if(verbose)
-      std::cerr << "No face detected." << std::endl;
+      std::cerr << "warning: empty file?" << std::endl;
     return false;
   }
 
-  if(maxi > static_cast<int>(points.size()-offset_idx) || mini < -static_cast<int>(points.size()-offset_idx))
+  if(maxi > static_cast<int>(points.size()) || mini < -static_cast<int>(points.size()))
   {
     if(verbose)
-      std::cerr << "a face index is invalid " << std::endl;
+      std::cerr << "error: invalid face index" << std::endl;
     return false;
   }
 
