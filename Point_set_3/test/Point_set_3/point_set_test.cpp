@@ -36,7 +36,11 @@ int main (int, char**)
   test (point_set.has_normal_map(), "point set should have normals.");
 
   const char* fname ("data/oni.pwn");
-  CGAL::read_point_set(fname, point_set);
+  if(!CGAL::read_point_set(fname, point_set))
+  {
+    test (false, "failed to read input point set.");
+    return EXIT_FAILURE;
+  }
 
   Point_set::iterator
     first_to_remove = CGAL::grid_simplify_point_set (point_set,

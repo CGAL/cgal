@@ -18,11 +18,11 @@ int main(int argc, char** argv)
   std::vector<Point> points;
   std::vector<Face> polygons;
 
-  bool ok = CGAL::read_OBJ(obj_file, points, polygons);
+  bool ok = CGAL::read_OBJ(obj_file, points, polygons, CGAL::parameters::verbose(true));
   assert(ok);
   std::cout << points.size() << " points and " << polygons.size() << " polygons" << std::endl;
 
-  if(argc == 0)
+  if(argc == 1)
     assert(points.size() == 434 && polygons.size() == 864);
 
   points.clear();

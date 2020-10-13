@@ -307,6 +307,7 @@ public:
     {
       if( is_border(he,pmesh()) ) { continue; }
 
+      CGAL_assertion(CGAL::is_valid_polygon_mesh(pmesh()));
       CGAL_assertion(CGAL::is_triangle_mesh(pmesh()));
       CGAL_assertion( v0 == target(he, pmesh()) );
       vertex_descriptor v1 = source(he, pmesh());

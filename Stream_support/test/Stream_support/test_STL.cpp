@@ -67,12 +67,12 @@ void further_tests()
 
 int main(int argc, char** argv)
 {
-  const char* stl_file = (argc > 1) ? argv[1] : "data/ascii-tetrahedron.obj";
+  const char* stl_file = (argc > 1) ? argv[1] : "data/ascii-tetrahedron.stl";
 
   std::vector<Point> points;
   std::vector<Face> polygons;
 
-  bool ok = CGAL::read_STL(stl_file, points, polygons);
+  bool ok = CGAL::read_STL(stl_file, points, polygons, CGAL::parameters::verbose(true));
   assert(ok);
   std::cout << points.size() << " points and " << polygons.size() << " polygons" << std::endl;
 
@@ -81,8 +81,8 @@ int main(int argc, char** argv)
 
   points.clear();
   polygons.clear();
-  std::string obj_string(stl_file);
-  ok = CGAL::read_STL(obj_string, points, polygons);
+  std::string stl_string(stl_file);
+  ok = CGAL::read_STL(stl_string, points, polygons);
   assert(ok);
 
   points.clear();

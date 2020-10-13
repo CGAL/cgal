@@ -1,10 +1,15 @@
 #include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Polyhedron_3.h>
+
 #include <CGAL/Linear_cell_complex_for_bgl_combinatorial_map_helper.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
+
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+
 #include <fstream>
 #include <vector>
 
@@ -30,59 +35,64 @@ struct Custom_VPM
   std::map<key_type, value_type>& points;
 };
 
-
 template< class Mesh>
-void do_test()
+void test(const std::string& filename, const bool is_pm)
 {
-  std::string name = "data_polygon_soup/bad_cube.off";
+  std::cout << "Test " << filename << " with Mesh = " << typeid(Mesh).name() << " is PM? " << is_pm << std::endl;
+
   Mesh g;
-  CGAL_assertion(!CGAL::read_polygon_mesh(name, g));
-  CGAL_assertion(CGAL::Polygon_mesh_processing::read_polygon_mesh(name, g));
+  bool success = CGAL::read_polygon_mesh(filename, g, CGAL::parameters::verbose(true));
+  CGAL_assertion(is_pm == success); // if it's a pm, BGL reader should be enough
+
+  clear(g);
+  success = CGAL::Polygon_mesh_processing::read_polygon_mesh(filename, g,
+                                                             CGAL::parameters::verbose(true)
+                                                                              .erase_all_duplicates(true));
+  CGAL_assertion(success);
   CGAL_assertion(is_valid(g));
-  typedef typename boost::property_map<Mesh,CGAL::vertex_point_t>::type VertexPointMap;
 
-  VertexPointMap vpm = get(CGAL::vertex_point, g);
-
+  // Test VPM NP
+  typename boost::property_map<Mesh,CGAL::vertex_point_t>::type vpm = get(CGAL::vertex_point, g);
   std::map<typename boost::graph_traits<Mesh>::vertex_descriptor, Kernel::Point_3> cpoints;
   Custom_VPM<Mesh> cvpm(cpoints);
-  //test pmap param
+
   Mesh g2;
-  CGAL_assertion(CGAL::Polygon_mesh_processing::read_polygon_mesh(name, g2, CGAL::parameters::vertex_point_map(cvpm)));
-  CGAL_assertion(num_vertices(g2)==12);
+  success = CGAL::Polygon_mesh_processing::read_polygon_mesh(filename, g2,
+                                                             CGAL::parameters::vertex_point_map(cvpm)
+                                                                              .erase_all_duplicates(true));
+  CGAL_assertion(success);
+  CGAL_assertion(num_vertices(g) == num_vertices(g2));
 
-  auto it = vertices(g2).begin(),
-      it2 = vertices(g).begin();
-
-  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
-  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
-  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
-  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
-  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
-  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
-  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
-  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
-  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
-  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
-  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
-  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
-
+  auto it = vertices(g).begin(), it2 = vertices(g2).begin();
+  while(it != vertices(g).end())
+  {
+    CGAL_assertion(get(vpm, *it++) == get(cvpm, *it2++));
+  }
 }
 
 int main()
 {
-  typedef Kernel::Point_3                                      Point;
+  typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3>                       Polyhedron;
 
-  typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
+  typedef Kernel::Point_3                                                                    Point;
+  typedef CGAL::Surface_mesh<Point>                                                          SM;
 
-  typedef CGAL::Surface_mesh<Point>                            SM;
+  typedef CGAL::Linear_cell_complex_traits<3, Kernel>                                        LCC_traits;
+  typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper<2, 3, LCC_traits>::type LCC;
 
-  typedef CGAL::Linear_cell_complex_traits<3, Kernel> MyTraits;
-  typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
-      <2, 3, MyTraits>::type LCC;
+  test<SM>("data/pig.off", true);
+  test<Polyhedron>("data/pig.off", true);
+  test<LCC>("data/pig.off", true);
 
+  test<SM>("data_polygon_soup/nm_vertex_and_edge.off", false);
+  test<Polyhedron>("data_polygon_soup/nm_vertex_and_edge.off", false);
+  test<LCC>("data_polygon_soup/nm_vertex_and_edge.off", false);
 
-  do_test<Polyhedron>();
-  do_test<SM>();
-  do_test<LCC>();
-  return 0;
+  test<SM>("data_polygon_soup/incompatible_orientation.off", false);
+  test<Polyhedron>("data_polygon_soup/incompatible_orientation.off", false);
+  test<LCC>("data_polygon_soup/incompatible_orientation.off", false);
+
+  std::cout << "Done!" << std::endl;
+
+  return EXIT_SUCCESS;
 }

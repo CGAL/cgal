@@ -125,7 +125,7 @@ bool read_XYZ(std::istream& is,
     FT x,y,z;
     FT nx,ny,nz;
 
-    lineNumber++;
+    ++lineNumber;
 
     // Trims line buffer
     line.erase(line.find_last_not_of (" ")+1);

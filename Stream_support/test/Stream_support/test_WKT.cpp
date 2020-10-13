@@ -1,3 +1,5 @@
+#include <iostream>
+
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
 
@@ -7,7 +9,6 @@
 #include <boost/version.hpp>
 
 #include <fstream>
-#include <iostream>
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel           Kernel;

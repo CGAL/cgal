@@ -105,8 +105,9 @@ bool test_points_with_np(std::string s)
 }
 
 #define CGAL_DEF_TEST_POINT_SET_3_FUNCTION(TYPE, type)                                             \
-void test_##TYPE(std::string s)                                                                    \
+void test_##TYPE(const std::string& s)                                                             \
 {                                                                                                  \
+  std::cout << "Test Point_set_3: " << s << " extension: " << #TYPE << std::endl;                  \
   CGAL::Point_set_3<Point_3, Vector_3> ps;                                                         \
   bool ok = CGAL::read_##TYPE(s, ps);                                                              \
   assert(ok);                                                                                      \
@@ -163,8 +164,9 @@ CGAL_DEF_TEST_POINT_SET_3_FUNCTION(LAS, "las")
 #undef CGAL_DEF_INITIALIZE_ID_FUCNTION
 
 #define CGAL_DEF_TEST_POINTS_FUNCTION(TYPE, type)                                                  \
-void test_points_##TYPE(std::string s)                                                             \
+void test_points_##TYPE(const std::string& s)                                                      \
 {                                                                                                  \
+  std::cout << "Test points: " << s << " extension: " << #TYPE << std::endl;                       \
   std::vector<Point_3> ps;                                                                         \
   bool ok = CGAL::read_##TYPE(s, std::back_inserter(ps));                                          \
   assert(ok);                                                                                      \
