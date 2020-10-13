@@ -201,7 +201,7 @@ private:
     const double max_distance_to_plane =
     dialog.epsilon();
     const double max_accepted_angle =
-    (std::acos(dialog.normal_tolerance()) * 180.0) / CGAL_PI;
+    dialog.normal_tolerance();
     const std::size_t min_region_size =
     dialog.min_points();
 
@@ -248,7 +248,19 @@ private:
         64 + rnd.get_int(0, 192),
         64 + rnd.get_int(0, 192)));
     }
-
+    if(color_vector.empty())
+    {
+      for(const auto& f : faces(fg))
+      {
+        fg.property_map<face_descriptor, int>("f:patch_id").first[f] =
+            static_cast<int>(0);
+      }
+      CGAL::Random rnd(static_cast<unsigned int>(0));
+      color_vector.push_back(QColor(
+        64 + rnd.get_int(0, 192),
+        64 + rnd.get_int(0, 192),
+        64 + rnd.get_int(0, 192)));
+    }
     colored_item->invalidateOpenGLBuffers();
     scene->addItem(colored_item);
   }
@@ -273,7 +285,7 @@ private:
     const double max_distance_to_plane =
     dialog.epsilon();
     const double max_accepted_angle =
-    (std::acos(dialog.normal_tolerance()) * 180.0) / CGAL_PI;
+    dialog.normal_tolerance();
     const std::size_t min_region_size =
     dialog.min_points();
 
@@ -648,7 +660,7 @@ private:
                                  CGAL::Shape_detection::Plane_map<Traits>(),
                                  CGAL::Shape_detection::Point_to_shape_index_map<Traits>(*points, planes),
                                  true, true, true, true,
-                                 180 * std::acos (op.normal_threshold) / CGAL_PI, op.epsilon);
+                                 op.normal_threshold, op.epsilon);
 
         std::cerr << "done" << std::endl;
       }
@@ -927,8 +939,14 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetectShapesSM_t
     dialog.label_4->setEnabled(false);
     dialog.m_cluster_epsilon_field->setEnabled(false);
     dialog.groupBox_3->setEnabled(false);
-
+    //todo: check default values
+    dialog.m_epsilon_field->setValue(0.01*sm_item->diagonalBbox());
+    std::size_t nb_faces = mesh->number_of_faces();
+    dialog.m_min_pts_field->setValue((std::max)(static_cast<int>(0.01*nb_faces), 1));
     if(!dialog.exec()) return;
+
+    if(dialog.min_points() > static_cast<unsigned int>(nb_faces))
+      dialog.m_min_pts_field->setValue(static_cast<unsigned int>(nb_faces));
     QApplication::setOverrideCursor(Qt::WaitCursor);
     if (dialog.region_growing()) {
       detect_shapes_with_region_growing_sm(sm_item, dialog);
@@ -969,6 +987,8 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
       Point_set_demo_point_set_shape_detection_dialog dialog;
       if(!dialog.exec())
         return;
+      if(dialog.min_points() > static_cast<unsigned int>(points->size()))
+        dialog.m_min_pts_field->setValue(static_cast<unsigned int>(points->size()));
 
       QApplication::setOverrideCursor(Qt::WaitCursor);
       if (dialog.region_growing())

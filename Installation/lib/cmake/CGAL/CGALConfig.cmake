@@ -150,6 +150,7 @@ foreach(cgal_lib ${CGAL_LIBRARIES})
   endif()
 endforeach()
 
+include(${CGAL_CONFIG_DIR}/CGALConfigVersion.cmake)
 
 #
 #
