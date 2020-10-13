@@ -434,7 +434,7 @@ void orient_scanline (Iterator begin, Iterator end,
        \cgalParamDescription{a property map associating a scanline ID
        to the elements of the point set `points`. A scanline is
        detected as a consecutive subrange of items in the input range
-       `point` whose ID is identical. IDs do not need to be unique,
+       `point` whose ID are identical. IDs do not need to be unique,
        they just need to be different for two consecutive
        scanlines. The LAS property `scan_direction_flag` (whose values
        are either 0 or 1 depending on the direction of the scanner)
