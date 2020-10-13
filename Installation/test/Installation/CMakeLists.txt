@@ -27,8 +27,8 @@ macro(create_link_to_program COMPONENT )
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS link_to_${COMPONENT} )
 
 endmacro()
-
-find_package(CGAL QUIET COMPONENTS Core)
+find_package(Qt5 QUIET)
+find_package(CGAL QUIET COMPONENTS Core Qt5)
 
 if ( CGAL_FOUND )
 
@@ -56,27 +56,17 @@ if ( CGAL_FOUND )
 
   create_link_to_program(CGAL)
 
-  if ( WITH_CGAL_Core )
+  if ( TARGET CGAL::CGAL_Core )
     create_link_to_program(CGAL_Core)
   endif()
 
-  if ( WITH_CGAL_ImageIO )
+  if ( TARGET CGAL::CGAL_ImageIO )
     create_link_to_program(CGAL_ImageIO)
   endif()
 
-  if ( WITH_CGAL_Qt4 )
-    find_package(Qt4 QUIET)
-    if( QT4_FOUND )
-      include(${QT_USE_FILE})
-      create_link_to_program(CGAL_Qt4)
-    endif()
-  endif()
 
-  if ( WITH_CGAL_Qt5 )
-    find_package(Qt5 QUIET)
-    if( Qt5_FOUND )
-      create_link_to_program(CGAL_Qt5)
-    endif()
+  if ( TARGET CGAL::CGAL_Qt5 )
+    create_link_to_program(CGAL_Qt5)
   endif()
 
   if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL Windows)
@@ -235,7 +225,7 @@ list(APPEND test_config_lst "test_config_file_3")
 if(CGAL_Qt5_FOUND)
   #configure cgal for a non standard install with qt5
   add_test(NAME config_non_standard_cgal_qt5
-    COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${NON_STANDARD_INSTALL_PREFIX}/non_standard_install_qt5 -DCGAL_INSTALL_LIB_DIR=lib -DWITH_CGAL_Qt5=ON
+    COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${NON_STANDARD_INSTALL_PREFIX}/non_standard_install_qt5 -DCGAL_INSTALL_LIB_DIR=lib
     "${CGAL_SOURCE_DIR}"
     WORKING_DIRECTORY "${NON_STANDARD_INSTALL_PREFIX}/non_standard_build_qt5")
   #install cgal in the non standard place

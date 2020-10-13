@@ -18,10 +18,8 @@ endif()
 
 list( SORT list )
 
-if(NOT CGAL_BUILDING_LIBS)
-  find_package(CGAL REQUIRED)
-  include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
-endif()
+find_package(CGAL REQUIRED)
+include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 
 message("== Generating build files for examples ==")
 foreach( entry ${list} )

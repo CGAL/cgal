@@ -1,19 +1,10 @@
 function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
-  if(CGAL_BUILD_SHARED_LIBS)
-    set(CGAL_LIB_PREFIX "")
-  else()
-    set(CGAL_LIB_PREFIX "lib")
-  endif()
+  set(CGAL_LIB_PREFIX "lib")
 
   set(RELEASE_MANGLED_NAME        "${CGAL_LIB_PREFIX}${LIBRARY_NAME}-${CGAL_TOOLSET}-mt-${CGAL_FULL_VERSION}" )
   set(DEBUG_MANGLED_NAME          "${CGAL_LIB_PREFIX}${LIBRARY_NAME}-${CGAL_TOOLSET}-mt-gd-${CGAL_FULL_VERSION}" )
 
-  if(CGAL_BUILD_SHARED_LIBS AND WIN32)
-    configure_file(${CGAL_INSTALLATION_PACKAGE_DIR}/src/CGAL_libs_verinfo.rc.in ${LIBRARY_NAME}_verinfo.rc @ONLY)
-    set(rc_file ${CMAKE_CURRENT_BINARY_DIR}/${LIBRARY_NAME}_verinfo.rc)
-  else()
-    set(rc_file )
-  endif()
+  set(rc_file )
 
   add_library(${LIBRARY_NAME} INTERFACE)
 

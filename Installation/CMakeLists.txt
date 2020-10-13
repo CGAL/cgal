@@ -357,7 +357,6 @@ set( CGAL_Qt5_SOVERSION          "14.0.0" )
 
 message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
-set( CGAL_BUILDING_LIBS TRUE )
 
 set( CGAL_VERSION_DIR     CGAL-${CGAL_VERSION} )
 set( CGAL_MODULES_REL_DIR cmake/modules )
@@ -667,7 +666,35 @@ cache_get(CGAL_3RD_PARTY_INCLUDE_DIRS  )
 cache_get(CGAL_3RD_PARTY_LIBRARIES     )
 cache_get(CGAL_3RD_PARTY_LIBRARIES_DIRS)
 
-add_subdirectory(src)
+#add_subdirectory(src)
+message("Configuring libCGAL_Qt5")
+
+if(NOT POLICY CMP0070 AND POLICY CMP0053)
+  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
+  cmake_policy(SET CMP0053 OLD)
+endif()
+
+include(CGAL_SetupCGAL_Qt5Dependencies)
+
+if(CGAL_Qt5_MISSING_DEPS)
+  message(STATUS "libCGAL_Qt5 is missing the dependencies: ${CGAL_Qt5_MISSING_DEPS} cannot be configured.")
+else()
+
+  message( STATUS "USING Qt5_VERSION = '${Qt5Core_VERSION_STRING}'" )
+  CGAL_setup_CGAL_Qt5_dependencies( CGAL_Qt5 )
+
+  if(COMMAND add_config_flag)
+    set( CGAL_HAS_QT5 TRUE )
+    add_config_flag( CGAL_HAS_QT5 )
+  endif()
+
+  install(DIRECTORY " ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/Qt" COMPONENT CGAL_Qt5)
+  install(DIRECTORY " ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/resources/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/resources" COMPONENT CGAL_Qt5)
+  install(DIRECTORY " ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/icons/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/icons" COMPONENT CGAL_Qt5)
+
+  message("libCGAL_Qt5 is configured")
+endif()
+
 
 #
 # Variables used when WITH_{demos|examples|tests} are TRUE

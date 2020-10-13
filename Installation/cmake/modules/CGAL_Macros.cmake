@@ -290,10 +290,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
       # To deal with imported targets of Qt5 and Boost, when CGAL
       # targets are themselves imported by another project.
-      if(NOT CGAL_BUILDING_LIBS)
-        if (${component} STREQUAL "Qt5")
-          find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
-        endif()
+
+      if (${component} STREQUAL "Qt5")
+        find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
       endif()
 
     else(WITH_CGAL_${component})
