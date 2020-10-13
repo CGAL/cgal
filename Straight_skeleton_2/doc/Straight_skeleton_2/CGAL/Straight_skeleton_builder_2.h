@@ -82,7 +82,7 @@ Edges movement is described by vertices movement, and these by bisectors. Theref
 between edges `E(j),E(i),E(k)` (all in the same connected component) occurs when the moving vertices
 `E(j)->E(i)` and `E(i)->E(k)` meet ; that is, when the two bisectors describing the moving vertices
 <I>intersect</I> (Note: as the edges move inward and events occur, a vertex between edges `A` and `B`
-might exist even if A and B are not consecutive; that is, `j` and `k` are not necessarily `i-1` and `i+1`
+might exist even if `A` and `B` are not consecutive; that is, `j` and `k` are not necessarily `i-1` and `i+1`
 respectively, although initially they are).
 
 Similarly, the collision between `E(i),E(i+1)` with `E(j)` (all in the same connected component)
@@ -176,7 +176,7 @@ the outer contour or inside another hole. It is also an error to enter a contour
 or touches any one another. It is possible however to enter a contour that touches itself in such a way
 that its interior region is still well defined and singly-connected (see the User Manual for examples).
 
-The sequence [aBegin,aEnd) must iterate over each 2D point that corresponds to a vertex
+The sequence `[aBegin,aEnd)` must iterate over each 2D point that corresponds to a vertex
 of the contour being entered. Vertices cannot be coincident (except consecutively since the method
 simply skip consecutive coincident vertices). Consecutive collinear edges are allowed.
 
@@ -189,10 +189,10 @@ Straight_skeleton_builder_2& enter_contour( InputPointIterator aBegin, InputPoin
 
 /*!
 constructs and returns the 2D straight skeleton in the interior of the polygon with holes as defined
-by the contours entered first by calling `enter_contour`. All the contours of the polygon with holes
-must be entered before calling `construct_skeleton`.
+by the contours entered first by calling `enter_contour()`. All the contours of the polygon with holes
+must be entered before calling `construct_skeleton()`.
 
-After `construct_skeleton` completes, you cannot enter more contours and/or call `construct_skeleton()` again.
+After `construct_skeleton()` completes, you cannot enter more contours and/or call `construct_skeleton()` again.
 If you need another straight skeleton for another polygon you must instantiate and use another builder.
 
 The result is a dynamically allocated instance of the `Ss` class, wrapped in a `boost::shared_ptr`.

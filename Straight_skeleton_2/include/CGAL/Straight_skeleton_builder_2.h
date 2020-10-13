@@ -244,7 +244,7 @@ private :
 
     return std::acos(cosine) * 180. / CGAL_PI;
   }
-
+// Only used to debug
   double ComputeSupportsAngleSplit ( EventPtr const& aEvent )
   {
     SplitEvent& lEvent = dynamic_cast<SplitEvent&>(*aEvent) ;
@@ -254,7 +254,7 @@ private :
 
     return ComputeApproximateAngle(lV1, lV2) ;
   }
-
+// Only used to debug
   double ComputeSupportsAnglePseudoSplit ( EventPtr const& aEvent )
   {
     PseudoSplitEvent& lEvent = dynamic_cast<PseudoSplitEvent&>(*aEvent) ;
@@ -276,10 +276,9 @@ private :
 
     return ComputeApproximateAngle(lV1, lV2) ;
   }
-
+// Only used to debug
   double ComputeSupportsAngle ( EventPtr const& aEvent )
   {
-    // CGAL_STSKEL_DISABLE_TRACE
 
     if ( aEvent->type() == Event::cSplitEvent )
     {
@@ -312,7 +311,6 @@ private :
 
   Comparison_result CompareEventsSupportAnglesSplitSplit ( EventPtr const& aA, EventPtr const& aB )
   {
-//    std::cout << "SS" << std::endl;
     CGAL_precondition ( aA->triedge().e0() == aB->triedge().e0() && aA->triedge().e1() == aB->triedge().e1() ) ;
     return Compare_ss_event_angles_2(mTraits)( CreateVector(aA->triedge().e0()),
                                                CreateVector(aA->triedge().e1()),
@@ -322,7 +320,6 @@ private :
 
   Comparison_result CompareEventsSupportAnglesSplitPseudoSplit ( EventPtr const& aA, EventPtr const& aB )
   {
-//    std::cout << "SPS" << std::endl;
     CGAL_precondition ( aA->triedge().e0() == aB->triedge().e0() && aA->triedge().e1() == aB->triedge().e1() ) ;
 
     PseudoSplitEvent& lPSEvent = dynamic_cast<PseudoSplitEvent&>(*aB) ;
@@ -344,7 +341,6 @@ private :
 
   Comparison_result CompareEventsSupportAnglesPseudoSplitPseudoSplit ( EventPtr const& aA, EventPtr const& aB )
   {
-//    std::cout << "PSPS" << std::endl;
     CGAL_precondition ( aA->triedge().e0() == aB->triedge().e0() && aA->triedge().e1() == aB->triedge().e1() ) ;
 
     PseudoSplitEvent& lPSEventA = dynamic_cast<PseudoSplitEvent&>(*aA) ;
@@ -522,7 +518,7 @@ public:
       if ( ! mBuilder->AreEventsSimultaneous(aA,aB) )
         return ( mBuilder->CompareEvents(aA,aB) == LARGER ) ;
 
-      // Priority queue comparison: A has higher priority than B if `operator()(A, B)` is `false`.
+      // Priority queue comparison: `A` has higher priority than `B` if `operator()(A, B)` is `false`.
       // We want to give priority to smaller angles, so we must return `false` if the angle is smaller
       // i.e. `true` if the angle is larger
       return ( mBuilder->CompareEventsSupportAngles(aA, aB) == LARGER ) ;

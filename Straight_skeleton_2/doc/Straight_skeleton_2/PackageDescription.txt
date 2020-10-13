@@ -41,14 +41,14 @@
 ///
 /// When the kernel differs, `CGAL::Cartesian_converter` is used to convert from one kernel to the other.
 ///
-/// By default, `SsK` and `OfK` is chosen as `CGAL::Exact_predicates_inexact_constructions_kernel`
+/// By default, `SsK` and `OfK` are chosen as `CGAL::Exact_predicates_inexact_constructions_kernel`
 /// as a compromise between speed and robustness. See also Section \ref Straight_skeleton_2CreateOffsetPolygonsfrom_1.
 ///
 /// \section SLSOffsetPolygonReturnType Polygon Return Type
 ///
 /// There are two classes of offset construction functions: those that simply return all the offset
 /// polygons, and those that also create an arrangement of the polygons to create a polygon with
-/// holes. The later contain <em>_with_holes</em> in the name.
+/// holes. The latter contain <em>_with_holes</em> in the name.
 ///
 /// The return type of the offset construction function is thus dediced by whether or not it is a simple
 /// polygon or a polygon with holes, and on the dictated output kernel (see Section \ref SLSKernelChoices).
@@ -145,4 +145,3 @@
 - `CGAL::compute_outer_frame_margin()`
 - `CGAL::convert_straight_skeleton_2()`
 */
-

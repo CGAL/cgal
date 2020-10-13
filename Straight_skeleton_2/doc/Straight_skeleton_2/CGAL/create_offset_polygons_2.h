@@ -37,7 +37,7 @@ create_offset_polygons_2 ( FT offset,
 
 returns a container with all the outer offset polygons at distance `offset` of the 2D polygon `poly`.
 
-A temporary straight skeleton is constructed in the `limited exterior` of the input polygon
+A temporary straight skeleton is constructed in the <I>limited exterior</I> of the input polygon
 to obtain the offsets. The construction of this skeleton is the most
 expensive operation, therefore, to construct offsets at more than one
 single distance, use the separate functions
@@ -75,7 +75,7 @@ create_exterior_skeleton_and_offset_polygons_2( FT offset,
 \ingroup PkgStraightSkeleton2OffsetFunctions
 
 returns a container with all the inner offset polygons at distance `offset` of the 2D polygon
-with holes whose outer boundary is `outer_boundary` and its holes are given by `[holes_begin,holes_end]`.
+with holes whose outer boundary is `outer_boundary` and its holes are given by `[holes_begin,holes_end)`.
 
 A temporary straight skeleton is constructed in the interior of the input polygon to obtain the offsets.
 The construction of this skeleton is the most expensive operation, therefore, to construct offsets

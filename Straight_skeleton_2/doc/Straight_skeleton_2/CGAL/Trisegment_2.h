@@ -11,7 +11,7 @@ at the event along with their collinearity.
 
 If the event is an edge-event, then `e0*->e1*->e2*` must be consecutive right before the event so that
 after the event `e0*` and `e2*` become consecutive. Thus, there are offset vertices `(e0*,e1*)` and `(e1*,e2*)`
-in the offset polygon which not necessarily exist in the original polygon.
+in the offset polygon which do not necessarily exist in the original polygon.
 
 If the event is a split-event, `e0*->e1*` must be consecutive right before the event so that after the event
 `e0*->right(e2*)` and `left(e2*)->e1*` become consecutive. Thus, there is an offset vertex `(e0*,e1*)` in the
