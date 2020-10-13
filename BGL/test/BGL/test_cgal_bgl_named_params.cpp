@@ -265,6 +265,8 @@ void test(const NamedParameters& np)
   check_same_type<9032>(get_parameter(np, CGAL::internal_np::inspector));
   check_same_type<9033>(get_parameter(np, CGAL::internal_np::logger));
   check_same_type<9034>(get_parameter(np, CGAL::internal_np::maximum_normal_deviation));
+  check_same_type<9035>(get_parameter(np, CGAL::internal_np::scan_angle_map));
+  check_same_type<9036>(get_parameter(np, CGAL::internal_np::scanline_id_map));
 }
 
 int main()
@@ -391,6 +393,8 @@ int main()
                          .inspector(A<9032>(9032))
                          .logger(A<9033>(9033))
                          .maximum_normal_deviation(A<9034>(9034))
+                         .scan_angle_map(A<9035>(9035))
+                         .scanline_id_map(A<9036>(9036))
                          .maximum_number_of_faces(A<78910>(78910))
        );
   return EXIT_SUCCESS;
