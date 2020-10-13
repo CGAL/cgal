@@ -104,7 +104,7 @@ bool read_polygon_mesh(const std::string& fname,
   if(!CGAL::read_polygon_soup(fname, points, faces))
   {
     if(verbose)
-      std::cerr << "W: cannot read polygon soup\n";
+      std::cerr << "Warning: cannot read polygon soup" << std::endl;
     return false;
   }
 
@@ -112,11 +112,16 @@ bool read_polygon_mesh(const std::string& fname,
   if(do_repair)
     PMP::repair_polygon_soup(points, faces, np);
 
-  if(!PMP::orient_polygon_soup(points, faces) ||
-     !PMP::is_polygon_soup_a_polygon_mesh(faces))
+  if(!PMP::orient_polygon_soup(points, faces))
   {
     if(verbose)
-      std::cerr << "W: File does not describe a polygon mesh" << std::endl;
+      std::cerr << "Some duplication happened during polygon soup orientation" << std::endl;
+  }
+
+  if(!PMP::is_polygon_soup_a_polygon_mesh(faces))
+  {
+    if(verbose)
+      std::cerr << "Warning: polygon soup does not describe a polygon mesh" << std::endl;
     return false;
   }
 
