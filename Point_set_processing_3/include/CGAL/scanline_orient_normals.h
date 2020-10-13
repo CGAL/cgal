@@ -23,6 +23,8 @@
 
 #include <boost/iterator/transform_iterator.hpp>
 
+#ifdef CGAL_EIGEN3_ENABLED
+
 //#define CGAL_SCANLINE_ORIENT_VERBOSE
 
 namespace CGAL
@@ -157,7 +159,6 @@ estimate_scan_position (Iterator begin, Iterator end, PointMap point_map,
                         const std::vector<Vector_3>& lines_of_sight)
 {
   using Point_3 = typename boost::property_traits<PointMap>::value_type;
-
   typedef Eigen::Matrix3d Matrix;
   typedef Eigen::Vector3d Vector;
   typedef Eigen::ConjugateGradient<Matrix> Solver;
@@ -558,5 +559,6 @@ void scanline_orient_normals (PointRange& points)
 
 } // namespace CGAL
 
+#endif // CGAL_EIGEN3_ENABLED
 
 #endif // CGAL_SCANLINE_ORIENT_NORMALS_H
