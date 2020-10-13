@@ -503,50 +503,6 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
         > ::type  type;
     };
 
-    template<typename PointRange, typename NamedParameters>
-    class GetScanAngleMap
-    {
-    public:
-      struct NoMap
-      {
-        typedef typename std::iterator_traits<typename PointRange::iterator>::value_type key_type;
-        typedef float value_type;
-        typedef value_type reference;
-        typedef boost::read_write_property_map_tag category;
-
-        typedef NoMap Self;
-        friend reference get(const Self&, const key_type&) { return 0.f; }
-        friend void put(const Self&, const key_type&, const value_type&) { }
-      };
-      typedef typename internal_np::Lookup_named_param_def <
-        internal_np::scan_angle_t,
-        NamedParameters,
-        NoMap//default
-        > ::type  type;
-    };
-
-    template<typename PointRange, typename NamedParameters>
-    class GetScanlineIDMap
-    {
-    public:
-      struct NoMap
-      {
-        typedef typename std::iterator_traits<typename PointRange::iterator>::value_type key_type;
-        typedef unsigned char value_type;
-        typedef value_type reference;
-        typedef boost::read_write_property_map_tag category;
-
-        typedef NoMap Self;
-        friend reference get(const Self&, const key_type&) { return 0; }
-        friend void put(const Self&, const key_type&, const value_type&) { }
-      };
-      typedef typename internal_np::Lookup_named_param_def <
-        internal_np::scanline_id_t,
-        NamedParameters,
-        NoMap//default
-        > ::type  type;
-    };
-
   } // namespace Point_set_processing_3
 
   template<typename NamedParameters, typename DefaultSolver>

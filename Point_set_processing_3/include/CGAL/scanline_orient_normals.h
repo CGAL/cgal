@@ -444,32 +444,27 @@ void scanline_orient_normals (PointRange& points, const NamedParameters& np)
   using parameters::get_parameter;
 
   using Iterator = typename PointRange::iterator;
+  using Value_type = typename std::iterator_traits<Iterator>::value_type;
   using PointMap = typename CGAL::GetPointMap<PointRange, NamedParameters>::type;
   using NormalMap = typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type;
   using Kernel = typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel;
   using Point_3 = typename Kernel::Point_3;
   using Vector_3 = typename Kernel::Vector_3;
-  using ScanAngleMap = typename Point_set_processing_3::GetScanAngleMap
-    <PointRange, NamedParameters>::type;
-  using ScanlineIDMap = typename Point_set_processing_3::GetScanlineIDMap
-    <PointRange, NamedParameters>::type;
+
+  using No_map = Constant_property_map<Value_type, int>;
+
+  using ScanAngleMap = typename internal_np::Lookup_named_param_def
+    <internal_np::scan_angle_t, NamedParameters, No_map>::type;
+  using Fallback_scan_angle = Boolean_tag<std::is_same<ScanAngleMap, No_map>::value>;
+
+  using ScanlineIDMap = typename internal_np::Lookup_named_param_def
+    <internal_np::scanline_id_t, NamedParameters, No_map>::type;
+  using Fallback_scanline_ID = Boolean_tag<std::is_same<ScanlineIDMap, No_map>::value>;
 
   CGAL_static_assertion_msg(!(std::is_same<NormalMap,
                               typename Point_set_processing_3::GetNormalMap
                               <PointRange, NamedParameters>::NoMap>::value),
                             "Error: no normal map");
-
-  using Fallback_scan_angle
-    = Boolean_tag
-    <std::is_same<ScanAngleMap,
-                  typename Point_set_processing_3::GetScanAngleMap
-                  <PointRange, NamedParameters>::NoMap>::value>;
-  using Fallback_scanline_ID
-    = Boolean_tag
-    <std::is_same<ScanlineIDMap,
-                  typename Point_set_processing_3::GetScanlineIDMap
-                  <PointRange, NamedParameters>::NoMap>::value>;
-
 
   PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
   NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
