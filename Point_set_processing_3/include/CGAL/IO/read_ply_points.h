@@ -122,6 +122,8 @@ make_ply_normal_reader(VectorMap normal_map);
   second element of the tuple should be a functor that constructs
   the value type of `PropertyMap` from N objects of types `T`.
 
+  \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
+
   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
   It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
   It can be omitted when the default is fine.
