@@ -201,8 +201,7 @@ public:
    * \param parent A reference to the node containing this one
    * \param index This node's relationship to its parent
    */
-  explicit Node(Self *parent = nullptr, Index index = 0) : m_parent(parent), m_depth(0)
-                                                           /* , m_location({0, 0, 0}) */ {
+  explicit Node(Self *parent = nullptr, Index index = 0) : m_parent(parent), m_depth(0) {
 
     if (parent) {
 
@@ -212,6 +211,9 @@ public:
         m_location[i] = (2 * parent->m_location[i]) + index[i];
 
     }
+    else
+      for (int i = 0; i < dim; i++)
+        m_location[i] = 0;
   }
 
   /// @}
@@ -338,9 +340,8 @@ public:
 
     Index result;
 
-    result[0] = location()[0] & 1;
-    result[1] = location()[1] & 1;
-    result[2] = location()[2] & 1;
+    for (std::size_t i = 0; i < dim; ++ i)
+      result[i] = location()[i] & 1;
 
     return result;
   }

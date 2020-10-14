@@ -37,8 +37,9 @@ const Node <Point_index, Dimension> *next_sibling(const Node <Point_index, Dimen
   // Find out which child this is
   std::size_t index = n->index().to_ulong();
 
+  constexpr static int degree = (2 << (Dimension::value-1));
   // Return null if this is the last child
-  if (7 == index)
+  if (index == degree - 1)
     return nullptr;
 
   // Otherwise, return the next child

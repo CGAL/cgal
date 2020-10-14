@@ -113,6 +113,8 @@ public:
 
 private: // Private types
 
+  typedef typename Kernel::Point_2 Point_2;
+  typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Vector_2 Vector_2;
   typedef typename Kernel::Vector_3 Vector_3;
   typedef typename Kernel::Iso_rectangle_2 Iso_rectangle_2;
@@ -578,10 +580,21 @@ public:
       bary[i] = node.location()[i] * size + (size / 2.0) + m_bbox_min[i];
 
     // Convert that location into a point
-    return {bary[0], bary[1], bary[2]};
+    Point out;
+    convert_array_to_point (bary, out);
+    return out;
   }
 
 private: // functions :
+
+  void convert_array_to_point (const FT* bary, Point_2& point) const
+  {
+    point = Point_2 (bary[0], bary[1]);
+  }
+  void convert_array_to_point (const FT* bary, Point_3& point) const
+  {
+    point = Point_3 (bary[0], bary[1], bary[2]);
+  }
 
   FT max_length (const Iso_rectangle_2& bbox) const
   {

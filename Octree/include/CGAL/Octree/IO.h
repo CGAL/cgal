@@ -22,6 +22,7 @@
 
 using std::ostream;
 
+
 template<typename Value, typename Dim>
 ostream &operator<<(ostream &os, const CGAL::Octree::Node<Value, Dim> &node) {
 
@@ -33,22 +34,24 @@ ostream &operator<<(ostream &os, const CGAL::Octree::Node<Value, Dim> &node) {
   os << "{ ";
 
   // Index identifies which child this is
-  os << "("
-     << node.index()[0]
-     << node.index()[1]
-     << node.index()[2]
-     << ") ";
+  os << "(";
+  for (std::size_t i = 0; i < node.index().size(); ++ i)
+    os << node.index()[i];
+  os << ") ";
 
   // Location
-  os << "("
-     << node.location()[0] << ","
-     << node.location()[1] << ","
-     << node.location()[2]
-     << ") ";
+  os << "( ";
+  for (const auto& b : node.location())
+    os << b << " ";
+  os << ") ";
 
   // Depth
   os << "("
      << +node.depth() // The + forces printing as an int instead of a char
+     << ") ";
+
+  os << "("
+     << node.size()
      << ") ";
 
 //  // If a node has points, indicate how many
