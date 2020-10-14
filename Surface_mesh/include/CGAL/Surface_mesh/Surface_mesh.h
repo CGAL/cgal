@@ -1126,12 +1126,12 @@ public:
              && num_faces() == number_of_removed_faces());
   }
 
-  /// removes all vertices, halfedge, edges and faces. Collects garbage but keeps all properties.
-  void remove_all_simplices();
+  /// removes all vertices, halfedge, edges and faces. Collects garbage but keeps all property maps.
+  void clear_without_removing_property_maps();
 
-    /// removes all vertices, halfedge, edges and faces. Collects garbage and clears all properties.
+    /// removes all vertices, halfedge, edges and faces. Collects garbage and remove all property maps added by a call to `add_property_map()` for all simplex types.
     ///
-    /// After calling this method, the object is the same as a newly constructed object. The additional properties (such as normal vectors) are also removed and must thus be re-added if needed.
+    /// After calling this method, the object is the same as a newly constructed object. The additional property maps are also removed and must thus be re-added if needed.
     void clear();
 
 
@@ -2863,7 +2863,7 @@ clear()
 template <typename P>
 void
 Surface_mesh<P>::
-remove_all_simplices()
+clear_without_removing_property_maps()
 {
 
   vprops_.resize(0);

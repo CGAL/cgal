@@ -27,7 +27,7 @@ int main()
 
   {
     Sm::Property_map<Sm::Vertex_index, Point_3> vpm = m.points();
-    m.remove_all_simplices();
+    m.clear_without_removing_property_maps();
     assert( m.points().data() == vpm.data() );
   }
 
