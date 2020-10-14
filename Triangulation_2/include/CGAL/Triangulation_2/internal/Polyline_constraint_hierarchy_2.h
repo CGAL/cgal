@@ -24,6 +24,10 @@
 #include <CGAL/Skiplist.h>
 #include <CGAL/triangulation_assertions.h>
 
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+#  include <CGAL/Constrained_triangulation_2.h>
+#endif
+
 namespace CGAL {
 
 // T               is expected to be Vertex_handle
