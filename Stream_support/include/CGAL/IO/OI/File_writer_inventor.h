@@ -25,19 +25,19 @@ namespace CGAL {
 
 class File_writer_inventor
 {
-  Inventor_ostream_base* m_os;
+  Inventor_ostream_base m_os;
   std::size_t m_facets;
 
 public:
   File_writer_inventor() {}
-  std::ostream& out() const { return m_os->os(); }
+  std::ostream& out() const { return m_os.os(); }
 
-  void write_header(Inventor_ostream_base& o,
+  void write_header(std::ostream& o,
                     std::size_t vertices,
                     std::size_t halfedges,
                     std::size_t facets)
   {
-    m_os = &o;
+    m_os.open(o);
     m_facets = facets;
 
     out() << "# " << vertices << " vertices\n";

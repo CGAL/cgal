@@ -14,6 +14,7 @@
 #include <CGAL/IO/OFF/Scanner_OFF.h>
 #include <CGAL/IO/OFF/File_scanner_OFF.h>
 #include <CGAL/IO/OFF/File_writer_OFF.h>
+#include <CGAL/IO/OFF/generic_copy_OFF.h>
 #include <CGAL/IO/helpers.h>
 #include <CGAL/IO/Generic_writer.h>
 

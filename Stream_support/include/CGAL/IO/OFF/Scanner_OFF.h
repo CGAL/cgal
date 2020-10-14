@@ -59,7 +59,7 @@ public:
     typedef File_scanner_OFF                   Scanner;
     typedef I_Scanner_OFF_vertex_iterator<Pt>  Self;
 
-  I_Scanner_OFF_vertex_iterator(std::size_t cnt) : m_scan(0), m_cnt(cnt+1) {}
+  I_Scanner_OFF_vertex_iterator(std::size_t cnt) : m_scan(nullptr), m_cnt(cnt+1) {}
     I_Scanner_OFF_vertex_iterator( Scanner& s, int cnt)
         : m_scan(&s), m_cnt(cnt)
     {
@@ -118,7 +118,7 @@ private:
 public:
 
     I_Scanner_OFF_vertex_and_normals_iterator( int cnt)
-        : m_scan(0), m_cnt(cnt+1) {}
+        : m_scan(nullptr), m_cnt(cnt+1) {}
     I_Scanner_OFF_vertex_and_normals_iterator( Scanner& s, int cnt)
         : m_scan(&s), m_cnt(cnt)
     {
@@ -184,7 +184,7 @@ public:
     typedef I_Scanner_OFF_facet_iterator  Self;
     typedef value_type::iterator          iterator;
 
-  I_Scanner_OFF_facet_iterator( std::size_t cnt) : m_scan(0), m_cnt(cnt+1) {}
+  I_Scanner_OFF_facet_iterator( std::size_t cnt) : m_scan(nullptr), m_cnt(cnt+1) {}
   I_Scanner_OFF_facet_iterator( Scanner& s, std::size_t cnt)
         : m_scan(&s), m_cnt(cnt)
     {

@@ -21,26 +21,27 @@
 
 #include <CGAL/IO/VRML/VRML_2_ostream.h>
 
-#include <iostream>
 #include <cstddef>
+#include <iostream>
 
 namespace CGAL {
 
 class File_writer_VRML_2
 {
-  VRML_2_ostream* m_os;
+  VRML_2_ostream m_os;
   std::size_t m_facets;
 
 public:
   File_writer_VRML_2() {}
-  std::ostream& out() const { return m_os->os(); }
 
-  void write_header(VRML_2_ostream& o,
+  std::ostream& out() const { return m_os.os(); }
+
+  void write_header(std::ostream& o,
                     std::size_t vertices,
                     std::size_t halfedges,
                     std::size_t facets)
   {
-    m_os = &o;
+    m_os.open(o);
     m_facets = facets;
 
     out() << "        #-- Begin of Polygon Mesh\n";
@@ -80,7 +81,7 @@ public:
              "                        coordIndex  [" << std::endl;
   }
 
-  void write_facet_begin( std::size_t) { out() << "                            "; }
+  void write_facet_begin(std::size_t) { out() << "                            "; }
   void write_facet_vertex_index( std::size_t idx) { out() << idx << ',';}
   void write_facet_end() { out() << "-1,\n"; }
 };

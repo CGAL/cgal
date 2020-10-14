@@ -31,10 +31,10 @@ namespace CGAL {
 class Inventor_ostream_base
 {
 private:
-  std::ostream* m_os;
+  std::ostream* m_os = nullptr;
 
 public:
-  Inventor_ostream_base() : m_os(0)  {}
+  Inventor_ostream_base() : m_os(nullptr)  {}
   Inventor_ostream_base(std::ostream& o) : m_os(&o) {}
   ~Inventor_ostream_base() { close(); }
   void open(std::ostream& o) { m_os = &o; }
@@ -53,13 +53,13 @@ public:
     return m_os && !m_os->fail();
   }
 
-  std::ostream& os()
+  std::ostream& os() const
   {
-    // The behaviour if m_os == 0 could be changed to return
+    // The behaviour if m_os == nullptr could be changed to return
     // cerr or a file handle to /dev/null. The latter one would
     // mimick the behaviour that one can still use a stream with
     // an invalid stream, but without producing any output.
-    CGAL_assertion( m_os != 0 );
+    CGAL_assertion( m_os != nullptr );
     return *m_os;
   }
 };

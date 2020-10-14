@@ -52,7 +52,7 @@ generic_copy_OFF(File_scanner_OFF& scanner,
   writer.write_header(out,
                       scanner.size_of_vertices(),
                       scanner.polyhedral_surface() ? scanner.size_of_halfedges() : 0,
-                       scanner.size_of_facets());
+                      scanner.size_of_facets());
 
   // read in all vertices
   double x, y, z; // Point coordinates.
