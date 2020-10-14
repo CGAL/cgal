@@ -922,7 +922,7 @@ bool write_PLY(std::ostream& os,
     return false;
 
   const int precision = parameters::choose_parameter(parameters::get_parameter(np, internal_np::stream_precision), 6);
-  os << std::setprecision(precision);
+  os.precision(precision);
 
   os << "ply" << std::endl
      << ((get_mode(os) == IO::BINARY) ? "format binary_little_endian 1.0" : "format ascii 1.0") << std::endl

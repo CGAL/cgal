@@ -49,6 +49,9 @@ public:
 
     ~Geomview_stream();
 
+    void precision(const int p) { prec = p; }
+    int precision() const { return prec; }
+
     Geomview_stream &operator<<(const Color &c);
     Geomview_stream &operator<<(const std::string & s);
     Geomview_stream &operator<<(int i);
@@ -218,6 +221,7 @@ private:
     double radius;    // radius of vertices
     int in, out;      // file descriptors for input and output pipes
     int pid;          // the geomview process identification
+    int prec;         // precision of the (ASCII) stream
     std::map<std::string, int> id; // used to get a unique ID per type.
 };
 

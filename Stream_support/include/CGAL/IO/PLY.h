@@ -468,7 +468,7 @@ bool write_PLY(std::ostream& out,
     return false;
 
   const int precision = parameters::choose_parameter(parameters::get_parameter(np, internal_np::stream_precision), 6);
-  out << std::setprecision(precision);
+  out.precision(precision);
 
   // Write header
   out << "ply" << std::endl

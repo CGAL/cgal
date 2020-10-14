@@ -304,7 +304,7 @@ bool write_GOCAD(std::ostream& os,
     return false;
 
   const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-  os << std::setprecision(precision);
+  os.precision(precision);
 
   os << "GOCAD TSurf 1\n"
         "HEADER {\n"

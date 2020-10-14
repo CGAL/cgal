@@ -67,7 +67,7 @@ bool write_OFF_PSP(std::ostream& os,
   }
 
   const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-  os << std::setprecision(precision);
+  os.precision(precision);
 
   // Write header
   os << "NOFF" << std::endl;
