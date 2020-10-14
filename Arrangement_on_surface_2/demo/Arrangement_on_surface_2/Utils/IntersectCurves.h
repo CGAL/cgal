@@ -27,7 +27,7 @@ public:
   Intersect_curves(const Traits*);
 
   void operator()(
-    X_monotone_curve_2 cv1, X_monotone_curve_2 cv2,
+    const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2,
     std::vector<CGAL::Object>& output);
 
 private:

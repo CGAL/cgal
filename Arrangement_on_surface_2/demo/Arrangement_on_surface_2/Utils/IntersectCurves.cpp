@@ -20,7 +20,7 @@ Intersect_curves<Traits_>::Intersect_curves(const Traits* traits) :
 
 template <typename Traits_>
 void Intersect_curves<Traits_>::operator()(
-  X_monotone_curve_2 cv1, X_monotone_curve_2 cv2,
+  const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2,
   std::vector<CGAL::Object>& output)
 {
   this->intersect(cv1, cv2, std::back_inserter(output));
