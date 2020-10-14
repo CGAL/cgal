@@ -36,12 +36,15 @@ public:
 
   std::ostream& out() const { return m_os.os(); }
 
-  void write_header(std::ostream& o,
+  void write_header(VRML_2_ostream& o,
                     std::size_t vertices,
                     std::size_t halfedges,
-                    std::size_t facets)
+                    std::size_t facets,
+                    const bool /*colors*/ = false,
+                    const bool /*normals*/ = false,
+                    const bool /*textures*/ = false)
   {
-    m_os.open(o);
+    m_os = o;
     m_facets = facets;
 
     out() << "        #-- Begin of Polygon Mesh\n";

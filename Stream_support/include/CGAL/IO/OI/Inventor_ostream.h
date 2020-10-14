@@ -48,6 +48,9 @@ public:
   bool fail() const { return m_os->fail(); }
   bool good() const { return m_os->good(); }
 
+  void precision(const int p) { m_os->precision(p); }
+  int precision() const { return m_os->precision(); }
+
   explicit operator bool()
   {
     return m_os && !m_os->fail();

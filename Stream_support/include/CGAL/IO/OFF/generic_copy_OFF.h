@@ -25,10 +25,10 @@
 
 namespace CGAL {
 
-template <class Writer>
+template <class Stream, class Writer>
 void
 generic_copy_OFF(File_scanner_OFF& scanner,
-                 std::ostream& out,
+                 Stream& out,
                  Writer& writer)
 {
   std::istream& in = scanner.in();
@@ -87,8 +87,8 @@ generic_copy_OFF(File_scanner_OFF& scanner,
   writer.write_footer();
 }
 
-template <class Writer>
-void generic_copy_OFF(std::istream& in, std::ostream& out, Writer& writer,
+template <class Stream, class Writer>
+void generic_copy_OFF(std::istream& in, Stream& out, Writer& writer,
                       bool verbose = false)
 {
   // scans a polyhedral surface in OFF from `in' and writes it
