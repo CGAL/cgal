@@ -17,6 +17,7 @@
 
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Random.h>
+#include <CGAL/boost/graph/helpers.h>
 
 namespace CGAL
 {
