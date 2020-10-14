@@ -1126,15 +1126,13 @@ public:
              && num_faces() == number_of_removed_faces());
   }
 
-  void clear(bool remove_properties);
+  /// removes all vertices, halfedge, edges and faces. Collects garbage but keeps all properties.
+  void remove_all_simplices();
 
     /// removes all vertices, halfedge, edges and faces. Collects garbage and clears all properties.
     ///
     /// After calling this method, the object is the same as a newly constructed object. The additional properties (such as normal vectors) are also removed and must thus be re-added if needed.
-    void clear()
-    {
-      clear(true);
-    }
+    void clear();
 
 
     /// reserves space for vertices, halfedges, edges, faces, and their currently
@@ -2841,35 +2839,42 @@ assign(const Surface_mesh<P>& rhs)
 template <typename P>
 void
 Surface_mesh<P>::
-clear(bool remove_properties)
+clear()
 {
-  if (remove_properties)
-  {
-    vprops_.clear();
-    hprops_.clear();
-    eprops_.clear();
-    fprops_.clear();
+  vprops_.clear();
+  hprops_.clear();
+  eprops_.clear();
+  fprops_.clear();
 
-    vconn_    = add_property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
-    hconn_    = add_property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
-    fconn_    = add_property_map<Face_index, Face_connectivity>("f:connectivity").first;
-    vpoint_   = add_property_map<Vertex_index, Point>("v:point").first;
-    vremoved_ = add_property_map<Vertex_index, bool>("v:removed", false).first;
-    eremoved_ = add_property_map<Edge_index, bool>("e:removed", false).first;
-    fremoved_ = add_property_map<Face_index, bool>("f:removed", false).first;
-  }
-  else
-  {
-    vprops_.resize(0);
-    hprops_.resize(0);
-    eprops_.resize(0);
-    fprops_.resize(0);
+  vconn_    = add_property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
+  hconn_    = add_property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
+  fconn_    = add_property_map<Face_index, Face_connectivity>("f:connectivity").first;
+  vpoint_   = add_property_map<Vertex_index, Point>("v:point").first;
+  vremoved_ = add_property_map<Vertex_index, bool>("v:removed", false).first;
+  eremoved_ = add_property_map<Edge_index, bool>("e:removed", false).first;
+  fremoved_ = add_property_map<Face_index, bool>("f:removed", false).first;
 
-    vprops_.shrink_to_fit();
-    hprops_.shrink_to_fit();
-    eprops_.shrink_to_fit();
-    fprops_.shrink_to_fit();
-  }
+  removed_vertices_ = removed_edges_ = removed_faces_ = 0;
+  vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();
+  garbage_ = false;
+  anonymous_property_ = 0;
+}
+
+template <typename P>
+void
+Surface_mesh<P>::
+remove_all_simplices()
+{
+
+  vprops_.resize(0);
+  hprops_.resize(0);
+  eprops_.resize(0);
+  fprops_.resize(0);
+
+  vprops_.shrink_to_fit();
+  hprops_.shrink_to_fit();
+  eprops_.shrink_to_fit();
+  fprops_.shrink_to_fit();
 
   removed_vertices_ = removed_edges_ = removed_faces_ = 0;
   vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();

@@ -18,5 +18,18 @@ int main()
   }
 
   std::cout << m.num_vertices() << "  " << m.number_of_removed_vertices() << std::endl;
+
+  {
+    Sm::Property_map<Sm::Vertex_index, Point_3> vpm = m.points();
+    m.clear();
+    assert( m.points().data() != vpm.data() );
+  }
+
+  {
+    Sm::Property_map<Sm::Vertex_index, Point_3> vpm = m.points();
+    m.remove_all_simplices();
+    assert( m.points().data() == vpm.data() );
+  }
+
   return 0;
 }
