@@ -208,8 +208,8 @@ void draw(const CGAL_POLY_TYPE& apoly,
 
   if (!cgal_test_suite)
   {
-    int argc=1;
-    const char* argv[2]={"polyhedron_viewer","\0"};
+    int argc=2;
+    const char* argv[2]={"polyhedron_viewer","--old"};
     QApplication app(argc,const_cast<char**>(argv));
     DefaultColorFunctorPolyhedron fcolor;
     SimplePolyhedronViewerQt<CGAL_POLY_TYPE, DefaultColorFunctorPolyhedron>

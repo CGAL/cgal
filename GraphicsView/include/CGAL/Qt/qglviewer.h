@@ -1167,7 +1167,7 @@ protected:
   QMap<WheelBindingPrivate, MouseActionPrivate> wheelBinding_;
   QMap<ClickBindingPrivate, qglviewer::ClickAction> clickBinding_;
   ::Qt::Key currentlyPressedKey_;
-
+  bool z_is_pressed;
   // S t a t e   F i l e
   QString stateFileName_;
 

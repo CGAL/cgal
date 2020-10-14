@@ -88,7 +88,7 @@ void CGAL::QGLViewer::defaultConstructor() {
 
   CGAL::QGLViewer::QGLViewerPool().append(this);
   camera_ = new qglviewer::Camera(this);
-  setCamera(camera());
+  setCamera(camera_);
 
   setDefaultShortcuts();
   setDefaultMouseBindings();
@@ -520,6 +520,7 @@ camera is manipulated) : main drawing method. Should be overloaded. \arg
 postDraw() : display of visual hints (world axis, FPS...) */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::paintGL() {
+  makeCurrent();
   // Clears screen, set model view matrix...
   preDraw();
   // Used defined method. Default calls draw()
@@ -529,6 +530,7 @@ void CGAL::QGLViewer::paintGL() {
     draw();
   // Add visual hints: axis, camera, grid...
   postDraw();
+  doneCurrent();
   Q_EMIT drawFinished(true);
 }
 
@@ -624,7 +626,7 @@ void CGAL::QGLViewer::postDraw() {
     painter.end();
     camera()->frame()->action_= qglviewer::NO_MOUSE_ACTION;
   }
-
+  glEnable(GL_DEPTH_TEST);
 }
 
 
@@ -1327,6 +1329,7 @@ void CGAL::QGLViewer::mousePressEvent(QMouseEvent *e) {
   //#CONNECTION# mouseDoubleClickEvent has the same structure
   //#CONNECTION# mouseString() concatenates bindings description in inverse
   // order.
+  makeCurrent();
   ClickBindingPrivate cbp(e->modifiers(), e->button(), false,
                           (::Qt::MouseButtons)(e->buttons() & ~(e->button())),
                           currentlyPressedKey_);
@@ -1510,6 +1513,7 @@ If defined, the wheel event is sent to the mouseGrabber(). It is otherwise sent
 according to wheel bindings (see setWheelBinding()). */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::wheelEvent(QWheelEvent *e) {
+  makeCurrent();
   if (mouseGrabber()) {
     if (mouseGrabberIsAManipulatedFrame_) {
       for (QMap<WheelBindingPrivate, MouseActionPrivate>::ConstIterator
@@ -2261,6 +2265,19 @@ void CGAL::QGLViewer::keyPressEvent(QKeyEvent *e) {
 
   const ::Qt::KeyboardModifiers modifiers = e->modifiers();
 
+  if(key == ::Qt::Key_Z && ! e->isAutoRepeat())
+  {
+    makeCurrent();
+    //orient camera to the cursor.
+    bool found = false;
+    qglviewer::Vec point;
+    point = camera()->pointUnderPixel(mapFromGlobal(QCursor::pos()), found);
+    if(!found)
+      return;
+    camera()->lookAt(point);
+    update();
+    return;
+  }
   QMap<qglviewer::KeyboardAction, unsigned int>::ConstIterator it = keyboardBinding_
                                                              .begin(),
                                                     end =
