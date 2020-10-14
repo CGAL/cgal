@@ -13,8 +13,6 @@
 
 #include <CGAL/license/Point_set_3.h>
 
-#include <CGAL/Point_set_3.h>
-
 #ifdef CGAL_LINKED_WITH_LASLIB
 #include <CGAL/IO/read_las_points.h>
 #include <CGAL/IO/write_las_points.h>
