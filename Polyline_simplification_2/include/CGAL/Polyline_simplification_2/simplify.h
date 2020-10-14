@@ -436,10 +436,10 @@ simplify(const CGAL::Polygon_with_holes_2<Traits,Container>& polygon,
 
 Simplifies an open or closed polyline given as an iterator range of 2D \cgal points.
 
-\tparam PointIterator must be an iterator with value type `CGAL::Kernel::Point_2`.
+\tparam PointIterator must be an iterator with value type `Kernel::Point_2`.
 \tparam CostFunction must be a model of `PolylineSimplificationCostFunction`
 \tparam StopFunction must be a model of `PolylineSimplificationStopPredicate`
-\tparam PointOutputIterator must be an output iterator to which `CGAL::Kernel::Point_2` can be assigned.
+\tparam PointOutputIterator must be an output iterator to which `Kernel::Point_2` can be assigned.
 */
   template <class PointIterator, class CostFunction, class StopFunction, class PointOutputIterator>
   PointOutputIterator
