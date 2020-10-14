@@ -136,7 +136,7 @@ void simple_property_write(std::ostream& stream,
     stream << no_char_character(get(map.first, *it));
   else
   {
-    typename boost::property_traits<PropertyMap>::reference value = get(map.first, *it);
+    typename boost::property_traits<PropertyMap>::value_type value = get(map.first, *it);
     stream.write(reinterpret_cast<char*>(&value), sizeof(value));
   }
 }
