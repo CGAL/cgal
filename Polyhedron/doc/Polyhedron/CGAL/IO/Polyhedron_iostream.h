@@ -10,12 +10,11 @@ appends it to the polyhedral surface \f$ P\f$. Only the point coordinates
 and facets from the input stream are used to build the polyhedral
 surface. Neither normal vectors nor color attributes are evaluated.
 
-\sa `CGAL::Polyhedron_3<Traits>`
-\sa `CGAL::Polyhedron_incremental_builder_3<HDS>`
-\sa \link PkgPolyhedronIOFunc `operator<<(std::ostream&, Polyhedron_3<PolyhedronTraits_3>&)`\endlink
-
 This function overloads the generic function \link PkgBGLIoFuncsOFF `read_OFF(std::istream&, FaceGraph)`\endlink
 (if no named parameters are used).
+
+\note This function requires `Traits` to be a model of `Kernel` (a stronger requirement
+than `PolyhedronTraits_3`).
 
 \cgalHeading{Implementation}
 
@@ -27,25 +26,29 @@ polyhedral surface.
 
 \note Starting with \cgal 5.2, this function will no longer set the `ios::badbit`
       of the input stream `in` if the file contains 0 vertices.
+
+\sa `CGAL::Polyhedron_3<Traits>`
+\sa `CGAL::Polyhedron_incremental_builder_3<HDS>`
+\sa \link PkgPolyhedronIOFunc `operator<<(std::ostream&, Polyhedron_3<Traits>&)`\endlink
 */
-template <class PolyhedronTraits_3>
-bool read_OFF( std::istream& in, Polyhedron_3<PolyhedronTraits_3>& P);
+template <class Traits>
+bool read_OFF( std::istream& in, Polyhedron_3<Traits>& P);
 
 /*!
 \relates Polyhedron_3
 \deprecated This function is deprecated since \cgal 5.2,
-            \link PkgPolyhedronIOFunc `CGAL::read_OFF(std::ostream&, Polyhedron_3<PolyhedronTraits_3>&)` \endlink should be used instead.
+            \link PkgPolyhedronIOFunc `CGAL::read_OFF(std::ostream&, Polyhedron_3<Traits>&)` \endlink should be used instead.
 */
-template <class PolyhedronTraits_3>
-bool read_off( std::ostream& out, Polyhedron_3<PolyhedronTraits_3>& P);
+template <class Traits>
+bool read_off( std::ostream& out, Polyhedron_3<Traits>& P);
 
 /*!
 \relates Polyhedron_3
 \ingroup PkgPolyhedronIOFunc
 calls \link read_OFF() `read_OFF(in, P)` \endlink.
 */
-template <class PolyhedronTraits_3>
-std::istream& operator>>( std::istream& in, Polyhedron_3<PolyhedronTraits_3>& P);
+template <class Traits>
+std::istream& operator>>( std::istream& in, Polyhedron_3<Traits>& P);
 
 /*!
 \relates Polyhedron_3
@@ -69,26 +72,26 @@ This function overloads the generic function \link PkgBGLIoFuncsOFF `write_OFF(s
 
 \sa `CGAL::Polyhedron_3<Traits>`
 \sa `CGAL::Polyhedron_incremental_builder_3<HDS>`
-\sa \link PkgPolyhedronIOFunc `operator>>(std::istream& in, Polyhedron_3<PolyhedronTraits_3>& P)` \endlink
+\sa \link PkgPolyhedronIOFunc `operator>>(std::istream& in, Polyhedron_3<Traits>& P)` \endlink
 */
-template <class PolyhedronTraits_3>
-bool write_OFF( std::ostream& out, Polyhedron_3<PolyhedronTraits_3>& P);
+template <class Traits>
+bool write_OFF( std::ostream& out, Polyhedron_3<Traits>& P);
 
 /*!
 \relates Polyhedron_3
 \deprecated This function is deprecated since \cgal 5.2,
-            \link PkgPolyhedronIOFunc `CGAL::write_OFF(std::ostream&, Polyhedron_3<PolyhedronTraits_3>&)` \endlink should be used instead.
+            \link PkgPolyhedronIOFunc `CGAL::write_OFF(std::ostream&, Polyhedron_3<Traits>&)` \endlink should be used instead.
 */
-template <class PolyhedronTraits_3>
-bool write_off( std::ostream& out, Polyhedron_3<PolyhedronTraits_3>& P);
+template <class Traits>
+bool write_off( std::ostream& out, Polyhedron_3<Traits>& P);
 
 /*!
 \relates Polyhedron_3
 \ingroup PkgPolyhedronIOFunc
 calls \link write_OFF() `write_OFF(out, P)` \endlink.
 */
-template <class PolyhedronTraits_3>
-std::ostream& operator<<( std::ostream& out, Polyhedron_3<PolyhedronTraits_3>& P);
+template <class Traits>
+std::ostream& operator<<( std::ostream& out, Polyhedron_3<Traits>& P);
 
 } /* namespace CGAL */
 

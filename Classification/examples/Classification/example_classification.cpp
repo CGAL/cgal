@@ -51,7 +51,9 @@ int main (int argc, char** argv)
 
   std::cerr << "Reading input" << std::endl;
   std::vector<Point> pts;
-  if (!(CGAL::read_points(filename, std::back_inserter(pts))))
+  if (!(CGAL::read_points(filename, std::back_inserter(pts),
+                          // the PLY reader expects a binary file by default
+                          CGAL::parameters::use_binary_mode(false))))
   {
     std::cerr << "Error: cannot read " << filename << std::endl;
     return EXIT_FAILURE;

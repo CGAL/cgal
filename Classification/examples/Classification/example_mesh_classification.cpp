@@ -35,7 +35,9 @@ int main (int argc, char** argv)
   std::string filename_config = (argc>2) ? argv[2] : "data/b9_mesh_config.gz";
 
   Mesh mesh;
-  if(!CGAL::read_polygon_mesh(filename, mesh))
+  if(!CGAL::read_polygon_mesh(filename, mesh,
+                              // the PLY reader expects a binary file by default
+                              CGAL::parameters::use_binary_mode(false)))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;

@@ -19,7 +19,7 @@
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
-#include <CGAL/IO/readpoints.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 

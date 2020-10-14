@@ -22,7 +22,7 @@ int main()
 
   std::ofstream out("out.inp");
   out.precision(17);
-  CGAL::write_INP(out, sm, "out.inp", "S4R");
+  CGAL::write_INP(out, "out.inp", "S4R", sm);
 
   return EXIT_SUCCESS;
 }

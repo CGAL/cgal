@@ -76,6 +76,9 @@ public:
     out() << "                                "
           << oformat(x) << ' ' << oformat(y) << ' ' << oformat(z) << ',' << '\n';
   }
+  void write_vertex_normal(const double, const double, const double) { }
+  void write_vertex_color(const double, const double, const double) { }
+  void write_vertex_texture(const double, const double) { }
 
   void write_facet_header() const
   {
@@ -86,6 +89,7 @@ public:
 
   void write_facet_begin(std::size_t) { out() << "                            "; }
   void write_facet_vertex_index( std::size_t idx) { out() << idx << ',';}
+  void write_face_color(const double, const double, const double) { }
   void write_facet_end() { out() << "-1,\n"; }
 };
 
