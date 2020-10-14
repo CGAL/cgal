@@ -7,4 +7,5 @@
 \example Octree/Octree_traversal_preorder.cpp
 \example Octree/Octree_traversal_custom.cpp
 \example Octree/Octree_grade.cpp
+\example Octree/Octree_quadtree.cpp
 */

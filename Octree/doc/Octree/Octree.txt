@@ -172,6 +172,20 @@ The tree is printed before and after grading, so that the differences are visibl
 
 \cgalExample{Octree/Octree_grade.cpp}
 
+\section Section_Octree_Quadtree Quadtree
+
+If the Octree class is templated with a point range whose `value_type`
+is a `Point_2` object, it will behave as a Quadtree: all the features
+of the package remain valid, using a dimension of 2 instead of 3 and a
+degree (number of children of a node) of 4 instead of 8.
+
+\b Example
+
+The following example shows how to create a Quadtree from a vector of
+`Point_2` objects:
+
+\cgalExample{Octree/Octree_quadtree.cpp}
+
 \section Section_Octree_Performance Performance
 
 \subsection Section_Octree_Performance_Comparison Comparison with kD Tree
