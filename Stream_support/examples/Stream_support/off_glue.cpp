@@ -159,9 +159,9 @@ int main( int argc, char **argv)
   vector<Vertex*>::iterator v = sorted_vertices.begin();
   writer.write_vertex((*v)->point.x(), (*v)->point.y(), (*v)->point.z());
   if ( scanner.has_normals()) {
-    writer.write_normal((*v)->normal.x(),
-                        (*v)->normal.y(),
-                        (*v)->normal.z());
+    writer.write_vertex_normal((*v)->normal.x(),
+                               (*v)->normal.y(),
+                               (*v)->normal.z());
   }
   ++v;
   for ( ; v != sorted_vertices.end(); ++v) {
@@ -170,9 +170,9 @@ int main( int argc, char **argv)
                            (*v)->point.y(),
                            (*v)->point.z());
       if ( scanner.has_normals()) {
-        writer.write_normal( (*v)->normal.x(),
-                             (*v)->normal.y(),
-                             (*v)->normal.z());
+        writer.write_vertex_normal( (*v)->normal.x(),
+                                    (*v)->normal.y(),
+                                    (*v)->normal.z());
       }
     }
   }
