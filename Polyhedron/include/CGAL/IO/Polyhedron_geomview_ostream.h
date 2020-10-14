@@ -31,7 +31,10 @@ public:
   void write_header(Geomview_stream& os,
                     std::size_t vertices,
                     std::size_t,
-                    std::size_t facets)
+                    std::size_t facets,
+                    bool = false,
+                    bool = false,
+                    bool = false)
   {
     out = &os;
 
@@ -50,9 +53,14 @@ public:
   }
 
   void write_vertex( const double& x, const double& y, const double& z) { *out << x << y << z; }
+  void write_vertex_normal(const double, const double, const double) { }
+  void write_vertex_color(const double, const double, const double) { }
+  void write_vertex_texture(const double, const double) { }
+
   void write_facet_header() {}
   void write_facet_begin(std::size_t no) { *out << int(no); }
   void write_facet_vertex_index( std::size_t index) { *out << int(index); }
+  void write_face_color(const double, const double, const double) { }
   void write_facet_end()
   {
     double r = out->fcr(),
