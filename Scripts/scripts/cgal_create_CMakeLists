@@ -42,21 +42,19 @@
 
 create_cmake_script_with_options()
 {
-  qt4='n'
-
   # parse options file
   if [ -e "$OPTIONS_FILE" ]; then
 
     OLDIFS="$IFS"
     IFS=$'\n'
-    for LINE in `cat $OPTIONS_FILE`; do 
+    for LINE in `cat $OPTIONS_FILE`; do
 
       # CGAL components
       if [ -z "$CGAL_COMPONENTS_GIVEN" ]; then # read file only if not given!
         next_cgal_component=`echo $LINE | grep -v "#" | grep CGAL_COMPONENT`
         if [ ! -z "$next_cgal_component" ]; then
           next_cgal_component=${next_cgal_component/CGAL_COMPONENT /}
-          if [ -z "$CGAL_COMPONENTS" ]; then 
+          if [ -z "$CGAL_COMPONENTS" ]; then
             CGAL_COMPONENTS=$next_cgal_component
           else
             CGAL_COMPONENTS=$CGAL_COMPONENTS":"$next_cgal_component
