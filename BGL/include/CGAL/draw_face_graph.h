@@ -170,7 +170,7 @@ protected:
     };
   }
 
-  virtual void keyPressEvent(QKeyEvent *e)
+  void keyPressEvent(QKeyEvent *e) override
   {
     // Test key pressed:
     //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
