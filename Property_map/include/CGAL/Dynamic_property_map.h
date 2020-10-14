@@ -35,7 +35,7 @@ struct Dynamic_property_map {
   typedef const value_type& reference;
   typedef boost::read_write_property_map_tag  category;
 
-  Dynamic_property_map(const V& default_value = V())
+  Dynamic_property_map(const V default_value = V())
     : map_(new Map()), default_value_(default_value)
   {}
 
