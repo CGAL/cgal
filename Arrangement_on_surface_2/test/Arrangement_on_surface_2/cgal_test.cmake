@@ -1422,3 +1422,5 @@ compile_and_run(test_spherical_removal)
 compile_and_run(test_io)
 
 compile_and_run(test_sgm)
+
+compile_and_run(test_polycurve_intersection)
