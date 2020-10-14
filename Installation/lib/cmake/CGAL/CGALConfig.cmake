@@ -131,7 +131,7 @@ include(CGAL_setup_target_dependencies)
 # Define the CGAL targets and their CGAL:: aliases
 #
 foreach(cgal_lib ${CGAL_LIBRARIES})
-  set(WITH_${cgal_lib} TRUE)
+
   if(${cgal_lib}_FOUND AND NOT TARGET ${cgal_lib})
     add_library(${cgal_lib} INTERFACE IMPORTED GLOBAL)
     if(NOT TARGET CGAL::${cgal_lib})
