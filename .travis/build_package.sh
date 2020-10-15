@@ -35,41 +35,41 @@ cd $ROOT
     cd ..
     IFS=$old_IFS
     mytime zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
-    #test dependencies 
+    #test dependencies
     cd $ROOT
     mytime bash Scripts/developer_scripts/cgal_check_dependencies.sh --check_headers /usr/bin/doxygen
 
     cd .travis
-  	#parse current matrix and check that no package has been forgotten
+    #parse current matrix and check that no package has been forgotten
 
-	  IFS=$'\n'
-	  COPY=0
-	  MATRIX=()
-	  for LINE in $(cat "$PWD/packages.txt")
-	  do
-	        MATRIX+="$LINE "
-	  done
-	
-	  PACKAGES=()
-	  cd ..
-  	for f in *
-	  do
-	    if [ -d  "$f/package_info/$f" ]
-	        then
-	                PACKAGES+="$f "
-	        fi
-	  done	
-	
-	  DIFFERENCE=$(echo ${MATRIX[@]} ${PACKAGES[@]} | tr ' ' '\n' | sort | uniq -u)
-	  IFS=$' '
-	  if [ "${DIFFERENCE[0]}" != "" ]
-	  then
-	        echo "The matrix and the actual package list differ : ."
-					echo ${DIFFERENCE[*]}
+    IFS=$'\n'
+    COPY=0
+    MATRIX=()
+    for LINE in $(cat "$PWD/packages.txt")
+    do
+          MATRIX+="$LINE "
+    done
+
+    PACKAGES=()
+    cd ..
+    for f in *
+    do
+      if [ -d  "$f/package_info/$f" ]
+          then
+                  PACKAGES+="$f "
+          fi
+    done
+
+    DIFFERENCE=$(echo ${MATRIX[@]} ${PACKAGES[@]} | tr ' ' '\n' | sort | uniq -u)
+    IFS=$' '
+    if [ "${DIFFERENCE[0]}" != "" ]
+    then
+          echo "The matrix and the actual package list differ : ."
+          echo ${DIFFERENCE[*]}
             echo "You should run generate_travis.sh."
-	        exit 1
-	  fi
-	  echo "Matrix is up to date."
+          exit 1
+    fi
+    echo "Matrix is up to date."
     #check if non standard cgal installation works
     cd $ROOT
     mkdir build_test
@@ -117,13 +117,13 @@ cd $ROOT
       EXTRA_CXX_FLAGS="-Werror=inconsistent-missing-override"
       ;;
   esac
-  
-  
-  mytime cmake -DCMAKE_CXX_FLAGS="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DBUILD_TESTING=ON -DWITH_tests=ON -DWITH_examples=ON -DWITH_demos=$WITHDEMOS ..
-  mytime ctest -j2 -L $ARG --output-on-failure
-  
 
-  
+
+  mytime cmake -DCMAKE_CXX_FLAGS="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DBUILD_TESTING=ON -DWITH_tests=ON -DWITH_examples=ON -DWITH_demos=$WITHDEMOS ..
+  mytime ctest -j2 -L $ARG -E execution___of__ --output-on-failure
+
+
+
 done
 IFS=$old_IFS
 # Local Variables:
