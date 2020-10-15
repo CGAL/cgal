@@ -9,7 +9,6 @@ if(BUILD_TESTING)
   enable_testing()
 endif()
 
-cmake_policy(SET CMP0064 NEW)
 
 include(CMakeParseArguments)
 

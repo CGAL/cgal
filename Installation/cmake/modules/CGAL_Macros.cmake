@@ -367,31 +367,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "${SPECIAL_PREFIXES}\n")
     file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "${SPECIAL_PREFIXES}")
 
-     foreach( lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES} )
-
-       list( FIND CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES "${lib}" POSITION )
-       # if lib is essential ...
-       if ( ("${POSITION}" STRGREATER "-1") )
-
-         set (vlib ${CGAL_EXT_LIB_${lib}_PREFIX} )
-         #the next 'if' is needed to avoid ${vlib} config variables to be overidden in case of a local configuration change
-         file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "  set( ${vlib}_FOUND           \"${${vlib}_FOUND}\" )\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "  set( ${vlib}_USE_FILE        \"${${vlib}_USE_FILE}\" )\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "  set( ${vlib}_INCLUDE_DIR     \"${${vlib}_INCLUDE_DIR}\" )\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "  set( ${vlib}_LIBRARIES       \"${${vlib}_LIBRARIES}\" )\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "  set( ${vlib}_DEFINITIONS     \"${${vlib}_DEFINITIONS}\" )\n")
-
-
-         #the next 'if' is needed to avoid ${vlib} config variables to be overidden in case of a local configuration change
-         file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "  set( ${vlib}_FOUND           \"${${vlib}_FOUND}\")\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "  set( ${vlib}_USE_FILE        \"${${vlib}_USE_FILE}\" )\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "  set( ${vlib}_INCLUDE_DIR     \"${${vlib}_INCLUDE_DIR}\" )\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "  set( ${vlib}_LIBRARIES       \"${${vlib}_LIBRARIES}\" )\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "  set( ${vlib}_DEFINITIONS     \"${${vlib}_DEFINITIONS}\" )\n")
-       endif()
-
-     endforeach()
-
   endmacro()
 
   macro ( fetch_env_var VAR )

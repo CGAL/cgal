@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-cmake_minimum_required(VERSION 3.11...3.15)
+cmake_minimum_required(VERSION 3.12...3.18)
 project( Installation_Tests )
 
 

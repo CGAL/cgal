@@ -4,18 +4,15 @@
 # ${CMAKE_SOURCE_DIR} and to the root binary directory of the project as
 # ${CMAKE_BINARY_DIR} or ${CMAKE_BINARY_DIR}.
 if(NOT PROJECT_NAME)
-  cmake_minimum_required(VERSION 3.1...3.15)
+  cmake_minimum_required(VERSION 3.12...3.18)
   project(CGAL CXX C)
 endif()
 
-# https://cmake.org/cmake/help/v3.2/policy/CMP0056.html
-#
 # Fix a bug: `try_compile` should use `CMAKE_EXE_LINKER_FLAGS`.
 # That variable can contain important flags like
 #
 #     -static-libstdc++ -static-libgcc
 #
-cmake_policy(SET CMP0056 NEW)
 # Use GNUInstallDirs to get canonical paths
 include(GNUInstallDirs)
 
@@ -505,16 +502,7 @@ endif()
 
 message("== Detect external libraries ==")
 
-# this is the place to tell which external libs are supporting
-# Remarks:
-#  External libs configured when Qt5 lib of cgal are required
-#  Coin is used in KDS, but no FindCoin or FindCOIN exists
-#  There exists FindIPE, FindMKL, but they are only used to support supporting libs
-list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 LEDA )
 
-# Where CMake is run several times, to avoid duplicates
-list(REMOVE_DUPLICATES CGAL_SUPPORTING_3RD_PARTY_LIBRARIES)
-hide_variable(CGAL_SUPPORTING_3RD_PARTY_LIBRARIES)
 
 # set some to have special prefix
 macro( set_special_prefix library prefix)
@@ -560,24 +548,6 @@ else()
   file(REMOVE "${CMAKE_BINARY_DIR}/include/gmp.h")
 endif()
 hide_variable(CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES)
-
-foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES})
-
-  # set standard prefix
-  if(NOT DEFINED CGAL_EXT_LIB_${lib}_PREFIX)
-    set(CGAL_EXT_LIB_${lib}_PREFIX ${lib})
-  endif()
-  hide_variable(CGAL_EXT_LIB_${lib}_PREFIX)
-
-  # add option
-  list( FIND CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES "${lib}" POSITION )
-  if ( "${POSITION}" STRGREATER "-1" ) # if lib is essential
-    option(WITH_${lib} "Select external library ${lib}" ON)
-  else()
-    option(WITH_${lib} "Select external library ${lib}" OFF)
-  endif()
-
-endforeach()
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -666,21 +636,9 @@ cache_get(CGAL_3RD_PARTY_INCLUDE_DIRS  )
 cache_get(CGAL_3RD_PARTY_LIBRARIES     )
 cache_get(CGAL_3RD_PARTY_LIBRARIES_DIRS)
 
-#add_subdirectory(src)
-if(NOT POLICY CMP0070 AND POLICY CMP0053)
-  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
-  cmake_policy(SET CMP0053 OLD)
-endif()
-
-find_package(Qt5 QUIET COMPONENTS OpenGL Svg Xml)
-if(NOT Qt5_FOUND)
-  message("CGAL_Qt5 needs Qt5 and won't be configured.")
-else()#NOT Qt5_FOUND
-  message( STATUS "USING Qt5_VERSION = '${Qt5Core_VERSION_STRING}'" )
-  install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/Qt" COMPONENT CGAL_Qt5)
-  install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/resources/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/resources" COMPONENT CGAL_Qt5)
-  install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/icons/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/icons" COMPONENT CGAL_Qt5)
-endif()#NOT Qt5_FOUND
+install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/Qt" COMPONENT CGAL_Qt5)
+install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/resources/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/resources" COMPONENT CGAL_Qt5)
+install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/icons/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/icons" COMPONENT CGAL_Qt5)
 
 
 #
@@ -1084,11 +1042,6 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
   message("sorting:")
   list(SORT list_of_documented_headers)
   #string(REPLACE ";" " \n" list_of_documented_headers "${list_of_documented_headers}")
-  if (NOT "${list_of_documented_headers}" STREQUAL "")
-    set(has_list_of_documented_headers TRUE)
-  else()
-    set(has_list_of_documented_headers FALSE)
-  endif()
   list(SORT list_of_documented_headers)
   list(REMOVE_DUPLICATES list_of_documented_headers)
 
@@ -1097,26 +1050,19 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
     message("list_of_whitelisted_headers: ${list_of_whitelisted_headers}")
     ## Loop on package and headers
     set(check_pkg_target_list)
-    cmake_policy(SET CMP0057 NEW)
     #get build dir for removal from deps
     get_filename_component(BUILD_DIR ${CMAKE_BINARY_DIR} NAME)
     foreach (package ${CGAL_CONFIGURED_PACKAGES_NAMES})
       if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include)
         set(check_pkg_headers_depends "")
-        if(has_list_of_documented_headers)
-          # Then recurse2
-          file(GLOB_RECURSE ${package}_HEADERS #don't use a hard coded list because the ones for the documented headers is enough.
-            RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h*")
-        else()
-        file(GLOB ${package}_HEADERS
-                    RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include"
-                    "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h*")
-        endif()
+        file(GLOB_RECURSE ${package}_HEADERS #don't use a hard coded list because the ones for the documented headers is enough.
+          RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include"
+          "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h*")
+
         list(SORT ${package}_HEADERS)
         foreach(header ${${package}_HEADERS})
           set(skip_hdr FALSE)
-          if(has_list_of_documented_headers AND NOT header IN_LIST list_of_documented_headers)
+          if(NOT header IN_LIST list_of_documented_headers)
 #            message(STATUS "Skip non-documented header \"${header}\".")
             set(skip_hdr TRUE)
           endif()
