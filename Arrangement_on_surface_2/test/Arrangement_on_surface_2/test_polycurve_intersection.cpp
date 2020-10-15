@@ -18,6 +18,17 @@ typedef CGAL::Arrangement_2<Geom_traits_2>                Arrangement_2;
 typedef Geom_traits_2::X_monotone_curve_2                 X_monotone_polyline;
 typedef Geom_traits_2::X_monotone_subcurve_2              X_monotone_subcurve;
 
+struct Test_functor
+{
+  void operator() (const CGAL::Object& obj) const
+  {
+    const X_monotone_polyline* poly
+      = CGAL::object_cast<X_monotone_polyline>(&obj);
+    CGAL_assertion_msg (poly != nullptr, "Intersection is not a polyline");
+    std::cerr << " * Intersection = " << *poly << std::endl;
+  }
+};
+
 void test (const X_monotone_polyline& a, const X_monotone_polyline& b)
 {
   Geom_traits_2 traits;
@@ -28,15 +39,7 @@ void test (const X_monotone_polyline& a, const X_monotone_polyline& b)
             << " * Polyline B = " << b << std::endl;
 
   intersect_2
-    (a, b,
-     boost::make_function_output_iterator
-     ([&](const CGAL::Object& obj)
-      {
-        const X_monotone_polyline* poly
-          = CGAL::object_cast<X_monotone_polyline>(&obj);
-        CGAL_assertion_msg (poly != nullptr, "Intersection is not a polyline");
-        std::cerr << " * Intersection = " << *poly << std::endl;
-      }));
+    (a, b, boost::make_function_output_iterator (Test_functor()));
 }
 
 int main(int argc, char* argv[])
@@ -76,5 +79,5 @@ int main(int argc, char* argv[])
   std::cerr << "Testing intersection right-to-left / right-to-left" << std::endl;
   test (p0r2l, p1r2l);
 
-  return EXIT_FAILURE;
+  return EXIT_SUCCESS;
 }
