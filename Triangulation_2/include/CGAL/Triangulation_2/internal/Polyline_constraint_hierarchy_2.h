@@ -1047,7 +1047,9 @@ add_Steiner(T va, T vb, T vc){
               << ")\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   Context_list* hcl=nullptr;
-  if(!get_contexts(va,vb,hcl)) CGAL_triangulation_assertion(false);
+  if(!get_contexts(va,vb,hcl)) {
+    return;
+  }
 
   Context_list* hcl2 = new  Context_list;
 
