@@ -35,7 +35,7 @@ Release date: December 2020
 ### [Surface Mesh](https://doc.cgal.org/5.2/Manual/packages.html#PkgSurfaceMesh)
 
 -   Added the function `clear_without_removing_property_maps()` to clear a mesh but keep all the created property maps added.
--   Added the functions `remove_property_maps()` and `remove_all_property_maps()` to remove all added property maps by index type or all of them respectively.
+-   Added the functions `remove_property_maps<Index_type>()` and `remove_all_property_maps()` to remove all added property maps by index type or all of them respectively.
 
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.2/Manual/packages.html#PkgPolygonMeshProcessing)
