@@ -442,22 +442,9 @@ public:
    * \return the bounding box defined by that node's relationship to the tree
    */
   Bbox bbox(const Node &node) const {
-
-    // Determine the side length of this node
-    FT size = m_side_per_depth[node.depth()];
-
-    // Determine the location this node should be split
-    FT min_corner[dim];
-    FT max_corner[dim];
-    for (int i = 0; i < dim; i++) {
-
-      min_corner[i] = m_bbox_min[i] + (node.location()[i] * size);
-      max_corner[i] = min_corner[i] + size;
-    }
-
-    // Create the cube
-    return {min_corner[0], min_corner[1], min_corner[2],
-            max_corner[0], max_corner[1], max_corner[2]};
+    Bbox out;
+    construct_bbox (node, out);
+    return out;
   }
 
   /*!
@@ -609,6 +596,44 @@ private: // functions :
     FT y_len = bbox.ymax() - bbox.ymin();
     FT z_len = bbox.zmax() - bbox.zmin();
     return (std::max)({x_len, y_len, z_len});
+  }
+
+  void construct_bbox (const Node& node, Bbox_2& box) const
+  {
+    // Determine the side length of this node
+    FT size = m_side_per_depth[node.depth()];
+
+    // Determine the location this node should be split
+    FT min_corner[dim];
+    FT max_corner[dim];
+    for (int i = 0; i < dim; i++) {
+
+      min_corner[i] = m_bbox_min[i] + (node.location()[i] * size);
+      max_corner[i] = min_corner[i] + size;
+    }
+
+    // Create the cube
+    box = {min_corner[0], min_corner[1],
+           max_corner[0], max_corner[1]};
+  }
+
+  void construct_bbox (const Node& node, Bbox_3& box) const
+  {
+    // Determine the side length of this node
+    FT size = m_side_per_depth[node.depth()];
+
+    // Determine the location this node should be split
+    FT min_corner[dim];
+    FT max_corner[dim];
+    for (int i = 0; i < dim; i++) {
+
+      min_corner[i] = m_bbox_min[i] + (node.location()[i] * size);
+      max_corner[i] = min_corner[i] + size;
+    }
+
+    // Create the cube
+    box = {min_corner[0], min_corner[1], min_corner[2],
+           max_corner[0], max_corner[1], max_corner[2]};
   }
 
   void reassign_points(Node &node, Range_iterator begin, Range_iterator end, const Point &center,
@@ -782,6 +807,63 @@ private: // functions :
 
     }
   }
+
+public:
+
+  /// \cond SKIP_IN_MANUAL
+  void dump_to_polylines (std::ostream& os) const
+  {
+    for (const Node& n : traverse<Traversal::Preorder>())
+      if (n.is_leaf())
+      {
+        Bbox box = bbox(n);
+        dump_box_to_polylines (box, os);
+      }
+  }
+
+  void dump_box_to_polylines (const Bbox_2& box, std::ostream& os) const
+  {
+    // dump in 3D for visualisation
+    os << "5 "
+       << box.xmin() << " " << box.ymin() << " 0 "
+       << box.xmin() << " " << box.ymax() << " 0 "
+       << box.xmax() << " " << box.ymax() << " 0 "
+       << box.xmax() << " " << box.ymin() << " 0 "
+       << box.xmin() << " " << box.ymin() << " 0" << std::endl;
+  }
+  void dump_box_to_polylines (const Bbox_3& box, std::ostream& os) const
+  {
+    // Back face
+    os << "5 "
+       << box.xmin() << " " << box.ymin() << " " << box.zmin() << " "
+       << box.xmin() << " " << box.ymax() << " " << box.zmin() << " "
+       << box.xmax() << " " << box.ymax() << " " << box.zmin() << " "
+       << box.xmax() << " " << box.ymin() << " " << box.zmin() << " "
+       << box.xmin() << " " << box.ymin() << " " << box.zmin() << std::endl;
+
+    // Front face
+    os << "5 "
+       << box.xmin() << " " << box.ymin() << " " << box.zmax() << " "
+       << box.xmin() << " " << box.ymax() << " " << box.zmax() << " "
+       << box.xmax() << " " << box.ymax() << " " << box.zmax() << " "
+       << box.xmax() << " " << box.ymin() << " " << box.zmax() << " "
+       << box.xmin() << " " << box.ymin() << " " << box.zmax() << std::endl;
+
+    // Traversal edges
+    os << "2 "
+       << box.xmin() << " " << box.ymin() << " " << box.zmin() << " "
+       << box.xmin() << " " << box.ymin() << " " << box.zmax() << std::endl;
+    os << "2 "
+       << box.xmin() << " " << box.ymax() << " " << box.zmin() << " "
+       << box.xmin() << " " << box.ymax() << " " << box.zmax() << std::endl;
+    os << "2 "
+       << box.xmax() << " " << box.ymin() << " " << box.zmin() << " "
+       << box.xmax() << " " << box.ymin() << " " << box.zmax() << std::endl;
+    os << "2 "
+       << box.xmax() << " " << box.ymax() << " " << box.zmin() << " "
+       << box.xmax() << " " << box.ymax() << " " << box.zmax() << std::endl;
+  }
+  /// \endcond
 
 }; // end class Octree
 
