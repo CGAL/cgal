@@ -1131,7 +1131,7 @@ public:
   /// removes all vertices, halfedge, edges and faces. Collects garbage but keeps all property maps.
   void clear_without_removing_property_maps();
 
-    /// removes all vertices, halfedge, edges and faces. Collects garbage and remove all property maps added by a call to `add_property_map()` for all simplex types.
+    /// removes all vertices, halfedge, edges and faces. Collects garbage and removes all property maps added by a call to `add_property_map()` for all simplex types.
     ///
     /// After calling this method, the object is the same as a newly constructed object. The additional property maps are also removed and must thus be re-added if needed.
     void clear();
@@ -2001,7 +2001,7 @@ private: //--------------------------------------------------- property handling
         Property_selector<I>(this).resize_property_array();
     }
 
-    /// removes all property maps for all index type added by a call to `add_property_map()`.
+    /// removes all property maps for all index types added by a call to `add_property_map()`.
     /// The memory allocated for those property maps is freed.
     void remove_all_property_maps()
     {
