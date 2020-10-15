@@ -1048,6 +1048,10 @@ add_Steiner(T va, T vb, T vc){
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   Context_list* hcl=nullptr;
   if(!get_contexts(va,vb,hcl)) {
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+      std::cerr << CGAL::internal::cdt_2_indent_level
+                << "  -> the constraint is already split\n";
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
     return;
   }
 
