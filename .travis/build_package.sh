@@ -103,8 +103,6 @@ cd $ROOT
     fi
   fi
   IFS=$' '
-  mkdir build
-  cd build
   mkdir -p build-travis
   cd build-travis
   WITHDEMOS=ON
@@ -120,7 +118,7 @@ cd $ROOT
 
 
   mytime cmake -DCMAKE_CXX_FLAGS="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DBUILD_TESTING=ON -DWITH_tests=ON -DWITH_examples=ON -DWITH_demos=$WITHDEMOS ..
-  mytime ctest -j2 -L $ARG -E execution___of__ --output-on-failure
+  mytime ctest -j2 -L $ARG'([_][A-Z]|$)'  -E execution___of__ --output-on-failure
 
 
 
