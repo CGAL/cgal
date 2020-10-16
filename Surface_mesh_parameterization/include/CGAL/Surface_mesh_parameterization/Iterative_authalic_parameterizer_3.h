@@ -35,6 +35,7 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/Weights.h>
+#include <CGAL/number_type_config.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
@@ -552,7 +553,7 @@ private:
 
       // Normalise the angle
       double factor = 2. / theta_sum;
-      factor *= M_PI;
+      factor *= CGAL_PI;
       for(int n=0; n<neighborsCounter; ++n)
         neighbor_list[n].angle *= factor;
 
@@ -646,7 +647,7 @@ private:
     vertex_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
     --previous_vertex_v_k;
     const PPM_ref position_v_k = get(ppmap, *previous_vertex_v_k);
-    NT cotg_psi_ij = internal::cotangent<Kernel>(position_v_k, position_v_j, position_v_i);
+//    NT cotg_psi_ij = internal::cotangent<Kernel>(position_v_k, position_v_j, position_v_i);
     NT cotg_beta_ij = internal::cotangent<Kernel>(position_v_i, position_v_k, position_v_j);
 
     // Compute cotangent of (v_i,v_j,v_l) corner (i.e. cotan of v_j corner)
@@ -655,7 +656,7 @@ private:
     ++next_vertex_v_l;
 
     const Point_3 position_v_l = get(ppmap, *next_vertex_v_l);
-    NT cotg_theta_ij = internal::cotangent<Kernel>(position_v_i, position_v_j, position_v_l);
+//    NT cotg_theta_ij = internal::cotangent<Kernel>(position_v_i, position_v_j, position_v_l);
     NT cotg_alpha_ij = internal::cotangent<Kernel>(position_v_j, position_v_l, position_v_i);
 
     NT weight = 0;
@@ -899,7 +900,7 @@ public:
     Matrix A(nv, nv);
     Matrix A_prev(nv, nv);
     Vector Xu(nv), Xv(nv), Bu(nv), Bv(nv);
-    double err[iterations];
+    std::vector<double> err(iterations);
 
     // Initialize A, Xu, Xv, Bu and Bv after border parameterization
     // Fill the border vertices' lines in both linear systems:
