@@ -118,7 +118,6 @@ create_interior_straight_skeleton_2 ( Polygon const& aOutContour,
                                       typename std::enable_if<
                                         ! CGAL_SS_i::has_Hole_const_iterator<Polygon>::value>::type* = nullptr)
 {
-//  CGAL_precondition(aOutContour.is_simple() || !"The input polygon is not simple.");
   return create_interior_straight_skeleton_2(CGAL_SS_i::vertices_begin(aOutContour)
                                             ,CGAL_SS_i::vertices_end(aOutContour)
                                             ,k

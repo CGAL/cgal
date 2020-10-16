@@ -557,17 +557,29 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CreateContourBisectors()
   }
 }
 
-// @todo certify calls to K() instead of supposing exact predicates from K
 template<class Gt, class Ss, class V>
 void Straight_skeleton_builder_2<Gt,Ss,V>::HarmonizeSpeeds(boost::mpl::bool_<true>)
 {
+  // Collinear input edges might not have the exact same speed if an inexact square root is used.
+  // This might cause some inconsistencies in time, resulting in invalid skeletons. Therefore,
+  // if the square root is not exact, we enforce that collinear input edges have the same speed,
+  // by making them use the same line coefficients (which determines the speed of the front).
+  //
+  // That is achieved by creating a set of input edges, with two input edges being equal if they are collinear.
+  // If a new input edge is not successfully inserted into the same, it takes the line coefficients
+  // of the representative of this class.
+
+  if(CGAL::is_same_or_derived<Field_with_sqrt_tag,
+                              typename Algebraic_structure_traits<FT>::Algebraic_category>::value)
+    return;
+
   auto comparer = [&](Halfedge_handle lLH, Halfedge_handle lRH) -> bool
   {
     const Direction_2 lLD = CreateDirection(lLH) ;
     const Direction_2 lRD = CreateDirection(lRH) ;
     Comparison_result rRes = K().compare_angle_with_x_axis_2_object()(lLD, lRD) ;
 
-    if ( rRes == EQUAL )
+    if ( rRes == EQUAL ) // parallel
     {
       if ( K().orientation_2_object()(lLH->vertex()->point(),
                                       lLH->opposite()->vertex()->point(),
@@ -862,7 +874,7 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::IsValidEvent( EventPtr aEvent )
   if ( IsProcessed(aEvent) )
     return false;
 
-  SetEventTimeAndPoint(*aEvent) ; // @todo redundant?
+  SetEventTimeAndPoint(*aEvent) ;
 
   if ( aEvent->type() == Event::cEdgeEvent)
   {
@@ -1960,6 +1972,11 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::FinishUp()
                 ,boost::bind(&Straight_skeleton_builder_2<Gt,Ss,V>::EraseBisector,this,_1)
                ) ;
 
+  // MergeCoincidentNodes() locks all extremities of halfedges that have a vertex involved in a multinode.
+  // However, both extremities might have different (combinatorially and geometrically) vertices.
+  // With a single pass, it would prevent one of the extremities from being properly simplified.
+  // The simpliest is to just run it again as the skeleton structure is small compared to the rest
+  // of the algorithm.
   for(;;)
   {
     if(!MergeCoincidentNodes())

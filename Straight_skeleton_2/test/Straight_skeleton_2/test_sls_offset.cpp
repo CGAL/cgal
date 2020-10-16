@@ -52,11 +52,9 @@ void test_API()
 {
   typedef CGAL::Polygon_2<K>                                         Polygon_2;
   typedef CGAL::Polygon_with_holes_2<K>                              Polygon_with_holes_2;
-  typedef CGAL::Straight_skeleton_2<K>                               Straight_skeleton;
 
   typedef CGAL::Polygon_2<EPICK>                                     Polygon_2_EPICK;
   typedef CGAL::Polygon_with_holes_2<EPICK>                          Polygon_with_holes_2_EPICK;
-  typedef CGAL::Straight_skeleton_2<EPICK>                           Straight_skeleton_EPICK;
 
   Polygon_2 p;
   Polygon_with_holes_2 pwh;

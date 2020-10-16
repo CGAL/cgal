@@ -89,8 +89,7 @@ and `create_offset_polygons_2()` instead.
 \tparam FT must be a model of `FieldNumberType` convertible to `OfK::FT` and `SsK::FT`.
 \tparam HoleIterator must be a model of `InputIterator` with value type being a model of `ConstRange`
                      with value type `SsK::Point_2`.
-\tparam InKPolygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`)
-                   or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`).
+\tparam InKPolygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`).
 \tparam OfKPolygon is a polygon without holes type determined from `OfK` and `InKPolygon`,
                    see Section \ref SLSOffsetPolygonReturnType.
 

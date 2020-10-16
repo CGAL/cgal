@@ -249,7 +249,7 @@ private :
   {
     SplitEvent& lEvent = dynamic_cast<SplitEvent&>(*aEvent) ;
 
-    Vector_2 lV1 ( aEvent->point(), lEvent.seed0()->point() ); // @fixme ? is this correct?
+    Vector_2 lV1 ( aEvent->point(), lEvent.seed0()->point() );
     Vector_2 lV2 ( aEvent->point(), aEvent->point() + CreateVector(aEvent->triedge().e2()) ) ;
 
     return ComputeApproximateAngle(lV1, lV2) ;
@@ -279,7 +279,6 @@ private :
 // Only used to debug
   double ComputeSupportsAngle ( EventPtr const& aEvent )
   {
-
     if ( aEvent->type() == Event::cSplitEvent )
     {
       Halfedge_handle lOppEdge = aEvent->triedge().e2() ;
@@ -303,8 +302,6 @@ private :
       CGAL_assertion ( aEvent->type() == Event::cPseudoSplitEvent );
       return ComputeSupportsAngleSplit ( aEvent ) ;
     }
-
-    // CGAL_STSKEL_ENABLE_TRACE
   }
 
   // Real stuff
@@ -450,6 +447,7 @@ private :
     }
   }
 
+  // @todo Should split events always have lower priority than split events?
   Comparison_result CompareEventsSupportAngles ( EventPtr const& aA, EventPtr const& aB )
   {
     CGAL_precondition ( aA->type() != Event::cEdgeEvent && aB->type() != Event::cEdgeEvent ) ;

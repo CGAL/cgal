@@ -171,9 +171,9 @@ Each contour must be input in turn starting with the <I>outer contour</I> and fo
 The order of the holes is unimportant but the outer contour must be entered first.
 The outer contour must be oriented counter-clockwise while holes must be oriented clockwise.
 
-It is an error to enter more than one outer contour or to enter a hole which is not inside
-the outer contour or inside another hole. It is also an error to enter a contour which crosses
-or touches any one another. It is possible however to enter a contour that touches itself in such a way
+It is an error to enter more than one outer contour, to enter a hole which is not inside
+the outer contour, to enter a hole that is inside another hole, or to enter a contour which crosses
+or touches a hole. It is possible however to enter a contour that touches itself in such a way
 that its interior region is still well defined and singly-connected (see the User Manual for examples).
 
 The sequence `[aBegin,aEnd)` must iterate over each 2D point that corresponds to a vertex
