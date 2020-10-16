@@ -60,6 +60,8 @@ public:
    * \param y the Y coordinate of theTextItem's position.
    * \param z the Z coordinate of theTextItem's position.
    * \param viewer the viewer used to display the Scene.
+   * \param scaler a vector indicating the scaling factors to apply to the scene when displaying it.
+   * It can be useful when a scene is very large along one of it's coordinates, making it hard to visualize it.
    * \return true if the TextItem is visible. */
   virtual bool  testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer, const QVector3D& scaler) = 0;
 
