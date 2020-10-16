@@ -24,7 +24,7 @@ set -e # Exit the script on first error, for safety
 PREVIOUS_MAJOR_RELEASE=$1
 CURRENT_RELEASE=$2
 
-REMOTE=`git config branch.releases/CGAL-${PREVIOUS_MAJOR_RELEASE}-branch.remote`
+REMOTE=`git config branch.releases/CGAL-${PREVIOUS_MAJOR_RELEASE}-branch.remote || git config branch.${PREVIOUS_MAJOR_RELEASE}.x-branch.remote`
 # $REMOTE should be the "cgal" remote, but a CGAL developer may have keep the
 # name "origin", or set to another one.
 

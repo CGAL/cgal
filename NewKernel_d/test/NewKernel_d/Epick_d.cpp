@@ -141,8 +141,8 @@ void test2(){
   typedef typename K1::Construct_max_vertex_d CMV;
   typedef typename K1::Compute_squared_radius_d SR;
   typedef typename K1::Translated_point_d TP;
-  typedef typename K1::Power_center_d PC;
-  typedef typename K1::Power_distance_d PoD;
+  typedef typename K1::Construct_power_sphere_d PC;
+  typedef typename K1::Compute_power_product_d PoD;
   typedef typename K1::Construct_weighted_point_d CWP;
   typedef typename K1::Power_side_of_bounded_power_sphere_d PSBPS;
   typedef typename K1::Compute_squared_radius_smallest_orthogonal_sphere_d CSRSOS;
@@ -210,12 +210,12 @@ void test2(){
   CMV cMv Kinit(construct_max_vertex_d_object);
   SR sr Kinit(compute_squared_radius_d_object);
   TP tp Kinit(translated_point_d_object);
-  PC pc Kinit(power_center_d_object);
+  PC pc Kinit(construct_power_sphere_d_object);
   CWP cwp Kinit(construct_weighted_point_d_object);
   //PDW pdw Kinit(point_drop_weight_d_object);
   PDW const& pdw = cp;
   PW pw Kinit(compute_weight_d_object);
-  PoD pod Kinit(power_distance_d_object);
+  PoD pod Kinit(compute_power_product_d_object);
   PSBPS psbps Kinit(power_side_of_bounded_power_sphere_d_object);
   CSRSOS csrsos Kinit(compute_squared_radius_smallest_orthogonal_sphere_d_object);
 
@@ -718,14 +718,14 @@ void test4(){
   typedef typename Ker::Weighted_point_d WP;
   typedef typename Ker::Construct_circumcenter_d CCc;
   typedef typename Ker::Equal_d E;
-  typedef typename Ker::Power_center_d PC;
-  typedef typename Ker::Power_distance_d PoD;
+  typedef typename Ker::Construct_power_sphere_d PC;
+  typedef typename Ker::Compute_power_product_d PoD;
   typedef typename Ker::Affine_rank_d AR;
   Ker k(4);
   CCc ccc Kinit(construct_circumcenter_d_object);
   E ed Kinit(equal_d_object);
-  PC pc Kinit(power_center_d_object);
-  PoD pod Kinit(power_distance_d_object);
+  PC pc Kinit(construct_power_sphere_d_object);
+  PoD pod Kinit(compute_power_product_d_object);
   AR ar Kinit(affine_rank_d_object);
   auto mkpt=[](auto...x){double l[]{(double)x...};return P(std::begin(l), std::end(l));};
   P tab1[]={mkpt(15,20,40,80),mkpt(10,23,36,80),mkpt(10,20,40,85),mkpt(10,15,40,80),mkpt(13,20,40,76)};

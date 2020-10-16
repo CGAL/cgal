@@ -193,6 +193,11 @@ as shown in the following example.
 
 \cgalExample{Polygon_mesh_processing/triangulate_faces_example.cpp}
 
+An additional parameter, named `visitor` can be used to track the how faces
+are triangulated into subfaces. The following examples shows how to use it.
+
+\cgalExample{Polygon_mesh_processing/triangulate_faces_split_visitor_example.cpp}
+
 
 \subsubsection RemeshingExample_1 Isotropic Remeshing of a Region on a Polygon Mesh
 

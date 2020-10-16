@@ -36,6 +36,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QDialog>
+#include <QMessageBox>
 
 #include <CGAL/Qt/GraphicsViewNavigation.h>
 
@@ -455,17 +456,28 @@ public Q_SLOTS:
           qobject_cast<Scene_polyhedron_selection_item*>
           (scene->item(scene->mainSelectionIndex()));
     if(!sel_item)
+    {
+      QMessageBox::information(mw, "Error", "No selection found.");
       return;
+    }
     if(sel_item->selected_facets.empty())
     {
+      QMessageBox::information(mw, "Error", "No selected facets.");
       cleanup();
       return;
     }
     if(!CGAL::is_closed(*sel_item->polyhedron()))
     {
+      QMessageBox::information(mw, "Error", "The surface mesh must be closed.");
       cleanup();
       return;
     }
+
+    connect(sel_item, &Scene_polyhedron_selection_item::aboutToBeDestroyed, this,
+            [this](){
+      sel_item = nullptr;
+    });
+
     if(visu_item)
       scene->erase(scene->item_id(visu_item));
     visu_item = nullptr;
@@ -573,7 +585,10 @@ public Q_SLOTS:
     Tree aabb_tree(faces(*sm).first, faces(*sm).second, *sm, uv_map_3);
 
     visu_item = new Scene_polylines_item;
-
+    connect(visu_item, &Scene_polylines_item::aboutToBeDestroyed, this,
+            [this](){
+      visu_item = nullptr;
+    });
 
     // compute 3D coordinates
     transfo =
@@ -757,6 +772,8 @@ public Q_SLOTS:
     }
 
     SMesh result;
+    if(!sel_item)
+      return;
     CGAL::copy_face_graph(*sel_item->polyhedron(), result);
     bool OK = PMP::corefine_and_compute_difference(result, text_mesh_complete, result);
 
@@ -800,7 +817,8 @@ public Q_SLOTS:
       textMesh = new Scene_surface_mesh_item(text_mesh);
       connect(textMesh, &Scene_surface_mesh_item::aboutToBeDestroyed,
               this, [this](){
-        textMesh = nullptr;});
+        textMesh = nullptr;
+      });
       textMesh->setName("Extruded Text");
       scene->addItem(textMesh);
     }
@@ -907,7 +925,8 @@ private:
     dock_widget->rot_slider->setValue(0);
     translation = EPICK::Vector_2(0,0);
     uv_map_3.reset();
-    graphics_scene->clear();
+    if(graphics_scene)
+      graphics_scene->clear();
     if(sel_item)
     {
       scene->erase(scene->item_id(sel_item));

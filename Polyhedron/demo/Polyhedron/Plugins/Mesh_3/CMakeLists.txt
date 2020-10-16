@@ -35,7 +35,7 @@ endif()
 find_package(Boost QUIET OPTIONAL_COMPONENTS filesystem system)
 if(Boost_FILESYSTEM_FOUND)
   qt5_wrap_ui( imgUI_FILES Image_res_dialog.ui raw_image.ui)
-  polyhedron_demo_plugin(io_image_plugin Io_image_plugin Volume_plane_intersection.cpp Raw_image_dialog.cpp ${imgUI_FILES} ${VOLUME_MOC_OUTFILES} KEYWORDS IO Mesh_3)
+  polyhedron_demo_plugin(io_image_plugin Io_image_plugin Volume_plane_intersection.cpp Raw_image_dialog.cpp ${imgUI_FILES} ${VOLUME_MOC_OUTFILES} KEYWORDS Viewer Mesh_3)
   target_link_libraries(io_image_plugin PUBLIC scene_image_item ${VTK_LIBRARIES} CGAL::CGAL_ImageIO)
   if(VTK_LIBRARIES)
     target_compile_definitions(io_image_plugin PRIVATE CGAL_USE_VTK)
@@ -63,7 +63,7 @@ target_link_libraries(mesh_3_optimization_plugin PUBLIC scene_c3t3_item scene_su
    message(STATUS "The Mesh_3_optimization_plugin requires Eigen, which was not found, and will use a deprecated class to replace it. Warnings are to be expected.")
  endif()#eigen
 
-polyhedron_demo_plugin(c3t3_io_plugin C3t3_io_plugin KEYWORDS IO Mesh_3)
+polyhedron_demo_plugin(c3t3_io_plugin C3t3_io_plugin KEYWORDS Viewer Mesh_3)
 target_link_libraries(c3t3_io_plugin PUBLIC scene_c3t3_item)
 
 qt5_wrap_ui( ribUI_FILES  Rib_dialog.ui)

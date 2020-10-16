@@ -601,7 +601,7 @@ public:
     #ifdef CGAL_HAS_THREADS
     mutable CGAL_MUTEX build_mutex; // mutex used to protect const calls inducing build() and build_kd_tree()
     #endif
-
+  public:
     const Node* root_node() const {
       CGAL_assertion(size() > 1);
 
@@ -625,7 +625,7 @@ public:
       m_nodes.emplace_back();
       return m_nodes.back();
     }
-
+  private:
     const Primitive& singleton_data() const {
       CGAL_assertion(size() == 1);
       return *m_primitives.begin();

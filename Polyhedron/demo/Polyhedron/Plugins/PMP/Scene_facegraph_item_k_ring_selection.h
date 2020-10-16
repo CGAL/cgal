@@ -273,7 +273,7 @@ public Q_SLOTS:
 
     boost::vector_property_map<int,
       boost::property_map<FaceGraph, boost::face_index_t>::type>
-      fccmap;
+      fccmap(static_cast<unsigned>(num_faces(poly)));
 
     //get connected componant from the picked face
     std::set<fg_face_descriptor> final_sel;
