@@ -22,9 +22,6 @@ if(TARGET CGAL::Eigen_support)
     polyhedron_demo_plugin(fairing_plugin Fairing_plugin ${fairingUI_FILES} KEYWORDS PMP)
     target_link_libraries(fairing_plugin PUBLIC scene_selection_item CGAL::Eigen_support)
 
-    polyhedron_demo_plugin(hole_filling_polyline_plugin Hole_filling_polyline_plugin )
-    target_link_libraries(hole_filling_polyline_plugin PUBLIC scene_surface_mesh_item scene_polylines_item CGAL::Eigen_support)
-
     qt5_wrap_ui( Mean_curvature_flow_skeleton_pluginUI_FILES  Mean_curvature_flow_skeleton_plugin.ui)
     polyhedron_demo_plugin(mean_curvature_flow_skeleton_plugin Mean_curvature_flow_skeleton_plugin ${Mean_curvature_flow_skeleton_pluginUI_FILES})
     target_link_libraries(mean_curvature_flow_skeleton_plugin
