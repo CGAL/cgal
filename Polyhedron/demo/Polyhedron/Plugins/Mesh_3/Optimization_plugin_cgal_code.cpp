@@ -141,6 +141,10 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
       return NULL;
     }
     Polyhedral_mesh_domain* sm_domain = new Polyhedral_mesh_domain(*smesh);
+    if(c3t3_item.get_sharp_edges_angle() != -1 )
+      sm_domain->detect_features(c3t3_item.get_sharp_edges_angle());
+    else if(c3t3_item.get_detect_borders())
+      sm_domain->detect_borders();
 
     // Create thread
     typedef Optimization_function<Polyhedral_mesh_domain,Parameters> Opt_function;

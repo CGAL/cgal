@@ -57,7 +57,8 @@ int main()
   //Remeshing : coarsen
   double target_edge_length = 15.;
   CGAL::tetrahedral_isotropic_remeshing(t3, target_edge_length,
-    CGAL::parameters::number_of_iterations(2));
+    CGAL::parameters::number_of_iterations(2)
+    .smooth_constrained_edges(true));
 
   std::cout << "Remeshing 1 done." << std::endl;
 

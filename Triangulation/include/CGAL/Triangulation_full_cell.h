@@ -42,7 +42,7 @@ public:
     typedef typename TriangulationTraits::Point_d       Point_d;
 
 private: // DATA MEMBERS
-    Data    data_;
+    CGAL_NO_UNIQUE_ADDRESS Data    data_;
 
 public:
 

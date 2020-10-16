@@ -67,7 +67,6 @@ public:
   {
     undo_();
     item->compute_normal_maps();
-    item->polyhedron_item()->invalidateOpenGLBuffers();
     item->invalidateOpenGLBuffers();
     item->redraw();
   }
@@ -1838,7 +1837,6 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_grap
 
 Scene_polyhedron_selection_item::~Scene_polyhedron_selection_item()
 {
-  poly_item->switchToGouraudPlusEdge(false);
   delete d;
   Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
     CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
@@ -2256,9 +2254,9 @@ void Scene_polyhedron_selection_item::printAllIds()
 {
   d->item->polyhedron_item()->printAllIds();
 }
-bool Scene_polyhedron_selection_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)const
+bool Scene_polyhedron_selection_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer, const QVector3D& scaler)const
 {
-  return d->item->polyhedron_item()->testDisplayId(x, y, z, viewer);
+  return d->item->polyhedron_item()->testDisplayId(x, y, z, viewer, scaler);
   return false;
 }
 
@@ -2609,4 +2607,18 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_selection_item::header() c
   data.titles.append(QString("Maximum"));
   data.titles.append(QString("Average"));
   return data;
+}
+
+
+void Scene_polyhedron_selection_item::updateDisplayedIds(QEvent* e)
+{
+  if(e->type() == QEvent::MouseButtonRelease )
+  {
+    QMouseEvent* mouse_event = static_cast<QMouseEvent*>(e);
+    if((mouse_event->button() == Qt::RightButton || mouse_event->button() == Qt::MiddleButton)
+       && temp_selected_vertices.size() == 1) {
+      fg_vertex_descriptor vh = *temp_selected_vertices.begin();
+      poly_item->updateIds(vh);
+    }
+  }
 }

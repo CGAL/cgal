@@ -33,8 +33,7 @@ any class model of the concept `FaceGraph`. Each function or class of this packa
 details the requirements on the input polygon mesh.
 
 \ref BGLNamedParameters are used to deal with optional parameters.
-The page \ref pmp_namedparameters describes their usage
-and provides a list of the parameters that are used in this package.
+The page \ref bgl_namedparameters describes their usage.
 
 \subsection PMPOutline Outline
 The algorithms described in this manual are organized in sections:
@@ -193,6 +192,11 @@ Triangulating a polygon mesh can be achieved through the function
 as shown in the following example.
 
 \cgalExample{Polygon_mesh_processing/triangulate_faces_example.cpp}
+
+An additional parameter, named `visitor` can be used to track the how faces
+are triangulated into subfaces. The following examples shows how to use it.
+
+\cgalExample{Polygon_mesh_processing/triangulate_faces_split_visitor_example.cpp}
 
 
 \subsubsection RemeshingExample_1 Isotropic Remeshing of a Region on a Polygon Mesh

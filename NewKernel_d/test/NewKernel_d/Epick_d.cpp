@@ -141,8 +141,8 @@ void test2(){
   typedef typename K1::Construct_max_vertex_d CMV;
   typedef typename K1::Compute_squared_radius_d SR;
   typedef typename K1::Translated_point_d TP;
-  typedef typename K1::Power_center_d PC;
-  typedef typename K1::Power_distance_d PoD;
+  typedef typename K1::Construct_power_sphere_d PC;
+  typedef typename K1::Compute_power_product_d PoD;
   typedef typename K1::Construct_weighted_point_d CWP;
   typedef typename K1::Power_side_of_bounded_power_sphere_d PSBPS;
   typedef typename K1::Compute_squared_radius_smallest_orthogonal_sphere_d CSRSOS;
@@ -210,12 +210,12 @@ void test2(){
   CMV cMv Kinit(construct_max_vertex_d_object);
   SR sr Kinit(compute_squared_radius_d_object);
   TP tp Kinit(translated_point_d_object);
-  PC pc Kinit(power_center_d_object);
+  PC pc Kinit(construct_power_sphere_d_object);
   CWP cwp Kinit(construct_weighted_point_d_object);
   //PDW pdw Kinit(point_drop_weight_d_object);
   PDW const& pdw = cp;
   PW pw Kinit(compute_weight_d_object);
-  PoD pod Kinit(power_distance_d_object);
+  PoD pod Kinit(compute_power_product_d_object);
   PSBPS psbps Kinit(power_side_of_bounded_power_sphere_d_object);
   CSRSOS csrsos Kinit(compute_squared_radius_smallest_orthogonal_sphere_d_object);
 
@@ -712,6 +712,38 @@ void test3(){
   std::ostringstream sv1; sv1 << v1; assert(sv1.str()=="3 3 2 1");
   std::istringstream sv2("3 4 5 6"); sv2 >> v1; assert(v1[0]==4&&v1[1]==5);
 }
+template<class Ker>
+void test4(){
+  typedef typename Ker::Point_d P;
+  typedef typename Ker::Weighted_point_d WP;
+  typedef typename Ker::Construct_circumcenter_d CCc;
+  typedef typename Ker::Equal_d E;
+  typedef typename Ker::Construct_power_sphere_d PC;
+  typedef typename Ker::Compute_power_product_d PoD;
+  typedef typename Ker::Affine_rank_d AR;
+  Ker k(4);
+  CCc ccc Kinit(construct_circumcenter_d_object);
+  E ed Kinit(equal_d_object);
+  PC pc Kinit(construct_power_sphere_d_object);
+  PoD pod Kinit(compute_power_product_d_object);
+  AR ar Kinit(affine_rank_d_object);
+  auto mkpt=[](auto...x){double l[]{(double)x...};return P(std::begin(l), std::end(l));};
+  P tab1[]={mkpt(15,20,40,80),mkpt(10,23,36,80),mkpt(10,20,40,85),mkpt(10,15,40,80),mkpt(13,20,40,76)};
+  assert(ed(ccc(tab1+0, tab1+5),mkpt(10,20,40,80)));
+  P tab2[]={mkpt(15,20,40,80),mkpt(13,24,40,80),mkpt(10,25,40,80),mkpt(10,20,43,84)};
+  assert(ed(ccc(tab2+0, tab2+4),mkpt(10,20,40,80)));
+  P tab3[]={mkpt(15,20,35,80),mkpt(10,25,40,75),mkpt(13,24,37,76)};
+  assert(ed(ccc(tab3+0, tab3+3),mkpt(10,20,40,80)));
+  auto mkwpt=[](auto...x){double l[]{(double)x...};auto last=std::prev(std::end(l));return WP(P(std::begin(l), last),*last);};
+  WP tab4[]={mkwpt(89,17,29,97,14),mkwpt(86,99,64,26,44),mkwpt(40,9,13,91,20),mkwpt(41,30,93,13,10),mkwpt(45,6,98,9,0),mkwpt(0,0,0,0,0)};
+  for(int i=5;i>=1;--i){
+    tab4[i]=pc(tab4+0, tab4+i);
+    for(int j=0;j<i;++j)
+      assert(pod(tab4[i],tab4[j])==0);
+    auto drop=[](WP const&x){return x.point();};
+    assert(ar(CGAL::make_transforming_iterator(tab4+0,drop), CGAL::make_transforming_iterator(tab4+i+1,drop))==i-1);
+  }
+}
 template struct CGAL::Epick_d<CGAL::Dimension_tag<2> >;
 template struct CGAL::Epick_d<CGAL::Dimension_tag<3> >;
 template struct CGAL::Epick_d<CGAL::Dynamic_dimension_tag>;
@@ -733,6 +765,7 @@ int main(){
   test2<CGAL::Epeck_d<CGAL::Dimension_tag<2>>>();
   test3<CGAL::Epeck_d<CGAL::Dimension_tag<3>>>();
   test3<CGAL::Epeck_d<CGAL::Dynamic_dimension_tag>>();
+  test4<CGAL::Epeck_d<CGAL::Dynamic_dimension_tag>>();
 #endif
 }
 

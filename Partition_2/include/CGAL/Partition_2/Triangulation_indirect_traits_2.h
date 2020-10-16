@@ -113,6 +113,7 @@ template <class Circulator>
 class Construct_circulator_2
 {
 public:
+   typedef Circulator result_type;
    Circulator operator()(Circulator p1) const { return p1; }
 };
 

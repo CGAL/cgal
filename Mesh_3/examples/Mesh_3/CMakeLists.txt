@@ -64,6 +64,12 @@ target_link_libraries(mesh_cubes_intersection_with_features PUBLIC CGAL::Eigen_s
 create_single_source_cgal_program( "mesh_implicit_domains.cpp" "implicit_functions.cpp" )
 target_link_libraries(mesh_implicit_domains PUBLIC CGAL::Eigen_support)
 
+find_package( ITT QUIET )
+if(TARGET ITT::ITT)
+  target_link_libraries(mesh_implicit_domains PRIVATE ITT::ITT)
+  target_compile_definitions(mesh_implicit_domains PRIVATE CGAL_MESH_3_USE_INTEL_ITT)
+endif()
+
 create_single_source_cgal_program( "mesh_polyhedral_domain.cpp" )
 target_link_libraries(mesh_polyhedral_domain PUBLIC CGAL::Eigen_support)
 
@@ -129,6 +135,7 @@ if( TARGET CGAL::CGAL_ImageIO)
   else()
     message( STATUS "NOTICE: The examples mesh_3D_image.cpp, mesh_3D_image_variable_size.cpp, mesh_optimization_example.cpp and mesh_optimization_lloyd_example.cpp need CGAL_ImageIO to be configured with ZLIB support, and will not be compiled." )
   endif()
+
 else()
   message( STATUS "NOTICE: Some examples need the CGAL_ImageIO library, and will not be compiled." )
 endif()

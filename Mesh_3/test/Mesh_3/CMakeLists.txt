@@ -18,6 +18,8 @@ if ( CGAL_FOUND )
   find_package( TBB QUIET )
   include(CGAL_TBB_support)
 
+  find_package( ITT QUIET )
+
   # Use Eigen
   find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
   include(CGAL_Eigen_support)
@@ -117,7 +119,19 @@ if ( CGAL_FOUND )
       endif()
     endforeach()
   endif()
+  if(TARGET ITT::ITT)
+    target_link_libraries(test_meshing_polyhedron_with_features PRIVATE ITT::ITT)
+    target_compile_definitions(test_meshing_polyhedron_with_features PRIVATE CGAL_MESH_3_USE_INTEL_ITT)
+    target_link_libraries(test_meshing_verbose PRIVATE ITT::ITT)
+    target_compile_definitions(test_meshing_verbose PRIVATE CGAL_MESH_3_USE_INTEL_ITT)
+  endif()
 
+  if(BUILD_TESTING)
+    set_tests_properties(
+      execution___of__test_meshing_polyhedron_with_features
+      execution___of__test_meshing_verbose
+      PROPERTIES RESOURCE_LOCK Mesh_3_Tests_IO)
+  endif()
 else()
 
     message(STATUS "This program requires the CGAL library, and will not be compiled.")

@@ -1224,8 +1224,8 @@ private:
       if(update_c3t3)
       {
         // Update status in c3t3
-        if(surface != boost::none)
-          c3t3_.add_to_complex(facet, surface.get());
+        if((bool)surface)
+          c3t3_.add_to_complex(facet, *surface);
         else
           c3t3_.remove_from_complex(facet);
       }
@@ -1246,7 +1246,7 @@ private:
         }
       }
 
-      return surface;
+      return surface ? surface : Surface_patch();
     }
 
 
@@ -2054,7 +2054,7 @@ private:
                                        true); /* update surface centers */
       // false means "do not update the c3t3"
       if ( c3t3_.is_in_complex(*fit) != (bool)sp ||
-           ((bool)sp && !(c3t3_.surface_patch_index(*fit) == sp.get()) ) )
+           ((bool)sp && !(c3t3_.surface_patch_index(*fit) == *sp) ) )
         return false;
     }
 
@@ -3648,10 +3648,17 @@ incident_slivers(const Vertex_handle& v,
   std::vector<Cell_handle> incident_cells_;
   tr_.incident_cells(v, std::back_inserter(incident_cells_));
 
+#ifdef CGAL_CXX17
+  std::remove_copy_if(incident_cells_.begin(),
+                      incident_cells_.end(),
+                      out,
+                      std::not_fn(Is_sliver<Sc>(c3t3_, criterion, sliver_bound)));
+#else
   std::remove_copy_if(incident_cells_.begin(),
                       incident_cells_.end(),
                       out,
                       std::not1(Is_sliver<Sc>(c3t3_,criterion,sliver_bound)));
+#endif
 
   return out;
 }
