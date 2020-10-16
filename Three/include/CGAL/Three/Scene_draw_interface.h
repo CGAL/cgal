@@ -60,10 +60,8 @@ public:
    * \param y the Y coordinate of theTextItem's position.
    * \param z the Z coordinate of theTextItem's position.
    * \param viewer the viewer used to display the Scene.
-   * \param scaler a vector indicating the scaling factors to apply to the scene when displaying it.
-   * It can be useful when a scene is very large along one of it's coordinates, making it hard to visualize it.
    * \return true if the TextItem is visible. */
-  virtual bool  testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer, const QVector3D& scaler) = 0;
+  virtual bool  testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer) = 0;
 
   ///\brief displays all the vertices ids if there are less than max_textItems.
   virtual void printVertexIds() = 0;
@@ -74,7 +72,7 @@ public:
   ///\brief displays all the primitive ids if there are less than max_textItems.
   virtual void printAllIds() = 0;
 
-  //!\brief moves the camera orthogonally to the picked sface.
+  //!\brief moves the camera orthogonally to the picked face.
   //!
   //! \param point the picked point
   //! \param viewer the active viewer
