@@ -104,6 +104,7 @@ public:
     _Linear_object_cached_2() :
       has_source(true),
       has_target(true),
+      is_right(false),
       is_vert(false),
       is_horiz(false),
       has_pos_slope(false),

@@ -233,8 +233,8 @@ public:
         }
         // The current intersection object is an intersection point:
         // Copy it as is.
-        const Intersection_point* ip = boost::get<Intersection_point>(&item);
-        *oi++ = Intersection_result(*ip);
+        Intersection_result ip = *boost::get<Intersection_point>(&item);
+        *oi++ = ip;
       }
 
       return oi;
