@@ -84,7 +84,7 @@ public:
 
 
   template <typename PolygonRange, typename PolygonMap>
-  void partition (const PolygonRange& polygons, PolygonMap polygon_map,
+  bool partition (const PolygonRange& polygons, PolygonMap polygon_map,
                   unsigned int k = 2, FT enlarge_bbox_ratio = 1.1)
   {
     CGAL::Bbox_3 bbox;
@@ -96,10 +96,10 @@ public:
 
     m_data.init (polygons.size());
 
-    CGAL_KSR_CERR(1) << "Adding bbox as polygons" << std::endl;
+    std::cout << "Adding bbox as polygons" << std::endl;
     add_bbox_as_polygons (bbox, enlarge_bbox_ratio);
 
-    CGAL_KSR_CERR(1) << "Adding input as polygons" << std::endl;
+    std::cout << "Adding input as polygons" << std::endl;
 
     KSR::size_t input_idx = 0;
     for (const typename PolygonRange::const_iterator::value_type& poly : polygons)
@@ -107,21 +107,23 @@ public:
 
     FT time_step = CGAL::approximate_sqrt(CGAL::squared_distance(Point_3 (bbox.xmin(), bbox.ymin(), bbox.zmin()),
                                                                  Point_3 (bbox.xmax(), bbox.ymax(), bbox.zmax())));
-    
+
     time_step /= 50;
-    
-    CGAL_KSR_CERR(1) << "Making input polygons intersection free" << std::endl;
-    
+
+    std::cout << "Making input polygons intersection free" << std::endl;
+
     KSR_3::dump (m_data, "init");
-    
+
     CGAL_assertion(check_integrity(true));
     make_polygons_intersection_free(k);
     CGAL_assertion(check_integrity(true));
 
+    std::cout << "Polygons are splitted" << std::endl;
+
     KSR_3::dump_segmented_edges (m_data, "init");
-    
+
     KSR_3::dump (m_data, "intersected");
-    
+
     std::size_t iter = 0;
     m_min_time = 0;
     m_max_time = time_step;
@@ -131,14 +133,45 @@ public:
       m_min_time = m_max_time;
       m_max_time += time_step;
 
-//      CGAL_assertion(check_integrity(true));
+      // dump (m_data, "iter_100-" + std::to_string(iter));
+      // CGAL_assertion(check_integrity(true));
       ++ iter;
+      if (iter > 100) {
+        CGAL_assertion_msg(false, "WHY SO MANY ITERATIONS?");
+      }
     }
-    exit(0);
+    std::cout << "Checking final mesh integrity!" << std::endl;
     CGAL_assertion(check_integrity(true));
+    std::cout << "Finalizing KSR!" << std::endl;
+    dump (m_data, "iter_1000-final-result");
+    // m_data.create_polyhedrons();
+    return true;
   }
 
-  
+  template<typename OutputIterator>
+  OutputIterator output_partition_edges_to_segment_soup(
+    OutputIterator edges) const {
+
+    CGAL_assertion_msg(false, "TODO: IMPLEMENT OUTPUT PARTITION EDGES!");
+    return edges;
+  }
+
+  template<typename VertexOutputIterator, typename FaceOutputIterator>
+  void output_partition_faces_to_polygon_soup(
+    VertexOutputIterator vertices, FaceOutputIterator faces,
+    const bool with_bbox = false) const {
+
+    CGAL_assertion_msg(false, "TODO: IMPLEMENT OUTPUT PARTITION FACES!");
+  }
+
+  template<typename PolyhedronOutputIterator>
+  PolyhedronOutputIterator output_partition_polyhedrons(
+    PolyhedronOutputIterator polyhedrons) const {
+
+    CGAL_assertion_msg(false, "TODO: IMPLEMENT OUTPUT PARTITION POLYHEDRONS!");
+    return polyhedrons;
+  }
+
   template <typename PointRange, typename PointMap, typename VectorMap>
   void reconstruct (const PointRange& points, PointMap point_map, VectorMap normal_map)
   {
@@ -184,24 +217,12 @@ public:
         }
       }
     }
-    
+
     return true;
   }
 
-  template <typename OutputIterator>
-  OutputIterator output_partition_edges_to_segment_soup (OutputIterator output) const
-  {
-  }
-
-  template <typename VertexOutputIterator, typename FacetOutputIterator>
-  void output_partition_facets_to_polygon_soup (VertexOutputIterator vertices,
-                                                FacetOutputIterator facets) //const
-  {
-  }
-
-
 private:
-  
+
   void add_bbox_as_polygons (const CGAL::Bbox_3& bbox, FT ratio)
   {
     FT xmed = (bbox.xmin() + bbox.xmax()) / 2.;
@@ -217,7 +238,7 @@ private:
     FT ymax = ymed + ratio * dy;
     FT zmin = zmed - ratio * dz;
     FT zmax = zmed + ratio * dz;
-    
+
     std::array<Point_3, 8> bbox_points
       = { Point_3 (xmin, ymin, zmin),
           Point_3 (xmin, ymin, zmax),
@@ -232,7 +253,7 @@ private:
 
     facet_points = { bbox_points[0], bbox_points[1], bbox_points[3], bbox_points[2] };
     m_data.add_bbox_polygon (facet_points);
-    
+
     facet_points = { bbox_points[4], bbox_points[5], bbox_points[7], bbox_points[6] };
     m_data.add_bbox_polygon (facet_points);
 
@@ -241,10 +262,10 @@ private:
 
     facet_points = { bbox_points[2], bbox_points[3], bbox_points[7], bbox_points[6] };
     m_data.add_bbox_polygon (facet_points);
-    
+
     facet_points = { bbox_points[1], bbox_points[5], bbox_points[7], bbox_points[3] };
     m_data.add_bbox_polygon (facet_points);
-    
+
     facet_points = { bbox_points[0], bbox_points[4], bbox_points[6], bbox_points[2] };
     m_data.add_bbox_polygon (facet_points);
 
@@ -254,11 +275,16 @@ private:
 
   void make_polygons_intersection_free (unsigned int k)
   {
+    std::cout << "num support planes: " << m_data.number_of_support_planes() << std::endl;
+    if (m_data.number_of_support_planes() < 8) {
+      return;
+    }
+
     // First, generate all transverse intersection lines
     typedef std::map<KSR::Idx_set, std::pair<IVertex, IVertex> > Map;
     Map map_p2vv;
 
-    for (const IVertex& ivertex : m_data.ivertices())
+    for (const IVertex ivertex : m_data.ivertices())
     {
       KSR::Idx_set key = m_data.intersected_planes (ivertex, false);
       if (key.size() < 2)
@@ -286,7 +312,7 @@ private:
       crossed_vertices.push_back (it_a->second.first);
 
       std::set<KSR::Idx_set> done;
-      
+
       for (typename Map::iterator it_b = map_p2vv.begin() ; it_b != map_p2vv.end(); ++ it_b)
       {
         const KSR::Idx_set& set_b = it_b->first;
@@ -301,7 +327,7 @@ private:
           union_set.insert (set_b.begin(), set_b.end());
           if (!done.insert (union_set).second)
             continue;
-          
+
           Point_2 inter;
           if (!KSR::intersection_2 (m_data.to_2d(common_plane_idx,
                                                  Segment_3 (m_data.point_3 (it_a->second.first),
@@ -332,7 +358,7 @@ private:
 
   bool initialize_queue()
   {
-    CGAL_KSR_CERR(1) << "Initializing queue for events in [" << m_min_time << ";" << m_max_time << "]" << std::endl;
+    std::cout << "Initializing queue for events in [" << m_min_time << ";" << m_max_time << "]" << std::endl;
 
     m_data.update_positions(m_max_time);
 
@@ -345,7 +371,7 @@ private:
       KSR::vector<CGAL::Bbox_2> segment_bboxes;
       init_search_structures (i, iedges, segments_2, segment_bboxes);
 
-      for (const PVertex& pvertex : m_data.pvertices(i))
+      for (const PVertex pvertex : m_data.pvertices(i))
         if (compute_events_of_vertex (pvertex, iedges, segments_2, segment_bboxes))
           still_running = true;
     }
@@ -367,7 +393,7 @@ private:
     std::copy (m_data.iedges(i).begin(),
                m_data.iedges(i).end(),
                std::back_inserter(iedges));
-      
+
     // Precompute segments and bboxes
     segments_2.reserve (iedges.size());
     segment_bboxes.reserve (iedges.size());
@@ -383,42 +409,48 @@ private:
                                  const KSR::vector<Segment_2>& segments_2,
                                  const KSR::vector<CGAL::Bbox_2>& segment_bboxes)
   {
+    std::cout.precision(20);
     if (m_data.is_frozen(pvertex))
       return false;
 
     Segment_2 sv (m_data.point_2 (pvertex, m_min_time),
                   m_data.point_2 (pvertex, m_max_time));
     CGAL::Bbox_2 sv_bbox = sv.bbox();
-    
+
     if (m_data.has_iedge(pvertex)) // Constrained vertex
     {
+      // const auto cutime = m_data.current_time();
+      // m_data.update_positions(m_min_time);
+      // std::cout << "Computing events for the constrained pvertex: " << m_data.str(pvertex) << ": " << m_data.point_3(pvertex) << std::endl;
+      // m_data.update_positions(cutime);
+
       // Test left and right vertices on mesh face
       PVertex prev;
       PVertex next;
       std::tie (prev, next) = m_data.prev_and_next (pvertex);
-      
+
       for (const PVertex& pother : { prev, next })
       {
         if (pother == Data::null_pvertex()
             || !m_data.is_active(pother)
             || m_data.has_iedge (pother))
           continue;
-        
+
         Segment_2 so (m_data.point_2 (pother, m_min_time),
                       m_data.point_2 (pother, m_max_time));
         CGAL::Bbox_2 so_bbox = so.bbox();
-        
+
         if (!do_overlap (sv_bbox, so_bbox))
           continue;
 
         Point_2 point;
         if (!KSR::intersection_2 (sv, so, point))
           continue;
-        
+
         FT dist = CGAL::approximate_sqrt (CGAL::squared_distance (sv.source(), point));
         FT time = dist / m_data.speed(pvertex);
 
-        m_queue.push (Event (pvertex, pother, m_min_time + time));
+        m_queue.push (Event (true, pvertex, pother, m_min_time + time));
       }
 
       // Test end-vertices of intersection edge
@@ -430,19 +462,23 @@ private:
         Point_2 pi = m_data.to_2d (pvertex.first, ivertex);
         if (sv.to_vector() * Vector_2 (sv.source(), pi) < 0)
           continue;
-        
+
         FT dist = CGAL::approximate_sqrt(CGAL::squared_distance (sv.source(), pi));
         FT time = dist / m_data.speed(pvertex);
 
-        if (time < m_max_time - m_min_time)
-          m_queue.push (Event (pvertex, ivertex, m_min_time + time));
+        if (time < m_max_time - m_min_time) {
+          m_queue.push (Event (true, pvertex, ivertex, m_min_time + time));
+
+          // std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
+          // std::cout << "ivertex: " << m_data.point_3(ivertex) << std::endl;
+        }
       }
     }
     else // Unconstrained vertex
     {
       PVertex prev = m_data.prev(pvertex);
       PVertex next = m_data.next(pvertex);
-      
+
       // Test all intersection edges
       for (std::size_t j = 0; j < iedges.size(); ++ j)
       {
@@ -456,7 +492,7 @@ private:
 
         if (!CGAL::do_overlap (sv_bbox, segment_bboxes[j]))
           continue;
-          
+
         Point_2 point;
         if (!KSR::intersection_2 (sv, segments_2[j], point))
           continue;
@@ -464,7 +500,7 @@ private:
         FT dist = CGAL::approximate_sqrt (CGAL::squared_distance (m_data.point_2 (pvertex, m_min_time), point));
         FT time = dist / m_data.speed(pvertex);
 
-        m_queue.push (Event (pvertex, iedge, m_min_time + time));
+        m_queue.push (Event (false, pvertex, iedge, m_min_time + time));
       }
     }
     return true;
@@ -473,10 +509,10 @@ private:
 
   void run()
   {
-    CGAL_KSR_CERR(1) << "Unstacking queue" << std::endl;
-    
+    std::cout << "Unstacking queue size: " << m_queue.size() << std::endl;
+
     KSR::size_t iterations = 0;
-    
+
     static int iter = 0;
 
     while (!m_queue.empty())
@@ -495,27 +531,28 @@ private:
         dump (m_data, "iter_" + std::to_string(iter));
         dump_event (m_data, ev, "iter_" + std::to_string(iter));
       }
-      
+
       m_data.update_positions (current_time);
 
-      CGAL_KSR_CERR(2) << "* Applying " << iter << ": " << ev << std::endl;
-      
+      std::cout << "* APPLYING " << iter << ": " << ev << std::endl << std::endl;
+
       ++ iter;
-      
-      if (iter == 57)
-      {
-        exit(0);
-      }
-      
+
+      // if (iter == 10)
+      // {
+      //   exit(0);
+      // }
+
       apply(ev);
 
       CGAL_assertion(check_integrity(true));
-      
-      m_data.update_positions (0.5 * (current_time + m_queue.next().time()));
-      dump (m_data, "after_" + std::to_string(iter - 1));
-      m_data.update_positions (current_time);
+
+      // m_data.update_positions (0.5 * (current_time + m_queue.next().time()));
+      // dump (m_data, "after_" + std::to_string(iter - 1));
+      // m_data.update_positions (current_time);
       ++ iterations;
     }
+    std::cout << "Finished!" << std::endl;
   }
 
   void apply (const Event& ev)
@@ -525,12 +562,12 @@ private:
     if (ev.is_pvertex_to_pvertex())
     {
       PVertex pother = ev.pother();
-      
+
       remove_events (pvertex);
       remove_events (pother);
 
       CGAL_assertion (m_data.has_iedge(pvertex));
-      
+
       if (m_data.has_iedge(pother)) // Two constrained vertices meet
       {
         CGAL_assertion_msg (false, "TODO: two constrained");
@@ -543,7 +580,7 @@ private:
 
           PVertex prev, next;
           std::tie (prev, next) = m_data.border_prev_and_next(pvertex);
-          
+
           PVertex pthird = prev;
           if (pthird == pother)
             pthird = next;
@@ -559,11 +596,11 @@ private:
     }
     else if (ev.is_pvertex_to_iedge())
     {
-      PVertex prev = m_data.prev(pvertex);      
+      PVertex prev = m_data.prev(pvertex);
       PVertex next = m_data.next(pvertex);
       IEdge iedge = ev.iedge();
       PFace pface = m_data.pface_of_pvertex (pvertex);
-      
+
       Segment_2 seg_edge = m_data.segment_2 (pvertex.first, iedge);
 
       bool done = false;
@@ -584,12 +621,12 @@ private:
           bool collision_other;
           collision_other
             = m_data.collision_occured (pother, iedge).first;
-          
+
           if ((collision || collision_other) && m_data.k(pface) > 1)
             m_data.k(pface) --;
           if (bbox_reached)
             m_data.k(pface) = 1;
-          
+
           if (m_data.k(pface) == 1) // Polygon stops
           {
             m_data.crop_polygon (pvertex, pother, iedge);
@@ -601,16 +638,16 @@ private:
             std::tie (pv0, pv1) = m_data.propagate_polygon (pvertex, pother, iedge);
             compute_events_of_vertices (std::array<PVertex, 4> {pvertex, pother, pv0, pv1});
           }
-          
+
           done = true;
           break;
         }
       }
-      
+
       if (!done)
       {
         remove_events (pvertex);
-      
+
         bool collision, bbox_reached;
         std::tie (collision, bbox_reached)
           = m_data.collision_occured (pvertex, iedge);
@@ -618,7 +655,7 @@ private:
           m_data.k(pface) --;
         if (bbox_reached)
           m_data.k(pface) = 1;
-      
+
         if (m_data.k(pface) == 1) // Polygon stops
         {
           PVertex pvnew = m_data.crop_polygon (pvertex, iedge);
@@ -638,13 +675,13 @@ private:
         = m_data.pvertices_around_ivertex (ev.pvertex(), ev.ivertex());
 
       for (auto& pv: pvertices)
-        std::cerr << m_data.point_3(pv) << " ";
+        std::cerr << m_data.point_3(pv) << std::endl;
       std::cerr << std::endl;
-      
+
       std::cerr << "Found " << pvertices.size() << " pvertices ready to be merged" << std::endl;
 
       // Remove associated events
-      for (const PVertex pvertex : pvertices)
+      for (const PVertex& pvertex : pvertices)
         remove_events (pvertex);
 
       // Merge them and get the newly created vertices
@@ -670,7 +707,7 @@ private:
   void compute_events_of_vertices (const PVertexRange& pvertices)
   {
     m_min_time = m_data.current_time();
-    
+
     m_data.update_positions(m_max_time);
 
     KSR::vector<IEdge> iedges;
@@ -680,13 +717,13 @@ private:
 
     for (const PVertex& pvertex : pvertices)
       m_data.deactivate(pvertex);
-    
+
     for (const PVertex& pvertex : pvertices)
       compute_events_of_vertex (pvertex, iedges, segments_2, segment_bboxes);
-    
+
     for (const PVertex& pvertex : pvertices)
       m_data.activate(pvertex);
-    
+
     m_data.update_positions(m_min_time);
   }
 

@@ -65,7 +65,7 @@ public:
   KSR::size_t& meta_vertex_idx() { return m_meta_vertex_idx; }
 
   FT time() const { return m_time; }
-  
+
   friend std::ostream& operator<< (std::ostream& os, const Event& ev)
   {
     os << "Event at t=" << ev.m_time << " between vertex " << ev.m_vertex_idx

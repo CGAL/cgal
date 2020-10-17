@@ -55,13 +55,13 @@ public:
 
   void make_deadend_of (KSR::size_t support_line_idx)
   { m_deadends.insert (support_line_idx); }
-  
+
   bool is_deadend_of (KSR::size_t support_line_idx) const
   { return m_deadends.find(support_line_idx) != m_deadends.end(); }
 
   void make_no_longer_deadend_of (KSR::size_t support_line_idx)
   { m_deadends.erase (support_line_idx); }
-  
+
 
 };
 

@@ -55,7 +55,7 @@ private:
      <boost::multi_index::member<Event, FT, &Event::m_time> >,
      boost::multi_index::ordered_non_unique
      <boost::multi_index::member<Event, KSR::size_t, &Event::m_vertex_idx> >
-     > 
+     >
    > Queue;
 
   typedef typename Queue::iterator Queue_iterator;
@@ -63,7 +63,7 @@ private:
   typedef typename Queue_by_time::iterator Queue_by_time_iterator;
   typedef typename Queue::template nth_index<1>::type Queue_by_event_idx;
   typedef typename Queue_by_event_idx::iterator Queue_by_event_idx_iterator;
-  
+
   Queue m_queue;
 
 public:
@@ -105,7 +105,7 @@ public:
     std::copy (range.first, range.second, std::back_inserter (events));
     queue_by_event_idx().erase (range.first, range.second);
   }
-     
+
 };
 
 

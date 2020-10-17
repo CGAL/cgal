@@ -1,4 +1,4 @@
-// Copyright (c) 2019 GeometryFactory Sarl (France).
+// Copyright (c) 2019 GeometryFactory SARL (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -21,15 +21,17 @@
 #ifndef CGAL_KSR_VERBOSITY_H
 #define CGAL_KSR_VERBOSITY_H
 
+// TODO: It does not work on mac os.
+// All verbosity output is completely suppressed for some reason.
+
+// STL includes.
 #include <ostream>
 
-// General verbosity
-
+// General verbosity.
 #ifndef CGAL_KSR_VERBOSE_LEVEL
 #define CGAL_KSR_VERBOSE_LEVEL 0
 #endif
 
 #define CGAL_KSR_CERR(level) if(level <= CGAL_KSR_VERBOSE_LEVEL) std::cerr
 
-
-#endif // CGAL_KSR_SILENT
+#endif // CGAL_KSR_VERBOSITY_H

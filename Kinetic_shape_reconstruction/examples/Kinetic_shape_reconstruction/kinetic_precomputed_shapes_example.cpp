@@ -1,71 +1,110 @@
-#include <fstream>
-
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-//#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
-#define CGAL_KSR_VERBOSE_LEVEL 4
-#define CGAL_KSR_DEBUG
 #include <CGAL/Kinetic_shape_reconstruction_3.h>
-
-#include <CGAL/IO/PLY_reader.h>
+#include <CGAL/IO/OFF_reader.h>
 #include <CGAL/IO/PLY_writer.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-//typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
-typedef Kernel::Point_3 Point_3;
-typedef std::vector<std::size_t> Polygon;
+using SCF   = CGAL::Simple_cartesian<float>;
+using SCD   = CGAL::Simple_cartesian<double>;
+using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
+using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 
-typedef CGAL::Kinetic_shape_reconstruction_3<Kernel> Reconstruction;
+using Kernel    = EPICK;
+using Point_3   = typename Kernel::Point_3;
+using Segment_3 = typename Kernel::Segment_3;
 
-struct My_polygon_map
-{
-  typedef std::vector<std::size_t> key_type;
-  typedef std::vector<Point_3> value_type;
-  typedef value_type reference;
-  typedef boost::readable_property_map_tag category;
-  
-  const std::vector<Point_3>* points;
+using KSR = CGAL::Kinetic_shape_reconstruction_3<Kernel>;
 
-  My_polygon_map (const std::vector<Point_3>& points) : points (&points) { }
+struct Polygon_map {
 
-  friend reference get (const My_polygon_map& map, const key_type& k)
-  {
-    reference out;
-    out.reserve (k.size());
-    std::transform (k.begin(), k.end(), std::back_inserter (out),
-                    [&](const std::size_t& idx) -> Point_3 { return (*(map.points))[idx]; });
-    return out;
+  using key_type   = std::vector<std::size_t>;
+  using value_type = std::vector<Point_3>;
+  using reference  = value_type;
+  using category   = boost::readable_property_map_tag;
+
+  const std::vector<Point_3>& points;
+  Polygon_map(
+    const std::vector<Point_3>& vertices) :
+  points(vertices)
+  { }
+
+  friend reference get(const Polygon_map& map, const key_type& face) {
+    reference polygon;
+    polygon.reserve(face.size());
+    std::transform(
+      face.begin(), face.end(),
+      std::back_inserter(polygon),
+      [&](const std::size_t vertex_index) -> Point_3 {
+        return map.points[vertex_index];
+      });
+    return polygon;
   }
 };
 
-int main (int argc, char** argv)
-{
-  std::string input_shapes_filename = (argc > 1 ? argv[1] : "data/simple_planes.ply");
-  std::ifstream input_shapes_file (input_shapes_filename);
+int main (int argc, char** argv) {
 
-  std::vector<Point_3> vertices;
-  std::vector<Polygon> facets;
+  // Input.
+  std::string input_filename = (argc > 1 ? argv[1] : "data/test_1_polygon_a.off");
+  std::ifstream input_file(input_filename);
 
-  if (!CGAL::read_PLY (input_shapes_file, vertices, facets))
-  {
-    std::cerr << "Error: can't read " << input_shapes_filename << std::endl;
+  std::vector<Point_3> input_vertices;
+  std::vector< std::vector<std::size_t> > input_faces;
+
+  if (!CGAL::read_OFF(input_file, input_vertices, input_faces)) {
+    std::cerr << "ERROR: can't read the file " << input_filename << "!" << std::endl;
     return EXIT_FAILURE;
   }
 
-  std::cerr.precision(18);
-  Reconstruction reconstruction;
+  std::cout << "--- INPUT STATS: " << std::endl;
+  std::cout << "* input kernel: " << boost::typeindex::type_id<Kernel>().pretty_name() << std::endl;
+  std::cout << "* number of input vertices: " << input_vertices.size() << std::endl;
+  std::cout << "* number of input faces: " << input_faces.size() << std::endl;
 
-  reconstruction.partition (facets, My_polygon_map (vertices));
+  // Algorithm.
+  KSR ksr;
+  const unsigned int k = 1;
+  Polygon_map polygon_map(input_vertices);
+  const bool is_success = ksr.partition(input_faces, polygon_map, k);
+  assert(is_success);
 
-  vertices.clear();
-  facets.clear();
+  // Output.
+  std::vector<Segment_3> output_edges;
+  // ksr.output_partition_edges_to_segment_soup(std::back_inserter(output_edges));
 
-  reconstruction.output_partition_facets_to_polygon_soup (std::back_inserter (vertices),
-                                                          std::back_inserter (facets));
+  std::vector<Point_3> output_vertices;
+  std::vector< std::vector<std::size_t> > output_faces;
+  // ksr.output_partition_faces_to_polygon_soup(
+  //   std::back_inserter(output_vertices), std::back_inserter(output_faces));
 
-  std::ofstream output_shapes_file ("out.ply");
-//  CGAL::set_binary_mode (output_shapes_file);
-  CGAL::write_PLY (output_shapes_file, vertices, facets, false);
+  std::cout << std::endl;
+  std::cout << "--- OUTPUT STATS: " << std::endl;
+  std::cout << "* number of output edges: " << output_edges.size() << std::endl;
+  std::cout << "* number of output vertices: " << output_vertices.size() << std::endl;
+  std::cout << "* number of output faces: " << output_faces.size() << std::endl;
+
+  // Export.
+  std::cout << std::endl;
+  std::cout << "--- EXPORT: " << std::endl;
+
+  std::string output_filename = "partition-edges.polylines";
+  std::ofstream output_file_edges(output_filename);
+  output_file_edges.precision(12);
+  for (const auto& output_edge : output_edges)
+    output_file_edges << "2 " << output_edge << std::endl;
+  output_file_edges.close();
+  std::cout << "* edges exported successfully" << std::endl;
+
+  output_filename = "partition-faces.ply";
+  std::ofstream output_file_faces(output_filename);
+  output_file_faces.precision(12);
+  if (!CGAL::write_PLY(output_file_faces, output_vertices, output_faces)) {
+    std::cerr << "ERROR: can't write to the file " << output_filename << "!" << std::endl;
+    return EXIT_FAILURE;
+  }
+  output_file_faces.close();
+  std::cout << "* faces exported successfully" << std::endl;
+  std::cout << std::endl << "3D KINETIC DONE!" << std::endl;
 
   return EXIT_SUCCESS;
 }

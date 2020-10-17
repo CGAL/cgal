@@ -1,4 +1,4 @@
-// Copyright (c) 2019 GeometryFactory Sarl (France).
+// Copyright (c) 2019 GeometryFactory SARL (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -21,128 +21,167 @@
 #ifndef CGAL_KSR_3_EVENT_H
 #define CGAL_KSR_3_EVENT_H
 
-//#include <CGAL/license/Kinetic_shape_reconstruction.h>
+// #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
 #include <CGAL/KSR/utils.h>
 
-namespace CGAL
-{
+namespace CGAL {
+namespace KSR_3 {
 
-namespace KSR_3
-{
-
-template <typename Data>
+// TODO: Can we avoid forward declaration?
+template<typename Data_structure>
 class Event_queue;
 
-template <typename Data>
-class Event
-{
+template<typename Data_structure>
+class Event {
+
 public:
-  typedef typename Data::Kernel Kernel;
-  typedef typename Kernel::FT FT;
-  typedef typename Data::PVertex PVertex;
-  typedef typename Data::PEdge PEdge;
-  typedef typename Data::PFace PFace;
-  typedef typename Data::IVertex IVertex;
-  typedef typename Data::IEdge IEdge;
-  
-  typedef Event_queue<Data> Queue;
+  // Kernel types.
+  using Kernel = typename Data_structure::Kernel;
+  using FT     = typename Kernel::FT;
+
+  // Data structure types.
+  using PVertex = typename Data_structure::PVertex;
+  using PEdge   = typename Data_structure::PEdge;
+  using PFace   = typename Data_structure::PFace;
+  using IVertex = typename Data_structure::IVertex;
+  using IEdge   = typename Data_structure::IEdge;
+
+  // Event queue types.
+  using Queue = Event_queue<Data_structure>;
   friend Queue;
-  
-private:
 
-  PVertex m_pvertex;
+  // Event types.
+  // TODO: Can it be that there other types of events?
+  // TODO: Should I use reference & in the constructors? Is that faster?
 
-  PVertex m_pother;
-  IEdge m_iedge;
-  IVertex m_ivertex;
-
-  FT m_time;
-
-public:
-
-  Event ()
-    : m_pvertex (Data::null_pvertex())
-    , m_pother (Data::null_pvertex())
-    , m_iedge (Data::null_iedge())
-    , m_ivertex (Data::null_ivertex())
-    , m_time (0)
+  // Empty event.
+  Event() :
+    m_is_constrained(false),
+    m_pvertex(Data_structure::null_pvertex()),
+    m_pother(Data_structure::null_pvertex()),
+    m_ivertex(Data_structure::null_ivertex()),
+    m_iedge(Data_structure::null_iedge()),
+    m_time(FT(0))
   { }
 
-  Event (PVertex pvertex, PVertex pother, FT time)
-    : m_pvertex (pvertex)
-    , m_pother (pother)
-    , m_iedge (Data::null_iedge())
-    , m_ivertex (Data::null_ivertex())
-    , m_time (time)
+  // An event that occurs between two polygon vertices.
+  Event(
+    const bool is_constrained,
+    const PVertex pvertex,
+    const PVertex pother,
+    const FT time) :
+  m_is_constrained(is_constrained),
+  m_pvertex(pvertex),
+  m_pother(pother),
+  m_ivertex(Data_structure::null_ivertex()),
+  m_iedge(Data_structure::null_iedge()),
+  m_time(time)
   { }
 
-  Event (PVertex pvertex, IEdge iedge, FT time)
-    : m_pvertex (pvertex)
-    , m_pother (Data::null_pvertex())
-    , m_iedge (iedge)
-    , m_ivertex (Data::null_ivertex())
-    , m_time (time)
+  // An event that occurs between a polygon vertex and an intersection graph edge.
+  Event(
+    const bool is_constrained,
+    const PVertex pvertex,
+    const IEdge iedge,
+    const FT time) :
+  m_is_constrained(is_constrained),
+  m_pvertex(pvertex),
+  m_pother(Data_structure::null_pvertex()),
+  m_ivertex(Data_structure::null_ivertex()),
+  m_iedge(iedge),
+  m_time(time) {
+
+    CGAL_assertion_msg(!is_constrained, "TODO: CAN THIS EVENT EVER HAPPEN IN THE CONSTRAINED SETTING?");
+  }
+
+  // An event that occurs between a polygon vertex and an intersection graph vertex.
+  Event(
+    const bool is_constrained,
+    const PVertex pvertex,
+    const IVertex ivertex,
+    const FT time) :
+  m_is_constrained(is_constrained),
+  m_pvertex(pvertex),
+  m_pother(Data_structure::null_pvertex()),
+  m_ivertex(ivertex),
+  m_iedge(Data_structure::null_iedge()),
+  m_time(time)
   { }
 
-  Event (PVertex pvertex, IVertex ivertex, FT time)
-    : m_pvertex (pvertex)
-    , m_pother (Data::null_pvertex())
-    , m_iedge (Data::null_iedge())
-    , m_ivertex (ivertex)
-    , m_time (time)
-  { }
+  // An event that occurs between two polygon vertices and an intersection graph vertex.
+  Event(
+    const bool is_constrained,
+    const PVertex pvertex,
+    const PVertex pother,
+    const IVertex ivertex,
+    const FT time) :
+  m_is_constrained(is_constrained),
+  m_pvertex(pvertex),
+  m_pother(pother),
+  m_ivertex(ivertex),
+  m_iedge(Data_structure::null_iedge()),
+  m_time(time) {
 
-  Event (PVertex pvertex, PVertex pother, IVertex ivertex, FT time)
-    : m_pvertex (pvertex)
-    , m_pother (pother)
-    , m_iedge (Data::null_iedge())
-    , m_ivertex (ivertex)
-    , m_time (time)
-  { }
+    CGAL_assertion_msg(is_constrained, "TODO: CAN THIS EVENT EVER HAPPEN IN THE UNCONSTRAINED SETTING?");
+  }
 
-  PVertex pvertex() const { return m_pvertex; }
-  PVertex pother() const { return m_pother; }
-  IEdge iedge() const { return m_iedge; }
-  IVertex ivertex() const { return m_ivertex; }
-  FT time() const { return m_time; }
+  // Data access.
+  const PVertex& pvertex() const { return m_pvertex; }
+  const PVertex& pother() const { return m_pother; }
+  const IVertex& ivertex() const { return m_ivertex; }
+  const IEdge& iedge() const { return m_iedge; }
+  const FT time() const { return m_time; }
 
-  bool is_pvertex_to_pvertex() const { return (m_pother != Data::null_pvertex()); }
-  bool is_pvertex_to_iedge() const { return (m_iedge != Data::null_iedge()); }
-  
-  bool is_pvertex_to_ivertex() const { return (m_pother == Data::null_pvertex()
-                                               && m_ivertex != Data::null_ivertex()); }
-  bool is_pvertices_to_ivertex() const { return (m_pother != Data::null_pvertex()
-                                                 && m_ivertex != Data::null_ivertex()); }
-  
-  friend std::ostream& operator<< (std::ostream& os, const Event& ev)
-  {
-    if (ev.is_pvertex_to_pvertex())
-      os << "Event at t=" << ev.m_time << " between PVertex("
-         << ev.m_pvertex.first << ":" << ev.m_pvertex.second
-         << ") and PVertex(" << ev.m_pother.first << ":" << ev.m_pother.second << ")";
-    else if (ev.is_pvertex_to_iedge())
-      os << "Event at t=" << ev.m_time << " between PVertex("
-         << ev.m_pvertex.first << ":" << ev.m_pvertex.second
-         << ") and IEdge" << ev.m_iedge;
-    else if (ev.is_pvertex_to_ivertex())
-      os << "Event at t=" << ev.m_time << " between PVertex("
-         << ev.m_pvertex.first << ":" << ev.m_pvertex.second
-         << ") and IVertex(" << ev.m_ivertex << ")";
-    else if (ev.is_pvertices_to_ivertex())
-      os << "Event at t=" << ev.m_time << " between PVertex("
-         << ev.m_pvertex.first << ":" << ev.m_pvertex.second
-         << "), PVertex(" << ev.m_pother.first << ":" << ev.m_pother.second
-         << " and IVertex(" << ev.m_ivertex << ")";
+  // Predicates.
+  const bool is_constrained() const { return m_is_constrained; }
+
+  // Event types. See constructors above.
+  const bool is_pvertex_to_pvertex() const {
+    return (m_pother != Data_structure::null_pvertex()); }
+  const bool is_pvertex_to_iedge()   const {
+    return (m_iedge != Data_structure::null_iedge()); }
+  const bool is_pvertex_to_ivertex() const {
+    return (m_pother == Data_structure::null_pvertex() && m_ivertex != Data_structure::null_ivertex()); }
+  const bool is_pvertices_to_ivertex() const {
+    return (m_pother != Data_structure::null_pvertex() && m_ivertex != Data_structure::null_ivertex()); }
+
+  // Output.
+  friend std::ostream& operator<<(std::ostream& os, const Event& event) {
+
+    const std::string constr_type = ( event.m_is_constrained ? "constrained " : "unconstrained " );
+    if (event.is_pvertex_to_pvertex())
+      os << constr_type << "Event at t = " << event.m_time << " between PVertex("
+         << event.m_pvertex.first << ":" << event.m_pvertex.second
+         << ") and PVertex(" << event.m_pother.first << ":" << event.m_pother.second << ")";
+    else if (event.is_pvertex_to_iedge())
+      os << constr_type << "Event at t = " << event.m_time << " between PVertex("
+         << event.m_pvertex.first << ":" << event.m_pvertex.second
+         << ") and IEdge" << event.m_iedge;
+    else if (event.is_pvertex_to_ivertex())
+      os << constr_type << "Event at t = " << event.m_time << " between PVertex("
+         << event.m_pvertex.first << ":" << event.m_pvertex.second
+         << ") and IVertex(" << event.m_ivertex << ")";
+    else if (event.is_pvertices_to_ivertex())
+      os << constr_type << "Event at t = " << event.m_time << " between PVertex("
+         << event.m_pvertex.first << ":" << event.m_pvertex.second
+         << "), PVertex(" << event.m_pother.first << ":" << event.m_pother.second
+         << " and IVertex(" << event.m_ivertex << ")";
     else
-      os << "Invalid event at t=" << ev.m_time;
+      os << "Invalid event at t = " << event.m_time;
     return os;
   }
 
+private:
+  bool m_is_constrained;
+  PVertex m_pvertex;
+  PVertex m_pother;
+  IVertex m_ivertex;
+  IEdge   m_iedge;
+  FT m_time;
 };
 
-
-}} // namespace CGAL::KSR_3
-
+} // namespace KSR_3
+} // namespace CGAL
 
 #endif // CGAL_KSR_3_EVENT_H

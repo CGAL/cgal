@@ -47,11 +47,11 @@ template <typename GeomTraits>
 class Data_structure
 {
 public:
-  
+
   typedef GeomTraits Kernel;
-  
+
 private:
-  
+
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_2 Point_2;
   typedef typename Kernel::Vector_2 Vector_2;
@@ -71,7 +71,7 @@ private:
   typedef typename Mesh::Face_index Face_index;
   typedef typename Mesh::Edge_index Edge_index;
   typedef typename Mesh::Halfedge_index Halfedge_index;
-  
+
   typedef KSR_3::Intersection_graph<Kernel> Intersection_graph;
 
   typedef KSR::vector<Support_plane> Support_planes;
@@ -103,7 +103,7 @@ public:
                                     typename Mesh::Edge_range::iterator> PEdge_iterator;
   typedef boost::transform_iterator<Make_PSimplex<PFace>,
                                     typename Mesh::Face_range::iterator> PFace_iterator;
-  
+
   typedef Iterator_range<PVertex_iterator> PVertices;
   typedef Iterator_range<PEdge_iterator> PEdges;
   typedef Iterator_range<PFace_iterator> PFaces;
@@ -123,7 +123,7 @@ public:
       return result_type(support_plane_idx, mesh.target(arg));
     }
   };
-  
+
   typedef boost::transform_iterator<Halfedge_to_pvertex,
                                     Halfedge_around_face_iterator<Mesh> > PVertex_of_pface_iterator;
   typedef Iterator_range<PVertex_of_pface_iterator> PVertices_of_pface;
@@ -143,7 +143,7 @@ public:
       return result_type(support_plane_idx, mesh.edge(arg));
     }
   };
-  
+
   typedef boost::transform_iterator<Halfedge_to_pedge,
                                     Halfedge_around_target_iterator<Mesh> > PEdge_around_pvertex_iterator;
   typedef Iterator_range<PEdge_around_pvertex_iterator> PEdges_around_pvertex;
@@ -162,9 +162,9 @@ private:
 
   // Helping data structures
   std::map<Point_3, KSR::size_t> m_meta_map;
-  
+
   FT m_current_time;
-  
+
 public:
 
   Data_structure()
@@ -180,15 +180,15 @@ public:
   {
     m_support_planes.reserve (number_of_polygons + 6);
   }
-  
+
   const FT& current_time() const { return m_current_time; }
 
   /*******************************
    * Support planes
    *******************************/
-  
+
   KSR::size_t number_of_support_planes() const { return m_support_planes.size(); }
-  
+
   bool is_bbox_support_plane (KSR::size_t support_plane_idx) const
   { return (support_plane_idx < 6); }
 
@@ -216,7 +216,7 @@ public:
       //   std::cerr << std::endl;
       //   return false;
       // }
-      
+
       // if (!polygon.is_convex())
       // {
       //   std::cerr << "PFace(" << pface.first << ":" << pface.second << ") is not convex" << std::endl;
@@ -229,7 +229,7 @@ public:
 
       PVertex prev = null_pvertex();
 
-      for (const PVertex& pvertex : pvertices_of_pface (pface))
+      for (const PVertex pvertex : pvertices_of_pface (pface))
       {
         if (prev == null_pvertex())
         {
@@ -245,11 +245,11 @@ public:
                     << str(prev) << " and " << str(pvertex) << std::endl;
           return false;
         }
-        
+
         prev = pvertex;
       }
     }
-    
+
     return true;
   }
 
@@ -269,12 +269,12 @@ public:
       m_support_planes.push_back (new_support_plane);
     }
 
-    if (support_plane_idx >= 6) // Intersect planes with bbox... 
+    if (support_plane_idx >= 6) // Intersect planes with bbox...
     {
       std::vector<std::pair<IEdge, Point_3> > intersections;
 
       Point_3 centroid = CGAL::ORIGIN;
-      for (const IEdge& edge : m_intersection_graph.edges())
+      for (const IEdge edge : m_intersection_graph.edges())
       {
         Point_3 point;
         if (!KSR::intersection_3 (support_plane(support_plane_idx).plane(),
@@ -319,14 +319,14 @@ public:
                                 }));
         CGAL_assertion (common_plane_idx != KSR::no_element());
         common_planes_idx.push_back (common_plane_idx);
-        
+
         typename std::map<KSR::size_t, KSR::size_t>::iterator iter;
         bool inserted;
         std::tie (iter, inserted)
           = map_lines_idx.insert (std::make_pair (common_plane_idx, KSR::no_element()));
         if (inserted)
           iter->second = m_intersection_graph.add_line();
-                
+
         vertices.push_back (m_intersection_graph.add_vertex (intersections[i].second).first);
       }
 
@@ -334,26 +334,34 @@ public:
       {
         for (KSR::size_t sp_idx : m_intersection_graph.intersected_planes(intersections[i].first))
           support_plane(sp_idx).iedges().erase (intersections[i].first);
-        IEdge edge_0, edge_1;
-        std::tie (edge_0, edge_1)
-          = m_intersection_graph.split_edge (intersections[i].first, vertices[i]);
-        for (const IEdge& edge : { edge_0, edge_1 })
-          for (KSR::size_t sp_idx : m_intersection_graph.intersected_planes(edge))
-            support_plane(sp_idx).iedges().insert (edge);
+        const auto edges = m_intersection_graph.split_edge (intersections[i].first, vertices[i]);
+        // for (const IEdge& edge : { edge_0, edge_1 })
+        //   for (KSR::size_t sp_idx : m_intersection_graph.intersected_planes(edge))
+        //     support_plane(sp_idx).iedges().insert (edge); // bugs!
+
+        const auto& iplanes_1 = m_intersection_graph.intersected_planes(edges.first);
+        for (const KSR::size_t sp_idx : iplanes_1) {
+          support_plane(sp_idx).iedges().insert(edges.first);
+        }
+
+        const auto& iplanes_2 = m_intersection_graph.intersected_planes(edges.second);
+        for (const KSR::size_t sp_idx : iplanes_2) {
+          support_plane(sp_idx).iedges().insert(edges.second);
+        }
 
         IEdge new_edge =
           m_intersection_graph.add_edge (vertices[i], vertices[(i+1)%vertices.size()], support_plane_idx).first;
         m_intersection_graph.intersected_planes(new_edge).insert (common_planes_idx[i]);
         m_intersection_graph.set_line (new_edge, map_lines_idx[common_planes_idx[i]]);
-        
+
         support_plane(support_plane_idx).iedges().insert (new_edge);
         support_plane(common_planes_idx[i]).iedges().insert (new_edge);
       }
     }
-      
+
     return support_plane_idx;
   }
-  
+
   void add_bbox_polygon (const std::array<Point_3, 4>& polygon)
   {
     KSR::size_t support_plane_idx = add_support_plane (Support_plane (polygon));
@@ -368,7 +376,7 @@ public:
 
     std::array<Vertex_index, 4> vertices
       = support_plane(support_plane_idx).add_bbox_polygon (points, ivertices);
-    
+
     for (std::size_t i = 0; i < 4; ++ i)
     {
       IEdge iedge;
@@ -377,10 +385,10 @@ public:
         = m_intersection_graph.add_edge (ivertices[i], ivertices[(i+1)%4], support_plane_idx);
       if (inserted)
         m_intersection_graph.set_line (iedge, m_intersection_graph.add_line());
-      
+
       support_plane(support_plane_idx).set_iedge
         (vertices[i], vertices[(i+1)%4], iedge);
-      
+
       support_plane(support_plane_idx).iedges().insert (iedge);
     }
   }
@@ -395,7 +403,7 @@ public:
     points.reserve (polygon.size());
     for (const Point_3& p : polygon)
       points.push_back (support_plane(support_plane_idx).to_2d(p));
-    
+
     Point_2 centroid = CGAL::centroid (points.begin(), points.end());
 
     std::sort (points.begin(), points.end(),
@@ -415,7 +423,7 @@ public:
   static PVertex null_pvertex() { return PVertex(KSR::no_element(), Vertex_index()); }
   static PEdge null_pedge() { return PEdge(KSR::no_element(), Edge_index()); }
   static PFace null_pface() { return PFace(KSR::no_element(), Face_index()); }
-  
+
   PVertices pvertices (KSR::size_t support_plane_idx) const
   {
     return PVertices (boost::make_transform_iterator
@@ -424,7 +432,7 @@ public:
                       boost::make_transform_iterator
                       (mesh(support_plane_idx).vertices().end(),
                        Make_PSimplex<PVertex>(support_plane_idx)));
-                      
+
   }
 
   PEdges pedges (KSR::size_t support_plane_idx) const
@@ -435,7 +443,7 @@ public:
                    boost::make_transform_iterator
                    (mesh(support_plane_idx).edges().end(),
                     Make_PSimplex<PEdge>(support_plane_idx)));
-                      
+
   }
 
   PFaces pfaces (KSR::size_t support_plane_idx) const
@@ -446,7 +454,7 @@ public:
                    boost::make_transform_iterator
                    (mesh(support_plane_idx).faces().end(),
                     Make_PSimplex<PFace>(support_plane_idx)));
-                      
+
   }
 
   // Get prev and next of free vertex
@@ -486,7 +494,7 @@ public:
     Halfedge_index hi = mesh(pvertex).halfedge(pvertex.second);
     if (mesh(pvertex).face(hi) != Face_index())
       hi = mesh(pvertex).prev (mesh(pvertex).opposite(hi));
-    
+
     CGAL_assertion (mesh(pvertex).face(hi) == Face_index());
     return std::make_pair (PVertex (pvertex.first, mesh(pvertex).source (hi)),
                            PVertex (pvertex.first, mesh(pvertex).target (mesh(pvertex).next(hi))));
@@ -545,10 +553,10 @@ public:
   std::pair<PFace, PFace> pfaces_of_pvertex (const PVertex& pvertex) const
   {
     std::pair<PFace, PFace> out (null_pface(), null_pface());
-    
+
     std::tie (out.first.second, out.second.second)
       = support_plane(pvertex).faces (pvertex.second);
-    
+
     if (out.first.second != Face_index())
       out.first.first = pvertex.first;
     if (out.second.second != Face_index())
@@ -608,7 +616,7 @@ public:
 
   bool is_active (const PVertex& pvertex) const
   { return support_plane(pvertex).is_active (pvertex.second); }
-  
+
   void deactivate (const PVertex& pvertex)
   {
     support_plane(pvertex).set_active (pvertex.second, false);
@@ -630,7 +638,7 @@ public:
   template <typename PSimplex>
   const Mesh& dbg_mesh (const PSimplex& psimplex) const { return dbg_mesh(psimplex.first); }
   const Mesh& dbg_mesh (KSR::size_t support_plane_idx) const { return support_plane(support_plane_idx).dbg_mesh(); }
-  
+
   PVertices dbg_pvertices (KSR::size_t support_plane_idx) const
   {
     return PVertices (boost::make_transform_iterator
@@ -648,7 +656,7 @@ public:
                    boost::make_transform_iterator
                    (dbg_mesh(support_plane_idx).faces().end(),
                     Make_PSimplex<PFace>(support_plane_idx)));
-                      
+
   }
   PVertices_of_pface dbg_pvertices_of_pface (const PFace& pface) const
   {
@@ -671,7 +679,7 @@ public:
 
   static IVertex null_ivertex() { return Intersection_graph::null_ivertex(); }
   static IEdge null_iedge() { return Intersection_graph::null_iedge(); }
-  
+
   IVertices ivertices() const { return m_intersection_graph.vertices(); }
   IEdges iedges() const { return m_intersection_graph.edges(); }
 
@@ -704,7 +712,7 @@ public:
                });
 
     KSR::size_t line_idx = m_intersection_graph.add_line();
-    
+
     for (KSR::size_t i = 0; i < vertices.size() - 1; ++ i)
     {
       IEdge iedge;
@@ -715,7 +723,7 @@ public:
                                          support_planes_idx);
       CGAL_assertion (inserted);
       m_intersection_graph.set_line (iedge, line_idx);
-      
+
       for (KSR::size_t support_plane_idx : support_planes_idx)
         support_plane(support_plane_idx).iedges().insert (iedge);
     }
@@ -736,7 +744,7 @@ public:
 
   Incident_iedges incident_iedges (const IVertex& ivertex) const
   { return m_intersection_graph.incident_edges(ivertex); }
-  
+
   const std::set<IEdge>& iedges (KSR::size_t support_plane_idx) const
   { return support_plane(support_plane_idx).iedges(); }
 
@@ -746,7 +754,7 @@ public:
   KSR::Idx_set intersected_planes (const IVertex& ivertex, bool keep_bbox = true) const
   {
     KSR::Idx_set out;
-    for (const IEdge& incident_iedge : incident_iedges (ivertex))
+    for (const IEdge incident_iedge : incident_iedges (ivertex))
       for (KSR::size_t support_plane_idx : intersected_planes (incident_iedge))
       {
         if (!keep_bbox && support_plane_idx < 6)
@@ -763,15 +771,15 @@ public:
   { return m_intersection_graph.is_active (iedge); }
   bool is_active (const IVertex& ivertex) const
   { return m_intersection_graph.is_active (ivertex); }
-  
+
   bool is_bbox_iedge (const IEdge& edge) const
   {
     for (KSR::size_t support_plane_idx : m_intersection_graph.intersected_planes(edge))
       if (support_plane_idx < 6)
         return true;
-    return false;              
+    return false;
   }
-  
+
   /*******************************
    * Connectivity
    *******************************/
@@ -785,7 +793,7 @@ public:
   { return support_plane(pvertex).has_iedge(pvertex.second); }
   IEdge iedge (const PVertex& pvertex) const
   { return support_plane(pvertex).iedge(pvertex.second); }
-  
+
   bool has_iedge (const PEdge& pedge) const
   { return support_plane(pedge).has_iedge(pedge.second); }
   IEdge iedge (const PEdge& pedge) const
@@ -800,7 +808,7 @@ public:
   { support_plane(a).set_iedge (a.second, b.second, iedge); }
   void connect (const PEdge& pedge, const IEdge& iedge)
   { support_plane(pedge).set_iedge (pedge.second, iedge); }
-  
+
   IVertex disconnect_ivertex (const PVertex& pvertex)
   {
     IVertex out = ivertex (pvertex);
@@ -829,18 +837,23 @@ public:
 
   std::vector<PVertex> pvertices_around_ivertex (const PVertex& pvertex, const IVertex& ivertex) const
   {
-    
+
     std::deque<PVertex> vertices;
     vertices.push_back (pvertex);
-    
+
     std::queue<Queue_element> todo;
     PVertex prev, next;
     std::tie (prev, next) = border_prev_and_next (pvertex);
+    // std::cout << "prev in: " << point_3(prev) << std::endl;
+    // std::cout << "next in: " << point_3(next) << std::endl;
+    // std::cout << "curr in: " << point_3(pvertex) << std::endl;
+
     todo.push (Queue_element (pvertex, prev, true, false));
     todo.push (Queue_element (pvertex, next, false, false));
 
     while (!todo.empty())
     {
+      // std::cout << std::endl;
       PVertex previous = todo.front().previous;
       PVertex current = todo.front().pvertex;
       bool front = todo.front().front;
@@ -849,9 +862,12 @@ public:
 
       IEdge iedge = this->iedge (current);
       bool is_free = (iedge == null_iedge());
+      // std::cout << "is free 1: " << is_free << std::endl;
 
-      if (!is_free && source(iedge) != ivertex && target(iedge) != ivertex)
+      if (!is_free && source(iedge) != ivertex && target(iedge) != ivertex) {
+        // std::cout << "is free 2: " << is_free << std::endl;
         is_free = true;
+      }
 
       if (!is_free)
       {
@@ -861,62 +877,80 @@ public:
         else
           CGAL_assertion (target(iedge) == ivertex);
 
+        std::cout.precision(20);
         // Filter backwards vertex
         if (direction (current) * Vector_2 (point_2 (current.first, other),
                                             point_2 (current.first, ivertex))
             < 0)
         {
           std::cerr << str(current) << " is backwards" << std::endl;
+          // std::cout << point_3(current) << std::endl;
           is_free = true;
         }
+        if (is_frozen(current)) {
+          std::cerr << str(current) << " is frozen" << std::endl;
+          // std::cout << point_3(current) << std::endl;
+          is_free = true;
+        }
+        // std::cout << "is free 3: " << is_free << std::endl;
       }
-      
+
       if (previous_was_free && is_free)
       {
         std::cerr << str(current) << " has no iedge, stopping there" << std::endl;
+        // std::cout << point_3(current) << std::endl;
         continue;
       }
-      
+
       if (is_free)
       {
         std::cerr << str(current) << " has no iedge" << std::endl;
+        // std::cout << point_3(current) << std::endl;
 
       }
       else
       {
         std::cerr << str(current) << " has iedge " << str(iedge)
                   << " from " << str(source(iedge)) << " to " << str(target(iedge)) << std::endl;
+        // std::cout << point_3(current) << std::endl;
 
       }
 
-      if (front)
+      if (front) {
         vertices.push_front (current);
-      else
+        // std::cout << "pushed front" << std::endl;
+      }
+      else {
         vertices.push_back (current);
-      
+        // std::cout << "pushed back" << std::endl;
+      }
+
       std::tie (prev, next) = border_prev_and_next (current);
 
       if (prev == previous)
       {
         CGAL_assertion (next != previous);
         todo.push (Queue_element (current, next, front, is_free));
+        // std::cout << "pushed next" << std::endl;
       }
-      else
+      else {
         todo.push (Queue_element (current, prev, front, is_free));
+        // std::cout << "pushed prev" << std::endl;
+      }
     }
 
     std::vector<PVertex> out;
     out.reserve (vertices.size());
     std::copy (vertices.begin(), vertices.end(),
                std::back_inserter (out));
-    
-    CGAL_KSR_CERR(3) << "*** Found vertices:";
+
+    std::cout << "*** Found vertices:";
     for (const PVertex& pv : out)
-      CGAL_KSR_CERR(3) << " " << str(pv);
-    CGAL_KSR_CERR(3) << std::endl;
+      std::cout << " " << str(pv);
+    std::cout << std::endl;
     return out;
   }
-  
+
   /*******************************
    * Conversions
    *******************************/
@@ -925,20 +959,20 @@ public:
   { return support_plane(support_plane_idx).to_2d (point_3(ivertex)); }
   Segment_2 to_2d (KSR::size_t support_plane_idx, const Segment_3& segment_3) const
   { return support_plane(support_plane_idx).to_2d (segment_3); }
-  
+
   Point_2 point_2 (const PVertex& pvertex, FT time) const
   { return support_plane(pvertex).point_2 (pvertex.second, time); }
   Point_2 point_2 (const PVertex& pvertex) const
   { return point_2 (pvertex, m_current_time); }
   Point_2 point_2 (KSR::size_t support_plane_idx, const IVertex& ivertex) const
   { return support_plane(support_plane_idx).to_2d(point_3 (ivertex)); }
-  
+
   Segment_2 segment_2 (KSR::size_t support_plane_idx, const IEdge& iedge) const
   { return support_plane(support_plane_idx).to_2d(segment_3(iedge)); }
-  
+
   Point_3 to_3d (KSR::size_t support_plane_idx, const Point_2& point_2) const
   { return support_plane(support_plane_idx).to_3d (point_2); }
-  
+
   Point_3 point_3 (const PVertex& pvertex, FT time) const
   { return support_plane(pvertex).point_3 (pvertex.second, time); }
   Point_3 point_3 (const PVertex& pvertex) const
@@ -960,17 +994,17 @@ public:
   std::pair<bool, bool> collision_occured (const PVertex& pvertex, const IEdge& iedge) const
   {
     bool collision = false;
-    
+
     for (KSR::size_t support_plane_idx : intersected_planes(iedge))
     {
       if (support_plane_idx < 6)
         return std::make_pair (true, true);
-      
-      for (const PEdge& pedge : pedges(support_plane_idx))
+
+      for (const PEdge pedge : pedges(support_plane_idx))
         if (this->iedge(pedge) == iedge)
         {
           Segment_2 iedge_segment = segment_2 (support_plane_idx, iedge);
-          
+
           Vector_2 source_2_vertex (iedge_segment.source(), point_2(pvertex));
 
           FT prod = iedge_segment.to_vector() * source_2_vertex;
@@ -984,31 +1018,31 @@ public:
           }
         }
     }
-    
+
     return std::make_pair (collision, false);
   }
-  
+
   /*******************************
    * Operations on polygons
    *******************************/
 
   PVertex crop_polygon (const PVertex& pvertex, const IEdge& iedge)
   {
-    CGAL_KSR_CERR(3) << "*** Cropping " << str(pvertex) << " along " << str(iedge) << std::endl;
-    
+    std::cout << "*** Cropping " << str(pvertex) << " along " << str(iedge) << std::endl;
+
     Point_2 future_point_a, future_point_b;
     Vector_2 direction_a, direction_b;
 
     compute_future_points_and_directions (pvertex, iedge,
                                           future_point_a, future_point_b,
                                           direction_a, direction_b);
-    
+
     PEdge pedge (pvertex.first, support_plane(pvertex).split_vertex(pvertex.second));
     CGAL_assertion (source(pedge) == pvertex || target(pedge) == pvertex);
 
     PVertex other = opposite(pedge, pvertex);
-    
-    CGAL_KSR_CERR(3) << "*** New edge " << str(pedge) << " between " << str(pvertex)
+
+    std::cout << "*** New edge " << str(pedge) << " between " << str(pvertex)
                      << " and " << str(other) << std::endl;
 
     connect (pedge, iedge);
@@ -1017,7 +1051,7 @@ public:
 
     support_plane(pvertex).set_point (pvertex.second, future_point_a);
     support_plane(other).set_point (other.second, future_point_b);
-    
+
     direction(pvertex) = direction_a;
     direction(other) = direction_b;
 
@@ -1026,8 +1060,8 @@ public:
 
   std::array<PVertex, 3> propagate_polygon (const PVertex& pvertex, const IEdge& iedge)
   {
-    CGAL_KSR_CERR(3) << "*** Propagating " << str(pvertex) << " along " << str(iedge) << std::endl;
-    
+    std::cout << "*** Propagating " << str(pvertex) << " along " << str(iedge) << std::endl;
+
     Point_2 original_point = point_2 (pvertex, 0);
     Vector_2 original_direction = direction(pvertex);
 
@@ -1035,7 +1069,7 @@ public:
 
     PVertex propagated = add_pvertex (pvertex.first, original_point);
     direction(propagated) = original_direction;
-    
+
     std::array<PVertex, 3> pvertices;
 
     pvertices[0] = pvertex;
@@ -1044,18 +1078,18 @@ public:
 
     PFace pface = add_pface (pvertices);
     CGAL_assertion (pface.second != Face_index());
-    
-    CGAL_KSR_CERR(3) << "*** New face " << lstr(pface) << std::endl;
+
+    std::cout << "*** New face " << lstr(pface) << std::endl;
 
     return pvertices;
   }
 
   void crop_polygon (const PVertex& pv0, const PVertex& pv1, const IEdge& iedge)
   {
-    CGAL_KSR_CERR(3) << "*** Cropping " << str(pv0) << "/" << str(pv1) << " along " << str(iedge) << std::endl;
+    std::cout << "*** Cropping " << str(pv0) << "/" << str(pv1) << " along " << str(iedge) << std::endl;
 
     Line_2 iedge_line = segment_2(pv0.first, iedge).supporting_line();
-    
+
     for (const PVertex& pvertex : { pv0, pv1 })
     {
       Point_2 init = iedge_line.projection (point_2 (pvertex, m_current_time));
@@ -1074,7 +1108,7 @@ public:
   std::pair<PVertex, PVertex> propagate_polygon
   (const PVertex& pvertex, const PVertex& pother, const IEdge& iedge)
   {
-    CGAL_KSR_CERR(3) << "*** Propagating " << str(pvertex) << "/" << str(pother) << " along " << str(iedge) << std::endl;
+    std::cout << "*** Propagating " << str(pvertex) << "/" << str(pother) << " along " << str(iedge) << std::endl;
 
     CGAL_assertion_msg (false, "TODO: propagate polygon via edge");
 
@@ -1083,8 +1117,8 @@ public:
 
   bool transfer_vertex (const PVertex& pvertex, const PVertex& pother)
   {
-    CGAL_KSR_CERR(3) << "*** Transfering " << str(pother) << " through " << str(pvertex) << std::endl;
-    
+    std::cout << "*** Transfering " << str(pother) << " through " << str(pvertex) << std::endl;
+
     // If pvertex is adjacent to one or two
     PFace source_face, target_face;
     std::tie (source_face, target_face) = pfaces_of_pvertex (pvertex);
@@ -1095,20 +1129,20 @@ public:
       std::swap (source_face, target_face);
     CGAL_assertion (common_pface == source_face);
 
-    CGAL_KSR_CERR(3) << "*** Initial faces: " << lstr(source_face)
+    std::cout << "*** Initial faces: " << lstr(source_face)
                      << " and " << lstr(target_face) << std::endl;
 
     PVertex pthird = next(pother);
     if (pthird == pvertex)
       pthird = prev(pother);
-    
+
     if (target_face == null_pface())
     {
       Vector_2 new_direction;
 
       Line_2 iedge_line = segment_2(pother.first, iedge(pvertex)).supporting_line();
       Point_2 pinit = iedge_line.projection(point_2 (pother, m_current_time));
-      
+
       Line_2 future_line (point_2 (pother, m_current_time + 1),
                           point_2 (pthird, m_current_time + 1));
 
@@ -1117,7 +1151,7 @@ public:
       direction(pvertex) = Vector_2 (pinit, future_point);
       support_plane(pvertex).set_point (pvertex.second,
                                         pinit - direction(pvertex) * m_current_time);
-      
+
       Halfedge_index hi = mesh(pvertex).halfedge(pother.second, pvertex.second);
       CGAL::Euler::join_vertex(hi, mesh(pvertex));
     }
@@ -1156,7 +1190,7 @@ public:
 
       Line_2 iedge_line = segment_2(pother.first, iedge).supporting_line();
       Point_2 pinit = iedge_line.projection(point_2 (pother, m_current_time));
-    
+
       direction(pvertex) = direction(pother);
       support_plane(pother).set_point (pvertex.second,
                                        pinit - direction(pvertex) * m_current_time);
@@ -1173,17 +1207,17 @@ public:
 //      std::cerr << "Connect " << str(pother) << " to " << str(iedge) << std::endl;
       connect (pother, iedge);
     }
-    
-    CGAL_KSR_CERR(3) << "*** New faces: " << lstr(source_face)
+
+    std::cout << "*** New faces: " << lstr(source_face)
                      << " and " << lstr(target_face) << std::endl;
 
     return (target_face != null_pface());
   }
-  
+
   void merge_pvertices (const PVertex& pvertex, const PVertex& pother)
   {
-    CGAL_KSR_CERR(3) << "*** Merging " << str(pvertex) << " with " << str(pother) << std::endl;
-    
+    std::cout << "*** Merging " << str(pvertex) << " with " << str(pother) << std::endl;
+
     Halfedge_index hi = mesh(pvertex).halfedge(pother.second, pvertex.second);
     disconnect_ivertex (pother);
     CGAL::Euler::join_vertex(hi, mesh(pvertex));
@@ -1196,7 +1230,7 @@ public:
 
     PVertex prev = pvertices.front();
     PVertex next = pvertices.back();
-    
+
     // Copy front/back to remember position/direction
     PVertex front (support_plane_idx, support_plane(support_plane_idx).duplicate_vertex(pvertices[1].second));
     PVertex back (support_plane_idx,support_plane(support_plane_idx).duplicate_vertex(pvertices[pvertices.size() - 2].second));
@@ -1233,20 +1267,22 @@ public:
 
     PVertex pvertex = pvertices[1];
     connect (pvertex, ivertex);
-    
-    CGAL_KSR_CERR(3) << "*** Frozen vertex: " << str(pvertex) << std::endl;
-    CGAL_KSR_CERR(3) << "*** Removed vertices:";
+
+    std::cout << "*** Frozen vertex: " << str(pvertex) << std::endl;
+    // std::cout << point_3(pvertex) << std::endl;
+    // std::cout << "*** Removed vertices:";
 
     // Join vertices
     for (std::size_t i = 2; i < pvertices.size() - 1; ++ i)
     {
-      CGAL_KSR_CERR(3) << " " << str(pvertices[i]);
+      // std::cout << " " << str(pvertices[i]) << std::endl;
+      // std::cout << point_3(pvertices[i]) << std::endl;
 
       Halfedge_index hi = mesh(support_plane_idx).halfedge(pvertices[i].second, pvertex.second);
       disconnect_ivertex (pvertices[i]);
       CGAL::Euler::join_vertex(hi, mesh(support_plane_idx));
     }
-    CGAL_KSR_CERR(3) << std::endl;
+    // std::cout << std::endl;
 
 
     Incident_iedges i_iedges = incident_iedges (ivertex);
@@ -1258,7 +1294,7 @@ public:
                   if (intersected_planes(ie).find (support_plane_idx)
                       == intersected_planes(ie).end())
                     return;
-                  
+
                   Direction_2 dir (point_2 (support_plane_idx, opposite (ie, ivertex))
                                    - point_2 (support_plane_idx, ivertex));
                   iedges.push_back (std::make_pair (ie, dir));
@@ -1277,7 +1313,7 @@ public:
         || (this->ivertex(next) != null_ivertex()
             && is_iedge (this->ivertex(next), ivertex)))
       back_constrained = true;
-    
+
     bool front_constrained = false;
     if ((iedge(prev) != null_iedge()
          && (source(iedge(prev)) == ivertex || target(iedge(prev)) == ivertex))
@@ -1285,26 +1321,27 @@ public:
             && is_iedge (this->ivertex(prev), ivertex)))
       front_constrained = true;
 
-    std::cerr << "Prev = " << point_2 (prev) << " / " << direction (prev) << std::endl
-              << "Front = " << point_2 (front) << " / " << direction (front) << std::endl
-              << "Back = " << point_2 (back) << " / " << direction (back) << std::endl
-              << "Next = " << point_2 (next) << " / " << direction (next) << std::endl;
+    std::cout.precision(20);
+    std::cout << "Prev = " << point_3 (prev) << " / " << direction (prev) << std::endl
+              << "Front = " << point_3 (front) << " / " << direction (front) << std::endl
+              << "Back = " << point_3 (back) << " / " << direction (back) << std::endl
+              << "Next = " << point_3 (next) << " / " << direction (next) << std::endl;
 
     std::vector<PVertex> new_vertices;
 
     if (back_constrained && front_constrained) // Closing case
     {
-      CGAL_assertion_msg (false, "TODO: closing");
+      // CGAL_assertion_msg (false, "TODO: closing");
     }
     else if (back_constrained) // Border case
     {
-      CGAL_KSR_CERR(3) << "*** Back border case" << std::endl;
+      std::cout << "*** Back border case" << std::endl;
       KSR::size_t other_side_limit = line_idx(next);
 
       Direction_2 dir (point_2(prev) - point_2 (pvertex));
 
       std::reverse (iedges.begin(), iedges.end());
-      
+
       KSR::size_t first_idx = KSR::no_element();
       for (std::size_t i = 0; i < iedges.size(); ++ i)
       {
@@ -1316,8 +1353,8 @@ public:
         }
       }
 
-      std::ofstream ("first.polylines.txt")
-        << "2 " << segment_3 (iedges[first_idx].first) << std::endl;
+      // std::ofstream ("first.polylines.txt")
+      //   << "2 " << segment_3 (iedges[first_idx].first) << std::endl;
 
       CGAL_assertion (first_idx != KSR::no_element());
 
@@ -1334,11 +1371,11 @@ public:
 
         crossed.push_back (iedge);
 
-        std::ofstream ("next.polylines.txt")
-          << "2 " << segment_3 (iedge) << std::endl;
+        // std::ofstream ("next.polylines.txt")
+        //   << "2 " << segment_3 (iedge) << std::endl;
         if (limit_reached || bbox_reached)
           break;
-        
+
         iedge_idx = (iedge_idx + 1) % iedges.size();
       }
 
@@ -1350,7 +1387,7 @@ public:
         compute_future_point_and_direction (back, prev, crossed[i], future_points[i], future_directions[i]);
 
       PVertex previous = null_pvertex();
-      
+
       for (std::size_t i = 0; i < crossed.size(); ++ i)
       {
         if (i == 0) // crop
@@ -1360,7 +1397,7 @@ public:
           PEdge pedge (support_plane_idx, support_plane(pvertex).edge (pvertex.second, cropped.second));
 
           new_vertices.push_back (cropped);
-    
+
           connect (pedge, crossed[i]);
           connect (cropped, crossed[i]);
 
@@ -1374,10 +1411,10 @@ public:
           PVertex propagated = add_pvertex (pvertex.first, future_points[i]);
           direction(propagated) = future_directions[i];
           new_vertices.push_back (propagated);
-          
+
           add_pface (std::array<PVertex, 3>{ pvertex, previous, propagated });
           previous = propagated;
-          
+
           PEdge pedge (support_plane_idx, support_plane(pvertex).edge (pvertex.second, propagated.second));
           connect (pedge, crossed[i]);
           connect (propagated, crossed[i]);
@@ -1386,8 +1423,8 @@ public:
     }
     else if (front_constrained) // Border case
     {
-      CGAL_KSR_CERR(3) << "*** Front border case" << std::endl;
-      
+      std::cout << "*** Front border case" << std::endl;
+
       KSR::size_t other_side_limit = line_idx(prev);
 
       Direction_2 dir (point_2(next) - point_2 (pvertex));
@@ -1397,15 +1434,15 @@ public:
       {
         if (dir.counterclockwise_in_between(iedges[i].second,
                                             iedges[(i+1)%iedges.size()].second))
-                                            
+
         {
           first_idx = (i+1)%iedges.size();
           break;
         }
       }
 
-      std::ofstream ("first.polylines.txt")
-        << "2 " << segment_3 (iedges[first_idx].first) << std::endl;
+      // std::ofstream ("first.polylines.txt")
+      //   << "2 " << segment_3 (iedges[first_idx].first) << std::endl;
 
       CGAL_assertion (first_idx != KSR::no_element());
 
@@ -1420,13 +1457,13 @@ public:
         std::tie (collision, bbox_reached) = collision_occured (pvertex, iedge);
         bool limit_reached = (line_idx(iedge) == other_side_limit);
 
-        std::ofstream ("next.polylines.txt")
-          << "2 " << segment_3 (iedge) << std::endl;
+        // std::ofstream ("next.polylines.txt")
+        //   << "2 " << segment_3 (iedge) << std::endl;
         crossed.push_back (iedge);
 
         if (limit_reached || bbox_reached)
           break;
-        
+
         iedge_idx = (iedge_idx + 1) % iedges.size();
       }
 
@@ -1438,11 +1475,12 @@ public:
         compute_future_point_and_direction (front, next, crossed[i], future_points[i], future_directions[i]);
 
       PVertex previous = null_pvertex();
-      
+
       for (std::size_t i = 0; i < crossed.size(); ++ i)
       {
         if (i == 0) // crop
         {
+          std::cout << "Cropping" << std::endl;
           PVertex cropped (support_plane_idx, support_plane(pvertex).split_edge (pvertex.second, next.second));
 
           PEdge pedge (support_plane_idx, support_plane(pvertex).edge (pvertex.second, cropped.second));
@@ -1450,7 +1488,7 @@ public:
           CGAL_assertion (cropped != pvertex);
 
           new_vertices.push_back (cropped);
-    
+
           connect (pedge, crossed[i]);
           connect (cropped, crossed[i]);
 
@@ -1461,13 +1499,14 @@ public:
         }
         else // create triangle face
         {
+          std::cout << "added new face!" << std::endl;
           PVertex propagated = add_pvertex (pvertex.first, future_points[i]);
           direction(propagated) = future_directions[i];
           new_vertices.push_back (propagated);
-          
+
           add_pface (std::array<PVertex, 3>{ pvertex, previous, propagated });
           previous = propagated;
-          
+
           PEdge pedge (support_plane_idx, support_plane(pvertex).edge (pvertex.second, propagated.second));
           connect (pedge, crossed[i]);
           connect (propagated, crossed[i]);
@@ -1476,7 +1515,7 @@ public:
     }
     else // Open case
     {
-      CGAL_KSR_CERR(3) << "*** Open case" << std::endl;
+      std::cout << "*** Open case" << std::endl;
 
       Direction_2 dir_next (point_2(next) - point_2 (pvertex));
       Direction_2 dir_prev (point_2(prev) - point_2 (pvertex));
@@ -1485,7 +1524,7 @@ public:
       {
         if (dir_next.counterclockwise_in_between(iedges[i].second,
                                                  iedges[(i+1)%iedges.size()].second))
-                                            
+
         {
           first_idx = (i+1)%iedges.size();
           break;
@@ -1521,14 +1560,14 @@ public:
         PEdge pedge (support_plane_idx, support_plane(pvertex).edge (pvertex.second, cropped.second));
 
         new_vertices.push_back (cropped);
-    
+
         connect (pedge, crossed.front());
         connect (cropped, crossed.front());
 
         support_plane(cropped).set_point (cropped.second, future_points.front());
         direction(cropped) = future_directions.front();
       }
-      
+
       for (std::size_t i = 1; i < crossed.size() - 1; ++ i)
       {
         PVertex propagated = add_pvertex (pvertex.first, future_points[i]);
@@ -1543,7 +1582,7 @@ public:
         PEdge pedge (support_plane_idx, support_plane(pvertex).edge (pvertex.second, cropped.second));
 
         new_vertices.push_back (cropped);
-    
+
         connect (pedge, crossed.back());
         connect (cropped, crossed.back());
 
@@ -1553,7 +1592,7 @@ public:
       std::cerr << new_vertices.size() << " new vertice(s)" << std::endl;
       for (std::size_t i = 0; i < new_vertices.size() - 1; ++ i)
         add_pface (std::array<PVertex, 3>{ new_vertices[i], new_vertices[i+1], pvertex });
-      
+
       for (std::size_t i = 1; i < crossed.size() - 1; ++ i)
       {
         PEdge pedge (support_plane_idx, support_plane(pvertex).edge (pvertex.second, new_vertices[i].second));
@@ -1565,18 +1604,26 @@ public:
     support_plane(support_plane_idx).remove_vertex(front.second);
     support_plane(support_plane_idx).remove_vertex(back.second);
 
-    CGAL_KSR_CERR(3) << "*** New vertices:";
+    std::cout << "*** New vertices:";
     for (const PVertex& pv : new_vertices)
-      CGAL_KSR_CERR(3) << " " << str(pv);
-    CGAL_KSR_CERR(3) << std::endl;
+      std::cout << " " << str(pv);
+    std::cout << std::endl;
 
     // push also remaining vertex so that its events are recomputed
     new_vertices.push_back (pvertex);
-    
+
+    if (has_iedge(prev) && !is_frozen(prev))
+      new_vertices.push_back (prev);
+    if (has_iedge(next) && !is_frozen(next))
+      new_vertices.push_back (next);
+
     return new_vertices;
   }
 
-  
+  void create_polyhedrons() {
+    CGAL_assertion_msg(false, "TODO: CREATE OUTPUT POLYHEDRONS!");
+  }
+
   void update_positions (FT time)
   {
     m_current_time = time;
@@ -1592,7 +1639,7 @@ public:
   { return "IVertex(" + std::to_string(ivertex) + ")"; }
   inline std::string str (const IEdge& iedge) const
   { std::ostringstream oss; oss << "IEdge" << iedge; return oss.str(); }
-  
+
   inline std::string lstr (const PFace& pface) const
   {
     if (pface == null_pface())
@@ -1614,7 +1661,7 @@ private:
   template <typename PSimplex>
   Support_plane& support_plane (const PSimplex& psimplex) { return support_plane(psimplex.first); }
   Support_plane& support_plane (KSR::size_t idx) { return m_support_planes[idx]; }
-  
+
   template <typename PSimplex>
   const Mesh& mesh (const PSimplex& psimplex) const { return mesh(psimplex.first); }
   const Mesh& mesh (KSR::size_t support_plane_idx) const { return support_plane(support_plane_idx).mesh(); }
@@ -1628,10 +1675,10 @@ private:
   {
     PVertex prev (pvertex.first, support_plane(pvertex).prev(pvertex.second));
     PVertex next (pvertex.first, support_plane(pvertex).next(pvertex.second));
-    
+
     Line_2 iedge_line = segment_2(pvertex.first, iedge).supporting_line();
     Point_2 pinit = iedge_line.projection(point_2 (pvertex, m_current_time));
-    
+
     Line_2 future_line_prev (point_2 (prev, m_current_time + 1),
                              point_2 (pvertex, m_current_time + 1));
     Line_2 future_line_next (point_2 (next, m_current_time + 1),
@@ -1652,7 +1699,7 @@ private:
       CGAL_assertion (a_found);
       future_point_a = pinit + (pinit - future_point_b);
     }
-        
+
     direction_a = Vector_2 (pinit, future_point_a);
     direction_b = Vector_2 (pinit, future_point_b);
     future_point_a = pinit - m_current_time * direction_a;
@@ -1673,7 +1720,7 @@ private:
     }
     Line_2 iedge_line = segment_2(pvertex.first, iedge).supporting_line();
     Point_2 pinit = iedge_line.projection(point_2 (pvertex, m_current_time));
-    
+
     Line_2 future_line_next (point_2 (next, m_current_time + 1),
                              point_2 (pvertex, m_current_time + 1));
 
@@ -1689,7 +1736,7 @@ private:
   {
     Line_2 iedge_line = segment_2(pvertex.first, iedge).supporting_line();
     Point_2 pinit = iedge_line.projection(point_2 (pvertex, m_current_time));
-    
+
     Line_2 future_line (point_2 (next, m_current_time + 1),
                         point_2 (prev, m_current_time + 1));
 
@@ -1698,7 +1745,7 @@ private:
     future_point = pinit - m_current_time * direction;
   }
 
-  
+
 };
 
 

@@ -56,7 +56,7 @@ public:
     Vertex_property () : active(true) { }
     Vertex_property (const Point_3& point) : point (point), active(true) { }
   };
-  
+
   struct Edge_property
   {
     KSR::size_t line;
@@ -80,24 +80,24 @@ public:
   typedef CGAL::Iterator_range<Vertex_iterator> Vertices;
   typedef CGAL::Iterator_range<Edge_iterator> Edges;
   typedef CGAL::Iterator_range<Incident_edge_iterator> Incident_edges;
-  
+
 private:
 
   Graph m_graph;
   KSR::size_t m_nb_lines;
   std::map<Point_3, Vertex_descriptor> m_map_points;
   std::map<KSR::Idx_vector, Vertex_descriptor> m_map_vertices;
-  
+
 public:
 
   Intersection_graph() : m_nb_lines(0) { }
 
   static Vertex_descriptor null_ivertex()
   { return boost::graph_traits<Graph>::null_vertex(); }
-    
+
   static Edge_descriptor null_iedge()
   { return Edge_descriptor(null_ivertex(), null_ivertex(), nullptr); }
-  
+
   std::pair<Vertex_descriptor, bool> add_vertex (const Point_3& point)
   {
     typename std::map<Point_3, Vertex_descriptor>::iterator iter;
@@ -147,7 +147,7 @@ public:
       m_graph[out.first].planes.insert (support_plane_idx);
     return out;
   }
-  
+
   std::pair<Edge_descriptor, bool> add_edge (const Point_3& source, const Point_3& target)
   {
     return add_edge (add_vertex (source).first, add_vertex (target).first);
@@ -166,7 +166,7 @@ public:
     Vertex_descriptor source = boost::source (edge, m_graph);
     Vertex_descriptor target = boost::target (edge, m_graph);
     Edge_property prop = m_graph[edge];
-    
+
     boost::remove_edge (edge, m_graph);
 
     bool inserted;
@@ -178,9 +178,9 @@ public:
       std::cerr << segment_3 (edge) << " " << point_3 (vertex) << std::endl;
     }
     CGAL_assertion (inserted);
-    
+
     m_graph[sedge] = prop;
-    
+
     Edge_descriptor tedge;
     std::tie (tedge, inserted) = boost::add_edge (vertex, target, m_graph);
     if (!inserted)
@@ -188,7 +188,7 @@ public:
       std::cerr << segment_3 (edge) << " " << point_3 (vertex) << std::endl;
     }
     CGAL_assertion (inserted);
-    
+
     m_graph[tedge] = prop;
 
     return std::make_pair (sedge, tedge);
@@ -223,7 +223,7 @@ public:
     return Segment_3 (m_graph[boost::source (edge, m_graph)].point,
                       m_graph[boost::target (edge, m_graph)].point);
   }
-  
+
   Line_3 line_3 (const Edge_descriptor& edge) const
   {
     return Line_3 (m_graph[source (edge, m_graph)].point,

@@ -185,7 +185,7 @@ public:
 
   Point_2 point_2 (const Vertex_index& vertex_index, FT time) const
   { return m_data->mesh.point(vertex_index) + time * m_data->direction[vertex_index]; }
-  
+
   Point_3 point_3 (const Vertex_index& vertex_index, FT time) const
   { return to_3d (point_2 (vertex_index, time)); }
 
@@ -210,13 +210,13 @@ public:
     m_data->e_iedge_map[ei] = iedge;
   }
 
-  void set_ivertex (const Vertex_index& vertex, 
+  void set_ivertex (const Vertex_index& vertex,
                     const IVertex& ivertex) const
   {
     m_data->v_ivertex_map[vertex] = ivertex;
   }
 
-  void set_iedge (const Vertex_index& vertex, 
+  void set_iedge (const Vertex_index& vertex,
                   const IEdge& iedge) const
   {
     m_data->v_iedge_map[vertex] = iedge;
@@ -269,7 +269,7 @@ public:
 
   bool is_active (const Vertex_index& vertex_index) const { return m_data->v_active_map[vertex_index]; }
   void set_active (const Vertex_index& vertex_index, bool value) { m_data->v_active_map[vertex_index] = value; }
-  
+
   bool is_frozen (const Vertex_index& vertex_index) const
   {
     return (m_data->direction[vertex_index] == CGAL::NULL_VECTOR);
@@ -288,19 +288,19 @@ public:
     return Line_2 (m_data->plane.to_2d(line.point()),
                    m_data->plane.to_2d(line.point() + line.to_vector()));
   }
-  
+
   Segment_2 to_2d (const Segment_3& segment) const
   {
     return Segment_2 (m_data->plane.to_2d(segment.source()),
                       m_data->plane.to_2d(segment.target()));
   }
-  
+
   Vector_3 to_3d (const Vector_2& vec) const
   {
     return Vector_3 (m_data->plane.to_3d (Point_2(0,0)),
                      m_data->plane.to_3d (Point_2(0,0) + vec));
   }
-  
+
   Point_3 to_3d (const Point_2& point) const { return m_data->plane.to_3d (point); }
 
   std::array<Vertex_index, 4>
@@ -314,7 +314,7 @@ public:
       m_data->v_ivertex_map[vi] = ivertices[i];
       vertices[i] = vi;
     }
-    
+
     Face_index fi = m_data->mesh.add_face (vertices);
     m_data->input_map[fi] = KSR::no_element();
 
@@ -331,7 +331,7 @@ public:
     std::vector<Vertex_index> dbg_vertices;
     dbg_vertices.reserve (points.size());
 #endif
-    
+
     for (const Point_2& p : points)
     {
       Vertex_index vi = m_data->mesh.add_vertex(p);
@@ -344,14 +344,14 @@ public:
       dbg_vertices.push_back (dbg_vi);
 #endif
     }
-    
+
     Face_index fi = m_data->mesh.add_face (vertices);
     m_data->input_map[fi] = input_idx;
 
 #ifdef CGAL_KSR_DEBUG
     m_data->dbg_mesh.add_face (dbg_vertices);
 #endif
-    
+
     return KSR::size_t(fi);
   }
 

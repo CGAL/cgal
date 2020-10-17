@@ -101,7 +101,7 @@ public:
   {
     return m_vector * Vector_2 (m_origin, point);
   }
-  
+
   Point_2 to_2d (const FT& point) const { return m_origin + point * m_vector; }
 
 };

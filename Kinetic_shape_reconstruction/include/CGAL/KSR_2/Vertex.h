@@ -70,7 +70,7 @@ public:
 
   const KSR::size_t& meta_vertex_idx() const { return m_meta_vertex_idx; }
   KSR::size_t& meta_vertex_idx() { return m_meta_vertex_idx; }
-  
+
   bool is_frozen() const { return (m_direction == FT(0)); }
   void freeze(FT time)
   {
