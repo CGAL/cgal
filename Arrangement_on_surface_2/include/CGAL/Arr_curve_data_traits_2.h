@@ -190,20 +190,29 @@ public:
   private:
     const Base_traits_2& m_base;
 
-    template <typename Wrapper, typename OutputIterator, typename T>
+    typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+    typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                      Intersection_result;
+    typedef boost::variant<Intersection_point, Base_x_monotone_curve_2>
+                                                      Intersection_base_result;
+
+    template <typename OutputIterator, typename T>
     inline std::enable_if_t<std::is_assignable<
         decltype(*std::declval<OutputIterator>()), T&&>::value>
-    assign(OutputIterator& oi, T&& x) const
+    assign_iterator(OutputIterator oi, T&& x) const
     {
+      // avoid maybe-uninitialized warnings with boost <= 1.70.0
+      // when move constructing Intersection_result(variant)
       (*oi = {}) = std::forward<T>(x);
     }
 
-    template <typename Wrapper, typename OutputIterator, typename T>
+    template <typename OutputIterator, typename T>
     inline std::enable_if_t<!std::is_assignable<
         decltype(*std::declval<OutputIterator>()), T&&>::value>
-    assign(OutputIterator& oi, T&& x) const
+    assign_iterator(OutputIterator oi, T&& x) const
     {
-      *oi = Wrapper{std::forward<T>(x)};
+      // when output iterator writes to type CGAL::Object
+      *oi = Intersection_result{std::forward<T>(x)};
     }
 
   public:
@@ -223,12 +232,6 @@ public:
                               const X_monotone_curve_2& cv2,
                               OutputIterator oi) const
     {
-      typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
-                                                        Intersection_result;
-      typedef boost::variant<Intersection_point, Base_x_monotone_curve_2>
-        Intersection_base_result;
-
       // Use the base functor to obtain all intersection objects.
       std::list<Intersection_base_result> base_objects;
       m_base.intersect_2_object()(cv1, cv2, std::back_inserter(base_objects));
@@ -245,15 +248,13 @@ public:
           // curve: Merge the data fields of both intersecting curves and
           // associate the result with the overlapping curve.
           X_monotone_curve_2 cv(*base_cv, Merge()(cv1.data(), cv2.data()));
-          this->assign<Intersection_result>(oi, std::move(cv));
-          oi++;
+          assign_iterator(oi++, std::move(cv));
           continue;
         }
         // The current intersection object is an intersection point:
         // Copy it as is.
         Intersection_point* ip = boost::get<Intersection_point>(&item);
-        this->assign<Intersection_result>(oi, std::move(*ip));
-        oi++;
+        assign_iterator(oi++, std::move(*ip));
       }
 
       return oi;
