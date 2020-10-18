@@ -59,7 +59,7 @@ private:
 public:
 
   /*! Default constructor. */
-  _Curve_data_ex ()
+  _Curve_data_ex () : BaseCurveType (), m_data {}
   {}
 
   /*!
