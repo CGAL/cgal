@@ -22,6 +22,7 @@
  */
 
 #include <list>
+#include <utility>
 
 #include <boost/variant.hpp>
 #include <boost/utility/enable_if.hpp>
@@ -189,6 +190,22 @@ public:
   private:
     const Base_traits_2& m_base;
 
+    template <typename Wrapper, typename OutputIterator, typename T>
+    inline std::enable_if_t<std::is_assignable<
+        decltype(*std::declval<OutputIterator>()), T&&>::value>
+    assign(OutputIterator& oi, T&& x) const
+    {
+      (*oi = {}) = std::forward<T>(x);
+    }
+
+    template <typename Wrapper, typename OutputIterator, typename T>
+    inline std::enable_if_t<!std::is_assignable<
+        decltype(*std::declval<OutputIterator>()), T&&>::value>
+    assign(OutputIterator& oi, T&& x) const
+    {
+      *oi = Wrapper{std::forward<T>(x)};
+    }
+
   public:
     /*! Constructor. */
     Intersect_2(const Base_traits_2& base) : m_base(base) {}
@@ -220,7 +237,7 @@ public:
       if (base_objects.empty()) return oi;
 
       // Go over all intersection objects and prepare the output.
-      for (const auto& item : base_objects) {
+      for (auto& item : base_objects) {
         const Base_x_monotone_curve_2* base_cv =
           boost::get<Base_x_monotone_curve_2>(&item);
         if (base_cv != nullptr) {
@@ -228,13 +245,15 @@ public:
           // curve: Merge the data fields of both intersecting curves and
           // associate the result with the overlapping curve.
           X_monotone_curve_2 cv(*base_cv, Merge()(cv1.data(), cv2.data()));
-          *oi++ = Intersection_result(cv);
+          this->assign<Intersection_result>(oi, std::move(cv));
+          oi++;
           continue;
         }
         // The current intersection object is an intersection point:
         // Copy it as is.
-        Intersection_result ip = *boost::get<Intersection_point>(&item);
-        *oi++ = ip;
+        Intersection_point* ip = boost::get<Intersection_point>(&item);
+        this->assign<Intersection_result>(oi, std::move(*ip));
+        oi++;
       }
 
       return oi;
