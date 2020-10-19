@@ -1215,7 +1215,7 @@ template <typename Traits>
 bool is_planar_2(
   const std::vector<typename Traits::Point_3>& points,
   const typename Traits::Vector_3& avg_normal,
-  const typename Traits::FT max_squared_distance,
+  const typename Traits::FT threshold_distance,
   const Traits& traits) {
 
   typedef typename Traits::FT FT;
@@ -1263,16 +1263,17 @@ bool is_planar_2(
   }
 
   const Plane_3 plane = Plane_3(centroid, avg_normal);
-  FT avg_squared_distance = FT(0);
+  FT avg_distance = FT(0);
   for (std::size_t i = 0; i < n; ++i) {
     const Point_3& p = points[i];
     const Point_3  q = projection_3(plane, p);
-    avg_squared_distance += squared_distance_3(p, q);
+    avg_distance += static_cast<FT>(
+      CGAL::sqrt(CGAL::to_double(CGAL::abs(squared_distance_3(p, q)))));
   }
-  avg_squared_distance /= static_cast<FT>(n);
-  // std::cout << "avg squared distance: " << avg_squared_distance << std::endl;
+  avg_distance /= static_cast<FT>(n);
+  // std::cout << "avg distance: " << avg_distance << std::endl;
 
-  if (avg_squared_distance > max_squared_distance) {
+  if (avg_distance > threshold_distance) {
     return false; // the user distance criteria are not satisfied!
   }
 
@@ -1291,7 +1292,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
                                    Tracer& tracer,
                                    const Validity_checker& is_valid,
                                    const Traits& traits,
-                                   const typename Traits::FT max_squared_distance)
+                                   const typename Traits::FT threshold_distance)
 {
   typedef typename Traits::FT FT;
   typedef typename Traits::Point_3 Point_3;
@@ -1351,7 +1352,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   // std::cout << "avg normal: " << avg_normal << std::endl;
 
   // Checking the hole planarity.
-  if (!is_planar_2(P, avg_normal, max_squared_distance, traits)) {
+  if (!is_planar_2(P, avg_normal, threshold_distance, traits)) {
     // std::cerr << "WARNING: planarity, cdt 2 falls back to the original solution!" << std::endl;
     return false;
   }

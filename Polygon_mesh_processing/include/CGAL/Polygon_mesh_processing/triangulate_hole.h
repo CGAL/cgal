@@ -93,11 +93,11 @@ namespace Polygon_mesh_processing {
                       This parameter is a good choice for near planar holes.}
     \cgalParamNEnd
 
-    \cgalParamNBegin{max_squared_distance}
-      \cgalParamDescription{The maximum squared distance between the vertices of
+    \cgalParamNBegin{threshold_distance}
+      \cgalParamDescription{The maximum distance between the vertices of
                             the hole boundary and the least squares plane fitted to this boundary.}
       \cgalParamType{double}
-      \cgalParamDefault{squared one quater of the hole bounding box height}
+      \cgalParamDefault{one quarter of the height of the bounding box of the hole}
       \cgalParamExtra{This parameter is used only in conjunction with
                       the parameter `use_2d_constrained_delaunay_triangulation`.}
     \cgalParamNEnd
@@ -142,7 +142,7 @@ namespace Polygon_mesh_processing {
         choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), true);
 #endif
 
-    typename GeomTraits::FT default_sq_dist = typename GeomTraits::FT(0);
+    typename GeomTraits::FT default_distance = typename GeomTraits::FT(0);
     if (use_cdt) {
 
       std::vector<typename GeomTraits::Point_3> points;
@@ -154,17 +154,20 @@ namespace Polygon_mesh_processing {
       } while (++circ != done);
 
       const typename GeomTraits::Iso_cuboid_3 bbox = CGAL::bounding_box(points.begin(), points.end());
-      default_sq_dist = CGAL::abs(CGAL::squared_distance(bbox.vertex(0), bbox.vertex(5)));
-      default_sq_dist /= typename GeomTraits::FT(16);
+      default_distance = static_cast<typename GeomTraits::FT>(
+        CGAL::sqrt(CGAL::to_double(CGAL::abs(CGAL::squared_distance(bbox.vertex(0), bbox.vertex(5))))));
+      default_distance /= typename GeomTraits::FT(4); // one quarter of the bbox height
     }
 
-    return internal::triangulate_hole_polygon_mesh(pmesh,
+    return internal::triangulate_hole_polygon_mesh(
+      pmesh,
       border_halfedge,
       out,
       choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(vertex_point, pmesh)),
       use_dt3,
-      choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits)),use_cdt,
-      choose_parameter(get_parameter(np, internal_np::max_squared_distance), default_sq_dist)).first;
+      choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits)),
+      use_cdt,
+      choose_parameter(get_parameter(np, internal_np::threshold_distance), default_distance)).first;
   }
 
   template<typename PolygonMesh, typename OutputIterator>
@@ -244,11 +247,11 @@ namespace Polygon_mesh_processing {
                       This parameter is a good choice for near planar holes.}
     \cgalParamNEnd
 
-    \cgalParamNBegin{max_squared_distance}
+    \cgalParamNBegin{threshold_distance}
       \cgalParamDescription{The maximum squared distance between the vertices of
                             the hole boundary and the least squares plane fitted to this boundary.}
       \cgalParamType{double}
-      \cgalParamDefault{squared one quater of the hole bounding box height}
+      \cgalParamDefault{one quarter of the height of the bounding box of the hole}
       \cgalParamExtra{This parameter is used only in conjunction with
                       the parameter `use_2d_constrained_delaunay_triangulation`.}
     \cgalParamNEnd
@@ -353,11 +356,11 @@ namespace Polygon_mesh_processing {
                       This parameter is a good choice for near planar holes.}
     \cgalParamNEnd
 
-    \cgalParamNBegin{max_squared_distance}
+    \cgalParamNBegin{threshold_distance}
       \cgalParamDescription{The maximum squared distance between the vertices of
                             the hole boundary and the least squares plane fitted to this boundary.}
       \cgalParamType{double}
-      \cgalParamDefault{squared one quater of the hole bounding box height}
+      \cgalParamDefault{one quarter of the height of the bounding box of the hole}
       \cgalParamExtra{This parameter is used only in conjunction with
                       the parameter `use_2d_constrained_delaunay_triangulation`.}
     \cgalParamNEnd
@@ -498,11 +501,11 @@ namespace Polygon_mesh_processing {
                       This parameter is a good choice for near planar holes.}
     \cgalParamNEnd
 
-    \cgalParamNBegin{max_squared_distance}
+    \cgalParamNBegin{threshold_distance}
       \cgalParamDescription{The maximum squared distance between the vertices of
                             the hole boundary and the least squares plane fitted to this boundary.}
       \cgalParamType{double}
-      \cgalParamDefault{squared one quater of the hole bounding box height}
+      \cgalParamDefault{one quarter of the height of the bounding box of the hole}
       \cgalParamExtra{This parameter is used only in conjunction with
                       the parameter `use_2d_constrained_delaunay_triangulation`.}
     \cgalParamNEnd
@@ -559,8 +562,9 @@ bool use_dt3 =
     Always_valid is_valid;
 
     const typename Kernel::Iso_cuboid_3 bbox = CGAL::bounding_box(points.begin(), points.end());
-    typename Kernel::FT default_sq_dist = CGAL::abs(CGAL::squared_distance(bbox.vertex(0), bbox.vertex(5)));
-    default_sq_dist /= typename Kernel::FT(16);
+    typename Kernel::FT default_distance = static_cast<typename Kernel::FT>(
+      CGAL::sqrt(CGAL::to_double(CGAL::abs(CGAL::squared_distance(bbox.vertex(0), bbox.vertex(5))))));
+    default_distance /= typename Kernel::FT(4); // one quarter of the bbox height
 
     if(!use_cdt ||
        !triangulate_hole_polyline_with_cdt(
@@ -568,7 +572,7 @@ bool use_dt3 =
          tracer,
          is_valid,
          choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)),
-         choose_parameter(get_parameter(np, internal_np::max_squared_distance), default_sq_dist)))
+         choose_parameter(get_parameter(np, internal_np::threshold_distance), default_distance)))
 #endif
     triangulate_hole_polyline(points, third_points, tracer, WC(),
                               use_dt3,
