@@ -223,8 +223,8 @@ struct Envelope {
     }
   };
 
-  typedef AABB_primitive<std::size_t, Datum_map<K>, Point_map<K>, Tag_true /*UseSharedData*/, Tag_false /*CacheDatum*/> Primitive;
-  typedef AABB_traits<K, Primitive> Tree_traits;
+  typedef AABB_primitive<std::size_t, Datum_map<GeomTraits>, Point_map<GeomTraits>, Tag_true /*UseSharedData*/, Tag_false /*CacheDatum*/> Primitive;
+  typedef AABB_traits<GeomTraits, Primitive> Tree_traits;
   typedef AABB_tree<Tree_traits> Tree;
 
 
@@ -320,8 +320,8 @@ private:
   {
     halfspace_generation(env_vertices, env_faces, halfspace, bounding_boxes, epsilon);
 
-    Datum_map<K> datum_map(bounding_boxes);
-    Point_map<K> point_map(bounding_boxes);
+    Datum_map<GeomTraits> datum_map(bounding_boxes);
+    Point_map<GeomTraits> point_map(bounding_boxes);
 
     // constructs AABB tree
     tree.insert(boost::counting_iterator<std::size_t>(0),
@@ -1465,8 +1465,8 @@ private:
       local_bounding_boxes[i] = bounding_boxes[filtered_intersection[i]];
     }
 
-    Datum_map<K> datum_map(local_bounding_boxes);
-    Point_map<K> point_map(local_bounding_boxes);
+    Datum_map<GeomTraits> datum_map(local_bounding_boxes);
+    Point_map<GeomTraits> point_map(local_bounding_boxes);
 
     // constructs AABB tree
     localtree.insert(boost::counting_iterator<std::size_t>(0),
