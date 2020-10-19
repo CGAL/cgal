@@ -134,6 +134,10 @@ public:
   typename Traits::Point_3 barycenter(const Node &node) const {
     return m_octree.barycenter(node);
   }
+
+  Bbox_3 boundingBox() const {
+      return m_octree.bbox(m_octree.root());
+  }
 };
 
 }
