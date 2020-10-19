@@ -867,9 +867,6 @@ private:
     m_vertex_id_count = static_cast<int>(num_vertices(m_tmesh));
     m_max_id = m_vertex_id_count;
 
-    if (m_is_medially_centered)
-      compute_voronoi_pole();
-
     init_args();
   }
 
