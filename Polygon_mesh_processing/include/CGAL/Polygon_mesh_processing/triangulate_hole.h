@@ -43,11 +43,13 @@ namespace Polygon_mesh_processing {
   /*!
   \ingroup hole_filling_grp
   triangulates a hole in a polygon mesh.
-  When using the 2D constrained Delaunay triangulation, the hole must not contain any
-  self-intersections. However, this option can be applied only for near planar holes.
-  In other cases, the hole must not contain any non-manifold vertex as well.
-  The patch generated does not introduce non-manifold edges nor degenerate triangles.
-  If a hole cannot be triangulated, `pmesh` is not modified and nothing is recorded in `out`.
+
+  Depending on the choice of the underlying algorithm different preconditions apply.
+  When using the 2D constrained Delaunay triangulation, the border edges of the hole
+  must not intersect the surface. Otherwise, additionally, the boundary
+  of the hole must not contain any non-manifold vertex. The patch generated does not
+  introduce non-manifold edges nor degenerate triangles. If a hole cannot be triangulated,
+  `pmesh` is not modified and nothing is recorded in `out`.
 
   @tparam PolygonMesh a model of `MutableFaceGraph`
   @tparam OutputIterator a model of `OutputIterator`
