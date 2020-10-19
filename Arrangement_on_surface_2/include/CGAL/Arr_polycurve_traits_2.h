@@ -716,14 +716,14 @@ public:
       Comparison_result dir1 = cmp_seg_endpts(cv1[0]);
       Comparison_result dir2 = cmp_seg_endpts(cv2[0]);
 
+      std::vector<X_monotone_subcurve_2> ocv; // Used to represent overlaps.
+      const bool invert_ocv = (dir1 == LARGER && dir2 == LARGER);
+
       const std::size_t n1 = cv1.number_of_subcurves();
       const std::size_t n2 = cv2.number_of_subcurves();
 
       std::size_t i1 = (dir1 == SMALLER) ? 0 : n1-1;
       std::size_t i2 = (dir2 == SMALLER) ? 0 : n2-1;
-
-      std::vector<X_monotone_subcurve_2> ocv; // Used to represent overlaps.
-      bool invert_ocv = false;
 
       auto compare_xy = m_poly_traits.compare_xy_2_object();
       Comparison_result left_res =
@@ -848,12 +848,6 @@ public:
               boost::get<X_monotone_subcurve_2>(&item);
             if (x_seg != nullptr) {
               X_monotone_subcurve_2 seg = *x_seg;
-
-              // If for some reason the subcurve intersection
-              // results in left oriented curve.
-              if (cmp_seg_endpts(seg) == LARGER)
-                invert_ocv = true;
-
               ocv.push_back(seg);
             }
 
@@ -982,7 +976,7 @@ public:
 
     template <typename OutputIterator>
     inline OutputIterator output_ocv
-    (std::vector<X_monotone_subcurve_2>& ocv, bool& invert_ocv, OutputIterator oi) const
+    (std::vector<X_monotone_subcurve_2>& ocv, bool invert_ocv, OutputIterator oi) const
     {
       typedef std::pair<Point_2, Multiplicity>        Intersection_point;
       typedef boost::variant<Intersection_point, X_monotone_curve_2>
@@ -995,7 +989,6 @@ public:
       *(oi ++) = Intersection_result(curve);
 
       ocv.clear();
-      invert_ocv = false;
 
       return oi;
     }
