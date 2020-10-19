@@ -848,6 +848,8 @@ public:
               boost::get<X_monotone_subcurve_2>(&item);
             if (x_seg != nullptr) {
               X_monotone_subcurve_2 seg = *x_seg;
+              if (cmp_seg_endpts(seg) == LARGER && !invert_ocv)
+                seg = construct_opposite(seg);
               ocv.push_back(seg);
             }
 
