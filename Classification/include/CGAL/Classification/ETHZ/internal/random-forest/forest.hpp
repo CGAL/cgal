@@ -31,7 +31,7 @@
 #endif
 
 #include <CGAL/algorithm.h>
-
+#include <CGAL/IO/binary_file_io.h>
 #include <CGAL/tags.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -164,10 +164,10 @@ public:
           f (seed_start, sample_idxes, trees, samples, labels, params.n_in_bag_samples, split_generator);
 
 #ifndef CGAL_LINKED_WITH_TBB
-        CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+        CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                    "Parallel_tag is enabled but TBB is unavailable.");
 #else
-        if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+        if (std::is_convertible<ConcurrencyTag,Parallel_tag>::value)
         {
           tbb::parallel_for(tbb::blocked_range<size_t>(nb_trees, nb_trees + params.n_trees), f);
         }
@@ -231,6 +231,28 @@ public:
         ar & BOOST_SERIALIZATION_NVP(trees);
     }
 #endif
+
+    void write (std::ostream& os)
+    {
+      params.write(os);
+
+      I_Binary_write_size_t_into_uinteger32 (os, trees.size());
+      for (std::size_t i_tree = 0; i_tree < trees.size(); ++i_tree)
+        trees[i_tree].write(os);
+    }
+
+    void read (std::istream& is)
+    {
+      params.read(is);
+
+      std::size_t nb_trees;
+      I_Binary_read_size_t_from_uinteger32 (is, nb_trees);
+      for (std::size_t i = 0; i < nb_trees; ++ i)
+      {
+        trees.push_back (new TreeType(&params));
+        trees.back().read(is);
+      }
+    }
 
     void get_feature_usage (std::vector<std::size_t>& count) const
     {
