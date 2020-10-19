@@ -1,8 +1,8 @@
 Release History
 ===============
 
-[Release 5.2](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.2)
------------
+
+[Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
 
 ### [3D Triangulations](https://doc.cgal.org/5.2/Manual/packages.html#PkgTriangulation3)
  - Add `Segment_cell_iterator` to iterate over cells intersected by a line segment.
@@ -17,15 +17,39 @@ Release date: December 2020
 
 -   Added the convenience header `CGAL/boost/graph/graph_traits_inheritance_macros.h` that allows to easily
     make any class inheriting from a model of a face graph concept, a model of the same concept.
+- Added the function `can_add_face()`, which tests whether a new face defined by a range of vertices can be added.
 
 ### [3D Convex Hulls](https://doc.cgal.org/5.2/Manual/packages.html#PkgConvexHull3)
+
 -   Added the function `CGAL::halfspace_intersection_interior_point_3()` that can be used to retrieve
     the point that is the most interior a convex closed volume defined by the intersection of a set of halfspaces.
 
+### [2D Arrangements](https://doc.cgal.org/5.2/Manual/packages.html#PkgArrangementOnSurface2)
+
+-   Replaced the use of legacy
+      [`CGAL::Object`](https://doc.cgal.org/5.2/STL_Extension/classCGAL_1_1Object.html)
+      to modern `boost::variant`
+    - Changed make-x-monotone return type from legacy
+      [`CGAL::Object`](https://doc.cgal.org/5.2/STL_Extension/classCGAL_1_1Object.html)
+      to `boost::variant` in all traits concepts and models.
+      As there exists an implicit conversion from `boost::variant` to `CGAL::Object`,
+      the new code is backward compatible. However, it is recommended that all calls
+      to the make-x-monotone functions are fixed to use the new return type.
+    - Changed `decompose()` interface to use `boost::variant` instead of legacy
+      [`CGAL::Object`](https://doc.cgal.org/5.1/STL_Extension/classCGAL_1_1Object.html)
+      As explained above, the code is backward compatible. However, it is recommended
+      that all calls to `decompose()` are fixed to use the new interface.
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.2/Manual/packages.html#PkgPolygonMeshProcessing)
+
+-   Added a visitor to the functions
+    [`CGAL::Polygon_mesh_processing::triangulate_face()`](https://doc.cgal.org/5.2/Polygon_mesh_processing/group__PMP__meshing__grp.html#ga70d65044f8c7309c24ade88fa280124a)
+    and [`CGAL::Polygon_mesh_processing::triangulate_faces()`](https://doc.cgal.org/5.2/Polygon_mesh_processing/group__PMP__meshing__grp.html#gacaaff4d520500c530d9c3d5ebe2a0760),
+    that enables the user to keep track of the newly created faces through the triangulation process.
 -   Added an option in `corefine()`, `split()` and `clip()` functions that enables the operation to be done on a mesh with
     self-intersections present in the intersection area.
+-   Added an optional range parameter to `CGAL::Polygon_mesh_processing::stitch_borders()`,
+    which can be used to specify which boundary cycles are eligible for stitching.
 
 ### [dD Geometry Kernel](https://doc.cgal.org/5.2/Manual/packages.html#PkgKernelD)
 

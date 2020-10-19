@@ -543,23 +543,30 @@ public:
 
   //@}
 
-  /// \name Functor definitions for supporting intersections.
+  //! \name Intersections, subdivisions, and mergings
   //@{
 
+  /*! \class Make_x_monotone_2
+   * A functor for subdividing a curve into x-monotone curves.
+   */
   class Make_x_monotone_2 {
   public:
-    /*! Cut the given curve into x-monotone subcurves and insert them into the
-     * given output iterator. As segments are always x_monotone, only one
-     * object will be contained in the iterator.
+    /*! Subdivide a given curve into x-monotone subcurves and insert them into
+     * a given output iterator. As segments are always x_monotone a single
+     * object is inserted.
      * \param cv the curve.
-     * \param oi the output iterator, whose value-type is variant<....
-     * \return the past-the-end iterator.
+     * \param oi the output iterator for the result. Its dereference type is a
+     *           variant that wraps a \c Point_2 or an \c X_monotone_curve_2
+     *           objects.
+     * \return the past-the-end output iterator.
      */
     template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
-      // Wrap the segment with an object.
-      *oi++ = make_object(cv);
+      // Wrap the segment with a variant.
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+        Make_x_monotone_result;
+      *oi++ = Make_x_monotone_result(cv);
       return oi;
     }
   };
@@ -1161,6 +1168,7 @@ public:
 //! \brief constructs default.
 template <typename Kernel>
 Arr_segment_traits_2<Kernel>::_Segment_cached_2::_Segment_cached_2() :
+  m_is_directed_right(false),
   m_is_vert(false),
   m_is_degen(true)
 {}

@@ -1,60 +1,97 @@
 name: Documentation
 
 on:
-  pull_request_target:
-    types: [opened, synchronize, reopened, labeled]
+  issue_comment:
+      types: [created]
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/github-script@v3
-      id: check
-      with:
-       result-encoding: string
-       script: |
-          const labels = context.payload.pull_request.labels
-          names = []
-          for(const label of labels) {
-            names.push(label.name)
-          }
-          if(names.includes("small feature")) {
-            return 'ok'
-          } else {
-            return 'stop'
-          }
+      - uses: actions/github-script@v3
+        id: get_round
+        with:
+         result-encoding: string
+         script: |
+           const asso = context.payload.comment.author_association
+           if(asso == 'OWNER' || asso == 'MEMBER') {
+             const body = context.payload.comment.body
+             if(body.includes("build:")) {
+               const re = /\/build:(\w+)\s*/;
+               if(re.test(body)){
+                 const res = re.exec(body)
+                 return res[1];
+               }
+             }
+           }
+           return 'stop'
+      - uses: actions/github-script@v3
+        if: steps.get_round.outputs.result != 'stop'
+        id: get_pr_number
+        with:
+         result-encoding: string
+         script: |
+           //get pullrequest url
+           const pr_number = context.payload.issue.number
+           return pr_number
+      - uses: actions/checkout@v2
+        name: "checkout branch"
+        if: steps.get_round.outputs.result != 'stop'
+        with:
+          repository: ${{ github.repository }}
+          ref: refs/pull/${{ steps.get_pr_number.outputs.result }}/merge
+          token: ${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}
 
 
+      - name: install dependencies
+        if: steps.get_round.outputs.result != 'stop'
+        run: |
+          set -x
+          sudo apt-get install -y graphviz ssh bibtex2html
+          sudo pip install lxml pyquery
+          wget --no-verbose -O doxygen_exe https://cgal.geometryfactory.com/~mgimeno/doxygen/build_1_8_13/bin/doxygen
+          sudo mv doxygen_exe /usr/bin/doxygen
+          sudo chmod +x /usr/bin/doxygen
+          git config --global user.email "maxime.gimeno@geometryfactory.com"
+          git config --global user.name "Maxime Gimeno"
 
-    - name: install dependencies
-      if: steps.check.outputs.result == 'ok'
-      run: |
-        set -x
-        sudo apt-get install -y graphviz ssh
-        sudo pip install lxml pyquery
-        wget -O doxygen_exe https://cgal.geometryfactory.com/~mgimeno/doxygen/build_1_8_13/bin/doxygen
-        sudo mv doxygen_exe /usr/bin/doxygen
-        sudo chmod +x /usr/bin/doxygen
-        git config --global user.email "maxime.gimeno@geometryfactory.com"
-        git config --global user.name "Maxime Gimeno"
+      - name: configure all
+        if: steps.get_round.outputs.result != 'stop'
+        run: |
+          set -ex
+          git clone https://CGAL:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git --depth=5
+          mkdir -p build_doc && cd build_doc && cmake ../Documentation/doc
 
-    - name: configure all
-      if: steps.check.outputs.result == 'ok'
-      run: |
-        git clone https://maxGimeno:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git --depth=5
-        mkdir -p build_doc && cd build_doc && cmake ../Documentation/doc
+      - name: Upload Doc
+        if: steps.get_round.outputs.result != 'stop'
+        run: |
+          set -ex
+          PR_NUMBER=${{ steps.get_pr_number.outputs.result }}
+          ROUND=${{ steps.get_round.outputs.result }}
+          wget --no-verbose cgal.github.io -O tmp.html
+          if ! egrep -q "\/$PR_NUMBER\/$ROUND" tmp.html; then
+            mkdir -p cgal.github.io/${PR_NUMBER}/$ROUND
+            cd build_doc && make -j2 doc && make -j2 doc_with_postprocessing
+            cp -r ./doc_output/* ../cgal.github.io/${PR_NUMBER}/$ROUND
+            cd ../cgal.github.io
+            egrep -v " ${PR_NUMBER}\." index.html > tmp.html
+            echo "<li><a href=https://cgal.github.io/${PR_NUMBER}/$ROUND/Manual/index.html>Manual for PR ${PR_NUMBER} ($ROUND).</a></li>" >> ./tmp.html
+            mv tmp.html index.html
+            git add ${PR_NUMBER}/$ROUND && git commit -q -a -m "Add ${PR_NUMBER} $ROUND" && git push -q -u origin master
+          else
+            exit 1
+          fi
 
-    - name: Upload Doc
-      if: steps.check.outputs.result == 'ok'
-      run: |
-        set -e
-        PR_NUMBER=$(python -c "import json; import os; y = json.load(open(os.environ['GITHUB_EVENT_PATH'])); print(y[\"number\"])")
-        mkdir -p cgal.github.io/${PR_NUMBER}
-        cd build_doc && make -j2 doc && make -j2 doc_with_postprocessing
-        cp -r ./doc_output/* ../cgal.github.io/${PR_NUMBER}/
-        cd ../cgal.github.io
-        if ! egrep -q " ${PR_NUMBER}\."; then
-          echo "<li><a href=https://cgal.github.io/${PR_NUMBER}/Manual/index.html>Manual for PR ${PR_NUMBER}.</a></li>" >> ./index.html
-        fi
-        git add ${PR_NUMBER} && git commit -a -m "Add ${PR_NUMBER}" && git push -u origin master
+      - name: Post address
+        uses: actions/github-script@v3
+        if: steps.get_round.outputs.result != 'stop'
+        with:
+          script: |
+            const address = "The documentation is built. You can find it here : https://cgal.github.io/${{ steps.get_pr_number.outputs.result }}/${{ steps.get_round.outputs.result }}/Manual/index.html"
+            github.issues.createComment({
+              owner: "CGAL",
+              repo: "cgal",
+              issue_number: ${{ github.event.issue.number }},
+              body: address
+            });

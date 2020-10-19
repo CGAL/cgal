@@ -67,6 +67,7 @@ create_single_source_cgal_program( "compute_normals_example_Polyhedron.cpp"  CXX
 create_single_source_cgal_program( "compute_normals_example.cpp" CXX_FEATURES cxx_range_for cxx_auto_type )
 create_single_source_cgal_program( "point_inside_example.cpp")
 create_single_source_cgal_program( "triangulate_faces_example.cpp")
+create_single_source_cgal_program( "triangulate_faces_split_visitor_example.cpp")
 create_single_source_cgal_program( "connected_components_example.cpp")
 create_single_source_cgal_program( "face_filtered_graph_example.cpp")
 create_single_source_cgal_program( "orient_polygon_soup_example.cpp")
