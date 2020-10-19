@@ -25,6 +25,8 @@
 
 #ifdef CGAL_EIGEN3_ENABLED
 
+#include <Eigen/Dense>
+
 //#define CGAL_SCANLINE_ORIENT_VERBOSE
 
 namespace CGAL
