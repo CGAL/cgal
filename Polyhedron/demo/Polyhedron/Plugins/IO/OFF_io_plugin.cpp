@@ -218,7 +218,16 @@ Polyhedron_demo_off_plugin::load_obj(QFileInfo fileinfo) {
   item->setName(fileinfo.baseName());
   if(item->load_obj(in))
     return item;
-  return 0;
+  //if not polygonmesh load in soup
+  std::vector<Point_3> points;
+  std::vector<std::vector<std::size_t> > polygons;
+  if(CGAL::read_OBJ(in, points, polygons))
+  {
+    Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item();
+    soup_item->load(points, polygons);
+    return soup_item;
+  }
+  return nullptr;
 }
 
 bool Polyhedron_demo_off_plugin::canSave(const CGAL::Three::Scene_item* item)
@@ -262,7 +271,8 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
     }
   }
   if(fileinfo.suffix().toLower() == "obj"){
-    bool res = (sm_item && sm_item->save_obj(out));
+    bool res = (sm_item && sm_item->save_obj(out))
+        || (soup_item && CGAL::write_OBJ(out, soup_item->points(), soup_item->polygons()));
     if(res)
     {
       items.pop_front();
