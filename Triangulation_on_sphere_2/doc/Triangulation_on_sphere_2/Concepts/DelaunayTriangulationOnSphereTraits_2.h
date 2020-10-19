@@ -32,7 +32,7 @@ public:
   ///
   /// which returns the center of the circle circumscribed to the face with vertices `p`, `q`, and `r`.
   ///
-  /// \note This type is only required for the computation of dual objects (Voronoi vertex)
+  /// \note This type is only required for the computation of dual objects (Voronoi vertices and edges)
   /// and a dummy type can be used otherwise.
   typedef unspecified_type Construct_circumcenter_on_sphere_2;
 

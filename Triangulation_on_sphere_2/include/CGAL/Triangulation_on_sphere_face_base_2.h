@@ -36,7 +36,9 @@ public:
 
 public:
   bool& in_conflict() { return _in_conflict_flag; }
-  bool& ghost() { return _ghost_flag; }
+
+  void set_ghost(const bool b) { _ghost_flag = b; }
+  bool is_ghost() const { return _ghost_flag; }
 
 public:
   Triangulation_on_sphere_face_base_2()

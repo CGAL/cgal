@@ -124,7 +124,7 @@ void Viewer::build_the_boundary(const Triangulation_on_sphere& T)
   for (typename Triangulation_on_sphere::All_edges_iterator 
     it=T.all_edges_begin();it!=T.all_edges_end();++it)
   {
-    if ( it->first->is_ghost() && 
+    if ( it->first->is_ghost() &&
          it->first->neighbor(it->second)->is_ghost() )
       continue;
     

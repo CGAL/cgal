@@ -41,7 +41,6 @@ public:
   typedef Traits::Point_on_sphere_2 Point;
 
   /// @}
-
 };
 
 } // namespace CGAL

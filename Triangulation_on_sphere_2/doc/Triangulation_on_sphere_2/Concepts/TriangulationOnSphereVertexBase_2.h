@@ -36,12 +36,12 @@ public:
   /// @{
 
   /*!
-  Constructs a vertex whose geometric embedding is the point `p`.
+  constructs a vertex whose geometric embedding is the point `p`.
   */
   TriangulationOnSphereVertexBase_2(Point p);
 
   /*!
-  Constructs a vertex whose geometric embedding is the point `p` and pointing to face `f`.
+  constructs a vertex whose geometric embedding is the point `p` and pointing to face `f`.
   `Face_handle` is the type defined the triangulation data structure used in the Delaunay triangulation
   on the sphere.
   */
@@ -53,7 +53,7 @@ public:
   /// @{
 
   /*!
-  Returns the point.
+  returns the point.
   */
   Point point() const;
 
@@ -63,18 +63,18 @@ public:
   /// @{
 
   /*!
-  Sets the point.
+  sets the point.
   */
   void set_point(Point p);
 
   /*!
-  Inputs the non-combinatorial information given by the vertex:
+  inputs the non-combinatorial information given by the vertex:
   the point and other possible information.
   */
   istream& operator>>(istream& is, TriangulationOnSphereVertexBase_2& v);
 
   /*!
-  Outputs the non combinatorial operation given by the vertex: the
+  outputs the non combinatorial operation given by the vertex: the
   point and other possible information.
   */
   ostream& operator<<(ostream& os, const TriangulationOnSphereVertexBase_2& v);

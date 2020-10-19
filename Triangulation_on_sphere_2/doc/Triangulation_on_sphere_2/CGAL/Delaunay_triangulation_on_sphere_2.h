@@ -10,12 +10,12 @@ A Delaunay triangulation of a set of points is a triangulation of the sets of po
 the following <I>empty circle property</I> (also called <I>Delaunay property</I>): the circumscribing
 sphere of any simplex of the triangulation contains no point of the set in its interior.
 For a point set with no case of co-circularity of more than three points,
-the Delaunay triangulation is unique, it is the dual of the Voronoi diagram of the points.
+the Delaunay triangulation is unique, and defined as the dual of the Voronoi diagram of the points.
 
 The setting of 3D points on the 2-sphere is particular in that the empty circle property
 can be reduced to a single 3D orientation test \cgalCite{cgal:ccplr-redtp-10}.
 
-\tparam Traits is the geometric traits, which must be a model of `DelaunayTriangulationTraits_2`.
+\tparam Traits is the geometric traits; it must be a model of `DelaunayTriangulationTraits_2`.
 
 \tparam TDS is the triangulation data structure, which must be a model of `TriangulationDataStructure_2`.
         \cgal provides a default instantiation for this parameter, which is the class
@@ -33,12 +33,12 @@ public:
   /// @{
 
   /*!
-  Introduces an empty triangulation.
+  introduces an empty triangulation.
   */
   Delaunay_triangulation_on_sphere_2(const Traits& gt = Traits());
 
   /*!
-  Introduces an empty triangulation and sets the center and radius of the sphere to `c` and `r` respectively.
+  introduces an empty triangulation and sets the center and radius of the sphere to `c` and `r` respectively.
   */
   Delaunay_triangulation_on_sphere_2(const Point_3& c, const FT r);
 
@@ -62,7 +62,7 @@ public:
   /// @{
 
   /*!
-  Returns the side of `p` with respect to the circle circumscribing the triangle associated with `f`.
+  returns the side of `p` with respect to the circle circumscribing the triangle associated with `f`.
   */
   Oriented_side side_of_oriented_circle(Face_handle f, const Point& p) const;
 
@@ -79,7 +79,7 @@ public:
   /// @{
 
   /*!
-  Inserts the point `p`.
+  inserts the point `p`.
   If the point `p` coincides with an already existing vertex, this vertex is returned
   and the triangulation remains unchanged.
   The optional parameter `f` is used to give a hint about the location of `p`.
@@ -87,7 +87,7 @@ public:
   Vertex_handle insert(const Point& p, Face_handle f = Face_handle());
 
   /*!
-  Inserts the point `p` at the location given by `(lt, loc, li)`.
+  inserts the point `p` at the location given by `(lt, loc, li)`.
   \sa `Triangulation_on_sphere_2::locate()`
   */
   Vertex_handle insert(const Point& p, Locate_type& lt, Face_handle loc, int li );
@@ -98,14 +98,14 @@ public:
   Vertex_handle push_back(const Point& p);
 
   /*!
-  Inserts the points in the range `[first, last)` and returns the number of inserted points.
+  inserts the points in the range `[first, last)` and returns the number of inserted points.
   \tparam PointInputIterator must be an input iterator with the value type `Point`.
   */
   template <class PointInputIterator>
   std::ptrdiff_t insert(PointInputIterator first, PointInputIterator last);
 
   /*!
-  Removes the vertex `v` from the triangulation.
+  removes the vertex `v` from the triangulation.
   */
   void remove(Vertex_handle v);
 
@@ -115,10 +115,10 @@ public:
   /// @{
 
   /*!
-  Outputs the faces and boundary edges of the conflict zone of point `p` into output iterators.
+  outputs the faces and boundary edges of the conflict zone of point `p` into output iterators.
 
   This function outputs in the container pointed to by `fit` the faces which are in conflict with point `p`,
-  i. e., the faces whose circumcircle contains `p`. It outputs in the container pointed to by `eit` the
+  i. e., the faces whose circumcircle contains `p`. It outputs in the container pointed to by `eit`
   the boundary of the zone in conflict with `p`. The boundary edges of the conflict zone
   are output in counter-clockwise order and each edge is described through its incident face
   which is not in conflict with `p`. The function returns in a `std::pair` the resulting output iterators.
@@ -148,44 +148,44 @@ public:
   // Straight
 
   /*!
-  Returns the center of the circle circumscribed to face `f`
+  returns the center of the circle circumscribed to face `f`
   */
   Point_3 dual(const Face_handle f) const;
 
   /*!
-  Returns the line segment with endpoints the circumcenters of the faces incident to the edge `e`.
+  returns the line segment with endpoints the circumcenters of the faces incident to the edge `e`.
   */
   Segment_3 dual(const Edge& e) const;
 
   /*!
-  Same as above.
+  returns the line segment with endpoints the circumcenters of the faces incident to the edge `*ec`.
   */
   Segment_3 dual(const Edge_circulator ec) const;
 
   /*!
-  Same as above.
+  returns the line segment with endpoints the circumcenters of the faces incident to the edge `*ei`.
   */
   Segment_3 dual(const All_edges_iterator ei) const;
 
   // Curved
 
   /*!
-  Returns the intersection of the dual of the face `f` and the sphere
+  returns the intersection of the dual of the face `f` and the sphere
   */
   Point dual_on_sphere(const Face_handle f) const;
 
   /*!
-  Returns the arc of great circle with endpoints the circumcenters of the faces incident to the edge `e`.
+  returns the arc of great circle with endpoints the circumcenters of the faces incident to the edge `e`.
   */
   Arc_segment arc_dual(const Edge& e) const;
 
   /*!
-  Same as above.
+  returns the arc of great circle with endpoints the circumcenters of the faces incident to the edge `*ec`.
   */
   Arc_segment arc_dual(const Edge_circulator ec) const;
 
   /*!
-  Same as above.
+  returns the arc of great circle with endpoints the circumcenters of the faces incident to the edge `*ei`.
   */
   Arc_segment arc_dual(const All_edges_iterator ei) const;
 

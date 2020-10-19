@@ -19,7 +19,12 @@
 \cgalPkgPicture{triangulation_on_sphere.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Mael Rouxel-Labbé, Monique Teillaud, and Claudia Werner}
-\cgalPkgDesc{This package enables the construction and manipulation of triangulations on the 2-sphere.}
+\cgalPkgDesc{This package enables the construction and manipulation of triangulations on the 2-sphere.
+             Triangulations are built incrementally and can be modified by insertion or removal of vertices.
+             They offer point location facilities. The package provides plain triangulation
+             (whose faces depend on the insertion order of the vertices) and Delaunay triangulations.
+             Delaunay triangulations offer nearest neighbor queries and primitives to build the dual
+             Voronoi diagrams.}
 \cgalPkgManuals{Chapter_2D_Triangulations_on_sphere,PkgTriangulationOnSphere2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -44,7 +49,7 @@ The basic elements of the representation are vertices and faces.
 Each triangular face gives access to its three incident vertices
 and to its three adjacent faces.
 Each vertex gives access to one of its incident faces
-and through that face to the circular list of its incident faces.
+and, through that face, to the circular list of its incident faces.
 The edges are not explicitly represented, they are only represented
 through the adjacency relations of two faces.
 

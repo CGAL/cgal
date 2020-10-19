@@ -118,7 +118,7 @@ public:
   ///
   /// `Point_3 operator()(Point_on_sphere_2 p)`,
   ///
-  /// which expresses a point on the sphere in the embedding 3D space.
+  /// which expresses the point `p` on the sphere as a point in the embedding 3D space.
   typedef unspecified_type Construct_point_3;
 
   /// Construction object. Must provide the operator:
@@ -140,7 +140,7 @@ public:
 public:
   /// \name Operations
   ///
-  /// The following functions give access to the predicate and constructor objects.
+  /// The following functions provide access to the predicate and constructor objects.
   ///
   /// @{
 
@@ -182,16 +182,24 @@ public:
   ///
   /// @{
 
-  /// Sets the center of the sphere.
+  /// sets the center of the sphere.
+  ///
+  /// \note This function is meant to be used only by the triangulation class as modifying the domain
+  ///       requires clearing the triangulation. Users can change the domain using
+  ///       `CGAL::Triangulation_on_sphere_2::set_center_and_radius()`.
   void set_center(Point_3);
 
-  /// Returns the center of the sphere.
+  /// returns the center of the sphere.
   Point_3 center();
 
-  /// Sets the radius of the sphere.
+  /// sets the radius of the sphere.
+  ///
+  /// \note This function is meant to be used only by the triangulation class as modifying the domain
+  ///       requires clearing the triangulation. Users can change the domain using
+  ///       `CGAL::Triangulation_on_sphere_2::set_center_and_radius()`.
   void set_radius(FT radius);
 
-  /// Returns the radius of the sphere.
+  /// returns the radius of the sphere.
   FT radius();
 
   /// @}
@@ -209,9 +217,9 @@ public:
   /// and the theoretical sphere. The gap must then be at least \f$ 2 \sqrt{R\delta} \f$, where \f$ R \f$
   /// is the radius of the sphere.
   ///
-  /// The following two predicates serve to check if the point is on the sphere, that is, if for
-  /// a model-defined \f$ \delta \f$ the distance to the sphere is smaller than \f$ \delta \f$,
-  /// and if the distance between two points is greater than \f$ 2 \sqrt{R\delta} \f$.
+  /// The following two predicates serve to check if the point is on the sphere, i.e.
+  /// if for a model-defined \f$ \delta \f$ the distance to the sphere is smaller
+  /// than \f$ \delta \f$ and if the distance between two points is greater than \f$ 2 \sqrt{R\delta} \f$.
   /// It is also of course possible to construct traits classes with arbitrary precision or
   /// with a representation that ensures that points are exactly on the sphere (such
   /// as `CGAL::Geographical_coordinates_traits_2`) and in this case,
@@ -221,11 +229,11 @@ public:
   ///
   /// @{
 
-  /// Returns whether the point `p` is on the sphere or not.
+  /// returns whether the point `p` is on the sphere or not.
   ///
   /// \note A point that is not on the sphere will not be inserted in the triangulation.
   bool is_on_sphere(Point_on_sphere_2 p);
 
-  /// Returns whether `p` and `q` are too close.
+  /// returns whether `p` and `q` are too close.
   bool are_points_too_close(Point_on_sphere_2 p, Point_on_sphere_2 q);
 };

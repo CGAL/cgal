@@ -90,15 +90,15 @@ public:
   public:
     Ghost_tester() { }
     Ghost_tester(const Triangulation_on_sphere_2& tr) : tr(tr) { }
-    bool operator()(const All_faces_iterator& fit) const { return fit->ghost(); }
+    bool operator()(const All_faces_iterator& fit) const { return fit->is_ghost(); }
     bool operator()(const All_edges_iterator& eit) const
     {
       // int dim = t->dimension();
       Face_handle f = eit->first;
-      bool edge1 = f->ghost();
+      bool edge1 = f->is_ghost();
       Face_handle f2 = f->neighbor(eit->second);
-      // bool edge2b = f2->ghost();
-      bool edge2 = (f->neighbor(eit->second))->ghost();
+      // bool edge2b = f2->is_ghost();
+      bool edge2 = (f->neighbor(eit->second))->is_ghost();
       bool result = edge1 && edge2;
       return !result;
     }
@@ -114,8 +114,8 @@ public:
     bool operator()(const All_edges_iterator& eit) const
     {
       Face_handle f = eit->first;
-      bool edge1 = f->ghost();
-      bool edge2 = f->neighbor(eit->second)->ghost();
+      bool edge1 = f->is_ghost();
+      bool edge2 = f->neighbor(eit->second)->is_ghost();
       return edge1 != edge2;
     }
   };
@@ -161,10 +161,23 @@ public:
   void clear();
 
 public:
-  // this function clears the triangulation
+  // these functions clear the triangulation
+  void set_center(const Point_3& c)
+  {
+    clear();
+    _gt.set_center(c);
+  }
+
   void set_radius(const FT radius)
   {
     clear();
+    _gt.set_radius(radius);
+  }
+
+  void set_center_and_radius(const Point_3& c, const FT radius)
+  {
+    clear();
+    _gt.set_center(c);
     _gt.set_radius(radius);
   }
 
@@ -363,9 +376,9 @@ is_valid(bool verbose,
     for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); ++it)
     {
       const Orientation s = orientation_on_sphere(point(it, 0), point(it, 1), point(it, 2));
-      CGAL_assertion(s == LEFT_TURN || it->ghost());
+      CGAL_assertion(s == LEFT_TURN || it->is_ghost());
 
-      result = result && (s == LEFT_TURN || it->ghost());
+      result = result && (s == LEFT_TURN || it->is_ghost());
     }
 
     // check number of faces. This cannot be done by the TDS,
@@ -463,7 +476,7 @@ locate_edge(const Point& p,
     All_edges_iterator eit;
     for(eit=all_edges_begin(); eit!=all_edges_end(); ++eit)
     {
-      if(!eit->first->ghost())
+      if(!eit->first->is_ghost())
       {
         if(collinear_between(point(eit->first, 0), point(eit->first, 1), p))
         {
@@ -472,7 +485,7 @@ locate_edge(const Point& p,
         }
       }
 
-      if(eit->first->ghost())
+      if(eit->first->is_ghost())
         loc = eit->first;
     }
 
@@ -622,7 +635,7 @@ march_locate_2D(Face_handle f,
                 Locate_type& lt,
                 int& li) const
 {
-  CGAL_assertion(!f->ghost());
+  CGAL_assertion(!f->is_ghost());
 
   boost::rand48 rng;
   boost::uniform_smallint<> two(0, 1);
@@ -633,7 +646,7 @@ march_locate_2D(Face_handle f,
 
   for(;;)
   {
-    if(f->ghost())
+    if(f->is_ghost())
     {
       if(orientation(f, t) == ON_POSITIVE_SIDE) // conflict with the corresponding face
       {
@@ -935,11 +948,11 @@ locate(const Point& p,
   if(start == Face_handle())
     start = all_faces_begin();
 
-  if(start->ghost())
+  if(start->is_ghost())
   {
     for(All_faces_iterator it = this->_tds.face_iterator_base_begin(); it !=all_faces_end(); it++)
     {
-      if(!it->ghost())
+      if(!it->is_ghost())
       {
         start = it;
         break;
@@ -1098,7 +1111,7 @@ show_all() const
   return;
 }
 
-// returns the number of ghost_faces
+// returns the number of ghost faces
 template <typename Gt, typename Tds>
 typename Triangulation_on_sphere_2<Gt, Tds>::size_type
 Triangulation_on_sphere_2<Gt, Tds>::
@@ -1106,7 +1119,7 @@ number_of_ghost_faces() const
 {
   std::size_t nb = 0;
   for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); ++it)
-    if(it->ghost())
+    if(it->is_ghost())
       ++nb;
 
   return nb;
@@ -1127,7 +1140,7 @@ Triangulation_on_sphere_2<Gt, Tds>::
 show_face(Face_handle fh) const
 {
   std::cerr << "face : " << (void*)&(*fh) << " => " << std::endl;
-  if(fh->ghost()) std::cerr << "ghost " << std::endl;
+  if(fh->is_ghost()) std::cerr << "ghost " << std::endl;
 
   int i = fh->dimension();
   switch(i)

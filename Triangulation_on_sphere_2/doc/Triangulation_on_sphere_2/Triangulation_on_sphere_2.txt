@@ -7,7 +7,7 @@ namespace CGAL {
 \cgalAutoToc
 \author Mael Rouxel-Labbé, Monique Teillaud, and Claudia Werner
 
-This chapter describes the two dimensional triangulations on the sphere of \cgal.
+This chapter describes two-dimensional triangulations on the sphere of \cgal.
 
 \section Section_2D_ToS_Definitions Definitions
 

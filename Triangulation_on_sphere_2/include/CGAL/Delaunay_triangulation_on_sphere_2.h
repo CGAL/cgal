@@ -172,7 +172,7 @@ public:
     // Points of triangulation
     for(All_faces_iterator it=tds().face_iterator_base_begin(); it!=all_faces_end(); ++it)
     {
-      if(!it->ghost())
+      if(!it->is_ghost())
         write_face_to_off(out, it);
       else
         write_face_to_off(out2, it);
@@ -506,7 +506,7 @@ is_valid(bool verbose, int level) const
       for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); ++it)
       {
         Orientation s = orientation_on_sphere(point(it, 0), point(it, 1), point(it, 2));
-        result = result && (s != NEGATIVE || it->ghost());
+        result = result && (s != NEGATIVE || it->is_ghost());
         CGAL_assertion(result);
       }
 
@@ -811,13 +811,13 @@ update_ghost_faces(Vertex_handle v, bool first)
       const Point& q = point(fn, 1);
       if(this->collinear_between(point(f, 0), point(f, 1), q))
       {
-        f->ghost() = true;
+        f->set_ghost(true);
         ghost_found = true;
         // @fixme not setting _ghost here?
       }
       else
       {
-        f->ghost() = false;
+        f->set_ghost(false);
       }
     }
   }
@@ -830,13 +830,13 @@ update_ghost_faces(Vertex_handle v, bool first)
       {
         if(orientation_on_sphere(fi) != POSITIVE)
         {
-          fi->ghost() = true;
+          fi->set_ghost(true);
           ghost_found = true;
           this->_ghost = fi;
         }
         else
         {
-          fi->ghost() = false;
+          fi->set_ghost(false);
         }
       }
     }
@@ -848,13 +848,13 @@ update_ghost_faces(Vertex_handle v, bool first)
       {
         if(orientation_on_sphere(fc) != POSITIVE)
         {
-          fc->ghost() = true;
+          fc->set_ghost(true);
           ghost_found = true;
           this->_ghost = fc;
         }
         else
         {
-          fc->ghost() = false;
+          fc->set_ghost(false);
         }
       }
       while(++fc != done);
@@ -1010,7 +1010,7 @@ fill_hole_regular(std::list<Edge>& first_hole)
       if(orientation_on_sphere(newf) != POSITIVE)
       {
         this->_ghost = newf;
-        newf->ghost() = true;
+        newf->set_ghost(true);
       }
       continue;
     }
@@ -1076,7 +1076,7 @@ fill_hole_regular(std::list<Edge>& first_hole)
     if(orientation_on_sphere(newf) != POSITIVE)
     {
       this->_ghost = newf;
-      newf->ghost() = true;
+      newf->set_ghost(true);
     }
 
     //update the hole and push back in the Hole_List stack

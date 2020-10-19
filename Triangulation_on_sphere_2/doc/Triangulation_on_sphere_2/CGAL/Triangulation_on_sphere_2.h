@@ -3,11 +3,11 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulationOnSphere2TriangulationClasses
 
-The class `Triangulation_on_sphere_2` is the basic class designed to handle triangulations
-of set of points \f$ \mathcal{S}\f$ on the sphere: it has vertices at the points of \f$ \mathcal{S}\f$
+The class `Triangulation_on_sphere_2` is the basic class designed to represent triangulations
+^of set of points \f$ \mathcal{S}\f$ on the sphere: it has vertices at the points of \f$ \mathcal{S}\f$
 and its domain covers the convex hull of \f$ \mathcal{S}\f$.
 
-\warning This triangulation supports neither the insertion nor the removal of vertices,
+\warning This triangulatiosn supports neither the insertion nor the removal of vertices,
 see `CGAL::Delaunay_triangulation_on_sphere_2` for such purposes.
 
 This triangulation class is very similar to `CGAL::Triangulation_2` as both classes represent
@@ -20,12 +20,12 @@ which are already perfectly adapted to the triangulation data structure.
 There is an exception to the previous statement: in the degenerate configuration
 where all points of \f$ \mathcal{S}\f$ lie on the same hemisphere, the triangulation has a border.
 Internally, the triangulation data structure must however remain a 2-manifold at all time,
-and to ensure this fictitious faces called <i>ghost faces</i> are added. We call faces that
-are not ghost faces <em>solid faces</em>.
+and to ensure this property, fictitious faces called <i>ghost faces</i> are added. We call faces that
+are not ghost faces <em>solid faces</em>, and edges of such faces <em>solid edges</em>.
 
-\tparam Traits is the geometric traits, which must be a model of the concept `TriangulationOnSphereTraits_2`.
+\tparam Traits is the geometric traits; it must be a model of the concept `TriangulationOnSphereTraits_2`.
 
-\tparam TDS is the triangulation data structure, which must be a model of the concept `TriangulationDataStructure_2`,
+\tparam TDS is the triangulation data structure; it must be a model of the concept `TriangulationDataStructure_2`,
         whose vertex base must be a model of `TriangulationOnSphereVertexBase_2` and whose face base
         must be a model of `TriangulationOnSphereFaceBase_2`. By default, the triangulation data structure
         is instantiated by `Triangulation_data_structure_2<Triangulation_on_sphere_vertex_base_2<Gt>, Triangulation_on_sphere_face_base_2<Gt> >`.
@@ -178,12 +178,12 @@ public:
   /// @{
 
   /*!
-  Introduces an empty triangulation.
+  constructs an empty triangulation.
   */
   Triangulation_on_sphere_2(const Traits& gt = Traits());
 
   /*!
-  Introduces an empty triangulation and sets the center and radius to `c` and `r` respectively.
+  constructs an empty triangulation and sets the center and radius to `c` and `r` respectively.
   */
   Triangulation_on_sphere_2(const Point_3& c, const FT r);
 
@@ -194,8 +194,7 @@ public:
   Triangulation_on_sphere_2(const Triangulation_on_sphere_2& tr);
 
   /*!
-  Assignment. All the vertices and faces are duplicated.
-  After the assignment, `*this` and `tr` refer to different triangulations: if `tr` is modified, `*this` is not.
+  Assignment operator. This performs a deep copy of the triangulation, duplicating vertices and faces.
   */
   Triangulation_on_sphere_2 operator=(const Triangulation_on_sphere_2<Traits,TDS>& tr);
 
@@ -205,9 +204,27 @@ public:
   void swap(Triangulation_on_sphere_2& tr);
 
   /*!
-  Deletes all faces and vertices, resulting in an empty triangulation.
+  deletes all faces and vertices, resulting in an empty triangulation.
   */
   void clear();
+
+  /// @}
+
+public:
+  /// \name Modifying the domain
+  ///
+  /// The following functions can be used to modify the sphere; the triangulation is cleared in the process.
+  ///
+  /// @{
+
+  /*! */
+  void set_center(const Point_3& c);
+
+  /*! */
+  void set_radius(const FT radius);
+
+  /*! */
+  void set_center_and_radius(const Point_3& c, const FT radius);
 
   /// @}
 
@@ -216,32 +233,32 @@ public:
   /// @{
 
   /*!
-  Returns the dimension of the convex hull (on the sphere) of the vertices.
+  returns the dimension of the convex hull (on the sphere) of the vertices.
   */
   int dimension() const;
 
   /*!
-  Returns a const reference to the triangulation traits object.
+  returns a const reference to the triangulation traits object.
   */
   const Geom_traits& geom_traits() const;
 
   /*!
-  Returns a const reference to the triangulation data structure.
+  returns a const reference to the triangulation data structure.
   */
   const Triangulation_data_structure& tds() const;
 
   /*!
-  Returns the number of vertices.
+  returns the number of vertices.
   */
   size_type number_of_vertices() const;
 
   /*!
-  Returns the number of faces.
+  returns the number of faces. Note that this includes ghost faces.
   */
   size_type number_of_faces() const;
 
   /*!
-  Returns the number of ghost faces.
+  returns the number of ghost faces.
   */
   size_type number_of_ghost_faces() const;
 
@@ -251,41 +268,41 @@ public:
   /// @{
 
   /*!
-  Returns the geometric position of the vertex `v`.
+  returns the geometric position of the vertex `v`.
   */
   const Point& point(const Vertex_handle v);
 
   /*!
-  Returns the geometric position of the `i`-th vertex of the face `f`.
+  returns the geometric position of the `i`-th vertex of the face `f`.
   */
   const Point& point(const Face_handle f, const int i);
 
   /*!
-  Returns the 3D line segment formed by the vertices of `e`.
+  returns the 3D line segment formed by the vertices of `e`.
   \pre `t.dimension()` \f$ \geq1\f$ and `e` is finite.
   */
   Segment_3 segment(const Edge& e) const;
 
   /*!
-  Returns the 3D line segment formed by the vertices of the edge `(f, i)`.
+  returns the 3D line segment formed by the vertices of the edge `(f, i)`.
   \pre `t.dimension()` \f$ \geq1\f$.
   */
   Segment_3 segment(Face_handle f, int i) const;
 
   /*!
-  Returns the great circle arc formed by the vertices of the edge `e`.
+  returns the great circle arc formed by the vertices of the edge `e`.
   \pre `t.dimension()` \f$ \geq1\f$ and `e` is finite.
   */
   Arc_segment arc_segment(const Edge& e) const;
 
   /*!
-  Returns the great circle arc formed by the vertices of the edge `(f, i)`.
+  returns the great circle arc formed by the vertices of the edge `(f, i)`.
   \pre `t.dimension()` \f$ \geq1\f$.
   */
   Arc_segment arc_segment(Face_handle f, int i) const;
 
   /*!
-  Returns the 3D triangle formed by the three vertices of face `f`.
+  returns the 3D triangle formed by the three vertices of face `f`.
   \pre `t.dimension()` \f$ \geq2\f$.
   */
   Triangle_3 triangle(const Face_handle f) const;
@@ -302,7 +319,7 @@ public:
   /// @{
 
   /*!
-  Starts at an arbitrary vertex
+  Starts at an arbitrary vertex.
   */
   All_vertices_iterator all_vertices_begin() const;
 
@@ -312,7 +329,7 @@ public:
   All_vertices_iterator all_vertices_end() const;
 
   /*!
-  Starts at an arbitrary edge
+  Starts at an arbitrary edge.
   */
   All_edges_iterator all_edges_begin() const;
 
@@ -322,7 +339,7 @@ public:
   All_edges_iterator all_edges_end() const;
 
   /*!
-  Starts at an arbitrary face
+  Starts at an arbitrary face.
   */
   All_faces_iterator all_faces_begin() const;
 
@@ -332,7 +349,7 @@ public:
   All_faces_iterator all_faces_end() const;
 
   /*!
-  Starts at an arbitrary face
+  Starts at an arbitrary face.
   */
   Solid_faces_iterator solid_faces_begin() const;
 
@@ -342,7 +359,7 @@ public:
   Solid_faces_iterator solid_faces_end() const;
 
   /*!
-  Starts at an arbitrary face
+  Starts at an arbitrary face.
   */
   Solid_edges_iterator solid_edges_begin() const;
 
@@ -403,29 +420,29 @@ public:
   /// \name Combinatorial Predicates
   ///
   /// The class `Triangulation_on_sphere_2` provides methods to test the
-  /// presence in the triangulation of a particular feature (edge or face).
+  /// presence of a particular feature (edge or face) in the triangulation.
   ///
   /// @{
 
   /*!
-  Returns `true` if there exists an edge having `va` and `vb` as vertices.
+  returns `true` if there exists an edge having `va` and `vb` as vertices.
   */
   bool is_edge(Vertex_handle va, Vertex_handle vb);
 
   /*!
-  Returns `true` if there exists an edge having `va` and `vb` as vertices.
+  returns `true` if there exists an edge having `va` and `vb` as vertices.
   If `true` is returned, the edge with vertices `va` and `vb` is the edge `e=(fr,i)`
   where `fr` is a handle to the face incident to `e` and on the right side of `e` oriented from `va` to `vb`.
   */
   bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, int & i);
 
   /*!
-  Returns `true` if there exists a face having `v1`, `v2` and `v3` as vertices.
+  returns `true` if there exists a face having `v1`, `v2` and `v3` as vertices.
   */
   bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3);
 
   /*!
-  Returns `true` if there exists a face having `v1`, `v2` and `v3` as vertices.
+  returns `true` if there exists a face having `v1`, `v2` and `v3` as vertices.
   If `true` is returned, fr is a handle to the face with `v1`, `v2` and `v3` as vertices.
   */
   bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3, Face_handle &fr);
@@ -441,7 +458,7 @@ public:
   /// @{
 
   /*!
-  Specifies which case occurs when locating a point in the triangulation.
+  specifies which case occurs when locating a point in the triangulation.
   */
   enum Locate_type { VERTEX=0, /*!< when the point coincides with a vertex of the triangulation */
                      EDGE, /*!< when the point is in the relative interior of an edge */
@@ -453,11 +470,11 @@ public:
                    };
 
   /*!
-  Locates the point in the triangulation, and returns information on this location.
+  locates the point in the triangulation, and returns information on this location.
 
   If the point is (according to the traits) not on the sphere or is too close to an existing vertex,
-  or if the dimension is not 2, or if the point is outside the affine hull, then the returned
-  `Face_handle` is `nullptr`.
+  or if the dimension of the triangulation is not 2, or if the point is outside the affine hull,
+  then the returned `Face_handle` is `nullptr`.
 
   Otherwise, a face intersected by the ray spawned from the center of the sphere
   and passing through the point is returned.
@@ -484,7 +501,7 @@ public:
   /// @{
 
   /*!
-  Tests the validity of the triangulation as a `Triangulation_on_sphere_2`
+  tests the validity of the triangulation as a `Triangulation_on_sphere_2`
   This method is mainly useful for debugging Delaunay triangulation algorithms designed by the user.
   */
   bool is_valid(bool verbose = false, int level = 0) const;
