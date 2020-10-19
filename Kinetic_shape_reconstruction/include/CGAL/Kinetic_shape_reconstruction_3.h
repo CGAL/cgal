@@ -82,7 +82,7 @@ public:
 
   }
 
-
+  // TODO: enlarge=1.0 does not work!
   template <typename PolygonRange, typename PolygonMap>
   bool partition (const PolygonRange& polygons, PolygonMap polygon_map,
                   unsigned int k = 2, FT enlarge_bbox_ratio = 1.1)
@@ -275,6 +275,7 @@ private:
 
   void make_polygons_intersection_free (unsigned int k)
   {
+    // TODO: FIX IT AND MAKE IT WORK FOR ANY NUMBER OF SUPPORT PLANES!
     std::cout << "num support planes: " << m_data.number_of_support_planes() << std::endl;
     if (m_data.number_of_support_planes() < 8) {
       return;
