@@ -46,6 +46,8 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Iterator_transform.h>
 
+#include <boost/pool/pool_alloc.hpp>
+
 namespace CGAL {
 
 /*! \class Arrangement_on_surface_2
@@ -64,7 +66,7 @@ class Arrangement_on_surface_2 {
 public:
   typedef GeomTraits_                                     Geometry_traits_2;
   typedef TopTraits_                                      Topology_traits;
-  typedef CGAL_ALLOCATOR(int)                             Allocator;
+  typedef boost::fast_pool_allocator<int>                 Allocator;
 
   // first define adaptor ...
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
@@ -2830,7 +2832,8 @@ void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 template <typename GeomTraits, typename TopTraits>
 void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
             const typename GeomTraits::X_monotone_curve_2& c,
-            const Object& obj);
+            typename Arr_point_location_result<
+              Arrangement_on_surface_2<GeomTraits, TopTraits> >::type obj);
 
 /*!
  * Insert an x-monotone curve into the arrangement, such that the curve
@@ -2946,16 +2949,16 @@ remove_vertex(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 template <typename GeomTraits, typename TopTraits>
 bool is_valid(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr);
 
-/*!
- * Compute the zone of the given x-monotone curve in the existing arrangement.
+/*! Compute the zone of the given x-monotone curve in the existing arrangement.
  * Meaning, it output the arrangment's vertices, edges and faces that the
  * x-monotone curve intersects.
  * \param arr The arrangement.
- * \param c The x-monotone curve that its zone was computed.
- * \param oi Output iterator of CGAL::Object to insert the zone elements to.
- * \param pi The point location strategy that is used to locate the starting
- * point.
- * \return The output iterator that the curves were inserted to.
+ * \param c the x-monotone curve that its zone is computed.
+ * \param oi the output iterator for the resulting zone elements. Its
+ *           dereference type is a variant that wraps a \c Vertex_handle, a
+ *           \c Halfedge_handle, or a \c Face_handle.
+ * \param pl the point location strategy used to locate the starting point.
+ * \return the past-the-end output iterator.
  */
 template <typename GeomTraits, typename TopTraits,
           typename OutputIterator, typename PointLocation>
@@ -2969,9 +2972,11 @@ OutputIterator zone(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
  * Overloaded version with no point location object - the walk point-location
  * strategy is used as default.
  * \param arr The arrangement.
- * \param c The x-monotone curve that its zone was computed.
- * \param oi Output iterator of CGAL::Object to insert the zone elements to.
- * \return The output iterator that the curves were inserted to.
+ * \param c the x-monotone curve that its zone was computed.
+ * \param oi the output iterator for the resulting zone elements. Its
+ *           dereference type is a variant that wraps a \c Vertex_handle, a
+ *           \c Halfedge_handle, or a \c Face_handle.
+ * \return the past-the-end output iterator.
  */
 template <typename GeomTraits, typename TopTraits, typename OutputIterator>
 OutputIterator zone(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,

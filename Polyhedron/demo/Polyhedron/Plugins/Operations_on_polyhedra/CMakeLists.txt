@@ -9,6 +9,10 @@ include( polyhedron_demo_macros )
  polyhedron_demo_plugin(diff_between_meshes_plugin Diff_between_meshes_plugin)
  target_link_libraries(diff_between_meshes_plugin PUBLIC scene_surface_mesh_item)
 
+ qt5_wrap_ui( animateUI_FILES Animate_widget.ui )
+ polyhedron_demo_plugin(animate_mesh_plugin Animate_mesh_plugin ${animateUI_FILES})
+ target_link_libraries(animate_mesh_plugin PUBLIC scene_surface_mesh_item)
+
  if( METIS_FOUND )
    qt5_wrap_ui( partitionUI_FILES PartitionDialog.ui )
    polyhedron_demo_plugin(partition_plugin Partition_graph_plugin ${partitionUI_FILES})

@@ -218,7 +218,7 @@ public:
   bool printEdgeIds() const;
   bool printFaceIds() const;
   void printAllIds();
-  bool testDisplayId(double, double, double, CGAL::Three::Viewer_interface*)const;
+  bool testDisplayId(double, double, double, CGAL::Three::Viewer_interface*, const QVector3D&)const;
   bool shouldDisplayIds(CGAL::Three::Scene_item *current_item) const;
   QString defaultSaveName() const
   {

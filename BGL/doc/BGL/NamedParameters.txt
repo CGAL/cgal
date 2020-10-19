@@ -38,8 +38,9 @@ CGAL::copy_face_graph(g1, g2);
 
 // specifying named parameters for the second graph
 CGAL::copy_face_graph(g1, g2,
-                      CGAL::parameters::all_default(),
-                      CGAL::parameters::vertex_point_map(vpm_2));
+                      CGAL::parameters::vertex_point_map(vpm)  //parameter for g1
+                      .vertex_to_vertex_map(v2v),              //other parameter for g1
+                      CGAL::parameters::all_default());        //parameter for g2
 \endcode
 */
 ˛

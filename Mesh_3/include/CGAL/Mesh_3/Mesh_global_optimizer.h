@@ -426,7 +426,7 @@ private:
       }
 
       if ( m_mgo.is_time_limit_reached() )
-        tbb::task::self().cancel_group_execution();
+        m_mgo.cancel_group_execution();
     }
   };
 
@@ -539,12 +539,16 @@ private:
         // restricted delaunay
         if ( m_mgo.is_time_limit_reached() )
         {
-          tbb::task::self().cancel_group_execution();
+          m_mgo.cancel_group_execution();
           break;
         }
       }
     }
   };
+
+  void cancel_group_execution() {
+    tbb_task_group_context.cancel_group_execution();
+  }
 #endif // CGAL_LINKED_WITH_TBB
 
   // -----------------------------------
@@ -566,6 +570,9 @@ private:
 
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
   mutable FT sum_moves_;
+#endif
+#ifdef CGAL_LINKED_WITH_TBB
+  tbb::task_group_context tbb_task_group_context;
 #endif
 };
 
@@ -935,6 +942,7 @@ update_mesh(const Moves_vector& moves,
         Self, C3T3_helpers, Tr, Moves_vector,
         Moving_vertices_set, Outdated_cell_set>(
           *this, helper_, moves, moving_vertices, outdated_cells)
+      , tbb_task_group_context
     );
   }
   // Sequential

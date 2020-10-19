@@ -398,7 +398,7 @@ public Q_SLOTS:
                  *selection_item->polyhedron(),
                  selection_item->constrained_edges_pmap(),
                  get(CGAL::vertex_point, *selection_item->polyhedron()),
-                 CGAL::Static_property_map<face_descriptor, std::size_t>(1),
+                 CGAL::Constant_property_map<face_descriptor, std::size_t>(1),
                  4. / 3. * target_length))
             {
               QApplication::restoreOverrideCursor();
@@ -640,7 +640,7 @@ public Q_SLOTS:
                pmesh,
                ecm,
                get(CGAL::vertex_point, pmesh),
-               CGAL::Static_property_map<face_descriptor, std::size_t>(1),
+               CGAL::Constant_property_map<face_descriptor, std::size_t>(1),
                4. / 3. * target_length))
           {
             QApplication::restoreOverrideCursor();
@@ -690,6 +690,12 @@ public Q_SLOTS:
                .number_of_relaxation_steps(nb_smooth)
                .edge_is_constrained_map(ecm)
                .relax_constraints(smooth_features));
+
+          //recollect sharp edges
+          for(edge_descriptor e : edges(pmesh))
+            eif[e] = false;
+          for(edge_descriptor e : edges_to_protect)
+            eif[e] = true;
         }
         if (fpmap_valid)
         {

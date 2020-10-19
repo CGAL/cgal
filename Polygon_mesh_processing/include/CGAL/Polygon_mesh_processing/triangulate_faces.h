@@ -48,14 +48,14 @@ namespace Polygon_mesh_processing {
 namespace Triangulate_faces
 {
 /** \ingroup PMP_meshing_grp
-*   Default new face visitor model of `PMPTriangulateFaceVisitor`.
+*   %Default new face visitor model of `PMPTriangulateFaceVisitor`.
 *   All its functions have an empty body. This class can be used as a
 *   base class if only some of the functions of the concept require to be
 *   overriden.
 */
-template<class TriangleMesh>
+template<class PolygonMesh>
 struct Default_visitor {
-  typedef boost::graph_traits<TriangleMesh> GT;
+  typedef boost::graph_traits<PolygonMesh> GT;
   typedef typename GT::face_descriptor face_descriptor;
 
   void before_subface_creations(face_descriptor /*f_old*/) {}
@@ -451,7 +451,7 @@ public:
 *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{triangulate_visitor}
+*   \cgalParamNBegin{visitor}
 *     \cgalParamDescription{a visitor that enables to track how faces are triangulated into subfaces}
 *     \cgalParamType{a class model of `PMPTriangulateFaceVisitor`}
 *     \cgalParamDefault{`Triangulate_faces::Default_visitor<PolygonMesh>`}
@@ -483,15 +483,15 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
   bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_delaunay_triangulation), true);
 
   typedef typename internal_np::Lookup_named_param_def<
-    internal_np::triangulate_visitor_t,
+    internal_np::visitor_t,
     NamedParameters,
     Triangulate_faces::Default_visitor<PolygonMesh>//default
   >::type Visitor;
   Visitor visitor = choose_parameter<Visitor>(
-                             get_parameter(np, internal_np::triangulate_visitor),
+                             get_parameter(np, internal_np::visitor),
                              Triangulate_faces::Default_visitor<PolygonMesh>());
 
-  internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel, Visitor> modifier(vpmap);
+  internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel, Visitor> modifier(vpmap, traits);
   return modifier.triangulate_face(f, pmesh, use_cdt, visitor);
 }
 
@@ -533,7 +533,7 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{triangulate_visitor}
+*   \cgalParamNBegin{visitor}
 *     \cgalParamDescription{a visitor that enables to track how faces are triangulated into subfaces}
 *     \cgalParamType{a class model of `PMPTriangulateFaceVisitor`}
 *     \cgalParamDefault{`Triangulate_faces::Default_visitor<PolygonMesh>`}
@@ -567,15 +567,15 @@ bool triangulate_faces(FaceRange face_range,
   bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_delaunay_triangulation), true);
 
   typedef typename internal_np::Lookup_named_param_def<
-    internal_np::triangulate_visitor_t,
+    internal_np::visitor_t,
     NamedParameters,
     Triangulate_faces::Default_visitor<PolygonMesh>//default
   >::type Visitor;
   Visitor visitor = choose_parameter<Visitor>(
-                                  get_parameter(np, internal_np::triangulate_visitor),
+                                  get_parameter(np, internal_np::visitor),
                                   Triangulate_faces::Default_visitor<PolygonMesh>());
 
-  internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel, Visitor> modifier(vpmap);
+  internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel, Visitor> modifier(vpmap, traits);
   return modifier(face_range, pmesh, use_cdt, visitor);
 }
 
@@ -611,7 +611,7 @@ bool triangulate_faces(FaceRange face_range, PolygonMesh& pmesh)
 *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{triangulate_visitor}
+*   \cgalParamNBegin{visitor}
 *     \cgalParamDescription{a visitor that enables to track how faces are triangulated into subfaces}
 *     \cgalParamType{a class model of `PMPTriangulateFaceVisitor`}
 *     \cgalParamDefault{`Triangulate_faces::Default_visitor<PolygonMesh>`}

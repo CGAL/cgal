@@ -14,7 +14,7 @@ public:
 /// Face decriptor type
 typedef unspecified_type face_descriptor;
 
-/// @name Functions used by `triangulate_face()` and `triangulate_faces()`
+/// @name Functions used by triangulate_face() and triangulate_faces()
 /// @{
   /// called before the triangulation of `f_split`. Note that `f_split`
   /// will be one of the faces of the triangulation. Each subsequent call to
