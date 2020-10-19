@@ -9,6 +9,7 @@
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/TextRenderer.h>
 #include <CGAL/Three/exceptions.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/Qt/debug.h>
 #include <CGAL/double.h>
 
@@ -258,9 +259,10 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(selectionChanged()));
   // setup menu filtering
+
   connect(sceneView->selectionModel(),
-          QOverload<const QItemSelection & , const QItemSelection &>::of(&QItemSelectionModel::selectionChanged),
-          this, [=](){filterOperations(false);});
+      QOverload<const QItemSelection & , const QItemSelection &>::of(&QItemSelectionModel::selectionChanged),
+      this, [this](){filterOperations(false);});
 
   sceneView->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(sceneView, SIGNAL(customContextMenuRequested(const QPoint & )),
@@ -363,13 +365,16 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   // Load plugins, and re-enable actions that need it.
   operationSearchBar.setPlaceholderText("Filter...");
   searchAction->setDefaultWidget(&operationSearchBar);
+
   connect(&operationSearchBar, &QLineEdit::textChanged,
-          this, [=](){filterOperations(true);});
+          this, [this](){filterOperations(true);});
+
   loadPlugins();
   accepted_keywords.clear();
 
   // Setup the submenu of the View menu that can toggle the dockwidgets
   Q_FOREACH(QDockWidget* widget, findChildren<QDockWidget*>()) {
+    widget->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetFloatable);
     ui->menuDockWindows->addAction(widget->toggleViewAction());
   }
   ui->menuDockWindows->removeAction(ui->dummyAction);
@@ -401,32 +406,25 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
                                                 objectValue);
     }
   }
+  filterOperations(true);
   // debugger->action(QScriptEngineDebugger::InterruptAction)->trigger();
 #endif
 }
 
 void addActionToMenu(QAction* action, QMenu* menu)
 {
-  bool added = false;
-  for(QAction* it : menu->actions())
-  {
-    QString atxt = action->text().remove("&"),
-        btxt = it->text().remove("&");
-    int i = 0;
-    while(atxt[i] == btxt[i]
-          && i < atxt.size()
-          && i < btxt.size())
-      ++i;
-    bool res = (atxt[i] < btxt[i]);
-    if (res)
-    {
-      menu->insertAction(it, action);
-      added = true;
-      break;
-    }
-  }
-  if(!added)
+  auto actions = menu->actions();
+  auto it = std::lower_bound(actions.begin(), actions.end(),
+                             action->text().remove("&"),
+                             [](QAction* a, QString text) {
+                               return a->text().remove("&").compare(text) < 0;
+                             });
+  if(it == actions.end()) {
     menu->addAction(action);
+  }
+  else {
+    menu->insertAction(*it, action);
+  }
 }
 
 //Recursive function that do a pass over a menu and its sub-menus(etc.) and hide them when they are empty
@@ -490,12 +488,12 @@ void MainWindow::filterOperations(bool)
         menu->removeAction(action);
     }
   }
+
   Q_FOREACH(QAction* action, action_menu_map.keys())
   {
     QMenu* menu = action_menu_map[action];
     addActionToMenu(action, menu);
   }
-
   QString filter=operationSearchBar.text();
   Q_FOREACH(const PluginNamePair& p, plugins) {
     Q_FOREACH(QAction* action, p.first->actions()) {
@@ -765,7 +763,7 @@ void MainWindow::loadPlugins()
     qputenv("PATH", new_path);
 #endif
     Q_FOREACH (QString pluginsDir,
-               env_path.split(separator, QString::SkipEmptyParts)) {
+               env_path.split(separator, CGAL_QT_SKIP_EMPTY_PARTS)) {
       QDir dir(pluginsDir);
       if(dir.isReadable())
         plugins_directories << dir;
@@ -1291,7 +1289,7 @@ QList<Scene_item*> MainWindow::loadItem(QFileInfo fileinfo,
   QCursor tmp_cursor(Qt::WaitCursor);
   CGAL::Three::Three::CursorScopeGuard guard(tmp_cursor);
   QList<Scene_item*> result = loader->load(fileinfo, ok, add_to_scene);
-  if(result.empty() || !ok)
+  if(!ok)
   {
     QApplication::restoreOverrideCursor();
       QMessageBox::warning(this, tr("Error"),
@@ -1329,6 +1327,8 @@ void MainWindow::selectSceneItem(int i)
   else {
     QItemSelection s =
         proxyModel->mapSelectionFromSource(scene->createSelection(i));
+    if(s.empty())
+      return;
     QModelIndex mi = proxyModel->mapFromSource(scene->getModelIndexFromId(i).first());
     sceneView->setCurrentIndex(mi);
     sceneView->selectionModel()->select(s,
@@ -1353,7 +1353,8 @@ void MainWindow::selectSceneItems(QList<int> is)
     sceneView->setCurrentIndex(i);
     sceneView->selectionModel()->select(s,
                                         QItemSelectionModel::ClearAndSelect);
-    sceneView->scrollTo(s.indexes().first());
+    if(!s.empty())
+      sceneView->scrollTo(s.indexes().first());
   }
 }
 
@@ -1398,10 +1399,7 @@ void MainWindow::removeSceneItemFromSelection(int i)
 
 void MainWindow::selectAll()
 {
-  QItemSelection s =
-      proxyModel->mapSelectionFromSource(scene->createSelectionAll());
-  sceneView->selectionModel()->select(s,
-                                      QItemSelectionModel::ClearAndSelect);
+  sceneView->selectAll();
 }
 
 int MainWindow::getSelectedSceneItemIndex() const
@@ -1585,6 +1583,8 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
             has_stats = true;
         }
         QMenu menu;
+        menu.addAction(actionAddToGroup);
+        menu.insertSeparator(0);
         Q_FOREACH(QString name, menu_actions.keys())
         {
           if(name == QString("alpha slider")
@@ -1795,12 +1795,12 @@ void MainWindow::updateInfo() {
     CGAL::Bbox_3 bbox = item->bbox();
     if(bbox !=CGAL::Bbox_3())
       item_text += QString("<div>Bounding box: min (%1,%2,%3), max (%4,%5,%6)</div>")
-          .arg(bbox.xmin())
-          .arg(bbox.ymin())
-          .arg(bbox.zmin())
-          .arg(bbox.xmax())
-          .arg(bbox.ymax())
-          .arg(bbox.zmax());
+          .arg(bbox.xmin(),0, 'g', 17)
+          .arg(bbox.ymin(),0, 'g', 17)
+          .arg(bbox.zmin(),0, 'g', 17)
+          .arg(bbox.xmax(),0, 'g', 17)
+          .arg(bbox.ymax(),0, 'g', 17)
+          .arg(bbox.zmax(),0, 'g', 17);
     if(!item_filename.isEmpty()) {
       item_text += QString("<div>File:<i> %1</div>").arg(item_filename);
     }
@@ -2585,6 +2585,10 @@ void MainWindow::makeNewGroup()
 {
   Scene_group_item * group = new Scene_group_item();
   scene->addItem(group);
+  for(Scene::Item_id id : scene->selectionIndices())
+  {
+    scene->changeGroup(scene->item(id), group);
+  }
 }
 
 void MainWindow::on_upButton_pressed()
@@ -2962,6 +2966,7 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
   std::vector<QColor> colors;
   std::vector<int> rendering_modes;
   QStringList not_saved;
+  Polyhedron_demo_io_plugin_interface* camera_plugin = nullptr;
   for(int i = 0; i < scene->numberOfEntries(); ++i)
   {
     Scene_item* item = scene->item(i);
@@ -2969,6 +2974,8 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     QString ext;
     for(Polyhedron_demo_io_plugin_interface* iop : io_plugins)
     {
+      if(iop->name() == "camera_positions_plugin")
+        camera_plugin = iop;
       if(iop->isDefaultLoader(item))
       {
         QString sf = iop->saveNameFilters().split(";;").first();
@@ -2997,6 +3004,23 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     loaders.push_back(std::make_pair(loader, ext));
     colors.push_back(item->color());
     rendering_modes.push_back(item->renderingMode());
+  }
+  bool has_camera_positions = false;
+  if(camera_plugin)
+  {
+    QString fullpath = make_fullpath("camera_tmp.camera.txt");
+    QList<Scene_item*> dummy;
+    if(camera_plugin->save(QFileInfo(fullpath), dummy))
+    {
+      QByteArray item = file_to_string(fullpath.toStdString().c_str());
+      os << "var camera_positions= [\'";
+      os<<qCompress(item, 9).toBase64().toStdString().c_str();
+      os << "\']\n" ;
+      //delete temp file
+      QFile tmp_file(fullpath);
+      tmp_file.remove();
+      has_camera_positions =true;
+    }
   }
   if(loaders.empty())
     return;
@@ -3060,6 +3084,12 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
   os << "        it.setRenderingMode(rendering_modes[index]);\n";
   os << "});\n";
   os << "viewer.moveCameraToCoordinates(camera, 0.05);\n";
+  if(has_camera_positions)
+  {
+    os<<"  var path=\"cams.camera.txt\";\n";
+    os<<"  var fullpath = main_window.write_string_to_file(camera_positions, path);\n";
+    os<<"  main_window.open(fullpath,\'camera_positions_plugin\');\n";
+  }
   os.close();
   if(!not_saved.empty())
     QMessageBox::warning(this,
@@ -3244,6 +3274,13 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
     }
     viewer->setTotalPass(nb);
   });
+
+  action = subviewer->findChild<QAction*>("actionScaleScene");
+  action->setCheckable(true);
+  action->setChecked(false);
+  connect(action, &QAction::triggered,
+          viewer, &Viewer::scaleScene);
+
   action= subviewer->findChild<QAction*>("actionBackFrontShading");
   connect(action, SIGNAL(toggled(bool)),
           viewer, SLOT(setBackFrontShading(bool)));
@@ -3455,6 +3492,10 @@ SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
   actionBackFrontShading->setCheckable(true);
   actionBackFrontShading->setChecked(false);
   viewMenu->addAction(actionBackFrontShading);
+
+  QAction* actionScaleScene = new QAction("&Scale the Scene...",this);
+  actionScaleScene->setObjectName("actionScaleScene");
+  viewMenu->addAction(actionScaleScene);
 
   if(mainviewer)
     setAttribute(Qt::WA_DeleteOnClose);

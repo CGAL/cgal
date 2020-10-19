@@ -13,8 +13,6 @@
 #ifndef CGAL_WRITE_VTK_IO_H
 #define CGAL_WRITE_VTK_IO_H
 
-#include <CGAL/license/Polyhedron.h>
-
 #include <fstream>
 #include <vector>
 template <class FT>

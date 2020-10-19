@@ -34,6 +34,7 @@
 #include <CGAL/Arrangement_2/Arrangement_2_iterators.h>
 #include <CGAL/assertions.h>
 
+#include <boost/pool/pool_alloc.hpp>
 
 namespace CGAL {
 
@@ -876,7 +877,7 @@ public:
  * The arrangement DCEL class.
  */
 template <class V, class H, class F,
-          class Allocator = CGAL_ALLOCATOR(int) >
+          class Allocator = boost::fast_pool_allocator<int> >
 class Arr_dcel_base {
 public:
   // Define the vertex, halfedge and face types.

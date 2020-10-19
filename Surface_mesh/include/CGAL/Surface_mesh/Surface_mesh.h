@@ -9,10 +9,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 
-
 #ifndef CGAL_SURFACE_MESH_H
 #define CGAL_SURFACE_MESH_H
-
 
 #include <CGAL/license/Surface_mesh.h>
 
@@ -1567,7 +1565,7 @@ public:
     }
 
 
-    /// performs a validity check on a single ede.
+    /// performs a validity check on a single edge.
     bool is_valid(Edge_index e) const {
       Halfedge_index h = halfedge(e);
       return is_valid(h) && is_valid(opposite(h));

@@ -8,7 +8,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Jane Tournois, Noura Faraj
+// Author(s)     : Jane Tournois, Noura Faraj, Jean-Marc Thiery, Tamy Boubekeur
+
+#ifndef CGAL_TETRAHEDRAL_REMESHING_IO_H
+#define CGAL_TETRAHEDRAL_REMESHING_IO_H
+
+#include <CGAL/license/Tetrahedral_remeshing.h>
 
 #include <CGAL/IO/io.h>
 
@@ -53,3 +58,5 @@ bool save_ascii_triangulation(std::ostream& os, const T3& t3)
 }
 
 }
+
+#endif // CGAL_TETRAHEDRAL_REMESHING_IO_H

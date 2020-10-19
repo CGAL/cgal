@@ -12,6 +12,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
+#include <CGAL/property_map.h>
 
 // This package
 #include <CGAL/remove_outliers.h>
@@ -40,9 +41,11 @@ typedef Kernel::Point_3 Point;
 // ----------------------------------------------------------------------------
 
 // Removes outliers
-void test_avg_knn_sq_distance(std::deque<Point>& points, // input point set
+template <class PointContainer, class PointMap>
+void test_avg_knn_sq_distance(PointContainer& points, // input point set
                               unsigned int nb_neighbors_remove_outliers, // K-nearest neighbors
-                              double removed_percentage) // percentage of points to remove
+                              double removed_percentage,
+                              PointMap point_map) // percentage of points to remove
 {
   CGAL::Timer task_timer; task_timer.start();
   std::cerr << "Removes outliers wrt average squared distance to k nearest neighbors (remove "
@@ -52,11 +55,12 @@ void test_avg_knn_sq_distance(std::deque<Point>& points, // input point set
   // Removes outliers using erase-remove idiom
   points.erase(CGAL::remove_outliers<CGAL::Parallel_if_available_tag>
                (points, nb_neighbors_remove_outliers,
-                CGAL::parameters::threshold_percent(removed_percentage)),
+                CGAL::parameters::threshold_percent(removed_percentage).
+                                  point_map(point_map)),
                points.end());
 
   // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
-  std::deque<Point>(points).swap(points);
+  PointContainer(points).swap(points);
 
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
@@ -130,8 +134,16 @@ int main(int argc, char * argv[])
     // Test
     //***************************************
 
-    test_avg_knn_sq_distance(points, nb_neighbors_remove_outliers, removed_percentage);
+    test_avg_knn_sq_distance(points, nb_neighbors_remove_outliers, removed_percentage,
+                             CGAL::Identity_property_map<Point>());
 
+    struct A{};
+    std::vector< std::pair<Point, A> > points_bis;
+    points_bis.reserve(points.size());
+    for (const Point p : points)
+      points_bis.push_back( std::make_pair(p, A()) );
+    test_avg_knn_sq_distance(points_bis, nb_neighbors_remove_outliers, removed_percentage,
+                             CGAL::First_of_pair_property_map<std::pair<Point,A>>());
   } // for each input file
 
   std::cerr << std::endl;

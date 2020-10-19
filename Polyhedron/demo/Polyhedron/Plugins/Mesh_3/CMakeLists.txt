@@ -22,9 +22,7 @@ if (VTK_FOUND)
     if(TARGET VTK::IOImage)
       set(VTK_LIBRARIES VTK::IOImage)
     endif()
-    if(VTK_LIBRARIES)
-      add_definitions(-DCGAL_USE_VTK)
-    else()
+    if(NOT VTK_LIBRARIES)
       message(STATUS "NOTICE : the DICOM files (.dcm) need VTK libraries to be open and will not be able to.")
     endif()
   else()
@@ -37,8 +35,11 @@ endif()
 find_package(Boost QUIET OPTIONAL_COMPONENTS filesystem system)
 if(Boost_FILESYSTEM_FOUND)
   qt5_wrap_ui( imgUI_FILES Image_res_dialog.ui raw_image.ui)
-  polyhedron_demo_plugin(io_image_plugin Io_image_plugin Volume_plane_intersection.cpp Raw_image_dialog.cpp ${imgUI_FILES} ${VOLUME_MOC_OUTFILES} KEYWORDS IO Mesh_3)
+  polyhedron_demo_plugin(io_image_plugin Io_image_plugin Volume_plane_intersection.cpp Raw_image_dialog.cpp ${imgUI_FILES} ${VOLUME_MOC_OUTFILES} KEYWORDS Viewer Mesh_3)
   target_link_libraries(io_image_plugin PUBLIC scene_image_item ${VTK_LIBRARIES} CGAL::CGAL_ImageIO)
+  if(VTK_LIBRARIES)
+    target_compile_definitions(io_image_plugin PRIVATE CGAL_USE_VTK)
+  endif()
   if(TARGET Boost::filesystem)
     target_link_libraries(io_image_plugin PUBLIC Boost::filesystem Boost::system)
   else()
@@ -49,7 +50,7 @@ else()
 endif()
 polyhedron_demo_plugin(mesh_3_optimization_plugin Optimization_plugin
   Optimization_plugin_cgal_code.cpp Optimizer_thread.cpp
-  ${meshingUI_FILES} KEYWORDS IO Mesh_3)
+  ${meshingUI_FILES} KEYWORDS Mesh_3)
 target_link_libraries(mesh_3_optimization_plugin PUBLIC scene_c3t3_item scene_surface_mesh_item scene_image_item scene_implicit_function_item )
 
 # Use Eigen
@@ -62,7 +63,7 @@ target_link_libraries(mesh_3_optimization_plugin PUBLIC scene_c3t3_item scene_su
    message(STATUS "The Mesh_3_optimization_plugin requires Eigen, which was not found, and will use a deprecated class to replace it. Warnings are to be expected.")
  endif()#eigen
 
-polyhedron_demo_plugin(c3t3_io_plugin C3t3_io_plugin KEYWORDS IO Mesh_3)
+polyhedron_demo_plugin(c3t3_io_plugin C3t3_io_plugin KEYWORDS Viewer Mesh_3)
 target_link_libraries(c3t3_io_plugin PUBLIC scene_c3t3_item)
 
 qt5_wrap_ui( ribUI_FILES  Rib_dialog.ui)

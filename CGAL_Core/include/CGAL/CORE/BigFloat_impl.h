@@ -78,12 +78,14 @@ BigInt FiveTo(unsigned long exp) {
 // ZERO
 CGAL_INLINE_FUNCTION
 const BigFloat& BigFloat::getZero() {
+  init_CORE();
   CGAL_STATIC_THREAD_LOCAL_VARIABLE(BigFloat, Zero,0);
   return Zero;
 }
 // ONE
 CGAL_INLINE_FUNCTION
 const BigFloat& BigFloat::getOne() {
+  init_CORE();
   CGAL_STATIC_THREAD_LOCAL_VARIABLE(BigFloat, One,1);
   return One;
 }
