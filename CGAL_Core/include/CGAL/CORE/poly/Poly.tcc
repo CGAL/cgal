@@ -670,19 +670,20 @@ Polynomial<NT> Polynomial<NT>::pseudoRemainder (
   contract();         // Let A = (*this).  Contract A.
   Polynomial<NT> tmpB(B);
   tmpB.contract();    // local copy of B
+  int bTrueDegree = tmpB.degree;
   C = NT(1);  // Initialized to C=1.
-  if (B.degree == -1)  {
+  if (bTrueDegree == -1)  {
     core_error("ERROR in Polynomial<NT>::pseudoRemainder :\n    -- divide by zero polynomial", __FILE__, __LINE__, false);
     return Polynomial(0);  // Unit Polynomial (arbitrary!)
   }
-  if (B.degree > degree) {
+  if (bTrueDegree > degree) {
     return Polynomial(); // Zero Polynomial
     // CHECK: 1*THIS = 0*B + THAT,  deg(THAT) < deg(B)
   }
 
   Polynomial<NT> Quo;  // accumulate the return polynomial, Quo
   Polynomial<NT> tmpQuo;
-  while (degree >= B.degree) {  // INVARIANT: C*A = B*Quo + (*this)
+  while (degree >= bTrueDegree) {  // INVARIANT: C*A = B*Quo + (*this)
     tmpQuo = reduceStep(tmpB);  // Let (*this) be (*oldthis), which
                                 // is transformed into (*newthis). Then,
                                 //     c*(*oldthis) = B*m + (*newthis)

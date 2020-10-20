@@ -25,10 +25,8 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
-#include <vector>
-#include <type_traits>
 #include <CGAL/Default.h>
-#include<CGAL/tss.h>
+#include <CGAL/tss.h>
 #include <CGAL/is_iterator.h>
 #include <CGAL/transforming_iterator.h>
 
@@ -46,6 +44,14 @@
 #include <boost/preprocessor/repetition/enum_params.hpp>
 #include <boost/preprocessor/repetition/enum_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum.hpp>
+
+#include <iostream>
+#include <iterator>
+#include <string>
+#include <tuple>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 
