@@ -37,6 +37,7 @@ protected:
   Converter<K> convert;
   QGraphicsScene *scene_;
   Point p;
+  bool do_insert;
 };
 
 
@@ -44,7 +45,7 @@ template <typename T>
 TriangulationPointInputAndConflictZone<T>::TriangulationPointInputAndConflictZone(QGraphicsScene* s,
                                                         T * dt_,
                                                         QObject* parent)
-  :  GraphicsViewInput(parent), dt(dt_), scene_(s)
+  :  GraphicsViewInput(parent), dt(dt_), scene_(s), do_insert(true)
 {}
 
 
@@ -54,6 +55,12 @@ template <typename T>
 void
 TriangulationPointInputAndConflictZone<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+  if(event->modifiers()  & ::Qt::ShiftModifier){
+    do_insert = false;
+    return;
+  }
+  else
+    do_insert = true;
   p = convert(event->scenePos());
   if(dt->dimension() < 2 ||
      event->modifiers() != 0 ||
@@ -91,7 +98,8 @@ TriangulationPointInputAndConflictZone<T>::mouseReleaseEvent(QGraphicsSceneMouse
     delete *it;
   }
   qfaces.clear();
-  Q_EMIT( generate(CGAL::make_object(p)));
+  if(do_insert)
+    Q_EMIT( generate(CGAL::make_object(p)));
 }
 
 

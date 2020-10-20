@@ -1751,6 +1751,8 @@ compile_and_run test_io
 
 compile_and_run test_sgm
 
+compile_and_run test_polycurve_intersection
+
 # if any error occurred then append the full error description file to error file
 
 if [ -f $FULL_ERROR_DESCRIPTION_FILE ] ; then

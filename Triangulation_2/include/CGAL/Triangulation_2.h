@@ -2976,9 +2976,9 @@ exact_locate(const Point& p,
              Face_handle start) const
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
 {
+  li = 4; //general init to avoid warnings.
+  lt = OUTSIDE_AFFINE_HULL; //same
   if (dimension() < 0) {
-    lt = OUTSIDE_AFFINE_HULL;
-    li = 4; // li should not be used in this case
     return Face_handle();
   }
   if( dimension() == 0) {
@@ -2987,10 +2987,6 @@ exact_locate(const Point& p,
     if (xy_equal(p,finite_vertex()->face()->vertex(0)->point())){
       lt = VERTEX ;
     }
-    else{
-      lt = OUTSIDE_AFFINE_HULL;
-    }
-    li = 4; // li should not be used in this case
     return Face_handle();
   }
   if(dimension() == 1){

@@ -15,7 +15,7 @@ CGAL_add_named_parameter(halfedge_index_t, halfedge_index, halfedge_index_map)
 CGAL_add_named_parameter(edge_index_t, edge_index, edge_index_map)
 CGAL_add_named_parameter(face_index_t, face_index, face_index_map)
 CGAL_add_named_parameter(vertex_index_t, vertex_index, vertex_index_map)
-CGAL_add_named_parameter(graph_visitor_t, graph_visitor, visitor)
+CGAL_add_named_parameter(visitor_t, visitor, visitor)
 
 CGAL_add_named_parameter(point_t, point_map, point_map)
 
@@ -101,6 +101,7 @@ CGAL_add_named_parameter(area_threshold_t, area_threshold, area_threshold)
 CGAL_add_named_parameter(halfedges_keeper_t, halfedges_keeper, halfedges_keeper)
 CGAL_add_named_parameter(volume_threshold_t, volume_threshold, volume_threshold)
 CGAL_add_named_parameter(dry_run_t, dry_run, dry_run)
+CGAL_add_named_parameter(do_not_modify_t, do_not_modify, do_not_modify)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
@@ -171,7 +172,6 @@ CGAL_add_named_parameter(pca_plane_t, pca_plane, pca_plane)
 CGAL_add_named_parameter(remesh_boundaries_t, remesh_boundaries, remesh_boundaries)
 CGAL_add_named_parameter(cell_selector_t, cell_selector, cell_selector)
 CGAL_add_named_parameter(facet_is_constrained_t, facet_is_constrained, facet_is_constrained_map)
-CGAL_add_named_parameter(remeshing_visitor_t, remeshing_visitor, remeshing_visitor)
 CGAL_add_named_parameter(smooth_constrained_edges_t, smooth_constrained_edges, smooth_constrained_edges)
 
 // output parameters

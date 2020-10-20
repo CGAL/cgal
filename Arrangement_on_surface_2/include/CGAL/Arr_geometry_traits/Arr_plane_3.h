@@ -197,49 +197,51 @@ public:
 /*! Intersect 2 planes
  * \param plane1 the first plane
  * \param plane2 the second plane
- * \return a geometric object that represents the intersection. Could be
- * the line of intersection, or a plane in case plane1 and plane2 coincide.
+ * \return a variant that represents the intersection. It wraps a line of
+ * intersection or a plane in case plane1 and plane2 coincide.
  */
-template <class Kernel>
-CGAL::Object intersect(const Arr_plane_3<Kernel> & plane1,
+template <typname Kernel>
+boost::variant<typename Kernel::Line_3, Arr_plane_3<Kernel> >
+intersect(const Arr_plane_3<Kernel> & plane1,
                        const Arr_plane_3<Kernel> & plane2)
 {
   typedef typename Kernel::Point_3      Point_3;
   typedef typename Kernel::Direction_3  Direction_3;
   typedef typename Kernel::Line_3       Line_3;
   typedef typename Kernel::FT           FT;
+  typedef boost::variant<Line_3, Arr_plane_3<Kernel> >  Intersection_result;
 
   // We know that the plane goes throgh the origin
-  const FT & a1 = plane1.a();
-  const FT & b1 = plane1.b();
-  const FT & c1 = plane1.c();
+  const FT& a1 = plane1.a();
+  const FT& b1 = plane1.b();
+  const FT& c1 = plane1.c();
 
-  const FT & a2 = plane2.a();
-  const FT & b2 = plane2.b();
-  const FT & c2 = plane2.c();
+  const FT& a2 = plane2.a();
+  const FT& b2 = plane2.b();
+  const FT& c2 = plane2.c();
 
   FT det = a1*b2 - a2*b1;
   if (det != 0) {
     Point_3 is_pt = Point_3(0, 0, 0, det);
     Direction_3 is_dir = Direction_3(b1*c2 - c1*b2, a2*c1 - a1*c2, det);
-    return make_object(Line_3(is_pt, is_dir));
+    return Intersection_result(Line_3(is_pt, is_dir));
   }
 
   det = a1*c2 - a2*c1;
   if (det != 0) {
     Point_3 is_pt = Point_3(0, 0, 0, det);
     Direction_3 is_dir = Direction_3(c1*b2 - b1*c2, det, a2*b1 - a1*b2);
-    return make_object(Line_3(is_pt, is_dir));
+    return Intersection_result(Line_3(is_pt, is_dir));
   }
   det = b1*c2 - c1*b2;
   if (det != 0) {
     Point_3 is_pt = Point_3(0, 0, 0, det);
     Direction_3 is_dir = Direction_3(det, c1*a2 - a1*c2, a1*b2 - b1*a2);
-    return make_object(Line_3(is_pt, is_dir));
+    return Intersection_result(Line_3(is_pt, is_dir));
   }
 
   // degenerate case
-  return make_object(plane1);
+  return Intersection_result(plane1);
 }
 
 /*! Compute the image point of the projection of p under an affine
