@@ -26,6 +26,7 @@
 #ifdef CGAL_EIGEN3_ENABLED
 
 #include <Eigen/Dense>
+#include <Eigen/IterativeLinearSolvers>
 
 //#define CGAL_SCANLINE_ORIENT_VERBOSE
 
