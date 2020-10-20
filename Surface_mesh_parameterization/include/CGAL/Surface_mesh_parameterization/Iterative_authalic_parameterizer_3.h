@@ -408,16 +408,19 @@ private:
     std::array<const Point_2*, 3> uv_points;
     std::array<const Point_3*, 3> mesh_points;
 
-    int i = 0;
-    for(vertex_descriptor v : CGAL::vertices_around_face(halfedge(f, tmesh), tmesh))
+    halfedge_descriptor h = halfedge(f, tmesh);
+    for(std::size_t i=0; i<3; ++i)
     {
+      vertex_descriptor v = target(h, tmesh);
+
       // just to be safe in case of weird VPM returning temporaries
       typename boost::property_traits<VertexUVMap>::reference uvp = get(uvmap, v);
       PPM_ref p = get(ppmap, v);
 
       uv_points[i] = &uvp;
       mesh_points[i] = &p;
-      ++i;
+
+      h = next(h, tmesh);
     }
 
     // Formula from Sander et al. 'Texture Mapping Progressive Meshes'
