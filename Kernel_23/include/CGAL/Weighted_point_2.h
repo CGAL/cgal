@@ -171,7 +171,7 @@ public:
 
   Weighted_point_2 transform(const Aff_transformation_2 &t) const
   {
-    return Weighted_point_2(t.transform(point(),weight()));
+    return Weighted_point_2(t.transform(point()),weight());
   }
 
 };
