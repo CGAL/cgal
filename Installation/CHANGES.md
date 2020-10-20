@@ -1,7 +1,6 @@
 Release History
 ===============
 
-
 [Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
 
 Release date: December 2020
@@ -13,6 +12,7 @@ Release date: December 2020
 - Added the function `can_add_face()`, which tests whether a new face defined by a range of vertices can be added.
 
 ### [3D Convex Hulls](https://doc.cgal.org/5.2/Manual/packages.html#PkgConvexHull3)
+
 -   Added the function `CGAL::halfspace_intersection_interior_point_3()` that can be used to retrieve
     the point that is the most interior a convex closed volume defined by the intersection of a set of halfspaces.
 
@@ -39,13 +39,19 @@ Release date: December 2020
 
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.2/Manual/packages.html#PkgPolygonMeshProcessing)
+
 -   Added a visitor to the functions
     [`CGAL::Polygon_mesh_processing::triangulate_face()`](https://doc.cgal.org/5.2/Polygon_mesh_processing/group__PMP__meshing__grp.html#ga70d65044f8c7309c24ade88fa280124a)
     and [`CGAL::Polygon_mesh_processing::triangulate_faces()`](https://doc.cgal.org/5.2/Polygon_mesh_processing/group__PMP__meshing__grp.html#gacaaff4d520500c530d9c3d5ebe2a0760),
     that enables the user to keep track of the newly created faces through the triangulation process.
-
 -   Added an option in `corefine()`, `split()` and `clip()` functions that enables the operation to be done on a mesh with
     self-intersections present in the intersection area.
+-   Added an optional range parameter to `CGAL::Polygon_mesh_processing::stitch_borders()`,
+    which can be used to specify which boundary cycles are eligible for stitching.
+
+### Surface Mesh
+
+-   Added the functions `set_recycle_garbage()` and `does_recycle_garbage()` to the class `Surface_mesh`.
 
 ### [dD Geometry Kernel](https://doc.cgal.org/5.2/Manual/packages.html#PkgKernelD)
 

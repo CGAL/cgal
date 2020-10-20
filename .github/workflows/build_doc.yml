@@ -18,7 +18,11 @@ jobs:
            if(asso == 'OWNER' || asso == 'MEMBER') {
              const body = context.payload.comment.body
              if(body.includes("build:")) {
-               return body.replace('build:','')
+               const re = /\/build:(\w+)\s*/;
+               if(re.test(body)){
+                 const res = re.exec(body)
+                 return res[1];
+               }
              }
            }
            return 'stop'
