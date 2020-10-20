@@ -16,5 +16,3 @@ if (benchmark_FOUND)
   create_single_source_cgal_program("tree_creation.cpp")
   target_link_libraries(tree_creation benchmark::benchmark)
 endif()
-
-
