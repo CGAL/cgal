@@ -738,9 +738,7 @@ struct Base_helper<TriangleMesh, Traits, Intrinsic_Delaunay, LA, VertexPointMap>
   template <class VertexDistanceMap>
   void estimate_geodesic_distances(VertexDistanceMap vdm)
   {
-    CGAL_precondition(!internal::has_degenerate_faces(this->m_idt.triangle_mesh(),
-                                                      this->m_idt.vertex_point_map()));
-
+    CGAL_precondition(!internal::has_degenerate_faces(this->m_idt.triangle_mesh()));
     base().estimate_geodesic_distances(this->m_idt.vertex_distance_map(vdm));
   }
 };
