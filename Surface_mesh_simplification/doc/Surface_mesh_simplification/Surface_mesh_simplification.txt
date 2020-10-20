@@ -215,7 +215,7 @@ On the one hand, this dramatically saves on memory but on the other hand is
 a processing waste because when an edge is effectively collapsed, `GetPlacement`
 must be called <I>again</I> to know were to move the remaining vertex.
 
-Earlier prototypes shown that attaching the placement to the edge, thus avoiding one
+Earlier prototypes showed that attaching the placement to the edge, thus avoiding one
 redundant call to the placement function after the edge collapsed, has little
 impact on the total running time. This is because the cost of an each edge is not just
 computed once but changes several times during the process so the placement function
@@ -336,10 +336,14 @@ results in a self intersection when one edge is collapsed using the Lindstrom-Tu
 Simple mesh before and after the collapse of edge `v-w` into vertex `w`. While the normals of `f1` and `f2` are almost equal, they are opposed after the edge collapse.
 \cgalFigureEnd
 
-The class `Surface_mesh_simplification::Bounded_normal_change_placement` is a placement that checks if
-another placement would invert the normal of a face around the stars of the
+The class `Surface_mesh_simplification::Bounded_normal_change_filter` checks if
+a placement would invert the normal of a face around the stars of the
 two vertices of an edge that is candidate for an edge collapse.  It then
 rejects this placement by returning `boost::none`.
+
+\note This filter class replaces the usage of the class `Surface_mesh_simplification::Bounded_normal_change_placement`.
+Using the filter is faster as it is only performed on the edge to be collapsed next,
+and not during the update on all edges incident to the vertex that is the result of the edhe collapse.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_bounded_normal_change.cpp}
 

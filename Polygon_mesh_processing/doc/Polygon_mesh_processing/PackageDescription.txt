@@ -215,6 +215,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 \cgalCRPSection{Miscellaneous}
 - `CGAL::Polygon_mesh_slicer`
 - `CGAL::Side_of_triangle_mesh`
+- `CGAL::Envelope`
 - `CGAL::Polygon_mesh_processing::bbox()`
 - `CGAL::Polygon_mesh_processing::vertex_bbox()`
 - `CGAL::Polygon_mesh_processing::edge_bbox()`
