@@ -318,6 +318,11 @@ public Q_SLOTS:
 
     if (poly_item || selection_item)
     {
+      if(selection_item && selection_item->selected_edges.empty())
+      {
+        QMessageBox::warning(mw, "Empty Edges", "There are no selected edges. Aborting.");
+        return;
+      }
       // Create dialog box
       QDialog dialog(mw);
       Ui::Isotropic_remeshing_dialog ui
