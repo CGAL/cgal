@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1...3.15)
 project( FastEnvelope_Examples )
 
-option(FAST_ENVELOPE_BUILD_DIR "Path to fast-evelope build directory")
+set(FAST_ENVELOPE_BUILD_DIR "" CACHE STRING "Path to fast-evelope build directory")
 
 find_package(CGAL REQUIRED)
 
