@@ -347,6 +347,20 @@ and not during the update on all edges incident to the vertex that is the result
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_bounded_normal_change.cpp}
 
+
+
+\subsection Surface_mesh_simplificationExamplewithEnvelope Example with Envelope
+
+The surface mesh simplification can be done in a way that the simplified mesh stays inside an envelope of the input mesh.
+This makes use of the class `Envelope` which enables to check whether a query point, segment, or triangle lies within
+a polyhedral envelope, which consists of the union of inflated triangles. While the user gives a distance `d`, the check
+is conservative, that is there may be triangles which would be inside a surface obtained as the Minkowski sum
+with a sphere of radius `d`, but which are outside the polyhedral envelope.
+
+\cgalExample{Surface_mesh_simplification/edge_collapse_envelope.cpp}
+
+
+
 \subsection Surface_mesh_simplificationExamplewithVisitor Example with Visitor
 
 The last example shows how to use a visitor with callbacks that are called at the different

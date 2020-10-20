@@ -31,6 +31,7 @@ endif()
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
 
+create_single_source_cgal_program( "edge_collapse_envelope.cpp" )
 create_single_source_cgal_program( "edge_collapse_constrain_sharp_edges.cpp" )
 create_single_source_cgal_program( "edge_collapse_constrained_border_polyhedron.cpp" )
 create_single_source_cgal_program( "edge_collapse_enriched_polyhedron.cpp" )
