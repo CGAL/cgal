@@ -41,6 +41,7 @@ do
     continue
   fi
 cd $ROOT
+
 #install openmesh only if necessary
   if [ "$ARG" = "CHECK" ] || [ "$ARG" = BGL ] || [ "$ARG" = Convex_hull_3 ] ||\
      [ "$ARG" = Polygon_mesh_processing ] || [ "$ARG" = Property_map ] ||\
@@ -92,28 +93,27 @@ cd $ROOT
           exit 1
     fi
     echo "Matrix is up to date."
-    #check if non standard cgal installation works
-    cd $ROOT
-    mkdir build_test
-    cd build_test
-    mytime cmake -DCMAKE_INSTALL_PREFIX=install/ -DCGAL_BUILD_THREE_DOC=TRUE ..
-    mytime make install
-    # test install with minimal downstream example
-    mkdir installtest
-    cd installtest
-    touch main.cpp
-    mkdir build
-    echo 'project(Example)' >> CMakeLists.txt
-    echo 'set(PROJECT_SRCS ${PROJECT_SOURCE_DIR}/main.cpp)' >> CMakeLists.txt
-    echo 'find_package(CGAL REQUIRED)' >> CMakeLists.txt
-    echo 'add_executable(${PROJECT_NAME} ${PROJECT_SRCS})' >> CMakeLists.txt
-    echo 'target_link_libraries(${PROJECT_NAME} CGAL::CGAL)' >> CMakeLists.txt
-    echo '#include "CGAL/remove_outliers.h"' >> main.cpp
-    cd build
-    mytime cmake -DCMAKE_INSTALL_PREFIX=../../install -DCGAL_BUILD_THREE_DOC=TRUE ..
-    cd ..
     exit 0
   fi
+
+  if [ "$ARG" = "Installation" ]
+  then
+  mkdir build_dir
+  cd build_dir
+  cmake -DWITH_tests=ON -DBUILD_TESTING=ON ..
+  ctest -j2 -L CGAL_cmake_testsuite --output-on-failure
+  cd ..
+  rm -rf ./build_dir
+  #==-- configure all CGAL with -DWITH_examples=ON -DWITH_demos=ON -DWITH_tests=ON, and then launch CTest on a few labels. --==
+  mkdir config_dir
+  cd config_dir
+  cmake -DWITH_examples=ON -DWITH_demos=ON -DWITH_tests=ON -DBUILD_TESTING=ON ..
+  ctest -j2 -L AABB_tree --output-on-failure
+  cd ..
+  rm -rf ./config_dir
+    exit 0
+  fi
+
   IFS=$old_IFS
 
   if [ -n "$TRAVIS_PULL_REQUEST_BRANCH" ] && [ "$ARG" != Polyhedron_demo ]; then
@@ -185,6 +185,7 @@ cd $ROOT
     cd "$ROOT/$DEMO"
     build_demo
   fi
+
 done
 IFS=$old_IFS
 # Local Variables:

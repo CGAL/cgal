@@ -38,18 +38,7 @@ public:
 
   typedef typename Base::result_type  result_type;
 
-
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else // CGAL_CFG_MATCHING_BUG_6
-  template <typename T>
-  result_type
-  operator()(const T& t) const
-  {
-    return Base()(t);
-  }
-#endif // end CGAL_CFG_MATCHING_BUG_6
-
 
   result_type
   operator()(const Segment_3& s) const

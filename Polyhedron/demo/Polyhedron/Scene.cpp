@@ -91,6 +91,8 @@ Scene::addItem(CGAL::Three::Scene_item* item)
     item->drawEdges(CGAL::Three::Three::mainViewer());
     item->drawPoints(CGAL::Three::Three::mainViewer());
     CGAL::Three::Three::mainViewer()->setDepthPeelingFbo(fbo);
+    if(group)
+       m_groups.append(id);
     return id;
 }
 
@@ -111,6 +113,7 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
     QList<Scene_item*> group_children;
     if(group)
     {
+      m_groups.removeAll(index);
       Q_FOREACH(Item_id id, group->getChildren())
       {
         CGAL::Three::Scene_item* child = group->getChild(id);
@@ -153,6 +156,7 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
     if(group)
     {
         addGroup(group);
+        m_groups.append(index);
     }
     itemChanged(index);
     Q_EMIT restoreCollapsedState();
@@ -174,6 +178,7 @@ Scene::erase(Scene::Item_id index)
     setSelectedItemsList(QList<Scene_interface::Item_id>()<<item_id(item));
     return erase(selectionIndices());
   }
+  m_groups.removeAll(index);
   if(item->parentGroup()
      && item->parentGroup()->isChildLocked(item))
     return -1;
@@ -249,6 +254,7 @@ Scene::erase(QList<int> indices)
       item->parentGroup()->removeChild(item);
     children.removeAll(removed_item);
     indexErased(removed_item);
+    m_groups.removeAll(removed_item);
     m_entries.removeAll(item);
 
     Q_EMIT itemAboutToBeDestroyed(item);
@@ -1360,9 +1366,15 @@ QItemSelection Scene::createSelectionAll()
   //it is not possible to directly create a selection with items that have different parents, so
   //we do it iteratively.
   QItemSelection sel;
-  for(int i=0; i< m_entries.size(); ++i)
-    sel.select(index_map.keys(i).at(0),
-               index_map.keys(i).at(4));
+  sel.select(this->createIndex(0, 0),
+             this->createIndex(m_entries.size(), LastColumn));
+  for(const auto& gid : m_groups)
+  {
+    CGAL::Three::Scene_group_item* group =
+        qobject_cast<CGAL::Three::Scene_group_item*>(item(gid));
+    sel.select(index_map.keys(group->getChildren().first()).at(0),
+               index_map.keys(group->getChildren().last()).at(4));
+  }
   return sel;
 }
 
@@ -1727,7 +1739,7 @@ void Scene::updatePrimitiveIds(CGAL::Three::Scene_item* it)
     }
   }
 }
-bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)
+bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer, const QVector3D& scaler)
 {
     CGAL::Three::Scene_item *i = item(mainSelectionIndex());
     if(!i)
@@ -1735,7 +1747,7 @@ bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_inte
     Scene_print_item_interface* spit= qobject_cast<Scene_print_item_interface*>(i);
     if(spit && i->visible())
     {
-        bool res = spit->testDisplayId(x,y,z, viewer);
+        bool res = spit->testDisplayId(x,y,z, viewer, scaler);
         return res;
     }
     else

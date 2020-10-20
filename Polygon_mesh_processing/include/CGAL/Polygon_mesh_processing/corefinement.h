@@ -201,22 +201,19 @@ corefine_and_compute_boolean_operations(
 
 // Vertex point maps
   //for input meshes
-  typedef typename GetVertexPointMap<TriangleMesh,
-                                     NamedParameters1>::type Vpm;
-  typedef typename GetVertexPointMap<TriangleMesh,
-                                     NamedParameters2>::type Vpm2;
-  CGAL_USE_TYPE(Vpm2);
-  CGAL_assertion_code(
-    static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value); )
-  CGAL_static_assertion(same_vpm);
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::type  VPM1;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::type  VPM2;
 
-  Vpm vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
-                              get_property_map(boost::vertex_point, tm1));
+  CGAL_static_assertion((std::is_same<typename boost::property_traits<VPM1>::value_type,
+                                      typename boost::property_traits<VPM2>::value_type>::value));
 
-  Vpm vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
-                              get_property_map(boost::vertex_point, tm2));
+  VPM1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                               get_property_map(boost::vertex_point, tm1));
 
-  typedef typename boost::property_traits<Vpm>::value_type Point_3;
+  VPM2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                               get_property_map(boost::vertex_point, tm2));
+
+  typedef typename boost::property_traits<VPM1>::value_type                 Point_3;
 
   // for output meshes: here we have to use a trick so that if for a specific output
   // that is not requested, the default vpm does not have the same value type as the
@@ -227,24 +224,24 @@ corefine_and_compute_boolean_operations(
     Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut1, TriangleMesh>,
     Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut2, TriangleMesh>,
     Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut3, TriangleMesh>
-  > Vpm_out_tuple_helper;
+  > VPM_out_tuple_helper;
 
   typedef std::tuple<
-    boost::optional< typename std::tuple_element<0, Vpm_out_tuple_helper>::type::type >,
-    boost::optional< typename std::tuple_element<1, Vpm_out_tuple_helper>::type::type >,
-    boost::optional< typename std::tuple_element<2, Vpm_out_tuple_helper>::type::type >,
-    boost::optional< typename std::tuple_element<3, Vpm_out_tuple_helper>::type::type >
-  > Vpm_out_tuple;
+    boost::optional< typename std::tuple_element<0, VPM_out_tuple_helper>::type::type >,
+    boost::optional< typename std::tuple_element<1, VPM_out_tuple_helper>::type::type >,
+    boost::optional< typename std::tuple_element<2, VPM_out_tuple_helper>::type::type >,
+    boost::optional< typename std::tuple_element<3, VPM_out_tuple_helper>::type::type >
+  > VPM_out_tuple;
 
-  Vpm_out_tuple vpm_out_tuple(
+  VPM_out_tuple vpm_out_tuple(
     Corefinement::get_vpm<Point_3>(std::get<0>(nps_out), output[0],
-                                   typename std::tuple_element<0, Vpm_out_tuple_helper>::type::Use_default_tag()),
+                                   typename std::tuple_element<0, VPM_out_tuple_helper>::type::Use_default_tag()),
     Corefinement::get_vpm<Point_3>(std::get<1>(nps_out), output[1],
-                                   typename std::tuple_element<1, Vpm_out_tuple_helper>::type::Use_default_tag()),
+                                   typename std::tuple_element<1, VPM_out_tuple_helper>::type::Use_default_tag()),
     Corefinement::get_vpm<Point_3>(std::get<2>(nps_out), output[2],
-                                   typename std::tuple_element<2, Vpm_out_tuple_helper>::type::Use_default_tag()),
+                                   typename std::tuple_element<2, VPM_out_tuple_helper>::type::Use_default_tag()),
     Corefinement::get_vpm<Point_3>(std::get<3>(nps_out), output[3],
-                                   typename std::tuple_element<3, Vpm_out_tuple_helper>::type::Use_default_tag())
+                                   typename std::tuple_element<3, VPM_out_tuple_helper>::type::Use_default_tag())
   );
 
   if (&tm1==&tm2)
@@ -367,16 +364,17 @@ corefine_and_compute_boolean_operations(
 
   // User visitor
   typedef typename internal_np::Lookup_named_param_def <
-    internal_np::graph_visitor_t,
+    internal_np::visitor_t,
     NamedParameters1,
     Corefinement::Default_visitor<TriangleMesh>//default
   > ::type User_visitor;
-  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::graph_visitor)));
+  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::visitor)));
 
   // surface intersection algorithm call
   typedef Corefinement::Face_graph_output_builder<TriangleMesh,
-                                                  Vpm,
-                                                  Vpm_out_tuple,
+                                                  VPM1,
+                                                  VPM2,
+                                                  VPM_out_tuple,
                                                   FaceIndexMap1,
                                                   FaceIndexMap2,
                                                   Default,
@@ -385,7 +383,8 @@ corefine_and_compute_boolean_operations(
                                                   User_visitor> Ob;
 
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
-    TriangleMesh, Vpm, Ob, Ecm_in, User_visitor> Algo_visitor;
+            TriangleMesh, VPM1, VPM2, Ob, Ecm_in, User_visitor> Algo_visitor;
+
   Ecm_in ecm_in(tm1,tm2,ecm1,ecm2);
   Edge_mark_map_tuple ecms_out(ecm_out_0, ecm_out_1, ecm_out_2, ecm_out_3);
   Ob ob(tm1, tm2, vpm1, vpm2, fid_map1, fid_map2, ecm_in, vpm_out_tuple, ecms_out, uv, output);
@@ -402,7 +401,7 @@ corefine_and_compute_boolean_operations(
     ob.setup_for_clipping_a_surface(use_compact_clipper);
   }
 
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, Vpm, Algo_visitor >
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Algo_visitor >
     functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm_in));
   functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
 
@@ -695,6 +694,14 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *     \cgalParamDefault{`false`}
  *     \cgalParamExtra{`np1` only}
  *   \cgalParamNEnd
+ *   \cgalParamNBegin{do_not_modify}
+ *     \cgalParamDescription{if `true`, the corresponding mesh will not be updated.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *     \cgalParamExtra{If this parameter is set to `true` for both meshes nothing will be done.
+ *                      If this option is set to `true` for one mesh,
+ *                      the other mesh is no longer required to be without self-intersection.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  */
@@ -710,24 +717,34 @@ corefine(      TriangleMesh& tm1,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
+  TriangleMesh* const_mesh_ptr=nullptr;
+  if (choose_parameter(get_parameter(np1, internal_np::do_not_modify), false))
+  {
+    if (choose_parameter(get_parameter(np2, internal_np::do_not_modify), false))
+      return;
+    const_mesh_ptr=&tm1;
+  }
+  else
+  {
+    if (choose_parameter(get_parameter(np2, internal_np::do_not_modify), false))
+      const_mesh_ptr=&tm2;
+  }
+
   const bool throw_on_self_intersection =
     choose_parameter(get_parameter(np1, internal_np::throw_on_self_intersection), false);
 
 // Vertex point maps
-  typedef typename GetVertexPointMap<TriangleMesh,
-                                     NamedParameters1>::type Vpm;
-  typedef typename GetVertexPointMap<TriangleMesh,
-                                     NamedParameters2>::type Vpm2;
-  CGAL_USE_TYPE(Vpm2);
-  CGAL_assertion_code(
-    static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value);)
-  CGAL_static_assertion(same_vpm);
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::type VPM1;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::type VPM2;
 
-  Vpm vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
-                              get_property_map(boost::vertex_point, tm1));
+  CGAL_static_assertion((std::is_same<typename boost::property_traits<VPM1>::value_type,
+                                      typename boost::property_traits<VPM2>::value_type>::value));
 
-  Vpm vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
-                              get_property_map(boost::vertex_point, tm2));
+  VPM1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                               get_property_map(boost::vertex_point, tm1));
+
+  VPM2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                               get_property_map(boost::vertex_point, tm2));
 
 // Edge is-constrained maps
   typedef typename internal_np::Lookup_named_param_def <
@@ -756,20 +773,21 @@ corefine(      TriangleMesh& tm1,
 
   // User visitor
   typedef typename internal_np::Lookup_named_param_def <
-    internal_np::graph_visitor_t,
+    internal_np::visitor_t,
     NamedParameters1,
     Corefinement::Default_visitor<TriangleMesh>//default
   > ::type User_visitor;
-  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::graph_visitor)));
+  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::visitor)));
 
 // surface intersection algorithm call
   typedef Corefinement::No_extra_output_from_corefinement<TriangleMesh> Ob;
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
-    TriangleMesh, Vpm, Ob, Ecm, User_visitor> Algo_visitor;
+    TriangleMesh, VPM1, VPM2, Ob, Ecm, User_visitor> Algo_visitor;
+
   Ob ob;
   Ecm ecm(tm1,tm2,ecm1,ecm2);
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, Vpm, Algo_visitor>
-    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm));
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Algo_visitor>
+    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm,const_mesh_ptr));
   functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
 }
 
@@ -831,9 +849,9 @@ autorefine(      TriangleMesh& tm,
   using parameters::get_parameter;
 
 // Vertex point maps
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type Vpm;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPM;
 
-  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_property_map(boost::vertex_point, tm));
 
 // Edge is-constrained maps
@@ -846,20 +864,20 @@ autorefine(      TriangleMesh& tm,
 
 // User visitor
   typedef typename internal_np::Lookup_named_param_def <
-    internal_np::graph_visitor_t,
+    internal_np::visitor_t,
     NamedParameters,
     Corefinement::Default_visitor<TriangleMesh>//default
   > ::type User_visitor;
-  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np, internal_np::graph_visitor)));
+  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np, internal_np::visitor)));
 
 
 // surface intersection algorithm call
   typedef Corefinement::No_extra_output_from_corefinement<TriangleMesh> Ob;
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
-    TriangleMesh, Vpm, Ob, Ecm, User_visitor,true> Algo_visitor;
+    TriangleMesh, VPM, VPM, Ob, Ecm, User_visitor,true> Algo_visitor;
   Ob ob;
 
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, Vpm, Algo_visitor>
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM, VPM, Algo_visitor>
     functor(tm, vpm, Algo_visitor(uv,ob,ecm) );
 
   functor(CGAL::Emptyset_iterator(), true);
@@ -924,8 +942,8 @@ autorefine_and_remove_self_intersections(      TriangleMesh& tm,
   using parameters::get_parameter;
 
 // Vertex point maps
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type Vpm;
-  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPM;
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_property_map(boost::vertex_point, tm));
 
 // Face index map
@@ -943,24 +961,24 @@ autorefine_and_remove_self_intersections(      TriangleMesh& tm,
 
 // User visitor
   typedef typename internal_np::Lookup_named_param_def <
-    internal_np::graph_visitor_t,
+    internal_np::visitor_t,
     NamedParameters,
     Corefinement::Default_visitor<TriangleMesh>//default
   > ::type User_visitor;
-  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np, internal_np::graph_visitor)));
+  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np, internal_np::visitor)));
 
 // surface intersection algorithm call
   typedef Corefinement::Output_builder_for_autorefinement<TriangleMesh,
-                                                          Vpm,
+                                                          VPM,
                                                           Fid_map,
                                                           Ecm,
                                                           Default > Ob;
 
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
-    TriangleMesh, Vpm, Ob, Ecm, User_visitor,true> Algo_visitor;
+    TriangleMesh, VPM, VPM, Ob, Ecm, User_visitor,true> Algo_visitor;
   Ob ob(tm, vpm, fid_map, ecm);
 
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, Vpm, Algo_visitor>
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM, VPM, Algo_visitor>
     functor(tm, vpm, Algo_visitor(uv,ob,ecm) );
 
   functor(CGAL::Emptyset_iterator(), true);
