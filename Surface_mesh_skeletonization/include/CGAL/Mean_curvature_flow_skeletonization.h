@@ -1296,6 +1296,7 @@ private:
     }
 
     typedef std::pair<Exact_point, vertex_descriptor> Pair_type;
+    std::vector<Pair_type> duplicated_points;
     for(const Pair_type& p : points)
     {
       std::size_t vid = get(m_vertex_id_pmap, p.second);
@@ -1320,9 +1321,23 @@ private:
           max_neg_t = t;
         }
       }
-
-      p.second->pole = cell_dual[max_neg_i];
+      // max_neg_i is -1 only when duplicated the point is duplicated
+      // (null edge or non-manifold issue resolved with duplication)
+      if (max_neg_i!=-1)
+        p.second->pole = cell_dual[max_neg_i];
+      else
+        duplicated_points.push_back(p);
     }
+
+    for (const Pair_type& p : duplicated_points)
+    {
+      typename Delaunay::Locate_type lt;
+      int li, lj;
+      typename Delaunay::Cell_handle cell = T.locate (p.first, lt, li, lj);
+      CGAL_assertion(lt==Delaunay::VERTEX);
+      p.second->pole = cell->vertex(li)->info()->pole; // copy the pole of the point present in the DT3
+    }
+
     m_are_poles_computed = true;
   }
 
