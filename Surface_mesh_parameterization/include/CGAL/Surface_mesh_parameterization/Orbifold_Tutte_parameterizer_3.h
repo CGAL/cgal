@@ -940,6 +940,8 @@ public:
                           VertexUVMap uvmap,
                           VertexIndexMap vimap) const
   {
+    CGAL_precondition(is_valid_polygon_mesh(mesh));
+    CGAL_precondition(is_triangle_mesh(mesh));
     CGAL_USE(bhd);
 
     Error_code status;

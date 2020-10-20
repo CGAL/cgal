@@ -197,6 +197,7 @@ public:
                           VertexParameterizedMap vpmap)
   {
     CGAL_precondition(is_valid_polygon_mesh(mesh));
+    CGAL_precondition(is_triangle_mesh(mesh));
     CGAL_precondition(bhd != boost::graph_traits<Triangle_mesh>::null_halfedge() && is_border(bhd, mesh));
 
     // Fill containers

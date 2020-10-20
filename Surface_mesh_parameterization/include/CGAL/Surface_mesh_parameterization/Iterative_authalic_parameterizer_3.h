@@ -875,6 +875,7 @@ public:
                           double& error)
   {
     CGAL_precondition(is_valid_polygon_mesh(tmesh));
+    CGAL_precondition(is_triangle_mesh(tmesh));
     CGAL_precondition(is_border(bhd, tmesh));
 
     Error_code status = OK;
