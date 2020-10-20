@@ -116,8 +116,9 @@ namespace CGAL {
     /// class using `traits`.
     AABB_tree(const AABBTraits& traits = AABBTraits());
 
-    // move constructor and assignment operator
+    /// move constructor
     AABB_tree(Self&&) noexcept;
+    /// assignment operator
     Self& operator=(Self&&) noexcept;
 
     // Disabled copy constructor & assignment operator
