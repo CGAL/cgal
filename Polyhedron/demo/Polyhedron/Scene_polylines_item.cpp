@@ -574,14 +574,16 @@ void Scene_polylines_item::change_corner_radii(double r) {
           }
           d->spheres->invalidateOpenGLBuffers();
           d->computeSpheres();
-
+          CGAL::Three::Three::mainWindow()->installEventFilter(d->spheres);
+          connect(d->spheres, &Scene_spheres_item::destroyMe, this,
+                  [this](){
+            removeEventFilter(d->spheres);
+            unlockChild(d->spheres);
+            scene->erase(scene->item_id(d->spheres));
+          });
         }
         else if(r>0 && d->spheres)
         {
-//          Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
-//          {
-//            d->spheres->gl_initialization(qobject_cast<Viewer_interface*>(v));
-//          }
           d->spheres->invalidateOpenGLBuffers();
           d->computeSpheres();
         }
