@@ -108,7 +108,9 @@ public:
     FT time_step = CGAL::approximate_sqrt(CGAL::squared_distance(Point_3 (bbox.xmin(), bbox.ymin(), bbox.zmin()),
                                                                  Point_3 (bbox.xmax(), bbox.ymax(), bbox.zmax())));
 
-    time_step /= 50;
+    time_step /= 50.0;
+    std::cout.precision(20);
+    std::cout << "time_step " << time_step << std::endl;
 
     std::cout << "Making input polygons intersection free" << std::endl;
 
@@ -118,9 +120,19 @@ public:
     make_polygons_intersection_free(k);
     CGAL_assertion(check_integrity(true));
 
+    for (KSR::size_t i = 6; i < m_data.number_of_support_planes(); ++i) {
+      const auto& sp = m_data.support_plane(i);
+      std::cout << "plane index: " << i << std::endl;
+      std::cout << "plane: " <<
+      sp.plane().a() << ", " <<
+      sp.plane().b() << ", " <<
+      sp.plane().c() << ", " <<
+      sp.plane().d() << std::endl;
+    }
+
     std::cout << "Polygons are splitted" << std::endl;
 
-    KSR_3::dump_segmented_edges (m_data, "init");
+    // KSR_3::dump_segmented_edges (m_data, "init");
 
     KSR_3::dump (m_data, "intersected");
 
@@ -225,12 +237,12 @@ private:
 
   void add_bbox_as_polygons (const CGAL::Bbox_3& bbox, FT ratio)
   {
-    FT xmed = (bbox.xmin() + bbox.xmax()) / 2.;
-    FT ymed = (bbox.ymin() + bbox.ymax()) / 2.;
-    FT zmed = (bbox.zmin() + bbox.zmax()) / 2.;
-    FT dx = (bbox.xmax() - bbox.xmin()) / 2.;
-    FT dy = (bbox.ymax() - bbox.ymin()) / 2.;
-    FT dz = (bbox.zmax() - bbox.zmin()) / 2.;
+    const FT xmed = (bbox.xmin() + bbox.xmax()) / FT(2);
+    const FT ymed = (bbox.ymin() + bbox.ymax()) / FT(2);
+    const FT zmed = (bbox.zmin() + bbox.zmax()) / FT(2);
+    const FT dx = (bbox.xmax() - bbox.xmin()) / FT(2);
+    const FT dy = (bbox.ymax() - bbox.ymin()) / FT(2);
+    const FT dz = (bbox.zmax() - bbox.zmin()) / FT(2);
 
     FT xmin = xmed - ratio * dx;
     FT xmax = xmed + ratio * dx;
@@ -238,6 +250,14 @@ private:
     FT ymax = ymed + ratio * dy;
     FT zmin = zmed - ratio * dz;
     FT zmax = zmed + ratio * dz;
+
+		std::cout.precision(20);
+		std::cout << "x_min = " << xmin << ";" << std::endl;
+		std::cout << "y_min = " << ymin << ";" << std::endl;
+		std::cout << "z_min = " << zmin << ";" << std::endl;
+		std::cout << "x_max = " << xmax << ";" << std::endl;
+		std::cout << "y_max = " << ymax << ";" << std::endl;
+		std::cout << "z_max = " << zmax << ";" << std::endl;
 
     std::array<Point_3, 8> bbox_points
       = { Point_3 (xmin, ymin, zmin),
@@ -539,10 +559,9 @@ private:
 
       ++ iter;
 
-      // if (iter == 10)
-      // {
-      //   exit(0);
-      // }
+      if (iter == 8) {
+        exit(0);
+      }
 
       apply(ev);
 

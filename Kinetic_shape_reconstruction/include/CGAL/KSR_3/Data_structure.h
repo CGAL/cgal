@@ -1612,9 +1612,9 @@ public:
     // push also remaining vertex so that its events are recomputed
     new_vertices.push_back (pvertex);
 
-    if (has_iedge(prev) && !is_frozen(prev))
+    // if (has_iedge(prev) && !is_frozen(prev))
       new_vertices.push_back (prev);
-    if (has_iedge(next) && !is_frozen(next))
+    // if (has_iedge(next) && !is_frozen(next))
       new_vertices.push_back (next);
 
     return new_vertices;
@@ -1653,7 +1653,6 @@ public:
   inline std::string lstr (const PEdge& pedge) const
   { return "PEdge(" + std::to_string(pedge.first) + ":e" + std::to_string(pedge.second)
       + ")[v" + std::to_string(source(pedge).second) + "->v" + std::to_string(target(pedge).second) + "]"; }
-private:
 
   template <typename PSimplex>
   const Support_plane& support_plane (const PSimplex& psimplex) const { return support_plane(psimplex.first); }
@@ -1661,6 +1660,8 @@ private:
   template <typename PSimplex>
   Support_plane& support_plane (const PSimplex& psimplex) { return support_plane(psimplex.first); }
   Support_plane& support_plane (KSR::size_t idx) { return m_support_planes[idx]; }
+
+private:
 
   template <typename PSimplex>
   const Mesh& mesh (const PSimplex& psimplex) const { return mesh(psimplex.first); }
