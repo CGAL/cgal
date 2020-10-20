@@ -16,9 +16,9 @@
 #include <fstream>
 
 template <int test_number> auto create_tree();
-template <int test_number, typename T> void init_tree(T &tree) {}
+template <int test_number, typename T> void init_tree() {}
 template <int test_number, typename T> bool test_tree(T &tree);
-template <int test_number> class TestUtils;
+template <int test_number> struct TestUtils;
 
 // test 0 is from "aabb_test_singleton_tree"
 template <> struct TestUtils<0> {
