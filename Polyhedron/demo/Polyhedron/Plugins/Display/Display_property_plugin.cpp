@@ -1464,7 +1464,7 @@ private:
     {}
 
     virtual void fill_values(){}
-    virtual void set_colors_map(std::unordered_map<Value_type, std::size_t> &/* value_index_map */){}
+    virtual void set_colors_map(std::unordered_map<Value_type, std::size_t> &){}
     virtual void set_colors_ramp(){}
     bool operator()()
     {
@@ -2080,4 +2080,3 @@ private:
   }
 
 #include "Display_property_plugin.moc"
-
