@@ -122,10 +122,15 @@ function(CGAL_installation_test_find_package_version mode)
   file(REMOVE_RECURSE "${CMAKE_CURRENT_BINARY_DIR}/build-test_find_package_version_${mode}")
   file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build-test_find_package_version_${mode})
   file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_find_package_version_${mode})
+
   configure_file(test_find_package.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/test_find_package_version_${mode}/CMakeLists.txt)
   add_test(NAME test_find_package_version_${mode}
-    COMMAND ${CMAKE_COMMAND} -S ${CMAKE_CURRENT_BINARY_DIR}/test_find_package_version_${mode} -B ${CMAKE_CURRENT_BINARY_DIR}/build-test_find_package_version_${mode} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON)
+    COMMAND ${CMAKE_COMMAND} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON ${CMAKE_CURRENT_BINARY_DIR}/test_find_package_version_${mode}
+    )
   cgal_setup_test_properties(test_find_package_version_${mode})
+  set_property(TEST test_find_package_version_${mode}
+    PROPERTY
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build-test_find_package_version_${mode})
 endfunction()
 
 CGAL_installation_test_find_package_version(less)
