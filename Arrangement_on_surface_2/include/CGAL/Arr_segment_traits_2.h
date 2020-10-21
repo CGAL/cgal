@@ -82,17 +82,13 @@ public:
     typedef typename Kernel::Point_2               Point_2;
 
   protected:
-    mutable Line_2 m_l;       // the line that supports the segment.
-    Point_2 m_ps;             // the source point of the segment.
-    Point_2 m_pt;             // the target point of the segment.
-    bool m_is_directed_right; // is (lexicographically) directed left to right.
-    mutable enum              // is this a vertical segment.
-    {
-      UNKNOWN,                  // If the line is not computed
-      REGULAR,                  // If the line is computed and not vertical
-      VERTICAL                  // If the line is computed and vertical
-    } m_is_vert;
-    bool m_is_degen;          // is the segment degenerate (a single point).
+    mutable Line_2 m_l;         // the line that supports the segment.
+    Point_2 m_ps;               // the source point of the segment.
+    Point_2 m_pt;               // the target point of the segment.
+    bool m_is_directed_right;   // is (lexicographically) directed left to right.
+    mutable bool m_is_vert;     // is this a vertical segment.
+    mutable bool m_is_computed; // is the support line computed.
+    bool m_is_degen;            // is the segment degenerate (a single point).
 
   public:
 
@@ -1170,7 +1166,8 @@ public:
 template <typename Kernel>
 Arr_segment_traits_2<Kernel>::_Segment_cached_2::_Segment_cached_2() :
   m_is_directed_right(false),
-  m_is_vert(UNKNOWN),
+  m_is_vert(false),
+  m_is_computed(false),
   m_is_degen(true)
 {}
 
@@ -1178,7 +1175,8 @@ Arr_segment_traits_2<Kernel>::_Segment_cached_2::_Segment_cached_2() :
 template <typename Kernel>
 Arr_segment_traits_2<Kernel>::
 _Segment_cached_2::_Segment_cached_2(const Segment_2& seg)
-  : m_is_vert(UNKNOWN)
+  : m_is_vert(false)
+  , m_is_computed(false)
 {
   Kernel kernel;
   auto vertex_ctr = kernel.construct_vertex_2_object();
@@ -1200,7 +1198,8 @@ _Segment_cached_2::_Segment_cached_2(const Point_2& source,
                                      const Point_2& target) :
   m_ps(source),
   m_pt(target),
-  m_is_vert(UNKNOWN)
+  m_is_vert(false),
+  m_is_computed(false)
 {
   Kernel kernel;
 
@@ -1229,7 +1228,8 @@ _Segment_cached_2::_Segment_cached_2(const Line_2& line,
      Segment_assertions::_assert_is_point_on(target, m_l,
                                              Has_exact_division()));
 
-  m_is_vert = (kernel.is_vertical_2_object()(m_l) ? VERTICAL : REGULAR);
+  m_is_vert = kernel.is_vertical_2_object()(m_l);
+  m_is_computed = true;
 
   Comparison_result res = kernel.compare_xy_2_object()(m_ps, m_pt);
   m_is_degen = (res == EQUAL);
@@ -1248,7 +1248,8 @@ _Segment_cached_2(const Line_2& line,
   m_ps(source),
   m_pt(target),
   m_is_directed_right(is_directed_right),
-  m_is_vert(is_vert ? VERTICAL : REGULAR),
+  m_is_vert(is_vert),
+  m_is_computed(true),
   m_is_degen(is_degen)
 {}
 
@@ -1271,6 +1272,7 @@ Arr_segment_traits_2<Kernel>::_Segment_cached_2::operator=(const Segment_2& seg)
 
   m_l = kernel.construct_line_2_object()(seg);
   m_is_vert = kernel.is_vertical_2_object()(seg);
+  m_is_computed = true;
 
   return (*this);
 }
@@ -1282,11 +1284,12 @@ template <typename Kernel>
 const typename Kernel::Line_2&
 Arr_segment_traits_2<Kernel>::_Segment_cached_2::line() const
 {
-  if (m_is_vert == UNKNOWN)
+  if (!m_is_computed)
   {
     Kernel kernel;
     m_l = kernel.construct_line_2_object()(m_ps, m_pt);
-    m_is_vert = (kernel.is_vertical_2_object()(m_l) ? VERTICAL : REGULAR);
+    m_is_vert = kernel.is_vertical_2_object()(m_l);
+    m_is_computed = true;
   }
   return m_l;
 }
@@ -1296,10 +1299,10 @@ template <typename Kernel>
 bool Arr_segment_traits_2<Kernel>::_Segment_cached_2::is_vertical() const
 {
   // Force computation of line is orientation is still unknown
-  if (m_is_vert == UNKNOWN)
+  if (!m_is_computed)
     line();
   CGAL_precondition(!m_is_degen);
-  return (m_is_vert == VERTICAL);
+  return m_is_vert;
 }
 
 //! \brief determines whether the curve is degenerate.
