@@ -2879,16 +2879,8 @@ void
 Surface_mesh<P>::
 clear()
 {
+  clear_without_removing_property_maps();
   remove_all_property_maps();
-  vprops_.shrink_to_fit();
-  hprops_.shrink_to_fit();
-  eprops_.shrink_to_fit();
-  fprops_.shrink_to_fit();
-
-  removed_vertices_ = removed_edges_ = removed_faces_ = 0;
-  vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();
-  garbage_ = false;
-  anonymous_property_ = 0;
 }
 
 template <typename P>
@@ -2896,7 +2888,6 @@ void
 Surface_mesh<P>::
 clear_without_removing_property_maps()
 {
-
   vprops_.resize(0);
   hprops_.resize(0);
   eprops_.resize(0);
