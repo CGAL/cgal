@@ -88,6 +88,7 @@ cd $ROOT
     echo '#include "CGAL/remove_outliers.h"' >> main.cpp
     cd build
     mytime cmake -DCMAKE_INSTALL_PREFIX=../../install -DCGAL_BUILD_THREE_DOC=TRUE ..
+    exit 0
   fi
 
   if [ "$ARG" = "Installation" ]
