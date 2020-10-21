@@ -64,8 +64,6 @@ int main(int argc, char* argv[])
   Geom_traits_2::Construct_x_monotone_curve_2 x_mono_polyline_construct =
     traits.construct_x_monotone_curve_2_object();
 
-  auto ctr_x_curve = traits.construct_x_monotone_curve_2_object();
-
   std::array<Segment_2, 2> r2l
     = { Segment_2(Point_2(1, 0), Point_2(0, 1)),
         Segment_2(Point_2(0, 1), Point_2(-1, 0)) };
