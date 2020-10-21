@@ -84,16 +84,18 @@ public:
   void before_init() const
   {
     std::size_t idx = 0;
-    backup_inc.reserve (nb_vertices());
+    backup_inc.resize (nb_vertices());
     for (typename Arr1::Vertex_const_iterator vit = arr1.vertices_begin();
          vit != arr1.vertices_end(); ++vit, ++idx)
     {
+      CGAL_assertion (idx < backup_inc.size());
       backup_inc[idx] = vit->inc();
       vit->set_inc (reinterpret_cast<void*>(idx));
     }
     for (typename Arr2::Vertex_const_iterator vit = arr2.vertices_begin();
          vit != arr2.vertices_end(); ++vit, ++idx)
     {
+      CGAL_assertion (idx < backup_inc.size());
       backup_inc[idx] = vit->inc();
       vit->set_inc (reinterpret_cast<void*>(idx));
     }
@@ -105,10 +107,16 @@ public:
     std::size_t idx = 0;
     for (typename Arr1::Vertex_const_iterator vit = arr1.vertices_begin();
          vit != arr1.vertices_end(); ++vit, ++idx)
+    {
+      CGAL_assertion (idx < backup_inc.size());
       vit->set_inc (backup_inc[idx]);
+    }
     for (typename Arr2::Vertex_const_iterator vit = arr2.vertices_begin();
          vit != arr2.vertices_end(); ++vit, ++idx)
+    {
+      CGAL_assertion (idx < backup_inc.size());
       vit->set_inc (backup_inc[idx]);
+    }
   }
 
 private:
