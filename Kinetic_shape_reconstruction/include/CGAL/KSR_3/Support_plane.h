@@ -150,6 +150,10 @@ public:
   { return to_3d (dbg_point_2 (vertex_index, time)); }
 #endif
 
+  const Point_2& get_point(const Vertex_index& vertex_index) const {
+    return m_data->mesh.point(vertex_index);
+  }
+
   void set_point (const Vertex_index& vertex_index, const Point_2& point)
   {
     m_data->mesh.point(vertex_index) = point;
@@ -357,6 +361,9 @@ public:
 
   Edge_index edge (const Vertex_index& v0, const Vertex_index& v1)
   {
+    // std::cout << int(v0) << " : " << int(v1) << std::endl;
+    // std::cout << int(m_data->mesh.halfedge(v0, v1)) << std::endl;
+    // std::cout << int(m_data->mesh.halfedge(v1, v0)) << std::endl;
     return m_data->mesh.edge (m_data->mesh.halfedge (v0, v1));
   }
 

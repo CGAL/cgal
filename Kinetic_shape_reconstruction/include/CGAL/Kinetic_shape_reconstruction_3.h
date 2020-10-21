@@ -490,8 +490,8 @@ private:
         if (time < m_max_time - m_min_time) {
           m_queue.push (Event (true, pvertex, ivertex, m_min_time + time));
 
-          // std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
-          // std::cout << "ivertex: " << m_data.point_3(ivertex) << std::endl;
+          std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
+          std::cout << "ivertex: " << m_data.point_3(ivertex) << std::endl;
         }
       }
     }
@@ -559,9 +559,9 @@ private:
 
       ++ iter;
 
-      if (iter == 8) {
-        exit(0);
-      }
+      // if (iter == 7) {
+      //   exit(0);
+      // }
 
       apply(ev);
 
@@ -608,6 +608,7 @@ private:
             CGAL_assertion (next == pother);
 
           remove_events (pthird);
+          // TODO: Should we remove here any events related to the crossed iedges?
           compute_events_of_vertices (std::array<PVertex,1>{pthird});
         }
         else
@@ -650,6 +651,7 @@ private:
           if (m_data.k(pface) == 1) // Polygon stops
           {
             m_data.crop_polygon (pvertex, pother, iedge);
+            // remove_events(iedge); // TODO: Do we need that?
             compute_events_of_vertices (std::array<PVertex,2>{pvertex, pother});
           }
           else // Polygon continues beyond the edge
@@ -679,6 +681,7 @@ private:
         if (m_data.k(pface) == 1) // Polygon stops
         {
           PVertex pvnew = m_data.crop_polygon (pvertex, iedge);
+          // remove_events(iedge); // TODO: Do we need that?
           compute_events_of_vertices (std::array<PVertex,2>{pvertex, pvnew});
         }
         else // Polygon continues beyond the edge
@@ -700,17 +703,24 @@ private:
 
       std::cerr << "Found " << pvertices.size() << " pvertices ready to be merged" << std::endl;
 
-      // Remove associated events
-      for (const PVertex& pvertex : pvertices)
-        remove_events (pvertex);
+      // Remove associated events.
+      // for (const PVertex& pvertex : pvertices)
+      //   remove_events (pvertex);
+      for (std::size_t i = 1; i < pvertices.size() - 1; ++i)
+        remove_events (pvertices[i]);
 
-      // Merge them and get the newly created vertices
+      // Merge them and get the newly created vertices.
+      std::vector<IEdge> crossed;
       std::vector<PVertex> new_pvertices
-        = m_data.merge_pvertices_on_ivertex (pvertices, ev.ivertex());
+        = m_data.merge_pvertices_on_ivertex (pvertices, ev.ivertex(), crossed);
 
-      // And compute new events
+      // Remove all events of the crossed iedges.
+      for (const auto& iedge : crossed)
+        remove_events(iedge);
+
+      // And compute new events.
+      CGAL_assertion(new_pvertices.size() > 0);
       compute_events_of_vertices (new_pvertices);
-
     }
     else
     {
@@ -718,9 +728,15 @@ private:
     }
   }
 
-  void remove_events (const PVertex& pvertex)
-  {
+  void remove_events (const IEdge& iedge) {
+    m_queue.erase_vertex_events (iedge);
+    std::cout << "erasing events for iedge " << m_data.str(iedge) << std::endl;
+    std::cout << m_data.segment_3(iedge) << std::endl;
+  }
+
+  void remove_events (const PVertex& pvertex) {
     m_queue.erase_vertex_events (pvertex);
+    std::cout << "erasing events for pvertex " << m_data.str(pvertex) << " : " << m_data.point_3(pvertex) << std::endl;
   }
 
   template <typename PVertexRange>

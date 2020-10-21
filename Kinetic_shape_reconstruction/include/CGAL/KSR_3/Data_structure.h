@@ -912,7 +912,7 @@ public:
       {
         std::cerr << str(current) << " has iedge " << str(iedge)
                   << " from " << str(source(iedge)) << " to " << str(target(iedge)) << std::endl;
-        // std::cout << point_3(current) << std::endl;
+        std::cout << point_3(current) << std::endl;
 
       }
 
@@ -1105,8 +1105,7 @@ public:
     connect (pedge, iedge);
   }
 
-  std::pair<PVertex, PVertex> propagate_polygon
-  (const PVertex& pvertex, const PVertex& pother, const IEdge& iedge)
+  std::pair<PVertex, PVertex> propagate_polygon(const PVertex& pvertex, const PVertex& pother, const IEdge& iedge)
   {
     std::cout << "*** Propagating " << str(pvertex) << "/" << str(pother) << " along " << str(iedge) << std::endl;
 
@@ -1224,16 +1223,45 @@ public:
   }
 
   std::vector<PVertex> merge_pvertices_on_ivertex (std::vector<PVertex>& pvertices,
-                                                   const IVertex& ivertex)
+                                                   const IVertex& ivertex,
+                                                   std::vector<IEdge>& crossed)
   {
+    crossed.clear();
     KSR::size_t support_plane_idx = pvertices.front().first;
 
     PVertex prev = pvertices.front();
     PVertex next = pvertices.back();
 
-    // Copy front/back to remember position/direction
-    PVertex front (support_plane_idx, support_plane(support_plane_idx).duplicate_vertex(pvertices[1].second));
-    PVertex back (support_plane_idx,support_plane(support_plane_idx).duplicate_vertex(pvertices[pvertices.size() - 2].second));
+    // Copy front/back to remember position/direction.
+    PVertex front, back;
+    if (pvertices.size() < 3) {
+      CGAL_assertion_msg(false, "TODO: WHY DO WE HAVE LESS THAN 3 VERTICES HERE?");
+    } else if (pvertices.size() == 3) {
+      // BUG: In this case, the point that is duplicated twice is not always copied.
+      // To fix it, we copy the second point not from the original vertex but from the first
+      // copy of that vertex.
+
+      const auto& initial = pvertices[1];
+      front = PVertex(support_plane_idx, support_plane(support_plane_idx).duplicate_vertex(initial.second));
+      support_plane(support_plane_idx).set_point(
+        front.second, support_plane(support_plane_idx).get_point(initial.second));
+      back  = PVertex(support_plane_idx, support_plane(support_plane_idx).duplicate_vertex(front.second));
+      support_plane(support_plane_idx).set_point(
+        back.second, support_plane(support_plane_idx).get_point(front.second));
+
+    } else if (pvertices.size() == 4) {
+
+      const auto& initial = pvertices[1];
+      front = PVertex(support_plane_idx, support_plane(support_plane_idx).duplicate_vertex(initial.second));
+      support_plane(support_plane_idx).set_point(
+        front.second, support_plane(support_plane_idx).get_point(initial.second));
+      back  = PVertex(support_plane_idx, support_plane(support_plane_idx).duplicate_vertex(front.second));
+      support_plane(support_plane_idx).set_point(
+        back.second, support_plane(support_plane_idx).get_point(front.second));
+
+    } else if (pvertices.size() > 4) {
+      CGAL_assertion_msg(false, "TODO: WHY DO WE HAVE MORE THAN 4 VERTICES HERE?");
+    }
 
     auto pvertex_to_point =
       [&](const PVertex& a) -> Point_2
@@ -1252,6 +1280,7 @@ public:
 
     if (CGAL::orientation (pprev, point_2 (support_plane_idx, ivertex), pnext) == CGAL::LEFT_TURN)
     {
+      std::cout << "swapped!" << std::endl;
       std::swap (prev, next);
       std::swap (front, back);
     }
@@ -1331,7 +1360,7 @@ public:
 
     if (back_constrained && front_constrained) // Closing case
     {
-      // CGAL_assertion_msg (false, "TODO: closing");
+
     }
     else if (back_constrained) // Border case
     {
@@ -1358,7 +1387,7 @@ public:
 
       CGAL_assertion (first_idx != KSR::no_element());
 
-      std::vector<IEdge> crossed;
+      crossed.clear();
 
       KSR::size_t iedge_idx = first_idx;
       while (true)
@@ -1409,6 +1438,7 @@ public:
         else // create triangle face
         {
           PVertex propagated = add_pvertex (pvertex.first, future_points[i]);
+          std::cout << "propagated: " << point_3(propagated) << std::endl;
           direction(propagated) = future_directions[i];
           new_vertices.push_back (propagated);
 
@@ -1446,7 +1476,7 @@ public:
 
       CGAL_assertion (first_idx != KSR::no_element());
 
-      std::vector<IEdge> crossed;
+      crossed.clear();
 
       KSR::size_t iedge_idx = first_idx;
       while (true)
@@ -1531,7 +1561,7 @@ public:
         }
       }
 
-      std::vector<IEdge> crossed;
+      crossed.clear();
 
       KSR::size_t iedge_idx = first_idx;
       while (true)
@@ -1610,12 +1640,22 @@ public:
     std::cout << std::endl;
 
     // push also remaining vertex so that its events are recomputed
+    // std::cout << "pushing new pv: " << str(pvertex) << std::endl;
+    // std::cout << "pv direction: " << direction(pvertex) << std::endl;
     new_vertices.push_back (pvertex);
+    crossed.push_back(iedge(pvertex));
 
-    // if (has_iedge(prev) && !is_frozen(prev))
-      new_vertices.push_back (prev);
-    // if (has_iedge(next) && !is_frozen(next))
-      new_vertices.push_back (next);
+    // if (has_iedge(prev) && !is_frozen(prev)) {
+    // // if (iedge(prev) != iedge(pvertex)) {
+    //   std::cout << "pushing new prev: " << str(prev) << std::endl;
+    //   new_vertices.push_back (prev);
+    // }
+
+    // if (has_iedge(next) && !is_frozen(next)) {
+    // // if (back_constrained) {
+    //   std::cout << "pushing new next: " << str(next) << std::endl;
+    //   new_vertices.push_back (next);
+    // }
 
     return new_vertices;
   }
