@@ -17,6 +17,7 @@
 
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Random.h>
+#include <CGAL/boost/graph/helpers.h>
 
 namespace CGAL
 {
@@ -169,7 +170,7 @@ protected:
     };
   }
 
-  virtual void keyPressEvent(QKeyEvent *e)
+  void keyPressEvent(QKeyEvent *e) override
   {
     // Test key pressed:
     //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();

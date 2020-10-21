@@ -21,6 +21,7 @@
 #include <CGAL/IO/File_header_OFF.h>
 #include <iostream>
 #include <cstddef>
+#include <cstdint>
 
 namespace CGAL {
 
@@ -77,13 +78,13 @@ public:
     }
     void write_facet_begin( std::size_t no) {
         if ( m_header.binary())
-          I_Binary_write_big_endian_integer32( out(), static_cast<boost::int32_t>(no));
+          I_Binary_write_big_endian_integer32( out(), static_cast<std::int32_t>(no));
         else
             out() << no << ' ';
     }
     void write_facet_vertex_index( std::size_t index) {
         if ( m_header.binary())
-          I_Binary_write_big_endian_integer32( out(), static_cast<boost::int32_t>(index));
+          I_Binary_write_big_endian_integer32( out(), static_cast<std::int32_t>(index));
         else
             out() << ' ' << index;
     }

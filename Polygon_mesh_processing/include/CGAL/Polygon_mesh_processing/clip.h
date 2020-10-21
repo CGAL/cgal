@@ -33,7 +33,14 @@
 
 #include <boost/property_map/property_map.hpp>
 
+#include <array>
+#include <algorithm>
+#include <map>
+#include <set>
+#include <type_traits>
 #include <unordered_map>
+#include <utility>
+#include <vector>
 
 namespace CGAL{
 namespace Polygon_mesh_processing {
@@ -420,10 +427,9 @@ generic_clip_impl(
                                      NamedParameters1>::type Vpm;
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters2>::type Vpm2;
-  CGAL_USE_TYPE(Vpm2);
-  CGAL_assertion_code(
-    static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value); )
-  CGAL_static_assertion(same_vpm);
+
+  CGAL_static_assertion((std::is_same<typename boost::property_traits<Vpm>::value_type,
+                                      typename boost::property_traits<Vpm>::value_type>::value));
 
   Vpm vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
                               get_property_map(boost::vertex_point, tm1));
@@ -477,17 +483,17 @@ generic_clip_impl(
 
   // surface intersection algorithm call
   typedef Corefinement::Generic_clip_output_builder<TriangleMesh,
-                                                    Vpm,
+                                                    Vpm, Vpm2,
                                                     Algo_ecm1,
                                                     FaceIndexMap1,
                                                     Default> Ob;
 
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
-    TriangleMesh, Vpm, Ob, Ecm_in, User_visitor> Algo_visitor;
+    TriangleMesh, Vpm, Vpm2, Ob, Ecm_in, User_visitor> Algo_visitor;
   Ecm_in ecm_in(tm1,tm2,ecm1,ecm2);
   Ob ob(tm1, tm2, vpm1, vpm2, algo_ecm1, fid_map1, use_compact_clipper);
 
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, Vpm, Algo_visitor >
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, Vpm, Vpm2, Algo_visitor >
     functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm_in,&tm2));
   functor(CGAL::Emptyset_iterator(), false, true);
 }

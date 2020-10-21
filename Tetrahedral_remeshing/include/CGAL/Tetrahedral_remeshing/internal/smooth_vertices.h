@@ -543,7 +543,7 @@ public:
           const Vector_3 current_pos(CGAL::ORIGIN, point(v->point()));
 
           const std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices[v];
-          for (const Surface_patch_index si : v_surface_indices)
+          for (const Surface_patch_index& si : v_surface_indices)
           {
             //Check if the mls surface exists to avoid degenerated cases
 

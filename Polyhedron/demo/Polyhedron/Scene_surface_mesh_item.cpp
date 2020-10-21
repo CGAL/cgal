@@ -2406,6 +2406,8 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
 
    for(const auto& f_it : CGAL::faces_around_target( halfedge(vh, *face_graph()), *face_graph()))
    {
+     if (f_it == boost::graph_traits<SMesh>::null_face()) continue;
+
      EPICK::Vector_3 n = CGAL::Polygon_mesh_processing::compute_face_normal(f_it, *face_graph());
      cgal_gl_data new_n[3];
      for(int i=0; i<3; ++i)
