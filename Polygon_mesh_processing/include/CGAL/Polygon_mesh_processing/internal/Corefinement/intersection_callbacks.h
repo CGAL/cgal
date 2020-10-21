@@ -57,7 +57,7 @@ public:
     halfedge_descriptor fh = face_box.info();
     halfedge_descriptor eh = edge_box.info();
 
-    edge_to_faces[eh].insert(face(fh, tm_faces));
+    edge_to_faces[edge(eh,tm_edges)].insert(face(fh, tm_faces));
   }
 
   void operator()( const Box* face_box_ptr, const Box* edge_box_ptr) const

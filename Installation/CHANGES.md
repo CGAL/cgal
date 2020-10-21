@@ -1,7 +1,6 @@
 Release History
 ===============
 
-
 [Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
 
 Release date: December 2020
@@ -67,6 +66,11 @@ Release date: December 2020
 
 - New function `Label_set::is_valid_ground_truth()` to help users
   check if a ground truth matches a given label set
+
+### Surface Mesh
+
+-   Added the functions `set_recycle_garbage()` and `does_recycle_garbage()` to the class `Surface_mesh`.
+
 
 ### [dD Geometry Kernel](https://doc.cgal.org/5.2/Manual/packages.html#PkgKernelD)
 
