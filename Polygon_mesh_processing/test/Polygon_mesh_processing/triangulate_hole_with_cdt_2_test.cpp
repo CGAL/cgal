@@ -35,9 +35,7 @@ void detect_borders(
       Halfedge_around_facet_circulator done(hf_around_facet);
 
       do {
-        const bool is_insertion_ok =
-          border_map.insert(*hf_around_facet).second;
-        assert(is_insertion_ok);
+        assert(border_map.insert(*hf_around_facet).second); // is insertion ok?
       } while (++hf_around_facet != done);
     }
   }
@@ -83,7 +81,7 @@ void test_triangulate_hole_with_cdt_2(
 
   // Triangulating the holes.
   std::vector<Face_handle> patch_faces;
-  for (const Halfedge_handle h : borders) {
+  for (const Halfedge_handle& h : borders) {
     patch_faces.clear();
     CGAL::Polygon_mesh_processing::triangulate_hole(
       pmesh,
