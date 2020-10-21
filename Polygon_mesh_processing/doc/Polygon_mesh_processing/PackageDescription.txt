@@ -125,6 +125,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::degenerate_faces()`
 - `CGAL::Polygon_mesh_processing::is_needle_triangle_face()`
 - `CGAL::Polygon_mesh_processing::is_cap_triangle_face()`
+- `CGAL::Envelope`
 
 \cgalCRPSection{Location Functions}
 - \link PMP_locate_grp Point Location \endlink
@@ -215,7 +216,6 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 \cgalCRPSection{Miscellaneous}
 - `CGAL::Polygon_mesh_slicer`
 - `CGAL::Side_of_triangle_mesh`
-- `CGAL::Envelope`
 - `CGAL::Polygon_mesh_processing::bbox()`
 - `CGAL::Polygon_mesh_processing::vertex_bbox()`
 - `CGAL::Polygon_mesh_processing::edge_bbox()`

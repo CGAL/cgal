@@ -1,4 +1,3 @@
-// Copyright (c) 2019 Bolun Wang, Teseo Schneider, Yixin Hu, Marco Attene, and Daniele Panozzo
 // Copyright (c) 2020 GeometryFactory (France).
 // All rights reserved.
 //
@@ -9,12 +8,32 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Andreas Fabri
-
-// This work is derived work from
 //
-// https://github.com/wangbolun300/fast-envelope  avaiable on 7th of October 2020
+// This file incorporates work covered by the following copyright and permission notice:
 //
-// and the original work is distributed under the MIT License
+//     MIT License
+//
+//     Copyright (c) 2019 Bolun Wang, Teseo Schneider, Yixin Hu, Marco Attene, and Daniele Panozzo
+//
+//     Permission is hereby granted, free of charge, to any person obtaining a copy
+//     of this software and associated documentation files (the "Software"), to deal
+//     in the Software without restriction, including without limitation the rights
+//     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//     copies of the Software, and to permit persons to whom the Software is
+//     furnished to do so, subject to the following conditions:
+//
+//     The above copyright notice and this permission notice shall be included in all
+//     copies or substantial portions of the Software.
+//
+//     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//     SOFTWARE.
+//
+//
 //
 // @article{Wang:2020:FE,
 //    title={Exact and Efficient Polyhedral Envelope Containment Check},
@@ -26,6 +45,9 @@
 //     year = {2020},
 //     publisher = {ACM}
 // }
+//
+// The code below uses the version of
+// https://github.com/wangbolun300/fast-envelope  avaiable on 7th of October 2020
 //
 // The code below only use the high level algorithms of checking that a query
 // is covered by a set of prisms, where each prism is an offset for an input triangle.
