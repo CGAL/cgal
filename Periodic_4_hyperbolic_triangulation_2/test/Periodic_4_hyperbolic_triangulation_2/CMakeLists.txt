@@ -10,14 +10,18 @@ if ( CGAL_FOUND AND (CGAL_Core_FOUND OR LEDA_FOUND) )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  create_single_source_cgal_program( "test_p4ht2_construct_point_2.cpp" )
-  create_single_source_cgal_program( "test_p4ht2_exact_complex_numbers.cpp" )
-  create_single_source_cgal_program( "test_p4ht2_intersections.cpp" )
-  create_single_source_cgal_program( "test_p4ht2_locate.cpp" )
-  create_single_source_cgal_program( "test_p4ht2_matrix.cpp" )
-  create_single_source_cgal_program( "test_p4ht2_removal_iterator.cpp" )
-  create_single_source_cgal_program( "test_p4ht2_removal.cpp" )
-  create_single_source_cgal_program( "test_p4ht2_insert_degenerate.cpp" )
+  foreach(cppfile
+    "test_p4ht2_construct_point_2"
+    "test_p4ht2_exact_complex_numbers"
+    "test_p4ht2_intersections"
+    "test_p4ht2_locate"
+    "test_p4ht2_matrix"
+    "test_p4ht2_removal_iterator"
+    "test_p4ht2_removal"
+    "test_p4ht2_insert_degenerate")
+      create_single_source_cgal_program(${cppfile}.cpp)
+      target_link_libraries(${cppfile} PRIVATE CGAL::CGAL_Core)
+  endforeach()
 
 else()
 

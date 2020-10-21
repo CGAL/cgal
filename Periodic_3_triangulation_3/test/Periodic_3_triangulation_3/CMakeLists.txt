@@ -12,22 +12,25 @@ if ( CGAL_FOUND )
 
   include(${CGAL_USE_FILE})
   include_directories (BEFORE "include")
-
-  create_single_source_cgal_program( "test_p3rt3_as_p3t3.cpp" )
-  create_single_source_cgal_program( "test_p3rt3_insert_remove_point_set.cpp" )
-  create_single_source_cgal_program( "test_p3rt3_versus_rt3.cpp" )
-  create_single_source_cgal_program( "test_periodic_3_alpha_shape_3.cpp" )
-  create_single_source_cgal_program( "test_periodic_3_delaunay_3.cpp" )
-  create_single_source_cgal_program( "test_periodic_3_delaunay_hierarchy_3.cpp" )
-  create_single_source_cgal_program( "test_periodic_3_offset_3.cpp" )
-  create_single_source_cgal_program( "test_periodic_3_regular_triangulation_3.cpp" )
-  create_single_source_cgal_program( "test_periodic_3_regular_triangulation_traits_3.cpp" )
-  create_single_source_cgal_program( "test_periodic_3_triangulation_3.cpp" )
-  create_single_source_cgal_program( "test_periodic_3_triangulation_tds.cpp" )
-  create_single_source_cgal_program( "test_periodic_3_triangulation_traits_C_3.cpp" )
-  create_single_source_cgal_program( "test_periodic_3_triangulation_traits_H_3.cpp" )
-  create_single_source_cgal_program( "test_periodic_3_triangulation_traits_SC_3.cpp" )
-  create_single_source_cgal_program( "test_periodic_3_triangulation_traits_SH_3.cpp" )
+  foreach(cppfile
+    "test_p3rt3_as_p3t3"
+    "test_p3rt3_insert_remove_point_set"
+    "test_p3rt3_versus_rt3"
+    "test_periodic_3_alpha_shape_3"
+    "test_periodic_3_delaunay_3"
+    "test_periodic_3_delaunay_hierarchy_3"
+    "test_periodic_3_offset_3"
+    "test_periodic_3_regular_triangulation_3"
+    "test_periodic_3_regular_triangulation_traits_3"
+    "test_periodic_3_triangulation_3"
+    "test_periodic_3_triangulation_tds"
+    "test_periodic_3_triangulation_traits_C_3"
+    "test_periodic_3_triangulation_traits_H_3"
+    "test_periodic_3_triangulation_traits_SC_3"
+    "test_periodic_3_triangulation_traits_SH_3")
+      create_single_source_cgal_program(${cppfile}.cpp)
+      target_link_libraries(${cppfile} PRIVATE CGAL::CGAL_Core)
+  endforeach()
 
 else()
 

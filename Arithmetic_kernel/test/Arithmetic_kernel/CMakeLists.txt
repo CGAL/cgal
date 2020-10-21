@@ -46,6 +46,7 @@ if ( CGAL_FOUND AND GMP_FOUND )
   create_single_source_cgal_program( "Arithmetic_kernel.cpp" )
   create_single_source_cgal_program( "LEDA_arithmetic_kernel.cpp" )
   create_single_source_cgal_program( "CORE_arithmetic_kernel.cpp" )
+  target_link_libraries(CORE_arithmetic_kernel PRIVATE CGAL::CGAL_Core)
   create_single_source_cgal_program( "Get_arithmetic_kernel.cpp" )
 
 else()

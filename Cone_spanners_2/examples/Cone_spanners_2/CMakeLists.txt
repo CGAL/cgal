@@ -18,6 +18,7 @@ if ( CGAL_Core_FOUND OR LEDA_FOUND )
   file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
   foreach(cppfile ${cppfiles})
     create_single_source_cgal_program( "${cppfile}" )
+    target_link_libraries(${cppfile} PRIVATE CGAL::CGAL_Core)
   endforeach()
 
 else()

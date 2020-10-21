@@ -19,53 +19,74 @@ if(CGAL_FOUND)
 
     create_single_source_cgal_program(
       "test_region_growing_basic.cpp")
+    target_link_libraries(test_region_growing_basic PRIVATE CGAL::CGAL_Core)
     create_single_source_cgal_program(
       "test_region_growing_on_cube.cpp")
+    target_link_libraries(test_region_growing_on_cube PRIVATE CGAL::CGAL_Core)
     create_single_source_cgal_program(
       "test_region_growing_on_point_set_2.cpp")
+    target_link_libraries(test_region_growing_on_point_set_2 PRIVATE CGAL::CGAL_Core)
     create_single_source_cgal_program(
       "test_region_growing_on_point_set_3.cpp")
+    target_link_libraries(test_region_growing_on_point_set_3 PRIVATE CGAL::CGAL_Core)
     create_single_source_cgal_program(
       "test_region_growing_on_polygon_mesh.cpp")
+    target_link_libraries(test_region_growing_on_polygon_mesh PRIVATE CGAL::CGAL_Core)
     create_single_source_cgal_program(
       "test_region_growing_on_point_set_2_with_sorting.cpp")
+    target_link_libraries(test_region_growing_on_point_set_2_with_sorting PRIVATE CGAL::CGAL_Core)
     create_single_source_cgal_program(
       "test_region_growing_on_point_set_3_with_sorting.cpp")
+    target_link_libraries(test_region_growing_on_point_set_3_with_sorting PRIVATE CGAL::CGAL_Core)
     create_single_source_cgal_program(
       "test_region_growing_on_polygon_mesh_with_sorting.cpp")
+    target_link_libraries(test_region_growing_on_polygon_mesh_with_sorting PRIVATE CGAL::CGAL_Core)
     create_single_source_cgal_program(
       "test_region_growing_on_degenerated_mesh.cpp")
+    target_link_libraries(test_region_growing_on_degenerated_mesh PRIVATE CGAL::CGAL_Core)
   endif()
 
   create_single_source_cgal_program(
     "test_efficient_RANSAC_cone_connected_component.cpp")
+  target_link_libraries(test_efficient_RANSAC_cone_connected_component PRIVATE CGAL::CGAL_Core)
   create_single_source_cgal_program(
     "test_efficient_RANSAC_cone_parameters.cpp")
+  target_link_libraries(test_efficient_RANSAC_cone_parameters PRIVATE CGAL::CGAL_Core)
 
   create_single_source_cgal_program(
     "test_efficient_RANSAC_cylinder_connected_component.cpp")
+  target_link_libraries(test_efficient_RANSAC_cylinder_connected_component PRIVATE CGAL::CGAL_Core)
   create_single_source_cgal_program(
     "test_efficient_RANSAC_cylinder_parameters.cpp")
+  target_link_libraries(test_efficient_RANSAC_cylinder_parameters PRIVATE CGAL::CGAL_Core)
 
   create_single_source_cgal_program(
     "test_efficient_RANSAC_plane_connected_component.cpp")
+  target_link_libraries(test_efficient_RANSAC_plane_connected_component PRIVATE CGAL::CGAL_Core)
   create_single_source_cgal_program(
     "test_efficient_RANSAC_plane_parameters.cpp")
+  target_link_libraries(test_efficient_RANSAC_plane_parameters PRIVATE CGAL::CGAL_Core)
 
   create_single_source_cgal_program(
     "test_efficient_RANSAC_sphere_connected_component.cpp")
+  target_link_libraries(test_efficient_RANSAC_sphere_connected_component PRIVATE CGAL::CGAL_Core)
   create_single_source_cgal_program(
     "test_efficient_RANSAC_sphere_parameters.cpp")
+  target_link_libraries(test_efficient_RANSAC_sphere_parameters PRIVATE CGAL::CGAL_Core)
 
   create_single_source_cgal_program(
     "test_efficient_RANSAC_torus_connected_component.cpp")
+  target_link_libraries(test_efficient_RANSAC_torus_connected_component PRIVATE CGAL::CGAL_Core)
   create_single_source_cgal_program(
     "test_efficient_RANSAC_torus_parameters.cpp")
+  target_link_libraries(test_efficient_RANSAC_torus_parameters PRIVATE CGAL::CGAL_Core)
 
   create_single_source_cgal_program(
     "test_efficient_RANSAC_scene.cpp")
+  target_link_libraries(test_efficient_RANSAC_scene PRIVATE CGAL::CGAL_Core)
   create_single_source_cgal_program(
     "test_efficient_RANSAC_regularization.cpp")
+  target_link_libraries(test_efficient_RANSAC_regularization PRIVATE CGAL::CGAL_Core)
 
 else()
   message(WARNING

@@ -21,11 +21,18 @@ include_directories (BEFORE ../../../Kernel_23/test/Kernel_23/include)
 include_directories (BEFORE ../Kernel_23/include)
 
 create_single_source_cgal_program( "test_Spherical_kernel.cpp" )
+target_link_libraries(test_Spherical_kernelPRIVATE CGAL::CGAL_Core)
 create_single_source_cgal_program( "test_Spherical_kernel_basics.cpp" )
+target_link_libraries(test_Spherical_kernel_basics PRIVATE CGAL::CGAL_Core)
 create_single_source_cgal_program( "test_Exact_spherical_kernel.cpp" )
+target_link_libraries(test_Exact_spherical_kernel PRIVATE CGAL::CGAL_Core)
 create_single_source_cgal_program( "test_Lazy_Spherical_kernel.cpp" )
+target_link_libraries(test_Lazy_Spherical_kernelPRIVATE CGAL::CGAL_Core)
 create_single_source_cgal_program( "test_Lazy_spherical_kernel_basics.cpp" )
+target_link_libraries(test_Lazy_spherical_kernel_basics PRIVATE CGAL::CGAL_Core)
 create_single_source_cgal_program( "test_Spherical_kernel_with_core.cpp" )
+target_link_libraries(test_Spherical_kernel_with_core PRIVATE CGAL::CGAL_Core)
+
 
 else()
 

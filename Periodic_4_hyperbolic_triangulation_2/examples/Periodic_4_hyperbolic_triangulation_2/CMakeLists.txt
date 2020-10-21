@@ -11,6 +11,7 @@ if ( CGAL_FOUND AND (CGAL_Core_FOUND OR LEDA_FOUND) )
   include( CGAL_CreateSingleSourceCGALProgram )
 
   create_single_source_cgal_program( "p4ht2_example_insertion.cpp" )
+  target_link_libraries(p4ht2_example_insertion PRIVATE CGAL::CGAL_Core)
 
 else()
 

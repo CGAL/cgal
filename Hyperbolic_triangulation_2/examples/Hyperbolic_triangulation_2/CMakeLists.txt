@@ -15,7 +15,9 @@ if ( CGAL_FOUND )
           include( CGAL_CreateSingleSourceCGALProgram )
 
           create_single_source_cgal_program( "ht2_example.cpp" )
+          target_link_libraries(ht2_example PRIVATE CGAL::CGAL_Core)
           create_single_source_cgal_program( "ht2_example_color.cpp" )
+          target_link_libraries(ht2_example_color PRIVATE CGAL::CGAL_Core)
 
 else()
 
