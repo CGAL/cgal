@@ -20,6 +20,7 @@
 #include <list>
 #include <CGAL/Boolean_set_operations_2/Gps_traits_adaptor.h>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/Object.h>
 
 #include <boost/function_output_iterator.hpp>
 
