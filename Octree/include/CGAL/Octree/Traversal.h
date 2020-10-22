@@ -16,15 +16,12 @@
 
 #include <iostream>
 #include <boost/range/iterator_range.hpp>
-#include "Node.h"
 #include "Traversal_iterator.h"
 
 namespace CGAL {
 
-namespace Octree {
-
-template<class Point_index, class Dimension>
-const Node <Point_index, Dimension> *next_sibling(const Node <Point_index, Dimension> *n) {
+template <typename Node>
+const Node* next_sibling(const Node* n) {
 
   // Passing null returns the first node
   if (nullptr == n)
@@ -37,7 +34,7 @@ const Node <Point_index, Dimension> *next_sibling(const Node <Point_index, Dimen
   // Find out which child this is
   std::size_t index = n->index().to_ulong();
 
-  constexpr static int degree = (2 << (Dimension::value-1));
+  constexpr static int degree = Node::Degree::value;
   // Return null if this is the last child
   if (index == degree - 1)
     return nullptr;
@@ -46,8 +43,8 @@ const Node <Point_index, Dimension> *next_sibling(const Node <Point_index, Dimen
   return &((*n->parent())[index + 1]);
 }
 
-template<class Point_index, class Dimension>
-const Node <Point_index, Dimension> *next_sibling_up(const Node <Point_index, Dimension> *n) {
+template <typename Node>
+const Node* next_sibling_up(const Node* n) {
 
   if (!n)
     return nullptr;
@@ -65,8 +62,8 @@ const Node <Point_index, Dimension> *next_sibling_up(const Node <Point_index, Di
   return nullptr;
 }
 
-template<class Point_index, class Dimension>
-const Node <Point_index, Dimension> *deepest_first_child(const Node <Point_index, Dimension> *n) {
+template <typename Node>
+const Node* deepest_first_child(const Node* n) {
 
   if (!n)
     return nullptr;
@@ -92,8 +89,8 @@ struct Preorder {
    * \param root
    * \return
    */
-  template<class Point_index, class Dimension>
-  const Node <Point_index, Dimension> *first(const Node <Point_index, Dimension> *root) const {
+  template <typename Node>
+  const Node* first(const Node* root) const {
     return root;
   }
 
@@ -104,8 +101,8 @@ struct Preorder {
    * \param n
    * \return
    */
-  template<class Point_index, class Dimension>
-  const Node <Point_index, Dimension> *next(const Node <Point_index, Dimension> *n) const {
+  template <typename Node>
+  const Node* next(const Node* n) const {
 
     if (n->is_leaf()) {
 
@@ -139,8 +136,8 @@ struct Postorder {
    * \param root
    * \return
    */
-  template<class Point_index, class Dimension>
-  const Node <Point_index, Dimension> *first(const Node <Point_index, Dimension> *root) const {
+  template <typename Node>
+  const Node* first(const Node* root) const {
 
     return deepest_first_child(root);
   }
@@ -152,8 +149,8 @@ struct Postorder {
    * \param n
    * \return
    */
-  template<class Point_index, class Dimension>
-  const Node <Point_index, Dimension> *next(const Node <Point_index, Dimension> *n) const {
+  template <typename Node>
+  const Node* next(const Node* n) const {
 
     auto next = deepest_first_child(next_sibling(n));
 
@@ -176,8 +173,8 @@ struct Leaves {
    * \param root
    * \return
    */
-  template<class Point_index, class Dimension>
-  const Node <Point_index, Dimension> *first(const Node <Point_index, Dimension> *root) const {
+  template <typename Node>
+  const Node* first(const Node* root) const {
 
     return deepest_first_child(root);
   }
@@ -189,8 +186,8 @@ struct Leaves {
    * \param n
    * \return
    */
-  template<class Point_index, class Dimension>
-  const Node <Point_index, Dimension> *next(const Node <Point_index, Dimension> *n) const {
+  template <typename Node>
+  const Node* next(const Node* n) const {
 
     auto next = deepest_first_child(next_sibling(n));
 
@@ -200,8 +197,6 @@ struct Leaves {
     return next;
   }
 };
-
-}
 
 }
 

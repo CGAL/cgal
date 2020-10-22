@@ -3,7 +3,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Octree.h>
-#include <CGAL/Octree/IO.h>
+#include <CGAL/Octree_traits_2.h>
 #include <CGAL/Random.h>
 
 // Type Declarations
@@ -11,9 +11,10 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_2 Point_2;
 typedef std::vector<Point_2> Point_vector;
 
-typedef CGAL::Octree::Octree<Point_vector> Quadtree;
+typedef CGAL::Octree_traits_2<Kernel> Traits;
+typedef CGAL::Octree<Traits, Point_vector> Quadtree;
 
-int main(int argc, char **argv)
+int main()
 {
   CGAL::Random r;
 
@@ -23,9 +24,28 @@ int main(int argc, char **argv)
                            r.get_double(-1., 1.));
 
   Quadtree quadtree(points_2d);
-  quadtree.refine(10, 1);
-  std::cerr << "Quadtree = " << std::endl
-            << quadtree << std::endl;
+  quadtree.refine(10, 5);
+
+
+  std::ofstream opoints ("points.xyz");
+  opoints.precision(18);
+  for (const auto& p : points_2d)
+    opoints << p << " 0" << std::endl;
+
+
+  {
+    std::ofstream ofile ("quadtree.polylines.txt");
+    ofile.precision(18);
+    quadtree.dump_to_polylines(ofile);
+  }
+
+  quadtree.grade();
+
+  {
+    std::ofstream ofile ("quadtree_graded.polylines.txt");
+    ofile.precision(18);
+    quadtree.dump_to_polylines(ofile);
+  }
 
   return EXIT_SUCCESS;
 }

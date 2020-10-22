@@ -3,7 +3,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Octree.h>
-#include <CGAL/Octree/IO.h>
+#include <CGAL/Octree_traits_3.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 
@@ -12,7 +12,9 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 typedef CGAL::Point_set_3<Point> Point_set;
 typedef Point_set::Point_map Point_map;
-typedef CGAL::Octree::Octree<Point_set, Point_map> Octree;
+
+typedef CGAL::Octree_traits_3<Kernel> Traits;
+typedef CGAL::Octree<Traits, Point_set, Point_map> Octree;
 
 int main(int argc, char **argv) {
 
@@ -33,10 +35,14 @@ int main(int argc, char **argv) {
   Octree octree(points, points.point_map());
 
   // Build the octree with a small bucket size, using a more verbose method
-  octree.refine(CGAL::Octree::Split_criterion::Max_depth_or_bucket_size(10, 2));
+  octree.refine(CGAL::Split_criterion::Max_depth_or_bucket_size(5, 10));
 
   // Print out the tree
   std::cout << octree;
+
+  std::ofstream out("octree.polylines.txt");
+  out.precision(18);
+  octree.dump_to_polylines (out);
 
   return EXIT_SUCCESS;
 }

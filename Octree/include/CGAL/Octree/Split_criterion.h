@@ -18,8 +18,6 @@
 
 namespace CGAL {
 
-namespace Octree {
-
 namespace Split_criterion {
 
 /*!
@@ -71,7 +69,6 @@ struct Max_depth_or_bucket_size {
   }
 };
 
-}
 }
 }
 

@@ -17,9 +17,6 @@
 #include <boost/function.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 
-#include <CGAL/Octree/Node.h>
-#include "Node.h"
-
 namespace CGAL {
 
 /*!

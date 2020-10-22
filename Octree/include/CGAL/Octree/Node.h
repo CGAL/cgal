@@ -14,6 +14,8 @@
 
 #include <CGAL/license/Octree.h>
 
+#include <CGAL/Octree/IO.h>
+
 #include <boost/range/iterator_range.hpp>
 
 #include <array>
@@ -23,7 +25,6 @@
 #include <iostream>
 
 namespace CGAL {
-namespace Octree {
 
 /*!
  * \ingroup PkgOctreeClasses
@@ -34,13 +35,16 @@ namespace Octree {
  *
  * \tparam Point_index is the datatype the node will contain
  */
-template<typename Point_index, typename Dimension>
-class Node {
-
-  constexpr static int dim = Dimension::value;
-  constexpr static int degree = (2 << (dim-1));
+template<class Traits, class PointRange, class PointMap>
+class Octree<Traits, PointRange, PointMap>::Node {
 
 public:
+
+  /// \cond SKIP_IN_MANUAL
+  typedef Octree<Traits, PointRange, PointMap> Parent;
+  typedef typename Parent::Dimension Dimension;
+  typedef typename Parent::Degree Degree;
+  /// \endcond
 
   /// \name Types
   /// @{
@@ -48,12 +52,12 @@ public:
   /*!
    * \brief self typedef for convenience
    */
-  typedef Node<Point_index, Dimension> Self;
+  typedef Octree<Traits, PointRange, PointMap>::Node Self;
 
   /*!
    * \brief array for containing the child nodes of this node
    */
-  typedef std::array<Self, degree> Children;
+  typedef std::array<Self, Degree::value> Children;
 
   /*!
    * \brief set of bits representing this node's relationship to its parent
@@ -64,7 +68,7 @@ public:
    * and index[2] is whether z is greater.
    * Used to represent a node's relationship to the center of its parent.
    */
-  typedef std::bitset<dim> Index;
+  typedef std::bitset<Dimension::value> Index;
 
   /*!
    * \brief coordinate location representing this node's relationship with the rest of the tree
@@ -73,12 +77,12 @@ public:
    * and adding the Index.
    * \todo Maybe I should add an example?
    */
-  typedef std::array<uint32_t, dim> Int_location;
+  typedef std::array<uint32_t, Dimension::value> Int_location;
 
   /*!
    * \brief a collection of point indices represented by begin and end iterators
    */
-  typedef boost::iterator_range<Point_index> Point_range;
+  typedef boost::iterator_range<typename PointRange::iterator> Point_range;
 
   // TODO: Should I use enum classes?
 
@@ -207,12 +211,12 @@ public:
 
       m_depth = parent->m_depth + 1;
 
-      for (int i = 0; i < dim; i++)
+      for (int i = 0; i < Dimension::value; i++)
         m_location[i] = (2 * parent->m_location[i]) + index[i];
 
     }
     else
-      for (int i = 0; i < dim; i++)
+      for (int i = 0; i < Dimension::value; i++)
         m_location[i] = 0;
   }
 
@@ -235,7 +239,7 @@ public:
     assert(is_leaf());
 
     m_children = std::make_unique<Children>();
-    for (int index = 0; index < degree; index++) {
+    for (int index = 0; index < Degree::value; index++) {
 
       (*m_children)[index] = std::move(Self(this, {Index(index)}));
     }
@@ -274,7 +278,7 @@ public:
   Self &operator[](int index) {
 
     assert(!is_leaf());
-    assert(0 <= index && index < degree);
+    assert(0 <= index && index < Degree::value);
 
     return (*m_children)[index];
   }
@@ -288,7 +292,7 @@ public:
   const Self &operator[](int index) const {
 
     assert(!is_leaf());
-    assert(0 <= index && index < degree);
+    assert(0 <= index && index < Degree::value);
 
     return (*m_children)[index];
   }
@@ -340,7 +344,7 @@ public:
 
     Index result;
 
-    for (std::size_t i = 0; i < dim; ++ i)
+    for (std::size_t i = 0; i < Dimension::value; ++ i)
       result[i] = location()[i] & 1;
 
     return result;
@@ -404,7 +408,7 @@ public:
    * \param direction which way to find the adjacent node relative to this one
    * \return a pointer to the adjacent node if it exists
    */
-  const Self *adjacent_node(std::bitset<dim> direction) const {
+  const Self *adjacent_node(std::bitset<Dimension::value> direction) const {
 
     // Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
     // direction:    000    001   010   011   100   101
@@ -455,13 +459,13 @@ public:
    * \brief equivalent to adjacent_node, with a Direction rather than a bitset
    */
   const Self *adjacent_node(Direction direction) const {
-    return adjacent_node(std::bitset<dim>(static_cast<int>(direction)));
+    return adjacent_node(std::bitset<Dimension::value>(static_cast<int>(direction)));
   }
 
   /*!
    * \brief equivalent to adjacent_node, except non-const
    */
-  Self *adjacent_node(std::bitset<dim> direction) {
+  Self *adjacent_node(std::bitset<Dimension::value> direction) {
     return const_cast<Self *>(const_cast<const Self *>(this)->adjacent_node(direction));
   }
 
@@ -469,7 +473,7 @@ public:
    * \brief equivalent to adjacent_node, with a Direction rather than a bitset and non-const
    */
   Self *adjacent_node(Direction direction) {
-    return adjacent_node(std::bitset<dim>(static_cast<int>(direction)));
+    return adjacent_node(std::bitset<Dimension::value>(static_cast<int>(direction)));
   }
 
   /// @}
@@ -556,7 +560,7 @@ public:
     if (!is_leaf()) {
 
       // Check all the children
-      for (int i = 0; i < degree; ++i) {
+      for (int i = 0; i < Degree::value; ++i) {
 
         // If any child cell is different, they're not the same
         if ((*m_children)[i] != rhs[i])
@@ -581,9 +585,15 @@ public:
   }
 
   /// @}
+
+  /// \cond SKIP_IN_MANUAL
+  friend std::ostream& operator<< (std::ostream& os, const Self& node)
+  {
+    return internal::print_octree_node(os, node);
+  }
+  /// \endcond
 };
 
-}
 }
 
 #endif //CGAL_OCTREE_NODE_H

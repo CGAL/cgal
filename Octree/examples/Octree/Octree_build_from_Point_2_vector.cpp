@@ -3,15 +3,13 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Octree.h>
-#include <CGAL/Octree_traits_3.h>
+#include <CGAL/Octree/IO.h>
 
 // Type Declarations
 typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::Point_3 Point;
+typedef Kernel::Point_2 Point;
 typedef std::vector<Point> Point_vector;
-
-typedef CGAL::Octree_traits_3<Kernel> Traits;
-typedef CGAL::Octree<Traits, Point_vector> Octree;
+typedef CGAL::Octree::Octree<Point_vector> Octree;
 
 int main(int argc, char **argv) {
 
@@ -31,6 +29,9 @@ int main(int argc, char **argv) {
 
   // Build the octree
   octree.refine(10, 20);
+
+  std::cout << (2 << (3-1)) << std::endl;
+  std::cout << (2 << (2-1)) << std::endl;
 
   // Print out the tree
   std::cout << octree;

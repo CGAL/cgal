@@ -3,7 +3,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Octree.h>
-#include <CGAL/Octree/IO.h>
+#include <CGAL/Octree_traits_3.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 
@@ -13,7 +13,9 @@ typedef Kernel::Point_3 Point;
 typedef Kernel::FT FT;
 typedef CGAL::Point_set_3<Point> Point_set;
 typedef Point_set::Point_map Point_map;
-typedef CGAL::Octree::Octree<Point_set, Point_map> Octree;
+
+typedef CGAL::Octree_traits_3<Kernel> Traits;
+typedef CGAL::Octree<Traits, Point_set, Point_map> Octree;
 
 // Split Criterion
 // The criterion is a functor which returns a boolean value, whether a node needs to be split or not

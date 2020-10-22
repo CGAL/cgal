@@ -14,7 +14,6 @@
 
 #include <CGAL/license/Octree.h>
 
-#include <CGAL/Octree/Node.h>
 #include <CGAL/Octree/Split_criterion.h>
 #include <CGAL/Octree/Traversal.h>
 #include <CGAL/Octree/Traversal_iterator.h>
@@ -44,8 +43,6 @@ using namespace std::placeholders;
 
 namespace CGAL {
 
-namespace Octree {
-
 /*!
  * \ingroup PkgOctreeClasses
  *
@@ -57,10 +54,13 @@ namespace Octree {
  * and it may contain eight other nodes which further subdivide the region.
  *
  * \tparam Point_range is a range type that provides random access iterators over the indices of a set of points.
- * \tparam Point_map is a type that maps items in the range to Point data
+ * \tparam PointMap is a type that maps items in the range to Point data
  */
-template<class Point_range, class Point_map = Identity_property_map<typename Point_range::iterator::value_type>>
-class Octree {
+template<typename Traits, typename PointRange, typename
+         PointMap = Identity_property_map
+         <typename std::iterator_traits<typename PointRange::iterator>::value_type> >
+class Octree
+{
 
 public:
 
@@ -70,29 +70,25 @@ public:
   /*!
    * \brief self typedef for convenience
    */
-  typedef Octree<Point_range, Point_map> Self;
+  typedef Octree<Traits, PointRange, PointMap> Self;
 
   /*!
-   * \brief The point type is deduced from the type of the property map used
+   * \brief The point type is given by the traits
    */
-  typedef typename boost::property_traits<Point_map>::value_type Point;
+  typedef typename Traits::Point_d Point;
+
+  typedef typename Traits::Dimension Dimension;
+  typedef Dimension_tag<(2 << (Dimension::value-1))> Degree;
 
   /*!
-   * \brief The Kernel used is deduced from the point type
+   * \brief The floating point type is given by the traits
    */
-  typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
-
-  typedef typename Ambient_dimension<Point, Kernel>::type Dimension;
-
-  /*!
-   * \brief The floating point type is decided by the Kernel
-   */
-  typedef typename Kernel::FT FT;
+  typedef typename Traits::FT FT;
 
   /*!
    * \brief The Sub-tree / Octant type
    */
-  typedef CGAL::Octree::Node<typename Point_range::iterator, Dimension> Node;
+  class Node;
 
   /*!
    * \brief A function that determines whether a node needs to be split when refining a tree
@@ -113,35 +109,28 @@ public:
 
 private: // Private types
 
-  typedef typename Kernel::Point_2 Point_2;
-  typedef typename Kernel::Point_3 Point_3;
-  typedef typename Kernel::Vector_2 Vector_2;
-  typedef typename Kernel::Vector_3 Vector_3;
-  typedef typename Kernel::Iso_rectangle_2 Iso_rectangle_2;
-  typedef typename Kernel::Iso_cuboid_3 Iso_cuboid_3;
-  typedef typename Kernel::Circle_2 Circle_2;
-  typedef typename Kernel::Sphere_3 Sphere_3;
-  typedef Aff_transformation_2<Kernel> Aff_transform_2;
-  typedef Aff_transformation_3<Kernel> Aff_transform_3;
+  typedef typename Traits::Bbox_d Bbox;
+  typedef typename Traits::Vector_d Vector;
+  typedef typename Traits::Iso_box_d Iso_box;
+  typedef typename Traits::Sphere_d Sphere;
+  typedef typename Traits::Aff_transformation_d Aff_transformation;
+  typedef typename Traits::Cartesian_const_iterator_d Cartesian_const_iterator;
 
-  constexpr static int dim = Dimension::value;
-  constexpr static int degree = (2 << (dim-1));
+  typedef typename Traits::Construct_point_d_from_array
+  Construct_point_d_from_array;
+  typedef typename Traits::Construct_bbox_d
+  Construct_bbox_d;
+  typedef typename Traits::Construct_iso_bounding_box_d
+  Construct_iso_bounding_box_d;
 
-  constexpr static bool is_quadtree = std::is_same<Dimension, Dimension_tag<2> >::value;
-  typedef typename std::conditional<is_quadtree, Vector_2, Vector_3>::type Vector;
-  typedef typename std::conditional<is_quadtree, Iso_rectangle_2, Iso_cuboid_3>::type Iso_cuboid;
-  typedef typename std::conditional<is_quadtree, Circle_2, Sphere_3>::type Sphere;
-  typedef typename std::conditional<is_quadtree, Bbox_2, Bbox_3>::type Bbox;
-  typedef typename std::conditional<is_quadtree, Aff_transform_2, Aff_transform_3>::type
-  Aff_transform;
-
-  typedef typename Point_range::iterator Range_iterator;
+  typedef typename PointRange::iterator Range_iterator;
   typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
 
 private: // data members :
 
-  Point_range &m_ranges;              /* input point range */
-  Point_map m_points_map;          /* property map: `value_type of InputIterator` -> `Point` (Position) */
+  Traits m_traits;
+  PointRange& m_range;              /* input point range */
+  PointMap m_point_map;          /* property map: `value_type of InputIterator` -> `Point` (Position) */
 
   Node m_root;                      /* root node of the octree */
 
@@ -167,43 +156,47 @@ public:
    * \param point_map maps the point indices to their coordinate locations
    * \param enlarge_ratio the degree to which the bounding box should be enlarged
    */
-  Octree(
-          Point_range &point_range,
-          Point_map point_map = Point_map(),
-          const FT enlarge_ratio = 1.2) :
-          m_ranges(point_range),
-          m_points_map(point_map) {
+  Octree(PointRange& point_range,
+         PointMap point_map = PointMap(),
+         const FT enlarge_ratio = 1.2,
+         Traits traits = Traits())
+    : m_traits (traits)
+    , m_range (point_range)
+    , m_point_map (point_map)
+  {
+    Construct_iso_bounding_box_d construct_iso_bounding_box
+      = m_traits.construct_iso_bounding_box_d_object();
 
     // compute bounding box that encloses all points
-    Iso_cuboid bbox = CGAL::bounding_box(boost::make_transform_iterator
-                                                 (m_ranges.begin(),
-                                                  CGAL::Property_map_to_unary_function<Point_map>(
-                                                          m_points_map)),
-                                         boost::make_transform_iterator
-                                                 (m_ranges.end(),
-                                                  CGAL::Property_map_to_unary_function<Point_map>(
-                                                          m_points_map)));
+    Iso_box bbox
+      = construct_iso_bounding_box (boost::make_transform_iterator
+                                    (m_range.begin(),
+                                     Property_map_to_unary_function<PointMap>
+                                     (m_point_map)),
+                                    boost::make_transform_iterator
+                                    (m_range.end(),
+                                     Property_map_to_unary_function<PointMap>
+                                     (m_point_map)));
 
     // Find the center point of the box
     Point bbox_centroid = midpoint(bbox.min(), bbox.max());
 
     // scale bounding box to add padding
-    bbox = bbox.transform(Aff_transform(SCALING, enlarge_ratio));
+    bbox = bbox.transform(Aff_transformation(SCALING, enlarge_ratio));
 
     // Convert the bounding box into a cube
     FT max_len = max_length(bbox);
-    bbox = Iso_cuboid(bbox.min(), bbox.min() + max_len * Vector(1.0, 1.0, 1.0));
+    bbox = Iso_box(bbox.min(), bbox.min() + max_len * Vector(1.0, 1.0, 1.0));
 
     // Shift the squared box to make sure it's centered in the original place
     Point bbox_transformed_centroid = midpoint(bbox.min(), bbox.max());
     Vector diff_centroid = bbox_centroid - bbox_transformed_centroid;
-    bbox = bbox.transform(Aff_transform(TRANSLATION, diff_centroid));
+    bbox = bbox.transform(Aff_transformation(TRANSLATION, diff_centroid));
 
     // save octree attributes
     m_bbox_min = bbox.min();
     m_side_per_depth.push_back(bbox.max()[0] - m_bbox_min[0]);
     m_root.points() = {point_range.begin(), point_range.end()};
-
   }
 
   /// @}
@@ -254,7 +247,7 @@ public:
         split((*current));
 
         // Process each of its children
-        for (int i = 0; i < degree; ++i)
+        for (int i = 0; i < Degree::value; ++i)
           todo.push(&(*current)[i]);
 
       }
@@ -331,7 +324,7 @@ public:
           split(*neighbor);
 
           // Add newly created children to the queue
-          for (int i = 0; i < degree; ++i) {
+          for (int i = 0; i < Degree::value; ++i) {
             leaf_nodes.push(&(*neighbor)[i]);
           }
         }
@@ -385,7 +378,7 @@ public:
 
     const Node *first = traversal_method.first(&m_root);
 
-    Node_traversal_method_const next = std::bind(&Traversal::template next<typename Point_range::iterator, Dimension>,
+    Node_traversal_method_const next = std::bind(&Traversal::template next<Node>,
                                                  traversal_method, _1);
 
     return boost::make_iterator_range(Traversal_iterator<const Node>(first, next),
@@ -417,7 +410,7 @@ public:
 
       // Find the index of the correct sub-node
       typename Node::Index index;
-      for (int dimension = 0; dimension < dim; ++dimension) {
+      for (int dimension = 0; dimension < Dimension::value; ++dimension) {
 
         index[dimension] = center[dimension] < p[dimension];
       }
@@ -442,9 +435,22 @@ public:
    * \return the bounding box defined by that node's relationship to the tree
    */
   Bbox bbox(const Node &node) const {
-    Bbox out;
-    construct_bbox (node, out);
-    return out;
+    // Determine the side length of this node
+    FT size = m_side_per_depth[node.depth()];
+
+    // Determine the location this node should be split
+    std::array<FT, Dimension::value> min_corner;
+    std::array<FT, Dimension::value> max_corner;
+    for (int i = 0; i < Dimension::value; i++) {
+
+      min_corner[i] = m_bbox_min[i] + (node.location()[i] * size);
+      max_corner[i] = min_corner[i] + size;
+    }
+
+    // Create the bbox
+    Construct_bbox_d construct_bbox
+      = m_traits.construct_bbox_d_object();
+    return construct_bbox(min_corner, max_corner);
   }
 
   /*!
@@ -562,86 +568,38 @@ public:
     FT size = m_side_per_depth[node.depth()];
 
     // Determine the location this node should be split
-    FT bary[dim];
-    for (int i = 0; i < dim; i++)
+    std::array<FT, Dimension::value> bary;
+    for (int i = 0; i < Dimension::value; i++)
       bary[i] = node.location()[i] * size + (size / 2.0) + m_bbox_min[i];
 
     // Convert that location into a point
-    Point out;
-    convert_array_to_point (bary, out);
-    return out;
+    Construct_point_d_from_array construct_point_d_from_array
+      = m_traits.construct_point_d_from_array_object();
+    return construct_point_d_from_array(bary);
   }
 
 private: // functions :
 
-  void convert_array_to_point (const FT* bary, Point_2& point) const
+  FT max_length (const Iso_box& bbox) const
   {
-    point = Point_2 (bary[0], bary[1]);
-  }
-  void convert_array_to_point (const FT* bary, Point_3& point) const
-  {
-    point = Point_3 (bary[0], bary[1], bary[2]);
-  }
-
-  FT max_length (const Iso_rectangle_2& bbox) const
-  {
-    FT x_len = bbox.xmax() - bbox.xmin();
-    FT y_len = bbox.ymax() - bbox.ymin();
-    return (std::max)({x_len, y_len});
-  }
-
-  FT max_length (const Iso_cuboid_3& bbox) const
-  {
-    FT x_len = bbox.xmax() - bbox.xmin();
-    FT y_len = bbox.ymax() - bbox.ymin();
-    FT z_len = bbox.zmax() - bbox.zmin();
-    return (std::max)({x_len, y_len, z_len});
-  }
-
-  void construct_bbox (const Node& node, Bbox_2& box) const
-  {
-    // Determine the side length of this node
-    FT size = m_side_per_depth[node.depth()];
-
-    // Determine the location this node should be split
-    FT min_corner[dim];
-    FT max_corner[dim];
-    for (int i = 0; i < dim; i++) {
-
-      min_corner[i] = m_bbox_min[i] + (node.location()[i] * size);
-      max_corner[i] = min_corner[i] + size;
+    FT out = FT(0);
+    Cartesian_const_iterator itmin = bbox.min().cartesian_begin();
+    Cartesian_const_iterator itmax = bbox.max().cartesian_begin();
+    for (; itmin != bbox.min().cartesian_end(); ++ itmin, ++ itmax)
+    {
+      CGAL_assertion (itmax != bbox.max().cartesian_end());
+      FT length = *itmax - *itmin;
+      out = (std::max(length, out));
     }
-
-    // Create the cube
-    box = {min_corner[0], min_corner[1],
-           max_corner[0], max_corner[1]};
-  }
-
-  void construct_bbox (const Node& node, Bbox_3& box) const
-  {
-    // Determine the side length of this node
-    FT size = m_side_per_depth[node.depth()];
-
-    // Determine the location this node should be split
-    FT min_corner[dim];
-    FT max_corner[dim];
-    for (int i = 0; i < dim; i++) {
-
-      min_corner[i] = m_bbox_min[i] + (node.location()[i] * size);
-      max_corner[i] = min_corner[i] + size;
-    }
-
-    // Create the cube
-    box = {min_corner[0], min_corner[1], min_corner[2],
-           max_corner[0], max_corner[1], max_corner[2]};
+    return out;
   }
 
   void reassign_points(Node &node, Range_iterator begin, Range_iterator end, const Point &center,
-                       std::bitset<dim> coord = {},
+                       std::bitset<Dimension::value> coord = {},
                        std::size_t dimension = 0) {
 
     // Root case: reached the last dimension
-    if (dimension == dim) {
+    if (dimension == Dimension::value) {
 
       node[coord.to_ulong()].points() = {begin, end};
 
@@ -651,16 +609,16 @@ private: // functions :
     // Split the point collection around the center point on this dimension
     Range_iterator split_point = std::partition(begin, end,
                                                 [&](const Range_type &a) -> bool {
-                                                  return (get(m_points_map, a)[dimension] < center[dimension]);
+                                                  return (get(m_point_map, a)[dimension] < center[dimension]);
                                                 });
 
     // Further subdivide the first side of the split
-    std::bitset<dim> coord_left = coord;
+    std::bitset<Dimension::value> coord_left = coord;
     coord_left[dimension] = false;
     reassign_points(node, begin, split_point, center, coord_left, dimension + 1);
 
     // Further subdivide the second side of the split
-    std::bitset<dim> coord_right = coord;
+    std::bitset<Dimension::value> coord_right = coord;
     coord_right[dimension] = true;
     reassign_points(node, split_point, end, center, coord_right, dimension + 1);
 
@@ -718,7 +676,7 @@ private: // functions :
       for (auto point_index : node.points()) {
 
         // Retrieve each point from the octree's point map
-        auto point = get(m_points_map, point_index);
+        auto point = get(m_point_map, point_index);
 
         // Pair that point with its distance from the search point
         Point_with_distance current_point_with_distance =
@@ -756,10 +714,10 @@ private: // functions :
 
       // Create a list to map children to their distances
       std::vector<Node_index_with_distance> children_with_distances;
-      children_with_distances.reserve(degree);
+      children_with_distances.reserve(Degree::value);
 
       // Fill the list with child nodes
-      for (int index = 0; index < degree; ++index) {
+      for (int index = 0; index < Degree::value; ++index) {
         auto &child_node = node[index];
 
         // Add a child to the list, with its distance
@@ -801,7 +759,7 @@ private: // functions :
       }
 
       // Otherwise, each of the children need to be checked
-      for (int i = 0; i < degree; ++i) {
+      for (int i = 0; i < Degree::value; ++i) {
         intersecting_nodes_recursive(query, node[i], output);
       }
 
@@ -863,12 +821,28 @@ public:
        << box.xmax() << " " << box.ymax() << " " << box.zmin() << " "
        << box.xmax() << " " << box.ymax() << " " << box.zmax() << std::endl;
   }
+
+  friend std::ostream& operator<< (std::ostream& os, const Self& octree)
+  {
+    // Create a range of nodes
+    auto nodes = octree.traverse(CGAL::Traversal::Preorder());
+    // Iterate over the range
+    for (auto &n : nodes) {
+      // Show the depth
+      for (int i = 0; i < n.depth(); ++i)
+        os << ". ";
+      // Print the node
+      os << n << std::endl;
+    }
+    return os;
+  }
+
   /// \endcond
 
 }; // end class Octree
 
-} // namespace Octree
-
 } // namespace CGAL
+
+#include <CGAL/Octree/Node.h>
 
 #endif // CGAL_OCTREE_3_H
