@@ -17,6 +17,13 @@ if (CGAL_FOUND)
     create_single_source_cgal_program("Octree_grade.cpp")
     create_single_source_cgal_program("Quadtree_build_from_Point_vector.cpp")
 
+    find_package(Eigen3 3.1.91) #(requires 3.2.0 or greater)
+    include(CGAL_Eigen_support)
+    if (TARGET CGAL::Eigen_support)
+      create_single_source_cgal_program("Orthtree_build.cpp")
+      target_link_libraries(Orthtree_build PUBLIC CGAL::Eigen_support)
+    endif()
+
 else ()
     message(WARNING
             "This program requires the CGAL library, and will not be compiled.")

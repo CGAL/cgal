@@ -14,6 +14,7 @@
 
 #include <CGAL/license/Orthtree.h>
 
+#include <CGAL/Orthtree/Cartesian_ranges.h>
 #include <CGAL/Orthtree/Split_criterion.h>
 #include <CGAL/Orthtree/Traversal.h>
 #include <CGAL/Orthtree/Traversal_iterator.h>
@@ -111,20 +112,19 @@ private: // Private types
 
   typedef typename Traits::Bbox_d Bbox;
   typedef typename Traits::Vector_d Vector;
-  typedef typename Traits::Iso_box_d Iso_box;
   typedef typename Traits::Sphere_d Sphere;
-  typedef typename Traits::Aff_transformation_d Aff_transformation;
   typedef typename Traits::Cartesian_const_iterator_d Cartesian_const_iterator;
+  typedef typename Traits::Array Array;
 
   typedef typename Traits::Construct_point_d_from_array
   Construct_point_d_from_array;
   typedef typename Traits::Construct_bbox_d
   Construct_bbox_d;
-  typedef typename Traits::Construct_iso_bounding_box_d
-  Construct_iso_bounding_box_d;
 
   typedef typename PointRange::iterator Range_iterator;
   typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
+
+  typedef internal::Cartesian_ranges<Traits> Cartesian_ranges;
 
 private: // data members :
 
@@ -137,6 +137,8 @@ private: // data members :
   Point m_bbox_min;                  /* input bounding box min value */
 
   std::vector<FT> m_side_per_depth;      /* side length per node's depth */
+
+  Cartesian_ranges cartesian_range;
 
 public:
 
@@ -164,38 +166,45 @@ public:
     , m_range (point_range)
     , m_point_map (point_map)
   {
-    Construct_iso_bounding_box_d construct_iso_bounding_box
-      = m_traits.construct_iso_bounding_box_d_object();
+    Array bbox_min;
+    for (FT& f : bbox_min)
+      f = std::numeric_limits<FT>::max();
+    Array bbox_max;
+    for (FT& f : bbox_max)
+      f = -std::numeric_limits<FT>::max();
 
-    // compute bounding box that encloses all points
-    Iso_box bbox
-      = construct_iso_bounding_box (boost::make_transform_iterator
-                                    (m_range.begin(),
-                                     Property_map_to_unary_function<PointMap>
-                                     (m_point_map)),
-                                    boost::make_transform_iterator
-                                    (m_range.end(),
-                                     Property_map_to_unary_function<PointMap>
-                                     (m_point_map)));
+    for (const Range_type& r : point_range)
+    {
+      const Point& p = get (m_point_map, r);
+      std::size_t i = 0;
+      for (const FT& x : cartesian_range(p))
+      {
+        bbox_min[i] = (std::min)(x, bbox_min[i]);
+        bbox_max[i] = (std::max)(x, bbox_max[i]);
+      }
+    }
 
-    // Find the center point of the box
-    Point bbox_centroid = midpoint(bbox.min(), bbox.max());
+    Array bbox_centroid;
+    FT max_length = FT(0);
+    for (std::size_t i = 0 ; i < Dimension::value; ++ i)
+    {
+      bbox_centroid[i] = (bbox_min[i] + bbox_max[i]) / FT(2);
+      max_length = (std::max)(max_length, bbox_max[i] - bbox_min[i]);
+    }
+    max_length *= enlarge_ratio / FT(2);
 
-    // scale bounding box to add padding
-    bbox = bbox.transform(Aff_transformation(SCALING, enlarge_ratio));
+    for (std::size_t i = 0 ; i < Dimension::value; ++ i)
+    {
+      bbox_min[i] = bbox_centroid[i] - max_length;
+      bbox_max[i] = bbox_centroid[i] - max_length;
+    }
 
-    // Convert the bounding box into a cube
-    FT max_len = max_length(bbox);
-    bbox = Iso_box(bbox.min(), bbox.min() + max_len * Vector(1.0, 1.0, 1.0));
-
-    // Shift the squared box to make sure it's centered in the original place
-    Point bbox_transformed_centroid = midpoint(bbox.min(), bbox.max());
-    Vector diff_centroid = bbox_centroid - bbox_transformed_centroid;
-    bbox = bbox.transform(Aff_transformation(TRANSLATION, diff_centroid));
+    Construct_point_d_from_array construct_point_d_from_array
+      = m_traits.construct_point_d_from_array_object();
 
     // save orthtree attributes
-    m_bbox_min = bbox.min();
-    m_side_per_depth.push_back(bbox.max()[0] - m_bbox_min[0]);
+    m_bbox_min = construct_point_d_from_array(bbox_min);
+    m_side_per_depth.push_back(bbox_max[0] - bbox_min[0]);
     m_root.points() = {point_range.begin(), point_range.end()};
   }
 
@@ -410,10 +419,9 @@ public:
 
       // Find the index of the correct sub-node
       typename Node::Index index;
-      for (int dimension = 0; dimension < Dimension::value; ++dimension) {
-
-        index[dimension] = center[dimension] < p[dimension];
-      }
+      std::size_t dimension = 0;
+      for (const auto& r : cartesian_range(center, p))
+        index[dimension ++] = (get<0>(r) < get<1>(r));
 
       // Find the correct sub-node of the current node
       node_for_point = &(*node_for_point)[index.to_ulong()];
@@ -439,8 +447,8 @@ public:
     FT size = m_side_per_depth[node.depth()];
 
     // Determine the location this node should be split
-    std::array<FT, Dimension::value> min_corner;
-    std::array<FT, Dimension::value> max_corner;
+    Array min_corner;
+    Array max_corner;
     for (int i = 0; i < Dimension::value; i++) {
 
       min_corner[i] = m_bbox_min[i] + (node.location()[i] * size);
@@ -568,9 +576,13 @@ public:
     FT size = m_side_per_depth[node.depth()];
 
     // Determine the location this node should be split
-    std::array<FT, Dimension::value> bary;
-    for (int i = 0; i < Dimension::value; i++)
-      bary[i] = node.location()[i] * size + (size / 2.0) + m_bbox_min[i];
+    Array bary;
+    std::size_t i = 0;
+    for (const FT& f : cartesian_range(m_bbox_min))
+    {
+      bary[i] = node.location()[i] * size + (size / 2.0) + f;
+      ++ i;
+    }
 
     // Convert that location into a point
     Construct_point_d_from_array construct_point_d_from_array
@@ -579,20 +591,6 @@ public:
   }
 
 private: // functions :
-
-  FT max_length (const Iso_box& bbox) const
-  {
-    FT out = FT(0);
-    Cartesian_const_iterator itmin = bbox.min().cartesian_begin();
-    Cartesian_const_iterator itmax = bbox.max().cartesian_begin();
-    for (; itmin != bbox.min().cartesian_end(); ++ itmin, ++ itmax)
-    {
-      CGAL_assertion (itmax != bbox.max().cartesian_end());
-      FT length = *itmax - *itmin;
-      out = (std::max(length, out));
-    }
-    return out;
-  }
 
   void reassign_points(Node &node, Range_iterator begin, Range_iterator end, const Point &center,
                        std::bitset<Dimension::value> coord = {},
@@ -607,10 +605,13 @@ private: // functions :
     }
 
     // Split the point collection around the center point on this dimension
-    Range_iterator split_point = std::partition(begin, end,
-                                                [&](const Range_type &a) -> bool {
-                                                  return (get(m_point_map, a)[dimension] < center[dimension]);
-                                                });
+    Range_iterator split_point = std::partition
+      (begin, end,
+       [&](const Range_type &a) -> bool {
+        // This should be done with cartesian iterator but it seems
+        // complicated to do efficiently
+        return (get(m_point_map, a)[dimension] < center[dimension]);
+      });
 
     // Further subdivide the first side of the split
     std::bitset<Dimension::value> coord_left = coord;

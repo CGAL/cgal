@@ -9,31 +9,44 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_ORTHTREE_TRAITS_3_H
-#define CGAL_ORTHTREE_TRAITS_3_H
+#ifndef CGAL_ORTHTREE_TRAITS_D_H
+#define CGAL_ORTHTREE_TRAITS_D_H
 
 namespace CGAL
 {
 
-template <typename GeomTraits>
-struct Orthtree_traits_2
+template <typename GeomTraits, typename DimensionTag>
+struct Orthtree_traits_d
 {
 public:
 
-  typedef Dimension_tag<2> Dimension;
-  typedef Bbox_2 Bbox_d;
+  typedef DimensionTag Dimension;
+
   typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Point_2 Point_d;
-  typedef typename GeomTraits::Vector_2 Vector_d;
-  typedef typename GeomTraits::Circle_2 Sphere_d;
-  typedef typename GeomTraits::Cartesian_const_iterator_2 Cartesian_const_iterator_d;
+  typedef typename GeomTraits::Point_d Point_d;
+  typedef typename GeomTraits::Vector_d Vector_d;
+  typedef typename GeomTraits::Sphere_d Sphere_d;
+  typedef typename GeomTraits::Cartesian_const_iterator_d Cartesian_const_iterator_d;
   typedef std::array<FT, Dimension::value> Array;
+
+  class Bbox_d
+  {
+    Point_d m_min, m_max;
+  public:
+
+    Bbox_d (const Point_d& min, const Point_d& max)
+      : m_min (min), m_max (max)
+    { }
+
+    const Point_d& min() { return m_min; }
+    const Point_d& max() { return m_max; }
+  };
 
   struct Construct_point_d_from_array
   {
     Point_d operator() (const Array& array) const
     {
-      return Point_d (array[0], array[1]);
+      return Point_d ( /* todo */ );
     }
   };
   Construct_point_d_from_array construct_point_d_from_array_object() const
@@ -44,7 +57,7 @@ public:
     Bbox_d operator() (const Array& min,
                        const Array& max) const
     {
-      return Bbox_d (min[0], min[1], max[0], max[1]);
+      return Bbox_d ( /* todo */ );
     }
   };
   Construct_bbox_d construct_bbox_d_object() const
@@ -54,4 +67,4 @@ public:
 
 }
 
-#endif // CGAL_ORTHTREE_TRAITS_2_H
+#endif // CGAL_ORTHTREE_TRAITS_D_H
