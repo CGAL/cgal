@@ -559,7 +559,7 @@ private:
 
       ++ iter;
 
-      // if (iter == 7) {
+      // if (iter == 33) {
       //   exit(0);
       // }
 
@@ -681,7 +681,7 @@ private:
         if (m_data.k(pface) == 1) // Polygon stops
         {
           PVertex pvnew = m_data.crop_polygon (pvertex, iedge);
-          // remove_events(iedge); // TODO: Do we need that?
+          remove_events(iedge); // TODO: Do we need that?
           compute_events_of_vertices (std::array<PVertex,2>{pvertex, pvnew});
         }
         else // Polygon continues beyond the edge
