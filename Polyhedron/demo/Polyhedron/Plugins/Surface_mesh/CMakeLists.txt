@@ -5,7 +5,7 @@ if(POLICY CMP0074)
 endif()
 
 if(TARGET CGAL::Eigen_support)
-  find_package(CGAL COMPONENTS Core)
+  find_package(CGAL)
 
   include(${CGAL_USE_FILE})
 
