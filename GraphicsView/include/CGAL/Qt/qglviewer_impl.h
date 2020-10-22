@@ -679,7 +679,6 @@ void CGAL::QGLViewer::setDefaultShortcuts() {
   setShortcut(qglviewer::FULL_SCREEN, ::Qt::ALT + ::Qt::Key_Return);
   setShortcut(qglviewer::ANIMATION, ::Qt::Key_Return);
   setShortcut(qglviewer::HELP, ::Qt::Key_H);
-  setShortcut(qglviewer::EDIT_CAMERA, ::Qt::Key_C);
   setShortcut(qglviewer::MOVE_CAMERA_LEFT, ::Qt::Key_Left);
   setShortcut(qglviewer::MOVE_CAMERA_RIGHT, ::Qt::Key_Right);
   setShortcut(qglviewer::MOVE_CAMERA_UP, ::Qt::Key_Up);
@@ -701,9 +700,6 @@ void CGAL::QGLViewer::setDefaultShortcuts() {
       tr("Opens this help window", "HELP action description");
   keyboardActionDescription_[qglviewer::ANIMATION] =
       tr("Starts/stops the animation", "ANIMATION action description");
-  keyboardActionDescription_[qglviewer::EDIT_CAMERA] =
-      tr("Toggles camera paths display",
-         "EDIT_CAMERA action description"); // TODO change
   keyboardActionDescription_[qglviewer::ENABLE_TEXT] =
       tr("Toggles the display of the text", "ENABLE_TEXT action description");
   keyboardActionDescription_[qglviewer::EXIT_VIEWER] =
