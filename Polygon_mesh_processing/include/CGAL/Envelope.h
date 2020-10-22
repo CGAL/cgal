@@ -70,7 +70,6 @@
 // This is for computing the surface mesh of a prism
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #endif
 
@@ -1805,7 +1804,6 @@ private:
 
     Surface_mesh<typename Exact_predicates_inexact_constructions_kernel::Point_3> sm;
     copy_face_graph(esm,sm);
-    Polygon_mesh_processing::triangulate_faces(sm);
     fname += "_";
     fname += std::to_string(i);
     fname += ".off";
