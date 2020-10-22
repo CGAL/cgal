@@ -29,7 +29,7 @@ namespace CGAL {
 /*!
  * \ingroup PkgOrthtreeClasses
  *
- * \brief represents a single node of the tree. Alternatively referred to as a cell, octant, or subtree
+ * \brief represents a single node of the tree. Alternatively referred to as a cell, orthant, or subtree
  *
  * \details The role of the node isn't fully stable yet
  *
@@ -62,10 +62,9 @@ public:
   /*!
    * \brief set of bits representing this node's relationship to its parent
    *
-   * Equivalent to an array of three booleans,
-   * where index[0] is whether x is greater,
-   * index[1] is whether y is greater,
-   * and index[2] is whether z is greater.
+   * Equivalent to an array of booleans, where index[0] is whether x
+   * is greater, index[1] is whether y is greater, index[2] is whether
+   * z is greater, and so on for higher dimensions if neede.
    * Used to represent a node's relationship to the center of its parent.
    */
   typedef std::bitset<Dimension::value> Index;
@@ -73,8 +72,8 @@ public:
   /*!
    * \brief coordinate location representing this node's relationship with the rest of the tree
    *
-   * Each value (x, y, z) of a location is calculated by doubling the parent's location
-   * and adding the Index.
+   * Each value (x, y, z, ...) of a location is calculated by doubling
+   * the parent's location and adding the Index.
    * \todo Maybe I should add an example?
    */
   typedef std::array<uint32_t, Dimension::value> Int_location;
@@ -336,7 +335,7 @@ public:
 
   /*!
    * \brief retrieve this node's index in relation to its parent
-   * \return the index of this nod3
+   * \return the index of this node
    */
   Index index() const {
 

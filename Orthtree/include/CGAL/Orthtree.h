@@ -47,14 +47,15 @@ namespace CGAL {
 /*!
  * \ingroup PkgOrthtreeClasses
  *
- * \brief a data structure for efficient computations in 3D space.
+ * \brief a data structure for efficient computations in dD space.
  *
  * \details It builds a hierarchy of nodes which subdivide the space based on a collection of points.
- * Each node represents an axis aligned cubic region of space.
+ * Each node represents an axis aligned hypercubic region of space.
  * A node contains the range of points that are present in the region it defines,
- * and it may contain eight other nodes which further subdivide the region.
+ * and it may contain \f$2^{dim}\f$ other nodes which further subdivide the region.
  *
- * \tparam Point_range is a range type that provides random access iterators over the indices of a set of points.
+ * \tparam Traits is a model of OrthtreeTraits
+ * \tparam PointRange is a range type that provides random access iterators over the indices of a set of points.
  * \tparam PointMap is a type that maps items in the range to Point data
  */
 template<typename Traits, typename PointRange,
@@ -78,7 +79,14 @@ public:
    */
   typedef typename Traits::Point_d Point;
 
+  /*!
+   * \brief Dimension of the tree
+   */
   typedef typename Traits::Dimension Dimension;
+
+  /*!
+   * \brief Degree of the tree (number of children of non-leaf nodes)
+   */
   typedef Dimension_tag<(2 << (Dimension::value-1))> Degree;
 
   /*!
@@ -87,7 +95,7 @@ public:
   typedef typename Traits::FT FT;
 
   /*!
-   * \brief The Sub-tree / Octant type
+   * \brief The Sub-tree / Orthant type
    */
   class Node;
 
@@ -128,7 +136,7 @@ private: // Private types
 
 private: // data members :
 
-  Traits m_traits;
+  Traits m_traits; /* the tree traits */
   PointRange& m_range;              /* input point range */
   PointMap m_point_map;          /* property map: `value_type of InputIterator` -> `Point` (Position) */
 
@@ -138,7 +146,7 @@ private: // data members :
 
   std::vector<FT> m_side_per_depth;      /* side length per node's depth */
 
-  Cartesian_ranges cartesian_range;
+  Cartesian_ranges cartesian_range; /* a helper to easily iterator on coordinates of points */
 
 public:
 
@@ -157,6 +165,7 @@ public:
    * \param point_range random access iterator over the indices of the points
    * \param point_map maps the point indices to their coordinate locations
    * \param enlarge_ratio the degree to which the bounding box should be enlarged
+   * \param traits the traits object
    */
   Orthtree(PointRange& point_range,
          PointMap point_map = PointMap(),
@@ -533,7 +542,7 @@ public:
   /// @{
 
   /*!
-   * \brief compares the topology of a pair of Orthtrees
+   * \brief compares the topology of a pair of orthtrees
    *
    * Trees may be considered equivalent even if they contain different points.
    * Equivalent trees must have the same bounding box and the same node structure.

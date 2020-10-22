@@ -36,7 +36,7 @@
 - `SplitCriterion`
 
 \cgalCRPSection{Classes}
-- `CGAL::Orthtree<Traits, PointRange, PointMap>`
-- `CGAL::Octree<GeomTraits, PointRange, PointMap>`
 - `CGAL::Quadtree<GeomTraits, PointRange, PointMap>`
+- `CGAL::Octree<GeomTraits, PointRange, PointMap>`
+- `CGAL::Orthtree<Traits, PointRange, PointMap>`
 */
