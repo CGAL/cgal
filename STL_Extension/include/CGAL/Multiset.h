@@ -237,9 +237,9 @@ protected:
       return parentP;
     }
 
-    void*& for_compact_container()
+    void for_compact_container (void * p)
     {
-      return reinterpret_cast<void*&>(parentP);
+      reinterpret_cast<void*&>(parentP) = p;
     }
 
   };
@@ -282,7 +282,7 @@ protected:
 
     void deallocate (Node* n)
     {
-      base.erase (Base::iterator::create_from_pointer(n));
+      base.erase (base.iterator_to(*n));
     }
   };
 

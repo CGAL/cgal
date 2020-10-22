@@ -910,13 +910,6 @@ namespace internal {
       m_ptr = nullptr;
     }
 
-    static CC_iterator create_from_pointer (pointer p)
-    {
-      CC_iterator out;
-      out.m_ptr.p = p;
-      return out;
-    }
-
   private:
 
     typedef typename DSC::Time_stamper           Time_stamper;

@@ -116,7 +116,7 @@ template <typename Vis>
 void No_intersection_surface_sweep_2<Vis>::deallocate_event(Event* event)
 {
   // Remove the event from the set of allocated events.
-  m_allocated_events.erase(Allocated_events_iterator::create_from_pointer(event));
+  m_allocated_events.erase(m_allocated_events.iterator_to(*event));
 }
 
 //-----------------------------------------------------------------------------

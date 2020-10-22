@@ -116,9 +116,9 @@ public:
   {
     return reinterpret_cast<void*&>(const_cast<Point_2&>(m_point));
   }
-  void*& for_compact_container()
+  void for_compact_container (void* p)
   {
-    return reinterpret_cast<void*&>(m_point);
+    reinterpret_cast<void*&>(m_point) = p;
   }
 
   /*! Initialize an event that is associated with a valid point. */
