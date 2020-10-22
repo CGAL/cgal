@@ -61,7 +61,7 @@ namespace CGAL {
 
     typedef typename internal::Container_type
                  <Concurrent_tag, Dart, Dart_allocator>::type Dart_container;
-    
+
 
     typedef typename Dart_container::iterator             Dart_handle;
     typedef typename Dart_container::const_iterator       Dart_const_handle;
