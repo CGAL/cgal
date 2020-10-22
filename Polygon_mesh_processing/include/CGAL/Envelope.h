@@ -97,9 +97,13 @@ namespace CGAL {
 template <typename GeomTraits>
 struct Envelope {
 
+public:
+  typedef typename GeomTraits::Point_3 Point_3;
+
+private:
+
   typedef std::array<int, 3> Vector3i;
 
-  typedef typename GeomTraits::Point_3 Point_3;
   typedef typename GeomTraits::Vector_3 Vector_3;
   typedef typename GeomTraits::Segment_3 Segment_3;
   typedef typename GeomTraits::Triangle_3 Triangle_3;
@@ -263,7 +267,7 @@ struct Envelope {
     init(epsilon);
   }
 
-
+public:
    /**
    * Constructor with a triangulated surface mesh.
     * @tparam TriangleMesh a model of `HalfedgeListGraph`
