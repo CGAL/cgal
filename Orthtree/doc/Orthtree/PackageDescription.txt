@@ -1,0 +1,42 @@
+/// \defgroup PkgOrthtreeRef Quadtree\, Octree and Orthtree Reference
+
+/// \defgroup PkgOrthtreeClasses Classes
+/// \ingroup PkgOrthtreeRef
+
+/// \defgroup PkgOrthtreeConcepts Concepts
+/// \ingroup PkgOrthtreeRef
+
+/*!
+\addtogroup PkgOrthtreeRef
+
+\cgalPkgDescriptionBegin{Quadtree\, Octree and Orthtree,PkgOrthtree}
+\cgalPkgPicture{octree_thumbnail.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Jackson Campolattaro, Cédric Portaneri, Tong Zhao, xxx}
+\cgalPkgDesc{The Orthtree package provides a data structure that subdivides 3d space, and a collection of algorithms for operating on the structure.}
+\cgalPkgManuals{Chapter_Orthtree,PkgOrthtreeRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{5.3}
+\cgalPkgBib{cgal:cpz-o}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\todo * Thumbnail
+
+\todo * Windows demo
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+- `Traversal`
+- `SplitCriterion`
+
+\cgalCRPSection{Classes}
+- `CGAL::Orthtree<Traits, PointRange, PointMap>`
+- `CGAL::Octree<GeomTraits, PointRange, PointMap>`
+- `CGAL::Quadtree<GeomTraits, PointRange, PointMap>`
+*/
