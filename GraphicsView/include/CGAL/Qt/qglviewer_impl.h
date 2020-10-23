@@ -155,6 +155,7 @@ void CGAL::QGLViewer::defaultConstructor() {
   is_sharing = false;
   is_linked = false;
   shared_context = nullptr;
+  _first_tick  = true;
 }
 
 CGAL_INLINE_FUNCTION
@@ -1544,6 +1545,17 @@ void CGAL::QGLViewer::wheelEvent(QWheelEvent *e) {
       MouseActionPrivate map = wheelBinding_[wbp];
       switch (map.handler) {
       case qglviewer::CAMERA:
+        if(currentlyPressedKey_ == ::Qt::Key_Z && _first_tick)
+        {
+          _first_tick = false;
+          makeCurrent();
+          //orient camera to the cursor.
+          bool found = false;
+          qglviewer::Vec point;
+          point = camera()->pointUnderPixel(mapFromGlobal(QCursor::pos()), found);
+          if(found)
+            camera()->lookAt(point);
+        }
         camera()->frame()->startAction(map.action, map.withConstraint);
         camera()->frame()->wheelEvent(e, camera());
         break;
@@ -2263,21 +2275,11 @@ void CGAL::QGLViewer::keyPressEvent(QKeyEvent *e) {
 
   const ::Qt::Key key = ::Qt::Key(e->key());
 
-  const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-
   if(key == ::Qt::Key_Z && ! e->isAutoRepeat())
   {
-    makeCurrent();
-    //orient camera to the cursor.
-    bool found = false;
-    qglviewer::Vec point;
-    point = camera()->pointUnderPixel(mapFromGlobal(QCursor::pos()), found);
-    if(!found)
-      return;
-    camera()->lookAt(point);
-    update();
-    return;
+    _first_tick = true;
   }
+  const ::Qt::KeyboardModifiers modifiers = e->modifiers();
   QMap<qglviewer::KeyboardAction, unsigned int>::ConstIterator it = keyboardBinding_
                                                              .begin(),
                                                     end =
