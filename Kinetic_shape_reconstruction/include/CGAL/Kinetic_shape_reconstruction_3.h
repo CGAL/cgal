@@ -141,7 +141,7 @@ public:
     m_max_time = time_step;
     while (initialize_queue())
     {
-      run();
+      run(k);
       m_min_time = m_max_time;
       m_max_time += time_step;
 
@@ -528,7 +528,7 @@ private:
   }
 
 
-  void run()
+  void run(const unsigned int k)
   {
     std::cout << "Unstacking queue size: " << m_queue.size() << std::endl;
 
@@ -559,11 +559,11 @@ private:
 
       ++ iter;
 
-      // if (iter == 33) {
+      // if (iter == 46) {
       //   exit(0);
       // }
 
-      apply(ev);
+      apply(k, ev);
 
       CGAL_assertion(check_integrity(true));
 
@@ -575,7 +575,9 @@ private:
     std::cout << "Finished!" << std::endl;
   }
 
-  void apply (const Event& ev)
+  void apply (
+    const unsigned int k,
+    const Event& ev)
   {
     PVertex pvertex = ev.pvertex();
 
@@ -631,34 +633,47 @@ private:
                        m_data.point_2(pvertex, ev.time()));
         CGAL_assertion (seg.squared_length() != 0);
 
-        if (CGAL::parallel (seg, seg_edge))
-        {
-          remove_events (pvertex);
-          remove_events (pother);
+        if (CGAL::parallel(seg, seg_edge)) {
+
+          remove_events(pvertex);
+          remove_events(pother);
 
           bool collision, bbox_reached;
-          std::tie (collision, bbox_reached)
-            = m_data.collision_occured (pvertex, iedge);
-          bool collision_other;
-          collision_other
-            = m_data.collision_occured (pother, iedge).first;
+          // std::tie(collision, bbox_reached) = m_data.collision_occured(pvertex, iedge);
+          std::tie(collision, bbox_reached) = m_data.is_occupied(pvertex, iedge);
+          std::cout << "collision/bbox: " << collision << "/" << bbox_reached << std::endl;
+
+          bool collision_other, bbox_reached_other;
+          // collision_other = m_data.collision_occured(pother, iedge).first;
+          std::tie(collision_other, bbox_reached_other) = m_data.is_occupied(pvertex, iedge);
+          std::cout << "other/bbox: " << collision_other << "/" << bbox_reached_other << std::endl;
 
           if ((collision || collision_other) && m_data.k(pface) > 1)
             m_data.k(pface) --;
-          if (bbox_reached)
-            m_data.k(pface) = 1;
 
-          if (m_data.k(pface) == 1) // Polygon stops
-          {
-            m_data.crop_polygon (pvertex, pother, iedge);
-            // remove_events(iedge); // TODO: Do we need that?
-            compute_events_of_vertices (std::array<PVertex,2>{pvertex, pother});
+          bool stop = false;
+          if (bbox_reached) {
+            m_data.k(pface) = 1; stop = true;
           }
-          else // Polygon continues beyond the edge
+          if ((collision || collision_other) && m_data.k(pface) == 1) {
+            stop = true;
+          }
+          if ((collision || collision_other) && m_data.k(pface) > 1)
+            m_data.k(pface)--;
+          CGAL_assertion(m_data.k(pface) >= 1);
+
+          if (stop) // polygon stops
+          {
+            m_data.crop_polygon(pvertex, pother, iedge);
+            remove_events(iedge);
+            compute_events_of_vertices(std::array<PVertex,2>{pvertex, pother});
+          }
+          else // polygon continues beyond the edge
           {
             PVertex pv0, pv1;
-            std::tie (pv0, pv1) = m_data.propagate_polygon (pvertex, pother, iedge);
-            compute_events_of_vertices (std::array<PVertex, 4> {pvertex, pother, pv0, pv1});
+            std::tie(pv0, pv1) = m_data.propagate_polygon(k, pvertex, pother, iedge);
+            // remove_events(iedge);
+            compute_events_of_vertices(std::array<PVertex, 4>{pvertex, pother, pv0, pv1});
           }
 
           done = true;
@@ -666,28 +681,37 @@ private:
         }
       }
 
-      if (!done)
-      {
-        remove_events (pvertex);
+      if (!done) {
+
+        remove_events(pvertex);
 
         bool collision, bbox_reached;
-        std::tie (collision, bbox_reached)
-          = m_data.collision_occured (pvertex, iedge);
-        if (collision && m_data.k(pface) > 1)
-          m_data.k(pface) --;
-        if (bbox_reached)
-          m_data.k(pface) = 1;
+        // std::tie(collision, bbox_reached) = m_data.collision_occured(pvertex, iedge);
+        std::tie(collision, bbox_reached) = m_data.is_occupied(pvertex, iedge);
+        std::cout << "collision/bbox: " << collision << "/" << bbox_reached << std::endl;
 
-        if (m_data.k(pface) == 1) // Polygon stops
-        {
-          PVertex pvnew = m_data.crop_polygon (pvertex, iedge);
-          remove_events(iedge); // TODO: Do we need that?
-          compute_events_of_vertices (std::array<PVertex,2>{pvertex, pvnew});
+        bool stop = false;
+        if (bbox_reached) {
+          m_data.k(pface) = 1; stop = true;
         }
-        else // Polygon continues beyond the edge
+        if (collision && m_data.k(pface) == 1) {
+          stop = true;
+        }
+        if (collision && m_data.k(pface) > 1)
+          m_data.k(pface)--;
+        CGAL_assertion(m_data.k(pface) >= 1);
+
+        if (stop) // polygon stops
         {
-          std::array<PVertex, 3> pvnew = m_data.propagate_polygon (pvertex, iedge);
-          compute_events_of_vertices (pvnew);
+          const PVertex pvnew = m_data.crop_polygon(pvertex, iedge);
+          remove_events(iedge);
+          compute_events_of_vertices(std::array<PVertex,2>{pvertex, pvnew});
+        }
+        else // polygon continues beyond the edge
+        {
+          const std::array<PVertex, 3> pvnew = m_data.propagate_polygon(k, pvertex, iedge);
+          // remove_events(iedge);
+          compute_events_of_vertices(pvnew);
         }
       }
     }
@@ -712,7 +736,7 @@ private:
       // Merge them and get the newly created vertices.
       std::vector<IEdge> crossed;
       std::vector<PVertex> new_pvertices
-        = m_data.merge_pvertices_on_ivertex (pvertices, ev.ivertex(), crossed);
+        = m_data.merge_pvertices_on_ivertex (k, pvertices, ev.ivertex(), crossed);
 
       // Remove all events of the crossed iedges.
       for (const auto& iedge : crossed)
