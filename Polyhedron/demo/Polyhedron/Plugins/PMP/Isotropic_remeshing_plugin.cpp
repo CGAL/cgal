@@ -300,51 +300,6 @@ public:
       std::cout << "No selected or boundary edges to be split" << std::endl;
   }
 
-
-  struct Update_indices_visitor
-  {
-    Scene_polyhedron_selection_item::Selection_set_vertex& m_vertices;
-    Scene_polyhedron_selection_item::Selection_set_edge&   m_edges;
-    Scene_polyhedron_selection_item::Selection_set_facet&  m_facets;
-    FaceGraph& m_mesh;
-
-    Update_indices_visitor(Scene_polyhedron_selection_item::Selection_set_vertex& vertices,
-                           Scene_polyhedron_selection_item::Selection_set_edge&   edges,
-                           Scene_polyhedron_selection_item::Selection_set_facet&  facets,
-                           FaceGraph& mesh)
-      : m_vertices(vertices), m_edges(edges), m_facets(facets), m_mesh(mesh)
-    {}
-
-    template<typename V2V, typename E2E, typename F2F>
-    void operator()(const V2V& v2v, const E2E& e2e, const F2F& f2f)
-    {
-      //in *2* maps,
-      //left is old simplex, right is new simplex
-
-      Scene_polyhedron_selection_item::Selection_set_vertex new_vertices;
-      Scene_polyhedron_selection_item::Selection_set_edge   new_edges;
-      Scene_polyhedron_selection_item::Selection_set_facet  new_facets;
-
-      for(vertex_descriptor v : m_vertices)
-        new_vertices.insert(v2v[v]);
-      m_vertices.clear();
-      m_vertices.insert(new_vertices.begin(), new_vertices.end());
-
-      for (edge_descriptor e : m_edges)
-      {
-        halfedge_descriptor h = halfedge(e, m_mesh);
-        new_edges.insert(edge(e2e[h], m_mesh));
-      }
-      m_edges.clear();
-      m_edges.insert(new_edges.begin(), new_edges.end());
-
-      for (face_descriptor f : m_facets)
-        new_facets.insert(f2f[f]);
-      m_facets.clear();
-      m_facets.insert(new_facets.begin(), new_facets.end());
-    }
-  };
-
 public Q_SLOTS:
   void isotropic_remeshing()
   {
@@ -517,10 +472,7 @@ public Q_SLOTS:
           selection_item->polyhedron_item()->setItemIsMulticolor(false);
         }
 
-        Update_indices_visitor visitor(selection_item->selected_vertices,
-                                       selection_item->selected_edges,
-                                       selection_item->selected_facets,
-                                       pmesh);
+
         selection_item->polyhedron_item()->polyhedron()->collect_garbage(visitor);
 
         selection_item->reset_numbers();

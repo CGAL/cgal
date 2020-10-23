@@ -1027,6 +1027,56 @@ protected :
   friend struct Scene_polyhedron_selection_item_priv;
   Scene_polyhedron_selection_item_priv *d;
 
+  struct Update_indices_visitor
+  {
+    Selection_set_vertex& m_vertices;
+    Selection_set_edge&   m_edges;
+    Selection_set_facet&  m_facets;
+    FaceGraph& m_mesh;
+
+    Update_indices_visitor(Selection_set_vertex& vertices,
+                           Selection_set_edge&   edges,
+                           Selection_set_facet&  facets,
+                           FaceGraph& mesh)
+      : m_vertices(vertices), m_edges(edges), m_facets(facets), m_mesh(mesh)
+    {}
+
+    template<typename V2V, typename E2E, typename F2F>
+    void operator()(const V2V& v2v, const E2E& e2e, const F2F& f2f)
+    {
+      //in *2* maps,
+      //left is old simplex, right is new simplex
+
+      Selection_set_vertex new_vertices;
+      Selection_set_edge   new_edges;
+      Selection_set_facet  new_facets;
+
+      for(vertex_descriptor v : m_vertices)
+      {
+        if(v2v[v] != boost::graph_traits<SMesh>::null_vertex())
+          new_vertices.insert(v2v[v]);
+      }
+      m_vertices.clear();
+      m_vertices.insert(new_vertices.begin(), new_vertices.end());
+
+      for (edge_descriptor e : m_edges)
+      {
+        halfedge_descriptor h = halfedge(e, m_mesh);
+        if(e2e[h] != boost::graph_traits<SMesh>::null_halfedge())
+          new_edges.insert(edge(e2e[h], m_mesh));
+      }
+      m_edges.clear();
+      m_edges.insert(new_edges.begin(), new_edges.end());
+
+      for (face_descriptor f : m_facets)
+        if(f2f[v] != boost::graph_traits<SMesh>::null_face())
+          new_facets.insert(f2f[f]);
+      m_facets.clear();
+      m_facets.insert(new_facets.begin(), new_facets.end());
+    }
+  };
+
+
 public:
   //statistics
   enum STATS {
