@@ -300,6 +300,51 @@ public:
       std::cout << "No selected or boundary edges to be split" << std::endl;
   }
 
+
+  struct Update_indices_visitor
+  {
+    Scene_polyhedron_selection_item::Selection_set_vertex& m_vertices;
+    Scene_polyhedron_selection_item::Selection_set_edge&   m_edges;
+    Scene_polyhedron_selection_item::Selection_set_facet&  m_facets;
+    FaceGraph& m_mesh;
+
+    Update_indices_visitor(Scene_polyhedron_selection_item::Selection_set_vertex& vertices,
+                           Scene_polyhedron_selection_item::Selection_set_edge&   edges,
+                           Scene_polyhedron_selection_item::Selection_set_facet&  facets,
+                           FaceGraph& mesh)
+      : m_vertices(vertices), m_edges(edges), m_facets(facets), m_mesh(mesh)
+    {}
+
+    template<typename V2V, typename E2E, typename F2F>
+    void operator()(const V2V& v2v, const E2E& e2e, const F2F& f2f)
+    {
+      //in *2* maps,
+      //left is old simplex, right is new simplex
+
+      Scene_polyhedron_selection_item::Selection_set_vertex new_vertices;
+      Scene_polyhedron_selection_item::Selection_set_edge   new_edges;
+      Scene_polyhedron_selection_item::Selection_set_facet  new_facets;
+
+      for(vertex_descriptor v : m_vertices)
+        new_vertices.insert(v2v[v]);
+      m_vertices.clear();
+      m_vertices.insert(new_vertices.begin(), new_vertices.end());
+
+      for (edge_descriptor e : m_edges)
+      {
+        halfedge_descriptor h = halfedge(e, m_mesh);
+        new_edges.insert(edge(e2e[h], m_mesh));
+      }
+      m_edges.clear();
+      m_edges.insert(new_edges.begin(), new_edges.end());
+
+      for (face_descriptor f : m_facets)
+        new_facets.insert(f2f[f]);
+      m_facets.clear();
+      m_facets.insert(new_facets.begin(), new_facets.end());
+    }
+  };
+
 public Q_SLOTS:
   void isotropic_remeshing()
   {
@@ -350,7 +395,6 @@ public Q_SLOTS:
       FaceGraph& pmesh = (poly_item != NULL)
         ? *poly_item->polyhedron()
         : *selection_item->polyhedron();
-
 
      Patch_id_pmap fpmap = get(CGAL::face_patch_id_t<int>(), pmesh);
      bool fpmap_valid = false;
@@ -461,40 +505,6 @@ public Q_SLOTS:
             }
         }
 
-        SMesh mesh_ = *selection_item->polyhedron();
-        std::vector<bool> are_edges_removed;
-        are_edges_removed.resize(mesh_.number_of_edges()+mesh_.number_of_removed_edges());
-        std::vector<bool> are_edges_constrained;
-        are_edges_constrained.resize(are_edges_removed.size());
-        for(std::size_t i=0; i< are_edges_removed.size(); ++i)
-        {
-          are_edges_removed[i] = mesh_.is_removed(SMesh::Edge_index(static_cast<int>(i)));
-          if(!are_edges_removed[i])
-            are_edges_constrained[i] = get(selection_item->constrained_edges_pmap(), SMesh::Edge_index(static_cast<int>(i)));
-        }
-
-
-        int i0, i1,
-            nE(mesh_.number_of_edges()+mesh_.number_of_removed_edges());
-
-        //get constrained values in order.
-        if (nE > 0)
-        {
-          i0=0;  i1=nE-1;
-          while (1)
-          {
-            // find first removed and last un-removed
-            while (!are_edges_removed[i0] && i0 < i1) ++i0;
-            while ( are_edges_removed[i1] && i0 < i1) --i1;
-            if (i0 >= i1) break;
-
-            // swap
-            std::swap(are_edges_constrained[i0], are_edges_constrained[i1]);
-            std::swap(are_edges_removed[i0], are_edges_removed[i1]);
-          }
-          // remember new size
-          nE = are_edges_removed[i0] ? i0 : i0+1;
-        }
         selection_item->polyhedron_item()->setColor(
               selection_item->polyhedron_item()->color());
         if(fpmap_valid)
@@ -507,18 +517,24 @@ public Q_SLOTS:
           selection_item->polyhedron_item()->setItemIsMulticolor(false);
         }
 
-        selection_item->polyhedron_item()->polyhedron()->collect_garbage();
-        //fix constrained_edges_map
-        for(int i=0; i< nE; ++i)
-        {
-          Scene_polyhedron_selection_item::Is_constrained_map<Scene_polyhedron_selection_item::Selection_set_edge>
-              pmap = selection_item->constrained_edges_pmap();
-          put(pmap, SMesh::Edge_index(i), are_edges_constrained[i]);
-        }
+        Update_indices_visitor visitor(selection_item->selected_vertices,
+                                       selection_item->selected_edges,
+                                       selection_item->selected_facets,
+                                       *selection_item->polyhedron());
+        selection_item->polyhedron_item()->polyhedron()->collect_garbage(visitor);
 
-        selection_item->poly_item_changed();
-        selection_item->clear<face_descriptor>();
-        selection_item->changed_with_poly_item();
+        //recollect sharp edges
+        boost::property_map<FaceGraph, CGAL::edge_is_feature_t>::type eif
+          = get(CGAL::edge_is_feature, pmesh);
+        for (edge_descriptor e : edges(pmesh))
+          eif[e] = false;
+        for (edge_descriptor e : selection_item->selected_edges)
+          eif[e] = true;
+
+        selection_item->polyhedron_item()->invalidateOpenGLBuffers();
+        Q_EMIT selection_item->polyhedron_item()->itemChanged();
+
+        selection_item->invalidateOpenGLBuffers();
       }
       else if (poly_item)
       {
