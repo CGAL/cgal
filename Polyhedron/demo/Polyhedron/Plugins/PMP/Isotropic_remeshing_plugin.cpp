@@ -520,16 +520,10 @@ public Q_SLOTS:
         Update_indices_visitor visitor(selection_item->selected_vertices,
                                        selection_item->selected_edges,
                                        selection_item->selected_facets,
-                                       *selection_item->polyhedron());
+                                       pmesh);
         selection_item->polyhedron_item()->polyhedron()->collect_garbage(visitor);
 
-        //recollect sharp edges
-        boost::property_map<FaceGraph, CGAL::edge_is_feature_t>::type eif
-          = get(CGAL::edge_is_feature, pmesh);
-        for (edge_descriptor e : edges(pmesh))
-          eif[e] = false;
-        for (edge_descriptor e : selection_item->selected_edges)
-          eif[e] = true;
+        selection_item->reset_numbers();
 
         selection_item->polyhedron_item()->invalidateOpenGLBuffers();
         Q_EMIT selection_item->polyhedron_item()->itemChanged();

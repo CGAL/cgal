@@ -276,6 +276,8 @@ public:
     return selected_vertices.empty() && selected_edges.empty() && selected_facets.empty();
   }
 
+  void reset_numbers();
+
   void compute_bbox() const
   {
     // Workaround a bug in g++-4.8.3:

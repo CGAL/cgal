@@ -2138,6 +2138,13 @@ void Scene_polyhedron_selection_item::selected_HL(const std::set<fg_edge_descrip
   Q_EMIT itemChanged();
 }
 
+void Scene_polyhedron_selection_item::reset_numbers()
+{
+  d->num_faces = num_faces(*poly_item->polyhedron());
+  d->num_vertices = num_vertices(*poly_item->polyhedron());
+  d->num_edges = num_edges(*poly_item->polyhedron());
+}
+
 void Scene_polyhedron_selection_item::init(Scene_face_graph_item* poly_item, QMainWindow* mw)
 {
   this->poly_item = poly_item;
