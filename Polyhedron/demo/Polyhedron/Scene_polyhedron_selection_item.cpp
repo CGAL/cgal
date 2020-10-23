@@ -2254,9 +2254,9 @@ void Scene_polyhedron_selection_item::printAllIds()
 {
   d->item->polyhedron_item()->printAllIds();
 }
-bool Scene_polyhedron_selection_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer, const QVector3D& scaler)const
+bool Scene_polyhedron_selection_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)const
 {
-  return d->item->polyhedron_item()->testDisplayId(x, y, z, viewer, scaler);
+  return d->item->polyhedron_item()->testDisplayId(x, y, z, viewer);
   return false;
 }
 

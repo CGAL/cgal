@@ -1482,7 +1482,7 @@ void Viewer::wheelEvent(QWheelEvent* e)
 
 bool Viewer::testDisplayId(double x, double y, double z)
 {
-    return d->scene->testDisplayId(x,y,z,this, d->scaler);
+    return d->scene->testDisplayId(x,y,z,this);
 }
 
 QPainter* Viewer::getPainter(){return d->painter;}
@@ -2116,4 +2116,6 @@ void Viewer::onTextMessageSocketReceived(QString message)
   update();
 }
 #endif
+
+const QVector3D& Viewer::scaler()const { return d->scaler; }
 #include "Viewer.moc"
