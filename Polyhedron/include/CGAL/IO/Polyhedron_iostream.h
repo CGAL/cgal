@@ -18,7 +18,10 @@
 #include <CGAL/IO/Polyhedron_OFF_iostream.h>
 #include <CGAL/IO/Polyhedron_VRML_1_ostream.h>
 #include <CGAL/IO/Polyhedron_VRML_2_ostream.h>
+#ifdef CGAL_USE_GEOMVIEW
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
+#endif
+
 #include <CGAL/IO/Polyhedron_inventor_ostream.h>
 
 #endif // CGAL_IO_POLYHEDRON_IOSTREAM_H
