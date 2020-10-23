@@ -490,7 +490,7 @@ public Q_SLOTS:
                     Visitor visitor(selection_item->selected_facets);
                     CGAL::Polygon_mesh_processing::triangulate_faces(selection_item->selected_facets,
                       pmesh,
-                      CGAL::Polygon_mesh_processing::parameters::triangulate_visitor(visitor));
+                      CGAL::Polygon_mesh_processing::parameters::visitor(visitor));
                     break;
                   }
                   else
