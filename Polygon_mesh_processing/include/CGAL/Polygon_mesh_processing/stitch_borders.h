@@ -658,10 +658,12 @@ void run_stitch_borders(PolygonMesh& pmesh,
 
 template <typename PolygonMesh, typename HalfedgePairsRange,
           typename Uf_vertices, typename Uf_handles>
-HalfedgePairsRange filter_stitchable_pairs(PolygonMesh& pmesh,
-                                           const HalfedgePairsRange& to_stitch,
-                                           Uf_vertices& uf_vertices,
-                                           Uf_handles& uf_handles)
+std::vector< std::pair<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor,
+                                typename boost::graph_traits<PolygonMesh>::halfedge_descriptor> >
+filter_stitchable_pairs(PolygonMesh& pmesh,
+                       const HalfedgePairsRange& to_stitch,
+                       Uf_vertices& uf_vertices,
+                       Uf_handles& uf_handles)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
@@ -782,7 +784,7 @@ HalfedgePairsRange filter_stitchable_pairs(PolygonMesh& pmesh,
   }
   else
   {
-    return to_stitch;
+    return std::vector<halfedges_pair>(to_stitch.begin(), to_stitch.end());
   }
 }
 
