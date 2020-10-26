@@ -80,7 +80,7 @@ private:
 public:
 
   /*!
-    \brief Constructs a feature based on the given color channel.
+    \brief constructs a feature based on the given color channel.
 
     \param input point range.
     \param color_map property map to access the colors of the input points.

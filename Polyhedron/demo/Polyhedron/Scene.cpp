@@ -1739,7 +1739,7 @@ void Scene::updatePrimitiveIds(CGAL::Three::Scene_item* it)
     }
   }
 }
-bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer, const QVector3D& scaler)
+bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)
 {
     CGAL::Three::Scene_item *i = item(mainSelectionIndex());
     if(!i)
@@ -1747,7 +1747,7 @@ bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_inte
     Scene_print_item_interface* spit= qobject_cast<Scene_print_item_interface*>(i);
     if(spit && i->visible())
     {
-        bool res = spit->testDisplayId(x,y,z, viewer, scaler);
+        bool res = spit->testDisplayId(x,y,z, viewer);
         return res;
     }
     else

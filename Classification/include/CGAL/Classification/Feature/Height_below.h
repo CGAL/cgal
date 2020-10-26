@@ -49,8 +49,6 @@ namespace Feature {
 template <typename GeomTraits, typename PointRange, typename PointMap>
 class Height_below : public Feature_base
 {
-  typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
-
   typedef Image<float> Image_float;
   typedef Planimetric_grid<GeomTraits, PointRange, PointMap> Grid;
 
@@ -62,7 +60,7 @@ class Height_below : public Feature_base
 
 public:
   /*!
-    \brief Constructs the feature.
+    \brief constructs the feature.
 
     \param input point range.
     \param point_map property map to access the input points.

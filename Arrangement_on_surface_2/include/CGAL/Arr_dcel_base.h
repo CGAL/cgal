@@ -91,6 +91,11 @@ public:
   /*! Destructor. */
   virtual ~Arr_vertex_base() {}
 
+  // Access/modification for pointer squatting
+  void* inc() const { return p_inc; }
+  void set_inc(void * inc) const
+  { const_cast<Arr_vertex_base&>(*this).p_inc = inc; }
+
   /*! Check if the point pointer is nullptr. */
   bool has_null_point() const { return (p_pt == nullptr); }
 

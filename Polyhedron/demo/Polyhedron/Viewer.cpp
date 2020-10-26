@@ -319,15 +319,14 @@ void Viewer::doBindings()
 
   //modify mouse bindings that have been updated
   setMouseBinding(Qt::Key(0), Qt::NoModifier, Qt::LeftButton, CGAL::qglviewer::RAP_FROM_PIXEL, true, Qt::RightButton);
+  setMouseBinding(Qt::ShiftModifier, Qt::RightButton, CGAL::qglviewer::NO_CLICK_ACTION, false, Qt::NoButton);
   setMouseBindingDescription(Qt::ShiftModifier, Qt::RightButton,
                              tr("Select and pop context menu"));
   setMouseBinding(Qt::Key_R, Qt::NoModifier, Qt::LeftButton, CGAL::qglviewer::RAP_FROM_PIXEL);
+
   //use the new API for these
   setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, CGAL::qglviewer::SELECT);
 
-  setMouseBindingDescription(Qt::Key(0), Qt::ShiftModifier, Qt::LeftButton,
-                             tr("Selects and display context "
-                                "menu of the selected item"));
   setMouseBindingDescription(Qt::Key_I, Qt::NoModifier, Qt::LeftButton,
                              tr("Show/hide the primitive ID of the types selected in the context menu of the picked item."));
   setMouseBindingDescription(Qt::Key_D, Qt::NoModifier, Qt::LeftButton,
@@ -1484,7 +1483,7 @@ void Viewer::wheelEvent(QWheelEvent* e)
 
 bool Viewer::testDisplayId(double x, double y, double z)
 {
-    return d->scene->testDisplayId(x,y,z,this, d->scaler);
+    return d->scene->testDisplayId(x,y,z,this);
 }
 
 QPainter* Viewer::getPainter(){return d->painter;}
@@ -2118,5 +2117,7 @@ void Viewer::onTextMessageSocketReceived(QString message)
   update();
 }
 #endif
+
+const QVector3D& Viewer::scaler()const { return d->scaler; }
 #include "Viewer.moc"
 #include "moc_Viewer.cpp"
