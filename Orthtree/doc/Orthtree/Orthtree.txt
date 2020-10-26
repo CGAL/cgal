@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_Orthtree
 
 \cgalAutoToc
-\author Jackson Campolattaro
+\author Jackson Campolattaro, Simon Giraudot, Cédric Portaneri, Tong Zhao, Pierre Alliez
 
 \section Section_Octree_Introduction Introduction
 
@@ -38,7 +38,7 @@ An `std::vector<Point_3>` is manually filled with points.
 The vector is used as the point set,
 a `CGAL::Identity_property_map` is automatically set as the octree's map type, so a map doesn't need to be provided.
 
-\cgalExample{Octree/Octree_build_from_Point_vector.cpp}
+\cgalExample{Orthtree/Octree_build_from_Point_vector.cpp}
 
 \subsection Section_Octree_Point_Set Building an Octree from a Point_set_3
 
@@ -59,7 +59,7 @@ The tree is then printed to the standard output.
 
 The split criterion is manually constructed and passed to the refine method.
 
-\cgalExample{Octree/Octree_build_from_Point_set.cpp}
+\cgalExample{Orthtree/Octree_build_from_Point_set.cpp}
 
 \subsection Section_Octree_Custom_Split_Criterion Building an Octree with a Custom Split Criterion
 
@@ -75,7 +75,7 @@ The criterion is a functor created by the user to determine whether a node needs
 This particular criterion sets a node's bucket size as a ratio of its depth.
 For example, for a ratio of 2, a node at depth 2 can hold 4 points, a node at depth 7 can hold 14.
 
-\cgalExample{Octree/Octree_build_with_custom_split.cpp}
+\cgalExample{Orthtree/Octree_build_with_custom_split.cpp}
 
 \section Section_Octree_Traversal Traversal over an Octree
 
@@ -103,7 +103,7 @@ calling the root node's parent accessor will return null.
 
 These accessors and operators can be chained to access any node in the tree in a single line of code.
 
-\cgalExample{Octree/Octree_traversal_manual.cpp}
+\cgalExample{Orthtree/Octree_traversal_manual.cpp}
 
 \subsection Section_Octree_Preorder_Traversal Preorder Traversal
 
@@ -123,7 +123,7 @@ A tree is constructed, and a traversal is used to create a range that can be ite
 The default output operator for the octree uses the preorder traversal to do a pretty-print of the tree structure.
 In this case, we print out the nodes of the tree without indentation instead.
 
-\cgalExample{Octree/Octree_traversal_preorder.cpp}
+\cgalExample{Orthtree/Octree_traversal_preorder.cpp}
 
 <!--
 \subsection Section_Octree_Custom_Traversal Using a Custom Traversal Method
@@ -132,7 +132,7 @@ In this case, we print out the nodes of the tree without indentation instead.
 
 e.g. I've build a tree and I want to print it out, but layer by layer
 
-\cgalExample{Octree/Octree_traversal_custom.cpp}
+\cgalExample{Orthtree/Octree_traversal_custom.cpp}
 
 !-->
 
@@ -158,7 +158,7 @@ The nearest neighbor method is invoked for several input points.
 A k value of 1 is used to find the single closest point.
 Results are put in a vector, and then printed.
 
-\cgalExample{Octree/Octree_find_nearest_neighbor.cpp}
+\cgalExample{Orthtree/Octree_find_nearest_neighbor.cpp}
 
 \subsection Section_Octree_Grade Grading an octree
 
@@ -170,7 +170,7 @@ A tree is created such that one node is split many more times than those it bord
 `grade()` splits the octree's nodes so that adjacent nodes never have a difference in depth greater than one.
 The tree is printed before and after grading, so that the differences are visible.
 
-\cgalExample{Octree/Octree_grade.cpp}
+\cgalExample{Orthtree/Octree_grade.cpp}
 
 \section Section_Octree_Quadtree Quadtree
 
@@ -184,7 +184,7 @@ degree (number of children of a node) of 4 instead of 8.
 The following example shows how to create a Quadtree from a vector of
 `Point_2` objects:
 
-\cgalExample{Octree/Octree_quadtree.cpp}
+\cgalExample{Orthtree/Quadtree_build_from_Point_vector.cpp}
 
 \section Section_Octree_Performance Performance
 
@@ -204,7 +204,8 @@ e.g. When is an octree the right choice?
 This package was developed by Jackson Campolatarro as part of the Google Summer of Code 2020,
 based on a prototype code by Tong Zhao and Cédric Portaneri,
 under the supervision of Simon Giraudot
-and with the kind help and advice of Pierre Alliez
+and with the kind help and advice of Pierre Alliez.
+
 */
 
 }

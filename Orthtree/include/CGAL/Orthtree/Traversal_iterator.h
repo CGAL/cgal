@@ -17,6 +17,8 @@
 #include <boost/function.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 
+/// \cond SKIP_IN_MANUAL
+
 namespace CGAL {
 
 /*!
@@ -91,5 +93,7 @@ private:
   Traversal_function m_next;
 };
 }
+
+/// \endcond
 
 #endif //CGAL_ORTHTREE_TRAVERSAL_ITERATOR_H

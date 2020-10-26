@@ -27,8 +27,6 @@
 namespace CGAL {
 
 /*!
- * \ingroup PkgOrthtreeClasses
- *
  * \brief represents a single node of the tree. Alternatively referred to as a cell, orthant, or subtree
  *
  * \details The role of the node isn't fully stable yet
@@ -40,14 +38,12 @@ class Orthtree<Traits, PointRange, PointMap>::Node {
 
 public:
 
-  /// \cond SKIP_IN_MANUAL
-  typedef Orthtree<Traits, PointRange, PointMap> Parent;
-  typedef typename Parent::Dimension Dimension;
-  typedef typename Parent::Degree Degree;
-  /// \endcond
-
   /// \name Types
   /// @{
+
+  typedef Orthtree<Traits, PointRange, PointMap> Parent; ///< Orthtree type.
+  typedef typename Parent::Dimension Dimension; ///< Dimension type.
+  typedef typename Parent::Degree Degree; ///< Degree type.
 
   /*!
    * \brief self typedef for convenience
@@ -76,7 +72,7 @@ public:
    * the parent's location and adding the Index.
    * \todo Maybe I should add an example?
    */
-  typedef std::array<uint32_t, Dimension::value> Int_location;
+  typedef std::array<std::uint32_t, Dimension::value> Int_location;
 
   /*!
    * \brief a collection of point indices represented by begin and end iterators
@@ -131,46 +127,7 @@ public:
     RIGHT_TOP_FRONT
   };
 
-  /*!
-   * \brief two directions along each axis in cartesian space, relative to a node
-   *
-   * Directions are mapped to numbers as 3-bit integers,
-   * though the numbers 6 and 7 are not used because there are only 6 different directions.
-   *
-   * The first two bits indicate the axis (00 = x, 01 = y, 10 = z),
-   * the third bit indicates the direction along that axis (0 = -, 1 = +).
-   *
-   * The following diagram may be a useful reference:
-   *
-   *            3 *
-   *              |  * 5
-   *              | /                  y+
-   *              |/                   *  z+
-   *     0 *------+------* 1           | *
-   *             /|                    |/
-   *            / |                    +-----* x+
-   *         4 *  |
-   *              * 2
-   *
-   * This lookup table may also be helpful:
-   *
-   * | Direction | bitset | number | Enum  |
-   * | --------- | ------ | ------ | ----- |
-   * | `-x`      | 000    | 0      | LEFT  |
-   * | `+x`      | 001    | 1      | RIGHT |
-   * | `-y`      | 010    | 2      | DOWN  |
-   * | `+y`      | 011    | 3      | UP    |
-   * | `-z`      | 100    | 4      | BACK  |
-   * | `+z`      | 101    | 5      | FRONT |
-   */
-  enum Direction {
-    LEFT,
-    RIGHT,
-    DOWN,
-    UP,
-    BACK,
-    FRONT
-  };
+  typedef typename Traits::Adjacency Adjacency;
 
   /// @}
 
@@ -180,7 +137,7 @@ private:
 
   const Self *m_parent;
 
-  uint8_t m_depth;
+  std::uint8_t m_depth;
 
   Int_location m_location;
 
@@ -188,21 +145,23 @@ private:
 
 public:
 
+  /// \cond SKIP_IN_MANUAL
+
   /// \name Construction
   /// @{
 
-  /*!
-   * \brief creates a new node, optionally as the child of a parent
-   *
-   * If no parent is provided, the node created is assumed to be the root of a tree.
-   * This means that the parent reference is a nullptr, and the depth is zero.
-   * If a parent is provided, the node becomes the child of that parent.
-   * In that case, an index should be passed, telling this node its relationship to its parent.
-   * Depth and location are automatically determined in the constructor,
-   * and should generally be considered immutable after construction.
-   *
-   * \param parent A reference to the node containing this one
-   * \param index This node's relationship to its parent
+ /*!
+    \brief creates a new node, optionally as the child of a parent
+
+    If no parent is provided, the node created is assumed to be the root of a tree.
+    This means that the parent reference is a nullptr, and the depth is zero.
+    If a parent is provided, the node becomes the child of that parent.
+    In that case, an index should be passed, telling this node its relationship to its parent.
+    Depth and location are automatically determined in the constructor,
+    and should generally be considered immutable after construction.
+
+    \param parent A reference to the node containing this one
+    \param index This node's relationship to its parent
    */
   explicit Node(Self *parent = nullptr, Index index = 0) : m_parent(parent), m_depth(0) {
 
@@ -257,41 +216,51 @@ public:
 
   /// @}
 
-  /// \name Child Accessors
+  /// \endcond
+
+  /// \name Accessors
   /// @{
 
   /*!
-   * \brief access the child nodes of this node by their indices
-   *
-   * \todo Explain how index values map to the Index type
-   *
-   * Retrieves a reference to the child node described by the index.
-   * The operator can be chained.
-   * for example, to access the third child of the second child of the fifth child of a node `n`
-   *
-   *     n[5][2][3];
-   *
-   * \param index The index of the child node, as an int
-   * \return A reference to the node
+    \brief returns this node's parent.
+    \pre `!is_root()`
    */
-  Self &operator[](int index) {
+  const Self* parent() const
+  {
+    CGAL_precondition (!is_root());
+    return m_parent;
+  }
 
-    assert(!is_leaf());
-    assert(0 <= index && index < Degree::value);
+  /*!
+    \brief returns the nth child fo this node.
+
+    \pre `!is_leaf()`
+    \pre `0 <= index && index < Degree::value`
+
+    The operator can be chained. For example, `n[5][2][3]` returns the
+    third child of the second child of the fifth child of a node `n`.
+   */
+  Self& operator[] (std::size_t index) {
+
+    CGAL_precondition (!is_leaf());
+    CGAL_precondition (0 <= index && index < Degree::value);
 
     return (*m_children)[index];
   }
 
   /*!
-   * \brief read-only access the child nodes of this node by their indices
-   *
-   * \param index The index of the child node, as an int
-   * \return A const reference to the node
-   */
-  const Self &operator[](int index) const {
+    \brief returns the nth child fo this node.
 
-    assert(!is_leaf());
-    assert(0 <= index && index < Degree::value);
+    \pre `!is_leaf()`
+    \pre `0 <= index && index < Degree::value`
+
+    The operator can be chained. For example, `n[5][2][3]` returns the
+    third child of the second child of the fifth child of a node `n`.
+   */
+  const Self& operator[](std::size_t index) const {
+
+    CGAL_precondition (!is_leaf());
+    CGAL_precondition (0 <= index && index < Degree::value);
 
     return (*m_children)[index];
   }
@@ -302,41 +271,21 @@ public:
   /// @{
 
   /*!
-   * \brief read-only access to this node's parent
-   *
-   * Ownership of a node is not equivalent to ownership of the entire tree,
-   * so it's not possible to obtain write access to a node's parent,
-   * only its children.
-   * Note that the return type is nullable,
-   * attempting to find the parent of a root node will return null.
-   * \todo Should I instead assert the node isn't root? (that would make this undefined behavior)
-   *
-   * \return A const pointer to the parent of this node (possibly nullptr)
+    \brief returns this node's depth.
    */
-  const Self *parent() const { return m_parent; }
+  std::uint8_t depth() const { return m_depth; }
 
   /*!
-   * \brief retrieve this node's depth in the tree
-   * \return the depth of this node, where root has a depth of 0
-   */
-  const uint8_t &depth() const { return m_depth; }
-
-  /*!
-   * \brief retrieve this node's location in the tree
-   *
-   * \todo Should I link to an explanation of the location type?
-   *
-   * \return this node's location
-   */
+    \brief returns this node's location.
+  */
   Int_location location() const {
 
     return m_location;
   }
 
   /*!
-   * \brief retrieve this node's index in relation to its parent
-   * \return the index of this node
-   */
+    \brief returns this node's index in relation to its parent.
+  */
   Index index() const {
 
     // TODO: There must be a better way of doing this!
@@ -350,16 +299,14 @@ public:
   }
 
   /*!
-   * \brief determine whether this node is a leaf node
-   * \return whether this node has no children
-   */
-  bool is_leaf() const { return (!m_children); }
-
-  /*!
-   * \brief determine whether this node is the root node
-   * \return whether this node has no parent
+    \brief returns `true` if the node has no parent, `false` otherwise.
    */
   bool is_root() const { return (!m_parent); }
+
+  /*!
+    \brief returns `true` if the node has no children, `false` otherwise.
+   */
+  bool is_leaf() const { return (!m_children); }
 
   /*!
    * \brief find the directly adjacent node in a specific direction
@@ -457,8 +404,8 @@ public:
   /*!
    * \brief equivalent to adjacent_node, with a Direction rather than a bitset
    */
-  const Self *adjacent_node(Direction direction) const {
-    return adjacent_node(std::bitset<Dimension::value>(static_cast<int>(direction)));
+  const Self *adjacent_node(Adjacency adjacency) const {
+    return adjacent_node(std::bitset<Dimension::value>(static_cast<int>(adjacency)));
   }
 
   /*!
@@ -471,8 +418,8 @@ public:
   /*!
    * \brief equivalent to adjacent_node, with a Direction rather than a bitset and non-const
    */
-  Self *adjacent_node(Direction direction) {
-    return adjacent_node(std::bitset<Dimension::value>(static_cast<int>(direction)));
+  Self *adjacent_node(Adjacency adjacency) {
+    return adjacent_node(std::bitset<Dimension::value>(static_cast<int>(adjacency)));
   }
 
   /// @}

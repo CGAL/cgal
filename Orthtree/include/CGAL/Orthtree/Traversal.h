@@ -16,9 +16,13 @@
 
 #include <iostream>
 #include <boost/range/iterator_range.hpp>
-#include "Traversal_iterator.h"
+#include <CGAL/Orthtree/Traversal_iterator.h>
 
 namespace CGAL {
+
+namespace Orthtrees {
+
+/// \cond SKIP_IN_MANUAL
 
 template <typename Node>
 const Node* next_sibling(const Node* n) {
@@ -75,10 +79,13 @@ const Node* deepest_first_child(const Node* n) {
   return first;
 }
 
+/// \endcond
+
 namespace Traversal {
 
 /*!
- * \brief walker for preorder traversal
+  \ingroup PkgOrthtreeTraversal
+  \brief walker for preorder traversal
  */
 struct Preorder {
 
@@ -125,7 +132,8 @@ struct Preorder {
 };
 
 /*!
- * \todo
+  \ingroup PkgOrthtreeTraversal
+  \todo
  */
 struct Postorder {
 
@@ -162,7 +170,8 @@ struct Postorder {
 };
 
 /*!
- * \brief walker for leaves-only traversal
+  \ingroup PkgOrthtreeTraversal
+  \brief walker for leaves-only traversal
  */
 struct Leaves {
 
@@ -198,8 +207,8 @@ struct Leaves {
   }
 };
 
-}
-
-}
+} // Traversal
+} // Orthtree
+} // CGAL
 
 #endif //CGAL_ORTHTREE_TRAVERSAL_CRITERION_H

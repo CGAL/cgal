@@ -1,6 +1,6 @@
 
 /*!
- * \ingroup PkgOctreeConcepts
+ * \ingroup PkgOrthtreeConcepts
  * \cgalConcept
  *
  * \brief A Traversal provides the functions needed to traverse the nodes of an octree using a Traversal_iterator.
@@ -9,7 +9,7 @@
  * rather than recursively.
  *
  * \todo Link to relevant classes
- * \sa `CGAL::Octree::Traversal_iterator<Value>`
+ * \sa `CGAL::Traversal_iterator<Value>`
  */
 class Traversal {
 public:
@@ -42,4 +42,3 @@ public:
   /// @}
 
 };
-

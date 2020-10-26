@@ -7,7 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Jackson Campolattaro, Cédric Portaneri, Tong Zhao
+// Author(s)     : Jackson Campolattaro, Simon Giraudot, Cédric Portaneri, Tong Zhao
 
 #ifndef CGAL_ORTHTREE_H
 #define CGAL_ORTHTREE_H
@@ -15,7 +15,7 @@
 #include <CGAL/license/Orthtree.h>
 
 #include <CGAL/Orthtree/Cartesian_ranges.h>
-#include <CGAL/Orthtree/Split_criterion.h>
+#include <CGAL/Orthtree/Split_predicate.h>
 #include <CGAL/Orthtree/Traversal.h>
 #include <CGAL/Orthtree/Traversal_iterator.h>
 
@@ -45,26 +45,46 @@ using namespace std::placeholders;
 namespace CGAL {
 
 /*!
- * \ingroup PkgOrthtreeClasses
- *
- * \brief a data structure for efficient computations in dD space.
- *
- * \details It builds a hierarchy of nodes which subdivide the space based on a collection of points.
- * Each node represents an axis aligned hypercubic region of space.
- * A node contains the range of points that are present in the region it defines,
- * and it may contain \f$2^{dim}\f$ other nodes which further subdivide the region.
- *
- * \tparam Traits is a model of OrthtreeTraits
- * \tparam PointRange is a range type that provides random access iterators over the indices of a set of points.
- * \tparam PointMap is a type that maps items in the range to Point data
+  \ingroup PkgOrthtreeClasses
+
+  \brief a data structure for efficient computations in dD space.
+
+  \details It builds a hierarchy of nodes which subdivide the space
+  based on a collection of points.  Each node represents an axis
+  aligned hypercubic region of space.  A node contains the range of
+  points that are present in the region it defines, and it may contain
+  \f$2^{dim}\f$ other nodes which further subdivide the region.
+
+  \sa Quadtree
+  \sa Octree
+
+  \tparam Traits is a model of `OrthtreeTraits`
+  \tparam PointRange is a model of range whose value type is the key type of `PointMap`
+  \tparam PointMap is a model of `ReadablePropertyMap` whose value type is `Traits::Point_d`
  */
 template<typename Traits, typename PointRange,
-         typename PointMap = Identity_property_map
-         <typename std::iterator_traits<typename PointRange::iterator>::value_type> >
+         typename PointMap = Identity_property_map<typename Traits::Point_d> >
 class Orthtree
 {
 
 public:
+
+  /// \name Traits Types
+  /// @{
+  typedef typename Traits::Dimension Dimension; ///< Dimension of the tree
+  typedef typename Traits::FT FT; ///< Number type.
+  typedef typename Traits::Point_d Point; ///< Point type.
+  typedef typename Traits::Bbox_d Bbox; ///< Bounding box type.
+  typedef typename Traits::Sphere_d Sphere; ///< Sphere type.
+
+  /// \cond SKIP_IN_MANUAL
+  typedef typename Traits::Array Array; ///< Array type.
+  typedef typename Traits::Construct_point_d_from_array
+  Construct_point_d_from_array;
+  typedef typename Traits::Construct_bbox_d
+  Construct_bbox_d;
+  /// \endcond
+  /// @}
 
   /// \name Public Types
   /// @{
@@ -75,24 +95,9 @@ public:
   typedef Orthtree<Traits, PointRange, PointMap> Self;
 
   /*!
-   * \brief The point type is given by the traits
-   */
-  typedef typename Traits::Point_d Point;
-
-  /*!
-   * \brief Dimension of the tree
-   */
-  typedef typename Traits::Dimension Dimension;
-
-  /*!
    * \brief Degree of the tree (number of children of non-leaf nodes)
    */
   typedef Dimension_tag<(2 << (Dimension::value-1))> Degree;
-
-  /*!
-   * \brief The floating point type is given by the traits
-   */
-  typedef typename Traits::FT FT;
 
   /*!
    * \brief The Sub-tree / Orthant type
@@ -100,39 +105,35 @@ public:
   class Node;
 
   /*!
-   * \brief A function that determines whether a node needs to be split when refining a tree
+   * \brief A predicate that determines whether a node needs to be split when refining a tree
    */
-  typedef std::function<bool(const Node &)> Split_criterion_function;
+  typedef std::function<bool(const Node &)> Split_predicate;
 
   /*!
-   * \brief A range that provides input-iterator access to the nodes of a tree
+   * \brief A model of `ConstRange` whose value type is `Node`.
    */
-  typedef boost::iterator_range<Traversal_iterator<const Node>> Node_range_const;
+#ifdef DOXYGEN_RUNNING
+  typedef unspecified_type Node_range;
+#else
+  typedef boost::iterator_range<Traversal_iterator<const Node>> Node_range;
+#endif
+
+  /// \cond SKIP_IN_MANUAL
 
   /*!
    * \brief A function that determines the next node in a traversal given the current one
    */
   typedef std::function<const Node *(const Node *)> Node_traversal_method_const;
 
-  /// @}
+  /// \endcond
 
-private: // Private types
-
-  typedef typename Traits::Bbox_d Bbox;
-  typedef typename Traits::Vector_d Vector;
-  typedef typename Traits::Sphere_d Sphere;
-  typedef typename Traits::Cartesian_const_iterator_d Cartesian_const_iterator;
-  typedef typename Traits::Array Array;
-
-  typedef typename Traits::Construct_point_d_from_array
-  Construct_point_d_from_array;
-  typedef typename Traits::Construct_bbox_d
-  Construct_bbox_d;
-
+  /// \cond SKIP_IN_MANUAL
   typedef typename PointRange::iterator Range_iterator;
   typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
-
   typedef internal::Cartesian_ranges<Traits> Cartesian_ranges;
+  /// \endcond
+
+  /// @}
 
 private: // data members :
 
@@ -150,23 +151,24 @@ private: // data members :
 
 public:
 
-  /// \name Construction, Destruction
+  /// \name Constructor
   /// @{
 
   /*!
-   * \brief Create an orthtree from a collection of points
-   *
-   * The resulting orthtree will have a root node with no children that contains the points passed.
-   * That root node will have a bounding box that encloses all of the points passed,
-   * with padding according to the enlarge_ratio
-   * This single-node orthtree is valid and compatible with all Orthtree functionality,
-   * but any performance benefits are unlikely to be realized unless the tree is refined.
-   *
-   * \param point_range random access iterator over the indices of the points
-   * \param point_map maps the point indices to their coordinate locations
-   * \param enlarge_ratio the degree to which the bounding box should be enlarged
-   * \param traits the traits object
-   */
+    \brief Create an orthtree from a collection of points
+
+    The constructed orthtree has a root node, with no children, that
+    contains the points passed. That root node has a bounding box that
+    encloses all of the points passed, with padding according to the
+    `enlarge_ratio`. This single-node orthtree is valid and compatible
+    with all Orthtree functionality, but any performance benefits are
+    unlikely to be realized until `refine()` is called.
+
+    \param point_range input point range.
+    \param point_map property map to access the input points.
+    \param enlarge_ratio ratio to which the bounding box should be enlarged.
+    \param traits the traits object.
+  */
   Orthtree(PointRange& point_range,
          PointMap point_map = PointMap(),
          const FT enlarge_ratio = 1.2,
@@ -223,15 +225,17 @@ public:
   /// @{
 
   /*!
-   * \brief subdivide an orthtree's nodes and sub-nodes until it meets the given criteria
-   *
-   * The split criterion can be any function pointer that takes a Node pointer
-   * and returns a boolean value (where true implies that a Node needs to be split).
-   * It's safe to call this function repeatedly, and with different criterion.
-   *
-   * \param split_criterion rule to use when determining whether or not a node needs to be subdivided
+    \brief recursively subdivides the orthtree until it meets the given criteria.
+
+    The split predicate is a `std::function` that takes a Node and
+    returns a boolean value (where `true` implies that a Node needs to
+    be split, `false` that the Node should be a leaf). This function
+    function may be called several times with different predicate.
+
+    \param split_predicate determines whether or not a node needs to
+    be subdivided.
    */
-  void refine(const Split_criterion_function &split_criterion) {
+  void refine(const Split_predicate& split_predicate) {
 
     // If the tree has already been refined, reset it
     if (!m_root.is_leaf())
@@ -252,7 +256,7 @@ public:
       todo.pop();
 
       // Check if this node needs to be processed
-      if (split_criterion(*current)) {
+      if (split_predicate(*current)) {
 
         // Check if we've reached a new max depth
         if (current->depth() == max_depth_reached()) {
@@ -273,33 +277,30 @@ public:
   }
 
   /*!
-   * \brief refine an orthtree using a max depth and max number of points in a node as split criterion
-   *
-   * This is equivalent to calling:
-   *
-   *     refine(Split_criterion::Max_depth_or_bucket_size(max_depth, bucket_size));
-   *
-   * This functionality is provided for consistency with older orthtree implementations
-   * which did not allow for custom split criterion.
-   *
-   * \param max_depth deepest a tree is allowed to be (nodes at this depth will not be split)
-   * \param bucket_size maximum points a node is allowed to contain
+
+    \brief convenience overload that refines an orthtree using a max
+    depth and max number of points in a node as split predicate.
+
+    This is equivalent to calling
+    `refine(Split_predicate::Max_depth_or_bucket_size(max_depth,
+    bucket_size))`
+
+    \param max_depth deepest a tree is allowed to be (nodes at this depth will not be split).
+    \param bucket_size maximum points a node is allowed to contain.
    */
   void refine(size_t max_depth = 10, size_t bucket_size = 20) {
-    refine(Split_criterion::Max_depth_or_bucket_size(max_depth, bucket_size));
+    refine(Orthtrees::Split_predicate::Max_depth_or_bucket_size(max_depth, bucket_size));
   }
 
   /*!
-   * \brief eliminate large jumps in depth by splitting nodes that are much shallower than their neighbors
-   *
-   * This function guarantees that any pair of adjacent nodes has a difference in depth no greater than 1.
-   * \todo link to adjacent nodes explanation
+    \brief refines the orthtree such that the difference of depth
+    between two immediate neighbor leaves is never more than 1.
    */
   void grade() {
 
     // Collect all the leaf nodes
     std::queue<Node *> leaf_nodes;
-    for (auto &leaf : traverse(Traversal::Leaves())) {
+    for (auto &leaf : traverse(Orthtrees::Traversal::Leaves())) {
       // TODO: I'd like to find a better (safer) way of doing this
       leaf_nodes.push(const_cast<Node *>(&leaf));
     }
@@ -356,100 +357,58 @@ public:
   /// @{
 
   /*!
-   * \brief provides read-only access to the root node, and by extension the rest of the tree
-   *
-   * \return a const reference to the root node of the tree
+    \brief provides read-only access to the root node, and by
+    extension the rest of the tree.
+
+    \return a const reference to the root node of the tree.
    */
   const Node &root() const { return m_root; }
 
   /*!
-   * \brief access the child nodes of the root node by their indices
-   *
-   * my_tree[5] is equivalent to my_tree.root()[5]
-   *
-   * \param index The index of the child node, as an int
-   * \return A reference to the node
+    \brief convenience function to access the child nodes of the root
+    node by their indices.
+
+    `my_tree[5]` is equivalent to `my_tree.root()[5]`.
+
+    \param index the index of the child node.
+    \return a reference to the node.
    */
-  const Node &operator[](int index) const { return m_root[index]; }
+  const Node &operator[](std::size_t index) const { return m_root[index]; }
 
   /*!
-   * \brief Finds the deepest level reached by a leaf node in this tree
-   *
-   * \return the deepest level, where root is 0
+    \brief Finds the deepest level reached by a leaf node in this tree.
+    \return the deepest level, where root is 0.
    */
   std::size_t max_depth_reached() const { return m_side_per_depth.size() - 1; }
 
   /*!
-   * \brief constructs an input range of nodes using a tree walker function
-   *
-   * The result is a boost range created from iterators that meet the criteria defining a Forward Input Iterator
-   * This is completely compatible with standard foreach syntax.
-   * Dereferencing returns a const reference to a node.
-   * \todo Perhaps I should add some discussion of recommended usage
-   *
-   * \tparam Traversal type of the walker rule
-   * \param traversal_method the rule to use when determining the order of the sequence of points produced
-   * \return a forward input iterator over the nodes of the tree
-   */
-  template<class Traversal>
-  Node_range_const traverse(const Traversal &traversal_method = Traversal()) const {
+    \brief constructs a node range using a tree traversal function.
 
-    const Node *first = traversal_method.first(&m_root);
+    This method allows to iterate on the nodes of the tree with a
+    user-selected order (preorder, postorder, leaves only, etc.).
+
+    \tparam Traversal model of `Traversal`
+    \param traversal
+    \return a forward input iterator over the nodes of the tree
+   */
+  template<typename Traversal>
+  Node_range traverse(const Traversal &traversal = Traversal()) const {
+
+    const Node *first = traversal.first(&m_root);
 
     Node_traversal_method_const next = std::bind(&Traversal::template next<Node>,
-                                                 traversal_method, _1);
+                                                 traversal, _1);
 
     return boost::make_iterator_range(Traversal_iterator<const Node>(first, next),
                                       Traversal_iterator<const Node>());
   }
 
   /*!
-   * \brief find the leaf node which would contain a point
-   *
-   * Traverses the orthtree and finds the deepest cell that has a domain enclosing the point passed.
-   * The point passed must be within the region enclosed by the orthtree (bbox of the root node).
-   *
-   * \param p The point to find a node for
-   * \return A const reference to the node which would contain the point
-   */
-  const Node &locate(const Point &p) const {
+    \brief constructs the bounding box of a node.
 
-    // Make sure the point is enclosed by the orthtree
-    assert(CGAL::do_intersect(p, bbox(m_root)));
-
-    // Start at the root node
-    auto *node_for_point = &m_root;
-
-    // Descend the tree until reaching a leaf node
-    while (!node_for_point->is_leaf()) {
-
-      // Find the point to split around
-      Point center = barycenter(*node_for_point);
-
-      // Find the index of the correct sub-node
-      typename Node::Index index;
-      std::size_t dimension = 0;
-      for (const auto& r : cartesian_range(center, p))
-        index[dimension ++] = (get<0>(r) < get<1>(r));
-
-      // Find the correct sub-node of the current node
-      node_for_point = &(*node_for_point)[index.to_ulong()];
-    }
-
-    // Return the result
-    return *node_for_point;
-  }
-
-  /*!
-   * \brief find the bounding box of a node
-   *
-   * Creates a cubic region representing a node.
-   * The size of the region depends on the node's depth in the tree.
-   * The location of the region depends on the node's location.
-   * The bounding box is useful for checking for collisions with a node.
-   *
-   * \param node the node to determine the bounding box of
-   * \return the bounding box defined by that node's relationship to the tree
+    \note The object constructed is not the bounding box of the point
+    subset inside the node, but the bounding box of the node itself
+    (cubic).
    */
   Bbox bbox(const Node &node) const {
     // Determine the side length of this node
@@ -470,70 +429,98 @@ public:
     return construct_bbox(min_corner, max_corner);
   }
 
+  /// @}
+
+  /// \name Queries
+  /// @{
+
   /*!
-   * \brief find the K points in a tree that are nearest to the search point and within a specific radius
-   *
-   * This function guarantees that there are no closer points than the ones returned,
-   * but it does not guarantee that it will return at least K points.
-   * For a query where the search radius encloses K or fewer points, all enclosed points will be returned.
-   * If the search radius passed is too small, no points may be returned.
-   * This function is useful when the user already knows how sparse the points are,
-   * or if they don't care about points that are too far away.
-   * Setting a small radius may have performance benefits.
-   *
-   * \tparam Point_output_iterator an output iterator type that will accept points
-   * \param search_point the location to find points near
-   * \param search_radius_squared the size of the region to search within
-   * \param k the number of points to find
-   * \param output the output iterator to add the found points to (in order of increasing distance)
+    \brief find the leaf node which contains the point `p`.
+
+    Traverses the orthtree and finds the deepest cell that has a
+    domain enclosing the point passed. The point passed must be within
+    the region enclosed by the orthtree (bbox of the root node).
+
+    \param point query point.
+    \return the node which contains the point.
    */
-  template<typename Point_output_iterator>
-  void nearest_k_neighbors_in_radius(const Point &search_point, FT search_radius_squared, std::size_t k,
-                                     Point_output_iterator output) const {
+  const Node& locate(const Point &point) const {
 
-    // Create an empty list of points
-    std::vector<Point_with_distance> points_list;
-    points_list.reserve(k);
+    // Make sure the point is enclosed by the orthtree
+    CGAL_precondition (CGAL::do_intersect(point, bbox(m_root)));
 
-    // Invoking the recursive function adds those points to the vector (passed by reference)
-    auto search_bounds = Sphere(search_point, search_radius_squared);
-    nearest_k_neighbors_recursive(search_bounds, m_root, points_list);
+    // Start at the root node
+    auto *node_for_point = &m_root;
 
-    // Add all the points found to the output
-    for (auto &item : points_list)
-      *output++ = item.point;
+    // Descend the tree until reaching a leaf node
+    while (!node_for_point->is_leaf()) {
+
+      // Find the point to split around
+      Point center = barycenter(*node_for_point);
+
+      // Find the index of the correct sub-node
+      typename Node::Index index;
+      std::size_t dimension = 0;
+      for (const auto& r : cartesian_range(center, point))
+        index[dimension ++] = (get<0>(r) < get<1>(r));
+
+      // Find the correct sub-node of the current node
+      node_for_point = &(*node_for_point)[index.to_ulong()];
+    }
+
+    // Return the result
+    return *node_for_point;
   }
 
   /*!
-   * \brief find the K points in a tree that are nearest to the search point
-   *
-   * This function is equivalent to invoking nearest_k_neighbors_in_radius for an infinite radius.
-   * For a tree with K or fewer points, all points in the tree will be returned.
-   *
-   * \tparam Point_output_iterator an output iterator type that will accept points
-   * \param search_point the location to find points near
-   * \param k the number of points to find
-   * \param output the output iterator to add the found points to (in order of increasing distance)
-   */
-  template<typename Point_output_iterator>
-  void nearest_k_neighbors(const Point &search_point, std::size_t k, Point_output_iterator output) const {
+    \brief finds the `k` nearest neighbors of `query`.
 
-    return nearest_k_neighbors_in_radius(search_point, std::numeric_limits<FT>::max(), k, output);
+    Nearest neighbors are outputted in order of increasing distance to
+    `query`.
+
+    \tparam OutputIterator a model of `OutputIterator` that accept `Point_d` objects.
+    \param query query point.
+    \param k number of neighbors.
+    \param output output iterator.
+   */
+  template<typename OutputIterator>
+  OutputIterator nearest_neighbors (const Point& query,
+                                    std::size_t k,
+                                    OutputIterator output) const {
+    return nearest_k_neighbors_in_radius(Sphere(query, std::numeric_limits<FT>::max()), k, output);
   }
 
   /*!
-   * \brief find the leaf nodes that intersect with any primitive
-   *
-   * This function finds all the intersecting nodes and returns them as const pointers.
-   *
-   * \tparam Query the primitive class (e.g. Sphere_3, Ray_3)
-   * \tparam Node_output_iterator an output iterator type that will accept node pointers
-   * \param query the primitive to check for intersections
-   * \param output the output iterator to add node references to
+    \brief finds the points in `sphere`.
+
+    Nearest neighbors are outputted in order of increasing distance to
+    the center of `sphere`.
+
+    \tparam OutputIterator a model of `OutputIterator` that accept `Point_d` objects.
+    \param query query sphere.
+    \param output output iterator.
    */
-  template<typename Query, typename Node_output_iterator>
-  void intersecting_nodes(const Query &query, Node_output_iterator output) const {
-    intersecting_nodes_recursive(query, root(), output);
+  template<typename OutputIterator>
+  OutputIterator nearest_neighbors (const Sphere& query, OutputIterator output) const {
+    return nearest_k_neighbors_in_radius(query, std::numeric_limits<std::size_t>::max(), output);
+  }
+
+  /*!
+    \brief find the leaf nodes that intersect with any primitive.
+
+    \note this function requires the function
+    `bool CGAL::do_intersect(QueryType, Traits::Bbox_d)` to be defined.
+
+    This function finds all the intersecting nodes and returns them as const pointers.
+
+    \tparam Query the primitive class (e.g. sphere, ray)
+    \tparam OutputIterator a model of `OutputIterator` that accepts `Node` objects
+    \param query the intersecting primitive.
+    \param output output iterator.
+   */
+  template<typename Query, typename OutputIterator>
+  OutputIterator intersected_nodes (const Query& query, OutputIterator output) const {
+    return intersected_nodes_recursive(query, root(), output);
   }
 
   /// @}
@@ -542,15 +529,11 @@ public:
   /// @{
 
   /*!
-   * \brief compares the topology of a pair of orthtrees
-   *
-   * Trees may be considered equivalent even if they contain different points.
-   * Equivalent trees must have the same bounding box and the same node structure.
-   * Node structure is evaluated by comparing the root nodes using the node equality operator.
-   * \todo Should I link to that?
-   *
-   * \param rhs tree to compare with
-   * \return whether the trees have the same topology
+    \brief compares the topology of the orthtree with `rhs`.
+
+    Trees may be considered equivalent even if they contain different points.
+    Equivalent trees must have the same bounding box and the same node structure.
+    Node structure is evaluated by comparing the root nodes using the node equality operator.
    */
   bool operator==(const Self &rhs) const {
 
@@ -567,9 +550,7 @@ public:
   }
 
   /*!
-   * \brief compares the topology of a pair of Orthtrees
-   * \param rhs tree to compare with
-   * \return whether the trees have different topology
+    \brief compares the topology of the orthtree with `rhs`.
    */
   bool operator!=(const Self &rhs) const {
     return !operator==(rhs);
@@ -673,7 +654,7 @@ private: // functions :
     FT distance;
   };
 
-  void nearest_k_neighbors_recursive(Sphere &search_bounds, const Node &node,
+  void nearest_k_neighbors_recursive(Sphere search_bounds, const Node &node,
                                      std::vector<Point_with_distance> &results, FT epsilon = 0) const {
 
     // Check whether the node has children
@@ -757,7 +738,8 @@ private: // functions :
   }
 
   template<typename Query, typename Node_output_iterator>
-  void intersecting_nodes_recursive(const Query &query, const Node &node, Node_output_iterator output) const {
+  Node_output_iterator intersected_nodes_recursive(const Query &query, const Node &node,
+                                                   Node_output_iterator output) const {
 
     // Check if the current node intersects with the query
     if (CGAL::do_intersect(query, bbox(node))) {
@@ -765,15 +747,52 @@ private: // functions :
       // if this node is a leaf, than it's considered an intersecting node
       if (node.is_leaf()) {
         *output++ = &node;
-        return;
+        return output;
       }
 
       // Otherwise, each of the children need to be checked
       for (int i = 0; i < Degree::value; ++i) {
         intersecting_nodes_recursive(query, node[i], output);
       }
-
     }
+    return output;
+  }
+
+  /*!
+    \brief finds the `k` points within a specific radius that are nearest to `query`.
+
+    This function guarantees that there are no closer points than the ones returned,
+    but it does not guarantee that it will return at least K points.
+    For a query where the search radius encloses K or fewer points, all enclosed points will be returned.
+    If the search radius passed is too small, no points may be returned.
+    This function is useful when the user already knows how sparse the points are,
+    or if they don't care about points that are too far away.
+    Setting a small radius may have performance benefits.
+
+    \tparam Point_output_iterator an output iterator type that will accept points
+    \param search_point the location to find points near
+    \param search_radius_squared the size of the region to search within
+    \param k the number of points to find
+    \param output the output iterator to add the found points to (in order of increasing distance)
+   */
+  template<typename OutputIterator>
+  OutputIterator nearest_k_neighbors_in_radius
+  (const Sphere& query_sphere,
+   std::size_t k, OutputIterator output) const {
+
+    // Create an empty list of points
+    std::vector<Point_with_distance> points_list;
+    if (k != (std::numeric_limits<std::size_t>::max)())
+      points_list.reserve(k);
+
+    // Invoking the recursive function adds those points to the vector (passed by reference)
+    nearest_k_neighbors_recursive(query_sphere, m_root, points_list);
+
+    // Add all the points found to the output
+    for (auto &item : points_list)
+      *output++ = item.point;
+
+    return output;
   }
 
 public:
@@ -781,7 +800,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   void dump_to_polylines (std::ostream& os) const
   {
-    for (const Node& n : traverse<Traversal::Preorder>())
+    for (const Node& n : traverse<Orthtrees::Traversal::Preorder>())
       if (n.is_leaf())
       {
         Bbox box = bbox(n);
@@ -835,7 +854,7 @@ public:
   friend std::ostream& operator<< (std::ostream& os, const Self& orthtree)
   {
     // Create a range of nodes
-    auto nodes = orthtree.traverse(CGAL::Traversal::Preorder());
+    auto nodes = orthtree.traverse(CGAL::Orthtrees::Traversal::Preorder());
     // Iterate over the range
     for (auto &n : nodes) {
       // Show the depth

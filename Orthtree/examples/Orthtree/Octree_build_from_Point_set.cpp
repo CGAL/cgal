@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
   Octree octree(points, points.point_map());
 
   // Build the octree with a small bucket size, using a more verbose method
-  octree.refine(CGAL::Split_criterion::Max_depth_or_bucket_size(5, 10));
+  octree.refine(CGAL::Orthtrees::Split_predicate::Max_depth_or_bucket_size(5, 10));
 
   // Print out the tree
   std::cout << octree;

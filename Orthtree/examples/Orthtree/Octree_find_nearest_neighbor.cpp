@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
     std::vector<Point> nearest_points;
 
     // k=1 to find the single closest point
-    octree.nearest_k_neighbors(p, 1, std::back_inserter(nearest_points));
+    octree.nearest_neighbors(p, 1, std::back_inserter(nearest_points));
 
     std::cout << "the nearest point to (" << p << ") is (" << nearest_points[0] << ")" << std::endl;
   }

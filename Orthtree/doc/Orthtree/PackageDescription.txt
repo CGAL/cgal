@@ -3,6 +3,15 @@
 /// \defgroup PkgOrthtreeClasses Classes
 /// \ingroup PkgOrthtreeRef
 
+/// \defgroup PkgOrthtreeTraits Traits
+/// \ingroup PkgOrthtreeClasses
+
+/// \defgroup PkgOrthtreeSplitPredicates Split Predicates
+/// \ingroup PkgOrthtreeClasses
+
+/// \defgroup PkgOrthtreeTraversal Traversal
+/// \ingroup PkgOrthtreeClasses
+
 /// \defgroup PkgOrthtreeConcepts Concepts
 /// \ingroup PkgOrthtreeRef
 
@@ -12,8 +21,8 @@
 \cgalPkgDescriptionBegin{Quadtree\, Octree and Orthtree,PkgOrthtree}
 \cgalPkgPicture{octree_thumbnail.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Jackson Campolattaro, Cédric Portaneri, Tong Zhao, xxx}
-\cgalPkgDesc{The Orthtree package provides a data structure that subdivides 3d space, and a collection of algorithms for operating on the structure.}
+\cgalPkgAuthor{Jackson Campolattaro, Simon Giraudot, Cédric Portaneri, Tong Zhao, Pierre Alliez}
+\cgalPkgDesc{The Orthtree package provides a data structure that subdivides space, with specializations for 2D (Quadtree) and 3D (Octree), along with a collection of algorithms for operating on these structures.}
 \cgalPkgManuals{Chapter_Orthtree,PkgOrthtreeRef}
 \cgalPkgSummaryEnd
 
@@ -25,18 +34,31 @@
 
 \cgalPkgDescriptionEnd
 
-\todo * Thumbnail
-
-\todo * Windows demo
 
 \cgalClassifedRefPages
 
 \cgalCRPSection{Concepts}
+- `OrthtreeTraits`
 - `Traversal`
-- `SplitCriterion`
 
 \cgalCRPSection{Classes}
 - `CGAL::Quadtree<GeomTraits, PointRange, PointMap>`
 - `CGAL::Octree<GeomTraits, PointRange, PointMap>`
 - `CGAL::Orthtree<Traits, PointRange, PointMap>`
+
+\cgalCRPSection{Traits}
+- `CGAL::Orthtree_traits_2<GeomTraits>`
+- `CGAL::Orthtree_traits_3<GeomTraits>`
+- `CGAL::Orthtree_traits_d<GeomTraits, Dimension>`
+
+\cgalCRPSection{Split Predicates}
+- `CGAL::Orthtrees::Split_predicate::Bucket_size`
+- `CGAL::Orthtrees::Split_predicate::Max_depth`
+- `CGAL::Orthtrees::Split_predicate::Max_depth_or_bucket_size`
+
+\cgalCRPSection{%Traversal}
+- `CGAL::Orthtrees::Traversal::Preorder`
+- `CGAL::Orthtrees::Traversal::Postorder`
+- `CGAL::Orthtrees::Traversal::Leaves`
+
 */
