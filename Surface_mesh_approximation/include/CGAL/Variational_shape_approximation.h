@@ -1778,7 +1778,7 @@ private:
   }
 
   /*!
-   * @brief subdivides a chord recursively in range `[chord_begin, chord_end).`
+   * @brief subdivides a chord recursively in range `[chord_begin, chord_end)`.
    * @param chord_begin begin iterator of the chord
    * @param chord_end end iterator of the chord
    * @param subdivision_ratio the chord recursive split error threshold
