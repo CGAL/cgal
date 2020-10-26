@@ -206,6 +206,13 @@ public:
 
   typedef Scene_facegraph_item_k_ring_selection::Active_handle Active_handle;
 
+  enum SelectionType{
+    Vertex=0x1,
+    Edge=0x2,
+    Facet=0x4,
+    None=0x8
+  };
+  Q_DECLARE_FLAGS(SelectionTypes, SelectionType)
   void common_constructor();
   Scene_polyhedron_selection_item() ;
   Scene_polyhedron_selection_item(Scene_face_graph_item* poly_item, QMainWindow* mw);
@@ -228,6 +235,7 @@ public:
   }
   void initializeBuffers(CGAL::Three::Viewer_interface *) const;
   void computeElements() const;
+  void setKeepSelectionValid(SelectionTypes type);
 
 protected:
   void init(Scene_face_graph_item* poly_item, QMainWindow* mw);
@@ -839,12 +847,7 @@ public Q_SLOTS:
   void selected_HL(const std::set<fg_vertex_descriptor>& m);
   void selected_HL(const std::set<fg_face_descriptor>& m);
   void selected_HL(const std::set<fg_edge_descriptor>& m);
-  void poly_item_changed() {
-    remove_erased_handles<fg_vertex_descriptor>();
-    remove_erased_handles<fg_edge_descriptor>();
-    remove_erased_handles<fg_face_descriptor>();
-    compute_normal_maps();
-  }
+  void poly_item_changed();
   void endSelection(){
     Q_EMIT simplicesSelected(this);
   }
@@ -1053,23 +1056,26 @@ protected :
 
       for(vertex_descriptor v : m_vertices)
       {
-        if(v2v[v] != boost::graph_traits<SMesh>::null_vertex())
+        if(v2v[v] != boost::graph_traits<SMesh>::null_vertex()
+           && int(v2v[v])  < m_mesh.number_of_vertices())
           new_vertices.insert(v2v[v]);
       }
       m_vertices.clear();
       m_vertices.insert(new_vertices.begin(), new_vertices.end());
 
-      for (edge_descriptor e : m_edges)
+      for (fg_edge_descriptor e : m_edges)
       {
         halfedge_descriptor h = halfedge(e, m_mesh);
-        if(e2e[h] != boost::graph_traits<SMesh>::null_halfedge())
+        if(e2e[h] != boost::graph_traits<SMesh>::null_halfedge()
+           && int(e2e[h])  < m_mesh.number_of_halfedges())
           new_edges.insert(edge(e2e[h], m_mesh));
       }
       m_edges.clear();
       m_edges.insert(new_edges.begin(), new_edges.end());
 
       for (face_descriptor f : m_facets)
-        if(f2f[v] != boost::graph_traits<SMesh>::null_face())
+        if(f2f[f] != boost::graph_traits<SMesh>::null_face()
+           && int(f2f[f])  < m_mesh.number_of_faces())
           new_facets.insert(f2f[f]);
       m_facets.clear();
       m_facets.insert(new_facets.begin(), new_facets.end());

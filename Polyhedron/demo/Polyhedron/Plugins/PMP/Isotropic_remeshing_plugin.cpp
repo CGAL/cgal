@@ -471,16 +471,11 @@ public Q_SLOTS:
         {
           selection_item->polyhedron_item()->setItemIsMulticolor(false);
         }
-
-
-        selection_item->polyhedron_item()->polyhedron()->collect_garbage(visitor);
-
-        selection_item->reset_numbers();
-
+        selection_item->setKeepSelectionValid(Scene_polyhedron_selection_item::Edge);
         selection_item->polyhedron_item()->invalidateOpenGLBuffers();
         Q_EMIT selection_item->polyhedron_item()->itemChanged();
-
         selection_item->invalidateOpenGLBuffers();
+        selection_item->setKeepSelectionValid(Scene_polyhedron_selection_item::None);
       }
       else if (poly_item)
       {
