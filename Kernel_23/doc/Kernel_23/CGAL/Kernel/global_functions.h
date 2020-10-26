@@ -357,7 +357,7 @@ which has the same direction as `l1`, and which is at the same distance
 from `l1` and `l2`.
 If `Kernel::FT` is not a model of `FieldWithSqrt`
 an approximation of the square root will be used in this function,
-impacting the exactness of the result even with a (exact) multiprecision
+impacting the exactness of the result even with an (exact) multiprecision
 number type.
 */
 template <typename Kernel>
@@ -383,7 +383,7 @@ plane which has the same oriented normal vector as `l1`, and which is at
 the same distance from `h1` and `h2`.
 If `Kernel::FT` is not a model of `FieldWithSqrt`
 an approximation of the square root will be used in this function,
-impacting the exactness of the result even with a (exact) multiprecision
+impacting the exactness of the result even with an (exact) multiprecision
 number type.
 */
 template <typename Kernel>
