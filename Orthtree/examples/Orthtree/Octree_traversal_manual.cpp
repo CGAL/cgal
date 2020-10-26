@@ -53,15 +53,15 @@ int main(int argc, char **argv) {
   std::cout << std::endl;
 
   // Retrieve one of the deeper children
-  const Octree::Node &cur = octree[3][2];
+  Octree::Node cur = octree[3][2];
   std::cout << "Navigation relative to a child node" << std::endl;
   std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
   std::cout << "the third child of the fourth child: " << std::endl;
   std::cout << cur << std::endl;
   std::cout << "the third child: " << std::endl;
-  std::cout << *cur.parent() << std::endl;
+  std::cout << cur.parent() << std::endl;
   std::cout << "the next sibling of the third child of the fourth child: " << std::endl;
-  std::cout << (*cur.parent())[cur.index().to_ulong() + 1] << std::endl;
+  std::cout << cur.parent()[cur.index().to_ulong() + 1] << std::endl;
 
   return EXIT_SUCCESS;
 }

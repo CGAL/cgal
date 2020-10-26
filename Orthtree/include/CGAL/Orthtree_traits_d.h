@@ -85,7 +85,7 @@ public:
   {
     Point_d operator() (const Array& array) const
     {
-      return Point_d ( /* todo */ );
+      return Point_d (array.begin(), array.end());
     }
   };
 #endif
@@ -102,7 +102,8 @@ public:
     Bbox_d operator() (const Array& min,
                        const Array& max) const
     {
-      return Bbox_d ( /* todo */ );
+      return Bbox_d (Point_d (min.begin(), min.end()),
+                     Point_d (max.begin(), max.end()));
     }
   };
 #endif

@@ -44,7 +44,7 @@ public:
    *
    * \todo
    */
-  typedef std::function<Value *(Value *)> Traversal_function;
+  typedef std::function<Value(Value)> Traversal_function;
 
   /// @}
 
@@ -58,7 +58,7 @@ public:
    *
    * \todo
    */
-  Traversal_iterator() : m_value(nullptr), m_next() {}
+  Traversal_iterator() : m_value(), m_next() {}
 
   /*!
    * \brief
@@ -68,7 +68,7 @@ public:
    * \param first
    * \param next
    */
-  Traversal_iterator(Value *first, const Traversal_function &next) : m_value(first), m_next(next) {}
+  Traversal_iterator(Value first, const Traversal_function &next) : m_value(first), m_next(next) {}
 
   /// @}
 
@@ -84,12 +84,12 @@ private:
   }
 
   Value &dereference() const {
-    return *m_value;
+    return const_cast<Value&>(m_value);
   }
 
 private:
 
-  Value *m_value;
+  Value m_value;
   Traversal_function m_next;
 };
 }

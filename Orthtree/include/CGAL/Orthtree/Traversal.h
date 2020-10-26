@@ -25,57 +25,57 @@ namespace Orthtrees {
 /// \cond SKIP_IN_MANUAL
 
 template <typename Node>
-const Node* next_sibling(const Node* n) {
+Node next_sibling(Node n) {
 
   // Passing null returns the first node
-  if (nullptr == n)
-    return nullptr;
+  if (n.is_null())
+    return Node();
 
   // If this node has no parent, it has no siblings
-  if (nullptr == n->parent())
-    return nullptr;
+  if (n.parent().is_null())
+    return Node();
 
   // Find out which child this is
-  std::size_t index = n->index().to_ulong();
+  std::size_t index = n.index().to_ulong();
 
   constexpr static int degree = Node::Degree::value;
   // Return null if this is the last child
   if (index == degree - 1)
-    return nullptr;
+    return Node();
 
   // Otherwise, return the next child
-  return &((*n->parent())[index + 1]);
+  return n.parent()[index + 1];
 }
 
 template <typename Node>
-const Node* next_sibling_up(const Node* n) {
+Node next_sibling_up(Node n) {
 
-  if (!n)
-    return nullptr;
+  if (n.is_null())
+    return Node();
 
-  auto up = n->parent();
+  Node up = n.parent();
 
-  while (nullptr != up) {
+  while (!up.is_null()) {
 
-    if (nullptr != next_sibling(up))
+    if (!next_sibling(up).is_null())
       return next_sibling(up);
 
-    up = up->parent();
+    up = up.parent();
   }
 
-  return nullptr;
+  return Node();
 }
 
 template <typename Node>
-const Node* deepest_first_child(const Node* n) {
+Node deepest_first_child(Node n) {
 
-  if (!n)
-    return nullptr;
+  if (n.is_null())
+    return Node();
 
   // Find the deepest child on the left
-  auto first = n;
-  while (!first->is_leaf())
-    first = &(*first)[0];
+  Node first = n;
+  while (!first.is_leaf())
+    first = first[0];
   return first;
 }
 
@@ -97,7 +97,7 @@ struct Preorder {
    * \return
    */
   template <typename Node>
-  const Node* first(const Node* root) const {
+  Node first(Node root) const {
     return root;
   }
 
@@ -109,25 +109,20 @@ struct Preorder {
    * \return
    */
   template <typename Node>
-  const Node* next(const Node* n) const {
+  Node next(Node n) const {
 
-    if (n->is_leaf()) {
+    if (n.is_leaf()) {
 
-      auto next = next_sibling(n);
+      Node next = next_sibling(n);
 
-      if (nullptr == next) {
-
+      if (next.is_null())
         return next_sibling_up(n);
-      }
 
       return next;
 
-    } else {
-
-      // Return the first child of this node
-      return &(*n)[0];
     }
-
+    else // Return the first child of this node
+      return n[0];
   }
 };
 
@@ -145,7 +140,7 @@ struct Postorder {
    * \return
    */
   template <typename Node>
-  const Node* first(const Node* root) const {
+  Node first(Node root) const {
 
     return deepest_first_child(root);
   }
@@ -158,12 +153,12 @@ struct Postorder {
    * \return
    */
   template <typename Node>
-  const Node* next(const Node* n) const {
+  Node next(Node n) const {
 
-    auto next = deepest_first_child(next_sibling(n));
+    Node next = deepest_first_child(next_sibling(n));
 
     if (!next)
-      next = n->parent();
+      next = n.parent();
 
     return next;
   }
@@ -183,7 +178,7 @@ struct Leaves {
    * \return
    */
   template <typename Node>
-  const Node* first(const Node* root) const {
+  Node first(Node root) const {
 
     return deepest_first_child(root);
   }
@@ -196,11 +191,11 @@ struct Leaves {
    * \return
    */
   template <typename Node>
-  const Node* next(const Node* n) const {
+  Node next(Node n) const {
 
-    auto next = deepest_first_child(next_sibling(n));
+    Node next = deepest_first_child(next_sibling(n));
 
-    if (!next)
+    if (next.is_null())
       next = deepest_first_child(next_sibling_up(n));
 
     return next;

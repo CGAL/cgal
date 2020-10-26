@@ -18,6 +18,7 @@
 #include <CGAL/Orthtree/Split_predicate.h>
 #include <CGAL/Orthtree/Traversal.h>
 #include <CGAL/Orthtree/Traversal_iterator.h>
+#include <CGAL/Orthtree/IO.h>
 
 #include <CGAL/bounding_box.h>
 
@@ -107,7 +108,7 @@ public:
   /*!
    * \brief A predicate that determines whether a node needs to be split when refining a tree
    */
-  typedef std::function<bool(const Node &)> Split_predicate;
+  typedef std::function<bool(Node)> Split_predicate;
 
   /*!
    * \brief A model of `ConstRange` whose value type is `Node`.
@@ -115,7 +116,7 @@ public:
 #ifdef DOXYGEN_RUNNING
   typedef unspecified_type Node_range;
 #else
-  typedef boost::iterator_range<Traversal_iterator<const Node>> Node_range;
+  typedef boost::iterator_range<Traversal_iterator<Node> > Node_range;
 #endif
 
   /// \cond SKIP_IN_MANUAL
@@ -123,7 +124,7 @@ public:
   /*!
    * \brief A function that determines the next node in a traversal given the current one
    */
-  typedef std::function<const Node *(const Node *)> Node_traversal_method_const;
+  typedef std::function<Node(Node)> Node_traversal_method_const;
 
   /// \endcond
 
@@ -176,6 +177,7 @@ public:
     : m_traits (traits)
     , m_range (point_range)
     , m_point_map (point_map)
+    , m_root(Node(), 0)
   {
     Array bbox_min;
     for (FT& f : bbox_min)
@@ -207,7 +209,7 @@ public:
     for (std::size_t i = 0 ; i < Dimension::value; ++ i)
     {
       bbox_min[i] = bbox_centroid[i] - max_length;
-      bbox_max[i] = bbox_centroid[i] - max_length;
+      bbox_max[i] = bbox_centroid[i] + max_length;
     }
 
     Construct_point_d_from_array construct_point_d_from_array
@@ -245,32 +247,32 @@ public:
     m_side_per_depth.resize(1);
 
     // Initialize a queue of nodes that need to be refined
-    std::queue<Node *> todo;
-    todo.push(&m_root);
+    std::queue<Node> todo;
+    todo.push(m_root);
 
     // Process items in the queue until it's consumed fully
     while (!todo.empty()) {
 
       // Get the next element
-      auto current = todo.front();
+      Node current = todo.front();
       todo.pop();
 
       // Check if this node needs to be processed
-      if (split_predicate(*current)) {
+      if (split_predicate(current)) {
 
         // Check if we've reached a new max depth
-        if (current->depth() == max_depth_reached()) {
+        if (current.depth() == max_depth_reached()) {
 
           // Update the side length map
           m_side_per_depth.push_back(*(m_side_per_depth.end() - 1) / 2);
         }
 
         // Split the node, redistributing its points to its children
-        split((*current));
+        split(current);
 
         // Process each of its children
         for (int i = 0; i < Degree::value; ++i)
-          todo.push(&(*current)[i]);
+          todo.push(current[i]);
 
       }
     }
@@ -299,52 +301,52 @@ public:
   void grade() {
 
     // Collect all the leaf nodes
-    std::queue<Node *> leaf_nodes;
-    for (auto &leaf : traverse(Orthtrees::Traversal::Leaves())) {
+    std::queue<Node> leaf_nodes;
+    for (Node leaf : traverse(Orthtrees::Traversal::Leaves())) {
       // TODO: I'd like to find a better (safer) way of doing this
-      leaf_nodes.push(const_cast<Node *>(&leaf));
+      leaf_nodes.push(leaf);
     }
 
     // Iterate over the nodes
     while (!leaf_nodes.empty()) {
 
       // Get the next node
-      Node *node = leaf_nodes.front();
+      Node node = leaf_nodes.front();
       leaf_nodes.pop();
 
       // Skip this node if it isn't a leaf anymore
-      if (!node->is_leaf())
+      if (!node.is_leaf())
         continue;
 
       // Iterate over each of the neighbors
       for (int direction = 0; direction < 6; ++direction) {
 
         // Get the neighbor
-        auto *neighbor = node->adjacent_node(direction);
+        Node neighbor = node.adjacent_node(direction);
 
         // If it doesn't exist, skip it
-        if (!neighbor)
+        if (neighbor.is_null())
           continue;
 
         // Skip if this neighbor is a direct sibling (it's guaranteed to be the same depth)
         // TODO: This check might be redundant, if it doesn't affect performance maybe I could remove it
-        if (neighbor->parent() == node->parent())
+        if (neighbor.parent() == node.parent())
           continue;
 
         // If it's already been split, skip it
-        if (!neighbor->is_leaf())
+        if (!neighbor.is_leaf())
           continue;
 
         // Check if the neighbor breaks our grading rule
         // TODO: could the rule be parametrized?
-        if ((node->depth() - neighbor->depth()) > 1) {
+        if ((node.depth() - neighbor.depth()) > 1) {
 
           // Split the neighbor
-          split(*neighbor);
+          split(neighbor);
 
           // Add newly created children to the queue
           for (int i = 0; i < Degree::value; ++i) {
-            leaf_nodes.push(&(*neighbor)[i]);
+            leaf_nodes.push(neighbor[i]);
           }
         }
       }
@@ -357,12 +359,9 @@ public:
   /// @{
 
   /*!
-    \brief provides read-only access to the root node, and by
-    extension the rest of the tree.
-
-    \return a const reference to the root node of the tree.
+    \brief returns the root node.
    */
-  const Node &root() const { return m_root; }
+  Node root() const { return m_root; }
 
   /*!
     \brief convenience function to access the child nodes of the root
@@ -373,7 +372,7 @@ public:
     \param index the index of the child node.
     \return a reference to the node.
    */
-  const Node &operator[](std::size_t index) const { return m_root[index]; }
+  Node operator[](std::size_t index) const { return m_root[index]; }
 
   /*!
     \brief Finds the deepest level reached by a leaf node in this tree.
@@ -394,13 +393,13 @@ public:
   template<typename Traversal>
   Node_range traverse(const Traversal &traversal = Traversal()) const {
 
-    const Node *first = traversal.first(&m_root);
+    Node first = traversal.first(m_root);
 
     Node_traversal_method_const next = std::bind(&Traversal::template next<Node>,
                                                  traversal, _1);
 
-    return boost::make_iterator_range(Traversal_iterator<const Node>(first, next),
-                                      Traversal_iterator<const Node>());
+    return boost::make_iterator_range(Traversal_iterator<Node>(first, next),
+                                      Traversal_iterator<Node>());
   }
 
   /*!
@@ -444,19 +443,19 @@ public:
     \param point query point.
     \return the node which contains the point.
    */
-  const Node& locate(const Point &point) const {
+  Node locate(const Point &point) const {
 
     // Make sure the point is enclosed by the orthtree
     CGAL_precondition (CGAL::do_intersect(point, bbox(m_root)));
 
     // Start at the root node
-    auto *node_for_point = &m_root;
+    auto node_for_point = m_root;
 
     // Descend the tree until reaching a leaf node
     while (!node_for_point->is_leaf()) {
 
       // Find the point to split around
-      Point center = barycenter(*node_for_point);
+      Point center = barycenter(node_for_point);
 
       // Find the index of the correct sub-node
       typename Node::Index index;
@@ -465,11 +464,11 @@ public:
         index[dimension ++] = (get<0>(r) < get<1>(r));
 
       // Find the correct sub-node of the current node
-      node_for_point = &(*node_for_point)[index.to_ulong()];
+      node_for_point = node_for_point[index.to_ulong()];
     }
 
     // Return the result
-    return *node_for_point;
+    return node_for_point;
   }
 
   /*!
@@ -560,7 +559,7 @@ public:
 
   // TODO: Document this
   // TODO: Could this method name be reduced to just "center" ?
-  Point barycenter(const Node &node) const {
+  Point barycenter(const Node& node) const {
 
     // Determine the side length of this node
     FT size = m_side_per_depth[node.depth()];
@@ -570,9 +569,11 @@ public:
     std::size_t i = 0;
     for (const FT& f : cartesian_range(m_bbox_min))
     {
+      std::cerr << node.location()[i] << " ";
       bary[i] = node.location()[i] * size + (size / 2.0) + f;
       ++ i;
     }
+    std::cerr << std::endl;
 
     // Convert that location into a point
     Construct_point_d_from_array construct_point_d_from_array
@@ -615,7 +616,7 @@ private: // functions :
 
   }
 
-  void split(Node &node) {
+  void split(Node& node) {
 
     // Make sure the node hasn't already been split
     assert(node.is_leaf());
@@ -625,6 +626,7 @@ private: // functions :
 
     // Find the point to around which the node is split
     Point center = barycenter(node);
+    std::cerr << center << std::endl;
 
     // Add the node's points to its children
     reassign_points(node, node.points().begin(), node.points().end(), center);
@@ -709,7 +711,7 @@ private: // functions :
 
       // Fill the list with child nodes
       for (int index = 0; index < Degree::value; ++index) {
-        auto &child_node = node[index];
+        Node child_node = node[index];
 
         // Add a child to the list, with its distance
         children_with_distances.push_back(
@@ -725,7 +727,7 @@ private: // functions :
 
       // Loop over the children
       for (auto child_with_distance : children_with_distances) {
-        auto &child_node = node[child_with_distance.index.to_ulong()];
+        Node child_node = node[child_with_distance.index.to_ulong()];
 
         // Check whether the bounding box of the child intersects with the search bounds
         if (do_intersect(child_node, search_bounds)) {
@@ -746,7 +748,7 @@ private: // functions :
 
       // if this node is a leaf, than it's considered an intersecting node
       if (node.is_leaf()) {
-        *output++ = &node;
+        *output++ = node;
         return output;
       }
 
