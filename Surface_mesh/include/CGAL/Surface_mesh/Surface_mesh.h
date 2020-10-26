@@ -929,7 +929,7 @@ public:
     Vertex_index add_vertex()
     {
       size_type inf = (std::numeric_limits<size_type>::max)();
-      if(vertices_freelist_ != inf){
+      if(recycle_ && (vertices_freelist_ != inf)){
         size_type idx = vertices_freelist_;
         vertices_freelist_ = (size_type)vconn_[Vertex_index(vertices_freelist_)].halfedge_;
         --removed_vertices_;
@@ -961,7 +961,7 @@ public:
     {
       Halfedge_index h0, h1;
       size_type inf = (std::numeric_limits<size_type>::max)();
-      if(edges_freelist_ != inf){
+      if(recycle_ && (edges_freelist_ != inf)){
         size_type idx = edges_freelist_;
         edges_freelist_ = (size_type)hconn_[Halfedge_index(edges_freelist_)].next_halfedge_;
         --removed_edges_;
@@ -1000,7 +1000,7 @@ public:
     Face_index add_face()
     {
       size_type inf = (std::numeric_limits<size_type>::max)();
-      if(faces_freelist_ != inf){
+      if(recycle_ && (faces_freelist_ != inf)){
         size_type idx = faces_freelist_;
         faces_freelist_ = (size_type)fconn_[Face_index(faces_freelist_)].halfedge_;
         --removed_faces_;
@@ -1268,7 +1268,8 @@ public:
     /// In case you store indices in an auxiliary data structure
     /// or in a property these indices are potentially no longer
     /// refering to the right elements.
-
+    /// When adding elements, by default elements that are marked as removed
+    /// are recycled.
 
     ///@{
 #ifndef DOXYGEN_RUNNING
@@ -1337,10 +1338,18 @@ public:
     /// refering to the right elements.
     void collect_garbage();
 
-    //undocumented convenience fucntion that allows to get old-index->new-index information
+    //undocumented convenience function that allows to get old-index->new-index information
     template <typename Visitor>
     void collect_garbage(Visitor& visitor);
 
+    /// controls the recycling or not of simplices previously marked as removed
+    /// upon addition of new elements.
+    /// When set to `true` (default value), new elements are first picked in the garbage (if any)
+    /// while if set to `false` only new elements are created.
+    void set_recycle_garbage(bool b);
+
+    /// Getter
+    bool does_recycle_garbage() const;
 
     /// @cond CGAL_DOCUMENT_INTERNALS
     /// removes unused memory from vectors. This shrinks the storage
@@ -2103,6 +2112,7 @@ private: //------------------------------------------------------- private data
     size_type edges_freelist_;
     size_type faces_freelist_;
     bool garbage_;
+    bool recycle_;
 
     size_type anonymous_property_;
 };
@@ -2738,6 +2748,7 @@ Surface_mesh()
     removed_vertices_ = removed_edges_ = removed_faces_ = 0;
     vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();
     garbage_ = false;
+    recycle_ = true;
     anonymous_property_ = 0;
 }
 
@@ -2773,6 +2784,7 @@ operator=(const Surface_mesh<P>& rhs)
         edges_freelist_    = rhs.edges_freelist_;
         faces_freelist_    = rhs.faces_freelist_;
         garbage_           = rhs.garbage_;
+        recycle_           = rhs.recycle_;
         anonymous_property_ = rhs.anonymous_property_;
     }
 
@@ -2826,6 +2838,7 @@ assign(const Surface_mesh<P>& rhs)
         edges_freelist_    = rhs.edges_freelist_;
         faces_freelist_    = rhs.faces_freelist_;
         garbage_           = rhs.garbage_;
+        recycle_           = rhs.recycle_;
         anonymous_property_ = rhs.anonymous_property_;
     }
 
@@ -2864,6 +2877,7 @@ clear()
   removed_vertices_ = removed_edges_ = removed_faces_ = 0;
   vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();
   garbage_ = false;
+  recycle_ = true;
   anonymous_property_ = 0;
 }
 
@@ -3163,6 +3177,7 @@ struct Dummy_visitor{
 };
 
 }
+
 template <typename P>
 void
 Surface_mesh<P>::
@@ -3171,6 +3186,25 @@ collect_garbage()
   collect_garbage_internal::Dummy_visitor visitor;
   collect_garbage(visitor);
 }
+
+
+template <typename P>
+void
+Surface_mesh<P>::
+set_recycle_garbage(bool b)
+{
+  recycle_ = b;
+}
+
+
+template <typename P>
+bool
+Surface_mesh<P>::
+does_recycle_garbage() const
+{
+  return recycle_;
+}
+
 
 namespace internal{
   namespace handle {
@@ -3211,6 +3245,7 @@ namespace internal{
     };
   }
 }
+
 
 } // CGAL
 

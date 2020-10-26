@@ -33,17 +33,18 @@
 /** Magic header for ANALYZE files written in big endian format */
 #define ANALYZE_BE_MAGIC "\134\001\000\000"
 
-#define DT_NONE                        0
-#define DT_UNKNOWN              0 /*Unknown data type*/
-#define DT_BINARY               1 /*Binary (1 bit per voxel)*/
-#define DT_UNSIGNED_CHAR        2 /*Unsigned character (8 bits per voxel)*/
-#define DT_SIGNED_SHORT         4 /*Signed short (16 bits per voxel)*/
-#define DT_SIGNED_INT           8 /*Signed integer (32 bits per voxel)*/
-#define DT_FLOAT                16 /*Floating point (32 bits per voxel)*/
-#define DT_COMPLEX              32 /*Complex (64 bits per voxel; 2 floating point numbers) */
-#define DT_DOUBLE               64 /*Double precision (64 bits per voxel)*/
-#define DT_RGB                  128 /* */
-#define DT_ALL                  255 /* */
+//use prefix CGAL_analyze_impl_ to avoid clashing and breaking dirent.h
+#define CGAL_analyze_impl_DT_NONE          0
+#define CGAL_analyze_impl_DT_UNKNOWN       0 /*Unknown data type*/
+#define CGAL_analyze_impl_DT_BINARY        1 /*Binary (1 bit per voxel)*/
+#define CGAL_analyze_impl_DT_UNSIGNED_CHAR 2 /*Unsigned character (8 bits per voxel)*/
+#define CGAL_analyze_impl_DT_SIGNED_SHORT  4 /*Signed short (16 bits per voxel)*/
+#define CGAL_analyze_impl_DT_SIGNED_INT    8 /*Signed integer (32 bits per voxel)*/
+#define CGAL_analyze_impl_DT_FLOAT         16 /*Floating point (32 bits per voxel)*/
+#define CGAL_analyze_impl_DT_COMPLEX       32 /*Complex (64 bits per voxel; 2 floating point numbers) */
+#define CGAL_analyze_impl_DT_DOUBLE        64 /*Double precision (64 bits per voxel)*/
+#define CGAL_analyze_impl_DT_RGB           128 /* */
+#define CGAL_analyze_impl_DT_ALL           255 /* */
 
 #include <cstring>
 
@@ -373,17 +374,17 @@ int _readAnalyzeHeader( _image* im, const char* name,
 
       switch(analyzeHeader->dime.datatype)
       {
-         case DT_BINARY:
-         case DT_UNSIGNED_CHAR:
-         case DT_SIGNED_SHORT:
-         case DT_SIGNED_INT:
-         case DT_FLOAT:
-         case DT_COMPLEX:
-         case DT_DOUBLE:
+         case CGAL_analyze_impl_DT_BINARY:
+         case CGAL_analyze_impl_DT_UNSIGNED_CHAR:
+         case CGAL_analyze_impl_DT_SIGNED_SHORT:
+         case CGAL_analyze_impl_DT_SIGNED_INT:
+         case CGAL_analyze_impl_DT_FLOAT:
+         case CGAL_analyze_impl_DT_COMPLEX:
+         case CGAL_analyze_impl_DT_DOUBLE:
             im->vdim = 1;
             break ;
 
-         case DT_RGB:
+         case CGAL_analyze_impl_DT_RGB:
             im->vdim = 3;
             break ;
 
@@ -396,17 +397,17 @@ int _readAnalyzeHeader( _image* im, const char* name,
 
       switch(analyzeHeader->dime.datatype)
       {
-         case DT_BINARY:
-         case DT_UNSIGNED_CHAR:
-         case DT_SIGNED_SHORT:
-         case DT_SIGNED_INT:
-         case DT_RGB:
+         case CGAL_analyze_impl_DT_BINARY:
+         case CGAL_analyze_impl_DT_UNSIGNED_CHAR:
+         case CGAL_analyze_impl_DT_SIGNED_SHORT:
+         case CGAL_analyze_impl_DT_SIGNED_INT:
+         case CGAL_analyze_impl_DT_RGB:
             im->wordKind = WK_FIXED;
             break ;
 
-         case DT_FLOAT:
-         case DT_COMPLEX:
-         case DT_DOUBLE:
+         case CGAL_analyze_impl_DT_FLOAT:
+         case CGAL_analyze_impl_DT_COMPLEX:
+         case CGAL_analyze_impl_DT_DOUBLE:
             im->wordKind = WK_FLOAT;
             break ;
 
@@ -419,17 +420,17 @@ int _readAnalyzeHeader( _image* im, const char* name,
 
       switch(analyzeHeader->dime.datatype)
       {
-         case DT_BINARY:
-         case DT_UNSIGNED_CHAR:
-         case DT_RGB:
+         case CGAL_analyze_impl_DT_BINARY:
+         case CGAL_analyze_impl_DT_UNSIGNED_CHAR:
+         case CGAL_analyze_impl_DT_RGB:
             im->sign = SGN_UNSIGNED;
             break ;
 
-         case DT_SIGNED_SHORT:
-         case DT_SIGNED_INT:
-         case DT_FLOAT:
-         case DT_COMPLEX:
-         case DT_DOUBLE:
+         case CGAL_analyze_impl_DT_SIGNED_SHORT:
+         case CGAL_analyze_impl_DT_SIGNED_INT:
+         case CGAL_analyze_impl_DT_FLOAT:
+         case CGAL_analyze_impl_DT_COMPLEX:
+         case CGAL_analyze_impl_DT_DOUBLE:
             im->sign = SGN_SIGNED;
             break ;
 
@@ -441,7 +442,7 @@ int _readAnalyzeHeader( _image* im, const char* name,
       }
 
       im->wdim = analyzeHeader->dime.bitpix;
-      if( analyzeHeader->dime.datatype == DT_RGB )
+      if( analyzeHeader->dime.datatype == CGAL_analyze_impl_DT_RGB )
       {
          im->wdim /= 3 ;
       }
@@ -612,10 +613,10 @@ writeAnalyzeHeader( const _image* im )
      if( im->wdim == 1 ) {
 
         if ( im->vdim == 1 ) {
-          hdr.dime.datatype = DT_UNSIGNED_CHAR ;
+          hdr.dime.datatype = CGAL_analyze_impl_DT_UNSIGNED_CHAR ;
         }
         else if ( im->vdim == 3 ) {
-          hdr.dime.datatype = DT_RGB ;
+          hdr.dime.datatype = CGAL_analyze_impl_DT_RGB ;
         }
         else {
           fprintf( stderr, "%s: unsupported image type\n", proc );
@@ -643,7 +644,7 @@ writeAnalyzeHeader( const _image* im )
             if ( imin > *buf ) imin = *buf;
           }
           if ( imax < 32768 ) {
-            hdr.dime.datatype = DT_SIGNED_SHORT ;
+            hdr.dime.datatype = CGAL_analyze_impl_DT_SIGNED_SHORT ;
           }
           else {
             fprintf( stderr, "%s: conversion from unsigned short to short impossible, max=%d\n", proc, imax );
@@ -676,7 +677,7 @@ writeAnalyzeHeader( const _image* im )
          if ( imax < *buf ) imax = *buf;
          if ( imin > *buf ) imin = *buf;
        }
-       hdr.dime.datatype = DT_SIGNED_SHORT ;
+       hdr.dime.datatype = CGAL_analyze_impl_DT_SIGNED_SHORT ;
      }
      else if( im->wdim == 4 ) {
        int *buf = (int*)im->data;
@@ -686,7 +687,7 @@ writeAnalyzeHeader( const _image* im )
          if ( imax < *buf ) imax = *buf;
          if ( imin > *buf ) imin = *buf;
        }
-       hdr.dime.datatype = DT_SIGNED_INT ;
+       hdr.dime.datatype = CGAL_analyze_impl_DT_SIGNED_INT ;
      }
      else {
        fprintf( stderr, "%s: unsupported image type\n", proc );
@@ -699,10 +700,10 @@ writeAnalyzeHeader( const _image* im )
        return -1;
      }
      if( im->wdim == 4 ) {
-       hdr.dime.datatype = DT_FLOAT ;
+       hdr.dime.datatype = CGAL_analyze_impl_DT_FLOAT ;
      }
      else if( im->wdim == 8 ) {
-       hdr.dime.datatype = DT_DOUBLE ;
+       hdr.dime.datatype = CGAL_analyze_impl_DT_DOUBLE ;
      }
      else {
        fprintf( stderr, "%s: unsupported image type\n", proc );

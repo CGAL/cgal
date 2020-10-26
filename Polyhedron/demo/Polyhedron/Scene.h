@@ -95,7 +95,7 @@ public:
   void printAllIds() Q_DECL_OVERRIDE;
   //!Re-computes the primitiveIds for `item`
   void updatePrimitiveIds(Scene_item *item) Q_DECL_OVERRIDE;
-  bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer, const QVector3D& scaler) Q_DECL_OVERRIDE;
+  bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer) Q_DECL_OVERRIDE;
   Bbox bbox() const Q_DECL_OVERRIDE;
   void computeBbox();
   double len_diagonal() const Q_DECL_OVERRIDE
