@@ -21,7 +21,7 @@ jobs:
          egrep -v " ${PR_NUMBER}\." index.html > tmp.html
          if [ -n "$(diff -q ./index.html ./tmp.html)" ]; then
            mv tmp.html index.html
-           #git rm -r ${PR_NUMBER} && git commit -a --amend && git push -f -u origin master
-           git commit -a -m "Remove ${PR_NUMBER}" && git push -u origin master
+           #git commit -a -m "Remove ${PR_NUMBER}" && git push -u origin master
          fi
+           git rm -r ${PR_NUMBER} && git commit -a --amend -m"base commit" && git push -f -u origin master
 
