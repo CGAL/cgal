@@ -29,7 +29,7 @@ typedef std::vector<CGAL::Color> ColorRange;
 int main(int argc, char** argv)
 {
 #ifdef CGAL_LINKED_WITH_3MF
-  const char* filname = (argc == 2) ? argv[1] : "data/test.3mf";
+  const char* filename = (argc == 2) ? argv[1] : "data/test.3mf";
 
   std::vector<PointRange> all_points;
   std::vector<PolygonRange> all_polygons;

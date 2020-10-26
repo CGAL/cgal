@@ -120,14 +120,14 @@ void test_file_IO_OFF()
     assert(in);
   }
 }
-
 void test_file_IO_geomview()
 {
+#ifdef CGAL_USE_GEOMVIEW
   Geomview_stream gv;
   Polyhedron P;
   gv << P;
+#endif #CGAL_USE_GEOMVIEW
 }
-
 void test_file_IO_inventor()
 {
   VRML_1_ostream out;
