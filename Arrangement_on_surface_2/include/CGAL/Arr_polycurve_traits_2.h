@@ -714,7 +714,9 @@ public:
       auto max_vertex = geom_traits->construct_max_vertex_2_object();
       auto intersect = geom_traits->intersect_2_object();
       auto cmp_seg_endpts = geom_traits->compare_endpoints_xy_2_object();
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
       auto construct_opposite = geom_traits->construct_opposite_2_object();
+#endif
 
       Comparison_result dir1 = cmp_seg_endpts(cv1[0]);
       Comparison_result dir2 = cmp_seg_endpts(cv2[0]);
