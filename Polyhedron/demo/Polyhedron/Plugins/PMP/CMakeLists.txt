@@ -46,7 +46,7 @@ if(TARGET CGAL::Eigen_support)
         target_compile_definitions( smoothing_plugin PRIVATE CGAL_PMP_USE_CERES_SOLVER )
         target_link_libraries(smoothing_plugin PUBLIC ceres)
       endif()
-      
+
       set_package_properties(
         Ceres PROPERTIES
         DESCRIPTION "A large scale non-linear optimization library."

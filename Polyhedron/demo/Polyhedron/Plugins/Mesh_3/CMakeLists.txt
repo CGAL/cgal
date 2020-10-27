@@ -63,7 +63,7 @@ if(Boost_FILESYSTEM_FOUND)
     Volume_plane_intersection.cpp
     Raw_image_dialog.cpp
     ${imgUI_FILES}
-    ${VOLUME_MOC_OUTFILES} 
+    ${VOLUME_MOC_OUTFILES}
     KEYWORDS Viewer Mesh_3)
   target_link_libraries(io_image_plugin PUBLIC scene_image_item ${VTK_LIBRARIES} CGAL::CGAL_ImageIO)
   if(VTK_LIBRARIES)
