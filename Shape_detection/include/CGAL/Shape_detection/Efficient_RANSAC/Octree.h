@@ -22,10 +22,10 @@
 #include <CGAL/Random.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC/Shape_base.h>
+#include <CGAL/Shape_detection/Efficient_RANSAC/Efficient_RANSAC_traits.h>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 
 #include <CGAL/Octree.h>
-#include <CGAL/Octree/IO.h>
 
 namespace CGAL {
 namespace Shape_detection {
@@ -50,6 +50,12 @@ struct Point_map_to_indexed_point_map {
   }
 };
 
+template <typename Traits>
+struct Traits_base { typedef Traits type; };
+template <typename Gt, typename IR, typename IPM, typename INM>
+struct Traits_base<CGAL::Shape_detection::Efficient_RANSAC_traits<Gt,IR,IPM,INM> >
+{ typedef Gt type; };
+
 template<class Traits>
 class RANSAC_octree {
 
@@ -59,12 +65,13 @@ class RANSAC_octree {
   typedef std::vector<std::size_t> Input_range;
   typedef Point_map_to_indexed_point_map<Input_iterator, Point_map> Indexed_point_map;
 
-  typedef CGAL::Octree::Octree<Input_range, Indexed_point_map> Octree;
+  typedef CGAL::Octree<typename Traits_base<Traits>::type,
+                       Input_range, Indexed_point_map> Octree;
 
   Traits m_traits;
   Input_range m_input_range;
   Indexed_point_map m_index_map;
-  CGAL::Octree::Octree<Input_range, Indexed_point_map> m_octree;
+  Octree m_octree;
 
   std::size_t m_offset;
 
@@ -84,9 +91,9 @@ public:
           m_octree(m_input_range, m_index_map, 1.0),
           m_offset(offset) {}
 
-  std::size_t index (const Node* node, std::size_t i) const
+  std::size_t index (Node node, std::size_t i) const
   {
-    return m_offset + *(node->points().begin() + i);
+    return m_offset + *(node.points().begin() + i);
   }
 
   std::size_t size() const {
@@ -94,7 +101,7 @@ public:
   }
 
   std::size_t maxLevel() const {
-    return m_octree.max_depth_reached() - 1;
+    return m_octree.depth() - 1;
   }
 
   std::size_t offset() const { return m_offset; }
@@ -125,11 +132,11 @@ public:
     return m_octree.bbox(m_octree.root()).xmax() - m_octree.bbox(m_octree.root()).xmin();
   }
 
-  const Node &locate(const typename Traits::Point_3 &p) const {
+  Node locate(const typename Traits::Point_3 &p) const {
     return m_octree.locate(p);
   }
 
-  const Node &root() const { return m_octree.root(); }
+  Node root() const { return m_octree.root(); }
 
   typename Traits::Point_3 barycenter(const Node &node) const {
     return m_octree.barycenter(node);

@@ -1033,28 +1033,28 @@ private:
 
     typedef typename Octree::Node Cell;
 
-    std::stack<const Cell *> stack;
-    stack.push(&octree->root());
+    std::stack<Cell> stack;
+    stack.push(octree->root());
 
     while (!stack.empty()) {
-      const Cell *cell = stack.top();
+      Cell cell = stack.top();
       stack.pop();
 
-      FT width = octree->width() / (1 << (cell->depth()));
+      FT width = octree->width() / (1 << (cell.depth()));
 
       FT diag = CGAL::sqrt(FT(3) * width * width) + epsilon;
 
-      FT dist = candidate->squared_distance(octree->barycenter(*cell));
+      FT dist = candidate->squared_distance(octree->barycenter(cell));
 
       if (dist > (diag * diag))
         continue;
 
       // differ between full or partial overlap?
       // if full overlap further traversal of this branch is not necessary
-      if (cell->is_leaf()) {
+      if (cell.is_leaf()) {
         std::vector<std::size_t> indices;
-        indices.reserve(cell->size());
-        for (std::size_t i = 0; i < cell->size(); i++) {
+        indices.reserve(cell.size());
+        for (std::size_t i = 0; i < cell.size(); i++) {
           if (shapeIndex[octree->index(cell, i)] == -1) {
             indices.push_back(octree->index(cell, i));
           }
@@ -1065,10 +1065,10 @@ private:
                                  indices);
       } else {
 
-        if (!cell->is_leaf()) {
+        if (!cell.is_leaf()) {
           for (std::size_t i = 0; i < 8; i++) {
-            if (!(*cell)[i].empty())
-              stack.push(&(*cell)[i]);
+            if (!cell[i].empty())
+              stack.push(cell[i]);
           }
         }
       }
@@ -1080,29 +1080,29 @@ private:
 
 
   template<class Octree>
-  const typename Octree::Node *node_containing_point(const Octree *octree, const Point &p, std::size_t level) {
+  const typename Octree::Node node_containing_point(const Octree *octree, const Point &p, std::size_t level) {
 
     // Find the node containing the point
     bool upperZ, upperY, upperX;
-    const typename Octree::Node *cur = &octree->root();
-    while (cur && cur->depth() < level) {
+    typename Octree::Node cur = octree->root();
+    while (!cur.is_null() && cur.depth() < level) {
 
       // Determine the coordinate of the child
       std::bitset<3> coordinate;
-      coordinate[0] = octree->barycenter(*cur).x() <= p.x();
-      coordinate[1] = octree->barycenter(*cur).y() <= p.y();
-      coordinate[2] = octree->barycenter(*cur).z() <= p.z();
+      coordinate[0] = octree->barycenter(cur).x() <= p.x();
+      coordinate[1] = octree->barycenter(cur).y() <= p.y();
+      coordinate[2] = octree->barycenter(cur).z() <= p.z();
 
       // If cur is a leaf node, its child is null
-      if (cur->is_leaf())
-        return nullptr;
+      if (cur.is_leaf())
+        return typename Octree::Node();
 
       // Otherwise, return the correct child of cur
-      cur = &(*cur)[coordinate.to_ulong()];
+      cur = cur[coordinate.to_ulong()];
 
       // If that child is empty, return null
-      if (cur->empty())
-        return nullptr;
+      if (cur.empty())
+        return typename Octree::Node();
     }
 
     return cur;
@@ -1118,15 +1118,15 @@ private:
 
     typedef typename Octree::Node Cell;
 
-    const Cell *cur = node_containing_point(octree, p, level);
+    const Cell cur = node_containing_point(octree, p, level);
 
     // Stop if the node we need doesn't exist
-    if (!cur)
+    if (cur.is_null())
       return false;
 
     // Count point indices that map to -1 in the shape index
     std::size_t enough = 0;
-    for (auto j : cur->points()) {
+    for (auto j : cur.points()) {
 
       if (shapeIndex[j] == -1)
         enough++;
@@ -1140,7 +1140,7 @@ private:
 
     do {
       std::size_t p = CGAL::get_default_random().
-              uniform_int<std::size_t>(0, cur->size() - 1);
+              uniform_int<std::size_t>(0, cur.size() - 1);
       // TODO: I'm not sure if dereferencing this is working correctly
       std::size_t j = octree->index(cur, p);
 
