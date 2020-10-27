@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
   std::cout << "the third child: " << std::endl;
   std::cout << cur.parent() << std::endl;
   std::cout << "the next sibling of the third child of the fourth child: " << std::endl;
-  std::cout << cur.parent()[cur.index().to_ulong() + 1] << std::endl;
+  std::cout << cur.parent()[cur.local_coordinates().to_ulong() + 1] << std::endl;
 
   return EXIT_SUCCESS;
 }

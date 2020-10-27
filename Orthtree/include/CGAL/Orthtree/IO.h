@@ -34,13 +34,13 @@ std::ostream& print_orthtree_node(std::ostream& os, const Node& node)
 
   // Index identifies which child this is
   os << "(";
-  for (std::size_t i = 0; i < node.index().size(); ++ i)
-    os << node.index()[i];
+  for (std::size_t i = 0; i < node.local_coordinates().size(); ++ i)
+    os << node.local_coordinates()[i];
   os << ") ";
 
   // Location
   os << "( ";
-  for (const auto& b : node.location())
+  for (const auto& b : node.global_coordinates())
     os << b << " ";
   os << ") ";
 

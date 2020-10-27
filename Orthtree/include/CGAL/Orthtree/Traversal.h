@@ -36,7 +36,7 @@ Node next_sibling(Node n) {
     return Node();
 
   // Find out which child this is
-  std::size_t index = n.index().to_ulong();
+  std::size_t index = n.local_coordinates().to_ulong();
 
   constexpr static int degree = Node::Degree::value;
   // Return null if this is the last child
@@ -85,29 +85,16 @@ namespace Traversal {
 
 /*!
   \ingroup PkgOrthtreeTraversal
-  \brief walker for preorder traversal
+  \brief preorder traversal, starting from the root towards the leaves.
+  \cgalModels Traversal
  */
 struct Preorder {
 
-  /*!
-   * \brief retrieve the first node of a tree in a preorder traversal, given the root
-   *
-   * \tparam Point_index
-   * \param root
-   * \return
-   */
   template <typename Node>
   Node first(Node root) const {
     return root;
   }
 
-  /*!
-   * \brief retrieve the next node of a tree in a preorder traversal, given the current one
-   *
-   * \tparam Point_index
-   * \param n
-   * \return
-   */
   template <typename Node>
   Node next(Node n) const {
 
@@ -128,30 +115,17 @@ struct Preorder {
 
 /*!
   \ingroup PkgOrthtreeTraversal
-  \todo
+  \brief preorder traversal, starting from the leaves towards the root.
+  \cgalModels Traversal
  */
 struct Postorder {
 
-  /*!
-   * \brief retrieve the first node of a tree in a postorder traversal, given the root
-   *
-   * \tparam Point_index
-   * \param root
-   * \return
-   */
   template <typename Node>
   Node first(Node root) const {
 
     return deepest_first_child(root);
   }
 
-  /*!
-   * \brief retrieve the next node of a tree in a postorder traversal, given the current one
-   *
-   * \tparam Point_index
-   * \param n
-   * \return
-   */
   template <typename Node>
   Node next(Node n) const {
 
@@ -166,30 +140,17 @@ struct Postorder {
 
 /*!
   \ingroup PkgOrthtreeTraversal
-  \brief walker for leaves-only traversal
+  \brief leaves traversal, ignoring all non-leave nodes.
+  \cgalModels Traversal
  */
 struct Leaves {
 
-  /*!
-   * \brief retrieve the first node of a tree in a leaves-only traversal, given the root
-   *
-   * \tparam Point_index
-   * \param root
-   * \return
-   */
   template <typename Node>
   Node first(Node root) const {
 
     return deepest_first_child(root);
   }
 
-  /*!
-   * \brief retrieve the next node of a tree in a leaves-only traversal, given the current one
-   *
-   * \tparam Point_index
-   * \param n
-   * \return
-   */
   template <typename Node>
   Node next(Node n) const {
 

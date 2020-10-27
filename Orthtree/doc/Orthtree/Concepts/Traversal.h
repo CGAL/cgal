@@ -1,44 +1,30 @@
 
 /*!
- * \ingroup PkgOrthtreeConcepts
- * \cgalConcept
- *
- * \brief A Traversal provides the functions needed to traverse the nodes of an octree using a Traversal_iterator.
- *
- * A traversal is used to define a specific walk of the tree (e.g. Preorder, Postorder) iteratively
- * rather than recursively.
- *
- * \todo Link to relevant classes
- * \sa `CGAL::Traversal_iterator<Value>`
+  \ingroup PkgOrthtreeConcepts
+  \cgalConcept
+
+  \brief a Traversal provides the functions needed to traverse the
+  nodes of an Orthtree.
+
+  A traversal is used to iterate on a tree with a user-selected order
+  (e.g. Preorder, Postorder).
+
+  \cgalHasModel `CGAL::Orthtrees::Traversal::Preorder`
+  \cgalHasModel `CGAL::Orthtrees::Traversal::Postorder`
+  \cgalHasModel `CGAL::Orthtrees::Traversal::Leaves`
  */
 class Traversal {
 public:
 
-  /// \name Methods
-  /// @{
+  /*!
+    \brief returns the first node to iterate to, given the root of the Orthtree.
+   */
+  template<typename Node>
+  Node first (Node root) const;
 
   /*!
-   * \brief uses a reference to the root of the tree to determine the first node of the sequence
-   *
-   * \todo The template params should be simplified
-   * \tparam Point_index
-   * \param root a const pointer to the root node
-   * \return a const pointer to the first node
+    \brief returns the next node to iterate to, given the previous node.
    */
-  template<class Point_index>
-  const Node <Point_index> *first(const Node <Point_index> *root) const {}
-
-  /*!
-   * \brief uses a reference to the current node to determine the next node of the sequence
-   *
-   * \todo The template params should be simplified
-   * \tparam Point_index
-   * \param n a const pointer to the current node
-   * \return a const pointer to the next node
-   */
-  template<class Point_index>
-  const Node <Point_index> *next(const Node <Point_index> *n) const {}
-
-  /// @}
-
+  template<typename Node>
+  Node next(Node n) const;
 };

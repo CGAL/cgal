@@ -261,7 +261,7 @@ public:
       if (split_predicate(current)) {
 
         // Check if we've reached a new max depth
-        if (current.depth() == max_depth_reached()) {
+        if (current.depth() == depth()) {
 
           // Update the side length map
           m_side_per_depth.push_back(*(m_side_per_depth.end() - 1) / 2);
@@ -375,10 +375,9 @@ public:
   Node operator[](std::size_t index) const { return m_root[index]; }
 
   /*!
-    \brief Finds the deepest level reached by a leaf node in this tree.
-    \return the deepest level, where root is 0.
+    \brief returns the deepest level reached by a leaf node in this tree (root being level 0).
    */
-  std::size_t max_depth_reached() const { return m_side_per_depth.size() - 1; }
+  std::size_t depth() const { return m_side_per_depth.size() - 1; }
 
   /*!
     \brief constructs a node range using a tree traversal function.
@@ -418,7 +417,7 @@ public:
     Array max_corner;
     for (int i = 0; i < Dimension::value; i++) {
 
-      min_corner[i] = m_bbox_min[i] + (node.location()[i] * size);
+      min_corner[i] = m_bbox_min[i] + (node.global_coordinates()[i] * size);
       max_corner[i] = min_corner[i] + size;
     }
 
@@ -541,7 +540,7 @@ public:
       return false;
 
     // Identical trees should have the same depth
-    if (rhs.max_depth_reached() != max_depth_reached())
+    if (rhs.depth() != depth())
       return false;
 
     // If all else is equal, recursively compare the trees themselves
@@ -569,8 +568,8 @@ public:
     std::size_t i = 0;
     for (const FT& f : cartesian_range(m_bbox_min))
     {
-      std::cerr << node.location()[i] << " ";
-      bary[i] = node.location()[i] * size + (size / 2.0) + f;
+      std::cerr << node.global_coordinates()[i] << " ";
+      bary[i] = node.global_coordinates()[i] * size + (size / 2.0) + f;
       ++ i;
     }
     std::cerr << std::endl;
@@ -652,7 +651,7 @@ private: // functions :
     FT distance;
   };
   struct Node_index_with_distance {
-    typename Node::Index index;
+    typename Node::Local_coordinates index;
     FT distance;
   };
 
@@ -715,7 +714,7 @@ private: // functions :
 
         // Add a child to the list, with its distance
         children_with_distances.push_back(
-                {typename Node::Index(index),
+                {typename Node::Local_coordinates(index),
                  CGAL::squared_distance(search_bounds.center(), barycenter(child_node))}
         );
       }
