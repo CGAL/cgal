@@ -21,7 +21,9 @@ if(CGAL_FOUND)
 
     set(targets
     # kinetic_2d_example
-    kinetic_precomputed_shapes_example)
+    kinetic_precomputed_shapes_example
+    # kinetic_random_shapes_example
+    )
 
     set(project_linked_libraries)
     set(project_compilation_definitions)

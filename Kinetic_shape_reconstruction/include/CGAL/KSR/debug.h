@@ -361,26 +361,26 @@ public:
   }
 
   void export_polygon_soup_3(
-    const KSR::vector< KSR::vector<Point_3> >& polygons,
+    const std::vector< std::vector<Point_3> >& polygons,
     const std::string file_name) const {
 
     std::stringstream stream;
     initialize(stream);
 
-    KSR::size_t num_vertices = 0;
+    std::size_t num_vertices = 0;
     for (const auto& polygon : polygons)
       num_vertices += polygon.size();
-    KSR::size_t num_faces = polygons.size();
+    std::size_t num_faces = polygons.size();
     add_ply_header_mesh(stream, num_vertices, num_faces);
 
     for (const auto& polygon : polygons)
       for (const auto& p : polygon)
         stream << p << std::endl;
 
-    KSR::size_t i = 0, polygon_id = 0;
+    std::size_t i = 0, polygon_id = 0;
     for (const auto& polygon : polygons) {
       stream << polygon.size() << " ";
-      for (KSR::size_t j = 0; j < polygon.size(); ++j)
+      for (std::size_t j = 0; j < polygon.size(); ++j)
         stream << i++ << " ";
       stream << get_idx_color(polygon_id) << std::endl;
       ++polygon_id;
