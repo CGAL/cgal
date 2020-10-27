@@ -547,7 +547,7 @@ bool read_LAS(const std::string& filename,
 {
   std::ifstream is(filename, std::ios::binary);
   CGAL::set_mode(is, CGAL::IO::BINARY);
-  return read_LAS<OutputIteratorValueType>(filename, output, np);
+  return read_LAS<OutputIteratorValueType>(is, output, np);
 }
 
 /// \cond SKIP_IN_MANUAL

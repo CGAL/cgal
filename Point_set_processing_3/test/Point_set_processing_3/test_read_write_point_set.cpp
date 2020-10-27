@@ -158,7 +158,47 @@ CGAL_DEF_TEST_POINT_SET_3_FUNCTION(XYZ, "xyz")
 CGAL_DEF_TEST_POINT_SET_3_FUNCTION(OFF, "off")
 CGAL_DEF_TEST_POINT_SET_3_FUNCTION(PLY, "ply")
 #ifdef CGAL_LINKED_WITH_LASLIB
-CGAL_DEF_TEST_POINT_SET_3_FUNCTION(LAS, "las")
+void test_LAS(const std::string& s)
+{
+  std::cout << "Test Point_set_3: " << s << " extension: las" <<std::endl;
+  CGAL::Point_set_3<Point_3, Vector_3> ps;
+  bool ok = CGAL::read_LAS(s, ps);
+  assert(ok);
+  ps.clear();
+  ok = CGAL::read_LAS(s.c_str(), ps);
+  assert(ok);
+  ps.clear();
+  std::ifstream in(s);
+  ok = CGAL::read_LAS(in, ps);
+  assert(ok);
+  const char* ext = "las";
+  std::string fname = "tmp.";
+  fname.append(ext);
+  ok = CGAL::write_LAS(fname, ps);
+  assert(ok);
+  ok = CGAL::write_LAS(fname.c_str(), ps);
+  assert(ok);
+  std::ofstream out(fname);
+  ok = CGAL::write_LAS(out, ps);
+  assert(ok);
+  CGAL::Point_set_3<Point_3, Vector_3> ps2;
+  std::ifstream is(fname);
+  ok = CGAL::read_LAS(is, ps2);
+  assert(ok);
+  assert(ps_are_equal(ps, ps2));
+  ok = CGAL::write_point_set(fname, ps2);
+  assert(ok);
+  ok = CGAL::write_point_set(fname, ps2, CGAL::parameters::stream_precision(10));
+  assert(ok);
+  ok = CGAL::write_point_set(fname.c_str(), ps2);
+  assert(ok);
+  ok = CGAL::write_point_set(fname.c_str(), ps2, CGAL::parameters::stream_precision(10));
+  assert(ok);
+  ps2.clear();
+  ok = CGAL::read_point_set(fname, ps2);
+  assert(ok);
+  assert(ps_are_equal(ps, ps2));
+  }
 #endif
 
 #undef CGAL_DEF_INITIALIZE_ID_FUCNTION

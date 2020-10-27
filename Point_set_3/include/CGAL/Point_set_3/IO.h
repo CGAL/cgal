@@ -233,7 +233,7 @@ bool write_point_set(const std::string& fname,
     return write_PLY(fname, ps, np);
 #ifdef CGAL_LINKED_WITH_LASLIB
   else if(ext == "las")
-    return write_LAS(fname, ps, np);
+    return write_LAS(fname, ps);
 #endif
 
   return false;

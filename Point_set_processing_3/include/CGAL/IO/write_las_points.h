@@ -366,7 +366,7 @@ bool write_LAS(const std::string& filename, const PointRange& points,
 {
   std::ofstream os(filename, std::ios::binary);
   CGAL::set_mode(os, CGAL::IO::BINARY);
-  return write_LAS(os, points, CGAL::Point_set_processing_3::parameters::all_default(points)());
+  return write_LAS(os, points, parameters::all_default());
 }
 
 /// \endcond
