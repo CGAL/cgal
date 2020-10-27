@@ -2240,17 +2240,7 @@ section, as well as the software described, apply more generally to
 arbitrary curves in two-dimensional surfaces.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_fig-unb_dcel,unb_dcel.png}
-A \sc{Dcel} representing an arrangement of four lines. Halfedges are
-drawn as thin arrows. The vertices \f$v_1, \ldots, v_8\f$ lie at
-infinity, and are not associated with valid points. The halfedges that
-connect them are fictitious, and are not associated with concrete
-curves. The face denoted \f$f_0\f$ (lightly shaded) is the fictitious
-"unbounded face" which lies outside the bounding rectangle (dashed)
-that bounds the actual arrangement. The four fictitious vertices
-\f$v_{\rm bl}, v_{\rm tl}, v_{\rm br}\f$ and \f$v_{\rm tr}\f$
-represent the four corners of the imaginary bounding rectangle.
-\cgalFigureEnd
+\subsection aos_ssec-unbounded-rep Representing Arrangements of Unbounded Curves
 <!----------------------------------------------------------------------------->
 
 Given a set \f$\cal C\f$ of unbounded curves, a simple approach for
@@ -2265,6 +2255,20 @@ curves without having to preprocess them. Moreover, if we are not
 given all the curves inducing the arrangement in advance, then the
 choice of a good bounding rectangle may change as more curves are
 introduced.
+
+<!----------------------------------------------------------------------------->
+\cgalFigureBegin{aos_fig-unb_dcel,unb_dcel.png}
+A \sc{Dcel} representing an arrangement of four lines. Halfedges are
+drawn as thin arrows. The vertices \f$v_1, \ldots, v_8\f$ lie at
+infinity, and are not associated with valid points. The halfedges that
+connect them are fictitious, and are not associated with concrete
+curves. The face denoted \f$f_0\f$ (lightly shaded) is the fictitious
+"unbounded face" which lies outside the bounding rectangle (dashed)
+that bounds the actual arrangement. The four fictitious vertices
+\f$v_{\rm bl}, v_{\rm tl}, v_{\rm br}\f$ and \f$v_{\rm tr}\f$
+represent the four corners of the imaginary bounding rectangle.
+\cgalFigureEnd
+<!----------------------------------------------------------------------------->
 
 Instead of an explicit approach, we use an implicit bounding rectangle
 embedded in the \sc{Dcel} structure. \cgalFigureRef{aos_fig-unb_dcel}
@@ -2369,7 +2373,7 @@ bounded, define your arrangement accordingly. That is, use a traits
 class that does not support unbounded curves.
 
 <!----------------------------------------------------------------------------->
-\subsection arr_ssecunb_basic Basic Manipulation and Traversal Methods
+\subsubsection arr_sssecunb_basic Basic Manipulation and Traversal Methods
 <!----------------------------------------------------------------------------->
 
 The types
@@ -2611,7 +2615,7 @@ typedef Arrangement::Face_handle                          Face_handle;
 \endcode
 
 <!----------------------------------------------------------------------------->
-\subsection arr_ssecunb_global Free Functions
+\subsubsection arr_sssec-unb_global Free Functions
 <!----------------------------------------------------------------------------->
 
 All the free functions that operate on arrangements of bounded curves
@@ -2637,6 +2641,10 @@ arrangements of lines, where the only restriction is that the query
 point has finite coordinates. Note that all the point-location
 strategies mentioned above, except the trapezoidal map strategy, are
 capable of handling arrangements of unbounded curves.
+
+<!----------------------------------------------------------------------------->
+\subsection arr_ssec-unb_duality Point-Line Duality
+<!----------------------------------------------------------------------------->
 
 In the following example we show how an arrangement of unbounded lines
 is utilized to solve the following problem: Given a set of points,
@@ -5212,7 +5220,7 @@ geometrically equivalent curves, but with different data fields.
 \cgalExample{Arrangement_on_surface_2/generic_curve_data.cpp}
 
 The third example we give in this section is based on `dual_lines.cpp`
-given in Section \ref arr_ssecunb_global. It constructs the
+given in Section \ref arr_ssec-unb_duality. It constructs the
 arrangement of the dual lines for a set of point given in an input
 file (by default we use `coll_points.dat`, which contains \f$50\f$
 points randomly selected on the grid \f$[-100,100]\times[-100,100]\f$;
