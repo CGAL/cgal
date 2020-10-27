@@ -340,12 +340,12 @@ correspond to a face at all, as it may have no area, or alternatively
 it may contain several faces. Every face can have several inner CCBs
 in its interior, or may not contain inner CCBs at all. In addition,
 every face may contain isolated vertices in its interior.  See
-\cgalFigureRef{arr_figseg_dcel} for an illustration of the various
+\cgalFigureRef{aos_fig-arr_segs} for an illustration of the various
 \sc{Dcel} features. For more details on the \sc{Dcel} data structure
 see \cgalCite{bkos-cgaa-00} Chapter 2.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figseg_dcel,arr_segs.png}
+\cgalFigureBegin{aos_fig-arr_segs,arr_segs.png}
 An arrangement of interior-disjoint line segments with some of the
 \sc{Dcel} records that represent it. The unbounded face \f$ f_0\f$ has
 a single connected component that forms a hole inside it, and this
@@ -823,7 +823,7 @@ curve(s); see Section \ref arr_secgl_funcs for more details and
 examples.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_1,insert.png}
+\cgalFigureBegin{aos_fig-insert,insert.png}
 Illustrations of the various specialized insertion procedures. The
 inserted \f$x\f$-monotone curve is drawn as a dashed line, surrounded
 by two solid arrows that represent the pair of twin halfedges added to
@@ -930,7 +930,7 @@ v1, v2)`\endlink returns a handle to the halfedge directed from
 </UL>
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_2,edge_insertion.png}
+\cgalFigureBegin{aos_fig-edge_insertion,edge_insertion.png}
 The arrngement of the line segments \f$s_1, \ldots, s_5\f$
 constructed in `edge_insertion.cpp`. The arrows mark the direction of
 the halfedges returned from the various insertion functions.
@@ -939,17 +939,18 @@ the halfedges returned from the various insertion functions.
 
 The program below demonstrates the usage of the four specialized
 insertion functions. It creates an arrangement of five line segments
-\f$s_1, \ldots, s_5\f$, as depicted in \cgalFigureRef{arr_figex_2}.
-\cgalFootnote{Notice that in all figures in the rest of this chapter
-the coordinate axes are drawn only for illustrative purposes and are
-<em>not</em> part of the arrangement.} The first line segment $s_1$
-is inserted in the interior of the unbounded face, while the four
-succeeding line segments \f$s_2, \ldots, s_5\f$ are inserted using the
-vertices created by the insertion of preceding segments. The arrows in
-the figure mark the direction of the halfedges \f$e_1, \ldots, e_5\f$
-returned from the insertion functions. The resulting arrangement
-consists of three faces, where the two bounded faces form together a
-hole in the unbounded face.
+\f$s_1, \ldots, s_5\f$, as depicted in
+\cgalFigureRef{aos_fig-edge_insertion}.  \cgalFootnote{Notice that in
+all figures in the rest of this chapter the coordinate axes are drawn
+only for illustrative purposes and are <em>not</em> part of the
+arrangement.} The first line segment $s_1$ is inserted in the interior
+of the unbounded face, while the four succeeding line segments \f$s_2,
+\ldots, s_5\f$ are inserted using the vertices created by the
+insertion of preceding segments. The arrows in the figure mark the
+direction of the halfedges \f$e_1, \ldots, e_5\f$ returned from the
+insertion functions. The resulting arrangement consists of three
+faces, where the two bounded faces form together a hole in the
+unbounded face.
 
 Two header files are included in the code in order to make this and
 the following examples more compact. The file
@@ -1013,7 +1014,7 @@ member function `Arrangement_2::vertex::face()`. The member function
 handle to an isolated vertex and removes it from the arrangement.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_3,isolated_vertices.png}
+\cgalFigureBegin{aos_fig-isolated_vertices,isolated_vertices.png}
 An arrangement of line segments containing three isolated vertices,
 as constructed in `isolated_vertices.cpp`. The vertices \f$u_2\f$
 and \f$u_3\f$ are eventually removed from the arrangement.
@@ -1025,7 +1026,7 @@ member-functions for manipulating isolated vertices. It first inserts
 three isolated vertices, \f$u_1\f$, \f$u_2\f$, and \f$u_3\f$, located
 inside the unbounded face of the arrangement. Then, it inserts four
 line segments \f$s_1, \ldots, s_4\f$, that form a square hole inside
-the unbounded face (see \cgalFigureRef{arr_figex_2} for an
+the unbounded face (see \cgalFigureRef{aos_fig-edge_insertion} for an
 illustration). Finally, it traverses the vertices and removes those
 isolated vertices that are still contained in the unbounded face
 (\f$u_2\f$ and \f$u_3\f$ in this case):
@@ -1095,7 +1096,7 @@ supplying additional Boolean flags to \link Arrangement_2::remove_edge
 vertices are to be removed should they become isolated.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_4,edge_manipulation.png}
+\cgalFigureBegin{aos_fig-edge_manipulation,edge_manipulation.png}
 The three steps of the example program `edge_manipulation.cpp`. In
 Step (a) it constructs an arrangement of four line segments. In Step
 (b) the edges \f$e_1\f$ and \f$e_2\f$ are split, and the split points
@@ -1109,8 +1110,8 @@ their incident edges and go back to the arrangement depicted in (a).
 
 The following example program shows how the edge-manipulation
 functions can be used. The program works in three steps, as
-demonstrated in \cgalFigureRef{arr_figex_3}. Note that the program
-uses the fact that \link Arrangement_2::split_edge()
+demonstrated in \cgalFigureRef{aos_fig-isolated_vertices}. Note that
+the program uses the fact that \link Arrangement_2::split_edge()
 `split_edge()`\endlink returns one of the new halfedges (after the
 split) that has the same direction as the original halfedge (the first
 parameter of the function) and is directed towards the split
@@ -1174,7 +1175,7 @@ necessary to locate the halfedge \f$e_{\mathrm{pred}}\f$ directed
 toward \f$v\f$, such that \f$c\f$ is located between the curves
 associated with \f$e_{\mathrm{pred}}\f$ and the next halfedge in the
 clockwise order in the circular list of halfedges around \f$v\f$; see
-\cgalFigureRef{arr_figex_1}. This search may take \f$O(d)\f$ time,
+\cgalFigureRef{aos_fig-insert}. This search may take \f$O(d)\f$ time,
 where \f$d\f$ is the degree of the vertex \f$v\f$. \cgalFootnote{We
 can store the handles to the halfedges incident to $v$ in an efficient
 search structure to obtain \f$O(\log d)\f$ access time. However, as
@@ -1205,7 +1206,7 @@ accepts a handle to one vertex and a handle to the predecessor
 halfedge around the other vertex.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_5,special_edge_insertion.png}
+\cgalFigureBegin{aos_fig-special_edge_insertion,special_edge_insertion.png}
 An arrangement of line segments, as constructed in
 `special_edge_insertion.cpp`. Note that \f$p_0\f$ is initially
 inserted as an isolated point and later on connected to the other four
@@ -1214,7 +1215,7 @@ vertices.
 <!----------------------------------------------------------------------------->
 
 The following program shows how to construct the arrangement
-depicted in \cgalFigureRef{arr_figex_5} using the specialized
+depicted in \cgalFigureRef{aos_fig-special_edge_insertion} using the specialized
 insertion functions that accept predecessor halfedges:
 
 \cgalExample{Arrangement_on_surface_2/special_edge_insertion.cpp}
@@ -1466,7 +1467,7 @@ frequently going through changes, the
 selected point-location strategy.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_8,point_location.png}
+\cgalFigureBegin{aos_fig-point_location,point_location.png}
 The arrangement of line segments, as constructed in
 `point_location.cpp`, `vertical_ray_shooting.cpp`, and
 `batched_point_location.cpp`. The arrangement vertices are drawn as
@@ -1477,7 +1478,7 @@ as crosses.
 
 The program listed below constructs a simple arrangement of five line
 segments that form a pentagonal face, with a single isolated
-vertex in its interior, as depicted in \cgalFigureRef{arr_figex_8}.
+vertex in its interior, as depicted in \cgalFigureRef{aos_fig-point_location}.
 Notice that we use the same arrangement structure in the next
 three example programs. The arrangement construction is performed by
 the function `construct_segment_arr()` defined in the header file
@@ -1563,7 +1564,7 @@ void shoot_vertical_ray(const RayShoot& vrs,
 The program below uses the function template listed above to
 perform vertical ray-shooting queries on an arrangement. The
 arrangement and the query points are exactly the same as in
-`point_location.cpp`; see \cgalFigureRef{arr_figex_8}.
+`point_location.cpp`; see \cgalFigureRef{aos_fig-point_location}.
 
 \cgalExample{Arrangement_on_surface_2/vertical_ray_shooting.cpp}
 
@@ -1841,7 +1842,7 @@ involve the splitting of curves.
 <!----------------------------------------------------------------------------->
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_10,incremental_insertion.png}
+\cgalFigureBegin{aos_fig-incremental_insertion,incremental_insertion.png}
 An arrangement of five intersecting line segments, as constructed in
 `incremental_insertion.cpp` and `aggregated_insertion.cpp`. The
 segment endpoints are marked by black disks and the arrangement
@@ -1869,17 +1870,17 @@ other, namely a kernel that is exact allways. Note that we alternately
 use the naive point-location strategy, given explicitly to the
 insertion functions, and the default walk point-location strategy.
 
-The resulting arrangement is depicted in \cgalFigureRef{arr_figex_10},
-where the vertices that correspond to segment endpoints are drawn as
-dark discs, and the vertices that correspond to intersection points
-are drawn as circles. It consists of 13 vertices, 16 edges, and 5
-faces. We also perform a point-location query on the resulting
-arrangement. The query point \f$q\f$ is drawn as a plus sign. The face
-that contains it is drawn with a shaded texture. The program calls an
-instance of the function template `print_arrangement_size()`, which
-prints quantitative measures of the arrangement; see \ref lst_paz
-"code example" for its listing in Section \ref
-aos_ssec-basic-arr_class.
+The resulting arrangement is depicted in
+\cgalFigureRef{aos_fig-incremental_insertion}, where the vertices that
+correspond to segment endpoints are drawn as dark discs, and the
+vertices that correspond to intersection points are drawn as
+circles. It consists of 13 vertices, 16 edges, and 5 faces. We also
+perform a point-location query on the resulting arrangement. The query
+point \f$q\f$ is drawn as a plus sign. The face that contains it is
+drawn with a shaded texture. The program calls an instance of the
+function template `print_arrangement_size()`, which prints
+quantitative measures of the arrangement; see \ref lst_paz "code
+example" for its listing in Section \ref aos_ssec-basic-arr_class.
 
 \cgalExample{Arrangement_on_surface_2/incremental_insertion.cpp}
 
@@ -1998,9 +1999,9 @@ insertion.
 
 The example below shows how to construct the same arrangement of five
 line segments built incrementally in `incremental_insertion.cpp`
-depicted in \cgalFigureRef{arr_figex_10} using the aggregate insertion
-function `%insert()`.  Note that no point-location object needs to be
-defined and attached to the arrangement.
+depicted in \cgalFigureRef{aos_fig-incremental_insertion} using the
+aggregate insertion function `%insert()`.  Note that no point-location
+object needs to be defined and attached to the arrangement.
 
 \cgalExample{Arrangement_on_surface_2/aggregated_insertion.cpp}
 
@@ -2012,7 +2013,7 @@ insert the curves one by one. For larger input sets, we use the
 aggregate insertion procedures.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_unb1,global_insertion.png}
+\cgalFigureBegin{aos_fig-global_insertion,global_insertion.png}
 An arrangement of intersecting line segments, as constructed in
 `global_insertion.cpp`. The segments of \f${\mathcal S}_1\f$ are
 drawn in solid lines and the segments of \f${\mathcal S}_2\f$ are
@@ -2145,7 +2146,7 @@ vertex and the remaining one is vertical.
 </UL>
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_fig_bounded_vd,bounded_vertical_decomposition.png}
+\cgalFigureBegin{aos_fig-bounded_vd,bounded_vertical_decomposition.png}
 An arrangement of four line segments and its vertical decompisition
 into pseudo trapezoids, as constructed in
 `bounded_vertical_decomposition.cpp`.  The segments of \f${\mathcal S}_1\f$
@@ -2163,7 +2164,7 @@ cells can be similarly categorized into two types. Observe that the
 boundary of an unbounded cell contains only one original edge or none
 and it may contain only non-vertical edges.  The resulting cells are
 therefore referred to as <em>pseudo trapezoids</em>. The
-\cgalFigureRef{arr_fig_bounded_vd} depicts the vertical decomposition
+\cgalFigureRef{aos_fig-bounded_vd} depicts the vertical decomposition
 of an arrangement induced by four line segments, as constructed in
 `bounded_vertical_decomposition.cpp` and listed below. The
 decomposition consists of 14 pseudo trapezoids, out of which two are
@@ -2239,99 +2240,403 @@ section, as well as the software described, apply more generally to
 arbitrary curves in two-dimensional surfaces.
 
 <!----------------------------------------------------------------------------->
-\subsection arr_ssecunb_basic Basic Manipulation and Traversal Methods
-<!----------------------------------------------------------------------------->
-
-Consider the arrangement induced by the two lines \f$y = x\f$ and \f$y
-= -x\f$. These two lines intersect at the origin, such that the
-arrangement contains a single vertex \f$v = (0,0)\f$, with four
-infinite rays emanating from it. Each ray corresponds to an
-arrangement edge, and these edges subdivide the plane into four
-unbounded faces.  Consider a halfedge pair that represents one of the
-edges. The source vertex of one of these halfedges is \f$v\f$ and its
-target is at infinity, while the other has its source at infinity and
-\f$v\f$ is its target.
-
-If `e` is an object of the nested type
-`Arrangement_2::Halfedge`, then the predicates
-`e.source_at_infinity()` and `e.target_at_infinity()` indicate
-whether the halfedge represents a curve with an end at infinity.
-In general there is no need to access the source (or the target) of a
-halfedge if it lies at infinity, since this vertex is not associated
-with any valid point. Similarly, calling `arr.number_of_vertices()`
-for an arrangement object `arr` counts only the vertices
-associated with finite points, and ignores vertices at infinity
-(and the range `[vertices_begin(), vertices_end())` contains only
-finite vertices). The method `arr.number_of_vertices_at_infinity()`
-counts the number of vertices at infinity.
-
-As mentioned above, arrangements of unbounded curves usually have more
-than one unbounded face. The function `arr.number_of_unbounded_faces()`
-returns the number of unbounded arrangement faces
-(Thus, `arr.number_of_faces() - arr.number_of_unbounded_faces()`
-is the number of bounded faces).
-The functions `arr.unbounded_faces_begin()` and
-`arr.unbounded_faces_end()` return iterators of type
-`Arrangement_2::Unbounded_face_iterator` that specify the range
-of unbounded faces. Naturally, the value-type of this iterator is
-`Arrangement_2::Face`.
-
-The specialized insertion functions listed in Section \ref
-arr_sssecmf_insert_cv can also be used for inserting \f$x\f$-monotone
-unbounded curves, provided that they are interior-disjoint from any
-subcurve that already exists in the arrangement. For example, if you
-wish to insert a ray \f$r\f$ emanating from \f$(0,0)\f$ in the
-direction of \f$(1,0)\f$, to the arrangement of \f$y = -x\f$ and \f$y
-= x\f$, you can use the function
-`Arrangement_2::insert_from_left_vertex()`, as the left endpoint of
-\f$r\f$ is already associated with an arrangement vertex.  Other
-edge-manipulation functions can also be applied on edges associated
-with unbounded curves.
-
-<!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figunb_dcel,unbounded_non_intersecting.png}
-An arrangement of unbounded linear objects, as constructed in
-`unbounded_non_intersecting.cpp`.
+\cgalFigureBegin{aos_fig-unb_dcel,unb_dcel.png}
+A \sc{Dcel} representing an arrangement of four lines. Halfedges are
+drawn as thin arrows. The vertices \f$v_1, \ldots, v_8\f$ lie at
+infinity, and are not associated with valid points. The halfedges that
+connect them are fictitious, and are not associated with concrete
+curves. The face denoted \f$f_0\f$ (lightly shaded) is the fictitious
+"unbounded face" which lies outside the bounding rectangle (dashed)
+that bounds the actual arrangement. The four fictitious vertices
+\f$v_{\rm bl}, v_{\rm tl}, v_{\rm br}\f$ and \f$v_{\rm tr}\f$
+represent the four corners of the imaginary bounding rectangle.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
-The following example demonstrates the use of the insertion function
-for pairwise interior-disjoint unbounded curves. In this example we
-use the traits class `Arr_linear_traits_2<Kernel>` to instantiate the
-`Arrangement_2` template. This traits class is capable of representing
-line segments as well as unbounded linear curves (namely lines and
-rays). Observe that objects of the type `X_monotone_curve_2` defined
-by this traits class are constructible from `Line_2`, `Ray_2`, and
-`Segment_2` objects, as defined in the instantiated kernel.
+Given a set \f$\cal C\f$ of unbounded curves, a simple approach for
+representing the arrangement induced by \f$\cal C\f$ would be to clip
+the unbounded curves using an axis-parallel rectangle that contains
+all finite curve endpoints and intersection points between curves in
+\f$\cal C\f$. This process would result in a set of bounded curves
+(line segments if \f$\cal C\f$ consists of lines and rays), and it
+would be straightforward to compute the arrangement induced by this
+set.  However, we would like to operate directly on the unbounded
+curves without having to preprocess them. Moreover, if we are not
+given all the curves inducing the arrangement in advance, then the
+choice of a good bounding rectangle may change as more curves are
+introduced.
 
-The first three curves are inserted using the special insertion
-functions for \f$ x\f$-monotone curves whose location in the
-arrangement is known. Notice that inserting an unbounded curve in the
-interior of an unbounded face, or from an existing vertex that
-represents the bounded end of the curve, may cause an unbounded face
-to split (this is never the case when inserting a bounded curve -
-compare with Section \ref arr_sssecmf_insert_cv). Then, three
-additional rays are inserted incrementally, using the insertion
-function for \f$ x\f$-monotone curves whose interior is disjoint from
-all arrangement features.  Finally, the program prints the size of the
-arrangement (compare to the illustration in
-\cgalFigureRef{arr_figex_unb1}) and the outer boundaries of its six
-unbounded faces:
+Instead of an explicit approach, we use an implicit bounding rectangle
+embedded in the \sc{Dcel} structure. \cgalFigureRef{aos_fig-unb_dcel}
+shows the arrangement of four lines that subdivide the plane into
+eight unbounded faces and two bounded ones. Notice that in this case
+portions of the the unbounded faces now have outer boundaries (those
+portions inside the bounding rectangle), and the halfedges along these
+outer CCBs are drawn as arrows. The bounding rectangle is drawn
+dashed. The vertices \f$v_1,v_2,\ldots,v_8\f$, which lie on the
+bounding rectangle, represent the unbounded ends of the four lines
+that approach infinity. The halfedges connecting them, which overlap
+with the bounding rectangle, are not associated with geometric curves.
+Thus, we refer to them as <em>fictitious</em>. Note that the outer
+CCBs of the unbounded faces contain fictitious halfedges. The twins of
+these halfedges form together one connected component that corresponds
+to the entire imaginary rectangle. It forms a single hole in the face
+\f$\tilde{f}\f$. We refer to \f$\tilde{f}\f$ as <em>fictitious</em>,
+since it does not correspond to a real two-dimensional cell of the
+arrangement. Finally, there are four additional vertices denoted by
+\f$v_{\rm bl}, v_{\rm tl}, v_{\rm br}\f$, and \f$v_{\rm tr}\f$, which
+coincide with the bottom-left, top-left, bottom-right, and top-right
+corners of the bounding rectangle, respectively. They do not lie on
+any curve, and are referred to as <em>fictitious</em> as well. These
+four vertices identify each of the fictitious edges as lying on the
+top, the bottom, the left, and the right edge of the imaginary
+bounding rectangle. The four fictitious vertices exist even when the
+arrangement is empty: In this case they are connected by four pairs of
+fictitious halfedges that define a single unbounded face (which
+represents the entire \f$\mathbb{R}^2\f$ plane) lying inside the
+imaginary bounding rectangle and a fictitious face lying outside.
+
+In summary, there are four types of arrangement vertices, which differ
+from one another by their location with respect to the imaginary
+bounding rectangle as follows:
+
+<OL>
+
+<LI> \anchor type-normal A vertex, associated with a point in
+  \f$\mathbb{R}^2\f$. Such a vertex always lies inside the bounding
+  rectangle and has bounded coordinates..
+
+<LI> \anchor type-unbounded A vertex that represents an unbounded end
+  of an \f$x\f$-monotone curve that approaches \f$x = -\infty\f$ or at
+  \f$x = \infty\f$. In case of a horizontal line or a curve with a
+  horizontal asymptote, the \f$y\f$-coordinate of the curve end may be
+  finite (see, for example, the vertices \f$v_2\f$ and \f$v_7\f$ in
+  \cgalFigureRef{aos_fig-unb_dcel}), but in general the curve end also
+  approaches \f$y = \pm\infty\f$; see for instance the vertices
+  \f$v_1\f$, \f$v_3\f$, \f$v_6\f$ and \f$v_8\f$ in
+  \cgalFigureRef{aos_fig-unb_dcel}). For convenience, we always take a
+  "tall" enough bounding rectangle and treat such vertices as lying on
+  either the left or the right rectangle edges (that is, if a curve
+  approaches \f$x = -\infty\f$, its left end will be represented by a
+  vertex on the left edge of the bounding rectangle, and if it
+  approaches \f$x = \infty\f$, its right end will be represented by a
+  vertex on the right edge).
+
+<LI> \anchor typeunboundedvertical A vertex that represents the
+  unbounded end of a vertical linear curve (line or ray) or of a curve
+  with a vertical asymptote (finite \f$x\f$-coordinate and an
+  unbounded \f$y\f$-coordinate). Such a vertex always lies on one of
+  the horizontal edges of the bounding rectangle (either the bottom
+  one if \f$y = -\infty\f$, or the top one if \f$y = \infty\f$). The
+  vertices \f$v_4\f$ and \f$v_5\f$ in \cgalFigureRef{aos_fig-unb_dcel}
+  are of this type.
+
+<LI> \anchor typefictitious The fictitious vertices that represent the
+  four corners of the bounding rectangle.
+
+</OL>
+
+<!----------------------------------------------------------------------------->
+\cgalFigureBegin{aos_fig-unb_asymptote,unb_asymptote.png}
+The portions of a horizontal line, a vertical line, and two rectangular
+hyperbolas with horizontal and vertical asymptotes confined to the
+imaginary bounding rectangle.
+\cgalFigureEnd
+<!----------------------------------------------------------------------------->
+
+A vertex (at infinity) of Type 2 or Type 3 above always has three
+incident edges---one concrete edge that is associated with an
+unbounded portion of an \f$x\f$-monotone curve, and two fictitious
+edges connecting the vertex to its neighboring vertices at infinity or
+the corners of the bounding rectangle; see
+\cgalFigureRef{aos_fig-unb_asymptote}.  Fictitious vertices (of type 4
+above) have exactly two incident fictitious edges. See Section \ref
+aos_sec-geom_traits for an explanation on how the traits-class
+interface helps impose the fact that a vertex at infinity is incident
+to a single non-fictitious edge.
+
+The traits class that substitutes the `Traits` parameter of the
+`Arrangement_2<Traits,Dcel>` class template when the latter is
+instantiated specifies whether the arrangement instance supports
+unbounded curves through the definitions of some tags nested in the
+traits class; see Section \ref aos_sssec-geom_traits-concepts_basic
+for details. Every arrangement that supports unbounded curves supports
+bounded curves as well, but not vice versa. Maintaining an arrangement
+that supports unbounded curves incurs an overhead due to the necessity
+to manage the imaginary bounding rectangle. If you know beforehand
+that all input curves that induce a particular arrangement are
+bounded, define your arrangement accordingly. That is, use a traits
+class that does not support unbounded curves.
+
+<!----------------------------------------------------------------------------->
+\subsection arr_ssecunb_basic Basic Manipulation and Traversal Methods
+<!----------------------------------------------------------------------------->
+
+The types
+\link Arrangement_2::Vertex `Vertex`\endlink,
+\link Arrangement_2::Halfedge `Halfedge`\endlink, and
+\link Arrangement_2::Face `Face`\endlink nested in the `Arrangement_2`
+class template support the methods described below in addition to the
+ones listed in Section \ref arr_ssectraverse. Let \f$v\f$, \f$e\f$,
+and \f$f\f$ be handles to a vertex of type
+\link Arrangement_2::Vertex `Vertex`\endlink, a halfedge of type
+\link Arrangement_2::Halfedge `Halfedge`\endlink, and a face of type
+\link Arrangement_2::Face `Face`\endlink, respectively.
+
+<UL>
+
+<LI>The calls \link Arrangement_2::Vertex::parameter_space_in_x()
+  `v->parameter_space_in_x()`\endlink and \link
+  Arrangement_2::Vertex::parameter_space_in_y()
+  `v->parameter_space_in_y()`\endlink determine the location of the
+  geometric embedding of the vertex \f$v\f$. The call \link
+  Arrangement_2::Vertex::parameter_space_in_x()
+  `v->parameter_space_in_x()`\endlink returns `CGAL::ARR_INTERIOR` if
+  the \f$x\f$-coordinate associated with \f$v\f$ is finite,
+  `CGAL::ARR_LEFT_BOUNDARY` if \f$v\f$ represents the end of a curve
+  the \f$x\f$-coordinate of which approaches \f$-\infty\f$, and
+  `CGAL::ARR_RIGHT_BOUNDARY` if \f$v\f$ represents the end of a curve
+  the \f$x\f$-coordinate of which approaches \f$\infty\f$. Similarly,
+  the call \link Arrangement_2::Vertex::parameter_space_in_y()
+  `v->parameter_space_in_y()`\endlink returns `CGAL::ARR_INTERIOR` if
+  the \f$y\f$-coordinate associated with \f$v\f$ is finite and
+  `CGAL::ARR_BOTTOM_BOUNDARY` or `CGAL::ARR_TOP_BOUNDARY` if \f$v\f$
+  represents the end of a curve the \f$y\f$-coordinate of which
+  approaches \f$-\infty\f$ or \f$\infty\f$, respectively.
+
+  The nested \link Arrangement_2::Vertex `Vertex`\endlink type also
+  provides the Boolean predicate \link
+  Arrangement_2::Vertex::is_at_open_boundary()
+  `is_at_open_boundary()`\endlink.  If the call \link
+  Arrangement_2::Vertex::is_at_open_boundary()
+  `v->is_at_open_boundary()`\endlink predicates evaluates to `false`,
+  you can access the point associated with $v$. Otherwise, \f$v\f$ is
+  not associated with a \link Arrangement_2::Point_2 `Point_2`\endlink
+  object, as it represents the unbounded end of a curve that
+  approaches infinity.
+
+<LI>The nested \link Arrangement_2::Halfedge `Halfedge`\endlink type
+  provides the Boolean predicate \link
+  Arrangement_2::Halfedge::is_fictitious `is_fictitious()`\endlink. If
+  the call \link Arrangement_2::Halfedge::is_fictitious
+  `e->is_fictitious()`\endlink predicate evaluates to `false`, you can
+  access the \f$x\f$-monotone curve associated with
+  \f$e\f$. Otherwise, \f$e\f$ is not associated with an \link
+  Arrangement_2::X_monotone_curve_2 `X_monotone_curve_2`\endlink object.
+
+<LI>The nested \link Arrangement_2::Face `Face`\endlink type provides
+  the Boolean predicate \link Arrangement_2::Face::is_fictitious()
+  `is_fictitious()`\endlink. The call \link
+  Arrangement_2::Face::is_fictitious() `f->is_fictitious()`\endlink
+  predicate evaluates to `true` only when \f$f\f$ lies outside the
+  bounding rectangle. The method \link
+  Arrangement_2::Face::outer_ccb() `outer_ccb()`\endlink (see Section
+  \ref arr_sssectr_face must not be invoked for the fictitious
+  face.  \cgalFootnote{Typically, the code is guarded against such
+  malicious calls with adequate preconditions. However, these
+  preconditions are suppressed when the code is compiled with maximum
+  optimization.}
+  Note that a valid unbounded face (of an arrangement
+  that supports unbounded curves) has a valid outer CCB, although the
+  CCB comprises only fictitious halfedges if the arrangement is
+  induced only by bounded curves.
+
+</UL>
+
+Let \f$p_l = (x_l,y_l)\f$ and \f$p_r = (x_r,y_r)\f$ be the left and
+right endpoints of a bounded \f$x\f$-monotone curve \f$c\f$,
+respectively. We say that a point \f$p = (x_p,y_p)\f$ lies in the
+\f$x\f$-range of \f$c\f$ if \f$x_l \leq x_p \leq x_r\f$. Let \f$p_l =
+(x_l,y_l)\f$ be the left endpoint of an \f$x\f$-monotone curve \f$c\f$
+unbounded from the right. A point \f$p = (x_p,y_p)\f$ lies in the
+\f$x\f$-range of \f$c\f$ if \f$x_l \leq x_p\f$. Similarly, A point
+\f$p = (x_p,y_p)\f$ lies in the \f$x\f$-range of an \f$x\f$-monotone
+curve unbounded from the left if \f$x_p \leq x_r\f$. Naturally, every
+point \f$p \in \mathbb{R}^2\f$ is in the \f$x\f$-range of an
+\f$x\f$-monotone curve unbounded from the left and from the right. The
+template function `is_in_x_range()` listed below, and defined in the
+file `is_in_x_range.h`, checks whether a given point \f$p\f$ is in the
+$x$-range of the curve associated with a given halfedge \f$e\f$. The
+function template also exemplifies how some of the above functions can
+be used.
+
+\code
+// Check whether the given point is in the x-range of the curve associated
+// with the given halfedge.
+template <typename Arrangement>
+bool is_in_x_range(typename Arrangement::Halfedge_const_handle he,
+                   const typename Arrangement::Point_2& p,
+                   const typename Arrangement::Traits_2& traits)
+{
+  auto cmp = traits.compare_x_2_object();
+
+  // Compare p with the source vertex (which may lie at x = +/- oo).
+  CGAL::Arr_parameter_space src_px = he->source()->parameter_space_in_x();
+  CGAL::Comparison_result res_s =
+    (src_px == CGAL::ARR_LEFT_BOUNDARY) ? CGAL::SMALLER :
+    ((src_px == CGAL::ARR_RIGHT_BOUNDARY) ? CGAL::LARGER :
+     cmp(he->source()->point(), p));
+  if (res_s == CGAL::EQUAL) return true;
+
+  // Compare p with the target vertex (which may lie at x = +/- oo).
+  CGAL::Arr_parameter_space trg_px = he->target()->parameter_space_in_x();
+  CGAL::Comparison_result  res_t =
+    (trg_px == CGAL::ARR_LEFT_BOUNDARY) ? CGAL::SMALLER :
+    ((trg_px == CGAL::ARR_RIGHT_BOUNDARY) ? CGAL::LARGER :
+     cmp(he->target()->point(), p));
+
+  // p lies in the x-range of the halfedge iff its source and target lie
+  // at opposite x-positions.
+  return (res_s != res_t);
+}
+\endcode
+
+It is important to observe that the call \link
+Arrangement_2::number_of_vertices() `arr.number_of_vertices()`\endlink
+does not count the vertices at infinity in the arrangement `arr`. To
+find out this number you need to issue the call \link
+Arrangement_2::number_of_vertices_at_infinity()
+`arr.number_of_vertices_at_infinity()`\endlink. Similarly, \link
+Arrangement_2::number_of_edges() `arr.number_of_edges()`\endlink does
+not count the fictitious edges (whose number is always \link
+Arrangement_2::number_of_vertices_at_infinity()
+`arr.number_of_vertices_at_infinity()`\endlink + 4) and \link
+Arrangement_2::number_of_faces() `arr.number_of_faces()`\endlink does
+not count the fictitious faces. The vertex, halfedge, edge, and face
+iterators defined by the `Arrangement_2` class template only go over
+true features of the arrangement; namely, vertices at infinity and
+fictitious halfedges and fictitious faces are skipped. On the other
+hand, the `Ccb_halfedge_circulator` of the outer boundary of an
+unbounded face or the `Halfegde_around_vertex_circulator` of a vertex
+at infinity do traverse fictitious halfedges. While an arrangement
+induced by bounded curves has a single unbounded face, an arrangement
+induced by unbounded curves may have several unbounded faces. The call
+\link Arrangement_2::number_of_unbounded_faces()
+`arr.number_of_unbounded_faces()`\endlink returns the number of
+unbounded arrangement faces (Thus, \link
+Arrangement_2::number_of_faces() `arr.number_of_faces()`\endlink -
+\link Arrangement_2::number_of_unbounded_faces()
+`arr.number_of_unbounded_faces()`\endlink is the number of bounded
+faces). The calls \link Arrangement_2::unbounded_faces_begin()
+`arr.unbounded_faces_begin()`\endlink and \link
+Arrangement_2::unbounded_faces_end()
+`arr.unbounded_faces_end()`\endlink return iterators of the type
+`Arrangement_2::Unbounded_face_iterator` (or its non-mutable, `const`,
+counterpart type) that define the range of the arrangement unbounded
+faces. Naturally, the value-type of this iterator is \link
+Arrangement_2::Face `Face`\endlink.
+
+There is no way to directly obtain the fictitious vertices that
+represent the four corners of the imaginary bounding
+rectangle. However, you can obtain the fictitious face through the
+call \link Arrangement_2::fictitious_face()
+`arr.fictitious_face()`\endlink, and then iterate over the boundary of
+its single hole, which represents the imaginary bounding
+rectangle. Recall that an arrangement of bounded curves does not have
+a fictitious face. In this case the call above returns a null handle.
+
+The example below exhibits the difference between an arrangement
+induced by bounded curves, which has a single unbounded face, and an
+arrangement induced by unbounded curves, which may have several
+unbounded faces. It also demonstrates the usage of the insertion
+function for pairwise interior-disjoint unbounded curves. In this case
+we use an instance of the traits class-template
+`Arr_linear_traits_2<Kernel>` to substitute the `Traits` parameter of
+the `Arrangement_2<Traits,Dcel>` class template when instantiated.
+This traits class-template is capable of representing line segments as
+well as unbounded linear curves, namely, lines and rays. Observe that
+objects of the `X_monotone_curve_2` type nested in this traits
+class-template are constructible from objects of types \link
+Arr_linear_traits_2<Kernel>::Line_2 `Line_2`\endlink, \link
+Arr_linear_traits_2<Kernel>::Ray_2 `Ray_2`\endlink, and \link
+Arr_linear_traits_2<Kernel>::Segment_2 `Segment_2`\endlink also nested
+in the traits class-template. These three types and the \link
+Arr_linear_traits_2<Kernel>::Point_2 `Point_2`\endlink type are
+defined by the traits class-template `Arr_linear_traits_2<Kernel>` to
+be the corresponding types of the kernel used to instantiate the
+traits class-template; see Paragraph \ref arr_sssectr_linear.
+
+<!----------------------------------------------------------------------------->
+\cgalFigureBegin{aos_fig-unbounded_non_intersecting,unbounded_non_intersecting.png}
+An arrangement of unbounded linear objects, as constructed in
+`unbounded_non_intersecting.cpp`.
+ \cgalFigureEnd
+ <!----------------------------------------------------------------------------->
+
+The first three curves, \f$c_1\f$, \f$c_2\f$, and \f$c_3\f$, are
+inserted using the specialized insertion functions for
+\f$x\f$-monotone curves whose location in the arrangement is
+known. Notice that inserting an unbounded curve in the interior of an
+unbounded face, or from an existing vertex that represents an bounded
+end of the curve, may cause an unbounded face to split. (This is never
+the case when inserting a bounded curve---compare with Section \ref
+arr_sssecmf_insert_cv.) Three additional rays are then inserted
+incrementally using the insertion function for $x$-monotone curves,
+the interior of which is disjoint from all arrangement features; see
+the illustration in
+\cgalFigureRef{aos_fig-unbounded_non_intersecting}). Finally, the
+program prints the size of the arrangement using the template function
+`print_unbounded_arrangement_size()` defined in the header file
+`arr_print.h`. (Its listing is omitted here.) The program also
+traverses the outer boundaries of its six unbounded faces and prints
+the curves along these boundaries. The header file `arr_linear.h`,
+which contains the definitions used by the example program, is listed
+immediately after the listing of the main function.
 
 \cgalExample{Arrangement_on_surface_2/unbounded_non_intersecting.cpp}
+
+The type definitions used by the example below, as well as by other
+examples that use the `Arr_linear_traits_2` class template, are listed
+next.  These types are defined in the header file `arr_linear.h`.
+
+\code
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Arr_linear_traits_2.h>
+#include <CGAL/Arrangement_2.h>
+
+typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
+typedef Kernel::FT                                        Number_type;
+
+typedef CGAL::Arr_linear_traits_2<Kernel>                 Traits;
+typedef Traits::Point_2                                   Point;
+typedef Traits::Segment_2                                 Segment;
+typedef Traits::Ray_2                                     Ray;
+typedef Traits::Line_2                                    Line;
+typedef Traits::X_monotone_curve_2                        X_monotone_curve;
+
+typedef CGAL::Arrangement_2<Traits>                       Arrangement;
+typedef Arrangement::Vertex_handle                        Vertex_handle;
+typedef Arrangement::Halfedge_handle                      Halfedge_handle;
+typedef Arrangement::Face_handle                          Face_handle;
+\endcode
 
 <!----------------------------------------------------------------------------->
 \subsection arr_ssecunb_global Free Functions
 <!----------------------------------------------------------------------------->
 
-In principle, all queries and operations that relate to arrangements
-of bounded curves can also be applied to arrangements of unbounded
-curves. For example, it is possible to issue point-location and
-vertical ray-shooting queries (see also Section \ref arr_secqueries)
-on arrangements of lines, where the only restriction is that the query
-point has finite coordinates.\cgalFootnote{Currently, all
-point-location strategies except the trapezoidal RIC point-location
-strategy are capable of handling arrangements of unbounded curves.}
+All the free functions that operate on arrangements of bounded curves
+(see Section \ref arr_secgl_funcs) can also be applied to arrangements
+of unbounded curves. For example, consider a container of linear
+curves that has to be inserted into an arrangement object, the type of
+which is an instance of the `Arrangement_2<Traits,Dcel>` class
+template, where the `Traits` parameter is substituted with the traits
+class that handles linear curves; see Section \ref
+arr_sssectr_linear. You can do it incrementally; namely, insert the
+curves one by one as follows:
+\code
+  for (auto it = curves.begin(); it != curves.end(); ++it) insert(arr, *it);
+\endcode
+Alternatively, the curves can be inserted aggregately using a single
+call as follows:
+\code
+  insert(arr, curves.begin(), curves.end());
+\endcode
+It is also possible to issue point-location queries and vertical
+ray-shooting queries (see also Section \ref arr_secqueries) on
+arrangements of lines, where the only restriction is that the query
+point has finite coordinates. Note that all the point-location
+strategies mentioned above, except the trapezoidal map strategy, are
+capable of handling arrangements of unbounded curves.
 
 In the following example we show how an arrangement of unbounded lines
 is utilized to solve the following problem: Given a set of points,
@@ -2351,193 +2656,11 @@ implies that there are at least three collinear points.
 
 Note that there are no three collinear points among the points defined
 in the input file `points.dat`. In the second part of the example the
-existence of collinearity is forced and verified as follows. A line
-dual to the midpoint of two randomly selected points is introduced,
-and inserted into the arrangement. This operation is followed by a
-test that verifies that a vertex of degree greater than \f$4\f$
-exists. This implied that collinearity indeed exists as explained
-above.
-
-<!----------------------------------------------------------------------------->
-\subsection arr_ssecunb_rep Representation of Unbounded Arrangements
-<!----------------------------------------------------------------------------->
-
-<!----------------------------------------------------------------------------->
-\cgalAdvancedBegin
-
-<!----------------------------------------------------------------------------->
-\cgalFigureBegin{typenormal,unb_dcel.png}
-A \sc{Dcel} representing an arrangement of four lines. Halfedges are
-drawn as thin arrows. The vertices \f$v_1, \ldots, v_8\f$ lie at
-infinity, and are not associated with valid points. The halfedges that
-connect them are fictitious, and are not associated with concrete
-curves. The face denoted \f$f_0\f$ (lightly shaded) is the fictitious
-"unbounded face" which lies outside the bounding rectangle (dashed)
-that bounds the actual arrangement. The four fictitious vertices
-\f$v_{\rm bl}, v_{\rm tl}, v_{\rm br}\f$ and \f$v_{\rm tr}\f$
-represent the four corners of the bounding rectangle.
-\cgalFigureEnd
-<!----------------------------------------------------------------------------->
-
-Given a set \f$\cal C\f$ of unbounded curves, a simple approach for
-representing the arrangement induced by \f$\cal C\f$ would be to clip
-the unbounded curves using an axis-parallel rectangle that contains
-all finite curve endpoints and intersection points between curves in
-\f$\cal C\f$. This process would result in a set \f$\cal C\f$ of
-bounded curves (line segments if \f$\cal C\f$ contains lines and
-rays), and it would be straightforward to compute the arrangement
-induced by this set.  However, we would like to operate directly on
-the unbounded curves without having to preprocess them. Therefore, we
-use an implicit bounding rectangle embedded in the \sc{Dcel}
-structure.  \cgalFigureRef{arr_figunb_dcel} shows the arrangement of
-four lines that subdivide the plane into eight unbounded faces and two
-bounded ones. Notice that in this case the unbounded faces have outer
-boundaries, and the halfedges along these outer CCBs are drawn as
-arrows. The bounding rectangle is drawn with a dashed line. The
-vertices \f$v_1,v_2,\ldots,v_8\f$, which represent the unbounded ends
-of the four lines, and lie on the bounding rectangle, actually exist
-at infinity, and the halfedges connecting them are <em>fictitious</em>,
-and represent portions of the bounding rectangle. Note that the outer
-CCBs of the unbounded faces contain fictitious halfedges. The twins of
-these halfedges form together one connected component that corresponds
-to the entire bounding rectangle, which forms a single hole in a face
-\f$f_0\f$. We say that \f$f_0\f$ is <em>fictitious</em>, as it does
-not correspond to a real two-dimensional cell of the arrangement.
-
-Observe that there are four extra vertices at infinity that do not lie
-on any curve; they are denoted as \f$v_{\rm bl}, v_{\rm tl}, v_{\rm
-br}\f$, and \f$v_{\rm tr}\f$, and represent the bottom-left, top-left,
-bottom-right, and top-right corners of the bounding rectangle,
-respectively. Similarly, there are fictitious halfedges that lie on
-the top, the bottom, the left, or the right edge of the bounding
-rectangle. When the arrangement is empty, there are exactly four pairs
-of fictitious halfedges, that divide the plane into two faces, namely
-a fictitious face lying outside of the bounding rectangle and a single
-unbounded face bounded by the bounding rectangle.
-
-Summarizing the above, there are four types of arrangement vertices,
-which differ from one another by their location with respect to the
-bounding rectangle:
-
-<OL>
-
-<LI>A vertex, associated with a point in \f$\mathbb{R}^2\f$ whose
-coordinates are bounded. Such a vertex always lies inside the
-bounding rectangle.
-
-<LI> \anchor typeunbounded A vertex that represents an unbounded end
-of an \f$x\f$-monotone curve that is defined at \f$x = -\infty\f$ or
-at \f$x = \infty\f$. In case of a horizontal line or a curve with a
-horizontal asymptote, the \f$y\f$-coordinate of the curve end may be
-finite (see for example the vertices \f$v_2\f$ and \f$v_7\f$ in
-\cgalFigureRef{arr_figunb_dcel}), but in general the curve end also
-goes to \f$y = \pm\infty\f$ (see for instance the vertices \f$v_1\f$,
-\f$v_3\f$, \f$v_6\f$ and \f$v_8\f$ in
-\cgalFigureRef{arr_figunb_dcel}). For our convenience, we will always
-take a "tall" enough bounding rectangle and treat such vertices as
-lying on either the left or right rectangle edges (that is, if a curve
-is defined at \f$x = -\infty\f$, its left end will be represented by a
-vertex on the left edge of the bounding rectangle, and if it is
-defined at \f$x = \infty\f$, its right end will be represented by a
-vertex of the right edge).
-
-<LI> \anchor typeunboundedvertical A vertex that represent the
-unbounded end of a vertical line or of a curve with a vertical
-asymptote (finite \f$x\f$-coordinate and an unbounded
-\f$y\f$-coordinate). Such a vertex always lies on one of the
-horizontal edges of the bounding rectangle (either the bottom one if
-\f$y = -\infty\f$, or the top one if \f$y = \infty\f$). The vertices
-\f$v_4\f$ and \f$v_5\f$ in \cgalFigureRef{arr_figunb_dcel} are of this
-type.
-
-<LI> \anchor typefictitious The fictitious vertices that represent the
-four corners of the bounding rectangle.
-
-</OL>
-
-A vertex (at infinity) of Type \ref typeunbounded or Type \ref
-typeunboundedvertical above always has three incident edges: one
-concrete edge that is associated with an unbounded portion of an
-\f$x\f$-monotone curve, and two fictitious edges connecting the vertex
-to its neighboring vertices at infinity.  Fictitious vertices (of type
-4 above) have exactly two incident edges.  See Section \ref
-aos_sec-geom_traits on how the traits-class interface helps imposing
-the fact that we never have more than one curve incident to any true
-vertex at infinity.
-
-The nested types defined in the `Arrangement_2` class support the
-following methods, in addition to the ones listed in Section \ref
-arr_ssectraverse : <UL> <LI>The `Vertex` class provides three-valued
-predicates `parameter_space_in_x()` and `parameter_space_in_y()`,
-which return the location of the geometric embedding of the vertex in
-the parameter space. In particular, the former returns
-`ARR_LEFT_BOUNDARY`, `ARR_INTERIOR`, or `ARR_RIGHT_BOUNDARY`, and the
-latter returns `ARR_BOTTOM_BOUNDARY`, `ARR_INTERIOR`, or
-`ARR_TOP_BOUNDARY`. In the case of arrangements in the plane, where
-the parameter space is the compactified plane, the former returns
-`ARR_INTERIOR` if the \f$x\f$-coordinate associated with the vertex is
-finite, `ARR_LEFT_BOUNDARY` if it is \f$-\infty\f$, and
-`ARR_RIGHT_BOUNDARY` if it is \f$\infty\f$. The latter returns
-`ARR_INTERIOR` if the \f$y\f$-coordinate associated with the vertex is
-finite, `ARR_BOTTOM_BOUNDARY` if it is \f$-\infty\f$, and
-`ARR_TOP_BOUNDARY` if it is \f$\infty\f$. The Boolean predicate
-`is_at_open_boundary()` is also provided. You can access the point
-associated with a vertex only if it is not a vertex at an open
-boundary (recall that a vertex at an open boundary is not associated
-with a `%Point_2` object).  <LI>The nested `Halfedge` class provides
-the Boolean predicate `is_fictitious()`. The \f$x\f$-monotone curve
-associated with a halfedge can be accessed by the `curve()` method
-only if the halfedge is not fictitious.  <LI>The nested `Face` class
-provides the Boolean predicate `f.is_fictitious()`. The method
-`outer_ccb()` has the precondition that the face is not
-fictitious. Note that non-fictitious unbounded faces always have valid
-CCBs (although this CCB may comprise only fictitious halfedge in case
-the arrangement contains only bounded curves).  </UL>
-
-The method `Arrangement_2::number_of_edges()` does not count the
-number of fictitious edges, (which is always the result of
-`Arrangement_2::number_of_vertices_at_infinity() + 4`), and the
-iterators returned by `Arrangement_2::edges_begin()` and
-`Arrangement_2::edges_end()` specify a range of non-fictitious
-edges. Similarly, `Arrangement_2::number_of_faces()` does not count
-the fictitious face. However, the
-`Arrangement_2::Ccb_halfedge_circulator` of the outer boundary of an
-unbounded face or the
-`Arrangement_2::Halfegde_around_vertex_circulator` of a vertex at
-infinity do traverse fictitious halfedges. For example, it is possible
-to traverse the outer boundaries of the unbounded arrangement edges
-using the following procedure:
-
-\code
-  Arrangement_2::Unbounded_face_const_iterator fit;
-  Arrangement_2::Ccb_halfedge_const_circulator first, curr;
-  Arrangement_2::Halfedge_const_handle he;
-  int k = 1;
-
-  for (fit = arr.unbounded_faces_begin();
-       fit != arr.unbounded_faces_end(); ++fit, k++) {
-    std::cout << "Unbounded face no. " << k << ": ";
-    curr = first = fit->outer_ccb();
-    if (! curr->source()->is_at_infinity())
-      std::cout << "(" << curr->source()->point() << ")";
-    do {
-      he = curr;
-      if (! he->is_fictitious())
-        std::cout << " [" << he->curve() << "] ";
-      else
-        std::cout << " [ ... ] ";
-
-      if (! he->target()->is_at_infinity())
-        std::cout << "(" << he->target()->point() << ")";
-
-      ++curr;
-    } while (curr != first);
-    std::cout << std::endl;
-}
-\endcode
-
-\cgalAdvancedEnd
-<!----------------------------------------------------------------------------->
+existence of a collinear triple is forced and verified as follows. A
+line dual to the midpoint of two randomly selected points is
+introduced, and inserted into the arrangement. This operation is
+followed by a test that verifies that a vertex of degree greater than
+\f$4\f$ exists.
 
 <!--=========================================================================-->
 \section aos_sec-curved_surfaces Arrangements on Curved Surfaces
@@ -3211,7 +3334,7 @@ class that models the combined concept
 are open in any direction. Recall that an arrangement that supports
 unbounded \f$x\f$-monotone curves maintains an implicit bounding
 rectangle in the \sc{Dcel} structure; see Section \ref
-arr_ssecunb_rep. If some curves inserted into an arrangement object
+aos_sec-unbounded. If some curves inserted into an arrangement object
 are expected to be unbounded; namely, there exists \f$d \in \{0,1\}\f$
 such that \f$\lim_{t \rightarrow d}x(t) = \pm\infty\f$ or \f$\lim_{t
 \rightarrow d}y(t) = \pm\infty\f$ holds for at least one input curve
@@ -3290,7 +3413,8 @@ following predicate:
 
 <DT>\link ArrangementVerticalSideTraits_2::Parameter_space_in_x_2 <B>`Parameter_space_in_x_2`</B>\endlink:
 
-<DD>This predicate is overloaded with two versions as follows:
+<DD>This three-valued predicate is overloaded with two versions as
+  follows:
 
 (i) Given a curve \f$c = (x(t), y(t))\f$ and an enumerator that
 specifies either the minimum end or the maximum end of the curve, and
@@ -3330,7 +3454,8 @@ following predicate:
 
 <DT>\link ArrangementHorizontalSideTraits_2::Parameter_space_in_y_2 <B>`Parameter_space_in_y_2`</B>\endlink:
 
-<DD>This predicate is overloaded with two versions as follows:
+<DD>This three-valued predicate is overloaded with two versions as
+  follows:
 
 (i) Given a curve \f$c = (x(t), y(t))\f$ and an enumerator that
 specifies either the minimum end or the maximum end of the curve, and
@@ -3659,7 +3784,7 @@ this manual, the predefined filtered kernel
 the line-segment traits class.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figpredef_kernels,fan_grids.png,Europe.png}
+\cgalFigureBegin{aos_figpredef_kernels,fan_grids.png,Europe.png}
 (a) An arrangement of \f$104\f$ line segments from the input file
 `fan_grids.dat`. (b) An arrangement of more than \f$3000\f$ interior
 disjoint line segments, defined in the input file `Europe.dat`.
@@ -3674,7 +3799,7 @@ integer coordinates from a file and computes their arrangement. By
 default it opens the `fan_grids.dat` input-file, located in the
 examples folder, which contains \f$104\f$ line segments that form
 four "fan-like" grids and induce a dense arrangement, as illustrated
-in \cgalFigureRef{arr_figpredef_kernels} (a):
+in \cgalFigureRef{aos_figpredef_kernels} (a):
 
 \cgalExample{Arrangement_on_surface_2/predefined_kernel.cpp}
 
@@ -3729,7 +3854,7 @@ arrangement.  By default, the example opens the `Europe.dat`
 input-file, located in the examples folder, which contains more than
 \f$3000\f$ line segments with floating-point coordinates that form
 the map of Europe, as depicted in
-\cgalFigureRef{arr_figpredef_kernels} (b):
+\cgalFigureRef{aos_figpredef_kernels} (b):
 
 \cgalExample{Arrangement_on_surface_2/predefined_kernel_non_intersecting.cpp}
 
@@ -3897,7 +4022,7 @@ attached to each individual segment; see Section
 data objects with the different segments that compose a polyline.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_12,polylines.png}
+\cgalFigureBegin{aos_figex_12,polylines.png}
 
 An arrangement of three polylines, as constructed in
 `polylines.cpp`. Red disks mark vertices associated with polyline
@@ -3913,7 +4038,7 @@ impossible scenario in arrangements of line segments.
 
 The following example program constructs an arrangement of three
 polylines, \f$\pi_1\f$, \f$\pi_2\f$, and \f$\pi_3\f$, as depicted in
-\cgalFigureRef{arr_figex_12}. In this example, each polyline is
+\cgalFigureRef{aos_figex_12}. In this example, each polyline is
 constructed from points stored in a different container, i.e., array,
 list, and vector. Points defining the polylines are not necessarily
 associated with arrangement vertices. The arrangement vertices are
@@ -4093,7 +4218,7 @@ typically algebraic numbers of degree 2, is \a not the same as the
 using the number type `CoordNT`, nested in the traits class-template.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_13,circles.png}
+\cgalFigureBegin{aos_figex_13,circles.png}
 
 An arrangement of three circles constructed in `circles.cpp`. Each
 circle is split into two \f$x\f$-monotone circular arcs, whose
@@ -4105,7 +4230,7 @@ intersection point of all three circles.
 <!----------------------------------------------------------------------------->
 
 In the following example an arrangement of three full circles is
-constructed, as shown in \cgalFigureRef{arr_figex_13}. Each Index is
+constructed, as shown in \cgalFigureRef{aos_figex_13}. Each Index is
 split into two \f$x\f$-monotone circular arcs, the endpoints of which
 are drawn as red discs; rings mark vertices that correspond to
 intersection points. Once the arrangement is constructed, we locate
@@ -4168,7 +4293,7 @@ case, all three points are required to have rational coordinates;
 namely, they are all given as `Kernel::Point_2` objects.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_circular_arcs,circular_arcs.png}
+\cgalFigureBegin{aos_figex_circular_arcs,circular_arcs.png}
 
 An arrangement of two full circles, two line segments, and three
 circular arcs as constructed in `circular_arcs.cpp`. Endpoints are
@@ -4180,7 +4305,7 @@ drawn as red disks and intersection points are drawn as rings.
 The following example demonstrates the usage of the various
 construction methods for circular arcs and line segments. The
 resulting arrangement is depicted in
-\cgalFigureRef{arr_figex_circular_arcs}. Note the usage of the
+\cgalFigureRef{aos_figex_circular_arcs}. Note the usage of the
 constructor of `CoordNT(alpha, beta, gamma)`, which creates a
 degree-\f$2\f$ algebraic number whose value is \f$\alpha +
 \beta\sqrt{\gamma}\f$.
@@ -4317,14 +4442,14 @@ derived `X_monotone_curve_2` classes also support basic access
 functions such as `source()`, `target()`, and `orientation()`.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_14,conics.png}
+\cgalFigureBegin{aos_figex_14,conics.png}
 An arrangement of mixed conic arcs, as constructed in conics.cpp
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
 The following example demonstrates the usage of the various
 constructors for conic arcs. The resulting arrangement is depicted in
-\cgalFigureRef{arr_figex_14}. Especially noteworthy are the
+\cgalFigureRef{aos_figex_14}. Especially noteworthy are the
 constructor of a circular arc that accepts three points, the
 constructor of a conic arc that accepts five points, and the
 constructor that allows specifying approximate endpoints, where the
@@ -4371,7 +4496,7 @@ typedef CGAL::Arrangement_2<Traits>                   Arrangement;
 \endcode
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_fig_conic_multiplicities,conic_multiplicities.png}
+\cgalFigureBegin{aos_fig_conic_multiplicities,conic_multiplicities.png}
 An arrangement of a circular arc and an hyperbolic arc, as constructed
 in conic_multiplicities.cpp
 \cgalFigureEnd
@@ -4380,7 +4505,7 @@ in conic_multiplicities.cpp
 The last example in this section demonstrates how the conic-traits
 class can handle intersection points with multiplicity. The resulting
 arrangement is depicted in
-\cgalFigureRef{arr_fig_conic_multiplicities}. The supporting curves of
+\cgalFigureRef{aos_fig_conic_multiplicities}. The supporting curves of
 the two arcs, a circle centered at \f$(0,\frac{1}{2})\f$ with radius
 \f$\frac{1}{2}\f$, and the hyperbola \f$y =
 \frac{x^2}{1-x}\f$,\cgalFootnote{This curve can also be written as
@@ -4425,7 +4550,7 @@ so it is impossible to use the landmark point-location strategy with
 this traits class.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_fig_rat_func_singular,rational_function_singular.png}
+\cgalFigureBegin{aos_fig_rat_func_singular,rational_function_singular.png}
 An arrangement of an arc of a rational functions that has
 singularities at \f$x = 1\f$ and at \f$x = 2\f$.
 \cgalFigureEnd
@@ -4437,7 +4562,7 @@ singularities. An arc that has singularities must be split into
 continuous portions before being inserted into the arrangement.
 Consider, for example, the rational arc given by the equation \f$y =
 \frac{1}{(x-1)(2-x)}\f$ defined over the interval \f$[0,3]\f$, as
-depicted in \cgalFigureRef{arr_fig_rat_func_singular}. This
+depicted in \cgalFigureRef{aos_fig_rat_func_singular}. This
 arc has two singularities, at \f$x = 1\f$ and at \f$x = 2\f$. It is
 split into three continuous portions defined over the intervals
 \f$[0,1)\f$, \f$(1,2)\f$, and \f$(2,3]\f$ by the traits operation
@@ -4517,7 +4642,7 @@ clean up costs are constant. In addition, there is also a separate
 member function that cleans up the cache upon request.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_16,rational_functions.png}
+\cgalFigureBegin{aos_fig-rational_functions,rational_functions.png}
 An arrangement of four arcs of rational functions, as constructed in
 rational_functions.cpp.
 \cgalFigureEnd
@@ -4525,13 +4650,13 @@ rational_functions.cpp.
 
 The following example demonstrates the construction of an arrangement
 induced by rational arcs depicted in
-\cgalFigureRef{arr_figex_16}. It uses constructors both
+\cgalFigureRef{aos_fig-rational_functions}. It uses constructors both
 for polynomial arcs and for rational arcs.
 
 \cgalExample{Arrangement_on_surface_2/rational_functions.cpp}
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_unb_rat,unbounded_rational_functions.png}
+\cgalFigureBegin{aos_fig-unbounded_rational_functions,unbounded_rational_functions.png}
 An arrangement of six arcs of rational functions, as constructed in
 unbounded_rational_functions.cpp
 \cgalFigureEnd
@@ -4539,12 +4664,12 @@ unbounded_rational_functions.cpp
 
 The following example demonstrates the construction of an arrangement
 of six rational arcs, four unbounded arcs and two bounded ones, as
-depicted in \cgalFigureRef{arr_figex_unb_rat}. Note the usage of the
-constructors of an entire rational function and of an infinite "ray"
-of such a function. Also observe that the hyperbolas \f$y =
-\pm\frac{1}{x}\f$ and \f$y = \pm\frac{1}{2x}\f$ never intersect,
-although they have common vertical and horizontal asymptotes, so very
-"thin" unbounded faces are created between them:
+depicted in \cgalFigureRef{aos_fig-unbounded_rational_functions}. Note
+the usage of the constructors of an entire rational function and of an
+infinite "ray" of such a function. Also observe that the hyperbolas
+\f$y = \pm\frac{1}{x}\f$ and \f$y = \pm\frac{1}{2x}\f$ never
+intersect, although they have common vertical and horizontal
+asymptotes, so very "thin" unbounded faces are created between them:
 
 \cgalExample{Arrangement_on_surface_2/unbounded_rational_functions.cpp}
 
@@ -4643,7 +4768,7 @@ concept `ArrangementDirectionalXMonotoneTraits_2`, which enables
 Boolean set operations; see Package \ref PkgBooleanSetOperations2Ref.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_bez,bezier_curves.png}
+\cgalFigureBegin{aos_figex_bez,bezier_curves.png}
 An arrangement of ten B&eacute;zier curves of degree \f$5\f$, as
 constructed in `Bezier_curves.cpp`.
 \cgalFigureEnd
@@ -4655,7 +4780,7 @@ number of control points, followed by the sequence of control points
 given as integer or rational coordinates. By default, the program uses
 the `Bezier.dat` file, which contains ten curves of degree \f$5\f$
 each; their resulting arrangement is depicted in
-\cgalFigureRef{arr_figex_bez}.
+\cgalFigureRef{aos_figex_bez}.
 
 \cgalExample{Arrangement_on_surface_2/Bezier_curves.cpp}
 
@@ -4722,14 +4847,14 @@ exemplified by the programs listed below. Consult the reference guide
 for the complete set of options.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_alg_curves,algebraic_curves.png}
+\cgalFigureBegin{aos_figex_alg_curves,algebraic_curves.png}
 An arrangement of algebraic curves of degrees \f$1\f$, \f$2\f$,
 \f$3\f$, and \f$6\f$, as constructed in `algebraic_curves.cpp`.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
 The following examples computes the arrangement depicted in in
-\cgalFigureRef{arr_figex_alg_curves}. The arrangement is induced by
+\cgalFigureRef{aos_figex_alg_curves}. The arrangement is induced by
 four algebraic curves, \f$c_1\f$, \f$c_2\f$, \f$c_3\f$, and \f$c_4\f$,
 of degrees $1$, $2$, $3$, and $6$, respectively. For each curve the
 defining polynomial is constructed first. Then, the algebraic curve is
@@ -4800,7 +4925,7 @@ representing such segments (and sub-segments of them). Formally, a
 terminal segment is either a vertical line-segment or a segment of an
 \f$x\f$-monotone curve whose \f$x\f$-range does not contain critical
 points in its interior. See
-\cgalFigureRef{arr_figcylindrical_decomposition} for an example of a
+\cgalFigureRef{aos_figcylindrical_decomposition} for an example of a
 quartic curve and its decomposition into terminal segments.  Notice
 that six vertices split the curve into \f$x\f$-monotone segments, and
 four additional vertices further split the corresponding
@@ -4808,7 +4933,7 @@ four additional vertices further split the corresponding
 \cgalAdvancedEnd
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figcylindrical_decomposition,algebraic_curves_decomposition.png}
+\cgalFigureBegin{aos_figcylindrical_decomposition,algebraic_curves_decomposition.png}
 
 The critical \f$x\f$-coordinates of an algebraic curve (dashed
 lines), and its decomposition into terminal segments (in different
@@ -4842,7 +4967,7 @@ point (counted from below) in the fiber of \f$c\f$ at the
 \f$c\f$ with \f$x\f$-coordinate \f$x'\f$.  Formally, for a curve
 \f$c\f$ and \f$x' \in \R\f$, the fiber of \f$c\f$ at \f$x'\f$ is \f$c
 \cap \{(x',b)\,|\,b \in \R\}\f$.} In the example depicted in
-\cgalFigureRef{arr_figcylindrical_decomposition}, if \f$x_1\f$ denotes
+\cgalFigureRef{aos_figcylindrical_decomposition}, if \f$x_1\f$ denotes
 the \f$x\f$-coordinate of \f$p\f$, and \f$c\f$ represents the
 algebraic curve, then \f$p\f$ could be represented by
 \f$(x_1,c,3)\f$. If \f$x_2\f$ is the \f$x\f$-coordinate of \f$q\f$,
@@ -4854,7 +4979,7 @@ that option, since computing an explicit representation of the
 $y$-coordinate can be rather expensive.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_alg_segments,algebraic_segments.png}
+\cgalFigureBegin{aos_figex_alg_segments,algebraic_segments.png}
 An arrangement of algebraic segments (solid lines), as constructed in
 `algebraic_segments.cpp`. The supporting curves are drawn as dashed
 lines.
@@ -4863,7 +4988,7 @@ lines.
 
 The following code exemplifies the method to construct points and the
 various methods to construct algebraic segments. The computed
-arrangement is depicted in \cgalFigureRef{arr_figex_alg_segments}.
+arrangement is depicted in \cgalFigureRef{aos_figex_alg_segments}.
 
 \cgalExample{Arrangement_on_surface_2/algebraic_segments.cpp}
 
@@ -5047,7 +5172,7 @@ respectively, the overlapping subcurve is associated with the
 consolidated set \f$S_1 \cup S_2\f$.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_consolidated_curve_data,consolidated_curve_data.png}
+\cgalFigureBegin{aos_figex_consolidated_curve_data,consolidated_curve_data.png}
 An arrangement of six red and blue segments, as constructed in `consolidated_curve_data.cpp`. Disks correspond to red-blue intersection points, while circles mark the endpoints of red-blue overlaps.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
@@ -5057,7 +5182,7 @@ class, attaching an additional <em>color</em> field to the segments
 using the consolidated curve-data traits class. A color may be either
 <em>blue</em> or <em>red</em>. Having constructed the arrangement of
 colored segments, as depicted in
-\cgalFigureRef{arr_figex_consolidated_curve_data}, we detect the
+\cgalFigureRef{aos_figex_consolidated_curve_data}, we detect the
 vertices that have incident edges mapped to both blue and red
 segments. These vertices, drawn as black discs in the figure,
 correspond to red-blue intersection points. We also locate the edge
@@ -5067,7 +5192,7 @@ endpoints are also drawn as black discs)
 \cgalExample{Arrangement_on_surface_2/consolidated_curve_data.cpp}
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_generic_curve_data,generic_curve_data.png}
+\cgalFigureBegin{aos_figex_generic_curve_data,generic_curve_data.png}
 An arrangement of four polylines, named A-D, as constructed in
 `generic_curve_data.cpp`.
 \cgalFigureEnd
@@ -5078,7 +5203,7 @@ class, attaching an additional <em>name</em> field to each polyline
 using the generic curve-data traits class. It constructs an
 arrangement of four polylines, named \f$A\f$, \f$B\f$, \f$c\f$, and
 \f$D\f$, as illustrated in
-\cgalFigureRef{arr_figex_generic_curve_data}.  In the case of
+\cgalFigureRef{aos_figex_generic_curve_data}.  In the case of
 overlaps, it simply concatenate the names of the overlapping
 polylines. At the end of the program the curve ssociated with the
 edges that correspond to overlapping polylines are replaced with
@@ -5263,7 +5388,7 @@ inheriting from the base observer class and overriding the relevant
 notification functions, as required by their applications.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_observer,observer.png}
+\cgalFigureBegin{aos_figex_observer,observer.png}
 An arrangement of six line segments, as constructed in `observer.cpp`.
 The halfedge \f$e_v\f$ (dashed) is eventually removed, so that the
 final arrangement consists of four faces (one unbounded and three
@@ -5276,7 +5401,7 @@ class. The observer in the example responds to changes in the
 arrangement faces. It prints a message whenever a face is split into
 two due to the insertion of an edge and whenever two faces merge into
 one due to the removal of an edge. The layout of the arrangement is
-depicted in \cgalFigureRef{arr_figex_observer}; it comprises six line
+depicted in \cgalFigureRef{aos_figex_observer}; it comprises six line
 segments and eight edges (the horizontal segment \f$s_h\f$ and the
 vertical segment \f$s_v\f$ induce two edges each).  The halfedge
 \f$e_v\f$ is induced by the vertical segment \f$s_v\f$. First, it is
@@ -5347,7 +5472,7 @@ arrangement observer tailored for this task, which receives updates
 whenever a face is modified and sets its data field accordingly.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_dcel_extension,dcel_extension.png}
+\cgalFigureBegin{aos_figex_dcel_extension,dcel_extension.png}
 
 An arrangement of six line segments, as constructed in
 `face_extension.cpp` and `dcel_extension.cpp` (in `dcel_extension.cpp`
@@ -5359,7 +5484,7 @@ the halfedges in `face_extension.cpp` are shown in brackets.
 
 The next example constructs an arrangement that contains seven bounded
 faces induced by six line segments, \f$s_1, \ldots, s_6\f$, as shown
-in \cgalFigureRef{arr_figex_dcel_extension}. An observer gets notified
+in \cgalFigureRef{aos_figex_dcel_extension}. An observer gets notified
 each time a new face \f$f\f$ is created, and it associates \f$f\f$
 with a running index, where the index of the unbounded face is 0. As a
 result, the faces are numbered according to their creation order,
@@ -5404,7 +5529,7 @@ face is also extended to store the size of its outer boundary, that
 is, the number of halfedges along its outer boundary.
 
 The constructed arrangement, depicted in
-\cgalFigureRef{arr_figex_dcel_extension}, is similar to the
+\cgalFigureRef{aos_figex_dcel_extension}, is similar to the
 arrangement constructed in the previous example.  In this case,
 however, we do not use an observer; instead, all auxiliary data-fields
 are set after the construction phase.  Also note that the data fields
@@ -5563,7 +5688,7 @@ using the standard insertion-operations instead, but, as mentioned
 above, this is less efficient.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_overlay,overlay.png}
+\cgalFigureBegin{aos_figex_overlay,overlay.png}
 Overlaying two simple arrangements of line segments, as done in
 `overlay.cpp` and `face_extension_overlay.cpp`. In
 `face_extension_overlay.cpp` the two bounded faces are considered as
@@ -5574,7 +5699,7 @@ the two marked faces is denoted by \f$f_0\f$.
 
 The next program constructs two simple arrangements; each comprises
 four line segments that form a square, as depicted in
-\cgalFigureRef{arr_figex_overlay}. The program computes the overlay of the
+\cgalFigureRef{aos_figex_overlay}. The program computes the overlay of the
 two arrangements. The resulting arrangement has 16 vertices, 24
 edges, and 10 faces (including the unbounded one.
 
@@ -5650,19 +5775,19 @@ polygons. The example computes the intersection between a
 parallel-axis square and a congruent square rotated
 \f$45^\circ\f$. The resulting polygon from the intersection operation
 is an octagon, which corresponds to the face~\f$\hat{f}\f$ in the
-arrangement depicted in \cgalFigureRef{arr_figex_overlay}.
+arrangement depicted in \cgalFigureRef{aos_figex_overlay}.
 
 \cgalExample{Arrangement_on_surface_2/face_extension_overlay.cpp}
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_overlay_unbounded,overlay_unbounded.png}
+\cgalFigureBegin{aos_figex_overlay_unbounded,overlay_unbounded.png}
 Overlaying two arrangements of lines that have unbounded faces, as
 done in `overlay_unbounded.cpp`.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
 The next example, depicted in
-\cgalFigureRef{arr_figex_overlay_unbounded}, demonstrates the face
+\cgalFigureRef{aos_figex_overlay_unbounded}, demonstrates the face
 overlay of two arrangements that have unbounded faces as well as
 bounded ones.  The first arrangement (blue) is induced by the two
 lines \f$y = x\f$ and \f$y = -x\f$, which subdivide the plane into
@@ -5790,7 +5915,7 @@ template <typename Arrangement> struct Overlay_color_traits {
 \endcode
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_overlay_color,overlay_color.png}
+\cgalFigureBegin{aos_figex_overlay_color,overlay_color.png}
 
 The overlay of two extended arrangements]{The overlay (c) of two
 arrangements (a) and (b). Each feature of the arrangements is extended
@@ -5801,7 +5926,7 @@ the blend of the colors of the two inducing features.
 <!----------------------------------------------------------------------------->
 
 The example program listed below computes the overlay, depicted in
-\cgalFigureRef{arr_figex_overlay_color}, of the two arrangements
+\cgalFigureRef{aos_figex_overlay_color}, of the two arrangements
 depicted in (a) and (d). Each feature of the input arrangements and of
 the overlay arrangement is extended with an RGB color stored as an
 `unsigned int`. The vertices, halfedges, and faces of the red
@@ -6001,7 +6126,7 @@ of the changes the arrangements undergoes; see Section \ref
 arr_ssecnotif for the details).
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_24,curve_history.png}
+\cgalFigureBegin{aos_figex_24,curve_history.png}
 An arrangement with history as constructed in
 `curve_history.cpp`. Note that \f$s_1\f$ and \f$s_3\f$ overlap over
 two edges. The point-location query points \f$q_1\f$, \f$q_2\f$, and
@@ -6010,7 +6135,7 @@ two edges. The point-location query points \f$q_1\f$, \f$q_2\f$, and
 <!----------------------------------------------------------------------------->
 
 In the following example we construct a simple arrangement of six line
-segments, as depicted in \cgalFigureRef{arr_figex_24}, while
+segments, as depicted in \cgalFigureRef{aos_figex_24}, while
 maintaining the curve history. Note that the input segments \f$s_1\f$
 and \f$s_3\f$ overlap over two edges. The example demonstrates the
 usage of the special traversal functions. It also shows how to issue
@@ -6022,7 +6147,7 @@ auxiliary function `locate_point()` defined in the header file
 \cgalExample{Arrangement_on_surface_2/curve_history.cpp}
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_25,edge_manipulation_curve_history.png}
+\cgalFigureBegin{aos_figex_25,edge_manipulation_curve_history.png}
 An arrangement with history of nine circles as constructed in
 `edge_manipulation_curve_history.cpp`. Note the vertical tangency
 points of \f$c_0\f$, marked as dark dots, which subdivide this circle
@@ -6036,7 +6161,7 @@ The following example demonstrates the usage of the free
 `remove_curve()` function. We construct an arrangement of nine
 circles, while keeping a handle to each inserted circle. We then
 remove the large circle \f$c_0\f$, which induces \f$18\f$ edges, as
-depicted in \cgalFigureRef{arr_figex_25}. The example also shows how
+depicted in \cgalFigureRef{aos_figex_25}. The example also shows how
 to use the \link Arrangement_with_history_2::split_edge()
 `split_edge()`\endlink and \link
 Arrangement_with_history_2::merge_edge() `merge_edge()`\endlink member
@@ -6085,8 +6210,9 @@ geometric types they define.  Thus, only arrangements of line segments
 or of polylines can be written or read.
 
 The following example constructs the arrangement depicted in
-\cgalFigureRef{arr_figex_5} and writes it to an output file. It also
-demonstrates how to re-read the arrangement from a file:
+\cgalFigureRef{aos_fig-special_edge_insertion} and writes it to an
+output file. It also demonstrates how to re-read the arrangement from
+a file.
 
 \cgalExample{Arrangement_on_surface_2/io.cpp}
 
@@ -6133,7 +6259,7 @@ and faces, provided that the `VertexData`, `HalfedgeData` and
 
 The following example constructs the same arrangement as the example
 `dcel_extension` does (see Section \ref arr_sssecex_dcel_all),
-depicted in \cgalFigureRef{arr_figex_dcel_extension}, and writes it to
+depicted in \cgalFigureRef{aos_figex_dcel_extension}, and writes it to
 an output file. It also demonstrates how to re-read the arrangement
 from a file:
 
@@ -6167,7 +6293,7 @@ class---as well as the `%Point_2` type and the `X_monotone_curve_2`
 types---support the `<<` and`>>` operators.
 
 The following example constructs the same arrangement as example
-`curve_history` does, depicted in \cgalFigureRef{arr_figex_24}, and
+`curve_history` does, depicted in \cgalFigureRef{aos_figex_24}, and
 writes it to an output file. It also demonstrates how to re-read the
 arrangement-with-history from a file:
 
@@ -6323,14 +6449,14 @@ template <typename Arrangement> struct Edge_length {
 \endcode
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_bgl_primal_adapter,bgl_primal_adapter.png}
+\cgalFigureBegin{aos_figex_bgl_primal_adapter,bgl_primal_adapter.png}
 An arrangement of seven line segments, as constructed by
 `bgl_primal_adapter.cpp` and `bgl_dual_adapter.cpp`.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
 In the following example we construct an arrangement of seven line
-segments, as shown in \cgalFigureRef{arr_figex_bgl_primal_adapter}.
+segments, as shown in \cgalFigureRef{aos_figex_bgl_primal_adapter}.
 Then, it uses the \sc{bgl} generic implementation of Dijkstra's
 shortest-paths algorithm to compute the sum of squared distances to
 all vertices from the lexicographically smallest vertex \f$v_0\f$ in
@@ -6375,7 +6501,7 @@ efficient mapping of face handles to indices.  Like vertices,
 associating arbitrary data with the arrangement faces.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{arr_figex_bgl_dual_adapter,bgl_dual_adapter.png}
+\cgalFigureBegin{aos_figex_bgl_dual_adapter,bgl_dual_adapter.png}
 An arrangement of seven line segments, as constructed by
 `bgl_dual_adapter.cpp` and its dual face graph, where every
 arrangement face is a vertex of the graph. The index of a dual
@@ -6386,7 +6512,7 @@ the face graph, starting from the unbounded face \f$f_0\f$.
 
 In the following example we construct the same arrangement as in
 example `bgl_primal_adapter.cpp` (see
-\cgalFigureRef{arr_figex_bgl_primal_adapter}), and perform
+\cgalFigureRef{aos_figex_bgl_primal_adapter}), and perform
 breadth-first search on the graph faces, starting from the unbounded
 face. We extend the \sc{Dcel} faces with an unsigned integer, marking
 the discovery time of the face using `boost` visitors and a

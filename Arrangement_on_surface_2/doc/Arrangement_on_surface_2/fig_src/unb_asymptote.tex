@@ -1,0 +1,62 @@
+\documentclass[12pt]{standalone}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{0.9}%
+  \begin{pspicture}(-3.5,-3.5)(2.1,2.1)
+    \newpsstyle{SimpleHandle}{fillstyle=solid,fillcolor=white,framearc=0.5}
+    \psframe[linewidth=0.25pt](-2,-2)(2,2)
+    \psline[linecolor=blue](-2,0)(2,0)                % l1
+    \psline[linecolor=blue](0,2)(0,-2)                % l2
+    \psplot[linecolor=blue]{-2}{-0.125}{-.25 x div}   % h1
+    \psplot[linecolor=blue]{-2}{-.0625}{-.125 x div}  % h3
+    \psplot[linecolor=blue]{0.125}{2}{-.25 x div}     % h2
+    \psplot[linecolor=blue]{.0625}{2}{-.125 x div}    % h4
+    \arrMainVertex(0,0){x}
+    \arrMinorVertex(-2,-2){bl}
+    \arrMinorVertex(-2,2){tl}
+    \arrMinorVertex(2,-2){br}
+    \arrMinorVertex(2,2){tr}
+    \PstLens[LensHandle=true,LensStyleHandle=SimpleHandle,
+      %% linewidth=xxx,LensHandleWidth=xxx,LensHandleHeight=xxx,
+      LensRotation=-45,LensSize=0.8,LensMagnification=4](-2,0.05){%
+      \psline[linecolor=blue,linewidth=0.3pt](-2,0)(2,0)               % l1
+      \psplot[linecolor=blue,linewidth=0.3pt]{-2}{-0.125}{-.25 x div}  % h1
+      \psplot[linecolor=blue,linewidth=0.3pt]{-2}{-.0625}{-.125 x div} % h3
+      %
+      \pnode(-2,-1.5){l0}
+      \pscircle*[linecolor=cyan](-2,0){0.5pt}
+      \cnode[linewidth=0.1pt](-2,0){0.5pt}{l1}
+      \pscircle*[linecolor=cyan](-2,0.06){0.5pt}
+      \cnode[linewidth=0.1pt](-2,0.06){0.5pt}{l2}
+      \pscircle*[linecolor=cyan](-2,0.12){0.5pt}
+      \cnode[linewidth=0.1pt](-2,0.12){0.5pt}{l3}
+      \pnode(-2,1.5){l4}
+      \ncline[linewidth=0.3pt]{l0}{l1}
+      \ncline[linewidth=0.3pt]{l1}{l2}
+      \ncline[linewidth=0.3pt]{l2}{l3}
+      \ncline[linewidth=0.3pt]{l3}{l4}
+    }
+    \PstLens[LensHandle=true,LensStyleHandle=SimpleHandle,
+      %% linewidth=xxx,LensHandleWidth=xxx,LensHandleHeight=xxx,
+      LensRotation=-45,LensSize=0.8,LensMagnification=4](0.05,-2){%
+      \psline[linecolor=blue,linewidth=0.3pt](0,-2)(0,2)               % l2
+      \psplot[linecolor=blue,linewidth=0.3pt]{0.125}{2}{-.25 x div}    % h2
+      \psplot[linecolor=blue,linewidth=0.3pt]{0.0625}{2}{-.125 x div}  % h3
+      %
+      \pnode(-2,-2){b0}
+      \pscircle*[linecolor=cyan](0,-2){0.5pt}
+      \cnode[linewidth=0.1pt](0,-2){0.5pt}{b1}
+      \pscircle*[linecolor=cyan](0.06,-2){0.5pt}
+      \cnode[linewidth=0.1pt](0.06,-2){0.5pt}{b2}
+      \pscircle*[linecolor=cyan](0.12,-2){0.5pt}
+      \cnode[linewidth=0.1pt](0.12,-2){0.5pt}{b3}
+      \pnode(2,-2){b4}
+      \ncline[linewidth=0.3pt]{b0}{b1}
+      \ncline[linewidth=0.3pt]{b1}{b2}
+      \ncline[linewidth=0.3pt]{b2}{b3}
+      \ncline[linewidth=0.3pt]{b3}{b4}
+    }
+  \end{pspicture}
+}
+\end{document}

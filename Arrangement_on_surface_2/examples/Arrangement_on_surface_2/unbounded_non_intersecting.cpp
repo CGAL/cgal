@@ -9,14 +9,11 @@ int main()
 {
   Arrangement arr;
 
-  // Insert a line in the (currently single) unbounded face of the arrangement,
-  // then split it into two at (0,0). Assign v to be the split point.
+  // Insert a line in the (currently single) unbounded face of the arrangement;
+  // then, insert a point that lies on the line splitting it into two.
   X_monotone_curve c1 = Line(Point(-1, 0), Point(1, 0));
-  Halfedge_handle  e1 = arr.insert_in_face_interior(c1, arr.unbounded_face());
-  X_monotone_curve c1_left = Ray(Point(0, 0), Point(-1, 0));
-  X_monotone_curve c1_right = Ray(Point(0, 0), Point(1, 0));
-  e1 = arr.split_edge(e1, c1_left, c1_right);
-  Vertex_handle v = e1->target();
+  Halfedge_handle e1 = arr.insert_in_face_interior(c1, arr.unbounded_face());
+  Vertex_handle v = insert_point(arr, Point(0,0));
   CGAL_assertion(! v->is_at_open_boundary());
 
   // Add two more rays using the specialized insertion functions.
@@ -37,15 +34,15 @@ int main()
   {
     std::cout << "Face no. " << k++ << "(" << it->number_of_outer_ccbs()
               << "," << it->number_of_inner_ccbs() << ")" << ": ";
-    Arrangement::Ccb_halfedge_const_circulator  first, curr;
+    Arrangement::Ccb_halfedge_const_circulator first, curr;
     curr = first = it->outer_ccb();
     if (! curr->source()->is_at_open_boundary())
       std::cout << "(" << curr->source()->point() << ")";
 
     do {
       Arrangement::Halfedge_const_handle he = curr;
-      if (! he->is_fictitious()) std::cout << "   [" << he->curve() << "]   ";
-      else std::cout << "   [ ... ]   ";
+      if (! he->is_fictitious()) std::cout << " [" << he->curve() << "] ";
+      else std::cout << " [ ... ] ";
 
       if (! he->target()->is_at_open_boundary())
         std::cout << "(" << he->target()->point() << ")";
