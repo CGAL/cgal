@@ -411,7 +411,7 @@ bool read_3MF(const std::string& fname,
  * \returns `true` if reading was successful, `false` otherwise.
  */
 template<typename PointRanges, typename TriangleRanges, typename ColorRanges>
-int read_3MF(const std::string& fname,
+bool read_3MF(const std::string& fname,
              PointRanges& all_points,
              TriangleRanges& all_triangles,
              ColorRanges& all_colors,

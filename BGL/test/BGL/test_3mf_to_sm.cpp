@@ -38,14 +38,12 @@ int main(int argc, char** argv)
   std::vector<Mesh> meshes;
 
   //testing reading functions.
-  int nb_meshes = CGAL::read_3MF(filename, meshes);
-
-  if(nb_meshes <0)
+  if(!CGAL::read_3MF(filename, meshes))
     return 1;
-  for(int i = 0; i< nb_meshes; ++i)
+  for(int i = 0; i< meshes.size(); ++i)
   {
     Mesh mesh = meshes[i];
-    std::cout<<names[i]<<" is valid: "<<mesh.is_valid()<<std::endl;
+    std::cout<<"mesh "<<i<<" is valid: "<<mesh.is_valid()<<std::endl;
     std::string outputName("output");
     outputName.append(std::to_string(i));
     outputName.append(".off");
