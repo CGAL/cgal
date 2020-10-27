@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Triangulation_segment_traverser_3.h>
 
 #include <assert.h>
 #include <iostream>
