@@ -52,6 +52,14 @@ struct Intrinsic_Delaunay
 {};
 
 namespace internal {
+  template<typename TriangleMesh>
+  bool has_degenerate_faces(const TriangleMesh& tm);
+
+  template<typename TriangleMesh, typename VertexPointMap>
+  bool has_degenerate_faces(const TriangleMesh& tm, VertexPointMap vpm);
+}
+
+namespace internal {
 template <typename TriangleMesh,
           typename Traits,
           typename LA,
