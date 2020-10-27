@@ -463,14 +463,16 @@ very useful. In this example, however, the points are far apart, and
 constructions of new geometric objects do not occur. Thus, it is safe
 to use `int` after all. The program constructs an arrangement induced
 by three line segments that are pairwise disjoint in their interior,
-prints out the number of faces, and ends. It uses the `insert()`
-free-function, which inserts the segments into the arrangement; see
-Section \ref arr_secgl_funcs. It uses the member function \link
-Arrangement_2::number_of_faces `number_of_faces()`\endlink to obtain
-the number of faces (two in this case). We give more elaborate
-examples in the rest of this chapter. The programs in those examples
-rely on computing with numbers of arbitrary precision, which
-guarantees robust execution and correct results.
+prints out the number of faces, and ends. It uses the \link
+insert(Arrangement_2<Traits, Dcel>&, InputIterator, InputIterator)
+`insert()`\endlink free-function, which inserts the segments into the
+arrangement; see Section \ref arr_secgl_funcs. It uses the member
+function \link Arrangement_2::number_of_faces
+`number_of_faces()`\endlink to obtain the number of faces (two in this
+case). We give more elaborate examples in the rest of this
+chapter. The programs in those examples rely on computing with numbers
+of arbitrary precision, which guarantees robust execution and correct
+results.
 
 \code{.cpp}
 #include <CGAL/Cartesian.h>
@@ -2000,8 +2002,10 @@ insertion.
 The example below shows how to construct the same arrangement of five
 line segments built incrementally in `incremental_insertion.cpp`
 depicted in \cgalFigureRef{aos_fig-incremental_insertion} using the
-aggregate insertion function `%insert()`.  Note that no point-location
-object needs to be defined and attached to the arrangement.
+aggregate insertion function \link insert(Arrangement_2<Traits,
+Dcel>&, InputIterator, InputIterator) `insert()`\endlink.  Note that
+no point-location object needs to be defined and attached to the
+arrangement.
 
 \cgalExample{Arrangement_on_surface_2/aggregated_insertion.cpp}
 
@@ -2031,10 +2035,11 @@ lines) in an aggregate fashion.  Notice that the line segments of
 \f${\mathcal S}_1\f$ are pairwise interior-disjoint, so
 `insert_non_intersecting_curves()` is safely used. \f${\mathcal
 S}_2\f$ also contains pairwise interior-disjoint segments, but as they
-intersect the existing arrangement, `%insert()` must be used to insert
-them. Also note that the single segment \f$s\f$ inserted incrementally
-partially overlaps an existing arrangement curve; the overlapped
-portion is drawn as a dash-dotted line.
+intersect the existing arrangement, \link insert(Arrangement_2<Traits,
+Dcel>&, InputIterator, InputIterator) `insert()`\endlink must be used
+to insert them. Also note that the single segment \f$s\f$ inserted
+incrementally partially overlaps an existing arrangement curve; the
+overlapped portion is drawn as a dash-dotted line.
 
 \cgalExample{Arrangement_on_surface_2/global_insertion.cpp}
 
@@ -5669,21 +5674,21 @@ differently colored edges. An overlay vertex is due to a blue vertex,
 a red vertex, a coincidence of two differently colored vertices, or an
 intersection of a blue and a red curve.
 
-The function template `overlay(arr_r, arr_b, arr_o, ovl_traits)`
-accepts two input arrangement objects `arr_r` and `arr_b`, and
-constructs their overlay object `arr_o`. All three arrangements must
-use the same geometric primitives. In other words, their types are
-instances of the `Arrangement_2<Traits,Dcel>` class template, where
-the `Traits` parameter is substituted with three geometry-traits
-classes, respectively. The geometry-traits classes of the input
-arrangements must be convertible to the geometry-traits class of the
-resulting arrangement.\cgalFootnote{It is sufficient that all three
-geometry-traits classes used to instantiate the three types of
-arrangements derive from a common ancestor that models the
+The call \link overlay() `overlay(arr_r, arr_b, arr_o,
+ovl_traits)`\endlink constructs the arrangement `arr_o`, which is the
+overlay of two input arrangement `arr_r` and `arr_b`. All three
+arrangements must use the same geometric primitives. In other words,
+their types are instances of the `Arrangement_2<Traits,Dcel>` class
+template, where the `Traits` parameter is substituted with three
+geometry-traits classes, respectively. The geometry-traits classes of
+the input arrangements must be convertible to the geometry-traits
+class of the resulting arrangement.\cgalFootnote{It is sufficient that
+all three geometry-traits classes used to instantiate the three types
+of arrangements derive from a common ancestor that models the
 geometry-traits concept.} Typically, all three arrangements use the
 same geometry-traits class.
 
-The `overlay(arr_r, arr_b, arr_o)` function template is suitable for
+The `overlay()` function template is suitable for
 arrangements that do not store any additional data with their
 \sc{Dcel} records; namely, arrangements defined using an instance of
 the default \sc{Dcel} class-template `Arr_default_dcel`. Typically,
