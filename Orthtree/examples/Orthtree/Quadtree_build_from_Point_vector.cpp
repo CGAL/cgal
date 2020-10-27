@@ -12,14 +12,25 @@ typedef std::vector<Point_2> Point_vector;
 
 typedef CGAL::Quadtree<Kernel, Point_vector> Quadtree;
 
-int main()
+int main(int argc, char** argv)
 {
-  CGAL::Random r;
-
   Point_vector points_2d;
-  for (std::size_t i = 0; i < 5; ++ i)
-    points_2d.emplace_back(r.get_double(-1., 1.),
-                           r.get_double(-1., 1.));
+  if (argc == 1)
+  {
+    CGAL::Random r;
+
+    for (std::size_t i = 0; i < 5; ++ i)
+      points_2d.emplace_back(r.get_double(-1., 1.),
+                             r.get_double(-1., 1.));
+  }
+  else
+  {
+    std::ifstream ifs (argv[1]);
+    Point_2 point;
+    unsigned int nb = 0;
+    while (ifs >> point)
+      points_2d.emplace_back(point);
+  }
 
   Quadtree quadtree(points_2d);
   quadtree.refine(10, 5);

@@ -20,8 +20,6 @@
 #include <CGAL/Orthtree/Traversal_iterator.h>
 #include <CGAL/Orthtree/IO.h>
 
-#include <CGAL/bounding_box.h>
-
 #include <CGAL/property_map.h>
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_3.h>
@@ -194,6 +192,7 @@ public:
       {
         bbox_min[i] = (std::min)(x, bbox_min[i]);
         bbox_max[i] = (std::max)(x, bbox_max[i]);
+        ++ i;
       }
     }
 

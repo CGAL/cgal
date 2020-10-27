@@ -30,7 +30,6 @@ int main()
 
   Orthtree orthtree(points_dd);
   orthtree.refine(10, 5);
-  orthtree.grade();
 
   return EXIT_SUCCESS;
 }
