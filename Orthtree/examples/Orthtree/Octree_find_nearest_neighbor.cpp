@@ -6,6 +6,8 @@
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 
+#include <boost/function_output_iterator.hpp>
+
 // Type Declarations
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
@@ -43,16 +45,15 @@ int main(int argc, char **argv) {
           {-0.46026, -0.25353, 0.32051},
           {-0.460261, -0.253533, 0.320513}
   };
-  for (auto p : points_to_find) {
-
-    // The nearest points will be placed in this vector
-    std::vector<Point> nearest_points;
-
-    // k=1 to find the single closest point
-    octree.nearest_neighbors(p, 1, std::back_inserter(nearest_points));
-
-    std::cout << "the nearest point to (" << p << ") is (" << nearest_points[0] << ")" << std::endl;
-  }
+  for (const Point& p : points_to_find)
+    octree.nearest_neighbors
+      (p, 1, // k=1 to find the single closest point
+       boost::make_function_output_iterator
+       ([&](const Point& nearest)
+        {
+          std::cout << "the nearest point to (" << p <<
+            ") is (" << nearest << ")" << std::endl;
+        }));
 
   return EXIT_SUCCESS;
 }

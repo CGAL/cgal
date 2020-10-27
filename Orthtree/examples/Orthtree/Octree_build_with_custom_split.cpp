@@ -15,8 +15,8 @@ typedef Point_set::Point_map Point_map;
 
 typedef CGAL::Octree<Kernel, Point_set, Point_map> Octree;
 
-// Split Criterion
-// The criterion is a functor which returns a boolean value, whether a node needs to be split or not
+// Split Predicate
+// The predicate is a functor which returns a boolean value, whether a node needs to be split or not
 struct Split_by_ratio {
 
   std::size_t ratio;
@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
   // Create an octree from the points
   Octree octree(points, points.point_map());
 
-  // Build the octree using our custom split criterion
+  // Build the octree using our custom split predicate
   octree.refine(Split_by_ratio(2.0));
 
   // Print out the tree

@@ -567,11 +567,9 @@ public:
     std::size_t i = 0;
     for (const FT& f : cartesian_range(m_bbox_min))
     {
-      std::cerr << node.global_coordinates()[i] << " ";
       bary[i] = node.global_coordinates()[i] * size + (size / 2.0) + f;
       ++ i;
     }
-    std::cerr << std::endl;
 
     // Convert that location into a point
     Construct_point_d_from_array construct_point_d_from_array
@@ -624,7 +622,6 @@ private: // functions :
 
     // Find the point to around which the node is split
     Point center = barycenter(node);
-    std::cerr << center << std::endl;
 
     // Add the node's points to its children
     reassign_points(node, node.points().begin(), node.points().end(), center);

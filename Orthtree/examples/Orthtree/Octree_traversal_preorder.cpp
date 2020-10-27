@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
   octree.refine();
 
   // Print out the octree using preorder traversal
-  for (auto &node : octree.traverse<CGAL::Orthtrees::Traversal::Preorder>()) {
+  for (Octree::Node node : octree.traverse<CGAL::Orthtrees::Traversal::Preorder>()) {
 
     std::cout << node << std::endl;
   }
