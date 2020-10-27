@@ -642,8 +642,12 @@ public:
     {
     case 3 :/*Cell_handle*/
     {
-      if(Cell_handle(_cell_iterator) == Cell_handle())
-        _curr_simplex = Simplex_3();
+      Cell_handle ch = Cell_handle(_cell_iterator);
+      if (ch == Cell_handle())
+      {
+        set_curr_simplex_to_entry();
+        break;
+      }
       else
       {
         if (!cell_iterator_is_ahead())
@@ -692,6 +696,7 @@ public:
           _curr_simplex = ch;
         break;
       }
+
       case Locate_type::EDGE:
         if (facet_has_edge(get_facet(), Edge(chnext, linext, ljnext)))
           set_curr_simplex_to_entry();
@@ -701,6 +706,10 @@ public:
 
       case Locate_type::FACET:
         _curr_simplex = ch;
+        break;
+
+      case Locate_type::OUTSIDE_AFFINE_HULL:
+        _curr_simplex = Simplex_3();
         break;
 
       default:
@@ -758,10 +767,24 @@ public:
           _curr_simplex = shared_facet(get_edge(), Edge(chnext, linext, ljnext));
         break;
       }
+
       case Locate_type::FACET:
         _curr_simplex = Cell_handle(_cell_iterator);//query goes through the cell
         break;
 
+      case Locate_type::OUTSIDE_AFFINE_HULL:
+      {
+        Cell_handle chprev = _cell_iterator.previous();
+        Locate_type ltprev;
+        int liprev, ljprev;
+        _cell_iterator.exit(ltprev, liprev, ljprev);
+
+        if (ltprev == Locate_type::VERTEX) //edge-vertex-outside
+          _curr_simplex = chprev->vertex(liprev);
+        else
+          _curr_simplex = Simplex_3(); //edge-outside
+        break;
+      }
       default:
         CGAL_assertion(false);//should not happen
       };
@@ -778,11 +801,6 @@ public:
       if (!cell_iterator_is_ahead()) //_curr_simplex does contain v
       {
         ++_cell_iterator;//cell_iterator needs to be ahead to detect degeneracies
-        if (Cell_handle(_cell_iterator) == Cell_handle())
-        {
-          _curr_simplex = _cell_iterator.previous();
-          break;
-        }
       }
       else
         ch = _cell_iterator.previous();
@@ -795,6 +813,12 @@ public:
       int linext, ljnext;
       _cell_iterator.entry(ltnext, linext, ljnext);
 
+      Cell_handle prev;
+      Locate_type ltprev;
+      int liprev, ljprev;
+      prev = _cell_iterator.previous();
+      _cell_iterator.exit(ltprev, liprev, ljprev);
+
       switch (ltnext)
       {
       case Locate_type::VERTEX:
@@ -804,12 +828,6 @@ public:
                      || triangulation()->is_infinite(chnext));
         if (_cell_iterator == _cell_iterator.end())
         {
-          Cell_handle prev;
-          Locate_type ltprev;
-          int liprev, ljprev;
-          prev = _cell_iterator.previous();
-          _cell_iterator.exit(ltprev, liprev, ljprev);
-
           if (prev == ch && ltprev == Locate_type::VERTEX)
           {
             CGAL_assertion(prev->vertex(liprev) == get_vertex());
@@ -840,6 +858,7 @@ public:
         }
         break;
       }
+
       case Locate_type::EDGE:
       {
         //facet shared by get_vertex() and the edge
@@ -847,11 +866,36 @@ public:
         _curr_simplex = shared_facet(Edge(chnext, linext, ljnext), get_vertex());
         break;
       }
-      default ://FACET or OUTSIDE_AFFINE_HULL
-        if(chnext == Cell_handle())
+
+      case Locate_type::OUTSIDE_AFFINE_HULL:
+      {
+        CGAL_assertion(_cell_iterator == _cell_iterator.end());
+        if (ltprev == Locate_type::VERTEX) //vertex-edge-vertex-outside
+        {
+          if(prev->vertex(liprev) != get_vertex())//avoid infinite loop edge-vertex-same edge-...
+            _curr_simplex = Edge(prev, liprev, prev->index(get_vertex()));
+          else
+            _curr_simplex = Simplex_3();
+        }
+        else if (ltprev == Locate_type::EDGE)//vertex-facet-edge-outside
+          _curr_simplex = Facet(prev, prev->index(get_vertex()));
+        else
+        {
+          CGAL_assertion(ltprev == Locate_type::FACET);
+          if(prev->vertex(liprev) != get_vertex()) //vertex-facet-outside
+            _curr_simplex = Facet(prev, liprev);
+          else //vertex-cell-facet-outside
+            _curr_simplex = prev;
+        }
+        break;
+      }
+
+      default://FACET
+        if (chnext == Cell_handle())
           _curr_simplex = Simplex_3();
         else
           _curr_simplex = shared_cell(Facet(chnext, linext), get_vertex());
+        break;
       };
     }
     break;
