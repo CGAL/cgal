@@ -373,7 +373,7 @@ int main (int argc, char** argv) {
   const std::size_t n = argc > 1 ? std::atoi(argv[1]) : 1; // number of random polygons
   const std::size_t p = argc > 2 ? std::atoi(argv[2]) : 4; // number of vertices in a polygon
 
-  const double d = 0.1; // side of the square
+  const double d = 1.0; // side of the square
 
   std::vector<Polygon_3> rnd_polygons;
   create_random_polygons(n, p, d, rnd_polygons);
