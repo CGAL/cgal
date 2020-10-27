@@ -490,8 +490,8 @@ private:
         if (time < m_max_time - m_min_time) {
           m_queue.push (Event (true, pvertex, ivertex, m_min_time + time));
 
-          std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
-          std::cout << "ivertex: " << m_data.point_3(ivertex) << std::endl;
+          // std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
+          // std::cout << "ivertex: " << m_data.point_3(ivertex) << std::endl;
         }
       }
     }
@@ -754,13 +754,13 @@ private:
 
   void remove_events (const IEdge& iedge) {
     m_queue.erase_vertex_events (iedge);
-    std::cout << "erasing events for iedge " << m_data.str(iedge) << std::endl;
-    std::cout << m_data.segment_3(iedge) << std::endl;
+    // std::cout << "erasing events for iedge " << m_data.str(iedge) << std::endl;
+    // std::cout << m_data.segment_3(iedge) << std::endl;
   }
 
   void remove_events (const PVertex& pvertex) {
     m_queue.erase_vertex_events (pvertex);
-    std::cout << "erasing events for pvertex " << m_data.str(pvertex) << " : " << m_data.point_3(pvertex) << std::endl;
+    // std::cout << "erasing events for pvertex " << m_data.str(pvertex) << " : " << m_data.point_3(pvertex) << std::endl;
   }
 
   template <typename PVertexRange>

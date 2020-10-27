@@ -845,23 +845,23 @@ public:
 
   std::vector<PVertex> pvertices_around_ivertex (const PVertex& pvertex, const IVertex& ivertex) const
   {
-    std::cout.precision(20);
+    // std::cout.precision(20);
     std::deque<PVertex> vertices;
     vertices.push_back (pvertex);
 
     std::queue<Queue_element> todo;
     PVertex prev, next;
     std::tie (prev, next) = border_prev_and_next (pvertex);
-    std::cout << "prev in: " << point_3(prev) << std::endl;
-    std::cout << "next in: " << point_3(next) << std::endl;
-    std::cout << "curr in: " << point_3(pvertex) << std::endl;
+    // std::cout << "prev in: " << point_3(prev) << std::endl;
+    // std::cout << "next in: " << point_3(next) << std::endl;
+    // std::cout << "curr in: " << point_3(pvertex) << std::endl;
 
     todo.push (Queue_element (pvertex, prev, true, false));
     todo.push (Queue_element (pvertex, next, false, false));
 
     while (!todo.empty())
     {
-      std::cout << std::endl;
+      // std::cout << std::endl;
       PVertex previous = todo.front().previous;
       PVertex current = todo.front().pvertex;
       bool front = todo.front().front;
@@ -870,11 +870,11 @@ public:
 
       IEdge iedge = this->iedge (current);
       bool is_free = (iedge == null_iedge());
-      std::cout << "is free 1: " << is_free << std::endl;
+      // std::cout << "is free 1: " << is_free << std::endl;
 
-      std::cout << "iedge: " << segment_3(iedge) << std::endl;
+      // std::cout << "iedge: " << segment_3(iedge) << std::endl;
       if (!is_free && source(iedge) != ivertex && target(iedge) != ivertex) {
-        std::cout << "is free 2: " << is_free << std::endl;
+        // std::cout << "is free 2: " << is_free << std::endl;
         is_free = true;
       }
 
@@ -886,58 +886,56 @@ public:
         else
           CGAL_assertion (target(iedge) == ivertex);
 
-        std::cout.precision(20);
-
         // Filter backwards vertex.
         const Vector_2 dir1 = direction(current);
-        std::cout << "dir1: " << dir1 << std::endl;
+        // std::cout << "dir1: " << dir1 << std::endl;
         const Vector_2 dir2(
           point_2(current.first, other), point_2(current.first, ivertex));
-        std::cout << "dir2: " << dir2 << std::endl;
+        // std::cout << "dir2: " << dir2 << std::endl;
         const FT dot_product = dir1 * dir2;
-        std::cout << "dot: " << dot_product << std::endl;
+        // std::cout << "dot: " << dot_product << std::endl;
 
         if (dot_product < FT(0))
         {
           std::cerr << str(current) << " is backwards" << std::endl;
-          std::cout << point_3(current) << std::endl;
+          // std::cout << point_3(current) << std::endl;
           is_free = true;
         }
         if (is_frozen(current)) {
           std::cerr << str(current) << " is frozen" << std::endl;
-          std::cout << point_3(current) << std::endl;
+          // std::cout << point_3(current) << std::endl;
           is_free = true;
         }
-        std::cout << "is free 3: " << is_free << std::endl;
+        // std::cout << "is free 3: " << is_free << std::endl;
       }
 
       if (previous_was_free && is_free)
       {
         std::cerr << str(current) << " has no iedge, stopping there" << std::endl;
-        std::cout << point_3(current) << std::endl;
+        // std::cout << point_3(current) << std::endl;
         continue;
       }
 
       if (is_free)
       {
         std::cerr << str(current) << " has no iedge" << std::endl;
-        std::cout << point_3(current) << std::endl;
+        // std::cout << point_3(current) << std::endl;
       }
       else
       {
         std::cerr << str(current) << " has iedge " << str(iedge)
                   << " from " << str(source(iedge)) << " to " << str(target(iedge)) << std::endl;
-        std::cout << segment_3(iedge) << std::endl;
-        std::cout << point_3(current) << std::endl;
+        // std::cout << segment_3(iedge) << std::endl;
+        // std::cout << point_3(current) << std::endl;
       }
 
       if (front) {
         vertices.push_front (current);
-        std::cout << "pushed front" << std::endl;
+        // std::cout << "pushed front" << std::endl;
       }
       else {
         vertices.push_back (current);
-        std::cout << "pushed back" << std::endl;
+        // std::cout << "pushed back" << std::endl;
       }
 
       std::tie (prev, next) = border_prev_and_next (current);
@@ -1095,10 +1093,10 @@ public:
     direction(pvertex) = direction_a;
     direction(other) = direction_b;
 
-    std::cout << "pvertex: " << point_3(pvertex) << std::endl;
-    std::cout << "pvertex dir: " << direction_a << std::endl;
-    std::cout << "other: " << point_3(other) << std::endl;
-    std::cout << "other dir: " << direction_b << std::endl;
+    // std::cout << "pvertex: " << point_3(pvertex) << std::endl;
+    // std::cout << "pvertex dir: " << direction_a << std::endl;
+    // std::cout << "other: " << point_3(other) << std::endl;
+    // std::cout << "other dir: " << direction_b << std::endl;
 
     return other;
   }
@@ -1651,7 +1649,7 @@ public:
           support_plane(cropped).set_point (cropped.second, future_points[i]);
           direction(cropped) = future_directions[i];
           previous = cropped;
-          std::cerr << point_2 (cropped) << " -> " << direction(cropped) << std::endl;
+          // std::cerr << point_2 (cropped) << " -> " << direction(cropped) << std::endl;
         }
         else // create triangle face
         {
@@ -1968,14 +1966,14 @@ private:
       std::cout << "prev parallel lines" << std::endl;
 
       const FT prev_dot = future_vec_prev * iedge_vec;
-      std::cout << segment_3(iedge) << std::endl;
-      std::cout << point_3(prev) << std::endl;
-      std::cout << to_3d(pvertex.first, pinit) << std::endl;
+      // std::cout << segment_3(iedge) << std::endl;
+      // std::cout << point_3(prev) << std::endl;
+      // std::cout << to_3d(pvertex.first, pinit) << std::endl;
       if (prev_dot < FT(0)) {
-        std::cout << "moves backwards" << std::endl;
+        // std::cout << "moves backwards" << std::endl;
         future_point_a = target_p;
       } else {
-        std::cout << "moves forwards" << std::endl;
+        // std::cout << "moves forwards" << std::endl;
         future_point_a = source_p;
       }
 
@@ -1993,8 +1991,8 @@ private:
       future_point_a = pinit - m_current_time * direction_a;
     }
 
-    std::cout << "future point a: " << to_3d(pvertex.first, future_point_a) << std::endl;
-    std::cout << "dir a: " << direction_a << std::endl;
+    // std::cout << "future point a: " << to_3d(pvertex.first, future_point_a) << std::endl;
+    // std::cout << "dir a: " << direction_a << std::endl;
 
     if (CGAL::abs(m2 - m3) < tol) {
       CGAL_assertion_msg(false, "TODO: next PARALLEL LINES!");
@@ -2011,8 +2009,8 @@ private:
       future_point_b = pinit - m_current_time * direction_b;
     }
 
-    std::cout << "future point b: " << to_3d(pvertex.first, future_point_b) << std::endl;
-    std::cout << "dir b: " << direction_b << std::endl;
+    // std::cout << "future point b: " << to_3d(pvertex.first, future_point_b) << std::endl;
+    // std::cout << "dir b: " << direction_b << std::endl;
   }
 
   void compute_future_point_and_direction (const std::size_t idx,
@@ -2026,8 +2024,8 @@ private:
       // std::cerr << "Found limit" << std::endl;
       future_point = point_2 (pvertex, 0);
       direction = this->direction (pvertex);
-      std::cout << "future direction " << std::to_string(idx) << ": " <<
-      Segment_3(to_3d(pvertex.first, future_point), point_3(pvertex)) << std::endl;
+      // std::cout << "future direction " << std::to_string(idx) << ": " <<
+      // Segment_3(to_3d(pvertex.first, future_point), point_3(pvertex)) << std::endl;
       // std::cout << "original: " << direction << std::endl;
       // std::cout << "mine: " << Vector_2(future_point, point_2(pvertex)) << std::endl;
       return;
@@ -2040,8 +2038,8 @@ private:
 
     future_point = KSR::intersection_2<Point_2> (future_line_next, iedge_line);
     direction = Vector_2 (pinit, future_point);
-    std::cout << "future direction " << std::to_string(idx) << ": " <<
-    Segment_3(to_3d(pvertex.first, pinit), to_3d(pvertex.first, future_point)) << std::endl;
+    // std::cout << "future direction " << std::to_string(idx) << ": " <<
+    // Segment_3(to_3d(pvertex.first, pinit), to_3d(pvertex.first, future_point)) << std::endl;
     future_point = pinit - m_current_time * direction;
   }
 
