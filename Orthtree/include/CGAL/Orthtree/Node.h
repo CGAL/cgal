@@ -474,6 +474,29 @@ public:
     return m_data == rhs.m_data;
   }
 
+  static bool is_topology_equal (const Self& a, const Self& b)
+  {
+    CGAL_assertion (!a.is_null() && !b.is_null());
+
+    // If one node is a leaf, and the other isn't, they're not the same
+    if (a.is_leaf() != b.is_leaf())
+      return false;
+
+    // If both nodes are non-leaf nodes
+    if (!a.is_leaf()) {
+
+      // Check all the children
+      for (int i = 0; i < Degree::value; ++i) {
+        // If any child cell is different, they're not the same
+        if (!is_topology_equal(a[i], b[i]))
+          return false;
+      }
+    }
+
+    // If both nodes are leaf nodes, they must be in the same location
+    return (a.global_coordinates() == b.global_coordinates());
+  }
+
   friend std::ostream& operator<< (std::ostream& os, const Self& node)
   {
     return internal::print_orthtree_node(os, node);

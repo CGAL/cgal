@@ -3,8 +3,7 @@
 
 #include <iostream>
 #include <CGAL/Octree.h>
-#include <CGAL/Octree/IO.h>
-#include <CGAL/Octree/Traversal.h>
+#include <CGAL/Orthtree/Traversal.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>
 
@@ -15,24 +14,23 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 typedef Kernel::FT FT;
 typedef CGAL::Point_set_3<Point> Point_set;
-typedef CGAL::Octree::Octree
-        <Point_set, typename Point_set::Point_map>
-        Octree;
+typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>
+Octree;
 
 std::size_t count_jumps(Octree &octree) {
 
   std::size_t jumps = 0;
 
-  for (auto &node : octree.traverse(CGAL::Octree::Traversal::Leaves())) {
+  for (auto &node : octree.traverse(CGAL::Orthtrees::Traversal::Leaves())) {
 
     for (int direction = 0; direction < 6; ++direction) {
 
       auto adjacent_node = node.adjacent_node(direction);
 
-      if (!adjacent_node)
+      if (adjacent_node.is_null())
         continue;
 
-      if ((node.depth() - adjacent_node->depth()) > 1)
+      if ((node.depth() - adjacent_node.depth()) > 1)
         jumps++;
     }
   }

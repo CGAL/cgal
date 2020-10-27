@@ -1,8 +1,7 @@
 #define CGAL_TRACE_STREAM std::cerr
 
 #include <CGAL/Octree.h>
-#include <CGAL/Octree/IO.h>
-#include <CGAL/Octree/Traversal.h>
+#include <CGAL/Orthtree/Traversal.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>
@@ -10,10 +9,10 @@
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 typedef CGAL::Point_set_3<Point> Point_set;
-typedef CGAL::Octree::Octree
-        <Point_set, typename Point_set::Point_map>
-        Octree;
+typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>
+Octree;
 typedef Octree::Node Node;
+typedef Octree::Traits Traits;
 
 int main(void) {
 
@@ -43,33 +42,33 @@ int main(void) {
   std::cout << octree << std::endl;
 
   // Root node should have no siblings
-  assert(nullptr == octree.root().adjacent_node(0));
-  assert(nullptr == octree.root().adjacent_node(1));
-  assert(nullptr == octree.root().adjacent_node(2));
-  assert(nullptr == octree.root().adjacent_node(3));
-  assert(nullptr == octree.root().adjacent_node(4));
-  assert(nullptr == octree.root().adjacent_node(5));
+  assert(octree.root().adjacent_node(0).is_null());
+  assert(octree.root().adjacent_node(1).is_null());
+  assert(octree.root().adjacent_node(2).is_null());
+  assert(octree.root().adjacent_node(3).is_null());
+  assert(octree.root().adjacent_node(4).is_null());
+  assert(octree.root().adjacent_node(5).is_null());
 
   // Left Top Front node should have siblings to the Right, Down, and Back
-  auto &left_top_back = octree.root()[Node::LEFT_TOP_BACK];
+  auto left_top_back = octree.root()[Traits::LEFT_TOP_BACK];
 
-  assert(octree.root()[Node::RIGHT_TOP_BACK] == *left_top_back.adjacent_node(Node::RIGHT));
-  assert(octree.root()[Node::LEFT_BOTTOM_BACK] == *left_top_back.adjacent_node(Node::DOWN));
-  assert(octree.root()[Node::LEFT_TOP_FRONT] == *left_top_back.adjacent_node(Node::FRONT));
-  assert(nullptr == left_top_back.adjacent_node(Node::LEFT));
-  assert(nullptr == left_top_back.adjacent_node(Node::UP));
-  assert(nullptr == left_top_back.adjacent_node(Node::BACK));
+  assert(octree.root()[Traits::RIGHT_TOP_BACK] == left_top_back.adjacent_node(Traits::RIGHT));
+  assert(octree.root()[Traits::LEFT_BOTTOM_BACK] == left_top_back.adjacent_node(Traits::DOWN));
+  assert(octree.root()[Traits::LEFT_TOP_FRONT] == left_top_back.adjacent_node(Traits::FRONT));
+  assert(left_top_back.adjacent_node(Traits::LEFT).is_null());
+  assert(left_top_back.adjacent_node(Traits::UP).is_null());
+  assert(left_top_back.adjacent_node(Traits::BACK).is_null());
 
-  std::cout << octree.root()[Node::LEFT_BOTTOM_BACK] << std::endl;
+  std::cout << octree.root()[Traits::LEFT_BOTTOM_BACK] << std::endl;
 
-  auto &right_top_back_of_left_bottom_back = octree.root()[Node::LEFT_BOTTOM_BACK][Node::RIGHT_TOP_BACK];
-  assert(octree.root()[Node::LEFT_BOTTOM_BACK][Node::LEFT_TOP_BACK] == *right_top_back_of_left_bottom_back.adjacent_node(Node::LEFT));
-  assert(octree.root()[Node::RIGHT_BOTTOM_BACK] == *right_top_back_of_left_bottom_back.adjacent_node(Node::RIGHT));
-  assert(nullptr != right_top_back_of_left_bottom_back.adjacent_node(Node::RIGHT));
-  assert(nullptr != right_top_back_of_left_bottom_back.adjacent_node(Node::UP));
-  assert(nullptr != right_top_back_of_left_bottom_back.adjacent_node(Node::DOWN));
-  assert(nullptr == right_top_back_of_left_bottom_back.adjacent_node(Node::BACK));
-  assert(nullptr != right_top_back_of_left_bottom_back.adjacent_node(Node::FRONT));
+  auto right_top_back_of_left_bottom_back = octree.root()[Traits::LEFT_BOTTOM_BACK][Traits::RIGHT_TOP_BACK];
+  assert(octree.root()[Traits::LEFT_BOTTOM_BACK][Traits::LEFT_TOP_BACK] == right_top_back_of_left_bottom_back.adjacent_node(Traits::LEFT));
+  assert(octree.root()[Traits::RIGHT_BOTTOM_BACK] == right_top_back_of_left_bottom_back.adjacent_node(Traits::RIGHT));
+  assert(!right_top_back_of_left_bottom_back.adjacent_node(Traits::RIGHT).is_null());
+  assert(!right_top_back_of_left_bottom_back.adjacent_node(Traits::UP).is_null());
+  assert(!right_top_back_of_left_bottom_back.adjacent_node(Traits::DOWN).is_null());
+  assert(right_top_back_of_left_bottom_back.adjacent_node(Traits::BACK).is_null());
+  assert(!right_top_back_of_left_bottom_back.adjacent_node(Traits::FRONT).is_null());
 
   return 0;
 }

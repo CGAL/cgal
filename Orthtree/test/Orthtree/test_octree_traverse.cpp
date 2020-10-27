@@ -1,8 +1,7 @@
 #define CGAL_TRACE_STREAM std::cerr
 
 #include <CGAL/Octree.h>
-#include <CGAL/Octree/IO.h>
-#include <CGAL/Octree/Traversal.h>
+#include <CGAL/Orthtree/Traversal.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>
@@ -12,9 +11,8 @@
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 typedef CGAL::Point_set_3<Point> Point_set;
-typedef CGAL::Octree::Octree
-        <Point_set, typename Point_set::Point_map>
-        Octree;
+typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>
+Octree;
 
 bool test_preorder_1_node() {
 
@@ -27,7 +25,7 @@ bool test_preorder_1_node() {
   octree.refine(10, 1);
 
   // Create the range
-  auto nodes = octree.traverse<CGAL::Octree::Traversal::Preorder>();
+  auto nodes = octree.traverse<CGAL::Orthtrees::Traversal::Preorder>();
 
   // Check each item in the range
   auto iter = nodes.begin();
@@ -48,7 +46,7 @@ bool test_preorder_9_nodes() {
   octree.refine(10, 1);
 
   // Create the range
-  auto nodes = octree.traverse<CGAL::Octree::Traversal::Preorder>();
+  auto nodes = octree.traverse<CGAL::Orthtrees::Traversal::Preorder>();
 
   // Check each item in the range
   auto iter = nodes.begin();
@@ -75,7 +73,7 @@ bool test_preorder_25_nodes() {
   octree.refine(10, 1);
 
   // Create the range
-  auto nodes = octree.traverse<CGAL::Octree::Traversal::Preorder>();
+  auto nodes = octree.traverse<CGAL::Orthtrees::Traversal::Preorder>();
 
   // Check each item in the range
   auto iter = nodes.begin();

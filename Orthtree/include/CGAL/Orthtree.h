@@ -61,12 +61,19 @@ namespace CGAL {
   \tparam PointRange is a model of range whose value type is the key type of `PointMap`
   \tparam PointMap is a model of `ReadablePropertyMap` whose value type is `Traits::Point_d`
  */
-template<typename Traits, typename PointRange,
-         typename PointMap = Identity_property_map<typename Traits::Point_d> >
+template<typename Traits_, typename PointRange_,
+         typename PointMap_ = Identity_property_map<typename Traits_::Point_d> >
 class Orthtree
 {
 
 public:
+
+  /// \name Template Types
+  /// @{
+  typedef Traits_ Traits;
+  typedef PointRange_ PointRange;
+  typedef PointMap_ PointMap;
+  /// @}
 
   /// \name Traits Types
   /// @{
@@ -450,13 +457,13 @@ public:
     auto node_for_point = m_root;
 
     // Descend the tree until reaching a leaf node
-    while (!node_for_point->is_leaf()) {
+    while (!node_for_point.is_leaf()) {
 
       // Find the point to split around
       Point center = barycenter(node_for_point);
 
       // Find the index of the correct sub-node
-      typename Node::Index index;
+      typename Node::Local_coordinates index;
       std::size_t dimension = 0;
       for (const auto& r : cartesian_range(center, point))
         index[dimension ++] = (get<0>(r) < get<1>(r));
@@ -484,7 +491,8 @@ public:
   OutputIterator nearest_neighbors (const Point& query,
                                     std::size_t k,
                                     OutputIterator output) const {
-    return nearest_k_neighbors_in_radius(Sphere(query, std::numeric_limits<FT>::max()), k, output);
+    Sphere query_sphere (query, std::numeric_limits<FT>::max());
+    return nearest_k_neighbors_in_radius(query_sphere, k, output);
   }
 
   /*!
@@ -499,7 +507,9 @@ public:
    */
   template<typename OutputIterator>
   OutputIterator nearest_neighbors (const Sphere& query, OutputIterator output) const {
-    return nearest_k_neighbors_in_radius(query, std::numeric_limits<std::size_t>::max(), output);
+    Sphere query_sphere = query;
+    return nearest_k_neighbors_in_radius(query_sphere,
+                                         std::numeric_limits<std::size_t>::max(), output);
   }
 
   /*!
@@ -543,7 +553,7 @@ public:
       return false;
 
     // If all else is equal, recursively compare the trees themselves
-    return rhs.m_root == m_root;
+    return Node::is_topology_equal(rhs.m_root, m_root);
   }
 
   /*!
@@ -651,7 +661,7 @@ private: // functions :
     FT distance;
   };
 
-  void nearest_k_neighbors_recursive(Sphere search_bounds, const Node &node,
+  void nearest_k_neighbors_recursive(Sphere& search_bounds, const Node &node,
                                      std::vector<Point_with_distance> &results, FT epsilon = 0) const {
 
     // Check whether the node has children
@@ -749,7 +759,7 @@ private: // functions :
 
       // Otherwise, each of the children need to be checked
       for (int i = 0; i < Degree::value; ++i) {
-        intersecting_nodes_recursive(query, node[i], output);
+        intersected_nodes_recursive(query, node[i], output);
       }
     }
     return output;
@@ -774,7 +784,7 @@ private: // functions :
    */
   template<typename OutputIterator>
   OutputIterator nearest_k_neighbors_in_radius
-  (const Sphere& query_sphere,
+  (Sphere& query_sphere,
    std::size_t k, OutputIterator output) const {
 
     // Create an empty list of points

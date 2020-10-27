@@ -86,6 +86,19 @@ public:
     FRONT
   };
 
+  /// \cond SKIP_IN_MANUAL
+  enum Child {
+    LEFT_BOTTOM_BACK,
+    RIGHT_BOTTOM_BACK,
+    LEFT_TOP_BACK,
+    RIGHT_TOP_BACK,
+    LEFT_BOTTOM_FRONT,
+    RIGHT_BOTTOM_FRONT,
+    LEFT_TOP_FRONT,
+    RIGHT_TOP_FRONT
+  };
+  /// \endcond
+
 #ifdef DOXYGEN_RUNNING
   /*!
     Functor with an operator to construct a `Point_d` from an `Array` object.

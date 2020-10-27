@@ -45,8 +45,9 @@ struct Cartesian_ranges
   {
     return CGAL::make_range
       (boost::make_zip_iterator
-       (boost::make_tuple (a.cartesian_begin(), b.cartesian_begin()),
-        boost::make_tuple (a.cartesian_end(), b.cartesian_end())));
+       (boost::make_tuple (a.cartesian_begin(), b.cartesian_begin())),
+        boost::make_zip_iterator
+       (boost::make_tuple (a.cartesian_end(), b.cartesian_end())));
   }
 
 };

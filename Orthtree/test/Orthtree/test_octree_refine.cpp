@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <CGAL/Octree.h>
-#include <CGAL/Octree/IO.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>
 
@@ -12,9 +11,9 @@
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 typedef CGAL::Point_set_3<Point> Point_set;
-typedef CGAL::Octree::Octree
-        <Point_set, typename Point_set::Point_map>
-        Octree;
+typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>
+Octree;
+typedef Octree::Node Node;
 
 void test_1_point() {
 
@@ -27,10 +26,10 @@ void test_1_point() {
   octree.refine(10, 1);
 
   // Check that the topology matches
-  Octree::Node single_node{};
+  Node single_node(Node(), 0);
   single_node.points() = octree.root().points();
-  assert(single_node == octree.root());
-  assert(0 == octree.max_depth_reached());
+  assert(Node::is_topology_equal(single_node, octree.root()));
+  assert(0 == octree.depth());
 
 }
 
@@ -46,10 +45,10 @@ void test_2_points() {
   octree.refine(10, 1);
 
   // The octree should have been split once
-  Octree::Node other{};
+  Node other(Node(), 0);
   other.split();
-  assert(other == octree.root());
-  assert(1 == octree.max_depth_reached());
+  assert(Node::is_topology_equal(other, octree.root()));
+  assert(1 == octree.depth());
 
 }
 
@@ -66,12 +65,12 @@ void test_4_points() {
   octree.refine(10, 1);
 
   // The octree should have been split once on the first level, and twice on the second
-  Octree::Node other{};
+  Node other(Node(), 0);
   other.split();
   other[3].split();
   other[7].split();
-  assert(other == octree.root());
-  assert(2 == octree.max_depth_reached());
+  assert(Node::is_topology_equal(other, octree.root()));
+  assert(2 == octree.depth());
 }
 
 int main(void) {

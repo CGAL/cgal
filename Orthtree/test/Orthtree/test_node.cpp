@@ -1,10 +1,10 @@
 
-#include <CGAL/Octree/Node.h>
+#include <CGAL/Orthtree/Node.h>
 #include <CGAL/Octree/IO.h>
 #include <iostream>
 #include <cassert>
 
-typedef CGAL::Octree::Node<std::vector<int>::iterator> Node;
+typedef CGAL::Orthtree::Node<std::vector<int>::iterator> Node;
 
 int main(void) {
 
