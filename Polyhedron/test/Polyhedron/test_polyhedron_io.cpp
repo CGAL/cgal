@@ -120,24 +120,19 @@ void test_file_IO_OFF()
     assert(in);
   }
 }
-void test_file_IO_geomview()
-{
-#ifdef CGAL_USE_GEOMVIEW
-  Geomview_stream gv;
-  Polyhedron P;
-  gv << P;
-#endif #CGAL_USE_GEOMVIEW
-}
+
 void test_file_IO_inventor()
 {
-  VRML_1_ostream out;
+  std::ofstream o("tmp");
+  VRML_1_ostream out(o);
   Polyhedron P;
   out << P;
 }
 
 void test_file_IO_VRML_2()
 {
-  VRML_2_ostream out;
+  std::ofstream o("tmp");
+  VRML_2_ostream out(o);
   Polyhedron P;
   out << P;
 }
@@ -145,7 +140,6 @@ void test_file_IO_VRML_2()
 int main()
 {
   test_file_IO_OFF();
-  test_file_IO_geomview();
   test_file_IO_inventor();
   test_file_IO_VRML_2();
 
