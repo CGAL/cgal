@@ -261,7 +261,7 @@ public:
         i != patch_ids_bitset.npos;
         i = patch_ids_bitset.find_next(i))
     {
-      all_patch_ids.push_back(i + min);
+      all_patch_ids.push_back(static_cast<int>(i + min));
     }
     using Polyline = typename std::iterator_traits<InputIterator>::value_type;
     auto identity_property_map = boost::typed_identity_property_map<Polyline>();
