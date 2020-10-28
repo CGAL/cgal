@@ -19,6 +19,7 @@
 #include <CGAL/centroid.h>
 #include <CGAL/Linear_algebraCd.h>
 #include <CGAL/PCA_util.h>
+#include <CGAL/Subiterator.h>
 
 #include <iterator>
 #include <list>
@@ -146,21 +147,16 @@ linear_least_squares_fitting_2(InputIterator first,
   // types
   typedef typename K::Point_2  Point;
   typedef typename K::Segment_2 Segment;
+  auto converter = [](const Segment& s, std::size_t idx) -> Point { return s[idx]; };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  std::list<Point> points;
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Segment& s = *it;
-    points.push_back(s[0]);
-    points.push_back(s[1]);
-  }
-  return linear_least_squares_fitting_2(points.begin(),points.end(),line,c,(Point*)nullptr,k,tag,
-                                        diagonalize_traits);
+  return linear_least_squares_fitting_2
+    (make_subiterator<Point, 2> (first, converter),
+     make_subiterator<Point, 2> (beyond),
+     line,c,(Point*)nullptr,k,tag,
+     diagonalize_traits);
 
 } // end linear_least_squares_fitting_2 for segment set with 1D tag
 

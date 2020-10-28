@@ -159,23 +159,16 @@ linear_least_squares_fitting_2(InputIterator first,
   // types
   typedef typename Kernel::Triangle_2 Triangle;
   typedef typename Kernel::Segment_2  Segment;
+  auto converter = [](const Triangle& t, std::size_t idx) -> Segment { return Segment(t[idx], t[(idx+1)%3]); };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  std::list<Segment> segments;
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Triangle& t = *it;
-    segments.push_back(Segment(t[0],t[1]));
-    segments.push_back(Segment(t[1],t[2]));
-    segments.push_back(Segment(t[2],t[0]));
-  }
-
-  return linear_least_squares_fitting_2(segments.begin(),segments.end(),line,c,tag,Kernel(),
-                                        diagonalize_traits);
+  return linear_least_squares_fitting_2
+    (make_subiterator<Segment, 3> (first, converter),
+     make_subiterator<Segment, 3> (beyond),
+     line,c,(Segment*)nullptr,Kernel(),tag,
+     diagonalize_traits);
 
 } // end linear_least_squares_fitting_2 for triangle set with 1D tag
 
@@ -196,24 +189,16 @@ linear_least_squares_fitting_2(InputIterator first,
 
   typedef typename Kernel::Triangle_2 Triangle;
   typedef typename Kernel::Point_2 Point;
+  auto converter = [](const Triangle& t, std::size_t idx) -> Point { return t[idx]; };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  std::list<Point> points;
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Triangle& t = *it;
-    points.push_back(Point(t[0]));
-    points.push_back(Point(t[1]));
-    points.push_back(Point(t[2]));
-  }
-
-  return linear_least_squares_fitting_2(points.begin(),points.end(),line,c,tag,Kernel(),
-                                        diagonalize_traits);
-
+  return linear_least_squares_fitting_2
+    (make_subiterator<Point, 3> (first, converter),
+     make_subiterator<Point, 3> (beyond),
+     line,c,(Point*)nullptr,Kernel(),tag,
+     diagonalize_traits);
 } // end linear_least_squares_fitting_2 for triangle set with 0D tag
 
 } // end namespace internal
