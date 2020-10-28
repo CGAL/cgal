@@ -19,6 +19,10 @@ Release date: December 2020
 -   Added an option in `corefine()`, `split()` and `clip()` functions that enables the operation to be done on a mesh with
     self-intersections present in the intersection area.
 
+### [Surface Mesh Parameterization](https://doc.cgal.org/5.2/Manual/packages.html#PkgSurfaceMeshParameterization)
+- Added a new parameterization method, Iterative Authalic Parameterization. It is based on the work of Jain, Hardik, Manuel Wollhaf, and Olaf Hellwich,
+  "Learning to Reconstruct Symmetric Shapes using Planar Parameterization of 3D Surface." (IEEE International Conference on Computer Vision Workshops, 2019).
+
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 -----------
 
