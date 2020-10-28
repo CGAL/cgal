@@ -65,7 +65,7 @@ private:
     {
       for(std::size_t j=i; j<dim; ++j)
       {
-        m(i,j) = static_cast<float>(cov[(dim * i) + j - ((i * (i+1)) / 2)]);
+        m(i,j) = static_cast<FT>(cov[(dim * i) + j - ((i * (i+1)) / 2)]);
 
         if(i != j)
           m(j,i) = m(i,j);
