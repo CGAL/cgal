@@ -22,6 +22,12 @@ namespace CGAL {
 
 namespace internal {
 
+template <typename FT>
+FT approximate_cbrt (const FT& x)
+{
+  return static_cast<FT>(std::cbrt (CGAL::to_double(x)));
+}
+
 // assemble covariance matrix from a triangle set
 template < typename InputIterator,
            typename K >
@@ -67,7 +73,7 @@ assemble_covariance_matrix_3(InputIterator first,
                       t[0].y(), t[1].y(), t[2].y(),
                       t[0].z(), t[1].z(), t[2].z();
 
-    FT area = std::sqrt(t.squared_area());
+    FT area = CGAL::approximate_sqrt(t.squared_area());
 
     // skip zero measure primitives
     if(area == (FT)0.0)
@@ -236,15 +242,15 @@ assemble_covariance_matrix_3(InputIterator first,
                    t[1].y()-y0, t[3].y()-y0, t[5].y()-y0,
                    t[1].z()-z0, t[3].z()-z0, t[5].z()-z0};
     Matrix transformation (delta);
-    FT area = std::pow(delta[0]*delta[0] + delta[3]*delta[3] +
-                  delta[6]*delta[6],1/3.0)*std::pow(delta[1]*delta[1] +
-                  delta[4]*delta[4] + delta[7]*delta[7],1/3.0)*2 +
-                  std::pow(delta[0]*delta[0] + delta[3]*delta[3] +
-                  delta[6]*delta[6],1/3.0)*std::pow(delta[2]*delta[2] +
-                  delta[5]*delta[5] + delta[8]*delta[8],1/3.0)*2 +
-                  std::pow(delta[1]*delta[1] + delta[4]*delta[4] +
-                  delta[7]*delta[7],1/3.0)*std::pow(delta[2]*delta[2] +
-                  delta[5]*delta[5] + delta[8]*delta[8],1/3.0)*2;
+    FT area = approximate_cbrt(delta[0]*delta[0] + delta[3]*delta[3] +
+                  delta[6]*delta[6])*approximate_cbrt(delta[1]*delta[1] +
+                  delta[4]*delta[4] + delta[7]*delta[7])*2 +
+                  approximate_cbrt(delta[0]*delta[0] + delta[3]*delta[3] +
+                  delta[6]*delta[6])*approximate_cbrt(delta[2]*delta[2] +
+                  delta[5]*delta[5] + delta[8]*delta[8])*2 +
+                  approximate_cbrt(delta[1]*delta[1] + delta[4]*delta[4] +
+                  delta[7]*delta[7])*approximate_cbrt(delta[2]*delta[2] +
+                  delta[5]*delta[5] + delta[8]*delta[8])*2;
 
     // skip zero measure primitives
     if(area == (FT)0.0)
@@ -324,7 +330,7 @@ assemble_covariance_matrix_3(InputIterator first,
     const Sphere& t = *it;
 
     // defined for convenience.
-    FT radius = std::sqrt(t.squared_radius());
+    FT radius = CGAL::approximate_sqrt(t.squared_radius());
     Matrix transformation;
     transformation << radius, 0.0, 0.0,
                       0.0, radius, 0.0,
@@ -409,7 +415,7 @@ assemble_covariance_matrix_3(InputIterator first,
 
     // defined for convenience.
     // FT example = CGAL::to_double(t[0].x());
-    FT radius = std::sqrt(t.squared_radius());
+    FT radius = CGAL::approximate_sqrt(t.squared_radius());
     Matrix transformation;
     transformation << radius, 0.0,    0.0,
                       0.0,    radius, 0.0,
@@ -576,8 +582,7 @@ assemble_covariance_matrix_3(InputIterator first,
     transformation << t[0].x(), t[1].x(), 0.0,
                       t[0].y(), t[1].y(), 0.0,
                       t[0].z(), t[1].z(), 1.0;
-    using std::sqrt;
-    FT length = sqrt(t.squared_length());
+    FT length = CGAL::approximate_sqrt(t.squared_length());
 
     // skip zero measure primitives
     if(length == (FT)0.0)

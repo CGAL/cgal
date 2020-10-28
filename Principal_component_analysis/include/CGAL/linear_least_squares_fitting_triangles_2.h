@@ -88,7 +88,7 @@ linear_least_squares_fitting_2(InputIterator first,
                    t[1].y() - y0, t[2].y() - y0};
 
     Matrix transformation = init_matrix<FT>(2,delta);
-    FT area = 0.5 * std::abs(LA::determinant(transformation));
+    FT area = 0.5 * CGAL::abs(LA::determinant(transformation));
     CGAL_assertion(area!=0);
 
     // Find the 2nd order moment for the triangle wrt to the origin by an affine transformation.

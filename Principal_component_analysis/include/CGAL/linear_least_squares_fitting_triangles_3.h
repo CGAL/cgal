@@ -77,7 +77,7 @@ linear_least_squares_fitting_3(InputIterator first,
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  std::list<Segment> segments;
+   std::list<Segment> segments;
   for(InputIterator it = first;
       it != beyond;
       it++)
@@ -87,6 +87,7 @@ linear_least_squares_fitting_3(InputIterator first,
     segments.push_back(Segment(t[1],t[2]));
     segments.push_back(Segment(t[2],t[0]));
   }
+
 
   // compute fitting plane
   return linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,c,(Segment*)nullptr,k,tag,

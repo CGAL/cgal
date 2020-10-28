@@ -83,7 +83,7 @@ linear_least_squares_fitting_2(InputIterator first,
 
     // defined for convenience.
     // FT example = CGAL::to_double(t[0].x());
-    FT radius = std::sqrt(t.squared_radius());
+    FT radius = CGAL::approximate_sqrt(t.squared_radius());
     FT delta[4] = {radius, 0.0,
                    0.0, radius};
     Matrix transformation = init_matrix<FT>(2,delta);
@@ -189,7 +189,7 @@ linear_least_squares_fitting_2(InputIterator first,
 
     // defined for convenience.
     // FT example = CGAL::to_double(t[0].x());
-    FT radius = std::sqrt(t.squared_radius());
+    FT radius = CGAL::approximate_sqrt(t.squared_radius());
     FT delta[4] = {radius, 0.0,
                    0.0, radius};
     Matrix transformation = init_matrix<FT>(2,delta);
@@ -199,7 +199,7 @@ linear_least_squares_fitting_2(InputIterator first,
     // Find the 2nd order moment for the circle wrt to the origin by an affine transformation.
 
     // Transform the standard 2nd order moment using the transformation matrix
-    transformation = 0.5 * length * transformation * moment * LA::transpose(transformation);
+    transformation = FT(0.5) * length * transformation * moment * LA::transpose(transformation);
 
     // Translate the 2nd order moment to the center of the circle.
     FT x0 = t.center().x();
