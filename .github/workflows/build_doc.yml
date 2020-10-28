@@ -61,7 +61,6 @@ jobs:
         if: steps.get_round.outputs.result != 'stop'
         run: |
           set -ex
-          git clone https://CGAL:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git --depth=5
           mkdir -p build_doc && cd build_doc && cmake ../Documentation/doc
 
       - name: Build and Upload Doc
@@ -76,15 +75,17 @@ jobs:
             LIST_OF_PKGS=$(git diff --name-only HEAD^1 HEAD |cut -s -d/ -f1 |sort -u | xargs -I {} ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
             if [ "$LIST_OF_PKGS" = "" ]; then
               exit 1
-            fi              
+            fi
             mkdir -p cgal.github.io/${PR_NUMBER}/$ROUND
             cd build_doc && make -j2 doc && make -j2 doc_with_postprocessing
+            cd ..
+            git clone https://CGAL:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git
             for f in $LIST_OF_PKGS
             do
-              cp -r ./doc_output/$f ../cgal.github.io/${PR_NUMBER}/$ROUND    
+              cp -r ./build_doc/doc_output/$f ./cgal.github.io/${PR_NUMBER}/$ROUND
             done
-            cp -r ./doc_output/Manual ../cgal.github.io/${PR_NUMBER}/$ROUND    
-            cd ../cgal.github.io
+            cp -r ./build_doc/doc_output/Manual ./cgal.github.io/${PR_NUMBER}/$ROUND
+            cd ./cgal.github.io
             egrep -v " ${PR_NUMBER}\." index.html > tmp.html || true
             echo "<li><a href=https://cgal.github.io/${PR_NUMBER}/$ROUND/Manual/index.html>Manual for PR ${PR_NUMBER} ($ROUND).</a></li>" >> ./tmp.html
             mv tmp.html index.html
