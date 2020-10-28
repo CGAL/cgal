@@ -76,13 +76,15 @@ jobs:
             if [ "$LIST_OF_PKGS" = "" ]; then
               exit 1
             fi
-            mkdir -p cgal.github.io/${PR_NUMBER}/$ROUND
             cd build_doc && make -j2 doc && make -j2 doc_with_postprocessing
             cd ..
             git clone https://CGAL:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git
+            mkdir -p cgal.github.io/${PR_NUMBER}/$ROUND
             for f in $LIST_OF_PKGS
             do
-              cp -r ./build_doc/doc_output/$f ./cgal.github.io/${PR_NUMBER}/$ROUND
+              if [ -d ./build_doc/doc_output/$f ]; then
+                cp -r ./build_doc/doc_output/$f ./cgal.github.io/${PR_NUMBER}/$ROUND
+              fi
             done
             cp -r ./build_doc/doc_output/Manual ./cgal.github.io/${PR_NUMBER}/$ROUND
             cd ./cgal.github.io
