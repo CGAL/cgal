@@ -71,10 +71,13 @@ jobs:
           ROUND=${{ steps.get_round.outputs.result }}
           wget --no-verbose cgal.github.io -O tmp.html
           if ! egrep -q "\/$PR_NUMBER\/$ROUND" tmp.html; then
+            #list impacted packages
+            LIST_OF_PKGS=$(git diff --name-only HEAD^1 HEAD |cut -s -d/ -f1 |sort -u | xargs -I {} ls -d {}/package_info 2>/dev/null  |cut -d/ -f1)
+            if [ "$LIST_OF_PKGS" = "" ]; then
+              exit 1
+            fi              
             mkdir -p cgal.github.io/${PR_NUMBER}/$ROUND
             cd build_doc && make -j2 doc && make -j2 doc_with_postprocessing
-            #list impacted packages
-            LIST_OF_PKGS=$(git diff --name-only origin/master... |cut -s -d/ -f1 |sort -u | xargs -I {} ls -d {}/package_info 2>/dev/null  |cut -d/ -f1)
             for f in $LIST_OF_PKGS
             do
               cp -r ./doc_output/$f ../cgal.github.io/${PR_NUMBER}/$ROUND    
