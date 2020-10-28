@@ -167,6 +167,7 @@ private:
   std::map<Point_3, KSR::size_t> m_meta_map;
 
   FT m_current_time;
+  FT m_previous_time;
 
 public:
 
@@ -1456,13 +1457,30 @@ public:
       // << "2 " << segment_3(iedge(pvertex)) << std::endl;
       const KSR::size_t other_side_limit = line_idx(pvertex);
 
-      Direction_2 dir(point_2(prev) - point_2(pvertex));
+      // const Direction_2 dir(point_2(prev) - point_2(pvertex));
+
+      const FT tmp_time = m_current_time - (m_current_time - m_previous_time) / FT(100);
+      const Direction_2 tmp_dir(point_2(prev, tmp_time) - point_2(pvertex.first, ivertex));
+      // std::cout << point_3(prev, tmp_time) << std::endl;
       std::reverse(iedges.begin(), iedges.end());
+
+      // std::cout << "initial iedges: " << std::endl;
+      // for (const auto& iedge : iedges) {
+        // std::cout << segment_3(iedge.first) << std::endl;
+      // }
+      // std::cout << "init dir: " << tmp_dir << std::endl;
+      // std::cout << std::endl;
 
       KSR::size_t first_idx = KSR::no_element();
       for (std::size_t i = 0; i < iedges.size(); ++ i)
       {
-        if (dir.counterclockwise_in_between(iedges[(i+1)%iedges.size()].second,
+        // std::cout << "iedge: " << segment_3(iedges[(i + 1) % iedges.size()].first) << std::endl;
+        // std::cout << "dir: " << iedges[(i + 1) % iedges.size()].second << std::endl;
+        // std::cout << "iedge: " << segment_3(iedges[i].first) << std::endl;
+        // std::cout << "dir: " << iedges[i].second << std::endl;
+        // std::cout << std::endl;
+
+        if (tmp_dir.counterclockwise_in_between(iedges[(i+1)%iedges.size()].second,
                                             iedges[i].second))
         {
           first_idx = (i+1)%iedges.size();
@@ -1594,12 +1612,15 @@ public:
       // << "2 " << segment_3(iedge(pvertex)) << std::endl;
       const KSR::size_t other_side_limit = line_idx(pvertex);
 
-      Direction_2 dir(point_2(next) - point_2(pvertex));
+      // const Direction_2 dir(point_2(next) - point_2(pvertex));
+
+      const FT tmp_time = m_current_time - (m_current_time - m_previous_time) / FT(100);
+      const Direction_2 tmp_dir(point_2(next, tmp_time) - point_2(pvertex.first, ivertex));
 
       KSR::size_t first_idx = KSR::no_element();
       for (std::size_t i = 0; i < iedges.size(); ++ i)
       {
-        if (dir.counterclockwise_in_between(iedges[i].second,
+        if (tmp_dir.counterclockwise_in_between(iedges[i].second,
                                             iedges[(i+1)%iedges.size()].second))
 
         {
@@ -1711,8 +1732,13 @@ public:
     {
       std::cout << "*** Open case" << std::endl;
 
-      Direction_2 dir_next (point_2(next) - point_2 (pvertex));
-      Direction_2 dir_prev (point_2(prev) - point_2 (pvertex));
+      // const Direction_2 dir_next(point_2(next) - point_2(pvertex));
+      // const Direction_2 dir_prev(point_2(prev) - point_2(pvertex));
+
+      const FT tmp_time = m_current_time - (m_current_time - m_previous_time) / FT(100);
+      const Direction_2 dir_next(point_2(next, tmp_time) - point_2(pvertex.first, ivertex));
+      const Direction_2 dir_prev(point_2(prev, tmp_time) - point_2(pvertex.first, ivertex));
+
       KSR::size_t first_idx = KSR::no_element();
       for (std::size_t i = 0; i < iedges.size(); ++ i)
       {
@@ -1891,6 +1917,7 @@ public:
 
   void update_positions (FT time)
   {
+    m_previous_time = m_current_time;
     m_current_time = time;
   }
 
@@ -1959,14 +1986,14 @@ private:
     const Line_2 future_line_prev(prev_p, curr_p);
     const Line_2 future_line_next(next_p, curr_p);
 
-    std::cout << "future line prev: " <<
-    Segment_3(
-      to_3d(pvertex.first, prev_p),
-      to_3d(pvertex.first, curr_p)) << std::endl;
-    std::cout << "future line next: " <<
-    Segment_3(
-      to_3d(pvertex.first, next_p),
-      to_3d(pvertex.first, curr_p)) << std::endl;
+    // std::cout << "future line prev: " <<
+    // Segment_3(
+    //   to_3d(pvertex.first, prev_p),
+    //   to_3d(pvertex.first, curr_p)) << std::endl;
+    // std::cout << "future line next: " <<
+    // Segment_3(
+    //   to_3d(pvertex.first, next_p),
+    //   to_3d(pvertex.first, curr_p)) << std::endl;
 
     const Vector_2 future_vec_prev(prev_p, curr_p);
     const Vector_2 future_vec_next(next_p, curr_p);
@@ -1994,14 +2021,15 @@ private:
     // std::cout << "iedge slope: " << m3 << std::endl;
 
     if (CGAL::abs(m1 - m3) < tol) {
+      // CGAL_assertion_msg(false, "TODO: prev PARALLEL LINES!");
 
       std::cout << "prev parallel lines" << std::endl;
       const FT prev_dot = future_vec_prev * iedge_vec;
       if (prev_dot < FT(0)) {
-        std::cout << "moves backwards" << std::endl;
+        std::cout << "prev moves backwards" << std::endl;
         future_point_a = target_p;
       } else {
-        std::cout << "moves forwards" << std::endl;
+        std::cout << "prev moves forwards" << std::endl;
         future_point_a = source_p;
       }
     } else {
@@ -2022,7 +2050,16 @@ private:
 
     if (CGAL::abs(m2 - m3) < tol) {
       CGAL_assertion_msg(false, "TODO: next PARALLEL LINES!");
+
       std::cout << "next parallel lines" << std::endl;
+      const FT next_dot = future_vec_next * iedge_vec;
+      if (next_dot < FT(0)) {
+        std::cout << "next moves backwards" << std::endl;
+        future_point_b = target_p;
+      } else {
+        std::cout << "next moves forwards" << std::endl;
+        future_point_b = source_p;
+      }
 
     } else {
 
@@ -2049,25 +2086,56 @@ private:
     if (this->iedge(pvertex) != null_iedge()
         && line_idx(pvertex) == line_idx(iedge))
     {
-      // std::cerr << "Found limit" << std::endl;
-      future_point = point_2 (pvertex, 0);
-      direction = this->direction (pvertex);
-      // std::cout << "future direction " << std::to_string(idx) << ": " <<
-      // Segment_3(to_3d(pvertex.first, future_point), point_3(pvertex)) << std::endl;
-      // std::cout << "original: " << direction << std::endl;
-      // std::cout << "mine: " << Vector_2(future_point, point_2(pvertex)) << std::endl;
+      // std::cerr << "found limit" << std::endl;
+      future_point = point_2(pvertex, FT(0));
+      direction = this->direction(pvertex);
       return;
     }
-    Line_2 iedge_line = segment_2(pvertex.first, iedge).supporting_line();
-    Point_2 pinit = iedge_line.projection(point_2 (pvertex, m_current_time));
 
-    Line_2 future_line_next (point_2 (next, m_current_time + 1),
-                             point_2 (pvertex, m_current_time + 1));
+    const Line_2 iedge_line = segment_2(pvertex.first, iedge).supporting_line();
+    const Point_2 pinit = iedge_line.projection(point_2(pvertex, m_current_time));
 
-    future_point = KSR::intersection_2<Point_2> (future_line_next, iedge_line);
-    direction = Vector_2 (pinit, future_point);
-    // std::cout << "future direction " << std::to_string(idx) << ": " <<
-    // Segment_3(to_3d(pvertex.first, pinit), to_3d(pvertex.first, future_point)) << std::endl;
+    const auto& curr = pvertex;
+    const auto next_p = point_2(next, m_current_time + FT(1));
+    const auto curr_p = point_2(curr, m_current_time + FT(1));
+
+    const Line_2  future_line_next(next_p, curr_p);
+    const Vector_2 future_vec_next(next_p, curr_p);
+
+    const auto source_p = point_2(pvertex.first, source(iedge));
+    const auto target_p = point_2(pvertex.first, target(iedge));
+    const Vector_2 iedge_vec(source_p, target_p);
+
+    const FT tol = FT(1) / FT(100000);
+    FT m2 = FT(100000), m3 = FT(100000);
+
+    const FT next_d = (curr_p.x() - next_p.x());
+    const FT edge_d = (target_p.x() - source_p.x());
+
+    if (CGAL::abs(next_d) > tol)
+      m2 = (curr_p.y() - next_p.y()) / next_d;
+    if (CGAL::abs(edge_d) > tol)
+      m3 = (target_p.y() - source_p.y()) / edge_d;
+
+    if (CGAL::abs(m2 - m3) < tol) {
+      // CGAL_assertion_msg(false, "TODO: back/front PARALLEL LINES!");
+      std::cout << "back/front parallel lines" << std::endl;
+
+      const FT next_dot = future_vec_next * iedge_vec;
+      if (next_dot < FT(0)) {
+        std::cout << "back/front moves backwards" << std::endl;
+        future_point = target_p;
+      } else {
+        std::cout << "back/front moves forwards" << std::endl;
+        future_point = source_p;
+      }
+
+    } else {
+      std::cout << "back/front intersected lines" << std::endl;
+      future_point = KSR::intersection_2<Point_2>(future_line_next, iedge_line);
+    }
+
+    direction = Vector_2(pinit, future_point);
     future_point = pinit - m_current_time * direction;
   }
 
@@ -2076,22 +2144,51 @@ private:
                                            const IEdge& iedge,
                                            Point_2& future_point, Vector_2& direction) const
   {
-    Line_2 iedge_line = segment_2(pvertex.first, iedge).supporting_line();
-    Point_2 pinit = iedge_line.projection(point_2 (pvertex, m_current_time));
+    const Line_2 iedge_line = segment_2(pvertex.first, iedge).supporting_line();
+    const auto pv_point = point_2(pvertex, m_current_time);
+    const Point_2 pinit = iedge_line.projection(pv_point);
 
-    Line_2 future_line (point_2 (next, m_current_time + 1),
-                        point_2 (prev, m_current_time + 1));
+    const auto& curr = prev;
+    const auto next_p = point_2(next, m_current_time + FT(1));
+    const auto curr_p = point_2(curr, m_current_time + FT(1));
 
-    future_point = KSR::intersection_2<Point_2> (future_line, iedge_line);
-    direction = Vector_2 (pinit, future_point);
+    const Line_2  future_line_next(next_p, curr_p);
+    // const Vector_2 future_vec_next(next_p, curr_p);
+
+    const auto source_p = point_2(pvertex.first, source(iedge));
+    const auto target_p = point_2(pvertex.first, target(iedge));
+    const Vector_2 iedge_vec(source_p, target_p);
+
+    const FT tol = FT(1) / FT(100000);
+    FT m2 = FT(100000), m3 = FT(100000);
+
+    const FT next_d = (curr_p.x() - next_p.x());
+    const FT edge_d = (target_p.x() - source_p.x());
+
+    if (CGAL::abs(next_d) > tol)
+      m2 = (curr_p.y() - next_p.y()) / next_d;
+    if (CGAL::abs(edge_d) > tol)
+      m3 = (target_p.y() - source_p.y()) / edge_d;
+
+    if (CGAL::abs(m2 - m3) < tol) {
+      // CGAL_assertion_msg(false, "TODO: open PARALLEL LINES!");
+      std::cout << "open parallel lines" << std::endl;
+
+      if (source_p == pv_point)
+        future_point = target_p;
+      else
+        future_point = source_p;
+
+    } else {
+      std::cout << "open intersected lines" << std::endl;
+      future_point = KSR::intersection_2<Point_2>(future_line_next, iedge_line);
+    }
+
+    direction = Vector_2(pinit, future_point);
     future_point = pinit - m_current_time * direction;
   }
-
-
 };
 
-
 }} // namespace CGAL::KSR_3
-
 
 #endif // CGAL_KSR_3_DATA_STRUCTURE_H
