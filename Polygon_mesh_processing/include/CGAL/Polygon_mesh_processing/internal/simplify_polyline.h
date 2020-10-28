@@ -56,8 +56,12 @@ void simplify_polyline(const PointRangeIn& input,
   {
     case ITERATIVE:
     {
+      const bool is_closed = input.front()==input.back();
+
+      std::size_t nb_points = is_closed ? input.size()-1 : input.size();
+
       // skip points in the input range that do not contains any information
-      if (input.size()<=2)
+      if (nb_points<=2)
       {
         output.reserve(input.size());
         for (const auto& p : input)
@@ -75,6 +79,7 @@ void simplify_polyline(const PointRangeIn& input,
         typename Kernel::Compare_squared_distance_3 compare_squared_distance;
         for (std::size_t i=b+1; i<e; ++i)
         {
+
           if (compare_squared_distance(get(in_pm, input[i]), line, max_squared_frechet_distance) == LARGER)
             return false;
         }
@@ -82,15 +87,17 @@ void simplify_polyline(const PointRangeIn& input,
       };
 
       std::size_t bi=0;
-      while(bi!=input.size())
+      while(bi!=nb_points)
       {
         std::size_t ei=bi+2;
+
         output.push_back(input[bi]);
         put(out_pm, output.back(), get(in_pm, input[bi]));
 
-        while(ei<input.size())
+        while(ei<nb_points)
         {
           typename Kernel::Line_3 sl(get(in_pm,input[bi]), get(in_pm,input[ei]));
+
           if (is_valid_approx(bi,ei,sl))
             ++ei; // we skip ei-1
           else
@@ -99,10 +106,15 @@ void simplify_polyline(const PointRangeIn& input,
             break;
           }
         }
-        if(ei>=input.size()) break;
+        if(ei>=nb_points) break;
       }
-      output.push_back(input.back());
-      put(out_pm, output.back(), get(in_pm, input.back()));
+      output.push_back(input[nb_points-1]);
+      put(out_pm, output.back(), get(in_pm, input[nb_points-1]));
+      if (is_closed)
+      {
+        output.push_back(input.back());
+        put(out_pm, output.back(), get(in_pm, input.back()));
+      }
       return;
     }
     case DOUGLAS_PEUCKER:
