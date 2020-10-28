@@ -28,7 +28,7 @@ void test(const NamedParameters& np)
 
     // Named parameters that we use in CGAL
   assert(get_parameter(np, CGAL::internal_np::vertex_index).v == 0);
-  assert(get_parameter(np, CGAL::internal_np::graph_visitor).v == 1);
+  assert(get_parameter(np, CGAL::internal_np::visitor).v == 1);
   assert(get_parameter(np, CGAL::internal_np::vertex_point).v == 2);
   assert(get_parameter(np, CGAL::internal_np::halfedge_index).v == 3);
   assert(get_parameter(np, CGAL::internal_np::edge_index).v == 4);
@@ -125,7 +125,7 @@ void test(const NamedParameters& np)
 
     // Named parameters that we use in CGAL
   check_same_type<0>(get_parameter(np, CGAL::internal_np::vertex_index));
-  check_same_type<1>(get_parameter(np, CGAL::internal_np::graph_visitor));
+  check_same_type<1>(get_parameter(np, CGAL::internal_np::visitor));
   check_same_type<2>(get_parameter(np, CGAL::internal_np::vertex_point));
   check_same_type<3>(get_parameter(np, CGAL::internal_np::halfedge_index));
   check_same_type<4>(get_parameter(np, CGAL::internal_np::edge_index));

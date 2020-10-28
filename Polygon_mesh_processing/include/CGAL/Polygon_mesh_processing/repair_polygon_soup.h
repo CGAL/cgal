@@ -348,13 +348,6 @@ std::size_t remove_invalid_polygons_in_polygon_soup(PointRange& /*points*/,
 
 } // end namespace internal
 
-template <typename PointRange, typename PolygonRange>
-std::size_t remove_degenerate_polygons_in_polygon_soup(PointRange& points,
-                                                       PolygonRange& polygons)
-{
-  return remove_degenerate_polygons_in_polygon_soup(points, polygons, CGAL::parameters::all_default());
-}
-
 /// \ingroup PMP_repairing_grp
 ///
 /// removes the isolated points from a polygon soup.

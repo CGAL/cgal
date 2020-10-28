@@ -504,7 +504,12 @@ public:
     }
   };
 
-  /*! A functor that divides a curve into x-monotone curves. */
+  //! \name Intersections & subdivisions
+  //@{
+
+  /*! \class Make_x_monotone_2
+   * A functor for subdividing curves into x-monotone curves.
+   */
   class Make_x_monotone_2 {
   private:
     typename Base::Make_x_monotone_2 m_object;
@@ -515,39 +520,43 @@ public:
     Make_x_monotone_2(const Base * base, bool enabled = true) :
       m_object(base->make_x_monotone_2_object()), m_enabled(enabled) {}
 
-    /*! Operate
-     * \param cv the curve
-     * \param oi an output iterator that contains the result. It's value
-     * type is CGAL::Object, which wraps either an x-monotone curve or a point
-     * \return the output iterator
+    /*! Subdivide a given curve into x-monotone subcurves and insert them into
+     * a given output iterator.
+     * \param cv the curve.
+     * \param oi an output iterator for the result. Its value type is a variant
+     *           that wraps Point_2 or X_monotone_curve_2 objects.
+     * \return the output iterator.
      */
-    template<typename OutputIterator>
+    template <typename OutputIterator>
     OutputIterator operator()(const Curve_2 & cv, OutputIterator oi) const
     {
-      if (!m_enabled) return m_object(cv, oi);
+      if (! m_enabled) return m_object(cv, oi);
       std::cout << "make_x_monotone" << std::endl
                 << "  cv: " << cv << std::endl;
-      std::list<CGAL::Object> container;
+
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+        Make_x_monotone_result;
+
+      std::list<Make_x_monotone_result> container;
       m_object(cv, std::back_inserter(container));
       if (container.empty()) return oi;
 
-      std::list<CGAL::Object>::iterator it;
-      unsigned int i = 0;
-      for (it = container.begin(); it != container.end(); ++it) {
-        X_monotone_curve_2 xcv;
-        if (assign (xcv, *it)) {
-          std::cout << "  result[" << i++ << "]: xcv: " << xcv << std::endl;
+      size_t i = 0;
+      for (auto it = container.begin(); it != container.end(); ++it) {
+        if (const auto* xcv = boost::get<X_monotone_curve_2>(*it)) {
+          std::cout << "  result[" << i++ << "]: xcv: " << *xcv << std::endl;
           continue;
         }
 
-        Point_2 p;
-        if (assign (p, *it)) {
-          std::cout << "  result[" << i++ << "]: p: " << p << std::endl;
+        if (const Point_2* p = boost::get<Point_2>(*it)) {
+          std::cout << "  result[" << i++ << "]: p: " << *p << std::endl;
           continue;
         }
+
+        CGAL_error();
       }
 
-      for (it = container.begin(); it != container.end(); ++it) *oi++ = *it;
+      for (auto it = container.begin(); it != container.end(); ++it) *oi++ = *it;
       container.clear();
       return oi;
     }
@@ -597,14 +606,14 @@ public:
     Intersect_2(const Base* base, bool enabled = true) :
       m_object(base->intersect_2_object()), m_enabled(enabled) {}
 
-    /*! Operate
+    /*! Compute the intersections of the two given curves and insert them into
+     * a given output iterator.
      * \param xcv1 the first curve
      * \param xcv2 the ssecond curve
-     * \param oi an output iterator that contains the result. It's value
-     * type is CGAL::Object, which wraps either an x-monotone overlapping
-     * curve or pair that consists of an intersection point and its
-     * multiplicity
-     * \return the output iterator
+     * \param oi the output iterator for the result. It value type is a variant
+     *           that wraps an x-monotone overlapping curve or a pair that
+     *           consists of the intersection point and its multiplicity
+     * \return the past-the-end output iterator.
      */
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2 & xcv1,

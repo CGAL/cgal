@@ -1573,9 +1573,9 @@ do_intersect(const Plane_3<R>& plane1, const Plane_3<R>& plane2, const R&)
 template <class R>
 inline bool
 do_intersect(const Plane_3<R> &plane1, const Plane_3<R> &plane2,
-             const Plane_3<R> &plane3, const R&)
+             const Plane_3<R> &plane3, const R& r)
 {
-  return bool(intersection(plane1, plane2, plane3));
+  return bool(intersection(plane1, plane2, plane3, r));
 }
 
 

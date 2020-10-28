@@ -113,7 +113,7 @@ public:
   /// @{
 
   /*!
-    \brief Instantiates the classifier using the sets of `labels` and `features`.
+    \brief instantiates the classifier using the sets of `labels` and `features`.
 
   */
   Neural_network_classifier (const Label_set& labels,
@@ -204,7 +204,7 @@ public:
 
   /// @{
   /*!
-    \brief Runs the training algorithm.
+    \brief runs the training algorithm.
 
     From the set of provided ground truth, this algorithm constructs a
     neural network and applies an Adam optimizer to set up the weights
@@ -251,6 +251,8 @@ public:
               const std::vector<std::size_t>& hidden_layers
               = std::vector<std::size_t>())
   {
+    CGAL_precondition (m_labels.is_valid_ground_truth (ground_truth));
+
     if (restart_from_scratch)
       clear();
 
@@ -258,15 +260,17 @@ public:
 
     std::vector<std::size_t> indices;
     std::vector<int> raw_gt;
-    for (std::size_t i = 0; i < ground_truth.size(); ++ i)
+    std::size_t i = 0;
+    for (const auto& gt_value : ground_truth)
     {
-      int gc = int(ground_truth[i]);
+      int gc = int(gt_value);
       if (gc != -1)
       {
         indices.push_back (i);
         raw_gt.push_back (gc);
         random_indices[std::size_t(gc)].push_back (indices.size() - 1);
       }
+      ++ i;
     }
 
     if (!initialized())
@@ -446,7 +450,7 @@ public:
   /// @{
 
   /*!
-    \brief Saves the current configuration in the stream `output`.
+    \brief saves the current configuration in the stream `output`.
 
     This allows to easily save and recover a specific classification
     configuration, that is to say:
@@ -527,7 +531,7 @@ public:
   }
 
   /*!
-    \brief Loads a configuration from the stream `input`.
+    \brief loads a configuration from the stream `input`.
 
     The input file should be in the XML format written by the
     `save_configuration()` method. The feature set of the classifier

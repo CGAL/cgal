@@ -67,7 +67,6 @@ public:
   {
     undo_();
     item->compute_normal_maps();
-    item->polyhedron_item()->invalidateOpenGLBuffers();
     item->invalidateOpenGLBuffers();
     item->redraw();
   }
@@ -1838,7 +1837,6 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_grap
 
 Scene_polyhedron_selection_item::~Scene_polyhedron_selection_item()
 {
-  poly_item->switchToGouraudPlusEdge(false);
   delete d;
   Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
     CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);

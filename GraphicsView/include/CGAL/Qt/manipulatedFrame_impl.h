@@ -458,7 +458,7 @@ void ManipulatedFrame::mouseMoveEvent(QMouseEvent *const event,
     // These MouseAction values make no sense for a manipulatedFrame
     break;
 
-  case NO_MOUSE_ACTION:
+  default:
     // Possible when the ManipulatedFrame is a MouseGrabber. This method is then
     // called without startAction because of mouseTracking.
     break;

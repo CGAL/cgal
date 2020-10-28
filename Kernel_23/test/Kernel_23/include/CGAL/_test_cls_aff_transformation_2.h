@@ -63,6 +63,8 @@ _test_cls_aff_transformation_2(const R& )
  CGAL::Point_2<R>  p3( n1, n0, n4 );        // (-3, 0)
  CGAL::Point_2<R>  p4( n7, n2,-n6 );        // ( 4,11)
 
+ CGAL::Weighted_point_2<R>  wp4( p4, n1 );
+
  CGAL::Direction_2<R> d0(n13, n0);
  CGAL::Direction_2<R> d1(n0, n13);
  CGAL::Direction_2<R> dir = (p2 - p4).direction();
@@ -72,6 +74,7 @@ _test_cls_aff_transformation_2(const R& )
  CGAL::Point_2<R>   tp2;
  CGAL::Point_2<R>   tp3;
  CGAL::Point_2<R>   tp4;
+ CGAL::Weighted_point_2<R>   twp4;
  CGAL::Segment_2<R> seg(p1,p2);
  CGAL::Segment_2<R> tseg;
  CGAL::Ray_2<R>     ray(p3,p2);
@@ -160,11 +163,14 @@ _test_cls_aff_transformation_2(const R& )
     tp2 = p2.transform( a[i] );
     tp3 = p3.transform( a[i] );
     tp4 = p4.transform( a[i] );
+    twp4 = wp4.transform( a[i] );
     tseg = seg.transform( a[i] );
     tray = ray.transform( a[i] );
     tlin = lin.transform( a[i] );
     ttri = tri.transform( a[i] );
     tisor= isor.transform( a[i]);
+    assert( twp4.point() == tp4 );
+    assert( twp4.weight() == wp4.weight() );
     assert( tseg == CGAL::Segment_2<R>(tp1, tp2) );
     assert( tray == CGAL::Ray_2<R>(tp3, tp2) );
     assert( tlin == CGAL::Line_2<R>(tp2, tp4) || nonexact);
@@ -173,11 +179,13 @@ _test_cls_aff_transformation_2(const R& )
 
     inv = a[i].inverse();
     tp4  = tp4.transform(  inv );
+    twp4 = twp4.transform( inv );
     tseg = tseg.transform( inv );
     tray = tray.transform( inv );
     tlin = tlin.transform( inv );
     ttri = ttri.transform( inv );
     assert( tp4  == p4  || nonexact );
+    assert( twp4 == wp4 || nonexact );
     assert( tseg == seg || nonexact );
     assert( tray == ray || nonexact );
     assert( tlin == lin || nonexact );

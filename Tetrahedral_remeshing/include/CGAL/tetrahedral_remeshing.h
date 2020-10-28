@@ -244,12 +244,12 @@ void tetrahedral_isotropic_remeshing(
                                  No_facet());
 
   typedef typename internal_np::Lookup_named_param_def <
-    internal_np::remeshing_visitor_t,
+    internal_np::visitor_t,
     NamedParameters,
     Tetrahedral_remeshing::internal::Default_remeshing_visitor
   > ::type Visitor;
   Visitor visitor
-    = choose_parameter(get_parameter(np, internal_np::remeshing_visitor),
+    = choose_parameter(get_parameter(np, internal_np::visitor),
                        Tetrahedral_remeshing::internal::Default_remeshing_visitor());
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
@@ -439,12 +439,12 @@ void tetrahedral_isotropic_remeshing(
                                  No_facet());
 
   typedef typename internal_np::Lookup_named_param_def <
-  internal_np::remeshing_visitor_t,
+              internal_np::visitor_t,
               NamedParameters,
               Tetrahedral_remeshing::internal::Default_remeshing_visitor
               > ::type Visitor;
   Visitor visitor
-    = choose_parameter(get_parameter(np, internal_np::remeshing_visitor),
+    = choose_parameter(get_parameter(np, internal_np::visitor),
                        Tetrahedral_remeshing::internal::Default_remeshing_visitor());
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE

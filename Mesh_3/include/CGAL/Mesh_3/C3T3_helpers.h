@@ -3648,10 +3648,17 @@ incident_slivers(const Vertex_handle& v,
   std::vector<Cell_handle> incident_cells_;
   tr_.incident_cells(v, std::back_inserter(incident_cells_));
 
+#ifdef CGAL_CXX17
+  std::remove_copy_if(incident_cells_.begin(),
+                      incident_cells_.end(),
+                      out,
+                      std::not_fn(Is_sliver<Sc>(c3t3_, criterion, sliver_bound)));
+#else
   std::remove_copy_if(incident_cells_.begin(),
                       incident_cells_.end(),
                       out,
                       std::not1(Is_sliver<Sc>(c3t3_,criterion,sliver_bound)));
+#endif
 
   return out;
 }
