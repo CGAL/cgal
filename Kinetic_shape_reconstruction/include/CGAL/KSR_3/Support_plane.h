@@ -339,12 +339,16 @@ public:
     for (const Point_2& p : points)
     {
       Vertex_index vi = m_data->mesh.add_vertex(p);
-      m_data->direction[vi] = KSR::normalize (Vector_2 (centroid, p));
+      m_data->direction[vi] =
+        Vector_2(centroid, p);
+        // KSR::normalize(Vector_2(centroid, p));
       vertices.push_back (vi);
 
 #ifdef CGAL_KSR_DEBUG
       Vertex_index dbg_vi = m_data->dbg_mesh.add_vertex(p);
-      m_data->dbg_direction[dbg_vi] = KSR::normalize (Vector_2 (centroid, p));
+      m_data->dbg_direction[dbg_vi] =
+        Vector_2(centroid, p);
+        // KSR::normalize(Vector_2(centroid, p));
       dbg_vertices.push_back (dbg_vi);
 #endif
     }

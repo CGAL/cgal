@@ -148,7 +148,8 @@ public:
       // dump (m_data, "iter_100-" + std::to_string(iter));
       // CGAL_assertion(check_integrity(true));
       ++ iter;
-      if (iter > 100) {
+      if (iter > 10000) {
+        std::cout << "Handling iteration # " << std::to_string(iter) << std::endl;
         CGAL_assertion_msg(false, "WHY SO MANY ITERATIONS?");
       }
     }
@@ -559,7 +560,7 @@ private:
 
       ++ iter;
 
-      // if (iter == 52) {
+      // if (iter == 5) {
       //   exit(0);
       // }
 
@@ -633,7 +634,14 @@ private:
                        m_data.point_2(pvertex, ev.time()));
         CGAL_assertion (seg.squared_length() != 0);
 
-        if (CGAL::parallel(seg, seg_edge)) {
+        bool both_are_free = true;
+        if (
+          m_data.iedge(pvertex) != m_data.null_iedge() ||
+          m_data.iedge(pother)  != m_data.null_iedge()) {
+          both_are_free = false;
+        }
+
+        if (both_are_free && CGAL::parallel(seg, seg_edge)) {
 
           remove_events(pvertex);
           remove_events(pother);

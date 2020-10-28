@@ -48,6 +48,7 @@ class Polygon_splitter
   typedef typename GeomTraits::Segment_2 Segment_2;
   typedef typename GeomTraits::Line_2 Line_2;
   typedef typename GeomTraits::Vector_2 Vector_2;
+  typedef typename GeomTraits::Triangle_2 Triangle_2;
 
   typedef KSR_3::Data_structure<GeomTraits> Data;
   typedef typename Data::PVertex PVertex;
@@ -104,32 +105,47 @@ public:
 
   void split_support_plane (KSR::size_t support_plane_idx, unsigned int k)
   {
-    // First, insert polygons
+    // First, insert polygons.
     for (PVertex pvertex : m_data.pvertices(support_plane_idx))
     {
-      Vertex_handle vh = m_cdt.insert (m_data.point_2 (pvertex));
+      const Vertex_handle vh = m_cdt.insert(m_data.point_2(pvertex));
       vh->info().pvertex = pvertex;
-      m_input.insert (pvertex);
+      m_input.insert(pvertex);
     }
 
     std::vector<std::vector<Point_2> > original_faces;
     std::vector<KSR::size_t> original_input;
     std::vector<Point_2> original_centroids;
 
+    std::vector<Point_2> points;
+    std::vector<Triangle_2> triangles;
     for (PFace pface : m_data.pfaces(support_plane_idx))
     {
-      std::vector<Point_2> points;
-      for (PVertex pvertex : m_data.pvertices_of_pface (pface))
-        points.push_back (m_data.point_2(pvertex));
+      points.clear();
+      for (const PVertex pvertex : m_data.pvertices_of_pface(pface))
+        points.push_back(m_data.point_2(pvertex));
 
-      original_faces.push_back (points);
-      original_input.push_back (m_data.input(pface));
-      original_centroids.push_back
-        (CGAL::centroid (points.begin(), points.end()));
+      original_faces.push_back(points);
+      original_input.push_back(m_data.input(pface));
 
-      points.push_back (points.front());
-      Cid cid = m_cdt.insert_constraint (points.begin(), points.end());
-      m_map_intersections.insert (std::make_pair (cid, Data::null_iedge()));
+      triangles.clear();
+      CDT tri;
+      for (const auto& point : points)
+        tri.insert(point);
+      triangles.reserve(tri.number_of_faces());
+
+      for (auto fit = tri.finite_faces_begin(); fit != tri.finite_faces_end(); ++fit) {
+        triangles.push_back(Triangle_2(
+            fit->vertex(0)->point(), fit->vertex(1)->point(), fit->vertex(2)->point()));
+      }
+      const auto centroid = CGAL::centroid(triangles.begin(), triangles.end());
+      original_centroids.push_back(centroid);
+
+      // original_centroids.push_back(CGAL::centroid(points.begin(), points.end()));
+
+      points.push_back(points.front());
+      Cid cid = m_cdt.insert_constraint(points.begin(), points.end());
+      m_map_intersections.insert(std::make_pair(cid, Data::null_iedge()));
     }
 
     // Then, add intersection vertices + constraints
@@ -271,8 +287,9 @@ public:
 
       m_data.input(pface) = original_input[original_idx];
       for (PVertex pvertex : new_vertices)
-        m_data.direction(pvertex) = KSR::normalize (Vector_2 (original_centroids[original_idx],
-                                                              m_data.point_2(pvertex)));
+        m_data.direction(pvertex) =
+          Vector_2(original_centroids[original_idx], m_data.point_2(pvertex));
+          // KSR::normalize(Vector_2(original_centroids[original_idx], m_data.point_2(pvertex)));
     }
 
     // Set intersection adjacencies

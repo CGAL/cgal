@@ -37,6 +37,8 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/centroid.h>
 
+#include <CGAL/Delaunay_triangulation_2.h>
+
 namespace CGAL
 {
 
@@ -64,6 +66,7 @@ private:
   typedef typename Kernel::Segment_3 Segment_3;
   typedef typename Kernel::Plane_3 Plane_3;
   typedef typename Kernel::Line_3 Line_3;
+  typedef typename Kernel::Triangle_2 Triangle_2;
 
   typedef KSR_3::Support_plane<Kernel> Support_plane;
   typedef typename Support_plane::Mesh Mesh;
@@ -404,7 +407,17 @@ public:
     for (const Point_3& p : polygon)
       points.push_back (support_plane(support_plane_idx).to_2d(p));
 
-    Point_2 centroid = CGAL::centroid (points.begin(), points.end());
+    // const auto centroid = CGAL::centroid(points.begin(), points.end());
+
+    using TRI = CGAL::Delaunay_triangulation_2<Kernel>;
+    TRI tri(points.begin(), points.end());
+    std::vector<Triangle_2> triangles;
+    triangles.reserve(tri.number_of_faces());
+    for (auto fit = tri.finite_faces_begin(); fit != tri.finite_faces_end(); ++fit) {
+      triangles.push_back(Triangle_2(
+          fit->vertex(0)->point(), fit->vertex(1)->point(), fit->vertex(2)->point()));
+    }
+    const auto centroid = CGAL::centroid(triangles.begin(), triangles.end());
 
     std::sort (points.begin(), points.end(),
                [&](const Point_2& a, const Point_2& b) -> bool
@@ -1133,6 +1146,12 @@ public:
   void crop_polygon (const PVertex& pv0, const PVertex& pv1, const IEdge& iedge)
   {
     std::cout << "*** Cropping " << str(pv0) << "/" << str(pv1) << " along " << str(iedge) << std::endl;
+
+    // CGAL_assertion_msg(false, "TODO: CHECK THIS FUNCTION!");
+
+    // std::cout.precision(20);
+    // std::cout << "pv0: " << point_3(pv0) << std::endl;
+    // std::cout << "pv1: " << point_3(pv1) << std::endl;
 
     Line_2 iedge_line = segment_2(pv0.first, iedge).supporting_line();
 
@@ -1922,20 +1941,32 @@ private:
   {
     const PVertex prev(pvertex.first, support_plane(pvertex).prev(pvertex.second));
     const PVertex next(pvertex.first, support_plane(pvertex).next(pvertex.second));
+    const auto& curr = pvertex;
 
     const Line_2 iedge_line = segment_2(pvertex.first, iedge).supporting_line();
     const Point_2 pinit = iedge_line.projection(point_2(pvertex, m_current_time));
 
+    // std::cout << "iedge segment: " << segment_3(iedge) << std::endl;
+
     const auto prev_p = point_2(prev, m_current_time + FT(1));
     const auto next_p = point_2(next, m_current_time + FT(1));
-    const auto curr_p = point_2(pvertex, m_current_time + FT(1));
+    const auto curr_p = point_2(curr, m_current_time + FT(1));
 
     // std::cout << "prev: " << point_3(prev) << std::endl;
     // std::cout << "next: " << point_3(next) << std::endl;
-    // std::cout << "curr: " << point_3(pvertex) << std::endl;
+    // std::cout << "curr: " << point_3(curr) << std::endl;
 
     const Line_2 future_line_prev(prev_p, curr_p);
     const Line_2 future_line_next(next_p, curr_p);
+
+    std::cout << "future line prev: " <<
+    Segment_3(
+      to_3d(pvertex.first, prev_p),
+      to_3d(pvertex.first, curr_p)) << std::endl;
+    std::cout << "future line next: " <<
+    Segment_3(
+      to_3d(pvertex.first, next_p),
+      to_3d(pvertex.first, curr_p)) << std::endl;
 
     const Vector_2 future_vec_prev(prev_p, curr_p);
     const Vector_2 future_vec_next(next_p, curr_p);
@@ -1961,56 +1992,53 @@ private:
     // std::cout << "prev slope: "  << m1 << std::endl;
     // std::cout << "next slope: "  << m2 << std::endl;
     // std::cout << "iedge slope: " << m3 << std::endl;
-    if (CGAL::abs(m1 - m3) < tol) {
-      // CGAL_assertion_msg(false, "TODO: prev PARALLEL LINES!");
-      std::cout << "prev parallel lines" << std::endl;
 
+    if (CGAL::abs(m1 - m3) < tol) {
+
+      std::cout << "prev parallel lines" << std::endl;
       const FT prev_dot = future_vec_prev * iedge_vec;
-      // std::cout << segment_3(iedge) << std::endl;
-      // std::cout << point_3(prev) << std::endl;
-      // std::cout << to_3d(pvertex.first, pinit) << std::endl;
       if (prev_dot < FT(0)) {
-        // std::cout << "moves backwards" << std::endl;
+        std::cout << "moves backwards" << std::endl;
         future_point_a = target_p;
       } else {
-        // std::cout << "moves forwards" << std::endl;
+        std::cout << "moves forwards" << std::endl;
         future_point_a = source_p;
       }
-
-      direction_a = Vector_2(pinit, future_point_a);
-      future_point_a = pinit - m_current_time * direction_a;
-
     } else {
+
+      std::cout << "prev intersected lines" << std::endl;
       const bool a_found = KSR::intersection_2(future_line_prev, iedge_line, future_point_a);
       if (!a_found)
       {
         std::cerr << "Warning: a not found" << std::endl;
         future_point_b = pinit + (pinit - future_point_a);
       }
-      direction_a = Vector_2(pinit, future_point_a);
-      future_point_a = pinit - m_current_time * direction_a;
     }
 
-    // std::cout << "future point a: " << to_3d(pvertex.first, future_point_a) << std::endl;
-    // std::cout << "dir a: " << direction_a << std::endl;
+    direction_a = Vector_2(pinit, future_point_a);
+    future_point_a = pinit - m_current_time * direction_a;
+    std::cout << "future point a: " << to_3d(pvertex.first, future_point_a + m_current_time * direction_a) << std::endl;
+    std::cout << "dir a: " << direction_a << std::endl;
 
     if (CGAL::abs(m2 - m3) < tol) {
       CGAL_assertion_msg(false, "TODO: next PARALLEL LINES!");
       std::cout << "next parallel lines" << std::endl;
 
     } else {
+
+      std::cout << "next intersected lines" << std::endl;
       const bool b_found = KSR::intersection_2(future_line_next, iedge_line, future_point_b);
       if (!b_found)
       {
         std::cerr << "Warning: b not found" << std::endl;
         future_point_a = pinit + (pinit - future_point_b);
       }
-      direction_b = Vector_2(pinit, future_point_b);
-      future_point_b = pinit - m_current_time * direction_b;
     }
 
-    // std::cout << "future point b: " << to_3d(pvertex.first, future_point_b) << std::endl;
-    // std::cout << "dir b: " << direction_b << std::endl;
+    direction_b = Vector_2(pinit, future_point_b);
+    future_point_b = pinit - m_current_time * direction_b;
+    std::cout << "future point b: " << to_3d(pvertex.first, future_point_b + m_current_time * direction_b) << std::endl;
+    std::cout << "dir b: " << direction_b << std::endl;
   }
 
   void compute_future_point_and_direction (const std::size_t idx,
