@@ -714,15 +714,17 @@ public:
       auto max_vertex = geom_traits->construct_max_vertex_2_object();
       auto intersect = geom_traits->intersect_2_object();
       auto cmp_seg_endpts = geom_traits->compare_endpoints_xy_2_object();
-#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
       auto construct_opposite = geom_traits->construct_opposite_2_object();
-#endif
 
       Comparison_result dir1 = cmp_seg_endpts(cv1[0]);
       Comparison_result dir2 = cmp_seg_endpts(cv2[0]);
 
       std::vector<X_monotone_subcurve_2> ocv; // Used to represent overlaps.
-      const bool invert_ocv = (dir1 == LARGER && dir2 == LARGER);
+      const bool invert_ocv = ((dir1 == LARGER) && (dir2 == LARGER));
+      const bool consistent = (dir1 == dir2);
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+      CGAL_assertion(consistent);
+#endif
 
       const std::size_t n1 = cv1.number_of_subcurves();
       const std::size_t n2 = cv2.number_of_subcurves();
@@ -853,10 +855,15 @@ public:
               boost::get<X_monotone_subcurve_2>(&item);
             if (x_seg != nullptr) {
               X_monotone_subcurve_2 seg = *x_seg;
-
+              // We maintain the variant that if the input curves have opposite
+              // directions (! consistent), the overalpping curves are directed
+              // left=>right. This, however, is not guaranteed for the
+              // subcurves. Therefore, we need to enforce it. That is, we make
+              // sure the subcurves are also directed left=>right in this case.
+              if (! consistent && (cmp_seg_endpts(seg) == LARGER))
+                seg = construct_opposite(seg);
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
-              // Check whether the resulting segment is directed to the left
-              if (cmp_seg_endpts(seg) == LARGER) seg = construct_opposite(seg);
+              CGAL_assertion(cmp_seg_endpts(seg) == SMALLER);
 #endif
               ocv.push_back(seg);
             }
