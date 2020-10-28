@@ -74,7 +74,7 @@ jobs:
             mkdir -p cgal.github.io/${PR_NUMBER}/$ROUND
             cd build_doc && make -j2 doc && make -j2 doc_with_postprocessing
             #list impacted packages
-            LIST_OF_PKGS=$(git diff --name-only cgal/master... |cut -s -d/ -f1 |sort -u | xargs -I {} ls -d {}/package_info 2>/dev/null  |cut -d/ -f1)
+            LIST_OF_PKGS=$(git diff --name-only origin/master... |cut -s -d/ -f1 |sort -u | xargs -I {} ls -d {}/package_info 2>/dev/null  |cut -d/ -f1)
             for f in $LIST_OF_PKGS
             do
               cp -r ./doc_output/$f ../cgal.github.io/${PR_NUMBER}/$ROUND    
