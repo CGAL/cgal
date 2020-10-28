@@ -94,7 +94,7 @@ described above; the `TopologyTraits` parameter must be substituted
 with a type that deals with the topology of the surface (see Section
 \ref aos_sec-topol_traits). In particular, it maintains a
 representation of the arrangement graph embedded in the surface using
-an extended doubly-connected edge list (\sc{EDcel}) data-structure
+an extended doubly-connected edge list (\sc{Dcel}) data-structure
 suitable for the particular topology.
 
 Several member functions and nested types defined in the
@@ -107,7 +107,7 @@ a matter of fact, the package provides additional class templates that
 represent two-dimensional arrangement, such as the
 `Arrangement_with_history_2` class template, which derives from the
 class template `Arrangement_2`; these additional class templates also
-contain inhertited definitions of the aforementioned member functions
+contain inherited definitions of the aforementioned member functions
 and nested types.) These names when appear in the text without any
 scope are (HTML) linked to the respective objects in the
 `Arrangement_2` class template; however, this choice of link is
@@ -288,14 +288,15 @@ rectangular two-dimensional area called the parameter space. The
 parameter space is defined as \f$ X \times Y\f$, where \f$ X\f$ and
 \f$ Y\f$ are open, half-open, or closed intervals with endpoints in
 the compactified real line \f$ \mathbb{R} \cup
-\{-\infty,+\infty\}\f$. Let \f$ b_l\f$, \f$ b_r\f$, \f$ b_b\f$, and
-\f$ b_t\f$ denote the endpoints of \f$ X\f$ and \f$ Y\f$,
-respectively. We typically refer to these values as the left, right,
-bottom, and top sides of the boundary of the parameter space. If the
-parameter space is, for example, the entire compactified plane, as
-in the case of arrangements in the plane, \f$ b_l = b_b =
--\infty\f$ and \f$ b_r = b_t = +\infty\f$;
-see Section \ref aos_sec-curved_surfaces for more details.
+\{-\infty,+\infty\}\f$. Let \f$x_{\rm min}\f$, \f$x_{\rm max}\f$,
+\f$y_{\rm min}\f$, and \f$y_{\rm max}\f$ denote the endpoints of \f$
+X\f$ and \f$ Y\f$, respectively. We typically refer to these values as
+the left, right, bottom, and top sides of the boundary of the
+parameter space. If the parameter space is, for example, the entire
+compactified plane, as in the case of arrangements in the plane,
+\f$x_{\rm min} = y_{\rm min} = -\infty\f$ and \f$x_{\rm max} = y_{\rm
+max} = +\infty\f$; see Section \ref aos_sec-curved_surfaces for more
+details.
 
 \cgalAdvancedEnd
 
@@ -486,8 +487,7 @@ typedef Traits_2::Point_2                               Point;
 typedef Traits_2::X_monotone_curve_2                    Segment;
 typedef CGAL::Arrangement_2<Traits_2>                   Arrangement;
 
-int main()
-{
+int main() {
   Arrangement arr;
   Point p1(1, 1), p2(1, 2), p3(2, 1);
   Segment cv[] = {Segment(p1, p2), Segment(p2, p3), Segment(p3, p1)};
@@ -789,7 +789,7 @@ vertices.
 
 The arrangement member-functions that insert new \f$x\f$-monotone
 curves into the arrangement, thus enabling the construction of a
-two-dimenstional surface subdivision, are rather specialized, as they
+two-dimensional surface subdivision, are rather specialized, as they
 assume that the interior of the inserted curve is disjoint from all
 existing arrangement vertices and edges, and in addition require
 apriori knowledge of the location of the inserted curve. Indeed, for
@@ -933,7 +933,7 @@ v1, v2)`\endlink returns a handle to the halfedge directed from
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-edge_insertion,edge_insertion.png}
-The arrngement of the line segments \f$s_1, \ldots, s_5\f$
+The arrangement of the line segments \f$s_1, \ldots, s_5\f$
 constructed in `edge_insertion.cpp`. The arrows mark the direction of
 the halfedges returned from the various insertion functions.
 \cgalFigureEnd
@@ -1392,7 +1392,7 @@ vary according to the user choice.} for answering queries:
   template, where the `Traits` parameter is substituted with a
   geometry-traits class that models the `ArrangementLandmarkTraits_2`
   concept, which refines the basic `ArrangementBasicTraits_2` concept;
-  see Section \ref aos_sssec-tr_lanmarks_concept for details. Most
+  see Section \ref aos_sssec-tr_landmarks_concept for details. Most
   traits classes included in the \ref PkgArrangementOnSurface2 package
   are models of this refined concept.
 
@@ -2733,11 +2733,12 @@ instead of the (compactified) real line in what follows.
 
 A parametric surface \f$S\f$ is given by a continuous function
 \f$\phi_S: \Phi \rightarrow \mathbb{R}^3\f$, where the domain \f$\Phi
-= X \times Y\f$ is a rectangular two-dimensional parameter space; \f$S
-= \phi_S(\Phi)\f$. \f$X\f$ and \f$Y\f$ are open, half-open, or closed
-intervals with endpoints in \f$\overline{\mathbb{R}}\f$. We use
-\f$x_{\rm min}\f$, \f$x_{\rm max}\f$, \f$y_{\rm min}\f$, and \f$y_{\rm
-max}\f$ to denote the endpoints of \f$X\f$ and \f$Y\f$, respectively.
+= X \times Y\f$ is a rectangular two-dimensional parameter space and
+\f$S = \phi_S(\Phi)\f$. The sets \f$X\f$ and \f$Y\f$ are open,
+half-open, or closed intervals with endpoints in
+\f$\overline{\mathbb{R}}\f$. We use \f$x_{\rm min}\f$, \f$x_{\rm
+max}\f$, \f$y_{\rm min}\f$, and \f$y_{\rm max}\f$ to denote the
+endpoints of \f$X\f$ and \f$Y\f$, respectively.
 
 <ul>
 
@@ -2746,10 +2747,10 @@ max}\f$ to denote the endpoints of \f$X\f$ and \f$Y\f$, respectively.
 <em>open</em>, if \f$x_{\rm min} \not\in X\f$ or \f$y\not\in Y\f$, and
 <em>closed</em>, otherwise. The right side is defined analogously.
 The bottom side consists of the points \f$(x, y_{\rm min})\f$ with
-\f$x \in (x_{\rm min},x_{\rm max})\f$; the top side is defined
-analogously. Bottom and top side can also be open. Note that the
+\f$x \notin (x_{\rm min},x_{\rm max})\f$; the top side is defined
+analogously. The bottom or top sides can also be open. Note that the
 "corners" of the parameter space belong to the vertical sides; this
-asymmetry corresponds to the fact, that we sweep \f$x\f$-monotone
+asymmetry corresponds to the fact that we sweep \f$x\f$-monotone
 curves, and not \f$y\f$-monotone curves. The four sides together form
 the boundary \f$\partial \Phi\f$.</li>
 
@@ -2763,11 +2764,11 @@ side of the domain.</li>
 
 </ul>
 
-A side of the domain is contracted, if \f$\phi_S\f$ is constant on it.
+A side of the domain is contracted if \f$\phi_S\f$ is constant on it.
 The image of the side is called a <em>contraction point</em>.
 
 The bottom and top sides of the domain (similarly for the left and
-right sides) are <em>identified</em>, if
+right sides) are <em>identified</em> if
 \f$\phi_S(x,y_{\rm min}) = \phi_S(x, y_{\rm max})\f$ for all
 \f$x \in X \f$. The curve \f$x \mapsto \phi_S(x,y_{\rm min})\f$ is
 called an <em>identification curve</em>.
@@ -2813,17 +2814,17 @@ one pinch point, is modeled by identifying the vertical and
 identifying the horizontal sides and, in addition, contracting one of
 the pairs. However, the croissant is excluded by our definitions. All
 surfaces supported by our framework are locally homeomorphic to a
-disk, and hence an \sc{EDcel} data-structure suffices for representing
+disk, and hence an \sc{Dcel} data-structure suffices for representing
 arrangements on these surfaces. The croissant is, at the pinch point,
 not locally homeomorphic to a disk, and hence a more general
-cell-tuple data structure than an \sc{EDcel} would be needed.
+cell-tuple data structure than an \sc{Dcel} would be needed.
 
 A curve \f$\gamma\f$ is a continuous function \f$\gamma: I \rightarrow
 \Phi\f$, where \f$I\f$ is an open, half-open, or closed interval with
-endpoints 0 and 1, and \f$\gamma\f$ is injective except for at a
-finite number of points. If \f$0 \not\in I\f$, \f$\lim_{t \rightarrow
-0+} \gamma(t)\f$ exists (in the closure of \f$\Phi\f$) and lies in an
-open side of the boundary. Similarly, if \f$1 \not\in I\f$, \f$\lim_{t
+endpoints 0 and 1, and \f$\gamma\f$ is injective except at a finite
+number of points. If \f$0 \not\in I\f$, \f$\lim_{t \rightarrow 0+}
+\gamma(t)\f$ exists (in the closure of \f$\Phi\f$) and lies in an open
+side of the boundary. Similarly, if \f$1 \not\in I\f$, then \f$\lim_{t
 \rightarrow 1-} \gamma(t)\f$ exists and lies in an open side of the
 boundary. A curve \f$c\f$ in \f$S\f$ is the image of a curve
 \f$\gamma\f$ in the domain.
@@ -2843,7 +2844,7 @@ equator curve on the sphere in standard parameterization is given by
 \f$\gamma(t) = (\pi(2t - 1),0)\f$ for \f$t \in [0,1]\f$. The
 \f$0\f$-end of \f$\gamma\f$ is the point \f$(-\pi,0)\f$ in \f$\Phi\f$
 and a point on the equator of the sphere. It is closed on the sphere,
-but non-closed in \f$\Phi\f$. The diagonal \f$(u,u)\f$ in the plane
+but not closed in \f$\Phi\f$. The diagonal \f$(u,u)\f$ in the plane
 is, for example, given by \f$\gamma(t) = (x(t),y(t))\f$ and \f$x(t) =
 y(t) = (t - 1/2)/(t(1-t))\f$.  Both ends of this curve are open. The
 \f$d\f$-end of a curve \f$\gamma\f$ is incident to the left side if
@@ -2854,10 +2855,10 @@ left side, which is then an open side. Similarly for the other sides.
 A <em>strongly \f$x\f$-monotone curve</em> is the image of a curve
 \f$\gamma\f$, such that if \f$t_1 < t_2\f$, then \f$x(t_1) <
 x(t_2)\f$. A <em>vertical curve</em> is the image of a curve
-\f$\gamma\f$, such that \f$x(t) = C\f$ for all \f$t \in I\f$ and some
-\f$c \in X\f$ and \f$y(t_1) < y(t_2)\f$ for \f$t_1 < t_2\f$. For
+\f$\gamma\f$, such that \f$x(t) = K\f$ for all \f$t \in I\f$ and some
+\f$K \in X\f$ and \f$y(t_1) < y(t_2)\f$ for \f$t_1 < t_2\f$. For
 instance, every Meridian curve of a sphere parameterized as above is
-vertical. A <em>\f$x\f$-monotone curve</em> is either vertical or
+vertical. An <em>\f$x\f$-monotone curve</em> is either vertical or
 strongly \f$x\f$-monotone.
 
 <!----------------------------------------------------------------------------->
@@ -2874,18 +2875,18 @@ surface. As explained in the previous section, a parametric surface
 \mathbb{R}^3\f$, where the domain \f$\Phi = X \times Y\f$ is a
 rectangular two-dimensional parameter space; \f$S =
 \phi_S(\Phi)\f$. \f$X\f$ and \f$Y\f$ are open, half-open, or closed
-intervals with endpoints in \f$\overline{\R} \f$.
+intervals with endpoints in \f$\overline{\mathbb{R}}\f$.
 
 The geometry-traits type introduces the type names of the basic
 geometric objects (i.e., point, curve, and \f$u \f$-monotone curve)
 and the set of operations on objects of these types required to
 construct and maintain the arrangement and to operate on it. The
 traits-concept hierarchy described in Section \ref aos_sec-geom_traits
-accurately define the requirements imposed on an instantiated geometry
-traits class. Recall that requirements apply to the parameter space
-\f$\Phi = X \times Y\f$; thus, they are defined in terms of \f$x\f$
-and \f$y\f$ coordinates.  Most requirements apply to all type of
-arrangements regadless of the embedding surface. However, several
+accurately defines the requirements imposed on a model of a
+geometry traits class. Recall that requirements apply to the parameter
+space \f$\Phi = X \times Y\f$; thus, they are defined in terms of
+\f$x\f$ and \f$y\f$ coordinates.  Most requirements apply to all type
+of arrangements regardless of the embedding surface. However, several
 refined concepts apply only to arrangements on surfaces that are not
 the plane, that is, modeled with \f$\phi_S\f$ not being the identity
 mapping. They differ according to the type of the side boundaries of
@@ -3007,7 +3008,7 @@ set of predicates is also sufficient for answering vertical
 ray-shooting queries and point-location queries with a small
 exception: Locating a point using the landmark strategy requires a
 traits class that models the concept `ArrangementLandmarkTraits_2`;
-see Section \ref aos_sssec-tr_lanmarks_concept.
+see Section \ref aos_sssec-tr_landmarks_concept.
 
 <DL>
 
@@ -3206,7 +3207,7 @@ sufficient to use a model of the `ArrangementXMonotoneTraits_2`
 concept.
 
 <!----------------------------------------------------------------------------->
-\subsubsection aos_sssec-tr_lanmarks_concept The Landmark Concept
+\subsubsection aos_sssec-tr_landmarks_concept The Landmark Concept
 <!----------------------------------------------------------------------------->
 
 <!----------------------------------------------------------------------------->
@@ -4978,17 +4979,17 @@ point (counted from below) in the fiber of \f$c\f$ at the
 \f$x\f$-coordinate \f$x_0\f$. \cgalFootnote{The fiber of a curve
 \f$c\f$ at some $x$-coordinate \f$x'\f$ is the set of all points on
 \f$c\f$ with \f$x\f$-coordinate \f$x'\f$.  Formally, for a curve
-\f$c\f$ and \f$x' \in \R\f$, the fiber of \f$c\f$ at \f$x'\f$ is \f$c
-\cap \{(x',b)\,|\,b \in \R\}\f$.} In the example depicted in
-\cgalFigureRef{aos_figcylindrical_decomposition}, if \f$x_1\f$ denotes
-the \f$x\f$-coordinate of \f$p\f$, and \f$c\f$ represents the
-algebraic curve, then \f$p\f$ could be represented by
+\f$c\f$ and \f$x' \in \mathbb{R}\f$, the fiber of \f$c\f$ at \f$x'\f$
+is \f$c \cap \{(x',b)\,|\,b \in \mathbb{R}\}\f$.} In the example
+depicted in \cgalFigureRef{aos_figcylindrical_decomposition}, if
+\f$x_1\f$ denotes the \f$x\f$-coordinate of \f$p\f$, and \f$c\f$
+represents the algebraic curve, then \f$p\f$ could be represented by
 \f$(x_1,c,3)\f$. If \f$x_2\f$ is the \f$x\f$-coordinate of \f$q\f$,
 then \f$(x_2,c,1)\f$ is a valid representation of \f$q\f$. Points are
 represented internally using the triple described above. Although the
 \f$y\f$-coordinate of a point represented by an object of the nested
-type `Algebraic_real_1` can be obtained, we advise caution with
-that option, since computing an explicit representation of the
+type `Algebraic_real_1` can be obtained, we advise caution with that
+option, since computing an explicit representation of the
 $y$-coordinate can be rather expensive.
 
 <!----------------------------------------------------------------------------->
@@ -6411,8 +6412,8 @@ easily represent property maps using vectors.  The
 creation of such indices, and together with
 `boost::vector_property_map<Type, IndexMap>` it generates an efficient
 mapping from \link Arrangement_2::Vertex_handle
-`Vertex_handle`\endlink objects to properties of type `Type`. Note
-however that unlike the `Arr_vertex_index_map` class template, the
+`Vertex_handle`\endlink objects to properties of type `Type`. Note,
+however, that unlike the `Arr_vertex_index_map` class template, the
 vertex property-map class is not kept synchronized with the number of
 vertices in the arrangement, so it should not be reused in calls to
 \sc{bgl} functions in case the arrangement is modified in between
@@ -6432,9 +6433,6 @@ computes and returns it. The functor template is defined in the header
 file `Edge_length.h`.
 
 \code
-#ifndef EDGE_LENGTH_H
-#define EDGE_LENGTH_H
-
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/property_map.h>
 
@@ -6457,8 +6455,6 @@ template <typename Arrangement> struct Edge_length {
   friend value_type get(const Edge_length& edge_length, key_type key)
   { return edge_length(key); }
 };
-
-#endif
 \endcode
 
 <!----------------------------------------------------------------------------->
