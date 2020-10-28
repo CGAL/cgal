@@ -10,6 +10,7 @@
 #include <QFormLayout>
 #include <QDialogButtonBox>
 #include <QRadioButton>
+#include <boost/type_traits/is_same.hpp>
 
 class QMultipleInputDialog
 {
