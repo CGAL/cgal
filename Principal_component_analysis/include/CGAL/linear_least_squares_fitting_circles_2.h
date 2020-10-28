@@ -107,6 +107,8 @@ linear_least_squares_fitting_2(InputIterator first,
     mass += area;
   }
 
+  CGAL_assertion_msg (mass != FT(0), "Can't compute PCA of null measure.");
+
   // Translate the 2nd order moment calculated about the origin to
   // the center of mass to get the covariance.
   covariance[0] += mass * (-1.0 * c.x() * c.x());
@@ -210,6 +212,8 @@ linear_least_squares_fitting_2(InputIterator first,
 
     mass += length;
   }
+
+  CGAL_assertion_msg (mass != FT(0), "Can't compute PCA of null measure.");
 
   // Translate the 2nd order moment calculated about the origin to
   // the center of mass to get the covariance.

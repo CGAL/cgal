@@ -67,7 +67,7 @@ linear_least_squares_fitting_2(InputIterator first,
 
   // assemble 2nd order moment about the origin.
   FT temp[4] = {1.0, 0.5, 0.5, 1.0};
-  Matrix moment = (1.0/3.0) * init_matrix<FT>(2,temp);
+  Matrix moment = FT(1.0/3.0) * init_matrix<FT>(2,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -98,6 +98,8 @@ linear_least_squares_fitting_2(InputIterator first,
 
     mass += length;
   }
+
+  CGAL_assertion_msg (mass != FT(0), "Can't compute PCA of null measure.");
 
   // Translate the 2nd order moment calculated about the origin to
   // the center of mass to get the covariance.
