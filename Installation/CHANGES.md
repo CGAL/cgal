@@ -43,9 +43,34 @@ Release date: December 2020
 -   Added an optional range parameter to `CGAL::Polygon_mesh_processing::stitch_borders()`,
     which can be used to specify which boundary cycles are eligible for stitching.
 
+### [Classification](https://doc.cgal.org/5.2/Manual/packages.html#PkgClassification)
+
+- **Breaking change**: new IO format for `ETHZ::Random_Forest` (a
+  conversion function from the outdated format to the new one is
+  provided)
+
+- Additional functions for the `Evaluation` class: `append()` to
+  enrich the evaluation with additional results; `confusion()` to
+  access the confusion matrix; output functions to save the evaluation
+  to and ASCII or HTML stream
+
+- New operator `feature_cast<>` for easy conversions
+
+- `Feature_set` and `Label_set` are now models of `Range`
+
+- `Label` now has attributes `index`, `standard_index` and `color`,
+  with automatic selection if the ASPRS standard names are used
+
+- New functions in `Point_set_feature_iterator` to allow users to
+  select which features should be generated
+
+- New function `Label_set::is_valid_ground_truth()` to help users
+  check if a ground truth matches a given label set
+
 ### Surface Mesh
 
 -   Added the functions `set_recycle_garbage()` and `does_recycle_garbage()` to the class `Surface_mesh`.
+
 
 ### [dD Geometry Kernel](https://doc.cgal.org/5.2/Manual/packages.html#PkgKernelD)
 

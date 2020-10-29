@@ -27,6 +27,7 @@
 
 #include <utility> // defines std::pair
 
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/Cartesian_converter_fwd.h>
@@ -603,6 +604,15 @@ make_transform_range_from_property_map (Range& range, Pmap pmap)
     (make_transform_iterator_from_property_map (range.begin(), pmap),
      make_transform_iterator_from_property_map (range.end(), pmap));
 }
+
+template <typename SizeType>
+CGAL::Iterator_range<boost::counting_iterator<SizeType> >
+make_counting_range (const SizeType begin, const SizeType end)
+{
+  return CGAL::make_range (boost::counting_iterator<SizeType>(begin),
+                           boost::counting_iterator<SizeType>(end));
+}
+
 /// \endcond
 
 } // namespace CGAL

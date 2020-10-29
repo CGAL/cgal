@@ -21,7 +21,6 @@
 #include <CGAL/Handle_hash_function.h>
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/properties.h>
-#include <CGAL/array.h>
 
 #include <unordered_set>
 
@@ -41,21 +40,21 @@ template <typename FaceListGraph>
 class Mesh_neighborhood
 {
 public:
-  typedef typename boost::graph_traits<FaceListGraph>::face_descriptor face_descriptor; ///<
+  using face_descriptor = typename boost::graph_traits<FaceListGraph>::face_descriptor; ///<
 
 private:
-  typedef typename boost::graph_traits<FaceListGraph>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<FaceListGraph>::vertex_descriptor vertex_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<FaceListGraph>::halfedge_descriptor;
+  using vertex_descriptor = typename boost::graph_traits<FaceListGraph>::vertex_descriptor;
   const FaceListGraph& m_mesh;
 
   class Is_face_selected
   {
   public:
-    typedef face_descriptor key_type;
-    typedef bool value_type;
-    typedef bool reference;
-    typedef boost::read_write_property_map_tag category;
-    typedef typename std::unordered_set<face_descriptor, CGAL::Handle_hash_function> Set;
+    using key_type = face_descriptor;
+    using value_type = bool;
+    using reference = bool;
+    using category = boost::read_write_property_map_tag;
+    using Set = typename std::unordered_set<face_descriptor, CGAL::Handle_hash_function>;
   private:
     Set* m_set;
 
@@ -85,14 +84,14 @@ public:
   class One_ring_neighbor_query
   {
   public:
-    typedef typename Mesh_neighborhood::face_descriptor value_type; ///<
+    using value_type = typename Mesh_neighborhood::face_descriptor; ///<
   private:
     const Mesh_neighborhood& neighborhood;
 
   public:
 
     /*!
-      \brief Constructs a 1-ring neighbor query object.
+      \brief constructs a 1-ring neighbor query object.
       \param neighborhood mesh neighborhood object.
     */
     One_ring_neighbor_query (const Mesh_neighborhood& neighborhood)
@@ -118,7 +117,7 @@ public:
   class N_ring_neighbor_query
   {
   public:
-    typedef typename Mesh_neighborhood::face_descriptor value_type; ///<
+    using value_type = typename Mesh_neighborhood::face_descriptor; ///<
   private:
     const Mesh_neighborhood& neighborhood;
     const std::size_t n;
@@ -126,7 +125,7 @@ public:
   public:
 
     /*!
-      \brief Constructs a N-ring neighbor query object.
+      \brief constructs a N-ring neighbor query object.
       \param neighborhood mesh neighborhood object.
       \param n size of neighborhood.
     */
@@ -152,7 +151,7 @@ public:
   /// @{
 
   /*!
-    \brief Constructs a neighborhood object based on the input mesh.
+    \brief constructs a neighborhood object based on the input mesh.
 
     \param mesh input mesh.
   */
@@ -172,7 +171,7 @@ public:
   /// @{
 
   /*!
-    \brief Returns a 1-ring neighbor query object.
+    \brief returns a 1-ring neighbor query object.
   */
   One_ring_neighbor_query one_ring_neighbor_query () const
   {
@@ -180,7 +179,7 @@ public:
   }
 
   /*!
-    \brief Returns an N-ring neighbor query object.
+    \brief returns an N-ring neighbor query object.
   */
   N_ring_neighbor_query n_ring_neighbor_query (const std::size_t n) const
   {
@@ -196,9 +195,7 @@ private:
   void direct_neighbors (const face_descriptor& query, OutputIterator output) const
   {
     for(halfedge_descriptor hd : halfedges_around_face(halfedge(query, m_mesh), m_mesh))
-      {
-        *(output ++ ) = face(opposite(hd, m_mesh), m_mesh);
-      }
+      *(output ++ ) = face(opposite(hd, m_mesh), m_mesh);
   }
 
   template <typename OutputIterator>
