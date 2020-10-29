@@ -148,10 +148,10 @@ public:
       // dump (m_data, "iter_100-" + std::to_string(iter));
       // CGAL_assertion(check_integrity(true));
       ++ iter;
-      if (iter > 10000) {
-        std::cout << "Handling iteration # " << std::to_string(iter) << std::endl;
-        CGAL_assertion_msg(false, "WHY SO MANY ITERATIONS?");
-      }
+      // if (iter > 10000) {
+      //   std::cout << "Handling iteration # " << std::to_string(iter) << std::endl;
+      //   CGAL_assertion_msg(false, "WHY SO MANY ITERATIONS?");
+      // }
     }
     std::cout << "Checking final mesh integrity!" << std::endl;
     CGAL_assertion(check_integrity(true));
@@ -560,7 +560,7 @@ private:
 
       ++ iter;
 
-      // if (iter == 5) {
+      // if (iter == 24) {
       //   exit(0);
       // }
 

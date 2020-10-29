@@ -1348,25 +1348,27 @@ public:
       CGAL_assertion_msg(false, "TODO: WHY DO WE HAVE MORE THAN 5 VERTICES HERE? PROBABLY IT IS OK!");
     }
 
-    auto pvertex_to_point =
-      [&](const PVertex& a) -> Point_2 {
-        return point_2(a);
-      };
+    // auto pvertex_to_point =
+    //   [&](const PVertex& a) -> Point_2 {
+    //     return point_2(a);
+    //   };
 
-    PFace fprev = pface_of_pvertex(prev);
-    Point_2 pprev = CGAL::centroid
-      (boost::make_transform_iterator (pvertices_of_pface(fprev).begin(), pvertex_to_point),
-       boost::make_transform_iterator (pvertices_of_pface(fprev).end(), pvertex_to_point));
-    PFace fnext = pface_of_pvertex(next);
-    Point_2 pnext = CGAL::centroid
-      (boost::make_transform_iterator (pvertices_of_pface(fnext).begin(), pvertex_to_point),
-       boost::make_transform_iterator (pvertices_of_pface(fnext).end(), pvertex_to_point));
+    // PFace fprev = pface_of_pvertex(prev);
+    // Point_2 pprev = CGAL::centroid
+    //   (boost::make_transform_iterator (pvertices_of_pface(fprev).begin(), pvertex_to_point),
+    //    boost::make_transform_iterator (pvertices_of_pface(fprev).end(), pvertex_to_point));
+    // PFace fnext = pface_of_pvertex(next);
+    // Point_2 pnext = CGAL::centroid
+    //   (boost::make_transform_iterator (pvertices_of_pface(fnext).begin(), pvertex_to_point),
+    //    boost::make_transform_iterator (pvertices_of_pface(fnext).end(), pvertex_to_point));
 
-    if (CGAL::orientation(pprev, point_2(support_plane_idx, ivertex), pnext) == CGAL::LEFT_TURN) {
-      std::cout << "Swapped!" << std::endl;
-      std::swap(prev, next);
-      std::swap(front, back);
-    }
+    bool was_swapped = false;
+    // if (CGAL::orientation(pprev, point_2(support_plane_idx, ivertex), pnext) == CGAL::LEFT_TURN) {
+    //   std::cout << "Swapped!" << std::endl;
+    //   was_swapped = true;
+    //   std::swap(prev, next);
+    //   std::swap(front, back);
+    // }
 
     // Freeze vertices.
     for (std::size_t i = 1; i < pvertices.size() - 1; ++i) {
@@ -1617,15 +1619,32 @@ public:
       const FT tmp_time = m_current_time - (m_current_time - m_previous_time) / FT(100);
       const Direction_2 tmp_dir(point_2(next, tmp_time) - point_2(pvertex.first, ivertex));
 
+      if (was_swapped) {
+        std::reverse(iedges.begin(), iedges.end());
+      }
+
+      // std::cout << "initial iedges: " << std::endl;
+      // for (const auto& iedge : iedges) {
+      //   std::cout << segment_3(iedge.first) << std::endl;
+      // }
+      // std::cout << "init dir: " << tmp_dir << std::endl;
+      // std::cout << std::endl;
+
       KSR::size_t first_idx = KSR::no_element();
       for (std::size_t i = 0; i < iedges.size(); ++ i)
       {
-        if (tmp_dir.counterclockwise_in_between(iedges[i].second,
-                                            iedges[(i+1)%iedges.size()].second))
-
-        {
-          first_idx = (i+1)%iedges.size();
-          break;
+        if (!was_swapped) {
+          if (tmp_dir.counterclockwise_in_between(
+            iedges[i].second, iedges[(i + 1) % iedges.size()].second)) {
+            first_idx = (i + 1) % iedges.size();
+            break;
+          }
+        } else {
+          if (tmp_dir.counterclockwise_in_between(
+            iedges[(i + 1) % iedges.size()].second, iedges[i].second)) {
+            first_idx = (i + 1) % iedges.size();
+            break;
+          }
         }
       }
 
@@ -1662,6 +1681,8 @@ public:
       }
 
       std::cerr << "IEdges crossed = " << crossed.size() << std::endl;
+      for (const auto& iedge : crossed)
+        std::cout << segment_3(iedge) << std::endl;
 
       std::vector<Point_2> future_points (crossed.size());
       std::vector<Vector_2> future_directions (crossed.size());
