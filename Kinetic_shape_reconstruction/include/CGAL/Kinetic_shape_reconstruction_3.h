@@ -528,6 +528,26 @@ private:
     return true;
   }
 
+  const bool are_parallel(
+    const Segment_2& seg1, const Segment_2& seg2) {
+
+    const FT tol = FT(1) / FT(100000);
+    FT m1 = FT(100000), m2 = FT(100000);
+
+    const FT d1 = (seg1.target().x() - seg1.source().x());
+    const FT d2 = (seg2.target().x() - seg2.source().x());
+
+    if (CGAL::abs(d1) > tol)
+      m1 = (seg1.target().y() - seg1.source().y()) / d1;
+    if (CGAL::abs(d2) > tol)
+      m2 = (seg2.target().y() - seg2.source().y()) / d2;
+
+    // return CGAL::parallel(seg1, seg2); // exact version
+
+    if (CGAL::abs(m1 - m2) < tol)
+      return true;
+    return false;
+  }
 
   void run(const unsigned int k)
   {
@@ -560,7 +580,7 @@ private:
 
       ++ iter;
 
-      // if (iter == 24) {
+      // if (iter == 6) {
       //   exit(0);
       // }
 
@@ -641,7 +661,7 @@ private:
           both_are_free = false;
         }
 
-        if (both_are_free && CGAL::parallel(seg, seg_edge)) {
+        if (both_are_free && are_parallel(seg, seg_edge)) {
 
           remove_events(pvertex);
           remove_events(pother);
@@ -680,7 +700,7 @@ private:
           {
             PVertex pv0, pv1;
             std::tie(pv0, pv1) = m_data.propagate_polygon(k, pvertex, pother, iedge);
-            // remove_events(iedge);
+            remove_events(iedge);
             compute_events_of_vertices(std::array<PVertex, 4>{pvertex, pother, pv0, pv1});
           }
 
@@ -718,7 +738,7 @@ private:
         else // polygon continues beyond the edge
         {
           const std::array<PVertex, 3> pvnew = m_data.propagate_polygon(k, pvertex, iedge);
-          // remove_events(iedge);
+          remove_events(iedge);
           compute_events_of_vertices(pvnew);
         }
       }

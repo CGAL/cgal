@@ -1150,25 +1150,57 @@ public:
 
     // CGAL_assertion_msg(false, "TODO: CHECK THIS FUNCTION!");
 
-    // std::cout.precision(20);
+    std::cout.precision(20);
     // std::cout << "pv0: " << point_3(pv0) << std::endl;
     // std::cout << "pv1: " << point_3(pv1) << std::endl;
 
-    Line_2 iedge_line = segment_2(pv0.first, iedge).supporting_line();
+    Point_2 future_point;
+    Vector_2 future_direction;
+    // const Line_2 iedge_line = segment_2(pv0.first, iedge).supporting_line();
+    CGAL_assertion(pv0.first == pv1.first);
 
-    for (const PVertex& pvertex : { pv0, pv1 })
     {
-      Point_2 init = iedge_line.projection (point_2 (pvertex, m_current_time));
-      Point_2 future = iedge_line.projection (point_2 (pvertex, m_current_time + 1));
+      // const Point_2 pinit = iedge_line.projection(point_2(pv0, m_current_time));
+      // const Point_2 future_point = iedge_line.projection(point_2(pv0, m_current_time + FT(1)));
 
-      direction(pvertex) = (future - init);
-      support_plane(pvertex).set_point (pvertex.second, init - direction(pvertex) * m_current_time);
+      const PVertex prev(pv0.first, support_plane(pv0).prev(pv0.second));
+      const PVertex next(pv0.first, support_plane(pv0).next(pv0.second));
 
-      connect (pvertex, iedge);
+      if (prev == pv1)
+        compute_future_point_and_direction(0, pv0, next, iedge, future_point, future_direction);
+      else {
+        CGAL_assertion(next == pv1);
+        compute_future_point_and_direction(0, pv0, prev, iedge, future_point, future_direction);
+      }
+
+      direction(pv0) = future_direction;
+      std::cout << "pv0 dir: " << direction(pv0) << std::endl;
+      support_plane(pv0).set_point(pv0.second, future_point);
+      connect(pv0, iedge);
     }
 
-    PEdge pedge (pv0.first, support_plane(pv0).edge (pv0.second, pv1.second));
-    connect (pedge, iedge);
+    {
+      // const Point_2 pinit = iedge_line.projection(point_2(pv1, m_current_time));
+      // const Point_2 future_point = iedge_line.projection(point_2(pv1, m_current_time + FT(1)));
+
+      const PVertex prev(pv1.first, support_plane(pv1).prev(pv1.second));
+      const PVertex next(pv1.first, support_plane(pv1).next(pv1.second));
+
+      if (prev == pv0)
+        compute_future_point_and_direction(0, pv1, next, iedge, future_point, future_direction);
+      else {
+        CGAL_assertion(next == pv0);
+        compute_future_point_and_direction(0, pv1, prev, iedge, future_point, future_direction);
+      }
+
+      direction(pv1) = future_direction;
+      std::cout << "pv1 dir: " << direction(pv1) << std::endl;
+      support_plane(pv1).set_point(pv1.second, future_point);
+      connect(pv1, iedge);
+    }
+
+    const PEdge pedge(pv0.first, support_plane(pv0).edge(pv0.second, pv1.second));
+    connect(pedge, iedge);
   }
 
   std::pair<PVertex, PVertex> propagate_polygon(
@@ -2070,7 +2102,7 @@ private:
     std::cout << "dir a: " << direction_a << std::endl;
 
     if (CGAL::abs(m2 - m3) < tol) {
-      CGAL_assertion_msg(false, "TODO: next PARALLEL LINES!");
+      // CGAL_assertion_msg(false, "TODO: next PARALLEL LINES!");
 
       std::cout << "next parallel lines" << std::endl;
       const FT next_dot = future_vec_next * iedge_vec;
