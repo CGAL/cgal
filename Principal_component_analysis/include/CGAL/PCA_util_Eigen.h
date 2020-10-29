@@ -149,18 +149,25 @@ assemble_covariance_matrix_3(InputIterator first,
 
     // defined for convenience.
     // FT example = CGAL::to_double(t[0].x());
-    FT x0 = t[0].x();
-    FT y0 = t[0].y();
-    FT z0 = t[0].z();
-    FT delta[9] = {t[1].x()-x0, t[3].x()-x0, t[5].x()-x0,
-                   t[1].y()-y0, t[3].y()-y0, t[5].y()-y0,
-                   t[1].z()-z0, t[3].z()-z0, t[5].z()-z0};
-    Matrix transformation (delta);
-    FT volume = t.volume();
+    FT x0 = t.xmin();
+    FT y0 = t.ymin();
+    FT z0 = t.zmin();
+
+    FT x1 = t.xmax();
+    FT y1 = t.ymax();
+    FT z1 = t.zmax();
+
+    Matrix transformation;
+    transformation << x1 - x0, 0      , 0      ,
+                      0      , y1 - y0, 0      ,
+                      0      , 0      , z1 - z0;
+
+    FT volume = (x1-x0) * (y1-y0) * (z1-z0);
 
     // skip zero measure primitives
     if(volume == (FT)0.0)
       continue;
+    CGAL_assertion(volume > 0.0);
 
     // Find the 2nd order moment for the cuboid wrt to the origin by an affine transformation.
 
@@ -168,9 +175,9 @@ assemble_covariance_matrix_3(InputIterator first,
     transformation = volume * transformation * moment * transformation.transpose();
 
     // Translate the 2nd order moment to the minimum corner (x0,y0,z0) of the cuboid.
-    FT xav0 = (delta[0] + delta[1] + delta[2])/4.0;
-    FT yav0 = (delta[3] + delta[4] + delta[5])/4.0;
-    FT zav0 = (delta[6] + delta[7] + delta[8])/4.0;
+    FT xav0 = (x1 - x0) / (4.0);
+    FT yav0 = (y1 - y0) / (4.0);
+    FT zav0 = (z1 - z0) / (4.0);
 
     // and add to covariance matrix
     covariance[0] += transformation(0,0) + volume * (2*x0*xav0 + x0*x0);
