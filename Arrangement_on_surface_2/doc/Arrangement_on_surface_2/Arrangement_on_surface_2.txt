@@ -464,9 +464,9 @@ very useful. In this example, however, the points are far apart, and
 constructions of new geometric objects do not occur. Thus, it is safe
 to use `int` after all. The program constructs an arrangement induced
 by three line segments that are pairwise disjoint in their interior,
-prints out the number of faces, and ends. It uses the \link
-insert(Arrangement_2<Traits, Dcel>&, InputIterator, InputIterator)
-`insert()`\endlink free-function, which inserts the segments into the
+prints out the number of faces, and ends. It uses the
+\link insert(Arrangement_2<Traits, Dcel>&, InputIterator, InputIterator) `insert()`\endlink
+free-function, which inserts the segments into the
 arrangement; see Section \ref arr_secgl_funcs. It uses the member
 function \link Arrangement_2::number_of_faces
 `number_of_faces()`\endlink to obtain the number of faces (two in this
@@ -1348,7 +1348,7 @@ void print_point_location
 \endcode
 
 <!----------------------------------------------------------------------------->
-\subsection arr_sssecpl_strat Choosing a Point-Location Strategy
+\subsection aos_sssec-pl_strategy Choosing a Point-Location Strategy
 <!----------------------------------------------------------------------------->
 
 Each of the various point-location class templates employs a different
@@ -1410,9 +1410,9 @@ vary according to the user choice.} for answering queries:
 
 <LI> `Arr_triangulation_point_location<Arrangement>` uses a
   constrained triangulation, provided by the \ref PkgTriangulation2
-  package, as a search strcture. Every time the arrangement is
+  package, as a search structure. Every time the arrangement is
   modified the constrained triangulation search-structure is
-  reconstructed from scrach, where the edges of the arrangement are
+  reconstructed from scratch, where the edges of the arrangement are
   set to be the constrained edges of the triangulation. This strategy
   is inefficient (especially when the number of modifications applied
   to the arrangement is high) and provided only for educational
@@ -1598,7 +1598,7 @@ arrangement. Thus, it takes \f$O((m+N)\log{(m+N)})\f$ time, where
 \f$N\f$ is the number of edges in the arrangement. Issuing separate
 queries exploiting a point-location strategy with logarithmic query
 time per query, such as the trapezoidal map RIC strategy (see Section
-\ref arr_sssecpl_strat), is asymptotically more efficient. However,
+\ref aos_sssec-pl_strategy), is asymptotically more efficient. However,
 experiments show that when the number \f$m\f$ of point-location
 queries is of the same order of magnitude as \f$N\f$, the batched
 point-location operation is more efficient in practice.  One of the
@@ -1651,7 +1651,7 @@ then "walking"' along the curve towards the right endpoint, keeping
 track of the vertices, edges, and faces crossed on the way. The \ref
 PkgArrangementOnSurface2 package offers a generic implementation of an
 algorithm that computes the zone. It is used to implement a set of
-operations that incerementally construct arrangements induced by sets
+operations that incrementally construct arrangements induced by sets
 of curves that lie in two-dimensional surfaces. For simplicity,
 however, we continue to consider arrangements embedded in the plane.
 
@@ -1699,7 +1699,7 @@ instantiated models the concept `ArrangementBasicTraits_2` concept
 point-location strategy is used), and does not have to support the
 computation of intersection points between curves. This implies that
 using a kernel that provides exact geometric predicates, but
-potentially inexact geometric constructions due to roundoff errors, is
+potentially inexact geometric constructions due to round-off errors, is
 still sufficient.
 
 The free-function template `CGAL::insert_non_intersecting_curve<>(arr,
@@ -1860,7 +1860,7 @@ line-segments \f$s_1, \ldots, s_5\f$. It is known that \f$s_1\f$ and
 `CGAL::insert_non_intersecting_curve<>()` is used to insert them into
 the empty arrangement. The rest of the segments are inserted using
 `CGAL::insert<>()`. Using a kernel that constructs geometric objects
-in an inexact manner (due to roundoff errors) may yield a program that
+in an inexact manner (due to round-off errors) may yield a program that
 computes incorrect results and crashes from time to time. This is
 avoided by using a kernel that provides exact geometric-object
 constructions as well as exact geometric-predicate evaluations. The
@@ -1868,7 +1868,7 @@ header file `arr_exact_construction_segments.h`, just like the header
 file `arr_inexact_construction_segments.h`, contains the definitions
 for arrangements of line segments.  Unlike the latter, it uses a
 kernel suitable for arrangements induced by curves that intersect each
-other, namely a kernel that is exact allways. Note that we alternately
+other, namely a kernel that is exact always. Note that we alternately
 use the naive point-location strategy, given explicitly to the
 insertion functions, and the default walk point-location strategy.
 
@@ -1946,8 +1946,8 @@ algorithm did not handle overlaps. Handling overlaps is difficult,
 especially for polyline, as two polylines may overlap in more then one
 connected component.) The generic implementation serves as the
 foundation of a family of concrete operations described in the rest of
-this section, such as aggregately cconstructing an arrangement induced
-by a set of curves that lie in a two-dimensional surface and omputing
+this section, such as aggregately constructing an arrangement induced
+by a set of curves that lie in a two-dimensional surface and ouputing
 the overlay of two arrangements.
 
 <!----------------------------------------------------------------------------->
@@ -2002,9 +2002,9 @@ insertion.
 The example below shows how to construct the same arrangement of five
 line segments built incrementally in `incremental_insertion.cpp`
 depicted in \cgalFigureRef{aos_fig-incremental_insertion} using the
-aggregate insertion function \link insert(Arrangement_2<Traits,
-Dcel>&, InputIterator, InputIterator) `insert()`\endlink.  Note that
-no point-location object needs to be defined and attached to the
+aggregate insertion function
+\link insert(Arrangement_2<Traits,Dcel>&, InputIterator, InputIterator) `insert()`\endlink.
+Note that no point-location object needs to be defined and attached to the
 arrangement.
 
 \cgalExample{Arrangement_on_surface_2/aggregated_insertion.cpp}
@@ -2035,11 +2035,11 @@ lines) in an aggregate fashion.  Notice that the line segments of
 \f${\mathcal S}_1\f$ are pairwise interior-disjoint, so
 `insert_non_intersecting_curves()` is safely used. \f${\mathcal
 S}_2\f$ also contains pairwise interior-disjoint segments, but as they
-intersect the existing arrangement, \link insert(Arrangement_2<Traits,
-Dcel>&, InputIterator, InputIterator) `insert()`\endlink must be used
-to insert them. Also note that the single segment \f$s\f$ inserted
-incrementally partially overlaps an existing arrangement curve; the
-overlapped portion is drawn as a dash-dotted line.
+intersect the existing arrangement,
+\link insert(Arrangement_2<Traits,Dcel>&, InputIterator, InputIterator) `insert()`\endlink
+must be used to insert them. Also note that the single segment \f$s\f$
+inserted incrementally partially overlaps an existing arrangement
+curve; the overlapped portion is drawn as a dash-dotted line.
 
 \cgalExample{Arrangement_on_surface_2/global_insertion.cpp}
 
@@ -2152,7 +2152,7 @@ vertex and the remaining one is vertical.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-bounded_vd,bounded_vertical_decomposition.png}
-An arrangement of four line segments and its vertical decompisition
+An arrangement of four line segments and its vertical decomposition
 into pseudo trapezoids, as constructed in
 `bounded_vertical_decomposition.cpp`.  The segments of \f${\mathcal S}_1\f$
 are drawn in solid lines and the segments of \f${\mathcal S}_2\f$ are
@@ -2516,7 +2516,7 @@ iterators defined by the `Arrangement_2` class template only go over
 true features of the arrangement; namely, vertices at infinity and
 fictitious halfedges and fictitious faces are skipped. On the other
 hand, the `Ccb_halfedge_circulator` of the outer boundary of an
-unbounded face or the `Halfegde_around_vertex_circulator` of a vertex
+unbounded face or the `Halfedge_around_vertex_circulator` of a vertex
 at infinity do traverse fictitious halfedges. While an arrangement
 induced by bounded curves has a single unbounded face, an arrangement
 induced by unbounded curves may have several unbounded faces. The call
@@ -2890,7 +2890,7 @@ of arrangements regardless of the embedding surface. However, several
 refined concepts apply only to arrangements on surfaces that are not
 the plane, that is, modeled with \f$\phi_S\f$ not being the identity
 mapping. They differ according to the type of the side boundaries of
-the parameter space being open, closed, constracted, or identified.
+the parameter space being open, closed, contracted, or identified.
 
 At this point only one type of arrangements on non planar surfaces is
 supported, namely, arrangements embedded in the sphere and induced by
@@ -3034,7 +3034,7 @@ see Section \ref aos_sssec-tr_landmarks_concept.
   \f$x\f$-monotone curve.
 
 <DT>\link ArrangementBasicTraits_2::Construct_max_vertex_2 <B>`Construct_max_vertex_2`</B>\endlink:
-<DD> Returns the lexicographically largeset (or right) endpoint of an
+<DD> Returns the lexicographically largest (or right) endpoint of an
   \f$x\f$-monotone curve.
 
 <DT>\link ArrangementBasicTraits_2::Is_vertical_2 <B>`Is_vertical_2`</B>\endlink:
@@ -3099,7 +3099,7 @@ to the type `Arr_oblivious_side_tag` for the class to be a model of
 the concept `ArrangementBasicTraits_2`.
 
 <!----------------------------------------------------------------------------->
-\subsubsection aos_sssec-geom_traits-concepts_intersecting Intersectiobs
+\subsubsection aos_sssec-geom_traits-concepts_intersecting Intersections
 <!----------------------------------------------------------------------------->
 
 Constructing an arrangement induced by \f$x\f$-monotone curves that
@@ -3278,11 +3278,11 @@ with unbounded curves or with arrangements embedded in curved
 surfaces. The category types `Left_side_category`,
 `Right_side_category`, `Bottom_side_category`, and
 `Top_side_category`, nested in every geometry traits class indicate
-whether the corresponding boundary side (i.e., left, right, bootom,
+whether the corresponding boundary side (i.e., left, right, bottom,
 and top) is open, closed, contracted, or identified, and whether this
 information is relevant at all. When all curves inserted into the
 arrangement are not expected to approach or reach that particular
-boundary side, the information is iirelevant. (Note that we explicitly
+boundary side, the information is irrelevant. (Note that we explicitly
 distinguish closed-only, contracted, and identified sides, although
 the latter two are closed in the parameter space as well.) Each one of
 the categories above must be convertible to one of the tag types
@@ -3418,7 +3418,7 @@ too additional abstract layers called
 \cgalFigureRef{aos_fig-identified_clusters}.
 
 In the following we list the specific requirements of all the
-aforemenstioned concepts.
+aforementioned concepts.
 
 The abstract concept `ArrangementVerticalSideTraits_2` requires the
 following predicate:
@@ -3718,7 +3718,7 @@ boundary.
 <!----------------------------------------------------------------------------->
 
 In this section we review the traits classes that are models of
-conecpts introduced in the previous sections. They handle line
+concepts introduced in the previous sections. They handle line
 segments, circular arcs, polylines, conic arcs, rational functions,
 arcs of B&eacute;zier, and arcs of algebraic curves.  The last
 subsection describes decorators for geometric traits classes
@@ -3785,7 +3785,7 @@ segment endpoints are represented as multi-precision rational numbers,
 which ensures the correctness of all computations regardless of the
 input.  Computations on multi-precision number types (such as `Gmpq`)
 take longer than computations on machine-precision floating-point. A
-kernel object of the aformentioned type uses numerical filtering to
+kernel object of the aforementioned type uses numerical filtering to
 expedite computation; see `Kernel_2` and `Kernel_3`. If the input set
 of line segments do not have degeneracies; namely, no two segments in
 the set share a common endpoint, and no three segments intersect at a
@@ -3913,7 +3913,7 @@ be uniquely defined by (and, thus, can be uniquely constructed from)
 two points within the handled family of curves; see Section \ref
 arr_sssectr_polylines. We also provide a similar traits class that
 handles continuous piecewise curves that are not necessarily linear
-and are not subject to the aformentioned constraint; see Section \ref
+and are not subject to the aforementioned constraint; see Section \ref
 arr_sssectr_polycurves.
 
 <!----------------------------------------------------------------------------->
@@ -4036,7 +4036,7 @@ attached to each individual segment; see Section
 data objects with the different segments that compose a polyline.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_figex_12,polylines.png}
+\cgalFigureBegin{aos_fig-polylines,polylines.png}
 
 An arrangement of three polylines, as constructed in
 `polylines.cpp`. Red disks mark vertices associated with polyline
@@ -4052,7 +4052,7 @@ impossible scenario in arrangements of line segments.
 
 The following example program constructs an arrangement of three
 polylines, \f$\pi_1\f$, \f$\pi_2\f$, and \f$\pi_3\f$, as depicted in
-\cgalFigureRef{aos_figex_12}. In this example, each polyline is
+\cgalFigureRef{aos_fig-polylines}. In this example, each polyline is
 constructed from points stored in a different container, i.e., array,
 list, and vector. Points defining the polylines are not necessarily
 associated with arrangement vertices. The arrangement vertices are
@@ -4095,7 +4095,7 @@ typedef CGAL::Arrangement_2<Traits>                        Arrangement;
 <!--
 The traits class `Arr_polycurve_traits_2<SubcurveTraits_2>` handles
 piecewise curves that are not necessarily linear, such as conic arcs,
-circular arcs, Bezier curves, or line segments. We call such a
+circular arcs, B&eacute;zier curves, or line segments. We call such a
 compound curve a <em>polycurve</em>. Similar to a polyline, a
 polycurve is a chain of subcurves, where each two neighboring
 subcurves in the chain share a common endpoint; that is, the polycurve
@@ -4232,7 +4232,7 @@ typically algebraic numbers of degree 2, is \a not the same as the
 using the number type `CoordNT`, nested in the traits class-template.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_figex_13,circles.png}
+\cgalFigureBegin{aos_fig-circles,circles.png}
 
 An arrangement of three circles constructed in `circles.cpp`. Each
 circle is split into two \f$x\f$-monotone circular arcs, whose
@@ -4244,7 +4244,7 @@ intersection point of all three circles.
 <!----------------------------------------------------------------------------->
 
 In the following example an arrangement of three full circles is
-constructed, as shown in \cgalFigureRef{aos_figex_13}. Each Index is
+constructed, as shown in \cgalFigureRef{aos_fig-circles}. Each Index is
 split into two \f$x\f$-monotone circular arcs, the endpoints of which
 are drawn as red discs; rings mark vertices that correspond to
 intersection points. Once the arrangement is constructed, we locate
@@ -4307,7 +4307,7 @@ case, all three points are required to have rational coordinates;
 namely, they are all given as `Kernel::Point_2` objects.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_figex_circular_arcs,circular_arcs.png}
+\cgalFigureBegin{aos_fig-circular_arcs,circular_arcs.png}
 
 An arrangement of two full circles, two line segments, and three
 circular arcs as constructed in `circular_arcs.cpp`. Endpoints are
@@ -4319,7 +4319,7 @@ drawn as red disks and intersection points are drawn as rings.
 The following example demonstrates the usage of the various
 construction methods for circular arcs and line segments. The
 resulting arrangement is depicted in
-\cgalFigureRef{aos_figex_circular_arcs}. Note the usage of the
+\cgalFigureRef{aos_fig-circular_arcs}. Note the usage of the
 constructor of `CoordNT(alpha, beta, gamma)`, which creates a
 degree-\f$2\f$ algebraic number whose value is \f$\alpha +
 \beta\sqrt{\gamma}\f$.
@@ -4456,14 +4456,14 @@ derived `X_monotone_curve_2` classes also support basic access
 functions such as `source()`, `target()`, and `orientation()`.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_figex_14,conics.png}
+\cgalFigureBegin{aos_fig-conics,conics.png}
 An arrangement of mixed conic arcs, as constructed in conics.cpp
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
 The following example demonstrates the usage of the various
 constructors for conic arcs. The resulting arrangement is depicted in
-\cgalFigureRef{aos_figex_14}. Especially noteworthy are the
+\cgalFigureRef{aos_fig-conics}. Especially noteworthy are the
 constructor of a circular arc that accepts three points, the
 constructor of a conic arc that accepts five points, and the
 constructor that allows specifying approximate endpoints, where the
@@ -4510,7 +4510,7 @@ typedef CGAL::Arrangement_2<Traits>                   Arrangement;
 \endcode
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_fig_conic_multiplicities,conic_multiplicities.png}
+\cgalFigureBegin{aos_fig-conic_multiplicities,conic_multiplicities.png}
 An arrangement of a circular arc and an hyperbolic arc, as constructed
 in conic_multiplicities.cpp
 \cgalFigureEnd
@@ -4519,7 +4519,7 @@ in conic_multiplicities.cpp
 The last example in this section demonstrates how the conic-traits
 class can handle intersection points with multiplicity. The resulting
 arrangement is depicted in
-\cgalFigureRef{aos_fig_conic_multiplicities}. The supporting curves of
+\cgalFigureRef{aos_fig-conic_multiplicities}. The supporting curves of
 the two arcs, a circle centered at \f$(0,\frac{1}{2})\f$ with radius
 \f$\frac{1}{2}\f$, and the hyperbola \f$y =
 \frac{x^2}{1-x}\f$,\cgalFootnote{This curve can also be written as
@@ -4564,7 +4564,7 @@ so it is impossible to use the landmark point-location strategy with
 this traits class.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_fig_rat_func_singular,rational_function_singular.png}
+\cgalFigureBegin{aos_fig-rat_func_singular,rational_function_singular.png}
 An arrangement of an arc of a rational functions that has
 singularities at \f$x = 1\f$ and at \f$x = 2\f$.
 \cgalFigureEnd
@@ -4576,7 +4576,7 @@ singularities. An arc that has singularities must be split into
 continuous portions before being inserted into the arrangement.
 Consider, for example, the rational arc given by the equation \f$y =
 \frac{1}{(x-1)(2-x)}\f$ defined over the interval \f$[0,3]\f$, as
-depicted in \cgalFigureRef{aos_fig_rat_func_singular}. This
+depicted in \cgalFigureRef{aos_fig-rat_func_singular}. This
 arc has two singularities, at \f$x = 1\f$ and at \f$x = 2\f$. It is
 split into three continuous portions defined over the intervals
 \f$[0,1)\f$, \f$(1,2)\f$, and \f$(2,3]\f$ by the traits operation
@@ -4721,7 +4721,7 @@ t^k (1-t)^{n-k}}\ .
 where \f$t \in [0, 1]\f$. The degree of the curve is therefore \f$n\f$;
 namely, \f$X(t)\f$ and \f$Y(t)\f$ are polynomials of degree
 \f$n\f$. B&eacute;zier curves have numerous applications in computer
-graphics and solid modelling. They are used, for example, in free-form
+graphics and solid modeling. They are used, for example, in free-form
 sketches and for defining the true-type fonts.
 
 Using the `Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>`
@@ -4731,8 +4731,8 @@ curves) of arbitrary degree. The curves are given by rational control
 points, that is, a sequence of objects of the `RatKernel::Point_2`
 type.  (In general, a sequence of \f$n+1\f$ control points define a
 B&eacute;zier curve of degree \f$n\f$.)  The three types that
-substitue the template parameters `RatKernel`, `AlgKernel`, and
-`NtTraits`, respectively, when the traits is instantiated must fulfil
+substitute the template parameters `RatKernel`, `AlgKernel`, and
+`NtTraits`, respectively, when the traits is instantiated must fulfill
 the same requirements of the corresponding types used to instantiate
 the `Arr_conic_traits_2` class template. Here, the use of the
 `CORE_algebraic_number_traits` class is also recommended with
@@ -4782,7 +4782,7 @@ concept `ArrangementDirectionalXMonotoneTraits_2`, which enables
 Boolean set operations; see Package \ref PkgBooleanSetOperations2Ref.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_figex_bez,bezier_curves.png}
+\cgalFigureBegin{aos_fig-bezier_curves,bezier_curves.png}
 An arrangement of ten B&eacute;zier curves of degree \f$5\f$, as
 constructed in `Bezier_curves.cpp`.
 \cgalFigureEnd
@@ -4794,7 +4794,7 @@ number of control points, followed by the sequence of control points
 given as integer or rational coordinates. By default, the program uses
 the `Bezier.dat` file, which contains ten curves of degree \f$5\f$
 each; their resulting arrangement is depicted in
-\cgalFigureRef{aos_figex_bez}.
+\cgalFigureRef{aos_fig-bezier_curves}.
 
 \cgalExample{Arrangement_on_surface_2/Bezier_curves.cpp}
 
@@ -4861,14 +4861,14 @@ exemplified by the programs listed below. Consult the reference guide
 for the complete set of options.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_figex_alg_curves,algebraic_curves.png}
+\cgalFigureBegin{aos_fig-algebraic_curves,algebraic_curves.png}
 An arrangement of algebraic curves of degrees \f$1\f$, \f$2\f$,
 \f$3\f$, and \f$6\f$, as constructed in `algebraic_curves.cpp`.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
 The following examples computes the arrangement depicted in in
-\cgalFigureRef{aos_figex_alg_curves}. The arrangement is induced by
+\cgalFigureRef{aos_fig-algebraic_curves}. The arrangement is induced by
 four algebraic curves, \f$c_1\f$, \f$c_2\f$, \f$c_3\f$, and \f$c_4\f$,
 of degrees $1$, $2$, $3$, and $6$, respectively. For each curve the
 defining polynomial is constructed first. Then, the algebraic curve is
@@ -4939,7 +4939,7 @@ representing such segments (and sub-segments of them). Formally, a
 terminal segment is either a vertical line-segment or a segment of an
 \f$x\f$-monotone curve whose \f$x\f$-range does not contain critical
 points in its interior. See
-\cgalFigureRef{aos_figcylindrical_decomposition} for an example of a
+\cgalFigureRef{aos_fig-cylindrical_decomposition} for an example of a
 quartic curve and its decomposition into terminal segments.  Notice
 that six vertices split the curve into \f$x\f$-monotone segments, and
 four additional vertices further split the corresponding
@@ -4947,7 +4947,7 @@ four additional vertices further split the corresponding
 \cgalAdvancedEnd
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_figcylindrical_decomposition,algebraic_curves_decomposition.png}
+\cgalFigureBegin{aos_fig-cylindrical_decomposition,algebraic_curves_decomposition.png}
 
 The critical \f$x\f$-coordinates of an algebraic curve (dashed
 lines), and its decomposition into terminal segments (in different
@@ -4981,7 +4981,7 @@ point (counted from below) in the fiber of \f$c\f$ at the
 \f$c\f$ with \f$x\f$-coordinate \f$x'\f$.  Formally, for a curve
 \f$c\f$ and \f$x' \in \mathbb{R}\f$, the fiber of \f$c\f$ at \f$x'\f$
 is \f$c \cap \{(x',b)\,|\,b \in \mathbb{R}\}\f$.} In the example
-depicted in \cgalFigureRef{aos_figcylindrical_decomposition}, if
+depicted in \cgalFigureRef{aos_fig-cylindrical_decomposition}, if
 \f$x_1\f$ denotes the \f$x\f$-coordinate of \f$p\f$, and \f$c\f$
 represents the algebraic curve, then \f$p\f$ could be represented by
 \f$(x_1,c,3)\f$. If \f$x_2\f$ is the \f$x\f$-coordinate of \f$q\f$,
@@ -4993,7 +4993,7 @@ option, since computing an explicit representation of the
 $y$-coordinate can be rather expensive.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_figex_alg_segments,algebraic_segments.png}
+\cgalFigureBegin{aos_fig-algebraic_segments,algebraic_segments.png}
 An arrangement of algebraic segments (solid lines), as constructed in
 `algebraic_segments.cpp`. The supporting curves are drawn as dashed
 lines.
@@ -5002,7 +5002,7 @@ lines.
 
 The following code exemplifies the method to construct points and the
 various methods to construct algebraic segments. The computed
-arrangement is depicted in \cgalFigureRef{aos_figex_alg_segments}.
+arrangement is depicted in \cgalFigureRef{aos_fig-algebraic_segments}.
 
 \cgalExample{Arrangement_on_surface_2/algebraic_segments.cpp}
 
@@ -5186,7 +5186,7 @@ respectively, the overlapping subcurve is associated with the
 consolidated set \f$S_1 \cup S_2\f$.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_figex_consolidated_curve_data,consolidated_curve_data.png}
+\cgalFigureBegin{aos_fig-consolidated_curve_data,consolidated_curve_data.png}
 An arrangement of six red and blue segments, as constructed in `consolidated_curve_data.cpp`. Disks correspond to red-blue intersection points, while circles mark the endpoints of red-blue overlaps.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
@@ -5196,7 +5196,7 @@ class, attaching an additional <em>color</em> field to the segments
 using the consolidated curve-data traits class. A color may be either
 <em>blue</em> or <em>red</em>. Having constructed the arrangement of
 colored segments, as depicted in
-\cgalFigureRef{aos_figex_consolidated_curve_data}, we detect the
+\cgalFigureRef{aos_fig-consolidated_curve_data}, we detect the
 vertices that have incident edges mapped to both blue and red
 segments. These vertices, drawn as black discs in the figure,
 correspond to red-blue intersection points. We also locate the edge
@@ -5206,7 +5206,7 @@ endpoints are also drawn as black discs)
 \cgalExample{Arrangement_on_surface_2/consolidated_curve_data.cpp}
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_figex_generic_curve_data,generic_curve_data.png}
+\cgalFigureBegin{aos_fig-generic_curve_data,generic_curve_data.png}
 An arrangement of four polylines, named A-D, as constructed in
 `generic_curve_data.cpp`.
 \cgalFigureEnd
@@ -5217,9 +5217,9 @@ class, attaching an additional <em>name</em> field to each polyline
 using the generic curve-data traits class. It constructs an
 arrangement of four polylines, named \f$A\f$, \f$B\f$, \f$c\f$, and
 \f$D\f$, as illustrated in
-\cgalFigureRef{aos_figex_generic_curve_data}.  In the case of
+\cgalFigureRef{aos_fig-generic_curve_data}.  In the case of
 overlaps, it simply concatenate the names of the overlapping
-polylines. At the end of the program the curve ssociated with the
+polylines. At the end of the program the curve associated with the
 edges that correspond to overlapping polylines are replaced with
 geometrically equivalent curves, but with different data fields.
 
@@ -5402,7 +5402,7 @@ inheriting from the base observer class and overriding the relevant
 notification functions, as required by their applications.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_figex_observer,observer.png}
+\cgalFigureBegin{aos_fig-observer,observer.png}
 An arrangement of six line segments, as constructed in `observer.cpp`.
 The halfedge \f$e_v\f$ (dashed) is eventually removed, so that the
 final arrangement consists of four faces (one unbounded and three
@@ -5415,7 +5415,7 @@ class. The observer in the example responds to changes in the
 arrangement faces. It prints a message whenever a face is split into
 two due to the insertion of an edge and whenever two faces merge into
 one due to the removal of an edge. The layout of the arrangement is
-depicted in \cgalFigureRef{aos_figex_observer}; it comprises six line
+depicted in \cgalFigureRef{aos_fig-observer}; it comprises six line
 segments and eight edges (the horizontal segment \f$s_h\f$ and the
 vertical segment \f$s_v\f$ induce two edges each).  The halfedge
 \f$e_v\f$ is induced by the vertical segment \f$s_v\f$. First, it is
@@ -5486,7 +5486,7 @@ arrangement observer tailored for this task, which receives updates
 whenever a face is modified and sets its data field accordingly.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_figex_dcel_extension,dcel_extension.png}
+\cgalFigureBegin{aos_fig-dcel_extension,dcel_extension.png}
 
 An arrangement of six line segments, as constructed in
 `face_extension.cpp` and `dcel_extension.cpp` (in `dcel_extension.cpp`
@@ -5498,7 +5498,7 @@ the halfedges in `face_extension.cpp` are shown in brackets.
 
 The next example constructs an arrangement that contains seven bounded
 faces induced by six line segments, \f$s_1, \ldots, s_6\f$, as shown
-in \cgalFigureRef{aos_figex_dcel_extension}. An observer gets notified
+in \cgalFigureRef{aos_fig-dcel_extension}. An observer gets notified
 each time a new face \f$f\f$ is created, and it associates \f$f\f$
 with a running index, where the index of the unbounded face is 0. As a
 result, the faces are numbered according to their creation order,
@@ -5531,7 +5531,7 @@ modifier `set_data()`.
 
 The next example shows how to use a \sc{Dcel} with extended vertex,
 halfedge, and face records. In this example each vertex is associated
-with a color, which iseither blue, red, or white, depending on whether
+with a color, which is either blue, red, or white, depending on whether
 the vertex is isolated, represents a segment endpoint, or represents
 an intersection point. (Notice that the coloring rules suggested here
 apply only to non-degenerate arrangements, where the sets of isolated
@@ -5543,7 +5543,7 @@ face is also extended to store the size of its outer boundary, that
 is, the number of halfedges along its outer boundary.
 
 The constructed arrangement, depicted in
-\cgalFigureRef{aos_figex_dcel_extension}, is similar to the
+\cgalFigureRef{aos_fig-dcel_extension}, is similar to the
 arrangement constructed in the previous example.  In this case,
 however, we do not use an observer; instead, all auxiliary data-fields
 are set after the construction phase.  Also note that the data fields
@@ -5779,7 +5779,7 @@ classes. Each face of the the \sc{Dcel} is extended with a Boolean
 flag. A polygon is represented as a <em>marked</em> arrangement face
 (whose flag is set). The example uses an instance of the
 `Arr_face_overlay_traits<ArrR,ArrB,ArrO,OverlayFaceData>` class
-remplate as the face-overlay traits class where the `OverlayFaceData`
+template as the face-overlay traits class where the `OverlayFaceData`
 template parameter is substituted with a functor that simply performs
 a logical <em>and</em> operation on Boolean flags. As a result, a face
 in the overlay arrangement is marked only when it corresponds to an
@@ -6140,7 +6140,7 @@ of the changes the arrangements undergoes; see Section \ref
 arr_ssecnotif for the details).
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_figex_24,curve_history.png}
+\cgalFigureBegin{aos_fig-curve_history,curve_history.png}
 An arrangement with history as constructed in
 `curve_history.cpp`. Note that \f$s_1\f$ and \f$s_3\f$ overlap over
 two edges. The point-location query points \f$q_1\f$, \f$q_2\f$, and
@@ -6149,7 +6149,7 @@ two edges. The point-location query points \f$q_1\f$, \f$q_2\f$, and
 <!----------------------------------------------------------------------------->
 
 In the following example we construct a simple arrangement of six line
-segments, as depicted in \cgalFigureRef{aos_figex_24}, while
+segments, as depicted in \cgalFigureRef{aos_fig-curve_history}, while
 maintaining the curve history. Note that the input segments \f$s_1\f$
 and \f$s_3\f$ overlap over two edges. The example demonstrates the
 usage of the special traversal functions. It also shows how to issue
@@ -6161,7 +6161,7 @@ auxiliary function `locate_point()` defined in the header file
 \cgalExample{Arrangement_on_surface_2/curve_history.cpp}
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_figex_25,edge_manipulation_curve_history.png}
+\cgalFigureBegin{aos_fig-edge_manipulation_curve_hostory,edge_manipulation_curve_history.png}
 An arrangement with history of nine circles as constructed in
 `edge_manipulation_curve_history.cpp`. Note the vertical tangency
 points of \f$c_0\f$, marked as dark dots, which subdivide this circle
@@ -6175,11 +6175,11 @@ The following example demonstrates the usage of the free
 `remove_curve()` function. We construct an arrangement of nine
 circles, while keeping a handle to each inserted circle. We then
 remove the large circle \f$c_0\f$, which induces \f$18\f$ edges, as
-depicted in \cgalFigureRef{aos_figex_25}. The example also shows how
-to use the \link Arrangement_with_history_2::split_edge()
-`split_edge()`\endlink and \link
-Arrangement_with_history_2::merge_edge() `merge_edge()`\endlink member
-functions when operating on an arrangement-with-history object.
+depicted in \cgalFigureRef{aos_fig-edge_manipulation_curve_hostory}.
+The example also shows how to use the \link
+Arrangement_with_history_2::split_edge() `split_edge()`\endlink and
+\link Arrangement_with_history_2::merge_edge() `merge_edge()`\endlink
+member functions when operating on an arrangement-with-history object.
 
 \cgalExample{Arrangement_on_surface_2/edge_manipulation_curve_history.cpp}
 
@@ -6273,7 +6273,7 @@ and faces, provided that the `VertexData`, `HalfedgeData` and
 
 The following example constructs the same arrangement as the example
 `dcel_extension` does (see Section \ref arr_sssecex_dcel_all),
-depicted in \cgalFigureRef{aos_figex_dcel_extension}, and writes it to
+depicted in \cgalFigureRef{aos_fig-dcel_extension}, and writes it to
 an output file. It also demonstrates how to re-read the arrangement
 from a file:
 
@@ -6307,7 +6307,7 @@ class---as well as the `%Point_2` type and the `X_monotone_curve_2`
 types---support the `<<` and`>>` operators.
 
 The following example constructs the same arrangement as example
-`curve_history` does, depicted in \cgalFigureRef{aos_figex_24}, and
+`curve_history` does, depicted in \cgalFigureRef{aos_fig-curve_history}, and
 writes it to an output file. It also demonstrates how to re-read the
 arrangement-with-history from a file:
 
@@ -6458,14 +6458,14 @@ template <typename Arrangement> struct Edge_length {
 \endcode
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_figex_bgl_primal_adapter,bgl_primal_adapter.png}
+\cgalFigureBegin{aos_fig-bgl_primal_adapter,bgl_primal_adapter.png}
 An arrangement of seven line segments, as constructed by
 `bgl_primal_adapter.cpp` and `bgl_dual_adapter.cpp`.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
 In the following example we construct an arrangement of seven line
-segments, as shown in \cgalFigureRef{aos_figex_bgl_primal_adapter}.
+segments, as shown in \cgalFigureRef{aos_fig-bgl_primal_adapter}.
 Then, it uses the \sc{bgl} generic implementation of Dijkstra's
 shortest-paths algorithm to compute the sum of squared distances to
 all vertices from the lexicographically smallest vertex \f$v_0\f$ in
@@ -6521,7 +6521,7 @@ the face graph, starting from the unbounded face \f$f_0\f$.
 
 In the following example we construct the same arrangement as in
 example `bgl_primal_adapter.cpp` (see
-\cgalFigureRef{aos_figex_bgl_primal_adapter}), and perform
+\cgalFigureRef{aos_fig-bgl_primal_adapter}), and perform
 breadth-first search on the graph faces, starting from the unbounded
 face. We extend the \sc{Dcel} faces with an unsigned integer, marking
 the discovery time of the face using `boost` visitors and a
