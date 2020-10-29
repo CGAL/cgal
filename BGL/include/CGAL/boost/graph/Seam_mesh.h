@@ -24,6 +24,7 @@
 #include <boost/unordered_set.hpp>
 
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <iterator>
 #include <utility>
@@ -32,6 +33,7 @@
 namespace CGAL {
 
 #ifndef DOXYGEN_RUNNING
+
 template <typename HD>
 class Seam_mesh_halfedge_descriptor
 {
@@ -86,7 +88,91 @@ public:
     return 2 * hash_value(hd.tmhd) + static_cast<std::size_t>(hd.seam);
   }
 };
+
+template <typename HD>
+class Seam_mesh_vertex_descriptor
+{
+public:
+  Seam_mesh_halfedge_descriptor<HD> hd;
+
+  Seam_mesh_vertex_descriptor() { }
+
+  Seam_mesh_vertex_descriptor(const Seam_mesh_halfedge_descriptor<HD>& h)
+    : hd(h)
+  { }
+
+  bool operator==(const Seam_mesh_vertex_descriptor& other) const
+  {
+    return (hd == other.hd);
+  }
+
+  bool operator!=(const Seam_mesh_vertex_descriptor& other) const
+  {
+    return (hd != other.hd);
+  }
+
+  bool operator<(const Seam_mesh_vertex_descriptor& other) const
+  {
+    return hd < other.hd;
+  }
+
+  operator HD() const
+  {
+    return hd;
+  }
+
+#ifdef CGAL_SEAM_MESH_INSERT_OPERATOR
+  friend std::ostream& operator<<(std::ostream& os, const Seam_mesh_vertex_descriptor vd)
+  {
+    os << "seam mesh vertex: " << vd.hd;
+    return os;
+  }
 #endif
+
+  friend std::size_t hash_value(const Seam_mesh_vertex_descriptor& vd)
+  {
+    return hash_value(vd.hd.tmhd);
+  }
+};
+
+template <typename HD, typename SM>
+class Seam_mesh_edge_descriptor
+{
+public:
+  Seam_mesh_halfedge_descriptor<HD> hd;
+  const SM* mesh_;
+
+  Seam_mesh_edge_descriptor() : mesh_(nullptr) { }
+
+  Seam_mesh_edge_descriptor(const Seam_mesh_halfedge_descriptor<HD>& hd, const SM* m)
+    : hd(hd), mesh_(m)
+  {}
+
+  friend bool operator==(Seam_mesh_edge_descriptor e1, Seam_mesh_edge_descriptor e2)
+  {
+    return (e1.hd == e2.hd) || (e1.hd == e2.mesh_->opposite(e2.hd));
+  }
+
+  friend bool operator!=(Seam_mesh_edge_descriptor e1, Seam_mesh_edge_descriptor e2)
+  {
+    return ! (e1 == e2);
+  }
+
+#ifdef CGAL_SEAM_MESH_INSERT_OPERATOR
+  friend std::ostream& operator<<(std::ostream& os, const Seam_mesh_edge_descriptor& ed)
+  {
+    os << ed.hd;
+    return os;
+  }
+#endif
+
+  friend std::size_t hash_value(const Seam_mesh_edge_descriptor& ed)
+  {
+    return hash_value((std::min)(ed.hd, ed.mesh_->opposite(ed.hd)));
+  }
+};
+
+#endif // DOXYGEN_RUNNING
 
 /// \ingroup PkgBGLAdaptors
 ///
@@ -112,6 +198,10 @@ class Seam_mesh
   typedef Seam_mesh<TM, SEM, SVM>                                 Self;
 
 public:
+  /// The underlying mesh type
+  typedef TM                                                      Triangle_mesh;
+
+  // backward compatibility
   typedef TM                                                      TriangleMesh;
 
 public:
@@ -187,23 +277,15 @@ public:
   class halfedge_descriptor
   {
 public:
-    TM_halfedge_descriptor tmhd;
-    bool seam;
-
     /// %Default constructor
-    halfedge_descriptor() : tmhd(), seam(false) { }
+    halfedge_descriptor();
 
-    halfedge_descriptor(TM_halfedge_descriptor tmhd, bool seam = false)
-      : tmhd(tmhd), seam(seam)
-    { }
+    /// Constructor from a halfedge of the underlying mesh
+    halfedge_descriptor(TM_halfedge_descriptor tmhd, bool seam = false);
 
 #ifdef CGAL_SEAM_MESH_INSERT_OPERATOR
     /// Print the halfedge and if it is on a seam.
-    friend std::ostream& operator<<(std::ostream& os, const halfedge_descriptor& hd)
-    {
-      os << hd.tmhd << ((hd.seam)?" on seam":"");
-      return os;
-    }
+    friend std::ostream& operator<<(std::ostream& os, const halfedge_descriptor& hd);
 #endif
   };
 #else
@@ -265,13 +347,13 @@ public:
       return halfedge_descriptor(*hd, seam);
     }
   };
-#endif
+#endif // DOXYGEN_RUNNING
 
+#ifdef DOXYGEN_RUNNING
   /// This class represents a vertex of the seam mesh.
   ///
   /// Implementation note: to properly duplicate vertices that are on seams,
-  /// a vertex_descriptor is in fact represented as a halfedge of the underlying
-  /// mesh.
+  /// a vertex_descriptor is in fact represented as a halfedge of the seam mesh.
   ///
   /// \cgalModels `Descriptor`
   /// \cgalModels `LessThanComparable`
@@ -280,48 +362,20 @@ public:
   class vertex_descriptor
   {
   public:
-    halfedge_descriptor hd;
-
     /// %Default constructor
-    vertex_descriptor() { }
+    vertex_descriptor();
 
-    vertex_descriptor(const halfedge_descriptor& h)
-      : hd(h)
-    { }
-
-    bool operator==(const vertex_descriptor& other) const
-    {
-      return (hd == other.hd);
-    }
-
-    bool operator!=(const vertex_descriptor& other) const
-    {
-      return (hd != other.hd);
-    }
-
-    bool operator<(const vertex_descriptor& other) const
-    {
-      return hd < other.hd;
-    }
-
-    operator TM_halfedge_descriptor() const
-    {
-      return hd;
-    }
+    /// Constructor from a seam mesh halfedge
+    vertex_descriptor(const halfedge_descriptor& h);
 
 #ifdef CGAL_SEAM_MESH_INSERT_OPERATOR
-    friend std::ostream& operator<<(std::ostream& os, const vertex_descriptor vd)
-    {
-      os << "seam mesh vertex: " << vd.hd;
-      return os;
-    }
+    /// Print the seam mesh vertex.
+    friend std::ostream& operator<<(std::ostream& os, const vertex_descriptor vd);
 #endif
-
-    friend std::size_t hash_value(const vertex_descriptor& vd)
-    {
-      return hash_value(vd.hd.tmhd);
-    }
   };
+#else
+  typedef Seam_mesh_vertex_descriptor<TM_halfedge_descriptor>         vertex_descriptor;
+#endif
 
    // iterator
 #ifndef DOXYGEN_RUNNING
@@ -403,48 +457,24 @@ public:
   };
 #endif
 
+#ifdef DOXYGEN_RUNNING
   /// This class represents an edge of the seam mesh.
   ///
   /// \cgalModels `Descriptor`
+  /// \cgalModels `Hashable`
   ///
   class edge_descriptor
   {
-  public:
-    halfedge_descriptor hd;
-    const Self* mesh_;
+    /// %Default constructor
+    edge_descriptor();
 
 #ifdef CGAL_SEAM_MESH_INSERT_OPERATOR
-    friend
-    std::ostream& operator<<(std::ostream& os, const edge_descriptor& ed)
-    {
-      os << ed.hd;
-      return os;
-    }
+    friend std::ostream& operator<<(std::ostream& os, const edge_descriptor& ed);
 #endif
-
-    edge_descriptor()
-      : mesh_(nullptr)
-    {}
-
-    edge_descriptor(const halfedge_descriptor& hd, const Self* m)
-      : hd(hd), mesh_(m)
-    {}
-
-    friend bool operator==(edge_descriptor e1, edge_descriptor e2)
-    {
-      return (e1.hd == e2.hd) || (e1.hd == e2.mesh_->opposite(e2.hd));
-    }
-
-    friend bool operator!=(edge_descriptor e1, edge_descriptor e2)
-    {
-      return ! (e1 == e2);
-    }
-
-    friend std::size_t hash_value(const edge_descriptor& ed)
-    {
-      return hash_value((std::min)(ed.hd, ed.mesh_->opposite(ed.hd)));
-    }
   };
+#else
+  typedef Seam_mesh_edge_descriptor<TM_halfedge_descriptor, Self> edge_descriptor;
+#endif
 
 #ifndef DOXYGEN_RUNNING
    // iterator
@@ -1119,6 +1149,46 @@ public:
 };
 
 } // namespace CGAL
+
+#ifndef CGAL_CFG_NO_STD_HASH
+
+namespace std {
+
+template <typename HD>
+struct hash<CGAL::Seam_mesh_vertex_descriptor<HD> >
+  : public CGAL::cpp98::unary_function<CGAL::Seam_mesh_vertex_descriptor<HD>, std::size_t>
+{
+  std::size_t operator()(const CGAL::Seam_mesh_vertex_descriptor<HD>& v) const
+  {
+    return hash_value(v);
+  }
+};
+
+template <typename HD>
+struct hash<CGAL::Seam_mesh_halfedge_descriptor<HD> >
+  : public CGAL::cpp98::unary_function<CGAL::Seam_mesh_halfedge_descriptor<HD>, std::size_t>
+{
+  std::size_t operator()(const CGAL::Seam_mesh_halfedge_descriptor<HD>& h) const
+  {
+    return hash_value(h);
+  }
+};
+
+template <typename HD, typename SM>
+struct hash<CGAL::Seam_mesh_edge_descriptor<HD, SM> >
+  : public CGAL::cpp98::unary_function<CGAL::Seam_mesh_edge_descriptor<HD, SM>, std::size_t>
+{
+  std::size_t operator()(const CGAL::Seam_mesh_edge_descriptor<HD, SM>& e) const
+  {
+    return hash_value(e);
+  }
+};
+
+// Seam_mesh::face_descriptor is equal to TM_face_descriptor so nothing to do
+
+} // namespace std
+
+#endif // CGAL_CFG_NO_STD_HASH
 
 #include <CGAL/enable_warnings.h>
 

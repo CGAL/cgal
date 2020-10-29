@@ -63,6 +63,8 @@ if ( CGAL_FOUND )
     target_link_libraries(simple_parameterization PUBLIC CGAL::Eigen_support)
     create_single_source_cgal_program( "square_border_parameterizer.cpp" )
     target_link_libraries(square_border_parameterizer PUBLIC CGAL::Eigen_support)
+    create_single_source_cgal_program( "iterative_authalic_parameterizer.cpp" )
+    target_link_libraries(iterative_authalic_parameterizer PUBLIC CGAL::Eigen_support)
 
     if(SuiteSparse_FOUND)
       target_link_libraries(orbifold PRIVATE ${SuiteSparse_LIBRARIES})
