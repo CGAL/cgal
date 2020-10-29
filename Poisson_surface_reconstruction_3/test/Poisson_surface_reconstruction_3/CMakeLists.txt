@@ -30,6 +30,13 @@ if ( CGAL_FOUND )
     # Executables that require Eigen 3.1
     create_single_source_cgal_program( "poisson_reconstruction_test.cpp" )
 
+    find_package(TBB)
+    if (TBB_FOUND)
+      create_single_source_cgal_program( "poisson_and_parallel_mesh_3.cpp" )
+      CGAL_target_use_TBB(poisson_and_parallel_mesh_3)
+    else()
+      message(STATUS "NOTICE: test with parallel Mesh_3 needs TBB and will not be compiled.")
+    endif()
   else()
 
     message(STATUS "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) and will not be compiled.")
@@ -41,4 +48,3 @@ else()
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
 
 endif()
-
