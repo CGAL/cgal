@@ -77,7 +77,6 @@ Release date: December 2020
 
 -   Added the functions `set_recycle_garbage()` and `does_recycle_garbage()` to the class `Surface_mesh`.
 
-
 ### [dD Geometry Kernel](https://doc.cgal.org/5.2/Manual/packages.html#PkgKernelD)
 
 -   The kernels [`Epick_d`](https://doc.cgal.org/5.2/Kernel_d/structCGAL_1_1Epick__d.html)
@@ -86,6 +85,10 @@ Release date: December 2020
     and [`Construct_power_sphere_d`](https://doc.cgal.org/5.2/Kernel_d/classCGAL_1_1Epeck__d_1_1Construct__power__sphere__d.html),
     to deal with weighted points.
 
+
+### [Surface Mesh Parameterization](https://doc.cgal.org/5.2/Manual/packages.html#PkgSurfaceMeshParameterization)
+- Added a new parameterization method, Iterative Authalic Parameterization. It is based on the work of Jain, Hardik, Manuel Wollhaf, and Olaf Hellwich,
+  "Learning to Reconstruct Symmetric Shapes using Planar Parameterization of 3D Surface." (IEEE International Conference on Computer Vision Workshops, 2019).
 
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/v5.1)
 -----------
