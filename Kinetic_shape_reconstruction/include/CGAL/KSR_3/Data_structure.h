@@ -2024,32 +2024,36 @@ private:
     const auto& curr = pvertex;
 
     const Line_2 iedge_line = segment_2(pvertex.first, iedge).supporting_line();
-    const Point_2 pinit = iedge_line.projection(point_2(pvertex, m_current_time));
+    const Point_2 pinit = iedge_line.projection(point_2(pvertex));
 
     // std::cout << "iedge segment: " << segment_3(iedge) << std::endl;
 
-    const auto prev_p = point_2(prev, m_current_time + FT(1));
-    const auto next_p = point_2(next, m_current_time + FT(1));
-    const auto curr_p = point_2(curr, m_current_time + FT(1));
+    const auto prev_p = point_2(prev);
+    const auto next_p = point_2(next);
+    const auto curr_p = point_2(curr);
 
     // std::cout << "prev: " << point_3(prev) << std::endl;
     // std::cout << "next: " << point_3(next) << std::endl;
     // std::cout << "curr: " << point_3(curr) << std::endl;
 
-    const Line_2 future_line_prev(prev_p, curr_p);
-    const Line_2 future_line_next(next_p, curr_p);
+    const Line_2 future_line_prev(
+      point_2(prev, m_current_time + FT(1)),
+      point_2(curr, m_current_time + FT(1)));
+    const Line_2 future_line_next(
+      point_2(next, m_current_time + FT(1)),
+      point_2(curr, m_current_time + FT(1)));
 
     // std::cout << "future line prev: " <<
     // Segment_3(
-    //   to_3d(pvertex.first, prev_p),
-    //   to_3d(pvertex.first, curr_p)) << std::endl;
+    //   to_3d(pvertex.first, point_2(prev, m_current_time + FT(1))),
+    //   to_3d(pvertex.first, point_2(curr, m_current_time + FT(1)))) << std::endl;
     // std::cout << "future line next: " <<
     // Segment_3(
-    //   to_3d(pvertex.first, next_p),
-    //   to_3d(pvertex.first, curr_p)) << std::endl;
+    //   to_3d(pvertex.first, point_2(next, m_current_time + FT(1))),
+    //   to_3d(pvertex.first, point_2(curr, m_current_time + FT(1)))) << std::endl;
 
-    const Vector_2 future_vec_prev(prev_p, curr_p);
-    const Vector_2 future_vec_next(next_p, curr_p);
+    const Vector_2 current_vec_prev(prev_p, curr_p);
+    const Vector_2 current_vec_next(next_p, curr_p);
 
     const auto source_p = point_2(pvertex.first, source(iedge));
     const auto target_p = point_2(pvertex.first, target(iedge));
@@ -2077,7 +2081,7 @@ private:
       // CGAL_assertion_msg(false, "TODO: prev PARALLEL LINES!");
 
       std::cout << "prev parallel lines" << std::endl;
-      const FT prev_dot = future_vec_prev * iedge_vec;
+      const FT prev_dot = current_vec_prev * iedge_vec;
       if (prev_dot < FT(0)) {
         std::cout << "prev moves backwards" << std::endl;
         future_point_a = target_p;
@@ -2105,7 +2109,7 @@ private:
       // CGAL_assertion_msg(false, "TODO: next PARALLEL LINES!");
 
       std::cout << "next parallel lines" << std::endl;
-      const FT next_dot = future_vec_next * iedge_vec;
+      const FT next_dot = current_vec_next * iedge_vec;
       if (next_dot < FT(0)) {
         std::cout << "next moves backwards" << std::endl;
         future_point_b = target_p;
@@ -2146,14 +2150,16 @@ private:
     }
 
     const Line_2 iedge_line = segment_2(pvertex.first, iedge).supporting_line();
-    const Point_2 pinit = iedge_line.projection(point_2(pvertex, m_current_time));
+    const Point_2 pinit = iedge_line.projection(point_2(pvertex));
 
     const auto& curr = pvertex;
-    const auto next_p = point_2(next, m_current_time + FT(1));
-    const auto curr_p = point_2(curr, m_current_time + FT(1));
+    const auto next_p = point_2(next);
+    const auto curr_p = point_2(curr);
 
-    const Line_2  future_line_next(next_p, curr_p);
-    const Vector_2 future_vec_next(next_p, curr_p);
+    const Line_2 future_line_next(
+      point_2(next, m_current_time + FT(1)),
+      point_2(curr, m_current_time + FT(1)));
+    const Vector_2 current_vec_next(next_p, curr_p);
 
     const auto source_p = point_2(pvertex.first, source(iedge));
     const auto target_p = point_2(pvertex.first, target(iedge));
@@ -2174,7 +2180,7 @@ private:
       // CGAL_assertion_msg(false, "TODO: back/front PARALLEL LINES!");
       std::cout << "back/front parallel lines" << std::endl;
 
-      const FT next_dot = future_vec_next * iedge_vec;
+      const FT next_dot = current_vec_next * iedge_vec;
       if (next_dot < FT(0)) {
         std::cout << "back/front moves backwards" << std::endl;
         future_point = target_p;
@@ -2198,15 +2204,16 @@ private:
                                            Point_2& future_point, Vector_2& direction) const
   {
     const Line_2 iedge_line = segment_2(pvertex.first, iedge).supporting_line();
-    const auto pv_point = point_2(pvertex, m_current_time);
+    const auto pv_point = point_2(pvertex);
     const Point_2 pinit = iedge_line.projection(pv_point);
 
     const auto& curr = prev;
-    const auto next_p = point_2(next, m_current_time + FT(1));
-    const auto curr_p = point_2(curr, m_current_time + FT(1));
+    const auto next_p = point_2(next);
+    const auto curr_p = point_2(curr);
 
-    const Line_2  future_line_next(next_p, curr_p);
-    // const Vector_2 future_vec_next(next_p, curr_p);
+    const Line_2 future_line_next(
+      point_2(next, m_current_time + FT(1)),
+      point_2(curr, m_current_time + FT(1)));
 
     const auto source_p = point_2(pvertex.first, source(iedge));
     const auto target_p = point_2(pvertex.first, target(iedge));
