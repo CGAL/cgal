@@ -316,6 +316,9 @@ NT approximate_sqrt(const NT& nt, Sqrt sqrt)
 template <typename NT>
 NT approximate_sqrt(const NT& nt)
 {
+  // the initial version of this function was using Algebraic_category
+  // for the dispatch but some ring type (like Gmpz) provides a Sqrt
+  // functor even if not being Field_with_sqrt.
   typedef CGAL::Algebraic_structure_traits<NT> AST;
   typedef typename AST::Sqrt Sqrt;
   return approximate_sqrt(nt, Sqrt());
