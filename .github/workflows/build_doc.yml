@@ -42,6 +42,7 @@ jobs:
           repository: ${{ github.repository }}
           ref: refs/pull/${{ steps.get_pr_number.outputs.result }}/merge
           token: ${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}
+          fetch-depth: 2
 
 
       - name: install dependencies
@@ -60,10 +61,9 @@ jobs:
         if: steps.get_round.outputs.result != 'stop'
         run: |
           set -ex
-          git clone https://CGAL:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git --depth=5
           mkdir -p build_doc && cd build_doc && cmake ../Documentation/doc
 
-      - name: Upload Doc
+      - name: Build and Upload Doc
         if: steps.get_round.outputs.result != 'stop'
         run: |
           set -ex
@@ -71,14 +71,27 @@ jobs:
           ROUND=${{ steps.get_round.outputs.result }}
           wget --no-verbose cgal.github.io -O tmp.html
           if ! egrep -q "\/$PR_NUMBER\/$ROUND" tmp.html; then
-            mkdir -p cgal.github.io/${PR_NUMBER}/$ROUND
+            #list impacted packages
+            LIST_OF_PKGS=$(git diff --name-only HEAD^1 HEAD |cut -s -d/ -f1 |sort -u | xargs -I {} ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
+            if [ "$LIST_OF_PKGS" = "" ]; then
+              exit 1
+            fi
             cd build_doc && make -j2 doc && make -j2 doc_with_postprocessing
-            cp -r ./doc_output/* ../cgal.github.io/${PR_NUMBER}/$ROUND
-            cd ../cgal.github.io
-            egrep -v " ${PR_NUMBER}\." index.html > tmp.html
+            cd ..
+            git clone https://CGAL:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git
+            mkdir -p cgal.github.io/${PR_NUMBER}/$ROUND
+            for f in $LIST_OF_PKGS
+            do
+              if [ -d ./build_doc/doc_output/$f ]; then
+                cp -r ./build_doc/doc_output/$f ./cgal.github.io/${PR_NUMBER}/$ROUND
+              fi
+            done
+            cp -r ./build_doc/doc_output/Manual ./cgal.github.io/${PR_NUMBER}/$ROUND
+            cd ./cgal.github.io
+            egrep -v " ${PR_NUMBER}\." index.html > tmp.html || true
             echo "<li><a href=https://cgal.github.io/${PR_NUMBER}/$ROUND/Manual/index.html>Manual for PR ${PR_NUMBER} ($ROUND).</a></li>" >> ./tmp.html
             mv tmp.html index.html
-            git add ${PR_NUMBER}/$ROUND && git commit -q -a -m "Add ${PR_NUMBER} $ROUND" && git push -q -u origin master
+            git add ${PR_NUMBER}/$ROUND && git commit -q --amend -m "base commit" && git push -q -f -u origin master
           else
             exit 1
           fi

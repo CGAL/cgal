@@ -158,6 +158,8 @@ void test_stitch_borders(const char* fname,
   PMP::stitch_borders(empty_deque, dummy_mesh);
   PMP::stitch_borders(dummy_mesh, params::apply_per_connected_component(true));
   PMP::stitch_borders(dummy_mesh);
+  std::deque<std::pair<halfedge_descriptor,halfedge_descriptor>> empty_deque_pair;
+  PMP::stitch_borders(dummy_mesh, empty_deque_pair);
 }
 
 template <typename Mesh>

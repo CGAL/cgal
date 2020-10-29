@@ -465,7 +465,9 @@ public:
 
 
     ///@}
+#ifndef CGAL_TEST_SURFACE_MESH
 private: //-------------------------------------------------- connectivity types
+#endif
 
     /// This type stores the vertex connectivity
     /// \sa `Halfedge_connectivity`, `Face_connectivity`
@@ -1126,9 +1128,12 @@ public:
              && num_faces() == number_of_removed_faces());
   }
 
-    /// removes all vertices, halfedge, edges and faces. Collects garbage and clears all properties.
+  /// removes all vertices, halfedge, edges and faces. Collects garbage but keeps all property maps.
+  void clear_without_removing_property_maps();
+
+    /// removes all vertices, halfedge, edges and faces. Collects garbage and removes all property maps added by a call to `add_property_map()` for all simplex types.
     ///
-    /// After calling this method, the object is the same as a newly constructed object. The additional properties (such as normal vectors) are also removed and must thus be re-added if needed.
+    /// After calling this method, the object is the same as a newly constructed object. The additional property maps are also removed and must thus be re-added if needed.
     void clear();
 
 
@@ -1907,6 +1912,7 @@ private: //--------------------------------------------------- property handling
     Properties::Property_container<Self,
                                    typename CGAL::Surface_mesh<P>::Vertex_index>&
     operator()() { return m_->vprops_; }
+    void resize_property_array() { m_->vprops_.resize_property_array(3); }
   };
   template<bool dummy>
   struct Property_selector<typename CGAL::Surface_mesh<P>::Halfedge_index, dummy> {
@@ -1915,6 +1921,7 @@ private: //--------------------------------------------------- property handling
     Properties::Property_container<Self,
                                    typename CGAL::Surface_mesh<P>::Halfedge_index>&
     operator()() { return m_->hprops_; }
+    void resize_property_array() { m_->hprops_.resize_property_array(1); }
   };
   template<bool dummy>
   struct Property_selector<typename CGAL::Surface_mesh<P>::Edge_index, dummy> {
@@ -1923,6 +1930,7 @@ private: //--------------------------------------------------- property handling
     Properties::Property_container<Self,
                                    typename CGAL::Surface_mesh<P>::Edge_index>&
     operator()() { return m_->eprops_; }
+    void resize_property_array() { m_->eprops_.resize_property_array(1); }
   };
   template<bool dummy>
   struct Property_selector<typename CGAL::Surface_mesh<P>::Face_index, dummy> {
@@ -1931,6 +1939,7 @@ private: //--------------------------------------------------- property handling
     Properties::Property_container<Self,
                                    typename CGAL::Surface_mesh<P>::Face_index>&
     operator()() { return m_->fprops_; }
+    void resize_property_array() { m_->fprops_.resize_property_array(2); }
   };
 
     public:
@@ -1990,6 +1999,25 @@ private: //--------------------------------------------------- property handling
     void remove_property_map(Property_map<I, T>& p)
     {
       (Property_selector<I>(this)()).template remove<T>(p);
+    }
+
+
+    /// removes all property maps for index type `I` added by a call to `add_property_map<I>()`.
+    /// The memory allocated for those property maps is freed.
+    template<class I>
+    void remove_property_maps()
+    {
+        Property_selector<I>(this).resize_property_array();
+    }
+
+    /// removes all property maps for all index types added by a call to `add_property_map()`.
+    /// The memory allocated for those property maps is freed.
+    void remove_all_property_maps()
+    {
+        remove_property_maps<Vertex_index>();
+        remove_property_maps<Face_index>();
+        remove_property_maps<Edge_index>();
+        remove_property_maps<Halfedge_index>();
     }
 
     /// @cond CGAL_DOCUMENT_INTERNALS
@@ -2851,11 +2879,15 @@ void
 Surface_mesh<P>::
 clear()
 {
-  vprops_.clear();
-  hprops_.clear();
-  eprops_.clear();
-  fprops_.clear();
+  clear_without_removing_property_maps();
+  remove_all_property_maps();
+}
 
+template <typename P>
+void
+Surface_mesh<P>::
+clear_without_removing_property_maps()
+{
   vprops_.resize(0);
   hprops_.resize(0);
   eprops_.resize(0);
@@ -2865,14 +2897,6 @@ clear()
   hprops_.shrink_to_fit();
   eprops_.shrink_to_fit();
   fprops_.shrink_to_fit();
-
-  vconn_    = add_property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
-  hconn_    = add_property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
-  fconn_    = add_property_map<Face_index, Face_connectivity>("f:connectivity").first;
-  vpoint_   = add_property_map<Vertex_index, Point>("v:point").first;
-  vremoved_ = add_property_map<Vertex_index, bool>("v:removed", false).first;
-  eremoved_ = add_property_map<Edge_index, bool>("e:removed", false).first;
-  fremoved_ = add_property_map<Face_index, bool>("f:removed", false).first;
 
   removed_vertices_ = removed_edges_ = removed_faces_ = 0;
   vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();
