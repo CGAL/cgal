@@ -208,7 +208,7 @@ class Cluster_classification : public Item_classification_base
       = new Scene_points_with_normal_item;
 
     points_item->setName (QString("%1 (%2)").arg(name).arg(m_labels[label]->name().c_str()));
-    points_item->setColor (m_label_colors[label]);
+    points_item->setColor (label_qcolor (m_labels[label]));
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->end(); ++ it)
     {
@@ -231,7 +231,7 @@ class Cluster_classification : public Item_classification_base
     {
       points_item[i] = new Scene_points_with_normal_item;
       points_item[i]->setName (QString("%1 (%2)").arg(name).arg(m_labels[i]->name().c_str()));
-      points_item[i]->setColor (m_label_colors[i]);
+      points_item[i]->setColor (label_qcolor (m_labels[i]));
       items.push_back (points_item[i]);
     }
 
