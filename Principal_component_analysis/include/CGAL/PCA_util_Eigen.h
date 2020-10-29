@@ -175,9 +175,9 @@ assemble_covariance_matrix_3(InputIterator first,
     transformation = volume * transformation * moment * transformation.transpose();
 
     // Translate the 2nd order moment to the minimum corner (x0,y0,z0) of the cuboid.
-    FT xav0 = (x1 - x0) / (4.0);
-    FT yav0 = (y1 - y0) / (4.0);
-    FT zav0 = (z1 - z0) / (4.0);
+    FT xav0 = (x1 - x0) / (2.0);
+    FT yav0 = (y1 - y0) / (2.0);
+    FT zav0 = (z1 - z0) / (2.0);
 
     // and add to covariance matrix
     covariance[0] += transformation(0,0) + volume * (2*x0*xav0 + x0*x0);
