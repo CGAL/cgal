@@ -714,7 +714,7 @@ centroid(InputIterator begin,
   {
     const Iso_cuboid& cuboid = *it;
     FT unsigned_area = 2 * ((cuboid.xmax()-cuboid.xmin())*(cuboid.ymax()-cuboid.ymin()) + (cuboid.xmax()-cuboid.xmin())*(cuboid.zmax()-cuboid.zmin()) + (cuboid.ymax()-cuboid.ymin())*(cuboid.zmax()-cuboid.zmin()));
-    Point c = K().construct_centroid_3_object()(cuboid[0],cuboid[1],cuboid[3],cuboid[5]);
+    Point c = K().construct_midpoint_3_object()(cuboid[0],cuboid[7]);
     v = v + unsigned_area * (c - ORIGIN);
     sum_areas += unsigned_area;
   }
@@ -747,7 +747,7 @@ centroid(InputIterator begin,
   {
     const Iso_cuboid& cuboid = *it;
     FT unsigned_volume = cuboid.volume();
-    Point c = K().construct_centroid_3_object()(cuboid[0],cuboid[1],cuboid[3],cuboid[5]);
+    Point c = K().construct_midpoint_3_object()(cuboid[0],cuboid[7]);
     v = v + unsigned_volume * (c - ORIGIN);
     sum_volumes += unsigned_volume;
   }
