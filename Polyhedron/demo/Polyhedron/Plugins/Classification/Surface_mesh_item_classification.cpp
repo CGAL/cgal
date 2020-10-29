@@ -29,9 +29,6 @@ Surface_mesh_item_classification::Surface_mesh_item_classification(Scene_surface
   m_labels.add("roof");
   m_labels.add("facade");
 
-  for (std::size_t i = 0; i < m_labels.size(); ++ i)
-    m_label_colors.push_back (this->get_new_label_color (m_labels[i]->name()));
-
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
   m_ethz = NULL;
 #ifdef CGAL_LINKED_WITH_OPENCV
@@ -108,7 +105,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
       std::size_t c = m_classif[fd];
 
       if (c != std::size_t(-1))
-        color = m_label_colors[c];
+        color = label_qcolor (m_labels[c]);
 
       m_color[fd] = CGAL::Color(color.red(), color.green(), color.blue());
     }
@@ -122,7 +119,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
       std::size_t c2 = m_classif[fd];
 
       if (c != std::size_t(-1))
-        color = m_label_colors[c];
+        color = label_qcolor(m_labels[c]);
 
       float div = 1;
       if (c != c2)
@@ -296,14 +293,14 @@ void Surface_mesh_item_classification::train (int classifier, const QMultipleInp
   for (std::size_t i = 0; i < m_labels.size(); ++ i)
     std::cerr << " * " << m_labels[i]->name() << ": " << nb_label[i] << " face(s)" << std::endl;
 
-  if (classifier == 0)
+  if (classifier == CGAL_CLASSIFICATION_SOWF_NUMBER)
   {
     m_sowf->train<Concurrency_tag>(training, dialog.get<QSpinBox>("trials")->value());
     CGAL::Classification::classify<Concurrency_tag> (m_mesh->polyhedron()->faces(),
                                                      m_labels, *m_sowf,
                                                      indices, m_label_probabilities);
   }
-  else if (classifier == 1)
+  else if (classifier == CGAL_CLASSIFICATION_ETHZ_NUMBER)
   {
     if (m_ethz != NULL)
       delete m_ethz;
@@ -315,7 +312,7 @@ void Surface_mesh_item_classification::train (int classifier, const QMultipleInp
                                                      m_labels, *m_ethz,
                                                      indices, m_label_probabilities);
   }
-  else if (classifier == 2)
+  else if (classifier == CGAL_CLASSIFICATION_OPENCV_NUMBER)
   {
 #ifdef CGAL_LINKED_WITH_OPENCV
     if (m_random_forest != NULL)
@@ -330,7 +327,7 @@ void Surface_mesh_item_classification::train (int classifier, const QMultipleInp
                                                      indices, m_label_probabilities);
 #endif
   }
-  else if (classifier == 3)
+  else if (classifier == CGAL_CLASSIFICATION_TENSORFLOW_NUMBER)
   {
 #ifdef CGAL_LINKED_WITH_TENSORFLOW
     if (m_neural_network != NULL)
@@ -392,9 +389,9 @@ bool Surface_mesh_item_classification::run (int method, int classifier,
     return false;
   }
 
-  if (classifier == 0)
+  if (classifier == CGAL_CLASSIFICATION_SOWF_NUMBER)
     run (method, *m_sowf, subdivisions, smoothing);
-  else if (classifier == 1)
+  else if (classifier == CGAL_CLASSIFICATION_ETHZ_NUMBER)
   {
     if (m_ethz == NULL)
     {
@@ -403,7 +400,7 @@ bool Surface_mesh_item_classification::run (int method, int classifier,
     }
     run (method, *m_ethz, subdivisions, smoothing);
   }
-  else if (classifier == 2)
+  else if (classifier == CGAL_CLASSIFICATION_OPENCV_NUMBER)
   {
 #ifdef CGAL_LINKED_WITH_OPENCV
     if (m_random_forest == NULL)
@@ -414,7 +411,7 @@ bool Surface_mesh_item_classification::run (int method, int classifier,
     run (method, *m_random_forest, subdivisions, smoothing);
 #endif
   }
-  else if (classifier == 3)
+  else if (classifier == CGAL_CLASSIFICATION_TENSORFLOW_NUMBER)
   {
 #ifdef CGAL_LINKED_WITH_TENSORFLOW
     if (m_neural_network == NULL)

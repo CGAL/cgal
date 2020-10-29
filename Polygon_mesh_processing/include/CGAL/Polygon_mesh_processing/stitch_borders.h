@@ -656,19 +656,20 @@ void run_stitch_borders(PolygonMesh& pmesh,
   }
 }
 
-template <typename PolygonMesh, typename HalfedgePairsRange,
+template <typename PolygonMesh, typename HalfedgePair,
           typename Uf_vertices, typename Uf_handles>
-HalfedgePairsRange filter_stitchable_pairs(PolygonMesh& pmesh,
-                                           const HalfedgePairsRange& to_stitch,
-                                           Uf_vertices& uf_vertices,
-                                           Uf_handles& uf_handles)
+const std::vector<HalfedgePair>&
+filter_stitchable_pairs(PolygonMesh& pmesh,
+                        const std::vector<HalfedgePair>& to_stitch,
+                        std::vector<HalfedgePair>& to_stitch_filtered,
+                        Uf_vertices& uf_vertices,
+                        Uf_handles& uf_handles)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
-  typedef typename std::pair<halfedge_descriptor, halfedge_descriptor>    halfedges_pair;
 
   // Merge the vertices
-  for(const halfedges_pair& hk : to_stitch)
+  for(const HalfedgePair& hk : to_stitch)
   {
     const halfedge_descriptor h1 = hk.first;
     const halfedge_descriptor h2 = hk.second;
@@ -749,9 +750,8 @@ HalfedgePairsRange filter_stitchable_pairs(PolygonMesh& pmesh,
   // filter halfedges to stitch
   if(!unstitchable_vertices.empty())
   {
-    std::vector<halfedges_pair> to_stitch_filtered;
     to_stitch_filtered.reserve(to_stitch.size());
-    for(const halfedges_pair& hk : to_stitch)
+    for(const HalfedgePair& hk : to_stitch)
     {
       // We test both halfedges because the previous test
       // might involve only one of the two halfedges
@@ -767,7 +767,7 @@ HalfedgePairsRange filter_stitchable_pairs(PolygonMesh& pmesh,
     // redo union find as some "master" vertex might be unstitchable
     uf_vertices.clear();
     uf_handles.clear();
-    for(const halfedges_pair& hk : to_stitch_filtered)
+    for(const HalfedgePair& hk : to_stitch_filtered)
     {
       halfedge_descriptor h1 = hk.first;
       halfedge_descriptor h2 = hk.second;
@@ -777,28 +777,23 @@ HalfedgePairsRange filter_stitchable_pairs(PolygonMesh& pmesh,
       uf_join_vertices(tgt1, src2, uf_vertices, uf_handles);
       uf_join_vertices(src1, tgt2, uf_vertices, uf_handles);
     }
-
     return to_stitch_filtered;
   }
-  else
-  {
-    return to_stitch;
-  }
+  return to_stitch;
 }
 
-template <typename StitchableHalfedgePairsRange, typename CandidateHalfedgeRange, typename PolygonMesh,
+template <typename HalfedgePair, typename CandidateHalfedgeRange, typename PolygonMesh,
           typename MaintainerVisitor, typename VertexPointMap>
-std::size_t stitch_halfedge_range(const StitchableHalfedgePairsRange& to_stitch,
+std::size_t stitch_halfedge_range(const std::vector<HalfedgePair>& to_stitch,
                                   const CandidateHalfedgeRange& representative_candidates,
                                   PolygonMesh& pmesh,
                                   MaintainerVisitor& mv,
                                   const VertexPointMap& vpm)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
-  typedef typename std::pair<halfedge_descriptor, halfedge_descriptor>    halfedges_pair;
 
 #ifdef CGAL_PMP_STITCHING_DEBUG_PP
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
   std::cout << to_stitch.size() << " tentative halfedge pair(s) to stitch:\n";
   for(const auto& hp : to_stitch)
   {
@@ -819,24 +814,47 @@ std::size_t stitch_halfedge_range(const StitchableHalfedgePairsRange& to_stitch,
   typedef std::unordered_map<vertex_descriptor, typename Uf_vertices::handle> Uf_handles;
   Uf_handles uf_handles;
 
-  std::vector<halfedges_pair> to_stitch_filtered = filter_stitchable_pairs(pmesh, to_stitch, uf_vertices, uf_handles);
+  std::vector<HalfedgePair> to_stitch_local;
+  const std::vector<HalfedgePair>& to_stitch_filtered =
+    filter_stitchable_pairs(pmesh, to_stitch, to_stitch_local, uf_vertices, uf_handles);
 
   mv.update_representatives(representative_candidates, to_stitch_filtered, vpm);
 
-  // Actualy stitching
+  // Actually stitching
   run_stitch_borders(pmesh, to_stitch_filtered, vpm, uf_vertices, uf_handles);
 
   return to_stitch_filtered.size();
 }
 
-template <typename HalfedgePairsRange, typename PolygonMesh, typename VertexPointMap>
-std::size_t stitch_halfedge_range(const HalfedgePairsRange& to_stitch,
+template <typename HalfedgePair, typename PolygonMesh, typename VertexPointMap>
+std::size_t stitch_halfedge_range(const std::vector<HalfedgePair>& to_stitch,
                                   PolygonMesh& pmesh,
                                   const VertexPointMap& vpm)
 {
   Dummy_cycle_rep_maintainer<PolygonMesh> mv(pmesh);
   return stitch_halfedge_range(to_stitch, halfedges(pmesh), pmesh, mv, vpm);
 }
+
+//overload to avoid a useless copy
+template <typename HalfedgePair, typename PolygonMesh, typename VertexPointMap>
+std::size_t stitch_halfedge_range_dispatcher(const std::vector<HalfedgePair>& to_stitch,
+                                             PolygonMesh& pmesh,
+                                             const VertexPointMap& vpm)
+{
+  return stitch_halfedge_range(to_stitch, pmesh, vpm);
+}
+
+//overload to doing the copy
+template <typename HalfedgePairRange, typename PolygonMesh, typename VertexPointMap>
+std::size_t stitch_halfedge_range_dispatcher(const HalfedgePairRange& to_stitch_const,
+                                             PolygonMesh& pmesh,
+                                             const VertexPointMap& vpm)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor HD;
+  std::vector< std::pair<HD,HD> > to_stitch(to_stitch_const.begin(), to_stitch_const.end());
+  return stitch_halfedge_range(to_stitch, pmesh, vpm);
+}
+
 
 /// High-level functions
 
@@ -1040,7 +1058,7 @@ std::size_t stitch_borders(PolygonMesh& pmesh,
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, pmesh));
 
-  return internal::stitch_halfedge_range(hedge_pairs_to_stitch, pmesh, vpm);
+  return internal::stitch_halfedge_range_dispatcher(hedge_pairs_to_stitch, pmesh, vpm);
 }
 
 ///\endcond

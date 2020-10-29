@@ -29,6 +29,7 @@
 #include <CGAL/Surface_mesh_parameterization/Barycentric_mapping_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Discrete_authalic_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Discrete_conformal_map_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/Iterative_authalic_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/LSCM_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
@@ -342,6 +343,7 @@ public:
     QAction* actionDCP = new QAction ("Discrete Conformal Map", mw);
     QAction* actionLSC = new QAction("Least Square Conformal Map", mw);
     QAction* actionDAP = new QAction("Discrete Authalic", mw);
+    QAction* actionIAP = new QAction("Iterative Authalic", mw);
     QAction* actionARAP = new QAction("As Rigid As Possible", mw);
     QAction* actionOTE = new QAction("Orbifold Tutte Embedding", mw);
     QAction* actionBTP = new QAction("Tutte Barycentric", mw);
@@ -349,6 +351,7 @@ public:
     actionDCP->setObjectName("actionDCP");
     actionLSC->setObjectName("actionLSC");
     actionDAP->setObjectName("actionDAP");
+    actionIAP->setObjectName("actionIAP");
     actionARAP->setObjectName("actionARAP");
     actionOTE->setObjectName("actionOTE");
     actionBTP->setObjectName("actionBTP");
@@ -356,6 +359,7 @@ public:
     _actions << actionARAP
              << actionBTP
              << actionDAP
+             << actionIAP
              << actionDCP
              << actionLSC
              << actionMVC
@@ -413,6 +417,7 @@ public Q_SLOTS:
   void on_actionDCP_triggered();
   void on_actionLSC_triggered();
   void on_actionDAP_triggered();
+  void on_actionIAP_triggered();
   void on_actionARAP_triggered();
   void on_actionOTE_triggered();
   void on_actionBTP_triggered();
@@ -485,8 +490,8 @@ public Q_SLOTS:
   }
 
 protected:
-  enum Parameterization_method { PARAM_MVC, PARAM_DCP, PARAM_LSC,
-                                 PARAM_DAP, PARAM_ARAP, PARAM_OTE, PARAM_BTP};
+  enum Parameterization_method { PARAM_MVC, PARAM_DCP, PARAM_LSC, PARAM_DAP,
+                                 PARAM_IAP, PARAM_ARAP, PARAM_OTE, PARAM_BTP};
   void parameterize(Parameterization_method method);
 
 private:
@@ -804,6 +809,15 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       status = SMP::parameterize(sMesh, Parameterizer(), bhd, uv_pm);
       break;
     }
+    case PARAM_IAP:
+    {
+      new_item_name = tr("%1 (parameterized (IAP))").arg(poly_item->name());
+      std::cout << "Parameterize (IAP)..." << std::endl;
+      typedef SMP::Iterative_authalic_parameterizer_3<Seam_mesh> Parameterizer;
+      Parameterizer parameterizer;
+      status = parameterizer.parameterize(sMesh, bhd, uv_pm, 15 /*iterations*/);
+      break;
+    }
     case PARAM_ARAP:
     {
       new_item_name = tr("%1 (parameterized (ARAP))").arg(poly_item->name());
@@ -1012,6 +1026,12 @@ void Polyhedron_demo_parameterization_plugin::on_actionDAP_triggered()
 {
   std::cerr << "DAP...";
   parameterize(PARAM_DAP);
+}
+
+void Polyhedron_demo_parameterization_plugin::on_actionIAP_triggered()
+{
+  std::cerr << "IAP...";
+  parameterize(PARAM_IAP);
 }
 
 void Polyhedron_demo_parameterization_plugin::on_actionARAP_triggered()
