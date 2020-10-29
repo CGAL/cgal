@@ -302,13 +302,13 @@ to_interval( const Real_embeddable& x) {
 }
 
 template <typename NT>
-NT approximate_sqrt(const NT& nt, CGAL::Field_tag)
+NT approximate_sqrt(const NT& nt, CGAL::Null_functor)
 {
   return NT(sqrt(CGAL::to_double(nt)));
 }
 
-template <typename NT>
-NT approximate_sqrt(const NT& nt, CGAL::Field_with_sqrt_tag)
+template <typename NT, typename Sqrt>
+NT approximate_sqrt(const NT& nt, Sqrt sqrt)
 {
   return sqrt(nt);
 }
@@ -317,8 +317,8 @@ template <typename NT>
 NT approximate_sqrt(const NT& nt)
 {
   typedef CGAL::Algebraic_structure_traits<NT> AST;
-  typedef typename AST::Algebraic_category Algebraic_category;
-  return approximate_sqrt(nt, Algebraic_category());
+  typedef typename AST::Sqrt Sqrt;
+  return approximate_sqrt(nt, Sqrt());
 }
 
 CGAL_NTS_END_NAMESPACE
