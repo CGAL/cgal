@@ -4939,7 +4939,7 @@ representing such segments (and sub-segments of them). Formally, a
 terminal segment is either a vertical line-segment or a segment of an
 \f$x\f$-monotone curve whose \f$x\f$-range does not contain critical
 points in its interior. See
-\cgalFigureRef{aos_fig-cylindrical_decomposition} for an example of a
+\cgalFigureRef{aos_fig-algebraic_curves_decomposition} for an example of a
 quartic curve and its decomposition into terminal segments.  Notice
 that six vertices split the curve into \f$x\f$-monotone segments, and
 four additional vertices further split the corresponding
@@ -4947,7 +4947,7 @@ four additional vertices further split the corresponding
 \cgalAdvancedEnd
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_fig-cylindrical_decomposition,algebraic_curves_decomposition.png}
+\cgalFigureBegin{aos_fig-algebraic_curves_decomposition,algebraic_curves_decomposition.png}
 
 The critical \f$x\f$-coordinates of an algebraic curve (dashed
 lines), and its decomposition into terminal segments (in different
@@ -4981,7 +4981,7 @@ point (counted from below) in the fiber of \f$c\f$ at the
 \f$c\f$ with \f$x\f$-coordinate \f$x'\f$.  Formally, for a curve
 \f$c\f$ and \f$x' \in \mathbb{R}\f$, the fiber of \f$c\f$ at \f$x'\f$
 is \f$c \cap \{(x',b)\,|\,b \in \mathbb{R}\}\f$.} In the example
-depicted in \cgalFigureRef{aos_fig-cylindrical_decomposition}, if
+depicted in \cgalFigureRef{aos_fig-algebraic_curves_decomposition}, if
 \f$x_1\f$ denotes the \f$x\f$-coordinate of \f$p\f$, and \f$c\f$
 represents the algebraic curve, then \f$p\f$ could be represented by
 \f$(x_1,c,3)\f$. If \f$x_2\f$ is the \f$x\f$-coordinate of \f$q\f$,
