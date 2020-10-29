@@ -645,7 +645,10 @@ public:
       Cell_handle ch = Cell_handle(_cell_iterator);
       if (ch == Cell_handle())
       {
-        set_curr_simplex_to_entry();
+        if(!triangulation()->is_infinite(Cell_handle(_curr_simplex)))
+          set_curr_simplex_to_entry();
+        else
+          _curr_simplex = Simplex_3();
         break;
       }
       else
@@ -879,13 +882,17 @@ public:
         }
         else if (ltprev == Locate_type::EDGE)//vertex-facet-edge-outside
           _curr_simplex = Facet(prev, prev->index(get_vertex()));
-        else
+        else if (ltprev == Locate_type::FACET) //vertex-facet-outside
         {
-          CGAL_assertion(ltprev == Locate_type::FACET);
           if(prev->vertex(liprev) != get_vertex()) //vertex-facet-outside
             _curr_simplex = Facet(prev, liprev);
           else //vertex-cell-facet-outside
             _curr_simplex = prev;
+        }
+        else
+        {
+          CGAL_assertion(ltprev == Locate_type::CELL);//vertex-cell-outside
+          _curr_simplex = prev;
         }
         break;
       }
