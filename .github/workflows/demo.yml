@@ -3,33 +3,115 @@ name: Test Polyhedron Demo
 on: [push, pull_request]
 
 jobs:
-  build:
-
+  batch_1:
     runs-on: ubuntu-latest
-    
     steps:
     - uses: actions/checkout@v2.0.0
     - name: install dependencies
       run: |
         sudo apt-get install -y libboost-dev libboost-program-options-dev libmpfr-dev libeigen3-dev qtbase5-dev libqt5sql5-sqlite libqt5opengl5-dev qtscript5-dev libqt5svg5-dev qttools5-dev qttools5-dev-tools
         git clone --branch v3.18.4 --depth 1 git://github.com/Kitware/CMake.git
-        cd ./CMake 
-        mkdir build 
-        cd build 
+        cd ./CMake
+        mkdir build
+        cd build
         cmake ..
         make -j2
-        sudo make install 
-        cd ../.. 
+        sudo make install
+        cd ../..
         rm -rf ./CMake
-
-
-    - name: Test the Demo
+    - name: run1
       run: |
         set -ex
-        /usr/local/bin/cmake --version
         cd Polyhedron/demo
+        LIST_OF_PLUGINS=$(for f in $(find ./Polyhedron/Plugins -iname "CMakeLists.txt"); do egrep "polyhedron_demo_plugin" $f |cut -d\( -f2 | cut -d" " -f1|sort -u|egrev -v "partition_plugin" ||true; done)
+        PLUGINS_ARRAY=(${LIST_OF_PLUGINS});
+        NB_OF_PLUGINS=${#PLUGINS_ARRAY[@]}
+        DEL=$(($NB_OF_PLUGINS / 4))
         mkdir build
         cd build
         /usr/local/bin/cmake -DCGAL_DIR=${{ github.workspace }} ../Polyhedron
-        make -j2 PMP
-        
+        make -j2 ${PLUGINS_ARRAY[@]:0:$DEL}
+  batch_2:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2.0.0
+    - name: install dependencies
+      run: |
+        sudo apt-get install -y libboost-dev libboost-program-options-dev libmpfr-dev libeigen3-dev qtbase5-dev libqt5sql5-sqlite libqt5opengl5-dev qtscript5-dev libqt5svg5-dev qttools5-dev qttools5-dev-tools
+        git clone --branch v3.18.4 --depth 1 git://github.com/Kitware/CMake.git
+        cd ./CMake
+        mkdir build
+        cd build
+        cmake ..
+        make -j2
+        sudo make install
+        cd ../..
+        rm -rf ./CMake
+    - name: run2
+      run: |
+        set -ex
+        cd Polyhedron/demo
+        LIST_OF_PLUGINS=$(for f in $(find ./Polyhedron/Plugins -iname "CMakeLists.txt"); do egrep "polyhedron_demo_plugin" $f |cut -d\( -f2 | cut -d" " -f1|sort -u|egrev -v "vtk_plugin"; done)
+        PLUGINS_ARRAY=(${LIST_OF_PLUGINS});
+        NB_OF_PLUGINS=${#PLUGINS_ARRAY[@]}
+        DEL=$(($NB_OF_PLUGINS / 4))
+        mkdir build
+        cd build
+         /usr/local/bin/cmake -DCGAL_DIR=${{ github.workspace }} ../Polyhedron
+        make -j2 ${PLUGINS_ARRAY[@]:$DEL:$((2 * $DEL))}
+  batch_3:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2.0.0
+    - name: install dependencies
+      run: |
+        sudo apt-get install -y libboost-dev libboost-program-options-dev libmpfr-dev libeigen3-dev qtbase5-dev libqt5sql5-sqlite libqt5opengl5-dev qtscript5-dev libqt5svg5-dev qttools5-dev qttools5-dev-tools
+        git clone --branch v3.18.4 --depth 1 git://github.com/Kitware/CMake.git
+        cd ./CMake
+        mkdir build
+        cd build
+        cmake ..
+        make -j2
+        sudo make install
+        cd ../..
+        rm -rf ./CMake
+    - name: run3
+      run: |
+        set -ex
+        cd Polyhedron/demo
+        LIST_OF_PLUGINS=$(for f in $(find ./Polyhedron/Plugins -iname "CMakeLists.txt"); do egrep "polyhedron_demo_plugin" $f |cut -d\( -f2 | cut -d" " -f1|sort -u |egrep -v "register_point_sets_plugin"; done)
+        PLUGINS_ARRAY=(${LIST_OF_PLUGINS});
+        NB_OF_PLUGINS=${#PLUGINS_ARRAY[@]}
+        DEL=$(($NB_OF_PLUGINS / 4))
+        mkdir build
+        cd build
+        /usr/local/bin/cmake -DCGAL_DIR=${{ github.workspace }} ../Polyhedron
+        make -j2 ${PLUGINS_ARRAY[@]:$((2 * $DEL)):$((3 * $DEL))}
+  batch_4:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2.0.0
+    - name: install dependencies
+      run: |
+        sudo apt-get install -y libboost-dev libboost-program-options-dev libmpfr-dev libeigen3-dev qtbase5-dev libqt5sql5-sqlite libqt5opengl5-dev qtscript5-dev libqt5svg5-dev qttools5-dev qttools5-dev-tools
+        git clone --branch v3.18.4 --depth 1 git://github.com/Kitware/CMake.git
+        cd ./CMake
+        mkdir build
+        cd build
+        cmake ..
+        make -j2
+        sudo make install
+        cd ../..
+        rm -rf ./CMake
+    - name: run4
+      run: |
+        set -ex
+        cd Polyhedron/demo
+        LIST_OF_PLUGINS=$(for f in $(find ./Polyhedron/Plugins -iname "CMakeLists.txt"); do egrep "polyhedron_demo_plugin" $f |cut -d\( -f2 | cut -d" " -f1|sort -u; done)
+        PLUGINS_ARRAY=(${LIST_OF_PLUGINS});
+        NB_OF_PLUGINS=${#PLUGINS_ARRAY[@]}
+        DEL=$(($NB_OF_PLUGINS / 4))
+        mkdir build
+        cd build
+        /usr/local/bin/cmake -DCGAL_DIR=${{ github.workspace }} ../Polyhedron
+        make -j2 ${PLUGINS_ARRAY[@]:$((3 * $DEL)):$NB_OF_PLUGINS}
