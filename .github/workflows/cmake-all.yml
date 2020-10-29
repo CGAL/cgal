@@ -1,6 +1,6 @@
 name: CMake all CGAL
 
-on: [push, pull_request]
+on: push
 
 jobs:
   build:

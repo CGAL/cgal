@@ -1,0 +1,35 @@
+name: Test Polyhedron Demo
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2.0.0
+    - name: install dependencies
+      run: |
+        sudo apt-get install -y libboost-dev libboost-program-options-dev libmpfr-dev libeigen3-dev qtbase5-dev libqt5sql5-sqlite libqt5opengl5-dev qtscript5-dev libqt5svg5-dev qttools5-dev qttools5-dev-tools
+        git clone --branch v3.18.4 --depth 1 git://github.com/Kitware/CMake.git
+        cd ./CMake 
+        mkdir build 
+        cd build 
+        cmake ..
+        make -j2
+        sudo make install 
+        cd ../.. 
+        rm -rf ./CMake
+
+
+    - name: Test the Demo
+      run: |
+        set -ex
+        /usr/local/bin/cmake --version
+        cd Polyhedron/demo
+        mkdir build
+        cd build
+        /usr/local/bin/cmake -DCGAL_DIR=${{ github.workspace }} ../Polyhedron
+        make -j2 PMP
+        
