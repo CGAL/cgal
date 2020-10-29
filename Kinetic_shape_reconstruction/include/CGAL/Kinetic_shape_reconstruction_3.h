@@ -580,7 +580,7 @@ private:
 
       ++ iter;
 
-      // if (iter == 6) {
+      // if (iter == 3) {
       //   exit(0);
       // }
 
@@ -764,7 +764,7 @@ private:
       // Merge them and get the newly created vertices.
       std::vector<IEdge> crossed;
       std::vector<PVertex> new_pvertices
-        = m_data.merge_pvertices_on_ivertex (k, pvertices, ev.ivertex(), crossed);
+        = m_data.merge_pvertices_on_ivertex(m_min_time, m_max_time, k, pvertices, ev.ivertex(), crossed);
 
       // Remove all events of the crossed iedges.
       for (const auto& iedge : crossed)

@@ -74,6 +74,10 @@ public:
   using Queue_by_pother_idx  = typename Queue::template nth_index<2>::type;
   using Queue_by_iedge_idx   = typename Queue::template nth_index<3>::type;
 
+  Event_queue() :
+  m_previous_time(FT(0))
+  { }
+
   // Size.
   const bool empty() const { return m_queue.empty(); }
   const KSR::size_t size() const { return m_queue.size(); }
@@ -95,6 +99,7 @@ public:
       std::cerr << "WARNING: next Event is happening at the same time!" << std::endl;
     else if (CGAL::abs(queue_by_time().begin()->m_time - event.m_time) < 1e-15)
       std::cerr << "WARNING: next Event is happening at almost the same time!" << std::endl;
+    m_previous_time = event.time();
     return event;
   }
 
@@ -108,11 +113,16 @@ public:
 
     // Erase by iedge.
     const auto pe = queue_by_iedge_idx().equal_range(iedge);
-    const auto pe_range = CGAL::make_range(pe);
+    // const auto pe_range = CGAL::make_range(pe);
 
-    for (const auto& event : pe_range)
-      std::cout << "**** Erasing (by iedge) " << event << std::endl;
-    queue_by_iedge_idx().erase(pe.first, pe.second);
+    for (auto eit = pe.first; eit != pe.second; ++eit) {
+      const auto& event = *eit;
+      // if (CGAL::abs(event.time() - m_previous_time) > 1e-15) {
+        std::cout << "**** Erasing (by iedge) " << event << std::endl;
+        queue_by_iedge_idx().erase(eit);
+      // }
+    }
+    // queue_by_iedge_idx().erase(pe.first, pe.second);
   }
 
   // Erase all events of the pvertex.
@@ -154,6 +164,7 @@ public:
 
 private:
   Queue m_queue;
+  FT m_previous_time;
 };
 
 } // namespace KSR_3
