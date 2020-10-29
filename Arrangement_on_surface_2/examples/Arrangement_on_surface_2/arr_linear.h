@@ -19,5 +19,8 @@ typedef CGAL::Arrangement_2<Traits>                       Arrangement;
 typedef Arrangement::Vertex_handle                        Vertex_handle;
 typedef Arrangement::Halfedge_handle                      Halfedge_handle;
 typedef Arrangement::Face_handle                          Face_handle;
+typedef Arrangement::Vertex_const_handle                  Vertex_const_handle;
+typedef Arrangement::Halfedge_const_handle                Halfedge_const_handle;
+typedef Arrangement::Face_const_handle                    Face_const_handle;
 
 #endif

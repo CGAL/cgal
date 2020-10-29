@@ -45,8 +45,7 @@ typedef Gm::Vertex_const_handle                 Vertex_const_handle;
 typedef Gm::Halfedge_const_handle               Halfedge_const_handle;
 typedef Gm::Face_const_handle                   Face_const_handle;
 
-int main()
-{
+int main() {
   Gm_polyhedron p;
   p.make_tetrahedron(Point_3(1.0, 0.0, 0.0), Point_3(0.0, 1.0, 0.0),
                      Point_3(0.0, 0.0, 1.0), Point_3(0.0, 0.0, 0.0));
@@ -85,11 +84,11 @@ protected:
     ctr_point(0, 0, -1)
   };
 
-  point_location_query(naive_pl, points[0]);
-  point_location_query(naive_pl, points[1]);
-  point_location_query(naive_pl, points[2]);
+  locate_point(naive_pl, points[0]);
+  locate_point(naive_pl, points[1]);
+  locate_point(naive_pl, points[2]);
 
-  // point_location_query(trap_pl, points[0]);
+  // locate_point(trap_pl, points[0]);
 
   ////////
   std::list<Query_result> results;
@@ -97,8 +96,7 @@ protected:
   // CGAL::locate(gm, &points[0], &points[3], std::back_inserter(results));
 
   // Print the results.
-  std::list<Query_result>::const_iterator it;
-  for (it = results.begin(); it != results.end(); ++it) {
+  for (auto it = results.begin(); it != results.end(); ++it) {
     std::cout << "The point (" << it->first << ") is located ";
     if (const Face_const_handle* f =
         boost::get<Face_const_handle>(&(it->second)))       // inside a face

@@ -16,14 +16,13 @@ typedef Traits_2::Point_2                                  Point_2;
 typedef Traits_2::X_monotone_curve_2                       Segment_2;
 typedef CGAL::Arrangement_2<Traits_2>                      Arrangement_2;
 
-int main (int argc, char *argv[])
-{
+int main (int argc, char* argv[]) {
   // Get the name of the input file from the command line, or use the default
   // fan_grids.dat file if no command-line parameters are given.
-  const char * filename = (argc > 1) ? argv[1] : "fan_grids.dat";
+  const char* filename = (argc > 1) ? argv[1] : "fan_grids.dat";
 
   // Open the input file.
-  std::ifstream     in_file (filename);
+  std::ifstream in_file(filename);
 
   if (! in_file.is_open()) {
     std::cerr << "Failed to open " << filename << " ..." << std::endl;
@@ -52,14 +51,14 @@ int main (int argc, char *argv[])
   in_file.close();
 
   // Construct the arrangement by aggregately inserting all segments.
-  Arrangement_2                  arr;
-  CGAL::Timer                    timer;
+  Arrangement_2 arr;
+  CGAL::Timer timer;
 
   std::cout << "Performing aggregated insertion of "
             << n << " segments." << std::endl;
 
   timer.start();
-  insert (arr, segments.begin(), segments.end());
+  insert(arr, segments.begin(), segments.end());
   timer.stop();
 
   // Print the arrangement dimensions.

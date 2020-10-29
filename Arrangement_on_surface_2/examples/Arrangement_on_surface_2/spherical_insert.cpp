@@ -19,8 +19,7 @@ typedef CGAL::Arr_spherical_topology_traits_2<Geom_traits_2> Topol_traits_2;
 typedef CGAL::Arrangement_on_surface_2<Geom_traits_2, Topol_traits_2>
                                                              Arrangement_2;
 
-int main()
-{
+int main() {
   // Construct the arrangement from 12 geodesic arcs.
   Geom_traits_2 traits;
   Arrangement_2 arr(&traits);

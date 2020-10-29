@@ -12,8 +12,7 @@ typedef CGAL::Arrangement_with_history_2<Traits>                Arr_with_hist;
 typedef Arr_with_hist::Curve_handle                             Curve_handle;
 typedef CGAL::Arr_walk_along_line_point_location<Arr_with_hist> Point_location;
 
-int main()
-{
+int main() {
   // Construct an arrangement containing nine circles: C[0] of radius 2 and
   // C[1], ..., C[8] of radius 1.
   const Number_type _7_halves = Number_type(7) / Number_type(2);

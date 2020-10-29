@@ -10,7 +10,6 @@
 // An observer that receives notifications of face splits and face mergers.
 class My_observer : public CGAL::Arr_observer<Arrangement> {
 public:
-
   My_observer(Arrangement& arr) : CGAL::Arr_observer<Arrangement>(arr) {}
 
   virtual void before_split_face(Face_handle, Halfedge_handle e)
@@ -26,8 +25,7 @@ public:
   }
 };
 
-int main()
-{
+int main() {
   // Construct the arrangement containing one diamond-shaped face.
   Arrangement arr;
   My_observer obs(arr);

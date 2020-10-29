@@ -4,8 +4,7 @@
 #include "arr_rat_functions.h"
 #include "arr_print.h"
 
-int main()
-{
+int main() {
   CGAL::set_pretty_mode(std::cout);             // for nice printouts.
 
   // Define a traits class object and a constructor for rational functions.

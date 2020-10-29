@@ -27,8 +27,7 @@ typedef CGAL::Arr_face_overlay_traits<Arrangement_blue, Arrangement_red,
                                       Arrangement_res, Overlay_label>
                                                            Overlay_traits;
 
-int main()
-{
+int main() {
   // Construct the first arrangement, induced by two lines y = x and y = -x.
   Arrangement_blue arr1;
   insert(arr1, Line(Point(0, 0), Point(1, 1)));

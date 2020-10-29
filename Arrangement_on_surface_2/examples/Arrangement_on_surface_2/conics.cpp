@@ -4,8 +4,7 @@
 #include "arr_conics.h"
 #include "arr_print.h"
 
-int main()
-{
+int main() {
   Arrangement arr;
 
   // Insert a hyperbolic arc (C1), supported by the hyperbola y = 1/x

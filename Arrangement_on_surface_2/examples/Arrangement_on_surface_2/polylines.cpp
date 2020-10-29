@@ -4,7 +4,7 @@
 #include <vector>
 #include <list>
 
-#include "arr_polylines .h"
+#include "arr_polylines.h"
 #include "arr_print.h"
 
 /* Define the Arrangement traits class to be used. You can either use some user
@@ -23,8 +23,7 @@ typedef Geom_traits_2::Segment_2                          Segment_2;
 typedef Geom_traits_2::Curve_2                            Polyline_2;
 typedef CGAL::Arrangement_2<Geom_traits_2>                Arrangement_2;
 
-int main()
-{
+int main() {
   Geom_traits_2 traits;
   Arrangement_2 arr(&traits);
 

@@ -5,8 +5,7 @@
 #include "arr_print.h"
 #include "read_objects.h"
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
   // Get the name of the input file from the command line, or use the default
   // Bezier.dat file if no command-line parameters are given.
   const char* filename = (argc > 1) ? argv[1] : "Bezier.dat";

@@ -4,8 +4,7 @@
 #include "arr_circular.h"
 #include "arr_print.h"
 
-int main()
-{
+int main() {
   std::list<Curve> curves;
 
   // Create a circle (C1) centered at the origin with squared radius 2.

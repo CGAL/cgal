@@ -13,8 +13,7 @@ typedef unsigned int                                         Color;
 typedef CGAL::Arr_extended_dcel<Traits, Color, Color, Color> Dcel;
 typedef CGAL::Arrangement_2<Traits, Dcel>                    Ex_arrangement;
 
-int main()
-{
+int main() {
   const Color vcol1(0x00000080), hcol1(0x000000ff), fcol1(0x00ccccff);
   const Color vcol2(0x00800000), hcol2(0x00ff0000), fcol2(0x00ffcccc);
 

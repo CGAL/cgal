@@ -4,8 +4,7 @@
 #include "arr_inexact_construction_segments.h"
 #include "arr_print.h"
 
-int main()
-{
+int main() {
   // Insert isolated points.
   Arrangement arr;
   Face_handle uf = arr.unbounded_face();

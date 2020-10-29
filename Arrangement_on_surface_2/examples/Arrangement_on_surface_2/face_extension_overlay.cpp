@@ -14,8 +14,7 @@ typedef CGAL::Arr_face_overlay_traits<Ex_arrangement, Ex_arrangement,
                                       std::logical_and<bool> >
                                                          Overlay_traits;
 
-int main()
-{
+int main() {
   // Construct the first arrangement, containing a square-shaped face.
   Ex_arrangement arr1;
   insert_non_intersecting_curve(arr1, Segment(Point(2, 2), Point(6, 2)));

@@ -29,8 +29,7 @@ typedef CGAL::Arr_spherical_topology_traits_2<Segment_traits_2>
 typedef CGAL::Arrangement_on_surface_2<Segment_traits_2, Topol_segment_traits_2>
                                                              Segment_arr;
 
-int main()
-{
+int main() {
   Segment_traits_2 seg_traits;
   Segment_traits_2::Construct_point_2 ctr_p =
     seg_traits.construct_point_2_object();

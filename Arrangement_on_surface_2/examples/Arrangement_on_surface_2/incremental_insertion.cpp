@@ -10,8 +10,7 @@
 typedef CGAL::Arr_naive_point_location<Arrangement>             Naive_pl;
 typedef CGAL::Arr_point_location_result<Arrangement>::Type      Pl_result_type;
 
-int main()
-{
+int main() {
   // Construct the arrangement of five intersecting segments.
   Arrangement arr;
   Naive_pl pl(arr);

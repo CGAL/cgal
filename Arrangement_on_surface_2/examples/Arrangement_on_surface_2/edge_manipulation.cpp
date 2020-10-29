@@ -4,8 +4,7 @@
 #include "arr_inexact_construction_segments.h"
 #include "arr_print.h"
 
-int main()
-{
+int main() {
   // Step (a)---construct a rectangular face.
   Point q1(1, 3), q2(3, 5), q3(5, 3), q4(3, 1);
   Segment s4(q1, q2), s1(q2, q3), s3(q3, q4), s2(q4, q1);

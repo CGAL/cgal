@@ -16,8 +16,7 @@ typedef CGAL::Arrangement_2<Traits>                   Arrangement;
 typedef Traits::Curve_2                               Curve;
 typedef Traits::Polynomial_2                          Polynomial;
 
-int main()
-{
+int main() {
   CGAL::set_pretty_mode(std::cout);             // for nice printouts.
 
   Traits traits;

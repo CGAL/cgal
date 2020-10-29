@@ -4,8 +4,7 @@
 #include "arr_exact_construction_segments.h"
 #include "arr_print.h"
 
-int main()
-{
+int main() {
   // Aggregately construct the arrangement of five line segments.
   Segment segments[] = {Segment(Point(1, 0), Point(2, 4)),
                         Segment(Point(5, 0), Point(5, 5)),

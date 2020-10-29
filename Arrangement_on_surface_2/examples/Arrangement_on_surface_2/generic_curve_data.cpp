@@ -20,8 +20,7 @@ typedef Ex_traits::Curve_2                          Ex_polyline;
 typedef Ex_traits::X_monotone_curve_2               Ex_x_monotone_polyline;
 typedef CGAL::Arrangement_2<Ex_traits>              Ex_arrangement;
 
-int main()
-{
+int main() {
   // Construct an arrangement of four polylines named A--D.
   Ex_traits traits;
   Ex_arrangement arr(&traits);

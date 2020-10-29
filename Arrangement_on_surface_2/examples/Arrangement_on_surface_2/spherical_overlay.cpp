@@ -17,8 +17,7 @@ typedef CGAL::Arrangement_on_surface_2<Geom_traits_2, Topol_traits_2>
                                                              Arrangement_2;
 typedef CGAL::Arr_default_overlay_traits<Arrangement_2>      Overlay_traits;
 
-int main()
-{
+int main() {
   Geom_traits_2 traits;
   Geom_traits_2::Construct_point_2 ctr_p = traits.construct_point_2_object();
   Geom_traits_2::Construct_x_monotone_curve_2 ctr_xcv =

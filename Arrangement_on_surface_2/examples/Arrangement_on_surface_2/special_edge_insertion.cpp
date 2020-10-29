@@ -4,8 +4,7 @@
 #include "arr_inexact_construction_segments.h"
 #include "arr_print.h"
 
-int main()
-{
+int main() {
   Point p0(3, 3), p1(1, 3), p2(3, 5), p3(5, 3), p4(3, 1);
   Segment s1(p1, p2), s2(p2, p3), s3(p3, p4), s4(p4, p1);
   Segment s5(p1, p0), s6(p0, p3), s7(p4, p0), s8(p0, p2);

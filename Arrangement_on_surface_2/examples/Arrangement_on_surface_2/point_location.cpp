@@ -11,23 +11,22 @@
 typedef CGAL::Arr_naive_point_location<Arrangement>         Naive_pl;
 typedef CGAL::Arr_landmarks_point_location<Arrangement>     Landmarks_pl;
 
-int main ()
-{
+int main() {
   // Construct the arrangement.
   Arrangement arr;
   construct_segments_arr(arr);
 
   // Perform some point-location queries using the naive strategy.
   Naive_pl naive_pl(arr);
-  point_location_query(naive_pl, Point(1, 4));          // q1
-  point_location_query(naive_pl, Point(4, 3));          // q2
-  point_location_query(naive_pl, Point(6, 3));          // q3
+  locate_point(naive_pl, Point(1, 4));          // q1
+  locate_point(naive_pl, Point(4, 3));          // q2
+  locate_point(naive_pl, Point(6, 3));          // q3
 
   // Perform some point-location queries using the landmark strategy.
   Landmarks_pl landmarks_pl(arr);
-  point_location_query(landmarks_pl, Point(3, 2));      // q4
-  point_location_query(landmarks_pl, Point(5, 2));      // q5
-  point_location_query(landmarks_pl, Point(1, 0));      // q6
+  locate_point(landmarks_pl, Point(3, 2));      // q4
+  locate_point(landmarks_pl, Point(5, 2));      // q5
+  locate_point(landmarks_pl, Point(1, 0));      // q6
 
   return 0;
 }

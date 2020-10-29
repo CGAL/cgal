@@ -32,8 +32,7 @@ typedef CGAL::Arrangement_on_surface_2<Geom_traits_2, Topol_traits_2>
                                                            Arrangement_2;
 typedef Arrangement_2::Vertex_handle                       Vertex_handle;
 
-int main()
-{
+int main() {
   Geom_traits_2 traits;
   Geom_traits_2::Construct_point_2 ctr_p = traits.construct_point_2_object();
   Geom_traits_2::Construct_x_monotone_curve_2 ctr_xcv =
@@ -89,7 +88,8 @@ int main()
   unsigned subsets = (1 << xcvs.size());
   std::cout << "#subsets curves: " << subsets << std::endl;
 
-  std::cout << "total combinations: " << (subsetsp)*(subsets) << std::endl<< std::endl;;
+  std::cout << "total combinations: " << (subsetsp)*(subsets)
+            << std::endl<< std::endl;
 
   for (unsigned up = 0; up < subsetsp; up++) {
     std::vector< Point_2 > points_sub;
@@ -109,8 +109,10 @@ int main()
         }
       }
 
-      std::cout << "subsetpoints #" << up << " has size: "  << points_sub.size() << std::endl;
-      std::cout << "subsetcurves #" << u << " has size: "  << xcvs_sub.size() << std::endl;
+      std::cout << "subsetpoints #" << up << " has size: "
+                << points_sub.size() << std::endl;
+      std::cout << "subsetcurves #" << u << " has size: "
+                << xcvs_sub.size() << std::endl;
 
 #if 1
       Arrangement_2 arr;
@@ -120,7 +122,8 @@ int main()
                 << std::endl;
 
       // TODO why is this signature not available as "insert(...)"
-      CGAL::insert_empty(arr, xcvs_sub.begin(), xcvs_sub.end(), points_sub.begin(), points_sub.end());
+      CGAL::insert_empty(arr, xcvs_sub.begin(), xcvs_sub.end(),
+                         points_sub.begin(), points_sub.end());
 
       // Print the size of the arrangement.
       std::cout << "The arrangement size:" << std::endl
@@ -128,7 +131,8 @@ int main()
                 << ",  E = " << arr.number_of_edges()
                 << ",  F = " << arr.number_of_faces() << std::endl;
 
-      std::cout << "=======================================================" << std::endl << std::endl << std::endl;
+      std::cout << "======================================================="
+                << std::endl << std::endl << std::endl;
 #endif
       //std::cout << "arr: " << arr << std::endl;
       std::cout << std::endl;

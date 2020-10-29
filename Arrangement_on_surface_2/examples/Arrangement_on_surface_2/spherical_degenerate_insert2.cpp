@@ -23,12 +23,10 @@ typedef CGAL::Arrangement_on_surface_2<Geom_traits_2, Topol_traits_2>
                                                            Arrangement_2;
 typedef Arrangement_2::Vertex_handle                       Vertex_handle;
 
-int main()
-{
+int main() {
   Geom_traits_2 traits;
-  Geom_traits_2::Construct_point_2 ctr_p = traits.construct_point_2_object();
-  Geom_traits_2::Construct_x_monotone_curve_2 ctr_xcv =
-    traits.construct_x_monotone_curve_2_object();
+  auto ctr_p = traits.construct_point_2_object();
+  auto ctr_xcv = traits.construct_x_monotone_curve_2_object();
   Arrangement_2 arr(&traits);
   Point_2 sp = ctr_p(0, 0, -1);
   Point_2 np = ctr_p(0, 0, 1);

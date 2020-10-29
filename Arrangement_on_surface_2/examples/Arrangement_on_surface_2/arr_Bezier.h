@@ -15,6 +15,7 @@ typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
 typedef Rat_kernel::Point_2                             Rat_point;
 typedef CGAL::Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
                                                         Traits;
+typedef Traits::X_monotone_curve_2                      Bezier_x_monotone_curve;
 typedef Traits::Curve_2                                 Bezier_curve;
 typedef CGAL::Arrangement_2<Traits>                     Arrangement;
 

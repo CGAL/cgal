@@ -17,7 +17,6 @@ private:
   size_t n_faces;                       // the current number of faces
 
 public:
-
   Face_index_observer(Ex_arrangement& arr) :
     CGAL::Arr_observer<Ex_arrangement>(arr), n_faces(0)
   {
@@ -31,10 +30,9 @@ public:
   }
 };
 
-int main ()
-{
+int main() {
   // Construct the arrangement containing two intersecting triangles.
-  Ex_arrangement       arr;
+  Ex_arrangement arr;
   Face_index_observer  obs(arr);
   insert_non_intersecting_curve(arr, Segment(Point(4, 1), Point(7, 6)));
   insert_non_intersecting_curve(arr, Segment(Point(1, 6), Point(7, 6)));

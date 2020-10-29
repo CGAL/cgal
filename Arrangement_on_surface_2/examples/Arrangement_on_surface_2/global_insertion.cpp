@@ -4,8 +4,7 @@
 #include "arr_exact_construction_segments.h"
 #include "arr_print.h"
 
-int main ()
-{
+int main() {
   Segment S1[] = {Segment(Point(1, 3), Point(4, 6)),
                   Segment(Point(1, 3), Point(6, 3)),
                   Segment(Point(1, 3), Point(4, 0)),

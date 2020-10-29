@@ -4,8 +4,7 @@
 #include "arr_exact_construction_segments.h"
 #include "arr_print.h"
 
-int main()
-{
+int main() {
   // Create an arrangement of four line segments forming an H-shape:
   Arrangement arr;
 

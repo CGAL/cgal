@@ -12,8 +12,7 @@ typedef std::pair<CGAL::Object, CGAL::Object>           Object_pair;
 typedef std::pair<Vertex_const_handle, Object_pair>     Vert_decomp_entry;
 typedef std::list<Vert_decomp_entry>                    Vert_decomp_list;
 
-int main()
-{
+int main() {
   // Construct the arrangement.
   Segment segments[] = {Segment(Point(0, 0), Point(3, 3)),
                         Segment(Point(3, 3), Point(6, 0)),

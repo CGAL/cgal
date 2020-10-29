@@ -5,8 +5,7 @@
 #include "arr_linear.h"
 #include "arr_print.h"
 
-int main()
-{
+int main() {
   Arrangement arr;
 
   // Insert a line in the (currently single) unbounded face of the arrangement;

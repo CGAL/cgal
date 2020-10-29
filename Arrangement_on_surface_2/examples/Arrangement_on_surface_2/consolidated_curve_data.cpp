@@ -7,15 +7,14 @@
 
 #include "arr_exact_construction_segments.h"
 
-enum Segment_color { RED, BLUE };
+enum Segment_color {RED, BLUE};
 
 typedef CGAL::Arr_consolidated_curve_data_traits_2<Traits, Segment_color>
                                                            Data_traits;
 typedef Data_traits::Curve_2                               Colored_segment;
 typedef CGAL::Arrangement_2<Data_traits>                   Colored_arr;
 
-int main()
-{
+int main() {
   Colored_arr arr;
 
   // Construct an arrangement containing three RED line segments.

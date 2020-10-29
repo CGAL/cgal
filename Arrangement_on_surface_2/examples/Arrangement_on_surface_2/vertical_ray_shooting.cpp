@@ -11,8 +11,7 @@
 typedef CGAL::Arr_walk_along_line_point_location<Arrangement> Walk_pl;
 typedef CGAL::Arr_trapezoid_ric_point_location<Arrangement>   Trap_pl;
 
-int main()
-{
+int main() {
   // Construct the arrangement.
   Arrangement arr;
   construct_segments_arr(arr);

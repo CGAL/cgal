@@ -7,8 +7,7 @@
 #include "arr_exact_construction_segments.h"
 #include "arr_print.h"
 
-int main()
-{
+int main() {
   // Construct the first arrangement, containing a square-shaped face.
   Arrangement arr1;
   insert_non_intersecting_curve(arr1, Segment(Point(2, 2), Point(6, 2)));

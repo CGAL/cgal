@@ -13,8 +13,7 @@
 typedef CGAL::Arr_point_location_result<Arrangement>    Point_location_result;
 typedef std::pair<Point, Point_location_result::Type>   Query_result;
 
-int main()
-{
+int main() {
   // Construct the arrangement.
   Arrangement arr;
   construct_segments_arr(arr);

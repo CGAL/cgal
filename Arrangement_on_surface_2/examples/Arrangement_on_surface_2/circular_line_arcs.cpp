@@ -33,8 +33,7 @@ typedef CGAL::Arr_circular_line_arc_traits_2<Circular_k>    Traits;
 typedef CGAL::Arrangement_2<Traits>                         Arrangement;
 typedef CGAL::Arr_naive_point_location<Arrangement>         Point_location;
 
-int main()
-{
+int main() {
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
   std::cout << "random_seed = " << random_seed << std::endl;

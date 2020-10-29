@@ -5,8 +5,7 @@
 
 #ifndef CGAL_USE_CORE
 #include <iostream>
-int main ()
-{
+int main() {
   std::cout << "Sorry, this example needs CORE ..." << std::endl;
   return 0;
 }
@@ -29,8 +28,7 @@ typedef Traits_2::Algebraic_real_1                 Alg_real_1;
 
 typedef CGAL::Arrangement_2<Traits_2>              Arrangement_2;
 
-int main ()
-{
+int main() {
   CGAL::set_pretty_mode(std::cout);             // for nice printouts.
 
   // Traits class object
@@ -92,7 +90,7 @@ int main ()
 
   // Print the arcs.
   for (unsigned int i(0); i < arcs.size(); ++i)
-    std::cout << arcs[i]<<std::endl;
+    std::cout << arcs[i] << std::endl;
 
   // Construct the arrangement of the four arcs.
   Arrangement_2 arr(&traits);

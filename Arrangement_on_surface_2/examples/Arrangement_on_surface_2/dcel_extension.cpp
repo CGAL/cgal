@@ -11,8 +11,7 @@ enum Color {BLUE, RED, WHITE};
 typedef CGAL::Arr_extended_dcel<Traits, Color, bool, unsigned int>    Dcel;
 typedef CGAL::Arrangement_2<Traits, Dcel>                   Ex_arrangement;
 
-int main ()
-{
+int main() {
   // Construct the arrangement containing two intersecting triangles.
   Traits traits;
   Ex_arrangement arr(&traits);

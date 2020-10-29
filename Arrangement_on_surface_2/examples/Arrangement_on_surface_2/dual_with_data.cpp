@@ -4,42 +4,33 @@
 
 #include <algorithm>
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Exact_rational.h>
-#include <CGAL/Arr_linear_traits_2.h>
+#include <CGAL/basic.h>
 #include <CGAL/Arr_curve_data_traits_2.h>
-#include <CGAL/Arrangement_2.h>
 
+#include "arr_linear.h"
 #include "read_objects.h"
 
-typedef CGAL::Cartesian<CGAL::Exact_rational>            Kernel;
-typedef CGAL::Arr_linear_traits_2<Kernel>                Linear_traits_2;
-typedef Linear_traits_2::Point_2                         Point_2;
-typedef Linear_traits_2::Line_2                          Line_2;
-typedef CGAL::Arr_curve_data_traits_2<Linear_traits_2,
-                                      unsigned int>      Traits_2;
-typedef Traits_2::X_monotone_curve_2                     X_monotone_curve_2;
-typedef CGAL::Arrangement_2<Traits_2>                    Arrangement_2;
+typedef CGAL::Arr_curve_data_traits_2<Traits, size_t>   Data_traits;
+typedef Data_traits::X_monotone_curve_2                 Data_x_monotone_curve_2;
+typedef CGAL::Arrangement_2<Data_traits>                Data_arrangement;
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char* argv[]) {
   // Get the name of the input file from the command line, or use the default
   // points.dat file if no command-line parameters are given.
   const char* filename = (argc > 1) ? argv[1] : "coll_points.dat";
 
-  std::vector<Point_2> points;
-
-  read_objects<Point_2>(filename, std::back_inserter(points));
-  std::vector<X_monotone_curve_2> dual_lines(points.size());
+  std::vector<Point> points;
+  read_objects<Point>(filename, std::back_inserter(points));
+  std::vector<Data_x_monotone_curve_2> dual_lines(points.size());
   size_t k{0};
   std::transform(points.begin(), points.end(), dual_lines.begin(),
-                 [&](const Point_2& p) {
-                   Line_2 dual_line(p.x(), CGAL::Exact_rational(-1), -(p.y()));
-                   return X_monotone_curve_2(dual_line, k++);
+                 [&](const Point& p) {
+                   Line dual_line(p.x(), -1, -(p.y()));
+                   return Data_x_monotone_curve_2(dual_line, k++);
                  });
 
   // Construct the dual arrangement by aggregately inserting the lines.
-  Arrangement_2 arr;
+  Data_arrangement arr;
   insert(arr, dual_lines.begin(), dual_lines.end());
 
   // Look for vertices whose degree is greater than 4.

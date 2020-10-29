@@ -19,9 +19,8 @@ typedef Traits::Algebraic_real_1                      Algebraic_real;
 typedef Traits::X_monotone_curve_2                    X_monotone_curve;
 typedef Traits::Point_2                               Point;
 
-int main()
-{
-  Traits  traits;
+int main() {
+  Traits traits;
 
   auto make_xmon = traits.make_x_monotone_2_object();
   auto ctr_cv = traits.construct_curve_2_object();
