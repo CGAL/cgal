@@ -1057,7 +1057,7 @@ protected :
       for(vertex_descriptor v : m_vertices)
       {
         if(v2v[v] != boost::graph_traits<SMesh>::null_vertex()
-           && int(v2v[v])  < m_mesh.number_of_vertices())
+           && int(v2v[v])  < static_cast<int>(m_mesh.number_of_vertices()))
           new_vertices.insert(v2v[v]);
       }
       m_vertices.clear();
@@ -1067,7 +1067,7 @@ protected :
       {
         halfedge_descriptor h = halfedge(e, m_mesh);
         if(e2e[h] != boost::graph_traits<SMesh>::null_halfedge()
-           && int(e2e[h])  < m_mesh.number_of_halfedges())
+           && int(e2e[h])  < static_cast<int>(m_mesh.number_of_halfedges()))
           new_edges.insert(edge(e2e[h], m_mesh));
       }
       m_edges.clear();
@@ -1075,7 +1075,7 @@ protected :
 
       for (face_descriptor f : m_facets)
         if(f2f[f] != boost::graph_traits<SMesh>::null_face()
-           && int(f2f[f])  < m_mesh.number_of_faces())
+           && int(f2f[f])  < static_cast<int>(m_mesh.number_of_faces()))
           new_facets.insert(f2f[f]);
       m_facets.clear();
       m_facets.insert(new_facets.begin(), new_facets.end());
