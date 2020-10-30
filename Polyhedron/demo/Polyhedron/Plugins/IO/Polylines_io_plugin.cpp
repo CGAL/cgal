@@ -272,7 +272,7 @@ void Polyhedron_demo_polylines_io_plugin::simplify()
 {
   Scene_polylines_item* item = qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex()));
   bool ok;
-  double err = QInputDialog::getDouble(mw, "Brechet Distance", "Enter the approximation error:", pow(0.01*item->diagonalBbox(),2),0,999,8,&ok);
+  double err = QInputDialog::getDouble(mw, "Squared Frechet Distance", "Enter the squared approximation error:", pow(0.01*item->diagonalBbox(),2),0,999,8,&ok);
   if(!ok)
     return;
   for(Scene_polylines_item::Polylines_container::iterator
