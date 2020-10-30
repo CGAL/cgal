@@ -27,6 +27,20 @@
 
 namespace CGAL {
 
+  namespace parameters
+  {
+    template <class Parameter, class NamedParameters>
+    struct Is_default
+    {
+      typedef typename internal_np::Lookup_named_param_def <
+        Parameter,
+        NamedParameters,
+        internal_np::Param_not_found > ::type NP_type;
+      static const bool value = boost::is_same<NP_type, internal_np::Param_not_found>::value;
+      typedef CGAL::Boolean_tag<value> type;
+    };
+  } // end of parameters namespace
+
   // forward declarations to avoid dependency to Solver_interface
   template <typename FT, unsigned int dim>
   class Default_diagonalize_traits;
