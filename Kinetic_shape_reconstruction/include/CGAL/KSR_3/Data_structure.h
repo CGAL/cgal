@@ -2022,6 +2022,12 @@ public:
         // CGAL_assertion_msg(false, "TODO: ADD A TRIANGLE FACE!");
 
       } else {
+
+        // for (std::size_t i = 0; i < new_vertices.size() - 1; ++i) {
+        //   std::cout << "adding a new face" << std::endl;
+        //   PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
+        //   this->k(new_pface) = k;
+        // }
         CGAL_assertion_msg(false, "TODO: ADD NEW OPEN CASE!");
       }
 

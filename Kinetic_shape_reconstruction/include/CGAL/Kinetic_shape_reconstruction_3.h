@@ -193,7 +193,6 @@ public:
 
   bool check_integrity(bool verbose = false) const
   {
-    // TODO
     for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++ i)
     {
       if (!m_data.mesh_is_valid(i))
