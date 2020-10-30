@@ -1381,7 +1381,18 @@ public:
         back.second, support_plane(support_plane_idx).get_point(initial2.second));
 
     } else {
-      CGAL_assertion_msg(false, "TODO: WHY DO WE HAVE MORE THAN 5 VERTICES HERE? PROBABLY IT IS OK!");
+
+      const auto& initial1 = pvertices[1];
+      front = PVertex(support_plane_idx, support_plane(support_plane_idx).duplicate_vertex(initial1.second));
+      support_plane(support_plane_idx).set_point(
+        front.second, support_plane(support_plane_idx).get_point(initial1.second));
+
+      const auto& initial2 = pvertices[pvertices.size() - 2];
+      back  = PVertex(support_plane_idx, support_plane(support_plane_idx).duplicate_vertex(initial2.second));
+      support_plane(support_plane_idx).set_point(
+        back.second, support_plane(support_plane_idx).get_point(initial2.second));
+
+      // CGAL_assertion_msg(false, "TODO: WHY DO WE HAVE MORE THAN 5 VERTICES HERE? PROBABLY IT IS OK!");
     }
 
     // auto pvertex_to_point =
@@ -1586,11 +1597,11 @@ public:
         {
           std::cout << "Cropping" << std::endl;
           PVertex cropped;
-          if (prev_iedge != null_iedge() && prev_iedge == crossed[i]) {
-            cropped = prev;
-          } else {
+          // if (prev_iedge != null_iedge() && prev_iedge == crossed[i]) {
+          //   cropped = prev;
+          // } else {
             cropped = PVertex(support_plane_idx, support_plane(pvertex).split_edge(pvertex.second, prev.second));
-          }
+          // }
 
           const PEdge pedge(support_plane_idx, support_plane(pvertex).edge(pvertex.second, cropped.second));
           new_vertices.push_back(cropped);
@@ -1749,11 +1760,11 @@ public:
         {
           std::cout << "Cropping" << std::endl;
           PVertex cropped;
-          if (next_iedge != null_iedge() && next_iedge == crossed[i]) {
-            cropped = next;
-          } else {
+          // if (next_iedge != null_iedge() && next_iedge == crossed[i]) {
+          //   cropped = next;
+          // } else {
             cropped = PVertex(support_plane_idx, support_plane(pvertex).split_edge(pvertex.second, next.second));
-          }
+          // }
 
           const PEdge pedge(support_plane_idx, support_plane(pvertex).edge(pvertex.second, cropped.second));
           CGAL_assertion(cropped != pvertex);
@@ -1869,13 +1880,11 @@ public:
 
       {
         PVertex cropped;
-        if (prev_iedge != null_iedge() && prev_iedge == crossed.front()) {
-          cropped = prev;
-        } else if (next_iedge != null_iedge() && next_iedge == crossed.front()) {
-          cropped = next;
-        } else {
+        // if (next_iedge != null_iedge() && next_iedge == crossed.front()) {
+        //   cropped = next;
+        // } else {
           cropped = PVertex(support_plane_idx, support_plane(pvertex).split_edge(pvertex.second, next.second));
-        }
+        // }
 
         const PEdge pedge(support_plane_idx, support_plane(pvertex).edge(pvertex.second, cropped.second));
         new_vertices.push_back(cropped);
@@ -1885,6 +1894,7 @@ public:
 
         support_plane(cropped).set_point(cropped.second, future_points.front());
         direction(cropped) = future_directions.front();
+        std::cout << direction(cropped) << std::endl;
         std::cout << "cropped 1: " << point_3(cropped) << std::endl;
       }
 
@@ -1899,13 +1909,11 @@ public:
 
       {
         PVertex cropped;
-        if (prev_iedge != null_iedge() && prev_iedge == crossed.back()) {
-          cropped = prev;
-        } else if (next_iedge != null_iedge() && next_iedge == crossed.back()) {
-          cropped = next;
-        } else {
+        // if (prev_iedge != null_iedge() && prev_iedge == crossed.back()) {
+        //   cropped = prev;
+        // } else {
           cropped = PVertex(support_plane_idx, support_plane(pvertex).split_edge(pvertex.second, prev.second));
-        }
+        // }
 
         const PEdge pedge(support_plane_idx, support_plane(pvertex).edge(pvertex.second, cropped.second));
         new_vertices.push_back(cropped);
@@ -1915,8 +1923,19 @@ public:
 
         support_plane(cropped).set_point(cropped.second, future_points.back());
         direction(cropped) = future_directions.back();
+        std::cout << direction(cropped) << std::endl;
         std::cout << "cropped 2: " << point_3(cropped) << std::endl;
       }
+
+      // if (future_directions.size() > 1) {
+      //   for (std::size_t i = 0; i < future_directions.size(); ++i) {
+      //     const std::size_t ip = (i + 1) % future_directions.size();
+      //     const FT tol = FT(1) / FT(100000);
+      //     CGAL_assertion(
+      //       CGAL::abs(future_directions[ip].x() - future_directions[i].x()) > tol &&
+      //       CGAL::abs(future_directions[ip].y() - future_directions[i].y()) > tol);
+      //   }
+      // }
 
       std::cerr << new_vertices.size() << " new vertice(s)" << std::endl;
 
@@ -2277,9 +2296,9 @@ private:
     if (CGAL::abs(edge_d) > tol)
       m3 = (target_p.y() - source_p.y()) / edge_d;
 
-    // std::cout << "m2: " << m2 << std::endl;
-    // std::cout << "m3: " << m3 << std::endl;
-    // std::cout << "mm: " << m2 - m3 << std::endl;
+    std::cout << "m2: " << m2 << std::endl;
+    std::cout << "m3: " << m3 << std::endl;
+    std::cout << "mm: " << m2 - m3 << std::endl;
 
     bool is_parallel = false;
     if (CGAL::abs(m2 - m3) < tol) {

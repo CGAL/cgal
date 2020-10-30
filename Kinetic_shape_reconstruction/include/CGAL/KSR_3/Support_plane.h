@@ -69,6 +69,7 @@ public:
   typedef typename Mesh::template Property_map<Edge_index, IEdge> E_iedge_map;
   typedef typename Mesh::template Property_map<Face_index, KSR::size_t> F_index_map;
   typedef typename Mesh::template Property_map<Face_index, unsigned int> F_uint_map;
+  typedef typename Mesh::template Property_map<Vertex_index, bool> V_original_map;
 
 
 private:
@@ -84,6 +85,7 @@ private:
     E_iedge_map e_iedge_map;
     F_index_map input_map;
     F_uint_map k_map;
+    V_original_map v_original_map;
     std::set<IEdge> iedges;
 
 #ifdef CGAL_KSR_DEBUG
@@ -131,6 +133,8 @@ public:
       ("f:input", KSR::no_element()).first;
     m_data->k_map = m_data->mesh.template add_property_map<Face_index, unsigned int>
       ("f:k", 0).first;
+    m_data->v_original_map = m_data->mesh.template add_property_map<Vertex_index, bool>
+      ("v:original", false).first;
 
 #ifdef CGAL_KSR_DEBUG
     m_data->dbg_direction = m_data->dbg_mesh.template add_property_map<Vertex_index, Vector_2>("v:direction", CGAL::NULL_VECTOR).first;
@@ -268,6 +272,8 @@ public:
   const KSR::size_t& input (const Face_index& face_index) const { return m_data->input_map[face_index]; }
   KSR::size_t& input (const Face_index& face_index) { return m_data->input_map[face_index]; }
 
+  const bool is_original(const Vertex_index& vertex_index) const { return m_data->v_original_map[vertex_index]; }
+
   const unsigned int& k (const Face_index& face_index) const { return m_data->k_map[face_index]; }
   unsigned int& k (const Face_index& face_index) { return m_data->k_map[face_index]; }
 
@@ -336,20 +342,33 @@ public:
     dbg_vertices.reserve (points.size());
 #endif
 
-    for (const Point_2& p : points)
-    {
-      Vertex_index vi = m_data->mesh.add_vertex(p);
-      m_data->direction[vi] =
-        Vector_2(centroid, p);
-        // KSR::normalize(Vector_2(centroid, p));
-      vertices.push_back (vi);
+    FT sum_length = FT(0);
+    std::vector<Vector_2> dirs;
+    dirs.reserve(points.size());
+    for (const Point_2& p : points) {
+      dirs.push_back(Vector_2(centroid, p));
+      KSR::normalize(dirs.back());
+      const FT length = CGAL::sqrt(dirs.back() * dirs.back());
+      sum_length += length;
+    }
+    sum_length /= FT(points.size());
+
+    for (std::size_t i = 0; i < points.size(); ++i) {
+      const auto& p = points[i];
+      const Vertex_index vi = m_data->mesh.add_vertex(p);
+
+      m_data->direction[vi] = dirs[i] / sum_length;
+      m_data->v_original_map[vi] = true;
+      // m_data->direction[vi] = KSR::normalize(dirs[i]);
+
+      // std::cout << "new: " << m_data->direction[vi] << std::endl;
+      // std::cout << "old: " << KSR::normalize(dirs[i]) << std::endl;
+      vertices.push_back(vi);
 
 #ifdef CGAL_KSR_DEBUG
-      Vertex_index dbg_vi = m_data->dbg_mesh.add_vertex(p);
-      m_data->dbg_direction[dbg_vi] =
-        Vector_2(centroid, p);
-        // KSR::normalize(Vector_2(centroid, p));
-      dbg_vertices.push_back (dbg_vi);
+      const Vertex_index dbg_vi = m_data->dbg_mesh.add_vertex(p);
+      m_data->dbg_direction[dbg_vi] = dirs[i] / sum_length;
+      dbg_vertices.push_back(dbg_vi);
 #endif
     }
 

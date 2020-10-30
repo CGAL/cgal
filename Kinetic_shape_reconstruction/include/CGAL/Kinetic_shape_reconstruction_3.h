@@ -148,7 +148,7 @@ public:
       // dump (m_data, "iter_100-" + std::to_string(iter));
       // CGAL_assertion(check_integrity(true));
       ++ iter;
-      // if (iter > 10000) {
+      // if (iter > 100) {
       //   std::cout << "Handling iteration # " << std::to_string(iter) << std::endl;
       //   CGAL_assertion_msg(false, "WHY SO MANY ITERATIONS?");
       // }
@@ -580,7 +580,7 @@ private:
 
       ++ iter;
 
-      // if (iter == 3) {
+      // if (iter == 29) {
       //   exit(0);
       // }
 

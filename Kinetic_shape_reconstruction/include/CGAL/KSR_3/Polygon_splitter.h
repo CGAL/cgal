@@ -43,6 +43,7 @@ namespace KSR_3
 template <typename GeomTraits>
 class Polygon_splitter
 {
+  typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_2 Point_2;
   typedef typename GeomTraits::Point_3 Point_3;
   typedef typename GeomTraits::Segment_2 Segment_2;
@@ -286,10 +287,30 @@ public:
       }
 
       m_data.input(pface) = original_input[original_idx];
-      for (PVertex pvertex : new_vertices)
-        m_data.direction(pvertex) =
-          Vector_2(original_centroids[original_idx], m_data.point_2(pvertex));
-          // KSR::normalize(Vector_2(original_centroids[original_idx], m_data.point_2(pvertex)));
+
+      // FT sum_length = FT(0);
+      // std::vector<Vector_2> dirs;
+      // dirs.reserve(new_vertices.size());
+      // for (const PVertex& pvertex : new_vertices) {
+      //   dirs.push_back(Vector_2(
+      //     original_centroids[original_idx], m_data.point_2(pvertex)));
+      //   const FT length = CGAL::sqrt(dirs.back() * dirs.back());
+      //   sum_length += length;
+      // }
+      // sum_length /= FT(new_vertices.size());
+
+      // for (std::size_t i = 0; i < new_vertices.size(); ++i) {
+      //   const auto& pvertex = new_vertices[i];
+      //   if (!m_data.support_plane(pvertex).is_original(pvertex.second)) {
+      //     m_data.direction(pvertex) = KSR::normalize(dirs[i]);
+      //   }
+
+      //   // m_data.direction(pvertex) = dirs[i] / sum_length;
+      //   m_data.direction(pvertex) = KSR::normalize(dirs[i]);
+
+      //   std::cout << "new: " << m_data.direction(pvertex) << std::endl;
+      //   std::cout << "old: " << KSR::normalize(dirs[i]) << std::endl;
+      // }
     }
 
     // Set intersection adjacencies
