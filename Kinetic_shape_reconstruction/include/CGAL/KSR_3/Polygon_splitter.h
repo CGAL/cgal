@@ -297,7 +297,8 @@ public:
       //   const FT length = CGAL::sqrt(dirs.back() * dirs.back());
       //   sum_length += length;
       // }
-      // sum_length /= FT(new_vertices.size());
+      // CGAL_assertion(dirs.size() == new_vertices.size());
+      // sum_length /= FT(dirs.size());
 
       // for (std::size_t i = 0; i < new_vertices.size(); ++i) {
       //   const auto& pvertex = new_vertices[i];

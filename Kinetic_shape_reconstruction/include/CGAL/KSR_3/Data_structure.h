@@ -1444,7 +1444,6 @@ public:
     }
     // std::cout << std::endl;
 
-
     Incident_iedges i_iedges = incident_iedges (ivertex);
     std::vector<std::pair<IEdge, Direction_2> > iedges;
     std::copy (i_iedges.begin(), i_iedges.end(),
@@ -1515,10 +1514,8 @@ public:
 
       // std::cout << "initial iedges: " << std::endl;
       // for (const auto& iedge : iedges) {
-        // std::cout << segment_3(iedge.first) << std::endl;
+      //   std::cout << segment_3(iedge.first) << std::endl;
       // }
-      // std::cout << "init dir: " << tmp_dir << std::endl;
-      // std::cout << std::endl;
 
       KSR::size_t first_idx = KSR::no_element();
       for (std::size_t i = 0; i < iedges.size(); ++i) {
@@ -1684,8 +1681,6 @@ public:
       // for (const auto& iedge : iedges) {
       //   std::cout << segment_3(iedge.first) << std::endl;
       // }
-      // std::cout << "init dir: " << tmp_dir << std::endl;
-      // std::cout << std::endl;
 
       KSR::size_t first_idx = KSR::no_element();
       for (std::size_t i = 0; i < iedges.size(); ++ i)
@@ -1826,6 +1821,11 @@ public:
       const Direction_2 dir_next(point_2(next, tmp_time) - point_2(pvertex.first, ivertex));
       const Direction_2 dir_prev(point_2(prev, tmp_time) - point_2(pvertex.first, ivertex));
 
+      // std::cout << "initial iedges: " << std::endl;
+      // for (const auto& iedge : iedges) {
+      //   std::cout << segment_3(iedge.first) << std::endl;
+      // }
+
       KSR::size_t first_idx = KSR::no_element();
       for (std::size_t i = 0; i < iedges.size(); ++i) {
         if (dir_next.counterclockwise_in_between(
@@ -1838,6 +1838,9 @@ public:
 
       crossed.clear();
 
+      // std::ofstream("first.polylines.txt")
+      // << "2 " << segment_3(iedges[first_idx].first) << std::endl;
+
       KSR::size_t iedge_idx = first_idx;
       std::size_t iter = 0;
       while (true)
@@ -1848,7 +1851,9 @@ public:
         if (!dir.counterclockwise_in_between (dir_next, dir_prev))
           break;
 
-        crossed.push_back (iedge);
+        // std::ofstream("next" + std::to_string(iter) + ".polylines.txt")
+        // << "2 " << segment_3(iedge) << std::endl;
+        crossed.push_back(iedge);
 
         iedge_idx = (iedge_idx + 1) % iedges.size();
 
@@ -1927,16 +1932,6 @@ public:
         std::cout << "cropped 2: " << point_3(cropped) << std::endl;
       }
 
-      // if (future_directions.size() > 1) {
-      //   for (std::size_t i = 0; i < future_directions.size(); ++i) {
-      //     const std::size_t ip = (i + 1) % future_directions.size();
-      //     const FT tol = FT(1) / FT(100000);
-      //     CGAL_assertion(
-      //       CGAL::abs(future_directions[ip].x() - future_directions[i].x()) > tol &&
-      //       CGAL::abs(future_directions[ip].y() - future_directions[i].y()) > tol);
-      //   }
-      // }
-
       std::cerr << new_vertices.size() << " new vertice(s)" << std::endl;
 
       bool is_occupied_edge_back, bbox_reached_back;
@@ -1969,24 +1964,24 @@ public:
           PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
           this->k(new_pface) = k;
         }
-      } else if ((!is_occupied_edge_back && !is_occupied_edge_front) && new_vertices.size() >= 2) { // add triangle
+      } else if ((!is_occupied_edge_back && !is_occupied_edge_front) && new_vertices.size() >= 2) { // add a triangle face
 
         for (std::size_t i = 0; i < new_vertices.size() - 1; ++i) {
           std::cout << "adding a new face" << std::endl;
           PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
           this->k(new_pface) = k;
         }
+        // CGAL_assertion_msg(false, "TODO: ADD A TRIANGLE FACE!");
 
-        // CGAL_assertion_msg(false, "TODO: ADD A TRIANGLE!");
-      } else if((is_occupied_edge_back || is_occupied_edge_front) && this->k(pface) == 1) {
+      } else if((is_occupied_edge_back || is_occupied_edge_front) && this->k(pface) == 1) { // add a triangle face
 
         for (std::size_t i = 0; i < new_vertices.size() - 1; ++i) {
           std::cout << "adding a new face" << std::endl;
           PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
           this->k(new_pface) = k;
         }
+        // CGAL_assertion_msg(false, "TODO: ADD A TRIANGLE FACE!");
 
-        // CGAL_assertion_msg(false, "TODO: CASE 1");
       } else {
         CGAL_assertion_msg(false, "TODO: ADD NEW OPEN CASE!");
       }
@@ -2296,9 +2291,9 @@ private:
     if (CGAL::abs(edge_d) > tol)
       m3 = (target_p.y() - source_p.y()) / edge_d;
 
-    std::cout << "m2: " << m2 << std::endl;
-    std::cout << "m3: " << m3 << std::endl;
-    std::cout << "mm: " << m2 - m3 << std::endl;
+    // std::cout << "m2: " << m2 << std::endl;
+    // std::cout << "m3: " << m3 << std::endl;
+    // std::cout << "mm: " << m2 - m3 << std::endl;
 
     bool is_parallel = false;
     if (CGAL::abs(m2 - m3) < tol) {
@@ -2333,28 +2328,28 @@ private:
     const auto iedge_bbox = iedge_seg.bbox();
 
     if (has_iedge(pvertex)) {
-      std::cout << "constrained pvertex case" << std::endl;
+      // std::cout << "constrained pvertex case" << std::endl;
       return false;
     }
 
     if (!is_active(pvertex)) {
-      std::cout << "pvertex no active case" << std::endl;
+      // std::cout << "pvertex no active case" << std::endl;
       return false;
     }
 
     if (!is_active(iedge)) {
-      std::cout << "iedge no active case" << std::endl;
+      // std::cout << "iedge no active case" << std::endl;
       return false;
     }
 
     if (!CGAL::do_overlap(pv_bbox, iedge_bbox)) {
-      std::cout << "no overlap case" << std::endl;
+      // std::cout << "no overlap case" << std::endl;
       return false;
     }
 
     Point_2 point;
     if (!KSR::intersection_2(pv_seg, iedge_seg, point)) {
-      std::cout << "no intersection case" << std::endl;
+      // std::cout << "no intersection case" << std::endl;
       return false;
     }
     return true;

@@ -351,7 +351,8 @@ public:
       const FT length = CGAL::sqrt(dirs.back() * dirs.back());
       sum_length += length;
     }
-    sum_length /= FT(points.size());
+    CGAL_assertion(dirs.size() == points.size());
+    sum_length /= FT(dirs.size());
 
     for (std::size_t i = 0; i < points.size(); ++i) {
       const auto& p = points[i];
@@ -359,7 +360,6 @@ public:
 
       m_data->direction[vi] = dirs[i] / sum_length;
       m_data->v_original_map[vi] = true;
-      // m_data->direction[vi] = KSR::normalize(dirs[i]);
 
       // std::cout << "new: " << m_data->direction[vi] << std::endl;
       // std::cout << "old: " << KSR::normalize(dirs[i]) << std::endl;
