@@ -1208,7 +1208,7 @@ test_polycurve_bezier_traits()
 
   compile_test_with_flags test_traits bezier_polycurve "$flags"
   if [ -n "${SUCCESS}" ] ; then
-   execute_commands_new_structure Polycurves_bezier test_polycurve_bezier_traits \
+   execute_commands_new_structure polycurves_bezier test_polycurve_bezier_traits \
     MERGE \
     EQUAL \
     IS_VERTICAL \
