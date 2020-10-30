@@ -759,6 +759,7 @@ void check_node_on_boundary_vertex_case(std::size_t node_id,
       bool hedge_is_marked = call_get(marks_on_edges,tm,edge(hedge,tm));
       //do split the edges
       CGAL_assertion_code(vertex_descriptor expected_src=source(hedge,tm));
+      user_visitor.before_edge_split(hedge, tm);
       for(std::size_t node_id : node_ids)
       {
         halfedge_descriptor hnew = Euler::split_edge(hedge, tm);
@@ -777,9 +778,11 @@ void check_node_on_boundary_vertex_case(std::size_t node_id,
         //update marker tags. If the edge was marked, then the resulting edges in the split must be marked
         if ( hedge_is_marked )
           call_put(marks_on_edges,tm,edge(hnew,tm),true);
+        user_visitor.edge_split(hnew, tm);
 
         CGAL_assertion_code(expected_src=vnew);
       }
+      user_visitor.after_edge_split();
 
       CGAL_assertion(target(hedge_incident_to_src,tm)==original_vertex);
       CGAL_assertion(face(hedge_incident_to_src,tm)==face(hedge_opp,tm));

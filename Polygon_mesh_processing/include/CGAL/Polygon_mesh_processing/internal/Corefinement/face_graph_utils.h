@@ -223,6 +223,9 @@ struct Default_visitor{
   void before_face_copy(face_descriptor /*f_old*/, TriangleMesh&, TriangleMesh&){}
   void after_face_copy(face_descriptor /*f_old*/, TriangleMesh&,
                        face_descriptor /* f_new */, TriangleMesh&){}
+  void before_edge_split(halfedge_descriptor /* h */, const TriangleMesh& /* tm */){}
+  void edge_split(halfedge_descriptor /* hnew */, const TriangleMesh& /* tm */){}
+  void after_edge_split(){}
 
 // calls commented in the code and probably incomplete due to the migration
 // see NODE_VISITOR_TAG
