@@ -569,9 +569,13 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HarmonizeSpeeds(boost::mpl::bool_<tru
   // If a new input edge is not successfully inserted into the same, it takes the line coefficients
   // of the representative of this class.
 
+  // No need to harmonize if we have an exact square root
   if(CGAL::is_same_or_derived<Field_with_sqrt_tag,
-                              typename Algebraic_structure_traits<FT>::Algebraic_category>::value)
+                              typename Algebraic_structure_traits<FT>::Algebraic_category>::value &&
+     !std::is_floating_point<FT>::value)
+  {
     return;
+  }
 
   auto comparer = [&](Halfedge_handle lLH, Halfedge_handle lRH) -> bool
   {
