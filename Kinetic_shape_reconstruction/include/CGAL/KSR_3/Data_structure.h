@@ -1335,6 +1335,11 @@ public:
     PVertex prev = pvertices.front();
     PVertex next = pvertices.back();
 
+    // Fix this by storing for each point the time of its previous event.
+    // Then take 50% or 10% of this time!
+    const FT time_step = (max_time - min_time) / FT(100);
+    const FT tmp_time = m_current_time - time_step;
+
     IEdge prev_iedge = null_iedge(), next_iedge = null_iedge();
 
     std::ofstream("came_from.polylines.txt")
@@ -1508,11 +1513,6 @@ public:
       // const Direction_2 dir(point_2(prev) - point_2(pvertex));
 
       // const FT tmp_time = m_current_time - (m_current_time - m_previous_time) / FT(100);
-
-      const FT tol = FT(1) / FT(1000000);
-      const FT diff_time = (m_current_time - m_previous_time) / FT(100);
-      FT tmp_time = m_current_time - diff_time;
-      if (diff_time < tol) tmp_time = m_previous_time;
 
       const Direction_2 tmp_dir(point_2(prev, tmp_time) - point_2(pvertex.first, ivertex));
       // std::cout << point_3(prev, tmp_time) << std::endl;
@@ -1693,20 +1693,6 @@ public:
 
       // const FT tmp_time = m_current_time - (m_current_time - m_previous_time) / FT(100);
 
-      const FT tol = FT(1) / FT(1000000);
-      const FT diff_time = (m_current_time - m_previous_time) / FT(100);
-      FT tmp_time = m_current_time - diff_time;
-
-      // std::cout << "diff_time: " << diff_time << std::endl;
-      // std::cout << "tmp_time: " << tmp_time << std::endl;
-
-      if (diff_time < tol) {
-        // tmp_time = m_previous_time;
-        const FT time_step = max_time - min_time;
-        tmp_time = m_current_time - time_step;
-      }
-      // std::cout << "final_time: " << tmp_time << std::endl;
-
       const Direction_2 tmp_dir(point_2(next, tmp_time) - point_2(pvertex.first, ivertex));
       // std::cout << point_3(next, tmp_time) << std::endl;
 
@@ -1869,11 +1855,6 @@ public:
       // const Direction_2 dir_prev(point_2(prev) - point_2(pvertex));
 
       // const FT tmp_time = m_current_time - (m_current_time - m_previous_time) / FT(100);
-
-      const FT tol = FT(1) / FT(1000000);
-      const FT diff_time = (m_current_time - m_previous_time) / FT(100);
-      FT tmp_time = m_current_time - diff_time;
-      if (diff_time < tol) tmp_time = m_previous_time;
 
       const Direction_2 dir_next(point_2(next, tmp_time) - point_2(pvertex.first, ivertex));
       const Direction_2 dir_prev(point_2(prev, tmp_time) - point_2(pvertex.first, ivertex));

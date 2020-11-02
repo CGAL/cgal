@@ -62,7 +62,8 @@ public:
     m_pother(Data_structure::null_pvertex()),
     m_ivertex(Data_structure::null_ivertex()),
     m_iedge(Data_structure::null_iedge()),
-    m_time(FT(0))
+    m_time(FT(0)),
+    m_support_plane_idx(m_pvertex.first)
   { }
 
   // An event that occurs between two polygon vertices.
@@ -76,7 +77,8 @@ public:
   m_pother(pother),
   m_ivertex(Data_structure::null_ivertex()),
   m_iedge(Data_structure::null_iedge()),
-  m_time(time)
+  m_time(time),
+  m_support_plane_idx(m_pvertex.first)
   { }
 
   // An event that occurs between a polygon vertex and an intersection graph edge.
@@ -90,7 +92,8 @@ public:
   m_pother(Data_structure::null_pvertex()),
   m_ivertex(Data_structure::null_ivertex()),
   m_iedge(iedge),
-  m_time(time) {
+  m_time(time),
+  m_support_plane_idx(m_pvertex.first) {
 
     CGAL_assertion_msg(!is_constrained, "TODO: CAN THIS EVENT EVER HAPPEN IN THE CONSTRAINED SETTING?");
   }
@@ -106,7 +109,8 @@ public:
   m_pother(Data_structure::null_pvertex()),
   m_ivertex(ivertex),
   m_iedge(Data_structure::null_iedge()),
-  m_time(time)
+  m_time(time),
+  m_support_plane_idx(m_pvertex.first)
   { }
 
   // An event that occurs between two polygon vertices and an intersection graph vertex.
@@ -121,7 +125,8 @@ public:
   m_pother(pother),
   m_ivertex(ivertex),
   m_iedge(Data_structure::null_iedge()),
-  m_time(time) {
+  m_time(time),
+  m_support_plane_idx(m_pvertex.first) {
 
     CGAL_assertion_msg(is_constrained, "TODO: CAN THIS EVENT EVER HAPPEN IN THE UNCONSTRAINED SETTING?");
   }
@@ -132,6 +137,7 @@ public:
   const IVertex& ivertex() const { return m_ivertex; }
   const IEdge& iedge() const { return m_iedge; }
   const FT time() const { return m_time; }
+  const KSR::size_t support_plane() const { return m_support_plane_idx; }
 
   // Predicates.
   const bool is_constrained() const { return m_is_constrained; }
@@ -179,6 +185,7 @@ private:
   IVertex m_ivertex;
   IEdge   m_iedge;
   FT m_time;
+  KSR::size_t m_support_plane_idx;
 };
 
 } // namespace KSR_3

@@ -472,6 +472,9 @@ private:
         FT time = dist / m_data.speed(pvertex);
 
         m_queue.push (Event (true, pvertex, pother, m_min_time + time));
+
+        // std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
+        // std::cout << "pother: " << m_data.point_3(pother) << std::endl;
       }
 
       // Test end-vertices of intersection edge
@@ -522,6 +525,9 @@ private:
         FT time = dist / m_data.speed(pvertex);
 
         m_queue.push (Event (false, pvertex, iedge, m_min_time + time));
+
+        // std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
+        // std::cout << "iedge: " << m_data.segment_3(iedge) << std::endl;
       }
     }
     return true;
@@ -579,7 +585,7 @@ private:
 
       ++ iter;
 
-      // if (iter == 9) {
+      // if (iter == 10) {
       //   exit(0);
       // }
 
@@ -692,14 +698,14 @@ private:
           if (stop) // polygon stops
           {
             m_data.crop_polygon(pvertex, pother, iedge);
-            remove_events(iedge);
+            remove_events(iedge, pvertex.first);
             compute_events_of_vertices(std::array<PVertex,2>{pvertex, pother});
           }
           else // polygon continues beyond the edge
           {
             PVertex pv0, pv1;
             std::tie(pv0, pv1) = m_data.propagate_polygon(k, pvertex, pother, iedge);
-            remove_events(iedge);
+            remove_events(iedge, pvertex.first);
             compute_events_of_vertices(std::array<PVertex, 4>{pvertex, pother, pv0, pv1});
           }
 
@@ -731,13 +737,13 @@ private:
         if (stop) // polygon stops
         {
           const PVertex pvnew = m_data.crop_polygon(pvertex, iedge);
-          remove_events(iedge);
+          remove_events(iedge, pvertex.first);
           compute_events_of_vertices(std::array<PVertex,2>{pvertex, pvnew});
         }
         else // polygon continues beyond the edge
         {
           const std::array<PVertex, 3> pvnew = m_data.propagate_polygon(k, pvertex, iedge);
-          remove_events(iedge);
+          remove_events(iedge, pvertex.first);
           compute_events_of_vertices(pvnew);
         }
       }
@@ -767,7 +773,7 @@ private:
 
       // Remove all events of the crossed iedges.
       for (const auto& iedge : crossed)
-        remove_events(iedge);
+        remove_events(iedge, pvertex.first);
 
       // And compute new events.
       CGAL_assertion(new_pvertices.size() > 0);
@@ -779,8 +785,11 @@ private:
     }
   }
 
-  void remove_events (const IEdge& iedge) {
-    m_queue.erase_vertex_events (iedge);
+  void remove_events (
+    const IEdge& iedge,
+    const KSR::size_t support_plane_idx) {
+
+    m_queue.erase_vertex_events(iedge, support_plane_idx);
     // std::cout << "erasing events for iedge " << m_data.str(iedge) << std::endl;
     // std::cout << m_data.segment_3(iedge) << std::endl;
   }
