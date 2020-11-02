@@ -198,9 +198,9 @@ private:
 
   static const bool OUT_PRISM = 1;
   static const bool IN_PRISM = 0;
-	static const int CUT_COPLANAR = 4;
-	static const int CUT_EMPTY = -1;
-	static const int CUT_FACE = 3;
+  static const int CUT_COPLANAR = 4;
+  static const int CUT_EMPTY = -1;
+  static const int CUT_FACE = 3;
 
 
   std::vector<Point_3> env_vertices;
@@ -1006,7 +1006,7 @@ private:
   Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order(
                 const ePoint_3& ip,
                 const std::vector<unsigned int> &prismindex,
-		const std::vector<std::vector<int>>& intersect_face, const int &jump, int &id) const
+                const std::vector<std::vector<int>>& intersect_face, const int &jump, int &id) const
   {
     int tot, fid, ori;
     for (int i = 0; i < prismindex.size(); i++){
@@ -1069,12 +1069,12 @@ private:
 
   int
   Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(
-		const ePoint_3& ip,
-                const std::vector<unsigned int> &prismindex,
-		const std::vector<std::vector<int>>& intersect_face,
-                const std::vector<int>& coverlist,
-                const int &jump,
-                int &id) const
+    const ePoint_3& ip,
+    const std::vector<unsigned int> &prismindex,
+    const std::vector<std::vector<int>>& intersect_face,
+    const std::vector<int>& coverlist,
+    const int &jump,
+    int &id) const
   {
     int tot, ori, fid;
 
@@ -1141,17 +1141,17 @@ private:
 
   int
   Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order(
-		const ePoint_3& ip,
-		const std::vector<unsigned int> &prismindex,
-                const std::vector<std::vector<int>>&intersect_face,
-                const int &jump1,
-                const int &jump2,
-		int &id) const
+    const ePoint_3& ip,
+    const std::vector<unsigned int> &prismindex,
+    const std::vector<std::vector<int>>&intersect_face,
+    const int &jump1,
+    const int &jump2,
+    int &id) const
   {
     int tot, ori, fid;
     for (int i = 0; i < prismindex.size(); i++){
 
-      if (prismindex[i] == jump1 || prismindex[i] == jump2)	continue;
+      if (prismindex[i] == jump1 || prismindex[i] == jump2) continue;
       if (!box_box_intersection(bounding_boxes[prismindex[i]], bounding_boxes[jump1])) continue;
       if (!box_box_intersection(bounding_boxes[prismindex[i]], bounding_boxes[jump2])) continue;
 
@@ -1212,19 +1212,19 @@ private:
 
   int
   Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(
-		const ePoint_3& ip,
-		const std::vector<unsigned int>& prismindex,
-                const std::vector<std::vector<int>*>& intersect_face,
-                const std::vector<int>& coverlist,
-                const int &jump1,
-                const int &jump2,
-		int &id) const
+    const ePoint_3& ip,
+    const std::vector<unsigned int>& prismindex,
+    const std::vector<std::vector<int>*>& intersect_face,
+    const std::vector<int>& coverlist,
+    const int &jump1,
+    const int &jump2,
+    int &id) const
   {
     int tot, ori, fid;
     for (int i = 0; i < prismindex.size(); i++){
 
 
-      if (prismindex[i] == jump1 || prismindex[i] == jump2)	continue;
+      if (prismindex[i] == jump1 || prismindex[i] == jump2) continue;
       if (!box_box_intersection(bounding_boxes[prismindex[i]], bounding_boxes[jump1])) continue;
       if (!box_box_intersection(bounding_boxes[prismindex[i]], bounding_boxes[jump2])) continue;
       if (coverlist[i] == 1) continue;
