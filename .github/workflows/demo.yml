@@ -1,6 +1,6 @@
 name: Test Polyhedron Demo
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   batch_1:
