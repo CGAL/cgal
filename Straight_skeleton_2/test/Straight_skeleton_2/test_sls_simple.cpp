@@ -76,6 +76,9 @@ bool is_valid(const boost::shared_ptr<StraightSkeleton>& ss)
 {
   typedef typename StraightSkeleton::Traits::Point_2 Point;
 
+  if(!ss)
+    return false;
+
   if(!ss->is_valid())
     return false;
 
