@@ -8,5 +8,5 @@ sudo apt-get install -y  libmpfr-dev \
 sudo apt purge --auto-remove cmake
 cd /tmp
 wget https://cmake.org/files/v3.18/cmake-3.18.4-Linux-x86_64.sh
-sudo sh cmake-3.18.4-Linux-x86_64.sh --skip-license
+sudo sh cmake-3.18.4-Linux-x86_64.sh --skip-license --prefix=/usr/local
 rm cmake-3.18.4-Linux-x86_64.sh
