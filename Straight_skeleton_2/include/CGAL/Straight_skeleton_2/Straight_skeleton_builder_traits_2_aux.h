@@ -209,7 +209,7 @@ struct No_cache
 {
   bool IsCached ( std::size_t ) { return false; }
 
-  Info const& Get ( std::size_t )
+  Info Get ( std::size_t )
   {
     CGAL_error();
     return Info();
