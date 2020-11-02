@@ -87,7 +87,7 @@ namespace CGAL {
 /**
  * \ingroup PkgPolygonMeshProcessingRef
  * This class provides a test whether a query point, segment, or triangle
- * is inside or outside a polyhedral envelope of a triangle soup.
+ * is inside or outside a polyhedral envelope of a triangle mesh.
  *
  * @tparam GeomTraits a geometric traits class, model of `Kernel`
  */
@@ -1815,7 +1815,7 @@ private:
 public:
 
   /*!
-   * \returns `true` if the query point is inside the polygonal envelope.
+   * \returns `true`, iff the query point is inside the polygonal envelope.
    */
 
   bool
@@ -1835,7 +1835,7 @@ public:
 
 
   /*!
-   * \returns `true` if the query segment is inside the polygonal envelope.
+   * \returns `true`, iff the query segment defined by the points `source` and `target` is inside the polygonal envelope.
    */
   bool
   operator()(const Point_3& source, const Point_3& target) const
@@ -1855,7 +1855,7 @@ public:
 
 
   /*!
-   * \returns `true` if the query triangle is inside the envelope.
+   * \returns `true`, iff the query triangle formed by the points `t0`, `t1`, and `t2` is inside the envelope.
    */
   bool
   operator()(const Point_3& t0, const Point_3& t1, const Point_3& t2) const

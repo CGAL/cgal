@@ -18,7 +18,7 @@ not filter any placement.
 \sa `Envelope`
 
 */
-template <typename GeomTraits,typename GetFilter_>
+template <typename GeomTraits, typename GetFilter_>
 class Envelope_filter {
 public:
 

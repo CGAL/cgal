@@ -536,11 +536,11 @@ package \refPkgSurfaceMeshSimplification, in order to simplify respecting a tole
 \subsubsection InsideExample Polyhedral Envelope Example
 \cgalExample{Polygon_mesh_processing/polyhedral_envelope.cpp}
 
-The algorithm is described in \cgalCite{cgal:wshap-eepec-20} and can be summarized as follows.
-First for each triangle a <em>prism</em> is constructed with an offset of \f$ \epsilon/\sqrt(3) \f$,
+The algorithm is described in \cgalCite{cgal:Wwshap-eepec-20} and can be summarized as follows.
+First for each triangle a <em>prism</em> is constructed with an offset of \f$ \epsilon/\sqrt(3) \f$ where \f$ \epsilon\f$ is the tolerance,
 and all prisms are stored in an AABB tree.  For a query point the algorithm checks if is inside a prism.
 For a query segment or triangle the algorithms checks if the query is completely covered.
-The details of how to check the covering can be found in the paper of Wang et al. \cgalCite{cgal:Wwshap-eepec-20}
+The details of how to check this covering can be found in the paper of Wang et al.
 
 \subsection PMPShapePredicates Shape Predicates
 

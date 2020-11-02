@@ -185,8 +185,8 @@ the mesh as much as possible.
 
 \subsection Surface_mesh_simplificationCostStrategyPolicies Cost Strategy Policies
 
-The cost strategy used by the algorithm is selected by means of two policies:
-`GetPlacement` and `GetCost`.
+The cost strategy used by the algorithm is selected by means of three policies:
+`GetPlacement`, `GetCost`, and `GetFilter`.
 
 The `GetPlacement` policy is called to compute the new position
 for the remaining vertex after the halfedge-collapse. It returns
@@ -209,7 +209,7 @@ But this is a trade-off: the cost of a collapse is a function of the placement
 (the new position chosen for the remaining vertex) so before `GetCost`
 is called for each and every edge, `GetPlacement` must also be called to obtain
 the placement parameter to the cost function.
-But that placement, which is a 3D Point, is not attached to each and every edge since
+But that placement, which is a 3D point, is not attached to each and every edge since
 that would easily <I>triple</I> the additional storage requirement.
 On the one hand, this dramatically saves on memory but on the other hand is
 a processing waste because when an edge is effectively collapsed, `GetPlacement`
@@ -222,6 +222,17 @@ computed once but changes several times during the process so the placement func
 must be called several times just as well. Caching the placement can only avoid the
 very last call, when the edge is collapsed, but not all the previous calls which
 are needed because the placement (and cost) changes.
+
+We have not yet explained what the `GetFilter` policy is about.
+While the cost is a scalar that is used in the priority queue, there may be
+additional criteria coming in to decide if the edge collapse shall be performed or not.
+While such a criterion could be easily integrated into the cost function,
+that is setting the cost to infinity in order not to be considered a candidate for a collapse,
+we test the criterion only for an edge when it is the next edge to collapse.
+This makes the mesh  simplification faster in case the computation of the
+criterion is expensive, for example when we check if the simplified mesh
+is in a tolerance envelope of the input mesh.
+
 
 \section Surface_mesh_simplificationAPI API
 
@@ -343,7 +354,7 @@ rejects this placement by returning `boost::none`.
 
 \note This filter class replaces the usage of the class `Surface_mesh_simplification::Bounded_normal_change_placement`.
 Using the filter is faster as it is only performed on the edge to be collapsed next,
-and not during the update on all edges incident to the vertex that is the result of the edhe collapse.
+and not during the update of all edges incident to the vertex that is the result of the edge collapse.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_bounded_normal_change.cpp}
 
