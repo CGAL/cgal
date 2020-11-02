@@ -1,4 +1,5 @@
 #!/bin/bash
+cmake --version
 FACTOR=$1
 set -ex
 cd Polyhedron/demo
@@ -11,5 +12,5 @@ NB_OF_PLUGINS=${#PLUGINS_ARRAY[@]}
 DEL=$(($NB_OF_PLUGINS / 4))
 mkdir build
 cd build
-/usr/local/bin/cmake -DCGAL_DIR=$2 ../Polyhedron
+cmake -DCGAL_DIR=$2 ../Polyhedron
 make -j2 ${PLUGINS_ARRAY[@]:$(($FACTOR * $DEL)):$((($FACTOR + 1) * $DEL))}
