@@ -863,6 +863,8 @@ public:
     std::deque<PVertex> vertices;
     vertices.push_back (pvertex);
 
+    // std::cout << "came from: " << segment_3(iedge(pvertex)) << std::endl;
+
     std::queue<Queue_element> todo;
     PVertex prev, next;
     std::tie (prev, next) = border_prev_and_next (pvertex);
@@ -1342,8 +1344,9 @@ public:
 
     IEdge prev_iedge = null_iedge(), next_iedge = null_iedge();
 
-    std::ofstream("came_from.polylines.txt")
-    << "2 " << segment_3(iedge(pvertices[1])) << std::endl;
+    // std::ofstream("came_from.polylines.txt")
+    // << "2 " << segment_3(iedge(pvertices[1])) << std::endl;
+    std::cout << "came from: " << segment_3(iedge(pvertices[1])) << std::endl;
 
     // Copy front/back to remember position/direction.
     PVertex front, back;
@@ -1470,6 +1473,7 @@ public:
                {
                  return a.second < b.second;
                });
+    CGAL_assertion(iedges.size() != 0);
 
     std::cout.precision(20);
     std::cout << "Prev = "  << point_3 (prev)  << " / " << direction (prev)  << std::endl
@@ -1573,6 +1577,7 @@ public:
         ++iter;
       }
 
+      CGAL_assertion(crossed.size() != 0);
       std::cerr << "IEdges crossed = " << crossed.size() << std::endl;
       for (const auto& iedge : crossed)
         std::cout << segment_3(iedge) << std::endl;
@@ -1755,6 +1760,7 @@ public:
         ++iter;
       }
 
+      CGAL_assertion(crossed.size() != 0);
       std::cerr << "IEdges crossed = " << crossed.size() << std::endl;
       for (const auto& iedge : crossed)
         std::cout << segment_3(iedge) << std::endl;
@@ -1877,6 +1883,7 @@ public:
         }
       }
 
+      CGAL_assertion(first_idx != KSR::no_element());
       crossed.clear();
 
       // std::ofstream("first.polylines.txt")
@@ -1904,6 +1911,7 @@ public:
         ++iter;
       }
 
+      CGAL_assertion(crossed.size() != 0);
       std::cerr << "IEdges crossed = " << crossed.size() << std::endl;
       for (const auto& iedge : crossed)
         std::cout << segment_3(iedge) << std::endl;
@@ -2071,16 +2079,19 @@ public:
     support_plane(support_plane_idx).remove_vertex(front.second);
     support_plane(support_plane_idx).remove_vertex(back.second);
 
-    std::cout << "*** New vertices:";
-    for (const PVertex& pv : new_vertices)
-      std::cout << " " << str(pv);
-    std::cout << std::endl;
-
     // push also remaining vertex so that its events are recomputed
     // std::cout << "pushing new pv: " << str(pvertex) << std::endl;
     // std::cout << "pv direction: " << direction(pvertex) << std::endl;
     new_vertices.push_back(pvertex);
     crossed.push_back(iedge(pvertex));
+
+    std::cout << "*** New vertices:";
+    for (const PVertex& pv : new_vertices)
+      std::cout << " " << str(pv);
+    std::cout << std::endl;
+
+    // for (const PVertex& pv : new_vertices)
+    //   std::cout << point_3(pv) << std::endl;
 
     // if (has_iedge(prev) && !is_frozen(prev)) {
     // // if (iedge(prev) != iedge(pvertex)) {
@@ -2274,14 +2285,14 @@ private:
                                            Point_2& future_point, Vector_2& direction) const
   {
     bool is_parallel = false;
-    if (this->iedge(pvertex) != null_iedge()
-        && line_idx(pvertex) == line_idx(iedge))
-    {
-      // std::cerr << "found limit" << std::endl;
-      future_point = point_2(pvertex, FT(0));
-      direction = this->direction(pvertex);
-      return is_parallel;
-    }
+    // if (this->iedge(pvertex) != null_iedge()
+    //     && line_idx(pvertex) == line_idx(iedge))
+    // {
+    //   std::cerr << "found limit" << std::endl;
+    //   future_point = point_2(pvertex, FT(0));
+    //   direction = this->direction(pvertex);
+    //   return is_parallel;
+    // }
 
     const Line_2 iedge_line = segment_2(pvertex.first, iedge).supporting_line();
     const Point_2 pinit = iedge_line.projection(point_2(pvertex));

@@ -585,9 +585,9 @@ private:
 
       ++ iter;
 
-      // if (iter == 10) {
-      //   exit(0);
-      // }
+      if (iter == 7) {
+        exit(0);
+      }
 
       apply(k, ev);
 
