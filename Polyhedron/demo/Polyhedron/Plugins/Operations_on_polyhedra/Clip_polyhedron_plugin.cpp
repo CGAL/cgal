@@ -3,6 +3,7 @@
 #include <QMainWindow>
 #include <QAction>
 #include <QVector>
+#include <QMessageBox>
 #include "Scene_surface_mesh_item.h"
 #include "Scene_plane_item.h"
 #include <CGAL/Three/Viewer_interface.h>
@@ -93,6 +94,7 @@ public :
     this->messages = mi;
     plane = nullptr;
     clipper_item = nullptr;
+    original_clipper = nullptr;
     //creates and link the actions
     actionClipPolyhedra = new QAction("Clip Polyhedra With Plane", mw);
     actionClipPolyhedra->setProperty("subMenuName","Polygon Mesh Processing/Corefinement");
@@ -109,6 +111,14 @@ public :
       ui_widget.coplanarCheckBox->setEnabled(!b);
     });
 
+    connect(ui_widget.do_not_modify_CheckBox, &QRadioButton::toggled,
+            [this](bool b){
+      if(b){
+        ui_widget.close_checkBox->setChecked(false);
+      }
+      ui_widget.close_checkBox->setEnabled(!b);
+    });
+
     connect(actionClipPolyhedra , SIGNAL(triggered()),
             this, SLOT(pop_widget()));
     connect(ui_widget.clipButton, &QPushButton::clicked,
@@ -116,6 +126,26 @@ public :
 
     connect(actionStartClippingWithPoly, &QAction::triggered,
             this, &Clip_polyhedron_plugin::start_clipping_with_poly);
+
+    connect(ui_widget.helpButton, &QPushButton::clicked,
+            [this](){
+      if(is_plane)
+        QMessageBox::information(dock_widget, QString("Help"),
+                                 QString("Clipping\n"
+                                         "\n"
+                                         "This function allows to clip all the selected polyhedra against a halfspace. "
+                                         "What is on the blue side of the clipping plane will be clipped, and what is on the yellow side will be kept.\n\n"
+                                         "If the option `keep closed` is checked, the clipped part of each polyhedron will be closed, "
+                                         "if it has a closed contour on the clipping plane. Otherwise, it will be left open."));
+      else
+        QMessageBox::information(dock_widget, QString("Help"),
+                                 QString("Clipping\n"
+                                         "\n"
+                                         "This function allows to clip all the selected polyhedra against a closed polyhedron, bounding a volume. "
+                                         "What is on the outside of the bound volume will be clipped, and what is on the inside will be kept.\n\n"
+                                         "If the option `keep closed` is checked, the clipped part of each polyhedron will be closed, "
+                                         "if it has a closed contour on the clipping polyhedron. Otherwise, it will be left open."));
+    });
 
   }
   bool applicable(QAction*) const
@@ -211,8 +241,9 @@ public Q_SLOTS:
       connect(ui_widget.flip_Button, SIGNAL(clicked()),
               plane, SLOT(flipPlane()));
       ui_widget.flip_Button->setEnabled(true);
-      ui_widget.split_radioButton->setEnabled(true);
+      ui_widget.do_not_modify_CheckBox->setEnabled(false);
       scene->addItem(plane);
+      is_plane = true;
     }
   }
 
@@ -234,7 +265,7 @@ public Q_SLOTS:
       QList<Scene_item*> polyhedra;
 
       //Fills the list of target polyhedra and the cutting plane
-      Q_FOREACH(int id, scene->selectionIndices())
+      for(int id : scene->selectionIndices())
       {
         Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(id));
         if(sm_item && CGAL::is_triangle_mesh(*sm_item->polyhedron()))
@@ -243,7 +274,7 @@ public Q_SLOTS:
         }
       }
       //apply the clipping function
-      Q_FOREACH(Scene_item* item, polyhedra)
+      for(Scene_item* item : polyhedra)
       {
         Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
 
@@ -288,6 +319,11 @@ public Q_SLOTS:
     {
       scene->erase(scene->item_id(plane));
     }
+    if(clipper_item)
+    {
+      QMessageBox::warning(CGAL::Three::Three::mainWindow(), "", "There is a clipper already. If you want to change, please erase the current one.");
+      return;
+    }
     Scene_surface_mesh_item* item = qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
     if(!item)
       return;
@@ -298,21 +334,31 @@ public Q_SLOTS:
                                (scene_bbox.zmin() + scene_bbox.zmax())/2.),
           item->face_graph(),"");
     clipper_item->setName("clipper");
-    int id=scene->addItem(clipper_item);
-    item->setVisible(false);
+    original_clipper = scene->replaceItem(scene->item_id(item), clipper_item, false);
     connect(clipper_item->manipulatedFrame(), &CGAL::qglviewer::ManipulatedFrame::modified,
             this, [this](){
       const double* matrix = clipper_item->manipulatedFrame()->matrix();
       clipper_item->setFMatrix(matrix);
       clipper_item->itemChanged();
     });
+
+    connect(clipper_item, &Scene_movable_sm_item::aboutToBeDestroyed,
+            this, [this](){
+      clipper_item = nullptr;
+      if(original_clipper){
+        scene->addItem(original_clipper);
+        original_clipper = nullptr;
+      }
+    });
+
     clipper_item->setColor(QColor(Qt::green));
-    scene->setSelectedItem(id);
+
     ui_widget.flip_Button->setEnabled(false);
+    ui_widget.do_not_modify_CheckBox->setEnabled(true);
     ui_widget.clip_radioButton->toggle();
-    ui_widget.split_radioButton->setEnabled(false);
     dock_widget->show();
     dock_widget->raise();
+    is_plane = false;
   }
 
   void clip_with_poly()
@@ -323,7 +369,7 @@ public Q_SLOTS:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     CGAL::QGLViewer* viewer = Three::mainViewer();
     QList<Scene_item*> polyhedra;
-    if(CGAL::Polygon_mesh_processing::does_self_intersect(*clipper_item->getFaceGraph())
+    if((!ui_widget.do_not_modify_CheckBox->isChecked() && CGAL::Polygon_mesh_processing::does_self_intersect(*clipper_item->getFaceGraph()))
        || ! CGAL::Polygon_mesh_processing::does_bound_a_volume(*clipper_item->getFaceGraph()))
     {
       CGAL::Three::Three::warning(tr("The clipper must not self intersect, and it must bound a volume."));
@@ -344,7 +390,7 @@ public Q_SLOTS:
     CGAL::Polygon_mesh_processing::transform(transfo, clipper);
 
     //Fills the list of target polyhedra and the cutting plane
-    for(int id = 0; id<scene->numberOfEntries(); ++id)
+    for(int id : scene->selectionIndices())
     {
       if(id == scene->item_id(clipper_item))
         continue;
@@ -370,45 +416,38 @@ public Q_SLOTS:
       {
         if(sm_item)
         {
-          CGAL::Polygon_mesh_processing::clip(*(sm_item->face_graph()),
-                                              clipper,
-                                              CGAL::Polygon_mesh_processing::parameters::clip_volume(
-                                                ui_widget.close_checkBox->isChecked()).
-                                              throw_on_self_intersection(true).
-                                              use_compact_clipper(
-                                                !ui_widget.coplanarCheckBox->isChecked()));
+          try {
+            CGAL::Polygon_mesh_processing::clip(*(sm_item->face_graph()),
+                                                clipper,
+                                                CGAL::Polygon_mesh_processing::parameters::clip_volume(
+                                                  ui_widget.close_checkBox->isChecked()).
+                                                throw_on_self_intersection(true).
+                                                use_compact_clipper(
+                                                  !ui_widget.coplanarCheckBox->isChecked())
+                                                .do_not_modify(ui_widget.do_not_modify_CheckBox->isChecked()));
+          }
+          catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
+          {
+            CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
+          }
         }
       }
       else
       {
-
-        SMesh* neg_side = new SMesh(*sm_item->face_graph());
-        CGAL::Polygon_mesh_processing::clip(*neg_side,
-                                            clipper,
-                                            CGAL::Polygon_mesh_processing::parameters::clip_volume(
-                                              ui_widget.close_checkBox->isChecked()).
-                                            throw_on_self_intersection(true).
-                                            use_compact_clipper(
-                                              !ui_widget.coplanarCheckBox->isChecked()));
-        Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(neg_side);
-        new_item->setName(QString("%1 on %2").arg(item->name()).arg("negative side"));
-        new_item->setColor(item->color());
-        new_item->setRenderingMode(item->renderingMode());
-        new_item->setVisible(item->visible());
-        scene->addItem(new_item);
-        new_item->invalidateOpenGLBuffers();
-        // part on the positive side
         SMesh* pos_side = new SMesh(*sm_item->face_graph());
-        CGAL::Polygon_mesh_processing::clip(*pos_side,
-                                            clipper,
-                                            CGAL::Polygon_mesh_processing::parameters::clip_volume(
-                                              ui_widget.close_checkBox->isChecked()).
-                                            throw_on_self_intersection(true).
-                                            use_compact_clipper(
-                                              !ui_widget.coplanarCheckBox->isChecked()));
+        try {
+          CGAL::Polygon_mesh_processing::split(*pos_side,
+                                               clipper,
+                                               CGAL::Polygon_mesh_processing::parameters::throw_on_self_intersection(true)
+                                               .do_not_modify(ui_widget.do_not_modify_CheckBox->isChecked()));
+        }
+        catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
+        {
+          CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
+        }
 
-        new_item = new Scene_surface_mesh_item(pos_side);
-        new_item->setName(QString("%1 on %2").arg(sm_item->name()).arg("positive side"));
+        Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(pos_side);
+        new_item->setName(QString("Splitted %1").arg(sm_item->name()));
         new_item->setColor(sm_item->color());
         new_item->setRenderingMode(sm_item->renderingMode());
         new_item->setVisible(sm_item->visible());
@@ -416,6 +455,7 @@ public Q_SLOTS:
         new_item->invalidateOpenGLBuffers();
       }
       item->invalidateOpenGLBuffers();
+      clipper_item->invalidateOpenGLBuffers();
       viewer->update();
     }
     QApplication::restoreOverrideCursor();
@@ -429,5 +469,7 @@ private:
   Messages_interface* messages;
   Scene_interface* scene;
   Scene_movable_sm_item* clipper_item;
+  Scene_item* original_clipper;
+  bool is_plane;
 }; //end of plugin class
 #include "Clip_polyhedron_plugin.moc"
