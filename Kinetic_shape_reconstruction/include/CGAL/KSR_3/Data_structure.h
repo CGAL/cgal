@@ -1600,15 +1600,25 @@ public:
         if (i == 0) // crop
         {
           std::cout << "Cropping" << std::endl;
-          PVertex cropped; Point_2 future_point;
+          PVertex cropped; Point_2 future_point; Vector_2 future_direction;
           if (prev_iedge != null_iedge() && prev_iedge == crossed[i]) {
+            std::cout << "prev parallel case" << std::endl;
+
             cropped = prev;
-            const auto prev_line = segment_2(pvertex.first, prev_iedge).supporting_line();
-            const auto pinit = prev_line.projection(point_2(prev));
-            future_point = pinit - m_current_time * future_directions[i];
+            const auto pair = this->border_prev_and_next(prev);
+            const auto pprev = pair.first;
+            compute_future_point_and_direction(
+              i, prev, pprev, prev_iedge, future_point, future_direction);
+
+            // const auto prev_line = segment_2(pvertex.first, prev_iedge).supporting_line();
+            // const auto pinit = prev_line.projection(point_2(prev));
+            // future_point = pinit - m_current_time * future_directions[i];
+
           } else {
+            std::cout << "standard case" << std::endl;
             cropped = PVertex(support_plane_idx, support_plane(pvertex).split_edge(pvertex.second, prev.second));
             future_point = future_points[i];
+            future_direction = future_directions[i];
           }
 
           const PEdge pedge(support_plane_idx, support_plane(pvertex).edge(pvertex.second, cropped.second));
@@ -1618,7 +1628,7 @@ public:
           connect(cropped, crossed[i]);
 
           support_plane(cropped).set_point(cropped.second, future_point);
-          direction(cropped) = future_directions[i];
+          direction(cropped) = future_direction;
           previous = cropped;
           // std::cerr << "cropped point -> direction: " << point_2 (cropped) << " -> " << direction(cropped) << std::endl;
           std::cout << "cropped: " << point_3(cropped) << std::endl;
@@ -1686,7 +1696,16 @@ public:
       const FT tol = FT(1) / FT(1000000);
       const FT diff_time = (m_current_time - m_previous_time) / FT(100);
       FT tmp_time = m_current_time - diff_time;
-      if (diff_time < tol) tmp_time = m_previous_time;
+
+      // std::cout << "diff_time: " << diff_time << std::endl;
+      // std::cout << "tmp_time: " << tmp_time << std::endl;
+
+      if (diff_time < tol) {
+        // tmp_time = m_previous_time;
+        const FT time_step = max_time - min_time;
+        tmp_time = m_current_time - time_step;
+      }
+      // std::cout << "final_time: " << tmp_time << std::endl;
 
       const Direction_2 tmp_dir(point_2(next, tmp_time) - point_2(pvertex.first, ivertex));
       // std::cout << point_3(next, tmp_time) << std::endl;
@@ -1772,15 +1791,25 @@ public:
         if (i == 0) // crop
         {
           std::cout << "Cropping" << std::endl;
-          PVertex cropped; Point_2 future_point;
+          PVertex cropped; Point_2 future_point; Vector_2 future_direction;
           if (next_iedge != null_iedge() && next_iedge == crossed[i]) {
+            std::cout << "next parallel case" << std::endl;
+
             cropped = next;
-            const auto next_line = segment_2(pvertex.first, next_iedge).supporting_line();
-            const auto pinit = next_line.projection(point_2(next));
-            future_point = pinit - m_current_time * future_directions[i];
+            const auto pair = this->border_prev_and_next(next);
+            const auto nnext = pair.second;
+            compute_future_point_and_direction(
+              i, next, nnext, next_iedge, future_point, future_direction);
+
+            // const auto next_line = segment_2(pvertex.first, next_iedge).supporting_line();
+            // const auto pinit = next_line.projection(point_2(next));
+            // future_point = pinit - m_current_time * future_directions[i];
+
           } else {
+            std::cout << "standard case" << std::endl;
             cropped = PVertex(support_plane_idx, support_plane(pvertex).split_edge(pvertex.second, next.second));
             future_point = future_points[i];
+            future_direction = future_directions[i];
           }
 
           const PEdge pedge(support_plane_idx, support_plane(pvertex).edge(pvertex.second, cropped.second));
@@ -1791,7 +1820,7 @@ public:
           connect(cropped, crossed[i]);
 
           support_plane(cropped).set_point(cropped.second, future_point);
-          direction(cropped) = future_directions[i];
+          direction(cropped) = future_direction;
           previous = cropped;
           // std::cerr << point_2 (cropped) << " -> " << direction(cropped) << std::endl;
         }
@@ -1915,15 +1944,25 @@ public:
       }
 
       {
-        PVertex cropped; Point_2 future_point;
+        PVertex cropped; Point_2 future_point; Vector_2 future_direction;
         if (next_iedge != null_iedge() && next_iedge == crossed.front()) {
+          std::cout << "next parallel case" << std::endl;
+
           cropped = next;
-          const auto next_line = segment_2(pvertex.first, next_iedge).supporting_line();
-          const auto pinit = next_line.projection(point_2(next));
-          future_point = pinit - m_current_time * future_directions.front();
+          const auto pair = this->border_prev_and_next(next);
+          const auto nnext = pair.second;
+          compute_future_point_and_direction(
+            0, next, nnext, next_iedge, future_point, future_direction);
+
+          // const auto next_line = segment_2(pvertex.first, next_iedge).supporting_line();
+          // const auto pinit = next_line.projection(point_2(next));
+          // future_point = pinit - m_current_time * future_directions.front();
+
         } else {
+          std::cout << "standard case" << std::endl;
           cropped = PVertex(support_plane_idx, support_plane(pvertex).split_edge(pvertex.second, next.second));
           future_point = future_points.front();
+          future_direction = future_directions.front();
         }
 
         const PEdge pedge(support_plane_idx, support_plane(pvertex).edge(pvertex.second, cropped.second));
@@ -1933,7 +1972,7 @@ public:
         connect(cropped, crossed.front());
 
         support_plane(cropped).set_point(cropped.second, future_point);
-        direction(cropped) = future_directions.front();
+        direction(cropped) = future_direction;
         std::cout << direction(cropped) << std::endl;
         std::cout << "cropped 1: " << point_3(cropped) << std::endl;
       }
@@ -1948,15 +1987,25 @@ public:
       }
 
       {
-        PVertex cropped; Point_2 future_point;
+        PVertex cropped; Point_2 future_point; Vector_2 future_direction;
         if (prev_iedge != null_iedge() && prev_iedge == crossed.back()) {
+          std::cout << "prev parallel case" << std::endl;
+
           cropped = prev;
-          const auto prev_line = segment_2(pvertex.first, prev_iedge).supporting_line();
-          const auto pinit = prev_line.projection(point_2(prev));
-          future_point = pinit - m_current_time * future_directions.back();
+          const auto pair = this->border_prev_and_next(prev);
+          const auto pprev = pair.first;
+          compute_future_point_and_direction(
+            0, prev, pprev, prev_iedge, future_point, future_direction);
+
+          // const auto prev_line = segment_2(pvertex.first, prev_iedge).supporting_line();
+          // const auto pinit = prev_line.projection(point_2(prev));
+          // future_point = pinit - m_current_time * future_directions.back();
+
         } else {
+          std::cout << "standard case" << std::endl;
           cropped = PVertex(support_plane_idx, support_plane(pvertex).split_edge(pvertex.second, prev.second));
           future_point = future_points.back();
+          future_direction = future_directions.back();
         }
 
         const PEdge pedge(support_plane_idx, support_plane(pvertex).edge(pvertex.second, cropped.second));
@@ -1966,7 +2015,7 @@ public:
         connect(cropped, crossed.back());
 
         support_plane(cropped).set_point(cropped.second, future_point);
-        direction(cropped) = future_directions.back();
+        direction(cropped) = future_direction;
         std::cout << direction(cropped) << std::endl;
         std::cout << "cropped 2: " << point_3(cropped) << std::endl;
       }
@@ -1990,7 +2039,7 @@ public:
       } else if ((is_occupied_edge_back && is_occupied_edge_front) && this->k(pface) == 1) { // stop
 
         // do nothing
-        CGAL_assertion_msg(false, "TODO: DO WE CORRECTLY HANDLE THIS CASE?");
+        // CGAL_assertion_msg(false, "TODO: DO WE CORRECTLY HANDLE THIS CASE?");
 
       } else if ((is_occupied_edge_back && is_occupied_edge_front) && this->k(pface) > 1) { // create a new face
 
@@ -2279,6 +2328,9 @@ private:
       m2 = (curr_p.y() - next_p.y()) / next_d;
     if (CGAL::abs(edge_d) > tol)
       m3 = (target_p.y() - source_p.y()) / edge_d;
+
+    // std::cout << "m2: " << m2 << std::endl;
+    // std::cout << "m3: " << m3 << std::endl;
 
     if (CGAL::abs(m2 - m3) < tol) {
       // CGAL_assertion_msg(false, "TODO: back/front PARALLEL LINES!");
