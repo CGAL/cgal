@@ -10,7 +10,6 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 
 #include <iostream>
-#include <fstream>
 #include <chrono>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
