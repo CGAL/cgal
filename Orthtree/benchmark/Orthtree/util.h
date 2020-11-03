@@ -5,6 +5,8 @@
 #include <CGAL/Point_set_3/IO.h>
 #include <CGAL/point_generators_3.h>
 
+#include <chrono>
+
 template<class Kernel>
 CGAL::Point_set_3<typename Kernel::Point_3> generate(size_t num_points = 1) {
 
@@ -21,6 +23,22 @@ CGAL::Point_set_3<typename Kernel::Point_3> generate(size_t num_points = 1) {
     points.insert(*generator++);
 
   return points;
+}
+
+template<typename Time_unit>
+Time_unit bench(const std::function<void(void)>& f) {
+
+    // Start the timer
+    auto start = std::chrono::high_resolution_clock::now();
+
+    // Run the function being benchmarked
+    f();
+
+    // End the timer
+    auto end = std::chrono::high_resolution_clock::now();
+
+    // Return the elapsed time
+    return std::chrono::duration_cast<Time_unit>(end - start);
 }
 
 #endif //OCTREE_UTIL_H

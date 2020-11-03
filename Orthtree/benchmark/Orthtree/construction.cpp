@@ -37,18 +37,16 @@ int main(int argc, char **argv) {
     // Create a collection of the right number of points
     auto points = generate<Kernel>(num_points);
 
-    // Start the timer
-    auto start = high_resolution_clock::now();
-
-    // Build the tree
-    Octree octree(points, points.point_map());
-    octree.refine();
-
-    // End the timer
-    auto end = high_resolution_clock::now();
+    auto elapsedTime = bench<microseconds>(
+            [&] {
+              // Build the tree
+              Octree octree(points, points.point_map());
+              octree.refine();
+            }
+    );
 
     file << num_points << ",";
-    file << duration_cast<microseconds>(end - start).count() << "\n";
+    file << elapsedTime.count() << "\n";
 
     std::cout << num_points << std::endl;
   }

@@ -44,18 +44,16 @@ int main(int argc, char **argv) {
     Octree octree(points, points.point_map());
     octree.refine();
 
-    // Start the timer
-    auto start = high_resolution_clock::now();
-
-    // Find the nearest point to the search point
-    std::vector<Point> nearest_neighbors;
-    octree.nearest_neighbors(search_point, 10, std::back_inserter(nearest_neighbors));
-
-    // End the timer
-    auto end = high_resolution_clock::now();
+    auto elapsedTime = bench<microseconds>(
+            [&] {
+              // Find the nearest point to the search point
+              std::vector<Point> nearest_neighbors;
+              octree.nearest_neighbors(search_point, 10, std::back_inserter(nearest_neighbors));
+            }
+    );
 
     file << num_points << ",";
-    file << duration_cast<microseconds>(end - start).count() << "\n";
+    file << elapsedTime.count() << "\n";
 
     std::cout << num_points << std::endl;
   }
