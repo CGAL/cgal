@@ -35,14 +35,14 @@ struct has_for_compact_container
 {
 private:
 
-	template<typename U> static
+  template<typename U> static
   auto test(void*) -> decltype(std::declval<U>().for_compact_container() == nullptr, Tag_true());
 
-	template<typename> static Tag_false test(...);
+  template<typename> static Tag_false test(...);
 
 public:
 
-	static constexpr bool value = std::is_same<decltype(test<T>(nullptr)),Tag_true>::value;
+  static constexpr bool value = std::is_same<decltype(test<T>(nullptr)),Tag_true>::value;
 };
 
 template <typename Point_2, bool HasFor>
