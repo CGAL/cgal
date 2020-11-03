@@ -514,7 +514,7 @@ input triangle mesh.
 
 \subsection PMPEnvelope Polyhedral Envelope Containment Check
 
-The class `CGAL::Envelope` provides functors that test whether a query point, segment or triangle
+The class `CGAL::Envelope` provides functors that test whether a query point, segment, or triangle
 is fully contained in a <em>polyhedral envelope</em> of a triangle mesh.
 
 \cgalFigureBegin{envelopeFig, envelope.png}
