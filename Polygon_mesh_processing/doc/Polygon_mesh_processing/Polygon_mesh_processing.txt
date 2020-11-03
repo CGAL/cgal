@@ -527,7 +527,7 @@ patches at convex edges and vertices of the input triangle mesh. Instead, the en
 of a collection of prisms that are guaranteed to be inside the Minkowski sum envelope, hence the
 term polyhedral envelope.  This containment test is exact for the polyhedral envelope, and
 conservative in the sense that, if a query is inside the polyhedral envelope, we can be sure
-that it is also in the Minkowski sum envelope, but if it is outside the polyhedral envelop
+that it is also in the Minkowski sum envelope, but if it is outside the polyhedral envelope
 we do not know where it is with respect to the Minkowski sum envelope.
 
 Such a test is used by the class `Surface_mesh_simplification::Envelope_filter` of the
