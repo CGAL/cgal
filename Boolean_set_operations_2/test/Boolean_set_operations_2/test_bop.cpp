@@ -146,6 +146,12 @@ bool test(std::istream& inp, const Polygon1& p1, const Polygon2& p2)
             comp2_res_from_file,
             or_side_from_file);
 
+  if (CGAL::do_intersect (p1, p2) != !intersection_res_from_file.empty())
+  {
+    std::cout << "do_intersect failed..." << std::endl;
+    return false;
+  }
+
   std::vector<Polygon_with_holes_2>  temp_result;
   std::back_insert_iterator<std::vector<Polygon_with_holes_2> > oi(temp_result);
 
