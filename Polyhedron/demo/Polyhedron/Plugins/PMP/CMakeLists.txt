@@ -252,7 +252,6 @@ if(${USE_PCH})
   triangulate_facets_plugin
   join_and_split_plugin
   corefinement_plugin
-  repair_polyhedron_plugin
   isotropic_remeshing_plugin
   distance_plugin
   detect_sharp_edges_plugin
@@ -282,6 +281,7 @@ if(${USE_PCH})
   point_inside_polyhedron_plugin
   selection_plugin
   surface_intersection_plugin
+  repair_polyhedron_plugin
   )
     target_precompile_headers(${tgt} REUSE_FROM PMP_headers_eigen_las)
   endforeach()
