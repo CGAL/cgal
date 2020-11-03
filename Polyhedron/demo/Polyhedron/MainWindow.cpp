@@ -48,7 +48,6 @@
 #include <QJsonArray>
 #include <QSequentialIterable>
 #include <QDir>
-#include <QLineEdit>
 
 
 #ifdef QT_SCRIPT_LIB

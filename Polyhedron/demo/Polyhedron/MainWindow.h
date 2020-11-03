@@ -7,6 +7,7 @@
 #include <CGAL/Three/Three.h>
 
 #include <QScriptable>
+#include <QLineEdit>
 
 
 #include <QVector>
