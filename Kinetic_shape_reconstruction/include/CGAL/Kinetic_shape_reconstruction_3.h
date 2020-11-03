@@ -622,25 +622,34 @@ private:
       }
       else // One constrained vertex meets a free vertex
       {
-        if (m_data.transfer_vertex (pvertex, pother))
-        {
-          compute_events_of_vertices (ev.time(), std::array<PVertex,2>{pvertex, pother});
+        if (m_data.transfer_vertex(pvertex, pother)) {
+
+          if (m_data.has_iedge(pvertex))
+            remove_events(m_data.iedge(pvertex), pvertex.first); // Should we remove it here?
+          if (m_data.has_iedge(pother))
+            remove_events(m_data.iedge(pother), pother.first); // Should we remove it here?
+          compute_events_of_vertices(ev.time(), std::array<PVertex,2>{pvertex, pother});
 
           PVertex prev, next;
-          std::tie (prev, next) = m_data.border_prev_and_next(pvertex);
+          std::tie(prev, next) = m_data.border_prev_and_next(pvertex);
 
           PVertex pthird = prev;
           if (pthird == pother)
             pthird = next;
           else
-            CGAL_assertion (next == pother);
+            CGAL_assertion(next == pother);
 
-          remove_events (pthird);
-          // TODO: Should we remove here any events related to the crossed iedges?
-          compute_events_of_vertices (ev.time(), std::array<PVertex,1>{pthird});
+          remove_events(pthird);
+          if (m_data.has_iedge(pthird))
+            remove_events(m_data.iedge(pthird), pthird.first); // Should we remove it here?
+          compute_events_of_vertices(ev.time(), std::array<PVertex,1>{pthird});
+
+        } else {
+
+          if (m_data.has_iedge(pvertex))
+            remove_events(m_data.iedge(pvertex), pvertex.first); // Should we remove it here?
+          compute_events_of_vertices(ev.time(), std::array<PVertex,1>{pvertex});
         }
-        else
-          compute_events_of_vertices (ev.time(), std::array<PVertex,1>{pvertex});
       }
     }
     else if (ev.is_pvertex_to_iedge())
