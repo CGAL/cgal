@@ -505,13 +505,30 @@ public:
 
   std::pair<PVertex, PVertex> border_prev_and_next (const PVertex& pvertex) const
   {
-    Halfedge_index hi = mesh(pvertex).halfedge(pvertex.second);
-    if (mesh(pvertex).face(hi) != Face_index())
-      hi = mesh(pvertex).prev (mesh(pvertex).opposite(hi));
+    // std::cout << point_3(pvertex) << std::endl;
+    Halfedge_index he = mesh(pvertex).halfedge(pvertex.second);
 
-    CGAL_assertion (mesh(pvertex).face(hi) == Face_index());
-    return std::make_pair (PVertex (pvertex.first, mesh(pvertex).source (hi)),
-                           PVertex (pvertex.first, mesh(pvertex).target (mesh(pvertex).next(hi))));
+    // std::cout << point_3(PVertex(pvertex.first, mesh(pvertex).source(he))) << std::endl;
+    // std::cout << point_3(PVertex(pvertex.first, mesh(pvertex).target(he))) << std::endl;
+
+    if (mesh(pvertex).face(he) != Face_index()) {
+      he = mesh(pvertex).prev(mesh(pvertex).opposite(he));
+    }
+
+    // std::cout << point_3(PVertex(pvertex.first, mesh(pvertex).source(he))) << std::endl;
+    // std::cout << point_3(PVertex(pvertex.first, mesh(pvertex).target(he))) << std::endl;
+
+    if (mesh(pvertex).face(he) != Face_index()) {
+      he = mesh(pvertex).prev(mesh(pvertex).opposite(he));
+    }
+
+    // If the assertion below fails, it probably means that we need to circulate
+    // longer until we hit the border edge!
+
+    CGAL_assertion(mesh(pvertex).face(he) == Face_index());
+    return std::make_pair(
+      PVertex(pvertex.first, mesh(pvertex).source(he)),
+      PVertex(pvertex.first, mesh(pvertex).target(mesh(pvertex).next(he))));
   }
 
   PVertex add_pvertex (KSR::size_t support_plane_idx, const Point_2& point)
@@ -863,14 +880,15 @@ public:
     std::deque<PVertex> vertices;
     vertices.push_back (pvertex);
 
-    // std::cout << "came from: " << segment_3(iedge(pvertex)) << std::endl;
+    std::cout << "came from: " <<
+    str(iedge(pvertex)) << " " << segment_3(iedge(pvertex)) << std::endl;
 
     std::queue<Queue_element> todo;
     PVertex prev, next;
     std::tie (prev, next) = border_prev_and_next (pvertex);
-    // std::cout << "prev in: " << point_3(prev) << std::endl;
-    // std::cout << "next in: " << point_3(next) << std::endl;
-    // std::cout << "curr in: " << point_3(pvertex) << std::endl;
+    // std::cout << "prev in: " << str(prev) << " " << point_3(prev) << std::endl;
+    // std::cout << "next in: " << str(next) << " " << point_3(next) << std::endl;
+    // std::cout << "curr in: " << str(pvertex) << " " << point_3(pvertex) << std::endl;
 
     todo.push (Queue_element (pvertex, prev, true, false));
     todo.push (Queue_element (pvertex, next, false, false));
@@ -1114,6 +1132,7 @@ public:
     // std::cout << "other: " << point_3(other) << std::endl;
     // std::cout << "other dir: " << direction_b << std::endl;
 
+    std::cout << "New vertices: " << str(other) << std::endl;
     return other;
   }
 
@@ -1346,7 +1365,9 @@ public:
 
     // std::ofstream("came_from.polylines.txt")
     // << "2 " << segment_3(iedge(pvertices[1])) << std::endl;
-    std::cout << "came from: " << segment_3(iedge(pvertices[1])) << std::endl;
+
+    std::cout << "came from: " <<
+    str(iedge(pvertices[1])) << " " << segment_3(iedge(pvertices[1])) << std::endl;
 
     // Copy front/back to remember position/direction.
     PVertex front, back;
