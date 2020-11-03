@@ -585,7 +585,7 @@ private:
 
       ++ iter;
 
-      // if (iter == 21) {
+      // if (iter == 3) {
       //   exit(0);
       // }
 
@@ -639,7 +639,7 @@ private:
           else
             CGAL_assertion(next == pother);
 
-          remove_events(pthird);
+          // remove_events(pthird);
           if (m_data.has_iedge(pthird))
             remove_events(m_data.iedge(pthird), pthird.first); // Should we remove it here?
           compute_events_of_vertices(ev.time(), std::array<PVertex,1>{pthird});
