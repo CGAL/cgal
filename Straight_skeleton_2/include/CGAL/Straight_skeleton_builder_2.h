@@ -1011,7 +1011,14 @@ private :
   void CreateContourBisectors();
   void HarmonizeSpeeds(boost::mpl::bool_<false>) { }
   void HarmonizeSpeeds(boost::mpl::bool_<true>);
-  void HarmonizeSpeeds() { return HarmonizeSpeeds(typename CGAL_SS_i::has_Segment_2_with_ID<Traits>::type()); }
+  void HarmonizeSpeeds() {
+    // Harmonize speed only if we have a segment type with id and a not exact square root
+    return HarmonizeSpeeds(
+      boost::mpl::bool_< CGAL_SS_i::has_Segment_2_with_ID<Traits>::value &&
+                         ( !is_same_or_derived<Field_with_sqrt_tag,
+                                               typename Algebraic_structure_traits<FT>::Algebraic_category
+                          >::value || std::is_floating_point<FT>::value) >() );
+  }
   void InitPhase();
 
   void SetupNewNode( Vertex_handle aNode );
