@@ -413,6 +413,9 @@ class Straight_skeleton_builder_traits_2_impl<Tag_false /*Is_filtered_kernel*/, 
   typedef Straight_skeleton_builder_traits_2_base<K>     Base ;
 
 public:
+
+  struct Protector {};
+
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Do_ss_event_exist_2>
     Do_ss_event_exist_2 ;
 
@@ -621,6 +624,8 @@ class Straight_skeleton_builder_traits_2_impl<Tag_true /*Is_filtered_kernel*/, K
   typedef CGAL_SS_i::SS_converter<BaseC2C> C2C ;
 
 public:
+
+  typedef typename FK::FT::Protector Protector;
 
   typedef Filtered_predicate<typename Exact    ::Do_ss_event_exist_2
                             ,typename Filtering::Do_ss_event_exist_2

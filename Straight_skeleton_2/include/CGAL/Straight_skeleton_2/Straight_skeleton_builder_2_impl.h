@@ -595,6 +595,9 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HarmonizeSpeeds(boost::mpl::bool_<tru
   typedef std::set<Halfedge_handle, decltype(comparer)> Ordered_halfedges;
   Ordered_halfedges lOrdered_halfedges(comparer);
 
+  typename CGAL_SS_i::Get_protector<Gt>::type protector;
+  CGAL_USE(protector);
+
   for( Face_iterator fit = mSSkel->SSkel::Base::faces_begin(); fit != mSSkel->SSkel::Base::faces_end(); ++fit)
   {
     Halfedge_handle lBorder = fit->halfedge() ;
