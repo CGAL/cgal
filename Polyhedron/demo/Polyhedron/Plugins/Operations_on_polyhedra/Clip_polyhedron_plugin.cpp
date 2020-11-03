@@ -131,21 +131,23 @@ public :
             [this](){
       if(is_plane)
         QMessageBox::information(dock_widget, QString("Help"),
-                                 QString("Clipping\n"
-                                         "\n"
-                                         "This function allows to clip all the selected polyhedra against a halfspace. "
-                                         "What is on the blue side of the clipping plane will be clipped, and what is on the yellow side will be kept.\n\n"
-                                         "If the option `keep closed` is checked, the clipped part of each polyhedron will be closed, "
-                                         "if it has a closed contour on the clipping plane. Otherwise, it will be left open."));
+                                 QString(R"(Clipping
+
+This function allows to clip all the selected polyhedra against a halfspace.
+What is on the blue side of the clipping plane will be clipped, and what is on the yellow side will be kept.
+
+If the option `keep closed` is checked, the clipped part of each polyhedron will be closed,
+if it has a closed contour on the clipping plane. Otherwise, it will be left open.)"));
       else
         QMessageBox::information(dock_widget, QString("Help"),
-                                 QString("Clipping\n"
-                                         "\n"
-                                         "This function allows to clip all the selected polyhedra against a closed polyhedron, bounding a volume. "
-                                         "What is on the outside of the bound volume will be clipped, and what is on the inside will be kept.\n\n"
-                                         "If the option `keep closed` is checked, the clipped part of each polyhedron will be closed, "
-                                         "if it has a closed contour on the clipping polyhedron. Otherwise, it will be left open."));
-    });
+                                 QString(R"(Clipping
+
+This function allows to clip all the selected polyhedra against a closed polyhedron, bounding a volume.
+What is on the outside of the bound volume will be clipped, and what is on the inside will be kept.
+
+If the option `keep closed` is checked, the clipped part of each polyhedron will be closed,
+if it has a closed contour on the clipping polyhedron. Otherwise, it will be left open.)"));
+});
 
   }
   bool applicable(QAction*) const
