@@ -40,7 +40,7 @@ void simplify_polyline(const PointRangeIn& input,
 
   static_assert(std::is_same<
     typename std::iterator_traits<typename PointRangeIn::const_iterator>::value_type,
-    typename std::iterator_traits<typename PointRangeOut::const_iterator>::value_type >::value );
+    typename std::iterator_traits<typename PointRangeOut::const_iterator>::value_type >::value, "");
 
   typedef typename GetPointMap<PointRangeIn, NamedParametersIn>::type Point_map_in;
   typedef typename GetPointMap<PointRangeOut, NamedParametersOut>::type Point_map_out;
