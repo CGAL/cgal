@@ -25,7 +25,7 @@ web site: http://www.gnu.org/copyleft/gpl.html.
 
 The GNU LGPL is an Open Source license that obliges you to distribute
 modifications you make on \cgal software accessible to the users.
-In contrast to the GPL, there is no obligation to make the source
+In contrast to the GPL, there is no obligation to distribute the source
 code of software you build on top of LGPLed \cgal data structures.
 
 The exact license terms can be found at the Free Software Foundation web site:
