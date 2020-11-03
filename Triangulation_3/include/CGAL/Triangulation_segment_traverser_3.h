@@ -555,6 +555,7 @@ public:
   { set_curr_simplex_to_entry(); }
   Triangulation_segment_simplex_iterator_3(const Tr* tr)
     : _cell_iterator(tr)
+    , _curr_simplex()
   {}
 
   bool operator==(const Simplex_iterator& sit) const
@@ -853,7 +854,7 @@ public:
           else
           {
             Cell_handle ec;
-            int ei, ej;
+            int ei = -1, ej = -1;
             if (!triangulation()->is_edge(get_vertex(), chnext->vertex(linext), ec, ei, ej))
               CGAL_assertion(false);
             _curr_simplex = Edge(ec, ei, ej);
