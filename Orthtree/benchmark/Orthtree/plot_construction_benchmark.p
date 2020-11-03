@@ -14,4 +14,4 @@ set ylabel "Time (ms)"
 set key autotitle columnhead
 
 set datafile separator ","
-plot 'construction_benchmark.csv'
+plot for [col=2:3] 'construction_benchmark.csv' using 1:col
