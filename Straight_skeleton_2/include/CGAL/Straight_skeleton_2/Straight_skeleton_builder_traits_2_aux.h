@@ -219,6 +219,30 @@ struct No_cache
   void Reset ( std::size_t ) { }
 };
 
+// Debug struct
+template <class Info>
+struct FPU_checker;
+
+template <class FT>
+struct FPU_checker<boost::optional< CGAL_SS_i::Rational< FT > > >
+{
+  static bool is_valid()
+  {
+    return !std::is_same<FT, CGAL::Interval_nt<false> >::value ||
+           FPU_get_cw() == CGAL_FE_UPWARD;
+  }
+};
+
+template <class K>
+struct FPU_checker<boost::optional< Line_2<K> > >
+{
+  static bool is_valid()
+  {
+    return !std::is_same<typename K::FT, CGAL::Interval_nt<false> >::value ||
+           FPU_get_cw() == CGAL_FE_UPWARD;
+  }
+};
+
 //TODO: call reserve, but how? #input vertices + n*m estimation?
 template <class Info>
 struct Info_cache
@@ -234,11 +258,13 @@ struct Info_cache
   Info const& Get(std::size_t i)
   {
     CGAL_precondition ( IsCached(i) ) ;
+    CGAL_precondition ( FPU_checker<Info>::is_valid() ) ;
     return mValues[i] ;
   }
 
   void Set ( std::size_t i, Info const& aValue)
   {
+    CGAL_precondition ( FPU_checker<Info>::is_valid() ) ;
     if (mValues.size() <= i )
     {
       mValues.resize(i+1) ;
