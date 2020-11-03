@@ -945,7 +945,7 @@ integrated in \cgal 5.0.
 Functionalities related to mesh and polygon soup repair have been introduced steadily over multiple versions
 since \cgal 4.10, in joint work between Sébastien Loriot and Mael Rouxel-Labbé.
 
-The polyhedral envelope containment check was integrated in \cgal 5.2. The implementation makes use of the
+The polyhedral envelope containment check was integrated in \cgal 5.3. The implementation makes use of the
 version of <a href="https://github.com/wangbolun300/fast-envelope">https://github.com/wangbolun300/fast-envelope</a>
 avaiable on 7th of October 2020.  It only uses the high level algorithm of checking that a query
 is covered by a set of prisms, where each prism is an offset for an input triangle.
