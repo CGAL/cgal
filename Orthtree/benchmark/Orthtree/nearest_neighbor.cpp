@@ -56,6 +56,8 @@ int main(int argc, char **argv) {
 
     file << num_points << ",";
     file << duration_cast<microseconds>(end - start).count() << "\n";
+
+    std::cout << num_points << std::endl;
   }
 
   file.close();

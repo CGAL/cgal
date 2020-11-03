@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
   file << "Number of Points,Build Time (ms) \n";
 
   // Perform tests for various dataset sizes
-  for (size_t num_points = 10; num_points < 1000000; num_points *= 1.1) {
+  for (size_t num_points = 10; num_points < 10000000; num_points *= 1.1) {
 
     // Create a collection of the right number of points
     auto points = generate<Kernel>(num_points);
