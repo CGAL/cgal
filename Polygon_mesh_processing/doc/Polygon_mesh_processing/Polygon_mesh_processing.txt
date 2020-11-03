@@ -525,7 +525,7 @@ While the user provides a distance
 the envelope is not the Minkowski sum with a sphere, because this would have cylindrical and spherical
 patches at convex edges and vertices of the input triangle mesh. Instead, the envelope consists
 of a collection of prisms that are guaranteed to be inside the Minkowski sum envelope, hence the
-term polyhedral envelope.  This containment test is exact for the polyhedral envelope, and
+term <em>polyhedral envelope</em>.  This containment test is exact for the polyhedral envelope, and
 conservative in the sense that, if a query is inside the polyhedral envelope, we can be sure
 that it is also in the Minkowski sum envelope, but if it is outside the polyhedral envelope
 we do not know where it is with respect to the Minkowski sum envelope.
@@ -536,11 +536,11 @@ package \refPkgSurfaceMeshSimplification, in order to simplify respecting a tole
 \subsubsection InsideExample Polyhedral Envelope Example
 \cgalExample{Polygon_mesh_processing/polyhedral_envelope.cpp}
 
-The algorithm is described in \cgalCite{cgal:Wwshap-eepec-20} and can be summarized as follows.
+The algorithm of  Wang et al \cgalCite{cgal:Wwshap-eepec-20} and can be summarized as follows.
 First for each triangle a <em>prism</em> is constructed with an offset of \f$ \epsilon/\sqrt(3) \f$ where \f$ \epsilon\f$ is the tolerance,
 and all prisms are stored in an AABB tree.  For a query point the algorithm checks if it is inside a prism.
 For a query segment or triangle the algorithms checks if the query is completely covered.
-The details of how to check this covering can be found in the paper of Wang et al.
+The details of how to check this covering can be found in the paper.
 
 \subsection PMPShapePredicates Shape Predicates
 
@@ -947,9 +947,9 @@ since \cgal 4.10, in joint work between Sébastien Loriot and Mael Rouxel-Labbé
 
 The polyhedral envelope containment check was integrated in \cgal 5.3. The implementation makes use of the
 version of <a href="https://github.com/wangbolun300/fast-envelope">https://github.com/wangbolun300/fast-envelope</a>
-avaiable on 7th of October 2020.  It only uses the high level algorithm of checking that a query
+available on 7th of October 2020.  It only uses the high level algorithm of checking that a query
 is covered by a set of prisms, where each prism is an offset for an input triangle.
-That is, the implementation in \cgal do not use indirect predicates.
+That is, the implementation in \cgal does not use indirect predicates.
 
 
 */
