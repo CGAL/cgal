@@ -503,27 +503,40 @@ public:
     return out;
   }
 
-  std::pair<PVertex, PVertex> border_prev_and_next (const PVertex& pvertex) const
-  {
+  const std::pair<PVertex, PVertex> border_prev_and_next(const PVertex& pvertex) const {
+
     // std::cout << point_3(pvertex) << std::endl;
     Halfedge_index he = mesh(pvertex).halfedge(pvertex.second);
+    const auto end = he;
 
     // std::cout << point_3(PVertex(pvertex.first, mesh(pvertex).source(he))) << std::endl;
     // std::cout << point_3(PVertex(pvertex.first, mesh(pvertex).target(he))) << std::endl;
-
-    if (mesh(pvertex).face(he) != Face_index()) {
-      he = mesh(pvertex).prev(mesh(pvertex).opposite(he));
-    }
-
-    // std::cout << point_3(PVertex(pvertex.first, mesh(pvertex).source(he))) << std::endl;
-    // std::cout << point_3(PVertex(pvertex.first, mesh(pvertex).target(he))) << std::endl;
-
-    if (mesh(pvertex).face(he) != Face_index()) {
-      he = mesh(pvertex).prev(mesh(pvertex).opposite(he));
-    }
 
     // If the assertion below fails, it probably means that we need to circulate
     // longer until we hit the border edge!
+
+    std::size_t count = 0;
+    while (true) {
+      if (mesh(pvertex).face(he) != Face_index()) {
+        he = mesh(pvertex).prev(mesh(pvertex).opposite(he));
+
+        // std::cout << point_3(PVertex(pvertex.first, mesh(pvertex).source(he))) << std::endl;
+        // std::cout << point_3(PVertex(pvertex.first, mesh(pvertex).target(he))) << std::endl;
+
+        ++count;
+      } else { break; }
+
+      // std::cout << "count: " << count << std::endl;
+      CGAL_assertion(count <= 2);
+      if (he == end) {
+        CGAL_assertion_msg(false, "ERROR: BORDER HALFEDGE IS NOT FOUND, FULL CIRCLE!");
+        break;
+      }
+      if (count == 100) {
+        CGAL_assertion_msg(false, "ERROR: BORDER HALFEDGE IS NOT FOUND, LIMIT ITERATIONS!");
+        break;
+      }
+    }
 
     CGAL_assertion(mesh(pvertex).face(he) == Face_index());
     return std::make_pair(
@@ -2432,38 +2445,44 @@ private:
     const FT min_time, const FT max_time,
     const PVertex& pvertex, const IEdge& iedge) {
 
+    const FT time_step = (max_time - min_time) / FT(100);
+    const FT time_1 = m_current_time - time_step;
+    const FT time_2 = m_current_time + time_step;
+
     const Segment_2 pv_seg(
-      point_2(pvertex, min_time), point_2(pvertex, max_time));
+      point_2(pvertex, time_1), point_2(pvertex, time_2));
     const auto pv_bbox = pv_seg.bbox();
 
     const auto iedge_seg  = segment_2(pvertex.first, iedge);
     const auto iedge_bbox = iedge_seg.bbox();
 
     if (has_iedge(pvertex)) {
-      // std::cout << "constrained pvertex case" << std::endl;
+      std::cout << "constrained pvertex case" << std::endl;
       return false;
     }
 
     if (!is_active(pvertex)) {
-      // std::cout << "pvertex no active case" << std::endl;
+      std::cout << "pvertex no active case" << std::endl;
       return false;
     }
 
     if (!is_active(iedge)) {
-      // std::cout << "iedge no active case" << std::endl;
+      std::cout << "iedge no active case" << std::endl;
       return false;
     }
 
     if (!CGAL::do_overlap(pv_bbox, iedge_bbox)) {
-      // std::cout << "no overlap case" << std::endl;
+      std::cout << "no overlap case" << std::endl;
       return false;
     }
 
     Point_2 point;
     if (!KSR::intersection_2(pv_seg, iedge_seg, point)) {
-      // std::cout << "no intersection case" << std::endl;
+      std::cout << "no intersection case" << std::endl;
       return false;
     }
+
+    std::cout << "found intersection" << std::endl;
     return true;
   }
 };
