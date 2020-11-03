@@ -70,7 +70,7 @@ public:
   typedef typename Mesh::template Property_map<Face_index, KSR::size_t> F_index_map;
   typedef typename Mesh::template Property_map<Face_index, unsigned int> F_uint_map;
   typedef typename Mesh::template Property_map<Vertex_index, bool> V_original_map;
-
+  typedef typename Mesh::template Property_map<Vertex_index, FT> V_time_map;
 
 private:
 
@@ -86,6 +86,7 @@ private:
     F_index_map input_map;
     F_uint_map k_map;
     V_original_map v_original_map;
+    V_time_map v_time_map;
     std::set<IEdge> iedges;
 
 #ifdef CGAL_KSR_DEBUG
@@ -135,6 +136,8 @@ public:
       ("f:k", 0).first;
     m_data->v_original_map = m_data->mesh.template add_property_map<Vertex_index, bool>
       ("v:original", false).first;
+    m_data->v_time_map = m_data->mesh.template add_property_map<Vertex_index, FT>
+      ("v:time", FT(0)).first;
 
 #ifdef CGAL_KSR_DEBUG
     m_data->dbg_direction = m_data->dbg_mesh.template add_property_map<Vertex_index, Vector_2>("v:direction", CGAL::NULL_VECTOR).first;
@@ -161,6 +164,14 @@ public:
   void set_point (const Vertex_index& vertex_index, const Point_2& point)
   {
     m_data->mesh.point(vertex_index) = point;
+  }
+
+  void set_last_event_time(const Vertex_index& vertex_index, const FT time) {
+    m_data->v_time_map[vertex_index] = time;
+  }
+
+  const FT last_event_time(const Vertex_index& vertex_index) const {
+    return m_data->v_time_map[vertex_index];
   }
 
   Vertex_index prev (const Vertex_index& vertex_index) const

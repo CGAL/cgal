@@ -187,6 +187,14 @@ public:
 
   const FT& current_time() const { return m_current_time; }
 
+  void set_last_event_time(const PVertex& pvertex, const FT time) {
+    support_plane(pvertex).set_last_event_time(pvertex.second, time);
+  }
+
+  const FT last_event_time(const PVertex& pvertex) {
+    return support_plane(pvertex).last_event_time(pvertex.second);
+  }
+
   /*******************************
    * Support planes
    *******************************/
@@ -1369,11 +1377,6 @@ public:
     PVertex prev = pvertices.front();
     PVertex next = pvertices.back();
 
-    // Fix this by storing for each point the time of its previous event.
-    // Then take 50% or 10% of this time!
-    const FT time_step = (max_time - min_time) / FT(100);
-    const FT tmp_time = m_current_time - time_step;
-
     IEdge prev_iedge = null_iedge(), next_iedge = null_iedge();
 
     // std::ofstream("came_from.polylines.txt")
@@ -1550,10 +1553,17 @@ public:
 
       // const Direction_2 dir(point_2(prev) - point_2(pvertex));
 
-      // const FT tmp_time = m_current_time - (m_current_time - m_previous_time) / FT(100);
+      const FT prev_time = last_event_time(prev);
+      CGAL_assertion(prev_time < m_current_time);
+      CGAL_assertion(prev_time >= FT(0));
 
-      const Direction_2 tmp_dir(point_2(prev, tmp_time) - point_2(pvertex.first, ivertex));
-      // std::cout << point_3(prev, tmp_time) << std::endl;
+      const auto pp_last = point_2(prev, prev_time);
+      const auto pp_curr = point_2(prev, m_current_time);
+      const auto dirp = Vector_2(pp_last, pp_curr);
+      const auto tmp_prev = pp_curr - dirp / FT(10);
+
+      const Direction_2 tmp_dir(tmp_prev - point_2(pvertex.first, ivertex));
+      // std::cout << to_3d(prev.first, tmp_prev) << std::endl;
 
       std::reverse(iedges.begin(), iedges.end());
 
@@ -1730,10 +1740,17 @@ public:
 
       // const Direction_2 dir(point_2(next) - point_2(pvertex));
 
-      // const FT tmp_time = m_current_time - (m_current_time - m_previous_time) / FT(100);
+      const FT next_time = last_event_time(next);
+      CGAL_assertion(next_time < m_current_time);
+      CGAL_assertion(next_time >= FT(0));
 
-      const Direction_2 tmp_dir(point_2(next, tmp_time) - point_2(pvertex.first, ivertex));
-      // std::cout << point_3(next, tmp_time) << std::endl;
+      const auto pn_last = point_2(next, next_time);
+      const auto pn_curr = point_2(next, m_current_time);
+      const auto dirn = Vector_2(pn_last, pn_curr);
+      const auto tmp_next = pn_curr - dirn / FT(10);
+
+      const Direction_2 tmp_dir(tmp_next - point_2(pvertex.first, ivertex));
+      // std::cout << to_3d(next.first, tmp_next) << std::endl;
 
       if (was_swapped) {
         std::reverse(iedges.begin(), iedges.end());
@@ -1891,16 +1908,31 @@ public:
     {
       std::cout << "*** Open case" << std::endl;
 
-      // const Direction_2 dir_next(point_2(next) - point_2(pvertex));
       // const Direction_2 dir_prev(point_2(prev) - point_2(pvertex));
+      // const Direction_2 dir_next(point_2(next) - point_2(pvertex));
 
-      // const FT tmp_time = m_current_time - (m_current_time - m_previous_time) / FT(100);
+      const FT prev_time = last_event_time(prev);
+      const FT next_time = last_event_time(next);
+      CGAL_assertion(prev_time < m_current_time);
+      CGAL_assertion(next_time < m_current_time);
+      CGAL_assertion(prev_time >= FT(0));
+      CGAL_assertion(next_time >= FT(0));
 
-      const Direction_2 dir_next(point_2(next, tmp_time) - point_2(pvertex.first, ivertex));
-      const Direction_2 dir_prev(point_2(prev, tmp_time) - point_2(pvertex.first, ivertex));
+      const auto pp_last = point_2(prev, prev_time);
+      const auto pp_curr = point_2(prev, m_current_time);
+      const auto dirp = Vector_2(pp_last, pp_curr);
+      const auto tmp_prev = pp_curr - dirp / FT(10);
 
-      // std::cout << point_3(next, tmp_time) << std::endl;
-      // std::cout << point_3(prev, tmp_time) << std::endl;
+      const auto pn_last = point_2(next, next_time);
+      const auto pn_curr = point_2(next, m_current_time);
+      const auto dirn = Vector_2(pn_last, pn_curr);
+      const auto tmp_next = pn_curr - dirn / FT(10);
+
+      const Direction_2 dir_prev(tmp_prev - point_2(pvertex.first, ivertex));
+      const Direction_2 dir_next(tmp_next - point_2(pvertex.first, ivertex));
+
+      // std::cout << to_3d(prev.first, tmp_prev) << std::endl;
+      // std::cout << to_3d(next.first, tmp_next) << std::endl;
 
       // std::cout << "initial iedges: " << std::endl;
       // for (const auto& iedge : iedges) {
@@ -2448,6 +2480,7 @@ private:
     const FT time_step = (max_time - min_time) / FT(100);
     const FT time_1 = m_current_time - time_step;
     const FT time_2 = m_current_time + time_step;
+    CGAL_assertion(time_1 != time_2);
 
     const Segment_2 pv_seg(
       point_2(pvertex, time_1), point_2(pvertex, time_2));

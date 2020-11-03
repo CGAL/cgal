@@ -585,7 +585,7 @@ private:
 
       ++ iter;
 
-      // if (iter == 7) {
+      // if (iter == 21) {
       //   exit(0);
       // }
 
@@ -624,7 +624,7 @@ private:
       {
         if (m_data.transfer_vertex (pvertex, pother))
         {
-          compute_events_of_vertices (std::array<PVertex,2>{pvertex, pother});
+          compute_events_of_vertices (ev.time(), std::array<PVertex,2>{pvertex, pother});
 
           PVertex prev, next;
           std::tie (prev, next) = m_data.border_prev_and_next(pvertex);
@@ -637,10 +637,10 @@ private:
 
           remove_events (pthird);
           // TODO: Should we remove here any events related to the crossed iedges?
-          compute_events_of_vertices (std::array<PVertex,1>{pthird});
+          compute_events_of_vertices (ev.time(), std::array<PVertex,1>{pthird});
         }
         else
-          compute_events_of_vertices (std::array<PVertex,1>{pvertex});
+          compute_events_of_vertices (ev.time(), std::array<PVertex,1>{pvertex});
       }
     }
     else if (ev.is_pvertex_to_iedge())
@@ -699,14 +699,14 @@ private:
           {
             m_data.crop_polygon(pvertex, pother, iedge);
             remove_events(iedge, pvertex.first);
-            compute_events_of_vertices(std::array<PVertex,2>{pvertex, pother});
+            compute_events_of_vertices(ev.time(), std::array<PVertex,2>{pvertex, pother});
           }
           else // polygon continues beyond the edge
           {
             PVertex pv0, pv1;
             std::tie(pv0, pv1) = m_data.propagate_polygon(k, pvertex, pother, iedge);
             remove_events(iedge, pvertex.first);
-            compute_events_of_vertices(std::array<PVertex, 4>{pvertex, pother, pv0, pv1});
+            compute_events_of_vertices(ev.time(), std::array<PVertex, 4>{pvertex, pother, pv0, pv1});
           }
 
           done = true;
@@ -738,13 +738,13 @@ private:
         {
           const PVertex pvnew = m_data.crop_polygon(pvertex, iedge);
           remove_events(iedge, pvertex.first);
-          compute_events_of_vertices(std::array<PVertex,2>{pvertex, pvnew});
+          compute_events_of_vertices(ev.time(), std::array<PVertex,2>{pvertex, pvnew});
         }
         else // polygon continues beyond the edge
         {
           const std::array<PVertex, 3> pvnew = m_data.propagate_polygon(k, pvertex, iedge);
           remove_events(iedge, pvertex.first);
-          compute_events_of_vertices(pvnew);
+          compute_events_of_vertices(ev.time(), pvnew);
         }
       }
     }
@@ -777,7 +777,7 @@ private:
 
       // And compute new events.
       CGAL_assertion(new_pvertices.size() > 0);
-      compute_events_of_vertices (new_pvertices);
+      compute_events_of_vertices (ev.time(), new_pvertices);
     }
     else
     {
@@ -800,22 +800,24 @@ private:
   }
 
   template <typename PVertexRange>
-  void compute_events_of_vertices (const PVertexRange& pvertices)
-  {
-    m_min_time = m_data.current_time();
+  void compute_events_of_vertices (
+    const FT last_event_time, const PVertexRange& pvertices) {
 
+    m_min_time = m_data.current_time();
     m_data.update_positions(m_max_time);
 
     KSR::vector<IEdge> iedges;
     KSR::vector<Segment_2> segments_2;
     KSR::vector<CGAL::Bbox_2> segment_bboxes;
-    init_search_structures (pvertices.front().first, iedges, segments_2, segment_bboxes);
+    init_search_structures(pvertices.front().first, iedges, segments_2, segment_bboxes);
 
     for (const PVertex& pvertex : pvertices)
       m_data.deactivate(pvertex);
 
-    for (const PVertex& pvertex : pvertices)
-      compute_events_of_vertex (pvertex, iedges, segments_2, segment_bboxes);
+    for (const PVertex& pvertex : pvertices) {
+      m_data.set_last_event_time(pvertex, last_event_time);
+      compute_events_of_vertex(pvertex, iedges, segments_2, segment_bboxes);
+    }
 
     for (const PVertex& pvertex : pvertices)
       m_data.activate(pvertex);
@@ -825,9 +827,6 @@ private:
 
 };
 
-
-
 } // namespace CGAL
-
 
 #endif // CGAL_KINETIC_SHAPE_RECONSTRUCTION_3_H
