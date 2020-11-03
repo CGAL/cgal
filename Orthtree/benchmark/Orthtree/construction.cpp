@@ -14,8 +14,9 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point;
 typedef CGAL::Point_set_3<Point> Point_set;
+typedef Point_set::Point_map Point_map;
 
-typedef CGAL::Octree::Octree<Point_set, typename Point_set::Point_map> Octree;
+typedef CGAL::Octree<Kernel, Point_set, Point_map> Octree;
 
 using std::chrono::high_resolution_clock;
 using std::chrono::duration_cast;

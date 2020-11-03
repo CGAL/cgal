@@ -14,8 +14,9 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point;
 typedef CGAL::Point_set_3<Point> Point_set;
+typedef Point_set::Point_map Point_map;
 
-typedef CGAL::Octree::Octree<Point_set, typename Point_set::Point_map> Octree;
+typedef CGAL::Octree<Kernel, Point_set, Point_map> Octree;
 
 using std::chrono::high_resolution_clock;
 using std::chrono::duration_cast;
@@ -48,7 +49,7 @@ int main(int argc, char **argv) {
 
     // Find the nearest point to the search point
     std::vector<Point> nearest_neighbors;
-    octree.nearest_k_neighbors(search_point, 10, std::back_inserter(nearest_neighbors));
+    octree.nearest_neighbors(search_point, 10, std::back_inserter(nearest_neighbors));
 
     // End the timer
     auto end = high_resolution_clock::now();
