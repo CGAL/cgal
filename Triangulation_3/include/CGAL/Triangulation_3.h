@@ -530,7 +530,7 @@ public:
   typedef Triangulation_segment_simplex_iterator_3<Self> Segment_simplex_iterator;
 
   typedef Iterator_range<Prevent_deref<Segment_cell_iterator> >    Segment_traverser_cell_handles;
-  typedef Iterator_range<Prevent_deref<Segment_simplex_iterator> > Segment_traverser_simplices;
+  typedef Iterator_range<Segment_simplex_iterator> Segment_traverser_simplices;
 
 private:
   // Auxiliary iterators for convenience
