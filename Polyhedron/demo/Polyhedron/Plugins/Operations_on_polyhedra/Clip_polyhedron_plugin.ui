@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>353</width>
+    <width>386</width>
     <height>231</height>
    </rect>
   </property>
@@ -135,7 +135,7 @@ Only available in Split mode.</string>
             <string>Allow the use of a self-intersected clipper, but prevent the closing of the result.</string>
            </property>
            <property name="text">
-            <string>Allow self-intersections in clipper</string>
+            <string>Allow self-intersections (not in clipper)</string>
            </property>
           </widget>
          </item>

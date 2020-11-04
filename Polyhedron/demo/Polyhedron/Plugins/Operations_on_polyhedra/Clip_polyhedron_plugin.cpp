@@ -178,11 +178,6 @@ public Q_SLOTS:
     dock_widget->hide();
   }
 
-  void on_clip_toggled(bool b)
-  {
-    ui_widget.do_not_modify_CheckBox->setEnabled(b);
-  }
-
   void pop_widget()
   {
     ui_widget.clip_radioButton->toggle();
@@ -207,9 +202,6 @@ public Q_SLOTS:
       plane->setColor(QColor(0,126,255));
       plane->setFlatMode();
       plane->setName(tr("Clipping plane"));
-
-      connect(ui_widget.clip_radioButton, &QPushButton::toggled,
-              this, &Clip_polyhedron_plugin::on_clip_toggled);
 
       connect(plane, SIGNAL(destroyed()),
               this, SLOT(on_plane_destroyed()));
@@ -267,7 +259,7 @@ public Q_SLOTS:
                                                   throw_on_self_intersection(true).
                                                   use_compact_clipper(
                                                     !ui_widget.coplanarCheckBox->isChecked())
-                                                  .do_not_modify(ui_widget.do_not_modify_CheckBox->isChecked()));
+                                                  .allow_self_intersections(ui_widget.do_not_modify_CheckBox->isChecked()));
             }
           }
           catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
@@ -286,7 +278,8 @@ public Q_SLOTS:
               {
                 CGAL::Polygon_mesh_processing::split(*(sm_item->face_graph()),
                                                     plane->plane(),
-                                                     CGAL::Polygon_mesh_processing::parameters::throw_on_self_intersection(true));
+                                                     CGAL::Polygon_mesh_processing::parameters::throw_on_self_intersection(true)
+                                                     .allow_self_intersections(ui_widget.do_not_modify_CheckBox->isChecked()));
               }
             }
             catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
@@ -313,11 +306,6 @@ public Q_SLOTS:
       QMessageBox::warning(CGAL::Three::Three::mainWindow(), "", "There is a clipper already. If you want to change, please erase the current one.");
       return;
     }
-
-    disconnect(ui_widget.clip_radioButton, &QPushButton::toggled,
-            this, &Clip_polyhedron_plugin::on_clip_toggled);
-    ui_widget.do_not_modify_CheckBox->setEnabled(true);
-
     Scene_surface_mesh_item* item = qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
     if(!item)
       return;
