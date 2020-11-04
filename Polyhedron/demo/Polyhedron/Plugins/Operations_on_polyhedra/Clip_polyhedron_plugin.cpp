@@ -342,13 +342,14 @@ public Q_SLOTS:
       clipper_item->itemChanged();
     });
 
-    connect(clipper_item, &Scene_movable_sm_item::aboutToBeDestroyed,
+    connect(clipper_item, &Scene_movable_sm_item::destroyed,
             this, [this](){
       clipper_item = nullptr;
       if(original_clipper){
         scene->addItem(original_clipper);
         original_clipper = nullptr;
       }
+      dock_widget->hide();
     });
 
     clipper_item->setColor(QColor(Qt::green));
