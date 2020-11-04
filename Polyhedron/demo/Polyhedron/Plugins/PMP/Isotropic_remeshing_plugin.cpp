@@ -180,6 +180,27 @@ class Polyhedron_demo_isotropic_remeshing_plugin :
   typedef boost::unordered_set<edge_descriptor>    Edge_set;
   typedef Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> Edge_constrained_pmap;
 
+  struct Visitor
+  {
+    typedef typename Scene_polyhedron_selection_item::Selection_set_facet Container;
+    Container& faces;
+
+    Visitor(Container& container)
+      : faces(container)
+    {}
+
+    void before_subface_creations(face_descriptor fd)
+    {
+      Container::iterator it = faces.find(fd);
+      faces.erase(it);
+    }
+    void after_subface_created(face_descriptor fd)
+    {
+      faces.insert(fd);
+    }
+    void after_subface_creations(){}
+  };
+
 public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface*)
   {
@@ -404,13 +425,31 @@ public Q_SLOTS:
               }
               else
               {
-                QApplication::setOverrideCursor(Qt::WaitCursor);
                 do_split_edges(selection_item, pmesh, target_length);
               }
             }
 
             if (selection_item->selected_facets.empty() && !selection_item->isEmpty())
             {
+              if (!CGAL::is_triangle_mesh(pmesh))
+              {
+                QApplication::restoreOverrideCursor();
+                if (QMessageBox::Ok ==
+                    QMessageBox::question(mw, tr("Error - Triangulate Faces?"),
+                      tr("The input mesh is not a triangulated surface mesh.\n"
+                         "Do you wish to triangulate faces first, or cancel remeshing ?"),
+                      (QMessageBox::Ok | QMessageBox::Cancel),
+                      QMessageBox::Ok))
+                {
+                  QApplication::setOverrideCursor(Qt::WaitCursor);
+                  CGAL::Polygon_mesh_processing::triangulate_faces(pmesh);
+                }
+                else
+                {
+                  return;
+                }
+              }
+
               if (fpmap_valid)
                 CGAL::Polygon_mesh_processing::isotropic_remeshing(faces(*selection_item->polyhedron())
                    , target_length
@@ -436,6 +475,31 @@ public Q_SLOTS:
             }
             else //selected_facets not empty
             {
+              for (auto f : selection_item->selected_facets)
+              {
+                if (!CGAL::is_triangle(halfedge(f, pmesh), pmesh))
+                {
+                  QApplication::restoreOverrideCursor();
+                  if(QMessageBox::Ok ==
+                     QMessageBox::question(mw, tr("Error - Triangulate Faces?"),
+                       tr("The input faces selected for remeshing are not all triangle faces.\n"
+                          "Do you wish to triangulate faces first, or cancel remeshing ?"),
+                       (QMessageBox::Ok | QMessageBox::Cancel),
+                       QMessageBox::Ok))
+                  {
+                    Visitor visitor(selection_item->selected_facets);
+                    CGAL::Polygon_mesh_processing::triangulate_faces(selection_item->selected_facets,
+                      pmesh,
+                      CGAL::Polygon_mesh_processing::parameters::visitor(visitor));
+                    break;
+                  }
+                  else
+                  {
+                    return;
+                  }
+                }
+              }
+
               if (fpmap_valid)
                 CGAL::Polygon_mesh_processing::isotropic_remeshing(selection_item->selected_facets
                   , target_length
@@ -521,7 +585,6 @@ public Q_SLOTS:
           if (preserve_duplicates)
           {
             detect_and_split_duplicates(poly_items, edges_to_protect_map, target_length);
-
           }
           Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> ecm(&edges_to_protect);
           for(edge_descriptor e : edges(pmesh))
@@ -545,6 +608,25 @@ public Q_SLOTS:
                                     " Aborting."));
             return;
           }
+
+          if (!CGAL::is_triangle_mesh(pmesh))
+          {
+            QApplication::restoreOverrideCursor();
+            if (QMessageBox::Ok ==
+                QMessageBox::question(mw, tr("Error - Triangulate Faces?"),
+                  tr("The input mesh is not a triangulated surface mesh.\n"
+                     "Do you wish to triangulate faces first, or cancel remeshing ?"),
+                  (QMessageBox::Ok | QMessageBox::Cancel), QMessageBox::Ok))
+            {
+              QApplication::setOverrideCursor(Qt::WaitCursor);
+              CGAL::Polygon_mesh_processing::triangulate_faces(pmesh);
+            }
+            else
+            {
+              return;
+            }
+          }
+
           if (fpmap_valid)
             CGAL::Polygon_mesh_processing::isotropic_remeshing(
                  faces(*poly_item->polyhedron())
@@ -589,10 +671,9 @@ public Q_SLOTS:
         std::cout << "Can't remesh that type of thing" << std::endl;
       }
       std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
-
-      // default cursor
-      QApplication::restoreOverrideCursor();
     }
+    // default cursor
+    QApplication::restoreOverrideCursor();
   }
 
   void isotropic_remeshing_of_several_polyhedra()
@@ -649,12 +730,36 @@ public Q_SLOTS:
       return;
     }
 
+
+    //check non-triangulated surfaces
+    for (Scene_facegraph_item* poly_item : selection)
+    {
+      if (!CGAL::is_triangle_mesh(*poly_item->polyhedron()))
+      {
+        if (QMessageBox::Ok == QMessageBox::question(mw,
+              tr("Error - Triangulate Faces?"),
+              tr("The input mesh ").append(poly_item->name())
+               .append(tr(" is not a triangulated surface mesh.\n"
+                "Do you wish to triangulate faces first, or cancel remeshing ?")),
+              (QMessageBox::Ok | QMessageBox::Cancel),
+              QMessageBox::Ok))
+        {
+          QApplication::setOverrideCursor(Qt::WaitCursor);
+          CGAL::Polygon_mesh_processing::triangulate_faces(*poly_item->polyhedron());
+          QApplication::restoreOverrideCursor();
+        }
+        else
+        {
+          QApplication::restoreOverrideCursor();
+          return;
+        }
+      }
+    }
+
     // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
     int total_time = 0;
 
-
-    //     typedef boost::graph_traits<FaceGraph>::edge_descriptor edge_descriptor;
     std::map<FaceGraph*,Edge_set > edges_to_protect;
 
     if(preserve_duplicates)

@@ -1120,6 +1120,8 @@ public:
   bool has_stats()const {return true;}
   QString computeStats(int type);
   CGAL::Three::Scene_item::Header_data header() const ;
+
+  void set_num_faces(const std::size_t n);
 };
 
 #endif

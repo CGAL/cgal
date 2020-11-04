@@ -150,6 +150,8 @@ struct Scene_polyhedron_selection_item_priv{
   Face_graph* polyhedron() { return poly; }
   const Face_graph* polyhedron()const { return poly; }
 
+  void set_num_faces(const std::size_t n) { num_faces = n; }
+
   bool canAddFace(fg_halfedge_descriptor hc, Scene_polyhedron_selection_item::fg_halfedge_descriptor t);
   bool canAddFaceAndVertex(Scene_polyhedron_selection_item::fg_halfedge_descriptor hc,
                            Scene_polyhedron_selection_item::fg_halfedge_descriptor t);
@@ -695,6 +697,11 @@ void Scene_polyhedron_selection_item::inverse_selection()
   }
   }
   invalidateOpenGLBuffers();
+}
+
+void Scene_polyhedron_selection_item::set_num_faces(const std::size_t n)
+{
+  d->set_num_faces(n);
 }
 
 void Scene_polyhedron_selection_item::set_highlighting(bool b)
