@@ -404,7 +404,8 @@ int main (int argc, char** argv) {
   // Algorithm.
   KSR ksr;
   IPolygon_3_map polygon_map;
-  const unsigned int k = 2;
+  const unsigned int k = (argc > 3 ? std::atoi(argv[3]) : 1);
+  std::cout << "* input k: " << k << std::endl;
   const bool is_success = ksr.partition(input_polygons, polygon_map, k);
   assert(is_success);
 
