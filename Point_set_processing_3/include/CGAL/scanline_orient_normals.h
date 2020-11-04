@@ -467,8 +467,6 @@ void scanline_orient_normals (PointRange& points, const NamedParameters& np)
   using PointMap = typename CGAL::GetPointMap<PointRange, NamedParameters>::type;
   using NormalMap = typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type;
   using Kernel = typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel;
-  using Point_3 = typename Kernel::Point_3;
-  using Vector_3 = typename Kernel::Vector_3;
 
   using No_map = Constant_property_map<Value_type, int>;
 
