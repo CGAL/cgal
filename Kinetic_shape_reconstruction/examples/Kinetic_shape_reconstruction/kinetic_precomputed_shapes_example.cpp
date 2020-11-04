@@ -63,7 +63,7 @@ int main (int argc, char** argv) {
 
   // Algorithm.
   KSR ksr;
-  const unsigned int k = 1;
+  const unsigned int k = 2;
   Polygon_map polygon_map(input_vertices);
   const bool is_success = ksr.partition(input_faces, polygon_map, k);
   assert(is_success);

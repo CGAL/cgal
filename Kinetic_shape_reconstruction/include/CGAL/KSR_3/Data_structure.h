@@ -2085,52 +2085,64 @@ public:
 
       const auto pface = pface_of_pvertex(pvertex);
       std::cout << "k intersections: " << this->k(pface) << std::endl;
-      if (bbox_reached_back || bbox_reached_front) { // stop
+      if (bbox_reached_back && bbox_reached_front) {
 
+        // We stop here.
         /* this->k(pface) = 1; */
 
-      } else if ((is_occupied_edge_back && is_occupied_edge_front) && this->k(pface) == 1) { // stop
+      } else if ((is_occupied_edge_back && is_occupied_edge_front) && this->k(pface) == 1) {
 
-        // do nothing
-        // CGAL_assertion_msg(false, "TODO: DO WE CORRECTLY HANDLE THIS CASE?");
+        // We stop here.
 
-      } else if ((is_occupied_edge_back && is_occupied_edge_front) && this->k(pface) > 1) { // create a new face
+      } else if ((is_occupied_edge_back && is_occupied_edge_front) && this->k(pface) > 1) {
 
+        // We update k here.
         this->k(pface)--;
         CGAL_assertion(this->k(pface) >= 1);
-        CGAL_assertion_msg(false, "TODO: DO WE CORRECTLY HANDLE THIS CASE?");
 
+        CGAL_assertion(new_vertices.size() >= 2);
         for (std::size_t i = 0; i < new_vertices.size() - 1; ++i) {
           std::cout << "adding a new face" << std::endl;
-          PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
+          const PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
           this->k(new_pface) = k;
         }
 
-      } else if ((!is_occupied_edge_back && !is_occupied_edge_front) && new_vertices.size() >= 2) { // add a triangle face
+      } else if ((!is_occupied_edge_back && !is_occupied_edge_front) && new_vertices.size() >= 2) {
 
+        // We do not update k here!
+        CGAL_assertion(new_vertices.size() >= 2);
         for (std::size_t i = 0; i < new_vertices.size() - 1; ++i) {
           std::cout << "adding a new face" << std::endl;
-          PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
+          const PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
           this->k(new_pface) = k;
         }
-        // CGAL_assertion_msg(false, "TODO: ADD A TRIANGLE FACE!");
 
-      } else if ((is_occupied_edge_back || is_occupied_edge_front) && this->k(pface) == 1) { // add a triangle face
+      } else if ((is_occupied_edge_back || is_occupied_edge_front) && this->k(pface) == 1) {
 
+        // We do not update k here!
+        CGAL_assertion(new_vertices.size() >= 2);
         for (std::size_t i = 0; i < new_vertices.size() - 1; ++i) {
           std::cout << "adding a new face" << std::endl;
-          PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
+          const PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
           this->k(new_pface) = k;
         }
-        // CGAL_assertion_msg(false, "TODO: ADD A TRIANGLE FACE!");
+        // CGAL_assertion_msg(false, "TODO: DO WE CORRECTLY HANDLE THIS CASE?");
+
+      } else if ((is_occupied_edge_back || is_occupied_edge_front) && this->k(pface) > 1) {
+
+        // We update k here.
+        this->k(pface)--;
+        CGAL_assertion(this->k(pface) >= 1);
+
+        CGAL_assertion(new_vertices.size() >= 2);
+        for (std::size_t i = 0; i < new_vertices.size() - 1; ++i) {
+          std::cout << "adding a new face" << std::endl;
+          const PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
+          this->k(new_pface) = k;
+        }
+        // CGAL_assertion_msg(false, "TODO: DO WE CORRECTLY HANDLE THIS CASE?");
 
       } else {
-
-        // for (std::size_t i = 0; i < new_vertices.size() - 1; ++i) {
-        //   std::cout << "adding a new face" << std::endl;
-        //   PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
-        //   this->k(new_pface) = k;
-        // }
         CGAL_assertion_msg(false, "TODO: ADD NEW OPEN CASE! DO NOT FORGET TO UPDATE K!");
       }
 
