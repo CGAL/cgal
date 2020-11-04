@@ -351,7 +351,6 @@ public Q_SLOTS:
         ? *poly_item->polyhedron()
         : *selection_item->polyhedron();
 
-
      Patch_id_pmap fpmap = get(CGAL::face_patch_id_t<int>(), pmesh);
      bool fpmap_valid = false;
      {
@@ -461,40 +460,6 @@ public Q_SLOTS:
             }
         }
 
-        SMesh mesh_ = *selection_item->polyhedron();
-        std::vector<bool> are_edges_removed;
-        are_edges_removed.resize(mesh_.number_of_edges()+mesh_.number_of_removed_edges());
-        std::vector<bool> are_edges_constrained;
-        are_edges_constrained.resize(are_edges_removed.size());
-        for(std::size_t i=0; i< are_edges_removed.size(); ++i)
-        {
-          are_edges_removed[i] = mesh_.is_removed(SMesh::Edge_index(static_cast<int>(i)));
-          if(!are_edges_removed[i])
-            are_edges_constrained[i] = get(selection_item->constrained_edges_pmap(), SMesh::Edge_index(static_cast<int>(i)));
-        }
-
-
-        int i0, i1,
-            nE(mesh_.number_of_edges()+mesh_.number_of_removed_edges());
-
-        //get constrained values in order.
-        if (nE > 0)
-        {
-          i0=0;  i1=nE-1;
-          while (1)
-          {
-            // find first removed and last un-removed
-            while (!are_edges_removed[i0] && i0 < i1) ++i0;
-            while ( are_edges_removed[i1] && i0 < i1) --i1;
-            if (i0 >= i1) break;
-
-            // swap
-            std::swap(are_edges_constrained[i0], are_edges_constrained[i1]);
-            std::swap(are_edges_removed[i0], are_edges_removed[i1]);
-          }
-          // remember new size
-          nE = are_edges_removed[i0] ? i0 : i0+1;
-        }
         selection_item->polyhedron_item()->setColor(
               selection_item->polyhedron_item()->color());
         if(fpmap_valid)
@@ -506,19 +471,11 @@ public Q_SLOTS:
         {
           selection_item->polyhedron_item()->setItemIsMulticolor(false);
         }
-
-        selection_item->polyhedron_item()->polyhedron()->collect_garbage();
-        //fix constrained_edges_map
-        for(int i=0; i< nE; ++i)
-        {
-          Scene_polyhedron_selection_item::Is_constrained_map<Scene_polyhedron_selection_item::Selection_set_edge>
-              pmap = selection_item->constrained_edges_pmap();
-          put(pmap, SMesh::Edge_index(i), are_edges_constrained[i]);
-        }
-
-        selection_item->poly_item_changed();
-        selection_item->clear<face_descriptor>();
-        selection_item->changed_with_poly_item();
+        selection_item->setKeepSelectionValid(Scene_polyhedron_selection_item::Edge);
+        selection_item->polyhedron_item()->invalidateOpenGLBuffers();
+        Q_EMIT selection_item->polyhedron_item()->itemChanged();
+        selection_item->invalidateOpenGLBuffers();
+        selection_item->setKeepSelectionValid(Scene_polyhedron_selection_item::None);
       }
       else if (poly_item)
       {
