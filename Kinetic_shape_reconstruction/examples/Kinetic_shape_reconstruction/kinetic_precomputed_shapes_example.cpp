@@ -63,7 +63,8 @@ int main (int argc, char** argv) {
 
   // Algorithm.
   KSR ksr;
-  const unsigned int k = 2;
+  const unsigned int k = (argc > 2 ? std::atoi(argv[2]) : 2);
+  std::cout << "* input k: " << k << std::endl;
   Polygon_map polygon_map(input_vertices);
   const bool is_success = ksr.partition(input_faces, polygon_map, k);
   assert(is_success);

@@ -1159,6 +1159,7 @@ public:
 
   std::array<PVertex, 3> propagate_polygon (
     const unsigned int k,
+    const unsigned int last_k,
     const PVertex& pvertex, const IEdge& iedge)
   {
     std::cout << "*** Propagating " << str(pvertex) << " along " << str(iedge) << std::endl;
@@ -1179,6 +1180,7 @@ public:
 
     PFace new_pface = add_pface (pvertices);
     this->k(new_pface) = k;
+    // this->k(new_pface) = last_k;
     CGAL_assertion (new_pface.second != Face_index());
 
     std::cout << "*** New face " << lstr(new_pface) << std::endl;
@@ -1246,14 +1248,13 @@ public:
   }
 
   std::pair<PVertex, PVertex> propagate_polygon(
-    const unsigned int, // k
+    const unsigned int, // k,
+    const unsigned int, // last_k,
     const PVertex& pvertex, const PVertex& pother, const IEdge& iedge)
   {
     std::cout << "*** Propagating " << str(pvertex) << "/" << str(pother) << " along " << str(iedge) << std::endl;
-
-    CGAL_assertion_msg (false, "TODO: propagate polygon via edge");
-
-    return std::make_pair (null_pvertex(), null_pvertex());
+    CGAL_assertion_msg(false, "TODO: propagate polygon via the edge!");
+    return std::make_pair(null_pvertex(), null_pvertex());
   }
 
   bool transfer_vertex (const PVertex& pvertex, const PVertex& pother)
@@ -1715,6 +1716,7 @@ public:
 
           PFace new_pface = add_pface(std::array<PVertex, 3>{pvertex, propagated, previous});
           this->k(new_pface) = k;
+          // this->k(new_pface) = this->k(pface);
           previous = propagated;
 
           // std::cout << "num edges after: " << mesh(new_pface.first).number_of_edges() << std::endl;
@@ -1894,6 +1896,7 @@ public:
 
           PFace new_pface = add_pface(std::array<PVertex, 3>{pvertex, previous, propagated});
           this->k(new_pface) = k;
+          // this->k(new_pface) = this->k(pface);
           previous = propagated;
 
           PEdge pedge(support_plane_idx, support_plane(pvertex).edge(pvertex.second, propagated.second));
@@ -2105,6 +2108,7 @@ public:
           std::cout << "adding a new face" << std::endl;
           const PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
           this->k(new_pface) = k;
+          // this->k(new_pface) = this->k(pface);
         }
 
       } else if ((!is_occupied_edge_back && !is_occupied_edge_front) && new_vertices.size() >= 2) {
@@ -2115,6 +2119,7 @@ public:
           std::cout << "adding a new face" << std::endl;
           const PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
           this->k(new_pface) = k;
+          // this->k(new_pface) = this->k(pface);
         }
 
       } else if ((is_occupied_edge_back || is_occupied_edge_front) && this->k(pface) == 1) {
@@ -2125,6 +2130,7 @@ public:
           std::cout << "adding a new face" << std::endl;
           const PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
           this->k(new_pface) = k;
+          // this->k(new_pface) = this->k(pface);
         }
         // CGAL_assertion_msg(false, "TODO: DO WE CORRECTLY HANDLE THIS CASE?");
 
@@ -2139,6 +2145,7 @@ public:
           std::cout << "adding a new face" << std::endl;
           const PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
           this->k(new_pface) = k;
+          // this->k(new_pface) = this->k(pface);
         }
         // CGAL_assertion_msg(false, "TODO: DO WE CORRECTLY HANDLE THIS CASE?");
 
