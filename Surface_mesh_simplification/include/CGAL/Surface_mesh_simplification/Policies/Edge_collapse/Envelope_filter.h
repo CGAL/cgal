@@ -17,7 +17,7 @@
 #include <CGAL/Default.h>
 #include <CGAL/intersections.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include<CGAL/Surface_mesh_simplification/internal/common.h>
+#include<CGAL/Surface_mesh_simplification/internal/Common.h>
 
 #include <CGAL/Envelope.h>
 
@@ -36,7 +36,7 @@ class Envelope_filter
   typedef GeomTraits                                                          Geom_traits;
   typedef typename Geom_traits::FT                                            FT;
   typedef typename Geom_traits::Point_3                                       Point_3;
- 
+
   typedef CGAL::Envelope<GeomTraits>                                          Envelope;
   typedef typename Envelope::Vector3i                                         Vector3i;
 

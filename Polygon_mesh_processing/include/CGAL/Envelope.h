@@ -86,7 +86,7 @@ namespace CGAL {
 
 /**
  * \ingroup PkgPolygonMeshProcessingRef
- * This class provides a test whether a query point, segment, or triangle
+ * This class can be used to check if a query point, segment, or triangle
  * is inside or outside a polyhedral envelope of a triangle mesh.
  *
  * @tparam GeomTraits a geometric traits class, model of `Kernel`
