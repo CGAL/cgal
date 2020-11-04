@@ -26,7 +26,7 @@
 
 //#define DO_NOT_USE_EIGEN_COMPUTEDIRECT_FOR_DIAGONALIZATION
 
-#include <CGAL/array.h>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 
