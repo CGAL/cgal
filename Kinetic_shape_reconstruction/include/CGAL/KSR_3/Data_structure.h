@@ -1091,12 +1091,14 @@ public:
     const PVertex& pvertex,
     const IEdge& query_iedge) {
 
+    // std::cout << str(query_iedge) << " " << segment_3(query_iedge) << std::endl;
     KSR::size_t num_adjacent_faces = 0;
     for (const auto plane_idx : intersected_planes(query_iedge)) {
       if (plane_idx == pvertex.first) continue; // current plane
       if (plane_idx < 6) return std::make_pair(true, true); // bbox plane
 
       for (const auto pedge : pedges(plane_idx)) {
+        // std::cout << str(iedge(pedge)) << std::endl;
         if (iedge(pedge) == query_iedge) {
           const auto& m = mesh(plane_idx);
           const auto he = m.halfedge(pedge.second);
@@ -1368,12 +1370,14 @@ public:
   std::vector<PVertex> merge_pvertices_on_ivertex (const FT min_time,
                                                    const FT max_time,
                                                    const unsigned int k,
+                                                   const PVertex& /* event_pvertex */,
                                                    std::vector<PVertex>& pvertices,
                                                    const IVertex& ivertex,
                                                    std::vector<IEdge>& crossed)
   {
     crossed.clear();
     KSR::size_t support_plane_idx = pvertices.front().first;
+    // const IEdge original_iedge = iedge(event_pvertex);
 
     PVertex prev = pvertices.front();
     PVertex next = pvertices.back();
@@ -1694,12 +1698,18 @@ public:
           std::tie(is_occupied_edge, bbox_reached) = is_occupied(pvertex, crossed[0]);
           std::cout << "is already occupied / bbox: " << is_occupied_edge << "/" << bbox_reached << std::endl;
 
+          // const bool is_original_occupied = is_occupied(pvertex, original_iedge).first;
+          // std::cout << "is original occupied: " << is_original_occupied << std::endl;
+
           // Stop.
           const auto pface = pface_of_pvertex(pvertex);
           std::cout << "k intersections: " << this->k(pface) << std::endl;
           if (bbox_reached) {
+            std::cout << "stop bbox" << std::endl;
             /* this->k(pface) = 1; */ break;
+          // } else if ((is_occupied_edge || is_original_occupied) && this->k(pface) == 1) {
           } else if (is_occupied_edge && this->k(pface) == 1) {
+            std::cout << "stop k" << std::endl;
             break;
           }
 
@@ -1874,12 +1884,18 @@ public:
           std::tie(is_occupied_edge, bbox_reached) = is_occupied(pvertex, crossed[0]);
           std::cout << "is already occupied / bbox: " << is_occupied_edge << "/" << bbox_reached << std::endl;
 
+          // const bool is_original_occupied = is_occupied(pvertex, original_iedge).first;
+          // std::cout << "is original occupied: " << is_original_occupied << std::endl;
+
           // Stop.
           const auto pface = pface_of_pvertex(pvertex);
           std::cout << "k intersections: " << this->k(pface) << std::endl;
           if (bbox_reached) {
+            std::cout << "stop bbox" << std::endl;
             /* this->k(pface) = 1; */ break;
+          // } else if ((is_occupied_edge || is_original_occupied) && this->k(pface) == 1) {
           } else if (is_occupied_edge && this->k(pface) == 1) {
+            std::cout << "stop k" << std::endl;
             break;
           }
 
@@ -2092,10 +2108,12 @@ public:
 
         // We stop here.
         /* this->k(pface) = 1; */
+        std::cout << "stop bbox" << std::endl;
 
       } else if ((is_occupied_edge_back && is_occupied_edge_front) && this->k(pface) == 1) {
 
         // We stop here.
+        std::cout << "stop k" << std::endl;
 
       } else if ((is_occupied_edge_back && is_occupied_edge_front) && this->k(pface) > 1) {
 

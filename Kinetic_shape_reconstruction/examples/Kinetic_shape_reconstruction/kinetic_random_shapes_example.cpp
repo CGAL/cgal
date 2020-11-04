@@ -404,7 +404,7 @@ int main (int argc, char** argv) {
   // Algorithm.
   KSR ksr;
   IPolygon_3_map polygon_map;
-  const unsigned int k = 1;
+  const unsigned int k = 2;
   const bool is_success = ksr.partition(input_polygons, polygon_map, k);
   assert(is_success);
 
