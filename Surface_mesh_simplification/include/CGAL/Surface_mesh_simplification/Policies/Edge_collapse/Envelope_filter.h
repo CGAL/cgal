@@ -36,8 +36,8 @@ class Envelope_filter
   typedef GeomTraits                                                          Geom_traits;
   typedef typename Geom_traits::FT                                            FT;
   typedef typename Geom_traits::Point_3                                       Point_3;
-
-  typedef CGAL::::Envelope<GeomTraits>                                        Envelope;
+ 
+  typedef CGAL::Envelope<GeomTraits>                                          Envelope;
   typedef typename Envelope::Vector3i                                         Vector3i;
 
 private:

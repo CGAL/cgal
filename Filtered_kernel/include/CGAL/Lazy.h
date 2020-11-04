@@ -899,7 +899,7 @@ struct Lazy_construction_optional
       }
       // Now we have to construct a rep for a lazy point with the three lazy planes.
       typedef Lazy_rep_optional_n<typename AK::Point_3, typename EK::Point_3, AC, EC, E2A, L1, L1, L1> LazyPointRep;
-      static LazyPointRep rep;
+      CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(LazyPointRep, rep);
 
       const typename AK::Point_3 ap = *oap;
       rep = LazyPointRep(2,ap, ec, l1, l2, l3);
@@ -938,7 +938,7 @@ struct Lazy_construction_optional
       // Now we have to construct a rep for a lazy point with the line and the plane.
       typedef Lazy_rep_optional_n<typename AK::Point_3, typename EK::Point_3, AC, EC, E2A, L1, L2> LazyPointRep;
 
-      static LazyPointRep rep;
+      CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(LazyPointRep, rep);
       const typename AK::Point_3 ap = *oap;
       rep = LazyPointRep(2, ap, ec, l1, l2);
       typename LK::Point_3 lp(&rep);

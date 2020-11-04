@@ -49,7 +49,7 @@ int main(int argc, char** argv)
   SMS::edge_collapse(mesh, stop, CGAL::parameters::get_cost(Cost()).get_filter(filter).get_placement(placement));
 
   std::ofstream out("out.off");
-  out << big_mesh << std::endl;
+  out << mesh << std::endl;
   out.close();
 
   return EXIT_SUCCESS;

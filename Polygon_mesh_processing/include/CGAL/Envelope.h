@@ -98,11 +98,9 @@ struct Envelope {
 
 public:
   typedef typename GeomTraits::Point_3 Point_3;
-
-private:
-
   typedef std::array<int, 3> Vector3i;
 
+private:
   typedef typename GeomTraits::Vector_3 Vector_3;
   typedef typename GeomTraits::Segment_3 Segment_3;
   typedef typename GeomTraits::Triangle_3 Triangle_3;
@@ -257,7 +255,7 @@ private:
 
   eOriented_side_3 oriented_side;
 
-
+public:
   Envelope(const std::vector<Point_3>& env_vertices,
            std::vector<Vector3i> env_faces,
            double epsilon)
@@ -266,7 +264,7 @@ private:
     init(epsilon);
   }
 
-public:
+
    /**
    * Constructor with a triangulated surface mesh.
     * @tparam TriangleMesh a model of `HalfedgeListGraph`
