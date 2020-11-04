@@ -78,15 +78,6 @@ No_intersection_surface_sweep_2<Vis>::~No_intersection_surface_sweep_2()
 
   // Free the event queue.
   delete m_queue;
-
-  // Free all the event that have not been de-allocated so far.
-  Event* p_event;
-  Allocated_events_iterator iter = m_allocated_events.begin();
-  for (; iter != m_allocated_events.end(); ++iter) {
-    p_event = *iter;
-    std::allocator_traits<Event_alloc>::destroy(m_eventAlloc, p_event);
-    m_eventAlloc.deallocate(p_event,1);
-  }
 }
 
 //-----------------------------------------------------------------------------
@@ -125,11 +116,7 @@ template <typename Vis>
 void No_intersection_surface_sweep_2<Vis>::deallocate_event(Event* event)
 {
   // Remove the event from the set of allocated events.
-  m_allocated_events.erase(event);
-
-  // Perfrom the actual deallocation.
-  std::allocator_traits<Event_alloc>::destroy(m_eventAlloc, event);
-  m_eventAlloc.deallocate(event, 1);
+  m_allocated_events.erase(m_allocated_events.iterator_to(*event));
 }
 
 //-----------------------------------------------------------------------------
@@ -629,12 +616,8 @@ No_intersection_surface_sweep_2<Vis>::_allocate_event(const Point_2& pt,
                                                       Arr_parameter_space ps_y)
 {
   // Allocate the event.
-  Event* e =  m_eventAlloc.allocate(1);
-  std::allocator_traits<Event_alloc>::construct(m_eventAlloc, e, m_masterEvent);
+  Event* e = &*m_allocated_events.emplace();
   e->init(pt, type, ps_x, ps_y);
-
-  // Insert it to the set of allocated events.
-  m_allocated_events.insert(e);
   return e;
 }
 
@@ -649,11 +632,8 @@ _allocate_event_at_open_boundary(Attribute type,
                                  Arr_parameter_space ps_x,
                                  Arr_parameter_space ps_y)
 {
-  Event* e =  m_eventAlloc.allocate(1);
-  std::allocator_traits<Event_alloc>::construct(m_eventAlloc, e, m_masterEvent);
+  Event* e = &*m_allocated_events.emplace();
   e->init_at_open_boundary(type, ps_x, ps_y);
-
-  m_allocated_events.insert(e);
   return e;
 }
 
