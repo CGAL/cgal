@@ -7,15 +7,14 @@
 
 #include <vector>
 
-#include <CGAL/config.h>
-#include <CGAL/Exact_rational.h>
-#include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>
 
-typedef CGAL::Exact_rational                               Number_type;
-typedef CGAL::Cartesian<Number_type>                       Kernel;
+#include "arr_print.h"
+
+typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
 
 #if 0
 typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -8, 6>  Geom_traits_2;
@@ -125,11 +124,7 @@ int main() {
       CGAL::insert_empty(arr, xcvs_sub.begin(), xcvs_sub.end(),
                          points_sub.begin(), points_sub.end());
 
-      // Print the size of the arrangement.
-      std::cout << "The arrangement size:" << std::endl
-                << "   V = " << arr.number_of_vertices()
-                << ",  E = " << arr.number_of_edges()
-                << ",  F = " << arr.number_of_faces() << std::endl;
+      print_arrangement_size(arr);          // print the arrangement size
 
       std::cout << "======================================================="
                 << std::endl << std::endl << std::endl;

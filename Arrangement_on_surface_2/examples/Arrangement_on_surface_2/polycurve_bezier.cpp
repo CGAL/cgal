@@ -48,11 +48,11 @@ int main() {
   Bezier_curve B;
 
   in_file >> n_curves;
-  unsigned int k;
+  size_t k;
   for (k = 0; k < n_curves; ++k) {
     // Read the current curve (specified by its control points).
     in_file >> B;
-    //convert it into x-monotone bezier curve.
+    // convert it into x-monotone bezier curve.
     std::vector<CGAL::Object> obj_vector;
     bezier_traits.make_x_monotone_2_object()(B, std::back_inserter(obj_vector));
     Bezier_x_monotone_curve x_seg =
@@ -61,16 +61,9 @@ int main() {
   }
 
   X_mono_polycurve polycurve = ctr_xpolycurve(x_curves.begin(), x_curves.end());
-
-  // Construct the arrangement.
   Arrangement_2 arr;
-  insert(arr, polycurve);
-
-  // Print the arrangement size.
-  std::cout << "The arrangement size:" << std::endl
-            << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges()
-            << ",  F = " << arr.number_of_faces() << std::endl;
+  insert(arr, polycurve);               // construct the arrangement
+  print_arrangement_size(arr);          // print the arrangement size
 
   return 0;
 }

@@ -8,6 +8,8 @@
 #include <CGAL/Arr_polycurve_basic_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
+#include "arr_print.h"
+
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef CGAL::Arr_directional_non_caching_segment_basic_traits_2<Kernel>
                                                             Subcurve_traits;
@@ -40,8 +42,7 @@ int main() {
   insert_non_intersecting_curve(arr, pc1);
   insert_non_intersecting_curve(arr, pc2);
 
-  std::cout << "# vertices: " << arr.number_of_vertices() << std::endl;;
-  std::cout << "# halfedges: " << arr.number_of_halfedges() << std::endl;;
-  std::cout << "# faces: " << arr.number_of_faces() << std::endl;;
+  print_arrangement_size(arr);          // print the arrangement size
+
   return 0;
 }

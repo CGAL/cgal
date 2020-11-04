@@ -3807,7 +3807,7 @@ disjoint line segments, defined in the input file `Europe.dat`.
 
 In the following example we use the predefined
 `Exact_predicates_exact_constructions_kernel` for instantiating our
-segment-traits class. This kernel use interval arithmetic to filter
+segment-traits class. This kernel uses interval arithmetic to filter
 the exact computations. The program reads a set of line segments with
 integer coordinates from a file and computes their arrangement. By
 default it opens the `fan_grids.dat` input-file, located in the
