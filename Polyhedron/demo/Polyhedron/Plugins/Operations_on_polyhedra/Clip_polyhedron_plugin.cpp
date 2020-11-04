@@ -310,17 +310,17 @@ public Q_SLOTS:
     Scene_surface_mesh_item* item = qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
     if(!item)
       return;
-    const Scene_interface::Bbox scene_bbox = scene->bbox();
     if(CGAL::Polygon_mesh_processing::does_self_intersect(*item->face_graph())
        || ! CGAL::Polygon_mesh_processing::does_bound_a_volume(*item->face_graph()))
     {
       QMessageBox::warning(CGAL::Three::Three::mainWindow(), "", "The clipper must not self intersect, and it must bound a volume.");
       return;
     }
-    clipper_item = new Scene_movable_sm_item(
-          CGAL::qglviewer::Vec((scene_bbox.xmin() + scene_bbox.xmax())/2.,
-                               (scene_bbox.ymin() + scene_bbox.ymax())/2.,
-                               (scene_bbox.zmin() + scene_bbox.zmax())/2.),
+    CGAL::qglviewer::Vec pos(((item->bbox().min)(0) + (item->bbox().max)(0))/2.0,
+                             ((item->bbox().min)(1) + (item->bbox().max)(1))/2.0,
+                             ((item->bbox().min)(2) + (item->bbox().max)(2))/2.0);
+
+    clipper_item = new Scene_movable_sm_item(pos,
           item->face_graph(),"");
     clipper_item->setName("clipper");
     original_clipper = scene->replaceItem(scene->item_id(item), clipper_item, false);
@@ -348,6 +348,9 @@ public Q_SLOTS:
     dock_widget->show();
     dock_widget->raise();
     is_plane = false;
+    const double* matrix = clipper_item->manipulatedFrame()->matrix();
+    clipper_item->setFMatrix(matrix);
+    clipper_item->itemChanged();
   }
 
   void clip_with_poly()
