@@ -1697,9 +1697,8 @@ public:
           const auto pface = pface_of_pvertex(pvertex);
           std::cout << "k intersections: " << this->k(pface) << std::endl;
           if (bbox_reached) {
-            this->k(pface) = 1; break;
-          }
-          if (is_occupied_edge && this->k(pface) == 1) {
+            /* this->k(pface) = 1; */ break;
+          } else if (is_occupied_edge && this->k(pface) == 1) {
             break;
           }
 
@@ -1877,9 +1876,8 @@ public:
           const auto pface = pface_of_pvertex(pvertex);
           std::cout << "k intersections: " << this->k(pface) << std::endl;
           if (bbox_reached) {
-            this->k(pface) = 1; break;
-          }
-          if (is_occupied_edge && this->k(pface) == 1) {
+            /* this->k(pface) = 1; */ break;
+          } else if (is_occupied_edge && this->k(pface) == 1) {
             break;
           }
 
@@ -2089,7 +2087,7 @@ public:
       std::cout << "k intersections: " << this->k(pface) << std::endl;
       if (bbox_reached_back || bbox_reached_front) { // stop
 
-        this->k(pface) = 1;
+        /* this->k(pface) = 1; */
 
       } else if ((is_occupied_edge_back && is_occupied_edge_front) && this->k(pface) == 1) { // stop
 
@@ -2107,6 +2105,7 @@ public:
           PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
           this->k(new_pface) = k;
         }
+
       } else if ((!is_occupied_edge_back && !is_occupied_edge_front) && new_vertices.size() >= 2) { // add a triangle face
 
         for (std::size_t i = 0; i < new_vertices.size() - 1; ++i) {
@@ -2116,7 +2115,7 @@ public:
         }
         // CGAL_assertion_msg(false, "TODO: ADD A TRIANGLE FACE!");
 
-      } else if((is_occupied_edge_back || is_occupied_edge_front) && this->k(pface) == 1) { // add a triangle face
+      } else if ((is_occupied_edge_back || is_occupied_edge_front) && this->k(pface) == 1) { // add a triangle face
 
         for (std::size_t i = 0; i < new_vertices.size() - 1; ++i) {
           std::cout << "adding a new face" << std::endl;
@@ -2132,7 +2131,7 @@ public:
         //   PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
         //   this->k(new_pface) = k;
         // }
-        CGAL_assertion_msg(false, "TODO: ADD NEW OPEN CASE!");
+        CGAL_assertion_msg(false, "TODO: ADD NEW OPEN CASE! DO NOT FORGET TO UPDATE K!");
       }
 
       for (std::size_t i = 1; i < crossed.size() - 1; ++i) {

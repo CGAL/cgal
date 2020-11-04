@@ -136,6 +136,11 @@ public:
 
     KSR_3::dump (m_data, "intersected");
 
+    for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
+      for (const auto pface : m_data.pfaces(i))
+        m_data.k(pface) = k;
+    }
+
     std::size_t iter = 0;
     m_min_time = 0;
     m_max_time = time_step;
@@ -585,7 +590,7 @@ private:
 
       ++ iter;
 
-      // if (iter == 3) {
+      // if (iter == 10) {
       //   exit(0);
       // }
 
@@ -687,21 +692,27 @@ private:
 
           bool collision_other, bbox_reached_other;
           // collision_other = m_data.collision_occured(pother, iedge).first;
-          std::tie(collision_other, bbox_reached_other) = m_data.is_occupied(pvertex, iedge);
+          std::tie(collision_other, bbox_reached_other) = m_data.is_occupied(pother, iedge);
           std::cout << "other/bbox: " << collision_other << "/" << bbox_reached_other << std::endl;
 
-          if ((collision || collision_other) && m_data.k(pface) > 1)
-            m_data.k(pface) --;
-
+          std::cout << "k intersections: " << m_data.k(pface) << std::endl;
           bool stop = false;
           if (bbox_reached) {
-            m_data.k(pface) = 1; stop = true;
-          }
-          if ((collision || collision_other) && m_data.k(pface) == 1) {
+
+            std::cout << "pv po k bbox" << std::endl;
+            /* m_data.k(pface) = 1; */ stop = true;
+
+          } else if ((collision || collision_other) && m_data.k(pface) == 1) {
+
+            std::cout << "pv po k stop" << std::endl;
             stop = true;
-          }
-          if ((collision || collision_other) && m_data.k(pface) > 1)
+
+          } else if ((collision || collision_other) && m_data.k(pface) > 1) {
+
+            std::cout << "pv po k continue" << std::endl;
             m_data.k(pface)--;
+
+          }
           CGAL_assertion(m_data.k(pface) >= 1);
 
           if (stop) // polygon stops
@@ -732,15 +743,23 @@ private:
         std::tie(collision, bbox_reached) = m_data.is_occupied(pvertex, iedge);
         std::cout << "collision/bbox: " << collision << "/" << bbox_reached << std::endl;
 
+        std::cout << "k intersections: " << m_data.k(pface) << std::endl;
         bool stop = false;
         if (bbox_reached) {
-          m_data.k(pface) = 1; stop = true;
-        }
-        if (collision && m_data.k(pface) == 1) {
+
+          std::cout << "pv k bbox" << std::endl;
+          /* m_data.k(pface) = 1; */ stop = true;
+
+        } else if (collision && m_data.k(pface) == 1) {
+
+          std::cout << "pv k stop" << std::endl;
           stop = true;
-        }
-        if (collision && m_data.k(pface) > 1)
+
+        } else if (collision && m_data.k(pface) > 1) {
+
+          std::cout << "pv k continue" << std::endl;
           m_data.k(pface)--;
+        }
         CGAL_assertion(m_data.k(pface) >= 1);
 
         if (stop) // polygon stops
