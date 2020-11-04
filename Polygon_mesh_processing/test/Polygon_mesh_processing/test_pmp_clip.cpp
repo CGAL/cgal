@@ -53,6 +53,23 @@ void test()
               params::face_index_map(custom_face_index_map_2));
     assert(CGAL::is_closed(tm1));
   }
+  //test with SI
+  {
+    TriangleMesh tm1, tm2;
+    std::ifstream("data-clip/clipper_for_tet.off") >> tm2;
+    std::ifstream("data-clip/tet_with_si_to_clip.off") >> tm1;
+
+    PMP::clip(tm1, tm2,
+              params::throw_on_self_intersection(true),
+              params::do_not_modify(true));
+    std::vector<TriangleMesh> meshes;
+    PMP::split_connected_components(tm1, meshes, params::all_default());
+    CGAL_assertion(meshes.size() == 2);
+    //if the order is not deterministc, put the num_vertices in a list and check
+    //if the list does contain all those numbers.
+    CGAL_assertion(num_vertices(meshes[0]) == 21);
+    CGAL_assertion(num_vertices(meshes[1]) == 6);
+  }
 
   // test with a iso-cuboid
   {
@@ -118,6 +135,23 @@ void test()
 
     PMP::clip(tm1, K::Plane_3(0, 0, 1, -2));
     assert(!CGAL::is_empty(tm1));
+  }
+
+  //test with SI
+  {
+    TriangleMesh tm1;
+    std::ifstream("data-clip/tet_with_si_to_clip.off") >> tm1;
+    if(num_vertices(tm1) == 0)
+    {
+      std::cerr<<"File not found. Aborting."<<std::endl;
+      CGAL_assertion(false);
+      return ;
+    }
+
+    PMP::clip(tm1, K::Plane_3(0,0,1,-4.5),
+               params::throw_on_self_intersection(true)
+               .allow_self_intersections(true));
+    CGAL_assertion(vertices(tm1).size() == 16);
   }
 
   // clipping with identity
@@ -493,6 +527,29 @@ void test_split_plane()
   CGAL_assertion(num_vertices(meshes[1]) == 1674);
 
   CGAL::clear(tm1);
+  meshes.clear();
+
+  //test with SI
+  std::ifstream("data-clip/tet_si_to_split.off") >> tm1;
+  if(num_vertices(tm1) == 0)
+  {
+    std::cerr<<"File not found. Aborting."<<std::endl;
+    CGAL_assertion(false);
+    return ;
+  }
+
+  PMP::split(tm1, K::Plane_3(0,0,1,-0.5),
+             params::throw_on_self_intersection(true)
+             .allow_self_intersections(true));
+  PMP::split_connected_components(tm1, meshes, params::all_default());
+  CGAL_assertion(meshes.size() == 2);
+  //if the order is not deterministc, put the num_vertices in a list and check
+  //if the list does contain all those numbers.
+  CGAL_assertion(num_vertices(meshes[0]) == 16);
+  CGAL_assertion(num_vertices(meshes[1]) == 16);
+
+  CGAL::clear(tm1);
+  meshes.clear();
 }
 
 template <class TriangleMesh>
@@ -593,6 +650,32 @@ void test_split()
   CGAL::clear(tm1);
   CGAL::clear(tm2);
   meshes.clear();
+
+
+  //test with SI
+  std::ifstream("data-clip/splitter_for_tet.off") >> tm2;
+  std::ifstream("data-clip/tet_si_to_split.off") >> tm1;
+  //test with SI
+  if(num_vertices(tm1) == 0 || num_vertices(tm2) == 0)
+  {
+    std::cerr<<"File not found. Aborting."<<std::endl;
+    CGAL_assertion(false);
+    return ;
+  }
+  PMP::split(tm1, tm2,
+             params::throw_on_self_intersection(true),
+             params::do_not_modify(true));
+  PMP::split_connected_components(tm1, meshes, params::all_default());
+  CGAL_assertion(meshes.size() == 3);
+  //if the order is not deterministc, put the num_vertices in a list and check
+  //if the list does contain all those numbers.
+  CGAL_assertion(num_vertices(meshes[0]) == 29);
+  CGAL_assertion(num_vertices(meshes[1]) == 8);
+  CGAL_assertion(num_vertices(meshes[2]) == 17);
+
+  CGAL::clear(tm1);
+  CGAL::clear(tm2);
+  meshes.clear();
 }
 
 template <class TriangleMesh>
@@ -634,13 +717,47 @@ void test_isocuboid()
   CGAL_assertion(num_vertices(meshes[8]) == 49  );
   CGAL_assertion(num_vertices(meshes[9]) == 13  );
   CGAL_assertion(tm.is_valid());
+  CGAL::clear(tm);
+  meshes.clear();
+
+
+  std::ifstream("data-clip/tet_with_si_to_clip.off") >> tm;
+  if(num_vertices(tm) == 0)
+  {
+    std::cerr<<"File not found. Aborting."<<std::endl;
+    CGAL_assertion(false);
+    return ;
+  }
+  splitter = K::Iso_cuboid_3(K::Point_3(-2, 7, 4),
+                           K::Point_3(-1, 8, 5));
+  PMP::split(tm, splitter,
+             params::throw_on_self_intersection(true)
+             .allow_self_intersections(true));
+  PMP::split_connected_components(tm, meshes, params::all_default());
+  CGAL_assertion(meshes.size() == 4);
+  //if the order is not deterministc, put the num_vertices in a list and check
+  //if the list does contain all those numbers.
+  CGAL_assertion(vertices(meshes[0]).size() == 22);
+  CGAL_assertion(vertices(meshes[1]).size() == 23);
+  CGAL_assertion(vertices(meshes[2]).size() == 7);
+  CGAL_assertion(vertices(meshes[3]).size() == 4);
 
   CGAL::clear(tm);
   meshes.clear();
+
+  std::ifstream("data-clip/tet_with_si_to_clip.off") >> tm;
+  PMP::clip(tm, splitter,
+             params::throw_on_self_intersection(true)
+             .allow_self_intersections(true));
+  PMP::split_connected_components(tm, meshes, params::all_default());
+  CGAL_assertion(meshes.size() == 2);
+  //if the order is not deterministc, put the num_vertices in a list and check
+  //if the list does contain all those numbers.
+  CGAL_assertion(vertices(meshes[0]).size() == 22);
+  CGAL_assertion(vertices(meshes[1]).size() == 4);
 }
 int main()
 {
-
   std::cout << "Surface Mesh" << std::endl;
   test<Surface_mesh>();
 
@@ -652,20 +769,15 @@ int main()
 
   std::cout << "running test_iso_cuboid with Surface_mesh\n";
   test_isocuboid<Surface_mesh>();
-
   std::cout << "running test_split_plane with Surface_mesh\n";
   test_split_plane<Surface_mesh>();
-
   std::cout << "running test_split with Polyhedron\n";
   test_split<Polyhedron>();
-
   std::cout << "running test_split_plane with Polyhedron\n";
   test_split_plane<Polyhedron>();
-
   std::cout << "running test_iso_cuboid with Polyhedron\n";
   test_isocuboid<Polyhedron>();
   std::cout << "Done!" << std::endl;
-
   return EXIT_SUCCESS;
 }
 

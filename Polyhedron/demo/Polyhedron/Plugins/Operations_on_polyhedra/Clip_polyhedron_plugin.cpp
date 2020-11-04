@@ -411,8 +411,8 @@ public Q_SLOTS:
                                                   ui_widget.close_checkBox->isChecked()).
                                                 throw_on_self_intersection(true).
                                                 use_compact_clipper(
-                                                  !ui_widget.coplanarCheckBox->isChecked())
-                                                .do_not_modify(ui_widget.do_not_modify_CheckBox->isChecked()));
+                                                  !ui_widget.coplanarCheckBox->isChecked()),
+                                                CGAL::Polygon_mesh_processing::parameters::do_not_modify(ui_widget.do_not_modify_CheckBox->isChecked()));
           }
           catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
           {
@@ -426,8 +426,8 @@ public Q_SLOTS:
         try {
           CGAL::Polygon_mesh_processing::split(*pos_side,
                                                clipper,
-                                               CGAL::Polygon_mesh_processing::parameters::throw_on_self_intersection(true)
-                                               .do_not_modify(ui_widget.do_not_modify_CheckBox->isChecked()));
+                                               CGAL::Polygon_mesh_processing::parameters::throw_on_self_intersection(true),
+                                               CGAL::Polygon_mesh_processing::parameters::do_not_modify(ui_widget.do_not_modify_CheckBox->isChecked()));
         }
         catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
         {
