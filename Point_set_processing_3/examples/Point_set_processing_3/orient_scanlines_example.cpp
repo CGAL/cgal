@@ -26,7 +26,7 @@ void dump (const char* filename, const std::vector<Point_with_info>& points)
 
 int main (int argc, char** argv)
 {
-  std::string fname (argc > 1 ? argv[1] : "data/test.las");
+  std::string fname (argc > 1 ? argv[1] : "data/urban.las");
 
   std::vector<Point_with_info> points;
 
