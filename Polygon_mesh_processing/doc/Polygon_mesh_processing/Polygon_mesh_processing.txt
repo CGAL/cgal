@@ -514,11 +514,11 @@ input triangle mesh.
 
 \subsection PMPEnvelope Polyhedral Envelope Containment Check
 
-The class `CGAL::Envelope` provides functors that test whether a query point, segment, or triangle
+The class `CGAL::Envelope` provides functors that enable you to check if a query point, segment, or triangle
 is fully contained in a <em>polyhedral envelope</em> of a triangle mesh.
 
 \cgalFigureBegin{envelopeFig, envelope.png}
-Two polyhedral envelopes.
+Polyhedral envelopes of two triangle meshes, and a Minkowski sum envelope for the second triangle mesh
 \cgalFigureEnd
 
 While the user provides a distance
@@ -526,12 +526,12 @@ the envelope is not the Minkowski sum with a sphere, because this would have cyl
 patches at convex edges and vertices of the input triangle mesh. Instead, the envelope consists
 of a collection of prisms that are guaranteed to be inside the Minkowski sum envelope, hence the
 term <em>polyhedral envelope</em>.  This containment test is exact for the polyhedral envelope, and
-conservative in the sense that, if a query is inside the polyhedral envelope, we can be sure
+conservative for the Minkowswi sum envelope: If a query is inside the polyhedral envelope, we can be sure
 that it is also in the Minkowski sum envelope, but if it is outside the polyhedral envelope
 we do not know where it is with respect to the Minkowski sum envelope.
 
 Such a test is used by the class `Surface_mesh_simplification::Envelope_filter` of the
-package \refPkgSurfaceMeshSimplification, in order to simplify respecting a tolerance.
+package \refPkgSurfaceMeshSimplification, in order to simplify within  a given tolerance.
 
 \subsubsection InsideExample Polyhedral Envelope Example
 \cgalExample{Polygon_mesh_processing/polyhedral_envelope.cpp}
