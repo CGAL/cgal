@@ -190,6 +190,10 @@ public:
     /// \name Modifiers
     //@{
 
+    /*! Set the (lexicographically) left endpoint.
+     * \param p the point to set.
+     * \pre p lies on the supporting line to the left of the right endpoint.
+     */
     void set_left(const Point_2& p);
 
     /*! Set the (lexicographically) right endpoint.
@@ -1174,9 +1178,9 @@ Arr_segment_traits_2<Kernel>::_Segment_cached_2::_Segment_cached_2() :
 //! \brief constructs a segment from a Kernel segment.
 template <typename Kernel>
 Arr_segment_traits_2<Kernel>::
-_Segment_cached_2::_Segment_cached_2(const Segment_2& seg)
-  : m_is_vert(false)
-  , m_is_computed(false)
+_Segment_cached_2::_Segment_cached_2(const Segment_2& seg) :
+  m_is_vert(false),
+  m_is_computed(false)
 {
   Kernel kernel;
   auto vertex_ctr = kernel.construct_vertex_2_object();
@@ -1284,8 +1288,7 @@ template <typename Kernel>
 const typename Kernel::Line_2&
 Arr_segment_traits_2<Kernel>::_Segment_cached_2::line() const
 {
-  if (!m_is_computed)
-  {
+  if (!m_is_computed) {
     Kernel kernel;
     m_l = kernel.construct_line_2_object()(m_ps, m_pt);
     m_is_vert = kernel.is_vertical_2_object()(m_l);
@@ -1299,8 +1302,7 @@ template <typename Kernel>
 bool Arr_segment_traits_2<Kernel>::_Segment_cached_2::is_vertical() const
 {
   // Force computation of line is orientation is still unknown
-  if (!m_is_computed)
-    line();
+  if (! m_is_computed) line();
   CGAL_precondition(!m_is_degen);
   return m_is_vert;
 }
@@ -1462,12 +1464,7 @@ public:
 
   /*! Create a bounding box for the segment.
    */
-  Bbox_2 bbox() const
-  {
-    Kernel kernel;
-    auto construct_bbox = kernel.construct_bbox_2_object();
-    return construct_bbox(this->m_ps) + construct_bbox(this->m_pt);
-  }
+  CGAL_DEPRECATED Bbox_2 bbox() const;
 };
 
 //! \brief constructs default.
@@ -1519,6 +1516,15 @@ Arr_segment_2<Kernel> Arr_segment_2<Kernel>::flip() const
   return Arr_segment_2(this->line(), this->target(), this->source(),
                        ! (this->is_directed_right()), this->is_vertical(),
                        this->is_degenerate());
+}
+
+//! \brief creates a bounding box for the segment.
+template <typename Kernel>
+Bbox_2 Arr_segment_2<Kernel>::bbox() const
+{
+  Kernel kernel;
+  auto construct_bbox = kernel.construct_bbox_2_object();
+  return construct_bbox(this->m_ps) + construct_bbox(this->m_pt);
 }
 
 /*! Exporter for the segment class used by the traits-class.
