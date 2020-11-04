@@ -116,12 +116,13 @@ public :
       if(b){
         ui_widget.close_checkBox->setChecked(false);
       }
-      ui_widget.close_checkBox->setEnabled(!b);
+
+      ui_widget.close_checkBox->setEnabled(ui_widget.clip_radioButton->isChecked() && !b);
     });
 
     connect(ui_widget.clip_radioButton, &QRadioButton::toggled,
             [this](bool b){
-      ui_widget.close_checkBox->setEnabled(b);
+      ui_widget.close_checkBox->setEnabled(!ui_widget.do_not_modify_CheckBox->isChecked() &&b);
     });
     connect(actionClipPolyhedra , SIGNAL(triggered()),
             this, SLOT(pop_widget()));
