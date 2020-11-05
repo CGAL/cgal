@@ -124,10 +124,6 @@ template < class Tr, class Inc >
 Triangulation_segment_cell_iterator_3<Tr,Inc>
 Triangulation_segment_cell_iterator_3<Tr,Inc>::end() const {
     SCI sci(_tr);
-    sci._source = _source;
-    sci._target = _target;
-    sci._s_vertex = _s_vertex;
-    sci._t_vertex = _t_vertex;
     std::get<0>(sci._cur) = Cell_handle();
     return sci;
 }
