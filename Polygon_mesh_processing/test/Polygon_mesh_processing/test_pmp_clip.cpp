@@ -64,11 +64,11 @@ void test()
               params::do_not_modify(true));
     std::vector<TriangleMesh> meshes;
     PMP::split_connected_components(tm1, meshes, params::all_default());
-    CGAL_assertion(meshes.size() == 2);
+    assert(meshes.size() == 2);
     //if the order is not deterministc, put the num_vertices in a list and check
     //if the list does contain all those numbers.
-    CGAL_assertion(num_vertices(meshes[0]) == 21);
-    CGAL_assertion(num_vertices(meshes[1]) == 6);
+    assert(num_vertices(meshes[0]) == 21);
+    assert(num_vertices(meshes[1]) == 6);
   }
 
   // test with a iso-cuboid
@@ -144,14 +144,14 @@ void test()
     if(num_vertices(tm1) == 0)
     {
       std::cerr<<"File not found. Aborting."<<std::endl;
-      CGAL_assertion(false);
+      assert(false);
       return ;
     }
 
     PMP::clip(tm1, K::Plane_3(0,0,1,-4.5),
                params::throw_on_self_intersection(true)
                .allow_self_intersections(true));
-    CGAL_assertion(vertices(tm1).size() == 16);
+    assert(vertices(tm1).size() == 16);
   }
 
   // clipping with identity
@@ -510,7 +510,7 @@ void test_split_plane()
   if(!input)
   {
     std::cerr<<"File not found. Aborting."<<std::endl;
-    CGAL_assertion(false);
+    assert(false);
     return ;
   }
   input.close();
@@ -519,12 +519,12 @@ void test_split_plane()
 
   std::vector<Mesh> meshes;
   PMP::split_connected_components(tm1, meshes, params::all_default());
-  CGAL_assertion(meshes.size() == 3);
+  assert(meshes.size() == 3);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
-  CGAL_assertion(num_vertices(meshes[2]) == 48);
-  CGAL_assertion(num_vertices(meshes[0]) == 1527);
-  CGAL_assertion(num_vertices(meshes[1]) == 1674);
+  assert(num_vertices(meshes[2]) == 48);
+  assert(num_vertices(meshes[0]) == 1527);
+  assert(num_vertices(meshes[1]) == 1674);
 
   CGAL::clear(tm1);
   meshes.clear();
@@ -534,7 +534,7 @@ void test_split_plane()
   if(num_vertices(tm1) == 0)
   {
     std::cerr<<"File not found. Aborting."<<std::endl;
-    CGAL_assertion(false);
+    assert(false);
     return ;
   }
 
@@ -542,11 +542,11 @@ void test_split_plane()
              params::throw_on_self_intersection(true)
              .allow_self_intersections(true));
   PMP::split_connected_components(tm1, meshes, params::all_default());
-  CGAL_assertion(meshes.size() == 2);
+  assert(meshes.size() == 2);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
-  CGAL_assertion(num_vertices(meshes[0]) == 16);
-  CGAL_assertion(num_vertices(meshes[1]) == 16);
+  assert(num_vertices(meshes[0]) == 16);
+  assert(num_vertices(meshes[1]) == 16);
 
   CGAL::clear(tm1);
   meshes.clear();
@@ -564,7 +564,7 @@ void test_split()
   if(!input)
   {
     std::cerr<<"File not found. Aborting."<<std::endl;
-    CGAL_assertion(false);
+    assert(false);
     return ;
   }
 
@@ -576,7 +576,7 @@ void test_split()
   if(!input)
   {
     std::cerr<<"File not found. Aborting."<<std::endl;
-    CGAL_assertion(false);
+    assert(false);
     return ;
   }
 
@@ -596,15 +596,15 @@ void test_split()
                                   meshes,
                                   params::face_patch_map(pidmap));
 
-  CGAL_assertion(meshes.size() == 5);
+  assert(meshes.size() == 5);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
-  CGAL_assertion(num_vertices(meshes[0]) == 2641);
-  CGAL_assertion(num_vertices(meshes[1]) == 159);
-  CGAL_assertion(num_vertices(meshes[2]) == 142);
-  CGAL_assertion(num_vertices(meshes[3]) == 83);
-  CGAL_assertion(num_vertices(meshes[4]) == 104);
-  CGAL_assertion(tm1.is_valid());
+  assert(num_vertices(meshes[0]) == 2641);
+  assert(num_vertices(meshes[1]) == 159);
+  assert(num_vertices(meshes[2]) == 142);
+  assert(num_vertices(meshes[3]) == 83);
+  assert(num_vertices(meshes[4]) == 104);
+  assert(tm1.is_valid());
 
   CGAL::clear(tm1);
   CGAL::clear(tm2);
@@ -617,7 +617,7 @@ void test_split()
   if(!input)
   {
     std::cerr<<"File not found. Aborting."<<std::endl;
-    CGAL_assertion(false);
+    assert(false);
     return ;
   }
 
@@ -629,7 +629,7 @@ void test_split()
   if(!input)
   {
     std::cerr<<"File not found. Aborting."<<std::endl;
-    CGAL_assertion(false);
+    assert(false);
     return ;
   }
 
@@ -640,12 +640,12 @@ void test_split()
                                   meshes,
                                   params::all_default());
 
-  CGAL_assertion(meshes.size() == 2);
+  assert(meshes.size() == 2);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
-  CGAL_assertion(num_vertices(meshes[0]) == 588);
-  CGAL_assertion(num_vertices(meshes[1]) == 50);
-  CGAL_assertion(tm1.is_valid());
+  assert(num_vertices(meshes[0]) == 588);
+  assert(num_vertices(meshes[1]) == 50);
+  assert(tm1.is_valid());
 
   CGAL::clear(tm1);
   CGAL::clear(tm2);
@@ -659,19 +659,19 @@ void test_split()
   if(num_vertices(tm1) == 0 || num_vertices(tm2) == 0)
   {
     std::cerr<<"File not found. Aborting."<<std::endl;
-    CGAL_assertion(false);
+    assert(false);
     return ;
   }
   PMP::split(tm1, tm2,
              params::throw_on_self_intersection(true),
              params::do_not_modify(true));
   PMP::split_connected_components(tm1, meshes, params::all_default());
-  CGAL_assertion(meshes.size() == 3);
+  assert(meshes.size() == 3);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
-  CGAL_assertion(num_vertices(meshes[0]) == 29);
-  CGAL_assertion(num_vertices(meshes[1]) == 8);
-  CGAL_assertion(num_vertices(meshes[2]) == 17);
+  assert(num_vertices(meshes[0]) == 29);
+  assert(num_vertices(meshes[1]) == 8);
+  assert(num_vertices(meshes[2]) == 17);
 
   CGAL::clear(tm1);
   CGAL::clear(tm2);
@@ -689,7 +689,7 @@ void test_isocuboid()
   if(!input)
   {
     std::cerr<<"File not found. Aborting."<<std::endl;
-    CGAL_assertion(false);
+    assert(false);
     return ;
   }
 
@@ -703,20 +703,20 @@ void test_isocuboid()
   PMP::split_connected_components(tm,
                                   meshes);
 
-  CGAL_assertion(meshes.size() == 10);
+  assert(meshes.size() == 10);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
-  CGAL_assertion(num_vertices(meshes[0]) == 2657);
-  CGAL_assertion(num_vertices(meshes[1]) == 131 );
-  CGAL_assertion(num_vertices(meshes[2]) == 32  );
-  CGAL_assertion(num_vertices(meshes[3]) == 123 );
-  CGAL_assertion(num_vertices(meshes[4]) == 220 );
-  CGAL_assertion(num_vertices(meshes[5]) == 107 );
-  CGAL_assertion(num_vertices(meshes[6]) == 121 );
-  CGAL_assertion(num_vertices(meshes[7]) == 56  );
-  CGAL_assertion(num_vertices(meshes[8]) == 49  );
-  CGAL_assertion(num_vertices(meshes[9]) == 13  );
-  CGAL_assertion(tm.is_valid());
+  assert(num_vertices(meshes[0]) == 2657);
+  assert(num_vertices(meshes[1]) == 131 );
+  assert(num_vertices(meshes[2]) == 32  );
+  assert(num_vertices(meshes[3]) == 123 );
+  assert(num_vertices(meshes[4]) == 220 );
+  assert(num_vertices(meshes[5]) == 107 );
+  assert(num_vertices(meshes[6]) == 121 );
+  assert(num_vertices(meshes[7]) == 56  );
+  assert(num_vertices(meshes[8]) == 49  );
+  assert(num_vertices(meshes[9]) == 13  );
+  assert(tm.is_valid());
   CGAL::clear(tm);
   meshes.clear();
 
@@ -725,7 +725,7 @@ void test_isocuboid()
   if(num_vertices(tm) == 0)
   {
     std::cerr<<"File not found. Aborting."<<std::endl;
-    CGAL_assertion(false);
+    assert(false);
     return ;
   }
   splitter = K::Iso_cuboid_3(K::Point_3(-2, 7, 4),
@@ -734,13 +734,13 @@ void test_isocuboid()
              params::throw_on_self_intersection(true)
              .allow_self_intersections(true));
   PMP::split_connected_components(tm, meshes, params::all_default());
-  CGAL_assertion(meshes.size() == 4);
+  assert(meshes.size() == 4);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
-  CGAL_assertion(vertices(meshes[0]).size() == 22);
-  CGAL_assertion(vertices(meshes[1]).size() == 23);
-  CGAL_assertion(vertices(meshes[2]).size() == 7);
-  CGAL_assertion(vertices(meshes[3]).size() == 4);
+  assert(vertices(meshes[0]).size() == 22);
+  assert(vertices(meshes[1]).size() == 23);
+  assert(vertices(meshes[2]).size() == 7);
+  assert(vertices(meshes[3]).size() == 4);
 
   CGAL::clear(tm);
   meshes.clear();
@@ -750,11 +750,11 @@ void test_isocuboid()
              params::throw_on_self_intersection(true)
              .allow_self_intersections(true));
   PMP::split_connected_components(tm, meshes, params::all_default());
-  CGAL_assertion(meshes.size() == 2);
+  assert(meshes.size() == 2);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
-  CGAL_assertion(vertices(meshes[0]).size() == 22);
-  CGAL_assertion(vertices(meshes[1]).size() == 4);
+  assert(vertices(meshes[0]).size() == 22);
+  assert(vertices(meshes[1]).size() == 4);
 }
 int main()
 {
