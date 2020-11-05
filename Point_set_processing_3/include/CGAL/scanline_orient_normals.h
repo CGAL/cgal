@@ -188,8 +188,8 @@ estimate_scan_position (Iterator begin, Iterator end, PointMap point_map,
     Q += I_nnt * a;
   }
 
-  Solver solver;
-  solver.compute(R);
+  Solver solver(R);
+
   if (solver.info() != Eigen::Success)
     return std::make_pair (ORIGIN, false);
 
