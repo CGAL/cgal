@@ -24,18 +24,8 @@
 
 #include "ui_Point_set_normal_estimation_plugin.h"
 
-#if BOOST_VERSION == 105700
-#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES) && !defined(BOOST_NO_CXX11_DEFAULTED_FUNCTIONS)
-#  define CGAL_DISABLE_NORMAL_ESTIMATION_PLUGIN 1
-#endif
-#endif
-
 // Concurrency
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 struct PCA_estimate_normals_functor
   : public Functor_with_signal_callback
@@ -85,7 +75,7 @@ struct Vector_to_pmap
   typedef Point_set::Index                     key_type;
   typedef bool                                 value_type;
   typedef value_type                           reference;
-  
+
   std::vector<bool>* vec;
 
   Vector_to_pmap (std::vector<bool>* vec = NULL) : vec (vec) { }
@@ -139,11 +129,7 @@ public:
     Scene_points_with_normal_item* item = qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
 
     if (action==actionNormalEstimation)
-#if CGAL_DISABLE_NORMAL_ESTIMATION_PLUGIN
-    return false;
-#else
-    return item;
-#endif
+      return item;
     else
       return item && item->has_normals();
   }
@@ -162,6 +148,7 @@ class Point_set_demo_normal_estimation_dialog : public QDialog, private Ui::Norm
     Point_set_demo_normal_estimation_dialog(QWidget* /*parent*/ = 0)
     {
       setupUi(this);
+      m_offset_radius->setMinimum(0.01);
     }
 
   int pca_neighbors() const { return m_pca_neighbors->value(); }
@@ -197,7 +184,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalInversio
     Point_set* points = item->point_set();
     if(points == NULL)
         return;
-  
+
     for(Point_set::iterator it = points->begin_or_selection_begin(); it != points->end(); ++it){
       points->normal(*it) = -1 * points->normal(*it);
     }
@@ -208,7 +195,6 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalInversio
 
 void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimation_triggered()
 {
-#if !CGAL_DISABLE_NORMAL_ESTIMATION_PLUGIN
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_points_with_normal_item* item =
@@ -227,7 +213,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
     Point_set_demo_normal_estimation_dialog dialog;
     if(!dialog.exec())
       return;
-      
+
     QApplication::setOverrideCursor(Qt::BusyCursor);
     QApplication::processEvents();
 
@@ -304,7 +290,6 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
 
     QApplication::restoreOverrideCursor();
   }
-#endif // !CGAL_DISABLE_NORMAL_ESTIMATION_PLUGIN
 }
 
 void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalOrientation_triggered()
@@ -337,10 +322,10 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalOrientat
       orient_selection = dialog.add<QRadioButton> ("Orient selection");
       orient_selection->setChecked(false);
     }
-    
+
     if(!dialog.exec())
       return;
-      
+
     QApplication::setOverrideCursor(Qt::BusyCursor);
     QApplication::processEvents();
 
@@ -361,7 +346,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalOrientat
 
       for (Point_set::iterator it = points->first_selected(); it != points->end(); ++ it)
         constrained_map[*it] = true;
-              
+
       first_unoriented_point =
         CGAL::mst_orient_normals(*points,
                                  std::size_t(neighborhood->value()),

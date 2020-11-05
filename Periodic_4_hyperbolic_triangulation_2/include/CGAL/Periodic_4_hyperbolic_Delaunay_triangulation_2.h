@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Iordan Iordanov
 
@@ -296,7 +287,7 @@ public:
     {
       remove(*vit);
     }
-  }   
+  }
 
   bool is_dummy_vertex(Vertex_handle vh) const
   {
@@ -627,10 +618,10 @@ remove(Vertex_handle v)
 
             Nbr_entry side1(nbf, nbidx);
             Nbr_entry side2(nbf->neighbor(nbidx), nbf->neighbor(nbidx)->index(nbf));
-            
+
             CGAL_triangulation_assertion(side1.first->neighbor(side1.second) == side2.first);
-            CGAL_triangulation_assertion(side2.first->neighbor(side2.second) == side1.first);  
-            
+            CGAL_triangulation_assertion(side2.first->neighbor(side2.second) == side1.first);
+
             Nbr_pair hist(side1, side2);
             failsafe.push_back(hist);
 
@@ -663,9 +654,9 @@ remove(Vertex_handle v)
     }
 
     /*
-      This is a failsafe check: make sure that there are no cycles of length 2 before 
-      deleting the old faces. If everything is OK, then proceed with the actual removal 
-      and keep the new faces. Otherwise the new objects are deleted and the operation 
+      This is a failsafe check: make sure that there are no cycles of length 2 before
+      deleting the old faces. If everything is OK, then proceed with the actual removal
+      and keep the new faces. Otherwise the new objects are deleted and the operation
       is canceled.
     */
     for (Face_iterator fit = this->faces_begin(); fit != this->faces_end(); ++fit) {
@@ -692,7 +683,7 @@ remove(Vertex_handle v)
                 tds().delete_face(new_f[rit]);
               }
 
-              CGAL_triangulation_assertion(this->is_valid(true)); 
+              CGAL_triangulation_assertion(this->is_valid(true));
 
               return false;
             }

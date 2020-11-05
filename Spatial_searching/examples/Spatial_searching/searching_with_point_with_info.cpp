@@ -28,7 +28,7 @@ int main() {
   Random_points_iterator rpit( 1.0);
   std::vector<Point_3> points;
   std::vector<int>     indices;
-  
+
   points.push_back(Point_3(*rpit++));
   points.push_back(Point_3(*rpit++));
   points.push_back(Point_3(*rpit++));
@@ -48,7 +48,7 @@ int main() {
   // Insert number_of_data_points in the tree
   Tree tree(
     boost::make_zip_iterator(boost::make_tuple( points.begin(),indices.begin() )),
-    boost::make_zip_iterator(boost::make_tuple( points.end(),indices.end() ) )  
+    boost::make_zip_iterator(boost::make_tuple( points.end(),indices.end() ) )
   );
   Point_3 query(0.0, 0.0, 0.0);
   Distance tr_dist;
@@ -57,7 +57,7 @@ int main() {
   K_neighbor_search search(tree, query, K);
   for(K_neighbor_search::iterator it = search.begin(); it != search.end(); it++){
     std::cout << " d(q, nearest neighbor)=  "
-	      << tr_dist.inverse_of_transformed_distance(it->second) << " " 
+              << tr_dist.inverse_of_transformed_distance(it->second) << " "
               << boost::get<0>(it->first)<< " " << boost::get<1>(it->first) << std::endl;
   }
   return 0;

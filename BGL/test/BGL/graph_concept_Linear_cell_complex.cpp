@@ -18,7 +18,7 @@ typedef Traits::vertex_descriptor vertex_descriptor;
 typedef Traits::face_descriptor face_descriptor;
 typedef LCC::Traits::Point Point_3;
 
-template<typename Graph> 
+template<typename Graph>
 void concept_check_polyhedron() {
   boost::function_requires< boost::GraphConcept<LCC> >();
   boost::function_requires< boost::VertexListGraphConcept<LCC> >();
@@ -68,13 +68,13 @@ void runtime_check_halfedgegraph()
   // +--------+
   // w        x
   LCC p;
-  vertex_descriptor 
+  vertex_descriptor
     u = add_vertex(Point_3(0,2,0), p),
     v = add_vertex(Point_3(2,2,0), p),
     w = add_vertex(Point_3(0,0,0), p),
     x = add_vertex(Point_3(2,0,0), p),
     y = add_vertex(Point_3(1,1,0), p);
-  
+
   std::vector<vertex_descriptor> face;
   face.push_back(v); face.push_back(u); face.push_back(y);
   CGAL::Euler::add_face(face, p);
@@ -86,7 +86,7 @@ void runtime_check_halfedgegraph()
   face.clear();
   face.push_back(x); face.push_back(y); face.push_back(w);
   CGAL::Euler::add_face(face, p);
-  
+
   face.clear();
   face.push_back(w); face.push_back(y); face.push_back(u);
   CGAL::Euler::add_face(face, p);

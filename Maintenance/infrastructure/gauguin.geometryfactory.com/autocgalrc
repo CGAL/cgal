@@ -15,7 +15,7 @@ CGAL_TESTER_ADDRESS="andreas.fabri@geometryfactory.com"
 
 COMPILERS_localhost=""
 #COMPILERS_localhost="$COMPILERS_localhost x64_Cygwin-Windows10_MSVC2013-Release-64bits"
-[ $(date +%a) = Sat ] || COMPILERS_localhost="$COMPILERS_localhost x64_Cygwin-Windows10_MSVC2013-Debug-64bits"
+[ $(date +%a) = Sat ] && COMPILERS_localhost="$COMPILERS_localhost x64_Cygwin-Windows10_MSVC2013-Debug-64bits"
 COMPILERS_localhost="$COMPILERS_localhost x64_Cygwin-Windows10_MSVC2017-Release-64bits"
 #COMPILERS_localhost="$COMPILERS_localhost x64_Cygwin-Windows10_MSVC2017-Release-64bits-extra_flags"
 COMPILERS_localhost="$COMPILERS_localhost x64_Cygwin-Windows10_MSVC2017-Debug-64bits"

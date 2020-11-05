@@ -23,15 +23,14 @@ int main()
   points.push_back( std::make_pair(Wpoint(Point(0,0,1),2),3) );
   points.push_back( std::make_pair(Wpoint(Point(2,2,2),2),4) );
   points.push_back( std::make_pair(Wpoint(Point(-1,0,1),2),5) );
-  
+
   Regular rt( points.begin(),points.end() );
 
   CGAL_assertion( rt.number_of_vertices() == 6 );
 
   // check that the info was correctly set.
-  Regular::Finite_vertices_iterator vit;
-  for (vit = rt.finite_vertices_begin(); vit != rt.finite_vertices_end(); ++vit)
-    if( points[ vit->info() ].first != vit->point() ){
+  for (Regular::Vertex_handle v : rt.finite_vertex_handles())
+    if( points[ v->info() ].first != v->point() ){
       std::cerr << "Error different info" << std::endl;
       exit(EXIT_FAILURE);
     }

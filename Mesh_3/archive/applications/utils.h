@@ -12,12 +12,12 @@ void display_faces_counts(const Tr& tr,
                           )
 {
   *out_stream << prefix << "Vertices: " << tr.number_of_vertices() << std::endl
-              << prefix << "Facets on surface: " 
-              << CGAL::Surface_mesher::number_of_facets_on_surface(tr) 
+              << prefix << "Facets on surface: "
+              << CGAL::Surface_mesher::number_of_facets_on_surface(tr)
               << std::endl
               << prefix << "Cells: "
               << tr.number_of_cells() << std::endl
-              << prefix << "Cells in volume: " 
+              << prefix << "Cells in volume: "
               << CGAL::number_of_cells_in_domain(tr) << std::endl;
 }
 
@@ -65,11 +65,11 @@ display_facets_by_surface_indices_statistics(C2T3& c2t3,
       }
     }
   }
-    
+
   *out_stream << prefix << "Hybrid facets: "
               << number_of_hybrid_facets << std::endl;
 
-  std::vector<int>::size_type vector_size = 
+  std::vector<int>::size_type vector_size =
     number_of_facets_by_surface_index.size();
   for(unsigned int i = 0; i < vector_size; ++i)
   {
@@ -95,13 +95,13 @@ display_vertices_by_surface_indices_statistics(const Tr& tr,
       ++vit)
   {
     const unsigned int index = vit->point().surface_index();
-    
+
     if(number_of_vertices_by_surface_index.size() <= index)
       number_of_vertices_by_surface_index.resize(index+1);
     ++number_of_vertices_by_surface_index[index];
   }
-    
-  std::vector<int>::size_type vector_size = 
+
+  std::vector<int>::size_type vector_size =
     number_of_vertices_by_surface_index.size();
   for(unsigned int i = 0; i < vector_size; ++i)
   {
@@ -144,8 +144,8 @@ display_cells_by_volume_indices_statistics(const Tr& tr,
 
   *out_stream << prefix << "Cells with default index: "
               << number_of_cells_with_default_volume_index << std::endl;
-    
-  std::vector<int>::size_type vector_size = 
+
+  std::vector<int>::size_type vector_size =
     number_of_cells_by_volume_index.size();
   for(unsigned int i = 0; i < vector_size; ++i)
   {

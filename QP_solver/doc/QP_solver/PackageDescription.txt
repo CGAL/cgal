@@ -7,7 +7,7 @@
 - `LinearProgram` (for linear programs with variable bounds  \f$ l \leq  x \leq u\f$)
 - `NonnegativeQuadraticProgram` (for quadratic programs with variable bounds \f$ x \geq 0\f$ )
 - `NonnegativeLinearProgram`   (for linear programs with variable bounds \f$ x \geq 0 \f$)
-- `MPSFormat` (the format used for reading and writing linear and quadratic programs) 
+- `MPSFormat` (the format used for reading and writing linear and quadratic programs)
 
 */
 
@@ -31,7 +31,7 @@ Then there are specific models for any of the four program concepts above; these
 - `CGAL::Quadratic_program_from_iterators`  (for quadratic programs that wrap given iterators, without copying data)
 - `CGAL::Linear_program_from_iterators`   (for linear programs wrapping given iterators)
 - `CGAL::Nonnegative_quadratic_program_from_iterators`  (for nonnegative quadratic programs, wrapping given iterators)
-- `CGAL::Nonnegative_linear_program_from_iterators`   (for nonnegative linear programs, wrapping given iterators) 
+- `CGAL::Nonnegative_linear_program_from_iterators`   (for nonnegative linear programs, wrapping given iterators)
 
 */
 

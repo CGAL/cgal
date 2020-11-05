@@ -74,11 +74,11 @@ int main() {
   std::ofstream out("out.off");
 
 #ifndef NDEBUG
-  const bool result = 
+  const bool result =
 #endif
     CGAL::output_surface_facets_to_off(out, c2t3,
-				       CGAL::Surface_mesher::IO_VERBOSE | 
-				       CGAL::Surface_mesher::IO_ORIENT_SURFACE);
+                                       CGAL::Surface_mesher::IO_VERBOSE |
+                                       CGAL::Surface_mesher::IO_ORIENT_SURFACE);
 
   assert(result == false);
 

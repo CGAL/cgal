@@ -25,7 +25,6 @@
 // ============================================================================
 
 
-#include <CGAL/basic.h>
 #include <cstddef>
 #include <iterator>
 #include <list>
@@ -217,7 +216,7 @@ template< class T> inline
 int foo2( T /*t*/) { return -1; }  // never used
 
 template< class T> inline
-int foo( T t) {     
+int foo( T t) {
   typedef typename Circulator_traits<T>::category category;
   return foo2( t, category());
 }
@@ -294,7 +293,7 @@ void test_tags() {
         std::vector<int>::difference_type
     > Circulator;
     typedef Random_access_container_from_circulator<Circulator> Container;
- 
+
     Circulator ci( v.begin(), v.end());
     Container  Co( ci);
     assert( 3 == foo( ci));
@@ -468,17 +467,17 @@ void test_container_from_circulator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Iterator z = Iterator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -496,7 +495,7 @@ void test_container_from_circulator() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -527,7 +526,7 @@ void test_container_from_circulator() {
         assert( 3 == (*i).key);
         (*++i).key = 7;
         assert( 7 == (*i).key);
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -540,7 +539,7 @@ void test_container_from_circulator() {
         i++;
         assert( 7 == (*i).key);
         (*i).key = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -580,17 +579,17 @@ void test_container_from_circulator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Const_iterator z = Const_iterator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Const_iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -608,7 +607,7 @@ void test_container_from_circulator() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -659,17 +658,17 @@ void test_container_from_circulator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Iterator z = Iterator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -687,7 +686,7 @@ void test_container_from_circulator() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -718,7 +717,7 @@ void test_container_from_circulator() {
         assert( 3 == (*i).key);
         (*++i).key = 7;
         assert( 7 == (*i).key);
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -731,7 +730,7 @@ void test_container_from_circulator() {
         i++;
         assert( 7 == (*i).key);
         (*i).key = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -752,17 +751,17 @@ void test_container_from_circulator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Iterator z = Iterator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -780,7 +779,7 @@ void test_container_from_circulator() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -818,7 +817,7 @@ void test_container_from_circulator() {
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = end;
         su = 0;
@@ -867,17 +866,17 @@ void test_container_from_circulator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Const_iterator z = Const_iterator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Const_iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -895,7 +894,7 @@ void test_container_from_circulator() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -933,7 +932,7 @@ void test_container_from_circulator() {
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = end;
         su = 0;
@@ -985,17 +984,17 @@ void test_container_from_circulator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Iterator z = Iterator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -1013,7 +1012,7 @@ void test_container_from_circulator() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -1044,7 +1043,7 @@ void test_container_from_circulator() {
         assert( 3 == (*i));
         (*++i) = 7;
         assert( 7 == (*i));
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -1057,7 +1056,7 @@ void test_container_from_circulator() {
         i++;
         assert( 7 == (*i));
         (*i) = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -1078,17 +1077,17 @@ void test_container_from_circulator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Iterator z = Iterator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -1106,7 +1105,7 @@ void test_container_from_circulator() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -1144,7 +1143,7 @@ void test_container_from_circulator() {
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = end;
         su = 0;
@@ -1174,17 +1173,17 @@ void test_container_from_circulator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Iterator z = Iterator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -1202,7 +1201,7 @@ void test_container_from_circulator() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -1240,7 +1239,7 @@ void test_container_from_circulator() {
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = end;
         su = 0;
@@ -1273,7 +1272,7 @@ void test_container_from_circulator() {
                + begin[3]
                + begin[4];
         assert( su == 15);
-    
+
         // Jump around.
         Iterator i = begin;
         i += 3;
@@ -1293,7 +1292,7 @@ void test_container_from_circulator() {
         assert( jj == end);
         Iterator ij = jj - 5;
         assert( ij == begin);
-    
+
         // Difference test.
         assert( jj - i == 5  ||  jj - i == 0);
         assert( i + (j-i) == j);
@@ -1337,7 +1336,7 @@ void test_container_from_circulator() {
         assert( j >= i);
         assert( i <= i);
         assert( i >= i);
-    
+
         assert( !( i >= j));
         assert( !( j <= i));
         assert( !( i > j));
@@ -1375,17 +1374,17 @@ void test_container_from_circulator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Const_iterator z = Const_iterator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Const_iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -1403,7 +1402,7 @@ void test_container_from_circulator() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -1441,7 +1440,7 @@ void test_container_from_circulator() {
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = end;
         su = 0;
@@ -1474,7 +1473,7 @@ void test_container_from_circulator() {
                + begin[3]
                + begin[4];
         assert( su == 15);
-    
+
         // Jump around.
         Const_iterator i = begin;
         i += 3;
@@ -1494,7 +1493,7 @@ void test_container_from_circulator() {
         assert( jj == end);
         Const_iterator ij = jj - 5;
         assert( ij == begin);
-    
+
         // Difference test.
         assert( jj - i == 5  ||  jj - i == 0);
         assert( i + (j-i) == j);
@@ -1518,7 +1517,7 @@ void test_container_from_circulator() {
         assert( j >= i);
         assert( i <= i);
         assert( i >= i);
-    
+
         assert( !( i >= j));
         assert( !( j <= i));
         assert( !( i > j));
@@ -1553,17 +1552,17 @@ void test_container_from_circulator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Iterator z = Iterator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -1581,7 +1580,7 @@ void test_container_from_circulator() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -1612,7 +1611,7 @@ void test_container_from_circulator() {
         assert( 3 == (*i).key);
         (*++i).key = 7;
         assert( 7 == (*i).key);
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -1625,7 +1624,7 @@ void test_container_from_circulator() {
         i++;
         assert( 7 == (*i).key);
         (*i).key = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -1646,17 +1645,17 @@ void test_container_from_circulator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Iterator z = Iterator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -1674,7 +1673,7 @@ void test_container_from_circulator() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -1712,7 +1711,7 @@ void test_container_from_circulator() {
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = end;
         su = 0;
@@ -1761,17 +1760,17 @@ void test_container_from_circulator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Const_iterator z = Const_iterator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Const_iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -1789,7 +1788,7 @@ void test_container_from_circulator() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -1827,7 +1826,7 @@ void test_container_from_circulator() {
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = end;
         su = 0;
@@ -1878,17 +1877,17 @@ void test_container_from_circulator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Iterator z = Iterator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -1906,7 +1905,7 @@ void test_container_from_circulator() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -1937,7 +1936,7 @@ void test_container_from_circulator() {
         assert( 3 == (*i));
         (*++i) = 7;
         assert( 7 == (*i));
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -1950,7 +1949,7 @@ void test_container_from_circulator() {
         i++;
         assert( 7 == (*i));
         (*i) = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -1971,17 +1970,17 @@ void test_container_from_circulator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Iterator z = Iterator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -1999,7 +1998,7 @@ void test_container_from_circulator() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -2037,7 +2036,7 @@ void test_container_from_circulator() {
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = end;
         su = 0;
@@ -2067,17 +2066,17 @@ void test_container_from_circulator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Iterator z = Iterator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -2095,7 +2094,7 @@ void test_container_from_circulator() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -2133,7 +2132,7 @@ void test_container_from_circulator() {
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = end;
         su = 0;
@@ -2166,7 +2165,7 @@ void test_container_from_circulator() {
                + begin[3]
                + begin[4];
         assert( su == 15);
-    
+
         // Jump around.
         Iterator i = begin;
         i += 3;
@@ -2186,7 +2185,7 @@ void test_container_from_circulator() {
         assert( jj == end);
         Iterator ij = jj - 5;
         assert( ij == begin);
-    
+
         // Difference test.
         assert( jj - i == 5  ||  jj - i == 0);
         assert( i + (j-i) == j);
@@ -2230,7 +2229,7 @@ void test_container_from_circulator() {
         assert( j >= i);
         assert( i <= i);
         assert( i >= i);
-    
+
         assert( !( i >= j));
         assert( !( j <= i));
         assert( !( i > j));
@@ -2265,17 +2264,17 @@ void test_circulator_from_iterator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = c;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -2293,7 +2292,7 @@ void test_circulator_from_iterator() {
         }
         assert( i == c);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -2324,7 +2323,7 @@ void test_circulator_from_iterator() {
         assert( 3 == (*i));
         (*++i) = 7;
         assert( 7 == (*i));
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = c;
@@ -2337,7 +2336,7 @@ void test_circulator_from_iterator() {
         i++;
         assert( 7 == (*i));
         (*i) = 4;
-    
+
         // Check the resetting.
         i = c;
         int k = 1;
@@ -2350,7 +2349,7 @@ void test_circulator_from_iterator() {
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( c);
         CGAL::Assert_circulator( c);
-    
+
         // Check the local type parameters.
         Circulator::value_type      k1;
         k1 = 1;
@@ -2372,7 +2371,7 @@ void test_circulator_from_iterator() {
         assert( s == 5);
         Circulator::difference_type d = -5;
         assert( d == -5);
-    
+
         // Check tests for empty data structures.
         Circulator z = Circulator();
         assert(   z == NULL);
@@ -2411,17 +2410,17 @@ void test_circulator_from_iterator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = c;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -2439,7 +2438,7 @@ void test_circulator_from_iterator() {
         }
         assert( i == c);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -2463,7 +2462,7 @@ void test_circulator_from_iterator() {
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( c);
         CGAL::Assert_circulator( c);
-    
+
         // Check the local type parameters.
         Circulator::value_type      k1;
         k1 = 1;
@@ -2485,7 +2484,7 @@ void test_circulator_from_iterator() {
         assert( s == 5);
         Circulator::difference_type d = -5;
         assert( d == -5);
-    
+
         // Check tests for empty data structures.
         Circulator z = Circulator();
         assert(   z == NULL);
@@ -2524,17 +2523,17 @@ void test_circulator_from_iterator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = c;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -2552,7 +2551,7 @@ void test_circulator_from_iterator() {
         }
         assert( i == c);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -2583,7 +2582,7 @@ void test_circulator_from_iterator() {
         assert( 3 == (*i));
         (*++i) = 7;
         assert( 7 == (*i));
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = c;
@@ -2596,7 +2595,7 @@ void test_circulator_from_iterator() {
         i++;
         assert( 7 == (*i));
         (*i) = 4;
-    
+
         // Check the resetting.
         i = c;
         int k = 1;
@@ -2617,17 +2616,17 @@ void test_circulator_from_iterator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = c;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -2645,7 +2644,7 @@ void test_circulator_from_iterator() {
         }
         assert( i == c);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -2683,7 +2682,7 @@ void test_circulator_from_iterator() {
         } while (i != c);
         assert( i == c);
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -2705,7 +2704,7 @@ void test_circulator_from_iterator() {
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( c);
         CGAL::Assert_circulator( c);
-    
+
         // Check the local type parameters.
         Circulator::value_type      k1;
         k1 = 1;
@@ -2727,7 +2726,7 @@ void test_circulator_from_iterator() {
         assert( s == 5);
         Circulator::difference_type d = -5;
         assert( d == -5);
-    
+
         // Check tests for empty data structures.
         Circulator z = Circulator();
         assert(   z == NULL);
@@ -2779,17 +2778,17 @@ void test_circulator_from_iterator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = c;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -2807,7 +2806,7 @@ void test_circulator_from_iterator() {
         }
         assert( i == c);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -2845,7 +2844,7 @@ void test_circulator_from_iterator() {
         } while (i != c);
         assert( i == c);
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -2867,7 +2866,7 @@ void test_circulator_from_iterator() {
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( c);
         CGAL::Assert_circulator( c);
-    
+
         // Check the local type parameters.
         Circulator::value_type      k1;
         k1 = 1;
@@ -2889,7 +2888,7 @@ void test_circulator_from_iterator() {
         assert( s == 5);
         Circulator::difference_type d = -5;
         assert( d == -5);
-    
+
         // Check tests for empty data structures.
         Circulator z = Circulator();
         assert(   z == NULL);
@@ -2941,17 +2940,17 @@ void test_circulator_from_iterator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = c;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -2969,7 +2968,7 @@ void test_circulator_from_iterator() {
         }
         assert( i == c);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -3000,7 +2999,7 @@ void test_circulator_from_iterator() {
         assert( 3 == (*i));
         (*++i) = 7;
         assert( 7 == (*i));
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = c;
@@ -3013,7 +3012,7 @@ void test_circulator_from_iterator() {
         i++;
         assert( 7 == (*i));
         (*i) = 4;
-    
+
         // Check the resetting.
         i = c;
         int k = 1;
@@ -3034,17 +3033,17 @@ void test_circulator_from_iterator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = c;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -3062,7 +3061,7 @@ void test_circulator_from_iterator() {
         }
         assert( i == c);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -3100,7 +3099,7 @@ void test_circulator_from_iterator() {
         } while (i != c);
         assert( i == c);
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -3130,17 +3129,17 @@ void test_circulator_from_iterator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = c;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -3158,7 +3157,7 @@ void test_circulator_from_iterator() {
         }
         assert( i == c);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -3196,7 +3195,7 @@ void test_circulator_from_iterator() {
         } while (i != c);
         assert( i == c);
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -3229,7 +3228,7 @@ void test_circulator_from_iterator() {
                + c[3]
                + c[4];
         assert( su == 15);
-    
+
         // Jump around.
         Circulator i = c;
         i += 3;
@@ -3249,7 +3248,7 @@ void test_circulator_from_iterator() {
         assert( jj == c);
         Circulator ij = jj - 5;
         assert( ij == c);
-    
+
         // Difference test.
         assert( jj - i == 5  ||  jj - i == 0);
         assert( i + (j-i) == j);
@@ -3278,7 +3277,7 @@ void test_circulator_from_iterator() {
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( c);
         CGAL::Assert_circulator( c);
-    
+
         // Check the local type parameters.
         Circulator::value_type      k1;
         k1 = 1;
@@ -3300,7 +3299,7 @@ void test_circulator_from_iterator() {
         assert( s == 5);
         Circulator::difference_type d = -5;
         assert( d == -5);
-    
+
         // Check tests for empty data structures.
         Circulator z = Circulator();
         assert(   z == NULL);
@@ -3375,17 +3374,17 @@ void test_circulator_from_iterator() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = c;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -3403,7 +3402,7 @@ void test_circulator_from_iterator() {
         }
         assert( i == c);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -3441,7 +3440,7 @@ void test_circulator_from_iterator() {
         } while (i != c);
         assert( i == c);
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -3474,7 +3473,7 @@ void test_circulator_from_iterator() {
                + c[3]
                + c[4];
         assert( su == 15);
-    
+
         // Jump around.
         Circulator i = c;
         i += 3;
@@ -3494,7 +3493,7 @@ void test_circulator_from_iterator() {
         assert( jj == c);
         Circulator ij = jj - 5;
         assert( ij == c);
-    
+
         // Difference test.
         assert( jj - i == 5  ||  jj - i == 0);
         assert( i + (j-i) == j);
@@ -3503,7 +3502,7 @@ void test_circulator_from_iterator() {
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( c);
         CGAL::Assert_circulator( c);
-    
+
         // Check the local type parameters.
         Circulator::value_type      k1;
         k1 = 1;
@@ -3525,7 +3524,7 @@ void test_circulator_from_iterator() {
         assert( s == 5);
         Circulator::difference_type d = -5;
         assert( d == -5);
-    
+
         // Check tests for empty data structures.
         Circulator z = Circulator();
         assert(   z == NULL);
@@ -3627,17 +3626,17 @@ void test_circulator_from_container() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = c;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -3655,7 +3654,7 @@ void test_circulator_from_container() {
         }
         assert( i == c);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -3686,7 +3685,7 @@ void test_circulator_from_container() {
         assert( 3 == (*i));
         (*++i) = 7;
         assert( 7 == (*i));
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = c;
@@ -3699,7 +3698,7 @@ void test_circulator_from_container() {
         i++;
         assert( 7 == (*i));
         (*i) = 4;
-    
+
         // Check the resetting.
         i = c;
         int k = 1;
@@ -3712,7 +3711,7 @@ void test_circulator_from_container() {
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( c);
         CGAL::Assert_circulator( c);
-    
+
         // Check the local type parameters.
         Circulator::value_type      k1;
         k1 = 1;
@@ -3734,7 +3733,7 @@ void test_circulator_from_container() {
         assert( s == 5);
         Circulator::difference_type d = -5;
         assert( d == -5);
-    
+
         // Check tests for empty data structures.
         Circulator z = Circulator();
         assert(   z == NULL);
@@ -3773,17 +3772,17 @@ void test_circulator_from_container() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = c;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -3801,7 +3800,7 @@ void test_circulator_from_container() {
         }
         assert( i == c);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -3825,7 +3824,7 @@ void test_circulator_from_container() {
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( c);
         CGAL::Assert_circulator( c);
-    
+
         // Check the local type parameters.
         Circulator::value_type      k1;
         k1 = 1;
@@ -3847,7 +3846,7 @@ void test_circulator_from_container() {
         assert( s == 5);
         Circulator::difference_type d = -5;
         assert( d == -5);
-    
+
         // Check tests for empty data structures.
         Circulator z = Circulator();
         assert(   z == NULL);
@@ -3886,17 +3885,17 @@ void test_circulator_from_container() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = c;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -3914,7 +3913,7 @@ void test_circulator_from_container() {
         }
         assert( i == c);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -3945,7 +3944,7 @@ void test_circulator_from_container() {
         assert( 3 == (*i));
         (*++i) = 7;
         assert( 7 == (*i));
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = c;
@@ -3958,7 +3957,7 @@ void test_circulator_from_container() {
         i++;
         assert( 7 == (*i));
         (*i) = 4;
-    
+
         // Check the resetting.
         i = c;
         int k = 1;
@@ -3979,17 +3978,17 @@ void test_circulator_from_container() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = c;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -4007,7 +4006,7 @@ void test_circulator_from_container() {
         }
         assert( i == c);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -4045,7 +4044,7 @@ void test_circulator_from_container() {
         } while (i != c);
         assert( i == c);
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -4067,7 +4066,7 @@ void test_circulator_from_container() {
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( c);
         CGAL::Assert_circulator( c);
-    
+
         // Check the local type parameters.
         Circulator::value_type      k1;
         k1 = 1;
@@ -4089,7 +4088,7 @@ void test_circulator_from_container() {
         assert( s == 5);
         Circulator::difference_type d = -5;
         assert( d == -5);
-    
+
         // Check tests for empty data structures.
         Circulator z = Circulator();
         assert(   z == NULL);
@@ -4142,17 +4141,17 @@ void test_circulator_from_container() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = c;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -4170,7 +4169,7 @@ void test_circulator_from_container() {
         }
         assert( i == c);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -4208,7 +4207,7 @@ void test_circulator_from_container() {
         } while (i != c);
         assert( i == c);
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -4230,7 +4229,7 @@ void test_circulator_from_container() {
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( c);
         CGAL::Assert_circulator( c);
-    
+
         // Check the local type parameters.
         Circulator::value_type      k1;
         k1 = 1;
@@ -4252,7 +4251,7 @@ void test_circulator_from_container() {
         assert( s == 5);
         Circulator::difference_type d = -5;
         assert( d == -5);
-    
+
         // Check tests for empty data structures.
         Circulator z = Circulator();
         assert(   z == NULL);
@@ -4304,17 +4303,17 @@ void test_circulator_from_container() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = c;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -4332,7 +4331,7 @@ void test_circulator_from_container() {
         }
         assert( i == c);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -4363,7 +4362,7 @@ void test_circulator_from_container() {
         assert( 3 == (*i));
         (*++i) = 7;
         assert( 7 == (*i));
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = c;
@@ -4376,7 +4375,7 @@ void test_circulator_from_container() {
         i++;
         assert( 7 == (*i));
         (*i) = 4;
-    
+
         // Check the resetting.
         i = c;
         int k = 1;
@@ -4397,17 +4396,17 @@ void test_circulator_from_container() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = c;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -4425,7 +4424,7 @@ void test_circulator_from_container() {
         }
         assert( i == c);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -4463,7 +4462,7 @@ void test_circulator_from_container() {
         } while (i != c);
         assert( i == c);
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -4493,17 +4492,17 @@ void test_circulator_from_container() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = c;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -4521,7 +4520,7 @@ void test_circulator_from_container() {
         }
         assert( i == c);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -4559,7 +4558,7 @@ void test_circulator_from_container() {
         } while (i != c);
         assert( i == c);
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -4592,7 +4591,7 @@ void test_circulator_from_container() {
                + c[3]
                + c[4];
         assert( su == 15);
-    
+
         // Jump around.
         Circulator i = c;
         i += 3;
@@ -4612,7 +4611,7 @@ void test_circulator_from_container() {
         assert( jj == c);
         Circulator ij = jj - 5;
         assert( ij == c);
-    
+
         // Difference test.
         assert( jj - i == 5  ||  jj - i == 0);
         assert( i + (j-i) == j);
@@ -4641,7 +4640,7 @@ void test_circulator_from_container() {
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( c);
         CGAL::Assert_circulator( c);
-    
+
         // Check the local type parameters.
         Circulator::value_type      k1;
         k1 = 1;
@@ -4663,7 +4662,7 @@ void test_circulator_from_container() {
         assert( s == 5);
         Circulator::difference_type d = -5;
         assert( d == -5);
-    
+
         // Check tests for empty data structures.
         Circulator z = Circulator();
         assert(   z == NULL);
@@ -4739,17 +4738,17 @@ void test_circulator_from_container() {
         typedef I_Traits::difference_type I_difference_type;
         assert(1==test_value_type( (I_value_type*)(0)));
         assert(1==test_difference_type( (I_difference_type*)(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = c;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -4767,7 +4766,7 @@ void test_circulator_from_container() {
         }
         assert( i == c);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -4805,7 +4804,7 @@ void test_circulator_from_container() {
         } while (i != c);
         assert( i == c);
         assert( su == 15);
-    
+
         // Assignment.
         i = c;
         su = 0;
@@ -4838,7 +4837,7 @@ void test_circulator_from_container() {
                + c[3]
                + c[4];
         assert( su == 15);
-    
+
         // Jump around.
         Circulator i = c;
         i += 3;
@@ -4858,7 +4857,7 @@ void test_circulator_from_container() {
         assert( jj == c);
         Circulator ij = jj - 5;
         assert( ij == c);
-    
+
         // Difference test.
         assert( jj - i == 5  ||  jj - i == 0);
         assert( i + (j-i) == j);
@@ -4867,7 +4866,7 @@ void test_circulator_from_container() {
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( c);
         CGAL::Assert_circulator( c);
-    
+
         // Check the local type parameters.
         Circulator::value_type      k1;
         k1 = 1;
@@ -4889,7 +4888,7 @@ void test_circulator_from_container() {
         assert( s == 5);
         Circulator::difference_type d = -5;
         assert( d == -5);
-    
+
         // Check tests for empty data structures.
         Circulator z = Circulator();
         assert(   z == NULL);

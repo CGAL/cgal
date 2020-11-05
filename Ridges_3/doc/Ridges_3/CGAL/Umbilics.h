@@ -11,21 +11,21 @@ enum Umbilic_type { NON_GENERIC_UMBILIC, ELLIPTIC_UMBILIC, HYPERBOLIC_UMBILIC };
 /*!
 \ingroup PkgRidges3Ref
 
-The function `compute_umbilics()` is a shortcut to the 
+The function `compute_umbilics()` is a shortcut to the
 method `Umbilic_approximation::compute()`.  See `Umbilic_approximation::Umbilic_approximation()` for an explanation of the parameters.
 
 
 */
-template < class TriangleMesh, 
+template < class TriangleMesh,
 class VertexFTMap,
 class VertexVectorMap,
 class OutputIterator>
 OutputIterator compute_umbilics(const TriangleMesh &tm,
-                                VertexFTMap vertex_k1_pm, 
+                                VertexFTMap vertex_k1_pm,
                                 VertexFTMap vertex_k2_pm,
-                                VertexVectorMap vertex_d1_pm, 
+                                VertexVectorMap vertex_d1_pm,
                                 VertexVectorMap vertex_d2_pm,
-                                OutputIterator it, 
+                                OutputIterator it,
 double size);
 
 } /* namespace CGAL */
@@ -36,15 +36,15 @@ namespace CGAL {
 /*!
 \ingroup PkgRidges3Ref
 
-The class `Umbilic_approximation` computes the approximation of 
-umbilics on a triangular polyhedral surface. 
+The class `Umbilic_approximation` computes the approximation of
+umbilics on a triangular polyhedral surface.
 
 \tparam TriangleMesh is the surface type. In the following let `K` be `Kernel_traits<boost::property_traits<TriangleMesh,CGAL::vertex_point_t>::%value_type>::%Kernel`
 \tparam VertexFTMap A property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `K::FT` as value type.
 \tparam VertexVectorMap A property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `K::Vector_3` as value type.
 
 \pre (checked at compile time)
-\pre The types `K::FT` and 
+\pre The types `K::FT` and
   `boost::property_traits<VertexFTMap>::%value_type` must coincide.
 \pre  The types `K::Vector_3` and
   `boost::property_traits<VertexVectorMap>::%value_type` must coincide.
@@ -52,54 +52,54 @@ umbilics on a triangular polyhedral surface.
   and `boost::property_traits<VertexFTMap>::%key_type`, and
   `boost::property_traits<VertexVectorMap>::%key_type` must coincide.
 
-\sa `Umbilic` 
+\sa `Umbilic`
 
 */
 template< typename TriangleMesh, typename VertexFTMap, typename VertexVectorMap >
 class Umbilic_approximation {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
 
-*/ 
-typedef typename TriangleMesh::Traits::FT FT; 
+*/
+typedef typename TriangleMesh::Traits::FT FT;
 
-/// @} 
+/// @}
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
-Constructor. 
+Constructor.
 
 \param tm the triangle mesh
 \param vertex_k1_pm maximal principal curvatures
 \param vertex_k2_pm minimal principal curvatures
 \param vertex_d1_pm maximal principal directions of curvature
 \param vertex_d2_pm minimal principal directions of curvature
-*/ 
-Umbilic_approximation(const TriangleMesh& tm, 
-                      VertexFTMap vertex_k1_pm, 
-                      VertexFTMap vertex_k2_pm, 
-                      VertexVectorMap vertex_d1_pm, 
-                      VertexVectorMap vertex_d2_pm); 
-  
-/// @} 
+*/
+Umbilic_approximation(const TriangleMesh& tm,
+                      VertexFTMap vertex_k1_pm,
+                      VertexFTMap vertex_k2_pm,
+                      VertexVectorMap vertex_d1_pm,
+                      VertexVectorMap vertex_d2_pm);
 
-/// \name Operations 
+/// @}
+
+/// \name Operations
 /// @{
 
 /*!
-Performs the approximation. The value of `size` determines the size of the 
-patches around vertices, taken as `size` times the size of the 
+Performs the approximation. The value of `size` determines the size of the
+patches around vertices, taken as `size` times the size of the
 1-ring. Umbilics are inserted into `it`.
 
-\tparam OutputIterator an output iterator with value type `Umbilic*`. 
-*/ 
-template <class OutputIterator> OutputIterator compute(OutputIterator it, FT size); 
+\tparam OutputIterator an output iterator with value type `Umbilic*`.
+*/
+template <class OutputIterator> OutputIterator compute(OutputIterator it, FT size);
 
 /// @}
 
@@ -111,47 +111,47 @@ namespace CGAL {
 /*!
 \ingroup PkgRidges3Ref
 
-The class `Umbilic` stores the description of an umbilic. 
+The class `Umbilic` stores the description of an umbilic.
 
-\sa `Umbilic_approximation` 
+\sa `Umbilic_approximation`
 
 */
 template< typename TriangleMesh >
 class Umbilic {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
 
-*/ 
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor; 
+*/
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 
 /*!
 
-*/ 
-typedef typename TriangleMesh::halfedge_descriptor halfedge_descriptor; 
+*/
+typedef typename TriangleMesh::halfedge_descriptor halfedge_descriptor;
 
-/// @} 
+/// @}
 
-/// \name Access Functions 
+/// \name Access Functions
 /// @{
 
 /*!
 
-*/ 
-vertex_descriptor vertex() const; 
+*/
+vertex_descriptor vertex() const;
 
 /*!
 
-*/ 
-Umbilic_type umbilic_type() const; 
+*/
+Umbilic_type umbilic_type() const;
 
 /*!
 
-*/ 
-const std::list<halfedge_descriptor>& contour_list()const; 
+*/
+const std::list<halfedge_descriptor>& contour_list()const;
 
 /// @}
 

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent Rineau
 
@@ -59,7 +50,7 @@ int main(int argc, char** argv)
   for(int i = 0; i < number_of_inputs; ++i)
   {
     *(inputs[i]) >> header;
-    
+
     if(header != "OFF")
     {
       std::cerr << "In file \"" << argv[i+1]
@@ -78,9 +69,9 @@ int main(int argc, char** argv)
     getline(*(inputs[i]), dummy);
   }
 
-  const unsigned int total_n_vertices = 
+  const unsigned int total_n_vertices =
     std::accumulate(n_vertices.begin(), n_vertices.end(), 0);
-  const unsigned int total_n_facets = 
+  const unsigned int total_n_facets =
     std::accumulate(n_facets.begin(), n_facets.end(), 0);
 
   cout << total_n_vertices << " " << total_n_facets << " 0\n";
@@ -93,7 +84,7 @@ int main(int argc, char** argv)
       cout << x << " " << y << " " << z << std::endl;
       getline(*(inputs[i]), dummy); // ignore the end of the line
     }
-  
+
   unsigned int vertex_index_offset = 0;
   for(int i_input = 0; i_input < number_of_inputs; ++i_input)
   {
@@ -122,7 +113,7 @@ int main(int argc, char** argv)
     if(!*(inputs[i]))
       return EXIT_FAILURE;
   }
-  if(!cout) 
+  if(!cout)
     return EXIT_FAILURE;
   else
     return EXIT_SUCCESS;

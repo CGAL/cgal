@@ -4,23 +4,12 @@
  * All rights reserved.
  *
  * This file is part of CGAL (www.cgal.org).
- * You can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * File: BigRat.h
- * Synopsis: 
- * 		a wrapper class for mpq from GMP
- * 
- * Written by 
+ * Synopsis:
+ *                 a wrapper class for mpq from GMP
+ *
+ * Written by
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
@@ -30,7 +19,7 @@
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
 #ifndef _CORE_BIGRAT_H_
@@ -38,7 +27,7 @@
 
 #include <CGAL/CORE/BigInt.h>
 
-namespace CORE { 
+namespace CORE {
 
 class BigRatRep : public RCRepImpl<BigRatRep> {
 public:
@@ -273,7 +262,7 @@ public:
   void canonicalize() {
     makeCopy();
     mpq_canonicalize(get_mp());
-  } 
+  }
   /// Has Exact Division
   static bool hasExactDivision() {
     return true;
@@ -372,9 +361,9 @@ inline BigRat operator/(const BigRat& a, const BigRat& b) {
 //   ensures that in Polynomial<NT>
 /// divisible(x,y) = "x | y"
 inline BigRat div_exact(const BigRat& x, const BigRat& y) {
-	BigRat z;
-	mpq_div(z.get_mp(), x.get_mp(), y.get_mp());
-	return z;
+        BigRat z;
+        mpq_div(z.get_mp(), x.get_mp(), y.get_mp());
+        return z;
 }
 /// numerator
 inline BigInt numerator(const BigRat& a) {
@@ -386,22 +375,22 @@ inline BigInt denominator(const BigRat& a) {
 }
 
 inline BigRat gcd(const BigRat& x, const BigRat& y) {
-  //	return BigRat(1);  // Remark: we may want replace this by
-			   // the definition of gcd of a quotient field
-			   // of a UFD [Yap's book, Chap.3]
+  //        return BigRat(1);  // Remark: we may want replace this by
+                           // the definition of gcd of a quotient field
+                           // of a UFD [Yap's book, Chap.3]
   //Here is one possible definition: gcd of x and y is just the
   //gcd of the numerators of x and y divided by the gcd of the
   //denominators of x and y.
   BigInt n = gcd(numerator(x), numerator(y));
   BigInt d = gcd(denominator(x), denominator(y));
   return BigRat(n,d);
-		
+
 }
 // Chee: 8/8/2004: need isDivisible to compile Polynomial<BigRat>
 // A trivial implementation is to return true always. But this
 // caused tPolyRat to fail.
 // So we follow the definition of
-// Expr::isDivisible(e1, e2) which checks if e1/e2 is an integer.  
+// Expr::isDivisible(e1, e2) which checks if e1/e2 is an integer.
 inline bool isInteger(const BigRat& x) {
   return BigInt(x.get_den_mp()) == 1;
 }

@@ -73,11 +73,11 @@ struct Level_finder< Segment_Delaunay_graph_Linf_2<Gt,SDGDS,LTag> >
 
 template<class SDG, class InputStream>
 bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
-	      bool test_remove)
+              bool test_remove)
 {
-  std::string ifname_full = get_fname(typename SDG2::Geom_traits::FT(), ifname);
-
   typedef SDG SDG2;
+
+  std::string ifname_full = get_fname(typename SDG2::Geom_traits::FT(), ifname);
 
   typedef SDG2 Segment_Delaunay_graph_2;
 
@@ -260,22 +260,22 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
       Vertex_circulator vc = sdg.incident_vertices(sdg.infinite_vertex());
       Vertex_circulator vc_start = vc;
       do {
-	null_os << vc;
-	vc++;
+        null_os << vc;
+        vc++;
       } while ( vc != vc_start );
 
       Face_circulator fc = sdg.incident_faces(sdg.infinite_vertex());
       Face_circulator fc_start = fc;
       do {
-	null_os << fc;
-	fc++;
+        null_os << fc;
+        fc++;
       } while ( fc != fc_start );
 
       Edge_circulator ec = sdg.incident_edges(sdg.infinite_vertex());
       Edge_circulator ec_start = ec;
       do {
-	null_os << ec;
-	ec++;
+        null_os << ec;
+        ec++;
       } while ( ec != ec_start );
     }
 
@@ -366,7 +366,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
       assert( ifs );
       Site_2 t;
       while ( ifs >> t ) {
-	sdg.insert(t);
+        sdg.insert(t);
       }
       std::cerr << std::endl;
       assert( sdg.is_valid(true, 1) );
@@ -375,8 +375,8 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
 
       std::vector<Vertex_handle> vec;
       for (vit = sdg.finite_vertices_begin();
-	   vit != sdg.finite_vertices_end(); ++vit) {
-	vec.push_back(vit);
+           vit != sdg.finite_vertices_end(); ++vit) {
+        vec.push_back(vit);
       }
       CGAL::cpp98::random_shuffle(vec.begin(), vec.end());
 
@@ -384,19 +384,19 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
       std::cerr << std::endl;
       Level_finder<SDG> level;
       do {
-	Site_2 tt = (*it)->site();
-	std::cerr << "  *** attempting to remove: " << tt << "\t" << std::flush;
-	if ( tt.is_point() ) { std::cerr << "\t" << std::flush; }
-	std::cerr << "  - LEVEL of v: " << level(*it)
-		  << " -  " << std::flush;
-	bool success = sdg.remove(*it);
-	std::cerr << (success ? " successful" : " UNSUCCESSFUL") << std::endl;
-	if ( success ) {
-	  vec.erase(it);
-	  it = vec.begin();
-	} else {
-	  ++it;
-	}
+        Site_2 tt = (*it)->site();
+        std::cerr << "  *** attempting to remove: " << tt << "\t" << std::flush;
+        if ( tt.is_point() ) { std::cerr << "\t" << std::flush; }
+        std::cerr << "  - LEVEL of v: " << level(*it)
+                  << " -  " << std::flush;
+        bool success = sdg.remove(*it);
+        std::cerr << (success ? " successful" : " UNSUCCESSFUL") << std::endl;
+        if ( success ) {
+          vec.erase(it);
+          it = vec.begin();
+        } else {
+          ++it;
+        }
       } while ( it != vec.end() );
 
       // second test case
@@ -407,12 +407,12 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
 
       vit = sdg.finite_vertices_begin();
       do {
-	bool success = sdg.remove(vit);
-	if ( success ) {
-	  vit = sdg.finite_vertices_begin();
-	} else {
-	  ++vit;
-	}
+        bool success = sdg.remove(vit);
+        if ( success ) {
+          vit = sdg.finite_vertices_begin();
+        } else {
+          ++vit;
+        }
       } while ( vit != sdg.finite_vertices_end() );
     }
     end_testing("removal methods");
@@ -439,7 +439,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     vnearest = sdg.nearest_neighbor(p2, vnearest);
   }
   end_testing("nearest neighbor methods");
-
+  /*
   start_testing("drawing methods");
   {
     sdg.draw_dual(null_os);
@@ -448,7 +448,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     sdg.draw_dual_edge(sdg.finite_edges_begin(), null_os);
   }
   end_testing("drawing methods");
-
+  */
   start_testing("swap method");
   {
     sdg.swap(sdg);

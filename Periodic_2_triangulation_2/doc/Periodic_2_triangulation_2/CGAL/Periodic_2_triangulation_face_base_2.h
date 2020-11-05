@@ -40,7 +40,5 @@ class Periodic_2_triangulation_face_base_2
 {
 public:
 
-/// @}
-
 }; /* end Periodic_2_triangulation_face_base_2 */
 } /* end namespace CGAL */

@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     :  Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_CD3_REFLEX_EDGE_SEARCHER_H
@@ -34,7 +25,7 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
 
   typedef Nef_                                            Nef_polyhedron;
   typedef typename Nef_polyhedron::SNC_structure          SNC_structure;
-  typedef CGAL::SNC_decorator<SNC_structure>              SNC_decorator;  
+  typedef CGAL::SNC_decorator<SNC_structure>              SNC_decorator;
 
   typedef typename SNC_structure::Vertex_handle           Vertex_handle;
   typedef typename SNC_structure::Vertex_const_handle     Vertex_const_handle;
@@ -67,10 +58,10 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
   Sphere_point dir;
 
   Reflex_edge_searcher(Sphere_point dir_in)
-    : dir(dir_in) {} 
+    : dir(dir_in) {}
 
-  int is_reflex_edge(Halfedge_handle e) {    
-    SHalfedge_around_svertex_circulator 
+  int is_reflex_edge(Halfedge_handle e) {
+    SHalfedge_around_svertex_circulator
       svc(e->out_sedge()), send(svc);
     int isrse = 0;
     CGAL_For_all(svc, send)
@@ -85,34 +76,34 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
   void operator()(SNC_structure& snc) {
     pos.clear();
     neg.clear();
-    
+
     Vertex_iterator vi;
     CGAL_forall_vertices(vi, snc) {
       SHalfedge_iterator sei;
       for(sei = vi->shalfedges_begin();
-	  sei != vi->shalfedges_end(); ++sei) {
-	if(!sei->incident_sface()->mark()) continue;
-	int isrse = CGAL::is_reflex_sedge<SNC_structure>(sei, dir);
-	CGAL_NEF_TRACEN("isrse final " << sei->source()->source()->point()
-			<< "->" << sei->source()->twin()->source()->point()
-			<< ": " << isrse);
-	if((isrse&1)==1) pos.insert(sei->source()->twin());
-	if((isrse&2)==2) neg.insert(sei->source());
+          sei != vi->shalfedges_end(); ++sei) {
+        if(!sei->incident_sface()->mark()) continue;
+        int isrse = CGAL::is_reflex_sedge<SNC_structure>(sei, dir);
+        CGAL_NEF_TRACEN("isrse final " << sei->source()->source()->point()
+                        << "->" << sei->source()->twin()->source()->point()
+                        << ": " << isrse);
+        if((isrse&1)==1) pos.insert(sei->source()->twin());
+        if((isrse&2)==2) neg.insert(sei->source());
       }
     }
   }
 
-  void handle_new_edge(Halfedge_handle e) { 
-    if(normalized(e->point()) == dir || 
+  void handle_new_edge(Halfedge_handle e) {
+    if(normalized(e->point()) == dir ||
        normalized(e->twin()->point()) == dir) {
       CGAL_error_msg( "should not happen");
       return;
     }
 
-    if(e->twin()->source()->point() < 
+    if(e->twin()->source()->point() <
        e->source()->point())
       e = e->twin();
-    SHalfedge_around_svertex_circulator 
+    SHalfedge_around_svertex_circulator
       svc(e->out_sedge()), send(svc);
     int pushed = 0;
     CGAL_For_all(svc, send) {
@@ -122,7 +113,7 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
       if((pushed&=2==0) && ((isrse&2)==2)) neg.insert(svc->source());
       pushed |= isrse;
       if(pushed == 3)
-	break;
+        break;
     }
   }
 

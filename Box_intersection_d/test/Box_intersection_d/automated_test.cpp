@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 //                 Andreas Meyer <ameyer@mpi-sb.mpg.de>
@@ -69,17 +60,17 @@ operator()( const char* filename1, const char* filename2 )
 
     // invoke each interface routine at least once, to check if it still
     // compiles
-    CGAL::box_intersection_all_pairs_d( 
+    CGAL::box_intersection_all_pairs_d(
                 boxes1.begin(), boxes1.end(),
                 boxes2.begin(), boxes2.end(),
-                callback0, 
-                CLOSED ? 
-                   CGAL::Box_intersection_d::CLOSED : 
+                callback0,
+                CLOSED ?
+                   CGAL::Box_intersection_d::CLOSED :
                    CGAL::Box_intersection_d::HALF_OPEN );
     std::cout << "all pairs ......... " << std::flush;
     CGAL::Timer timer;
     timer.start();
-    CGAL::Box_intersection_d::all_pairs( 
+    CGAL::Box_intersection_d::all_pairs(
                 boxes1.begin(), boxes1.end(),
                 boxes2.begin(), boxes2.end(),
                 callback1, typename Uti1::Traits() );
@@ -93,7 +84,7 @@ operator()( const char* filename1, const char* filename2 )
     timer.start();
     CGAL::Box_intersection_d::one_way_scan( boxes1.begin(), boxes1.end(),
                                             boxes2.begin(), boxes2.end(),
-                                            callback2, 
+                                            callback2,
                                             typename Uti1::Traits(), 2 );
     CGAL::Box_intersection_d::one_way_scan( boxes2.begin(), boxes2.end(),
                                             boxes1.begin(), boxes1.end(),
@@ -110,15 +101,15 @@ operator()( const char* filename1, const char* filename2 )
     const std::size_t cutoff = n < 2000 ? 6 : n / 100;
     CGAL::box_intersection_custom_predicates_d( boxes1.begin(), boxes1.end(),
                                                 boxes2.begin(), boxes2.end(),
-                                                callback3, 
+                                                callback3,
                                                 typename Uti1::Traits(),
                                                 cutoff );
     timer.stop();
     std::cout << "got " << callback3.get_counter() << " intersections in "
               << timer.time() << " seconds." << std::endl;
 
-    if( callback1.get_counter() != callback2.get_counter() ||  
-        callback1.get_counter() != callback3.get_counter() ) 
+    if( callback1.get_counter() != callback2.get_counter() ||
+        callback1.get_counter() != callback3.get_counter() )
     {
         unsigned int missing    = Uti1::countMissingItems( result_all_pairs,
                                                            result_tree );

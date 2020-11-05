@@ -20,7 +20,7 @@ int main()
 
   // generate 250 points randomly in a sphere of radius 100.0
   // and insert them into the triangulation
-  CGAL::cpp11::copy_n(gen, 250, std::back_inserter(points) );
+  std::copy_n(gen, 250, std::back_inserter(points) );
   Delaunay T;
   T.insert(points.begin(), points.end());
 
@@ -41,7 +41,7 @@ int main()
   //to get the number of points on the convex hull
   Surface_mesh chull;
   CGAL::convex_hull_3_to_face_graph(T, chull);
-  
+
   std::cout << "After removal of 25 points, there are "
             << num_vertices(chull) << " points on the convex hull." << std::endl;
 

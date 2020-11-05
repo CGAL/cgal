@@ -25,7 +25,7 @@ public:
   /// It provides `Segment_3 operator() const(const Point_3&, const Point_3&)`
   typedef unspecified_type Construct_segment_3;
   /// Functor testing intersections between triangles and segments.
-  /// It provides `bool operator() const (const Triangle_3&, const Segment_3&)` 
+  /// It provides `bool operator() const (const Triangle_3&, const Segment_3&)`
   /// and `bool operator() const (const Triangle_3&, const Triangle_3&)`
   typedef unspecified_type Do_intersect_3;
   /// @}

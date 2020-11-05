@@ -35,7 +35,7 @@ adjacent_vertices_V2(const Polyhedron& g,
                      OutputIterator out)
 {
   halfedge_around_target_iterator hi, he;
-  
+
   for(boost::tie(hi, he) = halfedges_around_target(halfedge(vd,g),g); hi != he; ++hi)
   {
     *out++ = source(*hi,g);
@@ -45,7 +45,7 @@ adjacent_vertices_V2(const Polyhedron& g,
 
 
 int main(int argc, char** argv)
-{ 
+{
   std::ifstream in((argc>1)?argv[1]:"cube.off");
   Polyhedron P;
   in >> P;

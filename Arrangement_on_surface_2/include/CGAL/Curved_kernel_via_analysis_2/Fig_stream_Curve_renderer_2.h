@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 // Author(s)     : Ophir Setter           <ophir.setter@cs.tau.ac.il>
 //
 
@@ -39,8 +30,8 @@ namespace CGAL {
  * outputs a curve arc to \c Fig_stream
  */
 template <class CKvA_2, class RatKernel>
-CGAL::Fig_stream<RatKernel>& 
-operator << 
+CGAL::Fig_stream<RatKernel>&
+operator <<
 (CGAL::Fig_stream<RatKernel>& ws, const internal::Arc_2< CKvA_2 >& arc)
 {
     typedef typename RatKernel::FT            NT;
@@ -55,9 +46,9 @@ operator <<
     boost::optional < Coord_2 > p1, p2;
     std::list<Coord_vec_2> points;
 
-    Bbox_2 bbox (CGAL::to_double(ws.bounding_rect().xmin()), 
-                 CGAL::to_double(ws.bounding_rect().ymin()), 
-                 CGAL::to_double(ws.bounding_rect().xmax()), 
+    Bbox_2 bbox (CGAL::to_double(ws.bounding_rect().xmin()),
+                 CGAL::to_double(ws.bounding_rect().ymin()),
+                 CGAL::to_double(ws.bounding_rect().xmax()),
                  CGAL::to_double(ws.bounding_rect().ymax()));
 
     // The maximum resolution of the renderer is 2048.
@@ -70,7 +61,7 @@ operator <<
     Facade::instance().draw(arc, points, &p1, &p2);
     if(points.empty())
         return ws;
-        
+
 
     // When we create the polyline, we need to scale it back to "regular"
     // coordinates as the Fig_stream also scales them.
@@ -90,13 +81,13 @@ operator <<
         std::vector< Point_2 > polyline;
         for (; vit != vec.end(); ++vit)
         {
-            polyline.push_back(Point_2(vit->first / x_scale + x_min, 
+            polyline.push_back(Point_2(vit->first / x_scale + x_min,
                                        vit->second / y_scale + y_min));
         }
         lit++;
         ws.write_polyline(polyline.begin(), polyline.end());
     }
-        
+
     return ws;
 }
 
@@ -104,28 +95,28 @@ operator <<
  *  outputs a curve point to \c Fig_stream
  */
 template <class CKvA_2, class RatKernel>
-CGAL::Fig_stream<RatKernel>& 
-operator << 
+CGAL::Fig_stream<RatKernel>&
+operator <<
 (CGAL::Fig_stream<RatKernel>& ws, const internal::Point_2< CKvA_2 >& pt)
 {
 #if 0 // TODO check why no point is drawn!
     typedef typename RatKernel::Point_2       Point_2;
     typedef typename RatKernel::Segment_2     Segment_2;
-    
-    typedef Curve_renderer_facade<CKvA_2> Facade; 
-    
-    Bbox_2 bbox(CGAL::to_double(ws.bounding_rect().xmin()), 
-                CGAL::to_double(ws.bounding_rect().ymin()), 
-                CGAL::to_double(ws.bounding_rect().xmax()), 
+
+    typedef Curve_renderer_facade<CKvA_2> Facade;
+
+    Bbox_2 bbox(CGAL::to_double(ws.bounding_rect().xmin()),
+                CGAL::to_double(ws.bounding_rect().ymin()),
+                CGAL::to_double(ws.bounding_rect().xmax()),
                 CGAL::to_double(ws.bounding_rect().ymax()));
-    
+
     Facade::setup(bbox, ws.width(), ws.height());
-    
-    std::pair< int, int > coord; 
+
+    std::pair< int, int > coord;
     if (!Facade::instance().draw(pt, coord)) {
-        return ws; 
+        return ws;
     }
-    
+
     int height = ws.height();
 
     Point_2 rat_pt(coord.first, height - coord.second);
@@ -133,7 +124,7 @@ operator <<
     ws.set_fill_style(CGAL::FIG_FILLED);
     ws.set_fill_color(CGAL::FIG_BLACK);
     ws.set_point_style(CGAL::FIG_DISC);
-    
+
     ws.write_point(rat_pt);
 #endif
     return ws;

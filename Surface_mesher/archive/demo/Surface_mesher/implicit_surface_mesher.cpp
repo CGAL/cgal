@@ -62,12 +62,12 @@ void usage(std::string error = "")
       it != string_options.end();
       ++it)
     std::cerr << "--" << it->first << " default value is \""
-	      << it->second << "\".\n";
+              << it->second << "\".\n";
   for(Double_options::iterator it = double_options.begin();
       it != double_options.end();
       ++it)
     std::cerr << "--" << it->first << " default value is "
-	      << it->second << ".\n";
+              << it->second << ".\n";
   exit(EXIT_FAILURE);
 }
 
@@ -86,23 +86,23 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
           parse_argv(argc, argv, extra_args + 2);
         }
       else if( arg.substr(0, 2) == "--" )
-	{
-	  Double_options::iterator opt_it =
-	    double_options.find(arg.substr(2, arg.length()-2));
-	  if( opt_it != double_options.end() )
-	    {
-	      if( argc < (3 + extra_args) )
-		usage((arg + " must be followed by a double!").c_str());
-	      std::stringstream s;
-	      double val;
-	      s << argv[extra_args + 2];
-	      s >> val;
-	      if( !s )
-		usage(("Bad double after " + arg + "!").c_str());
-	      opt_it->second = val;
-	      parse_argv(argc, argv, extra_args + 2);
-	    }
-	  else
+        {
+          Double_options::iterator opt_it =
+            double_options.find(arg.substr(2, arg.length()-2));
+          if( opt_it != double_options.end() )
+            {
+              if( argc < (3 + extra_args) )
+                usage((arg + " must be followed by a double!").c_str());
+              std::stringstream s;
+              double val;
+              s << argv[extra_args + 2];
+              s >> val;
+              if( !s )
+                usage(("Bad double after " + arg + "!").c_str());
+              opt_it->second = val;
+              parse_argv(argc, argv, extra_args + 2);
+            }
+          else
           {
             String_options::iterator opt_it =
                 string_options.find(arg.substr(2, arg.length()-2));
@@ -117,13 +117,13 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
             else
               usage(("Invalid option " + arg).c_str());
           }
-	}
+        }
       else
-	{
-	  output_to_file = true;
-	  filename = argv[1+extra_args];
-	  parse_argv(argc, argv, extra_args + 1);
-	}
+        {
+          output_to_file = true;
+          filename = argv[1+extra_args];
+          parse_argv(argc, argv, extra_args + 1);
+        }
     }
 }
 
@@ -166,16 +166,16 @@ int main(int argc, char **argv) {
     std::ifstream in( read_initial_points.c_str() );
     int n;
     in >> n;
-    if(in) 
+    if(in)
     {
     if(out)
-      std::cerr << "Reading initial points to file \"" 
+      std::cerr << "Reading initial points to file \""
                 << read_initial_points << "\"...\n";
       double_options["number_of_initial_points"] = 0;
       while( in.good() && !in.eof() )
       {
-	Point_3 p;
-	if(in >> p)
+        Point_3 p;
+        if(in >> p)
         {
           tr.insert(p);
           --n;
@@ -200,20 +200,20 @@ int main(int argc, char **argv) {
     typedef CGAL::Surface_mesh_traits_generator_3<Surface>::type Oracle;
     Oracle::Construct_initial_points initial_points =
       Oracle().construct_initial_points_object();
-    
+
     initial_points(surface, std::back_inserter(initial_point_sample),
                    number_of_initial_points);
 
     std::ofstream out(string_options["dump_of_initial_points"].c_str());
     if(out)
-      std::cerr << "Dumping initial points to file \"" 
+      std::cerr << "Dumping initial points to file \""
                 << string_options["dump_of_initial_points"] << "\"...\n";
 
     out << initial_point_sample.size() << "\n";
     for(std::vector<Point_3>::const_iterator it =
-	  initial_point_sample.begin();
-	it != initial_point_sample.end();
-	++it)
+          initial_point_sample.begin();
+        it != initial_point_sample.end();
+        ++it)
       out << *it <<"\n";
 
     tr.insert (initial_point_sample.begin(), initial_point_sample.end());

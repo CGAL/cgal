@@ -77,7 +77,7 @@ const double PI = 3.1415926; // 53589793238462643383280;
 bool cgal_nef3_timer_on = false;
 
 Nef_polyhedron create_complex_facet(int n) {
-  
+
   typedef std::list<Point_3> pointlist;
   typedef pointlist::const_iterator pointiterator;
   typedef std::pair<pointiterator,pointiterator> pointrange;
@@ -101,7 +101,7 @@ Nef_polyhedron create_complex_facet(int n) {
 }
 
 int main(int argc, char* argv[]) {
-  
+
   CGAL_assertion(argc>1 && argc<6);
 
   int n = argc > 1 ? std::atoi(argv[1]) : 50;
@@ -110,7 +110,7 @@ int main(int argc, char* argv[]) {
   std::cerr << "step: " << step << std::endl;
   int s = argc > 3 ? std::atoi(argv[3]) : 100;
   std::cerr << "size of cube: " << s << std::endl;
-  
+
   for(int i=step; i<=n*step; i+=step) {
     Nef_polyhedron C = create_complex_facet(i*8);
 
@@ -121,9 +121,9 @@ int main(int argc, char* argv[]) {
     Nef_polyhedron NT;
     in >> NT;
     CGAL_assertion(NT.is_valid());
-    
+
     NT.transform(Aff_transformation_3(CGAL::TRANSLATION,Vector_3(scale*2,0,-s*i)));
-  
+
     cgal_nef3_timer_on = true;
     C+=NT;
     cgal_nef3_timer_on = false;

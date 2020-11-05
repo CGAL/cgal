@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/FPU.h>
@@ -20,12 +19,12 @@ double test_timer() {
     assert( t.time() >= 0.0);
     assert( t.intervals() == 1);
     assert( t.precision() >= 0.0);
-    std::cout << "precision()            : " << t.precision() << "\n"; 
+    std::cout << "precision()            : " << t.precision() << "\n";
     assert( (t.max)() > 0.0);
 
     T s;
     s.start();
-    double p = 0.0;     
+    double p = 0.0;
     for ( int i = 0; i < 5; i++) {
         for ( int j = 0; j < 1000000; j++)
             p = p + 1.0;

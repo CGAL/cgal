@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -49,15 +40,15 @@ namespace Qt {
 // forward declaration
 class GraphicsViewNavigation;
 
-class CGAL_QT_EXPORT DemosMainWindow : public QMainWindow 
+class CGAL_QT_EXPORT DemosMainWindow : public QMainWindow
 {
   Q_OBJECT
 
 public:
   enum Option { NoOption = 0x0,
-		Size     = 0x1,
-		Position = 0x2,
-		State    = 0x4};
+                Size     = 0x1,
+                Position = 0x2,
+                State    = 0x4};
 
   Q_DECLARE_FLAGS(Options, Option)
 
@@ -66,7 +57,7 @@ public:
 
   virtual void open(QString)
   {
-    std::cerr << "You should implement open(QString);" << std::endl; 
+    std::cerr << "You should implement open(QString);" << std::endl;
   }
 
 public:
@@ -81,7 +72,7 @@ private:
   QMenu* getHelpMenu();
 
 protected:
-  DemosMainWindow (QWidget * parent = 0, ::Qt::WindowFlags flags = 0 );
+  DemosMainWindow (QWidget * parent = 0, ::Qt::WindowFlags flags = ::Qt::WindowType(0) );
   ~DemosMainWindow();
   void setupStatusBar();
   void addNavigation(QGraphicsView*);
@@ -94,7 +85,7 @@ protected:
 
   void writeState(QString groupname = "MainWindow");
   void readState(QString groupname = "MainWindow",
-		 Options what_to_save = Options(Size|State));
+                 Options what_to_save = Options(Size|State));
 
 protected Q_SLOTS:
   void setUseAntialiasing(bool checked);

@@ -43,7 +43,7 @@ void test(const int d, const string & type, int N)
     vector<Point> points;
     CGAL::Random rng;
     Random_points_iterator rand_it(d, 1.0, rng);
-    CGAL::cpp11::copy_n(rand_it, N, std::back_inserter(points));
+    std::copy_n(rand_it, N, std::back_inserter(points));
 
     cerr << '\n' << points.size() << " points in the grid.";
 
@@ -106,11 +106,11 @@ void test(const int d, const string & type, int N)
     assert( tri.maximal_dimension() == tri2.maximal_dimension() );
     assert( tri.number_of_vertices() == tri2.number_of_vertices() );
     assert( tri.number_of_full_cells() == tri2.number_of_full_cells() );
-    
+
     std::ofstream ofs("tri", std::ios::binary);
     ofs << tri;
     ofs.close();
-    
+
     std::ifstream ifs("tri", std::ios::binary);
     ifs >> tri2;
     ifs.close();

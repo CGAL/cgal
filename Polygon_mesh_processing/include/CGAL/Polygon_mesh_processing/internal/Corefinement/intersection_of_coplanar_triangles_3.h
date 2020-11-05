@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -36,10 +27,15 @@ namespace CGAL{
 namespace Polygon_mesh_processing {
 namespace Corefinement{
 
-template <class TriangleMesh, class VertexPointMap>
-struct Intersect_coplanar_faces_3{
+template <class TriangleMesh, class VertexPointMap1, class VertexPointMap2>
+struct Intersect_coplanar_faces_3
+{
  // typedefs
-  typedef typename boost::property_traits<VertexPointMap>::value_type Point;
+  typedef typename boost::property_traits<VertexPointMap1>::value_type Point;
+
+  CGAL_static_assertion((std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
+                                      typename boost::property_traits<VertexPointMap1>::value_type>::value));
+
   typedef typename CGAL::Kernel_traits<Point>::Kernel Input_kernel;
   typedef CGAL::Exact_predicates_exact_constructions_kernel Exact_kernel;
 
@@ -49,12 +45,14 @@ struct Intersect_coplanar_faces_3{
   typedef Coplanar_intersection<TriangleMesh, Exact_kernel> Inter_pt_info;
 // data members
   const TriangleMesh &tm1, &tm2;
-  const VertexPointMap &vpm1, &vpm2;
+  const VertexPointMap1& vpm1;
+  const VertexPointMap2& vpm2;
+
 // constructor
   Intersect_coplanar_faces_3(const TriangleMesh& tm1_,
                              const TriangleMesh& tm2_,
-                             const VertexPointMap& vpm1_,
-                             const VertexPointMap& vpm2_)
+                             const VertexPointMap1& vpm1_,
+                             const VertexPointMap2& vpm2_)
   : tm1(tm1_), tm2(tm2_), vpm1(vpm1_), vpm2(vpm2_)
   {}
 
@@ -242,7 +240,7 @@ struct Intersect_coplanar_faces_3{
     typedef typename std::list<Inter_pt_info>::iterator Iterator;
 
     std::map<Inter_pt_info*,Orientation> orientations;
-    BOOST_FOREACH(Inter_pt_info& ipt, inter_pts)
+    for(Inter_pt_info& ipt : inter_pts)
       orientations[ &ipt ]=get_orientation_and_update_info_2(h2,ipt);
 
     CGAL_assertion_code(int pt_added=0;)
@@ -291,14 +289,14 @@ struct Intersect_coplanar_faces_3{
   }
 };
 
-template <class TriangleMesh, class VertexPointMap, class Exact_kernel>
+template <class TriangleMesh, class VertexPointMap1, class VertexPointMap2, class Exact_kernel>
 void intersection_coplanar_faces(
   typename boost::graph_traits<TriangleMesh>::face_descriptor f1,
   typename boost::graph_traits<TriangleMesh>::face_descriptor f2,
   const TriangleMesh& tm1,
   const TriangleMesh& tm2,
-  const VertexPointMap& vpm1,
-  const VertexPointMap& vpm2,
+  const VertexPointMap1& vpm1,
+  const VertexPointMap2& vpm2,
   std::list< Coplanar_intersection<TriangleMesh, Exact_kernel> >& inter_pts)
 {
   typedef boost::graph_traits<TriangleMesh> GT;
@@ -306,7 +304,7 @@ void intersection_coplanar_faces(
 
   halfedge_descriptor h1=halfedge(f1,tm1), h2=halfedge(f2,tm2);
 
-  Intersect_coplanar_faces_3<TriangleMesh, VertexPointMap>
+  Intersect_coplanar_faces_3<TriangleMesh, VertexPointMap1, VertexPointMap2>
     intersect_cpln(tm1, tm2, vpm1, vpm2);
 
   // We will add in `inter_pts` the initial triangle of h1

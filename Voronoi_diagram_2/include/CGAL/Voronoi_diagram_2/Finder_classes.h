@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -44,7 +35,7 @@ struct Find_next_halfedge
   typedef typename VDA::Delaunay_graph::Face_handle   Delaunay_face_handle;
 
   void operator()(const VDA* vda, const Delaunay_face_handle& f, int i,
-		  Delaunay_face_handle& fnext, int& inext) const
+                  Delaunay_face_handle& fnext, int& inext) const
   {
     Delaunay_face_handle fcur = f;
     int icur = i, cw_i;
@@ -67,7 +58,7 @@ struct Find_opposite_halfedge
   typedef Find_next_halfedge<VDA>                     Next_halfedge;
 
   void operator()(const VDA* vda, const Delaunay_face_handle& f, int i,
-		  Delaunay_face_handle& fopp, int& iopp) const 
+                  Delaunay_face_handle& fopp, int& iopp) const
   {
     Delaunay_face_handle f1;
     int i1;
@@ -90,7 +81,7 @@ class Find_valid_vertex
   typedef std::map<Delaunay_face_handle,bool>        Delaunay_face_map;
 
   Delaunay_face_handle operator()(const VDA* vda,
-				  const Delaunay_face_handle& f) const
+                                  const Delaunay_face_handle& f) const
   {
     CGAL_precondition( !vda->dual().is_infinite(f) );
     Delaunay_face_map fmap;
@@ -104,8 +95,8 @@ class Find_valid_vertex
 
  private:
   void find_valid_vertex(const VDA* vda, const Delaunay_face_handle& cur,
-			 Delaunay_face_handle& fvalid,
-			 Delaunay_face_map& fmap) const
+                         Delaunay_face_handle& fvalid,
+                         Delaunay_face_map& fmap) const
   {
     if ( fmap.find(cur) != fmap.end() ) { return; }
     fmap[cur] = true;
@@ -118,15 +109,15 @@ class Find_valid_vertex
 
     if ( b[0] || b[1] || b[2] ) {
       if ( fvalid == Delaunay_face_handle() || cur < fvalid ) {
-	if ( !vda->dual().is_infinite(cur) ) {
-	  fvalid = cur;
-	}
+        if ( !vda->dual().is_infinite(cur) ) {
+          fvalid = cur;
+        }
       }
     }
 
     for (int i = 0; i < 3; i++) {
       if ( !vda->dual().is_infinite(cur->neighbor(i)) && !b[i] ) {
-	find_valid_vertex(vda, cur->neighbor(i), fvalid, fmap);
+        find_valid_vertex(vda, cur->neighbor(i), fvalid, fmap);
       }
     }
   }

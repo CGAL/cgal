@@ -16,7 +16,7 @@ class PointMarkBoundary {
  public:
   PointMark() : p(0,0,0), b(true), boundary(true) {}
   PointMark(const Self& pm) { p = pm.p; b = pm.b; }
-  PointMark(const Point_3& p_, bool b_, bool boundary_) 
+  PointMark(const Point_3& p_, bool b_, bool boundary_)
     : p(p_), b(b_) boundary(boundary_) {}
 
   Self& operator=(const Self& pm) {
@@ -56,23 +56,23 @@ class PointMarkBoundary {
 };
 
 template <typename Kernel>
-std::ostream& operator<<(std::ostream& out, 
-			 const PointMark<Kernel>& pm) {
+std::ostream& operator<<(std::ostream& out,
+                         const PointMark<Kernel>& pm) {
   out << pm.point() << "/" << pm.boolean();
   return out;
 }
 
 template <typename Kernel>
 bool operator==(const PointMark<Kernel>& pm1,
-		const PointMark<Kernel>& pm2) {
-  return 
+                const PointMark<Kernel>& pm2) {
+  return
     pm1.point() == pm2.point() &&
     pm1.boolean() == pm2.boolean();
 }
 
 template <typename Kernel>
 const PointMark<Kernel> operator+(const PointMark<Kernel>& pm1,
-				  const PointMark<Kernel>& pm2) {
+                                  const PointMark<Kernel>& pm2) {
   PointMark<Kernel> ret(pm1);
   ret += pm2;
   return ret;

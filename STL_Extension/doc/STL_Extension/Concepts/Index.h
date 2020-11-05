@@ -12,8 +12,8 @@ The concept `Index` is a refinement of `Descriptor` which must be convertible fr
 \cgalHeading{Notation}
 
 <dl>
-<dt>`I`</dt> 	  <dd>Object of type Index.</dd>
-<dt>`n`</dt> 	  <dd>Object of type `std::size_t`.</dd>
+<dt>`I`</dt>           <dd>Object of type Index.</dd>
+<dt>`n`</dt>           <dd>Object of type `std::size_t`.</dd>
 </dl>
 
 \cgalHeading{Valid Expressions}

@@ -35,7 +35,7 @@
 
 #include <CGAL/boost/graph/Euler_operations.h>
 
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
@@ -120,7 +120,7 @@ void cdt2_to_face_graph(const CDT& cdt, TriangleMesh& tm, int constant_coordinat
                                            fit!=fit_end; ++fit)
   {
     if (!fit->is_in_domain()) continue;
-    CGAL::cpp11::array<vertex_descriptor,3> vds;
+    std::array<vertex_descriptor,3> vds;
     for(int i=0; i<3; ++i)
     {
       typename Map::iterator it;
@@ -195,8 +195,6 @@ private:
             ui.edgeLength_dspinbox, SLOT(setEnabled(bool)));
 
     //Set default parameter edge length
-    ui.edgeLength_dspinbox->setDecimals(3);
-    ui.edgeLength_dspinbox->setSingleStep(0.001);
     ui.edgeLength_dspinbox->setRange(1e-6 * diag_length, //min
                                      2.   * diag_length);//max
     ui.edgeLength_dspinbox->setValue(0.05 * diag_length);
@@ -252,29 +250,28 @@ private:
     bool runMesh2 = ui.runMesh2_checkbox->isChecked();
     double target_length = ui.edgeLength_dspinbox->value();
     unsigned int nb_iter = ui.nbIterations_spinbox->value();
-    bool runLloyd = ui.runLloyd_checkbox->isChecked();
-
+    bool runLloyd = runMesh2?ui.runLloyd_checkbox->isChecked():false;
 
     // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    typedef ProjectionTraits                                             Gt;
-    typedef CGAL::Delaunay_mesh_vertex_base_2<Gt>                        Vb;
-    typedef CGAL::Delaunay_mesh_face_base_2<Gt>                          Fm;
-    typedef CGAL::Triangulation_face_base_with_info_2<FaceInfo2,Gt,Fm>   Fb;
-    typedef CGAL::Triangulation_data_structure_2<Vb, Fb>                TDS;
-    typedef CGAL::No_intersection_tag                                   Tag;
-    typedef CGAL::Constrained_Delaunay_triangulation_2<Gt, TDS, Tag>    CDT;
-    typedef CGAL::Delaunay_mesh_size_criteria_2<CDT>               Criteria;
-    typedef CGAL::Delaunay_mesher_2<CDT, Criteria>                   Mesher;
+    typedef ProjectionTraits                                              Gt;
+    typedef CGAL::Delaunay_mesh_vertex_base_2<Gt>                         Vb;
+    typedef CGAL::Delaunay_mesh_face_base_2<Gt>                           Fm;
+    typedef CGAL::Triangulation_face_base_with_info_2<FaceInfo2,Gt,Fm>    Fb;
+    typedef CGAL::Triangulation_data_structure_2<Vb, Fb>                  TDS;
+    typedef CGAL::No_constraint_intersection_requiring_constructions_tag  Tag;
+    typedef CGAL::Constrained_Delaunay_triangulation_2<Gt, TDS, Tag>      CDT;
+    typedef CGAL::Delaunay_mesh_size_criteria_2<CDT>                      Criteria;
+    typedef CGAL::Delaunay_mesher_2<CDT, Criteria>                        Mesher;
 
-    QTime time; // global timer
+    QElapsedTimer time; // global timer
     time.start();
 
     std::cout << " Building Constrained_Delaunay_triangulation_2..."
               << std::flush;
     CDT cdt;
 
-    QTime ltime; //local timer
+    QElapsedTimer ltime; //local timer
     ltime.start();
     double constant_coordinate =
       polylines_items.back()->polylines.back().back()[constant_coordinate_index];
@@ -334,11 +331,12 @@ private:
     }
 
     // export result as a surface_mesh item
-    QString iname =
-      polylines_items.size()==1?
-      polylines_items.front()->name()+QString("_meshed_"):
-      QString("2dmesh_");
-    iname+=QString::number(target_length);
+    QString iname = runMesh2 ? (( polylines_items.size()==1?
+                                  polylines_items.front()->name()+QString("_meshed_"):
+                                  QString("2dmesh_") )+QString::number(target_length) )
+                             : ( polylines_items.size()==1?
+                                 polylines_items.front()->name()+QString("_triangulated"):
+                                 QString("polylines_triangulation") );
     if (runLloyd) iname+=QString("_Lloyd_")+QString::number(nb_iter);
     Scene_surface_mesh_item* poly_item = new Scene_surface_mesh_item();
     poly_item->setName(iname);
@@ -348,7 +346,7 @@ private:
                        constant_coordinate);
     scene->addItem(poly_item);
     poly_item->invalidateOpenGLBuffers();
-    
+
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
     // default cursor
     QApplication::restoreOverrideCursor();

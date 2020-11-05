@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     :  Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_MS3_BIPARTITE_NARY_UNION_SORTED_COMBINED_H
@@ -56,7 +47,7 @@ template<typename Point_3>
 struct L2_sort {
   bool operator()(Point_3 p0, Point_3 p1) {
     return
-      p0.x()*p0.x() + p0.y()*p0.y() + p0.z()*p0.z() < 
+      p0.x()*p0.x() + p0.y()*p0.y() + p0.z()*p0.z() <
       p1.x()*p1.x() + p1.y()*p1.y() + p1.z()*p1.z();
   }
 };
@@ -64,11 +55,11 @@ struct L2_sort {
 #endif
 
 template<typename Nef_polyhedron>
-Nef_polyhedron 
-bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,  
-				     Nef_polyhedron& N1) {
+Nef_polyhedron
+bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
+                                     Nef_polyhedron& N1) {
 
-  typedef typename Nef_polyhedron::SM_const_decorator 
+  typedef typename Nef_polyhedron::SM_const_decorator
     SM_const_decorator;
   typedef typename Nef_polyhedron::Kernel Kernel;
   typedef typename Nef_polyhedron::Point_3 Point_3;
@@ -113,7 +104,7 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
 
   GM_list GM0;
   Volume_const_iterator c0;
-  for(c0 = ++N0.volumes_begin(); 
+  for(c0 = ++N0.volumes_begin();
       c0 != N0.volumes_end(); ++c0) {
     if(!c0->mark()) continue;
     Point_3 p(SFace_const_handle(c0->shells_begin())->center_vertex()->point());
@@ -122,15 +113,15 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
 
   GM_list GM1;
   Volume_const_iterator c1;
-  for(c1 = ++N1.volumes_begin(); 
+  for(c1 = ++N1.volumes_begin();
       c1 != N1.volumes_end(); ++c1) {
     if(!c1->mark()) continue;
     Point_3 p(SFace_const_handle(c1->shells_begin())->center_vertex()->point());
     GM1.push_back(std::make_pair(Gaussian_map(N1, c1), p));
   }
 
-  CGAL_assertion_msg(!GM0.empty() || !GM1.empty(), 
-		     "one operand must be full-dimensional");
+  CGAL_assertion_msg(!GM0.empty() || !GM1.empty(),
+                     "one operand must be full-dimensional");
 
   Vertex_const_iterator vci;
   for(vci = N0.vertices_begin();
@@ -147,7 +138,7 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
        vci->mark() &&
        !vci->sfaces_begin()->mark())
       GM1.push_back(std::make_pair(Gaussian_map(vci), vci->point()));
-  
+
   Halfedge_const_iterator eci;
   for(eci = N0.halfedges_begin();
       eci != N0.halfedges_end(); ++eci) {
@@ -159,7 +150,7 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
     else
       GM0.push_back(std::make_pair(Gaussian_map(eci), eci->twin()->source()->point()));
   }
-  
+
   for(eci = N1.halfedges_begin();
       eci != N1.halfedges_end(); ++eci) {
     if(eci->is_twin()) continue;
@@ -174,27 +165,27 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
   Halffacet_const_iterator fci;
   for(fci = N0.halffacets_begin();
       fci != N0.halffacets_end(); ++fci) {
-    if(fci->is_twin()) continue;  
+    if(fci->is_twin()) continue;
     if( fci->incident_volume() != fci->twin()->incident_volume() &&
-        ( fci->incident_volume()->mark() || fci->twin()->incident_volume()->mark() )) 
-	{
-		continue;
-	}
+        ( fci->incident_volume()->mark() || fci->twin()->incident_volume()->mark() ))
+        {
+                continue;
+        }
     SHalfedge_const_handle se(fci->facet_cycles_begin());
-    GM0.push_back(std::make_pair(Gaussian_map(fci), 
-				 se->source()->source()->point()));    
+    GM0.push_back(std::make_pair(Gaussian_map(fci),
+                                 se->source()->source()->point()));
   }
   for(fci = N1.halffacets_begin();
       fci != N1.halffacets_end(); ++fci) {
-    if(fci->is_twin()) continue;  
+    if(fci->is_twin()) continue;
     if( fci->incident_volume() != fci->twin()->incident_volume() &&
-        ( fci->incident_volume()->mark() || fci->twin()->incident_volume()->mark() )) 
-	{
-		continue;
-	}
+        ( fci->incident_volume()->mark() || fci->twin()->incident_volume()->mark() ))
+        {
+                continue;
+        }
     SHalfedge_const_handle se(fci->facet_cycles_begin());
-    GM1.push_back(std::make_pair(Gaussian_map(fci), 
-				 se->source()->source()->point()));    
+    GM1.push_back(std::make_pair(Gaussian_map(fci),
+                                 se->source()->source()->point()));
   }
 
   PQ pq;
@@ -202,21 +193,21 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
   for(gi0 = GM0.begin(); gi0 != GM0.end(); ++gi0) {
     for(gi1 = GM1.begin(); gi1 != GM1.end(); ++gi1) {
       pq.insert(std::make_pair(gi0->second+(CGAL::ORIGIN-gi1->second),
-			       std::make_pair(gi0, gi1)));
+                               std::make_pair(gi0, gi1)));
 
     }
   }
 
-  CGAL_assertion_msg(!GM0.empty() && !GM1.empty(), 
-		     "one operand must be full-dimensional");
+  CGAL_assertion_msg(!GM0.empty() && !GM1.empty(),
+                     "one operand must be full-dimensional");
 
   Nef_polyhedron empty;
   while(pq.size() > 0) {
     PQ_iterator pqi(pq.begin());
 
     Gaussian_map GcG;
-    GcG.minkowski_sum(pqi->second.first->first, 
-		      pqi->second.second->first);
+    GcG.minkowski_sum(pqi->second.first->first,
+                      pqi->second.second->first);
     pq.erase(pqi);
     Nef_polyhedron Ntmp(empty);
     CGAL::Gaussian_map_to_nef_3<Nef_polyhedron> Convertor(GcG);
@@ -234,7 +225,7 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
   for(GM_iterator it = GM1.begin(); it != GM1.end(); ++it) {
     delete it->first.sphere_map();
   }
-  
+
   return nary_union.get_union();
 }
 

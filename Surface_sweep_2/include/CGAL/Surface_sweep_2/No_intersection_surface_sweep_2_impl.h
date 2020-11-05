@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Baruch Zukerman  <baruchzu@post.tau.ac.il>
 //                 Efi Fogel        <efif@post.tau.ac.il>
@@ -87,19 +78,6 @@ No_intersection_surface_sweep_2<Vis>::~No_intersection_surface_sweep_2()
 
   // Free the event queue.
   delete m_queue;
-
-  // Free all the event that have not been de-allocated so far.
-  Event* p_event;
-  Allocated_events_iterator iter = m_allocated_events.begin();
-  for (; iter != m_allocated_events.end(); ++iter) {
-    p_event = *iter;
-#ifdef CGAL_CXX11
-    std::allocator_traits<Event_alloc>::destroy(m_eventAlloc, p_event);
-#else
-    m_eventAlloc.destroy(p_event);
-#endif
-    m_eventAlloc.deallocate(p_event,1);
-  }
 }
 
 //-----------------------------------------------------------------------------
@@ -138,15 +116,7 @@ template <typename Vis>
 void No_intersection_surface_sweep_2<Vis>::deallocate_event(Event* event)
 {
   // Remove the event from the set of allocated events.
-  m_allocated_events.erase(event);
-
-  // Perfrom the actual deallocation.
-#ifdef CGAL_CXX11
-  std::allocator_traits<Event_alloc>::destroy(m_eventAlloc, event);
-#else
-  m_eventAlloc.destroy(event);
-#endif
-  m_eventAlloc.deallocate(event, 1);
+  m_allocated_events.erase(m_allocated_events.iterator_to(*event));
 }
 
 //-----------------------------------------------------------------------------
@@ -235,11 +205,7 @@ void No_intersection_surface_sweep_2<Vis>::_complete_sweep()
 
   // Free all subcurve objects.
   for (unsigned int i = 0; i < m_num_of_subCurves; ++i){
-#ifdef CGAL_CXX11
     std::allocator_traits<Subcurve_alloc>::destroy(m_subCurveAlloc, m_subCurves + i);
-#else
-    m_subCurveAlloc.destroy(m_subCurves + i);
-#endif
   }
 
   if (m_num_of_subCurves > 0)
@@ -270,11 +236,7 @@ void No_intersection_surface_sweep_2<Vis>::
 _init_curve(const X_monotone_curve_2& curve, unsigned int index)
 {
   // Construct and initialize a subcurve object.
-#ifdef CGAL_CXX11
   std::allocator_traits<Subcurve_alloc>::construct(m_subCurveAlloc, m_subCurves + index, m_masterSubcurve );
-#else
-  m_subCurveAlloc.construct(m_subCurves + index, m_masterSubcurve);
-#endif
   (m_subCurves + index)->set_hint(this->m_statusLine.end());
   (m_subCurves + index)->init(curve);
 
@@ -309,6 +271,47 @@ _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc)
     pair_res = ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) ?
       _push_event(pt, end_attr, ps_x, ps_y, sc) :
       _push_event(cv, ind, end_attr, ps_x, ps_y, sc);
+
+    // Inform the visitor in case we updated an existing event.
+    Event* e = pair_res.first;
+    CGAL_assertion(e->is_closed());
+    m_visitor->update_event(e, pt, cv, ind, pair_res.second);
+  }
+  else {
+    // The curve end is open, insert it into the event queue.
+    pair_res = _push_event(cv, ind, end_attr, ps_x, ps_y, sc);
+
+    // Inform the visitor in case we updated an existing event.
+    Event* e = pair_res.first;
+    CGAL_assertion(! e->is_closed());
+    _update_event_at_open_boundary(e, cv, ind, pair_res.second);
+  }
+}
+
+template <typename Vis>
+void No_intersection_surface_sweep_2<Vis>::
+_init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc,
+                std::vector<Event_queue_iterator>& events, std::size_t index)
+{
+  // Get the boundary conditions of the curve end.
+  const Attribute  end_attr =
+    (ind == ARR_MIN_END) ? Event::LEFT_END : Event::RIGHT_END;
+
+  Arr_parameter_space ps_x = m_traits->parameter_space_in_x_2_object()(cv, ind);
+  Arr_parameter_space ps_y = m_traits->parameter_space_in_y_2_object()(cv, ind);
+
+  // Create the corresponding event and push it into the event queue.
+  std::pair<Event*, bool> pair_res;
+
+  if (m_traits->is_closed_2_object()(cv, ind)) {
+    // The curve end is closed and thus associated with a valid endpoint.
+    const Point_2& pt = (ind == ARR_MIN_END) ?
+      m_traits->construct_min_vertex_2_object()(cv) :
+      m_traits->construct_max_vertex_2_object()(cv);
+
+    pair_res = ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) ?
+      _push_event(pt, end_attr, ps_x, ps_y, sc, events, index) :
+      _push_event(cv, ind, end_attr, ps_x, ps_y, sc, pt, events, index);
 
     // Inform the visitor in case we updated an existing event.
     Event* e = pair_res.first;
@@ -613,16 +616,8 @@ No_intersection_surface_sweep_2<Vis>::_allocate_event(const Point_2& pt,
                                                       Arr_parameter_space ps_y)
 {
   // Allocate the event.
-  Event* e =  m_eventAlloc.allocate(1);
-#ifdef CGAL_CXX11
-  std::allocator_traits<Event_alloc>::construct(m_eventAlloc, e, m_masterEvent);
-#else
-  m_eventAlloc.construct(e, m_masterEvent);
-#endif
+  Event* e = &*m_allocated_events.emplace();
   e->init(pt, type, ps_x, ps_y);
-
-  // Insert it to the set of allocated events.
-  m_allocated_events.insert(e);
   return e;
 }
 
@@ -637,15 +632,8 @@ _allocate_event_at_open_boundary(Attribute type,
                                  Arr_parameter_space ps_x,
                                  Arr_parameter_space ps_y)
 {
-  Event* e =  m_eventAlloc.allocate(1);
-#ifdef CGAL_CXX11
-  std::allocator_traits<Event_alloc>::construct(m_eventAlloc, e, m_masterEvent);
-#else
-  m_eventAlloc.construct(e, m_masterEvent);
-#endif
+  Event* e = &*m_allocated_events.emplace();
   e->init_at_open_boundary(type, ps_x, ps_y);
-
-  m_allocated_events.insert(e);
   return e;
 }
 
@@ -691,6 +679,72 @@ No_intersection_surface_sweep_2<Vis>::_push_event(const Point_2& pt,
   // Insert the new event into the queue using the hint we got when we
   // looked for it.
   if (! exist) m_queue->insert_before(pair_res.first, e);
+
+#ifdef CGAL_SS_VERBOSE
+  if (! exist) {
+    CGAL_SS_PRINT_NEW_EVENT(pt, e);
+  }
+  else {
+    CGAL_SS_PRINT_UPDATE_EVENT(pt, e);
+  }
+#endif
+
+  // Return the resulting event and a flag indicating whether we have created
+  // a new event.
+  return (std::make_pair(e, !exist));
+}
+
+template <typename Vis>
+std::pair<typename No_intersection_surface_sweep_2<Vis>::Event*, bool>
+No_intersection_surface_sweep_2<Vis>::_push_event(const Point_2& pt,
+                                                  Attribute type,
+                                                  Arr_parameter_space ps_x,
+                                                  Arr_parameter_space ps_y,
+                                                  Subcurve* sc,
+                                                  std::vector<Event_queue_iterator>& events,
+                                                  std::size_t index)
+{
+  Event* e;
+
+  std::pair<Event_queue_iterator, bool>
+    pair_res = std::make_pair (events[index], true);
+
+  // If event does not exist
+  if (events[index] == Event_queue_iterator())
+  {
+    // Still look for the curve end in the event queue in case two
+    // point are the the same in the vertex range
+    m_queueEventLess.set_parameter_space_in_x(ps_x);
+    m_queueEventLess.set_parameter_space_in_y(ps_y);
+    pair_res = m_queue->find_lower(pt, m_queueEventLess);
+  }
+
+  bool exist = pair_res.second;
+  if (! exist) {
+    // The point is not found in the event queue - create a new event and
+    // insert it into the queue.
+    e = _allocate_event(pt, type, ps_x, ps_y);
+  }
+  else {
+    events[index] = pair_res.first;
+    // The event associated with the given point already exists in the queue,
+    // so we just have to update it.
+    e = *(pair_res.first);
+    CGAL_assertion(e->is_closed());
+
+    e->set_attribute(type);
+  }
+
+  // If we are given a subcurve that the event represents one of its
+  // endpoints, update the event and the subcurve records accordingly.
+  // Note that this must be done before we actually insert the new event
+  // into the event queue.
+  _add_curve(e, sc, type);
+
+  // Insert the new event into the queue using the hint we got when we
+  // looked for it.
+  if (! exist)
+    events[index] = m_queue->insert_before(pair_res.first, e);
 
 #ifdef CGAL_SS_VERBOSE
   if (! exist) {
@@ -769,6 +823,72 @@ No_intersection_surface_sweep_2<Vis>::_push_event(const X_monotone_curve_2& cv,
   return (std::make_pair(e, !exist));
 }
 
+template <typename Vis>
+std::pair<typename No_intersection_surface_sweep_2<Vis>::Event*, bool>
+No_intersection_surface_sweep_2<Vis>::_push_event(const X_monotone_curve_2& cv,
+                                                  Arr_curve_end ind,
+                                                  Attribute type,
+                                                  Arr_parameter_space ps_x,
+                                                  Arr_parameter_space ps_y,
+                                                  Subcurve* sc,
+                                                  const Point_2& pt,
+                                                  std::vector<Event_queue_iterator>& events,
+                                                  std::size_t index)
+{
+  Event* e;
+
+  std::pair<Event_queue_iterator, bool>
+    pair_res = std::make_pair (events[index], true);
+
+  // If event does not exist
+  if (events[index] == Event_queue_iterator())
+  {
+    // Still look for the curve end in the event queue in case two
+    // point are the the same in the vertex range
+
+    m_queueEventLess.set_parameter_space_in_x(ps_x);
+    m_queueEventLess.set_parameter_space_in_y(ps_y);
+    m_queueEventLess.set_index(ind);
+
+    pair_res =
+      m_queue->find_lower(cv, m_queueEventLess);
+  }
+
+  bool exist = pair_res.second;
+
+  if (! exist) {
+    // The curve end is not found in the event queue - create a new event and
+    // insert it into the queue.
+    // The curve end is closed and so it is associated with a valid
+    // point.
+    e = _allocate_event(pt, type, ps_x, ps_y);
+  }
+  else {
+    events[index] = pair_res.first;
+
+    // The event associated with the given curve end already exists in the
+    // queue, so we just have to update it.
+    e = *(pair_res.first);
+    CGAL_assertion((e->parameter_space_in_x() == ps_x) &&
+                   (e->parameter_space_in_y() == ps_y));
+
+    e->set_attribute(type);
+  }
+
+  // If we are given a subcurve that the event represents one of its
+  // endpoints, update the event and the subcurve records accordingly.
+  // Note that this must be done before we actually insert the new event
+  // into the event queue.
+  _add_curve(e, sc, type);
+
+  // Insert the new event into the queue using the hint we got when we
+  // looked for it.
+  if (! exist)
+    events[index] = m_queue->insert_before(pair_res.first, e);
+
+  return (std::make_pair(e, !exist));
+}
+
 //-----------------------------------------------------------------------------
 // add a curve as a right curve or left curve when the event is created
 // or updated.
@@ -777,7 +897,7 @@ template <typename Vis>
 void No_intersection_surface_sweep_2<Vis>::_add_curve(Event* e, Subcurve* sc,
                                                       Attribute type)
 {
-  if (sc == NULL) return;
+  if (sc == nullptr) return;
 
   if (type == Event::LEFT_END) {
     sc->set_left_event(e);

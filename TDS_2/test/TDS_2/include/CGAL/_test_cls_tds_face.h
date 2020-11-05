@@ -7,14 +7,14 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
-// source        : 
+//
+// source        :
 // file          : include/CGAL/_test_cls_tds_face.h
-// revision      : 
-// revision_date : 
+// revision      :
+// revision_date :
 // author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)
 //
 // coordinator   : INRIA Sophia-Antipolis
@@ -51,7 +51,7 @@ _test_cls_tds_face( const Tds )
   Face_handle gh4 = tds.create_face(vh1,vh2,vh3);
   Face_handle gh5 = tds.create_face(vh1,vh2,vh3,fh1,fh2,fh3);
   Face_handle fh4 = tds.create_face();
-  
+
   // Test vertex()
   assert( gh4->vertex(0) == vh1 );
   assert( gh4->vertex(1) == vh2 );
@@ -59,7 +59,7 @@ _test_cls_tds_face( const Tds )
   assert( gh5->vertex(0) == vh1 );
   assert( gh5->vertex(1) == vh2 );
   assert( gh5->vertex(2) == vh3 );
-  
+
   // Test index(Vertex *)
   assert( gh4->index(vh1) == 0 );
   assert( gh4->index(vh2) == 1 );
@@ -67,7 +67,7 @@ _test_cls_tds_face( const Tds )
   assert( gh5->index(vh1) == 0 );
   assert( gh5->index(vh2) == 1 );
   assert( gh5->index(vh3) == 2 );
-      
+
   // Test has_vertex()
   assert( gh4->has_vertex(vh1) );
   assert( ! gh4->has_vertex(vh4) );
@@ -93,7 +93,7 @@ _test_cls_tds_face( const Tds )
   assert( fh3->vertex(0) == vh2 );
   assert( fh3->vertex(1) == vh1 );
   assert( fh3->vertex(2) == vh4 );
-  
+
   // Test set_vertices()
   gh5->set_vertices();
   assert( gh5->vertex(0) == Vertex_handle());
@@ -108,12 +108,12 @@ _test_cls_tds_face( const Tds )
   assert( gh5->neighbor(0) == fh1 );
   assert( gh5->neighbor(1) == fh2 );
   assert( gh5->neighbor(2) == fh3 );
-  
+
   // Test index(Face *)
   assert( gh5->index(fh1) == 0 );
   assert( gh5->index(fh2) == 1 );
   assert( gh5->index(fh3) == 2 );
-   
+
   // Test has_neighbor()
   assert( gh5->has_neighbor(fh1) );
   assert( ! gh5->has_neighbor(fh4) );
@@ -127,7 +127,7 @@ _test_cls_tds_face( const Tds )
   assert( fh1->neighbor(0) == gh4 );
   assert( fh2->neighbor(1) == gh4 );
   assert( fh3->neighbor(2) == gh4 );
-  
+
   // Test set_neighbors()
   gh5->set_neighbors();
   assert( gh5->neighbor(0) == Face_handle());
@@ -155,7 +155,7 @@ _test_cls_tds_face( const Tds )
 
   // Test is_valid
   assert( gh4->is_valid() );
-  
+
   // Test ccw() and cw()
   assert( fh1->ccw(0) == 1 );
   assert( fh1->ccw(1) == 2 );
@@ -180,10 +180,10 @@ _test_cls_tds_face( const Tds )
 
   Face_handle hh1=tds.create_face(vh1, Vertex_handle(), Vertex_handle());
   Face_handle hh2=tds.create_face(vh2, Vertex_handle(), Vertex_handle(),
-				  hh1, Face_handle(), Face_handle());
+                                  hh1, Face_handle(), Face_handle());
   hh1->set_neighbor(0, hh2);
   assert (hh1->dimension() == 0);
-  assert (hh1->is_valid()); 
+  assert (hh1->is_valid());
 
   assert(tds.mirror_vertex(gh1,0) == vh1);
   assert(tds.mirror_vertex(gh1,1) == vh1);

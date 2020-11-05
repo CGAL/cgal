@@ -159,7 +159,7 @@ get_corners(OutputIterator corners) const;
 Fills `curves` with the curves
 of the input domain.
 `curves` value type must be
-`CGAL::cpp11::tuple<Curve_index,std::pair<Point_3,%Index>,std::pair<Point_3,%Index> >`.
+`std::tuple<Curve_index,std::pair<Point_3,%Index>,std::pair<Point_3,%Index> >`.
 If the curve corresponding to an entry
 in `curves` is not a loop, the pair of associated points should
 belong to

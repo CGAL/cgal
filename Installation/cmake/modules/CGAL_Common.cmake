@@ -23,7 +23,7 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
   else()
     set( CMAKE_2_6_3_OR_ABOVE FALSE )
   endif()
-    
+
   if ( CGAL_BUILDING_LIBS )
     option(BUILD_SHARED_LIBS "Build shared libraries" ON)
     set(CGAL_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
@@ -34,7 +34,7 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
       message( STATUS "Building static libraries" )
     endif()
   endif()
-  
+
   if ( WIN32 )
     find_program(CMAKE_UNAME uname /bin /usr/bin /usr/local/bin )
     if(CMAKE_UNAME)
@@ -60,6 +60,5 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
   set( Eigen3_FIND_VERSION "3.1.0")
   # set use-file for Eigen3 (needed to have default solvers)
   set(EIGEN3_USE_FILE "UseEigen3")
-
 
 endif()

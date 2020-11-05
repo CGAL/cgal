@@ -33,7 +33,6 @@ int format_output(const char* lib, const char* container, const char* to, int n,
 struct std_tag {};
 struct cgal_tag {};
 
-#ifndef CGAL_CFG_NO_CPP0X_COPY_N
 template <typename ForwardIterator, typename Size, typename OutputIterator>
 inline double test(ForwardIterator it, Size n, OutputIterator result, int repeats, std_tag) {
   boost::timer timer;
@@ -41,7 +40,6 @@ inline double test(ForwardIterator it, Size n, OutputIterator result, int repeat
   for (int i = 0; i < repeats; ++i) { std::copy_n(it, n, result); }
   return (double)n*repeats/timer.elapsed()/1.0E6;
 }
-#endif
 
 template <typename ForwardIterator, typename Size, typename OutputIterator>
 inline double test(ForwardIterator it, Size n, OutputIterator result, int repeats, cgal_tag) {
@@ -73,7 +71,7 @@ int main(int argc, char* argv[]) {
   copy_mem copy_m = new int[n];
 
   //wiki markup header
-  std::cout << 
+  std::cout <<
     "{| \n"
     "! Library !! From Container !! To !! #Elements !! items/sec \n"
     "|- \n";
@@ -109,7 +107,7 @@ int main(int argc, char* argv[]) {
 
   vector2 v2(n);
   copy_mem2 copy_m2 = new non_trivial_cctor[n];
-  
+
 #ifndef CGAL_CFG_NO_CPP0X_COPY_N
   item_sec = test(v2.begin(), n, copy_m2, repeats, std_tag());
   format_output("stdlib", "vector<non_trivial_cctor>", "non_trivial_cctor*", n, item_sec);
@@ -121,7 +119,7 @@ int main(int argc, char* argv[]) {
 
   //wiki markup footer
   std::cout << "|}" << std::endl;
-  
+
 
 
   return EXIT_SUCCESS;

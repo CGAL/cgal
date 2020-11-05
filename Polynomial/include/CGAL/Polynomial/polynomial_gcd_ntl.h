@@ -1,20 +1,11 @@
 // Copyright (c) 2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Kerber   <mkerber@mpi-inf.mpg.de>
@@ -24,7 +15,7 @@
 // ============================================================================
 
 /*! \file CGAL/Polynomial/polynomial_gcd_ntl.h
- *   \brief special polynomial gcd function via NTL  
+ *   \brief special polynomial gcd function via NTL
  */
 
 #ifndef CGAL_POLYNOMIAL_GCD_NTL_H
@@ -53,25 +44,25 @@
 #include <NTL/ZZX.h>
 
 namespace CGAL{
-template <class A> class Polynomial; // fwd 
+template <class A> class Polynomial; // fwd
 
 template <typename Polynomial_d> class Polynomial_traits_d;
 
 } // namespace CGAL
 
 
-// This part forms the bridge to NTL to use the modular gcd algorithm. If 
-// NTL is not available, the usual strategy is applied. 
+// This part forms the bridge to NTL to use the modular gcd algorithm. If
+// NTL is not available, the usual strategy is applied.
 
 namespace CGAL {
 namespace internal {
 
 // Forward
-template <class NT> 
+template <class NT>
 Polynomial<NT> gcd_utcf(
         const Polynomial<NT>& FF1 ,
         const Polynomial<NT>& FF2 );
- 
+
 template<typename PolyInt>
 inline
 void polynomial_to_ntl(const PolyInt& p, NTL::ZZX& q) {
@@ -83,7 +74,7 @@ void polynomial_to_ntl(const PolyInt& p, NTL::ZZX& q) {
     ss << "]";
     ss >> q;
 }
-      
+
 template<typename PolyInt>
 inline
 void ntl_to_polynomial(const NTL::ZZX& q,PolyInt& p) {
@@ -105,19 +96,19 @@ void ntl_to_polynomial(const NTL::ZZX& q,PolyInt& p) {
 template<typename NT> Polynomial<NT>
 inline
 modular_NTL_gcd_for_univariate_integer_polynomials
-  (Polynomial<NT> p1, Polynomial<NT> p2) {     
+  (Polynomial<NT> p1, Polynomial<NT> p2) {
   //    std::cout<<" NTL GCD"<<std::endl;
-    
-    NTL::ZZX q1,q2,h;   
+
+    NTL::ZZX q1,q2,h;
     Polynomial<NT> g;
     internal::polynomial_to_ntl(p1,q1);
     internal::polynomial_to_ntl(p2,q2);
 #ifdef CGAL_MODULAR_GCD_TIMER
-    timer_ntl2.start(); 
+    timer_ntl2.start();
 #endif
     NTL::GCD(h,q1,q2);
 #ifdef CGAL_MODULAR_GCD_TIMER
-    timer_ntl2.stop(); 
+    timer_ntl2.stop();
 #endif
     internal::ntl_to_polynomial(h,g);
     return g;
@@ -126,7 +117,7 @@ modular_NTL_gcd_for_univariate_integer_polynomials
 template<typename NT> Polynomial<NT>
 inline
 canonical_modular_NTL_gcd_for_univariate_integer_polynomials
-  (Polynomial<NT> p1, Polynomial<NT> p2) {     
+  (Polynomial<NT> p1, Polynomial<NT> p2) {
   //    std::cout<<" NTL canonical GCD"<<std::endl;
   return CGAL::canonicalize(modular_NTL_gcd_for_univariate_integer_polynomials(p1,p2));
 }
@@ -134,17 +125,17 @@ canonical_modular_NTL_gcd_for_univariate_integer_polynomials
 
 #ifdef CGAL_USE_LEDA
 
-template <> 
+template <>
 inline
 CGAL::Polynomial<leda::integer>
 gcd_utcf_(const CGAL::Polynomial<leda::integer>& p1,
           const CGAL::Polynomial<leda::integer>& p2) {
-    CGAL::Polynomial<leda::integer> gcd = 
+    CGAL::Polynomial<leda::integer> gcd =
         internal::canonical_modular_NTL_gcd_for_univariate_integer_polynomials(p1,p2);
     return gcd;
 }
 
-template <> 
+template <>
 inline
 CGAL::Polynomial<leda::integer>
 gcd_(const CGAL::Polynomial<leda::integer>& p1,
@@ -156,7 +147,7 @@ gcd_(const CGAL::Polynomial<leda::integer>& p1,
 
 #ifdef CGAL_USE_CORE
 
-template <> 
+template <>
 inline
 Polynomial<CORE::BigInt>
 gcd_utcf_(const Polynomial<CORE::BigInt>& p1,
@@ -165,7 +156,7 @@ gcd_utcf_(const Polynomial<CORE::BigInt>& p1,
     return gcd;
 }
 
-template <> 
+template <>
 inline
 Polynomial<CORE::BigInt>
 gcd_(const Polynomial<CORE::BigInt>& p1,

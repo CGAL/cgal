@@ -5,7 +5,6 @@
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 
 #include <boost/property_map/property_map.hpp>
-#include <boost/foreach.hpp>
 #include <iostream>
 #include <fstream>
 #include <map>
@@ -38,11 +37,11 @@ int main(int argc, char* argv[])
   faces_size_type num = PMP::connected_components(mesh,fccmap);
 
   std::cerr << "- The graph has " << num << " connected components (face connectivity)" << std::endl;
- 
+
   Filtered_graph ffg(mesh, 0, fccmap);
 
   std::cout << "The faces in component 0 are:" << std::endl;
-  BOOST_FOREACH(boost::graph_traits<Filtered_graph>::face_descriptor f, faces(ffg)){
+  for(boost::graph_traits<Filtered_graph>::face_descriptor f : faces(ffg)){
     std::cout  << f << std::endl;
   }
 
@@ -52,9 +51,9 @@ int main(int argc, char* argv[])
     components.push_back(1);
 
     ffg.set_selected_faces(components, fccmap);
-    
+
     std::cout << "The faces in components 0 and 1 are:" << std::endl;
-    BOOST_FOREACH(Filtered_graph::face_descriptor f, faces(ffg)){
+    for(Filtered_graph::face_descriptor f : faces(ffg)){
     std::cout  << f << std::endl;
     }
   }

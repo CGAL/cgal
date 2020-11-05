@@ -1,20 +1,11 @@
 // Copyright (c) 2012  GeometryFactory Sarl (France)
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau
@@ -42,17 +33,17 @@
 // source of the segment, and for t=1 that is its target), where the line
 // intersects the three slabs of the bounding box.
 
-// For a segment, the intersection is non-empty iff 
+// For a segment, the intersection is non-empty iff
 //    [t1, t2] intersects [0, 1].
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
 
   template <typename FT, bool bounded_0, bool use_static_filters = false>
-  struct Do_intersect_bbox_segment_aux_is_greater 
+  struct Do_intersect_bbox_segment_aux_is_greater
   {
     typedef typename Same_uncertainty<bool, FT>::type result_type;
 
@@ -125,7 +116,7 @@ namespace internal {
   }; // end specialization Do_intersect_bbox_segment_aux_is_greater<FT, true>
 
 
-  
+
   template <typename FT,
             typename BFT,
             bool bounded_0,
@@ -409,7 +400,7 @@ namespace internal {
     return true;
   }
 
-  
+
   template <typename FT,
             bool bounded_0,
             bool bounded_1,
@@ -435,7 +426,7 @@ namespace internal {
 
 
 
-  
+
   template <class K>
   bool do_intersect(const typename K::Segment_3& segment,
     const CGAL::Bbox_3& bbox,

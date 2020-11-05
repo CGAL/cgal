@@ -7,7 +7,6 @@
 #include <CGAL/random_polygon_2.h>
 
 #include <iostream>
-#include <boost/foreach.hpp>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef Kernel::Segment_2 Segment_2;
@@ -96,7 +95,7 @@ void print_polygons(std::ostream& out, const Polygon_set_2& polygon_set)
 {
   std::vector<Polygon_with_holes_2> polygons_wh(polygon_set.number_of_polygons_with_holes());
   polygon_set.polygons_with_holes(&polygons_wh[0]);
-  BOOST_FOREACH(Polygon_with_holes_2& polygon_wh, polygons_wh)
+  for(Polygon_with_holes_2& polygon_wh : polygons_wh)
   {
     print_polygon(out, polygon_wh.outer_boundary());
     for(Polygon_with_holes_2::Hole_const_iterator it=polygon_wh.holes_begin();
@@ -111,7 +110,7 @@ int main( int  argc , char ** argv )
 {
   double scale_factor = argc>1 ? atof(argv[1]):1;
   double sqrt_scale_factor = std::sqrt(scale_factor);
-  
+
   //testing grid rectangle intersection
   numLines  = 100 * sqrt_scale_factor;
   numArrays = 2;
@@ -125,7 +124,7 @@ int main( int  argc , char ** argv )
   build_segments(all_segments);
 
   std::ofstream out("polygons_grid.cgal");
-  BOOST_FOREACH(const Segment_2& s, all_segments)
+  for(const Segment_2& s : all_segments)
   {
     out   << "2 " << s.source() << " 0"
           << "  " << s.target() << " 0\n";
@@ -214,9 +213,9 @@ int main( int  argc , char ** argv )
   std::ofstream out("polygons_disjoint.cgal");
   std::vector<Polygon_2> polygons;
   polygons.reserve(grid_size*grid_size);
-  
+
   double epsilon = 1./(2* grid_size);
-  
+
   for (int i=0;i<grid_size;++i)
     for (int j=0;j<grid_size; ++j)
     {

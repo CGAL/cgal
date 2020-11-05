@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Francois Rebufat (Francois.Rebufat@sophia.inria.fr)
@@ -35,46 +26,46 @@ _test_vertex_iterator( const Triangulation &T )
     size_type n = 0;
 
     for (Vertex_iterator vit = T.vertices_begin(); vit != T.vertices_end(); ++vit)
-	{
-	  Vertex_handle vh = vit; // Test the conversion.
-	  n++;
-	  const Vertex & v = *vit; // Test operator*;
-	  Cell_handle c = vit->cell(); // Test operator->;
-	  (void) vh;
-	  (void) v;
-	  (void) c;
-	}
+        {
+          Vertex_handle vh = vit; // Test the conversion.
+          n++;
+          const Vertex & v = *vit; // Test operator*;
+          Cell_handle c = vit->cell(); // Test operator->;
+          (void) vh;
+          (void) v;
+          (void) c;
+        }
     assert( n == T.tds().number_of_vertices() );
     n=0;
     for (Vertex_iterator vit = T.vertices_begin();
-		    vit != T.vertices_end(); ++vit)
+                    vit != T.vertices_end(); ++vit)
     {
-	  Vertex_handle vh = vit; // Test the conversion.
-	  const Vertex & v = *vit; // Test operator*;
-	  Cell_handle c = vit->cell(); // Test operator->;
-	  n++;
-	  (void) vh;
-	  (void) v;
-	  (void) c;
+          Vertex_handle vh = vit; // Test the conversion.
+          const Vertex & v = *vit; // Test operator*;
+          Cell_handle c = vit->cell(); // Test operator->;
+          n++;
+          (void) vh;
+          (void) v;
+          (void) c;
     }
     assert( n == T.tds().number_of_vertices() );
 
     // Test Backward-ness of the iterators.
     n=0;
     for (Vertex_iterator vit = T.vertices_end(); vit != T.vertices_begin(); --vit)
-	{
-	  Vertex_handle vh = vit; // Test the conversion.
-	  (void) vh;
-	  n++;
-	}
+        {
+          Vertex_handle vh = vit; // Test the conversion.
+          (void) vh;
+          n++;
+        }
     assert( n == T.tds().number_of_vertices() );
     n=0;
     for (Vertex_iterator vit = T.vertices_end();
-		    vit != T.vertices_begin(); --vit)
+                    vit != T.vertices_begin(); --vit)
     {
-	  Vertex_handle vh = vit; // Test the conversion.
-	  (void) vh;
-	  n++;
+          Vertex_handle vh = vit; // Test the conversion.
+          (void) vh;
+          n++;
     }
     assert( n == T.tds().number_of_vertices() );
 
@@ -95,27 +86,27 @@ _test_unique_vertex_iterator( const Triangulation &T )
     size_type n = 0;
 
     for (Unique_vertex_iterator ovit = T.unique_vertices_begin();
-	 ovit != T.unique_vertices_end(); ++ovit)
-	{
-	  Vertex_handle vh = ovit; // Test the conversion.
-	  n++;
-	  const Vertex & v = *ovit; // Test operator*;
-	  Cell_handle c = ovit->cell(); // Test operator->;
-	  (void) vh;
-	  (void) v;
-	  (void) c;
-	}
+         ovit != T.unique_vertices_end(); ++ovit)
+        {
+          Vertex_handle vh = ovit; // Test the conversion.
+          n++;
+          const Vertex & v = *ovit; // Test operator*;
+          Cell_handle c = ovit->cell(); // Test operator->;
+          (void) vh;
+          (void) v;
+          (void) c;
+        }
     assert( n == T.number_of_vertices() );
 
     // Test Backward-ness of the iterators.
     n=0;
     for (Unique_vertex_iterator ovit = T.unique_vertices_end();
-	 ovit != T.unique_vertices_begin(); --ovit)
-	{
-	  Vertex_handle vh = ovit; // Test the conversion.
-	  (void) vh;
-	  n++;
-	}
+         ovit != T.unique_vertices_begin(); --ovit)
+        {
+          Vertex_handle vh = ovit; // Test the conversion.
+          (void) vh;
+          n++;
+        }
     assert( n == T.number_of_vertices() );
 
     return n;
@@ -201,28 +192,28 @@ _test_triangulation_iterator( const Triangulation &T )
   for (int i=0 ; i<4 ; i++) {
     Iterator_type it = Iterator_type(i);
     for (T4it = T.periodic_tetrahedra_begin(it);
-	 T4it != T.periodic_tetrahedra_end(it); ++T4it) {
+         T4it != T.periodic_tetrahedra_end(it); ++T4it) {
       const Periodic_tetrahedron & t = *T4it; // Test operator*.
       const Periodic_point p = T4it->at(0); // Test operator->.
       (void) t;
       (void) p;
     }
     for (T3it = T.periodic_triangles_begin(it);
-	 T3it != T.periodic_triangles_end(it); ++T3it) {
+         T3it != T.periodic_triangles_end(it); ++T3it) {
       const Periodic_triangle & t = *T3it; // Test operator*.
       const Periodic_point p = T3it->at(0); // Test operator->.
       (void) t;
       (void) p;
     }
-    for (Sit = T.periodic_segments_begin(it); 
-	 Sit != T.periodic_segments_end(it); ++Sit) {
+    for (Sit = T.periodic_segments_begin(it);
+         Sit != T.periodic_segments_end(it); ++Sit) {
       const Periodic_segment & s = *Sit; // Test operator*.
       const Periodic_point p = Sit->at(0); // Test operator->.
       (void) s;
       (void) p;
     }
     for (Pit = T.periodic_points_begin(it);
-	 Pit != T.periodic_points_end(it); ++Pit) {
+         Pit != T.periodic_points_end(it); ++Pit) {
       const Periodic_point & pp = *Pit; // Test operator*.
       const typename Triangulation::Point p = Pit->first; // Test operator->.
       (void) pp;
@@ -237,13 +228,13 @@ _test_triangulation_iterator( const Triangulation &T )
   for (int i=0 ; i<4 ; i++) {
     Iterator_type it = Iterator_type(i);
     for (T4it = T.periodic_tetrahedra_end(it);
-	 T4it != T.periodic_tetrahedra_begin(it); --T4it) ;
+         T4it != T.periodic_tetrahedra_begin(it); --T4it) ;
     for (T3it = T.periodic_triangles_end(it);
-	 T3it != T.periodic_triangles_begin(it); --T3it) ;
+         T3it != T.periodic_triangles_begin(it); --T3it) ;
     for (Sit = T.periodic_segments_end(it);
-	 Sit != T.periodic_segments_begin(it); --Sit) ;
+         Sit != T.periodic_segments_begin(it); --Sit) ;
     for (Pit = T.periodic_points_end(it);
-	 Pit != T.periodic_points_begin(it); --Pit) ;
+         Pit != T.periodic_points_begin(it); --Pit) ;
   }
 
   assert((n-m+f-t)==0);

@@ -5,7 +5,6 @@
 #include <iostream>
 #include <fstream>
 
-#include <boost/foreach.hpp>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point_3;
@@ -18,7 +17,7 @@ int main(int argc, char* argv[])
 {
   Triangle_mesh tm;
   const char* filename = (argc > 1) ? argv[1] : "./data/elephant.off";
-  std::ifstream input(filename);  
+  std::ifstream input(filename);
   if (!input || !(input >> tm) || tm.is_empty()) {
     std::cerr << "Not a valid off file." << std::endl;
     return 1;
@@ -28,11 +27,11 @@ int main(int argc, char* argv[])
   Vertex_distance_map vertex_distance = tm.add_property_map<vertex_descriptor, double>("v:distance", 0).first;
 
   vertex_descriptor source = *(vertices(tm).first);
-  
+
   CGAL::Heat_method_3::estimate_geodesic_distances(tm, vertex_distance, source) ;
 
   std::cout << "Source vertex " << source << " at: " << tm.point(source) << std::endl;
-  BOOST_FOREACH(vertex_descriptor vd , vertices(tm)){
+  for(vertex_descriptor vd : vertices(tm)){
     std::cout << vd << " ("<< tm.point(vd) << ")"
               <<  " is at distance " << get(vertex_distance, vd) << std::endl;
   }

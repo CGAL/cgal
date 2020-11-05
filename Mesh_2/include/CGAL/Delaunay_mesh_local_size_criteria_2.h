@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -49,7 +40,7 @@ private:
   Geom_traits traits;
 
 public:
-  Delaunay_mesh_local_size_criteria_2(const double aspect_bound = 0.125, 
+  Delaunay_mesh_local_size_criteria_2(const double aspect_bound = 0.125,
                                       const double size_bound = 0,
                                       const bool is_local_size = false,
                                       const Segment s = Segment(),
@@ -60,13 +51,13 @@ public:
   inline
   Segment segment() const { return _s; }
 
-  inline 
+  inline
   void set_segment(const Segment s) { _s = s; }
 
   inline
   bool is_local_size() const { return local; }
 
-  inline 
+  inline
   void set_local_size(bool local_size) { local = local_size; }
 
   class Is_bad: public Base::Is_bad
@@ -88,9 +79,9 @@ public:
 
   public:
     Is_bad(const double aspect_bound,
-	   const double size_bound,
-	   const bool l,
-	   const Segment_2 _s,
+           const double size_bound,
+           const bool l,
+           const Segment_2 _s,
            const Geom_traits& traits)
       : Base::Is_bad(aspect_bound, size_bound, traits), local(l), s(_s) {}
 
@@ -98,32 +89,32 @@ public:
     {
       return Base::Is_bad::operator()(q);
     }
-    
+
     Mesh_2::Face_badness operator()(const Face_handle& fh,
-				    Quality& q) const
+                                    Quality& q) const
     {
       if(!local)
-	return Baseclass::operator()(fh,q);
+        return Baseclass::operator()(fh,q);
       else
-	{
-	  typename Geom_traits::Do_intersect_2 do_intersect = 
-	    Geom_traits().do_intersect_2_object();
-	  
-	  Mesh_2::Face_badness is_non_locally_bad = 
-	    Baseclass::operator()(fh,q);
+        {
+          typename Geom_traits::Do_intersect_2 do_intersect =
+            Geom_traits().do_intersect_2_object();
+
+          Mesh_2::Face_badness is_non_locally_bad =
+            Baseclass::operator()(fh,q);
 
           const Point_2& a = fh->vertex(0)->point();
           const Point_2& b = fh->vertex(1)->point();
           const Point_2& c = fh->vertex(2)->point();
 
-	  if(do_intersect(Triangle_2(a,b,c), s))
-	    return is_non_locally_bad;
-	  else
-	    if( q.sine() < this->B )
-	      return Mesh_2::BAD;
-	    else
-	      return Mesh_2::NOT_BAD;
-	}
+          if(do_intersect(Triangle_2(a,b,c), s))
+            return is_non_locally_bad;
+          else
+            if( q.sine() < this->B )
+              return Mesh_2::BAD;
+            else
+              return Mesh_2::NOT_BAD;
+        }
     }
   };
 

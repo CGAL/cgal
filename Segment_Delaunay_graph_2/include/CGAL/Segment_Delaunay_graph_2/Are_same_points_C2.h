@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -58,14 +49,14 @@ private:
   {
     return
       ( are_same(s.source(), t.source()) &&
-	are_same(s.target(), t.target()) ) ||
+        are_same(s.target(), t.target()) ) ||
       ( are_same(s.source(), t.target()) &&
-	are_same(s.target(), t.source()) );
+        are_same(s.target(), t.source()) );
   }
 
   Boolean   predicate(const Site_2& p, const Site_2& q, const Tag_false&) const
   {
-    return are_same(p.point(), q.point()); 
+    return are_same(p.point(), q.point());
   }
 
   Boolean   predicate(const Site_2& p, const Site_2& q, const Tag_true&) const
@@ -75,8 +66,8 @@ private:
       Site_2 t[2] = { q.supporting_site(0), q.supporting_site(1) };
 
       if (  ( are_same(s[0], t[0]) && are_same(s[1], t[1]) ) ||
-	    ( are_same(s[0], t[1]) && are_same(s[1], t[0]) )  ) {
-	return true;
+            ( are_same(s[0], t[1]) && are_same(s[1], t[0]) )  ) {
+        return true;
       }
     }
 

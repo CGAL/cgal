@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Baruch Zukerman     <baruchzu@post.tau.ac.il>
 
@@ -30,7 +21,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_linear_traits_2.h>
-#include <CGAL/number_utils.h> 
+#include <CGAL/number_utils.h>
 #include <CGAL/Envelope_3/Envelope_base.h>
 #include <CGAL/Envelope_3/Env_plane_traits_3_functions.h>
 
@@ -63,7 +54,7 @@ public:
   typedef typename Base::Bottom_side_category  Bottom_side_category;
   typedef typename Base::Top_side_category     Top_side_category;
   typedef typename Base::Right_side_category   Right_side_category;
-  
+
   class Is_vertical_3
   {
   public:
@@ -85,7 +76,7 @@ public:
     Line_2               m_line;
     bool                 m_is_all_plane; // true -> all plane, false -> halfplane
     bool                 m_is_vert;
-  
+
   public:
     _Env_plane()
     {}
@@ -116,7 +107,7 @@ public:
       return m_plane;
     }
 
-   
+
     operator Plane_3 () const
     {
       return (m_plane);
@@ -159,7 +150,7 @@ public:
   class Compare_z_at_xy_3
   {
   public:
-  
+
     Comparison_result operator()(const Point_2& p,
                                  const Xy_monotone_surface_3& h1,
                                  const Xy_monotone_surface_3& h2) const
@@ -167,9 +158,9 @@ public:
       const Plane_3& plane1 = h1.plane();
       const Plane_3& plane2 = h2.plane();
       Sign sign_of_c1c2 = CGAL::sign(plane1.c() * plane2.c());
-      Sign sign_of_expr = 
+      Sign sign_of_expr =
         CGAL::sign ((p.x()*plane1.a() + p.y()*plane1.b() +
-                     plane1.d())*plane2.c() - 
+                     plane1.d())*plane2.c() -
                     (p.x()*plane2.a() + p.y()*plane2.b() +
                      plane2.d())*plane1.c());
       int i = -1 * static_cast<int>(sign_of_c1c2) *
@@ -193,19 +184,19 @@ public:
           CGAL_assertion(cv.is_line());
           p = k.construct_point_on_2_object()(cv.line(), 1);
         }
-     
-      return this->operator()(p, h1, h2); 
+
+      return this->operator()(p, h1, h2);
     }
 
     Comparison_result operator()(const Xy_monotone_surface_3& h1,
                                  const Xy_monotone_surface_3& h2) const
     {
       CGAL_assertion(h1.is_all_plane() && h2.is_all_plane());
-     
+
       const Plane_3& p1 = h1.plane();
       const Plane_3& p2 = h2.plane();
       const FT& res = p2.d()*p1.c() - p1.d()*p2.c();
-      int i = static_cast<int>(CGAL::sign(p1.c()*p2.c())) * 
+      int i = static_cast<int>(CGAL::sign(p1.c()*p2.c())) *
         static_cast<int>(CGAL::sign (res));
       return static_cast<Comparison_result>(i);
     }
@@ -229,14 +220,14 @@ public:
       const FT& a1 = plane1.a(),
         b1 = plane1.b(),
         c1 = plane1.c();
-      
+
       const FT& a2 = plane2.a(),
         b2 = plane2.b(),
         c2 = plane2.c();
 
       // our line is a3*x + b3*y + c3 = 0
       // it is assumed that the planes intersect over this line
-      const Line_2& line = cv.supp_line(); 
+      const Line_2& line = cv.supp_line();
       const FT& a3 = line.a(),
         b3 = line.b(),
         c3 = line.c();
@@ -269,22 +260,22 @@ public:
       // since detA>0 we can omit it.
       //
       Sign s1 = CGAL_NTS sign((a2*a3+b2*b3)/c2-(a1*a3+b1*b3)/c1);
-      
+
       // We only need to make sure that w is in the correct direction
       // (going from down to up)
       // the original segment endpoints p1=(x1,y1) and p2=(x2,y2)
       // are transformed to (v1,w1) and (v2,w2), so we need that w2 > w1
       // (otherwise the result should be multiplied by -1)
-      
+
       Kernel k;
       Point_2 p1 (k.construct_point_on_2_object()(line, 0));
       Point_2 p2 (k.construct_point_on_2_object()(line, 1));
-      
+
       if(k.compare_xy_2_object()(p1, p2) == LARGER)
         std::swap(p1, p2);
 
       CGAL_assertion(k.compare_xy_2_object()(p1, p2) == SMALLER);
-      
+
       const FT& x1 = p1.x(),
         y1 = p1.y(),
         x2 = p2.x(),
@@ -339,7 +330,7 @@ public:
                                           ON_ORIENTED_BOUNDARY));
         return o;
       }
-      
+
       // s is half-plane
       Kernel k;
       const Point_2& p1 = k.construct_point_on_2_object()(s.line(), 0);
@@ -353,7 +344,7 @@ public:
     }
   };
 
-  Construct_projected_boundary_2 
+  Construct_projected_boundary_2
   construct_projected_boundary_2_object() const
   {
     return Construct_projected_boundary_2();
@@ -373,13 +364,13 @@ public:
 
       const Plane_3& h1 = s1.plane();
       const Plane_3& h2 = s2.plane();
-      
+
       if(s1.is_vertical() && s2.is_vertical())
       {
         Line_2 l1(h1.a(), h1.b(), h1.d());
         Line_2 l2(h2.a(), h2.b(), h2.d());
         Object obj = k.intersect_2_object()(l1, l2);
-        
+
         Point_2 p;
         if(assign(p, obj))
           *o++ = make_object(p);
@@ -388,7 +379,7 @@ public:
         // nothing.
         return o;
       }
-       
+
       if(s1.is_all_plane() && s2.is_all_plane())
       {
         Object obj = k.intersect_3_object()(h1, h2);
@@ -446,7 +437,7 @@ public:
       }
 
       CGAL_assertion(!s2.is_all_plane() && !s2.is_all_plane());
-      Object obj = 
+      Object obj =
         half_plane_half_plane_proj_intersection(h1, s1.line(), h2, s2.line(), k);
 
       if(obj.is_empty())

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -42,8 +33,8 @@
 #include <CGAL/Eigen_solver_traits.h>
 #endif
 
-#include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
+#include <boost/type_traits/is_same.hpp>
 #include <boost/unordered_set.hpp>
 
 /// \file Fixed_border_parameterizer_3.h
@@ -67,8 +58,8 @@ namespace Surface_mesh_parameterization {
 /// Nevertheless, it implements most of the parameterization algorithm `parameterize()`.
 /// Subclasses are *Strategies* \cgalCite{cgal:ghjv-dpero-95} that modify the behavior of this algorithm:
 /// - They provide the template parameters `BorderParameterizer_` and `SolverTraits_`.
-/// - They implement `compute_w_ij()` to compute w_ij = (i, j), coefficient of matrix A
-///   for j neighbor vertex of i.
+/// - They implement `compute_w_ij()` to compute `w_ij`, the `(i,j)`-coefficient of matrix `A`
+///   for `j` neighbor vertex of `i`.
 ///
 // @todo `Fixed_border_parameterizer_3` should remove border vertices
 // from the linear systems in order to have a symmetric positive definite
@@ -97,7 +88,6 @@ namespace Surface_mesh_parameterization {
 ///                           Eigen::IncompleteLUT< double > > >
 /// \endcode
 ///
-/// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 /// \sa `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 /// \sa `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 /// \sa `CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
@@ -114,6 +104,11 @@ public:
     BorderParameterizer_,
     Circular_border_arc_length_parameterizer_3<TriangleMesh_> >::type  Border_parameterizer;
 
+  #if !defined(CGAL_EIGEN3_ENABLED)
+  CGAL_static_assertion_msg(!(boost::is_same<SolverTraits_, Default>::value),
+                            "Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
+  #endif
+
   typedef typename Default::Get<
     SolverTraits_,
   #if defined(CGAL_EIGEN3_ENABLED)
@@ -121,38 +116,47 @@ public:
       Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
                       Eigen::IncompleteLUT<double> > >
   #else
-    #pragma message("Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
     SolverTraits_ // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
   >::type                                                     Solver_traits;
 #else
+  /// Border parameterizer type
   typedef Border_parameterizer_                               Border_parameterizer;
+
+  /// Solver traits type
   typedef SolverTraits_                                       Solver_traits;
 #endif
 
+  /// Triangle mesh type
+  typedef TriangleMesh_                                       Triangle_mesh;
+
   typedef TriangleMesh_                                       TriangleMesh;
+
+  /// Mesh vertex type
+  typedef typename boost::graph_traits<Triangle_mesh>::vertex_descriptor    vertex_descriptor;
+
+  /// Mesh halfedge type
+  typedef typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor  halfedge_descriptor;
+
+  /// Solver vector type
+  typedef typename Solver_traits::Vector                      Vector;
+
+  /// Solver matrix type
+  typedef typename Solver_traits::Matrix                      Matrix;
 
 // Private types
 private:
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
-
-  typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
-  typedef CGAL::Vertex_around_face_circulator<TriangleMesh> vertex_around_face_circulator;
+  typedef CGAL::Vertex_around_target_circulator<Triangle_mesh>      vertex_around_target_circulator;
 
 // Protected types
 protected:
   // Traits subtypes:
-  typedef typename internal::Kernel_traits<TriangleMesh>::Kernel    Kernel;
-  typedef typename internal::Kernel_traits<TriangleMesh>::PPM       PPM;
+  typedef typename internal::Kernel_traits<Triangle_mesh>::Kernel   Kernel;
+  typedef typename internal::Kernel_traits<Triangle_mesh>::PPM      PPM;
   typedef typename Kernel::FT                                       NT;
   typedef typename Kernel::Point_2                                  Point_2;
   typedef typename Kernel::Point_3                                  Point_3;
   typedef typename Kernel::Vector_3                                 Vector_3;
-
-  // Solver traits subtypes:
-  typedef typename Solver_traits::Vector                            Vector;
-  typedef typename Solver_traits::Matrix                            Matrix;
 
 // Public operations
 public:
@@ -169,20 +173,20 @@ public:
 
   // Default copy constructor and operator =() are fine
 
-  /// Compute a one-to-one mapping from a triangular 3D surface mesh
+  /// computes a one-to-one mapping from a triangular 3D surface mesh
   /// to a piece of the 2D space.
   /// The mapping is piecewise linear (linear in each triangle).
-  /// The result is the (u,v) pair image of each vertex of the 3D surface.
+  /// The result is the `(u,v)` pair image of each vertex of the 3D surface.
   ///
   /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
-  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
-  ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
+  ///         %Point_2 (type deduced from `Triangle_mesh` using `Kernel_traits`)
   ///         as value type.
   /// \tparam VertexIndexMap must be a model of `ReadablePropertyMap` with
-  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
   ///         a unique integer as value type.
   /// \tparam VertexParameterizedMap must be a model of `ReadWritePropertyMap` with
-  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
   ///         a Boolean as value type.
   ///
   /// \param mesh a triangulated surface.
@@ -198,18 +202,22 @@ public:
   template <typename VertexUVmap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
-  Error_code parameterize(TriangleMesh& mesh,
+  Error_code parameterize(Triangle_mesh& mesh,
                           halfedge_descriptor bhd,
                           VertexUVmap uvmap,
                           VertexIndexMap vimap,
                           VertexParameterizedMap vpmap)
   {
+    CGAL_precondition(is_valid_polygon_mesh(mesh));
+    CGAL_precondition(is_triangle_mesh(mesh));
+    CGAL_precondition(bhd != boost::graph_traits<Triangle_mesh>::null_halfedge() && is_border(bhd, mesh));
+
     Error_code status = OK;
 
     typedef boost::unordered_set<vertex_descriptor> Vertex_set;
     Vertex_set vertices;
 
-    internal::Containers_filler<TriangleMesh> fc(mesh, vertices);
+    internal::Containers_filler<Triangle_mesh> fc(mesh, vertices);
     Polygon_mesh_processing::connected_component(
                                         face(opposite(bhd, mesh), mesh),
                                         mesh,
@@ -244,12 +252,12 @@ public:
     // w_ij for each neighbor j; then w_ii = - sum of w_ijs
     boost::unordered_set<vertex_descriptor> main_border;
 
-    BOOST_FOREACH(vertex_descriptor v, vertices_around_face(bhd,mesh)){
+    for(vertex_descriptor v : vertices_around_face(bhd,mesh)){
       main_border.insert(v);
     }
 
     int count = 0;
-    BOOST_FOREACH(vertex_descriptor v, vertices){
+    for(vertex_descriptor v : vertices){
       // inner vertices only
       if(main_border.find(v) == main_border.end()){
         // Compute the line i of matrix A for i inner vertex
@@ -278,7 +286,7 @@ public:
     CGAL_assertion(Dv == 1.0);
 
     // Copy Xu and Xv coordinates into the (u,v) pair of each vertex
-    BOOST_FOREACH(vertex_descriptor v, vertices)
+    for(vertex_descriptor v : vertices)
     {
       // inner vertices only
       if(main_border.find(v) == main_border.end()){
@@ -299,16 +307,16 @@ public:
 
 // Protected operations
 protected:
-  /// Initialize A, Bu and Bv after border parameterization.
+  /// initializes `A`, `Bu` and `Bv` after border parameterization.
   /// Fill the border vertices' lines in both linear systems:
   /// "u = constant" and "v = constant".
   ///
   /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
-  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
-  ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
+  ///         %Point_2 (type deduced from `Triangle_mesh` using `Kernel_traits`)
   ///         as value type.
   /// \tparam VertexIndexMap must be a model of `ReadablePropertyMap` with
-  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
   ///         a unique integer as value type.
   ///
   /// \param A the matrix in both linear system
@@ -320,16 +328,16 @@ protected:
   /// \param vimap an instanciation of the class `VertexIndexMap`.
   ///
   /// \pre Vertices must be indexed (`vimap` must be initialized).
-  /// \pre A, Bu and Bv must be allocated.
+  /// \pre `A`, `Bu`, and `Bv` must be allocated.
   /// \pre Border vertices must be parameterized.
   template <typename VertexUVmap, typename VertexIndexMap>
   void initialize_system_from_mesh_border(Matrix& A, Vector& Bu, Vector& Bv,
-                                          const TriangleMesh& mesh,
+                                          const Triangle_mesh& mesh,
                                           halfedge_descriptor bhd,
                                           VertexUVmap uvmap,
                                           VertexIndexMap vimap) const
   {
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)){
+    for(halfedge_descriptor hd : halfedges_around_face(bhd, mesh)){
       // Get vertex index in sparse linear system
       int index = get(vimap, target(hd, mesh));
       // Write a diagonal coefficient of A
@@ -342,16 +350,15 @@ protected:
     }
   }
 
-  /// Compute w_ij, coefficient of matrix A for j neighbor vertex of i.
+  /// computes `w_ij`, coefficient of matrix `A` for `j` neighbor vertex of `i`.
   /// Implementation note: Subclasses must at least implement compute_w_ij().
   ///
   /// \param mesh a triangulated surface.
   /// \param main_vertex_v_i the vertex of `mesh` with index `i`
   /// \param neighbor_vertex_v_j the vertex of `mesh` with index `j`
-  virtual NT compute_w_ij(const TriangleMesh& mesh,
+  virtual NT compute_w_ij(const Triangle_mesh& mesh,
                           vertex_descriptor main_vertex_v_i,
-                          vertex_around_target_circulator neighbor_vertex_v_j) const
-  = 0;
+                          Vertex_around_target_circulator<Triangle_mesh> neighbor_vertex_v_j) const = 0;
 
   /// Compute the line i of matrix A for i inner vertex:
   /// - call compute_w_ij() to compute the A coefficient w_ij for each neighbor v_j.
@@ -366,7 +373,7 @@ protected:
   Error_code setup_inner_vertex_relations(Matrix& A,
                                           Vector&,
                                           Vector&,
-                                          const TriangleMesh& mesh,
+                                          const Triangle_mesh& mesh,
                                           vertex_descriptor vertex,
                                           VertexIndexMap vimap) const
   {

@@ -13,11 +13,11 @@ public:
 /// @{
 
 /*!
-computes the midpoint of the segment 
-\f$ pq\f$.\pre `p` and `q` have the same dimension. 
-*/ 
-Kernel_d::Point_d operator()(const Kernel_d::Point_d& 
-p, const Kernel_d::Point_d& q); 
+computes the midpoint of the segment
+\f$ pq\f$.\pre `p` and `q` have the same dimension.
+*/
+Kernel_d::Point_d operator()(const Kernel_d::Point_d&
+p, const Kernel_d::Point_d& q);
 
 /// @}
 

@@ -1,14 +1,14 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_3D_Polyhedral_Surfaces
 \anchor chapterPolyhedron
 
 \author Lutz Kettner
 \cgalAutoToc
 
-\section sectionPolyIntro Introduction 
+\section sectionPolyIntro Introduction
 
 Polyhedral surfaces in three dimensions are composed of vertices,
 edges, facets and an incidence relationship on them. The organization
@@ -88,9 +88,9 @@ that it is easy to ignore border edges and work only with polyhedra.
 The polyhedral surface is based on the highly flexible design of the
 halfedge data structure. Examples for this flexibility can be found in
 Section \ref PolyhedronExtending and in Section \ref  HalfedgeDSExample
-"Examples" of the chapter on the halfedge data structure. 
+"Examples" of the chapter on the halfedge data structure.
 This design is not a prerequisite to understand the following examples.
-See also the Section \ref sectionPolyAdvanced below for some advanced 
+See also the Section \ref sectionPolyAdvanced below for some advanced
 examples.
 
 \subsection PolyhedronFirstExampleUsingDefaults First Example Using Defaults
@@ -100,14 +100,14 @@ class. It creates a tetrahedron and stores the reference to one of its
 halfedges in a `Halfedge_handle`. Handles, also know as
 <I>trivial iterators</I>, are used to keep references to halfedges,
 vertices, or facets for future use. There is also a `Halfedge_iterator`
-type for enumerating halfedges. Such an iterator type can be used 
+type for enumerating halfedges. Such an iterator type can be used
 wherever a handle is required. Respective `Halfedge_const_handle` and
 `Halfedge_const_iterator` for a constant polyhedron and similar
 handles and iterators with `Vertex_` and `Facet_` prefix
 are provided too.
 
 The example continues with a test if the halfedge
-actually refers to a tetrahedron. This test checks the connected 
+actually refers to a tetrahedron. This test checks the connected
 component referred to by the halfedge `h` and not the polyhedral
 surface as a whole. This examples works only on the combinatorial
 level of a polyhedral surface. The next example adds the geometry.
@@ -119,15 +119,15 @@ level of a polyhedral surface. The next example adds the geometry.
 We add geometry to the our construction of a tetrahedron. Four points
 are passed as arguments to the construction. This example demonstrates
 in addition the use of the vertex iterator and the access to the point
-in the vertices. Note the natural access notation 
+in the vertices. Note the natural access notation
 `v->`\link CGAL::Polyhedron_3::Vertex::point() `point()`\endlink.
 Similarly, all information stored in a vertex, halfedge, and facet can
 be accessed with a member function given a handle or iterator. For
-example, given a halfedge handle `h` we can write 
+example, given a halfedge handle `h` we can write
 `h->`\link CGAL::Polyhedron_3::Halfedge::next() `next()`\endlink
-to get a halfedge handle to the next halfedge, 
+to get a halfedge handle to the next halfedge,
 `h->`\link CGAL::Polyhedron_3::Halfedge::opposite() `opposite()`\endlink for
-the opposite halfedge, 
+the opposite halfedge,
 `h->`\link CGAL::Polyhedron_3::Halfedge::vertex() `vertex()`\endlink for the incident vertex at
 the tip of `h`, and so on. The output of the program will be
 
@@ -147,7 +147,7 @@ The polyhedron offers a point iterator for convenience. The above
 
 \code{.cpp}
 
-std::copy( P.points_begin(), P.points_end(), 
+std::copy( P.points_begin(), P.points_end(),
 std::ostream_iterator<Point_3>(std::cout,"\n"));
 
 \endcode
@@ -182,18 +182,18 @@ tetrahedron are the output of the program.
 
 \cgalExample{Polyhedron/polyhedron_prog_planes.cpp}
 
-\subsection sectionPolyVector Example with a Vector Instead of a List Representation 
+\subsection sectionPolyVector Example with a Vector Instead of a List Representation
 
 The polyhedron class template has actually four parameters, where
 three of them have default values. Using the default values explicitly
 in our examples above for three parameter - ignoring the fourth
-parameter, which would be a standard allocator for container class - 
+parameter, which would be a standard allocator for container class -
 the definition of a polyhedron looks like:
 
 \code{.cpp}
 
-typedef CGAL::Polyhedron_3< Traits, 
-CGAL::Polyhedron_items_3, 
+typedef CGAL::Polyhedron_3< Traits,
+CGAL::Polyhedron_items_3,
 CGAL::HalfedgeDS_default> Polyhedron;
 
 \endcode
@@ -206,7 +206,7 @@ representation. Using a vector provides random
 access for the elements in the polyhedral surface and is more space
 efficient, but elements cannot be deleted arbitrarily. Using a list
 allows arbitrary deletions, but provides only bidirectional iterators
-and is less space efficient. The following example creates again a 
+and is less space efficient. The following example creates again a
 tetrahedron with given points, but in a vector-based representation.
 
 The vector-based representation resizes automatically if the reserved
@@ -247,27 +247,27 @@ hash-structure. See also Section \ref PolyhedronFile.
 \subsection PolyhedronExampleUsingEulerOperatorstoBuild Example Using Euler Operators to Build a Cube
 
 Euler operators are the natural way of modifying polyhedral surfaces.
-We provide a set of operations for polyhedra: 
-\link Polyhedron_3::split_facet() split_facet()\endlink, 
-\link Polyhedron_3::join_facet()  `join_facet()`\endlink, 
-\link Polyhedron_3::split_vertex()  `split_vertex()`\endlink, 
+We provide a set of operations for polyhedra:
+\link Polyhedron_3::split_facet() split_facet()\endlink,
+\link Polyhedron_3::join_facet()  `join_facet()`\endlink,
+\link Polyhedron_3::split_vertex()  `split_vertex()`\endlink,
 \link Polyhedron_3::join_vertex()  `join_vertex()`\endlink,
-\link Polyhedron_3::split_loop()  `split_loop()`\endlink, and 
-\link Polyhedron_3::join_loop() `join_loop()`\endlink. 
+\link Polyhedron_3::split_loop()  `split_loop()`\endlink, and
+\link Polyhedron_3::join_loop() `join_loop()`\endlink.
 We add further convenient
-operators, such as 
-\link Polyhedron_3::split_edge() `split_edge()`\endlink. 
-However, they could be implemented 
+operators, such as
+\link Polyhedron_3::split_edge() `split_edge()`\endlink.
+However, they could be implemented
 using the six operators above. Furthermore, we provide more operators
 to work with polyhedral surfaces with border edges, for example, creating
-and deleting holes. We refer to the references manual for the 
+and deleting holes. We refer to the references manual for the
 definition and illustrative figures of the Euler operators.
 
 The following example implements a function that appends a unit cube
 to a polyhedral surface. To keep track of the different steps during
 the creation of the cube a sequence of sketches might help with labels
 for the different handles that occur in the program code. The following
-Figure shows six selected steps from the creation sequence. These steps 
+Figure shows six selected steps from the creation sequence. These steps
 are also marked in the program code.
 
 \image html make_cube.png
@@ -278,7 +278,7 @@ are also marked in the program code.
 \subsection PolyhedronDraw Draw a Polyhedron
 \anchor ssecDrawPolyhedron
 
-A polyhedron can be visualized by calling the `CGAL::draw()` function as shown in the following example. This function opens a new window showing the given polyhedron. The function is blocking, that is the program continues as soon as the user closes the window.
+A polyhedron can be visualized by calling the \link PkgDrawPolyhedron CGAL::draw<POLY>() \endlink function as shown in the following example. This function opens a new window showing the given polyhedron. A call to this function is blocking, that is the program continues as soon as the user closes the window.
 
 \cgalExample{Polyhedron/draw_polyhedron.cpp}
 
@@ -313,11 +313,11 @@ is the default format, iostream operators are provided for it.
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 template <class PolyhedronTraits_3>
-ostream& operator<<( ostream& out, 
+ostream& operator<<( ostream& out,
 const CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
 
 template <class PolyhedronTraits_3>
-istream& operator>>( istream& in, 
+istream& operator>>( istream& in,
 CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
 
 \endcode
@@ -338,19 +338,19 @@ format.
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
 
 template <class PolyhedronTraits_3>
-Inventor_ostream& operator<<( Inventor_ostream& out, 
+Inventor_ostream& operator<<( Inventor_ostream& out,
 const CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
 
 template <class PolyhedronTraits_3>
-VRML_1_ostream& operator<<( VRML_1_ostream& out, 
+VRML_1_ostream& operator<<( VRML_1_ostream& out,
 const CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
 
 template <class PolyhedronTraits_3>
-VRML_2_ostream& operator<<( VRML_2_ostream& out, 
+VRML_2_ostream& operator<<( VRML_2_ostream& out,
 const CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
 
 template <class PolyhedronTraits_3>
-Geomview_stream& operator<<( Geomview_stream& out, 
+Geomview_stream& operator<<( Geomview_stream& out,
 const CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
 
 \endcode
@@ -358,9 +358,9 @@ const CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
 All these file formats have in common that they represent a surface as
 a set of facets. Each facet is a list of indices pointing into a set
 of vertices. Vertices are represented as coordinate triples. The
-file I/O for polyhedral surfaces `Polyhedron_3` imposes certain 
-restrictions on these formats. They must represent a permissible 
-polyhedral surface, e.g., a 2-manifold and no isolated vertices, see 
+file I/O for polyhedral surfaces `Polyhedron_3` imposes certain
+restrictions on these formats. They must represent a permissible
+polyhedral surface, e.g., a 2-manifold and no isolated vertices, see
 Section \ref sectionPolyIntro.
 
 Some example programs around the different file formats are provided
@@ -374,22 +374,22 @@ into VRML 1.0 output.
 
 \anchor sectionPolyExtend
 
-In Section \ref sectionPolyVector we have seen how to change the 
+In Section \ref sectionPolyVector we have seen how to change the
 default list representation
 
 \code{.cpp}
 
-typedef CGAL::Polyhedron_3< Traits, 
-CGAL::Polyhedron_items_3, 
+typedef CGAL::Polyhedron_3< Traits,
+CGAL::Polyhedron_items_3,
 CGAL::HalfedgeDS_default> Polyhedron;
 
 \endcode
 
 to a vector based representation of the underlying halfedge data
 structure. Now we want to look a bit closer at the second template argument,
-`Polyhedron_items_3`, that specifies what kind of vertex, 
-halfedge, and facet is used. The implementation of 
-`Polyhedron_items_3` looks a bit involved with nested 
+`Polyhedron_items_3`, that specifies what kind of vertex,
+halfedge, and facet is used. The implementation of
+`Polyhedron_items_3` looks a bit involved with nested
 wrapper class templates. But ignoring this technicality, what remains
 are three local typedefs that define the `Vertex`, the
 `Halfedge`, and the `Face` for the polyhedral surface.
@@ -467,11 +467,11 @@ typedef My_face<Refs> Face;
 When we use our new items class with the polyhedral surface, our new
 face class is used in the halfedge data structure and the color
 attribute is available in the type `Polyhedron_3::Facet`. However,
-`Polyhedron_3::Facet` is not the same type as our local face 
+`Polyhedron_3::Facet` is not the same type as our local face
 typedef for `My_face`, but it is derived therefrom. Thus,
 everything that we put in the local face type except constructors is
 then available in the `Polyhedron_::Facet` type. For more
-details, see the Chapter \ref chapterHalfedgeDS "Halfedge Data Structures" 
+details, see the Chapter \ref chapterHalfedgeDS "Halfedge Data Structures"
 on the halfedge data structure design.
 
 Pulling all pieces together, the full example program illustrates how easy
@@ -528,18 +528,18 @@ processing memory only for the smoothing step of the old vertices.
 \image html subdiv_small.png
 \image latex subdiv_small.png
 
-The above figure shows three example objects, each 
+The above figure shows three example objects, each
 subdivided four times. The initial object for the left sequence is
 the closed surface of three unit cubes glued together to a corner.
-The example program shown here can handle only closed surfaces, 
+The example program shown here can handle only closed surfaces,
 but the extended example
 <TT>examples/Polyhedron/polyhedron_prog_subdiv_with_boundary.cpp</TT>
 handles surfaces with boundary. So, the middle sequence starts with
 the same surface where one of the facets has been removed. The boundary
 subdivides to a nice circle. The third sequence creates a sharp
-edge using a trick in the object presentation. The sharp edge is 
+edge using a trick in the object presentation. The sharp edge is
 actually a hole whose vertex coordinates pinch the hole shut to form an
-edge. The example directory <TT>examples/Polyhedron/</TT> contains the 
+edge. The example directory <TT>examples/Polyhedron/</TT> contains the
 OFF files used here.
 
 \cgalExample{Polyhedron/polyhedron_prog_subdiv.cpp}
@@ -567,12 +567,12 @@ checks are activated.
 In this example, `Build_triangle` is such a function object
 derived from `Modifier_base<HalfedgeDS>`. The `Polyhedron_3::delegate()`
 member function of the polyhedron accepts this function object and calls
-its `Modifier_base::operator()()` with a reference to its internally used halfedge 
-data structure. Thus, this member function in `Build_triangle` can 
+its `Modifier_base::operator()()` with a reference to its internally used halfedge
+data structure. Thus, this member function in `Build_triangle` can
 create the triangle in the halfedge data structure.
 
 \cgalExample{Polyhedron/polyhedron_prog_incr_builder.cpp}
 
-*/ 
+*/
 } /* namespace CGAL */
 

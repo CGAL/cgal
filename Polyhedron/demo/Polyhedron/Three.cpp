@@ -3,11 +3,15 @@
 #include <QMetaMethod>
 #include <QAction>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <QMdiArea>
+#include <QMdiSubWindow>
+#include <QMessageBox>
 #include "Messages_interface.h"
-
 using namespace CGAL::Three;
 
 QMainWindow* Three::s_mainwindow = NULL;
+Viewer_interface* Three::s_mainviewer = NULL;
+Viewer_interface* Three::s_currentviewer = NULL;
 Scene_interface* Three::s_scene = NULL;
 QObject* Three::s_connectable_scene = NULL;
 Three* Three::s_three = NULL;
@@ -20,6 +24,32 @@ int Three::default_lines_width;
 QMainWindow* Three::mainWindow()
 {
   return s_mainwindow;
+}
+
+Viewer_interface* Three::mainViewer()
+{
+  return s_mainviewer;
+}
+
+Viewer_interface* Three::currentViewer()
+{
+  return s_currentviewer;
+}
+
+void Three::setCurrentViewer(Viewer_interface *viewer)
+{
+  s_currentviewer = viewer;
+}
+
+Viewer_interface* Three::activeViewer()
+{
+  QMdiArea *mdi = mainWindow()->findChild<QMdiArea*>();
+  if(!mdi || !mdi->activeSubWindow())
+    return mainViewer();
+  Viewer_interface* v = qobject_cast<Viewer_interface*>(mdi->activeSubWindow()->widget());
+  if(!v)
+    return mainViewer();
+  return v;
 }
 
 Scene_interface* Three::scene()
@@ -146,6 +176,18 @@ void Three::error(QString s)
 {
   qobject_cast<Messages_interface*>(mainWindow())->message_error(s);
 }
+void Three::information(QString title, QString s)
+{
+  QMessageBox::information(mainWindow(), title, s);
+}
+void Three::warning(QString title, QString s)
+{
+  QMessageBox::warning(mainWindow(), title, s);
+}
+void Three::error(QString title, QString s)
+{
+  QMessageBox::critical(mainWindow(), title, s);
+}
 RenderingMode Three::defaultSurfaceMeshRenderingMode()
 {
   return s_defaultSMRM;
@@ -172,6 +214,8 @@ QString Three::modeName(RenderingMode mode) {
     return QObject::tr("Gouraud");
   case PointsPlusNormals:
     return QObject::tr("pts+normals");
+  case GouraudPlusEdges:
+    return QObject::tr("gouraud+edges");
   default:
     Q_ASSERT(false);
     return QObject::tr("unknown");

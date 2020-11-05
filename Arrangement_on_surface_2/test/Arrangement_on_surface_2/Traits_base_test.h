@@ -1,7 +1,6 @@
 #ifndef CGAL_TRAITS_BASE_TEST_H
 #define CGAL_TRAITS_BASE_TEST_H
 
-#include <CGAL/basic.h>
 
 #include <iostream>
 #include <fstream>
@@ -14,7 +13,6 @@
 #include <boost/lexical_cast.hpp>
 
 #include <CGAL/exceptions.h>
-#include <CGAL/Object.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/use.h>

@@ -41,11 +41,8 @@
 - `CGAL::Multiset<Type,Compare,Allocator>`
 
 \cgalCRPSection{Generic Algorithms}
-- `CGAL::cpp11::copy_n`
 - `CGAL::copy_n`
 - `CGAL::min_max_element`
-- `CGAL::cpp11::next`
-- `CGAL::cpp11::prev`
 - `CGAL::predecessor`
 - `CGAL::successor`
 
@@ -109,6 +106,9 @@
 - `CGAL::Tag_false`
 - `CGAL::Null_tag`
 - `CGAL::Null_functor`
+- `CGAL::Sequential_tag`
+- `CGAL::Parallel_tag`
+- `CGAL::Parallel_if_available_tag`
 - `CGAL::Uncertain<T>`
 - `CGAL::Default`
 - `CGAL::Fast`

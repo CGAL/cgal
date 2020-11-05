@@ -1,21 +1,12 @@
 // Copyright (c) 1999,2000  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -25,7 +16,7 @@
 // This file contains the description of the class Static_filter_error.
 // The goal of this class is to be run by some overloaded predicates,
 // to compute error bound done in these functions.
-// 
+//
 // The original idea is from Olivier Devillers.
 
 // It is still EXPERIMENTAL.
@@ -81,7 +72,7 @@ struct Static_filter_error
   Sfe operator+ (const Sfe &f) const
   {
       CGAL_warning_msg( _d == f._d ,
-	      "you are adding variables of different homogeneous degree");
+              "you are adding variables of different homogeneous degree");
       // We have to add an ulp, since the homogeneization could induce such
       // an error.
       FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
@@ -148,7 +139,7 @@ Static_filter_error
 sqrt(const Static_filter_error &f)
 {
   CGAL_warning_msg( (f.degree() & 1) == 0,
-	            "Do you really want a non integral degree ???");
+                    "Do you really want a non integral degree ???");
   // We have to add an ulp, since the homogeneization could induce such
   // an error.
   FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);

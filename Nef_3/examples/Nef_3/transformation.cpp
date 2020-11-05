@@ -19,13 +19,13 @@ int main() {
   Nef_polyhedron N(Plane_3(0,1,0,0));
   Aff_transformation_3 transl(CGAL::TRANSLATION, Vector_3(5, 7, 9));
   Aff_transformation_3 rotx90(1,0,0,
-			      0,0,-1,
-			      0,1,0,
-			      1);
+                              0,0,-1,
+                              0,1,0,
+                              1);
   Aff_transformation_3 scale(3,0,0,
-			     0,3,0,
-			     0,0,3,
-			     2);
+                             0,3,0,
+                             0,0,3,
+                             2);
 
   N.transform(transl);
   CGAL_assertion(N == Nef_polyhedron(Plane_3(0,1,0,-7)));

@@ -10,14 +10,15 @@
 #include <CGAL/surface_mesh_parameterization.h>
 
 #include <CGAL/Polygon_mesh_processing/measure.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
-#include <boost/foreach.hpp>
 #include <boost/functional/hash.hpp>
 
 #include <iostream>
 #include <fstream>
 
 namespace SMP = CGAL::Surface_mesh_parameterization;
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Simple_cartesian<double>            Kernel;
 typedef Kernel::Point_2                           Point_2;
@@ -30,6 +31,7 @@ typedef Kernel::Point_3                           Point_3;
 #define DCM_PM_SEAM_MESH
 #define DAC_SM_SEAM_MESH
 #define ORBIFOLD_SM_MESH
+#define ITERATIVE_SURF_MESH
 
 // POLYHEDRON_MESH
 typedef CGAL::Polyhedron_3<Kernel>                                PMesh;
@@ -95,7 +97,7 @@ int main(int, char**)
       return EXIT_FAILURE;
     }
 
-    PM_halfedge_descriptor hd = CGAL::Polygon_mesh_processing::longest_border(pm).first;
+    PM_halfedge_descriptor hd = PMP::longest_border(pm).first;
 
     CGAL::Unique_hash_map<PM_vertex_descriptor, Point_2,
                           boost::hash<PM_vertex_descriptor> > uvhm;
@@ -114,7 +116,7 @@ int main(int, char**)
       std::cout << "Parameterized with MVC (POLY)!" << std::endl;
     }
   }
-#endif
+#endif // MVC_POLYHEDRON_MESH
 
   // ***************************************************************************
   // ARAP WITH POLYHEDRON_MESH
@@ -132,7 +134,7 @@ int main(int, char**)
       return EXIT_FAILURE;
     }
 
-    PM_halfedge_descriptor hd = CGAL::Polygon_mesh_processing::longest_border(pm).first;
+    PM_halfedge_descriptor hd = PMP::longest_border(pm).first;
 
     // UV map
     CGAL::Unique_hash_map<PM_vertex_descriptor, Point_2,
@@ -142,25 +144,21 @@ int main(int, char**)
                             boost::hash<PM_vertex_descriptor> > > uvpm(uvhm);
 
     // Indices map
-    typedef boost::unordered_map<PM_vertex_descriptor, int> Indices;
-    Indices indices;
-    CGAL::Polygon_mesh_processing::connected_component(
-      face(opposite(hd, pm), pm),
-      pm,
-      boost::make_function_output_iterator(
-                 SMP::internal::Index_map_filler<PMesh, Indices>(pm, indices)));
-
-    boost::associative_property_map<Indices> vipm(indices);
+    typedef CGAL::dynamic_vertex_property_t<int>                                 Vertex_int_tag;
+    typedef typename boost::property_map<PMesh, Vertex_int_tag>::type            Vertex_int_map;
+    Vertex_int_map vipm = get(Vertex_int_tag(), pm);
+    CGAL::Surface_mesh_parameterization::internal::fill_index_map_of_cc(hd, pm, vipm);
 
     // Vertex parameterized map
-    boost::unordered_set<PM_vertex_descriptor> vs;
-    SMP::internal::Bool_property_map<boost::unordered_set<PM_vertex_descriptor> > vpm(vs);
+    typedef CGAL::dynamic_vertex_property_t<bool>                                Vertex_bool_tag;
+    typedef typename boost::property_map<PMesh, Vertex_bool_tag>::type           Vertex_bool_map;
+    Vertex_bool_map vpm = get(Vertex_bool_tag(), pm);
 
     // Parameterizer
     SMP::ARAP_parameterizer_3<PMesh> parameterizer;
     SMP::Error_code status = parameterizer.parameterize(pm, hd, uvpm, vipm, vpm);
-
-    if(status != SMP::OK) {
+    SMP::Error_code status_bis = SMP::parameterize(pm, parameterizer, hd, uvpm);
+    if(status != SMP::OK || status_bis != SMP::OK) {
       std::cout << "Encountered a problem: " << status << std::endl;
       return EXIT_FAILURE;
     }
@@ -168,7 +166,7 @@ int main(int, char**)
       std::cout << "Parameterized with ARAP (POLY)!" << std::endl;
     }
   }
-#endif
+#endif // ARAP_POLYHEDRON_MESH
 
   // ***************************************************************************
   // Barycentric mapping
@@ -186,7 +184,7 @@ int main(int, char**)
       return EXIT_FAILURE;
     }
 
-    SM_halfedge_descriptor hd = CGAL::Polygon_mesh_processing::longest_border(sm).first;
+    SM_halfedge_descriptor hd = PMP::longest_border(sm).first;
     assert(hd != SM_halfedge_descriptor());
 
     // UV map
@@ -196,11 +194,9 @@ int main(int, char**)
     // Indices map
     typedef boost::unordered_map<SM_vertex_descriptor, int> Indices;
     Indices indices;
-    CGAL::Polygon_mesh_processing::connected_component(
-      face(opposite(hd, sm), sm),
-      sm,
-      boost::make_function_output_iterator(
-                SMP::internal::Index_map_filler<SMesh, Indices>(sm, indices)));
+    PMP::connected_component(face(opposite(hd, sm), sm), sm,
+                             boost::make_function_output_iterator(
+                               SMP::internal::Index_map_filler<SMesh, Indices>(sm, indices)));
     boost::associative_property_map<Indices> vipm(indices);
 
     // Vertex parameterized map
@@ -211,8 +207,9 @@ int main(int, char**)
     SMP::Barycentric_mapping_parameterizer_3<SMesh> parameterizer;
 
     SMP::Error_code status = parameterizer.parameterize(sm, hd, uvpm, vipm, vpm);
+    SMP::Error_code status_bis = SMP::parameterize(sm, parameterizer, hd, uvpm);
 
-    if(status != SMP::OK) {
+    if(status != SMP::OK || status_bis != SMP::OK) {
       std::cout << "Encountered a problem: " << status << std::endl;
       return EXIT_FAILURE;
     }
@@ -220,7 +217,7 @@ int main(int, char**)
       std::cout << "Parameterized with Barycentric (SM)!" << std::endl;
     }
   }
-#endif
+#endif // BARY_SURF_MESH
 
   // ***************************************************************************
   // ARAP WITH SURF_MESH
@@ -239,8 +236,7 @@ int main(int, char**)
     }
 
     // halfedge on the longest border
-    SM_halfedge_descriptor hd =
-                        CGAL::Polygon_mesh_processing::longest_border(sm).first;
+    SM_halfedge_descriptor hd = PMP::longest_border(sm).first;
 
     CGAL::Unique_hash_map<SM_vertex_descriptor, Point_2,
                           boost::hash<SM_vertex_descriptor> > uvhm;
@@ -252,11 +248,9 @@ int main(int, char**)
     // Indices map
     typedef boost::unordered_map<SM_vertex_descriptor, int> Indices;
     Indices indices;
-    CGAL::Polygon_mesh_processing::connected_component(
-      face(opposite(hd, sm), sm),
-      sm,
-      boost::make_function_output_iterator(
-                SMP::internal::Index_map_filler<SMesh, Indices>(sm, indices)));
+    PMP::connected_component(face(opposite(hd, sm), sm), sm,
+                             boost::make_function_output_iterator(
+                               SMP::internal::Index_map_filler<SMesh, Indices>(sm, indices)));
     boost::associative_property_map<Indices> vipm(indices);
 
     // Parameterized bool pmap
@@ -267,7 +261,9 @@ int main(int, char**)
     SMP::ARAP_parameterizer_3<SMesh> parameterizer;
 
     SMP::Error_code status = parameterizer.parameterize(sm, hd, uv_pm, vipm, vpm);
-    if(status != SMP::OK) {
+    SMP::Error_code status_bis = SMP::parameterize(sm, parameterizer, hd, uv_pm);
+
+    if(status != SMP::OK || status_bis != SMP::OK) {
       std::cout << "Encountered a problem: " << status << std::endl;
       return EXIT_FAILURE;
     }
@@ -275,7 +271,7 @@ int main(int, char**)
       std::cout << "Parameterized with ARAP (SM)!" << std::endl;
     }
   }
-#endif
+#endif // ARAP_SURF_MESH
 
 #ifdef DCM_PM_SEAM_MESH
   {
@@ -308,16 +304,14 @@ int main(int, char**)
     PM_UV_pmap uv_pm(uv_hm);
 
     // a halfedge on the (possibly virtual) border
-    PM_SE_halfedge_descriptor hd = CGAL::Polygon_mesh_processing::longest_border(mesh).first;
+    PM_SE_halfedge_descriptor hd = PMP::longest_border(mesh).first;
 
     // Indices
     typedef boost::unordered_map<PM_SE_vertex_descriptor, int> Indices;
     Indices indices;
-    CGAL::Polygon_mesh_processing::connected_component(
-      face(opposite(hd, mesh), mesh),
-      mesh,
-      boost::make_function_output_iterator(
-        SMP::internal::Index_map_filler<PM_Seam_mesh, Indices>(mesh, indices)));
+    PMP::connected_component(face(opposite(hd, mesh), mesh), mesh,
+                             boost::make_function_output_iterator(
+                               SMP::internal::Index_map_filler<PM_Seam_mesh, Indices>(mesh, indices)));
     boost::associative_property_map<Indices> vipm(indices);
 
     // Parameterized
@@ -327,8 +321,9 @@ int main(int, char**)
     SMP::Discrete_conformal_map_parameterizer_3<PM_Seam_mesh> parameterizer;
 
     SMP::Error_code status = parameterizer.parameterize(mesh, hd, uv_pm, vipm, vpm);
+    SMP::Error_code status_bis = SMP::parameterize(mesh, parameterizer, hd, uv_pm);
 
-    if(status != SMP::OK) {
+    if(status != SMP::OK || status_bis != SMP::OK) {
       std::cout << "Encountered a problem: " << status << std::endl;
       return EXIT_FAILURE;
     }
@@ -336,7 +331,7 @@ int main(int, char**)
       std::cout << "Parameterized with DCM (SEAM POLY)!" << std::endl;
     }
   }
-#endif
+#endif // DCM_PM_SEAM_MESH
 
   // ***************************************************************************
   // DAC WITH SEAM_MESH (SM)
@@ -374,16 +369,14 @@ int main(int, char**)
                                            Point_2>("h:uv").first;
 
     // a halfedge on the (possibly virtual) border
-    SM_SE_halfedge_descriptor hd = CGAL::Polygon_mesh_processing::longest_border(mesh).first;
+    SM_SE_halfedge_descriptor hd = PMP::longest_border(mesh).first;
 
     // Indices
     typedef boost::unordered_map<SM_SE_vertex_descriptor, int> Indices;
     Indices indices;
-    CGAL::Polygon_mesh_processing::connected_component(
-        face(opposite(hd, mesh), mesh),
-        mesh,
-        boost::make_function_output_iterator(
-        SMP::internal::Index_map_filler<SM_Seam_mesh, Indices>(mesh, indices)));
+    PMP::connected_component(face(opposite(hd, mesh), mesh), mesh,
+                             boost::make_function_output_iterator(
+                               SMP::internal::Index_map_filler<SM_Seam_mesh, Indices>(mesh, indices)));
     boost::associative_property_map<Indices> vipm(indices);
 
     // Parameterized
@@ -393,7 +386,9 @@ int main(int, char**)
     SMP::Discrete_authalic_parameterizer_3<SM_Seam_mesh> parameterizer;
 
     SMP::Error_code status = parameterizer.parameterize(mesh, hd, uv_pm, vipm, vpm);
-    if(status != SMP::OK) {
+    SMP::Error_code status_bis = SMP::parameterize(mesh, parameterizer, hd, uv_pm);
+
+    if(status != SMP::OK || status_bis != SMP::OK) {
       std::cout << "Encountered a problem: " << status << std::endl;
       return EXIT_FAILURE;
     }
@@ -401,7 +396,7 @@ int main(int, char**)
       std::cout << "Parameterized with DAC (SEAM SM)!" << std::endl;
     }
   }
-#endif
+#endif // DAC_SM_SEAM_MESH
 
 #ifdef ORBIFOLD_SM_MESH
   {
@@ -436,7 +431,7 @@ int main(int, char**)
       SMP::compute_shortest_paths_between_cones(sm, cone_sm_vds.begin(), cone_sm_vds.end(), seam_edges);
 
       // Add the seams to the seam mesh
-      BOOST_FOREACH(SM_edge_descriptor e, seam_edges) {
+      for(SM_edge_descriptor e : seam_edges) {
         mesh.add_seam(source(e, sm), target(e, sm));
       }
     }
@@ -446,7 +441,7 @@ int main(int, char**)
     Indices indices;
     boost::associative_property_map<Indices> vimap(indices);
     int counter = 0;
-    BOOST_FOREACH(SM_SE_vertex_descriptor vd, vertices(mesh)) {
+    for(SM_SE_vertex_descriptor vd : vertices(mesh)) {
       put(vimap, vd, counter++);
     }
 
@@ -465,10 +460,10 @@ int main(int, char**)
 
     // a halfedge on the (possibly virtual) border
     // only used in output (will also be used to handle multiple connected components in the future)
-    SM_SE_halfedge_descriptor hd = CGAL::Polygon_mesh_processing::longest_border(mesh,
-                  CGAL::Polygon_mesh_processing::parameters::all_default()).first;
+    SM_SE_halfedge_descriptor hd = PMP::longest_border(mesh, PMP::parameters::all_default()).first;
 
     SMP::Error_code status = parameterizer.parameterize(mesh, hd, cmap, uvmap, vimap);
+
     if(status != SMP::OK) {
       std::cout << "Encountered a problem: " << status << std::endl;
       return EXIT_FAILURE;
@@ -477,7 +472,60 @@ int main(int, char**)
       std::cout << "Parameterized with Orbifold (SEAM SM)!" << std::endl;
     }
   }
-#endif
+#endif // ORBIFOLD_SM_MESH
+
+  // ***************************************************************************
+  // ITERATIVE AUTHALIC WITH SURFACE_MESH
+  // ***************************************************************************
+
+#ifdef ITERATIVE_SURF_MESH
+  {
+    std::cout << " ----------- ITERATIVE AUTHALIC SURFACE MESH ----------- " << std::endl;
+
+    std::ifstream in("data/oni.off");
+    SMesh sm;
+    in >> sm;
+    if(!in || num_vertices(sm) == 0) {
+      std::cerr << "Problem loading the input data" << std::endl;
+      return EXIT_FAILURE;
+    }
+
+    SM_halfedge_descriptor hd = PMP::longest_border(sm).first;
+    assert(hd != SM_halfedge_descriptor());
+
+    // UV map
+    typedef SMesh::Property_map<SM_vertex_descriptor, Point_2>  UV_pmap;
+    UV_pmap uvpm = sm.add_property_map<SM_vertex_descriptor, Point_2>("h:uv").first;
+
+    // Indices map
+    typedef boost::unordered_map<SM_vertex_descriptor, int> Indices;
+    Indices indices;
+    PMP::connected_component(face(opposite(hd, sm), sm), sm,
+                             boost::make_function_output_iterator(
+                               SMP::internal::Index_map_filler<SMesh, Indices>(sm, indices)));
+    boost::associative_property_map<Indices> vipm(indices);
+
+    // Vertex parameterized map
+    boost::unordered_set<SM_vertex_descriptor> vs;
+    SMP::internal::Bool_property_map<boost::unordered_set<SM_vertex_descriptor> > vpm(vs);
+
+    // Parameterizer
+    SMP::Iterative_authalic_parameterizer_3<SMesh> parameterizer;
+
+    double error = 0;
+    unsigned int iterations = 15;
+    SMP::Error_code status = parameterizer.parameterize(sm, hd, uvpm, vipm, vpm, iterations, error);
+    SMP::Error_code status_bis = parameterizer.parameterize(sm, uvpm, 10);
+
+    if(status != SMP::OK || status_bis != SMP::OK) {
+      std::cout << "Encountered a problem: " << status << std::endl;
+      return EXIT_FAILURE;
+    }
+    else {
+      std::cout << "Parameterized with Barycentric (SM)!" << std::endl;
+    }
+  }
+#endif // DAC_SM_SEAM_MESH
 
   std::cout << "Done!" << std::endl;
 

@@ -1,4 +1,4 @@
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #ifdef CGAL_USE_GMP
 
@@ -75,7 +75,7 @@ Test_set make_derived_tests (const Test_pair& pair) {
   for (std::string l = ""; l != "ff"; l += "f") {
     // append char 'f' to test whether it is correctly not eaten
     for (std::string sign = ""; sign != "done";) {
-      // prepend signs "", "+", "-"	
+      // prepend signs "", "+", "-"
       Gmpq s = should_be;
       if (sign == "-") s = -s;
       result.push_back(Test_pair(sign+input+l , s));
@@ -119,11 +119,11 @@ void test_input_from_float()
 
   // now the actual test
   std::cout << " Running " << test_set.size()  << " master tests..."
-	    << std::endl;
+            << std::endl;
   for (unsigned int i=0; i<test_set.size(); ++i) {
     Test_set derived = make_derived_tests (test_set[i]);
     std::cout << " Running " <<derived.size() << " derived tests..."
-	      << std::endl;
+              << std::endl;
     for (unsigned int j=0; j <derived.size(); ++j) {
       std::stringstream is(derived[j].first);
       Gmpq should_be (derived[j].second);
@@ -131,8 +131,8 @@ void test_input_from_float()
       assert(!is.fail());
       if (!is.eof()) assert(is.peek()=='f');
       if (q != should_be)
-	std::cout << " Error: " << derived[j].first + "  read as "
-		  << q << std::endl;
+        std::cout << " Error: " << derived[j].first + "  read as "
+                  << q << std::endl;
       assert(q == should_be);
     }
   }

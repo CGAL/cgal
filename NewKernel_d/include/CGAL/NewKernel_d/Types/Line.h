@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -25,28 +16,28 @@
 #include <CGAL/Kernel/mpl.h>
 namespace CGAL {
 template <class R_> class Line {
-	typedef typename Get_type<R_, FT_tag>::type FT_;
-	typedef typename Get_type<R_, Point_tag>::type	Point_;
-	typedef std::pair<Point_,Point_> Data_;
-	Data_ data;
-	public:
-	Line(){}
-	Line(Point_ const&a, Point_ const&b): data(a,b) {}
-	Point_ point(int i)const{
-	  if(i==0) return data.first;
-	  if(i==1) return data.second;
-	  throw "not implemented";
-	}
-	Line opposite()const{
-		return Line(data.second,data.first);
-	}
+        typedef typename Get_type<R_, FT_tag>::type FT_;
+        typedef typename Get_type<R_, Point_tag>::type        Point_;
+        typedef std::pair<Point_,Point_> Data_;
+        Data_ data;
+        public:
+        Line(){}
+        Line(Point_ const&a, Point_ const&b): data(a,b) {}
+        Point_ point(int i)const{
+          if(i==0) return data.first;
+          if(i==1) return data.second;
+          throw "not implemented";
+        }
+        Line opposite()const{
+                return Line(data.second,data.first);
+        }
 };
 namespace CartesianDKernelFunctors {
   template <class R_> struct Construct_line : Store_kernel<R_> {
     CGAL_FUNCTOR_INIT_STORE(Construct_line)
-    typedef typename Get_type<R_, Line_tag>::type	result_type;
-    typedef typename Get_type<R_, Point_tag>::type	Point;
-    typedef typename Get_type<R_, Vector_tag>::type	Vector;
+    typedef typename Get_type<R_, Line_tag>::type        result_type;
+    typedef typename Get_type<R_, Point_tag>::type        Point;
+    typedef typename Get_type<R_, Vector_tag>::type        Vector;
     typedef typename Get_functor<R_, Translated_point_tag>::type Tp_;
     //typedef typename Get_functor<R_, Difference_of_points_tag>::type Dp_;
     //typedef typename Get_functor<R_, Scaled_vector_tag>::type Sv_;

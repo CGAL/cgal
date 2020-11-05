@@ -48,7 +48,7 @@ public:
     // this is the type of data that the queries returns. For this example
     // we imagine that, for some reasons, we do not want to store the iterators
     // of the vector, but raw pointers. This is to show that the Id type
-    // does not have to be the same as the one of the input parameter of the 
+    // does not have to be the same as the one of the input parameter of the
     // constructor.
     typedef const My_triangle* Id;
 
@@ -62,14 +62,14 @@ private:
 public:
     My_triangle_primitive() {} // default constructor needed
 
-    // the following constructor is the one that receives the iterators from the 
+    // the following constructor is the one that receives the iterators from the
     // iterator range given as input to the AABB_tree
     My_triangle_primitive(Iterator it)
         : m_pt(&(*it)) {}
 
     const Id& id() const { return m_pt; }
 
-    // utility function to convert a custom 
+    // utility function to convert a custom
     // point type to CGAL point type.
     Point convert(const My_point *p) const
     {

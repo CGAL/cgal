@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
@@ -372,23 +363,23 @@ construct_anchor_vor(Rt_Simplex const &sVor)
 //    it = find_anchor(anchor_vor2, it);
 //    typename Compute_anchor::Simplex_iterator degenerate_it;
 //    for (degenerate_it = compute_anchor_obj.equivalent_anchors_begin();
-//	 degenerate_it != compute_anchor_obj.equivalent_anchors_end();
-//	 degenerate_it++) {
+//         degenerate_it != compute_anchor_obj.equivalent_anchors_end();
+//         degenerate_it++) {
 //      Anchor_map_iterator tmp;
 //      it2 = anchor_vor2.find(*degenerate_it);
 //      // Possibly not found for 2 Voronoi vertices with the same center,
 //      // If the first vertex is inserted and the second is already found.
 //      // see compute_anchor_obj.anchor_vor(Cell_handle)
 //      if (it2 != anchor_vor2.end()) {
-//	CGAL_assertion(it2 != anchor_vor2.end());
-//	// Merge sets:
-//	while (it2 != it2->second) {
-//	  tmp = it2->second;
-//	  it2->second = it->second;
-//	  it2 = tmp;
-//	  CGAL_assertion(it2 != anchor_vor2.end());
-//	}
-//	it2->second = it->second;
+//        CGAL_assertion(it2 != anchor_vor2.end());
+//        // Merge sets:
+//        while (it2 != it2->second) {
+//          tmp = it2->second;
+//          it2->second = it->second;
+//          it2 = tmp;
+//          CGAL_assertion(it2 != anchor_vor2.end());
+//        }
+//        it2->second = it->second;
 //      }
 //    }
 //  }

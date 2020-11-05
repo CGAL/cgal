@@ -1,20 +1,11 @@
 // Copyright (c) 2006-2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -60,7 +51,7 @@ class Sqrt_extension_algebraic_structure_traits_base< Type,
                                       CGAL::Integral_domain_without_division_tag > {
 public:
     typedef CGAL::Integral_domain_tag Algebraic_category;
-    
+
     class Integral_division
       : public CGAL::cpp98::binary_function< Type, Type, Type > {
     public:
@@ -69,40 +60,40 @@ public:
       }
       CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
-    
+
 private:
   typedef typename Type::NT COEFF;
   typedef typename Type::ROOT ROOT;
   typedef typename CGAL::Coercion_traits< ROOT, COEFF >::Cast Root_nt_cast;
   typedef CGAL::Algebraic_structure_traits<COEFF> AST_COEFF;
-  typedef typename AST_COEFF::Divides Divides_coeff;   
+  typedef typename AST_COEFF::Divides Divides_coeff;
 public:
-  class Divides 
+  class Divides
     : public CGAL::cpp98::binary_function<Type,Type,typename Divides_coeff::result_type>{
     typedef typename Divides_coeff::result_type BOOL;
   public:
-    BOOL operator()( const Type& x, const Type& y) const {  
+    BOOL operator()( const Type& x, const Type& y) const {
       Type q;
       return (*this)(x,y,q);
     }
-    
-    BOOL operator()( const Type& x, const Type& y, Type& q) const {       
+
+    BOOL operator()( const Type& x, const Type& y, Type& q) const {
       Divides_coeff divides;
-        
+
 //            std::cout<<"integral domain for sqrt"<<std::endl;
       BOOL result;
       COEFF q1, q2;
       if(x.is_extended()){
 //                std::cout<<" y is extended "<<std::endl;
         COEFF denom = x.a0()*x.a0() - x.a1()*x.a1() * Root_nt_cast()(x.root());
-        if ( denom == COEFF(0) ) {   
+        if ( denom == COEFF(0) ) {
           // this is for the rare case in which root is a square
-          // and the (pseudo) algebraic conjugate of p becomes zero 
+          // and the (pseudo) algebraic conjugate of p becomes zero
           result = divides(COEFF(2)*x.a0(),y.a0(),q1);
           if(!result) return false;
           result = divides(COEFF(2)*x.a1(),y.a1(),q2);
           if(!result) return false;
-          q = Type(q1 + q2); 
+          q = Type(q1 + q2);
         }else{
           q = y;
           q *= Type(x.a0(),-x.a1(),x.root());
@@ -117,7 +108,7 @@ public:
         if(y.is_extended()){
           result = divides(x.a0(),y.a0(),q1);
           if(!result) return false;
-          result = divides(x.a0(),y.a1(),q2);  
+          result = divides(x.a0(),y.a1(),q2);
           if(!result) return false;
           q = Type(q1, q2, y.root());
         }else{
@@ -127,12 +118,12 @@ public:
         }
       }
       if(q*x==y)
-        return true; 
+        return true;
       else
         return false;
     }
     CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT(Type,BOOL)
-  }; 
+  };
 };
 
 template< class Type >

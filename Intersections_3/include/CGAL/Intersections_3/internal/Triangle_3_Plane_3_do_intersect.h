@@ -1,21 +1,12 @@
 // Copyright (c) 2003  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Philippe Guigue
 
@@ -35,26 +26,26 @@ namespace CGAL {
   class Plane_3;
 
 namespace Intersections {
-  
+
 namespace internal {
 
 template <class K>
-bool do_intersect(const typename K::Triangle_3 &t, 
-		  const typename K::Plane_3   &h,
-		  const K & k)
+bool do_intersect(const typename K::Triangle_3 &t,
+                  const typename K::Plane_3   &h,
+                  const K & k)
 {
-  
+
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(t)) ;
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(h)) ;
 
-   
+
   typename K::Construct_vertex_3 vertex_on =
     k.construct_vertex_3_object();
-  
+
   typename K::Oriented_side_3 oriented_side =
     k.oriented_side_3_object();
 
-  
+
 
   switch ( oriented_side(h,vertex_on(t,0)) ) {
   case ON_POSITIVE_SIDE:
@@ -75,8 +66,8 @@ bool do_intersect(const typename K::Triangle_3 &t,
 template <class K>
 inline
 bool do_intersect(const typename K::Plane_3   &h,
-		  const typename K::Triangle_3 &t, 
-		  const K & k)
+                  const typename K::Triangle_3 &t,
+                  const K & k)
 {
   return do_intersect(t, h, k);
 }

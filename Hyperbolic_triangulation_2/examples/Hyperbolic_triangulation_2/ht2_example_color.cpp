@@ -49,7 +49,7 @@ int main(int argc, char** argv)
   {
     if(fit->has_vertex(vo))
     {
-      fit->info() = CGAL::RED;
+      fit->info() = CGAL::red();
       origin_faces++;
     }
   }
@@ -57,7 +57,7 @@ int main(int argc, char** argv)
   int red_faces = 0;
   for(fit = dt.hyperbolic_faces_begin(); fit != dt.hyperbolic_faces_end(); ++fit)
   {
-    if(fit->info() == CGAL::RED)
+    if(fit->info() == CGAL::red())
     {
       red_faces++;
     }

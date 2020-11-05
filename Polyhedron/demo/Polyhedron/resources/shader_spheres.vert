@@ -6,6 +6,7 @@ in vec3 center;
 in float radius;
 uniform mat4 mvp_matrix;
 uniform mat4 mv_matrix;
+uniform mat4 f_matrix;
 out vec4 fP;
 out vec3 fN;
 out vec4 color;
@@ -24,6 +25,6 @@ void main(void)
   mv_matrix_3[1] = mv_matrix[1].xyz;   
   mv_matrix_3[2] = mv_matrix[2].xyz;   
   fN = mv_matrix_3* normals;           
-  gl_Position =  mvp_matrix *
+  gl_Position =  mvp_matrix * f_matrix *
   vec4(radius*vertex.x + center.x, radius* vertex.y + center.y, radius*vertex.z + center.z, 1.0) ;
 }

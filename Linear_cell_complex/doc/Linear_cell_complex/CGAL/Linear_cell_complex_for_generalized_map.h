@@ -40,5 +40,5 @@ static unsigned int ambient_dimension = d2;
 /// @}
 
 }; /* end Linear_cell_complex_for_generalized_map */
-  
+
 } /* end namespace CGAL */

@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
@@ -40,10 +31,12 @@
 #include <boost/any.hpp>
 #endif
 
+#include <CGAL/use.h>
+
 namespace CGAL {
 
 template <typename Iter, typename Move>
-inline CGAL::Circulator_tag  
+inline CGAL::Circulator_tag
 query_circulator_or_iterator(const CircFromIt<Iter,Move>& )
 { return CGAL::Circulator_tag(); }
 
@@ -62,22 +55,22 @@ struct move_halfedge_around_face {
 };
 
 
-/*{\Moptions print_title=yes}*/ 
-/*{\Moptions constref=yes}*/ 
-/*{\Msubst 
+/*{\Moptions print_title=yes}*/
+/*{\Moptions constref=yes}*/
+/*{\Msubst
 PM_const_decorator#PMConstDecorator
 PM_decorator#PMDecorator
-}*/ 
+}*/
 /*{\Moptions outfile=PMConstDecorator.man }*/
 /*{\Manpage {PMConstDecorator}{}{Topological plane map exploration}{D}}*/
 
 template <typename HDS> class PM_decorator;
 
 template <typename HDS>
-class PM_const_decorator 
+class PM_const_decorator
 { typedef PM_const_decorator<HDS> Self;
-/*{\Mdefinition An instance |\Mvar| of the data type |\Mname| is a 
-decorator for interfacing the topological structure of a plane map |P| 
+/*{\Mdefinition An instance |\Mvar| of the data type |\Mname| is a
+decorator for interfacing the topological structure of a plane map |P|
 (read-only).
 
 A plane map |P| consists of a triple $(V, E, F)$ of vertices, edges, and
@@ -87,7 +80,7 @@ target(e)|. The list of all edges with source |v| is called the
 adjacency list |A(v)|.
 
 Edges are paired into twins. For each edge |e = (v,w)| there's an edge
-|twin(e) = (w,v)| and |twin(twin(e)) == e|\cgalFootnote{The existence of 
+|twin(e) = (w,v)| and |twin(twin(e)) == e|\cgalFootnote{The existence of
 the edge pairs makes |P| a bidirected graph, the |twin| links make
 |P| a map.}.
 
@@ -123,8 +116,8 @@ Plane maps are attributed. To each object $u \in V \cup E \cup F$
 we attribute a value |mark(u)| of type |Mark|. |Mark| fits the
 concepts assignable, default-constructible, and equal-comparable.}*/
 
-protected: 
-HDS* phds; 
+protected:
+HDS* phds;
 friend class PM_decorator<HDS>;
 
 public:
@@ -137,7 +130,7 @@ typedef typename HDS::Traits Traits;
 typedef typename Traits::Point  Point;
 /*{\Mtypemember The point type of vertices.}*/
 typedef typename Traits::Mark   Mark;
-/*{\Mtypemember All objects (vertices, edges, faces) are attributed by a 
+/*{\Mtypemember All objects (vertices, edges, faces) are attributed by a
 |Mark| object.}*/
 typedef size_t Size_type;
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
@@ -149,14 +142,14 @@ typedef boost::any GenPtr;
 
 
 
-typedef typename HDS::Vertex                  Vertex; 
+typedef typename HDS::Vertex                  Vertex;
 typedef typename HDS::Vertex_base             Vertex_base;
 typedef typename HDS::Vertex_handle           Vertex_handle;
 typedef typename HDS::Vertex_const_handle     Vertex_const_handle;
 typedef typename HDS::Vertex_const_iterator   Vertex_const_iterator;
-typedef typename HDS::Halfedge                Halfedge ; 
+typedef typename HDS::Halfedge                Halfedge ;
 typedef typename HDS::Halfedge_base           Halfedge_base ;
-typedef typename HDS::Halfedge_handle         Halfedge_handle; 
+typedef typename HDS::Halfedge_handle         Halfedge_handle;
 typedef typename HDS::Halfedge_const_handle   Halfedge_const_handle;
 typedef typename HDS::Halfedge_const_iterator Halfedge_const_iterator;
 typedef typename HDS::Face                    Face;
@@ -173,28 +166,28 @@ following kind: |Vertex_const_handle|,
 Additionally the following circulators are defined.}*/
 
 typedef CircFromIt<
-        Halfedge_const_iterator, 
-        move_halfedge_around_vertex<Halfedge_const_iterator> > 
+        Halfedge_const_iterator,
+        move_halfedge_around_vertex<Halfedge_const_iterator> >
         Halfedge_around_vertex_const_circulator;
 /*{\Mtypemember circulating the outgoing halfedges in $A(v)$.}*/
 
 typedef CircFromIt<
-        Halfedge_const_iterator, 
-        move_halfedge_around_face<Halfedge_const_iterator> > 
+        Halfedge_const_iterator,
+        move_halfedge_around_face<Halfedge_const_iterator> >
         Halfedge_around_face_const_circulator;
-/*{\Mtypemember circulating the halfedges in the face cycle of a 
+/*{\Mtypemember circulating the halfedges in the face cycle of a
 face |f|.}*/
 
 typedef typename Face::Hole_const_iterator Hole_const_iterator;
-/*{\Mtypemember iterating all holes of a face |f|. The type is 
+/*{\Mtypemember iterating all holes of a face |f|. The type is
 convertible to |Halfedge_const_handle|.}*/
 
-typedef typename Face::Isolated_vertex_const_iterator 
+typedef typename Face::Isolated_vertex_const_iterator
         Isolated_vertex_const_iterator;
-/*{\Mtypemember iterating all isolated vertices of a face |f|. 
+/*{\Mtypemember iterating all isolated vertices of a face |f|.
 The type generalizes |Vertex_const_handle|.}*/
 
-typedef PntItFromVertIt<Vertex_const_iterator,Point> 
+typedef PntItFromVertIt<Vertex_const_iterator,Point>
   Point_const_iterator;
 
 /*{\Mcreation 3}*/
@@ -206,7 +199,7 @@ PM_const_decorator& operator=(
   const PM_const_decorator<HDS>& D)
 { phds=D.phds; return *this; }
 
-PM_const_decorator(const Plane_map& P) 
+PM_const_decorator(const Plane_map& P)
 /*{\Mcreate constructs a plane map decorator exploring |P|.}*/
  : phds(const_cast<HDS*>(&P)) {}
 
@@ -220,7 +213,7 @@ Vertex_const_handle target(Halfedge_const_handle e) const
 /*{\Mop returns the target of |e|.}*/
 { return e->vertex(); }
 
-Halfedge_const_handle twin(Halfedge_const_handle e) const 
+Halfedge_const_handle twin(Halfedge_const_handle e) const
 /*{\Mop returns the twin of |e|.}*/
 { return e->opposite(); }
 
@@ -236,7 +229,7 @@ Halfedge_const_handle first_out_edge(Vertex_const_handle v) const
 
 Halfedge_const_handle last_out_edge(Vertex_const_handle v) const
 /*{\Mop returns the halfedge with source |v| that is the last
-  in the circular iteration before encountering |first_out_edge(v)| 
+  in the circular iteration before encountering |first_out_edge(v)|
   again. \precond |!is_isolated(v)|.}*/
 { return v->halfedge()->next(); }
 
@@ -271,13 +264,13 @@ Face_const_handle face(Vertex_const_handle v) const
 { return v->face(); }
 
 Halfedge_const_handle halfedge(Face_const_handle f) const
-/*{\Mop returns a halfedge in the bounding face cycle of |f| 
+/*{\Mop returns a halfedge in the bounding face cycle of |f|
 (|Halfedge_const_handle()| if there is no bounding face cycle).}*/
 { return f->halfedge(); }
 
 
 /*{\Mtext \headerline{Iteration} \setopdims{7.5cm}{0cm}}*/
-  
+
 Vertex_const_iterator   vertices_begin() const
 { return phds->vertices_begin(); }
 Halfedge_const_iterator halfedges_begin() const
@@ -295,19 +288,19 @@ Point_const_iterator points_begin() const
 Point_const_iterator points_end() const
 { return Point_const_iterator(vertices_end()); }
 
-Halfedge_around_vertex_const_circulator 
+Halfedge_around_vertex_const_circulator
   out_edges(Vertex_const_handle v) const
 /*{\Mop returns a circulator for the cyclic adjacency list of |v|.}*/
 { return Halfedge_around_vertex_const_circulator(first_out_edge(v)); }
 
-Halfedge_around_face_const_circulator 
+Halfedge_around_face_const_circulator
   face_cycle(Face_const_handle f) const
 /*{\Mop returns a circulator for the outer face cycle of |f|.}*/
 { return Halfedge_around_face_const_circulator(f->halfedge()); }
 
 Hole_const_iterator  holes_begin(Face_const_handle f) const
 /*{\Mop returns an iterator for all holes in the interior of |f|.
-   A |Hole_iterator| can be assigned to a 
+   A |Hole_iterator| can be assigned to a
    |Halfedge_around_face_const_circulator|.}*/
 { return f->fc_begin(); }
 
@@ -315,13 +308,13 @@ Hole_const_iterator  holes_end(Face_const_handle f) const
 /*{\Mop returns the past-the-end iterator of |f|.}*/
 { return f->fc_end(); }
 
-Isolated_vertex_const_iterator 
+Isolated_vertex_const_iterator
   isolated_vertices_begin(Face_const_handle f) const
-/*{\Mop returns an iterator for all isolated vertices in the interior 
+/*{\Mop returns an iterator for all isolated vertices in the interior
    of |f|.}*/
 { return f->iv_begin(); }
 
-Isolated_vertex_const_iterator 
+Isolated_vertex_const_iterator
   isolated_vertices_end(Face_const_handle f) const
 /*{\Mop returns the past the end iterator of |f|.}*/
 { return f->iv_end(); }
@@ -335,11 +328,11 @@ const Point& point(Vertex_const_handle v) const
 /*{\Mop returns the embedding of |v|.}*/
 { return v->point(); }
 
-const Mark& mark(Vertex_const_handle v) const  
+const Mark& mark(Vertex_const_handle v) const
 /*{\Mop returns the mark of |v|.}*/
 { return v->mark(); }
 
-const Mark& mark(Halfedge_const_handle e) const 
+const Mark& mark(Halfedge_const_handle e) const
 /*{\Mop returns the mark of |e|.}*/
 { if (&*e < &*(e->opposite())) return e->mark();
   else return e->opposite()->mark();
@@ -364,19 +357,19 @@ const GenPtr& info(Face_const_handle f) const
 
 /*{\Mtext \headerline{Statistics and Integrity}}*/
 
-Size_type number_of_vertices() const 
+Size_type number_of_vertices() const
 /*{\Mop returns the number of vertices.}*/
 { return phds->size_of_vertices(); }
 
-Size_type number_of_halfedges() const 
+Size_type number_of_halfedges() const
 /*{\Mop returns the number of halfedges.}*/
 { return phds->size_of_halfedges(); }
 
-Size_type number_of_edges() const    
+Size_type number_of_edges() const
 /*{\Mop returns the number of halfedge pairs.}*/
 { return phds->size_of_halfedges()/2; }
 
-Size_type number_of_faces() const    
+Size_type number_of_faces() const
 /*{\Mop returns the number of faces.}*/
 { return phds->size_of_faces(); }
 
@@ -387,17 +380,17 @@ Size_type number_of_connected_components() const;
 /*{\Mop calculates the number of connected components of |P|.}*/
 
 void print_statistics(std::ostream& os = std::cout) const
-/*{\Mop print the statistics of |P|: the number of vertices, edges, and 
+/*{\Mop print the statistics of |P|: the number of vertices, edges, and
    faces.}*/
 {
   os << "Plane Map - Statistics\n";
   os << "|V| = " << number_of_vertices() << std::endl;
-  os << "|E| = " << number_of_edges() 
+  os << "|E| = " << number_of_edges()
   << " (" << 2*number_of_edges() << ")" << std::endl;
   os << "|F| = " << number_of_faces() << std::endl;
   os << "|Fcs| = " << number_of_face_cycles() << std::endl << std::endl;
 }
- 
+
 void check_integrity_and_topological_planarity(bool faces=true) const;
 /*{\Mop checks the link structure and the genus of |P|.}*/
 
@@ -416,7 +409,7 @@ std::string PE(HH e)
 { std::ostringstream os;
   if (e==HH()) return "nil";
   os << "[" << PV(e->opposite()->vertex()) << ","
-            << PV(e->vertex()) << " " 
+            << PV(e->vertex()) << " "
   #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   << e->info()
   #endif
@@ -430,11 +423,11 @@ check_integrity_and_topological_planarity(bool faces) const
 {
   CGAL_NEF_TRACEN("check_integrity_and_topological_planarity:");
   using CGAL::Object_index;
-  Object_index<Vertex_const_iterator>   
+  Object_index<Vertex_const_iterator>
     VI(vertices_begin(),vertices_end(),'v');
-  Object_index<Halfedge_const_iterator> 
+  Object_index<Halfedge_const_iterator>
     EI(halfedges_begin(),halfedges_end(),'e');
-  Object_index<Face_const_iterator> 
+  Object_index<Face_const_iterator>
     FI(faces_begin(),faces_end(),'f');
   Vertex_const_handle vit, vend = phds->vertices_end();
   int iso_vert_num=0;
@@ -481,7 +474,7 @@ check_integrity_and_topological_planarity(bool faces) const
       CGAL_assertion( face(fcit)==fit ); ++fc_num;
     }
     Isolated_vertex_const_iterator ivit;
-    for(ivit = isolated_vertices_begin(fit); 
+    for(ivit = isolated_vertices_begin(fit);
         ivit != isolated_vertices_end(fit); ++ivit) {
       CGAL_assertion( face(ivit)==fit ); ++iv_num;
     }
@@ -492,10 +485,13 @@ check_integrity_and_topological_planarity(bool faces) const
   std::size_t e_num = number_of_edges();
   std::size_t c_num = number_of_connected_components() - iso_vert_num;
   std::size_t f_num = number_of_face_cycles() - c_num + 1;
+  CGAL_USE(v_num);
+  CGAL_USE(e_num);
+  CGAL_USE(f_num);
   CGAL_NEF_TRACEV(fc_num);CGAL_NEF_TRACEV(iv_num);CGAL_NEF_TRACEV(iso_vert_num);
   CGAL_NEF_TRACEV(v_num);CGAL_NEF_TRACEV(e_num);CGAL_NEF_TRACEV(c_num);CGAL_NEF_TRACEV(f_num);
   // CGAL_assertion(fc_num == f_num && iv_num == iso_vert_num);
-  /* this means all face cycles and all isolated vertices are 
+  /* this means all face cycles and all isolated vertices are
      indeed referenced from a face */
   /* every isolated vertex increases the component count
        one face cycle per component is redundent except one
@@ -504,12 +500,12 @@ check_integrity_and_topological_planarity(bool faces) const
 }
 
 template <typename HDS>
-typename PM_const_decorator<HDS>::Size_type 
+typename PM_const_decorator<HDS>::Size_type
 PM_const_decorator<HDS>::
 number_of_face_cycles() const
 {
   Size_type fc_num=0;
-  CGAL::Unique_hash_map<Halfedge_const_handle,bool> visited; 
+  CGAL::Unique_hash_map<Halfedge_const_handle,bool> visited;
     // init with bool() == false
   Halfedge_const_iterator eit =  phds->halfedges_begin();
   Halfedge_const_iterator eend = phds->halfedges_end();
@@ -529,12 +525,12 @@ number_of_connected_components() const
   typedef Vertex_const_iterator vc_handle;
   typedef Halfedge_around_vertex_const_circulator hvc_circulator;
   int comp_num=0;
-  CGAL::Unique_hash_map< vc_handle, bool> handled(false); 
+  CGAL::Unique_hash_map< vc_handle, bool> handled(false);
   vc_handle vit = vertices_begin(), vend = vertices_end();
   for ( ; vit != vend; ++vit) {
     if (handled[vit]) continue;
     std::list<vc_handle> L;
-    L.push_back(vit); handled[vit]=true; 
+    L.push_back(vit); handled[vit]=true;
     /* we keep the invariant that all nodes which have been stacked
        are marked handled */
     while (!L.empty()) {
@@ -543,13 +539,13 @@ number_of_connected_components() const
       hvc_circulator havc(first_out_edge(v)), hend(havc);
       CGAL_For_all(havc,hend) {
         if (!handled[target(havc)]) {
-          L.push_back(target(havc)); handled[target(havc)]=true; 
+          L.push_back(target(havc)); handled[target(havc)]=true;
         }
       }
     }
     ++comp_num;
   }
-  return comp_num;   
+  return comp_num;
 }
 
 struct KERNELPNT {
@@ -563,14 +559,14 @@ struct KERNELPNT {
 };
 
 template <typename PMCDEC, typename POINTDA>
-void print_as_leda_graph(std::ostream& os, const PMCDEC& D, 
+void print_as_leda_graph(std::ostream& os, const PMCDEC& D,
   const POINTDA& P)
 {
-  typedef typename PMCDEC::Vertex_const_iterator   
+  typedef typename PMCDEC::Vertex_const_iterator
   Vertex_const_iterator;
-  typedef typename PMCDEC::Halfedge_const_iterator 
+  typedef typename PMCDEC::Halfedge_const_iterator
   Halfedge_const_iterator;
-  int vn(1), en(1);  
+  int vn(1), en(1);
   CGAL::Unique_hash_map<Vertex_const_iterator,int>   v_num;
   CGAL::Unique_hash_map<Halfedge_const_iterator,int> e_num;
   os << "LEDA.GRAPH\n" << "point\n" << "int\n";

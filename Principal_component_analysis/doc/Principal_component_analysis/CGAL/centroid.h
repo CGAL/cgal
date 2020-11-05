@@ -30,9 +30,9 @@ facets (3D triangles).
 /*!
 computes the centroid of a non-empty set of 2D or 3D objects. The tag
 is used to specify the dimension to be considered from the
-objects. 
+objects.
 
-\pre first != beyond. 
+\pre first != beyond.
 
 \returns The return type is either `K::Point_2` or `K::Point_3`,
 depending on the dimension of the input objects, where `K` is
@@ -65,7 +65,7 @@ centroid(InputIterator first, InputIterator beyond, const Tag& t);
 tag is used to specify the dimension to be considered from the
 objects.
 
-\pre first != beyond. 
+\pre first != beyond.
 
 \returns The return type is either `K::Point_2` or `K::Point_3`,
 depending on the dimension of the input objects.

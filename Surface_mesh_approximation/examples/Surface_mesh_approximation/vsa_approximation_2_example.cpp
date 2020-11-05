@@ -21,7 +21,7 @@ int main()
 
   // output indexed triangle mesh
   std::vector<Kernel::Point_3> anchors;
-  std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles; // triplets of indices
+  std::vector<std::array<std::size_t, 3> > triangles; // triplets of indices
 
   // output face proxy index property map
   Face_proxy_pmap fpxmap =

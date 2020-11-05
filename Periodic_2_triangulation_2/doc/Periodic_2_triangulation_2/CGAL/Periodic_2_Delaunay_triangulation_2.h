@@ -332,7 +332,7 @@ public:
   */
   bool
   is_valid(Face_handle f, bool verbose = false) const;
-  
+
 /// @}
 
 }; /* end Periodic_2_Delaunay_triangulation_2 */

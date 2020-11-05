@@ -7,19 +7,19 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
+//
 // source        : $URL$
 // file          : test_delaunay_triangulation.C
-// revision      : 
-// revision_date : 
+// revision      :
+// revision_date :
 // author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)
 //
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 
 #if defined(BOOST_MSVC)
@@ -45,24 +45,24 @@ template class CGAL::Delaunay_triangulation_2<TestK>;
 
 int main()
 {
-  std::cout << "Testing Delaunay Triangulation_2 " << std::endl; 
+  std::cout << "Testing Delaunay Triangulation_2 " << std::endl;
   std::cout << " with Euclidean cartesian points : " << std::endl;
   typedef CGAL::Delaunay_triangulation_2<Test_rep_cartesian> Cls1;
 
   _test_cls_delaunay_triangulation_2( Cls1() );
 
 
-  std::cout << "Testing Delaunay Triangulation_2 "<< std::endl; 
+  std::cout << "Testing Delaunay Triangulation_2 "<< std::endl;
   std::cout << " with Triangulation_test_traits : " << std::endl;
   typedef CGAL::_Triangulation_test_traits                       Gt;
   typedef CGAL::Delaunay_triangulation_2<Gt>                 Cls;
 
-  _test_cls_delaunay_triangulation_2( Cls() ); 
+  _test_cls_delaunay_triangulation_2( Cls() );
 
   std::cout << "Testing Delaunay Triangulation_2 " <<  std::endl;
-  std::cout << " with Triangulation_data_structure_2 : " 
-	    <<  std::endl << " and Cartesian<double>"
-    	    << std::endl;
+  std::cout << " with Triangulation_data_structure_2 : "
+            <<  std::endl << " and Cartesian<double>"
+                << std::endl;
   std::cout << "this tests defaults setting" << std::endl;
   typedef CGAL::Cartesian<double>                       Gt3;
   typedef CGAL::Delaunay_triangulation_2<Gt3>           Cls3;
@@ -70,7 +70,7 @@ int main()
   _test_cls_delaunay_triangulation_2( Cls3() );
 
    std::cout << "Testing Delaunay Triangulation_2 " <<  std::endl;
-  std::cout << " using Kernel_traits : " 	    << std::endl;
+  std::cout << " using Kernel_traits : "             << std::endl;
   std::cout << " and Homogeneous Points "       << std::endl;
   typedef CGAL::Homogeneous<double>                                 Gt4;
   typedef CGAL::Delaunay_triangulation_2<Gt4>                   Cls4;

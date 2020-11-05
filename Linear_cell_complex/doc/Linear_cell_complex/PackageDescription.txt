@@ -19,7 +19,7 @@
 /// \defgroup PkgLinearCellComplexOperations Operations for Linear Cell Complex
 /// \ingroup PkgLinearCellComplexRef
 
-/*! Draw.
+/*!
   \code
    #include <CGAL/draw_linear_cell_complex.h>
   \endcode
@@ -75,7 +75,7 @@
 - `CGAL::compute_normal_of_cell_2<LCC>`
 
 \cgalCRPSubsection{Draw a Linear Cell Complex}
-- `CGAL::draw<LCC>`
+- \link PkgDrawLinearCellComplex CGAL::draw<LCC>() \endlink
 
 */
 

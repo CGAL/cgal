@@ -17,7 +17,7 @@ typedef Traits_2::X_monotone_curve_2                  X_monotone_curve_2;
 typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
 typedef Arrangement_2::Vertex_handle                  Vertex_handle;
 typedef Arrangement_2::Halfedge_handle                Halfedge_handle;
- 
+
 int main ()
 {
   Arrangement_2      arr;
@@ -30,7 +30,7 @@ int main ()
 
   X_monotone_curve_2 c1_left = Ray_2 (Point_2 (0, 0), Point_2 (-1, 0));
   X_monotone_curve_2 c1_right = Ray_2 (Point_2 (0, 0), Point_2 (1, 0));
- 
+
   e1 = arr.split_edge (e1, c1_left, c1_right);
   Vertex_handle      v = e1->target();
 
@@ -57,8 +57,8 @@ int main ()
             << "   V = " << arr.number_of_vertices()
             << " (plus " << arr.number_of_vertices_at_infinity()
             << " at infinity)"
-            << ",  E = " << arr.number_of_edges() 
-            << ",  F = " << arr.number_of_faces() 
+            << ",  E = " << arr.number_of_edges()
+            << ",  F = " << arr.number_of_faces()
             << " (" << arr.number_of_unbounded_faces() << " unbounded)"
             << std::endl << std::endl;
 

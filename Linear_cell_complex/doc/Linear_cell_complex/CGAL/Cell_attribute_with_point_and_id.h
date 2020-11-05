@@ -22,7 +22,7 @@ template< typename LCC, typename Info_, typename Tag, typename OnMerge, typename
 class Cell_attribute_with_point_and_id : public CGAL::Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit> {
 public:
 
-/// Returns the index. 
+/// Returns the index.
 int id() const;
 
 /// Returns the index by reference.

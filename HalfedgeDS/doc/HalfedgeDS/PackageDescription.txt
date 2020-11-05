@@ -13,7 +13,7 @@
 
 /// \defgroup  PkgHalfedgeDS_Decorators Decorators
 /// \ingroup PkgHalfedgeDSRef
-/// Classes that provide additional functions 
+/// Classes that provide additional functions
 /// to examine and to modify a halfedge data structure.
 
 

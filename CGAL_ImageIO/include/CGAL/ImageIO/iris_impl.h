@@ -1,21 +1,11 @@
 // Copyright (c) 2005-2008 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
-// This file is part of the ImageIO Library, and as been adapted for
-// CGAL (www.cgal.org).
-// You can redistribute it and/or  modify it under the terms of the
-// GNU Lesser General Public License as published by the Free Software Foundation;
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// These files are provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of the ImageIO Library, and as been adapted for CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 //
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
@@ -46,33 +36,33 @@
 
 typedef unsigned char byte;
 
-#define BPPMASK			0x00ff
-#define ITYPE_VERBATIM		0x0000
-#define ITYPE_RLE		0x0100
-#define ISRLE(type)		(((type) & 0xff00) == ITYPE_RLE)
-#define ISVERBATIM(type)	(((type) & 0xff00) == ITYPE_VERBATIM)
-#define BPP(type)		((type) & BPPMASK)
-#define RLE(bpp)		(ITYPE_RLE | (bpp))
-#define VERBATIM(bpp)		(ITYPE_VERBATIM | (bpp))
+#define BPPMASK                        0x00ff
+#define ITYPE_VERBATIM                0x0000
+#define ITYPE_RLE                0x0100
+#define ISRLE(type)                (((type) & 0xff00) == ITYPE_RLE)
+#define ISVERBATIM(type)        (((type) & 0xff00) == ITYPE_VERBATIM)
+#define BPP(type)                ((type) & BPPMASK)
+#define RLE(bpp)                (ITYPE_RLE | (bpp))
+#define VERBATIM(bpp)                (ITYPE_VERBATIM | (bpp))
 
 
 
 
 
 
-#define TAGLEN	(5)
+#define TAGLEN        (5)
 
 #define RINTLUM (79)
 #define GINTLUM (156)
 #define BINTLUM (21)
 
-#define OFFSET_R	3	/* this is byte order dependent */
-#define OFFSET_G	2
-#define OFFSET_B	1
-#define OFFSET_A	0
+#define OFFSET_R        3        /* this is byte order dependent */
+#define OFFSET_G        2
+#define OFFSET_B        1
+#define OFFSET_A        0
 
 #define ILUM(r,g,b)     ((int)(RINTLUM*(r)+GINTLUM*(g)+BINTLUM*(b))>>8)
-#define CHANOFFSET(z)	(3-(z))	/* this is byte order dependent */
+#define CHANOFFSET(z)        (3-(z))        /* this is byte order dependent */
 
 static byte    *getimagedata  (const _image *im, unsigned short, int, int, int);
 static void     interleaverow (byte *, byte *, int, int);
@@ -90,7 +80,7 @@ int testIrisHeader(char *magic,const char *) {
   if((((unsigned char *)magic)[0]<<8) + ((unsigned char *)magic)[1]
      == IRIS_MAGIC)
     return 0;
-  else 
+  else
     return -1;
 }
 
@@ -130,40 +120,40 @@ static void expandrow(byte *optr, byte *iptr, int z)
     if ( !(count = (pixel & 0x7f)) ) return;
     if (pixel & 0x80) {
       while (count>=8) {
-	optr[0*4] = iptr[0];
-	optr[1*4] = iptr[1];
-	optr[2*4] = iptr[2];
-	optr[3*4] = iptr[3];
-	optr[4*4] = iptr[4];
-	optr[5*4] = iptr[5];
-	optr[6*4] = iptr[6];
-	optr[7*4] = iptr[7];
-	optr += 8*4;
-	iptr += 8;
-	count = byte(count - 8);
+        optr[0*4] = iptr[0];
+        optr[1*4] = iptr[1];
+        optr[2*4] = iptr[2];
+        optr[3*4] = iptr[3];
+        optr[4*4] = iptr[4];
+        optr[5*4] = iptr[5];
+        optr[6*4] = iptr[6];
+        optr[7*4] = iptr[7];
+        optr += 8*4;
+        iptr += 8;
+        count = byte(count - 8);
       }
       while(count--) {
-	*optr = *iptr++;
-	optr+=4;
+        *optr = *iptr++;
+        optr+=4;
       }
     }
     else {
       pixel = *iptr++;
       while(count>=8) {
-	optr[0*4] = pixel;
-	optr[1*4] = pixel;
-	optr[2*4] = pixel;
-	optr[3*4] = pixel;
-	optr[4*4] = pixel;
-	optr[5*4] = pixel;
-	optr[6*4] = pixel;
-	optr[7*4] = pixel;
-	optr += 8*4;
-	count = byte(count - 8);
+        optr[0*4] = pixel;
+        optr[1*4] = pixel;
+        optr[2*4] = pixel;
+        optr[3*4] = pixel;
+        optr[4*4] = pixel;
+        optr[5*4] = pixel;
+        optr[6*4] = pixel;
+        optr[7*4] = pixel;
+        optr += 8*4;
+        count = byte(count - 8);
       }
       while(count--) {
-	*optr = pixel;
-	optr+=4;
+        *optr = pixel;
+        optr+=4;
       }
     }
   }
@@ -182,7 +172,7 @@ static void readtab(const _image *im, unsigned long *tab, int n)
 /*****************************************************/
 static void addimgtag(byte *dptr, int xsize, int ysize)
 {
-  /* this is used to extract image data from core dumps. 
+  /* this is used to extract image data from core dumps.
      I doubt this is necessary...  --jhb */
 
   dptr    = dptr + (xsize * ysize * 4);
@@ -211,7 +201,7 @@ static void addimgtag(byte *dptr, int xsize, int ysize)
 /*****************************************************/
 static unsigned short getshort( const _image *im)
 {
-  byte buf[2];
+  byte buf[2] = { '\0', '\0' };
   ImageIO_read( im, buf, (size_t) 2);
   return (unsigned short)((buf[0]<<8)+(buf[1]<<0));
 }
@@ -219,7 +209,7 @@ static unsigned short getshort( const _image *im)
 /*****************************************************/
 static unsigned long getlong( const _image *im )
 {
-  byte buf[4];
+  byte buf[4] = { '\0', '\0', '\0', '\0' };
   ImageIO_read( im, buf, (size_t) 4);
   return (((unsigned long) buf[0])<<24) + (((unsigned long) buf[1])<<16)
        + (((unsigned long) buf[2])<<8) + buf[3];
@@ -256,14 +246,14 @@ int readIrisImage( const char *, _image *im ) {
   /*  t1=texture_alloc();
   (void) strcpy(t1->name,fname);
   t1->type=IRIS;
-  
+
   t1->nrows = ysize;
   t1->ncols = xsize;
-    
+
   t1->image = create_int_array(t1->nrows,t1->ncols);*/
 
   /* got the raw image data.  Convert to an XV image (1,3 bytes / pix) */
-  if (zsize < 3) 
+  if (zsize < 3)
     {  /* grayscale */
       im->xdim = xsize;
       im->ydim = ysize;
@@ -276,25 +266,25 @@ int readIrisImage( const char *, _image *im ) {
 
       pic824 = (byte *) ImageIO_alloc((size_t) xsize * ysize);
       if (!pic824) exit(-1);
-      
+
       /* copy plane 3 from rawdata into pic824, inverting pic vertically */
       for (i = 0, bptr = pic824; i < ysize; i++)
-	{
-	  rptr = rawdata + 3 + ((ysize - 1) - i) * (xsize * 4);
-	  for (j = 0; j < xsize; j++, bptr++, rptr += 4)
-	    *bptr = *rptr;
-	}
-      
-      
+        {
+          rptr = rawdata + 3 + ((ysize - 1) - i) * (xsize * 4);
+          for (j = 0; j < xsize; j++, bptr++, rptr += 4)
+            *bptr = *rptr;
+        }
+
+
       size = im->xdim * im->ydim;
       for (bptr = pic824, iptr = (unsigned char *) im->data,
-	     i = 0; i < size; ++i, ++iptr, ++bptr)
-	{
-	  *iptr = *bptr;
-	}
-      
+             i = 0; i < size; ++i, ++iptr, ++bptr)
+        {
+          *iptr = *bptr;
+        }
+
       ImageIO_free(pic824);
-    
+
   }
 
   else {  /* truecolor */
@@ -308,38 +298,38 @@ int readIrisImage( const char *, _image *im ) {
     im->data = ImageIO_alloc(xsize * ysize * im->zdim * 4);
 
     pic824 = (byte *) ImageIO_alloc((size_t) xsize * ysize * 3);
-    if (!pic824) 
+    if (!pic824)
       exit(1);
-    
+
     /* copy plane 3 from rawdata into pic824, inverting pic vertically */
     for (i = 0, bptr = pic824; i< ysize; i++)
       {
-	rptr = rawdata + ((ysize - 1) - i) * (xsize * 4);
+        rptr = rawdata + ((ysize - 1) - i) * (xsize * 4);
 
-	for (j=0; j< xsize; j++, rptr += 4) {
-	  *bptr++ = rptr[3];
-	  *bptr++ = rptr[2];
-	  *bptr++ = rptr[1];
-	}
+        for (j=0; j< xsize; j++, rptr += 4) {
+          *bptr++ = rptr[3];
+          *bptr++ = rptr[2];
+          *bptr++ = rptr[1];
+        }
       }
-    
-    
+
+
     size = im->xdim * im->ydim;
     for (bptr = pic824, iptr = (unsigned char *) im->data, i = 0;
-	 i < size; ++i, iptr += 4, bptr += 3)
+         i < size; ++i, iptr += 4, bptr += 3)
       {
-	if ( _getEndianness() == END_LITTLE ) {
-	  iptr[0] = 0xFF;
-	  iptr[1] = bptr[2];
-	  iptr[2] = bptr[1];
-	  iptr[3] = bptr[0];
-	}
-	else {
-	  iptr[0] = bptr[0];
-	  iptr[1] = bptr[1];
-	  iptr[2] = bptr[2];
-	  iptr[3] = 0xFF;
-	}
+        if ( _getEndianness() == END_LITTLE ) {
+          iptr[0] = 0xFF;
+          iptr[1] = bptr[2];
+          iptr[2] = bptr[1];
+          iptr[3] = bptr[0];
+        }
+        else {
+          iptr[0] = bptr[0];
+          iptr[1] = bptr[1];
+          iptr[2] = bptr[2];
+          iptr[3] = 0xFF;
+        }
       }
       ImageIO_free(pic824);
   }
@@ -347,17 +337,17 @@ int readIrisImage( const char *, _image *im ) {
   ImageIO_free(rawdata);
 
   return 1;
-}     
+}
 
 
 
 
 /****************************************************/
 static byte *getimagedata(const _image *im, unsigned short type, int xsize, int ysize,
-			  int zsize)
+                          int zsize)
 {
-  /* read in a B/W RGB or RGBA iris image file and return a 
-     pointer to an array of 4-byte pixels, arranged ABGR, NULL on error */
+  /* read in a B/W RGB or RGBA iris image file and return a
+     pointer to an array of 4-byte pixels, arranged ABGR, nullptr on error */
 
   byte   *base, *lptr;
   byte   *verdat;
@@ -372,7 +362,7 @@ static byte *getimagedata(const _image *im, unsigned short type, int xsize, int 
   bpp     = BPP(type);
 
   if (bpp != 1) {
-    return (byte *) NULL;
+    return (byte *) nullptr;
   }
 
   if (rle) {
@@ -383,7 +373,7 @@ static byte *getimagedata(const _image *im, unsigned short type, int xsize, int 
     lengthtab = (unsigned long *) ImageIO_alloc((size_t) tablen * sizeof(long));
     rledat    = (byte *)   ImageIO_alloc((size_t) rlebuflen);
 
-    if (!starttab || !lengthtab || !rledat) 
+    if (!starttab || !lengthtab || !rledat)
       exit(1);
 
     ImageIO_seek( im, 512L, SEEK_SET );
@@ -392,7 +382,7 @@ static byte *getimagedata(const _image *im, unsigned short type, int xsize, int 
 
     if ( ImageIO_error(im) ) {
       ImageIO_free(starttab);  ImageIO_free(lengthtab);  ImageIO_free(rledat);
-      return (byte *) NULL;
+      return (byte *) nullptr;
     }
 
 
@@ -401,8 +391,8 @@ static byte *getimagedata(const _image *im, unsigned short type, int xsize, int 
     badorder = 0;
     for (y=0; y<ysize && !badorder; y++) {
       for (z=0; z<zsize && !badorder; z++) {
-	if (starttab[y+z*ysize] < cur) badorder = 1;
-	else cur = starttab[y+z*ysize];
+        if (starttab[y+z*ysize] < cur) badorder = 1;
+        else cur = starttab[y+z*ysize];
       }
     }
 
@@ -411,45 +401,45 @@ static byte *getimagedata(const _image *im, unsigned short type, int xsize, int 
     cur = 512 + 2*tablen*4;
 
     base = (byte *) ImageIO_alloc((size_t) (xsize*ysize+TAGLEN) * 4);
-    if (!base) 
+    if (!base)
       exit(1);
 
     addimgtag(base,xsize,ysize);
 
     if (badorder) {
       for (z=0; z<zsize; z++) {
-	lptr = base;
-	for (y=0; y<ysize; y++) {
-	  if (cur != starttab[y+z*ysize]) {
-	    ImageIO_seek( im, (long) starttab[y+z*ysize], 0);
-	    cur = starttab[y+z*ysize];
-	  }
+        lptr = base;
+        for (y=0; y<ysize; y++) {
+          if (cur != starttab[y+z*ysize]) {
+            ImageIO_seek( im, (long) starttab[y+z*ysize], 0);
+            cur = starttab[y+z*ysize];
+          }
 
-	  if (lengthtab[y+z*ysize]>(unsigned long)rlebuflen) {
-	    ImageIO_free(starttab); ImageIO_free(lengthtab); ImageIO_free(rledat); ImageIO_free(base);
-	    return (byte *) NULL;
-	  }
-	  ImageIO_read(im, rledat, (size_t) lengthtab[y+z*ysize]);
-	  cur += lengthtab[y+z*ysize];
-	  expandrow(lptr,rledat,3-z);
-	  lptr += (xsize * 4);
-	}
+          if (lengthtab[y+z*ysize]>(unsigned long)rlebuflen) {
+            ImageIO_free(starttab); ImageIO_free(lengthtab); ImageIO_free(rledat); ImageIO_free(base);
+            return (byte *) nullptr;
+          }
+          ImageIO_read(im, rledat, (size_t) lengthtab[y+z*ysize]);
+          cur += lengthtab[y+z*ysize];
+          expandrow(lptr,rledat,3-z);
+          lptr += (xsize * 4);
+        }
       }
     }
     else {
       lptr = base;
       for (y=0; y<ysize; y++) {
-	for (z=0; z<zsize; z++) {
-	  if (cur != starttab[y+z*ysize]) {
-	    ImageIO_seek( im, (long) starttab[y+z*ysize], 0);
-	    cur = starttab[y+z*ysize];
-	  }
-	  
-	  ImageIO_read(im, rledat, (size_t) lengthtab[y+z*ysize]);
-	  cur += lengthtab[y+z*ysize];
-	  expandrow(lptr,rledat,3-z);
-	}
-	lptr += (xsize * 4);
+        for (z=0; z<zsize; z++) {
+          if (cur != starttab[y+z*ysize]) {
+            ImageIO_seek( im, (long) starttab[y+z*ysize], 0);
+            cur = starttab[y+z*ysize];
+          }
+
+          ImageIO_read(im, rledat, (size_t) lengthtab[y+z*ysize]);
+          cur += lengthtab[y+z*ysize];
+          expandrow(lptr,rledat,3-z);
+        }
+        lptr += (xsize * 4);
       }
     }
 
@@ -462,7 +452,7 @@ static byte *getimagedata(const _image *im, unsigned short type, int xsize, int 
   else {  /* not RLE */
     verdat = (byte *) ImageIO_alloc((size_t) xsize);
     base   = (byte *) ImageIO_alloc((size_t) (xsize*ysize+TAGLEN) * 4);
-    if (!base || !verdat) 
+    if (!base || !verdat)
       exit(1);
 
     addimgtag(base,xsize,ysize);
@@ -472,9 +462,9 @@ static byte *getimagedata(const _image *im, unsigned short type, int xsize, int 
     for (z=0; z<zsize; z++) {
       lptr = base;
       for (y=0; y<ysize; y++) {
-	ImageIO_read(im, verdat, (size_t) xsize);
-	interleaverow(lptr,verdat,3-z,xsize);
-	lptr += (xsize * 4);
+        ImageIO_read(im, verdat, (size_t) xsize);
+        interleaverow(lptr,verdat,3-z,xsize);
+        lptr += (xsize * 4);
       }
     }
 

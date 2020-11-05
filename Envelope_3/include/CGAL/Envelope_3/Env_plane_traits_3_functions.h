@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Baruch Zukerman     <baruchzu@post.tau.ac.il>
 
@@ -31,7 +22,7 @@
 namespace CGAL {
 
 template <class K>
-Object plane_half_plane_proj_intersection(const typename K::Plane_3 &h1, 
+Object plane_half_plane_proj_intersection(const typename K::Plane_3 &h1,
                                           const typename K::Plane_3 &h2,
                                           const typename K::Line_2  &l,
                                           const K& k)
@@ -141,15 +132,15 @@ Object line_under_linear_constraint(const typename K::Line_2& l1,
       return Object();
 
     CGAL_assertion(side == ON_POSITIVE_SIDE); // the two lines are parallel
-    return make_object(l1);   
+    return make_object(l1);
   }
- 
+
   // the two lines overlap
   CGAL_USE_TYPE(Line_2);
   CGAL_assertion_code(Line_2 dummy;);
   CGAL_assertion_code(bool b =  assign(dummy, obj););
   CGAL_assertion(b);
-  
+
   return make_object(l1);
 }
 
@@ -197,7 +188,7 @@ Object ray_under_linear_constraint(const typename K::Ray_2&  ray,
   // the ray and the line overlap
   return make_object(ray);
 }
- 
+
 
 } //namespace CGAL
 

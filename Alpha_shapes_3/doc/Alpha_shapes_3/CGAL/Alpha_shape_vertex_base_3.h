@@ -4,8 +4,8 @@ namespace CGAL {
 /*!
 \ingroup PkgAlphaShapes3Ref
 
-The class `Alpha_shape_vertex_base_3` is the default model for the concept 
-`AlphaShapeVertex_3`. 
+The class `Alpha_shape_vertex_base_3` is the default model for the concept
+`AlphaShapeVertex_3`.
 
 \tparam Traits is the geometric traits class that is provided
 to the `Alpha_shape_3` class.
@@ -29,7 +29,6 @@ template< typename Traits, typename Vb, typename ExactAlphaComparisonTag, typena
 class Alpha_shape_vertex_base_3 : public Vb {
 public:
 
-/// @}
 
 }; /* end Alpha_shape_vertex_base_3 */
 } /* end namespace CGAL */

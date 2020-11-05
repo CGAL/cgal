@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s):  Kan Huang <huangkandiy@gmail.com>
@@ -31,7 +22,7 @@
 #include <CGAL/bounding_box.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Kernel/global_functions_2.h>
-#include <boost/unordered_map.hpp> 
+#include <boost/unordered_map.hpp>
 #include <iterator>
 
 
@@ -103,7 +94,7 @@ private:
       if (v1 == v2)
         return false;
       else
-        // I know this is dirty but it speeds up by 25%. Michael 
+        // I know this is dirty but it speeds up by 25%. Michael
         return &(*v1)<&(*v2);
 //        return Visibility_2::
 //          compare_xy_2(geom_traits, v1->point(), v2->point()) == SMALLER;
@@ -252,7 +243,7 @@ private:
     }
 
   };
-  
+
   const Arrangement_2 *p_arr;
   const Geometry_traits_2 *geom_traits;
 
@@ -289,15 +280,15 @@ private:
                                           //visibility_cone is greater than pi.
 
 public:
-  Rotational_sweep_visibility_2(): p_arr(NULL), geom_traits(NULL) {}
+  Rotational_sweep_visibility_2(): p_arr(nullptr), geom_traits(nullptr) {}
   Rotational_sweep_visibility_2(const Arrangement_2& arr): p_arr(&arr) {
     geom_traits = p_arr->geometry_traits();
   }
 
   const std::string name() const { return std::string("R_visibility_2"); }
-  
-  template <typename VARR> 
-  typename VARR::Face_handle 
+
+  template <typename VARR>
+  typename VARR::Face_handle
   compute_visibility(
           const Point_2& q, const Halfedge_const_handle e, VARR& arr_out) const
   {
@@ -404,8 +395,8 @@ public:
       return arr_out.faces_begin();
   }
 
-  template <typename VARR> 
-  typename VARR::Face_handle 
+  template <typename VARR>
+  typename VARR::Face_handle
   compute_visibility(
           const Point_2& q, const Face_const_handle f, VARR& arr_out) const
   {
@@ -429,7 +420,7 @@ public:
   }
 
 bool is_attached() const {
-  return (p_arr != NULL);
+  return (p_arr != nullptr);
 }
 
 void attach(const Arrangement_2& arr) {
@@ -438,8 +429,8 @@ void attach(const Arrangement_2& arr) {
 }
 
 void detach() {
-  p_arr = NULL;
-  geom_traits = NULL;
+  p_arr = nullptr;
+  geom_traits = nullptr;
 }
 
 const Arrangement_2& arrangement_2() const {

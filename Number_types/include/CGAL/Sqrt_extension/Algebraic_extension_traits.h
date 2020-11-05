@@ -1,20 +1,11 @@
 // Copyright (c) 2006-2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -29,9 +20,9 @@ namespace CGAL {
 
 template <class COEFF, class ROOT, class ACDE_TAG,class FP_TAG>
 class Algebraic_extension_traits<CGAL::Sqrt_extension<COEFF,ROOT,ACDE_TAG,FP_TAG> > {
-/* needed to 'add up' sqrt_extensions in iterator range such that all roots 
-   are collected in order to keep operation time minimal all scalar coeffs 
-   are set to 1 by standardise. 
+/* needed to 'add up' sqrt_extensions in iterator range such that all roots
+   are collected in order to keep operation time minimal all scalar coeffs
+   are set to 1 by standardise.
    TODO .. find a better name, if you want to.
 */
     template <class Type_>
@@ -43,7 +34,7 @@ class Algebraic_extension_traits<CGAL::Sqrt_extension<COEFF,ROOT,ACDE_TAG,FP_TAG
             return Type_(1);
         }
     };
-    
+
   template <class COEFF_, class ROOT_,class ACDE_TAG_,class FP_TAG_>
   class Standardise<CGAL::Sqrt_extension<COEFF_,ROOT_,ACDE_TAG_,FP_TAG_> > {
         Standardise<COEFF_> standardise;
@@ -51,7 +42,7 @@ class Algebraic_extension_traits<CGAL::Sqrt_extension<COEFF,ROOT,ACDE_TAG,FP_TAG
     typedef CGAL::Sqrt_extension<COEFF_,ROOT_,ACDE_TAG_,FP_TAG_> Type_;
         typedef Type_ argument_type;
         typedef Type_ result_type;
-    Type_ operator () (const Type_& a) const {       
+    Type_ operator () (const Type_& a) const {
             if (a.a1() != COEFF_(0)){
                 return Type_(standardise(a.a0()),standardise(a.a1()),a.root());
             }else{
@@ -61,13 +52,13 @@ class Algebraic_extension_traits<CGAL::Sqrt_extension<COEFF,ROOT,ACDE_TAG,FP_TAG
     };
 
 public:
-    //! \name Typedefs 
+    //! \name Typedefs
     //! the number type for which this instance has been instantiated
     typedef CGAL::Sqrt_extension<COEFF,ROOT,ACDE_TAG,FP_TAG> Type;
     //! Sqrt_extension as a number type is extended
     typedef ::CGAL::Tag_true Is_extended;
-    
-    /*! computes the factor which normalizes a number to be integral 
+
+    /*! computes the factor which normalizes a number to be integral
      *  after multiplication
      */
     class Normalization_factor{
@@ -90,13 +81,13 @@ public:
                 result = tmp1*Type(normalization_factor(tmp2.a0()));
                 CGAL_postcondition(result.a1() != COEFF(0));
             }else{
-                result = Type(normalization_factor(a.a0())); 
-            }           
+                result = Type(normalization_factor(a.a0()));
+            }
             return result;
         }
     };
 
-    /*! returns the extension factor needed for the gcd_utcf computation 
+    /*! returns the extension factor needed for the gcd_utcf computation
      *  for more details see ... TODO!!
      */
     class Denominator_for_algebraic_integers {
@@ -108,13 +99,13 @@ public:
         //! determine denominator for algebraic integers
     public:
         Type operator () (const Type& a) {
-            
+
             typedef Algebraic_extension_traits<COEFF> AET;
             typename AET::Denominator_for_algebraic_integers dfai;
 
             Standardise<COEFF> standardise;
             if (a.a1() != COEFF(0)) {
-                COEFF tmp = 
+                COEFF tmp =
                     standardise(a.a0())
                     + standardise(a.a1())
                     + standardise(COEFF(a.root()));
@@ -125,13 +116,13 @@ public:
         }
 
         /*! overloaded operator for computing the denominator out of an iterator
-          range accumulates all root expressions which appear in the range to 
-          the most complex term and uses this term to determine the denominator 
+          range accumulates all root expressions which appear in the range to
+          the most complex term and uses this term to determine the denominator
           for algebraic integers
         */
         template <class InputIterator>
         Type operator () (InputIterator begin, InputIterator end) {
-            Type a = std::accumulate(::boost::make_transform_iterator(begin,Standardise<Type>()), 
+            Type a = std::accumulate(::boost::make_transform_iterator(begin,Standardise<Type>()),
                     ::boost::make_transform_iterator(end  ,Standardise<Type>()), Type(0));
             return (*this)(a);
         }

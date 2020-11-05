@@ -27,7 +27,7 @@ Note that there is an additional, and undocumented, template parameter `CMap` fo
 \deprecated Before CGAL 4.9, `Items` had to define the type of dart used. This is now deprecated, the `Dart` type is no more defined in the item class, but replaced by the `Dart_info` type. See deprecated note in the `Linear_cell_complex_min_items` class. `CGAL_CMAP_DART_DEPRECATED` can be defined to keep the old behavior.
 
 */
-  
+
 template< typename d, typename d2, typename LCCTraits, typename Items, typename Alloc >
 class Linear_cell_complex_for_combinatorial_map : public Combinatorial_map<d,Items,Alloc>
  {

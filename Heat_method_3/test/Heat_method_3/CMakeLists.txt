@@ -1,10 +1,10 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Heat_method_3_Tests )
 
 
-cmake_minimum_required(VERSION 2.8.11)
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )
@@ -12,7 +12,7 @@ find_package( CGAL QUIET COMPONENTS  )
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 
 endif()
 
@@ -27,18 +27,16 @@ if ( NOT Boost_FOUND )
 
   message(STATUS "This project requires the Boost library, and will not be compiled.")
 
-  return()  
+  return()
 
 endif()
 
 
 find_package(Eigen3 3.3.0)
+include(CGAL_Eigen_support)
 
-if (EIGEN3_FOUND)
-  include( ${EIGEN3_USE_FILE} )
-else()  
+if (NOT TARGET CGAL::Eigen_support)
   message(STATUS "This project requires the  Eigen library (3.3 or greater), and will not be compiled.")
-
   return()
 endif()
 
@@ -52,5 +50,8 @@ include_directories( BEFORE include )
 include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "heat_method_concept.cpp" )
+target_link_libraries(heat_method_concept PUBLIC CGAL::Eigen_support)
 create_single_source_cgal_program( "heat_method_surface_mesh_test.cpp" )
+target_link_libraries(heat_method_surface_mesh_test PUBLIC CGAL::Eigen_support)
 create_single_source_cgal_program( "heat_method_surface_mesh_direct_test.cpp" )
+target_link_libraries(heat_method_surface_mesh_direct_test PUBLIC CGAL::Eigen_support)

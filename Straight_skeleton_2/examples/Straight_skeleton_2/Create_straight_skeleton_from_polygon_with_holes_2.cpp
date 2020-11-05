@@ -19,7 +19,7 @@ typedef boost::shared_ptr<Ss> SsPtr ;
 int main()
 {
   Polygon_2 outer ;
-  
+
   outer.push_back( Point(-1,-1) ) ;
   outer.push_back( Point(0,-12) ) ;
   outer.push_back( Point(1,-1) ) ;
@@ -28,21 +28,21 @@ int main()
   outer.push_back( Point(0,12) ) ;
   outer.push_back( Point(-1,1) ) ;
   outer.push_back( Point(-12,0) ) ;
-  
+
   Polygon_2 hole ;
-  
+
   hole.push_back( Point(-1,0) ) ;
   hole.push_back( Point(0,1 ) ) ;
   hole.push_back( Point(1,0 ) ) ;
   hole.push_back( Point(0,-1) ) ;
-    
+
   Polygon_with_holes poly( outer ) ;
-  
+
   poly.add_hole( hole ) ;
-     
+
   SsPtr iss = CGAL::create_interior_straight_skeleton_2(poly);
-  
+
   print_straight_skeleton(*iss);
-  
+
   return 0;
 }

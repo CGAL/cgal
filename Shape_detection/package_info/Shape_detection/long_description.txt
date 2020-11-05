@@ -1,0 +1,14 @@
+﻿Shape Detection
+
+Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez, Florent Lafarge, Simon Giraudot, Thien Hoang, and Dmitry Anisimov
+
+This CGAL package implements the Efficient RANSAC (RANdom SAmple Consensus) algorithm
+for detecting shapes in a point set with unoriented normals. Five canonical shapes
+can be detected: planes, spheres, cylinders, cones, and tori.
+Additional shapes can be detected, given a custom shape class by the user.
+
+In addition to the RANSAC algorithm, the generic Region Growing algorithm is implemented.
+This algorithm can detect shapes in a set of arbitrary items. In particular,
+CGAL provides three instances of the algorithm: detecting lines in a 2D point set,
+detecting planes in a 3D point set, and detecting planes on a polygon mesh.
+Other custom instances can be easily added by the user.

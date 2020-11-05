@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_3D_Minkowski_Sum_of_Polyhedra
 \anchor chapterMinkowskiSum3
 \author Peter Hachenberger
@@ -88,87 +88,87 @@ and the star is illustrated in \cgalFigureRef{figspoonStar}.
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=7><HR>
 <TR>
 <TD ALIGN=LEFT COLSPAN=3>
-model 1 
+model 1
 <TD ALIGN=LEFT COLSPAN=3>
-model 2 
+model 2
 <TD ALIGN=CENTER NOWRAP>
-running 
+running
 <TR>
 <TD ALIGN=CENTER NOWRAP>
-name 
+name
 <TD ALIGN=CENTER NOWRAP>
-facets 
+facets
 <TD ALIGN=CENTER NOWRAP>
-conv. pcs. 
+conv. pcs.
 <TD ALIGN=CENTER NOWRAP>
-name 
+name
 <TD ALIGN=CENTER NOWRAP>
-facets 
+facets
 <TD ALIGN=CENTER NOWRAP>
-conv. pcs. 
+conv. pcs.
 <TD ALIGN=CENTER NOWRAP>
-time 
+time
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=7><HR>
 <TR>
 <TD ALIGN=CENTER NOWRAP>
-mushroom 
+mushroom
 <TD ALIGN=CENTER NOWRAP>
-448 
+448
 <TD ALIGN=CENTER NOWRAP>
-255 
+255
 <TD ALIGN=CENTER NOWRAP>
-cube 
+cube
 <TD ALIGN=CENTER NOWRAP>
-6 
+6
 <TD ALIGN=CENTER NOWRAP>
-1 
+1
 <TD ALIGN=CENTER NOWRAP>
-204s 
+204s
 <TR>
 <TD ALIGN=CENTER NOWRAP>
-mushroom 
+mushroom
 <TD ALIGN=CENTER NOWRAP>
-448 
+448
 <TD ALIGN=CENTER NOWRAP>
-255 
+255
 <TD ALIGN=CENTER NOWRAP>
-ball1 
+ball1
 <TD ALIGN=CENTER NOWRAP>
-128 
+128
 <TD ALIGN=CENTER NOWRAP>
-1 
+1
 <TD ALIGN=CENTER NOWRAP>
-553s 
+553s
 <TR>
 <TD ALIGN=CENTER NOWRAP>
-spoon 
+spoon
 <TD ALIGN=CENTER NOWRAP>
-336 
+336
 <TD ALIGN=CENTER NOWRAP>
-186 
+186
 <TD ALIGN=CENTER NOWRAP>
-star 
+star
 <TD ALIGN=CENTER NOWRAP>
-24 
+24
 <TD ALIGN=CENTER NOWRAP>
-5 
+5
 <TD ALIGN=CENTER NOWRAP>
-882s 
+882s
 <TR>
 <TD ALIGN=CENTER NOWRAP>
-cup 
+cup
 <TD ALIGN=CENTER NOWRAP>
-1000 
+1000
 <TD ALIGN=CENTER NOWRAP>
-774 
+774
 <TD ALIGN=CENTER NOWRAP>
-ball2 
+ball2
 <TD ALIGN=CENTER NOWRAP>
-1000 
+1000
 <TD ALIGN=CENTER NOWRAP>
-1 
+1
 <TD ALIGN=CENTER NOWRAP>
-9851s 
+9851s
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=7><HR>
 </TABLE>
 
@@ -238,7 +238,7 @@ follows:
 <LI>All sets of coplanar facets of a full-dimensional
 feature must have the same selection mark (in case of different
 selection marks, unselected is assumed).
-<LI>All facets of lower-dimensional features need to be convex and 
+<LI>All facets of lower-dimensional features need to be convex and
 must not have holes (non-convex facets and holes are ignored).
 </OL>
 
@@ -284,5 +284,5 @@ function `minkowski_sum_3()`.
 
 \cgalExample{Minkowski_sum_3/glide.cpp}
 
-*/ 
+*/
 } /* namespace CGAL */

@@ -28,7 +28,7 @@
 #  include "polyhedral_surface.h"
 #endif
 
-MainWindow::MainWindow(MainWindow* other_window /* = 0 */) : 
+MainWindow::MainWindow(MainWindow* other_window /* = 0 */) :
   CGAL::Qt::DemosMainWindow(),
   surface(0)
 {
@@ -44,9 +44,9 @@ MainWindow::MainWindow(MainWindow* other_window /* = 0 */) :
 
   this->addAboutCGAL();
   this->addRecentFiles(this->menu_File,
-		       this->action_Quit);
+                       this->action_Quit);
   connect(this, SIGNAL(openRecentFile(QString)),
-	  this, SLOT(surface_open(QString)));
+          this, SLOT(surface_open(QString)));
 
   this->readState();
 
@@ -96,7 +96,7 @@ void MainWindow::show_only(QString tag)
   QTextStream err(&dummy);
 #endif
   err << "** Show only in \"" << tag << "\"\n";
-  Q_FOREACH(QObject* object, 
+  Q_FOREACH(QObject* object,
             this->findChildren<QObject*>())
   {
     QStringList show_only_in = object->property("show_only_in").toStringList();
@@ -112,7 +112,7 @@ void MainWindow::show_only(QString tag)
         menu->menuAction()->setVisible(visible);
       }
       else {
-	object->setProperty("visible", QVariant::fromValue<bool>(visible));
+        object->setProperty("visible", QVariant::fromValue<bool>(visible));
       }
     }
   }
@@ -122,7 +122,7 @@ void MainWindow::on_action_Open_triggered()
 {
   QSettings settings;
   QString directory = settings.value("Open directory",
-				     QDir::current().dirName()).toString();
+                                     QDir::current().dirName()).toString();
   QString filename = QFileDialog::getOpenFileName(this, tr("Open File"),
                                                   directory,
                                                   tr("all Files (*.*)"));
@@ -130,7 +130,7 @@ void MainWindow::on_action_Open_triggered()
     QFileInfo fileinfo(filename);
     if(fileinfo.isFile() && fileinfo.isReadable()) {
       settings.setValue("Open directory",
-			fileinfo.absoluteDir().absolutePath());
+                        fileinfo.absoluteDir().absolutePath());
       surface_open(filename);
     }
   }

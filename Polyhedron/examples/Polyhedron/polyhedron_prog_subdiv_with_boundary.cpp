@@ -196,6 +196,6 @@ int main( int argc, char* argv[]) {
         if ( i & 1)
             subdiv_border( P);
     }
-    cout << P;
+    cout << std::setprecision(17) << P;
     return 0;
 }

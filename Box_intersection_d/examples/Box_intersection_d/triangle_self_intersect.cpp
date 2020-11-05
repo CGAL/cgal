@@ -18,7 +18,7 @@ struct Report {
   {}
 
   // callback functor that reports all truly intersecting triangles
-  void operator()(const Box& a, const Box& b) const 
+  void operator()(const Box& a, const Box& b) const
   {
     std::cout << "Box " << (a.handle() - triangles->begin()) << " and "
               << (b.handle() - triangles->begin()) << " intersect";
@@ -39,12 +39,12 @@ int main(int argc, char*argv[])
   while(in >> t){
     triangles.push_back(t);
   }
-  
+
   // Create the corresponding vector of bounding boxes
   std::vector<Box> boxes;
   for ( Iterator i = triangles.begin(); i != triangles.end(); ++i)
     boxes.push_back( Box( i->bbox(), i));
-  
+
   // Run the self intersection algorithm with all defaults
   CGAL::box_self_intersection_d( boxes.begin(), boxes.end(), Report(triangles));
   return 0;

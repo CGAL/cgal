@@ -19,7 +19,7 @@ it has to be instantiated by a model of the concept
 `TriangulationDataStructure_2` with some additional
 functionality in faces.
 By default, the triangulation data structure is instantiated by
-`CGAL::Triangulation_data_structure_2 < CGAL::Triangulation_vertex_base_2<Gt>, 		 CGAL::Periodic_2_triangulation_face_base_2<Gt> > >`.
+`CGAL::Triangulation_data_structure_2 < CGAL::Triangulation_vertex_base_2<Gt>,                  CGAL::Periodic_2_triangulation_face_base_2<Gt> > >`.
 
 \cgalHeading{Traversal of the Triangulation}
 
@@ -206,6 +206,7 @@ public:
   */
   typedef Tds::difference_type difference_type;
 
+/// @}
 
   /*!
   \name Handles, Iterators and Circulators
@@ -956,11 +957,6 @@ public:
 /// \image html insert1.png "Insertion of a point on an edge."
 /// \anchor Triangulation_ref_Fig_insert2
 /// \image html insert2.png "Insertion in a face."
-/// @{
-
-
-
-/// @}
 
 /// \name
 /// \cgalAdvancedBegin

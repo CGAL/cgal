@@ -18,7 +18,7 @@ namespace CGAL {
 
 typedef enum { XY, NXY, ZX, NZX, YZ, NYZ, UNINIT } Plane_label;
 
-template <typename Point_3, typename Point_2> 
+template <typename Point_3, typename Point_2>
 class Project_point_3_to_point_2
 {
  public:
@@ -70,9 +70,9 @@ class Project_point_3_to_point_2
 };
 
 template <typename Diagonal_iterator, typename Planar_map>
-void divide_pm_by_diagonals( Diagonal_iterator begin, 
-			     Diagonal_iterator beyond, 
-			     Planar_map& pm) {
+void divide_pm_by_diagonals( Diagonal_iterator begin,
+                             Diagonal_iterator beyond,
+                             Planar_map& pm) {
   typedef typename Planar_map::X_curve X_curve;
   typedef typename Planar_map::Vertex_handle Vertex_handle;
 
@@ -85,13 +85,13 @@ void divide_pm_by_diagonals( Diagonal_iterator begin,
   }
 }
 
-template <typename SNC_structure, 
-	  typename Halffacet_handle, 
-	  typename OutputTriangleIterator, 
-	  typename Traits>
-void triangulate_nef3_facet( Halffacet_handle facet, 
-			     OutputTriangleIterator triangles,
-			     const Traits& traits) {
+template <typename SNC_structure,
+          typename Halffacet_handle,
+          typename OutputTriangleIterator,
+          typename Traits>
+void triangulate_nef3_facet( Halffacet_handle facet,
+                             OutputTriangleIterator triangles,
+                             const Traits& traits) {
 
   typedef typename Traits::Point_2 Point_2;
 
@@ -124,7 +124,7 @@ void triangulate_nef3_facet( Halffacet_handle facet,
 
   typedef Project_point_3_to_point_2< Point_3, Point_2> Projector;
 
-  // create a planar map to support the face creation 
+  // create a planar map to support the face creation
 
   Planar_map_2 pm;
   Face_handle polygon;
@@ -143,7 +143,7 @@ void triangulate_nef3_facet( Halffacet_handle facet,
   }
   Projector projector(label);
   polygon = pm_from_nef3_facet<SNC_structure>( facet, pm, projector);
-  
+
   CGAL_NEF_TRACEN("triangulating facet on plane "<<fplane);
   //CGAL_NEF_TRACEN("the facet will be proyected on the plane "<<(axis<0?"-":"")<<(axis==1?"YZ":(axis==2?"XZ":"XY")));
 
@@ -151,21 +151,21 @@ void triangulate_nef3_facet( Halffacet_handle facet,
   W.init(-1000,1000,-1000);
   W.clear();
   W << BLUE << pm;
-  Point_2 pause; 
+  Point_2 pause;
   //W >> pause;
 #endif
-  
+
   // mark the faces that correspond to holes
 
   Unique_hash_map< Face_handle, bool> hole_mark(false);
-  for( Holes_iterator hi = polygon->holes_begin(); 
+  for( Holes_iterator hi = polygon->holes_begin();
        hi != polygon->holes_end();
        ++hi) {
-    
+
     Ccb_halfedge_circulator c(*hi), cend(c);
     CGAL_For_all( c, cend)
       if( c->face() != c->twin()->face())
-	break; 
+        break;
     if( c != cend)
       continue; // TO VERIFY: the hole does not bound an area
 
@@ -175,25 +175,25 @@ void triangulate_nef3_facet( Halffacet_handle facet,
 
   // get a list of the cycles bounding the input polygon on the planar map
 
-  Cycles_list cycles;  
+  Cycles_list cycles;
   cycles.push_back(Circulator_project(polygon->outer_ccb()));
-  for( Holes_iterator hi = polygon->holes_begin(); 
+  for( Holes_iterator hi = polygon->holes_begin();
        hi != polygon->holes_end(); ++hi)
     cycles.push_back(Circulator_project((*hi)->ccb()));
 
   // divide the polygon into y-monotone pieces
 
   Diagonal_list diagonals;
-  partition_y_monotone_2( cycles.begin(), cycles.end(), 
-			  std::back_inserter(diagonals),
-			  Partition_traits_2());
+  partition_y_monotone_2( cycles.begin(), cycles.end(),
+                          std::back_inserter(diagonals),
+                          Partition_traits_2());
   divide_pm_by_diagonals( diagonals.begin(), diagonals.end(), pm);
 
   // mark the faces corresponding to y-monoton pieces
-  
+
   Unique_hash_map< Face_handle, bool> piece_mark(false);
   for( Face_iterator fi = pm.faces_begin(); fi != pm.faces_end(); ++fi) {
-    if( fi->is_unbounded()) 
+    if( fi->is_unbounded())
       continue;
     if( hole_mark[fi])
       continue;
@@ -213,11 +213,11 @@ void triangulate_nef3_facet( Halffacet_handle facet,
       continue;
     Face_handle piece = fi;
     CGAL_assertion( std::distance( piece->holes_begin(),
-				   piece->holes_end()) == 0); // no holes
+                                   piece->holes_end()) == 0); // no holes
     Diagonal_list diagonals;
-    Circulator_project circulator(piece->outer_ccb());    
-    triangulate_monotone_polygon_2( circulator, std::back_inserter(diagonals), 
-				    Monotone_polygon_triangulation_traits_2());
+    Circulator_project circulator(piece->outer_ccb());
+    triangulate_monotone_polygon_2( circulator, std::back_inserter(diagonals),
+                                    Monotone_polygon_triangulation_traits_2());
     divide_pm_by_diagonals( diagonals.begin(), diagonals.end(), pm);
   }
 
@@ -226,16 +226,16 @@ void triangulate_nef3_facet( Halffacet_handle facet,
   W << YELLOW << pm;
 #endif
 
-  // and extract triangles from the topological map 
-  
+  // and extract triangles from the topological map
+
   for( Face_iterator fi = pm.faces_begin(); fi != pm.faces_end(); ++fi) {
-    if( fi->is_unbounded()) 
+    if( fi->is_unbounded())
       continue;
     if( hole_mark[fi])
       continue;
     Face_handle triangle = fi;
     CGAL_assertion( std::distance( triangle->holes_begin(),
-				   triangle->holes_end()) == 0); // no holes
+                                   triangle->holes_end()) == 0); // no holes
     Ccb_halfedge_circulator c(triangle->outer_ccb());
     CGAL_assertion_code( Ccb_halfedge_circulator cend(c));
     Point_2 p2[3];

@@ -2,20 +2,13 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-2.0+
-//
+// Re-licensed for CGAL distribution to:
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Original license is:
+// SPDX-License-Identifier: GPL-2.0-or-later
 /*
 ###################################################################
 #                                                                 #
@@ -34,11 +27,11 @@
 This software library implements the maxflow algorithm
 described in
 
-	An Experimental Comparison of Min-Cut/Max-Flow Algorithms
-	for Energy Minimization in Vision.
-	Yuri Boykov and Vladimir Kolmogorov.
-	In IEEE Transactions on Pattern Analysis and Machine Intelligence (PAMI),
-	September 2004
+        An Experimental Comparison of Min-Cut/Max-Flow Algorithms
+        for Energy Minimization in Vision.
+        Yuri Boykov and Vladimir Kolmogorov.
+        In IEEE Transactions on Pattern Analysis and Machine Intelligence (PAMI),
+        September 2004
 
 This algorithm was developed by Yuri Boykov and Vladimir Kolmogorov
 at Siemens Corporate Research. To make it available for public use,
@@ -102,17 +95,17 @@ Both versions have the same interface.
 This section shows how to use the library to compute
 a minimum cut on the following graph:
 
-		        SOURCE
-		       /       \
-		     1/         \2
-		     /      3    \
-		   node0 -----> node1
-		     |   <-----   |
-		     |      4     |
-		     \            /
-		     5\          /6
-		       \        /
-		          SINK
+                        SOURCE
+                       /       \
+                     1/         \2
+                     /      3    \
+                   node0 -----> node1
+                     |   <-----   |
+                     |      4     |
+                     \            /
+                     5\          /6
+                       \        /
+                          SINK
 
 ///////////////////////////////////////////////////
 
@@ -121,29 +114,29 @@ a minimum cut on the following graph:
 
 void main()
 {
-	Graph::node_id nodes[2];
-	Graph *g = new Graph();
+        Graph::node_id nodes[2];
+        Graph *g = new Graph();
 
-	nodes[0] = g -> add_node();
-	nodes[1] = g -> add_node();
-	g -> set_tweights(nodes[0], 1, 5);
-	g -> set_tweights(nodes[1], 2, 6);
-	g -> add_edge(nodes[0], nodes[1], 3, 4);
+        nodes[0] = g -> add_node();
+        nodes[1] = g -> add_node();
+        g -> set_tweights(nodes[0], 1, 5);
+        g -> set_tweights(nodes[1], 2, 6);
+        g -> add_edge(nodes[0], nodes[1], 3, 4);
 
-	Graph::flowtype flow = g -> maxflow();
+        Graph::flowtype flow = g -> maxflow();
 
-	printf("Flow = %d\n", flow);
-	printf("Minimum cut:\n");
-	if (g->what_segment(nodes[0]) == Graph::SOURCE)
-		printf("node0 is in the SOURCE set\n");
-	else
-		printf("node0 is in the SINK set\n");
-	if (g->what_segment(nodes[1]) == Graph::SOURCE)
-		printf("node1 is in the SOURCE set\n");
-	else
-		printf("node1 is in the SINK set\n");
+        printf("Flow = %d\n", flow);
+        printf("Minimum cut:\n");
+        if (g->what_segment(nodes[0]) == Graph::SOURCE)
+                printf("node0 is in the SOURCE set\n");
+        else
+                printf("node0 is in the SINK set\n");
+        if (g->what_segment(nodes[1]) == Graph::SOURCE)
+                printf("node1 is in the SOURCE set\n");
+        else
+                printf("node1 is in the SINK set\n");
 
-	delete g;
+        delete g;
 }
 
 ///////////////////////////////////////////////////
@@ -151,94 +144,94 @@ void main()
 
 /* block.h */
 /*
-	Template classes Block and DBlock
-	Implement adding and deleting items of the same type in blocks.
+        Template classes Block and DBlock
+        Implement adding and deleting items of the same type in blocks.
 
-	If there there are many items then using Block or DBlock
-	is more efficient than using 'new' and 'delete' both in terms
-	of memory and time since
-	(1) On some systems there is some minimum amount of memory
-	    that 'new' can allocate (e.g., 64), so if items are
-	    small that a lot of memory is wasted.
-	(2) 'new' and 'delete' are designed for items of varying size.
-	    If all items has the same size, then an algorithm for
-	    adding and deleting can be made more efficient.
-	(3) All Block and DBlock functions are inline, so there are
-	    no extra function calls.
+        If there there are many items then using Block or DBlock
+        is more efficient than using 'new' and 'delete' both in terms
+        of memory and time since
+        (1) On some systems there is some minimum amount of memory
+            that 'new' can allocate (e.g., 64), so if items are
+            small that a lot of memory is wasted.
+        (2) 'new' and 'delete' are designed for items of varying size.
+            If all items has the same size, then an algorithm for
+            adding and deleting can be made more efficient.
+        (3) All Block and DBlock functions are inline, so there are
+            no extra function calls.
 
-	Differences between Block and DBlock:
-	(1) DBlock allows both adding and deleting items,
-	    whereas Block allows only adding items.
-	(2) Block has an additional operation of scanning
-	    items added so far (in the order in which they were added).
-	(3) Block allows to allocate several consecutive
-	    items at a time, whereas DBlock can add only a single item.
+        Differences between Block and DBlock:
+        (1) DBlock allows both adding and deleting items,
+            whereas Block allows only adding items.
+        (2) Block has an additional operation of scanning
+            items added so far (in the order in which they were added).
+        (3) Block allows to allocate several consecutive
+            items at a time, whereas DBlock can add only a single item.
 
-	Note that no constructors or destructors are called for items.
+        Note that no constructors or destructors are called for items.
 
-	Example usage for items of type 'MyType':
+        Example usage for items of type 'MyType':
 
-	///////////////////////////////////////////////////
-	#include "block.h"
-	#define BLOCK_SIZE 1024
+        ///////////////////////////////////////////////////
+        #include "block.h"
+        #define BLOCK_SIZE 1024
 
 #include <CGAL/license/Surface_mesh_segmentation.h>
 
-	typedef struct { int a, b; } MyType;
-	MyType *ptr, *array[10000];
+        typedef struct { int a, b; } MyType;
+        MyType *ptr, *array[10000];
 
-	...
+        ...
 
-	Block<MyType> *block = new Block<MyType>(BLOCK_SIZE);
+        Block<MyType> *block = new Block<MyType>(BLOCK_SIZE);
 
-	// adding items
-	for (int i=0; i<sizeof(array); i++)
-	{
-		ptr = block -> New();
-		ptr -> a = ptr -> b = rand();
-	}
+        // adding items
+        for (int i=0; i<sizeof(array); i++)
+        {
+                ptr = block -> New();
+                ptr -> a = ptr -> b = rand();
+        }
 
-	// reading items
-	for (ptr=block->ScanFirst(); ptr; ptr=block->ScanNext())
-	{
-		printf("%d %d\n", ptr->a, ptr->b);
-	}
+        // reading items
+        for (ptr=block->ScanFirst(); ptr; ptr=block->ScanNext())
+        {
+                printf("%d %d\n", ptr->a, ptr->b);
+        }
 
-	delete block;
+        delete block;
 
-	...
+        ...
 
-	DBlock<MyType> *dblock = new DBlock<MyType>(BLOCK_SIZE);
+        DBlock<MyType> *dblock = new DBlock<MyType>(BLOCK_SIZE);
 
-	// adding items
-	for (int i=0; i<sizeof(array); i++)
-	{
-		array[i] = dblock -> New();
-	}
+        // adding items
+        for (int i=0; i<sizeof(array); i++)
+        {
+                array[i] = dblock -> New();
+        }
 
-	// deleting items
-	for (int i=0; i<sizeof(array); i+=2)
-	{
-		dblock -> Delete(array[i]);
-	}
+        // deleting items
+        for (int i=0; i<sizeof(array); i+=2)
+        {
+                dblock -> Delete(array[i]);
+        }
 
-	// adding items
-	for (int i=0; i<sizeof(array); i++)
-	{
-		array[i] = dblock -> New();
-	}
+        // adding items
+        for (int i=0; i<sizeof(array); i++)
+        {
+                array[i] = dblock -> New();
+        }
 
-	delete dblock;
+        delete dblock;
 
-	///////////////////////////////////////////////////
+        ///////////////////////////////////////////////////
 
-	Note that DBlock deletes items by marking them as
-	empty (i.e., by adding them to the list of free items),
-	so that this memory could be used for subsequently
-	added items. Thus, at each moment the memory allocated
-	is determined by the maximum number of items allocated
-	simultaneously at earlier moments. All memory is
-	deallocated only when the destructor is called.
+        Note that DBlock deletes items by marking them as
+        empty (i.e., by adding them to the list of free items),
+        so that this memory could be used for subsequently
+        added items. Thus, at each moment the memory allocated
+        is determined by the maximum number of items allocated
+        simultaneously at earlier moments. All memory is
+        deallocated only when the destructor is called.
 */
 
 #ifndef __MAXFLOW_BLOCK_H__
@@ -267,8 +260,8 @@ public:
      (optionally) the pointer to the function which
      will be called if allocation failed; the message
      passed to this function is "Not enough memory!" */
-  Block(int size, void (*err_function)(const char *) = NULL) {
-    first = last = NULL;
+  Block(int size, void (*err_function)(const char *) = nullptr) {
+    first = last = nullptr;
     block_size = size;
     error_function = err_function;
   }
@@ -301,7 +294,7 @@ public:
         last = next;
         last -> current = & ( last -> data[0] );
         last -> last = last -> current + block_size;
-        last -> next = NULL;
+        last -> next = nullptr;
       }
     }
 
@@ -310,7 +303,7 @@ public:
     return t;
   }
 
-  /* Returns the first item (or NULL, if no items were added) */
+  /* Returns the first item (or nullptr, if no items were added) */
   Type *ScanFirst() {
     for (scan_current_block=first; scan_current_block;
          scan_current_block = scan_current_block->next) {
@@ -318,16 +311,16 @@ public:
       if (scan_current_data < scan_current_block -> current) return scan_current_data
             ++;
     }
-    return NULL;
+    return nullptr;
   }
 
-  /* Returns the next item (or NULL, if all items have been read)
+  /* Returns the next item (or nullptr, if all items have been read)
      Can be called only if previous ScanFirst() or ScanNext()
-     call returned not NULL. */
+     call returned not nullptr. */
   Type *ScanNext() {
     while (scan_current_data >= scan_current_block -> current) {
       scan_current_block = scan_current_block -> next;
-      if (!scan_current_block) return NULL;
+      if (!scan_current_block) return nullptr;
       scan_current_data = & ( scan_current_block -> data[0] );
     }
     return scan_current_data ++;
@@ -349,19 +342,19 @@ public:
 private:
 
   typedef struct block_st {
-    Type					*current, *last;
-    struct block_st			*next;
-    Type					data[1];
+    Type                                        *current, *last;
+    struct block_st                        *next;
+    Type                                        data[1];
   } block;
 
-  int		block_size;
-  block	*first;
-  block	*last;
+  int                block_size;
+  block        *first;
+  block        *last;
 
-  block	*scan_current_block;
-  Type	*scan_current_data;
+  block        *scan_current_block;
+  Type        *scan_current_data;
 
-  void	(*error_function)(const char *);
+  void        (*error_function)(const char *);
 };
 
 /***********************************************************************/
@@ -375,9 +368,9 @@ public:
      (optionally) the pointer to the function which
      will be called if allocation failed; the message
      passed to this function is "Not enough memory!" */
-  DBlock(int size, void (*err_function)(const char *) = NULL) {
-    first = NULL;
-    first_free = NULL;
+  DBlock(int size, void (*err_function)(const char *) = nullptr) {
+    first = nullptr;
+    first_free = nullptr;
     block_size = size;
     error_function = err_function;
   }
@@ -405,7 +398,7 @@ public:
       first_free = & (first -> data[0] );
       for (item=first_free; item<first_free+block_size-1; item++)
         item -> next_free = item + 1;
-      item -> next_free = NULL;
+      item -> next_free = nullptr;
       first -> next = next;
     }
 
@@ -425,20 +418,20 @@ public:
 private:
 
   typedef union block_item_st {
-    Type			t;
-    block_item_st	*next_free;
+    Type                        t;
+    block_item_st        *next_free;
   } block_item;
 
   typedef struct block_st {
-    struct block_st			*next;
-    block_item				data[1];
+    struct block_st                        *next;
+    block_item                                data[1];
   } block;
 
-  int			block_size;
-  block		*first;
-  block_item	*first_free;
+  int                        block_size;
+  block                *first;
+  block_item        *first_free;
 
-  void	(*error_function)(const char *);
+  void        (*error_function)(const char *);
 };
 
 
@@ -448,25 +441,25 @@ private:
 
 /* graph.h */
 /*
-	This software library implements the maxflow algorithm
-	described in
+        This software library implements the maxflow algorithm
+        described in
 
-		An Experimental Comparison of Min-Cut/Max-Flow Algorithms
-		for Energy Minimization in Vision.
-		Yuri Boykov and Vladimir Kolmogorov.
-		In IEEE Transactions on Pattern Analysis and Machine Intelligence (PAMI),
-		September 2004
+                An Experimental Comparison of Min-Cut/Max-Flow Algorithms
+                for Energy Minimization in Vision.
+                Yuri Boykov and Vladimir Kolmogorov.
+                In IEEE Transactions on Pattern Analysis and Machine Intelligence (PAMI),
+                September 2004
 
-	This algorithm was developed by Yuri Boykov and Vladimir Kolmogorov
-	at Siemens Corporate Research. To make it available for public use,
-	it was later reimplemented by Vladimir Kolmogorov based on open publications.
+        This algorithm was developed by Yuri Boykov and Vladimir Kolmogorov
+        at Siemens Corporate Research. To make it available for public use,
+        it was later reimplemented by Vladimir Kolmogorov based on open publications.
 
-	If you use this software for research purposes, you should cite
-	the aforementioned paper in any resulting publication.
+        If you use this software for research purposes, you should cite
+        the aforementioned paper in any resulting publication.
 
-	----------------------------------------------------------------
+        ----------------------------------------------------------------
 
-	For description, license, example usage, discussion of graph representation	and memory usage see README.TXT.
+        For description, license, example usage, discussion of graph representation        and memory usage see README.TXT.
 */
 
 #ifndef __MAXFLOW_GRAPH_H__
@@ -475,9 +468,9 @@ private:
 //#include "block.h"
 #include <stdio.h>
 /*
-	Nodes, arcs and pointers to nodes are
-	added in blocks for memory and time efficiency.
-	Below are numbers of items in blocks
+        Nodes, arcs and pointers to nodes are
+        added in blocks for memory and time efficiency.
+        Below are numbers of items in blocks
 */
 #define MF_NODE_BLOCK_SIZE 512
 #define MF_ARC_BLOCK_SIZE 1024
@@ -504,8 +497,8 @@ class Graph
 {
 public:
   typedef enum {
-    SOURCE	= 0,
-    SINK	= 1
+    SOURCE        = 0,
+    SINK        = 1
   } termtype; /* terminals */
 
   /* Type of edge weights.
@@ -522,7 +515,7 @@ public:
      function which will be called if an error occurs;
      an error message is passed to this function. If this
      argument is omitted, exit(1) will be called. */
-  Graph(void (*err_function)(const char *) = NULL);
+  Graph(void (*err_function)(const char *) = nullptr);
 
   /* Destructor */
   ~Graph();
@@ -574,109 +567,109 @@ private:
   /* node structure */
   typedef struct node_st {
     /*
-    	Usually i->first_out is the first outgoing
-    	arc, and (i+1)->first_out-1 is the last outgoing arc.
-    	However, it is not always possible, since
-    	arcs are allocated in blocks, so arcs corresponding
-    	to two consecutive nodes may be in different blocks.
+            Usually i->first_out is the first outgoing
+            arc, and (i+1)->first_out-1 is the last outgoing arc.
+            However, it is not always possible, since
+            arcs are allocated in blocks, so arcs corresponding
+            to two consecutive nodes may be in different blocks.
 
-    	If outgoing arcs for i are last in the arc block,
-    	then a different mechanism is used. i->first_out
-    	is odd in this case; the first outgoing arc
-    	is (a+1), and the last outgoing arc is
-    	((arc_forward *)(a->shift))-1, where
-    	a = (arc_forward *) (((char *)(i->first_out)) + 1);
+            If outgoing arcs for i are last in the arc block,
+            then a different mechanism is used. i->first_out
+            is odd in this case; the first outgoing arc
+            is (a+1), and the last outgoing arc is
+            ((arc_forward *)(a->shift))-1, where
+            a = (arc_forward *) (((char *)(i->first_out)) + 1);
 
-    	Similar mechanism is used for incoming arcs.
+            Similar mechanism is used for incoming arcs.
     */
-    arc_forward_st	*first_out;	/* first outcoming arc */
-    arc_reverse_st	*first_in;	/* first incoming arc */
+    arc_forward_st        *first_out;        /* first outcoming arc */
+    arc_reverse_st        *first_in;        /* first incoming arc */
 
-    arc_forward_st	*parent;	/* describes node's parent
-									   if MF_IS_ODD(parent) then MF_MAKE_EVEN(parent) points to 'arc_reverse',
-									   otherwise parent points to 'arc_forward' */
+    arc_forward_st        *parent;        /* describes node's parent
+                                                                           if MF_IS_ODD(parent) then MF_MAKE_EVEN(parent) points to 'arc_reverse',
+                                                                           otherwise parent points to 'arc_forward' */
 
-    node_st			*next;		/* pointer to the next active node
-									   (or to itself if it is the last node in the list) */
+    node_st                        *next;                /* pointer to the next active node
+                                                                           (or to itself if it is the last node in the list) */
 
-    int				TS;			/* timestamp showing when DIST was computed */
-    int				DIST;		/* distance to the terminal */
-    short			is_sink;	/* flag showing whether the node is in the source or in the sink tree */
+    int                                TS;                        /* timestamp showing when DIST was computed */
+    int                                DIST;                /* distance to the terminal */
+    short                        is_sink;        /* flag showing whether the node is in the source or in the sink tree */
 
-    captype			tr_cap;		/* if tr_cap > 0 then tr_cap is residual capacity of the arc SOURCE->node
-									   otherwise         -tr_cap is residual capacity of the arc node->SINK */
+    captype                        tr_cap;                /* if tr_cap > 0 then tr_cap is residual capacity of the arc SOURCE->node
+                                                                           otherwise         -tr_cap is residual capacity of the arc node->SINK */
   } node;
 
   /* arc structures */
 #define MF_NEIGHBOR_NODE(i, shift) ((node *) ((char *)(i) + (shift)))
 #define MF_NEIGHBOR_NODE_REV(i, shift) ((node *) ((char *)(i) - (shift)))
   typedef struct arc_forward_st {
-    INTEGER			shift;		/* node_to = MF_NEIGHBOR_NODE(node_from, shift) */
-    captype			r_cap;		/* residual capacity */
-    captype			r_rev_cap;	/* residual capacity of the reverse arc*/
+    INTEGER                        shift;                /* node_to = MF_NEIGHBOR_NODE(node_from, shift) */
+    captype                        r_cap;                /* residual capacity */
+    captype                        r_rev_cap;        /* residual capacity of the reverse arc*/
   } arc_forward;
 
   typedef struct arc_reverse_st {
-    arc_forward		*sister;	/* reverse arc */
+    arc_forward                *sister;        /* reverse arc */
   } arc_reverse;
 
   /* 'pointer to node' structure */
   typedef struct nodeptr_st {
-    node_st			*ptr;
-    nodeptr_st		*next;
+    node_st                        *ptr;
+    nodeptr_st                *next;
   } nodeptr;
 
   typedef struct node_block_st {
-    node					*current;
-    struct node_block_st	*next;
-    node					nodes[MF_NODE_BLOCK_SIZE];
+    node                                        *current;
+    struct node_block_st        *next;
+    node                                        nodes[MF_NODE_BLOCK_SIZE];
   } node_block;
 
   typedef struct arc_for_block_st {
-    char					*start;		/* the actual start address of this block.
-											   May be different from 'this' since 'this'
-											   must be at an even address. */
-    arc_forward				*current;
-    struct arc_for_block_st	*next;
+    char                                        *start;                /* the actual start address of this block.
+                                                                                           May be different from 'this' since 'this'
+                                                                                           must be at an even address. */
+    arc_forward                                *current;
+    struct arc_for_block_st        *next;
     arc_forward
     arcs_for[MF_ARC_BLOCK_SIZE]; /* all arcs must be at even addresses */
     union {
-      arc_forward			dummy;
-      node				*LAST_NODE;	/* used in graph consruction */
-    }						LAST_NODE;
+      arc_forward                        dummy;
+      node                                *LAST_NODE;        /* used in graph consruction */
+    }                                                LAST_NODE;
   } arc_for_block;
 
   typedef struct arc_rev_block_st {
-    char					*start;		/* the actual start address of this block.
-											   May be different from 'this' since 'this'
-											   must be at an even address. */
-    arc_reverse				*current;
-    struct arc_rev_block_st	*next;
+    char                                        *start;                /* the actual start address of this block.
+                                                                                           May be different from 'this' since 'this'
+                                                                                           must be at an even address. */
+    arc_reverse                                *current;
+    struct arc_rev_block_st        *next;
     arc_reverse
     arcs_rev[MF_ARC_BLOCK_SIZE]; /* all arcs must be at even addresses */
     union {
-      arc_reverse			dummy;
-      node				*LAST_NODE;	/* used in graph consruction */
-    }						LAST_NODE;
+      arc_reverse                        dummy;
+      node                                *LAST_NODE;        /* used in graph consruction */
+    }                                                LAST_NODE;
   } arc_rev_block;
 
-  node_block			*node_block_first;
-  arc_for_block		*arc_for_block_first;
-  arc_rev_block		*arc_rev_block_first;
-  DBlock<nodeptr>		*nodeptr_block;
+  node_block                        *node_block_first;
+  arc_for_block                *arc_for_block_first;
+  arc_rev_block                *arc_rev_block_first;
+  DBlock<nodeptr>                *nodeptr_block;
 
-  void	(*error_function)(const char
-                          *);	/* this function is called if a error occurs,
-										   with a corresponding error message
-										   (or exit(1) is called if it's NULL) */
+  void        (*error_function)(const char
+                          *);        /* this function is called if a error occurs,
+                                                                                   with a corresponding error message
+                                                                                   (or exit(1) is called if it's nullptr) */
 
-  flowtype			flow;		/* total flow */
+  flowtype                        flow;                /* total flow */
 
   /***********************************************************************/
 
-  node				*queue_first[2], *queue_last[2];	/* list of active nodes */
-  nodeptr				*orphan_first, *orphan_last;		/* list of pointers to orphans */
-  int					TIME;								/* monotonically increasing global counter */
+  node                                *queue_first[2], *queue_last[2];        /* list of active nodes */
+  nodeptr                                *orphan_first, *orphan_last;                /* list of pointers to orphans */
+  int                                        TIME;                                                                /* monotonically increasing global counter */
 
   /***********************************************************************/
 
@@ -700,11 +693,11 @@ private:
 inline Graph::Graph(void (*err_function)(const char *))
 {
   error_function = err_function;
-  node_block_first = NULL;
-  arc_for_block_first = NULL;
-  arc_rev_block_first = NULL;
-  orphan_first = NULL;
-  orphan_last = NULL;
+  node_block_first = nullptr;
+  arc_for_block_first = nullptr;
+  arc_rev_block_first = nullptr;
+  orphan_first = nullptr;
+  orphan_last = nullptr;
   flow = 0;
 }
 
@@ -822,16 +815,16 @@ inline void Graph::add_tweights(node_id i, captype cap_source, captype cap_sink)
 }
 
 /*
-	Converts arcs added by 'add_edge()' calls
-	to a forward star graph representation.
+        Converts arcs added by 'add_edge()' calls
+        to a forward star graph representation.
 
-	Linear time algorithm.
-	No or little additional memory is allocated
-	during this process
-	(it may be necessary to allocate additional
-	arc blocks, since arcs corresponding to the
-	same node must be contiguous, i.e. be in one
-	arc block.)
+        Linear time algorithm.
+        No or little additional memory is allocated
+        during this process
+        (it may be necessary to allocate additional
+        arc blocks, since arcs corresponding to the
+        same node must be contiguous, i.e. be in one
+        arc block.)
 */
 inline void Graph::prepare_graph()
 {
@@ -850,10 +843,10 @@ inline void Graph::prepare_graph()
   }
 
   /* FIRST STAGE */
-  a_rev_tmp->sister = NULL;
+  a_rev_tmp->sister = nullptr;
   for (a_rev=arc_rev_block_first->current;
        a_rev<&arc_rev_block_first->arcs_rev[MF_ARC_BLOCK_SIZE]; a_rev++) {
-    a_rev -> sister = NULL;
+    a_rev -> sister = nullptr;
   }
 
   ab_for = ab_for_first = arc_for_block_first;
@@ -870,12 +863,12 @@ inline void Graph::prepare_graph()
           if (error_function) (*error_function)("# of arcs per node exceeds block size!");
           exit(1);
         }
-        if (for_flag) ab_for = NULL;
+        if (for_flag) ab_for = nullptr;
         else          {
           ab_for = ab_for -> next;
           ab_rev_scan = ab_rev_scan -> next;
         }
-        if (ab_for == NULL) {
+        if (ab_for == nullptr) {
           arc_for_block *next = arc_for_block_first;
           char *ptr = new char[sizeof(arc_for_block)+1];
           if (!ptr) {
@@ -907,9 +900,9 @@ inline void Graph::prepare_graph()
           if (error_function) (*error_function)("# of arcs per node exceeds block size!");
           exit(1);
         }
-        if (rev_flag) ab_rev = NULL;
+        if (rev_flag) ab_rev = nullptr;
         else          ab_rev = ab_rev -> next;
-        if (ab_rev == NULL) {
+        if (ab_rev == nullptr) {
           arc_rev_block *next = arc_rev_block_first;
           char *ptr = new char[sizeof(arc_rev_block)+1];
           if (!ptr) {
@@ -957,7 +950,7 @@ inline void Graph::prepare_graph()
       ar = a_rev;
 
       do {
-        ar -> sister = NULL;
+        ar -> sister = nullptr;
 
         shift_new = ((char *)(af->shift)) - (char *)from;
         r_cap_new = af -> r_cap;
@@ -1031,26 +1024,26 @@ inline void Graph::prepare_graph()
 //#include "graph.h"
 
 /*
-	special constants for node->parent
+        special constants for node->parent
 */
-#define MF_TERMINAL ( (arc_forward *) 1 )		/* to terminal */
-#define MF_ORPHAN   ( (arc_forward *) 2 )		/* orphan */
+#define MF_TERMINAL ( (arc_forward *) 1 )                /* to terminal */
+#define MF_ORPHAN   ( (arc_forward *) 2 )                /* orphan */
 
-#define MF_INFINITE_D 1000000000		/* infinite distance to the terminal */
+#define MF_INFINITE_D 1000000000                /* infinite distance to the terminal */
 
 /***********************************************************************/
 
 /*
-	Functions for processing active list.
-	i->next points to the next node in the list
-	(or to i, if i is the last node in the list).
-	If i->next is NULL iff i is not in the list.
+        Functions for processing active list.
+        i->next points to the next node in the list
+        (or to i, if i is the last node in the list).
+        If i->next is nullptr iff i is not in the list.
 
-	There are two queues. Active nodes are added
-	to the end of the second queue and read from
-	the front of the first queue. If the first queue
-	is empty, it is replaced by the second queue
-	(and the second queue becomes empty).
+        There are two queues. Active nodes are added
+        to the end of the second queue and read from
+        the front of the first queue. If the first queue
+        is empty, it is replaced by the second queue
+        (and the second queue becomes empty).
 */
 
 inline void Graph::set_active(node *i)
@@ -1065,9 +1058,9 @@ inline void Graph::set_active(node *i)
 }
 
 /*
-	Returns the next active node.
-	If it is connected to the sink, it stays in the list,
-	otherwise it is removed from the list
+        Returns the next active node.
+        If it is connected to the sink, it stays in the list,
+        otherwise it is removed from the list
 */
 inline Graph::node * Graph::next_active()
 {
@@ -1077,15 +1070,15 @@ inline Graph::node * Graph::next_active()
     if (!(i=queue_first[0])) {
       queue_first[0] = i = queue_first[1];
       queue_last[0]  = queue_last[1];
-      queue_first[1] = NULL;
-      queue_last[1]  = NULL;
-      if (!i) return NULL;
+      queue_first[1] = nullptr;
+      queue_last[1]  = nullptr;
+      if (!i) return nullptr;
     }
 
     /* remove it from the active list */
-    if (i->next == i) queue_first[0] = queue_last[0] = NULL;
+    if (i->next == i) queue_first[0] = queue_last[0] = nullptr;
     else              queue_first[0] = i -> next;
-    i -> next = NULL;
+    i -> next = nullptr;
 
     /* a node in the list is active iff it has a parent */
     if (i->parent) return i;
@@ -1099,13 +1092,13 @@ inline void Graph::maxflow_init()
   node *i;
   node_block *nb;
 
-  queue_first[0] = queue_last[0] = NULL;
-  queue_first[1] = queue_last[1] = NULL;
-  orphan_first = NULL;
+  queue_first[0] = queue_last[0] = nullptr;
+  queue_first[1] = queue_last[1] = nullptr;
+  orphan_first = nullptr;
 
   for (nb=node_block_first; nb; nb=nb->next)
     for (i=&nb->nodes[0]; i<nb->current; i++) {
-      i -> next = NULL;
+      i -> next = nullptr;
       i -> TS = 0;
       if (i->tr_cap > 0) {
         /* i is connected to the source */
@@ -1122,7 +1115,7 @@ inline void Graph::maxflow_init()
         i -> TS = 0;
         i -> DIST = 1;
       } else {
-        i -> parent = NULL;
+        i -> parent = nullptr;
       }
     }
   TIME = 0;
@@ -1266,7 +1259,7 @@ inline void Graph::process_source_orphan(node *i)
   node *j;
   arc_forward *a0_for, *a0_for_first, *a0_for_last;
   arc_reverse *a0_rev, *a0_rev_first, *a0_rev_last;
-  arc_forward *a0_min = NULL, *a;
+  arc_forward *a0_min = nullptr, *a;
   nodeptr *np;
   int d, d_min = MF_INFINITE_D;
 
@@ -1397,7 +1390,7 @@ inline void Graph::process_source_orphan(node *i)
           if (orphan_last) orphan_last -> next = np;
           else             orphan_first        = np;
           orphan_last = np;
-          np -> next = NULL;
+          np -> next = nullptr;
         }
       }
     }
@@ -1414,7 +1407,7 @@ inline void Graph::process_source_orphan(node *i)
           if (orphan_last) orphan_last -> next = np;
           else             orphan_first        = np;
           orphan_last = np;
-          np -> next = NULL;
+          np -> next = nullptr;
         }
       }
     }
@@ -1426,7 +1419,7 @@ inline void Graph::process_sink_orphan(node *i)
   node *j;
   arc_forward *a0_for, *a0_for_first, *a0_for_last;
   arc_reverse *a0_rev, *a0_rev_first, *a0_rev_last;
-  arc_forward *a0_min = NULL, *a;
+  arc_forward *a0_min = nullptr, *a;
   nodeptr *np;
   int d, d_min = MF_INFINITE_D;
 
@@ -1557,7 +1550,7 @@ inline void Graph::process_sink_orphan(node *i)
           if (orphan_last) orphan_last -> next = np;
           else             orphan_first        = np;
           orphan_last = np;
-          np -> next = NULL;
+          np -> next = nullptr;
         }
       }
     }
@@ -1574,7 +1567,7 @@ inline void Graph::process_sink_orphan(node *i)
           if (orphan_last) orphan_last -> next = np;
           else             orphan_first        = np;
           orphan_last = np;
-          np -> next = NULL;
+          np -> next = nullptr;
         }
       }
     }
@@ -1585,8 +1578,8 @@ inline void Graph::process_sink_orphan(node *i)
 
 inline Graph::flowtype Graph::maxflow()
 {
-  node *i, *j, *current_node = NULL, *s_start, *t_start=NULL;
-  captype *cap_middle=NULL, *rev_cap_middle=NULL;
+  node *i, *j, *current_node = nullptr, *s_start, *t_start=nullptr;
+  captype *cap_middle=nullptr, *rev_cap_middle=nullptr;
   arc_forward *a_for, *a_for_first, *a_for_last;
   arc_reverse *a_rev, *a_rev_first, *a_rev_last;
   nodeptr *np, *np_next;
@@ -1597,15 +1590,15 @@ inline Graph::flowtype Graph::maxflow()
 
   while ( 1 ) {
     if ( (i=current_node) ) {
-      i -> next = NULL; /* remove active flag */
-      if (!i->parent) i = NULL;
+      i -> next = nullptr; /* remove active flag */
+      if (!i->parent) i = nullptr;
     }
     if (!i) {
       if (!(i = next_active())) break;
     }
 
     /* growth */
-    s_start = NULL;
+    s_start = nullptr;
 
     a_for_first = i -> first_out;
     if (MF_IS_ODD(a_for_first)) {
@@ -1734,13 +1727,13 @@ inline Graph::flowtype Graph::maxflow()
       /* adoption */
       while ( (np=orphan_first) ) {
         np_next = np -> next;
-        np -> next = NULL;
+        np -> next = nullptr;
 
         while ( (np=orphan_first) ) {
           orphan_first = np -> next;
           i = np -> ptr;
           nodeptr_block -> Delete(np);
-          if (!orphan_first) orphan_last = NULL;
+          if (!orphan_first) orphan_last = nullptr;
           if (i->is_sink) process_sink_orphan(i);
           else            process_source_orphan(i);
         }
@@ -1748,7 +1741,7 @@ inline Graph::flowtype Graph::maxflow()
         orphan_first = np_next;
       }
       /* adoption end */
-    } else current_node = NULL;
+    } else current_node = nullptr;
   }
 
   delete nodeptr_block;

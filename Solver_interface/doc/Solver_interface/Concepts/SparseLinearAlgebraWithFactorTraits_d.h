@@ -1,4 +1,3 @@
-
 /*!
 \ingroup PkgSolverInterfaceConcepts
 \cgalConcept
@@ -11,7 +10,6 @@ method to solve the system for different right-hand vectors.
 
 \cgalHasModel `CGAL::Eigen_solver_traits<T>`
 */
-
 class SparseLinearAlgebraWithFactorTraits_d {
 public:
 
@@ -48,4 +46,3 @@ bool linear_solver(const Matrix& B, Vector& X);
 /// @}
 
 }; /* end SparseLinearAlgebraWithFactorTraits_d */
-

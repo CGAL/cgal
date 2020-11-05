@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is a part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
@@ -29,11 +20,11 @@
 
 #include <CGAL/disable_warnings.h>
 
-// STL headers. 
+// STL headers.
 #include <vector>
 
 // CGAL headers.
-#include <CGAL/utils.h> 
+#include <CGAL/utils.h>
 #include <CGAL/assertions.h>
 #include <CGAL/number_utils.h>
 
@@ -54,14 +45,14 @@ namespace Barycentric_coordinates {
 // Try to find a square root object in the provided `Traits` class. If not, then use the default square root from CGAL.
 
 // Finds a square root of the provided value of the type `Kernel::FT` by first converting it to the double type and then taking the square root using the `CGAL::sqrt()` function.
-template<class Traits> 
+template<class Traits>
     class Default_sqrt
 {
     typedef typename Traits::FT FT;
 
 public:
     FT operator()(const FT &value) const
-    { 
+    {
         return FT(CGAL::sqrt(CGAL::to_double(value)));
     }
 };
@@ -75,9 +66,9 @@ template<class Traits, bool do_not_use_default = Has_nested_type_Sqrt<Traits>::v
 public:
     typedef Default_sqrt<Traits> Sqrt;
 
-    static Sqrt sqrt_object(const Traits&) 
-    { 
-        return Sqrt(); 
+    static Sqrt sqrt_object(const Traits&)
+    {
+        return Sqrt();
     }
 };
 
@@ -89,8 +80,8 @@ public:
     typedef typename Traits::Sqrt Sqrt;
 
     static Sqrt sqrt_object(const Traits &traits)
-    { 
-        return traits.sqrt_object(); 
+    {
+        return traits.sqrt_object();
     }
 };
 
@@ -112,8 +103,8 @@ public:
 \cgalModels `BarycentricCoordinates_2`
 
 */
- 
-template<class Traits> 
+
+template<class Traits>
     class Mean_value_2
 {
 
@@ -170,7 +161,7 @@ public:
     // This function computes mean value barycentric coordinates for a chosen query point on the bounded side of a simple polygon.
     template<class OutputIterator>
         inline boost::optional<OutputIterator> coordinates_on_bounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm)
-    {   
+    {
         switch(type_of_algorithm)
         {
             case PRECISE:
@@ -192,7 +183,7 @@ public:
     // This function computes mean value barycentric coordinates for a chosen query point on the unbounded side of a simple polygon.
     template<class OutputIterator>
         inline boost::optional<OutputIterator> coordinates_on_unbounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm)
-    {   
+    {
         switch(type_of_algorithm)
         {
             case PRECISE:
@@ -274,7 +265,7 @@ private:
         D[n-1] = scalar_product_2(s[n-1], s[0]);
 
         // Compute intermediate values t using the formulas from slide 19 here
-        // - http://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf 
+        // - http://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf
         for(int i = 0; i < n-1; ++i) {
             CGAL_precondition( (r[i]*r[i+1] + D[i]) != FT(0) );
             t[i] = A[i] / (r[i]*r[i+1] + D[i]);
@@ -336,8 +327,8 @@ private:
         // Following section 4.2 from [2] we denote P_j = r_j*r_{j+1} + dot_product(d_j, d_{j+1}).
         // Vector s_i from [1] corresponds to that one with the name d_i in [2].
         for(int j = 0; j < n-1; ++j)
-            P[j] = (CGAL::max)(r[j]*r[j+1] + scalar_product_2(s[j], s[j+1]), FT(0));
-        P[n-1] = (CGAL::max)(r[n-1]*r[0] + scalar_product_2(s[n-1], s[0]), FT(0));
+            P[j] = CGAL::max<FT>(r[j]*r[j+1] + scalar_product_2(s[j], s[j+1]), 0);
+        P[n-1] = CGAL::max<FT>(r[n-1]*r[0] + scalar_product_2(s[n-1], s[0]), 0);
 
         // Compute mean value weights using the formula (16) from [2].
         // Since the formula (16) always gives positive values, we have to add a proper sign to all the weight functions.
@@ -403,7 +394,7 @@ private:
         D[n-1] = scalar_product_2(s[n-1], s[0]);
 
         // Compute intermediate values t using the formulas from slide 19 here
-        // - http://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf 
+        // - http://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf
         for(int i = 0; i < n-1; ++i) {
             CGAL_precondition( (r[i]*r[i+1] + D[i]) != FT(0) );
             t[i] = A[i] / (r[i]*r[i+1] + D[i]);

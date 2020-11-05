@@ -39,7 +39,7 @@ void naive_test(int k, const char* fname,
   CGAL::Aff_transformation_3<K> init2(CGAL::TRANSLATION, - K::Vector_3(
                                         (box.xmax()-box.xmin()),0,0));
   PMP::transform(init2, tm2);
-  
+
   tmTree.build();
   K::Vector_3 unit_vec = (2.0/k * K::Vector_3((box.xmax()-box.xmin()),
                                               0,
@@ -56,9 +56,9 @@ void naive_test(int k, const char* fname,
   rot[7] = std::sin(CGAL_PI/4.0);
   rot[8] = std::cos(CGAL_PI/4.0);
   CGAL::Aff_transformation_3<K> R(rot[0], rot[1], rot[2],
-      rot[3], rot[4], rot[5], 
+      rot[3], rot[4], rot[5],
       rot[6], rot[7], rot[8]);
-  
+
   CGAL::Side_of_triangle_mesh<Surface_mesh, K> sotm1(tm);
   for(int i=1; i<k+1; ++i)
   {
@@ -68,10 +68,10 @@ void naive_test(int k, const char* fname,
     tmTree2.build();
     if(tmTree2.do_intersect(tmTree))
       ++nb_inter;
-    else 
+    else
     {
       if(sotm1(tm2.point(*tm2.vertices().begin())) != CGAL::ON_UNBOUNDED_SIDE)
-      {        
+      {
         ++nb_include;
       }
       else
@@ -101,16 +101,16 @@ void test_no_collision(int k, const char* fname,
   CGAL::Aff_transformation_3<K> init2(CGAL::TRANSLATION, - K::Vector_3(
                                         (box.xmax()-box.xmin()),0,0));
   PMP::transform(init2, tm2);
-  
+
   tmTree.build();
   tmTree2.build();
   typedef boost::property_map<Surface_mesh, CGAL::vertex_point_t>::type VPM;
   VPM vpm2 = get(CGAL::vertex_point, tm2);
-  
+
   K::Vector_3 unit_vec = (2.0/k * K::Vector_3((box.xmax()-box.xmin()),
                                               0,
                                               0));
-  
+
   CGAL::Side_of_triangle_mesh<Surface_mesh, K,
       VPM, Tree> sotm1(tmTree);
   for(int i=1; i<k+1; ++i)
@@ -126,7 +126,7 @@ void test_no_collision(int k, const char* fname,
     rot[7] = std::sin(i*CGAL_PI/4.0);
     rot[8] = std::cos(i*CGAL_PI/4.0);
     CGAL::Aff_transformation_3<K> R(rot[0], rot[1], rot[2],
-        rot[3], rot[4], rot[5], 
+        rot[3], rot[4], rot[5],
         rot[6], rot[7], rot[8]);
     CGAL::Aff_transformation_3<K> T1 = CGAL::Aff_transformation_3<K>(CGAL::TRANSLATION, i*unit_vec);
     CGAL::Aff_transformation_3<K> transfo = R*T1;
@@ -134,10 +134,10 @@ void test_no_collision(int k, const char* fname,
     CGAL::Interval_nt_advanced::Protector protector;
     if(tmTree2.do_intersect(tmTree))
       ++nb_inter;
-    else 
+    else
     {
       if(sotm1(transfo.transform(vpm2[*tm2.vertices().begin()])) != CGAL::ON_UNBOUNDED_SIDE)
-      {        
+      {
         ++nb_include;
       }
       else
@@ -158,7 +158,7 @@ int main(int argc, const char** argv)
   int k = (argc>1) ? atoi(argv[1]) : 10;
   const char* path = (argc>2)?argv[2]:"data/handle"
                                       ".off";
- 
+
   std::cout<< k<<" steps in "<<path<<std::endl;
   int nb_inter(0), nb_no_inter(0), nb_include(0),
       naive_inter(0), naive_no_inter(0), naive_include(0);

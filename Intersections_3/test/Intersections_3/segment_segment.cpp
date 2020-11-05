@@ -30,8 +30,8 @@ typedef CGAL::Cartesian<FT>                                 K;
   TEST_CASE_SEGMENT_BASE(k,l,i,j,i1,i2) \
   TEST_CASE_SEGMENT_BASE(k,l,j,i,i1,i2) \
   TEST_CASE_SEGMENT_BASE(l,k,i,j,i1,i2) \
-  TEST_CASE_SEGMENT_BASE(l,k,j,i,i1,i2) 
-  
+  TEST_CASE_SEGMENT_BASE(l,k,j,i,i1,i2)
+
 #define TEST_CASE_POINT_BASE(i,j,k,l,ind) \
 {\
   typename K::Segment_3 s1(pts[i],pts[j]); \
@@ -53,7 +53,7 @@ typedef CGAL::Cartesian<FT>                                 K;
   TEST_CASE_POINT_BASE(k,l,j,i,ind) \
   TEST_CASE_POINT_BASE(l,k,i,j,ind) \
   TEST_CASE_POINT_BASE(l,k,j,i,ind)
-  
+
 
 #define TEST_CASE_EMPTY_BASE(i,j,k,l) \
 {\
@@ -111,36 +111,36 @@ void _test_intersection_construct(K)
       assert( CGAL::do_intersect(s[i].supporting_line(),s[j]) );
       assert( CGAL::do_intersect(s[i],s[j].supporting_line()) );
     }
-  
+
   CGAL::Object objs[8];
   objs[0] = CGAL::intersection(s[0],s[1]); //Point(0,0,0)
   objs[1] = CGAL::intersection(s[0],s[2]); //Point(0,0,0)
   objs[2] = CGAL::intersection(s[0],s[3]); //Point(0,0,0)
   objs[3] = CGAL::intersection(s[3],s[4]); //Point(0,0,0)
-  objs[4] = CGAL::intersection(s[0].supporting_line(),s[1]); //Point(0,0,0)    
+  objs[4] = CGAL::intersection(s[0].supporting_line(),s[1]); //Point(0,0,0)
   objs[5] = CGAL::intersection(s[1],s[2]); //s[1]
   objs[6] = CGAL::intersection(s[1],s[3]); //Segment_3( Point(-1,0,0),Point(0,0,0) )
-  objs[7] = CGAL::intersection(s[2],s[1].supporting_line()); //s[2]    
+  objs[7] = CGAL::intersection(s[2],s[1].supporting_line()); //s[2]
   for (int k=0;k<5;++k){
     const Point_3* p=CGAL::object_cast<Point_3>(&(objs[k]));
     assert(p!=NULL);
     assert(*p==Point_3(0,0,0));
   }
-  
+
   const Segment_3* seg=CGAL::object_cast<Segment_3>(&(objs[5]));
   assert(seg!=NULL);
   assert(*seg==s[1]);
   seg=CGAL::object_cast<Segment_3>(&(objs[7]));
-  assert(*seg==s[2]);  
-  
+  assert(*seg==s[2]);
+
   seg=CGAL::object_cast<Segment_3>(&(objs[6]));
   assert(seg!=NULL);
-  assert(*seg==Segment_3( Point_3(0,0,0),Point_3(-1,0,0) ) || *seg==Segment_3( Point_3(-1,0,0),Point_3(0,0,0) ));  
+  assert(*seg==Segment_3( Point_3(0,0,0),Point_3(-1,0,0) ) || *seg==Segment_3( Point_3(-1,0,0),Point_3(0,0,0) ));
 
-  
+
   assert( !CGAL::do_intersect(s[0],Segment_3(Point_3(-1,0,0),Point_3(-0.5,0,0))) );
   assert( !CGAL::do_intersect(s[4],Segment_3(Point_3(-1,0,0),Point_3(-0.5,0,0))) );
-  
+
   std::cout << "OK!" << std::endl;
 }
 
@@ -148,8 +148,8 @@ int main()
 {
   K k;
   _test_intersection_construct(k);
-  
-   
+
+
   K::Point_3 pts[4] = {K::Point_3(0,0,0),K::Point_3(1,0,0),K::Point_3(2,0,0),K::Point_3(3,0,0)};
   all_cases_collinear<K>(pts);
   return 0;

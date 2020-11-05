@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 
@@ -35,7 +26,7 @@
 namespace CGAL {
 
   namespace Appel_impl {
-    
+
     // Computes the inverse of the positive definite (dxd)-matrix A
     // into Ai, by using the Cholesky decomposition of A. All three
     // iterator template parameters must be random access iterators of
@@ -48,13 +39,13 @@ namespace CGAL {
     //
     // Precondition: A and Ai may point to the same matrix (i.e., might alias).
     template<typename FT,
-	     typename Tmp_iterator,
-	     typename A_iterator,
-	     typename A_inverse_iterator>
+             typename Tmp_iterator,
+             typename A_iterator,
+             typename A_inverse_iterator>
     bool pd_matrix_inverse(const int d,
-			   A_iterator A,
-			   A_inverse_iterator Ai,
-			   Tmp_iterator tmp)
+                           A_iterator A,
+                           A_inverse_iterator Ai,
+                           Tmp_iterator tmp)
     {
       // I use the following version (in matlab notation) from Walter
       // Gander's lecture "Ausgleichsrechnung" (ETH Zurich, around 2000, see
@@ -74,22 +65,22 @@ namespace CGAL {
       // that instead of computing the result into L we can as well
       // overwrite the lower part of A.
       for (int j=0; j<d; ++j) {
-	// compute new column (v in above pseudo-code):
-	for (int i=j; i<d; ++i) {
-	  FT ll(0);
-	  for (int k=0; k<j; ++k)
-	    ll += A[i+k*d] * A[j+k*d];
-	  tmp[i] = A[i+j*d] - ll;
-	}
+        // compute new column (v in above pseudo-code):
+        for (int i=j; i<d; ++i) {
+          FT ll(0);
+          for (int k=0; k<j; ++k)
+            ll += A[i+k*d] * A[j+k*d];
+          tmp[i] = A[i+j*d] - ll;
+        }
 
-	// check regularity:
-	if (tmp[j] <= 0) // todo: epsilon?
-	  return false;
+        // check regularity:
+        if (tmp[j] <= 0) // todo: epsilon?
+          return false;
 
-	// overwrite column:
-	const FT scale = FT(1)/std::sqrt(tmp[j]);
-	for (int i=j; i<d; ++i)
-	  A[i+j*d] = tmp[i] * scale;
+        // overwrite column:
+        const FT scale = FT(1)/std::sqrt(tmp[j]);
+        for (int i=j; i<d; ++i)
+          A[i+j*d] = tmp[i] * scale;
       }
 
       // Now that we have in the lower triangular part of A the
@@ -97,28 +88,28 @@ namespace CGAL {
       // the inverse of A see "Numerical Recipes in C", end of Chapter
       // 2.9.
       for (int i=0; i<d; ++i) {
-	A[i+i*d] = FT(1)/A[i+i*d];
-	for (int j=i+1; j<d; ++j) {
-	  FT sum(0);
-	  for (int k=i; k<j; ++k)
-	    sum -= A[j+k*d] * A[k+i*d];
-	  A[j+i*d] = sum/A[j+j*d];
-	}
+        A[i+i*d] = FT(1)/A[i+i*d];
+        for (int j=i+1; j<d; ++j) {
+          FT sum(0);
+          for (int k=i; k<j; ++k)
+            sum -= A[j+k*d] * A[k+i*d];
+          A[j+i*d] = sum/A[j+j*d];
+        }
       }
-    
+
       // Finally, we calculate A^{-1} = (L^{-1})^T L^{-1} into Ai:
       for (int i=0; i<d; ++i)
-	for (int j=0; j<=i; ++j) {
+        for (int j=0; j<=i; ++j) {
 
-	  // compute entry (i,j) of A^{-1}:
-	  FT sum(0);
-	  for (int k=i; k<d; ++k)
-	    sum += A[k+i*d] * A[k+j*d];
-	  Ai[i+j*d] = sum;
+          // compute entry (i,j) of A^{-1}:
+          FT sum(0);
+          for (int k=i; k<d; ++k)
+            sum += A[k+i*d] * A[k+j*d];
+          Ai[i+j*d] = sum;
 
-	  // Since A^{-1} is symmetric, we set:
-	  Ai[j+i*d] = sum;
-	}
+          // Since A^{-1} is symmetric, we set:
+          Ai[j+i*d] = sum;
+        }
 
       return true;
     }
@@ -136,7 +127,7 @@ namespace CGAL {
   template<bool Embed,class Traits>
   void Khachiyan_approximation<Embed,Traits>::compute_M_of_x()
   // Computes into t the matrix
-  // 
+  //
   //    M(x) = sum(x_i p_i p_i^T,i=0..(n-1)).
   //
   // Complexity: O(n d^2)
@@ -146,23 +137,23 @@ namespace CGAL {
     // erase m:
     for (int i=0; i<d; ++i)
       for (int j=0; j<d; ++j)
-	t[i+j*d] = FT(0);
+        t[i+j*d] = FT(0);
 
     // evaluate products:
     for (int k=0; k<n; ++k) {
       C_it pi = tco.cartesian_begin(*P[k]);
       for (int i=0; i<d_P; ++i, ++pi) {
-	C_it pj = tco.cartesian_begin(*P[k]);
-	for (int j=0; j<d_P; ++j, ++pj)
-	  t[i+j*d] += x[k] * (*pi) * (*pj);
-	if (Embed)
-	  t[i+d_P*d] += x[k] * (*pi);
+        C_it pj = tco.cartesian_begin(*P[k]);
+        for (int j=0; j<d_P; ++j, ++pj)
+          t[i+j*d] += x[k] * (*pi) * (*pj);
+        if (Embed)
+          t[i+d_P*d] += x[k] * (*pi);
       }
       if (Embed) {
-	C_it pj = tco.cartesian_begin(*P[k]);
-	for (int j=0; j<d_P; ++j, ++pj)
-	  t[d_P+j*d] += x[k] * (*pj);
-	t[d_P+d_P*d] += x[k];
+        C_it pj = tco.cartesian_begin(*P[k]);
+        for (int j=0; j<d_P; ++j, ++pj)
+          t[d_P+j*d] += x[k] * (*pj);
+        t[d_P+d_P*d] += x[k];
       }
     }
   }
@@ -183,13 +174,13 @@ namespace CGAL {
     // Since the transformations we apply do not change the solution
     // space of the intermediate systems, we can say: The system t x =
     // e_j has, for any i in {1,...,d}, the same solution space as I x
-    // = n_i (with n_i being the i-th colum of N); it follows that
+    // = n_i (with n_i being the i-th column of N); it follows that
     // x=n_i.
 
     // store the identity matrix in mi:
     for (int i=0; i<d; ++i)
       for (int j=0; j<d; ++j)
-	mi[i+j*d] = FT(i==j? 1 : 0);
+        mi[i+j*d] = FT(i==j? 1 : 0);
 
     // Since it is not always possible to achieve a final form [*|I]
     // without row exchanges, we try to get the form [*|P(I)] where
@@ -211,31 +202,31 @@ namespace CGAL {
       bool found = false;
       int k = d-1;
       for (; k>=0; --k)
-	if (!is_zero(t[k+j*d]) && col_with_one[k]<0) {
-	  found = true;
-	  break;
-	}
+        if (!is_zero(t[k+j*d]) && col_with_one[k]<0) {
+          found = true;
+          break;
+        }
       if (!found)
-	return false;
+        return false;
       col_with_one[k] = j;
       row_with_one[j] = k;
 
       // zero out the entries above and below entry k:
       for (int i=0; i<d; ++i)
-	if (i != k) {
-	  // we add l times row k to row i:
-	  const FT l = -t[i+j*d]/t[k+j*d];
-	  for (int jj=0; jj<d; ++jj)
-	    mi[i+jj*d] += l*mi[k+jj*d];
-	  for (int jj=0; jj<=j; ++jj)
-	    t[i+jj*d]  += l*t[k+jj*d];
-	}
+        if (i != k) {
+          // we add l times row k to row i:
+          const FT l = -t[i+j*d]/t[k+j*d];
+          for (int jj=0; jj<d; ++jj)
+            mi[i+jj*d] += l*mi[k+jj*d];
+          for (int jj=0; jj<=j; ++jj)
+            t[i+jj*d]  += l*t[k+jj*d];
+        }
 
       // finally, we scale row k to get a one at (k,j):
       for (int jj=0; jj<d; ++jj)
-	mi[k+jj*d] /= t[k+j*d];
+        mi[k+jj*d] /= t[k+j*d];
       for (int jj=0; jj<=j; ++jj)
-	t[k+jj*d] /= t[k+j*d];
+        t[k+jj*d] /= t[k+j*d];
     }
 
     // At this point we know that for any i in {1,...,d} the system m
@@ -243,13 +234,13 @@ namespace CGAL {
     // P(I)^{-1} n_i and it thus suffices to undo the permutation:
     for (int i=0; i<d; ++i)
       if (row_with_one[i] != i) {
-	const int repl_row = row_with_one[i];
-	const int col = col_with_one[i];
-	for (int j=0; j<d; ++j)
-	  std::swap(mi[i+j*d],mi[repl_row+j*d]);
-	row_with_one[col] = repl_row;
-	col_with_one[repl_row] = col;
-	row_with_one[i] = col_with_one[i] = i;
+        const int repl_row = row_with_one[i];
+        const int col = col_with_one[i];
+        for (int j=0; j<d; ++j)
+          std::swap(mi[i+j*d],mi[repl_row+j*d]);
+        row_with_one[col] = repl_row;
+        col_with_one[repl_row] = col;
+        row_with_one[i] = col_with_one[i] = i;
     }
     return true;
   }
@@ -263,9 +254,9 @@ namespace CGAL {
       return false;
 
     return Appel_impl::pd_matrix_inverse<FT>(d,
-					     t.begin(),
-					     mi.begin(),
-					     tmp.begin());
+                                             t.begin(),
+                                             mi.begin(),
+                                             tmp.begin());
   }
 
   template<bool Embed,class Traits>
@@ -287,7 +278,7 @@ namespace CGAL {
     const FT invOfn = 1/FT(n);
     for (int i=0; i<d; ++i)
       for (int j=0; j<d; ++j)
-	t[i+j*d] = sum[i+j*d] * invOfn;
+        t[i+j*d] = sum[i+j*d] * invOfn;
 
     if (!compute_inverse_of_t_into_mi(Exact_flag()))
       return false;
@@ -301,12 +292,12 @@ namespace CGAL {
     // Finally, we compute the excess of P[k] (w.r.t. x) into ex[k]
     // for all k:
     ex_max = 0;
-    for (int k=0; k<n; ++k) 
+    for (int k=0; k<n; ++k)
       if ((ex[k] = excess<FT>(tco.cartesian_begin(*P[k]))) > ex[ex_max])
-	ex_max = k;
+        ex_max = k;
     CGAL_APPEL_LOG("appel","  Largest excess after initialization is " <<
-	      to_double(ex[ex_max]) << "." << "\n");
-    
+              to_double(ex[ex_max]) << "." << "\n");
+
     // Accoding to Khachiyam (Lemma 3, eq. (2.20) in "Rounding of
     // polytopes in the real number model of computation"), the
     // following eps makes (*) hold:
@@ -336,15 +327,15 @@ namespace CGAL {
     FT max_error(0);
     for (int i=0; i<d; ++i)
       for (int j=0; j<d; ++j) {
-	
-	// compute element (i,j) of the product of m and M(x):
-	FT v(0);
-	for (int k=0; k<d; ++k)
-	  v += t[i+k*d] * mi[k+j*d];
-	
-	// check it:
-	const FT exact(i == j? 1 : 0);
-	max_error = (std::max)(max_error,std::abs(v-exact));
+
+        // compute element (i,j) of the product of m and M(x):
+        FT v(0);
+        for (int k=0; k<d; ++k)
+          v += t[i+k*d] * mi[k+j*d];
+
+        // check it:
+        const FT exact(i == j? 1 : 0);
+        max_error = (std::max)(max_error,std::abs(v-exact));
       }
 
     // update statistics:
@@ -353,21 +344,21 @@ namespace CGAL {
     max_error_m = max_error;
     #endif
     CGAL_APPEL_LOG("appel","  The represenation error in m is: " <<
-	      to_double(max_error) << (max_error == FT(0)?
+              to_double(max_error) << (max_error == FT(0)?
               " (zero)" : "") << "." << "\n");
-    
+
     return max_error;
   }
   #endif // CGAL_APPEL_ASSERTION_MODE
 
   template<bool Embed,class Traits>
   void Khachiyan_approximation<Embed,Traits>::rank_1_update(int k,
-							    const FT& tau)
+                                                            const FT& tau)
   {
     // check preconditions:
     CGAL_APPEL_ASSERT(!check_tag(Exact_flag()) || tau == eps/((1+eps)*d-1));
-    CGAL_APPEL_ASSERT(!check_tag(Exact_flag()) || 
-		      excess<ET>(tco.cartesian_begin(*P[k])) == (1+eps)*d);
+    CGAL_APPEL_ASSERT(!check_tag(Exact_flag()) ||
+                      excess<ET>(tco.cartesian_begin(*P[k])) == (1+eps)*d);
     CGAL_USE(tau);
     const FT mu = eps / ((d-1)*(1+eps));
     const FT alpha = 1 + mu;
@@ -378,40 +369,40 @@ namespace CGAL {
       tmp[i] = FT(0);
       C_it pk = tco.cartesian_begin(*P[k]);
       for (int j=0; j<d_P; ++j, ++pk)
-	tmp[i] += (*pk) * mi[i+j*d];
+        tmp[i] += (*pk) * mi[i+j*d];
       if (Embed)
-	tmp[i] += mi[i+d_P*d];
+        tmp[i] += mi[i+d_P*d];
     }
 
     // We need to scale the current matrix m by alpha and add to it
     // the matrix (tmp tmp^T) times -beta:
     for (int i=0; i<d; ++i)
       for (int j=0; j<d; ++j) {
-	mi[i+j*d] *= alpha;
-	mi[i+j*d] -= beta * tmp[i]*tmp[j];
+        mi[i+j*d] *= alpha;
+        mi[i+j*d] -= beta * tmp[i]*tmp[j];
       }
 
     // Update ex[k]: We need to scale ex[k] by alpha and subtract from
     // it beta (p_k^T tmp)^2:
     ex_max = 0;
     for (int k=0; k<n; ++k) {
-      
+
       // compute gamma = (p_k^T tmp)^2:
       FT gamma(0);
       C_it pk = tco.cartesian_begin(*P[k]);
       for (int i=0; i<d_P; ++i, ++pk)
-	gamma += tmp[i] * (*pk);
+        gamma += tmp[i] * (*pk);
       if (Embed)
-	gamma += tmp[d_P];
+        gamma += tmp[d_P];
       gamma *= gamma;
-      
+
       // update ex[k]:
       ex[k] *= alpha;
       ex[k] -= beta*gamma;
 
       // remember the largest so far:
       if (ex[k] > ex[ex_max])
-	ex_max = k;
+        ex_max = k;
     }
 
     // check postcondition:
@@ -427,16 +418,16 @@ namespace CGAL {
     // (1+eps) d holds for all m in {1,...,n}:
     eps = ex[ex_max]/d - 1;
     is_exact_eps_uptodate = false;
-    
+
     CGAL_APPEL_LOG("appel","  The current eps is: " << to_double(eps) << "\n");
-    
+
     // check if we have already reached an acceptable eps:
     if (eps <= desired_eps) // numerics say we're ready to stop...
       if (exact_epsilon() <= desired_eps) // ... and if it's o.k, we stop
         // Note: if FT is inexact, exact_epsilon() may return a
         // negative number here, which we will interpret as the input
         // points being degenerate.
-	return true;
+        return true;
 
     // We optimize along the line
     //
@@ -454,7 +445,7 @@ namespace CGAL {
       x[i] = (1-tau)*x[i];
     x[ex_max] += tau;
     CGAL_APPEL_ASSERT(!check_tag(Exact_flag()) ||
-		      std::accumulate(x.begin(),x.end(),FT(0)) == FT(1));
+                      std::accumulate(x.begin(),x.end(),FT(0)) == FT(1));
     #endif // CGAL_APPEL_ASSERTION_MODE
 
     // recompute the inverse m of M(x) (where x is our new x') and
@@ -485,9 +476,9 @@ namespace CGAL {
 
     // debugging output:
     CGAL_APPEL_LOG("appel",
-		   "Exact epsilon is " << eps_e << " (rounded: " <<
-		   eps_exact << ")." << "\n");
-    
+                   "Exact epsilon is " << eps_e << " (rounded: " <<
+                   eps_exact << ")." << "\n");
+
     // check whether eps is negative (which under exact arithmetic is
     // not possible, and which we will take as a sign that the input
     // points are degenerate):
@@ -506,8 +497,8 @@ namespace CGAL {
     // debugging output:
     if (verbose) {
       CGAL_APPEL_IF_STATS(
-        std::cout << "The overall error in the matrix inverse is:   " 
-	          << max_error_m_all << "." << "\n");
+        std::cout << "The overall error in the matrix inverse is:   "
+                  << max_error_m_all << "." << "\n");
     }
 
     // handle degenerate case:
@@ -519,8 +510,8 @@ namespace CGAL {
     const ET     ratio   = (ET(epsilon)+1)*d;
     for (int i=0; i<n; ++i)
       if (excess<ET>(tco.cartesian_begin(*P[i])) > ratio) {
-	CGAL_APPEL_LOG("appel","ERROR: Eq. (*) violated." << "\n");
-	return false;
+        CGAL_APPEL_LOG("appel","ERROR: Eq. (*) violated." << "\n");
+        return false;
       }
 
     return true;
@@ -536,13 +527,13 @@ namespace CGAL {
     // copy matrix to destination:
     for (int i=0; i<d-1; ++i)
       for (int j=0; j<d-1; ++j)
-	inverse[i+j*(d-1)] = mi[i+j*d];
+        inverse[i+j*(d-1)] = mi[i+j*d];
 
     // solve in place:
     return Appel_impl::pd_matrix_inverse<FT>(d-1, inverse,
-					     inverse, tmp.begin());
+                                             inverse, tmp.begin());
   }
-  
+
   template<bool Embed,class Traits>
   void Khachiyan_approximation<Embed,Traits>::print(std::ostream& o)
   {
@@ -551,7 +542,7 @@ namespace CGAL {
     for (int k=0; k<n; ++k) {
       o << x[k];
       if (k<n-1)
-	o << ",";
+        o << ",";
     }
     o << "];" << "\n\n";
     #endif // CGAL_APPEL_ASSERTION_MODE
@@ -560,13 +551,13 @@ namespace CGAL {
     for (int i=0; i<d; ++i) {
       o << " [ ";
       for (int j=0; j<d; ++j) {
-	o << mi[i+j*d];
-	if (j<d-1)
-	  o << ",";
+        o << mi[i+j*d];
+        if (j<d-1)
+          o << ",";
       }
       o << "]";
       if (i<d-1)
-	o << ",";
+        o << ",";
       o << "\n";
     }
     o << "]);" << "\n";
@@ -575,13 +566,13 @@ namespace CGAL {
     for (int i=0; i<d; ++i) {
       o << " [ ";
       for (int j=0; j<d; ++j) {
-	o << sum[i+j*d];
-	if (j<d-1)
-	  o << ",";
+        o << sum[i+j*d];
+        if (j<d-1)
+          o << ",";
       }
       o << "]";
       if (i<d-1)
-	o << ",";
+        o << ",";
       o << "\n";
     }
     o << "]);" << "\n";
@@ -590,18 +581,18 @@ namespace CGAL {
     for (int i=0; i<d; ++i) {
       o << " [ ";
       for (int j=0; j<d; ++j) {
-	o << t[i+j*d];
-	if (j<d-1)
-	  o << ",";
+        o << t[i+j*d];
+        if (j<d-1)
+          o << ",";
       }
       o << "]";
       if (i<d-1)
-	o << ",";
+        o << ",";
       o << "\n";
     }
     o << "]);" << "\n";
   }
-  
+
   template<bool Embed,class Traits>
   int Khachiyan_approximation<Embed,Traits>::write_eps() const
   {
@@ -625,14 +616,14 @@ namespace CGAL {
     // output the inscribed ellipse:
     epsf.set_stroke_mode(Impl::Eps_export_2::Dashed);
     epsf.write_cs_ellipse(to_double(mi[0+0*d]),
-			  to_double(mi[1+1*d]),
-			  to_double(mi[1+0*d]));
+                          to_double(mi[1+1*d]),
+                          to_double(mi[1+0*d]));
 
     // Output the approximation of the minellipse: Since the relaxed
-    // optimality conditions (*) hold, 
+    // optimality conditions (*) hold,
     //
     //      p_i^T M(x)^{-1} p_i <= (1+eps) d,
-    // 
+    //
     // we can divide by a:=(1+eps)d to get
     //
     //     p_i^T M(x)^{-1}/a p_i <= 1,
@@ -643,25 +634,25 @@ namespace CGAL {
     for (int k=0; k<n; ++k) {
       // compute M(x)^{-1}/alpha p_k into vector tmp:
       for (int i=0; i<d; ++i) { // loop to determine tmp[i]
-	tmp[i] = FT(0);
-	C_it pk = tco.cartesian_begin(*P[k]);
-	for (int j=0; j<d; ++j, ++pk)
-	  tmp[i] += (*pk) * mi[i+j*d];
+        tmp[i] = FT(0);
+        C_it pk = tco.cartesian_begin(*P[k]);
+        for (int j=0; j<d; ++j, ++pk)
+          tmp[i] += (*pk) * mi[i+j*d];
       }
 
       // calculate p^T tmp:
       FT result(0);
       C_it pk = tco.cartesian_begin(*P[k]);
       for (int i=0; i<d; ++i, ++pk)
-	result += (*pk) * tmp[i];
+        result += (*pk) * tmp[i];
     }
 
     epsf.set_stroke_mode(Impl::Eps_export_2::Dashed);
     epsf.set_label("E2");
     epsf.write_cs_ellipse(to_double(mi[0+0*d]/a),
-			  to_double(mi[1+1*d]/a),
-			  to_double(mi[1+0*d]/a));
-    
+                          to_double(mi[1+1*d]/a),
+                          to_double(mi[1+0*d]/a));
+
     return id++;
   }
 

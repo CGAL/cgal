@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot
 
@@ -25,13 +16,23 @@
 
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
-#if (CV_MAJOR_VERSION < 3)
-#include <cv.h>
-#include <ml.h>
+
+#include <opencv2/opencv.hpp>
+
+//In opencv version 2.X the first digit is named EPOCH,
+//until version 3.0 where EPOCH disappears and it becomes MAJOR. Hence this
+//weird condition
+#ifdef CV_VERSION_EPOCH
+  #if  CV_VERSION_MAJOR == 4 && CV_VERSION_MINOR>= 11
+    #include <opencv2/ml.hpp>
+  #else
+    #include <opencv2/ml/ml.hpp>
+  #endif
 #else
-#include <opencv/cv.h>
-#include <opencv/ml.h>
+  #include <opencv2/ml.hpp>
 #endif
+
+
 
 namespace CGAL {
 
@@ -57,7 +58,7 @@ class Random_forest_classifier
   int m_max_categories;
   int m_max_number_of_trees_in_the_forest;
   float m_forest_accuracy;
-  
+
 #if (CV_MAJOR_VERSION < 3)
   CvRTrees* rtree;
 #else
@@ -65,12 +66,12 @@ class Random_forest_classifier
 #endif
 
 public:
-  
+
   /// \name Constructor
   /// @{
-  
+
 /*!
-  \brief Instantiates the classifier using the sets of `labels` and `features`.
+  \brief instantiates the classifier using the sets of `labels` and `features`.
 
   Parameters documentation is copy-pasted from [the official documentation of OpenCV](https://docs.opencv.org/2.4/modules/ml/doc/random_trees.html). For more details on this method, please refer to it.
 
@@ -95,7 +96,7 @@ public:
       m_max_number_of_trees_in_the_forest (max_number_of_trees_in_the_forest),
       m_forest_accuracy (forest_accuracy)
 #if (CV_MAJOR_VERSION < 3)
-    , rtree (NULL)
+    , rtree (nullptr)
 #endif
   {  }
 
@@ -103,32 +104,32 @@ public:
   ~Random_forest_classifier ()
   {
 #if (CV_MAJOR_VERSION < 3)
-    if (rtree != NULL)
+    if (rtree != nullptr)
       delete rtree;
 #endif
   }
   /// \endcond
-  
+
   /// @}
 
   /// \name Parameters
   /// @{
-  
+
   void set_max_depth (int max_depth) { m_max_depth = max_depth; }
   void set_min_sample_count (int min_sample_count) { m_min_sample_count = min_sample_count; }
   void set_max_categories (int max_categories) { m_max_categories = max_categories; }
   void set_max_number_of_trees_in_the_forest (int max_number_of_trees_in_the_forest)
   { m_max_number_of_trees_in_the_forest = max_number_of_trees_in_the_forest; }
   void set_forest_accuracy (float forest_accuracy) { m_forest_accuracy = forest_accuracy; }
-  
-  
+
+
   /// @}
 
   /// \name Training
   /// @{
-  
+
   /*!
-    \brief Runs the training algorithm.
+    \brief runs the training algorithm.
 
     From the set of provided ground truth, this algorithm estimates
     sets up the random trees that produce the most accurate result
@@ -146,8 +147,10 @@ public:
   template <typename LabelIndexRange>
   void train (const LabelIndexRange& ground_truth)
   {
+    CGAL_precondition (m_labels.is_valid_ground_truth (ground_truth));
+
 #if (CV_MAJOR_VERSION < 3)
-    if (rtree != NULL)
+    if (rtree != nullptr)
       delete rtree;
 #endif
 
@@ -157,35 +160,48 @@ public:
               << CV_MAJOR_VERSION << "."
               << CV_MINOR_VERSION << ")" << std::endl;
 #endif
-    
+
     std::size_t nb_samples = 0;
-    for (std::size_t i = 0; i < ground_truth.size(); ++ i)
-      if (int(ground_truth[i]) != -1)
+    for (const auto& gt_value : ground_truth)
+      if (int(gt_value) != -1)
         ++ nb_samples;
 
     cv::Mat training_features (int(nb_samples), int(m_features.size()), CV_32FC1);
     cv::Mat training_labels (int(nb_samples), 1, CV_32FC1);
 
-    for (std::size_t i = 0, index = 0; i < ground_truth.size(); ++ i)
-      if (int(ground_truth[i]) != -1)
+    std::size_t i = 0, index = 0;
+    for (const auto& gt_value : ground_truth)
+    {
+      if (int(gt_value) != -1)
       {
         for (std::size_t f = 0; f < m_features.size(); ++ f)
           training_features.at<float>(int(index), int(f)) = m_features[f]->value(i);
-        training_labels.at<float>(int(index), 0) = static_cast<float>(ground_truth[i]);
+        training_labels.at<float>(int(index), 0) = static_cast<float>(gt_value);
         ++ index;
       }
+      ++ i;
+    }
+
 
 #if (CV_MAJOR_VERSION < 3)
     float* priors = new float[m_labels.size()];
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
       priors[i] = 1.;
 
-    CvRTParams params (m_max_depth, m_min_sample_count,
-                       0, false, m_max_categories, priors, false, 0,
-                       m_max_number_of_trees_in_the_forest,
-                       m_forest_accuracy,
-                       CV_TERMCRIT_ITER | CV_TERMCRIT_EPS
-      );
+    CvRTParams params;
+
+    if (m_forest_accuracy == 0.f)
+      params = CvRTParams
+        (m_max_depth, m_min_sample_count,
+         0, false, m_max_categories, priors, false, 0,
+         m_max_number_of_trees_in_the_forest,
+         m_forest_accuracy, CV_TERMCRIT_ITER);
+    else
+      params = CvRTParams
+        (m_max_depth, m_min_sample_count,
+         0, false, m_max_categories, priors, false, 0,
+         m_max_number_of_trees_in_the_forest,
+         m_forest_accuracy, CV_TERMCRIT_EPS | CV_TERMCRIT_ITER);
 
     cv::Mat var_type (m_features.size() + 1, 1, CV_8U);
     var_type.setTo (cv::Scalar(CV_VAR_NUMERICAL));
@@ -205,8 +221,13 @@ public:
     rtree->setUseSurrogates(false);
     rtree->setPriors(cv::Mat());
     rtree->setCalculateVarImportance(false);
-    
-    cv::TermCriteria criteria (cv::TermCriteria::EPS + cv::TermCriteria::COUNT, m_max_number_of_trees_in_the_forest, 0.01f);
+
+    cv::TermCriteria criteria;
+    if (m_forest_accuracy == 0.f)
+      criteria = cv::TermCriteria (cv::TermCriteria::COUNT, m_max_number_of_trees_in_the_forest, m_forest_accuracy);
+    else
+      criteria = cv::TermCriteria (cv::TermCriteria::EPS + cv::TermCriteria::COUNT, m_max_number_of_trees_in_the_forest, m_forest_accuracy);
+
     rtree->setTermCriteria (criteria);
 
     cv::Ptr<cv::ml::TrainData> tdata = cv::ml::TrainData::create
@@ -224,7 +245,7 @@ public:
   void operator() (std::size_t item_index, std::vector<float>& out) const
   {
     out.resize (m_labels.size(), 0.);
-    
+
     cv::Mat feature (1, int(m_features.size()), CV_32FC1);
     for (std::size_t f = 0; f < m_features.size(); ++ f)
       feature.at<float>(0, int(f)) = m_features[f]->value(item_index);
@@ -243,9 +264,9 @@ public:
 #else
 
     std::vector<float> result (1, 0);
-    
+
     rtree->predict (feature, result);
-    
+
     for (std::size_t i = 0; i < out.size(); ++ i)
       if (i == std::size_t(result[0]))
         out[i] = 1.f;
@@ -261,7 +282,7 @@ public:
 
 
   /*!
-    \brief Saves the current configuration in the file named `filename`.
+    \brief saves the current configuration in the file named `filename`.
 
     This allows to easily save and recover a specific classification
     configuration.
@@ -275,7 +296,7 @@ public:
   }
 
   /*!
-    \brief Loads a configuration from the file named `filename`.
+    \brief loads a configuration from the file named `filename`.
 
     The input file should be in the XML format written by the
     `save_configuration()` method. The feature set of the classifier
@@ -286,7 +307,7 @@ public:
   void load_configuration (const char* filename)
   {
 #if (CV_MAJOR_VERSION < 3)
-    if (rtree != NULL)
+    if (rtree != nullptr)
       delete rtree;
     rtree = new CvRTrees;
     rtree->load(filename);
@@ -295,6 +316,7 @@ public:
 #endif
   }
 
+  /// @}
 
 };
 

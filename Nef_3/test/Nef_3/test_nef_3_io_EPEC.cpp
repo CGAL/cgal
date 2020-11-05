@@ -50,6 +50,6 @@ int main()
 {
   std::cout << "Testing Exact_predicates_exact_constructions_kernel\n";
   test_write_read<EPEC>();
- 
+
   return 0;
 }

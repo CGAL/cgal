@@ -32,8 +32,8 @@ typedef Classification::Mesh_feature_generator<Kernel, Mesh, Face_point_map>    
 int main (int argc, char** argv)
 {
   std::string filename = "data/b9_mesh.off";
-  std::string filename_config = "data/b9_mesh_config.gz";
-  
+  std::string filename_config = "data/b9_mesh_config.bin";
+
   if (argc > 1)
     filename = argv[1];
   if (argc > 2)
@@ -48,42 +48,32 @@ int main (int argc, char** argv)
   std::cerr << "Generating features" << std::endl;
   CGAL::Real_timer t;
   t.start();
-  
+
   ///////////////////////////////////////////////////////////////////
   //! [Generator]
 
   Feature_set features;
-  
+
   Face_point_map face_point_map (&mesh); // Associates each face to its center of mass
 
   std::size_t number_of_scales = 5;
   Feature_generator generator (mesh, face_point_map, number_of_scales);
-  
-#ifdef CGAL_LINKED_WITH_TBB
+
   features.begin_parallel_additions();
-#endif
-  
   generator.generate_point_based_features (features); // Features that consider the mesh as a point set
   generator.generate_face_based_features (features);  // Features computed directly on mesh faces
-
-#ifdef CGAL_LINKED_WITH_TBB
   features.end_parallel_additions();
-#endif
-  
+
   //! [Generator]
   ///////////////////////////////////////////////////////////////////
 
   t.stop();
   std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
 
-  // Add types
-  Label_set labels;
-  Label_handle ground = labels.add ("ground");
-  Label_handle vegetation = labels.add ("vegetation");
-  Label_handle roof = labels.add ("roof");
+  Label_set labels = { "ground", "vegetation", "roof" };
 
   std::vector<int> label_indices(mesh.number_of_faces(), -1);
-  
+
   std::cerr << "Using ETHZ Random Forest Classifier" << std::endl;
   Classification::ETHZ::Random_forest_classifier classifier (labels, features);
 
@@ -94,13 +84,13 @@ int main (int argc, char** argv)
   std::cerr << "Classifying with graphcut" << std::endl;
   t.reset();
   t.start();
-  Classification::classify_with_graphcut<CGAL::Sequential_tag>
+  Classification::classify_with_graphcut<CGAL::Parallel_if_available_tag>
     (mesh.faces(), Face_with_bbox_map(&mesh), labels, classifier,
      generator.neighborhood().n_ring_neighbor_query(2),
      0.2f, 1, label_indices);
   t.stop();
-  
+
   std::cerr << "Classification with graphcut done in " << t.time() << " second(s)" << std::endl;
-  
+
   return EXIT_SUCCESS;
 }

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stéphane Tayeb
@@ -58,27 +49,7 @@ public:
       traits(k)
   { }
 
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else // CGAL_CFG_MATCHING_BUG_6
-  typedef typename Kernel::Sphere_3                    Sphere_3;
-  typedef typename Kernel::Circle_3                    Circle_3;
-
-  result_type operator()(const Sphere_3& s) const
-  { return this->Base::operator()(s); }
-
-  result_type operator()(const Circle_3& c) const
-  { return this->Base::operator()(c); }
-
-  result_type operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
-  { return this->Base::operator()(p,q,r); }
-
-  result_type operator()(const Point_3& p, const Point_3& q) const
-  { return this->Base::operator()(p,q); }
-
-  result_type operator()(const Point_3& p) const
-  { return this->Base::operator()(p); }
-#endif // CGAL_CFG_MATCHING_BUG_6
 
   FT operator()(const Point_3& p,
                 const Point_3& q,

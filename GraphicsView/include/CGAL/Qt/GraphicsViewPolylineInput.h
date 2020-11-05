@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -56,12 +47,12 @@ public:
   {
     n_ = n;
   }
-  
+
   bool eventFilter(QObject *obj, QEvent *event);
-  
+
 protected:
   // protected constructor
-  GraphicsViewPolylineInput_non_templated_base(QObject* parent, 
+  GraphicsViewPolylineInput_non_templated_base(QObject* parent,
                                      QGraphicsScene* s,
                                      int n = 0,
                                      bool closed = true);
@@ -104,7 +95,7 @@ protected:
   void generate_polygon() {
     std::list<typename K::Point_2> points;
     Converter<K> convert;
-    convert(points, this->polygon); 
+    convert(points, this->polygon);
     if(closed_ && points.size()>2){
       points.push_back(points.front());
     }

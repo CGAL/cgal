@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -24,24 +15,25 @@
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 namespace CGAL {
 template <class R_> class Sphere {
-	typedef typename Get_type<R_, FT_tag>::type FT_;
-	typedef typename Get_type<R_, Point_tag>::type	Point_;
-	Point_ c_;
-	FT_ r2_;
+        typedef typename Get_type<R_, FT_tag>::type FT_;
+        typedef typename Get_type<R_, Point_tag>::type        Point_;
+        Point_ c_;
+        FT_ r2_;
 
-	public:
-	Sphere(Point_ const&p, FT_ const&r2): c_(p), r2_(r2) {}
-	// TODO: Add a piecewise constructor?
+        public:
+        Sphere(){}
+        Sphere(Point_ const&p, FT_ const&r2): c_(p), r2_(r2) {}
+        // TODO: Add a piecewise constructor?
 
-	Point_ const& center()const{return c_;}
-	FT_ const& squared_radius()const{return r2_;}
+        Point_ const& center()const{return c_;}
+        FT_ const& squared_radius()const{return r2_;}
 };
 
 namespace CartesianDKernelFunctors {
 template <class R_> struct Construct_sphere : Store_kernel<R_> {
   CGAL_FUNCTOR_INIT_STORE(Construct_sphere)
-  typedef typename Get_type<R_, Sphere_tag>::type	result_type;
-  typedef typename Get_type<R_, Point_tag>::type	Point;
+  typedef typename Get_type<R_, Sphere_tag>::type        result_type;
+  typedef typename Get_type<R_, Point_tag>::type        Point;
   typedef typename Get_type<R_, FT_tag>::type FT;
   result_type operator()(Point const&a, FT const&b)const{
     return result_type(a,b);
@@ -52,7 +44,7 @@ template <class R_> struct Construct_sphere : Store_kernel<R_> {
 #if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
 #  pragma warning(push)
 #  pragma warning(disable: 4309)
-#endif  
+#endif
     return result_type(cp(),0);
 #if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
 #  pragma warning(pop)
@@ -66,15 +58,15 @@ template <class R_> struct Construct_sphere : Store_kernel<R_> {
     // It should be possible to avoid copying the center by moving this code to a constructor.
     Point center = cc(f, e);
     FT const& r2 = sd(center, *f);
-    return this->operator()(CGAL_MOVE(center), r2);
+    return this->operator()(std::move(center), r2);
   }
 };
 
 template <class R_> struct Center_of_sphere : private Store_kernel<R_> {
   CGAL_FUNCTOR_INIT_STORE(Center_of_sphere)
-  typedef typename Get_type<R_, Sphere_tag>::type	Sphere;
+  typedef typename Get_type<R_, Sphere_tag>::type        Sphere;
   // No reference because of the second overload
-  typedef typename Get_type<R_, Point_tag>::type	result_type;
+  typedef typename Get_type<R_, Point_tag>::type        result_type;
 
   result_type const& operator()(Sphere const&s)const{
     return s.center();
@@ -82,15 +74,15 @@ template <class R_> struct Center_of_sphere : private Store_kernel<R_> {
 
   template<class Iter>
   result_type operator()(Iter b, Iter e)const{
-    typename Get_functor<R_, Construct_ttag<Sphere_tag> >::type	cs(this->kernel());
+    typename Get_functor<R_, Construct_ttag<Sphere_tag> >::type        cs(this->kernel());
     return operator()(cs(b,e)); // computes the radius needlessly
   }
 };
 
 template <class R_> struct Squared_radius {
   CGAL_FUNCTOR_INIT_IGNORE(Squared_radius)
-  typedef typename Get_type<R_, Sphere_tag>::type	Sphere;
-  typedef typename Get_type<R_, FT_tag>::type const&	result_type;
+  typedef typename Get_type<R_, Sphere_tag>::type        Sphere;
+  typedef typename Get_type<R_, FT_tag>::type const&        result_type;
   // TODO: Is_exact?
   result_type operator()(Sphere const&s)const{
     return s.squared_radius();

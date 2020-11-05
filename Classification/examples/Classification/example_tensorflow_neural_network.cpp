@@ -37,7 +37,7 @@ typedef Classification::Point_set_feature_generator<Kernel, Point_set, Pmap>    
 int main (int argc, char** argv)
 {
   std::string filename = "data/b9_training.ply";
-  
+
   if (argc > 1)
     filename = argv[1];
 
@@ -46,57 +46,46 @@ int main (int argc, char** argv)
 
   std::cerr << "Reading input" << std::endl;
   in >> pts;
-  
+
   Imap label_map;
   bool lm_found = false;
-  boost::tie (label_map, lm_found) = pts.property_map<int> ("label");
+  std::tie (label_map, lm_found) = pts.property_map<int> ("label");
   if (!lm_found)
   {
     std::cerr << "Error: \"label\" property not found in input file." << std::endl;
     return EXIT_FAILURE;
   }
 
-  std::vector<int> ground_truth;
-  ground_truth.reserve (pts.size());
-  std::copy (pts.range(label_map).begin(), pts.range(label_map).end(),
-             std::back_inserter (ground_truth));
-
   Feature_set features;
-  
+
   std::cerr << "Generating features" << std::endl;
   CGAL::Real_timer t;
   t.start();
   Feature_generator generator (pts, pts.point_map(),
                                5);  // using 5 scales
-  
-#ifdef CGAL_LINKED_WITH_TBB
-  features.begin_parallel_additions();
-#endif
-  
-  generator.generate_point_based_features (features);
 
-#ifdef CGAL_LINKED_WITH_TBB
+  features.begin_parallel_additions();
+  generator.generate_point_based_features (features);
   features.end_parallel_additions();
-#endif
-  
+
   t.stop();
   std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
 
-  // Add types
+  // Add labels
   Label_set labels;
   Label_handle ground = labels.add ("ground");
   Label_handle vegetation = labels.add ("vegetation");
   Label_handle roof = labels.add ("roof");
 
   std::vector<int> label_indices(pts.size(), -1);
-  
+
   std::cerr << "Using TensorFlow neural network Classifier" << std::endl;
   Classification::TensorFlow::Neural_network_classifier<> classifier (labels, features);
-  
+
   std::cerr << "Training" << std::endl;
   t.reset();
   t.start();
-  classifier.train (ground_truth,
+  classifier.train (pts.range(ground_truth),
                     true, // restart from scratch
                     100); // 100 iterations
   t.stop();
@@ -109,19 +98,19 @@ int main (int argc, char** argv)
      generator.neighborhood().k_neighbor_query(12),
      0.2f, 1, label_indices);
   t.stop();
-  
+
   std::cerr << "Classification with graphcut done in " << t.time() << " second(s)" << std::endl;
 
   std::cerr << "Precision, recall, F1 scores and IoU:" << std::endl;
-  Classification::Evaluation evaluation (labels, ground_truth, label_indices);
-  
-  for (std::size_t i = 0; i < labels.size(); ++ i)
+  Classification::Evaluation evaluation (labels, pts.range(ground_truth), label_indices);
+
+  for (Label_handle l : labels)
   {
-    std::cerr << " * " << labels[i]->name() << ": "
-              << evaluation.precision(labels[i]) << " ; "
-              << evaluation.recall(labels[i]) << " ; "
-              << evaluation.f1_score(labels[i]) << " ; "
-              << evaluation.intersection_over_union(labels[i]) << std::endl;
+    std::cerr << " * " << l->name() << ": "
+              << evaluation.precision(l) << " ; "
+              << evaluation.recall(l) << " ; "
+              << evaluation.f1_score(l) << " ; "
+              << evaluation.intersection_over_union(l) << std::endl;
   }
 
   std::cerr << "Accuracy = " << evaluation.accuracy() << std::endl
@@ -136,21 +125,12 @@ int main (int argc, char** argv)
   for (std::size_t i = 0; i < label_indices.size(); ++ i)
   {
     label_map[i] = label_indices[i]; // update label map with computed classification
-    
-    Label_handle label = labels[label_indices[i]];
 
-    if (label == ground)
-    {
-      red[i] = 245; green[i] = 180; blue[i] =   0;
-    }
-    else if (label == vegetation)
-    {
-      red[i] =   0; green[i] = 255; blue[i] =  27;
-    }
-    else if (label == roof)
-    {
-      red[i] = 255; green[i] =   0; blue[i] = 170;
-    }
+    Label_handle label = labels[label_indices[i]];
+    const CGAL::Color& color = label->color();
+    red[i] = color.red();
+    green[i] = color.green();
+    blue[i] = color.blue();
   }
 
   // Write result
@@ -159,6 +139,6 @@ int main (int argc, char** argv)
   f << pts;
 
   std::cerr << "All done" << std::endl;
-  
+
   return EXIT_SUCCESS;
 }

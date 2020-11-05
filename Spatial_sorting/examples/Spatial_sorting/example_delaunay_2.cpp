@@ -15,16 +15,16 @@ typedef CGAL::Delaunay_triangulation_2<K> DT;
 typedef K::Point_2                                          Point;
 typedef CGAL::Creator_uniform_2<double,Point>               Creator_2;
 
-void compute_delaunay(std::vector<Point>::iterator it, 
-			std::vector<Point>::iterator e){
+void compute_delaunay(std::vector<Point>::iterator it,
+                        std::vector<Point>::iterator e){
     DT dt;
     DT::Face_handle hint;
     for( ;it!=e; ++it)  hint = dt.insert(*it, hint)->face();
     return;
 }
 
-void test_orders(std::vector<Point>::iterator b, 
-			std::vector<Point>::iterator e){
+void test_orders(std::vector<Point>::iterator b,
+                        std::vector<Point>::iterator e){
     CGAL::Timer cost;
 
     cost.reset();cost.start();

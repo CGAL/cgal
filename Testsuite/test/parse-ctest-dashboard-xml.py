@@ -71,9 +71,10 @@ tests_per_label = defaultdict(list)
 for t_id in range(0, len(tests)):
     t = tests[t_id]
     for l in t['Labels']:
-        label = l.replace("_Tests","")
-        labels.add(label)
-        tests_per_label[label].append(t)
+        if "_Tests" in l or "_Examples" in l or "_Demo" in l:
+            label = l.replace("_Tests","")
+            labels.add(label)
+            tests_per_label[label].append(t)
 
 with open_file_create_dir(result_file_name.format(dir=os.getcwd(),
                                                   tester=tester_name,
@@ -100,11 +101,13 @@ for label, tests in tests_per_label.items():
                                                               tester=tester_name,
                                                               platform=platform_name), 'w') as label_report:
             print("""
+{scm_branch}
 ------------------------------------------------------------------
 - Error output from platform {platform}
 ------------------------------------------------------------------
 {error_txt}
-"""               .format(platform=platform_name,
+"""               .format(scm_branch=open("{}/../../../../../.scm-branch".format(os.getcwd()), 'r').read(),
+                         platform=platform_name,
                          error_txt=open("{}/error.txt".format(label), 'r').read()), file=label_report)
             for t in tests:
                 filename="{}/ProgramOutput.{}".format(label, t['Name'])

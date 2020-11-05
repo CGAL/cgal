@@ -47,9 +47,9 @@ int main()
 
   std::cout<<"Combinatorial map:"<<std::endl;
   test(cm);
-  
+
   std::cout<<"Generalized map:"<<std::endl;
   test(gm);
-  
+
   return EXIT_SUCCESS;
 }

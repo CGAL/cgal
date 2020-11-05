@@ -19,7 +19,7 @@ typedef CGAL_polyhedral_surface::Polyhedron Polyhedron;
 Polyhedral_surface::Polyhedral_surface(QObject* parent,
                                        double sharp_edges_angle_lower_bound,
                                        double sharp_edges_angle_upper_bound)
-  : Surface(parent), 
+  : Surface(parent),
     m_inverse_normals(false),
     surface_ptr(0),
     parent(parent),
@@ -36,31 +36,31 @@ Polyhedral_surface::Polyhedral_surface(QObject* parent,
     is_dirty(true),
     list_id(0)
 {
-  connection_map["actionDisplay_octree"] = 
+  connection_map["actionDisplay_octree"] =
     std::make_pair(SIGNAL(toggled(bool)),
                    SLOT(toggle_display_octree(bool)));
 
-  connection_map["actionDisplay_edges_octree"] = 
+  connection_map["actionDisplay_edges_octree"] =
     std::make_pair(SIGNAL(toggled(bool)),
                    SLOT(toggle_display_edges_octree(bool)));
 
-  connection_map["actionDisplay_surface"] = 
+  connection_map["actionDisplay_surface"] =
     std::make_pair(SIGNAL(toggled(bool)),
                    SLOT(toggle_display_surface(bool)));
 
-  connection_map["actionDisplay_all_edges"] = 
+  connection_map["actionDisplay_all_edges"] =
     std::make_pair(SIGNAL(toggled(bool)),
                    SLOT(toggle_display_all_edges(bool)));
 
-  connection_map["actionDisplay_control_edges"] = 
+  connection_map["actionDisplay_control_edges"] =
     std::make_pair(SIGNAL(toggled(bool)),
                    SLOT(toggle_display_control_edges(bool)));
 
-  connection_map["actionInverse_normals"] = 
+  connection_map["actionInverse_normals"] =
     std::make_pair(SIGNAL(toggled(bool)),
                    SLOT(set_inverse_normals(bool)));
 
-  connection_map["actionSubdivision"] = 
+  connection_map["actionSubdivision"] =
     std::make_pair(SIGNAL(triggered()),
                    SLOT(make_one_subdivision_step()));
   connection_map["action_Options"] =
@@ -83,7 +83,7 @@ void Polyhedral_surface::on_action_Options_triggered()
   QDoubleSpinBox* sb_upper = options_dialog->findChild<QDoubleSpinBox*>("angle_upper_bound");
   QDoubleSpinBox* sb_lower = options_dialog->findChild<QDoubleSpinBox*>("angle_lower_bound");
 
-  if(!sb_lower || !sb_upper) 
+  if(!sb_lower || !sb_upper)
     return;
 
   sb_lower->setValue(sharp_edges_angle_lower_bound);
@@ -133,7 +133,7 @@ void Polyhedral_surface::connect_actions()
   connect(this, SIGNAL(changed()), this, SLOT(display_nb_elements_in_status_bar()));
 }
 
-void Polyhedral_surface::display_nb_elements_in_status_bar() const 
+void Polyhedral_surface::display_nb_elements_in_status_bar() const
 {
   QMainWindow* mw = qobject_cast<QMainWindow *>(parent);
   if(surface_ptr && mw)
@@ -151,7 +151,7 @@ void Polyhedral_surface::set_dirty()
   Q_EMIT changed();
 }
 
-void Polyhedral_surface::busy() const 
+void Polyhedral_surface::busy() const
 {
   QMainWindow* mw = qobject_cast<QMainWindow *>(parent);
   if(mw)
@@ -161,7 +161,7 @@ void Polyhedral_surface::busy() const
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 }
 
-void Polyhedral_surface::not_busy() const 
+void Polyhedral_surface::not_busy() const
 {
   QApplication::restoreOverrideCursor();
   QMainWindow* mw = qobject_cast<QMainWindow *>(parent);
@@ -184,7 +184,7 @@ void Polyhedral_surface::set_sharp_edges_angle_bounds(const double lower_bound,
   }
 }
 
-void Polyhedral_surface::update_data_structures() 
+void Polyhedral_surface::update_data_structures()
 {
   surface_ptr->compute_sharp_edges_incidence_graph();
   if(display_octree || display_edges_octree) {
@@ -195,7 +195,7 @@ void Polyhedral_surface::update_data_structures()
     is_octree_initialized = false;
 }
 
-void Polyhedral_surface::construct_octree() 
+void Polyhedral_surface::construct_octree()
 {
   busy();
   surface_ptr->construct_octree();
@@ -268,10 +268,10 @@ bool Polyhedral_surface::open(const QString& filename)
 
   if(surface_ptr)
     delete surface_ptr;
-  surface_ptr = new CGAL_polyhedral_surface(in, 
-                                            sharp_edges_angle_lower_bound, 
+  surface_ptr = new CGAL_polyhedral_surface(in,
+                                            sharp_edges_angle_lower_bound,
                                             sharp_edges_angle_upper_bound,
-                                            false /*do not construct 
+                                            false /*do not construct
                                                     octree*/);
   if(!in) {
     QApplication::restoreOverrideCursor();
@@ -304,14 +304,14 @@ bool Polyhedral_surface::open(const QString& filename)
                                         CGAL::qglviewer::Vec(xmax, ymax, zmax));
   viewer->setBackgroundColor(Qt::white);
   viewer->showEntireScene();
-  
+
   QAction* actionInverse_normals = qFindChild<QAction*>(this, "actionInverse_normals");
   if(actionInverse_normals) actionInverse_normals->setChecked(false);
   Q_EMIT set_dirty();
   return true;
 }
 
-void Polyhedral_surface::close() 
+void Polyhedral_surface::close()
 {
   delete surface_ptr;
   surface_ptr = 0;
@@ -330,7 +330,7 @@ void Polyhedral_surface::postSelection(const QPoint&)
   if(!surface_ptr) return;
 
   selected_facet = selected_edge = -1;
-    
+
   const int nb_vertices = surface_ptr->incidence_graph.vertices.size();
   const int nb_edges = surface_ptr->incidence_graph.edges.size();
   if(viewer->selectedName() >= nb_edges + nb_vertices)
@@ -346,7 +346,7 @@ void Polyhedral_surface::postSelection(const QPoint&)
 
   Q_EMIT set_dirty();
 }
-  
+
 void Polyhedral_surface::draw(bool with_names)
 {
   if(!list_id)
@@ -378,7 +378,7 @@ void Polyhedral_surface::get_bbox(float& xmin, float& ymin, float& zmin,
     ymax=surface_ptr->bbox().ymax();
     zmax=surface_ptr->bbox().zmax();
   }
-  else 
+  else
   {
     xmin = ymin = zmin = 0.f;
     xmax = ymax = zmax = 1.f;
@@ -396,12 +396,12 @@ bool Polyhedral_surface::inverse_normals() const {
 
 
 Surface* get_polyhedral_surface(QObject* parent,
-				double sharp_edges_angle_lower_bound,
-				double sharp_edges_angle_upper_bound = 180.)
+                                double sharp_edges_angle_lower_bound,
+                                double sharp_edges_angle_upper_bound = 180.)
 {
   return new Polyhedral_surface(parent,
-				sharp_edges_angle_lower_bound,
-				sharp_edges_angle_upper_bound);
+                                sharp_edges_angle_lower_bound,
+                                sharp_edges_angle_upper_bound);
 }
 
 #include "polyhedral_surface.moc"

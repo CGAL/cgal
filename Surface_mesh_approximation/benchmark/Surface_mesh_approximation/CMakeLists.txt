@@ -1,10 +1,10 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Surface_mesh_approximation_Benchmarks )
 
 
-cmake_minimum_required(VERSION 2.8.11)
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )

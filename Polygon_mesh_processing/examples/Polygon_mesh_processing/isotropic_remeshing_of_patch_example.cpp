@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
   seed.push_back(*(faces(mesh).first));
   selected[seed.front()] = true;
   CGAL::expand_face_selection(seed, mesh, 5, selected, std::back_inserter(patch));
-  
+
   std::cout << " and patch of size " << patch.size() << std::endl;
   PMP::isotropic_remeshing(patch,
                            target_edge_length,
@@ -74,6 +74,7 @@ int main(int argc, char* argv[])
                            );
 
   std::ofstream out("out.off");
+  out.precision(17);
   out << mesh;
   std::cout << "Remeshing done." << std::endl;
 

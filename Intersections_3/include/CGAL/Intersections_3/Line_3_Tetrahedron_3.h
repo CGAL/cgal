@@ -1,20 +1,11 @@
 // Copyright (c) 2010 GeometryFactory (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -26,10 +17,24 @@
 #include <CGAL/Line_3.h>
 #include <CGAL/Tetrahedron_3.h>
 
-#include <CGAL/Intersections_3/internal/Tetrahedron_3_Unbounded_3_do_intersect.h>
+#include <CGAL/Intersections_3/internal/Tetrahedron_3_Line_3_intersection.h>
 
 namespace CGAL {
   CGAL_DO_INTERSECT_FUNCTION(Line_3, Tetrahedron_3, 3)
+
+  template<typename K>
+  typename Intersection_traits<K, typename K::Line_3, typename K::Tetrahedron_3>::result_type
+  intersection(const Line_3<K>& line,
+               const Tetrahedron_3<K>& tet) {
+    return K().intersect_3_object()(line, tet);
+  }
+
+  template<typename K>
+  typename Intersection_traits<K, typename K::Line_3, typename K::Tetrahedron_3>::result_type
+  intersection(const Tetrahedron_3<K>& tet,
+      const Line_3<K>& line) {
+    return K().intersect_3_object()(tet, line);
+  }
 }
 
 #endif // CGAL_INTERSECTIONS_3_LINE_3_TETRAHEDRON_3_H

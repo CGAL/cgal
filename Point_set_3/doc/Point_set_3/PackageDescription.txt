@@ -1,6 +1,16 @@
 /// \defgroup PkgPointSet3Ref 3D Point Set Reference
 
 /*!
+  \code
+   #include <CGAL/draw_point_set_3.h>
+  \endcode
+*/
+/// \defgroup PkgDrawPointSet3D Draw a 3D Point Set
+/// \ingroup PkgPointSet3Ref
+
+/*!
+\addtogroup PkgPointSet3Ref
+
 \cgalPkgDescriptionBegin{3D Point Set, PkgPointSet3}
 \cgalPkgPicture{point_set_3.png}
 \cgalPkgSummaryBegin
@@ -20,6 +30,9 @@
 
 \cgalCRPSection{Class}
 - `CGAL::Point_set_3<Point,Vector>`
+
+\cgalCRPSection{Draw a 3D Point Set}
+- \link PkgDrawPointSet3D CGAL::draw<PS>() \endlink
 
 \defgroup PkgPointSet3IO Input/Output
 \ingroup PkgPointSet3Ref

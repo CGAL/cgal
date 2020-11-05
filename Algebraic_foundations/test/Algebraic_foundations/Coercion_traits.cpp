@@ -1,5 +1,5 @@
-#include <CGAL/basic.h>
 #include <CGAL/use.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Coercion_traits.h>
 #include <cassert>
 int main(){
@@ -12,7 +12,7 @@ int main(){
     CGAL_static_assertion(
             ( boost::is_same<CT::Are_explicit_interoperable,CGAL::Tag_true>::value));
     assert( 5 == CT::Cast()(5));
-    }   
+    }
     {
     typedef CGAL::Coercion_traits<CGAL::Tag_true,CGAL::Tag_false> CT;
     CGAL_USE_TYPE(CT);
@@ -23,5 +23,5 @@ int main(){
             ( boost::is_same<CT::Are_explicit_interoperable,CGAL::Tag_false>::value));
     CGAL_static_assertion(
             ( boost::is_same<CT::Cast,CGAL::Null_functor>::value));
-    }      
+    }
 }

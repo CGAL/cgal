@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
 
@@ -669,7 +660,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1,
     objects.pop_front();
 
     if ((intersection_point = CGAL::object_cast<Intersection_point>(&obj)) !=
-        NULL)
+        nullptr)
     {
       // We have a simple intersection point.
       bool is_in_x_range = true; // true if the intersection point is to the
@@ -751,7 +742,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1,
       // curves.
       intersection_curve = CGAL::object_cast<X_monotone_curve_2>(&obj);
 
-      if (intersection_curve == NULL)
+      if (intersection_curve == nullptr)
         CGAL_error_msg("unrecognized intersection object.");
 
       // Get the endpoints of the overlapping curves.
@@ -830,7 +821,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1,
         Vertex_handle new_v = _append_vertex(out_d, p_right, e1);
         new_v->left()->add_curves(e2->curves_begin(), e2->curves_end());
 
-        // We are not at v becuase p_right is smaller than v.
+        // We are not at v because p_right is smaller than v.
         // The special case that we are at v is handled in the next
         // condition.
         // If we were at v, then this was a special case that is handled

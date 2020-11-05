@@ -28,7 +28,7 @@ The following examples show two possible models of the `GenericMapItems` concept
     {
       typedef double Dart_info;
       typedef CGAL::Cell_attribute<GMap, int> Edge_attrib;
-      typedef CGAL::cpp11::tuple<void,Edge_attrib> Attributes;
+      typedef std::tuple<void,Edge_attrib> Attributes;
     };
   };
   \endcode

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
@@ -71,7 +62,7 @@ void Arr_bounded_planar_topology_traits_2<GeometryTraits_2, Dcel_>::
 dcel_updated()
 {
   // Go over the DCEL faces and locate the unbounded face.
-  unb_face = NULL;
+  unb_face = nullptr;
   typename Dcel::Face_iterator fit = this->m_dcel.faces_begin();
   for (; fit != this->m_dcel.faces_end(); ++fit) {
     if (fit->is_unbounded()) {
@@ -79,7 +70,7 @@ dcel_updated()
       break;
     }
   }
-  CGAL_assertion(unb_face != NULL);
+  CGAL_assertion(unb_face != nullptr);
 }
 
 } // namespace CGAL

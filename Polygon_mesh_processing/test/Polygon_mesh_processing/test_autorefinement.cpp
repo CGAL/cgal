@@ -47,7 +47,7 @@ void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_poin
     PMP::experimental::surface_self_intersection(mesh, std::back_inserter(polylines));
     assert(polylines.size() == nb_polylines);
     std::size_t total_nb_pt=0;
-    BOOST_FOREACH(const std::vector<K::Point_3>& polyline, polylines)
+    for(const std::vector<K::Point_3>& polyline : polylines)
       total_nb_pt+=polyline.size();
     assert(total_nb_points == total_nb_pt);
     assert( !triple_intersection );

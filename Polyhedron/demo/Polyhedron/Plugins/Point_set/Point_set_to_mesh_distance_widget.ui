@@ -140,16 +140,6 @@
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <layout class="QGridLayout" name="gridLayout_2" columnstretch="1,0">
-           <item row="0" column="1">
-            <widget class="QDoubleSpinBox" name="distance_spinbox">
-             <property name="toolTip">
-              <string>Points further than this distance will be selected.</string>
-             </property>
-             <property name="decimals">
-              <number>6</number>
-             </property>
-            </widget>
-           </item>
            <item row="1" column="1">
             <widget class="QPushButton" name="select_button">
              <property name="toolTip">
@@ -164,6 +154,13 @@
             <widget class="QLabel" name="label_6">
              <property name="text">
               <string>Threshold:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="DoubleEdit" name="distance_spinbox">
+             <property name="text">
+              <string>0.00</string>
              </property>
             </widget>
            </item>
@@ -190,6 +187,13 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header>CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

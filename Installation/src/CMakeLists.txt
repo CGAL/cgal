@@ -72,7 +72,10 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
   # CMakeLists.txt can be the target like if it was an imported
   # target.
   add_library(CGAL::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
-
+  if(NOT TARGET ALL_CGAL_TARGETS)
+    add_custom_target( ALL_CGAL_TARGETS )
+  endif()
+  add_dependencies( ALL_CGAL_TARGETS ${LIBRARY_NAME} )
   if(CGAL_AUTO_LINK_ENABLED)
     if (NOT CGAL_HEADER_ONLY)
       set_target_properties( ${LIBRARY_NAME} PROPERTIES

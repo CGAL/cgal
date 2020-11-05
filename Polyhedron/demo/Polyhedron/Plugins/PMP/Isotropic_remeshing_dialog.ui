@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>376</width>
-    <height>368</height>
+    <height>369</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -98,9 +98,6 @@
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
-        <property name="buddy">
-         <cstring>edgeLength_dspinbox</cstring>
-        </property>
        </widget>
       </item>
       <item row="4" column="0">
@@ -176,22 +173,6 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QDoubleSpinBox" name="edgeLength_dspinbox">
-        <property name="minimumSize">
-         <size>
-          <width>110</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximum">
-         <double>1000.000000000000000</double>
-        </property>
-        <property name="singleStep">
-         <double>0.100000000000000</double>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="0">
        <spacer name="verticalSpacer_3">
         <property name="orientation">
@@ -207,6 +188,22 @@
          </size>
         </property>
        </spacer>
+      </item>
+      <item row="0" column="1">
+       <widget class="DoubleEdit" name="edgeLength_dspinbox">
+        <property name="inputMethodHints">
+         <set>Qt::ImhNone</set>
+        </property>
+        <property name="inputMask">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="placeholderText">
+         <string>0.00</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -239,9 +236,15 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header>CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>splitEdgesOnly_checkbox</tabstop>
-  <tabstop>edgeLength_dspinbox</tabstop>
   <tabstop>nbIterations_spinbox</tabstop>
   <tabstop>nbSmoothing_spinbox</tabstop>
   <tabstop>protect_checkbox</tabstop>

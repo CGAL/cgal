@@ -86,7 +86,7 @@ struct Stats_getter<CGAL::Regular_triangulation_3<K> >
 };
 
 
-template<typename DT_d, typename DT_23, 
+template<typename DT_d, typename DT_23,
          typename Pt_d_range, typename Pt_23_range>
 void test(
   int d, int N, Pt_d_range const& points_d, Pt_23_range const& points_23,
@@ -99,7 +99,7 @@ void test(
     timer.start();
     dt.insert(points_d.begin(), points_d.end());
 
-    std::cerr << "  * Td: " << yellow << timer.time() << " s" 
+    std::cerr << "  * Td: " << yellow << timer.time() << " s"
       << white << std::endl;
     std::cerr << "    " << dt.number_of_vertices() << " vertices, "
       << dt.number_of_finite_full_cells() << " finite cells."
@@ -129,11 +129,11 @@ void go(const int N)
   CGAL_assertion(D == 2 || D == 3);
 
   // Generate points (in a common "array" format)
-  std::vector<CGAL::cpp11::array<double, D> > coords;
+  std::vector<std::array<double, D> > coords;
   coords.reserve(N);
   for (int i = 0; i < N; ++i)
   {
-    CGAL::cpp11::array<double, D> pt;
+    std::array<double, D> pt;
     for (int j = 0; j < D; ++j)
       pt[j] = CGAL::default_random.get_double(-1., 1.);
     coords.push_back(pt);
@@ -153,7 +153,7 @@ void go(const int N)
   points_d.reserve(N);
   for (int i = 0; i < N; ++i)
     points_d.push_back(Point_d(D, coords[i].begin(), coords[i].end()));
-  
+
   // RTd
   typedef CGAL::Regular_triangulation<Kd> RT_d;
   typedef typename RT_d::Bare_point Bare_point_d;
@@ -181,7 +181,7 @@ void go(const int N)
     for (int i = 0; i < N; ++i)
       points.push_back(Point(coords[i][0], coords[i][1]));
 
-    std::cerr << std::endl << "DELAUNAY - dim " << D << " - " 
+    std::cerr << std::endl << "DELAUNAY - dim " << D << " - "
       << N << " points." << std::endl;
     test<DT_d, DT_2>(D, N, points_d, points, "static");
 

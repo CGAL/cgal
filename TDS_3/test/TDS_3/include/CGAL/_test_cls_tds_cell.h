@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Rebufat Francois (Francois.Rebufat@sophia.inria.fr)
 
@@ -97,11 +88,6 @@ _test_cell_tds_3(const Tds &)
    assert(c2->index(v1)==0);
    assert(c2->index(v2)==1);
    assert(c2->index(v3)==2);
-   //   c2->set_vertices();
-   //   assert(c2->vertex(0)==NULL);
-   //   assert(c2->vertex(1)==NULL);
-   //   assert(c2->vertex(2)==NULL);
-   //   assert(c2->vertex(3)==NULL);
    c2->set_vertices(v0, v1, v2, v3);
    assert(c2->index(v0)==0);
    assert(c2->index(v1)==1);
@@ -116,11 +102,6 @@ _test_cell_tds_3(const Tds &)
    assert(c2->index(n1)==0);
    assert(c2->index(n2)==1);
    assert(c2->index(n3)==2);
-   //   c2->set_neighbors();
-   //   assert(c2->neighbor(0)==NULL);
-   //   assert(c2->neighbor(1)==NULL);
-   //   assert(c2->neighbor(2)==NULL);
-   //   assert(c2->neighbor(3)==NULL);
    c2->set_neighbors(n0, n1, n2, n3);
    assert(c2->index(n0)==0);
    assert(c2->index(n1)==1);

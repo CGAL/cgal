@@ -2,24 +2,15 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #ifndef CGAL_MESH_3_ROBUST_INTERSECTION_KERNEL_3_H
@@ -44,7 +35,7 @@ class Robust_intersection_for_kernel_3
 public:
   typedef typename K_::Line_3                         Line_3;
   typedef typename K_::Plane_3                        Plane_3;
-  
+
   typedef Object                                      result_type;
 
   typedef Robust_intersection_for_kernel_3<K_>        Self;
@@ -74,7 +65,7 @@ public:
       return make_object(back_from_exact(*p));
     else if ( const EK::Segment_3* seg = object_cast<EK::Segment_3>(&object) )
       return make_object(back_from_exact(*seg));
-    else 
+    else
       return Object();
   }
 }; // end template Robust_intersection_for_kernel_3
@@ -84,7 +75,7 @@ template <typename K_base, typename Kernel>
 struct Robust_intersection_kernel_base
   : public K_base::template Base<Kernel>::Type
 {
-  
+
   // template < typename Kernel2 >
   // struct Base {
   //   typedef typename K_base::template Base<Kernel2> K2;
@@ -110,7 +101,7 @@ struct Robust_intersection_kernel
 
 
 } // end namespace Mesh_3
-  
+
 } //namespace CGAL
 
 #endif // CGAL_MESH_3_ROBUST_INTERSECTION_KERNEL_3_H

@@ -648,6 +648,11 @@ public:
   typedef unspecified_type Compare_angle_with_x_axis_2;
 
   /*!
+    a model of `Kernel::CompareSignedDistanceToLine_2`
+  */
+  typedef unspecified_type Compare_signed_distance_to_line_2;
+
+  /*!
     a model of `Kernel::CompareSlope_2`
   */
   typedef unspecified_type Compare_slope_2;
@@ -1287,6 +1292,11 @@ public:
     a model of `Kernel::ComputeApproximateArea_3`
   */
   typedef unspecified_type Compute_approximate_area_3;
+
+  /*!
+    a model of `Kernel::ComputeApproximateAngle_3`
+  */
+  typedef unspecified_type Compute_approximate_angle_3;
 
   /*!
     a model of `Kernel::ComputeApproximateDihedralAngle_3`

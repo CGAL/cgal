@@ -18,9 +18,9 @@ typedef CGAL::Sphere_circle<Kernel>    SCircle;
 typedef CGAL::Sphere_direction<Kernel> SDirection;
 typedef CGAL::Plane_3<Kernel>          Plane;
 
-int main() 
+int main()
 {
-  CGAL_TEST_START;    
+  CGAL_TEST_START;
   CGAL::set_pretty_mode ( std::cout );
   SPoint p(0,0,1), q(1,1,0), r(1,-1,0), s(1,1,1);
   SSegment s1(p,q), s2(p,r,false), s3(SPoint(0,-1,0),SPoint(-1,0,0));
@@ -30,7 +30,7 @@ int main()
   CGAL_TEST(p.z() == NT(1)){}
   CGAL_TEST(p.antipode().antipode()==p){}
   CGAL_TEST(p.antipode()!=p){}
-  
+
   CGAL_TEST(c1.opposite().opposite()==c1){}
   CGAL_TEST(c1.has_on(p)&&c1.has_on(q)){}
   CGAL_TEST(c3.plane()==Plane(1,1,1,0)){}
@@ -59,7 +59,7 @@ int main()
   for (it = Lp.begin(); it != Lp.end(); ++it) {
     std::cout << *it << std::endl;
   }
-  CGAL_TEST_END;     
+  CGAL_TEST_END;
 }
 
 

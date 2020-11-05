@@ -1,20 +1,11 @@
 // Copyright (c) 2009  GeometryFactory (France), INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     :  Laurent Rineau, Stephane Tayeb
@@ -28,9 +19,9 @@
 #include <CGAL/intersections.h>
 
 namespace CGAL {
-  
+
 namespace Intersections {
-  
+
 namespace internal {
 
 template <class K>
@@ -157,7 +148,7 @@ t3s3_intersection_collinear_aux(const typename K::Point_3& a,
     k.collinear_are_ordered_along_line_3_object();
 
   typename K::Equal_3 equals = k.equal_3_object();
- 
+
   // possible orders: [p,a,b,q], [p,a,q,b], [p,q,a,b], [a,p,b,q], [a,p,q,b], [a,b,p,q]
   if ( collinear_ordered(p,a,b) )
   {
@@ -447,9 +438,9 @@ intersection(const typename K::Triangle_3 &t,
               && orientation(p,q,c,a) != POSITIVE )
           {
             // The intersection should be a point
-            
+
             typename Intersection_traits<K, typename K::Line_3, typename K::Plane_3>
-              ::result_type 
+              ::result_type
               v = internal::intersection(s.supporting_line(),t.supporting_plane(), K());
             if(v) {
               if(const Point_3* res = intersect_get<Point_3>(v))
@@ -485,7 +476,7 @@ intersection(const typename K::Triangle_3 &t,
             && orientation(q,p,b,c) != POSITIVE
             && orientation(q,p,c,a) != POSITIVE )
           {
-            typename Intersection_traits<K, typename K::Line_3, typename K::Plane_3>::result_type 
+            typename Intersection_traits<K, typename K::Line_3, typename K::Plane_3>::result_type
               v = internal::intersection(s.supporting_line(),t.supporting_plane(), K());
             if(v) {
               if(const Point_3* res = intersect_get<Point_3>(v))
@@ -554,7 +545,7 @@ intersection(const typename K::Triangle_3 &t,
 
 template <class K>
 inline
-typename Intersection_traits<K, typename K::Segment_3, 
+typename Intersection_traits<K, typename K::Segment_3,
                                typename K::Triangle_3>::result_type
 intersection(const typename K::Segment_3  &s,
              const typename K::Triangle_3 &t,

@@ -9,7 +9,7 @@
 #include <CGAL/point_generators_2.h>
 
 #include <CGAL/Timer.h>
-#include<boost/range/iterator_range.hpp> 
+#include<boost/range/iterator_range.hpp>
 #include <boost/unordered_map.hpp>
 #include <unordered_map>
 
@@ -36,14 +36,14 @@ void  fct(int ii, int jj)
   typedef std::map<Vertex_handle,Point_2> SM;
   typedef std::unordered_map<Vertex_handle,Point_2> SUM;
   typedef boost::unordered_map<Vertex_handle,Point_2> BUM;
-  
+
   Dt dt;
   Vector_2 v(0,0);
   Random_points rp( 250);
   std::vector<Point_2> points;
   for(int i =0; i < ii; i++){
     Point_2 p = *rp++;
-    points.push_back(p); 
+    points.push_back(p);
   }
 
   dt.insert(points.begin(), points.end());
@@ -58,7 +58,7 @@ void  fct(int ii, int jj)
   Timer tsmc, tsumc, tbumc;
   Timer tsmq, tsumq, tbumq;
   for(int j=0; j <jj; j++){
-    
+
     {
       tsmc.start();
       SM sm;
@@ -66,8 +66,8 @@ void  fct(int ii, int jj)
         sm[vh] = vh->point();
       }
       tsmc.stop();
-      
-      
+
+
       tsmq.start();
       for(Vertex_handle vh : vertices){
         v = v + (sm[vh] - CGAL::ORIGIN);
@@ -81,8 +81,8 @@ void  fct(int ii, int jj)
         sm[vh] = vh->point();
       }
       tsumc.stop();
-      
-      
+
+
       tsumq.start();
       for(Vertex_handle vh : vertices){
         v = v + (sm[vh] - CGAL::ORIGIN);
@@ -96,8 +96,8 @@ void  fct(int ii, int jj)
         sm[vh] = vh->point();
       }
       tbumc.stop();
-      
-      
+
+
       tbumq.start();
       for(Vertex_handle vh : vertices){
         v = v + (sm[vh] - CGAL::ORIGIN);
@@ -108,10 +108,10 @@ void  fct(int ii, int jj)
   std::cerr << ii << " items and queries (repeated " << jj << " times)" << std::endl;
   std::cerr << "std::map             construction : "<< tsmc.time() << " sec." << std::endl;
   std::cerr << "std::map             queries      : "<< tsmq.time() << " sec." << std::endl;
-  
+
   std::cerr << "std::unordered_map   construction : "<< tsumc.time() << " sec." << std::endl;
   std::cerr << "std::unordered_map   queries      : "<< tsumq.time() << " sec." << std::endl;
-  
+
   std::cerr << "boost::unordered_map construction : "<< tbumc.time() << " sec." << std::endl;
   std::cerr << "boost::unordered_map queries      : "<< tbumq.time() << " sec.\n" << std::endl;
 }

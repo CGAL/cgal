@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel  <seel@mpi-sb.mpg.de>
 
@@ -42,7 +33,7 @@ our geometry kernel concept.}*/
 
 /*{\Mgeneralization SM_const_decorator}*/
 
-template <typename PMCDEC, typename GEOM> 
+template <typename PMCDEC, typename GEOM>
 class SM_checker : public PMCDEC
 { typedef PMCDEC Base;
   const GEOM& K;
@@ -65,16 +56,16 @@ CGAL_USING(Vertex_const_iterator);
 CGAL_USING(Halfedge_const_iterator);
 CGAL_USING(Halfedge_around_vertex_const_circulator);
 CGAL_USING(Halfedge_around_face_const_circulator);
-/*{\Mtext Iterators, handles, and circulators are inherited from 
+/*{\Mtext Iterators, handles, and circulators are inherited from
 |SM_const_decorator|.}*/
 
 /*{\Mcreation 3}*/
-SM_checker(Plane_map& P, const Geometry& k = Geometry()) : 
+SM_checker(Plane_map& P, const Geometry& k = Geometry()) :
   Base(P), K(k) {}
 /*{\Mcreate constructs a plane map checker working on |P| with
 geometric predicates used from |k|.}*/
 
-SM_checker(const Base& D, const Geometry& k = Geometry()) : 
+SM_checker(const Base& D, const Geometry& k = Geometry()) :
   Base(D), K(k) {}
 
 
@@ -88,11 +79,11 @@ bool is_forward(Halfedge_const_handle e) const
 
 void check_order_preserving_embedding(Vertex_const_handle v) const;
 /*{\Mop checks if the embedding of the targets of the edges in
-the adjacency list |A(v)| is counter-clockwise order-preserving with 
+the adjacency list |A(v)| is counter-clockwise order-preserving with
 respect to the order of the edges in |A(v)|.}*/
 
 void check_order_preserving_embedding() const;
-/*{\Mop checks if the embedding of all vertices of |P| is 
+/*{\Mop checks if the embedding of all vertices of |P| is
 counter-clockwise order-preserving with respect to the adjacency
 list ordering of all vertices.}*/
 
@@ -139,7 +130,7 @@ check_order_preserving_embedding(Vertex_const_handle v) const
       e = en;
     }
   }
-  error_status.freeze(0);  
+  error_status.freeze(0);
 }
 
 template <typename PMCDEC, typename GEOM>
@@ -178,15 +169,15 @@ SM_checker<PMCDEC,GEOM>::
 check_boundary_is_clockwise_weakly_polygon() const
 {
   Vertex_const_iterator vit, v_min;
-  for (vit = v_min = vertices_begin() ; vit != vertices_end(); ++vit) 
+  for (vit = v_min = vertices_begin() ; vit != vertices_end(); ++vit)
     if ( K.compare_xy(point(vit), point(v_min))<0 ) v_min = vit;
   CGAL_assertion_msg(!is_isolated(v_min),"Minimal vertex not connected.");
   Sphere_point p_min = point(v_min);
 
-  // determine boundary edge incident to v_min: 
+  // determine boundary edge incident to v_min:
   Halfedge_const_handle e_boundary_at_v_min = first_out_edge(v_min);
   // all out edges are forward oriented due to minimality
-  Halfedge_around_vertex_const_circulator 
+  Halfedge_around_vertex_const_circulator
     hvit(e_boundary_at_v_min), hend(hvit);
   do {
     --hvit;
@@ -238,7 +229,7 @@ check_is_triangulation() const
   Halfedge_const_iterator eit;
   for( eit = halfedges_begin(); eit != halfedges_end(); ++eit) {
     if (on_boundary[eit]) continue;
-    hit = hend = eit; 
+    hit = hend = eit;
     int edges_in_face_cycle=0;
     CGAL_For_all(hit,hend) {
       error_status << PE(hit);

@@ -2,7 +2,7 @@
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_print_item_interface.h>
 #include "Scene_polyhedron_selection_item.h"
-void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
+void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer, const QVector3D& scaler)
 {
     QPainter *painter = viewer->getPainter();
     if (!painter->isActive())
@@ -23,10 +23,15 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
           if(viewer->testDisplayId(src.x, src.y, src.z))
           {
             if(item->is_3D())
-              rect = QRect(int(camera->projectedCoordinatesOf(src).x-item->width()/2),
-                           int(camera->projectedCoordinatesOf(src).y-item->height()/2),
+            {
+              src.x *= scaler.x();
+              src.y *= scaler.y();
+              src.z *= scaler.z();
+              rect = QRect(int(camera->projectedCoordinatesOf(src).x -item->width()/2),
+                           int(camera->projectedCoordinatesOf(src).y -item->height()/2),
                            int(item->width()),
                            int(item->height()));
+            }
             else
               rect = QRect(int(src.x-item->width()/2),
                            int(src.y-item->height()/2),

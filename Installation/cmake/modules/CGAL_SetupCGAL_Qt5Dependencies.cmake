@@ -36,7 +36,9 @@ endif()
 if(NOT Qt5_FOUND)
   set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} Qt5")
 endif()
-
+if(NOT EXISTS ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/GraphicsItem.h)
+  set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} <CGAL/Qt/*.h> headers")
+endif()
 
 #.rst:
 # Result Variables

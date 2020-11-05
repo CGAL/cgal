@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Iordan Iordanov <iordan.iordanov@loria.fr>
 
@@ -26,7 +17,7 @@
 #include <CGAL/internal/Hyperbolic_octagon_translation_matrix.h>
 #include <CGAL/internal/Hyperbolic_octagon_translation_word.h>
 #include <CGAL/internal/Exact_complex.h>
-#include <CGAL/CORE_Expr.h>
+#include <CGAL/Exact_algebraic.h>
 #include <CGAL/tss.h>
 
 #include <iostream>
@@ -34,7 +25,7 @@
 
 namespace CGAL {
 
-template <typename FT = CORE::Expr>
+template <typename FT = Exact_algebraic>
 class Hyperbolic_octagon_translation
 {
 public:
@@ -59,15 +50,8 @@ private:
 
   Word _wrd;
 
-
-
-  static const Matrix& gmap(const std::string& s)
-  {
-    typedef std::map<std::string, Matrix>  M;
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(M, m);
-
-    if(m.empty()){
-
+  static auto initialize_gmap() {
+    std::map<std::string, Matrix> m;
     std::vector<Matrix> g;
     Matrix::generators(g);
 
@@ -128,7 +112,30 @@ private:
     m["7"] = g[D];
     m["72"] = g[D]*g[C];
     m["725"] = g[D]*g[C]*g[B];
+
+    { // This block abuses `operator<<` of numbers, to a null stream.
+      // That ensures that the following memory pool are correctly
+      // initialized:
+      //   - `CORE::MemoryPool<CORE::Realbase_for<long, 1024>`
+      //   - `CORE::MemoryPool<CORE::Realbase_for<double, 1024>`
+      //   - `CORE::MemoryPool<CORE::BigFloatRep, 1024>`
+      //   - `CORE::MemoryPool<CORE::BigIntRep, 1024>`
+      // otherwise, there is an assertion during the destruction of
+      // static (or `thread_local`) objects
+      struct NullBuffer : public std::streambuf {
+        int overflow(int c) { return c; }
+      };
+      NullBuffer null_buffer;
+      std::ostream null_stream(&null_buffer);
+      for(auto& pair: m) null_stream << pair.second;
     }
+    return m;
+  }
+
+  static const Matrix& gmap(const std::string& s)
+  {
+    typedef std::map<std::string, Matrix>  M;
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(M, m, initialize_gmap());
     return m[s];
   }
 

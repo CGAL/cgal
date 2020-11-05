@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 
+// release       :
+// release_date  :
 //
 // file          : test_support.C
 // package       : Stream_support

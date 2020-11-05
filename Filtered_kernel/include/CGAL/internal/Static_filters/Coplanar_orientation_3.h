@@ -1,21 +1,12 @@
 // Copyright (c) 2001,2004  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -58,26 +49,26 @@ public:
   Orientation operator()(const Point_3 &p, const Point_3 &q, const Point_3 &r) const
   {
       return opti_coplanar_orientationC3(
-	    to_double(p.x()), to_double(p.y()), to_double(p.z()),
-	    to_double(q.x()), to_double(q.y()), to_double(q.z()),
-	    to_double(r.x()), to_double(r.y()), to_double(r.z()));
+            to_double(p.x()), to_double(p.y()), to_double(p.z()),
+            to_double(q.x()), to_double(q.y()), to_double(q.z()),
+            to_double(r.x()), to_double(r.y()), to_double(r.z()));
   }
 
   Orientation operator()(const Point_3 &p, const Point_3 &q,
                          const Point_3 &r, const Point_3 &s) const
   {
       return opti_coplanar_orientationC3(
-	    to_double(p.x()), to_double(p.y()), to_double(p.z()),
-	    to_double(q.x()), to_double(q.y()), to_double(q.z()),
-	    to_double(r.x()), to_double(r.y()), to_double(r.z()),
-	    to_double(s.x()), to_double(s.y()), to_double(s.z()));
+            to_double(p.x()), to_double(p.y()), to_double(p.z()),
+            to_double(q.x()), to_double(q.y()), to_double(q.z()),
+            to_double(r.x()), to_double(r.y()), to_double(r.z()),
+            to_double(s.x()), to_double(s.y()), to_double(s.z()));
   }
 
 private:
   Orientation
   opti_coplanar_orientationC3(double px, double py, double pz,
                               double qx, double qy, double qz,
-		              double rx, double ry, double rz) const
+                              double rx, double ry, double rz) const
   {
       CGAL_PROFILER("Coplanar_orientation_3 #1 calls");
 
@@ -100,22 +91,22 @@ private:
   Orientation
   opti_coplanar_orientationC3(double px, double py, double pz,
                               double qx, double qy, double qz,
-		              double rx, double ry, double rz,
-		              double sx, double sy, double sz) const
+                              double rx, double ry, double rz,
+                              double sx, double sy, double sz) const
   {
       CGAL_PROFILER("Coplanar_orientation_3 #2 calls");
 
       Orientation oxy_pqr = orient_2d(px,py,qx,qy,rx,ry);
       if (oxy_pqr != COLLINEAR)
           return Orientation( oxy_pqr *
-		              orient_2d(px,py,qx,qy,sx,sy));
+                              orient_2d(px,py,qx,qy,sx,sy));
 
       CGAL_PROFILER("Coplanar_orientation_3 #2 step2");
 
       Orientation oyz_pqr = orient_2d(py,pz,qy,qz,ry,rz);
       if (oyz_pqr != COLLINEAR)
           return Orientation( oyz_pqr *
-		              orient_2d(py,pz,qy,qz,sy,sz));
+                              orient_2d(py,pz,qy,qz,sy,sz));
 
       CGAL_PROFILER("Coplanar_orientation_3 #2 step3");
 

@@ -10,9 +10,9 @@ typedef CGAL::Gmpzf ET;
 typedef CGAL::MP_Float ET;
 #endif
 
-typedef CGAL::Simple_cartesian<double>    K;  
+typedef CGAL::Simple_cartesian<double>    K;
 typedef K::Point_2                        Point;
-typedef CGAL::Polytope_distance_d_traits_2<K, ET, double>  
+typedef CGAL::Polytope_distance_d_traits_2<K, ET, double>
                                           Traits;
 typedef CGAL::Polytope_distance_d<Traits> Polytope_distance;
 
@@ -34,4 +34,4 @@ int main(void)
   std::cout << "Number of support points: " <<
     pd.number_of_support_points() << std::endl;
   return 0;
-} 
+}

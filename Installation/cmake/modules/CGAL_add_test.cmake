@@ -16,6 +16,9 @@ if(NOT POLICY CMP0064)
   # Add a fake function to avoid CMake errors
   function(cgal_add_compilation_test)
   endfunction()
+  # Add a fake function to avoid CMake errors
+  function(cgal_setup_test_properties)
+  endfunction()
 
   # Then return, to exit the file
   return()
@@ -95,10 +98,51 @@ function(cgal_add_compilation_test exe_name)
     return()
   endif()
   add_test(NAME "compilation_of__${exe_name}"
-    COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}")
+    COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}" --config "$<CONFIG>")
   set_property(TEST "compilation_of__${exe_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
+  if(NOT TARGET ALL_CGAL_TARGETS)
+    add_custom_target( ALL_CGAL_TARGETS )
+  endif()
+  if(NOT TARGET cgal_check_build_system)
+    add_custom_target(cgal_check_build_system)
+    add_dependencies( ALL_CGAL_TARGETS cgal_check_build_system )
+    add_test(NAME "check_build_system"
+      COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "cgal_check_build_system" --config "$<CONFIG>")
+    set_property(TEST "check_build_system"
+      APPEND PROPERTY LABELS "CGAL_build_system")
+    if(POLICY CMP0066) # cmake 3.7 or later
+      set_property(TEST "check_build_system"
+        PROPERTY FIXTURES_SETUP "check_build_system_SetupFixture")
+    endif()
+  endif()
+  if(POLICY CMP0066) # cmake 3.7 or later
+    set_property(TEST "compilation_of__${exe_name}"
+      APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
+  endif()
+  if(TARGET CGAL_Qt5_moc_and_resources) # if CGAL_Qt5 was searched, and is header-only
+    get_property(linked_libraries TARGET "${exe_name}" PROPERTY LINK_LIBRARIES)
+    #  message(STATUS "${exe_name} depends on ${linked_libraries}")
+    string(FIND "${linked_libraries}" "CGAL::CGAL_Qt5" link_with_CGAL_Qt5)
+    if(link_with_CGAL_Qt5 STRGREATER "-1" AND
+        NOT TARGET compilation_of__CGAL_Qt5_moc_and_resources)
+      # This custom target is useless. It is used only as a flag to
+      # detect that the test has already been created.
+      add_custom_target(compilation_of__CGAL_Qt5_moc_and_resources)
+      add_dependencies( compilation_of__CGAL_Qt5_moc_and_resources CGAL_Qt5_moc_and_resources )
+      add_test(NAME "compilation_of__CGAL_Qt5_moc_and_resources"
+        COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "compilation_of__CGAL_Qt5_moc_and_resources" --config "$<CONFIG>")
+      set_property(TEST "compilation_of__CGAL_Qt5_moc_and_resources"
+        APPEND PROPERTY LABELS "CGAL_build_system")
+      set_property(TEST "compilation_of__CGAL_Qt5_moc_and_resources"
+        PROPERTY FIXTURES_SETUP "check_build_system_SetupFixture")
+      set_property(TEST "compilation_of__CGAL_Qt5_moc_and_resources"
+        APPEND PROPERTY DEPENDS "check_build_system")
+    endif()
+  endif()
 endfunction(cgal_add_compilation_test)
+
+option(CGAL_TEST_DRAW_FUNCTIONS "If set, the ctest command will not skip the tests of the draw functions.")
 
 function(cgal_setup_test_properties test_name)
   if(ARGC GREATER 1)
@@ -109,12 +153,22 @@ function(cgal_setup_test_properties test_name)
   #      message(STATUS "  working dir: ${CMAKE_CURRENT_SOURCE_DIR}")
   set_property(TEST "${test_name}"
     PROPERTY WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  if(NOT CGAL_TEST_DRAW_FUNCTIONS)
+    set_property(TEST "${test_name}"
+      APPEND PROPERTY ENVIRONMENT CGAL_TEST_SUITE=1)
+  endif()
+
   if(exe_name)
     set_property(TEST "${test_name}"
       APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
   endif()
 
-  if(POLICY CMP0066) # CMake 3.7 or later
+  get_filename_component(_source_dir_abs ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE)
+  get_filename_component(_binary_dir_abs ${CMAKE_CURRENT_BINARY_DIR} ABSOLUTE)
+  string(FIND "${_binary_dir_abs}" "${_source_dir_abs}" _search_binary_in_source)
+
+  if(_search_binary_in_source EQUAL "-1"
+     AND POLICY CMP0066) # CMake 3.7 or later
     if(NOT TEST ${PROJECT_NAME}_SetupFixture)
       if(ANDROID)
         add_test(NAME ${PROJECT_NAME}_SetupFixture
@@ -182,7 +236,7 @@ function(cgal_setup_test_properties test_name)
         PROPERTY
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir)
     endif()
-    
+
     set_property(TEST "${test_name}"
       APPEND PROPERTY FIXTURES_REQUIRED "${PROJECT_NAME}")
     if(exe_name)

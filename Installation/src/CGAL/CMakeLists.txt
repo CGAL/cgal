@@ -10,8 +10,8 @@ endif()
 
 CGAL_setup_CGAL_dependencies(CGAL ${keyword})
 
-if(CGAL_HEADER_ONLY)
-  target_compile_definitions(CGAL INTERFACE CGAL_HEADER_ONLY=1)
+if(NOT CGAL_HEADER_ONLY)
+  target_compile_definitions(CGAL INTERFACE CGAL_NOT_HEADER_ONLY=1)
 endif()
 
 if(NOT CGAL_DISABLE_GMP)

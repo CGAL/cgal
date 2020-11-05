@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Ron Wein <baruchzu@post.tau.ac.il>
@@ -64,80 +55,80 @@ public:
    * Create a vertex v that corresponds to the coinciding vertices v1 and v2.
    */
   virtual void create_vertex (Vertex_handle_A /* v1 */,
-			      Vertex_handle_B /* v2 */,
-			      Vertex_handle_R /* v */) const
+                              Vertex_handle_B /* v2 */,
+                              Vertex_handle_R /* v */) const
   {}
 
   /*!
    * Create a vertex v that matches v1, which lies of the edge e2.
    */
   virtual void create_vertex (Vertex_handle_A /* v1 */,
-			      Halfedge_handle_B /* e2 */,
-			      Vertex_handle_R /* v */) const
+                              Halfedge_handle_B /* e2 */,
+                              Vertex_handle_R /* v */) const
   {}
 
   /*!
    * Create a vertex v that matches v1, contained in the face f2.
    */
   virtual void create_vertex (Vertex_handle_A /* v1 */,
-			      Face_handle_B /* f2 */,
-			      Vertex_handle_R /* v */) const
+                              Face_handle_B /* f2 */,
+                              Vertex_handle_R /* v */) const
   {}
 
   /*!
    * Create a vertex v that matches v2, which lies of the edge e1.
    */
   virtual void create_vertex (Halfedge_handle_A /* e1 */,
-			      Vertex_handle_B /* v2 */,
-			      Vertex_handle_R /* v */) const
+                              Vertex_handle_B /* v2 */,
+                              Vertex_handle_R /* v */) const
   {}
 
   /*!
    * Create a vertex v that matches v2, contained in the face f1.
    */
   virtual void create_vertex (Face_handle_A /* f1 */,
-			      Vertex_handle_B /* v2 */,
-			      Vertex_handle_R /* v */) const
+                              Vertex_handle_B /* v2 */,
+                              Vertex_handle_R /* v */) const
   {}
 
   /*!
    * Create a vertex v that matches the intersection of the edges e1 and e2.
    */
   virtual void create_vertex (Halfedge_handle_A /* e1 */,
-			      Halfedge_handle_B /* e2 */,
-			      Vertex_handle_R /* v */) const
+                              Halfedge_handle_B /* e2 */,
+                              Vertex_handle_R /* v */) const
   {}
 
   /*!
    * Create an edge e that matches the overlap between e1 and e2.
    */
   virtual void create_edge (Halfedge_handle_A /* e1 */,
-			    Halfedge_handle_B /* e2 */,
-			    Halfedge_handle_R /* e */) const
+                            Halfedge_handle_B /* e2 */,
+                            Halfedge_handle_R /* e */) const
   {}
 
   /*!
    * Create an edge e that matches the edge e1, contained in the face f2.
    */
   virtual void create_edge (Halfedge_handle_A /* e1 */,
-			    Face_handle_B /* f2 */,
-			    Halfedge_handle_R /* e */) const
+                            Face_handle_B /* f2 */,
+                            Halfedge_handle_R /* e */) const
   {}
 
   /*!
    * Create an edge e that matches the edge e2, contained in the face f1.
    */
   virtual void create_edge (Face_handle_A /* f1 */,
-			    Halfedge_handle_B /* e2 */,
-			    Halfedge_handle_R /* e */) const
+                            Halfedge_handle_B /* e2 */,
+                            Halfedge_handle_R /* e */) const
   {}
 
   /*!
    * Create a face f that matches the overlapping region between f1 and f2.
    */
   virtual void create_face (Face_handle_A /* f1 */,
-			    Face_handle_B /* f2 */,
-			    Face_handle_R /* f */) const
+                            Face_handle_B /* f2 */,
+                            Face_handle_R /* f */) const
   {}
 
 };

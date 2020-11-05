@@ -17,7 +17,6 @@ int main() {
   Nef_polyhedron N2(c, Nef_polyhedron::INCLUDED);
   Nef_polyhedron N3(N2.complement());
   CGAL_assertion(N1 == N2.join(N3));
-
   Sphere_point   p1(1,0,0), p2(0,1,0), p3(0,0,1);
   Sphere_segment s1(p1,p2), s2(p2,p3), s3(p3,p1);
   Sphere_segment triangle[3] = { s1, s2, s3 };

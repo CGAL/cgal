@@ -4,7 +4,6 @@
 #include <fstream>
 #include <iostream>
 
-#include <boost/foreach.hpp>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point_3;
@@ -33,28 +32,28 @@ int main(int argc, char* argv[])
   hm.add_source(source);
   assert(hm.sources().size() == 1);
   hm.estimate_geodesic_distances(vertex_distance);
-  
+
   Point_3 sp = sm.point(source);
 
   std::cout << "source: " << sp  << " " << source << std::endl;
-  vertex_descriptor far;
+  vertex_descriptor vfar;
   double sdistance = 0;
-  
-  BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
+
+  for(vertex_descriptor vd : vertices(sm)){
     if(get(vertex_distance,vd) > sdistance){
-      far = vd;
+      vfar = vd;
       sdistance = get(vertex_distance,vd);
     }
   }
   assert(sdistance > 2.9);
   assert(sdistance < CGAL_PI);
 
-  hm.add_source(far);
+  hm.add_source(vfar);
     assert(hm.sources().size() == 2);
   hm.estimate_geodesic_distances(vertex_distance);
 
   sdistance = 0;
-  BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
+  for(vertex_descriptor vd : vertices(sm)){
     if(get(vertex_distance,vd) > sdistance){
       sdistance = get(vertex_distance,vd);
     }
@@ -63,7 +62,7 @@ int main(int argc, char* argv[])
   assert(sdistance > 1.4);
   assert(sdistance < CGAL_PI/2.0);
 
-  hm.remove_source(far);
+  hm.remove_source(vfar);
   assert(hm.sources().size() == 1);
 
   hm.clear_sources();
@@ -71,18 +70,18 @@ int main(int argc, char* argv[])
   // add range of sources
   std::vector<vertex_descriptor> vrange;
   vrange.push_back(source);
-    vrange.push_back(far);
+    vrange.push_back(vfar);
   hm.add_sources(vrange);
   assert(hm.sources().size() == 2);
   hm.estimate_geodesic_distances(vertex_distance);
   sdistance = 0;
-  BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
+  for(vertex_descriptor vd : vertices(sm)){
     if(get(vertex_distance,vd) > sdistance){
       sdistance = get(vertex_distance,vd);
     }
   }
 
-  
+
   assert(sdistance > 1.4);
   assert(sdistance < CGAL_PI/2.0);
 
@@ -91,7 +90,7 @@ int main(int argc, char* argv[])
   assert(hm.sources().size() == 0);
   hm.add_source(source);
   hm.estimate_geodesic_distances(vertex_distance);
-   BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
+   for(vertex_descriptor vd : vertices(sm)){
     if(get(vertex_distance,vd) > sdistance){
       sdistance = get(vertex_distance,vd);
     }
@@ -99,10 +98,10 @@ int main(int argc, char* argv[])
   assert(sdistance > 2.9);
   assert(sdistance < CGAL_PI);
 
-  
+
   CGAL::Heat_method_3::estimate_geodesic_distances(sm, vertex_distance, source, CGAL::Heat_method_3::Direct());
   sdistance = 0;
-  BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
+  for(vertex_descriptor vd : vertices(sm)){
     if(get(vertex_distance,vd) > sdistance){
       sdistance = get(vertex_distance,vd);
     }
@@ -110,8 +109,8 @@ int main(int argc, char* argv[])
 
   assert(sdistance > 2.9);
   assert(sdistance < CGAL_PI);
-  
-  
+
+
   std::cout << "done" << std::endl;
   return 0;
 }

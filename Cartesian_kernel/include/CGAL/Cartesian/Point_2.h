@@ -1,25 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri, Herve Bronnimann
 
@@ -45,7 +36,7 @@ class PointC2
 public:
 
   typedef typename Vector_2_::Cartesian_const_iterator Cartesian_const_iterator;
-  
+
   typedef R_                                R;
 
   PointC2() {}
@@ -59,11 +50,20 @@ public:
   PointC2(const FT &hx, const FT &hy, const FT &hw)
     : base(hx, hy, hw) {}
 
+  friend void swap(Self& a, Self& b)
+#ifdef __cpp_lib_is_swappable
+    noexcept(std::is_nothrow_swappable_v<Vector_2_>)
+#endif
+  {
+    using std::swap;
+    swap(a.base, b.base);
+  }
+
   const FT& x() const
   {
       return base.x();
   }
-  
+
   const FT& y() const
   {
       return base.y();
@@ -82,14 +82,14 @@ public:
       return base.hw();
   }
 
-  Cartesian_const_iterator cartesian_begin() const 
+  Cartesian_const_iterator cartesian_begin() const
   {
-    return base.cartesian_begin(); 
+    return base.cartesian_begin();
   }
 
-  Cartesian_const_iterator cartesian_end() const 
+  Cartesian_const_iterator cartesian_end() const
   {
-    return base.cartesian_end(); 
+    return base.cartesian_end();
   }
 
   typename R_::Boolean   operator==(const PointC2 &p) const

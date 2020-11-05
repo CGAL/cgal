@@ -2,9 +2,8 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Circular_kernel_3_Tests )
-
-CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 
 find_package(CGAL QUIET COMPONENTS Core )
 
@@ -29,8 +28,8 @@ create_single_source_cgal_program( "test_Lazy_spherical_kernel_basics.cpp" )
 create_single_source_cgal_program( "test_Spherical_kernel_with_core.cpp" )
 
 else()
-  
+
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

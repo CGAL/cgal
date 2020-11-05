@@ -99,19 +99,19 @@ The energy function minimized using alpha-expansion graph cut algorithm \cgalCit
 
   <table border="0">
   <tr>
-	 <td>
-		\f$ E(\bar{x}) = \sum\limits_{f \in F} e_1(f, x_f) + \lambda \sum\limits_{ \{f,g\} \in N} e_2(x_f, x_g) \f$
+         <td>
+                \f$ E(\bar{x}) = \sum\limits_{f \in F} e_1(f, x_f) + \lambda \sum\limits_{ \{f,g\} \in N} e_2(x_f, x_g) \f$
 
-		\f$ e_1(f, x_f) = -log(max(P(f|x_f), \epsilon)) \f$
+                \f$ e_1(f, x_f) = -log(max(P(f|x_f), \epsilon)) \f$
 
-		\f$ e_2(x_f, x_g) =
-		\left \{
-		\begin{array}{rl}
-			-log(\theta(f,g)/\pi) &\mbox{ $x_f \ne x_g$} \\
-			0 &\mbox{ $x_f = x_g$}
-		\end{array}
-		\right \} \f$
-	 </td>
+                \f$ e_2(x_f, x_g) =
+                \left \{
+                \begin{array}{rl}
+                        -log(\theta(f,g)/\pi) &\mbox{ $x_f \ne x_g$} \\
+                        0 &\mbox{ $x_f = x_g$}
+                \end{array}
+                \right \} \f$
+         </td>
      <td>
 where:
   - \f$F\f$ denotes the set of facets,
@@ -119,10 +119,10 @@ where:
   - \f$x_f\f$ denotes the cluster assigned to facet \f$f\f$,
   - \f$P(f|x_p)\f$ denotes the probability of assigning facet \f$f\f$ to cluster \f$x_p\f$,
   - \f$\theta(f,g)\f$ denotes the dihedral angle between neighboring facets \f$f\f$ and \f$g\f$:
-	 concave angles and convex angles are weighted by 1 and 0.1 respectively,
+         concave angles and convex angles are weighted by 1 and 0.1 respectively,
   - \f$\epsilon\f$ denotes the minimal probability threshold,
   - \f$\lambda \in [0,1]\f$ denotes a smoothness parameter.
-	 </td>
+         </td>
   </tr>
   </table>
 
@@ -153,16 +153,16 @@ Clusters and segments. The input number of clusters is set to 5. <b>(a)</b> Resu
 
 \subsection Surface_mesh_segmentationAPI Summary
 Four functions are provided:
-	- `sdf_values()` : computes the SDF value of each facet of an input mesh in either raw or post-processed form.
+        - `sdf_values()` : computes the SDF value of each facet of an input mesh in either raw or post-processed form.
            SDF values are associated to facets using a property map (see \ref Chapter_CGAL_and_Boost_Property_Maps
 "CGAL and Boost Property Maps").
-	- `sdf_values_postprocessing()` : post-processes raw SDF values. The post-processing is decoupled from
+        - `sdf_values_postprocessing()` : post-processes raw SDF values. The post-processing is decoupled from
              the function `sdf_values()` to allow the use of alternative methods to compute SDF values or additional post-processing step.
-	- `segmentation_from_sdf_values()` : computes the mesh segmentation from the SDF values of the facets of an input mesh.
+        - `segmentation_from_sdf_values()` : computes the mesh segmentation from the SDF values of the facets of an input mesh.
             The input SDF values can be any set of scalar values associated to each facet as long as they have been normalized between 0 and 1.
             This function allows using the same SDF values with different parameters for the segmentation stage.
             The segment or cluster ids are associated to the facets using a property map.
-	- `segmentation_via_sdf_values()` : combines the three functions above.
+        - `segmentation_via_sdf_values()` : combines the three functions above.
 
 These functions expect as input a triangulated surface mesh bounding a 3D solid object, with
 the following properties:
@@ -202,12 +202,12 @@ The main advantage is to decrease from log to constant the complexity for access
 
 
 \subsection Surface_mesh_segmentationUsingSM Using a Surface_mesh
-When using a `Surface_mesh`, you can use the built-in property mechanism. 
+When using a `Surface_mesh`, you can use the built-in property mechanism.
 
 \cgalExample{Surface_mesh_segmentation/segmentation_from_sdf_values_SM_example.cpp}
 
-\subsection Surface_mesh_segmentationIndependantmeshpersegment Independant TriangleMesh per Segment
- It is possible to consider each segment as an independant triangle mesh, like in the following example, where the area of each segment is computed.
+\subsection Surface_mesh_segmentationIndependentmeshpersegment Independent TriangleMesh per Segment
+ It is possible to consider each segment as an independent triangle mesh, like in the following example, where the area of each segment is computed.
 
 \cgalExample{Surface_mesh_segmentation/extract_segmentation_into_mesh_example.cpp}
 
@@ -280,7 +280,7 @@ A comparison with biased and uniform sampling of points can be seen in \cgalFigu
 The mesh segmentation problem being ill-posed, the mesh segmentation community have proposed some benchmarks to evaluate the
 quality of a given algorithm. A benchmark is composed of a set of models and a software responsible for scoring
 the results. On a particular benchmark \cite Chen2009SegmentationBenchmark, the current implementation obtains the
-score of XXX. The code used in the benchmark is provided as an exemple XXX.
+score of XXX. The code used in the benchmark is provided as an example XXX.
 \todo Add the score and the source code used for the benchmark
 -->
 

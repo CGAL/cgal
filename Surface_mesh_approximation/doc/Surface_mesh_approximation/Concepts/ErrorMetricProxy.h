@@ -35,6 +35,6 @@ public:
   template <typename FaceRange>
   Proxy fit_proxy(const FaceRange &faces, const Triangle_mesh &tm) const;
 
-  /// }
+  /// @}
 
 };

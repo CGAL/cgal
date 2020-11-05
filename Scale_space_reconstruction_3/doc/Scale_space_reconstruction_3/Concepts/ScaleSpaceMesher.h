@@ -22,7 +22,7 @@ public:
   /**
    * \tparam InputIterator iterator over input points.
    * \tparam OutputIterator output iterator to which
-  `CGAL::cpp11::array<std::size_t, 3>` can be assigned.
+  `std::array<std::size_t, 3>` can be assigned.
    * \param begin iterator over the first input point.
    * \param end past-the-end iterator over the input points.
    * \param output iterator where facets (triples of point indices)

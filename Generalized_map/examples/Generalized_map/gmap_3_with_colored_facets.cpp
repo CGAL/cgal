@@ -27,7 +27,7 @@ struct Myitem
   {
     typedef CGAL::Cell_attribute<GMap, int, CGAL::Tag_true,
      Sum_functor, Divide_by_two_functor> Facet_attribute;
-    typedef CGAL::cpp11::tuple<void,void,Facet_attribute> Attributes;
+    typedef std::tuple<void,void,Facet_attribute> Attributes;
   };
 };
 
@@ -59,8 +59,8 @@ int main()
 
   // 3) Set the color of all facets of the second hexahedron to 13.
   for (GMap_3::One_dart_per_incident_cell_range<2, 3>::iterator it=
-	 gm.one_dart_per_incident_cell<2,3>(dh2).begin(),
-	 itend=gm.one_dart_per_incident_cell<2,3>(dh2).end(); it!=itend; ++it)
+         gm.one_dart_per_incident_cell<2,3>(dh2).begin(),
+         itend=gm.one_dart_per_incident_cell<2,3>(dh2).end(); it!=itend; ++it)
   { gm.info<2>(it)=13; }
 
   // 4) 3-Sew the two hexahedra along one facet.
