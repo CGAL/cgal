@@ -1464,7 +1464,7 @@ public:
 
   /*! Create a bounding box for the segment.
    */
-  CGAL_DEPRECATED Bbox_2 bbox() const;
+  Bbox_2 bbox() const;
 };
 
 //! \brief constructs default.
