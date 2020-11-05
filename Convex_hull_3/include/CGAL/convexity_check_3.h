@@ -14,12 +14,11 @@
 #ifndef CGAL_CONVEXITY_CHECK_3_H
 #define CGAL_CONVEXITY_CHECK_3_H
 
-#include <CGAL/license/Convex_hull_3.h>
-
-
-#include <CGAL/intersections.h>
-#include <CGAL/boost/graph/iterator.h>
-#include <CGAL/boost/graph/property_maps.h>
+#include "third_party/cgal/BGL/include/CGAL/boost/graph/iterator.h"
+#include "third_party/cgal/BGL/include/CGAL/boost/graph/property_maps.h"
+#include "third_party/cgal/Installation/include/CGAL/Surface_mesh/Surface_mesh_fwd.h"
+#include "third_party/cgal/Installation/include/CGAL/license/Convex_hull_3.h"
+#include "third_party/cgal/Intersections_3/include/CGAL/intersections.h"
 
 namespace CGAL {
 
@@ -224,6 +223,12 @@ bool all_points_inside( ForwardIterator first,
       }
    }
    return true;
+}
+
+template <class Point>
+bool is_strongly_convex_3(const Surface_mesh<Point>& surface_mesh) {
+  using Traits = typename CGAL::Kernel_traits<Point>::Kernel;
+  return is_strongly_convex_3(surface_mesh, Traits());
 }
 
 } // namespace CGAL
