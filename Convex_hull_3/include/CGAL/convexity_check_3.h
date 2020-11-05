@@ -14,11 +14,12 @@
 #ifndef CGAL_CONVEXITY_CHECK_3_H
 #define CGAL_CONVEXITY_CHECK_3_H
 
-#include "third_party/cgal/BGL/include/CGAL/boost/graph/iterator.h"
-#include "third_party/cgal/BGL/include/CGAL/boost/graph/property_maps.h"
-#include "third_party/cgal/Installation/include/CGAL/Surface_mesh/Surface_mesh_fwd.h"
-#include "third_party/cgal/Installation/include/CGAL/license/Convex_hull_3.h"
-#include "third_party/cgal/Intersections_3/include/CGAL/intersections.h"
+#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
+#include <CGAL/license/Convex_hull_3.h>
+#include <CGAL/intersections.h>
+
+#include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/property_maps.h>
 
 namespace CGAL {
 
