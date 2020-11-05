@@ -121,7 +121,7 @@ traits class, which mainly involves algebraic computations. A traits
 class also encapsulates the number types used to represent coordinates
 of geometric objects and to carry out algebraic operations on them. It
 encapsulates the type of coordinate system used (e.g., Cartesian and
-homogeneous), and the geometric or algebraic computation methods
+Homogeneous), and the geometric or algebraic computation methods
 themselves. The precise minimal sets of requirements, the actual traits
 classes must conform to, are organized as a hierarchy of concepts; see
 Section \ref aos_sec-geom_traits.
@@ -134,24 +134,25 @@ What constitutes valid curves that can be handled by the \ref
 PkgArrangementOnSurface2 package is discussed in detail in Section
 \ref aos_sec-geom_traits, where the models of the traits classes are
 described. However, when we cite combinatorial complexity bounds or
-bounds on the resources (running time, storage) required by
-algorithms, we often postulate stricter assumptions on the input
-curves. The prevalent term in use is that the curves are <em>well
-behaved</em>, which may have different interpretations in different
-settings. If we are concerned with combinatorial complexity bounds for
-curves embedded in a two-dimensional surface, then the standard
-assumptions are that (i) each curve is non-self-intersecting (a
-so-called Jordan arc) and (ii) every pair of curves intersects in at
-most some constant number of points. For algorithmic purposes we need
-to require more since we assume that any operation on a small constant
-number of curves takes unit time. In this sense arcs of algebraic
-curves of degree bounded by a constant (namely the zero set of
-bivariate polynomials of constant maximum total degree) are well
+bounds on the resources (i.e., running time and storage space)
+required by algorithms, we often postulate stricter assumptions on the
+input curves. The prevalent term in use is that the curves are
+<em>well behaved</em>, which may have different interpretations in
+different settings. If we are concerned with combinatorial complexity
+bounds for curves embedded in a two-dimensional surface, then the
+standard assumptions are that (i) each curve is non-self-intersecting
+(a so-called Jordan arc) and (ii) every pair of curves intersects in
+at most some constant number of points. For algorithmic purposes we
+need to require more since we assume that any operation on a small
+constant number of curves takes unit time. In this sense arcs of
+algebraic curves of degree bounded by a constant (namely the zero set
+of bivariate polynomials of constant maximum total degree) are well
 behaved. Naturally, what are typically considered well-behaved
 surfaces in \f$\mathbb{R}^3\f$ is even more complicated to state.
 
 Remarks
 <ol>
+
 <li> From the complexity-bound perspective, most of the arrangements
   that we can deal with can be regarded as defined by well-behaved
   curves. Even though the package allows for self-intersecting curves,
@@ -159,17 +160,19 @@ Remarks
   of well-behaved curves, thus having no effect on the asymptotic
   bounds that we cite.
 </li>
+
 <li> One type of curves that we deal with is special in this sense:
   <em>polylines</em>, namely concatenations of an unlimited number of
-  line segments. A polyline is not well behaved, as it cannot be
-  decomposed into a constant number of constant-descriptive complexity
-  subcurves. Informative bounds for arrangements of polylines are
-  expressed by other parameters in addition to the number of
-  polylines, for example, the total number of segments in all the
-  polylines together. The same holds for the more general type
-  <em>polycurve</em>, which are piecewise curves that are not
-  necessarily linear.
-</li>
+  line segments; see Section \ref arr_sssectr_polylines. A polyline is
+  not well behaved, as it cannot be decomposed into a constant number
+  of constant-descriptive complexity subcurves. Informative bounds for
+  arrangements of polylines are expressed by other parameters in
+  addition to the number of polylines, for example, the total number
+  of segments in all the polylines together. The same holds for the
+  more general type <em>polycurve</em>, which are piecewise curves
+  that are not necessarily linear; sse Section \ref
+  arr_sssectr_polycurves.  </li>
+
 </ol>
 
 <!----------------------------------------------------------------------------->
@@ -435,8 +438,7 @@ and faces of an arrangement, respectively.
 \anchor lst_paz
 \code{.cpp}
 template <typename Arrangement>
-void print_arrangement_size(const Arrangement& arr)
-{
+void print_arrangement_size(const Arrangement& arr) {
   std::cout << "The arrangement size:" << std::endl
             << "   |V| = " << arr.number_of_vertices()
             << ",  |E| = " << arr.number_of_edges()
@@ -547,8 +549,8 @@ should be noted that, for example, \link Arrangement_2::Vertex_handle
 Arrangement_2::Vertex_const_handle `Vertex_const_handle`\endlink, but
 not the other way around.
 
-The conversion of a non-mutable handle to a corresponding mutable
-handle is nevertheless possible. They can be performed using the
+Conversions of non-mutable handles to the corresponding mutable
+handles are nevertheless possible. They can be performed using the
 overloaded member function \link Arrangement_2::non_const_handle()
 `non_const_handle()`\endlink.  There are three variants that accept a
 non-mutable handle to a vertex, a halfedge, or a face, respectively.
@@ -563,8 +565,8 @@ object `arr` is mutable; see, e.g., Section \ref arr_ssecpl.
 A vertex \f$v\f$ of an arrangement induced by bounded curves is always
 associated with a geometric entity, namely with an \link
 Arrangement_2::Point_2 `Point_2`\endlink object, which can be obtained
-by \link Arrangement_2::Vertex::point() `v->point()`\endlink. Recall
-that `v` identifies a vertex handle; hence, we treat it as a pointer.
+by \link Arrangement_2::Vertex::point() `v->point()`\endlink, where
+`v` identifies a handle to \f$v\f$.
 
 The call \link Arrangement_2::Vertex::is_isolated()
 `v->is_isolated()`\endlink determines whether the vertex \f$v\f$ is
@@ -590,11 +592,10 @@ same as in the simple example above.
 
 \code
 template <typename Arrangement>
-void print_incident_halfedges(typename Arrangement::Vertex_const_handle v)
-{
+void print_incident_halfedges(typename Arrangement::Vertex_const_handle v) {
   if (v->is_isolated()) {
     std::cout << "The vertex (" << v->point() << ") is isolated" << std::endl;
-   return;
+    return;
   }
   typename Arrangement::Halfedge_around_vertex_const_circulator first, curr;
   first = curr = v->incident_halfedges();
@@ -617,7 +618,7 @@ A halfedge \f$e\f$ of an arrangement induced by bounded curves is
 associated with an \link Arrangement_2::X_monotone_curve_2
 `X_monotone_curve_2`\endlink object, which can be obtained by the
 \link Arrangement_2::Halfedge::curve() `he->curve()`\endlink, where
-`he` identifies a handle to \f$e\f$.
+`eh` identifies a handle to \f$e\f$.
 
 The calls \link Arrangement_2::Halfedge::source()
 `he->source()`\endlink and \link Arrangement_2::Halfedge::target()
@@ -628,7 +629,7 @@ halfedge using \link Arrangement_2::Halfedge::twin()
 `Dcel` structute, the following invariants always hold:
 <UL>
 <LI>`he->curve()` is equivalent to `he->twin()->curve()`,
-<LI>`he->source()` is equivalent to `he->twin()->target()`, and
+<LI>`e->sourceh()` is equivalent to `he->twin()->target()`, and
 <LI>`he->target()` is equivalent to `he->twin()->source()`.
 </UL>
 
@@ -646,7 +647,7 @@ traverse it using a circulator. Indeed \link
 Arrangement_2::Halfedge::ccb() `he->ccb()`\endlink returns an \link
 Arrangement_2::Ccb_halfedge_circulator
 `Ccb_halfedge_circulator`\endlink object for traversing all halfedges
-along the connected component of `he`. The value type of this
+along the connected component of \f$e\f$. The value type of this
 circulator is \link Arrangement_2::Halfedge `Halfedge`\endlink.
 
 The function template `print_ccb()` listed below prints all
@@ -657,8 +658,7 @@ can be inserted into the standard output using the `<<` operator).
 
 \code
 template <typename Arrangement>
-void print_ccb(typename Arrangement::Ccb_halfedge_const_circulator circ)
-{
+void print_ccb(typename Arrangement::Ccb_halfedge_const_circulator circ) {
   Ccb_halfedge_const_circulator curr = circ;
   std::cout << "(" << curr->source()->point() << ")";
   do {
@@ -694,9 +694,9 @@ as follows:
 
 <UL>
 
-<LI>You can obtain a pair of iterators of type
-  `Arrangement_2::Face::Hole_iterator` that define the range of holes
-  inside a face \f$f\f$ by calling \link
+<LI>You can obtain a pair of iterators of type \link
+  ArrangementDcelFace::Hole_iterator `Hole_iterator`\endlink that
+  define the range of holes inside a face \f$f\f$ by calling \link
   Arrangement_2::Face::holes_begin() `f->holes_begin()`\endlink and
   \link Arrangement_2::Face::holes_end() `f->holes_end()`\endlink. The
   value type of this iterator type is \link
@@ -721,8 +721,7 @@ boundaries of a given face. It uses the function template
 
 \code
 template <typename Arrangement>
-void print_face(typename Arrangement::Face_const_handle f)
-{
+void print_face(typename Arrangement::Face_const_handle f) {
   // Print the outer boundary.
   if (f->is_unbounded()) std::cout << "Unbounded face. " << std::endl;
   else {
@@ -755,8 +754,7 @@ well as the definitions of all other functions listed in this
 section. This concludes the preview of the various traversal methods.
 
 \code
-void print_arrangement (const Arrangement_2& arr)
-{
+void print_arrangement (const Arrangement_2& arr) {
   // Print the arrangement vertices.
   std::cout << arr.number_of_vertices() << " vertices:" << std::endl;
   for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
@@ -1160,10 +1158,15 @@ equivalent point with normalized coordinates, namely \f$(\frac{1}{2},
 \subsection arr_sssecadv_insert Advanced Insertion Functions
 <!----------------------------------------------------------------------------->
 
-\image html pred_around_vertex.png
-\image latex pred_around_vertex.png
-
 \cgalAdvancedBegin
+
+<table border="0" cellspacing="10">
+<tr>
+<td>
+\image html pred_around_vertex.png
+\image latex pred_around_vertex.pdf
+</td>
+<td>
 
 Assume that the specialized insertion function \link
 Arrangement_2::insert_from_left_vertex() `insert_from_left_vertex(c,
@@ -1186,6 +1189,9 @@ space without a meaningful improvement in running time in practice.}
 However, if the halfedge \f$e_{\mathrm{pred}}\f$ is known in advance,
 the insertion can be carried out in constant time, and without
 performing any geometric comparisons.
+</td>
+</tr>
+</table>
 
 The `Arrangement_2` class provides advanced versions of the
 specialized insertion functions for a curve \f$c\f$, namely, \link
@@ -4046,7 +4052,6 @@ point; it is rendered as a ring. Observe that the polyline \f$\pi_2\f$
 is split into three \f$x\f$-monotone polylines, and that the two
 curves \f$\pi_1\f$ and \f$\pi_3\f$ have two overlapping sections---an
 impossible scenario in arrangements of line segments.
-
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
