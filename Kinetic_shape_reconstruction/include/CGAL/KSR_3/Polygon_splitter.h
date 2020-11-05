@@ -281,9 +281,9 @@ public:
       std::size_t original_idx = 0;
       if (original_faces.size() != 1)
       {
-        // TODO: locate centroid of the face among the different
+        // Locate centroid of the face among the different
         // original faces to recover the input index
-        CGAL_assertion_msg(false, "TODO!");
+        CGAL_assertion_msg(false, "TODO: LOCATE CENTROID!");
       }
 
       m_data.input(pface) = original_input[original_idx];

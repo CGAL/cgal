@@ -193,7 +193,7 @@ public:
   template <typename PointRange, typename PointMap, typename VectorMap>
   void reconstruct (const PointRange& points, PointMap point_map, VectorMap normal_map)
   {
-    // TODO
+    CGAL_assertion_msg(false, "TODO: ADD RECONSTRUCTION!");
   }
 
   bool check_integrity(bool verbose = false) const
@@ -623,7 +623,7 @@ private:
 
       if (m_data.has_iedge(pother)) // Two constrained vertices meet
       {
-        CGAL_assertion_msg (false, "TODO: two constrained");
+        CGAL_assertion_msg(false, "TODO: ADD CASE TWO CONSTRAINED PVERTICES MEET!");
       }
       else // One constrained vertex meets a free vertex
       {
@@ -686,21 +686,28 @@ private:
           remove_events(pother);
 
           bool collision, bbox_reached;
-          // std::tie(collision, bbox_reached) = m_data.collision_occured(pvertex, iedge);
-          std::tie(collision, bbox_reached) = m_data.is_occupied(pvertex, iedge);
+          std::tie(collision, bbox_reached) = m_data.collision_occured(pvertex, iedge);
+          // std::tie(collision, bbox_reached) = m_data.is_occupied(pvertex, iedge);
           std::cout << "collision/bbox: " << collision << "/" << bbox_reached << std::endl;
 
           bool collision_other, bbox_reached_other;
-          // collision_other = m_data.collision_occured(pother, iedge).first;
-          std::tie(collision_other, bbox_reached_other) = m_data.is_occupied(pother, iedge);
+          std::tie(collision_other, bbox_reached_other) = m_data.collision_occured(pother, iedge);
+          // std::tie(collision_other, bbox_reached_other) = m_data.is_occupied(pother, iedge);
           std::cout << "other/bbox: " << collision_other << "/" << bbox_reached_other << std::endl;
 
           std::cout << "k intersections: " << m_data.k(pface) << std::endl;
           bool stop = false;
           if (bbox_reached) {
 
+            CGAL_assertion(bbox_reached_other); // Can we have a case with only one box side reached?
             std::cout << "pv po k bbox" << std::endl;
-            /* m_data.k(pface) = 1; */ stop = true;
+            stop = true;
+
+          } else if (bbox_reached_other) {
+
+            CGAL_assertion(bbox_reached); // Can we have a case with only one box side reached?
+            std::cout << "pv po k bbox" << std::endl;
+            stop = true;
 
           } else if ((collision || collision_other) && m_data.k(pface) == 1) {
 
@@ -712,6 +719,13 @@ private:
             std::cout << "pv po k continue" << std::endl;
             m_data.k(pface)--;
 
+          } else {
+
+            std::cout << "pv po continue" << std::endl;
+            CGAL_assertion(m_data.iedge(pvertex) == m_data.iedge(pother));
+            if (m_data.is_occupied(pvertex, iedge).first) {
+              CGAL_assertion_msg(false, "TODO: TWO PVERTICES SNEAK ON THE OTHER SIDE EVEN WHEN WE HAVE A POLYGON!");
+            }
           }
           CGAL_assertion(m_data.k(pface) >= 1);
 
@@ -739,8 +753,8 @@ private:
         remove_events(pvertex);
 
         bool collision, bbox_reached;
-        // std::tie(collision, bbox_reached) = m_data.collision_occured(pvertex, iedge);
-        std::tie(collision, bbox_reached) = m_data.is_occupied(pvertex, iedge);
+        std::tie(collision, bbox_reached) = m_data.collision_occured(pvertex, iedge);
+        // std::tie(collision, bbox_reached) = m_data.is_occupied(pvertex, iedge);
         std::cout << "collision/bbox: " << collision << "/" << bbox_reached << std::endl;
 
         std::cout << "k intersections: " << m_data.k(pface) << std::endl;
@@ -748,7 +762,7 @@ private:
         if (bbox_reached) {
 
           std::cout << "pv k bbox" << std::endl;
-          /* m_data.k(pface) = 1; */ stop = true;
+          stop = true;
 
         } else if (collision && m_data.k(pface) == 1) {
 
@@ -759,6 +773,9 @@ private:
 
           std::cout << "pv k continue" << std::endl;
           m_data.k(pface)--;
+
+        } else {
+          std::cout << "pv continue" << std::endl;
         }
         CGAL_assertion(m_data.k(pface) >= 1);
 
@@ -809,7 +826,7 @@ private:
     }
     else
     {
-      CGAL_assertion_msg (false, "Event is invalid");
+      CGAL_assertion_msg (false, "ERROR: INVALID EVENT!");
     }
   }
 

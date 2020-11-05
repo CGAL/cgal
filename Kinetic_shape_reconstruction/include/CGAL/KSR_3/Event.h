@@ -52,7 +52,7 @@ public:
   friend Queue;
 
   // Event types.
-  // TODO: Can it be that there other types of events?
+  // TODO: Can it be that there are other types of events?
   // TODO: Should I use reference & in the constructors? Is that faster?
 
   // Empty event.
