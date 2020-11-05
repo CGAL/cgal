@@ -746,6 +746,10 @@ public:
 
       // An intersection is guaranteed.
 
+      if (inexact_segment_to_segment_adjacency (cv1, cv2, oi,
+                                                Boolean_tag<std::is_floating_point<FT>::value>()))
+        return oi;
+
       // Intersect the two supporting lines.
       const Kernel& kernel = m_traits;
       auto res = kernel.intersect_2_object()(cv1.line(), cv2.line());
@@ -805,6 +809,47 @@ public:
       X_monotone_curve_2 overlap_seg(cv1.line(), p_l, p_r);
       *oi++ = Intersection_result(overlap_seg);
       return oi;
+    }
+
+  protected:
+
+    template <typename OutputIterator>
+    bool inexact_segment_to_segment_adjacency (const X_monotone_curve_2& cv1,
+                                               const X_monotone_curve_2& cv2,
+                                               OutputIterator& oi,
+                                               const Tag_false&) const
+    {
+      return false;
+    }
+
+    template <typename OutputIterator>
+    bool inexact_segment_to_segment_adjacency (const X_monotone_curve_2& cv1,
+                                               const X_monotone_curve_2& cv2,
+                                               OutputIterator& oi,
+                                               const Tag_true&) const
+    {
+      typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                        Intersection_result;
+      bool left_adjacency = false;
+      bool right_adjacency = false;
+
+      if (cv1.left() == cv2.left() || cv1.left() == cv2.right())
+        left_adjacency = true;
+      if (cv1.right() == cv2.left() || cv1.right() == cv2.right())
+        right_adjacency = true;
+
+      if (left_adjacency == right_adjacency)
+        return false;
+
+      if (left_adjacency)
+        *oi++ = Intersection_result (Intersection_point(cv1.left(), 1));
+      else
+      {
+        CGAL_assertion (right_adjacency);
+        *oi++ = Intersection_result (Intersection_point(cv1.right(), 1));
+      }
+      return true;
     }
   };
 
