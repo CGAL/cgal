@@ -11,7 +11,7 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_ENVELOPE_FILTER_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_ENVELOPE_FILTER_H
 
-#include <CGAL/license/Surface_mesh_simplification.h>
+#include <CGAL/license/Polygon_mesh_processing/Envelope.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/Default.h>
