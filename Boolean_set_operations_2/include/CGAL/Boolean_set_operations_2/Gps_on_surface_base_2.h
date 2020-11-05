@@ -25,6 +25,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+#include <CGAL/Arrangement_2/Arr_do_intersect_traits_adaptor_2.h>
 
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Boolean_set_operations_2/Gps_do_intersect_functor.h>
@@ -315,10 +316,27 @@ public:
   {
     if (this->is_empty() || other.is_empty()) return false;
     if (this->is_plane() || other.is_plane()) return true;
-    Aos_2 res_arr;
+
+    using Do_intersect_traits = Arr_do_intersect_traits_adaptor_2<Traits_2>;
+    using Aos_do_intersect
+      = CGAL::Arrangement_on_surface_2
+      <Do_intersect_traits,
+       typename Topology_traits::template rebind
+       <Do_intersect_traits,
+        typename Topology_traits::Dcel>::other >;
+
+    Aos_do_intersect res_arr;
     Gps_do_intersect_functor<Aos_2>  func;
-    overlay(*m_arr, *(other.m_arr), res_arr, func);
-    return func.found_reg_intersection();
+    try
+    {
+      overlay(*m_arr, *(other.m_arr), res_arr, func);
+    }
+    catch (typename Do_intersect_traits::Exception&)
+    {
+      std::cerr << "Caught exception" << std::endl;
+      return true;
+    }
+    return func.found_reg_intersection() || func.found_boundary_intersection();
   }
 
   // intersection with a simple polygon
