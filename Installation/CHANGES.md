@@ -2,6 +2,7 @@ Release History
 ===============
 
 [Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
+-----------
 
 Release date: December 2020
 
@@ -89,6 +90,9 @@ Release date: December 2020
 ### [Surface Mesh Parameterization](https://doc.cgal.org/5.2/Manual/packages.html#PkgSurfaceMeshParameterization)
 - Added a new parameterization method, Iterative Authalic Parameterization. It is based on the work of Jain, Hardik, Manuel Wollhaf, and Olaf Hellwich,
   "Learning to Reconstruct Symmetric Shapes using Planar Parameterization of 3D Surface." (IEEE International Conference on Computer Vision Workshops, 2019).
+
+### Add Move Semantics to AABB Trees
+ -   Added move constructor and assignment operator to AABB Tree class.
 
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/v5.1)
 -----------

@@ -219,6 +219,7 @@ void test(const NamedParameters& np)
   check_same_type<36>(get_parameter(np, CGAL::internal_np::face_normal));
   check_same_type<37>(get_parameter(np, CGAL::internal_np::random_seed));
   check_same_type<38>(get_parameter(np, CGAL::internal_np::do_project));
+  check_same_type<456>(get_parameter(np, CGAL::internal_np::algorithm));
 
     // Internal named parameters
   check_same_type<39>(get_parameter(np, CGAL::internal_np::weight_calculator));
@@ -318,6 +319,7 @@ int main()
                          .face_normal_map(A<36>(36))
                          .random_seed(A<37>(37))
                          .do_project(A<38>(38))
+                         .algorithm(A<456>(456))
                          .weight_calculator(A<39>(39))
                          .preserve_genus(A<40>(40))
                          .verbosity_level(A<41>(41))
