@@ -84,7 +84,7 @@ public:
     {
       typename Base::Intersect_2
         intersect_2 = dynamic_cast<const Base*>(&m_traits)->intersect_2_object();
-      intersect_2(cv1, cv2, [](const auto&) { throw Exception(); });
+      intersect_2(cv1, cv2, boost::make_function_output_iterator([](const auto&) { throw Exception(); }));
       return oi;
     }
   };
