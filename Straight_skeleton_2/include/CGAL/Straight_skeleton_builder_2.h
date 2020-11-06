@@ -525,12 +525,20 @@ public:
       CGAL_precondition( aA->type() != Event::cEdgeEvent || aB->type() != Event::cEdgeEvent ) ;
 
       if ( ! mBuilder->AreEventsSimultaneous(aA,aB) )
-        return ( mBuilder->CompareEvents(aA,aB) == LARGER ) ;
+      {
+        Comparison_result res = mBuilder->CompareEvents(aA,aB);
+        if ( res == EQUAL )
+          return aA < aB;
+        return ( res == LARGER ) ;
+      }
 
       // Priority queue comparison: `A` has higher priority than `B` if `operator()(A, B)` is `false`.
       // We want to give priority to smaller angles, so we must return `false` if the angle is smaller
       // i.e. `true` if the angle is larger
-      return ( mBuilder->CompareEventsSupportAngles(aA, aB) == LARGER ) ;
+      Comparison_result res = mBuilder->CompareEventsSupportAngles(aA, aB);
+      if ( res == EQUAL )
+        return aA < aB;
+      return ( res == LARGER ) ;
     }
 
   private:
