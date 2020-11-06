@@ -6,17 +6,76 @@ cmake_minimum_required(VERSION 3.1...3.15)
 project( Nef_S2_Examples )
 
 
-find_package(CGAL QUIET)
+if(POLICY CMP0053)
+  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
+  if(NOT POLICY CMP0070)
+    cmake_policy(SET CMP0053 OLD)
+  else()
+    cmake_policy(SET CMP0053 NEW)
+  endif()
+endif()
+if(POLICY CMP0071)
+    cmake_policy(SET CMP0071 NEW)
+endif()
+
+find_package(CGAL)
+find_package(Qt5 COMPONENTS Widgets OpenGL)
 
 if ( CGAL_FOUND )
 
   include_directories (BEFORE "include")
 
-  # create a target per cppfile
-  file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-  foreach(cppfile ${cppfiles})
-    create_single_source_cgal_program( "${cppfile}" )
-  endforeach()
+  create_single_source_cgal_program("nef_s2_construction.cpp")
+  create_single_source_cgal_program("nef_s2_exploration.cpp")
+  create_single_source_cgal_program("nef_s2_point_location.cpp")
+  create_single_source_cgal_program("nef_s2_simple.cpp")
+
+  if(Qt5_FOUND)
+      # The Qt5Widgets_INCLUDES also includes the include directories for
+      # dependencies QtCore and QtGui
+      include_directories(${Qt5Widgets_INCLUDE_DIRS} ${Qt5OpenGL_INCLUDE_DIRS})
+
+      # We need add -DQT_WIDGETS_LIB when using QtWidgets in Qt 5.
+      add_definitions(${Qt5Widgets_DEFINITIONS} ${Qt5OpenGL_DEFINITIONS})
+
+      # Tell CMake to run moc when necessary:
+      set(CMAKE_AUTOMOC ON)
+      # As moc files are generated in the binary dir, tell CMake
+      # to always look for includes there:
+      set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+      # qt5_wrap_cpp(mocfiles include/CGAL/Nef_S2/Qt_widget_OpenGL.h
+      #     include/CGAL/Nef_S2/Qt_widget_Nef_S2.h)
+
+      qt5_generate_moc(include/CGAL/Nef_S2/Qt_widget_OpenGL.h Qt_widget_OpenGL.h.moc.cpp)
+      qt5_generate_moc(include/CGAL/Nef_S2/Qt_widget_Nef_S2.h Qt_widget_Nef_S2.h.moc.cpp)
+
+
+      add_executable(nef_S2 
+          "nef_S2.cpp" 
+          "Qt_widget_OpenGL.h.moc.cpp" 
+          "Qt_widget_Nef_S2.h.moc.cpp" 
+          "Qt_widget_Nef_S2.cpp"
+          "Qt_widget_OpenGL.cpp" )
+      target_link_libraries(nef_S2 PRIVATE CGAL::CGAL)
+      if(CGAL_3RD_PARTY_LIBRARIES)
+          target_link_libraries(nef_S2 PRIVATE ${CGAL_3RD_PARTY_LIBRARIES})
+      endif()
+      target_link_libraries(nef_S2 PRIVATE  ${CGAL_LIBRARIES} Qt5::Widgets Qt5::OpenGL glut GLU GL )
+
+
+      add_executable(draw_nef_s2
+          "draw_nef_s2.cpp"
+          "Qt_widget_OpenGL.h.moc.cpp" 
+          "Qt_widget_Nef_S2.h.moc.cpp" 
+          "Qt_widget_Nef_S2.cpp"
+          "Qt_widget_OpenGL.cpp")
+      target_link_libraries(draw_nef_s2 PRIVATE CGAL::CGAL)
+      if(CGAL_3RD_PARTY_LIBRARIES)
+          target_link_libraries(draw_nef_s2 PRIVATE ${CGAL_3RD_PARTY_LIBRARIES})
+      endif()
+      target_link_libraries(draw_nef_s2 PRIVATE ${CGAL_LIBRARIES} Qt5::Widgets Qt5::OpenGL glut GLU GL )
+  endif()
 
 else()
 
