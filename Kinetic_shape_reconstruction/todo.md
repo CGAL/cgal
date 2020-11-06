@@ -5,3 +5,4 @@
 * Should we count the number of intersections per polygon or per mesh face?
 * Should we keep facei-facej number of intersections?
 * When we do a test e.g. 6 polygons intersect k = 6 times all intersections between polygons are already inserted for k = 5 and do not change for k = 6. For 3 input polygons, they are inserted only for k = 3. Is it correct behaviour?
+* Test randomness.

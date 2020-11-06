@@ -590,7 +590,7 @@ private:
 
       ++ iter;
 
-      // if (iter == 47) {
+      // if (iter == 50) {
       //   exit(0);
       // }
 
@@ -738,7 +738,7 @@ private:
           else // polygon continues beyond the edge
           {
             PVertex pv0, pv1;
-            std::tie(pv0, pv1) = m_data.propagate_polygon(k, m_data.k(pface), pvertex, pother, iedge);
+            std::tie(pv0, pv1) = m_data.propagate_polygon(m_data.k(pface), pvertex, pother, iedge);
             remove_events(iedge, pvertex.first);
             compute_events_of_vertices(ev.time(), std::array<PVertex, 4>{pvertex, pother, pv0, pv1});
           }
@@ -787,7 +787,7 @@ private:
         }
         else // polygon continues beyond the edge
         {
-          const std::array<PVertex, 3> pvnew = m_data.propagate_polygon(k, m_data.k(pface), pvertex, iedge);
+          const std::array<PVertex, 3> pvnew = m_data.propagate_polygon(m_data.k(pface), pvertex, iedge);
           remove_events(iedge, pvertex.first);
           compute_events_of_vertices(ev.time(), pvnew);
         }

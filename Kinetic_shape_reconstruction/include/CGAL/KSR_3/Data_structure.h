@@ -1092,8 +1092,17 @@ public:
           // std::cout << pedge_segment.squared_length() << std::endl;
 
           if (pedge_segment.squared_length() == FT(0))
-            std::cout << "ERROR: SOURCE_TO_PVERTEX SQ LENGTH = " << source_to_pvertex.squared_length() << std::endl;
+            std::cout << "ERROR: SOURCE_TO_PVERTEX/PEDGE SEGMENT SQ LENGTH = "
+            << source_to_pvertex.squared_length() << std::endl;
           CGAL_assertion(pedge_segment.squared_length() != FT(0));
+
+          // if (pedge_segment.squared_length() == FT(0)) {
+          //   if (pedge_segment.source() == point_3(pvertex)) {
+          //     collision = false;
+          //     break;
+          //   }
+          // }
+          // CGAL_assertion(pedge_segment.squared_length() != FT(0));
 
           if (source_to_pvertex.squared_length() <= pedge_segment.squared_length()) {
             collision = true;
@@ -1178,7 +1187,6 @@ public:
   }
 
   std::array<PVertex, 3> propagate_polygon (
-    const unsigned int /* k */,
     const unsigned int last_k,
     const PVertex& pvertex, const IEdge& iedge)
   {
@@ -1199,7 +1207,6 @@ public:
     pvertices[2] = propagated;
 
     PFace new_pface = add_pface (pvertices);
-    // this->k(new_pface) = k;
     this->k(new_pface) = last_k;
     CGAL_assertion (new_pface.second != Face_index());
 
@@ -1266,8 +1273,7 @@ public:
   }
 
   std::pair<PVertex, PVertex> propagate_polygon(
-    const unsigned int, // k,
-    const unsigned int, // last_k, // use last_k!
+    const unsigned int, // last_k,
     const PVertex& pvertex, const PVertex& pother, const IEdge& iedge)
   {
     std::cout << "*** Propagating " << str(pvertex) << "/" << str(pother) << " along " << str(iedge) << std::endl;
@@ -1686,7 +1692,12 @@ public:
 
           // Create a new face.
           std::cout << "adding new face!" << std::endl;
-          if (is_occupied_edge && this->k(pface) > 1) this->k(pface)--;
+          if (is_occupied_edge && this->k(pface) > 1) {
+            std::cout << "continue k > 1" << std::endl;
+            this->k(pface)--;
+          } else {
+            std::cout << "continue k = 1" << std::endl;
+          }
           CGAL_assertion(this->k(pface) >= 1);
 
           PVertex propagated = add_pvertex(pvertex.first, future_points[i]);
@@ -1861,7 +1872,12 @@ public:
 
           // Create a new face.
           std::cout << "adding new face!" << std::endl;
-          if (is_occupied_edge && this->k(pface) > 1) this->k(pface)--;
+          if (is_occupied_edge && this->k(pface) > 1) {
+            std::cout << "continue k > 1" << std::endl;
+            this->k(pface)--;
+          } else {
+            std::cout << "continue k = 1" << std::endl;
+          }
           CGAL_assertion(this->k(pface) >= 1);
 
           PVertex propagated = add_pvertex(pvertex.first, future_points[i]);
@@ -2061,69 +2077,45 @@ public:
       if (bbox_reached_back) {
 
         CGAL_assertion(bbox_reached_front);
-        // We stop here.
-        std::cout << "stop bbox" << std::endl;
+        std::cout << "stop bbox back" << std::endl;
 
       } else if (bbox_reached_front) {
 
         CGAL_assertion(bbox_reached_back);
-        // We stop here.
-        std::cout << "stop bbox" << std::endl;
+        std::cout << "stop bbox front" << std::endl;
 
       } else if ((is_occupied_edge_back && is_occupied_edge_front) && this->k(pface) == 1) {
 
-        // We stop here.
-        std::cout << "stop k" << std::endl;
+        add_new_faces(this->k(pface), pvertex, new_vertices, pface);
+        std::cout << "back && front k = 1" << std::endl;
 
       } else if ((is_occupied_edge_back && is_occupied_edge_front) && this->k(pface) > 1) {
 
-        // We update k here.
-        this->k(pface)--;
-        CGAL_assertion(this->k(pface) >= 1);
+        // this->k(pface)--;
+        // CGAL_assertion(this->k(pface) >= 1);
+        add_new_faces(this->k(pface), pvertex, new_vertices, pface);
+        std::cout << "back && front k > 1" << std::endl;
 
-        CGAL_assertion(new_vertices.size() >= 2);
-        for (std::size_t i = 0; i < new_vertices.size() - 1; ++i) {
-          std::cout << "adding a new face" << std::endl;
-          const PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
-          // this->k(new_pface) = k;
-          this->k(new_pface) = this->k(pface);
-        }
+      } else if ((!is_occupied_edge_back && !is_occupied_edge_front)) {
 
-      } else if ((!is_occupied_edge_back && !is_occupied_edge_front) && new_vertices.size() >= 2) {
+        add_new_faces(this->k(pface), pvertex, new_vertices, pface);
+        std::cout << "!back && !front" << std::endl;
 
-        // We do not update k here!
-        CGAL_assertion(new_vertices.size() >= 2);
-        for (std::size_t i = 0; i < new_vertices.size() - 1; ++i) {
-          std::cout << "adding a new face" << std::endl;
-          const PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
-          // this->k(new_pface) = k;
-          this->k(new_pface) = this->k(pface);
-        }
+      } else if (is_occupied_edge_back && !is_occupied_edge_front) {
 
-      } else if ((is_occupied_edge_back || is_occupied_edge_front) && this->k(pface) == 1) {
+        add_new_faces(this->k(pface), pvertex, new_vertices, pface);
+        std::cout << "back && !front" << std::endl;
 
-        // We do not update k here!
-        CGAL_assertion(new_vertices.size() >= 2);
-        for (std::size_t i = 0; i < new_vertices.size() - 1; ++i) {
-          std::cout << "adding a new face" << std::endl;
-          const PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
-          // this->k(new_pface) = k;
-          this->k(new_pface) = this->k(pface);
-        }
+      } else if (!is_occupied_edge_back && is_occupied_edge_front) {
 
-      } else if ((is_occupied_edge_back || is_occupied_edge_front) && this->k(pface) > 1) {
+        add_new_faces(this->k(pface), pvertex, new_vertices, pface);
+        std::cout << "!back && front" << std::endl;
 
-        // We update k here.
-        this->k(pface)--;
-        CGAL_assertion(this->k(pface) >= 1);
-
-        CGAL_assertion(new_vertices.size() >= 2);
-        for (std::size_t i = 0; i < new_vertices.size() - 1; ++i) {
-          std::cout << "adding a new face" << std::endl;
-          const PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
-          // this->k(new_pface) = k;
-          this->k(new_pface) = this->k(pface);
-        }
+        // if (this->k(pface) > 1) {
+        //   this->k(pface)--;
+        //   CGAL_assertion(this->k(pface) >= 1);
+        //   add_new_faces(this->k(pface), pvertex, new_vertices, pface);
+        // }
 
       } else {
         CGAL_assertion_msg(false, "TODO: ADD NEW OPEN CASE! DO NOT FORGET TO UPDATE K!");
@@ -2166,6 +2158,20 @@ public:
     // }
 
     return new_vertices;
+  }
+
+  void add_new_faces(
+    const unsigned int k,
+    const PVertex& pvertex,
+    const std::vector<PVertex>& new_vertices,
+    const PFace& pface) {
+
+    CGAL_assertion(new_vertices.size() >= 2);
+    for (std::size_t i = 0; i < new_vertices.size() - 1; ++i) {
+      std::cout << "adding a new face" << std::endl;
+      const PFace new_pface = add_pface(std::array<PVertex, 3>{new_vertices[i], new_vertices[i + 1], pvertex});
+      this->k(new_pface) = k;
+    }
   }
 
   void create_polyhedrons() {
