@@ -33,10 +33,10 @@ if(TARGET CGAL::Eigen_support)
   polyhedron_demo_plugin(
     surface_reconstruction_plugin
     Surface_reconstruction_plugin
-    Surface_reconstruction_poisson_impl
-    Surface_reconstruction_advancing_front_impl
-    Surface_reconstruction_scale_space_impl
-    Surface_reconstruction_polygonal_impl
+    Surface_reconstruction_poisson_impl.cpp
+    Surface_reconstruction_advancing_front_impl.cpp
+    Surface_reconstruction_scale_space_impl.cpp
+    Surface_reconstruction_polygonal_impl.cpp
     ${surface_reconstructionUI_FILES}
     KEYWORDS
     PointSetProcessing)
