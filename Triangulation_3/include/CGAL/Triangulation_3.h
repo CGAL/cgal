@@ -572,6 +572,10 @@ protected:
   Tds _tds;
   GT  _gt;
   Vertex_handle infinite; // infinite vertex
+  //IO maps
+    mutable std::vector<Vertex_handle> index_vertex_map;
+    mutable Unique_hash_map<Vertex_handle, std::size_t > vertex_index_map;
+
 
 public:
   template<typename P> // Point or Point_3
@@ -2351,6 +2355,38 @@ public:
     CGAL_triangulation_assertion( is_valid(false) );
     return is;
   }
+
+  size_type write_vertices_and_fill_maps(std::ostream& os, const size_type& num_vertices) const
+  {
+    index_vertex_map.resize(num_vertices+1);
+
+    size_type i = 0;
+    for(Vertex_iterator it = vertices_begin(), end = vertices_end(); it != end; ++it)
+      index_vertex_map[i++] = it;
+
+    CGAL_triangulation_assertion(i == num_vertices+1);
+    CGAL_triangulation_assertion(is_infinite(index_vertex_map[0]));
+
+    vertex_index_map[infinite_vertex()] = 0;
+    for(i=1; i <= num_vertices; i++)
+    {
+      os << *index_vertex_map[i];
+      vertex_index_map[index_vertex_map[i]] = i;
+      if(is_ascii(os))
+        os << std::endl;
+    }
+    return i;
+  }
+
+  const Unique_hash_map<Vertex_handle, std::size_t >& get_vertex_index_map() const
+  {
+    return vertex_index_map;
+  }
+
+  const std::vector<Vertex_handle>&  get_index_vertex_map() const
+  {
+    return index_vertex_map;
+  }
 };
 
 
@@ -2449,28 +2485,13 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
   if(n == 0)
     return os;
 
-  std::vector<Vertex_handle> TV(n+1);
-  size_type i = 0;
+
 
   // write the vertices
-  for(Vertex_iterator it = tr.vertices_begin(), end = tr.vertices_end(); it != end; ++it)
-    TV[i++] = it;
-
-  CGAL_triangulation_assertion(i == n+1);
-  CGAL_triangulation_assertion(tr.is_infinite(TV[0]));
-
-  Unique_hash_map<Vertex_handle, std::size_t > V;
-  V[tr.infinite_vertex()] = 0;
-  for(i=1; i <= n; i++)
-  {
-    os << *TV[i];
-    V[TV[i]] = i;
-    if(is_ascii(os))
-      os << std::endl;
-  }
+  size_type i = tr.write_vertices_and_fill_maps(os, n);
 
   // Asks the tds for the combinatorial information
-  tr.tds().print_cells(os, V);
+  tr.tds().print_cells(os, tr.get_vertex_index_map());
 
   // Write the non combinatorial information on the cells
   // using the << operator of Cell.
