@@ -87,7 +87,8 @@ namespace CGAL {
 /**
  * \ingroup PkgPolygonMeshProcessingRef
  * This class can be used to check if a query point, segment, or triangle
- * is inside or outside a polyhedral envelope of a triangle mesh.
+ * is inside or outside a polyhedral envelope of a triangle mesh and a distance \f$ \epsilon \f$.
+ * The polyhedral envelope is the union of <em>prisms</em> obtained.
  *
  * @tparam GeomTraits a geometric traits class, model of `Kernel`
  */
@@ -256,6 +257,8 @@ private:
   eOriented_side_3 oriented_side;
 
 public:
+
+#ifndef DOXYGEN_RUNNING
   Envelope(const std::vector<Point_3>& env_vertices,
            std::vector<Vector3i> env_faces,
            double epsilon)
@@ -263,7 +266,7 @@ public:
   {
     init(epsilon);
   }
-
+#endif
 
    /**
    * Constructor with a triangulated surface mesh.
@@ -271,7 +274,7 @@ public:
     * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
     *
     * @param tmesh a triangle mesh
-    * @param epsilon
+    * @param epsilon the distance of the Minkowski sum hull
     * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
     *
     * \cgalNamedParamsBegin
@@ -292,7 +295,10 @@ public:
     *   \cgalParamNEnd
     *
     * \cgalNamedParamsEnd
-   */
+    *
+    * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
+    *       while the queries are performed
+    */
 
   template <typename TriangleMesh, typename NamedParameters>
   Envelope(const TriangleMesh& tmesh,
