@@ -73,7 +73,8 @@ Trisegment_collinearity trisegment_collinearity_no_exact_constructions ( Segment
 template<class NT>
 inline NT inexact_sqrt_implementation( NT const& n, CGAL::Null_functor /*no_sqrt*/ )
 {
-  typedef CGAL::Interval_nt<true> IFT;
+  typedef CGAL::Interval_nt<false> IFT;
+  typename IFT::Protector protector;
 
   CGAL::NT_converter<NT, IFT> to_ift;
   return NT( to_double(sqrt(to_ift(n))) );
