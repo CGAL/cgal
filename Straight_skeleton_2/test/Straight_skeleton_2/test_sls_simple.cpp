@@ -12,12 +12,12 @@
 
 void Straight_skeleton_external_trace(std::string m)
 {
-  std::cout << std::setprecision(19) << m << std::endl << std::endl ;
+  std::cout << std::setprecision(17) << m << std::endl << std::endl ;
 }
 
 void Straight_skeleton_traits_external_trace(std::string m)
 {
-  std::cout << std::setprecision(19) << m << std::endl << std::endl ;
+  std::cout << std::setprecision(17) << m << std::endl << std::endl ;
 }
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
