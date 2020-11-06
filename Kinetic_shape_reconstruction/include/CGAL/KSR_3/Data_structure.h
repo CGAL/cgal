@@ -1391,15 +1391,12 @@ public:
 
   std::vector<PVertex> merge_pvertices_on_ivertex (const FT min_time,
                                                    const FT max_time,
-                                                   const unsigned int k,
-                                                   const PVertex& /* event_pvertex */,
                                                    std::vector<PVertex>& pvertices,
                                                    const IVertex& ivertex,
                                                    std::vector<IEdge>& crossed)
   {
     crossed.clear();
     KSR::size_t support_plane_idx = pvertices.front().first;
-    // const IEdge original_iedge = iedge(event_pvertex);
 
     PVertex prev = pvertices.front();
     PVertex next = pvertices.back();
