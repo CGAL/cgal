@@ -17,6 +17,9 @@ if(POLICY CMP0074)
   cmake_policy(SET CMP0074 NEW)
 endif()
 
+if(POLICY CMP0115)
+  cmake_policy(SET CMP0115 OLD)
+endif()
 include(FeatureSummary)
 
 # Find includes in corresponding build directories
