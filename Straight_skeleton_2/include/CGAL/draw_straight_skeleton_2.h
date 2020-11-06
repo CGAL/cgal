@@ -151,8 +151,7 @@ protected:
 
 template<class K>
 void draw(const CGAL_SS_TYPE& ass2,
-          const char* title="Straight Skeleton Basic Viewer",
-          bool nofill=false)
+          const char* title="Straight Skeleton Basic Viewer")
 {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
