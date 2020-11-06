@@ -59,9 +59,9 @@ if(TARGET CGAL::Eigen_support)
     polyhedron_demo_plugin(
       classification_plugin
       Classification_plugin
-      Point_set_item_classification
-      Cluster_classification
-      Surface_mesh_item_classification
+      Point_set_item_classification.cpp
+      Cluster_classification.cpp
+      Surface_mesh_item_classification.cpp
       ${classificationUI_FILES}
       KEYWORDS
       Classification)
