@@ -46,6 +46,9 @@ bool arrange_offset_polygons_2 ( InputPolygonPtrIterator           aBegin
                                , const K&
                                )
 {
+  bool bk_poly_assert_mode = get_use_polygon_assertions();
+  set_use_polygon_assertions(false); // disable assertions in Polygon_2 function as we may manipulate strictly simple polygons
+
   typedef typename std::iterator_traits<InputPolygonPtrIterator>::difference_type difference_type ;
   typedef typename std::iterator_traits<InputPolygonPtrIterator>::value_type PolygonPtr ;
 
@@ -60,6 +63,7 @@ bool arrange_offset_polygons_2 ( InputPolygonPtrIterator           aBegin
     difference_type lIdx = std::distance(aBegin,it);
 
     const PolygonPtr lPoly = *it ;
+
     Orientation lOrient = lPoly->orientation();
 
     // It's an outer boundary
@@ -87,17 +91,23 @@ bool arrange_offset_polygons_2 ( InputPolygonPtrIterator           aBegin
         PolygonWithHolesPtr lOuter = lTable[j];
         if ( lOuter )
           for ( auto v = CGAL_SS_i::vertices_begin(lPoly), ve = CGAL_SS_i::vertices_end(lPoly); v != ve && !lParent ; ++ v )
+          {
             if ( lOuter->outer_boundary().bounded_side(*v) == ON_BOUNDED_SIDE )
               lParent = lOuter ;
+
+          }
       }
 
       if (lParent == nullptr)
+      {
+        set_use_polygon_assertions(bk_poly_assert_mode);
         return false;
+      }
 
       lParent->add_hole(*lPoly);
     }
   }
-
+  set_use_polygon_assertions(bk_poly_assert_mode);
   return true;
 }
 
