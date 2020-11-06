@@ -17,7 +17,7 @@
 #include <CGAL/Default.h>
 #include <CGAL/intersections.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include<CGAL/Surface_mesh_simplification/internal/Common.h>
+
 
 #include <CGAL/Envelope.h>
 
@@ -29,8 +29,22 @@
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
+namespace internal {
 
-template<typename GeomTraits,typename BaseFilter = internal::Dummy_filter>
+  struct Dummy_filter2 {
+  template <typename Profile>
+  inline
+  const boost::optional<typename Profile::Point>
+  operator()(const Profile&, const boost::optional<typename Profile::Point>& op) const
+  {
+    return op;
+  }
+
+};
+
+} // namesapce internal
+
+template<typename GeomTraits,typename BaseFilter = internal::Dummy_filter2>
 class Envelope_filter
 {
   typedef GeomTraits                                                          Geom_traits;
