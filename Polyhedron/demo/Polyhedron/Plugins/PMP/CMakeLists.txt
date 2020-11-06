@@ -99,9 +99,8 @@ target_link_libraries(selection_plugin PUBLIC scene_selection_item scene_points_
 add_custom_target(self_intersection_plugin)
 add_dependencies(self_intersection_plugin selection_plugin)
 
-polyhedron_demo_plugin(triangulate_facets_plugin Triangulate_facets_plugin
-                       KEYWORDS PMP)
-target_link_libraries(triangulate_facets_plugin PUBLIC scene_surface_mesh_item)
+polyhedron_demo_plugin(triangulate_facets_plugin Triangulate_facets_plugin KEYWORDS PMP)
+target_link_libraries(triangulate_facets_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
 
 polyhedron_demo_plugin(corefinement_plugin Corefinement_plugin KEYWORDS PMP)
 target_link_libraries(corefinement_plugin PUBLIC scene_surface_mesh_item)
