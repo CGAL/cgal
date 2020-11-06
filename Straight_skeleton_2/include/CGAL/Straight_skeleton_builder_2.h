@@ -472,7 +472,18 @@ private :
       {
         // Event A does not exist, so give it the lower priority by returning LARGER
         // (meaning, operator() == true and A has lower priority than B)
-        return CGAL::LARGER;
+        //
+        // Exception: event B also is a pseudo split that does not exist...
+        if ( aB->type() == Event::cSplitEvent )
+        {
+          Halfedge_handle lOppEdgeB = aB->triedge().e2() ;
+          Site lSiteB;
+          Vertex_handle_pair lOppB = LookupOnSLAV(lOppEdgeB,aB,lSiteB);
+          if ( !handle_assigned(lOppB.first) )
+            return EQUAL;
+        }
+
+        return LARGER;
       }
     }
     else
