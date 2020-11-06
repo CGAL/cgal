@@ -774,8 +774,15 @@ operator<< (std::ostream& os,
 {
   // TODO: implement edge saving
   typedef typename Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::Concurrency_tag Concurrency_tag;
-  return os << static_cast<
+  os << static_cast<
     const Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr, Concurrency_tag>&>(c3t3);
+  std::cout<<"EDGES : \n ---"<<std::endl;
+  for(auto it = c3t3.triangulation().edges_begin(); it!= c3t3.triangulation().edges_end(); ++it)
+  {
+    std::cout<< *((*it).first)<<std::endl;
+  }
+  std::cout<<"EDGES : \n ---"<<std::endl;
+  return os;
 }
 
 
