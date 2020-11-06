@@ -17,6 +17,7 @@
 #include <CGAL/predicates/Straight_skeleton_pred_ftC2.h>
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_traits_2_aux.h>
+#include <CGAL/Trisegment_2.h>
 
 #include <CGAL/Filtered_construction.h>
 #include <CGAL/Uncertain.h>
@@ -801,9 +802,9 @@ public:
 
     typename FK::FT::Protector p;
 
-    typedef Trisegment_2<K, CGAL_SS_i::Segment_2_with_ID<K> > Source_trisegment_2 ;
+    typedef CGAL::Trisegment_2<K, CGAL_SS_i::Segment_2_with_ID<K> > Source_trisegment_2 ;
     typedef typename Source_trisegment_2::Self_ptr Source_trisegment_2_ptr;
-    typedef Trisegment_2<FK, CGAL_SS_i::Segment_2_with_ID<FK> > Target_trisegment_2 ;
+    typedef CGAL::Trisegment_2<FK, CGAL_SS_i::Segment_2_with_ID<FK> > Target_trisegment_2 ;
     typedef typename Target_trisegment_2::Self_ptr Target_trisegment_2_ptr;
 
     C2F to_FK ;
