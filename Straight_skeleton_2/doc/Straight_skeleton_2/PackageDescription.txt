@@ -62,7 +62,7 @@
 ///   <li>
 ///     If the kernel type `InK` is <b>equal</b> to the output kernel type `OfK`,
 ///     but the input polygon is a polygon <b>with holes</b> (a model of `GeneralPolygonWithHoles_2`),
-///     then the return type is ``InKPolygon`::General_polygon_2`.
+///     then the return type is `InKPolygon::General_polygon_2`.
 ///   </li>
 ///   <li>
 ///     If the kernel type  `InK` of the input polygon type is <b>equal</b> to the output kernel type `OfK`,
