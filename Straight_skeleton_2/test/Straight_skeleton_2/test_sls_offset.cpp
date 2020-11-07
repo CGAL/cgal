@@ -899,7 +899,7 @@ void test_offset(const char* filename)
 
   // Offset construction
   int i = 0;
-  for(const FT ot : offset_times)
+  for(const FT& ot : offset_times)
   {
     std::cout << "Offset #" << i++ << " = " << ot << std::endl;
     Polygon_with_holes_2_ptr_container offset_poly_with_holes =
