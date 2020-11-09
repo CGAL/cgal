@@ -76,10 +76,8 @@ int main() {
     boundary_size = 0;
     if (! fit->is_unbounded()) {
       auto curr = fit->outer_ccb();
-      do {
-        ++boundary_size;
-        ++curr;
-      } while (curr != fit->outer_ccb());
+      do ++boundary_size;
+      while (++curr != fit->outer_ccb());
     }
     fit->set_data(boundary_size);
   }
