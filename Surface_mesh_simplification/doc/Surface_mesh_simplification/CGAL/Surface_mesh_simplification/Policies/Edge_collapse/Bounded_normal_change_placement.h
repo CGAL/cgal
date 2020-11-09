@@ -5,7 +5,7 @@ namespace Surface_mesh_simplification {
 /*!
 \ingroup PkgSurfaceMeshSimplificationRef
 
-\deprecated This class is deprecated since \cgal 5.2 and the use of
+\deprecated This class is deprecated since \cgal 5.3 and the use of
 `Bounded_normal_change_filter` should be preferred.
 
 
