@@ -114,6 +114,7 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrangementDcelOuterCcb`
 - `ArrangementDcelInnerCcb`
 - `ArrangementDcelIsolatedVertex`
+- `ArrangementBasicTopologyTraits`
 - `ArrangementBasicTraits_2`
 - `ArrangementConstructXMonotoneCurveTraits_2`
 - `ArrangementLandmarkTraits_2`

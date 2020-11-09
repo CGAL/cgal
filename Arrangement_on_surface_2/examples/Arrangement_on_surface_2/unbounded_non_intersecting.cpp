@@ -31,10 +31,10 @@ int main() {
   for (auto it = arr.unbounded_faces_begin(); it != arr.unbounded_faces_end();
        ++it)
   {
-    std::cout << "Face no. " << k++ << "(" << it->number_of_outer_ccbs()
-              << "," << it->number_of_inner_ccbs() << ")" << ": ";
-    Arrangement::Ccb_halfedge_const_circulator first, curr;
-    curr = first = it->outer_ccb();
+    std::cout << "Face no. " << k++ << "(" << it->is_unbounded() << ","
+              << it->number_of_holes() << ")" << ": ";
+    Arrangement::Ccb_halfedge_const_circulator first = it->outer_ccb();
+    auto curr = first;
     if (! curr->source()->is_at_open_boundary())
       std::cout << "(" << curr->source()->point() << ")";
 

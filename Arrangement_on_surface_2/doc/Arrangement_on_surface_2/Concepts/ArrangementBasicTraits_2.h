@@ -103,7 +103,7 @@ public:
 
   /*! models the concept `ArrTraits::ConstructMaxVertex_2`.
    */
-typedef unspecified_type Construct_max_vertex_2;
+  typedef unspecified_type Construct_max_vertex_2;
 
   /*! models the concept `ArrTraits::IsVertical_2`.
    */

@@ -695,14 +695,17 @@ as follows:
 <UL>
 
 <LI>You can obtain a pair of iterators of type \link
-  ArrangementDcelFace::Hole_iterator `Hole_iterator`\endlink that
+  Arrangement_2::Face::Hole_iterator `Hole_iterator`\endlink that
   define the range of holes inside a face \f$f\f$ by calling \link
   Arrangement_2::Face::holes_begin() `f->holes_begin()`\endlink and
   \link Arrangement_2::Face::holes_end() `f->holes_end()`\endlink. The
   value type of this iterator type is \link
   Arrangement_2::Ccb_halfedge_circulator
   `Ccb_halfedge_circulator`\endlink, defining the CCB that winds in a
-  clockwise order around a hole.
+  clockwise order around a hole.  The call \link
+  Arrangement_2::Face::number_of_holes()
+  `f->number_of_holes()`\endlink return the number of holes in
+  \f$f\f$.
 
 <LI>The calls \link Arrangement_2::Face::isolated_vertices_begin()
   `f->isolated_vertices_begin()`\endlink and \link
@@ -2434,27 +2437,26 @@ and \f$f\f$ be handles to a vertex of type
   provides the Boolean predicate \link
   Arrangement_2::Halfedge::is_fictitious `is_fictitious()`\endlink. If
   the call \link Arrangement_2::Halfedge::is_fictitious
-  `e->is_fictitious()`\endlink predicate evaluates to `false`, you can
-  access the \f$x\f$-monotone curve associated with
-  \f$e\f$. Otherwise, \f$e\f$ is not associated with an \link
-  Arrangement_2::X_monotone_curve_2 `X_monotone_curve_2`\endlink object.
+  `e->is_fictitious()`\endlink evaluates to `false`, you can access
+  the \f$x\f$-monotone curve associated with \f$e\f$. Otherwise,
+  \f$e\f$ is not associated with an \link
+  Arrangement_2::X_monotone_curve_2 `X_monotone_curve_2`\endlink
+  object.
 
 <LI>The nested \link Arrangement_2::Face `Face`\endlink type provides
   the Boolean predicate \link Arrangement_2::Face::is_fictitious()
   `is_fictitious()`\endlink. The call \link
   Arrangement_2::Face::is_fictitious() `f->is_fictitious()`\endlink
-  predicate evaluates to `true` only when \f$f\f$ lies outside the
-  bounding rectangle. The method \link
-  Arrangement_2::Face::outer_ccb() `outer_ccb()`\endlink (see Section
-  \ref arr_sssectr_face must not be invoked for the fictitious
-  face.  \cgalFootnote{Typically, the code is guarded against such
-  malicious calls with adequate preconditions. However, these
-  preconditions are suppressed when the code is compiled with maximum
-  optimization.}
-  Note that a valid unbounded face (of an arrangement
-  that supports unbounded curves) has a valid outer CCB, although the
-  CCB comprises only fictitious halfedges if the arrangement is
-  induced only by bounded curves.
+  evaluates to `true` only when \f$f\f$ lies outside the bounding
+  rectangle. The method \link Arrangement_2::Face::outer_ccb()
+  `outer_ccb()`\endlink (see Section \ref arr_sssectr_face must not be
+  invoked for the fictitious face.  \cgalFootnote{Typically, the code
+  is guarded against such malicious calls with adequate
+  preconditions. However, these preconditions are suppressed when the
+  code is compiled with maximum optimization.}  Note that a valid
+  unbounded face (of an arrangement that supports unbounded curves)
+  has a valid outer CCB, although the CCB comprises only fictitious
+  halfedges if the arrangement is induced only by bounded curves.
 
 </UL>
 
@@ -2876,27 +2878,29 @@ can be used to represent a 2D arrangement embedded in a 3D
 surface. The template is parameterized by template parameters
 <em>geometry traits</em> and <em>topology traits</em>. The
 topology-traits type deals with the topology of the parametric
-surface. As explained in the previous section, a parametric surface
-\f$S \f$ is given by a continuous function \f$\phi_S: \Phi \rightarrow
-\mathbb{R}^3\f$, where the domain \f$\Phi = X \times Y\f$ is a
-rectangular two-dimensional parameter space; \f$S =
-\phi_S(\Phi)\f$. \f$X\f$ and \f$Y\f$ are open, half-open, or closed
-intervals with endpoints in \f$\overline{\mathbb{R}}\f$.
+surface; see Section \ref aos_sec-topol_traits. As explained in the
+previous section, a parametric surface \f$S \f$ is given by a
+continuous function \f$\phi_S: \Phi \rightarrow \mathbb{R}^3\f$, where
+the domain \f$\Phi = X \times Y\f$ is a rectangular two-dimensional
+parameter space; \f$S = \phi_S(\Phi)\f$. \f$X\f$ and \f$Y\f$ are open,
+half-open, or closed intervals with endpoints in
+\f$\overline{\mathbb{R}}\f$.
 
 The geometry-traits type introduces the type names of the basic
 geometric objects (i.e., point, curve, and \f$u \f$-monotone curve)
 and the set of operations on objects of these types required to
 construct and maintain the arrangement and to operate on it. The
 traits-concept hierarchy described in Section \ref aos_sec-geom_traits
-accurately defines the requirements imposed on a model of a
-geometry traits class. Recall that requirements apply to the parameter
-space \f$\Phi = X \times Y\f$; thus, they are defined in terms of
-\f$x\f$ and \f$y\f$ coordinates.  Most requirements apply to all type
-of arrangements regardless of the embedding surface. However, several
+accurately defines the requirements imposed on a model of a geometry
+traits class. Recall that requirements apply to the parameter space
+\f$\Phi = X \times Y\f$; thus, they are defined in terms of \f$x\f$
+and \f$y\f$ coordinates.  Most requirements apply to all type of
+arrangements regardless of the embedding surface. However, several
 refined concepts apply only to arrangements on surfaces that are not
-the plane, that is, modeled with \f$\phi_S\f$ not being the identity
-mapping. They differ according to the type of the side boundaries of
-the parameter space being open, closed, contracted, or identified.
+in the plane, that is, modeled with \f$\phi_S\f$ not being the
+identity mapping. They differ according to the type of the side
+boundaries of the parameter space being open, closed, contracted, or
+identified.
 
 At this point only one type of arrangements on non planar surfaces is
 supported, namely, arrangements embedded in the sphere and induced by
@@ -2930,6 +2934,127 @@ Sites are drawn in red and Voronoi edges are drawn in blue.
 (c) The power diagram of 10 random circles.
 (d) A degenerate power diagram of 14 sites on the sphere.
 \cgalFigureCaptionEnd
+
+<!----------------------------------------------------------------------------->
+\subsection aos_ssec-curved_surfaces-basic Basic Manipulation and Traversal Methods
+<!----------------------------------------------------------------------------->
+
+The types \link Arrangement_on_surface_2::Vertex `Vertex`\endlink,
+\link Arrangement_on_surface_2::Halfedge `Halfedge`\endlink, and \link
+Arrangement_on_surface_2::Face `Face`\endlink nested in the
+`Arrangement_on_surface_2` class template support the methods listed
+in Section \ref arr_ssectraverse and in Section \ref
+arr_sssecunb_basic.  Let \f$v\f$, \f$e\f$, and \f$f\f$ be handles to a
+vertex of type \link Arrangement_on_surface_2::Vertex
+`Vertex`\endlink, a halfedge of type \link
+Arrangement_on_surface_2::Halfedge `Halfedge`\endlink, and a face of
+type \link Arrangement_on_surface_2::Face `Face`\endlink,
+respectively.
+
+<UL>
+
+<LI>The calls \link
+  Arrangement_on_surface_2::Vertex::parameter_space_in_x()
+  `v->parameter_space_in_x()`\endlink and \link
+  Arrangement_on_surface_2::Vertex::parameter_space_in_y()
+  `v->parameter_space_in_y()`\endlink determine the location of the
+  geometric embedding of the vertex \f$v\f$. The call \link
+  Arrangement_on_surface_2::Vertex::parameter_space_in_x()
+  `v->parameter_space_in_x()`\endlink returns `CGAL::ARR_INTERIOR` if
+  the geometric embedding of \f$v\f$ is a point \f$p\f$ that does not
+  lie on the left nor on the right sides of the boundary of the
+  parameter space. If the left and right sides are not identified,
+  then `CGAL::ARR_LEFT_BOUNDARY` or `CGAL::ARR_RIGHT_BOUNDARY` are
+  returned if \f$p\f$ lies on the left or the right side,
+  respectively.  If the left and right sides are identified, the
+  return value is non-deterministic. Similarly, the call \link
+  Arrangement_2::Vertex::parameter_space_in_y()
+  `v->parameter_space_in_y()`\endlink returns `CGAL::ARR_INTERIOR` if
+  the geometric embedding of \f$v\f$ is a point \f$q\f$ that does not
+  lie on the bottom nor on the top sides of the boundary of the
+  parameter space. If the bottom and top sides are not identified,
+  then `CGAL::ARR_BOTTOM_BOUNDARY` or `CGAL::ARR_TOP_BOUNDARY` are
+  returned if \f$q\f$ lies on the bottom or the top side,
+  respectively.  If the bottom and top sides are identified, the
+  return value is non-deterministic.
+
+  If you want to determine whether a point \f$p\f$ lies on identified
+  sides, you need to exploit one of the two traits functors \link
+  ArrangementIdentifiedVerticalTraits_2::Is_on_y_identification_2
+  `Is_on_y_identification_2`\endlink or \link
+  ArrangementIdentifiedVerticalTraits_2::Is_on_y_identification_2
+  `Is_on_y_identification_2`\endlink; see Section \ref
+  aos_ssec-traits-curved. If \f$p\f$ is incident to an
+  \f$x\f$-monotone curve \f$c\f$ and \f$c\f$ is not vertical (thus,
+  does not lie on the identified side as well), you can determine the
+  boundary side of the end of \f$c\f$ associated with \f$p\f$
+  exploiting either the \link
+  ArrangementVerticalSideTraits_2::Parameter_space_in_x_2
+  `Parameter_space_in_x_2`\endlink functor or the \link
+  ArrangementHorizontalSideTraits_2::Parameter_space_in_y_2
+  `Parameter_space_in_x_2`\endlink functor; see Section \ref
+  aos_ssec-traits-curved.
+
+<LI>A face in a planar arrangement has at most one outer CCB. However,
+  a face in an arrangement embedded on a surface, such as a torus, may
+  have two outer CCBs; to this end, the methods \link
+  Arrangement_on_surface_2::Face::outer_ccbs_begin()
+  `outer_ccbs_begin()`\endlink and \link
+  Arrangement_on_surface_2::Face::outer_ccbs_end()
+  `outer_ccbs_end()`\endlink return a pair of iterators of type \link
+  Arrangement_on_surface_2::Face::Outer_ccb_iterator
+  `Outer_ccb_iterator`\endlink that define a range of outer CCBs
+  inside the face \f$f\f$. Similarly, the methods \link
+  Arrangement_on_surface_2::Face::inner_ccbs_begin()
+  `inner_ccbs_begin()`\endlink and \link
+  Arrangement_on_surface_2::Face::inner_ccbs_end()
+  `inner_ccbs_end()`\endlink return a pair of iterators of type \link
+  Arrangement_on_surface_2::Face::Inner_ccb_iterator
+  `Inner_ccb_iterator`\endlink that define a range of inner CCBs
+  inside the face \f$f\f$. (The latter pair of member functions and
+  the iterator type are equivalent to the methods \link
+  Arrangement_on_surface_2::Face::holes_begin()
+  `holes_begin()`\endlink, \link
+  Arrangement_on_surface_2::Face::holes_end() `holes()`\endlink, and
+  \link Arrangement_on_surface_2::Face::Hole_iterator
+  `Hole_iterator`\endlink; see Section arr_sssectr_face.) The calls
+  \link Arrangement_on_surface_2::Face::number_of_outer_ccbs()
+  `f->number_of_outer_ccbs()`\endlink and \link
+  Arrangement_on_surface_2::Face::number_of_inner_ccbs()
+  `f->number_of_inner_ccbs()`\endlink return the number of outer CCBs
+  and the number of inner CCBs in \f$f\f$, respectively.
+
+</UL>
+
+The template function `is_in_x_range()` listed below, and defined in the
+file `is_in_x_range.h`, checks whether a given point \f$p\f$ is in the
+$x$-range of the curve associated with a given halfedge \f$e\f$. The
+function template also exemplifies how some of the above functions can
+be used.
+
+\code
+bool is_in_x_range(const X_monotone_curve_2& xcv, const Point_2& point) const {
+  typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y> Traits;
+
+  Direction_2 p = project_xy(point);
+  if (xcv.is_vertical()) {
+    const Direction_3& normal = xcv.normal();
+    Direction_2 q = (xcv.is_directed_right()) ?
+      Direction_2(-(normal.dy()), normal.dx()) :
+      Direction_2(normal.dy(), -(normal.dx()));
+    const Kernel& kernel = *this;
+    return kernel.equal_2_object()(p, q);
+  }
+
+  // The curve is not vertical:
+  Direction_2 r = project_xy(xcv.right());
+  const Kernel& kernel = *this;
+  if (kernel.equal_2_object()(p, r)) return true;
+  Direction_2 l = Traits::project_xy(xcv.left());
+  if (kernel.equal_2_object()(p, l)) return true;
+  return kernel.counterclockwise_in_between_2_object()(p, l, r);
+}
+\endcode
 
 <!--=========================================================================-->
 \section aos_sec-geom_traits The Geometry Traits
@@ -5250,9 +5375,17 @@ instantiate the curve-data traits:
 <!--=========================================================================-->
 \section aos_sec-topol_traits The Topology Traits
 <!--=========================================================================-->
-
-At this point we do not expose the topology traits concept. The
-package contains one topology traits, namely,
+A topology traits class encapsulates the definitions of the
+topological entities and the implementation of the functions that
+handle these topological entities, used by the
+`Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>` class
+template and by the peripheral modules. Every topology traits class
+must model the basic concept `ArrangementBasicTopologyTraits`. A model
+of this basic concept holds the (\sc{Dcel}) data structure used to
+represent the arrangement cells (i.e., vertices, edges, and facets)
+and the incident * relations between them. At this point we do not
+expose the concepts that refine the basic concept. The package
+contains one topology traits, namely,
 `Arr_spherical_topology_traits_2`. It can serve as a topology traits
 for an arrangement embedded on a sphere. More precisely, for an
 arrangement embedded on a sphere defined over a parameter space the

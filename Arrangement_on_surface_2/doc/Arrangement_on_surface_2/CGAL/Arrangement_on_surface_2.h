@@ -76,20 +76,20 @@ public:
   typedef typename Topology_traits::Dcel                Dcel;
 
   /*! the point type, as defined by the traits class. */
-  typedef typename Geometry__traits_2::Point_2 Point_2;
+  typedef typename Geometry_traits_2::Point_2           Point_2;
 
   /*! the \f$ x\f$-monotone curve type, as defined by the traits class. */
   typedef typename Geometry_traits_2::X_monotone_curve_2 X_monotone_curve_2;
 
   /*! the size type (equivalent to `size_t`). */
-  typedef typename Dcel::Size Size;
+  typedef typename Dcel::Size                           Size;
 
   /*! \ingroup PkgArrangementOnSurface2DCEL
    * An object \f$ v\f$ of the class `Vertex` represents an arrangement vertex,
    * that is a \f$ 0\f$-dimensional cell, associated with a point on the
    * ambient surface.
    */
-  class Vertex : public Dcel::Vertex {
+  class Vertex : public typename Dcel::Vertex {
   public:
     /// \name Creation
     /// @{
@@ -162,7 +162,7 @@ public:
    * Halfedges are stored in doubly-connected lists and form chains. These
    * chains define the inner and outer boundaries of connected components.
    */
-  class Halfedge : public Dcel::Halfedge {
+  class Halfedge : public typename Dcel::Halfedge {
   public:
     /// \name Creation
     /// @{
@@ -226,8 +226,8 @@ public:
 
   /*! \ingroup PkgArrangementOnSurface2DCEL
    *
-   * An object of the class `Face` represents an arrangement face, namely, a \f$
-   * 2\f$-dimensional arrangement cell. An arrangement that supports only
+   * An object of the class `Face` represents an arrangement face, namely, a
+   * \f$2\f$-dimensional arrangement cell. An arrangement that supports only
    * bounded curves contains exactly one <I>unbounded</I> face, and a number of
    * bounded faces. An arrangement that supports also unbounded curves has one
    * or more unbounded faces. Such an arrangement has also exactly one
@@ -241,8 +241,37 @@ public:
    * do not correspond to real curves. A face may also contain holes, which are
    * defined by clockwise-oriented halfedge chains, and isolated vertices.
    */
-  class Face : public Dcel::Face {
+  class Face : public typename Dcel::Face {
+  private:
+    typedef Dcel::Face                               Base;
+
   public:
+
+    /// \name Types inherited from the base Dcel::Face
+    /// @{
+
+    /*! a bidirectional iterator over the inner CCBs of the face.
+     * Its value type is `Ccb_halfedge_circulator`.
+     */
+    typedef typename Base::Inner_ccb_iterator         Inner_ccb_iterator;
+
+    /*! a bidirectional iterator over the outer CCBs of the face.
+     * Its value type is `Ccb_halfedge_circulator`.
+     */
+    typedef typename Base::Outer_ccb_iterator         Outer_ccb_iterator;
+
+    /*! a bidirectional iterator over the holes (i.e., inner CCBs) contained
+     * inside the face. Its value type is `Ccb_halfedge_circulator`.
+     */
+    typedef typename Base::Hole_iterator              Hole_iterator;
+
+    /*! a bidirectional iterator over the isolated vertices contained inside
+     * the face. Its value type is `Vertex`.
+     */
+    typedef typename Base::Isolated_vertex_iterator   Isolated_vertex_iterator;
+
+    /// @}
+
     /// \name Creation
     /// @{
 

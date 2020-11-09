@@ -60,11 +60,11 @@ supports the merging of curves of opposite directions.
 \cgalModels `ArrangementDirectionalXMonotoneTraits_2`
 
 */
-template< typename Kernel >
-class Arr_segment_traits_2 {
+template <typename Kernel>
+class Arr_segment_traits_2 : public Kernel {
 public:
 
-Class Trim_2{
+Class Trim_2 {
 public:
 /// \name Creation
 /// @{
