@@ -547,6 +547,25 @@ public:
                                  Vertex_iterator_not_in_complex(*this));
   }
 
+  std::ostream& write_edges_in_complex(std::ostream& os,
+                                      const Unique_hash_map<Vertex_handle, std::size_t >& vertex_index_map) const
+  {
+    if(is_ascii(os))
+    {
+      for(auto it = edges_.begin(); it != edges_.end(); ++it)
+        os<<vertex_index_map[it->left]<<" "<<vertex_index_map[it->right]<< " "<< it->info<<std::endl;
+    }
+    else
+    {
+      for(auto it = edges_.begin(); it != edges_.end(); ++it)
+      {
+        write(os, vertex_index_map[it->left]);
+        write(os, vertex_index_map[it->right]);
+        write(os, it->info);
+      }
+    }
+    return os;
+  }
 
 private:
   /**
@@ -773,15 +792,16 @@ operator<< (std::ostream& os,
             const Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_> &c3t3)
 {
   // TODO: implement edge saving
+  c3t3.triangulation().set_clear_maps_after_io(false);
   typedef typename Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::Concurrency_tag Concurrency_tag;
   os << static_cast<
     const Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr, Concurrency_tag>&>(c3t3);
-  std::cout<<"EDGES : \n ---"<<std::endl;
-  for(auto it = c3t3.triangulation().edges_begin(); it!= c3t3.triangulation().edges_end(); ++it)
+  if(os.good() && c3t3.triangulation().dimension() > 0)
   {
-    std::cout<< *((*it).first)<<std::endl;
+    c3t3.write_edges_in_complex(os, c3t3.triangulation().get_vertex_index_map());
+    c3t3.triangulation().set_clear_maps_after_io(true);
+    c3t3.triangulation().clean_up_io_maps();
   }
-  std::cout<<"EDGES : \n ---"<<std::endl;
   return os;
 }
 
