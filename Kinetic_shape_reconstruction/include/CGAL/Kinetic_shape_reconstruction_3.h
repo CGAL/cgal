@@ -162,7 +162,7 @@ public:
     CGAL_assertion(check_integrity(true));
     std::cout << "Finalizing KSR!" << std::endl;
     dump (m_data, "iter_1000-final-result");
-    // m_data.create_polyhedrons();
+    m_data.create_polyhedrons();
     return true;
   }
 
@@ -302,9 +302,9 @@ private:
   {
     // TODO: FIX IT AND MAKE IT WORK FOR ANY NUMBER OF SUPPORT PLANES!
     std::cout << "num support planes: " << m_data.number_of_support_planes() << std::endl;
-    if (m_data.number_of_support_planes() < 8) {
-      return;
-    }
+    // if (m_data.number_of_support_planes() < 8) {
+    //   return;
+    // }
 
     // First, generate all transverse intersection lines
     typedef std::map<KSR::Idx_set, std::pair<IVertex, IVertex> > Map;

@@ -210,6 +210,45 @@ void dump_polygons (const DS& data, const std::string& tag = std::string()) {
 }
 
 template <typename DS>
+void dump_polyhedrons (const DS& data, const std::string& tag = std::string()) {
+
+  typedef CGAL::Surface_mesh<typename DS::Kernel::Point_3> Mesh;
+  typedef typename Mesh::template Property_map<typename Mesh::Face_index, unsigned char> Uchar_map;
+
+  Mesh mesh;
+  Uchar_map red = mesh.template add_property_map<typename Mesh::Face_index, unsigned char>("red", 0).first;
+  Uchar_map green = mesh.template add_property_map<typename Mesh::Face_index, unsigned char>("green", 0).first;
+  Uchar_map blue = mesh.template add_property_map<typename Mesh::Face_index, unsigned char>("blue", 0).first;
+
+  KSR::vector<typename Mesh::Vertex_index> vertices;
+  KSR::vector<typename Mesh::Vertex_index> map_vertices;
+
+  for (std::size_t i = 0; i < data.polyhedrons().size(); ++i) {
+    const auto& volume = data.polyhedrons()[i];
+
+    map_vertices.clear();
+    for (const auto& pvertex : volume.pvertices) {
+      if (map_vertices.size() <= pvertex.second)
+        map_vertices.resize(pvertex.second + 1);
+      map_vertices[pvertex.second] = mesh.add_vertex(data.point_3(pvertex));
+    }
+
+    for (const auto& pface : volume.pfaces) {
+      vertices.clear();
+      for (const auto pvertex : data.pvertices_of_pface(pface))
+        vertices.push_back(map_vertices[pvertex.second]);
+      const auto face = mesh.add_face(vertices);
+      std::tie(red[face], green[face], blue[face]) = get_idx_color(i * (pface.second + 1));
+    }
+
+    const std::string filename =
+      (tag != std::string() ? tag + "_" : "") + "volume-" + std::to_string(i) + ".ply";
+    std::ofstream out(filename);
+    CGAL::write_ply(out, mesh);
+  }
+}
+
+template <typename DS>
 void dump_polygon_borders (const DS& data, const std::string& tag = std::string()) {
 
   std::string filename = (tag != std::string() ? tag + "_" : "") + "polygon_borders.polylines.txt";

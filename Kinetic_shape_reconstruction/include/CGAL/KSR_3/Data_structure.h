@@ -151,17 +151,33 @@ public:
                                     Halfedge_around_target_iterator<Mesh> > PEdge_around_pvertex_iterator;
   typedef Iterator_range<PEdge_around_pvertex_iterator> PEdges_around_pvertex;
 
+  typedef boost::transform_iterator<Halfedge_to_pedge,
+                                    Halfedge_around_face_iterator<Mesh> > PEdge_of_pface_iterator;
+  typedef Iterator_range<PEdge_of_pface_iterator> PEdges_of_pface;
+
   typedef typename Intersection_graph::Vertex_descriptor IVertex;
   typedef typename Intersection_graph::Edge_descriptor IEdge;
   typedef typename Intersection_graph::Vertices IVertices;
   typedef typename Intersection_graph::Edges IEdges;
   typedef typename Intersection_graph::Incident_edges Incident_iedges;
 
+  struct Volume_cell {
+    std::vector<PFace> pfaces;
+    std::vector<int> neighbors;
+    std::set<PVertex> pvertices;
+
+    void add_pface(const PFace& pface, const int neighbor) {
+      pfaces.push_back(pface);
+      neighbors.push_back(neighbor);
+    }
+  };
+
 private:
 
   // Main data structure
   Support_planes m_support_planes;
   Intersection_graph m_intersection_graph;
+  std::vector<Volume_cell> m_volumes;
 
   // Helping data structures
   std::map<Point_3, KSR::size_t> m_meta_map;
@@ -193,6 +209,10 @@ public:
 
   const FT last_event_time(const PVertex& pvertex) {
     return support_plane(pvertex).last_event_time(pvertex.second);
+  }
+
+  const std::vector<Volume_cell>& polyhedrons() const {
+    return m_volumes;
   }
 
   /*******************************
@@ -634,6 +654,17 @@ public:
                                (halfedges_around_face(halfedge(pface.second, mesh(pface)),
                                                       mesh(pface)).end(),
                                 Halfedge_to_pvertex(pface.first, mesh(pface))));
+  }
+
+  PEdges_of_pface pedges_of_pface(const PFace& pface) const {
+
+    return PEdges_of_pface(
+      boost::make_transform_iterator(
+      halfedges_around_face(halfedge(pface.second, mesh(pface)), mesh(pface)).begin(),
+      Halfedge_to_pedge(pface.first, mesh(pface))),
+      boost::make_transform_iterator(
+      halfedges_around_face(halfedge(pface.second, mesh(pface)), mesh(pface)).end(),
+      Halfedge_to_pedge(pface.first, mesh(pface))));
   }
 
   PEdges_around_pvertex pedges_around_pvertex (const PVertex& pvertex) const
@@ -2172,7 +2203,217 @@ public:
   }
 
   void create_polyhedrons() {
-    CGAL_assertion_msg(false, "TODO: CREATE OUTPUT POLYHEDRONS!");
+    // for (std::size_t i = 0; i < number_of_support_planes(); ++i)
+    //   std::cout << "num faces sp " << i << ": " << pfaces(i).size() << std::endl;
+
+    // Check vertices.
+    for (const auto vertex : m_intersection_graph.vertices()) {
+      const auto nedges = m_intersection_graph.incident_edges(vertex);
+      if (nedges.size() <= 2)
+        std::cerr << "current num edges = " << nedges.size() << std::endl;
+      CGAL_assertion_msg(nedges.size() > 2,
+      "ERROR: VERTEX MUST HAVE AT LEAST 3 NEIGHBORS!");
+    }
+
+    // Check edges.
+    std::vector<PFace> nfaces;
+    for (const auto edge : m_intersection_graph.edges()) {
+      incident_faces(edge, nfaces);
+      if (nfaces.size() <= 1)
+        std::cerr << "current num faces = " << nfaces.size() << std::endl;
+      CGAL_assertion_msg(nfaces.size() > 1,
+      "ERROR: EDGE MUST HAVE AT LEAST 2 NEIGHBORS!");
+    }
+
+    // Check faces.
+    create_volumes();
+    for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
+      const auto pfaces = this->pfaces(i);
+      for (const auto pface : pfaces) {
+        const auto nvolumes = incident_volumes(pface);
+        if (nvolumes.size() == 0 || nvolumes.size() > 2)
+          std::cerr << "current num volumes = " << nvolumes.size() << std::endl;
+        CGAL_assertion_msg(nvolumes.size() == 1 || nvolumes.size() == 2,
+        "ERROR: FACE MUST HAVE 1 OR 2 NEIGHBORS!");
+      }
+    }
+  }
+
+  void create_volumes() {
+
+    m_volumes.clear();
+    std::map<PFace, std::pair<int, int> > map_volumes;
+    for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
+      const auto pfaces = this->pfaces(i);
+      for (const auto pface : pfaces)
+        map_volumes[pface] = std::make_pair(-1, -1);
+    }
+
+    int volume_index = 0;
+    for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
+      const auto pfaces = this->pfaces(i);
+      for (const auto pface : pfaces) {
+        const bool success = traverse_pface(pface, volume_index, map_volumes);
+        if (success) ++volume_index;
+      }
+    }
+    std::cout << "Found " << volume_index << " polyhedrons!" << std::endl;
+
+    for (const auto& item : map_volumes) {
+      const auto& pair = item.second;
+
+      CGAL_assertion(pair.first != -1);
+      if (m_volumes.size() <= pair.first)
+        m_volumes.resize(pair.first + 1);
+      m_volumes[pair.first].add_pface(item.first, pair.second);
+      if (pair.second == -1) continue;
+
+      CGAL_assertion(pair.second != -1);
+      if (m_volumes.size() <= pair.second)
+        m_volumes.resize(pair.second + 1);
+      m_volumes[pair.second].add_pface(item.first, pair.first);
+    }
+    for (auto& volume : m_volumes)
+      create_cell_pvertices(volume);
+    std::cout << "Created " << m_volumes.size() << " polyhedrons!" << std::endl;
+
+    for (const auto& volume : m_volumes) {
+      std::cout <<
+      " pvertices: " << volume.pvertices.size() <<
+      " pfaces: " << volume.pfaces.size() << std::endl;
+    }
+
+    dump_polyhedrons(*this, "iter_1000");
+  }
+
+  const bool traverse_pface(
+    const PFace& pface,
+    const int volume_index,
+    std::map<PFace, std::pair<int, int> >& map_volumes) {
+
+    auto& pair = map_volumes.at(pface);
+    if (pair.first != -1 && pair.second != -1) return false;
+    CGAL_assertion(pair.second == -1);
+    if (pair.first == volume_index) return false;
+    CGAL_assertion(pair.first != volume_index);
+
+    if (pair.first != -1) pair.second = volume_index;
+    else pair.first = volume_index;
+
+    const auto pedges = pedges_of_pface(pface);
+    const std::size_t n = pedges.size();
+
+    std::vector<PEdge> edges;
+    edges.reserve(n);
+    for (const auto pedge : pedges) {
+      edges.push_back(pedge);
+    }
+    CGAL_assertion(edges.size() == n);
+
+    std::vector<PFace> nfaces;
+    for (std::size_t i = 0; i < n; ++i) {
+      const std::size_t im = (i + n - 1) % n;
+      const std::size_t ip = (i + 1) % n;
+
+      const auto& edgem = edges[im];
+      const auto& edgei = edges[i];
+      const auto& edgep = edges[ip];
+
+      CGAL_assertion(has_iedge(edgei));
+      incident_faces(this->iedge(edgei), nfaces);
+      for (const auto& nface : nfaces) {
+        if (belongs_to_this_volume(pface, nface, edgem, edgep)) {
+          traverse_pface(nface, volume_index, map_volumes);
+        }
+      }
+    }
+    return true;
+  }
+
+  const bool belongs_to_this_volume(
+    const PFace& pface, const PFace& nface,
+    const PEdge& edgem, const PEdge& edgep) const {
+
+    if (pface.first == nface.first) return false;
+
+    std::vector<PFace> facesm, facesp;
+    CGAL_assertion(has_iedge(edgem));
+    incident_faces(this->iedge(edgem), facesm);
+    CGAL_assertion(has_iedge(edgep));
+    incident_faces(this->iedge(edgep), facesp);
+
+    const bool found_prev = check_neighbor_faces(pface, nface, facesm);
+    const bool found_next = check_neighbor_faces(pface, nface, facesp);
+    return (found_prev && found_next);
+  }
+
+  const bool check_neighbor_faces(
+    const PFace& pface,
+    const PFace& nface,
+    const std::vector<PFace>& faces) const {
+
+    CGAL_assertion(pface != nface);
+    for (const auto& face : faces) {
+      CGAL_assertion(face != nface);
+      if (face.first == nface.first) continue;
+      if (face == pface) return true;
+      if (has_equal_edge(pface, face)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  const bool has_equal_edge(const PFace& pface, const PFace& nface) const {
+
+    CGAL_assertion(pface != nface);
+    for (const auto pedge : pedges_of_pface(pface)) {
+      for (const auto nedge : pedges_of_pface(nface)) {
+        if (pedge == nedge) return true;
+      }
+    }
+    return false;
+  }
+
+  void create_cell_pvertices(Volume_cell& cell) {
+    cell.pvertices.clear();
+    for (const auto& pface : cell.pfaces) {
+      for (const auto pvertex : pvertices_of_pface(pface)) {
+        cell.pvertices.insert(pvertex);
+      }
+    }
+  }
+
+  const std::vector<Volume_cell> incident_volumes(const PFace& query_pface) const {
+    std::vector<Volume_cell> nvolumes;
+    for (const auto& volume : m_volumes) {
+      for (const auto& pface : volume.pfaces) {
+        if (pface == query_pface) nvolumes.push_back(volume);
+      }
+    }
+    return nvolumes;
+  }
+
+  void incident_faces(const IEdge& query_iedge, std::vector<PFace>& nfaces) const {
+
+    nfaces.clear();
+    for (const auto plane_idx : intersected_planes(query_iedge)) {
+      for (const auto pedge : pedges(plane_idx)) {
+        if (iedge(pedge) == query_iedge) {
+          const auto& m = mesh(plane_idx);
+          const auto he = m.halfedge(pedge.second);
+          const auto op = m.opposite(he);
+          const auto face1 = m.face(he);
+          const auto face2 = m.face(op);
+          if (face1 != Support_plane::Mesh::null_face()) {
+            nfaces.push_back(PFace(plane_idx, face1));
+          }
+          if (face2 != Support_plane::Mesh::null_face()) {
+            nfaces.push_back(PFace(plane_idx, face2));
+          }
+        }
+      }
+    }
   }
 
   void update_positions (FT time)
