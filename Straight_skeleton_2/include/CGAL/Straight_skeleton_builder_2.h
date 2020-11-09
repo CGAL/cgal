@@ -518,7 +518,7 @@ public:
     : public CGAL::cpp98::binary_function<bool,EventPtr,EventPtr>
   {
   public:
-    Split_event_compare ( Self* aBuilder ) : mBuilder(aBuilder) {}
+    Split_event_compare ( Self* aBuilder, Vertex_handle aV ) : mBuilder(aBuilder), mV(aV) {}
 
     bool operator() ( EventPtr const& aA, EventPtr const& aB ) const
     {
@@ -532,6 +532,10 @@ public:
         return ( res == LARGER ) ;
       }
 
+      // There are simultaneous events, we will need to refresh the queue before calling top()
+      // see PopNextSplitEvent()
+      mBuilder->GetVertexData(mV).mHasSimultaneousEvents = true ;
+
       // Priority queue comparison: `A` has higher priority than `B` if `operator()(A, B)` is `false`.
       // We want to give priority to smaller angles, so we must return `false` if the angle is smaller
       // i.e. `true` if the angle is larger
@@ -543,6 +547,7 @@ public:
 
   private:
     Self* mBuilder ;
+    const Vertex_handle mV ;
   } ;
 
   typedef std::priority_queue<EventPtr,std::vector<EventPtr>,Split_event_compare> SplitPQ ;
@@ -559,6 +564,7 @@ public:
       , mPrevInLAV(-1)
       , mNextInLAV(-1)
       , mNextSplitEventInMainPQ(false)
+      , mHasSimultaneousEvents(false)
       , mSplitEvents(aComparer)
     {}
 
@@ -569,7 +575,8 @@ public:
     bool              mIsExcluded ;
     int               mPrevInLAV ;
     int               mNextInLAV ;
-    bool              mNextSplitEventInMainPQ;
+    bool              mNextSplitEventInMainPQ ;
+    bool              mHasSimultaneousEvents ;
     SplitPQ           mSplitEvents ;
     Triedge           mTriedge ; // Here, E0,E1 corresponds to the vertex (unlike *event* triedges)
     Trisegment_2_ptr  mTrisegment ; // Skeleton nodes cache the full trisegment tree that defines the originating event
@@ -597,7 +604,7 @@ private :
 
   void InitVertexData( Vertex_handle aV )
   {
-    mVertexData.push_back( Vertex_data_ptr( new Vertex_data(aV,mSplitEventCompare) ) ) ;
+    mVertexData.push_back( Vertex_data_ptr( new Vertex_data(aV, Split_event_compare(this, aV) ) ) ) ;
   }
 
   Vertex_data const& GetVertexData( Vertex_const_handle aV ) const
@@ -807,6 +814,30 @@ private :
       SplitPQ& lPQ = lData.mSplitEvents ;
       if ( !lPQ.empty() )
       {
+        // When there are simultaneous split events, we sort them to handle nearby pseudo split events
+        // together as to avoid multiple fronts crossing each other without seeing
+        // and creating an invalid SLS.
+        //
+        // Unfortunately, the way that this sorting is performed requires knowing whether an event
+        // is a pseudo split, and requires looking into the LAV tree. More annoyingly, whether an event
+        // exists or not (see calls to handle_assigned(lOpp) and such) can change, which will
+        // change the position of the item in the split priority queue (as an invalid event is
+        // at the bottom of the priority queue).
+        //
+        // Consequently, when a simultaneous event has been detected, we need to refresh the queue
+        // to get the real top.
+        //
+        // In practice, things are usually fine with a roughly-correct priority queue because an
+        // invalid event being popped will just be ignored, but MSVC 2015-Debug is a very zealous
+        // compiler that checks that the full queue is sane when it pops() and will detect this kind
+        // of unimportant inconsistencies...
+        if ( lData.mHasSimultaneousEvents )
+        {
+          std::make_heap(const_cast<EventPtr*>(&lPQ.top()),
+                         const_cast<EventPtr*>(&lPQ.top()) + lPQ.size(),
+                         Split_event_compare(this, aV));
+        }
+
         rEvent = lPQ.top();
         lPQ.pop();
         lData.mNextSplitEventInMainPQ = true ;
@@ -1102,7 +1133,6 @@ private:
 
   Vertex_handle_pair_vector mSplitNodes ;
 
-  Split_event_compare mSplitEventCompare ;
   Event_compare mEventCompare ;
 
   int mVertexID ;

@@ -42,7 +42,6 @@ Straight_skeleton_builder_2<Gt,Ss,V>::Straight_skeleton_builder_2 ( boost::optio
   :
   mTraits(aTraits)
  ,mVisitor(aVisitor)
- ,mSplitEventCompare(this)
  ,mEventCompare(this)
  ,mVertexID(0)
  ,mEdgeID(0)
