@@ -62,6 +62,8 @@
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
+
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_primitive.h>
@@ -323,14 +325,17 @@ public:
       env_vertices.emplace_back(get(vpm, v));
     }
 
+    GeomTraits gt;
     for(typename boost::graph_traits<TriangleMesh>::face_descriptor f : faces(tmesh)){
-      typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h = halfedge(f, tmesh);
-      int i = get(vim, source(h, tmesh));
-      int j = get(vim, target(h, tmesh));
-      int k = get(vim, target(next(h, tmesh), tmesh));
+      if(! Polygon_mesh_processing::is_degenerate_triangle_face(f, tmesh, parameters::geom_traits(gt).vertex_point_map(vpm))){
+        typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h = halfedge(f, tmesh);
+        int i = get(vim, source(h, tmesh));
+        int j = get(vim, target(h, tmesh));
+        int k = get(vim, target(next(h, tmesh), tmesh));
 
-      Vector3i face = { i, j, k };
-      env_faces.push_back(face);
+        Vector3i face = { i, j, k };
+        env_faces.push_back(face);
+      }
     }
     init(epsilon);
   }
