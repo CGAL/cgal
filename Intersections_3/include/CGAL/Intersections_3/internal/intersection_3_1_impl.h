@@ -232,23 +232,6 @@ intersection_point(const typename K::Plane_3 &plane1,
     const FT &m21 = plane3.b();
     const FT &m22 = plane3.c();
     const FT &b2  = - plane3.d();
-    /*
-    const FT den = determinant(m00, m01, m02,
-                               m10, m11, m12,
-                               m20, m21, m22);
-    if(den == FT(0)){
-      return boost::none;
-    }
-    const FT num1 = determinant(b0, m01, m02,
-                                b1, m11, m12,
-                                b2, m21, m22);
-    const FT num2 = determinant(m00, b0, m02,
-                                m10, b1, m12,
-                                m20, b2, m22);
-    const FT num3 = determinant(m00, m01, b0,
-                                m10, m11, b1,
-                                m20, m21, b2);
-    */
 
     // Minors common to two determinants
     const FT minor_0 = m00*m11 - m10*m01;

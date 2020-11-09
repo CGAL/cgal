@@ -524,7 +524,7 @@ of the angle.  These halfspaces are at distance  \f$ \delta \f$ and oriented
 such that they contain the triangle.
 
 The <em>polyhedral envelope</em> with a tolerance \f$ \epsilon \f$ then is the union of the prisms of all triangular faces
-with  \f$ \delta = \epsilon / \sqrt(3) \f$
+with  \f$ \delta = \epsilon / \sqrt(3) \f$.
 
 \cgalFigureBegin{envelopeFig, envelope.png}
 The prism for a single triangle, the polyhedral envelope as well as the Minkowski sum envelope for a triangle mesh.
@@ -539,17 +539,26 @@ If a query is inside the polyhedral envelope, we can be sure
 that it is also in the Minkowski sum envelope, but if it is outside the polyhedral envelope
 we do not know where it is with respect to the Minkowski sum envelope.
 
-Such a test is used by the class `Surface_mesh_simplification::Envelope_filter` of the
-package \refPkgSurfaceMeshSimplification, in order to simplify within a given tolerance.
 
-\subsubsection InsideExample Polyhedral Envelope Example
-\cgalExample{Polygon_mesh_processing/polyhedral_envelope.cpp}
+The algorithm of  Wang et al \cgalCite{cgal:Wwshap-eepec-20} for the polyhedral envelope containment check
+can be summarized as follows.
+The prisms of the faces of the triangle mesh are stored in an AABB tree, which is used to quickly
+identify the prisms whose bounding box overlaps with the query.
 
-The algorithm of  Wang et al \cgalCite{cgal:Wwshap-eepec-20} and can be summarized as follows.
-First for each triangle a <em>prism</em> is constructed with an offset of \f$ \epsilon/\sqrt(3) \f$ where \f$ \epsilon\f$ is the tolerance,
-and all prisms are stored in an AABB tree.  For a query point the algorithm checks if it is inside a prism.
+For a query point the algorithm checks if it is inside one of these prisms.
 For a query segment or triangle the algorithms checks if the query is completely covered.
 The details of how to check this covering can be found in the paper.
+
+The polyedral envelope containment check is used by the class `Surface_mesh_simplification::Envelope_filter`
+of the package \refPkgSurfaceMeshSimplification, in order to simplify a triangle mesh within a given tolerance.
+
+
+\subsubsection PolyhedralEnvelopeExample Polyhedral Envelope Example
+
+The following example shows how to construct the envelope and perform queries.
+
+\cgalExample{Polygon_mesh_processing/polyhedral_envelope.cpp}
+
 
 \subsection PMPShapePredicates Shape Predicates
 
