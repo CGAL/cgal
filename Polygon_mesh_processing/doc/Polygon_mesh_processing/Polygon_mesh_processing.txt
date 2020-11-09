@@ -540,7 +540,7 @@ that it is also in the Minkowski sum envelope, but if it is outside the polyhedr
 we do not know where it is with respect to the Minkowski sum envelope.
 
 Such a test is used by the class `Surface_mesh_simplification::Envelope_filter` of the
-package \refPkgSurfaceMeshSimplification, in order to simplify within  a given tolerance.
+package \refPkgSurfaceMeshSimplification, in order to simplify within a given tolerance.
 
 \subsubsection InsideExample Polyhedral Envelope Example
 \cgalExample{Polygon_mesh_processing/polyhedral_envelope.cpp}
