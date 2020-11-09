@@ -23,7 +23,7 @@
 
 #include <boost/iterator/transform_iterator.hpp>
 
-#ifdef CGAL_EIGEN3_ENABLED
+#if defined(CGAL_EIGEN3_ENABLED) || defined(DOXYGEN_RUNNING)
 
 #include <Eigen/Dense>
 #include <Eigen/IterativeLinearSolvers>
