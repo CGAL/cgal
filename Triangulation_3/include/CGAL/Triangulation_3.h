@@ -573,8 +573,9 @@ protected:
   GT  _gt;
   Vertex_handle infinite; // infinite vertex
   //IO maps
-    mutable std::vector<Vertex_handle> index_vertex_map;
-    mutable Unique_hash_map<Vertex_handle, std::size_t > vertex_index_map;
+  mutable std::vector<Vertex_handle>* index_vertex_map;
+  mutable Unique_hash_map<Vertex_handle, std::size_t >* vertex_index_map;
+  mutable bool clear_maps_after_io;
 
 
 public:
@@ -724,13 +725,15 @@ public:
 public:
   // CONSTRUCTORS
   Triangulation_3(const GT& gt = GT(), Lock_data_structure *lock_ds = nullptr)
-    : Base(lock_ds), _tds(), _gt(gt)
+    : Base(lock_ds), _tds(), _gt(gt),
+      vertex_index_map(nullptr), index_vertex_map(nullptr), clear_maps_after_io(true)
   {
     init_tds();
   }
 
   Triangulation_3(Lock_data_structure *lock_ds, const GT& gt = GT())
-    : Base(lock_ds), _tds(), _gt(gt)
+    : Base(lock_ds), _tds(), _gt(gt),
+      vertex_index_map(nullptr), index_vertex_map(nullptr), clear_maps_after_io(true)
   {
     init_tds();
   }
@@ -740,6 +743,9 @@ public:
     : Base(tr.get_lock_data_structure()), _gt(tr._gt)
   {
     infinite = _tds.copy_tds(tr._tds, tr.infinite);
+    vertex_index_map = nullptr;
+    index_vertex_map = nullptr;
+    clear_maps_after_io = true;
     CGAL_triangulation_expensive_postcondition(*this == tr);
   }
 
@@ -749,7 +755,8 @@ public:
   template < typename InputIterator >
   Triangulation_3(InputIterator first, InputIterator last,
                   const GT& gt = GT(), Lock_data_structure *lock_ds = nullptr)
-    : Base(lock_ds), _gt(gt)
+    : Base(lock_ds), _gt(gt),
+      vertex_index_map(nullptr), index_vertex_map(nullptr), clear_maps_after_io(true)
   {
     init_tds();
     insert(first, last);
@@ -760,7 +767,8 @@ public:
   Triangulation_3(const Point& p0, const Point& p1,
                   const Point& p3, const Point& p4,
                   const GT& gt = GT(), Lock_data_structure *lock_ds = nullptr)
-    : Base(lock_ds), _gt(gt)
+    : Base(lock_ds), _gt(gt),
+      vertex_index_map(nullptr), index_vertex_map(nullptr), clear_maps_after_io(true)
   {
     CGAL_triangulation_precondition(orientation(p0, p1, p3, p4) == POSITIVE);
     init_tds(p0, p1, p3, p4);
@@ -2358,20 +2366,21 @@ public:
 
   size_type write_vertices_and_fill_maps(std::ostream& os, const size_type& num_vertices) const
   {
-    index_vertex_map.resize(num_vertices+1);
+    index_vertex_map = new std::vector<Vertex_handle>(num_vertices+1);
+    vertex_index_map = new Unique_hash_map<Vertex_handle, std::size_t >();
 
     size_type i = 0;
     for(Vertex_iterator it = vertices_begin(), end = vertices_end(); it != end; ++it)
-      index_vertex_map[i++] = it;
+      (*index_vertex_map)[i++] = it;
 
     CGAL_triangulation_assertion(i == num_vertices+1);
-    CGAL_triangulation_assertion(is_infinite(index_vertex_map[0]));
+    CGAL_triangulation_assertion(is_infinite((*index_vertex_map)[0]));
 
-    vertex_index_map[infinite_vertex()] = 0;
+    (*vertex_index_map)[infinite_vertex()] = 0;
     for(i=1; i <= num_vertices; i++)
     {
-      os << *index_vertex_map[i];
-      vertex_index_map[index_vertex_map[i]] = i;
+      os << *(*index_vertex_map)[i];
+      (*vertex_index_map)[(*index_vertex_map)[i]] = i;
       if(is_ascii(os))
         os << std::endl;
     }
@@ -2380,12 +2389,38 @@ public:
 
   const Unique_hash_map<Vertex_handle, std::size_t >& get_vertex_index_map() const
   {
-    return vertex_index_map;
+    CGAL_assertion(vertex_index_map != nullptr);
+    return *vertex_index_map;
+  }
+
+  bool do_clear_maps_after_io() const
+  {
+    return clear_maps_after_io;
+  }
+
+  void set_clear_maps_after_io(bool b) const
+  {
+    clear_maps_after_io = b;
+  }
+
+  void clean_up_io_maps() const
+  {
+    if(vertex_index_map)
+    {
+      delete vertex_index_map ;
+      vertex_index_map = nullptr;
+    }
+    if(index_vertex_map)
+    {
+      delete index_vertex_map;
+      index_vertex_map = nullptr;
+    }
   }
 
   const std::vector<Vertex_handle>&  get_index_vertex_map() const
   {
-    return index_vertex_map;
+    CGAL_assertion(index_vertex_map != nullptr);
+    return *index_vertex_map;
   }
 };
 
@@ -2448,6 +2483,7 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
   CGAL_triangulation_assertion(tr.is_valid(false));
   return is;
 }
+
 
 template < class GT, class Tds, class Lds >
 std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>& tr)
