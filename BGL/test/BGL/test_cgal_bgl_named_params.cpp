@@ -98,6 +98,7 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::halfedges_keeper).v == 62);
   assert(get_parameter(np, CGAL::internal_np::do_simplify_border).v == 64);
   assert(get_parameter(np, CGAL::internal_np::do_not_modify).v == 65);
+  assert(get_parameter(np, CGAL::internal_np::allow_self_intersections).v == 66);
   assert(get_parameter(np, CGAL::internal_np::maximum_number_of_faces).v == 78910);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
@@ -186,6 +187,7 @@ void test(const NamedParameters& np)
   check_same_type<55>(get_parameter(np, CGAL::internal_np::use_Delaunay_flips));
   check_same_type<56>(get_parameter(np, CGAL::internal_np::use_safety_constraints));
   check_same_type<65>(get_parameter(np, CGAL::internal_np::do_not_modify));
+  check_same_type<66>(get_parameter(np, CGAL::internal_np::allow_self_intersections));
 
   check_same_type<12340>(get_parameter(np, CGAL::internal_np::do_self_intersection_tests));
   check_same_type<12341>(get_parameter(np, CGAL::internal_np::do_orientation_tests));
@@ -358,6 +360,7 @@ int main()
                          .use_convex_hull(A<63>(63))
                          .do_simplify_border(A<64>(64))
                          .do_not_modify(A<65>(65))
+                         .allow_self_intersections(A<66>(66))
                          .point_map(A<9000>(9000))
                          .query_point_map(A<9001>(9001))
                          .normal_map(A<9002>(9002))
