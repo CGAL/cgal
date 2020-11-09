@@ -26,6 +26,7 @@
 #include <CGAL/Default.h>
 
 #include <boost/dynamic_bitset.hpp>
+#include <boost/mpl/has_xxx.hpp>
 
 // required to handle the multiple types of edge constrained maps
 // for the different output types. CGAL_COREF_FUNCTION_CALL_DEF
@@ -57,13 +58,72 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION,
 namespace PMP=Polygon_mesh_processing;
 namespace params=PMP::parameters;
 
+// extra functions for handling non-documented functions for user visitors
+// with no extra functions
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_extra_functions,
+                                  Has_extra_functions,
+                                  false)
+
+template <class UserVisitor, class TriangleMesh, class FaceIndexMap>
+void export_flags(UserVisitor&, boost::mpl::bool_<false>,
+                  FaceIndexMap, const std::vector<std::size_t>&,
+                  const boost::dynamic_bitset<>&,
+                  const boost::dynamic_bitset<>&,
+                  const boost::dynamic_bitset<>&,
+                  const boost::dynamic_bitset<>&,
+                  TriangleMesh&)
+{}
+
+template <class UserVisitor, class halfedge_descriptor>
+void register_halfedge_pair(UserVisitor&, boost::mpl::bool_<false>,
+                            halfedge_descriptor, halfedge_descriptor,
+                            bool, bool,
+                            bool, bool,
+                            bool=false, bool=false,
+                            bool=false, bool=false)
+{}
+
+// with extra functions (forward the call to the visitor)
+template <class UserVisitor, class TriangleMesh, class FaceIndexMap>
+void export_flags(UserVisitor& visitor, boost::mpl::bool_<true>,
+                  FaceIndexMap fim, const std::vector<std::size_t>& tm_patch_ids,
+                  const boost::dynamic_bitset<>&  is_patch_inside_other_tm,
+                  const boost::dynamic_bitset<>& coplanar_patches_of_tm,
+                  const boost::dynamic_bitset<>& coplanar_patches_of_tm_for_union_and_intersection,
+                  const boost::dynamic_bitset<>& patch_status_not_set,
+                  TriangleMesh& tm)
+{
+  visitor.export_flags(fim, tm_patch_ids,
+                       is_patch_inside_other_tm,
+                       coplanar_patches_of_tm,
+                       coplanar_patches_of_tm_for_union_and_intersection,
+                       patch_status_not_set,
+                       tm);
+}
+
+template <class UserVisitor, class halfedge_descriptor>
+void register_halfedge_pair(UserVisitor& visitor, boost::mpl::bool_<true>,
+                            halfedge_descriptor h1, halfedge_descriptor h2,
+                            bool q1_is_between_p1p2, bool q2_is_between_p1p2,
+                            bool p1_is_between_q1q2, bool p2_is_between_q1q2,
+                            bool p1_is_coplanar=false, bool p2_is_coplanar=false,
+                            bool q1_is_coplanar=false, bool q2_is_coplanar=false)
+{
+  visitor.register_halfedge_pair(h1, h2,
+                                 q1_is_between_p1p2, q2_is_between_p1p2,
+                                 p1_is_between_q1q2, p2_is_between_q1q2,
+                                 p1_is_coplanar, p2_is_coplanar,
+                                 q1_is_coplanar, q2_is_coplanar);
+}
+
+
 template <class TriangleMesh,
           class VertexPointMap1,
           class VertexPointMap2,
           class VpmOutTuple,
           class FaceIdMap1,
           class FaceIdMap2,
-          class Kernel_=Default,
+          class Kernel_ = Default,
           class EdgeMarkMapBind_  = Default,
           class EdgeMarkMapTuple_ = Default,
           class UserVisitor_      = Default>
@@ -86,6 +146,7 @@ class Face_graph_output_builder
                   No_mark<TriangleMesh> > >::type     EdgeMarkMapTuple;
   typedef typename Default::Get<
     UserVisitor_, Default_visitor<TriangleMesh> >::type  UserVisitor;
+  typedef typename Has_extra_functions<UserVisitor>::type VUNDF; //shortcut
 
 // graph_traits typedefs
   typedef TriangleMesh                                              TM;
@@ -483,6 +544,11 @@ public:
     boost::dynamic_bitset<> tm1_coplanar_faces(num_faces(tm1), 0);
     boost::dynamic_bitset<> tm2_coplanar_faces(num_faces(tm2), 0);
 
+    const bool used_to_classify_patches =  requested_output[UNION]==boost::none &&
+                                        requested_output[TM1_MINUS_TM2]==boost::none &&
+                                        requested_output[TM2_MINUS_TM1]==boost::none &&
+                                        requested_output[INTERSECTION]==boost::none;
+
     // In the following loop we filter intersection edges that are strictly inside a patch
     // of coplanar facets so that we keep only the edges on the border of the patch.
     // This is not optimal and in an ideal world being able to find the outside edges
@@ -498,8 +564,10 @@ public:
     for (;epp_it!=epp_it_end;)
     {
       halfedge_descriptor h1  = epp_it->second.first[&tm1];
+      CGAL_assertion( h1 != GT::null_halfedge());
       halfedge_descriptor h1_opp = opposite(h1, tm1);
       halfedge_descriptor h2 = epp_it->second.first[&tm2];
+      CGAL_assertion( h2 != GT::null_halfedge());
       halfedge_descriptor h2_opp = opposite(h2, tm2);
 
       //vertices from tm1
@@ -861,6 +929,12 @@ public:
               p1, p2, q2,
               vpm1, vpm2,
               nodes);
+
+            register_halfedge_pair(user_visitor, VUNDF(),
+                                   h1, h2,
+                                   false, q2_is_between_p1p2, false, !q2_is_between_p1p2,
+                                   true, false, true, false);
+
             if ( q2_is_between_p1p2 ) is_patch_inside_tm1.set(patch_id_q2); //case 1
             else is_patch_inside_tm2.set(patch_id_p2); //case 2
             continue;
@@ -882,6 +956,12 @@ public:
                 p1, p2, q1,
                 vpm1, vpm2,
                 nodes);
+
+              register_halfedge_pair(user_visitor, VUNDF(),
+                                     h1, h2,
+                                     q1_is_between_p1p2, false, false, !q1_is_between_p1p2,
+                                     true, false, false, true);
+
               if ( q1_is_between_p1p2 )
               { // case 3
                 is_patch_inside_tm1.set(patch_id_q1);
@@ -906,6 +986,12 @@ public:
                   p1, p2, q2,
                   vpm1, vpm2,
                   nodes);
+
+                register_halfedge_pair(user_visitor, VUNDF(),
+                                       h1, h2,
+                                       false, q2_is_between_p1p2, !q2_is_between_p1p2, false,
+                                       false, true, true, false);
+
                 if ( q2_is_between_p1p2 )
                 {  //case 5
                   is_patch_inside_tm1.set(patch_id_q2);
@@ -931,6 +1017,12 @@ public:
                     p1, p2, q1,
                     vpm1, vpm2,
                     nodes);
+
+                  register_halfedge_pair(user_visitor, VUNDF(),
+                                         h1, h2,
+                                         q1_is_between_p1p2, false, !q1_is_between_p1p2, false,
+                                         false, true, false, true);
+
                   if ( q1_is_between_p1p2 ) is_patch_inside_tm1.set(patch_id_q1);  //case 7
                   else is_patch_inside_tm2.set(patch_id_p1); //case 8
                   continue;
@@ -981,6 +1073,7 @@ public:
                 vpm2, vpm1,
                 nodes);
               if (!p1_is_between_q1q2){
+                register_halfedge_pair(user_visitor, VUNDF(), h1, h2, true, true, false, false);
                 // case (a4)
                 // poly_first  - poly_second            = p1q1 U q2p2
                 // poly_second - poly_first             = {0}
@@ -992,6 +1085,7 @@ public:
                 impossible_operation.set(TM1_MINUS_TM2); // tm1-tm2 is non-manifold
               }
               else{
+                register_halfedge_pair(user_visitor, VUNDF(), h1, h2, true, true, true, true);
                 // case (b4)
                 // poly_first  - poly_second            = q2q1
                 // poly_second - poly_first             = p2p1
@@ -1010,6 +1104,7 @@ public:
             }
             else
             {
+              register_halfedge_pair(user_visitor, VUNDF(), h1, h2, true, false, false, true);
               //case (c4)
               // poly_first  - poly_second            = p1q1
               // poly_second - poly_first             = p2q2
@@ -1034,6 +1129,7 @@ public:
           {
             if( q2_is_between_p1p2 )
             {
+              register_halfedge_pair(user_visitor, VUNDF(), h1, h2, false, true, true, false);
               //case (d4)
               // poly_first  - poly_second            = q2p2
               // poly_second - poly_first             = q1p1
@@ -1063,6 +1159,7 @@ public:
                 vpm2, vpm1,
                 nodes);
               if (!p1_is_between_q1q2){
+                register_halfedge_pair(user_visitor, VUNDF(), h1, h2, false, false, false, false);
                 //case (e4)
                 // poly_first  - poly_second            = p1p2
                 // poly_second - poly_first             = q1q2
@@ -1074,6 +1171,7 @@ public:
                 impossible_operation.set(UNION); // tm1 U tm2 is non-manifold
               }
               else{
+                register_halfedge_pair(user_visitor, VUNDF(), h1, h2, false, false, true, true);
                 //case (f4)
                 is_patch_inside_tm2.set(patch_id_p1);
                 is_patch_inside_tm2.set(patch_id_p2);
@@ -1089,6 +1187,24 @@ public:
             }
           }
         }
+    }
+
+    if (used_to_classify_patches)
+    {
+      export_flags( user_visitor, VUNDF(),fids1, tm1_patch_ids,
+                    is_patch_inside_tm2,
+                    coplanar_patches_of_tm1,
+                    coplanar_patches_of_tm1_for_union_and_intersection,
+                    patch_status_not_set_tm1,
+                    tm1);
+      export_flags( user_visitor, VUNDF(),
+                    fids2, tm2_patch_ids,
+                    is_patch_inside_tm1,
+                    coplanar_patches_of_tm2,
+                    coplanar_patches_of_tm2_for_union_and_intersection,
+                    patch_status_not_set_tm2,
+                    tm2);
+      return;
     }
 
     // (2-b) Classify isolated surface patches wrt the other mesh
