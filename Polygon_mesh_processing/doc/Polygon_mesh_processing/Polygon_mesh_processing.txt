@@ -514,24 +514,24 @@ input triangle mesh.
 
 \subsection PMPEnvelope Polyhedral Envelope Containment Check
 
-The class `CGAL::Envelope` provides functors that enable you to check if a query point, segment, or triangle
+The class `CGAL::Polyhedral_envelope` provides functors that enable users to check if a query point, segment, or triangle
 is fully contained in a <em>polyhedral envelope</em> of a triangle mesh.
 
-Given a distance \f$ \delta \f$ we compute for each triangle  a <em>prism</em> by intersecting two halfspaces
+The polyhedral envelope is a conservative approximation of the Minkowski sum envelope with a sphere of radius \f$ \epsilon \f$.
+The latter has cylindrical and spherical patches at convex edges and vertices of the input triangle mesh.
+
+Given a distance \f$ \delta =  \epsilon / \sqrt(3)\f$ we can associate  a <em>prism</em> to each triangle by intersecting two halfspaces
 parallel to the triangle, three halfspaces orthogonal to the triangle and parallel to the edges,
 and additionaly halfspaces for clipping obtuse angles, with the face normal corresponding to the bisector
 of the angle.  These halfspaces are at distance  \f$ \delta \f$ and oriented
 such that they contain the triangle.
 
-The <em>polyhedral envelope</em> with a tolerance \f$ \epsilon \f$ then is the union of the prisms of all triangular faces
+The <em>polyhedral envelope</em> of a triangle mesh with a tolerance \f$ \epsilon \f$ then is the union of the prisms of all faces
 with  \f$ \delta = \epsilon / \sqrt(3) \f$.
 
 \cgalFigureBegin{envelopeFig, envelope.png}
 The prism for a single triangle, the polyhedral envelope as well as the Minkowski sum envelope for a triangle mesh.
 \cgalFigureEnd
-
-For containent checks the polyhedral envelope is a conservative approximation of the Minkowski sum with a sphere of radius \f$ \epsilon \f$.
-The latter has cylindrical and spherical patches at convex edges and vertices of the input triangle mesh.
 
 The polyhedral envelope is guaranteed to be inside the Minkowski sum envelope.
 This containment test is exact for the polyhedral envelope, and conservative for the Minkowswi sum envelope:
@@ -555,7 +555,7 @@ of the package \refPkgSurfaceMeshSimplification, in order to simplify a triangle
 
 \subsubsection PolyhedralEnvelopeExample Polyhedral Envelope Example
 
-The following example shows how to construct the envelope and perform queries.
+The following example shows how to construct the polyhedral envelope and perform queries.
 
 \cgalExample{Polygon_mesh_processing/polyhedral_envelope.cpp}
 

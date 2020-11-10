@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Envelope.h>
+#include <CGAL/Polyhedral_envelope.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <fstream>
@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
   typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
   typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
 
-  typedef CGAL::Envelope<Kernel> Envelope;
+  typedef CGAL::Polyhedral_envelope<Kernel> Envelope;
 
   std::ifstream in((argc>1) ? argv[1] : "data/unitsphere.off");
   Surface_mesh tmesh;

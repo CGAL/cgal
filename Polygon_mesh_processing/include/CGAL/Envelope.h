@@ -53,8 +53,8 @@
 // is covered by a set of prisms, where each prism is an offset for an input triangle.
 // That is, we do not use indirect predicates
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_ENVELOPE_H
-#define CGAL_POLYGON_MESH_PROCESSING_ENVELOPE_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_POLYHEDRAL_ENVELOPE_H
+#define CGAL_POLYGON_MESH_PROCESSING_POLYHEDRAL_ENVELOPE_H
 
 #include <CGAL/license/Polygon_mesh_processing/Envelope.h>
 
@@ -97,7 +97,7 @@ namespace CGAL {
 
 
 template <typename GeomTraits>
-struct Envelope {
+struct Polyhedral_envelope {
 
 public:
   typedef typename GeomTraits::Point_3 Point_3;
@@ -261,9 +261,9 @@ private:
 public:
 
 #ifndef DOXYGEN_RUNNING
-  Envelope(const std::vector<Point_3>& env_vertices,
-           std::vector<Vector3i> env_faces,
-           double epsilon)
+  Polyhedral_envelope(const std::vector<Point_3>& env_vertices,
+                      std::vector<Vector3i> env_faces,
+                      double epsilon)
     : env_vertices(env_vertices), env_faces(env_faces)
   {
     init(epsilon);
@@ -303,9 +303,9 @@ public:
     */
 
   template <typename TriangleMesh, typename NamedParameters>
-  Envelope(const TriangleMesh& tmesh,
-           double epsilon,
-           const NamedParameters& np)
+  Polyhedral_envelope(const TriangleMesh& tmesh,
+                      double epsilon,
+                      const NamedParameters& np)
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -342,9 +342,9 @@ public:
 
 
   template <typename TriangleMesh>
-  Envelope(const TriangleMesh& tmesh,
-           double epsilon)
-    : Envelope(tmesh, epsilon, parameters::all_default())
+  Polyhedral_envelope(const TriangleMesh& tmesh,
+                      double epsilon)
+    : Polyhedral_envelope(tmesh, epsilon, parameters::all_default())
   {}
 
 
@@ -1901,10 +1901,10 @@ public:
   }
 
 
-}; // class Envelope
+}; // class Polyhedral_envelope
 
 } // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
-#endif //CGAL_POLYGON_MESH_PROCESSING_ENVELOPE_H
+#endif //CGAL_POLYGON_MESH_PROCESSING_POLYHEDRAL_ENVELOPE_H

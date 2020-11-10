@@ -8,10 +8,10 @@
 //
 // Author(s)     : Andreas Fabri
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_ENVELOPE_FILTER_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_ENVELOPE_FILTER_H
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_POLYHEDRAL_ENVELOPE_FILTER_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_POLYHEDRAL_ENVELOPE_FILTER_H
 
-#include <CGAL/license/Polygon_mesh_processing/Envelope.h>
+#include <CGAL/license/Polygon_mesh_processing/Polyhedral_envelope.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/Default.h>
@@ -19,7 +19,7 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 
 
-#include <CGAL/Envelope.h>
+#include <CGAL/Polyhedral_envelope.h>
 
 #include <boost/optional.hpp>
 
@@ -45,13 +45,13 @@ namespace internal {
 } // namesapce internal
 
 template<typename GeomTraits,typename BaseFilter = internal::Dummy_filter2>
-class Envelope_filter
+class Polyhedral_envelope_filter
 {
   typedef GeomTraits                                                          Geom_traits;
   typedef typename Geom_traits::FT                                            FT;
   typedef typename Geom_traits::Point_3                                       Point_3;
 
-  typedef CGAL::Envelope<GeomTraits>                                          Envelope;
+  typedef CGAL::Polyhedral_envelope<GeomTraits>                               Envelope;
   typedef typename Envelope::Vector3i                                         Vector3i;
 
 private:
@@ -93,15 +93,15 @@ private:
 
 
 public:
-  Envelope_filter(const FT dist,
-                      const BaseFilter& filter = BaseFilter())
+  Polyhedral_envelope_filter(const FT dist,
+                             const BaseFilter& filter = BaseFilter())
     :
       m_dist(dist),
       m_envelope(nullptr),
       m_base_filter(filter)
   {}
 
-  ~Envelope_filter()
+  ~Polyhedral_envelope_filter()
   {
     if(m_envelope != nullptr){
       delete m_envelope;
@@ -166,4 +166,4 @@ private:
 } // namespace Surface_mesh_simplification
 } // namespace CGAL
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_ENVELOPE_FILTER_H
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_POLYHEDRAL_ENVELOPE_FILTER_H

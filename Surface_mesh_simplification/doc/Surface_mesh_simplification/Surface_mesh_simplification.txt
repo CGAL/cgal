@@ -360,13 +360,13 @@ and not during the update of all edges incident to the vertex that is the result
 
 
 
-\subsection Surface_mesh_simplificationExamplewithEnvelope Example with Envelope
+\subsection Surface_mesh_simplificationExamplewithEnvelope Example with Polyhedral Envelope
 
 The surface mesh simplification can be done in a way that the simplified mesh stays inside an envelope of the input mesh.
-This makes use of the class `Envelope` which enables to check whether a query point, segment, or triangle lies within
-a polyhedral envelope, which consists of the union of inflated triangles. While the user gives a distance `d`, the check
-is conservative, that is there may be triangles which would be inside a surface obtained as the Minkowski sum
-with a sphere of radius `d`, but which are outside the polyhedral envelope.
+This makes use of the class `Polyhedral_envelope` which enables to check whether a query point, segment, or triangle lies within
+a polyhedral envelope, which consists of the union of inflated triangles. While the user gives a tolerance \f$\epsilon\f$, the check
+is conservative, that is there may be triangles which would be inside a surface obtained as the Minkowski sum envelope
+with a sphere of radius \f$\epsilon\f$, but which are outside the polyhedral envelope.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_envelope.cpp}
 

@@ -15,7 +15,7 @@ be absent). The value `boost::none` indicates that the edge should not be collap
 \cgalRefines `CopyConstructible`
 
 \cgalHasModel `CGAL::Surface_mesh_simplification::Bounded_normal_change_filter<BaseFilter>`
-\cgalHasModel `CGAL::Surface_mesh_simplification::Envelope_filter<GeomTraits, BaseFilter>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::Polyhedral_envelope_filter<GeomTraits, BaseFilter>`
 */
 
 
