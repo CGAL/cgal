@@ -103,8 +103,8 @@ public:
     std::pair<Curve_const_iterator, Curve_const_iterator>
     operator()(const General_polygon_2& pgn) const
     {
-      Curve_const_iterator c_begin(&pgn, pgn.edges_begin());
-      Curve_const_iterator c_end(&pgn, pgn.edges_end());
+      Curve_const_iterator c_begin(&pgn, pgn.vertex_pairs_begin());
+      Curve_const_iterator c_end(&pgn, pgn.vertex_pairs_end());
 
       return (std::make_pair(c_begin, c_end));
     }
