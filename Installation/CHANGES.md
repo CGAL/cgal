@@ -6,6 +6,10 @@ Release History
 
 Release date: December 2020
 
+### [3D Triangulations](https://doc.cgal.org/5.2/Manual/packages.html#PkgTriangulation3)
+ - Add `Segment_cell_iterator` to iterate over cells intersected by a line segment.
+ - Add `Segment_simplex_iterator` to iterate over simplices intersected by a line segment.
+
 ### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/5.2/Manual/packages.html#PkgBGL)
 
 -   Added the convenience header `CGAL/boost/graph/graph_traits_inheritance_macros.h` that allows to easily
@@ -29,7 +33,7 @@ Release date: December 2020
       the new code is backward compatible. However, it is recommended that all calls
       to the make-x-monotone functions are fixed to use the new return type.
     - Changed `decompose()` interface to use `boost::variant` instead of legacy
-      [`CGAL::Object`](https://doc.cgal.org/5.1/STL_Extension/classCGAL_1_1Object.html)
+      [`CGAL::Object`](https://doc.cgal.org/5.2/STL_Extension/classCGAL_1_1Object.html)
       As explained above, the code is backward compatible. However, it is recommended
       that all calls to `decompose()` are fixed to use the new interface.
 
