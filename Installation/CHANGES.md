@@ -4,6 +4,13 @@ Release History
 [Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
 -----------
 
+### [3D Triangulations](https://doc.cgal.org/5.2/Manual/packages.html#PkgTriangulation3)
+ - Add `Segment_cell_iterator` to iterate over cells intersected by a line segment.
+ - Add `Segment_simplex_iterator` to iterate over simplices intersected by a line segment.
+ 
+[Release 5.1](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
+-----------
+
 Release date: December 2020
 
 ### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/5.2/Manual/packages.html#PkgBGL)
