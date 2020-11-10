@@ -53,6 +53,8 @@ format.
 - `CGAL::estimate_local_range_scales()`
 - `CGAL::OpenGR::compute_registration_transformation()`
 - `CGAL::OpenGR::register_point_sets()`
+- `CGAL::OpenGR::compute_registration_transformations()`
+- `CGAL::OpenGR::register_point_clouds()`
 - `CGAL::pointmatcher::compute_registration_transformation()`
 - `CGAL::pointmatcher::register_point_sets()`
 - `CGAL::remove_outliers()`
