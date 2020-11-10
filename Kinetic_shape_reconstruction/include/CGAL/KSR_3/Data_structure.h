@@ -2203,6 +2203,8 @@ public:
   }
 
   void create_polyhedrons() {
+
+    std::cout.precision(20);
     // for (std::size_t i = 0; i < number_of_support_planes(); ++i)
     //   std::cout << "num faces sp " << i << ": " << pfaces(i).size() << std::endl;
 
@@ -2210,7 +2212,7 @@ public:
     for (const auto vertex : m_intersection_graph.vertices()) {
       const auto nedges = m_intersection_graph.incident_edges(vertex);
       if (nedges.size() <= 2)
-        std::cerr << "current num edges = " << nedges.size() << std::endl;
+        std::cerr << "ERROR: current num edges = " << nedges.size() << std::endl;
       CGAL_assertion_msg(nedges.size() > 2,
       "ERROR: VERTEX MUST HAVE AT LEAST 3 NEIGHBORS!");
     }
@@ -2219,10 +2221,12 @@ public:
     std::vector<PFace> nfaces;
     for (const auto edge : m_intersection_graph.edges()) {
       incident_faces(edge, nfaces);
-      if (nfaces.size() <= 1)
-        std::cerr << "current num faces = " << nfaces.size() << std::endl;
-      CGAL_assertion_msg(nfaces.size() > 1,
-      "ERROR: EDGE MUST HAVE AT LEAST 2 NEIGHBORS!");
+      if (nfaces.size() == 1) {
+        std::cout << segment_3(edge) << std::endl;
+        std::cerr << "ERROR: current num faces = " << nfaces.size() << std::endl;
+      }
+      CGAL_assertion_msg(nfaces.size() != 1,
+      "ERROR: EDGE MUST HAVE 0 OR AT LEAST 2 NEIGHBORS!");
     }
 
     // Check faces.
@@ -2249,19 +2253,42 @@ public:
         map_volumes[pface] = std::make_pair(-1, -1);
     }
 
+    // First, traverse only boundary faces.
     int volume_index = 0;
-    for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
+    for (std::size_t i = 0; i < 6; ++i) {
       const auto pfaces = this->pfaces(i);
       for (const auto pface : pfaces) {
-        const bool success = traverse_pface(pface, volume_index, map_volumes);
-        if (success) ++volume_index;
+        const bool success = traverse_boundary_pface(pface, volume_index, map_volumes);
+        if (success) {
+          ++volume_index;
+          // std::cout << std::endl;
+        }
       }
     }
-    std::cout << "Found " << volume_index << " polyhedrons!" << std::endl;
+    std::cout << "Found " << volume_index << " boundary polyhedrons!" << std::endl;
+    CGAL_assertion(volume_index > 0);
 
+    // Then traverse interior faces.
+    while (true) {
+      bool stop = true;
+      for (std::size_t i = 6; i < number_of_support_planes(); ++i) {
+        const auto pfaces = this->pfaces(i);
+        for (const auto pface : pfaces) {
+          const bool success = traverse_interior_pface(pface, volume_index, map_volumes);
+          if (!success) {
+            stop = false;
+            // std::cout << std::endl;
+          }
+        }
+      }
+      if (stop) break;
+    }
+
+    // Now, set final polyhedrons and their neighbors.
     for (const auto& item : map_volumes) {
       const auto& pair = item.second;
 
+      if (pair.first == -1) continue;
       CGAL_assertion(pair.first != -1);
       if (m_volumes.size() <= pair.first)
         m_volumes.resize(pair.first + 1);
@@ -2277,100 +2304,122 @@ public:
       create_cell_pvertices(volume);
     std::cout << "Created " << m_volumes.size() << " polyhedrons!" << std::endl;
 
+    dump_polyhedrons(*this, "polyhedrons/iter_1000");
     for (const auto& volume : m_volumes) {
+      CGAL_assertion(volume.pfaces.size() > 3);
       std::cout <<
       " pvertices: " << volume.pvertices.size() <<
       " pfaces: " << volume.pfaces.size() << std::endl;
     }
-
-    dump_polyhedrons(*this, "iter_1000");
   }
 
-  const bool traverse_pface(
+  const bool traverse_boundary_pface(
     const PFace& pface,
     const int volume_index,
     std::map<PFace, std::pair<int, int> >& map_volumes) {
 
+    if (pface.first >= 6) return false;
+    CGAL_assertion(pface.first < 6);
     auto& pair = map_volumes.at(pface);
-    if (pair.first != -1 && pair.second != -1) return false;
-    CGAL_assertion(pair.second == -1);
-    if (pair.first == volume_index) return false;
-    CGAL_assertion(pair.first != volume_index);
+    if (pair.first != -1) return false;
+    CGAL_assertion(pair.first == -1);
+    pair.first = volume_index;
 
-    if (pair.first != -1) pair.second = volume_index;
-    else pair.first = volume_index;
-
-    const auto pedges = pedges_of_pface(pface);
-    const std::size_t n = pedges.size();
-
-    std::vector<PEdge> edges;
-    edges.reserve(n);
-    for (const auto pedge : pedges) {
-      edges.push_back(pedge);
-    }
-    CGAL_assertion(edges.size() == n);
+    // std::cout << "CURRENT BND MAP: " << pair.first << " " << pair.second << std::endl;
+    // std::cout << "DUMPING BND PFACE: " <<
+    //   std::to_string(volume_index) + "-" +
+    //   std::to_string(pface.first) + "-" +
+    //   std::to_string(pface.second) << std::endl;
+    dump_pface(pface, "bnd-pface-" +
+      std::to_string(volume_index) + "-" +
+      std::to_string(pface.first) + "-" +
+      std::to_string(pface.second));
 
     std::vector<PFace> nfaces;
-    for (std::size_t i = 0; i < n; ++i) {
-      const std::size_t im = (i + n - 1) % n;
-      const std::size_t ip = (i + 1) % n;
-
-      const auto& edgem = edges[im];
-      const auto& edgei = edges[i];
-      const auto& edgep = edges[ip];
-
-      CGAL_assertion(has_iedge(edgei));
-      incident_faces(this->iedge(edgei), nfaces);
-      for (const auto& nface : nfaces) {
-        if (belongs_to_this_volume(pface, nface, edgem, edgep)) {
-          traverse_pface(nface, volume_index, map_volumes);
+    for (const auto pedge : pedges_of_pface(pface)) {
+      CGAL_assertion(has_iedge(pedge));
+      incident_faces(this->iedge(pedge), nfaces);
+      if (!has_interior_pface(nfaces)) {
+        // std::cout << "does not have interior pface" << std::endl;
+        // std::cout << segment_3(this->iedge(pedge)) << std::endl;
+        for (const auto& nface : nfaces) {
+          if (nface == pface) continue;
+          traverse_boundary_pface(nface, volume_index, map_volumes);
         }
+      } else {
+        // std::cout << "has interior pface" << std::endl;
+        // std::cout << segment_3(this->iedge(pedge)) << std::endl;
       }
     }
     return true;
   }
 
-  const bool belongs_to_this_volume(
-    const PFace& pface, const PFace& nface,
-    const PEdge& edgem, const PEdge& edgep) const {
-
-    if (pface.first == nface.first) return false;
-
-    std::vector<PFace> facesm, facesp;
-    CGAL_assertion(has_iedge(edgem));
-    incident_faces(this->iedge(edgem), facesm);
-    CGAL_assertion(has_iedge(edgep));
-    incident_faces(this->iedge(edgep), facesp);
-
-    const bool found_prev = check_neighbor_faces(pface, nface, facesm);
-    const bool found_next = check_neighbor_faces(pface, nface, facesp);
-    return (found_prev && found_next);
-  }
-
-  const bool check_neighbor_faces(
-    const PFace& pface,
-    const PFace& nface,
-    const std::vector<PFace>& faces) const {
-
-    CGAL_assertion(pface != nface);
-    for (const auto& face : faces) {
-      CGAL_assertion(face != nface);
-      if (face.first == nface.first) continue;
-      if (face == pface) return true;
-      if (has_equal_edge(pface, face)) {
-        return true;
-      }
+  const bool has_interior_pface(const std::vector<PFace>& pfaces) const {
+    for (const auto& pface : pfaces) {
+      if (pface.first >= 6) return true;
     }
     return false;
   }
 
-  const bool has_equal_edge(const PFace& pface, const PFace& nface) const {
+  const bool traverse_interior_pface(
+    const PFace& pface,
+    const int volume_index,
+    std::map<PFace, std::pair<int, int> >& map_volumes) {
 
-    CGAL_assertion(pface != nface);
+    if (pface.first < 6) return false;
+    CGAL_assertion(pface.first >= 6);
+    auto& pair = map_volumes.at(pface);
+
+    // std::cout << "CURRENT INT MAP: " << pair.first << " " << pair.second << std::endl;
+    CGAL_assertion(pair.first == -1 && pair.second == -1);
+
+    // std::cout << "dumping interior pface: " <<
+    //   std::to_string(pface.first) + "-" + std::to_string(pface.second) << std::endl;
+    dump_pface(pface, "int-pface" +
+      std::to_string(pface.first) + "-" + std::to_string(pface.second));
+
+    std::set<int> neighbors;
+    std::vector<PFace> nfaces;
     for (const auto pedge : pedges_of_pface(pface)) {
-      for (const auto nedge : pedges_of_pface(nface)) {
-        if (pedge == nedge) return true;
+      CGAL_assertion(has_iedge(pedge));
+      incident_faces(this->iedge(pedge), nfaces);
+
+      for (const auto& nface : nfaces) {
+        if (nface == pface) continue;
+        if (nface.first >= 6) continue; // TODO: skip interior pfaces (see below)
+
+        const auto& npair = map_volumes.at(nface);
+        CGAL_assertion(npair.first != -1);
+        neighbors.insert(npair.first);
+
+        // std::cout << "dumping nface: " <<
+        // std::to_string(nface.first) + "-" + std::to_string(nface.second) << std::endl;
+        // dump_pface(nface, "nface" +
+        // std::to_string(nface.first) + "-" + std::to_string(nface.second));
+
+        if (npair.second == -1) continue;
+        neighbors.insert(npair.second);
       }
+    }
+
+    if (neighbors.size() == 2) { // interior pfaces, which have boundary pfaces as neighbors
+
+      std::size_t count = 0;
+      for (const int neighbor : neighbors) {
+        if (count == 0) pair.first = neighbor;
+        else pair.second = neighbor;
+        ++count;
+      }
+      // std::cout << "FOUND INT MAP: " << pair.first << " " << pair.second << std::endl;
+      return true;
+
+    } else { // pure interior pfaces
+
+      for (const int neighbor : neighbors)
+        std::cout << neighbor << " ";
+      std::cout << std::endl << "NOT FOUND size: " << neighbors.size() << std::endl;
+      CGAL_assertion_msg(false, "TODO: HANDLE PURE INTERIOR FACE!");
+
     }
     return false;
   }
@@ -2382,6 +2431,20 @@ public:
         cell.pvertices.insert(pvertex);
       }
     }
+  }
+
+  void dump_pface(
+    const PFace& pface,
+    const std::string name) const {
+
+    std::vector<Point_3> polygon;
+    std::vector< std::vector<Point_3> > polygons;
+    for (const auto pvertex : pvertices_of_pface(pface)) {
+      polygon.push_back(point_3(pvertex));
+    }
+    polygons.push_back(polygon);
+    KSR_3::Saver<Kernel> saver;
+    saver.export_polygon_soup_3(polygons, "polyhedrons/" + name);
   }
 
   const std::vector<Volume_cell> incident_volumes(const PFace& query_pface) const {

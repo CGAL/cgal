@@ -210,45 +210,6 @@ void dump_polygons (const DS& data, const std::string& tag = std::string()) {
 }
 
 template <typename DS>
-void dump_polyhedrons (const DS& data, const std::string& tag = std::string()) {
-
-  typedef CGAL::Surface_mesh<typename DS::Kernel::Point_3> Mesh;
-  typedef typename Mesh::template Property_map<typename Mesh::Face_index, unsigned char> Uchar_map;
-
-  Mesh mesh;
-  Uchar_map red = mesh.template add_property_map<typename Mesh::Face_index, unsigned char>("red", 0).first;
-  Uchar_map green = mesh.template add_property_map<typename Mesh::Face_index, unsigned char>("green", 0).first;
-  Uchar_map blue = mesh.template add_property_map<typename Mesh::Face_index, unsigned char>("blue", 0).first;
-
-  KSR::vector<typename Mesh::Vertex_index> vertices;
-  KSR::vector<typename Mesh::Vertex_index> map_vertices;
-
-  for (std::size_t i = 0; i < data.polyhedrons().size(); ++i) {
-    const auto& volume = data.polyhedrons()[i];
-
-    map_vertices.clear();
-    for (const auto& pvertex : volume.pvertices) {
-      if (map_vertices.size() <= pvertex.second)
-        map_vertices.resize(pvertex.second + 1);
-      map_vertices[pvertex.second] = mesh.add_vertex(data.point_3(pvertex));
-    }
-
-    for (const auto& pface : volume.pfaces) {
-      vertices.clear();
-      for (const auto pvertex : data.pvertices_of_pface(pface))
-        vertices.push_back(map_vertices[pvertex.second]);
-      const auto face = mesh.add_face(vertices);
-      std::tie(red[face], green[face], blue[face]) = get_idx_color(i * (pface.second + 1));
-    }
-
-    const std::string filename =
-      (tag != std::string() ? tag + "_" : "") + "volume-" + std::to_string(i) + ".ply";
-    std::ofstream out(filename);
-    CGAL::write_ply(out, mesh);
-  }
-}
-
-template <typename DS>
 void dump_polygon_borders (const DS& data, const std::string& tag = std::string()) {
 
   std::string filename = (tag != std::string() ? tag + "_" : "") + "polygon_borders.polylines.txt";
@@ -352,7 +313,7 @@ public:
   }
 
   void export_points_2(
-    const KSR::vector<Point_2>& points,
+    const std::vector<Point_2>& points,
     const std::string file_name) const {
 
     std::stringstream stream;
@@ -364,7 +325,7 @@ public:
   }
 
   void export_points_3(
-    const KSR::vector<Point_3>& points,
+    const std::vector<Point_3>& points,
     const std::string file_name) const {
 
     std::stringstream stream;
@@ -376,7 +337,7 @@ public:
   }
 
   void export_segments_2(
-    const KSR::vector<Segment_2>& segments,
+    const std::vector<Segment_2>& segments,
     const std::string file_name) const {
 
     std::stringstream stream;
@@ -388,7 +349,7 @@ public:
   }
 
   void export_segments_3(
-    const KSR::vector<Segment_3>& segments,
+    const std::vector<Segment_3>& segments,
     const std::string file_name) const {
 
     std::stringstream stream;
@@ -428,27 +389,27 @@ public:
   }
 
   void export_polygon_soup_3(
-    const KSR::vector< KSR::vector<Point_3> >& polygons,
-    const KSR::vector<Color>& colors,
+    const std::vector< std::vector<Point_3> >& polygons,
+    const std::vector<Color>& colors,
     const std::string file_name) const {
 
     std::stringstream stream;
     initialize(stream);
 
-    KSR::size_t num_vertices = 0;
+    std::size_t num_vertices = 0;
     for (const auto& polygon : polygons)
       num_vertices += polygon.size();
-    KSR::size_t num_faces = polygons.size();
+    std::size_t num_faces = polygons.size();
     add_ply_header_mesh(stream, num_vertices, num_faces);
 
     for (const auto& polygon : polygons)
       for (const auto& p : polygon)
         stream << p << std::endl;
 
-    KSR::size_t i = 0, polygon_id = 0;
-    for (KSR::size_t k = 0; k < polygons.size(); ++k) {
+    std::size_t i = 0, polygon_id = 0;
+    for (std::size_t k = 0; k < polygons.size(); ++k) {
       stream << polygons[k].size() << " ";
-      for (KSR::size_t j = 0; j < polygons[k].size(); ++j)
+      for (std::size_t j = 0; j < polygons[k].size(); ++j)
         stream << i++ << " ";
       stream << colors[k] << std::endl;
       ++polygon_id;
@@ -473,8 +434,8 @@ public:
   }
 
   void export_mesh_2(
-    const KSR::vector<Point_2>& vertices,
-    const KSR::vector< KSR::vector<KSR::size_t> >& faces,
+    const std::vector<Point_2>& vertices,
+    const std::vector< std::vector<std::size_t> >& faces,
     const std::string file_name) const {
 
     std::stringstream stream;
@@ -486,7 +447,7 @@ public:
 
     for (const auto& face : faces) {
       stream << face.size();
-      for (const KSR::size_t findex : face){
+      for (const std::size_t findex : face){
         stream << " " << findex;
       }
       stream << " " << grey << std::endl;
@@ -495,9 +456,9 @@ public:
   }
 
   void export_mesh_2(
-    const KSR::vector<Point_2>& vertices,
-    const KSR::vector< KSR::vector<KSR::size_t> >& faces,
-    const KSR::vector<Color>& colors,
+    const std::vector<Point_2>& vertices,
+    const std::vector< std::vector<std::size_t> >& faces,
+    const std::vector<Color>& colors,
     const std::string file_name) const {
 
     std::stringstream stream;
@@ -507,9 +468,9 @@ public:
     for (const auto& vertex : vertices)
       stream << vertex << " 0 " << std::endl;
 
-    for (KSR::size_t k = 0; k < faces.size(); ++k) {
+    for (std::size_t k = 0; k < faces.size(); ++k) {
       stream << faces[k].size();
-      for (const KSR::size_t findex : faces[k]){
+      for (const std::size_t findex : faces[k]){
         stream << " " << findex;
       }
       stream << " " << colors[k] << std::endl;
@@ -517,7 +478,7 @@ public:
     save(stream, file_name + ".ply");
   }
 
-  const Color get_idx_color(const KSR::size_t idx) const {
+  const Color get_idx_color(const std::size_t idx) const {
     Random rand(idx);
     const unsigned char r = rand.get_int(32, 192);
     const unsigned char g = rand.get_int(32, 192);
@@ -547,7 +508,7 @@ private:
 
   void add_ply_header_points(
     std::stringstream& stream,
-    const KSR::size_t size) const {
+    const std::size_t size) const {
 
     stream <<
     "ply" 				         +  std::string(_NL_) + ""               			 <<
@@ -565,7 +526,7 @@ private:
 
   void add_ply_header_normals(
     std::stringstream& stream,
-    const KSR::size_t size) const {
+    const std::size_t size) const {
 
     stream <<
     "ply" 				         +  std::string(_NL_) + ""               			 <<
@@ -582,8 +543,8 @@ private:
 
   void add_ply_header_mesh(
     std::stringstream& stream,
-    const KSR::size_t num_vertices,
-    const KSR::size_t num_faces) const {
+    const std::size_t num_vertices,
+    const std::size_t num_faces) const {
 
     stream <<
     "ply" 				         +  std::string(_NL_) + ""               			<<
@@ -601,6 +562,35 @@ private:
     "end_header"           +  std::string(_NL_) + "";
   }
 };
+
+template<typename DS>
+void dump_polyhedrons(const DS& data, const std::string tag = std::string()) {
+
+  using Point_3 = typename DS::Kernel::Point_3;
+  std::vector<Point_3> polygon;
+  std::vector< std::vector<Point_3> > polygons;
+  std::vector<Color> colors;
+
+  Saver<typename DS::Kernel> saver;
+  for (std::size_t i = 0; i < data.polyhedrons().size(); ++i) {
+    const auto& volume = data.polyhedrons()[i];
+    const auto color = saver.get_idx_color(i);
+
+    colors.clear();
+    polygons.clear();
+    for (const auto& pface : volume.pfaces) {
+      polygon.clear();
+      for (const auto pvertex : data.pvertices_of_pface(pface))
+        polygon.push_back(data.point_3(pvertex));
+      polygons.push_back(polygon);
+      colors.push_back(color);
+    }
+
+    const std::string file_name =
+      (tag != std::string() ? tag + "_" : "") + "volume-" + std::to_string(i);
+    saver.export_polygon_soup_3(polygons, colors, file_name);
+  }
+}
 
 } // namespace KSR_3
 } // namespace CGAL
