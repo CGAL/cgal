@@ -1881,6 +1881,18 @@ bool remove_self_intersections(const FaceRange& face_range,
   // detect_feature_pp NP (unused for now)
   const double weak_dihedral_angle = 0.; // choose_parameter(get_parameter(np, internal_np::weak_dihedral_angle), 20.);
 
+  struct Return_false {
+    bool operator()(std::pair<face_descriptor, face_descriptor>) const { return false; }
+  };
+
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::filter_t,
+    NamedParameters,
+    Return_false // default: keep all
+  > ::type  Output_iterator_predicate;
+  Output_iterator_predicate out_it_predicates
+    = choose_parameter<Output_iterator_predicate>(get_parameter(np, internal_np::filter));
+
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
   std::cout << "DEBUG: Starting remove_self_intersections, is_valid(tmesh)? " << is_valid_polygon_mesh(tmesh) << "\n";
   std::cout << "\tpreserve_genus: " << preserve_genus << std::endl;
@@ -1909,7 +1921,8 @@ bool remove_self_intersections(const FaceRange& face_range,
 
       // TODO : possible optimization to reduce the range to check with the bbox
       // of the previous patches or something.
-      self_intersections(working_face_range, tmesh, std::back_inserter(self_inter));
+      self_intersections(working_face_range, tmesh,
+                         CGAL::filter_output_iterator(std::back_inserter(self_inter), out_it_predicates));
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
       std::cout << self_inter.size() << " intersecting pairs" << std::endl;
 #endif
