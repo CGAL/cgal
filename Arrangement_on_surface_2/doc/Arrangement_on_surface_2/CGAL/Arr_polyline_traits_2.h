@@ -111,6 +111,52 @@ public:
   /// @}
 
   /*! The `X_monotone_curve_2` type nested within the traits class respresnts
+   * polylines.
+   */
+  class Curve_2 {
+  public:
+    //! Const iterator of subcurves.
+    typedef std::vector<X_monotone_segment_2>::const_iterator
+      Segment_const_iterator;
+
+    //! Reverse const iterator of subcurves.
+    typedef std::reverse_iterator<Segment_const_iterator>
+      Segment_const_reverse_iterator;
+
+    //! constructs default.
+    Curve_2();
+
+    //! constructs from a subcurve.
+    Curve_2(const Segment_2& seg);
+
+    /*! constructs a polyline from a range of subcurves.
+     * \param begin An iterator pointing to the first subcurve in the range.
+     * \param end An iterator pointing after the past-the-end subcurve
+     *        in the range.
+     * \pre The end of subcurve n should be the beginning of subcurve n+1.
+     */
+    template <typename InputIterator>
+    void Curve_2(InputIterator begin, InputIterator end);
+
+    //! obtains an iterator for the polycurve subcurves.
+    Segment_const_iterator begin_segments() const;
+
+    //! obtains a past-the-end iterator for the polycurve subcurves.
+    Segment_const_iterator end_segments() const;
+
+    //! obtains the first reverse iterator of the polyline subcurves.
+    Segment_const_reverse_iterator rbegin_segments() const;
+
+    //! obtains the past-the-end reverse iterator for the polyline points.
+    Segment_const_reverse_iterator rend_segments() const;
+
+    /*! Obtain the number of subcurves that comprise the poyline.
+     * \return The number of subcurves.
+     */
+    Segments_size_type number_of_segments() const;
+  };
+
+  /*! The `X_monotone_curve_2` type nested within the traits class respresnts
    * \f$x\f$-monotone polylines.
    */
   class X_monotone_curve_2 {

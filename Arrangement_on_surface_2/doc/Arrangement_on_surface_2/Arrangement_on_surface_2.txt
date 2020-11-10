@@ -2562,8 +2562,9 @@ we use an instance of the traits class-template
 the `Arrangement_2<Traits,Dcel>` class template when instantiated.
 This traits class-template is capable of representing line segments as
 well as unbounded linear curves, namely, lines and rays. Observe that
-objects of the `X_monotone_curve_2` type nested in this traits
-class-template are constructible from objects of types \link
+objects of the \link Arr_linear_traits_2::X_monotone_curve_2
+`X_monotone_curve_2`\endlink type nested in this traits class-template
+are constructible from objects of types \link
 Arr_linear_traits_2<Kernel>::Line_2 `Line_2`\endlink, \link
 Arr_linear_traits_2<Kernel>::Ray_2 `Ray_2`\endlink, and \link
 Arr_linear_traits_2<Kernel>::Segment_2 `Segment_2`\endlink also nested
@@ -2995,8 +2996,9 @@ respectively.
   ArrangementHorizontalSideTraits_2::Parameter_space_in_y_2
   `Parameter_space_in_y_2`\endlink functors; see Section \ref
   aos_ssec-traits-curved. The operations in both functors accept an
-  enumeration that indicates the curve end, that is, `ARR_MIN_END` or
-  `ARR_MAX_END`, in addition to the curve itself.
+  enumeration that indicates the curve end, that is,
+  `CGAL::ARR_MIN_END` or `CGAL::ARR_MAX_END`, in addition to the curve
+  itself.
 
 <LI>A face in a planar arrangement has at most one outer CCB. However,
   a face in an arrangement embedded on a surface, such as a torus, may
@@ -3343,27 +3345,33 @@ The concept `ArrangementTraits_2` refines the
 `ArrangementXMonotoneTraits_2` concept. A model of the refined concept
 must define an additional type that is used to represent general, not
 necessarily \f$x\f$-monotone and not necessarily continuous, curves,
-named `Curve_2`. It also has to support the subdivision of a curve of
-that type into a set of continuous \f$x\f$-monotone curves and
-isolated points. For example, the curve \f$c:\ (x^2 + y^2)(x^2 + y^2 -
-1) = 0\f$ comprises the unit circle (the locus of all points for which
-\f$x^2 + y^2 = 1\f$) and the origin (the singular point
-\f$(0,0)\f$). \f$c\f$ should therefore be subdivided into two circular
-arcs, the upper part and the lower part of the unit circle, and a
-single isolated point.  In particular a model of the refined concept
-has to support the following additional operation:
+named \link ArrangementTraits_2::Curve_2 `Curve_2`\endlink. It also
+has to support the subdivision of a curve of that type into a set of
+continuous \f$x\f$-monotone curves and isolated points. For example,
+the curve \f$c:\ (x^2 + y^2)(x^2 + y^2 - 1) = 0\f$ comprises the unit
+circle (the locus of all points for which \f$x^2 + y^2 = 1\f$) and the
+origin (the singular point \f$(0,0)\f$). \f$c\f$ should therefore be
+subdivided into two circular arcs, the upper part and the lower part
+of the unit circle, and a single isolated point.  In particular a
+model of the refined concept has to support the following additional
+operation:
 
 <DL>
+
 <DT>\link ArrangementTraits_2::Make_x_monotone_2 <B>`Make_x_monotone_2`</B>\endlink:
-<DD> Divides a given general curve of type `Curve_2` into continuous
-  weakly \f$x\f$-monotone curves and isolated points.  </DL>
+
+<DD> Divides a given general curve of type \link
+  ArrangementTraits_2::Curve_2 `Curve_2`\endlink into continuous weakly
+  \f$x\f$-monotone curves and isolated points.
+
+</DL>
 
 Note that a model of the refined concept `ArrangementTraits_2` is
 required only when using the free `insert()` function templates (see
-Section \ref arr_secgl_funcs) that accept an object of type `Curve_2`
-or a range of objects of that type. In all other cases it is
-sufficient to use a model of the `ArrangementXMonotoneTraits_2`
-concept.
+Section \ref arr_secgl_funcs) that accept an object of type \link
+ArrangementTraits_2::Curve_2 `Curve_2`\endlink or a range of objects
+of that type. In all other cases it is sufficient to use a model of
+the `ArrangementXMonotoneTraits_2` concept.
 
 <!----------------------------------------------------------------------------->
 \subsubsection aos_sssec-tr_landmarks_concept The Landmark Concept
@@ -3906,19 +3914,21 @@ arr_sssectr_linear.
 An instance of the `Arr_segment_traits_2<Kernel>` class template used
 in most example programs so far is instantiated by substituting the
 `Kernel` template parameter with a geometric kernel that must conform
-to the `Kernel` concept; see Package \ref
-PkgKernel23Concepts. This traits class defines its point type to be
-the `Kernel::Point_2` type. However, neither the `Curve_2` nor the
-`X_monotone_curve_2` nested types of the traits are defined as the
-`Kernel::Segment_2` type. A kernel segment is represented by its two
-endpoints, and these may have a large bit size representation when the
-segment is the result of several split operations in comparison with
-the representation of the original-segment endpoints. The large bit
-size representation may significantly slow down the various
-traits-class operations involving such segments. (A straightforward
-solution would be to repeatedly normalize the results of all
-computations. However, our experience shows that indiscriminate
-normalization considerably slows down the arrangement construction.)
+to the `Kernel` concept; see Package \ref PkgKernel23Concepts. This
+traits class defines its point type to be the `Kernel::Point_2`
+type. However, neither the \link Arr_segment_traits_2::Curve_2
+`Curve_2`\endlink nor the \link
+Arr_segment_traits_2::X_monotone_curve_2 `X_monotone_curve_2`\endlink
+nested types of the traits are defined as the `Kernel::Segment_2`
+type. A kernel segment is represented by its two endpoints, and these
+may have a large bit size representation when the segment is the
+result of several split operations in comparison with the
+representation of the original-segment endpoints. The large bit size
+representation may significantly slow down the various traits-class
+operations involving such segments. (A straightforward solution would
+be to repeatedly normalize the results of all computations. However,
+our experience shows that indiscriminate normalization considerably
+slows down the arrangement construction.)
 
 In contrast, the `Arr_segment_traits_2` class template represents a
 segment using its supporting line in addition to the two endpoints.
@@ -3927,12 +3937,14 @@ changes as the segment is split. The `Arr_segment_traits_2` class
 template also caches some additional information with each segment to
 speed up various predicates, i.e., two Boolean flags indicating (i)
 whether the segment is vertical and (ii) whether the segment
-target-point is lexicographically larger than its source.  An
-`X_monotone_curve_2` object is still constructible from two endpoints
-or from a kernel segment and converted to an `X_monotone_curve_2`
-object. Moreover, an `X_monotone_curve_2` instance can also be cast or
-to a `Kernel::Segment_2` object. The two types are thus convertible to
-one another.
+target-point is lexicographically larger than its source.  An \link
+Arr_segment_traits_2::X_monotone_curve_2 `X_monotone_curve_2`\endlink
+object is still constructible from two endpoints or from a kernel
+segment and converted to an `X_monotone_curve_2` object. Moreover, an
+\link Arr_segment_traits_2::X_monotone_curve_2
+`X_monotone_curve_2`\endlink instance can also be cast or to a
+`Kernel::Segment_2` object. The two types are thus convertible to one
+another.
 
 Using an instance of the `Arr_segment_traits_2<Kernel>`
 class template can be very efficient when constructing arrangements
@@ -4041,20 +4053,22 @@ of unbounded curves is capable of handling bounded and unbounded
 linear objects, namely, lines, rays, and line segments. It models the
 concepts `ArrangementTraits_2`, `ArrangementLandmarkTraits_2`, and
 `{ArrangementOpenBoundaryTraits_2`. It is parameterized by a geometric
-kernel and its nested `Point_2` type is defined to be the kernel-point
-type. The `Curve_2` (and `X_monotone_curve_2`) nested types are
-constructible from a `Kernel::Line_2`, a `Kernel::Ray_2`, or from a
-`Kernel::Segment_2` object. Given a linear-curve object \f$c\f$, you
-can use the calls `c.is_line()`, `c.is_ray()`, and `c.is_segment()` to
-find out whether it has a source point or a target point. Based on the
-curve type, you can access its endpoints using the methods
-`c.source()` (for rays and for line segments) and `c.target()` (for
-segments only). It is also possible to cast a curve into a
-`Kernel::Line_2`, a `Kernel::Ray_2`, or a `Kernel::Segment_2` type,
-using the methods `c.line()`, `c.ray()`, and `c.segment()`,
-respectively.  Just like the default segment-traits class, the
-linear-curve traits class uses caching techniques to speed up its
-predicate evaluations and object constructions.
+kernel and its nested \link Arr_linear_traits_2::Point_2
+`Point_2`\endlink type is defined to be the kernel-point type. The
+\link Arr_linear_traits_2::Curve_2 `Curve_2`\endlink (and \link
+Arr_linear_traits_2::X_monotone_curve_2 `X_monotone_curve_2`\endlink)
+nested types are constructible from a `Kernel::Line_2`, a
+`Kernel::Ray_2`, or from a `Kernel::Segment_2` object. Given a
+linear-curve object \f$c\f$, you can use the calls `c.is_line()`,
+`c.is_ray()`, and `c.is_segment()` to find out whether it has a source
+point or a target point. Based on the curve type, you can access its
+endpoints using the methods `c.source()` (for rays and for line
+segments) and `c.target()` (for segments only). It is also possible to
+cast a curve into a `Kernel::Line_2`, a `Kernel::Ray_2`, or a
+`Kernel::Segment_2` type, using the methods `c.line()`, `c.ray()`, and
+`c.segment()`, respectively.  Just like the default segment-traits
+class, the linear-curve traits class uses caching techniques to speed
+up its predicate evaluations and object constructions.
 
 <!----------------------------------------------------------------------------->
 \subsubsection arr_ssectr_polylines The Polyline and Polycurve Traits Classes
@@ -4109,15 +4123,20 @@ subcurve traits must support the construction of a unique
 (\f$x\f$-monotone) segment given two input points.
 
 An instance of the polyline traits class-template inherits its nested
-point type, i.e., `%Point_2`, from the subcurve traits, and defines the
-nested types `Curve_2` and `X_monotone_curve_2`, which are used to
-represent polylines and \f$x\f$-monotone polylines, respectively.  A
-polyline of the nested type `Curve_2` is stored as a vector of
-`SubcurveTraits_2::Curve_2` objects, and an \f$x\f$-monotone polyline
-of the nested type `X_monotone_curve_2` is stored as a vector of
-`SubcurveTraits_2::X_monotone_curve_2` objects.  The nested
-`X_monotone_curve_2` type inherits from the nested type `Curve_2`.  By
-default, `Arr_segment_traits_2` is used as the subcurve traits (in
+point type, i.e., \link Arr_polyline_traits_2::Point_2
+`Point_2`\endlink, from the subcurve traits, and defines the nested
+types \link Arr_polyline_traits_2::Curve_2 `Curve_2`\endlink and \link
+Arr_polyline_traits_2::X_monotone_curve_2
+`X_monotone_curve_2`\endlink, which are used to represent polylines
+and \f$x\f$-monotone polylines, respectively.  A polyline of the
+nested type \link Arr_polyline_traits_2::Curve_2 `Curve_2`\endlink is
+stored as a vector of `SubcurveTraits_2::Curve_2` objects, and an
+\f$x\f$-monotone polyline of the nested type \link
+Arr_polyline_traits_2::X_monotone_curve_2 `X_monotone_curve_2`\endlink
+is stored as a vector of `SubcurveTraits_2::X_monotone_curve_2`
+objects.  The nested `X_monotone_curve_2` type inherits from the
+nested type \link Arr_polyline_traits_2::Curve_2 `Curve_2`\endlink.
+By default, `Arr_segment_traits_2` is used as the subcurve traits (in
 case where the `SubcurveTraits_2` parameter is omitted). In this case
 the nested types `SubcurveTraits_2::Curve_2` and
 `SubcurveTraits_2::X_monotone_curve_2` are identical types
@@ -4439,17 +4458,19 @@ typedef Traits::Rational_circle_2                          Circle;
 typedef CGAL::Arrangement_2<Traits>                        Arrangement;
 \endcode
 
-The `Curve_2` type nested in `Arr_circle_segment_traits_2` can be used
-to represent circles, circular arcs, or line segments. We now describe
-and demonstrate a variety of ways in which the curves of this type can
-be constructed. A Curve object can be constructed from a
+The \link Arr_circle_segment_traits_2::Curve_2 `Curve_2`\endlink type
+nested in `Arr_circle_segment_traits_2` can be used to represent
+circles, circular arcs, or line segments. We now describe and
+demonstrate a variety of ways in which the curves of this type can be
+constructed. A Curve object can be constructed from a
 `Kernel::Circle_2` object or from a `Kernel::Segment_2` object. A
 circular arc is typically defined by a supporting circle and two
-endpoints, where the endpoints are of type `Point_2`, with rational or
-irrational coordinates. The orientation of the arc is determined by
+endpoints, where the endpoints are of type \link
+Arr_circle_segment_traits_2::Point_2 `Point_2`\endlink, with rational
+or irrational coordinates. The orientation of the arc is determined by
 the orientation of the supporting circle. Similarly, we also support
-the construction of line segments given their supporting line (of
-type `Kernel::Line_2`) and two endpoints, which may have irrational
+the construction of line segments given their supporting line (of type
+`Kernel::Line_2`) and two endpoints, which may have irrational
 coordinates (unlike the `Kernel::Segment_2` type).
 
 Note that the `Kernel::Circle_2` type is used to represent a circle
@@ -4598,20 +4619,27 @@ class-template. Also note the types defined by the rational kernels,
 which we need for conveniently constructing conic arcs.
 
 The `Arr_conic_traits_2` models the `ArrangementTraits_2` and
-`ArrangementLandmarkTraits_2` concepts. Its `Point_2` type is derived
-from `AlgKernel::Point_2`, while the `Curve_2` type represents a
-bounded, not necessarily \f$x\f$-monotone, conic arc.  The
-`X_monotone_curve_2` type is derived from `Curve_2`, but its
-constructors are used only by the traits class.  Users should
-therefore construct only `Curve_2` objects and insert them into the
-arrangement using the `insert()` function.
+`ArrangementLandmarkTraits_2` concepts. Its \link
+Arr_conic_traits_2::Point_2 `Point_2`\endlink type is derived from
+`AlgKernel::Point_2`, while the \link Arr_conic_traits_2::Curve_2
+`Curve_2`\endlink type represents a bounded, not necessarily
+\f$x\f$-monotone, conic arc.  The \link
+Arr_conic_traits_2::X_monotone_curve_2 `X_monotone_curve_2`\endlink
+type is derived from \link Arr_conic_traits_2::Curve_2
+`Curve_2`\endlink, but its constructors are used only by the traits
+class.  Users should therefore construct only \link
+Arr_conic_traits_2::Curve_2 `Curve_2`\endlink objects and insert them
+into the arrangement using the `insert()` function.
 
 Conic arcs are constructible from full ellipses or by specifying a
 supporting curve, two endpoints, and an orientation. However, several
-constructors of `Curve_2` are available to allow for some special
-cases, such as circular arcs or line segments. The `Curve_2` and the
-derived `X_monotone_curve_2` classes also support basic access
-functions such as `source()`, `target()`, and `orientation()`.
+constructors of \link Arr_conic_traits_2::Curve_2 `Curve_2`\endlink
+are available to allow for some special cases, such as circular arcs
+or line segments. The \link Arr_conic_traits_2::Curve_2
+`Curve_2`\endlink and the derived \link
+Arr_conic_traits_2::X_monotone_curve_2 `X_monotone_curve_2`\endlink
+classes also support basic access functions such as `source()`,
+`target()`, and `orientation()`.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-conics,conics.png}
@@ -4734,15 +4762,18 @@ singularities. An arc that has singularities must be split into
 continuous portions before being inserted into the arrangement.
 Consider, for example, the rational arc given by the equation \f$y =
 \frac{1}{(x-1)(2-x)}\f$ defined over the interval \f$[0,3]\f$, as
-depicted in \cgalFigureRef{aos_fig-rat_func_singular}. This
-arc has two singularities, at \f$x = 1\f$ and at \f$x = 2\f$. It is
-split into three continuous portions defined over the intervals
-\f$[0,1)\f$, \f$(1,2)\f$, and \f$(2,3]\f$ by the traits operation
-`Make_x_monotone_2`. Arbitrary rational functions are represented by
-the nested type `Curve_2` and continuous portions of rational
-functions are represented by the nested type `X_monotone_curve_2`.
-Constructors for both types are provided by the traits in form of
-functors.
+depicted in \cgalFigureRef{aos_fig-rat_func_singular}. This arc has
+two singularities, at \f$x = 1\f$ and at \f$x = 2\f$. It is split into
+three continuous portions defined over the intervals \f$[0,1)\f$,
+\f$(1,2)\f$, and \f$(2,3]\f$ by the traits operation \link
+ArrangementTraits_2::Make_x_monotone_2
+`Make_x_monotone_2`\endlink. Arbitrary rational functions are
+represented by the nested type \link
+Arr_rational_function_traits_2::Curve_2 `Curve_2`\endlink and
+continuous portions of rational functions are represented by the
+nested type \link Arr_rational_function_traits_2::X_monotone_curve_2
+`X_monotone_curve_2`\endlink.  Constructors for both types are
+provided by the traits in form of functors.
 
 When the `Arr_rational_function_traits_2<AlgebraicKernel_d_1>` class
 template is instantiated, the template parameter must be substituted
@@ -4768,11 +4799,12 @@ template parameter is defined as the `Coefficient` type. This type
 cannot be algebraic. Moreover, it is recommended that this type is not
 made rational either, since using rational (as opposed to integral)
 coefficients does not extend the range of the rational arcs and is
-typically less efficient.\cgalFootnote{The `Algebraic_kernel_d_1` class
-template uses the types provided by the \ref PkgPolynomial package to
-define its nested `Polynomial_1` type and conveniently expose it to
-the user.} The `Bound` type, however, can be algebraic. A point of
-type `Point_2` nested in the `Arr_rational_function_traits_2` class
+typically less efficient.\cgalFootnote{The `Algebraic_kernel_d_1`
+class template uses the types provided by the \ref PkgPolynomial
+package to define its nested `Polynomial_1` type and conveniently
+expose it to the user.} The `Bound` type, however, can be algebraic. A
+point of type \link Arr_rational_function_traits_2::Point_2
+`Point_2`\endlink nested in the `Arr_rational_function_traits_2` class
 template is represented by a rational function and its $x$-coordinate,
 which is derived from the type `Algebraic_real_1` nested in the
 algebraic-kernel type. An explicit representation by the nested type
@@ -4856,11 +4888,13 @@ identical. You can construct the rational arc providing the
 coefficients of \f$P'\f$ and \f$Q'\f$ to the constructor. In this case
 the constructor normalizes the coefficients and generates the desired
 polynomials \f$P\f$ and \f$Q\f$. To this end, the curve constructors
-of both types, namely `Curve_2` and `X_monotone_curve_2`, have
-operators that accept ranges of polynomial coefficients as well as
-polynomials. The coefficients in a given range must be in the order of
-the degrees of the corresponding variables starting from the constant
-term.
+of both types, namely \link Arr_rational_function_traits_2::Curve_2
+`Curve_2`\endlink and \link
+Arr_rational_function_traits_2::X_monotone_curve_2
+`X_monotone_curve_2`\endlink, have operators that accept ranges of
+polynomial coefficients as well as polynomials. The coefficients in a
+given range must be in the order of the degrees of the corresponding
+variables starting from the constant term.
 
 <!----------------------------------------------------------------------------->
 \paragraph arr_sssectr_bez A Traits Class for Planar B&eacute;zier Curves
@@ -4930,8 +4964,11 @@ approximate computation fails to produce an unambiguous result. Most
 arrangement vertices are therefore associated with approximated
 points. You cannot access the coordinates of such points as algebraic
 numbers. However, access to the approximate coordinates is possible.
-See the Reference Manual for the exact interface of the `Point_2`,
-`Curve_2`, and `X_monotone_curve_2` types defined by the traits class.
+See the Reference Manual for the exact interface of the \link
+Arr_Bezier_curve_traits_2::Point_2 `Point_2`\endlink, \link
+Arr_Bezier_curve_traits_2::Curve_2 `Curve_2`\endlink, and \link
+Arr_Bezier_curve_traits_2::X_monotone_curve_2
+`X_monotone_curve_2`\endlink types defined by the traits class.
 
 Every instance of the `Arr_Bezier_curve_traits_2` class templates
 models the concept `ArrangementTraits_2` (but it does not model the
@@ -5007,16 +5044,22 @@ number types above. Finally, the template parameter `Coefficient` can
 be substituted also with a rational number type, where the type of the
 numerator and denominator is one of the types above.
 
-The type `Curve_2` nested in the `Arr_algebraic_segment_traits_2`
-class template defines an algebraic curve. An object of this type can
-be constructed by the `Construct_curve_2` functor also nested in the
-class template. Its function operator accepts as an argument an object
-of type `Polynomial_2`, nested as well in the traits class-template.
-The type `Polynomial_2` models the concept `Polynomial_d`. An object
-of the nested type `Polynomial_2` represents a bivariate
-polynomial. It can be constructed in a few convenient ways, some are
-exemplified by the programs listed below. Consult the reference guide
-for the complete set of options.
+The type \link Arr_algebraic_segment_traits_2::Curve_2
+`Curve_2`\endlink nested in the `Arr_algebraic_segment_traits_2` class
+template defines an algebraic curve. An object of this type can be
+constructed by the \link
+Arr_algebraic_segment_traits_2::Construct_curve_2
+`Construct_curve_2`\endlink functor also nested in the class
+template. Its function operator accepts as an argument an object of
+type \link Arr_algebraic_segment_traits_2::Polynomial_2
+`Polynomial_2`\endlink, nested as well in the traits class-template.
+The type \link Arr_algebraic_segment_traits_2::Polynomial_2
+`Polynomial_2`\endlink models the concept `Polynomial_d`. An object of
+the nested type \link Arr_algebraic_segment_traits_2::Polynomial_2
+`Polynomial_2`\endlink represents a bivariate polynomial. It can be
+constructed in a few convenient ways, some are exemplified by the
+programs listed below. Consult the reference guide for the complete
+set of options.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-algebraic_curves,algebraic_curves.png}
@@ -5026,12 +5069,14 @@ An arrangement of algebraic curves of degrees \f$1\f$, \f$2\f$,
 <!----------------------------------------------------------------------------->
 
 The following examples computes the arrangement depicted in in
-\cgalFigureRef{aos_fig-algebraic_curves}. The arrangement is induced by
-four algebraic curves, \f$c_1\f$, \f$c_2\f$, \f$c_3\f$, and \f$c_4\f$,
-of degrees $1$, $2$, $3$, and $6$, respectively. For each curve the
-defining polynomial is constructed first. Then, the algebraic curve is
-constructed using the `Construct_curve_2` functor.  Finally, the curve
-is inserted into the arrangement.
+\cgalFigureRef{aos_fig-algebraic_curves}. The arrangement is induced
+by four algebraic curves, \f$c_1\f$, \f$c_2\f$, \f$c_3\f$, and
+\f$c_4\f$, of degrees $1$, $2$, $3$, and $6$, respectively. For each
+curve the defining polynomial is constructed first. Then, the
+algebraic curve is constructed using the \link
+Arr_algebraic_segment_traits_2::Construct_curve_2
+`Construct_curve_2`\endlink functor.  Finally, the curve is inserted
+into the arrangement.
 
 \cgalExample{Arrangement_on_surface_2/algebraic_curves.cpp}
 
@@ -5049,22 +5094,30 @@ the constructor of the `Arrangement_2` data structure to avoid the
 construction of a duplicate traits-class object.
 
 A weakly \f$x\f$-monotone segment of an algebraic curve is represented
-by the `X_monotone_curve_2` type nested in the traits
+by the \link Arr_algebraic_segment_traits_2::X_monotone_curve_2
+`X_monotone_curve_2`\endlink type nested in the traits
 class-template. You can construct such segments in two ways as
-follows: (i) using the `Make_x_monotone_2` functor or (ii) using the
-`Construct_x_monotone_segment_2` functor.  Both functors are nested in
-the traits class-template. The former is required by the concept
-`ArrangementTraits_2` our traits class models; see Section \ref
-aos_sssec-geom_traits-concepts_arbitrary. The latter enables the
-construction of individual segments. The `X_monotone_curve_2` type
-represents weakly \f$x\f$-monotone segments of a curve; however, for
-technical reasons, segments may need to be further subdivided into
-several sub-segments, called terminal segments. Therefore,
-`Construct_x_monotone_segment_2` constructs a sequence of
-`X_monotone_curve_2` objects, whose union represents the desired
-weakly $x$-monotone segment. The function operator of the
-`Construct_x_monotone_segment_2` functor accepts as arguments the
-underlying algebraic curve, the leftmost point of the segment, the
+follows: (i) using the \link ArrangementTraits_2::Make_x_monotone_2
+`Make_x_monotone_2`\endlink functor or (ii) using the \link
+Arr_algebraic_segment_traits_2::Construct_x_monotone_segment_2
+`Construct_x_monotone_segment_2`\endlink functor.  Both functors are
+nested in the traits class-template. The former is required by the
+concept `ArrangementTraits_2` our traits class models; see Section
+\ref aos_sssec-geom_traits-concepts_arbitrary. The latter enables the
+construction of individual segments. The \link
+Arr_algebraic_segment_traits_2::X_monotone_curve_2
+`X_monotone_curve_2`\endlink type represents weakly \f$x\f$-monotone
+segments of a curve; however, for technical reasons, segments may need
+to be further subdivided into several sub-segments, called terminal
+segments. Therefore, \link
+Arr_algebraic_segment_traits_2::Construct_x_monotone_segment_2
+`Construct_x_monotone_segment_2`\endlink constructs a sequence of
+\link Arr_algebraic_segment_traits_2::X_monotone_curve_2
+`X_monotone_curve_2`\endlink objects, whose union represents the
+desired weakly $x$-monotone segment. The function operator of the
+\link Arr_algebraic_segment_traits_2::Construct_x_monotone_segment_2
+`Construct_x_monotone_segment_2`\endlink functor accepts as arguments
+the underlying algebraic curve, the leftmost point of the segment, the
 rightmost point of the segment, and an output iterator associated with
 a container of output terminal segments. The function operator is
 overloaded. In addition to the variant above, there is one that
@@ -5076,14 +5129,13 @@ returned segment, its left endpoint, or its right endpoint. The third
 variant accepts only two delimiting points and an output iterator. It
 constructs line segments.
 
-\cgalAdvancedBegin
-The subdivision terminal segments is due to the internal
-representation of \f$x\f$-monotone segments, which is based on a
-vertical decomposition.  We assume the defining polynomial \f$f\f$ of
-the curve \f$c\f$ to be <em>square-free</em>. That is, it contains no
-divisor \f$g^2\f$ of total degree greater than zero. We define a
-<em>(complex) critical point</em> \f$p\in\mathbb{C}^2\f$ by \f[
-f(p)=0=\frac{\partial f}{\partial y}(p). \f] An \f$x\f$-coordinate
+\cgalAdvancedBegin The subdivision terminal segments is due to the
+internal representation of \f$x\f$-monotone segments, which is based
+on a vertical decomposition.  We assume the defining polynomial
+\f$f\f$ of the curve \f$c\f$ to be <em>square-free</em>. That is, it
+contains no divisor \f$g^2\f$ of total degree greater than zero. We
+define a <em>(complex) critical point</em> \f$p\in\mathbb{C}^2\f$ by
+\f[ f(p)=0=\frac{\partial f}{\partial y}(p). \f] An \f$x\f$-coordinate
 \f$\alpha\in\mathbb{R}\f$ is <em>critical</em> either if some critical
 point has \f$x\f$-coordinate \f$\alpha\f$, or if the leading
 coefficient of \f$f\f$, considered as a polynomial in \f$y\f$,
@@ -5092,16 +5144,17 @@ can only take place at critical \f$x\f$-coordinates.  Between two
 consecutive critical \f$x\f$-coordinates the curve decomposes into a
 finite number of \f$x\f$-monotone segments (the same holds to the left
 of the leftmost, and to the right of the rightmost critical
-\f$x\f$-coordinate).  The type `X_monotone_curve_2` is only capable of
-representing such segments (and sub-segments of them). Formally, a
-terminal segment is either a vertical line-segment or a segment of an
-\f$x\f$-monotone curve whose \f$x\f$-range does not contain critical
-points in its interior. See
-\cgalFigureRef{aos_fig-algebraic_curves_decomposition} for an example of a
-quartic curve and its decomposition into terminal segments.  Notice
-that six vertices split the curve into \f$x\f$-monotone segments, and
-four additional vertices further split the corresponding
-\f$x\f$-monotone segments into terminal segments.
+\f$x\f$-coordinate).  The type \link
+Arr_algebraic_segment_traits_2::X_monotone_curve_2
+`X_monotone_curve_2`\endlink is only capable of representing such
+segments (and sub-segments of them). Formally, a terminal segment is
+either a vertical line-segment or a segment of an \f$x\f$-monotone
+curve whose \f$x\f$-range does not contain critical points in its
+interior. See \cgalFigureRef{aos_fig-algebraic_curves_decomposition}
+for an example of a quartic curve and its decomposition into terminal
+segments.  Notice that six vertices split the curve into
+\f$x\f$-monotone segments, and four additional vertices further split
+the corresponding \f$x\f$-monotone segments into terminal segments.
 \cgalAdvancedEnd
 
 <!----------------------------------------------------------------------------->
@@ -5127,21 +5180,24 @@ Coordinates of points are represented by the type `Algebraic_real_1`
 nested in the traits class-template. This type is defined as the
 corresponding type nested in the instance of `Algebraic_kernel_d_1`.
 
-You can construct an object of type `Point_2` using the
-`Construct_point_2` functor nested in the traits class-template. Its
-function operator is overloaded with a couple of variants that accepts
-the \f$x\f$ and \f$y\f$ coordinates of the point. Their types must be
-either `Algebraic_real_1` or `Coefficient`. Another efficient variant
-accepts a triple \f$(x_0,c,i)\f$, which identifies the \f$i\f$-th
-point (counted from below) in the fiber of \f$c\f$ at the
-\f$x\f$-coordinate \f$x_0\f$. \cgalFootnote{The fiber of a curve
-\f$c\f$ at some $x$-coordinate \f$x'\f$ is the set of all points on
-\f$c\f$ with \f$x\f$-coordinate \f$x'\f$.  Formally, for a curve
-\f$c\f$ and \f$x' \in \mathbb{R}\f$, the fiber of \f$c\f$ at \f$x'\f$
-is \f$c \cap \{(x',b)\,|\,b \in \mathbb{R}\}\f$.} In the example
-depicted in \cgalFigureRef{aos_fig-algebraic_curves_decomposition}, if
-\f$x_1\f$ denotes the \f$x\f$-coordinate of \f$p\f$, and \f$c\f$
-represents the algebraic curve, then \f$p\f$ could be represented by
+You can construct an object of type \link
+Arr_algebraic_segment_traits_2::Point_2 `Point_2`\endlink using the
+\link Arr_algebraic_segment_traits_2::Construct_point_2
+`Construct_point_2`\endlink functor nested in the traits
+class-template. Its function operator is overloaded with a couple of
+variants that accepts the \f$x\f$ and \f$y\f$ coordinates of the
+point. Their types must be either `Algebraic_real_1` or
+`Coefficient`. Another efficient variant accepts a triple
+\f$(x_0,c,i)\f$, which identifies the \f$i\f$-th point (counted from
+below) in the fiber of \f$c\f$ at the \f$x\f$-coordinate
+\f$x_0\f$. \cgalFootnote{The fiber of a curve \f$c\f$ at some
+$x$-coordinate \f$x'\f$ is the set of all points on \f$c\f$ with
+\f$x\f$-coordinate \f$x'\f$.  Formally, for a curve \f$c\f$ and \f$x'
+\in \mathbb{R}\f$, the fiber of \f$c\f$ at \f$x'\f$ is \f$c \cap
+\{(x',b)\,|\,b \in \mathbb{R}\}\f$.} In the example depicted in
+\cgalFigureRef{aos_fig-algebraic_curves_decomposition}, if \f$x_1\f$
+denotes the \f$x\f$-coordinate of \f$p\f$, and \f$c\f$ represents the
+algebraic curve, then \f$p\f$ could be represented by
 \f$(x_1,c,3)\f$. If \f$x_2\f$ is the \f$x\f$-coordinate of \f$q\f$,
 then \f$(x_2,c,1)\f$ is a valid representation of \f$q\f$. Points are
 represented internally using the triple described above. Although the
@@ -5262,32 +5318,39 @@ CurveData, Convert>` parameterized by a base-traits class, which must
 be substituted with one of the geometric traits models described in
 the previous subsections or with a user-defined traits model, when the
 decorator is instantiated. The curve-data decorator derives from the
-base-traits class, and in particular inherits its `Point_2` type. The
-remaining nested types are defined as follows:
+base-traits class, and in particular inherits its \link
+Arr_curve_data_traits_2::Point_2 `Point_2`\endlink type. The remaining
+nested types are defined as follows:
 
 <UL>
 
-<LI>`Curve_2` is derived from the basic `BaseTraits::Curve_2`
-class, extending it by an extra field of type `CurveData`.
+<LI>\link Arr_curve_data_traits_2::Curve_2 `Curve_2`\endlink is
+  derived from the basic `BaseTraits::Curve_2` class, extending it by
+  an extra field of type `CurveData`.
 
-<LI>`X_monotone_curve_2` is derived from the basic
-`BaseTraits::X_monotone_curve_2` class, extending it by an extra field
-of type `XMonotoneCurveData`, which must model the concepts
-CopyConstructible, EqualityComparable, and DefaultConstructible.  The
-latter ensures that every instance of the class template
-`Arr_curve_data_traits_2` obtained by substituting the `BaseTraits`
-template parameter with a model of the `ArrangementLandmarkTraits_2`
-concept models the ArrangementLandmarkTraits_2` concept as well
+<LI>\link Arr_curve_data_traits_2::X_monotone_curve_2
+  `X_monotone_curve_2`\endlink is derived from the basic
+  `BaseTraits::X_monotone_curve_2` class, extending it by an extra
+  field of type `XMonotoneCurveData`, which must model the concepts
+  CopyConstructible, EqualityComparable, and DefaultConstructible.
+  The latter ensures that every instance of the class template
+  `Arr_curve_data_traits_2` obtained by substituting the `BaseTraits`
+  template parameter with a model of the `ArrangementLandmarkTraits_2`
+  concept models the ArrangementLandmarkTraits_2` concept as well
 
 </UL>
 
-Note that the nested `Curve_2` and `X_monotone_curve_2` are not the
-same, even if the `BaseTraits::Curve_2` and
-`BaseTraits::X_monotone_curve_2` are (as in the case of the
-segment-traits class, for example). The extended curve types support
-the additional methods
-\link CGAL::Arr_curve_data_traits_2<Tr, XData, Mrg, CData, Cnv>::Curve_2::data() `data()`\endlink and
-\link CGAL::Arr_curve_data_traits_2<Tr, XData, Mrg, CData, Cnv>::Curve_2::set_data() `set_data()`\endlink for accessing and
+Note that the nested \link Arr_curve_data_traits_2::Curve_2
+`Curve_2`\endlink and \link
+Arr_curve_data_traits_2::X_monotone_curve_2
+`X_monotone_curve_2`\endlink are not the same, even if the
+`BaseTraits::Curve_2` and `BaseTraits::X_monotone_curve_2` are (as in
+the case of the segment-traits class, for example). The extended curve
+types support the additional methods \link
+CGAL::Arr_curve_data_traits_2<Tr, XData, Mrg, CData,
+Cnv>::Curve_2::data() `data()`\endlink and \link
+CGAL::Arr_curve_data_traits_2<Tr, XData, Mrg, CData,
+Cnv>::Curve_2::set_data() `set_data()`\endlink for accessing and
 modifying the data field.
 
 You can create an extended curve (or an extended \f$x\f$-monotone curve)
@@ -5608,17 +5671,18 @@ this data stored in these fields, as the following sections reveal.
 For many applications of the \ref PkgArrangementOnSurface2 package it
 is necessary to store additional information (perhaps of non-geometric
 nature) with the arrangement features. Vertices are associated with
-`Point_2` objects and edges (halfedge pairs) are associated with
-`X_monotone_curve_2` objects, both defined by the traits
-class. Extending the geometric traits-class types by using a
-traits-class decorator, as explained in Section \ref arr_ssecmeta_tr,
-might be a sufficient solution for some applications.  However, the
-\sc{Dcel} faces are not associated with any geometric object, so
-traits-class decorators cannot help here. Extending the \sc{Dcel} face
-records comes in handy is such cases. As a matter of fact, it is
-possible to conveniently extend all \sc{Dcel} records (namely
-vertices, halfedges, and faces), which is advantageous for some
-applications.
+\link Arrangement_2::Point_2 `Point_2`\endlink objects and edges
+(halfedge pairs) are associated with \link
+Arrangement_2::X_monotone_curve_2 `X_monotone_curve_2`\endlink
+objects, both defined by the traits class. Extending the geometric
+traits-class types by using a traits-class decorator, as explained in
+Section \ref arr_ssecmeta_tr, might be a sufficient solution for some
+applications.  However, the \sc{Dcel} faces are not associated with
+any geometric object, so traits-class decorators cannot help
+here. Extending the \sc{Dcel} face records comes in handy is such
+cases. As a matter of fact, it is possible to conveniently extend all
+\sc{Dcel} records (namely vertices, halfedges, and faces), which is
+advantageous for some applications.
 
 All examples presented so far use the default \sc{Dcel}; namely, they
 employ the `Arr_default_dcel<Traits>` instance. This is done
@@ -6145,17 +6209,20 @@ these curves and the arrangement edges they induce. Similarly, the
 extends the `Arrangement_2<GeometryTraits,Dcel>` class template. The
 `GeometryTraits` template parameter, of either class templates, must
 be substituted with a model of the `ArrangementTraits_2` concept; see
-Section \ref aos_ssec-insert_gen. It should define the `Curve_2` type
-and support its subdivision into `X_monotone_curve_2` objects, among
-the others.  The `Dcel` parameter must be substituted with a model of
-the `ArrangementDcel` concept. You can use either the default
-\sc{Dcel} class or an extended \sc{Dcel} class (see Section \ref
-arr_ssecex_dcel) based on your needs. An arrangement that support the
-cross-mapping mentioned above is referred to as an arrangement with
-history. In the following we use the `Arrangement_with_history_2<>`
-class template to demonstrate arrangements with history. However, the
-explanation applies also to `Arrangement_on_surface_with_history_2<>`,
-as the type of the embedding surface is irrelevant to the discussion.
+Section \ref aos_ssec-insert_gen. It should define the \link
+ArrangementTraits_2::Curve_2 `Curve_2`\endlink type and support
+its subdivision into \link
+ArrangementBasicTraits_2::X_monotone_curve_2
+`X_monotone_curve_2`\endlink objects, among the others.  The `Dcel`
+parameter must be substituted with a model of the `ArrangementDcel`
+concept. You can use either the default \sc{Dcel} class or an extended
+\sc{Dcel} class (see Section \ref arr_ssecex_dcel) based on your
+needs. An arrangement that support the cross-mapping mentioned above
+is referred to as an arrangement with history. In the following we use
+the `Arrangement_with_history_2<>` class template to demonstrate
+arrangements with history. However, the explanation applies also to
+`Arrangement_on_surface_with_history_2<>`, as the type of the
+embedding surface is irrelevant to the discussion.
 
 <!----------------------------------------------------------------------------->
 \subsubsection arr_sssecarrwh_traverse Traversing an Arrangement with History
@@ -6179,11 +6246,11 @@ Arrangement_with_history_2::curves_begin()
 Arrangement_with_history_2::curves_end() `arr.curves_end()`\endlink
 return `Arrangement_with_history_2::Curve_iterator` objects that
 define the range of curves that induce the arrangement.  The value
-type of this iterator is `Curve_2`. Moreover, the curve-iterator type
-is convertible to `Arrangement_with_history_2::Curve_handle`, which is
-used for accessing the stored curves. For convenience, the
-corresponding constant-iterator and constant-handle types are also
-defined.
+type of this iterator is \link Arrangement_with_history_2::Curve_2
+`Curve_2`\endlink. Moreover, the curve-iterator type is convertible to
+`Arrangement_with_history_2::Curve_handle`, which is used for
+accessing the stored curves. For convenience, the corresponding
+constant-iterator and constant-handle types are also defined.
 
 As mentioned in the previous paragraph, a `Curve_handle` object `ch`
 serves as a pointer to a curve stored in an arrangement-with-history
@@ -6218,7 +6285,8 @@ Arrangement_with_history_2::originating_curves_end()
 `arr.originating_curves_end(e)`\endlink return
 `Arrangement_with_history_2::Originating_curve_iterator` objects that
 define the range of curves that induce `e`. The value type of these
-iterators is `Curve_2`.
+iterators is \link Arrangement_with_history_2::Curve_2
+`Curve_2`\endlink.
 
 Overlaying two arrangement-with-history objects is possible only if
 their types are instances of the
@@ -6248,9 +6316,10 @@ templates, which we highlight next.
 The most significant difference between the arrangement-with-history
 class template and the basic arrangement class template is the way
 they handle their input curves.  `Arrangement_with_history_2` always
-stores the `Curve_2` objects that induce it. Thus, it is impossible to
-insert \f$x\f$-monotone curves into an arrangement with history. The
-free functions `insert_non_intersecting_curve()` and the version of
+stores the \link Arrangement_with_history_2::Curve_2 `Curve_2`\endlink
+objects that induce it. Thus, it is impossible to insert
+\f$x\f$-monotone curves into an arrangement with history. The free
+functions `insert_non_intersecting_curve()` and the version of
 `insert()` that accept \f$x\f$-monotone curves, as well as their
 aggregated versions), are therefore not available for
 arrangement-with-history instances. Only the free overloaded functions
@@ -6379,10 +6448,12 @@ stream, respectively. The arrangement is written using a simple
 predefined ASCII format that encodes the arrangement topology, as well
 as all geometric entities associated with vertices and edges.
 
-The ability to use the input/output operators, requires that the
-`%Point_2` type and the `X_monotone_curve_2` type defined by the traits
-class both support the `<<` and `>>` operators. The
-`Arr_conic_traits_2` class (see Section \ref arr_sssectr_conic), the
+The ability to use the input/output operators, requires that the \link
+ArrangementBasicTraits_2::Point_2 `Point_2`\endlink type and the \link
+ArrangementBasicTraits_2::X_monotone_curve_2
+`X_monotone_curve_2`\endlink type defined by the traits class both
+support the `<<` and `>>` operators. The `Arr_conic_traits_2` class
+(see Section \ref arr_sssectr_conic), the
 `Arr_rational_function_traits_2` class (see Section \ref
 arr_sssectr_ratfunc), and the `Arr_linear_traits_2` class (see Section
 \ref arr_ssectr_segs) currently do not provide these operators for the
@@ -6468,9 +6539,12 @@ The arrangement package supplies an inserter and an extractor for the
 `Arrangement_with_history_2<Traits,Dcel>` class. The arrangement is
 represented using a simple predefined ASCII format. An object of the
 `Arrangement_with_history_2<Traits,Dcel>` type can be saved and
-restored, as long as the `Curve_2` type defined by the traits
-class---as well as the `%Point_2` type and the `X_monotone_curve_2`
-types---support the `<<` and`>>` operators.
+restored, as long as the \link Arrangement_with_history_2::Curve_2
+`Curve_2`\endlink type defined by the traits class---as well as the
+\link Arrangement_with_history_2::Point_2 `Point_2`\endlink type and
+the \link Arrangement_with_history_2::X_monotone_curve_2
+`X_monotone_curve_2`\endlink types---support the `<<` and`>>`
+operators.
 
 The following example constructs the same arrangement as example
 `curve_history` does, depicted in \cgalFigureRef{aos_fig-curve_history}, and
