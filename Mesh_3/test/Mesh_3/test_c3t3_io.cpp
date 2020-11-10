@@ -455,7 +455,9 @@ struct Test_c3t3_io {
     v6->set_index(Mesh_domain::get_sub_domain_index_1());
 
     // then test I/O
-    return test_io(c3t3, prefix, false) && test_io(c3t3, prefix, true);
+    bool res = test_io(c3t3, prefix, false);
+    res &= test_io(c3t3, prefix, true);
+    return res;
   }
 };
 

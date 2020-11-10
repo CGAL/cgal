@@ -2426,7 +2426,6 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
   for(std::size_t j=0 ; j < m; j++)
     if(!(is >> *(C[j])))
       return is;
-
   CGAL_triangulation_assertion(tr.is_valid(false));
   return is;
 }

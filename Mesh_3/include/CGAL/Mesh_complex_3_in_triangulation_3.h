@@ -552,8 +552,18 @@ public:
   {
     if(is_ascii(os))
     {
+      os << number_of_edges_in_complex()<<std::endl;
+    }
+    else
+    {
+      write(os, number_of_edges_in_complex());
+    }
+    if(is_ascii(os))
+    {
       for(auto it = edges_.begin(); it != edges_.end(); ++it)
+      {
         os<<vertex_index_map[it->left]<<" "<<vertex_index_map[it->right]<< " "<< it->info<<std::endl;
+      }
     }
     else
     {
@@ -565,6 +575,45 @@ public:
       }
     }
     return os;
+  }
+
+  std::istream& read_edges_in_complex(std::istream& is,
+                                      const std::vector<Vertex_handle >& index_vertex_map)
+  {
+    std::size_t n;
+    if(is_ascii(is))
+    {
+      is >> n;
+    }
+    else
+    {
+      CGAL::read(is, n);
+    }
+    if(!is)
+      return is;
+
+    for(std::size_t i=0; i < n; ++i)
+    {
+      if(!is)
+        return is;
+      //read edge and curve index
+      std::size_t l,r;
+      int c; //todo
+      if(is_ascii(is))
+      {
+        is >> l;
+        is >> r;
+        is >> c;
+      }
+      else
+      {
+        CGAL::read(is, l);
+        CGAL::read(is, r);
+        CGAL::read(is, c);
+      }
+      add_to_complex(index_vertex_map[l],index_vertex_map[r], c);
+    }
+    return is;
   }
 
 private:
@@ -791,16 +840,14 @@ std::ostream &
 operator<< (std::ostream& os,
             const Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_> &c3t3)
 {
-  // TODO: implement edge saving
-  c3t3.triangulation().set_clear_maps_after_io(false);
   typedef typename Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::Concurrency_tag Concurrency_tag;
   os << static_cast<
     const Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr, Concurrency_tag>&>(c3t3);
   if(os.good() && c3t3.triangulation().dimension() > 0)
   {
-    c3t3.write_edges_in_complex(os, c3t3.triangulation().get_vertex_index_map());
-    c3t3.triangulation().set_clear_maps_after_io(true);
-    c3t3.triangulation().clean_up_io_maps();
+    Unique_hash_map<typename Tr::Vertex_handle, std::size_t > vertex_index_map;
+    c3t3.triangulation().fill_map(c3t3.triangulation().number_of_vertices(), vertex_index_map);
+    c3t3.write_edges_in_complex(os, vertex_index_map);
   }
   return os;
 }
@@ -815,7 +862,20 @@ operator>> (std::istream& is,
   typedef typename Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::Concurrency_tag Concurrency_tag;
   is >> static_cast<
     Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr, Concurrency_tag>&>(c3t3);
+
   c3t3.rescan_after_load_of_triangulation();
+  //rebuild index_vertex_map
+  std::vector< typename Tr::Vertex_handle > V(c3t3.triangulation().number_of_vertices()+1);
+  //V[0] = c3t3.triangulation().infinite_vertex(); // the infinite vertex is numbered 0
+  std::size_t i = 0;
+  auto vit = c3t3.triangulation().vertices_begin();
+  for(vit; vit != c3t3.triangulation().vertices_end(); ++vit)
+  {
+    V[i++] = vit;
+  }
+
+  //load edges_in_complex
+  c3t3.read_edges_in_complex(is, V);
   return is;
 }
 
