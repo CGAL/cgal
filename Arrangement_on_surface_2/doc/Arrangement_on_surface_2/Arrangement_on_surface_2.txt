@@ -2471,7 +2471,7 @@ unbounded from the right. A point \f$p = (x_p,y_p)\f$ lies in the
 curve unbounded from the left if \f$x_p \leq x_r\f$. Naturally, every
 point \f$p \in \mathbb{R}^2\f$ is in the \f$x\f$-range of an
 \f$x\f$-monotone curve unbounded from the left and from the right. The
-template function `is_in_x_range()` listed below, and defined in the
+function template `is_in_x_range()` listed below, and defined in the
 file `is_in_x_range.h`, checks whether a given point \f$p\f$ is in the
 $x$-range of the curve associated with a given halfedge \f$e\f$. The
 function template also exemplifies how some of the above functions can
@@ -2592,7 +2592,7 @@ incrementally using the insertion function for $x$-monotone curves,
 the interior of which is disjoint from all arrangement features; see
 the illustration in
 \cgalFigureRef{aos_fig-unbounded_non_intersecting}). Finally, the
-program prints the size of the arrangement using the template function
+program prints the size of the arrangement using the function template
 `print_unbounded_arrangement_size()` defined in the header file
 `arr_print.h`. (Its listing is omitted here.) The program also
 traverses the outer boundaries of its six unbounded faces and prints
@@ -2960,40 +2960,43 @@ respectively.
   `v->parameter_space_in_y()`\endlink determine the location of the
   geometric embedding of the vertex \f$v\f$. The call \link
   Arrangement_on_surface_2::Vertex::parameter_space_in_x()
-  `v->parameter_space_in_x()`\endlink returns `CGAL::ARR_INTERIOR` if
-  the geometric embedding of \f$v\f$ is a point \f$p\f$ that does not
-  lie on the left nor on the right sides of the boundary of the
-  parameter space. If the left and right sides are not identified,
-  then `CGAL::ARR_LEFT_BOUNDARY` or `CGAL::ARR_RIGHT_BOUNDARY` are
-  returned if \f$p\f$ lies on the left or the right side,
-  respectively.  If the left and right sides are identified, the
-  return value is non-deterministic. Similarly, the call \link
-  Arrangement_2::Vertex::parameter_space_in_y()
-  `v->parameter_space_in_y()`\endlink returns `CGAL::ARR_INTERIOR` if
-  the geometric embedding of \f$v\f$ is a point \f$q\f$ that does not
-  lie on the bottom nor on the top sides of the boundary of the
-  parameter space. If the bottom and top sides are not identified,
-  then `CGAL::ARR_BOTTOM_BOUNDARY` or `CGAL::ARR_TOP_BOUNDARY` are
-  returned if \f$q\f$ lies on the bottom or the top side,
-  respectively.  If the bottom and top sides are identified, the
+  `v->parameter_space_in_x()`\endlink returns `ARR_INTERIOR` if the
+  geometric embedding of \f$v\f$ is a point \f$p\f$ the pre-image of
+  which does not lie on the left nor on the right sides of the
+  boundary of the parameter space. If the left and right sides are not
+  identified, then `ARR_LEFT_BOUNDARY` or `ARR_RIGHT_BOUNDARY` are
+  returned if the pre-image of \f$p\f$ lies on the left or the right
+  side, respectively.  If the left and right sides are identified, the
+  return value is non-deterministic and can be either
+  `ARR_LEFT_BOUNDARY` or `ARR_RIGHT_BOUNDARY`. Similarly, the call
+  \link Arrangement_2::Vertex::parameter_space_in_y()
+  `v->parameter_space_in_y()`\endlink returns `ARR_INTERIOR` if the
+  geometric embedding of \f$v\f$ is a point \f$q\f$, the pre-image of
+  which does not lie on the bottom nor on the top sides of the
+  boundary of the parameter space. If the bottom and top sides are not
+  identified, then `ARR_BOTTOM_BOUNDARY` or `ARR_TOP_BOUNDARY` are
+  returned if the pre-image of \f$q\f$ lies on the bottom or the top
+  side, respectively.  If the bottom and top sides are identified, the
   return value is non-deterministic.
 
-  If you want to determine whether a point \f$p\f$ lies on identified
-  sides, you need to exploit one of the two traits functors \link
+  If you want to determine whether the pre-image of a point \f$p\f$
+  lies on identified sides, you need to employ one of the two traits
+  functors \link
   ArrangementIdentifiedVerticalTraits_2::Is_on_y_identification_2
   `Is_on_y_identification_2`\endlink or \link
   ArrangementIdentifiedVerticalTraits_2::Is_on_y_identification_2
   `Is_on_y_identification_2`\endlink; see Section \ref
-  aos_ssec-traits-curved. If \f$p\f$ is incident to an
-  \f$x\f$-monotone curve \f$c\f$ and \f$c\f$ is not vertical (thus,
-  does not lie on the identified side as well), you can determine the
-  boundary side of the end of \f$c\f$ associated with \f$p\f$
-  exploiting either the \link
+  aos_ssec-traits-curved. If the pre-image of an \f$x\f$-monotone
+  curve \f$c\f$ does not entirely lie on identified sides, you can
+  determine the location of the pre-image of an endpoint of \f$c\f$
+  employing either the \link
   ArrangementVerticalSideTraits_2::Parameter_space_in_x_2
   `Parameter_space_in_x_2`\endlink functor or the \link
   ArrangementHorizontalSideTraits_2::Parameter_space_in_y_2
-  `Parameter_space_in_x_2`\endlink functor; see Section \ref
-  aos_ssec-traits-curved.
+  `Parameter_space_in_y_2`\endlink functors; see Section \ref
+  aos_ssec-traits-curved. The operations in both functors accept an
+  enumeration that indicates the curve end, that is, `ARR_MIN_END` or
+  `ARR_MAX_END`, in addition to the curve itself.
 
 <LI>A face in a planar arrangement has at most one outer CCB. However,
   a face in an arrangement embedded on a surface, such as a torus, may
@@ -3026,33 +3029,58 @@ respectively.
 
 </UL>
 
-The template function `is_in_x_range()` listed below, and defined in the
-file `is_in_x_range.h`, checks whether a given point \f$p\f$ is in the
-$x$-range of the curve associated with a given halfedge \f$e\f$. The
-function template also exemplifies how some of the above functions can
-be used.
+The function template `is_in_x_range()` listed below checks whether a
+given point \f$p\f$, in the interior of the parameter space, is in
+the $x$-range of an \f$x\f$-monotone curve \f$c\f$. It assumes that
+the left and right sides of the parameter space are identified and the
+bottom and top sides are contracted, which is the settings used by the
+traits class template
+`Arr_geodesic_arc_on_sphere_traits_2<Kernel,X,Y>`; see Section \ref
+arr_ssectr_spherical.
 
 \code
-bool is_in_x_range(const X_monotone_curve_2& xcv, const Point_2& point) const {
-  typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y> Traits;
+template <typename GeometryTraits>
+bool is_in_x_range(const typename GeometryTraits::X_monotone_curve_2& c,
+                   const typename GeometryTraits::Point_2& point,
+		   const GeometryTraits& traits) const {
+  CGAL_assertion(! traits.is_on_y_identification_2_object()(p));
 
-  Direction_2 p = project_xy(point);
-  if (xcv.is_vertical()) {
-    const Direction_3& normal = xcv.normal();
-    Direction_2 q = (xcv.is_directed_right()) ?
-      Direction_2(-(normal.dy()), normal.dx()) :
-      Direction_2(normal.dy(), -(normal.dx()));
-    const Kernel& kernel = *this;
-    return kernel.equal_2_object()(p, q);
+  if (traits.is_on_y_identification_2_object()(c)) return false;
+
+  auto psy = traits.parameter_space_in_y_2_object();
+  auto psy_min = psy(xcv, ARR_MIN_END);
+  if (psy_min == ARR_BOTTOM_BOUNDARY)
+    return traits.compare_x_on_boundary_2_object()(p, c, ARR_MIN_END) == EQUAL;
+  auto psy_max = psy(xcv, ARR_MAX_END);
+  if (psy_max == ARR_TOP_BOUNDARY)
+    return traits.compare_x_on_boundary_2_object()(p, c, ARR_MAX_END) == EQUAL;
+
+  auto psx = traits.parameter_space_in_x_2_object();
+  auto psx_min = psx(xcv, ARR_MIN_END);
+  auto psx_max = psx(xcv, ARR_MAX_END);
+
+  if ((psx_min == ARR_LEFT_BOUNDARY) && (psx_min == ARR_RIGHT_BOUNDARY))
+    return true;
+
+  auto cmp_x = traits.compare_x_2_object();
+  if (psx_min == ARR_LEFT_BOUNDARY) {
+    const auto& p_right = traits.construct_max_vertex_2_object()(c);
+    auto res = cmp_x(p, p_right);
+    return ((res == SMALLER) || (res == EQUAL));
+  }
+  if (psx_max == ARR_RIGHT_BOUNDARY) {
+    const auto& p_left = traits.construct_min_vertex_2_object()(c);
+    auto res = cmp_x(p_left, p);
+    return ((res == SMALLER) || (res == EQUAL));
   }
 
-  // The curve is not vertical:
-  Direction_2 r = project_xy(xcv.right());
-  const Kernel& kernel = *this;
-  if (kernel.equal_2_object()(p, r)) return true;
-  Direction_2 l = Traits::project_xy(xcv.left());
-  if (kernel.equal_2_object()(p, l)) return true;
-  return kernel.counterclockwise_in_between_2_object()(p, l, r);
+  const auto& p_left = traits.construct_min_vertex_2_object()(c);
+  auto res = cmp_x(p_left, p);
+  if (res == LARGER) return false;
+  const auto& p_right = traits.construct_max_vertex_2_object()(c);
+  auto res = cmp_x(p, p_right);
+  if (res == LARGER) return false;
+  return true;
 }
 \endcode
 

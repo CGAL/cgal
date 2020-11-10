@@ -136,13 +136,15 @@ public:
 
     /*! obtains the placement of the \f$ x\f$-coordinate in the parameter space,
      * that is, either the left boundary-side, the interior, or the right
-     * boundary-side.
+     * boundary-side. If the vertex lies on an identified vertical side, the
+     * return value is non-deterministic.
      */
     Arr_parameter_space parameter_space_in_x() const;
 
     /*! obtains the placement of the \f$ y\f$-coordinate in the parameter space,
      * that is, either the bottom boundary-side, the interior, or the top
-     * boundary-side.
+     * boundary-side. If the vertex lies on an identified horizontal side, the
+     * return value is non-deterministic.
      */
     Arr_parameter_space parameter_space_in_y() const;
 
