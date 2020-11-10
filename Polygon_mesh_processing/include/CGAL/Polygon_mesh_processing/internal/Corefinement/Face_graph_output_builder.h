@@ -519,8 +519,15 @@ public:
     const boost::dynamic_bitset<>& is_node_of_degree_one,
     const Mesh_to_map_node&)
   {
-    CGAL_assertion( vertex_to_node_id1.size() == vertex_to_node_id2.size());
-    CGAL_assertion( vertex_to_node_id1.size() == nodes.size());
+    const bool used_to_classify_patches =  requested_output[UNION]==boost::none &&
+                                           requested_output[TM1_MINUS_TM2]==boost::none &&
+                                           requested_output[TM2_MINUS_TM1]==boost::none &&
+                                           requested_output[INTERSECTION]==boost::none;
+
+    CGAL_assertion( vertex_to_node_id1.size() <= nodes.size() );
+    CGAL_assertion( vertex_to_node_id2.size() <= nodes.size() );
+    CGAL_assertion(used_to_classify_patches || vertex_to_node_id1.size() == vertex_to_node_id2.size());
+    CGAL_assertion(used_to_classify_patches || vertex_to_node_id1.size() == nodes.size());
 
     Intersection_edge_map& intersection_edges1 = mesh_to_intersection_edges[&tm1];
     Intersection_edge_map& intersection_edges2 = mesh_to_intersection_edges[&tm2];
@@ -543,11 +550,6 @@ public:
     // bitset to identify coplanar faces
     boost::dynamic_bitset<> tm1_coplanar_faces(num_faces(tm1), 0);
     boost::dynamic_bitset<> tm2_coplanar_faces(num_faces(tm2), 0);
-
-    const bool used_to_classify_patches =  requested_output[UNION]==boost::none &&
-                                        requested_output[TM1_MINUS_TM2]==boost::none &&
-                                        requested_output[TM2_MINUS_TM1]==boost::none &&
-                                        requested_output[INTERSECTION]==boost::none;
 
     // In the following loop we filter intersection edges that are strictly inside a patch
     // of coplanar facets so that we keep only the edges on the border of the patch.
@@ -784,25 +786,66 @@ public:
           }
           else
           {
-            //Nothing allowed
             if (!used_to_clip_a_surface)
             {
+              if (used_to_classify_patches)
+              {
+                Node_id index_o_prime = ids.first, index_o = ids.second;
+                if( is_border(h1, tm1) )
+                {
+                  h1 = opposite(h1, tm1);
+                  h2 = opposite(h2, tm2);
+                  std::swap(index_o_prime, index_o);
+                }
+
+                vertex_descriptor p = target(next(h1,tm1),tm1);
+                vertex_descriptor q= target(next(h2,tm2),tm2);
+                Node_id index_p = get_node_id(p, vertex_to_node_id1);
+                Node_id index_q = get_node_id(q, vertex_to_node_id2);
+
+                std::size_t patch_id_p=tm1_patch_ids[ get(fids1, face(h1,tm1)) ];
+                std::size_t patch_id_q=tm2_patch_ids[ get(fids2, face(h2,tm2)) ];
+
+                //indicates that patch status will be updated
+                patch_status_not_set_tm1.reset(patch_id_p);
+                patch_status_not_set_tm2.reset(patch_id_q);
+
+                if (coplanar_patches_of_tm1.test(patch_id_p) && coplanar_patches_of_tm2.test(patch_id_q))
+                {
+                  coplanar_patches_of_tm1_for_union_and_intersection.set(patch_id_p);
+                  coplanar_patches_of_tm2_for_union_and_intersection.set(patch_id_q);
+                }
+                else
+                {
+                  if ( p_is_below_q(index_o_prime, index_o,
+                                    index_p, index_q, p, q,
+                                    vpm1, vpm2,
+                                    nodes) )
+                    is_patch_inside_tm2.set(patch_id_p);
+                  else
+                    is_patch_inside_tm1.set(patch_id_q);
+                }
+              }
+              else
+              {
+                //Nothing allowed
 #ifdef CGAL_COREFINEMENT_DEBUG
-              std::cout << "  Non-manifold edge case 1\n";
+                std::cout << "  Non-manifold edge case 1\n";
 #endif
-              impossible_operation.set();
-              return;
+                impossible_operation.set();
+                return;
+              }
             }
           }
         }
         else
         {
-          //Ambiguous, we can do nothing
-          if (!used_to_clip_a_surface)
+          if (!used_to_clip_a_surface && !used_to_classify_patches)
           {
 #ifdef CGAL_COREFINEMENT_DEBUG
               std::cout << "  Non-manifold edge case 2\n";
 #endif
+            //Ambiguous, we can do nothing
             impossible_operation.set();
             return;
           }
@@ -834,20 +877,38 @@ public:
             std::size_t patch_id_q1=tm2_patch_ids[ get(fids2, face(opposite(h2,tm2),tm2)) ];
             std::size_t patch_id_q2=tm2_patch_ids[ get(fids2, face(h2,tm2)) ];
 
-            //indicates that patch status will be updated
-            patch_status_not_set_tm1.reset(patch_id_p);
-            patch_status_not_set_tm2.reset(patch_id_q1);
-            patch_status_not_set_tm2.reset(patch_id_q2);
+            if (index_p!=index_q1 && index_p!=index_q2)
+            {
+              //indicates that patch status will be updated
+              patch_status_not_set_tm1.reset(patch_id_p);
+              patch_status_not_set_tm2.reset(patch_id_q1);
+              patch_status_not_set_tm2.reset(patch_id_q2);
 
-            bool p_is_between_q1q2 = sorted_around_edge(
-                ids.first, ids.second,
-                index_q1, index_q2, index_p,
-                q1, q2, p,
-                vpm2, vpm1,
-                nodes);
+              bool p_is_between_q1q2 = sorted_around_edge(
+                  ids.first, ids.second,
+                  index_q1, index_q2, index_p,
+                  q1, q2, p,
+                  vpm2, vpm1,
+                  nodes);
 
-            if (p_is_between_q1q2)
-              is_patch_inside_tm2.set(patch_id_p);
+              if (p_is_between_q1q2)
+              {
+                is_patch_inside_tm2.set(patch_id_p);
+                // locally does not really make sense globally
+                if (h == h1) // i.e. p2
+                  is_patch_inside_tm1.set(patch_id_q2);
+                else
+                  is_patch_inside_tm1.set(patch_id_q1);
+              }
+              else
+              {
+                // locally does not really make sense globally
+                if (h == h1) // i.e. p2
+                  is_patch_inside_tm1.set(patch_id_q1);
+                else
+                  is_patch_inside_tm1.set(patch_id_q2);
+              }
+            }
           }
         }
       }
@@ -855,12 +916,75 @@ public:
         if ( is_border_edge(h2,tm2) )
         {
           CGAL_assertion(!used_to_clip_a_surface);
-          //Ambiguous, we do nothing
+          if (!used_to_classify_patches)
+          {
 #ifdef CGAL_COREFINEMENT_DEBUG
-              std::cout << "  Non-manifold edge case 3\n";
+            std::cout << "  Non-manifold edge case 3\n";
 #endif
-          impossible_operation.set();
-          return;
+            impossible_operation.set();
+            return;
+          }
+          else
+          {
+            //Sort the three triangle faces around their common edge
+            //  we assume that the exterior of the volume is indicated by
+            //  counterclockwise oriented faces
+            //  (corrected by is_tmi_inside_tmi).
+            halfedge_descriptor h = is_border(h2, tm2) ? opposite(h2, tm2) : h2;
+            vertex_descriptor q = target(next(h,tm2),tm2);
+            //    when looking from the side of indices.second,
+            //    the interior of the first triangle mesh is described
+            //    by turning counterclockwise from p1 to p2
+            vertex_descriptor p1=target(next(opposite(h1,tm1),tm1),tm1);
+            vertex_descriptor p2=target(next(h1,tm1),tm1);
+            //    when looking from the side of indices.second,
+            //    the interior of the second volume is described
+            //    by turning from p1 to p2
+
+            //check if the third point of each triangular face is an original point (stay NID)
+            //or a intersection point (in that case we need the index of the corresponding node to
+            //have the exact value of the point)
+            Node_id index_q = get_node_id(q, vertex_to_node_id2);
+            Node_id index_p1 = get_node_id(p1, vertex_to_node_id1);
+            Node_id index_p2 = get_node_id(p2, vertex_to_node_id1);
+
+            std::size_t patch_id_q=tm2_patch_ids[ get(fids2, face(h,tm2)) ];
+            std::size_t patch_id_p1=tm1_patch_ids[ get(fids1, face(opposite(h1,tm1),tm1)) ];
+            std::size_t patch_id_p2=tm1_patch_ids[ get(fids1, face(h1,tm1)) ];
+
+            if (index_q!=index_p1 && index_q!=index_p2)
+            {
+              //indicates that patch status will be updated
+              patch_status_not_set_tm2.reset(patch_id_q);
+              patch_status_not_set_tm1.reset(patch_id_p1);
+              patch_status_not_set_tm1.reset(patch_id_p2);
+
+              bool q_is_between_p1p2 = sorted_around_edge(
+                  ids.first, ids.second,
+                  index_p1, index_p2, index_q,
+                  p1, p2, q,
+                  vpm1, vpm2,
+                  nodes);
+
+              if (q_is_between_p1p2)
+              {
+                is_patch_inside_tm1.set(patch_id_q);
+                // locally does not really make sense globally
+                if (h == h2) // i.e. q2
+                  is_patch_inside_tm2.set(patch_id_p2);
+                else
+                  is_patch_inside_tm2.set(patch_id_p1);
+              }
+              else
+              {
+                // locally does not really make sense globally
+                if (h == h2) // i.e. q2
+                  is_patch_inside_tm2.set(patch_id_p1);
+                else
+                  is_patch_inside_tm2.set(patch_id_p2);
+              }
+            }
+          }
         }
         else
         {
