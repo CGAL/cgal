@@ -106,7 +106,7 @@ CGAL_add_named_parameter(do_not_modify_t, do_not_modify, do_not_modify)
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
 CGAL_add_named_parameter(get_placement_policy_t, get_placement_policy, get_placement)
-CGAL_add_named_parameter(get_filter_policy_t, get_filter_policy, get_filter)
+CGAL_add_named_parameter(filter_t, filter, filter)
 
 //to be documented
 CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)

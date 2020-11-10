@@ -5,18 +5,18 @@ namespace Surface_mesh_simplification {
 /*!
 \ingroup PkgSurfaceMeshSimplificationRef
 
-The class `Bounded_normal_change_filter` is a model for the `GetFilter` concept.
+The class `Bounded_normal_change_filter` is a model for the `Filter` concept.
 It rejects the placement if the nested filter rejects it, or
 if any triangle in the profile changes the normal by more than 90 degree, in this order.
 
 
-\tparam Get_filter_ must be a model of the concept `GetFilter`.  It defaults to a class that does
+\tparam Filter_ must be a model of the concept `Filter`.  It defaults to a class that does
 not filter any placement.
 
-\cgalModels `GetFilter`
+\cgalModels `Filter`
 
 */
-template <typename GetFilter_>
+template <typename Filter_>
 class Bounded_normal_change_filter {
 public:
 
@@ -31,9 +31,9 @@ public:
   /*!
   Constructor
 
-  \param get_filter is the filter that will be filtered.
+  \param filter is the filter that will be filtered.
   */
-  Bounded_normal_change_filter(const GetFilter_& get_filter);
+  Bounded_normal_change_filter(const Filter_& filter);
 
   /// @}
 

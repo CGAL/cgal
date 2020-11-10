@@ -2,7 +2,7 @@
 \ingroup PkgSurfaceMeshSimplificationConcepts
 \cgalConcept
 
-The concept `GetFilter` describes the requirements for the <I>policy
+The concept `Filter` describes the requirements for the <I>policy
 function object</I> which gets the profile and placement of an edge
 and which can filter the placement.  The filtering is only done when
 an edge is taken from the priority queue in order to get collapsed,
@@ -19,7 +19,7 @@ be absent). The value `boost::none` indicates that the edge should not be collap
 */
 
 
-class GetFilter
+class Filter
 {
 public:
 

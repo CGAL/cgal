@@ -66,7 +66,7 @@ int main(int argc, char** argv)
   SMS::Bounded_normal_change_filter<> filter;
   SMS::edge_collapse(surface_mesh, stop,
                      CGAL::parameters::get_cost(SMS::LindstromTurk_cost<Surface_mesh>())
-                                      .get_filter(filter)
+                                      .filter(filter)
                                       .get_placement(Placement()));
 
   std::cout << t.time() << " sec" << std::endl;

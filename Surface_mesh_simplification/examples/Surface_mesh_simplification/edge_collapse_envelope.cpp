@@ -46,7 +46,7 @@ int main(int argc, char** argv)
   std::cout << "eps = " << 0.01*diag << std::endl;
   Placement placement;
   Filter filter(0.01*diag);
-  SMS::edge_collapse(mesh, stop, CGAL::parameters::get_cost(Cost()).get_filter(filter).get_placement(placement));
+  SMS::edge_collapse(mesh, stop, CGAL::parameters::get_cost(Cost()).filter(filter).get_placement(placement));
 
   std::ofstream out("out.off");
   out << mesh << std::endl;

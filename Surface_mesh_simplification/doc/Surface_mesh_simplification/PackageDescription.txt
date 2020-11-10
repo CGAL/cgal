@@ -27,7 +27,7 @@
 - `StopPredicate`
 - `GetCost`
 - `GetPlacement`
-- `GetFilter`
+- `Filter`
 - `EdgeCollapseSimplificationVisitor`
 
 \cgalCRPSection{Functions}
