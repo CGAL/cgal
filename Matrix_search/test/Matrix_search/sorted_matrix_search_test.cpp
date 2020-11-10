@@ -16,6 +16,8 @@
 #include <vector>
 #include <cstdlib>
 
+#include <boost/bind.hpp>
+
 template < class Matrix_iterator, class Value >
 Value
 compute_upper_bound( Matrix_iterator f,
