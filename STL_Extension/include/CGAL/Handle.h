@@ -18,6 +18,7 @@
 #define CGAL_HANDLE_H
 
 #include <cstddef>
+#include <atomic>
 #include <CGAL/Handle_for.h>
 #include <CGAL/assertions.h>
 
@@ -30,7 +31,7 @@ class Rep
              Rep() : count(1) { }
     virtual ~Rep() {}
 
-    int      count;
+    std::atomic_int count;
 };
 
 class Handle
@@ -47,9 +48,11 @@ class Handle
     {
       CGAL_precondition( x.PTR != static_cast<Rep*>(0) );
       PTR = x.PTR;
-      CGAL_assume (PTR->count > 0);
+      //CGAL_assume (PTR->count > 0);
       incref();
     }
+
+    Handle(Handle&& x) noexcept : PTR(x.PTR) { x.PTR = 0; }
 
     ~Handle() { reset(); }
 
@@ -63,21 +66,33 @@ class Handle
       return *this;
     }
 
+    Handle&
+    operator=(Handle&& x) noexcept
+    {
+      swap(*this, x);
+      return *this;
+    }
+
     friend void swap(Handle& a, Handle& b) noexcept { std::swap(a.PTR, b.PTR); }
 
     void reset()
     {
       if (PTR)
       {
-        if (--PTR->count==0)
+        // TODO: the first condition tries to avoid the expensive
+        // release synchronization, check that it is still safe.
+        if (PTR->count.load(std::memory_order_relaxed) == 1
+            || PTR->count.fetch_sub(1, std::memory_order_release) == 1) {
+          std::atomic_thread_fence(std::memory_order_acquire);
           delete PTR;
+        }
         PTR=0;
       }
     }
 
     void incref() const noexcept
     {
-      PTR->count++;
+      PTR->count.fetch_add(1, std::memory_order_relaxed);
     }
 
     int
