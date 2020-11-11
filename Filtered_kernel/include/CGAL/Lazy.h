@@ -56,6 +56,21 @@
 
 namespace CGAL {
 
+// It would be nice to provide a specialization for Interval_nt, but I believe that would require making approx() return by value for this AT.
+// The approximate value is set once at construction, and possibly updated once during update_exact().
+template<class AT>
+struct Indirect_AT {
+  std::atomic<AT*> p; // no atomic<unique_ptr> ??
+  std::unique_ptr<AT> old;
+  Indirect_AT():p(new AT()){}
+  Indirect_AT(AT const& a):p(new AT(a)){}
+  Indirect_AT(AT&& a):p(new AT(std::move(a))){}
+  Indirect_AT& operator=(AT const& a){ old.reset(p.load(std::memory_order_relaxed)); p.store(new AT(a), std::memory_order_relaxed); return *this; }
+  Indirect_AT& operator=(AT&& a){ old.reset(p.load(std::memory_order_relaxed)); p.store(new AT(std::move(a)), std::memory_order_relaxed); return *this; }
+  operator AT const&()const{return *p.load(std::memory_order_relaxed);}
+  ~Indirect_AT() { delete p.load(std::memory_order_relaxed); }
+};
+
 template <class E,
           class A,
           class E2A,
@@ -75,6 +90,7 @@ approx(const Lazy<AT,ET,E2A>& l)
   return l.approx();
 }
 
+#if 0
 // Where is this one (non-const) needed ?  Is it ?
 template <typename AT, typename ET, typename E2A>
 inline
@@ -83,6 +99,7 @@ approx(Lazy<AT,ET,E2A>& l)
 {
   return l.approx();
 }
+#endif
 
 
 template <typename AT, typename ET, typename E2A>
@@ -242,7 +259,7 @@ public:
 
   typedef AT_ AT;
 
-  mutable AT at;
+  mutable Indirect_AT<AT> at;
   mutable std::atomic<ET*> et;
 
   Lazy_rep ()
@@ -261,7 +278,7 @@ public:
       return at;
   }
 
-  AT& approx()
+  Indirect_AT<AT>& approx()
   {
       return at;
   }
@@ -781,8 +798,10 @@ public :
   const ET& exact() const
   { return ptr()->exact(); }
 
+#if 0
   AT& approx()
   { return ptr()->approx(); }
+#endif
 
   ET& exact()
   { return ptr()->exact(); }
