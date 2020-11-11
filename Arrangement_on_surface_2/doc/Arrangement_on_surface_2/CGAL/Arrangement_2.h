@@ -60,59 +60,58 @@ public:
   /// \name Types
   /// @{
 
-  /*! a private type used as an abbreviation of the `Arrangement_2` type
-   * hereafter.
-   */
-  typedef Arrangement_2<Traits_2, Dcel> Self;
+  //! the geometry traits class.
+  typedef Traits                                  Geometry_traits;
 
-  /*! the traits class in use. */
-  typedef Traits Traits_2;
+  //! The topology traits.
+  typedef typename Default_planar_topology<Geometry_traits, Dcel>::Traits
+    Topology_traits;
 
-  /*! the <span class="textsc">Dcel</span> representation of the arrangement. */
-  typedef unspecified_type Dcel;
+  //! The base arrangement on surface type.
+  typedef Arrangement_on_surface_2<Geometry_traits, Topology_traits>
+    Base;
 
   /// @}
 
   /// \name Types inherited from the base Arrangement_on_surface_2
   /// @{
 
-  typedef typename Arrangement_on_surface_2::Point_2             Point_2;
-  typedef typename Arrangement_on_surface_2::X_monotone_curve_2  X_monotone_curve_2;
-  typedef typename Arrangement_on_surface_2::Size                Size;
+  typedef typename Base::Point_2                  Point_2;
+  typedef typename Base::X_monotone_curve_2       X_monotone_curve_2;
+  typedef typename Base::Curve_2                  Curve_2;
+  typedef typename Base::Size                     Size;
 
-  typedef typename Arrangement_on_surface_2::Vertex              Vertex;
-  typedef typename Arrangement_on_surface_2::Halfedge            Halfedge;
-  typedef typename Arrangement_on_surface_2::Face                Face;
+  typedef typename Base::Vertex                   Vertex;
+  typedef typename Base::Halfedge                 Halfedge;
+  typedef typename Base::Face                     Face;
 
-  typedef typename Arrangement_on_surface_2::Vertex_handle       Vertex_handle;
-  typedef typename Arrangement_on_surface_2::Halfedge_handle     Halfedge_handle;
-  typedef typename Arrangement_on_surface_2::Face_handle         Face_handle;
-  typedef typename Arrangement_on_surface_2::Vertex_iterator     Vertex_iterator;
-  typedef typename Arrangement_on_surface_2::Halfedge_iterator   Halfedge_iterator;
-  typedef typename Arrangement_on_surface_2::Edge_iterator       Edge_iterator;
-  typedef typename Arrangement_on_surface_2::Face_iterator       Face_iterator;
-  typedef typename Arrangement_on_surface_2::Unbounded_face_iterator Unbounded_face_iterator;
-  typedef typename Arrangement_on_surface_2::Halfedge_around_vertex_circulator Halfedge_around_vertex_circulator;
-  typedef typename Arrangement_on_surface_2::Ccb_halfedge_circulator Ccb_halfedge_circulator;
-  typedef typename Arrangement_on_surface_2::Hole_iterator       Hole_iterator;
-  typedef typename Arrangement_on_surface_2::Isolated_vertex_iterator Isolated_vertex_iterator;
+  typedef typename Base::Vertex_handle            Vertex_handle;
+  typedef typename Base::Halfedge_handle          Halfedge_handle;
+  typedef typename Base::Face_handle              Face_handle;
+  typedef typename Base::Vertex_iterator          Vertex_iterator;
+  typedef typename Base::Halfedge_iterator        Halfedge_iterator;
+  typedef typename Base::Edge_iterator            Edge_iterator;
+  typedef typename Base::Face_iterator            Face_iterator;
+  typedef typename Base::Unbounded_face_iterator  Unbounded_face_iterator;
+  typedef typename Base::Halfedge_around_vertex_circulator
+    Halfedge_around_vertex_circulator;
+  typedef typename Base::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
+  typedef typename Base::Hole_iterator            Hole_iterator;
+  typedef typename Base::Isolated_vertex_iterator Isolated_vertex_iterator;
 
-  typedef typename Arrangement_on_surface_2::Vertex_handle       Vertex_const_handle;
-  typedef typename Arrangement_on_surface_2::Halfedge_handle     Halfedge_const_handle;
-  typedef typename Arrangement_on_surface_2::Face_handle         Face_const_handle;
-  typedef typename Arrangement_on_surface_2::Vertex_iterator     Vertex_const_iterator;
-  typedef typename Arrangement_on_surface_2::Halfedge_iterator   Halfedge_const_iterator;
-  typedef typename Arrangement_on_surface_2::Edge_iterator       Edge_const_iterator;
-  typedef typename Arrangement_on_surface_2::Face_iterator       Face_const_iterator;
-  typedef typename Arrangement_on_surface_2::Unbounded_face_iterator
-    Unbounded_face_const_iterator;
-  typedef typename Arrangement_on_surface_2::Halfedge_around_vertex_circulator
+  typedef typename Base::Vertex_handle            Vertex_const_handle;
+  typedef typename Base::Halfedge_handle          Halfedge_const_handle;
+  typedef typename Base::Face_handle              Face_const_handle;
+  typedef typename Base::Vertex_iterator          Vertex_const_iterator;
+  typedef typename Base::Halfedge_iterator        Halfedge_const_iterator;
+  typedef typename Base::Edge_iterator            Edge_const_iterator;
+  typedef typename Base::Face_iterator            Face_const_iterator;
+  typedef typename Base::Unbounded_face_iterator  Unbounded_face_const_iterator;
+  typedef typename Base::Halfedge_around_vertex_circulator
     Halfedge_around_const_vertex_circulator;
-  typedef typename Arrangement_on_surface_2::Ccb_halfedge_circulator
-    Ccb_halfedge_const_circulator;
-  typedef typename Arrangement_on_surface_2::Hole_iterator       Hole_const_iterator;
-  typedef typename Arrangement_on_surface_2::Isolated_vertex_iterator
-    Isolated_vertex_const_iterator;
+  typedef typename Base::Ccb_halfedge_circulator  Ccb_halfedge_const_circulator;
+  typedef typename Base::Hole_iterator            Hole_const_iterator;
+  typedef typename Base::Isolated_vertex_iterator Isolated_vertex_const_iterator;
 
   /// @}
 
@@ -125,12 +124,12 @@ public:
   Arrangement_2<Traits, Dcel>();
 
   /*! copy constructor. */
-  Arrangement_2<Traits, Dcel>(const Self& other);
+  Arrangement_2<Traits, Dcel>(const Arrangement_2<Traits, Dcel>& other);
 
   /*! constructs an empty arrangement that uses the given `traits`
    * instance for performing the geometric predicates.
    */
-  Arrangement_2<Traits, Dcel>(const Traits_2 *traits);
+  Arrangement_2<Traits, Dcel>(const Traits *traits);
 
   /// @}
 
@@ -138,10 +137,10 @@ public:
   /// @{
 
   /*! assignment operator. */
-  Self& operator=(other);
+  Arrangement_2<Traits, Dcel>& operator=(other);
 
   /*! assigns the contents of another arrangement. */
-  void assign(const Self& other);
+  void assign(const Arrangement_2<Traits, Dcel>& other);
 
   /*! clears the arrangement. */
   void clear();
@@ -154,7 +153,7 @@ public:
   /*! obtains the traits object used by the arrangement instance.
    * A `const` version is also available.
    */
-  Traits_2* traits();
+  Traits* traits();
 
   /// @}
 }; /* end Arrangement_2 */
@@ -451,10 +450,10 @@ bool remove_vertex(Arrangement_2<Traits,Dcel>& arr,
  * `ArrangementPointLocation_2` concept.
  * </UL>
  */
-template <typename Traits_2, typename Dcel,
+template <typename Traits, typename Dcel,
           typename OutputIterator, typename PointLocation>
-OutputIterator zone(Arrangement_2<Traits_2, Dcel>& arr,
-                    const typename Traits_2::X_monotone_curve_2& c,
+OutputIterator zone(Arrangement_2<Traits, Dcel>& arr,
+                    const typename Traits::X_monotone_curve_2& c,
                     OutputIterator oi, const PointLocation& pl);
 
 } /* namespace CGAL */

@@ -44,35 +44,37 @@ namespace CGAL {
  * \sa `overlaying arrangements`
  */
 template <typename Traits, typename Dcel>
-class Arrangement_with_history_2 : public Arrangement_on_surface_with_history_2<Traits, typename Default_planar_topology<GeomTraits_, Dcel_>::Traits> {
+class Arrangement_with_history_2 : public Arrangement_on_surface_with_history_2<Traits, typename Default_planar_topology<Traits, Dcel>::Traits> {
 public:
 
   /// \name Types
   /// @{
 
-  /*! a private type used as an abbreviation of the `Arrangement_with_history_2`
-   * type hereafter.
-   */
-  typedef Arrangement_with_history_2<Traits_2,Dcel> Self;
+  //! the geometry traits class.
+  typedef Traits                                  Geometry_traits;
 
-  /*! the traits class in use. */
-  typedef unspecified_type Traits_2;
+  //! The topology traits.
+  typedef typename Default_planar_topology<Geometry_traits, Dcel>::Traits
+    Topology_traits;
 
-  /*! the <span class="textsc">Dcel</span> representation of the arrangement. */
-  typedef unspecified_type Dcel;
+  //! The base arrangement on surface type.
+  typedef Arrangement_on_surface_with_history_2<Geometry_traits, Topology_traits>
+    Base;
 
   /// @}
 
   /// \name Types inherited from the base Arrangement_on_surface_2_with_history_2.
   /// @{
 
-  typedef Arrangement_on_surface_with_history_2::Point_2 Point_2;
-  typedef Arrangement_on_surface_with_history_2::X_monotone_curve_2 X_monotone_curve_2;
-  typedef Arrangement_on_surface_with_history_2::Curve_2 Curve_2;
-  typedef Arrangement_on_surface_with_history_2::Curve_handle Curve_handle;
-  typedef Arrangement_on_surface_with_history_2::Curve_iterator Curve_iterator;
-  typedef Arrangement_on_surface_with_history_2::Induced_edge_iterator Induced_edge_iterator;
-  typedef Arrangement_on_surface_with_history_2::Originating_curve_iterator Originating_curve_iterator;
+  typedef typename Base::Point_2                    Point_2;
+  typedef typename Base::X_monotone_curve_2         X_monotone_curve_2;
+  typedef typename Base::Curve_2                    Curve_2;
+  typedef typename Base::Size                       Size;
+
+  typedef typename Base::Curve_handle               Curve_handle;
+  typedef typename Base::Curve_iterator             Curve_iterator;
+  typedef typename Base::Induced_edge_iterator      Induced_edge_iterator;
+  typedef typename Base::Originating_curve_iterator Originating_curve_iterator;
 
   /// @}
 
@@ -85,12 +87,12 @@ public:
   Arrangement_with_history_2<Traits, Dcel>();
 
   /*! copy constructor. */
-  Arrangement_with_history_2<Traits, Dcel>(const Self& other);
+  Arrangement_with_history_2<Traits, Dcel>(const Arrangement_with_history_2<Traits, Dcel>& other);
 
   /*! constructs an empty arrangement that uses the given `traits` instance for
    * performing the geometric predicates.
    */
-  Arrangement_with_history_2<Traits, Dcel>(Traits_2 *traits);
+  Arrangement_with_history_2<Traits, Dcel>(Traits* traits);
 
   /// @}
 
@@ -98,10 +100,10 @@ public:
   /// @{
 
   /*! assignment operator. */
-  Self& operator= (other);
+  Arrangement_with_history_2<Traits, Dcel>& operator= (other);
 
   /*! assigns the contents of another arrangement. */
-  void assign(const Self& other);
+  void assign(const Arrangement_with_history_2<Traits, Dcel>& other);
 
   /*! clears the arrangement. */
   void clear();
@@ -114,7 +116,7 @@ public:
   /*! obtains the traits object used by the arrangement instance.
    * A `const` version is also available.
    */
-  Traits_2* traits();
+  Traits* traits();
 
   /// @}
 }; /* end Arrangement_with_history_2 */
