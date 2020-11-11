@@ -19,6 +19,8 @@ typedef Traits::Algebraic_real_1                      Algebraic_real;
 typedef Traits::X_monotone_curve_2                    X_monotone_curve;
 typedef Traits::Point_2                               Point;
 
+typedef boost::variant<Point, X_monotone_curve>       Make_x_monotone_result;
+
 int main() {
   Traits traits;
 
@@ -33,17 +35,16 @@ int main() {
   // Construct a curve (C1) with the equation x^4+y^3-1=0.
   Curve cv1 = ctr_cv(CGAL::ipower(x, 4) + CGAL::ipower(y, 3) - 1);
   // Construct all x-monotone segments using the Make_x_mononotone functor.
-  std::vector<CGAL::Object> pre_segs;
+  std::vector<Make_x_monotone_result> pre_segs;
   make_xmon(cv1, std::back_inserter(pre_segs));
   // Cast all CGAL::Objects into X_monotone_segment
   // (the vector might also contain Point objects for isolated points,
   // but not in this case).
   std::vector<X_monotone_curve> segs;
-  for (const auto& seg : pre_segs) {
-    X_monotone_curve curr;
-    bool check = CGAL::assign(curr, seg);
-    CGAL_assertion(check);
-    segs.push_back(curr);
+  for(size_t i = 0; i < pre_segs.size(); ++i) {
+    auto* curr_p = boost::get<X_monotone_curve>(&pre_segs[i]);
+    CGAL_assertion(curr_p);
+    segs.push_back(*curr_p);
   }
   // Construct an ellipse (C2) with the equation 2*x^2+5*y^2-7=0.
   Curve cv2 = ctr_cv(2*CGAL::ipower(x,2)+5*CGAL::ipower(y,2)-7);
@@ -85,15 +86,13 @@ int main() {
 
   // Add some isolated points (must be wrapped into CGAL::Object).
   std::vector<CGAL::Object> isolated_pts;
-  // p1
   isolated_pts.push_back(CGAL::make_object(ctr_pt(Algebraic_real(2), cv4, 0)));
-  // p2
   isolated_pts.push_back(CGAL::make_object(ctr_pt(Integer(1), Integer(2))));
-  // p3
   isolated_pts.push_back(CGAL::make_object(ctr_pt(Algebraic_real(-1),
                                                   Algebraic_real(2))));
   CGAL::insert(arr, isolated_pts.begin(), isolated_pts.end());
 
   print_arrangement_size(arr);                  // print the arrangement size
+
   return 0;
 }

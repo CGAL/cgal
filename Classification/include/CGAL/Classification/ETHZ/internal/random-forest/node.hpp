@@ -22,6 +22,8 @@
 #include "../dataview.h"
 #include "common-libraries.hpp"
 
+#include <CGAL/IO/binary_file_io.h>
+
 #if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
 #include <boost/serialization/scoped_ptr.hpp>
 #include <boost/serialization/vector.hpp>
@@ -253,9 +255,46 @@ public:
     }
 #endif
 
+    void write (std::ostream& os)
+    {
+      I_Binary_write_bool (os, is_leaf);
+      I_Binary_write_size_t_into_uinteger32 (os, n_samples);
+      I_Binary_write_size_t_into_uinteger32 (os, depth);
+      splitter.write(os);
+
+      for (const float& f : node_dist)
+        I_Binary_write_float32 (os, f);
+
+      if (!is_leaf)
+      {
+        left->write(os);
+        right->write(os);
+      }
+    }
+
+    void read (std::istream& is)
+    {
+      I_Binary_read_bool (is, is_leaf);
+      I_Binary_read_size_t_from_uinteger32 (is, n_samples);
+      I_Binary_read_size_t_from_uinteger32 (is, depth);
+      splitter.read(is);
+
+      node_dist.resize(params->n_classes, 0.0f);
+      for (std::size_t i = 0; i < node_dist.size(); ++ i)
+        I_Binary_read_float32 (is, node_dist[i]);
+
+      if (!is_leaf)
+      {
+        left.reset(new Derived(depth + 1, params));
+        right.reset(new Derived(depth + 1, params));
+        left->read(is);
+        right->read(is);
+      }
+    }
+
     void get_feature_usage (std::vector<std::size_t>& count) const
     {
-      if (!is_leaf)
+      if (!is_leaf && splitter.feature != -1)
       {
         count[std::size_t(splitter.feature)] ++;
         left->get_feature_usage(count);

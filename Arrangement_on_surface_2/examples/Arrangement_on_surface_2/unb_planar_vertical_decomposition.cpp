@@ -8,9 +8,12 @@
 
 #include "arr_linear.h"
 
-typedef std::pair<Vertex_const_handle, std::pair<CGAL::Object, CGAL::Object> >
-                                                        Vert_decomp_entry;
-typedef std::list<Vert_decomp_entry>                    Vert_decomp_list;
+typedef boost::variant<Vertex_const_handle, Halfedge_const_handle,
+                         Face_const_handle>              Cell_type;
+typedef boost::optional<Cell_type>                       Vert_decomp_type;
+typedef std::pair<Vert_decomp_type, Vert_decomp_type>    Vert_decomp_pair;
+typedef std::pair<Vertex_const_handle, Vert_decomp_pair> Vert_decomp_entry;
+typedef std::list<Vert_decomp_entry>                     Vert_decomp_list;
 
 int main() {
   // Construct the arrangement.
@@ -31,29 +34,37 @@ int main() {
   CGAL::decompose(arr, std::back_inserter(vd_list));
 
   // Print the results.
-  std::pair<CGAL::Object, CGAL::Object> curr;
-  Vertex_const_handle vh;
-  Halfedge_const_handle hh;
-  Face_const_handle fh;
   for (auto vd_iter = vd_list.begin(); vd_iter != vd_list.end(); ++vd_iter) {
-    curr = vd_iter->second;
+    const Vert_decomp_pair& curr = vd_iter->second;
     std::cout << "Vertex (" << vd_iter->first->point() << ") : ";
 
     std::cout << " feature below: ";
-    if (CGAL::assign (vh, curr.first)) std::cout << '(' << vh->point() << ')';
-    else if (CGAL::assign (hh, curr.first))
-      if (!hh->is_fictitious()) std::cout << '[' << hh->curve() << ']';
-      else std::cout << "NONE";
-    else std::cout << "EMPTY";
+    if (! curr.first) std::cout << "EMPTY";
+    else {
+      auto* vh = boost::get<Vertex_const_handle>(&*(curr.first));;
+      if (vh) std::cout << '(' << (*vh)->point() << ')';
+      else {
+        auto* hh = boost::get<Halfedge_const_handle>(&*(curr.first));
+        CGAL_assertion(hh);
+        if (! (*hh)->is_fictitious())
+          std::cout << '[' << (*hh)->curve() << ']';
+        else std::cout << "NONE";
+      }
+    }
 
     std::cout << "   feature above: ";
-    if (CGAL::assign (vh, curr.second))
-      std::cout << '(' << vh->point() << ')' << std::endl;
-    else if (CGAL::assign (hh, curr.second))
-      if (!hh->is_fictitious())
-        std::cout << '[' << hh->curve() << ']' << std::endl;
-      else std::cout << "NONE" << std::endl;
-    else std::cout << "EMPTY" << std::endl;
+    if (! curr.second) std::cout << "EMPTY" << std::endl;
+    else {
+      auto* vh = boost::get<Vertex_const_handle>(&*(curr.second));;
+      if (vh) std::cout << '(' << (*vh)->point() << ')' << std::endl;
+      else {
+        auto* hh = boost::get<Halfedge_const_handle>(&*(curr.second));
+        CGAL_assertion(hh);
+        if (! (*hh)->is_fictitious())
+          std::cout << '[' << (*hh)->curve() << ']' << std::endl;
+        else std::cout << "NONE" << std::endl;
+      }
+    }
   }
 
   return 0;

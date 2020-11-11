@@ -1,4 +1,3 @@
-// ======================================================================
 //
 // Copyright (c) 2017 GeometryFactory (France).  All Rights Reserved.
 //
@@ -11,7 +10,6 @@
 //
 // Author(s):
 //
-// ======================================================================
 
 /**
 * \ingroup PkgSurfaceSubdivisionMethod3Ref

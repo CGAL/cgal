@@ -7,8 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
-//                 Ron Wein          <wein@post.tau.ac.il>
+// Author(s): Efi Fogel         <efif@post.tau.ac.il>
+//            Ron Wein          <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_SPHERICAL_TOPOLOGY_TRAITS_2_IMPL_H
 #define CGAL_ARR_SPHERICAL_TOPOLOGY_TRAITS_2_IMPL_H
@@ -562,7 +562,10 @@ let_me_decide_the_outer_ccb(std::pair< CGAL::Sign, CGAL::Sign> signs1,
  * represent the curve end along the face boundary.
  */
 template <typename GeomTraits, typename Dcel>
-CGAL::Object
+boost::optional
+  <boost::variant
+    <typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Vertex*,
+     typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Halfedge*> >
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 place_boundary_vertex(Face* /* f */,
                       const X_monotone_curve_2& xc, Arr_curve_end ind,
@@ -573,15 +576,18 @@ place_boundary_vertex(Face* /* f */,
                       ,
                       Arr_parameter_space ps_y)
 {
+  typedef boost::variant<Vertex*, Halfedge*>    Non_optional_result;
+  typedef boost::optional<Non_optional_result>  Result;
+
   // std::cout << "place_boundary_vertex()" << std::endl;
   if (ps_y == ARR_BOTTOM_BOUNDARY) {
-    if (m_south_pole == nullptr) return Object();
-    return CGAL::make_object(m_south_pole);
+    if (m_south_pole == nullptr) return boost::none;
+    return Result(Non_optional_result(m_south_pole));
   }
 
   if (ps_y == ARR_TOP_BOUNDARY) {
-    if (m_north_pole == nullptr) return Object();
-    return CGAL::make_object(m_north_pole);
+    if (m_north_pole == nullptr) return boost::none;
+    return Result(Non_optional_result(m_north_pole));
   }
 
   CGAL_assertion((ps_x == ARR_LEFT_BOUNDARY) || (ps_x == ARR_RIGHT_BOUNDARY));
@@ -592,11 +598,11 @@ place_boundary_vertex(Face* /* f */,
   auto it = m_boundary_vertices.find(key);
   if (it != m_boundary_vertices.end()) {
     Vertex* v = it->second;
-    return CGAL::make_object(v);
+    return Result(Non_optional_result(v));
   }
 
   // The vertex hasn't been created yet, return a null object:
-  return Object();
+  return boost::none;
 }
 
 /*! \brief locate the predecessor halfedge for the given curve around a given
@@ -632,7 +638,11 @@ locate_around_boundary_vertex(Vertex* v,
 
 /*! \brief locates a DCEL feature that contains a given curve end. */
 template <typename GeomTraits, typename Dcel>
-CGAL::Object Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
+boost::variant
+<typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Vertex*,
+ typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Halfedge*,
+ typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Face*>
+Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
                  Arr_parameter_space
 #if !defined(CGAL_NO_ASSERTIONS)
@@ -641,27 +651,28 @@ locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
                  ,
                  Arr_parameter_space ps_y)
 {
+  typedef boost::variant<Vertex*, Halfedge*, Face*>     Result;
   // Act according to the boundary conditions.
   if (ps_y == ARR_TOP_BOUNDARY) {
     // In case the curve end coincides with the north pole, return the vertex
     // representing the north pole, if one exists. Otherwise, return the face
     // containing this pole (the spherical face).
-    if (m_north_pole != nullptr) return CGAL::make_object(m_north_pole);
-    return CGAL::make_object(m_spherical_face);
+    if (m_north_pole != nullptr) return Result(m_north_pole);
+    return Result(m_spherical_face);
   }
 
   if (ps_y == ARR_BOTTOM_BOUNDARY) {
     // In case the curve end coincides with the south pole, return the vertex
     // representing the south pole, if one exists. Otherwise, search for the
     // face containing this pole.
-    if (m_south_pole != nullptr) return CGAL::make_object(m_south_pole);
+    if (m_south_pole != nullptr) return Result(m_south_pole);
 
     // If there are no vertices on the identification curve return the spherical
     // face.
-    if (m_boundary_vertices.empty()) return CGAL::make_object(m_spherical_face);
+    if (m_boundary_vertices.empty()) return Result(m_spherical_face);
 
     Vertex* v = m_boundary_vertices.begin()->second;
-    return CGAL::make_object(_face_below_vertex_on_discontinuity(v));
+    return Result(_face_below_vertex_on_discontinuity(v));
   }
 
   CGAL_assertion((ps_x == ARR_LEFT_BOUNDARY) || (ps_x == ARR_RIGHT_BOUNDARY));
@@ -680,13 +691,13 @@ locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
   // associated with a vertical curve that lies on the boundary and contains
   // the query point cannot exist either. Return the spherical face.
   if (it == m_boundary_vertices.end())
-    return CGAL::make_object(m_spherical_face);
+    return Result(m_spherical_face);
 
   Vertex* v = it->second;
 
   // If the key is equal, return the vertex.
   if (m_geom_traits->compare_y_on_boundary_2_object()(key, v->point()) == EQUAL)
-    return CGAL::make_object(v);
+    return Result(v);
 
   // The vertex v lies on the identification curve and is strictly above the
   // curve end. Search for an edge incident to v and is associated with a
@@ -697,12 +708,12 @@ locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
     const X_monotone_curve_2& curve = he->curve();
     if ((ARR_LEFT_TO_RIGHT == he->direction()) &&
         (m_geom_traits->is_vertical_2_object()(curve)))
-      return CGAL::make_object(he);
+      return Result(he);
     he = he->next()->opposite();
   } while (he != start);
 
   // Return the face that lies below the vertex v.
-  return CGAL::make_object(_face_below_vertex_on_discontinuity(v));
+  return Result(_face_below_vertex_on_discontinuity(v));
 }
 
 //! \brief determines whether a given boundary vertex is redundant.

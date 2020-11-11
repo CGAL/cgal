@@ -1980,8 +1980,9 @@ public:
   /// \name Functor definitions for supporting intersections.
   //@{
 
-  /*! A functor that divides an arc into x-monotone arcs. That are, arcs that
-   * do not cross the identification arc.
+  /*! \class Make_x_monotone_2
+   * A functor for subdividing arcs into x-monotone arcs that do not cross the
+   * identification arc.
    */
   class Make_x_monotone_2 {
   protected:
@@ -1998,21 +1999,24 @@ public:
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
 
   public:
-    /*! Cut the given curve into x-monotone subcurves and insert them into the
-     * given output iterator. As spherical_arcs are always x_monotone, only one
-     * object will be contained in the iterator.
+    /*! Subdivide a given curve into x-monotone subcurves and insert them into
+     * a given output iterator. As spherical_arcs are always x_monotone, only
+     * one object will be contained in the iterator.
      * \param xc the curve.
-     * \param oi the output iterator, whose value-type is Object. The output
-     *           object is a wrapper of either an X_monotone_curve_2, or - in
-     *           case the input spherical_arc is degenerate - a Point_2 object.
+     * \param oi the output iterator for the result. Its dereference type is a
+     *           variant that wraps a \c Point_2 or an \c X_monotone_curve_2
+     *           objects.
      * \return the past-the-end iterator.
      */
-    template<typename OutputIterator>
+    template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& c, OutputIterator oi) const
     {
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+        Make_x_monotone_result;
+
       if (c.is_degenerate()) {
         // The spherical_arc is a degenerate point - wrap it with an object:
-        *oi++ = make_object(c.right());
+        *oi++ = Make_x_monotone_result(c.right());
         return oi;
       }
 
@@ -2020,7 +2024,7 @@ public:
         // The spherical arc is monotone - wrap it with an object:
         // *oi++ = make_object(X_monotone_curve_2(c));
         const X_monotone_curve_2* xc = &c;
-        *oi++ = make_object(*xc);
+        *oi++ = Make_x_monotone_result(*xc);
         return oi;
       }
 
@@ -2032,14 +2036,14 @@ public:
           const Point_2& pp = m_traits.pos_pole();
           X_monotone_curve_2 xc1(np, pp, c.normal(), true, true);
           X_monotone_curve_2 xc2(pp, np, c.normal(), true, false);
-          *oi++ = make_object(xc1);
-          *oi++ = make_object(xc2);
+          *oi++ = Make_x_monotone_result(xc1);
+          *oi++ = Make_x_monotone_result(xc2);
           return oi;
         }
 #if defined(CGAL_FULL_X_MONOTONE_GEODESIC_ARC_ON_SPHERE_IS_SUPPORTED)
         // The arc is not vertical => break it at the discontinuity arc:
         const X_monotone_curve_2 xc(c.normal());
-        *oi++ = make_object(xc);
+        *oi++ = Make_x_monotone_result(xc);
 #else
         // Full x-monotone arcs are not supported!
         // Split the arc at the intersection point with the complement of the
@@ -2052,8 +2056,8 @@ public:
         Point_2 p2 = ctr_p(Direction_3(normal.dz(), 0, -(normal.dx())));
         X_monotone_curve_2 xc1(p1, p2, normal, false, directed_right);
         X_monotone_curve_2 xc2(p2, p1, normal, false, directed_right);
-        *oi++ = make_object(xc1);
-        *oi++ = make_object(xc2);
+        *oi++ = Make_x_monotone_result(xc1);
+        *oi++ = Make_x_monotone_result(xc2);
 #endif
         return oi;
       }
@@ -2071,16 +2075,16 @@ public:
         if (source.is_min_boundary() || target.is_min_boundary()) {
           X_monotone_curve_2 xc1(source, pp, normal, true, true);
           X_monotone_curve_2 xc2(pp, target, normal, true, false);
-          *oi++ = make_object(xc1);
-          *oi++ = make_object(xc2);
+          *oi++ = Make_x_monotone_result(xc1);
+          *oi++ = Make_x_monotone_result(xc2);
           return oi;
         }
 
         if (source.is_max_boundary() || target.is_max_boundary()) {
           X_monotone_curve_2 xc1(source, np, normal, true, false);
           X_monotone_curve_2 xc2(np, target, normal, true, true);
-          *oi++ = make_object(xc1);
-          *oi++ = make_object(xc2);
+          *oi++ = Make_x_monotone_result(xc1);
+          *oi++ = Make_x_monotone_result(xc2);
           return oi;
         }
 
@@ -2100,19 +2104,19 @@ public:
                     (!plane_is_positive && !s_is_positive));
         const Point_2& pole1 = (ccw) ? pp : np;
         X_monotone_curve_2 xc1(source, pole1, normal, true, ccw);
-        *oi++ = make_object(xc1);
+        *oi++ = Make_x_monotone_result(xc1);
         if (s_is_positive != t_is_positive) {
           // Construct 1 more arc:
           X_monotone_curve_2 xc2(pole1, target, normal, true, !ccw);
-          *oi++ = make_object(xc2);
+          *oi++ = Make_x_monotone_result(xc2);
           return oi;
         }
         // Construct 2 more arcs:
         const Point_2& pole2 = (ccw) ? np : pp;
         X_monotone_curve_2 xc2(pole1, pole2, normal, true, !ccw);
-        *oi++ = make_object(xc2);
+        *oi++ = Make_x_monotone_result(xc2);
         X_monotone_curve_2 xc3(pole2, target, normal, true, ccw);
-        *oi++ = make_object(xc3);
+        *oi++ = Make_x_monotone_result(xc3);
         return oi;
       }
 
@@ -2129,8 +2133,8 @@ public:
 
       X_monotone_curve_2 xc1(source, p, normal, false, directed_right);
       X_monotone_curve_2 xc2(p, target, normal, false, directed_right);
-      *oi++ = make_object(xc1);
-      *oi++ = make_object(xc2);
+      *oi++ = Make_x_monotone_result(xc1);
+      *oi++ = Make_x_monotone_result(xc2);
       return oi;
     }
   };

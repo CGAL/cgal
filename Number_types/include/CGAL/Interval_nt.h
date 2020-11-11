@@ -1573,6 +1573,8 @@ namespace Eigen {
 
     static inline Real epsilon() { return 0; }
     static inline Real dummy_precision() { return 0; }
+    static inline Real highest() { return Real((std::numeric_limits<double>::max)(), std::numeric_limits<double>::infinity()); }
+    static inline Real lowest() { return Real(-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::lowest()); }
 
     // Costs could depend on b.
     enum {

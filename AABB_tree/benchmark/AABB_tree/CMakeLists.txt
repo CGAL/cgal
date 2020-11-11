@@ -9,3 +9,10 @@ find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core )
 create_single_source_cgal_program( "test.cpp" )
 create_single_source_cgal_program( "tree_construction.cpp" )
 
+# google benchmark
+find_package(benchmark)
+
+if (benchmark_FOUND)
+  create_single_source_cgal_program("tree_creation.cpp")
+  target_link_libraries(tree_creation benchmark::benchmark)
+endif()

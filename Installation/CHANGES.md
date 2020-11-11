@@ -1,16 +1,115 @@
 Release History
 ===============
 
-[Release 5.1](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
+[Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
 -----------
 
-Release date: July 2020
+Release date: December 2020
+
+### [3D Triangulations](https://doc.cgal.org/5.2/Manual/packages.html#PkgTriangulation3)
+ - Add `Segment_cell_iterator` to iterate over cells intersected by a line segment.
+ - Add `Segment_simplex_iterator` to iterate over simplices intersected by a line segment.
+
+### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/5.2/Manual/packages.html#PkgBGL)
+
+-   Added the convenience header `CGAL/boost/graph/graph_traits_inheritance_macros.h` that allows to easily
+    make any class inheriting from a model of a face graph concept, a model of the same concept.
+- Added the function `can_add_face()`, which tests whether a new face defined by a range of vertices can be added.
+
+### [3D Convex Hulls](https://doc.cgal.org/5.2/Manual/packages.html#PkgConvexHull3)
+
+-   Added the function `CGAL::halfspace_intersection_interior_point_3()` that can be used to retrieve
+    the point that is the most interior a convex closed volume defined by the intersection of a set of halfspaces.
+
+### [2D Arrangements](https://doc.cgal.org/5.2/Manual/packages.html#PkgArrangementOnSurface2)
+
+-   Replaced the use of legacy
+      [`CGAL::Object`](https://doc.cgal.org/5.2/STL_Extension/classCGAL_1_1Object.html)
+      to modern `boost::variant`
+    - Changed make-x-monotone return type from legacy
+      [`CGAL::Object`](https://doc.cgal.org/5.2/STL_Extension/classCGAL_1_1Object.html)
+      to `boost::variant` in all traits concepts and models.
+      As there exists an implicit conversion from `boost::variant` to `CGAL::Object`,
+      the new code is backward compatible. However, it is recommended that all calls
+      to the make-x-monotone functions are fixed to use the new return type.
+    - Changed `decompose()` interface to use `boost::variant` instead of legacy
+      [`CGAL::Object`](https://doc.cgal.org/5.2/STL_Extension/classCGAL_1_1Object.html)
+      As explained above, the code is backward compatible. However, it is recommended
+      that all calls to `decompose()` are fixed to use the new interface.
+
+### [Surface Mesh](https://doc.cgal.org/5.2/Manual/packages.html#PkgSurfaceMesh)
+
+-   Added the function `clear_without_removing_property_maps()` to clear a mesh but keep all the created property maps added.
+-   Added the functions `remove_property_maps<Index_type>()` and `remove_all_property_maps()` to remove all added property maps by index type or all of them respectively.
+
+
+### [Polygon Mesh Processing](https://doc.cgal.org/5.2/Manual/packages.html#PkgPolygonMeshProcessing)
+
+-   Added a visitor to the functions
+    [`CGAL::Polygon_mesh_processing::triangulate_face()`](https://doc.cgal.org/5.2/Polygon_mesh_processing/group__PMP__meshing__grp.html#ga70d65044f8c7309c24ade88fa280124a)
+    and [`CGAL::Polygon_mesh_processing::triangulate_faces()`](https://doc.cgal.org/5.2/Polygon_mesh_processing/group__PMP__meshing__grp.html#gacaaff4d520500c530d9c3d5ebe2a0760),
+    that enables the user to keep track of the newly created faces through the triangulation process.
+-   Added an option in `corefine()`, `split()` and `clip()` functions that enables the operation to be done on a mesh with
+    self-intersections present in the intersection area.
+-   Added an optional range parameter to `CGAL::Polygon_mesh_processing::stitch_borders()`,
+    which can be used to specify which boundary cycles are eligible for stitching.
+
+### [Classification](https://doc.cgal.org/5.2/Manual/packages.html#PkgClassification)
+
+- **Breaking change**: new IO format for `ETHZ::Random_Forest` (a
+  conversion function from the outdated format to the new one is
+  provided)
+
+- Additional functions for the `Evaluation` class: `append()` to
+  enrich the evaluation with additional results; `confusion()` to
+  access the confusion matrix; output functions to save the evaluation
+  to and ASCII or HTML stream
+
+- New operator `feature_cast<>` for easy conversions
+
+- `Feature_set` and `Label_set` are now models of `Range`
+
+- `Label` now has attributes `index`, `standard_index` and `color`,
+  with automatic selection if the ASPRS standard names are used
+
+- New functions in `Point_set_feature_iterator` to allow users to
+  select which features should be generated
+
+- New function `Label_set::is_valid_ground_truth()` to help users
+  check if a ground truth matches a given label set
+
+### Surface Mesh
+
+-   Added the functions `set_recycle_garbage()` and `does_recycle_garbage()` to the class `Surface_mesh`.
+
+### [dD Geometry Kernel](https://doc.cgal.org/5.2/Manual/packages.html#PkgKernelD)
+
+-   The kernels [`Epick_d`](https://doc.cgal.org/5.2/Kernel_d/structCGAL_1_1Epick__d.html)
+    and [`Epeck_d`](https://doc.cgal.org/5.2/Kernel_d/structCGAL_1_1Epeck__d.html) gain two new functors:
+    [`Compute_power_product_d`](https://doc.cgal.org/5.2/Kernel_d/classCGAL_1_1Epeck__d_1_1Compute__power__product__d.html)
+    and [`Construct_power_sphere_d`](https://doc.cgal.org/5.2/Kernel_d/classCGAL_1_1Epeck__d_1_1Construct__power__sphere__d.html),
+    to deal with weighted points.
+
+
+### [Surface Mesh Parameterization](https://doc.cgal.org/5.2/Manual/packages.html#PkgSurfaceMeshParameterization)
+- Added a new parameterization method, Iterative Authalic Parameterization. It is based on the work of Jain, Hardik, Manuel Wollhaf, and Olaf Hellwich,
+  "Learning to Reconstruct Symmetric Shapes using Planar Parameterization of 3D Surface." (IEEE International Conference on Computer Vision Workshops, 2019).
+
+### Add Move Semantics to AABB Trees
+ -   Added move constructor and assignment operator to AABB Tree class.
+
+[Release 5.1](https://github.com/CGAL/cgal/releases/tag/v5.1)
+-----------
+
+Release date: September 2020
 
 ### [Tetrahedral Remeshing](https://doc.cgal.org/5.1/Manual/packages.html#PkgTetrahedralRemeshing) (new package)
 
 -   This package implements a tetrahedral isotropic remeshing algorithm,
     that improves the quality of tetrahedra in terms of dihedral angles,
     while targeting a given edge length.
+
+    See also the associated [blog entry](https://www.cgal.org/2020/08/07/Tetrahedral-remeshing/).
 
 ### [Surface Mesh Topology](https://doc.cgal.org/5.1/Manual/packages.html#PkgSurfaceMeshTopologySummary) (new package)
 
@@ -33,6 +132,7 @@ Release date: July 2020
 ### Installation
 
 -   The CGAL\_Core library no longer requires `Boost.Thread`, even if the g++ compiler is used.
+-   The minimal supported version of Boost is now 1.66.0.
 
 ### [Tutorials](https://doc.cgal.org/5.1/Manual/tutorials.html)
 

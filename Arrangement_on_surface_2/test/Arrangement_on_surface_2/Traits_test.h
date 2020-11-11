@@ -13,7 +13,6 @@
 #include <boost/lexical_cast.hpp>
 
 #include <CGAL/exceptions.h>
-#include <CGAL/Object.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2_dispatching.h>
 #include <CGAL/use.h>
@@ -911,22 +910,22 @@ template <typename Geom_traits_T>
 bool Traits_test<Geom_traits_T>::
 make_x_monotone_wrapper(std::istringstream& str_stream)
 {
-  typedef Geom_traits_T                         Traits;
-  typedef typename Traits::Point_2              Point_2;
-  typedef typename Traits::X_monotone_curve_2   X_monotone_curve_2;
+  typedef Geom_traits_T                                 Traits;
+  typedef typename Traits::Point_2                      Point_2;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
+  typedef boost::variant<Point_2, X_monotone_curve_2>   Make_x_monotone_result;
   CGAL_USE_TYPE(typename Traits::Curve_2);
 
   unsigned int id;
   str_stream >> id;
-  std::cout << "Test: make_x_monotone( " << this->m_curves[id]
-            << " ) ? ";
-  std::vector<CGAL::Object> object_vec;
+  std::cout << "Test: make_x_monotone( " << this->m_curves[id] << " ) ? ";
+  std::vector<Make_x_monotone_result> objs;
   this->m_geom_traits.make_x_monotone_2_object()(this->m_curves[id],
-                                                 std::back_inserter(object_vec));
+                                                 std::back_inserter(objs));
 
   size_t num;
   str_stream >> num;
-  if (!this->compare(num, object_vec.size(), "size")) return false;
+  if (!this->compare(num, objs.size(), "size")) return false;
 
   for (size_t i = 0; i < num; ++i) {
     unsigned int type;                  // 0 - point, 1 - x-monotone curve
@@ -935,20 +934,19 @@ make_x_monotone_wrapper(std::istringstream& str_stream)
     unsigned int id;                    // The id of the point or x-monotone
     str_stream >> id;                   // ... curve respectively
 
-    const X_monotone_curve_2 * xcv_ptr =
-      CGAL::object_cast<X_monotone_curve_2> (&(object_vec[i]));
-    if (xcv_ptr != NULL) {
+    const auto* xcv_ptr = boost::get<X_monotone_curve_2>(&(objs[i]));
+    if (xcv_ptr != nullptr) {
       if (!this->compare(type, 1u, "type")) return false;
       if (!this->compare_curves(this->m_xcurves[id], *xcv_ptr)) return false;
       continue;
     }
 
-    const Point_2 * pt_ptr = CGAL::object_cast<Point_2> (&(object_vec[i]));
-    assert (pt_ptr != NULL);
+    const auto* pt_ptr = boost::get<Point_2>(&(objs[i]));
+    assert(pt_ptr != nullptr);
     if (!this->compare(type, 0u, "type")) return false;
     if (!this->compare_points(this->m_points[id], *pt_ptr)) return false;
   }
-  object_vec.clear();
+  objs.clear();
   return true;
 }
 

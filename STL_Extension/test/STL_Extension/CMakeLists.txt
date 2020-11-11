@@ -34,6 +34,11 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_lexcompare_outputrange.cpp" )
   create_single_source_cgal_program( "test_Modifiable_priority_queue.cpp" )
   create_single_source_cgal_program( "test_multiset.cpp" )
+
+  add_executable( test_multiset_cc "test_multiset.cpp" )
+  target_link_libraries( test_multiset_cc PUBLIC CGAL::CGAL )
+  target_compile_options( test_multiset_cc PUBLIC -DCGAL_MULTISET_USE_COMPACT_CONTAINER_AS_DEFAULT )
+
   create_single_source_cgal_program( "test_N_tuple.cpp" )
   create_single_source_cgal_program( "test_namespaces.cpp" )
   create_single_source_cgal_program( "test_Nested_iterator.cpp" )

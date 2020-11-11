@@ -103,6 +103,7 @@ endif()
   create_single_source_cgal_program("test_pmp_manifoldness.cpp")
   create_single_source_cgal_program("test_mesh_smoothing.cpp")
   create_single_source_cgal_program("test_remove_caps_needles.cpp")
+  create_single_source_cgal_program("test_simplify_polylines_pmp.cpp")
 #  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
 
   if( TARGET CGAL::TBB_support )
@@ -119,13 +120,13 @@ if(OpenMesh_FOUND)
 endif()
 
 find_package(Ceres QUIET)
-if(TARGET ceres)
+if(TARGET ceres AND TARGET CGAL::Eigen_support)
   target_compile_definitions( test_mesh_smoothing PRIVATE CGAL_PMP_USE_CERES_SOLVER )
-  target_link_libraries( test_mesh_smoothing PRIVATE ceres )
+  target_link_libraries( test_mesh_smoothing PUBLIC CGAL::Eigen_support PRIVATE ceres )
 
 #  target_compile_definitions( test_pmp_repair_self_intersections PRIVATE CGAL_PMP_USE_CERES_SOLVER )
 #  target_link_libraries( test_pmp_repair_self_intersections PRIVATE ceres )
-endif(TARGET ceres)
+endif(TARGET ceres AND TARGET CGAL::Eigen_support)
 
 if(BUILD_TESTING)
   set_tests_properties(

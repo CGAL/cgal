@@ -69,6 +69,7 @@ create_single_source_cgal_program( "example_generation_and_training.cpp" )
 create_single_source_cgal_program( "example_mesh_classification.cpp" )
 create_single_source_cgal_program( "example_cluster_classification.cpp" )
 create_single_source_cgal_program( "gis_tutorial_example.cpp" )
+create_single_source_cgal_program( "example_deprecated_conversion.cpp" )
 
 if (TARGET CGAL::OpenCV_support)
   create_single_source_cgal_program( "example_opencv_random_forest.cpp" )
@@ -89,7 +90,8 @@ foreach(target
     example_cluster_classification
     example_opencv_random_forest
     example_tensorflow_neural_network
-    gis_tutorial_example)
+    gis_tutorial_example
+    example_deprecated_conversion)
   if(TARGET ${target})
     target_link_libraries(${target} PUBLIC
       CGAL::Eigen_support

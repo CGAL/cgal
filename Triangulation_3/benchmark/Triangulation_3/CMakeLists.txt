@@ -45,6 +45,8 @@ create_single_source_cgal_program( "simple.cpp" )
 
 create_single_source_cgal_program( "Triangulation_benchmark_3.cpp" )
 
+create_single_source_cgal_program( "segment_traverser_benchmark.cpp" )
+
 find_package(benchmark)
 
 if(TARGET benchmark::benchmark)

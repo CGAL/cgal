@@ -32,6 +32,9 @@ namespace CGAL {
 template<typename AABBTraits>
 class AABB_node
 {
+private:
+  typedef AABB_node<AABBTraits> Self;
+
 public:
   typedef typename AABBTraits::Bounding_box Bounding_box;
 
@@ -41,28 +44,14 @@ public:
     , m_p_left_child(nullptr)
     , m_p_right_child(nullptr)      { };
 
-  /// Non virtual Destructor
-  /// Do not delete children because the tree hosts and delete them
-  ~AABB_node() { };
+  AABB_node(Self&& node) = default;
+
+  // Disabled copy constructor & assignment operator
+  AABB_node(const Self& src) = delete;
+  Self& operator=(const Self& src) = delete;
 
   /// Returns the bounding box of the node
   const Bounding_box& bbox() const { return m_bbox; }
-
-  /**
-   * @brief Builds the tree by recursive expansion.
-   * @param first the first primitive to insert
-   * @param last the last primitive to insert
-   * @param range the number of primitive of the range
-   *
-   * [first,last[ is the range of primitives to be added to the tree.
-   */
-  template<typename ConstPrimitiveIterator, typename ComputeBbox, typename SplitPrimitives>
-  void expand(ConstPrimitiveIterator first,
-              ConstPrimitiveIterator beyond,
-              const std::size_t range,
-              const ComputeBbox& compute_bbox,
-              const SplitPrimitives& split_primitives,
-              const AABBTraits&);
 
   /**
    * @brief General traversal query
@@ -95,8 +84,17 @@ public:
                      { return *static_cast<Primitive*>(m_p_left_child); }
   const Primitive& right_data() const
                      { return *static_cast<Primitive*>(m_p_right_child); }
+  template <class Left, class Right>
+  void set_children(Left& l, Right& r)
+  {
+    m_p_left_child = static_cast<void*>(std::addressof(l));
+    m_p_right_child = static_cast<void*>(std::addressof(r));
+  }
+  void set_bbox(const Bounding_box& bbox)
+  {
+    m_bbox = bbox;
+  }
 
-private:
   Node& left_child() { return *static_cast<Node*>(m_p_left_child); }
   Node& right_child() { return *static_cast<Node*>(m_p_right_child); }
   Primitive& left_data() { return *static_cast<Primitive*>(m_p_left_child); }
@@ -111,48 +109,7 @@ private:
   void *m_p_left_child;
   void *m_p_right_child;
 
-private:
-  // Disabled copy constructor & assignment operator
-  typedef AABB_node<AABBTraits> Self;
-  AABB_node(const Self& src);
-  Self& operator=(const Self& src);
-
 };  // end class AABB_node
-
-template<typename Tr>
-template<typename ConstPrimitiveIterator, typename ComputeBbox, typename SplitPrimitives>
-void
-AABB_node<Tr>::expand(ConstPrimitiveIterator first,
-                      ConstPrimitiveIterator beyond,
-                      const std::size_t range,
-                      const ComputeBbox& compute_bbox,
-                      const SplitPrimitives& split_primitives,
-                      const Tr& traits)
-{
-  m_bbox = compute_bbox(first, beyond);
-
-  // sort primitives along longest axis aabb
-  split_primitives(first, beyond, m_bbox);
-
-  switch(range)
-  {
-  case 2:
-    m_p_left_child = &(*first);
-    m_p_right_child = &(*(++first));
-    break;
-  case 3:
-    m_p_left_child = &(*first);
-    m_p_right_child = static_cast<Node*>(this)+1;
-    right_child().expand(first+1, beyond, 2, compute_bbox, split_primitives, traits);
-    break;
-  default:
-    const std::size_t new_range = range/2;
-    m_p_left_child = static_cast<Node*>(this) + 1;
-    m_p_right_child = static_cast<Node*>(this) + new_range;
-    left_child().expand(first, first + new_range, new_range, compute_bbox, split_primitives, traits);
-    right_child().expand(first + new_range, beyond, range - new_range, compute_bbox, split_primitives, traits);
-  }
-}
 
 
 template<typename Tr>

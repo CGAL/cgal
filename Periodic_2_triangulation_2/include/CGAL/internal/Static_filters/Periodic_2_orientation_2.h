@@ -103,21 +103,7 @@ public:
     : Base(o2b), _dom(dom)
   { }
 
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else
-  result_type
-  operator()(const Vector_2& u, const Vector_2& v) const
-  {
-    return Base::operator()(u, v);
-  }
-
-  result_type
-  operator()(const Circle_2& c) const
-  {
-    return Base::operator()(c);
-  }
-#endif
 
   /// Normal static orientation test, copied from Orientation_2
   result_type operator()(const Point_2 &p, const Point_2 &q, const Point_2 &r) const

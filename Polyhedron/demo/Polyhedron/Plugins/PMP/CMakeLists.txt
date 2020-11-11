@@ -22,9 +22,6 @@ if(TARGET CGAL::Eigen_support)
     polyhedron_demo_plugin(fairing_plugin Fairing_plugin ${fairingUI_FILES} KEYWORDS PMP)
     target_link_libraries(fairing_plugin PUBLIC scene_selection_item CGAL::Eigen_support)
 
-    polyhedron_demo_plugin(hole_filling_polyline_plugin Hole_filling_polyline_plugin )
-    target_link_libraries(hole_filling_polyline_plugin PUBLIC scene_surface_mesh_item scene_polylines_item CGAL::Eigen_support)
-
     qt5_wrap_ui( Mean_curvature_flow_skeleton_pluginUI_FILES  Mean_curvature_flow_skeleton_plugin.ui)
     polyhedron_demo_plugin(mean_curvature_flow_skeleton_plugin Mean_curvature_flow_skeleton_plugin ${Mean_curvature_flow_skeleton_pluginUI_FILES})
     target_link_libraries(mean_curvature_flow_skeleton_plugin
@@ -77,7 +74,7 @@ polyhedron_demo_plugin(polyhedron_stitching_plugin Polyhedron_stitching_plugin K
 target_link_libraries(polyhedron_stitching_plugin PUBLIC scene_surface_mesh_item scene_polylines_item)
 
 qt5_wrap_ui( selectionUI_FILES Selection_widget.ui)
-polyhedron_demo_plugin(selection_plugin Selection_plugin ${selectionUI_FILES} KEYWORDS PMP IO Classification Mesh_3)
+polyhedron_demo_plugin(selection_plugin Selection_plugin ${selectionUI_FILES} KEYWORDS PMP Viewer Classification Mesh_3)
 target_link_libraries(selection_plugin PUBLIC scene_selection_item scene_points_with_normal_item scene_polylines_item)
 
 #to keep it simple to compile
@@ -85,7 +82,7 @@ add_custom_target(self_intersection_plugin )
 add_dependencies(self_intersection_plugin selection_plugin)
 
 polyhedron_demo_plugin(triangulate_facets_plugin Triangulate_facets_plugin KEYWORDS PMP)
-target_link_libraries(triangulate_facets_plugin PUBLIC scene_surface_mesh_item)
+target_link_libraries(triangulate_facets_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
 
 polyhedron_demo_plugin(corefinement_plugin Corefinement_plugin KEYWORDS PMP)
 target_link_libraries(corefinement_plugin PUBLIC scene_surface_mesh_item)
@@ -95,7 +92,7 @@ target_link_libraries(surface_intersection_plugin PUBLIC scene_surface_mesh_item
 
 qt5_wrap_ui( repairUI_FILES RemoveNeedlesDialog.ui)
 polyhedron_demo_plugin(repair_polyhedron_plugin Repair_polyhedron_plugin  ${repairUI_FILES} KEYWORDS PMP)
-target_link_libraries(repair_polyhedron_plugin PUBLIC scene_surface_mesh_item)
+target_link_libraries(repair_polyhedron_plugin PUBLIC scene_points_with_normal_item scene_surface_mesh_item)
 
 qt5_wrap_ui( isotropicRemeshingUI_FILES Isotropic_remeshing_dialog.ui)
 polyhedron_demo_plugin(isotropic_remeshing_plugin Isotropic_remeshing_plugin  ${isotropicRemeshingUI_FILES} KEYWORDS PMP)
@@ -111,7 +108,7 @@ if(TARGET CGAL::TBB_support)
   target_link_libraries(distance_plugin PUBLIC CGAL::TBB_support)
 endif()
 
-polyhedron_demo_plugin(detect_sharp_edges_plugin Detect_sharp_edges_plugin KEYWORDS IO Mesh_3 PMP)
+polyhedron_demo_plugin(detect_sharp_edges_plugin Detect_sharp_edges_plugin KEYWORDS Viewer Mesh_3 PMP)
 target_link_libraries(detect_sharp_edges_plugin PUBLIC scene_surface_mesh_item)
 
 qt5_wrap_ui( randomPerturbationUI_FILES Random_perturbation_dialog.ui)

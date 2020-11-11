@@ -45,9 +45,6 @@ void Surface_sweep_2<Vis>::_complete_sweep()
   // Complete the sweep process using base sweep-line class.
   Base::_complete_sweep();
 
-  // Clean the set of curve pairs for which we have computed intersections.
-  m_curves_pair_set.clear();
-
   // Free all overlapping subcurves we have created.
   Subcurve_iterator   itr;
   for (itr = m_overlap_subCurves.begin(); itr != m_overlap_subCurves.end();
@@ -518,9 +515,8 @@ void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2,
 
   CGAL_assertion(c1 != c2);
 
-  // look up for (c1,c2) in the table and insert if doesnt exist
-  Curve_pair cv_pair(c1,c2);
-  if (! (m_curves_pair_set.insert(cv_pair)).second) {
+  // look up for c1 in the table of c2 (or vice versa if c2<c1) and insert if doesnt exist
+  if ((c1 < c2 ? c1->intersection_exists(c2) : c2->intersection_exists(c1))) {
     CGAL_SS_PRINT_END_EOL("computing intersection (already computed)");
     return;  //the curves have already been checked for intersection
   }
