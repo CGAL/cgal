@@ -84,30 +84,15 @@ int spherical_compare(const Sphere_point<R>& p1,
                       const Sphere_point<R>& p2,
                       int axis, int pos) {
 
-  Sphere_point<R> pS, pN;
-  CGAL_assertion(axis>=0 && axis<=2);
-  switch(axis) {
-  case 0:
-    pS=Sphere_point<R>(0,-1,0);
-    //    pN=Sphere_point<R>(0,1,0);
-    break;
-  case 1:
-    pS=Sphere_point<R>(0,0,1);
-    //    pN=Sphere_point<R>(0,0,-1);
-    break;
-  case 2:
-    pS=Sphere_point<R>(0,-1,0);
-    //    pN=Sphere_point<R>(0,1,0);
-    break;
-  }
   typename R::Direction_3
     d1(p1-CGAL::ORIGIN),
     d2(p2-CGAL::ORIGIN);
   if (d1 == d2) return 0;
+
+  CGAL_assertion(axis>=0 && axis<=2);
   if(is_south(p1,axis) || is_north(p2,axis)) return -1;
   if(is_south(p2,axis) || is_north(p1,axis)) return 1;
-  //  if (d1 == dS || d2 == dN) return -1;
-  //  if (d1 == dN || d2 == dS) return  1;
+
   // now no more special cases
   if (axis==0 && (p1.hx()==static_cast<typename R::RT>(0) &&
                   p2.hx()==static_cast<typename R::RT>(0))) {
@@ -133,7 +118,11 @@ int spherical_compare(const Sphere_point<R>& p1,
     // now s1 == s2
     return s1 * CGAL::spherical_orientation(p1,Sphere_point<R>(0,0,1),p2);
   }
-  int sor = CGAL::spherical_orientation(pS,p1,p2);
+  int sor;
+  if(axis==1)
+    sor = CGAL::spherical_orientation(Sphere_point<R>(0, 0, 1),p1,p2);
+  else
+    sor = CGAL::spherical_orientation(Sphere_point<R>(0,-1, 0),p1,p2);
   if ( sor ) return sor;
   if(axis==0)
     return CGAL::spherical_orientation(Sphere_point<R>(0,0,pos),p2,p1);
