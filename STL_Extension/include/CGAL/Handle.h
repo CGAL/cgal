@@ -48,22 +48,17 @@ class Handle
       CGAL_precondition( x.PTR != static_cast<Rep*>(0) );
       PTR = x.PTR;
       CGAL_assume (PTR->count > 0);
-      PTR->count++;
+      incref();
     }
 
-    ~Handle()
-    {
-        if ( PTR && (--PTR->count == 0))
-            delete PTR;
-    }
+    ~Handle() { reset(); }
 
     Handle&
     operator=(const Handle& x) noexcept
     {
       CGAL_precondition( x.PTR != static_cast<Rep*>(0) );
-      x.PTR->count++;
-      if ( PTR && (--PTR->count == 0))
-          delete PTR;
+      x.incref();
+      reset();
       PTR = x.PTR;
       return *this;
     }
@@ -78,6 +73,11 @@ class Handle
           delete PTR;
         PTR=0;
       }
+    }
+
+    void incref() const noexcept
+    {
+      PTR->count++;
     }
 
     int
