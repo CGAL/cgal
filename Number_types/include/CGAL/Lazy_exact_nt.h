@@ -184,7 +184,7 @@ public:
     prune_dag();
   }
 
-  void prune_dag() const { l = Lazy_exact_nt<ET1>(); }
+  void prune_dag() const { l.reset(); }
 };
 
 
@@ -203,7 +203,7 @@ struct Lazy_exact_unary : public Lazy_exact_nt_rep<ET>
     this->set_depth(op1.depth() + 1);
   }
 
-  void prune_dag() const { op1 = Lazy_exact_nt<ET>(); }
+  void prune_dag() const { op1.reset(); }
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void
@@ -234,8 +234,8 @@ struct Lazy_exact_binary : public Lazy_exact_nt_rep<ET>
 
   void prune_dag() const
   {
-    op1 = Lazy_exact_nt<ET1>();
-    op2 = Lazy_exact_nt<ET2>();
+    op1.reset();
+    op2.reset();
   }
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
