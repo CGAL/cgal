@@ -27,7 +27,7 @@ class Rep
 {
     friend class Handle;
   protected:
-             Rep() { count = 1; }
+             Rep() : count(1) { }
     virtual ~Rep() {}
 
     int      count;
