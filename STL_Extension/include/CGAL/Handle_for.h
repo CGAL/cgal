@@ -26,6 +26,7 @@
 #include <CGAL/memory.h>
 #include <algorithm>
 #include <cstddef>
+#include <atomic>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -39,7 +40,7 @@ class Handle_for
     // Wrapper that adds the reference counter.
     struct RefCounted {
         T t;
-        unsigned int count;
+        std::atomic_uint count;
         template <class... U>
         RefCounted(U&&...u ) : t(std::forward<U>(u)...), count(1) {}
     };
@@ -62,22 +63,19 @@ public:
     Handle_for()
     {
         pointer p = allocator.allocate(1);
-        new (p) RefCounted();
-        ptr_ = p;
+        ptr_ = new (p) RefCounted();
     }
 
     Handle_for(const element_type& t)
     {
         pointer p = allocator.allocate(1);
-        new (p) RefCounted(t);
-        ptr_ = p;
+        ptr_ = new (p) RefCounted(t);
     }
 
     Handle_for(element_type && t)
     {
         pointer p = allocator.allocate(1);
-        new (p) RefCounted(std::move(t));
-        ptr_ = p;
+        ptr_ = new (p) RefCounted(std::move(t));
     }
 
 /* I comment this one for now, since it's preventing the automatic conversions
@@ -86,8 +84,7 @@ public:
     Handle_for(const T1& t1)
     {
         pointer p = allocator.allocate(1);
-        new (p) RefCounted(t1);
-        ptr_ = p;
+        ptr_ = new (p) RefCounted(t1);
     }
 */
 
@@ -95,15 +92,14 @@ public:
     Handle_for(T1 && t1, T2 && t2, Args && ... args)
     {
         pointer p = allocator.allocate(1);
-        new (&(p->t)) RefCounted(std::forward<T1>(t1), std::forward<T2>(t2), std::forward<Args>(args)...);
-        ptr_ = p;
+        ptr_ = new (&(p->t)) RefCounted(std::forward<T1>(t1), std::forward<T2>(t2), std::forward<Args>(args)...);
     }
 
     Handle_for(const Handle_for& h) noexcept
       : ptr_(h.ptr_)
     {
-        CGAL_assume (ptr_->count > 0);
-        ++(ptr_->count);
+        // CGAL_assume (ptr_->count > 0);
+        ptr_->count.fetch_add(1, std::memory_order_relaxed);
     }
 
     Handle_for&
@@ -148,9 +144,11 @@ public:
 
     ~Handle_for()
     {
-      if (--(ptr_->count) == 0) {
+      if (ptr_->count.load(std::memory_order_relaxed) == 1
+          || ptr_->count.fetch_sub(1, std::memory_order_release) == 1) {
+        std::atomic_thread_fence(std::memory_order_acquire);
         Allocator_traits::destroy(allocator, ptr_);
-        allocator.deallocate( ptr_, 1);
+        allocator.deallocate(ptr_, 1);
       }
     }
 
