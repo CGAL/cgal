@@ -129,7 +129,7 @@ public:
   /*! constructs an empty arrangement that uses the given `traits`
    * instance for performing the geometric predicates.
    */
-  Arrangement_2<Traits, Dcel>(const Traits *traits);
+  Arrangement_2<Traits, Dcel>(const Traits* traits);
 
   /// @}
 
@@ -197,8 +197,7 @@ namespace CGAL {
  *
  * \pre If provided, `pl` must be attached to the given arrangement `arr`.
  */
-template <typename Traits, typename Dcel,
-          typename Curve, typename PointLocation>
+template <typename Traits, typename Dcel, typename Curve, typename PointLocation>
 void insert(Arrangement_2<Traits,Dcel>& arr, const Curve& c,
             const PointLocation& pl = walk_pl);
 
@@ -222,52 +221,10 @@ void insert(Arrangement_2<Traits, Dcel>& arr,
  * \param last the past-the-end iterator of the range of curves.
  */
 template <typename Traits, typename Dcel, class InputIterator>
-void insert(Arrangement_2<Traits,Dcel>& arr,
+void insert(Arrangement_2<Traits, Dcel>& arr,
             InputIterator first, InputIterator last);
 
 /// @}
-
-/*! \ingroup PkgArrangementOnSurface2Funcs
- *
- * Checks if a given curve or \f$ x\f$-monotone curve intersects an existing
- * arrangement's edges or vertices.
- *
- * If the give curve is not an \f$ x\f$-monotone curve then the function
- * subdivides the given curve into \f$ x\f$-monotone subcurves and isolated
- * vertices . Each subcurve is in turn checked for intersection.  The function
- * uses the zone algorithm to check if the curve intersects the
- * arrangement. First, the curve's left endpoint is located. Then, its zone is
- * computed starting from its left endpoint location. The zone computation
- * terminates when an intersection with an arrangement's edge/vertex is found or
- * when the right endpoint is reached.
- *
- * A given point-location object is used for locating the left endpoint
- * of the given curve in the existing arrangement. By default, the function
- * uses the "walk along line" point-location strategy - namely an
- * instance of the class
- * `Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel> >`.
- *
- * Checks if the given curve or \f$ x\f$-monotone curve `c` intersects
- * edges or vertices of the existing arrangement `arr`.
- * \pre If provided, `pl` must be attached to the given arrangement `arr`.
- *
- * \cgalHeading{Requirements}
- *
- * <UL>
- * <LI>If `c` is \f$ x\f$-monotone then the instantiated `GeomTraits`
- * class must model the `ArrangementXMonotoneTraits_2` concept. If
- * `c` is a curve then the instantiated `GeomTraits` class must
- * model the `ArrangementTraits_2` concept. That is, it should
- * define the `Curve_2` type, and support its subdivision into
- * \f$ x\f$-monotone subcurves (and perhaps isolated points).
- * <LI>The point-location object `pl`, must model the
- * `ArrangementPointLocation_2` concept.
- * </UL>
- */
-template <typename GeomTraits, typename TopTraits,
-          typename Curve, typename PointLocation>
-bool do_intersect(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
-                  const Curve& c, const PointLocation& pl);
 
 /*! \ingroup PkgArrangementOnSurface2Funcs
  *

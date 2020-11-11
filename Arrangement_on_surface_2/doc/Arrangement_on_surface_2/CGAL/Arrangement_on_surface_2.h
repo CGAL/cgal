@@ -16,7 +16,7 @@ namespace CGAL {
 
  * The `Arrangement_on_surface_2` template has two parameters:
  * <UL>
- * <LI>The `GeometryTraits_2` template-parameter should be instantiated with
+ * <LI>The `GeometryTraits` template-parameter should be instantiated with
  * a model of a geometry traits. The minimal requirements are defined by the
  * `ArrangementBasicTraits_2` concept. A model of this concept defines
  * the types of \f$ x\f$-monotone curves and two-dimensional points, namely
@@ -53,14 +53,14 @@ namespace CGAL {
  * \sa `PkgArrangementOnSurface2Read`
  * \sa `PkgArrangementOnSurface2Write`
  */
-template <typename GeometryTraits_2, typename TopologyTraits>
+template <typename GeometryTraits, typename TopologyTraits>
 class Arrangement_on_surface_2 {
 public:
   /// \name Types
   /// @{
 
   /*! the geometry traits class in use. */
-  typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef GeometryTraits                              Geometry_traits_2;
 
   /*! the topology traits class in use. */
   typedef TopologyTraits                                Topology_traits;
@@ -528,15 +528,15 @@ public:
   /*! constructs an empty arrangement containing one unbounded face,
    * which corresponds to the entire plane.
    */
-  Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>();
+  Arrangement_on_surface_2<GeometryTraits, TopologyTraits>();
 
   /*! copy constructor. */
-  Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>(const Self& other);
+  Arrangement_on_surface_2<GeometryTraits, TopologyTraits>(const Self& other);
 
   /*! constructs an empty arrangement that uses the given `traits`
    *instance for performing the geometric predicates.
    */
-  Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>(const GeometryTraits_2* traits);
+  Arrangement_on_surface_2<GeometryTraits, TopologyTraits>(const GeometryTraits* traits);
 
   /// @}
 
@@ -1042,13 +1042,13 @@ namespace CGAL {
  * The given point-location object `pl` is used to locate the left endpoints of
  * the \f$ x\f$-monotone curves. By default, the function uses the "walk along
  * line" point-location strategy - namely an instance of the class
- * `Arr_walk_along_line_point_location<Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits> >`.
+ * `Arr_walk_along_line_point_location<Arrangement_on_surface_2<GeometryTraits, TopologyTraits> >`.
  *
  * \pre If provided, `pl` must be attached to the given arrangement `arr`.
  */
-template <typename GeometryTraits_2, typename TopologyTraits,
+template <typename GeometryTraits, typename TopologyTraits,
           typename Curve, typename PointLocation>
-void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
+void insert(Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
             const Curve& c,
             const PointLocation& pl = walk_pl);
 
@@ -1060,10 +1060,10 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
  * zone computation terminates, when the right endpoint is reached.  Thus,
  * point-location is not required.
 */
-template <typename GeometryTraits_2, typename TopologyTraits>
-void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
+template <typename GeometryTraits, typename TopologyTraits>
+void insert(Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
             const typename Traits::X_monotone_curve_2& xc,
-            typename Arr_point_location_result<Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits> >::type obj);
+            typename Arr_point_location_result<Arrangement_on_surface_2<GeometryTraits, TopologyTraits> >::type obj);
 
 
 /*! Aggregately inserts the curves or \f$ x\f$-monotone curves in the range
@@ -1072,9 +1072,9 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
  * \param first the iterator to the first element in the range of curves.
  * \param last the past-the-end iterator of the range of curves.
  */
-template <typename GeometryTraits_2, typename TopologyTraits,
+template <typename GeometryTraits, typename TopologyTraits,
           typename InputIterator>
-void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
+void insert(Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
             InputIterator first,
             InputIterator last);
 
@@ -1082,10 +1082,10 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 
 /*! \ingroup PkgArrangementOnSurface2Funcs
  *
- * Checks if a given curve or \f$ x\f$-monotone curve intersects an existing
+ * Checks if a given curve or \f$x\f$-monotone curve intersects an existing
  * arrangement's edges or vertices.
  *
- * If the give curve is not an \f$ x\f$-monotone curve then the function
+ * If the give curve is not an \f$x\f$-monotone curve then the function
  * subdivides the given curve into \f$ x\f$-monotone subcurves and isolated
  * vertices . Each subcurve is in turn checked for intersection.  The function
  * uses the zone algorithm to check if the curve intersects the
@@ -1097,7 +1097,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
  * A given point-location object is used for locating the left endpoint of the
  * given curve in the existing arrangement. By default, the function uses the
  * "walk along line" point-location strategy - namely an instance of the class
- * `Arr_walk_along_line_point_location<Arrangement_on_surface_2<GeometryTraits_2,
+ * `Arr_walk_along_line_point_location<Arrangement_on_surface_2<GeometryTraits,
  * TopologyTraits> >`.
  *
  * Checks if the given curve or \f$ x\f$-monotone curve `c` intersects
@@ -1108,9 +1108,9 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
  * \cgalHeading{Requirements}
  *
  * <UL>
- * <LI>If `c` is \f$ x\f$-monotone then the instantiated `GeometryTraits_2`
+ * <LI>If `c` is \f$ x\f$-monotone then the instantiated `GeometryTraits`
  * class must model the `ArrangementXMonotoneTraits_2` concept. If
- * `c` is a curve then the instantiated `GeometryTraits_2` class must
+ * `c` is a curve then the instantiated `GeometryTraits` class must
  * model the `ArrangementTraits_2` concept. That is, it should
  * define the `Curve_2` type, and support its subdivision into
  * \f$ x\f$-monotone subcurves (and perhaps isolated points).
@@ -1118,12 +1118,10 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
  * `ArrangementPointLocation_2` concept.
  * </UL>
  */
-template <typename GeometryTraits_2, typename TopologyTraits,
-          typename Curve, typename PointLocation>
-bool do_intersect
-(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
- const Curve& c,
- const PointLocation& pl);
+template <typename GeometryTraits, typename TopologyTraits, typename Curve,
+          typename PointLocation>
+bool do_intersect(Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
+                  const Curve& c, const PointLocation& pl);
 
 /*! \ingroup PkgArrangementOnSurface2Funcs
  *
@@ -1139,7 +1137,7 @@ bool do_intersect
  * A given point-location object is used for answering the two point-location
  * queries on the given curve endpoints. By default, the function uses the "walk
  * along line" point-location strategy - namely, an instance of the class
- * `Arr_walk_along_line_point_location<Arrangement_on_surface_2<GeometryTraits_2,
+ * `Arr_walk_along_line_point_location<Arrangement_on_surface_2<GeometryTraits,
  * TopologyTraits> >`.
  *
  * \pre If provided, `pl` must be attached to the given arrangement `arr`.
@@ -1153,11 +1151,11 @@ bool do_intersect
  * `ArrangementPointLocation_2` concept.
  * </UL>
  */
-template <typename GeometryTraits_2, typename TopologyTraits,
+template <typename GeometryTraits, typename TopologyTraits,
           typename PointLocation>
-typename Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>::Halfedge_handle
+typename Arrangement_on_surface_2<GeometryTraits, TopologyTraits>::Halfedge_handle
 insert_non_intersecting_curve
-(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
+(Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
  const typename Traits::X_monotone_curve_2& xc,
  const PointLocation& pl = walk_pl);
 
@@ -1177,10 +1175,10 @@ insert_non_intersecting_curve
  * <LI>`InputIterator::value_type` must be `Traits::X_monotone_curve_2`
  * </UL>
  */
-template <typename GeometryTraits_2, typename TopologyTraits,
+template <typename GeometryTraits, typename TopologyTraits,
           typename InputIterator>
 void insert_non_intersecting_curves
-(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
+(Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
  InputIterator first, InputIterator last);
 
 /*! \ingroup PkgArrangementOnSurface2Funcs
@@ -1192,7 +1190,7 @@ void insert_non_intersecting_curves
  * contained inside a face, and is inserted as an isolated vertex inside this
  * face.  By default, the function uses the "walk along line" point-location
  * strategy - namely, an instance of the class
- * `Arr_walk_along_line_point_location<Arrangement_on_surface_2<GeometryTraits_2,
+ * `Arr_walk_along_line_point_location<Arrangement_on_surface_2<GeometryTraits,
  * TopologyTraits> >`.  In either case, the function returns a handle for the
  * vertex associated with the point.
  *
@@ -1210,10 +1208,10 @@ void insert_non_intersecting_curves
  * `ArrangementPointLocation_2` concept.
  * </UL>
  */
-template <typename GeometryTraits_2, typename TopologyTraits,
+template <typename GeometryTraits, typename TopologyTraits,
           typename PointLocation>
-typename Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>::Vertex_handle
-insert_point(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
+typename Arrangement_on_surface_2<GeometryTraits, TopologyTraits>::Vertex_handle
+insert_point(Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
              const typename Traits::Point_2& p,
              const PointLocation& pl = walk_pl);
 
@@ -1235,9 +1233,9 @@ insert_point(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
  * The instantiated traits class must model the concept
  * `ArranagmentXMonotoneTraits_2`.
  */
-template <typename GeometryTraits_2, typename TopologyTraits>
+template <typename GeometryTraits, typename TopologyTraits>
 bool is_valid
-(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr);
+(const Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr);
 
 /*! \ingroup PkgArrangementOnSurface2Funcs
  *
@@ -1262,10 +1260,10 @@ bool is_valid
  * </UL>
  */
 template<typename GeometryTraits, typename TopologyTraits>
-typename Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>::Face_handle
+typename Arrangement_on_surface_2<GeometryTraits, TopologyTraits>::Face_handle
 remove_edge
-(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
- typename Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>::Halfedge_handle e);
+(Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
+ typename Arrangement_on_surface_2<GeometryTraits, TopologyTraits>::Halfedge_handle e);
 
 /*! \ingroup PkgArrangementOnSurface2Funcs
  *
@@ -1286,10 +1284,10 @@ remove_edge
  * functionality.
  * </UL>
  */
-template <typename GeometryTraits_2, typename TopologyTraits>
+template <typename GeometryTraits, typename TopologyTraits>
 bool remove_vertex
-(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
- typename Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>::Vertex_handle v);
+(Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
+ typename Arrangement_on_surface_2<GeometryTraits, TopologyTraits>::Vertex_handle v);
 
 /*! \ingroup PkgArrangementOnSurface2Funcs
  *
@@ -1302,7 +1300,7 @@ bool remove_vertex
  * A given point-location object is used for answering point-location queries
  * during the insertion process. By default, the function uses the "walk along
  * line" point-location strategy - namely an instance of the class
- * `Arr_walk_along_line_point_location<Arrangement_on_surface_2<GeometryTraits_2,
+ * `Arr_walk_along_line_point_location<Arrangement_on_surface_2<GeometryTraits,
  * TopologyTraits> >`.
  *
  * Compute the zone of the given \f$ x\f$-monotone curve `c` in the arrangement
@@ -1313,17 +1311,17 @@ bool remove_vertex
  * \cgalHeading{Requirements}
  *
  * <UL>
- * <LI>The instantiated `GeometryTraits_2` class must model the
+ * <LI>The instantiated `GeometryTraits` class must model the
  * `ArrangementXMonotoneTraits_2` concept.
  * <LI>The point-location object `pl`, must model the
  * `ArrangementPointLocation_2` concept.
  * </UL>
  */
-template <typename GeometryTraits_2, typename TopologyTraits,
+template <typename GeometryTraits, typename TopologyTraits,
           typename OutputIterator, typename PointLocation>
 OutputIterator zone
-(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
- const typename GeometryTraits_2::X_monotone_curve_2& c,
+(Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
+ const typename GeometryTraits::X_monotone_curve_2& c,
  OutputIterator oi,
  const PointLocation& pl);
 

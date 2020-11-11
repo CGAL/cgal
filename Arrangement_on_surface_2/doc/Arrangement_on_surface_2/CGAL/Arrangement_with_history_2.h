@@ -92,7 +92,7 @@ public:
   /*! constructs an empty arrangement that uses the given `traits` instance for
    * performing the geometric predicates.
    */
-  Arrangement_with_history_2<Traits, Dcel>(Traits* traits);
+  Arrangement_with_history_2<Traits, Dcel>(const Traits* traits);
 
   /// @}
 
@@ -136,10 +136,9 @@ public:
  *
  * \pre If provided, `pl` is attached to the given arrangement `arr`.
  */
-template<typename Traits, typename Dcel,
-         typename PointLocation>
-typename Arrangement_with_history_2<Traits,Dcel>::Curve_handle
-insert(Arrangement_with_history_2<Traits,Dcel>& arr,
+template<typename Traits, typename Dcel, typename PointLocation>
+typename Arrangement_with_history_2<Traits, Dcel>::Curve_handle
+insert(Arrangement_with_history_2<Traits, Dcel>& arr,
        const typename Traits::Curve_2& c,
        const PointLocation& pl = walk_pl);
 
