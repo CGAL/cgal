@@ -40,6 +40,8 @@ class Handle_for
     struct RefCounted {
         T t;
         unsigned int count;
+        template <class... U>
+        RefCounted(U&&...u ) : t(std::forward<U>(u)...), count(1) {}
     };
 
 
@@ -60,24 +62,21 @@ public:
     Handle_for()
     {
         pointer p = allocator.allocate(1);
-        new (&(p->t)) element_type(); // we get the warning here
-        p->count = 1;
+        new (p) RefCounted();
         ptr_ = p;
     }
 
     Handle_for(const element_type& t)
     {
         pointer p = allocator.allocate(1);
-        new (&(p->t)) element_type(t);
-        p->count = 1;
+        new (p) RefCounted(t);
         ptr_ = p;
     }
 
     Handle_for(element_type && t)
     {
         pointer p = allocator.allocate(1);
-        new (&(p->t)) element_type(std::move(t));
-        p->count = 1;
+        new (p) RefCounted(std::move(t));
         ptr_ = p;
     }
 
@@ -87,8 +86,7 @@ public:
     Handle_for(const T1& t1)
     {
         pointer p = allocator.allocate(1);
-        new (&(p->t)) T(t1);
-        p->count = 1;
+        new (p) RefCounted(t1);
         ptr_ = p;
     }
 */
@@ -97,8 +95,7 @@ public:
     Handle_for(T1 && t1, T2 && t2, Args && ... args)
     {
         pointer p = allocator.allocate(1);
-        new (&(p->t)) element_type(std::forward<T1>(t1), std::forward<T2>(t2), std::forward<Args>(args)...);
-        p->count = 1;
+        new (&(p->t)) RefCounted(std::forward<T1>(t1), std::forward<T2>(t2), std::forward<Args>(args)...);
         ptr_ = p;
     }
 
