@@ -52,6 +52,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <atomic>
 
 namespace CGAL {
 
@@ -242,7 +243,7 @@ public:
   typedef AT_ AT;
 
   mutable AT at;
-  mutable ET *et;
+  mutable std::atomic<ET*> et;
 
   Lazy_rep ()
     : at(), et(nullptr){}
@@ -267,14 +268,14 @@ public:
 
   const ET & exact() const
   {
-    if (et==nullptr)
+    if (et.load(std::memory_order_relaxed)==nullptr)
       update_exact();
     return *et;
   }
 
   ET & exact()
   {
-    if (et==nullptr)
+    if (et.load(std::memory_order_relaxed)==nullptr)
       update_exact();
     return *et;
   }
@@ -324,9 +325,16 @@ class Lazy_rep_n :
   const EC& ec() const { return *this; }
   template<std::size_t...I>
   void update_exact_helper(std::index_sequence<I...>) const {
-    this->et = new ET(ec()( CGAL::exact( std::get<I>(l) ) ... ) );
-    this->at = E2A()(*(this->et));
-    l = std::tuple<L...>{};
+    ET* other = nullptr;
+    ET* pet = new ET(ec()( CGAL::exact( std::get<I>(l) ) ... ) );
+    // TODO: find the right memory_orders for this
+    bool updated = this->et.compare_exchange_strong(other, pet);
+    if (!updated) { // some other thread was faster
+      pet->~ET();
+    } else {
+      this->at = E2A()(*pet);
+      l = std::tuple<L...>{};
+    }
   }
   public:
   void update_exact() const {
@@ -372,7 +380,12 @@ public:
   void
   update_exact() const
   {
-    this->et = new ET();
+    ET* other = nullptr;
+    ET* pet = new ET();
+    bool updated = this->et.compare_exchange_strong(other, pet);
+    if (!updated) {
+      pet->~ET();
+    }
   }
 
   Lazy_rep_0()
@@ -483,16 +496,20 @@ public:
   void
   update_exact() const
   {
+    ET* other = nullptr;
+    ET* pet = new ET();
 // TODO : This looks really unfinished...
     std::vector<Object> vec;
-    this->et = new ET();
     //this->et->reserve(this->at.size());
-    ec()(CGAL::exact(l1_), std::back_inserter(*(this->et)));
-    if(this->et==nullptr)
-    E2A()(*(this->et));
-    this->at = E2A()(*(this->et));
-    // Prune lazy tree
-    l1_ = L1();
+    ec()(CGAL::exact(l1_), std::back_inserter(pet));
+    bool updated = this->et.compare_exchange_strong(other, pet);
+    if (!updated) {
+      pet->~ET();
+    } else {
+      this->at = E2A()(*pet);
+      // Prune lazy tree
+      l1_ = L1();
+    }
   }
 
   Lazy_rep_with_vector_1(const AC& ac, const EC& /*ec*/, const L1& l1)
@@ -536,13 +553,19 @@ public:
   void
   update_exact() const
   {
-    this->et = new ET();
-    this->et->reserve(this->at.size());
-    ec()(CGAL::exact(l1_), CGAL::exact(l2_), std::back_inserter(*(this->et)));
-    this->at = E2A()(*(this->et));
-    // Prune lazy tree
-    l1_ = L1();
-    l2_ = L2();
+    ET* other = nullptr;
+    ET* pet = new ET();
+    pet->reserve(this->at.size());
+    ec()(CGAL::exact(l1_), CGAL::exact(l2_), std::back_inserter(pet));
+    bool updated = this->et.compare_exchange_strong(other, pet);
+    if (!updated) {
+      pet->~ET();
+    } else {
+      this->at = E2A()(*pet);
+      // Prune lazy tree
+      l1_ = L1();
+      l2_ = L2();
+    }
   }
 
   Lazy_rep_with_vector_2(const AC& ac, const EC& /*ec*/, const L1& l1, const L2& l2)
@@ -586,12 +609,18 @@ public:
   void
   update_exact() const
   {
-    this->et = new ET();
-    ec()(CGAL::exact(l1_), CGAL::exact(l2_), *(this->et));
-    this->at = E2A()(*(this->et));
-    // Prune lazy tree
-    l1_ = L1();
-    l2_ = L2();
+    ET* other = nullptr;
+    ET* pet = new ET();
+    ec()(CGAL::exact(l1_), CGAL::exact(l2_), pet);
+    bool updated = this->et.compare_exchange_strong(other, pet);
+    if (!updated) {
+      pet->~ET();
+    } else {
+      this->at = E2A()(*pet);
+      // Prune lazy tree
+      l1_ = L1();
+      l2_ = L2();
+    }
   }
 
   Lazy_rep_2_1(const AC& ac, const EC& /*ec*/, const L1& l1, const L2& l2)
@@ -638,12 +667,18 @@ public:
   void
   update_exact() const
   {
-    this->et = new ET();
-    ec()(CGAL::exact(l1_), CGAL::exact(l2_), this->et->first, this->et->second );
-    this->at = E2A()(*(this->et));
-    // Prune lazy tree
-    l1_ = L1();
-    l2_ = L2();
+    ET* other = nullptr;
+    ET* pet = new ET();
+    ec()(CGAL::exact(l1_), CGAL::exact(l2_), pet->first, pet->second );
+    bool updated = this->et.compare_exchange_strong(other, pet);
+    if (!updated) {
+      pet->~ET();
+    } else {
+      this->at = E2A()(*pet);
+      // Prune lazy tree
+      l1_ = L1();
+      l2_ = L2();
+    }
   }
 
   Lazy_rep_2_2(const AC& ac, const EC& /*ec*/, const L1& l1, const L2& l2)
