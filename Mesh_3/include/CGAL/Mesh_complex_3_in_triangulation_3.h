@@ -562,7 +562,7 @@ public:
     {
       for(auto it = edges_.begin(); it != edges_.end(); ++it)
       {
-        os<<vertex_index_map[it->left]<<" "<<vertex_index_map[it->right]<< " "<< it->info<<std::endl;
+        os<<vertex_index_map[it->left]<<" "<<vertex_index_map[it->right]<< " "<< CGAL::oformat(it->info)<<std::endl;
       }
     }
     else
@@ -571,7 +571,7 @@ public:
       {
         write(os, vertex_index_map[it->left]);
         write(os, vertex_index_map[it->right]);
-        write(os, it->info);
+        os << CGAL::oformat(it->info);
       }
     }
     return os;
@@ -598,19 +598,18 @@ public:
         return is;
       //read edge and curve index
       std::size_t l,r;
-      int c; //todo
+      Curve_index c; //todo
       if(is_ascii(is))
       {
         is >> l;
         is >> r;
-        is >> c;
       }
       else
       {
         CGAL::read(is, l);
         CGAL::read(is, r);
-        CGAL::read(is, c);
       }
+      is >> CGAL::iformat(c);
       add_to_complex(index_vertex_map[l],index_vertex_map[r], c);
     }
     return is;
