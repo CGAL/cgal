@@ -22,8 +22,18 @@
 #define CGAL_KSR_UTILS_H
 
 // STL includes.
+#include <set>
 #include <cmath>
+#include <array>
+#include <string>
 #include <sstream>
+#include <vector>
+#include <queue>
+#include <map>
+
+// CGAL includes.
+#include <CGAL/Bbox_3.h>
+#include <CGAL/Iterator_range.h>
 
 // Line discretization.
 #define CGAL_KSR_SAME_VECTOR_TOLERANCE 0.99999
@@ -203,6 +213,14 @@ std::string to_string (const Point& p) {
   oss.precision(18);
   oss << p;
   return oss.str();
+}
+
+template<typename Point_d>
+decltype(auto) distance(const Point_d& p, const Point_d& q) {
+  using Traits = typename Kernel_traits<Point_d>::Kernel;
+  using FT = typename Traits::FT;
+  const FT sq_dist = CGAL::squared_distance(p, q);
+  return static_cast<FT>(CGAL::sqrt(CGAL::to_double(sq_dist)));
 }
 
 } // namespace KSR

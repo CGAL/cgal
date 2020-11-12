@@ -79,7 +79,7 @@ public:
 
   // Size.
   const bool empty() const { return m_queue.empty(); }
-  const KSR::size_t size() const { return m_queue.size(); }
+  const std::size_t size() const { return m_queue.size(); }
 
   // Access.
   void push(const Event& event) {

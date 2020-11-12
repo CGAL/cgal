@@ -378,6 +378,7 @@ int main (int argc, char** argv) {
   std::vector<Polygon_3> rnd_polygons;
   create_random_polygons(n, p, d, rnd_polygons);
 
+  std::cout << std::endl;
   std::cout << "--- INPUT STATS: " << std::endl;
   std::cout << "* input kernel: " << boost::typeindex::type_id<EPICK>().pretty_name() << std::endl;
   std::cout << "* polygon kernel: " << boost::typeindex::type_id<Kernel>().pretty_name() << std::endl;
@@ -409,6 +410,6 @@ int main (int argc, char** argv) {
   const bool is_success = ksr.partition(input_polygons, polygon_map, k);
   assert(is_success);
 
-  std::cout << std::endl << "3D KINETIC DONE!" << std::endl;
+  std::cout << std::endl << "3D KINETIC DONE!" << std::endl << std::endl;
   return EXIT_SUCCESS;
 }

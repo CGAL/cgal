@@ -196,9 +196,8 @@ public:
     CGAL_assertion_msg(false, "TODO: ADD PRINTING!");
   }
 
-  void init (std::size_t number_of_polygons)
-  {
-    m_support_planes.reserve (number_of_polygons + 6);
+  void reserve(const std::size_t number_of_polygons) {
+    m_support_planes.reserve(number_of_polygons + 6);
   }
 
   const FT& current_time() const { return m_current_time; }
@@ -394,7 +393,8 @@ public:
     return support_plane_idx;
   }
 
-  void add_bbox_polygon (const std::array<Point_3, 4>& polygon)
+  template <typename PointRange>
+  void add_bbox_polygon (const PointRange& polygon)
   {
     KSR::size_t support_plane_idx = add_support_plane (Support_plane (polygon));
 
@@ -426,7 +426,7 @@ public:
   }
 
   template <typename PointRange>
-  void add_polygon (const PointRange& polygon, KSR::size_t input_idx)
+  void add_input_polygon (const PointRange& polygon, KSR::size_t input_idx)
   {
     KSR::size_t support_plane_idx = add_support_plane (Support_plane (polygon));
 
@@ -2265,7 +2265,7 @@ public:
         }
       }
     }
-    std::cout << "Found " << volume_index << " boundary polyhedrons!" << std::endl;
+    std::cout << "* found boundary polyhedrons: "<< volume_index << std::endl;
     CGAL_assertion(volume_index > 0);
 
     // Then traverse interior faces.
@@ -2302,7 +2302,7 @@ public:
     }
     for (auto& volume : m_volumes)
       create_cell_pvertices(volume);
-    std::cout << "Created " << m_volumes.size() << " polyhedrons!" << std::endl;
+    std::cout << "* created polyhedrons: " << m_volumes.size() << std::endl;
 
     dump_polyhedrons(*this, "polyhedrons/iter_1000");
     for (const auto& volume : m_volumes) {

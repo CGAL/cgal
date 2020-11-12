@@ -56,6 +56,7 @@ int main (int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
+  std::cout << std::endl;
   std::cout << "--- INPUT STATS: " << std::endl;
   std::cout << "* input kernel: " << boost::typeindex::type_id<Kernel>().pretty_name() << std::endl;
   std::cout << "* number of input vertices: " << input_vertices.size() << std::endl;
@@ -90,7 +91,7 @@ int main (int argc, char** argv) {
 
   std::string output_filename = "partition-edges.polylines";
   std::ofstream output_file_edges(output_filename);
-  output_file_edges.precision(12);
+  output_file_edges.precision(20);
   for (const auto& output_edge : output_edges)
     output_file_edges << "2 " << output_edge << std::endl;
   output_file_edges.close();
@@ -98,14 +99,14 @@ int main (int argc, char** argv) {
 
   output_filename = "partition-faces.ply";
   std::ofstream output_file_faces(output_filename);
-  output_file_faces.precision(12);
+  output_file_faces.precision(20);
   if (!CGAL::write_PLY(output_file_faces, output_vertices, output_faces)) {
     std::cerr << "ERROR: can't write to the file " << output_filename << "!" << std::endl;
     return EXIT_FAILURE;
   }
   output_file_faces.close();
   std::cout << "* faces exported successfully" << std::endl;
-  std::cout << std::endl << "3D KINETIC DONE!" << std::endl;
+  std::cout << std::endl << "3D KINETIC DONE!" << std::endl << std::endl;
 
   return EXIT_SUCCESS;
 }

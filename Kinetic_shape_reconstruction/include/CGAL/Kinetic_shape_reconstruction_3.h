@@ -1,4 +1,4 @@
-// Copyright (c) 2019 GeometryFactory Sarl (France).
+// Copyright (c) 2019 GeometryFactory SARL (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -21,148 +21,147 @@
 #ifndef CGAL_KINETIC_SHAPE_RECONSTRUCTION_3_H
 #define CGAL_KINETIC_SHAPE_RECONSTRUCTION_3_H
 
-//#include <CGAL/license/Kinetic_shape_reconstruction.h>
+// #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
-#include <CGAL/box_intersection_d.h>
-
+#include <CGAL/KSR/utils.h>
+#include <CGAL/KSR/debug.h>
+#include <CGAL/KSR_3/Event.h>
+#include <CGAL/KSR_3/Event_queue.h>
 #include <CGAL/KSR_3/Data_structure.h>
 #include <CGAL/KSR_3/Polygon_splitter.h>
 
-#include <CGAL/KSR_3/Event.h>
-#include <CGAL/KSR_3/Event_queue.h>
+namespace CGAL {
 
-#include <CGAL/KSR/debug.h>
+template<typename GeomTraits>
+class Kinetic_shape_reconstruction_3 {
 
-#include <unordered_set>
-
-namespace CGAL
-{
-
-template <typename GeomTraits>
-class Kinetic_shape_reconstruction_3
-{
 public:
+  using Kernel      = GeomTraits;
+  using FT          = typename Kernel::FT;
+  using Point_2     = typename Kernel::Point_2;
+  using Point_3     = typename Kernel::Point_3;
+  using Segment_2   = typename Kernel::Segment_2;
+  using Segment_3   = typename Kernel::Segment_3;
+  using Vector_2    = typename Kernel::Vector_2;
+  using Transform_3 = typename Kernel::Aff_transformation_3;
 
-  typedef GeomTraits Kernel;
-  typedef typename Kernel::FT FT;
-  typedef typename Kernel::Point_2 Point_2;
-  typedef typename Kernel::Segment_2 Segment_2;
-  typedef typename Kernel::Direction_2 Direction_2;
-  typedef typename Kernel::Line_2 Line_2;
-  typedef typename Kernel::Ray_2 Ray_2;
-  typedef typename Kernel::Vector_2 Vector_2;
-  typedef typename Kernel::Point_3 Point_3;
-  typedef typename Kernel::Segment_3 Segment_3;
-  typedef typename Kernel::Direction_3 Direction_3;
-  typedef typename Kernel::Line_3 Line_3;
-  typedef typename Kernel::Ray_3 Ray_3;
-  typedef typename Kernel::Vector_3 Vector_3;
+  using Data = KSR_3::Data_structure<Kernel>;
 
-  typedef KSR_3::Data_structure<Kernel> Data;
-  typedef typename Data::PVertex PVertex;
-  typedef typename Data::PEdge PEdge;
-  typedef typename Data::PFace PFace;
-  typedef typename Data::IEdge IEdge;
-  typedef typename Data::IVertex IVertex;
+  using PVertex = typename Data::PVertex;
+  using PEdge   = typename Data::PEdge;
+  using PFace   = typename Data::PFace;
 
-  typedef KSR_3::Event<Data> Event;
-  typedef KSR_3::Event_queue<Data> Event_queue;
+  using IVertex = typename Data::IVertex;
+  using IEdge   = typename Data::IEdge;
+
+  using Event       = KSR_3::Event<Data>;
+  using Event_queue = KSR_3::Event_queue<Data>;
+
+  using Bbox_3 = CGAL::Bbox_3;
 
 private:
-
   Data m_data;
   Event_queue m_queue;
   FT m_min_time;
   FT m_max_time;
 
 public:
+  template<
+  typename InputRange,
+  typename PolygonMap>
+  const bool partition(
+    const InputRange& input_range,
+    const PolygonMap polygon_map,
+    const unsigned int k = 1,
+    const FT enlarge_bbox_ratio = FT(11) / FT(10),
+    const bool reorient = false) {
 
-  Kinetic_shape_reconstruction_3()
-  {
-
-  }
-
-  // TODO: enlarge=1.0 does not work!
-  template <typename PolygonRange, typename PolygonMap>
-  bool partition (const PolygonRange& polygons, PolygonMap polygon_map,
-                  unsigned int k = 1, FT enlarge_bbox_ratio = 1.1)
-  {
-    CGAL::Bbox_3 bbox;
-    for (const auto& poly : polygons)
-    {
-      const std::vector<Point_3>& polygon = get (polygon_map, poly);
-      bbox += CGAL::bbox_3 (polygon.begin(), polygon.end());
-    }
-
-    m_data.init (polygons.size());
-
-    std::cout << "Adding bbox as polygons" << std::endl;
-    add_bbox_as_polygons (bbox, enlarge_bbox_ratio);
-
-    std::cout << "Adding input as polygons" << std::endl;
-
-    KSR::size_t input_idx = 0;
-    for (const typename PolygonRange::const_iterator::value_type& poly : polygons)
-      m_data.add_polygon (get (polygon_map, poly), input_idx ++);
-
-    FT time_step = CGAL::approximate_sqrt(CGAL::squared_distance(Point_3 (bbox.xmin(), bbox.ymin(), bbox.zmin()),
-                                                                 Point_3 (bbox.xmax(), bbox.ymax(), bbox.zmax())));
-
-    time_step /= 50.0;
     std::cout.precision(20);
-    std::cout << "time_step " << time_step << std::endl;
-
-    std::cout << "Making input polygons intersection free" << std::endl;
-
-    KSR_3::dump (m_data, "init");
-
-    CGAL_assertion(check_integrity(true));
-    make_polygons_intersection_free(k);
-    CGAL_assertion(check_integrity(true));
-
-    for (KSR::size_t i = 6; i < m_data.number_of_support_planes(); ++i) {
-      const auto& sp = m_data.support_plane(i);
-      std::cout << "plane index: " << i << std::endl;
-      std::cout << "plane: " <<
-      sp.plane().a() << ", " <<
-      sp.plane().b() << ", " <<
-      sp.plane().c() << ", " <<
-      sp.plane().d() << std::endl;
+    if (input_range.size() == 0) {
+      CGAL_warning_msg(input_range.size() != 0,
+      "WARNING: YOUR INPUT IS EMPTY. RETURN WITH NO CHANGE!");
+      return false;
     }
 
-    std::cout << "Polygons are splitted" << std::endl;
-
-    // KSR_3::dump_segmented_edges (m_data, "init");
-
-    KSR_3::dump (m_data, "intersected");
-
-    for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
-      for (const auto pface : m_data.pfaces(i))
-        m_data.k(pface) = k;
+    if (k == 0) {
+      CGAL_warning_msg(k != 0,
+      "WARNING: YOU SET K TO 0. THE VALID VALUES ARE {1,2,...}. RETURN WITH NO CHANGE!");
+      return false;
     }
 
-    std::size_t iter = 0;
-    m_min_time = 0;
+    if (enlarge_bbox_ratio < FT(1)) {
+      CGAL_warning_msg(enlarge_bbox_ratio >= FT(1),
+      "WARNING: YOU SET ENLARGE_BBOX_RATIO < 1. THE VALID RANGE IS [1, +INF). RETURN WITH NO CHANGE!");
+      return false;
+    }
+
+    std::cout << std::endl << "--- INITIALIZING KSR:" << std::endl;
+
+    FT time_step;
+    std::array<Point_3, 8> bbox;
+    create_bounding_box(
+      input_range, polygon_map, enlarge_bbox_ratio, reorient, bbox, time_step);
+    std::cout << "* precomputed time_step: " << time_step << std::endl;
+
+    std::vector< std::vector<Point_3> > bbox_faces;
+    bounding_box_to_polygons(bbox, bbox_faces);
+    add_polygons(input_range, polygon_map, bbox_faces);
+
+    std::cout << "* intersecting input polygons ...";
+
+    KSR_3::dump(m_data, "init");
+    // KSR_3::dump_segmented_edges(m_data, "init");
+
+    CGAL_assertion(check_integrity(true));
+    make_polygons_intersection_free();
+    CGAL_assertion(check_integrity(true));
+    set_k_intersections(k);
+
+    KSR_3::dump(m_data, "intersected");
+    // KSR_3::dump_segmented_edges(m_data, "intersected");
+
+    std::cout << " done" << std::endl;
+
+    // for (KSR::size_t i = 6; i < m_data.number_of_support_planes(); ++i) {
+    //   const auto& sp = m_data.support_plane(i);
+    //   std::cout << "plane index: " << i << std::endl;
+    //   std::cout << "plane: " <<
+    //   sp.plane().a() << ", " <<
+    //   sp.plane().b() << ", " <<
+    //   sp.plane().c() << ", " <<
+    //   sp.plane().d() << std::endl;
+    // }
+
+    // exit(EXIT_SUCCESS);
+
+    std::cout << std::endl << "--- RUNNING THE QUEUE:" << std::endl;
+    std::cout << "* propagation started" << std::endl;
+    std::size_t num_iterations = 0;
+    m_min_time = FT(0);
     m_max_time = time_step;
-    while (initialize_queue())
-    {
+    while (initialize_queue()) {
+
       run(k);
       m_min_time = m_max_time;
       m_max_time += time_step;
 
-      // dump (m_data, "iter_100-" + std::to_string(iter));
+      // dump(m_data, "iter_100-" + std::to_string(num_iterations));
       // CGAL_assertion(check_integrity(true));
-      ++iter;
-      // if (iter > 100) {
-      //   std::cout << "Handling iteration # " << std::to_string(iter) << std::endl;
+      ++num_iterations;
+      // if (num_iterations > 100) {
       //   CGAL_assertion_msg(false, "WHY SO MANY ITERATIONS?");
       // }
     }
-    std::cout << "Checking final mesh integrity!" << std::endl;
+    std::cout << "* propagation finished" << std::endl;
+
+    std::cout << std::endl << "--- FINALIZING KSR:" << std::endl;
+
+    std::cout << "* checking final mesh integrity ...";
     CGAL_assertion(check_integrity(true));
-    std::cout << "Finalizing KSR!" << std::endl;
-    dump (m_data, "iter_1000-final-result");
-    m_data.create_polyhedrons();
+    dump(m_data, "iter_1000-final-result");
+    std::cout << " done" << std::endl;
+
+    // m_data.create_polyhedrons();
     return true;
   }
 
@@ -190,10 +189,183 @@ public:
     return polyhedrons;
   }
 
-  template <typename PointRange, typename PointMap, typename VectorMap>
-  void reconstruct (const PointRange& points, PointMap point_map, VectorMap normal_map)
-  {
+  template<typename InputRange, typename PointMap, typename VectorMap>
+  void reconstruct(
+    const InputRange& input_range,
+    const PointMap point_map,
+    const VectorMap normal_map) {
+
     CGAL_assertion_msg(false, "TODO: ADD RECONSTRUCTION!");
+  }
+
+private:
+  template<
+  typename InputRange,
+  typename PolygonMap>
+  void create_bounding_box(
+    const InputRange& input_range,
+    const PolygonMap polygon_map,
+    const FT enlarge_bbox_ratio,
+    const bool reorient,
+    std::array<Point_3, 8>& bbox,
+    FT& time_step) const {
+
+    if (reorient)
+      initialize_optimal_box(input_range, polygon_map, bbox);
+    else
+      initialize_axis_aligned_box(input_range, polygon_map, bbox);
+
+    CGAL_assertion(bbox.size() == 8);
+    time_step  = KSR::distance(bbox.front(), bbox.back());
+    time_step /= FT(50);
+
+    enlarge_bounding_box(enlarge_bbox_ratio, bbox);
+
+    const auto& minp = bbox.front();
+    const auto& maxp = bbox.back();
+    std::cout << "* bounding box minp: " <<
+      minp.x() << "\t, " << minp.y() << "\t, " << minp.z() << std::endl;
+    std::cout << "* bounding box maxp: " <<
+      maxp.x() << "\t, " << maxp.y() << "\t\t, " << maxp.z() << std::endl;
+  }
+
+  template<
+  typename InputRange,
+  typename PolygonMap>
+  void initialize_optimal_box(
+    const InputRange& input_range,
+    const PolygonMap polygon_map,
+    std::array<Point_3, 8>& bbox) const {
+
+    CGAL_assertion_msg(false, "TODO: IMPLEMENT THE ORIENTED OPTIMAL BBOX!");
+  }
+
+  template<
+  typename InputRange,
+  typename PolygonMap>
+  void initialize_axis_aligned_box(
+    const InputRange& input_range,
+    const PolygonMap polygon_map,
+    std::array<Point_3, 8>& bbox) const {
+
+    Bbox_3 box;
+    for (const auto& item : input_range) {
+      const auto& polygon = get(polygon_map, item);
+      box += CGAL::bbox_3(polygon.begin(), polygon.end());
+    }
+
+    // The order of faces corresponds to the standard order from here:
+    // https://doc.cgal.org/latest/BGL/group__PkgBGLHelperFct.html#gad9df350e98780f0c213046d8a257358e
+    bbox = {
+      Point_3(box.xmin(), box.ymin(), box.zmin()),
+      Point_3(box.xmax(), box.ymin(), box.zmin()),
+      Point_3(box.xmax(), box.ymax(), box.zmin()),
+      Point_3(box.xmin(), box.ymax(), box.zmin()),
+      Point_3(box.xmin(), box.ymax(), box.zmax()),
+      Point_3(box.xmin(), box.ymin(), box.zmax()),
+      Point_3(box.xmax(), box.ymin(), box.zmax()),
+      Point_3(box.xmax(), box.ymax(), box.zmax()) };
+  }
+
+  void enlarge_bounding_box(
+    const FT enlarge_bbox_ratio,
+    std::array<Point_3, 8>& bbox) const {
+
+    CGAL_assertion_msg(
+      enlarge_bbox_ratio > FT(1), "TODO: HANDLE THE CASE ENLARGE_BBOX_RATIO = FT(1)");
+    const auto a = CGAL::centroid(bbox.begin(), bbox.end());
+    Transform_3 scale(CGAL::Scaling(), enlarge_bbox_ratio);
+    for (auto& point : bbox)
+      point = scale.transform(point);
+
+    const auto b = CGAL::centroid(bbox.begin(), bbox.end());
+    Transform_3 translate(CGAL::Translation(), a - b);
+    for (auto& point : bbox)
+      point = translate.transform(point);
+  }
+
+  void bounding_box_to_polygons(
+    const std::array<Point_3, 8>& bbox,
+    std::vector< std::vector<Point_3> >& bbox_faces) const {
+
+    bbox_faces.clear();
+    bbox_faces.reserve(6);
+
+    bbox_faces.push_back({bbox[0], bbox[1], bbox[2], bbox[3]});
+    bbox_faces.push_back({bbox[0], bbox[1], bbox[6], bbox[5]});
+    bbox_faces.push_back({bbox[1], bbox[2], bbox[7], bbox[6]});
+    bbox_faces.push_back({bbox[2], bbox[3], bbox[4], bbox[7]});
+    bbox_faces.push_back({bbox[3], bbox[0], bbox[5], bbox[4]});
+    bbox_faces.push_back({bbox[5], bbox[6], bbox[7], bbox[4]});
+    CGAL_assertion(bbox_faces.size() == 6);
+
+    // Simon's bbox. The faces are different.
+    // const FT xmin = bbox[0].x();
+    // const FT ymin = bbox[0].y();
+    // const FT zmin = bbox[0].z();
+    // const FT xmax = bbox[7].x();
+    // const FT ymax = bbox[7].y();
+    // const FT zmax = bbox[7].z();
+    // const std::vector<Point_3> sbbox = {
+    //   Point_3(xmin, ymin, zmin),
+    //   Point_3(xmin, ymin, zmax),
+    //   Point_3(xmin, ymax, zmin),
+    //   Point_3(xmin, ymax, zmax),
+    //   Point_3(xmax, ymin, zmin),
+    //   Point_3(xmax, ymin, zmax),
+    //   Point_3(xmax, ymax, zmin),
+    //   Point_3(xmax, ymax, zmax) };
+
+    // bbox_faces.push_back({sbbox[0], sbbox[1], sbbox[3], sbbox[2]});
+    // bbox_faces.push_back({sbbox[4], sbbox[5], sbbox[7], sbbox[6]});
+    // bbox_faces.push_back({sbbox[0], sbbox[1], sbbox[5], sbbox[4]});
+    // bbox_faces.push_back({sbbox[2], sbbox[3], sbbox[7], sbbox[6]});
+    // bbox_faces.push_back({sbbox[1], sbbox[5], sbbox[7], sbbox[3]});
+    // bbox_faces.push_back({sbbox[0], sbbox[4], sbbox[6], sbbox[2]});
+    // CGAL_assertion(bbox_faces.size() == 6);
+  }
+
+  template<
+  typename InputRange,
+  typename PolygonMap>
+  void add_polygons(
+    const InputRange& input_range,
+    const PolygonMap polygon_map,
+    const std::vector< std::vector<Point_3> >& bbox_faces) {
+
+    m_data.reserve(input_range.size());
+    add_bbox_faces(bbox_faces);
+    add_input_polygons(input_range, polygon_map);
+  }
+
+  void add_bbox_faces(
+    const std::vector< std::vector<Point_3> >& bbox_faces) {
+
+    for (const auto& bbox_face : bbox_faces)
+      m_data.add_bbox_polygon(bbox_face);
+
+    CGAL_assertion(m_data.number_of_support_planes() == 6);
+    CGAL_assertion(m_data.ivertices().size() == 8);
+    CGAL_assertion(m_data.iedges().size() == 12);
+
+    std::cout << "* added bbox faces: " << bbox_faces.size() << std::endl;
+  }
+
+  template<
+  typename InputRange,
+  typename PolygonMap>
+  void add_input_polygons(
+    const InputRange& input_range,
+    const PolygonMap polygon_map) {
+
+    KSR::size_t input_index = 0;
+    for (const auto& item : input_range) {
+      const auto& polygon = get(polygon_map, item);
+      m_data.add_input_polygon(polygon, input_index);
+      ++input_index;
+    }
+    CGAL_assertion(m_data.number_of_support_planes() > 6);
+    std::cout << "* added input polygons: " <<  input_range.size() << std::endl;
   }
 
   bool check_integrity(bool verbose = false) const
@@ -238,73 +410,15 @@ public:
     return true;
   }
 
-private:
-
-  void add_bbox_as_polygons (const CGAL::Bbox_3& bbox, FT ratio)
-  {
-    const FT xmed = (bbox.xmin() + bbox.xmax()) / FT(2);
-    const FT ymed = (bbox.ymin() + bbox.ymax()) / FT(2);
-    const FT zmed = (bbox.zmin() + bbox.zmax()) / FT(2);
-    const FT dx = (bbox.xmax() - bbox.xmin()) / FT(2);
-    const FT dy = (bbox.ymax() - bbox.ymin()) / FT(2);
-    const FT dz = (bbox.zmax() - bbox.zmin()) / FT(2);
-
-    FT xmin = xmed - ratio * dx;
-    FT xmax = xmed + ratio * dx;
-    FT ymin = ymed - ratio * dy;
-    FT ymax = ymed + ratio * dy;
-    FT zmin = zmed - ratio * dz;
-    FT zmax = zmed + ratio * dz;
-
-		std::cout.precision(20);
-		std::cout << "x_min = " << xmin << ";" << std::endl;
-		std::cout << "y_min = " << ymin << ";" << std::endl;
-		std::cout << "z_min = " << zmin << ";" << std::endl;
-		std::cout << "x_max = " << xmax << ";" << std::endl;
-		std::cout << "y_max = " << ymax << ";" << std::endl;
-		std::cout << "z_max = " << zmax << ";" << std::endl;
-
-    std::array<Point_3, 8> bbox_points
-      = { Point_3 (xmin, ymin, zmin),
-          Point_3 (xmin, ymin, zmax),
-          Point_3 (xmin, ymax, zmin),
-          Point_3 (xmin, ymax, zmax),
-          Point_3 (xmax, ymin, zmin),
-          Point_3 (xmax, ymin, zmax),
-          Point_3 (xmax, ymax, zmin),
-          Point_3 (xmax, ymax, zmax) };
-
-    std::array<Point_3, 4> facet_points;
-
-    facet_points = { bbox_points[0], bbox_points[1], bbox_points[3], bbox_points[2] };
-    m_data.add_bbox_polygon (facet_points);
-
-    facet_points = { bbox_points[4], bbox_points[5], bbox_points[7], bbox_points[6] };
-    m_data.add_bbox_polygon (facet_points);
-
-    facet_points = { bbox_points[0], bbox_points[1], bbox_points[5], bbox_points[4] };
-    m_data.add_bbox_polygon (facet_points);
-
-    facet_points = { bbox_points[2], bbox_points[3], bbox_points[7], bbox_points[6] };
-    m_data.add_bbox_polygon (facet_points);
-
-    facet_points = { bbox_points[1], bbox_points[5], bbox_points[7], bbox_points[3] };
-    m_data.add_bbox_polygon (facet_points);
-
-    facet_points = { bbox_points[0], bbox_points[4], bbox_points[6], bbox_points[2] };
-    m_data.add_bbox_polygon (facet_points);
-
-    CGAL_assertion (m_data.ivertices().size() == 8);
-    CGAL_assertion (m_data.iedges().size() == 12);
-  }
-
-  void make_polygons_intersection_free (unsigned int k)
+  void make_polygons_intersection_free ()
   {
     // TODO: FIX IT AND MAKE IT WORK FOR ANY NUMBER OF SUPPORT PLANES!
-    std::cout << "num support planes: " << m_data.number_of_support_planes() << std::endl;
-    // if (m_data.number_of_support_planes() < 8) {
-    //   return;
-    // }
+    // std::cout << "num support planes: " << m_data.number_of_support_planes() << std::endl;
+    if (m_data.number_of_support_planes() < 8) {
+      return;
+    }
+
+    const unsigned int k = 0;
 
     // First, generate all transverse intersection lines
     typedef std::map<KSR::Idx_set, std::pair<IVertex, IVertex> > Map;
@@ -379,6 +493,15 @@ private:
     {
       KSR_3::Polygon_splitter<GeomTraits> splitter (m_data);
       splitter.split_support_plane (i, k);
+    }
+  }
+
+  void set_k_intersections(const unsigned int k) {
+
+    for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
+      for (const auto pface : m_data.pfaces(i)) {
+        m_data.k(pface) = k;
+      }
     }
   }
 
@@ -603,7 +726,6 @@ private:
       // m_data.update_positions (current_time);
       ++ iterations;
     }
-    std::cout << "Finished!" << std::endl;
   }
 
   void apply (
