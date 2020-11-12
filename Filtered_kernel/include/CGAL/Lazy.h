@@ -287,14 +287,22 @@ public:
   {
     if (et.load(std::memory_order_relaxed)==nullptr)
       update_exact();
-    return *et;
+    return *et.load(std::memory_order_consume);
+    // Should we return the pointer from update_exact, to avoid an extra load and synchronization?
   }
 
+  // ??? Is this needed? Safe?
   ET & exact()
   {
     if (et.load(std::memory_order_relaxed)==nullptr)
       update_exact();
-    return *et;
+    return *et.load(std::memory_order_consume);
+  }
+
+  bool set_exact(ET* pet) const
+  {
+    ET* other = nullptr;
+    return this->et.compare_exchange_strong(other, pet, std::memory_order_release);
   }
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
@@ -342,10 +350,8 @@ class Lazy_rep_n :
   const EC& ec() const { return *this; }
   template<std::size_t...I>
   void update_exact_helper(std::index_sequence<I...>) const {
-    ET* other = nullptr;
     ET* pet = new ET(ec()( CGAL::exact( std::get<I>(l) ) ... ) );
-    // TODO: find the right memory_orders for this
-    bool updated = this->et.compare_exchange_strong(other, pet);
+    bool updated = this->set_exact(pet);
     if (!updated) { // some other thread was faster
       pet->~ET();
     } else {
@@ -397,9 +403,8 @@ public:
   void
   update_exact() const
   {
-    ET* other = nullptr;
     ET* pet = new ET();
-    bool updated = this->et.compare_exchange_strong(other, pet);
+    bool updated = this->set_exact(pet);
     if (!updated) {
       pet->~ET();
     }
@@ -513,13 +518,12 @@ public:
   void
   update_exact() const
   {
-    ET* other = nullptr;
     ET* pet = new ET();
 // TODO : This looks really unfinished...
     std::vector<Object> vec;
     //this->et->reserve(this->at.size());
     ec()(CGAL::exact(l1_), std::back_inserter(pet));
-    bool updated = this->et.compare_exchange_strong(other, pet);
+    bool updated = this->set_exact(pet);
     if (!updated) {
       pet->~ET();
     } else {
@@ -570,11 +574,10 @@ public:
   void
   update_exact() const
   {
-    ET* other = nullptr;
     ET* pet = new ET();
     pet->reserve(this->at.size());
     ec()(CGAL::exact(l1_), CGAL::exact(l2_), std::back_inserter(pet));
-    bool updated = this->et.compare_exchange_strong(other, pet);
+    bool updated = this->set_exact(pet);
     if (!updated) {
       pet->~ET();
     } else {
@@ -626,10 +629,9 @@ public:
   void
   update_exact() const
   {
-    ET* other = nullptr;
     ET* pet = new ET();
     ec()(CGAL::exact(l1_), CGAL::exact(l2_), pet);
-    bool updated = this->et.compare_exchange_strong(other, pet);
+    bool updated = this->set_exact(pet);
     if (!updated) {
       pet->~ET();
     } else {
@@ -684,10 +686,9 @@ public:
   void
   update_exact() const
   {
-    ET* other = nullptr;
     ET* pet = new ET();
     ec()(CGAL::exact(l1_), CGAL::exact(l2_), pet->first, pet->second );
-    bool updated = this->et.compare_exchange_strong(other, pet);
+    bool updated = this->set_exact(pet);
     if (!updated) {
       pet->~ET();
     } else {

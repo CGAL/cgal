@@ -130,9 +130,8 @@ struct Lazy_exact_Int_Cst : public Lazy_exact_nt_rep<ET>
       : Lazy_exact_nt_rep<ET>(double(i)) {}
 
   void update_exact() const {
-    ET* other = nullptr;
     ET* pet = new ET((int)this->approx().inf());
-    bool updated = this->et.compare_exchange_strong(other, pet);
+    bool updated = this->set_exact(pet);
     if (!updated) {
       pet->~ET();
     }
@@ -147,9 +146,8 @@ struct Lazy_exact_Cst : public Lazy_exact_nt_rep<ET>
       : Lazy_exact_nt_rep<ET>(x), cste(x) {}
 
   void update_exact() const {
-    ET* other = nullptr;
     ET* pet = new ET(cste);
-    bool updated = this->et.compare_exchange_strong(other, pet);
+    bool updated = this->set_exact(pet);
     if (!updated) {
       pet->~ET();
     }
@@ -193,9 +191,8 @@ public:
 
   void update_exact() const
   {
-    ET* other = nullptr;
     ET* pet = new ET(l.exact());
-    bool updated = this->et.compare_exchange_strong(other, pet);
+    bool updated = this->set_exact(pet);
     if (!updated) {
       pet->~ET();
     } else {
@@ -287,9 +284,8 @@ struct NAME : public Lazy_exact_unary<ET>                                \
                                                                          \
   void update_exact() const                                              \
   {                                                                      \
-    ET* other = nullptr;                                                 \
     ET* pet = new ET(OP(this->op1.exact()));                             \
-    bool updated = this->et.compare_exchange_strong(other, pet);         \
+    bool updated = this->set_exact(pet);                                 \
     if (!updated) {                                                      \
       pet->~ET();                                                        \
     } else {                                                             \
@@ -316,9 +312,8 @@ struct NAME : public Lazy_exact_binary<ET, ET1, ET2>                     \
                                                                          \
   void update_exact() const                                              \
   {                                                                      \
-    ET* other = nullptr;                                                 \
     ET* pet = new ET(this->op1.exact() OP this->op2.exact());            \
-    bool updated = this->et.compare_exchange_strong(other, pet);         \
+    bool updated = this->set_exact(pet);                                 \
     if (!updated) {                                                      \
       pet->~ET();                                                        \
     } else {                                                             \
@@ -343,9 +338,8 @@ struct Lazy_exact_Min : public Lazy_exact_binary<ET>
 
   void update_exact() const
   {
-    ET* other = nullptr;
     ET* pet = new ET((CGAL::min)(this->op1.exact(), this->op2.exact()));
-    bool updated = this->et.compare_exchange_strong(other, pet);
+    bool updated = this->set_exact(pet);
     if (!updated) {
       pet->~ET();
     } else {
@@ -365,9 +359,8 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
 
   void update_exact() const
   {
-    ET* other = nullptr;
     ET* pet = new ET((CGAL::max)(this->op1.exact(), this->op2.exact()));
-    bool updated = this->et.compare_exchange_strong(other, pet);
+    bool updated = this->set_exact(pet);
     if (!updated) {
       pet->~ET();
     } else {
@@ -1341,7 +1334,7 @@ operator>> (std::istream & is, Lazy_exact_nt<ET> & a)
   ET e;
   internal::read_float_or_quotient(is, e);
   if (is)
-    a = e;
+    a = std::move(e);
   return is;
 }
 
