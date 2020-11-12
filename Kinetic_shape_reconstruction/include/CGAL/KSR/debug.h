@@ -106,15 +106,6 @@ void dump_polygons (const DS& data, const std::string& tag = std::string()) {
   Uchar_map green = mesh.template add_property_map<typename Mesh::Face_index, unsigned char>("green", 0).first;
   Uchar_map blue = mesh.template add_property_map<typename Mesh::Face_index, unsigned char>("blue", 0).first;
 
-#ifdef CGAL_KSR_DEBUG
-
-  Mesh dbg_mesh;
-  Uchar_map dbg_red = dbg_mesh.template add_property_map<typename Mesh::Face_index, unsigned char>("red", 0).first;
-  Uchar_map dbg_green = dbg_mesh.template add_property_map<typename Mesh::Face_index, unsigned char>("green", 0).first;
-  Uchar_map dbg_blue = dbg_mesh.template add_property_map<typename Mesh::Face_index, unsigned char>("blue", 0).first;
-
-#endif
-
   Mesh bbox_mesh;
   Uchar_map bbox_red = bbox_mesh.template add_property_map<typename Mesh::Face_index, unsigned char>("red", 0).first;
   Uchar_map bbox_green = bbox_mesh.template add_property_map<typename Mesh::Face_index, unsigned char>("green", 0).first;
@@ -160,27 +151,6 @@ void dump_polygons (const DS& data, const std::string& tag = std::string()) {
         std::tie (red[face], green[face], blue[face])
           = get_idx_color (i * (pface.second+1));
       }
-
-#ifdef CGAL_KSR_DEBUG
-
-      map_vertices.clear();
-      for (typename DS::PVertex pvertex : data.dbg_pvertices(i)) {
-        if (map_vertices.size() <= pvertex.second)
-          map_vertices.resize (pvertex.second + 1);
-        map_vertices[pvertex.second] = dbg_mesh.add_vertex (data.dbg_point_3 (pvertex));
-      }
-
-      for (typename DS::PFace pface : data.dbg_pfaces(i)) {
-        vertices.clear();
-        for(typename DS::PVertex pvertex : data.dbg_pvertices_of_pface(pface))
-          vertices.push_back (map_vertices[pvertex.second]);
-        typename Mesh::Face_index face = dbg_mesh.add_face (vertices);
-        std::tie (dbg_red[face], dbg_green[face], dbg_blue[face])
-          = get_idx_color (i * (pface.second+1));
-      }
-
-#endif
-
     }
   }
 
@@ -188,15 +158,6 @@ void dump_polygons (const DS& data, const std::string& tag = std::string()) {
   std::ofstream out (filename);
   // CGAL::set_binary_mode (out);
   CGAL::write_ply(out, mesh);
-
-#ifdef CGAL_KSR_DEBUG
-
-  std::string dbg_filename = (tag != std::string() ? tag + "_" : "") + "dbg_polygons.ply";
-  std::ofstream dbg_out (dbg_filename);
-  // CGAL::set_binary_mode (dbg_out);
-  CGAL::write_ply(dbg_out, dbg_mesh);
-
-#endif
 
 #if 0
 

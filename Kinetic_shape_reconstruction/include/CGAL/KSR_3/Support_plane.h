@@ -1,4 +1,4 @@
-// Copyright (c) 2019 GeometryFactory Sarl (France).
+// Copyright (c) 2019 GeometryFactory SARL (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -21,61 +21,58 @@
 #ifndef CGAL_KSR_3_SUPPORT_PLANE_H
 #define CGAL_KSR_3_SUPPORT_PLANE_H
 
-//#include <CGAL/license/Kinetic_shape_reconstruction.h>
+// #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
-#include <CGAL/KSR/utils.h>
-#include <CGAL/KSR_3/Intersection_graph.h>
+// CGAL includes.
 #include <CGAL/Surface_mesh.h>
 
-namespace CGAL
-{
+// Internal includes.
+#include <CGAL/KSR/utils.h>
+#include <CGAL/KSR_3/Intersection_graph.h>
 
-namespace KSR_3
-{
+namespace CGAL {
+namespace KSR_3 {
 
-template <typename GeomTraits>
-class Support_plane
-{
+template<typename GeomTraits>
+class Support_plane {
+
 public:
-  typedef GeomTraits Kernel;
-  typedef typename Kernel::FT FT;
-  typedef typename Kernel::Point_2 Point_2;
-  typedef typename Kernel::Vector_2 Vector_2;
-  typedef typename Kernel::Segment_2 Segment_2;
-  typedef typename Kernel::Line_2 Line_2;
-  typedef typename Kernel::Triangle_2 Triangle_2;
-  typedef typename Kernel::Point_3 Point_3;
-  typedef typename Kernel::Vector_3 Vector_3;
-  typedef typename Kernel::Segment_3 Segment_3;
-  typedef typename Kernel::Line_3 Line_3;
-  typedef typename Kernel::Plane_3 Plane_3;
+  using Kernel = GeomTraits;
 
-  typedef KSR_3::Intersection_graph<Kernel> Intersection_graph;
-  typedef typename Intersection_graph::Vertex_descriptor IVertex;
-  typedef typename Intersection_graph::Edge_descriptor IEdge;
+  using FT        = typename Kernel::FT;
+  using Point_2   = typename Kernel::Point_2;
+  using Point_3   = typename Kernel::Point_3;
+  using Vector_2  = typename Kernel::Vector_2;
+  using Vector_3  = typename Kernel::Vector_3;
+  using Segment_2 = typename Kernel::Segment_2;
+  using Segment_3 = typename Kernel::Segment_3;
+  using Line_2    = typename Kernel::Line_2;
+  using Line_3    = typename Kernel::Line_3;
+  using Plane_3   = typename Kernel::Plane_3;
 
-  typedef CGAL::Surface_mesh<Point_2> Mesh;
-  typedef typename Mesh::Vertex_index Vertex_index;
-  typedef typename Mesh::Edge_index Edge_index;
-  typedef typename Mesh::Halfedge_index Halfedge_index;
-  typedef typename Mesh::Face_index Face_index;
+  using Mesh = CGAL::Surface_mesh<Point_2>;
+  using Intersection_graph = KSR_3::Intersection_graph<Kernel>;
 
-  typedef std::tuple<Vertex_index, Edge_index, Face_index> Locate_type;
+  using IVertex = typename Intersection_graph::Vertex_descriptor;
+  using IEdge   = typename Intersection_graph::Edge_descriptor;
 
-  typedef typename Mesh::template Property_map<Vertex_index, Vector_2> V_vector_map;
-  typedef typename Mesh::template Property_map<Vertex_index, IVertex> V_ivertex_map;
-  typedef typename Mesh::template Property_map<Vertex_index, IEdge> V_iedge_map;
-  typedef typename Mesh::template Property_map<Vertex_index, bool> V_bool_map;
-  typedef typename Mesh::template Property_map<Edge_index, IEdge> E_iedge_map;
-  typedef typename Mesh::template Property_map<Face_index, KSR::size_t> F_index_map;
-  typedef typename Mesh::template Property_map<Face_index, unsigned int> F_uint_map;
-  typedef typename Mesh::template Property_map<Vertex_index, bool> V_original_map;
-  typedef typename Mesh::template Property_map<Vertex_index, FT> V_time_map;
+  using Vertex_index   = typename Mesh::Vertex_index;
+  using Face_index     = typename Mesh::Face_index;
+  using Edge_index     = typename Mesh::Edge_index;
+  using Halfedge_index = typename Mesh::Halfedge_index;
+
+  using V_vector_map   = typename Mesh::template Property_map<Vertex_index, Vector_2>;
+  using V_ivertex_map  = typename Mesh::template Property_map<Vertex_index, IVertex>;
+  using V_iedge_map    = typename Mesh::template Property_map<Vertex_index, IEdge>;
+  using V_bool_map     = typename Mesh::template Property_map<Vertex_index, bool>;
+  using E_iedge_map    = typename Mesh::template Property_map<Edge_index, IEdge>;
+  using F_index_map    = typename Mesh::template Property_map<Face_index, KSR::size_t>;
+  using F_uint_map     = typename Mesh::template Property_map<Face_index, unsigned int>;
+  using V_original_map = typename Mesh::template Property_map<Vertex_index, bool>;
+  using V_time_map     = typename Mesh::template Property_map<Vertex_index, FT>;
 
 private:
-
-  struct Data
-  {
+  struct Data {
     Plane_3 plane;
     Mesh mesh;
     V_vector_map direction;
@@ -88,74 +85,111 @@ private:
     V_original_map v_original_map;
     V_time_map v_time_map;
     std::set<IEdge> iedges;
-
-#ifdef CGAL_KSR_DEBUG
-    Mesh dbg_mesh;
-    V_vector_map dbg_direction;
-#endif
   };
 
   std::shared_ptr<Data> m_data;
 
 public:
+  Support_plane() { }
 
-  Support_plane () { }
+  template<typename PointRange>
+  Support_plane(const PointRange& points) :
+  m_data(std::make_shared<Data>()) {
 
-  template <typename PointRange>
-  Support_plane (const PointRange& points)
-    : m_data (new Data())
-  {
-    // Compute support plane
+    // Newell's method.
     Vector_3 normal = CGAL::NULL_VECTOR;
-
-    //Newell's method
-    for (std::size_t i = 0; i < points.size(); ++ i)
-    {
-      const Point_3& pa = points[i];
-      const Point_3& pb = points[(i+1) % points.size()];
-      FT x = normal.x() + (pa.y()-pb.y())*(pa.z()+pb.z());
-      FT y = normal.y() + (pa.z()-pb.z())*(pa.x()+pb.x());
-      FT z = normal.z() + (pa.x()-pb.x())*(pa.y()+pb.y());
-      normal = Vector_3 (x,y,z);
+    const std::size_t n = points.size();
+    for (std::size_t i = 0; i < n; ++i) {
+      const auto& pa = points[i];
+      const auto& pb = points[(i + 1) % n];
+      const FT x = normal.x() + (pa.y() - pb.y()) * (pa.z() + pb.z());
+      const FT y = normal.y() + (pa.z() - pb.z()) * (pa.x() + pb.x());
+      const FT z = normal.z() + (pa.x() - pb.x()) * (pa.y() + pb.y());
+      normal = Vector_3(x, y, z);
     }
-    CGAL_assertion_msg (normal != CGAL::NULL_VECTOR, "Polygon is flat");
+    CGAL_assertion_msg(normal != CGAL::NULL_VECTOR, "ERROR: polygon is flat!");
 
-    m_data->plane = Plane_3 (points[0], KSR::normalize(normal));
-    m_data->direction = m_data->mesh.template add_property_map<Vertex_index, Vector_2>("v:direction", CGAL::NULL_VECTOR).first;
-    m_data->v_ivertex_map = m_data->mesh.template add_property_map<Vertex_index, IVertex>
-      ("v:ivertex", Intersection_graph::null_ivertex()).first;
-    m_data->v_iedge_map = m_data->mesh.template add_property_map<Vertex_index, IEdge>
-      ("v:iedge", Intersection_graph::null_iedge()).first;
-    m_data->v_active_map = m_data->mesh.template add_property_map<Vertex_index, bool>
-      ("v:active", true).first;
-    m_data->e_iedge_map = m_data->mesh.template add_property_map<Edge_index, IEdge>
-      ("e:iedge", Intersection_graph::null_iedge()).first;
-    m_data->input_map = m_data->mesh.template add_property_map<Face_index, KSR::size_t>
-      ("f:input", KSR::no_element()).first;
-    m_data->k_map = m_data->mesh.template add_property_map<Face_index, unsigned int>
-      ("f:k", 0).first;
-    m_data->v_original_map = m_data->mesh.template add_property_map<Vertex_index, bool>
-      ("v:original", false).first;
-    m_data->v_time_map = m_data->mesh.template add_property_map<Vertex_index, FT>
-      ("v:time", FT(0)).first;
-
-#ifdef CGAL_KSR_DEBUG
-    m_data->dbg_direction = m_data->dbg_mesh.template add_property_map<Vertex_index, Vector_2>("v:direction", CGAL::NULL_VECTOR).first;
-#endif
+    m_data->plane = Plane_3(points[0], KSR::normalize(normal));
+    m_data->direction = m_data->mesh.template add_property_map<Vertex_index, Vector_2>(
+      "v:direction", CGAL::NULL_VECTOR).first;
+    m_data->v_ivertex_map = m_data->mesh.template add_property_map<Vertex_index, IVertex>(
+      "v:ivertex", Intersection_graph::null_ivertex()).first;
+    m_data->v_iedge_map = m_data->mesh.template add_property_map<Vertex_index, IEdge>(
+      "v:iedge", Intersection_graph::null_iedge()).first;
+    m_data->v_active_map = m_data->mesh.template add_property_map<Vertex_index, bool>(
+      "v:active", true).first;
+    m_data->e_iedge_map = m_data->mesh.template add_property_map<Edge_index, IEdge>(
+      "e:iedge", Intersection_graph::null_iedge()).first;
+    m_data->input_map = m_data->mesh.template add_property_map<Face_index, KSR::size_t>(
+      "f:input", KSR::no_element()).first;
+    m_data->k_map = m_data->mesh.template add_property_map<Face_index, unsigned int>(
+      "f:k", 0).first;
+    m_data->v_original_map = m_data->mesh.template add_property_map<Vertex_index, bool>(
+      "v:original", false).first;
+    m_data->v_time_map = m_data->mesh.template add_property_map<Vertex_index, FT>(
+      "v:time", FT(0)).first;
   }
 
+  const std::array<Vertex_index, 4>
+  add_bbox_polygon(
+    const std::array<Point_2, 4>& points,
+    const std::array<IVertex, 4>& ivertices) {
+
+    std::array<Vertex_index, 4> vertices;
+    for (std::size_t i = 0; i < 4; ++i) {
+      const auto vi = m_data->mesh.add_vertex(points[i]);
+      m_data->v_ivertex_map[vi] = ivertices[i];
+      vertices[i] = vi;
+    }
+
+    const auto fi = m_data->mesh.add_face(vertices);
+    CGAL_assertion(fi != Mesh::null_face());
+    m_data->input_map[fi] = KSR::no_element();
+    return vertices;
+  }
+
+  const KSR::size_t add_input_polygon(
+    const std::vector<Point_2>& points,
+    const Point_2& centroid,
+    const KSR::size_t input_idx) {
+
+    std::vector<Vertex_index> vertices;
+    const std::size_t n = points.size();
+    CGAL_assertion(n >= 3);
+    vertices.reserve(n);
+
+    FT sum_length = FT(0);
+    std::vector<Vector_2> directions;
+    directions.reserve(n);
+
+    for (const auto& point : points) {
+      directions.push_back(Vector_2(centroid, point));
+      const FT length = static_cast<FT>(
+        CGAL::sqrt(CGAL::to_double(CGAL::abs(directions.back() * directions.back()))));
+      sum_length += length;
+    }
+    CGAL_assertion(directions.size() == n);
+    sum_length /= static_cast<FT>(n);
+
+    for (std::size_t i = 0; i < n; ++i) {
+      const auto& point = points[i];
+      const auto vi = m_data->mesh.add_vertex(point);
+      m_data->direction[vi] = directions[i] / sum_length;
+      m_data->v_original_map[vi] = true;
+      vertices.push_back(vi);
+    }
+
+    const auto fi = m_data->mesh.add_face(vertices);
+    CGAL_assertion(fi != Mesh::null_face());
+    m_data->input_map[fi] = input_idx;
+    return static_cast<KSR::size_t>(fi);
+  }
+
+  // OTHER
   const Plane_3& plane() const { return m_data->plane; }
 
   const Mesh& mesh() const { return m_data->mesh; }
   Mesh& mesh() { return m_data->mesh; }
-
-#ifdef CGAL_KSR_DEBUG
-  const Mesh& dbg_mesh() const { return m_data->dbg_mesh; }
-  Point_2 dbg_point_2 (const Vertex_index& vertex_index, FT time) const
-  { return m_data->dbg_mesh.point(vertex_index) + time * m_data->dbg_direction[vertex_index]; }
-  Point_3 dbg_point_3 (const Vertex_index& vertex_index, FT time) const
-  { return to_3d (dbg_point_2 (vertex_index, time)); }
-#endif
 
   const Point_2& get_point(const Vertex_index& vertex_index) const {
     return m_data->mesh.point(vertex_index);
@@ -323,75 +357,6 @@ public:
   }
 
   Point_3 to_3d (const Point_2& point) const { return m_data->plane.to_3d (point); }
-
-  std::array<Vertex_index, 4>
-  add_bbox_polygon (const std::array<Point_2, 4>& points,
-                    const std::array<IVertex, 4>& ivertices)
-  {
-    std::array<Vertex_index, 4> vertices;
-    for (std::size_t i = 0; i < 4; ++ i)
-    {
-      Vertex_index vi = m_data->mesh.add_vertex(points[i]);
-      m_data->v_ivertex_map[vi] = ivertices[i];
-      vertices[i] = vi;
-    }
-
-    Face_index fi = m_data->mesh.add_face (vertices);
-    m_data->input_map[fi] = KSR::no_element();
-
-    return vertices;
-  }
-
-  KSR::size_t add_polygon (const std::vector<Point_2>& points, const Point_2& centroid,
-                           KSR::size_t input_idx)
-  {
-    std::vector<Vertex_index> vertices;
-    vertices.reserve (points.size());
-
-#ifdef CGAL_KSR_DEBUG
-    std::vector<Vertex_index> dbg_vertices;
-    dbg_vertices.reserve (points.size());
-#endif
-
-    FT sum_length = FT(0);
-    std::vector<Vector_2> dirs;
-    dirs.reserve(points.size());
-    for (const Point_2& p : points) {
-      dirs.push_back(Vector_2(centroid, p));
-      KSR::normalize(dirs.back());
-      const FT length = CGAL::sqrt(dirs.back() * dirs.back());
-      sum_length += length;
-    }
-    CGAL_assertion(dirs.size() == points.size());
-    sum_length /= FT(dirs.size());
-
-    for (std::size_t i = 0; i < points.size(); ++i) {
-      const auto& p = points[i];
-      const Vertex_index vi = m_data->mesh.add_vertex(p);
-
-      m_data->direction[vi] = dirs[i] / sum_length;
-      m_data->v_original_map[vi] = true;
-
-      // std::cout << "new: " << m_data->direction[vi] << std::endl;
-      // std::cout << "old: " << KSR::normalize(dirs[i]) << std::endl;
-      vertices.push_back(vi);
-
-#ifdef CGAL_KSR_DEBUG
-      const Vertex_index dbg_vi = m_data->dbg_mesh.add_vertex(p);
-      m_data->dbg_direction[dbg_vi] = dirs[i] / sum_length;
-      dbg_vertices.push_back(dbg_vi);
-#endif
-    }
-
-    Face_index fi = m_data->mesh.add_face (vertices);
-    m_data->input_map[fi] = input_idx;
-
-#ifdef CGAL_KSR_DEBUG
-    m_data->dbg_mesh.add_face (dbg_vertices);
-#endif
-
-    return KSR::size_t(fi);
-  }
 
   Edge_index edge (const Vertex_index& v0, const Vertex_index& v1)
   {

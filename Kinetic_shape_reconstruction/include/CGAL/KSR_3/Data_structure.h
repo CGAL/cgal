@@ -306,12 +306,12 @@ public:
       std::map<KSR::size_t, KSR::size_t> map_lines_idx;
       KSR::vector<IVertex> vertices;
 
-      const std::size_t ni = intersections.size();
-      vertices.reserve(ni);
+      const std::size_t n = intersections.size();
+      vertices.reserve(n);
 
-      for (std::size_t i = 0; i < ni; ++i) {
+      for (std::size_t i = 0; i < n; ++i) {
         const auto& iedge0 = intersections[i].first;
-        const auto& iedge1 = intersections[(i + 1) % ni].first;
+        const auto& iedge1 = intersections[(i + 1) % n].first;
 
         KSR::size_t common_plane_idx = KSR::no_element();
         std::set_intersection(
@@ -340,8 +340,9 @@ public:
         vertices.push_back(m_intersection_graph.add_vertex(
           intersections[i].second).first);
       }
+      CGAL_assertion(vertices.size() == n);
 
-      for (std::size_t i = 0; i < intersections.size(); ++i) {
+      for (std::size_t i = 0; i < n; ++i) {
         const auto& iplanes = m_intersection_graph.intersected_planes(intersections[i].first);
         for (const KSR::size_t sp_idx : iplanes) {
           support_plane(sp_idx).iedges().erase(intersections[i].first);
@@ -360,7 +361,7 @@ public:
         }
 
         const auto new_edge = m_intersection_graph.add_edge(
-          vertices[i], vertices[(i + 1) % vertices.size()], support_plane_idx).first;
+          vertices[i], vertices[(i + 1) % n], support_plane_idx).first;
         m_intersection_graph.intersected_planes(new_edge).insert(common_planes_idx[i]);
         m_intersection_graph.set_line(new_edge, map_lines_idx[common_planes_idx[i]]);
 
@@ -426,7 +427,7 @@ public:
       const Segment_2 segb(centroid, b);
       return ( Direction_2(sega) < Direction_2(segb) );
     });
-    support_plane(support_plane_idx).add_polygon(points, centroid, input_idx);
+    support_plane(support_plane_idx).add_input_polygon(points, centroid, input_idx);
   }
 
   /*******************************
@@ -695,45 +696,6 @@ public:
     if (ivertex(pvertex) != null_ivertex())
       m_intersection_graph.is_active(ivertex(pvertex)) = true;
   }
-
-#ifdef CGAL_KSR_DEBUG
-  template <typename PSimplex>
-  const Mesh& dbg_mesh (const PSimplex& psimplex) const { return dbg_mesh(psimplex.first); }
-  const Mesh& dbg_mesh (KSR::size_t support_plane_idx) const { return support_plane(support_plane_idx).dbg_mesh(); }
-
-  PVertices dbg_pvertices (KSR::size_t support_plane_idx) const
-  {
-    return PVertices (boost::make_transform_iterator
-                      (dbg_mesh(support_plane_idx).vertices().begin(),
-                       Make_PSimplex<PVertex>(support_plane_idx)),
-                      boost::make_transform_iterator
-                      (dbg_mesh(support_plane_idx).vertices().end(),
-                       Make_PSimplex<PVertex>(support_plane_idx)));
-  }
-  PFaces dbg_pfaces (KSR::size_t support_plane_idx) const
-  {
-    return PFaces (boost::make_transform_iterator
-                   (dbg_mesh(support_plane_idx).faces().begin(),
-                    Make_PSimplex<PFace>(support_plane_idx)),
-                   boost::make_transform_iterator
-                   (dbg_mesh(support_plane_idx).faces().end(),
-                    Make_PSimplex<PFace>(support_plane_idx)));
-
-  }
-  PVertices_of_pface dbg_pvertices_of_pface (const PFace& pface) const
-  {
-    return PVertices_of_pface (boost::make_transform_iterator
-                               (halfedges_around_face(halfedge(pface.second, dbg_mesh(pface)),
-                                                      dbg_mesh(pface)).begin(),
-                                Halfedge_to_pvertex(pface.first, dbg_mesh(pface))),
-                               boost::make_transform_iterator
-                               (halfedges_around_face(halfedge(pface.second, dbg_mesh(pface)),
-                                                      dbg_mesh(pface)).end(),
-                                Halfedge_to_pvertex(pface.first, dbg_mesh(pface))));
-  }
-  Point_3 dbg_point_3 (const PVertex& pvertex) const
-  { return support_plane(pvertex).dbg_point_3 (pvertex.second, m_current_time); }
-#endif
 
   /*******************************
    * ISimplices
