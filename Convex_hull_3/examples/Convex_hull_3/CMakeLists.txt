@@ -42,8 +42,6 @@ endif()
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
 
-create_single_source_cgal_program( "is_strongly_convex_3.cpp" )
-
 create_single_source_cgal_program( "dynamic_hull_3.cpp" )
 
 create_single_source_cgal_program( "dynamic_hull_LCC_3.cpp" )
