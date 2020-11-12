@@ -615,7 +615,15 @@ public:
     }
     return is;
   }
+  std::istream& load_without_edges(std::istream& is)
+  {
+    is >> static_cast<
+      Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr, Concurrency_tag>&>(*this);
 
+    rescan_after_load_of_triangulation();
+    return is;
+
+  }
 private:
   /**
    * Creates an Internal_edge object (i.e a pair of ordered Vertex_handle)
@@ -858,7 +866,6 @@ std::istream &
 operator>> (std::istream& is,
             Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_> &c3t3)
 {
-  // TODO: implement edge loading
   typedef typename Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::Concurrency_tag Concurrency_tag;
   is >> static_cast<
     Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr, Concurrency_tag>&>(c3t3);
