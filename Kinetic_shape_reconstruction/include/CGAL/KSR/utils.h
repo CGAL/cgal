@@ -34,6 +34,11 @@
 // CGAL includes.
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Iterator_range.h>
+#include <CGAL/Polygon_2.h>
+#include <CGAL/centroid.h>
+
+// Boost includes.
+#include <boost/function_output_iterator.hpp>
 
 // Line discretization.
 #define CGAL_KSR_SAME_VECTOR_TOLERANCE 0.99999
@@ -117,18 +122,6 @@ using std::array;
 using std::queue;
 using std::map;
 
-// Use -1 as no element identifier
-inline size_t no_element() { return size_t(-1); }
-
-// Use -2 as special uninitialized identifier
-inline size_t uninitialized() { return size_t(-2); }
-
-// Vector normalization
-template <typename Vector>
-inline Vector normalize (const Vector& v) {
-  return v / CGAL::approximate_sqrt(v*v);
-}
-
 template <typename Type1, typename Type2, typename ResultType>
 inline bool intersection_2 (const Type1& t1, const Type2& t2, ResultType& result) {
 
@@ -152,22 +145,6 @@ inline ResultType intersection_2 (const Type1& t1, const Type2& t2) {
   bool intersection_found = intersection_2 (t1, t2, out);
   CGAL_assertion_msg (intersection_found, "ERROR: Intersection not found!");
   return out;
-}
-
-template <typename Type1, typename Type2, typename ResultType>
-inline bool intersection_3 (const Type1& t1, const Type2& t2, ResultType& result) {
-
-  typedef typename Kernel_traits<Type1>::Kernel::Intersect_3 Intersect_3;
-  typename cpp11::result_of<Intersect_3(Type1, Type2)>::type
-    inter = intersection (t1, t2);
-  if (!inter)
-    return false;
-
-  if (const ResultType* typed_inter = boost::get<ResultType>(&*inter)) {
-    result = *typed_inter;
-    return true;
-  }
-  return false;
 }
 
 template <typename ResultType, typename Type1, typename Type2>
@@ -206,11 +183,18 @@ inline bool intersection_3 (const Line_3& seg, const vector<Point_3>& polygon, P
   return false;
 }
 
-template <typename Point>
-std::string to_string (const Point& p) {
+// CLEAN!
 
+// Use -1 as no element identifier.
+inline const KSR::size_t no_element() { return KSR::size_t(-1); }
+
+// Use -2 as special uninitialized identifier.
+inline const KSR::size_t uninitialized() { return KSR::size_t(-2); }
+
+template<typename Point_d>
+std::string to_string(const Point_d& p) {
   std::ostringstream oss;
-  oss.precision(18);
+  oss.precision(20);
   oss << p;
   return oss.str();
 }
@@ -221,6 +205,42 @@ decltype(auto) distance(const Point_d& p, const Point_d& q) {
   using FT = typename Traits::FT;
   const FT sq_dist = CGAL::squared_distance(p, q);
   return static_cast<FT>(CGAL::sqrt(CGAL::to_double(sq_dist)));
+}
+
+template<typename FT>
+static FT tolerance() {
+  return FT(1) / FT(100000);
+}
+
+template<typename FT>
+static FT point_tolerance() {
+  return tolerance<FT>();
+}
+
+template<typename FT>
+static FT vector_tolerance() {
+  return FT(99999) / FT(100000);
+}
+
+template<typename Vector_d>
+inline Vector_d normalize(const Vector_d& v) {
+  using Traits = typename Kernel_traits<Vector_d>::Kernel;
+  using FT = typename Traits::FT;
+  const FT dot_prod = CGAL::abs(v * v);
+  return v / static_cast<FT>(CGAL::sqrt(CGAL::to_double(dot_prod)));
+}
+
+template<typename Type1, typename Type2, typename ResultType>
+inline bool intersection_3(
+  const Type1& t1, const Type2& t2, ResultType& result) {
+
+  const auto inter = intersection(t1, t2);
+  if (!inter) return false;
+  if (const ResultType* typed_inter = boost::get<ResultType>(&*inter)) {
+    result = *typed_inter;
+    return true;
+  }
+  return false;
 }
 
 } // namespace KSR

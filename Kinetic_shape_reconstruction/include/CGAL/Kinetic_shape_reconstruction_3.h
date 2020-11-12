@@ -36,7 +36,9 @@ template<typename GeomTraits>
 class Kinetic_shape_reconstruction_3 {
 
 public:
-  using Kernel      = GeomTraits;
+  using Kernel = GeomTraits;
+
+private:
   using FT          = typename Kernel::FT;
   using Point_2     = typename Kernel::Point_2;
   using Point_3     = typename Kernel::Point_3;
@@ -64,8 +66,15 @@ private:
   Event_queue m_queue;
   FT m_min_time;
   FT m_max_time;
+  const bool m_verbose;
 
 public:
+  Kinetic_shape_reconstruction_3(const bool verbose = true) :
+  m_min_time(-FT(1)),
+  m_max_time(-FT(1)),
+  m_verbose(verbose)
+  { }
+
   template<
   typename InputRange,
   typename PolygonMap>
@@ -76,7 +85,7 @@ public:
     const FT enlarge_bbox_ratio = FT(11) / FT(10),
     const bool reorient = false) {
 
-    std::cout.precision(20);
+    if (m_verbose) std::cout.precision(20);
     if (input_range.size() == 0) {
       CGAL_warning_msg(input_range.size() != 0,
       "WARNING: YOUR INPUT IS EMPTY. RETURN WITH NO CHANGE!");
@@ -95,32 +104,38 @@ public:
       return false;
     }
 
-    std::cout << std::endl << "--- INITIALIZING KSR:" << std::endl;
+    if (m_verbose) {
+      std::cout << std::endl << "--- INITIALIZING KSR:" << std::endl;
+    }
 
     FT time_step;
     std::array<Point_3, 8> bbox;
     create_bounding_box(
       input_range, polygon_map, enlarge_bbox_ratio, reorient, bbox, time_step);
-    std::cout << "* precomputed time_step: " << time_step << std::endl;
+    if (m_verbose) {
+      std::cout << "* precomputed time_step: " << time_step << std::endl;
+    }
 
     std::vector< std::vector<Point_3> > bbox_faces;
     bounding_box_to_polygons(bbox, bbox_faces);
     add_polygons(input_range, polygon_map, bbox_faces);
 
-    std::cout << "* intersecting input polygons ...";
+    if (m_verbose) {
+      std::cout << "* intersecting input polygons ...";
+      KSR_3::dump(m_data, "init");
+      // KSR_3::dump_segmented_edges(m_data, "init");
+    }
 
-    KSR_3::dump(m_data, "init");
-    // KSR_3::dump_segmented_edges(m_data, "init");
-
-    CGAL_assertion(check_integrity(true));
+    check_integrity();
     make_polygons_intersection_free();
-    CGAL_assertion(check_integrity(true));
+    check_integrity();
     set_k_intersections(k);
 
-    KSR_3::dump(m_data, "intersected");
-    // KSR_3::dump_segmented_edges(m_data, "intersected");
-
-    std::cout << " done" << std::endl;
+    if (m_verbose) {
+      KSR_3::dump(m_data, "intersected");
+      // KSR_3::dump_segmented_edges(m_data, "intersected");
+      std::cout << " done" << std::endl;
+    }
 
     // for (KSR::size_t i = 6; i < m_data.number_of_support_planes(); ++i) {
     //   const auto& sp = m_data.support_plane(i);
@@ -134,32 +149,46 @@ public:
 
     // exit(EXIT_SUCCESS);
 
-    std::cout << std::endl << "--- RUNNING THE QUEUE:" << std::endl;
-    std::cout << "* propagation started" << std::endl;
+    if (m_verbose) {
+      std::cout << std::endl << "--- RUNNING THE QUEUE:" << std::endl;
+      std::cout << "propagation started ..." << std::endl;
+    }
     std::size_t num_iterations = 0;
     m_min_time = FT(0);
     m_max_time = time_step;
+    CGAL_assertion(m_min_time >= FT(0) && m_max_time >= m_min_time);
     while (initialize_queue()) {
 
       run(k);
       m_min_time = m_max_time;
       m_max_time += time_step;
-
-      // dump(m_data, "iter_100-" + std::to_string(num_iterations));
-      // CGAL_assertion(check_integrity(true));
+      check_integrity();
       ++num_iterations;
+
+      // if (m_verbose) {
+      //   std::cout << ".";
+      //   if (num_iterations == 50) {
+      //     std::cout << std::endl;
+      //   }
+      // }
+
       // if (num_iterations > 100) {
       //   CGAL_assertion_msg(false, "WHY SO MANY ITERATIONS?");
       // }
     }
-    std::cout << "* propagation finished" << std::endl;
+    if (m_verbose) {
+      std::cout << "... propagation finished" << std::endl;
+    }
 
-    std::cout << std::endl << "--- FINALIZING KSR:" << std::endl;
-
-    std::cout << "* checking final mesh integrity ...";
-    CGAL_assertion(check_integrity(true));
-    dump(m_data, "iter_1000-final-result");
-    std::cout << " done" << std::endl;
+    if (m_verbose) {
+      std::cout << std::endl << "--- FINALIZING KSR:" << std::endl;
+      std::cout << "* checking final mesh integrity ...";
+    }
+    check_integrity();
+    if (m_verbose) {
+      dump(m_data, "iter_1000-final-result");
+      std::cout << " done" << std::endl;
+    }
 
     // m_data.create_polyhedrons();
     return true;
@@ -223,10 +252,14 @@ private:
 
     const auto& minp = bbox.front();
     const auto& maxp = bbox.back();
-    std::cout << "* bounding box minp: " <<
+    if (m_verbose) {
+      std::cout << "* bounding box minp: " <<
       minp.x() << "\t, " << minp.y() << "\t, " << minp.z() << std::endl;
-    std::cout << "* bounding box maxp: " <<
+    }
+    if (m_verbose) {
+      std::cout << "* bounding box maxp: " <<
       maxp.x() << "\t, " << maxp.y() << "\t\t, " << maxp.z() << std::endl;
+    }
   }
 
   template<
@@ -348,7 +381,9 @@ private:
     CGAL_assertion(m_data.ivertices().size() == 8);
     CGAL_assertion(m_data.iedges().size() == 12);
 
-    std::cout << "* added bbox faces: " << bbox_faces.size() << std::endl;
+    if (m_verbose) {
+      std::cout << "* added bbox faces: " << bbox_faces.size() << std::endl;
+    }
   }
 
   template<
@@ -365,48 +400,53 @@ private:
       ++input_index;
     }
     CGAL_assertion(m_data.number_of_support_planes() > 6);
-    std::cout << "* added input polygons: " <<  input_range.size() << std::endl;
+    if (m_verbose) {
+      std::cout << "* added input polygons: " <<  input_range.size() << std::endl;
+    }
   }
 
-  bool check_integrity(bool verbose = false) const
-  {
-    for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++ i)
-    {
-      if (!m_data.mesh_is_valid(i))
-      {
-        if (verbose)
-          std::cerr << "ERROR: Mesh " << i << " is invalid" << std::endl;
+  const bool check_integrity() const {
+
+    for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
+      if (!m_data.is_mesh_valid(i)) {
+        if (m_verbose) {
+          const std::string msg = "ERROR: mesh " + std::to_string(i) + " is not valid!";
+          CGAL_assertion_msg(false, msg.c_str());
+        }
         return false;
       }
 
-      for (const IEdge& iedge : m_data.iedges(i))
-        if (m_data.intersected_planes(iedge).find (i)
-            == m_data.intersected_planes(iedge).end())
-        {
-          if (verbose)
-            std::cerr << "ERROR: Support_plane[" << i
-                      << "] is intersected by " << m_data.str(iedge)
-                      << " which claims it does not intersect it" << std::endl;
-          return false;
-        }
-    }
-
-    for (const IEdge iedge : m_data.iedges())
-    {
-      for (KSR::size_t support_plane_idx : m_data.intersected_planes (iedge))
-      {
-        if (m_data.iedges(support_plane_idx).find (iedge)
-            == m_data.iedges(support_plane_idx).end())
-        {
-          if (verbose)
-            std::cerr << "ERROR: " << m_data.str(iedge)
-                      << " intersects Support_plane[" << support_plane_idx
-                      << "] which claims it's not intersected by it" << std::endl;
+      for (const auto& iedge : m_data.iedges(i)) {
+        const auto& iplanes = m_data.intersected_planes(iedge);
+        if (iplanes.find(i) == iplanes.end()) {
+          if (m_verbose) {
+            const std::string msg = "ERROR: support_plane " + std::to_string(i) +
+            " is intersected by " + m_data.str(iedge) +
+            " but it claims it does not intersect it!";
+            CGAL_assertion_msg(false, msg.c_str());
+          }
           return false;
         }
       }
     }
 
+    for (const auto iedge : m_data.iedges()) {
+      const auto& iplanes = m_data.intersected_planes(iedge);
+      for (const auto support_plane_idx : iplanes) {
+
+        const auto& sp_iedges = m_data.iedges(support_plane_idx);
+        if (sp_iedges.find(iedge) == sp_iedges.end()) {
+
+          if (m_verbose) {
+            const std::string msg = "ERROR: iedge " + m_data.str(iedge) +
+            " intersects support plane " + std::to_string(support_plane_idx) +
+            " but it claims it is not intersected by it!";
+            CGAL_assertion_msg(false, msg.c_str());
+          }
+          return false;
+        }
+      }
+    }
     return true;
   }
 
@@ -718,8 +758,7 @@ private:
       // }
 
       apply(k, ev);
-
-      CGAL_assertion(check_integrity(true));
+      check_integrity();
 
       // m_data.update_positions (0.5 * (current_time + m_queue.next().time()));
       // dump (m_data, "after_" + std::to_string(iter - 1));

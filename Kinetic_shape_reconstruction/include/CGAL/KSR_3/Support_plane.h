@@ -445,20 +445,32 @@ public:
 
 };
 
-template <typename Kernel>
-bool operator== (const Support_plane<Kernel>& a, const Support_plane<Kernel>& b)
-{
-  const typename Kernel::Plane_3& va = a.plane();
-  const typename Kernel::Plane_3& vb = b.plane();
+template<typename Kernel>
+bool operator==(
+  const Support_plane<Kernel>& a,
+  const Support_plane<Kernel>& b) {
 
-  if (CGAL::abs(va.orthogonal_vector() * vb.orthogonal_vector()) < CGAL_KSR_SAME_VECTOR_TOLERANCE)
-    return false;
+  using FT = typename Kernel::FT;
 
-  return (CGAL::approximate_sqrt(CGAL::squared_distance (vb.point(), va)) < CGAL_KSR_SAME_POINT_TOLERANCE);
+  const auto& planea = a.plane();
+  const auto& planeb = b.plane();
+
+  const auto va = planea.orthogonal_vector();
+  const auto vb = planeb.orthogonal_vector();
+
+  const FT sq_dist_to_plane = CGAL::squared_distance(planea.point(), planeb);
+
+  const FT ptol = KSR::point_tolerance<FT>();
+  const FT vtol = KSR::vector_tolerance<FT>();
+  const FT sq_ptol = ptol * ptol;
+
+  // Are the planes parallel?
+  if (CGAL::abs(va * vb) < vtol) return false;
+  // Are the planes coplanar?
+  return (sq_dist_to_plane < sq_ptol);
 }
 
-
-}} // namespace CGAL::KSR_3
-
+} // namespace KSR_3
+} // namespace CGAL
 
 #endif // CGAL_KSR_3_SUPPORT_LINE_H
