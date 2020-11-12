@@ -195,7 +195,7 @@ bool CGAL_is_strongly_convex_3(const Polyhedron& P, Point_3<R>*)
 template<class Polyhedron>
 bool is_strongly_convex_3(const Polyhedron& P)
 {
-  typedef typename boost::property_map<Polyhedron, vertex_point_t>::type Ppmap;
+  typedef typename boost::property_map<Polyhedron, vertex_point_t>::const_type Ppmap;
   typedef typename boost::property_traits<Ppmap>::value_type Point_3;
 
   return CGAL_is_strongly_convex_3(P, reinterpret_cast<Point_3*>(0));
