@@ -24,7 +24,6 @@
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
-#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/number_utils.h>
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>
@@ -52,11 +51,9 @@ struct Intrinsic_Delaunay
 {};
 
 namespace internal {
-  template<typename TriangleMesh>
-  bool has_degenerate_faces(const TriangleMesh& tm);
 
-  template<typename TriangleMesh, typename VertexPointMap>
-  bool has_degenerate_faces(const TriangleMesh& tm, VertexPointMap vpm);
+  template<typename TriangleMesh, typename Traits>
+  bool has_degenerate_faces(const TriangleMesh& tm, const Traits& traits);
 }
 
 namespace internal {
@@ -489,7 +486,7 @@ public:
   void estimate_geodesic_distances(VertexDistanceMap vdm)
   {
     CGAL_precondition(
-      !CGAL::Heat_method_3::internal::has_degenerate_faces(triangle_mesh(), vertex_point_map()));
+      !CGAL::Heat_method_3::internal::has_degenerate_faces(triangle_mesh(), Traits()));
 
     if(is_empty(tm)){
       return;
@@ -689,24 +686,31 @@ struct Idt_storage
   {}
 };
 
-template<typename TriangleMesh, typename VertexPointMap>
-bool has_degenerate_faces(const TriangleMesh& tm, VertexPointMap vpm)
+template<typename TriangleMesh, typename Traits>
+bool has_degenerate_faces(const TriangleMesh& tm, const Traits& traits)
 {
+  typedef typename Traits::Point_3  Point;
+  typedef typename Traits::Vector_3 Vector_3;
+  typename Traits::Construct_vector_3
+    construct_vector = traits.construct_vector_3_object();
+  typename Traits::Compute_scalar_product_3
+    scalar_product = traits.compute_scalar_product_3_object();
+  typename Traits::Construct_cross_product_vector_3
+    cross_product = traits.construct_cross_product_vector_3_object();
+
+  typename boost::property_map< TriangleMesh, boost::vertex_point_t>::const_type
+    vpm = get(boost::vertex_point, tm);
   for (typename boost::graph_traits<TriangleMesh>::face_descriptor f : faces(tm))
   {
-    if (CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, tm,
-      CGAL::Polygon_mesh_processing::parameters::vertex_point_map(vpm)))
+    const Point p1 = get(vpm, target(halfedge(f, tm), tm));
+    const Point p2 = get(vpm, target(next(halfedge(f, tm), tm), tm));
+    const Point p3 = get(vpm, target(next(next(halfedge(f, tm), tm), tm), tm));
+    Vector_3 v = cross_product(construct_vector(p1, p2), construct_vector(p1, p3));
+    if(scalar_product(v, v) == 0.)
       return true;
   }
   return false;
 }
-
-template<typename TriangleMesh>
-bool has_degenerate_faces(const TriangleMesh& tm)
-{
-  return has_degenerate_faces(tm, get(vertex_point, tm));
-}
-
 
 template <typename TriangleMesh,
           typename Traits,
@@ -748,7 +752,8 @@ struct Base_helper<TriangleMesh, Traits, Intrinsic_Delaunay, LA, VertexPointMap>
   void estimate_geodesic_distances(VertexDistanceMap vdm)
   {
     CGAL_precondition(
-      !CGAL::Heat_method_3::internal::has_degenerate_faces(this->m_idt.triangle_mesh()));
+      !CGAL::Heat_method_3::internal::has_degenerate_faces(
+        this->m_idt.triangle_mesh(), Traits()));
     base().estimate_geodesic_distances(this->m_idt.vertex_distance_map(vdm));
   }
 };
@@ -967,8 +972,6 @@ estimate_geodesic_distances(const TriangleMesh& tm,
                             typename boost::graph_traits<TriangleMesh>::vertex_descriptor source,
                             Mode)
 {
-  CGAL_precondition(!internal::has_degenerate_faces(tm));
-
   CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<TriangleMesh, Mode> hm(tm);
   hm.add_source(source);
   hm.estimate_geodesic_distances(vdm);
@@ -982,8 +985,6 @@ estimate_geodesic_distances(const TriangleMesh& tm,
                             VertexDistanceMap vdm,
                             typename boost::graph_traits<TriangleMesh>::vertex_descriptor source)
 {
-  CGAL_precondition(!internal::has_degenerate_faces(tm));
-
   CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<TriangleMesh, Intrinsic_Delaunay> hm(tm);
   hm.add_source(source);
   hm.estimate_geodesic_distances(vdm);
@@ -1018,8 +1019,6 @@ estimate_geodesic_distances(const TriangleMesh& tm,
 #endif
 )
 {
-  CGAL_precondition(!internal::has_degenerate_faces(tm));
-
   CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<TriangleMesh, Mode> hm(tm);
   hm.add_sources(sources);
   hm.estimate_geodesic_distances(vdm);
@@ -1035,8 +1034,6 @@ estimate_geodesic_distances(const TriangleMesh& tm,
                               typename boost::has_range_const_iterator<VertexConstRange>
                                      >::type* = 0)
 {
-  CGAL_precondition(!internal::has_degenerate_faces(tm));
-
   CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<TriangleMesh, Intrinsic_Delaunay> hm(tm);
   hm.add_sources(sources);
   hm.estimate_geodesic_distances(vdm);
