@@ -267,11 +267,6 @@ public:
       return at;
   }
 
-  Indirect_AT<AT>& approx()
-  {
-      return at;
-  }
-
 #if 1
 #define CGAL_UPDATE_EXACT_BEGIN \
   if (!this->start_update()) return;
@@ -1782,7 +1777,7 @@ struct Lazy_construction<LK, AC, EC, E2A_, true> {
   operator()() const
   {
     typedef Lazy<AT, ET, E2A> Handle;
-    return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>()) );
+    return result_type( Handle() );
   }
 
 #undef CGAL_CONSTRUCTION_OPERATOR
@@ -1853,7 +1848,7 @@ struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> { \
     typedef Lazy<AT, ET, E2A> Handle;
     typedef typename Type_mapper< typename cpp11::result_of<AC()>::type ,AK, LK>::type result_type;
 
-    return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>()) );
+    return result_type( Handle() );
   }
 };
 
