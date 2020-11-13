@@ -567,11 +567,21 @@ public:
     }
     else
     {
-      for(auto it = edges_.begin(); it != edges_.end(); ++it)
+      if(is_ascii(os))
+        for(auto it = edges_.begin(); it != edges_.end(); ++it)
+        {
+          os << CGAL::oformat(vertex_index_map[it->left]);
+          os << CGAL::oformat(vertex_index_map[it->right]);
+          os << CGAL::oformat(it->info);
+        }
+      else
       {
-        os << CGAL::oformat(vertex_index_map[it->left]);
-        os << CGAL::oformat(vertex_index_map[it->right]);
-        os << CGAL::oformat(it->info);
+        for(auto it = edges_.begin(); it != edges_.end(); ++it)
+        {
+          write(os,vertex_index_map[it->left]);
+          write(os,vertex_index_map[it->right]);
+          write(os,it->info);
+        }
       }
     }
     return os;
@@ -592,20 +602,39 @@ public:
     if(!is)
       return is;
 
-    for(std::size_t i=0; i < n; ++i)
+    if(is_ascii(is))
     {
-      //read edge and curve index
-      std::size_t l,r;
-      Curve_index c; //todo
-      is >> CGAL::iformat(l);
-      is >> CGAL::iformat(r);
-      is >> CGAL::iformat(c);
-      if(!is)
-        return is;
-      add_to_complex(index_vertex_map[l],index_vertex_map[r], c);
+      for(std::size_t i=0; i < n; ++i)
+      {
+        //read edge and curve index
+        std::size_t l,r;
+        Curve_index c;
+        is >> CGAL::iformat(l);
+        is >> CGAL::iformat(r);
+        is >> CGAL::iformat(c);
+        if(!is)
+          return is;
+        add_to_complex(index_vertex_map[l],index_vertex_map[r], c);
+      }
+    }
+    else
+    {
+      for(std::size_t i=0; i < n; ++i)
+      {
+        //read edge and curve index
+        std::size_t l,r;
+        Curve_index c;
+        CGAL::read(is,l);
+        CGAL::read(is,r);
+        CGAL::read(is,c);
+        if(!is)
+          return is;
+        add_to_complex(index_vertex_map[l],index_vertex_map[r], c);
+      }
     }
     return is;
   }
+
   std::istream& load_without_edges(std::istream& is)
   {
     is >> static_cast<
