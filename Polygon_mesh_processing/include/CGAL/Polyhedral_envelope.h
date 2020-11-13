@@ -56,7 +56,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_POLYHEDRAL_ENVELOPE_H
 #define CGAL_POLYGON_MESH_PROCESSING_POLYHEDRAL_ENVELOPE_H
 
-#include <CGAL/license/Polygon_mesh_processing/Envelope.h>
+#include <CGAL/license/Polygon_mesh_processing/Polyhedral_envelope.h>
 
 #include <CGAL/disable_warnings.h>
 
