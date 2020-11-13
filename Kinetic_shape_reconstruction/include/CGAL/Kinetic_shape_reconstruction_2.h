@@ -835,7 +835,7 @@ private:
           Point_2 point_b = support_line.to_2d(b.point(min_time + time_to_collision));
           Point_2 point = CGAL::midpoint (point_a, point_b);
 
-          KSR::size_t meta_vertex_idx =m_data.add_meta_vertex (point, i);
+          /* KSR::size_t meta_vertex_idx = */ m_data.add_meta_vertex (point, i);
         }
       }
     }
@@ -891,7 +891,7 @@ private:
 
     KSR::size_t iterations = 0;
 
-    static int iter = 0;
+    // static int iter = 0;
 
     while (!m_queue.empty())
     {

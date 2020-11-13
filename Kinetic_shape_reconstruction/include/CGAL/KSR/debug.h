@@ -174,7 +174,7 @@ void dump_polygons(const DS& data, const std::string tag = std::string()) {
   CGAL::write_ply(out, mesh);
   out.close();
 
-#if 0
+#if false
 
   const std::string bbox_filename = (tag != std::string() ? tag + "_" : "") + "bbox_polygons.ply";
   std::ofstream bbox_out(bbox_filename);
@@ -468,7 +468,7 @@ private:
 
     if (!file)
       std::cerr << std::endl <<
-        "ERROR: Error saving file " << file_path
+        "ERROR: error saving file " << file_path
       << "!" << std::endl << std::endl;
 
     file << stream.str();

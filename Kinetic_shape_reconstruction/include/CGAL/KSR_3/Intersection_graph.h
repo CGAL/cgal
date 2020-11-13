@@ -36,52 +36,43 @@ template<typename GeomTraits>
 class Intersection_graph {
 
 public:
-  typedef GeomTraits Kernel;
-  typedef typename Kernel::FT FT;
-  typedef typename Kernel::Point_2 Point_2;
-  typedef typename Kernel::Vector_2 Vector_2;
-  typedef typename Kernel::Line_2 Line_2;
-  typedef typename Kernel::Point_3 Point_3;
-  typedef typename Kernel::Vector_3 Vector_3;
-  typedef typename Kernel::Segment_3 Segment_3;
-  typedef typename Kernel::Line_3 Line_3;
-  typedef typename Kernel::Plane_3 Plane_3;
+  using Kernel = GeomTraits;
 
-  struct Vertex_property
-  {
+  using FT        = typename Kernel::FT;
+  using Point_3   = typename Kernel::Point_3;
+  using Segment_3 = typename Kernel::Segment_3;
+  using Line_3    = typename Kernel::Line_3;
+
+  struct Vertex_property {
     Point_3 point;
     bool active;
-
-    Vertex_property () : active(true) { }
-    Vertex_property (const Point_3& point) : point (point), active(true) { }
+    Vertex_property() :
+    active(true)
+    { }
+    Vertex_property(const Point_3& point) :
+    point(point),
+    active(true)
+    { }
   };
 
-  struct Edge_property
-  {
+  struct Edge_property {
     KSR::size_t line;
     KSR::Idx_set planes;
     bool active;
-
-    Edge_property() : line (KSR::no_element()), active(true) { }
+    Edge_property() :
+    line(KSR::no_element()),
+    active(true)
+    { }
   };
 
-  typedef boost::adjacency_list <boost::setS,
-                                 boost::vecS,
-                                 boost::undirectedS,
-                                 Vertex_property,
-                                 Edge_property> Graph;
+  using Graph = boost::adjacency_list<
+    boost::setS, boost::vecS, boost::undirectedS,
+    Vertex_property, Edge_property>;
 
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex_descriptor;
-  typedef typename boost::graph_traits<Graph>::vertex_iterator Vertex_iterator;
-  typedef typename boost::graph_traits<Graph>::edge_descriptor Edge_descriptor;
-  typedef typename boost::graph_traits<Graph>::edge_iterator Edge_iterator;
-  typedef typename boost::graph_traits<Graph>::out_edge_iterator Incident_edge_iterator;
-  typedef CGAL::Iterator_range<Vertex_iterator> Vertices;
-  typedef CGAL::Iterator_range<Edge_iterator> Edges;
-  typedef CGAL::Iterator_range<Incident_edge_iterator> Incident_edges;
+  using Vertex_descriptor = typename boost::graph_traits<Graph>::vertex_descriptor;
+  using Edge_descriptor   = typename boost::graph_traits<Graph>::edge_descriptor;
 
 private:
-
   Graph m_graph;
   KSR::size_t m_nb_lines;
   std::map<Point_3, Vertex_descriptor> m_map_points;
@@ -158,80 +149,71 @@ public:
 
   const KSR::size_t line(const Edge_descriptor& edge) const { return m_graph[edge].line; }
 
-  std::pair<Edge_descriptor, Edge_descriptor>
-  split_edge (const Edge_descriptor& edge, const Vertex_descriptor& vertex)
-  {
-    Vertex_descriptor source = boost::source (edge, m_graph);
-    Vertex_descriptor target = boost::target (edge, m_graph);
-    Edge_property prop = m_graph[edge];
+  const std::pair<Edge_descriptor, Edge_descriptor>
+  split_edge(const Edge_descriptor& edge, const Vertex_descriptor& vertex) {
 
-    boost::remove_edge (edge, m_graph);
+    const auto source = boost::source(edge, m_graph);
+    const auto target = boost::target(edge, m_graph);
+    const auto prop = m_graph[edge];
+    boost::remove_edge(edge, m_graph);
 
-    bool inserted;
+    bool is_inserted;
     Edge_descriptor sedge;
-    std::tie (sedge, inserted) = boost::add_edge (source, vertex, m_graph);
-
-    if (!inserted)
-    {
-      std::cerr << segment_3 (edge) << " " << point_3 (vertex) << std::endl;
+    std::tie(sedge, is_inserted) = boost::add_edge(source, vertex, m_graph);
+    if (!is_inserted) {
+      std::cerr << segment_3(edge) << " " << point_3(vertex) << std::endl;
     }
-    CGAL_assertion (inserted);
-
+    CGAL_assertion(is_inserted);
     m_graph[sedge] = prop;
 
     Edge_descriptor tedge;
-    std::tie (tedge, inserted) = boost::add_edge (vertex, target, m_graph);
-    if (!inserted)
-    {
-      std::cerr << segment_3 (edge) << " " << point_3 (vertex) << std::endl;
+    std::tie(tedge, is_inserted) = boost::add_edge(vertex, target, m_graph);
+    if (!is_inserted) {
+      std::cerr << segment_3(edge) << " " << point_3(vertex) << std::endl;
     }
-    CGAL_assertion (inserted);
-
+    CGAL_assertion(is_inserted);
     m_graph[tedge] = prop;
 
-    return std::make_pair (sedge, tedge);
+    return std::make_pair(sedge, tedge);
   }
 
-  Vertices vertices() const { return CGAL::make_range(boost::vertices (m_graph)); }
-  Edges edges() const { return CGAL::make_range(boost::edges (m_graph)); }
+  decltype(auto) vertices() const { return CGAL::make_range(boost::vertices(m_graph)); }
+  decltype(auto) edges() const { return CGAL::make_range(boost::edges(m_graph)); }
 
-  Vertex_descriptor source (const Edge_descriptor& edge) const
-  { return boost::source (edge, m_graph); }
-  Vertex_descriptor target (const Edge_descriptor& edge) const
-  { return boost::target (edge, m_graph); }
+  const Vertex_descriptor source(const Edge_descriptor& edge) const { return boost::source(edge, m_graph); }
+  const Vertex_descriptor target(const Edge_descriptor& edge) const { return boost::target(edge, m_graph); }
 
-  bool is_edge (const Vertex_descriptor& source, const Vertex_descriptor& target) const
-  { return boost::edge (source, target, m_graph).second; }
+  const bool is_edge(const Vertex_descriptor& source, const Vertex_descriptor& target) const {
+    return boost::edge(source, target, m_graph).second;
+  }
 
-  Incident_edges incident_edges (const Vertex_descriptor& vertex) const
-  { return CGAL::make_range (boost::out_edges(vertex, m_graph)); }
+  decltype(auto) incident_edges(const Vertex_descriptor& vertex) const {
+    return CGAL::make_range(boost::out_edges(vertex, m_graph));
+  }
 
-  const KSR::Idx_set& intersected_planes (const Edge_descriptor& edge) const
-  { return m_graph[edge].planes; }
-  KSR::Idx_set& intersected_planes (const Edge_descriptor& edge)
-  { return m_graph[edge].planes; }
+  const KSR::Idx_set& intersected_planes(const Edge_descriptor& edge) const { return m_graph[edge].planes; }
+  KSR::Idx_set& intersected_planes(const Edge_descriptor& edge) { return m_graph[edge].planes; }
 
-  const Point_3& point_3 (const Vertex_descriptor& vertex) const
-  {
+  const Point_3& point_3(const Vertex_descriptor& vertex) const {
     return m_graph[vertex].point;
   }
 
-  Segment_3 segment_3 (const Edge_descriptor& edge) const
-  {
-    return Segment_3 (m_graph[boost::source (edge, m_graph)].point,
-                      m_graph[boost::target (edge, m_graph)].point);
+  const Segment_3 segment_3(const Edge_descriptor& edge) const {
+    return Segment_3(
+      m_graph[boost::source(edge, m_graph)].point,
+      m_graph[boost::target(edge, m_graph)].point);
   }
 
-  Line_3 line_3 (const Edge_descriptor& edge) const
-  {
-    return Line_3 (m_graph[source (edge, m_graph)].point,
-                   m_graph[target (edge, m_graph)].point);
+  const Line_3 line_3(const Edge_descriptor& edge) const {
+    return Line_3(
+      m_graph[source(edge, m_graph)].point,
+      m_graph[target(edge, m_graph)].point);
   }
 
-  bool is_active (const Vertex_descriptor& vertex) const { return m_graph[vertex].active; }
-  bool& is_active (const Vertex_descriptor& vertex) { return m_graph[vertex].active; }
-  bool is_active (const Edge_descriptor& edge) const { return m_graph[edge].active; }
-  bool& is_active (const Edge_descriptor& edge) { return m_graph[edge].active; }
+  const bool& is_active(const Vertex_descriptor& vertex) const { return m_graph[vertex].active; }
+  bool& is_active(const Vertex_descriptor& vertex) { return m_graph[vertex].active; }
+  const bool& is_active(const Edge_descriptor& edge) const { return m_graph[edge].active; }
+  bool& is_active(const Edge_descriptor& edge) { return m_graph[edge].active; }
 };
 
 } // namespace KSR_3

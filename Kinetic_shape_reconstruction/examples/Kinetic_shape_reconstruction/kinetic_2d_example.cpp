@@ -1,12 +1,12 @@
 #include <fstream>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/IO/PLY_writer.h>
 #include <CGAL/Kinetic_shape_reconstruction_2.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Random.h>
 #include <CGAL/Aff_transformation_2.h>
+#include <CGAL/IO/PLY_writer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_2 Point_2;

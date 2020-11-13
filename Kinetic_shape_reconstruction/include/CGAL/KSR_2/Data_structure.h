@@ -511,7 +511,7 @@ public:
     Segment& segment = m_segments[segment_idx];
     KSR::size_t input_idx = segment.input_idx();
     KSR::size_t support_line_idx = segment.support_line_idx();
-    KSR::size_t source_idx = segment.source_idx();
+    // KSR::size_t source_idx = segment.source_idx();
     KSR::size_t target_idx = segment.target_idx();
 
     Support_line& support_line = support_line_of_segment(segment_idx);

@@ -148,7 +148,8 @@ public:
     //   sp.plane().d() << std::endl;
     // }
 
-    // exit(EXIT_SUCCESS);
+    // m_data.check_bbox();
+    // std::cout << std::endl << "POLYGON SPLITTER SUCCESS!" << std::endl << std::endl;
 
     if (m_verbose) {
       std::cout << std::endl << "--- RUNNING THE QUEUE:" << std::endl;

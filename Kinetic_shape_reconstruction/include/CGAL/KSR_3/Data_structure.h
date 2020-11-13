@@ -145,10 +145,6 @@ public:
   using IVertex = typename Intersection_graph::Vertex_descriptor;
   using IEdge   = typename Intersection_graph::Edge_descriptor;
 
-  using IVertices       = typename Intersection_graph::Vertices;
-  using IEdges          = typename Intersection_graph::Edges;
-  using Incident_iedges = typename Intersection_graph::Incident_edges;
-
   struct Volume_cell {
     std::vector<PFace> pfaces;
     std::vector<int> neighbors;
@@ -688,8 +684,8 @@ public:
   static IVertex null_ivertex() { return Intersection_graph::null_ivertex(); }
   static IEdge null_iedge() { return Intersection_graph::null_iedge(); }
 
-  const IVertices ivertices() const { return m_intersection_graph.vertices(); }
-  const IEdges iedges() const { return m_intersection_graph.edges(); }
+  decltype(auto) ivertices() const { return m_intersection_graph.vertices(); }
+  decltype(auto) iedges() const { return m_intersection_graph.edges(); }
 
   const KSR::size_t nb_intersection_lines() const { return m_intersection_graph.nb_lines(); }
   const KSR::size_t line_idx(const IEdge& iedge) const { return m_intersection_graph.line(iedge); }
@@ -748,7 +744,7 @@ public:
     return out;
   }
 
-  const Incident_iedges incident_iedges(const IVertex& ivertex) const {
+  decltype(auto) incident_iedges(const IVertex& ivertex) const {
     return m_intersection_graph.incident_edges(ivertex);
   }
 
@@ -1447,7 +1443,7 @@ public:
     }
     // std::cout << std::endl;
 
-    Incident_iedges i_iedges = incident_iedges (ivertex);
+    auto i_iedges = incident_iedges(ivertex);
     std::vector<std::pair<IEdge, Direction_2> > iedges;
     std::copy (i_iedges.begin(), i_iedges.end(),
                boost::make_function_output_iterator
@@ -2126,13 +2122,23 @@ public:
     }
   }
 
-  void create_polyhedrons() {
+  void check_bbox() {
 
-    std::cout.precision(20);
-    // for (std::size_t i = 0; i < number_of_support_planes(); ++i)
-    //   std::cout << "num faces sp " << i << ": " << pfaces(i).size() << std::endl;
+    for (KSR::size_t i = 0; i < 6; ++i) {
+      const auto pfaces = this->pfaces(i);
+      for (const auto pface : pfaces) {
+        for (const auto pedge : pedges_of_pface(pface)) {
+          CGAL_assertion_msg(has_iedge(pedge), "ERROR: BBOX EDGE IS MISSING AN IEDGE!");
+        }
+        for (const auto pvertex : pvertices_of_pface(pface)) {
+          CGAL_assertion_msg(has_ivertex(pvertex), "ERROR: BBOX VERTEX IS MISSING AN IVERTEX!");
+        }
+      }
+    }
+  }
 
-    // Check vertices.
+  void check_vertices() {
+
     for (const auto vertex : m_intersection_graph.vertices()) {
       const auto nedges = m_intersection_graph.incident_edges(vertex);
       if (nedges.size() <= 2)
@@ -2140,8 +2146,10 @@ public:
       CGAL_assertion_msg(nedges.size() > 2,
       "ERROR: VERTEX MUST HAVE AT LEAST 3 NEIGHBORS!");
     }
+  }
 
-    // Check edges.
+  void check_edges() {
+
     std::vector<PFace> nfaces;
     for (const auto edge : m_intersection_graph.edges()) {
       incident_faces(edge, nfaces);
@@ -2152,9 +2160,10 @@ public:
       CGAL_assertion_msg(nfaces.size() != 1,
       "ERROR: EDGE MUST HAVE 0 OR AT LEAST 2 NEIGHBORS!");
     }
+  }
 
-    // Check faces.
-    create_volumes();
+  void check_faces() {
+
     for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
       const auto pfaces = this->pfaces(i);
       for (const auto pface : pfaces) {
@@ -2165,6 +2174,19 @@ public:
         "ERROR: FACE MUST HAVE 1 OR 2 NEIGHBORS!");
       }
     }
+  }
+
+  void create_polyhedrons() {
+
+    std::cout.precision(20);
+    // for (std::size_t i = 0; i < number_of_support_planes(); ++i)
+    //   std::cout << "num faces sp " << i << ": " << pfaces(i).size() << std::endl;
+
+    check_bbox();
+    check_vertices();
+    check_edges();
+    create_volumes();
+    check_faces();
   }
 
   void create_volumes() {
