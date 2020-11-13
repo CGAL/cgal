@@ -28,7 +28,6 @@
 
 // Internal includes.
 #include <CGAL/KSR/utils.h>
-#include <CGAL/KSR/verbosity.h>
 #include <CGAL/KSR/debug.h>
 
 #include <CGAL/KSR_3/Support_plane.h>
@@ -282,7 +281,7 @@ public:
       std::vector< std::pair<IEdge, Point_3> > intersections;
 
       for (const IEdge iedge : m_intersection_graph.edges()) {
-        if (!KSR::intersection_3(
+        if (!KSR::intersection(
           support_plane(support_plane_idx).plane(), segment_3(iedge), point)) {
           continue;
         }
@@ -698,58 +697,57 @@ public:
   }
 
   /*******************************
-   * ISimplices
-   *******************************/
+  **          ISimplices        **
+  ********************************/
 
   static IVertex null_ivertex() { return Intersection_graph::null_ivertex(); }
   static IEdge null_iedge() { return Intersection_graph::null_iedge(); }
 
-  IVertices ivertices() const { return m_intersection_graph.vertices(); }
-  IEdges iedges() const { return m_intersection_graph.edges(); }
+  const IVertices ivertices() const { return m_intersection_graph.vertices(); }
+  const IEdges iedges() const { return m_intersection_graph.edges(); }
 
-  KSR::size_t nb_intersection_lines() const { return m_intersection_graph.nb_lines(); }
-  KSR::size_t line_idx (const IEdge& iedge) const { return m_intersection_graph.line (iedge); }
-  KSR::size_t line_idx (const PVertex& pvertex) const { return line_idx (iedge(pvertex)); }
+  const KSR::size_t nb_intersection_lines() const { return m_intersection_graph.nb_lines(); }
+  const KSR::size_t line_idx(const IEdge& iedge) const { return m_intersection_graph.line(iedge); }
+  const KSR::size_t line_idx(const PVertex& pvertex) const { return line_idx(iedge(pvertex)); }
 
-  IVertex add_ivertex (const Point_3& point, const KSR::Idx_set& support_planes_idx)
-  {
+  const IVertex add_ivertex(const Point_3& point, const KSR::Idx_set& support_planes_idx) {
+
     KSR::Idx_vector vec_planes;
-    std::copy (support_planes_idx.begin(), support_planes_idx.end(),
-               std::back_inserter (vec_planes));
-
-    IVertex vertex;
-    bool inserted;
-    std::tie (vertex, inserted) = m_intersection_graph.add_vertex (point, vec_planes);
-    return vertex;
+    std::copy(
+      support_planes_idx.begin(),
+      support_planes_idx.end(),
+      std::back_inserter(vec_planes));
+    const auto pair = m_intersection_graph.add_vertex(point, vec_planes);
+    const auto ivertex = pair.first;
+    return ivertex;
   }
 
-  void add_iedge (const KSR::Idx_set& support_planes_idx,
-                  KSR::vector<IVertex>& vertices)
-  {
-    Point_3 source = m_intersection_graph.point_3 (vertices.front());
+  void add_iedge(const KSR::Idx_set& support_planes_idx, KSR::vector<IVertex>& vertices) {
 
-    std::sort (vertices.begin(), vertices.end(),
-               [&](const IVertex& a, const IVertex& b) -> bool
-               {
-                 return (CGAL::squared_distance (source, m_intersection_graph.point_3(a))
-                         < CGAL::squared_distance (source, m_intersection_graph.point_3(b)));
-               });
+    const auto source = m_intersection_graph.point_3(vertices.front());
+    std::sort(vertices.begin(), vertices.end(),
+      [&](const IVertex& a, const IVertex& b) -> bool {
+        const auto ap = m_intersection_graph.point_3(a);
+        const auto bp = m_intersection_graph.point_3(b);
+        const auto sq_dist_a = CGAL::squared_distance(source, ap);
+        const auto sq_dist_b = CGAL::squared_distance(source, bp);
+        return (sq_dist_a < sq_dist_b);
+      }
+    );
 
     KSR::size_t line_idx = m_intersection_graph.add_line();
+    for (KSR::size_t i = 0; i < vertices.size() - 1; ++i) {
 
-    for (KSR::size_t i = 0; i < vertices.size() - 1; ++ i)
-    {
-      IEdge iedge;
-      bool inserted;
-      std::tie (iedge, inserted)
-        = m_intersection_graph.add_edge (vertices[i],
-                                         vertices[i+1],
-                                         support_planes_idx);
-      CGAL_assertion (inserted);
-      m_intersection_graph.set_line (iedge, line_idx);
+      const auto pair = m_intersection_graph.add_edge(
+        vertices[i], vertices[i + 1], support_planes_idx);
+      const auto iedge = pair.first;
+      const auto is_inserted = pair.second;
+      CGAL_assertion(is_inserted);
+      m_intersection_graph.set_line(iedge, line_idx);
 
-      for (KSR::size_t support_plane_idx : support_planes_idx)
-        support_plane(support_plane_idx).iedges().insert (iedge);
+      for (const auto support_plane_idx : support_planes_idx) {
+        support_plane(support_plane_idx).iedges().insert(iedge);
+      }
     }
   }
 
@@ -1276,7 +1274,7 @@ public:
       Line_2 future_line (point_2 (pother, m_current_time + 1),
                           point_2 (pthird, m_current_time + 1));
 
-      Point_2 future_point = KSR::intersection_2<Point_2> (future_line, iedge_line);
+      Point_2 future_point = KSR::intersection<Point_2>(future_line, iedge_line);
 
       direction(pvertex) = Vector_2 (pinit, future_point);
       support_plane(pvertex).set_point (pvertex.second,
@@ -1328,7 +1326,7 @@ public:
       Line_2 future_line (point_2 (pvertex, m_current_time + 1),
                           point_2 (pthird, m_current_time + 1));
 
-      Point_2 future_point = KSR::intersection_2<Point_2> (future_line, iedge_line);
+      Point_2 future_point = KSR::intersection<Point_2>(future_line, iedge_line);
 
       direction(pother) = Vector_2 (pinit, future_point);
       support_plane(pother).set_point (pother.second,
@@ -2532,7 +2530,7 @@ private:
     } else {
 
       std::cout << "prev intersected lines" << std::endl;
-      const bool a_found = KSR::intersection_2(future_line_prev, iedge_line, future_point_a);
+      const bool a_found = KSR::intersection(future_line_prev, iedge_line, future_point_a);
       if (!a_found)
       {
         std::cerr << "Warning: a not found" << std::endl;
@@ -2559,7 +2557,7 @@ private:
     } else {
 
       std::cout << "next intersected lines" << std::endl;
-      const bool b_found = KSR::intersection_2(future_line_next, iedge_line, future_point_b);
+      const bool b_found = KSR::intersection(future_line_next, iedge_line, future_point_b);
       if (!b_found)
       {
         std::cerr << "Warning: b not found" << std::endl;
@@ -2635,7 +2633,7 @@ private:
 
     } else {
       std::cout << "back/front intersected lines" << std::endl;
-      future_point = KSR::intersection_2<Point_2>(future_line_next, iedge_line);
+      future_point = KSR::intersection<Point_2>(future_line_next, iedge_line);
     }
 
     direction = Vector_2(pinit, future_point);
@@ -2691,7 +2689,7 @@ private:
 
     } else {
       std::cout << "open intersected lines" << std::endl;
-      future_point = KSR::intersection_2<Point_2>(future_line_next, iedge_line);
+      future_point = KSR::intersection<Point_2>(future_line_next, iedge_line);
     }
 
     direction = Vector_2(pinit, future_point);
@@ -2736,7 +2734,7 @@ private:
     }
 
     Point_2 point;
-    if (!KSR::intersection_2(pv_seg, iedge_seg, point)) {
+    if (!KSR::intersection(pv_seg, iedge_seg, point)) {
       std::cout << "no intersection case" << std::endl;
       return false;
     }

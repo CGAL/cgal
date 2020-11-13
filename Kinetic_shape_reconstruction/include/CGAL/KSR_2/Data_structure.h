@@ -26,7 +26,6 @@
 #include <boost/function_output_iterator.hpp>
 
 #include <CGAL/KSR/utils.h>
-#include <CGAL/KSR/verbosity.h>
 #include <CGAL/KSR_2/Support_line.h>
 #include <CGAL/KSR_2/Segment.h>
 #include <CGAL/KSR_2/Vertex.h>
@@ -404,7 +403,7 @@ public:
         for (KSR::size_t i = 0; i < 4; ++ i)
         {
           Point_2 point;
-          if (!KSR::intersection_2 (m_support_lines[i].line(), m_support_lines.back().line(), point))
+          if (!KSR::intersection(m_support_lines[i].line(), m_support_lines.back().line(), point))
             continue;
 
           FT position = m_support_lines.back().to_1d (point);

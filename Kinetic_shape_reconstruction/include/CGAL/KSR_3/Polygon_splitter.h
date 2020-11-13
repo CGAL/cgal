@@ -1,4 +1,4 @@
-// Copyright (c) 2019 GeometryFactory Sarl (France).
+// Copyright (c) 2019 GeometryFactory SARL (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -104,8 +104,9 @@ public:
 
   Polygon_splitter (Data& data) : m_data (data) { }
 
-  void split_support_plane (KSR::size_t support_plane_idx, unsigned int k)
+  void split_support_plane (KSR::size_t support_plane_idx)
   {
+    const unsigned int k = 0;
     // First, insert polygons.
     for (PVertex pvertex : m_data.pvertices(support_plane_idx))
     {
@@ -445,7 +446,7 @@ public:
 
       Line_2 intersection_line = m_data.segment_2 (support_plane_idx, iedge).supporting_line();
 
-      Point_2 inter = KSR::intersection_2<Point_2> (intersection_line, future_line);
+      Point_2 inter = KSR::intersection<Point_2> (intersection_line, future_line);
 
       m_data.direction(pvertex) = Vector_2 (m_data.point_2(pvertex, 0), inter);
     }

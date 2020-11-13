@@ -59,7 +59,8 @@ private:
   using Event       = KSR_3::Event<Data>;
   using Event_queue = KSR_3::Event_queue<Data>;
 
-  using Bbox_3 = CGAL::Bbox_3;
+  using Bbox_3           = CGAL::Bbox_3;
+  using Polygon_splitter = KSR_3::Polygon_splitter<Kernel>;
 
 private:
   Data m_data;
@@ -450,89 +451,83 @@ private:
     return true;
   }
 
-  void make_polygons_intersection_free ()
-  {
-    // TODO: FIX IT AND MAKE IT WORK FOR ANY NUMBER OF SUPPORT PLANES!
-    // std::cout << "num support planes: " << m_data.number_of_support_planes() << std::endl;
-    if (m_data.number_of_support_planes() < 8) {
-      return;
-    }
+  void make_polygons_intersection_free() {
 
-    const unsigned int k = 0;
+    // First, create all transverse intersection lines.
+    using Map_p2vv = std::map<KSR::Idx_set, std::pair<IVertex, IVertex> >;
+    Map_p2vv map_p2vv;
 
-    // First, generate all transverse intersection lines
-    typedef std::map<KSR::Idx_set, std::pair<IVertex, IVertex> > Map;
-    Map map_p2vv;
-
-    for (const IVertex ivertex : m_data.ivertices())
-    {
-      KSR::Idx_set key = m_data.intersected_planes (ivertex, false);
-      if (key.size() < 2)
+    for (const auto ivertex : m_data.ivertices()) {
+      const auto key = m_data.intersected_planes(ivertex, false);
+      if (key.size() < 2) {
         continue;
+      }
 
-      typename Map::iterator iter;
-      bool inserted;
-      std::tie (iter, inserted) = map_p2vv.insert (std::make_pair (key,
-                                                                   std::make_pair (ivertex,
-                                                                                   IVertex())));
-      if (!inserted)
-        iter->second.second = ivertex;
+      const auto pair = map_p2vv.insert(std::make_pair(
+        key, std::make_pair(ivertex, IVertex())));
+      const bool is_inserted = pair.second;
+      if (!is_inserted) {
+        pair.first->second.second = ivertex;
+      }
     }
 
+    // Then, intersect these lines to find internal intersection vertices.
+    using Pair_pv = std::pair< KSR::Idx_set, KSR::vector<IVertex> >;
+    KSR::vector<Pair_pv> todo;
+    for (auto it_a = map_p2vv.begin(); it_a != map_p2vv.end(); ++it_a) {
+      const auto& set_a = it_a->first;
 
-    // Then, intersect these lines to find internal intersection vertices
-    KSR::vector<std::pair<KSR::Idx_set, KSR::vector<IVertex> > > todo;
-    for (typename Map::iterator it_a = map_p2vv.begin(); it_a != map_p2vv.end(); ++ it_a)
-    {
-      const KSR::Idx_set& set_a = it_a->first;
-
-      todo.push_back (std::make_pair (set_a, KSR::vector<IVertex>()));
-
-      KSR::vector<IVertex>& crossed_vertices = todo.back().second;
-      crossed_vertices.push_back (it_a->second.first);
+      todo.push_back(std::make_pair(set_a, KSR::vector<IVertex>()));
+      auto& crossed_vertices = todo.back().second;
+      crossed_vertices.push_back(it_a->second.first);
 
       std::set<KSR::Idx_set> done;
+      for (auto it_b = map_p2vv.begin(); it_b != map_p2vv.end(); ++it_b) {
+        const auto& set_b = it_b->first;
 
-      for (typename Map::iterator it_b = map_p2vv.begin() ; it_b != map_p2vv.end(); ++ it_b)
-      {
-        const KSR::Idx_set& set_b = it_b->first;
         KSR::size_t common_plane_idx = KSR::no_element();
-        std::set_intersection (set_a.begin(), set_a.end(), set_b.begin(), set_b.end(),
-                               boost::make_function_output_iterator
-                               ([&](const KSR::size_t& idx) -> void { common_plane_idx = idx; }));
+        std::set_intersection(
+          set_a.begin(), set_a.end(), set_b.begin(), set_b.end(),
+          boost::make_function_output_iterator(
+            [&](const KSR::size_t idx) -> void {
+              common_plane_idx = idx;
+            }
+          )
+        );
 
-        if (common_plane_idx != KSR::no_element())
-        {
-          KSR::Idx_set union_set = set_a;
-          union_set.insert (set_b.begin(), set_b.end());
-          if (!done.insert (union_set).second)
+        if (common_plane_idx != KSR::no_element()) {
+          auto union_set = set_a;
+          union_set.insert(set_b.begin(), set_b.end());
+          if (!done.insert(union_set).second) {
             continue;
+          }
 
           Point_2 inter;
-          if (!KSR::intersection_2 (m_data.to_2d(common_plane_idx,
-                                                 Segment_3 (m_data.point_3 (it_a->second.first),
-                                                            m_data.point_3 (it_a->second.second))),
-                                    m_data.to_2d(common_plane_idx,
-                                                 (Segment_3 (m_data.point_3 (it_b->second.first),
-                                                             m_data.point_3 (it_b->second.second)))),
-                                    inter))
-            continue;
+          if (!KSR::intersection(
+            m_data.to_2d(common_plane_idx,
+              Segment_3(m_data.point_3(it_a->second.first), m_data.point_3(it_a->second.second))),
+            m_data.to_2d(common_plane_idx,
+              Segment_3(m_data.point_3(it_b->second.first), m_data.point_3(it_b->second.second))),
+            inter)) {
 
-          crossed_vertices.push_back (m_data.add_ivertex
-                                      (m_data.to_3d (common_plane_idx, inter), union_set));
+            continue;
+          }
+
+          crossed_vertices.push_back(
+            m_data.add_ivertex(m_data.to_3d(common_plane_idx, inter), union_set));
         }
       }
-      crossed_vertices.push_back (it_a->second.second);
+      crossed_vertices.push_back(it_a->second.second);
     }
 
-    for (auto& t : todo)
-      m_data.add_iedge (t.first, t.second);
+    for (auto& t : todo) {
+      m_data.add_iedge(t.first, t.second);
+    }
 
-    // Refine polygons
-    for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++ i)
-    {
-      KSR_3::Polygon_splitter<GeomTraits> splitter (m_data);
-      splitter.split_support_plane (i, k);
+    // Refine polygons.
+    for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
+      Polygon_splitter splitter(m_data);
+      splitter.split_support_plane(i);
     }
   }
 
@@ -633,7 +628,7 @@ private:
           continue;
 
         Point_2 point;
-        if (!KSR::intersection_2 (sv, so, point))
+        if (!KSR::intersection(sv, so, point))
           continue;
 
         FT dist = CGAL::approximate_sqrt (CGAL::squared_distance (sv.source(), point));
@@ -686,7 +681,7 @@ private:
           continue;
 
         Point_2 point;
-        if (!KSR::intersection_2 (sv, segments_2[j], point))
+        if (!KSR::intersection (sv, segments_2[j], point))
           continue;
 
         FT dist = CGAL::approximate_sqrt (CGAL::squared_distance (m_data.point_2 (pvertex, m_min_time), point));

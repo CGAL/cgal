@@ -643,7 +643,7 @@ private:
                          != m_data.segment(segment_idx_b).support_line_idx());
 
          Point_2 point;
-         if (!KSR::intersection_2 (segments_2[segment_idx_a], segments_2[segment_idx_b], point))
+         if (!KSR::intersection(segments_2[segment_idx_a], segments_2[segment_idx_b], point))
            return;
 
          todo.push_back (std::make_tuple (point,
@@ -742,7 +742,7 @@ private:
             continue;
 
           Point_2 point;
-          if (!KSR::intersection_2 (si, segments_2[segment_idx], point))
+          if (!KSR::intersection(si, segments_2[segment_idx], point))
             continue;
 
           Support_line& sli = m_data.support_line_of_vertex(vertex);
@@ -880,8 +880,7 @@ private:
       }
     }
 
-    if (CGAL_KSR_VERBOSE_LEVEL > 3)
-      m_queue.print();
+    m_queue.print();
 
     return still_running;
   }

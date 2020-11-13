@@ -44,146 +44,74 @@
 #define CGAL_KSR_SAME_VECTOR_TOLERANCE 0.99999
 #define CGAL_KSR_SAME_POINT_TOLERANCE 1e-10
 
-#define CGAL_KSR_ASSERT_POINTS_ALMOST_EQUAL(a,b) \
-  CGAL_assertion_msg (CGAL::approximate_sqrt(CGAL::squared_distance((a), (b))) < 1e-15, \
-                      std::string("Points " + CGAL::KSR::to_string(a) + " and " \
-                      + CGAL::KSR::to_string(b) + " should be almost equal").c_str())
-
 namespace CGAL {
 namespace KSR {
 
 // Size type.
 #ifdef CGAL_KSR_USE_STD_SIZE_T_AS_SIZE_TYPE
-typedef std::size_t size_t;
+using size_t = std::size_t;
 using std::vector;
 #else
 
-typedef boost::uint32_t size_t;
-
-template <typename ValueType>
+using size_t = boost::uint32_t;
+template<typename ValueType>
 class vector {
 
 public:
-  typedef ValueType value_type;
-  typedef std::vector<ValueType> Base;
-  typedef typename Base::const_iterator const_iterator;
-  typedef typename Base::iterator iterator;
+  using value_type     = ValueType;
+  using Base           = std::vector<ValueType>;
+  using const_iterator = typename Base::const_iterator;
+  using iterator       = typename Base::iterator;
 
 private:
   std::vector<ValueType> m_data;
 
 public:
-  vector (KSR::size_t size = 0)
-    : m_data (size) { }
-  vector (KSR::size_t size, const ValueType& def)
-    : m_data (size, def) { }
+  vector(const KSR::size_t size = 0) :
+  m_data(size)
+  { }
+  vector(const KSR::size_t size, const ValueType& value) :
+  m_data(size, value)
+  { }
 
   const_iterator begin() const { return m_data.begin(); }
   const_iterator end() const { return m_data.end(); }
   iterator begin() { return m_data.begin(); }
   iterator end() { return m_data.end(); }
 
-  KSR::size_t size() const { return static_cast<KSR::size_t>(m_data.size()); }
-  bool empty() const { return m_data.empty(); }
+  const KSR::size_t size() const { return static_cast<KSR::size_t>(m_data.size()); }
+  const bool empty() const { return m_data.empty(); }
   void clear() { m_data.clear(); }
 
-  void reserve (const KSR::size_t& size) { m_data.reserve(std::size_t(size)); }
-  void resize (const KSR::size_t& size) { m_data.resize(std::size_t(size)); }
+  void reserve(const KSR::size_t size) { m_data.reserve(std::size_t(size)); }
+  void resize(const KSR::size_t size) { m_data.resize(std::size_t(size)); }
 
-  const ValueType& operator[] (const KSR::size_t& idx) const { return m_data[std::size_t(idx)]; }
-  ValueType& operator[] (const KSR::size_t& idx) { return m_data[std::size_t(idx)]; }
+  const ValueType& operator[](const KSR::size_t idx) const { return m_data[std::size_t(idx)]; }
+  ValueType& operator[](const KSR::size_t idx) { return m_data[std::size_t(idx)]; }
 
-  void erase (iterator it) { m_data.erase (it); }
-  void insert (iterator it, const ValueType& v) { m_data.insert (it, v); }
+  void erase(const iterator it) { m_data.erase(it); }
+  void insert(const iterator it, const ValueType& value) { m_data.insert(it, value); }
 
   const ValueType& front() const { return m_data.front(); }
   ValueType& front() { return m_data.front(); }
   const ValueType& back() const { return m_data.back(); }
   ValueType& back() { return m_data.back(); }
 
-  void push_back (const ValueType& v) { m_data.push_back (v); }
-  void swap (vector& other) { m_data.swap (other.m_data); }
+  void push_back(const ValueType& value) { m_data.push_back(value); }
+  void swap(vector& other) { m_data.swap(other.m_data); }
 
-  bool operator< (const vector& other) const {
+  const bool operator<(const vector& other) const {
     return (this->m_data < other.m_data);
   }
 };
 
 #endif
 
-typedef vector<KSR::size_t> Idx_vector;
-typedef typename Idx_vector::iterator Idx_iterator;
+using Idx_vector = vector<KSR::size_t>;
+using Idx_vector_iterator = typename Idx_vector::iterator;
 
-typedef std::set<KSR::size_t> Idx_set;
-typedef typename Idx_set::iterator Idx_set_iterator;
-
-using std::set;
-using std::array;
-using std::queue;
-using std::map;
-
-template <typename Type1, typename Type2, typename ResultType>
-inline bool intersection_2 (const Type1& t1, const Type2& t2, ResultType& result) {
-
-  typedef typename Kernel_traits<Type1>::Kernel::Intersect_2 Intersect_2;
-  typename cpp11::result_of<Intersect_2(Type1, Type2)>::type
-    inter = intersection (t1, t2);
-  if (!inter)
-    return false;
-
-  if (const ResultType* typed_inter = boost::get<ResultType>(&*inter)) {
-    result = *typed_inter;
-    return true;
-  }
-  return false;
-}
-
-template <typename ResultType, typename Type1, typename Type2>
-inline ResultType intersection_2 (const Type1& t1, const Type2& t2) {
-
-  ResultType out;
-  bool intersection_found = intersection_2 (t1, t2, out);
-  CGAL_assertion_msg (intersection_found, "ERROR: Intersection not found!");
-  return out;
-}
-
-template <typename ResultType, typename Type1, typename Type2>
-inline ResultType intersection_3 (const Type1& t1, const Type2& t2) {
-
-  ResultType out;
-  bool intersection_found = intersection_3 (t1, t2, out);
-  CGAL_assertion_msg (intersection_found, "ERROR: Intersection not found!");
-  return out;
-}
-
-template <typename Point_3>
-bool do_intersect (const vector<Point_3>& a, const vector<Point_3>& b) {
-
-  typedef typename Kernel_traits<Point_3>::Kernel::Triangle_3 Triangle_3;
-  for (KSR::size_t i = 1; i < a.size() - 1; ++ i) {
-    Triangle_3 ta (a[0], a[i], a[i+1]);
-    for (KSR::size_t j = 1; j < b.size() - 1; ++ j) {
-      Triangle_3 tb (b[0], b[j], b[j+1]);
-      if (CGAL::do_intersect (ta, tb))
-        return true;
-    }
-  }
-  return false;
-}
-
-template <typename Line_3, typename Point_3>
-inline bool intersection_3 (const Line_3& seg, const vector<Point_3>& polygon, Point_3& result) {
-
-  typedef typename Kernel_traits<Point_3>::Kernel::Triangle_3 Triangle_3;
-  for (KSR::size_t i = 1; i < polygon.size() - 1; ++ i) {
-    Triangle_3 triangle (polygon[0], polygon[i], polygon[i+1]);
-    if (intersection_3 (seg, triangle, result))
-      return true;
-  }
-  return false;
-}
-
-// CLEAN!
+using Idx_set = std::set<KSR::size_t>;
+using Idx_set_iterator = typename Idx_set::iterator;
 
 // Use -1 as no element identifier.
 inline const KSR::size_t no_element() { return KSR::size_t(-1); }
@@ -192,7 +120,7 @@ inline const KSR::size_t no_element() { return KSR::size_t(-1); }
 inline const KSR::size_t uninitialized() { return KSR::size_t(-2); }
 
 template<typename Point_d>
-std::string to_string(const Point_d& p) {
+const std::string to_string(const Point_d& p) {
   std::ostringstream oss;
   oss.precision(20);
   oss << p;
@@ -223,7 +151,7 @@ static FT vector_tolerance() {
 }
 
 template<typename Vector_d>
-inline Vector_d normalize(const Vector_d& v) {
+inline const Vector_d normalize(const Vector_d& v) {
   using Traits = typename Kernel_traits<Vector_d>::Kernel;
   using FT = typename Traits::FT;
   const FT dot_prod = CGAL::abs(v * v);
@@ -231,7 +159,7 @@ inline Vector_d normalize(const Vector_d& v) {
 }
 
 template<typename Type1, typename Type2, typename ResultType>
-inline bool intersection_3(
+inline const bool intersection(
   const Type1& t1, const Type2& t2, ResultType& result) {
 
   const auto inter = intersection(t1, t2);
@@ -241,6 +169,15 @@ inline bool intersection_3(
     return true;
   }
   return false;
+}
+
+template<typename ResultType, typename Type1, typename Type2>
+inline const ResultType intersection(const Type1& t1, const Type2& t2) {
+
+  ResultType out;
+  const bool is_intersection_found = intersection(t1, t2, out);
+  CGAL_assertion_msg(is_intersection_found, "ERROR: intersection is not found!");
+  return out;
 }
 
 } // namespace KSR

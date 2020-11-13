@@ -1,6 +1,5 @@
 #include <fstream>
 
-#define CGAL_KSR_VERBOSE_LEVEL 4
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/PLY_writer.h>
 #include <CGAL/Kinetic_shape_reconstruction_2.h>
@@ -38,7 +37,7 @@ void add_regular_case (std::vector<Segment_2>& segments, CGAL::Random& rand)
   Transform scale (CGAL::Scaling(), rand.get_double(0.1, 10));
   Transform translate (CGAL::Translation(), Vector_2 (rand.get_double(-5, 5),
                                                       rand.get_double(-5, 5)));
-  
+
   Transform transform = scale * rotate * translate;
 
   for (std::size_t i = size_before; i < segments.size(); ++ i)
@@ -65,7 +64,7 @@ int main (int argc, char** argv)
 #ifdef REGULAR_CASE
   add_regular_case (segments, rand);
 #else
-  
+
   for (unsigned int i = 0; i < nb_lines; ++ i)
   {
     Point_2 source (rand.get_double(0, 5), rand.get_double(0, 5));
@@ -74,7 +73,7 @@ int main (int argc, char** argv)
     segments.push_back (Segment_2(source, target));
   }
 #endif
-  
+
   std::ofstream input_file ("input.polylines.txt");
   for (const Segment_2& s : segments)
     input_file << "2 " << s.source() << " 0 " << s.target() << " 0" << std::endl;
@@ -108,7 +107,7 @@ int main (int argc, char** argv)
   if (reconstruction.output_partition_cells_to_face_graph(mesh))
   {
     std::cerr << mesh.number_of_vertices() << " vertices and " << mesh.number_of_faces() << " faces" << std::endl;
-    
+
     std::ofstream output_shapes_file ("out.ply");
     output_shapes_file << "ply" << std::endl
                        << "format ascii 1.0" << std::endl
@@ -136,6 +135,6 @@ int main (int argc, char** argv)
   }
   else
     std::cerr << "Invalid face graph" << std::endl;
-  
+
   return EXIT_SUCCESS;
 }

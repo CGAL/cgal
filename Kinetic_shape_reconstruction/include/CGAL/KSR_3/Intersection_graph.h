@@ -1,4 +1,4 @@
-// Copyright (c) 2019 GeometryFactory Sarl (France).
+// Copyright (c) 2019 GeometryFactory SARL (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -89,76 +89,75 @@ private:
   std::map<KSR::Idx_vector, Vertex_descriptor> m_map_vertices;
 
 public:
+  Intersection_graph() :
+  m_nb_lines(0)
+  { }
 
-  Intersection_graph() : m_nb_lines(0) { }
-
-  static Vertex_descriptor null_ivertex()
-  { return boost::graph_traits<Graph>::null_vertex(); }
-
-  static Edge_descriptor null_iedge()
-  { return Edge_descriptor(null_ivertex(), null_ivertex(), nullptr); }
-
-  std::pair<Vertex_descriptor, bool> add_vertex (const Point_3& point)
-  {
-    typename std::map<Point_3, Vertex_descriptor>::iterator iter;
-    bool inserted;
-    std::tie (iter, inserted) = m_map_points.insert (std::make_pair (point, Vertex_descriptor()));
-    if (inserted)
-    {
-      iter->second = boost::add_vertex(m_graph);
-      m_graph[iter->second].point = point;
-    }
-
-    return std::make_pair (iter->second, inserted);
+  static Vertex_descriptor null_ivertex() {
+    return boost::graph_traits<Graph>::null_vertex();
   }
 
-  std::pair<Vertex_descriptor, bool> add_vertex (const Point_3& point,
-                                                 const KSR::Idx_vector& intersected_planes)
-  {
-    typename std::map<KSR::Idx_vector, Vertex_descriptor>::iterator iter;
-    bool inserted;
-    std::tie (iter, inserted) = m_map_vertices.insert (std::make_pair (intersected_planes, Vertex_descriptor()));
-    if (inserted)
-    {
-      iter->second = boost::add_vertex(m_graph);
-      m_graph[iter->second].point = point;
-    }
-
-    return std::make_pair (iter->second, inserted);
+  static Edge_descriptor null_iedge() {
+    return Edge_descriptor(null_ivertex(), null_ivertex(), nullptr);
   }
 
-  KSR::size_t add_line() { return (m_nb_lines ++); }
-  KSR::size_t nb_lines() const { return m_nb_lines; }
+  const KSR::size_t add_line() { return ( m_nb_lines++ ); }
+  const KSR::size_t nb_lines() const { return m_nb_lines; }
 
-  std::pair<Edge_descriptor, bool> add_edge (const Vertex_descriptor& source, const Vertex_descriptor& target,
-                                             KSR::size_t support_plane_idx)
-  {
-    std::pair<Edge_descriptor, bool> out = boost::add_edge (source, target, m_graph);
-    m_graph[out.first].planes.insert (support_plane_idx);
+  const std::pair<Vertex_descriptor, bool> add_vertex(const Point_3& point) {
+
+    const auto pair = m_map_points.insert(std::make_pair(point, Vertex_descriptor()));
+    const auto is_inserted = pair.second;
+    if (is_inserted) {
+      pair.first->second = boost::add_vertex(m_graph);
+      m_graph[pair.first->second].point = point;
+    }
+    return std::make_pair(pair.first->second, is_inserted);
+  }
+
+  const std::pair<Vertex_descriptor, bool> add_vertex(
+    const Point_3& point, const KSR::Idx_vector& intersected_planes) {
+
+    const auto pair = m_map_vertices.insert(std::make_pair(intersected_planes, Vertex_descriptor()));
+    const auto is_inserted = pair.second;
+    if (is_inserted) {
+      pair.first->second = boost::add_vertex(m_graph);
+      m_graph[pair.first->second].point = point;
+    }
+    return std::make_pair(pair.first->second, is_inserted);
+  }
+
+  const std::pair<Edge_descriptor, bool> add_edge(
+    const Vertex_descriptor& source, const Vertex_descriptor& target,
+    const KSR::size_t support_plane_idx) {
+
+    const auto out = boost::add_edge(source, target, m_graph);
+    m_graph[out.first].planes.insert(support_plane_idx);
     return out;
   }
 
-  template <typename IndexContainer>
-  std::pair<Edge_descriptor, bool> add_edge (const Vertex_descriptor& source, const Vertex_descriptor& target,
-                                             const IndexContainer& support_planes_idx)
-  {
-    std::pair<Edge_descriptor, bool> out = boost::add_edge (source, target, m_graph);
-    for (KSR::size_t support_plane_idx : support_planes_idx)
-      m_graph[out.first].planes.insert (support_plane_idx);
+  template<typename IndexContainer>
+  const std::pair<Edge_descriptor, bool> add_edge(
+    const Vertex_descriptor& source, const Vertex_descriptor& target,
+    const IndexContainer& support_planes_idx) {
+
+    const auto out = boost::add_edge(source, target, m_graph);
+    for (const auto support_plane_idx : support_planes_idx) {
+      m_graph[out.first].planes.insert(support_plane_idx);
+    }
     return out;
   }
 
-  std::pair<Edge_descriptor, bool> add_edge (const Point_3& source, const Point_3& target)
-  {
-    return add_edge (add_vertex (source).first, add_vertex (target).first);
+  const std::pair<Edge_descriptor, bool> add_edge(
+    const Point_3& source, const Point_3& target) {
+    return add_edge(add_vertex(source).first, add_vertex(target).first);
   }
 
-  void set_line (const Edge_descriptor& edge, KSR::size_t line_idx)
-  {
+  void set_line(const Edge_descriptor& edge, const KSR::size_t line_idx) {
     m_graph[edge].line = line_idx;
   }
 
-  KSR::size_t line (const Edge_descriptor& edge) const { return m_graph[edge].line; }
+  const KSR::size_t line(const Edge_descriptor& edge) const { return m_graph[edge].line; }
 
   std::pair<Edge_descriptor, Edge_descriptor>
   split_edge (const Edge_descriptor& edge, const Vertex_descriptor& vertex)

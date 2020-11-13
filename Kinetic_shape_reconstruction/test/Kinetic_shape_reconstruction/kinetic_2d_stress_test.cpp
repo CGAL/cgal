@@ -12,7 +12,6 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Epick;
 #include <CGAL/Cartesian_converter.h>
 typedef CGAL::Cartesian_converter<Epeck, Epick> Epeck_to_epick;
 
-#define CGAL_KSR_VERBOSE_LEVEL 0
 #include <CGAL/Kinetic_shape_reconstruction_2.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/iterator.h>
@@ -57,7 +56,7 @@ void add_regular_case (std::vector<Segment_2>& segments)
   Transform scale (CGAL::Scaling(), cgal_rand.get_double(0.1, 10));
   Transform translate (CGAL::Translation(), Vector_2 (cgal_rand.get_double(-5, 5),
                                                       cgal_rand.get_double(-5, 5)));
-  
+
   Transform transform = scale * rotate * translate;
 
   for (std::size_t i = size_before; i < segments.size(); ++ i)
@@ -72,9 +71,9 @@ void add_regular_case (std::vector<Segment_2>& segments)
 void add_star_case (std::vector<Segment_2>& segments, std::size_t star_branches)
 {
   std::size_t size_before = segments.size();
-  
+
   Segment_2 base (Point_2 (0, 1), Point_2 (0, 3));
-                    
+
   for (std::size_t i = 0; i < star_branches; ++ i)
   {
     double angle = 2. * CGAL_PI * (i / double(star_branches));
@@ -90,7 +89,7 @@ void add_star_case (std::vector<Segment_2>& segments, std::size_t star_branches)
   Transform scale (CGAL::Scaling(), cgal_rand.get_double(0.1, 10));
   Transform translate (CGAL::Translation(), Vector_2 (cgal_rand.get_double(-5, 5),
                                                       cgal_rand.get_double(-5, 5)));
-  
+
   Transform transform = scale * rotate * translate;
 
   for (std::size_t i = size_before; i < segments.size(); ++ i)
@@ -137,7 +136,7 @@ void test_segments (std::string test_name, const std::vector<Segment_2>& exact_s
 {
   CGAL::Real_timer t;
   t.start();
-  
+
   std::vector<typename Kernel::Segment_2> segments;
   get_segments_from_exact<Kernel> (exact_segments, segments);
 
@@ -210,7 +209,7 @@ void stress_test (std::string test_name,
                   std::size_t k)
 {
   cgal_rand = CGAL::Random(0);
-  
+
   std::cerr << "[Stress test " << test_name << "]" << std::endl;
   std::vector<Segment_2> exact_segments;
 
@@ -231,7 +230,7 @@ void stress_test (std::string test_name,
   Point_2 pmin (bbox.xmin(), bbox.ymin());
   Point_2 pmax (bbox.xmax(), bbox.ymax());
   double seg_size = CGAL::to_double(FT(0.1) * CGAL::approximate_sqrt(CGAL::squared_distance(pmin, pmax)));
-  
+
   for (std::size_t i = 0; i < nb_random_lines; ++ i)
   {
     Point_2 source (cgal_rand.get_double(bbox.xmin(), bbox.xmax()), cgal_rand.get_double(bbox.ymin(), bbox.ymax()));
@@ -271,7 +270,7 @@ int main (int argc, char** argv)
   stress_test ("04_3000_random_lines", 3000, 0, 0, 0, 2);
   stress_test ("05_3000_random_lines_k_3", 3000, 0, 0, 0, 3);
 #endif
-  
+
   stress_test ("06_regular_case", 0, 1, 0, 0, 2);
   stress_test ("07_multi_regular_case", 0, 5, 0, 0, 2);
   stress_test ("08_multi_regular_case_and_random_lines", 30, 5, 0, 0, 2);
@@ -289,6 +288,6 @@ int main (int argc, char** argv)
   t.stop();
 
   std::cerr << "All tests done in " << t.time() << " seconds" << std::endl;
-  
+
   return EXIT_SUCCESS;
 }
