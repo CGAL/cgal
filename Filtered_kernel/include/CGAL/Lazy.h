@@ -373,10 +373,14 @@ public:
   // true if you are the last one and can clean-up
   bool end_update() const
   {
+#if !defined __SANITIZE_THREAD__ && !__has_feature(thread_sanitizer)
     bool b = workers.load(std::memory_order_relaxed) == 1
       || workers.fetch_sub(1, std::memory_order_release) == 1;
     // unneeded for Lazy_rep_0?
     if(b) std::atomic_thread_fence(std::memory_order_acquire);
+#else
+    bool b = workers.fetch_sub(1, std::memory_order_acq_rel) == 1;
+#endif
     return b;
   }
 

@@ -79,8 +79,8 @@ class Handle
     {
       if (PTR)
       {
-        // The advanced version seems to work in practice on x86_64, but TSAN complains like crazy, even if I remove the questionable first test.
-#if 0
+        // TSAN does not support fences :-(
+#if !defined __SANITIZE_THREAD__ && !__has_feature(thread_sanitizer)
         if (PTR->count.load(std::memory_order_relaxed) == 1
             || PTR->count.fetch_sub(1, std::memory_order_release) == 1) {
           std::atomic_thread_fence(std::memory_order_acquire);

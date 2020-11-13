@@ -144,9 +144,14 @@ public:
 
     ~Handle_for()
     {
+      // TSAN does not support fences :-(
+#if !defined __SANITIZE_THREAD__ && !__has_feature(thread_sanitizer)
       if (ptr_->count.load(std::memory_order_relaxed) == 1
           || ptr_->count.fetch_sub(1, std::memory_order_release) == 1) {
         std::atomic_thread_fence(std::memory_order_acquire);
+#else
+      if (ptr_->count.fetch_sub(1, std::memory_order_acq_rel) == 1) {
+#endif
         Allocator_traits::destroy(allocator, ptr_);
         allocator.deallocate(ptr_, 1);
       }
