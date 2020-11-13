@@ -53,9 +53,7 @@ endif()
 create_single_source_cgal_program( "fast.cpp" )
 create_single_source_cgal_program("polygon_mesh_slicer.cpp")
 
-create_single_source_cgal_program("hole_filling.cpp")
 
 if(TARGET CGAL::Eigen_support)
   target_link_libraries(polygon_mesh_slicer PUBLIC CGAL::Eigen_support)
-  target_link_libraries(hole_filling PUBLIC CGAL::Eigen_support)
 endif()
