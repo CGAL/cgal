@@ -98,6 +98,7 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::halfedges_keeper).v == 62);
   assert(get_parameter(np, CGAL::internal_np::do_simplify_border).v == 64);
   assert(get_parameter(np, CGAL::internal_np::do_not_modify).v == 65);
+  assert(get_parameter(np, CGAL::internal_np::allow_self_intersections).v == 66);
   assert(get_parameter(np, CGAL::internal_np::maximum_number_of_faces).v == 78910);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
@@ -186,6 +187,7 @@ void test(const NamedParameters& np)
   check_same_type<55>(get_parameter(np, CGAL::internal_np::use_Delaunay_flips));
   check_same_type<56>(get_parameter(np, CGAL::internal_np::use_safety_constraints));
   check_same_type<65>(get_parameter(np, CGAL::internal_np::do_not_modify));
+  check_same_type<66>(get_parameter(np, CGAL::internal_np::allow_self_intersections));
 
   check_same_type<12340>(get_parameter(np, CGAL::internal_np::do_self_intersection_tests));
   check_same_type<12341>(get_parameter(np, CGAL::internal_np::do_orientation_tests));
@@ -219,6 +221,7 @@ void test(const NamedParameters& np)
   check_same_type<36>(get_parameter(np, CGAL::internal_np::face_normal));
   check_same_type<37>(get_parameter(np, CGAL::internal_np::random_seed));
   check_same_type<38>(get_parameter(np, CGAL::internal_np::do_project));
+  check_same_type<456>(get_parameter(np, CGAL::internal_np::algorithm));
 
     // Internal named parameters
   check_same_type<39>(get_parameter(np, CGAL::internal_np::weight_calculator));
@@ -265,6 +268,8 @@ void test(const NamedParameters& np)
   check_same_type<9032>(get_parameter(np, CGAL::internal_np::inspector));
   check_same_type<9033>(get_parameter(np, CGAL::internal_np::logger));
   check_same_type<9034>(get_parameter(np, CGAL::internal_np::maximum_normal_deviation));
+  check_same_type<9035>(get_parameter(np, CGAL::internal_np::scan_angle_map));
+  check_same_type<9036>(get_parameter(np, CGAL::internal_np::scanline_id_map));
 }
 
 int main()
@@ -318,6 +323,7 @@ int main()
                          .face_normal_map(A<36>(36))
                          .random_seed(A<37>(37))
                          .do_project(A<38>(38))
+                         .algorithm(A<456>(456))
                          .weight_calculator(A<39>(39))
                          .preserve_genus(A<40>(40))
                          .verbosity_level(A<41>(41))
@@ -356,6 +362,7 @@ int main()
                          .use_convex_hull(A<63>(63))
                          .do_simplify_border(A<64>(64))
                          .do_not_modify(A<65>(65))
+                         .allow_self_intersections(A<66>(66))
                          .point_map(A<9000>(9000))
                          .query_point_map(A<9001>(9001))
                          .normal_map(A<9002>(9002))
@@ -391,6 +398,8 @@ int main()
                          .inspector(A<9032>(9032))
                          .logger(A<9033>(9033))
                          .maximum_normal_deviation(A<9034>(9034))
+                         .scan_angle_map(A<9035>(9035))
+                         .scanline_id_map(A<9036>(9036))
                          .maximum_number_of_faces(A<78910>(78910))
        );
   return EXIT_SUCCESS;

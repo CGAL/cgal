@@ -46,7 +46,7 @@ class Cluster
 {
 public:
 
-  typedef typename ItemMap::value_type Item;
+  using Item = typename boost::property_traits<ItemMap>::value_type;
 
   /// \cond SKIP_IN_MANUAL
   struct Neighbor_query
@@ -64,9 +64,9 @@ public:
   class Point_idx_to_point_unary_function
   {
   public:
-    typedef std::size_t argument_type;
-    typedef typename ItemMap::reference result_type;
-    typedef boost::readable_property_map_tag category;
+    using argument_type = std::size_t;
+    using result_type = typename boost::property_traits<ItemMap>::reference;
+    using category = boost::readable_property_map_tag;
 
     const ItemRange* m_range;
     ItemMap m_item_map;
@@ -105,9 +105,9 @@ public:
     \param item_map property map to access the input items.
   */
   Cluster (const ItemRange& range, ItemMap item_map)
-    : neighbors (new std::vector<std::size_t>())
+    : neighbors (std::make_shared<std::vector<std::size_t> >())
     , m_range (&range), m_item_map (item_map)
-    , m_inliers (new std::vector<std::size_t>())
+    , m_inliers (std::make_shared<std::vector<std::size_t> >())
     , m_training(-1), m_label(-1)
   { }
 

@@ -13,6 +13,8 @@
 #ifndef CGAL_AABB_TREE_H
 #define CGAL_AABB_TREE_H
 
+#include <memory>
+
 #include <CGAL/license/AABB_tree.h>
 
 #include <CGAL/disable_warnings.h>
@@ -62,6 +64,7 @@ namespace CGAL {
     typedef std::vector<typename AABBTraits::Primitive> Primitives;
 
     typedef internal::Primitive_helper<AABBTraits> Helper;
+    typedef AABB_tree<AABBTraits> Self;
 
   public:
     typedef AABBTraits AABB_traits;
@@ -112,6 +115,15 @@ namespace CGAL {
     /// constructs an empty tree, and initializes the internally stored traits
     /// class using `traits`.
     AABB_tree(const AABBTraits& traits = AABBTraits());
+
+    /// move constructor
+    AABB_tree(Self&&) noexcept;
+    /// assignment operator
+    Self& operator=(Self&&) noexcept;
+
+    // Disabled copy constructor & assignment operator
+    AABB_tree(const Self&) = delete;
+    Self& operator=(const Self&) = delete;
 
     /**
      * @brief Builds the datastructure from a sequence of primitives.
@@ -475,10 +487,7 @@ public:
     // clear nodes
     void clear_nodes()
     {
-      if( size() > 1 ) {
-        delete [] m_p_root_node;
-      }
-      m_p_root_node = nullptr;
+      m_nodes.clear();
     }
 
     // clears internal KD tree
@@ -491,8 +500,7 @@ public:
 #endif
       {
         CGAL_assertion( m_p_search_tree!=nullptr );
-        delete m_p_search_tree;
-        m_p_search_tree = nullptr;
+        m_p_search_tree.reset();
 #ifdef CGAL_HAS_THREADS
         m_atomic_search_tree_constructed.store(false, std::memory_order_relaxed);
 #else
@@ -522,6 +530,22 @@ public:
   private:
     typedef AABB_node<AABBTraits> Node;
 
+    /**
+     * @brief Builds the tree by recursive expansion.
+     * @param first the first primitive to insert
+     * @param last the last primitive to insert
+     * @param range the number of primitive of the range
+     *
+     * [first,last[ is the range of primitives to be added to the tree.
+     */
+    template<typename ConstPrimitiveIterator, typename ComputeBbox, typename SplitPrimitives>
+    void expand(Node& node,
+                ConstPrimitiveIterator first,
+                ConstPrimitiveIterator beyond,
+                const std::size_t range,
+                const ComputeBbox& compute_bbox,
+                const SplitPrimitives& split_primitives,
+                const AABBTraits&);
 
   public:
     // returns a point which must be on one primitive
@@ -573,8 +597,8 @@ public:
     AABBTraits m_traits;
     // set of input primitives
     Primitives m_primitives;
-    // single root node
-    Node* m_p_root_node = nullptr;
+    // tree nodes. first node is the root node
+    std::vector<Node> m_nodes;
     #ifdef CGAL_HAS_THREADS
     mutable CGAL_MUTEX build_mutex; // mutex used to protect const calls inducing build() and build_kd_tree()
     #endif
@@ -594,7 +618,13 @@ public:
 #endif
         const_cast< AABB_tree<AABBTraits>* >(this)->build();
       }
-      return m_p_root_node;
+      return std::addressof(m_nodes[0]);
+    }
+
+    Node& new_node()
+    {
+      m_nodes.emplace_back();
+      return m_nodes.back();
     }
   private:
     const Primitive& singleton_data() const {
@@ -603,7 +633,7 @@ public:
     }
 
     // search KD-tree
-    const Search_tree* m_p_search_tree = nullptr;
+    mutable std::unique_ptr<const Search_tree> m_p_search_tree;
     bool m_use_default_search_tree = true; // indicates whether the internal kd-tree should be built
 #ifdef CGAL_HAS_THREADS
     std::atomic<bool> m_atomic_need_build;
@@ -613,11 +643,6 @@ public:
     mutable bool m_search_tree_constructed = false;
 #endif
 
-  private:
-    // Disabled copy constructor & assignment operator
-    typedef AABB_tree<AABBTraits> Self;
-    AABB_tree(const Self& src);
-    Self& operator=(const Self& src);
 
   };  // end class AABB_tree
 
@@ -631,6 +656,30 @@ public:
     , m_atomic_search_tree_constructed(false)
 #endif
   {}
+
+  template <typename Tr>
+  typename AABB_tree<Tr>::Self& AABB_tree<Tr>::operator=(Self&& tree) noexcept
+  {
+    m_traits = std::move(tree.m_traits);
+    m_primitives = std::move(tree.m_primitives);
+    m_nodes = std::move(tree.m_nodes);
+    m_p_search_tree = std::move(tree.m_p_search_tree);
+    m_use_default_search_tree = std::exchange(tree.m_use_default_search_tree, true);
+#ifdef CGAL_HAS_THREADS
+    m_atomic_need_build = tree.m_atomic_need_build.load(std::memory_order_relaxed);
+    m_atomic_search_tree_constructed = tree.m_atomic_search_tree_constructed.load(std::memory_order_relaxed);
+#else
+    m_need_build = std::exchange(tree.m_need_build, false);
+    m_search_tree_constructed = std::exchange(tree.m_search_tree_constructed, false);
+#endif
+    return *this;
+  }
+
+  template<typename Tr>
+  AABB_tree<Tr>::AABB_tree(Self&& tree) noexcept
+  {
+    *this = std::move(tree);
+  }
 
    template<typename Tr>
   template<typename ConstPrimitiveIterator, typename ... T>
@@ -705,6 +754,41 @@ public:
   }
 
   template<typename Tr>
+  template<typename ConstPrimitiveIterator, typename ComputeBbox, typename SplitPrimitives>
+  void
+  AABB_tree<Tr>::expand(Node& node,
+                        ConstPrimitiveIterator first,
+                        ConstPrimitiveIterator beyond,
+                        const std::size_t range,
+                        const ComputeBbox& compute_bbox,
+                        const SplitPrimitives& split_primitives,
+                        const Tr& traits)
+  {
+    node.set_bbox(compute_bbox(first, beyond));
+
+    // sort primitives along longest axis aabb
+    split_primitives(first, beyond, node.bbox());
+
+    switch(range)
+    {
+    case 2:
+      node.set_children(*first, *(first+1));
+      break;
+    case 3:
+      node.set_children(*first, new_node());
+      expand(node.right_child(), first+1, beyond, 2, compute_bbox, split_primitives, traits);
+      break;
+    default:
+      const std::size_t new_range = range/2;
+      node.set_children(new_node(), new_node());
+      expand(node.left_child(), first, first + new_range, new_range, compute_bbox, split_primitives, traits);
+      expand(node.right_child(), first + new_range, beyond, range - new_range, compute_bbox, split_primitives, traits);
+    }
+  }
+
+
+  // Build the data structure, after calls to insert(..)
+  template<typename Tr>
   void AABB_tree<Tr>::build()
   {
     custom_build(m_traits.compute_bbox_object(),
@@ -719,24 +803,19 @@ public:
     const SplitPrimitives& split_primitives)
   {
     clear_nodes();
+
     if(m_primitives.size() > 1) {
 
       // allocates tree nodes
-      m_p_root_node = new Node[m_primitives.size()-1]();
-      if(m_p_root_node == nullptr)
-      {
-        std::cerr << "Unable to allocate memory for AABB tree" << std::endl;
-        CGAL_assertion(m_p_root_node != nullptr);
-        m_primitives.clear();
-        clear();
-      }
+      m_nodes.reserve(m_primitives.size()-1);
 
       // constructs the tree
-      m_p_root_node->expand(m_primitives.begin(), m_primitives.end(),
-                            m_primitives.size(),
-                            compute_bbox,
-                            split_primitives,
-                            m_traits);
+      expand(new_node(),
+             m_primitives.begin(), m_primitives.end(),
+             m_primitives.size(),
+             compute_bbox,
+             split_primitives,
+             m_traits);
     }
 #ifdef CGAL_HAS_THREADS
     m_atomic_need_build.store(false, std::memory_order_release); // in case build() is triggered by a call to root_node()
@@ -768,22 +847,13 @@ public:
                                     ConstPointIterator beyond)
   {
     clear_search_tree();
-    m_p_search_tree = new Search_tree(first, beyond);
-
-    if(m_p_search_tree != nullptr)
-    {
+    m_p_search_tree = std::make_unique<const Search_tree>(first, beyond);
 #ifdef CGAL_HAS_THREADS
       m_atomic_search_tree_constructed.store(true, std::memory_order_release); // in case build_kd_tree() is triggered by a call to best_hint()
 #else
       m_search_tree_constructed = true;
 #endif
       return true;
-    }
-    else
-    {
-      std::cerr << "Unable to allocate memory for accelerating distance queries" << std::endl;
-      return false;
-    }
   }
 
   template<typename Tr>
@@ -792,7 +862,6 @@ public:
     clear_search_tree();
     m_use_default_search_tree = false;
   }
-
 
   // constructs the search KD tree from internal primitives
   template<typename Tr>

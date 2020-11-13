@@ -1,10 +1,14 @@
 Release History
 ===============
 
-
 [Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
+-----------
 
 Release date: December 2020
+
+### [3D Triangulations](https://doc.cgal.org/5.2/Manual/packages.html#PkgTriangulation3)
+ - Add `Segment_cell_iterator` to iterate over cells intersected by a line segment.
+ - Add `Segment_simplex_iterator` to iterate over simplices intersected by a line segment.
 
 ### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/5.2/Manual/packages.html#PkgBGL)
 
@@ -29,9 +33,15 @@ Release date: December 2020
       the new code is backward compatible. However, it is recommended that all calls
       to the make-x-monotone functions are fixed to use the new return type.
     - Changed `decompose()` interface to use `boost::variant` instead of legacy
-      [`CGAL::Object`](https://doc.cgal.org/5.1/STL_Extension/classCGAL_1_1Object.html)
+      [`CGAL::Object`](https://doc.cgal.org/5.2/STL_Extension/classCGAL_1_1Object.html)
       As explained above, the code is backward compatible. However, it is recommended
       that all calls to `decompose()` are fixed to use the new interface.
+
+### [Surface Mesh](https://doc.cgal.org/5.2/Manual/packages.html#PkgSurfaceMesh)
+
+-   Added the function `clear_without_removing_property_maps()` to clear a mesh but keep all the created property maps added.
+-   Added the functions `remove_property_maps<Index_type>()` and `remove_all_property_maps()` to remove all added property maps by index type or all of them respectively.
+
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.2/Manual/packages.html#PkgPolygonMeshProcessing)
 
@@ -44,6 +54,37 @@ Release date: December 2020
 -   Added an optional range parameter to `CGAL::Polygon_mesh_processing::stitch_borders()`,
     which can be used to specify which boundary cycles are eligible for stitching.
 
+### [Point Set Processing](https://doc.cgal.org/5.2/Manual/packages.html#PkgPointSetProcessing3)
+-   Added a function [`CGAL::scanline_orient_normals()`](https://doc.cgal.org/5.2/Point_set_processing_3/group__PkgPointSetProcessing3Algorithms.html#ga221d4efde44f42aefe153cb927138efe) that orients a point cloud by estimating a line of sight.
+
+### [Classification](https://doc.cgal.org/5.2/Manual/packages.html#PkgClassification)
+
+- **Breaking change**: new IO format for `ETHZ::Random_Forest` (a
+  conversion function from the outdated format to the new one is
+  provided)
+
+- Additional functions for the `Evaluation` class: `append()` to
+  enrich the evaluation with additional results; `confusion()` to
+  access the confusion matrix; output functions to save the evaluation
+  to and ASCII or HTML stream
+
+- New operator `feature_cast<>` for easy conversions
+
+- `Feature_set` and `Label_set` are now models of `Range`
+
+- `Label` now has attributes `index`, `standard_index` and `color`,
+  with automatic selection if the ASPRS standard names are used
+
+- New functions in `Point_set_feature_iterator` to allow users to
+  select which features should be generated
+
+- New function `Label_set::is_valid_ground_truth()` to help users
+  check if a ground truth matches a given label set
+
+### Surface Mesh
+
+-   Added the functions `set_recycle_garbage()` and `does_recycle_garbage()` to the class `Surface_mesh`.
+
 ### [dD Geometry Kernel](https://doc.cgal.org/5.2/Manual/packages.html#PkgKernelD)
 
 -   The kernels [`Epick_d`](https://doc.cgal.org/5.2/Kernel_d/structCGAL_1_1Epick__d.html)
@@ -52,6 +93,13 @@ Release date: December 2020
     and [`Construct_power_sphere_d`](https://doc.cgal.org/5.2/Kernel_d/classCGAL_1_1Epeck__d_1_1Construct__power__sphere__d.html),
     to deal with weighted points.
 
+
+### [Surface Mesh Parameterization](https://doc.cgal.org/5.2/Manual/packages.html#PkgSurfaceMeshParameterization)
+- Added a new parameterization method, Iterative Authalic Parameterization. It is based on the work of Jain, Hardik, Manuel Wollhaf, and Olaf Hellwich,
+  "Learning to Reconstruct Symmetric Shapes using Planar Parameterization of 3D Surface." (IEEE International Conference on Computer Vision Workshops, 2019).
+
+### Add Move Semantics to AABB Trees
+ -   Added move constructor and assignment operator to AABB Tree class.
 
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/v5.1)
 -----------

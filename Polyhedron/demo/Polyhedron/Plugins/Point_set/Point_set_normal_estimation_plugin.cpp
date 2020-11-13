@@ -7,6 +7,7 @@
 #include <CGAL/jet_estimate_normals.h>
 #include <CGAL/vcm_estimate_normals.h>
 #include <CGAL/mst_orient_normals.h>
+#include <CGAL/scanline_orient_normals.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 
@@ -306,82 +307,156 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalOrientat
     if(points == NULL)
         return;
 
-    // Gets options
-    QMultipleInputDialog dialog ("Normal Orientation", mw);
-    QSpinBox* neighborhood = dialog.add<QSpinBox> ("Neighborhood Size: ");
-    neighborhood->setRange (1, 10000000);
-    neighborhood->setValue (18);
+    // Chose method
+    QMultipleInputDialog method ("Normal Orientation", mw);
+    QRadioButton* mst = method.add<QRadioButton> ("Orient by Minimum Spanning Tree");
+    mst->setChecked(true);
+    QRadioButton* scanline = method.add<QRadioButton> ("Orient 2.5D airborne acquired scanlines");
+    scanline->setChecked(false);
 
-    QRadioButton* use_seed_points = NULL;
-    QRadioButton* orient_selection = NULL;
-
-    if (points->nb_selected_points() != 0)
-    {
-      use_seed_points = dialog.add<QRadioButton> ("Use selection as seed points and orient the unselected points");
-      use_seed_points->setChecked(true);
-      orient_selection = dialog.add<QRadioButton> ("Orient selection");
-      orient_selection->setChecked(false);
-    }
-
-    if(!dialog.exec())
+    if (!method.exec())
       return;
 
-    QApplication::setOverrideCursor(Qt::BusyCursor);
-    QApplication::processEvents();
-
-    // First point to delete
-    Point_set::iterator first_unoriented_point = points->end();
-
-    //***************************************
-    // normal orientation
-    //***************************************
-
-    CGAL::Timer task_timer; task_timer.start();
-    std::cerr << "Orient normals with a Minimum Spanning Tree (k=" << neighborhood->value() << ")...\n";
-
-    // Tries to orient normals
-    if (points->nb_selected_points() != 0 && use_seed_points->isChecked())
+    if (mst->isChecked())
     {
-      std::vector<bool> constrained_map (points->size(), false);
+      // Gets options
+      QMultipleInputDialog dialog ("Normal Orientation", mw);
+      QSpinBox* neighborhood = dialog.add<QSpinBox> ("Neighborhood Size: ");
+      neighborhood->setRange (1, 10000000);
+      neighborhood->setValue (18);
 
-      for (Point_set::iterator it = points->first_selected(); it != points->end(); ++ it)
-        constrained_map[*it] = true;
+      QRadioButton* use_seed_points = NULL;
+      QRadioButton* orient_selection = NULL;
 
-      first_unoriented_point =
-        CGAL::mst_orient_normals(*points,
-                                 std::size_t(neighborhood->value()),
-                                 points->parameters().
-                                 point_is_constrained_map(Vector_to_pmap(&constrained_map)));
+      if (points->nb_selected_points() != 0)
+      {
+        use_seed_points = dialog.add<QRadioButton> ("Use selection as seed points and orient the unselected points");
+        use_seed_points->setChecked(true);
+        orient_selection = dialog.add<QRadioButton> ("Orient selection");
+        orient_selection->setChecked(false);
+      }
+
+      if(!dialog.exec())
+        return;
+
+      QApplication::setOverrideCursor(Qt::BusyCursor);
+      QApplication::processEvents();
+
+      // First point to delete
+      Point_set::iterator first_unoriented_point = points->end();
+
+      //***************************************
+      // normal orientation
+      //***************************************
+
+      CGAL::Timer task_timer; task_timer.start();
+      std::cerr << "Orient normals with a Minimum Spanning Tree (k=" << neighborhood->value() << ")...\n";
+
+      // Tries to orient normals
+      if (points->nb_selected_points() != 0 && use_seed_points->isChecked())
+      {
+        std::vector<bool> constrained_map (points->size(), false);
+
+        for (Point_set::iterator it = points->first_selected(); it != points->end(); ++ it)
+          constrained_map[*it] = true;
+
+        first_unoriented_point =
+          CGAL::mst_orient_normals(*points,
+                                   std::size_t(neighborhood->value()),
+                                   points->parameters().
+                                   point_is_constrained_map(Vector_to_pmap(&constrained_map)));
+      }
+      else
+        first_unoriented_point =
+          CGAL::mst_orient_normals(points->all_or_selection_if_not_empty(),
+                                   std::size_t(neighborhood->value()),
+                                   points->parameters());
+
+      std::size_t nb_unoriented_normals = std::distance(first_unoriented_point, points->end());
+      std::size_t memory = CGAL::Memory_sizer().virtual_size();
+      std::cerr << "Orient normals: " << nb_unoriented_normals << " point(s) with an unoriented normal are selected ("
+                << task_timer.time() << " seconds, "
+                << (memory>>20) << " Mb allocated)"
+                << std::endl;
+
+      // Selects points with an unoriented normal
+      points->set_first_selected (first_unoriented_point);
+
+      // Updates scene
+      item->invalidateOpenGLBuffers();
+      scene->itemChanged(index);
+
+      QApplication::restoreOverrideCursor();
+
+      // Warns user
+      if (nb_unoriented_normals > 0)
+      {
+        QMessageBox::information(NULL,
+                                 tr("Points with an unoriented normal"),
+                                 tr("%1 point(s) with an unoriented normal are selected.\nPlease orient them or remove them before running Poisson reconstruction.")
+                                 .arg(nb_unoriented_normals));
+      }
     }
-    else
-      first_unoriented_point =
-        CGAL::mst_orient_normals(points->all_or_selection_if_not_empty(),
-                                 std::size_t(neighborhood->value()),
-                                 points->parameters());
-
-    std::size_t nb_unoriented_normals = std::distance(first_unoriented_point, points->end());
-    std::size_t memory = CGAL::Memory_sizer().virtual_size();
-    std::cerr << "Orient normals: " << nb_unoriented_normals << " point(s) with an unoriented normal are selected ("
-              << task_timer.time() << " seconds, "
-              << (memory>>20) << " Mb allocated)"
-              << std::endl;
-
-    // Selects points with an unoriented normal
-    points->set_first_selected (first_unoriented_point);
-
-    // Updates scene
-    item->invalidateOpenGLBuffers();
-    scene->itemChanged(index);
-
-    QApplication::restoreOverrideCursor();
-
-    // Warns user
-    if (nb_unoriented_normals > 0)
+    else // scanline method
     {
-      QMessageBox::information(NULL,
-                               tr("Points with an unoriented normal"),
-                               tr("%1 point(s) with an unoriented normal are selected.\nPlease orient them or remove them before running Poisson reconstruction.")
-                               .arg(nb_unoriented_normals));
+      QApplication::setOverrideCursor(Qt::BusyCursor);
+      QApplication::processEvents();
+
+      //***************************************
+      // normal orientation
+      //***************************************
+
+      CGAL::Timer task_timer; task_timer.start();
+      std::cerr << "Orient normals with along 2.5D scanlines..." << std::endl;
+
+      Point_set::Property_map<float> scan_angle;
+      Point_set::Property_map<unsigned char> scan_direction_flag;
+      bool angle_found = false, flag_found = false;
+
+      std::tie (scan_angle, angle_found)
+        = points->property_map<float>("scan_angle");
+      std::tie (scan_direction_flag, flag_found)
+        = points->property_map<unsigned char>("scan_direction_flag");
+
+      if (!angle_found && !flag_found)
+      {
+        std::cerr << "  using no additional properties" << std::endl;
+        CGAL::scanline_orient_normals(points->all_or_selection_if_not_empty(),
+                                      points->parameters());
+      }
+      else if (!angle_found && flag_found)
+      {
+        std::cerr << "  using scan direction flag" << std::endl;
+        CGAL::scanline_orient_normals(points->all_or_selection_if_not_empty(),
+                                      points->parameters().
+                                      scanline_id_map (scan_direction_flag));
+      }
+      else if (angle_found && !flag_found)
+      {
+        std::cerr << "  using scan angle" << std::endl;
+        CGAL::scanline_orient_normals(points->all_or_selection_if_not_empty(),
+                                      points->parameters().
+                                      scan_angle_map (scan_angle));
+      }
+      else // if (angle_found && flag_found)
+      {
+        std::cerr << "  using scan angle and direction flag" << std::endl;
+        CGAL::scanline_orient_normals(points->all_or_selection_if_not_empty(),
+                                      points->parameters().
+                                      scan_angle_map (scan_angle).
+                                      scanline_id_map (scan_direction_flag));
+      }
+      std::size_t memory = CGAL::Memory_sizer().virtual_size();
+      std::cerr << "Orient normals: "
+                << task_timer.time() << " seconds, "
+                << (memory>>20) << " Mb allocated)"
+                << std::endl;
+
+      // Updates scene
+      item->invalidateOpenGLBuffers();
+      scene->itemChanged(index);
+
+      QApplication::restoreOverrideCursor();
     }
   }
 }

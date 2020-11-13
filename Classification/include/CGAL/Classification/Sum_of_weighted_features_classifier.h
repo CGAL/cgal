@@ -163,7 +163,7 @@ public:
 
 /*!
 
-  \brief Instantiates the classifier using the sets of `labels` and `features`.
+  \brief instantiates the classifier using the sets of `labels` and `features`.
 
   \note If the label set of the feature set are modified after
   instantiating this object (addition of removal of a label and/or of
@@ -190,7 +190,7 @@ public:
   /// @{
 
   /*!
-    \brief Sets the weight of `feature` (`weight` must be positive).
+    \brief sets the weight of `feature` (`weight` must be positive).
   */
   void set_weight (Feature_handle feature, float weight)
   {
@@ -204,7 +204,7 @@ public:
   /// \endcond
 
   /*!
-    \brief Returns the weight of `feature`.
+    \brief returns the weight of `feature`.
   */
   float weight (Feature_handle feature) const
   {
@@ -218,7 +218,7 @@ public:
   /// \endcond
 
   /*!
-    \brief Sets the `effect` of `feature` on `label`.
+    \brief sets the `effect` of `feature` on `label`.
   */
   void set_effect (Label_handle label, Feature_handle feature,
                    Effect effect)
@@ -234,7 +234,7 @@ public:
   /// \endcond
 
   /*!
-    \brief Returns the `effect` of `feature` on `label`.
+    \brief returns the `effect` of `feature` on `label`.
   */
   Effect effect (Label_handle label, Feature_handle feature) const
   {
@@ -269,7 +269,7 @@ public:
   /// @{
 
   /*!
-    \brief Runs the training algorithm.
+    \brief runs the training algorithm.
 
     From the set of provided ground truth, this algorithm estimates
     the sets of weights and effects that produce the most accurate
@@ -298,14 +298,20 @@ public:
   float train (const LabelIndexRange& ground_truth,
                unsigned int nb_tests = 300)
   {
+    CGAL_precondition (m_labels.is_valid_ground_truth (ground_truth));
+
     std::vector<std::vector<std::size_t> > training_sets (m_labels.size());
     std::size_t nb_tot = 0;
-    for (std::size_t i = 0; i < ground_truth.size(); ++ i)
-      if (int(ground_truth[i]) != -1)
+    std::size_t i = 0;
+    for (const auto& gt_value : ground_truth)
+    {
+      if (int(gt_value) != -1)
       {
-        training_sets[std::size_t(ground_truth[i])].push_back (i);
+        training_sets[std::size_t(gt_value)].push_back (i);
         ++ nb_tot;
       }
+      ++ i;
+    }
 
 #ifdef CLASSIFICATION_TRAINING_QUICK_ESTIMATION
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
@@ -636,7 +642,7 @@ public:
   /// @{
 
   /*!
-    \brief Saves the current configuration in the stream `output`.
+    \brief saves the current configuration in the stream `output`.
 
     This allows to easily save and recover a specific classification
     configuration, that is to say:
@@ -694,7 +700,7 @@ public:
   }
 
   /*!
-    \brief Loads a configuration from the stream `input`. A
+    \brief loads a configuration from the stream `input`. A
     configuration is a set of weights and effects.
 
     The input file should be in the XML format written by the
@@ -896,10 +902,10 @@ private:
       std::size_t gt = j;
 
 #ifndef CGAL_LINKED_WITH_TBB
-      CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+      CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                  "Parallel_tag is enabled but TBB is unavailable.");
 #else
-      if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+      if (std::is_convertible<ConcurrencyTag,Parallel_tag>::value)
       {
         std::vector<std::mutex> tp_mutex (m_labels.size());
         std::vector<std::mutex> fp_mutex (m_labels.size());
