@@ -569,8 +569,8 @@ public:
     {
       for(auto it = edges_.begin(); it != edges_.end(); ++it)
       {
-        write(os, vertex_index_map[it->left]);
-        write(os, vertex_index_map[it->right]);
+        os << CGAL::oformat(vertex_index_map[it->left]);
+        os << CGAL::oformat(vertex_index_map[it->right]);
         os << CGAL::oformat(it->info);
       }
     }
@@ -594,22 +594,14 @@ public:
 
     for(std::size_t i=0; i < n; ++i)
     {
-      if(!is)
-        return is;
       //read edge and curve index
       std::size_t l,r;
       Curve_index c; //todo
-      if(is_ascii(is))
-      {
-        is >> l;
-        is >> r;
-      }
-      else
-      {
-        CGAL::read(is, l);
-        CGAL::read(is, r);
-      }
+      is >> CGAL::iformat(l);
+      is >> CGAL::iformat(r);
       is >> CGAL::iformat(c);
+      if(!is)
+        return is;
       add_to_complex(index_vertex_map[l],index_vertex_map[r], c);
     }
     return is;
@@ -853,7 +845,19 @@ operator<< (std::ostream& os,
   if(os.good() && c3t3.triangulation().dimension() > 0)
   {
     Unique_hash_map<typename Tr::Vertex_handle, std::size_t > vertex_index_map;
-    c3t3.triangulation().fill_map(c3t3.triangulation().number_of_vertices(), vertex_index_map);
+
+
+    typename Tr::size_type i = 0;
+    vertex_index_map[c3t3.triangulation().infinite_vertex()] = 0;
+    auto vit = c3t3.triangulation().vertices_begin();
+    //skip infinite vertex
+    ++vit;
+    for(vit; vit != c3t3.triangulation().vertices_end(); ++vit)
+    {
+      vertex_index_map[vit] = ++i;
+    }
+    CGAL_triangulation_assertion(i == c3t3.triangulation().number_of_vertices());
+    CGAL_triangulation_assertion(c3t3.triangulation().is_infinite(c3t3.triangulation().vertices_begin()));
     c3t3.write_edges_in_complex(os, vertex_index_map);
   }
   return os;
