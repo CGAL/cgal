@@ -53,6 +53,7 @@
 #include <utility>
 #include <vector>
 #include <atomic>
+#include <thread>
 
 namespace CGAL {
 
@@ -65,10 +66,10 @@ struct Indirect_AT {
   Indirect_AT():p(new AT()){}
   Indirect_AT(AT const& a):p(new AT(a)){}
   Indirect_AT(AT&& a):p(new AT(std::move(a))){}
-  Indirect_AT& operator=(AT const& a){ old.reset(p.load(std::memory_order_relaxed)); p.store(new AT(a), std::memory_order_relaxed); return *this; }
-  Indirect_AT& operator=(AT&& a){ old.reset(p.load(std::memory_order_relaxed)); p.store(new AT(std::move(a)), std::memory_order_relaxed); return *this; }
-  operator AT const&()const{return *p.load(std::memory_order_relaxed);}
-  ~Indirect_AT() { delete p.load(std::memory_order_relaxed); }
+  Indirect_AT& operator=(AT const& a){ old.reset(p.load(std::memory_order_relaxed)); p.store(new AT(a), std::memory_order_release); return *this; }
+  Indirect_AT& operator=(AT&& a){ old.reset(p.load(std::memory_order_relaxed)); p.store(new AT(std::move(a)), std::memory_order_release); return *this; }
+  operator AT const&()const{return *p.load(std::memory_order_acquire);}
+  ~Indirect_AT() { delete p.load(std::memory_order_acquire); }
 };
 
 template <class E,
@@ -89,18 +90,6 @@ approx(const Lazy<AT,ET,E2A>& l)
 {
   return l.approx();
 }
-
-#if 0
-// Where is this one (non-const) needed ?  Is it ?
-template <typename AT, typename ET, typename E2A>
-inline
-AT&
-approx(Lazy<AT,ET,E2A>& l)
-{
-  return l.approx();
-}
-#endif
-
 
 template <typename AT, typename ET, typename E2A>
 inline
@@ -259,8 +248,8 @@ public:
 
   typedef AT_ AT;
 
-  mutable Indirect_AT<AT> at;
-  mutable std::atomic<ET*> et;
+  mutable Indirect_AT<AT> at{};
+  mutable std::atomic<ET*> et { nullptr };
 
   Lazy_rep ()
     : at(), et(nullptr){}
@@ -283,6 +272,69 @@ public:
       return at;
   }
 
+#if 1
+#define CGAL_UPDATE_EXACT_BEGIN \
+  if (!this->start_update()) return;
+#define CGAL_UPDATE_EXACT_MIDDLE \
+  this->et.store(pet, std::memory_order_release);
+#define CGAL_UPDATE_EXACT_END
+
+  // true if you should update
+  bool start_update() const
+  {
+    ET* other = nullptr;
+    // TODO specify memory_order_*
+    bool doit = et.compare_exchange_strong(other, (ET*)1);
+    if (!doit) {
+      // Wait until it becomes available
+      while ((uintptr_t)other == 1) {
+        std::this_thread::yield(); // or do nothing?
+        other = et.load(std::memory_order_relaxed);
+      }
+      return false;
+    }
+    return true;
+  }
+
+  const ET & exact() const
+  {
+    uintptr_t pet = (uintptr_t) et.load(std::memory_order_relaxed);
+    if (pet <= 1) {
+      if (pet == 0)
+        update_exact();
+      else
+        // Wait until it becomes available
+        while((uintptr_t)et.load(std::memory_order_relaxed)==1)
+          std::this_thread::yield(); // or do nothing?
+    }
+    return *et.load(std::memory_order_consume);
+    // Should we return the pointer from update_exact, to avoid an extra load and synchronization?
+  }
+
+#elif 1
+  mutable std::atomic<std::thread::id> worker{}; // thread that is allowed to updatee
+
+#define CGAL_UPDATE_EXACT_BEGIN \
+  if (!this->start_update()) return;
+#define CGAL_UPDATE_EXACT_MIDDLE \
+  this->et.store(pet, std::memory_order_release);
+#define CGAL_UPDATE_EXACT_END
+
+  // true if you should update
+  bool start_update() const
+  {
+    std::thread::id none{};
+    // TODO specify memory_order_*
+    bool doit = worker.compare_exchange_strong(none, std::this_thread::get_id());
+    if (!doit) {
+      // Wait until it becomes available
+      while(et.load(std::memory_order_relaxed)==nullptr)
+        std::this_thread::yield(); // or do nothing?
+      return false;
+    }
+    return true;
+  }
+
   const ET & exact() const
   {
     if (et.load(std::memory_order_relaxed)==nullptr)
@@ -291,19 +343,52 @@ public:
     // Should we return the pointer from update_exact, to avoid an extra load and synchronization?
   }
 
-  // ??? Is this needed? Safe?
-  ET & exact()
-  {
-    if (et.load(std::memory_order_relaxed)==nullptr)
-      update_exact();
-    return *et.load(std::memory_order_consume);
+#else
+  mutable std::atomic_uint workers{}; // number of threads running update_exact
+  // not written yet
+#define CGAL_UPDATE_EXACT_BEGIN \
+  workers.fetch_add(1, std::memory_order_relaxed); \
+  if (et.load(std::memory_order_relaxed)!=nullptr) \
+  if (!this->start_update()) return;
+#define CGAL_UPDATE_EXACT_MIDDLE \
+  bool updated = this->set_exact(pet); \
+  if (!updated) { /* some other thread was faster */ \
+    pet->~ET(); \
+  } else if (this->end_update()) {
+#define CGAL_UPDATE_EXACT_END \
   }
-
   bool set_exact(ET* pet) const
   {
     ET* other = nullptr;
     return this->et.compare_exchange_strong(other, pet, std::memory_order_release);
   }
+
+  // true if you should update
+  bool start_update() const
+  {
+    unsigned int w = workers.fetch_add(1, std::memory_order_relaxed);
+    ???
+  }
+
+  // true if you are the last one and can clean-up
+  bool end_update() const
+  {
+    bool b = workers.load(std::memory_order_relaxed) == 1
+      || workers.fetch_sub(1, std::memory_order_release) == 1;
+    // unneeded for Lazy_rep_0?
+    if(b) std::atomic_thread_fence(std::memory_order_acquire);
+    return b;
+  }
+
+  const ET & exact() const
+  {
+    if (et.load(std::memory_order_relaxed)==nullptr)
+      update_exact();
+    return *et.load(std::memory_order_consume);
+    // Should we return the pointer from update_exact, to avoid an extra load and synchronization?
+  }
+
+#endif
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void print_at_et(std::ostream& os, int level) const
@@ -350,14 +435,12 @@ class Lazy_rep_n :
   const EC& ec() const { return *this; }
   template<std::size_t...I>
   void update_exact_helper(std::index_sequence<I...>) const {
-    ET* pet = new ET(ec()( CGAL::exact( std::get<I>(l) ) ... ) );
-    bool updated = this->set_exact(pet);
-    if (!updated) { // some other thread was faster
-      pet->~ET();
-    } else {
+    CGAL_UPDATE_EXACT_BEGIN
+      ET* pet = new ET(ec()( CGAL::exact( std::get<I>(l) ) ... ) );
+    CGAL_UPDATE_EXACT_MIDDLE
       this->at = E2A()(*pet);
       l = std::tuple<L...>{};
-    }
+    CGAL_UPDATE_EXACT_END
   }
   public:
   void update_exact() const {
@@ -403,11 +486,10 @@ public:
   void
   update_exact() const
   {
-    ET* pet = new ET();
-    bool updated = this->set_exact(pet);
-    if (!updated) {
-      pet->~ET();
-    }
+    CGAL_UPDATE_EXACT_BEGIN
+      ET* pet = new ET();
+    CGAL_UPDATE_EXACT_MIDDLE
+    CGAL_UPDATE_EXACT_END
   }
 
   Lazy_rep_0()
@@ -518,19 +600,17 @@ public:
   void
   update_exact() const
   {
-    ET* pet = new ET();
+    CGAL_UPDATE_EXACT_BEGIN
+      ET* pet = new ET();
 // TODO : This looks really unfinished...
-    std::vector<Object> vec;
-    //this->et->reserve(this->at.size());
-    ec()(CGAL::exact(l1_), std::back_inserter(pet));
-    bool updated = this->set_exact(pet);
-    if (!updated) {
-      pet->~ET();
-    } else {
+      std::vector<Object> vec;
+      //this->et->reserve(this->at.size());
+      ec()(CGAL::exact(l1_), std::back_inserter(*pet));
+    CGAL_UPDATE_EXACT_MIDDLE
       this->at = E2A()(*pet);
       // Prune lazy tree
       l1_ = L1();
-    }
+    CGAL_UPDATE_EXACT_END
   }
 
   Lazy_rep_with_vector_1(const AC& ac, const EC& /*ec*/, const L1& l1)
@@ -574,18 +654,16 @@ public:
   void
   update_exact() const
   {
-    ET* pet = new ET();
-    pet->reserve(this->at.size());
-    ec()(CGAL::exact(l1_), CGAL::exact(l2_), std::back_inserter(pet));
-    bool updated = this->set_exact(pet);
-    if (!updated) {
-      pet->~ET();
-    } else {
+    CGAL_UPDATE_EXACT_BEGIN
+      ET* pet = new ET();
+      pet->reserve(this->at.size());
+      ec()(CGAL::exact(l1_), CGAL::exact(l2_), std::back_inserter(*pet));
+    CGAL_UPDATE_EXACT_MIDDLE
       this->at = E2A()(*pet);
       // Prune lazy tree
       l1_ = L1();
       l2_ = L2();
-    }
+    CGAL_UPDATE_EXACT_END
   }
 
   Lazy_rep_with_vector_2(const AC& ac, const EC& /*ec*/, const L1& l1, const L2& l2)
@@ -629,17 +707,15 @@ public:
   void
   update_exact() const
   {
-    ET* pet = new ET();
-    ec()(CGAL::exact(l1_), CGAL::exact(l2_), pet);
-    bool updated = this->set_exact(pet);
-    if (!updated) {
-      pet->~ET();
-    } else {
+    CGAL_UPDATE_EXACT_BEGIN
+      ET* pet = new ET();
+      ec()(CGAL::exact(l1_), CGAL::exact(l2_), *pet);
+    CGAL_UPDATE_EXACT_MIDDLE
       this->at = E2A()(*pet);
       // Prune lazy tree
       l1_ = L1();
       l2_ = L2();
-    }
+    CGAL_UPDATE_EXACT_END
   }
 
   Lazy_rep_2_1(const AC& ac, const EC& /*ec*/, const L1& l1, const L2& l2)
@@ -686,17 +762,15 @@ public:
   void
   update_exact() const
   {
-    ET* pet = new ET();
-    ec()(CGAL::exact(l1_), CGAL::exact(l2_), pet->first, pet->second );
-    bool updated = this->set_exact(pet);
-    if (!updated) {
-      pet->~ET();
-    } else {
+    CGAL_UPDATE_EXACT_BEGIN
+      ET* pet = new ET();
+      ec()(CGAL::exact(l1_), CGAL::exact(l2_), pet->first, pet->second );
+    CGAL_UPDATE_EXACT_MIDDLE
       this->at = E2A()(*pet);
       // Prune lazy tree
       l1_ = L1();
       l2_ = L2();
-    }
+    CGAL_UPDATE_EXACT_END
   }
 
   Lazy_rep_2_2(const AC& ac, const EC& /*ec*/, const L1& l1, const L2& l2)
@@ -797,14 +871,6 @@ public :
   { return ptr()->approx(); }
 
   const ET& exact() const
-  { return ptr()->exact(); }
-
-#if 0
-  AT& approx()
-  { return ptr()->approx(); }
-#endif
-
-  ET& exact()
   { return ptr()->exact(); }
 
   unsigned depth() const

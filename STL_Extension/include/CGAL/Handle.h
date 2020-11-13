@@ -79,11 +79,14 @@ class Handle
     {
       if (PTR)
       {
-        // TODO: the first condition tries to avoid the expensive
-        // release synchronization, check that it is still safe.
+        // The advanced version seems to work in practice on x86_64, but TSAN complains like crazy, even if I remove the questionable first test.
+#if 0
         if (PTR->count.load(std::memory_order_relaxed) == 1
             || PTR->count.fetch_sub(1, std::memory_order_release) == 1) {
           std::atomic_thread_fence(std::memory_order_acquire);
+#else
+        if (PTR->count.fetch_sub(1, std::memory_order_acq_rel) == 1) {
+#endif
           delete PTR;
         }
         PTR=0;
