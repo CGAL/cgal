@@ -565,6 +565,10 @@ protected:
   Tds _tds;
   GT  _gt;
   Vertex_handle infinite; // infinite vertex
+  //IO maps
+  mutable std::vector<Vertex_handle>* index_vertex_map;
+  mutable Unique_hash_map<Vertex_handle, std::size_t >* vertex_index_map;
+  mutable bool clear_maps_after_io;
 
 
 public:
@@ -714,13 +718,15 @@ public:
 public:
   // CONSTRUCTORS
   Triangulation_3(const GT& gt = GT(), Lock_data_structure *lock_ds = nullptr)
-    : Base(lock_ds), _tds(), _gt(gt)
+    : Base(lock_ds), _tds(), _gt(gt),
+      vertex_index_map(nullptr), index_vertex_map(nullptr), clear_maps_after_io(true)
   {
     init_tds();
   }
 
   Triangulation_3(Lock_data_structure *lock_ds, const GT& gt = GT())
-    : Base(lock_ds), _tds(), _gt(gt)
+    : Base(lock_ds), _tds(), _gt(gt),
+      vertex_index_map(nullptr), index_vertex_map(nullptr), clear_maps_after_io(true)
   {
     init_tds();
   }
@@ -730,6 +736,9 @@ public:
     : Base(tr.get_lock_data_structure()), _gt(tr._gt)
   {
     infinite = _tds.copy_tds(tr._tds, tr.infinite);
+    vertex_index_map = nullptr;
+    index_vertex_map = nullptr;
+    clear_maps_after_io = true;
     CGAL_triangulation_expensive_postcondition(*this == tr);
   }
 
@@ -739,7 +748,8 @@ public:
   template < typename InputIterator >
   Triangulation_3(InputIterator first, InputIterator last,
                   const GT& gt = GT(), Lock_data_structure *lock_ds = nullptr)
-    : Base(lock_ds), _gt(gt)
+    : Base(lock_ds), _gt(gt),
+      vertex_index_map(nullptr), index_vertex_map(nullptr), clear_maps_after_io(true)
   {
     init_tds();
     insert(first, last);
@@ -750,7 +760,8 @@ public:
   Triangulation_3(const Point& p0, const Point& p1,
                   const Point& p3, const Point& p4,
                   const GT& gt = GT(), Lock_data_structure *lock_ds = nullptr)
-    : Base(lock_ds), _gt(gt)
+    : Base(lock_ds), _gt(gt),
+      vertex_index_map(nullptr), index_vertex_map(nullptr), clear_maps_after_io(true)
   {
     CGAL_triangulation_precondition(orientation(p0, p1, p3, p4) == POSITIVE);
     init_tds(p0, p1, p3, p4);
@@ -2279,22 +2290,64 @@ public:
     return is;
   }
 
-  size_type fill_map(const size_type& num_vertices, Unique_hash_map<Vertex_handle, std::size_t >& vertex_index_map) const
+  size_type write_vertices_and_fill_maps(std::ostream& os, const size_type& num_vertices) const
   {
+    index_vertex_map = new std::vector<Vertex_handle>(num_vertices+1);
+    vertex_index_map = new Unique_hash_map<Vertex_handle, std::size_t >();
+
     size_type i = 0;
-    vertex_index_map[infinite_vertex()] = 0;
-    auto vit = vertices_begin();
-    //skip infinite vertex
-    ++vit;
-    for(vit; vit != vertices_end(); ++vit)
+    for(Vertex_iterator it = vertices_begin(), end = vertices_end(); it != end; ++it)
+      (*index_vertex_map)[i++] = it;
+
+    CGAL_triangulation_assertion(i == num_vertices+1);
+    CGAL_triangulation_assertion(is_infinite((*index_vertex_map)[0]));
+
+    (*vertex_index_map)[infinite_vertex()] = 0;
+    for(i=1; i <= num_vertices; i++)
     {
-      vertex_index_map[vit] = ++i;
+      os << *(*index_vertex_map)[i];
+      (*vertex_index_map)[(*index_vertex_map)[i]] = i;
+      if(is_ascii(os))
+        os << std::endl;
     }
-    CGAL_triangulation_assertion(i == num_vertices);
-    CGAL_triangulation_assertion(is_infinite(vertices_begin()));
     return i;
   }
 
+  const Unique_hash_map<Vertex_handle, std::size_t >& get_vertex_index_map() const
+  {
+    CGAL_assertion(vertex_index_map != nullptr);
+    return *vertex_index_map;
+  }
+
+  bool do_clear_maps_after_io() const
+  {
+    return clear_maps_after_io;
+  }
+
+  void set_clear_maps_after_io(bool b) const
+  {
+    clear_maps_after_io = b;
+  }
+
+  void clean_up_io_maps() const
+  {
+    if(vertex_index_map)
+    {
+      delete vertex_index_map ;
+      vertex_index_map = nullptr;
+    }
+    if(index_vertex_map)
+    {
+      delete index_vertex_map;
+      index_vertex_map = nullptr;
+    }
+  }
+
+  const std::vector<Vertex_handle>&  get_index_vertex_map() const
+  {
+    CGAL_assertion(index_vertex_map != nullptr);
+    return *index_vertex_map;
+  }
 };
 
 template <class Cell, class Vertex>
@@ -2396,15 +2449,10 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
       return is;
   //move to next non empty
   std::string s;
-  std::istream::pos_type pos;
+  std::istream::pos_type pos=is.tellg();
   do{
     pos = is.tellg();
     std::getline(is, s);
-    if(is.eof())
-    {
-      is.clear();
-      return is;
-    }
     if(!is)
       return is;
   }while(s == "");
@@ -2508,22 +2556,14 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
 
   if(n == 0)
     return os;
+
+
+
   // write the vertices
-  auto vit = tr.vertices_begin();
-  ++vit;
-  for(; vit != tr.vertices_end(); ++vit)
-  {
-    os << *vit;
-    if(is_ascii(os))
-      os<<std::endl;
-  }
-
-  Unique_hash_map<Vertex_handle, std::size_t > vertex_index_map;
-  tr.fill_map(n, vertex_index_map);
-
+  size_type i = tr.write_vertices_and_fill_maps(os, n);
 
   // Asks the tds for the combinatorial information
-  tr.tds().print_cells(os, vertex_index_map);
+  tr.tds().print_cells(os, tr.get_vertex_index_map());
 
   // Write the non combinatorial information on the cells
   // using the << operator of Cell.
@@ -2565,12 +2605,9 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
 
   if(tr.number_of_vertices() > 0 && has_extra_data(*tr.vertices_begin()))
   {
-    auto vit = tr.vertices_begin();
-    //skip infinite vertex
-    ++vit;
-    for(vit; vit != tr.vertices_end(); ++vit)
+    for(i=1; i <= n; i++)
     {
-      write_vertex_extra_data_3(os, *vit, vertex_index_map);
+      write_vertex_extra_data_3(os, *tr.get_index_vertex_map()[i], tr.get_vertex_index_map());
     }
   }
 
@@ -2579,9 +2616,11 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
   {
     for(Cell_iterator it = tr.cells_begin(), end = tr.cells_end(); it != end; ++it)
     {
-      write_cell_extra_data_3(os, *it, vertex_index_map);
+      write_cell_extra_data_3(os, *it, tr.get_vertex_index_map());
     }
   }
+  if(tr.do_clear_maps_after_io())
+    tr.clean_up_io_maps();
   return os ;
 }
 
