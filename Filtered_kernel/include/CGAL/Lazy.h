@@ -282,7 +282,7 @@ public:
     bool doit = et.compare_exchange_strong(other, (ET*)1);
     if (!doit) {
       // Wait until it becomes available
-      // Using a lock would let the implementation choose how to wait...
+      // TODO: try std::call_once or similar, hoping that it waits better.
       while ((uintptr_t)other == 1) {
         std::this_thread::yield(); // or do nothing?
         other = et.load(std::memory_order_relaxed);
