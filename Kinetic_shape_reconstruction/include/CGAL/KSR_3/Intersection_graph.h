@@ -21,21 +21,20 @@
 #ifndef CGAL_KSR_3_INTERSECTION_GRAPH_H
 #define CGAL_KSR_3_INTERSECTION_GRAPH_H
 
-//#include <CGAL/license/Kinetic_shape_reconstruction.h>
+// #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
-#include <CGAL/KSR/utils.h>
-
+// Boost includes.
 #include <boost/graph/adjacency_list.hpp>
 
-namespace CGAL
-{
+// Internal includes.
+#include <CGAL/KSR/utils.h>
 
-namespace KSR_3
-{
+namespace CGAL {
+namespace KSR_3 {
 
-template <typename GeomTraits>
-class Intersection_graph
-{
+template<typename GeomTraits>
+class Intersection_graph {
+
 public:
   typedef GeomTraits Kernel;
   typedef typename Kernel::FT FT;
@@ -235,8 +234,7 @@ public:
   bool& is_active (const Edge_descriptor& edge) { return m_graph[edge].active; }
 };
 
-
-}} // namespace CGAL::KSR_3
-
+} // namespace KSR_3
+} // namespace CGAL
 
 #endif // CGAL_KSR_3_INTERSECTION_GRAPH_H

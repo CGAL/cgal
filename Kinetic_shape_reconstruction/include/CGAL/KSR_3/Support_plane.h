@@ -185,229 +185,218 @@ public:
     return static_cast<KSR::size_t>(fi);
   }
 
-  // OTHER
   const Plane_3& plane() const { return m_data->plane; }
 
   const Mesh& mesh() const { return m_data->mesh; }
   Mesh& mesh() { return m_data->mesh; }
 
-  const Point_2& get_point(const Vertex_index& vertex_index) const {
-    return m_data->mesh.point(vertex_index);
+  const Point_2& get_point(const Vertex_index& vi) const {
+    return m_data->mesh.point(vi);
   }
 
-  void set_point (const Vertex_index& vertex_index, const Point_2& point)
-  {
-    m_data->mesh.point(vertex_index) = point;
+  void set_point(const Vertex_index& vi, const Point_2& point) {
+    m_data->mesh.point(vi) = point;
   }
 
-  void set_last_event_time(const Vertex_index& vertex_index, const FT time) {
-    m_data->v_time_map[vertex_index] = time;
+  void set_last_event_time(const Vertex_index& vi, const FT time) {
+    m_data->v_time_map[vi] = time;
   }
 
-  const FT last_event_time(const Vertex_index& vertex_index) const {
-    return m_data->v_time_map[vertex_index];
+  const FT last_event_time(const Vertex_index& vi) const {
+    return m_data->v_time_map[vi];
   }
 
-  Vertex_index prev (const Vertex_index& vertex_index) const
-  {
-    return m_data->mesh.source(m_data->mesh.halfedge(vertex_index));
+  const Vertex_index prev(const Vertex_index& vi) const {
+    return m_data->mesh.source(m_data->mesh.halfedge(vi));
   }
-  Vertex_index next (const Vertex_index& vertex_index) const
-  {
-    return m_data->mesh.target(m_data->mesh.next(m_data->mesh.halfedge(vertex_index)));
+  const Vertex_index next(const Vertex_index& vi) const {
+    return m_data->mesh.target(m_data->mesh.next(m_data->mesh.halfedge(vi)));
   }
 
-  Face_index face (const Vertex_index& vertex_index) const
-  {
-    Face_index out = m_data->mesh.face (m_data->mesh.halfedge(vertex_index));
-    if (out == Face_index())
-      out = m_data->mesh.face (m_data->mesh.opposite(m_data->mesh.halfedge(vertex_index)));
-    CGAL_assertion (out != Face_index());
+  const Face_index face(const Vertex_index& vi) const {
+
+    auto out = m_data->mesh.face(m_data->mesh.halfedge(vi));
+    if (out == Face_index()) {
+      out = m_data->mesh.face(m_data->mesh.opposite(m_data->mesh.halfedge(vi)));
+    }
+    CGAL_assertion(out != Face_index());
     return out;
   }
 
-  std::pair<Face_index, Face_index> faces (const Vertex_index& vertex_index) const
-  {
-    for (Halfedge_index hi : halfedges_around_target (halfedge(vertex_index, m_data->mesh), m_data->mesh))
-      if (has_iedge (m_data->mesh.edge(hi)))
-        return std::make_pair (m_data->mesh.face (hi),
-                               m_data->mesh.face (m_data->mesh.opposite(hi)));
-    CGAL_assertion_msg (false, "No constrained edge found");
-    return std::make_pair (Face_index(), Face_index());
+  const std::pair<Face_index, Face_index> faces(const Vertex_index& vi) const {
+
+    for (const auto& he : halfedges_around_target(halfedge(vi, m_data->mesh), m_data->mesh)) {
+      if (has_iedge(m_data->mesh.edge(he))) {
+        return std::make_pair(
+          m_data->mesh.face(he), m_data->mesh.face(m_data->mesh.opposite(he)));
+      }
+    }
+    CGAL_assertion_msg(false, "ERROR: no constrained edge found!");
+    return std::make_pair(Face_index(), Face_index());
   }
 
-  Point_2 point_2 (const Vertex_index& vertex_index, FT time) const
-  { return m_data->mesh.point(vertex_index) + time * m_data->direction[vertex_index]; }
-
-  Point_3 point_3 (const Vertex_index& vertex_index, FT time) const
-  { return to_3d (point_2 (vertex_index, time)); }
-
-  Segment_2 segment_2 (const Edge_index& edge_index, FT time) const
-  {
-    return Segment_2 (point_2 (m_data->mesh.source (m_data->mesh.halfedge(edge_index)), time),
-                      point_2 (m_data->mesh.target (m_data->mesh.halfedge(edge_index)), time));
+  const Point_2 point_2(const Vertex_index& vi, const FT time) const {
+    return m_data->mesh.point(vi) + time * m_data->direction[vi];
   }
 
-  Segment_3 segment_3 (const Edge_index& edge_index, FT time) const
-  {
-    return Segment_3 (point_3 (m_data->mesh.source (m_data->mesh.halfedge(edge_index)), time),
-                      point_3 (m_data->mesh.target (m_data->mesh.halfedge(edge_index)), time));
+  const Point_3 point_3(const Vertex_index& vi, const FT time) const {
+    return to_3d(point_2(vi, time));
   }
 
-  void set_iedge (const Vertex_index& a, const Vertex_index& b,
-                  const IEdge& iedge) const
-  {
-    Halfedge_index hi = m_data->mesh.halfedge (a, b);
-    CGAL_assertion (hi != Halfedge_index());
-    Edge_index ei = m_data->mesh.edge(hi);
+  const Segment_2 segment_2(const Edge_index& ei, const FT time) const {
+
+    return Segment_2(
+      point_2(m_data->mesh.source(m_data->mesh.halfedge(ei)), time),
+      point_2(m_data->mesh.target(m_data->mesh.halfedge(ei)), time));
+  }
+
+  const Segment_3 segment_3(const Edge_index& ei, const FT time) const {
+    return Segment_3(
+      point_3(m_data->mesh.source(m_data->mesh.halfedge(ei)), time),
+      point_3(m_data->mesh.target(m_data->mesh.halfedge(ei)), time));
+  }
+
+  void set_iedge(
+    const Vertex_index& v0, const Vertex_index& v1, const IEdge& iedge) const {
+
+    const auto he = m_data->mesh.halfedge(v0, v1);
+    CGAL_assertion(he != Halfedge_index());
+    const auto ei = m_data->mesh.edge(he);
     m_data->e_iedge_map[ei] = iedge;
   }
 
-  void set_ivertex (const Vertex_index& vertex,
-                    const IVertex& ivertex) const
-  {
-    m_data->v_ivertex_map[vertex] = ivertex;
+  void set_ivertex(const Vertex_index& vi, const IVertex& ivertex) const {
+    m_data->v_ivertex_map[vi] = ivertex;
   }
 
-  void set_iedge (const Vertex_index& vertex,
-                  const IEdge& iedge) const
-  {
-    m_data->v_iedge_map[vertex] = iedge;
+  void set_iedge(const Vertex_index& vi, const IEdge& iedge) const {
+    m_data->v_iedge_map[vi] = iedge;
   }
 
-  void set_iedge (const Edge_index& edge,
-                  const IEdge& iedge) const
-  {
-    m_data->e_iedge_map[edge] = iedge;
+  void set_iedge(const Edge_index& ei, const IEdge& iedge) const {
+    m_data->e_iedge_map[ei] = iedge;
   }
 
-  const IEdge& iedge (const Edge_index& edge_index) const
-  {
-    return m_data->e_iedge_map[edge_index];
+  const IEdge& iedge(const Edge_index& ei) const {
+    return m_data->e_iedge_map[ei];
   }
 
-  const IEdge& iedge (const Vertex_index& vertex_index) const
-  {
-    return m_data->v_iedge_map[vertex_index];
+  const IEdge& iedge(const Vertex_index& vi) const {
+    return m_data->v_iedge_map[vi];
   }
 
-  const IVertex& ivertex (const Vertex_index& vertex_index) const
-  {
-    return m_data->v_ivertex_map[vertex_index];
+  const IVertex& ivertex(const Vertex_index& vi) const {
+    return m_data->v_ivertex_map[vi];
   }
 
-  bool has_iedge (const Edge_index& edge_index) const
-  {
-    return (m_data->e_iedge_map[edge_index] != Intersection_graph::null_iedge());
+  const bool has_iedge(const Edge_index& ei) const {
+    return (m_data->e_iedge_map[ei] != Intersection_graph::null_iedge());
   }
-  bool has_iedge (const Vertex_index& vertex_index) const
-  {
-    return (m_data->v_iedge_map[vertex_index] != Intersection_graph::null_iedge());
+  const bool has_iedge(const Vertex_index& vi) const {
+    return (m_data->v_iedge_map[vi] != Intersection_graph::null_iedge());
   }
-  bool has_ivertex (const Vertex_index& vertex_index) const
-  {
-    return (m_data->v_ivertex_map[vertex_index] != Intersection_graph::null_ivertex());
+  const bool has_ivertex(const Vertex_index& vi) const {
+    return (m_data->v_ivertex_map[vi] != Intersection_graph::null_ivertex());
   }
 
-  const Vector_2& direction (const Vertex_index& vertex_index) const { return m_data->direction[vertex_index]; }
-  Vector_2& direction (const Vertex_index& vertex_index) { return m_data->direction[vertex_index]; }
-  FT speed (const Vertex_index& vertex_index) const
-  { return CGAL::approximate_sqrt (m_data->direction[vertex_index].squared_length()); }
+  const Vector_2& direction(const Vertex_index& vi) const { return m_data->direction[vi]; }
+  Vector_2& direction(const Vertex_index& vi) { return m_data->direction[vi]; }
 
-  const KSR::size_t& input (const Face_index& face_index) const { return m_data->input_map[face_index]; }
-  KSR::size_t& input (const Face_index& face_index) { return m_data->input_map[face_index]; }
+  const FT speed(const Vertex_index& vi) const {
+    return static_cast<FT>(CGAL::sqrt(
+      CGAL::to_double(CGAL::abs(m_data->direction[vi].squared_length()))));
+  }
 
-  const bool is_original(const Vertex_index& vertex_index) const { return m_data->v_original_map[vertex_index]; }
+  const KSR::size_t& input(const Face_index& fi) const { return m_data->input_map[fi]; }
+  KSR::size_t& input(const Face_index& fi) { return m_data->input_map[fi]; }
 
-  const unsigned int& k (const Face_index& face_index) const { return m_data->k_map[face_index]; }
-  unsigned int& k (const Face_index& face_index) { return m_data->k_map[face_index]; }
+  const bool is_original(const Vertex_index& vi) const { return m_data->v_original_map[vi]; }
 
-  bool is_active (const Vertex_index& vertex_index) const { return m_data->v_active_map[vertex_index]; }
-  void set_active (const Vertex_index& vertex_index, bool value) { m_data->v_active_map[vertex_index] = value; }
+  const unsigned int& k(const Face_index& fi) const { return m_data->k_map[fi]; }
+  unsigned int& k(const Face_index& fi) { return m_data->k_map[fi]; }
 
-  bool is_frozen (const Vertex_index& vertex_index) const
-  {
-    return (m_data->direction[vertex_index] == CGAL::NULL_VECTOR);
+  const bool is_active(const Vertex_index& vi) const { return m_data->v_active_map[vi]; }
+  void set_active(const Vertex_index& vi, const bool value) { m_data->v_active_map[vi] = value; }
+
+  const bool is_frozen(const Vertex_index& vi) const {
+    return (m_data->direction[vi] == CGAL::NULL_VECTOR);
   }
 
   const std::set<IEdge>& iedges() const { return m_data->iedges; }
   std::set<IEdge>& iedges() { return m_data->iedges; }
 
-  Point_2 to_2d (const Point_3& point) const
-  {
-    return m_data->plane.to_2d (point);
+  const Point_2 to_2d(const Point_3& point) const {
+    return m_data->plane.to_2d(point);
   }
 
-  Line_2 to_2d (const Line_3& line) const
-  {
-    return Line_2 (m_data->plane.to_2d(line.point()),
-                   m_data->plane.to_2d(line.point() + line.to_vector()));
+  const Line_2 to_2d(const Line_3& line) const {
+    return Line_2(
+      m_data->plane.to_2d(line.point()),
+      m_data->plane.to_2d(line.point() + line.to_vector()));
   }
 
-  Segment_2 to_2d (const Segment_3& segment) const
-  {
-    return Segment_2 (m_data->plane.to_2d(segment.source()),
-                      m_data->plane.to_2d(segment.target()));
+  const Segment_2 to_2d(const Segment_3& segment) const {
+    return Segment_2(
+      m_data->plane.to_2d(segment.source()),
+      m_data->plane.to_2d(segment.target()));
   }
 
-  Vector_3 to_3d (const Vector_2& vec) const
-  {
-    return Vector_3 (m_data->plane.to_3d (Point_2(0,0)),
-                     m_data->plane.to_3d (Point_2(0,0) + vec));
+  const Vector_3 to_3d(const Vector_2& vec) const {
+    return Vector_3(
+      m_data->plane.to_3d(Point_2(FT(0), FT(0))),
+      m_data->plane.to_3d(Point_2(FT(0), FT(0)) + vec));
   }
 
-  Point_3 to_3d (const Point_2& point) const { return m_data->plane.to_3d (point); }
+  const Point_3 to_3d(const Point_2& point) const {
+    return m_data->plane.to_3d(point);
+  }
 
-  Edge_index edge (const Vertex_index& v0, const Vertex_index& v1)
-  {
+  const Edge_index edge(const Vertex_index& v0, const Vertex_index& v1) {
+
     // std::cout << int(v0) << " : " << int(v1) << std::endl;
     // std::cout << int(m_data->mesh.halfedge(v0, v1)) << std::endl;
     // std::cout << int(m_data->mesh.halfedge(v1, v0)) << std::endl;
-    return m_data->mesh.edge (m_data->mesh.halfedge (v0, v1));
+    return m_data->mesh.edge(m_data->mesh.halfedge(v0, v1));
   }
 
-  Edge_index add_edge (const Vertex_index& v0, const Vertex_index& v1,
-                       const IEdge& iedge)
-  {
-    Edge_index out = m_data->mesh.edge (m_data->mesh.add_edge(v0,v1));
+  const Edge_index add_edge(
+    const Vertex_index& v0, const Vertex_index& v1, const IEdge& iedge) {
+
+    const auto out = m_data->mesh.edge(m_data->mesh.add_edge(v0, v1));
     m_data->e_iedge_map[out] = iedge;
     return out;
   }
 
-  Vertex_index add_vertex (const Point_2& point)
-  {
+  const Vertex_index add_vertex(const Point_2& point) {
     return m_data->mesh.add_vertex(point);
   }
 
-  Vertex_index duplicate_vertex (const Vertex_index& v)
-  {
-    Vertex_index vi = m_data->mesh.add_vertex (m_data->mesh.point(v));
-    m_data->direction[vi] = m_data->direction[v];
+  const Vertex_index duplicate_vertex(const Vertex_index& v) {
+    const auto vi = m_data->mesh.add_vertex(m_data->mesh.point(v));
+    m_data->direction[vi]     = m_data->direction[v];
     m_data->v_ivertex_map[vi] = m_data->v_ivertex_map[v];
-    m_data->v_iedge_map[vi] = m_data->v_iedge_map[v];
+    m_data->v_iedge_map[vi]   = m_data->v_iedge_map[v];
     return vi;
   }
 
-  void remove_vertex (const Vertex_index& v)
-  {
-    m_data->mesh.remove_vertex(v);
+  void remove_vertex(const Vertex_index& vi) {
+    m_data->mesh.remove_vertex(vi);
   }
 
-  Edge_index split_vertex (const Vertex_index& ei)
-  {
-    return m_data->mesh.edge
-      (CGAL::Euler::split_vertex (m_data->mesh.halfedge (ei),
-                                  m_data->mesh.opposite(m_data->mesh.next(m_data->mesh.halfedge (ei))),
-                                  m_data->mesh));
+  const Edge_index split_vertex(const Vertex_index& vi) {
+    return m_data->mesh.edge(
+      CGAL::Euler::split_vertex(
+        m_data->mesh.halfedge(vi),
+        m_data->mesh.opposite(m_data->mesh.next(m_data->mesh.halfedge(vi))),
+        m_data->mesh));
   }
 
-  Vertex_index split_edge (const Vertex_index& v0, const Vertex_index& v1)
-  {
-    return m_data->mesh.target
-      (CGAL::Euler::split_edge (m_data->mesh.halfedge (v0, v1), m_data->mesh));
+  const Vertex_index split_edge(
+    const Vertex_index& v0, const Vertex_index& v1) {
+
+    return m_data->mesh.target(
+      CGAL::Euler::split_edge(m_data->mesh.halfedge(v0, v1), m_data->mesh));
   }
-
-
 };
 
 template<typename Kernel>
