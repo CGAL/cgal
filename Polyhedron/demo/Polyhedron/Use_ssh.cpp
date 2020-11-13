@@ -10,10 +10,11 @@
 // Author(s)     : Maxime Gimeno
 
 #ifdef CGAL_USE_SSH
-
+#include "config.h"
 #include <CGAL/Three/Three.h>
 
 #include "CGAL/Use_ssh.h"
+#include <CGAL/use.h>
 #include <iostream>
 #include <fstream>
 #include <cstring>
@@ -143,6 +144,7 @@ bool establish_ssh_session_from_agent(ssh_session& session,
                                       const char *server,
                                       const char *pub_key_path)
 {
+#ifndef _WIN32
   int port = 22;
 
   //Can use SSH_LOG_PROTOCOL here for verbose output
@@ -161,7 +163,7 @@ bool establish_ssh_session_from_agent(ssh_session& session,
 #if LIBSSH_VERSION_MAJOR <1 && LIBSSH_VERSION_MINOR < 8
     if( ssh_is_server_known(session) != SSH_SERVER_KNOWN_OK )
 #else
-      if( ssh_session_is_known_server(session) != SSH_KNOWN_HOSTS_OK )
+    if( ssh_session_is_known_server(session) != SSH_KNOWN_HOSTS_OK )
 #endif
     {
       if(QMessageBox::warning(CGAL::Three::Three::mainWindow(), QString("Unknown Server"),
@@ -185,14 +187,14 @@ bool establish_ssh_session_from_agent(ssh_session& session,
         ssh_connect(session);
       }
     }
-      ssh_key pubkey = ssh_key_new();
-      ssh_pki_import_pubkey_file(pub_key_path, &pubkey);
-      res = ssh_userauth_try_publickey(session, NULL, pubkey);
-      if(res == SSH_AUTH_AGAIN)
-        ssh_disconnect(session);
-      else
-        break;
-    }
+    ssh_key pubkey = ssh_key_new();
+    ssh_pki_import_pubkey_file(pub_key_path, &pubkey);
+    res = ssh_userauth_try_publickey(session, NULL, pubkey);
+    if(res == SSH_AUTH_AGAIN)
+      ssh_disconnect(session);
+    else
+      break;
+  }
 
 
   if(!test_result(res))
@@ -208,6 +210,14 @@ bool establish_ssh_session_from_agent(ssh_session& session,
     return false;
   }
   return true;
+#else
+  CGAL_USE(session);
+  CGAL_USE(user);
+  CGAL_USE(server);
+  CGAL_USE(pub_key_path);
+
+  return false;
+#endif
 }
 
 void close_connection(ssh_session &session)
