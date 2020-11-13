@@ -59,18 +59,24 @@ if ( CGAL_FOUND )
     target_link_libraries(${target} ${CGAL_libs})
   endforeach()
 
+  # Use Eigen
+  find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+  include(CGAL_Eigen_support)
+
   find_package(LASLIB)
   include(CGAL_LASLIB_support)
   if (TARGET CGAL::LASLIB_support)
     add_executable( read_las_example "read_las_example.cpp" )
     target_link_libraries(read_las_example ${CGAL_libs} CGAL::LASLIB_support)
+    if (TARGET CGAL::Eigen_support)
+      add_executable( orient_scanlines_example "orient_scanlines_example.cpp" )
+      target_link_libraries(orient_scanlines_example ${CGAL_libs}
+        CGAL::Eigen_support CGAL::LASLIB_support)
+    endif()
   else()
     message(STATUS "NOTICE : the LAS reader test requires LASlib and will not be compiled.")
   endif()
 
-  # Use Eigen
-  find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-  include(CGAL_Eigen_support)
   if (TARGET CGAL::Eigen_support)
     set(CGAL_libs ${CGAL_libs} CGAL::Eigen_support)
 

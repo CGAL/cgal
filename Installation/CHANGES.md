@@ -54,6 +54,9 @@ Release date: December 2020
 -   Added an optional range parameter to `CGAL::Polygon_mesh_processing::stitch_borders()`,
     which can be used to specify which boundary cycles are eligible for stitching.
 
+### [Point Set Processing](https://doc.cgal.org/5.2/Manual/packages.html#PkgPointSetProcessing3)
+-   Added a function [`CGAL::scanline_orient_normals()`](https://doc.cgal.org/5.2/Point_set_processing_3/group__PkgPointSetProcessing3Algorithms.html#ga221d4efde44f42aefe153cb927138efe) that orients a point cloud by estimating a line of sight.
+
 ### [Classification](https://doc.cgal.org/5.2/Manual/packages.html#PkgClassification)
 
 - **Breaking change**: new IO format for `ETHZ::Random_Forest` (a
