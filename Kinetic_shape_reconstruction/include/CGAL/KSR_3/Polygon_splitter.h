@@ -37,7 +37,7 @@
 namespace CGAL {
 namespace KSR_3 {
 
-template<typename GeomTraits>
+template<typename Data, typename GeomTraits>
 class Polygon_splitter {
 
 public:
@@ -50,8 +50,6 @@ private:
   using Line_2     = typename Kernel::Line_2;
   using Vector_2   = typename Kernel::Vector_2;
   using Triangle_2 = typename Kernel::Triangle_2;
-
-  using Data = KSR_3::Data_structure<Kernel>;
 
   using PVertex = typename Data::PVertex;
   using PFace   = typename Data::PFace;
@@ -399,8 +397,8 @@ public:
   }
 
 private:
-
-  const bool is_border(const std::pair<Face_handle, int>& edge) const {
+  const bool is_border(
+    const std::pair<Face_handle, int>& edge) const {
 
     if (!m_cdt.is_constrained(edge)) {
       return false;

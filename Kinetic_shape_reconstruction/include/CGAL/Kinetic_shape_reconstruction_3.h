@@ -23,6 +23,10 @@
 
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
+// CGAL includes.
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
+// Internal includes.
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/debug.h>
 #include <CGAL/KSR_3/Event.h>
@@ -59,8 +63,10 @@ private:
   using Event       = KSR_3::Event<Data>;
   using Event_queue = KSR_3::Event_queue<Data>;
 
-  using Bbox_3           = CGAL::Bbox_3;
-  using Polygon_splitter = KSR_3::Polygon_splitter<Kernel>;
+  using Bbox_3 = CGAL::Bbox_3;
+
+  // using EK = CGAL::Exact_predicates_exact_constructions_kernel;
+  using Polygon_splitter = KSR_3::Polygon_splitter<Data, Kernel>;
 
 private:
   Data m_data;
@@ -148,8 +154,9 @@ public:
     //   sp.plane().d() << std::endl;
     // }
 
-    // m_data.check_bbox();
-    // std::cout << std::endl << "POLYGON SPLITTER SUCCESS!" << std::endl << std::endl;
+    m_data.check_bbox();
+    std::cout << std::endl << "POLYGON SPLITTER SUCCESS!" << std::endl << std::endl;
+    exit(EXIT_SUCCESS);
 
     if (m_verbose) {
       std::cout << std::endl << "--- RUNNING THE QUEUE:" << std::endl;
