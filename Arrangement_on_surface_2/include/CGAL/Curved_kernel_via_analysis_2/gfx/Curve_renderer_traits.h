@@ -55,13 +55,13 @@ struct Max_coeff
     {
         typename CGAL::Polynomial<X>::const_iterator it = p.begin();
         Max_coeff<NT> max_coeff;
-        NT max(max_coeff(*it));
+        NT cur_max(max_coeff(*it));
         while(++it != p.end()) {
             NT tmp(max_coeff(*it));
-            if(max < CGAL_ABS(tmp))
-                max = CGAL_ABS(tmp);
+            if(cur_max < CGAL_ABS(tmp))
+                cur_max = CGAL_ABS(tmp);
         }
-        return max;
+        return cur_max;
     }
     NT operator()(const NT& x) const
     { return CGAL_ABS(x); }
@@ -241,7 +241,7 @@ struct Curve_renderer_traits_base
         typedef void result_type;
 
         template <class Float>
-        void operator()(const Float& x) const
+        void operator()(const Float& /*x*/) const
         { }
     };
 
@@ -251,7 +251,7 @@ struct Curve_renderer_traits_base
         typedef bool result_type;
 
         template <class Float>
-        bool operator()(const Float& x) const
+        bool operator()(const Float& /*x*/) const
         { return false;/*(CGAL_ABS(x) <= 1e-16)*/; }
     };
 

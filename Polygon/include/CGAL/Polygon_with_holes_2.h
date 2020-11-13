@@ -48,7 +48,7 @@ public:
   typedef typename Base::Hole_const_iterator         Hole_const_iterator;
   typedef typename Base::Size                        Size;
 
-  /*! Default constructor. */
+  /*! %Default constructor. */
   Polygon_with_holes_2 () :
     Base()
   {}

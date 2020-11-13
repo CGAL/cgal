@@ -633,9 +633,9 @@ bool is_point_inside_region( Region const& aRegion, Point const& aP )
   return rR ;
 }
 
-bool is_skeleton_valid( IRegion const& aRegion, ISls const& aSkeleton )
+bool is_skeleton_valid( IRegion const& aRegion, ISls const& aSkeleton, bool is_partial )
 {
-  bool rValid = aSkeleton.is_valid() ;
+  bool rValid = aSkeleton.is_valid(is_partial) ;
 
   if ( !rValid )
   {
@@ -713,7 +713,7 @@ int create_skeleton ( Zone& rZone, boost::optional<IFT> const& aMaxTime = boost:
     rStatus = cTimedOut ;
 
   if ( rStatus == cUnknown )
-    rStatus = lSls && is_skeleton_valid(*rZone.Input,*lSls) ? cOK : cFailed ;
+    rStatus = lSls && is_skeleton_valid(*rZone.Input,*lSls, (bool) aMaxTime) ? cOK : cFailed ;
 
   double lEllapsedTime = t.time();
 
@@ -821,7 +821,7 @@ int test_zone ( Zone& rZone )
 
         OSlsPtr lOSkeleton = CvtSls(*rZone.PartialSkeleton) ;
 
-        assert( lOSkeleton->is_valid() ) ;
+        assert( lOSkeleton->is_valid(true) ) ;
 
         IOffsetBuilderVisitor lWatchdog(check_timeout);
 

@@ -598,6 +598,33 @@ void CGAL::QGLViewer::postDraw() {
   if (displayMessage_)
     drawText(10, height() - 10, message_);
 
+  //zoom region
+  if(camera()->frame()->action_ == qglviewer::ZOOM_ON_REGION)
+  {
+    QPainter painter(this);
+    painter.setPen(QColor(120,120,120));
+    painter.drawRect(QRect(camera()->frame()->pressPos_, mapFromGlobal(QCursor::pos())));
+    painter.end();
+  }
+
+  //zoom_fov indicator
+  if(camera()->frame()->action_ == qglviewer::ZOOM_FOV)
+  {
+    QPainter painter(this);
+    QPoint bot(width()-30,height()/2-0.33*height()),
+           top(width()-30, height()/2+0.33*height());
+    int fov_height = (top.y()-bot.y())*camera()->fieldOfView()*4.0/CGAL_PI + bot.y();
+
+
+    painter.setPen(QColor(120,120,120));
+    painter.drawLine(bot, top);
+    painter.fillRect(QRect(QPoint(width()-40, fov_height+10),
+                           QPoint(width()-20, fov_height-10)),
+                     QColor(120,120,120));
+    painter.end();
+    camera()->frame()->action_= qglviewer::NO_MOUSE_ACTION;
+  }
+
 }
 
 
@@ -652,7 +679,6 @@ void CGAL::QGLViewer::setDefaultShortcuts() {
   setShortcut(qglviewer::FULL_SCREEN, ::Qt::ALT + ::Qt::Key_Return);
   setShortcut(qglviewer::ANIMATION, ::Qt::Key_Return);
   setShortcut(qglviewer::HELP, ::Qt::Key_H);
-  setShortcut(qglviewer::EDIT_CAMERA, ::Qt::Key_C);
   setShortcut(qglviewer::MOVE_CAMERA_LEFT, ::Qt::Key_Left);
   setShortcut(qglviewer::MOVE_CAMERA_RIGHT, ::Qt::Key_Right);
   setShortcut(qglviewer::MOVE_CAMERA_UP, ::Qt::Key_Up);
@@ -674,9 +700,6 @@ void CGAL::QGLViewer::setDefaultShortcuts() {
       tr("Opens this help window", "HELP action description");
   keyboardActionDescription_[qglviewer::ANIMATION] =
       tr("Starts/stops the animation", "ANIMATION action description");
-  keyboardActionDescription_[qglviewer::EDIT_CAMERA] =
-      tr("Toggles camera paths display",
-         "EDIT_CAMERA action description"); // TODO change
   keyboardActionDescription_[qglviewer::ENABLE_TEXT] =
       tr("Toggles the display of the text", "ENABLE_TEXT action description");
   keyboardActionDescription_[qglviewer::EXIT_VIEWER] =
@@ -732,6 +755,7 @@ void CGAL::QGLViewer::setDefaultMouseBindings() {
 
     setWheelBinding(modifiers, mh, qglviewer::ZOOM);
   }
+  setWheelBinding(::Qt::Key_Z, ::Qt::NoModifier, qglviewer::CAMERA, qglviewer::ZOOM_FOV);
 
   // Z o o m   o n   r e g i o n
   setMouseBinding(::Qt::ShiftModifier, ::Qt::MidButton, qglviewer::CAMERA, qglviewer::ZOOM_ON_REGION);
@@ -752,6 +776,7 @@ void CGAL::QGLViewer::setDefaultMouseBindings() {
   // A c t i o n s   w i t h   k e y   m o d i f i e r s
   setMouseBinding(::Qt::Key_Z, ::Qt::NoModifier, ::Qt::LeftButton, qglviewer::ZOOM_ON_PIXEL);
   setMouseBinding(::Qt::Key_Z, ::Qt::NoModifier, ::Qt::RightButton, qglviewer::ZOOM_TO_FIT);
+
 
 #ifdef Q_OS_MAC
   // Specific Mac bindings for touchpads. Two fingers emulate a wheelEvent which
@@ -1636,6 +1661,8 @@ QString CGAL::QGLViewer::mouseActionString(qglviewer::MouseAction ma) {
                          "SCREEN_TRANSLATE mouse action");
   case CGAL::qglviewer::ZOOM_ON_REGION:
     return CGAL::QGLViewer::tr("Zooms on region for", "ZOOM_ON_REGION mouse action");
+  case CGAL::qglviewer::ZOOM_FOV:
+    return CGAL::QGLViewer::tr("Changes the FOV to emulate an optical zoom for ", "ZOOM_FOV mouse action");
   }
   return QString();
 }
@@ -2722,14 +2749,16 @@ void CGAL::QGLViewer::setWheelBinding(::Qt::Key key, ::Qt::KeyboardModifiers mod
                                 bool withConstraint) {
   //#CONNECTION# ManipulatedFrame::wheelEvent and
   // ManipulatedCameraFrame::wheelEvent switches
-  if ((action != qglviewer::ZOOM) && (action != qglviewer::MOVE_FORWARD) &&
-      (action != qglviewer::MOVE_BACKWARD) && (action != qglviewer::NO_MOUSE_ACTION)) {
+  if ((action != qglviewer::ZOOM) && (action != qglviewer::ZOOM_FOV) &&
+      (action != qglviewer::MOVE_FORWARD) && (action != qglviewer::MOVE_BACKWARD)
+      && (action != qglviewer::NO_MOUSE_ACTION)) {
     qWarning("Cannot bind %s to wheel",
              mouseActionString(action).toLatin1().constData());
     return;
   }
 
-  if ((handler == qglviewer::FRAME) && (action != qglviewer::ZOOM) && (action != qglviewer::NO_MOUSE_ACTION)) {
+  if ((handler == qglviewer::FRAME) && (action != qglviewer::ZOOM)
+      && (action != qglviewer::NO_MOUSE_ACTION)) {
     qWarning("Cannot bind %s to FRAME wheel",
              mouseActionString(action).toLatin1().constData());
     return;
@@ -3840,18 +3869,13 @@ void CGAL::QGLViewer::initFromDOMElement(const QDomElement &element) {
       setAxisIsDrawn(DomUtils::boolFromDom(child, "axisIsDrawn", false));
       setGridIsDrawn(DomUtils::boolFromDom(child, "gridIsDrawn", false));
       setFPSIsDisplayed(DomUtils::boolFromDom(child, "FPSIsDisplayed", false));
-      // See comment below.
-      tmpCameraIsEdited = DomUtils::boolFromDom(child, "cameraIsEdited", false);
-      // setTextIsEnabled(DomUtils::boolFromDom(child, "textIsEnabled", true));
     }
 
     if (child.tagName() == "Geometry") {
       setFullScreen(DomUtils::boolFromDom(child, "fullScreen", false));
 
-      if (isFullScreen()) {
-        prevPos_.setX(DomUtils::intFromDom(child, "prevPosX", 0));
-        prevPos_.setY(DomUtils::intFromDom(child, "prevPosY", 0));
-      } else {
+      if (!isFullScreen())
+      {
         int width = DomUtils::intFromDom(child, "width", 600);
         int height = DomUtils::intFromDom(child, "height", 400);
         topLevelWidget()->resize(width, height);
@@ -3863,15 +3887,6 @@ void CGAL::QGLViewer::initFromDOMElement(const QDomElement &element) {
         topLevelWidget()->move(pos);
       }
     }
-
-    if (child.tagName() == "Camera") {
-      connectAllCameraKFIInterpolatedSignals(false);
-      camera()->initFromDOMElement(child);
-      connectAllCameraKFIInterpolatedSignals();
-    }
-
-    if ((child.tagName() == "ManipulatedFrame") && (manipulatedFrame()))
-      manipulatedFrame()->initFromDOMElement(child);
 
     child = child.nextSibling().toElement();
   }

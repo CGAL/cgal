@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>2D Arrangements Demo</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -49,20 +49,27 @@
    <addaction name="separator"/>
    <addaction name="actionZoomIn"/>
    <addaction name="actionZoomOut"/>
+   <addaction name="actionZoomReset"/>
    <addaction name="separator"/>
-   <addaction name="actionSnapMode"/>
+   <addaction name="actionShowGrid"/>
+   <addaction name="separator"/>
+   <addaction name="actionArrangementSnapMode"/>
    <addaction name="actionGridSnapMode"/>
    <addaction name="separator"/>
    <addaction name="actionLowerEnvelope"/>
    <addaction name="actionUpperEnvelope"/>
    <addaction name="separator"/>
-   <addaction name="actionConicSegment"/>
-   <addaction name="actionCurveRay"/>
-   <addaction name="actionCurveLine"/>
-   <addaction name="actionConicCircle"/>
-   <addaction name="actionConicEllipse"/>
+   <addaction name="actionSegment"/>
+   <addaction name="actionPolyline"/>
+   <addaction name="actionRay"/>
+   <addaction name="actionLine"/>
+   <addaction name="actionCircle"/>
+   <addaction name="actionEllipse"/>
+   <addaction name="actionBezier"/>
    <addaction name="actionConicThreePoint"/>
    <addaction name="actionConicFivePoint"/>
+   <addaction name="actionAddAlgebraicCurve"/>
+   <addaction name="actionAddRationalCurve"/>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -103,10 +110,10 @@
     <property name="title">
      <string>&amp;Edit</string>
     </property>
-    <addaction name="actionSnapMode"/>
-    <addaction name="actionGridSnapMode"/>
-    <addaction name="separator"/>
     <addaction name="actionShowGrid"/>
+    <addaction name="separator"/>
+    <addaction name="actionArrangementSnapMode"/>
+    <addaction name="actionGridSnapMode"/>
     <addaction name="separator"/>
     <addaction name="actionPreferences"/>
    </widget>
@@ -130,12 +137,9 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/demo_insert.xpm</normaloff>:/icons/demo_insert.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/insert.xpm</normaloff>:/cgal/icons/insert.xpm</iconset>
    </property>
    <property name="text">
     <string>&amp;Insert</string>
@@ -146,8 +150,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/demo_delete.xpm</normaloff>:/icons/demo_delete.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/delete.xpm</normaloff>:/cgal/icons/delete.xpm</iconset>
    </property>
    <property name="text">
     <string>&amp;Delete</string>
@@ -158,8 +162,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/hand.xpm</normaloff>:/icons/hand.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/hand.xpm</normaloff>:/cgal/icons/hand.xpm</iconset>
    </property>
    <property name="text">
     <string>Drag</string>
@@ -170,8 +174,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/demo_pointlocation.xpm</normaloff>:/icons/demo_pointlocation.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/pointlocation.xpm</normaloff>:/cgal/icons/pointlocation.xpm</iconset>
    </property>
    <property name="text">
     <string>Point Location</string>
@@ -182,8 +186,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/demo_rayshoot_up.xpm</normaloff>:/icons/demo_rayshoot_up.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/rayshoot_up.xpm</normaloff>:/cgal/icons/rayshoot_up.xpm</iconset>
    </property>
    <property name="text">
     <string>Ray Shooting Up</string>
@@ -194,8 +198,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/demo_rayshoot_down.xpm</normaloff>:/icons/demo_rayshoot_down.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/rayshoot_down.xpm</normaloff>:/cgal/icons/rayshoot_down.xpm</iconset>
    </property>
    <property name="text">
     <string>Ray Shooting Down</string>
@@ -206,8 +210,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/demo_merge.xpm</normaloff>:/icons/demo_merge.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/merge.xpm</normaloff>:/cgal/icons/merge.xpm</iconset>
    </property>
    <property name="text">
     <string>Merge</string>
@@ -218,8 +222,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/demo_split.xpm</normaloff>:/icons/demo_split.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/split.xpm</normaloff>:/cgal/icons/split.xpm</iconset>
    </property>
    <property name="text">
     <string>Split</string>
@@ -230,23 +234,35 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/demo_fill.xpm</normaloff>:/icons/demo_fill.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/fill.xpm</normaloff>:/cgal/icons/fill.xpm</iconset>
    </property>
    <property name="text">
     <string>Fill</string>
    </property>
   </action>
-  <action name="actionSnapMode">
+  <action name="actionShowGrid">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/demo_snapvertex.xpm</normaloff>:/icons/demo_snapvertex.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/grid.xpm</normaloff>:/cgal/icons/grid.xpm</iconset>
    </property>
    <property name="text">
-    <string>Enable snapping</string>
+    <string>Show grid</string>
+   </property>
+  </action>
+  <action name="actionArrangementSnapMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/snapvertex.xpm</normaloff>:/cgal/icons/snapvertex.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Snap to arrangement</string>
    </property>
   </action>
   <action name="actionGridSnapMode">
@@ -254,26 +270,11 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/demo_snapgrid.xpm</normaloff>:/icons/demo_snapgrid.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/snapgrid.xpm</normaloff>:/cgal/icons/snapgrid.xpm</iconset>
    </property>
    <property name="text">
     <string>Snap to grid</string>
-   </property>
-  </action>
-  <action name="actionSegment">
-   <property name="text">
-    <string>Segment</string>
-   </property>
-  </action>
-  <action name="actionPolyline">
-   <property name="text">
-    <string>Polyline</string>
-   </property>
-  </action>
-  <action name="actionConic">
-   <property name="text">
-    <string>Conic</string>
    </property>
   </action>
   <action name="actionNewTab">
@@ -294,21 +295,13 @@
     <string>&amp;Preferences...</string>
    </property>
   </action>
-  <action name="actionShowGrid">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Show &amp;grid</string>
-   </property>
-  </action>
   <action name="actionLowerEnvelope">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/lower_env_xpm.xpm</normaloff>:/icons/lower_env_xpm.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/lower_env_xpm.xpm</normaloff>:/cgal/icons/lower_env_xpm.xpm</iconset>
    </property>
    <property name="text">
     <string>Lower envelope</string>
@@ -319,46 +312,70 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/upper_env_xpm.xpm</normaloff>:/icons/upper_env_xpm.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/upper_env_xpm.xpm</normaloff>:/cgal/icons/upper_env_xpm.xpm</iconset>
    </property>
    <property name="text">
     <string>Upper envelope</string>
    </property>
   </action>
-  <action name="actionConicSegment">
+  <action name="actionSegment">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/demo_conic_segment.xpm</normaloff>:/icons/demo_conic_segment.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/conic_segment.xpm</normaloff>:/cgal/icons/conic_segment.xpm</iconset>
    </property>
    <property name="text">
     <string>Segment</string>
    </property>
+   <property name="toolTip">
+    <string>Segment</string>
+   </property>
   </action>
-  <action name="actionConicCircle">
+  <action name="actionPolyline">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/demo_conic_circle.xpm</normaloff>:/icons/demo_conic_circle.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/conic_segment.xpm</normaloff>:/cgal/icons/conic_segment.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Polyline</string>
+   </property>
+   <property name="toolTip">
+    <string>Polyline</string>
+   </property>
+  </action>
+  <action name="actionCircle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/conic_circle.xpm</normaloff>:/cgal/icons/conic_circle.xpm</iconset>
    </property>
    <property name="text">
     <string>Circle</string>
    </property>
+   <property name="toolTip">
+    <string>Circle</string>
+   </property>
   </action>
-  <action name="actionConicEllipse">
+  <action name="actionEllipse">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/demo_conic_ellipse.xpm</normaloff>:/icons/demo_conic_ellipse.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/conic_ellipse.xpm</normaloff>:/cgal/icons/conic_ellipse.xpm</iconset>
    </property>
    <property name="text">
+    <string>Ellipse</string>
+   </property>
+   <property name="toolTip">
     <string>Ellipse</string>
    </property>
   </action>
@@ -367,10 +384,13 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/demo_conic_3points.xpm</normaloff>:/icons/demo_conic_3points.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/conic_3points.xpm</normaloff>:/cgal/icons/conic_3points.xpm</iconset>
    </property>
    <property name="text">
+    <string>Three Point Conic</string>
+   </property>
+   <property name="toolTip">
     <string>Three Point Conic</string>
    </property>
   </action>
@@ -379,11 +399,53 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/demo_conic_5points.xpm</normaloff>:/icons/demo_conic_5points.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/conic_5points.xpm</normaloff>:/cgal/icons/conic_5points.xpm</iconset>
    </property>
    <property name="text">
     <string>Five Point Conic</string>
+   </property>
+   <property name="toolTip">
+    <string>Five Point Conic</string>
+   </property>
+  </action>
+  <action name="actionBezier">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/conic_segment.xpm</normaloff>:/cgal/icons/conic_segment.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Bezier</string>
+   </property>
+   <property name="toolTip">
+    <string>Bezier</string>
+   </property>
+  </action>
+  <action name="actionAddAlgebraicCurve">
+   <property name="text">
+    <string>Add Curve</string>
+   </property>
+   <property name="toolTip">
+    <string>Curve Equation</string>
+   </property>
+   <property name="icon">
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/equation.xpm</normaloff>:/cgal/icons/equation.xpm</iconset>
+   </property>
+  </action>
+  <action name="actionAddRationalCurve">
+   <property name="text">
+    <string>Add Curve</string>
+   </property>
+   <property name="toolTip">
+    <string>Curve Equation</string>
+   </property>
+   <property name="icon">
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/equation.xpm</normaloff>:/cgal/icons/equation.xpm</iconset>
    </property>
   </action>
   <action name="actionCloseTab">
@@ -417,43 +479,67 @@
   </action>
   <action name="actionZoomIn">
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/demo_zoomin.xpm</normaloff>:/icons/demo_zoomin.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/zoomin.xpm</normaloff>:/cgal/icons/zoomin.xpm</iconset>
    </property>
    <property name="text">
+    <string>Zoom In</string>
+   </property>
+   <property name="toolTip">
     <string>Zoom In</string>
    </property>
   </action>
   <action name="actionZoomOut">
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/demo_zoomout.xpm</normaloff>:/icons/demo_zoomout.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/zoomout.xpm</normaloff>:/cgal/icons/zoomout.xpm</iconset>
    </property>
    <property name="text">
     <string>Zoom Out</string>
    </property>
+   <property name="toolTip">
+    <string>Zoom Out</string>
+   </property>
   </action>
-  <action name="actionCurveRay">
+  <action name="actionZoomReset">
+   <property name="icon">
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/zoomreset.xpm</normaloff>:/cgal/icons/zoomreset.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom Reset</string>
+   </property>
+   <property name="toolTip">
+    <string>Zoom Reset</string>
+   </property>
+  </action>
+  <action name="actionRay">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/demo_conic_ray.xpm</normaloff>:/icons/demo_conic_ray.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/conic_ray.xpm</normaloff>:/cgal/icons/conic_ray.xpm</iconset>
    </property>
    <property name="text">
     <string>Ray</string>
    </property>
+   <property name="toolTip">
+    <string>Ray</string>
+   </property>
   </action>
-  <action name="actionCurveLine">
+  <action name="actionLine">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ArrangementDemoWindow.qrc">
-     <normaloff>:/icons/demo_conic_line.xpm</normaloff>:/icons/demo_conic_line.xpm</iconset>
+    <iconset resource="Arrangement_on_surface_2.qrc">
+     <normaloff>:/cgal/icons/conic_line.xpm</normaloff>:/cgal/icons/conic_line.xpm</iconset>
    </property>
    <property name="text">
+    <string>Line</string>
+   </property>
+   <property name="toolTip">
     <string>Line</string>
    </property>
   </action>
@@ -467,7 +553,7 @@
   </action>
  </widget>
  <resources>
-  <include location="ArrangementDemoWindow.qrc"/>
+  <include location="Arrangement_on_surface_2.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -98,7 +98,7 @@ int edge_collapse(TM& tmesh,
                                  choose_parameter<No_constrained_edge_map<TM> >(get_parameter(np, internal_np::edge_is_constrained)),
                                  choose_parameter<LindstromTurk_cost<TM> >(get_parameter(np, internal_np::get_cost_policy)),
                                  choose_parameter<LindstromTurk_placement<TM> >(get_parameter(np, internal_np::get_placement_policy)),
-                                 choose_parameter<internal::Dummy_visitor>(get_parameter(np, internal_np::graph_visitor)));
+                                 choose_parameter<internal::Dummy_visitor>(get_parameter(np, internal_np::visitor)));
 }
 
 template<class TM, class ShouldStop>

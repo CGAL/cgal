@@ -32,16 +32,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
   public:
     typedef typename Base::result_type result_type;
 
-    #ifndef CGAL_CFG_MATCHING_BUG_6
     using Base::operator();
-    #else
-    result_type
-    operator()(const Weighted_point_3& p, const Weighted_point_3& q) const
-    {
-      return Base::operator()(p,q);
-    }
-    #endif
-
 
     void
     msvc_workaround(double& max1, double& max2, double& max3, double& max4, double& max5, double&  RT_tmp_result,

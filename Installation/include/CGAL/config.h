@@ -159,9 +159,6 @@
 
 #if CGAL_HEADER_ONLY
 #  include <CGAL/internal/enable_third_party_libraries.h>
-#  if(BOOST_MSVC)
-#    include <CGAL/MSVC_compiler_config.h>
-#  endif
 #else
 #  include <CGAL/compiler_config.h>
 #endif
@@ -300,6 +297,10 @@
 // Same for C++17
 #if __cplusplus >= 201703L || _MSVC_LANG >= 201703L
 #  define CGAL_CXX17 1
+#endif
+// Same for C++20
+#if __cplusplus >= 202002L || _MSVC_LANG >= 202002L
+#  define CGAL_CXX20 1
 #endif
 
 #if defined(BOOST_NO_CXX11_HDR_FUNCTIONAL) || BOOST_VERSION < 105000
