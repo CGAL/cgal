@@ -568,12 +568,14 @@ public:
     else
     {
       if(is_ascii(os))
+      {
         for(auto it = edges_.begin(); it != edges_.end(); ++it)
         {
-          os << CGAL::oformat(vertex_index_map[it->left]);
-          os << CGAL::oformat(vertex_index_map[it->right]);
+          write(os, vertex_index_map[it->left]);
+          write(os, vertex_index_map[it->right]);
           os << CGAL::oformat(it->info);
         }
+      }
       else
       {
         for(auto it = edges_.begin(); it != edges_.end(); ++it)
