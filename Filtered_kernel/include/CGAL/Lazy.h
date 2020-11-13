@@ -287,6 +287,7 @@ public:
     bool doit = et.compare_exchange_strong(other, (ET*)1);
     if (!doit) {
       // Wait until it becomes available
+      // Using a lock would let the implementation choose how to wait...
       while ((uintptr_t)other == 1) {
         std::this_thread::yield(); // or do nothing?
         other = et.load(std::memory_order_relaxed);
@@ -311,7 +312,8 @@ public:
     // Should we return the pointer from update_exact, to avoid an extra load and synchronization?
   }
 
-#elif 1
+#elif 0
+  // This version seems strictly less interesting than the previous one
   mutable std::atomic<std::thread::id> worker{}; // thread that is allowed to updatee
 
 #define CGAL_UPDATE_EXACT_BEGIN \
@@ -344,17 +346,25 @@ public:
   }
 
 #else
-  mutable std::atomic_uint workers{}; // number of threads running update_exact
+  // number of references to the arguments, 1 when et is null, plus 1 per thread running update_exact.
+  // Don't care about the case where et is non-null from construction, update_exact will never be called.
+  // This is used to decide who can prune the tree.
+  mutable std::atomic_uint n_arg_refs{1};
   // not written yet
 #define CGAL_UPDATE_EXACT_BEGIN \
-  workers.fetch_add(1, std::memory_order_relaxed); \
-  if (et.load(std::memory_order_relaxed)!=nullptr) \
-  if (!this->start_update()) return;
-#define CGAL_UPDATE_EXACT_MIDDLE \
+  n_arg_refs.fetch_add(1, std::memory_order_relaxed); \
+  if (et.load(std::memory_order_relaxed)==nullptr) {
+#define CGAL_UPDATE_EXACT_MIDDLE_1 \
   bool updated = this->set_exact(pet); \
   if (!updated) { /* some other thread was faster */ \
     pet->~ET(); \
-  } else if (this->end_update()) {
+  } \
+  if (updated) {
+#define CGAL_UPDATE_EXACT_MIDDLE_2 \
+  } \
+  int dec = 1 + updated; \
+  bool do_clean = n_arg_refs.fetch_sub(dec, std::memory_order_relaxed) == dec; \
+  if (do_clean) {
 #define CGAL_UPDATE_EXACT_END \
   }
   bool set_exact(ET* pet) const
@@ -366,7 +376,7 @@ public:
   // true if you should update
   bool start_update() const
   {
-    unsigned int w = workers.fetch_add(1, std::memory_order_relaxed);
+    unsigned int w = n_arg_refs.fetch_add(1, std::memory_order_relaxed);
     ???
   }
 
