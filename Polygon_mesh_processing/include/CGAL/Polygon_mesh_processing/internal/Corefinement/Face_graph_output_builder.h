@@ -1375,7 +1375,8 @@ public:
             if (tm1_coplanar_faces.test(f_id))
             {
               coplanar_patches_of_tm1.set(patch_id);
-              coplanar_patches_of_tm1_for_union_and_intersection.set(patch_id);
+              if (is_tm1_inside_out == is_tm2_inside_out)
+                coplanar_patches_of_tm1_for_union_and_intersection.set(patch_id);
             }
             else
             {
@@ -1436,7 +1437,8 @@ public:
             if (tm2_coplanar_faces.test(f_id))
             {
               coplanar_patches_of_tm2.set(patch_id);
-              coplanar_patches_of_tm2_for_union_and_intersection.set(patch_id);
+              if (is_tm1_inside_out == is_tm2_inside_out)
+                coplanar_patches_of_tm2_for_union_and_intersection.set(patch_id);
             }
             else
             {
