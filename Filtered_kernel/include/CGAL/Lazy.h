@@ -55,11 +55,40 @@
 #include <atomic>
 #include <thread>
 #include <mutex>
+#include <optional>
 
 namespace CGAL {
 
-// It would be nice to provide a specialization for Interval_nt, but I believe that would require making approx() return by value for this AT.
+// It would be nice to provide a specialization for Interval_nt with a single AT (atomic by pieces?), possibly making approx() return by value for this AT.
+//
 // The approximate value is set once at construction, and possibly updated once during update_exact().
+#if 0
+  // Roughly sorted from fastest to slowest for building a DT3 with Epeck
+#elif 1
+template<class AT>
+struct Indirect_AT {
+  typedef AT const& reference;
+  // TODO: we could store the second one with ET, so it doesn't take any space until needed.
+  std::aligned_storage_t<sizeof(AT), alignof(AT)> at[2];
+  std::atomic<AT*> current{(AT*)&at[0]};
+  Indirect_AT(){new(&at[0])AT();}
+  Indirect_AT(AT const& a){new(&at[0])AT(a);}
+  Indirect_AT(AT&& a){new(&at[0])AT(std::move(a));}
+  Indirect_AT& operator=(AT const& a){ new(&at[1])AT(a); current.store((AT*)&at[1], std::memory_order_release); return *this; }
+  Indirect_AT& operator=(AT&& a){ new(&at[1])AT(std::move(a)); current.store((AT*)&at[1], std::memory_order_release); return *this; }
+  operator reference()const{
+    return *current.load(std::memory_order_consume);
+  }
+  ~Indirect_AT(){
+    reinterpret_cast<AT*>(&at[0])->~AT();
+    if (current.load(std::memory_order_relaxed) == (AT*)&at[1]) {
+      std::atomic_thread_fence(std::memory_order_acquire);
+      reinterpret_cast<AT*>(&at[1])->~AT();
+    }
+  }
+};
+#elif 1
+// Surprisingly fast, despite the allocation
 template<class AT>
 struct Indirect_AT {
   typedef AT const& reference;
@@ -73,6 +102,72 @@ struct Indirect_AT {
   operator reference()const{return *p.load(std::memory_order_acquire);}
   ~Indirect_AT() { delete p.load(std::memory_order_acquire); }
 };
+#elif 1
+template<class AT>
+struct Indirect_AT {
+  typedef AT const& reference;
+  AT orig{};
+  std::optional<AT> fine{std::nullopt};
+  std::atomic<AT*> current{&orig};
+  Indirect_AT(){}
+  Indirect_AT(AT const& a):orig(a){}
+  Indirect_AT(AT&& a):orig(std::move(a)){}
+  Indirect_AT& operator=(AT const& a){ fine=a; current.store(fine.operator->(), std::memory_order_release); return *this; }
+  Indirect_AT& operator=(AT&& a){ fine=std::move(a); current.store(fine.operator->(), std::memory_order_release); return *this; }
+  operator reference()const{
+    // could be memory_order_relaxed when current points to old
+    return *current.load(std::memory_order_consume);
+  }
+};
+#elif 1
+template<class AT>
+struct Indirect_AT {
+  typedef AT const& reference;
+  std::aligned_storage_t<sizeof(AT), alignof(AT)> at[2];
+  // TODO: could we use et!=nullptr for that?
+  std::atomic_int updated{};
+  Indirect_AT(){new(&at[0])AT();}
+  Indirect_AT(AT const& a){new(&at[0])AT(a);}
+  Indirect_AT(AT&& a){new(&at[0])AT(std::move(a));}
+  Indirect_AT& operator=(AT const& a){ new(&at[1])AT(a); updated.store(1, std::memory_order_release); return *this; }
+  Indirect_AT& operator=(AT&& a){ new(&at[1])AT(std::move(a)); updated.store(1, std::memory_order_release); return *this; }
+  operator reference()const{
+    return *reinterpret_cast<AT const*>(&at[updated.load(std::memory_order_acquire)]);
+  }
+  ~Indirect_AT(){
+    reinterpret_cast<AT*>(&at[0])->~AT();
+    if (updated.load(std::memory_order_acquire))
+      reinterpret_cast<AT*>(&at[1])->~AT();
+  }
+};
+#elif 1
+template<class AT>
+struct Indirect_AT {
+  typedef AT const& reference;
+  AT orig{};
+  std::optional<AT> fine{std::nullopt};
+  // TODO: could we use et!=nullptr for that?
+  std::atomic_int updated{};
+  std::unique_ptr<AT> old;
+  Indirect_AT(){}
+  Indirect_AT(AT const& a):orig(a){}
+  Indirect_AT(AT&& a):orig(std::move(a)){}
+  Indirect_AT& operator=(AT const& a){ fine=a; updated.store(1, std::memory_order_release); return *this; }
+  Indirect_AT& operator=(AT&& a){ fine=std::move(a); updated.store(1, std::memory_order_release); return *this; }
+  operator reference()const{
+ #if !defined __SANITIZE_THREAD__ && !__has_feature(thread_sanitizer)
+    if (updated.load(std::memory_order_relaxed)) {
+      std::atomic_thread_fence(std::memory_order_acquire);
+ #else
+    if (updated.load(std::memory_order_acquire)) {
+ #endif
+      return *fine;
+    } else {
+      return orig;
+    }
+  }
+};
+#endif
 
 template <class E,
           class A,
