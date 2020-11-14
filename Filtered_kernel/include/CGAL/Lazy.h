@@ -54,6 +54,7 @@
 #include <vector>
 #include <atomic>
 #include <thread>
+#include <mutex>
 
 namespace CGAL {
 
@@ -61,6 +62,7 @@ namespace CGAL {
 // The approximate value is set once at construction, and possibly updated once during update_exact().
 template<class AT>
 struct Indirect_AT {
+  typedef AT const& reference;
   std::atomic<AT*> p; // no atomic<unique_ptr> ??
   std::unique_ptr<AT> old;
   Indirect_AT():p(new AT()){}
@@ -68,7 +70,7 @@ struct Indirect_AT {
   Indirect_AT(AT&& a):p(new AT(std::move(a))){}
   Indirect_AT& operator=(AT const& a){ old.reset(p.load(std::memory_order_relaxed)); p.store(new AT(a), std::memory_order_release); return *this; }
   Indirect_AT& operator=(AT&& a){ old.reset(p.load(std::memory_order_relaxed)); p.store(new AT(std::move(a)), std::memory_order_release); return *this; }
-  operator AT const&()const{return *p.load(std::memory_order_acquire);}
+  operator reference()const{return *p.load(std::memory_order_acquire);}
   ~Indirect_AT() { delete p.load(std::memory_order_acquire); }
 };
 
@@ -85,7 +87,7 @@ class Lazy_exact_nt;
 
 template <typename AT, typename ET, typename E2A>
 inline
-const AT&
+decltype(auto)
 approx(const Lazy<AT,ET,E2A>& l)
 {
   return l.approx();
@@ -262,12 +264,28 @@ public:
   Lazy_rep (A&& a, E&& e)
       : at(std::forward<A>(a)), et(new ET(std::forward<E>(e))) {}
 
-  const AT& approx() const
+  typename Indirect_AT<AT>::reference approx() const
   {
       return at;
   }
 
 #if 1
+  mutable std::once_flag once;
+
+#define CGAL_UPDATE_EXACT_BEGIN
+#define CGAL_UPDATE_EXACT_MIDDLE \
+  this->et.store(pet, std::memory_order_relaxed);
+#define CGAL_UPDATE_EXACT_END
+
+  const ET & exact() const
+  {
+    // The test is unnecessary, only use it if benchmark says so
+    //if (et.load(std::memory_order_relaxed) == nullptr)
+    std::call_once(once, [this](){this->update_exact();});
+    return *et.load(std::memory_order_consume);
+  }
+
+#elif 1
 #define CGAL_UPDATE_EXACT_BEGIN \
   if (!this->start_update()) return;
 #define CGAL_UPDATE_EXACT_MIDDLE \
@@ -876,7 +894,7 @@ public :
   friend void swap(Lazy& a, Lazy& b) noexcept
   { swap(static_cast<Handle&>(a), static_cast<Handle&>(b)); }
 
-  const AT& approx() const
+  decltype(auto) approx() const
   { return ptr()->approx(); }
 
   const ET& exact() const
