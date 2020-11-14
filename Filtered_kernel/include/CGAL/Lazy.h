@@ -59,8 +59,6 @@
 
 namespace CGAL {
 
-// It would be nice to provide a specialization for Interval_nt with a single AT (atomic by pieces?), possibly making approx() return by value for this AT.
-//
 // The approximate value is set once at construction, and possibly updated once during update_exact().
 #if 0
   // Roughly sorted from fastest to slowest for building a DT3 with Epeck
@@ -68,7 +66,7 @@ namespace CGAL {
 template<class AT>
 struct Indirect_AT {
   typedef AT const& reference;
-  // TODO: we could store the second one with ET, so it doesn't take any space until needed.
+  // TODO: we could store the second one with ET, so it doesn't take any space until needed. It would make the specialization for Interval_nt less convenient though.
   std::aligned_storage_t<sizeof(AT), alignof(AT)> at[2];
   std::atomic<AT*> current{(AT*)&at[0]};
   Indirect_AT(){new(&at[0])AT();}
@@ -168,6 +166,20 @@ struct Indirect_AT {
   }
 };
 #endif
+
+// Specialization for Lazy_exact_nt, where we don't need the indirection.
+template<bool b>
+struct Indirect_AT<Interval_nt<b>> {
+  typedef Interval_nt<b> AT;
+  typedef AT reference;
+  std::atomic<double> x, y;
+  Indirect_AT():x(),y(){}
+  Indirect_AT(AT a):x(-a.inf()),y(a.sup()){}
+  Indirect_AT& operator=(AT a){ x.store(-a.inf(), std::memory_order_relaxed); y.store(a.sup(), std::memory_order_relaxed); return *this; }
+  operator reference()const{
+    return AT(-x.load(std::memory_order_relaxed), y.load(std::memory_order_relaxed));
+  }
+};
 
 template <class E,
           class A,
@@ -364,6 +376,7 @@ public:
       return at;
   }
 
+  // I think we should have different code for cases where there is some cleanup to do (say, a sum of 2 Lazy_exact_nt) and for cases where there isn't (a Lazy_exact_nt constructed from a double). Objects can be hidden in a tuple in Lazy_rep_n, so checking if there is something to clean requires some code. It isn't clear if we also need to restrict that to cases where update_exact doesn't touch AT. The special version would be basically: if(et==0){pet=new ET(...);if(!et.exchange(0,pet))delete pet; update at?}
 #if 1
   mutable std::once_flag once;
 
@@ -395,7 +408,6 @@ public:
     bool doit = et.compare_exchange_strong(other, (ET*)1);
     if (!doit) {
       // Wait until it becomes available
-      // TODO: try std::call_once or similar, hoping that it waits better.
       while ((uintptr_t)other == 1) {
         std::this_thread::yield(); // or do nothing?
         other = et.load(std::memory_order_relaxed);
@@ -454,6 +466,7 @@ public:
   }
 
 #else
+  // COMPLETE NONSENSE
   // number of references to the arguments, 1 when et is null, plus 1 per thread running update_exact.
   // Don't care about the case where et is non-null from construction, update_exact will never be called.
   // This is used to decide who can prune the tree.
@@ -561,6 +574,7 @@ class Lazy_rep_n :
       ET* pet = new ET(ec()( CGAL::exact( std::get<I>(l) ) ... ) );
     CGAL_UPDATE_EXACT_MIDDLE
       this->at = E2A()(*pet);
+      // TODO: apply some reset-like function to each element instead.
       l = std::tuple<L...>{};
     CGAL_UPDATE_EXACT_END
   }
