@@ -555,7 +555,7 @@ public:
 
   bool is_lazy() const { return et == nullptr; }
   virtual void update_exact() const = 0;
-  virtual ~Lazy_rep() { delete et; }
+  virtual ~Lazy_rep() { delete et.load(std::memory_order_consume); }
 };
 
 
