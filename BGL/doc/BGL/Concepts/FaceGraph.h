@@ -25,7 +25,7 @@ A face descriptor must be `DefaultConstructible`, `Assignable`, `EqualityCompara
 \sa \link PkgBGLConcepts Graph Concepts \endlink
 */
 class FaceGraph {
-  /// Returns a special `boost::graph_traits<HalfedgeGraph>::face_descriptor` object which
+  /// Returns a special `boost::graph_traits<HalfedgeGraph>::%face_descriptor` object which
   /// does not refer to any face of graph object which type is `FaceGraph`.
   static boost::graph_traits<HalfedgeGraph>::halfedge_descriptor null_face();
 };

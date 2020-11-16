@@ -11,8 +11,7 @@ if(CGAL_Core_FOUND)
     set(keyword PUBLIC)
   endif()
 
-  CGAL_setup_CGAL_Core_dependencies(CGAL_Core ${keyword})
+  cgal_setup_cgal_core_dependencies(CGAL_Core ${keyword})
 
   message("libCGAL_Core is configured")
 endif()
-

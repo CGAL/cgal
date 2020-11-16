@@ -184,9 +184,21 @@ PCA is faster but jet is more accurate in the presence of high
 curvatures. These function only estimates the _direction_ of the
 normals, not their orientation (the orientation of the vectors might
 not be locally consistent). To properly orient the normals, the
-function `mst_orient_normals()` can be used. Notice that it can also
-be used directly on input normals if their orientation is not
-consistent.
+following functions can be used:
+
+- `mst_orient_normals()`
+- `scanline_orient_normals()`
+
+The first one uses a _minimum spanning tree_ to consistently propagate
+the orientation of normals in an increasingly large neighborhood. In
+the case of data with many sharp features and occlusions (which are
+common in airborne LIDAR data, for example), the second algorithm may
+produce better results: it takes advantage of point clouds which are
+ordered into scanlines to estimate the line of sight of each point and
+thus to orient normals accordingly.
+
+Notice that these can also be used directly on input normals if their
+orientation is not consistent.
 
 \snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Normal estimation
 

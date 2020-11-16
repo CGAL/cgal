@@ -384,7 +384,7 @@ public:
         return *(this->ptr()->_m_xy);
     }
 
-    inline const Coordinate_1& y() const {
+    inline const Coordinate_1 y() const {
       return this->xy().y();
     }
 

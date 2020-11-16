@@ -345,32 +345,32 @@ void reserve( size_type v, size_type h, size_type f);
 /*!
 number of vertices.
 */
-Size size_of_vertices() const;
+size_type size_of_vertices() const;
 
 /*!
 number of halfedges.
 */
-Size size_of_halfedges() const;
+size_type size_of_halfedges() const;
 
 /*!
 number of faces.
 */
-Size size_of_faces() const;
+size_type size_of_faces() const;
 
 /*!
 space reserved for vertices.
 */
-Size capacity_of_vertices() const;
+size_type capacity_of_vertices() const;
 
 /*!
 space reserved for halfedges.
 */
-Size capacity_of_halfedges() const;
+size_type capacity_of_halfedges() const;
 
 /*!
 space reserved for faces.
 */
-Size capacity_of_faces() const;
+size_type capacity_of_faces() const;
 
 /*!
 bytes used for the halfedge data structure.
@@ -597,7 +597,7 @@ number of border halfedges. An edge with no incident face
 counts as two border halfedges.
 \pre `normalize_border()` has been called and no halfedge insertion or removal and no change in border status of the halfedges have occurred since then.
 */
-Size size_of_border_halfedges() const;
+size_type size_of_border_halfedges() const;
 
 /*!
 number of border edges. If `size_of_border_edges()` is equal
@@ -605,7 +605,7 @@ to `size_of_border_halfedges()` all border edges are incident to
 a face on one side and to an open region on the other side.
 \pre `normalize_border()` has been called and no halfedge insertion or removal and no change in border status of the halfedges have occurred since then.
 */
-Size size_of_border_edges() const;
+size_type size_of_border_edges() const;
 
 /*!
 halfedge iterator starting with the border edges. The range

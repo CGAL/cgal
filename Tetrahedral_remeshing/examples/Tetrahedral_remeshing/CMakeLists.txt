@@ -3,19 +3,16 @@
 
 cmake_minimum_required(VERSION 3.1...3.14)
 
-project( Tetrahedral_remeshing_Examples )
+project(Tetrahedral_remeshing_Examples)
 
 # CGAL and its components
-find_package( CGAL REQUIRED )
-if ( NOT CGAL_FOUND )
-  message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()
-endif()
+find_package(CGAL REQUIRED)
 
 # Boost and its components
-find_package( Boost REQUIRED )
-if ( NOT Boost_FOUND )
-  message(STATUS "This project requires the Boost library, and will not be compiled.")
+find_package(Boost REQUIRED)
+if(NOT Boost_FOUND)
+  message(
+    STATUS "This project requires the Boost library, and will not be compiled.")
   return()
 endif()
 
@@ -29,6 +26,7 @@ create_single_source_cgal_program( "tetrahedral_remeshing_example.cpp" )
 create_single_source_cgal_program( "tetrahedral_remeshing_with_features.cpp")
 create_single_source_cgal_program( "tetrahedral_remeshing_of_one_subdomain.cpp")
 create_single_source_cgal_program( "tetrahedral_remeshing_from_mesh.cpp")
-
-create_single_source_cgal_program( "mesh_and_remesh_polyhedral_domain_with_features.cpp" )
-target_link_libraries(mesh_and_remesh_polyhedral_domain_with_features PUBLIC CGAL::Eigen_support)
+create_single_source_cgal_program(
+  "mesh_and_remesh_polyhedral_domain_with_features.cpp")
+target_link_libraries(mesh_and_remesh_polyhedral_domain_with_features
+                      PUBLIC CGAL::Eigen_support)

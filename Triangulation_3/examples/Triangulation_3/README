@@ -22,6 +22,11 @@ in a triangulation, when he needs to add handles in it.
 This example shows the use of the Fast_location policy to speed up
 point location queries in a Delaunay triangulation. 
 
+------- segment_traverser_3 --------------------------------------------
+
+This example shows how to use a Triangulation_segment_cell_iterator_3
+to traverse the triangulation in a straight line.
+
 ------- tds --------------------------------------------------
 
 Shows how to construct a 3D triangulation data structure by 

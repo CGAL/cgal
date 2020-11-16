@@ -56,7 +56,7 @@ namespace internal {
     int n;
     Indentation_level() : n(0) {}
     friend std::ostream& operator<<(std::ostream& os, Indentation_level level) {
-      return os << std::string(2*level.n, ' ');
+      return os << std::setw(2) << level.n << ": " << std::string(2*level.n, ' ');
     }
     Indentation_level& operator++() { ++n; return *this; }
     Indentation_level& operator--() { --n; return *this; }
@@ -843,11 +843,11 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
       if (vi != vaa && vi != vbb) {
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "CT_2::insert_constraint stask push [vaa, vi] ( #" << vaa->time_stamp() << "= " << vaa->point()
+            << "CT_2::insert_constraint stack push [vaa, vi] ( #" << vaa->time_stamp() << "= " << vaa->point()
             << " , #" << vi->time_stamp() << "= " << vi->point()
             << " )\n";
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "CT_2::insert_constraint stask push [vi, vbb] ( #" << vi->time_stamp() << "= " << vi->point()
+            << "CT_2::insert_constraint stack push [vi, vbb] ( #" << vi->time_stamp() << "= " << vi->point()
             << " , #" << vbb->time_stamp() << "= " << vbb->point()
             << " )\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
@@ -857,7 +857,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
       else{
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "CT_2::insert_constraint stask push [vaa, vbb]( #" << vaa->time_stamp() << "= " << vaa->point()
+            << "CT_2::insert_constraint stack push [vaa, vbb]( #" << vaa->time_stamp() << "= " << vaa->point()
             << " , #" << vbb->time_stamp() << "= " << vbb->point()
             << " )\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS

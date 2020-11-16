@@ -251,6 +251,8 @@ public:
               const std::vector<std::size_t>& hidden_layers
               = std::vector<std::size_t>())
   {
+    CGAL_precondition (m_labels.is_valid_ground_truth (ground_truth));
+
     if (restart_from_scratch)
       clear();
 
@@ -258,15 +260,17 @@ public:
 
     std::vector<std::size_t> indices;
     std::vector<int> raw_gt;
-    for (std::size_t i = 0; i < ground_truth.size(); ++ i)
+    std::size_t i = 0;
+    for (const auto& gt_value : ground_truth)
     {
-      int gc = int(ground_truth[i]);
+      int gc = int(gt_value);
       if (gc != -1)
       {
         indices.push_back (i);
         raw_gt.push_back (gc);
         random_indices[std::size_t(gc)].push_back (indices.size() - 1);
       }
+      ++ i;
     }
 
     if (!initialized())

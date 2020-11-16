@@ -4,10 +4,13 @@
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Polygon_mesh_processing/internal/simplify_polyline.h>
+
 #include <CGAL/Three/Three.h>
 #include <fstream>
 #include <QVariant>
 #include <QMessageBox>
+#include <QInputDialog>
 using namespace CGAL::Three;
 class Polyhedron_demo_polylines_io_plugin :
   public QObject,
@@ -40,8 +43,14 @@ public:
       actionSplit_polylines= new QAction(tr("Split Selected Polylines"), mainWindow);
       actionSplit_polylines->setProperty("subMenuName", "Operations on Polylines");
       actionSplit_polylines->setObjectName("actionSplitPolylines");
+
+      actionSimplify_polylines = new QAction(tr("Simplify Selected Polyline"), mainWindow);
+      actionSimplify_polylines->setProperty("subMenuName", "Operations on Polylines");
+      actionSimplify_polylines->setObjectName("actionSimplifyPolylines");
       connect(actionSplit_polylines, &QAction::triggered, this, &Polyhedron_demo_polylines_io_plugin::split);
       connect(actionJoin_polylines, &QAction::triggered, this, &Polyhedron_demo_polylines_io_plugin::join);
+      connect(actionSimplify_polylines, &QAction::triggered, this, &Polyhedron_demo_polylines_io_plugin::simplify);
+
 
     }
   QString name() const override{ return "polylines_io_plugin"; }
@@ -52,6 +61,9 @@ public:
   bool canSave(const CGAL::Three::Scene_item*) override;
   bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>&) override;
   bool applicable(QAction* a) const override{
+    if( a == actionSimplify_polylines)
+      return qobject_cast<Scene_polylines_item*>(scene->item(
+                                                   scene->mainSelectionIndex()));
     bool all_polylines_selected = true;
     Q_FOREACH(int index, scene->selectionIndices())
     {
@@ -73,7 +85,8 @@ public:
   QList<QAction*> actions() const override{
 
     return QList<QAction*>()<<actionSplit_polylines
-                            <<actionJoin_polylines;
+                            <<actionJoin_polylines
+                           <<actionSimplify_polylines;
   }
 
   bool isDefaultLoader(const Scene_item* item) const override{
@@ -86,10 +99,12 @@ public:
   void split();
   //!Joins the selected Scene_polylines_items in a single item containing all their polylines.
   void join();
+  void simplify();
 
 private:
   QAction* actionSplit_polylines;
   QAction* actionJoin_polylines;
+  QAction* actionSimplify_polylines;
 };
 
 bool Polyhedron_demo_polylines_io_plugin::canLoad(QFileInfo fileinfo) const{
@@ -251,6 +266,29 @@ void Polyhedron_demo_polylines_io_plugin::split()
     scene->addItem(new_polyline);
     scene->changeGroup(new_polyline, group);
   }
+}
+
+void Polyhedron_demo_polylines_io_plugin::simplify()
+{
+  Scene_polylines_item* item = qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex()));
+  bool ok;
+  double err = QInputDialog::getDouble(mw, "Squared Frechet Distance", "Enter the squared approximation error:", pow(0.01*item->diagonalBbox(),2),0,999,8,&ok);
+  if(!ok)
+    return;
+  for(Scene_polylines_item::Polylines_container::iterator
+      it = item->polylines.begin();
+      it!= item->polylines.end();
+      ++it)
+  {
+    Scene_polylines_item::Polyline out_range;
+    CGAL::Polygon_mesh_processing::experimental::simplify_polyline(*it,
+                                                                   out_range,
+                                                                   err);
+    it->clear();
+    it->insert(it->begin(), out_range.begin(), out_range.end());
+  }
+  item->invalidateOpenGLBuffers();
+  item->redraw();
 }
 
 void Polyhedron_demo_polylines_io_plugin::join()

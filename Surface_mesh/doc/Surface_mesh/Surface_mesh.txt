@@ -198,6 +198,15 @@ The connectivity is also stored in properties, namely the properties named
 It is quite similar for the marker of deleted element, where we have
 "v:removed", "e:removed", and "f:removed".
 
+Convenience functions are provided to remove property maps added by a user,
+either by index type (`Surface_mesh::remove_property_maps<I>()`) or all of them (`Surface_mesh::remove_all_property_maps()`).
+
+To clear a mesh, you have the possibility to get a mesh with all added property maps
+removed (`Surface_mesh::clear()`) or to keep them (`Surface_mesh::clear_without_removing_property_maps()`). Note
+that in both cases, the  "v:point" property map will be preserved and keeping
+a reference to it is safe.
+
+
 \subsection properties_example Example
 
 This example shows how to use the most common features of the property system.
