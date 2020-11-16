@@ -57,6 +57,27 @@ if(BUILD_TESTING)
   enable_testing()
 endif()
 
+#setup prefix path
+file(GLOB BOOST_DIRS "C:/Program Files/boost/*")
+if(NOT BOOST_DIRS)
+  file(GLOB BOOST_DIRS "C:/Program Files/boost*")
+endif()
+if(BOOST_DIRS)
+  list(GET BOOST_DIRS 0 boost_dir)
+  list(APPEND CMAKE_PREFIX_PATH "${boost_dir}")
+endif()#BOOST_DIRS
+
+file(GLOB QT_DIRS "C:/Qt/5")
+if(QT_DIRS)
+  list(GET QT_DIRS 0 qt_dir)
+  file(GLOB compilos "${qt_dir}/msvc*")
+  if(compilos)
+    list(GET compilos 0 compilo)
+    list(APPEND CMAKE_PREFIX_PATH "${compilo}/lib/cmake/Qt5")
+  endif()#compilo
+endif()#QT_DIRS
+
+
 # and finally start actual build
 add_subdirectory(Installation)
 add_subdirectory(Documentation/doc)
