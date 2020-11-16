@@ -38,6 +38,11 @@ struct MD_homogeneous_types {
   {
     return "Triangulation_3(Weighted_point<Point_3>,Vb(Tvb_3+i+i),Cb(i+RTcb_3+(i)[4]))";
   }
+
+  static Index index_from_curve_index (const Curve_index &curve_index)
+  {
+    return curve_index;
+  }
 };
 
 // One with heterogeneous index types
@@ -65,8 +70,38 @@ struct MD_heterogeneous_types {
   {
     return "Triangulation_3(Weighted_point<Point_3>,Vb(Tvb_3+i+boost::variant<enum,std::pair<i,i>,i,d>),Cb(enum+RTcb_3+(std::pair<i,i>)[4]))";
   }
+  static Index index_from_curve_index (const Curve_index &curve_index)
+  {
+    return curve_index;
+  }
 };
 
+struct MD_curve_pair {
+  typedef CGAL::Tag_false Has_features;
+  typedef int Subdomain_index;
+  typedef int Surface_patch_index;
+  typedef std::pair<int, int> Curve_index;
+  typedef int Corner_index;
+  typedef int Index;
+
+  static Subdomain_index get_sub_domain_index_1() { return 1; }
+  static Subdomain_index get_sub_domain_index_2() { return 2; }
+  static Surface_patch_index get_surface_patch_index_1() { return 3; }
+  static Surface_patch_index get_surface_patch_index_2() { return 4; }
+  static Curve_index get_curve_index_1() { return std::make_pair(5,6); }
+  static Curve_index get_curve_index_2() { return std::make_pair(6,7); }
+  static Corner_index get_corner_index_1() { return 7; }
+  static Corner_index get_corner_index_2() { return 8; }
+
+  static std::string reference_format_string()
+  {
+    return "Triangulation_3(Weighted_point<Point_3>,Vb(Tvb_3+i+i),Cb(i+RTcb_3+(i)[4]))";
+  }
+  static Index index_from_curve_index (const Curve_index &curve_index)
+  {
+    return curve_index.first;
+  }
+};
 //
 // Define I/O for MD_heterogeneous_types::Subdomain_index (then enum)
 //
@@ -446,9 +481,9 @@ struct Test_c3t3_io {
     v2->set_dimension(0);
     v2->set_index(Mesh_domain::get_corner_index_2());
     v3->set_dimension(1);
-    v3->set_index(Mesh_domain::get_curve_index_1());
+    v3->set_index(Mesh_domain::index_from_curve_index(Mesh_domain::get_curve_index_1()));
     v4->set_dimension(1);
-    v4->set_index(Mesh_domain::get_curve_index_2());
+    v4->set_index(Mesh_domain::index_from_curve_index(Mesh_domain::get_curve_index_2()));
     v5->set_dimension(2);
     v5->set_index(Mesh_domain::get_surface_patch_index_1());
     v6->set_dimension(3);
@@ -591,6 +626,12 @@ int main()
   }
   std::cout << "Then test I/O when all indices are different types" << std::endl;
   ok = Test_c3t3_io<MD_heterogeneous_types>()("data/c3t3_io-hetero");
+  if(!ok) {
+    std::cerr << "Error\n";
+    return -1;
+  }
+  std::cout << "Then test I/O when curve_index are pair of integers." << std::endl;
+  ok = Test_c3t3_io<MD_curve_pair>()("data/c3t3_io-pairs");
   if(!ok) {
     std::cerr << "Error\n";
     return -1;
