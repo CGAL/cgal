@@ -553,13 +553,6 @@ public:
     if(is_ascii(os))
     {
       os << number_of_edges_in_complex()<<std::endl;
-    }
-    else
-    {
-      write(os, number_of_edges_in_complex());
-    }
-    if(is_ascii(os))
-    {
       for(auto it = edges_.begin(); it != edges_.end(); ++it)
       {
         os<<vertex_index_map[it->left]<<" "<<vertex_index_map[it->right]<< " "<< CGAL::oformat(it->info)<<std::endl;
@@ -567,23 +560,12 @@ public:
     }
     else
     {
-      if(is_ascii(os))
+      write(os, number_of_edges_in_complex());
+      for(auto it = edges_.begin(); it != edges_.end(); ++it)
       {
-        for(auto it = edges_.begin(); it != edges_.end(); ++it)
-        {
-          write(os, vertex_index_map[it->left]);
-          write(os, vertex_index_map[it->right]);
-          os << CGAL::oformat(it->info);
-        }
-      }
-      else
-      {
-        for(auto it = edges_.begin(); it != edges_.end(); ++it)
-        {
-          write(os,vertex_index_map[it->left]);
-          write(os,vertex_index_map[it->right]);
-          write(os,it->info);
-        }
+        write(os, vertex_index_map[it->left]);
+        write(os, vertex_index_map[it->right]);
+        write(os, it->info);
       }
     }
     return os;
