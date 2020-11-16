@@ -113,8 +113,8 @@ Release date: December 2020
 ### [3D Triangulations](https://doc.cgal.org/5.2/Manual/packages.html#PkgTriangulation3)
 
 -   Added new classes and functions to visit the cells and simplices intersected by a line segment,
-    see Sections [Segment Cell Iterator](https://doc.cgal.org/5.2Triangulation_3/classCGAL_1_1Triangulation__3.html#amgrp0d087ed77bb99ca595c92d2cd2ab59b9)
-    and [Segment Simplex Iterator](https://doc.cgal.org/5.2Triangulation_3/classCGAL_1_1Triangulation__3.html#amgrp2447c1d2dce281951a0a4d8aecd3f35d), respectively.
+    see Sections [Segment Cell Iterator](https://doc.cgal.org/5.2/Triangulation_3/classCGAL_1_1Triangulation__3.html#amgrp0d087ed77bb99ca595c92d2cd2ab59b9)
+    and [Segment Simplex Iterator](https://doc.cgal.org/5.2/Triangulation_3/classCGAL_1_1Triangulation__3.html#amgrp2447c1d2dce281951a0a4d8aecd3f35d), respectively.
 
 
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/v5.1)
