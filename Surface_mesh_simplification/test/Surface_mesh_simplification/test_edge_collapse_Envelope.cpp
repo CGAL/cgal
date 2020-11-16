@@ -12,7 +12,7 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h>
 
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_filter.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Envelope_filter.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Polyhedral_envelope_filter.h>
 
 //bbox
 #include <CGAL/Polygon_mesh_processing/bbox.h>
@@ -29,7 +29,7 @@ typedef CGAL::Surface_mesh<Point_3>                           Surface;
 
 typedef SMS::LindstromTurk_cost<Surface>                      Cost;
 typedef SMS::LindstromTurk_placement<Surface>                 Placement;
-typedef SMS::Envelope_filter<Kernel,SMS::Bounded_normal_change_filter<> > Filter;
+typedef SMS::Polyhedral_envelope_filter<Kernel,SMS::Bounded_normal_change_filter<> > Filter;
 
 struct Stats
 {
