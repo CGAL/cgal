@@ -3119,7 +3119,7 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     if(!path.contains("Polyhedron_demo_"))
       path.prepend("Polyhedron_demo_");
     try{
-      ssh_session session;
+      ssh_session session = NULL;
       bool res = establish_ssh_session_from_agent(session,
                                                   user.toStdString().c_str(),
                                                   server.toStdString().c_str(),
@@ -3135,7 +3135,10 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
                                      tr(""),
                                      &ok);
         if(!ok)
+        {
+          ssh_free(session);
           return;
+        }
         pass = pass.trimmed();
         res = establish_ssh_session(session,
                                     user.toStdString().c_str(),
@@ -3150,6 +3153,7 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
         QMessageBox::warning(this,
                              "Error",
                              "The SSH session could not be started.");
+        ssh_free(session);
         return;
       }
       res = push_file(session,path.toStdString().c_str(), filename.toStdString().c_str());
@@ -3159,9 +3163,11 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
                              "Error",
                              "The file could not be uploaded. Check your console for more information.");
         close_connection(session);
+        ssh_free(session);
         return;
       }
       close_connection(session);
+      ssh_free(session);
       QFile tmp_file(filename);
       tmp_file.remove();
     } catch( ssh::SshException e )
@@ -3654,7 +3660,7 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
     privK=privK.trimmed();
 
     try{
-      ssh_session session;
+      ssh_session session = nullptr;
       bool res = establish_ssh_session_from_agent(session,
                                                   user.toStdString().c_str(),
                                                   server.toStdString().c_str(),
@@ -3667,7 +3673,10 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
                                      tr(""),
                                      &ok);
         if(!ok)
+        {
+          ssh_free(session);
           return;
+        }
         pass = pass.trimmed();
         res = establish_ssh_session(session,
                                     user.toStdString().c_str(),
@@ -3681,6 +3690,7 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
         QMessageBox::warning(this,
                              "Error",
                              "The SSH session could not be started.");
+        ssh_free(session);
         return;
       }
       QStringList names;
@@ -3697,7 +3707,10 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
                                    names);
       filename = QString("%1/load_scene.js").arg(QDir::tempPath());
       if(path.isEmpty())
+      {
+        ssh_free(session);
         return;
+      }
       path.prepend("Polyhedron_demo_");
       path = tr("/tmp/%2").arg(path);
       res = pull_file(session,path.toStdString().c_str(), filename.toStdString().c_str());
@@ -3707,9 +3720,11 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
                              "Error",
                              "The file could not be fetched. Check your console for more info.");
         close_connection(session);
+        ssh_free(session);
         return;
       }
       close_connection(session);
+      ssh_free(session);
     } catch( ssh::SshException e )
     {
       std::cout << "Error during connection : ";

@@ -92,6 +92,7 @@ public:
   //!Set total number of depth peeling passes.
    void setTotalPass(int);
    void resetFov();
+   const QVector3D& scaler() const;
 Q_SIGNALS:
   void sendMessage(QString);
   void doneInitGL(CGAL::Three::Viewer_interface*);
