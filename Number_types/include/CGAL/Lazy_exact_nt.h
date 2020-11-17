@@ -130,10 +130,8 @@ struct Lazy_exact_Int_Cst : public Lazy_exact_nt_rep<ET>
       : Lazy_exact_nt_rep<ET>(double(i)) {}
 
   void update_exact() const {
-    CGAL_UPDATE_EXACT_BEGIN
-      ET* pet = new ET((int)this->approx().inf());
-    CGAL_UPDATE_EXACT_MIDDLE
-    CGAL_UPDATE_EXACT_END
+    ET* pet = new ET((int)this->approx().inf());
+    this->set_ptr(pet);
   }
 };
 
@@ -145,10 +143,8 @@ struct Lazy_exact_Cst : public Lazy_exact_nt_rep<ET>
       : Lazy_exact_nt_rep<ET>(x), cste(x) {}
 
   void update_exact() const {
-    CGAL_UPDATE_EXACT_BEGIN
-      ET* pet = new ET(cste);
-    CGAL_UPDATE_EXACT_MIDDLE
-    CGAL_UPDATE_EXACT_END
+    ET* pet = new ET(cste);
+    this->set_ptr(pet);
   }
 
   private:
@@ -189,12 +185,10 @@ public:
 
   void update_exact() const
   {
-    CGAL_UPDATE_EXACT_BEGIN
-      ET* pet = new ET(l.exact());
-    CGAL_UPDATE_EXACT_MIDDLE
-      this->at = l.approx();
-      prune_dag();
-    CGAL_UPDATE_EXACT_END
+    ET* pet = new ET(l.exact());
+    this->set_at(pet, l.approx());
+    this->set_ptr(pet);
+    this->prune_dag();
   }
 
   void prune_dag() const { l.reset(); }
@@ -280,13 +274,11 @@ struct NAME : public Lazy_exact_unary<ET>                                \
                                                                          \
   void update_exact() const                                              \
   {                                                                      \
-    CGAL_UPDATE_EXACT_BEGIN                                              \
-      ET* pet = new ET(OP(this->op1.exact()));                           \
-    CGAL_UPDATE_EXACT_MIDDLE                                             \
-      if (!this->approx().is_point())                                    \
-        this->at = CGAL_NTS to_interval(*(this->et));                    \
-      this->prune_dag();                                                 \
-    CGAL_UPDATE_EXACT_END                                                \
+    ET* pet = new ET(OP(this->op1.exact()));                             \
+    if (!this->is_point())                                               \
+      this->set_at(pet);                                                 \
+    this->set_ptr(pet);                                                  \
+    this->prune_dag();                                                   \
   }                                                                      \
 };
 
@@ -306,13 +298,11 @@ struct NAME : public Lazy_exact_binary<ET, ET1, ET2>                     \
                                                                          \
   void update_exact() const                                              \
   {                                                                      \
-    CGAL_UPDATE_EXACT_BEGIN                                              \
-      ET* pet = new ET(this->op1.exact() OP this->op2.exact());          \
-    CGAL_UPDATE_EXACT_MIDDLE                                             \
-      if (!this->approx().is_point())                                    \
-        this->at = CGAL_NTS to_interval(*(this->et));                    \
-      this->prune_dag();                                                 \
-    CGAL_UPDATE_EXACT_END                                                \
+    ET* pet = new ET(this->op1.exact() OP this->op2.exact());            \
+    if (!this->is_point())                                               \
+      this->set_at(pet);                                                 \
+    this->set_ptr(pet);                                                  \
+    this->prune_dag();                                                   \
   }                                                                      \
 };
 
@@ -330,13 +320,11 @@ struct Lazy_exact_Min : public Lazy_exact_binary<ET>
 
   void update_exact() const
   {
-    CGAL_UPDATE_EXACT_BEGIN
-      ET* pet = new ET((CGAL::min)(this->op1.exact(), this->op2.exact()));
-    CGAL_UPDATE_EXACT_MIDDLE
-      if (!this->approx().is_point())
-        this->at = CGAL_NTS to_interval(*(this->et));
-      this->prune_dag();
-    CGAL_UPDATE_EXACT_END
+    ET* pet = new ET((CGAL::min)(this->op1.exact(), this->op2.exact()));
+    if (!this->is_point())
+      this->set_at(pet);
+    this->set_ptr(pet);
+    this->prune_dag();
   }
 };
 
@@ -349,13 +337,11 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
 
   void update_exact() const
   {
-    CGAL_UPDATE_EXACT_BEGIN
-      ET* pet = new ET((CGAL::max)(this->op1.exact(), this->op2.exact()));
-    CGAL_UPDATE_EXACT_MIDDLE
-      if (!this->approx().is_point())
-        this->at = CGAL_NTS to_interval(*(this->et));
-      this->prune_dag();
-    CGAL_UPDATE_EXACT_END
+    ET* pet = new ET((CGAL::max)(this->op1.exact(), this->op2.exact()));
+    if (!this->is_point())
+      this->set_at(pet);
+    this->set_ptr(pet);
+    this->prune_dag();
   }
 };
 
