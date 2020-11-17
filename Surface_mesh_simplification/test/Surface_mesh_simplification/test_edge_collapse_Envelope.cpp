@@ -140,7 +140,7 @@ int main(int argc, char** argv)
     std::cout << "eps = " << 0.01*diag << std::endl;
     Placement placement_ref;
     Filter filter(0.01*diag);
-    SMS::edge_collapse(big_mesh, stop, CGAL::parameters::get_cost(Cost()).get_filter(filter).visitor(vis).get_placement(placement_ref));
+    SMS::edge_collapse(big_mesh, stop, CGAL::parameters::get_cost(Cost()).filter(filter).visitor(vis).get_placement(placement_ref));
     std::cout << "Output has " << vertices(big_mesh).size() << " vertices and " << edges(big_mesh).size() << " edges" << std::endl;
     std::cout << t.time() << "sec\n";
   }
