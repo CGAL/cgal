@@ -20,8 +20,8 @@
 // easy solution.
 // MSVC had trouble with versions <= 1.69:
 // https://github.com/boostorg/multiprecision/issues/98
-#if !defined CGAL_DISABLE_GMP && !defined CGAL_DO_NOT_USE_BOOST_MP && \
-    BOOST_VERSION >= 106300 && (!defined _MSC_VER || BOOST_VERSION >= 107000)
+#if !defined CGAL_DO_NOT_USE_BOOST_MP && BOOST_VERSION >= 106300 && \
+    (!defined _MSC_VER || BOOST_VERSION >= 107000)
 #define CGAL_USE_BOOST_MP 1
 
 #include <CGAL/functional.h> // *ary_function
