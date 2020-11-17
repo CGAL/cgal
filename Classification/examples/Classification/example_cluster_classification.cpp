@@ -57,7 +57,6 @@ int main (int argc, char** argv)
     filename_config = argv[2];
 
   std::ifstream in (filename.c_str(), std::ios::binary);
-  Point_set pts;
 
   std::cerr << "Reading input" << std::endl;
   Point_set pts;
