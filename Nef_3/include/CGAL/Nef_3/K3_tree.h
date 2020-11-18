@@ -483,7 +483,7 @@ public:
     Segment_3 segment;
     bool initialized;
   public:
-    Objects_around_segment() : initialized(false) {}
+    Objects_around_segment() : root_node(nullptr), initialized(false) {}
     Objects_around_segment( const K3_tree& k, const Segment_3& s) :
       root_node(k.root), segment(s), initialized(true) {
       CGAL_NEF_TRACEN("Objects_around_segment: input segment: "<<segment);
@@ -514,7 +514,8 @@ public:
       CGAL_assertion_code( Segment_3 prev_segment;)
       CGAL_assertion_code( bool first_segment;)
     public:
-      Iterator() : node() {}
+      Iterator() : node()
+      { CGAL_assertion_code( first_segment = false); }
       Iterator( const Node_handle root, const Segment_3& s) {
         CGAL_assertion_code( first_segment = true);
         S.push_front( Candidate( root, s));
