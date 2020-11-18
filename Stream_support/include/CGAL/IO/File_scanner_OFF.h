@@ -540,7 +540,7 @@ public:
         //split it into strings
         std::istringstream iss(col);
         //holds the rgb values
-        unsigned char rgb[3];
+        unsigned char rgb[3] {};
         int index =0;
         //split the string into numbers
         while(iss>>color_info){
