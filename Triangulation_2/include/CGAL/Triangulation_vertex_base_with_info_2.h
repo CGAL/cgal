@@ -39,16 +39,16 @@ public:
   };
 
   Triangulation_vertex_base_with_info_2()
-    : Vb() {}
+    : Vb(), _info{} {}
 
   Triangulation_vertex_base_with_info_2(const Point & p)
-    : Vb(p) {}
+    : Vb(p), _info{} {}
 
   Triangulation_vertex_base_with_info_2(const Point & p, Face_handle c)
-    : Vb(p, c) {}
+    : Vb(p, c), _info{} {}
 
   Triangulation_vertex_base_with_info_2(Face_handle c)
-    : Vb(c) {}
+    : Vb(c), _info{} {}
 
   const Info& info() const { return _info; }
   Info&       info()       { return _info; }
