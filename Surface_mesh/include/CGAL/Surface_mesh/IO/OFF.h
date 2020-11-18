@@ -338,11 +338,6 @@ bool read_OFF(std::istream& is,
   using parameters::get_parameter;
   using parameters::is_default_parameter;
 
-  typedef typename CGAL::GetVertexPointMap<Mesh, CGAL_BGL_NP_CLASS>::type   VPM;
-
-  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_property_map(CGAL::vertex_point, sm));
-
   std::streampos pos = is.tellg();
   CGAL::File_scanner_OFF scanner(is, false);
   is.seekg(pos);
