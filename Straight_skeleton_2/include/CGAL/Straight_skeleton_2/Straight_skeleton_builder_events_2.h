@@ -54,6 +54,7 @@ public:
     :
      mTriedge   (aTriedge)
     ,mTrisegment(aTrisegment)
+    ,mTime{}
   {}
 
   virtual ~ Event_2() {}
