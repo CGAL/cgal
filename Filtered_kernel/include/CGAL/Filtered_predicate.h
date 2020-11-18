@@ -59,6 +59,7 @@ public:
   // AP::result_type must be convertible to EP::result_type.
 
   Filtered_predicate()
+    : c2e{}, c2a{}
   {}
 
   // These constructors are used for constructive predicates.
