@@ -212,7 +212,7 @@ template<typename Nef_, typename FTComparison, typename Container>
   SNC_point_locator* pl;
 
  public:
-  Edge_sorter(Container& cin) : c(cin) {}
+  Edge_sorter(Container& cin) : c(cin), sncp(nullptr), pl(nullptr) {}
 
   void operator()(SNC_and_PL& sncpl) {
     sncp = sncpl.sncp;
