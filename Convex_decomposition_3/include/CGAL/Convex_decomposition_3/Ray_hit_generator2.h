@@ -69,7 +69,8 @@ class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
   bool vertex_added;
 
  public:
-  Ray_hit_generator2(Vector_3 d, Vertex_handle v) : dir(d), vs(v) {}
+  Ray_hit_generator2(Vector_3 d, Vertex_handle v)
+    : dir(d), vs(v), sncp(nullptr), pl(nullptr), edge_splitted(false), vertex_added(false) {}
 
   Vertex_handle create_vertex_on_first_hit(const Ray_3& r) {
 
