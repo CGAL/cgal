@@ -205,7 +205,7 @@ private:
 
 public:
   Halfedge_around_source_iterator()
-    : anchor(), pos(), g(0)
+    : anchor(), pos(), g(nullptr), winding(0)
   {}
 
   Halfedge_around_source_iterator(halfedge_descriptor hd, const Graph& g, int n=0)
@@ -305,7 +305,7 @@ private:
 
 public:
   Halfedge_around_target_iterator()
-    : anchor(), pos(), g(0)
+    : anchor(), pos(), g(nullptr), winding(0)
   {}
 
   Halfedge_around_target_iterator(halfedge_descriptor hd, const Graph& g, int n=0)
