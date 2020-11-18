@@ -102,7 +102,7 @@ bool write_points(const std::string& fname,
 {
   const std::string ext = IO::internal::get_file_extension(fname);
 
-  if(ext == "xyz")
+  if(ext == "xyz" || ext == "pwn")
     return write_XYZ(fname, points, np);
   else if(ext == "off")
     return write_OFF(fname, points, np);

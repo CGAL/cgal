@@ -162,7 +162,10 @@ public:
     if(stream >> s)
       c = static_cast<char>(s);
     else
+    {
+      c = 0;
       stream.clear(std::ios::badbit);
+    }
   }
 
   void read_ascii(std::istream& stream, signed char& c) const
@@ -171,7 +174,10 @@ public:
     if(stream >> s)
       c = static_cast<signed char>(s);
     else
+    {
+      c = 0;
       stream.clear(std::ios::badbit);
+    }
   }
 
   void read_ascii(std::istream& stream, unsigned char& c) const
@@ -180,7 +186,10 @@ public:
     if(stream >> s)
       c = static_cast<unsigned char>(s);
     else
+    {
+      c = 0;
       stream.clear(std::ios::badbit);
+    }
   }
 
   void read_ascii(std::istream& stream, float& t) const

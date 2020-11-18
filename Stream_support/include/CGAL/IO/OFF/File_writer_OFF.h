@@ -31,8 +31,8 @@ class File_writer_OFF
   File_header_OFF m_header;
 
 public:
-  File_writer_OFF(bool verbose = false) : m_header(verbose) {}
-  File_writer_OFF(const File_header_OFF& h) : m_header(h) {}
+  File_writer_OFF(bool verbose = false) : m_os(nullptr), m_header(verbose) {}
+  File_writer_OFF(const File_header_OFF& h) : m_os(nullptr), m_header(h) {}
 
   std::ostream& out() { return *m_os; }
   File_header_OFF& header() { return m_header; }
