@@ -553,43 +553,16 @@ public:
       const Segment_2& s1 = is1->first;
       const Segment_2& s2 = is2->first;
 
-      CGAL_assertion_msg(( K.orientation(s1,p) == 0 ) ||  ( K.orientation(s2,p) == 0 ) ,"compare error in sweep.");
-
-      int s = 0;
-      if(K.is_degenerate(s1))
-        return o2c(K.orientation(s2,p));
-      if(K.is_degenerate(s2))
-        return o2c(-K.orientation(s1,p));
-
-      s = - K.orientation(s1,p);
-      if(s!=0)
-        return o2c(s);
-      s = K.orientation(s2,p);
-      if(s!=0)
-        return o2c(s);
-      return o2c(K.orientation(s2,K.target(s1)));
-      /*
-      if( p == K.source(s1) )
+      int s = -K.orientation(s1,p);
+      if ( s == 0 )
         s = K.orientation(s2,p);
       else
-        s = - K.orientation(s1,p);
-      if ( s || K.is_degenerate(s1) || K.is_degenerate(s2) )
-        if(s < 0) return CGAL::SMALLER;
-        else if(s > 0) return CGAL::LARGER;
-        else return CGAL::EQUAL;
+        CGAL_assertion_msg( K.orientation(s2,p) == 0, "compare error in sweep.");
 
-      s = K.orientation(s2,K.target(s1));
-      //        if (s==0) {
-      //        if(is1 < is2) return CGAL::SMALLER;
-      //        if (is1 > is2) return CGAL::LARGER;
-      //        return CGAL::EQUAL;
-      //      }
+      if( s || K.is_degenerate(s2) || K.is_degenerate(s1))
+        return o2c(s);
 
-      // overlapping segments are not equal
-      if(s < 0) return CGAL::SMALLER;
-      if(s > 0) return CGAL::LARGER;
-      return CGAL::EQUAL;
-*/
+      return o2c(K.orientation(s2,K.target(s1)));
     }
   };
 
