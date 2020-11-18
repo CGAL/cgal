@@ -966,8 +966,8 @@ public:
     else{
       color = CGAL::Color(rgb[0], rgb[1], rgb[2]);
     }
-    std::streampos ss_pos = iss.tellg();
-    if(ss_pos != -1)
+    std::iostream::pos_type ss_pos = iss.tellg();
+    if(ss_pos != std::iostream::pos_type(-1))
     {
       position +=ss_pos;
       is.seekg(position);
