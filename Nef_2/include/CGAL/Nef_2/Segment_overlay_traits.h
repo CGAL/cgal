@@ -460,59 +460,6 @@ public:
   OUTPUT&  GO;
   const GEOMETRY& K;
 
-
-  class lt_segs_at_sweepline
-  {
-    const Point_2& p;
-    ISegment s_bottom, s_top; // sentinel segments
-    const GEOMETRY& K;
-
-  public:
-    lt_segs_at_sweepline(const Point_2& pi,
-                         ISegment s1, ISegment s2,
-                         const GEOMETRY& k)
-     : p(pi), s_bottom(s1), s_top(s2), K(k)
-    {}
-
-    lt_segs_at_sweepline(const lt_segs_at_sweepline& lt)
-      : p(lt.p), s_bottom(lt.s_bottom), s_top(lt.s_top), K(lt.K)
-    {}
-
-    template <typename ss_pair>
-    bool
-    operator()(const ISegment& is1, const ss_pair& ss2) const
-    {
-      return operator()(is1, ss2.first);
-    }
-
-    bool
-    operator()(const ISegment& is1, const ISegment& is2) const
-    {
-      if ( is2 == s_top || is1 == s_bottom ) return true;
-      if ( is1 == s_top || is2 == s_bottom ) return false;
-      if ( is1 == is2 ) return false;
-      // Precondition: p is contained in s1 or s2.
-      const Segment_2& s1 = is1->first;
-      const Segment_2& s2 = is2->first;
-
-      CGAL_assertion_msg(( K.orientation(s1,p) == 0 ) ||  ( K.orientation(s2,p) == 0 ) ,"compare error in sweep.");
-
-      int s = 0;
-      if( p == K.source(s1) )
-        s = K.orientation(s2,p);
-      else
-        s = - K.orientation(s1,p);
-      if ( s || K.is_degenerate(s1) || K.is_degenerate(s2) )
-        return ( s < 0 );
-
-      s = K.orientation(s2,K.target(s1));
-      if (s==0) return ( is1 - is2 ) < 0;
-      // overlapping segments are not equal
-      return ( s < 0 );
-    }
-  };
-
-
   class compare_segs_at_sweepline
   {
     const Point_2& p;
