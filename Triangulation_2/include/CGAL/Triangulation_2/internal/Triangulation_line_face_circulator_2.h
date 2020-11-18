@@ -148,7 +148,7 @@ Triangulation_line_face_circulator_2<Triangulation>::
 Triangulation_line_face_circulator_2(Vertex_handle v,
                                      const Triangulation* tr,
                                      const Point& dir)
-  :pos(), _tr(tr), s(undefined)
+  :pos(), _tr(tr), s(undefined), i(-1)
   // begin at the face incident to v, traversed by the ray from v to
   // dir
   // or null iterator
