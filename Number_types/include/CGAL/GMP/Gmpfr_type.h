@@ -71,7 +71,7 @@ bool operator==(const Gmpfr&,const Gmpz&);
 struct Gmpfr_rep{
         mpfr_t floating_point_number;
         bool clear_on_destruction;
-        Gmpfr_rep():clear_on_destruction(true){}
+        Gmpfr_rep() : floating_point_number{}, clear_on_destruction(true) {}
         ~Gmpfr_rep(){
                 if(clear_on_destruction)
                         mpfr_clear(floating_point_number);
