@@ -24,10 +24,10 @@ namespace CGAL {
 namespace internal {
 
 template <typename T, typename Allocator = CGAL_ALLOCATOR(T) > class chained_map;
-template <typename T> class chained_map_elem;
+template <typename T> struct chained_map_elem;
 
 template <typename T>
-class chained_map_elem
+struct chained_map_elem
 {
   template<typename T2, typename Alloc> friend class chained_map;
   std::size_t k; T i;
@@ -271,7 +271,8 @@ T& chained_map<T, Allocator>::access(chained_map_item p, std::size_t x)
 
 template <typename T, typename Allocator>
 chained_map<T, Allocator>::chained_map(std::size_t n) :
-  nullptrKEY(0), NONnullptrKEY(1), old_table(0)
+  nullptrKEY(0), NONnullptrKEY(1), STOP{}, old_table(nullptr), old_table_end(nullptr),
+  old_free(nullptr), old_table_size(0), old_table_size_1(0), old_index(0)
 {
   if (n < 512)
     init_table(512);
@@ -285,7 +286,8 @@ chained_map<T, Allocator>::chained_map(std::size_t n) :
 
 template <typename T, typename Allocator>
 chained_map<T, Allocator>::chained_map(const chained_map<T, Allocator>& D) :
-  nullptrKEY(0), NONnullptrKEY(1), old_table(0)
+  nullptrKEY(0), NONnullptrKEY(1), STOP{}, old_table(nullptr), old_table_end(nullptr),
+  old_free(nullptr), old_table_size(0), old_table_size_1(0), old_index(0)
 {
   init_table(D.table_size);
   STOP.i = D.STOP.i; // xdef
