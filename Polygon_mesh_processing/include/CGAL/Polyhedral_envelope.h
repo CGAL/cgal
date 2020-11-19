@@ -1745,13 +1745,6 @@ private:
         halfspace[i].emplace_back(plane);// number 2
 
 
-        if (obtuse != 1) {
-          plane = get_corner_plane(ver[faces[i][1]], midpoint(ver[faces[i][0]], ver[faces[i][2]]) , normal,
-                           tolerance, use_accurate_cross);
-          halfspace[i].emplace_back(plane);// number 3;
-
-        }
-
         edgedire = normalize(BC);
         // if (use_accurate_cross)edgenormaldist = accurate_cross_product_direction(ORIGIN, edgedire, ORIGIN, normal)*tolerance;
         // else
@@ -1762,12 +1755,6 @@ private:
                       ver[faces[i][1]] + edgenormaldist + normal);
         halfspace[i].emplace_back(plane);// number 4
 
-        if (obtuse != 2) {
-          plane = get_corner_plane(ver[faces[i][2]], midpoint(ver[faces[i][0]], ver[faces[i][1]]), normal,
-                           tolerance,use_accurate_cross);
-          halfspace[i].emplace_back(plane);// number 5;
-
-        }
 
         edgedire = -normalize(AC);
         // if (use_accurate_cross)edgenormaldist = accurate_cross_product_direction(ORIGIN, edgedire, ORIGIN , normal)*tolerance;
@@ -1779,11 +1766,21 @@ private:
                       ver[faces[i][0]] + edgenormaldist + normal);
         halfspace[i].emplace_back(plane);// number 6
 
+
+        if (obtuse != 1) {
+          plane = get_corner_plane(ver[faces[i][1]], midpoint(ver[faces[i][0]], ver[faces[i][2]]) , normal,
+                                   tolerance, use_accurate_cross);
+          halfspace[i].emplace_back(plane);// number 3;
+        }
         if (obtuse != 0) {
           plane = get_corner_plane(ver[faces[i][0]], midpoint(ver[faces[i][1]], ver[faces[i][2]]) , normal,
-                           tolerance,use_accurate_cross);
+                                   tolerance,use_accurate_cross);
           halfspace[i].emplace_back(plane);// number 7;
-
+        }
+        if (obtuse != 2) {
+          plane = get_corner_plane(ver[faces[i][2]], midpoint(ver[faces[i][0]], ver[faces[i][1]]), normal,
+                                   tolerance,use_accurate_cross);
+          halfspace[i].emplace_back(plane);// number 5;
         }
 
 #ifdef CGAL_ENVELOPE_DEBUG

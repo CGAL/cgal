@@ -12,7 +12,7 @@
 
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Envelope.h>
+#include <CGAL/Polyhedral_envelope.h>
 #include <CGAL/Timer.h>
 
 #include <fstream>
@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
   typedef std::array<int, 3> Vector3i;
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef Kernel::Point_3 Point_3;
-  typedef CGAL::Envelope<Kernel> Envelope;
+  typedef CGAL::Polyhedral_envelope<Kernel> Envelope;
 
   std::vector<Point_3> env_vertices;
   std::vector<Vector3i> env_faces;
