@@ -502,9 +502,7 @@ template <typename OutputIterator,
           typename ... PropertyHandler>
 CGAL_DEPRECATED bool read_ply_points_with_properties(std::istream& is, OutputIterator output, PropertyHandler&& ... properties)
 {
-  typedef typename value_type_traits<OutputIterator>::type OutputValueType;
-
-  return read_PLY_with_properties<OutputValueType>(is, output, std::forward<PropertyHandler>(properties)...);
+  return read_PLY_with_properties<typename value_type_traits<OutputIterator>::type>(is, output, std::forward<PropertyHandler>(properties)...);
 }
 
 template <typename OutputIteratorValueType,
