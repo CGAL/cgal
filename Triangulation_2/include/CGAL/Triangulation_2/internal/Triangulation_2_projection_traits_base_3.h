@@ -202,36 +202,94 @@ public:
 
     Object planes_intersection = intersection(plane_1, plane_2);
     if(planes_intersection.empty()) {
+#ifdef CGAL_T2_PTB_3_DEBUG
       std::cerr << "planes_intersection is empty\n";
+#endif
       return planes_intersection;
     }
     if(const Line* line = object_cast<Line>(&planes_intersection))
     {
+      // check if the intersection line intersects both segments by
+      // checking if a point on the intersection line is between
+      // the segments endpoints
       const Point& pi = line->point(0);
-      if(cross_product(normal, pi - s1.source())
+      if(  cross_product(normal, pi - s1.source())
          * cross_product(normal, pi - s1.target()) > FT(0)
          ||
-         cross_product(normal, pi - s2.source())
+           cross_product(normal, pi - s2.source())
          * cross_product(normal, pi - s2.target()) > FT(0) )
       {
-        // the intersection of the lines is not inside the segments
+        // the intersection of the supporting lines is not inside both segments
+#ifdef CGAL_T2_PTB_3_DEBUG
         std::cerr << "intersection not inside\n";
         return Object();
+#endif
       }
       else
       {
-        // Let the plane passing through s1.source() and with normal
-        // the cross product of s1.to_vector() and s2.to_vector(). That
-        // plane should intersect *l, now.
-        return intersection(*line, Plane_3(s1.source(),
-                                           cross_product(s1.to_vector(),
-                                                         s2.to_vector())));
+        // Let the plane passing through s1.source() and with normal the traits' normal.
+        // The segment intersection point computed as the intersection
+        // of the *l and that plane. Note that if segments are not coplanar the positive
+        // of the intersection point is somehow arbitrary.
+        return intersection(*line, Plane_3(s1.source(), normal));
       }
     }
     if(object_cast<Plane_3>(&planes_intersection))
     {
-      std::cerr << "coplanar lines\n";
-      CGAL_error();
+#ifdef CGAL_T2_PTB_3_DEBUG
+      std::cerr << "coplanar supporting lines\n";
+#endif
+      auto is_inside_segment = [](const Segment& s, const Point& q)
+      {
+        return Vector_3(q,s.source()) * Vector_3(q,s.target()) <=0;
+      };
+
+      bool src2_in_s1 = is_inside_segment(s1, s2.source());
+      bool tgt2_in_s1 = is_inside_segment(s1, s2.target());
+      bool src1_in_s2 = is_inside_segment(s2, s1.source());
+      bool tgt1_in_s2 = is_inside_segment(s2, s1.target());
+
+      if (src1_in_s2 && tgt1_in_s2) return make_object(s1);
+      if (src2_in_s1 && tgt2_in_s1) return make_object(s2);
+
+      if (src1_in_s2)
+      {
+        if (src2_in_s1)
+        {
+          if (cross_product(normal, Vector_3(s1.source(), s2.source())) != NULL_VECTOR)
+            return make_object(Segment(s1.source(), s2.source()));
+          else
+            return make_object(s1.source());
+        }
+        if (tgt2_in_s1)
+        {
+          if (cross_product(normal, Vector_3(s1.source(), s2.target())) != NULL_VECTOR)
+            return make_object(Segment(s1.source(), s2.target()));
+          else
+            return make_object(s1.source());
+        }
+        // should never get here with a Kernel with exact constructions
+        return make_object(s1.source());
+      }
+      if (tgt1_in_s2)
+      {
+        if (src2_in_s1)
+        {
+          if (cross_product(normal, Vector_3(s1.target(), s2.source())) != NULL_VECTOR)
+            return make_object(Segment(s1.target(), s2.source()));
+          else
+            return make_object(s1.target());
+        }
+        if (tgt2_in_s1)
+        {
+          if (cross_product(normal, Vector_3(s1.target(), s2.target())) != NULL_VECTOR)
+            return make_object(Segment(s1.target(), s2.target()));
+          else
+            return make_object(s1.target());
+        }
+        // should never get here with a Kernel with exact constructions
+        return make_object(s1.target());
+      }
       return Object();
     }
     return Object();
