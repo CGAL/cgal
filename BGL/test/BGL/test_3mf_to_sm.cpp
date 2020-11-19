@@ -40,7 +40,7 @@ int main(int argc, char** argv)
   //testing reading functions.
   if(!CGAL::read_3MF(filename, meshes))
     return 1;
-  for(int i = 0; i< meshes.size(); ++i)
+  for(std::size_t i = 0; i< meshes.size(); ++i)
   {
     Mesh mesh = meshes[i];
     std::cout<<"mesh "<<i<<" is valid: "<<mesh.is_valid()<<std::endl;

@@ -481,7 +481,7 @@ bool read_ply_points(std::istream& is, ///< input stream.
 template <typename OutputIteratorValueType, typename OutputIterator, typename ... PropertyHandler>
 CGAL_DEPRECATED bool read_ply_points_with_properties(std::istream& is, OutputIterator output, PropertyHandler&& ... properties)
 {
-  return read_PLY(is, output, std::forward<PropertyHandler>(properties)...);
+  return read_PLY_with_properties(is, output, std::forward<PropertyHandler>(properties)...);
 }
 
 /**
@@ -504,7 +504,7 @@ CGAL_DEPRECATED bool read_ply_points_with_properties(std::istream& is, OutputIte
 {
   typedef typename value_type_traits<OutputIterator>::type OutputValueType;
 
-  return read_PLY<OutputValueType>(is, output, std::forward<PropertyHandler>(properties)...);
+  return read_PLY_with_properties<OutputValueType>(is, output, std::forward<PropertyHandler>(properties)...);
 }
 
 template <typename OutputIteratorValueType,

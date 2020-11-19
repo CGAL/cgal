@@ -614,7 +614,7 @@ CGAL_DEPRECATED bool read_las_points_with_properties(std::istream& is,
                                                      OutputIterator output,
                                                      PropertyHandler&& ... properties)
 {
-  return read_LAS(is, output, std::forward<PropertyHandler>(properties)...);
+  return read_LAS_with_properties(is, output, std::forward<PropertyHandler>(properties)...);
 }
 
 /// \cond SKIP_IN_MANUAL
@@ -627,7 +627,7 @@ CGAL_DEPRECATED bool read_las_points_with_properties(std::istream& is,
 {
   typedef typename value_type_traits<OutputIterator>::type OutputValueType;
 
-  return read_LAS<OutputValueType>(is, output, std::forward<PropertyHandler>(properties)...);
+  return read_LAS_with_properties<OutputValueType>(is, output, std::forward<PropertyHandler>(properties)...);
 }
 
 /// \endcond

@@ -332,8 +332,6 @@ bool read_OFF(std::istream& is,
               Surface_mesh<Point>& sm,
               const CGAL_BGL_NP_CLASS& np)
 {
-  typedef Surface_mesh<Point>                                               Mesh;
-
   using parameters::choose_parameter;
   using parameters::get_parameter;
   using parameters::is_default_parameter;
