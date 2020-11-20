@@ -42,14 +42,25 @@ install(
   DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/Qt"
   COMPONENT CGAL_Qt5)
 if(CGAL_HEADER_ONLY)
-  install(
-    DIRECTORY "../../demo/resources/"
-    DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/resources"
-    COMPONENT CGAL_Qt5)
-  install(
-    DIRECTORY "../../demo/icons/"
-    DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/icons"
-    COMPONENT CGAL_Qt5)
+  if(EXISTS ${CGAL_MODULES_DIR}/demo/resources)
+    install(
+      DIRECTORY "${CGAL_MODULES_DIR}/demo/resources/"
+      DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/resources"
+      COMPONENT CGAL_Qt5)
+    install(
+      DIRECTORY "${CGAL_MODULES_DIR}/demo/icons/"
+      DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/icons"
+      COMPONENT CGAL_Qt5)
+  else()
+    install(
+      DIRECTORY "../../demo/resources/"
+      DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/resources"
+      COMPONENT CGAL_Qt5)
+    install(
+      DIRECTORY "../../demo/icons/"
+      DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/icons"
+      COMPONENT CGAL_Qt5)
+  endif()
 endif()
 
 message("libCGAL_Qt5 is configured")
