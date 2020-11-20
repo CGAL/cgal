@@ -186,7 +186,7 @@ the mesh as much as possible.
 \subsection Surface_mesh_simplificationCostStrategyPolicies Cost Strategy Policies
 
 The cost strategy used by the algorithm is selected by means of three policies:
-`GetPlacement`, `GetCost`, and `GetFilter`.
+`GetPlacement`, `GetCost`, and `Filter`.
 
 The `GetPlacement` policy is called to compute the new position
 for the remaining vertex after the halfedge-collapse. It returns
@@ -223,7 +223,7 @@ must be called several times just as well. Caching the placement can only avoid 
 very last call, when the edge is collapsed, but not all the previous calls which
 are needed because the placement (and cost) changes.
 
-We have not yet explained what the `GetFilter` policy is about.
+We have not yet explained what the `Filter` policy is about.
 While the cost is a scalar that is used in the priority queue, there may be
 additional criteria coming in to decide if the edge collapse shall be performed or not.
 While such a criterion could be easily integrated into the cost function,
@@ -279,6 +279,7 @@ edge_index_map(eimap)         : property-map giving each edge a unique integer i
 edge_is_constrained_map(ebmap): property-map specifying whether an edge is a constrained edge or not
 get_cost(cf)                  : function object computing the cost of a collapse
 get_placement(pf)             : function object computing the placement for the remaining vertex
+filter(filter)                : function object to reject a candidate chosen for the next edge collapse
 visitor(vis)                  : function object tracking the simplification process
 */
 
@@ -288,6 +289,7 @@ int r = edge_collapse(surface_mesh, stop_predicate,
                                        .edge_is_border_map(ebmap)
                                        .get_cost(cf)
                                        .get_placement(pf)
+                                       .filter(filter
                                        .visitor(vis));
 
 \endcode

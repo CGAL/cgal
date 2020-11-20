@@ -6,7 +6,8 @@ The concept `Filter` describes the requirements for the <I>policy
 function object</I> which gets the profile and placement of an edge
 and which can filter the placement.  The filtering is only done when
 an edge is taken from the priority queue in order to get collapsed,
-and neither when the edge is inserted or updated in the priority queue.
+and neither when the edge is inserted nor when it is updated in the
+priority queue.
 
 The placement returned is a `boost::optional` value (i.e., it can
 be absent). The value `boost::none` indicates that the edge should not be collapsed.
