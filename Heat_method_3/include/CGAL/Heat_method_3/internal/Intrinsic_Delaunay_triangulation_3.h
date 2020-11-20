@@ -287,7 +287,7 @@ private:
 
   // Mollification strategy to avoid degeneracies
   void
-  mollify(double delta)
+  mollify(const double delta)
   {
     // compute smallest length epsilon we can add to
     // all edges to ensure that the strict triangle
@@ -397,7 +397,10 @@ private:
       put(edge_id_map, ed, edge_i++);
       stack.push(ed);
     }
-    mollify(min_length*1e-4);
+
+    if(internal::has_degenerate_faces(m_intrinsic_tm, Traits()))
+      mollify(min_length*1e-4);
+
     loop_over_edges(stack, mark_edges);
     //now that edges are calculated, go through and for each face, calculate the vertex positions around it
 

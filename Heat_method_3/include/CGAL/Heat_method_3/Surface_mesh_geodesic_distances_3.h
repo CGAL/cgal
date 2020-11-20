@@ -485,9 +485,6 @@ public:
   template<class VertexDistanceMap>
   void estimate_geodesic_distances(VertexDistanceMap vdm)
   {
-    CGAL_precondition(
-      !CGAL::Heat_method_3::internal::has_degenerate_faces(triangle_mesh(), Traits()));
-
     if(is_empty(tm)){
       return;
     }
@@ -666,6 +663,9 @@ struct Base_helper
   template <class VertexDistanceMap>
   void estimate_geodesic_distances(VertexDistanceMap vdm)
   {
+    CGAL_assertion(
+      !CGAL::Heat_method_3::internal::has_degenerate_faces(
+        base().triangle_mesh(), Traits()));
     base().estimate_geodesic_distances(vdm);
   }
 };
@@ -751,9 +751,6 @@ struct Base_helper<TriangleMesh, Traits, Intrinsic_Delaunay, LA, VertexPointMap>
   template <class VertexDistanceMap>
   void estimate_geodesic_distances(VertexDistanceMap vdm)
   {
-    CGAL_precondition(
-      !CGAL::Heat_method_3::internal::has_degenerate_faces(
-        this->m_idt.triangle_mesh(), Traits()));
     base().estimate_geodesic_distances(this->m_idt.vertex_distance_map(vdm));
   }
 };
