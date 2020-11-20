@@ -55,9 +55,9 @@ the number of edges effectively removed.
     \cgalParamDefault{`CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>`}
   \cgalParamNEnd
 
-  \cgalParamNBegin{get_filter}
+  \cgalParamNBegin{filter}
     \cgalParamDescription{a policy which returns the filter for a placement}
-    \cgalParamType{a model of the concept `GetFilter`}
+    \cgalParamType{a model of the concept `Filter`}
     \cgalParamDefault{no placement gets filtered}
   \cgalParamNEnd
 
