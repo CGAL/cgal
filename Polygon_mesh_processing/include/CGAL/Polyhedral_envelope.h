@@ -101,7 +101,9 @@ struct Polyhedral_envelope {
 
 public:
   typedef typename GeomTraits::Point_3 Point_3;
+#ifndef DOXYGEN_RUNNING
   typedef std::array<int, 3> Vector3i;
+#endif
 
 private:
   typedef typename GeomTraits::Vector_3 Vector_3;
@@ -341,12 +343,13 @@ public:
   }
 
 
-  template <typename TriangleMesh>
+#ifndef DOXYGEN_RUNNING
+  <typename TriangleMesh>
   Polyhedral_envelope(const TriangleMesh& tmesh,
                       double epsilon)
     : Polyhedral_envelope(tmesh, epsilon, parameters::all_default())
   {}
-
+#endif
 
 private:
 

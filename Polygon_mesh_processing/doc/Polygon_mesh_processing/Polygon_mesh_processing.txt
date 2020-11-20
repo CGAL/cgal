@@ -549,7 +549,7 @@ For a query point the algorithm checks if it is inside one of these prisms.
 For a query segment or triangle the algorithms checks if the query is completely covered.
 The details of how to check this covering can be found in the paper.
 
-The polyhedral envelope containment check is used by the class `Surface_mesh_simplification::Envelope_filter`
+The polyhedral envelope containment check is used by the class `Surface_mesh_simplification::Polyhedral_envelope_filter`
 of the package \refPkgSurfaceMeshSimplification, in order to simplify a triangle mesh within a given tolerance.
 
 
