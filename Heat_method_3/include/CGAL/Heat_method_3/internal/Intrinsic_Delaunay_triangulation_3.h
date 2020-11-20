@@ -398,7 +398,7 @@ private:
       stack.push(ed);
     }
 
-    if(internal::has_degenerate_faces(m_intrinsic_tm, Traits()))
+    if(CGAL::Heat_method_3::internal::has_degenerate_faces(m_intrinsic_tm, Traits()))
       mollify(min_length*1e-4);
 
     loop_over_edges(stack, mark_edges);
