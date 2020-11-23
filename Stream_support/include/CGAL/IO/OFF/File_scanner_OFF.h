@@ -941,6 +941,11 @@ public:
         if(color_info.at(c) == '.')
         {
           is_float = true;
+       //   break;
+        }
+        if(color_info.at(c) == '#')
+        {
+          color_info.resize(c);
           break;
         }
       }
