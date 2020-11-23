@@ -90,15 +90,54 @@ private:
   std::shared_ptr<Data> m_data;
 
 public:
-  Support_plane() { }
+  Support_plane() :
+  m_data(std::make_shared<Data>()) {
+
+    m_data->direction      = m_data->mesh.template add_property_map<Vertex_index, Vector_2>(
+      "v:direction", CGAL::NULL_VECTOR).first;
+
+    m_data->v_ivertex_map  = m_data->mesh.template add_property_map<Vertex_index, IVertex>(
+      "v:ivertex", Intersection_graph::null_ivertex()).first;
+
+    m_data->v_iedge_map    = m_data->mesh.template add_property_map<Vertex_index, IEdge>(
+      "v:iedge", Intersection_graph::null_iedge()).first;
+
+    m_data->v_active_map   = m_data->mesh.template add_property_map<Vertex_index, bool>(
+      "v:active", true).first;
+
+    m_data->e_iedge_map    = m_data->mesh.template add_property_map<Edge_index, IEdge>(
+      "e:iedge", Intersection_graph::null_iedge()).first;
+
+    m_data->input_map      = m_data->mesh.template add_property_map<Face_index, KSR::size_t>(
+      "f:input", KSR::no_element()).first;
+
+    m_data->k_map          = m_data->mesh.template add_property_map<Face_index, unsigned int>(
+      "f:k", 0).first;
+
+    m_data->v_original_map = m_data->mesh.template add_property_map<Vertex_index, bool>(
+      "v:original", false).first;
+
+    m_data->v_time_map     = m_data->mesh.template add_property_map<Vertex_index, FT>(
+      "v:time", FT(0)).first;
+  }
 
   template<typename PointRange>
-  Support_plane(const PointRange& points) :
+  Support_plane(const PointRange& polygon) :
   m_data(std::make_shared<Data>()) {
+
+    std::vector<Point_3> points;
+    points.reserve(polygon.size());
+    for (const auto& point : polygon) {
+      points.push_back(Point_3(
+        static_cast<FT>(point.x()),
+        static_cast<FT>(point.y()),
+        static_cast<FT>(point.z())));
+    }
+    const std::size_t n = points.size();
+    CGAL_assertion(n == polygon.size());
 
     // Newell's method.
     Vector_3 normal = CGAL::NULL_VECTOR;
-    const std::size_t n = points.size();
     for (std::size_t i = 0; i < n; ++i) {
       const auto& pa = points[i];
       const auto& pb = points[(i + 1) % n];
@@ -110,25 +149,160 @@ public:
     CGAL_assertion_msg(normal != CGAL::NULL_VECTOR, "ERROR: polygon is flat!");
 
     m_data->plane = Plane_3(points[0], KSR::normalize(normal));
-    m_data->direction = m_data->mesh.template add_property_map<Vertex_index, Vector_2>(
+
+    m_data->direction      = m_data->mesh.template add_property_map<Vertex_index, Vector_2>(
       "v:direction", CGAL::NULL_VECTOR).first;
-    m_data->v_ivertex_map = m_data->mesh.template add_property_map<Vertex_index, IVertex>(
+
+    m_data->v_ivertex_map  = m_data->mesh.template add_property_map<Vertex_index, IVertex>(
       "v:ivertex", Intersection_graph::null_ivertex()).first;
-    m_data->v_iedge_map = m_data->mesh.template add_property_map<Vertex_index, IEdge>(
+
+    m_data->v_iedge_map    = m_data->mesh.template add_property_map<Vertex_index, IEdge>(
       "v:iedge", Intersection_graph::null_iedge()).first;
-    m_data->v_active_map = m_data->mesh.template add_property_map<Vertex_index, bool>(
+
+    m_data->v_active_map   = m_data->mesh.template add_property_map<Vertex_index, bool>(
       "v:active", true).first;
-    m_data->e_iedge_map = m_data->mesh.template add_property_map<Edge_index, IEdge>(
+
+    m_data->e_iedge_map    = m_data->mesh.template add_property_map<Edge_index, IEdge>(
       "e:iedge", Intersection_graph::null_iedge()).first;
-    m_data->input_map = m_data->mesh.template add_property_map<Face_index, KSR::size_t>(
+
+    m_data->input_map      = m_data->mesh.template add_property_map<Face_index, KSR::size_t>(
       "f:input", KSR::no_element()).first;
-    m_data->k_map = m_data->mesh.template add_property_map<Face_index, unsigned int>(
+
+    m_data->k_map          = m_data->mesh.template add_property_map<Face_index, unsigned int>(
       "f:k", 0).first;
+
     m_data->v_original_map = m_data->mesh.template add_property_map<Vertex_index, bool>(
       "v:original", false).first;
-    m_data->v_time_map = m_data->mesh.template add_property_map<Vertex_index, FT>(
+
+    m_data->v_time_map     = m_data->mesh.template add_property_map<Vertex_index, FT>(
       "v:time", FT(0)).first;
   }
+
+  template<typename IG, typename SP>
+  void convert(const IG& ig, SP& sp) {
+
+    using CPoint_2  = typename SP::Kernel::Point_2;
+    using Converter = CGAL::Cartesian_converter<Kernel, typename SP::Kernel>;
+    Converter converter;
+
+    const auto& vmap = ig.vmap();
+    const auto& emap = ig.emap();
+
+    std::set<CPoint_2> pts;
+    std::map<Vertex_index, Vertex_index> map_vi;
+    sp.data().plane = converter(m_data->plane);
+    for (const auto& vertex : m_data->mesh.vertices()) {
+      const auto converted   = converter(m_data->mesh.point(vertex));
+      const bool is_inserted = pts.insert(converted).second;
+      const auto vi = sp.data().mesh.add_vertex();
+      map_vi[vertex] = vi;
+
+      if (is_inserted) {
+        sp.data().mesh.point(vi) = converted;
+      } else {
+        sp.data().mesh.point(vi) = converted;
+
+        // using CFT = typename SP::Kernel::FT;
+        // const CFT b1 = CFT(9) / CFT(10);
+        // const CFT b2 = CFT(1) / CFT(10);
+
+        // const auto pi = this->prev(vertex);
+        // const auto pc = converter(m_data->mesh.point(pi));
+        // const auto ni = this->next(vertex);
+        // const auto nc = converter(m_data->mesh.point(ni));
+
+        // if (nc != converted) {
+        //   const auto x = b1 * converted.x() + b2 * nc.x();
+        //   const auto y = b1 * converted.y() + b2 * nc.y();
+        //   const CPoint_2 new_point(x, y);
+        //   sp.data().mesh.point(vi) = new_point;
+        //   // std::cout << "or: " << to_3d(Point_2(converted.x(), converted.y())) << std::endl;
+        //   // std::cout << "nc: " << to_3d(Point_2(new_point.x(), new_point.y())) << std::endl;
+        // } else if (pc != converted) {
+        //   const auto x = b1 * converted.x() + b2 * pc.x();
+        //   const auto y = b1 * converted.y() + b2 * pc.y();
+        //   const CPoint_2 new_point(x, y);
+        //   sp.data().mesh.point(vi) = new_point;
+        //   // std::cout << "or: " << to_3d(Point_2(converted.x(), converted.y())) << std::endl;
+        //   // std::cout << "pc: " << to_3d(Point_2(new_point.x(), new_point.y())) << std::endl;
+        // } else {
+        //   CGAL_assertion_msg(false, "ERROR: WE HAVE THREE EQUAL POINTS!");
+        // }
+      }
+    }
+    CGAL_assertion(sp.data().mesh.number_of_vertices() == m_data->mesh.number_of_vertices());
+
+    std::map<Face_index, Face_index> map_fi;
+    std::vector<Vertex_index> mapped_vertices;
+    for (const auto& face : m_data->mesh.faces()) {
+      const auto vertices = CGAL::vertices_around_face(
+        m_data->mesh.halfedge(face), m_data->mesh);
+
+      mapped_vertices.clear();
+      mapped_vertices.reserve(vertices.size());
+      for (const auto vertex : vertices) {
+        mapped_vertices.push_back(map_vi.at(vertex));
+      }
+      CGAL_assertion(mapped_vertices.size() == vertices.size());
+      const auto fi = sp.data().mesh.add_face(mapped_vertices);
+      map_fi[face] = fi;
+    }
+    CGAL_assertion(sp.data().mesh.number_of_faces() == m_data->mesh.number_of_faces());
+
+    for (const auto& vertex : m_data->mesh.vertices()) {
+      const auto vi = map_vi.at(vertex);
+      sp.data().direction[vi] = converter(m_data->direction[vertex]);
+
+      const auto ivertex = m_data->v_ivertex_map[vertex];
+      if (ivertex != IG::null_ivertex()) {
+        sp.data().v_ivertex_map[vi] = vmap.at(ivertex);
+      } else {
+        sp.data().v_ivertex_map[vi] = ivertex;
+      }
+
+      const auto iedge = m_data->v_iedge_map[vertex];
+      if (iedge != IG::null_iedge()) {
+        sp.data().v_iedge_map[vi] = emap.at(iedge);
+      } else {
+        sp.data().v_iedge_map[vi] = iedge;
+      }
+
+      sp.data().v_active_map[vi]   = m_data->v_active_map[vertex];
+      sp.data().v_original_map[vi] = m_data->v_original_map[vertex];
+      sp.data().v_time_map[vi]     = converter(m_data->v_time_map[vertex]);
+    }
+
+    for (const auto& edge : m_data->mesh.edges()) {
+      const auto source = m_data->mesh.source(m_data->mesh.halfedge(edge));
+      const auto target = m_data->mesh.target(m_data->mesh.halfedge(edge));
+
+      const auto s = map_vi[source];
+      const auto t = map_vi[target];
+      const auto he = sp.data().mesh.halfedge(s, t);
+      const auto ei = sp.data().mesh.edge(he);
+
+      const auto iedge = m_data->e_iedge_map[edge];
+      if (iedge != IG::null_iedge()) {
+        sp.data().e_iedge_map[ei] = emap.at(iedge);
+      } else {
+        sp.data().e_iedge_map[ei] = iedge;
+      }
+    }
+
+    for (const auto& face : m_data->mesh.faces()) {
+      const auto fi = map_fi.at(face);
+      sp.data().input_map[fi] = m_data->input_map[face];
+      sp.data().k_map[fi]     = m_data->k_map[face];
+    }
+
+    sp.data().iedges.clear();
+    for (const auto& iedge : m_data->iedges) {
+      CGAL_assertion(iedge != IG::null_iedge());
+      sp.data().iedges.insert(emap.at(iedge));
+    }
+  }
+
+  Data& data() { return *m_data; }
 
   const std::array<Vertex_index, 4>
   add_bbox_polygon(

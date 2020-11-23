@@ -32,12 +32,11 @@
 
 // Internal includes.
 #include <CGAL/KSR/utils.h>
-#include <CGAL/KSR_3/Data_structure.h>
 
 namespace CGAL {
 namespace KSR_3 {
 
-template<typename Data, typename GeomTraits>
+template<typename Data_structure, typename GeomTraits>
 class Polygon_splitter {
 
 public:
@@ -51,19 +50,18 @@ private:
   using Vector_2   = typename Kernel::Vector_2;
   using Triangle_2 = typename Kernel::Triangle_2;
 
-  using PVertex = typename Data::PVertex;
-  using PFace   = typename Data::PFace;
-  using PEdge   = typename Data::PEdge;
+  using PVertex = typename Data_structure::PVertex;
+  using PFace   = typename Data_structure::PFace;
 
-  using IVertex = typename Data::IVertex;
-  using IEdge   = typename Data::IEdge;
+  using IVertex = typename Data_structure::IVertex;
+  using IEdge   = typename Data_structure::IEdge;
 
   struct Vertex_info {
     PVertex pvertex;
     IVertex ivertex;
     Vertex_info() :
-    pvertex(Data::null_pvertex()),
-    ivertex(Data::null_ivertex())
+    pvertex(Data_structure::null_pvertex()),
+    ivertex(Data_structure::null_ivertex())
     { }
   };
 
@@ -92,13 +90,13 @@ private:
   using Face_index   = typename Mesh_3::Face_index;
   using Uchar_map    = typename Mesh_3::template Property_map<Face_index, unsigned char>;
 
-  Data& m_data;
+  Data_structure& m_data;
   TRI m_cdt;
   std::set<PVertex> m_input;
   std::map<CID, IEdge> m_map_intersections;
 
 public:
-  Polygon_splitter(Data& data) :
+  Polygon_splitter(Data_structure& data) :
   m_data(data)
   { }
 
@@ -143,7 +141,7 @@ public:
 
       points.push_back(points.front());
       const auto cid = m_cdt.insert_constraint(points.begin(), points.end());
-      m_map_intersections.insert(std::make_pair(cid, Data::null_iedge()));
+      m_map_intersections.insert(std::make_pair(cid, Data_structure::null_iedge()));
     }
 
     // Then, add intersection vertices + constraints.
@@ -244,7 +242,7 @@ public:
 
         const auto source = face->vertex(m_cdt.ccw(idx));
         const auto target = face->vertex(m_cdt.cw(idx));
-        if (source->info().pvertex == Data::null_pvertex()) {
+        if (source->info().pvertex == Data_structure::null_pvertex()) {
           source->info().pvertex = m_data.add_pvertex(
             support_plane_idx, source->point());
         }
@@ -278,15 +276,15 @@ public:
 
     // Set intersection adjacencies.
     for (auto vit = m_cdt.finite_vertices_begin(); vit != m_cdt.finite_vertices_end(); ++vit) {
-      if (vit->info().pvertex != Data::null_pvertex() &&
-          vit->info().ivertex != Data::null_ivertex()) {
+      if (vit->info().pvertex != Data_structure::null_pvertex() &&
+          vit->info().ivertex != Data_structure::null_ivertex()) {
 
         m_data.connect(vit->info().pvertex, vit->info().ivertex);
       }
     }
 
     for (const auto& m : m_map_intersections) {
-      if (m.second == Data::null_iedge()) {
+      if (m.second == Data_structure::null_iedge()) {
         continue;
       }
 
@@ -302,7 +300,9 @@ public:
         const auto b = *next;
         vit = next;
 
-        if (a->info().pvertex == Data::null_pvertex() || b->info().pvertex == Data::null_pvertex()) {
+        if (
+          a->info().pvertex == Data_structure::null_pvertex() ||
+          b->info().pvertex == Data_structure::null_pvertex()) {
           continue;
         }
         m_data.connect(a->info().pvertex, b->info().pvertex, m.second);
@@ -311,12 +311,12 @@ public:
 
     for (const auto pvertex : m_data.pvertices(support_plane_idx)) {
       bool frozen = false;
-      auto iedge = Data::null_iedge();
-      std::pair<PVertex, PVertex> neighbors(Data::null_pvertex(), Data::null_pvertex());
+      auto iedge = Data_structure::null_iedge();
+      std::pair<PVertex, PVertex> neighbors(Data_structure::null_pvertex(), Data_structure::null_pvertex());
 
       for (const auto pedge : m_data.pedges_around_pvertex(pvertex)) {
         if (m_data.has_iedge(pedge)) {
-          if (iedge == Data::null_iedge()) {
+          if (iedge == Data_structure::null_iedge()) {
             iedge = m_data.iedge(pedge);
           } else {
             frozen = true;
@@ -324,10 +324,10 @@ public:
           }
         } else {
           const auto opposite = m_data.opposite(pedge, pvertex);
-          if (neighbors.first == Data::null_pvertex()) {
+          if (neighbors.first == Data_structure::null_pvertex()) {
             neighbors.first = opposite;
           } else {
-            CGAL_assertion(neighbors.second == Data::null_pvertex());
+            CGAL_assertion(neighbors.second == Data_structure::null_pvertex());
             neighbors.second = opposite;
           }
         }
@@ -340,11 +340,13 @@ public:
       }
 
       // No intersection incident = keep initial direction.
-      if (iedge == Data::null_iedge()) {
+      if (iedge == Data_structure::null_iedge()) {
         continue;
       }
       m_data.connect(pvertex, iedge);
-      CGAL_assertion(neighbors.first != Data::null_pvertex() && neighbors.second != Data::null_pvertex());
+      CGAL_assertion(
+        neighbors.first  != Data_structure::null_pvertex() &&
+        neighbors.second != Data_structure::null_pvertex());
 
       bool first_okay = (m_input.find(neighbors.first) != m_input.end());
       auto latest = pvertex;
@@ -414,7 +416,7 @@ private:
       if (iter == m_map_intersections.end()) {
         continue;
       }
-      if (iter->second == Data::null_iedge()) {
+      if (iter->second == Data_structure::null_iedge()) {
         return true;
       }
     }

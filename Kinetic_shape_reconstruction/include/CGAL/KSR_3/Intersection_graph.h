@@ -26,6 +26,9 @@
 // Boost includes.
 #include <boost/graph/adjacency_list.hpp>
 
+// CGAL includes.
+#include <CGAL/Cartesian_converter.h>
+
 // Internal includes.
 #include <CGAL/KSR/utils.h>
 
@@ -77,11 +80,74 @@ private:
   KSR::size_t m_nb_lines;
   std::map<Point_3, Vertex_descriptor> m_map_points;
   std::map<KSR::Idx_vector, Vertex_descriptor> m_map_vertices;
+  std::map<Vertex_descriptor, Vertex_descriptor> m_vmap;
+  std::map<Edge_descriptor, Edge_descriptor> m_emap;
 
 public:
   Intersection_graph() :
   m_nb_lines(0)
   { }
+
+  void clear() {
+    m_graph.clear();
+    m_nb_lines = 0;
+    m_map_points.clear();
+    m_map_vertices.clear();
+  }
+
+  template<typename IG>
+  void convert(IG& ig) {
+
+    using Converter = CGAL::Cartesian_converter<Kernel, typename IG::Kernel>;
+
+    Converter converter;
+    ig.set_nb_lines(m_nb_lines);
+
+    const auto vpair = boost::vertices(m_graph);
+    const auto vertex_range = CGAL::make_range(vpair);
+    for (const auto vertex : vertex_range) {
+      const auto vd = boost::add_vertex(ig.graph());
+      ig.graph()[vd].point  = converter(m_graph[vertex].point);
+      ig.graph()[vd].active = m_graph[vertex].active;
+      CGAL_assertion(m_graph[vertex].active);
+      m_vmap[vertex] = vd;
+    }
+    CGAL_assertion(boost::num_vertices(ig.graph()) == boost::num_vertices(m_graph));
+
+    const auto epair = boost::edges(m_graph);
+    const auto edge_range = CGAL::make_range(epair);
+    for (const auto edge : edge_range) {
+      const auto ed = boost::add_edge(
+        boost::source(edge, m_graph), boost::target(edge, m_graph), ig.graph()).first;
+
+      CGAL_assertion(m_graph[edge].line >= 0);
+      ig.graph()[ed].line   = m_graph[edge].line;
+
+      CGAL_assertion(m_graph[edge].planes.size() >= 2);
+      ig.graph()[ed].planes = m_graph[edge].planes;
+
+      CGAL_assertion(m_graph[edge].active);
+      ig.graph()[ed].active = m_graph[edge].active;
+
+      m_emap[edge] = ed;
+    }
+    CGAL_assertion(boost::num_edges(ig.graph()) == boost::num_edges(m_graph));
+
+    // for (const auto& mp : m_map_points) {
+    //   ig.mapped_points()[converter(mp.first)] = m_vmap.at(mp.second);
+    // }
+    // for (const auto& mv : m_map_vertices) {
+    //   ig.mapped_vertices()[mv.first] = m_vmap.at(mv.second);
+    // }
+  }
+
+  const std::map<Vertex_descriptor, Vertex_descriptor>& vmap() const {
+    return m_vmap;
+  }
+
+  const std::map<Edge_descriptor, Edge_descriptor>& emap() const {
+    return m_emap;
+  }
 
   static Vertex_descriptor null_ivertex() {
     return boost::graph_traits<Graph>::null_vertex();
@@ -93,6 +159,8 @@ public:
 
   const KSR::size_t add_line() { return ( m_nb_lines++ ); }
   const KSR::size_t nb_lines() const { return m_nb_lines; }
+  void set_nb_lines(const KSR::size_t value) { m_nb_lines = value; }
+  Graph& graph() { return m_graph; }
 
   const std::pair<Vertex_descriptor, bool> add_vertex(const Point_3& point) {
 

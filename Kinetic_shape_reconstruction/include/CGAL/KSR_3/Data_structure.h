@@ -167,6 +167,38 @@ public:
   m_current_time(FT(0))
   { }
 
+  void clear() {
+    m_support_planes.clear();
+    m_intersection_graph.clear();
+    m_volumes.clear();
+    m_current_time = FT(0);
+  }
+
+  template<typename DS>
+  void convert(DS& ds) {
+
+    ds.clear();
+    ds.resize(number_of_support_planes());
+    CGAL_assertion(ds.number_of_support_planes() == number_of_support_planes());
+
+    m_intersection_graph.convert(ds.igraph());
+    for (KSR::size_t i = 0; i < number_of_support_planes(); ++i) {
+      m_support_planes[i].convert(m_intersection_graph, ds.support_planes()[i]);
+    }
+  }
+
+  KSR::vector<Support_plane>& support_planes() {
+    return m_support_planes;
+  }
+
+  Intersection_graph& igraph() {
+    return m_intersection_graph;
+  }
+
+  void resize(const KSR::size_t number_of_items) {
+    m_support_planes.resize(number_of_items);
+  }
+
   // TODO: It looks like here we lose precision during the conversion because
   // KSR::size_t is usually smaller than std::size_t!
   void reserve(const std::size_t number_of_polygons) {
@@ -199,11 +231,19 @@ public:
     return (support_plane_idx < 6);
   }
 
-  const bool is_mesh_valid(const KSR::size_t support_plane_idx) const {
+  const bool is_mesh_valid(
+    const bool check_simplicity,
+    const bool check_convexity,
+    const KSR::size_t support_plane_idx) const {
 
     const bool is_valid = mesh(support_plane_idx).is_valid();
     if (!is_valid) {
       return false;
+    }
+
+    // bbox faces may have multiple equal points after converting from exact to inexact!
+    if (support_plane_idx < 6) {
+      return true;
     }
 
     for (const auto pface : pfaces(support_plane_idx)) {
@@ -217,18 +257,18 @@ public:
         boost::make_transform_iterator(pvertices_of_pface(pface).end(), unary_f));
 
       // Use only with an exact kernel!
-      // if (!polygon.is_simple()) {
-      //   const std::string msg = "ERROR: pface " + str(pface) + " is not simple!";
-      //   CGAL_assertion_msg(false, msg.c_str());
-      //   return false;
-      // }
+      if (check_simplicity && !polygon.is_simple()) {
+        const std::string msg = "ERROR: pface " + str(pface) + " is not simple!";
+        CGAL_assertion_msg(false, msg.c_str());
+        return false;
+      }
 
       // Use only with an exact kernel!
-      // if (!polygon.is_convex()) {
-      //   const std::string msg = "ERROR: pface " + str(pface) + " is not convex!";
-      //   CGAL_assertion_msg(false, msg.c_str());
-      //   return false;
-      // }
+      if (check_convexity && !polygon.is_convex()) {
+        const std::string msg = "ERROR: pface " + str(pface) + " is not convex!";
+        CGAL_assertion_msg(false, msg.c_str());
+        return false;
+      }
 
       auto prev = null_pvertex();
       for (const auto pvertex : pvertices_of_pface(pface)) {
@@ -250,6 +290,44 @@ public:
       }
     }
     return true;
+  }
+
+  void check_integrity(
+    const bool check_simplicity = false,
+    const bool check_convexity  = false) const {
+
+    for (KSR::size_t i = 0; i < number_of_support_planes(); ++i) {
+      if (!is_mesh_valid(check_simplicity, check_convexity, i)) {
+        const std::string msg = "ERROR: mesh " + std::to_string(i) + " is not valid!";
+        CGAL_assertion_msg(false, msg.c_str());
+      }
+
+      for (const auto& iedge : this->iedges(i)) {
+        const auto& iplanes = this->intersected_planes(iedge);
+        if (iplanes.find(i) == iplanes.end()) {
+
+          const std::string msg = "ERROR: support_plane " + std::to_string(i) +
+          " is intersected by " + str(iedge) +
+          " but it claims it does not intersect it!";
+          CGAL_assertion_msg(false, msg.c_str());
+        }
+      }
+    }
+
+    for (const auto iedge : this->iedges()) {
+      const auto& iplanes = this->intersected_planes(iedge);
+      for (const auto support_plane_idx : iplanes) {
+
+        const auto& sp_iedges = this->iedges(support_plane_idx);
+        if (sp_iedges.find(iedge) == sp_iedges.end()) {
+
+          const std::string msg = "ERROR: iedge " + str(iedge) +
+          " intersects support plane " + std::to_string(support_plane_idx) +
+          " but it claims it is not intersected by it!";
+          CGAL_assertion_msg(false, msg.c_str());
+        }
+      }
+    }
   }
 
   template<typename PointRange>
@@ -401,8 +479,13 @@ public:
     const KSR::size_t support_plane_idx = add_support_plane(polygon);
     std::vector<Point_2> points;
     points.reserve(polygon.size());
-    for (const auto& point : polygon)
-      points.push_back(support_plane(support_plane_idx).to_2d(point));
+    for (const auto& point : polygon) {
+      const Point_3 converted(
+        static_cast<FT>(point.x()),
+        static_cast<FT>(point.y()),
+        static_cast<FT>(point.z()));
+      points.push_back(support_plane(support_plane_idx).to_2d(converted));
+    }
 
     // const auto centroid = CGAL::centroid(points.begin(), points.end());
 
@@ -2185,8 +2268,8 @@ public:
     check_bbox();
     check_vertices();
     check_edges();
-    create_volumes();
-    check_faces();
+    // create_volumes();
+    // check_faces();
   }
 
   void create_volumes() {
