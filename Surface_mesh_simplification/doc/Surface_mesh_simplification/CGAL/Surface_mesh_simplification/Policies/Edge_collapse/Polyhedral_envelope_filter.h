@@ -46,7 +46,7 @@ public:
   /// @{
 
   /*!
-  Returns the placement, if it does not get filtered by the wrapped filter,
+  returns the placement, if it does not get filtered by the wrapped filter,
   and if all triangles in the profile are inside the polyhedral envelope.
   */
   boost::optional<typename Edge_profile::Point> operator()(const Edge_profile& profile,

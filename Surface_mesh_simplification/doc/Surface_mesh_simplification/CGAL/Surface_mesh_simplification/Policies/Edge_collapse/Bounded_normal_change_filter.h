@@ -6,11 +6,11 @@ namespace Surface_mesh_simplification {
 \ingroup PkgSurfaceMeshSimplificationRef
 
 The class `Bounded_normal_change_filter` is a model for the `Filter` concept.
-It rejects the placement if the nested filter rejects it, or
+It rejects a placement if the nested filter rejects it, or
 if any triangle in the profile changes the normal by more than 90 degree, in this order.
 
 
-\tparam Filter_ must be a model of the concept `Filter`.  It defaults to a class that does
+\tparam Filter_ must be a model of the concept `Filter`. It defaults to a class that does
 not filter any placement.
 
 \cgalModels `Filter`
@@ -41,8 +41,8 @@ public:
   /// @{
 
   /*!
-  Returns the placement, if it does not get filtered by the wrapped filter
-  and if no triangle in the profile has its normal changed by more than 90 degree.
+  returns the placement, if it does not get filtered by the wrapped filter
+  and if no triangle in the profile has its normal changed by more than 90 degrees.
   */
   boost::optional<typename Edge_profile::Point> operator()(const Edge_profile& profile,
                                                            boost::optional<typename Profile::Point> op) const;
