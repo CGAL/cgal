@@ -390,6 +390,7 @@ void check_node_on_boundary_vertex_case(std::size_t node_id,
                                   const TriangleMesh& tm) // TODO check if we need a special case if the endpoint of the intersect edge is on the third face
   {
     CGAL_assertion(f1!=f2 && f1!=f3 && f2!=f3);
+    is_node_on_boundary.resize(node_id+1, false);
     TriangleMesh* tm_ptr = const_cast<TriangleMesh*>(&tm);
 //    user_visitor.new_node_added_triple_face(node_id, f1, f2, f3, tm); // NODE_VISITOR_TAG
 #ifdef CGAL_DEBUG_AUTOREFINEMENT
