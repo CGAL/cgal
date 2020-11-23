@@ -2268,8 +2268,8 @@ public:
     check_bbox();
     check_vertices();
     check_edges();
-    // create_volumes();
-    // check_faces();
+    create_volumes();
+    check_faces();
   }
 
   void create_volumes() {
