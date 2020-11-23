@@ -223,12 +223,13 @@ must be called several times just as well. Caching the placement can only avoid 
 very last call, when the edge is collapsed, but not all the previous calls which
 are needed because the placement (and cost) changes.
 
-We have not yet explained what the `Filter` policy is about.
+
+Finally, we explain the `Filter` policy.
 While the cost is a scalar that is used in the priority queue, there may be
 additional criteria coming in to decide if the edge collapse shall be performed or not.
 While such a criterion could be easily integrated into the cost function,
 that is setting the cost to infinity in order not to be considered a candidate for a collapse,
-we test the criterion only for an edge when it is the next edge to collapse.
+we test a criterion only for an edge when it is the next edge to collapse.
 This makes the mesh  simplification faster in case the computation of the
 criterion is expensive, for example when we check if the simplified mesh
 is in a tolerance envelope of the input mesh.
