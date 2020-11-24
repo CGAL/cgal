@@ -2283,14 +2283,21 @@ public:
     }
 
     // First, traverse only boundary faces.
+    std::vector<PFace> int_pfaces;
     int volume_index = 0;
     for (std::size_t i = 0; i < 6; ++i) {
       const auto pfaces = this->pfaces(i);
       for (const auto pface : pfaces) {
-        const bool success = traverse_boundary_pface(pface, volume_index, map_volumes);
+        CGAL_assertion(pface.first < 6);
+        int_pfaces.clear();
+        const bool success = traverse_boundary_pface(
+          pface, volume_index, map_volumes, int_pfaces);
         if (success) {
+          for (const auto& int_pface : int_pfaces) {
+            CGAL_assertion(int_pface.first >= 6);
+            traverse_other_pface(int_pface, volume_index, map_volumes);
+          }
           ++volume_index;
-          // std::cout << std::endl;
         }
       }
     }
@@ -2298,19 +2305,11 @@ public:
     CGAL_assertion(volume_index > 0);
 
     // Then traverse interior faces.
-    while (true) {
-      bool stop = true;
-      for (std::size_t i = 6; i < number_of_support_planes(); ++i) {
-        const auto pfaces = this->pfaces(i);
-        for (const auto pface : pfaces) {
-          const bool success = traverse_interior_pface(pface, volume_index, map_volumes);
-          if (!success) {
-            stop = false;
-            // std::cout << std::endl;
-          }
-        }
+    for (std::size_t i = 6; i < number_of_support_planes(); ++i) {
+      const auto pfaces = this->pfaces(i);
+      for (const auto pface : pfaces) {
+        traverse_interior_pface(pface, map_volumes);
       }
-      if (stop) break;
     }
 
     // Now, set final polyhedrons and their neighbors.
@@ -2345,7 +2344,8 @@ public:
   const bool traverse_boundary_pface(
     const PFace& pface,
     const int volume_index,
-    std::map<PFace, std::pair<int, int> >& map_volumes) {
+    std::map<PFace, std::pair<int, int> >& map_volumes,
+    std::vector<PFace>& int_pfaces) {
 
     if (pface.first >= 6) return false;
     CGAL_assertion(pface.first < 6);
@@ -2365,105 +2365,316 @@ public:
     //   std::to_string(pface.second));
 
     std::vector<PFace> nfaces;
-    for (const auto pedge : pedges_of_pface(pface)) {
+    const auto pedges = pedges_of_pface(pface);
+    for (const auto pedge : pedges) {
       CGAL_assertion(has_iedge(pedge));
       incident_faces(this->iedge(pedge), nfaces);
-      if (!has_interior_pface(nfaces)) {
-        // std::cout << "does not have interior pface" << std::endl;
-        // std::cout << segment_3(this->iedge(pedge)) << std::endl;
+      if (!has_interior_pface(pface, nfaces)) {
         for (const auto& nface : nfaces) {
           if (nface == pface) continue;
-          traverse_boundary_pface(nface, volume_index, map_volumes);
+          traverse_boundary_pface(nface, volume_index, map_volumes, int_pfaces);
         }
       } else {
-        // std::cout << "has interior pface" << std::endl;
-        // std::cout << segment_3(this->iedge(pedge)) << std::endl;
+        std::size_t count = 0;
+        for (const auto& nface : nfaces) {
+          if (nface == pface)  continue;
+          if (nface.first < 6) continue;
+          int_pfaces.push_back(nface); ++count;
+        }
+        CGAL_assertion(count == 1);
       }
     }
     return true;
   }
 
-  const bool has_interior_pface(const std::vector<PFace>& pfaces) const {
+  const bool has_interior_pface(
+    const PFace& current,
+    const std::vector<PFace>& pfaces) const {
     for (const auto& pface : pfaces) {
+      if (pface == current) continue;
       if (pface.first >= 6) return true;
     }
     return false;
   }
 
-  const bool traverse_interior_pface(
+  const bool traverse_other_pface(
     const PFace& pface,
     const int volume_index,
     std::map<PFace, std::pair<int, int> >& map_volumes) {
 
-    if (pface.first < 6) return false;
-    CGAL_assertion(pface.first >= 6);
+    const bool is_boundary = (pface.first < 6);
     auto& pair = map_volumes.at(pface);
 
-    // std::cout << "CURRENT INT MAP: " << pair.first << " " << pair.second << std::endl;
-    CGAL_assertion(pair.first == -1 && pair.second == -1);
+    if (pair.first != -1 && pair.second != -1) return false;
+    CGAL_assertion(pair.second == -1);
+    if (pair.first == volume_index) return false;
+    CGAL_assertion(pair.first != volume_index);
 
-    // std::cout << "dumping interior pface: " <<
-    //   std::to_string(pface.first) + "-" + std::to_string(pface.second) << std::endl;
-    dump_pface(pface, "int-pface" +
-      std::to_string(pface.first) + "-" + std::to_string(pface.second));
+    if (pair.first == -1) {
+      pair.first = volume_index;
+    } else {
+      CGAL_assertion(pair.first != -1);
+      CGAL_assertion(!is_boundary);
+      pair.second = volume_index;
+    }
 
-    std::set<int> neighbors;
+    // std::cout << "DUMPING OTHER PFACE: " <<
+    //   std::to_string(volume_index) + "-" +
+    //   std::to_string(pface.first) + "-" +
+    //   std::to_string(pface.second) << std::endl;
+    // dump_pface(pface, "other-pface-" +
+    //   std::to_string(volume_index) + "-" +
+    //   std::to_string(pface.first) + "-" +
+    //   std::to_string(pface.second));
+
     std::vector<PFace> nfaces;
     const auto pedges = pedges_of_pface(pface);
     for (const auto pedge : pedges) {
       CGAL_assertion(has_iedge(pedge));
       incident_faces(this->iedge(pedge), nfaces);
 
-      std::cout << "pedge: " << segment_3(pedge) << std::endl;
-      std::cout << "nfaces size: " << nfaces.size() << std::endl;
+      if (!has_interior_pface(pface, nfaces)) {
+        const auto bnd_pface = find_bnd_pface(
+          pface, pedge, nfaces, volume_index, map_volumes);
+
+        if (bnd_pface.first == null_pface()) continue;
+        if (bnd_pface.second && bnd_pface.first != null_pface()) {
+
+          if (bnd_pface.first.first < 6) {
+            std::vector<PFace> extra_pfaces;
+            traverse_boundary_pface(bnd_pface.first, volume_index, map_volumes, extra_pfaces);
+            for (const auto& extra_pface : extra_pfaces)
+              traverse_other_pface(extra_pface, volume_index, map_volumes);
+            continue;
+          } else {
+            CGAL_assertion_msg(false, "TODO: HANDLE INT EXTRA CASE!");
+          }
+        }
+
+        CGAL_assertion(bnd_pface.first != null_pface());
+        traverse_other_pface(bnd_pface.first, volume_index, map_volumes);
+      } else {
+        const auto int_pface = find_int_pface(
+          pface, pedge, nfaces, volume_index, map_volumes);
+        if (int_pface == null_pface()) {
+          // std::cout << "DETECTED!" << std::endl;
+          continue;
+        }
+
+        CGAL_assertion(int_pface != null_pface());
+        traverse_other_pface(int_pface, volume_index, map_volumes);
+      }
+    }
+    return true;
+  }
+
+  const std::pair<PFace, bool> find_bnd_pface(
+    const PFace& current,
+    const PEdge& pedge,
+    const std::vector<PFace>& nfaces,
+    const int volume_index,
+    const std::map<PFace, std::pair<int, int> >& map_volumes) {
+
+    // std::cout << "pedge: " << segment_3(pedge) << std::endl;
+    std::vector<PFace> bnd_nfaces;
+    get_bnd_pfaces(current, nfaces, bnd_nfaces);
+    CGAL_assertion_msg(bnd_nfaces.size() == 2, "TODO: HANDLE CASE BND SIZE > 2!");
+
+    bool has_vol_0 = has_bnd_volume_index(current, bnd_nfaces[0], volume_index, map_volumes, false);
+    bool has_vol_1 = has_bnd_volume_index(current, bnd_nfaces[1], volume_index, map_volumes, false);
+
+    bool are_both_empty = false;
+    if (!has_vol_0 && !has_vol_1) {
+      are_both_empty = true;
+      has_vol_0 = has_bnd_volume_index(current, bnd_nfaces[0], volume_index, map_volumes, true);
+      has_vol_1 = has_bnd_volume_index(current, bnd_nfaces[1], volume_index, map_volumes, true);
+    }
+
+    if (has_vol_0) {
+      CGAL_assertion_msg(!has_vol_1, "TODO: CAN WE HAVE BOTH VOLUMES?");
+      return std::make_pair(bnd_nfaces[0], are_both_empty);
+    }
+
+    if (has_vol_1) {
+      CGAL_assertion_msg(!has_vol_0, "TODO: CAN WE HAVE BOTH VOLUMES?");
+      return std::make_pair(bnd_nfaces[1], are_both_empty);
+    }
+
+    // CGAL_assertion_msg(false, "TODO: HANDLE CASE EMPTY BND VOLUMES!");
+    return std::make_pair(null_pface(), are_both_empty);
+  }
+
+  void get_bnd_pfaces(
+    const PFace& current,
+    const std::vector<PFace>& nfaces,
+    std::vector<PFace>& bnd_nfaces) {
+
+    bnd_nfaces.clear();
+    for (const auto& nface : nfaces) {
+      if (nface == current) continue;
+      CGAL_assertion_msg(nface.first < 6, "TODO: HANDLE EXTRA INT PFACE CASE!");
+      bnd_nfaces.push_back(nface);
+    }
+  }
+
+  const bool has_bnd_volume_index(
+    const PFace& current,
+    const PFace& pface,
+    const int volume_index,
+    const std::map<PFace, std::pair<int, int> >& map_volumes,
+    const bool use_extra) {
+
+    const auto ppair = map_volumes.at(pface);
+    CGAL_assertion(ppair.second == -1);
+    if (ppair.first == volume_index) return true;
+
+    if (use_extra) {
+
+      std::vector<PFace> nfaces;
+      const auto pedges = pedges_of_pface(pface);
+      for (const auto pedge : pedges) {
+        CGAL_assertion(has_iedge(pedge));
+        incident_faces(this->iedge(pedge), nfaces);
+
+        for (const auto& nface : nfaces) {
+          if (nface == pface)   continue;
+          if (nface == current) continue;
+          if (nface.first < 6)  continue;
+          const auto& npair = map_volumes.at(nface);
+          if (npair.first  == volume_index) {
+            // dump_pface(nface, "found-1");
+            return true;
+          }
+          if (npair.second == volume_index) {
+            // dump_pface(nface, "found-2");
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  const PFace find_int_pface(
+    const PFace& current,
+    const PEdge& pedge,
+    const std::vector<PFace>& nfaces,
+    const int volume_index,
+    const std::map<PFace, std::pair<int, int> >& map_volumes) {
+
+    // std::cout << "pedge: " << segment_3(pedge) << std::endl;
+    std::vector<PFace> int_nfaces;
+    get_int_pfaces(current, nfaces, int_nfaces);
+    // std::cout << "nfaces: " << int_nfaces.size() << std::endl;
+
+    for (const auto& int_nface : int_nfaces) {
+      CGAL_assertion(int_nface != current);
+      if (has_int_volume_index(current, int_nface, volume_index, map_volumes)) {
+        const bool success = check_other_volumes(
+          current, int_nface, int_nfaces, volume_index, map_volumes);
+        if (success) {
+          return int_nface;
+        }
+      }
+    }
+
+    // CGAL_assertion_msg(false, "TODO: HANDLE CASE EMPTY INT VOLUMES!");
+    return null_pface();
+  }
+
+  void get_int_pfaces(
+    const PFace& current,
+    const std::vector<PFace>& nfaces,
+    std::vector<PFace>& int_nfaces) {
+
+    int_nfaces.clear();
+    for (const auto& nface : nfaces) {
+      if (nface == current) continue;
+      CGAL_assertion_msg(nface.first >= 6, "TODO: HANDLE EXTRA BND PFACE CASE!");
+      int_nfaces.push_back(nface);
+    }
+  }
+
+  const bool has_int_volume_index(
+    const PFace& current,
+    const PFace& pface,
+    const int volume_index,
+    const std::map<PFace, std::pair<int, int> >& map_volumes) {
+
+    // dump_pface(pface, "face");
+    const auto ppair = map_volumes.at(pface);
+    // CGAL_assertion(ppair.second == -1);
+    if (ppair.first == volume_index || ppair.second == volume_index) {
+      // dump_pface(pface, "found-0");
+      return true;
+    }
+
+    std::vector<PFace> nfaces;
+    const auto pedges = pedges_of_pface(pface);
+    for (const auto pedge : pedges) {
+      CGAL_assertion(has_iedge(pedge));
+      incident_faces(this->iedge(pedge), nfaces);
 
       for (const auto& nface : nfaces) {
-        if (nface == pface) {
-          std::cout << "skip pface" << "; ";
-          continue;
-        }
-        // TODO: skip interior pfaces (see below)
-        if (nface.first >= 6) {
-          std::cout << "skip interior" << "; ";
-          continue;
-        }
-
+        if (nface == pface)   continue;
+        if (nface == current) continue;
+        if (nface.first >= 6) continue;
         const auto& npair = map_volumes.at(nface);
-        CGAL_assertion(npair.first != -1);
-        neighbors.insert(npair.first);
-        std::cout << npair.first << "; ";
-
-        // std::cout << "dumping nface: " <<
-        // std::to_string(nface.first) + "-" + std::to_string(nface.second) << std::endl;
-        // dump_pface(nface, "nface" +
-        // std::to_string(nface.first) + "-" + std::to_string(nface.second));
-
-        if (npair.second == -1) continue;
-        neighbors.insert(npair.second);
-        std::cout << npair.second << "; ";
+        if (npair.first  == volume_index) {
+          // dump_pface(nface, "found-1");
+          return true;
+        }
+        if (npair.second == volume_index) {
+          // dump_pface(nface, "found-2");
+          return true;
+        }
       }
-      std::cout << std::endl << std::endl;
     }
+    return false;
+  }
 
-    if (neighbors.size() == 2) { // interior pfaces, which have boundary pfaces as neighbors
+  const bool check_other_volumes(
+    const PFace& current,
+    const PFace& query_pface,
+    const std::vector<PFace>& int_pfaces,
+    const int volume_index,
+    const std::map<PFace, std::pair<int, int> >& map_volumes) {
 
-      std::size_t count = 0;
-      for (const int neighbor : neighbors) {
-        if (count == 0) pair.first = neighbor;
-        else pair.second = neighbor;
-        ++count;
-      }
-      // std::cout << "FOUND INT MAP: " << pair.first << " " << pair.second << std::endl;
+    for (const auto& int_pface : int_pfaces) {
+      if (int_pface == query_pface) continue;
+      const bool has_vol = has_int_volume_index(current, int_pface, volume_index, map_volumes);
+      CGAL_assertion_msg(!has_vol, "TODO: CAN WE HAVE OTHER VOLUMES?");
+    }
+    return true;
+  }
+
+  const bool traverse_interior_pface(
+    const PFace& pface,
+    std::map<PFace, std::pair<int, int> >& map_volumes) {
+
+    const bool is_boundary = (pface.first < 6);
+    auto& pair = map_volumes.at(pface);
+
+    // std::cout << "CURRENT INT MAP: " << pair.first << " " << pair.second << std::endl;
+
+    if (is_boundary) return false;
+    CGAL_assertion(!is_boundary);
+
+    if (pair.first != -1 && pair.second != -1) return false;
+
+    if (pair.first != -1 && pair.second == -1) {
+      dump_pface(pface, "pure-pface");
+      CGAL_assertion_msg(false, "TODO: HANDLE PURE INTERIOR PFACE CASE 1!");
       return true;
-
-    } else { // pure interior pfaces
-
-      std::cout << "found volumes: ";
-      for (const int neighbor : neighbors)
-        std::cout << neighbor << " ";
-      std::cout << std::endl << "neighbors size: " << neighbors.size() << std::endl;
-      CGAL_assertion_msg(false, "TODO: HANDLE PURE INTERIOR FACE!");
     }
+
+    if (pair.first == -1 && pair.second == -1) {
+      dump_pface(pface, "pure-pface");
+      CGAL_assertion_msg(false, "TODO: HANDLE PURE INTERIOR PFACE CASE 2!");
+      return true;
+    }
+
+    CGAL_assertion_msg(false, "ERROR: INVALID CASE!");
     return false;
   }
 
