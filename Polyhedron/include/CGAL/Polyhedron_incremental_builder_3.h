@@ -187,7 +187,12 @@ public:
         // internal state. The previous polyhedral surface in `h'
         // remains unchanged. The incremental builder adds the new
         // polyhedral surface to the old one.
-      : m_error( false), m_verbose( verbose), hds(h) {
+      : m_error( false), m_verbose( verbose), hds(h),
+        rollback_v(0), rollback_f(0), rollback_h(0),
+        new_vertices(0), new_faces(0), w1(0), w2(0),
+        v1(0), first_vertex(false), last_vertex(false),
+        new_halfedges(0)
+    {
         CGAL_assertion_code(check_protocoll = 0;)
     }
 

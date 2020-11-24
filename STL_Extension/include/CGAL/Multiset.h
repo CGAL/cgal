@@ -102,8 +102,13 @@ protected:
     Node        *rightP;           // Points on the right child of the node.
     Node        *leftP;            // Points on the left child of the node.
 
-    /*! Default constructor. */
-    Node() :
+    /*!
+     * Constructor for dummy nodes
+     * \param _color The color of the node.
+     */
+    Node(Node_color _color) :
+      object{},
+      color(_color),
       parentP(nullptr),
       rightP(nullptr),
       leftP(nullptr)
@@ -573,11 +578,10 @@ public:
     rootP (nullptr),
     iSize (0),
     iBlackHeight (0),
-    comp_f (comp)
+    comp_f (comp),
+    beginNode(Node::DUMMY_BEGIN), // Mark the two fictitious nodes as dummies.
+    endNode(Node::DUMMY_END)
   {
-    // Mark the two fictitious nodes as dummies.
-    beginNode.color = Node::DUMMY_BEGIN;
-    endNode.color = Node::DUMMY_END;
 
     // Insert all objects to the tree.
     while (first != last)
@@ -1507,11 +1511,10 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::Multiset () :
   rootP (nullptr),
   iSize (0),
   iBlackHeight (0),
-  comp_f ()
+  comp_f (),
+  beginNode(Node::DUMMY_BEGIN), // Mark the two fictitious nodes as dummies.
+  endNode(Node::DUMMY_END)
 {
-  // Mark the two fictitious nodes as dummies.
-  beginNode.color = Node::DUMMY_BEGIN;
-  endNode.color = Node::DUMMY_END;
 }
 
 //---------------------------------------------------------
@@ -1522,11 +1525,10 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::Multiset (const Compare
   rootP (nullptr),
   iSize (0),
   iBlackHeight (0),
-  comp_f (comp)
+  comp_f (comp),
+  beginNode(Node::DUMMY_BEGIN), // Mark the two fictitious nodes as dummies.
+  endNode(Node::DUMMY_END)
 {
-  // Mark the two fictitious nodes as dummies.
-  beginNode.color = Node::DUMMY_BEGIN;
-  endNode.color = Node::DUMMY_END;
 }
 
 //---------------------------------------------------------
@@ -1537,11 +1539,10 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::Multiset (const Self& t
   rootP (nullptr),
   iSize (tree.iSize),
   iBlackHeight (tree.iBlackHeight),
-  comp_f (tree.comp_f)
+  comp_f (tree.comp_f),
+  beginNode(Node::DUMMY_BEGIN), // Mark the two fictitious nodes as dummies.
+  endNode(Node::DUMMY_END)
 {
-  // Mark the two fictitious nodes as dummies.
-  beginNode.color = Node::DUMMY_BEGIN;
-  endNode.color = Node::DUMMY_END;
 
   // Copy all the copied tree's nodes recursively.
   if (tree.rootP != nullptr)

@@ -89,7 +89,9 @@ public:
   T2 second;
   T3 third;
 
-  Triple() {}
+  Triple()
+  : first{}, second{}, third{}
+  {}
 
   Triple(const T1& a, const T2& b, const T3& c)
   : first(a), second(b), third(c)

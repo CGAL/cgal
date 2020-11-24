@@ -300,8 +300,10 @@ struct Mpzf {
     pool::push(data());
   }
 
-  Mpzf(noalloc){}
-  Mpzf(allocate,int i) { init(i); }
+  Mpzf(noalloc)
+    : data_(nullptr), size(0), exp(0) {}
+  Mpzf(allocate,int i)
+    : size(0), exp(0) { init(i); }
 
   public:
 

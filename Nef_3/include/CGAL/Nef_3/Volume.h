@@ -47,7 +47,7 @@ class Volume_base  {
 
  public:
 
-  Volume_base() {}
+  Volume_base() : mark_{} {}
 
   Volume_base(Mark m) : mark_(m) {}
 

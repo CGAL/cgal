@@ -40,6 +40,7 @@ public:
   typedef typename Tds::Cell_iterator            Cell_iterator;
 
   Triangulation_ds_facet_iterator_3()
+    : _tds(nullptr)
     {}
 
   Triangulation_ds_facet_iterator_3(const Tds * tds)
