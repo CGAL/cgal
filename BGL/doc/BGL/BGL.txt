@@ -333,7 +333,7 @@ therefore introduce the `Arr_vertex_index_map<Arrangement>` class-template,
 which maintains a mapping of vertex handles to indices, as required by the
 \sc{Bgl}. An instance of this class must be attached to a valid arrangement
 vertex when it is created. It uses the notification mechanism (see
-Section \ref arr_secnotif) to automatically maintain the mapping of vertices
+Section \ref arr_ssecnotif) to automatically maintain the mapping of vertices
 to indices, even when new vertices are inserted into the arrangement or
 existing vertices are removed.
 
@@ -357,7 +357,9 @@ should not be reused in calls to the \sc{Bgl} functions in case the arrangement
 is modified in between these calls.
 
 \cgalFigureBegin{figex_bgl,ex_bgl.png}
-An arrangement of 7 line segments, as constructed by `ex_bgl_primal_adapter.cpp` and `ex_bgl_dual_adapter.cpp`. The breadth-first visit times for the arrangement faces, starting from the unbounded face \f$ f_0\f$, are shown in brackets.
+An arrangement of 7 line segments, as constructed by `bgl_primal_adapter.cpp`
+and `bgl_dual_adapter.cpp`. The breadth-first visit times for the arrangement
+faces, starting from the unbounded face \f$ f_0\f$, are shown in brackets.
 \cgalFigureEnd
 
 In the following example we construct an arrangement of 7 line segments,
@@ -398,12 +400,12 @@ efficient mapping of face handles to indices. We also provide the template
 data with the arrangement faces.
 
 In the following example we construct the same arrangement as in
-example `ex_bgl_primal_adapter.cpp` (see \cgalFigureRef{arr_figex_bgl}),
-and perform breadth-first search on the graph faces, starting from the
-unbounded face. We extend the \sc{Dcel} faces
-with an unsigned integer, marking the discover time of the face and use a
-breadth-first-search visitor to obtain these times and update the faces
-accordingly:
+example `ex_bgl_primal_adapter.cpp` (see
+\cgalFigureRef{aos_fig-bgl_primal_adapter}), and perform breadth-first
+search on the graph faces, starting from the unbounded face. We extend
+the \sc{Dcel} faces with an unsigned integer, marking the discover
+time of the face and use a breadth-first-search visitor to obtain
+these times and update the faces accordingly:
 
 \cgalExample{BGL_arrangement_2/arrangement_dual.cpp}
 

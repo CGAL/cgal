@@ -744,7 +744,7 @@ respectively. Their intersection comprises nine simple polygons, as
 depicted to the right.
 
 Recall that every B&eacute;zier curve is defined by a sequence of control
-points that form chains (see Section \ref arr_ssectr_bez. The last
+points that form chains (see Section \ref arr_sssectr_bez. The last
 control point of every curve must be identical to the first control
 point of its successor. The function `read_Bezier_polygon()`
 included in the example reads the curves from an input file until they
@@ -781,4 +781,3 @@ line.
 
 */
 } /* namespace CGAL */
-
