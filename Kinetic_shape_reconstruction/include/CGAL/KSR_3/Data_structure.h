@@ -2359,10 +2359,10 @@ public:
     //   std::to_string(volume_index) + "-" +
     //   std::to_string(pface.first) + "-" +
     //   std::to_string(pface.second) << std::endl;
-    dump_pface(pface, "bnd-pface-" +
-      std::to_string(volume_index) + "-" +
-      std::to_string(pface.first) + "-" +
-      std::to_string(pface.second));
+    // dump_pface(pface, "bnd-pface-" +
+    //   std::to_string(volume_index) + "-" +
+    //   std::to_string(pface.first) + "-" +
+    //   std::to_string(pface.second));
 
     std::vector<PFace> nfaces;
     for (const auto pedge : pedges_of_pface(pface)) {
@@ -2409,17 +2409,29 @@ public:
 
     std::set<int> neighbors;
     std::vector<PFace> nfaces;
-    for (const auto pedge : pedges_of_pface(pface)) {
+    const auto pedges = pedges_of_pface(pface);
+    for (const auto pedge : pedges) {
       CGAL_assertion(has_iedge(pedge));
       incident_faces(this->iedge(pedge), nfaces);
 
+      std::cout << "pedge: " << segment_3(pedge) << std::endl;
+      std::cout << "nfaces size: " << nfaces.size() << std::endl;
+
       for (const auto& nface : nfaces) {
-        if (nface == pface) continue;
-        if (nface.first >= 6) continue; // TODO: skip interior pfaces (see below)
+        if (nface == pface) {
+          std::cout << "skip pface" << "; ";
+          continue;
+        }
+        // TODO: skip interior pfaces (see below)
+        if (nface.first >= 6) {
+          std::cout << "skip interior" << "; ";
+          continue;
+        }
 
         const auto& npair = map_volumes.at(nface);
         CGAL_assertion(npair.first != -1);
         neighbors.insert(npair.first);
+        std::cout << npair.first << "; ";
 
         // std::cout << "dumping nface: " <<
         // std::to_string(nface.first) + "-" + std::to_string(nface.second) << std::endl;
@@ -2428,7 +2440,9 @@ public:
 
         if (npair.second == -1) continue;
         neighbors.insert(npair.second);
+        std::cout << npair.second << "; ";
       }
+      std::cout << std::endl << std::endl;
     }
 
     if (neighbors.size() == 2) { // interior pfaces, which have boundary pfaces as neighbors
@@ -2444,11 +2458,11 @@ public:
 
     } else { // pure interior pfaces
 
+      std::cout << "found volumes: ";
       for (const int neighbor : neighbors)
         std::cout << neighbor << " ";
-      std::cout << std::endl << "NOT FOUND size: " << neighbors.size() << std::endl;
+      std::cout << std::endl << "neighbors size: " << neighbors.size() << std::endl;
       CGAL_assertion_msg(false, "TODO: HANDLE PURE INTERIOR FACE!");
-
     }
     return false;
   }
