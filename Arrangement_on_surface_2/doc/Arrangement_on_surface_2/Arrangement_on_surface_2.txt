@@ -94,8 +94,8 @@ described above; the `TopologyTraits` parameter must be substituted
 with a type that deals with the topology of the surface (see Section
 \ref aos_sec-topol_traits). In particular, it maintains a
 representation of the arrangement graph embedded in the surface using
-an extended doubly-connected edge list (\sc{Dcel}) data-structure
-suitable for the particular topology.
+a doubly-connected edge list (\sc{Dcel}) data-structure suitable for
+the particular topology.
 
 Several member functions and nested types defined in the
 `Arrangement_2` derived class-template inherit their values from the
@@ -3937,34 +3937,39 @@ changes as the segment is split. The `Arr_segment_traits_2` class
 template also caches some additional information with each segment to
 speed up various predicates, i.e., two Boolean flags indicating (i)
 whether the segment is vertical and (ii) whether the segment
-target-point is lexicographically larger than its source.  An \link
+target-point is lexicographically larger than its source.  The
+calculation of the supporting line and two Boolean flags is delayed to
+the point in time when needed to achieve further improvement in
+efficiency. An \link Arr_segment_traits_2::X_monotone_curve_2
+`X_monotone_curve_2`\endlink object is still constructible from two
+endpoints or from a kernel segment and converted to an
+`X_monotone_curve_2` object. Moreover, an \link
 Arr_segment_traits_2::X_monotone_curve_2 `X_monotone_curve_2`\endlink
-object is still constructible from two endpoints or from a kernel
-segment and converted to an `X_monotone_curve_2` object. Moreover, an
-\link Arr_segment_traits_2::X_monotone_curve_2
-`X_monotone_curve_2`\endlink instance can also be cast or to a
-`Kernel::Segment_2` object. The two types are thus convertible to one
-another.
+instance can also be cast or to a `Kernel::Segment_2` object. The two
+types are thus convertible to one another.
 
-Using an instance of the `Arr_segment_traits_2<Kernel>`
-class template can be very efficient when constructing arrangements
-induced by line segments with a large number of
-intersections. Efficiency is affected by the substituted geometric
-kernel. Using `Exact_predicates_exact_constructions_kernel` as the
-kernel type is in general not a bad choice; the coordinates of the
-segment endpoints are represented as multi-precision rational numbers,
-which ensures the correctness of all computations regardless of the
-input.  Computations on multi-precision number types (such as `Gmpq`)
-take longer than computations on machine-precision floating-point. A
-kernel object of the aforementioned type uses numerical filtering to
-expedite computation; see `Kernel_2` and `Kernel_3`. If the input set
-of line segments do not have degeneracies; namely, no two segments in
-the set share a common endpoint, and no three segments intersect at a
-common point, or at least, degeneracies exist but their number is
-relatively small, then filtered computation incurs only negligible
-overhead compared to floating-point arithmetic, which is
-error-prone. Indeed, in almost all examples and applications given in
-this manual, the predefined filtered kernel
+Computing the intersection between two segments is preceded by an
+application of an efficient predicate that tests whether an
+intersection exists at all. This optimization has negligble overhead;
+Thus, using an instance of the `Arr_segment_traits_2<Kernel>` class
+template is still very efficient when constructing arrangements
+induced by line segments with a large number of intersections.
+Efficiency is affected by the substituted geometric kernel. Using
+`Exact_predicates_exact_constructions_kernel` as the kernel type is in
+general not a bad choice; the coordinates of the segment endpoints are
+represented as multi-precision rational numbers, which ensures the
+correctness of all computations regardless of the input.  Computations
+on multi-precision number types (such as `Gmpq`) take longer than
+computations on machine-precision floating-point. A kernel object of
+the aforementioned type uses numerical filtering to expedite
+computation; see `Kernel_2` and `Kernel_3`. If the input set of line
+segments do not have degeneracies; namely, no two segments in the set
+share a common endpoint, and no three segments intersect at a common
+point, or at least, degeneracies exist but their number is relatively
+small, then filtered computation incurs only negligible overhead
+compared to floating-point arithmetic, which is error-prone. Indeed,
+in almost all examples and applications given in this manual, the
+predefined filtered kernel
 `Exact_predicates_exact_constructions_kernel` is used to instantiate
 the line-segment traits class.
 
@@ -6722,11 +6727,12 @@ squared distances of the vertex from $v_0$.
 \subsection arr_ssecbgl_dual The Dual Arrangement Representation
 <!----------------------------------------------------------------------------->
 
-It is possible to give a dual graph representation for an arrangement
-instance, such that each arrangement face corresponds to a graph
-vertex and two vertices are adjacent iff the corresponding faces share
-a common edge on their boundaries. This is done by specializing the
-`boost:graph_traits` template for `Dual<Arrangement_2>` instances,
+An arrangement instance can be represented as a graph other than the
+one described in the previous section. A dual-graph representation
+refers to the graph, where each arrangement face corresponds to a
+graph vertex, and two vertices are adjacent iff the corresponding faces
+share a common edge on their boundaries. This is done by specializing
+the `boost:graph_traits` template for `Dual<Arrangement_2>` instances,
 where `Dual<Arrangement_2>` is a template specialization that gives a
 dual interpretation to an arrangement instance.
 
@@ -6745,12 +6751,47 @@ of the concepts `VertexListGraph`, `EdgeListGraph` and
 Since we use \link Arrangement_2::Face_handle `Face_handle`\endlink
 objects as the vertex descriptors, we define the
 `Arr_face_index_map<Arrangement>` class-template, which maintains an
-efficient mapping of face handles to indices.  Like vertices,
-`boost::vector_property_map<Type, IndexMap>` can be used for
-associating arbitrary data with the arrangement faces.
+efficient mapping of face handles to indices.
+
+The next example demonstrates how a property map can be used to update
+or receive information directly from a feature of the arrangement
+without the need to search for its index. The example also
+demonstrates the application of the breadth-first search} (BFS)
+algorithm on a dual arrangement. It uses the functor template
+`Extended_face_property_map<Arrangement, Type>` to directly access
+information stored inside the faces. The functor implements a property
+map that utilizes the `data()` and `set_data() member functions of the
+extended face to update or obtain the property. When the property map
+is instantiated, the `Type` parameter must be substituted with the
+same type that is used to extend the arrangement face; see Section
+\ref arr_sssecex_dcel_face. The functor template is defined in the
+header file `Extended_face_property_map.h` listed below.
+
+\code
+// A property map that reads/writes the information to/from the extended face.
+template <typename Arrangement, class Type> class Extended_face_property_map {
+public:
+  typedef typename Arrangement::Face_handle       Face_handle;
+
+  // Boost property type definitions.
+  typedef boost::read_write_property_map_tag      category;
+  typedef Type                                    value_type;
+  typedef value_type&                             reference;
+  typedef Face_handle                             key_type;
+
+  // The get function is required by the property map concept.
+  friend reference get(const Extended_face_property_map& map, key_type key)
+  { return key->data(); }
+
+  // The put function is required by the property map concept.
+  friend void put(const Extended_face_property_map& map,
+                  key_type key, value_type val)
+  { key->set_data(val); }
+};
+\endcode
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_figex_bgl_dual_adapter,bgl_dual_adapter.png}
+\cgalFigureBegin{aos_fig-bgl_dual_adapter,bgl_dual_adapter.png}
 An arrangement of seven line segments, as constructed by
 `bgl_dual_adapter.cpp` and its dual face graph, where every
 arrangement face is a vertex of the graph. The index of a dual
@@ -6759,14 +6800,19 @@ the face graph, starting from the unbounded face \f$f_0\f$.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
-In the following example we construct the same arrangement as in
-example `bgl_primal_adapter.cpp` (see
-\cgalFigureRef{aos_fig-bgl_primal_adapter}), and perform
-breadth-first search on the graph faces, starting from the unbounded
-face. We extend the \sc{Dcel} faces with an unsigned integer, marking
-the discovery time of the face using `boost` visitors and a
-property-map class that directly accesses the extended data of the
-faces.
+The following example constructs the same arrangement constructed by
+the program coded in `ex_bgl_primal_adaptor.cpp`; see
+\cgalFigureRef{aos_fig-bgl_primal_adapter}. Then, it performs a
+breadth-first search traversal on the face graph, starting from the
+unbounded face. The \sc{Dcel} faces are extended with an unsigned
+integer indicating the discovered time of the face. The code uses a
+visitor that obtains the times and writes them into a property map
+that updates the faces
+accordingly. \cgalFigureRef{aos_fig-bgl_dual_adapter} shows the graph
+dual to the arrangement. It is clear that the unbounded face \f$f_0\f$
+is discovered at time \f$0\f$, the neighboring faces \f$f_1\f$,
+\f$f_3\f$, and \f$f_4\f$ are discovered at times \f$1\f$, \f$2\f$, and
+\f$3\f$, and finally \f$f_2\f$ is discovered at time \f$4\f$.
 
 \cgalExample{Arrangement_on_surface_2/bgl_dual_adapter.cpp}
 
