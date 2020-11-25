@@ -14,7 +14,7 @@
 #include <iostream>
 
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Epick_without_intervals K;
 typedef CGAL::Polyhedron_3<K> Polyhedron_3;
 typedef K::Point_3 Point_3;
 
