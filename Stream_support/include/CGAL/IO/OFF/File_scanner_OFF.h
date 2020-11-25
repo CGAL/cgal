@@ -34,6 +34,9 @@ namespace CGAL {
 class File_scanner_OFF
   : public File_header_OFF
 {
+  std::vector<double> entries;
+  int color_entries;
+  int first_color_index;
   std::istream& m_in;
   bool normals_read;
   bool eol_reached;
@@ -120,6 +123,7 @@ public:
     else
     {
       skip_comment();
+
       if(!(m_in >> iformat(x) >> iformat(y) >> iformat(z)))
       {
         m_in.clear(std::ios::badbit);
@@ -265,6 +269,57 @@ public:
     else
     {
       skip_comment();
+      std::string line;
+      std::getline(m_in, line);
+      // First remove the comment if there is one
+      std::size_t pos = line.find('#');
+      if(pos != std::string::npos){
+        line = line.substr(0,pos);
+      }
+
+      // Read all numbers in the line
+      std::istringstream issline(line);
+      entries.clear();
+      double d;
+      while(issline >> iformat(d)){
+        entries.push_back(d);
+      }
+
+      if(has_colors()){
+        // Compute how many entries are there for the color
+        // We might do this only once if we assume that it is the same for all lines
+        int H = (is_homogeneous())? 1:0;
+        first_color_index = 3 + H;
+
+        color_entries = entries.size();
+        color_entries -= 3 + H; // coordinates
+        if(has_normals()){
+          first_color_index += 3 + H;
+          color_entries -= 3 + H;
+        }
+        if(has_textures()){
+          color_entries -= 2 + H;
+        }
+        // now color_entries should be 1, 3, or 4 for the color
+      }
+
+      // todo: error checking
+      if(entries.size() < 3){
+        // error: not enough for x y z
+      }
+      x = entries[0];
+      y = entries[1];
+      z = entries[2];
+
+      if(is_homogeneous()){
+        if(entries.size() < 4){
+          // error: no w
+        }
+        x /= entries[3];
+        y /= entries[3];
+        z /= entries[3];
+      }
+
       if(!(m_in >> iformat(x) >> iformat(y) >> iformat(z)))
       {
         m_in.clear(std::ios::badbit);
@@ -420,6 +475,15 @@ public:
       }
       else
       {
+        int first_texture_index = first_color_index + color_entries;
+        x = entries[first_texture_index];
+        x = entries[first_texture_index+1];
+
+        if(is_homogeneous()){
+          x /= entries[first_texture_index+2];
+          y /= entries[first_texture_index+2];
+        }
+
         if(is_homogeneous())
         {
           float fx, fy, fw;
@@ -520,6 +584,19 @@ public:
       }
       else
       {
+        if(is_homogeneous()){
+          if(entries.size() < 8){
+            // not enough data
+          }
+          x = entries[4]/entries[7];
+          y = entries[5]/entries[7];
+          z = entries[6]/entries[7];
+        }else{
+          x = entries[3];
+          y = entries[4];
+          z = entries[5];
+        }
+
         if(is_homogeneous())
         {
           float fx, fy, fz, fw;
@@ -996,6 +1073,24 @@ public:
     }
     else
     {
+      if(color_entries == 1){
+        int i = entries[first_color_index]; // the index in the color map
+      }
+      double rd = entries[first_color_index];
+      double gd = entries[first_color_index + 1];
+      double bd = entries[first_color_index + 2];
+
+      if( (floor(rd) == rd) &&  (floor(gd) == gd) && (floor(bd) == bd)){
+        // we have to do with integers
+      }else{
+        // we have to do with floats
+      }
+      if(color_entries == 4){
+        double alphad = entries[first_color_index + 3];
+        // it seems that we ignore it.
+      }
+
+
       CGAL::Color color = get_color_from_line(m_in, eol_reached);
       r = color.red();
       g = color.green();
