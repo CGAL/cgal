@@ -39,215 +39,24 @@ class File_scanner_OFF
   int first_color_index;
   std::istream& m_in;
   bool normals_read;
-  bool eol_reached;
 
   void skip_comment() { m_in >> skip_comment_OFF; }
 
 public:
   File_scanner_OFF(std::istream& in, bool verbose = false)
-    : File_header_OFF(verbose), m_in(in), normals_read(false), eol_reached(false)
+    : File_header_OFF(verbose), m_in(in), normals_read(false)
   {
     in >> static_cast<File_header_OFF&>(*this);
   }
 
   File_scanner_OFF(std::istream& in, const File_header_OFF& header)
     :
-      File_header_OFF(header), m_in(in), normals_read(false), eol_reached(false)
+      File_header_OFF(header), m_in(in), normals_read(false)
   { }
 
   std::istream& in() { return m_in; }
 
-  // The scan_vertex() routine is provided for multiple
-  // coordinate types to support parameterized polytopes.
-  void scan_vertex(float& x, float&  y, float&  z)
-  {
-    if(binary())
-    {
-      I_Binary_read_big_endian_float32(m_in, x);
-      I_Binary_read_big_endian_float32(m_in, y);
-      I_Binary_read_big_endian_float32(m_in, z);
-      if(is_homogeneous()) {
-        float w;
-        I_Binary_read_big_endian_float32(m_in, w);
-        x /= w;
-        y /= w;
-        z /= w;
-      }
-    }
-    else
-    {
-      skip_comment();
-      if(!(m_in >> iformat(x) >> iformat(y) >> iformat(z)))
-      {
-        m_in.clear(std::ios::badbit);
-        if(verbose())
-          std::cerr<<"error while reading vertex."<<std::endl;
-        return;
-      }
-      if(is_homogeneous())
-      {
-        float w;
-        if(!(m_in >> iformat(w)))
-        {
-          m_in.clear(std::ios::badbit);
-          if(verbose())
-            std::cerr<<"error while reading vertex."<<std::endl;
-          return;
-        }
-        x /= w;
-        y /= w;
-        z /= w;
-      }
-    }
-  }
-
-  void scan_vertex(double& x, double& y, double& z)
-  {
-    if(binary())
-    {
-      float f;
-      I_Binary_read_big_endian_float32(m_in, f);
-      x = f;
-      I_Binary_read_big_endian_float32(m_in, f);
-      y = f;
-      I_Binary_read_big_endian_float32(m_in, f);
-      z = f;
-      if(is_homogeneous())
-      {
-        I_Binary_read_big_endian_float32(m_in, f);
-        x /= f;
-        y /= f;
-        z /= f;
-      }
-    }
-    else
-    {
-      skip_comment();
-
-      if(!(m_in >> iformat(x) >> iformat(y) >> iformat(z)))
-      {
-        m_in.clear(std::ios::badbit);
-        if(verbose())
-          std::cerr<<"error while reading vertex."<<std::endl;
-        return;
-      }
-      if(is_homogeneous())
-      {
-        double w;
-        m_in >> iformat(w);
-        if(!(m_in >> iformat(w)))
-        {
-          m_in.clear(std::ios::badbit);
-          if(verbose())
-            std::cerr<<"error while reading vertex."<<std::endl;
-          return;
-        }
-        x /= w;
-        y /= w;
-        z /= w;
-      }
-    }
-  }
-
-  void scan_vertex(int& x, int& y, int& z)
-  {
-    if(binary())
-    {
-      float fx, fy, fz;
-      I_Binary_read_big_endian_float32(m_in, fx);
-      I_Binary_read_big_endian_float32(m_in, fy);
-      I_Binary_read_big_endian_float32(m_in, fz);
-      if(is_homogeneous()) {
-        float fw;
-        I_Binary_read_big_endian_float32(m_in, fw);
-        x = int(fx / fw);
-        y = int(fy / fw);
-        z = int(fz / fw);
-      } else {
-        x = int(fx);
-        y = int(fy);
-        z = int(fz);
-      }
-    }
-    else
-    {
-      skip_comment();
-      if(is_homogeneous())
-      {
-        double fx, fy, fz, fw;
-        if(!(m_in >> iformat(fx) >> iformat(fy) >> iformat(fz) >> iformat(fw)))
-        {
-          m_in.clear(std::ios::badbit);
-          if(verbose())
-            std::cerr<<"error while reading vertex."<<std::endl;
-          return;
-        }
-        x = int(fx / fw);
-        y = int(fy / fw);
-        z = int(fz / fw);
-      }
-      else
-      {
-        double d;
-        if(!(m_in >> iformat(d)))
-        {
-          m_in.clear(std::ios::badbit);
-          if(verbose())
-            std::cerr<<"error while reading vertex."<<std::endl;
-          return;
-        }
-        x = int(d);
-        if(!(m_in >> iformat(d)))
-        {
-          m_in.clear(std::ios::badbit);
-          if(verbose())
-            std::cerr<<"error while reading vertex."<<std::endl;
-          return;
-        }
-        y = int(d);
-        if(!(m_in >> iformat(d)))
-        {
-          m_in.clear(std::ios::badbit);
-          if(verbose())
-            std::cerr<<"error while reading vertex."<<std::endl;
-          return;
-        }
-        z = int(d);
-      }
-    }
-  }
-
-  void scan_vertex(float& x, float& y, float& z, float& w)
-  {
-    w = 1;
-    if(binary())
-    {
-      I_Binary_read_big_endian_float32(m_in, x);
-      I_Binary_read_big_endian_float32(m_in, y);
-      I_Binary_read_big_endian_float32(m_in, z);
-      if(is_homogeneous())
-        I_Binary_read_big_endian_float32(m_in, w);
-    }
-    else
-    {
-      skip_comment();
-      if(!(m_in >> iformat(x) >> iformat(y) >> iformat(z)))
-      {
-        m_in.clear(std::ios::badbit);
-        if(verbose())
-          std::cerr<<"error while reading vertex."<<std::endl;
-        return;
-      }
-      if(is_homogeneous())
-        if(!(m_in >> iformat(w)))
-        {
-          m_in.clear(std::ios::badbit);
-          if(verbose())
-            std::cerr<<"error while reading vertex."<<std::endl;
-          return;
-        }
-    }
-  }
+// Coordinates
   void scan_vertex(double& x, double& y, double& z, double& w)
   {
     w = 1;
@@ -287,11 +96,10 @@ public:
 
       if(has_colors()){
         // Compute how many entries are there for the color
-        // We might do this only once if we assume that it is the same for all lines
         int H = (is_homogeneous())? 1:0;
         first_color_index = 3 + H;
 
-        color_entries = entries.size();
+        color_entries = static_cast<int>(entries.size());
         color_entries -= 3 + H; // coordinates
         if(has_normals()){
           first_color_index += 3 + H;
@@ -300,12 +108,18 @@ public:
         if(has_textures()){
           color_entries -= 2 + H;
         }
-        // now color_entries should be 1, 3, or 4 for the color
+        // now color_entries should be 0, 1, 3, or 4 for the color
+        if(color_entries > 0)
+          m_has_vcolors = true;
+
       }
 
-      // todo: error checking
-      if(entries.size() < 3){
-        // error: not enough for x y z
+      if(entries.size() < 3)
+      {
+        m_in.clear(std::ios::badbit);
+        if(verbose())
+          std::cerr<<"error while reading vertex."<<std::endl;
+        return;
       }
       x = entries[0];
       y = entries[1];
@@ -313,144 +127,64 @@ public:
 
       if(is_homogeneous()){
         if(entries.size() < 4){
-          // error: no w
-        }
-        x /= entries[3];
-        y /= entries[3];
-        z /= entries[3];
-      }
-
-      if(!(m_in >> iformat(x) >> iformat(y) >> iformat(z)))
-      {
-        m_in.clear(std::ios::badbit);
-        if(verbose())
-          std::cerr<<"error while reading vertex."<<std::endl;
-        return;
-      }
-
-      if(is_homogeneous())
-        if(!(m_in >> iformat(w)))
-        {
           m_in.clear(std::ios::badbit);
           if(verbose())
             std::cerr<<"error while reading vertex."<<std::endl;
           return;
         }
-
+        w = entries[3];
+      }
     }
+  }
+
+  void scan_vertex(float& x, float& y, float& z, float& w)
+  {
+    double dx, dy, dz, dw;
+    scan_vertex(dx, dy, dz, dw);
+    x = static_cast<float>(dx);
+    y = static_cast<float>(dy);
+    z = static_cast<float>(dz);
+    w = static_cast<float>(dw);
   }
 
   void scan_vertex(int& x, int& y, int& z, int& w)
   {
-    w = 1;
-    if(binary())
-    {
-      float f;
-      I_Binary_read_big_endian_float32(m_in, f);
-      x = int(f);
-      I_Binary_read_big_endian_float32(m_in, f);
-      y = int(f);
-      I_Binary_read_big_endian_float32(m_in, f);
-      z = int(f);
-      if(is_homogeneous())
-      {
-        I_Binary_read_big_endian_float32(m_in, f);
-        w = int(f);
-      }
-    }
-    else
-    {
-      skip_comment();
-      double d;
-      if(!(m_in >> iformat(d)))
-      {
-        m_in.clear(std::ios::badbit);
-        if(verbose())
-          std::cerr<<"error while reading vertex."<<std::endl;
-        return;
-      }
-      x = int(d);
-      if(!(m_in >> iformat(d)))
-      {
-        m_in.clear(std::ios::badbit);
-        if(verbose())
-          std::cerr<<"error while reading vertex."<<std::endl;
-        return;
-      }
-      y = int(d);
-      if(!(m_in >> iformat(d)))
-      {
-        m_in.clear(std::ios::badbit);
-        if(verbose())
-          std::cerr<<"error while reading vertex."<<std::endl;
-        return;
-      }
-      z = int(d);
-      if(is_homogeneous())
-      {
-        if(!(m_in >> iformat(d)))
-        {
-          m_in.clear(std::ios::badbit);
-          if(verbose())
-            std::cerr<<"error while reading vertex."<<std::endl;
-          return;
-        }
-        w = int(d);
-      }
-    }
+    double dx, dy, dz, dw;
+    scan_vertex(dx, dy, dz, dw);
+    x = static_cast<int>(dx);
+    y = static_cast<int>(dy);
+    z = static_cast<int>(dz);
+    w = static_cast<int>(dw);
   }
 
-  void scan_texture(float& x, float& y, float& w)
+  void scan_vertex(double& x, double& y, double& z)
   {
-    w = 1;
-    if(has_textures())
-    {
-      if(binary())
-      {
-        float fx, fy;
-        I_Binary_read_big_endian_float32(m_in, fx);
-        I_Binary_read_big_endian_float32(m_in, fy);
-        if(is_homogeneous())
-        {
-          float fw;
-          I_Binary_read_big_endian_float32(m_in, fw);
-          x = fx / fw;
-          y = fy / fw;
-        } else
-        {
-          x = fx;
-          y = fy;
-        }
-      }
-      else
-      {
-        if(is_homogeneous())
-        {
-          float fx, fy, fw;
-          if(!(m_in >> iformat(fx) >> iformat(fy) >> iformat(fw)))
-          {
-            m_in.clear(std::ios::badbit);
-            if(verbose())
-              std::cerr<<"error while reading texture."<<std::endl;
-            return;
-          }
-          x = fx / fw;
-          y = fy / fw;
-        }
-        else
-        {
-          if(!(m_in >> iformat(x) >> iformat(y)))
-          {
-            m_in.clear(std::ios::badbit);
-            if(verbose())
-              std::cerr<<"error while reading texture."<<std::endl;
-            return;
-          }
-        }
-      }
-    }
+    double dx, dy, dz, dw;
+    scan_vertex(dx, dy, dz, dw);
+    x = dx / dw;
+    y = dy / dw;
+    z = dz / dw;
   }
 
+  void scan_vertex(float& x, float& y, float& z)
+  {
+    double dx, dy, dz;
+    scan_vertex(dx, dy, dz);
+    x = static_cast<float>(dx);
+    y = static_cast<float>(dy);
+    z = static_cast<float>(dz);
+  }
+
+  void scan_vertex(int& x, int& y, int& z)
+  {
+    double dx, dy, dz;
+    scan_vertex(dx, dy, dz);
+    x = static_cast<int>(dx);
+    y = static_cast<int>(dy);
+    z = static_cast<int>(dz);
+  }
+
+// Textures
   void scan_texture(double& x, double& y, double& w)
   {
     w=1;
@@ -477,261 +211,66 @@ public:
       {
         int first_texture_index = first_color_index + color_entries;
         x = entries[first_texture_index];
-        x = entries[first_texture_index+1];
-
-        if(is_homogeneous()){
-          x /= entries[first_texture_index+2];
-          y /= entries[first_texture_index+2];
-        }
-
+        y = entries[first_texture_index + 1];
         if(is_homogeneous())
         {
-          float fx, fy, fw;
-          if(!(m_in >> iformat(fx) >> iformat(fy) >> iformat(fw)))
+          if(entries.size() <= first_texture_index + 2)
           {
             m_in.clear(std::ios::badbit);
             if(verbose())
               std::cerr<<"error while reading texture."<<std::endl;
             return;
           }
-          x = fx / fw;
-          y = fy / fw;
-        }
-        else
-        {
-          if(!(m_in >> iformat(x) >> iformat(y)))
-          {
-            m_in.clear(std::ios::badbit);
-            if(verbose())
-              std::cerr<<"error while reading texture."<<std::endl;
-            return;
-          }
+          w = entries[first_texture_index + 2];
         }
       }
+
     }
   }
 
-
-  void scan_normal(float& x, float& y, float& z)
+  void scan_texture(float& x, float& y, float& w)
   {
-    if(has_normals())
-    {
-      normals_read = true;
-      if(binary()) {
-        I_Binary_read_big_endian_float32(m_in, x);
-        I_Binary_read_big_endian_float32(m_in, y);
-        I_Binary_read_big_endian_float32(m_in, z);
-        if(is_homogeneous())
-        {
-          float w;
-          I_Binary_read_big_endian_float32(m_in, w);
-          x /= w;
-          y /= w;
-          z /= w;
-        }
-      }
-      else
-      {
-        if(!(m_in >> iformat(x) >> iformat(y) >> iformat(z)))
-        {
-          m_in.clear(std::ios::badbit);
-          if(verbose())
-            std::cerr<<"error while reading normal."<<std::endl;
-          return;
-        }
-        if(is_homogeneous())
-        {
-          float w;
-          if(!(m_in >> iformat(w)))
-          {
-            m_in.clear(std::ios::badbit);
-            if(verbose())
-              std::cerr<<"error while reading normal."<<std::endl;
-            return;
-          }
-          x /= w;
-          y /= w;
-          z /= w;
-        }
-      }
-    }
+    double dx, dy, dw;
+    scan_texture(dx, dy, dw);
+    x = static_cast<float>(dx);
+    y = static_cast<float>(dy);
+    w = static_cast<float>(dw);
   }
 
-  void scan_normal(double& x, double& y, double& z)
+  void scan_texture(int& x, int& y, int& w)
   {
-    if(has_normals())
-    {
-      normals_read = true;
-      if(binary())
-      {
-        float fx, fy, fz;
-        I_Binary_read_big_endian_float32(m_in, fx);
-        I_Binary_read_big_endian_float32(m_in, fy);
-        I_Binary_read_big_endian_float32(m_in, fz);
-        if(is_homogeneous())
-        {
-          float fw;
-          I_Binary_read_big_endian_float32(m_in, fw);
-          x = fx / fw;
-          y = fy / fw;
-          z = fz / fw;
-        } else
-        {
-          x = fx;
-          y = fy;
-          z = fz;
-        }
-      }
-      else
-      {
-        if(is_homogeneous()){
-          if(entries.size() < 8){
-            // not enough data
-          }
-          x = entries[4]/entries[7];
-          y = entries[5]/entries[7];
-          z = entries[6]/entries[7];
-        }else{
-          x = entries[3];
-          y = entries[4];
-          z = entries[5];
-        }
-
-        if(is_homogeneous())
-        {
-          float fx, fy, fz, fw;
-          if(!(m_in >> iformat(fx) >> iformat(fy) >> iformat(fz) >> iformat(fw)))
-          {
-            m_in.clear(std::ios::badbit);
-            if(verbose())
-              std::cerr<<"error while reading normal."<<std::endl;
-            return;
-          }
-          x = fx / fw;
-          y = fy / fw;
-          z = fz / fw;
-        }
-        else
-        {
-          if(!(m_in >> iformat(x) >> iformat(y) >> iformat(z)))
-          {
-            m_in.clear(std::ios::badbit);
-            if(verbose())
-              std::cerr<<"error while reading normal."<<std::endl;
-            return;
-          }
-
-        }
-      }
-    }
+    double dx, dy, dw;
+    scan_texture(dx, dy, dw);
+    x = static_cast<int>(dx);
+    y = static_cast<int>(dy);
+    w = static_cast<int>(dw);
   }
 
-  void scan_normal(int& x, int& y, int& z)
+  void scan_texture(double& x, double& y)
   {
-    if(has_normals())
-    {
-      normals_read = true;
-      if(binary())
-      {
-        float fx, fy, fz;
-        I_Binary_read_big_endian_float32(m_in, fx);
-        I_Binary_read_big_endian_float32(m_in, fy);
-        I_Binary_read_big_endian_float32(m_in, fz);
-        if(is_homogeneous()) {
-          float fw;
-          I_Binary_read_big_endian_float32(m_in, fw);
-          x = int(fx / fw);
-          y = int(fy / fw);
-          z = int(fz / fw);
-        } else {
-          x = int(fx);
-          y = int(fy);
-          z = int(fz);
-        }
-      }
-      else
-      {
-        if(is_homogeneous())
-        {
-          float fx, fy, fz, fw;
-          if(!(m_in >> iformat(fx) >> iformat(fy) >> iformat(fz) >> iformat(fw)))
-          {
-            m_in.clear(std::ios::badbit);
-            if(verbose())
-              std::cerr<<"error while reading normal."<<std::endl;
-            return;
-          }
-          x = int(fx / fw);
-          y = int(fy / fw);
-          z = int(fz / fw);
-        }
-        else
-        {
-          double d;
-          if(!(m_in >> iformat(d)))
-          {
-            m_in.clear(std::ios::badbit);
-            if(verbose())
-              std::cerr<<"error while reading normal."<<std::endl;
-            return;
-          }
-          x = int(d);
-          if(!(m_in >> iformat(d)))
-          {
-            m_in.clear(std::ios::badbit);
-            if(verbose())
-              std::cerr<<"error while reading normal."<<std::endl;
-            return;
-          }
-
-          y = int(d);
-          if(!(m_in >> iformat(d)))
-          {
-            m_in.clear(std::ios::badbit);
-            if(verbose())
-              std::cerr<<"error while reading normal."<<std::endl;
-            return;
-          }
-          z = int(d);
-        }
-      }
-    }
+    double dx, dy, dw;
+    scan_texture(dx, dy, dw);
+    x = dx / dw;
+    y = dy / dw;
   }
 
-  void scan_normal(float& x, float& y, float& z, float& w)
+  void scan_texture(float& x, float& y)
   {
-    w = 1;
-    if(has_normals())
-    {
-      normals_read = true;
-      if(binary())
-      {
-        I_Binary_read_big_endian_float32(m_in, x);
-        I_Binary_read_big_endian_float32(m_in, y);
-        I_Binary_read_big_endian_float32(m_in, z);
-        if(is_homogeneous())
-          I_Binary_read_big_endian_float32(m_in, w);
-      }
-      else
-      {
-        if(!(m_in >> iformat(x) >> iformat(y) >> iformat(z)))
-        {
-          m_in.clear(std::ios::badbit);
-          if(verbose())
-            std::cerr<<"error while reading normal."<<std::endl;
-          return;
-        }
-        if(is_homogeneous())
-          if(!(m_in >> iformat(w)))
-          {
-            m_in.clear(std::ios::badbit);
-            if(verbose())
-              std::cerr<<"error while reading normal."<<std::endl;
-            return;
-          }
-      }
-    }
+    double dx, dy;
+    scan_texture(dx, dy);
+    x = static_cast<float>(dx);
+    y = static_cast<float>(dy);
   }
+
+  void scan_texture(int& x, int& y)
+  {
+    double dx, dy;
+    scan_texture(dx, dy);
+    x = static_cast<int>(dx);
+    y = static_cast<int>(dy);
+  }
+
+  // Normals
 
   void scan_normal(double& x, double& y, double& z, double& w)
   {
@@ -756,85 +295,77 @@ public:
       }
       else
       {
-        if(!(m_in >> iformat(x) >> iformat(y) >> iformat(z)))
+        int first_normal_index = (is_homogeneous())? 4:3;
+        if(entries.size() <= first_normal_index + 2)
         {
           m_in.clear(std::ios::badbit);
           if(verbose())
             std::cerr<<"error while reading normal."<<std::endl;
           return;
         }
+        x = entries[first_normal_index];
+        y = entries[first_normal_index + 1];
+        z = entries[first_normal_index + 2];
+
         if(is_homogeneous())
-          if(!(m_in >> iformat(w)))
-          {
+        {
+          if(entries.size() <= first_normal_index + 3){
             m_in.clear(std::ios::badbit);
             if(verbose())
               std::cerr<<"error while reading normal."<<std::endl;
             return;
           }
+          w = entries[first_normal_index + 3];
+        }
       }
     }
   }
 
+  void scan_normal(float& x, float& y, float& z, float& w)
+  {
+    double dx, dy, dz, dw;
+    scan_normal(dx, dy, dz, dw);
+    x = static_cast<float>(dx);
+    y = static_cast<float>(dy);
+    z = static_cast<float>(dz);
+    w = static_cast<float>(dw);
+  }
+
   void scan_normal(int& x, int& y, int& z, int& w)
   {
-    w = 1;
-    if(has_normals())
-    {
-      normals_read = true;
-      if(binary())
-      {
-        float f;
-        I_Binary_read_big_endian_float32(m_in, f);
-        x = int(f);
-        I_Binary_read_big_endian_float32(m_in, f);
-        y = int(f);
-        I_Binary_read_big_endian_float32(m_in, f);
-        z = int(f);
-        if(is_homogeneous()) {
-          I_Binary_read_big_endian_float32(m_in, f);
-          w = int(f);
-        }
-      }
-      else
-      {
-        double d;
-        if(!(m_in >> iformat(d)))
-        {
-          m_in.clear(std::ios::badbit);
-          if(verbose())
-            std::cerr<<"error while reading normal."<<std::endl;
-          return;
-        }
-        x = int(d);
-        if(!(m_in >> iformat(d)))
-        {
-          m_in.clear(std::ios::badbit);
-          if(verbose())
-            std::cerr<<"error while reading normal."<<std::endl;
-          return;
-        }
-        y = int(d);
-        if(!(m_in >> iformat(d)))
-        {
-          m_in.clear(std::ios::badbit);
-          if(verbose())
-            std::cerr<<"error while reading normal."<<std::endl;
-          return;
-        }
-        z = int(d);
-        if(is_homogeneous())
-        {
-          if(!(m_in >> iformat(d)))
-          {
-            m_in.clear(std::ios::badbit);
-            if(verbose())
-              std::cerr<<"error while reading normal."<<std::endl;
-            return;
-          }
-          w = int(d);
-        }
-      }
-    }
+    double dx, dy, dz, dw;
+    scan_normal(dx, dy, dz, dw);
+    x = static_cast<int>(dx);
+    y = static_cast<int>(dy);
+    z = static_cast<int>(dz);
+    w = static_cast<int>(dw);
+  }
+
+  void scan_normal(double& x, double& y, double& z)
+  {
+    double dx, dy, dz, dw;
+    scan_normal(dx, dy, dz, dw);
+    x = dx / dw;
+    y = dy / dw;
+    z = dz / dw;
+  }
+
+  void scan_normal(float& x, float& y, float& z)
+  {
+    double dx, dy, dz;
+    scan_normal(dx, dy, dz);
+    x = static_cast<float>(dx);
+    y = static_cast<float>(dy);
+    z = static_cast<float>(dz);
+  }
+
+  void scan_normal(int& x, int& y, int& z)
+  {
+    double dx, dy, dz;
+    scan_normal(dx, dy, dz);
+    x = static_cast<int>(dx);
+    y = static_cast<int>(dy);
+    z = static_cast<int>(dz);
   }
 
   static const Color& get_indexed_color(int id)
@@ -993,7 +524,7 @@ public:
     return color[id];
   }
 
-  static CGAL::Color get_color_from_line(std::istream &is, bool& eol_reached)
+  static CGAL::Color get_color_from_line(std::istream &is)
   {
     std::string color_info;
     bool is_float = false;
@@ -1054,7 +585,6 @@ public:
       position +=ss_pos;
       is.seekg(position);
     }
-    eol_reached = (ss_pos == -1);
     return color;
   }
 
@@ -1073,8 +603,12 @@ public:
     }
     else
     {
+      CGAL::Color color;
       if(color_entries == 1){
-        int i = entries[first_color_index]; // the index in the color map
+        color = get_indexed_color(static_cast<int>(entries[first_color_index])); // the index in the color map
+        r = color.red();
+        g = color.green();
+        b = color.blue();
       }
       double rd = entries[first_color_index];
       double gd = entries[first_color_index + 1];
@@ -1082,19 +616,19 @@ public:
 
       if( (floor(rd) == rd) &&  (floor(gd) == gd) && (floor(bd) == bd)){
         // we have to do with integers
+        r = static_cast<unsigned char>(rd);
+        g = static_cast<unsigned char>(gd);
+        b = static_cast<unsigned char>(bd);
       }else{
         // we have to do with floats
+        r = static_cast<unsigned char>(rd*255);
+        g = static_cast<unsigned char>(gd*255);
+        b = static_cast<unsigned char>(bd*255);
       }
       if(color_entries == 4){
-        double alphad = entries[first_color_index + 3];
+        //double alphad = entries[first_color_index + 3];
         // it seems that we ignore it.
       }
-
-
-      CGAL::Color color = get_color_from_line(m_in, eol_reached);
-      r = color.red();
-      g = color.green();
-      b = color.blue();
     }
   }
 
@@ -1112,11 +646,8 @@ public:
           I_Binary_read_big_endian_float32(m_in, f);
       }
 
-      if(has_colors()) // @fixme 'has_colors_read' ?
+      if(has_colors())
       {
-        // It is not well stated in the Geomview manual
-        // how color is coded following a vertex. It is
-        // parsed similar to the optional color for facets.
         boost::int32_t k;
         I_Binary_read_big_endian_integer32(m_in, k);
         if(k<0 || k>4)
@@ -1200,17 +731,37 @@ public:
     else
     {
       skip_comment();
-      if(!(m_in >> size))
-      {
-        m_in.clear(std::ios::badbit);
-        if(verbose())
-          std::cerr<<"error while reading facet. Missing size."<<std::endl;
-        return;
+      std::string line;
+      std::getline(m_in, line);
+      // First remove the comment if there is one
+      std::size_t pos = line.find('#');
+      if(pos != std::string::npos){
+        line = line.substr(0,pos);
+      }
+
+      // Read all numbers in the line
+      std::istringstream issline(line);
+      entries.clear();
+      double d;
+      while(issline >> iformat(d)){
+        entries.push_back(d);
+      }
+      size = static_cast<std::size_t>(entries[0]);
+      if(has_colors()){
+        // Compute how many entries are there for the color
+        first_color_index = static_cast<int>(size + 1);
+
+        color_entries = static_cast<int>(entries.size());
+        color_entries -= static_cast<int>(size  + 1); // coordinates
+        // now color_entries should be 0, 1, 3, or 4 for the color
+        if(color_entries > 0)
+          m_has_fcolors = true;
       }
     }
   }
 
   void scan_facet_vertex_index(std::size_t& index,
+                               const std::size_t& current_entry,
                                std::size_t current_facet)
   {
     if(binary()){
@@ -1220,13 +771,14 @@ public:
     }
     else
     {
-      if(!(m_in >> index))
+      if(entries.size() <= current_entry )
       {
         m_in.clear(std::ios::badbit);
         if(verbose())
           std::cerr<<"error while reading facet. Missing index."<<std::endl;
         return;
       }
+      index = static_cast<std::size_t>(entries[current_entry]);
     }
 
     if(m_in.fail())
@@ -1294,14 +846,7 @@ public:
         I_Binary_read_big_endian_float32(m_in, dummy);
       }
     }
-    else
-    {
-      m_in >> skip_until_EOL;
-    }
   }
-
-  bool eol()const { return eol_reached; }
-  void set_eol(const bool b) {eol_reached = b; }
 };
 
 template < class Point> inline

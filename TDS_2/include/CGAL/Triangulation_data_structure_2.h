@@ -2342,7 +2342,7 @@ off_file_input( std::istream& is, bool verbose)
 
     for ( std::size_t j = 0; j < no; ++j) {
       std::size_t index;
-      scanner.scan_facet_vertex_index( index, i);
+      scanner.scan_facet_vertex_index( index, j+1, i);
       fh->set_vertex(j, vvh[index]);
       vvh[index]->set_face(fh);
     }

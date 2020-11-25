@@ -40,6 +40,10 @@ private:
   // Publicly accessible but not that well supported file informations.
   bool m_textures; // STOFF detected.
   bool m_colors; // COFF detected.
+protected:
+  bool m_has_vcolors;
+  bool m_has_fcolors;
+private:
   bool m_normals; // NOFF format stores also normals at vertices.
 
   // More privately used file informations to scan the file.
@@ -81,6 +85,8 @@ public:
   std::size_t  index_offset()       const { return m_offset; }
   bool has_textures()       const { return m_textures; } // STOFF detected.
   bool has_colors()         const { return m_colors; } // COFF detected.
+  bool has_vcolors()         const { return m_has_vcolors; } // COFF detected.
+  bool has_fcolors()         const { return m_has_fcolors; } // COFF detected.
   bool has_normals()        const { return m_normals;} // NOFF format.
   bool is_homogeneous()     const { return m_tag4; } // 4OFF detected.
 

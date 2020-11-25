@@ -86,7 +86,7 @@ void Polyhedron_scan_OFF<HDS>:: operator()(HDS& target)
     Point p;
     file_scan_vertex( scanner, p);
     B.add_vertex( p);
-    if(scanner.has_colors())
+    if(scanner.has_vcolors())
     {
       Color c;
       file_scan_color(scanner, c);
@@ -125,11 +125,9 @@ void Polyhedron_scan_OFF<HDS>:: operator()(HDS& target)
     for(std::size_t j=0; j<no; ++j)
     {
       std::size_t index;
-      scanner.scan_facet_vertex_index( index, i);
+      scanner.scan_facet_vertex_index( index, j+1, i); //current_entry = j + 1 for the size entry
       B.add_vertex_to_facet( index);
     }
-
-    //TO DO : Insert read color
     B.end_facet();
     scanner.skip_to_next_facet( i);
   }

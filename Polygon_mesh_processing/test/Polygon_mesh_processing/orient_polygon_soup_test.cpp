@@ -46,7 +46,7 @@ std::istream& read_soup(
 
     for(std::size_t j = 0; j < no; ++j) {
       std::size_t id;
-      scanner.scan_facet_vertex_index(id, i);
+      scanner.scan_facet_vertex_index(id, j+1, i);
       if(id < scanner.size_of_vertices())
       {
         polygons[i][j] = id;

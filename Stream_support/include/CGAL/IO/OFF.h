@@ -94,7 +94,7 @@ bool read_OFF(std::istream& is,
       *vn_out++ = Normal(FT(nx), FT(ny), FT(nz), FT(nw));
     }
 
-    if(scanner.has_colors())
+    if(scanner.has_vcolors())
     {
       unsigned char r=0, g=0, b=0;
       scanner.scan_color(r, g, b);
@@ -108,15 +108,11 @@ bool read_OFF(std::istream& is,
       CGAL_assertion(nw != 0);
       *vt_out++ = Texture(nx, ny, nw);
     }
-    if(!scanner.eol())
-      scanner.skip_to_next_vertex(i);
-    scanner.set_eol(false);
-
     if(!is.good())
       return false;
   }
 
-  bool has_fcolors = false;
+
   for(std::size_t i=0; i<scanner.size_of_facets(); ++i)
   {
     std::size_t no(-1);
@@ -129,29 +125,13 @@ bool read_OFF(std::istream& is,
     for(std::size_t j=0; j<no; ++j)
     {
       std::size_t id;
-      scanner.scan_facet_vertex_index(id, i);
+      scanner.scan_facet_vertex_index(id,j+1, i);
       if(id < scanner.size_of_vertices())
         polygons[i][j] = id;
       else
         return false;
     }
-
-    if(i == 0)
-    {
-      std::string col;
-      std::getline(is, col);
-      std::istringstream iss(col);
-      char ci =' ';
-
-      if(iss >> ci)
-      {
-        has_fcolors = true;
-        std::istringstream iss2(col);
-        bool dum;
-        *fc_out++ = scanner.get_color_from_line(iss2, dum);
-      }
-    }
-    else if(has_fcolors)
+    if(scanner.has_fcolors())
     {
       unsigned char r=0, g=0, b=0;
       scanner.scan_color(r,g,b);

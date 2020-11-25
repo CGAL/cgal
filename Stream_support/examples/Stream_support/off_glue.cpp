@@ -185,7 +185,7 @@ int main( int argc, char **argv)
     writer.write_facet_begin( no);
     for ( std::size_t j = 0; j < no; j++) {
       std::size_t index;
-      scanner.scan_facet_vertex_index( index, i);
+      scanner.scan_facet_vertex_index( index, j+1, i);
       writer.write_facet_vertex_index(  vertices[index].index);
     }
     scanner.skip_to_next_facet( i);

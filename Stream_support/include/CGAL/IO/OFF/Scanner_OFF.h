@@ -167,7 +167,7 @@ private:
             //  A huge value helps to detect a potential
             //  error in the function scan_facet_vertex_index
             for (std::size_t i = 0; i < no; ++i) {
-                m_scan->scan_facet_vertex_index( index, m_cnt);
+                m_scan->scan_facet_vertex_index( index, i+1, m_cnt);
                 m_indices.push_back( index);
             }
             m_scan->skip_to_next_facet( m_cnt);
