@@ -87,6 +87,7 @@ public:
     std::vector<Face_color> face_colors;
 
     const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
+    const bool binary = choose_parameter(get_parameter(np, internal_np::use_binary_mode), true);
 
     bool ok =
         static_cast<Derived*>(this)->read(m_is, m_points, m_faces,
@@ -94,7 +95,8 @@ public:
                                                      .vertex_color_output_iterator(std::back_inserter(vertex_colors))
                                                      .vertex_texture_output_iterator(std::back_inserter(vertex_textures))
                                                      .face_color_output_iterator(std::back_inserter(face_colors))
-                                                     .verbose(verbose));
+                                                     .verbose(verbose)
+                                                     .use_binary_mode(binary));
     if(!ok)
       return false;
 

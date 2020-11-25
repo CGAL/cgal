@@ -164,19 +164,29 @@ bool read_STL(const std::string& fname,
               Graph& g, const
               CGAL_BGL_NP_CLASS& np)
 {
-  const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  const bool binary = choose_parameter(get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)
   {
     std::ifstream is(fname, std::ios::binary);
     CGAL::set_mode(is, CGAL::IO::BINARY);
-    return read_STL(is, g, np);
+    if(read_STL(is, g, np))
+    {
+      return true;
+    }
+    CGAL::clear(g);
   }
-  else
-  {
-    std::ifstream is(fname);
-    CGAL::set_mode(is, CGAL::IO::ASCII);
-    return read_STL(is, g, np);
-  }
+  std::ifstream is(fname);
+  CGAL::set_mode(is, CGAL::IO::ASCII);
+
+  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::type      VPM;
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_property_map(CGAL::vertex_point, g));
+  bool v = choose_parameter(get_parameter(np, internal_np::verbose),
+                            false);
+  return read_STL(is, g, CGAL::parameters::use_binary_mode(false).vertex_point_map(vpm).verbose(v));
 }
 
 /// \cond SKIP_IN_MANUAL
