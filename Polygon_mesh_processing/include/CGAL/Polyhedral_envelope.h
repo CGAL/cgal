@@ -274,7 +274,7 @@ public:
 
    /**
    * Constructor with a triangulated surface mesh.
-    * @tparam TriangleMesh a model of `HalfedgeListGraph`
+    * @tparam TriangleMesh a model of `FaceListGraph`
     * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
     *
     * @param tmesh a triangle mesh
