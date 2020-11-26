@@ -32,7 +32,7 @@ class File_writer_VRML_2
   std::size_t m_facets;
 
 public:
-  File_writer_VRML_2(): m_out(nullptr), m_facets(0) {}
+  File_writer_VRML_2(): m_facets(0) {}
 
   std::ostream& out() const { return m_os.os(); }
 
