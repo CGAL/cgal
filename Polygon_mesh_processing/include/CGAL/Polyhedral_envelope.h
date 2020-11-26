@@ -286,7 +286,7 @@ public:
     *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
     *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
     *                    as key type and `%Point_3` as value type}
-    *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+    *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
     *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
     *                     must be available in `PolygonMesh`.}
     *   \cgalParamNEnd
