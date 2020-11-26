@@ -36,7 +36,8 @@ public:
   /*!
   Constructor
 
-  \param get_filter is the filter that will be filtered.
+  \param dist is the parameter given to the polyhedral envelope
+  \param filter is the filter that will be filtered.
   */
   Polyhedral_envelope_filter(const FT& dist, const Filter& filter);
 
