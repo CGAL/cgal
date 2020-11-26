@@ -72,11 +72,11 @@ is collected or transmitted.
 It is specified in each file of the \cgal library which license applies to it.
 
 The \cgal documentation is distributed under the Creative Commons
-<a href="https://creativecommons.org/licenses/by-nc-nd/2.0/">BY-NC-ND</a> License.
+<a href="https://creativecommons.org/licenses/by-nc-nd/2.0/">CC BY-NC-ND 2.0</a> License.
 
 All files that do not have an explicit copyright or license notice (e.g., all
-examples, some demos, data files without a license, ...) are licensed under a very permissive license.
-The exact license text can be found in the file
-<a href="https://github.com/CGAL/cgal/blob/master/Installation/LICENSE.FREE_USE">LICENSE.FREE_USE</a>.
+examples, some demos, data files without a license, ...)
+are distributed under the Creative Commons
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CCO 1.0</a> License.
 
 */
