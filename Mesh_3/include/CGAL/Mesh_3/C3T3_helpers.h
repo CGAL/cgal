@@ -3441,6 +3441,8 @@ get_least_square_surface_plane(const Vertex_handle& v,
 
   // Get adjacent surface points
   std::vector<Bare_point> surface_point_vector;
+  std::vector<typename C3T3::Triangulation::Triangle> triangles;
+
   typename Facet_vector::iterator fit = facets.begin(), fend = facets.end();
   for ( ; fit != fend; ++fit )
   {
@@ -3460,6 +3462,8 @@ get_least_square_surface_plane(const Vertex_handle& v,
       const Bare_point& bp = tr_.get_closest_point(cp(position),
                                                    cell->get_facet_surface_center(i));
       surface_point_vector.push_back(bp);
+
+      triangles.push_back(c3t3_.triangulation().triangle(*fit));
     }
   }
 
@@ -3470,11 +3474,19 @@ get_least_square_surface_plane(const Vertex_handle& v,
   // Compute least square fitting plane
   Plane_3 plane;
   Bare_point point;
-  CGAL::linear_least_squares_fitting_3(surface_point_vector.begin(),
-                                       surface_point_vector.end(),
+//  CGAL::linear_least_squares_fitting_3(surface_point_vector.begin(),
+//                                       surface_point_vector.end(),
+//                                       plane,
+//                                       point,
+//                                       Dimension_tag<0>(),
+//                                       tr_.geom_traits(),
+//                                       Default_diagonalize_traits<FT, 3>());
+
+  CGAL::linear_least_squares_fitting_3(triangles.begin(),
+                                       triangles.end(),
                                        plane,
                                        point,
-                                       Dimension_tag<0>(),
+                                       Dimension_tag<2>(),
                                        tr_.geom_traits(),
                                        Default_diagonalize_traits<FT, 3>());
 
