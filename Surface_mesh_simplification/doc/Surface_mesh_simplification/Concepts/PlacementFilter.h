@@ -2,7 +2,7 @@
 \ingroup PkgSurfaceMeshSimplificationConcepts
 \cgalConcept
 
-The concept `Filter` describes the requirements for the <I>policy
+The concept `PlacementFilter` describes the requirements for the <I>policy
 function object</I> which gets the profile and placement of an edge
 and which can filter the placement.  The filtering is only done when
 an edge is taken from the priority queue in order to get collapsed,
@@ -15,12 +15,12 @@ be absent). The value `boost::none` indicates that the edge should not be collap
 \cgalRefines `DefaultConstructible`
 \cgalRefines `CopyConstructible`
 
-\cgalHasModel `CGAL::Surface_mesh_simplification::Bounded_normal_change_filter<BaseFilter>`
-\cgalHasModel `CGAL::Surface_mesh_simplification::Polyhedral_envelope_filter<GeomTraits, BaseFilter>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::Bounded_normal_change_filter<BasePlacementFilter>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::Polyhedral_envelope_filter<GeomTraits, BasePlacementFilter>`
 */
 
 
-class Filter
+class PlacementFilter
 {
 public:
 
@@ -38,4 +38,4 @@ public:
 
   /// @}
 
-}; /* end Filter */
+}; /* end PlacementFilter */

@@ -5,20 +5,20 @@ namespace Surface_mesh_simplification {
 /*!
 \ingroup PkgSurfaceMeshSimplificationRef
 
-The class `Polyhedral_envelope_filter` is a model for the `Filter` concept.
+The class `Polyhedral_envelope_filter` is a model for the `PlacementFilter` concept.
 It rejects the placement if the nested filter rejects it, or
 if any triangle in the profile is not inside the polyhedral envelope, in this order.
 
 
-\tparam Filter_ must be a model of the concept `Filter`.  It defaults to a class that does
+\tparam Filter must be a model of the concept `PlacementFilter`.  It defaults to a class that does
 not filter any placement.
 
-\cgalModels `Filter`
+\cgalModels `PlacementFilter`
 
 \sa `Polyhedral_envelope`
 
 */
-template <typename GeomTraits, typename Filter_>
+template <typename GeomTraits, typename Filter>
 class Polyhedral_envelope_filter {
 public:
 
@@ -38,7 +38,7 @@ public:
 
   \param get_filter is the filter that will be filtered.
   */
-  Polyhedral_envelope_filter(const FT& dist, const Filter_& get_filter);
+  Polyhedral_envelope_filter(const FT& dist, const Filter& filter);
 
   /// @}
 

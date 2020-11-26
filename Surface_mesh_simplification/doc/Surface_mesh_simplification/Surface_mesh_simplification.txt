@@ -224,7 +224,7 @@ very last call, when the edge is collapsed, but not all the previous calls which
 are needed because the placement (and cost) changes.
 
 
-Finally, we explain the `Filter` policy.
+Finally, we explain the `PlacementFilter` policy.
 While the cost is a scalar that is used in the priority queue, there may be
 additional criteria coming in to decide if the edge collapse shall be performed or not.
 While such a criterion could be easily integrated into the cost function,
