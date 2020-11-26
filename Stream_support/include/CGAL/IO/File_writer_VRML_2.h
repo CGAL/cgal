@@ -27,7 +27,7 @@ class CGAL_EXPORT File_writer_VRML_2 {
     std::ostream*      m_out;
     std::size_t        m_facets;
 public:
-    File_writer_VRML_2() : m_out(nullptr), m_facets(0) {}
+    File_writer_VRML_2() {}
     std::ostream& out() const { return *m_out; }
     void write_header( std::ostream& o,
                        std::size_t vertices,
