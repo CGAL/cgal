@@ -24,6 +24,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/use.h>
+#include <CGAL/internal/Exact_type_selector.h>
 
 #include <boost/range/value_type.hpp>
 #include <boost/utility/enable_if.hpp>
@@ -64,7 +65,6 @@ bool read_OFF(std::istream& is,
   typedef typename CGAL::Kernel_traits<Point>::Kernel                                 Kernel;
   typedef typename Kernel::Point_2                                                    Texture;
   typedef typename Kernel::Vector_3                                                   Normal;
-  typedef typename Kernel::FT                                                         FT;
   typedef CGAL::Color                                                                 Color;
 
   if(!is.good()){
@@ -91,7 +91,7 @@ bool read_OFF(std::istream& is,
       double nx, ny, nz, nw;
       scanner.scan_normal(nx, ny, nz, nw);
       CGAL_assertion(nw != 0);
-      *vn_out++ = Normal(FT(nx), FT(ny), FT(nz), FT(nw));
+      *vn_out++ = Normal(nx, ny, nz, nw);
     }
 
     if(scanner.has_vcolors())
