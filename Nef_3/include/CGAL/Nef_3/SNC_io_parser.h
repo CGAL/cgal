@@ -127,9 +127,9 @@ class moreLeft : public T {
   typedef typename T::RT                RT;
 
  public:
-  moreLeft(T D) : T(D) {}
+  moreLeft(const T& D) : T(D) {}
 
-  int operator()(SHalfedge_handle se1, SHalfedge_handle se2) {
+  int operator()(SHalfedge_handle se1, SHalfedge_handle se2) const {
 
     CGAL_assertion(se1 != SHalfedge_handle());
     if(se2 == SHalfedge_handle())
@@ -356,7 +356,7 @@ class sort_sface_cycle_entries : public SNC_decorator<T> {
   typedef typename T::Vector_3          Vector_3;
 
  public:
-  sort_sface_cycle_entries(T D) : Base(D) {}
+  sort_sface_cycle_entries(T& D) : Base(D) {}
 
   bool operator() (Object_handle o1, Object_handle o2) const {
     CGAL_NEF_TRACEN("sort sface cycles ");
@@ -442,11 +442,11 @@ class sort_sfaces : public SNC_decorator<T> {
     if(sf1->center_vertex() != sf2->center_vertex())
       return SORT(sf1->center_vertex(), sf2->center_vertex());
 
-    //    sort_sface_cycle_entries<Base> sort_cycles((Base) *this);
+    //    sort_sface_cycle_entries<Base> sort_cycles(*this);
     //    return sort_cycles(*sf1->sface_cycles_begin(), *sf2->sface_cycles_begin());
 
     SM_decorator SD(&*sf1->center_vertex());
-    moreLeft<Base> ml((Base) *this);
+    moreLeft<Base> ml(*this);
     Vector_3 plus(1,0,0);
 
     SFace_cycle_iterator fc;
@@ -563,7 +563,7 @@ class sort_facet_cycle_entries : public T {
   typedef typename T::Vector_3          Vector_3;
 
  public:
-  sort_facet_cycle_entries(T D) : T(D) {}
+  sort_facet_cycle_entries(const T& D) : T(D) {}
 
   bool operator() (Object_handle o1, Object_handle o2) const {
 
@@ -611,7 +611,7 @@ class sort_shell_entries : public T {
   typedef typename T::Point_3       Point_3;
 
  public:
-  sort_shell_entries(T D) : T(D) {}
+  sort_shell_entries(const T& D) : T(D) {}
 
   bool operator() (Object_handle o1, Object_handle o2) const {
     SFace_handle sf1, sf2;
@@ -1076,7 +1076,7 @@ public:
   { Self O(os,W, sort); O.print(); }
 
   template <typename Iter, typename Index>
-    void output_sorted_indexes(Iter begin, Iter end, Index i) const {
+    void output_sorted_indexes(Iter begin, Iter end, const Index& i) const {
     int low = i[begin];
     int high = low;
     for(Iter it=begin; it != end; it++) {
@@ -1193,7 +1193,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
         }
       }
       fi->plane() = normalized(fi->plane());
-      fi->boundary_entry_objects().sort(sort_facet_cycle_entries<Base>((Base) *this));
+      fi->boundary_entry_objects().sort(sort_facet_cycle_entries<Base>(*this));
     }
     FL.push_back(fi);
   }
@@ -1262,7 +1262,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
           *fc = make_object(se);
         }
       }
-      sfi->boundary_entry_objects().sort(sort_sface_cycle_entries<Base>((Base) *this));
+      sfi->boundary_entry_objects().sort(sort_sface_cycle_entries<Base>(*this));
     }
     SFL.push_back(sfi);
   }
@@ -1287,7 +1287,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
         visit_shell_objects(SFace_handle(it),findMinSF);
         *it = make_object(findMinSF.minimal_sface());
       }
-      ci->shell_entry_objects().sort(sort_shell_entries<Base>((Base)*this));
+      ci->shell_entry_objects().sort(sort_shell_entries<Base>(*this));
     }
     CL.push_back(ci);
   }
