@@ -531,7 +531,14 @@ bool write_VTP(std::ostream& os,
 template<typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_VTP(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
-  std::ofstream os(fname);
+  const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
+  std::ofstream os;
+  if(binary){
+    os.open(fname, std::ios::binary);
+    CGAL::set_mode(os, CGAL::IO::BINARY);
+  }
+  else
+    os.open(fname);
   return write_VTP(os, g, np);
 }
 

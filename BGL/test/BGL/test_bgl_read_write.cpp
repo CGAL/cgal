@@ -750,14 +750,18 @@ void test_bgl_VTP(const char* filename,
 
   // write with VTP
   {
-    std::ofstream os("tmp.vtp");
-    if(binary)
+    std::ofstream os;
+    if(binary){
+      os.open("tmp.vtp", std::ios::binary);
       CGAL::set_mode(os, CGAL::IO::BINARY);
-    ok = CGAL::write_VTP(os, fg);
+    }
+    else
+      os.open("tmp.vtp");
+    ok = CGAL::write_VTP(os, fg, CGAL::parameters::use_binary_mode(binary));
     assert(ok);
 
     Mesh fg2;
-    ok = CGAL::read_VTP("tmp.vtp", fg2);
+    ok = CGAL::read_VTP("tmp.vtp", fg2, CGAL::parameters::use_binary_mode(binary));
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
   }
@@ -771,7 +775,7 @@ void test_bgl_VTP(const char* filename,
     assert(ok);
 
     Mesh fg2;
-    ok = CGAL::read_polygon_mesh("tmp.vtp", fg2);
+    ok = CGAL::read_polygon_mesh("tmp.vtp", fg2, CGAL::parameters::use_binary_mode(binary));
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
   }
@@ -799,15 +803,22 @@ void test_bgl_VTP(const char* filename,
 
   // write with VTP
   {
-    std::ofstream os("tmp.vtp");
+    std::ofstream os;
     if(binary)
+    {
+      os.open("tmp.vtp", std::ios::binary);
       CGAL::set_mode(os, CGAL::IO::BINARY);
-    ok = CGAL::write_VTP(os, fg);
+    }
+    else
+    {
+      os.open("tmp.vtp");
+    }
+    ok = CGAL::write_VTP(os, fg, CGAL::parameters::use_binary_mode(binary));
     assert(ok);
 
     Mesh fg2;
 
-    ok = CGAL::read_polygon_mesh("tmp.vtp", fg2);
+    ok = CGAL::read_polygon_mesh("tmp.vtp", fg2, CGAL::parameters::use_binary_mode(binary));
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
   }
@@ -822,7 +833,7 @@ void test_bgl_VTP(const char* filename,
 
     Mesh fg2;
 
-    ok = CGAL::read_polygon_mesh("tmp.vtp", fg2);
+    ok = CGAL::read_polygon_mesh("tmp.vtp", fg2, CGAL::parameters::use_binary_mode(binary));
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
   }
@@ -898,8 +909,8 @@ int main(int argc, char** argv)
 #ifdef CGAL_USE_VTK
   const char* vtp_file = (argc > 6) ? argv[6] : "data/bones.vtp";
 
-  //test_bgl_VTP<Polyhedron, Kernel>(vtp_file, false);
-  //test_bgl_VTP<SM, Kernel>(vtp_file, false);
+  test_bgl_VTP<Polyhedron, Kernel>(vtp_file, false);
+  test_bgl_VTP<SM, Kernel>(vtp_file, false);
   test_bgl_VTP<LCC, Kernel>(vtp_file, false);
 
   test_bgl_VTP<Polyhedron, Kernel>(vtp_file, true);
