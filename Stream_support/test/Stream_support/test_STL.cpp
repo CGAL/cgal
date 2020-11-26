@@ -13,7 +13,8 @@ typedef K::Point_3                                            Point;
 typedef std::vector<std::size_t>                              Face;
 
 template <typename Point_type, typename Polygon_type>
-void read(const char* fname, std::size_t v, std::size_t f)
+void read(const char* fname, std::size_t v, std::size_t f,
+          bool is_binary = false, bool should_fail = false)
 {
   std::cout << "Reading "<< fname << std::endl;
   std::ifstream input(fname, std::ios::in | std::ios::binary);
@@ -26,20 +27,22 @@ void read(const char* fname, std::size_t v, std::size_t f)
 
   std::vector<Point_type> points;
   std::vector<Polygon_type> faces;
-  bool ok = CGAL::read_STL(input, points, faces);
-  assert(ok);
+  bool ok = CGAL::read_STL(input, points, faces, CGAL::parameters::use_binary_mode(is_binary));
+  assert(ok != should_fail);
+  if(!should_fail)
+  {
+    std::cout << "OFF version of file " << fname << std::endl;
 
-  std::cout << "OFF version of file " << fname << std::endl;
+    std::cout << "OFF\n" << points.size() << " " << faces.size()  << " 0" << std::endl;
+    for(std::size_t i=0; i < points.size(); i++)
+      std::cout << points[i][0] << " " << points[i][1] << " " << points[i][2]<< std::endl;
 
-  std::cout << "OFF\n" << points.size() << " " << faces.size()  << " 0" << std::endl;
-  for(std::size_t i=0; i < points.size(); i++)
-    std::cout << points[i][0] << " " << points[i][1] << " " << points[i][2]<< std::endl;
+    for(std::size_t i=0; i < faces.size(); i++)
+      std::cout << "3 " << faces[i][0] << " " << faces[i][1] << " " << faces[i][2] << std::endl;
 
-  for(std::size_t i=0; i < faces.size(); i++)
-    std::cout << "3 " << faces[i][0] << " " << faces[i][1] << " " << faces[i][2] << std::endl;
-
-  assert(points.size() == v);
-  assert(faces.size() == f);
+    assert(points.size() == v);
+    assert(faces.size() == f);
+  }
 }
 
 void further_tests()
@@ -53,16 +56,16 @@ void further_tests()
   typedef std::vector<int>                                            Polygon_type_2;
   typedef std::basic_string<int>                                      Polygon_type_3;
 
-  read<Point_type_1, Polygon_type_1>("data/cube.stl", 8, 12);
+  read<Point_type_1, Polygon_type_1>("data/cube.stl", 8, 12, true);
   read<Point_type_1, Polygon_type_2>("data/triangle.stl", 3, 1);
 
   read<Point_type_1, Polygon_type_3>("data/ascii-tetrahedron.stl", 4, 4);
-  read<Point_type_2, Polygon_type_1>("data/binary-tetrahedron-nice-header.stl", 4, 4);
-  read<Point_type_2, Polygon_type_2>("data/binary-tetrahedron-non-standard-header-1.stl", 4, 4);
-  read<Point_type_2, Polygon_type_3>("data/binary-tetrahedron-non-standard-header-2.stl", 4, 4);
-  read<Point_type_3, Polygon_type_1>("data/binary-tetrahedron-non-standard-header-3.stl", 4, 4);
-  read<Point_type_3, Polygon_type_2>("data/binary-tetrahedron-non-standard-header-4.stl", 4, 4);
-  read<Point_type_3, Polygon_type_3>("data/binary-tetrahedron-non-standard-header-5.stl", 4, 4);
+  read<Point_type_2, Polygon_type_1>("data/binary-tetrahedron-nice-header.stl", 4, 4, true);
+  read<Point_type_2, Polygon_type_2>("data/binary-tetrahedron-non-standard-header-1.stl", 4, 4, true, true);
+  read<Point_type_2, Polygon_type_3>("data/binary-tetrahedron-non-standard-header-2.stl", 4, 4, true, true);
+  read<Point_type_3, Polygon_type_1>("data/binary-tetrahedron-non-standard-header-3.stl", 4, 4, true, true);
+  read<Point_type_3, Polygon_type_2>("data/binary-tetrahedron-non-standard-header-4.stl", 4, 4, true, true);
+  read<Point_type_3, Polygon_type_3>("data/binary-tetrahedron-non-standard-header-5.stl", 4, 4, true, false);
 }
 
 int main(int argc, char** argv)
@@ -89,6 +92,10 @@ int main(int argc, char** argv)
   polygons.clear();
   std::ifstream is(stl_file);
   ok = CGAL::read_STL(is, points, polygons);
+  assert(!ok);
+  is.clear();
+  is.seekg(0, is.beg);
+  ok = CGAL::read_STL(is, points, polygons, CGAL::parameters::use_binary_mode(false));
   assert(ok);
   is.close();
 

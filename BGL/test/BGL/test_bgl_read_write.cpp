@@ -849,7 +849,7 @@ void test_bgl_VTP(const char* filename,
 #endif // CGAL_USE_VTK
 
 int main(int argc, char** argv)
-{/*
+{
   // OFF
   const char* off_file = (argc > 1) ? argv[1] : "data/prim.off";
   test_bgl_OFF<Polyhedron, Kernel>(off_file);
@@ -875,7 +875,7 @@ int main(int argc, char** argv)
   const char* ply_file = (argc > 3) ? argv[3] : "data/colored_tetra.ply";
   test_bgl_PLY<Polyhedron>(ply_file, true);
   test_bgl_PLY<SM>(ply_file, true);
-*/
+
   // STL
   const char* stl_file = (argc > 4) ? argv[4] : "data/pig.stl";
   test_bgl_STL<Polyhedron>(stl_file);
@@ -884,7 +884,7 @@ int main(int argc, char** argv)
 #ifdef CGAL_USE_OPENMESH
   test_bgl_STL<OMesh>(stl_file);
 #endif
-/*
+
   // GOCAD
   const char* gocad_file = (argc > 5) ? argv[5] : "data/2016206_MHT_surface.ts";
   test_bgl_GOCAD<Polyhedron>(gocad_file);
@@ -912,7 +912,7 @@ int main(int argc, char** argv)
 #endif
 
 #endif // CGAL_USE_VTK
-*/
+
   std::cout << "Done!" << std::endl;
 
   return EXIT_SUCCESS;

@@ -170,6 +170,7 @@ bool read_STL(std::istream& is, PointRange& points, TriangleRange& facets,
  *
  * \brief reads the content of a file named `fname` into `points` and `facets`, using the \ref IOStreamSTL.
  *
+ *  If `use_binary_mode` is `true`, but the reading fails, ASCII reading will be automatically tested.
  * \attention The polygon soup is not cleared, and the data from the file are appended.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
@@ -209,19 +210,25 @@ bool read_STL(const std::string& fname,
 #endif
               )
 {
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   const bool binary = parameters::choose_parameter(parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)
   {
     std::ifstream is(fname, std::ios::binary);
     CGAL::set_mode(is, CGAL::IO::BINARY);
-    return read_STL(is, points, facets, np);
+    if(read_STL(is, points, facets, np))
+    {
+      return true;
+    }
+    points.clear();
+    facets.clear();
   }
-  else
-  {
-    std::ifstream is(fname);
-    CGAL::set_mode(is, CGAL::IO::ASCII);
-    return read_STL(is, points, facets, np);
-  }
+  std::ifstream is(fname);
+  CGAL::set_mode(is, CGAL::IO::ASCII);
+  bool v = choose_parameter(get_parameter(np, internal_np::verbose),
+                            false);
+  return read_STL(is, points, facets, CGAL::parameters::verbose(v).use_binary_mode(false));
 }
 
 /// \cond SKIP_IN_MANUAL

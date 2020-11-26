@@ -111,7 +111,8 @@ bool read_STL(std::istream& is,
 {
   typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::type      VPM;
   typedef typename boost::property_traits<VPM>::value_type                      Point;
-
+  if(!is.good())
+    return false;
   IO::internal::STL_builder<Graph, Point> builder(is);
   return builder(g, np);
 }
@@ -122,6 +123,7 @@ bool read_STL(std::istream& is,
   \brief reads the graph `g` from the file `fname`, using the \ref IOStreamSTL.
 
   The data is expected to represent a 2-manifold (possibly with borders).
+  If `use_binary_mode` is `true`, but the reading fails, ASCII reading will be automatically tested.
 
   \attention The graph `g` is not cleared, and the data from the file are appended.
 
@@ -176,7 +178,7 @@ bool read_STL(const std::string& fname,
     {
       return true;
     }
-    CGAL::clear(g);
+    g.clear();
   }
   std::ifstream is(fname);
   CGAL::set_mode(is, CGAL::IO::ASCII);
