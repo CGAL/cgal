@@ -26,6 +26,8 @@
 #include <CGAL/Triangulation_2_projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 
+#include <boost/container/flat_map.hpp>
+
 namespace CGAL{
 namespace Polygon_mesh_processing {
 namespace Corefinement{
@@ -156,6 +158,10 @@ private:
 // data members
 private:
   boost::dynamic_bitset<> is_node_on_boundary; // indicate if a vertex is a border vertex in tm1 or tm2
+  boost::container::flat_map<TriangleMesh*, std::vector< vertex_descriptor> > node_on_vertex_map;
+  boost::container::flat_map<TriangleMesh*, std::vector< halfedge_descriptor> > node_on_edge_map;
+
+
   std::vector< std::vector<Node_id> > graph_of_constraints;
   boost::dynamic_bitset<> is_node_of_degree_one;
   //nb of intersection points between coplanar faces, see fixes XSL_TAG_CPL_VERT
@@ -281,12 +287,96 @@ public:
     }
   }
 
+  bool is_on_border(std::size_t node_id1, std::size_t node_id2,
+                    const std::vector<vertex_descriptor>* node_on_vertex_ptr,
+                    const std::vector<halfedge_descriptor>* node_on_edge_ptr,
+                    TriangleMesh* tm_ptr)
+  {
+    if (tm_ptr == nullptr) return false;
+
+    if (node_on_vertex_ptr!=nullptr)
+    {
+      if ( (*node_on_vertex_ptr)[node_id1] != Graph_traits::null_vertex() )
+      {
+        if ( (*node_on_vertex_ptr)[node_id2] != Graph_traits::null_vertex() )
+        {
+          std::pair< halfedge_descriptor, bool > res =
+            halfedge((*node_on_vertex_ptr)[node_id1],
+                     (*node_on_vertex_ptr)[node_id2],
+                     *tm_ptr);
+          CGAL_assertion(res.second);
+          return res.second && is_border_edge(res.first, *tm_ptr);
+        }
+        if (node_on_edge_ptr!=nullptr)
+        {
+          halfedge_descriptor h = (*node_on_edge_ptr)[node_id2];
+          if (h != Graph_traits::null_halfedge())
+          {
+            return ( source(h, *tm_ptr)==(*node_on_vertex_ptr)[node_id1] ||
+                    target(h, *tm_ptr)==(*node_on_vertex_ptr)[node_id1] )
+                  && is_border_edge(h, *tm_ptr);
+          }
+          return false;
+        }
+      }
+    }
+
+    if (node_on_edge_ptr!=nullptr)
+    {
+      halfedge_descriptor h = (*node_on_edge_ptr)[node_id1];
+      if (h != Graph_traits::null_halfedge())
+      {
+        if ( node_on_vertex_ptr!=nullptr &&
+             (*node_on_vertex_ptr)[node_id2] != Graph_traits::null_vertex() )
+        {
+          return ( source(h, *tm_ptr)==(*node_on_vertex_ptr)[node_id2] ||
+                  target(h, *tm_ptr)==(*node_on_vertex_ptr)[node_id2] )
+                && is_border_edge(h, *tm_ptr);
+        }
+        halfedge_descriptor h_bis = (*node_on_edge_ptr)[node_id2];
+        if (h_bis != Graph_traits::null_halfedge())
+          return h==h_bis || h==opposite(h_bis, *tm_ptr);
+      }
+    }
+    return false;
+  }
+
   template<class Graph_node>
   void annotate_graph(std::vector<Graph_node>& graph)
   {
     std::size_t nb_nodes=graph.size();
     graph_of_constraints.resize(nb_nodes);
     is_node_of_degree_one.resize(nb_nodes);
+//TODO: pas bon avec autoref et la collecte des infos aussi...
+    TriangleMesh* tm1_ptr = nullptr;
+    const std::vector<vertex_descriptor>* node_on_vertex_1_ptr = nullptr;
+    const std::vector<halfedge_descriptor>* node_on_edge_1_ptr = nullptr;
+    TriangleMesh* tm2_ptr = nullptr;
+    const std::vector<vertex_descriptor>* node_on_vertex_2_ptr = nullptr;
+    const std::vector<halfedge_descriptor>* node_on_edge_2_ptr = nullptr;
+
+    boost::container::flat_set<TriangleMesh*> mesh_ptrs;
+    mesh_ptrs.reserve(2);
+    for (const auto& k_v : node_on_vertex_map) mesh_ptrs.insert(k_v.first);
+    for (const auto& k_v : node_on_edge_map) mesh_ptrs.insert(k_v.first);
+
+    if (!mesh_ptrs.empty())
+    {
+      tm1_ptr=*mesh_ptrs.begin();
+      auto itv = node_on_vertex_map.find(tm1_ptr);
+      if (itv != node_on_vertex_map.end()) node_on_vertex_1_ptr= &(itv->second);
+      auto ite = node_on_edge_map.find(tm1_ptr);
+      if (ite != node_on_edge_map.end()) node_on_edge_1_ptr= &(ite->second);
+      if (mesh_ptrs.size()==2)
+      {
+        tm2_ptr=*std::next(mesh_ptrs.begin());
+        itv = node_on_vertex_map.find(tm2_ptr);
+        if (itv != node_on_vertex_map.end()) node_on_vertex_2_ptr= &(itv->second);
+        ite = node_on_edge_map.find(tm2_ptr);
+        if (ite != node_on_edge_map.end()) node_on_edge_2_ptr= &(ite->second);
+      }
+    }
+
     for(std::size_t node_id=0;node_id<nb_nodes;++node_id)
     {
       graph_of_constraints[node_id].assign(
@@ -296,21 +386,24 @@ public:
       if (graph_of_constraints[node_id].size()==1)
         is_node_of_degree_one.set(node_id);
 
-      // mark every vertex on the boundary connected to another vertex by a non-boundary edge
+      if (handle_non_manifold_features) continue; // skip the rest of the function meant to prepare
+                                                  // the intersection polylines for the output builder
+                                                  // (which is not called with non-manifold features)
+
+      // mark every vertex contained by the intersection polyline, incident to a border and a non-border edge.
       // The logic is somehow equivalent to what was done with the container `non_manifold_nodes`
       // that was used to split polylines at certains points. Non-manifold was used in the context
       // of the combinatorial map where the import inside the combinatorial map was possible (see broken_bound-[12].off)
-      if (is_node_on_boundary.test(node_id))
+      if (is_node_on_boundary.test(node_id) && graph_of_constraints[node_id].size()==2)
       {
-        // TODO: the commented condition is not restrictive enough. It only tests the vertices, not the edge used
-        //       to go from one vertex to the other. Right now we are marking too many norder vertices as
-        //       terminal than necessary. We cannot use mesh_to_node_id_to_vertex since it will be filled only
-        //       after the call to visitor.finalize() in the main algorithm
-        //       The current version of the code is correct but too many nodes are potentially
-        //       marked as terminal
-        if (graph_of_constraints[node_id].size()==2 /* && (
-            !is_node_on_boundary.test(graph_of_constraints[node_id][0]) ||
-            !is_node_on_boundary.test(graph_of_constraints[node_id][1]) ) */ )
+        std::size_t nn1 = graph_of_constraints[node_id][0],
+                    nn2 = graph_of_constraints[node_id][1];
+        // check if in tm1 or in tm2 edge(node_id, nn1) and edge(node_id, nn2)
+        if (  is_on_border(node_id, nn1, node_on_vertex_1_ptr, node_on_edge_1_ptr, tm1_ptr) !=
+              is_on_border(node_id, nn2, node_on_vertex_1_ptr, node_on_edge_1_ptr, tm1_ptr)
+            ||
+              is_on_border(node_id, nn1, node_on_vertex_2_ptr, node_on_edge_2_ptr, tm2_ptr) !=
+              is_on_border(node_id, nn2, node_on_vertex_2_ptr, node_on_edge_2_ptr, tm2_ptr) )
         {
           graph[node_id].make_terminal();
         }
@@ -350,26 +443,29 @@ public:
     CGAL_error_msg("This function should not be called");
   }
 
-void check_node_on_boundary_edge_case(std::size_t node_id,
-                                     halfedge_descriptor h,
-                                     const TriangleMesh& tm)
-{
-  if ( is_border_edge(h,tm) )
-    is_node_on_boundary.set(node_id);
-}
-
-void check_node_on_boundary_vertex_case(std::size_t node_id,
-                                       halfedge_descriptor h,
-                                       const TriangleMesh& tm)
-{
-  //we turn around the hedge and check no halfedge is a border halfedge
-   for(halfedge_descriptor hc :halfedges_around_target(h,tm))
-    if ( is_border_edge(hc,tm) )
-    {
+  void check_node_on_boundary_edge_case(std::size_t node_id,
+                                      halfedge_descriptor h,
+                                      const TriangleMesh& tm)
+  {
+    if ( is_border_edge(h,tm) )
       is_node_on_boundary.set(node_id);
-      return;
-    }
-}
+    node_on_edge_map[const_cast<TriangleMesh*>(&tm)][node_id] = h;
+  }
+
+  void check_node_on_boundary_vertex_case(std::size_t node_id,
+                                        halfedge_descriptor h,
+                                        const TriangleMesh& tm)
+  {
+    node_on_vertex_map[const_cast<TriangleMesh*>(&tm)][node_id] = target(h,tm);
+
+    //we turn around the hedge and check no halfedge is a border halfedge
+    for(halfedge_descriptor hc :halfedges_around_target(h,tm))
+      if ( is_border_edge(hc,tm) )
+      {
+        is_node_on_boundary.set(node_id);
+        return;
+      }
+  }
 
   //keep track of the fact that a polyhedron original vertex is a node
   void all_incident_faces_got_a_node_as_vertex(
@@ -392,6 +488,9 @@ void check_node_on_boundary_vertex_case(std::size_t node_id,
     CGAL_assertion(f1!=f2 && f1!=f3 && f2!=f3);
     is_node_on_boundary.resize(node_id+1, false);
     TriangleMesh* tm_ptr = const_cast<TriangleMesh*>(&tm);
+    node_on_edge_map[tm_ptr].resize(node_id+1, Graph_traits::null_halfedge());
+    node_on_vertex_map[tm_ptr].resize(node_id+1, Graph_traits::null_vertex());
+
 //    user_visitor.new_node_added_triple_face(node_id, f1, f2, f3, tm); // NODE_VISITOR_TAG
 #ifdef CGAL_DEBUG_AUTOREFINEMENT
     std::cout << "adding node " << node_id << " " << f1 << " " << f2 << " " << f3 << "\n";
@@ -414,6 +513,11 @@ void check_node_on_boundary_vertex_case(std::size_t node_id,
 
     TriangleMesh* tm1_ptr = const_cast<TriangleMesh*>(&tm1);
     TriangleMesh* tm2_ptr = const_cast<TriangleMesh*>(&tm2);
+
+    node_on_edge_map[tm1_ptr].resize(node_id+1, Graph_traits::null_halfedge());
+    node_on_vertex_map[tm1_ptr].resize(node_id+1, Graph_traits::null_vertex());
+    node_on_edge_map[tm2_ptr].resize(node_id+1, Graph_traits::null_halfedge());
+    node_on_vertex_map[tm2_ptr].resize(node_id+1,  Graph_traits::null_vertex());
 
     //forward to the visitor
 //    user_visitor.new_node_added(node_id, type, h_1, h_2, is_target_coplanar, is_source_coplanar); // NODE_VISITOR_TAG
