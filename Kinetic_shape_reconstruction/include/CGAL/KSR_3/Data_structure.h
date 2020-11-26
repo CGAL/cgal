@@ -49,9 +49,12 @@ private:
   using Segment_2   = typename Kernel::Segment_2;
   using Segment_3   = typename Kernel::Segment_3;
   using Vector_2    = typename Kernel::Vector_2;
+  using Vector_3    = typename Kernel::Vector_3;
   using Direction_2 = typename Kernel::Direction_2;
   using Triangle_2  = typename Kernel::Triangle_2;
   using Line_2      = typename Kernel::Line_2;
+  using Line_3      = typename Kernel::Line_3;
+  using Plane_3     = typename Kernel::Plane_3;
 
   using Support_plane      = KSR_3::Support_plane<Kernel>;
   using Intersection_graph = KSR_3::Intersection_graph<Kernel>;
@@ -155,16 +158,6 @@ public:
       neighbors.push_back(neighbor);
     }
   };
-
-  struct PFcmp {
-    const bool operator()(const PFace& p, const PFace& q) const {
-      const std::size_t ratep = static_cast<std::size_t>(p.first >= 6);
-      const std::size_t rateq = static_cast<std::size_t>(q.first >= 6);
-      if (ratep == rateq) return (p > q);
-      return (ratep > rateq);
-    }
-  };
-  using PFqueue = std::priority_queue<PFace, std::vector<PFace>, PFcmp>;
 
 private:
   KSR::vector<Support_plane> m_support_planes;
@@ -2359,45 +2352,58 @@ public:
     if (pair.first != -1) return false;
     CGAL_assertion(pair.first == -1);
 
-    const PFcmp cmp;
-    PFqueue queue(cmp);
-    queue.push(pface);
+    std::deque<PFace> queue;
+    queue.push_front(pface);
+
+    Point_3 volume_centroid;
+    std::size_t volume_size = 0;
 
     while (!queue.empty()) {
-      const auto curr = queue.top();
-      propagate_pface(curr, volume_index, map_volumes, queue);
-      queue.pop();
+      const auto curr = queue.front();
+      queue.pop_front();
+      propagate_pface(curr, volume_index, volume_size, volume_centroid, map_volumes, queue);
     }
+    std::cout << "FOUND VOLUME (SIZE/BARYCENTER): "
+    << volume_size << " / " << volume_centroid << std::endl;
     return true;
   }
 
   void propagate_pface(
     const PFace& pface,
     const int volume_index,
+    std::size_t& volume_size,
+    Point_3& volume_centroid,
     std::map<PFace, std::pair<int, int> >& map_volumes,
-    PFqueue& queue) const {
+    std::deque<PFace>& queue) const {
 
     const bool is_boundary = (pface.first < 6);
     if (is_boundary) {
-      propagate_boundary_pface(pface, volume_index, map_volumes, queue);
+      propagate_boundary_pface(pface, volume_index, volume_size, volume_centroid, map_volumes, queue);
     } else {
-      propagate_interior_pface(pface, volume_index, map_volumes, queue);
+      propagate_interior_pface(pface, volume_index, volume_size, volume_centroid, map_volumes, queue);
     }
   }
 
   void propagate_boundary_pface(
     const PFace& pface,
     const int volume_index,
+    std::size_t& volume_size,
+    Point_3& volume_centroid,
     std::map<PFace, std::pair<int, int> >& map_volumes,
-    PFqueue& queue) const {
+    std::deque<PFace>& queue) const {
 
     CGAL_assertion(pface.first < 6);
-
     auto& pair = map_volumes.at(pface);
     CGAL_assertion(pair.second == -1);
     if (pair.first != - 1) return;
     CGAL_assertion(pair.first == -1);
     pair.first = volume_index;
+
+    const Point_3 center = centroid_of_pface(pface);
+    volume_centroid = CGAL::barycenter(
+      volume_centroid, static_cast<FT>(volume_size), center, FT(1));
+    std::cout << "vol center: " << volume_centroid << std::endl;
+    ++volume_size;
 
     // std::cout << "BND PFACE MAP: (" <<
     // pair.first << ", " << pair.second << ")" << std::endl;
@@ -2421,12 +2427,12 @@ public:
         CGAL_assertion(bnd_nfaces.size() == 1);
         CGAL_assertion(bnd_nfaces[0].first < 6);
         CGAL_assertion(bnd_nfaces[0] != pface);
-        queue.push(bnd_nfaces[0]);
+        queue.push_front(bnd_nfaces[0]);
       } else {
         CGAL_assertion(int_nfaces.size() == 1);
         CGAL_assertion(int_nfaces[0].first >= 6);
         CGAL_assertion(int_nfaces[0] != pface);
-        queue.push(int_nfaces[0]);
+        queue.push_back(int_nfaces[0]);
       }
     }
   }
@@ -2449,11 +2455,12 @@ public:
   void propagate_interior_pface(
     const PFace& pface,
     const int volume_index,
+    std::size_t& volume_size,
+    Point_3& volume_centroid,
     std::map<PFace, std::pair<int, int> >& map_volumes,
-    PFqueue& queue) const {
+    std::deque<PFace>& queue) const {
 
     CGAL_assertion(pface.first >= 6);
-
     auto& pair = map_volumes.at(pface);
     if (pair.first != -1 && pair.second != -1) return;
     CGAL_assertion(pair.second == -1);
@@ -2464,6 +2471,12 @@ public:
     } else {
       pair.first  = volume_index;
     }
+
+    const Point_3 center = centroid_of_pface(pface);
+    volume_centroid = CGAL::barycenter(
+      volume_centroid, static_cast<FT>(volume_size), center, FT(1));
+    std::cout << "vol center: " << volume_centroid << std::endl;
+    ++volume_size;
 
     // std::cout << "INT PFACE MAP: (" <<
     // pair.first << ", " << pair.second << ")" << std::endl;
@@ -2485,27 +2498,38 @@ public:
 
       if (int_nfaces.size() == 0) {
         const auto bnd_nface = find_next_boundary_pface(
-          pface, pedge, bnd_nfaces, volume_index, map_volumes);
+          volume_centroid, pface, pedge, bnd_nfaces, volume_index, map_volumes);
         CGAL_assertion(bnd_nface != null_pface());
-        queue.push(bnd_nface);
+        queue.push_front(bnd_nface);
       } else {
         CGAL_assertion_msg(bnd_nfaces.size() == 0, "TODO: CAN THEY BE NON-ZERO?");
         const auto int_nface = find_next_interior_pface(
-          pface, pedge, int_nfaces, volume_index, map_volumes);
+          volume_centroid, pface, pedge, int_nfaces, volume_index, map_volumes);
         CGAL_assertion(int_nface != null_pface());
-        queue.push(int_nface);
+        queue.push_back(int_nface);
       }
     }
   }
 
   const PFace find_next_boundary_pface(
+    const Point_3& volume_centroid,
     const PFace& pface,
     const PEdge& pedge,
     const std::vector<PFace>& bnd_nfaces,
     const int volume_index,
     const std::map<PFace, std::pair<int, int> >& map_volumes) const {
 
+    CGAL_assertion(bnd_nfaces.size() > 0);
+    if (bnd_nfaces.size() != 2) {
+      std::cout << "DEBUG: number of found boundary faces: " << bnd_nfaces.size() << std::endl;
+      dump_pface(pface, "face-curr");
+      dump_pedge(pedge, "face-edge");
+      for (std::size_t i = 0; i < bnd_nfaces.size(); ++i) {
+        dump_pface(bnd_nfaces[i], "face-" + std::to_string(i));
+      }
+    }
     CGAL_assertion(bnd_nfaces.size() == 2);
+
     const auto& nface0 = bnd_nfaces[0];
     const auto& nface1 = bnd_nfaces[1];
 
@@ -2537,96 +2561,256 @@ public:
     }
     CGAL_assertion(pair0.first == -1 && pair1.first == -1);
 
-    dump_pface(pface, "face-curr");
-    dump_pedge(pedge, "face-edge");
-    dump_pface(bnd_nfaces[0], "face-0");
-    dump_pface(bnd_nfaces[1], "face-1");
-
-    CGAL_assertion_msg(false, "TODO: FIND NEXT BOUNDARY PFACE!");
-    return null_pface();
+    return find_using_2d_directions(
+      volume_index, volume_centroid, pface, pedge, bnd_nfaces);
   }
 
   const PFace find_next_interior_pface(
+    const Point_3& volume_centroid,
     const PFace& pface,
     const PEdge& pedge,
     const std::vector<PFace>& int_nfaces,
     const int volume_index,
     const std::map<PFace, std::pair<int, int> >& map_volumes) const {
 
-    CGAL_assertion_msg(
-      int_nfaces.size() == 2 || int_nfaces.size() == 3, "TODO: CAN WE HAVE LESS/MORE?");
-    for (const auto& int_nface : int_nfaces) {
-      CGAL_assertion(int_nface.first >= 6);
-      CGAL_assertion(int_nface != pface);
-      const auto& pair = map_volumes.at(int_nface);
-      if (pair.first == volume_index || pair.second == volume_index) {
-        return int_nface;
+    CGAL_assertion(int_nfaces.size() > 0);
+    if (int_nfaces.size() > 3) {
+      std::cout << "DEBUG: number of found interior faces: " << int_nfaces.size() << std::endl;
+      dump_pface(pface, "face-curr");
+      dump_pedge(pedge, "face-edge");
+      for (std::size_t i = 0; i < int_nfaces.size(); ++i) {
+        dump_pface(int_nfaces[i], "face-" + std::to_string(i));
       }
     }
-    return find_using_2d_directions(pface, pedge, int_nfaces);
+    CGAL_assertion_msg(int_nfaces.size() <= 3, "TODO: CAN WE HAVE MORE?");
+
+    if (int_nfaces.size() == 1) {
+      return int_nfaces[0];
+    }
+
+    return find_using_2d_directions(
+      volume_index, volume_centroid, pface, pedge, int_nfaces);
   }
 
   const PFace find_using_2d_directions(
+    const int volume_index,
+    const Point_3& volume_centroid,
     const PFace& pface,
     const PEdge& pedge,
     const std::vector<PFace>& nfaces) const {
 
-    const auto support_plane_idx = pface.first;
-    const auto& mesh = this->mesh(support_plane_idx);
-    const auto query_he = mesh.halfedge(pedge.second);
-    CGAL_assertion(this->has_iedge(pedge));
-    const auto query_iedge = this->iedge(pedge);
-    const auto query = to_3d(support_plane_idx, mesh.point(mesh.target(query_he)));
+    const bool is_debug = false;
+      // ( volume_index == 0 &&
+      //   pface.first == 6 &&
+      //   static_cast<std::size_t>(pface.second) == 1);
 
-    std::vector<PEdge> dir_edges;
-    const auto init_edge = mesh.edge(mesh.next(query_he));
-    const PEdge init_pedge(support_plane_idx, init_edge);
-    dir_edges.push_back(init_pedge);
-    locate_pedges(query, query_iedge, nfaces, dir_edges);
+    if (is_debug) {
+      // std::cout << "search using 2d directions" << std::endl;
+      std::cout << "DEBUG: number of neighbor faces: " << nfaces.size() << std::endl;
+      dump_pface(pface, "face-curr");
+      dump_pedge(pedge, "face-edge");
+      for (std::size_t i = 0; i < nfaces.size(); ++i) {
+        dump_pface(nfaces[i], "face-" + std::to_string(i));
+      }
+    }
 
-    for (std::size_t i = 0; i < dir_edges.size(); ++i)
-      dump_pedge(dir_edges[i], "dir-" + std::to_string(i));
+    Point_3 center = centroid_of_pface(pface);
+    const Segment_3 segment = segment_3(pedge);
+    const Line_3 line(segment.source(), segment.target());
+    Point_3 midp = CGAL::midpoint(segment.source(), segment.target());
+    Vector_3 norm(segment.source(), segment.target());
+    norm = KSR::normalize(norm);
+    const Plane_3 plane(midp, norm);
 
-    dump_pface(pface, "face-init");
-    dump_pedge(pedge, "pedge-init");
-    for (std::size_t i = 0; i < nfaces.size(); ++i)
-      dump_pface(nfaces[i], "face-" + std::to_string(i));
+    std::vector<Point_3> points;
+    points.reserve(nfaces.size() + 2);
 
-    CGAL_assertion_msg(false, "TODO: FIND USING 2D DIRECTIONS!");
-    return null_pface();
-  }
+    points.push_back(midp);
+    points.push_back(center);
+    for (const auto& nface : nfaces) {
+      center = centroid_of_pface(nface);
+      points.push_back(center);
+    }
+    CGAL_assertion(points.size() >= 3);
 
-  void locate_pedges(
-    const Point_3& query,
-    const IEdge& query_iedge,
-    const std::vector<PFace>& pfaces,
-    std::vector<PEdge>& pedges) const {
+    // const Plane_3 plane = compute_plane(points);
+    for (auto& point : points)
+      point = plane.projection(point);
 
-    std::set<KSR::size_t> support_planes;
-    for (const auto& pface : pfaces)
-      support_planes.insert(pface.first);
+    if (is_debug) {
+      std::vector<Segment_3> segments;
+      for (std::size_t i = 1; i < points.size(); ++i)
+        segments.push_back(Segment_3(points[0], points[i]));
+      KSR_3::Saver<Kernel> saver;
+      saver.export_segments_3(segments, "polyhedrons/directions-init");
+    }
 
-    const FT tol = KSR::tolerance<FT>();
-    const FT sq_tol = tol * tol;
-    for (const KSR::size_t support_plane_idx : support_planes) {
-      const auto& mesh = this->mesh(support_plane_idx);
+    const FT cx = volume_centroid.x();
+    const FT cy = volume_centroid.y();
+    const FT cz = volume_centroid.z();
+    FT d = (norm.x() * cx + norm.y() * cy + norm.z() * cz + plane.d());
 
-      for (const auto& vertex : mesh.vertices()) {
-        const auto point = to_3d(support_plane_idx, mesh.point(vertex));
-        const FT sq_dist = CGAL::squared_distance(point, query);
-        if (sq_dist < sq_tol) {
+    const Plane_3 tr_plane(midp + norm * d, norm);
+    Point_3 inter;
+    const bool is_intersection_found = KSR::intersection(line, tr_plane, inter);
+    if (!is_intersection_found) {
+      std::cout << "d = " << d << std::endl;
+    }
+    CGAL_assertion(is_intersection_found);
+    d = KSR::distance(midp, inter);
+    norm = Vector_3(midp, inter);
+    norm = KSR::normalize(norm);
+    for (auto& point : points) {
+      point += norm * d;
+      // point = tr_plane.projection(point);
+    }
+    // const Point_3 vc = tr_plane.projection(volume_centroid);
+    const auto vc = volume_centroid;
 
-          const auto hes = CGAL::halfedges_around_source(vertex, mesh);
-          for (const auto& he : hes) {
-            const auto edge = mesh.edge(he);
-            const PEdge pedge(support_plane_idx, edge);
-            if (this->iedge(pedge) == query_iedge) continue;
-            pedges.push_back(pedge);
+    if (is_debug) {
+      std::vector<Segment_3> segments;
+      for (std::size_t i = 1; i < points.size(); ++i)
+        segments.push_back(Segment_3(points[0], points[i]));
+      segments.push_back(Segment_3(points[0], vc));
+      KSR_3::Saver<Kernel> saver;
+      saver.export_segments_3(segments, "polyhedrons/directions");
+    }
+
+    std::vector< std::pair<Direction_2, PFace> > dir_edges;
+    dir_edges.reserve(nfaces.size() + 1);
+
+    const Point_2 proj_0 = plane.to_2d(points[0]);
+    for (std::size_t i = 1; i < points.size(); ++i) {
+      const Point_2 proj_i = plane.to_2d(points[i]);
+      const Vector_2 vec(proj_0, proj_i);
+      if (i == 1) {
+        dir_edges.push_back(std::make_pair(Direction_2(vec), pface));
+      } else {
+        dir_edges.push_back(std::make_pair(Direction_2(vec), nfaces[i - 2]));
+      }
+    }
+    CGAL_assertion(dir_edges.size() == nfaces.size() + 1);
+
+    const Point_2 proj_vc = plane.to_2d(vc);
+    const Vector_2 vec(proj_0, proj_vc);
+    const Direction_2 ref_dir(vec);
+
+    std::sort(dir_edges.begin(), dir_edges.end(), [&](
+      const std::pair<Direction_2, PFace>& p,
+      const std::pair<Direction_2, PFace>& q) -> bool {
+        return p.first < q.first;
+      }
+    );
+
+    const std::size_t n = dir_edges.size();
+    for (std::size_t i = 0; i < n; ++i) {
+      if (dir_edges[i].second == pface) {
+
+        const std::size_t im = (i + n - 1) % n;
+        const std::size_t ip = (i + 1) % n;
+
+        const auto& dir_prev = dir_edges[im].first;
+        const auto& dir_curr = dir_edges[i].first;
+        const auto& dir_next = dir_edges[ip].first;
+
+        if (is_debug) {
+          dump_pface(dir_edges[im].second, "prev");
+          dump_pface(dir_edges[ip].second, "next");
+        }
+
+        if (ref_dir.counterclockwise_in_between(dir_prev, dir_curr)) {
+          if (is_debug) {
+            std::cout << "found prev" << std::endl;
+            exit(EXIT_SUCCESS);
           }
+          return dir_edges[im].second;
+        } else if (ref_dir.counterclockwise_in_between(dir_curr, dir_next)) {
+          if (is_debug) {
+            std::cout << "found next" << std::endl;
+            exit(EXIT_SUCCESS);
+          }
+          return dir_edges[ip].second;
+        } else {
+          CGAL_assertion_msg(false, "ERROR: WRONG ORIENTATION!");
         }
       }
     }
-    CGAL_assertion(pedges.size() > 1);
+
+    CGAL_assertion_msg(false, "ERROR: NEXT PFACE IS NOT FOUND!");
+    return null_pface();
+  }
+
+  const Point_3 centroid_of_pface(const PFace& pface) const {
+
+    const std::function<Point_3(PVertex)> unary_f =
+    [&](const PVertex& pvertex) -> Point_3 {
+      return point_3(pvertex);
+    };
+    const std::vector<Point_3> polygon(
+      boost::make_transform_iterator(pvertices_of_pface(pface).begin(), unary_f),
+      boost::make_transform_iterator(pvertices_of_pface(pface).end()  , unary_f));
+    CGAL_assertion(polygon.size() >= 3);
+    return CGAL::centroid(polygon.begin(), polygon.end());
+  }
+
+  const Plane_3 compute_plane(const std::vector<Point_3>& points) const {
+
+    CGAL_assertion(points.size() >= 3);
+    if (points.size() == 3) {
+      return Plane_3(points[0], points[1], points[2]);
+    }
+
+    // for (std::size_t i = 0; i < points.size(); ++i) {
+    //   const std::size_t i1 = (i + 1) % points.size();
+    //   const std::size_t i2 = (i + 2) % points.size();
+    //   const std::size_t i3 = (i + 3) % points.size();
+    //   CGAL_assertion(CGAL::coplanar(points[i], points[i1], points[i2], points[i3]));
+    // }
+
+    // Compute centroid.
+    const auto centroid = CGAL::centroid(points.begin(), points.end());
+
+    // Compute covariance matrix.
+    FT xx = FT(0), yy = FT(0), zz = FT(0);
+    FT xy = FT(0), xz = FT(0), yz = FT(0);
+    for (std::size_t i = 0; i < points.size(); ++i) {
+      const auto& p = points[i];
+      const FT dx = p.x() - centroid.x();
+      const FT dy = p.y() - centroid.y();
+      const FT dz = p.z() - centroid.z();
+      xx += dx * dx; yy += dy * dy; zz += dz * dz;
+      xy += dx * dy; xz += dx * dz; yz += dy * dz;
+    }
+
+    const FT x = yy * zz - yz * yz;
+    const FT y = xx * zz - xz * xz;
+    const FT z = xx * yy - xy * xy;
+    FT maxv = -FT(1);
+    maxv = (CGAL::max)(maxv, x);
+    maxv = (CGAL::max)(maxv, y);
+    maxv = (CGAL::max)(maxv, z);
+    CGAL_assertion(maxv > FT(0));
+
+    // Compute plane normal.
+    FT nx = FT(0), ny = FT(0), nz = FT(0);
+    if (maxv == x) {
+      nx = x;
+      ny = xz * yz - xy * zz;
+      nz = xy * yz - xz * yy;
+    } else if (maxv == y) {
+      nx = xz * yz - xy * zz;
+      ny = y;
+      nz = xy * xz - yz * xx;
+    } else if (maxv == z) {
+      nx = xy * yz - xz * yy;
+      ny = xy * xz - yz * xx;
+      nz = z;
+    } else {
+      CGAL_assertion_msg(false, "ERROR: WRONG PLANE NORMAL CASE!");
+    }
+
+    Vector_3 normal(nx, ny, nz);
+    return Plane_3(centroid, KSR::normalize(normal));
   }
 
   const bool traverse_interior_volume(
