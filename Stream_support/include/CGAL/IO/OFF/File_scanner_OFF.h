@@ -35,8 +35,8 @@ class File_scanner_OFF
   : public File_header_OFF
 {
   std::vector<double> entries;
-  int color_entries;
-  int first_color_index;
+  std::size_t color_entries;
+  std::size_t first_color_index;
   std::istream& m_in;
   bool normals_read;
 
@@ -99,7 +99,7 @@ public:
         int H = (is_homogeneous())? 1:0;
         first_color_index = 3 + H;
 
-        color_entries = static_cast<int>(entries.size());
+        color_entries = entries.size();
         color_entries -= 3 + H; // coordinates
         if(has_normals()){
           first_color_index += 3 + H;
@@ -109,9 +109,8 @@ public:
           color_entries -= 2 + H;
         }
         // now color_entries should be 0, 1, 3, or 4 for the color
-        if(color_entries > 0)
+        if(color_entries != 0)
           m_has_vcolors = true;
-
       }
 
       if(entries.size() < 3)
@@ -209,7 +208,7 @@ public:
       }
       else
       {
-        int first_texture_index = first_color_index + color_entries;
+        std::size_t first_texture_index = first_color_index + color_entries;
         x = entries[first_texture_index];
         y = entries[first_texture_index + 1];
         if(is_homogeneous())
@@ -295,7 +294,7 @@ public:
       }
       else
       {
-        int first_normal_index = (is_homogeneous())? 4:3;
+        std::size_t first_normal_index = (is_homogeneous())? 4:3;
         if(entries.size() <= first_normal_index + 2)
         {
           m_in.clear(std::ios::badbit);
@@ -749,10 +748,10 @@ public:
       size = static_cast<std::size_t>(entries[0]);
       if(has_colors()){
         // Compute how many entries are there for the color
-        first_color_index = static_cast<int>(size + 1);
+        first_color_index = size + 1;
 
-        color_entries = static_cast<int>(entries.size());
-        color_entries -= static_cast<int>(size  + 1); // coordinates
+        color_entries = entries.size();
+        color_entries -= size  + 1; // coordinates
         // now color_entries should be 0, 1, 3, or 4 for the color
         if(color_entries > 0)
           m_has_fcolors = true;
