@@ -24,7 +24,7 @@ namespace CGAL {
 namespace internal {
 
 template <typename T, typename Allocator = CGAL_ALLOCATOR(T) > class chained_map;
-template <typename T> class chained_map_elem;
+template <typename T> struct chained_map_elem;
 
 template <typename T>
 struct chained_map_elem
