@@ -157,6 +157,9 @@ public:
       std::cout << " done" << std::endl;
     }
 
+    if (m_verbose) {
+      std::cout << "* getting volumes:" << std::endl;
+    }
     m_data.create_polyhedrons();
     return true;
   }

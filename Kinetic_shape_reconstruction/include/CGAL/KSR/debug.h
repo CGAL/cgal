@@ -314,7 +314,7 @@ public:
 
     for (const auto& segment : segments)
       stream << "2 " << segment.source() << " 0 " << segment.target() << " 0 " << std::endl;
-    save(stream, file_name + ".polylines");
+    save(stream, file_name + ".polylines.txt");
   }
 
   void export_segments_3(
@@ -326,7 +326,7 @@ public:
 
     for (const auto& segment : segments)
       stream << "2 " << segment.source() << " " << segment.target() << std::endl;
-    save(stream, file_name + ".polylines");
+    save(stream, file_name + ".polylines.txt");
   }
 
   void export_polygon_soup_3(
