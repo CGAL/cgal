@@ -561,7 +561,8 @@ private:
 
     std::array<Orientation,8> o1, o2;
 
-    int ori = 0, ct1 = 0, ct2 = 0;  //ori=0 to avoid the case that there is only one cut plane
+    Oriented_side ori = ON_ORIENTED_BOUNDARY;
+    int ct1 = 0, ct2 = 0;  //ori=0 to avoid the case that there is only one cut plane
     std::vector<int> cutp;
     cutp.reserve(8);
 
@@ -865,7 +866,8 @@ private:
     std::vector<int>  cutp;
     cutp.reserve(8);
 
-    int  ori = 0, ct1 = 0, ct2 = 0, ct3 = 0;
+    Oriented_side ori = ON_ORIENTED_BOUNDARY;
+    int ct1 = 0, ct2 = 0, ct3 = 0;
 
     for (unsigned int i = 0; i < prism.size(); i++)
       {
@@ -947,7 +949,7 @@ private:
             }
             const Plane& plane_j = prism[cutp[j]];
             ori = oriented_side(plane_j.eplane, ip);
-            if (ori == 1){
+            if (ori == ON_POSITIVE_SIDE){
               break;
             }
           }
@@ -957,7 +959,7 @@ private:
           }
         }
 
-        ori = 0;// initialize the orientation to avoid the j loop doesn't happen because cutp.size()==1
+        ori = ON_ORIENTED_BOUNDARY;// initialize the orientation to avoid the j loop doesn't happen because cutp.size()==1
       }
 
     if (cutp.size() <= 2){
@@ -1010,9 +1012,9 @@ private:
                   continue;
               }
 
-              ori = int(oriented_side(prism[cutp[k]].eplane, *ipp));
+              ori = oriented_side(prism[cutp[k]].eplane, *ipp);
 
-              if (ori == 1){
+              if (ori == ON_POSITIVE_SIDE){
                   break;
               }
             }
@@ -1075,14 +1077,14 @@ private:
                 const std::vector<unsigned int> &prismindex,
                 const std::vector<std::vector<unsigned int>>& intersect_face, const unsigned int &jump, int &id) const
   {
-    int ori;
+    Oriented_side ori;
     unsigned int tot, fid;
     for (unsigned int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
           continue;
         }
       tot = 0; fid = 0;
-      ori = -1;
+      ori = ON_NEGATIVE_SIDE;
       const Prism& prism = halfspace[prismindex[i]];
       for (unsigned int j = 0; j < halfspace[prismindex[i]].size(); j++) {
 
@@ -1091,21 +1093,21 @@ private:
             if (fid + 1 < intersect_face[i].size()) fid++;
           }
         else continue;
-        ori = int(oriented_side(prism[j].eplane, ip));
+        ori = oriented_side(prism[j].eplane, ip);
 
-        if (ori == 1 || ori == 0)
+        if (ori == ON_POSITIVE_SIDE || ori == ON_ORIENTED_BOUNDARY)
           {
             break;
           }
 
-        if (ori == -1)
+        if (ori == ON_NEGATIVE_SIDE)
           {
             tot++;
           }
       }
-      if (ori == 1 || ori == 0) continue;
+      if (ori == ON_POSITIVE_SIDE || ori == ON_ORIENTED_BOUNDARY) continue;
       fid = 0;
-      ori = -1;
+      ori = ON_NEGATIVE_SIDE;
       for (unsigned int j = 0; j < halfspace[prismindex[i]].size(); j++) {
         if (intersect_face[i][fid] == j)
           {
@@ -1113,18 +1115,18 @@ private:
             continue;
           }
 
-        ori = int(oriented_side(prism[j].eplane, ip));
-        if (ori == 1 || ori == 0)
+        ori = oriented_side(prism[j].eplane, ip);
+        if (ori == ON_POSITIVE_SIDE || ori == ON_ORIENTED_BOUNDARY)
           {
             break;
           }
 
-        if (ori == -1)
+        if (ori == ON_NEGATIVE_SIDE)
           {
             tot++;
           }
       }
-      if (ori == 1 || ori == 0) continue;
+      if (ori == ON_POSITIVE_SIDE || ori == ON_ORIENTED_BOUNDARY) continue;
       if (tot == halfspace[prismindex[i]].size())
         {
           id = i;
@@ -1144,7 +1146,7 @@ private:
     const unsigned int &jump,
     int &id) const
   {
-    int ori;
+    Oriented_side ori;
     unsigned int tot, fid;
     for (unsigned int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
@@ -1154,7 +1156,7 @@ private:
         continue;
       }
       tot = 0; fid = 0;
-      ori = -1;
+      ori = ON_NEGATIVE_SIDE;
       const Prism& prism = halfspace[prismindex[i]];
 
       for (unsigned int j = 0; j < halfspace[prismindex[i]].size(); j++) {
@@ -1163,20 +1165,20 @@ private:
         }else{
           continue;
         }
-        ori = int(oriented_side(prism[j].eplane,ip));
-        if (ori == 1 || ori == 0){
+        ori = oriented_side(prism[j].eplane,ip);
+        if (ori == ON_POSITIVE_SIDE || ori == ON_ORIENTED_BOUNDARY){
           break;
         }
 
-        if (ori == -1){
+        if (ori == ON_NEGATIVE_SIDE){
           tot++;
         }
       }
-      if (ori == 1 || ori == 0){
+      if (ori == ON_POSITIVE_SIDE || ori == ON_ORIENTED_BOUNDARY){
         continue;
       }
       fid = 0;
-      ori = -1;
+      ori = ON_NEGATIVE_SIDE;
 
       for (unsigned int j = 0; j < halfspace[prismindex[i]].size(); j++) {
         if (intersect_face[i][fid] == j){
@@ -1184,16 +1186,16 @@ private:
           continue;
         }
 
-        ori = int(oriented_side(prism[j].eplane,ip));
-        if (ori == 1 || ori == 0){
+        ori = oriented_side(prism[j].eplane,ip);
+        if (ori == ON_POSITIVE_SIDE || ori == ON_ORIENTED_BOUNDARY){
           break;
         }
 
-        if (ori == -1){
+        if (ori == ON_NEGATIVE_SIDE){
           tot++;
         }
       }
-      if (ori == 1 || ori == 0){
+      if (ori == ON_POSITIVE_SIDE || ori == ON_ORIENTED_BOUNDARY){
         continue;
       }
       if (tot == halfspace[prismindex[i]].size()) {
@@ -1215,7 +1217,7 @@ private:
     const unsigned int &jump2,
     int &id) const
   {
-    int ori;
+    Oriented_side ori;
     unsigned int tot, fid;
     for (unsigned int i = 0; i < prismindex.size(); i++){
 
@@ -1225,7 +1227,7 @@ private:
 
       tot = 0;
       fid = 0;
-      ori = -1;
+      ori = ON_NEGATIVE_SIDE;
       const Prism& prism = halfspace[prismindex[i]];
       for (unsigned int j = 0; j < prism.size(); j++) {
         if (intersect_face[i][fid] == j){
@@ -1233,19 +1235,19 @@ private:
         }
         else continue;
 
-        ori = int(oriented_side(prism[j].eplane, ip));
+        ori = oriented_side(prism[j].eplane, ip);
 
-        if (ori == 1 || ori == 0){
+        if (ori == ON_POSITIVE_SIDE || ori == ON_ORIENTED_BOUNDARY){
           break;
         }
 
-        if (ori == -1){
+        if (ori == ON_NEGATIVE_SIDE){
           tot++;
         }
       }
-      if (ori == 1 || ori == 0) continue;
+      if (ori == ON_POSITIVE_SIDE || ori == ON_ORIENTED_BOUNDARY) continue;
       fid = 0;
-      ori = -1;
+      ori = ON_NEGATIVE_SIDE;
       for (unsigned int j = 0; j < halfspace[prismindex[i]].size(); j++) {
         if (intersect_face[i][fid] == j){
           if (fid + 1 < intersect_face[i].size()){
@@ -1254,17 +1256,17 @@ private:
           continue;
         }
 
-        ori = int(oriented_side(prism[j].eplane, ip));
+        ori = oriented_side(prism[j].eplane, ip);
 
-        if (ori == 1 || ori == 0){
+        if (ori == ON_POSITIVE_SIDE || ori == ON_ORIENTED_BOUNDARY){
           break;
         }
 
-        if (ori == -1){
+        if (ori == ON_NEGATIVE_SIDE){
           tot++;
         }
       }
-      if (ori == 1 || ori == 0) continue;
+      if (ori == ON_POSITIVE_SIDE || ori == ON_ORIENTED_BOUNDARY) continue;
       if (tot == prism.size()){
 
         id = i;
@@ -1288,7 +1290,7 @@ private:
     const unsigned int &jump2,
     int &id) const
   {
-    int ori;
+    Oriented_side ori;
     unsigned int tot, fid;
     for (unsigned int i = 0; i < prismindex.size(); i++){
 
@@ -1299,7 +1301,7 @@ private:
       if (coverlist[i] == 1) continue;
       tot = 0;
       fid = 0;
-      ori = -1;
+      ori = ON_NEGATIVE_SIDE;
       const Prism& prism = halfspace[prismindex[i]];
       for (unsigned int j = 0; j < prism.size(); j++) {
         if ((*intersect_face[i])[fid] == j){
@@ -1307,20 +1309,19 @@ private:
         }
         else continue;
 
-        ori = int(oriented_side(prism[j].eplane, ip));
+        ori = oriented_side(prism[j].eplane, ip);
 
-        if (ori == 1 || ori == 0){
+        if (ori == ON_POSITIVE_SIDE || ori == ON_ORIENTED_BOUNDARY){
           break;
         }
 
-        if (ori == -1){
-
+        if (ori == ON_NEGATIVE_SIDE){
           tot++;
         }
       }
-      if (ori == 1 || ori == 0) continue;
+      if (ori == ON_POSITIVE_SIDE || ori == ON_ORIENTED_BOUNDARY) continue;
       fid = 0;
-      ori = -1;
+      ori = ON_NEGATIVE_SIDE;
       for (unsigned int j = 0; j < halfspace[prismindex[i]].size(); j++) {
         if ((*intersect_face[i])[fid] == j)
           {
@@ -1330,18 +1331,18 @@ private:
             continue;
           }
 
-        ori = int(oriented_side(prism[j].eplane, ip));
+        ori = oriented_side(prism[j].eplane, ip);
 
-        if (ori == 1 || ori == 0){
+        if (ori == ON_POSITIVE_SIDE || ori == ON_ORIENTED_BOUNDARY){
 
           break;
         }
 
-        if (ori == -1){
+        if (ori == ON_NEGATIVE_SIDE){
           tot++;
         }
       }
-      if (ori == 1 || ori == 0) continue;
+      if (ori == ON_POSITIVE_SIDE || ori == ON_ORIENTED_BOUNDARY) continue;
       if (tot == halfspace[prismindex[i]].size()){
         id = i;
         return IN_PRISM;
