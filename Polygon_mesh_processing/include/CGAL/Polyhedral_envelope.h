@@ -480,7 +480,7 @@ private:
 
 
   bool
-  point_out_prism(const ePoint_3 &point, const std::vector<unsigned int> &prismindex, int jump) const
+  point_out_prism(const ePoint_3 &point, const std::vector<unsigned int> &prismindex, unsigned int jump) const
   {
     Orientation ori;
 
@@ -514,7 +514,7 @@ private:
   // \param jump is the index of the prism that shall be ignored
   // \param id is a return parameter for the prism with `point` inside
   bool
-  point_out_prism_return_local_id(const Point_3 &point, const ePoint_3 &epoint, const std::vector<unsigned int> &prismindex, const int jump, int &id) const
+  point_out_prism_return_local_id(const Point_3 &point, const ePoint_3 &epoint, const std::vector<unsigned int> &prismindex, const unsigned int jump, int &id) const
   {
     Vector_3 bmin, bmax;
 
@@ -665,7 +665,7 @@ private:
 
   int
   Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id(const ePoint_3 &ip,
-                                                          const std::vector<unsigned int> &prismindex, const int &jump, int &id) const
+                                                          const std::vector<unsigned int> &prismindex, const unsigned int &jump, int &id) const
   {
     Oriented_side ori;
 
@@ -703,7 +703,7 @@ private:
     ePoint_3 esource(source.x(),source.y(),source.z());
     ePoint_3 etarget(target.x(),target.y(),target.z());
 
-    int jump1 = -1;
+    unsigned int jump1 = -1;
     bool out, cut;
     int inter;
 
@@ -872,7 +872,7 @@ private:
   int
   is_triangle_cut_envelope_polyhedra(const int &cindex, //the triangle is not degenerated
                                      const Triangle& query,
-                                     std::vector<int> &cid) const
+                                     std::vector<unsigned int> &cid) const
   {
     const ePoint_3 &tri0 = query.etriangle[0];
     const ePoint_3 &tri1 = query.etriangle[1];
@@ -1079,7 +1079,7 @@ private:
 
   bool
   is_tpp_on_polyhedra(const ePoint_3& ip,
-                      const int &prismid, const int &faceid)const
+                      const int &prismid, const unsigned int &faceid)const
   {
     for (unsigned int i = 0; i < halfspace[prismid].size(); i++) {
       /*bool neib = is_two_facets_neighbouring(prismid, i, faceid);// this works only when the polyhedron is convex and no two neighbour facets are coplanar
@@ -1098,7 +1098,7 @@ private:
   Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order(
                 const ePoint_3& ip,
                 const std::vector<unsigned int> &prismindex,
-                const std::vector<std::vector<int>>& intersect_face, const int &jump, int &id) const
+                const std::vector<std::vector<unsigned int>>& intersect_face, const unsigned int &jump, int &id) const
   {
     int ori;
     unsigned int tot, fid;
@@ -1164,13 +1164,13 @@ private:
   Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(
     const ePoint_3& ip,
     const std::vector<unsigned int> &prismindex,
-    const std::vector<std::vector<int>>& intersect_face,
+    const std::vector<std::vector<unsigned int>>& intersect_face,
     const std::vector<int>& coverlist,
-    const int &jump,
+    const unsigned int &jump,
     int &id) const
   {
-    int tot, ori;
-    unsigned int fid;
+    int ori;
+    unsigned int tot, fid;
     for (unsigned int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
         continue;
@@ -1235,12 +1235,13 @@ private:
   Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order(
     const ePoint_3& ip,
     const std::vector<unsigned int> &prismindex,
-    const std::vector<std::vector<int>>&intersect_face,
-    const int &jump1,
-    const int &jump2,
+    const std::vector<std::vector<unsigned int>>&intersect_face,
+    const unsigned int &jump1,
+    const unsigned int &jump2,
     int &id) const
   {
-    int tot, ori, fid;
+    int ori;
+    unsigned int tot, fid;
     for (unsigned int i = 0; i < prismindex.size(); i++){
 
       if (prismindex[i] == jump1 || prismindex[i] == jump2) continue;
@@ -1306,10 +1307,10 @@ private:
   Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(
     const ePoint_3& ip,
     const std::vector<unsigned int>& prismindex,
-    const std::vector<std::vector<int>*>& intersect_face,
+    const std::vector<std::vector<unsigned int>*>& intersect_face,
     const std::vector<int>& coverlist,
-    const int &jump1,
-    const int &jump2,
+    const unsigned int &jump1,
+    const unsigned int &jump2,
     int &id) const
   {
     int ori;
@@ -1391,7 +1392,7 @@ private:
 
     Triangle query(t0, t1, t2);
 
-    int jump1, jump2;
+    unsigned int jump1, jump2;
     static const std::array<std::array<int, 2>, 3> triseg = {
       {{{1, 2}}, {{2, 0}}, {{0, 1}}}
     };
@@ -1399,7 +1400,7 @@ private:
 
     std::vector<unsigned int> filtered_intersection;
     filtered_intersection.reserve(prismindex.size() / 3);
-    std::vector<std::vector<int>>intersect_face;
+    std::vector<std::vector<unsigned int>>intersect_face;
     intersect_face.reserve(prismindex.size() / 3);
     bool out, cut;
 
@@ -1478,7 +1479,7 @@ private:
 #endif // DEGENERATION_FIX
 
 
-    std::vector<int> cidl; cidl.reserve(8); // todo: std::array??
+    std::vector<unsigned int> cidl; cidl.reserve(8); // todo: std::array??
     for (unsigned int i = 0; i < prismindex.size(); i++) {
       tti = is_triangle_cut_envelope_polyhedra(prismindex[i],
                                                query,
@@ -1511,8 +1512,8 @@ private:
 
     std::vector<unsigned int> neighbours;//local id
     std::vector<unsigned int > list;
-    std::vector<std::vector<int>*> neighbour_facets;
-    std::vector<std::vector<int>>  idlistorder;
+    std::vector<std::vector<unsigned int>*> neighbour_facets;
+    std::vector<std::vector<unsigned int>>  idlistorder;
     std::vector<int> neighbour_cover;
     idlistorder.emplace_back(intersect_face[queue[0]]);
 
