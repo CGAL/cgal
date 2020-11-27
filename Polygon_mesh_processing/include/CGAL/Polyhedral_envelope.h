@@ -68,6 +68,8 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_primitive.h>
 
+#include <CGAL/Dynamic_property_map.h>
+
 #ifdef CGAL_ENVELOPE_DEBUG
 // This is for computing the surface mesh of a prism
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
@@ -264,7 +266,7 @@ public:
 
 #ifndef DOXYGEN_RUNNING
   Polyhedral_envelope(const std::vector<Point_3>& env_vertices,
-                      std::vector<Vector3i> env_faces,
+                      const std::vector<Vector3i>& env_faces,
                       double epsilon)
     : env_vertices(env_vertices), env_faces(env_faces)
   {
@@ -272,38 +274,32 @@ public:
   }
 #endif
 
-   /**
-   * Constructor with a triangulated surface mesh.
-    * @tparam TriangleMesh a model of `FaceListGraph`
-    * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-    *
-    * @param tmesh a triangle mesh
-    * @param epsilon the distance of the Minkowski sum hull
-    * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-    *
-    * \cgalNamedParamsBegin
-    *   \cgalParamNBegin{vertex_point_map}
-    *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
-    *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-    *                    as key type and `%Point_3` as value type}
-    *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
-    *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-    *                     must be available in `TriangleMesh`.}
-    *   \cgalParamNEnd
-    *
-    *   \cgalParamNBegin{vertex_index_map}
-    *     \cgalParamDescription{a property map associating to each vertex of `tmesh` a unique index between `0` and `num_vertices(tmesh) - 1`}
-    *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
-    *                    as key type and `std::size_t` as value type}
-    *     \cgalParamDefault{an automatically indexed internal map}
-    *   \cgalParamNEnd
-    *
-    * \cgalNamedParamsEnd
-    *
-    * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
-    *       while the queries are performed
-    */
+  /// \name Initialization
+  /// @{
 
+  /**
+   * Constructor with a triangulated surface mesh.
+   * @tparam TriangleMesh a model of `FaceListGraph`
+   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+   *
+   * @param tmesh a triangle mesh
+   * @param epsilon the distance of the Minkowski sum hull
+   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+   *
+   * \cgalNamedParamsBegin
+   *   \cgalParamNBegin{vertex_point_map}
+   *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+   *                    as key type and `%Point_3` as value type}
+   *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+   *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+   *                     must be available in `TriangleMesh`.}
+   *   \cgalParamNEnd
+   * \cgalNamedParamsEnd
+   *
+   * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
+   *       while the queries are performed
+   */
   template <typename TriangleMesh, typename NamedParameters>
   Polyhedral_envelope(const TriangleMesh& tmesh,
                       double epsilon,
@@ -312,25 +308,28 @@ public:
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
+    typedef boost::graph_traits<TriangleMesh> Graph_traits;
 
     typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, tmesh));
 
-    typedef typename GetInitializedVertexIndexMap<TriangleMesh, NamedParameters>::const_type VertexIndexMap;
-    VertexIndexMap vim = CGAL::get_initialized_vertex_index_map(tmesh, np);
+    env_vertices.reserve(vertices(tmesh).size());
+    env_faces.reserve(faces(tmesh).size());
 
-    env_vertices.reserve(num_vertices(tmesh));
-    env_faces.reserve(num_faces(tmesh));
+    typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<int> >::const_type VIM;
+    VIM vim  = get(CGAL::dynamic_vertex_property_t<int>(), tmesh);
 
-    for(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v : vertices(tmesh)){
+    int id=0;
+    for(typename Graph_traits::vertex_descriptor v : vertices(tmesh)){
+      put(vim, v, id++);
       env_vertices.emplace_back(get(vpm, v));
     }
 
     GeomTraits gt;
-    for(typename boost::graph_traits<TriangleMesh>::face_descriptor f : faces(tmesh)){
+    for(typename Graph_traits::face_descriptor f : faces(tmesh)){
       if(! Polygon_mesh_processing::is_degenerate_triangle_face(f, tmesh, parameters::geom_traits(gt).vertex_point_map(vpm))){
-        typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h = halfedge(f, tmesh);
+        typename Graph_traits::halfedge_descriptor h = halfedge(f, tmesh);
         int i = get(vim, source(h, tmesh));
         int j = get(vim, target(h, tmesh));
         int k = get(vim, target(next(h, tmesh), tmesh));
