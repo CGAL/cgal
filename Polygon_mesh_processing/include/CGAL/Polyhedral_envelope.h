@@ -80,6 +80,7 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/iterator/counting_iterator.hpp>
+#include <boost/range/has_range_iterator.hpp>
 
 #include <string>
 #include <fstream>
@@ -264,16 +265,6 @@ private:
 
 public:
 
-#ifndef DOXYGEN_RUNNING
-  Polyhedral_envelope(const std::vector<Point_3>& env_vertices,
-                      const std::vector<Vector3i>& env_faces,
-                      double epsilon)
-    : env_vertices(env_vertices), env_faces(env_faces)
-  {
-    init(epsilon);
-  }
-#endif
-
   /// \name Initialization
   /// @{
 
@@ -373,7 +364,11 @@ public:
   Polyhedral_envelope(const FaceRange& face_range,
                       const TriangleMesh& tmesh,
                       double epsilon,
-                      const NamedParameters& np)
+                      const NamedParameters& np
+#ifndef DOXYGEN_RUNNING
+                      , typename boost::disable_if<boost::has_range_const_iterator<TriangleMesh>>::type* = 0
+#endif
+  )
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -419,6 +414,63 @@ public:
     init(epsilon);
   }
 
+  /**
+    * Constructor with a triangle soup.
+    *
+    * @tparam PointRange a model of the concept `ConstRange` with `PointRange::const_iterator`
+    *                    being a model of `InputIterator` with a point as value type
+    * @tparam TriangleRange a model of the concept `ConstRange` with `TriangleRange::const_iterator`
+    *                       being a model of `InputIterator` whose value type is model of
+    *                       the concept `RandomAccessContainer` whose value_type is convertible to `std::size_t`.
+    * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+    *
+    * @param points points of the soup of triangles
+    * @param triangles each element in the range describes a triangle as a triple of indices of the points in `points`
+    * @param epsilon the distance of the Minkowski sum hull
+    * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+    *
+    * \cgalNamedParamsBegin
+    *   \cgalParamNBegin{point_map}
+    *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
+    *     \cgalParamType{a model of `ReadablePropertyMap` whose value type is `Point_3` and whose key
+    *                    is the value type of `PointRange::const_iterator`}
+    *     \cgalParamDefault{`CGAL::Identity_property_map`}
+    *   \cgalParamNEnd
+    * \cgalNamedParamsEnd
+    *
+    */
+  template <typename PointRange, typename TriangleRange, typename NamedParameters>
+  Polyhedral_envelope(const PointRange& points,
+                      const TriangleRange& triangles,
+                      double epsilon,
+                      const NamedParameters& np
+#ifndef DOXYGEN_RUNNING
+                      , typename boost::enable_if<boost::has_range_const_iterator<TriangleRange>>::type* = 0
+#endif
+                      )
+  {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::const_type Point_map;
+    Point_map pm = choose_parameter<Point_map>(get_parameter(np, internal_np::point_map));
+
+    env_vertices.reserve(points.size());
+    env_faces.reserve(triangles.size());
+
+    typedef typename boost::range_value<PointRange>::type  Point_key;
+    for (const Point_key& p : points)
+      env_vertices.emplace_back(get(pm,p));
+
+    typedef typename boost::range_value<TriangleRange>::type  Triangle;
+    for (const Triangle& t : triangles)
+    {
+      Vector3i face = { t[0], t[1], t[2] };
+      env_faces.emplace_back(face);
+    }
+    init(epsilon);
+  }
+
   /// @}
 
 #ifndef DOXYGEN_RUNNING
@@ -431,8 +483,17 @@ public:
   template <typename FaceRange, typename TriangleMesh>
   Polyhedral_envelope(const FaceRange& face_range,
                       const TriangleMesh& tmesh,
-                      double epsilon)
+                      double epsilon,
+                      typename boost::disable_if<boost::has_range_const_iterator<TriangleMesh>>::type* = 0)
     : Polyhedral_envelope(face_range, tmesh, epsilon, parameters::all_default())
+  {}
+
+  template <typename PointRange, typename TriangleRange, typename NamedParameters>
+  Polyhedral_envelope(const PointRange& points,
+                      const TriangleRange& triangles,
+                      double epsilon,
+                      typename boost::enable_if<boost::has_range_const_iterator<TriangleRange>>::type* = 0)
+    : Polyhedral_envelope(points, triangles, epsilon, parameters::all_default())
   {}
 #endif
 
