@@ -325,6 +325,7 @@ void test_kernel()
   test_skeleton<K>("data/rectangle.poly", 6, 18, 4);
   test_skeleton<K>("data/region_4.poly", 4, 12, 3);
   test_skeleton<K>("data/rombus_4_spokes.poly", 17, 56, 12);
+  test_skeleton<K>("data/issue5177.poly");
 
   // The embedding of those below is bad when using EPICK
   test_skeleton<K>("data/poly4.poly"/*, 15, 48, 10*/); // almost duplicates
