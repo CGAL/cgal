@@ -253,15 +253,21 @@ struct Mpzf {
   typedef Mpzf_impl::no_pool<mp_limb_t*,Mpzf> pool;
 //#endif
 
-  mp_limb_t* data_; /* data_[0] is never 0 (except possibly for 0). */
+  /* data_[0] is never 0 (except possibly for 0). */
+  mp_limb_t* data_; /* coverity[member_decl] */
+
   inline mp_limb_t*& data() { return data_; }
   inline mp_limb_t const* data() const { return data_; }
 
 #ifdef CGAL_MPZF_USE_CACHE
   mp_limb_t cache[cache_size + 1];
 #endif
-  int size; /* Number of relevant limbs in data_. */
-  int exp; /* The number is data_ (an integer) * 2 ^ (64 * exp). */
+  /* Number of relevant limbs in data_. */
+  int size; /* coverity[member_decl] */
+
+  /* The number is data_ (an integer) * 2 ^ (64 * exp). */
+  int exp; /* coverity[member_decl] */
+
   typedef int Exponent_type;
   typedef int Size_type;
 
@@ -300,10 +306,10 @@ struct Mpzf {
     pool::push(data());
   }
 
-  Mpzf(noalloc)
-    : data_(nullptr), size(0), exp(0) {}
-  Mpzf(allocate,int i)
-    : size(0), exp(0) { init(i); }
+  // These constructors intentionally
+  // don't initialize any members
+  Mpzf(noalloc){}
+  Mpzf(allocate,int i) { init(i); }
 
   public:
 
