@@ -471,6 +471,42 @@ public:
     return cwp(get_closest_point(cp(wp), cp(wq)), cw(wq));
   }
 
+  Triangle get_closest_triangle(const Bare_point& p, const Triangle& t) const
+  {
+    Triangle rt;
+    const std::array<Bare_point, 3> ct = { canonicalize_point(t[0]),
+                                           canonicalize_point(t[1]),
+                                           canonicalize_point(t[2]) };
+    FT min_sq_dist = std::numeric_limits<FT>::infinity();
+
+    for (int i = 0; i < 3; ++i) {
+      for (int j = 0; j < 3; ++j) {
+        for (int k = 0; k < 3; ++k) {
+
+          const Triangle tt(
+            construct_point(std::make_pair(ct[0], Offset(i - 1, j - 1, k - 1))),
+            construct_point(std::make_pair(ct[1], Offset(i - 1, j - 1, k - 1))),
+            construct_point(std::make_pair(ct[2], Offset(i - 1, j - 1, k - 1))));
+
+          for (int v = 0; v < 3; ++v) {//vertices
+            const Bare_point ttv = tt[v];
+            FT sq_dist = geom_traits().compute_squared_distance_3_object()(p, ttv);
+
+            if (sq_dist < min_sq_dist)
+            {
+              rt = tt;
+              min_sq_dist = sq_dist;
+            }
+            if(min_sq_dist == 0.)
+              return rt;
+          }
+        }
+      }
+    }
+
+    return rt;
+  }
+
   // Warning: This is a periodic version that computes the smallest possible
   // distances between p and q, and between p and r FOR ALL POSSIBLE OFFSETS
   // before comparing these distances.

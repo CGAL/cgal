@@ -59,6 +59,7 @@ public:
   typedef typename Geom_traits::FT                            FT;
   typedef typename Base::Bare_point                           Bare_point;
   typedef typename Base::Weighted_point                       Weighted_point;
+  typedef typename Base::Triangle                             Triangle;
 
   typedef typename Base::Vertex_handle                        Vertex_handle;
   typedef typename Base::Cell_handle                          Cell_handle;
@@ -80,6 +81,11 @@ public:
   Bare_point get_closest_point(const Bare_point& /*p*/, const Bare_point& q) const
   {
     return q;
+  }
+
+  Triangle get_closest_triangle(const Bare_point& /*p*/, const Triangle& t) const
+  {
+    return t;
   }
 
   void set_point(const Vertex_handle v,
