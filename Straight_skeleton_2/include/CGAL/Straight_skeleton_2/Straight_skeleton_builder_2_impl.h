@@ -88,7 +88,7 @@ Straight_skeleton_builder_2<Gt,Ss,V>::PopEventFromPQ()
 }
 
 // Tests whether there is an edge event between the 3 contour edges defining nodes 'aLnode' and 'aRNode'.
-// If such event exits and is not in the past, it's returned. Otherwise the result is null
+// If such event exits and is not in the past, it's returned. Otherwise the result is null.
 //
 template<class Gt, class Ss, class V>
 typename Straight_skeleton_builder_2<Gt,Ss,V>::EventPtr
@@ -1528,6 +1528,10 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::Propagate()
         }
 
         ++ mStepID ;
+      }
+      else
+      {
+        CGAL_STSKEL_BUILDER_TRACE (3,"\nAlready processed") ;
       }
     }
     else break ;

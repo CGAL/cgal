@@ -467,7 +467,7 @@ compute_degenerate_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2
   //
   //   (1)
   //   The bisecting line of e0 and e1 is a line perpendicular to e0 (and e1)
-  //   which passes through 'q': the degenerate offset vertex (e0*,e1*)
+  //   which passes through 'q', the degenerate offset vertex (e0*,e1*).
   //   This "degenerate" bisecting line is given by:
   //
   //     B0(t) = p + t*[l0.a,l0.b]
@@ -482,9 +482,9 @@ compute_degenerate_offset_lines_isec_timeC2 ( boost::intrusive_ptr< Trisegment_2
   //    l0.a*x(t) + l0.b*y(t) + l0.c + t = 0
   //    l2.a*x(t) + l2.b*y(t) + l2.c + t = 0
   //
-  //   where (l0.a,l0.b,l0.c) and (l2.a,l2.b,l0.c) are the normalized line coefficientes of e0 and e2 resp.
+  //   where (l0.a,l0.b,l0.c) and (l2.a,l2.b,l2.c) are the normalized line coefficientes of e0 and e2, resp.
   //
-  //     B1(t)=[x(t),y(t)]
+  //     B1(t) = [x(t),y(t)]
   //
   //   (3)
   //   These two bisecting lines B0(t) and B1(t) intersect (if they do) in a single point 'p' whose distance

@@ -1061,6 +1061,12 @@ private :
   void CreateContourBisectors();
   void HarmonizeSpeeds(boost::mpl::bool_<false>) { }
   void HarmonizeSpeeds(boost::mpl::bool_<true>);
+
+  // @fixme This function can create an inconsistency between the skeleton and the offset
+  // when caching is used: this function will harmonize values in the cache used by the skeleton
+  // builder, but not the values in the cache used in the offset builder (actually, no_cache is used
+  // for the offset builder, at the moment). It is difficult to harmonize between caches as one might
+  // wish to build the skeleton and the offset in completely different moments and independent functions...
   void HarmonizeSpeeds() {
     // Harmonize speed only if we have a segment type with id and a not exact square root
     return HarmonizeSpeeds(
