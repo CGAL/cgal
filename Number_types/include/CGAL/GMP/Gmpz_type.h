@@ -45,7 +45,7 @@ struct Gmpz_rep
 
   mpz_t mpZ; /* coverity[member_decl] */
 
-  Gmpz_rep() : mpZ{} {}
+  Gmpz_rep() {}
   ~Gmpz_rep() { mpz_clear(mpZ); }
 
 private:
