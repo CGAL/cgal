@@ -779,32 +779,9 @@ private:
                                const ePoint_3& tq,
                                const ePoint_3& tr,
                                const ePoint_3& n,
-                               const Plane& facet1,
-                               const Plane& facet2,
                                const ePoint_3& ip
                                ) const
   {
-#if 0
-    // This checks if the triangle is completely on a side of facet1   or facet2
-    // If this is  the case the intersection line of the facets cannot be in the triangle
-    // But this case gets altready filtered ealier
-    bool fast_exit = false;
-    Orientation ori = orientation(facet1.ep, facet1.eq, facet1.er, tp);
-    if(ori != COPLANAR){
-      if( (ori == orientation(facet1.ep, facet1.eq, facet1.er, tq))
-          && (ori == orientation(facet1.ep, facet1.eq, facet1.er, tr)) ){
-        return 0;
-      }
-    }
-    ori = orientation(facet2.ep, facet2.eq, facet2.er, tp);
-    if(ori != COPLANAR){
-      if( (ori == orientation(facet2.ep, facet2.eq, facet2.er, tq))
-          && (ori == orientation(facet2.ep, facet2.eq, facet2.er, tr))){
-        return 0;
-      }
-    }
-#endif
-
     int o1 = int(orientation(n,tp,tq, ip));
     int o2 = int(orientation(n,tq,tr, ip));
 
@@ -1013,8 +990,6 @@ private:
             if(ipp){
                 inter = is_3_triangle_cut_float_fast(tri0, tri1, tri2,
                                                      n,
-                                                     prism[cutp[i]],
-                                                     prism[cutp[j]],
                                                      *ipp);
             }
             // this was for a fast float check
@@ -1679,7 +1654,7 @@ private:
                    const Point_3& midp,
                    const Vector_3 &normal,
                    const double distance,
-                   const bool robust) const
+                   const bool /* robust */) const
   {
     Point_3 plane0, plane1, plane2;
     double distance_small = distance * 1;// to be conservative to reduce numerical error, can set the Scalar as 0.999
