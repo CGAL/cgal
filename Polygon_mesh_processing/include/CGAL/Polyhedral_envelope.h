@@ -975,7 +975,6 @@ private:
             }
           }
           if (ori != 1){
-            int cutpi = cutp[i];
             cut[cutp[i]] = true;
             break;
           }
@@ -1021,8 +1020,6 @@ private:
             // this was for a fast float check
             if (inter == 2)
               { //we dont know if point exist or if inside of triangle
-                int cutpi = cutp[i];
-                int cutpj = cutp[j];
                 cut[cutp[i]] = true;
                 cut[cutp[j]] = true;
                 continue;
@@ -1046,8 +1043,6 @@ private:
             }
 
             if (ori != 1) {
-              int cutpi = cutp[i];
-              int cutpj = cutp[j];
               cut[cutp[i]] = true;
               cut[cutp[j]] = true;
             }
@@ -1105,7 +1100,8 @@ private:
                 const std::vector<unsigned int> &prismindex,
                 const std::vector<std::vector<int>>& intersect_face, const int &jump, int &id) const
   {
-    int tot, fid, ori;
+    int ori;
+    unsigned int tot, fid;
     for (unsigned int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
           continue;
@@ -1173,8 +1169,8 @@ private:
     const int &jump,
     int &id) const
   {
-    int tot, ori, fid;
-
+    int tot, ori;
+    unsigned int fid;
     for (unsigned int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
         continue;
@@ -1316,7 +1312,8 @@ private:
     const int &jump2,
     int &id) const
   {
-    int tot, ori, fid;
+    int ori;
+    unsigned int tot, fid;
     for (unsigned int i = 0; i < prismindex.size(); i++){
 
 
@@ -1406,9 +1403,7 @@ private:
     intersect_face.reserve(prismindex.size() / 3);
     bool out, cut;
 
-    int inter, inter1, record1, record2,
-
-      tti; //triangle-triangle intersection
+    int inter, tti; //triangle-triangle intersection
 
     jump1 = -1;
 
@@ -1708,11 +1703,10 @@ private:
     double tolerance = epsilon / std::sqrt(3);// the envelope thickness, to be conservative
     double bbox_tolerance = epsilon *(1 + 1e-6);
     Vector_3 AB, AC, BC, normal;
-    int de;
     Plane plane;
     std::array<Vector_3, 8> box;
 
-
+#if 0
     static const std::array<Vector_3, 8> boxorder = {
       {
         {1, 1, 1},
@@ -1724,9 +1718,10 @@ private:
         {-1, -1, -1},
         {1, -1, -1},
       } };
-    bool use_accurate_cross = false;
 
-    static const int c_face[6][3] = { {0, 1, 2}, {4, 7, 6}, {0, 3, 4}, {1, 0, 4}, {1, 5, 2}, {2, 6, 3} };
+  static const int c_face[6][3] = { {0, 1, 2}, {4, 7, 6}, {0, 3, 4}, {1, 0, 4}, {1, 5, 2}, {2, 6, 3} };
+#endif
+    bool use_accurate_cross = false;
 
     halfspace.resize(faces.size());
     bounding_boxes.resize(faces.size());
@@ -1742,7 +1737,7 @@ private:
         BC = ver[faces[i][2]] - ver[faces[i][1]];
 
 #if 0
-        de = algorithms::is_triangle_degenerated(ver[faces[i][0]], ver[faces[i][1]], ver[faces[i][2]]);
+        int de = algorithms::is_triangle_degenerated(ver[faces[i][0]], ver[faces[i][1]], ver[faces[i][2]]);
 
         if (de == DEGENERATED_POINT)
           {
