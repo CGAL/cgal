@@ -484,12 +484,12 @@ private:
   {
     Orientation ori;
 
-    for (int i = 0; i < prismindex.size(); i++){
+    for (unsigned int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
         continue;
       }
 
-      for (int j = 0; j < halfspace[prismindex[i]].size(); j++) {
+      for (unsigned int j = 0; j < halfspace[prismindex[i]].size(); j++) {
         const Plane& plane = halfspace[prismindex[i]][j];
         // As all points have coordinates with intervals with inf==sup the orientation test is faster
         // as it can exploit the static filters
@@ -520,14 +520,14 @@ private:
 
     Orientation ori;
 
-    for (int i = 0; i < prismindex.size(); i++){
+    for (unsigned int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
         continue;
       }
       if(bounding_boxes[prismindex[i]].has_on_unbounded_side(point)){
         continue;
       }
-      for (int j = 0; j < halfspace[prismindex[i]].size(); j++){
+      for (unsigned int j = 0; j < halfspace[prismindex[i]].size(); j++){
         const Plane& plane = halfspace[prismindex[i]][j];
         ori = orientation(plane.ep, plane.eq, plane.er, epoint);
         if (ori != ON_NEGATIVE_SIDE){
@@ -565,7 +565,7 @@ private:
     std::vector<int> cutp;
     cutp.reserve(8);
 
-    for (int i = 0; i < prism.size(); i++){
+    for (unsigned int i = 0; i < prism.size(); i++){
       const Plane& plane = prism[i];
       // POSITIVE is outside the prism
       o1[i] = orientation(plane.ep, plane.eq, plane.er, source); // orientation exploits static filter as inf()==sup()
@@ -625,7 +625,7 @@ private:
     */
 
 
-    for (int i = 0; i < cutp.size(); i++){
+    for (unsigned int i = 0; i < cutp.size(); i++){
       const Plane& plane_i = prism[cutp[i]];
 
       boost::optional<ePoint_3> op = intersection_point(line, plane_i.eplane);
@@ -635,7 +635,7 @@ private:
 
       const ePoint_3& ip = *op;
 
-      for(int j = 0; j < cutp.size(); j++) {
+      for(unsigned int j = 0; j < cutp.size(); j++) {
         if (i == j){
           continue;
         }
@@ -651,7 +651,7 @@ private:
       }
     }
 
-    for (int i = 0; i < prism.size(); i++) {
+    for (unsigned int i = 0; i < prism.size(); i++) {
       if (cut[i] == true){
         cid.emplace_back(i);
       }
@@ -669,12 +669,12 @@ private:
   {
     Oriented_side ori;
 
-    for (int i = 0; i < prismindex.size(); i++){
+    for (unsigned int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
         continue;
       }
 
-      for (int j = 0; j < halfspace[prismindex[i]].size(); j++){
+      for (unsigned int j = 0; j < halfspace[prismindex[i]].size(); j++){
         const Plane& plane = halfspace[prismindex[i]][j];
         ori = oriented_side(plane.eplane, ip);
 
@@ -735,7 +735,7 @@ private:
 
     std::vector<int> cidl;
     cidl.reserve(8);
-    for (int i = 0; i < queue.size(); i++) {
+    for (unsigned int i = 0; i < queue.size(); i++) {
 
       jump1 = prismindex[queue[i]];
 
@@ -748,7 +748,7 @@ private:
         continue;
       }
 
-      for (int j = 0; j < cidl.size(); j++) {
+      for (unsigned int j = 0; j < cidl.size(); j++) {
         boost::optional<ePoint_3> op = intersection_point(line,
                                                           halfspace[prismindex[queue[i]]][cidl[j]].eplane);
         const ePoint_3& ip = *op;
@@ -890,7 +890,7 @@ private:
 
     int  ori = 0, ct1 = 0, ct2 = 0, ct3 = 0;
 
-    for (int i = 0; i < prism.size(); i++)
+    for (unsigned int i = 0; i < prism.size(); i++)
       {
         const Plane& plane = prism[i];
 
@@ -935,7 +935,7 @@ private:
 
     std::array<eLine_3*,2> seg;
 
-    for (int i = 0; i < cutp.size(); i++)
+    for (unsigned int i = 0; i < cutp.size(); i++)
       {
         int tmp = 0;
         if (o1[cutp[i]] * o2[cutp[i]] == -1|| o1[cutp[i]] + o2[cutp[i]] == -1) {
@@ -964,7 +964,7 @@ private:
 
           const ePoint_3& ip = *op;
 
-          for (int j = 0; j < cutp.size(); j++){
+          for (unsigned int j = 0; j < cutp.size(); j++){
             if (i == j){
                   continue;
             }
@@ -985,7 +985,7 @@ private:
       }
 
     if (cutp.size() <= 2){
-        for (int i = 0; i < prism.size(); i++){
+        for (unsigned int i = 0; i < prism.size(); i++){
           if (cut[i] == true){
               cid.emplace_back(i);
           }
@@ -996,9 +996,9 @@ private:
     // triangle-facet-facet intersection
 
     const ePlane_3& tri_eplane = query.eplane;
-    for (int i = 0; i < cutp.size(); i++)
+    for (unsigned int i = 0; i < cutp.size(); i++)
       {
-        for (int j = i + 1; j < cutp.size(); j++)// two facets and the triangle generate a point
+        for (unsigned int j = i + 1; j < cutp.size(); j++)// two facets and the triangle generate a point
           {
             if (cut[cutp[i]] == true && cut[cutp[j]] == true)
               continue;
@@ -1032,7 +1032,7 @@ private:
               continue; // sure not inside
             }
 
-            for (int k = 0; k < cutp.size(); k++){
+            for (unsigned int k = 0; k < cutp.size(); k++){
 
               if (k == i || k == j){
                   continue;
@@ -1054,7 +1054,7 @@ private:
           }
       }
 
-    for (int i = 0; i < prism.size(); i++){
+    for (unsigned int i = 0; i < prism.size(); i++){
       if (cut[i] == true){
         cid.emplace_back(i);
       }
@@ -1086,7 +1086,7 @@ private:
   is_tpp_on_polyhedra(const ePoint_3& ip,
                       const int &prismid, const int &faceid)const
   {
-    for (int i = 0; i < halfspace[prismid].size(); i++) {
+    for (unsigned int i = 0; i < halfspace[prismid].size(); i++) {
       /*bool neib = is_two_facets_neighbouring(prismid, i, faceid);// this works only when the polyhedron is convex and no two neighbour facets are coplanar
         if (neib == false) continue;*/
       if (i == faceid) continue;
@@ -1106,14 +1106,14 @@ private:
                 const std::vector<std::vector<int>>& intersect_face, const int &jump, int &id) const
   {
     int tot, fid, ori;
-    for (int i = 0; i < prismindex.size(); i++){
+    for (unsigned int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
           continue;
         }
       tot = 0; fid = 0;
       ori = -1;
       const Prism& prism = halfspace[prismindex[i]];
-      for (int j = 0; j < halfspace[prismindex[i]].size(); j++) {
+      for (unsigned int j = 0; j < halfspace[prismindex[i]].size(); j++) {
 
         if (intersect_face[i][fid] == j)
           {
@@ -1135,7 +1135,7 @@ private:
       if (ori == 1 || ori == 0) continue;
       fid = 0;
       ori = -1;
-      for (int j = 0; j < halfspace[prismindex[i]].size(); j++) {
+      for (unsigned int j = 0; j < halfspace[prismindex[i]].size(); j++) {
         if (intersect_face[i][fid] == j)
           {
             if (fid + 1 < intersect_face[i].size()) fid++;
@@ -1175,7 +1175,7 @@ private:
   {
     int tot, ori, fid;
 
-    for (int i = 0; i < prismindex.size(); i++){
+    for (unsigned int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
         continue;
       }
@@ -1186,7 +1186,7 @@ private:
       ori = -1;
       const Prism& prism = halfspace[prismindex[i]];
 
-      for (int j = 0; j < halfspace[prismindex[i]].size(); j++) {
+      for (unsigned int j = 0; j < halfspace[prismindex[i]].size(); j++) {
         if (intersect_face[i][fid] == j)   {
           if (fid + 1 < intersect_face[i].size()) fid++;
         }else{
@@ -1207,7 +1207,7 @@ private:
       fid = 0;
       ori = -1;
 
-      for (int j = 0; j < halfspace[prismindex[i]].size(); j++) {
+      for (unsigned int j = 0; j < halfspace[prismindex[i]].size(); j++) {
         if (intersect_face[i][fid] == j){
           if (fid + 1 < intersect_face[i].size()) fid++;{
             continue;
@@ -1246,7 +1246,7 @@ private:
     int &id) const
   {
     int tot, ori, fid;
-    for (int i = 0; i < prismindex.size(); i++){
+    for (unsigned int i = 0; i < prismindex.size(); i++){
 
       if (prismindex[i] == jump1 || prismindex[i] == jump2) continue;
       if (!box_box_intersection(bounding_boxes[prismindex[i]], bounding_boxes[jump1])) continue;
@@ -1256,7 +1256,7 @@ private:
       fid = 0;
       ori = -1;
       const Prism& prism = halfspace[prismindex[i]];
-      for (int j = 0; j < prism.size(); j++) {
+      for (unsigned int j = 0; j < prism.size(); j++) {
         if (intersect_face[i][fid] == j){
           if (fid + 1 < intersect_face[i].size()) fid++;
         }
@@ -1275,7 +1275,7 @@ private:
       if (ori == 1 || ori == 0) continue;
       fid = 0;
       ori = -1;
-      for (int j = 0; j < halfspace[prismindex[i]].size(); j++) {
+      for (unsigned int j = 0; j < halfspace[prismindex[i]].size(); j++) {
         if (intersect_face[i][fid] == j){
           if (fid + 1 < intersect_face[i].size()){
             fid++;
@@ -1318,7 +1318,7 @@ private:
     int &id) const
   {
     int tot, ori, fid;
-    for (int i = 0; i < prismindex.size(); i++){
+    for (unsigned int i = 0; i < prismindex.size(); i++){
 
 
       if (prismindex[i] == jump1 || prismindex[i] == jump2) continue;
@@ -1329,7 +1329,7 @@ private:
       fid = 0;
       ori = -1;
       const Prism& prism = halfspace[prismindex[i]];
-      for (int j = 0; j < prism.size(); j++) {
+      for (unsigned int j = 0; j < prism.size(); j++) {
         if ((*intersect_face[i])[fid] == j){
           if (fid + 1 < intersect_face[i]->size()) fid++;
         }
@@ -1349,7 +1349,7 @@ private:
       if (ori == 1 || ori == 0) continue;
       fid = 0;
       ori = -1;
-      for (int j = 0; j < halfspace[prismindex[i]].size(); j++) {
+      for (unsigned int j = 0; j < halfspace[prismindex[i]].size(); j++) {
         if ((*intersect_face[i])[fid] == j)
           {
             if (fid + 1 < intersect_face[i]->size()){
@@ -1442,7 +1442,7 @@ private:
       idlist.emplace_back(prismindex[check_id]);
 
       std::vector<int> cidl; cidl.reserve(8);
-      for (int i = 0; i < queue.size(); i++) {
+      for (unsigned int i = 0; i < queue.size(); i++) {
 
         jump1 = prismindex[queue[i]];
         int seg_inside = 0;
@@ -1456,7 +1456,7 @@ private:
           }
           if (!cut) continue;
 
-          for (int j = 0; j < cidl.size(); j++) {
+          for (unsigned int j = 0; j < cidl.size(); j++) {
             boost::optional<ePoint_3> op = intersection_point(eline,
                                                               halfspace[prismindex[queue[i]]][cidl[j]].eplane);
             const ePoint_3& ip = *op;
@@ -1485,7 +1485,7 @@ private:
 
 
     std::vector<int> cidl; cidl.reserve(8); // todo: std::array??
-    for (int i = 0; i < prismindex.size(); i++) {
+    for (unsigned int i = 0; i < prismindex.size(); i++) {
       tti = is_triangle_cut_envelope_polyhedra(prismindex[i],
                                                query,
                                                cidl);
@@ -1522,17 +1522,14 @@ private:
     std::vector<int> neighbour_cover;
     idlistorder.emplace_back(intersect_face[queue[0]]);
 
-    for (int i = 0; i < queue.size(); i++) {
+    for (unsigned int i = 0; i < queue.size(); i++) {
 
       jump1 = filtered_intersection[queue[i]];
 
       for (int k = 0; k < 3; k++) {
-        const ePoint_3& etriangle_triseg_k_0 = query.etriangle[triseg[k][0]];
-        const ePoint_3& etriangle_triseg_k_1 = query.etriangle[triseg[k][1]];
-
         const eLine_3& eline = query.elines[k];
 
-        for (int j = 0; j < intersect_face[queue[i]].size(); j++) {
+        for (unsigned int j = 0; j < intersect_face[queue[i]].size(); j++) {
           tti = seg_cut_plane(query.etriangle[triseg[k][0]],
                               query.etriangle[triseg[k][1]],
                               halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].ep,
@@ -1583,7 +1580,7 @@ private:
     std::vector<Iso_cuboid_3> local_bounding_boxes;
     local_bounding_boxes.resize(filtered_intersection.size());
 
-    for (int i = 0; i < filtered_intersection.size(); i++) {
+    for (unsigned int i = 0; i < filtered_intersection.size(); i++) {
       local_bounding_boxes[i] = bounding_boxes[filtered_intersection[i]];
     }
 
@@ -1601,7 +1598,7 @@ private:
 
     const ePlane_3& etriangle_eplane = query.eplane;
 
-    for (int i = 1; i < queue.size(); i++){
+    for (unsigned int i = 1; i < queue.size(); i++){
       jump1 = filtered_intersection[queue[i]];
 
       localtree.all_intersected_primitives(bounding_boxes[jump1], std::back_inserter(list));
@@ -1609,21 +1606,21 @@ private:
       neighbours.resize(list.size());
       neighbour_facets.resize(list.size());
       neighbour_cover.resize(list.size());
-      for (int j = 0; j < list.size(); j++) {
+      for (unsigned int j = 0; j < list.size(); j++) {
         neighbours[j] = filtered_intersection[list[j]];
         neighbour_facets[j] = &(intersect_face[list[j]]);
         if (coverlist[list[j]] == 1) neighbour_cover[j] = 1;
         else neighbour_cover[j] = 0;
       }
 
-      for (int j = 0; j < i; j++) {
+      for (unsigned int j = 0; j < i; j++) {
         jump2 = filtered_intersection[queue[j]];
 
         if (! box_box_intersection(bounding_boxes[jump1], bounding_boxes[jump2])){
           continue;
         }
-        for (int k = 0; k < intersect_face[queue[i]].size(); k++) {
-          for (int h = 0; h < intersect_face[queue[j]].size(); h++) {
+        for (unsigned int k = 0; k < intersect_face[queue[i]].size(); k++) {
+          for (unsigned int h = 0; h < intersect_face[queue[j]].size(); h++) {
 
             // We moved the intersection here
             // In case there is no intersection point we continue
@@ -1734,7 +1731,7 @@ private:
 
     halfspace.resize(faces.size());
     bounding_boxes.resize(faces.size());
-    for (int i = 0; i < faces.size(); ++i)
+    for (unsigned int i = 0; i < faces.size(); ++i)
       {
         Bbox bb = ver[faces[i][0]].bbox () + ver[faces[i][1]].bbox() + ver[faces[i][2]].bbox();
         // todo: Add a grow() function to Bbox
@@ -1873,7 +1870,7 @@ private:
 
 #ifdef CGAL_ENVELOPE_DEBUG
         std::cout << "face "<< i << std::endl;
-        for(int j = 0; j < halfspace[i].size(); j++){
+        for(unsigned int j = 0; j < halfspace[i].size(); j++){
           const Plane& p =  halfspace[i][j];
           std::cout << p.ep << " | "  << p.eq << " | "  << p.er << std::endl;
           ePoint_3 pv(ver[faces[i][0]].x(), ver[faces[i][0]].y(),ver[faces[i][0]].z());
@@ -1889,7 +1886,7 @@ private:
   void prism_to_off(unsigned int i, std::string fname) const
   {
     std::vector<ePlane_3> eplanes;
-    for(int j = 0; j < halfspace[i].size(); j++){
+    for(unsigned int j = 0; j < halfspace[i].size(); j++){
       eplanes.push_back(halfspace[i][j].eplane);
     }
     ePoint_3 origin(env_vertices[env_faces[i][0]].x(), env_vertices[env_faces[i][0]].y(),env_vertices[env_faces[i][0]].z());
@@ -1975,7 +1972,7 @@ public:
     // std::sort(prismindex.begin(), prismindex.end());
 
 #ifdef CGAL_ENVELOPE_DEBUG
-    for(int i = 0; i < prismindex.size(); i++){
+    for(unsigned int i = 0; i < prismindex.size(); i++){
       prism_to_off(prismindex[i], "prism");
     }
 #endif
