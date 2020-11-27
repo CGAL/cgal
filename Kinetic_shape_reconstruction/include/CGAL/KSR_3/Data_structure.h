@@ -2582,50 +2582,69 @@ public:
 
       // if (num_volumes > 0) {
 
-      //   std::vector<PFace> all_nfaces;
-      //   for (const auto& bnd_nface : bnd_nfaces)
-      //     all_nfaces.push_back(bnd_nface);
-      //   for (const auto& int_nface : int_nfaces)
-      //     all_nfaces.push_back(int_nface);
+        if (num_volumes == 0) {
+          if (int_nfaces.size() == 1) {
+            queue.push_back(int_nfaces[0]);
+            continue;
+          }
+          if (int_nfaces.size() == 0 && bnd_nfaces.size() == 1) {
+            queue.push_front(bnd_nfaces[0]);
+            continue;
+          }
+        }
 
-      //   if (all_nfaces.size() == 0) {
-      //     dump_info(pface, pedge, nfaces);
-      //     std::cout << "DEBUG: num nfaces: " << nfaces.size() << std::endl;
-      //   }
-      //   CGAL_assertion(all_nfaces.size() > 0);
+        if (num_volumes > 0) {
+          // todo
+        }
 
-      //   const auto res = find_using_2d_directions(
-      //   volume_index, volume_centroid, pface, pedge, all_nfaces);
-      //   if (res == null_pface()) continue;
-      //   if (is_boundary_pface(res, volume_index, num_volumes, map_volumes)) {
-      //     queue.push_front(res);
-      //   } else {
-      //     queue.push_back(res);
-      //   }
+        std::vector<PFace> all_nfaces;
+        // for (const auto& bnd_nface : bnd_nfaces)
+        //   all_nfaces.push_back(bnd_nface);
+        // for (const auto& int_nface : int_nfaces)
+        //   all_nfaces.push_back(int_nface);
+        for (const auto& nface : nfaces) {
+          if (nface == pface) continue;
+          all_nfaces.push_back(nface);
+        }
+
+        if (all_nfaces.size() == 0) {
+          dump_info(pface, pedge, nfaces);
+          std::cout << "DEBUG: num nfaces: " << nfaces.size() << std::endl;
+        }
+        CGAL_assertion(all_nfaces.size() > 0);
+
+        const auto res = find_using_2d_directions(
+        volume_index, volume_centroid, pface, pedge, all_nfaces);
+        if (res == null_pface()) continue;
+        if (is_boundary_pface(res, volume_index, num_volumes, map_volumes)) {
+          queue.push_front(res);
+        } else {
+          queue.push_back(res);
+        }
 
       // } else {
 
-        if (int_nfaces.size() == 0) {
-          // if (bnd_nfaces.size() == 0) continue;
-          CGAL_assertion(bnd_nfaces.size() > 0);
-          const auto bnd_nface = find_next_boundary_pface(
-            volume_centroid, pface, pedge, bnd_nfaces, volume_index, num_volumes, map_volumes);
-          CGAL_assertion(bnd_nface != null_pface());
-          // if (bnd_nface == null_pface()) continue;
-          queue.push_front(bnd_nface);
-        } else {
-          if (num_volumes == 0) {
-            CGAL_assertion_msg(bnd_nfaces.size() == 1,
-            "ERROR: BND -> INT NUMBER OF BND PFACES MUST BE 1!");
-          }
-          // if (int_nfaces.size() == 0) continue;
-          CGAL_assertion(int_nfaces.size() > 0);
-          const auto int_nface = find_next_interior_pface(
-            volume_centroid, pface, pedge, int_nfaces, volume_index, num_volumes, map_volumes);
-          CGAL_assertion(int_nface != null_pface());
-          // if (int_nface == null_pface()) continue;
-          queue.push_back(int_nface);
-        }
+        // if (int_nfaces.size() == 0) {
+        //   // if (bnd_nfaces.size() == 0) continue;
+        //   CGAL_assertion(bnd_nfaces.size() > 0);
+        //   const auto bnd_nface = find_next_boundary_pface(
+        //     volume_centroid, pface, pedge, bnd_nfaces, volume_index, num_volumes, map_volumes);
+        //   CGAL_assertion(bnd_nface != null_pface());
+        //   // if (bnd_nface == null_pface()) continue;
+        //   queue.push_front(bnd_nface);
+        // } else {
+        //   if (num_volumes == 0) {
+        //     CGAL_assertion_msg(bnd_nfaces.size() == 1,
+        //     "ERROR: BND -> INT NUMBER OF BND PFACES MUST BE 1!");
+        //   }
+        //   // if (int_nfaces.size() == 0) continue;
+        //   CGAL_assertion(int_nfaces.size() > 0);
+        //   const auto int_nface = find_next_interior_pface(
+        //     volume_centroid, pface, pedge, int_nfaces, volume_index, num_volumes, map_volumes);
+        //   CGAL_assertion(int_nface != null_pface());
+        //   // if (int_nface == null_pface()) continue;
+        //   queue.push_back(int_nface);
+        // }
 
       // }
     }
@@ -2664,90 +2683,90 @@ public:
     }
   }
 
-  const PFace find_next_boundary_pface(
-    const Point_3& volume_centroid,
-    const PFace& pface,
-    const PEdge& pedge,
-    const std::vector<PFace>& bnd_nfaces,
-    const int volume_index,
-    const int num_volumes,
-    const std::map<PFace, std::pair<int, int> >& map_volumes) const {
+  // const PFace find_next_boundary_pface(
+  //   const Point_3& volume_centroid,
+  //   const PFace& pface,
+  //   const PEdge& pedge,
+  //   const std::vector<PFace>& bnd_nfaces,
+  //   const int volume_index,
+  //   const int num_volumes,
+  //   const std::map<PFace, std::pair<int, int> >& map_volumes) const {
 
-    CGAL_assertion(bnd_nfaces.size() > 0);
-    const auto& bnd_nface0 = bnd_nfaces[0];
-    CGAL_assertion(bnd_nface0 != pface);
-    if (bnd_nfaces.size() == 1) {
-      // std::cout << "bnd found 1: " <<
-      // volume_index << " " << int_nface0.first << " " << int_nface0.second << std::endl;
-      return bnd_nface0;
-    }
-    CGAL_assertion(bnd_nfaces.size() > 1);
+  //   CGAL_assertion(bnd_nfaces.size() > 0);
+  //   const auto& bnd_nface0 = bnd_nfaces[0];
+  //   CGAL_assertion(bnd_nface0 != pface);
+  //   if (bnd_nfaces.size() == 1) {
+  //     // std::cout << "bnd found 1: " <<
+  //     // volume_index << " " << int_nface0.first << " " << int_nface0.second << std::endl;
+  //     return bnd_nface0;
+  //   }
+  //   CGAL_assertion(bnd_nfaces.size() > 1);
 
-    if (num_volumes == 0) {
-      CGAL_assertion_msg(
-        !is_boundary_pface(pface, volume_index, num_volumes, map_volumes),
-        "ERROR: BND -> BND WRONG NUMBER OF NEIGHBORS! MUST BE 1!");
-      if (bnd_nfaces.size() != 2) {
-        dump_info(pface, pedge, bnd_nfaces);
-      }
-      CGAL_assertion_msg(bnd_nfaces.size() == 2,
-        "ERROR: INT -> BND WRONG NUMBER OF NEIGHBORS! MUST BE 2!");
+  //   if (num_volumes == 0) {
+  //     CGAL_assertion_msg(
+  //       !is_boundary_pface(pface, volume_index, num_volumes, map_volumes),
+  //       "ERROR: BND -> BND WRONG NUMBER OF NEIGHBORS! MUST BE 1!");
+  //     if (bnd_nfaces.size() != 2) {
+  //       dump_info(pface, pedge, bnd_nfaces);
+  //     }
+  //     CGAL_assertion_msg(bnd_nfaces.size() == 2,
+  //       "ERROR: INT -> BND WRONG NUMBER OF NEIGHBORS! MUST BE 2!");
 
-      for (const auto& bnd_nface : bnd_nfaces) {
-        CGAL_assertion(bnd_nface != pface);
-        const auto& pair = map_volumes.at(bnd_nface);
-        CGAL_assertion(pair.second == -1);
-        if (pair.second != -1) {
-          std::cerr << "ERROR: WRONG FACE TYPE DETECTED!" << std::endl;
-          exit(EXIT_FAILURE);
-        }
-      }
-    }
+  //     for (const auto& bnd_nface : bnd_nfaces) {
+  //       CGAL_assertion(bnd_nface != pface);
+  //       const auto& pair = map_volumes.at(bnd_nface);
+  //       CGAL_assertion(pair.second == -1);
+  //       if (pair.second != -1) {
+  //         std::cerr << "ERROR: WRONG FACE TYPE DETECTED!" << std::endl;
+  //         exit(EXIT_FAILURE);
+  //       }
+  //     }
+  //   }
 
-    const auto res = find_using_2d_directions(
-      volume_index, volume_centroid, pface, pedge, bnd_nfaces);
-    // std::cout << "bnd found 2: " <<
-    // volume_index << " " << res.first << " " << res.second << std::endl;
-    return res;
-  }
+  //   const auto res = find_using_2d_directions(
+  //     volume_index, volume_centroid, pface, pedge, bnd_nfaces);
+  //   // std::cout << "bnd found 2: " <<
+  //   // volume_index << " " << res.first << " " << res.second << std::endl;
+  //   return res;
+  // }
 
-  const PFace find_next_interior_pface(
-    const Point_3& volume_centroid,
-    const PFace& pface,
-    const PEdge& pedge,
-    const std::vector<PFace>& int_nfaces,
-    const int volume_index,
-    const int num_volumes,
-    const std::map<PFace, std::pair<int, int> >& map_volumes) const {
+  // const PFace find_next_interior_pface(
+  //   const Point_3& volume_centroid,
+  //   const PFace& pface,
+  //   const PEdge& pedge,
+  //   const std::vector<PFace>& int_nfaces,
+  //   const int volume_index,
+  //   const int num_volumes,
+  //   const std::map<PFace, std::pair<int, int> >& map_volumes) const {
 
-    CGAL_assertion(int_nfaces.size() > 0);
-    const auto& int_nface0 = int_nfaces[0];
-    CGAL_assertion(int_nface0 != pface);
-    if (int_nfaces.size() == 1) {
-      // std::cout << "int found 1: " <<
-      // volume_index << " " << int_nface0.first << " " << int_nface0.second << std::endl;
-      return int_nface0;
-    }
-    CGAL_assertion(int_nfaces.size() > 1);
+  //   CGAL_assertion(int_nfaces.size() > 0);
+  //   const auto& int_nface0 = int_nfaces[0];
+  //   CGAL_assertion(int_nface0 != pface);
+  //   if (int_nfaces.size() == 1) {
+  //     // std::cout << "int found 1: " <<
+  //     // volume_index << " " << int_nface0.first << " " << int_nface0.second << std::endl;
+  //     return int_nface0;
+  //   }
+  //   CGAL_assertion(int_nfaces.size() > 1);
 
-    if (num_volumes == 0) {
-      if (is_boundary_pface(pface, volume_index, num_volumes, map_volumes)) {
-        dump_info(pface, pedge, int_nfaces);
-        CGAL_assertion_msg(int_nfaces.size() == 1, "TODO: BND -> INT CAN WE HAVE MORE NEIGHBORS?");
-      }
-    }
+  //   if (num_volumes == 0) {
+  //     if (is_boundary_pface(pface, volume_index, num_volumes, map_volumes)) {
+  //       dump_info(pface, pedge, int_nfaces);
+  //       CGAL_assertion_msg(int_nfaces.size() == 1, "TODO: BND -> INT CAN WE HAVE MORE NEIGHBORS?");
+  //     }
+  //   }
 
-    if (int_nfaces.size() > 3) {
-      dump_info(pface, pedge, int_nfaces);
-    }
-    CGAL_assertion_msg(int_nfaces.size() <= 3, "TODO: INT -> INT CAN WE HAVE MORE NEIGHBORS?");
+  //   if (int_nfaces.size() > 3) {
+  //     dump_info(pface, pedge, int_nfaces);
+  //   }
+  //   CGAL_assertion_msg(int_nfaces.size() <= 3, "TODO: INT -> INT CAN WE HAVE MORE NEIGHBORS?");
 
-    const auto res = find_using_2d_directions(
-      volume_index, volume_centroid, pface, pedge, int_nfaces);
-    // std::cout << "int found 2: " <<
-    // volume_index << " " << res.first << " " << res.second << std::endl;
-    return res;
-  }
+  //   const auto res = find_using_2d_directions(
+  //     volume_index, volume_centroid, pface, pedge, int_nfaces);
+  //   // std::cout << "int found 2: " <<
+  //   // volume_index << " " << res.first << " " << res.second << std::endl;
+  //   return res;
+  // }
 
   void propagate_interior_pface(
     const bool verbose,
@@ -2801,53 +2820,57 @@ public:
 
       // if (num_volumes > 0) {
 
-      //   std::vector<PFace> all_nfaces;
-      //   for (const auto& bnd_nface : bnd_nfaces)
-      //     all_nfaces.push_back(bnd_nface);
-      //   for (const auto& int_nface : int_nfaces)
-      //     all_nfaces.push_back(int_nface);
+        std::vector<PFace> all_nfaces;
+        // for (const auto& bnd_nface : bnd_nfaces)
+        //   all_nfaces.push_back(bnd_nface);
+        // for (const auto& int_nface : int_nfaces)
+        //   all_nfaces.push_back(int_nface);
+        for (const auto& nface : nfaces) {
+          if (nface == pface) continue;
+          all_nfaces.push_back(nface);
+        }
 
-      //   if (all_nfaces.size() == 0) {
-      //     dump_info(pface, pedge, nfaces);
-      //     std::cout << "DEBUG: num nfaces: " << nfaces.size() << std::endl;
-      //   }
-      //   CGAL_assertion(all_nfaces.size() > 0);
+        if (all_nfaces.size() == 0) {
+          dump_info(pface, pedge, nfaces);
+          std::cout << "DEBUG: num nfaces: " << nfaces.size() << std::endl;
+        }
+        CGAL_assertion(all_nfaces.size() > 0);
 
-      //   const auto res = find_using_2d_directions(
-      //   volume_index, volume_centroid, pface, pedge, all_nfaces);
-      //   if (res == null_pface()) continue;
-      //   if (is_boundary_pface(res, volume_index, num_volumes, map_volumes)) {
-      //     queue.push_front(res);
-      //   } else {
-      //     queue.push_back(res);
-      //   }
+        const auto res = find_using_2d_directions(
+        volume_index, volume_centroid, pface, pedge, all_nfaces);
+        if (res == null_pface()) continue;
+        if (is_boundary_pface(res, volume_index, num_volumes, map_volumes)) {
+          queue.push_front(res);
+        } else {
+          queue.push_back(res);
+        }
 
       // } else {
 
-        if (int_nfaces.size() == 0) {
-          // if (bnd_nfaces.size() == 0) continue;
-          CGAL_assertion(bnd_nfaces.size() > 0);
-          const auto bnd_nface = find_next_boundary_pface(
-            volume_centroid, pface, pedge, bnd_nfaces, volume_index, num_volumes, map_volumes);
-          CGAL_assertion(bnd_nface != null_pface());
-          // if (bnd_nface == null_pface()) continue;
-          queue.push_front(bnd_nface);
-        } else {
-          if (num_volumes == 0) {
-            CGAL_assertion_msg(bnd_nfaces.size() == 0,
-            "ERROR: INT -> INT WE CANNOT HAVE BND PFACES HERE!");
-          }
+        // if (int_nfaces.size() == 0) {
+        //   // if (bnd_nfaces.size() == 0) continue;
+        //   CGAL_assertion(bnd_nfaces.size() > 0);
+        //   const auto bnd_nface = find_next_boundary_pface(
+        //     volume_centroid, pface, pedge, bnd_nfaces, volume_index, num_volumes, map_volumes);
+        //   CGAL_assertion(bnd_nface != null_pface());
+        //   // if (bnd_nface == null_pface()) continue;
+        //   queue.push_front(bnd_nface);
+        // } else {
+        //   if (num_volumes == 0) {
+        //     CGAL_assertion_msg(bnd_nfaces.size() == 0,
+        //     "ERROR: INT -> INT WE CANNOT HAVE BND PFACES HERE!");
+        //   }
 
-          // if (int_nfaces.size() == 0) continue;
-          CGAL_assertion(int_nfaces.size() > 0);
-          // if (num_volumes > 0 && int_nfaces.size() == 1) continue; // TODO: TEST THIS!
+        //   // if (int_nfaces.size() == 0) continue;
+        //   CGAL_assertion(int_nfaces.size() > 0);
+        //   // if (num_volumes > 0 && int_nfaces.size() == 1) continue; // TODO: TEST THIS!
 
-          const auto int_nface = find_next_interior_pface(
-            volume_centroid, pface, pedge, int_nfaces, volume_index, num_volumes, map_volumes);
-          CGAL_assertion(int_nface != null_pface());
-          // if (int_nface == null_pface()) continue;
-          queue.push_back(int_nface);
-        }
+        //   const auto int_nface = find_next_interior_pface(
+        //     volume_centroid, pface, pedge, int_nfaces, volume_index, num_volumes, map_volumes);
+        //   CGAL_assertion(int_nface != null_pface());
+        //   // if (int_nface == null_pface()) continue;
+        //   queue.push_back(int_nface);
+        // }
 
       // }
     }
