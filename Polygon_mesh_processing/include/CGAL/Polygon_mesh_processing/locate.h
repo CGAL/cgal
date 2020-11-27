@@ -132,11 +132,6 @@ get_descriptor_from_location(const std::pair<typename boost::graph_traits<Triang
                                              std::array<FT, 3> >& loc,
                              const TriangleMesh& tm);
 
-template <typename FT, typename TriangleMesh>
-Face_location<TriangleMesh, FT>
-locate_in_face(typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd,
-               const FT t,
-               const TriangleMesh& tm);
 // end of forward declarations
 
 namespace internal {

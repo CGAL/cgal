@@ -83,7 +83,7 @@ namespace CGAL
                 typedef typename CGAL::Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
                 typedef typename Neighbor_search::Tree Tree;
         private:
-                Tree* m_p_tree;
+                Tree m_tree;
 
 
                 Point_and_primitive_id get_p_and_p(const Point_and_primitive_id& p)
@@ -98,30 +98,22 @@ namespace CGAL
         public:
                 template <class ConstPointIterator>
                 AABB_search_tree(ConstPointIterator begin, ConstPointIterator beyond)
-                    : m_p_tree(nullptr)
+                    : m_tree{}
                 {
-                        typedef typename Add_decorated_point<Traits, typename Traits::Primitive::Id>::Point_3 Decorated_point;
+                        typedef typename Add_decorated_point<Traits,typename Traits::Primitive::Id>::Point_3 Decorated_point;
                         std::vector<Decorated_point> points;
                         while(begin != beyond) {
                                 Point_and_primitive_id pp = get_p_and_p(*begin);
-                                points.push_back(Decorated_point(pp.first,pp.second));
+                                points.emplace_back(pp.first, pp.second);
                                 ++begin;
                         }
-                        m_p_tree = new Tree(points.begin(), points.end());
-                        if(m_p_tree != nullptr)
-                                m_p_tree->build();
-                        else
-                                std::cerr << "unable to build the search tree!" << std::endl;
+                        m_tree.insert(points.begin(), points.end());
+                        m_tree.build();
                 }
-
-                ~AABB_search_tree() {
-                        delete m_p_tree;
-                }
-
 
                 Point_and_primitive_id closest_point(const Point& query) const
                 {
-                        Neighbor_search search(*m_p_tree, query, 1);
+                        Neighbor_search search(m_tree, query, 1);
                         return Point_and_primitive_id(static_cast<Point>(search.begin()->first), search.begin()->first.id());
                 }
         };
