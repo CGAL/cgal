@@ -1209,9 +1209,8 @@ private:
 
       for (unsigned int j = 0; j < halfspace[prismindex[i]].size(); j++) {
         if (intersect_face[i][fid] == j){
-          if (fid + 1 < intersect_face[i].size()) fid++;{
-            continue;
-          }
+          if (fid + 1 < intersect_face[i].size()) fid++;
+          continue;
         }
 
         ori = int(oriented_side(prism[j].eplane,ip));
