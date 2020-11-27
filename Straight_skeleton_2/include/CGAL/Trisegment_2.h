@@ -202,7 +202,7 @@ private :
   Self_ptr mChildR ;
 
   // this is the potential child of e2-e0, if it exists. It is used only in the configuration
-  // of e0 and e2 collinear as the common child gives where the bissector starts (as it is not
+  // of e0 and e2 collinear as the common child gives where the bisector starts (as it is not
   // necessarily the middle of the gap between e2 and e0).
   Self_ptr mChildT ;
 } ;

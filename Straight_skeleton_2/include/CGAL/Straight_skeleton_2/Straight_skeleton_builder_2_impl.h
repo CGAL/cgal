@@ -105,17 +105,15 @@ Straight_skeleton_builder_2<Gt,Ss,V>::FindEdgeEvent( Vertex_handle aLNode, Verte
     Trisegment_2_ptr lTrisegment = CreateTrisegment(lTriedge,aLNode,aRNode);
 
     // The 02 collinearity configuration is problematic: 01 or 12 collinearity has a seed position
-    // giving the point through which the bissector passes. However, for 02, it is not a given.
+    // giving the point through which the bisector passes. However, for 02, it is not a given.
     //
     // If the seed exists, the information is passed to the traits as the "third" child of the trisegment.
     // Otherwise, ignore this as it should re-appear when the seed of 02 is created.
+    //
+    // Note that this is only for edge events; (pseudo-)split events are not concerned.
     if ( lTrisegment->collinearity() == TRISEGMENT_COLLINEARITY_02 )
     {
       // Check in the SLAV if the seed corresponding to 02 exists
-
-      std::cout << "EdgeEvent 02" << std::endl ;
-
-      // Note that this is only for edge events; (pseudo-)split events are not concerned.
       Vertex_handle lPrevNode = GetPrevInLAV(aLNode) ;
       CGAL_assertion( GetEdgeStartingAt(lPrevNode) == lTriedge.e0() ) ;
 
@@ -138,9 +136,9 @@ Straight_skeleton_builder_2<Gt,Ss,V>::FindEdgeEvent( Vertex_handle aLNode, Verte
           // - e0 and e2 will meet. In that case, we can ignore all the details of the concavity
           //   and simply consider that in the end, all that matters is the e0, e2, next(e0),
           //   and prev(e2). In that case, we get two bisectors issued from e0 and e2, and one
-          //   bissector issued from some seed S and splitting next(e0) and prev(e2). This can also
-          //   be seen as two exterior bissectors and one interior bissector of a triangle
-          //   target(e0) -- S - source(e2). It is a known result that these three bissectors
+          //   bisector issued from some seed S and splitting next(e0) and prev(e2). This can also
+          //   be seen as two exterior bisectors and one interior bisector of a triangle
+          //   target(e0) -- S - source(e2). It is a known result that these three bisectors
           //   meet in a single point. Thus, when we get here e0-e1-e2, we know that
           //   these will meet in a single, existing point, either the left or the right child (the oldest).
 
