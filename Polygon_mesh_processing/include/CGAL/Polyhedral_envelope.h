@@ -341,12 +341,98 @@ public:
     init(epsilon);
   }
 
+  /**
+   * Constructor using a subset of faces of a triangulated surface mesh
+   *
+   * @tparam FaceRange a model of `ConstRange` with `ConstRange::const_iterator`
+   *                   being a model of `InputIterator` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+   *                   as value type
+   * @tparam TriangleMesh a model of `FaceListGraph`
+   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+   *
+   * @param tmesh a triangle mesh
+   * @param face_range the subset of faces to be considered when computing the polyhedron envelope
+   * @param epsilon the distance of the Minkowski sum hull
+   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+   *
+   * \cgalNamedParamsBegin
+   *   \cgalParamNBegin{vertex_point_map}
+   *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+   *                    as key type and `%Point_3` as value type}
+   *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+   *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+   *                     must be available in `TriangleMesh`.}
+   *   \cgalParamNEnd
+   * \cgalNamedParamsEnd
+   *
+   * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
+   *       while the queries are performed
+   */
+  template <typename FaceRange, typename TriangleMesh, typename NamedParameters>
+  Polyhedral_envelope(const FaceRange& face_range,
+                      const TriangleMesh& tmesh,
+                      double epsilon,
+                      const NamedParameters& np)
+  {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type
+      vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(CGAL::vertex_point, tmesh));
+
+    typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+    typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+
+    std::unordered_map<vertex_descriptor, int> local_vid;
+    env_faces.reserve(face_range.size());
+    env_vertices.reserve(3*env_faces.size()/2); // only a guess
+
+    for(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v : vertices(tmesh)){
+      env_vertices.emplace_back(get(vpm, v));
+    }
+
+    GeomTraits gt;
+    int curr_id=0;
+    auto get_vid = [&local_vid,&curr_id, &vpm, this](vertex_descriptor v)
+    {
+      auto insert_res = local_vid.insert( std::make_pair(v, curr_id) );
+      if (insert_res.second){
+        ++curr_id;
+        env_vertices.emplace_back(get(vpm, v));
+      }
+      return insert_res.first->second;
+    };
+
+    for(face_descriptor f : face_range){
+      if(! Polygon_mesh_processing::is_degenerate_triangle_face(f, tmesh, parameters::geom_traits(gt).vertex_point_map(vpm))){
+        typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h = halfedge(f, tmesh);
+        int i = get_vid(source(h, tmesh));
+        int j = get_vid(target(h, tmesh));
+        int k = get_vid(target(next(h, tmesh), tmesh));
+
+        Vector3i face = { i, j, k };
+        env_faces.push_back(face);
+      }
+    }
+    init(epsilon);
+  }
+
+  /// @}
 
 #ifndef DOXYGEN_RUNNING
-  <typename TriangleMesh>
+  template <typename TriangleMesh>
   Polyhedral_envelope(const TriangleMesh& tmesh,
                       double epsilon)
     : Polyhedral_envelope(tmesh, epsilon, parameters::all_default())
+  {}
+
+  template <typename FaceRange, typename TriangleMesh>
+  Polyhedral_envelope(const FaceRange& face_range,
+                      const TriangleMesh& tmesh,
+                      double epsilon)
+    : Polyhedral_envelope(face_range, tmesh, epsilon, parameters::all_default())
   {}
 #endif
 
