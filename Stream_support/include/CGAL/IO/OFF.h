@@ -65,6 +65,7 @@ bool read_OFF(std::istream& is,
   typedef typename CGAL::Kernel_traits<Point>::Kernel                                 Kernel;
   typedef typename Kernel::Point_2                                                    Texture;
   typedef typename Kernel::Vector_3                                                   Normal;
+  typedef typename Kernel::FT                                                         FT;
   typedef CGAL::Color                                                                 Color;
 
   if(!is.good()){
@@ -88,10 +89,9 @@ bool read_OFF(std::istream& is,
 
     if(scanner.has_normals())
     {
-      double nx, ny, nz, nw;
-      scanner.scan_normal(nx, ny, nz, nw);
-      CGAL_assertion(nw != 0);
-      *vn_out++ = Normal(nx, ny, nz, nw);
+      double nx, ny, nz;
+      scanner.scan_normal(nx, ny, nz);
+      *vn_out++ = Normal(FT(nx), FT(ny), FT(nz));
     }
 
     if(scanner.has_vcolors())
