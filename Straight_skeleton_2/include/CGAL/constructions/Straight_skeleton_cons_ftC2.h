@@ -414,9 +414,10 @@ compute_seed_pointC2 ( boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K
                          : compute_oriented_midpoint(tri->e1(),tri->e2()) ;
       break ;
 
-    case Trisegment_2::UNKNOWN :
+    case Trisegment_2::THIRD :
 
-      p = compute_oriented_midpoint(tri->e0(),tri->e2());
+      p = tri->child_t() ? construct_offset_lines_isecC2(tri->child_t(), aCoeff_cache) // this can recurse
+                         : compute_oriented_midpoint(tri->e0(),tri->e2()) ;
 
       break ;
   }

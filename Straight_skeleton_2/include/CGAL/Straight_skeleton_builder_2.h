@@ -899,6 +899,35 @@ private :
                                     : LARGER  ;
   }
 
+  Comparison_result CompareEvents( Vertex_handle aLNode, Vertex_handle aRNode ) const
+  {
+    if ( aLNode->is_skeleton() )
+    {
+      if ( aRNode->is_skeleton() )
+      {
+        if ( aLNode->has_infinite_time() && aRNode->has_infinite_time() )
+          return EQUAL ;
+        else if ( aLNode->has_infinite_time() )
+          return LARGER ;
+        else if ( aRNode->has_infinite_time() )
+          return SMALLER ;
+        else
+          return CompareEvents ( GetTrisegment(aLNode), GetTrisegment(aRNode) ) ;
+      }
+      else // left skeleton, right not skeleton
+      {
+        return LARGER ;
+      }
+    }
+    else // left not skeleton
+    {
+      if ( aRNode->is_skeleton() )
+        return SMALLER ;
+      else // both not skeleton
+        return EQUAL ;
+    }
+  }
+
   bool AreEventsSimultaneous( Trisegment_2_ptr const& x, Trisegment_2_ptr const& y ) const
   {
     return Are_ss_events_simultaneous_2(mTraits)(x,y) ;
