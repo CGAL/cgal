@@ -2594,7 +2594,15 @@ public:
         }
 
         if (num_volumes > 0) {
-          // todo
+          if (int_nfaces.size() == 1) {
+            queue.push_back(int_nfaces[0]);
+            continue;
+          }
+          if (int_nfaces.size() == 0 && bnd_nfaces.size() == 1) {
+            queue.push_front(bnd_nfaces[0]);
+            continue;
+          }
+          // todo: finish that!
         }
 
         std::vector<PFace> all_nfaces;
@@ -3002,7 +3010,7 @@ public:
           }
           return dir_edges[ip].second;
         } else {
-          // return null_pface();
+          return null_pface();
           dump_info(pface, pedge, nfaces);
           dump_frame(points, "polyhedrons/directions-init");
           auto extended = points;
