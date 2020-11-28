@@ -30,7 +30,12 @@ class VRML_2_ostream
 public:
   VRML_2_ostream() : m_os(nullptr) {}
   VRML_2_ostream(std::ostream& o) : m_os(&o) { header(); }
-  ~VRML_2_ostream() { close(); }
+  ~VRML_2_ostream() CGAL_NOEXCEPT(CGAL_NO_ASSERTIONS_BOOL)
+  {
+    CGAL_destructor_assertion_catch(
+      close();
+    );
+  }
 
   void open(std::ostream& o) { m_os = &o; header(); }
   void close()
