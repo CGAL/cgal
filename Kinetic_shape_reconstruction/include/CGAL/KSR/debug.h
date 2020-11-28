@@ -532,6 +532,37 @@ private:
   }
 };
 
+template<typename DS, typename PFace>
+void dump_polyhedron(
+  const DS& data,
+  const std::vector<PFace>& pfaces,
+  const std::string file_name) {
+
+  using Point_3 = typename DS::Kernel::Point_3;
+  std::vector<Point_3> polygon;
+  std::vector< std::vector<Point_3> > polygons;
+  std::vector<Color> colors;
+
+  colors.reserve(pfaces.size());
+  polygons.reserve(pfaces.size());
+
+  Saver<typename DS::Kernel> saver;
+  for (const auto& pface : pfaces) {
+    const auto pvertices = data.pvertices_of_pface(pface);
+    const auto color = saver.get_idx_color(static_cast<int>(pface.second));
+    polygon.clear();
+    for (const auto pvertex : pvertices) {
+      polygon.push_back(data.point_3(pvertex));
+    }
+    colors.push_back(color);
+    polygons.push_back(polygon);
+  }
+  CGAL_assertion(colors.size() == pfaces.size());
+  CGAL_assertion(polygons.size() == pfaces.size());
+
+  saver.export_polygon_soup_3(polygons, colors, file_name);
+}
+
 template<typename DS>
 void dump_polyhedrons(const DS& data, const std::string tag = std::string()) {
 
