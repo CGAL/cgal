@@ -149,12 +149,14 @@ public:
         return *this;
     }
 
-    ~Handle_for()
+    ~Handle_for() noexcept
     {
-      if (--(ptr_->count) == 0) {
-        Allocator_traits::destroy(allocator, ptr_);
-        allocator.deallocate( ptr_, 1);
-      }
+      try{
+        if (--(ptr_->count) == 0) {
+          Allocator_traits::destroy(allocator, ptr_);
+          allocator.deallocate( ptr_, 1);
+        }
+      } catch(...) {}
     }
 
     void
