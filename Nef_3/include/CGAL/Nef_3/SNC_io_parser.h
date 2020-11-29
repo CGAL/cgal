@@ -1535,22 +1535,22 @@ read_vertex(Vertex_handle vh) {
   vh->sncp() = this->sncp();
 
   in >> index;
-  vh->svertices_begin() = (index >= 0 ? Edge_of[index] : this->svertices_end());
+  vh->svertices_begin() = (index >= 0 ? Edge_of.at(index) : this->svertices_end());
   in >> index;
-  vh->svertices_last()  = index >= 0 ? Edge_of[index] : this->svertices_end();
+  vh->svertices_last()  = index >= 0 ? Edge_of.at(index) : this->svertices_end();
   OK = OK && test_string(",");
   in >> index;
-  vh->shalfedges_begin() = index >= 0 ? SEdge_of[index] : this->shalfedges_end();
+  vh->shalfedges_begin() = index >= 0 ? SEdge_of.at(index) : this->shalfedges_end();
   in >> index;
-  vh->shalfedges_last()  = index >= 0 ? SEdge_of[index] : this->shalfedges_end();
+  vh->shalfedges_last()  = index >= 0 ? SEdge_of.at(index) : this->shalfedges_end();
   OK = OK && test_string(",");
   in >> index;
-  vh->sfaces_begin() = index >= 0 ? SFace_of[index] : this->sfaces_end();
+  vh->sfaces_begin() = index >= 0 ? SFace_of.at(index) : this->sfaces_end();
   in >> index;
-  vh->sfaces_last()  = index >= 0 ? SFace_of[index] : this->sfaces_end();
+  vh->sfaces_last()  = index >= 0 ? SFace_of.at(index) : this->sfaces_end();
   OK = OK && test_string(",");
   in >> index;
-  vh->shalfloop() = index >= 0 ? SLoop_of[index] : this->shalfloops_end();
+  vh->shalfloop() = index >= 0 ? SLoop_of.at(index) : this->shalfloops_end();
   OK = OK && test_string("|");
 #ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
   in >> hx >> hy >> hz >> hw;
@@ -1596,7 +1596,7 @@ bool SNC_io_parser<EW>::
 read_edge(Halfedge_handle eh) {
 
   bool OK = true;
-  int index;
+  size_t index;
 #ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
   typename K::RT hx,hy,hz,hw;
 #endif
@@ -1604,18 +1604,22 @@ read_edge(Halfedge_handle eh) {
   OK = OK && test_string("{");
 
   in >> index;
-  eh->twin() = Edge_of[index];
+  CGAL_assertion(index<Edge_of.size());
+  eh->twin() = Edge_of.at(index);
   OK = OK && test_string(",");
   in >> index;
-  eh->center_vertex() = Vertex_of[index];
+  CGAL_assertion(index<Vertex_of.size());
+  eh->center_vertex() = Vertex_of.at(index);
   OK = OK && test_string(",");
   in >> index;
   if(index == 0) {
     in >> index;
-    eh->out_sedge() = SEdge_of[index];
+    CGAL_assertion(index<SEdge_of.size());
+    eh->out_sedge() = SEdge_of.at(index);
   } else {
     in >> index;
-    eh->incident_sface() = SFace_of[index];
+    CGAL_assertion(index<SFace_of.size());
+    eh->incident_sface() = SFace_of.at(index);
   }
   OK = OK && test_string("|");
 #ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
@@ -1659,7 +1663,7 @@ bool SNC_io_parser<EW>::
 read_facet(Halffacet_handle fh) {
 
   bool OK = true;
-  int index;
+  size_t index;
   char cc;
 #ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
   typename K::RT a,b,c,d;
@@ -1669,14 +1673,16 @@ read_facet(Halffacet_handle fh) {
   OK = OK && test_string("{");
 
   in >> index;
-  fh->twin() = Halffacet_of[index];
+  CGAL_assertion(index<Halffacet_of.size());
+  fh->twin() = Halffacet_of.at(index);
   OK = OK && test_string(",");
 
   in >> cc;
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
-    fh->boundary_entry_objects().push_back(make_object(SEdge_of[index]));
+    CGAL_assertion(index<SEdge_of.size());
+    fh->boundary_entry_objects().push_back(make_object(SEdge_of.at(index)));
     in >> cc;
   }
 
@@ -1684,12 +1690,15 @@ read_facet(Halffacet_handle fh) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
-    fh->boundary_entry_objects().push_back(make_object(SLoop_of[index]));
+    CGAL_assertion(index<SLoop_of.size());
+    fh->boundary_entry_objects().push_back(make_object(SLoop_of.at(index)));
     in >> cc;
   }
 
   in >> index;
-  fh->incident_volume() = Volume_of[index+addInfiBox];
+  index+=addInfiBox;
+  CGAL_assertion(index<Volume_of.size());
+  fh->incident_volume() = Volume_of.at(index);
   OK = OK && test_string("|");
 #ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
   in >> a >> b >> c >> d;
@@ -1721,7 +1730,7 @@ bool SNC_io_parser<EW>::
 read_volume(Volume_handle ch) {
 
   bool OK = true;
-  int index;
+  size_t index;
   char cc;
 
   in >> index;
@@ -1731,7 +1740,8 @@ read_volume(Volume_handle ch) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
-    ch->shell_entry_objects().push_back(make_object(SFace_of[index]));
+    CGAL_assertion(index<SFace_of.size());
+    ch->shell_entry_objects().push_back(make_object(SFace_of.at(index)));
     in >> cc;
   }
   in >> ch->mark();
@@ -1772,7 +1782,7 @@ bool SNC_io_parser<EW>::
 read_sedge(SHalfedge_handle seh) {
 
   bool OK = true;
-  int index;
+  size_t index;
 #ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
   typename K::RT a,b,c,d;
 #endif
@@ -1781,28 +1791,36 @@ read_sedge(SHalfedge_handle seh) {
   OK = OK && test_string("{");
 
   in >> index;
-  seh->twin() = SEdge_of[index];
+  CGAL_assertion(index<SEdge_of.size());
+  seh->twin() = SEdge_of.at(index);
   OK = OK && test_string(",");
   in >> index;
-  seh->sprev() = SEdge_of[index];
+  CGAL_assertion(index<SEdge_of.size());
+  seh->sprev() = SEdge_of.at(index);
   OK = OK && test_string(",");
   in >> index;
-  seh->snext() = SEdge_of[index];
+  CGAL_assertion(index<SEdge_of.size());
+  seh->snext() = SEdge_of.at(index);
   OK = OK && test_string(",");
   in >> index;
-  seh->source() = Edge_of[index];
+  CGAL_assertion(index<Edge_of.size());
+  seh->source() = Edge_of.at(index);
   OK = OK && test_string(",");
   in >> index;
-  seh->incident_sface() = SFace_of[index];
+  CGAL_assertion(index<SFace_of.size());
+  seh->incident_sface() = SFace_of.at(index);
   OK = OK && test_string(",");
   in >> index;
-  seh->prev() = SEdge_of[index];
+  CGAL_assertion(index<SEdge_of.size());
+  seh->prev() = SEdge_of.at(index);
   OK = OK && test_string(",");
   in >> index;
-  seh->next() = SEdge_of[index];
+  CGAL_assertion(index<SEdge_of.size());
+  seh->next() = SEdge_of.at(index);
   OK = OK && test_string(",");
   in >> index;
-  seh->facet() = Halffacet_of[index];
+  CGAL_assertion(index<Halffacet_of.size());
+  seh->facet() = Halffacet_of.at(index);
   OK = OK && test_string("|");
 #ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
   in >> a >> b >> c >> d;
@@ -1843,7 +1861,7 @@ bool SNC_io_parser<EW>::
 read_sloop(SHalfloop_handle slh) {
 
   bool OK = true;
-  int index;
+  size_t index;
 #ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
   typename K::RT a,b,c,d;
 #endif
@@ -1852,13 +1870,16 @@ read_sloop(SHalfloop_handle slh) {
   OK = OK && test_string("{");
 
   in >> index;
-  slh->twin() = SLoop_of[index];
+  CGAL_assertion(index<SLoop_of.size());
+  slh->twin() = SLoop_of.at(index);
   OK = OK && test_string(",");
   in >> index;
-  slh->incident_sface() = SFace_of[index];
+  CGAL_assertion(index<SFace_of.size());
+  slh->incident_sface() = SFace_of.at(index);
   OK = OK && test_string(",");
   in >> index;
-  slh->facet() = Halffacet_of[index];
+  CGAL_assertion(index<Halffacet_of.size());
+  slh->facet() = Halffacet_of.at(index);
   OK = OK && test_string("|");
 #ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
   in >> a >> b >> c >> d;
@@ -1897,23 +1918,25 @@ bool SNC_io_parser<EW>::
 read_sface(SFace_handle sfh) {
 
   bool OK = true;
-  int index;
+  size_t index;
   char cc;
 
   in >> index;
   OK = OK && test_string("{");
 
   in >> index;
-  sfh->center_vertex() = Vertex_of[index];
+  CGAL_assertion(index<Vertex_of.size());
+  sfh->center_vertex() = Vertex_of.at(index);
   OK = OK && test_string(",");
 
   in >> cc;
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
-    //    sfh->boundary_entry_objects().push_back(SEdge_of[index]);
+    CGAL_assertion(index<SEdge_of.size());
+    //    sfh->boundary_entry_objects().push_back(SEdge_of.at(index));
     SM_decorator SD(&*sfh->center_vertex());
-    SD.link_as_face_cycle(SEdge_of[index],sfh);
+    SD.link_as_face_cycle(SEdge_of.at(index),sfh);
     in >> cc;
   }
 
@@ -1921,8 +1944,9 @@ read_sface(SFace_handle sfh) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
-    sfh->boundary_entry_objects().push_back(make_object(Edge_of[index]));
-    this->sncp()->store_sm_boundary_item(Edge_of[index], --(sfh->sface_cycles_end()));
+    CGAL_assertion(index<Edge_of.size());
+    sfh->boundary_entry_objects().push_back(make_object(Edge_of.at(index)));
+    this->sncp()->store_sm_boundary_item(Edge_of.at(index), --(sfh->sface_cycles_end()));
     in >> cc;
   }
 
@@ -1930,13 +1954,16 @@ read_sface(SFace_handle sfh) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
-    sfh->boundary_entry_objects().push_back(make_object(SLoop_of[index]));
-    this->sncp()->store_sm_boundary_item(SLoop_of[index], --(sfh->sface_cycles_end()));
+    CGAL_assertion(index<SLoop_of.size());
+    sfh->boundary_entry_objects().push_back(make_object(SLoop_of.at(index)));
+    this->sncp()->store_sm_boundary_item(SLoop_of.at(index), --(sfh->sface_cycles_end()));
     in >> cc;
   }
 
   in >> index;
-  sfh->volume() = Volume_of[index+addInfiBox];
+  index+=addInfiBox;
+  CGAL_assertion(index<Volume_of.size());
+  sfh->volume() = Volume_of.at(index);
   OK = OK && test_string("}");
   in >> sfh->mark();
 
