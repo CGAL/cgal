@@ -167,6 +167,7 @@ struct Polygon_converter_output_iterator :
   operator OutputIterator() const { return output; }
 };
 
+// THIS IS A TEMPORARY PLACE HOLDER AND SHOULD BE REMOVED
 // Convert General_polygon_2<Polyline_traits> to Polygon_2
 template <typename Kernel, typename Container, typename ArrTraits>
 Polygon_2<Kernel, Container>
@@ -176,6 +177,7 @@ convert_polygon_back(const General_polygon_2<ArrTraits>& pgn)
   return tmp;
 }
 
+// THIS IS A TEMPORARY PLACE HOLDER AND SHOULD BE REMOVED
 // Convert General_polygon_with_holes_2<Polyline_traits> to Polygon_with_holes_2
 template <typename Kernel, typename Container, typename ArrTraits>
 Polygon_with_holes_2<Kernel, Container>
@@ -190,7 +192,7 @@ convert_polygon_back(const General_polygon_with_holes_2
 // Polygon_with_holes_2
 template <typename OutputIterator, typename Kernel>
 Polygon_converter_output_iterator<OutputIterator, Kernel>
-convert_polygon_back (OutputIterator& output)
+convert_polygon_back(OutputIterator& output)
 { return Polygon_converter_output_iterator<OutputIterator, Kernel>(output); }
 
 // Utility for checking if polygon remains the same after being
