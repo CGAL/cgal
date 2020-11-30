@@ -1161,8 +1161,61 @@ public:
 
   const std::pair<bool, bool> is_occupied(
     const PVertex& pvertex,
+    const IVertex& ivertex,
     const IEdge& query_iedge) {
 
+    const auto pair = is_occupied(pvertex, query_iedge);
+    const bool has_polygon = pair.first;
+    const bool is_bbox_reached = pair.second;
+
+    if (is_bbox_reached) return std::make_pair(true, true);
+    CGAL_assertion(!is_bbox_reached);
+    if (!has_polygon) {
+      // std::cout << "NO POLYGON DETECTED" << std::endl;
+      return std::make_pair(false, false);
+    }
+    CGAL_assertion(has_polygon);
+
+    CGAL_assertion(ivertex != null_ivertex());
+    std::set<PEdge> pedges;
+    get_occupied_pedges(pvertex, query_iedge, pedges);
+    for (const auto& pedge : pedges) {
+      CGAL_assertion(pedge != null_pedge());
+      // std::cout << "PEDGE: " << segment_3(pedge) << std::endl;
+
+      const auto source = this->source(pedge);
+      const auto target = this->target(pedge);
+      if (this->ivertex(source) == ivertex || this->ivertex(target) == ivertex) {
+        return std::make_pair(true, false);
+      }
+    }
+    return std::make_pair(false, false);
+  }
+
+  void get_occupied_pedges(
+    const PVertex& pvertex,
+    const IEdge& query_iedge,
+    std::set<PEdge>& pedges) {
+
+    pedges.clear();
+    for (const auto plane_idx : intersected_planes(query_iedge)) {
+      if (plane_idx == pvertex.first) continue; // current plane
+      if (plane_idx < 6) continue; // bbox plane
+
+      for (const auto pedge : this->pedges(plane_idx)) {
+        if (iedge(pedge) == query_iedge) {
+          pedges.insert(pedge);
+        }
+      }
+    }
+    CGAL_assertion(pedges.size() > 0);
+  }
+
+  const std::pair<bool, bool> is_occupied(
+    const PVertex& pvertex,
+    const IEdge& query_iedge) {
+
+    CGAL_assertion(query_iedge != null_iedge());
     // std::cout << str(query_iedge) << " " << segment_3(query_iedge) << std::endl;
     KSR::size_t num_adjacent_faces = 0;
     for (const auto plane_idx : intersected_planes(query_iedge)) {
@@ -1170,6 +1223,8 @@ public:
       if (plane_idx < 6) return std::make_pair(true, true); // bbox plane
 
       for (const auto pedge : pedges(plane_idx)) {
+        if (!has_iedge(pedge)) continue;
+
         // std::cout << str(iedge(pedge)) << std::endl;
         if (iedge(pedge) == query_iedge) {
           const auto& m = mesh(plane_idx);
@@ -1448,7 +1503,8 @@ public:
 
     IEdge prev_iedge = null_iedge(), next_iedge = null_iedge();
 
-    // std::ofstream("came_from.polylines.txt")
+    // std::cout << "start from: " << segment_3(iedge(pvertices[1])) << std::endl;
+    // std::ofstream("start_from.polylines.txt")
     // << "2 " << segment_3(iedge(pvertices[1])) << std::endl;
 
     std::cout << "came from: " <<
@@ -1611,7 +1667,7 @@ public:
       const auto tmp_prev = pp_curr - dirp / FT(10);
 
       const Direction_2 tmp_dir(tmp_prev - point_2(pvertex.first, ivertex));
-      // std::cout << to_3d(prev.first, tmp_prev) << std::endl;
+      // std::cout << "tmp_dir: " << to_3d(prev.first, tmp_prev) << std::endl;
 
       std::reverse(iedges.begin(), iedges.end());
 
@@ -1630,6 +1686,7 @@ public:
         }
       }
 
+      // std::cout << "first: " << segment_3(iedges[first_idx].first) << std::endl;
       // std::ofstream("first.polylines.txt")
       // << "2 " << segment_3(iedges[first_idx].first) << std::endl;
 
@@ -1646,6 +1703,7 @@ public:
         bool limit_reached = (line_idx(iedge) == other_side_limit);
         std::cout << "limit/bbox: " << limit_reached << "/" << bbox_reached << std::endl;
 
+        // std::cout << "next: " << segment_3(iedge) << std::endl;
         // std::ofstream("next" + std::to_string(iter) + ".polylines.txt")
         // << "2 " << segment_3(iedge) << std::endl;
         crossed.push_back(iedge);
@@ -1716,7 +1774,7 @@ public:
         else // create triangle face
         {
           bool is_occupied_edge, bbox_reached;
-          std::tie(is_occupied_edge, bbox_reached) = is_occupied(pvertex, crossed[0]);
+          std::tie(is_occupied_edge, bbox_reached) = is_occupied(pvertex, ivertex, crossed[0]);
           // std::tie(is_occupied_edge, bbox_reached) = collision_occured(pvertex, crossed[0]);
           std::cout << "is already occupied / bbox: " << is_occupied_edge << "/" << bbox_reached << std::endl;
 
@@ -1749,7 +1807,6 @@ public:
           std::cout << "propagated: " << point_3(propagated) << std::endl;
 
           PFace new_pface = add_pface(std::array<PVertex, 3>{pvertex, propagated, previous});
-          // this->k(new_pface) = k;
           this->k(new_pface) = this->k(pface);
           previous = propagated;
 
@@ -1780,7 +1837,7 @@ public:
       const auto tmp_next = pn_curr - dirn / FT(10);
 
       const Direction_2 tmp_dir(tmp_next - point_2(pvertex.first, ivertex));
-      // std::cout << to_3d(next.first, tmp_next) << std::endl;
+      // std::cout << "tmp_dir: " << to_3d(next.first, tmp_next) << std::endl;
 
       if (was_swapped) {
         std::reverse(iedges.begin(), iedges.end());
@@ -1809,6 +1866,7 @@ public:
         }
       }
 
+      // std::cout << "first: " << segment_3(iedges[first_idx].first) << std::endl;
       // std::ofstream("first.polylines.txt")
       // << "2 " << segment_3(iedges[first_idx].first) << std::endl;
 
@@ -1825,6 +1883,7 @@ public:
         bool limit_reached = (line_idx(iedge) == other_side_limit);
         std::cout << "limit/bbox: " << limit_reached << "/" << bbox_reached << std::endl;
 
+        // std::cout << "next: " << segment_3(iedge) << std::endl;
         // std::ofstream("next" + std::to_string(iter) + ".polylines.txt")
         // << "2 " << segment_3(iedge) << std::endl;
         crossed.push_back(iedge);
@@ -1896,7 +1955,7 @@ public:
         else // create triangle face
         {
           bool is_occupied_edge, bbox_reached;
-          std::tie(is_occupied_edge, bbox_reached) = is_occupied(pvertex, crossed[0]);
+          std::tie(is_occupied_edge, bbox_reached) = is_occupied(pvertex, ivertex, crossed[0]);
           // std::tie(is_occupied_edge, bbox_reached) = collision_occured(pvertex, crossed[0]);
           std::cout << "is already occupied / bbox: " << is_occupied_edge << "/" << bbox_reached << std::endl;
 
@@ -1929,7 +1988,6 @@ public:
           std::cout << "propagated: " << point_3(propagated) << std::endl;
 
           PFace new_pface = add_pface(std::array<PVertex, 3>{pvertex, previous, propagated});
-          // this->k(new_pface) = k;
           this->k(new_pface) = this->k(pface);
           previous = propagated;
 
@@ -1987,6 +2045,7 @@ public:
       CGAL_assertion(first_idx != KSR::no_element());
       crossed.clear();
 
+      // std::cout << "first: " << segment_3(iedges[first_idx].first) << std::endl;
       // std::ofstream("first.polylines.txt")
       // << "2 " << segment_3(iedges[first_idx].first) << std::endl;
 
@@ -2000,6 +2059,7 @@ public:
         if (!dir.counterclockwise_in_between (dir_next, dir_prev))
           break;
 
+        // std::cout << "next: " << segment_3(iedge) << std::endl;
         // std::ofstream("next" + std::to_string(iter) + ".polylines.txt")
         // << "2 " << segment_3(iedge) << std::endl;
         crossed.push_back(iedge);
@@ -2105,12 +2165,12 @@ public:
       std::cerr << new_vertices.size() << " new vertice(s)" << std::endl;
 
       bool is_occupied_edge_back, bbox_reached_back;
-      std::tie(is_occupied_edge_back, bbox_reached_back) = is_occupied(pvertex, crossed.back());
+      std::tie(is_occupied_edge_back, bbox_reached_back) = is_occupied(pvertex, ivertex, crossed.back());
       // std::tie(is_occupied_edge_back, bbox_reached_back) = collision_occured(pvertex, crossed.back());
       std::cout << "is already occupied back / bbox: " << is_occupied_edge_back << "/" << bbox_reached_back << std::endl;
 
       bool is_occupied_edge_front, bbox_reached_front;
-      std::tie(is_occupied_edge_front, bbox_reached_front) = is_occupied(pvertex, crossed.front());
+      std::tie(is_occupied_edge_front, bbox_reached_front) = is_occupied(pvertex, ivertex, crossed.front());
       // std::tie(is_occupied_edge_front, bbox_reached_front) = collision_occured(pvertex, crossed.front());
       std::cout << "is already occupied front / bbox: " << is_occupied_edge_front << "/" << bbox_reached_front << std::endl;
 
@@ -2128,36 +2188,27 @@ public:
 
       } else if ((is_occupied_edge_back && is_occupied_edge_front) && this->k(pface) == 1) {
 
-        add_new_faces(this->k(pface), pvertex, new_vertices, pface);
-        std::cout << "back && front k = 1" << std::endl;
+        std::cout << "stop back && front k = 1" << std::endl;
 
       } else if ((is_occupied_edge_back && is_occupied_edge_front) && this->k(pface) > 1) {
 
-        // this->k(pface)--;
-        // CGAL_assertion(this->k(pface) >= 1);
+        this->k(pface)--;
+        CGAL_assertion(this->k(pface) >= 1);
         add_new_faces(this->k(pface), pvertex, new_vertices, pface);
-        std::cout << "back && front k > 1" << std::endl;
+        std::cout << "continue back && front k > 1" << std::endl;
 
       } else if ((!is_occupied_edge_back && !is_occupied_edge_front)) {
 
         add_new_faces(this->k(pface), pvertex, new_vertices, pface);
-        std::cout << "!back && !front" << std::endl;
+        std::cout << "continue !back && !front" << std::endl;
 
-      } else if (is_occupied_edge_back && !is_occupied_edge_front) {
-
-        add_new_faces(this->k(pface), pvertex, new_vertices, pface);
-        std::cout << "back && !front" << std::endl;
-
-      } else if (!is_occupied_edge_back && is_occupied_edge_front) {
+      } else if (is_occupied_edge_back || is_occupied_edge_front) {
 
         add_new_faces(this->k(pface), pvertex, new_vertices, pface);
-        std::cout << "!back && front" << std::endl;
+        std::cout << "continue back || front" << std::endl;
 
-        // if (this->k(pface) > 1) {
-        //   this->k(pface)--;
-        //   CGAL_assertion(this->k(pface) >= 1);
-        //   add_new_faces(this->k(pface), pvertex, new_vertices, pface);
-        // }
+        // std::cout << "centroid pface: " << centroid_of_pface(pface) << std::endl;
+        // CGAL_assertion_msg(false, "TEST THIS CASE: BACK || FRONT!");
 
       } else {
         CGAL_assertion_msg(false, "TODO: ADD NEW OPEN CASE! DO NOT FORGET TO UPDATE K!");

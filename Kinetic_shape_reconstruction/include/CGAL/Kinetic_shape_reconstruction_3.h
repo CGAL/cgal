@@ -625,6 +625,7 @@ private:
         remove_events (pvertices[i]);
 
       // Merge them and get the newly created vertices.
+      // std::cout << "came from: " << m_data.segment_3(m_data.iedge(ev.pvertex())) << std::endl;
       std::vector<IEdge> crossed;
       std::vector<PVertex> new_pvertices
         = m_data.merge_pvertices_on_ivertex(m_min_time, m_max_time, pvertices, ev.ivertex(), crossed);
