@@ -210,13 +210,6 @@ public:
   const Point& point(const Vertex_handle v) const { return v->point(); }
   const Point& point(const Face_handle f, const int i) const { return point(f->vertex(i)); }
 
-  //-----------------------LOCATION-----------------------------------------------------------------
-  Face_handle march_locate_2D(Face_handle f, const Point& t, Locate_type& lt, int& li) const;
-  Face_handle march_locate_1D(const Point& t, Locate_type& lt, int& li) const ;
-  Face_handle locate(const Point& p, Locate_type& lt, int& li, Face_handle start) const;
-  Face_handle locate(const Point& p, const Face_handle start) const;
-  Face_handle locate_edge(const Point& p, Locate_type& lt, int& li, bool on_diametral_plane) const;
-
   //-----------------------PREDICATES---------------------------------------------------------------
   Orientation orientation(const Point& p, const Point& q, const Point& r, const Point& s) const;
   Orientation orientation(const Face_handle f, const Point& p) const;
@@ -230,6 +223,13 @@ public:
 
   void test_distance(const Point& p, const Face_handle f, Locate_type& lt, int& li) const;
   bool are_points_too_close(const Point& p, const Point& q, Locate_type& lt) const;
+
+  //-----------------------LOCATION-----------------------------------------------------------------
+  Face_handle march_locate_2D(Face_handle f, const Point& t, Locate_type& lt, int& li) const;
+  Face_handle march_locate_1D(const Point& t, Locate_type& lt, int& li) const ;
+  Face_handle locate(const Point& p, Locate_type& lt, int& li, Face_handle start) const;
+  Face_handle locate(const Point& p, const Face_handle start) const;
+  Face_handle locate_edge(const Point& p, Locate_type& lt, int& li, bool on_diametral_plane) const;
 
   //-----------------------DEBUG--------------------------------------------------------------------
   void show_all() const;
@@ -434,6 +434,64 @@ is_face(Vertex_handle v1,
   return _tds.is_face(v1, v2, v3, fr);
 }
 
+//---------------------- PREDICATES -------------------------------
+template <typename Gt, typename Tds>
+Comparison_result
+Triangulation_on_sphere_2< Gt,  Tds>::
+compare(const Point& p, const Point& q) const
+{
+  return geom_traits().compare_on_sphere_2_object()(p, q);
+}
+
+template <class Gt, class Tds>
+Orientation
+Triangulation_on_sphere_2<Gt, Tds>::
+orientation(const Point&p, const Point& q, const Point& r, const Point& s) const
+{
+  return geom_traits().side_of_oriented_circle_2_object()(p, q, r, s);
+}
+
+template <typename Gt, typename Tds>
+inline Orientation
+Triangulation_on_sphere_2<Gt, Tds>::
+orientation(const Face_handle fh, const Point& r) const
+{
+  return orientation(point(fh, 0), point(fh, 1), point(fh, 2), r);
+}
+
+template <typename Gt, typename Tds>
+inline Orientation
+Triangulation_on_sphere_2<Gt, Tds>::
+orientation_on_sphere(const Point& p, const Point& q, const Point& r) const
+{
+  return geom_traits().orientation_on_sphere_2_object()(p, q, r);
+}
+
+template <typename Gt, typename Tds>
+inline Orientation
+Triangulation_on_sphere_2<Gt, Tds>::
+orientation_on_sphere(const Face_handle f) const
+{
+  return orientation_on_sphere(point(f, 0), point(f, 1), point(f, 2));
+}
+
+template <typename Gt, typename Tds>
+inline bool
+Triangulation_on_sphere_2<Gt, Tds>::
+are_equal(const Point& p, const Point& q) const
+{
+  return geom_traits().equal_on_sphere_2_object()(p, q);
+}
+
+// return true if r strictly lies inside the cone defined by the center of the sphere, p and q
+template <typename Gt, typename Tds>
+bool
+Triangulation_on_sphere_2<Gt, Tds>::
+collinear_between(const Point& p, const Point& q, const Point& r) const
+{
+  return geom_traits().collinear_are_strictly_ordered_on_great_circle_2_object()(p, q, r);
+}
+
 //----------------------------------------POINT LOCATION---------------------------------------//
 // tests whether the two points p and q are too close according to the lemma about hidden vertices.
 template<class Gt, class Tds>
@@ -515,15 +573,17 @@ locate_edge(const Point& p,
       }
     }
 
+    // @fixme 'loc' is not set
+
     test_distance(p, loc, lt, li);
     return loc;
   }
 }
 
 /*
- calls too_close for possible conflicts.
+ calls are_points_too_close() for possible conflicts.
  If the point p is too close to an existing vertex, this vertex is returned.
- should be replaced by a nearest neighbor search.
+ @todo should be replaced by a nearest neighbor search.
  */
 template <typename Gt, typename Tds>
 void
@@ -544,8 +604,8 @@ test_distance(const Point& p,
         li = 0;
         return;
       }
-    }
       break;
+    }
     case 0:
     case 1:
     {
@@ -558,8 +618,8 @@ test_distance(const Point& p,
           return;
         }
       }
-    }
       break;
+    }
     case 2: // @fixme this seems wrong, the face in conflict might not have the closest vertex
     {
       const Vertex_handle v0 = f->vertex(0);
@@ -582,8 +642,8 @@ test_distance(const Point& p,
         li = 2;
         return;
       }
-    }
       break;
+    }
   }
 }
 
@@ -592,7 +652,8 @@ typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
 Triangulation_on_sphere_2<Gt, Tds>::
 march_locate_1D(const Point& p, Locate_type& lt, int& li) const
 {
-  CGAL_assertion(dimension() >= 1);
+  CGAL_assertion(dimension() == 1);
+
 
   // check if p is coplanar with existing points
   // first three points of triangulation
@@ -1004,64 +1065,6 @@ locate(const Point& p,
   Locate_type lt;
   int li;
   return locate(p, lt, li, start);
-}
-
-//---------------------- PREDICATES -------------------------------
-template <typename Gt, typename Tds>
-Comparison_result
-Triangulation_on_sphere_2< Gt,  Tds>::
-compare(const Point& p, const Point& q) const
-{
-  return geom_traits().compare_on_sphere_2_object()(p, q);
-}
-
-template <class Gt, class Tds>
-Orientation
-Triangulation_on_sphere_2<Gt, Tds>::
-orientation(const Point&p, const Point& q, const Point& r, const Point& s) const
-{
-  return geom_traits().orientation_3_object()(p, q, r, s);
-}
-
-template <typename Gt, typename Tds>
-inline Orientation
-Triangulation_on_sphere_2<Gt, Tds>::
-orientation(const Face_handle fh, const Point& r) const
-{
-  return orientation(point(fh, 0), point(fh, 1), point(fh, 2), r);
-}
-
-template <typename Gt, typename Tds>
-inline Orientation
-Triangulation_on_sphere_2<Gt, Tds>::
-orientation_on_sphere(const Point& p, const Point& q, const Point& r) const
-{
-  return geom_traits().orientation_on_sphere_2_object()(p, q, r);
-}
-
-template <typename Gt, typename Tds>
-inline Orientation
-Triangulation_on_sphere_2<Gt, Tds>::
-orientation_on_sphere(const Face_handle f) const
-{
-  return orientation_on_sphere(point(f, 0), point(f, 1), point(f, 2));
-}
-
-template <typename Gt, typename Tds>
-inline bool
-Triangulation_on_sphere_2<Gt, Tds>::
-are_equal(const Point& p, const Point& q) const
-{
-  return geom_traits().equal_on_sphere_2_object()(p, q);
-}
-
-// return true if r strictly lies inside the cone defined by the center of the sphere, p and q
-template <typename Gt, typename Tds>
-bool
-Triangulation_on_sphere_2<Gt, Tds>::
-collinear_between(const Point& p, const Point& q, const Point& r) const
-{
-  return geom_traits().inside_cone_2_object()(p, q, r);
 }
 
 //--------------------------------------------DEBUG-------------------------------------------------

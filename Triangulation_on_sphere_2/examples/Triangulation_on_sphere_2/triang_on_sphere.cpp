@@ -1,18 +1,18 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Delaunay_triangulation_sphere_2.h>
-#include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
+#include <CGAL/Delaunay_triangulation_on_sphere_2.h>
+#include <CGAL/Delaunay_triangulation_sphere_traits_2.h> // @todo '_on_' ?
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>     Traits;
-typedef CGAL::Delaunay_triangulation_sphere_2<Traits>       DToS2;
+typedef CGAL::Delaunay_triangulation_on_sphere_2<Traits>    DToS2;
 
-typedef Traits::Point_2                                     Point;
+typedef Traits::Point_3                                     Point;
 
 int main()
 {
-  std::vector<K::Point_3> points;
+  std::vector<Point> points;
   points.emplace_back( 2, 1, 1);
   points.emplace_back(-2, 1, 1);
   points.emplace_back( 0, 1, 1);

@@ -34,7 +34,7 @@
 namespace CGAL {
 
 template <class Gt,
-          class Tds = Triangulation_data_structure_2 <
+          class Tds = Triangulation_data_structure_2<
                         Triangulation_on_sphere_vertex_base_2<Gt>,
                         Triangulation_on_sphere_face_base_2<Gt> > >
 class Delaunay_triangulation_on_sphere_2
@@ -112,14 +112,104 @@ public:
     : Base(center, radius)
   { }
 
-  // CHECK
-  void check_neighboring_faces() const;
-  bool is_plane() const;
-  bool is_valid(bool verbose = false, int level = 0) const;
-  bool is_valid_face(Face_handle fh, bool verbose = false, int level = 0) const;
-  bool is_valid_vertex(Vertex_handle fh, bool verbose = false, int level = 0) const;
+  // Predicates & Constructions
+  Oriented_side side_of_oriented_circle(const Point& p, const Point& q, const Point& r, const Point& s, bool perturb = false) const;
+  Oriented_side side_of_oriented_circle(const Face_handle f, const Point& p, bool perturb = false) const;
+  bool test_conflict(const Point& p, Face_handle fh) const;
 
   //INSERTION
+  template <typename OutputItFaces, typename OutputItBoundaryEdges>
+  std::pair<OutputItFaces,OutputItBoundaryEdges>
+  get_conflicts_and_boundary(const Point& p,
+                             OutputItFaces fit,
+                             OutputItBoundaryEdges eit,
+                             Face_handle fh) const
+  {
+    CGAL_precondition(dimension() == 2);
+    CGAL_precondition(test_conflict(p, fh));
+
+    *fit++ = fh; //put fh in OutputItFaces
+    fh->in_conflict() = true;
+
+    std::pair<OutputItFaces, OutputItBoundaryEdges> pit = std::make_pair(fit, eit);
+    pit = propagate_conflicts(p, fh, 0, pit);
+    pit = propagate_conflicts(p, fh, 1, pit);
+    pit = propagate_conflicts(p, fh, 2, pit);
+
+    return std::make_pair(fit, eit);
+  }
+
+private:
+  template <class OutputItFaces, class OutputItBoundaryEdges>
+  std::pair<OutputItFaces, OutputItBoundaryEdges>
+  non_recursive_propagate_conflicts(const Point& p,
+                                    const Face_handle fh,
+                                    const int i,
+                                    std::pair<OutputItFaces,OutputItBoundaryEdges> pit) const
+  {
+    std::stack<std::pair<Face_handle, int> > stack;
+    stack.push(std::make_pair(fh, i));
+
+    while(!stack.empty())
+    {
+      const Face_handle fh = stack.top().first;
+      const int i = stack.top().second;
+      stack.pop();
+      Face_handle fn = fh->neighbor(i);
+      if(!test_conflict(p,fn))
+      {
+        *(pit.second)++ = Edge(fn, fn->index(fh));
+      }
+      else
+      {
+        *(pit.first)++ = fn;
+        int j = fn->index(fh);
+
+        // In the non-recursive version, we walk via 'ccw(j)' first. Here, we are filling the stack
+        // and the order is thus the opposite (we want the top element of the stack to be 'ccw(j)')
+        stack.push(std::make_pair(fn, cw(j)));
+        stack.push(std::make_pair(fn, ccw(j)));
+      }
+    }
+
+    return pit;
+  }
+
+  template <typename OutputItFaces, typename OutputItBoundaryEdges>
+  std::pair<OutputItFaces, OutputItBoundaryEdges>
+  propagate_conflicts(const Point& p,
+                      Face_handle fh,
+                      int i,
+                      std::pair<OutputItFaces, OutputItBoundaryEdges> pit,
+                      int depth = 0) const
+  {
+    if(depth == 100)
+      return non_recursive_propagate_conflicts(p, fh, i, pit);
+
+    Face_handle fn = fh->neighbor(i);
+    if(fn->in_conflict())
+      return pit;
+
+    if(!test_conflict(p, fn))
+    {
+      *(pit.second)++ = Edge(fn, fn->index(fh));
+    }
+    else
+    {
+      *(pit.first)++ = fn;
+      // @fixme, change it to tds_data() like T3.h also update the code in HT2 because
+      // it doesn't need to have tds_data() in HT_face_base_2
+      // @fixme when is that reset ?
+      fn->in_conflict() = true;
+      int j = fn->index(fh);
+      pit = propagate_conflicts(p, fn, ccw(j), pit, depth + 1);
+      pit = propagate_conflicts(p, fn, cw(j), pit, depth + 1);
+    }
+
+    return pit;
+  }
+
+public:
   Vertex_handle insert(const Point& p, Locate_type lt, Face_handle loc, int li);
   Vertex_handle insert(const Point& p, Face_handle f = Face_handle());
   Vertex_handle insert_first(const Point& p);
@@ -127,7 +217,6 @@ public:
   Vertex_handle insert_outside_affine_hull_regular(const Point& p);
   Vertex_handle insert_cocircular(const Point& p, Locate_type lt, Face_handle loc);
 
-  bool test_conflict(const Point& p, Face_handle fh) const;
   bool update_ghost_faces(Vertex_handle v = Vertex_handle(), bool first = false);
 
   //REMOVAL
@@ -139,9 +228,6 @@ public:
   bool test_dim_up(const Point& p) const;
   void fill_hole_regular(std::list<Edge>& hole);
 
-  Oriented_side side_of_oriented_circle(const Point& p, const Point& q, const Point& r, const Point& s, bool perturb = false) const;
-  Oriented_side side_of_oriented_circle(const Face_handle f, const Point& p, bool perturb = false) const;
-
   // Dual
   Point_3 circumcenter(const Point& p0, const Point& p1, const Point& p2) const;
   Point_3 circumcenter(const Face_handle f) const;
@@ -149,6 +235,13 @@ public:
   Object dual(const Edge& e) const ;
   Object dual(const Edge_circulator ec) const { return dual(*ec); }
   Object dual(const All_edges_iterator ei) const { return dual(*ei); }
+
+  // Validity
+  void check_neighboring_faces() const;
+  bool is_plane() const;
+  bool is_valid(bool verbose = false, int level = 0) const;
+  bool is_valid_face(Face_handle fh, bool verbose = false, int level = 0) const;
+  bool is_valid_vertex(Vertex_handle fh, bool verbose = false, int level = 0) const;
 
   template <typename Stream>
   Stream& write_vertices(Stream& out, std::vector<Vertex_handle>& t)
@@ -255,8 +348,7 @@ public:
     std::vector<Point> points(first, last);
     std::random_shuffle(points.begin(), points.end());
 
-    // @fixme need an adapter
-    spatial_sort(points.begin(), points.end());
+    spatial_sort(points.begin(), points.end(), geom_traits());
 
     Face_handle hint;
     Vertex_handle v;
@@ -269,98 +361,9 @@ public:
 
     return number_of_vertices() - n;
   }
-
-  template <typename OutputItFaces, typename OutputItBoundaryEdges>
-  std::pair<OutputItFaces,OutputItBoundaryEdges>
-  get_conflicts_and_boundary(const Point& p,
-                             OutputItFaces fit,
-                             OutputItBoundaryEdges eit,
-                             Face_handle fh) const
-  {
-    CGAL_precondition(dimension() == 2);
-    CGAL_precondition(test_conflict(p, fh));
-
-    *fit++ = fh; //put fh in OutputItFaces
-    fh->in_conflict() = true;
-
-    std::pair<OutputItFaces, OutputItBoundaryEdges> pit = std::make_pair(fit, eit);
-    pit = propagate_conflicts(p, fh, 0, pit);
-    pit = propagate_conflicts(p, fh, 1, pit);
-    pit = propagate_conflicts(p, fh, 2, pit);
-
-    return std::make_pair(fit, eit);
-  }
-
-private:
-  template <class OutputItFaces, class OutputItBoundaryEdges>
-  std::pair<OutputItFaces, OutputItBoundaryEdges>
-  non_recursive_propagate_conflicts(const Point& p,
-                                    const Face_handle fh,
-                                    const int i,
-                                    std::pair<OutputItFaces,OutputItBoundaryEdges> pit) const
-  {
-    std::stack<std::pair<Face_handle, int> > stack;
-    stack.push(std::make_pair(fh, i));
-
-    while(!stack.empty())
-    {
-      const Face_handle fh = stack.top().first;
-      const int i = stack.top().second;
-      stack.pop();
-      Face_handle fn = fh->neighbor(i);
-      if(!test_conflict(p,fn))
-      {
-        *(pit.second)++ = Edge(fn, fn->index(fh));
-      }
-      else
-      {
-        *(pit.first)++ = fn;
-        int j = fn->index(fh);
-
-        // In the non-recursive version, we walk via 'ccw(j)' first. Here, we are filling the stack
-        // and the order is thus the opposite (we want the top element of the stack to be 'ccw(j)')
-        stack.push(std::make_pair(fn, cw(j)));
-        stack.push(std::make_pair(fn, ccw(j)));
-      }
-    }
-
-    return pit;
-  }
-
-  template <typename OutputItFaces, typename OutputItBoundaryEdges>
-  std::pair<OutputItFaces, OutputItBoundaryEdges>
-  propagate_conflicts(const Point& p,
-                      Face_handle fh,
-                      int i,
-                      std::pair<OutputItFaces, OutputItBoundaryEdges> pit,
-                      int depth = 0) const
-  {
-    if(depth == 100)
-      return non_recursive_propagate_conflicts(p, fh, i, pit);
-
-    Face_handle fn = fh->neighbor(i);
-    if(fn->in_conflict())
-      return pit;
-
-    if(!test_conflict(p, fn))
-    {
-      *(pit.second)++ = Edge(fn, fn->index(fh));
-    }
-    else
-    {
-      *(pit.first)++ = fn;
-      // @fixme, change it to tds_data() like T3.h also update the code in HT2 because
-      // it doesn't need to have tds_data() in HT_face_base_2
-      // @fixme when is that reset ?
-      fn->in_conflict() = true;
-      int j = fn->index(fh);
-      pit = propagate_conflicts(p, fn, ccw(j), pit, depth + 1);
-      pit = propagate_conflicts(p, fn, cw(j), pit, depth + 1);
-    }
-
-    return pit;
-  }
 };
+
+// ------------------------ PREDICATES / CONSTRUCTIONS --------------------------------//
 
 // computes the power test of 4 points. 'perturb' defines whether a symbolic perturbation
 // is used (by default, perturb == false)
@@ -373,7 +376,7 @@ side_of_oriented_circle(const Point& p0, const Point& p1, const Point& p2, const
                         bool perturb) const
 {
   // Specificity of the ToS_2: the in-circle is a call to orientation_3
-  Oriented_side os = geom_traits().orientation_3_object()(p0, p1, p2, p);
+  Oriented_side os = orientation(p0, p1, p2, p);
   if(os != ON_ORIENTED_BOUNDARY || !perturb)
     return os;
 
@@ -402,177 +405,12 @@ side_of_oriented_circle(const Point& p0, const Point& p1, const Point& p2, const
   return ON_NEGATIVE_SIDE;
 }
 
-
 template <typename Gt, typename Tds>
 Oriented_side
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 side_of_oriented_circle(const Face_handle f, const Point& p, bool perturb) const
 {
   return side_of_oriented_circle(point(f, 0), point(f, 1), point(f, 2), p, perturb);
-}
-
-//-------------------------------------------CHECK------------------------------------------------//
-// checks whether neighboring faces are linked correctly to each other.
-template <typename Gt, typename Tds>
-void
-Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-check_neighboring_faces() const
-{
-  if(dimension() == 1)
-  {
-    for(All_faces_iterator eit=all_faces_begin(); eit!=all_faces_end(); ++eit)
-    {
-      Face_handle f1 = eit->neighbor(0);
-      Face_handle f2 = eit->neighbor(1);
-      CGAL_assertion(f1->has_neighbor(eit));
-      CGAL_assertion(f2->has_neighbor(eit));
-    }
-  }
-
-  for(All_faces_iterator eit=all_faces_begin(); eit!=all_faces_end(); ++eit)
-  {
-    Face_handle f1 = eit->neighbor(0);
-    Face_handle f2 = eit->neighbor(1);
-    Face_handle f3 = eit->neighbor(2);
-    CGAL_assertion(f1->has_neighbor(eit));
-    CGAL_assertion(f2->has_neighbor(eit));
-    CGAL_assertion(f3->has_neighbor(eit));
-  }
-}
-
-//checks whether a given triangulation is plane (all points are coplanar)
-template <typename Gt, typename Tds>
-bool
-Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-is_plane() const
-{
-  if(number_of_vertices() <= 3)
-    return true;
-
-  bool plane = true;
-
-  All_vertices_iterator it1 = vertices_begin(), it2(it1), it3(it1), it4(it1);
-  std::advance(it2, 1);
-  std::advance(it3, 2);
-  std::advance(it4, 3);
-
-  while(it4 != vertices_end())
-  {
-    Orientation s = side_of_oriented_circle(point(it1), point(it2), point(it3), point(it4));
-    plane = plane && s == ON_ORIENTED_BOUNDARY;
-
-    if(!plane)
-      return false;
-
-    ++it1;
-    ++it2;
-    ++it3;
-    ++it4;
-  }
-
-  return true;
-}
-
-template <typename Gt, typename Tds>
-bool
-Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-is_valid(bool verbose, int level) const
-{
-  bool result = true;
-
-  if(!tds().is_valid(verbose, level))
-  {
-    if(verbose)
-      std::cerr << "invalid data structure" << std::endl;
-
-    CGAL_assertion(false);
-    return false;
-  }
-
-  for(All_faces_iterator fit=all_faces_begin(); fit!=all_faces_end(); ++fit)
-    is_valid_face(fit, verbose, level);
-
-  for(All_vertices_iterator vit=vertices_begin(); vit!=vertices_end(); ++vit)
-    is_valid_vertex(vit, verbose, level);
-
-  switch(dimension())
-  {
-    case 0 :
-      break;
-    case 1 :
-      CGAL_assertion(this->is_plane());
-      break;
-    case 2 :
-      for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); ++it)
-      {
-        Orientation s = orientation_on_sphere(point(it, 0), point(it, 1), point(it, 2));
-        result = result && (s != NEGATIVE || it->is_ghost());
-        CGAL_assertion(result);
-      }
-
-      result = result && (number_of_faces() == 2*(number_of_vertices()) - 4);
-      CGAL_assertion(result);
-      break;
-  }
-
-  // in any dimension
-  if(verbose)
-    std::cerr << " number of vertices " << number_of_vertices() << "\t" << std::endl;
-
-  CGAL_assertion(result);
-  return result;
-}
-
-template <typename Gt, typename Tds>
-bool
-Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-is_valid_vertex(Vertex_handle vh, bool verbose, int /*level*/) const
-{
-  bool result = vh->face()->has_vertex(vh);
-  if(!result)
-  {
-    if(verbose)
-    {
-      std::cerr << " from is_valid_vertex " << std::endl;
-      std::cerr << "normal vertex " << &(*vh) << std::endl;
-      std::cerr << point(vh) << " " << std::endl;
-      std::cerr << "vh_>face " << &*(vh->face()) << " " << std::endl;
-
-      show_face(vh->face());
-    }
-
-    CGAL_assertion(false);
-    return false;
-  }
-
-  return true;
-}
-
-template <typename Gt, typename Tds>
-bool
-Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-is_valid_face(Face_handle fh, bool verbose, int /*level*/) const
-{
-  bool result = true;
-  for(int i=0; i<+2; ++i)
-  {
-    Orientation test = side_of_oriented_circle(fh, point(fh->vertex(i)));
-    result = result && test == ON_ORIENTED_BOUNDARY;
-    CGAL_assertion(result);
-  }
-
-  if(!result)
-  {
-    if(verbose)
-    {
-      std::cerr << " from is_valid_face " << std::endl;
-      std::cerr << " face " << std::endl;
-      show_face(fh);
-    }
-  }
-
-  CGAL_assertion(result);
-  return result;
 }
 
 // tests whether there is a conflict between p and the face fh
@@ -1166,6 +1004,170 @@ dual(const Edge& e) const
                                                            dual(e.first->neighbor(e.second)));
 
   return make_object(s);
+}
+
+//-------------------------------------------CHECK------------------------------------------------//
+// checks whether neighboring faces are linked correctly to each other.
+template <typename Gt, typename Tds>
+void
+Delaunay_triangulation_on_sphere_2<Gt, Tds>::
+check_neighboring_faces() const
+{
+  if(dimension() == 1)
+  {
+    for(All_faces_iterator eit=all_faces_begin(); eit!=all_faces_end(); ++eit)
+    {
+      Face_handle f1 = eit->neighbor(0);
+      Face_handle f2 = eit->neighbor(1);
+      CGAL_assertion(f1->has_neighbor(eit));
+      CGAL_assertion(f2->has_neighbor(eit));
+    }
+  }
+
+  for(All_faces_iterator eit=all_faces_begin(); eit!=all_faces_end(); ++eit)
+  {
+    Face_handle f1 = eit->neighbor(0);
+    Face_handle f2 = eit->neighbor(1);
+    Face_handle f3 = eit->neighbor(2);
+    CGAL_assertion(f1->has_neighbor(eit));
+    CGAL_assertion(f2->has_neighbor(eit));
+    CGAL_assertion(f3->has_neighbor(eit));
+  }
+}
+
+//checks whether a given triangulation is plane (all points are coplanar)
+template <typename Gt, typename Tds>
+bool
+Delaunay_triangulation_on_sphere_2<Gt, Tds>::
+is_plane() const
+{
+  if(number_of_vertices() <= 3)
+    return true;
+
+  bool plane = true;
+
+  All_vertices_iterator it1 = vertices_begin(), it2(it1), it3(it1), it4(it1);
+  std::advance(it2, 1);
+  std::advance(it3, 2);
+  std::advance(it4, 3);
+
+  while(it4 != vertices_end())
+  {
+    Orientation s = side_of_oriented_circle(point(it1), point(it2), point(it3), point(it4));
+    plane = plane && s == ON_ORIENTED_BOUNDARY;
+
+    if(!plane)
+      return false;
+
+    ++it1;
+    ++it2;
+    ++it3;
+    ++it4;
+  }
+
+  return true;
+}
+
+template <typename Gt, typename Tds>
+bool
+Delaunay_triangulation_on_sphere_2<Gt, Tds>::
+is_valid(bool verbose, int level) const
+{
+  bool result = true;
+
+  if(!tds().is_valid(verbose, level))
+  {
+    if(verbose)
+      std::cerr << "invalid data structure" << std::endl;
+
+    CGAL_assertion(false);
+    return false;
+  }
+
+  for(All_faces_iterator fit=all_faces_begin(); fit!=all_faces_end(); ++fit)
+    is_valid_face(fit, verbose, level);
+
+  for(All_vertices_iterator vit=vertices_begin(); vit!=vertices_end(); ++vit)
+    is_valid_vertex(vit, verbose, level);
+
+  switch(dimension())
+  {
+    case 0 :
+      break;
+    case 1 :
+      CGAL_assertion(this->is_plane());
+      break;
+    case 2 :
+      for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); ++it)
+      {
+        Orientation s = orientation_on_sphere(point(it, 0), point(it, 1), point(it, 2));
+        result = result && (s != NEGATIVE || it->is_ghost());
+        CGAL_assertion(result);
+      }
+
+      result = result && (number_of_faces() == 2*(number_of_vertices()) - 4);
+      CGAL_assertion(result);
+      break;
+  }
+
+  // in any dimension
+  if(verbose)
+    std::cerr << " number of vertices " << number_of_vertices() << "\t" << std::endl;
+
+  CGAL_assertion(result);
+  return result;
+}
+
+template <typename Gt, typename Tds>
+bool
+Delaunay_triangulation_on_sphere_2<Gt, Tds>::
+is_valid_vertex(Vertex_handle vh, bool verbose, int /*level*/) const
+{
+  bool result = vh->face()->has_vertex(vh);
+  if(!result)
+  {
+    if(verbose)
+    {
+      std::cerr << " from is_valid_vertex " << std::endl;
+      std::cerr << "normal vertex " << &(*vh) << std::endl;
+      std::cerr << point(vh) << " " << std::endl;
+      std::cerr << "vh_>face " << &*(vh->face()) << " " << std::endl;
+
+      show_face(vh->face());
+    }
+
+    CGAL_assertion(false);
+    return false;
+  }
+
+  return true;
+}
+
+template <typename Gt, typename Tds>
+bool
+Delaunay_triangulation_on_sphere_2<Gt, Tds>::
+is_valid_face(Face_handle fh, bool verbose, int /*level*/) const
+{
+  bool result = true;
+  for(int i=0; i<+2; ++i)
+  {
+    Orientation test = side_of_oriented_circle(fh, point(fh->vertex(i)));
+    result = result && test == ON_ORIENTED_BOUNDARY;
+    CGAL_assertion(result);
+  }
+
+  if(!result)
+  {
+    if(verbose)
+    {
+      std::cerr << " from is_valid_face " << std::endl;
+      std::cerr << " face " << std::endl;
+      show_face(fh);
+    }
+  }
+
+  CGAL_assertion(result);
+  return result;
 }
 
 } // namespace CGAL
