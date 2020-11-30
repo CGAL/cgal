@@ -39,7 +39,6 @@ namespace internal{
       }
     };
 
-    template <>
     template <class T, class Alloc>
     struct Hash_functor<In_place_list_const_iterator<T, Alloc>> {
       std::size_t operator()(const In_place_list_const_iterator<T, Alloc>& h) {
