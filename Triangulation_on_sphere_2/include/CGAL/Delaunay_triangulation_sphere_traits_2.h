@@ -16,6 +16,9 @@
 
 #include <CGAL/license/Triangulation_on_sphere_2.h>
 
+#include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
+#include <CGAL/Spherical_kernel_3.h>
+
 #include <CGAL/enum.h>
 
 namespace CGAL {
@@ -93,33 +96,48 @@ protected:
 
 } // namespace internal
 
-template <typename K>
+template <typename LK_,
+          typename SK_ = CGAL::Spherical_kernel_3<
+                          LK_, CGAL::Algebraic_kernel_for_spheres_2_3<typename LK_::FT> > >
 class Delaunay_triangulation_sphere_traits_2
-//  : public K // @tmp disabled to see what is really needed
+//  : public LK_, // @tmp disabled to see what is really needed
+//    public SK_
 {
-  typedef K                                         Base;
-  typedef Delaunay_triangulation_sphere_traits_2<K> Self;
+  typedef LK_                                                        LK;
+  typedef SK_                                                        SK;
+  typedef Delaunay_triangulation_sphere_traits_2<LK>                 Self;
 
 public:
-  typedef typename K::FT                            FT;
-  typedef typename K::Point_3                       Point_on_sphere_2;
-  typedef typename K::Point_3                       Point_3;
-  typedef typename K::Segment_3                     Segment_3;
+  typedef typename LK::FT                                            FT;
+  typedef typename LK::Point_3                                       Point_on_sphere_2;
+  typedef typename LK::Point_3                                       Point_3;
+  typedef typename LK::Segment_3                                     Segment_3;
 
-  typedef typename K::Compare_xyz_3                 Compare_on_sphere_2;
-  typedef internal::Equal_on_sphere_2<Base>         Equal_on_sphere_2;
-  typedef internal::Inside_cone_2<Base>             Inside_cone_2;
-  typedef typename K::Orientation_3                 Orientation_3;
-  typedef internal::Orientation_on_sphere_2<Base>   Orientation_on_sphere_2;
+  typedef typename SK::Circular_arc_3                                Arc_on_sphere_2;
 
+  // predicates
+  typedef internal::Inside_cone_2<LK>                                Collinear_are_strictly_ordered_on_great_circle_2;
+  typedef typename LK::Compare_xyz_3                                 Compare_on_sphere_2;
+  typedef internal::Equal_on_sphere_2<LK>                            Equal_on_sphere_2;
+  typedef internal::Orientation_on_sphere_2<LK>                      Orientation_on_sphere_2;
+  typedef typename LK::Orientation_3                                 Side_of_oriented_circle_2; // @todo 'on_sphere'?
+
+  // constructions
+  typedef typename LK::Construct_point_3                             Construct_point_3;
+  typedef typename LK::Construct_segment_3                           Construct_segment_3;
+  typedef typename LK::Construct_triangle_3                          Construct_triangle_3;
+
+  typedef typename SK::Construct_circular_arc_3                      Construct_arc_on_sphere_2;
   // @fixme should project on the sphere
-  typedef typename K::Construct_circumcenter_3      Construct_circumcenter_on_sphere_2;
-  typedef typename K::Construct_segment_3           Construct_segment_3;
+  typedef typename LK::Construct_circumcenter_3                      Construct_circumcenter_on_sphere_2;
+
+  typedef typename LK::Compute_squared_distance_3                    Compute_squared_distance_3;
 
   Delaunay_triangulation_sphere_traits_2(const Point_3& center = CGAL::ORIGIN,
                                          const FT radius = 1,
-                                         const K& k = K())
-    : /*Base(k),*/ _center(center), _radius(radius)
+                                         const LK& k = LK(),
+                                         const SK& sk = SK())
+    : /*LK(k), SK(sk),*/ _center(center), _radius(radius)
   {
     initialize_bounds();
   }
@@ -136,35 +154,50 @@ private:
   }
 
 public:
+  Collinear_are_strictly_ordered_on_great_circle_2
+  collinear_are_strictly_ordered_on_great_circle_2_object() const
+  { return Collinear_are_strictly_ordered_on_great_circle_2(_center, LK()); }
+
   Compare_on_sphere_2
   compare_on_sphere_2_object() const
-  { return typename K::Compare_xyz_3(); } // base().compare_xyz_3_object() @todo
+  { return typename LK::Compare_xyz_3(); } // @tmp static_cast<const Base&>(*this)
 
   Equal_on_sphere_2
   equal_on_sphere_2_object() const
-  { return Equal_on_sphere_2(_center, K()); } // @tmp static_cast<const Base&>(*this)
-
-  Inside_cone_2
-  inside_cone_2_object() const
-  { return Inside_cone_2(_center, K()); }
-
-  Orientation_3
-  orientation_3_object() const
-  { return Base().orientation_3_object(); }
+  { return Equal_on_sphere_2(_center, LK()); } // @tmp
 
   Orientation_on_sphere_2
   orientation_on_sphere_2_object() const
-  { return Orientation_on_sphere_2(_center, K()); }
+  { return Orientation_on_sphere_2(_center, LK()); }
+
+  Side_of_oriented_circle_2
+  side_of_oriented_circle_2_object() const
+  { return typename LK::Orientation_3(); } // @tmp
 
 public:
+  Construct_point_3
+  construct_point_3_object() const
+  { return typename LK::Construct_point_3(); } // @tmp
+
   Construct_segment_3
   construct_segment_3_object() const
-  { return Base().construct_segment_3_object(); }
+  { return typename LK::construct_segment_3_object(); } // @tmp
 
-  // For points on sphere
+  Construct_triangle_3
+  construct_triangle_3_object() const
+  { return typename LK::Construct_triangle_3(); } // @tmp
+
+  Construct_arc_on_sphere_2
+  construct_arc_on_sphere_2_object() const
+  { return typename SK::Construct_circular_arc_3(); } // @tmp
+
   Construct_circumcenter_on_sphere_2
   construct_circumcenter_on_sphere_2_object() const
-  { return Construct_circumcenter_on_sphere_2(); }
+  { return typename LK::Construct_circumcenter_3(); } // @tmp
+
+  Compute_squared_distance_3
+  compute_squared_distance_3_object() const
+  { return typename LK::Compute_squared_distance_3(); } // @tmp
 
 public:
   void set_center(const Point_3& center) { _center = center; }
@@ -175,13 +208,13 @@ public:
 public:
   bool is_on_sphere(const Point_3& p) const
   {
-    const FT sq_dist = K().compute_squared_distance_3_object()(p, _center); // @tmp
+    const FT sq_dist = compute_squared_distance_3_object()(p, _center);
     return (_minRadiusSquared < sq_dist && sq_dist < _maxRadiusSquared);
   }
 
   bool are_points_too_close(const Point_3& p, const Point_3& q) const
   {
-    return (K().compute_squared_distance_3_object()(p, q) <= _minDistSquared); // @tmp use base::
+    return (compute_squared_distance_3_object()(p, q) <= _minDistSquared);
   }
 
 protected:

@@ -34,7 +34,7 @@ and thus not inserted, or guaranteed to not be hidden upon insertion.
 */
 template <typename LK,
           typename SK = CGAL::Spherical_kernel_3<
-                          K, CGAL::Algebraic_kernel_for_spheres_2_3<typename LK::FT> > >
+                          LK, CGAL::Algebraic_kernel_for_spheres_2_3<typename LK::FT> > >
 class Delaunay_triangulation_sphere_traits_2
 {
 public:
@@ -73,7 +73,7 @@ public:
   typedef unspecified_type                          Collinear_are_strictly_ordered_on_great_circle_2;
 
   ///
-  typedef typename LK::Orientation_3                 Side_of_oriented_circle_2;
+  typedef typename LK::Orientation_3                Side_of_oriented_circle_2;
 
   /// Internally uses `Orientation_3`
   typedef unspecified_type                          Orientation_on_sphere_2;
@@ -85,7 +85,7 @@ public:
   /// @{
 
   /// Internally uses `SK::Construct_circular_arc_3`
-  typedef typename unspecified_type                Construct_arc_on_sphere_2;
+  typedef typename unspecified_type                 Construct_arc_on_sphere_2;
 
   ///
   typedef typename unspecified_type                 Construct_circumcenter_on_sphere_2;
