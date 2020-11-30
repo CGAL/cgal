@@ -8,106 +8,137 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein        <wein@post.tau.ac.il>
-//                 Efi Fogel       <efif@post.tau.ac.il>
+// Author(s): Baruch Zukerman <baruchzu@post.tau.ac.il>
+//            Ron Wein        <wein@post.tau.ac.il>
+//            Efi Fogel       <efif@post.tau.ac.il>
+//            Simon Giraudot  <simon.giraudot@geometryfactory.com>
 
 #ifndef CGAL_BSO_INTERNAL_FUNCTIONS_H
 #define CGAL_BSO_INTERNAL_FUNCTIONS_H
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 
+#include <iterator>
+
 #include <CGAL/Boolean_set_operations_2/Gps_default_traits.h>
 #include <CGAL/Boolean_set_operations_2/Polygon_conversions.h>
-
-#include <iterator>
+#include <CGAL/Polygon_set_2.h>
+#include <CGAL/General_polygon_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
 
 namespace CGAL {
 
 /// \name _do_intersect() functions.
 //@{
 
-template <class Pgn1, class Pgn2, class Traits>
+// With Traits
+template <typename Pgn1, class Pgn2, typename Traits>
 inline bool _do_intersect(const Pgn1& pgn1, const Pgn2& pgn2, Traits& tr)
 {
   General_polygon_set_2<Traits> gps(tr);
-  gps.insert(convert_polygon(pgn1, tr));
-  return (gps.do_intersect(convert_polygon(pgn2, tr)));
+  gps.insert(pgn1);
+  return gps.do_intersect(pgn2);
 }
 
-template <class Pgn1, class Pgn2>
-inline bool _do_intersect(const Pgn1& pgn1, const Pgn2& pgn2)
-{
-  typename Gps_default_traits<Pgn1>::Traits    tr;
-  return _do_intersect(pgn1, pgn2, tr);
+// Without Traits
+template <typename Pgn1, typename Pgn2>
+inline bool _do_intersect(const Pgn1& pgn1, const Pgn2& pgn2) {
+  typedef typename Gps_default_traits<Pgn1>::Arr_traits         Segment_traits;
+  typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
+  typedef Gps_traits_2<Polyline_traits>                         Traits;
+  Traits traits;
+  return _do_intersect(convert_polygon<Polyline_traits>(pgn1),
+                       convert_polygon<Polyline_traits>(pgn2), traits);
 }
 
 //@}
+
 /// \name _oriented_side() functions.
 //@{
 
-template <class Obj, class Pgn, class Traits>
-inline
-Oriented_side _oriented_side(const Obj& obj, const Pgn& pgn, Traits& tr)
+// With Traits
+template <typename Obj, typename Pgn, typename Traits>
+inline Oriented_side _oriented_side(const Obj& obj, const Pgn& pgn, Traits& tr)
 {
   General_polygon_set_2<Traits> gps(tr);
-  gps.insert(convert_polygon(pgn, tr));
-  return (gps.oriented_side(obj));
+  gps.insert(pgn);
+  return gps.oriented_side(obj);
 }
 
-template <class Kernel, class Pgn, class Traits>
-inline
-Oriented_side _oriented_side(const Polygon_2<Kernel>& obj, const Pgn& pgn, Traits& tr)
+// Without Traits
+template <typename Pgn1, typename Pgn2>
+inline Oriented_side _oriented_side(const Pgn1& pgn1, const Pgn2& pgn2)
 {
-  General_polygon_set_2<Traits> gps(tr);
-  gps.insert(convert_polygon(pgn, tr));
-  return (gps.oriented_side(convert_polygon(obj, tr)));
+  // Use the first polygon to determine the (default) traits
+  typedef typename Gps_default_traits<Pgn1>::Arr_traits         Segment_traits;
+  typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
+  typedef Gps_traits_2<Polyline_traits>                         Traits;
+  Traits traits;
+  return _oriented_side(convert_polygon<Polyline_traits>(pgn1),
+                        convert_polygon<Polyline_traits>(pgn2), traits);
 }
 
-template <class Kernel, class Pgn, class Traits>
-inline
-Oriented_side _oriented_side(const Polygon_with_holes_2<Kernel>& obj, const Pgn& pgn, Traits& tr)
+// Without Traits
+template <typename Kernel, typename Pgn>
+inline Oriented_side _oriented_side(const typename Kernel::Point_2& point,
+                                    const Pgn& pgn)
 {
-  General_polygon_set_2<Traits> gps(tr);
-  gps.insert(convert_polygon(pgn, tr));
-  return (gps.oriented_side(convert_polygon(obj, tr)));
-}
-
-template <class Obj, class Pgn>
-inline Oriented_side _oriented_side(const Obj& obj, const Pgn& pgn)
-{
-  typename Gps_default_traits<Pgn>::Traits    tr;
-  return _oriented_side(obj, pgn, tr);
+  // Use the polygon to determine the (default) traits
+  typedef typename Gps_default_traits<Pgn>::Arr_traits          Segment_traits;
+  typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
+  typedef Gps_traits_2<Polyline_traits>                         Traits;
+  Traits traits;
+  return _oriented_side(point, convert_polygon<Polyline_traits>(pgn), traits);
 }
 
 //@}
+
 /// \name _intersection() functions.
 //@{
 
-template <class Pgn1, class Pgn2, class OutputIterator, class Traits>
+// With Traits
+template <typename Pgn1, typename Pgn2, typename OutputIterator, typename Traits>
 inline OutputIterator _intersection(const Pgn1& pgn1, const Pgn2& pgn2,
-                                    OutputIterator out, Traits& tr)
+                                    OutputIterator oi, Traits& tr)
 {
   General_polygon_set_2<Traits> gps(tr);
-  gps.insert(convert_polygon(pgn1, tr));
-  gps.intersection(convert_polygon(pgn2, tr));
-  return (gps.polygons_with_holes(convert_polygon_back(out, pgn1, tr)));
+  gps.insert(pgn1);
+  gps.intersection(pgn2);
+  return gps.polygons_with_holes(oi);
 }
 
-template <class Pgn1, class Pgn2, class OutputIterator>
+// Without Traits
+  template <typename Kernel, typename Container,
+            typename Pgn1, typename Pgn2, typename OutputIterator>
 inline OutputIterator _intersection(const Pgn1& pgn1, const Pgn2& pgn2,
-                                    OutputIterator out)
+                                    OutputIterator oi)
 {
-  typename Gps_default_traits<Pgn1>::Traits    tr;
-  return (_intersection(pgn1, pgn2, out, tr));
+  // Use the first polygon to determine the (default) traits
+  typedef typename Gps_default_traits<Pgn1>::Arr_traits         Segment_traits;
+  typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
+  typedef Gps_traits_2<Polyline_traits>                         Traits;
+  Traits traits;
+
+  typedef General_polygon_2<Polyline_traits>                    General_pgn;
+  typedef General_polygon_with_holes_2<General_pgn>             General_pwh;
+  std::list<General_pwh> general_pwhs;
+
+  _intersection(convert_polygon<Polyline_traits>(pgn1),
+                convert_polygon<Polyline_traits>(pgn2),
+               std::back_inserter(general_pwhs), traits);
+  for (const auto& general_pwh : general_pwhs)
+    *oi++ = convert_polygon_back<Kernel, Container>(general_pwh);
+  return oi;
 }
 
 //@}
+
 /// \name _join() functions.
 //@{
 
-template <class Traits>
-inline bool _is_empty (const typename Traits:: Polygon_2& pgn, Traits& tr)
+// Polygon_2
+template <typename Traits>
+inline bool _is_empty(const typename Traits::Polygon_2& pgn, Traits& tr)
 {
   typedef typename Traits::Curve_const_iterator Curve_const_iterator;
   const std::pair<Curve_const_iterator, Curve_const_iterator>& itr_pair =
@@ -115,40 +146,24 @@ inline bool _is_empty (const typename Traits:: Polygon_2& pgn, Traits& tr)
   return (itr_pair.first == itr_pair.second);
 }
 
-template <class Traits>
-inline bool _is_empty (const typename Traits::Polygon_with_holes_2&, Traits&)
-{
-  return false;
-}
+// A polygon with holes cannot be empty.
+template <typename Traits>
+inline bool _is_empty(const typename Traits::Polygon_with_holes_2&, Traits&)
+{ return false; }
 
-template <typename Kernel>
-inline bool _is_empty (const Polygon_2<Kernel>& polygon,
-                       typename Gps_polyline_traits<Kernel>::Traits&)
-{
-  return (polygon.size() == 0);
-}
-
-template <typename Kernel>
-inline bool _is_empty (const Polygon_with_holes_2<Kernel>& pwh,
-                       typename Gps_polyline_traits<Kernel>::Traits&)
-{
-  return false;
-}
-
-template <class Pgn1, class Pgn2, class Pwh, class Traits>
+// With Traits
+template <typename Pgn1, typename Pgn2, typename Traits>
 inline bool _join(const Pgn1& pgn1, const Pgn2& pgn2,
-                  Pwh& res, Traits& tr)
+                  typename Traits::Polygon_with_holes_2& res, Traits& tr)
 {
-  if (_is_empty(pgn1, tr) || _is_empty(pgn2, tr))
-    return false;
+  if (_is_empty(pgn1, tr) || _is_empty(pgn2, tr)) return false;
 
   General_polygon_set_2<Traits> gps(tr);
-  gps.insert(convert_polygon(pgn1, tr));
-  gps.join(convert_polygon(pgn2, tr));
-  if (gps.number_of_polygons_with_holes() == 1)
-  {
-    Oneset_iterator<Pwh> oi (res);
-    gps.polygons_with_holes(convert_polygon_back(oi, pgn1, tr));
+  gps.insert(pgn1);
+  gps.join(pgn2);
+  if (gps.number_of_polygons_with_holes() == 1) {
+    Oneset_iterator<typename Traits::Polygon_with_holes_2> oi(res);
+    gps.polygons_with_holes(oi);
     return true;
   }
 
@@ -156,77 +171,168 @@ inline bool _join(const Pgn1& pgn1, const Pgn2& pgn2,
   return false;
 }
 
-template <class Pgn1, class Pgn2, class Pwh>
-inline bool _join(const Pgn1& pgn1, const Pgn2& pgn2, Pwh& res)
+// Without Traits
+template <typename Kernel, typename Container,
+          typename Pgn1, typename Pgn2, typename Pwh>
+inline bool _join(const Pgn1& pgn1, const Pgn2& pgn2, Pwh& pwh)
 {
-  typename Gps_default_traits<Pgn1>::Traits  tr;
-  return _join(pgn1, pgn2, res, tr);
+  // Use the first polygon to determine the (default) traits
+  typedef typename Gps_default_traits<Pgn1>::Arr_traits         Segment_traits;
+  typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
+  typedef Gps_traits_2<Polyline_traits>                         Traits;
+  Traits traits;
+
+  typedef General_polygon_2<Polyline_traits>                    General_pgn;
+  typedef General_polygon_with_holes_2<General_pgn>             General_pwh;
+  General_pwh general_pwh;
+
+  auto res = _join(convert_polygon<Polyline_traits>(pgn1),
+                   convert_polygon<Polyline_traits>(pgn2),
+                   general_pwh, traits);
+  pwh = convert_polygon_back<Kernel, Container>(general_pwh);
+  return res;
 }
 
 //@}
+
 /// \name _difference() functions.
 //@{
 
-template <class Pgn1, class Pgn2, class OutputIterator, class Traits>
+template <typename Pgn1, typename Pgn2, typename OutputIterator, typename Traits>
 inline OutputIterator _difference(const Pgn1& pgn1, const Pgn2& pgn2,
                                   OutputIterator oi, Traits& tr)
 {
   General_polygon_set_2<Traits> gps(tr);
-  gps.insert(convert_polygon(pgn1, tr));
-  gps.difference(convert_polygon(pgn2, tr));
-  return gps.polygons_with_holes(convert_polygon_back(oi, pgn1, tr));
+  gps.insert(pgn1);
+  gps.difference(pgn2);
+  return gps.polygons_with_holes(oi);
 }
 
-template <class Pgn1, class Pgn2, class OutputIterator>
+template <typename Kernel, typename Container,
+          typename Pgn1, typename Pgn2, typename OutputIterator>
 inline OutputIterator _difference(const Pgn1& pgn1, const Pgn2& pgn2,
                                   OutputIterator oi)
 {
-  typename Gps_default_traits<Pgn1>::Traits  tr;
-  return _difference(pgn1, pgn2, oi, tr);
+  // Use the first polygon to determine the (default) traits
+  typedef typename Gps_default_traits<Pgn1>::Arr_traits         Segment_traits;
+  typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
+  typedef Gps_traits_2<Polyline_traits>                         Traits;
+  Traits traits;
+
+  typedef General_polygon_2<Polyline_traits>                    General_pgn;
+  typedef General_polygon_with_holes_2<General_pgn>             General_pwh;
+  std::list<General_pwh> general_pwhs;
+
+  _difference(convert_polygon<Polyline_traits>(pgn1),
+              convert_polygon<Polyline_traits>(pgn2),
+              std::back_inserter(general_pwhs), traits);
+  for (const auto& general_pwh : general_pwhs)
+    *oi++ = convert_polygon_back<Kernel, Container>(general_pwh);
+  return oi;
 }
 
 //@}
 /// \name _symmetric_difference() functions.
 //@{
 
-template <class Pgn1, class Pgn2, class OutputIterator, class Traits>
+template <typename Pgn1, typename Pgn2, typename OutputIterator, typename Traits>
 inline OutputIterator _symmetric_difference(const Pgn1& pgn1, const Pgn2& pgn2,
                                             OutputIterator oi, Traits& tr)
 {
   General_polygon_set_2<Traits> gps(tr);
-  gps.insert(convert_polygon(pgn1, tr));
-  gps.symmetric_difference(convert_polygon(pgn2, tr));
-  return gps.polygons_with_holes(convert_polygon_back(oi, pgn1, tr));
+  gps.insert(pgn1);
+  gps.symmetric_difference(pgn2);
+  return gps.polygons_with_holes(oi);
 }
 
-template <class Pgn1, class Pgn2, class OutputIterator>
+template <typename Kernel, typename Container,
+          typename Pgn1, typename Pgn2, typename OutputIterator>
 inline OutputIterator _symmetric_difference(const Pgn1& pgn1, const Pgn2& pgn2,
                                             OutputIterator oi)
 {
-  typename Gps_default_traits<Pgn1>::Traits    tr;
-  return _symmetric_difference(pgn1, pgn2, oi, tr);
+  // Use the first polygon to determine the (default) traits
+  typedef typename Gps_default_traits<Pgn1>::Arr_traits         Segment_traits;
+  typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
+  typedef Gps_traits_2<Polyline_traits>                         Traits;
+  Traits traits;
+
+  typedef General_polygon_2<Polyline_traits>                    General_pgn;
+  typedef General_polygon_with_holes_2<General_pgn>             General_pwh;
+  std::list<General_pwh> general_pwhs;
+
+  _symmetric_difference(convert_polygon<Polyline_traits>(pgn1),
+                        convert_polygon<Polyline_traits>(pgn2),
+              std::back_inserter(general_pwhs), traits);
+  for (const auto& general_pwh : general_pwhs)
+    *oi++ = convert_polygon_back<Kernel, Container>(general_pwh);
+  return oi;
 }
 
 //@}
+
 /// \name _complement() functions.
 //@{
 
-template <class Pgn, class Pwh, class Traits>
-void _complement(const Pgn& pgn, Pwh& res,
+// Compute the complemenet of a (general) polygon
+template <typename Pgn, typename Traits>
+void _complement(const Pgn& pgn, typename Traits::Polygon_with_holes_2& res,
                  Traits& tr)
 {
   General_polygon_set_2<Traits> gps(tr);
-  gps.insert(convert_polygon(pgn, tr));
+  gps.insert(pgn);
   gps.complement();
-  Oneset_iterator<Pwh> oi(res);
-  gps.polygons_with_holes(convert_polygon_back(oi, pgn, tr));
+  Oneset_iterator<typename Traits::Polygon_with_holes_2> oi(res);
+  gps.polygons_with_holes(oi);
 }
 
-template <class Pgn, class Pwh>
-void _complement(const Pgn& pgn, Pwh& res)
+// Compute the complemenet of a (general) polygon
+template <typename Kernel, typename Container, typename Pgn, typename Pwh>
+void _complement(const Pgn& pgn, Pwh& pwh)
 {
-  typename Gps_default_traits<Pgn>::Traits    tr;
-  _complement(pgn, res, tr);
+  // Use the first polygon to determine the (default) traits
+  typedef typename Gps_default_traits<Pgn>::Arr_traits         Segment_traits;
+  typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
+  typedef Gps_traits_2<Polyline_traits>                         Traits;
+  Traits traits;
+
+  typedef General_polygon_2<Polyline_traits>                    General_pgn;
+  typedef General_polygon_with_holes_2<General_pgn>             General_pwh;
+  General_pwh general_pwh;
+
+  _complement(convert_polygon<Polyline_traits>(pgn), general_pwh, traits);
+  pwh = convert_polygon_back<Kernel, Container>(general_pwh);
+}
+
+// Compute the complemenet of a (general) polygon with holes
+template <typename Pgn, typename OutputIterator, typename Traits>
+OutputIterator _complement(const Pgn& pgn, OutputIterator oi, Traits& traits)
+{
+  General_polygon_set_2<Traits> gps(traits);
+  gps.insert(pgn, traits);
+  gps.complement();
+  return gps.polygons_with_holes(oi, traits);
+}
+
+// Compute the complemenet of a (general) polygon with holes
+template <typename Kernel, typename Container,
+          typename Pgn, typename OutputIterator>
+OutputIterator _complement(const Pgn& pgn, OutputIterator oi)
+{
+  // Use the first polygon to determine the (default) traits
+  typedef typename Gps_default_traits<Pgn>::Arr_traits          Segment_traits;
+  typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
+  typedef Gps_traits_2<Polyline_traits>                         Traits;
+  Traits traits;
+
+  typedef General_polygon_2<Polyline_traits>                    General_pgn;
+  typedef General_polygon_with_holes_2<General_pgn>             General_pwh;
+  std::list<General_pwh> general_pwhs;
+
+  complement(convert_polygon<Polyline_traits>(pgn),
+             std::back_inserter(general_pwhs), traits);
+  for (const auto& general_pwh : general_pwhs)
+    *oi++ = convert_polygon_back<Kernel, Container>(general_pwh);
+  return oi;
 }
 
 //@}
