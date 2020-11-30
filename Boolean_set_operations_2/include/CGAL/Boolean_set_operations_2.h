@@ -40,7 +40,7 @@ namespace CGAL {
 /// \name do_intersect() functions.
 //@{
 
-//  Polygon_2, Polygon_2 =======================================================
+// Polygon_2, Polygon_2 ========================================================
 // With Traits
 template <typename Kernel, typename Container, typename Traits>
 inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
