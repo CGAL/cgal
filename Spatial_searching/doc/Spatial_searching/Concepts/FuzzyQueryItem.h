@@ -18,7 +18,7 @@ public:
 /*!
 Dimension Tag.
 */
-typedef unspecified_type D;
+typedef unspecified_type Dimension;
 
 /*!
 represents a `d`-dimensional point.
@@ -53,13 +53,13 @@ bool contains_point_given_as_coordinates(Coord_iterator begin, Coord_iterator en
 Test whether the inner approximation of the spatial object intersects a rectangle
 associated with a node of a tree.
 */
-bool inner_range_intersects(const Kd_tree_rectangle<FT,D>& rectangle) const;
+bool inner_range_intersects(const Kd_tree_rectangle<FT,Dimension>& rectangle) const;
 
 /*!
 Test whether the outer approximation of the spatial object encloses the rectangle
 associated with a node of a tree.
 */
-bool outer_range_contains(const Kd_tree_rectangle<FT,D>& rectangle) const;
+bool outer_range_contains(const Kd_tree_rectangle<FT,Dimension>& rectangle) const;
 
 /// @}
 
