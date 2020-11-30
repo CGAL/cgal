@@ -1,6 +1,7 @@
 /*!
 
 \example Polygon_mesh_processing/polyhedral_envelope.cpp
+\example Polygon_mesh_processing/polyhedral_envelope_of_triangle_soup.cpp
 \example Polygon_mesh_processing/self_intersections_example.cpp
 \example Polygon_mesh_processing/hole_filling_example.cpp
 \example Polygon_mesh_processing/hole_filling_example_SM.cpp

@@ -555,10 +555,14 @@ of the package \ref PkgSurfaceMeshSimplification, in order to simplify a triangl
 
 \subsubsection PolyhedralEnvelopeExample Polyhedral Envelope Example
 
-The following example shows how to construct the polyhedral envelope and perform queries.
+The following example shows how to construct the polyhedral envelope for a `Surface_mesh` and perform queries.
 
 \cgalExample{Polygon_mesh_processing/polyhedral_envelope.cpp}
 
+As the polyhedral envelope does not need any connectivity information, the same check can be performed
+just with a triangle soup.
+
+\cgalExample{Polygon_mesh_processing/polyhedral_envelope_of_triangle_soup.cpp}
 
 \subsection PMPShapePredicates Shape Predicates
 
