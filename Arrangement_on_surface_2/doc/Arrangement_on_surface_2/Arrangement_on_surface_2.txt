@@ -3818,8 +3818,8 @@ boundary-side, \f$p\f$ is located far to the top in a similar manner.
 
 </DL>
 
-The concepts `ArrangementClosedIdentifiedVerticalTraits_2` require the following
-predicate:
+The concept `ArrangementIdentifiedVerticalTraits_2` requires the following
+predicates:
 
 <DL>
 
@@ -3842,7 +3842,7 @@ this overloaded version is required only for the concepts
 
 
 The concept `ArrangementIdentifiedVerticalTraits_2` requires the
-following requirement:
+following predicate:
 
 <DL>
 <DT>\link ArrangementIdentifiedVerticalTraits_2::Is_on_y_identification_2 <B>`Is_on_y_identification_2`</B>\endlink:
@@ -3861,7 +3861,7 @@ boundary.
 </DL>
 
 Similarly, the concept `ArrangementIdentifiedHorizontalTraits_2`
-requires the following requirement:
+requires the following predicate:
 
 <DL>
 
