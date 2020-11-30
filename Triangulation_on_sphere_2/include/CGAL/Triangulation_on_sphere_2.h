@@ -484,10 +484,15 @@ locate_edge(const Point& p,
           return eit->first;
         }
       }
-
-      if(eit->first->is_ghost())
+      else
+      {
         loc = eit->first;
+      }
     }
+
+    // The new point is on the same 3D plane as the existing vertices, but not on an existing edge
+    lt = OUTSIDE_CONVEX_HULL;
+    li = 4;
 
     test_distance(p, loc, lt, li);
     return loc;
