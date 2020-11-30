@@ -19,6 +19,7 @@
 #define CGAL_HANDLE_HASH_FUNCTION_H
 
 #include <CGAL/config.h>
+#include <CGAL/In_place_list.h>
 #include <cstddef>
 
 namespace CGAL {
@@ -35,6 +36,16 @@ namespace internal{
       {
         return std::size_t(&*h) /
           sizeof( typename std::iterator_traits<H>::value_type);
+      }
+    };
+
+    template <>
+    template <class T, class Alloc>
+    struct Hash_functor<In_place_list_const_iterator<T, Alloc>> {
+      std::size_t operator()(const In_place_list_const_iterator<T, Alloc>& h) {
+        return std::size_t(h.operator->()) /
+               sizeof(typename std::iterator_traits<
+                      In_place_list_const_iterator<T, Alloc>>::value_type);
       }
     };
   }
