@@ -27,10 +27,8 @@ int main(int argc, char* argv[])
   int j = (argc>4) ? std::stoi(std::string(argv[4])) : 100;
   int k = (argc>5) ? std::stoi(std::string(argv[5])) : 200;
 
-  if(envelope(points[i],
-              points[j],
-              points[k]){
-
+  if (envelope(points[i], points[j],points[k]))
+  {
     std::cout << "inside polyhedral envelope" << std::endl;
   }
 

@@ -465,7 +465,7 @@ public:
     typedef typename boost::range_value<TriangleRange>::type  Triangle;
     for (const Triangle& t : triangles)
     {
-      Vector3i face = { t[0], t[1], t[2] };
+      Vector3i face = { int(t[0]), int(t[1]), int(t[2]) };
       env_faces.emplace_back(face);
     }
     init(epsilon);
@@ -488,7 +488,7 @@ public:
     : Polyhedral_envelope(face_range, tmesh, epsilon, parameters::all_default())
   {}
 
-  template <typename PointRange, typename TriangleRange, typename NamedParameters>
+  template <typename PointRange, typename TriangleRange>
   Polyhedral_envelope(const PointRange& points,
                       const TriangleRange& triangles,
                       double epsilon,
