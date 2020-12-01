@@ -168,7 +168,8 @@ void test_LAS(const std::string& s)
   ok = CGAL::read_LAS(s.c_str(), ps);
   assert(ok);
   ps.clear();
-  std::ifstream in(s);
+  std::ifstream in(s, std::ios::binary);
+  CGAL::set_mode(in, CGAL::IO::BINARY);
   ok = CGAL::read_LAS(in, ps);
   assert(ok);
   const char* ext = "las";
@@ -178,11 +179,14 @@ void test_LAS(const std::string& s)
   assert(ok);
   ok = CGAL::write_LAS(fname.c_str(), ps);
   assert(ok);
-  std::ofstream out(fname);
+  std::ofstream out(fname, std::ios::binary);
+  CGAL::set_mode(out, CGAL::IO::BINARY);
   ok = CGAL::write_LAS(out, ps);
   assert(ok);
   CGAL::Point_set_3<Point_3, Vector_3> ps2;
-  std::ifstream is(fname);
+
+  std::ifstream is(fname, std::ios::binary);
+  CGAL::set_mode(is, CGAL::IO::BINARY);
   ok = CGAL::read_LAS(is, ps2);
   assert(ok);
   assert(ps_are_equal(ps, ps2));
