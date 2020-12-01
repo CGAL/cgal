@@ -608,6 +608,7 @@ public:
         r = color.red();
         g = color.green();
         b = color.blue();
+        return;
       }
       double rd = entries[first_color_index];
       double gd = entries[first_color_index + 1];
@@ -672,50 +673,6 @@ public:
         }
       }
     }
-    else
-    {
-      if(has_normals() && ! normals_read)
-      {
-        double dummy;
-        if(is_homogeneous()) {
-          if(!(m_in >> dummy >> dummy >> dummy >> dummy))
-          {
-            m_in.clear(std::ios::badbit);
-            if(verbose())
-              std::cerr<<"error while reading. Missing expected characters."<<std::endl;
-            return;
-          }
-        } else {
-          if(!(m_in >> dummy >> dummy >> dummy))
-          {
-            m_in.clear(std::ios::badbit);
-            if(verbose())
-              std::cerr<<"error while reading. Missing expected characters."<<std::endl;
-            return;
-          }
-        }
-      }
-
-      if(has_colors() ) // skip color entries (1 to 4)
-        m_in >> skip_until_EOL;
-    }
-
-    if(!m_in)
-    {
-      if(verbose())
-      {
-        std::cerr << " " << std::endl;
-        std::cerr << "File_scanner_OFF::" << std::endl;
-        std::cerr << "skip_to_next_vertex(): input error: cannot read "
-                     "OFF file beyond vertex " << current_vertex << "."
-                  << std::endl;
-      }
-
-      set_off_header(false);
-      return;
-    }
-
-    normals_read = false;
   }
 
   void scan_facet(std::size_t& size, std::size_t CGAL_assertion_code(current_facet))
