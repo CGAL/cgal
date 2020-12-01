@@ -1,6 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 
 #define CGAL_RANSAC_EXPERIMENTAL_FIXES
+#define USE_WEIGHTED_LEVELS
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
@@ -75,7 +76,8 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
     (CGAL::make_transform_iterator_from_property_map (original_points.begin(), Point_map()),
      CGAL::make_transform_iterator_from_property_map (original_points.end(), Point_map()));
 
-  std::cerr << "Ground truth   = " << 6*nb*nb + 1 << " planes" << std::endl;
+  std::size_t ground_truth = 6*nb*nb+1;
+  std::cerr << "Ground truth   = " << ground_truth << " planes" << std::endl;
 
   Point_set points;
   points.reserve (nb * nb * original_points.size());
@@ -116,6 +118,8 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
   t.stop();
   std::cerr << "Region Growing = " << nb_detected << " planes (" << 1000 * t.time() << "ms)" << std::endl;
 
+  assert (nb_detected == ground_truth);
+
   CGAL::Real_timer timer;
   double timeout = 120; // 2 minutes timeout
   timer.start();
@@ -150,6 +154,9 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
             << nb_runs << " runs, planes["
             << detected_ransac.front() << ";" << detected_ransac.back() << "], time["
             << times_ransac.front() << ";" << times_ransac.back() << "])" << std::endl;
+
+  // RANSAC should at least detect 75% of shapes
+  assert (detected_ransac[detected_ransac.size() / ] > std::size_t(0.75 * ground_truth));
 
 #ifdef CGAL_TEST_RANSAC_PROTOTYPE
   {
