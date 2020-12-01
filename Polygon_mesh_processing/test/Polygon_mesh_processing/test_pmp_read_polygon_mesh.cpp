@@ -41,33 +41,39 @@ void test(const std::string& filename, const bool is_pm)
   std::cout << "Test " << filename << " with Mesh = " << typeid(Mesh).name() << " is PM? " << is_pm << std::endl;
 
   Mesh g;
+  std::cout<<"0"<<std::endl;
   bool success = CGAL::read_polygon_mesh(filename, g, CGAL::parameters::verbose(true));
-  CGAL_assertion(is_pm == success); // if it's a pm, BGL reader should be enough
+  std::cout<<"1"<<std::endl;
+  assert(is_pm == success); // if it's a pm, BGL reader should be enough
 
-  clear(g);
+  g.clear();
   success = CGAL::Polygon_mesh_processing::read_polygon_mesh(filename, g,
                                                              CGAL::parameters::verbose(true)
                                                                               .erase_all_duplicates(true));
-  CGAL_assertion(success);
-  CGAL_assertion(is_valid(g));
-
+  std::cout<<"2"<<std::endl;
+  assert(success);
+  assert(is_valid(g));
+std::cout<<"3"<<std::endl;
   // Test VPM NP
   typename boost::property_map<Mesh,CGAL::vertex_point_t>::type vpm = get(CGAL::vertex_point, g);
   std::map<typename boost::graph_traits<Mesh>::vertex_descriptor, Kernel::Point_3> cpoints;
   Custom_VPM<Mesh> cvpm(cpoints);
-
+std::cout<<"4"<<std::endl;
   Mesh g2;
   success = CGAL::Polygon_mesh_processing::read_polygon_mesh(filename, g2,
                                                              CGAL::parameters::vertex_point_map(cvpm)
                                                                               .erase_all_duplicates(true));
-  CGAL_assertion(success);
-  CGAL_assertion(num_vertices(g) == num_vertices(g2));
+  std::cout<<"5"<<std::endl;
+  assert(success);
+  assert(num_vertices(g) == num_vertices(g2));
 
   auto it = vertices(g).begin(), it2 = vertices(g2).begin();
-  while(it != vertices(g).end())
+  std::cout<<"6"<<std::endl;
+  while(it != vertices(g).end() && it2 != vertices(g2).end())
   {
-    CGAL_assertion(get(vpm, *it++) == get(cvpm, *it2++));
+    assert(get(vpm, *it++) == get(cvpm, *it2++));
   }
+  std::cout<<"7"<<std::endl;
 }
 
 int main()
