@@ -56,7 +56,7 @@ if(EIGEN3_FOUND)
     add_executable(test_validity_sampled_data "test_validity_sampled_data.cpp")
     target_link_libraries(test_validity_sampled_data CGAL::CGAL CGAL::Eigen_support)
   endif()
-
+  cgal_add_test(test_validity_sampled_data)
 endif()
 
 create_single_source_cgal_program(
