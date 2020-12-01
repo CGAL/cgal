@@ -473,12 +473,22 @@ public:
 
   Triangle get_closest_triangle(const Bare_point& p, const Triangle& t) const
   {
-    Triangle rt;
-    const std::array<Bare_point, 3> ct = { canonicalize_point(t[0]),
-                                           canonicalize_point(t[1]),
-                                           canonicalize_point(t[2]) };
-    FT min_sq_dist = std::numeric_limits<FT>::infinity();
+    //canonicalize t
+    Bare_point min_p = t[0];
+    if (t[1] < min_p) {
+      min_p = t[1];
+    }
+    if (t[2] < min_p) {
+      min_p = t[2];
+    }
 
+    Vector_3 move_to_canonical(min_p, canonicalize_point(min_p));
+    const std::array<Bare_point, 3> ct = { t[0] + move_to_canonical,
+                                           t[1] + move_to_canonical,
+                                           t[2] + move_to_canonical };
+
+    FT min_sq_dist = std::numeric_limits<FT>::infinity();
+    Triangle rt;
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 3; ++j) {
         for (int k = 0; k < 3; ++k) {
