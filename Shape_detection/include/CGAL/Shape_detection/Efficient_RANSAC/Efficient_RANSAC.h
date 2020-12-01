@@ -524,10 +524,10 @@ namespace CGAL {
       std::vector<Shape *> candidates;
 
       // Identifying minimum number of samples
-      std::size_t required_samples = 0;
+      m_required_samples = 0;
       for (std::size_t i = 0;i<m_shape_factories.size();i++) {
         Shape *tmp = (Shape *) m_shape_factories[i]();
-        required_samples = (std::max<std::size_t>)(required_samples, tmp->minimum_sample_size());
+        m_required_samples = (std::max<std::size_t>)(m_required_samples, tmp->minimum_sample_size());
         delete tmp;
       }
 
@@ -569,7 +569,7 @@ namespace CGAL {
                 select_random_octree_level(),
                 indices,
                 m_shape_index,
-                required_samples);
+                m_required_samples);
 
               if (callback && !callback(num_invalid / double(m_num_total_points)))
                 return false;
@@ -1019,7 +1019,8 @@ namespace CGAL {
     }
 
     inline FT stop_probability(std::size_t largest_candidate, std::size_t num_pts, std::size_t num_candidates, std::size_t octree_depth) const {
-      return (std::min<FT>)(std::pow((FT) 1.f - (FT) largest_candidate / FT(num_pts * octree_depth * 4), (int) num_candidates), (FT) 1);
+      return (std::min<FT>)(std::pow((FT) 1.f - (FT) largest_candidate
+                                     / (FT(num_pts) * (octree_depth+1) * (1 << (m_required_samples - 1))), (int) num_candidates), (FT) 1);
     }
 
   private:
@@ -1039,6 +1040,7 @@ namespace CGAL {
     std::vector<int> m_shape_index;
     std::size_t m_num_available_points;
     std::size_t m_num_total_points;
+    std::size_t m_required_samples;
 
     //give the index of the subset of point i
     std::vector<int> m_index_subsets;
