@@ -99,6 +99,7 @@ bool read_OFF(std::istream& is,
   typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
   typedef typename Point_set_processing_3::GetNormalMap<PointRange, CGAL_BGL_NP_CLASS>::type NormalMap;
   typedef typename Point_set_processing_3::GetK<PointRange, CGAL_BGL_NP_CLASS>::Kernel Kernel;
+  typedef typename Kernel::FT                                                          FT;
 
   bool has_normals = !(boost::is_same<NormalMap,
                        typename Point_set_processing_3::GetNormalMap<PointRange, CGAL_BGL_NP_CLASS>::NoMap>::value);
@@ -167,14 +168,15 @@ bool read_OFF(std::istream& is,
       double nx,ny,nz;
       if (iss >> iformat(x) >> iformat(y) >> iformat(z))
       {
-        Point point(x,y,z);
+        FT fx(x), fy(y), fz(z);
+        Point point(fx, fy, fz);
         Vector normal = CGAL::NULL_VECTOR;
         // ... + normal...
         if (iss >> iformat(nx))
         {
           // In case we could read one number, we expect that there are two more
           if(iss  >> iformat(ny) >> iformat(nz)){
-            normal = Vector(nx,ny,nz);
+            normal = Vector(FT(nx),FT(ny),FT(nz));
           } else {
             std::cerr << "Error line " << lineNumber << " of file" << std::endl;
             return false;

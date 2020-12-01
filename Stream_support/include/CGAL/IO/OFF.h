@@ -82,7 +82,7 @@ bool read_OFF(std::istream& is,
 
   for(std::size_t i=0; i<scanner.size_of_vertices(); ++i)
   {
-    double x, y, z, w;
+    double x(0), y(0), z(0), w(0);
     scanner.scan_vertex(x, y, z, w);
     CGAL_assertion(w != 0);
     IO::internal::fill_point(x, y, z, w, points[i]);
@@ -103,10 +103,9 @@ bool read_OFF(std::istream& is,
 
     if(scanner.has_textures())
     {
-      double nx, ny, nw;
-      scanner.scan_texture(nx, ny, nw);
-      CGAL_assertion(nw != 0);
-      *vt_out++ = Texture(nx, ny, nw);
+      double nx, ny;
+      scanner.scan_texture(nx, ny);
+      *vt_out++ = Texture(FT(nx), FT(ny));
     }
     if(!is.good())
       return false;
@@ -118,7 +117,7 @@ bool read_OFF(std::istream& is,
     std::size_t no(-1);
     scanner.scan_facet(no, i);
 
-    if(!is.good() || no == std::size_t(-1))
+    if((!is.eof() && !is.good()) || no == std::size_t(-1))
       return false;
 
     CGAL::internal::resize(polygons[i], no);
@@ -126,6 +125,10 @@ bool read_OFF(std::istream& is,
     {
       std::size_t id;
       scanner.scan_facet_vertex_index(id,j+1, i);
+      if(!is)
+      {
+        return false;
+      }
       if(id < scanner.size_of_vertices())
         polygons[i][j] = id;
       else

@@ -30,7 +30,8 @@ namespace internal {
 template <typename Kernel>
 void fill_point(const double x, const double y, const double z, const double w, CGAL::Point_3<Kernel>& pt)
 {
-  pt = CGAL::Point_3<Kernel>(x, y, z, w);
+  typedef typename Kernel::FT FT;
+  pt = CGAL::Point_3<Kernel>(FT(x/w), FT(y/w), FT(z/w));
 }
 
 template <typename Point_3>

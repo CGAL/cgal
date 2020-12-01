@@ -124,8 +124,10 @@ void Polyhedron_scan_OFF<HDS>:: operator()(HDS& target)
 
     for(std::size_t j=0; j<no; ++j)
     {
-      std::size_t index;
+      std::size_t index = 0;
       scanner.scan_facet_vertex_index( index, j+1, i); //current_entry = j + 1 for the size entry
+      if(!m_in)
+        return;
       B.add_vertex_to_facet( index);
     }
     B.end_facet();

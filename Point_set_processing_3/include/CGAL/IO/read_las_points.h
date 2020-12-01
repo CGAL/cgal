@@ -416,9 +416,7 @@ bool read_LAS_with_properties(std::istream& is,
                               OutputIterator output,
                               PropertyHandler&& ... properties)
 {
-  typedef typename value_type_traits<OutputIterator>::type OutputValueType;
-
-  return read_LAS_with_properties<OutputValueType>(is, output, std::forward<PropertyHandler>(properties)...);
+  return read_LAS_with_properties<typename value_type_traits<OutputIterator>::type>(is, output, std::forward<PropertyHandler>(properties)...);
 }
 
 /// \endcond
@@ -625,9 +623,7 @@ CGAL_DEPRECATED bool read_las_points_with_properties(std::istream& is,
                                                      OutputIterator output,
                                                      PropertyHandler&& ... properties)
 {
-  typedef typename value_type_traits<OutputIterator>::type OutputValueType;
-
-  return read_LAS_with_properties<OutputValueType>(is, output, std::forward<PropertyHandler>(properties)...);
+  return read_LAS_with_properties<typename value_type_traits<OutputIterator>::type>(is, output, std::forward<PropertyHandler>(properties)...);
 }
 
 /// \endcond
@@ -647,9 +643,7 @@ CGAL_DEPRECATED bool read_las_points(std::istream& is,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef Point_set_processing_3::Fake_point_range<OutputIteratorValueType> PointRange;
-
-  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
+  typedef typename CGAL::GetPointMap<Point_set_processing_3::Fake_point_range<OutputIteratorValueType>, CGAL_BGL_NP_CLASS>::type PointMap;
   PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
 
   return read_LAS(is, output, make_las_point_reader(point_map));

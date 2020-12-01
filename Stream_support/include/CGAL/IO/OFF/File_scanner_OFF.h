@@ -138,7 +138,7 @@ public:
 
   void scan_vertex(float& x, float& y, float& z, float& w)
   {
-    double dx, dy, dz, dw;
+    double dx(0), dy(0), dz(0), dw(0);
     scan_vertex(dx, dy, dz, dw);
     x = static_cast<float>(dx);
     y = static_cast<float>(dy);
@@ -148,7 +148,7 @@ public:
 
   void scan_vertex(int& x, int& y, int& z, int& w)
   {
-    double dx, dy, dz, dw;
+    double dx(0), dy(0), dz(0), dw(0);
     scan_vertex(dx, dy, dz, dw);
     x = static_cast<int>(dx);
     y = static_cast<int>(dy);
@@ -158,7 +158,7 @@ public:
 
   void scan_vertex(double& x, double& y, double& z)
   {
-    double dx, dy, dz, dw;
+    double dx(0), dy(0), dz(0), dw(0);
     scan_vertex(dx, dy, dz, dw);
     x = dx / dw;
     y = dy / dw;
@@ -167,7 +167,7 @@ public:
 
   void scan_vertex(float& x, float& y, float& z)
   {
-    double dx, dy, dz;
+    double dx(0), dy(0), dz(0);
     scan_vertex(dx, dy, dz);
     x = static_cast<float>(dx);
     y = static_cast<float>(dy);
@@ -176,7 +176,7 @@ public:
 
   void scan_vertex(int& x, int& y, int& z)
   {
-    double dx, dy, dz;
+    double dx(0), dy(0), dz(0);
     scan_vertex(dx, dy, dz);
     x = static_cast<int>(dx);
     y = static_cast<int>(dy);
@@ -322,7 +322,7 @@ public:
 
   void scan_normal(float& x, float& y, float& z, float& w)
   {
-    double dx, dy, dz, dw;
+    double dx(0), dy(0), dz(0), dw(0);
     scan_normal(dx, dy, dz, dw);
     x = static_cast<float>(dx);
     y = static_cast<float>(dy);
@@ -332,7 +332,7 @@ public:
 
   void scan_normal(int& x, int& y, int& z, int& w)
   {
-    double dx, dy, dz, dw;
+    double dx(0), dy(0), dz(0), dw(0);
     scan_normal(dx, dy, dz, dw);
     x = static_cast<int>(dx);
     y = static_cast<int>(dy);
@@ -342,7 +342,7 @@ public:
 
   void scan_normal(double& x, double& y, double& z)
   {
-    double dx, dy, dz, dw;
+    double dx(0), dy(0), dz(0), dw(0);
     scan_normal(dx, dy, dz, dw);
     x = dx / dw;
     y = dy / dw;
@@ -351,7 +351,7 @@ public:
 
   void scan_normal(float& x, float& y, float& z)
   {
-    double dx, dy, dz;
+    double dx(0), dy(0), dz(0);
     scan_normal(dx, dy, dz);
     x = static_cast<float>(dx);
     y = static_cast<float>(dy);
@@ -360,7 +360,7 @@ public:
 
   void scan_normal(int& x, int& y, int& z)
   {
-    double dx, dy, dz;
+    double dx(0), dy(0), dz(0);
     scan_normal(dx, dy, dz);
     x = static_cast<int>(dx);
     y = static_cast<int>(dy);
@@ -853,7 +853,7 @@ Point& file_scan_vertex(File_scanner_OFF& scanner, Point& p)
 {
   typedef typename Point::R R;
   typedef typename R::RT    RT;
-  double x, y, z, w;
+  double x(0), y(0), z(0), w(0);
 
   scanner.scan_vertex(x, y, z, w);
 
@@ -882,7 +882,7 @@ file_scan_normal(File_scanner_OFF& scanner, Vector& v)
   typedef typename Vector::R R;
   typedef typename R::RT     RT;
 
-  double x, y, z, w;
+  double x(0), y(0), z(0), w(0);
   scanner.scan_normal(x, y, z, w);
   if(w == 1)
     v = Vector(RT(x), RT(y), RT(z));
