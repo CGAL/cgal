@@ -44,6 +44,21 @@ if(EIGEN3_FOUND)
     target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
   endforeach()
 
+  set(RANSAC_PROTO_DIR CACHE PATH "")
+  if (NOT RANSAC_PROTO_DIR STREQUAL "")
+    add_definitions(-DPOINTSWITHINDEX -DCGAL_TEST_RANSAC_PROTOTYPE)
+    include_directories(${RANSAC_PROTO_DIR})
+    include_directories(${RANSAC_PROTO_DIR}/MiscLib/)
+    file(GLOB proto_src "${RANSAC_PROTO_DIR}/*.cpp")
+    file(GLOB proto_misc_src "${RANSAC_PROTO_DIR}/MiscLib/*.cpp")
+    add_library(libproto STATIC  ${proto_src} ${proto_misc_src})
+    add_executable(test_validity_sampled_data "test_validity_sampled_data.cpp")
+    target_link_libraries(test_validity_sampled_data libproto CGAL::CGAL CGAL::Eigen_support)
+  else()
+    add_executable(test_validity_sampled_data "test_validity_sampled_data.cpp")
+    target_link_libraries(test_validity_sampled_data CGAL::CGAL CGAL::Eigen_support)
+  endif()
+
 endif()
 
 create_single_source_cgal_program(

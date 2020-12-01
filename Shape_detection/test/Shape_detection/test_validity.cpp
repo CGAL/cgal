@@ -1,5 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 
+//#define CGAL_RANSAC_EXPERIMENTAL_FIXES
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
@@ -33,9 +34,9 @@ void test_random_planes(std::size_t nb_planes);
 
 int main()
 {
-  test_random_planes(1);
-  test_random_planes(10);
-  test_random_planes(100);
+  // test_random_planes(1);
+  // test_random_planes(10);
+  // test_random_planes(100);
   test_random_planes(1000);
   test_random_planes(10000);
 
@@ -56,20 +57,20 @@ void test_random_planes(std::size_t nb_planes)
   std::vector<double> nb_unassigned_ransac;
 
   CGAL::Real_timer timer;
-  double timeout = 120.; // 2 minutes timeout
+  double timeout = 60.; // 1 minute timeout
 
   timer.start();
-  std::size_t nb_runs = 500;
+  std::size_t nb_runs = 100;
   for (std::size_t run = 0; run < nb_runs; ++ run)
   {
-    std::size_t min_points = random.get_int(10, 200);
-    std::size_t max_points = random.get_int(200, 10000);
+    std::size_t min_points = random.get_int(10, 100);
+    std::size_t max_points = random.get_int(100, 1000);
     double cluster_epsilon = random.get_double(0.01, 10.);
     double epsilon = random.get_double (0., cluster_epsilon / 10.);
     double normal_threshold = random.get_double (0.75, 0.99);
 
-    double domain_size = cluster_epsilon * std::sqrt(nb_planes) * min_points;
     double spacing = 0.8 * cluster_epsilon / std::sqrt(2); // smaller than diagonal
+    double domain_size = spacing * std::sqrt(nb_planes) * std::sqrt(0.5 * (min_points + max_points)) * 0.5;
     double noise = 0.5 * epsilon;
 
     Point_set points;
@@ -145,11 +146,11 @@ void test_random_planes(std::size_t nb_planes)
                 << " * normal_threshold = " << normal_threshold << std::endl;
 
       std::ofstream ofile("0shapes.ply", std::ios::binary);
-//      CGAL::set_binary_mode (ofile);
+      CGAL::set_binary_mode (ofile);
       CGAL::write_ply_points (ofile, points,
                               CGAL::parameters::point_map(Point_map()).
                               normal_map(Normal_map()));
-
+      ofile.close();
       exit(0);
     }
 #endif
