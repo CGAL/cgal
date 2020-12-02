@@ -388,11 +388,7 @@ public:
 
     std::unordered_map<vertex_descriptor, int> local_vid;
     env_faces.reserve(face_range.size());
-    env_vertices.reserve(3*env_faces.size()/2); // only a guess
-
-    for(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v : vertices(tmesh)){
-      env_vertices.emplace_back(get(vpm, v));
-    }
+    env_vertices.reserve(3*face_range.size()/2); // only a guess
 
     GeomTraits gt;
     int curr_id=0;
@@ -1541,7 +1537,7 @@ private:
     }
 
 #ifdef CGAL_ENVELOPE_DEBUG
-    for(int i = 0; i < filtered_intersection.size(); i++){
+    for(std::size_t i = 0; i < filtered_intersection.size(); i++){
       prism_to_off(filtered_intersection[i], "filtered");
     }
 #endif
