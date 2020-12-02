@@ -405,9 +405,9 @@ private:
 
       ++ iter;
 
-      // if (iter == 200) {
-      //   exit(EXIT_FAILURE);
-      // }
+      if (iter == 40) {
+        exit(EXIT_FAILURE);
+      }
 
       apply(k, ev);
       m_data.check_integrity();
@@ -628,7 +628,7 @@ private:
       // std::cout << "came from: " << m_data.segment_3(m_data.iedge(ev.pvertex())) << std::endl;
       std::vector<IEdge> crossed;
       std::vector<PVertex> new_pvertices
-        = m_data.merge_pvertices_on_ivertex(m_min_time, m_max_time, pvertices, ev.ivertex(), crossed);
+        = m_data.merge_pvertices_on_ivertex(m_min_time, m_max_time, ev.pvertex(), pvertices, ev.ivertex(), crossed);
 
       // Remove all events of the crossed iedges.
       for (const auto& iedge : crossed)
