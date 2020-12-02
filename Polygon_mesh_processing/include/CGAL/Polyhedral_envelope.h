@@ -514,6 +514,12 @@ private:
                 datum_map,
                 point_map);
     tree.build();
+
+#ifdef CGAL_ENVELOPE_DEBUG
+    for(unsigned int i = 0; i < halfspace.size(); ++i){
+      prism_to_off(i, "prism");
+    }
+#endif
   }
 
 
