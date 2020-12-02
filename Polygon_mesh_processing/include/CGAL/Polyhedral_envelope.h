@@ -93,7 +93,7 @@ namespace CGAL {
  * \ingroup PkgPolygonMeshProcessingRef
  * This class can be used to check if a query point, segment, or triangle
  * is inside or outside a polyhedral envelope of a set of triangles, constructed for a given  \f$ \epsilon \f$ distance tolerance.
- * The polyhedral envelope is the union of <em>prisms</em> obtained.
+ * The polyhedral envelope is the union of <em>prisms</em> obtained. See Section \ref PMPEnvelope for more details.
  *
  * @tparam GeomTraits a geometric traits class, model of `Kernel`
  */
