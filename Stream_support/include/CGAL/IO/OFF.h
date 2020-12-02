@@ -123,7 +123,7 @@ bool read_OFF(std::istream& is,
     CGAL::internal::resize(polygons[i], no);
     for(std::size_t j=0; j<no; ++j)
     {
-      std::size_t id;
+      std::size_t id = 0;
       scanner.scan_facet_vertex_index(id,j+1, i);
       if(!is)
       {

@@ -355,8 +355,6 @@ void test_bgl_OFF(const char* filename)
   assert(!ok);
   ok = CGAL::read_OFF("data/invalid_cut.off", fg); // cut in half
   assert(!ok);
-  ok = CGAL::read_OFF("data/invalid_header.off", fg); // wrong header (NOFF but no normals)
-  assert(!ok);
   ok = CGAL::read_OFF("data/invalid_nv.off", fg); // wrong number of points
   assert(!ok);
   ok = CGAL::read_OFF("data/sphere.obj", fg);
@@ -864,10 +862,22 @@ int main(int argc, char** argv)
   // OFF
   const char* off_file = (argc > 1) ? argv[1] : "data/prim.off";
   test_bgl_OFF<Polyhedron, Kernel>(off_file);
+  Polyhedron fg;
+  bool ok = CGAL::read_OFF("data/invalid_header.off", fg); // wrong header (NOFF but no normals)
+  assert(ok);
   test_bgl_OFF<SM, Kernel>(off_file);
+  SM sm;
+  ok = CGAL::read_OFF("data/invalid_header.off", sm); // wrong header (NOFF but no normals)
+  assert(!ok);
   test_bgl_OFF<LCC, Kernel>(off_file);
+  LCC lcc;
+  ok = CGAL::read_OFF("data/invalid_header.off", lcc); // wrong header (NOFF but no normals)
+  assert(!ok);
 #ifdef CGAL_USE_OPENMESH
   test_bgl_OFF<OMesh, EPICK>(off_file);
+  OMesh om;
+  bool ok = CGAL::read_OFF("data/invalid_header.off", om); // wrong header (NOFF but no normals)
+  assert(!ok);
 #endif
   // OBJ
   const char* obj_file = (argc > 2) ? argv[2] : "data/sphere.obj";
