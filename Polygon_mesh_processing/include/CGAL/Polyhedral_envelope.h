@@ -1945,6 +1945,9 @@ private:
 
 public:
 
+  /// \name Query Operators
+  /// @{
+
   /*!
    * returns `true`, iff the query point is inside the polyhedral envelope.
    */
@@ -2011,17 +2014,107 @@ public:
     // only needed when we want to compare runs with FastEnvelope
     // std::sort(prismindex.begin(), prismindex.end());
 
-#ifdef CGAL_ENVELOPE_DEBUG
-    for(unsigned int i = 0; i < prismindex.size(); i++){
-      prism_to_off(prismindex[i], "prism");
-    }
-#endif
     if(triangle_out_of_envelope(t0, t1, t2, prismindex)){
       return false;
     }
     return true;
   }
 
+  /**
+   * returns `true`, iff all the triangles of `tmesh` are inside the polyhedral envelope.
+   * @tparam TriangleMesh a model of `FaceListGraph`
+   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+   *
+   * @param tmesh a triangle mesh
+   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+   *
+   * \cgalNamedParamsBegin
+   *   \cgalParamNBegin{vertex_point_map}
+   *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+   *                    as key type and `%Point_3` as value type}
+   *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+   *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+   *                     must be available in `TriangleMesh`.}
+   *   \cgalParamNEnd
+   * \cgalNamedParamsEnd
+   */
+  template <typename TriangleMesh, typename NamedParameters>
+  bool
+  operator()(const TriangleMesh& tmesh, const NamedParameters& np) const
+  {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type
+      vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(CGAL::vertex_point, tmesh));
+
+    for (typename boost::graph_traits<TriangleMesh>::face_descriptor f : faces(tmesh))
+    {
+      typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h =
+        halfedge(f, tmesh);
+      if (! this->operator()(get(vpm, source(h, tmesh)),
+                             get(vpm, target(h, tmesh)),
+                             get(vpm, target(next(h, tmesh), tmesh))) )
+      {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+#ifndef DOXYGEN_RUNNING
+  template <typename TriangleMesh>
+  bool
+  operator()(const TriangleMesh& tmesh,
+             typename boost::disable_if<boost::has_range_const_iterator<TriangleMesh>>::type* = 0) const
+  {
+    return this->operator()(tmesh, parameters::all_default());
+  }
+#endif
+
+  /**
+   * returns `true`, iff all the triangles in `triangle_range` are inside the polyhedral envelope.
+   * @tparam TriangleRange a model of `ConstRange` with `ConstRange::const_iterator`
+   *                       being a model of `InputIterator` with a value type being itself a model of
+   *                       `ConstRange` with `ConstRange::const_iterator` being a model of `InputIterator`
+   *                       with `Point_3` as value type.
+   *
+   * @param triangle_range a range of triangles
+   * \cgalNamedParamsEnd
+   */
+  template <typename TriangleRange>
+  bool
+  operator()(const TriangleRange& triangle_range,
+#ifndef DOXYGEN_RUNNING
+             typename boost::enable_if<boost::has_range_const_iterator<TriangleRange>>::type* = 0) const
+#endif
+  {
+    std::vector<Point_3> triangle;
+    triangle.reserve(3);
+    for (const auto& t : triangle_range)
+    {
+      triangle.clear();
+      triangle.assign(t.begin(), t.end());
+      CGAL_assertion(triangle.size()==3);
+      if (! this->operator()(t[0], t[1], t[2]) )
+      {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /// @}
+
+  /// returns `true` if the polyhedral envelope is empty and `false` otherwise.
+  bool empty() const
+  {
+    return env_faces.empty();
+  }
 
 }; // class Polyhedral_envelope
 
