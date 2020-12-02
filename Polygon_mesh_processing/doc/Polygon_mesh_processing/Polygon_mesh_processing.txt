@@ -515,10 +515,11 @@ input triangle mesh.
 \subsection PMPEnvelope Polyhedral Envelope Containment Check
 
 The class `CGAL::Polyhedral_envelope` provides functors to check if a query point, segment, or triangle
-is fully contained in a <em>polyhedral envelope</em> of a triangle mesh.
+is fully contained in a <em>polyhedral envelope</em> of a triangle mesh or of a triangle soup. In the
+following, input triangles will refer either to the triangles of a mesh or of a soup.
 
 The polyhedral envelope is a conservative approximation of the Minkowski sum envelope with a sphere of radius \f$ \epsilon \f$.
-The latter has cylindrical and spherical patches at convex edges and vertices of the input triangle mesh.
+The latter has cylindrical and spherical patches at convex edges and vertices of the input triangles.
 
 Given a distance \f$ \delta =  \epsilon / \sqrt(3)\f$ we can associate  a <em>prism</em> to each triangle by intersecting two halfspaces
 parallel to the triangle, three halfspaces orthogonal to the triangle and parallel to the edges,
@@ -526,7 +527,7 @@ and additionaly halfspaces for clipping obtuse angles, with the face normal corr
 of the angle.  These halfspaces are at distance  \f$ \delta \f$ and
 such that they contain the triangle.
 
-The <em>polyhedral envelope</em> of a triangle mesh with a tolerance \f$ \epsilon \f$ then is the union of the prisms of all faces
+The <em>polyhedral envelope</em> of a set of triangles with a tolerance \f$ \epsilon \f$ then is the union of the prisms of all faces
 with  \f$ \delta = \epsilon / \sqrt(3) \f$.
 
 \cgalFigureBegin{envelopeFig, envelope.png}
@@ -539,10 +540,9 @@ If a query is inside the polyhedral envelope, we can be sure
 that it is also in the Minkowski sum envelope, but if it is outside the polyhedral envelope
 we do not know where it is with respect to the Minkowski sum envelope.
 
-
 The algorithm of Wang et al. \cgalCite{cgal:Wwshap-eepec-20} for the polyhedral envelope containment check
 can be summarized as follows.
-The prisms of the faces of the triangle mesh are stored in an AABB tree, which is used to quickly
+The prisms of the faces of the input triangles are stored in an AABB tree, which is used to quickly
 identify the prisms whose bounding box overlaps with the query.
 
 For a query point the algorithm checks if it is inside one of these prisms.
