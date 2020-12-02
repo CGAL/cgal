@@ -1855,7 +1855,7 @@ public:
           std::cout << "adding extra face!" << std::endl;
           PVertex propagated = find_opposite_pvertex(pvertex, ivertex, all_crossed.back());
           if (propagated == null_pvertex()) {
-            CGAL_assertion_msg(false, "TODO: BACK NULL PROPAGATED CASE!");
+            CGAL_assertion_msg(false, "TODO: BACK, NULL PROPAGATED CASE!");
           } else {
 
             std::cout << "propagated: " << point_3(propagated) << std::endl;
@@ -1863,9 +1863,11 @@ public:
             const PFace new_pface = add_pface(std::array<PVertex, 3>{pvertex, propagated, previous});
             this->k(new_pface) = this->k(pface);
             previous = propagated;
+            // crossed.push_back(all_crossed.back()); // do we need to remove events from this edge?
+
           }
         } else {
-          CGAL_assertion_msg(false, "TODO: BACK CROSSED < LIMIT MULTIPLE FACES!");
+          CGAL_assertion_msg(false, "TODO: BACK, CROSSED < LIMIT, MULTIPLE FACES!");
         }
       }
 
@@ -2098,7 +2100,7 @@ public:
       if (crossed.size() < all_crossed.size()) {
         if (crossed.size() == all_crossed.size() - 1) {
 
-          // CGAL_assertion_msg(false, "TODO: FRONT CROSSED < LIMIT 1 FACE!");
+          // CGAL_assertion_msg(false, "TODO: FRONT, CROSSED < LIMIT, 1 FACE!");
 
           std::cout << "adding extra face!" << std::endl;
           PVertex propagated = find_opposite_pvertex(pvertex, ivertex, all_crossed.back());
@@ -2119,8 +2121,9 @@ public:
             const PEdge pedge(support_plane_idx, support_plane(pvertex).edge(pvertex.second, propagated.second));
             connect(pedge, all_crossed.back());
             connect(propagated, all_crossed.back());
+            crossed.push_back(all_crossed.back()); // remove events from this one
 
-            // CGAL_assertion_msg(false, "TODO: FRONT NULL PROPAGATED CASE!");
+            // CGAL_assertion_msg(false, "TODO: FRONT, NULL PROPAGATED CASE!");
 
           } else {
 
@@ -2129,9 +2132,11 @@ public:
             const PFace new_pface = add_pface(std::array<PVertex, 3>{pvertex, previous, propagated});
             this->k(new_pface) = this->k(pface);
             previous = propagated;
+            // crossed.push_back(all_crossed.back()); // do we need to remove events from this edge?
+
           }
         } else {
-          CGAL_assertion_msg(false, "TODO: FRONT CROSSED < LIMIT MULTIPLE FACES!");
+          CGAL_assertion_msg(false, "TODO: FRONT, CROSSED < LIMIT, MULTIPLE FACES!");
         }
       }
 
@@ -2143,7 +2148,7 @@ public:
         // continue ..
         // std::cout << "crossed size: " << crossed.size() << std::endl;
         // std::cout << "all crossed size: " << all_crossed.size() << std::endl;
-        // CGAL_assertion_msg(false, "TODO: FRONT CROSSED > LIMIT!");
+        // CGAL_assertion_msg(false, "TODO: FRONT, CROSSED > LIMIT!");
       }
     }
     else // Open case

@@ -258,14 +258,14 @@ private:
                   m_data.point_2 (pvertex, m_max_time));
     CGAL::Bbox_2 sv_bbox = sv.bbox();
 
-    if (m_data.has_iedge(pvertex)) // Constrained vertex
+    if (m_data.has_iedge(pvertex)) // constrained vertex
     {
       // const auto cutime = m_data.current_time();
       // m_data.update_positions(m_min_time);
       // std::cout << "Computing events for the constrained pvertex: " << m_data.str(pvertex) << ": " << m_data.point_3(pvertex) << std::endl;
       // m_data.update_positions(cutime);
 
-      // Test left and right vertices on mesh face
+      // Test left and right vertices on mesh face.
       PVertex prev;
       PVertex next;
       std::tie (prev, next) = m_data.prev_and_next (pvertex);
@@ -297,7 +297,7 @@ private:
         // std::cout << "pother: " << m_data.point_3(pother) << std::endl;
       }
 
-      // Test end-vertices of intersection edge
+      // Test end-vertices of intersection edge.
       IEdge iedge = m_data.iedge(pvertex);
       for (const IVertex& ivertex : { m_data.source(iedge), m_data.target(iedge) })
       {
@@ -318,12 +318,12 @@ private:
         }
       }
     }
-    else // Unconstrained vertex
+    else // unconstrained vertex
     {
       PVertex prev = m_data.prev(pvertex);
       PVertex next = m_data.next(pvertex);
 
-      // Test all intersection edges
+      // Test all intersection edges.
       for (std::size_t j = 0; j < iedges.size(); ++ j)
       {
         const IEdge& iedge = iedges[j];
@@ -434,18 +434,18 @@ private:
 
       CGAL_assertion (m_data.has_iedge(pvertex));
 
-      if (m_data.has_iedge(pother)) // Two constrained vertices meet
+      if (m_data.has_iedge(pother)) // two constrained vertices meet
       {
         CGAL_assertion_msg(false, "TODO: ADD CASE TWO CONSTRAINED PVERTICES MEET!");
       }
-      else // One constrained vertex meets a free vertex
+      else // one constrained vertex meets a free vertex
       {
         if (m_data.transfer_vertex(pvertex, pother)) {
 
           if (m_data.has_iedge(pvertex))
-            remove_events(m_data.iedge(pvertex), pvertex.first); // Should we remove it here?
+            remove_events(m_data.iedge(pvertex), pvertex.first); // should we remove it here?
           if (m_data.has_iedge(pother))
-            remove_events(m_data.iedge(pother), pother.first); // Should we remove it here?
+            remove_events(m_data.iedge(pother), pother.first); // should we remove it here?
           compute_events_of_vertices(ev.time(), std::array<PVertex,2>{pvertex, pother});
 
           PVertex prev, next;
@@ -459,13 +459,13 @@ private:
 
           // remove_events(pthird);
           if (m_data.has_iedge(pthird))
-            remove_events(m_data.iedge(pthird), pthird.first); // Should we remove it here?
+            remove_events(m_data.iedge(pthird), pthird.first); // should we remove it here?
           compute_events_of_vertices(ev.time(), std::array<PVertex,1>{pthird});
 
         } else {
 
           if (m_data.has_iedge(pvertex))
-            remove_events(m_data.iedge(pvertex), pvertex.first); // Should we remove it here?
+            remove_events(m_data.iedge(pvertex), pvertex.first); // should we remove it here?
           compute_events_of_vertices(ev.time(), std::array<PVertex,1>{pvertex});
         }
       }
@@ -512,13 +512,13 @@ private:
           bool stop = false;
           if (bbox_reached) {
 
-            CGAL_assertion(bbox_reached_other); // Can we have a case with only one box side reached?
+            CGAL_assertion(bbox_reached_other); // can we have a case with only one box side reached?
             std::cout << "pv po k bbox" << std::endl;
             stop = true;
 
           } else if (bbox_reached_other) {
 
-            CGAL_assertion(bbox_reached); // Can we have a case with only one box side reached?
+            CGAL_assertion(bbox_reached); // can we have a case with only one box side reached?
             std::cout << "pv po k bbox" << std::endl;
             stop = true;
 
@@ -608,7 +608,7 @@ private:
     }
     else if (ev.is_pvertex_to_ivertex())
     {
-      // first, let's gather all vertices that will get merged
+      // First, let's gather all vertices that will get merged.
       std::vector<PVertex> pvertices
         = m_data.pvertices_around_ivertex (ev.pvertex(), ev.ivertex());
 
