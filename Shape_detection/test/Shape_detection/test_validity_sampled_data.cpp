@@ -156,7 +156,7 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
             << times_ransac.front() << ";" << times_ransac.back() << "])" << std::endl;
 
   // RANSAC should at least detect 75% of shapes
-  assert (detected_ransac[detected_ransac.size() / ] > std::size_t(0.75 * ground_truth));
+  assert (detected_ransac[detected_ransac.size() / 2] > std::size_t(0.75 * ground_truth));
 
 #ifdef CGAL_TEST_RANSAC_PROTOTYPE
   {
