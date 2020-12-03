@@ -2209,7 +2209,7 @@ public:
   /// @}
 
   /// returns `true` if the polyhedral envelope is empty and `false` otherwise.
-  bool empty() const
+  bool is_empty() const
   {
     return env_faces.empty();
   }

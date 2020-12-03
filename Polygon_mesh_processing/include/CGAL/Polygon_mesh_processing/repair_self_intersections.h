@@ -504,7 +504,7 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
     return false;
   }
 #ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
-  if (!cc_envelope.empty() && !cc_envelope(local_mesh))
+  if (!cc_envelope.is_empty() && !cc_envelope(local_mesh))
   {
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
     std::cout << "  DEBUG: patch is not in the input polyhedral envelope\n";
@@ -1093,7 +1093,7 @@ bool fill_hole(std::vector<typename boost::graph_traits<TriangleMesh>::halfedge_
   }
 
 #ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
-  if (!cc_envelope.empty() && !cc_envelope(patch))
+  if (!cc_envelope.is_empty() && !cc_envelope(patch))
   {
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
     std::cout << "  DEBUG: Patch is not inside the input polyhedral envelope\n";
@@ -1266,7 +1266,7 @@ bool fill_hole_with_constraints(std::vector<typename boost::graph_traits<Triangl
 
 #ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
   // check if the patch is inside the input polyhedral envelope
-  if(!cc_envelope.empty() && !cc_envelope(patch))
+  if(!cc_envelope.is_empty() && !cc_envelope(patch))
   {
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
     std::cout << "Patch is not entirely inside the input polyhedral envelope, use base fill_hole" << std::endl;
@@ -1989,6 +1989,7 @@ bool remove_self_intersections(const FaceRange& face_range,
   std::cout << "\tmax_steps: " << max_steps << std::endl;
   std::cout << "\tstrong_dihedral_angle: " << strong_dihedral_angle << std::endl;
   std::cout << "\tweak_dihedral_angle: " << weak_dihedral_angle << std::endl;
+  std::cout << "\tcontainment_epsilon: " << containment_epsilon << std::endl;
 #endif
 
   if(!preserve_genus)
