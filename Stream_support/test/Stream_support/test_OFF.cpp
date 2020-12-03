@@ -37,6 +37,13 @@ int main(int argc, char** argv)
   ok = CGAL::read_OFF(is, points, polygons);
   assert(ok);
   is.close();
+  points.clear();
+  polygons.clear();
+
+  is.open(off_file, std::ios::binary);
+  ok = CGAL::read_OFF(is, points, polygons);
+  assert(ok);
+  is.close();
 
   std::ofstream os("tmp.off", std::ios::binary);
   ok = CGAL::write_OFF(os, points, polygons);

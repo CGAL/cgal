@@ -33,7 +33,13 @@ int main(int argc, char** argv)
 
   points.clear();
   polygons.clear();
+
   std::ifstream is(obj_file);
+  ok = CGAL::read_OBJ(is, points, polygons);
+  assert(ok);
+  is.close();
+
+  is.open(obj_file, std::ios::binary);
   ok = CGAL::read_OBJ(is, points, polygons);
   assert(ok);
   is.close();

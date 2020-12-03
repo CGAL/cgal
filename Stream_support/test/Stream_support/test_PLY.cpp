@@ -33,7 +33,15 @@ int main(int argc, char** argv)
 
   points.clear();
   polygons.clear();
+
   std::ifstream is(ply_file);
+  ok = CGAL::read_PLY(is, points, polygons);
+  assert(ok);
+  is.close();
+  points.clear();
+  polygons.clear();
+
+  is.open(ply_file, std::ios::binary);
   ok = CGAL::read_PLY(is, points, polygons);
   assert(ok);
   is.close();
