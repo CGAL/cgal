@@ -102,6 +102,7 @@ CGAL_add_named_parameter(halfedges_keeper_t, halfedges_keeper, halfedges_keeper)
 CGAL_add_named_parameter(volume_threshold_t, volume_threshold, volume_threshold)
 CGAL_add_named_parameter(dry_run_t, dry_run, dry_run)
 CGAL_add_named_parameter(do_not_modify_t, do_not_modify, do_not_modify)
+CGAL_add_named_parameter(allow_self_intersections_t, allow_self_intersections, allow_self_intersections)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
@@ -112,6 +113,7 @@ CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)
 CGAL_add_named_parameter(random_seed_t, random_seed, random_seed)
 CGAL_add_named_parameter(do_lock_mesh_t, do_lock_mesh, do_lock_mesh)
 CGAL_add_named_parameter(do_simplify_border_t, do_simplify_border, do_simplify_border)
+CGAL_add_named_parameter(algorithm_t, algorithm, algorithm)
 
 //internal
 CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculator)
@@ -150,6 +152,8 @@ CGAL_add_named_parameter(inspector_t, inspector, inspector)
 CGAL_add_named_parameter(logger_t, logger, logger)
 CGAL_add_named_parameter(pointmatcher_config_t, pointmatcher_config, pointmatcher_config)
 CGAL_add_named_parameter(adjacencies_t, adjacencies, adjacencies)
+CGAL_add_named_parameter(scan_angle_t, scan_angle_map, scan_angle_map)
+CGAL_add_named_parameter(scanline_id_t, scanline_id_map, scanline_id_map)
 
 // List of named parameters used in Surface_mesh_approximation package
 CGAL_add_named_parameter(verbose_level_t, verbose_level, verbose_level)

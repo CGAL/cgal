@@ -1,9 +1,8 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-
 cmake_minimum_required(VERSION 3.1...3.15)
-project( Polyhedron_IO_Demo )
+project(Polyhedron_IO_Demo)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
@@ -12,16 +11,7 @@ endif()
 
 set_property(DIRECTORY PROPERTY CGAL_NO_TESTING TRUE)
 
-find_package(CGAL QUIET)
+find_package(CGAL REQUIRED)
 
-if ( CGAL_FOUND )
-
-  create_single_source_cgal_program( "geomview_demo.cpp" )
-  create_single_source_cgal_program( "viewpoint2off.cpp" )
-
-else()
-
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
-
-endif()
-
+create_single_source_cgal_program("geomview_demo.cpp")
+create_single_source_cgal_program("viewpoint2off.cpp")
