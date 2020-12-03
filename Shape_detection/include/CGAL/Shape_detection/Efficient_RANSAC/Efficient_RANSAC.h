@@ -555,9 +555,9 @@ namespace CGAL {
           do {
             // Search (remaining_points / min_points) shapes (max 200 per iteration, min 1)
             std::size_t search_number
-              = std::min(std::size_t(200),
-                         std::max(std::size_t((m_num_available_points - num_invalid) / double(m_options.min_points)),
-                                  std::size_t(1)));
+              = (std::min)(std::size_t(200),
+                           (std::max)(std::size_t((m_num_available_points - num_invalid) / double(m_options.min_points)),
+                                      std::size_t(1)));
             for (std::size_t nb = 0; nb < search_number; ++ nb)
             {
               // Generate candidates
