@@ -58,8 +58,6 @@
 
 #include <CGAL/license/Polygon_mesh_processing/Polyhedral_envelope.h>
 
-#define CGAL_ENVELOPE_DEBUG 1
-
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -201,19 +199,11 @@ private:
 
   typedef std::vector<Plane> Prism;
 
-  std::vector<Prism> halfspace; // should be renamed to "prisms"
-  std::vector<Iso_cuboid_3> bounding_boxes;
-
   static const bool OUT_PRISM = 1;
   static const bool IN_PRISM = 0;
   static const int CUT_COPLANAR = 4;
   static const int CUT_EMPTY = -1;
   static const int CUT_FACE = 3;
-
-
-  std::vector<Point_3> env_vertices;
-  std::vector<Vector3i> env_faces;
-
 
   // For a query object the envelope test uses an AABB tree to find the relevant prisms
 
@@ -233,6 +223,7 @@ private:
 
     friend value_type get(const Datum_map& m, key_type k)
     {
+      CGAL_assertion( m.boxes_ptr->size()>k );
       return (*m.boxes_ptr)[k];
     }
   };
@@ -252,6 +243,7 @@ private:
 
     friend value_type get(const Point_map& m, key_type k)
     {
+      CGAL_assertion( m.boxes_ptr->size()>k );
       return ((*m.boxes_ptr)[k].min)();
     }
   };
@@ -260,6 +252,11 @@ private:
   typedef AABB_traits<GeomTraits, Primitive> Tree_traits;
   typedef AABB_tree<Tree_traits> Tree;
 
+// Data members
+  std::vector<Prism> halfspace; // should be renamed to "prisms"
+  std::vector<Iso_cuboid_3> bounding_boxes;
+  std::vector<Point_3> env_vertices;
+  std::vector<Vector3i> env_faces;
 
   Tree tree;
 
@@ -275,6 +272,37 @@ public:
    */
   Polyhedral_envelope()
   {}
+
+  // Disabled copy constructor & assignment operator
+  Polyhedral_envelope(const Polyhedral_envelope<GeomTraits>&) = delete;
+  Polyhedral_envelope<GeomTraits>& operator=(const Polyhedral_envelope<GeomTraits>&) = delete;
+
+  Polyhedral_envelope<GeomTraits>& operator=(Polyhedral_envelope<GeomTraits>&& other) noexcept
+  {
+    halfspace = std::move(other.halfspace);
+    bounding_boxes = std::move(other.bounding_boxes);
+    env_vertices = std::move(other.env_vertices);
+    env_faces = std::move(other.env_faces);
+    tree = std::move(other.tree);
+    oriented_side = std::move(other.oriented_side);
+
+    const_cast<Tree_traits&>(tree.traits())
+      .set_shared_data(Datum_map<GeomTraits>(bounding_boxes),
+                       Point_map<GeomTraits>(bounding_boxes));
+
+    return *this;
+  }
+
+  Polyhedral_envelope(Polyhedral_envelope<GeomTraits>&& other)
+    : halfspace(other.halfspace)
+    , bounding_boxes(other.bounding_boxes)
+    , env_vertices(other.env_vertices)
+    , env_faces(other.env_faces)
+    , tree(other.tree)
+    , oriented_side(other.oriented_side)
+  {
+    *this = std::move(other);
+  }
 
   /**
    * Constructor with a triangulated surface mesh.
