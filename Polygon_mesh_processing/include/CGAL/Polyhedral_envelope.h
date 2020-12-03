@@ -85,7 +85,10 @@
 #include <string>
 #include <fstream>
 
-
+#ifdef DOXYGEN_RUNNING
+#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_PMP_NP_CLASS NamedParameters
+#endif
 
 namespace CGAL {
 
@@ -2062,15 +2065,21 @@ public:
    *                     must be available in `TriangleMesh`.}
    *   \cgalParamNEnd
    * \cgalNamedParamsEnd
+   * \todo Add ConcurrencyTag as template parameter + use TBB parallel for
+   * \todo Find a way to test the containment of the vertices first and then
+   *       the triangles. It requires to have a map vertex->prism id so that
+   *       we can test if the 3 vertices of a face are in the same face + have
+   *       the initial list of prisms.
+   * \todo apply that to the soup versions
    */
-  template <typename TriangleMesh, typename NamedParameters>
+  template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
   bool
-  operator()(const TriangleMesh& tmesh, const NamedParameters& np) const
+  operator()(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np) const
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
-    typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type
+    typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, tmesh));
 
@@ -2100,6 +2109,70 @@ public:
 #endif
 
   /**
+    * returns `true`, iff all the triangles in `triangles` are inside the polyhedral envelope.
+    *
+    * @tparam PointRange a model of the concept `ConstRange` with `PointRange::const_iterator`
+    *                    being a model of `InputIterator` with a point as value type
+    * @tparam TriangleRange a model of the concept `ConstRange` with `TriangleRange::const_iterator`
+    *                       being a model of `InputIterator` whose value type is model of
+    *                       the concept `RandomAccessContainer` whose value_type is convertible to `std::size_t`.
+    * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+    *
+    * @param points points of the soup of triangles
+    * @param triangles each element in the range describes a triangle as a triple of indices of the points in `points`
+    * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+    *
+    * \cgalNamedParamsBegin
+    *   \cgalParamNBegin{point_map}
+    *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
+    *     \cgalParamType{a model of `ReadablePropertyMap` whose value type is `Point_3` and whose key
+    *                    is the value type of `PointRange::const_iterator`}
+    *     \cgalParamDefault{`CGAL::Identity_property_map`}
+    *   \cgalParamNEnd
+    * \cgalNamedParamsEnd
+    *
+    */
+  template <typename PointRange, typename TriangleRange, typename NamedParameters>
+  bool operator()(const PointRange& points,
+                  const TriangleRange& triangles,
+                  const NamedParameters& np) const
+  {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    typedef typename std::iterator_traits<typename TriangleRange::const_iterator>::value_type Triangle;
+
+    typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::const_type Point_map;
+    Point_map pm = choose_parameter<Point_map>(get_parameter(np, internal_np::point_map));
+
+    std::array<Point_3, 3> pts;
+
+    for (const Triangle& f : triangles)
+    {
+      typename Triangle::const_iterator t_it = f.begin();
+
+      if (! this->operator()(get(pm, points[*t_it]),
+                             get(pm, points[*++t_it]),
+                             get(pm, points[*++t_it])) )
+      {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+#ifndef DOXYGEN_RUNNING
+  template <typename PointRange, typename TriangleRange>
+  bool operator()(const PointRange& points,
+                  const TriangleRange& triangles) const
+  {
+    return this->operator()(points, triangles, parameters::all_default());
+  }
+
+#endif
+
+  /**
    * returns `true`, iff all the triangles in `triangle_range` are inside the polyhedral envelope.
    * @tparam TriangleRange a model of `ConstRange` with `ConstRange::const_iterator`
    *                       being a model of `InputIterator` with a value type being itself a model of
@@ -2107,14 +2180,14 @@ public:
    *                       with `Point_3` as value type.
    *
    * @param triangle_range a range of triangles
-   * \cgalNamedParamsEnd
    */
   template <typename TriangleRange>
   bool
-  operator()(const TriangleRange& triangle_range,
+  operator()(const TriangleRange& triangle_range
 #ifndef DOXYGEN_RUNNING
-             typename boost::enable_if<boost::has_range_const_iterator<TriangleRange>>::type* = 0) const
+             , typename boost::enable_if<boost::has_range_const_iterator<TriangleRange>>::type* = 0
 #endif
+    ) const
   {
     std::vector<Point_3> triangle;
     triangle.reserve(3);
