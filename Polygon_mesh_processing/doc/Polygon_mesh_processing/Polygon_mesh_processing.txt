@@ -564,6 +564,11 @@ just with a triangle soup.
 
 \cgalExample{Polygon_mesh_processing/polyhedral_envelope_of_triangle_soup.cpp}
 
+A triangle mesh can also be used as query, to check if a remeshed version is within the polyhedral envelope of
+an input mesh.
+
+\cgalExample{Polygon_mesh_processing/polyhedral_envelope_mesh_containment.cpp}
+
 \subsection PMPShapePredicates Shape Predicates
 
 Badly shaped or, even worse, completely degenerate elements of a polygon mesh are problematic
