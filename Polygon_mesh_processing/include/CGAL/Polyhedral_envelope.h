@@ -294,12 +294,6 @@ public:
   }
 
   Polyhedral_envelope(Polyhedral_envelope<GeomTraits>&& other)
-    : halfspace(other.halfspace)
-    , bounding_boxes(other.bounding_boxes)
-    , env_vertices(other.env_vertices)
-    , env_faces(other.env_faces)
-    , tree(other.tree)
-    , oriented_side(other.oriented_side)
   {
     *this = std::move(other);
   }
