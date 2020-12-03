@@ -84,7 +84,7 @@
 
 #include <string>
 #include <fstream>
-
+#include <type_traits>
 #ifdef DOXYGEN_RUNNING
 #define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
 #define CGAL_PMP_NP_CLASS NamedParameters
@@ -193,7 +193,9 @@ private:
       : ep(ep), eq(eq), er(er), eplane(ep,eq,er)
     {}
 
-    Plane(const Point_3& p, const Point_3& q, const Point_3& r)
+    template <class Point>
+    Plane(const Point& p, const Point& q, const Point& r,
+          typename std::enable_if<!std::is_same<Point,ePoint_3>::value>::type* = 0)
       : ep(p.x(),p.y(),p.z()), eq(q.x(),q.y(),q.z()), er(r.x(),r.y(),r.z()), eplane(ep,eq,er)
     {}
     ePoint_3 ep, eq, er;
@@ -399,7 +401,7 @@ public:
                       double epsilon,
                       const NamedParameters& np
 #ifndef DOXYGEN_RUNNING
-                      , typename boost::disable_if<boost::has_range_const_iterator<TriangleMesh>>::type* = 0
+                      , typename std::enable_if<!boost::has_range_const_iterator<TriangleMesh>::value>::type* = 0
 #endif
   )
   {
@@ -474,7 +476,7 @@ public:
                       double epsilon,
                       const NamedParameters& np
 #ifndef DOXYGEN_RUNNING
-                      , typename boost::enable_if<boost::has_range_const_iterator<TriangleRange>>::type* = 0
+                      , typename std::enable_if<boost::has_range_const_iterator<TriangleRange>::value>::type* = 0
 #endif
                       )
   {
@@ -513,7 +515,7 @@ public:
   Polyhedral_envelope(const FaceRange& face_range,
                       const TriangleMesh& tmesh,
                       double epsilon,
-                      typename boost::disable_if<boost::has_range_const_iterator<TriangleMesh>>::type* = 0)
+                      typename std::enable_if<!boost::has_range_const_iterator<TriangleMesh>::value>::type* = 0)
     : Polyhedral_envelope(face_range, tmesh, epsilon, parameters::all_default())
   {}
 
@@ -521,7 +523,7 @@ public:
   Polyhedral_envelope(const PointRange& points,
                       const TriangleRange& triangles,
                       double epsilon,
-                      typename boost::enable_if<boost::has_range_const_iterator<TriangleRange>>::type* = 0)
+                      typename std::enable_if<boost::has_range_const_iterator<TriangleRange>::value>::type* = 0)
     : Polyhedral_envelope(points, triangles, epsilon, parameters::all_default())
   {}
 #endif
@@ -2102,7 +2104,7 @@ public:
   template <typename TriangleMesh>
   bool
   operator()(const TriangleMesh& tmesh,
-             typename boost::disable_if<boost::has_range_const_iterator<TriangleMesh>>::type* = 0) const
+             typename std::enable_if<!boost::has_range_const_iterator<TriangleMesh>::value>::type* = 0) const
   {
     return this->operator()(tmesh, parameters::all_default());
   }
@@ -2146,14 +2148,13 @@ public:
     Point_map pm = choose_parameter<Point_map>(get_parameter(np, internal_np::point_map));
 
     std::array<Point_3, 3> pts;
-
     for (const Triangle& f : triangles)
     {
       typename Triangle::const_iterator t_it = f.begin();
-
-      if (! this->operator()(get(pm, points[*t_it]),
-                             get(pm, points[*++t_it]),
-                             get(pm, points[*++t_it])) )
+      pts[0]=get(pm, points[*t_it]);
+      pts[1]=get(pm, points[*(++t_it)]);
+      pts[2]=get(pm, points[*(++t_it)]);
+      if (! this->operator()(pts[0], pts[1], pts[2]) )
       {
         return false;
       }
@@ -2185,7 +2186,7 @@ public:
   bool
   operator()(const TriangleRange& triangle_range
 #ifndef DOXYGEN_RUNNING
-             , typename boost::enable_if<boost::has_range_const_iterator<TriangleRange>>::type* = 0
+             , typename std::enable_if<boost::has_range_const_iterator<TriangleRange>::value>::type* = 0
 #endif
     ) const
   {
