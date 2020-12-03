@@ -96,8 +96,25 @@ void test_remove_si()
   assert(!PMP::does_self_intersect(tm));
 }
 
+void cube_test()
+{
+  std::cout << "---- cube_test() ----\n";
+  CGAL::Surface_mesh<EPIC::Point_3> tm;
+  std::ifstream in("data-coref/cube_meshed.off");
+  in >> tm;
+  assert(tm.vertices().size()!=0);
+
+  typedef EPIC::Point_3 P;
+  CGAL::Polyhedral_envelope<EPIC> envelope(tm, 0.1);
+  assert(envelope(P(0,0,0), P(1,0,0), P(1,1,0)));
+  assert(envelope(P(0,0,0.05), P(1,0,0.05), P(1,1,0.05)));
+  // assert(envelope(P(0,0,0.1), P(1,0,0.1), P(1,1,0.1))); // NOT WORKING
+  assert(!envelope(P(0,0,0.2), P(1,0,0.2), P(1,1,0.2)));
+}
+
 int main()
 {
   test_remove_si();
   test_API();
+  cube_test();
 }
