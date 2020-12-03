@@ -64,8 +64,10 @@ int main (int argc, char** argv)
   test_copied_point_cloud (points, 2);
   test_copied_point_cloud (points, 5);
   test_copied_point_cloud (points, 10);
+#ifndef CGAL_TEST_SUITE // Disable tests too large for testsuite
   test_copied_point_cloud (points, 20);
   test_copied_point_cloud (points, 50);
+#endif
 
   return EXIT_SUCCESS;
 }
@@ -120,10 +122,17 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
 
   assert (nb_detected == ground_truth);
 
-  CGAL::Real_timer timer;
+#ifdef CGAL_TEST_SUITE
+  double timeout = 60; // 1 minute timeout
+  std::size_t nb_runs = 20; //
+#else
   double timeout = 120; // 2 minutes timeout
-  timer.start();
   std::size_t nb_runs = 500;
+#endif
+
+  CGAL::Real_timer timer;
+  timer.start();
+
   std::vector<std::size_t> detected_ransac;
   std::vector<double> times_ransac;
   for (std::size_t run = 0; run < nb_runs; ++ run)
