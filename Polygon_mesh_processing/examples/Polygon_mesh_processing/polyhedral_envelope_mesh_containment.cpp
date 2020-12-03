@@ -9,7 +9,6 @@ int main(int argc, char* argv[])
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef Kernel::Point_3 Point_3;
   typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
-  typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<Surface_mesh>::halfedge_descriptor halfedge_descriptor;
 
   typedef CGAL::Polyhedral_envelope<Kernel> Envelope;
@@ -23,7 +22,8 @@ int main(int argc, char* argv[])
 
   double eps = (argc>3) ? std::stod(std::string(argv[3])) : 0.2;
 
-  Envelope envelope(tmesh, eps);
+  Envelope envelope;
+  envelope = Envelope(tmesh, eps);
 
   for(auto fd : faces(test)){
     halfedge_descriptor hd = halfedge(fd, test);
