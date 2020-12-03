@@ -473,42 +473,46 @@ public:
 
   Triangle get_closest_triangle(const Bare_point& p, const Triangle& t) const
   {
-    //canonicalize t
-    Bare_point min_p = t[0];
-    if (t[1] < min_p) {
-      min_p = t[1];
-    }
-    if (t[2] < min_p) {
-      min_p = t[2];
-    }
+    typename Geom_traits::Less_xyz_3 less = geom_traits().less_xyz_3_object();
+    typename Geom_traits::Construct_vector_3 cv = geom_traits().construct_vector_3_object();
+    typename Geom_traits::Construct_translated_point_3 tr = geom_traits().construct_translated_point_3_object();
+    typename Geom_traits::Compute_squared_distance_3 csd = geom_traits().compute_squared_distance_3_object();
 
-    Vector_3 move_to_canonical(min_p, canonicalize_point(min_p));
-    const std::array<Bare_point, 3> ct = { t[0] + move_to_canonical,
-                                           t[1] + move_to_canonical,
-                                           t[2] + move_to_canonical };
+    //canonicalize t
+    std::size_t min_p_id = 0;
+    if(less(t[1], t[min_p_id]))
+      min_p_id = 1;
+    if(less(t[2], t[min_p_id]))
+      min_p_id = 2;
+
+    Bare_point canon_min_p = canonicalize_point(t[min_p_id]);
+    Vector_3 move_to_canonical = cv(t[min_p_id], canon_min_p);
+    const std::array<Bare_point, 3> ct = { (min_p_id == 0) ? canon_min_p : tr(t[0], move_to_canonical),
+                                           (min_p_id == 1) ? canon_min_p : tr(t[1], move_to_canonical),
+                                           (min_p_id == 2) ? canon_min_p : tr(t[2], move_to_canonical) };
 
     FT min_sq_dist = std::numeric_limits<FT>::infinity();
     Triangle rt;
-    for (int i = 0; i < 3; ++i) {
-      for (int j = 0; j < 3; ++j) {
-        for (int k = 0; k < 3; ++k) {
+    for(int i = 0; i < 3; ++i) {
+      for(int j = 0; j < 3; ++j) {
+        for(int k = 0; k < 3; ++k) {
 
           const Triangle tt(
             construct_point(std::make_pair(ct[0], Offset(i - 1, j - 1, k - 1))),
             construct_point(std::make_pair(ct[1], Offset(i - 1, j - 1, k - 1))),
             construct_point(std::make_pair(ct[2], Offset(i - 1, j - 1, k - 1))));
 
-          for (int v = 0; v < 3; ++v) {//vertices
-            const Bare_point ttv = tt[v];
-            FT sq_dist = geom_traits().compute_squared_distance_3_object()(p, ttv);
+          for(int v = 0; v < 3; ++v) {//vertices
+            const Bare_point& ttv = tt[v];
+            const FT sq_dist = csd(p, ttv);
 
-            if (sq_dist < min_sq_dist)
-            {
+            if(sq_dist == FT(0))
+              return rt;
+
+            if(sq_dist < min_sq_dist) {
               rt = tt;
               min_sq_dist = sq_dist;
             }
-            if(min_sq_dist == 0.)
-              return rt;
           }
         }
       }
