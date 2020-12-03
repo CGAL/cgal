@@ -78,12 +78,12 @@ public:
   // possibilities). To allow Periodic_3_mesh_3 to use Mesh_3's files,
   // each mesh triangulation implements its own version.
 
-  Bare_point get_closest_point(const Bare_point& /*p*/, const Bare_point& q) const
+  const Bare_point& get_closest_point(const Bare_point& /*p*/, const Bare_point& q) const
   {
     return q;
   }
 
-  Triangle get_closest_triangle(const Bare_point& /*p*/, const Triangle& t) const
+  const Triangle& get_closest_triangle(const Bare_point& /*p*/, const Triangle& t) const
   {
     return t;
   }
