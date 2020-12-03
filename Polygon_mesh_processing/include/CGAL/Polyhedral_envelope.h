@@ -58,6 +58,8 @@
 
 #include <CGAL/license/Polygon_mesh_processing/Polyhedral_envelope.h>
 
+#define CGAL_ENVELOPE_DEBUG 1
+
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
