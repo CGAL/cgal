@@ -304,6 +304,15 @@ private:
         if (!m_data.is_active(ivertex))
           continue;
         Point_2 pi = m_data.to_2d (pvertex.first, ivertex);
+        // std::cout << m_data.str(pvertex) << std::endl;
+        // std::cout << m_data.point_3(ivertex) << std::endl;
+        // std::cout << "2 " << m_data.to_3d(pvertex.first, sv.source()) <<
+        // " " << m_data.to_3d(pvertex.first, sv.target()) << std::endl;
+        // std::cout << "2 " << m_data.to_3d(pvertex.first, sv.source()) <<
+        // " " << m_data.to_3d(pvertex.first, pi) << std::endl;
+        // std::cout << sv.to_vector() << std::endl;
+        // std::cout << Vector_2 (sv.source(), pi) << std::endl;
+        // std::cout << sv.to_vector() * Vector_2 (sv.source(), pi) << std::endl;
         if (sv.to_vector() * Vector_2 (sv.source(), pi) < 0)
           continue;
 
@@ -405,9 +414,9 @@ private:
 
       ++ iter;
 
-      if (iter == 40) {
-        exit(EXIT_FAILURE);
-      }
+      // if (iter == 380) {
+      //   exit(EXIT_FAILURE);
+      // }
 
       apply(k, ev);
       m_data.check_integrity();

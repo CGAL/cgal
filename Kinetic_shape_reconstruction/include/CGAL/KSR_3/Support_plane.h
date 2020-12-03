@@ -409,6 +409,16 @@ public:
     return std::make_pair(Face_index(), Face_index());
   }
 
+  const std::pair<Face_index, Face_index> faces(const Halfedge_index& he) const {
+
+    if (has_iedge(m_data->mesh.edge(he))) {
+      return std::make_pair(
+        m_data->mesh.face(he), m_data->mesh.face(m_data->mesh.opposite(he)));
+    }
+    CGAL_assertion_msg(false, "ERROR: no constrained edge found!");
+    return std::make_pair(Face_index(), Face_index());
+  }
+
   const Point_2 point_2(const Vertex_index& vi, const FT time) const {
     return m_data->mesh.point(vi) + time * m_data->direction[vi];
   }
