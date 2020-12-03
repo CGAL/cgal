@@ -545,9 +545,11 @@ private:
     tree.build();
 
 #ifdef CGAL_ENVELOPE_DEBUG
+    Surface_mesh<typename Exact_predicates_inexact_constructions_kernel::Point_3> sm;
     for(unsigned int i = 0; i < halfspace.size(); ++i){
-      prism_to_off(i, "prism");
+      prism_to_mesh(i, sm);
     }
+    std::ofstream("all_prisms.off") << std::setprecision(17) << sm;
 #endif
   }
 
@@ -1952,7 +1954,8 @@ private:
   }
 
 #ifdef CGAL_ENVELOPE_DEBUG
-  void prism_to_off(unsigned int i, std::string fname) const
+  template <class Mesh>
+  void prism_to_mesh(unsigned int i, Mesh& sm) const
   {
     std::vector<ePlane_3> eplanes;
     for(unsigned int j = 0; j < halfspace[i].size(); j++){
@@ -1962,8 +1965,13 @@ private:
     Surface_mesh<ePoint_3> esm;
     halfspace_intersection_3(eplanes.begin(),eplanes.end(),esm , boost::make_optional(origin));
 
-    Surface_mesh<typename Exact_predicates_inexact_constructions_kernel::Point_3> sm;
     copy_face_graph(esm,sm);
+  }
+
+  void prism_to_off(unsigned int i, std::string fname) const
+  {
+    Surface_mesh<typename Exact_predicates_inexact_constructions_kernel::Point_3> sm;
+    prism_to_mesh(i, sm);
     fname += "_";
     fname += std::to_string(i);
     fname += ".off";
