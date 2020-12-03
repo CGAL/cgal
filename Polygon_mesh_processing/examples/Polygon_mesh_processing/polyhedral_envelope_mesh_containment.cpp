@@ -34,5 +34,6 @@ int main(int argc, char* argv[])
       std::cout << "inside polyhedral envelope" << std::endl;
     }
   }
+  std::cout << "done" << std::endl;
   return 0;
 }
