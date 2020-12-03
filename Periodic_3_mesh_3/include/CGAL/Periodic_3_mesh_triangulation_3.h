@@ -502,17 +502,14 @@ public:
             construct_point(std::make_pair(ct[1], Offset(i - 1, j - 1, k - 1))),
             construct_point(std::make_pair(ct[2], Offset(i - 1, j - 1, k - 1))));
 
-          for(int v = 0; v < 3; ++v) {//vertices
-            const Bare_point& ttv = tt[v];
-            const FT sq_dist = csd(p, ttv);
+          const FT sq_dist = csd(p, tt);
 
-            if(sq_dist == FT(0))
-              return rt;
+          if(sq_dist == FT(0))
+            return rt;
 
-            if(sq_dist < min_sq_dist) {
-              rt = tt;
-              min_sq_dist = sq_dist;
-            }
+          if(sq_dist < min_sq_dist) {
+            rt = tt;
+            min_sq_dist = sq_dist;
           }
         }
       }
