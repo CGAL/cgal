@@ -9,5 +9,5 @@ the source tarballs.
 A lot of files in the Git repository are not distributed in the source
 tarballs, for examples all the files in the `doc/` and `test/`
 sub-directories of CGAL packages. For all those files, unless they have an
-explicit license notice, the license is the Creative Commons 1.0. The text can be found 
+explicit license notice, the license is the CC0 1.0. The text can be found 
 at https://creativecommons.org/publicdomain/zero/1.0/ .
