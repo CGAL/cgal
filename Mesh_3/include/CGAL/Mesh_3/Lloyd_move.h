@@ -551,7 +551,6 @@ private:
 
     Cell_circulator current_cell = tr.incident_cells(edge);
     Cell_circulator done = current_cell;
-    CGAL_assertion(c3t3.is_in_complex(current_cell));
 
     // a & b are fixed points
     const Weighted_point& wa = tr.point(v);
@@ -561,7 +560,6 @@ private:
     const Weighted_point& a_b = tr.point(current_cell, current_cell->index(v));
     Vector_3 ba = Vector_3(cp(a_b), b);
     ++current_cell;
-    CGAL_assertion(c3t3.is_in_complex(current_cell));
     CGAL_assertion(current_cell != done);
 
     // c & d are moving points
@@ -573,7 +571,6 @@ private:
 
     while ( current_cell != done )
     {
-      CGAL_assertion(c3t3.is_in_complex(current_cell));
       Bare_point d = tr.dual(current_cell);
       const Weighted_point& a_d = tr.point(current_cell, current_cell->index(v));
       Vector_3 da = Vector_3(cp(a_d), d);
