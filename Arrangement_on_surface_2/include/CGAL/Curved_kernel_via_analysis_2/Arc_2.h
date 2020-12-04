@@ -1818,8 +1818,7 @@ protected:
      */
     void _check_arc_interior() const {
 
-#if !(defined(CGAL_KERNEL_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
-        || defined(NDEBUG))
+#if !(defined(CGAL_KERNEL_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS))
 
         if(is_vertical()) {
             Coordinate_1 x0 = _minpoint().x();

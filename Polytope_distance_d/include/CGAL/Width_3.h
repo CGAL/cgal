@@ -687,8 +687,7 @@ class Width_3 {
 
     std::vector<Vertex_handle> apv;
 #if !(defined(CGAL_KERNEL_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
-  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))\
-  || defined(NDEBUG))
+  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)))
       typename InputDA::Vertex_iterator vtxitass = P.vertices_begin();
       while(vtxitass!=P.vertices_end()) {
         RT px,py,pz,ph;
@@ -745,8 +744,7 @@ class Width_3 {
     DEBUGENDL(INITIAL_VF_PAIR,"Initial Plane E2: ",A<<" "<<B<<" "<<C<<" "<<D);
 
 #if !(defined(CGAL_KERNEL_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
-  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))\
-  || defined(NDEBUG))
+  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)))
       CGAL_expensive_assertion(D!=K && D!=0);
       DEBUGMSG(ASSERTION_OUTPUT,"A real plane E2 has been computed. "
                <<"ASSERTION OK.");
@@ -1058,8 +1056,7 @@ class Width_3 {
           DEBUGMSG(EE_COMPUTATION,"Now we check if the provided "
                    <<"solution is a feasible one.");
 #if !(defined(CGAL_KERNEL_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
-  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))\
-  || defined(NDEBUG))
+  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)))
             RT px,py,pz,ph;
             tco.get_point_coordinates(p,px,py,pz,ph);
             CGAL_expensive_assertion(a*px+b*py+c*pz+k*ph>=0);
@@ -1411,14 +1408,12 @@ class Width_3 {
       DEBUGMSG(WIDTH_3_CONVEX,"All plane equations of all facets computed.");
 
       //ensure all flags are false
-#if !(defined(CGAL_KERNEL_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
-      || defined(NDEBUG))
+#if !(defined(CGAL_KERNEL_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS))
         int halfedgecount=0;
 #endif
         Halfedge_handle esf=P.halfedges_begin();
         while(esf!=P.halfedges_end()) {
-#if !(defined(CGAL_KERNEL_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
-      || defined(NDEBUG))
+#if !(defined(CGAL_KERNEL_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS))
           ++halfedgecount;
 #endif
           DEBUGENDL(EDGE_INITIALIZING,"Edge e: "
@@ -1429,8 +1424,7 @@ class Width_3 {
           ++esf;
         }
 
-#if !(defined(CGAL_KERNEL_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
-      || defined(NDEBUG))
+#if !(defined(CGAL_KERNEL_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS))
       CGAL_assertion(int(P.size_of_halfedges())==halfedgecount);
       DEBUGENDL(WIDTH_3_CONVEX,"Visited all ",halfedgecount
                 <<" halfedges. ASSERTION OK.");
@@ -1446,8 +1440,7 @@ class Width_3 {
       initial_VF_pair(dao,f,P,go_on);
 
 #if !(defined(CGAL_KERNEL_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
-  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))\
-  || defined(NDEBUG))
+  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)))
         Vertex_iterator vtxass=P.vertices_begin();
         while(vtxass!=P.vertices_end()) {
           RT px,py,pz,ph;
@@ -1523,8 +1516,7 @@ class Width_3 {
         }
       }
 #if !(defined(CGAL_KERNEL_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
-  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))\
-  || defined(NDEBUG))
+  || (!defined(CGAL_KERNEL_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)))
       Facet_handle fass=P.facets_begin();
       while(fass!=P.facets_end()) {
         std::vector<Vertex_handle> apvass;
