@@ -371,8 +371,7 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
     break;
   }
 
-  case ZOOM_ON_REGION:
-  case NO_MOUSE_ACTION:
+  default:
     break;
   }
 
@@ -424,6 +423,23 @@ void ManipulatedCameraFrame::wheelEvent(QWheelEvent *const event,
         inverseTransformOf(Vec(0.0, 0.0, 0.2 * flySpeed() * event->angleDelta().y())));
     Q_EMIT manipulated();
     break;
+  case ZOOM_FOV:
+  {
+    qreal delta = - wheelDelta(event);//- sign to keep the same behavior as for the ZOOM action.
+    qreal new_fov = delta/100 + camera->fieldOfView();
+    if(new_fov > CGAL_PI/180.0)
+    {
+      new_fov = delta + camera->fieldOfView();
+    }
+    if(new_fov > CGAL_PI/4.0)
+      new_fov = CGAL_PI/4.0;
+    if( new_fov >= 0.0)
+    {
+      camera->setFieldOfView(new_fov);
+    }
+    Q_EMIT manipulated();
+    break;
+  }
   default:
     break;
   }
@@ -447,7 +463,10 @@ void ManipulatedCameraFrame::wheelEvent(QWheelEvent *const event,
   // isManipulated() returns false. But then fastDraw would not be used with
   // wheel. Detecting the last wheel event and forcing a final draw() is done
   // using the timer_.
-  action_ = NO_MOUSE_ACTION;
+  if(action_ != ZOOM_FOV)
+    action_ = NO_MOUSE_ACTION;
+  //else done after postDraw().
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -83,10 +83,10 @@ int main(int argc, char* argv[])
   }
 
   Exact_point_map mesh1_exact_points =
-    mesh1.add_property_map<vertex_descriptor,EK::Point_3>("e:exact_point").first;
+    mesh1.add_property_map<vertex_descriptor,EK::Point_3>("v:exact_point").first;
 
   Exact_point_map mesh2_exact_points =
-    mesh2.add_property_map<vertex_descriptor,EK::Point_3>("e:exact_point").first;
+    mesh2.add_property_map<vertex_descriptor,EK::Point_3>("v:exact_point").first;
 
   Exact_vertex_point_map mesh1_vpm(mesh1_exact_points, mesh1);
   Exact_vertex_point_map mesh2_vpm(mesh2_exact_points, mesh2);

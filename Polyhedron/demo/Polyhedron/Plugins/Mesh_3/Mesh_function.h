@@ -243,8 +243,7 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag)
      criteria,
      p_.protect_features,
      p::mesh_3_options(p::pointer_to_stop_atomic_boolean = &stop_,
-                       p::nonlinear_growth_of_balls =
-                       p_.use_sizing_field_with_aabb_tree));
+                       p::nonlinear_growth_of_balls = true));
 }
 
 template < typename D_, typename Tag >

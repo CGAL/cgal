@@ -2130,7 +2130,7 @@ void Scene_surface_mesh_item::printAllIds()
   d->killIds();
 }
 
-bool Scene_surface_mesh_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer, const QVector3D& scaler)const
+bool Scene_surface_mesh_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)const
 {
   const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   EPICK::Point_3 src(x - offset.x,
@@ -2138,6 +2138,7 @@ bool Scene_surface_mesh_item::testDisplayId(double x, double y, double z, CGAL::
                       z - offset.z);
 
   CGAL::qglviewer::Camera* cam = viewer->camera();
+  const QVector3D& scaler = viewer->scaler();
   EPICK::Point_3 dest( cam->position().x/scaler.x() - offset.x,
                        cam->position().y/scaler.y() - offset.y,
                        cam->position().z/scaler.z() - offset.z);
@@ -2406,6 +2407,8 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
 
    for(const auto& f_it : CGAL::faces_around_target( halfedge(vh, *face_graph()), *face_graph()))
    {
+     if (f_it == boost::graph_traits<SMesh>::null_face()) continue;
+
      EPICK::Vector_3 n = CGAL::Polygon_mesh_processing::compute_face_normal(f_it, *face_graph());
      cgal_gl_data new_n[3];
      for(int i=0; i<3; ++i)
