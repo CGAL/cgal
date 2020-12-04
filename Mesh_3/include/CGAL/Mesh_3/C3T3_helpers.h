@@ -3452,9 +3452,6 @@ get_least_square_surface_plane(const Vertex_handle& v,
     {
       ref_facet = f;
 
-      const Cell_handle cell = f.first;
-      const int i = f.second;
-
       // In the case of a periodic triangulation, the incident facets of a point
       // do not necessarily have the same offsets. Worse, the surface centers
       // might not have the same offset as their facet. Thus, no solution except
