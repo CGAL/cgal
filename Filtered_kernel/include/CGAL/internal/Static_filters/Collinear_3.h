@@ -76,16 +76,11 @@ public:
       else if (max1 > upper_bound_1)
         upper_bound_1 = max1;
 
-      int int_tmp_result;
-
-      if ( (lower_bound_1 < 5.00368081960964635413e-147) || (upper_bound_1 > 1.67597599124282407923e+153) )
-        return Base::operator()(p, q, r);
-
-      double eps = (8.88720573725927976811e-16 * (max1 * max2));
-      if ( (double_tmp_result > eps) || (double_tmp_result < -eps) )
-        return false;
-
-
+      if ((lower_bound_1 >= 5.00368081960964635413e-147) && (upper_bound_1 <= 1.67597599124282407923e+153)) {
+        double eps = (8.88720573725927976811e-16 * (max1 * max2));
+        if ((double_tmp_result > eps) || (double_tmp_result < -eps))
+          return false;
+      }
       double dpz = (pz - rz);
       double dqz = (qz - rz);
 
@@ -103,12 +98,11 @@ public:
       else if (max3 > upper_bound_1)
         upper_bound_1 = max3;
 
-      if ( (lower_bound_1 < 5.00368081960964635413e-147) || (upper_bound_1 > 1.67597599124282407923e+153) )
-          return Base::operator()(p, q, r);
-
-      eps = (8.88720573725927976811e-16 * (max1 * max3));
-      if ( std::abs(double_tmp_result_k3Lzf6g) > eps)
-        return false;
+      if ((lower_bound_1 >= 5.00368081960964635413e-147) && (upper_bound_1 <= 1.67597599124282407923e+153)) {
+        double eps = (8.88720573725927976811e-16 * (max1 * max3));
+        if (std::abs(double_tmp_result_k3Lzf6g) > eps)
+          return false;
+      }
 
       double double_tmp_result_AvrrXBP = ((dpy * dqz) - (dpz * dqy));
 
@@ -120,12 +114,11 @@ public:
       else if (max3 > upper_bound_1)
         upper_bound_1 = max3;
 
-      if ( (lower_bound_1 < 5.00368081960964635413e-147) || (upper_bound_1 > 1.67597599124282407923e+153) )
-          return Base::operator()(p, q, r);
-
-      eps = (8.88720573725927976811e-16 * (max2 * max3));
-      if ( std::abs(double_tmp_result_AvrrXBP) > eps)
-        return false;
+      if ((lower_bound_1 >= 5.00368081960964635413e-147) && (upper_bound_1 <= 1.67597599124282407923e+153)) {
+        double eps = (8.88720573725927976811e-16 * (max2 * max3));
+        if (std::abs(double_tmp_result_AvrrXBP) > eps)
+          return false;
+      }
     }
     return Base::operator()(p, q, r);
   }
