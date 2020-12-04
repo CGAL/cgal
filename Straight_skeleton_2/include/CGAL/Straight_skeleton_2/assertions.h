@@ -13,6 +13,7 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
+#include <CGAL/assertions.h>
 
 #if defined(CGAL_STRAIGHT_SKELETON_NO_POSTCONDITIONS) \
   || defined(CGAL_NO_POSTCONDITIONS) \
