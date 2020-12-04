@@ -88,8 +88,8 @@ namespace internal {
 
     bool operator()(const std::size_t i, const std::size_t j) const {
 
-      CGAL_precondition(i >= 0 && i < m_scores.size());
-      CGAL_precondition(j >= 0 && j < m_scores.size());
+      CGAL_precondition(i < m_scores.size());
+      CGAL_precondition(j < m_scores.size());
 
       return m_scores[i] > m_scores[j];
     }
@@ -129,7 +129,6 @@ namespace internal {
       points.clear();
       for (std::size_t i = 0; i < region.size(); ++i) {
 
-        CGAL_precondition(region[i] >= 0);
         CGAL_precondition(region[i] < input_range.size());
 
         const auto& key = *(input_range.begin() + region[i]);
