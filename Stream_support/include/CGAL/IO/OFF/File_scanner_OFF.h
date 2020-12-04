@@ -702,6 +702,11 @@ public:
       while(issline >> iformat(d)){
         entries.push_back(d);
       }
+      if(entries.empty())
+      {
+        m_in.clear(std::ios::badbit);
+        return;
+      }
       size = static_cast<std::size_t>(entries[0]);
       if(has_colors()){
         // Compute how many entries are there for the color
