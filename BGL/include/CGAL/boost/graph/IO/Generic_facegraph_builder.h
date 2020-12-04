@@ -140,7 +140,7 @@ public:
     for(size_type i=0, fs=m_faces.size(); i<fs; ++i)
     {
       std::vector<vertex_descriptor> face(m_faces[i].size());
-      for(std::size_t j=0, fs=face.size(); j<fs; ++j)
+      for(std::size_t j=0, fis=face.size(); j<fis; ++j)
         face[j] = vertices[m_faces[i][j]];
 
       face_descriptor f = CGAL::Euler::add_face(face, g);
