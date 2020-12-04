@@ -149,6 +149,10 @@ public:
 
     if (m_verbose) {
       std::cout << std::endl << "--- FINALIZING KSR:" << std::endl;
+      dump(m_data, "iter_999-pre-final-result");
+    }
+    m_data.finalize();
+    if (m_verbose) {
       std::cout << "* checking final mesh integrity ...";
     }
     m_data.check_integrity();
@@ -156,7 +160,7 @@ public:
       dump(m_data, "iter_1000-final-result");
       std::cout << " done" << std::endl;
     }
-
+    // exit(EXIT_SUCCESS);
     if (m_verbose) {
       std::cout << "* getting volumes:" << std::endl;
     }
@@ -579,7 +583,7 @@ private:
         // std::tie(collision, bbox_reached) = m_data.is_occupied(pvertex, iedge);
         std::cout << "collision/bbox: " << collision << "/" << bbox_reached << std::endl;
 
-        std::cout << "k intersections: " << m_data.k(pface) << std::endl;
+        std::cout << "k intersections before: " << m_data.k(pface) << std::endl;
         bool stop = false;
         if (bbox_reached) {
 
@@ -600,6 +604,8 @@ private:
           std::cout << "pv continue" << std::endl;
         }
         CGAL_assertion(m_data.k(pface) >= 1);
+        // std::cout << "PFACE: " << m_data.centroid_of_pface(pface) << std::endl;
+        std::cout << "k intersections after: " << m_data.k(pface) << std::endl;
 
         if (stop) // polygon stops
         {

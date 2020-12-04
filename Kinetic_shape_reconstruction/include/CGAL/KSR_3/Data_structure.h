@@ -1244,7 +1244,7 @@ public:
       }
     }
 
-    std::cout << "num adjacent faces: " << num_adjacent_faces << std::endl;
+    // std::cout << "num adjacent faces: " << num_adjacent_faces << std::endl;
     if (num_adjacent_faces <= 1)
       return std::make_pair(false, false);
     return std::make_pair(true, false);
@@ -1730,26 +1730,26 @@ public:
       }
 
       std::vector<IEdge> all_crossed;
-      iedge_idx = first_idx; iter = 0;
-      while (true) {
-        const IEdge& iedge = iedges[iedge_idx].first;
-        bool limit_reached, bbox_reached;
-        std::tie(limit_reached, bbox_reached) = is_occupied(pvertex, iedge);
-        all_crossed.push_back(iedge);
-        if (limit_reached || bbox_reached) {
-          break;
-        }
-        iedge_idx = (iedge_idx + 1) % iedges.size();
-        if (iter == 100) {
-          CGAL_assertion_msg(false, "ERROR: BACK LIMIT WHY SO MANY ITERATIONS?");
-        } ++iter;
-      }
+      // iedge_idx = first_idx; iter = 0;
+      // while (true) {
+      //   const IEdge& iedge = iedges[iedge_idx].first;
+      //   bool limit_reached, bbox_reached;
+      //   std::tie(limit_reached, bbox_reached) = is_occupied(pvertex, iedge);
+      //   all_crossed.push_back(iedge);
+      //   if (limit_reached || bbox_reached) {
+      //     break;
+      //   }
+      //   iedge_idx = (iedge_idx + 1) % iedges.size();
+      //   if (iter == 100) {
+      //     CGAL_assertion_msg(false, "ERROR: BACK LIMIT WHY SO MANY ITERATIONS?");
+      //   } ++iter;
+      // }
 
       CGAL_assertion(crossed.size() != 0);
       std::cerr << "IEdges crossed = " << crossed.size() << std::endl;
       for (const auto& iedge : crossed)
         std::cout << segment_3(iedge) << std::endl;
-      CGAL_assertion(crossed[0] == all_crossed[0]);
+      // CGAL_assertion(crossed[0] == all_crossed[0]);
 
       std::vector<Point_2> future_points;
       std::vector<Vector_2> future_directions;
@@ -1838,7 +1838,7 @@ public:
 
           // Stop.
           const auto pface = pface_of_pvertex(pvertex);
-          std::cout << "k intersections: " << this->k(pface) << std::endl;
+          std::cout << "k intersections before: " << this->k(pface) << std::endl;
           if (bbox_reached) {
             std::cout << "stop bbox" << std::endl;
             CGAL_assertion_msg(false, "ERROR: THIS CASE CANNOT HAPPEN!");
@@ -1857,6 +1857,8 @@ public:
             std::cout << "continue k = 1" << std::endl;
           }
           CGAL_assertion(this->k(pface) >= 1);
+          // std::cout << "PFACE: " << centroid_of_pface(pface) << std::endl;
+          std::cout << "k intersections after: " << this->k(pface) << std::endl;
 
           const PVertex propagated = add_pvertex(pvertex.first, future_points[i]);
           direction(propagated) = future_directions[i];
@@ -2020,8 +2022,8 @@ public:
       // const Direction_2 dir(point_2(next) - point_2(pvertex));
 
       const FT next_time = last_event_time(next);
-      std::cout << next_time << std::endl;
-      std::cout << m_current_time << std::endl;
+      // std::cout << next_time << std::endl;
+      // std::cout << m_current_time << std::endl;
       CGAL_assertion(next_time < m_current_time);
       CGAL_assertion(next_time >= FT(0));
 
@@ -2090,26 +2092,26 @@ public:
       }
 
       std::vector<IEdge> all_crossed;
-      iedge_idx = first_idx; iter = 0;
-      while (true) {
-        const IEdge& iedge = iedges[iedge_idx].first;
-        bool limit_reached, bbox_reached;
-        std::tie(limit_reached, bbox_reached) = is_occupied(pvertex, iedge);
-        all_crossed.push_back(iedge);
-        if (limit_reached || bbox_reached) {
-          break;
-        }
-        iedge_idx = (iedge_idx + 1) % iedges.size();
-        if (iter == 100) {
-          CGAL_assertion_msg(false, "ERROR: FRONT LIMIT WHY SO MANY ITERATIONS?");
-        } ++iter;
-      }
+      // iedge_idx = first_idx; iter = 0;
+      // while (true) {
+      //   const IEdge& iedge = iedges[iedge_idx].first;
+      //   bool limit_reached, bbox_reached;
+      //   std::tie(limit_reached, bbox_reached) = is_occupied(pvertex, iedge);
+      //   all_crossed.push_back(iedge);
+      //   if (limit_reached || bbox_reached) {
+      //     break;
+      //   }
+      //   iedge_idx = (iedge_idx + 1) % iedges.size();
+      //   if (iter == 100) {
+      //     CGAL_assertion_msg(false, "ERROR: FRONT LIMIT WHY SO MANY ITERATIONS?");
+      //   } ++iter;
+      // }
 
       CGAL_assertion(crossed.size() != 0);
       std::cerr << "IEdges crossed = " << crossed.size() << std::endl;
       for (const auto& iedge : crossed)
         std::cout << segment_3(iedge) << std::endl;
-      CGAL_assertion(crossed[0] == all_crossed[0]);
+      // CGAL_assertion(crossed[0] == all_crossed[0]);
 
       std::vector<Point_2> future_points;
       std::vector<Vector_2> future_directions;
@@ -2200,7 +2202,7 @@ public:
 
           // Stop.
           const auto pface = pface_of_pvertex(pvertex);
-          std::cout << "k intersections: " << this->k(pface) << std::endl;
+          std::cout << "k intersections before: " << this->k(pface) << std::endl;
           if (bbox_reached) {
             std::cout << "stop bbox" << std::endl;
             CGAL_assertion_msg(false, "ERROR: THIS CASE CANNOT HAPPEN!");
@@ -2219,6 +2221,8 @@ public:
             std::cout << "continue k = 1" << std::endl;
           }
           CGAL_assertion(this->k(pface) >= 1);
+          // std::cout << "PFACE: " << centroid_of_pface(pface) << std::endl;
+          std::cout << "k intersections after: " << this->k(pface) << std::endl;
 
           const PVertex propagated = add_pvertex(pvertex.first, future_points[i]);
           direction(propagated) = future_directions[i];
@@ -2742,7 +2746,7 @@ public:
       std::cout << "is already occupied front / bbox: " << is_occupied_edge_front << "/" << bbox_reached_front << std::endl;
 
       const auto pface = pface_of_pvertex(pvertex);
-      std::cout << "k intersections: " << this->k(pface) << std::endl;
+      std::cout << "k intersections before: " << this->k(pface) << std::endl;
       if (bbox_reached_back) {
 
         CGAL_assertion(bbox_reached_front);
@@ -2771,15 +2775,23 @@ public:
 
       } else if (is_occupied_edge_back || is_occupied_edge_front) {
 
+        // if (this->k(pface) > 1) {
+        //   this->k(pface)--;
+        // }
+        // CGAL_assertion(this->k(pface) >= 1);
         add_new_faces(this->k(pface), pvertex, ivertex, new_vertices, pface, crossed);
         std::cout << "continue back || front" << std::endl;
 
-        // std::cout << "centroid pface: " << centroid_of_pface(pface) << std::endl;
+        // std::cout << "pv pface: "    << str(pface_of_pvertex(pvertex))      << std::endl;
+        // std::cout << "back pface: "  << str(pface_of_pvertex(pvertices[1])) << std::endl;
+        // std::cout << "front pface: " << str(pface_of_pvertex(pvertices[2])) << std::endl;
         // CGAL_assertion_msg(false, "TEST THIS CASE: BACK || FRONT!");
 
       } else {
         CGAL_assertion_msg(false, "TODO: ADD NEW OPEN CASE! DO NOT FORGET TO UPDATE K!");
       }
+      // std::cout << "PFACE: " << centroid_of_pface(pface) << std::endl;
+      std::cout << "k intersections after: " << this->k(pface) << std::endl;
 
       // for (std::size_t i = 1; i < crossed.size() - 1; ++i) {
       //   PEdge pedge(support_plane_idx, support_plane(pvertex).edge(pvertex.second, new_vertices[i].second));
@@ -2924,6 +2936,157 @@ public:
     return null_pvertex();
   }
 
+  void finalize() {
+
+    bool quit = true;
+    std::size_t num_removed_faces = 0;
+    do {
+      quit = true;
+      for (const auto iedge : m_intersection_graph.edges()) {
+        const std::size_t num_faces = check_edge(iedge);
+        if (num_faces != 0) {
+          num_removed_faces += num_faces;
+          quit = false; break;
+        }
+      }
+    } while (!quit);
+    std::cout << "* number of removed hanging faces: " << num_removed_faces << std::endl;
+    // CGAL_assertion_msg(false, "TODO: DEBUG THIS FUNCTION!");
+  }
+
+  const std::size_t check_edge(const IEdge& iedge) {
+
+    std::vector<PFace> pfaces;
+    std::size_t num_removed_pfaces = 0;
+    incident_faces(iedge, pfaces);
+    if (pfaces.size() == 1) {
+      return remove_pfaces(iedge, pfaces[0], false);
+    }
+    if (pfaces.size() == 2) {
+      const auto& pface0 = pfaces[0];
+      const auto& pface1 = pfaces[1];
+      if (pface0.first >= 6 && pface1.first >= 6 && pface0.first != pface1.first) {
+        return remove_pfaces(iedge, pface0, false);
+      }
+    }
+    return num_removed_pfaces;
+  }
+
+  const std::size_t remove_pfaces(
+    const IEdge& init_iedge, const PFace& init_pface, const bool stop) {
+
+    std::set<PFace> unique;
+    std::vector< std::pair<Halfedge_index, PFace> > nfaces;
+    const Halfedge_index init_he = find_crossing_he(init_iedge, init_pface);
+    add_pfaces(init_he, init_pface, unique, nfaces);
+    std::cout << "* found faces to remove: " << nfaces.size() << std::endl;
+
+    std::size_t num_removed_pfaces = 0;
+    for (const auto& item : nfaces) {
+      const auto& he = item.first;
+      const auto& nface = item.second;
+      const bool success = remove_pface(he, nface);
+      if (success) ++num_removed_pfaces;
+    }
+    CGAL_assertion(num_removed_pfaces == nfaces.size());
+    if (stop) CGAL_assertion_msg(false, "TODO: DEBUG THIS FUNCTION!");
+    return num_removed_pfaces;
+  }
+
+  const Halfedge_index find_crossing_he(
+    const IEdge& iedge, const PFace& pface) {
+
+    const auto& mesh = this->mesh(pface.first);
+    const auto pedges = pedges_of_pface(pface);
+    bool found_pedge = false;
+    for (const auto pedge : pedges) {
+      CGAL_assertion(has_iedge(pedge));
+      if (this->iedge(pedge) == iedge) {
+        found_pedge = true;
+
+        const auto he = mesh.halfedge(pedge.second);
+        const auto op = mesh.opposite(he);
+        const auto face1 = mesh.face(he);
+        const auto face2 = mesh.face(op);
+        const bool has_face1 = (face1 != Support_plane::Mesh::null_face());
+        const bool has_face2 = (face2 != Support_plane::Mesh::null_face());
+        if (!has_face1) {
+          return op;
+        } else if (!has_face2) {
+          return he;
+        } else {
+          CGAL_assertion_msg(false, "ERROR: CROSSING HE IS NOT FOUND!");
+        }
+      }
+    }
+    CGAL_assertion(found_pedge);
+    return Halfedge_index();
+  }
+
+  void add_pfaces(
+    const Halfedge_index crossing_he,
+    const PFace& pface,
+    std::set<PFace>& unique,
+    std::vector< std::pair<Halfedge_index, PFace> >& nfaces) {
+
+    const auto pair = unique.insert(pface);
+    if (!pair.second) return;
+
+    CGAL_assertion(crossing_he != Halfedge_index());
+    CGAL_assertion(pface != null_pface());
+    CGAL_assertion(pface.second != Support_plane::Mesh::null_face());
+    nfaces.push_back(std::make_pair(crossing_he, pface));
+
+    const auto& mesh = this->mesh(pface.first);
+    const auto pedges = pedges_of_pface(pface);
+    for (const auto pedge : pedges) {
+      CGAL_assertion(has_iedge(pedge));
+
+      const PVertex pvertex(pface.first, 0);
+      bool is_occupied_edge, bbox_reached;
+      std::tie(is_occupied_edge, bbox_reached) = is_occupied(pvertex, this->iedge(pedge));
+      if (is_occupied_edge || bbox_reached) continue;
+
+      const auto he = mesh.halfedge(pedge.second);
+      const auto op = mesh.opposite(he);
+      const auto face1 = mesh.face(he);
+      const auto face2 = mesh.face(op);
+
+      const auto nface1 = PFace(pface.first, face1);
+      const auto nface2 = PFace(pface.first, face2);
+      const bool has_nface1 = (face1 != Support_plane::Mesh::null_face());
+      const bool has_nface2 = (face2 != Support_plane::Mesh::null_face());
+
+      if (nface1 == pface) {
+        if (has_nface2) {
+          // std::cout << "adding nface2" << std::endl;
+          add_pfaces(op, nface2, unique, nfaces);
+        }
+        continue;
+      }
+      if (nface2 == pface) {
+        if (has_nface1) {
+          // std::cout << "adding nface1" << std::endl;
+          add_pfaces(he, nface1, unique, nfaces);
+        }
+        continue;
+      }
+      CGAL_assertion_msg(false, "ERROR: NO PFACE FOUND!");
+    }
+  }
+
+  const bool remove_pface(const Halfedge_index he, const PFace& pface) {
+
+    std::cout << "* removing " << str(pface) << std::endl;
+    const std::string plane_idx = std::to_string(pface.first);
+    const std::string face_idx  = std::to_string(pface.second);
+    // dump_pface(pface, "removed-pface-" + plane_idx + "-" + face_idx);
+
+    auto& mesh = this->mesh(pface.first);
+    CGAL::Euler::remove_face(he, mesh);
+    return true;
+  }
+
   void check_bbox() {
 
     for (KSR::size_t i = 0; i < 6; ++i) {
@@ -3023,6 +3186,7 @@ public:
     }
 
     // First, traverse only boundary volumes.
+    // TODO: SORT HERE BY PFACE AREA!
     bool is_found_new_volume = false;
     std::size_t volume_size = 0;
     int num_volumes  = 0;
@@ -3044,21 +3208,35 @@ public:
     CGAL_assertion(num_volumes > 0);
 
     // Then traverse all other volumes if any.
+    std::vector<PFace> other_pfaces;
+    for (std::size_t i = 6; i < number_of_support_planes(); ++i) {
+      const auto pfaces = this->pfaces(i);
+      for (const auto pface : pfaces) {
+        CGAL_assertion(pface.first >= 6);
+        other_pfaces.push_back(pface);
+      }
+    }
+
+    // TODO: SORT HERE BY PFACE AREA!
+    std::sort(other_pfaces.begin(), other_pfaces.end(),
+      [&](const PFace& pface1, const PFace& pface2) -> bool {
+        const auto pedges1 = pedges_of_pface(pface1);
+        const auto pedges2 = pedges_of_pface(pface2);
+        return pedges1.size() > pedges2.size();
+      }
+    );
+
     bool quit = true;
     do {
       quit = true;
       const int before = volume_index;
-      for (std::size_t i = 6; i < number_of_support_planes(); ++i) {
-        const auto pfaces = this->pfaces(i);
-        for (const auto pface : pfaces) {
-          CGAL_assertion(pface.first >= 6);
-          std::tie(is_found_new_volume, volume_size) = traverse_interior_volume(
-            pface, volume_index, num_volumes, map_volumes, centroids);
-          if (is_found_new_volume) {
-            quit = false;
-            check_volume(volume_index, volume_size, map_volumes);
-            ++volume_index;
-          }
+      for (const auto& other_pface : other_pfaces) {
+        std::tie(is_found_new_volume, volume_size) = traverse_interior_volume(
+          other_pface, volume_index, num_volumes, map_volumes, centroids);
+        if (is_found_new_volume) {
+          quit = false;
+          check_volume(volume_index, volume_size, map_volumes);
+          ++volume_index;
         }
       }
       const int after = volume_index;
@@ -3350,6 +3528,7 @@ public:
 
       is_saved_centroid = true;
       saved_centroid = volume_centroid;
+      // std::cout << "SHIFTING CENTROID" << std::endl;
 
       CGAL_assertion(pair.first < num_volumes);
       CGAL_assertion(centroids.find(pair.first) != centroids.end());
