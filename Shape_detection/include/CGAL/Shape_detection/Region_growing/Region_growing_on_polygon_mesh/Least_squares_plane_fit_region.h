@@ -200,7 +200,6 @@ namespace Polygon_mesh {
       const std::size_t query_index,
       const std::vector<std::size_t>&) const {
 
-      CGAL_precondition(query_index >= 0);
       CGAL_precondition(query_index < m_face_range.size());
 
       const auto face = *(m_face_range.begin() + query_index);
@@ -252,7 +251,6 @@ namespace Polygon_mesh {
       CGAL_precondition(region.size() > 0);
       if (region.size() == 1) { // create new reference plane and normal
 
-        CGAL_precondition(region[0] >= 0);
         CGAL_precondition(region[0] < m_face_range.size());
 
         // The best fit plane will be a plane through this face centroid with
@@ -271,7 +269,6 @@ namespace Polygon_mesh {
         std::vector<Local_point_3> points;
         for (std::size_t i = 0; i < region.size(); ++i) {
 
-          CGAL_precondition(region[i] >= 0);
           CGAL_precondition(region[i] < m_face_range.size());
 
           const auto face = *(m_face_range.begin() + region[i]);
