@@ -199,12 +199,18 @@ namespace CGAL {
   `smallest_radius_delaunay_sphere()`.
 
   */
-  template <
-    class Dt = Default,
-    class P = Default>
-  class Advancing_front_surface_reconstruction {
-
-    typedef typename Default::Get<Dt,Delaunay_triangulation_3<Exact_predicates_inexact_constructions_kernel, Triangulation_data_structure_3<Advancing_front_surface_reconstruction_vertex_base_3<Exact_predicates_inexact_constructions_kernel>, Advancing_front_surface_reconstruction_cell_base_3<Exact_predicates_inexact_constructions_kernel> > > >::type Triangulation;
+  template <class Dt = Default,
+            class P = Default>
+  class Advancing_front_surface_reconstruction
+  {
+    typedef typename Default::Get<Dt,
+                                  Delaunay_triangulation_3<
+                                    Exact_predicates_inexact_constructions_kernel,
+                                    Triangulation_data_structure_3<
+                                      Advancing_front_surface_reconstruction_vertex_base_3<
+                                        Exact_predicates_inexact_constructions_kernel>,
+                                      Advancing_front_surface_reconstruction_cell_base_3<
+                                        Exact_predicates_inexact_constructions_kernel> > > >::type Triangulation;
     typedef typename Default::Get<P,AFSR::Default_priority>::type Priority;
   public:
 
@@ -215,9 +221,9 @@ namespace CGAL {
   /*!
     The type of the 2D triangulation data structure describing the reconstructed surface, being a model of `TriangulationDataStructure_2`.
     - The type `Triangulation_data_structure_2::Vertex` is model of the concept `TriangulationDataStructure_2::Vertex` and has additionally the
-    method `vertex_3()` that returns a `#Vertex_handle` to the associated 3D vertex.
+    method `vertex_3()` that returns a `Vertex_handle` to the associated 3D vertex.
     - The type `Triangulation_data_structure_2::Face` is model of the concept `TriangulationDataStructure_2::Face` and  has additionally the
-    method `facet()` that returns the associated `#Facet`, and a method `bool is_on_surface()`
+    method `facet()` that returns the associated `Facet`, and a method `bool is_on_surface()`
     for testing if a face is part of the reconstructed surface or a face incident to a boundary edge.
 
     In case the surface has boundaries, the 2D surface has one vertex which is associated to the infinite
@@ -226,14 +232,19 @@ namespace CGAL {
     typedef unspecified_type Triangulation_data_structure_2;
 
   /*!
-  The type of the 3D triangulation.
+  The type of the 3D Delaunay triangulation (the first template parameter).
   */
     typedef unspecified_type Triangulation_3;
 
   /*!
-  The type of the facet priority functor.
+  The type of the facet priority functor (the second template parameter).
   */
     typedef unspecified_type Priority;
+
+  /*!
+  The number type.
+  */
+    typedef typename Triangulation_3::Geom_traits::FT FT;
 
   /*!
   The point type.
@@ -258,21 +269,21 @@ namespace CGAL {
   /*!
     A bidirectional iterator range which enables to enumerate all points that were removed
     from the 3D Delaunay triangulation during the surface reconstruction. The value type
-    of the iterator is `#Point`.
+    of the iterator is `Point`.
   */
     typedef unspecified_type Outlier_range;
+
+  /*!
+     A bidirectional iterator range which enables to visit all vertices on a boundary.
+     The value type of the iterator is  `Vertex_handle`.
+   */
+     typedef unspecified_type Vertex_on_boundary_range;
 
   /*!
     A bidirectional iterator range which enables to visit all boundaries.
     The value type of the iterator is `Vertex_on_boundary_range`.
   */
     typedef unspecified_type Boundary_range;
-
- /*!
-    A bidirectional iterator range which enables to visit all vertices on a boundary.
-    The value type of the iterator is  `#Vertex_handle`
-  */
-    typedef unspecified_type Vertex_on_boundary_range;
   /// @}
 #endif
 
@@ -768,9 +779,9 @@ namespace CGAL {
 
     \param radius_ratio_bound candidates incident to surface triangles which are not in the beta-wedge
            are discarded, if the ratio of their radius and the radius of the surface triangle is larger than `radius_ratio_bound`.
-           Described in Section \ref AFSR_Boundaries
+           Described in Section \ref AFSR_Boundaries.
     \param beta half the angle of the wedge in which only the radius of triangles counts for the plausibility of candidates.
-           Described in Section \ref AFSR_Selection
+           Described in Section \ref AFSR_Selection.
 
     */
     void run(double radius_ratio_bound=5, double beta= 0.52)
@@ -1350,7 +1361,7 @@ namespace CGAL {
 
       returns the infinite floating value that prevents a facet to be used.
     */
-    coord_type infinity() const { return std::numeric_limits<coord_type>::infinity(); }
+    FT infinity() const { return std::numeric_limits<coord_type>::infinity(); }
     /// @}
 
     //---------------------------------------------------------------------
@@ -2524,9 +2535,9 @@ namespace CGAL {
   \param out output iterator
   \param radius_ratio_bound candidates incident to surface triangles which are not in the beta-wedge
          are discarded, if the ratio of their radius and the radius of the surface triangle is larger than `radius_ratio_bound`.
-         Described in Section \ref AFSR_Boundaries
+         Described in Section \ref AFSR_Boundaries.
   \param beta half the angle of the wedge in which only the radius of triangles counts for the plausibility of candidates.
-         Described in Section \ref AFSR_Selection
+         Described in Section \ref AFSR_Selection.
 
   */
   template <typename PointInputIterator, typename IndicesOutputIterator>
@@ -2570,7 +2581,7 @@ namespace CGAL {
   be convertible to `Exact_predicates_inexact_constructions_kernel::Point_3` with the `Cartesian_converter`.
   \tparam IndicesOutputIterator must be an output iterator to which
   `std::array<std::size_t, 3>` can be assigned.
-  \tparam Priority must be a functor with `double operator()(AdvancingFront,Cell_handle,int)` returning the
+  \tparam Priority must be a functor with `double operator()(Advancing_front_surface_reconstruction,Cell_handle,int)` returning the
   priority of the facet `(Cell_handle,int)`.
 
   \param b iterator on the first point of the sequence
