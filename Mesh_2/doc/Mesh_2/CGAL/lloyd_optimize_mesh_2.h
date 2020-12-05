@@ -19,8 +19,8 @@ and the Delaunay triangulation is updated.
 Vertices on the mesh boundaries are not moved.
 
 \tparam CDT is required to be or derive from `CGAL::Constrained_Delaunay_triangulation_2`,
-with vertex base and face base of its underlying  `TriangulationDataStructure_2`
-respectively implementing the concepts `DelaunayMeshFaceBase_2` and `DelaunayMeshVertexBase_2`.
+with vertex base and face base of its underlying `TriangulationDataStructure_2`
+being models of `DelaunayMeshVertexBase_2` and `DelaunayMeshFaceBase_2`, respectively.
 The argument `cdt`, passed by reference, provides the initial mesh
 and is modified by the algorithm to represent the final optimized mesh.
 

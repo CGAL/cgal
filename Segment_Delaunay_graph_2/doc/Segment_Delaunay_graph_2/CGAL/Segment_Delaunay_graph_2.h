@@ -6,12 +6,25 @@ namespace CGAL {
 
 The class `Segment_Delaunay_graph_2` represents the segment Delaunay graph (which is
 the dual graph of the 2D segment Voronoi diagram).
-Currently it supports only insertions of sites.
+Currently it only supports the insertions of sites.
 
-\tparam Gt must be a model of `SegmentDelaunayGraphTraits_2`
+\tparam Gt must be a model of `SegmentDelaunayGraphTraits_2`.
+
+\tparam St must be a model of `SegmentDelaunayGraphStorageTraits_2`.
+        By default, the storage traits is instantiated by `Segment_Delaunay_graph_storage_traits_2<Gt>`.
+
 \tparam DS must be a model of `SegmentDelaunayGraphDataStructure_2`.
-`DS` defaults to
-`CGAL::Triangulation_data_structure_2< CGAL::Segment_Delaunay_graph_vertex_base_2<Gt>, CGAL::Triangulation_face_base_2<Gt> >`.
+        `DS` defaults to `CGAL::Triangulation_data_structure_2< CGAL::Segment_Delaunay_graph_vertex_base_2<St>, CGAL::Segment_Delaunay_graph_face_base_2<Gt> >`.
+        Any custom type can be used instead of `Segment_Delaunay_graph_vertex_base_2`
+        and `Segment_Delaunay_graph_face_base_2`, provided that they are models of the
+        concepts `SegmentDelaunayGraphVertexBase_2` and `TriangulationFaceBase_2`, respectively.
+
+\cgalHeading{Storage}
+
+To avoid redundancy in the storage of points, input points are stored in a container,
+and the various types of sites (input points and segments, points of intersection,
+subsegments with one or two points of intersection as endpoints) only store handles to the points
+in the container.
 
 \cgalHeading{Traversal of the Segment Delaunay Graph}
 

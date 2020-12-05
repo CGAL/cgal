@@ -19,36 +19,34 @@ find the nearest neighbor of \f$ p\f$ as in the
 we use the nearest neighbor found at level \f$ i+1\f$ to find the nearest
 neighbor at level \f$ i\f$. This is a variant of the corresponding
 hierarchy for points found in \cgalCite{d-iirdt-98}.
+
 The class has two template parameters which have essentially the same
-meaning as in the `Apollonius_graph_2<Gt,Agds>` class. The first
-template parameter must be a model of the
-`ApolloniusGraphTraits_2` concept.
-The second template parameter must be a model of the
-`ApolloniusGraphDataStructure_2` concept. However, the vertex base
-class that is to be used in the Apollonius graph data structure must
-be a model of the `ApolloniusGraphHierarchyVertexBase_2` concept.
-The second template parameter defaults to
-`Triangulation_data_structure_2< Apollonius_graph_hierarchy_vertex_base_2< Apollonius_graph_vertex_base_2<Gt,true> >, Triangulation_face_base_2<Gt> >`.
+meaning as in the `Apollonius_graph_2<Gt,Agds>` class.
+
+\tparam Gt is the geometric traits class and must be a model of `ApolloniusGraphTraits_2`.
+
+\tparam Agds is the Apollonius graph data structure and must be a model of `ApolloniusGraphDataStructure_2`
+whose vertex and face must be models of `ApolloniusGraphHierarchyVertexBase_2` and `TriangulationFaceBase_2`, respectively.
+It defaults to:
+\code
+  CGAL::Triangulation_data_structure_2<
+    CGAL::Apollonius_graph_hierarchy_vertex_base_2<CGAL::Apollonius_graph_vertex_base_2<Gt,true> >,
+    CGAL::Triangulation_face_base_2<Gt> >
+\endcode
+
+\cgalHeading{Heritage}
 
 The `Apollonius_graph_hierarchy_2` class derives publicly from the
 `Apollonius_graph_2<Gt,Agds>` class. The interface is
 the same with its base class. In the sequel only the methods
 overridden are documented.
 
-\cgalHeading{Types}
-
 `Apollonius_graph_hierarchy_2` does not introduce other types than those introduced by
 its base class `Apollonius_graph_2<Gt,Agds>`.
 
-\sa `ApolloniusGraphDataStructure_2`
-\sa `ApolloniusGraphTraits_2`
-\sa `ApolloniusGraphHierarchyVertexBase_2`
 \sa `CGAL::Apollonius_graph_2<Gt,Agds>`
-\sa `CGAL::Triangulation_data_structure_2<Vb,Fb>`
 \sa `CGAL::Apollonius_graph_traits_2<K,Method_tag>`
 \sa `CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
-\sa `CGAL::Apollonius_graph_hierarchy_vertex_base_2<Agvb>`
-
 */
 template< typename Gt, typename Agds >
 class Apollonius_graph_hierarchy_2 : public CGAL::Apollonius_graph_2<Gt,Agds> {

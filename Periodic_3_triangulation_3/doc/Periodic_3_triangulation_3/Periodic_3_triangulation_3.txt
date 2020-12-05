@@ -290,18 +290,14 @@ triangles, and tetrahedra are used.
 \subsection P3Triangulation3sectds The Triangulation Data Structure Parameter
 
 The second template parameter of the periodic triangulation classes is a
-triangulation data structure class. This class can be seen as a container for
-the cells and vertices maintaining incidence and adjacency relations (see
-Chapter \ref chapterTDS3 "3D Triangulation Data Structure"). A model of this triangulation data structure is
-`Triangulation_data_structure_3`, and it is described by the
-`TriangulationDataStructure_3` concept. This model is itself
-parameterized by a vertex base class and a cell base class, which gives the
-possibility to customize the vertices and cells used by the triangulation data
-structure, and hence by the geometric triangulation using it.
-To represent periodic triangulations the cell base and vertex base
-classes need to meet the concepts
-`Periodic_3TriangulationDSCellBase_3` and
-`Periodic_3TriangulationDSVertexBase_3`.
+triangulation data structure class.
+This parameter must meet the requirements described in the concept `TriangulationDataStructure_3`,
+for which \cgal offers the model `CGAL::Triangulation_data_structure_3`.
+To represent periodic triangulations,
+the face and vertex of the triangulation data structure must be also be models of extended concepts.
+The model `CGAL::Triangulation_data_structure_3` is parameterized by a vertex
+base class and a face base class, which gives the possibility to customize the vertices and
+faces used by the triangulation data structure.
 
 A default value for the triangulation data structure parameter is provided in
 all the triangulation classes, so it does not need to be specified by

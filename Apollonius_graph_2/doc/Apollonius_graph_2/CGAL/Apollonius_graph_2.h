@@ -4,14 +4,20 @@ namespace CGAL {
 /*!
 \ingroup PkgApolloniusGraph2Ref
 
-The class `Apollonius_graph_2` represents the
-Apollonius graph. It supports insertions and deletions of sites.
-It is templated by two template arguments `Gt`, which
-must be a model of `ApolloniusGraphTraits_2`, and `Agds`,
-which must be a model of `ApolloniusGraphDataStructure_2`.
-The second template argument defaults to
-`CGAL::Triangulation_data_structure_2< CGAL::Apollonius_graph_vertex_base_2<Gt,true>, CGAL::Triangulation_face_base_2<Gt> >`.
-\cgalModels `DelaunayGraph_2`
+The class `Apollonius_graph_2` represents the Apollonius graph.
+It supports insertions and deletions of sites.
+
+\tparam Gt is the geometric traits class and must be a model of `ApolloniusGraphTraits_2`.
+
+\tparam Agds is the Apollonius graph data structure and must be a model of `ApolloniusGraphDataStructure_2`
+whose vertex and face must be models of `ApolloniusGraphVertexBase_2` and `TriangulationFaceBase_2`,
+respectively.
+It defaults to:
+\code
+  CGAL::Triangulation_data_structure_2<
+    CGAL::Apollonius_graph_vertex_base_2<Gt,true>,
+    CGAL::Triangulation_face_base_2<Gt> >`
+\endcode
 
 \cgalHeading{Traversal of the Apollonius Graph}
 
