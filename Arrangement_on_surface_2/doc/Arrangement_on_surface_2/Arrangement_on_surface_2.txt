@@ -3728,7 +3728,7 @@ of the general ones; e.g., `insert()`.
 
 <LI>When the curves to be inserted into an arrangement are segments that
 are pairwise disjoint in their interior, it is more efficient to use
-the traits class `Arr_non_caching_segment_traits_2` rather then
+the traits class `Arr_non_caching_segment_traits_2` rather than
 the default one (`Arr_segment_traits_2`).
 
 If the segments may intersect each other, the default traits class

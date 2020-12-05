@@ -63,13 +63,13 @@ public:
    * \return true if the TextItem is visible. */
   virtual bool  testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer) = 0;
 
-  ///\brief displays all the vertices ids if there are less than max_textItems.
+  ///\brief displays all the vertices ids if there are fewer than max_textItems.
   virtual void printVertexIds() = 0;
-  ///\brief displays all the edges ids if there are less than max_textItems.
+  ///\brief displays all the edges ids if there are fewer than max_textItems.
   virtual void printEdgeIds() = 0;
-  ///\brief displays all the faces ids if there are less than max_textItems.
+  ///\brief displays all the faces ids if there are fewer than max_textItems.
   virtual void printFaceIds() = 0;
-  ///\brief displays all the primitive ids if there are less than max_textItems.
+  ///\brief displays all the primitive ids if there are fewer than max_textItems.
   virtual void printAllIds() = 0;
 
   //!\brief moves the camera orthogonally to the picked face.

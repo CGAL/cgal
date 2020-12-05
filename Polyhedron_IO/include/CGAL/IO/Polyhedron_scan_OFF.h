@@ -105,7 +105,7 @@ Polyhedron_scan_OFF<HDS>:: operator()( HDS& target) {
                 std::cerr << " " << std::endl;
                 std::cerr << "Polyhedron_scan_OFF<Traits>::" << std::endl;
                 std::cerr << "operator()(): input error: facet " << i
-                     << " has less than 3 vertices." << std::endl;
+                     << " has fewer than 3 vertices." << std::endl;
             }
             B.rollback();
             m_in.clear( std::ios::badbit);

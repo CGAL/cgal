@@ -721,7 +721,7 @@ Checks the validity of the Apollonius graph. If `verbose` is
 is 0, only the data structure is validated. If `level` is 1, then
 both the data structure and the Apollonius graph are
 validated. Negative values of `level` always return true, and
-values greater then 1 are equivalent to `level` being 1.
+values greater than 1 are equivalent to `level` being 1.
 */
 bool is_valid(bool verbose = false, int level = 1);
 

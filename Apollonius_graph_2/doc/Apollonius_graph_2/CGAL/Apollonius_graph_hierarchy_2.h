@@ -209,7 +209,7 @@ is validated, as well as the inter-level pointers. If `level` is
 1, then the data structure at all levels is validated, the inter-level
 pointers are validated and all levels of the Apollonius graph
 hierarchy are also validated. Negative values of `level` always
-return `true`, and values greater then 1 are equivalent to
+return `true`, and values greater than 1 are equivalent to
 `level` being 1.
 */
 bool is_valid(bool verbose = false, int level = 1) const;
