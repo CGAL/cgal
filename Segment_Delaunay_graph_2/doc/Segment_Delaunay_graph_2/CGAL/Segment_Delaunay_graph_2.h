@@ -297,8 +297,7 @@ Face_handle infinite_face();
 /*!
 Returns the `infinite_vertex`.
 */
-Vertex_handle
-infinite_vertex();
+Vertex_handle infinite_vertex();
 
 /*!
 Returns a vertex distinct from the `infinite_vertex`.

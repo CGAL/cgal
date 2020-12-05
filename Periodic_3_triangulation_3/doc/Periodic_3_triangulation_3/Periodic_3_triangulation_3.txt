@@ -219,17 +219,17 @@ The first template parameter of the triangulation class
 `Periodic_3_triangulation_3<Periodic_3TriangulationTraits_3, TriangulationDataStructure_3>`
 is the geometric traits class, described by the concept
 `Periodic_3TriangulationTraits_3`. It is different to the
-TriangulationTraits_3 (see
+`TriangulationTraits_3` (see
 chapter \ref Triangulation3secTraits "3D Triangulations") in that it
 implements all objects, predicates and constructions using offsets.
 
-The class `Periodic_3_triangulation_traits_3<TriangulationTraits_3,Periodic_3Offset_3>`
+The class `CGAL::Periodic_3_triangulation_traits_3<TriangulationTraits_3,Periodic_3Offset_3>`
 provides the required functionality. It expects two template
 parameters: a model of the concept `TriangulationTraits_3`
 and a model of the concept `Periodic_3Offset_3`.
 
 The second parameter `Periodic_3Offset_3` defaults to
-`Periodic_3_offset_3`.
+`CGAL::Periodic_3_offset_3`.
 
 \subsubsection P3Triangulation3secTraitsP3DT3 Traits for Periodic Delaunay Triangulations
 
@@ -237,7 +237,7 @@ The first template parameter of the Delaunay triangulation class
 `Periodic_3_Delaunay_triangulation_3<Periodic_3DelaunayTriangulationTraits_3, TriangulationDataStructure_3>`
 is the geometric traits class, described by the concept
 `Periodic_3DelaunayTriangulationTraits_3`. It is different to the
-DelaunayTriangulationTraits_3 (see
+`DelaunayTriangulationTraits_3` (see
 chapter \ref Triangulation3secTraits "3D Triangulations") in that it
 implements all objects, predicates and constructions using offsets.
 
@@ -246,9 +246,7 @@ provides the required functionality. It expects two template
 parameters: a model of the concept `DelaunayTriangulationTraits_3`
 and a model of the concept `Periodic_3Offset_3`.
 
-The second parameter `Periodic_3Offset_3` defaults to
-`Periodic_3_offset_3`.
-
+The second parameter `Periodic_3Offset_3` defaults to `CGAL::Periodic_3_offset_3`.
 
 \subsubsection P3Triangulation3secTraitsP3regularT3 Traits for Periodic Regular Triangulations
 

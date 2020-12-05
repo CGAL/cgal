@@ -77,7 +77,7 @@ typedef unspecified_type Hidden_sites_iterator;
 /// @{
 
 /*!
-Default constructor.
+%Default constructor.
 */
 ApolloniusGraphVertexBase_2();
 

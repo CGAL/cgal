@@ -37,8 +37,7 @@ public:
 /// @{
 
 /*!
-Default
-constructor.
+%Default constructor.
 */
 ApolloniusGraphHierarchyVertexBase_2();
 

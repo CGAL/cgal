@@ -98,7 +98,7 @@ typedef Gt::Site_2 Site_2;
 
 /// \name Handles And Iterators
 /// The vertices and faces of the Apollonius graph are accessed
-/// through `handles`, `iterators` and `circulators`. The iterators
+/// through `handles`, `iterators`, and `circulators`. The iterators
 /// and circulators are all bidirectional and non-mutable. The
 /// circulators and iterators are assignable to the corresponding
 /// handle types, and they are also convertible to the corresponding

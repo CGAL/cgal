@@ -71,7 +71,7 @@ Apollonius_graph_hierarchy_2<Gt,Agds>(Input_iterator
 first, Input_iterator beyond, Gt gt=Gt());
 
 /*!
-Copy constructor. All faces, vertices and inter-level pointers
+Copy constructor. All faces, vertices, and inter-level pointers
 are duplicated. After the construction, `agh` and `other` refer
 to two different Apollonius graph hierarchies: if
 `other` is modified, `agh` is not.
