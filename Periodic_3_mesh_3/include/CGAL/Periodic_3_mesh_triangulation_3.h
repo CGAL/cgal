@@ -444,10 +444,10 @@ public:
     const Bare_point cq = canonicalize_point(q);
     FT min_sq_dist = std::numeric_limits<FT>::infinity();
 
-    for(int i = 0; i < 3; ++i) {
-      for(int j = 0; j < 3; ++j) {
-        for(int k = 0; k < 3; ++k) {
-          const Bare_point tcq = construct_point(std::make_pair(cq, Offset(i-1, j-1, k-1)));
+    for(int i = -1; i < 2; ++i) {
+      for(int j = -1; j < 2; ++j) {
+        for(int k = -1; k < 2; ++k) {
+          const Bare_point tcq = construct_point(std::make_pair(cq, Offset(i, j, k)));
           FT sq_dist = geom_traits().compute_squared_distance_3_object()(p, tcq);
 
           if(sq_dist < min_sq_dist)
@@ -473,34 +473,29 @@ public:
 
   Triangle get_closest_triangle(const Bare_point& p, const Triangle& t) const
   {
-    typename Geom_traits::Less_xyz_3 less = geom_traits().less_xyz_3_object();
     typename Geom_traits::Construct_vector_3 cv = geom_traits().construct_vector_3_object();
     typename Geom_traits::Construct_translated_point_3 tr = geom_traits().construct_translated_point_3_object();
     typename Geom_traits::Compute_squared_distance_3 csd = geom_traits().compute_squared_distance_3_object();
 
-    //canonicalize t
-    std::size_t min_p_id = 0;
-    if(less(t[1], t[min_p_id]))
-      min_p_id = 1;
-    if(less(t[2], t[min_p_id]))
-      min_p_id = 2;
-
-    Bare_point canon_min_p = canonicalize_point(t[min_p_id]);
-    Vector_3 move_to_canonical = cv(t[min_p_id], canon_min_p);
-    const std::array<Bare_point, 3> ct = { (min_p_id == 0) ? canon_min_p : tr(t[0], move_to_canonical),
-                                           (min_p_id == 1) ? canon_min_p : tr(t[1], move_to_canonical),
-                                           (min_p_id == 2) ? canon_min_p : tr(t[2], move_to_canonical) };
+    // It doesn't matter which point we use to canonicalize the triangle as P3M3 is necessarily
+    // in one cover and we have to look at all the neighboring copies anyway since we do not
+    // have control of 'p'.
+    Bare_point canon_p0 = canonicalize_point(t[0]);
+    Vector_3 move_to_canonical = cv(t[0], canon_p0);
+    const std::array<Bare_point, 3> ct = { canon_p0,
+                                           tr(t[1], move_to_canonical),
+                                           tr(t[2], move_to_canonical) };
 
     FT min_sq_dist = std::numeric_limits<FT>::infinity();
     Triangle rt;
-    for(int i = 0; i < 3; ++i) {
-      for(int j = 0; j < 3; ++j) {
-        for(int k = 0; k < 3; ++k) {
+    for(int i = -1; i < 2; ++i) {
+      for(int j = -1; j < 2; ++j) {
+        for(int k = -1; k < 2; ++k) {
 
           const Triangle tt(
-            construct_point(std::make_pair(ct[0], Offset(i - 1, j - 1, k - 1))),
-            construct_point(std::make_pair(ct[1], Offset(i - 1, j - 1, k - 1))),
-            construct_point(std::make_pair(ct[2], Offset(i - 1, j - 1, k - 1))));
+            construct_point(std::make_pair(ct[0], Offset(i, j, k))),
+            construct_point(std::make_pair(ct[1], Offset(i, j, k))),
+            construct_point(std::make_pair(ct[2], Offset(i, j, k))));
 
           const FT sq_dist = csd(p, tt);
 
