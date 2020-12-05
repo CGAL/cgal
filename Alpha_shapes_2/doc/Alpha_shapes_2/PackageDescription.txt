@@ -70,6 +70,7 @@ finite number of different \f$ \alpha\f$-shapes and corresponding
 
 \cgalCRPSection{Concepts}
 - `AlphaShapeTraits_2`
+- `WeightedAlphaShapeTraits_2`
 - `AlphaShapeFace_2`
 - `AlphaShapeVertex_2`
 
