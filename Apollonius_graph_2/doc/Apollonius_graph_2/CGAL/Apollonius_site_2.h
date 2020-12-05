@@ -22,12 +22,9 @@ The I/O operators are defined for `iostream`.
 The information output in the `iostream` is: the point of the
 Apollonius site and its weight.
 
-\sa `Kernel`
-\sa `ApolloniusSite_2`
 \sa `CGAL::Qt_widget`
 \sa `CGAL::Apollonius_graph_traits_2<K,Method_tag>`
 \sa `CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
-
 */
 template< typename K >
 class Apollonius_site_2 {

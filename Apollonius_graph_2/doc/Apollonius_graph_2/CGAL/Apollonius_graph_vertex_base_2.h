@@ -19,13 +19,8 @@ discarded. By default `StoreHidden` is set to `true`.
 
 \cgalModels `ApolloniusGraphVertexBase_2`
 
-\sa `ApolloniusGraphVertexBase_2`
-\sa `ApolloniusGraphDataStructure_2`
-\sa `ApolloniusGraphTraits_2`
 \sa `CGAL::Triangulation_data_structure_2<Vb,Fb>`
-\sa `CGAL::Apollonius_graph_traits_2<K,Method_tag>`
-\sa `CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
-
+\sa `CGAL::Apollonius_graph_hierarchy_vertex_base_2<Gt>`
 */
 template< typename Gt, typename StoreHidden >
 class Apollonius_graph_vertex_base_2 {
@@ -37,7 +32,7 @@ public:
 /*!
 %Default constructor.
 */
-Apollonius_graph_bertex_base_2();
+Apollonius_graph_vertex_base_2();
 
 /*!
 Constructs a vertex associated with the site `s` and

@@ -67,8 +67,7 @@ Creates an Apollonius graph hierarchy using
 range [`first`, `beyond`).
 */
 template< class Input_iterator >
-Apollonius_graph_hierarchy_2<Gt,Agds>(Input_iterator
-first, Input_iterator beyond, Gt gt=Gt());
+Apollonius_graph_hierarchy_2(Input_iterator first, Input_iterator beyond, Gt gt=Gt());
 
 /*!
 Copy constructor. All faces, vertices, and inter-level pointers
