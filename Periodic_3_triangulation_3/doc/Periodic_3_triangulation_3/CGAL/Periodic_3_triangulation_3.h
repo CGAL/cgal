@@ -16,7 +16,7 @@ Its default value is:
 CGAL::Triangulation_data_structure_3<
   CGAL::Triangulation_vertex_base_3<PT,Periodic_3_triangulation_ds_vertex_base_3<> >,
   CGAL::Triangulation_cell_base_3<PT,Periodic_3_triangulation_ds_cell_base_3<> > >
-\endcond
+\endcode
 
 \sa `CGAL::Periodic_3_Delaunay_triangulation_3<Traits, TDS>`
 \sa `CGAL::Periodic_3_regular_triangulation_3<Traits, TDS>`
