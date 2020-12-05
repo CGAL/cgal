@@ -61,8 +61,7 @@ public:
 Creates an hierarchy of Apollonius graphs using `gt` as
 geometric traits.
 */
-Apollonius_graph_hierarchy_2(Gt
-gt=Gt());
+Apollonius_graph_hierarchy_2(Gt gt=Gt());
 
 /*!
 Creates an Apollonius graph hierarchy using
@@ -79,8 +78,7 @@ are duplicated. After the construction, `agh` and `other` refer
 to two different Apollonius graph hierarchies: if
 `other` is modified, `agh` is not.
 */
-Apollonius_graph_hierarchy_2<Gt,Agds>
-(Apollonius_graph_hierarchy_2<Gt,Agds> other);
+Apollonius_graph_hierarchy_2(const Apollonius_graph_hierarchy_2<Gt,Agds>& other);
 
 /*!
 Assignment. All faces, vertices and inter-level pointers
@@ -112,7 +110,7 @@ site `s` in the Apollonius graph hierarchy. If `s`
 is visible then the vertex handle of `s` is returned, otherwise
 `Vertex_handle(nullptr)` is returned.
 */
-Vertex_handle insert(Site_2 s);
+Vertex_handle insert(const Site_2& s);
 
 /*!
 Inserts `s` in the Apollonius graph hierarchy using the
@@ -124,8 +122,7 @@ A call to this method is equivalent to `agh.insert(s);` and it has
 been added for the sake of conformity with the interface of the
 `Apollonius_graph_2<Gt,Agds>` class.
 */
-Vertex_handle insert(Site_2 s, Vertex_handle
-vnear);
+Vertex_handle insert(const Site_2& s, Vertex_handle vnear);
 
 /// @}
 
@@ -152,7 +149,7 @@ arbitrarily and one of the nearest neighbors of `p` is
 returned. If there are no visible sites in the Apollonius diagram
 `Vertex_handle(nullptr)` is returned.
 */
-Vertex_handle nearest_neighbor(Point p);
+Vertex_handle nearest_neighbor(const Point_2& p) const;
 
 /*!
 Finds the nearest neighbor of the point
@@ -163,8 +160,7 @@ A call to this method is equivalent to
 conformity with the interface of the
 `Apollonius_graph_2<Gt,Agds>` class.
 */
-Vertex_handle nearest_neighbor(Point p,
-Vertex_handle vnear);
+Vertex_handle nearest_neighbor(const Point_2& p, Vertex_handle vnear) const;
 
 /// @}
 
@@ -177,7 +173,7 @@ state of the Apollonius graph hierarchy to an output stream. In particular,
 all visible and hidden sites are written as well as the
 underlying combinatorial hierarchical data structure.
 */
-void file_output(std::ostream& os);
+void file_output(std::ostream& os) const;
 
 /*!
 Reads the state of the
@@ -189,7 +185,7 @@ void file_input(std::istream& is);
 Writes the current state of the Apollonius graph hierarchy to an
 output stream.
 */
-std::ostream& operator<<(std::ostream& os, Apollonius_graph_hierarchy_2<Gt,Agds> agh);
+std::ostream& operator<<(std::ostream& os, Apollonius_graph_hierarchy_2<Gt,Agds> agh) const;
 
 /*!
 Reads the state of the Apollonius graph hierarchy from an input stream.
@@ -227,11 +223,10 @@ void clear();
 
 /*!
 The Apollonius graph hierarchies `other` and `agh` are
-swapped. `agh`.`swap(other)` should be preferred to `agh`` =
-other` or to `agh``(other)` if `other` is deleted afterwards.
+swapped. `agh.swap(other)` should be preferred to `agh = other`
+or to `agh(other)` if `other` is deleted afterwards.
 */
-void swap(Apollonius_graph_hierarchy_2<Gt,Agds>
-other);
+void swap(Apollonius_graph_hierarchy_2<Gt,Agds>& other);
 
 /// @}
 

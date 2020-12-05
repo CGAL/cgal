@@ -45,14 +45,13 @@ Apollonius_graph_traits_2<K,Method_tag>();
 /*!
 Copy constructor.
 */
-Apollonius_graph_traits_2<K,Method_tag>(Apollonius_graph_traits_2<K,Method_tag> other);
+Apollonius_graph_traits_2<K,Method_tag>(const Apollonius_graph_traits_2<K,Method_tag>& other);
 
 /*!
 Assignment operator.
 */
 Apollonius_graph_traits_2<K,Method_tag>
-operator=(Apollonius_graph_traits_2<K,Method_tag>
-other);
+operator=(const Apollonius_graph_traits_2<K,Method_tag>& other);
 
 /// @}
 

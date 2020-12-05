@@ -324,33 +324,32 @@ Point_container point_container();
 /*!
 Starts at an arbitrary finite vertex.
 */
-Finite_vertices_iterator finite_vertices_begin();
+Finite_vertices_iterator finite_vertices_begin() const;
 
 /*!
 Past-the-end iterator.
 */
-Finite_vertices_iterator finite_vertices_end();
+Finite_vertices_iterator finite_vertices_end() const;
 
 /*!
 Starts at an arbitrary finite edge.
 */
-Finite_edges_iterator finite_edges_begin();
+Finite_edges_iterator finite_edges_begin() const;
 
 /*!
 Past-the-end iterator.
 */
-Finite_edges_iterator finite_edges_end();
+Finite_edges_iterator finite_edges_end() const;
 
 /*!
 Starts at an arbitrary finite face.
 */
-Finite_faces_iterator finite_faces_begin();
+Finite_faces_iterator finite_faces_begin() const;
 
 /*!
 Past-the-end iterator.
 */
-Finite_faces_iterator finite_faces_end()
-const;
+Finite_faces_iterator finite_faces_end() const;
 
 /// @}
 
@@ -366,32 +365,32 @@ const;
 /*!
 Starts at an arbitrary vertex.
 */
-All_vertices_iterator all_vertices_begin();
+All_vertices_iterator all_vertices_begin() const;
 
 /*!
 Past-the-end iterator.
 */
-All_vertices_iterator all_vertices_end();
+All_vertices_iterator all_vertices_end() const;
 
 /*!
 Starts at an arbitrary edge.
 */
-All_edges_iterator all_edges_begin();
+All_edges_iterator all_edges_begin() const;
 
 /*!
 Past-the-end iterator.
 */
-All_edges_iterator all_edges_end();
+All_edges_iterator all_edges_end() const;
 
 /*!
 Starts at an arbitrary face.
 */
-All_faces_iterator all_faces_begin();
+All_faces_iterator all_faces_begin() const;
 
 /*!
 Past-the-end iterator.
 */
-All_faces_iterator all_faces_end();
+All_faces_iterator all_faces_end() const;
 
 /// @}
 
@@ -405,22 +404,22 @@ All_faces_iterator all_faces_end();
 /*!
 Starts at an arbitrary input site.
 */
-Input_sites_iterator input_sites_begin();
+Input_sites_iterator input_sites_begin() const;
 
 /*!
 Past-the-end iterator.
 */
-Input_sites_iterator input_sites_end();
+Input_sites_iterator input_sites_end() const;
 
 /*!
 Starts at an arbitrary output site.
 */
-Output_sites_iterator output_sites_begin();
+Output_sites_iterator output_sites_begin() const;
 
 /*!
 Past-the-end iterator.
 */
-Output_sites_iterator output_sites_end();
+Output_sites_iterator output_sites_end() const;
 
 /// @}
 

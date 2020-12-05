@@ -44,7 +44,7 @@ Apollonius_site_2(Point_2 p=Point_2(), Weight w= Weight(0));
 /*!
 Copy constructor.
 */
-Apollonius_site_2(Apollonius_site_2<K> other);
+Apollonius_site_2(const Apollonius_site_2<K>& other);
 
 /// @}
 
@@ -57,8 +57,7 @@ Apollonius site `s` into the stream `os`.
 \pre The insert operator must be defined for `Point_2` and `Weight`.
 \relates Apollonius_site_2
 */
-std::ostream& operator<<(std::ostream& os,
-const Apollonius_site_2<K>& s);
+std::ostream& operator<<(std::ostream& os, const Apollonius_site_2<K>& s) const;
 
 /*!
 Reads an Apollonius site from the stream `is` and assigns it
@@ -67,8 +66,7 @@ to `s`.
 \pre The extract operator must be defined for `Point_2` and `Weight`.
 \relates Apollonius_site_2
 */
-std::istream& operator>>(std::istream& is,
-const Apollonius_site_2<K>& s);
+std::istream& operator>>(std::istream& is, const Apollonius_site_2<K>& s);
 
 /*!
 Inserts the Apollonius site `s` into the `Qt_widget` stream `w`.
@@ -76,7 +74,6 @@ Inserts the Apollonius site `s` into the `Qt_widget` stream `w`.
 \pre The insert operator must be defined for `K::Circle_2`.
 \relates Apollonius_site_2
 */
-Qt_widget& operator<<(Qt_widget& w,
-const Apollonius_site_2<K>& s);
+Qt_widget& operator<<(Qt_widget& w, const Apollonius_site_2<K>& s) const;
 
 } /* end namespace CGAL */

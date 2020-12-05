@@ -43,7 +43,7 @@ Apollonius_graph_bertex_base_2();
 Constructs a vertex associated with the site `s` and
 embedded at the center of `s`.
 */
-Apollonius_graph_vertex_base_2(Site_2 s);
+Apollonius_graph_vertex_base_2(const Site_2& s);
 
 /*!
 Constructs a vertex associated with
@@ -51,7 +51,7 @@ the site `s`, embedded at the center of `s`,
 and pointing to the face associated with the face
 handle `f`.
 */
-Apollonius_graph_vertex_base_2(Site_2 s, Face_handle f);
+Apollonius_graph_vertex_base_2(const Site_2& s, Face_handle f);
 
 /// @}
 
