@@ -1069,6 +1069,7 @@ private Q_SLOTS:
       case 2:
       case 3:
         dock_widget->sourcePointsButton->setEnabled(true);
+        CGAL_FALLTHROUGH;
       default:
         dock_widget->maxBox->setMinimum(-99999999);
         dock_widget->maxBox->setMaximum(99999999);
@@ -1463,7 +1464,7 @@ private:
     {}
 
     virtual void fill_values(){}
-    virtual void set_colors_map(std::unordered_map<Value_type, std::size_t> &value_index_map){}
+    virtual void set_colors_map(std::unordered_map<Value_type, std::size_t> &){}
     virtual void set_colors_ramp(){}
     bool operator()()
     {
@@ -2079,4 +2080,3 @@ private:
   }
 
 #include "Display_property_plugin.moc"
-

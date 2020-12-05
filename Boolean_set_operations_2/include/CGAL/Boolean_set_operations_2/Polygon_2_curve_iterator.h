@@ -52,7 +52,7 @@ public:
 
 
     typedef Polygon_                                      Polygon;
-    typedef typename Polygon::Edge_const_iterator         Edge_const_iterator;
+    typedef typename Polygon::Vertex_pair_iterator        Edge_const_iterator;
     typedef typename Edge_const_iterator::difference_type difference_type;
 
   private:
@@ -78,7 +78,7 @@ public:
 
     X_monotone_curve_2 operator*()
     {
-      return X_monotone_curve_2(*m_curr_edge);
+      return X_monotone_curve_2(m_curr_edge->first, m_curr_edge->second);
     }
 
     Polygon_2_curve_ptr<X_monotone_curve_2> operator->()
