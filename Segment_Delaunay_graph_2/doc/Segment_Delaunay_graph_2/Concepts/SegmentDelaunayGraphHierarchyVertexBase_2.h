@@ -26,13 +26,13 @@ The `SegmentDelaunayGraphHierarchyVertexBase_2` concept does not
 introduce any constructors in addition to those of the
 `SegmentDelaunayGraphVertexBase_2` concept.
 
-\cgalHasModel CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<CGAL::Segment_Delaunay_graph_vertex_base_2<Gt,SSTag> >
+\cgalHasModel CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<CGAL::Segment_Delaunay_graph_vertex_base_2<St> >
 
 \sa `SegmentDelaunayGraphDataStructure_2`
 \sa `SegmentDelaunayGraphVertexBase_2`
-\sa `CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,DS>`
+\sa `CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,St,SSTag,DS>`
 \sa `CGAL::Triangulation_data_structure_2<Vb,Fb>`
-\sa `CGAL::Segment_Delaunay_graph_vertex_base_2<Gt,SSTag>`
+\sa `CGAL::Segment_Delaunay_graph_vertex_base_2<St,Vb>`
 \sa `CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<Vbb>`
 
 */

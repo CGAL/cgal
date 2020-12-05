@@ -22,15 +22,15 @@
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 
-#include <CGAL/Triangulation_ds_vertex_base_2.h>
+#include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/Segment_Delaunay_graph_storage_site_2.h>
 #include <CGAL/Segment_Delaunay_graph_simple_storage_site_2.h>
 
-
-
 namespace CGAL {
 
-template < class STraits, class Vb = Triangulation_ds_vertex_base_2<> >
+template < class STraits,
+           class Vb = Triangulation_vertex_base_2<
+                        typename STraits::Geom_traits> >
 class Segment_Delaunay_graph_vertex_base_2
   : public Vb
 {

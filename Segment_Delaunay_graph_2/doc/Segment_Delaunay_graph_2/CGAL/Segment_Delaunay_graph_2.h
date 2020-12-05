@@ -13,18 +13,21 @@ Currently it only supports the insertions of sites.
 \tparam St must be a model of `SegmentDelaunayGraphStorageTraits_2`.
         By default, the storage traits is instantiated by `Segment_Delaunay_graph_storage_traits_2<Gt>`.
 
-\tparam DS must be a model of `SegmentDelaunayGraphDataStructure_2`.
-        `DS` defaults to `CGAL::Triangulation_data_structure_2< CGAL::Segment_Delaunay_graph_vertex_base_2<St>, CGAL::Segment_Delaunay_graph_face_base_2<Gt> >`.
-        Any custom type can be used instead of `Segment_Delaunay_graph_vertex_base_2`
-        and `Segment_Delaunay_graph_face_base_2`, provided that they are models of the
-        concepts `SegmentDelaunayGraphVertexBase_2` and `TriangulationFaceBase_2`, respectively.
+\tparam DS must be a model of `SegmentDelaunayGraphDataStructure_2` whose vertex and face are
+        models of the concepts `SegmentDelaunayGraphVertexBase_2` and `TriangulationFaceBase_2`, respectively.
+        It defaults to:
+        \code
+        `CGAL::Triangulation_data_structure_2<
+                  CGAL::Segment_Delaunay_graph_vertex_base_2<St>,
+                  CGAL::Segment_Delaunay_graph_face_base_2<Gt> >`
+        \endcode
 
 \cgalHeading{Storage}
 
 To avoid redundancy in the storage of points, input points are stored in a container,
 and the various types of sites (input points and segments, points of intersection,
 subsegments with one or two points of intersection as endpoints) only store handles to the points
-in the container.
+in the container. See Section \ref Segment_Delaunay_graph_2StronglyIntersecting for more information.
 
 \cgalHeading{Traversal of the Segment Delaunay Graph}
 
@@ -32,45 +35,34 @@ A segment Delaunay graph can be seen as a container of faces and
 vertices. Therefore the `Segment_Delaunay_graph_2` class provides several iterators
 and circulators that allow to traverse it (completely or partially).
 
-
-
 \cgalModels `DelaunayGraph_2`
 
-\sa `DelaunayGraph_2`
-\sa `SegmentDelaunayGraphTraits_2`
-\sa `SegmentDelaunayGraphDataStructure_2`
-\sa `SegmentDelaunayGraphVertexBase_2`
-\sa `TriangulationFaceBase_2`
-\sa `CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>`
 \sa `CGAL::Segment_Delaunay_graph_traits_2<K,MTag>`
 \sa `CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>`
 \sa `CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
 \sa `CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`
-\sa `CGAL::Triangulation_data_structure_2<Vb,Fb>`
-\sa `CGAL::Segment_Delaunay_graph_vertex_base_2<Gt,SSTag>`
-\sa `CGAL::Triangulation_face_base_2<Gt>`
-
+\sa `CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,St,STag,DS>`
 */
-template< typename Gt, typename DS >
+template< typename Gt, typename St, typename DS >
 class Segment_Delaunay_graph_2 {
 public:
 
 /// \name Types
 
-
-
-
-
 /// @{
 
 /*!
-A type for the geometric traits.
+Type for the geometric traits.
 */
 typedef Gt Geom_traits;
 
 /*!
-A type for the underlying
-data structure.
+Type for the storage traits.
+*/
+typedef St Storage_traits;
+
+/*!
+Type for the underlying data structure.
 */
 typedef DS Data_structure;
 
@@ -86,26 +78,29 @@ Size type (an unsigned integral type)
 typedef typename DS::size_type size_type;
 
 /*!
-A type for the
-point defined in the geometric traits.
+Type for the point defined in the geometric traits.
 */
 typedef typename Gt::Point_2 Point_2;
 
 /*!
-A type for the segment Delaunay graph site, defined in the geometric
-traits.
+Type for the segment Delaunay graph site, defined in the geometric traits.
 */
 typedef typename Gt::Site_2 Site_2;
 
 /*!
-A type for the container of points.
+Type for the segment Delaunay storage site, defined in the storage traits.
 */
-typedef unspecified_type Point_container;
+typedef typename Storage_traits::Storage_site_2 Storage_site_2;
 
 /*!
-A handle for points in the point container.
+Type for the container of points.
 */
-typedef typename Point_container::iterator Point_handle;
+typedef typename Storage_traits::Point_container Point_container;
+
+/*!
+Handle type for points in the point container.
+*/
+typedef typename Storage_traits::Point_handle Point_handle;
 
 /// @}
 
@@ -138,67 +133,67 @@ The `Edge(f,i)` is the edge common to faces `f` and
 typedef typename DS::Edge Edge;
 
 /*!
-A type for a vertex.
+Type for a vertex.
 */
 typedef typename DS::Vertex Vertex;
 
 /*!
-A type for a face.
+Type for a face.
 */
 typedef typename DS::Face Face;
 
 /*!
-A type for a handle to a vertex.
+Type for a handle to a vertex.
 */
 typedef typename DS::Vertex_handle Vertex_handle;
 
 /*!
-A type for a handle to a face.
+Type for a handle to a face.
 */
 typedef typename DS::Face_handle Face_handle;
 
 /*!
-A type for a circulator over vertices incident to a given vertex.
+Type for a circulator over vertices incident to a given vertex.
 */
 typedef typename DS::Vertex_circulator Vertex_circulator;
 
 /*!
-A type for a circulator over faces incident to a given vertex.
+Type for a circulator over faces incident to a given vertex.
 */
 typedef typename DS::Face_circulator Face_circulator;
 
 /*!
-A type for a circulator over edges incident to a given vertex.
+Type for a circulator over edges incident to a given vertex.
 */
 typedef typename DS::Edge_circulator Edge_circulator;
 
 /*!
-A type for an iterator over all vertices.
+Type for an iterator over all vertices.
 */
 typedef typename DS::Vertex_iterator All_vertices_iterator;
 
 /*!
-A type for an iterator over all faces.
+Type for an iterator over all faces.
 */
 typedef typename DS::Face_iterator All_faces_iterator;
 
 /*!
-A type for an iterator over all edges.
+Type for an iterator over all edges.
 */
 typedef typename DS::Edge_iterator All_edges_iterator;
 
 /*!
-A type for an iterator over finite vertices.
+Type for an iterator over finite vertices.
 */
 typedef unspecified_type Finite_vertices_iterator;
 
 /*!
-A type for an iterator over finite faces.
+Type for an iterator over finite faces.
 */
 typedef unspecified_type Finite_faces_iterator;
 
 /*!
-A type for an iterator over finite edges.
+Type for an iterator over finite edges.
 */
 typedef unspecified_type Finite_edges_iterator;
 
@@ -217,12 +212,12 @@ typedef unspecified_type Finite_edges_iterator;
 /// @{
 
 /*!
-A type for a bidirectional iterator over all input sites.
+Type for a bidirectional iterator over all input sites.
 */
 typedef unspecified_type Input_sites_iterator;
 
 /*!
-A type for a bidirectional iterator over all output sites (the sites
+Type for a bidirectional iterator over all output sites (the sites
 in the Delaunay graph).
 */
 typedef unspecified_type Output_sites_iterator;
@@ -235,8 +230,7 @@ typedef unspecified_type Output_sites_iterator;
 /// @{
 
 /*!
-Creates the
-segment Delaunay graph using `gt` as geometric traits.
+Creates the segment Delaunay graph using `gt` as geometric traits.
 */
 Segment_Delaunay_graph_2(Gt gt=Gt());
 
@@ -246,8 +240,7 @@ and inserts all sites in the range [`first`, `beyond`).
 \pre `Input_iterator` must be a model of `InputIterator`. The value type of `Input_iterator` must be either `Point_2` or `Site_2`.
 */
 template< class Input_iterator >
-Segment_Delaunay_graph_2(Input_iterator first, Input_iterator beyond,
-Gt gt=Gt());
+Segment_Delaunay_graph_2(Input_iterator first, Input_iterator beyond, Gt gt = Gt());
 
 /// @}
 
@@ -255,9 +248,30 @@ Gt gt=Gt());
 /// @{
 
 /*!
-Returns a reference to the segment Delaunay graph traits object.
+Returns a reference to the segment Delaunay graph geometric traits object.
 */
-Geom_traits geom_traits();
+const Geom_traits& geom_traits() const;
+
+/*!
+Returns a reference to the segment Delaunay graph storage traits object.
+*/
+const Storage_traits&  storage_traits() const;
+
+/*!
+Returns a reference to the point container object.
+*/
+Point_container point_container();
+
+/*!
+Returns a reference to the
+segment Delaunay graph data structure object.
+*/
+Data_structure data_structure();
+
+/*!
+Same as `data_structure()`. It has been added for compliance to the `DelaunayGraph_2` concept.
+*/
+Data_structure tds();
 
 /*!
 Returns the dimension of the segment Delaunay graph. The dimension
@@ -304,24 +318,6 @@ Returns a vertex distinct from the `infinite_vertex`.
 \pre The number of sites in the segment Delaunay graph must be at least one.
 */
 Vertex_handle finite_vertex();
-
-/*!
-Returns a reference to the
-segment Delaunay graph data structure object.
-*/
-Data_structure data_structure();
-
-/*!
-Same as `data_structure()`. It
-has been added for compliance to the `DelaunayGraph_2` concept.
-*/
-Data_structure tds();
-
-/*!
-Returns a reference to
-the point container object.
-*/
-Point_container point_container();
 
 /// @}
 
@@ -533,41 +529,38 @@ bool is_infinite(Edge_circulator ec) const;
 /// @{
 
 /*!
-Inserts the sites in the range
-[`first`,`beyond`). The number of additional sites inserted in
-the Delaunay graph is returned. `Input_iterator` must be a model of
-`InputIterator` and its value type must be
-either `Point_2` or `Site_2`.
+Iteratively inserts the sites in the range [`first`,`beyond`).
+\tparam Input_iterator must be a model of `InputIterator` and its value type must be either `Point_2` or `Site_2`.
+\return the number of sites inserted in the Delaunay graph
 */
 template< class Input_iterator >
 size_type insert(Input_iterator first, Input_iterator beyond);
 
 /*!
-Same as the previous method. `Input_iterator` must be a model of
-`InputIterator` and its value type must be
-either `Point_2` or `Site_2`.
+Iteratively inserts the sites in the range [`first`,`beyond`).
+\tparam Input_iterator must be a model of `InputIterator` and its value type must be either `Point_2` or `Site_2`.
+\return the number of sites inserted in the Delaunay graph
 */
 template< class Input_iterator >
-size_type insert(Input_iterator first, Input_iterator beyond, Tag_false);
+size_type insert(Input_iterator first, Input_iterator beyond, CGAL::Tag_false);
 
 /*!
 Decomposes the range [first,beyond) into a range of input points and a range of input segments
 that are respectively passed to `insert_segments()` and `insert_points()`.
 Non-input sites are first random_shuffled and then inserted one by one.
-`Input_iterator` must be a model of `InputIterator` and its value type must be
-either `Point_2`, `Segment_2` or `Site_2`.
-\return  the number of sites inserted in the Delaunay graph
+\tparam Input_iterator must be a model of `InputIterator` and its value type must be either `Point_2`, `Segment_2` or `Site_2`.
+\return the number of sites inserted in the Delaunay graph
 */
 template< class Input_iterator >
-size_type insert(Input_iterator first, Input_iterator beyond, Tag_true);
+size_type insert(Input_iterator first, Input_iterator beyond, CGAL::Tag_true);
 
 /*!
 Inserts the points in the range [first,beyond) as sites.
 Note that this function is not guaranteed to insert the points
 following the order of `PointInputIterator`, as `spatial_sort()`
 is used to improve efficiency.
-\return  the number of points inserted in the Delaunay graph
 \tparam PointIterator must be an input iterator `Point_2` or `Site_2` as value_type.
+\return the number of points inserted in the Delaunay graph
 */
 template <class PointIterator>
 std::size_t insert_points(PointIterator first, PointIterator beyond);
@@ -577,8 +570,8 @@ Inserts the segments in the range [first,beyond) as sites.
 Note that this function is not guaranteed to insert the segments
 following the order of `SegmentIterator`, as `spatial_sort()`
 is used to improve efficiency.
-\return  the number of segments inserted in the Delaunay graph
 \tparam SegmentIterator must be an input iterator with `Site_2`, `Segment_2` or `std::pair<Point_2,Point_2>` as value type.
+\return the number of segments inserted in the Delaunay graph
 */
 template <class SegmentIterator>
 std::size_t insert_segments(SegmentIterator first, SegmentIterator beyond);
@@ -588,33 +581,30 @@ Same as above except that each segment is given as a pair of indices of the poin
 in the range [points_first, points_beyond). The indices must start from 0 to `std::distance(points_first, points_beyond)`
 \tparam PointIterator is an input iterator with `Point_2` as value type.
 \tparam IndicesIterator is an input iterator with `std::pair<std::size_t, std::size_t>` as value type.
+\return the number of segments inserted in the Delaunay graph
 */
 template <class PointIterator, class IndicesIterator>
 std::size_t insert_segments(PointIterator points_first, PointIterator points_beyond,
                             IndicesIterator indices_first, IndicesIterator indices_beyond);
 
 /*!
-Inserts the
-point `p` in the segment Delaunay graph. If `p` has already
-been inserted, then the vertex handle of its already inserted copy is
-returned. If `p` has not been inserted yet, the vertex handle of
-`p` is returned.
+Inserts the point `p` in the segment Delaunay graph.
+If `p` has already been inserted, then the vertex handle of its already inserted copy is returned.
+If `p` has not been inserted yet, the vertex handle of `p` is returned.
 */
 Vertex_handle insert(Point_2 p);
 
 /*!
-Inserts `p` in the segment Delaunay graph using the site
-associated with `vnear` as an estimate for the nearest neighbor
-of `p`. The vertex handle returned has the same semantics as
-the vertex handle returned by the method
+Inserts `p` in the segment Delaunay graph using the site associated with `vnear`
+as an estimate for the nearest neighbor of `p`.
+The vertex handle returned has the same semantics as the vertex handle returned by the method
 `Vertex_handle insert(Point_2 p)`.
 */
 Vertex_handle insert(Point_2 p, Vertex_handle vnear);
 
 /*!
-Inserts the
-closed segment with endpoints `p1` and `p2` in the segment
-Delaunay graph. If the segment has already been inserted in the
+Inserts the closed segment with endpoints `p1` and `p2` in the segment Delaunay graph.
+If the segment has already been inserted in the
 Delaunay graph then the vertex handle of its already inserted copy is
 returned. If the segment does not intersect any segment in the
 existing diagram, the vertex handle corresponding to its
@@ -625,37 +615,31 @@ vertex handle to one of its open subsegments is returned.
 Vertex_handle insert(Point_2 p1, Point_2 p2);
 
 /*!
-Inserts the segment whose endpoints are `p1` and `p2`
-in the segment Delaunay graph using the site
-associated with `vnear` as an estimate for the nearest neighbor
-of `p1`. The vertex handle returned has the same semantics as the
-vertex handle returned by the method
+Inserts the segment whose endpoints are `p1` and `p2` in the segment Delaunay graph using the site
+associated with `vnear` as an estimate for the nearest neighbor of `p1`.
+The vertex handle returned has the same semantics as the vertex handle returned by the method
 `Vertex_handle insert(Point_2 p1, Point_2 p2)`.
 */
-Vertex_handle insert(Point_2 p1, Point_2 p2, Vertex_handle
-vnear);
+Vertex_handle insert(Point_2 p1, Point_2 p2, Vertex_handle vnear);
 
 /*!
-Inserts the site `s` in the
-segment Delaunay graph. The vertex handle returned has the same
-semantics as the vertex handle returned by the methods
-`Vertex_handle insert(Point_2 p)` and `Vertex_handle insert(Point_2 p1, Point_2 p2)`, depending on whether `s`
-represents a point or a segment respectively.
+Inserts the site `s` in the segment Delaunay graph.
+The vertex handle returned has the same semantics as the vertex handle returned by the methods
+`Vertex_handle insert(Point_2 p)` and `Vertex_handle insert(Point_2 p1, Point_2 p2)`,
+depending on whether `s` represents a point or a segment respectively.
 \pre `s.is_input()` must be `true`.
 */
 Vertex_handle insert(Site_2 s);
 
 /*!
-Inserts `s` in the segment Delaunay graph using the site
-associated with `vnear` as an estimate for the nearest neighbor of
-`s`, if `s` is a point, or the first endpoint of `s`, if
-`s` is a segment. The vertex handle returned has the same
-semantics as the vertex handle returned by the method
+Inserts `s` in the segment Delaunay graph using the site associated with `vnear`
+as an estimate for the nearest neighbor of `s`, if `s` is a point, or the first endpoint of `s`, if
+`s` is a segment.
+The vertex handle returned has the same semantics as the vertex handle returned by the method
 `Vertex_handle insert(Site_2 s)`.
 \pre `s.is_input()` must be `true`.
 */
-Vertex_handle insert(Site_2 s, Vertex_handle
-vnear);
+Vertex_handle insert(Site_2 s, Vertex_handle vnear);
 
 /// @}
 
@@ -679,8 +663,7 @@ arbitrarily and one of the nearest neighbors of `p` is
 returned. If there are no sites in the segment Delaunay graph
 `Vertex_handle()` is returned.
 */
-Vertex_handle nearest_neighbor(Point_2 p,
-Vertex_handle vnear);
+Vertex_handle nearest_neighbor(Point_2 p, Vertex_handle vnear);
 
 /// @}
 
@@ -787,20 +770,19 @@ combinatorial data structure.
 void file_output(std::ostream& os);
 
 /*!
-Reads the state of the
-segment Delaunay graph from an input stream.
+Reads the state of the segment Delaunay graph from an input stream.
 */
 void file_input(std::istream& is);
 
 /*!
 Writes the current state of the segment Delaunay graph to an output stream.
 */
-std::ostream& operator<<(std::ostream& os, Segment_Delaunay_graph_2<Gt,DS> sdg);
+std::ostream& operator<<(std::ostream& os, const Segment_Delaunay_graph_2<Gt,St,DS>& sdg);
 
 /*!
 Reads the state of the segment Delaunay graph from an input stream.
 */
-std::istream& operator>>(std::istream& is, Segment_Delaunay_graph_2<Gt,DS> sdg);
+std::istream& operator>>(std::istream& is, Segment_Delaunay_graph_2<Gt,St,DS>& sdg);
 
 /// @}
 
@@ -829,13 +811,12 @@ Clears all contents of the segment Delaunay graph.
 void clear();
 
 /*!
-The segment Delaunay graphs
-`other` and `*this` are swapped. For a segment Delaunay graph `sdg`, the operation
+The segment Delaunay graphs `other` and `*this` are swapped.
+For a segment Delaunay graph `sdg`, the operation
 `sdg`.`swap(other)` should  be preferred to `sdg``= other` or to `sdg``(other)` if
 `other` is deleted afterwards.
 */
-void swap(Segment_Delaunay_graph_2<Gt,DS>
-other);
+void swap(Segment_Delaunay_graph_2<Gt,St,DS>& other);
 
 /// @}
 
