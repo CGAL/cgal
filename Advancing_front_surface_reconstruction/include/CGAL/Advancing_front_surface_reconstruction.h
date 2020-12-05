@@ -175,13 +175,26 @@ namespace CGAL {
   store handles to the vertices and faces of the 3D triangulation, which enables the user to explore the
   2D as well as 3D neighborhood of vertices and facets of the surface.
 
-  \tparam Dt must be a `Delaunay_triangulation_3` with
-  `Advancing_front_surface_reconstruction_vertex_base_3` and `Advancing_front_surface_reconstruction_cell_base_3` blended into the vertex and cell type.
-  The default uses the `Exact_predicates_inexact_constructions_kernel` as geometric traits class.
+  \tparam Dt must be a `Delaunay_triangulation_3` whose `Traits` template parameter must be a model of
+  `AdvancingFrontSurfaceReconstructionTraits_3` and whose `Tds` template parameter must be
+  a model of `TriangulationDataStructure_3` with `Advancing_front_surface_reconstruction_vertex_base_3` and
+  `Advancing_front_surface_reconstruction_cell_base_3` blended into the vertex and cell type, respectively.
+  The default value is:
+  \code
+    CGAL::Delaunay_triangulation_3<CGAL::Exact_predicates_inexact_constructions_kernel,
+                                   CGAL::Triangulation_data_structure_3<
+                                     CGAL::Advancing_front_surface_reconstruction_vertex_base_3<
+                                       CGAL::Exact_predicates_inexact_constructions_kernel>,
+                                     CGAL::Advancing_front_surface_reconstruction_cell_base_3<
+                                       CGAL::Exact_predicates_inexact_constructions_kernel> > >`
+  \endcode
 
-  \tparam P must be a functor with `double operator()(AdvancingFront,Cell_handle,int)` returning the
-  priority of the facet `(Cell_handle,int)`. This functor enables the user to choose how candidate
-  triangles are prioritized. If a facet should not appear in the output,
+  \tparam P must be a functor offering
+  \code
+    FT operator()(Advancing_front_surface_reconstruction,Cell_handle,int)
+  \endcode
+  returning the priority of the facet `(Cell_handle,int)`. This functor enables the user
+  to choose how candidate triangles are prioritized. If a facet should not appear in the output,
   `infinity()` must be returned. It defaults to a functor that returns the
   `smallest_radius_delaunay_sphere()`.
 
