@@ -68,6 +68,13 @@ class Handle
       return *this;
     }
 
+    Handle&
+    operator=(Handle&& x) noexcept
+    {
+      swap(*this,x);
+      return *this;
+    }
+
     friend void swap(Handle& a, Handle& b) noexcept { std::swap(a.PTR, b.PTR); }
 
     void reset()
