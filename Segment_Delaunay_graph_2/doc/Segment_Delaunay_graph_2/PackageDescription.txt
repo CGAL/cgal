@@ -47,6 +47,7 @@ the class
 - `SegmentDelaunayGraphStorageTraits_2`
 - `SegmentDelaunayGraphDataStructure_2`
 - `SegmentDelaunayGraphVertexBase_2`
+- `SegmentDelaunayGraphFaceBase_2`
 - `SegmentDelaunayGraphTraits_2`
 - `SegmentDelaunayGraphHierarchyVertexBase_2`
 

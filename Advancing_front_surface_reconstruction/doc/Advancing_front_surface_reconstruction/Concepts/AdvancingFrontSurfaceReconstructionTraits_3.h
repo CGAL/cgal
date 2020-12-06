@@ -45,7 +45,7 @@ which constructs the vector `q-p`.
 typedef unspecified_type Construct_vector_3;
 
 /*!
-A constructor object that must provide the function operators
+A constructor object that must provide the function operator
 
 `Vector_3 operator()(Vector_3 v, Vector_3 w)`,
 
@@ -54,7 +54,7 @@ which returns the cross product of `v` and `w`.
 typedef unspecified_type Construct_cross_product_vector_3;
 
 /*!
-A constructor object that must provide the function operators
+A constructor object that must provide the function operator
 
 `FT operator()(Vector_3 v, Vector_3 w)`,
 
@@ -104,7 +104,7 @@ which returns the squared radius of the sphere `s`.
 typedef unspecified_type Compute_squared_radius_3;
 
 /*!
-A constructor object that must provide the function operators
+A constructor object that must provide the function operator
 
 `FT operator()(Point_3 p, Point_3 q)`,
 

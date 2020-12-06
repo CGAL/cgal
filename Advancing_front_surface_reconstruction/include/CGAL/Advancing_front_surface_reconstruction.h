@@ -275,7 +275,7 @@ namespace CGAL {
 
   /*!
      A bidirectional iterator range which enables to visit all vertices on a boundary.
-     The value type of the iterator is  `Vertex_handle`.
+     The value type of the iterator is `Vertex_handle`.
    */
      typedef unspecified_type Vertex_on_boundary_range;
 
@@ -1361,7 +1361,7 @@ namespace CGAL {
 
       returns the infinite floating value that prevents a facet to be used.
     */
-    FT infinity() const { return std::numeric_limits<coord_type>::infinity(); }
+    FT infinity() const { return std::numeric_limits<FT>::infinity(); }
     /// @}
 
     //---------------------------------------------------------------------

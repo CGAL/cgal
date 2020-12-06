@@ -230,17 +230,19 @@ typedef unspecified_type Output_sites_iterator;
 /// @{
 
 /*!
-Creates the segment Delaunay graph using `gt` as geometric traits.
+Creates the segment Delaunay graph using `gt` as geometric traits and `st` as storage traits.
 */
-Segment_Delaunay_graph_2(Gt gt=Gt());
+Segment_Delaunay_graph_2(Gt gt=Gt(), St st=St());
 
 /*!
-Creates the segment Delaunay graph using `gt` as geometric traits
+Creates the segment Delaunay graph using `gt` as geometric traits, `st` as storage traits,
 and inserts all sites in the range [`first`, `beyond`).
-\pre `Input_iterator` must be a model of `InputIterator`. The value type of `Input_iterator` must be either `Point_2` or `Site_2`.
+\pre `Input_iterator` must be a model of `InputIterator`.
+The value type of `Input_iterator` must be either `Point_2` or `Site_2`.
 */
 template< class Input_iterator >
-Segment_Delaunay_graph_2(Input_iterator first, Input_iterator beyond, Gt gt = Gt());
+Segment_Delaunay_graph_2(Input_iterator first, Input_iterator beyond,
+                         Gt gt = Gt(), St gt = St());
 
 /// @}
 
@@ -260,18 +262,18 @@ const Storage_traits&  storage_traits() const;
 /*!
 Returns a reference to the point container object.
 */
-Point_container point_container();
+const Point_container& point_container() const;
 
 /*!
 Returns a reference to the
 segment Delaunay graph data structure object.
 */
-Data_structure data_structure();
+const Data_structure& data_structure() const;
 
 /*!
 Same as `data_structure()`. It has been added for compliance to the `DelaunayGraph_2` concept.
 */
-Data_structure tds();
+const Data_structure& tds() const;
 
 /*!
 Returns the dimension of the segment Delaunay graph. The dimension
@@ -279,45 +281,45 @@ is \f$ -1\f$ if the graph contains no sites, \f$ 0\f$ if the graph
 contains one site, \f$ 1\f$ if it contains two sites and \f$ 2\f$ if it
 contains three or more sites.
 */
-int dimension();
+int dimension() const;
 
 /*!
 Returns the number of finite vertices of the segment Delaunay graph.
 */
-size_type number_of_vertices();
+size_type number_of_vertices() const;
 
 /*!
 Returns the number of faces (both finite and infinite) of the
 segment Delaunay graph.
 */
-size_type number_of_faces();
+size_type number_of_faces() const;
 
 /*!
 Return the number of input sites.
 */
-size_type number_of_input_sites();
+size_type number_of_input_sites() const;
 
 /*!
 Return the number of output sites. This is equal to the number of
 vertices in the segment Delaunay graph.
 */
-size_type number_of_output_sites();
+size_type number_of_output_sites() const;
 
 /*!
 Returns a face incident to the `infinite_vertex`.
 */
-Face_handle infinite_face();
+Face_handle infinite_face() const;
 
 /*!
 Returns the `infinite_vertex`.
 */
-Vertex_handle infinite_vertex();
+Vertex_handle infinite_vertex() const;
 
 /*!
 Returns a vertex distinct from the `infinite_vertex`.
 \pre The number of sites in the segment Delaunay graph must be at least one.
 */
-Vertex_handle finite_vertex();
+Vertex_handle finite_vertex() const;
 
 /// @}
 
@@ -457,39 +459,39 @@ Output_sites_iterator output_sites_end() const;
 Starts at an arbitrary face incident
 to `v`.
 */
-Face_circulator incident_faces(Vertex_handle v);
+Face_circulator incident_faces(Vertex_handle v) const;
 
 /*!
 Starts at face `f`.
 \pre Face `f` is incident to vertex `v`.
 */
-Face_circulator incident_faces(Vertex_handle v, Face_handle f);
+Face_circulator incident_faces(Vertex_handle v, Face_handle f) const;
 
 /*!
 Starts at an arbitrary edge incident
 to `v`.
 */
-Edge_circulator incident_edges(Vertex_handle v);
+Edge_circulator incident_edges(Vertex_handle v) const;
 
 /*!
 Starts at the first edge of `f` incident to
 `v`, in counterclockwise order around `v`.
 \pre Face `f` is incident to vertex `v`.
 */
-Edge_circulator incident_edges(Vertex_handle v, Face_handle f);
+Edge_circulator incident_edges(Vertex_handle v, Face_handle f) const;
 
 /*!
 Starts at an arbitrary vertex incident
 to `v`.
 */
-Vertex_circulator incident_vertices(Vertex_handle v);
+Vertex_circulator incident_vertices(Vertex_handle v) const;
 
 /*!
 Starts at the first vertex of `f` adjacent to `v`
 in counterclockwise order around `v`.
 \pre Face `f` is incident to vertex `v`.
 */
-Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f);
+Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f) const;
 
 /// @}
 
@@ -592,7 +594,7 @@ Inserts the point `p` in the segment Delaunay graph.
 If `p` has already been inserted, then the vertex handle of its already inserted copy is returned.
 If `p` has not been inserted yet, the vertex handle of `p` is returned.
 */
-Vertex_handle insert(Point_2 p);
+Vertex_handle insert(const Point_2& p);
 
 /*!
 Inserts `p` in the segment Delaunay graph using the site associated with `vnear`
@@ -600,7 +602,7 @@ as an estimate for the nearest neighbor of `p`.
 The vertex handle returned has the same semantics as the vertex handle returned by the method
 `Vertex_handle insert(Point_2 p)`.
 */
-Vertex_handle insert(Point_2 p, Vertex_handle vnear);
+Vertex_handle insert(const Point_2& p, Vertex_handle vnear);
 
 /*!
 Inserts the closed segment with endpoints `p1` and `p2` in the segment Delaunay graph.
@@ -612,7 +614,7 @@ corresponding open segment is returned. Finally, if the segment
 intersects other segments in the existing Delaunay graph, the
 vertex handle to one of its open subsegments is returned.
 */
-Vertex_handle insert(Point_2 p1, Point_2 p2);
+Vertex_handle insert(const Point_2& p1, const Point_2& p2);
 
 /*!
 Inserts the segment whose endpoints are `p1` and `p2` in the segment Delaunay graph using the site
@@ -620,7 +622,7 @@ associated with `vnear` as an estimate for the nearest neighbor of `p1`.
 The vertex handle returned has the same semantics as the vertex handle returned by the method
 `Vertex_handle insert(Point_2 p1, Point_2 p2)`.
 */
-Vertex_handle insert(Point_2 p1, Point_2 p2, Vertex_handle vnear);
+Vertex_handle insert(const Point_2& p1, const Point_2& p2, Vertex_handle vnear);
 
 /*!
 Inserts the site `s` in the segment Delaunay graph.
@@ -629,7 +631,7 @@ The vertex handle returned has the same semantics as the vertex handle returned 
 depending on whether `s` represents a point or a segment respectively.
 \pre `s.is_input()` must be `true`.
 */
-Vertex_handle insert(Site_2 s);
+Vertex_handle insert(const Site_2& s);
 
 /*!
 Inserts `s` in the segment Delaunay graph using the site associated with `vnear`
@@ -639,7 +641,7 @@ The vertex handle returned has the same semantics as the vertex handle returned 
 `Vertex_handle insert(Site_2 s)`.
 \pre `s.is_input()` must be `true`.
 */
-Vertex_handle insert(Site_2 s, Vertex_handle vnear);
+Vertex_handle insert(const Site_2& s, Vertex_handle vnear);
 
 /// @}
 
@@ -653,7 +655,7 @@ finds the site whose segment Voronoi diagram cell contains
 of `p` is returned. If there are no sites in the
 segment Delaunay graph `Vertex_handle()` is returned.
 */
-Vertex_handle nearest_neighbor(Point_2 p);
+Vertex_handle nearest_neighbor(const Point_2& p) const;
 
 /*!
 Finds the nearest neighbor of the point
@@ -663,7 +665,7 @@ arbitrarily and one of the nearest neighbors of `p` is
 returned. If there are no sites in the segment Delaunay graph
 `Vertex_handle()` is returned.
 */
-Vertex_handle nearest_neighbor(Point_2 p, Vertex_handle vnear);
+Vertex_handle nearest_neighbor(const Point_2& p, Vertex_handle vnear) const;
 
 /// @}
 
@@ -683,7 +685,7 @@ defined:
 
 */
 template < class Stream >
-Stream& draw_dual(Stream& str);
+Stream& draw_dual(Stream& str) const;
 
 /*!
 Draws the segment Voronoi
@@ -699,7 +701,7 @@ The following operators must be defined:
 
 */
 template < class Stream >
-Stream& draw_skeleton(Stream& str);
+Stream& draw_skeleton(Stream& str) const;
 
 /*!
 Draws the edge `e` of
@@ -714,7 +716,7 @@ The following operators must be defined:
 \pre `e` must be a finite edge.
 */
 template< class Stream >
-Stream& draw_dual_edge(Edge e, Stream& str);
+Stream& draw_dual_edge(Edge e, Stream& str) const;
 
 /*!
 Draws the edge `*ec` of the segment Voronoi diagram to the stream
@@ -729,7 +731,7 @@ The following operators must be defined:
 \pre `*ec` must be a finite edge.
 */
 template< class Stream >
-Stream& draw_dual_edge(Edge_circulator ec, Stream& str);
+Stream& draw_dual_edge(Edge_circulator ec, Stream& str) const;
 
 /*!
 Draws the edge `*eit` of the segment Voronoi diagram to the
@@ -744,7 +746,7 @@ The following operators must be defined:
 \pre `*eit` must be a finite edge.
 */
 template< class Stream >
-Stream& draw_dual_edge(All_edges_iterator eit, Stream& str);
+Stream& draw_dual_edge(All_edges_iterator eit, Stream& str) const;
 
 /*!
 Draws the edge `*eit` of the segment Voronoi diagram to the
@@ -758,7 +760,7 @@ The following operators must be defined:
 `Stream& operator<<(Stream&, Gt::Line_2)`
 */
 template< class Stream >
-Stream& draw_dual_edge(Finite_edges_iterator eit, Stream& str);
+Stream& draw_dual_edge(Finite_edges_iterator eit, Stream& str) const;
 
 /*!
 Writes the current
@@ -798,7 +800,7 @@ Delaunay graph are validated. Negative values of `level` always
 return true, and values greater than 1 are equivalent to `level`
 being 1.
 */
-bool is_valid(bool verbose = false, int level = 1);
+bool is_valid(bool verbose = false, int level = 1) const;
 
 /// @}
 
