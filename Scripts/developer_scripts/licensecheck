@@ -586,6 +586,8 @@ sub parselicense {
     }
     else
     {
+      $license="";
+
       if ($licensetext =~ /SPDX-License-Identifier GPL-3.0-or-later/i) {
         $license = "GPL (v3 or later)";
       }
@@ -604,6 +606,10 @@ sub parselicense {
 
       if ($licensetext =~ /SPDX-License-Identifier LicenseRef-RFL/i) {
         $license = "MIT/X11 (BSD like)";
+      }
+
+      if ($licensetext =~ /SPDX-License-Identifier \( GPL-3.0-or-later OR LicenseRef-Commercial \) AND MIT/i) {
+        $license = "GPL (v3 or later) AND MIT/X11 (BSD like)";
       }
     }
 
