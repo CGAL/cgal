@@ -258,7 +258,6 @@ compare_offset_lines_isec_timesC2 ( boost::intrusive_ptr< Trisegment_2<K, Segmen
   {
     Quotient mt = mt_->to_quotient();
     Quotient nt = nt_->to_quotient();
-
     if ( CGAL_NTS certified_is_positive(mt) && CGAL_NTS certified_is_positive(nt) )
       rResult = CGAL_NTS certified_compare(mt,nt);
   }

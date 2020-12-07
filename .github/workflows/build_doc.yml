@@ -49,8 +49,9 @@ jobs:
         if: steps.get_round.outputs.result != 'stop'
         run: |
           set -x
-          sudo apt-get install -y graphviz ssh bibtex2html
-          sudo pip install lxml pyquery
+          sudo apt-get update && sudo apt-get install -y graphviz ssh bibtex2html
+          sudo pip install lxml 
+          sudo pip install 'pyquery==1.4.1' # it seems to be the last py2 compatible version
           wget --no-verbose -O doxygen_exe https://cgal.geometryfactory.com/~mgimeno/doxygen/build_1_8_13/bin/doxygen
           sudo mv doxygen_exe /usr/bin/doxygen
           sudo chmod +x /usr/bin/doxygen
