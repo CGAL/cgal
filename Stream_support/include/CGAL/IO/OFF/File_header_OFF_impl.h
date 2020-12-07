@@ -276,8 +276,8 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
     while( i < max_keyword - 1 && in.get(c) && std::isalnum(c))
         keyword[i++] = c;
     keyword[i] = '\0';
-    if ( i < 2 || (std::isdigit(keyword[0]) && keyword[0] != '4')
-               || std::isdigit(keyword[1])) {
+    if ( i < 2 || (keyword[0] >= 0 && std::isdigit(keyword[0]) && keyword[0] != '4')
+               || (keyword[1] >= 0 && std::isdigit(keyword[1]))) {
       in.clear( std::ios::badbit);
       if ( h.verbose()) {
           std::cerr << " " << std::endl;
@@ -329,7 +329,7 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
             }
         }
         in >> skip_comment_OFF >> c;
-        if ( std::isdigit(c)) {
+        if (c >= 0 &&  std::isdigit(c)) {
             in.putback(c);
             int n;
             in >> n;
