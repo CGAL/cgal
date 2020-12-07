@@ -1,6 +1,12 @@
 Release History
 ===============
 
+[Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
+-----------
+
+Release date: June 2021
+
+
 [Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
 -----------
 
