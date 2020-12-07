@@ -139,7 +139,7 @@ bool read_STL(std::istream& is,
   }
 
   // If the first word is not 'solid', the file must be binary
-  if(s != "solid" || (word[5] !='\n' && word[5] != ' '))
+  if(s != "solid" || (word[5] !='\n' && word[5] !='\r' && word[5] != ' '))
   {
     if(!binary)
       return false;
