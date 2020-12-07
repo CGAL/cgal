@@ -61,11 +61,11 @@ void further_tests()
 
   read<Point_type_1, Polygon_type_3>("data/ascii-tetrahedron.stl", 4, 4);
   read<Point_type_2, Polygon_type_1>("data/binary-tetrahedron-nice-header.stl", 4, 4, true);
-  read<Point_type_2, Polygon_type_2>("data/binary-tetrahedron-non-standard-header-1.stl", 4, 4, true, true);
-  read<Point_type_2, Polygon_type_3>("data/binary-tetrahedron-non-standard-header-2.stl", 4, 4, true, true);
-  read<Point_type_3, Polygon_type_1>("data/binary-tetrahedron-non-standard-header-3.stl", 4, 4, true, true);
-  read<Point_type_3, Polygon_type_2>("data/binary-tetrahedron-non-standard-header-4.stl", 4, 4, true, true);
-  read<Point_type_3, Polygon_type_3>("data/binary-tetrahedron-non-standard-header-5.stl", 4, 4, true, false);
+  read<Point_type_2, Polygon_type_2>("data/binary-tetrahedron-non-standard-header-1.stl", 4, 4, true);
+  read<Point_type_2, Polygon_type_3>("data/binary-tetrahedron-non-standard-header-2.stl", 4, 4, true);
+  read<Point_type_3, Polygon_type_1>("data/binary-tetrahedron-non-standard-header-3.stl", 4, 4, true);
+  read<Point_type_3, Polygon_type_2>("data/binary-tetrahedron-non-standard-header-4.stl", 4, 4, true);
+  read<Point_type_3, Polygon_type_3>("data/binary-tetrahedron-non-standard-header-5.stl", 4, 4, true);
 }
 
 int main(int argc, char** argv)
@@ -92,7 +92,9 @@ int main(int argc, char** argv)
   polygons.clear();
   std::ifstream is(stl_file);
   ok = CGAL::read_STL(is, points, polygons);
-  assert(!ok);
+  assert(ok);
+  points.clear();
+  polygons.clear();
   is.clear();
   is.seekg(0, is.beg);
   ok = CGAL::read_STL(is, points, polygons, CGAL::parameters::use_binary_mode(false));

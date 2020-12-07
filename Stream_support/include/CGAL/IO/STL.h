@@ -141,17 +141,33 @@ bool read_STL(std::istream& is,
   // If the first word is not 'solid', the file must be binary
   if(s != "solid" || (word[5] !='\n' && word[5] !='\r' && word[5] != ' '))
   {
-    if(!binary)
-      return false;
+    if(IO::internal::parse_binary_STL(is, points, facets, verbose))
+    {
+      return true;
+    }
+    else
+    {
+      // If we failed to read it as a binary, try as ASCII just in case...
+      // The file does not start with 'solid' anyway, so it's fine to reset it.
+      is.clear();
+      is.seekg(0, std::ios::beg);
+      return IO::internal::parse_ASCII_STL(is, points, facets, verbose);
+    }
 
-    return IO::internal::parse_binary_STL(is, points, facets, verbose);
   }
   // Now, we have found the keyword "solid" which is supposed to indicate that the file is ASCII
-  if(binary)
-    return false;
   is.clear();
   is.seekg(0, std::ios::beg); // the parser needs to read all "solid" to work correctly.
-  return IO::internal::parse_ASCII_STL(is, points, facets, verbose);
+  if(IO::internal::parse_ASCII_STL(is, points, facets, verbose))
+  {
+    // correctly read the input as an ASCII file
+    return true;
+  }
+  else// Failed to read the ASCII file
+  {
+    // It might have actually have been a binary file... ?
+    return IO::internal::parse_binary_STL(is, points, facets, verbose);
+  }
 }
 
 /// \cond SKIP_IN_MANUAL
