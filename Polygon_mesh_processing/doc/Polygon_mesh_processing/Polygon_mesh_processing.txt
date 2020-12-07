@@ -518,7 +518,7 @@ The class `CGAL::Polyhedral_envelope` provides functors to check if a query poin
 is fully contained in a <em>polyhedral envelope</em> of a triangle mesh or of a triangle soup. In the
 following, input triangles will refer either to the triangles of a mesh or of a soup.
 
-The polyhedral envelope is a conservative approximation of the Minkowski sum envelope with a sphere of radius \f$ \epsilon \f$.
+The polyhedral envelope is a conservative approximation of the Minkowski sum envelope of a set of triangles with a sphere of radius \f$ \epsilon \f$.
 The latter has cylindrical and spherical patches at convex edges and vertices of the input triangles.
 
 Given a distance \f$ \delta =  \epsilon / \sqrt(3)\f$ we can associate  a <em>prism</em> to each triangle by intersecting two halfspaces
