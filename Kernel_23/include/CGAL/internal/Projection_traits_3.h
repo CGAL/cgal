@@ -327,9 +327,9 @@ public:
     //compute intersection points in projected plane
     //We know that none of the segment is degenerate
 
-    CGAL::cpp11::result_of<typename R::Intersect_2(Segment_2, Segment_2)>::type
+    typename CGAL::cpp11::result_of<typename R::Intersect_2(Segment_2, Segment_2)>::type
     o = intersection(s1_2,s2_2);
-    if(! 0){
+    if(! o){
       return boost::none;
     }
 
