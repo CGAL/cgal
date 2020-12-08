@@ -43,8 +43,6 @@
 namespace CGAL {
 namespace Heat_method_3 {
 
-
-
 // forward declaration
 template <typename IDT>
 struct IDT_vertex_point_property_map;
@@ -52,6 +50,12 @@ struct IDT_vertex_point_property_map;
 // forward declaration
 template <typename IDT, typename PM>
 struct IDT_vertex_distance_property_map;
+
+// forward declaration
+namespace internal {
+  template<typename TriangleMesh, typename Traits>
+  bool has_degenerate_faces(const TriangleMesh& tm, const Traits& traits);
+}
 
 template <class TriangleMesh>
 struct Intrinsic_Delaunay_triangulation_3_vertex_descriptor {
