@@ -351,6 +351,8 @@ namespace internal {
           continue;
 
         Patch_id pid = get_patch_id(f);
+        if (pid > max_patch_id)
+          max_patch_id = pid;
         input_triangles_.push_back(triangle(f));
         input_patch_ids_.push_back(pid);
         std::pair<typename Patch_id_to_index_map::iterator, bool>
@@ -1876,34 +1878,25 @@ private:
     template <typename HalfedgeRange>
     bool check_normals(const HalfedgeRange& hedges) const
     {
-      typedef std::multimap<Patch_id, Vector_3>   Normals_multimap;
-      typedef typename Normals_multimap::iterator Normals_iterator;
-
-      Normals_multimap normals_per_patch;
+      std::vector< std::vector<Vector_3> > normals_per_patch(max_patch_id+1);
       for(halfedge_descriptor hd : hedges)
       {
         Vector_3 n = compute_normal(face(hd, mesh_));
         if (n == CGAL::NULL_VECTOR) //for degenerate faces
           continue;
         Patch_id pid = get_patch_id(face(hd, mesh_));
-        normals_per_patch.insert(std::make_pair(pid, n));
+        normals_per_patch[pid].push_back(n);
       }
 
       //on each surface patch,
       //check all normals have same orientation
-      for (Normals_iterator it = normals_per_patch.begin();
-        it != normals_per_patch.end();/*done inside loop*/)
+      for (Patch_id pid = 0; pid<=max_patch_id; ++pid)
       {
-        std::vector<Vector_3> normals;
-        std::pair<Normals_iterator, Normals_iterator> n_range
-          = normals_per_patch.equal_range((*it).first);
-        for (Normals_iterator iit = n_range.first; iit != n_range.second; ++iit)
-          normals.push_back((*iit).second);
+        const std::vector<Vector_3>& normals = normals_per_patch[pid];
+        if (normals.empty()) continue;
 
         if (!check_orientation(normals))
           return false;
-
-        it = n_range.second;
       }
       return true;
     }
@@ -1952,6 +1945,7 @@ private:
     Halfedge_status_pmap halfedge_status_pmap_;
     bool protect_constraints_;
     FacePatchMap patch_ids_map_;
+    Patch_id max_patch_id = 0;
     EdgeIsConstrainedMap ecmap_;
     VertexIsConstrainedMap vcmap_;
     FaceIndexMap fimap_;
