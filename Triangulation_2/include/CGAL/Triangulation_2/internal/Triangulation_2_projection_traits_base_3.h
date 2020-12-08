@@ -224,9 +224,16 @@ public:
         // Let the plane passing through s1.source() and with normal
         // the cross product of s1.to_vector() and s2.to_vector(). That
         // plane should intersect *l, now.
-        return intersection(*line, Plane_3(s1.source(),
-                                           cross_product(s1.to_vector(),
-                                                         s2.to_vector())));
+        auto inter = intersection(*line, Plane_3(s1.source(),
+                                                 cross_product(s1.to_vector(),
+                                                               s2.to_vector())));
+        if(! inter){
+          return boost::none;
+        }
+        if(const Point* point = boost::get<Point>(&*inter)){
+          typedef  boost::variant<Point, Segment> variant_type;
+          return boost::make_optional(variant_type(*point));
+        }
       }
     }
     if(boost::get<Plane_3>(&*planes_intersection))
