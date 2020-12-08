@@ -46,10 +46,9 @@ the following function overloads are also available.
 The iterator versions of those functions can be used in conjunction
 with `Dispatch_output_iterator`.
 
-Since both the number of intersections, if any, and their types, depend
-on the arguments, the function expects an output iterator on
-`decltype(std::declval<K::Intersect_2>()(std::declval<Type1>(), std::declval<Type2>()))`, as
-presented below.
+Since both the number of intersections, if any, and types of the interesection results
+depend on the arguments, the function expects an output iterator on `K::Intersect_2(Type1, Type2)`
+as presented below.
 */
 
 /// @{

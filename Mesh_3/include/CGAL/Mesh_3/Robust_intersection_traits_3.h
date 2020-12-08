@@ -266,10 +266,11 @@ ts_intersection(const typename K::Triangle_3 &t,
                 const typename K::Segment_3  &s,
                 const K & k)
 {
-  typedef decltype(
-    std::declval<typename K::Intersect_3>()(
-      std::declval<typename K::Segment_3>(),
-      std::declval<typename K::Triangle_3>())) result_type;
+  // typedef decltype(
+  // std::declval<typename K::Intersect_3>()(
+  //   std::declval<typename K::Segment_3>(),
+  //   std::declval<typename K::Triangle_3>())) result_type;
+  typedef decltype(typename K::Intersect_3()(s, t)) result_type;
 
   CGAL_MESH_3_BRANCH_PROFILER(std::string("coplanar/calls in   : ") +
                               std::string(CGAL_PRETTY_FUNCTION), tmp);
@@ -409,10 +410,11 @@ tr_intersection(const typename K::Triangle_3  &t,
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(t) ) ;
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(r) ) ;
 
-  typedef decltype(
-    std::declval<typename K::Intersect_3>()(
-      std::declval<typename K::Ray_3>(),
-      std::declval<typename K::Triangle_3>())) result_type;
+  // typedef decltype(
+  //   std::declval<typename K::Intersect_3>()(
+  //     std::declval<typename K::Ray_3>(),
+  //     std::declval<typename K::Triangle_3>())) result_type;
+  typedef decltype(typename K::Intersect_3()(r, t)) result_type;
 
   typedef typename K::Point_3 Point_3;
 
@@ -485,9 +487,10 @@ public:
     EK::Intersect_3 exact_intersection = EK().intersect_3_object();
 
     // Cartesian converters have an undocumented, optional< variant > operator
-    typedef decltype(
-      std::declval<typename K_::Intersect_3>()(
-        std::declval<T1>(), std::declval<T2>())) result_type;
+    // typedef decltype(
+    //   std::declval<typename K_::Intersect_3>()(
+    //     std::declval<T1>(), std::declval<T2>())) result_type;
+    typedef decltype(typename K_::Intersect_3()(t, s)) result_type;
 
     return result_type(back_from_exact(exact_intersection(to_exact(t), to_exact(s))));
   }
@@ -540,9 +543,10 @@ public:
     EK::Intersect_3 exact_intersection = EK().intersect_3_object();
 
     // Cartesian converters have an undocumented, optional< variant > operator
-    typedef decltype(
-      std::declval<typename K_::Intersect_3>()(
-        std::declval<T1>(), std::declval<T2>())) result_type;
+    // typedef decltype(
+    //   std::declval<typename K_::Intersect_3>()(
+    //     std::declval<T1>(), std::declval<T2>())) result_type;
+    typedef decltype(typename K_::Intersect_3()(t, s)) result_type;
 
     return result_type(back_from_exact(exact_intersection(to_exact(t), to_exact(s))));
   }

@@ -30,14 +30,17 @@ namespace internal {
     //classical typedefs
     typedef Iterator key_type;
     typedef typename GeomTraits::Point_3 value_type;
+    // typedef decltype(
+    //   std::declval<typename GeomTraits::Construct_source_3>()(
+    //     std::declval<typename GeomTraits::Segment_3>())) reference;
     typedef decltype(
-      std::declval<typename GeomTraits::Construct_source_3>()(
-        std::declval<typename GeomTraits::Segment_3>())) reference;
+      typename GeomTraits::Construct_source_3()(
+        *std::declval<key_type&>())) reference;
     typedef boost::readable_property_map_tag category;
+    typedef Source_of_segment_3_iterator_property_map<GeomTraits, Iterator> Self;
 
-    inline friend
-    typename Source_of_segment_3_iterator_property_map<GeomTraits,Iterator>::reference
-    get(Source_of_segment_3_iterator_property_map<GeomTraits,Iterator>, Iterator it)
+    inline friend reference
+    get(Self, key_type it)
     {
       return typename GeomTraits::Construct_source_3()( *it );
     }

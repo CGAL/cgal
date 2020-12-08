@@ -87,6 +87,7 @@ BOOST_PP_REPEAT_FROM_TO(1, 10, CGAL_VARIANT_TYPEMAP, _)
 //};
 
 // Then we specialize for all kernel objects.
+// More details on why it is like that are here: https://github.com/CGAL/cgal/pull/4878#discussion_r459986501
 #define CGAL_Kernel_obj(X) \
   template < typename K1, typename K2 > \
   struct Type_mapper_impl < typename K1::X, K1, K2 > \
