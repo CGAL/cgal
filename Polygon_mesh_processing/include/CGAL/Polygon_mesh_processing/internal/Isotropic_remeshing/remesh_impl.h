@@ -999,6 +999,7 @@ namespace internal {
         // compute moves
         typedef std::pair<vertex_descriptor, Point> VP_pair;
         std::vector< std::pair<vertex_descriptor, Point> > new_locations;
+        new_locations.reserve(barycenters.size());
         for(const VNP& vnp : barycenters)
         {
           vertex_descriptor v = std::get<0>(vnp);
