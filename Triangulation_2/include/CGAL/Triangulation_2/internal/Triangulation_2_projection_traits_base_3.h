@@ -185,7 +185,8 @@ public:
     CGAL_TIME_PROFILER("Construct Projected_intersect_3")
   }
 
-  Object operator()(const Segment& s1, const Segment& s2)
+  boost::optional<boost::variant<Point,Segment> >
+  operator()(const Segment& s1, const Segment& s2)
   {
     CGAL_PROFILER("Projected_intersect_3::operator()")
     CGAL_TIME_PROFILER("Projected_intersect_3::operator()")
@@ -200,12 +201,12 @@ public:
     const Plane_3 plane_1(s1.source(), u1);
     const Plane_3 plane_2(s2.source(), u2);
 
-    Object planes_intersection = intersection(plane_1, plane_2);
-    if(planes_intersection.empty()) {
+    auto planes_intersection = intersection(plane_1, plane_2);
+    if(! planes_intersection) {
       std::cerr << "planes_intersection is empty\n";
-      return planes_intersection;
+      return boost::none;
     }
-    if(const Line* line = object_cast<Line>(&planes_intersection))
+    if(const Line* line = boost::get<Line>(&*planes_intersection))
     {
       const Point& pi = line->point(0);
       if(cross_product(normal, pi - s1.source())
@@ -216,7 +217,7 @@ public:
       {
         // the intersection of the lines is not inside the segments
         std::cerr << "intersection not inside\n";
-        return Object();
+        return boost::none;
       }
       else
       {
@@ -228,13 +229,13 @@ public:
                                                          s2.to_vector())));
       }
     }
-    if(object_cast<Plane_3>(&planes_intersection))
+    if(boost::get<Plane_3>(&*planes_intersection))
     {
       std::cerr << "coplanar lines\n";
       CGAL_error();
-      return Object();
+      return boost::none;
     }
-    return Object();
+    return boost::none;
   }
 }; // end class Projected_intersect_3
 
