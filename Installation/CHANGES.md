@@ -13,7 +13,7 @@ Release date: June 2021
     Bolun Wang, Teseo Schneider, Yixin Hu, Marco Attene, and Daniele Panozzo.
     "Exact and efficient polyhedral envelope containment check." (ACM Trans. Graph., 39-4, July 2020).
 
-### [Surface Mesh Simplification](https://doc.cgal.org/5.1/Manual/packages.html#PkgSurfaceMeshSimplification)
+### [Surface Mesh Simplification](https://doc.cgal.org/5.3/Manual/packages.html#PkgSurfaceMeshSimplification)
 -   Added a filtering mechanism so that costly tests get only applied to the next candidate for the edge collapse.
 -   Added the class `Polyhedral_envelope_filter` that enables to perform mesh simplification inside a polyhedral envelope of the input mesh.
 
