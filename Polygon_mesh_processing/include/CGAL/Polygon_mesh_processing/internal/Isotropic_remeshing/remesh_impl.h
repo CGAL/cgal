@@ -946,7 +946,7 @@ namespace internal {
       typedef std::map<vertex_descriptor, Vector_3> VNormalsMap;
       VNormalsMap vnormals;
       boost::associative_property_map<VNormalsMap> propmap_normals(vnormals);
-      std::map<vertex_descriptor, Point> barycenters;
+      std::vector< std::pair<vertex_descriptor, Point> > barycenters;
 
       // at each vertex, compute vertex normal
       // at each vertex, compute barycenter of neighbors
@@ -972,7 +972,7 @@ namespace internal {
           CGAL_assertion(star_size > 0); //isolated vertices have already been discarded
           move = (1. / (double)star_size) * move;
 
-          barycenters[v] = get(vpmap_, v) + move;
+          barycenters.push_back( std::make_pair(v, get(vpmap_, v) + move) );
         }
         else if (relax_constraints
               && !protect_constraints_
@@ -995,15 +995,15 @@ namespace internal {
                                    * Vector_3(get(vpmap_, v), get(vpmap_, ph1)));
             //check squared cosine is < 0.25 (~120 degrees)
             if (0.25 < dot / (sqlength(border_halfedges[0]) * sqlength(border_halfedges[0])))
-              barycenters[v] = CGAL::midpoint(midpoint(border_halfedges[0]),
-                                              midpoint(border_halfedges[1]));
+              barycenters.push_back( std::make_pair(v, CGAL::midpoint(midpoint(border_halfedges[0]),
+                                                                      midpoint(border_halfedges[1]))) );
           }
         }
       }
 
       // compute moves
-      typedef typename std::map<vertex_descriptor, Point>::value_type VP_pair;
-      std::map<vertex_descriptor, Point> new_locations;
+      typedef std::pair<vertex_descriptor, Point> VP_pair;
+      std::vector< std::pair<vertex_descriptor, Point> > new_locations;
       for(const VP_pair& vp : barycenters)
       {
         vertex_descriptor v = vp.first;
@@ -1011,7 +1011,7 @@ namespace internal {
         Vector_3 nv = boost::get(propmap_normals, v);
         Point qv = vp.second; //barycenter at v
 
-        new_locations[v] = qv + (nv * Vector_3(qv, pv)) * nv;
+        new_locations.push_back( std::make_pair(v, qv + (nv * Vector_3(qv, pv)) * nv) );
       }
 
       // perform moves
