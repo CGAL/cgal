@@ -1,56 +1,42 @@
-# Created by the script cgal_create_CMakeLists
+# Created by the script cgal_create_CMakeLists.
 # This is the CMake script for compiling a set of CGAL applications.
 
-project( test_cmake )
+project(KSR_Tests)
 
-cmake_minimum_required(VERSION 2.8.11)
-
-###############################################################################
-# TARGETS
-###############################################################################
-set(targets
-  kinetic_2d_stress_test
-)
-
-
-###############################################################################
-# GENERATED PART
-###############################################################################
-
-# CGAL and its components
-find_package( CGAL QUIET COMPONENTS  )
-
-if ( NOT CGAL_FOUND )
-  message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
-endif()
-
-# include helper file
-include( ${CGAL_USE_FILE} )
-
-# Boost and its components
-find_package( Boost REQUIRED )
-
-if ( NOT Boost_FOUND )
-  message(STATUS "This project requires the Boost library, and will not be compiled.")
-  return()  
-endif()
-
-include( CGAL_CreateSingleSourceCGALProgram )
-
-# Libraries and flags
-set(project_linked_libraries)
-set(project_compilation_definitions)
-
-# Use C++14
+cmake_minimum_required(VERSION 3.1...3.15)
 set(CMAKE_CXX_STANDARD 14)
 
-# Creating targets with correct libraries and flags
-foreach(target ${targets})
-  create_single_source_cgal_program( "${target}.cpp" )
-  if(TARGET ${target})
-    target_link_libraries(${target} PUBLIC ${project_linked_libraries})
-    target_compile_definitions(${target} PUBLIC ${project_compilation_definitions})
-  endif()
-endforeach()
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
 
+find_package(CGAL QUIET COMPONENTS Core)
+if(CGAL_FOUND)
+  message(STATUS "Found CGAL")
+
+  include(${CGAL_USE_FILE})
+  include(CGAL_CreateSingleSourceCGALProgram)
+
+  find_package(Boost REQUIRED)
+  if(Boost_FOUND)
+    message(STATUS "Found Boost")
+
+    set(targets
+    # kinetic_2d_stress_test
+    kinetic_3d_test_all
+    )
+
+    set(project_linked_libraries)
+    set(project_compilation_definitions)
+
+    foreach(target ${targets})
+      create_single_source_cgal_program("${target}.cpp")
+      if(TARGET ${target})
+        target_link_libraries(${target} PUBLIC ${project_linked_libraries})
+        target_compile_definitions(${target} PUBLIC ${project_compilation_definitions})
+      endif()
+    endforeach()
+  else()
+    message(ERROR "This program requires the Boost library, and will not be compiled.")
+  endif()
+else()
+  message(ERROR "This program requires the CGAL library, and will not be compiled.")
+endif()

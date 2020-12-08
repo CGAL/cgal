@@ -124,9 +124,10 @@ public:
     m_min_time = FT(0);
     m_max_time = time_step;
     CGAL_assertion(m_min_time >= FT(0) && m_max_time >= m_min_time);
+    std::size_t global_iteration = 0;
     while (initialize_queue()) {
 
-      run(k);
+      global_iteration = run(k, global_iteration);
       m_min_time = m_max_time;
       m_max_time += time_step;
       m_data.check_integrity();
@@ -139,9 +140,9 @@ public:
       //   }
       // }
 
-      // if (num_iterations > 100) {
-      //   CGAL_assertion_msg(false, "WHY SO MANY ITERATIONS?");
-      // }
+      if (num_iterations > 100000000) {
+        CGAL_assertion_msg(false, "DEBUG WARNING: WHY SO MANY ITERATIONS?");
+      }
     }
     if (m_verbose) {
       std::cout << "... propagation finished" << std::endl;
@@ -387,13 +388,13 @@ private:
     return false;
   }
 
-  void run(const unsigned int k)
+  const std::size_t run(const unsigned int k, const std::size_t init_iter)
   {
     std::cout << "Unstacking queue size: " << m_queue.size() << std::endl;
 
     KSR::size_t iterations = 0;
 
-    static int iter = 0;
+    std::size_t iter = init_iter;
 
     while (!m_queue.empty())
     {
@@ -430,6 +431,7 @@ private:
       // m_data.update_positions (current_time);
       ++ iterations;
     }
+    return iter;
   }
 
   void apply (

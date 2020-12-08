@@ -367,7 +367,7 @@ void create_random_polygons(
     std::to_string(num_polygons) + "-" + std::to_string(num_vertices));
 }
 
-int main (int argc, char** argv) {
+int main(const int argc, const char** argv) {
 
   // Input.
   const std::size_t n = argc > 1 ? std::atoi(argv[1]) : 1; // number of random polygons
@@ -404,7 +404,7 @@ int main (int argc, char** argv) {
 
   // Algorithm.
   KSR ksr;
-  IPolygon_3_map polygon_map;
+  const IPolygon_3_map polygon_map;
   const unsigned int k = (argc > 3 ? std::atoi(argv[3]) : 1);
   std::cout << "* input k: " << k << std::endl;
   const bool is_success = ksr.partition(input_polygons, polygon_map, k);

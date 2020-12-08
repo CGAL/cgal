@@ -42,7 +42,7 @@ struct Polygon_map {
   }
 };
 
-int main (int argc, char** argv) {
+int main(const int argc, const char** argv) {
 
   // Input.
   std::string input_filename = (argc > 1 ? argv[1] : "data/test_1_polygon_a.off");
@@ -66,7 +66,7 @@ int main (int argc, char** argv) {
   KSR ksr;
   const unsigned int k = (argc > 2 ? std::atoi(argv[2]) : 1);
   std::cout << "* input k: " << k << std::endl;
-  Polygon_map polygon_map(input_vertices);
+  const Polygon_map polygon_map(input_vertices);
   const bool is_success = ksr.partition(input_faces, polygon_map, k);
   assert(is_success);
 
