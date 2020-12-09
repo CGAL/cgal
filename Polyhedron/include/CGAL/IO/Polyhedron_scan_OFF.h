@@ -105,7 +105,7 @@ void Polyhedron_scan_OFF<HDS>:: operator()(HDS& target)
   for(i=0; i<scanner.size_of_facets(); ++i)
   {
     B.begin_facet();
-    std::size_t no;
+    std::size_t no = 0;
     scanner.scan_facet( no, i);
     if(! m_in || B.error() || no < 3)
     {

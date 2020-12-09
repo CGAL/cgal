@@ -197,7 +197,7 @@ namespace CGAL {
     for (i=0; i<scanner.size_of_facets(); i++)
     {
       B.begin_facet();
-      std::size_t no;
+      std::size_t no=0;
       scanner.scan_facet(no, i);
       /* TODO manage errors
          if( ! in || B.error() || no < 3) {

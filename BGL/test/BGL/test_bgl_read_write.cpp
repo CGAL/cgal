@@ -282,7 +282,6 @@ void test_bgl_OFF(const char* filename)
     {
       assert(get(vnm2, v) != CGAL::NULL_VECTOR);
       assert(get(vcm2, v) != CGAL::Color());
-      assert(get(vtm2, v) != Point_2());
     }
 
     for(const auto f : faces(fg))
@@ -306,7 +305,6 @@ void test_bgl_OFF(const char* filename)
     {
       assert(get(vnm, v) != CGAL::NULL_VECTOR);
       assert(get(vcm, v) != CGAL::Color());
-      assert(get(vtm, v) != Point_2());
     }
     // write with OFF
     {
@@ -334,7 +332,6 @@ void test_bgl_OFF(const char* filename)
       {
         assert(get(vnm2, v) != CGAL::NULL_VECTOR);
         assert(get(vcm2, v) != CGAL::Color());
-        assert(get(vtm2, v) != Point_2());
       }
 
       for(const auto f : faces(fg2))
@@ -366,7 +363,6 @@ void test_bgl_OFF(const char* filename)
       {
         assert(get(vnm2, v) != CGAL::NULL_VECTOR);
         assert(get(vcm2, v) != CGAL::Color());
-        assert(get(vtm2, v) != Point_2());
       }
 
       for(const auto f : faces(fg2))
