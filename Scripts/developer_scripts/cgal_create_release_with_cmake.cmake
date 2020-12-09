@@ -158,6 +158,8 @@ if(EXISTS ${GIT_REPO}/Maintenance/release_building/public_release_name)
   file(COPY "${GIT_REPO}/Maintenance/release_building/public_release_name"
     DESTINATION "${release_dir}/doc")
 endif()
+file(COPY ${GIT_REPO}/GraphicsView/demo/resources ${GIT_REPO}/GraphicsView/demo/icons
+  DESTINATION "${release_dir}/cmake/modules/demo")
 
 #create VERSION
 file(WRITE ${release_dir}/VERSION "${CGAL_VERSION}")

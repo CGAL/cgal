@@ -403,6 +403,9 @@ struct SS_converter : Converter
 
       if ( tri->child_r() )
         res->set_child_r( cvt_trisegment(tri->child_r() ) ) ;
+
+      if ( tri->child_t() )
+        res->set_child_t( cvt_trisegment(tri->child_t() ) ) ;
     }
 
     return res ;

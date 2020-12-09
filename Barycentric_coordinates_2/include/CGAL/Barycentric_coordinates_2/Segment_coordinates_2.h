@@ -199,10 +199,10 @@ private:
 // Global functions
 
 /*!
-   \anchor seg_coord_global
  * \relates Segment_coordinates_2
  * This is a global function that takes both vertices of a segment and computes segment coordinates at a given query point with respect to these vertices.
 
+   \anchor seg_coord_global
 \tparam Traits must be a model of the concept `BarycentricTraits_2`.
 
 */
