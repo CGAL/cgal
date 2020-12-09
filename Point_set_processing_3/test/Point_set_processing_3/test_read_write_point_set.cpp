@@ -255,7 +255,48 @@ CGAL_DEF_TEST_POINTS_FUNCTION(XYZ, "xyz")
 CGAL_DEF_TEST_POINTS_FUNCTION(OFF, "off")
 CGAL_DEF_TEST_POINTS_FUNCTION(PLY, "ply")
 #ifdef CGAL_LINKED_WITH_LASLIB
-CGAL_DEF_TEST_POINTS_FUNCTION(LAS, "las")
+void test_points_LAS(const std::string& s)
+{
+  std::cout << "Test points: " << s << " extension: LAS "<< std::endl;
+  std::vector<Point_3> ps;
+  bool ok = CGAL::read_LAS(s, std::back_inserter(ps));
+  assert(ok);
+  ps.clear();
+  ok = CGAL::read_LAS(s.c_str(), std::back_inserter(ps));
+  assert(ok);
+  ps.clear();
+  std::ifstream in(s, std::ios::binary);
+  ok = CGAL::read_LAS(in, std::back_inserter(ps));
+  assert(ok);
+  const char* ext = "las";
+  std::string fname = "tmp.";
+  fname.append(ext);
+  ok = CGAL::write_LAS(fname, ps);
+  assert(ok);
+  ok = CGAL::write_LAS(fname, ps, CGAL::parameters::stream_precision(10));
+  assert(ok);
+  ok = CGAL::write_LAS(fname.c_str(), ps);
+  assert(ok);
+  ok = CGAL::write_LAS(fname.c_str(), ps, CGAL::parameters::stream_precision(10));
+  assert(ok);
+  std::ofstream out(fname, std::ios::binary);
+  ok = CGAL::write_LAS(out, ps);
+  assert(ok);
+  std::ofstream out2(fname, std::ios::binary);
+  ok = CGAL::write_LAS(out2, ps, CGAL::parameters::stream_precision(10));
+  assert(ok);
+  std::vector<Point_3> ps2;
+  std::ifstream is(fname, std::ios::binary);
+  ok = CGAL::read_LAS(is, std::back_inserter(ps2));
+  assert(ok);
+  assert(points_are_equal(ps, ps2));
+  ok = CGAL::write_points(fname, ps2);
+  assert(ok);
+  ps2.clear();
+  ok = CGAL::read_points(fname, std::back_inserter(ps2));
+  assert(ok);
+  assert(points_are_equal(ps, ps2));
+  }
 #endif
 
 #undef CGAL_DEF_INITIALIZE_ID_FUCNTION
