@@ -1387,7 +1387,7 @@ public:
     return std::make_pair(null_pvertex(), null_pvertex());
   }
 
-  bool transfer_vertex (const PVertex& pvertex, const PVertex& pother)
+  bool transfer_pvertex (const PVertex& pvertex, const PVertex& pother)
   {
     std::cout << "*** Transfering " << str(pother) << " through " << str(pvertex) << std::endl;
 

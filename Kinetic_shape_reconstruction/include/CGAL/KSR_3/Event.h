@@ -78,8 +78,11 @@ public:
   m_ivertex(Data_structure::null_ivertex()),
   m_iedge(Data_structure::null_iedge()),
   m_time(time),
-  m_support_plane_idx(m_pvertex.first)
-  { }
+  m_support_plane_idx(m_pvertex.first) {
+
+    CGAL_assertion_msg(is_constrained,
+    "ERROR: THIS EVENT CANNOT EVER HAPPEN IN THE UNCONSTRAINED SETTING!");
+  }
 
   // An event that occurs between a polygon vertex and an intersection graph edge.
   Event(
@@ -95,7 +98,8 @@ public:
   m_time(time),
   m_support_plane_idx(m_pvertex.first) {
 
-    CGAL_assertion_msg(!is_constrained, "TODO: CAN THIS EVENT EVER HAPPEN IN THE CONSTRAINED SETTING?");
+    CGAL_assertion_msg(!is_constrained,
+    "ERROR: THIS EVENT CANNOT EVER HAPPEN IN THE CONSTRAINED SETTING!");
   }
 
   // An event that occurs between a polygon vertex and an intersection graph vertex.
@@ -110,8 +114,11 @@ public:
   m_ivertex(ivertex),
   m_iedge(Data_structure::null_iedge()),
   m_time(time),
-  m_support_plane_idx(m_pvertex.first)
-  { }
+  m_support_plane_idx(m_pvertex.first) {
+
+    CGAL_assertion_msg(is_constrained,
+    "TODO: CAN THIS EVENT EVER HAPPEN IN THE UNCONSTRAINED SETTING?");
+  }
 
   // An event that occurs between two polygon vertices and an intersection graph vertex.
   Event(
@@ -128,7 +135,8 @@ public:
   m_time(time),
   m_support_plane_idx(m_pvertex.first) {
 
-    CGAL_assertion_msg(is_constrained, "TODO: CAN THIS EVENT EVER HAPPEN IN THE UNCONSTRAINED SETTING?");
+    CGAL_assertion_msg(is_constrained,
+    "ERROR: THIS EVENT CANNOT EVER HAPPEN IN THE UNCONSTRAINED SETTING!");
   }
 
   // Data access.

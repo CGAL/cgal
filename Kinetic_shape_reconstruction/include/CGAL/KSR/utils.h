@@ -181,6 +181,32 @@ inline const ResultType intersection(const Type1& t1, const Type2& t2) {
   return out;
 }
 
+template<typename Segment_2>
+const bool are_parallel(
+  const Segment_2& seg1, const Segment_2& seg2) {
+
+  using Traits = typename Kernel_traits<Segment_2>::Kernel;
+  using FT = typename Traits::FT;
+
+  const FT tol = tolerance<FT>();
+  FT m1 = FT(100000), m2 = FT(100000);
+
+  const FT d1 = (seg1.target().x() - seg1.source().x());
+  const FT d2 = (seg2.target().x() - seg2.source().x());
+
+  if (CGAL::abs(d1) > tol)
+    m1 = (seg1.target().y() - seg1.source().y()) / d1;
+  if (CGAL::abs(d2) > tol)
+    m2 = (seg2.target().y() - seg2.source().y()) / d2;
+
+  // return CGAL::parallel(seg1, seg2); // exact version
+
+  if (CGAL::abs(m1 - m2) < tol) { // approximate version
+    return true;
+  }
+  return false;
+}
+
 } // namespace KSR
 } // namespace CGAL
 
