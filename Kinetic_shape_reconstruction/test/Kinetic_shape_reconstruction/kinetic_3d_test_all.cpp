@@ -139,7 +139,7 @@ int main (const int argc, const char** argv) {
 
   std::cout << std::endl << "--OUTPUT STATS:" << std::endl;
   std::cout << "* number of iterations per test: " << num_iters << std::endl;
-  std::cout << "* k intersections: [1, 6]" << std::endl;
+  std::cout << "* k intersections: {1,2,3,4,5,6,100}" << std::endl;
 
   std::cout << std::endl << "ALL " << num_tests << " TESTS SUCCESS!" << std::endl;
   return EXIT_SUCCESS;

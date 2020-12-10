@@ -628,7 +628,8 @@ private:
     const PVertex& pother,
     const Event& event) {
 
-    if (m_data.transfer_pvertex(pvertex, pother)) {
+    CGAL_assertion(m_data.has_iedge(pvertex));
+    if (m_data.transfer_pvertex_via_iedge(pvertex, pother)) {
 
       if (m_data.has_iedge(pvertex)) {
         remove_events(m_data.iedge(pvertex), pvertex.first);
@@ -753,13 +754,14 @@ private:
         }
 
         if (stop) { // polygon stops
-          m_data.crop_polygon(pvertex, pother, iedge);
+          m_data.crop_pedge_along_iedge(pvertex, pother, iedge);
           remove_events(iedge, pvertex.first);
           compute_events_of_pvertices(
             event.time(), std::array<PVertex, 2>{pvertex, pother});
         } else { // polygon continues beyond the edge
           PVertex pv0, pv1;
-          std::tie(pv0, pv1) = m_data.propagate_polygon(m_data.k(pface), pvertex, pother, iedge);
+          std::tie(pv0, pv1) =
+            m_data.propagate_pedge_beyond_iedge(pvertex, pother, iedge, m_data.k(pface));
           remove_events(iedge, pvertex.first);
           compute_events_of_pvertices(
             event.time(), std::array<PVertex, 4>{pvertex, pother, pv0, pv1});
@@ -815,15 +817,16 @@ private:
     }
 
     if (stop) { // polygon stops
-      const PVertex pvnew = m_data.crop_polygon(pvertex, iedge);
+      const PVertex pother =
+        m_data.crop_pvertex_along_iedge(pvertex, iedge);
       remove_events(iedge, pvertex.first);
       compute_events_of_pvertices(
-        event.time(), std::array<PVertex, 2>{pvertex, pvnew});
+        event.time(), std::array<PVertex, 2>{pvertex, pother});
     } else { // polygon continues beyond the edge
-      const std::array<PVertex, 3> pvnew = m_data.propagate_polygon(
-        m_data.k(pface), pvertex, iedge);
+      const std::array<PVertex, 3> pvertices =
+        m_data.propagate_pvertex_beyond_iedge(pvertex, iedge, m_data.k(pface));
       remove_events(iedge, pvertex.first);
-      compute_events_of_pvertices(event.time(), pvnew);
+      compute_events_of_pvertices(event.time(), pvertices);
     }
   }
 
@@ -853,8 +856,7 @@ private:
     std::vector<IEdge> crossed_iedges;
     const std::vector<PVertex> new_pvertices =
       m_data.merge_pvertices_on_ivertex(
-        m_min_time, m_max_time, pvertex,
-        crossed_pvertices, ivertex, crossed_iedges);
+        m_min_time, m_max_time, pvertex, ivertex, crossed_pvertices, crossed_iedges);
 
     // Remove all events of the crossed iedges.
     for (const auto& crossed_iedge : crossed_iedges) {
