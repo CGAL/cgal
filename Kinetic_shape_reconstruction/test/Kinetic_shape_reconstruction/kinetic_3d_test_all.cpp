@@ -51,7 +51,7 @@ const bool run_test(
     std::cout << std::endl << "--INPUT K: " << k << std::endl;
     for (std::size_t iter = 0; iter < num_iters; ++iter) {
       std::cout << std::endl << "--ITERATION #" << iter + 1 << " BEGIN!" << std::endl;
-      KSR ksr;
+      KSR ksr(false, false);
       assert(ksr.partition(input_faces, polygon_map, k));
       ksr.clear();
       std::cout << std::endl << "--ITERATION #" << iter + 1 << " END!" << std::endl;
@@ -61,8 +61,9 @@ const bool run_test(
   std::cout << std::endl << "--INPUT K: " << 100 << std::endl;
   for (std::size_t iter = 0; iter < num_iters; ++iter) {
     std::cout << std::endl << "--ITERATION #" << iter + 1 << " BEGIN!" << std::endl;
-    KSR ksr;
+    KSR ksr(false, false);
     assert(ksr.partition(input_faces, polygon_map, 100));
+    ksr.clear();
     std::cout << std::endl << "--ITERATION #" << iter + 1 << " END!" << std::endl;
   }
 

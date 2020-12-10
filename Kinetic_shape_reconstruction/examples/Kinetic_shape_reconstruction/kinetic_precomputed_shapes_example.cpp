@@ -63,7 +63,7 @@ int main(const int argc, const char** argv) {
   std::cout << "* number of input faces: " << input_faces.size() << std::endl;
 
   // Algorithm.
-  KSR ksr;
+  KSR ksr(true, true);
   const unsigned int k = (argc > 2 ? std::atoi(argv[2]) : 1);
   std::cout << "* input k: " << k << std::endl;
   const Polygon_map polygon_map(input_vertices);
@@ -86,26 +86,26 @@ int main(const int argc, const char** argv) {
   std::cout << "* number of output faces: " << output_faces.size() << std::endl;
 
   // Export.
-  std::cout << std::endl;
-  std::cout << "--- EXPORT: " << std::endl;
+  // std::cout << std::endl;
+  // std::cout << "--- EXPORT: " << std::endl;
 
-  std::string output_filename = "partition-edges.polylines";
-  std::ofstream output_file_edges(output_filename);
-  output_file_edges.precision(20);
-  for (const auto& output_edge : output_edges)
-    output_file_edges << "2 " << output_edge << std::endl;
-  output_file_edges.close();
-  std::cout << "* edges exported successfully" << std::endl;
+  // std::string output_filename = "partition-edges.polylines";
+  // std::ofstream output_file_edges(output_filename);
+  // output_file_edges.precision(20);
+  // for (const auto& output_edge : output_edges)
+  //   output_file_edges << "2 " << output_edge << std::endl;
+  // output_file_edges.close();
+  // std::cout << "* edges exported successfully" << std::endl;
 
-  output_filename = "partition-faces.ply";
-  std::ofstream output_file_faces(output_filename);
-  output_file_faces.precision(20);
-  if (!CGAL::write_PLY(output_file_faces, output_vertices, output_faces)) {
-    std::cerr << "ERROR: can't write to the file " << output_filename << "!" << std::endl;
-    return EXIT_FAILURE;
-  }
-  output_file_faces.close();
-  std::cout << "* faces exported successfully" << std::endl;
+  // output_filename = "partition-faces.ply";
+  // std::ofstream output_file_faces(output_filename);
+  // output_file_faces.precision(20);
+  // if (!CGAL::write_PLY(output_file_faces, output_vertices, output_faces)) {
+  //   std::cerr << "ERROR: can't write to the file " << output_filename << "!" << std::endl;
+  //   return EXIT_FAILURE;
+  // }
+  // output_file_faces.close();
+  // std::cout << "* faces exported successfully" << std::endl;
   std::cout << std::endl << "3D KINETIC DONE!" << std::endl << std::endl;
 
   return EXIT_SUCCESS;

@@ -77,6 +77,10 @@ public:
   using Queue_by_pother_idx  = typename Queue::template nth_index<2>::type;
   using Queue_by_iedge_idx   = typename Queue::template nth_index<3>::type;
 
+  Event_queue(const bool verbose) :
+  m_verbose(verbose)
+  { }
+
   // Size.
   const bool empty() const { return m_queue.empty(); }
   const std::size_t size() const { return m_queue.size(); }
@@ -84,7 +88,7 @@ public:
 
   // Access.
   void push(const Event& event) {
-    std::cout << "** pushing " << event << std::endl;
+    if (m_verbose) std::cout << "** pushing " << event << std::endl;
     m_queue.insert(event);
   }
 
@@ -95,10 +99,15 @@ public:
     const Event event = *event_iterator;
     m_queue.erase(event_iterator);
 
-    if (queue_by_time().begin()->m_time == event.m_time)
-      std::cerr << "WARNING: NEXT EVENT IS HAPPENING AT THE SAME TIME!" << std::endl;
-    else if (CGAL::abs(queue_by_time().begin()->m_time - event.m_time) < 1e-15)
-      std::cerr << "WARNING: NEXT EVENT IS HAPPENING AT ALMOST THE SAME TIME!" << std::endl;
+    if (queue_by_time().begin()->m_time == event.m_time) {
+      if (m_verbose) {
+        std::cerr << "WARNING: NEXT EVENT IS HAPPENING AT THE SAME TIME!" << std::endl;
+      }
+    } else if (CGAL::abs(queue_by_time().begin()->m_time - event.m_time) < 1e-15) {
+      if (m_verbose) {
+        std::cerr << "WARNING: NEXT EVENT IS HAPPENING AT ALMOST THE SAME TIME!" << std::endl;
+      }
+    }
     return event;
   }
 
@@ -117,8 +126,10 @@ public:
       boost::make_tuple(iedge, support_plane_idx));
     const auto pe_range = CGAL::make_range(pe);
 
-    for (const auto& event : pe_range)
-      std::cout << "** erasing (by iedge) " << event << std::endl;
+    if (m_verbose) {
+      for (const auto& event : pe_range)
+        std::cout << "** erasing (by iedge) " << event << std::endl;
+    }
     queue_by_iedge_idx().erase(pe.first, pe.second);
   }
 
@@ -129,16 +140,20 @@ public:
     const auto pv = queue_by_pvertex_idx().equal_range(pvertex);
     const auto pv_range = CGAL::make_range(pv);
 
-    for (const auto& event : pv_range)
-      std::cout << "** erasing (by pvertex) " << event << std::endl;
+    if (m_verbose) {
+      for (const auto& event : pv_range)
+        std::cout << "** erasing (by pvertex) " << event << std::endl;
+    }
     queue_by_pvertex_idx().erase(pv.first, pv.second);
 
     // Erase by pother. TODO: Why is pother here?
     const auto po = queue_by_pother_idx().equal_range(pvertex);
     const auto po_range = CGAL::make_range(po);
 
-    for (const auto& event : po_range)
-      std::cout << "** erasing (by pother) " << event << std::endl;
+    if (m_verbose) {
+      for (const auto& event : po_range)
+        std::cout << "** erasing (by pother) " << event << std::endl;
+    }
     queue_by_pother_idx().erase(po.first, po.second);
   }
 
@@ -161,6 +176,7 @@ public:
 
 private:
   Queue m_queue;
+  const bool m_verbose;
 };
 
 } // namespace KSR_3

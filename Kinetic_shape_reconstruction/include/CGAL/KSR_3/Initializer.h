@@ -52,9 +52,12 @@ private:
   using IVertex = typename Data_structure::IVertex;
 
 public:
-  Initializer(const bool verbose) :
+  Initializer(
+    const bool debug,
+    const bool verbose) :
+  m_debug(debug),
   m_verbose(verbose),
-  m_data(m_verbose)
+  m_data(m_debug)
   { }
 
   template<
@@ -85,8 +88,8 @@ public:
     bounding_box_to_polygons(bbox, bbox_faces);
     add_polygons(input_range, polygon_map, bbox_faces);
 
-    if (m_verbose) {
-      std::cout << "* intersecting input polygons ...";
+    if (m_verbose) std::cout << "* intersecting input polygons ...";
+    if (m_debug) {
       KSR_3::dump(m_data, "init");
       // KSR_3::dump_segmented_edges(m_data, "init");
     }
@@ -96,10 +99,10 @@ public:
     m_data.check_integrity();
     set_k_intersections(k);
 
-    if (m_verbose) {
+    if (m_verbose) std::cout << " done" << std::endl;
+    if (m_debug) {
       KSR_3::dump(m_data, "intersected");
       // KSR_3::dump_segmented_edges(m_data, "intersected");
-      std::cout << " done" << std::endl;
     }
 
     // for (KSR::size_t i = 6; i < m_data.number_of_support_planes(); ++i) {
@@ -132,6 +135,7 @@ public:
   }
 
 private:
+  const bool m_debug;
   const bool m_verbose;
   Data_structure m_data;
 

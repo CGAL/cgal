@@ -1527,13 +1527,13 @@ public:
 
       if (mesh(pedge).target(he) == pvertex.second)
       {
-        // std::cout << "shift target." << std::endl;
+        // std::cout << "shift target" << std::endl;
         CGAL::Euler::shift_target (he, mesh(pedge));
       }
       else
       {
         CGAL_assertion(mesh(pedge).source(he) == pvertex.second);
-        // std::cout << "shift source." << std::endl;
+        // std::cout << "shift source" << std::endl;
         CGAL::Euler::shift_source (he, mesh(pedge));
       }
 
@@ -1656,7 +1656,7 @@ public:
 
     bool was_swapped = false;
     // if (CGAL::orientation(pprev, point_2(support_plane_idx, ivertex), pnext) == CGAL::LEFT_TURN) {
-    //   std::cout << "Swapped!" << std::endl;
+    //   std::cout << "swapped" << std::endl;
     //   was_swapped = true;
     //   std::swap(prev, next);
     //   std::swap(front, back);
@@ -1677,9 +1677,9 @@ public:
       std::cout << "- frozen pvertex: " << str(pvertex) << std::endl;
     }
     // std::cout << point_3(pvertex) << std::endl;
-    // std::cout << "*** Removed vertices:";
+    // std::cout << "removed pvertices:";
 
-    // Join vertices
+    // Join vertices.
     for (std::size_t i = 2; i < pvertices.size() - 1; ++ i)
     {
       // std::cout << " " << str(pvertices[i]) << std::endl;
@@ -1876,7 +1876,7 @@ public:
       }
 
       for (std::size_t i = 0; i < iedges.size(); ++i) {
-        // std::cout << "back saved " << str(iedges[i].first) << std::endl;
+        // std::cout << "back saved: " << str(iedges[i].first) << std::endl;
         Point_2 future_point;
         Vector_2 future_direction;
         compute_future_point_and_direction(
@@ -1981,20 +1981,22 @@ public:
         const std::size_t csize = crossed.size();
         const std::size_t asize = all_crossed.size();
 
-        std::cout << "crossed size: " << csize << std::endl;
-        std::cout << "all_crossed size: " << asize << std::endl;
+        if (m_verbose) {
+          std::cout << "- crossed size: " << csize << std::endl;
+          std::cout << "- all_crossed size: " << asize << std::endl;
+        }
 
         const std::size_t num_extra_faces = asize - csize;
         CGAL_assertion(num_extra_faces > 0);
         if (num_extra_faces == 1) {
 
-          std::cout << "adding extra face!" << std::endl;
+          if (m_verbose) std::cout << "- adding extra face" << std::endl;
           PVertex propagated = find_opposite_pvertex(pvertex, ivertex, all_crossed.back());
           if (propagated == null_pvertex()) {
             CGAL_assertion_msg(false, "TODO: BACK, NULL PROPAGATED CASE!");
           } else {
 
-            std::cout << "propagated: " << point_3(propagated) << std::endl;
+            // std::cout << "propagated: " << point_3(propagated) << std::endl;
             CGAL_assertion(num_extra_faces == 1);
 
             // Old code.
@@ -2009,7 +2011,7 @@ public:
             const auto& mesh = this->mesh(pvertex);
             auto he = mesh.halfedge(pvertex.second, propagated.second);
             const PEdge qpedge(pvertex.first, mesh.edge(he));
-            std::cout << "qpedge: " << segment_3(qpedge) << std::endl;
+            // std::cout << "qpedge: " << segment_3(qpedge) << std::endl;
 
             PFace target_pface = null_pface();
             for (const auto pface : pfaces(pvertex.first)) {
@@ -2050,7 +2052,7 @@ public:
               }
             }
             CGAL_assertion(other_pedge != null_pedge());
-            std::cout << "other pedge: " << segment_3(other_pedge) << std::endl;
+            // std::cout << "other pedge: " << segment_3(other_pedge) << std::endl;
 
             IEdge other_iedge;
             const auto& iedges = support_plane(pvertex).iedges();
@@ -2065,7 +2067,7 @@ public:
               }
             }
             CGAL_assertion(other_iedge != null_iedge());
-            std::cout << "other iedge: " << segment_3(other_iedge) << std::endl;
+            // std::cout << "other iedge: " << segment_3(other_iedge) << std::endl;
 
             CGAL_assertion(m_points.find(std::make_pair(pvertex.first, other_iedge)) != m_points.end());
             CGAL_assertion(m_directions.find(std::make_pair(pvertex.first, other_iedge)) != m_directions.end());
@@ -2074,15 +2076,15 @@ public:
 
             auto tmp = future_direction;
             tmp = KSR::normalize(tmp);
-            std::cout << "future: " << to_3d(pvertex.first, point_2(propagated) + m_current_time * tmp) << std::endl;
+            // std::cout << "future tmp: " << to_3d(pvertex.first, point_2(propagated) + m_current_time * tmp) << std::endl;
 
             const auto before = propagated;
             propagated = add_pvertex(propagated.first, future_point);
             direction(propagated) = future_direction;
             new_vertices.push_back(propagated);
 
-            std::cout << "before: " << point_3(before) << std::endl;
-            std::cout << "propagated: " << point_3(propagated) << std::endl;
+            // std::cout << "before: " << point_3(before) << std::endl;
+            // std::cout << "propagated: " << point_3(propagated) << std::endl;
 
             const PFace pface = pface_of_pvertex(pvertex);
             const PFace new_pface = add_pface(std::array<PVertex, 4>{pvertex, before, propagated, previous});
@@ -2255,7 +2257,7 @@ public:
       }
 
       for (std::size_t i = 0; i < iedges.size(); ++i) {
-        // std::cout << "front saved " << str(iedges[i].first) << std::endl;
+        // std::cout << "front saved: " << str(iedges[i].first) << std::endl;
         Point_2 future_point;
         Vector_2 future_direction;
         compute_future_point_and_direction(
@@ -2360,8 +2362,10 @@ public:
         const std::size_t csize = crossed.size();
         const std::size_t asize = all_crossed.size();
 
-        std::cout << "crossed size: " << csize << std::endl;
-        std::cout << "all_crossed size: " << asize << std::endl;
+        if (m_verbose) {
+          std::cout << "- crossed size: " << csize << std::endl;
+          std::cout << "- all_crossed size: " << asize << std::endl;
+        }
 
         const std::size_t num_extra_faces = asize - csize;
         CGAL_assertion(num_extra_faces != 0);
@@ -2374,7 +2378,7 @@ public:
           const auto& mesh = this->mesh(pvertex);
           auto he = mesh.halfedge(pvertex.second, propagated.second);
           const PEdge qpedge(pvertex.first, mesh.edge(he));
-          std::cout << "qpedge: " << segment_3(qpedge) << std::endl;
+          // std::cout << "qpedge: " << segment_3(qpedge) << std::endl;
 
           PFace target_pface = null_pface();
           for (const auto pface : pfaces(pvertex.first)) {
@@ -2415,7 +2419,7 @@ public:
             }
           }
           CGAL_assertion(other_pedge != null_pedge());
-          std::cout << "other pedge: " << segment_3(other_pedge) << std::endl;
+          // std::cout << "other pedge: " << segment_3(other_pedge) << std::endl;
 
           IEdge other_iedge;
           const auto& iedges = support_plane(pvertex).iedges();
@@ -2430,7 +2434,7 @@ public:
             }
           }
           CGAL_assertion(other_iedge != null_iedge());
-          std::cout << "other iedge: " << segment_3(other_iedge) << std::endl;
+          // std::cout << "other iedge: " << segment_3(other_iedge) << std::endl;
 
           if (!is_occupied(propagated, other_iedge).first) {
             is_ok = false;
@@ -2445,7 +2449,7 @@ public:
           CGAL_assertion(future_directions.size() == asize);
 
           for (std::size_t i = csize; i < asize; ++i) {
-            std::cout << "adding extra face!" << std::endl;
+            if (m_verbose) std::cout << "- adding extra face" << std::endl;
 
             PVertex propagated = find_opposite_pvertex(pvertex, ivertex, all_crossed[i]);
             if (propagated == null_pvertex()) {
@@ -2461,7 +2465,7 @@ public:
 
               // auto tmp = future_direction;
               // tmp = KSR::normalize(tmp);
-              // std::cout << "future: " << to_3d(pvertex.first, pinit + m_current_time * tmp) << std::endl;
+              // std::cout << "future tmp: " << to_3d(pvertex.first, pinit + m_current_time * tmp) << std::endl;
 
               const FT dot_product = future_direction * future_directions[i];
               if (dot_product < FT(0)) {
@@ -2479,7 +2483,7 @@ public:
               direction(propagated) = future_direction;
               new_vertices.push_back(propagated);
 
-              std::cout << "propagated null: " << point_3(propagated) << std::endl;
+              // std::cout << "propagated null: " << point_3(propagated) << std::endl;
               const PFace pface = pface_of_pvertex(pvertex);
               const PFace new_pface = add_pface(std::array<PVertex, 3>{pvertex, previous, propagated});
               this->k(new_pface) = this->k(pface);
@@ -2494,7 +2498,7 @@ public:
 
             } else {
 
-              std::cout << "propagated std: " << point_3(propagated) << std::endl;
+              // std::cout << "propagated std: " << point_3(propagated) << std::endl;
               CGAL_assertion(i == asize - 1);
 
               // Old code!
@@ -2509,7 +2513,7 @@ public:
               const auto& mesh = this->mesh(pvertex);
               auto he = mesh.halfedge(pvertex.second, propagated.second);
               const PEdge qpedge(pvertex.first, mesh.edge(he));
-              std::cout << "qpedge: " << segment_3(qpedge) << std::endl;
+              // std::cout << "qpedge: " << segment_3(qpedge) << std::endl;
 
               PFace target_pface = null_pface();
               for (const auto pface : pfaces(pvertex.first)) {
@@ -2550,7 +2554,7 @@ public:
                 }
               }
               CGAL_assertion(other_pedge != null_pedge());
-              std::cout << "other pedge: " << segment_3(other_pedge) << std::endl;
+              // std::cout << "other pedge: " << segment_3(other_pedge) << std::endl;
 
               IEdge other_iedge;
               const auto& iedges = support_plane(pvertex).iedges();
@@ -2565,7 +2569,7 @@ public:
                 }
               }
               CGAL_assertion(other_iedge != null_iedge());
-              std::cout << "other iedge: " << segment_3(other_iedge) << std::endl;
+              // std::cout << "other iedge: " << segment_3(other_iedge) << std::endl;
 
               // if (!is_occupied(propagated, other_iedge).first) {
               //   break;
@@ -2583,15 +2587,15 @@ public:
 
               auto tmp = future_direction;
               tmp = KSR::normalize(tmp);
-              std::cout << "future: " << to_3d(pvertex.first, point_2(propagated) + m_current_time * tmp) << std::endl;
+              // std::cout << "future tmp: " << to_3d(pvertex.first, point_2(propagated) + m_current_time * tmp) << std::endl;
 
               const auto before = propagated;
               propagated = add_pvertex(propagated.first, future_point);
               direction(propagated) = future_direction;
 
 
-              std::cout << "before: " << point_3(before) << std::endl;
-              std::cout << "propagated: " << point_3(propagated) << std::endl;
+              // std::cout << "before: " << point_3(before) << std::endl;
+              // std::cout << "propagated: " << point_3(propagated) << std::endl;
 
               std::size_t count = 0;
               for (const IVertex& iver : { this->source(other_iedge), this->target(other_iedge) }) {
@@ -2621,7 +2625,7 @@ public:
                 // support_plane(propagated).set_point(propagated.second, future_point);
                 // direction(propagated) = future_direction;
 
-                CGAL_assertion_msg(false, "TODO!");
+                CGAL_assertion_msg(false, "TODO! DOES IT WORK AT ALL?");
               } else {
                 new_vertices.push_back(propagated);
               }
@@ -2631,7 +2635,7 @@ public:
               this->k(new_pface) = this->k(pface);
               previous = propagated;
 
-              // CGAL_assertion_msg(false, "DEBUG THIS CASE!");
+              CGAL_assertion_msg(false, "DEBUG THIS CASE!");
 
               const PEdge pedge(support_plane_idx, support_plane(pvertex).edge(before.second, propagated.second));
               connect(pedge, other_iedge);
@@ -2639,14 +2643,14 @@ public:
               crossed.push_back(other_iedge);
             }
           }
-          // CGAL_assertion_msg(false, "TODO: TEST THIS LOOP!");
+          CGAL_assertion_msg(false, "TODO: TEST THIS LOOP!");
         } else {
 
-          std::cout << "crossed size: " << crossed.size() << std::endl;
-          std::cout << "all crossed size: " << all_crossed.size() << std::endl;
-          for (const auto& iedge : all_crossed) {
-            std::cout << segment_3(iedge) << std::endl;
-          }
+          // std::cout << "crossed size: " << crossed.size() << std::endl;
+          // std::cout << "all crossed size: " << all_crossed.size() << std::endl;
+          // for (const auto& iedge : all_crossed) {
+          //   std::cout << segment_3(iedge) << std::endl;
+          // }
 
           CGAL_assertion_msg(false, "TODO: FRONT, CROSSED < LIMIT, MULTIPLE FACES!");
         }
@@ -2771,7 +2775,7 @@ public:
       CGAL_assertion(future_directions.size() == crossed.size());
 
       for (std::size_t i = 0; i < iedges.size(); ++i) {
-        // std::cout << "open saved " << str(iedges[i].first) << std::endl;
+        // std::cout << "open saved: " << str(iedges[i].first) << std::endl;
         Point_2 future_point;
         Vector_2 future_direction;
         compute_future_point_and_direction(
@@ -2811,7 +2815,7 @@ public:
         direction(cropped) = future_directions.front();
 
         if (m_verbose) {
-          // std::cout << direction(cropped) << std::endl;
+          // std::cout << "direction cropped 1: " << direction(cropped) << std::endl;
           std::cout << "- cropped 1: " << point_3(cropped) << std::endl;
         }
       }
@@ -2858,7 +2862,7 @@ public:
         direction(cropped) = future_directions.back();
 
         if (m_verbose) {
-          // std::cout << direction(cropped) << std::endl;
+          // std::cout << "direction cropped 2: " << direction(cropped) << std::endl;
           std::cout << "- cropped 2: " << point_3(cropped) << std::endl;
         }
       }
@@ -2919,9 +2923,9 @@ public:
         add_new_faces(this->k(pface), pvertex, ivertex, new_vertices, pface, crossed);
         if (m_verbose) std::cout << "- continue back || front" << std::endl;
 
-        // std::cout << "pv pface: "    << str(pface_of_pvertex(pvertex))      << std::endl;
-        // std::cout << "back pface: "  << str(pface_of_pvertex(pvertices[1])) << std::endl;
-        // std::cout << "front pface: " << str(pface_of_pvertex(pvertices[2])) << std::endl;
+        // std::cout << "pv pface: "   << str(pface_of_pvertex(pvertex))      << std::endl;
+        // std::cout << "back pface: " << str(pface_of_pvertex(pvertices[1])) << std::endl;
+        // std::cout << "fron pface: " << str(pface_of_pvertex(pvertices[2])) << std::endl;
         // CGAL_assertion_msg(false, "TEST THIS CASE: BACK || FRONT!");
 
       } else {
@@ -2955,9 +2959,6 @@ public:
         std::cout << " " << str(pv);
       std::cout << std::endl;
     }
-
-    // for (const PVertex& pv : new_vertices)
-    //   std::cout << point_3(pv) << std::endl;
 
     // if (has_iedge(prev) && !is_frozen(prev)) {
     // // if (iedge(prev) != iedge(pvertex)) {
@@ -3486,7 +3487,7 @@ public:
 
     std::cout.precision(20);
     // for (std::size_t i = 0; i < number_of_support_planes(); ++i)
-    //   std::cout << "num faces sp " << i << ": " << pfaces(i).size() << std::endl;
+    //   std::cout << "num pfaces sp " << i << ": " << pfaces(i).size() << std::endl;
 
     check_bbox();
     check_interior();
@@ -4211,9 +4212,9 @@ private:
     if (CGAL::abs(edge_d) > tol)
       m3 = (target_p.y() - source_p.y()) / edge_d;
 
-    // std::cout << "prev slope: "  << m1 << std::endl;
-    // std::cout << "next slope: "  << m2 << std::endl;
-    // std::cout << "iedge slope: " << m3 << std::endl;
+    // std::cout << "prev slope: " << m1 << std::endl;
+    // std::cout << "next slope: " << m2 << std::endl;
+    // std::cout << "iedg slope: " << m3 << std::endl;
 
     if (CGAL::abs(m1 - m3) < tol) {
       if (m_verbose) std::cout << "- prev parallel lines" << std::endl;
@@ -4414,7 +4415,7 @@ private:
 
     // auto tmp = future_direction;
     // tmp = KSR::normalize(tmp);
-    // std::cout << "future: " << to_3d(pvertex.first, pinit + m_current_time * tmp) << std::endl;
+    // std::cout << "future tmp: " << to_3d(pvertex.first, pinit + m_current_time * tmp) << std::endl;
 
     if (m_verbose) {
       std::cout << "- open future point: " <<
