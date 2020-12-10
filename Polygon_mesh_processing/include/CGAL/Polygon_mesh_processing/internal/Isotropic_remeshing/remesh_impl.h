@@ -1881,6 +1881,11 @@ private:
       std::vector< std::vector<Vector_3> > normals_per_patch(max_patch_id+1);
       for(halfedge_descriptor hd : hedges)
       {
+        Halfedge_status s = status(hd);
+
+        if(s != PATCH && s != PATCH_BORDER)
+          continue;
+
         Vector_3 n = compute_normal(face(hd, mesh_));
         if (n == CGAL::NULL_VECTOR) //for degenerate faces
           continue;
