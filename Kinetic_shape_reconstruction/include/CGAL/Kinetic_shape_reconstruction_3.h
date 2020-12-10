@@ -836,7 +836,7 @@ private:
     const Event& event) {
 
     // First, let's gather all pvertices that will get merged.
-    std::vector<PVertex> crossed_pvertices =
+    const std::vector<PVertex> crossed_pvertices =
       m_data.pvertices_around_ivertex(pvertex, ivertex);
 
     if (m_debug) {
