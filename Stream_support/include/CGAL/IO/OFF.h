@@ -47,6 +47,13 @@ namespace CGAL {
 namespace IO {
 namespace internal {
 
+//help fixing conversion warnings without using value_type, which is forbidden by c++20
+template< typename S, typename T>
+void integer_type_converter(S& p1, const T& p2)
+{
+  p1 = static_cast<S>(p2);
+}
+
 template <typename PointRange, typename PolygonRange,
           typename VertexNormalOutputIterator,
           typename VertexColorOutputIterator,
@@ -67,6 +74,7 @@ bool read_OFF(std::istream& is,
   typedef typename Kernel::Vector_3                                                   Normal;
   typedef typename Kernel::FT                                                         FT;
   typedef CGAL::Color                                                                 Color;
+
 
   if(!is.good()){
     if(verbose)
@@ -130,7 +138,7 @@ bool read_OFF(std::istream& is,
         return false;
       }
       if(id < scanner.size_of_vertices())
-        polygons[i][j] = id;
+        integer_type_converter(polygons[i][j], id);
       else
         return false;
     }

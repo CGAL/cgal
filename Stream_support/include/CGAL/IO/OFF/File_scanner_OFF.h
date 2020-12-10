@@ -225,6 +225,11 @@ public:
       }
 
     }
+    else
+    {
+      x=0;
+      y=0;
+    }
   }
 
   void scan_texture(float& x, float& y, float& w)

@@ -107,7 +107,7 @@ bool read_OBJ(std::istream& is,
         {
           const std::size_t n = polygons.back().size();
           ::CGAL::internal::resize(polygons.back(), n + 1);
-          polygons.back()[n] = points.size() + i; // negative indices are relative references
+          polygons.back()[n] = static_cast<int>(points.size()) + i; // negative indices are relative references
           if(i < mini)
             mini = i;
         }
