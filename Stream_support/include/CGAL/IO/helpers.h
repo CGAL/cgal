@@ -20,6 +20,7 @@
 
 #include <boost/mpl/logical.hpp>
 #include <boost/mpl/has_xxx.hpp>
+#include <boost/range/has_range_iterator.hpp>
 
 namespace CGAL {
 namespace IO {
