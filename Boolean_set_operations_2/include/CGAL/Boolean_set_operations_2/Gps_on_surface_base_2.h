@@ -296,7 +296,7 @@ public:
               PolygonWithHolesIterator pgn_with_holes_end);
 
   // test for intersection with a simple polygon
-  bool do_intersect(const Polygon_2& pgn, bool strict = false) const
+  bool do_intersect(const Polygon_2& pgn, bool strict = true) const
   {
     ValidationPolicy::is_valid(pgn, *m_traits);
     Self other(pgn, *m_traits);
@@ -304,7 +304,7 @@ public:
   }
 
   // test for intersection with a polygon with holes
-  bool do_intersect(const Polygon_with_holes_2& pgn_with_holes, bool strict = false) const
+  bool do_intersect(const Polygon_with_holes_2& pgn_with_holes, bool strict = true) const
   {
     ValidationPolicy::is_valid(pgn_with_holes, *m_traits);
     Self other(pgn_with_holes, *m_traits);
@@ -312,7 +312,7 @@ public:
   }
 
   //test for intersection with another Gps_on_surface_base_2 object
-  bool do_intersect(const Self& other, bool strict = false) const
+  bool do_intersect(const Self& other, bool strict = true) const
   {
     if (this->is_empty() || other.is_empty()) return false;
     if (this->is_plane() || other.is_plane()) return true;

@@ -30,6 +30,7 @@ typedef CGAL::Arr_segment_traits_2<Kernel>            Arr_traits;
 typedef CGAL::Gps_traits_2<Arr_traits>                General_traits;
 typedef CGAL::General_polygon_set_2<General_traits>   Gps;
 
+namespace BSO2 = CGAL::Boolean_set_operations_2;
 
 void read_file(std::istream& inp,
                bool& intersect,
@@ -108,7 +109,7 @@ void my_complement(const typename Traits_::Polygon_2& p,
                    Traits_& )
 {
   vec.resize(1);
-  CGAL::complement(p, vec[0]);
+  BSO2::complement(p, vec[0]);
 }
 
 template <class Traits_>
@@ -116,7 +117,7 @@ void my_complement(const typename Traits_::Polygon_with_holes_2& p,
                    std::vector<typename Traits_::Polygon_with_holes_2>& vec,
                    Traits_& )
 {
-  CGAL::complement(p, std::back_inserter(vec));
+  BSO2::complement(p, std::back_inserter(vec));
 }
 
 template <typename Polygon>
@@ -194,28 +195,33 @@ bool test(std::istream& inp, const Polygon1& p1, const Polygon2& p2)
             comp2_res_from_file,
             or_side_from_file);
 
-  if (CGAL::do_intersect (p1, p2) != intersect)
+  if (BSO2::do_intersect (p1, p2) != !intersection_res_from_file.empty())
   {
     std::cout << "do_intersect failed..." << std::endl;
     return false;
   }
+  if (CGAL::do_intersect (p1, p2) != intersect)
+  {
+    std::cout << "unregularized do_intersect failed..." << std::endl;
+    return false;
+  }
   if (inexact_do_intersect (p1, p2) != intersect)
   {
-    std::cout << "do_intersect (inexact kernel) failed..." << std::endl;
+    std::cout << "unregularized do_intersect (inexact kernel) failed..." << std::endl;
     return false;
   }
 
   std::vector<Polygon_with_holes_2>  temp_result;
   std::back_insert_iterator<std::vector<Polygon_with_holes_2> > oi(temp_result);
 
-  CGAL::intersection(p1, p2, oi);
+  BSO2::intersection(p1, p2, oi);
   if (! are_equal(intersection_res_from_file, temp_result))
   {
     std::cout << "intersection 1 failed..." << std::endl;
     return false;
   }
 
-  CGAL::intersection(p2, p1, oi);
+  BSO2::intersection(p2, p1, oi);
   if (! are_equal(intersection_res_from_file, temp_result))
   {
     std::cout << "intersection 2 failed..." << std::endl;
@@ -225,7 +231,7 @@ bool test(std::istream& inp, const Polygon1& p1, const Polygon2& p2)
   Polygon_with_holes_2 join_res;
   bool do_x;
 
-  do_x = CGAL::join(p1, p2, join_res);
+  do_x = BSO2::join(p1, p2, join_res);
   if (do_x != intersect)
   {
     std::cout << "join 11 failed..." << std::endl;
@@ -240,7 +246,7 @@ bool test(std::istream& inp, const Polygon1& p1, const Polygon2& p2)
     }
   }
 
-  do_x = CGAL::join(p2, p1, join_res);
+  do_x = BSO2::join(p2, p1, join_res);
   if (do_x != intersect)
   {
     std::cout << "join 21 failed..." << std::endl;
@@ -255,14 +261,14 @@ bool test(std::istream& inp, const Polygon1& p1, const Polygon2& p2)
     }
   }
 
-  CGAL::difference(p1 ,p2, oi);
+  BSO2::difference(p1 ,p2, oi);
   if (! are_equal(diff1_res_from_file, temp_result))
   {
     std::cout << "diff 1 failed..." << std::endl;
     return false;
   }
 
-  CGAL::difference(p2 ,p1, oi);
+  BSO2::difference(p2 ,p1, oi);
 
   if (! are_equal(diff2_res_from_file, temp_result))
   {
@@ -270,14 +276,14 @@ bool test(std::istream& inp, const Polygon1& p1, const Polygon2& p2)
     return false;
   }
 
-  CGAL::symmetric_difference(p1 ,p2, oi);
+  BSO2::symmetric_difference(p1 ,p2, oi);
   if (! are_equal(symm_diff_res_from_file, temp_result))
   {
     std::cout << "symmetric_difference 1 failed" << std::endl;
     return false;
   }
 
-  CGAL::symmetric_difference(p2 ,p1, oi);
+  BSO2::symmetric_difference(p2 ,p1, oi);
   if (! are_equal(symm_diff_res_from_file, temp_result))
   {
     std::cout << "symmetric_difference 2 failed" << std::endl;
@@ -300,13 +306,13 @@ bool test(std::istream& inp, const Polygon1& p1, const Polygon2& p2)
     return false;
   }
 
-  CGAL::Oriented_side or_side = CGAL::oriented_side(p1, p2);
+  CGAL::Oriented_side or_side = BSO2::oriented_side(p1, p2);
   if (or_side != or_side_from_file) {
     std::cout << "oriented_side 1 failed" << std::endl;
     return false;
   }
 
-  or_side = CGAL::oriented_side(p2, p1);
+  or_side = BSO2::oriented_side(p2, p1);
   if (or_side != or_side_from_file) {
     std::cout << "oriented_side 2 failed" << std::endl;
     return false;

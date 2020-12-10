@@ -30,6 +30,8 @@ typedef CGAL::Arr_segment_traits_2<Kernel>            Arr_traits;
 typedef CGAL::Gps_traits_2<Arr_traits>                General_traits;
 typedef CGAL::General_polygon_set_2<General_traits>   Gps;
 
+namespace BSO2 = CGAL::Boolean_set_operations_2;
+
 template <class Container>
 bool are_equal(const Container& l1, Container& l2)
 {
@@ -118,19 +120,19 @@ bool test_one_file(std::istream& inp)
   std::vector<Polygon_with_holes_2>    temp;
   std::back_insert_iterator<std::vector<Polygon_with_holes_2> > oi(temp);
 
-  CGAL::join(polygons.begin(), polygons.end(), oi);
+  BSO2::join(polygons.begin(), polygons.end(), oi);
   if(! are_equal(join1_res, temp))
   {
     std::cout<<"join failed...\n";
     return false;
   }
-  CGAL::join(polygons_with_holes.begin(), polygons_with_holes.end(), oi);
+  BSO2::join(polygons_with_holes.begin(), polygons_with_holes.end(), oi);
   if(! are_equal(join2_res, temp))
   {
     std::cout<<"join failed...\n";
     return false;
   }
-  CGAL::join(polygons.begin(), polygons.end(),
+  BSO2::join(polygons.begin(), polygons.end(),
              polygons_with_holes.begin(), polygons_with_holes.end(), oi);
   if(! are_equal(join3_res, temp))
   {
@@ -138,19 +140,19 @@ bool test_one_file(std::istream& inp)
     return false;
   }
 
-  CGAL::intersection(polygons.begin(), polygons.end(), oi);
+  BSO2::intersection(polygons.begin(), polygons.end(), oi);
   if(! are_equal(intersection1_res, temp))
   {
     std::cout<<"intersection failed...\n";
     return false;
   }
-  CGAL::intersection(polygons_with_holes.begin(), polygons_with_holes.end(), oi);
+  BSO2::intersection(polygons_with_holes.begin(), polygons_with_holes.end(), oi);
   if(! are_equal(intersection2_res, temp))
   {
     std::cout<<"intersection failed...\n";
     return false;
   }
-  CGAL::intersection(polygons.begin(), polygons.end(),
+  BSO2::intersection(polygons.begin(), polygons.end(),
              polygons_with_holes.begin(), polygons_with_holes.end(), oi);
   if(! are_equal(intersection3_res, temp))
   {
@@ -158,19 +160,19 @@ bool test_one_file(std::istream& inp)
     return false;
   }
 
-  CGAL::symmetric_difference(polygons.begin(), polygons.end(), oi);
+  BSO2::symmetric_difference(polygons.begin(), polygons.end(), oi);
   if(! are_equal(symm_diff1_res, temp))
   {
     std::cout<<"symmetric_difference failed...\n";
     return false;
   }
-  CGAL::symmetric_difference(polygons_with_holes.begin(), polygons_with_holes.end(), oi);
+  BSO2::symmetric_difference(polygons_with_holes.begin(), polygons_with_holes.end(), oi);
   if(! are_equal(symm_diff2_res, temp))
   {
     std::cout<<"symmetric_difference failed...\n";
     return false;
   }
-  CGAL::symmetric_difference(polygons.begin(), polygons.end(),
+  BSO2::symmetric_difference(polygons.begin(), polygons.end(),
              polygons_with_holes.begin(), polygons_with_holes.end(), oi);
   if(! are_equal(symm_diff3_res, temp))
   {

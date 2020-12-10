@@ -23,6 +23,28 @@
 
 namespace CGAL {
 
+/// \name unregularized _do_intersect() functions.
+//@{
+
+template <class Pgn1, class Pgn2, class Traits>
+inline bool _do_intersect(const Pgn1& pgn1, const Pgn2& pgn2, Traits& tr)
+{
+  General_polygon_set_2<Traits> gps(tr);
+  gps.insert(pgn1);
+  return (gps.do_intersect(pgn2, false));
+}
+
+template <class Pgn1, class Pgn2>
+inline bool _do_intersect(const Pgn1& pgn1, const Pgn2& pgn2)
+{
+  typename Gps_default_traits<Pgn1>::Traits    tr;
+  return _do_intersect(pgn1, pgn2, tr);
+}
+
+//@}
+
+namespace Boolean_set_operations_2 {
+
 /// \name _do_intersect() functions.
 //@{
 
@@ -38,7 +60,7 @@ template <class Pgn1, class Pgn2>
 inline bool _do_intersect(const Pgn1& pgn1, const Pgn2& pgn2)
 {
   typename Gps_default_traits<Pgn1>::Traits    tr;
-  return _do_intersect(pgn1, pgn2, tr);
+  return Boolean_set_operations_2::_do_intersect(pgn1, pgn2, tr);
 }
 
 //@}
@@ -197,6 +219,8 @@ void _complement(const Pgn& pgn, Pwh& res)
 }
 
 //@}
+
+} //namespace Boolean_set_operations_2
 
 } //namespace CGAL
 

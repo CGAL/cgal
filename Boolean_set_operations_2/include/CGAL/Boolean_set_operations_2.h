@@ -33,7 +33,7 @@
 
 namespace CGAL {
 
-/// \name do_intersect() functions.
+/// \name unregularized do_intersect() functions.
 //@{
 
 template <class Kernel, class Container>
@@ -96,11 +96,78 @@ inline bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
   return (_do_intersect(pgn1, pgn2, tr));
 }
 
+//@}
+
+namespace Boolean_set_operations_2 {
+
+/// \name do_intersect() functions.
+//@{
+
+template <class Kernel, class Container>
+inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
+                         const Polygon_2<Kernel, Container>& pgn2)
+{
+  return (Boolean_set_operations_2::_do_intersect(pgn1, pgn2));
+}
+
+template <class Kernel, class Container, class Traits>
+inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
+                         const Polygon_2<Kernel, Container>& pgn2,
+                         Traits& tr)
+{
+  return (Boolean_set_operations_2::_do_intersect(pgn1, pgn2, tr));
+}
+
+template <class Kernel, class Container>
+inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
+                         const Polygon_with_holes_2<Kernel, Container>& pgn2)
+{
+  return (Boolean_set_operations_2::_do_intersect(pgn1, pgn2));
+}
+
+template <class Kernel, class Container, class Traits>
+inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
+                         const Polygon_with_holes_2<Kernel, Container>& pgn2,
+                         Traits& tr)
+{
+  return (Boolean_set_operations_2::_do_intersect(pgn1, pgn2, tr));
+}
+
+template <class Kernel, class Container>
+inline bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                         const Polygon_2<Kernel, Container>& pgn2)
+{
+  return (Boolean_set_operations_2::_do_intersect(pgn1, pgn2));
+}
+
+template <class Kernel, class Container, class Traits>
+inline bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                         const Polygon_2<Kernel, Container>& pgn2,
+                         Traits& tr)
+{
+  return (Boolean_set_operations_2::_do_intersect(pgn1, pgn2, tr));
+}
+
+template <class Kernel, class Container>
+inline bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                         const Polygon_with_holes_2<Kernel, Container>& pgn2)
+{
+  return (Boolean_set_operations_2::_do_intersect(pgn1, pgn2));
+}
+
+template <class Kernel, class Container, class Traits>
+inline bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                         const Polygon_with_holes_2<Kernel, Container>& pgn2,
+                         Traits& tr)
+{
+  return (Boolean_set_operations_2::_do_intersect(pgn1, pgn2, tr));
+}
+
 template <class Arr_traits>
 inline bool do_intersect(const General_polygon_2<Arr_traits>& pgn1,
                          const General_polygon_2<Arr_traits>& pgn2)
 {
-  return (_do_intersect(pgn1, pgn2));
+  return (Boolean_set_operations_2::_do_intersect(pgn1, pgn2));
 }
 
 template <class Arr_traits, class Gps_traits>
@@ -108,7 +175,7 @@ inline bool do_intersect(const General_polygon_2<Arr_traits>& pgn1,
                          const General_polygon_2<Arr_traits>& pgn2,
                          Gps_traits& tr)
 {
-  return (_do_intersect(pgn1, pgn2, tr));
+  return (Boolean_set_operations_2::_do_intersect(pgn1, pgn2, tr));
 }
 
 template <class Arr_traits>
@@ -116,7 +183,7 @@ inline bool do_intersect(const General_polygon_2<Arr_traits>& pgn1,
                          const General_polygon_with_holes_2
                                <General_polygon_2<Arr_traits> >& pgn2)
 {
-  return (_do_intersect(pgn1, pgn2));
+  return (Boolean_set_operations_2::_do_intersect(pgn1, pgn2));
 }
 
 template <class Arr_traits, class Gps_traits>
@@ -125,7 +192,7 @@ inline bool do_intersect(const General_polygon_2<Arr_traits>& pgn1,
                                <General_polygon_2<Arr_traits> >& pgn2,
                          Gps_traits& tr)
 {
-  return (_do_intersect(pgn1, pgn2, tr));
+  return (Boolean_set_operations_2::_do_intersect(pgn1, pgn2, tr));
 }
 
 
@@ -135,7 +202,7 @@ inline bool do_intersect(const General_polygon_with_holes_2
                                <General_polygon_2<Arr_traits> >& pgn1,
                          const General_polygon_2<Arr_traits>& pgn2)
 {
-  return (_do_intersect(pgn1, pgn2));
+  return (Boolean_set_operations_2::_do_intersect(pgn1, pgn2));
 }
 
 template <class Arr_traits, class Gps_traits>
@@ -144,14 +211,14 @@ inline bool do_intersect(const General_polygon_with_holes_2
                          const General_polygon_2<Arr_traits>& pgn2,
                          Gps_traits& tr)
 {
-  return (_do_intersect(pgn1, pgn2, tr));
+  return (Boolean_set_operations_2::_do_intersect(pgn1, pgn2, tr));
 }
 
 template <class Polygon_>
 inline bool do_intersect(const General_polygon_with_holes_2<Polygon_>& pgn1,
                          const General_polygon_with_holes_2<Polygon_>& pgn2)
 {
-  return (_do_intersect(pgn1, pgn2));
+  return (Boolean_set_operations_2::_do_intersect(pgn1, pgn2));
 }
 
 template <class Polygon_, class Traits>
@@ -159,7 +226,7 @@ inline bool do_intersect(const General_polygon_with_holes_2<Polygon_>& pgn1,
                          const General_polygon_with_holes_2<Polygon_>& pgn2,
                          Traits& tr)
 {
-  return (_do_intersect(pgn1, pgn2, tr));
+  return (Boolean_set_operations_2::_do_intersect(pgn1, pgn2, tr));
 }
 
 //@}
@@ -1247,6 +1314,7 @@ Oriented_side oriented_side(const typename Polygon_::Point_2& p,
 
 //@}
 
+} //namespace Boolean_set_operations_2
 
 } //namespace CGAL
 
