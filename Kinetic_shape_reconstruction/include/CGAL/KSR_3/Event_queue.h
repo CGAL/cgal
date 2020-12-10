@@ -80,10 +80,11 @@ public:
   // Size.
   const bool empty() const { return m_queue.empty(); }
   const std::size_t size() const { return m_queue.size(); }
+  void clear() { m_queue.clear(); }
 
   // Access.
   void push(const Event& event) {
-    std::cout << "**** Pushing " << event << std::endl;
+    std::cout << "** pushing " << event << std::endl;
     m_queue.insert(event);
   }
 
@@ -95,9 +96,9 @@ public:
     m_queue.erase(event_iterator);
 
     if (queue_by_time().begin()->m_time == event.m_time)
-      std::cerr << "WARNING: next Event is happening at the same time!" << std::endl;
+      std::cerr << "WARNING: NEXT EVENT IS HAPPENING AT THE SAME TIME!" << std::endl;
     else if (CGAL::abs(queue_by_time().begin()->m_time - event.m_time) < 1e-15)
-      std::cerr << "WARNING: next Event is happening at almost the same time!" << std::endl;
+      std::cerr << "WARNING: NEXT EVENT IS HAPPENING AT ALMOST THE SAME TIME!" << std::endl;
     return event;
   }
 
@@ -117,7 +118,7 @@ public:
     const auto pe_range = CGAL::make_range(pe);
 
     for (const auto& event : pe_range)
-      std::cout << "**** Erasing (by iedge) " << event << std::endl;
+      std::cout << "** erasing (by iedge) " << event << std::endl;
     queue_by_iedge_idx().erase(pe.first, pe.second);
   }
 
@@ -129,7 +130,7 @@ public:
     const auto pv_range = CGAL::make_range(pv);
 
     for (const auto& event : pv_range)
-      std::cout << "**** Erasing (by pvertex) " << event << std::endl;
+      std::cout << "** erasing (by pvertex) " << event << std::endl;
     queue_by_pvertex_idx().erase(pv.first, pv.second);
 
     // Erase by pother. TODO: Why is pother here?
@@ -137,7 +138,7 @@ public:
     const auto po_range = CGAL::make_range(po);
 
     for (const auto& event : po_range)
-      std::cout << "**** Erasing (by pother) " << event << std::endl;
+      std::cout << "** erasing (by pother) " << event << std::endl;
     queue_by_pother_idx().erase(po.first, po.second);
   }
 

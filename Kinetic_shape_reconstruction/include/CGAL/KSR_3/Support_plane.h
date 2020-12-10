@@ -146,7 +146,7 @@ public:
       const FT z = normal.z() + (pa.x() - pb.x()) * (pa.y() + pb.y());
       normal = Vector_3(x, y, z);
     }
-    CGAL_assertion_msg(normal != CGAL::NULL_VECTOR, "ERROR: polygon is flat!");
+    CGAL_assertion_msg(normal != CGAL::NULL_VECTOR, "ERROR: POLYGON HAS FLAT BBOX!");
 
     m_data->plane = Plane_3(points[0], KSR::normalize(normal));
 
@@ -405,7 +405,7 @@ public:
           m_data->mesh.face(he), m_data->mesh.face(m_data->mesh.opposite(he)));
       }
     }
-    CGAL_assertion_msg(false, "ERROR: no constrained edge found!");
+    CGAL_assertion_msg(false, "ERROR: NO CONSTRAINED EDGE FOUND!");
     return std::make_pair(Face_index(), Face_index());
   }
 
@@ -415,7 +415,7 @@ public:
       return std::make_pair(
         m_data->mesh.face(he), m_data->mesh.face(m_data->mesh.opposite(he)));
     }
-    CGAL_assertion_msg(false, "ERROR: no constrained edge found!");
+    CGAL_assertion_msg(false, "ERROR: NO CONSTRAINED EDGE FOUND!");
     return std::make_pair(Face_index(), Face_index());
   }
 

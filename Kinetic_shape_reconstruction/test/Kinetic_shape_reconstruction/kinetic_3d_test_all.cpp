@@ -53,6 +53,7 @@ const bool run_test(
       std::cout << std::endl << "--ITERATION #" << iter + 1 << " BEGIN!" << std::endl;
       KSR ksr;
       assert(ksr.partition(input_faces, polygon_map, k));
+      ksr.clear();
       std::cout << std::endl << "--ITERATION #" << iter + 1 << " END!" << std::endl;
     }
   }

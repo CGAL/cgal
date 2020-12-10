@@ -468,7 +468,7 @@ private:
 
     if (!file)
       std::cerr << std::endl <<
-        "ERROR: error saving file " << file_path
+        "ERROR: WHILE SAVING FILE " << file_path
       << "!" << std::endl << std::endl;
 
     file << stream.str();
@@ -590,6 +590,67 @@ void dump_polyhedrons(const DS& data, const std::string tag = std::string()) {
       (tag != std::string() ? tag + "_" : "") + "volume-" + std::to_string(i);
     saver.export_polygon_soup_3(polygons, colors, file_name);
   }
+}
+
+template<typename DS, typename PFace>
+void dump_pface(
+  const DS& data,
+  const PFace& pface,
+  const std::string name) {
+
+  using Kernel = typename DS::Kernel;
+  using Point_3 = typename Kernel::Point_3;
+  std::vector<Point_3> polygon;
+  std::vector< std::vector<Point_3> > polygons;
+  for (const auto pvertex : data.pvertices_of_pface(pface)) {
+    polygon.push_back(data.point_3(pvertex));
+  }
+  polygons.push_back(polygon);
+  Saver<Kernel> saver;
+  saver.export_polygon_soup_3(polygons, "polyhedrons/" + name);
+}
+
+template<typename DS, typename PEdge>
+void dump_pedge(
+  const DS& data,
+  const PEdge& pedge,
+  const std::string name) {
+
+  using Kernel = typename DS::Kernel;
+  using Segment_3 = typename Kernel::Segment_3;
+  const std::vector<Segment_3> segments = { data.segment_3(pedge) };
+  Saver<Kernel> saver;
+  saver.export_segments_3(segments, "polyhedrons/" + name);
+}
+
+template<typename DS, typename PFace, typename PEdge>
+void dump_info(
+  const DS& data,
+  const PFace& pface,
+  const PEdge& pedge,
+  const std::vector<PFace>& nfaces) {
+
+  std::cout << "DEBUG: number of found nfaces: " << nfaces.size() << std::endl;
+  dump_pface(data, pface, "face-curr");
+  dump_pedge(data, pedge, "face-edge");
+  for (std::size_t i = 0; i < nfaces.size(); ++i) {
+    dump_pface(data, nfaces[i], "nface-" + std::to_string(i));
+  }
+}
+
+template<typename Point_3>
+void dump_frame(
+  const std::vector<Point_3>& points,
+  const std::string name) {
+
+  using Kernel = typename Kernel_traits<Point_3>::Kernel;
+  using Segment_3 = typename Kernel::Segment_3;
+  std::vector<Segment_3> segments;
+  segments.reserve(points.size() - 1);
+  for (std::size_t i = 1; i < points.size(); ++i)
+    segments.push_back(Segment_3(points[0], points[i]));
+  Saver<Kernel> saver;
+  saver.export_segments_3(segments, name);
 }
 
 } // namespace KSR_3

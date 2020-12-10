@@ -53,7 +53,8 @@ private:
 
 public:
   Initializer(const bool verbose) :
-  m_verbose(verbose)
+  m_verbose(verbose),
+  m_data(m_verbose)
   { }
 
   template<
@@ -126,6 +127,10 @@ public:
     ds.check_bbox();
   }
 
+  void clear() {
+    m_data.clear();
+  }
+
 private:
   const bool m_verbose;
   Data_structure m_data;
@@ -160,7 +165,7 @@ private:
     }
     if (m_verbose) {
       std::cout << "* bounding box maxp: " <<
-      maxp.x() << "\t, " << maxp.y() << "\t\t, " << maxp.z() << std::endl;
+      maxp.x() << "\t, " << maxp.y() << "\t, " << maxp.z() << std::endl;
     }
   }
 
@@ -284,7 +289,7 @@ private:
     CGAL_assertion(m_data.iedges().size() == 12);
 
     if (m_verbose) {
-      std::cout << "* added bbox faces: " << bbox_faces.size() << std::endl;
+      std::cout << "* inserted bbox faces: " << bbox_faces.size() << std::endl;
     }
   }
 
@@ -303,7 +308,7 @@ private:
     }
     CGAL_assertion(m_data.number_of_support_planes() > 6);
     if (m_verbose) {
-      std::cout << "* added input polygons: " <<  input_range.size() << std::endl;
+      std::cout << "* inserted input polygons: " <<  input_range.size() << std::endl;
     }
   }
 

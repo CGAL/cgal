@@ -64,19 +64,20 @@ private:
   using Bbox_2 = CGAL::Bbox_2;
 
 private:
-  Data_structure m_data;
   Event_queue m_queue;
   FT m_min_time;
   FT m_max_time;
   const bool m_verbose;
   Initializer m_initializer;
+  Data_structure m_data;
 
 public:
   Kinetic_shape_reconstruction_3(const bool verbose = true) :
   m_min_time(-FT(1)),
   m_max_time(-FT(1)),
   m_verbose(verbose),
-  m_initializer(m_verbose)
+  m_initializer(m_verbose),
+  m_data(m_verbose)
   { }
 
   template<
@@ -203,7 +204,16 @@ public:
     CGAL_assertion_msg(false, "TODO: ADD RECONSTRUCTION!");
   }
 
+  void clear() {
+    m_data.clear();
+    m_queue.clear();
+    m_min_time = -FT(1);
+    m_max_time = -FT(1);
+    m_initializer.clear();
+  }
+
 private:
+
   const bool initialize_queue() {
     std::cout << "* initializing queue for events in [" <<
     m_min_time << ";" << m_max_time << "]" << std::endl;
@@ -516,12 +526,14 @@ private:
 
       const Event event = m_queue.pop();
       const FT current_time = event.time();
-      if (iteration < 10) {
-        dump(m_data, "iter_0" + std::to_string(iteration));
-        dump_event(m_data, event, "iter_0" + std::to_string(iteration));
-      } else {
-        dump(m_data, "iter_" + std::to_string(iteration));
-        dump_event(m_data, event, "iter_" + std::to_string(iteration));
+      if (m_verbose) {
+        if (iteration < 10) {
+          dump(m_data, "iter_0" + std::to_string(iteration));
+          dump_event(m_data, event, "iter_0" + std::to_string(iteration));
+        } else {
+          dump(m_data, "iter_" + std::to_string(iteration));
+          dump_event(m_data, event, "iter_" + std::to_string(iteration));
+        }
       }
 
       m_data.update_positions(current_time);
@@ -691,37 +703,37 @@ private:
         // std::tie(collision_other, bbox_reached_other) = m_data.is_occupied(pother, iedge);
 
         if (m_verbose) {
-          std::cout << "* collision/bbox: " << collision << "/" << bbox_reached << std::endl;
-          std::cout << "* other/bbox: " << collision_other << "/" << bbox_reached_other << std::endl;
-          std::cout << "* k intersections before: " << m_data.k(pface) << std::endl;
+          std::cout << "- collision/bbox: " << collision << "/" << bbox_reached << std::endl;
+          std::cout << "- other/bbox: " << collision_other << "/" << bbox_reached_other << std::endl;
+          std::cout << "- k intersections befor: " << m_data.k(pface) << std::endl;
         }
 
         bool stop = false;
         if (bbox_reached) {
 
           CGAL_assertion(bbox_reached_other);
-          if (m_verbose) std::cout << "* pv po bbox" << std::endl;
+          if (m_verbose) std::cout << "- pv po bbox" << std::endl;
           stop = true;
 
         } else if (bbox_reached_other) {
 
           CGAL_assertion(bbox_reached);
-          if (m_verbose) std::cout << "* po pv bbox" << std::endl;
+          if (m_verbose) std::cout << "- po pv bbox" << std::endl;
           stop = true;
 
         } else if ((collision || collision_other) && m_data.k(pface) == 1) {
 
-          if (m_verbose) std::cout << "* pv po k stop" << std::endl;
+          if (m_verbose) std::cout << "- pv po k stop" << std::endl;
           stop = true;
 
         } else if ((collision || collision_other) && m_data.k(pface) > 1) {
 
-          if (m_verbose) std::cout << "* pv po k continue" << std::endl;
+          if (m_verbose) std::cout << "- pv po k continue" << std::endl;
           m_data.k(pface)--;
 
         } else {
 
-          if (m_verbose) std::cout << "* pv po continue" << std::endl;
+          if (m_verbose) std::cout << "- pv po continue" << std::endl;
           CGAL_assertion(m_data.iedge(pvertex) == m_data.iedge(pother));
           if (m_data.is_occupied(pvertex, iedge).first) {
             CGAL_assertion_msg(false,
@@ -732,7 +744,7 @@ private:
         CGAL_assertion(m_data.k(pface) >= 1);
         if (m_verbose) {
           // std::cout << "PFACE: " << m_data.centroid_of_pface(pface) << std::endl;
-          std::cout << "* k intersections after: " << m_data.k(pface) << std::endl;
+          std::cout << "- k intersections after: " << m_data.k(pface) << std::endl;
         }
 
         if (stop) { // polygon stops
@@ -767,34 +779,34 @@ private:
     // std::tie(collision, bbox_reached) = m_data.is_occupied(pvertex, iedge);
 
     if (m_verbose) {
-      std::cout << "* collision/bbox: " << collision << "/" << bbox_reached << std::endl;
-      std::cout << "* k intersections before: " << m_data.k(pface) << std::endl;
+      std::cout << "- collision/bbox: " << collision << "/" << bbox_reached << std::endl;
+      std::cout << "- k intersections befor: " << m_data.k(pface) << std::endl;
     }
 
     bool stop = false;
     if (bbox_reached) {
 
-      if (m_verbose) std::cout << "* pv k bbox" << std::endl;
+      if (m_verbose) std::cout << "- pv k bbox" << std::endl;
       stop = true;
 
     } else if (collision && m_data.k(pface) == 1) {
 
-      if (m_verbose) std::cout << "* pv k stop" << std::endl;
+      if (m_verbose) std::cout << "- pv k stop" << std::endl;
       stop = true;
 
     } else if (collision && m_data.k(pface) > 1) {
 
-      if (m_verbose) std::cout << "* pv k continue" << std::endl;
+      if (m_verbose) std::cout << "- pv k continue" << std::endl;
       m_data.k(pface)--;
 
     } else {
-      if (m_verbose) std::cout << "* pv continue" << std::endl;
+      if (m_verbose) std::cout << "- pv continue" << std::endl;
     }
 
     CGAL_assertion(m_data.k(pface) >= 1);
     if (m_verbose) {
       // std::cout << "PFACE: " << m_data.centroid_of_pface(pface) << std::endl;
-      std::cout << "* k intersections after: " << m_data.k(pface) << std::endl;
+      std::cout << "- k intersections after: " << m_data.k(pface) << std::endl;
     }
 
     if (stop) { // polygon stops
@@ -820,12 +832,11 @@ private:
       m_data.pvertices_around_ivertex(pvertex, ivertex);
 
     if (m_verbose) {
-      std::cout << "* crossed pvertices: " << std::endl;
+      std::cout << "- found " << crossed_pvertices.size() <<
+      " pvertices ready to be merged: " << std::endl;
       for (const auto& crossed_pvertex : crossed_pvertices) {
         std::cout << m_data.point_3(crossed_pvertex) << std::endl;
       }
-      std::cout << std::endl << "* found " << crossed_pvertices.size() <<
-      " crossed pvertices ready to be merged!" << std::endl;
     }
 
     // Remove associated events.
@@ -834,7 +845,6 @@ private:
     }
 
     // Merge them and get the newly created pvertices.
-    // std::cout << "came from: " << m_data.segment_3(m_data.iedge(pvertex)) << std::endl;
     std::vector<IEdge> crossed_iedges;
     const std::vector<PVertex> new_pvertices =
       m_data.merge_pvertices_on_ivertex(

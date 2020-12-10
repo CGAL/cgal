@@ -229,7 +229,7 @@ public:
     Edge_descriptor sedge;
     std::tie(sedge, is_inserted) = boost::add_edge(source, vertex, m_graph);
     if (!is_inserted) {
-      std::cerr << segment_3(edge) << " " << point_3(vertex) << std::endl;
+      std::cerr << "WARNING: " << segment_3(edge) << " " << point_3(vertex) << std::endl;
     }
     CGAL_assertion(is_inserted);
     m_graph[sedge] = prop;
@@ -237,7 +237,7 @@ public:
     Edge_descriptor tedge;
     std::tie(tedge, is_inserted) = boost::add_edge(vertex, target, m_graph);
     if (!is_inserted) {
-      std::cerr << segment_3(edge) << " " << point_3(vertex) << std::endl;
+      std::cerr << "WARNING: " << segment_3(edge) << " " << point_3(vertex) << std::endl;
     }
     CGAL_assertion(is_inserted);
     m_graph[tedge] = prop;

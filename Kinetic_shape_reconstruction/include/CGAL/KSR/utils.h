@@ -177,7 +177,7 @@ inline const ResultType intersection(const Type1& t1, const Type2& t2) {
 
   ResultType out;
   const bool is_intersection_found = intersection(t1, t2, out);
-  CGAL_assertion_msg(is_intersection_found, "ERROR: intersection is not found!");
+  CGAL_assertion_msg(is_intersection_found, "ERROR: INTERSECTION IS NOT FOUND!");
   return out;
 }
 
