@@ -1004,12 +1004,11 @@ template<typename C3t3>
 void check_surface_patch_indices(const C3t3& c3t3)
 {
   typedef typename C3t3::Vertex_handle Vertex_handle;
-  typedef typename C3t3::Surface_patch_index Surface_patch_index;
   for (Vertex_handle v : c3t3.triangulation().finite_vertex_handles())
   {
     if (v->in_dimension() != 2)
       continue;
-    CGAL_assertion(surface_patch_index(v, c3t3) != Surface_patch_index());
+    CGAL_assertion(surface_patch_index(v, c3t3) != typename C3t3::Surface_patch_index());
   }
 }
 
