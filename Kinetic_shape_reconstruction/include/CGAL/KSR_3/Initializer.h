@@ -328,8 +328,8 @@ private:
         continue;
       }
 
-      const auto pair = map_p2vv.insert(std::make_pair(
-        key, std::make_pair(ivertex, IVertex())));
+      const auto pair = map_p2vv.insert(
+        std::make_pair(key, std::make_pair(ivertex, IVertex())));
       const bool is_inserted = pair.second;
       if (!is_inserted) {
         pair.first->second.second = ivertex;

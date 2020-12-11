@@ -102,51 +102,74 @@ public:
 
   void split_support_plane(const KSR::size_t support_plane_idx) {
 
-    // First, insert polygons.
-    for (const auto pvertex : m_data.pvertices(support_plane_idx)) {
+    // Create cdt.
+    std::vector<KSR::size_t> original_input;
+    std::vector< std::vector<Point_2> > original_faces;
+    initialize_cdt(support_plane_idx, original_input, original_faces);
+    tag_cdt_exterior_faces();
+    tag_cdt_interior_faces();
+    dump(false, support_plane_idx);
+
+    // Split polygons using cdt.
+    m_data.clear_polygon_faces(support_plane_idx);
+    initialize_new_pfaces(support_plane_idx, original_input, original_faces);
+
+    // Set intersection adjacencies.
+    reconnect_pvertices_to_ivertices();
+    reconnect_pedges_to_iedges();
+    set_new_adjacencies(support_plane_idx);
+  }
+
+private:
+
+  void initialize_cdt(
+    const KSR::size_t support_plane_idx,
+    std::vector<KSR::size_t>& original_input,
+    std::vector< std::vector<Point_2> >& original_faces) {
+
+    // Insert pvertices.
+    std::map<PVertex, Vertex_handle> vhs_map;
+    const auto all_pvertices = m_data.pvertices(support_plane_idx);
+    for (const auto pvertex : all_pvertices) {
       const auto vh = m_cdt.insert(m_data.point_2(pvertex));
       vh->info().pvertex = pvertex;
       m_input.insert(pvertex);
+      vhs_map[pvertex] = vh;
     }
 
-    std::vector< std::vector<Point_2> > original_faces;
-    std::vector<KSR::size_t> original_input;
-    std::vector<Point_2> original_centroids;
+    // Insert pfaces and the corresponding constraints.
+    original_faces.clear();
+    original_input.clear();
 
-    std::vector<Point_2> points;
-    std::vector<Triangle_2> triangles;
-    for (const PFace pface : m_data.pfaces(support_plane_idx)) {
+    // std::vector<Vertex_handle> vhs;
+    std::vector<Point_2> original_face;
+    const auto all_pfaces = m_data.pfaces(support_plane_idx);
+    for (const auto pface : all_pfaces) {
+      const auto pvertices = m_data.pvertices_of_pface(pface);
 
-      points.clear();
-      for (const auto pvertex : m_data.pvertices_of_pface(pface)) {
-        points.push_back(m_data.point_2(pvertex));
+      // vhs.clear();
+      original_face.clear();
+      for (const auto pvertex : pvertices) {
+        CGAL_assertion(vhs_map.find(pvertex) != vhs_map.end());
+        const auto vh = vhs_map.at(pvertex);
+        original_face.push_back(vh->point());
+        // vhs.push_back(vh);
       }
 
-      original_faces.push_back(points);
+      original_faces.push_back(original_face);
       original_input.push_back(m_data.input(pface));
 
-      triangles.clear();
-      CDT tri;
-      for (const auto& point : points) {
-        tri.insert(point);
-      }
-      triangles.reserve(tri.number_of_faces());
-
-      for (auto fit = tri.finite_faces_begin(); fit != tri.finite_faces_end(); ++fit) {
-        triangles.push_back(Triangle_2(
-            fit->vertex(0)->point(), fit->vertex(1)->point(), fit->vertex(2)->point()));
-      }
-      const auto centroid = CGAL::centroid(triangles.begin(), triangles.end());
-      original_centroids.push_back(centroid);
-
-      points.push_back(points.front());
-      const auto cid = m_cdt.insert_constraint(points.begin(), points.end());
+      // TODO: Why we cannot use vhs directly here? That should be more precise!
+      // vhs.push_back(vhs.front());
+      // const auto cid = m_cdt.insert_constraint(vhs.begin(), vhs.end());
+      original_face.push_back(original_face.front());
+      const auto cid = m_cdt.insert_constraint(original_face.begin(), original_face.end());
       m_map_intersections.insert(std::make_pair(cid, Data_structure::null_iedge()));
     }
 
     // Then, add intersection vertices + constraints.
-    for (const auto& iedge : m_data.iedges(support_plane_idx)) {
-
+    const auto& iedges = m_data.iedges(support_plane_idx);
+    for (const auto& iedge : iedges) {
       const auto source = m_data.source(iedge);
       const auto target = m_data.target(iedge);
 
@@ -158,12 +181,14 @@ public:
       const auto cid = m_cdt.insert_constraint(vsource, vtarget);
       m_map_intersections.insert(std::make_pair(cid, iedge));
     }
+  }
 
-    // Tag external faces.
+  // All exterior faces are tagged by KSR::no_element().
+  void tag_cdt_exterior_faces() {
+
     std::queue<Face_handle> todo;
     todo.push(m_cdt.incident_faces(m_cdt.infinite_vertex()));
     while (!todo.empty()) {
-
       const auto fh = todo.front();
       todo.pop();
       if (fh->info().index != KSR::uninitialized()) {
@@ -171,23 +196,58 @@ public:
       }
       fh->info().index = KSR::no_element();
 
-      for (int i = 0; i < 3; ++i) {
+      for (std::size_t i = 0; i < 3; ++i) {
         const auto next = fh->neighbor(i);
-        const bool is_on_border = is_border(std::make_pair(fh, i));
-        if (!is_on_border) {
+        const auto edge = std::make_pair(fh, i);
+        const bool is_border_edge = is_border(edge);
+        if (!is_border_edge) {
           todo.push(next);
         }
       }
     }
+    CGAL_assertion(todo.size() == 0);
+  }
+
+  const bool is_border(const Edge& edge) const {
+
+    if (!m_cdt.is_constrained(edge)) {
+      return false;
+    }
+
+    const std::size_t im = (edge.second + 2) % 3;
+    const std::size_t ip = (edge.second + 1) % 3;
+
+    const auto vm = edge.first->vertex(im);
+    const auto vp = edge.first->vertex(ip);
+
+    const auto ctx_begin = m_cdt.contexts_begin(vp, vm);
+    const auto ctx_end = m_cdt.contexts_end(vp, vm);
+
+    for (auto cit = ctx_begin; cit != ctx_end; ++cit) {
+      const auto iter = m_map_intersections.find(cit->id());
+      if (iter == m_map_intersections.end()) {
+        continue;
+      }
+      if (iter->second == Data_structure::null_iedge()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // All enterior faces are tagged by face_index.
+  void tag_cdt_interior_faces() {
 
     KSR::size_t face_index = 0;
+    std::queue<Face_handle> todo;
     for (auto fit = m_cdt.finite_faces_begin(); fit != m_cdt.finite_faces_end(); ++fit) {
+      CGAL_assertion(todo.size() == 0);
       if (fit->info().index != KSR::uninitialized()) {
         continue;
       }
 
       todo.push(fit);
-      KSR::size_t nb_faces = 0;
+      KSR::size_t num_faces = 0;
       while (!todo.empty()) {
         const auto fh = todo.front();
         todo.pop();
@@ -195,107 +255,131 @@ public:
           continue;
         }
         fh->info().index = face_index;
-        ++nb_faces;
+        ++num_faces;
 
-        for (int i = 0; i < 3; ++i) {
+        for (std::size_t i = 0; i < 3; ++i) {
           const auto next = fh->neighbor(i);
-          const bool is_constrained = m_cdt.is_constrained(std::make_pair(fh, i));
-          if (!is_constrained) {
+          const auto edge = std::make_pair(fh, i);
+          const bool is_constrained_edge = m_cdt.is_constrained(edge);
+          if (!is_constrained_edge) {
             todo.push(next);
           }
         }
       }
       ++face_index;
+      CGAL_assertion(todo.size() == 0);
     }
+  }
 
-    // dump(support_plane_idx);
-    m_data.clear_polygon_faces(support_plane_idx);
+  void initialize_new_pfaces(
+    const KSR::size_t support_plane_idx,
+    const std::vector<KSR::size_t>& original_input,
+    const std::vector< std::vector<Point_2> >& original_faces) {
 
     std::set<KSR::size_t> done;
     for (auto fit = m_cdt.finite_faces_begin(); fit != m_cdt.finite_faces_end(); ++fit) {
       CGAL_assertion(fit->info().index != KSR::uninitialized());
-      if (fit->info().index == KSR::no_element()) {
+      if (fit->info().index == KSR::no_element()) { // skip exterior faces
         continue;
       }
 
+      // Search for a constrained edge.
       Edge edge;
-      for (int i = 0; i < 3; ++i) {
+      for (std::size_t i = 0; i < 3; ++i) {
         edge = std::make_pair(fit, i);
         if (m_cdt.is_constrained(edge)) {
           break;
         }
       }
 
+      // Skip pure interior faces.
       if (!m_cdt.is_constrained(edge)) {
         continue;
       }
 
-      if (!done.insert(edge.first->info().index).second) {
+      // If face index is already a part of the set, skip.
+      const auto fh = edge.first;
+      if (!done.insert(fh->info().index).second) {
         continue;
       }
 
-      std::vector<PVertex> new_vertices;
-      auto current = edge;
+      // Start from the constrained edge and traverse all constrained edges / boundary
+      // of the triangulation part that is tagged with the same face index.
+      // While traversing, add all missing pvertices.
+      auto curr = edge;
+      std::vector<PVertex> new_pvertices;
       do {
-        const auto face = current.first;
-        const int idx = current.second;
+        const auto curr_face = curr.first;
+        const int idx = curr.second;
 
-        const auto source = face->vertex(m_cdt.ccw(idx));
-        const auto target = face->vertex(m_cdt.cw(idx));
+        const auto source = curr_face->vertex(m_cdt.ccw(idx));
+        const auto target = curr_face->vertex(m_cdt.cw (idx));
         if (source->info().pvertex == Data_structure::null_pvertex()) {
-          source->info().pvertex = m_data.add_pvertex(
-            support_plane_idx, source->point());
+          source->info().pvertex =
+            m_data.add_pvertex(support_plane_idx, source->point());
         }
-        new_vertices.push_back(source->info().pvertex);
+        new_pvertices.push_back(source->info().pvertex);
 
-        auto next = std::make_pair(face, m_cdt.ccw(idx));
+        // Search for the next constrained edge.
+        auto next = std::make_pair(curr_face, m_cdt.ccw(idx));
         while (!m_cdt.is_constrained(next)) {
 
           const auto next_face = next.first->neighbor(next.second);
+          // Should be the same original polygon.
           CGAL_assertion(next_face->info().index == edge.first->info().index);
 
           const int next_idx = m_cdt.ccw(next_face->index(next.first));
           next = std::make_pair(next_face, next_idx);
         }
+        // Check wether next source == previous target.
         CGAL_assertion(next.first->vertex(m_cdt.ccw(next.second)) == target);
-        current = next;
+        curr = next;
 
-      } while (current != edge);
+      } while (curr != edge);
+      CGAL_assertion(curr == edge);
 
-      const auto pface = m_data.add_pface(new_vertices);
+      // Add a new pface.
+      const auto pface = m_data.add_pface(new_pvertices);
       CGAL_assertion(pface != PFace());
 
       std::size_t original_idx = 0;
       if (original_faces.size() != 1) {
         // TODO: locate centroid of the face among the different
         // original faces to recover the input index.
-        CGAL_assertion_msg(false, "TODO: FINISH THE CASE WITH THE ONE ORIGINAL FACE IN THE POLYGON SPLITTER!");
+        CGAL_assertion_msg(false,
+        "TODO: POLYGON SPLITTER, FIX CASE WITH MULTIPLE ORIGINAL FACES!");
       }
       m_data.input(pface) = original_input[original_idx];
     }
+  }
 
-    // Set intersection adjacencies.
+  void reconnect_pvertices_to_ivertices() {
+
+    // Reconnect only those, which have already been connected.
     for (auto vit = m_cdt.finite_vertices_begin(); vit != m_cdt.finite_vertices_end(); ++vit) {
       if (vit->info().pvertex != Data_structure::null_pvertex() &&
           vit->info().ivertex != Data_structure::null_ivertex()) {
-
         m_data.connect(vit->info().pvertex, vit->info().ivertex);
       }
     }
+  }
 
-    for (const auto& m : m_map_intersections) {
-      if (m.second == Data_structure::null_iedge()) {
+  void reconnect_pedges_to_iedges() {
+
+    // Reconnect only those, which have already been connected.
+    for (const auto& item : m_map_intersections) {
+      const auto& cid   = item.first;
+      const auto& iedge = item.second;
+
+      if (iedge == Data_structure::null_iedge()) {
         continue;
       }
+      CGAL_assertion(iedge != Data_structure::null_iedge());
 
-      auto vit = m_cdt.vertices_in_constraint_begin(m.first);
+      auto vit = m_cdt.vertices_in_constraint_begin(cid);
       while (true) {
-        auto next = vit;
-        ++next;
-        if (next == m_cdt.vertices_in_constraint_end(m.first)) {
-          break;
-        }
-
+        auto next = vit; ++next;
+        if (next == m_cdt.vertices_in_constraint_end(cid)) { break; }
         const auto a = *vit;
         const auto b = *next;
         vit = next;
@@ -305,21 +389,33 @@ public:
           b->info().pvertex == Data_structure::null_pvertex()) {
           continue;
         }
-        m_data.connect(a->info().pvertex, b->info().pvertex, m.second);
+        CGAL_assertion(a->info().pvertex != Data_structure::null_pvertex());
+        CGAL_assertion(b->info().pvertex != Data_structure::null_pvertex());
+        m_data.connect(a->info().pvertex, b->info().pvertex, iedge);
       }
     }
+  }
 
-    for (const auto pvertex : m_data.pvertices(support_plane_idx)) {
-      bool frozen = false;
+  void set_new_adjacencies(
+    const KSR::size_t support_plane_idx) {
+
+    const auto all_pvertices = m_data.pvertices(support_plane_idx);
+    for (const auto pvertex : all_pvertices) {
+
+      bool is_frozen = false;
       auto iedge = Data_structure::null_iedge();
-      std::pair<PVertex, PVertex> neighbors(Data_structure::null_pvertex(), Data_structure::null_pvertex());
+      std::pair<PVertex, PVertex> neighbors(
+        Data_structure::null_pvertex(), Data_structure::null_pvertex());
 
-      for (const auto pedge : m_data.pedges_around_pvertex(pvertex)) {
+      // Search for a frozen pvertex.
+      const auto pedges = m_data.pedges_around_pvertex(pvertex);
+      for (const auto pedge : pedges) {
+
         if (m_data.has_iedge(pedge)) {
           if (iedge == Data_structure::null_iedge()) {
             iedge = m_data.iedge(pedge);
           } else {
-            frozen = true;
+            is_frozen = true;
             break;
           }
         } else {
@@ -333,13 +429,13 @@ public:
         }
       }
 
-      // Several incident intersections = frozen vertex.
-      if (frozen) {
+      // Several incident intersections = frozen pvertex.
+      if (is_frozen) {
         m_data.direction(pvertex) = CGAL::NULL_VECTOR;
         continue;
       }
 
-      // No intersection incident = keep initial direction.
+      // No incident intersections = keep initial direction.
       if (iedge == Data_structure::null_iedge()) {
         continue;
       }
@@ -348,44 +444,39 @@ public:
         neighbors.first  != Data_structure::null_pvertex() &&
         neighbors.second != Data_structure::null_pvertex());
 
+      // Set future direction.
       bool first_okay = (m_input.find(neighbors.first) != m_input.end());
-      auto latest = pvertex;
-      auto current = neighbors.first;
+      auto last = pvertex;
+      auto curr = neighbors.first;
       while (!first_okay) {
-        const auto pair = m_data.border_prev_and_next(current);
-        auto next = pair.first;
-        auto ignored = pair.second;
-
-        if (next == latest) {
+        PVertex next, ignored;
+        std::tie(next, ignored) = m_data.border_prev_and_next(curr);
+        if (next == last) {
           std::swap(next, ignored);
         }
-        CGAL_assertion(ignored == latest);
+        CGAL_assertion(ignored == last);
 
-        latest = current;
-        current = next;
-        if (m_input.find(current) != m_input.end()) {
-          neighbors.first = current;
+        last = curr; curr = next;
+        if (m_input.find(curr) != m_input.end()) {
+          neighbors.first = curr;
           first_okay = true;
         }
       }
 
       bool second_okay = (m_input.find(neighbors.second) != m_input.end());
-      latest = pvertex;
-      current = neighbors.second;
+      last = pvertex;
+      curr = neighbors.second;
       while (!second_okay) {
-        const auto pair = m_data.border_prev_and_next(current);
-        auto next = pair.first;
-        auto ignored = pair.second;
-
-        if (next == latest) {
+        PVertex next, ignored;
+        std::tie(next, ignored) = m_data.border_prev_and_next(curr);
+        if (next == last) {
           std::swap(next, ignored);
         }
-        CGAL_assertion(ignored == latest);
+        CGAL_assertion(ignored == last);
 
-        latest = current;
-        current = next;
-        if (m_input.find(current) != m_input.end()) {
-          neighbors.second = current;
+        last = curr; curr = next;
+        if (m_input.find(curr) != m_input.end()) {
+          neighbors.second = curr;
           second_okay = true;
         }
       }
@@ -398,32 +489,10 @@ public:
     }
   }
 
-private:
-  const bool is_border(
-    const std::pair<Face_handle, int>& edge) const {
-
-    if (!m_cdt.is_constrained(edge)) {
-      return false;
-    }
-
-    for (auto cit = m_cdt.contexts_begin(
-      edge.first->vertex((edge.second + 1) % 3), edge.first->vertex((edge.second + 2) % 3));
-      cit != m_cdt.contexts_end(
-      edge.first->vertex((edge.second + 1) % 3), edge.first->vertex((edge.second + 2) % 3));
-      ++cit) {
-
-      const auto iter = m_map_intersections.find(cit->id());
-      if (iter == m_map_intersections.end()) {
-        continue;
-      }
-      if (iter->second == Data_structure::null_iedge()) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  void dump(const KSR::size_t support_plane_idx) {
+  void dump(
+    const bool dump_data,
+    const KSR::size_t support_plane_idx) {
+    if (!dump_data) return;
 
     Mesh_3 mesh;
     Uchar_map red   = mesh.template add_property_map<Face_index, unsigned char>("red", 0).first;

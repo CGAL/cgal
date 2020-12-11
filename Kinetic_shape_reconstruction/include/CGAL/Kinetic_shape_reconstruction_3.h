@@ -118,7 +118,10 @@ public:
       input_range, polygon_map, k, enlarge_bbox_ratio, reorient));
     m_initializer.convert(m_data);
 
-    // std::cout << std::endl << "POLYGON SPLITTER SUCCESS!" << std::endl << std::endl;
+    // if (m_verbose) {
+    //   std::cout << std::endl << "POLYGON SPLITTER SUCCESS!" << std::endl << std::endl;
+    // }
+    // return true;
     // exit(EXIT_SUCCESS);
 
     if (m_verbose) {
