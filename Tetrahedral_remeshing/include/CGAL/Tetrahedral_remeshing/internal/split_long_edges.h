@@ -53,7 +53,7 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
     (point(v1->point()), point(v2->point()));
 
   //backup subdomain info of incident cells before making changes
-  short dimension;
+  short dimension = 0;
   if(c3t3.is_in_complex(e))
     dimension = 1;
   else
@@ -66,6 +66,7 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
     else
       CGAL_assertion(false);//e should be in complex
   }
+  CGAL_assertion(dimension > 0);
 
   boost::unordered_map<Facet, Subdomain_index> cells_info;
   boost::unordered_map<Facet, std::pair<Vertex_handle, Surface_patch_index> > facets_info;
