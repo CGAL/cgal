@@ -1,4 +1,4 @@
-// Copyright (c) 2015 GeometryFactory (France).
+﻿// Copyright (c) 2015 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -824,27 +824,50 @@ namespace internal {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Equalize valences..." << std::endl;
 #endif
+      const double cap_threshold = std::cos(160. / 180 * CGAL_PI);
+
       unsigned int nb_flips = 0;
       for(edge_descriptor e : edges(mesh_))
       {
         //only the patch edges are allowed to be flipped
         if (!is_flip_allowed(e))
           continue;
+        if (!PMP::internal::should_flip(e, mesh_, vpmap_, gt_))
+          continue;
 
         halfedge_descriptor he = halfedge(e, mesh_);
+
+        std::array<halfedge_descriptor, 2> r1 = PMP::internal::is_badly_shaped(
+            face(he, mesh_),
+            mesh_, vpmap_, ecmap_, gt_,
+            cap_threshold, // bound on the angle: above 160 deg => cap
+            4, // bound on shortest/longest edge above 4 => needle
+            0);// collapse length threshold : not needed here
+        std::array<halfedge_descriptor, 2> r2 = PMP::internal::is_badly_shaped(
+            face(opposite(he, mesh_), mesh_),
+            mesh_, vpmap_, ecmap_, gt_, cap_threshold, 4, 0);
+        const bool badly_shaped = (r1[0] != boost::graph_traits<PolygonMesh>::null_halfedge()//needle
+                                || r1[1] != boost::graph_traits<PolygonMesh>::null_halfedge()//cap
+                                || r2[0] != boost::graph_traits<PolygonMesh>::null_halfedge()//needle
+                                || r2[1] != boost::graph_traits<PolygonMesh>::null_halfedge());//cap
+
         vertex_descriptor va = source(he, mesh_);
         vertex_descriptor vb = target(he, mesh_);
         vertex_descriptor vc = target(next(he, mesh_), mesh_);
         vertex_descriptor vd = target(next(opposite(he, mesh_), mesh_), mesh_);
 
-        int vva = valence(va), tvva = target_valence(va);
-        int vvb = valence(vb), tvvb = target_valence(vb);
-        int vvc = valence(vc), tvvc = target_valence(vc);
-        int vvd = valence(vd), tvvd = target_valence(vd);
-        int deviation_pre = CGAL::abs(vva - tvva)
+        int vva, tvva, vvb, tvvb, vvc, tvvc, vvd, tvvd, deviation_pre;
+        if (!badly_shaped)
+        {
+          vva = valence(va), tvva = target_valence(va);
+          vvb = valence(vb), tvvb = target_valence(vb);
+          vvc = valence(vc), tvvc = target_valence(vc);
+          vvd = valence(vd), tvvd = target_valence(vd);
+          deviation_pre = CGAL::abs(vva - tvva)
                           + CGAL::abs(vvb - tvvb)
                           + CGAL::abs(vvc - tvvc)
                           + CGAL::abs(vvd - tvvd);
+        }
 
         CGAL_assertion_code(Halfedge_status s1 = status(he));
         CGAL_assertion_code(Halfedge_status s1o = status(opposite(he, mesh_)));
@@ -854,10 +877,14 @@ namespace internal {
         CGAL_assertion( is_flip_topologically_allowed(edge(he, mesh_)) );
         CGAL_assertion( !get(ecmap_, edge(he, mesh_)) );
         CGAL::Euler::flip_edge(he, mesh_);
-        vva -= 1;
-        vvb -= 1;
-        vvc += 1;
-        vvd += 1;
+
+        if (!badly_shaped)
+        {
+          vva -= 1;
+          vvb -= 1;
+          vvc += 1;
+          vvd += 1;
+        }
         ++nb_flips;
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
@@ -874,14 +901,18 @@ namespace internal {
              (vc == target(he, mesh_) && vd == source(he, mesh_))
           || (vd == target(he, mesh_) && vc == source(he, mesh_)));
 
-        int deviation_post = CGAL::abs(vva - tvva)
+        int deviation_post;
+        if(!badly_shaped)
+        {
+          deviation_post = CGAL::abs(vva - tvva)
                            + CGAL::abs(vvb - tvvb)
                            + CGAL::abs(vvc - tvvc)
                            + CGAL::abs(vvd - tvvd);
+        }
 
         //check that mesh does not become non-triangle,
         //nor has inverted faces
-        if (deviation_pre <= deviation_post
+        if ((!badly_shaped && deviation_pre <= deviation_post)
           || !check_normals(he)
           || incident_to_degenerate(he)
           || incident_to_degenerate(opposite(he, mesh_))
@@ -1186,6 +1217,7 @@ private:
     void dump(const char* filename) const
     {
       std::ofstream out(filename);
+      out.precision(18);
       out << mesh_;
       out.close();
     }
