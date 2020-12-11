@@ -238,6 +238,9 @@ self_intersections_impl(const FaceRange& face_range,
   // This loop is very cheap, so there is hardly anything to gain from parallelizing it
   for(face_descriptor f : face_range)
   {
+    if (f == boost::graph_traits<TriangleMesh>::null_face())
+      continue;
+
     halfedge_descriptor h = halfedge(f, tmesh);
     typename boost::property_traits<VPM>::reference
       p = get(vpmap, target(h,tmesh)),
