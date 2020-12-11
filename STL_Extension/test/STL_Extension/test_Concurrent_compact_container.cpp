@@ -22,7 +22,7 @@ int main()
 #include <CGAL/Concurrent_compact_container.h>
 #include <CGAL/Random.h>
 #include <CGAL/use.h>
-
+#define TBB_PREVIEW_GLOBAL_CONTROL 1
 # include <tbb/global_control.h>
 # include <tbb/parallel_for.h>
 # include <atomic>
