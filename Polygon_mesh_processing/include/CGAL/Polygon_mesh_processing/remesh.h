@@ -296,7 +296,7 @@ void isotropic_remeshing(const FaceRange& faces
       remesher.split_long_edges(high);
       remesher.collapse_short_edges(low, high, collapse_constraints);
     }
-    remesher.equalize_valences();
+    remesher.flip_edges_for_valence_and_shape();
     remesher.tangential_relaxation(smoothing_1d, nb_laplacian);
     if ( choose_parameter(get_parameter(np, internal_np::do_project), true) )
       remesher.project_to_surface(get_parameter(np, internal_np::projection_functor));

@@ -819,7 +819,7 @@ namespace internal {
     // The target valence is 6 and 4 for interior and boundary vertices, resp.
     // The algo. tentatively flips each edge `e` and checks whether the deviation
     // to the target valences decreases. If not, the edge is flipped back"
-    void equalize_valences()
+    void flip_edges_for_valence_and_shape()
     {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Equalize valences..." << std::endl;
@@ -832,6 +832,7 @@ namespace internal {
         //only the patch edges are allowed to be flipped
         if (!is_flip_allowed(e))
           continue;
+        //add geometric test to avoid axe cuts
         if (!PMP::internal::should_flip(e, mesh_, vpmap_, gt_))
           continue;
 
