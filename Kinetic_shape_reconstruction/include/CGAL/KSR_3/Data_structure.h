@@ -282,12 +282,16 @@ public:
 
     const Support_plane new_support_plane(polygon);
     KSR::size_t support_plane_idx = KSR::no_element();
+    bool found_coplanar_polygons = false;
     for (KSR::size_t i = 0; i < number_of_support_planes(); ++i) {
       if (new_support_plane == support_plane(i)) {
+        found_coplanar_polygons = true;
         support_plane_idx = i;
-        break;
+        return support_plane_idx;
       }
     }
+    CGAL_assertion_msg(!found_coplanar_polygons,
+    "TODO: HANDLE MULTIPLE COPLANAR POLYGONS!");
 
     if (support_plane_idx == KSR::no_element()) {
       support_plane_idx = number_of_support_planes();
@@ -408,7 +412,7 @@ public:
       support_plane(support_plane_idx).add_bbox_polygon(points, ivertices);
 
     for (std::size_t i = 0; i < 4; ++i) {
-      const auto pair = m_intersection_graph.add_edge (ivertices[i], ivertices[(i+1)%4], support_plane_idx);
+      const auto pair = m_intersection_graph.add_edge(ivertices[i], ivertices[(i+1)%4], support_plane_idx);
       const auto& iedge = pair.first;
       const bool is_inserted = pair.second;
       if (is_inserted) {

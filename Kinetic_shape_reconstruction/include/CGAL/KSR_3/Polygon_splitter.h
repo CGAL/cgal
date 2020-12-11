@@ -102,6 +102,8 @@ public:
 
   void split_support_plane(const KSR::size_t support_plane_idx) {
 
+    std::cout << "current sp index: " << support_plane_idx << std::endl;
+
     // Create cdt.
     std::vector<KSR::size_t> original_input;
     std::vector< std::vector<Point_2> > original_faces;
@@ -118,6 +120,17 @@ public:
     reconnect_pvertices_to_ivertices();
     reconnect_pedges_to_iedges();
     set_new_adjacencies(support_plane_idx);
+    switch (original_faces.size()) {
+      case 1: { return; }
+      case 2: {
+        add_unique_bisector();
+        return;
+      }
+      default: {
+        add_multiple_bisectors();
+        return;
+      }
+    }
   }
 
 private:
@@ -341,15 +354,11 @@ private:
       // Add a new pface.
       const auto pface = m_data.add_pface(new_pvertices);
       CGAL_assertion(pface != PFace());
-
-      std::size_t original_idx = 0;
       if (original_faces.size() != 1) {
-        // TODO: locate centroid of the face among the different
-        // original faces to recover the input index.
-        CGAL_assertion_msg(false,
-        "TODO: POLYGON SPLITTER, FIX CASE WITH MULTIPLE ORIGINAL FACES!");
+        locate_pface_among_coplanar_pfaces(pface, original_input, original_faces);
+      } else {
+        m_data.input(pface) = original_input[0];
       }
-      m_data.input(pface) = original_input[original_idx];
     }
   }
 
@@ -487,6 +496,32 @@ private:
       const Point_2 inter = KSR::intersection<Point_2>(intersection_line, future_line);
       m_data.direction(pvertex) = Vector_2(m_data.point_2(pvertex, FT(0)), inter);
     }
+  }
+
+  void locate_pface_among_coplanar_pfaces(
+    const PFace& pface,
+    const std::vector<KSR::size_t>& original_input,
+    const std::vector< std::vector<Point_2> >& original_faces) {
+
+    // TODO: locate centroid of the face among the different
+    // original faces to recover the input index.
+
+    CGAL_assertion_msg(false,
+    "TODO: POLYGON SPLITTER, LOCATE PFACE AMONG COPLANAR PFACES!");
+    const std::size_t original_idx = 0;
+    m_data.input(pface) = original_input[original_idx];
+  }
+
+  void add_unique_bisector() {
+
+    CGAL_assertion_msg(false,
+    "TODO: POLYGON SPLITTER, ADD UNIQUE BISECTOR!");
+  }
+
+  void add_multiple_bisectors() {
+
+    CGAL_assertion_msg(false,
+    "TODO: POLYGON SPLITTER, ADD MULTIPLE BISECTORS!");
   }
 
   void dump(
