@@ -873,8 +873,6 @@ namespace internal {
         CGAL_assertion_code(Halfedge_status s1 = status(he));
         CGAL_assertion_code(Halfedge_status s1o = status(opposite(he, mesh_)));
 
-        Patch_id pid = get_patch_id(face(he, mesh_));
-
         CGAL_assertion( is_flip_topologically_allowed(edge(he, mesh_)) );
         CGAL_assertion( !get(ecmap_, edge(he, mesh_)) );
         CGAL::Euler::flip_edge(he, mesh_);
@@ -935,6 +933,7 @@ namespace internal {
             || (vb == source(he, mesh_) && va == target(he, mesh_)));
         }
 
+        Patch_id pid = get_patch_id(face(he, mesh_));
         set_patch_id(face(he, mesh_), pid);
         set_patch_id(face(opposite(he, mesh_), mesh_), pid);
       }
