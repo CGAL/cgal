@@ -485,13 +485,13 @@ make_regular_prism(typename boost::graph_traits<Graph>::vertices_size_type nb_ve
     put(vpmap, vertices[i],
         P(0.5*diameter * cos(i*precision*to_rad) + base_center.x(),
           height+base_center.y(),
-          -0.5*diameter * sin(i*precision*to_rad) + base_center.z()));
+          -0.5*diameter * sin(to_double((double)i*precision*to_rad)) + base_center.z()));
 
     put(vpmap,
         vertices[i+nb_vertices],
-        P(0.5*diameter * cos(i*precision*to_rad) + base_center.x(),
+        P(0.5*diameter * cos(to_double((double)i*precision*to_rad)) + base_center.x(),
           base_center.y(),
-          -0.5*diameter * sin(i*precision*to_rad) + base_center.z()));
+          -0.5*diameter * sin(to_double((double)i*precision*to_rad)) + base_center.z()));
   }
 
   //fill faces
@@ -589,9 +589,9 @@ make_pyramid(typename boost::graph_traits<Graph>::vertices_size_type nb_vertices
   for(typename boost::graph_traits<Graph>::vertices_size_type i=0; i<nb_vertices; ++i)
   {
     put(vpmap, vertices[i],
-        P(0.5*diameter*cos(i*precision*to_rad)+base_center.x(),
+        P(0.5*diameter*cos(to_double((double)i*precision*to_rad))+base_center.x(),
           base_center.y(),
-          -0.5*diameter*sin(i*precision*to_rad)+base_center.z()));
+          -0.5*diameter*sin(to_double((double)i*precision*to_rad))+base_center.z()));
   }
 
   //fill faces
