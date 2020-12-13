@@ -51,6 +51,12 @@ class Handle
       PTR->count++;
     }
 
+    Handle(Handle&& x) noexcept
+      : PTR(x.PTR)
+    {
+      x.PTR = static_cast<Rep*>(0);
+    }
+
     ~Handle()
     {
         if ( PTR && (--PTR->count == 0))
