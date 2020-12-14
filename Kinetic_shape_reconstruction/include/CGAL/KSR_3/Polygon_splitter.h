@@ -24,6 +24,7 @@
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
 // CGAL includes.
+#include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
@@ -106,7 +107,7 @@ public:
   void split_support_plane(const KSR::size_t support_plane_idx) {
 
     std::cout.precision(20);
-    // std::cout << "current sp index: " << support_plane_idx << std::endl;
+    std::cout << "current sp index: " << support_plane_idx << std::endl;
 
     // Create cdt.
     std::vector<KSR::size_t> original_input;
@@ -115,7 +116,7 @@ public:
     tag_cdt_exterior_faces();
     tag_cdt_interior_faces();
     if (support_plane_idx >= 6) {
-      // dump(true, 0, support_plane_idx, "original-faces.ply");
+      dump(true, 0, support_plane_idx, "original-faces.ply");
       // dump(true, 1, support_plane_idx, "original-input.ply");
     } else {
       CGAL_assertion(original_faces.size() == 1);
@@ -129,17 +130,8 @@ public:
     reconnect_pvertices_to_ivertices();
     reconnect_pedges_to_iedges();
     set_new_adjacencies(support_plane_idx);
-    switch (original_faces.size()) {
-      case 1: { return; }
-      case 2: {
-        add_unique_bisector();
-        return;
-      }
-      default: {
-        add_multiple_bisectors();
-        return;
-      }
-    }
+    if (original_faces.size() > 1)
+      add_bisectors(support_plane_idx, original_faces);
   }
 
 private:
@@ -382,9 +374,11 @@ private:
       CGAL_assertion(curr == edge);
 
       // Add a new pface.
+      CGAL_assertion(original_faces.size() > 0);
       CGAL_assertion(original_input.size() == original_faces.size());
       const auto pface = m_data.add_pface(new_pvertices);
       CGAL_assertion(pface != PFace());
+
       if (original_faces.size() != 1) {
         // dump_original_faces(support_plane_idx, original_faces, "original-faces");
         // dump_current_pface(pface, "current-pface-" + m_data.str(pface));
@@ -546,16 +540,68 @@ private:
     // std::cout << "found original input: " << m_data.input(pface) << std::endl;
   }
 
-  void add_unique_bisector() {
+  void add_bisectors(
+    const KSR::size_t support_plane_idx,
+    const std::vector< std::vector<Point_2> >& original_faces) {
+
+    using Regular_triangulation = CGAL::Regular_triangulation_2<Kernel>;
+    using Weighted_point = typename Regular_triangulation::Weighted_point;
+
+    std::vector<Point_2> points;
+    std::vector<Weighted_point> wps;
+
+    // Find bbox of the support plane.
+    const auto& iedges = m_data.iedges(support_plane_idx);
+    points.reserve(iedges.size() * 2);
+    for (const auto& iedge : iedges) {
+      const auto source = m_data.source(iedge);
+      const auto target = m_data.target(iedge);
+      points.push_back(m_data.to_2d(support_plane_idx, source));
+      points.push_back(m_data.to_2d(support_plane_idx, target));
+    }
+
+    const auto bbox = CGAL::bbox_2(points.begin(), points.end());
+    const Weighted_point wp1(Point_2(bbox.xmin(), bbox.ymin()), FT(0));
+    const Weighted_point wp2(Point_2(bbox.xmax(), bbox.ymin()), FT(0));
+    const Weighted_point wp3(Point_2(bbox.xmax(), bbox.ymax()), FT(0));
+    const Weighted_point wp4(Point_2(bbox.xmin(), bbox.ymax()), FT(0));
+    wps.push_back(wp1);
+    wps.push_back(wp2);
+    wps.push_back(wp3);
+    wps.push_back(wp4);
+
+    // Create power diagram.
+    wps.reserve(original_faces.size() + 4);
+    for (const auto& original_face : original_faces) {
+      const auto centroid = CGAL::centroid(
+        original_face.begin(), original_face.end());
+
+      FT max_sq_dist = -FT(1);
+      for (const auto& p : original_face) {
+        const FT sq_dist = CGAL::squared_distance(p, centroid);
+        max_sq_dist = CGAL::max(sq_dist, max_sq_dist);
+      }
+      CGAL_assertion(max_sq_dist >= FT(0));
+      const FT weight = static_cast<FT>(CGAL::sqrt(CGAL::to_double(max_sq_dist)));
+      const Weighted_point wp(centroid, weight);
+      wps.push_back(wp);
+    }
+
+    Regular_triangulation triangulation;
+    using Vertex_handle = typename Regular_triangulation::Vertex_handle;
+    std::vector<Vertex_handle> vhs;
+    vhs.reserve(original_faces.size());
+    for (const auto& wp : wps) {
+      const auto vh = triangulation.insert(wp);
+      vhs.push_back(vh);
+    }
+    CGAL_assertion(triangulation.is_valid());
+    dump_power_diagram(triangulation, support_plane_idx);
+
+    // Filter all necessary bisectors.
 
     CGAL_assertion_msg(false,
-    "TODO: POLYGON SPLITTER, ADD UNIQUE BISECTOR!");
-  }
-
-  void add_multiple_bisectors() {
-
-    CGAL_assertion_msg(false,
-    "TODO: POLYGON SPLITTER, ADD MULTIPLE BISECTORS!");
+    "TODO: POLYGON SPLITTER, ADD BISECTORS!");
   }
 
   void dump(
@@ -641,6 +687,54 @@ private:
       polygons[0].push_back(m_data.point_3(pvertex, FT(0)));
     KSR_3::Saver<Kernel> saver;
     saver.export_polygon_soup_3(polygons, file_name);
+  }
+
+  template<typename Triangulation>
+  void dump_power_diagram(
+    const Triangulation& tri,
+    const KSR::size_t support_plane_idx) {
+
+    Mesh_3 mesh;
+    std::map<typename Triangulation::Vertex_handle, Vertex_index> map_v2i;
+    for (auto vit = tri.finite_vertices_begin(); vit != tri.finite_vertices_end(); ++vit) {
+      const auto wp = vit->point();
+      const Point_2 point(wp.x(), wp.y());
+      map_v2i.insert(std::make_pair(
+        vit, mesh.add_vertex(m_data.support_plane(support_plane_idx).to_3d(point))));
+    }
+
+    for (auto fit = tri.finite_faces_begin(); fit != tri.finite_faces_end(); ++fit) {
+      std::array<Vertex_index, 3> vertices;
+      for (std::size_t i = 0; i < 3; ++i) {
+        vertices[i] = map_v2i[fit->vertex(i)];
+      }
+      mesh.add_face(vertices);
+    }
+
+    std::ofstream out_cdt("power-cdt.ply");
+    out_cdt.precision(20);
+    CGAL::write_ply(out_cdt, mesh);
+    out_cdt.close();
+
+    std::ofstream out_diagram("power-diagram.polylines.txt");
+    out_diagram.precision(20);
+
+    for(auto eit = tri.finite_edges_begin(); eit != tri.finite_edges_end(); ++eit) {
+      const auto object = tri.dual(eit);
+
+      // typename Kernel::Ray_2  ray;
+      // typename Kernel::Line_2 line;
+
+      typename Kernel::Segment_2 segment;
+      if (CGAL::assign(segment, object)) {
+        out_diagram << "2 " <<
+        m_data.to_3d(support_plane_idx, segment.source()) << " " <<
+        m_data.to_3d(support_plane_idx, segment.target()) << std::endl;
+      }
+      // if (CGAL::assign(ray, object)) out_diagram << "2 " << r << std::endl;
+      // if (CGAL::assign(line, object)) out_diagram << "2 " << l << std::endl;
+    }
+    out_diagram.close();
   }
 };
 
