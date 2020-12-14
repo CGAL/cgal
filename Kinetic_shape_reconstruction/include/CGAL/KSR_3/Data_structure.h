@@ -1118,6 +1118,9 @@ public:
   const Segment_2 to_2d(const KSR::size_t support_plane_idx, const Segment_3& segment_3) const {
     return support_plane(support_plane_idx).to_2d(segment_3);
   }
+  const Point_2 to_2d(const KSR::size_t support_plane_idx, const Point_3& point_3) const {
+    return support_plane(support_plane_idx).to_2d(point_3);
+  }
 
   const Point_2 point_2(const PVertex& pvertex, const FT time) const {
     return support_plane(pvertex).point_2(pvertex.second, time);

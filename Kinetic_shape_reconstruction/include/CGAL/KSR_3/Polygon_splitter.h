@@ -32,6 +32,7 @@
 
 // Internal includes.
 #include <CGAL/KSR/utils.h>
+#include <CGAL/KSR/debug.h>
 
 namespace CGAL {
 namespace KSR_3 {
@@ -67,8 +68,10 @@ private:
 
   struct Face_info {
     KSR::size_t index;
+    KSR::size_t input;
     Face_info() :
-    index(KSR::uninitialized())
+    index(KSR::uninitialized()),
+    input(KSR::uninitialized())
     { }
   };
 
@@ -102,7 +105,8 @@ public:
 
   void split_support_plane(const KSR::size_t support_plane_idx) {
 
-    std::cout << "current sp index: " << support_plane_idx << std::endl;
+    std::cout.precision(20);
+    // std::cout << "current sp index: " << support_plane_idx << std::endl;
 
     // Create cdt.
     std::vector<KSR::size_t> original_input;
@@ -110,7 +114,12 @@ public:
     initialize_cdt(support_plane_idx, original_input, original_faces);
     tag_cdt_exterior_faces();
     tag_cdt_interior_faces();
-    dump(false, support_plane_idx);
+    if (support_plane_idx >= 6) {
+      // dump(true, 0, support_plane_idx, "original-faces.ply");
+      // dump(true, 1, support_plane_idx, "original-input.ply");
+    } else {
+      CGAL_assertion(original_faces.size() == 1);
+    }
 
     // Split polygons using cdt.
     m_data.clear_polygon_faces(support_plane_idx);
@@ -155,20 +164,25 @@ private:
     original_input.clear();
 
     // std::vector<Vertex_handle> vhs;
+    std::vector<TRI> triangulations;
     std::vector<Point_2> original_face;
+
     const auto all_pfaces = m_data.pfaces(support_plane_idx);
     for (const auto pface : all_pfaces) {
       const auto pvertices = m_data.pvertices_of_pface(pface);
 
       // vhs.clear();
+      TRI triangulation;
       original_face.clear();
       for (const auto pvertex : pvertices) {
         CGAL_assertion(vhs_map.find(pvertex) != vhs_map.end());
         const auto vh = vhs_map.at(pvertex);
         original_face.push_back(vh->point());
+        triangulation.insert(vh->point());
         // vhs.push_back(vh);
       }
 
+      triangulations.push_back(triangulation);
       original_faces.push_back(original_face);
       original_input.push_back(m_data.input(pface));
 
@@ -193,6 +207,22 @@ private:
 
       const auto cid = m_cdt.insert_constraint(vsource, vtarget);
       m_map_intersections.insert(std::make_pair(cid, iedge));
+    }
+
+    // Finally, add original labels to the cdt.
+    for (auto fit = m_cdt.finite_faces_begin(); fit != m_cdt.finite_faces_end(); ++fit) {
+      const auto centroid = CGAL::centroid(
+        fit->vertex(0)->point(),
+        fit->vertex(1)->point(),
+        fit->vertex(2)->point());
+      for (KSR::size_t i = 0; i < triangulations.size(); ++i) {
+        const auto fh = triangulations[i].locate(centroid);
+        if (fh == nullptr || triangulations[i].is_infinite(fh)) {
+          continue;
+        }
+        fit->info().input = i;
+        break;
+      }
     }
   }
 
@@ -352,14 +382,20 @@ private:
       CGAL_assertion(curr == edge);
 
       // Add a new pface.
+      CGAL_assertion(original_input.size() == original_faces.size());
       const auto pface = m_data.add_pface(new_pvertices);
       CGAL_assertion(pface != PFace());
       if (original_faces.size() != 1) {
-        locate_pface_among_coplanar_pfaces(pface, original_input, original_faces);
+        // dump_original_faces(support_plane_idx, original_faces, "original-faces");
+        // dump_current_pface(pface, "current-pface-" + m_data.str(pface));
+        locate_pface_among_coplanar_pfaces(pface);
       } else {
         m_data.input(pface) = original_input[0];
       }
     }
+    // if (original_faces.size() > 1) {
+    //   CGAL_assertion_msg(false, "TODO: DEBUG THIS SUPPORT PLANE!");
+    // }
   }
 
   void reconnect_pvertices_to_ivertices() {
@@ -499,17 +535,15 @@ private:
   }
 
   void locate_pface_among_coplanar_pfaces(
-    const PFace& pface,
-    const std::vector<KSR::size_t>& original_input,
-    const std::vector< std::vector<Point_2> >& original_faces) {
+    const PFace& pface) {
 
-    // TODO: locate centroid of the face among the different
-    // original faces to recover the input index.
-
-    CGAL_assertion_msg(false,
-    "TODO: POLYGON SPLITTER, LOCATE PFACE AMONG COPLANAR PFACES!");
-    const std::size_t original_idx = 0;
-    m_data.input(pface) = original_input[original_idx];
+    // std::cout << "locating " << m_data.str(pface) << std::endl;
+    const auto centroid = m_data.centroid_of_pface(pface);
+    const auto fh = m_cdt.locate(m_data.to_2d(pface.first, centroid));
+    CGAL_assertion(fh != nullptr && !m_cdt.is_infinite(fh));
+    CGAL_assertion(fh->info().input != KSR::uninitialized());
+    m_data.input(pface) = fh->info().input;
+    // std::cout << "found original input: " << m_data.input(pface) << std::endl;
   }
 
   void add_unique_bisector() {
@@ -526,13 +560,15 @@ private:
 
   void dump(
     const bool dump_data,
-    const KSR::size_t support_plane_idx) {
+    const std::size_t type, // 0 - index, 1 - input
+    const KSR::size_t support_plane_idx,
+    std::string file_name = "") {
     if (!dump_data) return;
 
     Mesh_3 mesh;
-    Uchar_map red   = mesh.template add_property_map<Face_index, unsigned char>("red", 0).first;
-    Uchar_map green = mesh.template add_property_map<Face_index, unsigned char>("green", 0).first;
-    Uchar_map blue  = mesh.template add_property_map<Face_index, unsigned char>("blue", 0).first;
+    Uchar_map red   = mesh.template add_property_map<Face_index, unsigned char>("red"  , 125).first;
+    Uchar_map green = mesh.template add_property_map<Face_index, unsigned char>("green", 125).first;
+    Uchar_map blue  = mesh.template add_property_map<Face_index, unsigned char>("blue" , 125).first;
 
     std::map<Vertex_handle, Vertex_index> map_v2i;
     for (auto vit = m_cdt.finite_vertices_begin(); vit != m_cdt.finite_vertices_end(); ++vit) {
@@ -547,19 +583,64 @@ private:
       }
 
       const auto face = mesh.add_face(vertices);
-      CGAL::Random rand(fit->info().index);
-      if (fit->info().index != KSR::no_element()) {
-        red[face]   = (unsigned char)(rand.get_int(32, 192));
-        green[face] = (unsigned char)(rand.get_int(32, 192));
-        blue[face]  = (unsigned char)(rand.get_int(32, 192));
+      if (type == 0) {
+        CGAL::Random rand(fit->info().index);
+        if (fit->info().index != KSR::no_element()) {
+          red[face]   = (unsigned char)(rand.get_int(32, 192));
+          green[face] = (unsigned char)(rand.get_int(32, 192));
+          blue[face]  = (unsigned char)(rand.get_int(32, 192));
+        }
+      } else if (type == 1) {
+        CGAL::Random rand(fit->info().input);
+        if (fit->info().input != KSR::uninitialized()) {
+          red[face]   = (unsigned char)(rand.get_int(32, 192));
+          green[face] = (unsigned char)(rand.get_int(32, 192));
+          blue[face]  = (unsigned char)(rand.get_int(32, 192));
+        }
+      } else {
+        CGAL_assertion_msg(false, "ERROR: WRONG LABEL TYPE!");
       }
     }
 
-    const std::string filename = "face_" + std::to_string(support_plane_idx) + ".ply";
-    std::ofstream out(filename);
+    if (file_name == "")
+      file_name = "support_cdt_" + std::to_string(support_plane_idx) + ".ply";
+    std::ofstream out(file_name);
     out.precision(20);
     CGAL::write_ply(out, mesh);
     out.close();
+  }
+
+  void dump_original_faces(
+    const KSR::size_t support_plane_idx,
+    const std::vector< std::vector<Point_2> >& original_faces,
+    const std::string file_name) {
+
+    std::vector<Point_3> polygon;
+    std::vector< std::vector<Point_3> > polygons;
+    polygons.reserve(original_faces.size());
+
+    for (const auto& original_face : original_faces) {
+      polygon.clear();
+      for (const auto& p : original_face) {
+        polygon.push_back(m_data.to_3d(support_plane_idx, p));
+      }
+      polygons.push_back(polygon);
+    }
+    CGAL_assertion(polygons.size() == original_faces.size());
+    KSR_3::Saver<Kernel> saver;
+    saver.export_polygon_soup_3(polygons, file_name);
+  }
+
+  void dump_current_pface(
+    const PFace& pface,
+    const std::string file_name) {
+
+    const auto pvertices = m_data.pvertices_of_pface(pface);
+    std::vector< std::vector<Point_3> > polygons(1);
+    for (const auto pvertex : pvertices)
+      polygons[0].push_back(m_data.point_3(pvertex, FT(0)));
+    KSR_3::Saver<Kernel> saver;
+    saver.export_polygon_soup_3(polygons, file_name);
   }
 };
 
