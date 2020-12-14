@@ -118,10 +118,6 @@ int main()
     assert( &vremoved.array() == &l_vremoved.array() );
     assert( &eremoved.array() == &l_eremoved.array() );
     assert( &fremoved.array() == &l_fremoved.array() );
-    assert( &vprop.array() != &l_vprop.array() );
-    assert( &hprop.array() != &l_hprop.array() );
-    assert( &fprop.array() != &l_fprop.array() );
-    assert( &eprop.array() != &l_eprop.array() );
   }
 
   return 0;
