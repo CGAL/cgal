@@ -69,9 +69,11 @@ private:
   };
 
   struct Face_info {
+    bool tagged;
     KSR::size_t index;
     KSR::size_t input;
     Face_info() :
+    tagged(false),
     index(KSR::uninitialized()),
     input(KSR::uninitialized())
     { }
@@ -94,6 +96,11 @@ private:
   using Vertex_index = typename Mesh_3::Vertex_index;
   using Face_index   = typename Mesh_3::Face_index;
   using Uchar_map    = typename Mesh_3::template Property_map<Face_index, unsigned char>;
+
+  using Regular_triangulation = CGAL::Regular_triangulation_2<Kernel>;
+  using Weighted_point        = typename Regular_triangulation::Weighted_point;
+  using RVertex_handle        = typename Regular_triangulation::Vertex_handle;
+  using REdge                 = typename Regular_triangulation::Edge;
 
   Data_structure& m_data;
   TRI m_cdt;
@@ -119,14 +126,18 @@ public:
 
     // Split polygons using cdt.
     m_data.clear_polygon_faces(support_plane_idx);
-    initialize_new_pfaces(support_plane_idx, original_input, original_faces);
+    initialize_new_pfaces(
+      support_plane_idx, original_input, original_faces);
 
     // Set intersection adjacencies.
     reconnect_pvertices_to_ivertices();
     reconnect_pedges_to_iedges();
     set_new_adjacencies(support_plane_idx);
-    if (original_faces.size() > 1)
-      add_bisectors(support_plane_idx, original_faces);
+    if (original_faces.size() > 1) {
+      merge_coplanar_pfaces(
+        support_plane_idx, original_input, original_faces);
+      // add_bisectors(original_faces, support_plane_idx);
+    }
   }
 
 private:
@@ -555,17 +566,14 @@ private:
     // std::cout << "found original input: " << m_data.input(pface) << std::endl;
   }
 
-  void add_bisectors(
+  void merge_coplanar_pfaces(
     const KSR::size_t support_plane_idx,
+    const std::vector<KSR::size_t>& original_input,
     const std::vector< std::vector<Point_2> >& original_faces) {
 
-    using Regular_triangulation = CGAL::Regular_triangulation_2<Kernel>;
-    using Weighted_point = typename Regular_triangulation::Weighted_point;
-
-    std::vector<Point_2> points;
-    std::vector<Weighted_point> wps;
-
     const bool is_debug = false;
+    CGAL_assertion(support_plane_idx >= 6);
+
     if (is_debug) {
       std::cout << std::endl << "support plane idx: " << support_plane_idx << std::endl;
       std::cout << "dumping support plane ... ";
@@ -574,15 +582,144 @@ private:
       std::cout << "done" << std::endl;
     }
 
-    // Find bbox of the support plane.
+    if (original_faces.size() > 2) {
+      CGAL_assertion_msg(false, "TODO: MERGE > 2 COPLANAR PFACES!");
+      // This code should be very similar to the one with 2 coplanar pfaces!
+    }
+
+    const auto all_pfaces = m_data.pfaces(support_plane_idx);
+    std::vector<PFace> pfaces;
+    pfaces.reserve(all_pfaces.size());
+    for (const auto pface : all_pfaces) {
+      pfaces.push_back(pface);
+    }
+    CGAL_assertion(pfaces.size() >= 2);
+    CGAL_assertion(pfaces.size() == all_pfaces.size());
+    if (is_debug) std::cout << "num pfaces: " << pfaces.size() << std::endl;
+
+    std::vector< std::pair<PFace, PFace> > to_be_merged;
     const auto& iedges = m_data.iedges(support_plane_idx);
+    for (std::size_t i = 0; i < pfaces.size(); ++i) {
+      const auto& pface_i = pfaces[i];
+      const auto centroid_i = m_data.centroid_of_pface(pface_i);
+      for (std::size_t j = i + 1; j < pfaces.size(); ++j) {
+        const auto& pface_j = pfaces[j];
+        const auto centroid_j = m_data.centroid_of_pface(pface_j);
+
+        const Segment_2 query_segment(
+          m_data.to_2d(support_plane_idx, centroid_i),
+          m_data.to_2d(support_plane_idx, centroid_j));
+
+        bool found_intersection = false;
+        for (const auto& iedge : iedges) {
+          const auto source = m_data.source(iedge);
+          const auto target = m_data.target(iedge);
+          const auto s = m_data.to_2d(support_plane_idx, source);
+          const auto t = m_data.to_2d(support_plane_idx, target);
+          const Segment_2 segment(s, t); Point_2 inter;
+          if (KSR::intersection(query_segment, segment, inter)) {
+            found_intersection = true;
+            break;
+          }
+        }
+        if (!found_intersection) {
+          to_be_merged.push_back(std::make_pair(pface_i, pface_j));
+        }
+      }
+    }
+    if (is_debug) std::cout << "pairs to be merged: " << to_be_merged.size() << std::endl;
+    CGAL_assertion(to_be_merged.size() == 1);
+
+    if (is_debug) {
+      std::cout << "merge: " <<
+      m_data.str(to_be_merged[0].first) << " + " <<
+      m_data.str(to_be_merged[0].second) << std::endl;
+      std::cout << "centroid i: " << m_data.centroid_of_pface(to_be_merged[0].first) << std::endl;
+      std::cout << "centroid j: " << m_data.centroid_of_pface(to_be_merged[0].second) << std::endl;
+    }
+
+    CGAL_assertion_msg(false,
+    "TODO: POLYGON SPLITTER, MERGE COPLANAR PFACES!");
+  }
+
+  void add_bisectors(
+    const std::vector< std::vector<Point_2> >& original_faces,
+    const KSR::size_t support_plane_idx) {
+
+    CGAL_assertion_msg(false,
+    "WARNING: WHEN ADDING BISECTORS, WE SHOULD ALSO CHANGE THE KINETIC CODE! NOT FINISHED!");
+
+    const bool is_debug = false;
+    CGAL_assertion(support_plane_idx >= 6);
+
+    if (is_debug) {
+      std::cout << std::endl << "support plane idx: " << support_plane_idx << std::endl;
+      std::cout << "dumping support plane ... ";
+      dump(true, 0, support_plane_idx, "support-plane-" +
+      std::to_string(support_plane_idx) + ".ply");
+      std::cout << "done" << std::endl;
+    }
+
+    std::vector<Weighted_point> wps;
+    create_weighted_points(original_faces, support_plane_idx, wps);
+
+    std::vector<RVertex_handle> vhs;
+    vhs.reserve(original_faces.size());
+    Regular_triangulation triangulation;
+    create_regular_triangulation(wps, vhs, triangulation);
+    CGAL_assertion(triangulation.is_valid());
+    CGAL_assertion(vhs.size() == original_faces.size());
+
+    if (is_debug) {
+      std::cout << "dumping regular triangulation / power diagram ... ";
+      dump(triangulation, support_plane_idx);
+      std::cout << "done" << std::endl;
+
+      for (std::size_t i = 0; i < vhs.size(); ++i) {
+        std::cout << "vhs " << std::to_string(i) << ": "
+        << m_data.to_3d(support_plane_idx, vhs[i]->point().point()) << std::endl;
+      }
+    }
+
+    std::vector< std::pair<Segment_2, bool> > bisectors;
+    find_bisectors(is_debug, support_plane_idx, vhs, triangulation, bisectors);
+    CGAL_assertion(bisectors.size() > 0);
+    convert_bisectors_to_iedges(is_debug, support_plane_idx, wps, bisectors);
+
+    // CGAL_assertion_msg(false,
+    // "TODO: POLYGON SPLITTER, ADD BISECTORS!");
+  }
+
+  void create_weighted_points(
+    const std::vector< std::vector<Point_2> >& original_faces,
+    const KSR::size_t support_plane_idx,
+    std::vector<Weighted_point>& wps) const {
+
+    wps.clear();
+    wps.reserve(original_faces.size() + 4);
+    add_weighted_bbox(support_plane_idx, wps);
+    CGAL_assertion(wps.size() == 4);
+    add_weighted_input(original_faces, support_plane_idx, wps);
+    CGAL_assertion(wps.size() == original_faces.size() + 4);
+  }
+
+  void add_weighted_bbox(
+    const KSR::size_t support_plane_idx,
+    std::vector<Weighted_point>& wps) const {
+
+    CGAL_assertion(support_plane_idx >= 6);
+    const auto& iedges = m_data.iedges(support_plane_idx);
+
+    std::vector<Point_2> points;
     points.reserve(iedges.size() * 2);
+
     for (const auto& iedge : iedges) {
       const auto source = m_data.source(iedge);
       const auto target = m_data.target(iedge);
       points.push_back(m_data.to_2d(support_plane_idx, source));
       points.push_back(m_data.to_2d(support_plane_idx, target));
     }
+    CGAL_assertion(points.size() == iedges.size() * 2);
 
     const auto bbox = CGAL::bbox_2(points.begin(), points.end());
     const Weighted_point wp1(Point_2(bbox.xmin(), bbox.ymin()), FT(0));
@@ -593,9 +730,13 @@ private:
     wps.push_back(wp2);
     wps.push_back(wp3);
     wps.push_back(wp4);
+  }
 
-    // Create power diagram.
-    wps.reserve(original_faces.size() + 4);
+  void add_weighted_input(
+    const std::vector< std::vector<Point_2> >& original_faces,
+    const KSR::size_t support_plane_idx,
+    std::vector<Weighted_point>& wps) const {
+
     for (const auto& original_face : original_faces) {
       const auto centroid = CGAL::centroid(
         original_face.begin(), original_face.end());
@@ -603,41 +744,73 @@ private:
       FT max_sq_dist = -FT(1);
       for (const auto& p : original_face) {
         const FT sq_dist = CGAL::squared_distance(p, centroid);
-        max_sq_dist = CGAL::max(sq_dist, max_sq_dist);
+        max_sq_dist = (CGAL::max)(sq_dist, max_sq_dist);
       }
-      CGAL_assertion(max_sq_dist >= FT(0));
+      CGAL_assertion(max_sq_dist > FT(0));
       const FT weight = static_cast<FT>(CGAL::sqrt(CGAL::to_double(max_sq_dist)));
       const Weighted_point wp(centroid, weight);
       wps.push_back(wp);
     }
+  }
 
-    Regular_triangulation triangulation;
-    using Vertex_handle = typename Regular_triangulation::Vertex_handle;
-    std::vector<Vertex_handle> vhs;
-    vhs.reserve(original_faces.size());
+  void create_regular_triangulation(
+    const std::vector<Weighted_point>& wps,
+    std::vector<RVertex_handle>& vhs,
+    Regular_triangulation& triangulation) const {
+
     for (std::size_t i = 0; i < wps.size(); ++i) {
       const auto& wp = wps[i];
-      if (i < 4) triangulation.insert(wp);
+      if (i < 4) { triangulation.insert(wp); }
       else {
         const auto vh = triangulation.insert(wp);
         vhs.push_back(vh);
       }
     }
-    CGAL_assertion(triangulation.is_valid());
+  }
 
-    if (is_debug) {
-      std::cout << "dumping power cdt/diagram ... ";
-      dump_power_cdt_and_diagram(triangulation, support_plane_idx);
-      std::cout << "done" << std::endl;
+  void find_bisectors(
+    const bool is_debug,
+    const KSR::size_t support_plane_idx,
+    const std::vector<RVertex_handle>& vhs,
+    const Regular_triangulation& triangulation,
+    std::vector< std::pair<Segment_2, bool> >& bisectors) const {
+
+    if (vhs.size() > 2) {
+      CGAL_assertion_msg(false, "TODO: FIND MULTIPLE BISECTORS!");
+      // The way to find multiple bisectors is actually almost the same as for
+      // one bisector. We first find all pairs of unique vhs connections:
+      // like vhs[0] -> vhs[1], vhs[1] -> vhs[3], vhs[3] -> vhs[2], vhs[2] -> vhs[1], etc.
+      // then we extract the corresponding segments + possibly two rays, which
+      // may intersect the bbox boundaries. We transform these rays into segments.
+      // That is we are going to have several interior bisectors and two boundary bisectors.
     }
 
-    // Filter all necessary bisectors.
-    if (is_debug) {
-      std::cout << "vhs 0: " << m_data.to_3d(support_plane_idx, vhs[0]->point().point()) << std::endl;
-      std::cout << "vhs 1: " << m_data.to_3d(support_plane_idx, vhs[1]->point().point()) << std::endl;
+    bisectors.clear();
+    const auto edge = find_bisecting_edge(
+      is_debug, vhs[0], vhs[1], support_plane_idx, vhs, triangulation);
+    const auto object = triangulation.dual(edge);
+    Segment_2 bisector;
+    if (CGAL::assign(bisector, object)) {
+      if (is_debug) {
+        std::cout << "found bisector: 2 " <<
+        m_data.to_3d(support_plane_idx, bisector.source()) << " " <<
+        m_data.to_3d(support_plane_idx, bisector.target()) << std::endl;
+      }
+    } else {
+      CGAL_assertion_msg(false, "TODO: ADD OTHER TYPES: RAY/LINE!");
     }
+    bisectors.push_back(std::make_pair(bisector, true));
+  }
 
-    auto curr = triangulation.incident_edges(vhs[0]);
+  const REdge find_bisecting_edge(
+    const bool is_debug,
+    const RVertex_handle& vh0,
+    const RVertex_handle& vh1,
+    const KSR::size_t support_plane_idx,
+    const std::vector<RVertex_handle>& vhs,
+    const Regular_triangulation& triangulation) const {
+
+    auto curr = triangulation.incident_edges(vh0);
     const auto end = curr;
     do {
       const auto fh = curr->first;
@@ -650,45 +823,52 @@ private:
       // std::cout << "im, q: " << m_data.to_3d(support_plane_idx, q) << std::endl;
 
       CGAL_assertion(
-        fh->vertex(ip) == vhs[0] || fh->vertex(im) == vhs[0]);
-
-      if (fh->vertex(ip) == vhs[1]) {
+        fh->vertex(ip) == vh0 || fh->vertex(im) == vh0);
+      if (fh->vertex(ip) == vh1) {
         if (is_debug) {
           std::cout << "ip, found connecting edge: 2 " <<
             m_data.to_3d(support_plane_idx, q) << " " <<
             m_data.to_3d(support_plane_idx, p) << std::endl;
         }
-        break;
+        return *curr;
       }
 
-      if (fh->vertex(im) == vhs[1]) {
+      if (fh->vertex(im) == vh1) {
         if (is_debug) {
           std::cout << "im, found connecting edge: 2 " <<
             m_data.to_3d(support_plane_idx, p) << " " <<
             m_data.to_3d(support_plane_idx, q) << std::endl;
         }
-        break;
+        return *curr;
       }
 
       ++curr;
     } while (curr != end);
-    const auto object = triangulation.dual(curr);
-    Segment_2 segment;
-    if (CGAL::assign(segment, object)) {
-      if (is_debug) {
-        std::cout << "found bisector: 2 " <<
-        m_data.to_3d(support_plane_idx, segment.source()) << " " <<
-        m_data.to_3d(support_plane_idx, segment.target()) << std::endl;
-      }
+    CGAL_assertion_msg(curr == end, "ERROR: THE BISECTING EDGE IS NOT FOUND!");
+    return *curr;
+  }
+
+  void convert_bisectors_to_iedges(
+    const bool is_debug,
+    const KSR::size_t support_plane_idx,
+    const std::vector<Weighted_point>& wps,
+    const std::vector< std::pair<Segment_2, bool> >& bisectors) {
+
+    CGAL_assertion(bisectors.size() > 0);
+    if (bisectors.size() > 1) {
+      CGAL_assertion_msg(false, "TODO: HANDLE MULTIPLE BISECTORS!");
+      // Should be more or less the same code as for one bisector!
     }
 
-    // Add iedge.
+    const bool is_boundary_bisector = bisectors[0].second;
+    CGAL_assertion(is_boundary_bisector);
+    const auto& bisector = bisectors[0].first;
     std::vector<Point_2> inter_points;
     for (std::size_t i = 0; i < 4; ++i) {
       const std::size_t ip = (i + 1) % 4;
       const Segment_2 bbox_edge(wps[i].point(), wps[ip].point());
       Point_2 inter_point;
-      if (KSR::intersection(segment, bbox_edge, inter_point)) {
+      if (KSR::intersection(bisector, bbox_edge, inter_point)) {
         inter_points.push_back(inter_point);
       }
     }
@@ -711,9 +891,6 @@ private:
       m_data.igraph().set_line(iedge, m_data.igraph().add_line());
     }
     m_data.support_plane(support_plane_idx).iedges().insert(iedge);
-
-    // CGAL_assertion_msg(false,
-    // "TODO: POLYGON SPLITTER, ADD BISECTORS!");
   }
 
   void dump(
@@ -801,21 +978,22 @@ private:
     saver.export_polygon_soup_3(polygons, file_name);
   }
 
-  template<typename Triangulation>
-  void dump_power_cdt_and_diagram(
-    const Triangulation& tri,
+  void dump(
+    const Regular_triangulation& triangulation,
     const KSR::size_t support_plane_idx) {
 
     Mesh_3 mesh;
-    std::map<typename Triangulation::Vertex_handle, Vertex_index> map_v2i;
-    for (auto vit = tri.finite_vertices_begin(); vit != tri.finite_vertices_end(); ++vit) {
+    std::map<RVertex_handle, Vertex_index> map_v2i;
+    for (auto vit = triangulation.finite_vertices_begin();
+    vit != triangulation.finite_vertices_end(); ++vit) {
       const auto wp = vit->point();
       const Point_2 point(wp.x(), wp.y());
       map_v2i.insert(std::make_pair(
         vit, mesh.add_vertex(m_data.support_plane(support_plane_idx).to_3d(point))));
     }
 
-    for (auto fit = tri.finite_faces_begin(); fit != tri.finite_faces_end(); ++fit) {
+    for (auto fit = triangulation.finite_faces_begin();
+    fit != triangulation.finite_faces_end(); ++fit) {
       std::array<Vertex_index, 3> vertices;
       for (std::size_t i = 0; i < 3; ++i) {
         vertices[i] = map_v2i[fit->vertex(i)];
@@ -831,8 +1009,9 @@ private:
     std::ofstream out_diagram("power-diagram.polylines.txt");
     out_diagram.precision(20);
 
-    for(auto eit = tri.finite_edges_begin(); eit != tri.finite_edges_end(); ++eit) {
-      const auto object = tri.dual(eit);
+    for(auto eit = triangulation.finite_edges_begin();
+    eit != triangulation.finite_edges_end(); ++eit) {
+      const auto object = triangulation.dual(eit);
 
       // typename Kernel::Ray_2  ray;
       // typename Kernel::Line_2 line;
