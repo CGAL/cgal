@@ -98,11 +98,6 @@ int main()
   {
     m.clear();
 
-    auto l_vprop = m.add_property_map<Vertex_index, int>("vprop").first;
-    auto l_hprop = m.add_property_map<Halfedge_index, int>("hprop").first;
-    auto l_fprop = m.add_property_map<Face_index, int>("fprop").first;
-    auto l_eprop = m.add_property_map<Edge_index, int>("eprop").first;
-
     auto l_vconn = m.property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
     auto l_hconn = m.property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
     auto l_fconn = m.property_map<Face_index, Face_connectivity>("f:connectivity").first;
