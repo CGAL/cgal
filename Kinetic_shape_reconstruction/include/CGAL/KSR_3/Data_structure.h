@@ -3437,6 +3437,7 @@ public:
     const Segment_3 segment = segment_3(pedge);
     const Line_3 line(segment.source(), segment.target());
     Point_3 midp = CGAL::midpoint(segment.source(), segment.target());
+    // std::cout << "midp: " << midp << std::endl;
     Vector_3 norm(segment.source(), segment.target());
     norm = KSR::normalize(norm);
     const Plane_3 plane(midp, norm);
@@ -3465,6 +3466,8 @@ public:
     const FT cz = volume_centroid.z();
     FT d = (norm.x() * cx + norm.y() * cy + norm.z() * cz + plane.d());
 
+    // std::cout << "1 d: " << d << std::endl;
+    // std::cout << "1 norm: " << norm << std::endl;
     const Plane_3 tr_plane(midp + norm * d, norm);
     Point_3 inter;
     const bool is_intersection_found = KSR::intersection(line, tr_plane, inter);
@@ -3472,11 +3475,19 @@ public:
       std::cout << "d = " << d << std::endl;
     }
     CGAL_assertion(is_intersection_found);
+    // std::cout << "inter: " << inter << std::endl;
+
     d = KSR::distance(midp, inter);
     norm = Vector_3(midp, inter);
-    norm = KSR::normalize(norm);
-    for (auto& point : points) {
-      point += norm * d;
+    // std::cout << "2 d: " << d << std::endl;
+    // std::cout << "2 norm: " << norm << std::endl;
+
+    if (d != FT(0)) {
+      CGAL_assertion(norm != Vector_3(FT(0), FT(0), FT(0)));
+      norm = KSR::normalize(norm);
+      for (auto& point : points) {
+        point += norm * d;
+      }
     }
 
     if (is_debug) {

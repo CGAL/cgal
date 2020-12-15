@@ -155,8 +155,9 @@ template<typename Vector_d>
 inline const Vector_d normalize(const Vector_d& v) {
   using Traits = typename Kernel_traits<Vector_d>::Kernel;
   using FT = typename Traits::FT;
-  const FT dot_prod = CGAL::abs(v * v);
-  return v / static_cast<FT>(CGAL::sqrt(CGAL::to_double(dot_prod)));
+  const FT dot_product = CGAL::abs(v * v);
+  CGAL_assertion(dot_product != FT(0));
+  return v / static_cast<FT>(CGAL::sqrt(CGAL::to_double(dot_product)));
 }
 
 template<typename Type1, typename Type2, typename ResultType>

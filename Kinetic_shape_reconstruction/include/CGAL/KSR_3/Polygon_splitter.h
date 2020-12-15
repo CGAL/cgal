@@ -51,6 +51,7 @@ private:
   using Line_2     = typename Kernel::Line_2;
   using Vector_2   = typename Kernel::Vector_2;
   using Triangle_2 = typename Kernel::Triangle_2;
+  using Segment_2  = typename Kernel::Segment_2;
 
   using PVertex = typename Data_structure::PVertex;
   using PFace   = typename Data_structure::PFace;
@@ -106,21 +107,15 @@ public:
 
   void split_support_plane(const KSR::size_t support_plane_idx) {
 
-    std::cout.precision(20);
-    std::cout << "current sp index: " << support_plane_idx << std::endl;
-
     // Create cdt.
+    std::cout.precision(20);
     std::vector<KSR::size_t> original_input;
     std::vector< std::vector<Point_2> > original_faces;
     initialize_cdt(support_plane_idx, original_input, original_faces);
+    CGAL_assertion(original_faces.size() >= 1);
+    CGAL_assertion(original_input.size() == original_faces.size());
     tag_cdt_exterior_faces();
     tag_cdt_interior_faces();
-    if (support_plane_idx >= 6) {
-      dump(true, 0, support_plane_idx, "original-faces.ply");
-      // dump(true, 1, support_plane_idx, "original-input.ply");
-    } else {
-      CGAL_assertion(original_faces.size() == 1);
-    }
 
     // Split polygons using cdt.
     m_data.clear_polygon_faces(support_plane_idx);
@@ -438,8 +433,10 @@ private:
   void set_new_adjacencies(
     const KSR::size_t support_plane_idx) {
 
+    // std::cout << std::endl << "support plane idx: " << support_plane_idx << std::endl;
     const auto all_pvertices = m_data.pvertices(support_plane_idx);
     for (const auto pvertex : all_pvertices) {
+      // std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
 
       bool is_frozen = false;
       auto iedge = Data_structure::null_iedge();
@@ -449,11 +446,15 @@ private:
       // Search for a frozen pvertex.
       const auto pedges = m_data.pedges_around_pvertex(pvertex);
       for (const auto pedge : pedges) {
+        // std::cout << "pedge: 2 " << m_data.segment_3(pedge) << " : "
+        // << m_data.has_iedge(pedge) << std::endl;
 
         if (m_data.has_iedge(pedge)) {
           if (iedge == Data_structure::null_iedge()) {
+            // std::cout << "empty iedge" << std::endl;
             iedge = m_data.iedge(pedge);
           } else {
+            // std::cout << "frozen pvertex" << std::endl;
             is_frozen = true;
             break;
           }
@@ -461,9 +462,12 @@ private:
           const auto opposite = m_data.opposite(pedge, pvertex);
           if (neighbors.first == Data_structure::null_pvertex()) {
             neighbors.first = opposite;
+            // std::cout << "assigned first neighbor: " << m_data.point_3(opposite) << std::endl;
           } else {
+            CGAL_assertion(neighbors.first  != Data_structure::null_pvertex());
             CGAL_assertion(neighbors.second == Data_structure::null_pvertex());
             neighbors.second = opposite;
+            // std::cout << "assigned second neighbor: " << m_data.point_3(opposite) << std::endl;
           }
         }
       }
@@ -479,53 +483,64 @@ private:
         continue;
       }
       m_data.connect(pvertex, iedge);
-      CGAL_assertion(
-        neighbors.first  != Data_structure::null_pvertex() &&
-        neighbors.second != Data_structure::null_pvertex());
+      // CGAL_assertion(
+      //   neighbors.first  != Data_structure::null_pvertex() &&
+      //   neighbors.second != Data_structure::null_pvertex());
 
       // Set future direction.
-      bool first_okay = (m_input.find(neighbors.first) != m_input.end());
-      auto last = pvertex;
-      auto curr = neighbors.first;
-      while (!first_okay) {
-        PVertex next, ignored;
-        std::tie(next, ignored) = m_data.border_prev_and_next(curr);
-        if (next == last) {
-          std::swap(next, ignored);
-        }
-        CGAL_assertion(ignored == last);
-
-        last = curr; curr = next;
-        if (m_input.find(curr) != m_input.end()) {
-          neighbors.first = curr;
-          first_okay = true;
-        }
+      bool is_first_okay = false;
+      if (neighbors.first != Data_structure::null_pvertex()) {
+        is_first_okay = update_neighbor(pvertex,   neighbors.first);
       }
 
-      bool second_okay = (m_input.find(neighbors.second) != m_input.end());
-      last = pvertex;
-      curr = neighbors.second;
-      while (!second_okay) {
-        PVertex next, ignored;
-        std::tie(next, ignored) = m_data.border_prev_and_next(curr);
-        if (next == last) {
-          std::swap(next, ignored);
-        }
-        CGAL_assertion(ignored == last);
-
-        last = curr; curr = next;
-        if (m_input.find(curr) != m_input.end()) {
-          neighbors.second = curr;
-          second_okay = true;
-        }
+      bool is_second_okay = false;
+      if (neighbors.second != Data_structure::null_pvertex()) {
+        is_second_okay = update_neighbor(pvertex, neighbors.second);
       }
 
-      const Line_2 future_line(
-        m_data.point_2(neighbors.first, FT(1)), m_data.point_2(neighbors.second, FT(1)));
+      Line_2 future_line;
+      if (is_first_okay && is_second_okay) {
+        future_line = Line_2(
+          m_data.point_2(neighbors.first , FT(1)),
+          m_data.point_2(neighbors.second, FT(1)));
+      } else {
+        CGAL_assertion(is_first_okay && !is_second_okay);
+        future_line = Line_2(
+          m_data.point_2(pvertex        , FT(1)),
+          m_data.point_2(neighbors.first, FT(1)));
+      }
+      CGAL_assertion(future_line != Line_2());
+
       const auto intersection_line = m_data.segment_2(support_plane_idx, iedge).supporting_line();
-      const Point_2 inter = KSR::intersection<Point_2>(intersection_line, future_line);
-      m_data.direction(pvertex) = Vector_2(m_data.point_2(pvertex, FT(0)), inter);
+      const Point_2 future_point = KSR::intersection<Point_2>(intersection_line, future_line);
+      const auto pinit = m_data.point_2(pvertex, FT(0));
+      const Vector_2 future_direction(pinit, future_point);
+      m_data.direction(pvertex) = future_direction;
+      // std::cout << "future point: " << m_data.to_3d(pvertex.first, future_point) << std::endl;
     }
+  }
+
+  const bool update_neighbor(
+    const PVertex& pvertex, PVertex& neighbor) const {
+
+    bool is_okay = (m_input.find(neighbor) != m_input.end());
+    auto last = pvertex;
+    auto curr = neighbor;
+    while (!is_okay) {
+      PVertex next, ignored;
+      std::tie(next, ignored) = m_data.border_prev_and_next(curr);
+      if (next == last) {
+        std::swap(next, ignored);
+      }
+      CGAL_assertion(ignored == last);
+
+      last = curr; curr = next;
+      if (m_input.find(curr) != m_input.end()) {
+        neighbor = curr;
+        is_okay = true;
+      }
+    }
+    return is_okay;
   }
 
   void locate_pface_among_coplanar_pfaces(
@@ -549,6 +564,15 @@ private:
 
     std::vector<Point_2> points;
     std::vector<Weighted_point> wps;
+
+    const bool is_debug = false;
+    if (is_debug) {
+      std::cout << std::endl << "support plane idx: " << support_plane_idx << std::endl;
+      std::cout << "dumping support plane ... ";
+      dump(true, 0, support_plane_idx, "support-plane-" +
+      std::to_string(support_plane_idx) + ".ply");
+      std::cout << "done" << std::endl;
+    }
 
     // Find bbox of the support plane.
     const auto& iedges = m_data.iedges(support_plane_idx);
@@ -591,17 +615,105 @@ private:
     using Vertex_handle = typename Regular_triangulation::Vertex_handle;
     std::vector<Vertex_handle> vhs;
     vhs.reserve(original_faces.size());
-    for (const auto& wp : wps) {
-      const auto vh = triangulation.insert(wp);
-      vhs.push_back(vh);
+    for (std::size_t i = 0; i < wps.size(); ++i) {
+      const auto& wp = wps[i];
+      if (i < 4) triangulation.insert(wp);
+      else {
+        const auto vh = triangulation.insert(wp);
+        vhs.push_back(vh);
+      }
     }
     CGAL_assertion(triangulation.is_valid());
-    dump_power_diagram(triangulation, support_plane_idx);
+
+    if (is_debug) {
+      std::cout << "dumping power cdt/diagram ... ";
+      dump_power_cdt_and_diagram(triangulation, support_plane_idx);
+      std::cout << "done" << std::endl;
+    }
 
     // Filter all necessary bisectors.
+    if (is_debug) {
+      std::cout << "vhs 0: " << m_data.to_3d(support_plane_idx, vhs[0]->point().point()) << std::endl;
+      std::cout << "vhs 1: " << m_data.to_3d(support_plane_idx, vhs[1]->point().point()) << std::endl;
+    }
 
-    CGAL_assertion_msg(false,
-    "TODO: POLYGON SPLITTER, ADD BISECTORS!");
+    auto curr = triangulation.incident_edges(vhs[0]);
+    const auto end = curr;
+    do {
+      const auto fh = curr->first;
+      const auto id = curr->second;
+      const auto ip = (id + 1) % 3;
+      const auto im = (id + 2) % 3;
+      const auto& p = fh->vertex(ip)->point().point();
+      const auto& q = fh->vertex(im)->point().point();
+      // std::cout << "ip, p: " << m_data.to_3d(support_plane_idx, p) << std::endl;
+      // std::cout << "im, q: " << m_data.to_3d(support_plane_idx, q) << std::endl;
+
+      CGAL_assertion(
+        fh->vertex(ip) == vhs[0] || fh->vertex(im) == vhs[0]);
+
+      if (fh->vertex(ip) == vhs[1]) {
+        if (is_debug) {
+          std::cout << "ip, found connecting edge: 2 " <<
+            m_data.to_3d(support_plane_idx, q) << " " <<
+            m_data.to_3d(support_plane_idx, p) << std::endl;
+        }
+        break;
+      }
+
+      if (fh->vertex(im) == vhs[1]) {
+        if (is_debug) {
+          std::cout << "im, found connecting edge: 2 " <<
+            m_data.to_3d(support_plane_idx, p) << " " <<
+            m_data.to_3d(support_plane_idx, q) << std::endl;
+        }
+        break;
+      }
+
+      ++curr;
+    } while (curr != end);
+    const auto object = triangulation.dual(curr);
+    Segment_2 segment;
+    if (CGAL::assign(segment, object)) {
+      if (is_debug) {
+        std::cout << "found bisector: 2 " <<
+        m_data.to_3d(support_plane_idx, segment.source()) << " " <<
+        m_data.to_3d(support_plane_idx, segment.target()) << std::endl;
+      }
+    }
+
+    // Add iedge.
+    std::vector<Point_2> inter_points;
+    for (std::size_t i = 0; i < 4; ++i) {
+      const std::size_t ip = (i + 1) % 4;
+      const Segment_2 bbox_edge(wps[i].point(), wps[ip].point());
+      Point_2 inter_point;
+      if (KSR::intersection(segment, bbox_edge, inter_point)) {
+        inter_points.push_back(inter_point);
+      }
+    }
+    CGAL_assertion(inter_points.size() == 2);
+    if (is_debug) {
+      std::cout << "found iedge: 2 " <<
+        m_data.to_3d(support_plane_idx, inter_points[0]) << " " <<
+        m_data.to_3d(support_plane_idx, inter_points[1]) << std::endl;
+    }
+
+    const auto iv0 = m_data.igraph().
+      add_vertex(m_data.to_3d(support_plane_idx, inter_points[0])).first;
+    const auto iv1 = m_data.igraph().
+      add_vertex(m_data.to_3d(support_plane_idx, inter_points[1])).first;
+
+    const auto pair = m_data.igraph().add_edge(iv0, iv1, support_plane_idx);
+    const auto& iedge = pair.first;
+    const bool is_inserted = pair.second;
+    if (is_inserted) {
+      m_data.igraph().set_line(iedge, m_data.igraph().add_line());
+    }
+    m_data.support_plane(support_plane_idx).iedges().insert(iedge);
+
+    // CGAL_assertion_msg(false,
+    // "TODO: POLYGON SPLITTER, ADD BISECTORS!");
   }
 
   void dump(
@@ -690,7 +802,7 @@ private:
   }
 
   template<typename Triangulation>
-  void dump_power_diagram(
+  void dump_power_cdt_and_diagram(
     const Triangulation& tri,
     const KSR::size_t support_plane_idx) {
 

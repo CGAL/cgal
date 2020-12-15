@@ -88,7 +88,7 @@ public:
     bounding_box_to_polygons(bbox, bbox_faces);
     add_polygons(input_range, polygon_map, bbox_faces);
 
-    if (m_verbose) std::cout << "* intersecting input polygons ...";
+    if (m_verbose) std::cout << "* intersecting input polygons ... ";
     if (m_debug) {
       KSR_3::dump(m_data, "init");
       // KSR_3::dump_segmented_edges(m_data, "init");
@@ -99,9 +99,9 @@ public:
     m_data.check_integrity();
     set_k_intersections(k);
 
-    if (m_verbose) std::cout << " done" << std::endl;
+    if (m_verbose) std::cout << "done" << std::endl;
     if (m_debug) {
-      KSR_3::dump(m_data, "intersected");
+      KSR_3::dump(m_data, "intersected-iter-1000");
       // KSR_3::dump_segmented_edges(m_data, "intersected");
     }
 
@@ -393,6 +393,9 @@ private:
     for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
       Polygon_splitter splitter(m_data);
       splitter.split_support_plane(i);
+      if (i >= 6 && m_debug) {
+        KSR_3::dump(m_data, "intersected-iter-" + std::to_string(i));
+      }
     }
   }
 

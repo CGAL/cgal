@@ -123,7 +123,7 @@ public:
       CGAL_assertion(m_graph[edge].line >= 0);
       ig.graph()[ed].line   = m_graph[edge].line;
 
-      CGAL_assertion(m_graph[edge].planes.size() >= 2);
+      CGAL_assertion(m_graph[edge].planes.size() >= 1);
       ig.graph()[ed].planes = m_graph[edge].planes;
 
       CGAL_assertion(m_graph[edge].active);
