@@ -1057,8 +1057,8 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
       if(CGAL::Euler::does_satisfy_link_condition(e, tmesh))
       {
         const halfedge_descriptor h = halfedge(e, tmesh);
-        degenerate_edges_to_remove.erase(it);
         local_edge_range.erase(*it);
+        degenerate_edges_to_remove.erase(it);
 
         // remove edges that could also be set for removal
         if(face(h, tmesh) != GT::null_face())
