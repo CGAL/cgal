@@ -609,7 +609,7 @@ public:
         tr(), m_cell_selector, ossi.str().c_str());
 #endif
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-      CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3); 
+      CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
 #endif
     }
 
