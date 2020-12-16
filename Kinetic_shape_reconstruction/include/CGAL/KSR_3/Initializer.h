@@ -101,7 +101,7 @@ public:
 
     if (m_verbose) std::cout << "done" << std::endl;
     if (m_debug) {
-      KSR_3::dump(m_data, "intersected-iter-1000");
+      KSR_3::dump(m_data, "intersected");
       // KSR_3::dump_segmented_edges(m_data, "intersected");
     }
 

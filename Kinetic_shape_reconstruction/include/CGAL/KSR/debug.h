@@ -55,7 +55,7 @@ get_idx_color(const KSR::size_t idx) {
 template<typename DS>
 void dump_intersection_edges(const DS& data, const std::string tag = std::string()) {
 
-  const std::string filename = (tag != std::string() ? tag + "_" : "") + "intersection_edges.polylines.txt";
+  const std::string filename = (tag != std::string() ? tag + "-" : "") + "intersection-edges.polylines.txt";
   std::ofstream out(filename);
   out.precision(20);
 
@@ -70,7 +70,7 @@ void dump_segmented_edges(const DS& data, const std::string tag = std::string())
 
   std::vector<std::ofstream*> out;
   for (KSR::size_t i = 0; i < data.nb_intersection_lines(); ++i) {
-    const std::string filename = (tag != std::string() ? tag + "_" : "") + "intersection_line_" + std::to_string(i) + ".polylines.txt";
+    const std::string filename = (tag != std::string() ? tag + "-" : "") + "intersection-line-" + std::to_string(i) + ".polylines.txt";
     out.push_back(new std::ofstream(filename));
     out.back()->precision(20);
   }
@@ -88,7 +88,7 @@ void dump_segmented_edges(const DS& data, const std::string tag = std::string())
 template<typename DS>
 void dump_constrained_edges(const DS& data, const std::string tag = std::string()) {
 
-  const std::string filename = (tag != std::string() ? tag + "_" : "") + "constrained_edges.polylines.txt";
+  const std::string filename = (tag != std::string() ? tag + "-" : "") + "constrained-edges.polylines.txt";
   std::ofstream out(filename);
   out.precision(20);
 
@@ -99,6 +99,51 @@ void dump_constrained_edges(const DS& data, const std::string tag = std::string(
       }
     }
   }
+  out.close();
+}
+
+template<typename DS>
+void dump_2d_surface_mesh(
+  const DS& data,
+  const KSR::size_t support_plane_idx,
+  const std::string tag = std::string()) {
+
+  using Point_3      = typename DS::Kernel::Point_3;
+  using Mesh         = CGAL::Surface_mesh<Point_3>;
+  using Face_index   = typename Mesh::Face_index;
+  using Vertex_index = typename Mesh::Vertex_index;
+  using Uchar_map    = typename Mesh::template Property_map<Face_index, unsigned char>;
+
+  Mesh mesh;
+  Uchar_map red   = mesh.template add_property_map<Face_index, unsigned char>("red", 0).first;
+  Uchar_map green = mesh.template add_property_map<Face_index, unsigned char>("green", 0).first;
+  Uchar_map blue  = mesh.template add_property_map<Face_index, unsigned char>("blue", 0).first;
+
+  KSR::vector<Vertex_index> vertices;
+  KSR::vector<Vertex_index> map_vertices;
+
+  map_vertices.clear();
+  for (const auto pvertex : data.pvertices(support_plane_idx)) {
+    if (map_vertices.size() <= pvertex.second) {
+      map_vertices.resize(pvertex.second + 1);
+    }
+    map_vertices[pvertex.second] = mesh.add_vertex(data.point_3(pvertex));
+  }
+
+  for (const auto pface : data.pfaces(support_plane_idx)) {
+    vertices.clear();
+    for (const auto pvertex : data.pvertices_of_pface(pface)) {
+      vertices.push_back(map_vertices[pvertex.second]);
+    }
+    const auto face = mesh.add_face(vertices);
+    std::tie(red[face], green[face], blue[face]) =
+      get_idx_color(support_plane_idx * (pface.second + 1));
+  }
+
+  const std::string filename = (tag != std::string() ? tag + "-" : "") + "polygons.ply";
+  std::ofstream out(filename);
+  out.precision(20);
+  CGAL::write_ply(out, mesh);
   out.close();
 }
 
@@ -168,7 +213,7 @@ void dump_polygons(const DS& data, const std::string tag = std::string()) {
     }
   }
 
-  const std::string filename = (tag != std::string() ? tag + "_" : "") + "polygons.ply";
+  const std::string filename = (tag != std::string() ? tag + "-" : "") + "polygons.ply";
   std::ofstream out(filename);
   out.precision(20);
   CGAL::write_ply(out, mesh);
@@ -176,7 +221,7 @@ void dump_polygons(const DS& data, const std::string tag = std::string()) {
 
 #if false
 
-  const std::string bbox_filename = (tag != std::string() ? tag + "_" : "") + "bbox_polygons.ply";
+  const std::string bbox_filename = (tag != std::string() ? tag + "-" : "") + "bbox-polygons.ply";
   std::ofstream bbox_out(bbox_filename);
   bbox_out.precision(20);
   CGAL::write_ply(bbox_out, bbox_mesh);
@@ -188,7 +233,7 @@ void dump_polygons(const DS& data, const std::string tag = std::string()) {
 template<typename DS>
 void dump_polygon_borders(const DS& data, const std::string tag = std::string()) {
 
-  const std::string filename = (tag != std::string() ? tag + "_" : "") + "polygon_borders.polylines.txt";
+  const std::string filename = (tag != std::string() ? tag + "-" : "") + "polygon-borders.polylines.txt";
   std::ofstream out(filename);
   out.precision(20);
   for (KSR::size_t i = 6; i < data.number_of_support_planes(); ++i) {
@@ -204,13 +249,13 @@ void dump_event(const DS& data, const Event& ev, const std::string tag = std::st
 
   if (ev.is_pvertex_to_pvertex()) {
 
-    const std::string vfilename = (tag != std::string() ? tag + "_" : "") + "event_pvertex.xyz";
+    const std::string vfilename = (tag != std::string() ? tag + "-" : "") + "event-pvertex.xyz";
     std::ofstream vout(vfilename);
     vout.precision(20);
     vout << data.point_3(ev.pvertex()) << std::endl;
     vout.close();
 
-    const std::string ofilename = (tag != std::string() ? tag + "_" : "") + "event_pother.xyz";
+    const std::string ofilename = (tag != std::string() ? tag + "-" : "") + "event-pother.xyz";
     std::ofstream oout(ofilename);
     oout.precision(20);
     oout << data.point_3(ev.pother()) << std::endl;
@@ -218,13 +263,13 @@ void dump_event(const DS& data, const Event& ev, const std::string tag = std::st
 
   } else if (ev.is_pvertex_to_iedge()) {
 
-    const std::string lfilename = (tag != std::string() ? tag + "_" : "") + "event_iedge.polylines.txt";
+    const std::string lfilename = (tag != std::string() ? tag + "-" : "") + "event-iedge.polylines.txt";
     std::ofstream lout(lfilename);
     lout.precision(20);
     lout << "2 " << data.segment_3(ev.iedge()) << std::endl;
     lout.close();
 
-    const std::string vfilename = (tag != std::string() ? tag + "_" : "") + "event_pvertex.xyz";
+    const std::string vfilename = (tag != std::string() ? tag + "-" : "") + "event-pvertex.xyz";
     std::ofstream vout(vfilename);
     vout.precision(20);
     vout << data.point_3(ev.pvertex());
@@ -232,13 +277,13 @@ void dump_event(const DS& data, const Event& ev, const std::string tag = std::st
 
   } else if (ev.is_pvertex_to_ivertex()) {
 
-    const std::string vfilename = (tag != std::string() ? tag + "_" : "") + "event_pvertex.xyz";
+    const std::string vfilename = (tag != std::string() ? tag + "-" : "") + "event-pvertex.xyz";
     std::ofstream vout(vfilename);
     vout.precision(20);
     vout << data.point_3(ev.pvertex()) << std::endl;
     vout.close();
 
-    const std::string ofilename = (tag != std::string() ? tag + "_" : "") + "event_ivertex.xyz";
+    const std::string ofilename = (tag != std::string() ? tag + "-" : "") + "event-ivertex.xyz";
     std::ofstream oout(ofilename);
     oout.precision(20);
     oout << data.point_3(ev.ivertex()) << std::endl;
@@ -587,7 +632,7 @@ void dump_polyhedrons(const DS& data, const std::string tag = std::string()) {
     }
 
     const std::string file_name =
-      (tag != std::string() ? tag + "_" : "") + "volume-" + std::to_string(i);
+      (tag != std::string() ? tag + "-" : "") + "volume-" + std::to_string(i);
     saver.export_polygon_soup_3(polygons, colors, file_name);
   }
 }

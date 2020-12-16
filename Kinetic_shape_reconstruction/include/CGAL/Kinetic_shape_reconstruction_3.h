@@ -118,11 +118,11 @@ public:
       input_range, polygon_map, k, enlarge_bbox_ratio, reorient));
     m_initializer.convert(m_data);
 
-    if (m_verbose) {
-      std::cout << std::endl << "POLYGON SPLITTER SUCCESS!" << std::endl << std::endl;
-    }
+    // if (m_verbose) {
+    //   std::cout << std::endl << "POLYGON SPLITTER SUCCESS!" << std::endl << std::endl;
+    // }
     // return true;
-    exit(EXIT_SUCCESS);
+    // exit(EXIT_SUCCESS);
 
     if (m_verbose) {
       std::cout << std::endl << "--- RUNNING THE QUEUE:" << std::endl;
@@ -159,12 +159,12 @@ public:
     }
 
     if (m_verbose) std::cout << std::endl << "--- FINALIZING KSR:" << std::endl;
-    if (m_debug) dump(m_data, "iter_999-pre-final-result");
+    if (m_debug) dump(m_data, "iter-" + std::to_string(global_iteration) + "-pre-final-result");
     m_data.finalize();
     if (m_verbose) std::cout << "* checking final mesh integrity ...";
     m_data.check_integrity();
     if (m_verbose) std::cout << " done" << std::endl;
-    if (m_debug) dump(m_data, "iter_1000-final-result");
+    if (m_debug) dump(m_data, "iter-" + std::to_string(global_iteration + 1) + "-final-result");
 
     // std::cout << std::endl << "CLEANING SUCCESS!" << std::endl << std::endl;
     // exit(EXIT_SUCCESS);
@@ -534,11 +534,11 @@ private:
       const FT current_time = event.time();
       if (m_debug) {
         if (iteration < 10) {
-          dump(m_data, "iter_0" + std::to_string(iteration));
-          dump_event(m_data, event, "iter_0" + std::to_string(iteration));
+          dump(m_data, "iter-0" + std::to_string(iteration));
+          dump_event(m_data, event, "iter-0" + std::to_string(iteration));
         } else {
-          dump(m_data, "iter_" + std::to_string(iteration));
-          dump_event(m_data, event, "iter_" + std::to_string(iteration));
+          dump(m_data, "iter-" + std::to_string(iteration));
+          dump_event(m_data, event, "iter-" + std::to_string(iteration));
         }
       }
 

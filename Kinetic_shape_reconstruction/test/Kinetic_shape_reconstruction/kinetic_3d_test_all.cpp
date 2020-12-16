@@ -76,22 +76,22 @@ int main (const int argc, const char** argv) {
   const std::size_t num_iters = 3;
 
   // Stress tests 0.
-  assert(run_test("data/stress-test-0/test-1-polygon-a.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-0/test-1-polygon-b.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-0/test-1-polygon-c.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-0/test-1-polygon-d.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-0/test-2-polygons-ab.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-0/test-2-polygons-ac.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-0/test-2-polygons-ad.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-0/test-2-polygons-bc.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-0/test-2-polygons-bd.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-0/test-2-polygons-cd.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-0/test-3-polygons-abc.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-0/test-3-polygons-abd.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-0/test-3-polygons-acd.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-0/test-3-polygons-bcd.off", num_iters, num_tests));
+  assert(run_test("data/stress-test-0/test-1-polygon-a.off"    , num_iters, num_tests));
+  assert(run_test("data/stress-test-0/test-1-polygon-b.off"    , num_iters, num_tests));
+  assert(run_test("data/stress-test-0/test-1-polygon-c.off"    , num_iters, num_tests));
+  assert(run_test("data/stress-test-0/test-1-polygon-d.off"    , num_iters, num_tests));
+  assert(run_test("data/stress-test-0/test-2-polygons-ab.off"  , num_iters, num_tests));
+  assert(run_test("data/stress-test-0/test-2-polygons-ac.off"  , num_iters, num_tests));
+  assert(run_test("data/stress-test-0/test-2-polygons-ad.off"  , num_iters, num_tests));
+  assert(run_test("data/stress-test-0/test-2-polygons-bc.off"  , num_iters, num_tests));
+  assert(run_test("data/stress-test-0/test-2-polygons-bd.off"  , num_iters, num_tests));
+  assert(run_test("data/stress-test-0/test-2-polygons-cd.off"  , num_iters, num_tests));
+  assert(run_test("data/stress-test-0/test-3-polygons-abc.off" , num_iters, num_tests));
+  assert(run_test("data/stress-test-0/test-3-polygons-abd.off" , num_iters, num_tests));
+  assert(run_test("data/stress-test-0/test-3-polygons-acd.off" , num_iters, num_tests));
+  assert(run_test("data/stress-test-0/test-3-polygons-bcd.off" , num_iters, num_tests));
   assert(run_test("data/stress-test-0/test-4-polygons-abcd.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-0/test-6-polygons.off", num_iters, num_tests));
+  assert(run_test("data/stress-test-0/test-6-polygons.off"     , num_iters, num_tests));
 
   // Stress tests 1.
   assert(run_test("data/stress-test-1/test-1-rnd-polygons-1-4.off", num_iters, num_tests));
@@ -112,34 +112,37 @@ int main (const int argc, const char** argv) {
   assert(run_test("data/stress-test-2/test-6-rnd-polygons-3-4.off", num_iters, num_tests));
 
   // Stress tests 3.
-  assert(run_test("data/stress-test-3/test-1-rnd-polygons-2-3.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-3/test-2-rnd-polygons-2-3.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-3/test-3-rnd-polygons-2-3.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-3/test-4-rnd-polygons-2-4.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-3/test-5-rnd-polygons-1-3.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-3/test-6-rnd-polygons-2-3.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-3/test-7-rnd-polygons-2-4.off", num_iters, num_tests));
+  assert(run_test("data/stress-test-3/test-1-rnd-polygons-2-3.off" , num_iters, num_tests));
+  assert(run_test("data/stress-test-3/test-2-rnd-polygons-2-3.off" , num_iters, num_tests));
+  assert(run_test("data/stress-test-3/test-3-rnd-polygons-2-3.off" , num_iters, num_tests));
+  assert(run_test("data/stress-test-3/test-4-rnd-polygons-2-4.off" , num_iters, num_tests));
+  assert(run_test("data/stress-test-3/test-5-rnd-polygons-1-3.off" , num_iters, num_tests));
+  assert(run_test("data/stress-test-3/test-6-rnd-polygons-2-3.off" , num_iters, num_tests));
+  assert(run_test("data/stress-test-3/test-7-rnd-polygons-2-4.off" , num_iters, num_tests));
   assert(run_test("data/stress-test-3/test-8-rnd-polygons-2-10.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-3/test-9-rnd-polygons-4-4.off", num_iters, num_tests));
+  assert(run_test("data/stress-test-3/test-9-rnd-polygons-4-4.off" , num_iters, num_tests));
   assert(run_test("data/stress-test-3/test-10-rnd-polygons-5-4.off", num_iters, num_tests));
 
   // Stress tests 4.
-  assert(run_test("data/stress-test-4/test-1-rnd-polygons-2-6.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-4/test-2-rnd-polygons-3-8.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-4/test-3-rnd-polygons-4-4.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-4/test-4-rnd-polygons-4-6.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-4/test-5-rnd-polygons-6-4.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-4/test-6-rnd-polygons-5-6.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-4/test-7-rnd-polygons-7-6.off", num_iters, num_tests));
-  assert(run_test("data/stress-test-4/test-8-rnd-polygons-7-8.off", num_iters, num_tests));
+  assert(run_test("data/stress-test-4/test-1-rnd-polygons-2-6.off" , num_iters, num_tests));
+  assert(run_test("data/stress-test-4/test-2-rnd-polygons-3-8.off" , num_iters, num_tests));
+  assert(run_test("data/stress-test-4/test-3-rnd-polygons-4-4.off" , num_iters, num_tests));
+  assert(run_test("data/stress-test-4/test-4-rnd-polygons-4-6.off" , num_iters, num_tests));
+  assert(run_test("data/stress-test-4/test-5-rnd-polygons-6-4.off" , num_iters, num_tests));
+  assert(run_test("data/stress-test-4/test-6-rnd-polygons-5-6.off" , num_iters, num_tests));
+  assert(run_test("data/stress-test-4/test-7-rnd-polygons-7-6.off" , num_iters, num_tests));
+  assert(run_test("data/stress-test-4/test-8-rnd-polygons-7-8.off" , num_iters, num_tests));
   assert(run_test("data/stress-test-4/test-9-rnd-polygons-12-4.off", num_iters, num_tests));
 
   // Real data tests.
-  assert(run_test("data/real-data-test/building_b_15squares_15planes.off", num_iters, num_tests));
+  assert(run_test("data/real-data-test/building-a-10polygons-10planes.off", num_iters, num_tests));
+  assert(run_test("data/real-data-test/building-b-15squares-15planes.off" , num_iters, num_tests));
 
   // Edge case tests.
-  assert(run_test("data/edge-case-test/test-2-polygons.off", num_iters, num_tests));
-  assert(run_test("data/edge-case-test/test-4-polygons.off", num_iters, num_tests));
+  assert(run_test("data/edge-case-test/test-2-polygons.off" , num_iters, num_tests)); // edge touch
+  assert(run_test("data/edge-case-test/test-4-polygons.off" , num_iters, num_tests)); // edge touch / 2 coplanar
+  assert(run_test("data/edge-case-test/test-5-polygons.off" , num_iters, num_tests)); // edge touch / vertex touch / 2 coplanar
+  // assert(run_test("data/edge-case-test/test-20-polygons.off", num_iters, num_tests)); // 2 overlap and coplanar
 
   std::cout << std::endl << "--OUTPUT STATS:" << std::endl;
   std::cout << "* number of iterations per test: " << num_iters << std::endl;
