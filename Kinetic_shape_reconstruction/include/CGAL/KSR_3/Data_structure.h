@@ -291,7 +291,7 @@ public:
       }
     }
     CGAL_assertion_msg(!found_coplanar_polygons,
-    "TODO: HANDLE MULTIPLE COPLANAR POLYGONS!");
+    "TODO: HANDLE MULTIPLE COPLANAR POLYGONS! CAN WE HAVE THEM HERE?");
 
     if (support_plane_idx == KSR::no_element()) {
       support_plane_idx = number_of_support_planes();
@@ -425,7 +425,8 @@ public:
   }
 
   template<typename PointRange>
-  void add_input_polygon(const PointRange& polygon, const KSR::size_t input_idx) {
+  void add_input_polygon(
+    const PointRange& polygon, const KSR::size_t input_index) {
 
     const KSR::size_t support_plane_idx = add_support_plane(polygon);
     std::vector<Point_2> points;
@@ -437,9 +438,20 @@ public:
         static_cast<FT>(point.z()));
       points.push_back(support_plane(support_plane_idx).to_2d(converted));
     }
+    const auto centroid = sort_points_by_direction(points);
+    std::vector<KSR::size_t> input_indices;
+    input_indices.push_back(input_index);
+    support_plane(support_plane_idx).
+      add_input_polygon(points, centroid, input_indices);
+  }
 
+  const Point_2 sort_points_by_direction(
+    std::vector<Point_2>& points) const {
+
+    // Naive version.
     // const auto centroid = CGAL::centroid(points.begin(), points.end());
 
+    // Better version.
     using TRI = CGAL::Delaunay_triangulation_2<Kernel>;
     TRI tri(points.begin(), points.end());
     std::vector<Triangle_2> triangles;
@@ -456,7 +468,17 @@ public:
       const Segment_2 segb(centroid, b);
       return ( Direction_2(sega) < Direction_2(segb) );
     });
-    support_plane(support_plane_idx).add_input_polygon(points, centroid, input_idx);
+    return centroid;
+  }
+
+  void add_input_polygon(
+    const KSR::size_t support_plane_idx,
+    const std::vector<KSR::size_t>& input_indices,
+    std::vector<Point_2>& points) {
+
+    const auto centroid = sort_points_by_direction(points);
+    support_plane(support_plane_idx).
+      add_input_polygon(points, centroid, input_indices);
   }
 
   /*******************************
@@ -732,8 +754,8 @@ public:
     }
   }
 
-  const KSR::size_t& input(const PFace& pface) const{ return support_plane(pface).input(pface.second); }
-  KSR::size_t& input(const PFace& pface) { return support_plane(pface).input(pface.second); }
+  const std::vector<KSR::size_t>& input(const PFace& pface) const{ return support_plane(pface).input(pface.second); }
+  std::vector<KSR::size_t>& input(const PFace& pface) { return support_plane(pface).input(pface.second); }
 
   const unsigned int& k(const PFace& pface) const { return support_plane(pface).k(pface.second); }
   unsigned int& k(const PFace& pface) { return support_plane(pface).k(pface.second); }
@@ -1510,6 +1532,8 @@ public:
       const Line_2 future_line(
         point_2(pother, m_current_time + FT(1)),
         point_2(pthird, m_current_time + FT(1)));
+      CGAL_assertion_msg(!CGAL::parallel(future_line, iedge_line),
+      "TODO: TRANSFER PVERTEX, HANDLE CASE WITH PARALLEL LINES!");
       Point_2 future_point = KSR::intersection<Point_2>(future_line, iedge_line);
 
       const Vector_2 future_direction(pinit, future_point);
@@ -1559,6 +1583,8 @@ public:
       const Line_2 future_line(
         point_2(pvertex, m_current_time + FT(1)),
         point_2(pthird , m_current_time + FT(1)));
+      CGAL_assertion_msg(!CGAL::parallel(future_line, iedge_line),
+      "TODO: TRANSFER PVERTEX, HANDLE CASE WITH PARALLEL LINES!");
       Point_2 future_point = KSR::intersection<Point_2>(future_line, iedge_line);
 
       const Vector_2 future_direction(pinit, future_point);

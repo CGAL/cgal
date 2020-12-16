@@ -24,6 +24,7 @@
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
 // CGAL includes.
+#include <CGAL/convex_hull_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -102,21 +103,31 @@ private:
   using RVertex_handle        = typename Regular_triangulation::Vertex_handle;
   using REdge                 = typename Regular_triangulation::Edge;
 
+  enum struct Merge_type { CONVEX_HULL = 0, RECTANGLE = 1 };
+
   Data_structure& m_data;
   TRI m_cdt;
   std::set<PVertex> m_input;
   std::map<CID, IEdge> m_map_intersections;
+  const Merge_type m_merge_type;
 
 public:
   Polygon_splitter(Data_structure& data) :
-  m_data(data)
+  m_data(data),
+  m_merge_type(Merge_type::CONVEX_HULL)
   { }
 
   void split_support_plane(const KSR::size_t support_plane_idx) {
 
+    // Preprocessing.
+    const auto all_pfaces = m_data.pfaces(support_plane_idx);
+    if (all_pfaces.size() > 1) {
+      merge_coplanar_pfaces(support_plane_idx);
+    }
+
     // Create cdt.
     std::cout.precision(20);
-    std::vector<KSR::size_t> original_input;
+    std::vector< std::vector<KSR::size_t> > original_input;
     std::vector< std::vector<Point_2> > original_faces;
     initialize_cdt(support_plane_idx, original_input, original_faces);
     CGAL_assertion(original_faces.size() >= 1);
@@ -134,17 +145,110 @@ public:
     reconnect_pedges_to_iedges();
     set_new_adjacencies(support_plane_idx);
     if (original_faces.size() > 1) {
-      merge_coplanar_pfaces(
-        support_plane_idx, original_input, original_faces);
+      CGAL_assertion_msg(false,
+      "ERROR: WE CANNOT HAVE MULTIPLE COPLANAR PFACES!");
+      // merge_coplanar_pfaces(
+      //   support_plane_idx, original_input, original_faces);
       // add_bisectors(original_faces, support_plane_idx);
     }
   }
 
 private:
 
+  void merge_coplanar_pfaces(
+    const KSR::size_t support_plane_idx) {
+
+    const bool is_debug = false;
+    CGAL_assertion(support_plane_idx >= 6);
+    if (is_debug) {
+      std::cout << std::endl << "support plane idx: " << support_plane_idx << std::endl;
+    }
+
+    std::vector<Point_2> points;
+    collect_pface_points(support_plane_idx, points);
+    std::vector<Point_2> merged;
+    create_merged_pface(points, merged);
+
+    if (is_debug) {
+      std::cout << "merged pface: " << std::endl;
+      for (std::size_t i = 0; i < merged.size(); ++i) {
+        const std::size_t ip = (i + 1) % merged.size();
+        const auto& p = merged[i];
+        const auto& q = merged[ip];
+        std::cout << "2 " <<
+        m_data.to_3d(support_plane_idx, p) << " " <<
+        m_data.to_3d(support_plane_idx, q) << std::endl;
+      }
+    }
+
+    add_merged_pface(support_plane_idx, merged);
+    // CGAL_assertion_msg(false, "TODO: MERGE COPLANAR PFACES!");
+  }
+
+  void collect_pface_points(
+    const KSR::size_t support_plane_idx,
+    std::vector<Point_2>& points) const {
+
+    points.clear();
+    const auto all_pfaces = m_data.pfaces(support_plane_idx);
+    CGAL_assertion(all_pfaces.size() > 1);
+    points.reserve(all_pfaces.size() * 3);
+    for (const auto pface : all_pfaces) {
+      const auto pvertices = m_data.pvertices_of_pface(pface);
+      CGAL_assertion(pvertices.size() >= 3);
+
+      for (const auto pvertex : pvertices) {
+        const auto point = m_data.point_2(pvertex);
+        points.push_back(point);
+      }
+    }
+    CGAL_assertion(points.size() >= all_pfaces.size() * 3);
+  }
+
+  void create_merged_pface(
+    const std::vector<Point_2>& points,
+    std::vector<Point_2>& merged) const {
+
+    merged.clear();
+    switch (m_merge_type) {
+      case Merge_type::CONVEX_HULL: {
+        CGAL::convex_hull_2(points.begin(), points.end(), std::back_inserter(merged) );
+        break;
+      }
+      case Merge_type::RECTANGLE: {
+        CGAL_assertion_msg(false, "TODO: MERGE PFACES INTO A RECTANGLE!");
+        break;
+      }
+      default: {
+        CGAL_assertion_msg(false, "ERROR: MERGE PFACES, WRONG TYPE!");
+        break;
+      }
+    }
+    CGAL_assertion(merged.size() >= 3);
+  }
+
+  void add_merged_pface(
+    const KSR::size_t support_plane_idx,
+    std::vector<Point_2>& merged) {
+
+    const auto all_pfaces = m_data.pfaces(support_plane_idx);
+    std::vector<KSR::size_t> input_indices;
+    input_indices.reserve(all_pfaces.size());
+
+    for (const auto pface : all_pfaces) {
+      const auto& pface_input = m_data.input(pface);
+      CGAL_assertion(pface_input.size() == 1);
+      input_indices.push_back(pface_input[0]);
+    }
+    CGAL_assertion(input_indices.size() == all_pfaces.size());
+
+    m_data.support_plane(support_plane_idx).clear_pfaces();
+    m_data.add_input_polygon(support_plane_idx, input_indices, merged);
+  }
+
   void initialize_cdt(
     const KSR::size_t support_plane_idx,
-    std::vector<KSR::size_t>& original_input,
+    std::vector< std::vector<KSR::size_t> >& original_input,
     std::vector< std::vector<Point_2> >& original_faces) {
 
     // Insert pvertices.
@@ -161,7 +265,7 @@ private:
     original_faces.clear();
     original_input.clear();
 
-    // std::vector<Vertex_handle> vhs;
+    // std::vector<Vertex_handle> vhs; // TODO: Why we cannot use vhs here?
     std::vector<TRI> triangulations;
     std::vector<Point_2> original_face;
 
@@ -170,17 +274,17 @@ private:
       const auto pvertices = m_data.pvertices_of_pface(pface);
 
       // vhs.clear();
-      TRI triangulation;
+      // TRI triangulation; // TODO: remove triangulations here!
       original_face.clear();
       for (const auto pvertex : pvertices) {
         CGAL_assertion(vhs_map.find(pvertex) != vhs_map.end());
         const auto vh = vhs_map.at(pvertex);
         original_face.push_back(vh->point());
-        triangulation.insert(vh->point());
+        // triangulation.insert(vh->point());
         // vhs.push_back(vh);
       }
 
-      triangulations.push_back(triangulation);
+      // triangulations.push_back(triangulation);
       original_faces.push_back(original_face);
       original_input.push_back(m_data.input(pface));
 
@@ -208,19 +312,22 @@ private:
     }
 
     // Finally, add original labels to the cdt.
-    for (auto fit = m_cdt.finite_faces_begin(); fit != m_cdt.finite_faces_end(); ++fit) {
-      const auto centroid = CGAL::centroid(
-        fit->vertex(0)->point(),
-        fit->vertex(1)->point(),
-        fit->vertex(2)->point());
-      for (KSR::size_t i = 0; i < triangulations.size(); ++i) {
-        const auto fh = triangulations[i].locate(centroid);
-        if (fh == nullptr || triangulations[i].is_infinite(fh)) {
-          continue;
-        }
-        fit->info().input = i;
-        break;
-      }
+    if (all_pfaces.size() > 1) {
+      CGAL_assertion_msg(false, "ERROR: WE CANNOT HAVE MULTIPLE COPLANAR PFACES!");
+      // for (auto fit = m_cdt.finite_faces_begin(); fit != m_cdt.finite_faces_end(); ++fit) {
+      //   const auto centroid = CGAL::centroid(
+      //     fit->vertex(0)->point(),
+      //     fit->vertex(1)->point(),
+      //     fit->vertex(2)->point());
+      //   for (KSR::size_t i = 0; i < triangulations.size(); ++i) {
+      //     const auto fh = triangulations[i].locate(centroid);
+      //     if (fh == nullptr || triangulations[i].is_infinite(fh)) {
+      //       continue;
+      //     }
+      //     fit->info().input = i;
+      //     break;
+      //   }
+      // }
     }
   }
 
@@ -314,7 +421,7 @@ private:
 
   void initialize_new_pfaces(
     const KSR::size_t support_plane_idx,
-    const std::vector<KSR::size_t>& original_input,
+    const std::vector< std::vector<KSR::size_t> >& original_input,
     const std::vector< std::vector<Point_2> >& original_faces) {
 
     std::set<KSR::size_t> done;
@@ -386,9 +493,11 @@ private:
       CGAL_assertion(pface != PFace());
 
       if (original_faces.size() != 1) {
+        CGAL_assertion_msg(original_faces.size() <= 1,
+        "ERROR: WE CANNOT HAVE MULTIPLE COPLANAR PFACES!");
         // dump_original_faces(support_plane_idx, original_faces, "original-faces");
         // dump_current_pface(pface, "current-pface-" + m_data.str(pface));
-        locate_pface_among_coplanar_pfaces(pface);
+        // locate_pface_among_coplanar_pfaces(pface);
       } else {
         m_data.input(pface) = original_input[0];
       }
@@ -523,6 +632,8 @@ private:
       CGAL_assertion(future_line != Line_2());
 
       const auto intersection_line = m_data.segment_2(support_plane_idx, iedge).supporting_line();
+      CGAL_assertion_msg(!CGAL::parallel(intersection_line, future_line),
+      "TODO: POLYGON SPLITTER, HANDLE CASE WITH PARALLEL LINES!");
       const Point_2 future_point = KSR::intersection<Point_2>(intersection_line, future_line);
       const auto pinit = m_data.point_2(pvertex, FT(0));
       const Vector_2 future_direction(pinit, future_point);
@@ -557,6 +668,7 @@ private:
   void locate_pface_among_coplanar_pfaces(
     const PFace& pface) {
 
+    // TODO: Change fh->info().input to vector!
     // std::cout << "locating " << m_data.str(pface) << std::endl;
     const auto centroid = m_data.centroid_of_pface(pface);
     const auto fh = m_cdt.locate(m_data.to_2d(pface.first, centroid));
@@ -568,7 +680,7 @@ private:
 
   void merge_coplanar_pfaces(
     const KSR::size_t support_plane_idx,
-    const std::vector<KSR::size_t>& original_input,
+    const std::vector< std::vector<KSR::size_t> >& original_input,
     const std::vector< std::vector<Point_2> >& original_faces) {
 
     const bool is_debug = false;

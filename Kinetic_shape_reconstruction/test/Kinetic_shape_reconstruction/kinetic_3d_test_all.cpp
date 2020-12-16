@@ -137,9 +137,9 @@ int main (const int argc, const char** argv) {
   // Real data tests.
   assert(run_test("data/real-data-test/building_b_15squares_15planes.off", num_iters, num_tests));
 
-  // Coplanar tests.
-  // assert(run_test("data/edge-case-test/test-2-polygons.off", num_iters, num_tests));
-  // assert(run_test("data/edge-case-test/test-4-polygons.off", num_iters, num_tests));
+  // Edge case tests.
+  assert(run_test("data/edge-case-test/test-2-polygons.off", num_iters, num_tests));
+  assert(run_test("data/edge-case-test/test-4-polygons.off", num_iters, num_tests));
 
   std::cout << std::endl << "--OUTPUT STATS:" << std::endl;
   std::cout << "* number of iterations per test: " << num_iters << std::endl;
