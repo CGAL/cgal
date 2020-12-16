@@ -167,7 +167,7 @@ private:
     std::vector<Point_2> points;
     collect_pface_points(support_plane_idx, points);
     std::vector<Point_2> merged;
-    create_merged_pface(points, merged);
+    create_merged_pface(support_plane_idx, points, merged);
 
     if (is_debug) {
       std::cout << "merged pface: " << std::endl;
@@ -206,6 +206,7 @@ private:
   }
 
   void create_merged_pface(
+    const KSR::size_t support_plane_idx,
     const std::vector<Point_2>& points,
     std::vector<Point_2>& merged) const {
 
@@ -225,6 +226,35 @@ private:
       }
     }
     CGAL_assertion(merged.size() >= 3);
+    CGAL_assertion(check_merged_pface(support_plane_idx, merged));
+  }
+
+  // Check if the newly created pface goes beyond the bbox.
+  const bool check_merged_pface(
+    const KSR::size_t support_plane_idx,
+    const std::vector<Point_2>& merged) const {
+
+    std::vector<Weighted_point> wps;
+    add_weighted_bbox(support_plane_idx, wps);
+    CGAL_assertion(wps.size() == 4);
+
+    for (std::size_t i = 0; i < 4; ++i) {
+      const std::size_t ip = (i + 1) % 4;
+      const auto& pi = wps[i].point();
+      const auto& qi = wps[ip].point();
+      const Segment_2 edge(pi, qi);
+
+      for (std::size_t j = 0; j < merged.size(); ++j) {
+        const std::size_t jp = (j + 1) % merged.size();
+        const auto& pj = merged[j];
+        const auto& qj = merged[jp];
+        const Segment_2 segment(pj, qj);
+        Point_2 inter;
+        const bool is_intersected = KSR::intersection(segment, edge, inter);
+        if (is_intersected) return false;
+      }
+    }
+    return true;
   }
 
   void add_merged_pface(

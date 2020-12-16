@@ -393,9 +393,9 @@ private:
     for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
       Polygon_splitter splitter(m_data);
       splitter.split_support_plane(i);
-      if (i >= 6 && m_debug) {
-        KSR_3::dump(m_data, "intersected-iter-" + std::to_string(i));
-      }
+      // if (i >= 6 && m_debug) {
+      //   KSR_3::dump(m_data, "intersected-iter-" + std::to_string(i));
+      // }
     }
   }
 
