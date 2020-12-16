@@ -65,6 +65,7 @@ option(POLYHEDRON_QTSCRIPT_DEBUGGER
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5 ImageIO)
 set_package_properties(CGAL PROPERTIES TYPE REQUIRED)
 include(${CGAL_USE_FILE})
+message("CGAL_USE_DIR = ${CGAL_USE_FILE}")
 # Find Qt5 itself
 
 find_package(
