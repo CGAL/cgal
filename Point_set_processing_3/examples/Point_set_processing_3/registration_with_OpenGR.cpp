@@ -21,28 +21,37 @@ namespace params = CGAL::parameters;
 
 int main(int argc, const char** argv)
 {
-  const char* fname1 = (argc>1)?argv[1]:"data/hippo1.ply";
-  const char* fname2 = (argc>2)?argv[2]:"data/hippo2.ply";
+  const char* fname_in1 = (argc > 1) ? argv[1] : "data/hippo1.ply";
+	const char* fname_in2 = (argc > 2) ? argv[2] : "data/hippo2.ply";
+	const char* fname_output = (argc > 3) ? argv[3] : "data/hippo_aligned.ply";
 
   std::vector<Pwn> pwns1, pwns2;
-  std::ifstream input(fname1);
-  if (!input ||
-      !CGAL::read_ply_points(input, std::back_inserter(pwns1),
+	std::ifstream input(fname_in1, std::ios::binary);
+  if (!input)
+	{
+		std::cerr << "Error: cannot open file " << fname_in1 << std::endl;
+		return EXIT_FAILURE;
+	}
+  if (!CGAL::read_ply_points(input, std::back_inserter(pwns1),
             CGAL::parameters::point_map (CGAL::First_of_pair_property_map<Pwn>()).
             normal_map (Normal_map())))
   {
-    std::cerr << "Error: cannot read file " << fname1 << std::endl;
+    std::cerr << "Error: cannot read file " << fname_in1 << std::endl;
     return EXIT_FAILURE;
   }
   input.close();
 
-  input.open(fname2);
-  if (!input ||
-      !CGAL::read_ply_points(input, std::back_inserter(pwns2),
+  input.open(fname_in2, std::ios::binary);
+  if (!input)
+	{
+		std::cerr << "Error: cannot open file " << fname_in2 << std::endl;
+		return EXIT_FAILURE;
+	}
+  if (!CGAL::read_ply_points(input, std::back_inserter(pwns2),
             CGAL::parameters::point_map (Point_map()).
             normal_map (Normal_map())))
   {
-    std::cerr << "Error: cannot read file " << fname2 << std::endl;
+    std::cerr << "Error: cannot read file " << fname_in2 << std::endl;
     return EXIT_FAILURE;
   }
   input.close();
@@ -69,7 +78,7 @@ int main(int argc, const char** argv)
                                       params::point_map(Point_map())
                                       .normal_map(Normal_map()));
 
-  std::ofstream out("pwns2_aligned.ply");
+  std::ofstream out(fname_output);
   if (!out ||
       !CGAL::write_ply_points(
         out, pwns2,
@@ -81,7 +90,7 @@ int main(int argc, const char** argv)
 
   std::cout << "Registration score: " << score << ".\n"
             << "Transformed version of " << fname2
-            << " written to pwn2_aligned.ply.\n";
+            << " written to " << fnameOut << std::endl;
 
   return EXIT_SUCCESS;
 }
