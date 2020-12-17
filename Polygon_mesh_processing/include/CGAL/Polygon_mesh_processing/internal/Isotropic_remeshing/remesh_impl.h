@@ -1464,7 +1464,9 @@ private:
       unsigned int nb_incident_features = 0;
       for(halfedge_descriptor h : halfedges_around_target(v, mesh_))
       {
-        if (is_on_border(h) || is_on_patch_border(h))
+        halfedge_descriptor hopp = opposite(h, mesh_);
+        if ( is_on_border(h) || is_on_patch_border(h)
+          || is_on_border(hopp) || is_on_patch_border(hopp))
           ++nb_incident_features;
         if (nb_incident_features > 2)
           return true;
