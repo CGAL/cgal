@@ -540,6 +540,9 @@ private:
           dump(m_data, "iter-" + std::to_string(iteration));
           dump_event(m_data, event, "iter-" + std::to_string(iteration));
         }
+        // const KSR::size_t sp_debug_idx = 23;
+        // dump_2d_surface_mesh(m_data, sp_debug_idx, "iter-" + std::to_string(iteration) +
+        // "-surface-mesh-" + std::to_string(sp_debug_idx));
       }
 
       m_data.update_positions(current_time);

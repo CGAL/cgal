@@ -137,6 +137,23 @@ public:
     }
   };
 
+  struct Halfedge_to_pface {
+    using argument_type = Halfedge_index;
+    using result_type = PFace;
+
+    const KSR::size_t support_plane_idx;
+    const Mesh& mesh;
+
+    Halfedge_to_pface(const KSR::size_t sp_idx, const Mesh& m) :
+    support_plane_idx(sp_idx),
+    mesh(m)
+    { }
+
+    const result_type operator()(const argument_type& arg) const {
+      return result_type(support_plane_idx, mesh.face(arg));
+    }
+  };
+
   using PEdge_around_pvertex_iterator =
     boost::transform_iterator<Halfedge_to_pedge, CGAL::Halfedge_around_target_iterator<Mesh> >;
   using PEdges_around_pvertex = CGAL::Iterator_range<PEdge_around_pvertex_iterator>;
@@ -144,6 +161,10 @@ public:
   using PEdge_of_pface_iterator =
     boost::transform_iterator<Halfedge_to_pedge, CGAL::Halfedge_around_face_iterator<Mesh> >;
   using PEdges_of_pface = CGAL::Iterator_range<PEdge_of_pface_iterator>;
+
+  using PFace_around_pvertex_iterator =
+    boost::transform_iterator<Halfedge_to_pface, CGAL::Halfedge_around_target_iterator<Mesh> >;
+  using PFaces_around_pvertex = CGAL::Iterator_range<PFace_around_pvertex_iterator>;
 
   using IVertex = typename Intersection_graph::Vertex_descriptor;
   using IEdge   = typename Intersection_graph::Edge_descriptor;
@@ -690,6 +711,28 @@ public:
       out.second.first = pvertex.first;
     }
     return out;
+  }
+
+  const PFaces_around_pvertex pfaces_around_pvertex(const PVertex& pvertex) const {
+
+    return PFaces_around_pvertex(
+      boost::make_transform_iterator(
+        halfedges_around_target(halfedge(pvertex.second, mesh(pvertex)), mesh(pvertex)).begin(),
+        Halfedge_to_pface(pvertex.first, mesh(pvertex))),
+      boost::make_transform_iterator(
+        halfedges_around_target(halfedge(pvertex.second, mesh(pvertex)), mesh(pvertex)).end(),
+        Halfedge_to_pface(pvertex.first, mesh(pvertex))));
+  }
+
+  void non_null_pfaces_around_pvertex(
+    const PVertex& pvertex, std::vector<PFace>& pfaces) const {
+
+    pfaces.clear();
+    const auto nfaces = pfaces_around_pvertex(pvertex);
+    for (const auto pface : nfaces) {
+      if (pface.second == Support_plane::Mesh::null_face()) continue;
+      pfaces.push_back(pface);
+    }
   }
 
   const PVertices_of_pface pvertices_of_pface(const PFace& pface) const {
@@ -1402,12 +1445,9 @@ public:
     pvertices[2] = propagated;
 
     const PFace new_pface = add_pface(pvertices);
+    if (m_verbose) std::cout << "- new pface: " << lstr(new_pface) << std::endl;
     this->k(new_pface) = k;
     CGAL_assertion(new_pface.second != Face_index());
-
-    if (m_verbose) {
-      std::cout << "- new face: " << lstr(new_pface) << std::endl;
-    }
     return pvertices;
   }
 
@@ -1977,6 +2017,7 @@ public:
 
         if (m_verbose) std::cout << "- propagated: " << point_3(propagated) << std::endl;
         const PFace new_pface = add_pface(std::array<PVertex, 3>{pvertex, propagated, previous});
+        if (m_verbose) std::cout << "- new pface: " << lstr(new_pface) << std::endl;
         this->k(new_pface) = this->k(pface);
         previous = propagated;
 
@@ -2164,6 +2205,7 @@ public:
 
         if (m_verbose) std::cout << "- propagated: " << point_3(propagated) << std::endl;
         const PFace new_pface = add_pface(std::array<PVertex, 3>{pvertex, previous, propagated});
+        if (m_verbose) std::cout << "- new pface: " << lstr(new_pface) << std::endl;
         this->k(new_pface) = this->k(pface);
         previous = propagated;
 
@@ -2454,6 +2496,7 @@ public:
         std::cout << "- adding new pface" << std::endl;
       }
       const PFace new_pface = add_pface(std::array<PVertex, 3>{new_pvertices[i], new_pvertices[i + 1], pvertex});
+      if (m_verbose) std::cout << "- new pface: " << lstr(new_pface) << std::endl;
       this->k(new_pface) = k;
       ++num_added_pfaces;
     }
@@ -2549,6 +2592,10 @@ public:
       std::cout << "* number of removed hanging faces: " << num_removed_faces << std::endl;
     }
     // CGAL_assertion_msg(false, "TODO: DEBUG THIS FUNCTION!");
+
+    // TODO: Should I also implement here the part that removes all
+    // identical pfaces within the same support plane? If the k intersection
+    // criteria works well, that should not be necessary!
   }
 
   const std::size_t check_edge(const IEdge& iedge) {
@@ -2793,7 +2840,7 @@ public:
         boost::make_transform_iterator(pvertices.end(), unary_f));
 
       // Very slow!
-      if (true) {
+      if (check_equal_faces) {
         for (const auto oface : pfaces) {
           if (oface == pface) continue;
 
@@ -2882,7 +2929,7 @@ public:
   void check_integrity(
     const bool check_simplicity  = false,
     const bool check_convexity   = false,
-    const bool check_equal_faces = false) const {
+    const bool check_equal_faces = true) const {
 
     for (KSR::size_t i = 0; i < number_of_support_planes(); ++i) {
       if (!is_mesh_valid(check_simplicity, check_convexity, check_equal_faces, i)) {
