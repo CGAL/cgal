@@ -6,6 +6,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Polygon_mesh_processing/internal/simplify_polyline.h>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
+#include <CGAL/Mesh_3/polylines_to_protect.h>
 
 #include <CGAL/Three/Three.h>
 #include <fstream>
@@ -278,15 +279,60 @@ void Polyhedron_demo_polylines_io_plugin::split()
   }
 }
 
-void Polyhedron_demo_polylines_io_plugin::split()
+template <typename P,
+          typename PolylineInputIterator>
+void
+polylines_to_split(std::vector<std::vector<P> >& polylines,
+                     PolylineInputIterator existing_polylines_begin,
+                     PolylineInputIterator existing_polylines_end)
+{
+  typedef P Point_3;
+  typedef typename CGAL::Kernel_traits<P>::Kernel K;
+  using CGAL::internal::polylines_to_protect_namespace::Vertex_info;
+  typedef boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS,
+                                Vertex_info<Point_3> > Graph;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+  typedef typename std::iterator_traits<PolylineInputIterator>::value_type Polyline;
+
+  Graph graph;
+  typedef CGAL::Mesh_3::internal::Returns_midpoint<K, int> Midpoint_fct;
+  CGAL::Mesh_3::internal::Graph_manipulations<Graph,
+                                        Point_3,
+                                        int,
+                                        Midpoint_fct> g_manip(graph);
+
+  for (PolylineInputIterator poly_it = existing_polylines_begin;
+       poly_it != existing_polylines_end; ++poly_it)
+  {
+    Polyline polyline = *poly_it;
+    if (polyline.size() < 2)
+      continue;
+
+    typename Polyline::iterator pit = polyline.begin();
+    while (boost::next(pit) != polyline.end())
+    {
+      vertex_descriptor v = g_manip.get_vertex(*pit, false);
+      vertex_descriptor w = g_manip.get_vertex(*boost::next(pit), false);
+      g_manip.try_add_edge(v, w);
+      ++pit;
+    }
+  }
+
+  CGAL::Mesh_3::Polyline_visitor<Point_3, Graph> visitor(polylines, graph);
+  const Graph& const_graph = graph;
+  typedef typename CGAL::Kernel_traits<P>::Kernel K;
+  CGAL::split_graph_into_polylines(const_graph, visitor);
+}
+
+void Polyhedron_demo_polylines_io_plugin::split_graph()
 {
   Scene_item* main_item = scene->item(scene->mainSelectionIndex());
   Scene_polylines_item* polylines_item =
       qobject_cast<Scene_polylines_item*>(main_item);
   if(polylines_item == 0) return;
-
+  std::vector<Scene_polylines_item::Polylines_container::value_type> new_polylines;
+  polylines_to_split(new_polylines, polylines_item->polylines.begin(), polylines_item->polylines.end());
   Scene_polylines_item* new_item = new Scene_polylines_item;
-  auto new_polylines = CGAL::split_graph_into_polylines(polylines_item->polylines);
   new_item->polylines =
       Scene_polylines_item::Polylines_container{new_polylines.begin(), new_polylines.end()};
   new_item->setName(tr("%1 (split)").arg(polylines_item->name()));
