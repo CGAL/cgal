@@ -193,16 +193,21 @@ private:
   std::map< std::pair<KSR::size_t, IEdge>, Vector_2> m_directions;
   KSR::vector<Support_plane> m_support_planes;
   Intersection_graph m_intersection_graph;
-  std::vector<Volume_cell> m_volumes;
+
   FT m_current_time;
   FT m_previous_time;
   bool m_verbose;
+
+  std::vector<Volume_cell> m_volumes;
+  std::size_t m_num_volume_levels;
+  std::map<int, std::size_t> m_volume_level_map;
 
 public:
   Data_structure(const bool verbose) :
   m_current_time(FT(0)),
   m_previous_time(FT(0)),
-  m_verbose(verbose)
+  m_verbose(verbose),
+  m_num_volume_levels(0)
   { }
 
   void clear() {
@@ -210,9 +215,25 @@ public:
     m_directions.clear();
     m_support_planes.clear();
     m_intersection_graph.clear();
-    m_volumes.clear();
-    m_current_time = FT(0);
+
+    m_current_time  = FT(0);
     m_previous_time = FT(0);
+
+    m_volumes.clear();
+    m_num_volume_levels = 0;
+    m_volume_level_map.clear();
+  }
+
+  const std::size_t number_of_volume_levels() const {
+    return m_num_volume_levels;
+  }
+
+  const std::size_t number_of_volumes(const int volume_level) const {
+    if (volume_level < 0) {
+      return m_volumes.size();
+    }
+    CGAL_assertion(volume_level >= 0);
+    return m_volume_level_map.at(volume_level);
   }
 
   template<typename DS>
@@ -232,13 +253,11 @@ public:
   **          GENERAL           **
   ********************************/
 
-  KSR::vector<Support_plane>& support_planes() {
-    return m_support_planes;
-  }
+  const KSR::vector<Support_plane>& support_planes() const { return m_support_planes; }
+  KSR::vector<Support_plane>& support_planes() { return m_support_planes; }
 
-  Intersection_graph& igraph() {
-    return m_intersection_graph;
-  }
+  const Intersection_graph& igraph() const { return m_intersection_graph; }
+  Intersection_graph& igraph() { return m_intersection_graph; }
 
   void resize(const KSR::size_t number_of_items) {
     m_support_planes.resize(number_of_items);
@@ -2799,7 +2818,7 @@ public:
 
   void check_faces() {
 
-    for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
+    for (KSR::size_t i = 0; i < number_of_support_planes(); ++i) {
       const auto pfaces = this->pfaces(i);
       for (const auto pface : pfaces) {
         const auto nvolumes = incident_volumes(pface);
@@ -3035,7 +3054,7 @@ public:
   void create_polyhedrons() {
 
     std::cout.precision(20);
-    // for (std::size_t i = 0; i < number_of_support_planes(); ++i)
+    // for (KSR::size_t i = 0; i < number_of_support_planes(); ++i)
     //   std::cout << "num pfaces sp " << i << ": " << pfaces(i).size() << std::endl;
 
     check_bbox();
@@ -3052,7 +3071,7 @@ public:
     m_volumes.clear();
     std::map<int, Point_3> centroids;
     std::map<PFace, std::pair<int, int> > map_volumes;
-    for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
+    for (KSR::size_t i = 0; i < number_of_support_planes(); ++i) {
       const auto pfaces = this->pfaces(i);
       for (const auto pface : pfaces)
         map_volumes[pface] = std::make_pair(-1, -1);
@@ -3065,6 +3084,7 @@ public:
     std::size_t volume_size = 0;
     int num_volumes  = 0;
     int volume_index = 0;
+    int volume_level = 0;
     for (std::size_t i = 0; i < 6; ++i) {
       const auto pfaces = this->pfaces(i);
       for (const auto pface : pfaces) {
@@ -3081,11 +3101,14 @@ public:
       std::cout << "* found boundary volumes: "<< volume_index << std::endl;
     }
     num_volumes = volume_index;
+    m_volume_level_map[volume_level] =
+      static_cast<std::size_t>(num_volumes);
+    ++volume_level;
     CGAL_assertion(num_volumes > 0);
 
     // Then traverse all other volumes if any.
     std::vector<PFace> other_pfaces;
-    for (std::size_t i = 6; i < number_of_support_planes(); ++i) {
+    for (KSR::size_t i = 6; i < number_of_support_planes(); ++i) {
       const auto pfaces = this->pfaces(i);
       for (const auto pface : pfaces) {
         CGAL_assertion(pface.first >= 6);
@@ -3122,8 +3145,12 @@ public:
       }
       CGAL_assertion(after >= before);
       num_volumes = volume_index;
+      m_volume_level_map[volume_level] =
+        static_cast<std::size_t>(num_volumes);
+      ++volume_level;
 
     } while (!quit);
+    m_num_volume_levels = volume_level;
 
     // Now, set final polyhedrons and their neighbors.
     for (const auto& item : map_volumes) {

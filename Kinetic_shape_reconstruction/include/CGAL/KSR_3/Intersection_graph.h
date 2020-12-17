@@ -95,6 +95,14 @@ public:
     m_map_vertices.clear();
   }
 
+  const std::size_t number_of_vertices() const {
+    return static_cast<std::size_t>(boost::num_vertices(m_graph));
+  }
+
+  const std::size_t number_of_edges() const {
+    return static_cast<std::size_t>(boost::num_edges(m_graph));
+  }
+
   template<typename IG>
   void convert(IG& ig) {
 
