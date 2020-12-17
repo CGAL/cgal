@@ -44,7 +44,6 @@ struct Polygon_map {
   }
 };
 
-// TODO: Save all volumes in one file!
 int main(const int argc, const char** argv) {
 
   // Input.
@@ -97,19 +96,19 @@ int main(const int argc, const char** argv) {
   assert(num_edges == output_edges.size());
 
   // Faces.
-  output_vertices.clear();
   const std::size_t num_faces = ksr.number_of_faces(-1);
-  std::vector< std::vector<std::size_t> > output_faces;
-  ksr.output_partition_faces(
-    std::back_inserter(output_vertices),
-    std::back_inserter(output_faces), -1);
-  assert(num_faces == output_faces.size());
+  // output_vertices.clear();
+  // std::vector< std::vector<std::size_t> > output_faces;
+  // ksr.output_partition_faces(
+  //   std::back_inserter(output_vertices),
+  //   std::back_inserter(output_faces), -1);
+  // assert(num_faces == output_faces.size());
 
-  const int num_volume_levels = ksr.number_of_volume_levels();
-  CGAL_assertion(num_volume_levels > 0);
+  // const int num_volume_levels = ksr.number_of_volume_levels();
+  // CGAL_assertion(num_volume_levels > 0);
 
   // Volumes.
-  // const std::size_t num_volumes = ksr.number_of_volumes(-1);
+  const std::size_t num_volumes = ksr.number_of_volumes(-1);
   // std::vector<Surface_mesh> output_volumes;
   // ksr.output_partition_volumes(
   //   std::back_inserter(output_volumes), -1);
@@ -117,10 +116,10 @@ int main(const int argc, const char** argv) {
 
   std::cout << std::endl;
   std::cout << "--- OUTPUT STATS: " << std::endl;
-  std::cout << "* number of output vertices: " << output_vertices.size() << std::endl;
-  std::cout << "* number of output edges: "    << output_edges.size()    << std::endl;
-  std::cout << "* number of output faces: "    << output_faces.size()    << std::endl;
-  // std::cout << "* number of output volumes: "  << output_volumes.size()  << std::endl;
+  std::cout << "* number of output vertices: " << num_vertices << std::endl;
+  std::cout << "* number of output edges: "    << num_edges    << std::endl;
+  std::cout << "* number of output faces: "    << num_faces    << std::endl;
+  std::cout << "* number of output volumes: "  << num_volumes  << std::endl;
 
   // Export.
   std::cout << std::endl;
@@ -145,15 +144,15 @@ int main(const int argc, const char** argv) {
   std::cout << "* partition edges exported successfully" << std::endl;
 
   // Faces.
-  output_filename = "partition-faces.ply";
-  std::ofstream output_file_faces(output_filename);
-  output_file_faces.precision(20);
-  if (!CGAL::write_PLY(output_file_faces, output_vertices, output_faces)) {
-    std::cerr << "ERROR: can't write to the file " << output_filename << "!" << std::endl;
-    return EXIT_FAILURE;
-  }
-  output_file_faces.close();
-  std::cout << "* partition faces exported successfully" << std::endl;
+  // output_filename = "partition-faces.ply";
+  // std::ofstream output_file_faces(output_filename);
+  // output_file_faces.precision(20);
+  // if (!CGAL::write_PLY(output_file_faces, output_vertices, output_faces)) {
+  //   std::cerr << "ERROR: can't write to the file " << output_filename << "!" << std::endl;
+  //   return EXIT_FAILURE;
+  // }
+  // output_file_faces.close();
+  // std::cout << "* partition faces exported successfully" << std::endl;
 
   // Volumes.
   // output_filename = "partition-volume-";

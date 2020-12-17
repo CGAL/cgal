@@ -239,6 +239,13 @@ public:
     return m_data.number_of_volumes(volume_level);
   }
 
+  const int support_plane_index(const std::size_t polygon_index) const {
+
+    // CGAL_assertion(polygon_index < m_data.number_of_input_polygons());
+    CGAL_assertion_msg(false, "TODO: IMPLEMENT SUPPORT PLANE INDEX!");
+    return -1;
+  }
+
   template<typename VertexOutputIterator>
   VertexOutputIterator output_partition_vertices(
     VertexOutputIterator vertices, const int support_plane_idx = -1) const {
@@ -286,33 +293,7 @@ public:
     VertexOutputIterator vertices, FaceOutputIterator faces,
     const int support_plane_idx = -1) const {
 
-    CGAL_assertion(support_plane_idx < number_of_support_planes());
-    if (support_plane_idx < 0) {
-      for (int i = 0; i < number_of_support_planes(); ++i)
-        output_partition_faces(vertices, faces, i);
-      return;
-    }
-
-    // Finish that!
-    CGAL_assertion(support_plane_idx >= 0);
-    const KSR::size_t sp_idx = KSR::size_t(support_plane_idx);
-
-    for (const auto pvertex : m_data.pvertices(sp_idx)) {
-      CGAL_assertion(m_data.has_ivertex(pvertex));
-      const auto ivertex = m_data.ivertex(pvertex);
-      *(vertices++) = m_data.point_3(ivertex);
-    }
-
-    std::vector<std::size_t> face;
-    for (const auto pface : m_data.pfaces(sp_idx)) {
-      face.clear();
-      for (const auto pvertex : m_data.pvertices_of_pface(pface)) {
-        CGAL_assertion(m_data.has_ivertex(pvertex));
-        const auto ivertex = m_data.ivertex(pvertex);
-        face.push_back(static_cast<std::size_t>(ivertex));
-      }
-      *(faces++) = face;
-    }
+    CGAL_assertion_msg(false, "TODO: IMPLEMENT OUTPUT PARTITION FACES!");
   }
 
   template<typename VolumeOutputIterator>
@@ -321,6 +302,14 @@ public:
 
     CGAL_assertion_msg(false, "TODO: IMPLEMENT OUTPUT PARTITION VOLUMES!");
     return volumes;
+  }
+
+  template<typename FaceGraph>
+  void output_support_plane(
+    const int support_plane_idx, FaceGraph& face_graph) const {
+
+    face_graph.clear();
+    CGAL_assertion_msg(false, "TODO: IMPLEMENT OUTPUT SUPPORT PLANE!");
   }
 
   template<typename InputRange, typename PointMap, typename VectorMap>
