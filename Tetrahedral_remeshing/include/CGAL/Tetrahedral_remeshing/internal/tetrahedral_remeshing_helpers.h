@@ -650,6 +650,15 @@ bool is_internal(const typename C3t3::Edge& edge,
   return true;
 }
 
+template<typename C3T3, typename CellSelector>
+bool is_selected(const typename C3T3::Triangulation::Edge& e,
+                 const C3T3& c3t3,
+                 CellSelector cell_selector)
+{
+  return is_boundary(c3t3, e, cell_selector)
+      || is_internal(e, c3t3, cell_selector);
+}
+
 template<typename Gt>
 void normalize(typename Gt::Vector_3& v, const Gt& gt)
 {
