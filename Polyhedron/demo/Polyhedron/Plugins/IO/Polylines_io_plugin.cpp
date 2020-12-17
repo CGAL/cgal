@@ -46,7 +46,7 @@ public:
       actionSplit_polylines->setProperty("subMenuName", "Operations on Polylines");
       actionSplit_polylines->setObjectName("actionSplitPolylines");
 
-      actionSplit_polylines_graph= new QAction(tr("Split Graph Into Polylines"), mainWindow);
+      actionSplit_polylines_graph= new QAction(tr("Split Graph into Polylines"), mainWindow);
       actionSplit_polylines_graph->setProperty("subMenuName", "Operations on Polylines");
       actionSplit_polylines_graph->setObjectName("actionSplitPolylinesGraph");
 
