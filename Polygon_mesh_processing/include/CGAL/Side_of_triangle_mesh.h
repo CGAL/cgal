@@ -187,14 +187,14 @@ public:
   * @param other The instance to be moved
   */
   Side_of_triangle_mesh(Side_of_triangle_mesh&& other) :
-    tm_ptr{other.tm_ptr},
+    tm_ptr{std::move(other.tm_ptr)},
     opt_vpm{std::move(other.opt_vpm)},
-    own_tree{other.own_tree},
-    box{other.box},
+    own_tree{std::move(other.own_tree)},
+    box{std::move(other.box)},
     #ifdef CGAL_HAS_THREADS
       atomic_tree_ptr{other.atomic_tree_ptr.load()}
     #else
-      tree_ptr{other.tree_ptr}
+      tree_ptr{std::move(other.tree_ptr)}
     #endif
   {
     other.own_tree = false;
@@ -219,15 +219,15 @@ public:
   */
   Side_of_triangle_mesh& operator=(Side_of_triangle_mesh&& other)
   {
-    tm_ptr = other.tm_ptr;
+    tm_ptr = std::move(other.tm_ptr);
     opt_vpm = std::move(other.opt_vpm);
-    own_tree = other.own_tree;
-    box = other.box;
+    own_tree = std::move(other.own_tree);
+    box = std::move(other.box);
     other.own_tree = false;
     #ifdef CGAL_HAS_THREADS
       atomic_tree_ptr = atomic_tree_ptr.load();
     #else
-      tree_ptr = other.tree_ptr;
+      tree_ptr = std::move(other.tree_ptr);
     #endif
     return *this;
   }
