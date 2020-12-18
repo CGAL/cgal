@@ -33,3 +33,6 @@ QUESTIONS:
 
 5. When two polygons intersect at the very beginning, does it count as an intersection? Can we squeeze through the whole or not?
 - Both are ok.
+
+Do the functions collision_occured/is_occupied work correctly?
+Should I use uniform k with respect to the support plane rather than pface?

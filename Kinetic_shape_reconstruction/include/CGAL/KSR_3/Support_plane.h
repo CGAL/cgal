@@ -85,6 +85,7 @@ private:
     V_original_map v_original_map;
     V_time_map v_time_map;
     std::set<IEdge> iedges;
+    unsigned int k;
   };
 
   std::shared_ptr<Data> m_data;
