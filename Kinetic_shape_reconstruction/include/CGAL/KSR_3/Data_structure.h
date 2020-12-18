@@ -3151,7 +3151,7 @@ public:
   void check_integrity(
     const bool check_simplicity  = false,
     const bool check_convexity   = false,
-    const bool check_equal_faces = false) const {
+    const bool check_equal_faces = true ) const {
 
     for (KSR::size_t i = 0; i < number_of_support_planes(); ++i) {
       if (!is_mesh_valid(check_simplicity, check_convexity, check_equal_faces, i)) {
