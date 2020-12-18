@@ -120,7 +120,6 @@ typename Type_converter<R>::Vector_3 get_vector(const CGAL::Vector_3<R>& v){ ret
 template<typename T>
 class moreLeft : public T {
 
-  typedef typename T::SM_decorator      SM_decorator;
   typedef typename T::SHalfedge_handle  SHalfedge_handle;
   typedef typename T::Vector_3          Vector_3;
   typedef typename T::FT                FT;
@@ -135,7 +134,6 @@ class moreLeft : public T {
     if(se2 == SHalfedge_handle())
       return -1;
 
-    SM_decorator SM(&*se1->source()->source());
     Vector_3 vec1 = se1->circle().orthogonal_vector();
     Vector_3 vec2 = se2->circle().orthogonal_vector();
 
@@ -215,17 +213,17 @@ class sort_edges : public SNC_const_decorator<T> {
 };
 
 template <typename T>
-class sort_facets : public SNC_decorator<T> {
+class sort_facets : public SNC_const_decorator<T> {
 
   typedef T SNC_structure;
-  typedef SNC_decorator<T>             Base;
+  typedef SNC_const_decorator<T>       Base;
   typedef typename T::Halffacet_handle Halffacet_handle;
   typedef typename T::SHalfedge_handle SHalfedge_handle;
   typedef typename T::Vector_3         Vector_3;
   typedef typename T::Plane_3          Plane_3;
 
  public:
-  sort_facets(T& D) : Base(D) {}
+  sort_facets(const T& D) : Base(D) {}
 
   bool operator() (Halffacet_handle f1, Halffacet_handle f2) const {
 
@@ -322,14 +320,14 @@ class sort_sedges : public SNC_const_decorator<T> {
 
 
 template <typename T>
-class sort_sloops : public SNC_decorator<T> {
+class sort_sloops : public SNC_const_decorator<T> {
 
   typedef T SNC_structure;
-  typedef CGAL::SNC_decorator<T>             Base;
+  typedef CGAL::SNC_const_decorator<T>       Base;
   typedef typename T::SHalfloop_handle SHalfloop_handle;
 
  public:
-  sort_sloops(T& D) : Base(D) {}
+  sort_sloops(const T& D) : Base(D) {}
 
   bool operator() (SHalfloop_handle sl1, SHalfloop_handle sl2) const {
     if(sl1 == sl2) return false;
@@ -414,10 +412,10 @@ class sort_sface_cycle_entries : public SNC_const_decorator<T> {
 };
 
 template <typename T>
-class sort_sfaces : public SNC_decorator<T> {
+class sort_sfaces : public SNC_const_decorator<T> {
 
   typedef T SNC_structure;
-  typedef CGAL::SNC_decorator<T>            Base;
+  typedef CGAL::SNC_const_decorator<T>      Base;
   typedef typename T::SM_decorator          SM_decorator;
   typedef typename T::Point_3               Point_3;
   typedef typename T::Vector_3              Vector_3;
@@ -430,7 +428,7 @@ class sort_sfaces : public SNC_decorator<T> {
                       SHalfedge_around_sface_circulator;
 
  public:
-  sort_sfaces(T& D) : Base(D) {}
+  sort_sfaces(const T& D) : Base(D) {}
 
   bool operator() (SFace_handle sf1, SFace_handle sf2) const {
     CGAL_NEF_TRACEN("sort sfaces");
@@ -530,15 +528,15 @@ class sort_sfaces : public SNC_decorator<T> {
 };
 
 template <typename T>
-class sort_volumes : public SNC_decorator<T> {
+class sort_volumes : public SNC_const_decorator<T> {
 
   typedef T SNC_structure;
-  typedef CGAL::SNC_decorator<T>    Base;
+  typedef CGAL::SNC_const_decorator<T> Base;
   typedef typename T::Volume_handle Volume_handle;
   typedef typename T::SFace_handle  SFace_handle;
 
  public:
-  sort_volumes(T& D) : Base(D) {}
+  sort_volumes(const T& D) : Base(D) {}
 
   bool operator() (Volume_handle c1, Volume_handle c2) const {
     CGAL_NEF_TRACEN("sort volumes");
@@ -627,10 +625,10 @@ class sort_shell_entries : public T {
 };
 
 template<typename T>
-struct find_minimal_sface_of_shell : public SNC_decorator<T> {
+struct find_minimal_sface_of_shell : public SNC_const_decorator<T> {
 
   typedef T                               SNC_structure;
-  typedef CGAL::SNC_decorator<T>          Base;
+  typedef CGAL::SNC_const_decorator<T>    Base;
   typedef typename T::Vertex_handle       Vertex_handle;
   typedef typename T::Halfedge_handle     Halfedge_handle;
   typedef typename T::Halffacet_handle    Halffacet_handle;
@@ -643,7 +641,7 @@ struct find_minimal_sface_of_shell : public SNC_decorator<T> {
   SFace_handle sf_min;
   sort_sfaces<T> SORT;
 
-  find_minimal_sface_of_shell(T& D, SFace_visited_hash& Vi)
+  find_minimal_sface_of_shell(const T& D, SFace_visited_hash& Vi)
     : Base(D), Done(Vi), SORT(D) {}
 
   void visit(SFace_handle h) {
