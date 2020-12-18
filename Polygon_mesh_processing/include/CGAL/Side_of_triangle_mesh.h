@@ -181,7 +181,6 @@ public:
     box = tree.bbox();
   }
 
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
   /**
   * Constructor moving an instance of Side_of_triangle_mesh to a new memory
   * location with minimal memory copy.
@@ -200,7 +199,6 @@ public:
   {
     other.own_tree = false;
   }
-#endif
 
   ~Side_of_triangle_mesh()
   {
@@ -213,7 +211,6 @@ public:
   }
 
 public:
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
   /**
   * Assign operator moving an instance of Side_of_triangle_mesh to this
   * location with minimal memory copy.
@@ -234,7 +231,6 @@ public:
     #endif
     return *this;
   }
-#endif
 
   /**
    * returns the location of a query point
