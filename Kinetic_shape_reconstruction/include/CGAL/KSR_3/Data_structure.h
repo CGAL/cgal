@@ -1263,9 +1263,9 @@ public:
 
       for (const auto pedge : pedges(support_plane_idx)) {
         if (this->iedge(pedge) == iedge) {
-          const auto pedge_segment = Segment_3(point_3(source(pedge)), point_3(target(pedge)));
+          const auto pedge_segment = Segment_2(point_2(source(pedge)), point_2(target(pedge)));
 
-          const Segment_3 source_to_pvertex(pedge_segment.source(), point_3(pvertex));
+          const Segment_2 source_to_pvertex(pedge_segment.source(), point_2(pvertex));
           // if (CGAL::sqrt(source_to_pvertex.squared_length()) < tol) {
           //   std::cerr << "WARNING: POINTS ARE ALMOST EQUAL!" << std::endl;
           //   collision = true;
@@ -1534,6 +1534,7 @@ public:
     const PVertex& pvertex, const PVertex& pother, const IEdge& iedge,
     const unsigned int /* k */) {
 
+    // Here, instead of 1 triangle pface, we should add 1 rectangle pface!
     std::cout.precision(20);
     if (m_verbose) {
       std::cout << "** propagating pedge [" << str(pvertex) << "-" << str(pother)
@@ -2948,7 +2949,7 @@ public:
   void check_integrity(
     const bool check_simplicity  = false,
     const bool check_convexity   = false,
-    const bool check_equal_faces = true) const {
+    const bool check_equal_faces = false) const {
 
     for (KSR::size_t i = 0; i < number_of_support_planes(); ++i) {
       if (!is_mesh_valid(check_simplicity, check_convexity, check_equal_faces, i)) {

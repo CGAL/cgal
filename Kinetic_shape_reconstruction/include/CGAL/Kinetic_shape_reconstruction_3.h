@@ -801,6 +801,12 @@ private:
 
     bool is_event_happend = false;
     const auto pface = m_data.pface_of_pvertex(pvertex);
+
+    std::vector<PFace> nfaces;
+    m_data.non_null_pfaces_around_pvertex(pvertex, nfaces);
+    CGAL_assertion(nfaces.size() == 1);
+    CGAL_assertion(nfaces[0] == pface);
+
     const auto prev = m_data.prev(pvertex);
     const auto next = m_data.next(pvertex);
     const auto isegment = m_data.segment_2(pvertex.first, iedge);
@@ -819,6 +825,10 @@ private:
       if (both_are_free && KSR::are_parallel(segment, isegment)) {
         remove_events(pvertex);
         remove_events(pother);
+
+        m_data.non_null_pfaces_around_pvertex(pother, nfaces);
+        CGAL_assertion(nfaces.size() == 1);
+        CGAL_assertion(nfaces[0] == pface);
 
         bool collision, bbox_reached;
         std::tie(collision, bbox_reached) = m_data.collision_occured(pvertex, iedge);
@@ -859,11 +869,14 @@ private:
 
         } else {
 
+          CGAL_assertion(!collision && !collision_other);
           if (m_debug) std::cout << "- pv po continue" << std::endl;
-          CGAL_assertion(m_data.iedge(pvertex) == m_data.iedge(pother));
-          if (m_data.is_occupied(pvertex, iedge).first) {
+          if (
+            m_data.is_occupied(pvertex, iedge).first ||
+            m_data.is_occupied(pother , iedge).first) {
+
             CGAL_assertion_msg(false,
-            "ERROR: TWO PVERTICES SNEAK ON THE OTHER SIDE EVEN WHEN WE HAVE A POLYGON!");
+            "ERROR: TWO PVERTICES SNEAK TO THE OTHER SIDE EVEN WHEN WE HAVE A POLYGON!");
           }
         }
 
@@ -886,6 +899,10 @@ private:
           compute_events_of_pvertices(
             event.time(), std::array<PVertex, 4>{pvertex, pother, pv0, pv1});
         }
+
+        CGAL_assertion(m_data.has_iedge(pvertex));
+        CGAL_assertion(m_data.has_iedge(pother));
+        CGAL_assertion(m_data.iedge(pvertex) == m_data.iedge(pother));
         is_event_happend = true;
         break;
       }
@@ -898,8 +915,14 @@ private:
     const IEdge& iedge,
     const Event& event) {
 
+    CGAL_assertion(!m_data.has_iedge(pvertex));
     const auto pface = m_data.pface_of_pvertex(pvertex);
     remove_events(pvertex);
+
+    std::vector<PFace> nfaces;
+    m_data.non_null_pfaces_around_pvertex(pvertex, nfaces);
+    CGAL_assertion(nfaces.size() == 1);
+    CGAL_assertion(nfaces[0] == pface);
 
     bool collision, bbox_reached;
     std::tie(collision, bbox_reached) = m_data.collision_occured(pvertex, iedge);
@@ -948,6 +971,7 @@ private:
       remove_events(iedge, pvertex.first);
       compute_events_of_pvertices(event.time(), pvertices);
     }
+    CGAL_assertion(m_data.has_iedge(pvertex));
   }
 
   void apply_event_constrained_pvertex_meets_ivertex(
@@ -973,6 +997,7 @@ private:
     }
 
     // Merge them and get the newly created pvertices.
+    CGAL_assertion(!m_data.has_ivertex(pvertex));
     std::vector<IEdge> crossed_iedges;
     const std::vector<PVertex> new_pvertices =
       m_data.merge_pvertices_on_ivertex(
