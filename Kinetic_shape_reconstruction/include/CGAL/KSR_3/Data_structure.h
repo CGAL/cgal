@@ -1677,6 +1677,14 @@ public:
       std::cout << "** merging " << str(event_pvertex) << " on " << str(ivertex) << std::endl;
     }
 
+    // std::vector<PFace> nfaces;
+    // non_null_pfaces_around_pvertex(event_pvertex, nfaces);
+    // std::cout << "event nfaces: " << nfaces.size() << std::endl;
+    // for (std::size_t i = 0; i < nfaces.size(); ++i) {
+    //   std::cout << "event nface: " << str(nfaces[i]) << std::endl;
+    //   dump_pface(*this, nfaces[i], "event-nface-" + std::to_string(i));
+    // }
+
     // std::cout << "event pvertex: " << point_3(event_pvertex) << std::endl;
     // std::cout << "ivertex: " << point_3(ivertex) << std::endl;
 
@@ -1995,16 +2003,31 @@ public:
         CGAL_assertion_msg(i == 1,
         "TODO: BACK, CAN WE HAVE MORE THAN 1 NEW PFACE? IF YES, I SHOULD CHECK K FOR EACH!");
 
+        // const auto pface = pface_of_pvertex(pvertex);
+        const auto pface = pface_of_pvertex(previous);
+
+        std::vector<PFace> nfaces;
+        non_null_pfaces_around_pvertex(previous, nfaces);
+        if (nfaces.size() != 1) {
+          dump_pface(*this, pface, "back-pface");
+          for (std::size_t j = 0; j < nfaces.size(); ++j) {
+            dump_pface(*this, nfaces[j], "nface-" + std::to_string(j));
+          }
+        }
+        CGAL_assertion(nfaces.size() == 1);
+        CGAL_assertion(nfaces[0] == pface);
+
         // Now, we check if we should add a new pface.
         bool is_occupied_edge, bbox_reached;
         std::tie(is_occupied_edge, bbox_reached) = is_occupied(pvertex, ivertex, crossed[i - 1]);
+        // std::tie(is_occupied_edge, bbox_reached) = is_occupied(pvertex, crossed[i - 1]);
+
         if (m_verbose) {
           std::cout << "- is already occupied / bbox: "
           << is_occupied_edge << "/" << bbox_reached << std::endl;
         }
 
         // Stop propagating.
-        const auto pface = pface_of_pvertex(pvertex);
         if (m_verbose) std::cout << "- k intersections befor: " << this->k(pface) << std::endl;
         if (bbox_reached) {
           if (m_verbose) std::cout << "- stop bbox" << std::endl;
@@ -2026,7 +2049,6 @@ public:
         CGAL_assertion(this->k(pface) >= 1);
 
         if (m_verbose) {
-          // std::cout << "PFACE: " << centroid_of_pface(pface) << std::endl;
           std::cout << "- k intersections after: " << this->k(pface) << std::endl;
         }
 
@@ -2184,15 +2206,30 @@ public:
         CGAL_assertion_msg(i == 1,
         "TODO: FRONT, CAN WE HAVE MORE THAN 1 NEW PFACE? IF YES, I SHOULD CHECK K FOR EACH!");
 
+        // const auto pface = pface_of_pvertex(pvertex);
+        const auto pface = pface_of_pvertex(previous);
+
+        std::vector<PFace> nfaces;
+        non_null_pfaces_around_pvertex(previous, nfaces);
+        if (nfaces.size() != 1) {
+          dump_pface(*this, pface, "front-pface");
+          for (std::size_t j = 0; j < nfaces.size(); ++j) {
+            dump_pface(*this, nfaces[j], "nface-" + std::to_string(j));
+          }
+        }
+        CGAL_assertion(nfaces.size() == 1);
+        CGAL_assertion(nfaces[0] == pface);
+
         // Now, we check if we should add a new pface.
         bool is_occupied_edge, bbox_reached;
         std::tie(is_occupied_edge, bbox_reached) = is_occupied(pvertex, ivertex, crossed[i - 1]);
+        // std::tie(is_occupied_edge, bbox_reached) = is_occupied(pvertex, crossed[i - 1]);
+
         if (m_verbose) {
           std::cout << "- is already occupied / bbox: " << is_occupied_edge << "/" << bbox_reached << std::endl;
         }
 
         // Stop propagating.
-        const auto pface = pface_of_pvertex(pvertex);
         if (m_verbose) std::cout << "- k intersections befor: " << this->k(pface) << std::endl;
         if (bbox_reached) {
           if (m_verbose) std::cout << "- stop bbox" << std::endl;
@@ -2214,7 +2251,6 @@ public:
         CGAL_assertion(this->k(pface) >= 1);
 
         if (m_verbose) {
-          // std::cout << "PFACE: " << centroid_of_pface(pface) << std::endl;
           std::cout << "- k intersections after: " << this->k(pface) << std::endl;
         }
 
@@ -2597,20 +2633,22 @@ public:
   void finalize() {
 
     bool quit = true;
-    std::size_t num_removed_faces = 0;
+    std::size_t num_removed_pfaces = 0;
     do {
       quit = true;
       for (const auto iedge : m_intersection_graph.edges()) {
-        const std::size_t num_faces = check_edge(iedge);
-        if (num_faces != 0) {
-          num_removed_faces += num_faces;
+        const std::size_t num_pfaces = check_edge(iedge);
+        if (num_pfaces != 0) {
+          num_removed_pfaces += num_pfaces;
           quit = false; break;
         }
       }
     } while (!quit);
     if (m_verbose) {
-      std::cout << "* number of removed hanging faces: " << num_removed_faces << std::endl;
+      std::cout << "* number of removed hanging pfaces: " << num_removed_pfaces << std::endl;
     }
+
+    // CGAL_assertion_msg(num_removed_pfaces == 0, "TODO: DO WE STILL HAVE HANGING PFACES?");
     // CGAL_assertion_msg(false, "TODO: DEBUG THIS FUNCTION!");
 
     // TODO: Should I also implement here the part that removes all
