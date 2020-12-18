@@ -34,5 +34,14 @@ QUESTIONS:
 5. When two polygons intersect at the very beginning, does it count as an intersection? Can we squeeze through the whole or not?
 - Both are ok.
 
-Do the functions collision_occured/is_occupied work correctly?
-Should I use uniform k with respect to the support plane rather than pface?
+Ideas:
+Do the functions collision_occured/is_occupied work correctly? Not sure.
+Should I use uniform k with respect to the support plane rather than pface? I think yes.
+Try to use for pvertex->iedge events the function version: is_occupied(pvertex, ivertex, iedge).
+Study again the case with 7 and 12 input polygons. They have 1 and 3 hanging pfaces respectively for k = 1. 27 k = 1 for building b and 19 k = 2 for the same building.
+Try to simplify the case as much as possible such that choice of pface does not change anything, we do not have many events until the bad case happens, we are sure that we correctly passed all intermediate events, use only the case k = 1 so that we do not propagate.
+Try to do again what I already tried in the experimental code but for the new refactored case.
+Try to use strict version of the function is_occupied() everywhere.
+What if I extend the initially intersected polygons until they fill the whole cell, then hanging pfaces for the case of the test with 7 and 12 polygons (test-8 and test-9) should not happen!
+Try to see what JP is doing in more detail and compare his steps with ours!
+Where I should use which version of is_occupied()?

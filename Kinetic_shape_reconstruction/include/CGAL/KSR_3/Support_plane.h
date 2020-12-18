@@ -124,6 +124,7 @@ public:
     }
     CGAL_assertion_msg(normal != CGAL::NULL_VECTOR, "ERROR: POLYGON HAS FLAT BBOX!");
 
+    m_data->k = 0;
     m_data->plane = Plane_3(points[0], KSR::normalize(normal));
     add_property_maps();
   }
@@ -170,6 +171,7 @@ public:
 
     std::set<CPoint_2> pts;
     std::map<Vertex_index, Vertex_index> map_vi;
+    sp.data().k = m_data->k;
     sp.data().plane = converter(m_data->plane);
     for (const auto& vertex : m_data->mesh.vertices()) {
       const auto converted   = converter(m_data->mesh.point(vertex));
@@ -487,8 +489,14 @@ public:
 
   const bool is_original(const Vertex_index& vi) const { return m_data->v_original_map[vi]; }
 
-  const unsigned int& k(const Face_index& fi) const { return m_data->k_map[fi]; }
-  unsigned int& k(const Face_index& fi) { return m_data->k_map[fi]; }
+  const unsigned int& k(const Face_index& fi) const {
+    return m_data->k;
+    // return m_data->k_map[fi];
+  }
+  unsigned int& k(const Face_index& fi) {
+    return m_data->k;
+    // return m_data->k_map[fi];
+  }
 
   const bool is_active(const Vertex_index& vi) const { return m_data->v_active_map[vi]; }
   void set_active(const Vertex_index& vi, const bool value) { m_data->v_active_map[vi] = value; }
