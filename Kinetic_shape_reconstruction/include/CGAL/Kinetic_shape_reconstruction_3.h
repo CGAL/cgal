@@ -25,6 +25,9 @@
 
 // CGAL includes.
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/orientation.h>
 
 // Internal includes.
 #include <CGAL/KSR/utils.h>
@@ -45,6 +48,7 @@ public:
 private:
   using FT        = typename Kernel::FT;
   using Point_2   = typename Kernel::Point_2;
+  using Point_3   = typename Kernel::Point_3;
   using Vector_2  = typename Kernel::Vector_2;
   using Segment_2 = typename Kernel::Segment_2;
 
@@ -59,9 +63,10 @@ private:
   using Event       = KSR_3::Event<Data_structure>;
   using Event_queue = KSR_3::Event_queue<Data_structure>;
 
-  using EK = CGAL::Exact_predicates_exact_constructions_kernel;
-  using Initializer = KSR_3::Initializer<EK>;
-  using Bbox_2 = CGAL::Bbox_2;
+  using EK           = CGAL::Exact_predicates_exact_constructions_kernel;
+  using Initializer  = KSR_3::Initializer<EK>;
+  using Bbox_2       = CGAL::Bbox_2;
+  using Polygon_mesh = CGAL::Surface_mesh<Point_3>;
 
 private:
   const bool m_debug;
@@ -197,8 +202,9 @@ public:
     if (support_plane_idx < 0) {
       return m_data.igraph().number_of_vertices();
     }
+
     CGAL_assertion(support_plane_idx >= 0);
-    const KSR::size_t sp_idx = KSR::size_t(support_plane_idx);
+    const KSR::size_t sp_idx = static_cast<KSR::size_t>(support_plane_idx);
     return static_cast<std::size_t>(m_data.mesh(sp_idx).number_of_vertices());
   }
 
@@ -208,8 +214,9 @@ public:
     if (support_plane_idx < 0) {
       return m_data.igraph().number_of_edges();
     }
+
     CGAL_assertion(support_plane_idx >= 0);
-    const KSR::size_t sp_idx = KSR::size_t(support_plane_idx);
+    const KSR::size_t sp_idx = static_cast<KSR::size_t>(support_plane_idx);
     return static_cast<std::size_t>(m_data.mesh(sp_idx).number_of_edges());
   }
 
@@ -217,18 +224,20 @@ public:
 
     CGAL_assertion(support_plane_idx < number_of_support_planes());
     if (support_plane_idx < 0) {
-
       std::size_t num_all_faces = 0;
       for (int i = 0; i < number_of_support_planes(); ++i) {
         const std::size_t num_faces = static_cast<std::size_t>(
-          m_data.mesh(KSR::size_t(i)).number_of_faces());
+          m_data.mesh(static_cast<KSR::size_t>(i)).number_of_faces());
         num_all_faces += num_faces;
       }
       return num_all_faces;
     }
+
     CGAL_assertion(support_plane_idx >= 0);
-    const KSR::size_t sp_idx = KSR::size_t(support_plane_idx);
-    return static_cast<std::size_t>(m_data.mesh(sp_idx).number_of_faces());
+    const KSR::size_t sp_idx = static_cast<KSR::size_t>(support_plane_idx);
+    const std::size_t num_faces = static_cast<std::size_t>(
+      m_data.mesh(sp_idx).number_of_faces());
+    return num_faces;
   }
 
   const int number_of_volume_levels() const {
@@ -252,16 +261,17 @@ public:
 
     CGAL_assertion(support_plane_idx < number_of_support_planes());
     if (support_plane_idx < 0) {
-      for (const auto ivertex : m_data.igraph().vertices())
+      const auto ivertices = m_data.ivertices();
+      for (const auto ivertex : ivertices) {
         *(vertices++) = m_data.point_3(ivertex);
+      }
       return vertices;
     }
 
     CGAL_assertion(support_plane_idx >= 0);
-    const KSR::size_t sp_idx = KSR::size_t(support_plane_idx);
-    const auto& mesh = m_data.mesh(sp_idx);
-    for (const auto& vertex : mesh.vertices()) {
-      const typename Data_structure::PVertex pvertex(sp_idx, vertex);
+    const KSR::size_t sp_idx = static_cast<KSR::size_t>(support_plane_idx);
+    const auto pvertices = m_data.pvertices(sp_idx);
+    for (const auto pvertex : pvertices) {
       *(vertices++) = m_data.point_3(pvertex);
     }
     return vertices;
@@ -273,16 +283,17 @@ public:
 
     CGAL_assertion(support_plane_idx < number_of_support_planes());
     if (support_plane_idx < 0) {
-      for (const auto iedge : m_data.igraph().edges())
+      const auto iedges = m_data.iedges();
+      for (const auto iedge : iedges) {
         *(edges++) = m_data.segment_3(iedge);
+      }
       return edges;
     }
 
     CGAL_assertion(support_plane_idx >= 0);
-    const KSR::size_t sp_idx = KSR::size_t(support_plane_idx);
-    const auto& mesh = m_data.mesh(sp_idx);
-    for (const auto& edge : mesh.edges()) {
-      const typename Data_structure::PEdge pedge(sp_idx, edge);
+    const KSR::size_t sp_idx = static_cast<KSR::size_t>(support_plane_idx);
+    const auto pedges = m_data.pedges(sp_idx);
+    for (const auto pedge : pedges) {
       *(edges++) = m_data.segment_3(pedge);
     }
     return edges;
@@ -293,23 +304,108 @@ public:
     VertexOutputIterator vertices, FaceOutputIterator faces,
     const int support_plane_idx = -1) const {
 
-    CGAL_assertion_msg(false, "TODO: IMPLEMENT OUTPUT PARTITION FACES!");
+    std::size_t num_vertices = 0;
+    KSR::Indexer<IVertex> indexer;
+
+    CGAL_assertion(support_plane_idx < number_of_support_planes());
+    if (support_plane_idx < 0) {
+      for (int i = 0; i < number_of_support_planes(); ++i) {
+        output_partition_faces(vertices, faces, indexer, num_vertices, i);
+      }
+      return;
+    }
+
+    CGAL_assertion(support_plane_idx >= 0);
+    output_partition_faces(
+      vertices, faces, indexer, num_vertices, support_plane_idx);
+  }
+
+  template<typename FaceGraph>
+  void output_support_plane(
+    FaceGraph& face_graph, const int support_plane_idx) const {
+
+    face_graph.clear();
+    CGAL_assertion(support_plane_idx >= 0);
+    CGAL_assertion(support_plane_idx < number_of_support_planes());
+    CGAL_assertion_msg(false, "TODO: IMPLEMENT ORIENTED OUTPUT SUPPORT PLANE!");
   }
 
   template<typename VolumeOutputIterator>
   VolumeOutputIterator output_partition_volumes(
     VolumeOutputIterator volumes, const int volume_level = -1) const {
 
-    CGAL_assertion_msg(false, "TODO: IMPLEMENT OUTPUT PARTITION VOLUMES!");
+    if (volume_level < 0) {
+      for (int i = 0; i < number_of_volume_levels(); ++i) {
+        output_partition_volumes(volumes, i);
+      }
+      return volumes;
+    }
+
+    CGAL_assertion(volume_level >= 0);
+    const std::size_t begin = (volume_level == 0) ? 0 : number_of_volumes(volume_level - 1);
+    const std::size_t end = number_of_volumes(volume_level);
+
+    for (std::size_t i = begin; i < end; ++i) {
+      output_partition_volume(volumes, i);
+    }
     return volumes;
   }
 
-  template<typename FaceGraph>
-  void output_support_plane(
-    const int support_plane_idx, FaceGraph& face_graph) const {
+  template<typename VolumeOutputIterator>
+  VolumeOutputIterator output_partition_volume(
+    VolumeOutputIterator volumes, const std::size_t volume_index) const {
 
-    face_graph.clear();
-    CGAL_assertion_msg(false, "TODO: IMPLEMENT OUTPUT SUPPORT PLANE!");
+    CGAL_assertion(volume_index < number_of_volumes(-1));
+
+    std::vector<Point_3> vertices;
+    std::vector< std::vector<std::size_t> > faces;
+    output_partition_volume(
+      std::back_inserter(vertices), std::back_inserter(faces), volume_index);
+    CGAL::Polygon_mesh_processing::orient_polygon_soup(vertices, faces);
+
+    Polygon_mesh polygon_mesh;
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(
+      vertices, faces, polygon_mesh);
+    *(volumes++) = polygon_mesh;
+    return volumes;
+  }
+
+  template<typename VertexOutputIterator, typename FaceOutputIterator>
+  void output_partition_volume(
+    VertexOutputIterator vertices, FaceOutputIterator faces,
+    const std::size_t volume_index) const {
+
+    CGAL_assertion(volume_index < number_of_volumes(-1));
+    CGAL_assertion(m_data.polyhedrons().size() == number_of_volumes(-1));
+    const auto& volume = m_data.polyhedrons()[volume_index];
+
+    std::size_t num_vertices = 0;
+    KSR::Indexer<IVertex> indexer;
+
+    std::vector<std::size_t> face;
+    const auto& pfaces = volume.pfaces;
+    for (const auto& pface : pfaces) {
+      face.clear();
+      const auto pvertices = m_data.pvertices_of_pface(pface);
+      for (const auto pvertex : pvertices) {
+
+        CGAL_assertion(m_data.has_ivertex(pvertex));
+        const auto ivertex = m_data.ivertex(pvertex);
+        const std::size_t idx = indexer(ivertex);
+
+        if (idx == num_vertices) {
+          *(vertices++) = m_data.point_3(ivertex);
+          ++num_vertices;
+        }
+        face.push_back(idx);
+      }
+      *(faces++) = face;
+    }
+  }
+
+  template<typename LCC>
+  void output_partition(LCC& lcc) const {
+    CGAL_assertion_msg(false, "TODO: OUTPUT PARTITION LCC!");
   }
 
   template<typename InputRange, typename PointMap, typename VectorMap>
@@ -330,6 +426,36 @@ public:
   }
 
 private:
+
+  template<typename VertexOutputIterator, typename FaceOutputIterator>
+  void output_partition_faces(
+    VertexOutputIterator vertices, FaceOutputIterator faces,
+    KSR::Indexer<IVertex>& indexer, std::size_t& num_vertices,
+    const int support_plane_idx) const {
+
+    std::vector<std::size_t> face;
+    CGAL_assertion(support_plane_idx >= 0);
+    const KSR::size_t sp_idx = static_cast<KSR::size_t>(support_plane_idx);
+
+    const auto pfaces = m_data.pfaces(sp_idx);
+    for (const auto pface : pfaces) {
+      face.clear();
+      const auto pvertices = m_data.pvertices_of_pface(pface);
+      for (const auto pvertex : pvertices) {
+
+        CGAL_assertion(m_data.has_ivertex(pvertex));
+        const auto ivertex = m_data.ivertex(pvertex);
+        const std::size_t idx = indexer(ivertex);
+
+        if (idx == num_vertices) {
+          *(vertices++) = m_data.point_3(ivertex);
+          ++num_vertices;
+        }
+        face.push_back(idx);
+      }
+      *(faces++) = face;
+    }
+  }
 
   const bool initialize_queue() {
 

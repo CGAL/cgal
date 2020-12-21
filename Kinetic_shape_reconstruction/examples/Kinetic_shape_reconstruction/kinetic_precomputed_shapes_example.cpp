@@ -47,6 +47,7 @@ struct Polygon_map {
 int main(const int argc, const char** argv) {
 
   // Input.
+  const auto kernel_name = boost::typeindex::type_id<Kernel>().pretty_name();
   std::string input_filename = (argc > 1 ? argv[1] : "data/test_1_polygon_a.off");
   std::ifstream input_file(input_filename);
 
@@ -60,9 +61,9 @@ int main(const int argc, const char** argv) {
 
   std::cout << std::endl;
   std::cout << "--- INPUT STATS: " << std::endl;
-  std::cout << "* input kernel: " << boost::typeindex::type_id<Kernel>().pretty_name() << std::endl;
-  std::cout << "* number of input vertices: " << input_vertices.size() << std::endl;
-  std::cout << "* number of input faces: " << input_faces.size() << std::endl;
+  std::cout << "* used kernel: "        << kernel_name           << std::endl;
+  std::cout << "* number of vertices: " << input_vertices.size() << std::endl;
+  std::cout << "* number of faces: "    << input_faces.size()    << std::endl;
 
   // Algorithm.
   const bool debug   = true;
@@ -78,48 +79,64 @@ int main(const int argc, const char** argv) {
   assert(is_success);
 
   // Output.
+  const int support_plane_idx = - 1;
   const int num_support_planes = ksr.number_of_support_planes();
   CGAL_assertion(num_support_planes > 6);
 
   // Vertices.
-  const std::size_t num_vertices = ksr.number_of_vertices(-1);
+  const std::size_t num_vertices = ksr.number_of_vertices(support_plane_idx);
   std::vector<Point_3> output_vertices;
   ksr.output_partition_vertices(
-    std::back_inserter(output_vertices), -1);
+    std::back_inserter(output_vertices), support_plane_idx);
   assert(num_vertices == output_vertices.size());
 
   // Edges.
-  const std::size_t num_edges = ksr.number_of_edges(-1);
+  const std::size_t num_edges = ksr.number_of_edges(support_plane_idx);
   std::vector<Segment_3> output_edges;
   ksr.output_partition_edges(
-    std::back_inserter(output_edges), -1);
+    std::back_inserter(output_edges), support_plane_idx);
   assert(num_edges == output_edges.size());
 
   // Faces.
-  const std::size_t num_faces = ksr.number_of_faces(-1);
-  // output_vertices.clear();
-  // std::vector< std::vector<std::size_t> > output_faces;
-  // ksr.output_partition_faces(
-  //   std::back_inserter(output_vertices),
-  //   std::back_inserter(output_faces), -1);
-  // assert(num_faces == output_faces.size());
+  const std::size_t num_faces = ksr.number_of_faces(support_plane_idx);
+  std::vector<Point_3> output_face_vertices;
+  std::vector< std::vector<std::size_t> > output_faces;
+  ksr.output_partition_faces(
+    std::back_inserter(output_face_vertices),
+    std::back_inserter(output_faces), support_plane_idx);
+  assert(num_faces == output_faces.size());
 
-  // const int num_volume_levels = ksr.number_of_volume_levels();
-  // CGAL_assertion(num_volume_levels > 0);
+  int volume_level = - 1;
+  const int num_volume_levels = ksr.number_of_volume_levels();
+  CGAL_assertion(num_volume_levels > 0);
 
   // Volumes.
-  const std::size_t num_volumes = ksr.number_of_volumes(-1);
-  // std::vector<Surface_mesh> output_volumes;
-  // ksr.output_partition_volumes(
-  //   std::back_inserter(output_volumes), -1);
-  // assert(num_volumes == output_volumes.size());
+  const std::size_t num_volumes = ksr.number_of_volumes(volume_level);
+  std::vector<Surface_mesh> output_volumes;
+  ksr.output_partition_volumes(
+    std::back_inserter(output_volumes), volume_level);
+  assert(num_volumes == output_volumes.size());
+
+  // Support planes.
+  // std::vector<Surface_mesh> support_planes;
+  // support_planes.reserve(num_support_planes);
+  // for (int i = 0; i < num_support_planes; ++i) {
+  //   Surface_mesh sp_mesh;
+  //   ksr.output_support_plane(i, sp_mesh);
+  //   CGAL_assertion(sp_mesh.number_of_vertices() == ksr.number_of_vertices(i));
+  //   CGAL_assertion(sp_mesh.number_of_edges()    == ksr.number_of_edges(i));
+  //   CGAL_assertion(sp_mesh.number_of_faces()    == ksr.number_of_faces(i));
+  //   support_planes.push_back(sp_mesh);
+  // }
+  // CGAL_assertion(support_planes.size() == num_support_planes);
 
   std::cout << std::endl;
   std::cout << "--- OUTPUT STATS: " << std::endl;
-  std::cout << "* number of output vertices: " << num_vertices << std::endl;
-  std::cout << "* number of output edges: "    << num_edges    << std::endl;
-  std::cout << "* number of output faces: "    << num_faces    << std::endl;
-  std::cout << "* number of output volumes: "  << num_volumes  << std::endl;
+  std::cout << "* number of vertices: "       << num_vertices       << std::endl;
+  std::cout << "* number of edges: "          << num_edges          << std::endl;
+  std::cout << "* number of faces: "          << num_faces          << std::endl;
+  std::cout << "* number of volumes: "        << num_volumes        << std::endl;
+  std::cout << "* number of support planes: " << num_support_planes << std::endl;
 
   // Export.
   std::cout << std::endl;
@@ -144,29 +161,38 @@ int main(const int argc, const char** argv) {
   std::cout << "* partition edges exported successfully" << std::endl;
 
   // Faces.
-  // output_filename = "partition-faces.ply";
-  // std::ofstream output_file_faces(output_filename);
-  // output_file_faces.precision(20);
-  // if (!CGAL::write_PLY(output_file_faces, output_vertices, output_faces)) {
-  //   std::cerr << "ERROR: can't write to the file " << output_filename << "!" << std::endl;
-  //   return EXIT_FAILURE;
-  // }
-  // output_file_faces.close();
-  // std::cout << "* partition faces exported successfully" << std::endl;
+  output_filename = "partition-faces.ply";
+  std::ofstream output_file_faces(output_filename);
+  output_file_faces.precision(20);
+  if (!CGAL::write_PLY(output_file_faces, output_face_vertices, output_faces)) {
+    std::cerr << "ERROR: can't write to the file " << output_filename << "!" << std::endl;
+    return EXIT_FAILURE;
+  }
+  output_file_faces.close();
+  std::cout << "* partition faces exported successfully" << std::endl;
 
   // Volumes.
-  // output_filename = "partition-volume-";
-  // for (std::size_t i = 0; i < num_volumes; ++i) {
-  //   const auto output_file = output_filename + std::to_string(i) + ".ply";
-  //   std::ofstream output_file_volume(output_file);
-  //   output_file_volume.precision(20);
-  //   if (!CGAL::write_ply(output_file_volume, output_volumes[i])) {
-  //     std::cerr << "ERROR: can't write to the file " << output_file << "!" << std::endl;
-  //     return EXIT_FAILURE;
-  //   }
-  //   output_file_volume.close();
+  output_filename = "partition-volume-";
+  for (std::size_t i = 0; i < num_volumes; ++i) {
+    const auto output_file = output_filename + std::to_string(i) + ".ply";
+    std::ofstream output_file_volume(output_file);
+    output_file_volume.precision(20);
+    if (!CGAL::write_ply(output_file_volume, output_volumes[i])) {
+      std::cerr << "ERROR: can't write to the file " << output_file << "!" << std::endl;
+      return EXIT_FAILURE;
+    }
+    output_file_volume.close();
+  }
+  std::cout << "* partition volumes exported successfully" << std::endl;
+
+  // Support planes.
+  // for (std::size_t i = 0; i < support_planes.size(); ++i) {
+  //   const std::string filename = "support_plane-" + std::to_string(i);
+  //   std::ofstream output_file_support_plane(filename);
+  //   output_file_support_plane.precision(20);
+  //   CGAL::write_ply(output_file_support_plane, support_planes[i]);
+  //   output_file_support_plane.close();
   // }
-  // std::cout << "* partition volumes exported successfully" << std::endl;
 
   std::cout << std::endl << "3D KINETIC DONE!" << std::endl << std::endl;
   return EXIT_SUCCESS;

@@ -208,6 +208,22 @@ const bool are_parallel(
   return false;
 }
 
+template<typename IVertex>
+class Indexer {
+public:
+  const std::size_t operator()(const IVertex& ivertex) {
+    const auto pair = m_indices.insert(
+      std::make_pair(ivertex, m_indices.size()));
+    const auto& item = pair.first;
+    const std::size_t idx = item->second;
+    return idx;
+  }
+  void clear() { m_indices.clear(); }
+
+private:
+  std::map<IVertex, std::size_t> m_indices;
+};
+
 } // namespace KSR
 } // namespace CGAL
 
