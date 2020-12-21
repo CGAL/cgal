@@ -254,10 +254,9 @@ public:
   }
 
   const int support_plane_index(const std::size_t polygon_index) const {
-
-    // CGAL_assertion(polygon_index < m_data.number_of_input_polygons());
-    CGAL_assertion_msg(false, "TODO: IMPLEMENT SUPPORT PLANE INDEX!");
-    return -1;
+    const int support_plane_idx = m_data.support_plane_index(polygon_index);
+    CGAL_assertion(support_plane_idx >= 6);
+    return support_plane_idx;
   }
 
   template<typename VertexOutputIterator>

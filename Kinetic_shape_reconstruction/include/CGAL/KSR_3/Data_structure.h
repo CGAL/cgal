@@ -194,17 +194,18 @@ private:
   KSR::vector<Support_plane> m_support_planes;
   Intersection_graph m_intersection_graph;
 
-  FT m_current_time;
   FT m_previous_time;
+  FT m_current_time;
   bool m_verbose;
 
   std::vector<Volume_cell> m_volumes;
   std::map<int, std::size_t> m_volume_level_map;
+  std::map<KSR::size_t, KSR::size_t> m_input_polygon_map;
 
 public:
   Data_structure(const bool verbose) :
-  m_current_time(FT(0)),
   m_previous_time(FT(0)),
+  m_current_time(FT(0)),
   m_verbose(verbose)
   { }
 
@@ -214,11 +215,24 @@ public:
     m_support_planes.clear();
     m_intersection_graph.clear();
 
-    m_current_time  = FT(0);
     m_previous_time = FT(0);
+    m_current_time  = FT(0);
 
     m_volumes.clear();
     m_volume_level_map.clear();
+  }
+
+  void set_input_polygon_map(
+    const std::map<KSR::size_t, KSR::size_t>& input_polygon_map) {
+    m_input_polygon_map = input_polygon_map;
+  }
+
+  const int support_plane_index(const std::size_t polygon_index) const {
+
+    const KSR::size_t polygon_idx = static_cast<KSR::size_t>(polygon_index);
+    CGAL_assertion(m_input_polygon_map.find(polygon_idx) != m_input_polygon_map.end());
+    const KSR::size_t sp_idx = m_input_polygon_map.at(polygon_idx);
+    return static_cast<int>(sp_idx);
   }
 
   const int number_of_volume_levels() const {
@@ -249,6 +263,7 @@ public:
     for (KSR::size_t i = 0; i < number_of_support_planes(); ++i) {
       m_support_planes[i].convert(m_intersection_graph, ds.support_planes()[i]);
     }
+    ds.set_input_polygon_map(m_input_polygon_map);
   }
 
   /*******************************
@@ -487,6 +502,7 @@ public:
     input_indices.push_back(input_index);
     support_plane(support_plane_idx).
       add_input_polygon(points, centroid, input_indices);
+    m_input_polygon_map[input_index] = support_plane_idx;
   }
 
   const Point_2 sort_points_by_direction(
@@ -523,6 +539,9 @@ public:
     const auto centroid = sort_points_by_direction(points);
     support_plane(support_plane_idx).
       add_input_polygon(points, centroid, input_indices);
+    for (const KSR::size_t input_index : input_indices) {
+      m_input_polygon_map[input_index] = support_plane_idx;
+    }
   }
 
   /*******************************

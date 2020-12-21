@@ -81,6 +81,7 @@ int main(const int argc, const char** argv) {
   const int support_plane_idx = -1;
   const int num_support_planes = ksr.number_of_support_planes();
   CGAL_assertion(num_support_planes > 6);
+  CGAL_assertion(ksr.support_plane_index(0) == 6);
 
   // Vertices.
   const std::size_t num_vertices = ksr.number_of_vertices(support_plane_idx);
