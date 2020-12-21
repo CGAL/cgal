@@ -199,15 +199,13 @@ private:
   bool m_verbose;
 
   std::vector<Volume_cell> m_volumes;
-  std::size_t m_num_volume_levels;
   std::map<int, std::size_t> m_volume_level_map;
 
 public:
   Data_structure(const bool verbose) :
   m_current_time(FT(0)),
   m_previous_time(FT(0)),
-  m_verbose(verbose),
-  m_num_volume_levels(0)
+  m_verbose(verbose)
   { }
 
   void clear() {
@@ -220,19 +218,23 @@ public:
     m_previous_time = FT(0);
 
     m_volumes.clear();
-    m_num_volume_levels = 0;
     m_volume_level_map.clear();
   }
 
-  const std::size_t number_of_volume_levels() const {
-    return m_num_volume_levels;
+  const int number_of_volume_levels() const {
+    return static_cast<int>(m_volume_level_map.size());
   }
 
   const std::size_t number_of_volumes(const int volume_level) const {
+
+    CGAL_assertion(volume_level < number_of_volume_levels());
+    if (volume_level >= number_of_volume_levels()) return std::size_t(-1);
     if (volume_level < 0) {
       return m_volumes.size();
     }
+
     CGAL_assertion(volume_level >= 0);
+    CGAL_assertion(m_volume_level_map.find(volume_level) != m_volume_level_map.end());
     return m_volume_level_map.at(volume_level);
   }
 
@@ -285,7 +287,7 @@ public:
     return support_plane(pvertex).last_event_time(pvertex.second);
   }
 
-  const std::vector<Volume_cell>& polyhedrons() const {
+  const std::vector<Volume_cell>& volumes() const {
     return m_volumes;
   }
 
@@ -3203,7 +3205,7 @@ public:
 
     const bool is_broken_volume = is_volume_degenerate(pfaces);
     if (is_broken_volume) {
-      dump_polyhedron(*this, pfaces, "polyhedrons/degenerate");
+      dump_volume(*this, pfaces, "volumes/degenerate");
     }
     CGAL_assertion(!is_broken_volume);
     CGAL_assertion(pfaces.size() == volume_size);
@@ -3254,7 +3256,7 @@ public:
   **     EXTRACTING VOLUMES     **
   ********************************/
 
-  void create_polyhedrons() {
+  void create_polyhedra() {
 
     std::cout.precision(20);
     // for (KSR::size_t i = 0; i < number_of_support_planes(); ++i)
@@ -3304,10 +3306,9 @@ public:
       std::cout << "* found boundary volumes: "<< volume_index << std::endl;
     }
     num_volumes = volume_index;
-    m_volume_level_map[volume_level] =
-      static_cast<std::size_t>(num_volumes);
-    ++volume_level;
     CGAL_assertion(num_volumes > 0);
+    m_volume_level_map[volume_level] = static_cast<std::size_t>(num_volumes);
+    ++volume_level;
 
     // Then traverse all other volumes if any.
     std::vector<PFace> other_pfaces;
@@ -3346,16 +3347,16 @@ public:
       if (m_verbose) {
         std::cout << "* found interior volumes: "<< after - before << std::endl;
       }
-      CGAL_assertion(after >= before);
       num_volumes = volume_index;
-      m_volume_level_map[volume_level] =
-        static_cast<std::size_t>(num_volumes);
-      ++volume_level;
+      CGAL_assertion(after >= before);
+      if (after > before) {
+        m_volume_level_map[volume_level] = static_cast<std::size_t>(after - before);
+        ++volume_level;
+      }
 
     } while (!quit);
-    m_num_volume_levels = volume_level;
 
-    // Now, set final polyhedrons and their neighbors.
+    // Now, set final volumes and their neighbors.
     for (const auto& item : map_volumes) {
       const auto& pface = item.first;
       const auto& pair  = item.second;
@@ -3381,13 +3382,13 @@ public:
       create_cell_pvertices(volume);
 
     if (m_verbose) {
-      std::cout << "* created polyhedrons: " << m_volumes.size() << std::endl;
-      dump_polyhedrons(*this, "polyhedrons/final");
+      std::cout << "* created volumes: " << m_volumes.size() << std::endl;
+      dump_volumes(*this, "volumes/final");
       for (std::size_t i = 0; i < m_volumes.size(); ++i) {
         const auto& volume = m_volumes[i];
         CGAL_assertion(volume.pfaces.size() > 3);
         std::cout <<
-        " POLYHEDRON " << std::to_string(i) << ": "
+        " VOLUME "     << std::to_string(i) << ": "
         " pvertices: " << volume.pvertices.size() <<
         " pfaces: "    << volume.pfaces.size()    << std::endl;
       }
@@ -3819,7 +3820,7 @@ public:
     }
 
     if (is_debug) {
-      dump_frame(points, "polyhedrons/directions-init");
+      dump_frame(points, "volumes/directions-init");
     }
 
     const FT cx = volume_centroid.x();
@@ -3854,7 +3855,7 @@ public:
     if (is_debug) {
       auto extended = points;
       extended.push_back(volume_centroid);
-      dump_frame(extended, "polyhedrons/directions");
+      dump_frame(extended, "volumes/directions");
     }
 
     std::vector< std::pair<Direction_2, PFace> > dir_edges;
@@ -3914,10 +3915,10 @@ public:
         } else {
           // return null_pface();
           dump_info(*this, pface, pedge, nfaces);
-          dump_frame(points, "polyhedrons/directions-init");
+          dump_frame(points, "volumes/directions-init");
           auto extended = points;
           extended.push_back(volume_centroid);
-          dump_frame(extended, "polyhedrons/directions");
+          dump_frame(extended, "volumes/directions");
           CGAL_assertion_msg(false, "ERROR: WRONG ORIENTATION!");
         }
       }

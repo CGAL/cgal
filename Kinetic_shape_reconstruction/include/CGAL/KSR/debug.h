@@ -578,7 +578,7 @@ private:
 };
 
 template<typename DS, typename PFace>
-void dump_polyhedron(
+void dump_volume(
   const DS& data,
   const std::vector<PFace>& pfaces,
   const std::string file_name) {
@@ -609,7 +609,7 @@ void dump_polyhedron(
 }
 
 template<typename DS>
-void dump_polyhedrons(const DS& data, const std::string tag = std::string()) {
+void dump_volumes(const DS& data, const std::string tag = std::string()) {
 
   using Point_3 = typename DS::Kernel::Point_3;
   std::vector<Point_3> polygon;
@@ -617,8 +617,8 @@ void dump_polyhedrons(const DS& data, const std::string tag = std::string()) {
   std::vector<Color> colors;
 
   Saver<typename DS::Kernel> saver;
-  for (std::size_t i = 0; i < data.polyhedrons().size(); ++i) {
-    const auto& volume = data.polyhedrons()[i];
+  for (std::size_t i = 0; i < data.volumes().size(); ++i) {
+    const auto& volume = data.volumes()[i];
     const auto color = saver.get_idx_color(i);
 
     colors.clear();
@@ -652,7 +652,7 @@ void dump_pface(
   }
   polygons.push_back(polygon);
   Saver<Kernel> saver;
-  saver.export_polygon_soup_3(polygons, "polyhedrons/" + name);
+  saver.export_polygon_soup_3(polygons, "volumes/" + name);
 }
 
 template<typename DS, typename PEdge>
@@ -665,7 +665,7 @@ void dump_pedge(
   using Segment_3 = typename Kernel::Segment_3;
   const std::vector<Segment_3> segments = { data.segment_3(pedge) };
   Saver<Kernel> saver;
-  saver.export_segments_3(segments, "polyhedrons/" + name);
+  saver.export_segments_3(segments, "volumes/" + name);
 }
 
 template<typename DS, typename PFace, typename PEdge>

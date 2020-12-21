@@ -26,7 +26,7 @@ QUESTIONS:
 - Merge polygons, which are at the same cell.
 
 3. Can we avoid kinetic completely?
-- Probably yes, but there is a problem of how to find the correct criteria that guarantees the polyhedron convexity. But we can use the trick with tagging pfaces at least for all initial polygons.
+- Probably yes, but there is a problem of how to find the correct criteria that guarantees the volume convexity. But we can use the trick with tagging pfaces at least for all initial polygons.
 
 4. Do you have any guarantee on the number of final volumes? Is this number optimal for each k?
 - No, it is super difficult.
