@@ -24,144 +24,135 @@ namespace params = CGAL::parameters;
 
 int main(int argc, const char** argv)
 {
-	const char* fname_in1 = (argc > 1) ? argv[1] : "data/hippo1.ply";
-	const char* fname_in2 = (argc > 2) ? argv[2] : "data/hippo2.ply";
-	const char* fname_output = (argc > 3) ? argv[3] : "data/hippo_aligned_pointmatcher.ply";
+  const char* fname1 = (argc>1)?argv[1]:"data/hippo1.ply";
+  const char* fname2 = (argc>2)?argv[2]:"data/hippo2.ply";
 
-	std::vector<Pwn> pwns1, pwns2;
-	std::ifstream input(fname_in1, std::ios::binary);
-	if (!input)
-	{
-		std::cerr << "Error: cannot open file " << fname_in1 << std::endl;
-		return EXIT_FAILURE;
-	}
-	if (!CGAL::read_ply_points(input, std::back_inserter(pwns1),
-		CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Pwn>()).
-		normal_map(Normal_map())))
-	{
-		std::cerr << "Error: cannot read file " << fname_in1 << std::endl;
-		return EXIT_FAILURE;
-	}
-	input.close();
+  std::vector<Pwn> pwns1, pwns2;
+  std::ifstream input(fname1);
+  if (!input ||
+      !CGAL::read_ply_points(input, std::back_inserter(pwns1),
+            CGAL::parameters::point_map (CGAL::First_of_pair_property_map<Pwn>()).
+            normal_map (Normal_map())))
+  {
+    std::cerr << "Error: cannot read file " << fname1 << std::endl;
+    return EXIT_FAILURE;
+  }
+  input.close();
 
-	input.open(fname_in2, std::ios::binary);
-	if (!input)
-	{
-		std::cerr << "Error: cannot open file " << fname_in2 << std::endl;
-		return EXIT_FAILURE;
-	}
-	if (!CGAL::read_ply_points(input, std::back_inserter(pwns2),
-		CGAL::parameters::point_map(Point_map()).
-		normal_map(Normal_map())))
-	{
-		std::cerr << "Error: cannot read file " << fname_in2 << std::endl;
-		return EXIT_FAILURE;
-	}
-	input.close();
+  input.open(fname2);
+  if (!input ||
+      !CGAL::read_ply_points(input, std::back_inserter(pwns2),
+            CGAL::parameters::point_map (Point_map()).
+            normal_map (Normal_map())))
+  {
+    std::cerr << "Error: cannot read file " << fname2 << std::endl;
+    return EXIT_FAILURE;
+  }
+  input.close();
 
-	//
-	// Prepare ICP config
-	//
-	using CGAL::pointmatcher::ICP_config;
+  //
+  // Prepare ICP config
+  //
+  using CGAL::pointmatcher::ICP_config;
 
-	// Possible config modules/components: https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain
-	// See documentation of optional named parameters for CGAL PM ICP configuration / pointmatcher config module mapping
+  // Possible config modules/components: https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain
+  // See documentation of optional named parameters for CGAL PM ICP configuration / pointmatcher config module mapping
 
-	// Prepare point set 1 filters (PM::ReferenceDataPointsFilters)
-	std::vector<ICP_config> point_set_1_filters;
-	point_set_1_filters.push_back(ICP_config{ /*.name=*/"MinDistDataPointsFilter"       , /*.params=*/{ {"minDist", "0.5" }} });
-	point_set_1_filters.push_back(ICP_config{ /*.name=*/"RandomSamplingDataPointsFilter", /*.params=*/{ {"prob"   , "0.05"}} });
+  // Prepare point set 1 filters (PM::ReferenceDataPointsFilters)
+  std::vector<ICP_config> point_set_1_filters;
+  point_set_1_filters.push_back( ICP_config { /*.name=*/"MinDistDataPointsFilter"       , /*.params=*/{ {"minDist", "0.5" }}  } );
+  point_set_1_filters.push_back( ICP_config { /*.name=*/"RandomSamplingDataPointsFilter", /*.params=*/{ {"prob"   , "0.05"}}  } );
 
-	// Prepare point set 2 filters (PM::ReadingDataPointsFilters)
-	std::vector<ICP_config> point_set_2_filters;
-	point_set_2_filters.push_back(ICP_config{ /*.name=*/"MinDistDataPointsFilter"       , /*.params=*/{ {"minDist", "0.5" }} });
-	point_set_2_filters.push_back(ICP_config{ /*.name=*/"RandomSamplingDataPointsFilter", /*.params=*/{ {"prob"   , "0.05"}} });
+  // Prepare point set 2 filters (PM::ReadingDataPointsFilters)
+  std::vector<ICP_config> point_set_2_filters;
+  point_set_2_filters.push_back( ICP_config { /*.name=*/"MinDistDataPointsFilter"       , /*.params=*/{ {"minDist", "0.5" }}  } );
+  point_set_2_filters.push_back( ICP_config { /*.name=*/"RandomSamplingDataPointsFilter", /*.params=*/{ {"prob"   , "0.05"}}  } );
 
-	// Prepare matcher function
-	ICP_config matcher{ /*.name=*/"KDTreeMatcher", /*.params=*/{ {"knn", "1"}, {"epsilon", "3.16"} } };
+        // Prepare matcher function
+  ICP_config matcher { /*.name=*/"KDTreeMatcher", /*.params=*/{ {"knn", "1"}, {"epsilon", "3.16"} } };
 
-	// Prepare outlier filters
-	std::vector<ICP_config> outlier_filters;
-	outlier_filters.push_back(ICP_config{ /*.name=*/"TrimmedDistOutlierFilter", /*.params=*/{ {"ratio", "0.75" }} });
+  // Prepare outlier filters
+  std::vector<ICP_config> outlier_filters;
+  outlier_filters.push_back( ICP_config { /*.name=*/"TrimmedDistOutlierFilter", /*.params=*/{ {"ratio", "0.75" }}  } );
 
-	// Prepare error minimizer
-	ICP_config error_minimizer{ /*.name=*/"PointToPointErrorMinimizer" };
+  // Prepare error minimizer
+  ICP_config error_minimizer { /*.name=*/"PointToPointErrorMinimizer"};
 
-	// Prepare transformation checker
-	std::vector<ICP_config> transformation_checkers;
-	transformation_checkers.push_back(ICP_config{ /*.name=*/"CounterTransformationChecker", /*.params=*/{ {"maxIterationCount", "150" }} });
-	transformation_checkers.push_back(ICP_config{ /*.name=*/"DifferentialTransformationChecker", /*.params=*/{ {"minDiffRotErr"  , "0.001" },
-																										 {"minDiffTransErr", "0.01"  },
-																										 {"smoothLength"   , "4"     } }
-		});
-	// Prepare inspector
-	ICP_config inspector{ /*.name=*/"NullInspector" };
+  // Prepare transformation checker
+  std::vector<ICP_config> transformation_checkers;
+  transformation_checkers.push_back( ICP_config { /*.name=*/"CounterTransformationChecker", /*.params=*/{ {"maxIterationCount", "150" }}  } );
+  transformation_checkers.push_back( ICP_config { /*.name=*/"DifferentialTransformationChecker", /*.params=*/{ {"minDiffRotErr"  , "0.001" },
+                                                                                                       {"minDiffTransErr", "0.01"  },
+                                                                                                       {"smoothLength"   , "4"     } }
+                                                } );
+  // Prepare inspector
+  ICP_config inspector { /*.name=*/"NullInspector" };
 
-	// Prepare logger
-	ICP_config logger{ /*.name=*/"FileLogger" };
+  // Prepare logger
+  ICP_config logger { /*.name=*/"FileLogger" };
 
-	const K::Aff_transformation_3 identity_transform = K::Aff_transformation_3(CGAL::Identity_transformation());
+  const K::Aff_transformation_3 identity_transform = K::Aff_transformation_3(CGAL::Identity_transformation());
 
-	// EITHER call the ICP registration method pointmatcher to get the transformation to apply to pwns2
-	std::pair<K::Aff_transformation_3, bool> res =
-		CGAL::pointmatcher::compute_registration_transformation
-		(pwns1, pwns2,
-			params::point_map(Point_map()).normal_map(Normal_map())
-			.point_set_filters(point_set_1_filters)
-			.matcher(matcher)
-			.outlier_filters(outlier_filters)
-			.error_minimizer(error_minimizer)
-			.transformation_checkers(transformation_checkers)
-			.inspector(inspector)
-			.logger(logger),
-			params::point_map(Point_map()).normal_map(Normal_map())
-			.point_set_filters(point_set_2_filters)
-			.transformation(identity_transform) /* initial transform for pwns2.
-												 * default value is already identity transform.
-												 * a proper initial transform could be given, for example,
-												 * a transform returned from a coarse registration algorithm.
-												 * */
-		);
+  // EITHER call the ICP registration method pointmatcher to get the transformation to apply to pwns2
+  std::pair<K::Aff_transformation_3, bool> res =
+  CGAL::pointmatcher::compute_registration_transformation
+    (pwns1, pwns2,
+     params::point_map(Point_map()).normal_map(Normal_map())
+     .point_set_filters(point_set_1_filters)
+     .matcher(matcher)
+     .outlier_filters(outlier_filters)
+     .error_minimizer(error_minimizer)
+     .transformation_checkers(transformation_checkers)
+     .inspector(inspector)
+     .logger(logger),
+     params::point_map(Point_map()).normal_map(Normal_map())
+     .point_set_filters(point_set_2_filters)
+     .transformation(identity_transform) /* initial transform for pwns2.
+                                          * default value is already identity transform.
+                                          * a proper initial transform could be given, for example,
+                                          * a transform returned from a coarse registration algorithm.
+                                          * */
+     );
 
-	// OR call the ICP registration method from pointmatcher and apply the transformation to pwn2
-	bool converged =
-		CGAL::pointmatcher::register_point_sets
-		(pwns1, pwns2,
-			params::point_map(Point_map()).normal_map(Normal_map())
-			.point_set_filters(point_set_1_filters)
-			.matcher(matcher)
-			.outlier_filters(outlier_filters)
-			.error_minimizer(error_minimizer)
-			.transformation_checkers(transformation_checkers)
-			.inspector(inspector)
-			.logger(logger),
-			params::point_map(Point_map()).normal_map(Normal_map())
-			.point_set_filters(point_set_2_filters)
-			.transformation(res.first) /* pass the above computed transformation as initial transformation.
-									   * as a result, the registration will require less iterations to converge.
-									   * */
-		);
+  // OR call the ICP registration method from pointmatcher and apply the transformation to pwn2
+  bool converged =
+  CGAL::pointmatcher::register_point_sets
+    (pwns1, pwns2,
+     params::point_map(Point_map()).normal_map(Normal_map())
+     .point_set_filters(point_set_1_filters)
+     .matcher(matcher)
+     .outlier_filters(outlier_filters)
+     .error_minimizer(error_minimizer)
+     .transformation_checkers(transformation_checkers)
+     .inspector(inspector)
+     .logger(logger),
+     params::point_map(Point_map()).normal_map(Normal_map())
+     .point_set_filters(point_set_2_filters)
+     .transformation(res.first) /* pass the above computed transformation as initial transformation.
+                                * as a result, the registration will require less iterations to converge.
+                                * */
+     );
 
-	if (converged)
-		std::cerr << "Success" << std::endl;
-	else
-	{
-		std::cerr << "Failure" << std::endl;
-		return EXIT_FAILURE;
-	}
+  if (converged)
+    std::cerr << "Success" << std::endl;
+  else
+  {
+    std::cerr << "Failure" << std::endl;
+    return EXIT_FAILURE;
+  }
 
-	std::ofstream out(fname_output);
-	if (!out ||
-		!CGAL::write_ply_points(
-			out, pwns2,
-			CGAL::parameters::point_map(Point_map()).
-			normal_map(Normal_map())))
-	{
-		return EXIT_FAILURE;
-	}
+  std::ofstream out("pwns2_aligned.ply");
+  if (!out ||
+      !CGAL::write_ply_points(
+        out, pwns2,
+        CGAL::parameters::point_map(Point_map()).
+        normal_map(Normal_map())))
+  {
+    return EXIT_FAILURE;
+  }
 
-	std::cout << "Transformed version of " << fname_in2
-		<< " written to " << fname_output << std::endl;
+  std::cout << "Transformed version of " << fname2
+            << " written to pwn2_aligned.ply.\n";
 
-	return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
