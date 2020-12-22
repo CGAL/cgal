@@ -2422,11 +2422,11 @@ public:
         pvertex, prev, next, crossed[i], future_points[i], future_directions[i]);
       if (is_parallel) {
         if (is_intersecting_iedge(min_time, max_time, prev, crossed[i])) {
-          CGAL_assertion_msg(i == crossed.size() - 1, "TODO: FRONT, CAN WE HAVE OTHER I HERE?");
+          CGAL_assertion_msg(i == crossed.size() - 1, "TODO: OPEN, PREV, CAN WE HAVE OTHER I HERE?");
           prev_iedge = crossed[i];
         }
         if (is_intersecting_iedge(min_time, max_time, next, crossed[i])) {
-          CGAL_assertion_msg(i == 0, "TODO: FRONT, CAN WE HAVE OTHER I HERE?");
+          CGAL_assertion_msg(i == 0, "TODO: OPEN, NEXT, CAN WE HAVE OTHER I HERE?");
           next_iedge = crossed[i];
         }
       }
@@ -2654,7 +2654,6 @@ public:
         CGAL_assertion(this->k(pface_front) == 1);
         CGAL_assertion(this->k(pface_back)  == 1);
       }
-      // CGAL_assertion_msg(false, "TODO: FRONT AND BACK, FINISH THIS CASE!");
 
     } else if ((!is_occupied_edge_front && !is_occupied_edge_back)) {
 
@@ -2662,9 +2661,7 @@ public:
       CGAL_assertion(this->k(pface_front) == this->k(pface_back));
       add_new_pfaces(this->k(pface_front), pvertex, crossed,
       future_points, future_directions, new_pvertices);
-
       if (m_verbose) std::cout << "- continue !front && !back" << std::endl;
-      // CGAL_assertion_msg(false, "TODO: !FRONT AND !BACK, FINISH THIS CASE!");
 
     } else if (is_occupied_edge_front || is_occupied_edge_back) {
 
@@ -2681,9 +2678,7 @@ public:
       } else {
         CGAL_assertion_msg(false, "ERROR: WRONG OPEN CASE!");
       }
-
       if (m_verbose) std::cout << "- continue front || back" << std::endl;
-      // CGAL_assertion_msg(false, "TODO: FRONT OR BACK, FINISH THIS CASE!");
 
     } else {
       CGAL_assertion_msg(false, "TODO: ADD NEW OPEN CASE! DO NOT FORGET TO UPDATE K!");
@@ -3608,7 +3603,7 @@ public:
       auto vec2 = Vector_3(centroid, other_centroid);
       vec2 = KSR::normalize(vec2);
 
-      const FT d = FT(1) / FT(100000); // TODO: CAN WE AVOID THIS VALUE?
+      const FT d = KSR::tolerance<FT>(); // TODO: CAN WE AVOID THIS VALUE?
       const FT dot_product = vec1 * vec2;
 
       if (dot_product < FT(0)) {

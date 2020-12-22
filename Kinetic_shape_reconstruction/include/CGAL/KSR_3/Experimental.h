@@ -560,7 +560,7 @@ class Experimental {
         // continue ..
         // std::cout << "crossed size: " << crossed.size() << std::endl;
         // std::cout << "all crossed size: " << all_crossed.size() << std::endl;
-        // CGAL_assertion_msg(false, "TODO: BACK CROSSED > LIMIT!");
+        CGAL_assertion_msg(false, "TODO: BACK CROSSED > LIMIT!");
       }
     }
     else if (front_constrained) // Border case
@@ -893,7 +893,7 @@ class Experimental {
         if (is_ok) {
         if (num_extra_faces < 3) {
 
-          // CGAL_assertion_msg(false, "TODO: FRONT, CROSSED < LIMIT, 1 or 2 FACES!");
+          CGAL_assertion_msg(false, "TODO: FRONT, CROSSED < LIMIT, 1 or 2 FACES!");
           CGAL_assertion(future_points.size() == asize);
           CGAL_assertion(future_directions.size() == asize);
 
@@ -943,7 +943,7 @@ class Experimental {
               connect(propagated, all_crossed[i]);
               crossed.push_back(all_crossed[i]); // remove events from this one
 
-              // CGAL_assertion_msg(false, "TODO: FRONT, NULL PROPAGATED CASE!");
+              CGAL_assertion_msg(false, "TODO: FRONT, NULL PROPAGATED CASE!");
 
             } else {
 
@@ -1116,7 +1116,7 @@ class Experimental {
         // continue ..
         // std::cout << "crossed size: " << crossed.size() << std::endl;
         // std::cout << "all crossed size: " << all_crossed.size() << std::endl;
-        // CGAL_assertion_msg(false, "TODO: FRONT, CROSSED > LIMIT!");
+        CGAL_assertion_msg(false, "TODO: FRONT, CROSSED > LIMIT!");
       }
     }
     else // Open case

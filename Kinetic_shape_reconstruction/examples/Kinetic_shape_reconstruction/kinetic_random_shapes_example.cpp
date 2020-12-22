@@ -380,11 +380,11 @@ int main(const int argc, const char** argv) {
 
   std::cout << std::endl;
   std::cout << "--- INPUT STATS: " << std::endl;
-  std::cout << "* input kernel: " << boost::typeindex::type_id<EPICK>().pretty_name() << std::endl;
-  std::cout << "* polygon kernel: " << boost::typeindex::type_id<Kernel>().pretty_name() << std::endl;
-  std::cout << "* expected number of polygons: " << n << std::endl;
-  std::cout << "* generated number of polygons: " << rnd_polygons.size() << std::endl;
-  std::cout << "* number of vertices in a polygon: " << p << std::endl;
+  std::cout << "* input kernel: "                    << boost::typeindex::type_id<EPICK>().pretty_name()  << std::endl;
+  std::cout << "* polygon kernel: "                  << boost::typeindex::type_id<Kernel>().pretty_name() << std::endl;
+  std::cout << "* expected number of polygons: "     << n                                                 << std::endl;
+  std::cout << "* generated number of polygons: "    << rnd_polygons.size()                               << std::endl;
+  std::cout << "* number of vertices in a polygon: " << p                                                 << std::endl;
   // exit(EXIT_SUCCESS);
 
   IPolygon_3 input_polygon;
@@ -403,7 +403,7 @@ int main(const int argc, const char** argv) {
   assert(input_polygons.size() == rnd_polygons.size());
 
   // Algorithm.
-  KSR ksr(true, true);
+  KSR ksr(false, false);
   const IPolygon_3_map polygon_map;
   const unsigned int k = (argc > 3 ? std::atoi(argv[3]) : 1);
   std::cout << "* input k: " << k << std::endl;

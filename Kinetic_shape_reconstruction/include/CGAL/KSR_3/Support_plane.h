@@ -122,7 +122,7 @@ public:
       const FT z = normal.z() + (pa.x() - pb.x()) * (pa.y() + pb.y());
       normal = Vector_3(x, y, z);
     }
-    CGAL_assertion_msg(normal != CGAL::NULL_VECTOR, "ERROR: POLYGON HAS FLAT BBOX!");
+    CGAL_assertion_msg(normal != CGAL::NULL_VECTOR, "ERROR: BBOX IS FLAT!");
 
     m_data->k = 0;
     m_data->plane = Plane_3(points[0], KSR::normalize(normal));

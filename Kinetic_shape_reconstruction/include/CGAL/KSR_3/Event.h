@@ -28,7 +28,7 @@
 namespace CGAL {
 namespace KSR_3 {
 
-// TODO: Can we avoid forward declaration?
+// TODO: CAN WE AVOID FORWARD DECLARATION?
 template<typename Data_structure>
 class Event_queue;
 

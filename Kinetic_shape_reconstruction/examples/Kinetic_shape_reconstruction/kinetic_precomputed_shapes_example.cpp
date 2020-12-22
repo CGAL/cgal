@@ -70,14 +70,15 @@ int main(const int argc, const char** argv) {
   const unsigned int k = (argc > 2 ? std::atoi(argv[2]) : 1);
   std::cout << "* number of intersections k: " << k << std::endl;
 
-  const unsigned int n = 0; // number of subdivisions per bbox side
+  const unsigned int n = 0;
+  std::cout << "* number of subdivisions per bbox side: " << n << std::endl;
   const unsigned int num_blocks = std::pow(n + 1, 3);
   std::cout << "* number of blocks: " << num_blocks << std::endl;
 
   const double enlarge_bbox_ratio = 1.1;
   std::cout << "* enlarge bbox ratio: " << enlarge_bbox_ratio << std::endl;
 
-  const bool reorient = true;
+  const bool reorient = false;
   std::cout << "* reorient: " << (reorient ? "true" : "false") << std::endl;
 
   // Algorithm.

@@ -82,7 +82,7 @@ private:
 public:
   Kinetic_shape_reconstruction_3(
     const bool verbose = true,
-    const bool debug = false) :
+    const bool debug   = false) :
   m_debug(debug),
   m_verbose(verbose),
   m_queue(m_debug),
@@ -92,51 +92,50 @@ public:
   m_data(m_debug)
   { }
 
-  // TODO: Use named parameters here!
+  // TODO: USE NAMED PARAMETERS!
   template<
   typename InputRange,
   typename PolygonMap>
   const bool partition(
     const InputRange& input_range,
     const PolygonMap polygon_map,
-    const unsigned int k = 1,
-    const unsigned int n = 0,
-    const double enlarge_bbox_ratio = 1.1,
-    const bool reorient = false) {
+    unsigned int k = 1,
+    unsigned int n = 0,
+    double enlarge_bbox_ratio = 1.1,
+    bool reorient = false) {
 
     std::cout.precision(20);
     if (input_range.size() == 0) {
-      CGAL_warning_msg(input_range.size() != 0,
-      "WARNING: YOUR INPUT IS EMPTY. RETURN WITH NO CHANGE!");
-      return false;
-    }
-
-    if (k == 0) {
-      CGAL_warning_msg(k != 0,
-      "WARNING: YOU SET K TO 0. THE VALID VALUES ARE {1,2,...}. RETURN WITH NO CHANGE!");
+      CGAL_warning_msg(input_range.size() > 0,
+      "WARNING: YOUR INPUT IS EMPTY! RETURN WITH NO CHANGE!");
       return false;
     }
 
     if (n != 0) {
-      CGAL_assertion_msg(n == 0,
-      "TODO: IMPLEMENT KINETIC SUBDIVISION!");
-
+      CGAL_assertion_msg(false, "TODO: IMPLEMENT KINETIC SUBDIVISION!");
       if (n > 3) {
         CGAL_warning_msg(n <= 3,
-        "WARNING: DOES IT MAKE SENSE TO HAVE MORE THAN 64 INPUT BLOCKS? RETURN WITH NO CHANGE!");
-        return false;
+        "WARNING: DOES IT MAKE SENSE TO HAVE MORE THAN 64 INPUT BLOCKS? SETTING N TO 3!");
+        n = 3;
       }
     }
 
     if (enlarge_bbox_ratio < 1.0) {
       CGAL_warning_msg(enlarge_bbox_ratio >= 1.0,
-      "WARNING: YOU SET ENLARGE_BBOX_RATIO < 1.0. THE VALID RANGE IS [1.0, +INF). RETURN WITH NO CHANGE!");
-      return false;
+      "WARNING: YOU SET ENLARGE_BBOX_RATIO < 1.0! THE VALID RANGE IS [1.0, +INF). SETTING TO 1.0!");
+      enlarge_bbox_ratio = 1.0;
     }
 
     const FT time_step = static_cast<FT>(m_initializer.initialize(
       input_range, polygon_map, k, enlarge_bbox_ratio, reorient));
     m_initializer.convert(m_data);
+    m_data.check_integrity();
+
+    if (k == 0) {
+      CGAL_warning_msg(k > 0,
+      "WARNING: YOU SET K TO 0! THAT MEANS NO PROPAGATION! THE VALID VALUES ARE {1,2,...}. INTERSECT AND RETURN!");
+      return false;
+    }
 
     // if (m_verbose) {
     //   std::cout << std::endl << "POLYGON SPLITTER SUCCESS!" << std::endl << std::endl;
@@ -803,7 +802,8 @@ private:
 
     const bool is_event_found = false;
     return is_event_found;
-    CGAL_assertion_msg(false, "TODO: ADD THIS EXTRA TYPE OF EVENT!");
+    CGAL_assertion_msg(false,
+    "TODO: ADD PVERTEX TO IVERTEX UNCONSTRAINED EVENT!");
   }
 
   const std::size_t run(
@@ -904,7 +904,7 @@ private:
     const Event&   /* event   */) {
 
     CGAL_assertion_msg(false,
-    "TODO: ADD CASE TWO CONSTRAINED PVERTICES MEET!");
+    "TODO: IMPLEMENT TWO CONSTRAINED PVERTICES MEET EVENT!");
   }
 
   void apply_event_two_unconstrained_pvertices_meet(
@@ -1192,7 +1192,7 @@ private:
     const Event&   /* event   */) {
 
     CGAL_assertion_msg(false,
-    "TODO: ADD UNCONSTRAINED PVERTEX MEETS IVERTEX EVENT!");
+    "TODO: IMPLEMENT UNCONSTRAINED PVERTEX MEETS IVERTEX EVENT!");
   }
 
   void remove_events(const IEdge& iedge, const KSR::size_t support_plane_idx) {

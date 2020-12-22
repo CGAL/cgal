@@ -24,7 +24,8 @@
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
 // CGAL includes.
-// #include <CGAL/optimal_bounding_box.h>
+#include <CGAL/optimal_bounding_box.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 // Internal includes.
 #include <CGAL/KSR/utils.h>
@@ -51,10 +52,13 @@ private:
   using Data_structure   = KSR_3::Data_structure<Kernel>;
   using Polygon_splitter = KSR_3::Polygon_splitter<Data_structure, Kernel>;
 
-  using IVertex = typename Data_structure::IVertex;
+  using IVertex  = typename Data_structure::IVertex;
+  using IK       = CGAL::Exact_predicates_inexact_constructions_kernel;
+  using IFT      = typename IK::FT;
+  using IPoint_3 = typename IK::Point_3;
 
-  using Bbox_3 = CGAL::Bbox_3;
-  // using OBB_traits = CGAL::Oriented_bounding_box_traits_3<Kernel>;
+  using Bbox_3     = CGAL::Bbox_3;
+  using OBB_traits = CGAL::Oriented_bounding_box_traits_3<IK>;
 
 public:
   Initializer(
@@ -155,10 +159,11 @@ private:
     std::array<Point_3, 8>& bbox,
     FT& time_step) const {
 
-    if (reorient)
+    if (reorient) {
       initialize_optimal_box(input_range, polygon_map, bbox);
-    else
+    } else {
       initialize_axis_aligned_box(input_range, polygon_map, bbox);
+    }
 
     CGAL_assertion(bbox.size() == 8);
     time_step  = KSR::distance(bbox.front(), bbox.back());
@@ -194,24 +199,55 @@ private:
     }
 
     // Set points.
-    std::vector<Point_3> points;
-    points.reserve(num_points);
+    std::vector<IPoint_3> ipoints;
+    ipoints.reserve(num_points);
     for (const auto& item : input_range) {
       const auto& polygon = get(polygon_map, item);
-      for (const auto& p : polygon) {
-        const Point_3 point(p.x(), p.y(), p.z());
-        points.push_back(point);
+      for (const auto& point : polygon) {
+        const IPoint_3 ipoint(
+          static_cast<IFT>(CGAL::to_double(point.x())),
+          static_cast<IFT>(CGAL::to_double(point.y())),
+          static_cast<IFT>(CGAL::to_double(point.z())));
+        ipoints.push_back(ipoint);
       }
     }
 
     // Compute optimal bbox.
     // The order of faces corresponds to the standard order from here:
     // https://doc.cgal.org/latest/BGL/group__PkgBGLHelperFct.html#gad9df350e98780f0c213046d8a257358e
-    // const OBB_traits obb_traits;
-    // CGAL::oriented_bounding_box(
-    //   points, bbox,
-    //   CGAL::parameters::use_convex_hull(true).
-    //   geom_traits(obb_traits));
+    const OBB_traits obb_traits;
+    std::array<IPoint_3, 8> ibbox;
+    CGAL::oriented_bounding_box(
+      ipoints, ibbox,
+      CGAL::parameters::use_convex_hull(true).
+      geom_traits(obb_traits));
+
+    for (std::size_t i = 0; i < 8; ++i) {
+      const auto& ipoint = ibbox[i];
+      const Point_3 point(
+        static_cast<FT>(ipoint.x()),
+        static_cast<FT>(ipoint.y()),
+        static_cast<FT>(ipoint.z()));
+      bbox[i] = point;
+    }
+
+    const FT sq_length = CGAL::squared_distance(bbox[0], bbox[1]);
+    const FT sq_width  = CGAL::squared_distance(bbox[0], bbox[3]);
+    const FT sq_height = CGAL::squared_distance(bbox[0], bbox[5]);
+    CGAL_assertion(sq_length >= FT(0));
+    CGAL_assertion(sq_width  >= FT(0));
+    CGAL_assertion(sq_height >= FT(0));
+    const FT tol = KSR::tolerance<FT>();
+    if (sq_length < tol || sq_width < tol || sq_height < tol) {
+      if (m_verbose) {
+        std::cout << "* warning: optimal bounding box is flat, reverting ..." << std::endl;
+      }
+      initialize_axis_aligned_box(input_range, polygon_map, bbox);
+    } else {
+      if (m_verbose) {
+        std::cout << "* using optimal bounding box" << std::endl;
+      }
+    }
   }
 
   template<
@@ -239,16 +275,34 @@ private:
       Point_3(box.xmin(), box.ymin(), box.zmax()),
       Point_3(box.xmax(), box.ymin(), box.zmax()),
       Point_3(box.xmax(), box.ymax(), box.zmax()) };
+
+    const FT sq_length = CGAL::squared_distance(bbox[0], bbox[1]);
+    const FT sq_width  = CGAL::squared_distance(bbox[0], bbox[3]);
+    const FT sq_height = CGAL::squared_distance(bbox[0], bbox[5]);
+    CGAL_assertion(sq_length >= FT(0));
+    CGAL_assertion(sq_width  >= FT(0));
+    CGAL_assertion(sq_height >= FT(0));
+    const FT tol = KSR::tolerance<FT>();
+    if (sq_length < tol || sq_width < tol || sq_height < tol) {
+      CGAL_assertion_msg(false, "TODO: HANDLE FLAT AXIS ALIGNED BBOX!");
+    } else {
+      if (m_verbose) {
+        std::cout << "* using axis aligned bounding box" << std::endl;
+      }
+    }
   }
 
   void enlarge_bounding_box(
     const FT enlarge_bbox_ratio,
     std::array<Point_3, 8>& bbox) const {
 
-    CGAL_assertion_msg(
-      enlarge_bbox_ratio > FT(1), "TODO: HANDLE THE CASE ENLARGE_BBOX_RATIO = FT(1)");
+    FT enlarge_ratio = enlarge_bbox_ratio;
+    if (enlarge_bbox_ratio == FT(1)) {
+      enlarge_ratio += KSR::tolerance<FT>();
+    }
+
     const auto a = CGAL::centroid(bbox.begin(), bbox.end());
-    Transform_3 scale(CGAL::Scaling(), enlarge_bbox_ratio);
+    Transform_3 scale(CGAL::Scaling(), enlarge_ratio);
     for (auto& point : bbox)
       point = scale.transform(point);
 

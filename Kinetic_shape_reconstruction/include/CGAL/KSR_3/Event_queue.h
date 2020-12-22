@@ -146,7 +146,7 @@ public:
     }
     queue_by_pvertex_idx().erase(pv.first, pv.second);
 
-    // Erase by pother. TODO: Why is pother here?
+    // Erase by pother.
     const auto po = queue_by_pother_idx().equal_range(pvertex);
     const auto po_range = CGAL::make_range(po);
 

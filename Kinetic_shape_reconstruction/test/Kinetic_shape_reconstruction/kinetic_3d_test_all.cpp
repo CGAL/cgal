@@ -139,11 +139,8 @@ int main (const int argc, const char** argv) {
   assert(run_test("data/edge-case-test/test-2-polygons.off" , ks, num_iters, num_tests)); // edge touch
   assert(run_test("data/edge-case-test/test-4-polygons.off" , ks, num_iters, num_tests)); // edge touch / 2 coplanar
   assert(run_test("data/edge-case-test/test-5-polygons.off" , ks, num_iters, num_tests)); // edge touch / vertex touch / 2 coplanar
-
-  // std::vector<unsigned int> ts;
-  // ts.push_back(1); ts.push_back(2); ts.push_back(4);
-  // ts.push_back(5); ts.push_back(6); ts.push_back(100);
   assert(run_test("data/edge-case-test/test-20-polygons.off", ks, num_iters, num_tests)); // 2 overlap and coplanar
+  assert(run_test("data/edge-case-test/test-flat-bbox.off"  , ks, num_iters, num_tests)); // flat bbox / 2 coplanar
 
   std::cout << std::endl << "--OUTPUT STATS:" << std::endl;
   std::cout << "* number of iterations per test: " << num_iters << std::endl;
