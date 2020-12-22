@@ -18,7 +18,7 @@
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 
 #include <iostream>
-#include <fstream>
+
 
 namespace SMS = CGAL::Surface_mesh_simplification;
 
@@ -49,7 +49,7 @@ struct My_visitor : SMS::Edge_collapse_visitor_base<Surface>
   void OnCollected(const Profile&, const boost::optional<double>&)
   {
     ++(stats->collected);
-    std::cerr << "\rEdges collected: " << stats->collected << std::flush;
+    std::cerr << "\rEdges collected: " << stats->collected << std::endl;
   }
 
   // Called during the processing phase for each edge selected.
@@ -92,76 +92,60 @@ struct My_visitor : SMS::Edge_collapse_visitor_base<Surface>
 
 int main(int argc, char** argv)
 {
-  Surface ref_mesh;
+  Surface input_mesh;
   std::ifstream is(argc > 1 ? argv[1] : "data/helmet.off");
-  is >> ref_mesh;
+  is >> input_mesh;
 
-  SMS::Count_stop_predicate<Surface> stop(num_halfedges(ref_mesh)/100);
+  SMS::Count_stop_predicate<Surface> stop(0); // go as far as you can while in the envelope
 
   Stats stats;
   My_visitor vis(&stats);
 
-  std::cout << "Input has " << num_vertices(ref_mesh) << " vertices and " << num_edges(ref_mesh) << " edges" << std::endl;
-  CGAL::Iso_cuboid_3<Kernel> bbox(CGAL::Polygon_mesh_processing::bbox(ref_mesh));
+  std::cout << "Input has " << num_vertices(input_mesh) << " vertices and " << num_edges(input_mesh) << " edges" << std::endl;
+  CGAL::Iso_cuboid_3<Kernel> bbox(CGAL::Polygon_mesh_processing::bbox(input_mesh));
 
   Point_3 cmin = (bbox.min)();
   Point_3 cmax = (bbox.max)();
   const double diag = CGAL::approximate_sqrt(CGAL::squared_distance(cmin, cmax));
 
-  Surface mesh_cpy = ref_mesh; // need a copy to keep the AABB tree valid
-  Surface small_mesh = ref_mesh;
-  Surface big_mesh = ref_mesh;
-  Surface huge_mesh = ref_mesh;
+  Surface mesh_cpy = input_mesh; // need a copy to keep the AABB tree valid
+  Surface small_envelope_mesh = input_mesh;
+  Surface big_envelope_mesh = input_mesh;
+  Surface huge_envelope_mesh = input_mesh;
 
   CGAL::Timer t;
   t.start();
-  /*
-  {
-    Placement placement_ref;
-    SMS::edge_collapse(ref_mesh, stop, CGAL::parameters::get_cost(Cost()).get_placement(placement_ref));
-    std::cout << "Output has " << vertices(ref_mesh).size() << " vertices and " << edges(ref_mesh).size() << " edges" << std::endl;
-    std::cout << t.time() << "sec\n";
-    t.reset();
-  }
-  */
 
-  /*
   {
-    std::cout << "eps = " << 0.00005*diag << std::endl;
-    Placement placement_ref;
-    Filtered_placement ignore(0.00005*diag);
-    SMS::edge_collapse(small_mesh, stop, ignore, CGAL::parameters::get_cost(Cost()).get_placement(placement_ref));
-    std::cout << "Output has " << vertices(small_mesh).size() << " vertices and " << edges(small_mesh).size() << " edges" << std::endl;
+    std::cout << "eps = " << 0.005*diag << std::endl;
+    Placement placement;
+    Filter filter(0.005*diag);
+    SMS::edge_collapse(small_envelope_mesh, stop, CGAL::parameters::get_cost(Cost()).filter(filter).get_placement(placement));
+    std::cout << "Output has " << vertices(small_envelope_mesh).size() << " vertices and " << edges(small_envelope_mesh).size() << " edges" << std::endl;
     std::cout << t.time() << "sec\n";
     t.reset();
   }
-  */
+
   {
     std::cout << "eps = " << 0.01*diag << std::endl;
-    Placement placement_ref;
+    Placement placement;
     Filter filter(0.01*diag);
-    SMS::edge_collapse(big_mesh, stop, CGAL::parameters::get_cost(Cost()).filter(filter).visitor(vis).get_placement(placement_ref));
-    std::cout << "Output has " << vertices(big_mesh).size() << " vertices and " << edges(big_mesh).size() << " edges" << std::endl;
+    SMS::edge_collapse(big_envelope_mesh, stop, CGAL::parameters::get_cost(Cost()).filter(filter).visitor(vis).get_placement(placement));
+    std::cout << "Output has " << vertices(big_envelope_mesh).size() << " vertices and " << edges(big_envelope_mesh).size() << " edges" << std::endl;
     std::cout << t.time() << "sec\n";
+    t.reset();
   }
-  /*
-  {
-    std::cout << "eps = " << 0.0002*diag << std::endl;
-    Placement placement_ref;
-    Filtered_placement ignore(0.0002*diag);
-    SMS::edge_collapse(huge_mesh, stop, ignore, CGAL::parameters::get_cost(Cost()).get_placement(placement_ref));
-    std::cout << "Output has " << vertices(huge_mesh).size() << " vertices and " << edges(huge_mesh).size() << " edges" << std::endl;
-    std::cout << t.time() << "sec\n";
-  }
-  */
-  std::ofstream out("big.off");
-  out << big_mesh << std::endl;
-  out.close();
 
-  std::cout << "no filtering: " << vertices(ref_mesh).size() << " vertices left" << std::endl;
-  std::cout << "huge filtering distance: " << vertices(huge_mesh).size() << " vertices left" << std::endl;
-  std::cout << "large filtering distance: " << vertices(big_mesh).size() << " vertices left" << std::endl;
-  std::cout << "small filtering distance: " << vertices(small_mesh).size() << " vertices left" << std::endl;
+  {
+    std::cout << "eps = " << 0.02*diag << std::endl;
+    Placement placement;
+    Filter filter(0.02*diag);
+    SMS::edge_collapse(huge_envelope_mesh, stop, CGAL::parameters::get_cost(Cost()).filter(filter).get_placement(placement));
+    std::cout << "Output has " << vertices(huge_envelope_mesh).size() << " vertices and " << edges(huge_envelope_mesh).size() << " edges" << std::endl;
+    std::cout << t.time() << "sec\n";
+  }
+
+
 
   std::cout << "\nEdges collected: "  << stats.collected
             << "\nEdges proccessed: " << stats.processed
@@ -172,9 +156,9 @@ int main(int argc, char** argv)
             << "\nEdge not collapsed due to placement computation constraints: " << stats.placement_uncomputable
             << std::endl;
 
-  assert(vertices(ref_mesh).size() < vertices(small_mesh).size());
-  assert(vertices(huge_mesh).size() < vertices(small_mesh).size());
-  assert(vertices(ref_mesh).size() < vertices(big_mesh).size());
+  assert(vertices(input_mesh).size() > vertices(small_envelope_mesh).size());
+  assert(vertices(small_envelope_mesh).size() > vertices(big_envelope_mesh).size());
+  assert(vertices(big_envelope_mesh).size() > vertices(huge_envelope_mesh).size());
 
   return EXIT_SUCCESS;
 }
