@@ -3079,6 +3079,7 @@ public:
 
       // Very slow!
       if (check_equal_faces) {
+        const FT tol = KSR::tolerance<FT>();
         for (const auto oface : pfaces) {
           if (oface == pface) continue;
 
@@ -3093,7 +3094,7 @@ public:
           for (const auto& ppoint : polygon) {
             std::size_t count = 0;
             for (const auto& opoint : oolygon) {
-              if (CGAL::squared_distance(ppoint, opoint) < KSR::tolerance<FT>()) {
+              if (CGAL::squared_distance(ppoint, opoint) < tol) {
                 const auto res = unique.insert(count);
                 const bool is_inserted = res.second;
                 if (is_inserted) { ++num_overtices; }
@@ -3603,13 +3604,14 @@ public:
       auto vec2 = Vector_3(centroid, other_centroid);
       vec2 = KSR::normalize(vec2);
 
-      const FT d = KSR::tolerance<FT>(); // TODO: CAN WE AVOID THIS VALUE?
+      // TODO: CAN WE AVOID THIS VALUE?
+      const FT tol = KSR::tolerance<FT>();
       const FT dot_product = vec1 * vec2;
 
       if (dot_product < FT(0)) {
-        centroid += d * vec1;
+        centroid += tol * vec1;
       } else {
-        centroid -= d * vec1;
+        centroid -= tol * vec1;
       }
       volume_centroid = CGAL::barycenter(
         volume_centroid, static_cast<FT>(volume_size), centroid, FT(1));

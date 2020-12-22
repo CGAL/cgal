@@ -231,14 +231,14 @@ private:
       bbox[i] = point;
     }
 
-    const FT sq_length = CGAL::squared_distance(bbox[0], bbox[1]);
-    const FT sq_width  = CGAL::squared_distance(bbox[0], bbox[3]);
-    const FT sq_height = CGAL::squared_distance(bbox[0], bbox[5]);
-    CGAL_assertion(sq_length >= FT(0));
-    CGAL_assertion(sq_width  >= FT(0));
-    CGAL_assertion(sq_height >= FT(0));
+    const FT bbox_length_1 = CGAL::squared_distance(bbox[0], bbox[1]);
+    const FT bbox_length_2 = CGAL::squared_distance(bbox[0], bbox[3]);
+    const FT bbox_length_3 = CGAL::squared_distance(bbox[0], bbox[5]);
+    CGAL_assertion(bbox_length_1 >= FT(0));
+    CGAL_assertion(bbox_length_2 >= FT(0));
+    CGAL_assertion(bbox_length_3 >= FT(0));
     const FT tol = KSR::tolerance<FT>();
-    if (sq_length < tol || sq_width < tol || sq_height < tol) {
+    if (bbox_length_1 < tol || bbox_length_2 < tol || bbox_length_3 < tol) {
       if (m_verbose) {
         std::cout << "* warning: optimal bounding box is flat, reverting ..." << std::endl;
       }
@@ -276,15 +276,65 @@ private:
       Point_3(box.xmax(), box.ymin(), box.zmax()),
       Point_3(box.xmax(), box.ymax(), box.zmax()) };
 
-    const FT sq_length = CGAL::squared_distance(bbox[0], bbox[1]);
-    const FT sq_width  = CGAL::squared_distance(bbox[0], bbox[3]);
-    const FT sq_height = CGAL::squared_distance(bbox[0], bbox[5]);
-    CGAL_assertion(sq_length >= FT(0));
-    CGAL_assertion(sq_width  >= FT(0));
-    CGAL_assertion(sq_height >= FT(0));
+    const FT bbox_length_1 = CGAL::squared_distance(bbox[0], bbox[1]);
+    const FT bbox_length_2 = CGAL::squared_distance(bbox[0], bbox[3]);
+    const FT bbox_length_3 = CGAL::squared_distance(bbox[0], bbox[5]);
+    CGAL_assertion(bbox_length_1 >= FT(0));
+    CGAL_assertion(bbox_length_2 >= FT(0));
+    CGAL_assertion(bbox_length_3 >= FT(0));
     const FT tol = KSR::tolerance<FT>();
-    if (sq_length < tol || sq_width < tol || sq_height < tol) {
-      CGAL_assertion_msg(false, "TODO: HANDLE FLAT AXIS ALIGNED BBOX!");
+    if (bbox_length_1 < tol || bbox_length_2 < tol || bbox_length_3 < tol) {
+      if (bbox_length_1 < tol) {
+
+        CGAL_assertion_msg(bbox_length_2 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
+        CGAL_assertion_msg(bbox_length_3 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
+        const FT x = FT(2) * tol;
+
+        bbox[0] = Point_3(bbox[0].x() - x, bbox[0].y(), bbox[0].z());
+        bbox[3] = Point_3(bbox[3].x() - x, bbox[3].y(), bbox[3].z());
+        bbox[4] = Point_3(bbox[4].x() - x, bbox[4].y(), bbox[4].z());
+        bbox[5] = Point_3(bbox[5].x() - x, bbox[5].y(), bbox[5].z());
+
+        bbox[1] = Point_3(bbox[1].x() + x, bbox[1].y(), bbox[1].z());
+        bbox[2] = Point_3(bbox[2].x() + x, bbox[2].y(), bbox[2].z());
+        bbox[7] = Point_3(bbox[7].x() + x, bbox[7].y(), bbox[7].z());
+        bbox[6] = Point_3(bbox[6].x() + x, bbox[6].y(), bbox[6].z());
+
+      } else if (bbox_length_2 < tol) {
+
+        CGAL_assertion_msg(bbox_length_3 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
+        CGAL_assertion_msg(bbox_length_1 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
+        const FT y = FT(2) * tol;
+
+        bbox[0] = Point_3(bbox[0].x(), bbox[0].y() - y, bbox[0].z());
+        bbox[1] = Point_3(bbox[1].x(), bbox[1].y() - y, bbox[1].z());
+        bbox[6] = Point_3(bbox[6].x(), bbox[6].y() - y, bbox[6].z());
+        bbox[5] = Point_3(bbox[5].x(), bbox[5].y() - y, bbox[5].z());
+
+        bbox[3] = Point_3(bbox[3].x(), bbox[3].y() + y, bbox[3].z());
+        bbox[2] = Point_3(bbox[2].x(), bbox[2].y() + y, bbox[2].z());
+        bbox[7] = Point_3(bbox[7].x(), bbox[7].y() + y, bbox[7].z());
+        bbox[4] = Point_3(bbox[4].x(), bbox[4].y() + y, bbox[4].z());
+
+      } else if (bbox_length_3 < tol) {
+
+        CGAL_assertion_msg(bbox_length_1 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
+        CGAL_assertion_msg(bbox_length_2 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
+        const FT z = FT(2) * tol;
+
+        bbox[0] = Point_3(bbox[0].x(), bbox[0].y(), bbox[0].z() - z);
+        bbox[1] = Point_3(bbox[1].x(), bbox[1].y(), bbox[1].z() - z);
+        bbox[2] = Point_3(bbox[2].x(), bbox[2].y(), bbox[2].z() - z);
+        bbox[3] = Point_3(bbox[3].x(), bbox[3].y(), bbox[3].z() - z);
+
+        bbox[5] = Point_3(bbox[5].x(), bbox[5].y(), bbox[5].z() + z);
+        bbox[6] = Point_3(bbox[6].x(), bbox[6].y(), bbox[6].z() + z);
+        bbox[7] = Point_3(bbox[7].x(), bbox[7].y(), bbox[7].z() + z);
+        bbox[4] = Point_3(bbox[4].x(), bbox[4].y(), bbox[4].z() + z);
+
+      } else {
+        CGAL_assertion_msg(false, "ERROR: WRONG CASE!");
+      }
     } else {
       if (m_verbose) {
         std::cout << "* using axis aligned bounding box" << std::endl;
@@ -297,8 +347,9 @@ private:
     std::array<Point_3, 8>& bbox) const {
 
     FT enlarge_ratio = enlarge_bbox_ratio;
+    const FT tol = KSR::tolerance<FT>();
     if (enlarge_bbox_ratio == FT(1)) {
-      enlarge_ratio += KSR::tolerance<FT>();
+      enlarge_ratio += FT(2) * tol;
     }
 
     const auto a = CGAL::centroid(bbox.begin(), bbox.end());

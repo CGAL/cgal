@@ -48,7 +48,7 @@ int main(const int argc, const char** argv) {
 
   // Input.
   const auto kernel_name = boost::typeindex::type_id<Kernel>().pretty_name();
-  std::string input_filename = (argc > 1 ? argv[1] : "data/test_1_polygon_a.off");
+  std::string input_filename = (argc > 1 ? argv[1] : "data/stress-test-0/test-1-polygon-a.off");
   std::ifstream input_file(input_filename);
 
   std::vector<Point_3> input_vertices;
@@ -64,30 +64,23 @@ int main(const int argc, const char** argv) {
   std::cout << "* used kernel: "        << kernel_name        << std::endl;
   std::cout << "* number of polygons: " << input_faces.size() << std::endl;
 
-  std::cout << std::endl;
-  std::cout << "--- OPTIONS: " << std::endl;
-
-  const unsigned int k = (argc > 2 ? std::atoi(argv[2]) : 1);
-  std::cout << "* number of intersections k: " << k << std::endl;
-
-  const unsigned int n = 0;
-  std::cout << "* number of subdivisions per bbox side: " << n << std::endl;
-  const unsigned int num_blocks = std::pow(n + 1, 3);
-  std::cout << "* number of blocks: " << num_blocks << std::endl;
-
-  const double enlarge_bbox_ratio = 1.1;
-  std::cout << "* enlarge bbox ratio: " << enlarge_bbox_ratio << std::endl;
-
-  const bool reorient = false;
-  std::cout << "* reorient: " << (reorient ? "true" : "false") << std::endl;
+  // Parameters.
+  const bool         verbose = true;
+  const bool         debug   = true;
+  const unsigned int k = (argc > 2 ? std::atoi(argv[2]) : 1); // intersections
+  const unsigned int subdiv  = 0;
+  const double       eratio  = 1.1;
+  const bool         orient  = false;
 
   // Algorithm.
-  const bool debug   = true;
-  const bool verbose = true;
   KSR ksr(verbose, debug);
   const Polygon_map polygon_map(input_vertices);
   const bool is_success = ksr.partition(
-    input_faces, polygon_map, k, n, enlarge_bbox_ratio, reorient);
+    input_faces, polygon_map, CGAL::parameters::
+    k_intersections(k).
+    n_subdivisions(subdiv).
+    enlarge_bbox_ratio(eratio).
+    reorient(orient));
   assert(is_success);
 
   // Output.

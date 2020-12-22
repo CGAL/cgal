@@ -28,6 +28,7 @@ if(CGAL_FOUND)
       set(targets
       # kinetic_2d_example
       kinetic_precomputed_shapes_example
+      kinetic_reconstruction_example
       # kinetic_random_shapes_example
       )
 

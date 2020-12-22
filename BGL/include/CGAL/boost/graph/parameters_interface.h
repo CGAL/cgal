@@ -189,3 +189,9 @@ CGAL_add_named_parameter(accuracy_t, accuracy, accuracy)
 CGAL_add_named_parameter(maximum_running_time_t, maximum_running_time, maximum_running_time)
 CGAL_add_named_parameter(overlap_t, overlap, overlap)
 CGAL_add_named_parameter(maximum_normal_deviation_t, maximum_normal_deviation, maximum_normal_deviation)
+
+// kinetic parameters
+CGAL_add_named_parameter(k_intersections_t, k_intersections, k_intersections)
+CGAL_add_named_parameter(n_subdivisions_t, n_subdivisions, n_subdivisions)
+CGAL_add_named_parameter(enlarge_bbox_ratio_t, enlarge_bbox_ratio, enlarge_bbox_ratio)
+CGAL_add_named_parameter(reorient_t, reorient, reorient)

@@ -23,6 +23,10 @@
 
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
+// Boost includes.
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
+
 // CGAL includes.
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
@@ -35,6 +39,7 @@
 #include <CGAL/KSR_3/Event.h>
 #include <CGAL/KSR_3/Event_queue.h>
 #include <CGAL/KSR_3/Data_structure.h>
+#include <CGAL/KSR_3/Reconstruction.h>
 #include <CGAL/KSR_3/Initializer.h>
 
 namespace CGAL {
@@ -63,9 +68,10 @@ private:
   using Event       = KSR_3::Event<Data_structure>;
   using Event_queue = KSR_3::Event_queue<Data_structure>;
 
-  using EK          = CGAL::Exact_predicates_exact_constructions_kernel;
-  using Initializer = KSR_3::Initializer<EK>;
-  using Bbox_2      = CGAL::Bbox_2;
+  using Bbox_2         = CGAL::Bbox_2;
+  using EK             = CGAL::Exact_predicates_exact_constructions_kernel;
+  using Initializer    = KSR_3::Initializer<EK>;
+  using Reconstruction = KSR_3::Reconstruction<Kernel>;
 
   using Polygon_mesh = CGAL::Surface_mesh<Point_3>;
   using Vertex_index = typename Polygon_mesh::Vertex_index;
@@ -92,17 +98,23 @@ public:
   m_data(m_debug)
   { }
 
-  // TODO: USE NAMED PARAMETERS!
   template<
   typename InputRange,
-  typename PolygonMap>
+  typename PolygonMap,
+  typename NamedParameters>
   const bool partition(
     const InputRange& input_range,
     const PolygonMap polygon_map,
-    unsigned int k = 1,
-    unsigned int n = 0,
-    double enlarge_bbox_ratio = 1.1,
-    bool reorient = false) {
+    const NamedParameters& np) {
+
+    const unsigned int k = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::k_intersections), 1);
+    unsigned int n = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::n_subdivisions), 0);
+    double enlarge_bbox_ratio = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::enlarge_bbox_ratio), 1.1);
+    const bool reorient = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::reorient), false);
 
     std::cout.precision(20);
     if (input_range.size() == 0) {
@@ -124,6 +136,18 @@ public:
       CGAL_warning_msg(enlarge_bbox_ratio >= 1.0,
       "WARNING: YOU SET ENLARGE_BBOX_RATIO < 1.0! THE VALID RANGE IS [1.0, +INF). SETTING TO 1.0!");
       enlarge_bbox_ratio = 1.0;
+    }
+
+    if (m_verbose) {
+      const unsigned int num_blocks = std::pow(n + 1, 3);
+      const std::string is_reorient = (reorient ? "true" : "false");
+
+      std::cout << std::endl << "--- OPTIONS: " << std::endl;
+      std::cout << "* number of intersections k: "            << k                  << std::endl;
+      std::cout << "* number of subdivisions per bbox side: " << n                  << std::endl;
+      std::cout << "* number of subdivision blocks: "         << num_blocks         << std::endl;
+      std::cout << "* enlarge bbox ratio: "                   << enlarge_bbox_ratio << std::endl;
+      std::cout << "* reorient: "                             << is_reorient        << std::endl;
     }
 
     const FT time_step = static_cast<FT>(m_initializer.initialize(
@@ -193,6 +217,30 @@ public:
     return true;
   }
 
+  template<
+  typename InputRange,
+  typename PointMap,
+  typename VectorMap,
+  typename LabelMap,
+  typename NamedParameters>
+  void reconstruct(
+    const InputRange& input_range,
+    const PointMap point_map,
+    const VectorMap normal_map,
+    const LabelMap label_map,
+    const NamedParameters& np) {
+
+    Reconstruction reconstruction(
+      input_range, point_map, normal_map, label_map, m_data);
+    reconstruction.detect_planar_shapes(np);
+    reconstruction.partition(np);
+    reconstruction.compute_model(np);
+  }
+
+  /*******************************
+  **         STATISTICS         **
+  ********************************/
+
   const int number_of_support_planes() const {
     return static_cast<int>(m_data.number_of_support_planes());
   }
@@ -257,6 +305,10 @@ public:
     CGAL_assertion(support_plane_idx >= 6);
     return support_plane_idx;
   }
+
+  /*******************************
+  **           OUTPUT           **
+  ********************************/
 
   template<typename VertexOutputIterator>
   VertexOutputIterator output_partition_vertices(
@@ -458,19 +510,13 @@ public:
     CGAL_assertion_msg(false, "TODO: OUTPUT PARTITION LCC!");
   }
 
-  template<
-  typename InputRange,
-  typename PointMap,
-  typename VectorMap,
-  typename LabelMap>
-  void reconstruct(
-    const InputRange& input_range,
-    const PointMap point_map,
-    const VectorMap normal_map,
-    const LabelMap label_map) {
-
-    CGAL_assertion_msg(false, "TODO: ADD RECONSTRUCTION!");
+  void output_reconstructed_model() const {
+    CGAL_assertion_msg(false, "TODO: OUTPUT RECONSTRUCTED MODEL!");
   }
+
+  /*******************************
+  **           MEMORY           **
+  ********************************/
 
   void clear() {
     m_data.clear();

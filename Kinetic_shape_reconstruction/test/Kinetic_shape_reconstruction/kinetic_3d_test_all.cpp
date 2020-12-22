@@ -53,7 +53,8 @@ const bool run_test(
     for (std::size_t iter = 0; iter < num_iters; ++iter) {
       std::cout << std::endl << "--ITERATION #" << iter + 1 << " BEGIN!" << std::endl;
       KSR ksr(false, false);
-      assert(ksr.partition(input_faces, polygon_map, k));
+      assert(ksr.partition(
+        input_faces, polygon_map, CGAL::parameters::k_intersections(k)));
       ksr.clear();
       std::cout << std::endl << "--ITERATION #" << iter + 1 << " END!" << std::endl;
     }
@@ -136,11 +137,13 @@ int main (const int argc, const char** argv) {
   assert(run_test("data/real-data-test/building-b-15squares-15planes.off" , ks, num_iters, num_tests));
 
   // Edge case tests.
-  assert(run_test("data/edge-case-test/test-2-polygons.off" , ks, num_iters, num_tests)); // edge touch
-  assert(run_test("data/edge-case-test/test-4-polygons.off" , ks, num_iters, num_tests)); // edge touch / 2 coplanar
-  assert(run_test("data/edge-case-test/test-5-polygons.off" , ks, num_iters, num_tests)); // edge touch / vertex touch / 2 coplanar
-  assert(run_test("data/edge-case-test/test-20-polygons.off", ks, num_iters, num_tests)); // 2 overlap and coplanar
-  assert(run_test("data/edge-case-test/test-flat-bbox.off"  , ks, num_iters, num_tests)); // flat bbox / 2 coplanar
+  assert(run_test("data/edge-case-test/test-flat-bbox-xy.off", ks, num_iters, num_tests)); // flat bbox / 2 coplanar in XY
+  assert(run_test("data/edge-case-test/test-flat-bbox-xz.off", ks, num_iters, num_tests)); // flat bbox / 2 coplanar in XZ
+  assert(run_test("data/edge-case-test/test-flat-bbox-yz.off", ks, num_iters, num_tests)); // flat bbox / 2 coplanar in YZ
+  assert(run_test("data/edge-case-test/test-2-polygons.off"  , ks, num_iters, num_tests)); // edge touch
+  assert(run_test("data/edge-case-test/test-4-polygons.off"  , ks, num_iters, num_tests)); // edge touch / 2 coplanar
+  assert(run_test("data/edge-case-test/test-5-polygons.off"  , ks, num_iters, num_tests)); // edge touch / vertex touch / 2 coplanar
+  assert(run_test("data/edge-case-test/test-20-polygons.off" , ks, num_iters, num_tests)); // 2 overlap and coplanar
 
   std::cout << std::endl << "--OUTPUT STATS:" << std::endl;
   std::cout << "* number of iterations per test: " << num_iters << std::endl;
