@@ -56,7 +56,7 @@ int main()
 
   K::Intersect_2 intersection;
 
-  CGAL::cpp11::result_of<K::Intersect_2(Segment, Segment)>::type 
+  CGAL::cpp11::result_of<K::Intersect_2(Segment, Segment)>::type
     intersect = intersection(s1, s2);
 
   K::Construct_cartesian_const_iterator_2 construct_it;

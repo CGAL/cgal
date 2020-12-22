@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -23,15 +23,15 @@ namespace CGAL {
 
   template <class P>
   struct Is_weighted : public Tag_false {} ;
-  
+
   template <typename K>
   struct Is_weighted< ::CGAL::Weighted_point_3<K> > :
     public Tag_true {} ;
-  
+
   namespace details {
 
     template <class P, typename FT, bool>
-    struct Point_traits_aux 
+    struct Point_traits_aux
     {
       // should give errors
     };
@@ -44,7 +44,7 @@ namespace CGAL {
       typedef typename Kernel_traits<P>::type K;
       typedef typename ::CGAL::Weighted_point_3<K> Weighted_point;
       typedef Tag_false Is_weighted;
-     
+
       const Bare_point& bare_point(const Point& bp)
       {
         return bp;
@@ -73,7 +73,7 @@ namespace CGAL {
       typedef P Weighted_point;
       typedef typename Point::Point Bare_point;
       typedef Tag_true Is_weighted;
-     
+
       const Bare_point& bare_point(const Point& wp)
       {
         return wp.point();
@@ -96,7 +96,7 @@ namespace CGAL {
     }; // end class Point_traits_aux<P, FT, true>
 
     template <class Point>
-    struct FT_of_point 
+    struct FT_of_point
     {
       typedef typename CGAL::Kernel_traits<Point>::Kernel::FT type;
     };

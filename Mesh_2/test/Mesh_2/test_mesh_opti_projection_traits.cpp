@@ -49,7 +49,7 @@ int main()
   Mesher mesher(cdt);
   mesher.set_criteria(Criteria(0.125, 0.05));
   mesher.refine_mesh();
-  
+
   std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
 
   std::cout << "Run Lloyd optimization...";

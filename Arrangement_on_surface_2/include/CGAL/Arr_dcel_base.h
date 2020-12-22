@@ -34,6 +34,7 @@
 #include <CGAL/Arrangement_2/Arrangement_2_iterators.h>
 #include <CGAL/assertions.h>
 
+#include <boost/pool/pool_alloc.hpp>
 
 namespace CGAL {
 
@@ -89,6 +90,11 @@ public:
 
   /*! Destructor. */
   virtual ~Arr_vertex_base() {}
+
+  // Access/modification for pointer squatting
+  void* inc() const { return p_inc; }
+  void set_inc(void * inc) const
+  { const_cast<Arr_vertex_base&>(*this).p_inc = inc; }
 
   /*! Check if the point pointer is nullptr. */
   bool has_null_point() const { return (p_pt == nullptr); }
@@ -876,7 +882,7 @@ public:
  * The arrangement DCEL class.
  */
 template <class V, class H, class F,
-          class Allocator = CGAL_ALLOCATOR(int) >
+          class Allocator = boost::fast_pool_allocator<int> >
 class Arr_dcel_base {
 public:
   // Define the vertex, halfedge and face types.

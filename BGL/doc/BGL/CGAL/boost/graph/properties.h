@@ -1,5 +1,5 @@
-/// Boost Namespace
-namespace boost {
+/// CGAL Namespace
+namespace CGAL {
 
 /// \ingroup PkgBGLProperties
 /// @{
@@ -34,9 +34,6 @@ enum face_index_t { face_index };
 enum vertex_point_t { vertex_point };
 
 /// @}
-} // namespace boost
-
-namespace CGAL {
 
 /// \ingroup PkgBGLProperties
 ///
@@ -72,7 +69,7 @@ struct dynamic_halfedge_property_t
 {
   dynamic_halfedge_property_t();
 };
-  
+
 /// \ingroup PkgBGLPropertiesDynamic
 /// Dynamic edge property tag
 /// \tparam T the value type of the edge property
@@ -81,7 +78,7 @@ struct dynamic_edge_property_t
 {
   dynamic_edge_property_t();
 };
- 
+
 /// \ingroup PkgBGLPropertiesDynamic
 /// Dynamic face property tag
 /// \tparam T the value type of the face property

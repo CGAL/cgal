@@ -56,14 +56,14 @@ int main(int argc, char** argv)
   generic.add_options() ("help", "Produce help message");
   generic.add_options()("file", po::value<std::string>(), "Mesh image contained in that file");
   generic.add_options()("raw", po::value<std::string>(), "Image is in raw format. Parameters are given by arg file [rx, ry, rz, vx, vy, vz], one per line");
-  
+
   po::options_description mesh("Mesh generation parameters");
   mesh.add_options()("facet_angle", po::value<double>(), "Set facet angle bound")
   ("facet_size", po::value<double>(), "Set facet size bound")
   ("facet_error", po::value<double>(), "Set facet approximation error bound")
   ("tet_shape", po::value<double>(), "Set tet radius-edge bound")
   ("tet_size", po::value<double>(), "Set tet size bound");
-  
+
   po::options_description desc("Options");
   desc.add_options()
   ("exude", po::value<double>(), "Exude mesh after refinement. arg is time_limit.")
@@ -72,67 +72,67 @@ int main(int argc, char** argv)
   ("odt", po::value<int>(), "ODT-smoothing after refinement. arg is max_iteration_nb")
   ("convergence", po::value<double>()->default_value(0.02), "Convergence ratio for smoothing functions")
   ("min_displacement", po::value<double>()->default_value(0.01), "Minimal displacement ratio for smoothing functions (moves that are below that ratio will not be done)")
-  ("time_limit", po::value<double>()->default_value(0), "Max time for smoothing functions")  
+  ("time_limit", po::value<double>()->default_value(0), "Max time for smoothing functions")
   ("no_label_rebind", "Don't rebind cell labels in medit output")
   ("show_patches", "Show surface patches in medit output");
-  
-  
+
+
   po::options_description cmdline_options("Usage",1);
   cmdline_options.add(generic).add(mesh).add(desc);
-  
+
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, cmdline_options), vm);
   po::notify(vm);
-  
+
   if (vm.count("help") || argc < 2)
-  {    
+  {
     std::cout << cmdline_options << std::endl;
     return 1;
   }
-  
+
   std::cout << "=========== Params ==========="<< std::endl;
-  
+
   double facet_angle = set_arg<double>("facet_angle","Facet angle",vm);
   double facet_size = set_arg<double>("facet_size","Facet size",vm);
   double facet_error = set_arg<double>("facet_error","Facet approximation error",vm);
-  
+
   double tet_shape = set_arg<double>("tet_shape","Tet shape (radius-edge)",vm);
   double tet_size = set_arg<double>("tet_size","Tet size",vm);
-  
+
   std::cout << std::endl;
   std::string image_filename = set_arg<std::string>("file", "Filename", vm);
   std::string raw_file_params;
   if ( vm.count("raw") )
     raw_file_params = set_arg<std::string>("raw", "Raw parameters file", vm);
-  
+
   std::cout << "=============================="<< std::endl;
   std::cout << std::endl;
-      
+
   if ( image_filename.empty() )
   {
     std::cout << "No file selected. Exit.\n";
     return 0;
   }
-  
+
   // Loads image
   Image image;
-  
+
   if ( ! vm.count("raw") )
   {
-    image.read(image_filename.c_str());    
+    image.read(image_filename.c_str());
   }
   else
   {
     int rx = 0; int ry = 0; int rz = 0;
     double vx = 0.; double vy = 0.; double vz = 0.;
-    
+
     std::ifstream raw_file(raw_file_params.c_str());
     raw_file >> rx >> ry >> rz;
     raw_file >> vx >> vy >> vz;
 
-    image.read_raw(image_filename.c_str(),rx,ry,rz,vx,vy,vz);    
+    image.read_raw(image_filename.c_str(),rx,ry,rz,vx,vy,vz);
   }
-  
+
   // Domain
   Mesh_domain domain(image, 1e-9);
 
@@ -143,11 +143,11 @@ int main(int argc, char** argv)
   Cell_criteria cell_criteria(tet_shape,
                               tet_size); // radius-edge ratio, size
   Mesh_criteria criteria(facet_criteria, cell_criteria);
- 
+
   // Meshing
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_exude(), no_perturb());
-  
-  
+
+
   // Odt
   if (  vm.count("odt") )
   {
@@ -157,7 +157,7 @@ int main(int argc, char** argv)
                               sliver_bound=vm["min_displacement"].as<double>(),
                               time_limit=vm["time_limit"].as<double>());
   }
-  
+
   // Lloyd
   if ( vm.count("lloyd") )
   {
@@ -167,19 +167,19 @@ int main(int argc, char** argv)
                                 sliver_bound=vm["min_displacement"].as<double>(),
                                 time_limit=vm["time_limit"].as<double>());
   }
-  
+
   // Perturbation
   if ( vm.count("perturb") )
   {
     CGAL::perturb_mesh_3(c3t3, domain, time_limit = vm["perturb"].as<double>() );
   }
-  
+
   // Exudation
   if ( vm.count("exude") )
   {
     CGAL::exude_mesh_3(c3t3, time_limit = vm["exude"].as<double>());
   }
-  
+
   double min_angle = 181.;
   for ( C3t3::Cell_iterator cit = c3t3.cells_begin() ;
        cit != c3t3.cells_end() ;
@@ -188,9 +188,9 @@ int main(int argc, char** argv)
     min_angle = (std::min)(min_angle,
                            CGAL::to_double(CGAL::Mesh_3::minimum_dihedral_angle(c3t3.triangulation().tetrahedron(cit))));
   }
-  
+
   std::cerr << "Min angle: " << min_angle << std::endl;
-    
+
   // Output
   std::ofstream medit_file("out.mesh");
   c3t3.output_to_medit(medit_file,!vm.count("no_label_rebind"), vm.count("show_patches"));

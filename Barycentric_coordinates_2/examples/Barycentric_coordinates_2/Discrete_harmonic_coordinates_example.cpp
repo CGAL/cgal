@@ -24,7 +24,7 @@ int main()
     // Construct a unit square.
     const int number_of_vertices = 4;
     Point_vector vertices(number_of_vertices);
-    
+
     vertices[0] = Point(0, 0); vertices[1] = Point(1, 0); vertices[2] = Point(1, 1); vertices[3] = Point(0, 1);
 
     // Create an std::vector to store coordinates.
@@ -96,7 +96,7 @@ int main()
 
     // Output the computed coordinate values.
     cout << endl << "Exact discrete harmonic coordinates for all the defined points: " << endl << endl;
-    const size_t number_of_query_points = coordinates.size(); 
+    const size_t number_of_query_points = coordinates.size();
     for(int index = 0; index < int(number_of_query_points); ++index) {
         cout << "Coordinate " << index % number_of_vertices + 1 << " = " << coordinates[index] << " ";
         if((index +  1) %      number_of_vertices  == 0) cout << endl;

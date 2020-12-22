@@ -28,7 +28,7 @@ public:
 
 protected:
 
-  void mousePressEvent(QGraphicsSceneMouseEvent *event); 
+  void mousePressEvent(QGraphicsSceneMouseEvent *event);
   bool eventFilter(QObject *obj, QEvent *event);
 
 private:
@@ -39,9 +39,9 @@ private:
 
 
 template <typename T>
-void 
+void
 DelaunayMeshInsertSeeds<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{  
+{
   if((event->modifiers() & ::Qt::ShiftModifier)
     && event->button() == ::Qt::LeftButton)
   {
@@ -55,12 +55,12 @@ DelaunayMeshInsertSeeds<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 
 template <typename T>
-bool 
+bool
 DelaunayMeshInsertSeeds<T>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress)
   {
-    QGraphicsSceneMouseEvent *mouseEvent 
+    QGraphicsSceneMouseEvent *mouseEvent
       = static_cast<QGraphicsSceneMouseEvent *>(event);
     mousePressEvent(mouseEvent);
     return false;
@@ -70,7 +70,7 @@ DelaunayMeshInsertSeeds<T>::eventFilter(QObject *obj, QEvent *event)
     // standard event processing
     return QObject::eventFilter(obj, event);
   }
-} 
+}
 
 
 } // namespace Qt

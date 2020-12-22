@@ -38,6 +38,7 @@
 #ifdef CGAL_MESH_3_PROFILING
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
+#include <CGAL/Mesh_3/Dump_c3t3.h>
 
 #include <CGAL/Object.h>
 #include <CGAL/atomic.h>
@@ -476,6 +477,12 @@ protected:
   /// Insert facet into refinement queue
   void insert_bad_facet(Facet facet, const Quality& quality)
   {
+#if CGAL_MESH_3_VERY_VERBOSE
+    std::stringstream s;
+    s << "insert_bad_facet(" << debug_info_element_impl(facet) << ", ...) by thread "
+      << std::this_thread::get_id() << '\n';
+    std::cerr << s.str();
+#endif
     // Insert the facet and its mirror
     this->add_bad_element(
       this->from_facet_to_refinement_queue_element(facet, mirror_facet(facet)),
@@ -570,6 +577,7 @@ protected:
     Facet canonical_facet = this->canonical_facet(facet);
     this->remove_element(canonical_facet);
 #endif
+    CGAL_USE(facet);
   }
 #ifdef CGAL_LINKED_WITH_TBB
   /// Removes facet from refinement queue
@@ -846,8 +854,12 @@ public:
     if( zone.locate_type == Tr::VERTEX )
     {
       std::stringstream sstr;
+      sstr.precision(17);
       sstr << "(" << p << ") is already inserted on surface.\n";
-      CGAL_error_msg(sstr.str().c_str());
+      CGAL_error_msg(([this,str=sstr.str()] {
+        dump_c3t3(this->r_c3t3_, "dump-bug");
+        return str.c_str();
+      }()));
       return CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
     }
     else

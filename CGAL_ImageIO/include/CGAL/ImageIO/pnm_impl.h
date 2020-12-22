@@ -43,23 +43,23 @@
 
 CGAL_INLINE_FUNCTION
 int testPpmHeader(char *magic,const char *) {
-  if( !strncmp(magic, PPM_MAGIC, strlen(PPM_MAGIC))) 
+  if( !strncmp(magic, PPM_MAGIC, strlen(PPM_MAGIC)))
     return 0;
-  else 
+  else
     return -1;
 }
 CGAL_INLINE_FUNCTION
 int testPgmHeader(char *magic,const char *) {
   if (( !strncmp(magic, PGM_MAGIC, strlen(PGM_MAGIC))))
     return 0;
-  else 
+  else
     return -1;
 }
 CGAL_INLINE_FUNCTION
 int testPgmAsciiHeader(char *magic,const char *) {
   if  ( !strncmp(magic, PGM_ASCII_MAGIC, strlen(PGM_ASCII_MAGIC)))
     return 0;
-  else 
+  else
     return -1;
 }
 
@@ -149,22 +149,22 @@ int readPpmImage(const char *name,_image *im)
   char string[256];
   int x=0, y=0;
   int max=0;
-  
+
   fgetns( string, 255, im );
   if ( strncmp(string, PPM_MAGIC, strlen(PPM_MAGIC) ) ) {
     fprintf( stderr, "readPpmImage: bad magic string in \'%s\'\n", name );
     return( -1 );
   }
-  
+
   do {
     fgetns( string, 255, im );
 
     if ( string[0] != '#' ) {
       if ( x == 0 && y == 0 ) {
-	sscanf( string, "%d %d", &x, &y );
+        sscanf( string, "%d %d", &x, &y );
       }
       else if ( max == 0 ) {
-	sscanf( string, "%d", &max );
+        sscanf( string, "%d", &max );
       }
     }
   } while ( max == 0 );
@@ -187,10 +187,10 @@ int readPpmImage(const char *name,_image *im)
     fprintf( stderr, "readPpmImage: max value too large (%d) in \'%s\'\n", max, name );
     return( -1 );
   }
-  im->data = ImageIO_alloc( x*y*3 );		     
-  
+  im->data = ImageIO_alloc( x*y*3 );
+
   ImageIO_read( im, im->data,  x*y*3 );
-  
+
   return 1;
 }
 
@@ -205,14 +205,14 @@ int writePpmImage( char *name,_image *im )
     fprintf( stderr, "writePpmImage: bad dimensions, unable to write '%s'\n", name );
     return -1;
   }
-  if ( im->wordKind != WK_FIXED || im->sign != SGN_UNSIGNED 
+  if ( im->wordKind != WK_FIXED || im->sign != SGN_UNSIGNED
        || ( im->wdim != 1 && im->wdim != 2 ) ) {
     fprintf( stderr, "writePpmImage: bad type, unable to write '%s'\n", name );
-    return -1;  
+    return -1;
   }
-  
+
   _openWriteImage( im, name );
-  
+
   if(!im->fd) {
     fprintf(stderr, "writeInrimage: error: unable to open file \'%s\'\n", name );
     return ImageIO_OPENING;
@@ -228,14 +228,14 @@ int writePpmImage( char *name,_image *im )
     {
       unsigned char *buf = (unsigned char *)im->data;
       for ( i=0; i<im->xdim*im->ydim*3; i++, buf++ )
-	if ( max < *buf ) max = *buf;
+        if ( max < *buf ) max = *buf;
     }
     break;
   case 2 :
     {
       unsigned short *buf = (unsigned short *)im->data;
       for ( i=0; i<im->xdim*im->ydim*3; i++, buf++ )
-	if ( max < *buf ) max = *buf;
+        if ( max < *buf ) max = *buf;
     }
     break;
   }
@@ -255,7 +255,7 @@ int writePpmImage( char *name,_image *im )
     unsigned char *tmp = (unsigned char *)ImageIO_alloc( im->xdim*im->ydim*3 );
     if ( tmp == nullptr ) {
       fprintf( stderr, "writePpmImage: unable to allocate auxiliary buffer\n" );
-      return -1; 
+      return -1;
     }
     for ( i=0; i<im->xdim*im->ydim*3; i++, buf++ )
       tmp[i] = (unsigned char)*buf;
@@ -317,16 +317,16 @@ int readPgmAsciiImage(const char *name,_image *im)
     fprintf( stderr, "readAsciiPgmImage: bad magic string in \'%s\'\n", name );
     return( -1 );
   }
-  
+
   do {
     fgetns( string, 255, im );
 
     if ( string[0] != '#' ) {
       if ( x == 0 && y == 0 ) {
-	sscanf( string, "%d %d", &x, &y );
+        sscanf( string, "%d %d", &x, &y );
       }
       else if ( max == 0 ) {
-	sscanf( string, "%d", &max );
+        sscanf( string, "%d", &max );
       }
     }
   } while ( max == 0 );
@@ -347,8 +347,8 @@ int readPgmAsciiImage(const char *name,_image *im)
     fprintf( stderr, "readAsciiPgmImage: max value too large (%d) in \'%s\'\n", max, name );
     return( -1 );
   }
-  im->data = ImageIO_alloc( x*y );		     
-  
+  im->data = ImageIO_alloc( x*y );
+
   n=0;
 
   while( fgetns( string, 255, im ) != 0 && n < x*y ) {
@@ -357,55 +357,55 @@ int readPgmAsciiImage(const char *name,_image *im)
       /* skip trailing whitespace
        */
       while ( *tmp == ' ' || *tmp == '\t' )
-	tmp++;
+        tmp++;
       if ( *tmp == '\0' || *tmp == '\n' || *tmp == EOF )
-	continue;
-      
+        continue;
+
       /* read a number
        */
       switch ( im->wordKind ) {
       case WK_FIXED :
-	if ( sscanf( tmp, "%d", &iv ) != 1 ) {
-	  fprintf( stderr, "readAsciiPgmImage: error in reading ascii data\n" );
-	  ImageIO_free( im->data ); im->data = nullptr;
-	  return 0;
-	}
-	break;
+        if ( sscanf( tmp, "%d", &iv ) != 1 ) {
+          fprintf( stderr, "readAsciiPgmImage: error in reading ascii data\n" );
+          ImageIO_free( im->data ); im->data = nullptr;
+          return 0;
+        }
+        break;
       default :
-	ImageIO_free( im->data ); im->data = nullptr;
-	return 0;
+        ImageIO_free( im->data ); im->data = nullptr;
+        return 0;
       }
-	  
+
       if ( im->wdim == 1 ) {
-	unsigned char *buf = (unsigned char *)im->data;
-	buf += n;
-	if ( iv < 0 )        *buf = (unsigned char)0;
-	else if ( iv > 255 ) *buf = (unsigned char)255;
-	else                 *buf = (unsigned char)iv;
-	n ++;
+        unsigned char *buf = (unsigned char *)im->data;
+        buf += n;
+        if ( iv < 0 )        *buf = (unsigned char)0;
+        else if ( iv > 255 ) *buf = (unsigned char)255;
+        else                 *buf = (unsigned char)iv;
+        n ++;
       }
       else if ( im->wdim == 2 ) {
-	unsigned short int *buf = (unsigned short int *)im->data;
-	buf += n;
-	if ( iv < 0 )          *buf = (unsigned short int)0;
-	else if ( iv > 65535 ) *buf = (unsigned short int)65535;
-	else                   *buf = (unsigned short int)iv;
-	n ++;
+        unsigned short int *buf = (unsigned short int *)im->data;
+        buf += n;
+        if ( iv < 0 )          *buf = (unsigned short int)0;
+        else if ( iv > 65535 ) *buf = (unsigned short int)65535;
+        else                   *buf = (unsigned short int)iv;
+        n ++;
       }
       else {
-	fprintf( stderr, "readAsciiPgmImage: word im not handled\n" );
-	ImageIO_free( im->data ); im->data = nullptr;
-	return 0;
+        fprintf( stderr, "readAsciiPgmImage: word im not handled\n" );
+        ImageIO_free( im->data ); im->data = nullptr;
+        return 0;
       }
-      
-      /* skip a number 
+
+      /* skip a number
        */
       while ( (*tmp >= '0' && *tmp <= '9') || *tmp == '.' || *tmp == '-' )
-	tmp++;
+        tmp++;
     }
   }
 
-  
+
   return 1;
 }
 
@@ -447,26 +447,26 @@ int readPgmAsciiImage(const char *name,_image *im)
 CGAL_INLINE_FUNCTION
 int readPgmImage(const char *name,_image *im)
 {
-  
+
   char string[256];
   int x=0, y=0;
   int max=0;
-  
+
   fgetns( string, 255, im );
   if ( strncmp(string, PGM_MAGIC, strlen(PGM_MAGIC) ) ) {
     fprintf( stderr, "readPgmImage: bad magic string in \'%s\'\n", name );
     return( -1 );
   }
-  
+
   do {
     fgetns( string, 255, im );
 
     if ( string[0] != '#' ) {
       if ( x == 0 && y == 0 ) {
-	sscanf( string, "%d %d", &x, &y );
+        sscanf( string, "%d %d", &x, &y );
       }
       else if ( max == 0 ) {
-	sscanf( string, "%d", &max );
+        sscanf( string, "%d", &max );
       }
     }
   } while ( max == 0 );
@@ -489,10 +489,10 @@ int readPgmImage(const char *name,_image *im)
     fprintf( stderr, "readPgmImage: max value too large (%d) in \'%s\'\n", max, name );
     return( -1 );
   }
-  im->data = ImageIO_alloc( x*y );		     
-  
+  im->data = ImageIO_alloc( x*y );
+
   ImageIO_read( im, im->data,  x*y );
-  
+
   return 1;
 }
 
@@ -507,27 +507,27 @@ int writePgmImage(char *name,_image *im  )
     fprintf( stderr, "writePgmImage: bad dimensions, unable to write '%s'\n", name );
     return -1;
   }
-  if ( im->wordKind != WK_FIXED || im->sign != SGN_UNSIGNED 
+  if ( im->wordKind != WK_FIXED || im->sign != SGN_UNSIGNED
        || ( im->wdim != 1 && im->wdim != 2 ) ) {
     fprintf( stderr, "writePgmImage: bad type, unable to write '%s'\n", name );
-    return -1;  
+    return -1;
   }
 
   if ( 0 )
     im->dataMode = DM_ASCII;
-  
+
   _openWriteImage( im, name );
-  
+
   if(!im->fd) {
     fprintf(stderr, "writePgmImage: error: unable to open file \'%s\'\n", name );
     return ImageIO_OPENING;
   }
-  
-  if ( im->dataMode == DM_ASCII ) 
+
+  if ( im->dataMode == DM_ASCII )
     sprintf( string, "%s\n", PGM_ASCII_MAGIC );
-  else 
+  else
     sprintf( string, "%s\n", PGM_MAGIC );
-  
+
   ImageIO_write( im, string, strlen( string ) );
   sprintf( string, "# CREATOR: pnm.c $Revision$ $Date$\n" );
   ImageIO_write( im, string, strlen( string ) );
@@ -539,14 +539,14 @@ int writePgmImage(char *name,_image *im  )
     {
       unsigned char *buf = (unsigned char *)im->data;
       for ( i=0; i<im->xdim*im->ydim; i++, buf++ )
-	if ( max < *buf ) max = *buf;
+        if ( max < *buf ) max = *buf;
     }
     break;
   case 2 :
     {
       unsigned short *buf = (unsigned short *)im->data;
       for ( i=0; i<im->xdim*im->ydim; i++, buf++ )
-	if ( max < *buf ) max = *buf;
+        if ( max < *buf ) max = *buf;
     }
     break;
   }
@@ -570,36 +570,36 @@ int writePgmImage(char *name,_image *im  )
       return -1;
     case 1 :
       {
-	unsigned char *theBuf = ( unsigned char * )im->data;
-	do {
-	  memset( str, 0, _LGTH_STRING_ );
-	  for ( j=0; j<n && i<size; j++, i++ ) {
-	    sprintf( str+strlen(str), "%d", theBuf[i] );
-	    if ( j<n && i<size ) sprintf( str+strlen(str), " " );
-	  }
-	  sprintf( str+strlen(str), "\n" );
-	  if ( ImageIO_write( im, str, strlen( str ) ) <= 0 ) {
-	    fprintf(stderr, "writePgmImage: error when writing data in \'%s\'\n", name );
-	    return( -3 );
-	  }
-	} while ( i < size );
+        unsigned char *theBuf = ( unsigned char * )im->data;
+        do {
+          memset( str, 0, _LGTH_STRING_ );
+          for ( j=0; j<n && i<size; j++, i++ ) {
+            sprintf( str+strlen(str), "%d", theBuf[i] );
+            if ( j<n && i<size ) sprintf( str+strlen(str), " " );
+          }
+          sprintf( str+strlen(str), "\n" );
+          if ( ImageIO_write( im, str, strlen( str ) ) <= 0 ) {
+            fprintf(stderr, "writePgmImage: error when writing data in \'%s\'\n", name );
+            return( -3 );
+          }
+        } while ( i < size );
       }
       break;
     case 2 :
       {
-	unsigned short int *theBuf = ( unsigned short int * )im->data;
-	do {
-	  memset( str, 0, _LGTH_STRING_ );
-	  for ( j=0; j<n && i<size; j++, i++ ) {
-	    sprintf( str+strlen(str), "%d", theBuf[i] );
-	    if ( j<n && i<size ) sprintf( str+strlen(str), " " );
-	  }
-	  sprintf( str+strlen(str), "\n" );
-	  if ( ImageIO_write( im, str, strlen( str ) ) <= 0 ) {
-	    fprintf(stderr, "writePgmImage: error when writing data in \'%s\'\n", name );
-	    return( -3 );
-	  }
-	} while ( i < size );
+        unsigned short int *theBuf = ( unsigned short int * )im->data;
+        do {
+          memset( str, 0, _LGTH_STRING_ );
+          for ( j=0; j<n && i<size; j++, i++ ) {
+            sprintf( str+strlen(str), "%d", theBuf[i] );
+            if ( j<n && i<size ) sprintf( str+strlen(str), " " );
+          }
+          sprintf( str+strlen(str), "\n" );
+          if ( ImageIO_write( im, str, strlen( str ) ) <= 0 ) {
+            fprintf(stderr, "writePgmImage: error when writing data in \'%s\'\n", name );
+            return( -3 );
+          }
+        } while ( i < size );
       }
       break;
     }
@@ -610,16 +610,16 @@ int writePgmImage(char *name,_image *im  )
     }
     else {
       /* 2 octets, but max <= 255
-	 has to be converted on one octet
+         has to be converted on one octet
       */
       unsigned short *buf = (unsigned short *)im->data;
       unsigned char *tmp = (unsigned char *)ImageIO_alloc( im->xdim*im->ydim );
       if ( tmp == nullptr ) {
-	fprintf( stderr, "writePgmImage: unable to allocate auxiliary buffer\n" );
-	return -1; 
+        fprintf( stderr, "writePgmImage: unable to allocate auxiliary buffer\n" );
+        return -1;
       }
       for ( i=0; i<im->xdim*im->ydim; i++, buf++ )
-	tmp[i] = (unsigned char)*buf;
+        tmp[i] = (unsigned char)*buf;
       ImageIO_write( im, tmp, im->xdim*im->ydim );
       ImageIO_free( tmp );
     }

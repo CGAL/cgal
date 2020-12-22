@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
@@ -49,7 +49,7 @@ template <class GeomTraits, class TopTraits>
 class graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >
 {
 public:
-  
+
   typedef GeomTraits                                 Geometry_traits_2;
   typedef TopTraits                                  Topology_traits;
   typedef CGAL::Arrangement_on_surface_2<Geometry_traits_2, Topology_traits>
@@ -71,7 +71,7 @@ private:
    * models the BidirectionalGraph concept as well as the VertexListGraph and
    * EdgeListGraph concepts.
    */
-  struct Arr_traversal_category : 
+  struct Arr_traversal_category :
     public virtual boost::bidirectional_graph_tag,   // This tag refines the
                                                      // incidence_graph_tag.
     public virtual boost::vertex_list_graph_tag,  // Can iterate over vertices.
@@ -84,7 +84,7 @@ private:
    * This is by adapting the Halfegde_around_vertex_circulator type to an
    * iterator. Moreover, as the circulator goes over all ingoing halfedges
    * of the vertex, the iterator adapter may return their twin halfedges, if
-   * we need the outgoing halfedges.  
+   * we need the outgoing halfedges.
    */
   class Halfedge_around_vertex_iterator
   {
@@ -116,7 +116,7 @@ public:
     {}
 
     /*!
-     * Constructor. 
+     * Constructor.
      * \param circ A ciruclator for the halfedges around a vertex.
      * \param out_edges Do we need the outgoing or the ingoing halfedges.
      * \param counter A counter associated with the iterator.
@@ -145,12 +145,12 @@ public:
     {
       return (_circ == it._circ && _out == it._out && _counter == it._counter);
     }
-    
+
     bool operator!= (const Self& it) const
     {
       return (_circ != it._circ || _out != it._out || _counter != it._counter);
     }
-    
+
     /*! Dereference operators. */
     reference operator* () const
     {
@@ -161,7 +161,7 @@ public:
     {
       return &_hh;
     }
-    
+
     /* Increment operators. */
     Self& operator++()
     {
@@ -169,7 +169,7 @@ public:
       {
         ++_circ;
         ++_counter;
-        
+
         if (_out)
           _hh = _circ->twin();
         else
@@ -183,12 +183,12 @@ public:
     Self operator++ (int )
     {
       Self tmp = *this;
-      
+
       do
       {
         ++_circ;
         ++_counter;
-        
+
         if (_out)
           _hh = _circ->twin();
         else
@@ -279,7 +279,7 @@ public:
     Halfedge_around_vertex_circulator   first = v->incident_halfedges();
     Halfedge_around_vertex_circulator   circ = first;
     degree_size_type                    deg = 0;
-    
+
     do
     {
       if (! circ->is_fictitious())
@@ -528,7 +528,7 @@ degree (typename
 // --------------------------------------------------
 
 /*!
- * Get the number of vertices in the given arrangement. 
+ * Get the number of vertices in the given arrangement.
  * \param arr The arrangement.
  * \return Number of vertices.
  */
@@ -541,7 +541,7 @@ num_vertices (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
   boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >
     gt_arr (arr);
 
-  return gt_arr.number_of_vertices(); 
+  return gt_arr.number_of_vertices();
 }
 
 /*!
@@ -570,7 +570,7 @@ vertices (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 // ------------------------------------------------
 
 /*!
- * Get the number of halfedges in the given arrangement. 
+ * Get the number of halfedges in the given arrangement.
  * \param arr The arrangement.
  * \return Number of halfedges (graph edges).
  */
@@ -580,7 +580,7 @@ boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >::
                                                                edges_size_type
 num_edges (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 {
-  return arr.number_of_halfedges(); 
+  return arr.number_of_halfedges();
 }
 
 /*!

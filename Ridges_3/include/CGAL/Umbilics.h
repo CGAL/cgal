@@ -39,11 +39,11 @@ class Umbilic
  public:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
-  
+
   //constructor
   Umbilic(const TriangleMesh& P,
           const vertex_descriptor v_init,
-	  const std::list<halfedge_descriptor> contour_init); 
+          const std::list<halfedge_descriptor> contour_init);
 
   //access fct
   vertex_descriptor vertex() const { return v;}
@@ -65,17 +65,17 @@ template <class TriangleMesh>
 Umbilic<TriangleMesh>::
 Umbilic(const TriangleMesh& P,
         const vertex_descriptor v_init,
-	const std::list<halfedge_descriptor> contour_init) 
+        const std::list<halfedge_descriptor> contour_init)
   : P(P), v(v_init), contour(contour_init)
-{} 
+{}
 
 
 template <class TriangleMesh>
-std::ostream& 
+std::ostream&
 operator<<(std::ostream& out_stream, const Umbilic<TriangleMesh>& umbilic)
 {
   typedef typename boost::property_map<TriangleMesh,vertex_point_t>::const_type VPM;
-  VPM vpm = get(vertex_point, umbilic.mesh()); 
+  VPM vpm = get(vertex_point, umbilic.mesh());
   out_stream << "Umbilic at location (" << get(vpm, umbilic.vertex()) <<  ") of type ";
   switch (umbilic.umbilic_type())
     {
@@ -97,7 +97,7 @@ operator<<(std::ostream& out_stream, const Umbilic<TriangleMesh>& umbilic)
 template < class TriangleMesh, class VertexFTMap, class VertexVectorMap >
 class Umbilic_approximation
 {
-  
+
   typedef typename boost::property_map<TriangleMesh,vertex_point_t>::const_type VPM;
   typedef typename boost::property_traits<VPM>::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel Kernel;
@@ -118,11 +118,11 @@ class Umbilic_approximation
   typedef CGAL::Umbilic<TriangleMesh> Umbilic;
 
   //constructor : sets propertymaps and the poly_neighbors
-  Umbilic_approximation(const TriangleMesh& P, 
-			const VertexFTMap& vertex2k1_pm, 
-			const VertexFTMap& vertex2k2_pm,
-			const VertexVectorMap& vertex2d1_pm, 
-			const VertexVectorMap& vertex2d2_pm);
+  Umbilic_approximation(const TriangleMesh& P,
+                        const VertexFTMap& vertex2k1_pm,
+                        const VertexFTMap& vertex2k2_pm,
+                        const VertexVectorMap& vertex2d1_pm,
+                        const VertexVectorMap& vertex2d2_pm);
   //identify umbilics as vertices minimizing the function k1-k2 on
   //their patch and for which the index is not 0. We avoid
   //potential umbilics whose contours touch the border.
@@ -131,7 +131,7 @@ class Umbilic_approximation
 
  protected:
   const TriangleMesh& P;
-  
+
   typedef T_PolyhedralSurf_neighbors<TriangleMesh> Poly_neighbors;
   boost::shared_ptr<Poly_neighbors> poly_neighbors;
 
@@ -155,12 +155,12 @@ class Umbilic_approximation
 
 template < class TriangleMesh,  class VertexFTMap, class VertexVectorMap >
 Umbilic_approximation< TriangleMesh, VertexFTMap, VertexVectorMap >::
-Umbilic_approximation(const TriangleMesh& p, 
-		      const VertexFTMap& vertex2k1_pm, 
-		      const VertexFTMap& vertex2k2_pm,
-		      const VertexVectorMap& vertex2d1_pm, 
-		      const VertexVectorMap& vertex2d2_pm)
-  : P(p), k1(vertex2k1_pm), k2(vertex2k2_pm), 
+Umbilic_approximation(const TriangleMesh& p,
+                      const VertexFTMap& vertex2k1_pm,
+                      const VertexFTMap& vertex2k2_pm,
+                      const VertexVectorMap& vertex2d1_pm,
+                      const VertexVectorMap& vertex2d2_pm)
+  : P(p), k1(vertex2k1_pm), k2(vertex2k2_pm),
     d1(vertex2d1_pm), d2(vertex2d2_pm)
 {
   CGAL_precondition(is_triangle_mesh(P));
@@ -175,11 +175,11 @@ OutputIterator Umbilic_approximation< TriangleMesh, VertexFTMap, VertexVectorMap
 compute(OutputIterator umbilics_it, FT size)
 {
   CGAL_precondition( size >= 1 );
-  
+
   std::vector<vertex_descriptor> vces;
   std::list<halfedge_descriptor> contour;
   FT umbilicEstimatorVertex, umbilicEstimatorNeigh;
-  
+
   bool is_umbilic = true;
 
   //MAIN loop on P vertices
@@ -194,8 +194,8 @@ compute(OutputIterator umbilics_it, FT size)
     is_umbilic = true;
     //the size of neighbourhood is (size * OneRingSize)
     poly_neighbors->compute_neighbors(vh, vces, contour, size);
-    
-    
+
+
     // avoid umbilics whose contours touch the border (Note may not be
     // desirable?)
     typename std::list<halfedge_descriptor>::const_iterator itb_cont = contour.begin(),
@@ -203,20 +203,20 @@ compute(OutputIterator umbilics_it, FT size)
     for (; itb_cont != ite_cont; itb_cont++)
       if ( is_border(*itb_cont, P) ) {is_umbilic = false; continue;}
     if (is_umbilic == false) continue;
-    
+
     //is v an umbilic?
-    //a priori is_umbilic = true, and it switches to false as soon as a 
+    //a priori is_umbilic = true, and it switches to false as soon as a
     //  neigh vertex has a lower umbilicEstimator value
     typename std::vector<vertex_descriptor>::const_iterator itbv = vces.begin(),
       itev = vces.end();
     itbv++;
     for (; itbv != itev; itbv++)
-      {	umbilicEstimatorNeigh = cgal_abs( get(k1,*itbv) - get(k2,*itbv) );
-	if ( umbilicEstimatorNeigh < umbilicEstimatorVertex ) 
-	  {is_umbilic = false; break;}
+      {        umbilicEstimatorNeigh = cgal_abs( get(k1,*itbv) - get(k2,*itbv) );
+        if ( umbilicEstimatorNeigh < umbilicEstimatorVertex )
+          {is_umbilic = false; break;}
       }
     if (is_umbilic == false) continue;
-    
+
     //v is an umbilic (wrt the min of k1-k2), compute the index. If
     //the index is not 0 then we have actually an umbilic which is output
     Umbilic*  cur_umbilic = new Umbilic(P, vh, contour);
@@ -256,7 +256,7 @@ compute_type(Umbilic& umb)
     normal = CGAL::cross_product(get(d1,v), get(d2,v));
   }
   while (itb != (itlast));
-  
+
   //angle (v_last, v_0)
   v = target(*umb.contour_list().begin(), P);
    dirnext = get(d1,v);
@@ -277,25 +277,25 @@ compute_type(Umbilic& umb)
 
 //Global function
 
-template < class TriangleMesh,  
+template < class TriangleMesh,
            class VertexFTMap,
            class VertexVectorMap,
            class OutputIterator>
 OutputIterator compute_umbilics(const TriangleMesh &P,
-                                const VertexFTMap& vertex2k1_pm, 
+                                const VertexFTMap& vertex2k1_pm,
                                 const VertexFTMap& vertex2k2_pm,
-                                const VertexVectorMap& vertex2d1_pm, 
+                                const VertexVectorMap& vertex2d1_pm,
                                 const VertexVectorMap& vertex2d2_pm,
-                                OutputIterator it, 
+                                OutputIterator it,
                                 double size)
 {
-  typedef Umbilic_approximation < TriangleMesh, 
+  typedef Umbilic_approximation < TriangleMesh,
     VertexFTMap, VertexVectorMap > Umbilic_approximation;
-  
-  Umbilic_approximation umbilic_approximation(P, 
-					      vertex2k1_pm, vertex2k2_pm,
-					      vertex2d1_pm, vertex2d2_pm);
-  return umbilic_approximation.compute(it, size);  
+
+  Umbilic_approximation umbilic_approximation(P,
+                                              vertex2k1_pm, vertex2k2_pm,
+                                              vertex2d1_pm, vertex2d2_pm);
+  return umbilic_approximation.compute(it, size);
 }
 
 

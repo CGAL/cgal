@@ -34,22 +34,22 @@ struct Fct
 void fct(const Polyhedron& p)
 {
   vertex_range vr(vertices(p));
-  
+
   std::cout << "new for loop" << std::endl;
   for(vertex_descriptor vd : vr){
     std::cout << vd->point() << std::endl;
   }
-    
+
   std::cout << "boost::tie + std::for_each" << std::endl;
   vertex_iterator vb, ve;
-  
+
   boost::tie(vb,ve) = vertices_range(p);
   std::for_each(vb,ve, Fct());
 }
 
 int main(int argc, char** argv)
 {
-  Polyhedron P;  
+  Polyhedron P;
   std::ifstream in((argc>1)?argv[1]:"cube.off");
   in >> P ;
 

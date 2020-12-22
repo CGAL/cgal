@@ -92,7 +92,7 @@ private:
       return K::Point_3 (sample.point().x(), sample.point().y(), 0.);
     }
   };
-  
+
   // data
   std::vector<Sample_> m_samples;
 
@@ -106,10 +106,10 @@ private:
   double m_bbox_x;
   double m_bbox_y;
   double m_bbox_size;
-  
+
   //Random
   CGAL::Random random;
-  
+
   template <class Vector>
   Vector random_vec(const double scale)
   {
@@ -407,10 +407,10 @@ public:
                                                          Point_3_from_sample()),
                          boost::make_transform_iterator (m_samples.end(),
                                                          Point_3_from_sample())),
-       3);
+       3, CGAL::parameters::point_map (CGAL::Identity_property_map_no_lvalue<K::Point_3>()));
     std::cerr << "Average spacing = " << spacing << std::endl;
   }
-  
+
   void print_vertex(Vertex vertex) {
     std::cout << "vertex " << vertex << std::endl;
   }
@@ -639,7 +639,7 @@ public:
 
     if (view_tolerance)
       draw_tolerance(viewer);
-    
+
     if (view_edges)
       m_pwsrec->draw_edges(0.5f * line_thickness, 0.9f, 0.9f, 0.9f);
 

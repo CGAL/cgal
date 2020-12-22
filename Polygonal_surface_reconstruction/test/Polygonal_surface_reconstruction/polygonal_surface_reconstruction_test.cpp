@@ -1,6 +1,6 @@
 // polygonal_surface_reconstruction_test.cpp
 //
-// Test the Polygonal Surface Reconstruction method with different 
+// Test the Polygonal Surface Reconstruction method with different
 //    - kernels(Simple_cartesian, EPICK)
 //    - solvers(GLPK, SCIP)
 //    - use/ignore provided planar segmentation
@@ -12,12 +12,12 @@
 
 #ifdef CGAL_USE_GLPK
 #include <CGAL/GLPK_mixed_integer_program_traits.h>
-typedef CGAL::GLPK_mixed_integer_program_traits<double>				GLPK_Solver;
+typedef CGAL::GLPK_mixed_integer_program_traits<double>                                GLPK_Solver;
 #endif
 
 #ifdef CGAL_USE_SCIP
 #include <CGAL/SCIP_mixed_integer_program_traits.h>
-typedef CGAL::SCIP_mixed_integer_program_traits<double>				SCIP_Solver;
+typedef CGAL::SCIP_mixed_integer_program_traits<double>                                SCIP_Solver;
 #endif
 
 #include <CGAL/Simple_cartesian.h>
@@ -26,8 +26,8 @@ typedef CGAL::SCIP_mixed_integer_program_traits<double>				SCIP_Solver;
 #include "polygonal_surface_reconstruction_test_framework.h"
 
 // kernels:
-typedef CGAL::Simple_cartesian<double>								Cartesian;
-typedef CGAL::Exact_predicates_inexact_constructions_kernel			Epick;
+typedef CGAL::Simple_cartesian<double>                                                                Cartesian;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel                        Epick;
 
 
 int main(int argc, char* argv[])
@@ -38,76 +38,76 @@ int main(int argc, char* argv[])
             (argc > 1) ? argv[1]
             : "data/icosahedron.pwn";
 
-	//---------------------------------------------------------------------
+        //---------------------------------------------------------------------
 
     std::cerr << "--- Using Simple cartesian kernel";
 
-	//---------------------------------------------------------------------
+        //---------------------------------------------------------------------
 
 #ifdef CGAL_USE_GLPK
     std::cerr << "\n\t---- Using GLPK solver\n";
 
-	std::cerr << "\t\t---- using provided planes\n";
-	reconstruct<Cartesian, GLPK_Solver>(input_file, false);
+        std::cerr << "\t\t---- using provided planes\n";
+        reconstruct<Cartesian, GLPK_Solver>(input_file, false);
 
     std::cerr << "\t\t---- re-extract planes\n";
-	reconstruct<Cartesian, GLPK_Solver>(input_file, true);
+        reconstruct<Cartesian, GLPK_Solver>(input_file, true);
 #endif
 
 #ifdef CGAL_USE_SCIP
     std::cerr << "\n\t---- Using SCIP solver\n";
 
-	std::cerr << "\t\t---- using provided planes\n";
-	reconstruct<Cartesian, SCIP_Solver>(input_file, false);
+        std::cerr << "\t\t---- using provided planes\n";
+        reconstruct<Cartesian, SCIP_Solver>(input_file, false);
 
     std::cerr << "\t\t---- re-extract planes\n";
-	reconstruct<Cartesian, SCIP_Solver>(input_file, true);
+        reconstruct<Cartesian, SCIP_Solver>(input_file, true);
 #endif
 
 #if !defined(CGAL_USE_GLPK) && !defined(CGAL_USE_SCIP)
     std::cerr << "\n\t---- Using no solver (partial test)\n";
 
-	std::cerr << "\t\t---- using provided planes\n";
-	reconstruct<Cartesian, int>(input_file, false);
+        std::cerr << "\t\t---- using provided planes\n";
+        reconstruct<Cartesian, int>(input_file, false);
 
     std::cerr << "\t\t---- re-extract planes\n";
-	reconstruct<Cartesian, int>(input_file, true);
+        reconstruct<Cartesian, int>(input_file, true);
 #endif
 
-	//---------------------------------------------------------------------
+        //---------------------------------------------------------------------
 
     std::cerr << "\n--- Using Epick kernel";
 
-	//---------------------------------------------------------------------
+        //---------------------------------------------------------------------
 
 #ifdef CGAL_USE_GLPK
     std::cerr << "\n\t---- Using GLPK solver\n";
 
-	std::cerr << "\t\t---- using provided planes\n";
-	reconstruct<Epick, GLPK_Solver>(input_file, false);
+        std::cerr << "\t\t---- using provided planes\n";
+        reconstruct<Epick, GLPK_Solver>(input_file, false);
 
     std::cerr << "\t\t---- re-extract planes\n";
-	reconstruct<Epick, GLPK_Solver>(input_file, true);
-#endif 
+        reconstruct<Epick, GLPK_Solver>(input_file, true);
+#endif
 
 #ifdef CGAL_USE_SCIP
     std::cerr << "\n\t---- Using SCIP solver\n";
 
-	std::cerr << "\t\t---- using provided planes\n";
-	reconstruct<Epick, SCIP_Solver>(input_file, false);
+        std::cerr << "\t\t---- using provided planes\n";
+        reconstruct<Epick, SCIP_Solver>(input_file, false);
 
     std::cerr << "\t\t---- re-extract planes\n";
-	reconstruct<Epick, SCIP_Solver>(input_file, true);
+        reconstruct<Epick, SCIP_Solver>(input_file, true);
 #endif
 
 #if !defined(CGAL_USE_GLPK) && !defined(CGAL_USE_SCIP)
     std::cerr << "\n\t---- Using no solver (partial test)\n";
 
-	std::cerr << "\t\t---- using provided planes\n";
-	reconstruct<Epick, int>(input_file, false);
+        std::cerr << "\t\t---- using provided planes\n";
+        reconstruct<Epick, int>(input_file, false);
 
     std::cerr << "\t\t---- re-extract planes\n";
-	reconstruct<Epick, int>(input_file, true);
+        reconstruct<Epick, int>(input_file, true);
 #endif
 
     return EXIT_SUCCESS;

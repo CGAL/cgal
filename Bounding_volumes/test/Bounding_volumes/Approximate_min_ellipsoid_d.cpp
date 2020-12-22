@@ -63,7 +63,7 @@ struct DD {};
 
 template<typename Kernel,typename Point_list>
 void add_random_points(int n, int d, int multiplicity, Point_list& list,
-		       const DD&)
+                       const DD&)
   // Adds n random d-dimensional points to the given list.
 {
   typedef typename Point_list::value_type Point;
@@ -78,7 +78,7 @@ void add_random_points(int n, int d, int multiplicity, Point_list& list,
 
 template<typename Kernel,typename Point_list>
 void add_random_points(int n, int d, int multiplicity, Point_list& list,
-		       const TwoD&)
+                       const TwoD&)
   // Adds n random d-dimensional points to the given list.
 {
   typedef typename Point_list::value_type Point;
@@ -96,7 +96,7 @@ void add_random_points(int n, int d, int multiplicity, Point_list& list,
 
 template<typename Kernel,typename Point_list>
 void add_random_points(int n, int d, int multiplicity, Point_list& list,
-		       const ThreeD&)
+                       const ThreeD&)
   // Adds n random d-dimensional points to the given list.
 {
   typedef typename Point_list::value_type Point;
@@ -106,8 +106,8 @@ void add_random_points(int n, int d, int multiplicity, Point_list& list,
     for (int j = 0; j < multiplicity; ++j) {
       Point_d p = *rpg;
       list.push_back(Point(*p.cartesian_begin(),
-			   *(p.cartesian_begin()+1),
-			   *(p.cartesian_begin()+2)));
+                           *(p.cartesian_begin()+1),
+                           *(p.cartesian_begin()+2)));
     }
 
     ++rpg;
@@ -143,8 +143,8 @@ void simple_test(int n, int d, int multiplicity, double eps)
   typedef CGAL::Approximate_min_ellipsoid_d<Traits> Mel;
 
   std::cerr << "n=" << n << ", d=" << d << ", mult=" << multiplicity
-	    << ", eps=" << eps;
-  
+            << ", eps=" << eps;
+
   // generate points
   Point_list P;
   typedef typename is_d_dimensional<Traits>::value is_d;
@@ -164,7 +164,7 @@ void simple_test(int n, int d, int multiplicity, double eps)
     if (d == 2 || d == 3)
       mel.axes_lengths_begin();   // (Note: forces axes to be computed.)
   }
-  
+
   // query
   bool is_fd   = mel.is_full_dimensional();
   check(!mel.is_empty() || !is_fd, "empty but full-dimensional");
@@ -174,7 +174,7 @@ void simple_test(int n, int d, int multiplicity, double eps)
     for (int i=0; i<d; ++i) {
       mel.defining_vector(i);
       for (int j=0; j<d; ++j)
-	mel.defining_matrix(i,j);
+        mel.defining_matrix(i,j);
     }
     mel.defining_scalar();
     std::cerr << ", achieved_eps=" << mel.achieved_epsilon();
@@ -203,7 +203,7 @@ void test(int n, int multiplicity)
   simple_test<K_2,T_2>(n, 2, multiplicity, 0.1);
   simple_test<K_2,T_2>(n, 2, multiplicity, 0.01);
   simple_test<K_2,T_2>(n, 2, multiplicity, 0.001);
-  
+
   // 3d
   simple_test<K_d,T_d>(n, 3, multiplicity, 0.5);
   simple_test<K_d,T_d>(n, 3, multiplicity, 0.1);

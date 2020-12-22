@@ -42,7 +42,7 @@ int main()
   create_path_2(p2);
 
   bool res=true;
-  
+
   if (cst.is_contractible(p1))
   {
     std::cout<<"ERROR homotopy_small_cylinder test1: "

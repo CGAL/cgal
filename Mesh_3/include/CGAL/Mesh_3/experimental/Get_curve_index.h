@@ -24,7 +24,7 @@ namespace CGAL { namespace Mesh_3 {
 // struct Get_curves_indices {
 //   const Mesh_domain* mesh_domain;
 
-//   Get_curves_indices(const Mesh_domain* mesh_domain) 
+//   Get_curves_indices(const Mesh_domain* mesh_domain)
 //     : mesh_domain(mesh_domain) {}
 
 // }; // end Get_curves_indices

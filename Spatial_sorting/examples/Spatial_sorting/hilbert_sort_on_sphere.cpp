@@ -20,7 +20,7 @@ int main ()
   std::cout << "UNIT SPHERE: " << std::endl;
 
   v.reserve(size);
-                                                                    
+
   CGAL::Random_points_on_sphere_3<Point> unit_sphere(1.0, random);  // generate points
   for (std::size_t i = 0; i < size; ++i) v.push_back(*unit_sphere++);
 
@@ -41,7 +41,7 @@ int main ()
   for (std::size_t i = 0; i < size; ++i) v.push_back(*given_sphere++ + trans);
 
   CGAL::hilbert_sort_on_sphere(v.begin(), v.end(),                   // sort
-    sphere.squared_radius(), sphere.center());  
+    sphere.squared_radius(), sphere.center());
 
   for(std::size_t i=0; i<size; ++i) std::cout << v[i] << std::endl; //output
 

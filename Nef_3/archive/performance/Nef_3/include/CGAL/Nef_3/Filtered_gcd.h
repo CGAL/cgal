@@ -9,7 +9,7 @@
 namespace CGAL {
 
 /*
-template <typename NT> 
+template <typename NT>
 Lazy_exact_nt<NT> operator%=(const Lazy_exact_nt<NT>& a, const Lazy_exact_nt<NT>& b) {
 
   NT res = a.exact();
@@ -17,7 +17,7 @@ Lazy_exact_nt<NT> operator%=(const Lazy_exact_nt<NT>& a, const Lazy_exact_nt<NT>
   return Lazy_exact_nt<NT>(res);
 }
 */
-template <typename NT> 
+template <typename NT>
 Lazy_exact_nt<NT> gcd(const Lazy_exact_nt<NT>& a, const Lazy_exact_nt<NT>& b) {
 
   NT nta = a.exact();

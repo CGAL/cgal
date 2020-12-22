@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_STL_Extensions_for_CGAL
 
 \cgalAutoToc
@@ -69,24 +69,24 @@ when the container used to contain lots of elements, but now has far less. In
 this case, we suggest to do a copy of the container in order to "defragment"
 the internal representation.
 
-The objects stored in this container can optionally store an 
+The objects stored in this container can optionally store an
 "erase counter". If it exists, i.e.\ if the object is a model of the
-`ObjectWithEraseCounter` concept, each time an object is erased from the 
+`ObjectWithEraseCounter` concept, each time an object is erased from the
 container, the erase counter of the object will be incremented.
-For example, this erase counter can be exploited using the `CC_safe_handle` 
+For example, this erase counter can be exploited using the `CC_safe_handle`
 helper class, so that one can know if a handle is still pointing to the same
 element.
-Note that this is meaningful only because the container doesn't 
+Note that this is meaningful only because the container doesn't
 deallocate elements until the destruction or clear() of the container.
 For example, this counter is used by
 the parallel 3D mesh generation engine to lazily manage the queues of bad cells:
-an element in the queue is a pair containing a cell iterator and the 
+an element in the queue is a pair containing a cell iterator and the
 erase counter value of the cell when it has been inserted. When an element
 is popped from the queue, the algorithm checks if the current value of
 the erase counter matches the stored value. If it doesn't match, it means
 the cell has been destroyed in the meantime and the algorithm ignores it. Without this
 lazy management, each time a cell is destroyed, the algorithm has to look
-for it in the queue and remove it. This mechanism is even more useful for the parallel 
+for it in the queue and remove it. This mechanism is even more useful for the parallel
 version of the meshing process, since each thread has its own queue and looking
 for a cell in all the queues would be very slow.
 
@@ -94,10 +94,10 @@ This container has been developed in order to efficiently handle large data
 structures like the triangulation and halfedge data structures. It can
 probably be useful for other kinds of graphs as well.
 
-The class `Concurrent_compact_container<T, Allocator>` 
+The class `Concurrent_compact_container<T, Allocator>`
 provides the same features, but enables concurrency-safe
 `insert` and `erase` operations. Other operations are not concurrency-safe.
-It requires the program to be linked against 
+It requires the program to be linked against
 the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
 
 \section stl_multi Multiset with Extended Functionality

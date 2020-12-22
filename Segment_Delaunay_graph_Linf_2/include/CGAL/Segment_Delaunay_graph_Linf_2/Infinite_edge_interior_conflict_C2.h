@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
 //philaris@gmail.com, sandeep.kr.dey@gmail.com, evanthia.papadopoulou@usi.ch
@@ -77,7 +77,7 @@ private:
 
 public:
   Boolean   operator()(const Site_2& q, const Site_2& s, const Site_2& r,
-		       const Site_2& t, Sign sgn) const
+                       const Site_2& t, Sign sgn) const
   {
 
     CGAL_SDG_DEBUG(
@@ -308,7 +308,7 @@ public:
             << ' ' << sgn << " returns "
             << ( sgn == NEGATIVE ) << std::endl;);
         return ( sgn == NEGATIVE );
-      } 
+      }
       else
       {
         if (sgn == NEGATIVE) {

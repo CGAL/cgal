@@ -31,26 +31,26 @@ bool test_cone_parameters() {
   for (int i = 0 ; i < NB_ROUNDS ; i++) {
     Pwn_vector points;
 
-	  // Generate random points on random cone.
+          // Generate random points on random cone.
     Vector axis;
     Point apex;
     FT angle = 0;
     FT mid = 0;
     CGAL::Bbox_3 bbox(-10, -10, -10, 10, 10, 10);
-    
+
     sample_random_cone(NB_POINTS, apex, axis, angle, mid,
       std::back_inserter(points));
 
-	  // Add outliers in second half of rounds.
+          // Add outliers in second half of rounds.
     if (i >= NB_ROUNDS / 2)
-      for (std::size_t j = 0; j < NB_POINTS / 2; j++) 
+      for (std::size_t j = 0; j < NB_POINTS / 2; j++)
         points.push_back(random_pwn_in<K>(bbox));
-        
+
     Efficient_ransac ransac;
     Traits traits = ransac.traits();
 
     ransac.template add_shape_factory<Cone>();
-    
+
     ransac.set_input(points);
 
     // Set cluster epsilon to a high value as just the parameters of
@@ -66,10 +66,10 @@ bool test_cone_parameters() {
       std::cout << " aborted" << std::endl;
       return false;
     }
-    
+
     typename Efficient_ransac::Shape_range shapes = ransac.shapes();
 
-	  // Check: unique shape detected.
+          // Check: unique shape detected.
     if (shapes.size() != 1)
       continue;
 
@@ -78,9 +78,9 @@ bool test_cone_parameters() {
     // Check: shape detected is a cone.
     if (!cone)
       continue;
-    
+
     // Check radius and alignment with axis.
-    if (CGAL::abs(angle - cone->angle()) > (FT) 0.02 
+    if (CGAL::abs(angle - cone->angle()) > (FT) 0.02
       || CGAL::abs(CGAL::abs(axis * cone->axis()) - (FT) 1.0) > (FT) 0.02)
       continue;
 
@@ -110,7 +110,7 @@ int main() {
   bool success = true;
 
   std::cout << "test_cone_parameters<CGAL::Simple_cartesian<float>> ";
-  if (!test_cone_parameters<CGAL::Simple_cartesian<float> >()) 
+  if (!test_cone_parameters<CGAL::Simple_cartesian<float> >())
     success = false;
 
   std::cout << "test_cone_parameters<CGAL::Simple_cartesian<double>> ";
@@ -118,7 +118,7 @@ int main() {
     success = false;
 
   std::cout << "test_cone_parameters<CGAL::Exact_predicates_inexact_constructions_kernel> ";
-  if (!test_cone_parameters<CGAL::Exact_predicates_inexact_constructions_kernel>()) 
+  if (!test_cone_parameters<CGAL::Exact_predicates_inexact_constructions_kernel>())
     success = false;
 
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;

@@ -3,12 +3,12 @@ namespace CGAL {
 /*!
 \ingroup PkgSpatialSortingFunctionObjects
 
-The function object `Hilbert_sort_3` sorts iterator ranges of 
-`Traits::Point_3` along a Hilbert curve by recursively subdividing at the median 
+The function object `Hilbert_sort_3` sorts iterator ranges of
+`Traits::Point_3` along a Hilbert curve by recursively subdividing at the median
 or the middle, depending on the `PolicyTag`(see Section \ref sechilbert_sorting
 for more information on the policies).
 
-\tparam Traits must be a model of the concept `SpatialSortingTraits_3`. 
+\tparam Traits must be a model of the concept `SpatialSortingTraits_3`.
 
 \tparam PolicyTag is used to specify the strategy policy.
 Possible values are \link CGAL::Hilbert_sort_median_policy `Hilbert_sort_median_policy` \endlink
@@ -23,23 +23,23 @@ template< typename Traits, typename PolicyTag, typename ConcurrencyTag = Sequent
 class Hilbert_sort_3 {
 public:
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
-constructs an instance with `traits` as traits class instance. 
-*/ 
-Hilbert_sort_3(const Traits &traits = Traits()); 
+constructs an instance with `traits` as traits class instance.
+*/
+Hilbert_sort_3(const Traits &traits = Traits());
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-It sorts the range `[begin, end)`. 
+It sorts the range `[begin, end)`.
 \tparam InputPointIterator must be a model of `RandomAccessIterator` with value type `Traits::Point_3`.
-*/ 
+*/
 template <class InputPointIterator>
 void operator() (InputPointIterator begin, InputPointIterator end) const;
 

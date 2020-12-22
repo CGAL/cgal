@@ -44,7 +44,7 @@ public:
   typedef std::array<FT, dim>                         Vector;
   typedef std::array<FT, dim*dim>                     Matrix;
   typedef std::array<FT, (dim * (dim+1) / 2)>         Covariance_matrix;
-  
+
   /// Fill `eigenvalues` with the eigenvalues of the covariance matrix represented by `cov`.
   /// Eigenvalues are sorted by increasing order.
   /// \return `true` if the operation was successful and `false` otherwise.

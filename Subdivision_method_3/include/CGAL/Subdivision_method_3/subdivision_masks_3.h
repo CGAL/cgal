@@ -1,5 +1,3 @@
-// ======================================================================
-//
 // Copyright (c) 2005-2017 GeometryFactory (France).  All Rights Reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -11,7 +9,6 @@
 //
 // Author(s): Le-Jeng Shiue <Andy.Shiue@gmail.com>
 //
-// ======================================================================
 
 #ifndef CGAL_SUBDIVISION_MASKS_3_H
 #define CGAL_SUBDIVISION_MASKS_3_H
@@ -340,7 +337,7 @@ public:
 
     for (size_t i = 0; i < n; i++, ++vcir) {
       Point_ref p = get(this->vpmap,target(opposite(*vcir, *(this->pmesh)), *(this->pmesh)));
-      R[0] += p[0]; 	R[1] += p[1]; 	R[2] += p[2];
+      R[0] += p[0];         R[1] += p[1];         R[2] += p[2];
     }
     if (n == 6) {
       pt = Point((10*S[0]+R[0])/16, (10*S[1]+R[1])/16, (10*S[2]+R[2])/16);

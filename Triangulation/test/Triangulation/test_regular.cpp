@@ -32,7 +32,7 @@ void test(const int d, const string & type, const int N)
   RTri rt(d);
   cerr << "\nBuilding Regular triangulation of (" << type << d << ") dimension with " << N << " points";
   assert(rt.empty());
-  
+
   // Generate N random points
   std::vector<Weighted_point> points;
   for (int i = 0; i < N; ++i)
@@ -146,13 +146,13 @@ void test_inserting_points_at_the_same_position()
   assert(rt.number_of_vertices() == 1);
   assert(rt.number_of_hidden_vertices() == 0);
   assert(vh == vh2);
-  
+
   // Same position, bigger weight
   vh = rt.insert(Weighted_point(Bare_point(pt.begin(), pt.end()), 1.3));
   assert(rt.number_of_vertices() == 1);
   assert(rt.number_of_hidden_vertices() == 1);
   assert(vh != Vertex_handle());
-  
+
   // Same point
   vh2 = rt.insert(Weighted_point(Bare_point(pt.begin(), pt.end()), 1.3));
   assert(rt.number_of_vertices() == 1);
@@ -276,7 +276,7 @@ int main(int argc, char **argv)
   go<3>(N);
   go<2>(N);
   go<1>(N);
-  
+
   cerr << endl;
   return 0;
 }

@@ -13,7 +13,7 @@ typedef CGAL::Surface_mesh<Point>                            Mesh;
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 
-int main() 
+int main()
 {
   Mesh sm;
   CGAL::make_quad(Point(0,0,0), Point(1,0,0),Point(1,1,0),Point(0,1,0), sm);

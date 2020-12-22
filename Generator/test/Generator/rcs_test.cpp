@@ -50,7 +50,7 @@ main( )
   typedef CGAL::Polygon_2< R, Cont >                     Polygon_2;
   typedef Creator_uniform_2< double, Point_2 >           Creator;
   typedef Random_points_in_square_2< Point_2, Creator >  Point_generator;
-  
+
   // this is not initialized on MIPSPRO:
   set_pretty_mode( std::cout);
   set_pretty_mode( std::cerr);

@@ -13,7 +13,7 @@ int main ()
   v.push_back( Point(1.0,1.0)) ;
   v.push_back( Point(0.1,0.1)) ;
   v.push_back( Point(0.2,0.8)) ;
-  
+
   std::cout << "Hilbert sort (middle policy)." << std::endl;
   CGAL::hilbert_sort (v.begin(), v.end(), K(), CGAL::Hilbert_sort_middle_policy());
   std::cout<<v[0]<<"; "<<v[1]<<"; "<<v[2]<<"; "<<v[3]<<"; "<<std::endl;

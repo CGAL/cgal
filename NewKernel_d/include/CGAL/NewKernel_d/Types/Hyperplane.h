@@ -18,25 +18,25 @@
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 namespace CGAL {
 template <class R_> class Hyperplane {
-	typedef typename Get_type<R_, FT_tag>::type FT_;
-	typedef typename Get_type<R_, Vector_tag>::type	Vector_;
-	Vector_ v_;
-	FT_ s_;
+        typedef typename Get_type<R_, FT_tag>::type FT_;
+        typedef typename Get_type<R_, Vector_tag>::type        Vector_;
+        Vector_ v_;
+        FT_ s_;
 
-	public:
-	Hyperplane(){}
-	Hyperplane(Vector_ const&v, FT_ const&s): v_(v), s_(s) {}
-	// TODO: Add a piecewise constructor?
+        public:
+        Hyperplane(){}
+        Hyperplane(Vector_ const&v, FT_ const&s): v_(v), s_(s) {}
+        // TODO: Add a piecewise constructor?
 
-	Vector_ const& orthogonal_vector()const{return v_;}
-	FT_ translation()const{return s_;}
+        Vector_ const& orthogonal_vector()const{return v_;}
+        FT_ translation()const{return s_;}
 };
 namespace CartesianDKernelFunctors {
 template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
   CGAL_FUNCTOR_INIT_STORE(Construct_hyperplane)
-  typedef typename Get_type<R_, Hyperplane_tag>::type	result_type;
-  typedef typename Get_type<R_, Point_tag>::type	Point;
-  typedef typename Get_type<R_, Vector_tag>::type	Vector;
+  typedef typename Get_type<R_, Hyperplane_tag>::type        result_type;
+  typedef typename Get_type<R_, Point_tag>::type        Point;
+  typedef typename Get_type<R_, Vector_tag>::type        Vector;
   typedef typename Get_type<R_, FT_tag>::type FT;
   private:
   struct One {
@@ -58,7 +58,7 @@ template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
 #if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
 #  pragma warning(push)
 #  pragma warning(disable: 4309)
-#endif    
+#endif
     return result_type(cv(),0);
 #if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
 #  pragma warning(pop)
@@ -74,9 +74,9 @@ template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
     typedef typename Increment_dimension<D2>::type D2i;
 
     typedef Eigen::Matrix<FT, Eigen_dimension<D1>::value, Eigen_dimension<D1i>::value,
-	      Eigen::ColMajor|Eigen::AutoAlign, Eigen_dimension<D2>::value, Eigen_dimension<D2i>::value> Matrix;
+              Eigen::ColMajor|Eigen::AutoAlign, Eigen_dimension<D2>::value, Eigen_dimension<D2i>::value> Matrix;
     typedef Eigen::Matrix<FT, Eigen_dimension<D1i>::value, 1,
-	      Eigen::ColMajor|Eigen::AutoAlign, Eigen_dimension<D2i>::value, 1> Vec;
+              Eigen::ColMajor|Eigen::AutoAlign, Eigen_dimension<D2i>::value, 1> Vec;
     typename Get_functor<R_, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
     typename Get_functor<R_, Construct_ttag<Vector_tag> >::type cv(this->kernel());
     typename Get_functor<R_, Point_dimension_tag>::type pd(this->kernel());
@@ -91,7 +91,7 @@ template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
     for (i=1; ++f!=e; ++i) {
       Point const& p=*f;
       for(int j=0;j<d;++j)
-	m(i,j)=c(p,j);
+        m(i,j)=c(p,j);
     }
     CGAL_assertion (i == d);
     for(i=0;i<d;++i)
@@ -117,15 +117,15 @@ template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
 };
 template <class R_> struct Orthogonal_vector {
   CGAL_FUNCTOR_INIT_IGNORE(Orthogonal_vector)
-  typedef typename Get_type<R_, Hyperplane_tag>::type		Hyperplane;
-  typedef typename Get_type<R_, Vector_tag>::type const&	result_type;
+  typedef typename Get_type<R_, Hyperplane_tag>::type                Hyperplane;
+  typedef typename Get_type<R_, Vector_tag>::type const&        result_type;
   result_type operator()(Hyperplane const&s)const{
     return s.orthogonal_vector();
   }
 };
 template <class R_> struct Hyperplane_translation {
   CGAL_FUNCTOR_INIT_IGNORE(Hyperplane_translation)
-  typedef typename Get_type<R_, Hyperplane_tag>::type	Hyperplane;
+  typedef typename Get_type<R_, Hyperplane_tag>::type        Hyperplane;
   typedef typename Get_type<R_, FT_tag>::type result_type;
   // TODO: Is_exact?
   result_type operator()(Hyperplane const&s)const{
@@ -134,13 +134,13 @@ template <class R_> struct Hyperplane_translation {
 };
 template <class R_> struct Value_at : Store_kernel<R_> {
   CGAL_FUNCTOR_INIT_STORE(Value_at)
-  typedef typename Get_type<R_, Hyperplane_tag>::type	Hyperplane;
-  typedef typename Get_type<R_, Vector_tag>::type	Vector;
-  typedef typename Get_type<R_, Point_tag>::type	Point;
-  typedef typename Get_type<R_, FT_tag>::type		FT;
+  typedef typename Get_type<R_, Hyperplane_tag>::type        Hyperplane;
+  typedef typename Get_type<R_, Vector_tag>::type        Vector;
+  typedef typename Get_type<R_, Point_tag>::type        Point;
+  typedef typename Get_type<R_, FT_tag>::type                FT;
   typedef FT result_type;
-  typedef typename Get_functor<R_, Scalar_product_tag>::type	Dot;
-  typedef typename Get_functor<R_, Point_to_vector_tag>::type	P2V;
+  typedef typename Get_functor<R_, Scalar_product_tag>::type        Dot;
+  typedef typename Get_functor<R_, Point_to_vector_tag>::type        P2V;
   result_type operator()(Hyperplane const&h, Point const&p)const{
     Dot dot(this->kernel());
     P2V p2v(this->kernel());

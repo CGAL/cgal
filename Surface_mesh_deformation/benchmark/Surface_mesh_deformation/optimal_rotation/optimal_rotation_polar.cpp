@@ -46,7 +46,7 @@ void algorithm_polar(Eigen::Matrix3d A, Eigen::Matrix3d &U, double tolerance)
   int k = -1;
   Eigen::Matrix3d Y;
   double alpha, beta, gamma;
-  do 
+  do
   {
     k++;
     Y = X.inverse();
@@ -62,17 +62,17 @@ void algorithm_polar(Eigen::Matrix3d A, Eigen::Matrix3d &U, double tolerance)
 
 
 int main() {
-	
+
   std::ifstream file;
   file.open("SVD_benchmark");
-  if (!file) 
+  if (!file)
   {
     CGAL_TRACE_STREAM << "Error loading file!\n";
     return 0;
   }
 
   int ite = 200000;
-  Eigen::Matrix3d A, U, H;           
+  Eigen::Matrix3d A, U, H;
 
   int matrix_idx = rand()%200;
   for (int i = 0; i < matrix_idx; i++)
@@ -92,7 +92,7 @@ int main() {
   A(2,0) = 0.0039090073251031232; A(2,1) = 0.0066744523074963374; A(2,2) = 0.010848552426718550;
   A = A*10000;
 
-  CGAL::Timer task_timer; 
+  CGAL::Timer task_timer;
 
   CGAL_TRACE_STREAM << "Start SVD decomposition...";
   task_timer.start();
@@ -104,10 +104,10 @@ int main() {
     int aaa = 0;
   }
   task_timer.stop();
-  
+
 
   CGAL_TRACE_STREAM << "done: " << task_timer.time() << "s\n";
 
-	return 0;
+        return 0;
 }
 

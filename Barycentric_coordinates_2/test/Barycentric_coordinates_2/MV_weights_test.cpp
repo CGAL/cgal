@@ -32,8 +32,8 @@ int main()
 {
     Point_vector vertices(5);
 
-    vertices[0] = Point(0, 0);                                      vertices[1] = Point(1, 0);                                      
-    vertices[2] = Point(Scalar(5) /Scalar(4), Scalar(3)/Scalar(4)); vertices[3] = Point(Scalar(1)/Scalar(2), Scalar(3)/Scalar(2)); 
+    vertices[0] = Point(0, 0);                                      vertices[1] = Point(1, 0);
+    vertices[2] = Point(Scalar(5) /Scalar(4), Scalar(3)/Scalar(4)); vertices[3] = Point(Scalar(1)/Scalar(2), Scalar(3)/Scalar(2));
     vertices[4] = Point(Scalar(-1)/Scalar(4), Scalar(3)/Scalar(4));
 
     Mean_value_coordinates mean_value_coordinates(vertices.begin(), vertices.end());
@@ -85,6 +85,6 @@ int main()
     }
 
     cout << endl << "MV_weights_test: PASSED." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

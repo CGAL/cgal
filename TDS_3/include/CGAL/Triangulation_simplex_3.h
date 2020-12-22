@@ -44,7 +44,7 @@ public:
 
   // Default constructor initialises to undefined simplex:
   Triangulation_simplex_3() : ref(-1), ch() { }
-	
+
   Triangulation_simplex_3(Vertex_handle vh) {
     set_vertex(vh);
   }
@@ -105,11 +105,11 @@ public:
 
   template < class TDS2 >
   friend bool operator==(Triangulation_simplex_3<TDS2> s0,
-			 Triangulation_simplex_3<TDS2> s1);
+                         Triangulation_simplex_3<TDS2> s1);
   template < class TDS2 >
   friend bool operator< (Triangulation_simplex_3<TDS2> s0,
-			 Triangulation_simplex_3<TDS2> s1);
-	
+                         Triangulation_simplex_3<TDS2> s1);
+
 private:
   void set_vertex(const Vertex_handle vh) {
     ch = vh->cell();
@@ -147,35 +147,35 @@ private:
 template < class TriangulationDataStructure_3 >
 bool
 operator!=(Triangulation_simplex_3<TriangulationDataStructure_3> s0,
-	   Triangulation_simplex_3<TriangulationDataStructure_3> s1) {
+           Triangulation_simplex_3<TriangulationDataStructure_3> s1) {
   return !(s0==s1);
 }
 
 template < class TriangulationDataStructure_3 >
 bool
 operator==(Triangulation_simplex_3<TriangulationDataStructure_3> s0,
-	   Triangulation_simplex_3<TriangulationDataStructure_3> s1) {
+           Triangulation_simplex_3<TriangulationDataStructure_3> s1) {
   typedef Triangulation_simplex_3<TriangulationDataStructure_3> Sim;
   if (s0.dimension() != s1.dimension()) return false;
-	
+
   typename Sim::Cell_handle neighbor;
-	
+
   switch (s0.dimension()) {
   case (0): // Vertex
     return (s0.ch->vertex(s0.index(0)) == s1.ch->vertex(s1.index(0)));
   case (1): // Edge
     return ((s0.ch->vertex(s0.index(0)) == s1.ch->vertex(s1.index(0)) &&
-	     s0.ch->vertex(s0.index(1)) == s1.ch->vertex(s1.index(1))) ||
-	    (s0.ch->vertex(s0.index(1)) == s1.ch->vertex(s1.index(0)) &&
-	     s0.ch->vertex(s0.index(0)) == s1.ch->vertex(s1.index(1))));
+             s0.ch->vertex(s0.index(1)) == s1.ch->vertex(s1.index(1))) ||
+            (s0.ch->vertex(s0.index(1)) == s1.ch->vertex(s1.index(0)) &&
+             s0.ch->vertex(s0.index(0)) == s1.ch->vertex(s1.index(1))));
   case (2):
     if (s0.ch == s1.ch && s0.index(0) == s1.index(0)) {
       return true;
     }
-			
+
     neighbor = s0.ch->neighbor(s0.index(0));
     if (neighbor == s1.ch &&
-	neighbor->index(s0.ch) == s1.index(0)) {
+        neighbor->index(s0.ch) == s1.index(0)) {
       return true;
     }
     return false;
@@ -189,13 +189,13 @@ operator==(Triangulation_simplex_3<TriangulationDataStructure_3> s0,
 template < class TriangulationDataStructure_3 >
 bool
 operator<(Triangulation_simplex_3<TriangulationDataStructure_3> s0,
-	  Triangulation_simplex_3<TriangulationDataStructure_3> s1) {
+          Triangulation_simplex_3<TriangulationDataStructure_3> s1) {
   typedef Triangulation_simplex_3<TriangulationDataStructure_3> Sim;
 
   if (s0 == s1) return false;
   if (s0.dimension() < s1.dimension()) return true;
   if (s0.dimension() > s1.dimension()) return false;
-	
+
   // Dimensions are equal, compare the memory addresses of the simplices
   typename Sim::Cell_handle ch1, ch2;
   typename Sim::Vertex_handle vh1, vh2, vh3, vh4;
@@ -203,36 +203,36 @@ operator<(Triangulation_simplex_3<TriangulationDataStructure_3> s0,
   case (0): // Vertex
     // Vertextices are not equal
     return (&(*s0.ch->vertex(s0.index(0))) <
-	    &(*s1.ch->vertex(s1.index(0))));
+            &(*s1.ch->vertex(s1.index(0))));
   case (1): // Edge
     vh1 = s0.ch->vertex(s0.index(0));
     vh2 = s0.ch->vertex(s0.index(1));
     vh3 = s1.ch->vertex(s1.index(0));
     vh4 = s1.ch->vertex(s1.index(1));
-			
+
     if ((std::min)(&(*vh1), &(*vh2)) < (std::min)(&(*vh3), &(*vh4)))
       return true;
-			
+
     if ((std::min)(&(*vh1), &(*vh2)) > (std::min)(&(*vh3), &(*vh4)))
       return false;
-			
+
     if ((std::max)(&(*vh1), &(*vh2)) < (std::max)(&(*vh3), &(*vh4)))
       return true;
-			
+
     return false;
   case (2): // Facet
     ch1 = s0.ch->neighbor(s0.index(0));
     ch2 = s1.ch->neighbor(s1.index(0));
-			
+
     if ((std::min)(&(*s0.ch), &(*ch1)) < (std::min)(&(*s1.ch), &(*ch2)))
       return true;
-			
+
     if ((std::min)(&(*s0.ch), &(*ch1)) > (std::min)(&(*s1.ch), &(*ch2)))
       return false;
-			
+
     if ((std::max)(&(*s0.ch), &(*ch1)) < (std::max)(&(*s1.ch), &(*ch2)))
       return true;
-			
+
     return false;
   case (3): // Cell
     return (&(*s0.ch) < &(*s1.ch));
@@ -244,7 +244,7 @@ operator<(Triangulation_simplex_3<TriangulationDataStructure_3> s0,
 template < class TriangulationDataStructure_3 >
 std::ostream &
 operator<< (std::ostream& os,
-	    const Triangulation_simplex_3<TriangulationDataStructure_3> &s)
+            const Triangulation_simplex_3<TriangulationDataStructure_3> &s)
 {
   typename TriangulationDataStructure_3::Vertex_handle vh;
   typename TriangulationDataStructure_3::Edge e;
@@ -258,20 +258,20 @@ operator<< (std::ostream& os,
     case 1:
       e = s;
       os << &*(e.first->vertex(e.second)) << " "
-	 << &*(e.first->vertex(e.third));
+         << &*(e.first->vertex(e.third));
       break;
     case 2:
       f = s;
       os << &*(f.first->vertex((f.second+1)&3)) << " "
-	 << &*(f.first->vertex((f.second+2)&3)) << " "
-	 << &*(f.first->vertex((f.second+3)&3));
+         << &*(f.first->vertex((f.second+2)&3)) << " "
+         << &*(f.first->vertex((f.second+3)&3));
       break;
     case 3:
       ch = s;
       os << &*(ch->vertex(0)) << " "
-	 << &*(ch->vertex(1)) << " "
-	 << &*(ch->vertex(2)) << " "
-	 << &*(ch->vertex(3));
+         << &*(ch->vertex(1)) << " "
+         << &*(ch->vertex(2)) << " "
+         << &*(ch->vertex(3));
       break;
   }
   return os;

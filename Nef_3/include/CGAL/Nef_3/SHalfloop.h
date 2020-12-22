@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Seel        <seel@mpi-sb.mpg.de>
 //                 Miguel Granados     <granados@mpi-sb.mpg.de>
@@ -30,7 +30,7 @@
 
 namespace CGAL {
 
-template <typename Refs> 
+template <typename Refs>
 class SHalfloop_base {
 
   typedef typename Refs::Mark  Mark;
@@ -52,7 +52,7 @@ class SHalfloop_base {
 
  public:
 
-  SHalfloop_base() : twin_(), incident_sface_(), facet_(), 
+  SHalfloop_base() : twin_(), incident_sface_(), facet_(),
     mark_(), circle_() {}
 
     ~SHalfloop_base() {
@@ -60,19 +60,19 @@ class SHalfloop_base {
     }
     SHalfloop_base(const SHalfloop_base<Refs>& l)
       { twin_ = l.twin_;
-	incident_sface_ = l.incident_sface_;
-	facet_ = l.facet_;
-	mark_ = l.mark_;
-	circle_ = l.circle_;
+        incident_sface_ = l.incident_sface_;
+        facet_ = l.facet_;
+        mark_ = l.mark_;
+        circle_ = l.circle_;
       }
 
     SHalfloop_base<Refs>& operator=(const SHalfloop_base<Refs>& l)
       { twin_ = l.twin_;
-	incident_sface_ = l.incident_sface_;
-	facet_ = l.facet_;
-	mark_ = l.mark_;
-	circle_ = l.circle_;
-	return *this;
+        incident_sface_ = l.incident_sface_;
+        facet_ = l.facet_;
+        mark_ = l.mark_;
+        circle_ = l.circle_;
+        return *this;
       }
 
     Mark& mark() { return mark_;}
@@ -92,30 +92,30 @@ class SHalfloop_base {
 
  public:
     std::string debug() const
-      { std::stringstream os; 
-	set_pretty_mode(os); 
-	os<<"sl [ "<<circle_<<" ] ";
-	return os.str();
+      { std::stringstream os;
+        set_pretty_mode(os);
+        os<<"sl [ "<<circle_<<" ] ";
+        return os.str();
       }
 
     bool is_twin() const { return (&*twin_ < this); }
 
     bool is_valid( bool verb = false, int level = 0) const {
-      
+
       Verbose_ostream verr(verb);
       verr << "begin CGAL::SNC_items<...>::SHalfloop_base::is_valid( verb=true, "
-	"level = " << level << "):" << std::endl;
+        "level = " << level << "):" << std::endl;
 
       bool valid = (twin_  != SHalfloop_handle() && twin_  != nullptr);
-      valid = valid && (incident_sface_ != SFace_handle() && 
-			incident_sface_ != nullptr);
+      valid = valid && (incident_sface_ != SFace_handle() &&
+                        incident_sface_ != nullptr);
       valid = valid && (facet_ != Halffacet_handle() &&
-			facet_ != nullptr);
+                        facet_ != nullptr);
       valid = valid && (circle_.d() == 0);
       valid = valid && (circle_.a() != 0 || circle_.b() != 0 || circle_.c() !=0);
-      
+
       verr << "end of CGAL::SNC_items<...>::SHalfloop_base::is_valid(): structure is "
-	   << ( valid ? "valid." : "NOT VALID.") << std::endl;
+           << ( valid ? "valid." : "NOT VALID.") << std::endl;
 
       return valid;
     }

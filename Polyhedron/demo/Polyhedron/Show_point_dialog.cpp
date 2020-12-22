@@ -10,10 +10,10 @@ Show_point_dialog::Show_point_dialog(QWidget* parent)
 {
   ui->setupUi(this);
 
-  QClipboard::Mode mode = QClipboard::Selection; 
+  QClipboard::Mode mode = QClipboard::Selection;
   while(true) {
     QString clipboard_text = QApplication::clipboard()->text(mode);
-    
+
     interprete_string(clipboard_text);
     if(m_has_correct_coordinates) {
       ui->lineEdit->setText(clipboard_text);
@@ -39,13 +39,13 @@ void Show_point_dialog::interprete_string(const QString& string)
 {
   QString double_re("([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?)");
   QString not_double_char_re("[^0-9-+.eE]");
-  QString full_re = QString("^") 
+  QString full_re = QString("^")
     + not_double_char_re + "*"
     + double_re
     + not_double_char_re + "+"
     + double_re
     + not_double_char_re + "+"
-    + double_re 
+    + double_re
     + "(" + not_double_char_re + "*"
     + "|" + not_double_char_re + "+" + double_re
     + ")"

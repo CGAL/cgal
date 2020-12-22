@@ -36,18 +36,18 @@ namespace CGAL {
     struct Is_from_point_from_adapter_traits{
       typedef boost::false_type type;
     };
-    
-    
+
+
     template <class K,class PM,class Base,class Point>
     struct Is_from_point_from_adapter_traits<Search_traits_adapter<K,PM,Base>,Point>{
       typedef typename boost::is_same<Point,typename Base::Point_d> type;
     };
   } //namespace internal
-  
+
   template <class SearchTraits>
   class Fuzzy_iso_box{
     SearchTraits traits;
-    
+
     public:
 
     typedef typename SearchTraits::Point_d Point_d;
@@ -61,8 +61,8 @@ namespace CGAL {
 
     private:
 
-    typename boost::remove_cv< 
-      typename boost::remove_reference< typename Construct_min_vertex_d::result_type >::type 
+    typename boost::remove_cv<
+      typename boost::remove_reference< typename Construct_min_vertex_d::result_type >::type
       >::type min, max;
     Cartesian_const_iterator_d min_begin, max_begin;
     FT eps;
@@ -85,7 +85,7 @@ namespace CGAL {
       min_begin = construct_it(min);
       max_begin = construct_it(max);
     }
-   
+
     public:
 
     // default constructor
@@ -98,7 +98,7 @@ namespace CGAL {
       CGAL_precondition(epsilon >= 0);
       construct<Point_d,typename SearchTraits::Construct_iso_box_d>(p,q);
     }
-        
+
   //additional constructor if SearchTraits = Search_traits_adapter
   template <class Point>
   Fuzzy_iso_box(const Point& p,const Point&q,FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits(),
@@ -122,10 +122,10 @@ namespace CGAL {
 
   template <typename Coord_iterator>
   bool contains_point_given_as_coordinates(Coord_iterator it_coord_begin, Coord_iterator /*unused*/) const {
-	  Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
-	  Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;
-		for (unsigned int i = 0; i < dim; ++i, ++it_coord_begin, ++minit, ++maxit) {
-			if ( ((*it_coord_begin) < (*minit)) || ((*it_coord_begin) > (*maxit)) )
+          Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+          Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;
+                for (unsigned int i = 0; i < dim; ++i, ++it_coord_begin, ++minit, ++maxit) {
+                        if ( ((*it_coord_begin) < (*minit)) || ((*it_coord_begin) > (*maxit)) )
         return false;
     }
     return true;

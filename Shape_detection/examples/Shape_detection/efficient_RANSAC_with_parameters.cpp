@@ -26,7 +26,7 @@ typedef CGAL::Shape_detection::Sphere<Traits>           Sphere;
 typedef CGAL::Shape_detection::Torus<Traits>            Torus;
 
 int main(int argc, char** argv) {
-  
+
   // Points with normals.
   Pwn_vector points;
 
@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).
       normal_map(Normal_map()))) {
-    
+
     std::cerr << "Error: cannot read file cube.pwn!" << std::endl;
     return EXIT_FAILURE;
   }
@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
 
   // Provide input data.
   ransac.set_input(points);
-    
+
   // Register shapes for detection.
   ransac.add_shape_factory<Plane>();
   ransac.add_shape_factory<Sphere>();
@@ -64,61 +64,61 @@ int main(int argc, char** argv) {
 
   // Set probability to miss the largest primitive at each iteration.
   parameters.probability = 0.05;
- 
-  // Detect shapes with at least 500 points.
+
+  // Detect shapes with at least 200 points.
   parameters.min_points = 200;
 
   // Set maximum Euclidean distance between a point and a shape.
   parameters.epsilon = 0.002;
- 
+
   // Set maximum Euclidean distance between points to be clustered.
   parameters.cluster_epsilon = 0.01;
- 
+
   // Set maximum normal deviation.
-  // 0.9 < dot(surface_normal, point_normal); 
-  parameters.normal_threshold = 0.9;   
-  
+  // 0.9 < dot(surface_normal, point_normal);
+  parameters.normal_threshold = 0.9;
+
   // Detect shapes.
   ransac.detect(parameters);
 
   // Print number of detected shapes and unassigned points.
-  std::cout << ransac.shapes().end() - ransac.shapes().begin() 
+  std::cout << ransac.shapes().end() - ransac.shapes().begin()
   << " detected shapes, "
   << ransac.number_of_unassigned_points()
   << " unassigned points." << std::endl;
-  
+
   // Efficient_ransac::shapes() provides
   // an iterator range to the detected shapes.
   Efficient_ransac::Shape_range shapes = ransac.shapes();
   Efficient_ransac::Shape_range::iterator it = shapes.begin();
 
   while (it != shapes.end()) {
-    
+
     // Get specific parameters depending on the detected shape.
     if (Plane* plane = dynamic_cast<Plane*>(it->get())) {
-      
+
       Kernel::Vector_3 normal = plane->plane_normal();
       std::cout << "Plane with normal " << normal << std::endl;
-        
+
       // Plane shape can also be converted to the Kernel::Plane_3.
-      std::cout << "Kernel::Plane_3: " << 
+      std::cout << "Kernel::Plane_3: " <<
       static_cast<Kernel::Plane_3>(*plane) << std::endl;
 
     } else if (Cylinder* cyl = dynamic_cast<Cylinder*>(it->get())) {
-      
+
       Kernel::Line_3 axis = cyl->axis();
       FT radius = cyl->radius();
-      
-      std::cout << "Cylinder with axis " 
+
+      std::cout << "Cylinder with axis "
       << axis << " and radius " << radius << std::endl;
 
     } else {
-        
+
       // Print the parameters of the detected shape.
       // This function is available for any type of shape.
       std::cout << (*it)->info() << std::endl;
     }
-    
+
     // Proceed with the next detected shape.
     it++;
   }

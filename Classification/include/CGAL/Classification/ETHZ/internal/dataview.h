@@ -21,7 +21,7 @@
 #include <vector>
 
 namespace CGAL { namespace internal {
-    
+
 namespace liblearning {
 //! \brief A view for one-dimensional data
 //
@@ -49,7 +49,7 @@ struct DataView1D {
         data(&vec[0]), step(1), num_elements(vec.size())
     {
     }
-    
+
     //! \brief Construct empty view
     DataView1D() : data(0), step(1), num_elements(0)
     {

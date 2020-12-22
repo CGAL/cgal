@@ -21,8 +21,8 @@ bool read(std::string s)
 {
   std::ifstream fs(s.c_str());
   std::vector<PointVectorPair> pv_pairs;
-  return CGAL::read_xyz_points(fs, 
-                               back_inserter(pv_pairs), 
+  return CGAL::read_xyz_points(fs,
+                               back_inserter(pv_pairs),
                                CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
                                normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
 }
@@ -34,8 +34,8 @@ bool read(std::string s,
 {
   std::ifstream fs(s.c_str());
 
-  return CGAL::read_xyz_points(fs, 
-                               back_inserter(pv_pairs), 
+  return CGAL::read_xyz_points(fs,
+                               back_inserter(pv_pairs),
                                CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
                                normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
 }
@@ -45,8 +45,8 @@ bool read_off(std::string s,
 {
   std::ifstream fs(s.c_str());
 
-  return CGAL::read_off_points(fs, 
-                               back_inserter(pv_pairs), 
+  return CGAL::read_off_points(fs,
+                               back_inserter(pv_pairs),
                                CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
                                normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
 }
@@ -56,8 +56,8 @@ bool read_ply (std::string s,
 {
   std::ifstream fs(s.c_str());
 
-  return CGAL::read_ply_points (fs, 
-                                back_inserter(pv_pairs), 
+  return CGAL::read_ply_points (fs,
+                                back_inserter(pv_pairs),
                                 CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
                                 normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
 }
@@ -79,7 +79,7 @@ int main()
   read("data/read_test/ok_2.xyz", pv_pairs);
   assert(pv_pairs.size() == 4);
   assert(pv_pairs[0] == std::make_pair(Point_3(2,3,4), Vector_3(4,4,2)));
-  assert(pv_pairs[1] == std::make_pair(Point_3(3,4,6), Vector_3(0,0,0))); 
+  assert(pv_pairs[1] == std::make_pair(Point_3(3,4,6), Vector_3(0,0,0)));
   assert(pv_pairs[2] == std::make_pair(Point_3(3,6,7), Vector_3(3,5,6)));
   assert(pv_pairs[3] == std::make_pair(Point_3(1,3,4), Vector_3(4,6,8)));
 
@@ -88,7 +88,7 @@ int main()
   assert(read_off("data/read_test/ok_1.off", pv_pairs));
   assert(pv_pairs.size() == 4);
   assert(pv_pairs[0] == std::make_pair(Point_3(3,2,0), Vector_3(1,2,3)));
-  assert(pv_pairs[1] == std::make_pair(Point_3(1,2,3), Vector_3(0,0,0))); 
+  assert(pv_pairs[1] == std::make_pair(Point_3(1,2,3), Vector_3(0,0,0)));
   assert(pv_pairs[2] == std::make_pair(Point_3(4,5,6), Vector_3(0,0,0)));
   assert(pv_pairs[3] == std::make_pair(Point_3(7,8,9), Vector_3(0,0,0)));
 
@@ -109,6 +109,6 @@ int main()
   assert(pv_pairs[0] == std::make_pair(Point_3(1,1,1), Vector_3(2,2,2)));
   assert(pv_pairs[1] == std::make_pair(Point_3(3,3,3), Vector_3(4,4,4)));
   assert(pv_pairs[2] == std::make_pair(Point_3(5,5,5), Vector_3(6,6,6)));
-  
+
   return 0;
-}  
+}

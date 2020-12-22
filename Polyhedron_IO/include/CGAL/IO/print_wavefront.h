@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
@@ -36,7 +36,7 @@ template < class Traits,
            template < class T, class I, class A>
            class HDS, class Alloc>
 void
-print_wavefront( std::ostream& out, 
+print_wavefront( std::ostream& out,
                  const Polyhedron_3<Traits,Items,HDS,Alloc>& P) {
     File_writer_wavefront  writer;
     generic_print_polyhedron( out, P, writer);

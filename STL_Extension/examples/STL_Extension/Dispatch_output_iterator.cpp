@@ -9,11 +9,11 @@ int main()
   std::vector<double> b;
   std::vector<char> c;
 
-  typedef CGAL::Dispatch_output_iterator< 
+  typedef CGAL::Dispatch_output_iterator<
     std::tuple<int, double, char>,
     std::tuple<std::back_insert_iterator< std::vector<int> >,
                std::back_insert_iterator< std::vector<double> >,
-               std::back_insert_iterator< std::vector<char> > 
+               std::back_insert_iterator< std::vector<char> >
                > > Dispatch;
 
   Dispatch disp = CGAL::dispatch_output<int, double, char>(
@@ -25,11 +25,11 @@ int main()
   var va = 23; var vb = 4.2; var vc = 'x';
 
   // goes to a
-  *disp++ = va; 
+  *disp++ = va;
   // goes to b
-  *disp++ = vb; 
+  *disp++ = vb;
   // goes to c
-  *disp++ = vc; 
+  *disp++ = vc;
   // goes to a
   *disp++ = 42;
 

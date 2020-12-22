@@ -7,7 +7,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -33,7 +33,7 @@ class CGAL_QT_EXPORT GraphicsViewInput  : public QObject
   Q_OBJECT
 
 public:
-  GraphicsViewInput(QObject* parent) 
+  GraphicsViewInput(QObject* parent)
     : QObject(parent)
   {}
 

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -39,14 +39,14 @@ public:
 
 private:
   Uncertain<bool> is_hidden(const Site_2& p, const Site_2& q,
-			    const Integral_domain_without_division_tag&) const
+                            const Integral_domain_without_division_tag&) const
   {
     RT w1 = p.weight();
     RT w2 = q.weight();
     Uncertain<Sign> s = CGAL::sign( CGAL::square(p.x() - q.x())
-				    + CGAL::square(p.y() - q.y())
-				    - CGAL::square(w1 - w2)
-				    );
+                                    + CGAL::square(p.y() - q.y())
+                                    - CGAL::square(w1 - w2)
+                                    );
     if ( is_indeterminate(s) ) {
       return Uncertain<bool>::indeterminate();
     }
@@ -60,11 +60,11 @@ private:
   }
 
   Uncertain<bool> is_hidden(const Site_2& p, const Site_2& q,
-			    const Field_with_sqrt_tag&) const
+                            const Field_with_sqrt_tag&) const
   {
     RT d = CGAL::sqrt(CGAL::square(p.x() - q.x())
-		      + CGAL::square(p.y() - q.y()));
-    
+                      + CGAL::square(p.y() - q.y()));
+
     Uncertain<Sign> s = CGAL::sign(d - p.weight() + q.weight());
     if ( is_indeterminate(s) ) {
       return Uncertain<bool>::indeterminate();

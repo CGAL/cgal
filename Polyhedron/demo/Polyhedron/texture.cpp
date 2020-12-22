@@ -223,10 +223,10 @@ int Texture::Extract(int left, int top, int right, int bottom)
   // Check
   if(left >= right || top >= bottom)
     return 0;
-  if(left < 0  || left >= (int)m_Width || 
+  if(left < 0  || left >= (int)m_Width ||
     right < 0 || right >= (int)m_Width)
     return 0;
-  if(top < 0  || top >= (int)m_Height || 
+  if(top < 0  || top >= (int)m_Height ||
     bottom < 0 || bottom >= (int)m_Height)
     return 0;
 
@@ -251,7 +251,7 @@ int Texture::Extract(int left, int top, int right, int bottom)
   for(j=0;j<NewHeight;j++)
     for(i=0;i<NewWidth;i++)
       for(k=0;k<BytePerPixel;k++)
-	pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(m_Height-1-(j+top))+(i+left)*BytePerPixel+k];
+        pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(m_Height-1-(j+top))+(i+left)*BytePerPixel+k];
 
   // Replace datas
   delete [] m_pData;
@@ -304,25 +304,25 @@ int Texture::DuplicateMirror(int left, int top, int right, int bottom)
   for(j=0;j<NewHeight/2;j++)
     for(i=0;i<NewWidth/2;i++)
       for(k=0;k<BytePerPixel;k++)
-	pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(bottom-(j+top))+(i+left)*BytePerPixel+k];
+        pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(bottom-(j+top))+(i+left)*BytePerPixel+k];
   // o o
   // o x
   for(j=0;j<NewHeight/2;j++)
     for(i=NewWidth/2;i<NewWidth;i++)
       for(k=0;k<BytePerPixel;k++)
-	pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(bottom-(j+top))+(right-(i-NewWidth/2+left))*BytePerPixel+k];
+        pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(bottom-(j+top))+(right-(i-NewWidth/2+left))*BytePerPixel+k];
   // x o
   // o o
   for(j=NewHeight/2;j<NewHeight;j++)
     for(i=0;i<NewWidth/2;i++)
       for(k=0;k<BytePerPixel;k++)
-	pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(j-NewHeight/2+top)+(i+left)*BytePerPixel+k];
+        pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(j-NewHeight/2+top)+(i+left)*BytePerPixel+k];
   // o x
   // o o
   for(j=NewHeight/2;j<NewHeight;j++)
     for(i=NewWidth/2;i<NewWidth;i++)
       for(k=0;k<BytePerPixel;k++)
-	pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(j-NewHeight/2+top)+(right-(i-NewWidth/2+left))*BytePerPixel+k];
+        pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(j-NewHeight/2+top)+(right-(i-NewWidth/2+left))*BytePerPixel+k];
 
   // Replace datas
   delete [] m_pData;
@@ -375,12 +375,12 @@ int Texture::DuplicateRepeatWidth(int left, int top, int right, int bottom)
   for(j=0;j<NewHeight;j++)
     for(i=0;i<NewWidth/2;i++)
       for(k=0;k<BytePerPixel;k++)
-	pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(bottom-(j+top))+(i+left)*BytePerPixel+k];
+        pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(bottom-(j+top))+(i+left)*BytePerPixel+k];
   // o x
   for(j=0;j<NewHeight;j++)
     for(i=NewWidth/2;i<NewWidth;i++)
       for(k=0;k<BytePerPixel;k++)
-	pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(bottom-(j+top))+(i-NewWidth/2+left)*BytePerPixel+k];
+        pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(bottom-(j+top))+(i-NewWidth/2+left)*BytePerPixel+k];
 
   // Replace datas
   delete [] m_pData;
@@ -399,8 +399,8 @@ int Texture::DuplicateRepeatWidth(int left, int top, int right, int bottom)
 // Fill
 //********************************************
 void Texture::Fill(unsigned char r,
-		   unsigned char g,
-		   unsigned char b)
+                   unsigned char g,
+                   unsigned char b)
 {
   if(!IsValid()) return;
   if(m_Depth != 24) return;
@@ -418,9 +418,9 @@ void Texture::Fill(unsigned char r,
 // GreyToColor
 //***************************************
 void Texture::GreyToColor(unsigned char grey,
-			  unsigned char r, 
-			  unsigned char g,
-			  unsigned char b)
+                          unsigned char r,
+                          unsigned char g,
+                          unsigned char b)
 {
   if(!IsValid()) return;
   if(m_Depth != 24) return;
@@ -429,9 +429,9 @@ void Texture::GreyToColor(unsigned char grey,
     {
       if(m_pData[m_WidthByte32*j+i*3] == grey)
       {
-	m_pData[m_WidthByte32*j+i*3] = b;
-	m_pData[m_WidthByte32*j+i*3+1] = g;
-	m_pData[m_WidthByte32*j+i*3+2] = r;
+        m_pData[m_WidthByte32*j+i*3] = b;
+        m_pData[m_WidthByte32*j+i*3+1] = g;
+        m_pData[m_WidthByte32*j+i*3+2] = r;
       }
     }
 }
@@ -440,11 +440,11 @@ void Texture::GreyToColor(unsigned char grey,
 // ColorToColor
 //***************************************
 void Texture::ColorToColor(unsigned char r1,
-			   unsigned char g1,
-			   unsigned char b1,
-			   unsigned char r2, 
-			   unsigned char g2,
-			   unsigned char b2)
+                           unsigned char g1,
+                           unsigned char b1,
+                           unsigned char r2,
+                           unsigned char g2,
+                           unsigned char b2)
 {
   if(!IsValid()) return;
   if(m_Depth != 24) return;
@@ -452,12 +452,12 @@ void Texture::ColorToColor(unsigned char r1,
     for(unsigned int i=0;i<m_Width;i++)
     {
       if(m_pData[m_WidthByte32*j+i*3] == b1 &&
-	m_pData[m_WidthByte32*j+i*3+1] == g1 &&
-	m_pData[m_WidthByte32*j+i*3+2] == r1)
+        m_pData[m_WidthByte32*j+i*3+1] == g1 &&
+        m_pData[m_WidthByte32*j+i*3+2] == r1)
       {
-	m_pData[m_WidthByte32*j+i*3]   = b2;
-	m_pData[m_WidthByte32*j+i*3+1] = g2;
-	m_pData[m_WidthByte32*j+i*3+2] = r2;
+        m_pData[m_WidthByte32*j+i*3]   = b2;
+        m_pData[m_WidthByte32*j+i*3+1] = g2;
+        m_pData[m_WidthByte32*j+i*3+2] = r2;
       }
     }
 }
@@ -480,7 +480,7 @@ int Texture::SetAlphaLayer(unsigned char alpha) // 0 - 255
   if(m_Depth != 32)
     return 0;
 
-  // Fill alpha layer 
+  // Fill alpha layer
   int size = m_Width * m_Height;
   for(int i=0;i<4*size;i+=4)
     m_pData[i+3] = alpha;
@@ -535,7 +535,7 @@ int Texture::AddAlphaLayer(unsigned char alpha) // 0 - 255
 // SetAlpha
 // From RGB to grey scales, then alpha layer
 //********************************************
-int Texture::SetAlphaLayer(Texture *pTexture) 
+int Texture::SetAlphaLayer(Texture *pTexture)
 {
   // Check
   if(!IsValid())
@@ -571,10 +571,10 @@ int Texture::SetAlphaLayer(Texture *pTexture)
 //********************************************
 // ReadBuffer
 //********************************************
-int Texture::ReadBuffer(unsigned char *buffer, 
-			int width, 
-			int height, 
-			int depth)
+int Texture::ReadBuffer(unsigned char *buffer,
+                        int width,
+                        int height,
+                        int depth)
 {
   if(buffer == NULL)
     return 0;
@@ -587,8 +587,8 @@ int Texture::ReadBuffer(unsigned char *buffer,
   for(int j=0;j<height;j++)
     for(int i=0;i<width;i++)
       for(int k=0;k<BytePerPixel;k++)
-	m_pData[m_WidthByte32*j + i*BytePerPixel+k] = 
-	buffer[(width*j+i)*BytePerPixel+k];
+        m_pData[m_WidthByte32*j + i*BytePerPixel+k] =
+        buffer[(width*j+i)*BytePerPixel+k];
 
   return 1;
 }
@@ -597,9 +597,9 @@ int Texture::ReadBuffer(unsigned char *buffer,
 //********************************************
 // ReadBufferByte32
 //********************************************
-int Texture::ReadBufferByte32(unsigned char *pData, 
-			      int width, 
-			      int height)
+int Texture::ReadBufferByte32(unsigned char *pData,
+                              int width,
+                              int height)
 {
   // alloc 32 bits buffer
   if(!Alloc(width,height,32))
@@ -633,18 +633,18 @@ void Texture::Copy(Texture *pTexture)
   for(unsigned int j=0;j<height;j++)
     for(unsigned int i=0;i<width;i++)
       for(unsigned int k=0;k<BytePerPixel;k++)
-	m_pData[m_WidthByte32*j + i*BytePerPixel+k] = 
-	pBuffer[(width*j+i)*BytePerPixel+k];
+        m_pData[m_WidthByte32*j + i*BytePerPixel+k] =
+        pBuffer[(width*j+i)*BytePerPixel+k];
 }
 
 
 //********************************************
 // ReadBuffer
 //********************************************
-int Texture::ReadBuffer(float *buffer, 
-			int width, 
-			int height, 
-			int depth)
+int Texture::ReadBuffer(float *buffer,
+                        int width,
+                        int height,
+                        int depth)
 {
   if(buffer == NULL)
     return 0;
@@ -657,8 +657,8 @@ int Texture::ReadBuffer(float *buffer,
   for(int j=0;j<height;j++)
     for(int i=0;i<width;i++)
       for(int k=0;k<BytePerPixel;k++)
-	m_pData[m_WidthByte32*j + i*BytePerPixel+k] = 
-	(unsigned char)(255.0f * buffer[(width*j+i)*BytePerPixel+k]);
+        m_pData[m_WidthByte32*j + i*BytePerPixel+k] =
+        (unsigned char)(255.0f * buffer[(width*j+i)*BytePerPixel+k]);
 
   return 1;
 }
@@ -666,10 +666,10 @@ int Texture::ReadBuffer(float *buffer,
 //********************************************
 // ReadBuffer
 //********************************************
-int Texture::ReadBuffer(float **ppBuffer, 
-			int width, 
-			int height,
-			float ratio)
+int Texture::ReadBuffer(float **ppBuffer,
+                        int width,
+                        int height,
+                        float ratio)
 {
   if(ppBuffer == NULL)
     return 0;
@@ -690,9 +690,9 @@ int Texture::ReadBuffer(float **ppBuffer,
 //********************************************
 // WriteBuffer
 //********************************************
-int Texture::WriteBuffer(float **ppBuffer, 
-			 int width, 
-			 int height)
+int Texture::WriteBuffer(float **ppBuffer,
+                         int width,
+                         int height)
 {
   if(ppBuffer == NULL)
     return 0;
@@ -706,9 +706,9 @@ int Texture::WriteBuffer(float **ppBuffer,
 //********************************************
 // WriteBuffer32
 //********************************************
-int Texture::WriteBuffer32(float **ppBuffer, 
-			   int width, 
-			   int height)
+int Texture::WriteBuffer32(float **ppBuffer,
+                           int width,
+                           int height)
 {
   if(ppBuffer == NULL)
     return 0;
@@ -733,10 +733,10 @@ int Texture::WriteBuffer32(float **ppBuffer,
 //********************************************
 // ReadBuffer
 //********************************************
-int Texture::ReadBuffer(double *buffer, 
-			int width, 
-			int height, 
-			int depth)
+int Texture::ReadBuffer(double *buffer,
+                        int width,
+                        int height,
+                        int depth)
 {
   if(buffer == NULL)
     return 0;
@@ -766,9 +766,9 @@ int Texture::Grey(unsigned int x, unsigned int y)
   int BytePerPixel = m_Depth / 8;
   // Grey scale
   if(BytePerPixel == 1)
-    return (int)m_pData[m_WidthByte32*y + x]; 
+    return (int)m_pData[m_WidthByte32*y + x];
   else // 24 or 32 bits (alpha layer)
-    return (int)((int)m_pData[m_WidthByte32*y + x*BytePerPixel+0]+ 
+    return (int)((int)m_pData[m_WidthByte32*y + x*BytePerPixel+0]+
     (int)m_pData[m_WidthByte32*y + x*BytePerPixel+1]+
     (int)m_pData[m_WidthByte32*y + x*BytePerPixel+2])/3;
 }
@@ -776,22 +776,22 @@ int Texture::Grey(unsigned int x, unsigned int y)
 //********************************************
 // Color
 //********************************************
-void Texture::Color(unsigned int x, unsigned int y, 
-		    unsigned char *pRed, unsigned char *pGreen, unsigned char *pBlue)
+void Texture::Color(unsigned int x, unsigned int y,
+                    unsigned char *pRed, unsigned char *pGreen, unsigned char *pBlue)
 {
   int BytePerPixel = m_Depth / 8;
   // Grey scale
   if(BytePerPixel == 1)
   {
-    *pRed = m_pData[m_WidthByte32*y + x]; 
-    *pGreen = m_pData[m_WidthByte32*y + x]; 
-    *pBlue = m_pData[m_WidthByte32*y + x]; 
+    *pRed = m_pData[m_WidthByte32*y + x];
+    *pGreen = m_pData[m_WidthByte32*y + x];
+    *pBlue = m_pData[m_WidthByte32*y + x];
   }
   else // 24 or 32 bits (alpha layer)
   {
-    *pRed = m_pData[m_WidthByte32*y + x*BytePerPixel]; 
-    *pGreen = m_pData[m_WidthByte32*y + x*BytePerPixel+1]; 
-    *pBlue = m_pData[m_WidthByte32*y + x*BytePerPixel+2]; 
+    *pRed = m_pData[m_WidthByte32*y + x*BytePerPixel];
+    *pGreen = m_pData[m_WidthByte32*y + x*BytePerPixel+1];
+    *pBlue = m_pData[m_WidthByte32*y + x*BytePerPixel+2];
   }
 }
 
@@ -800,13 +800,13 @@ void Texture::Color(unsigned int x, unsigned int y,
 
 
 void Texture::GenerateMirrorV(unsigned int width,
-			      unsigned int height, 
-			      unsigned char r,
-			      unsigned char g,
-			      unsigned char b,
-			      unsigned char rb,
-			      unsigned char gb,
-			      unsigned char bb)
+                              unsigned int height,
+                              unsigned char r,
+                              unsigned char g,
+                              unsigned char b,
+                              unsigned char rb,
+                              unsigned char gb,
+                              unsigned char bb)
 {
   Alloc(width,height,24);
 
@@ -834,13 +834,13 @@ void Texture::GenerateMirrorV(unsigned int width,
 }
 
 void Texture::GenerateMirrorH(unsigned int width,
-			      unsigned int height, 
-			      unsigned char r,
-			      unsigned char g,
-			      unsigned char b,
-			      unsigned char rb,
-			      unsigned char gb,
-			      unsigned char bb)
+                              unsigned int height,
+                              unsigned char r,
+                              unsigned char g,
+                              unsigned char b,
+                              unsigned char rb,
+                              unsigned char gb,
+                              unsigned char bb)
 {
   Alloc(width,height,24);
 
@@ -869,14 +869,14 @@ void Texture::GenerateMirrorH(unsigned int width,
 
 
 void Texture::GenerateCheckerBoard(unsigned int width,
-				   unsigned int height, 
-				   int size,
-				   unsigned char r,
-				   unsigned char g,
-				   unsigned char b,
-				   unsigned char rb,
-				   unsigned char gb,
-				   unsigned char bb)
+                                   unsigned int height,
+                                   int size,
+                                   unsigned char r,
+                                   unsigned char g,
+                                   unsigned char b,
+                                   unsigned char rb,
+                                   unsigned char gb,
+                                   unsigned char bb)
 {
   Alloc(width,height,24);
 
@@ -887,30 +887,30 @@ void Texture::GenerateCheckerBoard(unsigned int width,
       int v = (int)((double)j/(double)size);
       bool h_odd = (h%2) == 0;
       bool v_odd = (v%2) == 0;
-      if((h_odd	+ v_odd)%2 == 0)
+      if((h_odd        + v_odd)%2 == 0)
       {
-	m_pData[m_WidthByte32*j + i*3]   = rb;
-	m_pData[m_WidthByte32*j + i*3+1] = gb;
-	m_pData[m_WidthByte32*j + i*3+2] = bb;
+        m_pData[m_WidthByte32*j + i*3]   = rb;
+        m_pData[m_WidthByte32*j + i*3+1] = gb;
+        m_pData[m_WidthByte32*j + i*3+2] = bb;
       }
       else
       {
-	m_pData[m_WidthByte32*j + i*3]   = r;
-	m_pData[m_WidthByte32*j + i*3+1] = g;
-	m_pData[m_WidthByte32*j + i*3+2] = b;
+        m_pData[m_WidthByte32*j + i*3]   = r;
+        m_pData[m_WidthByte32*j + i*3+1] = g;
+        m_pData[m_WidthByte32*j + i*3+2] = b;
       }
     }
 }
 
 void Texture::GenerateVStripes(unsigned int width,
-			       unsigned int height, 
-			       int size,
-			       unsigned char r,
-			       unsigned char g,
-			       unsigned char b,
-			       unsigned char rb,
-			       unsigned char gb,
-			       unsigned char bb)
+                               unsigned int height,
+                               int size,
+                               unsigned char r,
+                               unsigned char g,
+                               unsigned char b,
+                               unsigned char rb,
+                               unsigned char gb,
+                               unsigned char bb)
 {
   Alloc(width,height,24);
 
@@ -921,28 +921,28 @@ void Texture::GenerateVStripes(unsigned int width,
       bool h_odd = (h%2) == 0;
       if(h_odd)
       {
-	m_pData[m_WidthByte32*j + i*3]   = rb;
-	m_pData[m_WidthByte32*j + i*3+1] = gb;
-	m_pData[m_WidthByte32*j + i*3+2] = bb;
+        m_pData[m_WidthByte32*j + i*3]   = rb;
+        m_pData[m_WidthByte32*j + i*3+1] = gb;
+        m_pData[m_WidthByte32*j + i*3+2] = bb;
       }
       else
       {
-	m_pData[m_WidthByte32*j + i*3]   = r;
-	m_pData[m_WidthByte32*j + i*3+1] = g;
-	m_pData[m_WidthByte32*j + i*3+2] = b;
+        m_pData[m_WidthByte32*j + i*3]   = r;
+        m_pData[m_WidthByte32*j + i*3+1] = g;
+        m_pData[m_WidthByte32*j + i*3+2] = b;
       }
     }
 }
 
 void Texture::GenerateHStripes(unsigned int width,
-			       unsigned int height, 
-			       int size,
-			       unsigned char r,
-			       unsigned char g,
-			       unsigned char b,
-			       unsigned char rb,
-			       unsigned char gb,
-			       unsigned char bb)
+                               unsigned int height,
+                               int size,
+                               unsigned char r,
+                               unsigned char g,
+                               unsigned char b,
+                               unsigned char rb,
+                               unsigned char gb,
+                               unsigned char bb)
 {
   Alloc(width,height,24);
 
@@ -953,15 +953,15 @@ void Texture::GenerateHStripes(unsigned int width,
       bool v_odd = (v%2) == 0;
       if(v_odd)
       {
-	m_pData[m_WidthByte32*j + i*3]   = rb;
-	m_pData[m_WidthByte32*j + i*3+1] = gb;
-	m_pData[m_WidthByte32*j + i*3+2] = bb;
+        m_pData[m_WidthByte32*j + i*3]   = rb;
+        m_pData[m_WidthByte32*j + i*3+1] = gb;
+        m_pData[m_WidthByte32*j + i*3+2] = bb;
       }
       else
       {
-	m_pData[m_WidthByte32*j + i*3]   = r;
-	m_pData[m_WidthByte32*j + i*3+1] = g;
-	m_pData[m_WidthByte32*j + i*3+2] = b;
+        m_pData[m_WidthByte32*j + i*3]   = r;
+        m_pData[m_WidthByte32*j + i*3+1] = g;
+        m_pData[m_WidthByte32*j + i*3+2] = b;
       }
     }
 }
@@ -971,15 +971,15 @@ void Texture::GenerateHStripes(unsigned int width,
 // GenerateGrid
 //***************************************
 void Texture::GenerateGrid(unsigned int width,
-			   unsigned int height, 
-			   int /*size*/,
-			   unsigned int thickness,
-			   unsigned char r,
-			   unsigned char g,
-			   unsigned char b,
-			   unsigned char rb,
-			   unsigned char gb,
-			   unsigned char bb)
+                           unsigned int height,
+                           int /*size*/,
+                           unsigned int thickness,
+                           unsigned char r,
+                           unsigned char g,
+                           unsigned char b,
+                           unsigned char rb,
+                           unsigned char gb,
+                           unsigned char bb)
 {
   Alloc(width,height,24);
 
@@ -1015,8 +1015,8 @@ void Texture::GenerateGrid(unsigned int width,
 }
 
 void Texture::GenerateGradientH(unsigned int width,
-				unsigned int height,
-				int /*size*/)
+                                unsigned int height,
+                                int /*size*/)
 {
   Alloc(width,height,24);
 
@@ -1033,8 +1033,8 @@ void Texture::GenerateGradientH(unsigned int width,
   }
 }
 void Texture::GenerateGradientV(unsigned int width,
-				unsigned int height,
-				int /*size*/)
+                                unsigned int height,
+                                int /*size*/)
 {
   Alloc(width,height,24);
 
@@ -1055,14 +1055,14 @@ void Texture::GenerateGradientV(unsigned int width,
 // GenerateLines
 //***************************************
 void Texture::GenerateLines(unsigned int width,
-			    unsigned int height, 
-			    int size,
-			    unsigned char r,
-			    unsigned char g,
-			    unsigned char b,
-			    unsigned char rb,
-			    unsigned char gb,
-			    unsigned char bb)
+                            unsigned int height,
+                            int size,
+                            unsigned char r,
+                            unsigned char g,
+                            unsigned char b,
+                            unsigned char rb,
+                            unsigned char gb,
+                            unsigned char bb)
 {
   Alloc(width,height,24);
 

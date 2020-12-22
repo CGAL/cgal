@@ -5,11 +5,11 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_kth_root.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_root_of.h>
 #endif
-#include <CGAL/use.h> 
+#include <CGAL/use.h>
 
 int main(){
 
-  typedef CGAL::Exact_predicates_exact_constructions_kernel               EPEK; 
+  typedef CGAL::Exact_predicates_exact_constructions_kernel               EPEK;
   CGAL_USE_TYPE(EPEK);
 
 #if defined(CGAL_USE_CORE) || defined(CGAL_USE_LEDA)

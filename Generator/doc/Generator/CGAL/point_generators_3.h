@@ -164,7 +164,7 @@ get_default_random());
 } /* end namespace CGAL */
 
 namespace CGAL {
-	
+
 /*!
 
 The class `Random_points_in_triangle_3` is an input iterator creating points uniformly
@@ -182,7 +182,7 @@ distributed inside a 3D triangle. The default `Creator` is
 template< typename Point_3, typename Creator >
 class Random_points_in_triangle_3 {
 public:
-	
+
 /// \name Types
 /// @{
 
@@ -304,7 +304,7 @@ Random& rnd = get_default_random());
 } /* end namespace CGAL */
 
 namespace CGAL {
-	
+
 /*!
 
 The class `Random_points_in_tetrahedron_3` is an input iterator creating points uniformly
@@ -322,7 +322,7 @@ distributed inside a tetrahedron. The default `Creator` is
 template< typename Point_3, typename Creator >
 class Random_points_in_tetrahedron_3 {
 public:
-	
+
 /// \name Types
 /// @{
 
@@ -376,7 +376,7 @@ get_default_random());
 /// @}
 
 }; /* end Random_points_in_tetrahedron_3 */
-	
+
 } /* end namespace CGAL */
 
 namespace CGAL {

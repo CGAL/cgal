@@ -5,7 +5,7 @@
 
 /// \defgroup PkgMesh2Functions Mesh Generation Functions
 /// \ingroup PkgMesh2Ref
-/// The main function to generate a mesh is `refine_Delaunay_mesh_2()`. 
+/// The main function to generate a mesh is `refine_Delaunay_mesh_2()`.
 /// The function `lloyd_optimize_mesh_2()` allows to optimize an existing mesh.
 
 /// \defgroup PkgMesh2Enum Enumerations
@@ -22,7 +22,7 @@
 \cgalPkgPicture{Mesh_2/fig/delaunaymesh-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Laurent Rineau}
-\cgalPkgDesc{This package implements a Delaunay refinement algorithm to construct conforming triangulations and 2D meshes. 
+\cgalPkgDesc{This package implements a Delaunay refinement algorithm to construct conforming triangulations and 2D meshes.
 Conforming Delaunay triangulations are obtained from constrained Delaunay triangulations by refining constrained edges until they are Delaunay edges.
 Conforming Gabriel triangulations  are obtained by further refining constrained edges until they become Gabriel edges.
 The package provides also a 2D mesh generator that refines triangles and constrained edges until user defined size and shape criteria on triangles are satisfied.

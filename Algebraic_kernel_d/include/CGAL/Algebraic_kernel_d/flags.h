@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
 //
@@ -17,10 +17,10 @@
 #ifndef CGAL_ACK_FLAGS_H
 #define CGAL_ACK_FLAGS_H 1
 
-// TODO: use new interface and remove this flag 
-#ifndef CGAL_AK_ENABLE_DEPRECATED_INTERFACE 
+// TODO: use new interface and remove this flag
+#ifndef CGAL_AK_ENABLE_DEPRECATED_INTERFACE
 #define CGAL_AK_ENABLE_DEPRECATED_INTERFACE 0
-#endif 
+#endif
 
 // Is debug-information printed?
 #ifndef CGAL_ACK_DEBUG_FLAG
@@ -50,7 +50,7 @@
 #endif
 
 /**
- * For random choices in the algorithm, this seed is used 
+ * For random choices in the algorithm, this seed is used
  * If set to zero, a random seed is used
  */
 #ifndef CGAL_ACK_STATIC_SEED
@@ -66,7 +66,7 @@
 
 
 /**
- * If set, the program uses the AlciX-code 
+ * If set, the program uses the AlciX-code
  * for the curve- and curve-pair-analysis.
  * This flag is only for debugging purposes.
  */
@@ -90,7 +90,7 @@
  * compuation time
  *
  * WARNING: Currently, the status line does not store the additional
- * information whether a point is singluar or not. 
+ * information whether a point is singluar or not.
  * Therefore, there is currently no reasons to set this flag. It is still
  * contained for possible further extension of the status line.
  */
@@ -110,7 +110,7 @@
  * The "resultant first" strategy means: instead of computing the full
  * subresultant sequence (or Sturm-Habicht sequence), the algorithm
  * only computed the resultant in a first step. This suffices already for
- * many curves (i.e., regular ones). The full subresultant is computed 
+ * many curves (i.e., regular ones). The full subresultant is computed
  * if it is needed for the first time.
  *
  * This strategy only makes sense if computing resultants is faster than
@@ -147,7 +147,7 @@
 /**
  * Allows to switch off the specialized method for Status_line_CPA_1
  * if multiplicity is zero or one.
- * Since this methods improves the performance, 
+ * Since this methods improves the performance,
  * it is not recommended to set this flag unless for testing
  */
 #ifndef ACK_CGAL_NO_ARC_FLIP
@@ -160,7 +160,7 @@
  * SHEAR_STRATEGY performs a shear whenever a degenerate situation occurs.
  * SHEAR_ONLY_AT_IRRATIONAL_STRATEGY handles rational coordinates with
  * a more direct method, but performs a shear for irrational x-coordinates
- * that have a degeneracy. Finally, EXCEPTION_STRATEGY throws an exception 
+ * that have a degeneracy. Finally, EXCEPTION_STRATEGY throws an exception
  * whenever a degeneracy occurs.
  */
 #ifndef CGAL_ACK_DEFAULT_DEGENERACY_STRATEGY
@@ -182,7 +182,7 @@
  * At some points in the algorithm, it is checked whether a polynomial
  * H(x):=h(p(x),q(x)) vanishes for an algebraic number x_0 with polynomial r.
  * For that check, the computation of H is done modulo r for efficiency.
- * This can be switched off by this flag, though it is recommended not to 
+ * This can be switched off by this flag, though it is recommended not to
  * do so.
  */
 #ifndef CGAL_ACK_USE_NO_REDUCTION_MODULO_RESULTANT

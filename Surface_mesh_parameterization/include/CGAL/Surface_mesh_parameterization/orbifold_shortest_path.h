@@ -103,7 +103,7 @@ public:
 
 /// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
-/// Compute the shortest path between `source` and `target` over `mesh`, using
+/// computes the shortest path between `source` and `target` over `mesh`, using
 /// <a href="https://www.boost.org/doc/libs/release/libs/graph/doc/dijkstra_shortest_paths.html">
 /// boost::dijkstra_shortest_paths()</a>.
 ///

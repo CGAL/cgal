@@ -25,7 +25,7 @@ void read_mesh(const char* fname,
   std::ifstream input(fname);
   if (!input || !(input >> mesh) || mesh.is_empty())
   {
-    std::cerr << fname << " is not a valid off file.\n";
+    std::cerr << fname << " is not a valid off file." << std::endl;
     std::exit(1);
   }
 }

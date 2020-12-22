@@ -33,21 +33,21 @@ typedef CGAL::Shape_detection_3::Plane<Traits>               Plane;
 // Please update your code to the new version using other examples!
 template<typename ShapeDetection>
 int run(const char* filename) {
-  
+
   // Points with normals.
   Pwn_vector points;
 
-  // Load a point set from a file. 
+  // Load a point set from a file.
   // read_xyz_points_and_normals takes an OutputIterator for storing the points
   // and a property map to store the normal vector with each point.
   std::ifstream stream(filename);
 
-  if (!stream || 
+  if (!stream ||
     !CGAL::read_xyz_points(stream,
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).
       normal_map(Normal_map()))) {
-      
+
     std::cout << "Error: cannot read the file cube.pwn" << std::endl;
     return EXIT_FAILURE;
   }
@@ -65,14 +65,14 @@ int run(const char* filename) {
   shape_detection.detect();
 
   // Print number of detected shapes.
-  std::cout << shape_detection.shapes().end() - shape_detection.shapes().begin() 
+  std::cout << shape_detection.shapes().end() - shape_detection.shapes().begin()
   << " shapes detected." << std::endl;
 
   return EXIT_SUCCESS;
 }
 
 int main (int argc, char** argv) {
-  
+
   if (argc > 1 && std::string(argv[1]) == "-r") {
     std::cout << "Efficient RANSAC" << std::endl;
     return run<Efficient_ransac> ((argc > 2) ? argv[2] : "data/cube.pwn");

@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
   boost::unordered_map<vertex_descriptor, double> vertex_distance;
 
   vertex_descriptor source = *(vertices(tm).first);
-  
+
   CGAL::Heat_method_3::estimate_geodesic_distances(tm,
                                                    boost::make_assoc_property_map(vertex_distance),
                                                    source) ;

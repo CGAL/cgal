@@ -51,9 +51,9 @@ int main(int argc, char* argv[])
   double kidney_size = 3.;
   int volume_dimension = 3;
   Sizing_field size(8);
-  size.set_size(kidney_size, volume_dimension, 
+  size.set_size(kidney_size, volume_dimension,
                 domain.index_from_subdomain_index(127));
-  
+
   // Mesh criteria
   Mesh_criteria criteria(facet_angle=30, facet_size=6, facet_distance=2,
                          cell_radius_edge_ratio=3, cell_size=size);

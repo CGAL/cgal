@@ -52,26 +52,26 @@ and can compute the compute the
 intersections point if any. The oracle is represented by a traits class
 which can be passed to the meshing function
 or automatically generated for certain types of surfaces.
-The current implementation provides 
-traits classes 
-to mesh implicit surfaces as well as  surfaces described 
+The current implementation provides
+traits classes
+to mesh implicit surfaces as well as  surfaces described
 as a gray level in a three
 dimensional image.
 
-The output mesh conforms to some size and shape criteria 
+The output mesh conforms to some size and shape criteria
 which are customizable. The criteria are passed to the mesher
-through a parameter 
+through a parameter
 whose type is a model of the
 concept `SurfaceMeshFacetsCriteria_3`.
 
 The meshing algorithm is a Delaunay refinement process
-which is mainly guided by the criteria. 
+which is mainly guided by the criteria.
 The output mesh may offer some guarantees, as being manifold,
 homeomorphic to the surface or within a given
-Hausdorff distance.  However, these guarantees depend 
+Hausdorff distance.  However, these guarantees depend
 on the quality of the input surface (smoothness, with or without
 boundary, manifold or  not),
-the type and values of the given criteria. 
+the type and values of the given criteria.
 The behavior of the refinement process can also be influenced through
 a tag, which allows for instance to enforce the manifold property
 of  the output mesh  while avoiding an over-refinement of the mesh.

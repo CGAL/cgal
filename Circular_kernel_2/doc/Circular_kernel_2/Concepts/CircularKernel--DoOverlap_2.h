@@ -15,18 +15,18 @@ public:
 /// @{
 
 /*!
-For two line arcs. 
-*/ 
-bool operator() 
-(const CircularKernel::Line_arc_2 & l0, 
-const CircularKernel::Line_arc_2 & l1); 
+For two line arcs.
+*/
+bool operator()
+(const CircularKernel::Line_arc_2 & l0,
+const CircularKernel::Line_arc_2 & l1);
 
 /*!
-For two circular arcs. 
-*/ 
-bool operator() 
-(const CircularKernel::Circular_arc_2 & a0, 
-const CircularKernel::Circular_arc_2 & a1); 
+For two circular arcs.
+*/
+bool operator()
+(const CircularKernel::Circular_arc_2 & a0,
+const CircularKernel::Circular_arc_2 & a1);
 
 /// @}
 

@@ -35,7 +35,7 @@ public:
 
 
 
-  result_type 
+  result_type
   operator()(const Point_3& p,const Point_3& q, const Point_3& r, const Point_3& s) const
   {
     return Orientation_3()(p,q,r,s) == COPLANAR;

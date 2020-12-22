@@ -37,7 +37,7 @@ int test_surface_mesh(const char* filename)
   random_points<Point>(mesh, nb_query, back_inserter(points));
   inside_test(mesh, points);
 
-  //test compilation of constructor from AABB_tree  
+  //test compilation of constructor from AABB_tree
   typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> FGTP;
   typedef CGAL::AABB_traits<K, FGTP>    AABB_traits;
   typedef CGAL::AABB_tree<AABB_traits>  AABB_tree;

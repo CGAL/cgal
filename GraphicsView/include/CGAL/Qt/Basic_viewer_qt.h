@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 
@@ -96,11 +96,11 @@ const char fragment_source_color[] =
     "void main(void) { \n"
     "   highp vec3 L = light_pos.xyz - fP.xyz; \n"
     "   highp vec3 V = -fP.xyz; \n"
-    
+
     "   highp vec3 N = normalize(fN); \n"
     "   L = normalize(L); \n"
     "   V = normalize(V); \n"
-    
+
     "   highp vec3 R = reflect(-L, N); \n"
     "   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * fColor; \n"
     "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
@@ -143,14 +143,14 @@ const char vertex_source_color_comp[] =
     "attribute highp vec4 vertex;\n"
     "attribute highp vec3 normal;\n"
     "attribute highp vec3 color;\n"
-    
+
     "uniform highp mat4 mvp_matrix;\n"
     "uniform highp mat4 mv_matrix; \n"
-    
+
     "varying highp vec4 fP; \n"
     "varying highp vec3 fN; \n"
     "varying highp vec4 fColor; \n"
-    
+
     "uniform highp float point_size; \n"
     "void main(void)\n"
     "{\n"
@@ -176,20 +176,20 @@ const char fragment_source_color_comp[] =
     "uniform highp vec4 light_spec; \n"
     "uniform highp vec4 light_amb;  \n"
     "uniform highp float spec_power ; \n"
-    
+
     "void main(void) { \n"
-    
+
     "   highp vec3 L = light_pos.xyz - fP.xyz; \n"
     "   highp vec3 V = -fP.xyz; \n"
-    
+
     "   highp vec3 N = normalize(fN); \n"
     "   L = normalize(L); \n"
     "   V = normalize(V); \n"
-    
+
     "   highp vec3 R = reflect(-L, N); \n"
     "   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * fColor; \n"
     "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
-    
+
     "gl_FragColor = light_amb*fColor + diffuse  ; \n"
     "} \n"
     "\n"
@@ -252,7 +252,8 @@ public:
                   bool inverse_normal=false,
                   bool draw_rays=true,
                   bool draw_lines=true,
-                  bool draw_text=true) :
+                  bool draw_text=true,
+                  bool no_2D_mode=false) :
     CGAL::QGLViewer(parent),
     m_draw_vertices(draw_vertices),
     m_draw_edges(draw_edges),
@@ -263,6 +264,7 @@ public:
     m_use_mono_color(use_mono_color),
     m_inverse_normal(inverse_normal),
     m_draw_text(draw_text),
+    m_no_2D_mode(no_2D_mode),
     m_size_points(7.),
     m_size_edges(3.1),
     m_size_rays(3.1),
@@ -323,6 +325,26 @@ public:
                                &arrays[FLAT_NORMAL_COLORED_FACES],
                                &arrays[SMOOTH_NORMAL_COLORED_FACES])
   {
+    // Define 'Control+Q' as the new exit shortcut (default was 'Escape')
+    setShortcut(qglviewer::EXIT_VIEWER, ::Qt::CTRL+::Qt::Key_Q);
+
+    // Add custom key description (see keyPressEvent).
+    setKeyDescription(::Qt::Key_E, "Toggles edges display");
+    setKeyDescription(::Qt::Key_M, "Toggles mono color");
+    setKeyDescription(::Qt::Key_N, "Inverse direction of normals");
+    setKeyDescription(::Qt::Key_S, "Switch between flat/Gouraud shading display");
+    setKeyDescription(::Qt::Key_T, "Toggles text display");
+    setKeyDescription(::Qt::Key_U, "Move camera direction upside down");
+    setKeyDescription(::Qt::Key_V, "Toggles vertices display");
+    setKeyDescription(::Qt::Key_W, "Toggles faces display");
+    setKeyDescription(::Qt::Key_Plus, "Increase size of edges");
+    setKeyDescription(::Qt::Key_Minus, "Decrease size of edges");
+    setKeyDescription(::Qt::Key_Plus+::Qt::ControlModifier, "Increase size of vertices");
+    setKeyDescription(::Qt::Key_Minus+::Qt::ControlModifier, "Decrease size of vertices");
+    setKeyDescription(::Qt::Key_PageDown, "Increase light (all colors, use shift/alt/ctrl for one rgb component)");
+    setKeyDescription(::Qt::Key_PageUp, "Decrease light (all colors, use shift/alt/ctrl for one rgb component)");
+    setKeyDescription(::Qt::Key_O, "Toggles 2D mode only");
+
     if (title[0]==0)
       setWindowTitle("CGAL Basic Viewer");
     else
@@ -341,6 +363,31 @@ public:
 
     for (unsigned int i=0; i<NB_VAO_BUFFERS; ++i)
       vao[i].destroy();
+  }
+
+  void set_draw_vertices(bool b) {
+    m_draw_vertices = b;
+  }
+  void set_draw_edges(bool b) {
+    m_draw_edges = b;
+  }
+  void set_draw_rays(bool b) {
+    m_draw_rays = b;
+  }
+  void set_draw_lines(bool b) {
+    m_draw_lines = b;
+  }
+  void set_draw_faces(bool b) {
+    m_draw_faces = b;
+  }
+  void set_use_mono_color(bool b) {
+    m_use_mono_color = b;
+  }
+  void set_inverse_normal(bool b) {
+    m_inverse_normal = b;
+  }
+  void set_draw_text(bool b) {
+    m_draw_text = b;
   }
 
   void clear()
@@ -372,7 +419,7 @@ public:
   bool has_zero_x() const
   {
     return
-      m_buffer_for_mono_points.has_zero_x() && 
+      m_buffer_for_mono_points.has_zero_x() &&
       m_buffer_for_colored_points.has_zero_x() &&
       m_buffer_for_mono_segments.has_zero_x() &&
       m_buffer_for_colored_segments.has_zero_x() &&
@@ -382,12 +429,12 @@ public:
       m_buffer_for_colored_rays.has_zero_x() &&
       m_buffer_for_mono_lines.has_zero_x() &&
       m_buffer_for_colored_lines.has_zero_x();
-  }  
+  }
 
   bool has_zero_y() const
   {
     return
-      m_buffer_for_mono_points.has_zero_y() && 
+      m_buffer_for_mono_points.has_zero_y() &&
       m_buffer_for_colored_points.has_zero_y() &&
       m_buffer_for_mono_segments.has_zero_y() &&
       m_buffer_for_colored_segments.has_zero_y() &&
@@ -398,11 +445,11 @@ public:
       m_buffer_for_mono_lines.has_zero_y() &&
       m_buffer_for_colored_lines.has_zero_y();
   }
-  
+
   bool has_zero_z() const
   {
     return
-      m_buffer_for_mono_points.has_zero_z() && 
+      m_buffer_for_mono_points.has_zero_z() &&
       m_buffer_for_colored_points.has_zero_z() &&
       m_buffer_for_mono_segments.has_zero_z() &&
       m_buffer_for_colored_segments.has_zero_z() &&
@@ -413,7 +460,7 @@ public:
       m_buffer_for_mono_lines.has_zero_z() &&
       m_buffer_for_colored_lines.has_zero_z();
   }
-  
+
   template<typename KPoint>
   void add_point(const KPoint& p)
   { m_buffer_for_mono_points.add_point(p); }
@@ -551,6 +598,12 @@ public:
     { return m_buffer_for_colored_faces.face_end(); }
   }
 
+  virtual void redraw()
+  {
+    initialize_buffers();
+    update();
+  }
+
 protected:
   // Shortcuts to simplify function calls.
   template<typename KPoint>
@@ -585,19 +638,19 @@ protected:
     }
 
     // Vertices and segments shader
-    
-    const char* source_ = isOpenGL_4_3() 
+
+    const char* source_ = isOpenGL_4_3()
         ? vertex_source_p_l
         : vertex_source_p_l_comp;
-    
+
     QOpenGLShader *vertex_shader_p_l = new QOpenGLShader(QOpenGLShader::Vertex);
     if(!vertex_shader_p_l->compileSourceCode(source_))
     { std::cerr<<"Compiling vertex source FAILED"<<std::endl; }
 
-    source_ = isOpenGL_4_3() 
+    source_ = isOpenGL_4_3()
         ? fragment_source_p_l
         : fragment_source_p_l_comp;
-    
+
     QOpenGLShader *fragment_shader_p_l= new QOpenGLShader(QOpenGLShader::Fragment);
     if(!fragment_shader_p_l->compileSourceCode(source_))
     { std::cerr<<"Compiling fragmentsource FAILED"<<std::endl; }
@@ -610,19 +663,19 @@ protected:
     { std::cerr<<"linking Program FAILED"<<std::endl; }
 
     // Faces shader
-    
-    source_ = isOpenGL_4_3() 
+
+    source_ = isOpenGL_4_3()
             ? vertex_source_color
             : vertex_source_color_comp;
-    
+
     QOpenGLShader *vertex_shader_face = new QOpenGLShader(QOpenGLShader::Vertex);
     if(!vertex_shader_face->compileSourceCode(source_))
     { std::cerr<<"Compiling vertex source FAILED"<<std::endl; }
 
-    source_ = isOpenGL_4_3() 
+    source_ = isOpenGL_4_3()
             ? fragment_source_color
             : fragment_source_color_comp;
-    
+
     QOpenGLShader *fragment_shader_face= new QOpenGLShader(QOpenGLShader::Fragment);
     if(!fragment_shader_face->compileSourceCode(source_))
     { std::cerr<<"Compiling fragmentsource FAILED"<<std::endl; }
@@ -979,7 +1032,8 @@ protected:
 
   // Returns true if the data structure lies on a plane
   bool is_two_dimensional() {
-    return (!is_empty() && (has_zero_x() || has_zero_y() || has_zero_z()));
+    return (!is_empty() && !m_no_2D_mode &&
+            (has_zero_x() || has_zero_y() || has_zero_z()));
   }
 
   virtual void draw()
@@ -987,6 +1041,28 @@ protected:
     glEnable(GL_DEPTH_TEST);
     if(!m_are_buffers_initialized)
     { initialize_buffers(); }
+
+    if (is_two_dimensional())
+    {
+      camera()->setType(CGAL::qglviewer::Camera::ORTHOGRAPHIC);
+      //      Camera Constraint:
+      constraint.setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::AXIS);
+      constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
+
+      double cx=0., cy=0., cz=0.;
+      if (has_zero_x())      { cx=1.; }
+      else if (has_zero_y()) { cy=1.; }
+      else                   { cz=1.; }
+
+      camera()->setViewDirection(CGAL::qglviewer::Vec(-cx,-cy,-cz));
+      constraint.setRotationConstraintDirection(CGAL::qglviewer::Vec(cx, cy, cz));
+      camera()->frame()->setConstraint(&constraint);
+    }
+    else
+    {
+      camera()->setType(CGAL::qglviewer::Camera::PERSPECTIVE);
+      camera()->frame()->setConstraint(nullptr);
+    }
 
     QColor color;
     attrib_buffers(this);
@@ -1168,23 +1244,6 @@ protected:
       rendering_program_face.release();
     }
 
-    if (is_two_dimensional())
-    {
-      camera()->setType(CGAL::qglviewer::Camera::ORTHOGRAPHIC);
-      //      Camera Constraint:
-      constraint.setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::AXIS);
-      constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
-
-      double cx=0., cy=0., cz=0.;
-      if (has_zero_x())      { cx=1.; }
-      else if (has_zero_y()) { cy=1.; }
-      else                   { cz=1.; }
-    
-      camera()->setViewDirection(CGAL::qglviewer::Vec(-cx,-cy,-cz));
-      constraint.setRotationConstraintDirection(CGAL::qglviewer::Vec(cx, cy, cz));
-      camera()->frame()->setConstraint(&constraint);
-    }
-
     if (m_draw_text)
     {
       glDisable(GL_LIGHTING);
@@ -1194,17 +1253,11 @@ protected:
           (CGAL::qglviewer::Vec(std::get<0>(m_texts[i]).x(),
                                 std::get<0>(m_texts[i]).y(),
                                 std::get<0>(m_texts[i]).z()));
-        
+
         drawText((int)screenPos[0], (int)screenPos[1], std::get<1>(m_texts[i]));
       }
       glEnable(GL_LIGHTING);
     }
-  }
-
-  virtual void redraw()
-  {
-    initialize_buffers();
-    update();
   }
 
   virtual void init()
@@ -1212,25 +1265,6 @@ protected:
     // Restore previous viewer state.
     restoreStateFromFile();
     initializeOpenGLFunctions();
-
-    // Define 'Control+Q' as the new exit shortcut (default was 'Escape')
-    setShortcut(qglviewer::EXIT_VIEWER, ::Qt::CTRL+::Qt::Key_Q);
-
-    // Add custom key description (see keyPressEvent).
-    setKeyDescription(::Qt::Key_E, "Toggles edges display");
-    setKeyDescription(::Qt::Key_F, "Toggles faces display");
-    setKeyDescription(::Qt::Key_G, "Switch between flat/Gouraud shading display");
-    setKeyDescription(::Qt::Key_M, "Toggles mono color");
-    setKeyDescription(::Qt::Key_N, "Inverse direction of normals");
-    setKeyDescription(::Qt::Key_T, "Toggles text display");
-    setKeyDescription(::Qt::Key_U, "Move camera direction upside down");
-    setKeyDescription(::Qt::Key_V, "Toggles vertices display");
-    setKeyDescription(::Qt::Key_Plus, "Increase size of edges");
-    setKeyDescription(::Qt::Key_Minus, "Decrease size of edges");
-    setKeyDescription(::Qt::Key_Plus+::Qt::ControlModifier, "Increase size of vertices");
-    setKeyDescription(::Qt::Key_Minus+::Qt::ControlModifier, "Decrease size of vertices");
-    setKeyDescription(::Qt::Key_PageDown, "Increase light (all colors, use shift/alt/ctrl for one rgb component)");
-    setKeyDescription(::Qt::Key_PageUp, "Decrease light (all colors, use shift/alt/ctrl for one rgb component)");
 
     // Light default parameters
     glLineWidth(m_size_edges);
@@ -1244,7 +1278,7 @@ protected:
     glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
 
     compile_shaders();
-      
+
     CGAL::Bbox_3 bb;
     if (bb==bounding_box()) // Case of "empty" bounding box
     {
@@ -1278,20 +1312,6 @@ protected:
       m_draw_edges=!m_draw_edges;
       displayMessage(QString("Draw edges=%1.").arg(m_draw_edges?"true":"false"));
       update();
-    }else if ((e->key()==::Qt::Key_F) && (modifiers==::Qt::NoButton))
-    {
-      m_draw_faces=!m_draw_faces;
-      displayMessage(QString("Draw faces=%1.").arg(m_draw_faces?"true":"false"));
-      update();
-    }
-    else if ((e->key()==::Qt::Key_G) && (modifiers==::Qt::NoButton))
-    {
-      m_flatShading=!m_flatShading;
-      if (m_flatShading)
-        displayMessage("Flat shading.");
-      else
-        displayMessage("Gouraud shading.");
-      redraw();
     }
     else if ((e->key()==::Qt::Key_M) && (modifiers==::Qt::NoButton))
     {
@@ -1305,6 +1325,21 @@ protected:
       displayMessage(QString("Inverse normal=%1.").arg(m_inverse_normal?"true":"false"));
       negate_all_normals();
       redraw();
+    }
+    else if ((e->key()==::Qt::Key_S) && (modifiers==::Qt::NoButton))
+    {
+      m_flatShading=!m_flatShading;
+      if (m_flatShading)
+        displayMessage("Flat shading.");
+      else
+        displayMessage("Gouraud shading.");
+      redraw();
+    }
+    else if ((e->key()==::Qt::Key_T) && (modifiers==::Qt::NoButton))
+    {
+      m_draw_text=!m_draw_text;
+      displayMessage(QString("Draw text=%1.").arg(m_draw_text?"true":"false"));
+      update();
     }
     else if ((e->key()==::Qt::Key_U) && (modifiers==::Qt::NoButton))
     {
@@ -1330,16 +1365,16 @@ protected:
         redraw();
       }
     }
-    else if ((e->key()==::Qt::Key_T) && (modifiers==::Qt::NoButton))
-    {
-      m_draw_text=!m_draw_text;
-      displayMessage(QString("Draw text=%1.").arg(m_draw_text?"true":"false"));
-      update();
-    }
     else if ((e->key()==::Qt::Key_V) && (modifiers==::Qt::NoButton))
     {
       m_draw_vertices=!m_draw_vertices;
       displayMessage(QString("Draw vertices=%1.").arg(m_draw_vertices?"true":"false"));
+      update();
+    }
+    else if ((e->key()==::Qt::Key_W) && (modifiers==::Qt::NoButton))
+    {
+      m_draw_faces=!m_draw_faces;
+      displayMessage(QString("Draw faces=%1.").arg(m_draw_faces?"true":"false"));
       update();
     }
     else if ((e->key()==::Qt::Key_Plus) && (!modifiers.testFlag(::Qt::ControlModifier))) // No ctrl
@@ -1438,6 +1473,18 @@ protected:
                      arg(m_ambient_color.x()).arg(m_ambient_color.y()).arg(m_ambient_color.z()));
       update();
     }
+    else if ((e->key()==::Qt::Key_O) && (modifiers==::Qt::NoButton))
+    {
+      bool old_2D=is_two_dimensional();
+      m_no_2D_mode=!m_no_2D_mode;
+      if (old_2D!=is_two_dimensional())
+      {
+        if (is_two_dimensional())
+        { displayMessage(QString("Viewer is in 2D mode.")); }
+        else { displayMessage(QString("Viewer is in 3D mode.")); }
+        update();
+      }
+    }
     else
       CGAL::QGLViewer::keyPressEvent(e);
   }
@@ -1487,7 +1534,8 @@ protected:
   bool m_use_mono_color;
   bool m_inverse_normal;
   bool m_draw_text;
-  
+  bool m_no_2D_mode;
+
   double m_size_points;
   double m_size_edges;
   double m_size_rays;
@@ -1585,7 +1633,7 @@ namespace CGAL
 
   template<class T>
   void draw(const T&, const char* ="", bool=false)
-  { 
+  {
     std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
   }
 

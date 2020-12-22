@@ -74,6 +74,6 @@ int main()
     }
 
     cout << endl << "WP_DH_unit_square_test: PASSED." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

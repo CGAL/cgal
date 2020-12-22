@@ -18,4 +18,5 @@
 \example Spatial_searching/weighted_Minkowski_distance.cpp
 \example Spatial_searching/splitter_worst_cases.cpp
 \example Spatial_searching/searching_sphere_orthogonally.cpp
+\example Spatial_searching/parallel_kdtree.cpp
 */

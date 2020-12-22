@@ -43,10 +43,10 @@ class Verticality : public Feature_base
   const typename GeomTraits::Vector_3 vertical;
   std::vector<compressed_float> verticality_feature;
   const Local_eigen_analysis* eigen;
-  
+
 public:
   /*!
-    \brief Constructs the feature using local eigen analysis.
+    \brief constructs the feature using local eigen analysis.
 
     \tparam InputRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator`.
@@ -64,7 +64,7 @@ public:
 
 
   /*!
-    \brief Constructs the feature using provided normals of points.
+    \brief constructs the feature using provided normals of points.
 
     \tparam PointRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator` and its value type is the key type of

@@ -36,7 +36,7 @@ Scene_group_item::Bbox Scene_group_item::bbox() const
    {
      first_non_empty = getChild(id);
    }
- 
+
  if(first_non_empty)
  {
    Bbox b =first_non_empty->bbox();
@@ -65,7 +65,7 @@ QString Scene_group_item::toolTip() const {
 }
 
 void Scene_group_item::addChild(Scene_item* new_item)
-{  
+{
     if(!children.contains(scene->item_id(new_item)))
     {
         children.append(scene->item_id(new_item));
@@ -90,7 +90,7 @@ void Scene_group_item::update_group_number(Scene_item * new_item, int n)
             qobject_cast<Scene_group_item*>(new_item);
     if(group)
       Q_FOREACH(Scene_interface::Item_id id, group->getChildren()){
-        
+
         update_group_number(getChild(id),n+1);
       }
     new_item->has_group = n;
@@ -148,17 +148,17 @@ void Scene_group_item::moveUp(int i)
 }
 
 void Scene_group_item::draw(CGAL::Three::Viewer_interface* ) const  {
-  
+
 }
 
 void Scene_group_item::drawEdges(CGAL::Three::Viewer_interface* ) const
 {
-  
+
 }
 
 void Scene_group_item::drawPoints(CGAL::Three::Viewer_interface* ) const
 {
-  
+
 }
 
 void Scene_group_item::renderChildren(Viewer_interface *viewer,

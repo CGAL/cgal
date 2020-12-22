@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
@@ -26,9 +26,9 @@ class Polyhedron_writer_geomview {
     Geomview_stream*  out;
 public:
     Polyhedron_writer_geomview( Geomview_stream& geo) : out(&geo) {}
-    void write_header( std::ostream&, 
-                       std::size_t vertices, 
-                       std::size_t, 
+    void write_header( std::ostream&,
+                       std::size_t vertices,
+                       std::size_t,
                        std::size_t facets) {
         // ignore ostream. Output goes to Geomview_stream.
         // Print header.

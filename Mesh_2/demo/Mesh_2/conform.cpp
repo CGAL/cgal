@@ -36,13 +36,13 @@ typedef K::Point_2 Point;
 void usage(char** argv)
 {
   std::cerr << "Usage: " << argv[0]
-	    << " [-Q] [-D] [-v] input.poly [output.poly]" << std::endl
-	    << "Read a Shewchuk .poly file and output a conforming PSLG."
-	    << std::endl
-	    << "  -Q   Quiet" << std::endl
-	    << "  -D   Make conforming Delaunay, instead of"
+            << " [-Q] [-D] [-v] input.poly [output.poly]" << std::endl
+            << "Read a Shewchuk .poly file and output a conforming PSLG."
+            << std::endl
+            << "  -Q   Quiet" << std::endl
+            << "  -D   Make conforming Delaunay, instead of"
     " conforming Gabriel." << std::endl
-	    << "  -v   Verbose" << std::endl;
+            << "  -v   Verbose" << std::endl;
 }
 
 int main(int argc, char** argv)
@@ -61,17 +61,17 @@ int main(int argc, char** argv)
   while(argv[arg_count][0] == '-' && std::string(argv[arg_count]) != "--")
     {
       if(std::string(argv[arg_count]) == "-Q")
-	terminal_output = false;
+        terminal_output = false;
       else if(std::string(argv[arg_count]) == "-D")
-	delaunay = true;
+        delaunay = true;
       else if(std::string(argv[arg_count]) == "-v")
-	verbose = true;
+        verbose = true;
       else
-	{
-	  std::cerr << "Unknown option " << argv[arg_count] << std::endl;
-	  usage(argv);
-	  return 1;
-	}
+        {
+          std::cerr << "Unknown option " << argv[arg_count] << std::endl;
+          usage(argv);
+          return 1;
+        }
       ++arg_count;
     }
   if(std::string(argv[arg_count]) == "--")
@@ -88,33 +88,33 @@ int main(int argc, char** argv)
       Tr t;
       CGAL::read_triangle_poly_file(t, input);
       if(delaunay)
-	{
-	  if(verbose)
-	    std::cerr << "Make conforming Delaunay..." << std::endl;
-	  CGAL::make_conforming_Delaunay_2(t);
-	}
+        {
+          if(verbose)
+            std::cerr << "Make conforming Delaunay..." << std::endl;
+          CGAL::make_conforming_Delaunay_2(t);
+        }
       else
-	{
-	  if(verbose)
-	    std::cerr << "Make conforming Gabriel..." << std::endl;
-	  CGAL::make_conforming_Gabriel_2(t);
-	}
+        {
+          if(verbose)
+            std::cerr << "Make conforming Gabriel..." << std::endl;
+          CGAL::make_conforming_Gabriel_2(t);
+        }
 
       if(argc==arg_count+1)
-	{
-	  if(terminal_output)
-	    CGAL::write_triangle_poly_file(t, std::cout);
-	}
+        {
+          if(terminal_output)
+            CGAL::write_triangle_poly_file(t, std::cout);
+        }
       else
-	{
-	  std::ofstream output(argv[arg_count+1]);
-	  CGAL::write_triangle_poly_file(t, output);
-	}
+        {
+          std::ofstream output(argv[arg_count+1]);
+          CGAL::write_triangle_poly_file(t, output);
+        }
 
       if(terminal_output)
-	std::cerr
-	  << "Number of points: " << t.number_of_vertices() << std::endl
-	  << "Number of triangles: " << t.number_of_faces () << std::endl;
+        std::cerr
+          << "Number of points: " << t.number_of_vertices() << std::endl
+          << "Number of triangles: " << t.number_of_faces () << std::endl;
 
     }
   else

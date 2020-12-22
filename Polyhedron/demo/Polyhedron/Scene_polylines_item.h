@@ -14,7 +14,7 @@
 struct Scene_polylines_item_private;
 class Scene_spheres_item;
 
-class SCENE_POLYLINES_ITEM_EXPORT Scene_polylines_item 
+class SCENE_POLYLINES_ITEM_EXPORT Scene_polylines_item
     : public CGAL::Three::Scene_group_item
 {
     Q_OBJECT
@@ -57,10 +57,10 @@ public:
 
 
     void smooth(std::vector<Point_3>& polyline);
-    //When selecting a polylineitem, we don't want to select its children, so 
+    //When selecting a polylineitem, we don't want to select its children, so
     //we can still apply Operations to it
     QList<Scene_interface::Item_id> getChildrenForSelection() const Q_DECL_OVERRIDE {
-      return QList<Scene_interface::Item_id>(); 
+      return QList<Scene_interface::Item_id>();
     }
     void setWidth(int i);
     void computeElements() const Q_DECL_OVERRIDE;

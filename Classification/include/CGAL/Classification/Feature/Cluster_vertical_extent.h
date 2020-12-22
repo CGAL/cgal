@@ -36,11 +36,11 @@ namespace Feature {
 class Cluster_vertical_extent : public CGAL::Classification::Feature_base
 {
   std::vector<float> m_values;
-  
+
 public:
 
   /*!
-    \brief Constructs the feature.
+    \brief constructs the feature.
 
     \tparam ClusterRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator` and its value type is the key type of
@@ -52,15 +52,15 @@ public:
   Cluster_vertical_extent (const ClusterRange& clusters)
   {
     typedef typename ClusterRange::const_iterator::value_type::Item Item;
-    
+
     this->set_name ("cluster_vertical_extent");
 
     m_values.reserve (clusters.size());
     for (std::size_t i = 0; i < clusters.size(); ++ i)
     {
-      float min_z = std::numeric_limits<float>::max();
-      float max_z = -std::numeric_limits<float>::min();
-        
+      float min_z = (std::numeric_limits<float>::max)();
+      float max_z = -(std::numeric_limits<float>::min)();
+
       for (std::size_t j = 0; j < clusters[i].size(); ++ j)
       {
         const Item& item = clusters[i][j];
@@ -75,7 +75,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   virtual float value (std::size_t cluster_index) { return m_values[cluster_index]; }
   /// \endcond
-    
+
 };
 
 } // namespace Feature

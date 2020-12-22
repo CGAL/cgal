@@ -1,9 +1,9 @@
-// Copyright (c) 1999,2007  
+// Copyright (c) 1999,2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -40,7 +40,7 @@
 #include <CGAL/Rational_traits.h>
 
 #include <CGAL/Scalar_factor_traits.h>       // not part of CGAL 3.3
-#include <CGAL/Algebraic_extension_traits.h> // not part of CGAL 3.3 
+#include <CGAL/Algebraic_extension_traits.h> // not part of CGAL 3.3
 
 #include <CGAL/Needs_parens_as_product.h>
 

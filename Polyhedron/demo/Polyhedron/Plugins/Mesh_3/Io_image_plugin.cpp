@@ -75,7 +75,7 @@
 // 0..1 and min_max is the range it came from.
 struct IntConverter {
   std::pair<int, int> min_max;
-  
+
   int operator()(float f) {
     float s = f * float((min_max.second - min_max.first));
     //approximate instead of just floor.
@@ -295,6 +295,11 @@ public:
     if(ok)
       items.pop_front();
     return ok;
+  }
+  bool isDefaultLoader(const Scene_item* item) const override{
+    if(qobject_cast<const Scene_image_item*>(item))
+      return true;
+    return false;
   }
   QString name() const override{ return "segmented images"; }
 
@@ -721,7 +726,7 @@ private:
       viewer->installEventFilter(y_item);
       viewer->installEventFilter(z_item);
     }
-    
+
     connect(x_item, SIGNAL(selected(CGAL::Three::Scene_item*)), this, SLOT(select_plane(CGAL::Three::Scene_item*)));
     connect(y_item, SIGNAL(selected(CGAL::Three::Scene_item*)), this, SLOT(select_plane(CGAL::Three::Scene_item*)));
     connect(z_item, SIGNAL(selected(CGAL::Three::Scene_item*)), this, SLOT(select_plane(CGAL::Three::Scene_item*)));

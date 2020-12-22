@@ -24,7 +24,7 @@ int main(int argc, char** argv)
   CGAL::set_error_behaviour(CGAL::ABORT);
 
   QApplication application(argc,argv);
-  
+
   application.setOrganizationDomain("cgal.org");
   application.setOrganizationName("CNRS and LIRIS' Establishments");
   application.setApplicationName("3D Linear Cell Complex");

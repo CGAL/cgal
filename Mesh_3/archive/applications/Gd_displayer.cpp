@@ -52,7 +52,7 @@ void Gd_displayer::set_window(const double x_min, const double x_max,
   syclip = sy;
   gdImageSetClip(im, xclip, yclip, xclip+sxclip, yclip+syclip);
   xscal = sxclip / (xmax-xmin);
-  yscal = syclip / (ymax-ymin);  
+  yscal = syclip / (ymax-ymin);
 }
 
 int Gd_displayer::x_pixel(double x) const
@@ -74,6 +74,6 @@ bool Gd_displayer::save_png(const char* filename)
     fclose(pngout);
     return true;
   }
-  else 
+  else
     return false;
 }

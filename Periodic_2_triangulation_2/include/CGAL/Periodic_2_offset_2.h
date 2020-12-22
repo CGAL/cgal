@@ -27,7 +27,7 @@ class Periodic_2_offset_2
 {
   //  template <class K2>
   //  friend std::ostream & operator<<(std::ostream &os,
-  //				   const Periodic_2_offset_2 &off);
+  //                                   const Periodic_2_offset_2 &off);
 
 public:
   /// Default constructor.

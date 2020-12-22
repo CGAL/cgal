@@ -3,11 +3,11 @@
 //
 // This file is part of CGAL (www.cgal.org).
 //
-// $URL$ 
+// $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // $Date$
-// 
+//
 //
 // Author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
@@ -50,7 +50,7 @@ _test_weighted_alpha_shape_3()
 
   std::list<Weighted_point> L;
   bool verbose = false;
-  
+
   // first a known small case
   // four groups of sphere :
   // - two groups of 4 intersecting spheres
@@ -74,8 +74,8 @@ _test_weighted_alpha_shape_3()
 
   L.push_back(Weighted_point(Bare_point(30.,0.,0.), 3));
   L.push_back(Weighted_point(Bare_point(32.,0.,0.), 3));
-  
- 
+
+
   Alpha_shape_3 A( L.begin(), L.end(), 0, Alpha_shape_3::REGULARIZED);
   if(verbose) show_alpha_values(A);
   A.set_alpha(0.);
@@ -97,12 +97,12 @@ _test_weighted_alpha_shape_3()
   count_faces(A, verbose);
   test_filtration(A,verbose);
 
-  // I add a test for CH4 
+  // I add a test for CH4
   //  This test detected a bug in make_alpha_shape() cominig from clear()
   if(verbose) std::cerr << "test for CH4" << std::endl;
   L.clear();
   L.push_back(Weighted_point(Bare_point(-1.,-1.,-1.), 1.));
-  L.push_back(Weighted_point(Bare_point(-1., 1., 1.), 1.)); 
+  L.push_back(Weighted_point(Bare_point(-1., 1., 1.), 1.));
   L.push_back(Weighted_point(Bare_point( 1.,-1., 1.), 1.));
   L.push_back(Weighted_point(Bare_point( 1., 1.,-1.), 1.));
   L.push_back(Weighted_point(Bare_point( 0., 0., 0.), 3.));
@@ -134,7 +134,7 @@ _test_weighted_alpha_shape_3()
   std::size_t  n = A.make_alpha_shape(L.begin(), L.end());
   std::cout << "Alpha Shape computed :" << n  << " points" << std::endl;
   std::cout << " test number_of_components - find_optimal_alpha "
-	    <<   std::endl;
+            <<   std::endl;
   A.set_alpha(*A.find_optimal_alpha(2));
   assert( A.number_of_solid_components() <= 2);
 
@@ -142,16 +142,16 @@ _test_weighted_alpha_shape_3()
   Alpha_iterator previous = opt; --previous;
   if(verbose) {
     std::cerr << " alpha optimal for 1 component  = " << *opt
-	      << "nb of components " << A.number_of_solid_components(*opt)
-	      << std::endl;
-    std::cerr << " previous        " << *previous 
-	      << "nb of components " 
-	      << A.number_of_solid_components(*previous) << std::endl;
+              << "nb of components " << A.number_of_solid_components(*opt)
+              << std::endl;
+    std::cerr << " previous        " << *previous
+              << "nb of components "
+              << A.number_of_solid_components(*previous) << std::endl;
     std::cerr << "alpha_solid " << A.find_alpha_solid() << std::endl;
   }
   assert (A.number_of_solid_components(*opt) == 1);
-  assert (A.number_of_solid_components(*previous) > 1 
-	  || *opt ==  A.find_alpha_solid());
+  assert (A.number_of_solid_components(*previous) > 1
+          || *opt ==  A.find_alpha_solid());
 }
 
 

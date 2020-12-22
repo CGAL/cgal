@@ -12,6 +12,7 @@
 #ifndef CGAL_LINEAR_CELL_COMPLEX_BASE_H
 #define CGAL_LINEAR_CELL_COMPLEX_BASE_H 1
 
+#include <CGAL/Linear_cell_complex_fwd.h>
 #include <CGAL/Combinatorial_map_functors.h>
 #include <CGAL/internal/Combinatorial_map_internal_functors.h>
 #include <CGAL/Linear_cell_complex_operations.h>
@@ -42,21 +43,22 @@ namespace CGAL {
              class Alloc_,
              template<unsigned int,class,class,class,class>
              class Map,
-             class Refs,
+             class Refs_,
              class Storage_>
   class Linear_cell_complex_base:
-    public Map<d_, Refs, Items_, Alloc_, Storage_>
+    public Map<d_, Refs_, Items_, Alloc_, Storage_>
   {
   public:
     typedef Linear_cell_complex_base<d_, ambient_dim,
                                 Traits_, Items_, Alloc_, Map,
-                                Refs, Storage_>  Self;
-    typedef Map<d_, Refs, Items_, Alloc_, Storage_> Base;
+                                Refs_, Storage_>  Self;
+    typedef Map<d_, Refs_, Items_, Alloc_, Storage_> Base;
 
-    typedef Traits_ Traits;
-    typedef Items_  Items;
-    typedef Alloc_  Alloc;
+    typedef Traits_  Traits;
+    typedef Items_   Items;
+    typedef Alloc_   Alloc;
     typedef Storage_ Storage;
+    typedef Refs_     Refs;
 
     static const unsigned int ambient_dimension = ambient_dim;
     static const unsigned int dimension = Base::dimension;
@@ -110,10 +112,11 @@ namespace CGAL {
     using Base::create_dart;
     using Base::attribute;
     using Base::null_handle;
+    using Base::null_dart_handle;
     using Base::point_of_vertex_attribute;
     using Base::other_extremity;
     using Base::darts;
-    
+
     using Base::are_attributes_automatically_managed;
     using Base::mark;
     using Base::is_marked;
@@ -125,7 +128,7 @@ namespace CGAL {
     using Base::opposite;
     using Base::is_next_exist;
     using Base::is_previous_exist;
-    
+
     using Base::make_segment;
     using Base::make_triangle;
     using Base::make_quadrangle;

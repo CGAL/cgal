@@ -298,7 +298,7 @@ public:
   { }
 
   virtual ~Basic_arr() {}
-  
+
   /*! */
   //virtual void op() = 0;
 
@@ -329,18 +329,18 @@ public:
 
     return 0;
   }
-    
+
   /* */
   void clean()
   {
     m_curve_list.clear();
-#if defined(CGAL_TRAITS_COUNTING)    
+#if defined(CGAL_TRAITS_COUNTING)
     if (m_verbose_level > 0) std::cout << m_traits;
 #endif
   }
   void sync(){}
 
-  void set_file_name(const char * filename, int file_index=0) 
+  void set_file_name(const char * filename, int file_index=0)
   { m_filename = filename; }
   void set_verbose_level(const unsigned int level) { m_verbose_level = level; }
   void set_postscript(const bool postscript) { m_postscript = postscript; }
@@ -363,16 +363,16 @@ protected:
 
 /*!  This class is supplied to the bench as a templatwe parameter.
  * it defines the operations we want to measure.
- * in this case we measure only the incremental construction 
+ * in this case we measure only the incremental construction
  * of the arrangement.
 */
 template <class Strategy>
 class Increment_arr : public Basic_arr {
 public:
   // op is the main function that must be implemented in each benchable class
-  // that is supplied to the Bench class. 
+  // that is supplied to the Bench class.
   // the other functions that should be implemented are inherited from Basic_arr
-  // This (op) is the main method, that is different from all other classes 
+  // This (op) is the main method, that is different from all other classes
   // inherite from Basic_arr
   void op()
   {
@@ -381,7 +381,7 @@ public:
     Strategy strategy(arr);
     for (i = m_curve_list.begin(); i != m_curve_list.end(); ++i)
       insert(arr, *i, strategy);
-    
+
     if (m_verbose_level > 0) {      //print to cout
       if (m_verbose_level > 1) {
         if (!arr.is_valid()) std::cerr << "map invalid!" << std::endl;
@@ -506,7 +506,7 @@ public:
     CST::Point_2::clear_cache();
 #endif
 }
-  
+
   /*! */
   int init()
   {
@@ -520,7 +520,7 @@ public:
     float min_range = (x_range < y_range) ? x_range : y_range;
     float x_margin = min_range / 4;
     float y_margin = (height * x_margin) / m_width;
-        
+
     m_x0 = m_bbox.xmin() - x_margin;
     m_x1 = m_bbox.xmax() + x_margin;
     m_y0 = m_bbox.ymin() - y_margin;
@@ -530,7 +530,7 @@ public:
 #if defined(USE_CGAL_WINDOW)
     m_window = new Window_stream(m_width, m_height);
     if (!m_window) return -1;
-    m_window->init(m_x0, m_x1, m_y0);   // logical window size 
+    m_window->init(m_x0, m_x1, m_y0);   // logical window size
 
     m_window->set_redraw(&Display_arr::redraw);
     m_window->set_mode(leda_src_mode);
@@ -545,7 +545,7 @@ public:
     if (!m_window) return -1;
     App->setMainWidget(m_window);
     m_window->resize(m_width, m_height);
-    m_window->set_window(m_x0, m_x1, m_y0, m_y1);   // logical window size 
+    m_window->set_window(m_x0, m_x1, m_y0, m_y1);   // logical window size
     m_window->setLineWidth(1);
     m_window->setPointSize(3);
     m_window->show();
@@ -559,15 +559,15 @@ public:
     Basic_arr::clean();
     delete m_window;
   }
-  
+
 private:
   /*! */
 #if defined(USE_CGAL_WINDOW)
   static void
-    redraw(leda_window * wp, double x0, double y0, double x1, double y1) 
+    redraw(leda_window * wp, double x0, double y0, double x1, double y1)
   { wp->flush_buffer(x0,y0,x1,y1); }
 #endif
-  
+
   Window_stream * m_window;
 };
 
@@ -576,9 +576,9 @@ typedef cb::Benchmark<Display_arr>              Dis_arr_bench;
 /*! */
 template <class Bench_inst, class Benchable>
 void run_bench(Bench_inst & bench_inst, Benchable & benchable,
-               const char * fullname, 
+               const char * fullname,
                int samples, int iterations, unsigned int verbose_level,
-               bool postscript = false, 
+               bool postscript = false,
                const char * fullname2 = 0)
 {
   //set some variable
@@ -586,10 +586,10 @@ void run_bench(Bench_inst & bench_inst, Benchable & benchable,
   benchable.set_verbose_level(verbose_level);
   benchable.set_postscript(postscript);
   if (fullname2) benchable.set_file_name(fullname2, 1);
-  
+
   if (samples > 0) bench_inst.set_samples(samples);
   else if (iterations > 0) bench_inst.set_iterations(iterations);
-  
+
   //opertor () in the Bench - does all the work !
   bench_inst();
 }
@@ -641,8 +641,8 @@ int main(int argc, char * argv[])
 
   //general definitions
   Type_code type_code;           // operation we want to apply
-  Strategy_code strategy_code;   // point location strategy 
-  
+  Strategy_code strategy_code;   // point location strategy
+
   if (verbose_level > 0) {
     std::cout << "type_mask = "<< type_mask << std::endl;
     std::cout << "strategy_mask = " << strategy_mask  << std::endl;
@@ -660,7 +660,7 @@ int main(int argc, char * argv[])
       std::string name =
         std::string(option_parser.get_type_name(type_code)) + " " +
         std::string(option_parser.get_strategy_name(strategy_code)) + " " +
-        TRAITS_TYPE + " " + KERNEL_TYPE + " " + 
+        TRAITS_TYPE + " " + KERNEL_TYPE + " " +
         NUMBER_TYPE + " " + " (" + std::string(filename[0]) + ")";
       Trap_inc_arr_bench bench_inst(name, seconds, false);
       Trap_inc_arr & benchable = bench_inst.get_benchable();
@@ -670,7 +670,7 @@ int main(int argc, char * argv[])
                                                   verbose_level, postscript);
     }
 #endif
-    
+
     // Naive point location:
     strategy_code = Option_parser::STRATEGY_NAIVE;
     if (strategy_mask & (0x1 << strategy_code)) {
@@ -686,7 +686,7 @@ int main(int argc, char * argv[])
                                                     samples, iterations,
                                                     verbose_level, postscript);
     }
-    
+
     // Walk point location:
     strategy_code = Option_parser::STRATEGY_WALK;
     if (strategy_mask & (0x1 << strategy_code)) {
@@ -702,7 +702,7 @@ int main(int argc, char * argv[])
                                                   samples, iterations,
                                                   verbose_level, postscript);
     }
-    
+
 #if defined(LANDMARK_SUPPORTED)
     // Landmarks point location:
     strategy_code = Option_parser::STRATEGY_LANDMARKS;
@@ -723,7 +723,7 @@ int main(int argc, char * argv[])
                                                             postscript);
     }
 #endif
-    
+
 #if defined(TRIANGLE_SUPPORTED)
     // Triangle point location:
     strategy_code = Option_parser::STRATEGY_TRIANGLE;
@@ -731,19 +731,19 @@ int main(int argc, char * argv[])
       std::string name =
         std::string(option_parser.get_type_name(type_code)) + " " +
         std::string(option_parser.get_strategy_name(strategy_code)) + " " +
-        TRAITS_TYPE + " " + KERNEL_TYPE + " " + 
+        TRAITS_TYPE + " " + KERNEL_TYPE + " " +
         NUMBER_TYPE +" " + " (" + std::string(file_name) + ")";
       Triangle_inc_arr_bench bench_inst(name, seconds, false);
       Triangle_inc_arr & benchable = bench_inst.get_benchable();
       run_bench<Triangle_inc_arr_bench,Triangle_inc_arr>(bench_inst, benchable,
-                                                         full_name, 
+                                                         full_name,
                                                          samples, iterations,
                                                          verbose_level,
                                                          postscript);
     }
 #endif
   }
-  
+
   // Construct Aggregately
   type_code = Option_parser::TYPE_AGGREGATE;
   if (type_mask & (0x1 << type_code)) {
@@ -754,7 +754,7 @@ int main(int argc, char * argv[])
       NUMBER_TYPE + " " + " (" + std::string(file_name) + ")";
     Agg_arr_bench bench_inst(name, seconds, false);
     Aggregate_arr & benchable = bench_inst.get_benchable();
-    run_bench<Agg_arr_bench,Aggregate_arr>(bench_inst, benchable, full_name, 
+    run_bench<Agg_arr_bench,Aggregate_arr>(bench_inst, benchable, full_name,
                                            samples, iterations,
                                            verbose_level, postscript);
   }
@@ -779,10 +779,10 @@ int main(int argc, char * argv[])
     Display_arr & benchable = bench_inst.get_benchable();
     benchable.set_width(width);
     benchable.set_height(height);
-    run_bench<Dis_arr_bench,Display_arr>(bench_inst, benchable, full_name, 
+    run_bench<Dis_arr_bench,Display_arr>(bench_inst, benchable, full_name,
                                          samples, iterations,
                                          verbose_level, postscript);
   }
-  
+
   return 0;
 }

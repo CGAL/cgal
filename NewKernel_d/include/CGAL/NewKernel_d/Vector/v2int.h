@@ -82,53 +82,53 @@ namespace CGAL {
     typedef std::array<NT1,2> Vector;
     struct Construct_vector {
       struct Dimension {
-	Vector operator()(unsigned d) const {
-	  CGAL_assertion(d==2);
-	  return Vector();
-	}
+        Vector operator()(unsigned d) const {
+          CGAL_assertion(d==2);
+          return Vector();
+        }
       };
 
       // TODO (for all constructors): check that input fits in NT1...
       struct Iterator {
-	template<typename Iter>
-	  Vector operator()(unsigned d,Iter const& f,Iter const& e) const {
-	    CGAL_assertion(d==2);
-	    NT1 x0 = *f;
-	    NT1 x1 = *++f;
-	    CGAL_assertion (++f == e);
-	    CGAL_assertion (check_limits(x0) && check_limits(x1));
-	    Vector a = { x0, x1 };
-	    return a;
-	  }
+        template<typename Iter>
+          Vector operator()(unsigned d,Iter const& f,Iter const& e) const {
+            CGAL_assertion(d==2);
+            NT1 x0 = *f;
+            NT1 x1 = *++f;
+            CGAL_assertion (++f == e);
+            CGAL_assertion (check_limits(x0) && check_limits(x1));
+            Vector a = { x0, x1 };
+            return a;
+          }
       };
 
       struct Iterator_and_last {
-	template<typename Iter,typename T>
-	  Vector operator()(unsigned d,Iter const& f,Iter const& e,double t) const {
-	    CGAL_assertion(d==2);
-	    NT1 x = *f;
-	    CGAL_assertion (++f == e);
-	    CGAL_assertion (check_limits(x) && check_limits(t));
-	    Vector a = { x, t };
-	    return a;
-	  }
+        template<typename Iter,typename T>
+          Vector operator()(unsigned d,Iter const& f,Iter const& e,double t) const {
+            CGAL_assertion(d==2);
+            NT1 x = *f;
+            CGAL_assertion (++f == e);
+            CGAL_assertion (check_limits(x) && check_limits(t));
+            Vector a = { x, t };
+            return a;
+          }
       };
 
       struct Values {
-	  Vector operator()(NT1 a,NT1 b) const {
-	    CGAL_assertion (check_limits(a) && check_limits(b));
-	    Vector r = { a, b };
-	    return r;
-	  }
+          Vector operator()(NT1 a,NT1 b) const {
+            CGAL_assertion (check_limits(a) && check_limits(b));
+            Vector r = { a, b };
+            return r;
+          }
       };
 
       /*
-	 // Maybe safer not to provide it
+         // Maybe safer not to provide it
       struct Values_divide {
-	Vector operator()(double h,double a,double b) const {
-	  Vector r = { a/h, b/h };
-	  return r;
-	}
+        Vector operator()(double h,double a,double b) const {
+          Vector r = { a/h, b/h };
+          return r;
+        }
       };
       */
     };

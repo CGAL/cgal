@@ -29,7 +29,7 @@
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
-  
+
 // the two base classes
 #include "ui_Delaunay_triangulation_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -45,10 +45,10 @@ class MainWindow :
   public Ui::Delaunay_triangulation_2
 {
   Q_OBJECT
-  
-private:  
-  Delaunay dt; 
-  QGraphicsScene scene;  
+
+private:
+  Delaunay dt;
+  QGraphicsScene scene;
 
   CGAL::Qt::TriangulationGraphicsItem<Delaunay> * dgi;
   CGAL::Qt::VoronoiGraphicsItem<Delaunay> * vgi;
@@ -76,7 +76,7 @@ public Q_SLOTS:
   void on_actionShowVoronoi_toggled(bool checked);
 
   void on_actionInsertPoint_toggled(bool checked);
-  
+
   void on_actionInsertRandomPoints_triggered();
 
   void on_actionLoadPoints_triggered();
@@ -105,7 +105,7 @@ MainWindow::MainWindow()
   dgi = new CGAL::Qt::TriangulationGraphicsItem<Delaunay>(&dt);
 
   QObject::connect(this, SIGNAL(changed()),
-		   dgi, SLOT(modelChanged()));
+                   dgi, SLOT(modelChanged()));
 
   dgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(dgi);
@@ -114,42 +114,42 @@ MainWindow::MainWindow()
   vgi = new CGAL::Qt::VoronoiGraphicsItem<Delaunay>(&dt);
 
   QObject::connect(this, SIGNAL(changed()),
-		   vgi, SLOT(modelChanged()));
+                   vgi, SLOT(modelChanged()));
 
   vgi->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(vgi);
   vgi->hide();
 
   // Setup input handlers. They get events before the scene gets them
-  // and the input they generate is passed to the triangulation with 
-  // the signal/slot mechanism    
+  // and the input they generate is passed to the triangulation with
+  // the signal/slot mechanism
   pi = new CGAL::Qt::TriangulationPointInputAndConflictZone<Delaunay>(&scene, &dt, this );
 
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(processInput(CGAL::Object)));
+                   this, SLOT(processInput(CGAL::Object)));
 
   mp = new CGAL::Qt::TriangulationMovingPoint<Delaunay>(&dt, this);
   // TriangulationMovingPoint<Delaunay> emits a modelChanged() signal each
   // time the moving point moves.
   // The following connection is for the purpose of emitting changed().
   QObject::connect(mp, SIGNAL(modelChanged()),
-		   this, SIGNAL(changed()));
+                   this, SIGNAL(changed()));
 
   trv = new CGAL::Qt::TriangulationRemoveVertex<Delaunay>(&dt, this);
   QObject::connect(trv, SIGNAL(modelChanged()),
-		   this, SIGNAL(changed()));
+                   this, SIGNAL(changed()));
 
   tcc = new CGAL::Qt::TriangulationCircumcircle<Delaunay>(&scene, &dt, this);
   tcc->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
   cz = new CGAL::Qt::TriangulationConflictZone<Delaunay>(&scene, &dt, this);
 
-  // 
+  //
   // Manual handling of actions
   //
 
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()),
+                   this, SLOT(close()));
 
   // We put mutually exclusive actions in an QActionGroup
   QActionGroup* ag = new QActionGroup(this);
@@ -158,7 +158,7 @@ MainWindow::MainWindow()
   ag->addAction(this->actionCircumcenter);
   ag->addAction(this->actionShowConflictZone);
 
-  // Check two actions 
+  // Check two actions
   this->actionInsertPoint->setChecked(true);
   this->actionShowDelaunay->setChecked(true);
 
@@ -171,8 +171,8 @@ MainWindow::MainWindow()
   this->graphicsView->setMouseTracking(true);
 
   // Turn the vertical axis upside down
-  this->graphicsView->matrix().scale(1, -1);
-                                                      
+  this->graphicsView->transform().scale(1, -1);
+
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
   this->addNavigation(this->graphicsView);
@@ -185,7 +185,7 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
-	  this, SLOT(open(QString)));
+          this, SLOT(open(QString)));
 }
 
 
@@ -200,10 +200,10 @@ MainWindow::processInput(CGAL::Object o)
 }
 
 
-/* 
+/*
  *  Qt Automatic Connections
  *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
- * 
+ *
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
  */
@@ -249,7 +249,7 @@ MainWindow::on_actionCircumcenter_toggled(bool checked)
   if(checked){
     scene.installEventFilter(tcc);
     tcc->show();
-  } else {  
+  } else {
     scene.removeEventFilter(tcc);
     tcc->hide();
   }
@@ -282,20 +282,20 @@ void
 MainWindow::on_actionInsertRandomPoints_triggered()
 {
   QRectF rect = CGAL::Qt::viewportsBbox(&scene);
-  CGAL::Qt::Converter<K> convert;  
+  CGAL::Qt::Converter<K> convert;
   Iso_rectangle_2 isor = convert(rect);
   CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((isor.min)(), (isor.max)());
   bool ok = false;
 
-  const int number_of_points = 
-    QInputDialog::getInt(this, 
+  const int number_of_points =
+    QInputDialog::getInt(this,
                              tr("Number of random points"),
                              tr("Enter number of random points"),
-			     100,
-			     0,
-			     (std::numeric_limits<int>::max)(),
-			     1,
-			     &ok);
+                             100,
+                             0,
+                             (std::numeric_limits<int>::max)(),
+                             1,
+                             &ok);
 
   if(!ok) {
     return;
@@ -319,7 +319,7 @@ void
 MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open Points file"),
+                                                  tr("Open Points file"),
                                                   ".",
                                                   tr("CGAL files (*.pts.cgal);;"
                                                    #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
@@ -338,7 +338,7 @@ MainWindow::open(QString fileName)
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
   std::ifstream ifs(qPrintable(fileName));
-  
+
   K::Point_2 p;
   std::vector<K::Point_2> points;
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
@@ -350,7 +350,7 @@ MainWindow::open(QString fileName)
   else
     while(ifs >> p) {
       // ignore whatever comes after x and y
-      ifs.ignore((std::numeric_limits<std::streamsize>::max)(), '\n'); 
+      ifs.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
       points.push_back(p);
     }
   dt.insert(points.begin(), points.end());
@@ -360,7 +360,7 @@ MainWindow::open(QString fileName)
   this->addToRecentFiles(fileName);
   actionRecenter->trigger();
   Q_EMIT( changed());
-    
+
 }
 
 void
@@ -381,7 +381,7 @@ MainWindow::on_actionSavePoints_triggered()
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
       std::vector<K::Point_2> points;
       points.reserve(dt.number_of_vertices());
-      for(Delaunay::Finite_vertices_iterator 
+      for(Delaunay::Finite_vertices_iterator
           vit = dt.finite_vertices_begin(),
           end = dt.finite_vertices_end();
           vit!= end; ++vit)
@@ -392,7 +392,7 @@ MainWindow::on_actionSavePoints_triggered()
 #endif
     }
     else
-      for(Delaunay::Finite_vertices_iterator 
+      for(Delaunay::Finite_vertices_iterator
           vit = dt.finite_vertices_begin(),
           end = dt.finite_vertices_end();
           vit!= end; ++vit)
@@ -407,7 +407,7 @@ void
 MainWindow::on_actionRecenter_triggered()
 {
   this->graphicsView->setSceneRect(dgi->boundingRect());
-  this->graphicsView->fitInView(dgi->boundingRect(), Qt::KeepAspectRatio);  
+  this->graphicsView->fitInView(dgi->boundingRect(), Qt::KeepAspectRatio);
 }
 
 

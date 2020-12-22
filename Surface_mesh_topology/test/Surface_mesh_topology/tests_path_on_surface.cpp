@@ -23,7 +23,7 @@ bool test_constructions()
   in>>sm;
 
   Path_on_surface<SM> p1(sm), p2(sm);
-  
+
   p1.push_back_by_index(24);
   p1.extend_positive_turn(1);
   p1.extend_negative_turn(1);
@@ -100,7 +100,7 @@ int main()
 
   std::cout<<"tests_path_on_surface "<<(success?"OK":"failed") <<std::endl;
 
-  if (!success) 
+  if (!success)
   { return EXIT_FAILURE; }
 
   return EXIT_SUCCESS;

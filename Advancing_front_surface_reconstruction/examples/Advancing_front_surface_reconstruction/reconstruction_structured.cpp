@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <array>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
@@ -36,7 +37,7 @@ typedef CGAL::Triangulation_data_structure_3<LVb,LCb> Tds;
 typedef CGAL::Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 typedef Triangulation_3::Vertex_handle Vertex_handle;
 
-typedef CGAL::cpp11::array<std::size_t,3> Facet;
+typedef std::array<std::size_t,3> Facet;
 
 
 // Functor to init the advancing front algorithm with indexed points
@@ -45,7 +46,7 @@ struct On_the_fly_pair{
   typedef std::pair<Point, std::size_t> result_type;
 
   On_the_fly_pair(const Pwn_vector& points) : points(points) {}
-  
+
   result_type
   operator()(std::size_t i) const
   {
@@ -59,7 +60,7 @@ struct Priority_with_structure_coherence {
 
   Structure& structure;
   double bound;
-  
+
   Priority_with_structure_coherence(Structure& structure,
                                     double bound)
     : structure (structure), bound (bound)
@@ -111,10 +112,10 @@ int main (int argc, char* argv[])
   Pwn_vector points;
 
   const char* fname = (argc>1) ? argv[1] : "data/cube.pwn";
-  // Loading point set from a file. 
+  // Loading point set from a file.
   std::ifstream stream(fname);
 
-  if (!stream || 
+  if (!stream ||
     !CGAL::read_xyz_points(stream,
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).
@@ -194,6 +195,6 @@ int main (int argc, char* argv[])
   std::cerr << "all done\n" << std::endl;
 
   f.close();
-  
+
   return 0;
 }

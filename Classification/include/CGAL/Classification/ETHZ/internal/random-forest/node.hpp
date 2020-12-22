@@ -21,8 +21,17 @@
 #define CGAL_INTERNAL_LIBLEARNING_RANDOMFORESTS_NODE_H
 #include "../dataview.h"
 #include "common-libraries.hpp"
+
+#include <CGAL/IO/binary_file_io.h>
+
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
 #include <boost/serialization/scoped_ptr.hpp>
 #include <boost/serialization/vector.hpp>
+#else
+#include <boost/scoped_ptr.hpp>
+#include <vector>
+#endif
+
 #if VERBOSE_NODE_LEARNING
 #include <cstdio>
 #endif
@@ -42,7 +51,7 @@ public:
     typedef ParamT ParamType;
     ParamType const* params;
     Splitter splitter;
-    
+
     boost::scoped_ptr<Derived> left;
     boost::scoped_ptr<Derived> right;
     std::vector<float> node_dist;
@@ -53,7 +62,7 @@ public:
     {}
 
     bool pure(DataView2D<int> labels, int* sample_idxes) const {
-        if (n_samples < 2) 
+        if (n_samples < 2)
             return true; // an empty node is by definition pure
         int first_sample_idx = sample_idxes[0];
         int seen_class = labels(first_sample_idx, 0);
@@ -72,7 +81,7 @@ public:
 
     int partition_samples(DataView2D<FeatureType> samples, int* sample_idxes) {
         // sort samples in bag so that left-samples precede right-samples
-        // works like std::partition 
+        // works like std::partition
         int low  = 0;
         int high = n_samples;
 
@@ -139,8 +148,8 @@ public:
         std::vector<uint64_t> classes_r;
 
         // pass information about data to split generator
-        split_generator.init(samples, 
-                             labels, 
+        split_generator.init(samples,
+                             labels,
                              sample_idxes,
                              n_samples,
                              params->n_classes,
@@ -149,7 +158,7 @@ public:
         size_t n_proposals = split_generator.num_proposals();
 
         std::pair<FeatureType, float> results; // (threshold, loss)
-        
+
         for (size_t i_proposal = 0; i_proposal < n_proposals; ++i_proposal) {
             // generate proposal
             Splitter split = split_generator.gen_proposal(gen);
@@ -167,13 +176,13 @@ public:
     }
 
     template<typename SplitGenerator>
-    void train(DataView2D<FeatureType> samples, 
-               DataView2D<int> labels, 
-               int* sample_idxes, 
-               size_t n_samples_, 
+    void train(DataView2D<FeatureType> samples,
+               DataView2D<int> labels,
+               int* sample_idxes,
+               size_t n_samples_,
                SplitGenerator const& split_generator,
                RandomGen& gen
-               ) 
+               )
     {
         n_samples = n_samples_;
         node_dist.resize(params->n_classes, 0.0f);
@@ -195,7 +204,7 @@ public:
             return;
         }
 
-        is_leaf = false; 
+        is_leaf = false;
 
 #if VERBOSE_NODE_LEARNING
         std::printf("Determining the best split at depth %zu/%zu\n", depth, params->max_depth);
@@ -213,21 +222,22 @@ public:
         int offset_right    = low;
 #ifdef TREE_GRAPHVIZ_STREAM
         if (depth <= TREE_GRAPHVIZ_MAX_DEPTH) {
-            TREE_GRAPHVIZ_STREAM << "p" << std::hex << (unsigned long)this       
-                << " -> " 
-                << "p" << std::hex << (unsigned long)left.get() 
+            TREE_GRAPHVIZ_STREAM << "p" << std::hex << (unsigned long)this
+                << " -> "
+                << "p" << std::hex << (unsigned long)left.get()
                 << std::dec << " [label=\"" << n_samples_left << "\"];" <<  std::endl;
-            TREE_GRAPHVIZ_STREAM << "p" << std::hex << (unsigned long)this       
-                << " -> " 
-                << "p" << std::hex << (unsigned long)right.get() 
+            TREE_GRAPHVIZ_STREAM << "p" << std::hex << (unsigned long)this
+                << " -> "
+                << "p" << std::hex << (unsigned long)right.get()
                 << std::dec << " [label=\"" << n_samples_right << "\"];" << std::endl;
         }
 #endif
         // train left and right side of split
         left->train (samples, labels, sample_idxes + offset_left,  n_samples_left,  split_generator, gen);
         right->train(samples, labels, sample_idxes + offset_right, n_samples_right, split_generator, gen);
-    } 
+    }
 
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
     template <typename Archive>
     void serialize(Archive& ar, unsigned /*version*/)
     {
@@ -243,10 +253,48 @@ public:
           ar & BOOST_SERIALIZATION_NVP(right);
         }
     }
-  
+#endif
+
+    void write (std::ostream& os)
+    {
+      I_Binary_write_bool (os, is_leaf);
+      I_Binary_write_size_t_into_uinteger32 (os, n_samples);
+      I_Binary_write_size_t_into_uinteger32 (os, depth);
+      splitter.write(os);
+
+      for (const float& f : node_dist)
+        I_Binary_write_float32 (os, f);
+
+      if (!is_leaf)
+      {
+        left->write(os);
+        right->write(os);
+      }
+    }
+
+    void read (std::istream& is)
+    {
+      I_Binary_read_bool (is, is_leaf);
+      I_Binary_read_size_t_from_uinteger32 (is, n_samples);
+      I_Binary_read_size_t_from_uinteger32 (is, depth);
+      splitter.read(is);
+
+      node_dist.resize(params->n_classes, 0.0f);
+      for (std::size_t i = 0; i < node_dist.size(); ++ i)
+        I_Binary_read_float32 (is, node_dist[i]);
+
+      if (!is_leaf)
+      {
+        left.reset(new Derived(depth + 1, params));
+        right.reset(new Derived(depth + 1, params));
+        left->read(is);
+        right->read(is);
+      }
+    }
+
     void get_feature_usage (std::vector<std::size_t>& count) const
     {
-      if (!is_leaf)
+      if (!is_leaf && splitter.feature != -1)
       {
         count[std::size_t(splitter.feature)] ++;
         left->get_feature_usage(count);

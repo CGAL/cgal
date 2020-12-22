@@ -3,20 +3,20 @@ namespace Qt {
 /*!
 \ingroup PkgGraphicsViewInputClasses
 
-An object of type `GraphicsViewInput` can emit a signal with `CGAL::Object` as argument. 
+An object of type `GraphicsViewInput` can emit a signal with `CGAL::Object` as argument.
 
 */
 
 class GraphicsViewInput {
 public:
 
-/// \name Signals 
+/// \name Signals
 /// @{
 
 /*!
-A signal that emits a `CGAL::Object`. 
-*/ 
-void generate(Object); 
+A signal that emits a `CGAL::Object`.
+*/
+void generate(Object);
 
 /// @}
 

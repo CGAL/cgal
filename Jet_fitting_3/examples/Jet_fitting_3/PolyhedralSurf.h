@@ -100,7 +100,7 @@ Facet_PM<TPoly> get_fpm(boost::vertex_attribute_t, TPoly& ) {return Facet_PM<TPo
 //----------------------------------------------------------------
  //  int ring_index;
 //   My_halfedge(): ring_index(-1) {}
-//   void setRingIndex(int i) {	ring_index = i;    }
+//   void setRingIndex(int i) {        ring_index = i;    }
 //   int getRingIndex() {return ring_index;    }
 //   void resetRingIndex() {ring_index = -1;    }
 
@@ -145,7 +145,7 @@ HEdge_PM<TPoly> get_hepm(boost::edge_weight_t, TPoly& )
 struct Wrappers_VFH:public CGAL::Polyhedron_items_3 {
   // wrap vertex
   template < class Refs, class Traits > struct Vertex_wrapper {
-    typedef struct {
+    typedef struct FGeomTraits {
     public:
       typedef typename Traits::Point_3 Point_3;
     } FGeomTraits;
@@ -158,7 +158,7 @@ struct Wrappers_VFH:public CGAL::Polyhedron_items_3 {
   template < class Refs, class Traits > struct Face_wrapper {
     //typedef typename Traits::Vector_3 Vector_3;
     //all types needed by the facet...
-    typedef struct {
+    typedef struct FGeomTraits {
     public:
       typedef typename Traits::Vector_3 Vector_3;
     } FGeomTraits;

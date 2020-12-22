@@ -24,7 +24,7 @@ int main(int argc, char** argv)
     Curves_on_surface_topology<LCC_3_cmap> cst(map, true);
     std::cout << "Mesh " << file << std::endl;
     cst.compute_minimal_quadrangulation(true);
-  
+
     std::cout<<"Initial map: ";
     map.display_characteristics(std::cout)<<std::endl;
     std::cout<<"Reduced map: ";

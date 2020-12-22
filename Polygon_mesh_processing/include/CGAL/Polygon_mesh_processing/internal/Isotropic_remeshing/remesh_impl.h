@@ -323,7 +323,10 @@ namespace internal {
     {
       halfedge_status_pmap_ = get(CGAL::dynamic_halfedge_property_t<Halfedge_status>(),
                                   pmesh);
-      CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
+      CGAL_assertion_code(input_mesh_is_valid_ = CGAL::is_valid_polygon_mesh(pmesh));
+      CGAL_warning_msg(input_mesh_is_valid_,
+        "The input mesh is not a valid polygon mesh. "
+        "It could lead PMP::isotropic_remeshing() to fail.");
     }
 
     ~Incremental_remesher()
@@ -349,7 +352,7 @@ namespace internal {
         Patch_id pid = get_patch_id(f);
         input_triangles_.push_back(triangle(f));
         input_patch_ids_.push_back(pid);
-        std::pair<typename Patch_id_to_index_map::iterator, bool> 
+        std::pair<typename Patch_id_to_index_map::iterator, bool>
           res = patch_id_to_index_map.insert(std::make_pair(pid,0));
         if(res.second){
           res.first->second =  patch_id_to_index_map.size()-1;
@@ -590,7 +593,6 @@ namespace internal {
 #endif
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
-      CGAL_expensive_assertion(is_triangle_mesh(mesh_));
       debug_status_map();
       debug_self_intersections();
 #endif
@@ -804,7 +806,6 @@ namespace internal {
 #endif
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
-      CGAL_expensive_assertion(is_triangle_mesh(mesh_));
       debug_status_map();
       debug_self_intersections();
       CGAL_assertion(PMP::remove_degenerate_faces(mesh_,
@@ -1033,8 +1034,7 @@ namespace internal {
           put(vpmap_, vp.first, initial_pos);//cancel move
       }
 
-      CGAL_assertion(is_valid_polygon_mesh(mesh_));
-      CGAL_assertion(is_triangle_mesh(mesh_));
+      CGAL_assertion(!input_mesh_is_valid_ || is_valid_polygon_mesh(mesh_));
       }//end for loop (nit == nb_iterations)
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
@@ -1067,8 +1067,7 @@ namespace internal {
         Point proj = trees[patch_id_to_index_map[get_patch_id(face(halfedge(v, mesh_), mesh_))]]->closest_point(get(vpmap_, v));
         put(vpmap_, v, proj);
       }
-      CGAL_assertion(is_valid_polygon_mesh(mesh_));
-      CGAL_assertion(is_triangle_mesh(mesh_));
+      CGAL_assertion(!input_mesh_is_valid_ || is_valid_polygon_mesh(mesh_));
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_self_intersections();
 #endif
@@ -1097,7 +1096,6 @@ namespace internal {
         put(vpmap_, v,  proj(v));
       }
       CGAL_assertion(is_valid(mesh_));
-      CGAL_assertion(is_triangle_mesh(mesh_));
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_self_intersections();
 #endif
@@ -1311,7 +1309,7 @@ private:
       {
         if (is_on_patch_border(next(hopp, mesh_)) && is_on_patch_border(prev(hopp, mesh_)))
           return false;
-        else if (next_on_patch_border(h) == hopp)
+        else if (next_on_patch_border(h) == hopp && prev_on_patch_border(h) == hopp)
           return false; //isolated patch border
         else
           return true;
@@ -1361,7 +1359,7 @@ private:
       do
       {
         if (is_on_patch_border(nxt))
-        { 
+        {
           CGAL_assertion(get_patch_id(face(nxt, mesh_)) == pid);
           return nxt;
         }
@@ -1466,7 +1464,9 @@ private:
       unsigned int nb_incident_features = 0;
       for(halfedge_descriptor h : halfedges_around_target(v, mesh_))
       {
-        if (is_on_border(h) || is_on_patch_border(h))
+        halfedge_descriptor hopp = opposite(h, mesh_);
+        if ( is_on_border(h) || is_on_patch_border(h)
+          || is_on_border(hopp) || is_on_patch_border(hopp))
           ++nb_incident_features;
         if (nb_incident_features > 2)
           return true;
@@ -1513,7 +1513,9 @@ private:
       // tag patch border halfedges
       for(halfedge_descriptor h : halfedges(mesh_))
       {
-        if (status(h)==PATCH && status(opposite(h, mesh_))!=PATCH)
+        if (status(h) == PATCH
+          && (   status(opposite(h, mesh_)) != PATCH
+              || get_patch_id(face(h, mesh_)) != get_patch_id(face(opposite(h, mesh_), mesh_))))
         {
           set_status(h, PATCH_BORDER);
           has_border_ = true;
@@ -1522,7 +1524,7 @@ private:
 
       // update status using constrained edge map
       if (!boost::is_same<EdgeIsConstrainedMap,
-                          Constant_property_map<edge_descriptor, bool> >::value)
+                          Static_boolean_property_map<edge_descriptor, false> >::value)
       {
         for(edge_descriptor e : edges(mesh_))
         {
@@ -1959,6 +1961,7 @@ private:
     EdgeIsConstrainedMap ecmap_;
     VertexIsConstrainedMap vcmap_;
     FaceIndexMap fimap_;
+    CGAL_assertion_code(bool input_mesh_is_valid_;)
 
   };//end class Incremental_remesher
 }//end namespace internal

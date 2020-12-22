@@ -7,10 +7,10 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
+//
 // file          : test/Triangulation/test_constrained_triangulation.C
 // source        : $URL$
 // revision      : $Id$

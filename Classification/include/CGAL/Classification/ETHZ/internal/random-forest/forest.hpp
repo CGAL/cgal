@@ -31,7 +31,7 @@
 #endif
 
 #include <CGAL/algorithm.h>
-
+#include <CGAL/IO/binary_file_io.h>
 #include <CGAL/tags.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -55,7 +55,7 @@ class Tree_training_functor
   typedef typename NodeT::ParamType ParamType;
   typedef typename NodeT::FeatureType FeatureType;
   typedef Tree<NodeT> TreeType;
-  
+
   std::size_t seed_start;
   const std::vector<int>& sample_idxes;
   boost::ptr_vector<Tree<NodeT> >& trees;
@@ -63,7 +63,7 @@ class Tree_training_functor
   DataView2D<int> labels;
   std::size_t n_in_bag_samples;
   const SplitGenerator& split_generator;
-  
+
 public:
 
   Tree_training_functor(std::size_t seed_start,
@@ -81,7 +81,7 @@ public:
     , n_in_bag_samples(n_in_bag_samples)
     , split_generator(split_generator)
   { }
-    
+
 #ifdef CGAL_LINKED_WITH_TBB
   void operator()(const tbb::blocked_range<std::size_t>& r) const
   {
@@ -89,7 +89,7 @@ public:
       apply(s);
   }
 #endif // CGAL_LINKED_WITH_TBB
-    
+
   inline void apply (std::size_t i_tree) const
   {
     // initialize random generator with sequential seeds (one for each
@@ -120,14 +120,14 @@ public:
     RandomForest(ParamType const& params) : params(params) {}
 
     template<typename ConcurrencyTag, typename SplitGenerator>
-    void train(DataView2D<FeatureType> samples, 
-               DataView2D<int> labels, 
-               DataView2D<int> train_sample_idxes, 
+    void train(DataView2D<FeatureType> samples,
+               DataView2D<int> labels,
+               DataView2D<int> train_sample_idxes,
                SplitGenerator const& split_generator,
                size_t seed_start = 1,
                bool reset_trees = true,
                std::size_t n_classes = std::size_t(-1)
-               ) 
+               )
     {
         if (reset_trees)
           trees.clear();
@@ -136,7 +136,7 @@ public:
           params.n_classes = *std::max_element(&labels(0,0), &labels(0,0)+labels.num_elements()) + 1;
         else
           params.n_classes = n_classes;
-        
+
         params.n_features = samples.cols;
         params.n_samples  = samples.rows;
 
@@ -159,15 +159,15 @@ public:
         std::size_t nb_trees = trees.size();
         for (std::size_t i_tree = nb_trees; i_tree < nb_trees + params.n_trees; ++ i_tree)
           trees.push_back (new TreeType(&params));
-        
+
         Tree_training_functor<NodeT, SplitGenerator>
           f (seed_start, sample_idxes, trees, samples, labels, params.n_in_bag_samples, split_generator);
 
 #ifndef CGAL_LINKED_WITH_TBB
-        CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+        CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                    "Parallel_tag is enabled but TBB is unavailable.");
 #else
-        if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+        if (std::is_convertible<ConcurrencyTag,Parallel_tag>::value)
         {
           tbb::parallel_for(tbb::blocked_range<size_t>(nb_trees, nb_trees + params.n_trees), f);
         }
@@ -223,11 +223,35 @@ public:
         return sum/trees.size();
     }
 #endif
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
     template <typename Archive>
     void serialize(Archive& ar, unsigned /* version */)
     {
         ar & BOOST_SERIALIZATION_NVP(params);
         ar & BOOST_SERIALIZATION_NVP(trees);
+    }
+#endif
+
+    void write (std::ostream& os)
+    {
+      params.write(os);
+
+      I_Binary_write_size_t_into_uinteger32 (os, trees.size());
+      for (std::size_t i_tree = 0; i_tree < trees.size(); ++i_tree)
+        trees[i_tree].write(os);
+    }
+
+    void read (std::istream& is)
+    {
+      params.read(is);
+
+      std::size_t nb_trees;
+      I_Binary_read_size_t_from_uinteger32 (is, nb_trees);
+      for (std::size_t i = 0; i < nb_trees; ++ i)
+      {
+        trees.push_back (new TreeType(&params));
+        trees.back().read(is);
+      }
     }
 
     void get_feature_usage (std::vector<std::size_t>& count) const

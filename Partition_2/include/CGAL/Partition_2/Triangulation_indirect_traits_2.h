@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -21,11 +21,11 @@
 namespace CGAL {
 
 template <class Circulator>
-class Indirect_segment 
+class Indirect_segment
 {
 public:
    Indirect_segment() {}
-   Indirect_segment(Circulator s, Circulator t) : _source_ref(s), 
+   Indirect_segment(Circulator s, Circulator t) : _source_ref(s),
                                                   _target_ref(t)
    {}
    Circulator source() {return _source_ref;}
@@ -37,12 +37,12 @@ private:
 };
 
 template <class Circulator>
-class Indirect_triangle 
+class Indirect_triangle
 {
 public:
    Indirect_triangle() {}
-   Indirect_triangle(Circulator p0, Circulator p1, Circulator p2): 
-       _p0(p0), _p1(p1), _p2(p2) 
+   Indirect_triangle(Circulator p0, Circulator p1, Circulator p2):
+       _p0(p0), _p1(p1), _p2(p2)
    {}
 
 private:
@@ -113,6 +113,7 @@ template <class Circulator>
 class Construct_circulator_2
 {
 public:
+   typedef Circulator result_type;
    Circulator operator()(Circulator p1) const { return p1; }
 };
 
@@ -129,7 +130,7 @@ public:
 };
 
 template <class Circulator, class Traits>
-class Triangulation_indirect_traits_2 
+class Triangulation_indirect_traits_2
 {
 public:
 
@@ -151,12 +152,12 @@ public:
    Compare_x_2 compare_x_2_object() const
    {
      return Compare_x_2(_traits.compare_x_2_object());
-   }  
+   }
 
    Compare_y_2 compare_y_2_object() const
    {
      return Compare_y_2(_traits.compare_y_2_object());
-   }  
+   }
 
    Orientation_2 orientation_2_object() const
    {

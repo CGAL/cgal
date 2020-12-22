@@ -66,7 +66,7 @@ struct Bezier_rat_kernel  : public CGAL::Cartesian<Bezier_rational>  {};
 struct Bezier_alg_kernel  : public CGAL::Cartesian<Bezier_algebraic> {};
 
 struct Bezier_traits : public CGAL::Arr_Bezier_curve_traits_2<Bezier_rat_kernel, Bezier_alg_kernel, Bezier_nt_traits> {};
-  
+
 typedef Bezier_rat_kernel::Point_2                      Bezier_rat_point;
 typedef Bezier_traits::Curve_2                          Bezier_curve;
 typedef Bezier_traits::X_monotone_curve_2               Bezier_X_monotone_curve;

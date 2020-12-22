@@ -42,7 +42,7 @@ public:
     typedef typename TriangulationTraits::Point_d       Point_d;
 
 private: // DATA MEMBERS
-    Data    data_;
+    CGAL_NO_UNIQUE_ADDRESS Data    data_;
 
 public:
 
@@ -55,7 +55,7 @@ public:
         typedef typename Base::template Rebind_TDS<TDS2>::Other TDSFullCell2;
         typedef Triangulation_full_cell<TriangulationTraits, Data_, TDSFullCell2> Other;
     };
- 
+
     Triangulation_full_cell(const int d)
         : Base(d), data_() {}
 

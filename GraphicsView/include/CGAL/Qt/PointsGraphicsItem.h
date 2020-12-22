@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -43,9 +43,9 @@ public:
 
 public:
   QRectF boundingRect() const;
-  
+
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-  
+
 
   const QPen& verticesPen() const
   {
@@ -85,7 +85,7 @@ protected:
 
 template <typename P>
 PointsGraphicsItem<P>::PointsGraphicsItem(P * p_)
-  :  points(p_), painterostream(0),  draw_vertices(true)   
+  :  points(p_), painterostream(0),  draw_vertices(true)
 {
   setVerticesPen(QPen(::Qt::red, 3.));
   if(points->size() == 0){
@@ -96,7 +96,7 @@ PointsGraphicsItem<P>::PointsGraphicsItem(P * p_)
 }
 
 template <typename P>
-QRectF 
+QRectF
 PointsGraphicsItem<P>::boundingRect() const
 {
   return bounding_rect;
@@ -106,8 +106,8 @@ PointsGraphicsItem<P>::boundingRect() const
 
 
 template <typename P>
-void 
-PointsGraphicsItem<P>::paint(QPainter *painter, 
+void
+PointsGraphicsItem<P>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem * /*option*/,
                                     QWidget * /*widget*/)
 {
@@ -129,7 +129,7 @@ PointsGraphicsItem<P>::paint(QPainter *painter,
 // We let the bounding box only grow, so that when vertices get removed
 // the maximal bbox gets refreshed in the GraphicsView
 template <typename P>
-void 
+void
 PointsGraphicsItem<P>::updateBoundingBox()
 {
   Converter<Traits> convert;
@@ -142,7 +142,7 @@ PointsGraphicsItem<P>::updateBoundingBox()
 
 
 template <typename P>
-void 
+void
 PointsGraphicsItem<P>::modelChanged()
 {
   if((points->size() == 0) ){

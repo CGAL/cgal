@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
@@ -26,7 +26,7 @@
 
 namespace CGAL {
 
-namespace internal_nef 
+namespace internal_nef
 {
 template <class Handle, class Vector>
 CGAL_MEDIUM_INLINE

@@ -1,20 +1,20 @@
-// Copyright (c) 2000,2001  
+// Copyright (c) 2000,2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Seel
 #ifndef CGAL_POINTCDXXX_H
-#define CGAL_POINTCDXXX_H 
+#define CGAL_POINTCDXXX_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Origin.h>
@@ -29,8 +29,8 @@ std::istream& operator>>(std::istream&, PointCd<FT,LA>&);
 template <class FT, class LA>
 std::ostream& operator<<(std::ostream&, const PointCd<FT,LA>&);
 
-template <class _FT, class _LA > 
-class PointCd : public Handle_for< Tuple_d<_FT,_LA> > { 
+template <class _FT, class _LA >
+class PointCd : public Handle_for< Tuple_d<_FT,_LA> > {
   typedef Tuple_d<_FT,_LA> Tuple;
   typedef Handle_for<Tuple> Base;
   typedef PointCd<_FT,_LA> Self;
@@ -43,7 +43,7 @@ _FT& entry(int i) { return ptr()->v[i]; }
 const _FT& entry(int i) const { return ptr()->v[i]; }
 PointCd(const Base& b) : Base(b) {}
 
-public: 
+public:
 /*{\Mtypes 4}*/
 
 typedef _FT RT;
@@ -61,9 +61,9 @@ PointCd(int d = 0) : Base( Tuple(d) ) {}
 PointCd(int d, const Origin&) : Base( Tuple(d) ) {}
 
 template <class InputIterator>
-PointCd(int d, InputIterator first, InputIterator last) 
-  : Base( Tuple(d,first,last) ) 
-{ if ( first == last ) return; 
+PointCd(int d, InputIterator first, InputIterator last)
+  : Base( Tuple(d,first,last) )
+{ if ( first == last ) return;
   // else first specifies common denominator:
   CGAL_assertion_msg(FT(*first)!=FT(0),
     "PointCd::constructor: denominator must be nonzero.");
@@ -71,71 +71,71 @@ PointCd(int d, InputIterator first, InputIterator last)
 }
 
 template <class InputIterator>
-PointCd (int d, InputIterator first, InputIterator last, 
+PointCd (int d, InputIterator first, InputIterator last,
   const FT& D) : Base( Tuple(d,first,last) )
 { CGAL_assertion_msg(D!=FT(0),"PointCd::constructor: D must be nonzero.");
   for (int i=0; i<d; ++i) entry(i)=entry(i)/D;
 }
 
 PointCd(int x, int y, int w = 1) : Base( Tuple((FT)x,(FT)y) )
-{ CGAL_assertion_msg(w!=0,"PointCd::construction: w == 0."); 
+{ CGAL_assertion_msg(w!=0,"PointCd::construction: w == 0.");
   vector_rep()/=w; }
 
-PointCd(const FT& x, const FT& y, const FT& w = 1) 
+PointCd(const FT& x, const FT& y, const FT& w = 1)
   : Base( Tuple(x,y) )
-{ CGAL_assertion_msg(w!=FT(0),"PointCd::construction: w == 0."); 
+{ CGAL_assertion_msg(w!=FT(0),"PointCd::construction: w == 0.");
   vector_rep()/=w; }
 
-PointCd(int x, int y, int z, int w) : 
+PointCd(int x, int y, int z, int w) :
   Base( Tuple(FT(x),FT(y),FT(z), MatchHelper()) )
-{ CGAL_assertion_msg(w!=0,"PointCd::construction: w == 0."); 
+{ CGAL_assertion_msg(w!=0,"PointCd::construction: w == 0.");
   vector_rep()/=w; }
 
-PointCd(const FT& x, const FT& y, const FT& z, const FT& w) 
+PointCd(const FT& x, const FT& y, const FT& z, const FT& w)
   : Base( Tuple(x,y,z,MatchHelper()) )
 { CGAL_assertion_msg(w!=FT(0),"PointCd::construction: w == 0.");
   vector_rep()/=w; }
 
-~PointCd() {}     
+~PointCd() {}
 
 int dimension() const  { return ptr()->size(); }
 
 FT cartesian(int i) const
 { CGAL_assertion_msg((0<=i && i<dimension()),
     "PointCd::cartesian(): index out of range.");
-  return entry(i); 
+  return entry(i);
 }
 FT operator[](int i) const { return cartesian(i); }
-FT homogeneous(int i) const 
-{ CGAL_assertion_msg((0<=i && i<=(dimension())), 
+FT homogeneous(int i) const
+{ CGAL_assertion_msg((0<=i && i<=(dimension())),
     "PointCd::homogeneous(): index out of range.");
   if (i!=dimension()) return entry(i); else return FT(1);
 }
 
-Cartesian_const_iterator cartesian_begin() const 
+Cartesian_const_iterator cartesian_begin() const
 { return ptr()->begin(); }
-Cartesian_const_iterator cartesian_end() const 
+Cartesian_const_iterator cartesian_end() const
 { return ptr()->end(); }
 
-Homogeneous_const_iterator homogeneous_begin() const 
+Homogeneous_const_iterator homogeneous_begin() const
 { return Homogeneous_const_iterator(ptr()->begin(),ptr()->end()); }
-Homogeneous_const_iterator homogeneous_end() const 
+Homogeneous_const_iterator homogeneous_end() const
 { return Homogeneous_const_iterator(ptr()->beyondend()); }
 
 PointCd<FT,LA> transform(const Aff_transformationCd<FT,LA>& t) const;
 
-inline VectorCd<FT,LA> operator-(const Origin& o) const; 
+inline VectorCd<FT,LA> operator-(const Origin& o) const;
 
-VectorCd<FT,LA> operator-(const PointCd<FT,LA>& q) const 
-{ VectorCd<FT,LA> res(dimension()); 
+VectorCd<FT,LA> operator-(const PointCd<FT,LA>& q) const
+{ VectorCd<FT,LA> res(dimension());
   res.ptr()->cartesian_sub(ptr(),q.ptr());
-  return res; 
+  return res;
 }
 
 PointCd<FT,LA> operator+(const VectorCd<FT,LA>& v) const;
 PointCd<FT,LA> operator-(const VectorCd<FT,LA>& v) const;
-PointCd<FT,LA>& operator+=(const VectorCd<FT,LA>& v); 
-PointCd<FT,LA>& operator-=(const VectorCd<FT,LA>& v); 
+PointCd<FT,LA>& operator+=(const VectorCd<FT,LA>& v);
+PointCd<FT,LA>& operator-=(const VectorCd<FT,LA>& v);
 
 static Comparison_result cmp(
   const PointCd<FT,LA>& p1, const PointCd<FT,LA>& p2)
@@ -175,5 +175,5 @@ FT z()  const { return cartesian(2); }
 
 #undef PointCd
 } //namespace CGAL
-#endif // CGAL_POINTCDXXX_H 
+#endif // CGAL_POINTCDXXX_H
 //----------------------- end of file ----------------------------------

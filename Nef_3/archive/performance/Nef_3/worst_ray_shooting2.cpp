@@ -80,7 +80,7 @@ const double PI = 3.1415926; // 53589793238462643383280;
 bool cgal_nef3_timer_on = false;
 
 Nef_polyhedron create_complex_facet(int n) {
-  
+
   typedef std::list<Point_3> pointlist;
   typedef pointlist::const_iterator pointiterator;
   typedef std::pair<pointiterator,pointiterator> pointrange;
@@ -104,7 +104,7 @@ Nef_polyhedron create_complex_facet(int n) {
 }
 
 Aff_transformation_3 compute_transformation_matrix(double alpha) {
-  
+
   double arc = CGAL_PI * alpha / 180.0;
 
   RT epsilon = 1;
@@ -122,27 +122,27 @@ Aff_transformation_3 compute_transformation_matrix(double alpha) {
     epsilon *= RT(10);
   }
 
-  std::cout << "epsilon      : 1/" << epsilon << std::endl; 
+  std::cout << "epsilon      : 1/" << epsilon << std::endl;
 
   RT sin_alpha(0);
   RT cos_alpha(0);
   RT w(0);
-  
+
   CGAL::Timer t;
-  t.start(); 
+  t.start();
   CGAL::rational_rotation_approximation( arc,
-					 sin_alpha, cos_alpha, w,
-					 RT(1), RT(epsilon));
+                                         sin_alpha, cos_alpha, w,
+                                         RT(1), RT(epsilon));
   t.stop();
   std::cout << "approx. time: " << t.time() << std::endl;
 
   Aff_transformation_3 aff( cos_alpha, NT(0), sin_alpha,
-			    NT(0), w, NT(0),
-			    -sin_alpha, NT(0), cos_alpha,
-			    w);
+                            NT(0), w, NT(0),
+                            -sin_alpha, NT(0), cos_alpha,
+                            w);
 
-  std::cout << "sin(alpha)*w: " << sin_alpha << std::endl; 
-  std::cout << "cos(alpha)*w: " << cos_alpha << std::endl; 
+  std::cout << "sin(alpha)*w: " << sin_alpha << std::endl;
+  std::cout << "cos(alpha)*w: " << cos_alpha << std::endl;
   std::cout << "w: " << w << std::endl;
 
   return aff;
@@ -154,24 +154,24 @@ Aff_transformation_3 compute_transformation_matrix(RT sinus, RT cosinus, RT w) {
   double arc = std::asin(sin_double);
   double alpha = arc * 180 / CGAL_PI;
 
-  std::cout << "sin(alpha)*w: " << sinus << std::endl; 
-  std::cout << "cos(alpha)*w: " << cosinus << std::endl; 
+  std::cout << "sin(alpha)*w: " << sinus << std::endl;
+  std::cout << "cos(alpha)*w: " << cosinus << std::endl;
   std::cout << "w: " << w << std::endl;
 
   std::cout << "sin_double: " << sin_double << std::endl;
   std::cout << "arc: " << arc << std::endl;
   std::cout << "alpha: " << alpha << std::endl;
-  
+
   Aff_transformation_3 aff( cosinus, NT(0), sinus,
-			    NT(0), w, NT(0),
-			    -sinus, NT(0), cosinus,
-			    w);
+                            NT(0), w, NT(0),
+                            -sinus, NT(0), cosinus,
+                            w);
   return aff;
 
 }
 
 int main(int argc, char* argv[]) {
-  
+
   CGAL_assertion(argc>2 && argc<6);
 
   std::ifstream rotations(argv[1]);
@@ -189,7 +189,7 @@ int main(int argc, char* argv[]) {
   std::cerr << "step: " << step << std::endl;
   int s = argc > 4 ? std::atoi(argv[4]) : 100;
   std::cerr << "size of cube: " << s << std::endl;
-  
+
   double alpha;
   RT sinus, cosinus, w;
   Aff_transformation_3 aff;
@@ -204,7 +204,7 @@ int main(int argc, char* argv[]) {
     rotations >> w;
     aff = compute_transformation_matrix(sinus, cosinus, w);
   }
-  
+
   for(int i=step; i<=n*step; i+=step) {
     Nef_polyhedron C = create_complex_facet(i*8);
     C.transform(aff);
@@ -216,9 +216,9 @@ int main(int argc, char* argv[]) {
     Nef_polyhedron NT;
     in >> NT;
     CGAL_assertion(NT.is_valid());
-    
+
     NT.transform(Aff_transformation_3(CGAL::TRANSLATION,Vector_3(scale*2,(-s*i)/2,-s)));
-  
+
     cgal_nef3_timer_on = true;
     C+=NT;
     cgal_nef3_timer_on = false;

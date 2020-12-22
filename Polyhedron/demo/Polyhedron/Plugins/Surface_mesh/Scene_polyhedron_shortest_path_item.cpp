@@ -30,19 +30,19 @@ struct Scene_polyhedron_shortest_path_item_priv
   typedef GraphTraits::face_descriptor face_descriptor;
   typedef GraphTraits::face_iterator face_iterator;
 
-  typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Face_graph> 
+  typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Face_graph>
   Surface_mesh_shortest_path_traits;
-  typedef CGAL::Surface_mesh_shortest_path<Surface_mesh_shortest_path_traits> 
+  typedef CGAL::Surface_mesh_shortest_path<Surface_mesh_shortest_path_traits>
   Surface_mesh_shortest_path;
   typedef Surface_mesh_shortest_path::Face_location Face_location;
-  typedef CGAL::AABB_face_graph_triangle_primitive<Face_graph, VertexPointMap> 
+  typedef CGAL::AABB_face_graph_triangle_primitive<Face_graph, VertexPointMap>
   AABB_face_graph_primitive;
   typedef CGAL::AABB_traits<Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
   typedef CGAL::AABB_tree<AABB_face_graph_traits> AABB_face_graph_tree;
 
-  typedef Surface_mesh_shortest_path_traits::Barycentric_coordinates 
+  typedef Surface_mesh_shortest_path_traits::Barycentric_coordinates
   Barycentric_coordinates;
-  typedef Surface_mesh_shortest_path_traits::Construct_barycentric_coordinates 
+  typedef Surface_mesh_shortest_path_traits::Construct_barycentric_coordinates
   Construct_barycentric_coordinates;
   typedef Surface_mesh_shortest_path_traits::Ray_3 Ray_3;
   typedef Surface_mesh_shortest_path_traits::Point_3 Point_3;
@@ -105,14 +105,14 @@ Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item()
 Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item(
     Scene_face_graph_item* polyhedronItem,
     CGAL::Three::Scene_interface* sceneInterface,
-    Messages_interface* messages, 
+    Messages_interface* messages,
     QMainWindow* mainWindow)
   :Scene_polyhedron_item_decorator(polyhedronItem, false)
 { d = new Scene_polyhedron_shortest_path_item_priv(this);
   common_constructor();
   initialize(polyhedronItem, sceneInterface, messages, mainWindow);
 }
-  
+
 Scene_polyhedron_shortest_path_item::~Scene_polyhedron_shortest_path_item()
 {
   deinitialize();
@@ -127,8 +127,8 @@ void Scene_polyhedron_shortest_path_item_priv::compute_elements() const
      const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
      typedef Scene_polyhedron_shortest_path_item::Surface_mesh_shortest_path::
          Source_point_iterator Source_point_iterator;
-    for( Source_point_iterator it = m_shortestPaths->source_points_begin(); 
-         it != m_shortestPaths->source_points_end(); 
+    for( Source_point_iterator it = m_shortestPaths->source_points_begin();
+         it != m_shortestPaths->source_points_end();
          ++it)
     {
       const Kernel::Point_3& p = m_shortestPaths->point(it->first, it->second);
@@ -159,7 +159,7 @@ bool Scene_polyhedron_shortest_path_item::supportsRenderingMode(RenderingMode m)
     return true;
   }
 }
-  
+
 void Scene_polyhedron_shortest_path_item::draw(CGAL::Three::Viewer_interface* viewer) const
 {
     if (supportsRenderingMode(renderingMode()))
@@ -184,14 +184,14 @@ void Scene_polyhedron_shortest_path_item::drawPoints(CGAL::Three::Viewer_interfa
     computeElements();
     initializeBuffers(viewer);
   }
-  
+
    viewer->setGlPointSize(4.0f);
    Pc* pc = getPointContainer(0);
    pc->setColor(QColor(Qt::green));
    pc->draw(viewer, true);
    viewer->setGlPointSize(1.0f);
 }
-  
+
 Scene_polyhedron_shortest_path_item* Scene_polyhedron_shortest_path_item::clone() const
 {
   return 0;
@@ -202,7 +202,7 @@ void Scene_polyhedron_shortest_path_item::set_selection_mode(Selection_mode mode
   d->m_selectionMode = mode;
 }
 
-Scene_polyhedron_shortest_path_item::Selection_mode 
+Scene_polyhedron_shortest_path_item::Selection_mode
 Scene_polyhedron_shortest_path_item::get_selection_mode() const
 {
   return d->m_selectionMode;
@@ -232,7 +232,7 @@ void Scene_polyhedron_shortest_path_item_priv::recreate_shortest_path_object()
             CGAL::get(CGAL::halfedge_index, *(item->polyhedron())),
             CGAL::get(CGAL::face_index, *(item->polyhedron())),
             CGAL::get(CGAL::vertex_point, *(item->polyhedron())));
-            
+
   //m_shortestPaths->m_debugOutput = true;
 
   m_isTreeCached = false;
@@ -256,14 +256,14 @@ void Scene_polyhedron_shortest_path_item_priv::ensure_shortest_paths_tree()
     CGAL::Three::Three::information("Done.");
   }
 }
-  
+
 void Scene_polyhedron_shortest_path_item::poly_item_changed()
 {
   d->recreate_shortest_path_object();
   invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
 }
-  
+
 void Scene_polyhedron_shortest_path_item::invalidateOpenGLBuffers()
 {
   compute_bbox();
@@ -292,7 +292,7 @@ bool Scene_polyhedron_shortest_path_item_priv::get_mouse_ray(
     const CGAL::qglviewer::Vec orig = camera->position() - offset;
     outRay = Ray_3(Point_3(orig.x, orig.y, orig.z), Point_3(point.x, point.y, point.z));
   }
-  
+
   return found;
 }
 
@@ -300,28 +300,28 @@ void Scene_polyhedron_shortest_path_item_priv::remove_nearest_point(
     const Scene_polyhedron_shortest_path_item::Face_location& faceLocation)
 {
   Surface_mesh_shortest_path_traits::Compute_squared_distance_3 computeSquaredDistance3;
-  
+
   const Point_3 pickLocation = m_shortestPaths->point(faceLocation.first,
                                                       faceLocation.second);
-  
+
   Surface_mesh_shortest_path::Source_point_iterator found =
       m_shortestPaths->source_points_end();
   FT minDistance(0.0);
-  
+
   for (Surface_mesh_shortest_path::Source_point_iterator it =
-       m_shortestPaths->source_points_begin(); 
+       m_shortestPaths->source_points_begin();
        it != m_shortestPaths->source_points_end(); ++it)
   {
     Point_3 sourceLocation = m_shortestPaths->point(it->first, it->second);
     FT distance = computeSquaredDistance3(sourceLocation, pickLocation);
-    
+
     if (found == m_shortestPaths->source_points_end() || distance < minDistance)
     {
       found = it;
       minDistance = distance;
     }
   }
-  
+
   if (found != m_shortestPaths->source_points_end())
   {
     m_shortestPaths->remove_source_point(found);
@@ -333,7 +333,7 @@ void Scene_polyhedron_shortest_path_item_priv::get_as_edge_point(
 {
   size_t minIndex = 0;
   FT minCoord(inOutLocation.second[0]);
-  
+
   for (size_t i = 1; i < 3; ++i)
   {
     if (minCoord > inOutLocation.second[i])
@@ -342,11 +342,11 @@ void Scene_polyhedron_shortest_path_item_priv::get_as_edge_point(
       minCoord = inOutLocation.second[i];
     }
   }
-  
+
   // The nearest edge is that of the two non-minimal barycentric coordinates
   size_t nearestEdge[2];
   size_t current = 0;
-  
+
   for (size_t i = 0; i < 3; ++i)
   {
     if (i != minIndex)
@@ -366,17 +366,17 @@ void Scene_polyhedron_shortest_path_item_priv::get_as_edge_point(
     m_shortestPaths->point(inOutLocation.first,
     construct_barycentric_coordinates(FT(0.0), FT(0.0), FT(1.0))),
   };
-  
+
   CGAL::Surface_mesh_shortest_paths_3::Parametric_distance_along_segment_3<
       Surface_mesh_shortest_path_traits> parametricDistanceSegment3;
-  
+
   Point_3 trianglePoint = m_shortestPaths->point(inOutLocation.first, inOutLocation.second);
-  
-  FT distanceAlongSegment = parametricDistanceSegment3(trianglePoints[nearestEdge[0]], 
+
+  FT distanceAlongSegment = parametricDistanceSegment3(trianglePoints[nearestEdge[0]],
       trianglePoints[nearestEdge[1]], trianglePoint);
-  
+
   FT coords[3] = { FT(0.0), FT(0.0), FT(0.0), };
-  
+
   coords[nearestEdge[1]] = distanceAlongSegment;
   coords[nearestEdge[0]] = FT(1.0) - distanceAlongSegment;
 
@@ -388,7 +388,7 @@ void Scene_polyhedron_shortest_path_item_priv::get_as_vertex_point(
 {
   size_t maxIndex = 0;
   FT maxCoord(inOutLocation.second[0]);
-  
+
   for (size_t i = 1; i < 3; ++i)
   {
     if (inOutLocation.second[i] > maxCoord)
@@ -397,10 +397,10 @@ void Scene_polyhedron_shortest_path_item_priv::get_as_vertex_point(
       maxCoord = inOutLocation.second[i];
     }
   }
-  
+
   FT coords[3] = { FT(0.0), FT(0.0), FT(0.0), };
   coords[maxIndex] = FT(1.0);
-  
+
   Construct_barycentric_coordinates construct_barycentric_coordinates;
   inOutLocation.second = construct_barycentric_coordinates(coords[0], coords[1], coords[2]);
 }
@@ -409,9 +409,9 @@ bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   ensure_aabb_object();
-  
+
   Face_location faceLocation = m_shortestPaths->locate(ray, m_aabbTree);
-  
+
   if (faceLocation.first == GraphTraits::null_face())
   {
     CGAL::Three::Three::information(QObject::tr("Shortest Paths: No face under cursor."));
@@ -461,11 +461,11 @@ bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray
       case It::FACE_MODE:
         break;
       }
-      
+
       if (m_shortestPaths->number_of_source_points() > 0)
       {
         ensure_shortest_paths_tree();
-        
+
         Scene_polylines_item* polylines = new Scene_polylines_item();
 
         polylines->polylines.push_back(Scene_polylines_item::Polyline());
@@ -476,7 +476,7 @@ bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray
         time.start();
         //~ m_shortestPaths->m_debugOutput=true;
         m_shortestPaths->shortest_path_points_to_source_points(
-              faceLocation.first, 
+              faceLocation.first,
               faceLocation.second,
               std::back_inserter(polylines->polylines.back()));
         std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
@@ -515,14 +515,14 @@ bool Scene_polyhedron_shortest_path_item::eventFilter(QObject*, QEvent* event)
     Qt::KeyboardModifiers modifiers = keyEvent->modifiers();
     d->m_shiftHeld = modifiers.testFlag(Qt::ShiftModifier);
   }
-  
+
   if (event->type() == QEvent::MouseButtonPress && d->m_shiftHeld)
   {
     QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-    if(mouseEvent->button() == Qt::LeftButton) 
+    if(mouseEvent->button() == Qt::LeftButton)
     {
       Ray_3 mouseRay;
-      
+
       if (d->get_mouse_ray(mouseEvent, mouseRay))
       {
         if (d->run_point_select(mouseRay))
@@ -532,7 +532,7 @@ bool Scene_polyhedron_shortest_path_item::eventFilter(QObject*, QEvent* event)
       }
     }
   }
-  
+
   return false;
 }
 
@@ -544,21 +544,21 @@ bool Scene_polyhedron_shortest_path_item::load(const std::string& file_name)
 
 bool Scene_polyhedron_shortest_path_item::deferred_load(
     Scene_face_graph_item* polyhedronItem,
-    CGAL::Three::Scene_interface* sceneInterface, 
-    Messages_interface* messages, 
+    CGAL::Three::Scene_interface* sceneInterface,
+    Messages_interface* messages,
     QMainWindow* mainWindow)
 {
   initialize(polyhedronItem, sceneInterface, messages, mainWindow);
-  
+
   std::ifstream inFile(d->m_deferredLoadFilename.c_str());
-  
-  if (!inFile) 
-  { 
+
+  if (!inFile)
+  {
     return false;
   }
-  
+
   d->m_shortestPaths->clear();
-  
+
   std::vector<face_descriptor> listOfFaces;
   listOfFaces.reserve(CGAL::num_faces(*polyhedron()));
   face_iterator current, end;
@@ -577,33 +577,33 @@ bool Scene_polyhedron_shortest_path_item::deferred_load(
     std::istringstream lineStream(line);
     FT coords[3];
     lineStream >> faceId >> coords[0] >> coords[1] >> coords[2];
-    
+
     location = construct_barycentric_coordinates(coords[0], coords[1], coords[2]);
-    
+
     // std::cout << "Read in face: " << faceId << " , " << location << std::endl;
-    
+
     d->m_shortestPaths->add_source_point(listOfFaces[faceId], location);
   }
 
   return true;
 }
 
-bool Scene_polyhedron_shortest_path_item::save(const std::string& file_name) const 
+bool Scene_polyhedron_shortest_path_item::save(const std::string& file_name) const
 {
   std::ofstream out(file_name.c_str());
   boost::property_map<Face_graph, CGAL::face_index_t>::type fimap
       = get(CGAL::face_index, *polyhedron());
   if (!out)
-  { 
-    return false; 
+  {
+    return false;
   }
 
   for(Surface_mesh_shortest_path::Source_point_iterator it =
-      d->m_shortestPaths->source_points_begin(); 
+      d->m_shortestPaths->source_points_begin();
       it != d->m_shortestPaths->source_points_end();
       ++it)
-  { 
-    out << get(fimap, it->first) << " " << it->second[0] << " " << it->second[1] 
+  {
+    out << get(fimap, it->first) << " " << it->second[0] << " " << it->second[1]
         << " " << it->second[3] << std::endl;
   }
 
@@ -611,15 +611,15 @@ bool Scene_polyhedron_shortest_path_item::save(const std::string& file_name) con
 }
 
 void Scene_polyhedron_shortest_path_item::initialize(
-    Scene_face_graph_item* polyhedronItem, 
-    CGAL::Three::Scene_interface* sceneInterface, 
+    Scene_face_graph_item* polyhedronItem,
+    CGAL::Three::Scene_interface* sceneInterface,
     Messages_interface* messages, QMainWindow* mainWindow)
 {
   d->m_mainWindow = mainWindow;
   d->m_messages = messages;
   this->poly_item = polyhedronItem;
   d->m_sceneInterface = sceneInterface;
-  connect(polyhedronItem, SIGNAL(item_is_about_to_be_changed()), this, 
+  connect(polyhedronItem, SIGNAL(item_is_about_to_be_changed()), this,
           SLOT(poly_item_changed()));
   Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
     viewer->installEventFilter(this);

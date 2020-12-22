@@ -27,18 +27,18 @@ template <class K>
 inline bool
 do_intersect(const typename K::Point_3 &pt,
              const typename K::Line_3 &line,
-             const K&)
+             const K& k)
 {
-  return line.has_on(pt);
+  return k.has_on_3_object()(line,pt);
 }
 
 template <class K>
 inline bool
 do_intersect(const typename K::Line_3 &line,
              const typename K::Point_3 &pt,
-             const K&)
+             const K& k)
 {
-  return line.has_on(pt);
+  return k.has_on_3_object()(line, pt);
 }
 
 template <class K>

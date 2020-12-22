@@ -14,7 +14,7 @@
 #ifndef CGAL_FACETS_IN_COMPLEX_3_TO_TRIANGLE_MESH_H
 #define CGAL_FACETS_IN_COMPLEX_3_TO_TRIANGLE_MESH_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/array.h>
 #include <CGAL/boost/graph/Euler_operations.h>

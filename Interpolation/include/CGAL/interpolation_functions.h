@@ -34,7 +34,7 @@ struct Data_access
   typedef typename Map::mapped_type   Data_type;
   typedef typename Map::key_type      Key_type;
 
-  Data_access<Map>(const Map& m): map(m){}
+  Data_access(const Map& m): map(m){}
 
   std::pair< Data_type, bool>
   operator()(const Key_type& p) const
@@ -203,10 +203,10 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
 //
 // The general scheme:
 //  Coord_type inv_weight = f(dist); //i.e. dist^2
-//   	term1 +=  coeff/inv_weight;
+//           term1 +=  coeff/inv_weight;
 //    term2 +=  coeff * squared_dist;
 //    term3 +=  coeff*(squared_dist/inv_weight);
-// 	  gradient_int += (coeff/inv_weight) * (vh->get_value()+ vh->get_gradient() * (p - vh->point()));
+//           gradient_int += (coeff/inv_weight) * (vh->get_value()+ vh->get_gradient() * (p - vh->point()));
 
 template < class ForwardIterator, class ValueFunctor, class GradFunctor, class Traits, class Point >
 std::pair<

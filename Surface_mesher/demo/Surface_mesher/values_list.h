@@ -33,11 +33,11 @@ protected:
 
 class Values_list : public QWidget
 {
-  Q_OBJECT 
+  Q_OBJECT
 public:
   enum Field { Value = 0 , Color = 1, Name = 2};
   Values_list(QWidget* parent);
-  
+
   // const accessors
   int numberOfValues() const;
   QColor color(const int i) const;

@@ -1,16 +1,16 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>)
 
@@ -262,6 +262,8 @@ public:
     bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& i) const { return  It::operator==(i); }
     bool operator!=( const Self& i) const { return !(*this == i); }
+    bool operator==( const It& i) const { return  It::operator==(i); }
+    bool operator!=( const It& i) const { return !(*this == i); }
 
     Self& operator++() {
         this->nt = (*this->nt).next();

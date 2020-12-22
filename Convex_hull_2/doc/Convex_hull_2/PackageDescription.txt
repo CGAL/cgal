@@ -47,7 +47,7 @@ of the convex hull of `P`.
 as functions for testing if a given set of points is strongly convex or not.
 There are also a number of functions available for computing particular extreme
 points in 2D and subsequences of the hull points, such as the lower hull or
-upper hull of a set of points. 
+upper hull of a set of points.
 
 \cgalClassifedRefPages
 

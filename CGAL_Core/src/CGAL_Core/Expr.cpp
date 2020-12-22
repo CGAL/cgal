@@ -7,14 +7,14 @@
  *
  * File: Expr.cpp
  *
- * Written by 
+ * Written by
  *       Koji Ouchi <ouchi@simulation.nyu.edu>
  *       Chee Yap <yap@cs.nyu.edu>
  *       Igor Pechtchanski <pechtcha@cs.nyu.edu>
  *       Vijay Karamcheti <vijayk@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
- *       Sylvain Pion <pion@cs.nyu.edu> 
+ *       Sylvain Pion <pion@cs.nyu.edu>
  *
  * WWW URL: http://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu

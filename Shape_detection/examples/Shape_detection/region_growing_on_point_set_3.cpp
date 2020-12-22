@@ -41,11 +41,11 @@ using Points_3     = std::vector<Point_3>;
 
 // Define an insert iterator.
 struct Insert_point_colored_by_region_index {
-      
+
   using argument_type = Indices;
   using result_type   = void;
 
-  using Color_map = 
+  using Color_map =
   typename Output_range:: template Property_map<unsigned char>;
 
   const Input_range& m_input_range;
@@ -54,33 +54,33 @@ struct Insert_point_colored_by_region_index {
         std::size_t& m_number_of_regions;
 
   Color_map m_red, m_green, m_blue;
-    
+
   Insert_point_colored_by_region_index(
     const Input_range& input_range,
     const   Point_map  point_map,
          Output_range& output_range,
-          std::size_t& number_of_regions) : 
+          std::size_t& number_of_regions) :
   m_input_range(input_range),
   m_point_map(point_map),
   m_output_range(output_range),
   m_number_of_regions(number_of_regions) {
-        
-    m_red = 
+
+    m_red =
     m_output_range.template add_property_map<unsigned char>("red", 0).first;
-    m_green = 
+    m_green =
     m_output_range.template add_property_map<unsigned char>("green", 0).first;
-    m_blue = 
+    m_blue =
     m_output_range.template add_property_map<unsigned char>("blue", 0).first;
   }
 
   result_type operator()(const argument_type& region) {
 
     CGAL::Random rand(static_cast<unsigned int>(m_number_of_regions));
-    const unsigned char r = 
+    const unsigned char r =
     static_cast<unsigned char>(64 + rand.get_int(0, 192));
-    const unsigned char g = 
+    const unsigned char g =
     static_cast<unsigned char>(64 + rand.get_int(0, 192));
-    const unsigned char b = 
+    const unsigned char b =
     static_cast<unsigned char>(64 + rand.get_int(0, 192));
 
     for (const std::size_t index : region) {
@@ -98,18 +98,27 @@ struct Insert_point_colored_by_region_index {
 }; // Insert_point_colored_by_region_index
 
 int main(int argc, char *argv[]) {
-    
-  std::cout << std::endl << 
-    "region_growing_on_point_set_3 example started" 
+
+  std::cout << std::endl <<
+    "region_growing_on_point_set_3 example started"
   << std::endl << std::endl;
-    
-  std::cout << 
-    "Note: if 0 points are loaded, please specify the path to the file data/point_set_3.xyz by hand!" 
+
+  std::cout <<
+    "Note: if 0 points are loaded, please specify the path to the file data/point_set_3.xyz by hand!"
   << std::endl << std::endl;
 
   // Load xyz data either from a local folder or a user-provided file.
   std::ifstream in(argc > 1 ? argv[1] : "data/point_set_3.xyz");
   CGAL::set_ascii_mode(in);
+
+  if (!in) {
+    std::cout <<
+    "Error: cannot read the file point_set_3.xyz!" << std::endl;
+    std::cout <<
+    "You can either create a symlink to the data folder or provide this file by hand."
+    << std::endl << std::endl;
+    return EXIT_FAILURE;
+  }
 
   const bool with_normal_map = true;
   Input_range input_range(with_normal_map);
@@ -117,10 +126,10 @@ int main(int argc, char *argv[]) {
   in >> input_range;
   in.close();
 
-  std::cout << 
-    "* loaded " 
-  << input_range.size() << 
-    " points with normals" 
+  std::cout <<
+    "* loaded "
+  << input_range.size() <<
+    " points with normals"
   << std::endl;
 
   // Default parameter values for the data file point_set_3.xyz.
@@ -131,12 +140,12 @@ int main(int argc, char *argv[]) {
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(
-    input_range, 
-    k, 
+    input_range,
+    k,
     input_range.point_map());
-    
+
   Region_type region_type(
-    input_range, 
+    input_range,
     max_distance_to_plane, max_accepted_angle, min_region_size,
     input_range.point_map(), input_range.normal_map());
 
@@ -145,13 +154,13 @@ int main(int argc, char *argv[]) {
     input_range, neighbor_query, region_type);
 
   // Run the algorithm.
-  Output_range output_range; 
+  Output_range output_range;
   std::size_t number_of_regions = 0;
 
   Insert_point_colored_by_region_index inserter(
-     input_range, input_range.point_map(), 
+     input_range, input_range.point_map(),
     output_range, number_of_regions);
-  
+
   CGAL::Timer timer;
 
   timer.start();
@@ -160,13 +169,13 @@ int main(int argc, char *argv[]) {
   timer.stop();
 
   // Print the number of found regions.
-  std::cout << "* " << number_of_regions << 
-    " regions have been found in " << timer.time() << " seconds" 
+  std::cout << "* " << number_of_regions <<
+    " regions have been found in " << timer.time() << " seconds"
   << std::endl;
 
   // Save the result to a file in the user-provided path if any.
   if (argc > 2) {
-        
+
     const std::string path     = argv[2];
     const std::string fullpath = path + "regions_point_set_3.ply";
 
@@ -182,8 +191,8 @@ int main(int argc, char *argv[]) {
   region_growing.unassigned_items(std::back_inserter(unassigned_items));
 
   // Print the number of unassigned items.
-  std::cout << "* " << unassigned_items.size() << 
-    " points do not belong to any region" 
+  std::cout << "* " << unassigned_items.size() <<
+    " points do not belong to any region"
   << std::endl;
 
   // Store all unassigned points.
@@ -197,12 +206,12 @@ int main(int argc, char *argv[]) {
     unassigned_points.push_back(point);
   }
 
-  std::cout << "* " << unassigned_points.size() << 
-    " unassigned points are stored" 
+  std::cout << "* " << unassigned_points.size() <<
+    " unassigned points are stored"
   << std::endl;
 
-  std::cout << std::endl << 
-    "region_growing_on_point_set_3 example finished" 
+  std::cout << std::endl <<
+    "region_growing_on_point_set_3 example finished"
   << std::endl << std::endl;
 
   return EXIT_SUCCESS;

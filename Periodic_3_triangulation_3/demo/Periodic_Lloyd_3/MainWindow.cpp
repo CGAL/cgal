@@ -23,24 +23,24 @@ MainWindow::MainWindow(QWidget* parent): CGAL::Qt::DemosMainWindow(parent)
 void
 MainWindow::connectActions()
 {
-  QObject::connect(this->actionNew_Point_Set, SIGNAL(triggered()), 
-		   this, SLOT(newPointSet()));
+  QObject::connect(this->actionNew_Point_Set, SIGNAL(triggered()),
+                   this, SLOT(newPointSet()));
 
-  QObject::connect(this->actionLoad_points, SIGNAL(triggered()), 
-		   this, SLOT(loadPoints()));
+  QObject::connect(this->actionLoad_points, SIGNAL(triggered()),
+                   this, SLOT(loadPoints()));
 
-  QObject::connect(this->actionSave_points, SIGNAL(triggered()), 
-		   this, SLOT(savePoints()));
+  QObject::connect(this->actionSave_points, SIGNAL(triggered()),
+                   this, SLOT(savePoints()));
 
-  QObject::connect(this->speedSlider, SIGNAL(valueChanged(int)), 
-		   this, SLOT(speedChanged(int)));
+  QObject::connect(this->speedSlider, SIGNAL(valueChanged(int)),
+                   this, SLOT(speedChanged(int)));
 
   QObject::connect(this->viewer, SIGNAL(valueChanged(int)),
                    this, SLOT(speedChanged(int)));
 
-  QObject::connect(this, SIGNAL(sceneChanged()), 
-		   this->viewer, SLOT(sceneChanged()));
-  
+  QObject::connect(this, SIGNAL(sceneChanged()),
+                   this->viewer, SLOT(sceneChanged()));
+
   QObject::connect(this->actionStep, SIGNAL(triggered()),
                    this, SLOT(lloydStep()));
 
@@ -53,8 +53,8 @@ MainWindow::connectActions()
   QObject::connect(this->action2D_version, SIGNAL(toggled(bool)),
                    this, SLOT(toggle2D(bool)));
 
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   qApp, SLOT(quit()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()),
+                   qApp, SLOT(quit()));
 
   QObject::connect(this->actionDemo_Help, SIGNAL(triggered()),
                    this, SLOT(help()));
@@ -92,7 +92,7 @@ MainWindow::newPointSet()
 
   int numberOfPoints = QInputDialog::getInt(this,
       "Periodic Lloyd", "Number of points: ", 100, 0, 2147483647, 1, &ok );
-  
+
   if (ok) newPoints(numberOfPoints);
 }
 
@@ -101,14 +101,14 @@ MainWindow::loadPoints()
 {
   QString fileName = QFileDialog
     ::getOpenFileName(this, tr("Open point set"),
-	".", tr("All files (*)"));
+        ".", tr("All files (*)"));
   if(fileName.isEmpty()) return;
-  
+
   std::ifstream ifs(fileName.toLatin1().data() );
   scene.points.clear();
   Iso_cuboid_3 dom;
   ifs >> dom;
-  std::copy(std::istream_iterator<Point_3>(ifs), 
+  std::copy(std::istream_iterator<Point_3>(ifs),
       std::istream_iterator<Point_3>(),
       std::back_inserter(scene.points));
 
@@ -124,14 +124,14 @@ MainWindow::loadPoints()
   CGAL::qglviewer::Vec center(cx/8.,cy/8.,cz/8.);
   viewer->setSceneCenter(center);
   viewer->setSceneRadius(std::sqrt(
-	  ((dom.xmax()-dom.xmin())*(dom.xmax()-dom.xmin()))
-	  + ((dom.xmax()-dom.xmin())*(dom.xmax()-dom.xmin()))
-	  + ((dom.xmax()-dom.xmin())*(dom.xmax()-dom.xmin()))));
+          ((dom.xmax()-dom.xmin())*(dom.xmax()-dom.xmin()))
+          + ((dom.xmax()-dom.xmin())*(dom.xmax()-dom.xmin()))
+          + ((dom.xmax()-dom.xmin())*(dom.xmax()-dom.xmin()))));
 
   speedSlider->setRange(0,100);
   speedSlider->setSliderPosition(100);
 
-  emit (sceneChanged()); 
+  emit (sceneChanged());
 }
 
 void
@@ -139,9 +139,9 @@ MainWindow::savePoints()
 {
   QString fileName = QFileDialog
     ::getSaveFileName(this, tr("Save point set"),
-	".", tr("*.pts"));
+        ".", tr("*.pts"));
   if(fileName.isEmpty()) return;
-  
+
   std::ofstream ofs(fileName.toLatin1().data() );
   ofs << scene.periodic_triangulation.domain() << '\n';
   for (std::list<Point_3>::iterator pit = scene.points.begin() ;
@@ -154,7 +154,7 @@ void MainWindow::lloydStep() {
   viewer->changed();
   }
 
-void 
+void
 MainWindow::speedChanged(int i)
 {
   int speed = (100-i)*100;
@@ -173,11 +173,11 @@ MainWindow::newPoints(int n)
   CGAL::Random rnd(std::time(NULL));
   CGAL::Random_points_in_cube_3<Point_3, Creator> in_cube(1,rnd);
 
-  for (int i=0 ; i<n ; i++) 
+  for (int i=0 ; i<n ; i++)
     if (scene.two_dimensional) {
       Point_3 rdpt = *in_cube++;
       scene.points.push_back(Point_3(rdpt.x(),rdpt.y(),0.));
-    } else 
+    } else
       scene.points.push_back(*in_cube++);
 
   Iso_cuboid_3 dom(-1,-1,-1,1,1,1);
@@ -193,14 +193,14 @@ MainWindow::newPoints(int n)
   CGAL::qglviewer::Vec center(cx/8.,cy/8.,cz/8.);
   viewer->setSceneCenter(center);
   viewer->setSceneRadius(std::sqrt(
-	  ((dom.xmax()-dom.xmin())*(dom.xmax()-dom.xmin()))
-	  + ((dom.xmax()-dom.xmin())*(dom.xmax()-dom.xmin()))
-	  + ((dom.xmax()-dom.xmin())*(dom.xmax()-dom.xmin()))));
+          ((dom.xmax()-dom.xmin())*(dom.xmax()-dom.xmin()))
+          + ((dom.xmax()-dom.xmin())*(dom.xmax()-dom.xmin()))
+          + ((dom.xmax()-dom.xmin())*(dom.xmax()-dom.xmin()))));
 
   speedSlider->setRange(0,100);
   speedSlider->setSliderPosition(100);
 
-  emit (sceneChanged()); 
+  emit (sceneChanged());
 }
 
 void MainWindow::help() {
@@ -213,7 +213,7 @@ void MainWindow::help() {
 #endif
 
   QStringList args;
-  QString help_path = QCoreApplication::applicationDirPath() 
+  QString help_path = QCoreApplication::applicationDirPath()
     + QDir::separator()
     + QString("./Periodic_Lloyd_3.qhc");
   args << QString("-collectionFile") << help_path;

@@ -1,4 +1,3 @@
-//=============================================================================
 // Copyright (C) 2001-2005 by Computer Graphics Group, RWTH Aachen
 // Copyright (C) 2011 by Graphics & Geometry Group, Bielefeld University
 // Copyright (C) 2014 GeometryFactory
@@ -137,7 +136,7 @@ public: // virtual interface of Base_property_array
       if(pa != nullptr){
         std::copy((*pa).data_.begin(), (*pa).data_.end(), data_.end()-(*pa).data_.size());
         return true;
-      } 
+      }
       return false;
     }
 
@@ -222,7 +221,7 @@ private:
 
 template<typename, typename>
 class Property_container;
-/// @endcond 
+/// @endcond
 
 
 
@@ -292,7 +291,7 @@ public:
         parrays_.back()->resize(size_);
       }
     }
-  
+
     // Transfer one element with all properties
     // WARNING: properties must be the same in the two containers
     bool transfer(const Property_container& _rhs, std::size_t from, std::size_t to)
@@ -327,7 +326,7 @@ public:
       typedef typename Ref_class::template Get_property_map<Key, T>::type type;
     };
 
-    template <class T> 
+    template <class T>
     std::pair<typename Get_pmap_type<T>::type, bool>
     get(const std::string& name, std::size_t i) const
     {
@@ -366,7 +365,7 @@ public:
 
 
     // get a property by its name. returns invalid property if it does not exist.
-    template <class T> 
+    template <class T>
     std::pair<typename Get_pmap_type<T>::type, bool>
     get(const std::string& name) const
     {
@@ -395,7 +394,7 @@ public:
 
 
     // get the type of property by its name. returns typeid(void) if it does not exist.
-    const std::type_info& 
+    const std::type_info&
     get_type(const std::string& name) const
     {
         for (std::size_t i=0; i<parrays_.size(); ++i)
@@ -406,7 +405,7 @@ public:
 
 
     // delete a property
-    template <class T> 
+    template <class T>
     bool
     remove(typename Get_pmap_type<T>::type& h)
     {
@@ -440,7 +439,7 @@ public:
     {
         for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->reserve(n);
-        capacity_ = std::max(n, capacity_);
+        capacity_ = (std::max)(n, capacity_);
     }
 
     // resize all arrays to size n
@@ -449,6 +448,16 @@ public:
         for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->resize(n);
         size_ = n;
+    }
+
+    // resize the vector of properties to n, deleting all other properties
+    void resize_property_array(size_t n)
+    {
+        if (parrays_.size()<=n)
+          return;
+        for (std::size_t i=n; i<parrays_.size(); ++i)
+            delete parrays_[i];
+        parrays_.resize(n);
     }
 
     // free unused space in all arrays
@@ -465,7 +474,7 @@ public:
         for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->push_back();
         ++size_;
-        capacity_ = (std::max(size_, capacity_));
+        capacity_ = ((std::max)(size_, capacity_));
     }
 
     // reset element to its default property values
@@ -488,7 +497,7 @@ public:
       this->parrays_.swap (other.parrays_);
       std::swap(this->size_, other.size_);
     }
-  
+
 private:
     std::vector<Base_property_array*>  parrays_;
     size_t  size_;
@@ -498,11 +507,11 @@ private:
   /// @endcond
 
 #ifndef DOXYGEN_RUNNING
-/// 
 ///
-/// `Property_map` enables to attach properties to the simplices of a 
+///
+/// `Property_map` enables to attach properties to the simplices of a
 ///  surface mesh.
-/// 
+///
 /// @tparam Key The key type of the property map. It must be a model of `Index`.
 /// @tparam Value The value type of the property.
 ///
@@ -511,7 +520,7 @@ private:
 template <class I, class T, class CRTP_derived_class>
 class Property_map_base
 /// @cond CGAL_DOCUMENT_INTERNALS
-  : public boost::put_get_helper< 
+  : public boost::put_get_helper<
            typename Property_array<T>::reference,
            CRTP_derived_class>
 /// @endcond
@@ -529,7 +538,7 @@ public:
     typedef typename Property_array<T>::const_reference const_reference;
     typedef typename Property_array<T>::iterator iterator;
     typedef typename Property_array<T>::const_iterator const_iterator;
-#else 
+#else
     /// A reference to the value type of the property.
   typedef unspecified_type reference;
 
@@ -550,14 +559,14 @@ public:
     {
         parray_ = nullptr;
     }
-  /// @endcond 
+  /// @endcond
 
 public:
     /// \name Accessing Properties
     //@{
 #ifdef DOXYGEN_RUNNING
     /// Conversion to a Boolean. It is \c true when the property map
-    /// can be used, and \c false otherwise.  
+    /// can be used, and \c false otherwise.
   operator bool () const;
 #else
     operator bool_type() const {
@@ -607,7 +616,9 @@ public:
     }
 
     //@}
+#ifndef CGAL_TEST_SURFACE_MESH
 private:
+#endif
 
     Property_array<T>& array()
     {

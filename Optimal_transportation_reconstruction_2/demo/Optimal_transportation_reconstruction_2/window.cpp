@@ -14,8 +14,8 @@
 #include "ui_options.h"
 #include "dialog_options.h"
 
-MainWindow::MainWindow() : 
-QMainWindow(), Ui_MainWindow(), 
+MainWindow::MainWindow() :
+QMainWindow(), Ui_MainWindow(),
 maxNumRecentFiles(15), recentFileActs(15)
 {
   setupUi(this);
@@ -176,13 +176,13 @@ void MainWindow::on_actionSave_triggered()
 }
 
 
-void MainWindow::on_actionInsertPoint_toggled() 
+void MainWindow::on_actionInsertPoint_toggled()
 {
   viewer->toggle_insert_points();
   update();
 }
 
-void MainWindow::on_actionRecenter_triggered() 
+void MainWindow::on_actionRecenter_triggered()
 {
   double center_x, center_y, scale;
   m_scene->compute_bbox(center_x, center_y, scale);

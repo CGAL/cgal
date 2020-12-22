@@ -51,7 +51,7 @@ int main()
   create_path_3(p3);
 
   bool res=true;
-  
+
   if(cst.is_contractible(p1))
   {
     std::cout<<"ERROR homotopy_double_torus_with_holes test1: "

@@ -19,6 +19,8 @@ typedef CGAL::Iso_cuboid_3< K >     Cub;
 typedef CGAL::Sphere_3< K >         Sph;
 typedef CGAL::Circle_3< K >         C;
 
+typedef CGAL::Tetrahedron_3< K >    T;
+
 typedef CGAL::Bbox_3                Bbox_3;
 
 template<class A, class B>
@@ -82,7 +84,7 @@ int main(int argc, char**)
 
     // special
     CGAL::cpp11::result_of<K::Intersect_3(Pl, Pl, Pl)>::type plplpl = CGAL::intersection(Pl(), Pl(), Pl());
-    
+
     call_intersection_global(Tr(), S());
     call_intersection_global(Tr(), L());
     call_intersection_global(Tr(), Pl());
@@ -103,13 +105,19 @@ int main(int argc, char**)
     // call_intersection_global(Cub(), Tr());
     call_intersection_global(Cub(), R());
     call_intersection_global(Cub(), Cub());
+//    call_intersection_global(Cub(), Bbox_3());
 
     call_intersection_global(Bbox_3(), L());
     call_intersection_global(Bbox_3(), S());
     call_intersection_global(Bbox_3(), R());
+    call_intersection_global(Bbox_3(), Cub());
+    CGAL::intersection(Bbox_3(), Bbox_3());
+
+    call_intersection_global(T(), L());
+
 
     // with kernel
-  
+
     call_intersection_with_kernel(S(), S(), K());
     call_intersection_with_kernel(S(), L(), K());
     call_intersection_with_kernel(S(), Pl(), K());
@@ -159,14 +167,14 @@ int main(int argc, char**)
     call_intersection_with_kernel(Bbox_3(), S(), K());
     call_intersection_with_kernel(Bbox_3(), R(), K());
 
-    // The doc defines calls to do_intersect for these objects 
+    // The doc defines calls to do_intersect for these objects
 
     // Plane_3<Kernel>
     // Line_3<Kernel>
     // Ray_3<Kernel>
     // Segment_3<Kernel>
     // Triangle_3<Kernel>.
-    // Bbox_3. 
+    // Bbox_3.
     call_do_intersect_global(Pl(), Pl());
     call_do_intersect_global(Pl(), L());
     call_do_intersect_global(Pl(), R());
@@ -216,7 +224,7 @@ int main(int argc, char**)
     call_do_intersect_global(Bbox_3(), Tr());
     call_do_intersect_global(Bbox_3(), Sph());
     call_do_intersect_global(Bbox_3(), Bbox_3());
-    
+
     // with_kernel
     call_do_intersect_with_kernel(Pl(), Pl(), K());
     call_do_intersect_with_kernel(Pl(), L(), K());

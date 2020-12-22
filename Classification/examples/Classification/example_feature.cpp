@@ -58,7 +58,7 @@ public:
     else
       return 0.f;
   }
-    
+
 };
 
 //! [Feature]
@@ -95,14 +95,14 @@ int main (int argc, char** argv)
   // Feature that identifies points whose x coordinate is between -20
   // and 20 and whose y coordinate is between -15 and 15
   Feature_handle my_feature = features.add<My_feature> (pts, -20., 20., -15., 15.);
-  
+
   //! [Addition]
   ///////////////////////////////////////////////////////////////////
-  
+
   Feature_handle verticality = features.add<Verticality> (pts, eigen);
 
   Classifier classifier (labels, features);
-  
+
   std::cerr << "Setting weights" << std::endl;
   classifier.set_weight(verticality, 0.5);
   classifier.set_weight(my_feature, 0.25);
@@ -115,7 +115,7 @@ int main (int argc, char** argv)
 
   std::cerr << "Classifying" << std::endl;
   std::vector<int> label_indices(pts.size(), -1);
-  Classification::classify_with_graphcut<CGAL::Sequential_tag>
+  Classification::classify_with_graphcut<CGAL::Parallel_if_available_tag>
     (pts, Pmap(), labels, classifier,
      neighborhood.k_neighbor_query(12),
      0.5, 1, label_indices);

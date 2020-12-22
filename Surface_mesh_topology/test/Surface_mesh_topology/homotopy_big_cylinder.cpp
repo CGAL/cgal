@@ -58,7 +58,7 @@ int main()
   create_path_3(p3);
 
   bool res=true;
-  
+
   if (cst.is_contractible(p1))
   {
     std::cout<<"ERROR homotopy_big_cylinder test1: "
@@ -90,7 +90,7 @@ int main()
              <<std::endl;
     res=false;
   }
-  
+
   if (cst.are_freely_homotopic(p1, p3))
   {
     std::cout<<"ERROR homotopy_big_cylinder test5: "
@@ -98,7 +98,7 @@ int main()
              <<std::endl;
     res=false;
   }
-  
+
   if (cst.are_freely_homotopic(p2, p3))
   {
     std::cout<<"ERROR homotopy_big_cylinder test6: "

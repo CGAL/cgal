@@ -20,6 +20,9 @@
 #include <QUrl>
 #include <QLineEdit>
 #include <QDoubleValidator>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+#include <QRandomGenerator>
+#endif
 
 Values_delegate::Values_delegate(QWidget* parent) : QItemDelegate(parent) {}
 void Values_delegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
@@ -53,7 +56,7 @@ QWidget *Values_delegate::createEditor(QWidget *parent,
   }
   else return QItemDelegate::createEditor(parent, option, index);
 }
-  
+
 void Values_delegate::setEditorData(QWidget *editor,
                                        const QModelIndex &index) const
 {
@@ -106,7 +109,7 @@ Values_list::Values_list(QWidget* parent):
   Q_ASSERT_X(treeWidget, "Values_list constructor", "cannot find widget \"treeWidget\"");
 
   treeWidget->sortByColumn(Value, Qt::AscendingOrder);
-   
+
   treeWidget->header()->setSectionsClickable(false);
 
 
@@ -122,7 +125,7 @@ Values_list::Values_list(QWidget* parent):
           this, SIGNAL(changed()));
 
   connect(this, SIGNAL(changed()),
-	  this, SLOT(update_items_cache()));
+          this, SLOT(update_items_cache()));
 }
 
 QColor Values_list::color(const int i) const
@@ -197,7 +200,7 @@ void Values_list::save_values(QString filename) const
  settings.endGroup();
 }
 
-void Values_list::load_values(QString filename) 
+void Values_list::load_values(QString filename)
 {
   QSettings settings;
 
@@ -240,7 +243,12 @@ void Values_list::addValue(const double i)
   newItem->setData(Value, Qt::CheckStateRole, Qt::Checked);
   newItem->setData(Value, Qt::DisplayRole, i);
   QStringList colors = QColor::colorNames();
+#if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
   const int color_index = qrand() % colors.size();
+#else
+const int color_index = QRandomGenerator::global()->generate() % colors.size();
+#endif
+
   QColor color = QColor(colors[color_index]);
   newItem->setData(Color, Qt::DisplayRole, color);
   newItem->setData(Name, Qt::DisplayRole, "");

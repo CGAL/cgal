@@ -19,10 +19,10 @@ typedef CGAL::Voronoi_diagram_2<DT,AT,AP>                                    VD;
 // typedef for the result type of the point location
 typedef AT::Site_2                    Site_2;
 
-int main()
+int main(int argc, char* argv[])
 {
   VD vd;
-  std::ifstream ifs("data/data4.dt.cin");
+  std::ifstream ifs((argc>1)?argv[1]:"data/data4.dt.cin");
   assert(ifs);
 
   Site_2 t;

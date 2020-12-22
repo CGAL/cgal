@@ -13,7 +13,7 @@
 #ifndef CGAL_IO_FILE_BINARY_MESH_3_H
 #define CGAL_IO_FILE_BINARY_MESH_3_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 
 #include <iostream>
@@ -55,7 +55,7 @@ bool load_binary_file(std::istream& is, C3T3& c3t3)
   }
   if (s != "CGAL" ||
       !(is >> s) ||
-      s != "c3t3") 
+      s != "c3t3")
   {
     return false;
   }

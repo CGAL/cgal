@@ -87,7 +87,7 @@ int main ()
                                                     Point_3 (6, 6, 0),
                                                     Point_3 (1, 3, 4)),
                                         'B'));
-  
+
   // Compute and print the minimization diagram.
   Envelope_diagram_2      min_diag;
 

@@ -352,7 +352,7 @@ int main(int argc, char** argv)
 }
 
 
-#else 
+#else
  int main()
  {
    std::cout << "TestMesh.cpp needs Boost Program Options" << std::endl;

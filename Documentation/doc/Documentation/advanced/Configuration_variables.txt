@@ -85,6 +85,7 @@ and will serverly limit performances.
 | Variable              | Description                                                           | Type        | %Default Value |
 | :-                    | :-                    | :-   |  :-            |
 | `CGAL_DIR`            | Full-path to the binary directory where \cgal was configured          |Either CMake or Environment | none |
+| `Qt5_DIR`             | Full-path to the Qt cmake directory  |CMake| platform-dependent|
 
 
 \subsection installation_variables_third_party Variables Providing Information About 3rd-Party Libraries
@@ -300,6 +301,20 @@ environment variable is sufficient.
 | `ESBTL_INC_DIR` | Directory containing the `ESBTL/default.h` file | Environment |
 | `ESBTL_INCLUDE_DIR` | Directory containing the `ESBTL/default.h` file | CMake |
 
+\subsection installation_metis METIS Library
+
+Some BGL examples require the \sc{Metis} library in order to partition \sc{Metis} meshes.
+
+If \sc{Metis} is not automatically found, setting the `METIS_INCLUDE_DIR` and `METIS_LIBRARY`
+cmake variables is necessary.
+
+
+| Variable             | Description           | Type        |
+| :-                   | :-                    | :-             |
+| `METIS_INCLUDE_DIR` | Directory of \sc{Metis} default installation | CMAKE |
+| `METIS_LIBRARY` | Directory containing the `libmetis.so or .lib` file | CMAKE |
+
+
 \subsection installation_tbb TBB Library
 
 If \sc{Tbb} is not automatically found, the user must set the `TBB_ROOT`
@@ -323,6 +338,44 @@ Note that the variables in the table below are being used.
 | `TBB_MALLOC_DEBUG_LIBRARY` | Full pathname of the compiled TBB debug malloc library | CMake |
 | `TBB_MALLOCPROXY_DEBUG_LIBRARY` | Full pathname of the compiled TBB debug malloc_proxy library (optional) | CMake |
 | `TBB_MALLOCPROXY_RELEASE_LIBRARY` | Full pathname of the compiled TBB release malloc_proxy library (optional) | CMake |
+
+\subsection installation_laslib LASlib library
+
+If LASLIB is not automatically found, the following variables must be set:
+
+| Variable             | Description           | Type        |
+| :-                   | :-                    | :-             |
+| `LASLIB_INCLUDE_DIR` | Directory containing the file `lasreader.hpp` | CMake |
+| `LASZIP_INCLUDE_DIR` | Directory containing the file `mydefs.hpp` | CMake |
+| `LASLIB_LIBRARIES` | Full pathname of the compiled LASLIB library | CMake |
+
+\subsection installation_OpenCV OpenCV library
+
+The environment variable `OPENCV_DIR` should be set to the directory
+containing the file `OpenCVConfig.cmake` provided by OpenCV.
+
+\subsection installation_TensorFlow TensorFlow library
+
+If TensorFlow is not automatically found, the following variables must be set:
+
+| Variable             | Description           | Type        |
+| :-                   | :-                    | :-             |
+| `TensorFlow_INCLUDE_DIR` | Directory containing the directories `tensorflow/core`, `tensorflow/cc`, etc. | CMake |
+| `TensorFlow_LIBRARY` | Full pathname of the compiled TensorFlow C++ library | CMake |
+
+\subsection installation_SCIP SCIP library
+
+The environment variable `SCIP_DIR` should be set to the directory
+containing the file `scip-config.cmake` provided by SCIP.
+
+\subsection installation_GLPK GLPK library
+
+If GLPK is not automatically found, the following variables must be set:
+
+| Variable             | Description           | Type        |
+| :-                   | :-                    | :-             |
+| `GLPK_INCLUDE_DIR` | Directory containing the file `glpk.h` | CMake |
+| `GLPK_LIBRARIES` | Full pathname of the compiled GLPK library | CMake |
 
 \section installation_compiler_workarounds Compiler Workarounds
 

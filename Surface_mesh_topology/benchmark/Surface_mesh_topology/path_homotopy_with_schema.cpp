@@ -8,7 +8,7 @@
   std::cout<<"usage: "<<argv[0]<<" scheme [-nbdefo D] [-nbedges E] "
            <<" [-nbtests N] [-seed S] [-time]"<<std::endl
            <<"   Load the given polygonal scheme (by default \"a b -a -b\"),"
-	   << "compute one random path, deform it "
+           << "compute one random path, deform it "
            <<"into a second path and test that the two paths are homotope."
            <<std::endl
            <<"   -nbdefo D: use D deformations to generate the second path (by default a random number between 10 and 100)."<<std::endl
@@ -82,7 +82,7 @@ void process_command_line(int argc, char** argv,
 int main(int argc, char** argv)
 {
   using namespace CGAL::Surface_mesh_topology;
-  std::string scheme="a b -a -b";  
+  std::string scheme="a b -a -b";
   bool withD=false;
   unsigned int D=0;
   bool withE=false;
@@ -98,13 +98,13 @@ int main(int argc, char** argv)
   std::cout<<"Initial map: ";
   cm.display_characteristics(std::cout) << ", valid="
                                          << cm.is_valid() << std::endl;
-  
+
   Curves_on_surface_topology<Polygonal_schema_with_combinatorial_map<> > smct(cm, time);
   smct.compute_minimal_quadrangulation(time);
   std::cout<<"Reduced map: ";
   smct.get_minimal_quadrangulation().display_characteristics(std::cout)
     << ", valid="<< smct.get_minimal_quadrangulation().is_valid() << std::endl;
-   
+
   unsigned int nbcontractible=0;
   std::vector<std::size_t> errors_seeds;
 
@@ -162,7 +162,7 @@ int main(int argc, char** argv)
 
   std::cout<<"Number of contractible paths: "<<nbcontractible<<" among "<<N
            <<" (i.e. "<<(double)(nbcontractible*100)/double(N)<<"%)."<< std::endl
-	   << "==============" <<std::endl;
-    
+           << "==============" <<std::endl;
+
   return EXIT_SUCCESS;
 }

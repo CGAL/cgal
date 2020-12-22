@@ -14,7 +14,7 @@
 
 
 /*! \file CGAL/Algebraic_extension_traits.h
- *  \brief Defines traits class CGAL::Algebraic_extension_traits. 
+ *  \brief Defines traits class CGAL::Algebraic_extension_traits.
 */
 
 #ifndef CGAL_ALGEBRAIC_NUMBER_TRAITS_H
@@ -29,22 +29,22 @@ namespace CGAL {
 template< class T >
 class Algebraic_extension_traits {
 public:
-    //! \name Typedefs 
+    //! \name Typedefs
     //! the number type for which this instance has been instantiated
     typedef T Type;
     //! standard number types are not extended
     typedef CGAL::Tag_false Is_extended;
-  
-    //! computes the factor which normalizes a number to be integral after 
+
+    //! computes the factor which normalizes a number to be integral after
     //  multiplication
-    class Normalization_factor 
+    class Normalization_factor
         : public CGAL::cpp98::unary_function<Type,Type> {
     private:
-        static Type 
+        static Type
         normalization_factor(const Type&,Integral_domain_without_division_tag){
             return Type(1);
         }
-        static Type 
+        static Type
         normalization_factor(const Type& a, Field_tag){
             return Type(1)/a;
         }
@@ -57,15 +57,15 @@ public:
             return normalization_factor(a, Tag());
         }
     };
-    
-    class Denominator_for_algebraic_integers 
+
+    class Denominator_for_algebraic_integers
         : public CGAL::cpp98::unary_function<Type,Type> {
-    public: 
+    public:
         //! determine normalization factor
         Type operator () (const Type&) {
             return Type(1);
         }
-        
+
         template <class InputIterator>
         Type operator () (InputIterator, InputIterator) {
             return Type(1);

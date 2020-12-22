@@ -413,16 +413,16 @@ bool testCopy()
 
     Map1 map2p(map2); assert(map2p.is_valid());
     if ( map2.is_isomorphic_to(map2p) ) { assert(false); return false; }
-    if ( !map2.is_isomorphic_to(map2p, false, false) ) 
+    if ( !map2.is_isomorphic_to(map2p, false, false) )
     { assert(false); return false; }
 
     Map3 map2t(map2); assert(map2t.is_valid());
     if ( map2.is_isomorphic_to(map2t) ) { assert(false); return false; }
-    if ( !map2.is_isomorphic_to(map2t, false, false) ) 
+    if ( !map2.is_isomorphic_to(map2t, false, false) )
     { assert(false); return false; }
 
     if ( map2p.is_isomorphic_to(map2t) ) { assert(false); return false; }
-    if ( !map2p.is_isomorphic_to(map2t, false, false) ) 
+    if ( !map2p.is_isomorphic_to(map2t, false, false) )
     { assert(false); return false; }
 
     Map1 map3p(map3); assert(map3p.is_valid());
@@ -432,7 +432,7 @@ bool testCopy()
 
     Map2 map3t(map3); assert(map3t.is_valid());
     if ( map3.is_isomorphic_to(map3t) ) { assert(false); return false; }
-    if ( !map3.is_isomorphic_to(map3t, false, false) ) 
+    if ( !map3.is_isomorphic_to(map3t, false, false) )
     { assert(false); return false; }
 
     if ( map3p.is_isomorphic_to(map3t) ) { assert(false); return false; }
@@ -463,7 +463,7 @@ bool testCopy()
 
     Map7 map5c(map5); assert(map5c.is_valid());
     if ( map5.is_isomorphic_to(map5c) ) { assert(false); return false; }
-    if ( !map5.is_isomorphic_to(map5c, false, false) ) 
+    if ( !map5.is_isomorphic_to(map5c, false, false) )
     { assert(false); return false; }
     assert( map5c.number_of_attributes<0>()==0 &&
             map5c.number_of_attributes<2>()==map5.number_of_attributes<2>() );
@@ -593,12 +593,12 @@ bool testCopy()
 bool testImportFromHalfedge()
 {
   bool res=true;
-  
+
   HDS hds;
   CGAL::HalfedgeDS_decorator<HDS> decorator(hds);
   decorator.create_loop();
   decorator.create_segment();
-  
+
   Map1 map1; map1.import_from_halfedge_graph(hds);
   Map2 map2; map2.import_from_halfedge_graph(hds);
   Map3 map3; map3.import_from_halfedge_graph(hds);

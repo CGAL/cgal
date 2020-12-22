@@ -25,12 +25,12 @@ int main(int argc, char **argv)
   if (argc>=3)
     rep=atoi(argv[2]);
   std::vector<Point> points;
-  points.reserve(n);  
+  points.reserve(n);
   CGAL::Random_points_in_disc_2<Point,Creator> g(1);
   CGAL::copy_n( g, n, std::back_inserter(points));
   Delaunay original;
   original.insert(points.begin(),points.end());
-  
+
   double res=0;
   for (int r=0;r<rep;++r){
     Delaunay delaunay=original;
@@ -51,6 +51,6 @@ int main(int argc, char **argv)
   }
 
   std::cout << res/rep << std::endl;
-            
+
   return 0;
 }

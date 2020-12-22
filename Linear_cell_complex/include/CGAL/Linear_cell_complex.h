@@ -12,6 +12,7 @@
 #ifndef CGAL_LINEAR_CELL_COMPLEX_H
 #define CGAL_LINEAR_CELL_COMPLEX_H 1
 
+#include <CGAL/Linear_cell_complex_fwd.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_traits.h>
 #include <CGAL/Linear_cell_complex_min_items.h>
@@ -26,19 +27,10 @@ namespace CGAL {
    */
 
 #if !defined(CGAL_NO_DEPRECATED_CODE)
-  template < unsigned int d_, unsigned int ambient_dim = d_,
-             class Traits_ = Linear_cell_complex_traits<ambient_dim>,
-#if defined(CGAL_CMAP_DART_DEPRECATED)
-             class Items_ = Linear_cell_complex_min_items<d_>,
-#else
-             class Items_ = Linear_cell_complex_min_items,
-#endif
-             class Alloc_ = CGAL_ALLOCATOR(int),
-             template<unsigned int,class,class,class,class>
-             class CMap = Combinatorial_map_base,
-             class Storage_ = CMap_linear_cell_complex_storage_1<d_, ambient_dim,
-                                                                 Traits_, Items_,
-                                                                 Alloc_> >
+  template < unsigned int d_, unsigned int ambient_dim,
+             class Traits_, class Items_, class Alloc_,
+             template<unsigned int,class,class,class,class> class CMap,
+             class Storage_ >
   class CGAL_DEPRECATED Linear_cell_complex:
     public Linear_cell_complex_for_combinatorial_map<d_, ambient_dim, Traits_, Items_,
                                                      Alloc_, CMap, Storage_>

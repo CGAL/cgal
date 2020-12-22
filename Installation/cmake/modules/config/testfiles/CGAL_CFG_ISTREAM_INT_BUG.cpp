@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -19,11 +19,11 @@
 int main()
 {
   int i;
-  std::string one = "7812,"; 
+  std::string one = "7812,";
   std::istringstream is(one);
   is >> i;
   std::cout << i << std::endl;
-  if(i != 7812){ // bad luck if there is garbage that equals 7812. 
+  if(i != 7812){ // bad luck if there is garbage that equals 7812.
     return 1;
   }
   return 0;

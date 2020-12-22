@@ -30,10 +30,10 @@ namespace Wrap {
 template <class R_>
 class Vector_d : public Get_type<typename R_::Kernel_base, Vector_tag>::type
 {
-  typedef typename Get_type<R_, RT_tag>::type		RT_;
-  typedef typename Get_type<R_, FT_tag>::type		FT_;
+  typedef typename Get_type<R_, RT_tag>::type                RT_;
+  typedef typename Get_type<R_, FT_tag>::type                FT_;
   typedef typename R_::Kernel_base           Kbase;
-  typedef typename Get_type<R_, Point_tag>::type	Point_;
+  typedef typename Get_type<R_, Point_tag>::type        Point_;
   typedef typename Get_functor<Kbase, Construct_ttag<Vector_tag> >::type CVBase;
   typedef typename Get_functor<Kbase, Compute_vector_cartesian_coordinate_tag>::type CCBase;
   typedef typename Get_functor<Kbase, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CVI;
@@ -49,7 +49,7 @@ public:
   typedef Dimension_tag<0>  Feature_dimension;
 
   //typedef typename R_::Vector_cartesian_const_iterator Cartesian_const_iterator;
-  typedef typename Get_type<Kbase, Vector_tag>::type	Rep;
+  typedef typename Get_type<Kbase, Vector_tag>::type        Rep;
 
   const Rep& rep() const
   {
@@ -63,22 +63,22 @@ public:
 
   typedef          R_                       R;
 
-#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)  
+#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
 #  pragma warning(push)
 #  pragma warning(disable: 4309)
 #endif
   template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Vector_d> >::value>::type> explicit Vector_d(U&&...u)
-	  : Rep(CVBase()(std::forward<U>(u)...)){}
+          : Rep(CVBase()(std::forward<U>(u)...)){}
 
 #if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
 #  pragma warning(pop)
 #endif
-  
+
 //  // called from Construct_vector_d
 //  template<class...U> explicit Vector_d(Eval_functor&&,U&&...u)
-//	  : Rep(Eval_functor(), std::forward<U>(u)...){}
+//          : Rep(Eval_functor(), std::forward<U>(u)...){}
   template<class F,class...U> explicit Vector_d(Eval_functor&&,F&&f,U&&...u)
-	  : Rep(std::forward<F>(f)(std::forward<U>(u)...)){}
+          : Rep(std::forward<F>(f)(std::forward<U>(u)...)){}
 
 #if 0
   // the new standard may make this necessary
@@ -102,19 +102,19 @@ public:
 
 
   decltype(auto) cartesian(int i)const{
-	  return CCBase()(rep(),i);
+          return CCBase()(rep(),i);
   }
 
   decltype(auto) operator[](int i)const{
-	  return CCBase()(rep(),i);
+          return CCBase()(rep(),i);
   }
 
   decltype(auto) cartesian_begin()const{
-	  return CVI()(rep(),Begin_tag());
+          return CVI()(rep(),Begin_tag());
   }
 
   decltype(auto) cartesian_end()const{
-	  return CVI()(rep(),End_tag());
+          return CVI()(rep(),End_tag());
   }
 
   Vector_d operator-() const
@@ -128,7 +128,7 @@ public:
   }
 
   decltype(auto) squared_length()const{
-	  return SLBase()(rep());
+          return SLBase()(rep());
   }
 
   friend std::ostream& operator <<(std::ostream& os, const Vector_d& v)
@@ -139,14 +139,14 @@ public:
     {
       os << v.dimension();
       for(; b != e; ++b){
-	os << " " << *b;
+        os << " " << *b;
       }
     }
     else
     {
       write(os, v.dimension());
       for(; b != e; ++b){
-	write(os, *b);
+        write(os, *b);
       }
     }
 
@@ -168,12 +168,12 @@ public:
     if(is_ascii(is))
     {
       for(int i=0;i<dim;++i)
-	is >> iformat(coords[i]);
+        is >> iformat(coords[i]);
     }
     else
     {
       for(int i=0;i<dim;++i)
-	read(is, coords[i]);
+        read(is, coords[i]);
     }
 
     if(is)

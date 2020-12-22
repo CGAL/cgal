@@ -96,7 +96,7 @@ void hilbert_sort (RandomAccessIterator begin, RandomAccessIterator end,
 {
   typedef std::iterator_traits<RandomAccessIterator> ITraits;
   typedef typename ITraits::value_type               value_type;
-  
+
   internal::hilbert_sort<ConcurrencyTag>(begin, end, k, Hilbert_sort_median_policy(),
                                          static_cast<value_type *> (0));
 }

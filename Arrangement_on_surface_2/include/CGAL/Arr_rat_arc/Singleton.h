@@ -26,14 +26,14 @@ template <class T>
 class Singleton
 {
 public:
-  static T* instance() 
+  static T* instance()
   {
-    if(!m_pInstance) 
+    if(!m_pInstance)
       m_pInstance = new T;
     CGAL_assertion(m_pInstance !=nullptr);
     return m_pInstance;
   }
-      
+
   static void DestroyInstance()
   {
     delete m_pInstance;
@@ -49,5 +49,5 @@ private:
 template <class T> T* Singleton<T>::m_pInstance=nullptr;
 
 }   // namespace Arr_rational_arc
-}   //namespace CGAL { 
+}   //namespace CGAL {
 #endif // CGAL_SINGLETON_H_

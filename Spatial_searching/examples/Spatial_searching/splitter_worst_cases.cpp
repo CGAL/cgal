@@ -20,7 +20,7 @@ int main()
   Points sliding_worst_case;
   for (int i = 0 ,j = 1; i < 10 ; ++i , j *= 2){
     sliding_worst_case.push_back(Point_2(((double)i)/10 , 0));
-    sliding_worst_case.push_back(Point_2( (double)j , 0));    
+    sliding_worst_case.push_back(Point_2( (double)j , 0));
   }
 
   Sliding_midpoint sliding(10);
@@ -44,7 +44,7 @@ int main()
   }
   median_worst_case.push_back(Point_2(20,0));
 
- 
+
   Tree_median tree3(median_worst_case.begin() , median_worst_case.end() , median);
 
   tree3.build();

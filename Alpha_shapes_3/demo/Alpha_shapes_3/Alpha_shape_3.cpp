@@ -9,7 +9,7 @@
 int main(int argc, char** argv)
 {
  QApplication application(argc,argv);
- 
+
   application.setOrganizationDomain("geometryfactory.com");
   application.setOrganizationName("GeometryFactory");
   application.setApplicationName("Alpha Shape Reconstruction");
@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 
   CGAL_QT_INIT_RESOURCES;
   Q_INIT_RESOURCE(Alpha_shape_3);
-  
+
   MainWindow mw;
   mw.show();
 

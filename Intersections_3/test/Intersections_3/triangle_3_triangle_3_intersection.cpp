@@ -51,7 +51,7 @@ void test_coplanar_triangles(){
   t1=Triangle( Point(0,0,0),Point(0,1,0),Point(1,0,0) );
   t2=Triangle( Point(0,0,0),Point(0,1,0),Point(0.1,0.1,0) );
   obj=CGAL::intersection(t1,t2);
-  assert(CGAL::object_cast<Triangle>(&obj)!=NULL);  
+  assert(CGAL::object_cast<Triangle>(&obj)!=NULL);
   obj=CGAL::intersection(t2,t1);
   assert(CGAL::object_cast<Triangle>(&obj)!=NULL);
   //one edge of t2 included into an edge of t1, one common vertex
@@ -81,22 +81,22 @@ void test_coplanar_triangles(){
   obj=CGAL::intersection(t1,t2);
   assert(CGAL::object_cast<Triangle>(&obj)!=NULL);
   obj=CGAL::intersection(t2,t1);
-  assert(CGAL::object_cast<Triangle>(&obj)!=NULL);  
+  assert(CGAL::object_cast<Triangle>(&obj)!=NULL);
   //one vertex of t1 on edges of t2
   t1=Triangle( Point(0,0,0),Point(0,1,0),Point(1,0,0) );
   t2=Triangle( Point(-1,-1,0),Point(0.25,0.25,0),Point(0.25,-1,0) );
   obj=CGAL::intersection(t1,t2);
   assert(CGAL::object_cast<Triangle>(&obj)!=NULL);
   obj=CGAL::intersection(t2,t1);
-  assert(CGAL::object_cast<Triangle>(&obj)!=NULL); 
+  assert(CGAL::object_cast<Triangle>(&obj)!=NULL);
   //two vertices of t1 on edges of t2
   t1=Triangle( Point(0,0,0),Point(0.5,1,0),Point(1,0,0) );
   t2=Triangle( Point(-1,-1,0),Point(0.5,0.5,0),Point(2,-1,0) );
   obj=CGAL::intersection(t1,t2);
   assert(CGAL::object_cast<Triangle>(&obj)!=NULL);
   obj=CGAL::intersection(t2,t1);
-  assert(CGAL::object_cast<Triangle>(&obj)!=NULL);  
-//Intersection is a point  
+  assert(CGAL::object_cast<Triangle>(&obj)!=NULL);
+//Intersection is a point
   //edges  are collinear, one vertex in common
   t1=Triangle( Point(0,0,0),Point(0,1,0),Point(1,0,0) );
   t2=Triangle( Point(0,0,0),Point(-0.25,0,0),Point(0,-0.25,0) );
@@ -139,7 +139,7 @@ void test_coplanar_triangles(){
   obj=CGAL::intersection(t1,t2);
   assert(CGAL::object_cast<Segment>(&obj)!=NULL);
   obj=CGAL::intersection(t2,t1);
-  assert(CGAL::object_cast<Segment>(&obj)!=NULL); 
+  assert(CGAL::object_cast<Segment>(&obj)!=NULL);
   //exactly one vertex of each triangle contributes
   t1=Triangle( Point(0,0,0),Point(0,1,0),Point(1,0,0) );
   t2=Triangle( Point(0,-0.1,0),Point(0,0.9,0),Point(-1,0,0) );
@@ -152,8 +152,8 @@ void test_coplanar_triangles(){
   obj=CGAL::intersection(t1,t2);
   assert(CGAL::object_cast<Segment>(&obj)!=NULL);
   obj=CGAL::intersection(t2,t1);
-  assert(CGAL::object_cast<Segment>(&obj)!=NULL);  
-//Intersection is a polygon  
+  assert(CGAL::object_cast<Segment>(&obj)!=NULL);
+//Intersection is a polygon
   //David's star
   t1=Triangle( Point(0,0,0),Point(1,0,0),Point(0.5,1.5,0) );
   t2=Triangle( Point(0,1,0),Point(1,1,0),Point(0.5,-0.5,0) );
@@ -162,7 +162,7 @@ void test_coplanar_triangles(){
   assert(CGAL::object_cast<Polygon2>(&obj)->size()==6);
   obj=CGAL::intersection(t2,t1);
   assert(CGAL::object_cast<Polygon2>(&obj)!=NULL);
-  assert(CGAL::object_cast<Polygon2>(&obj)->size()==6);  
+  assert(CGAL::object_cast<Polygon2>(&obj)->size()==6);
   //intersection of two triangle corners
   t1=Triangle( Point(0,0,0),Point(1,0,0),Point(0.5,1,0) );
   t2=Triangle( Point(0,1,0),Point(1,1,0),Point(0.5,0,0) );
@@ -171,7 +171,7 @@ void test_coplanar_triangles(){
   assert(CGAL::object_cast<Polygon2>(&obj)->size()==4);
   obj=CGAL::intersection(t2,t1);
   assert(CGAL::object_cast<Polygon2>(&obj)!=NULL);
-  assert(CGAL::object_cast<Polygon2>(&obj)->size()==4);  
+  assert(CGAL::object_cast<Polygon2>(&obj)->size()==4);
   //t2 pierces two edges of t1
   t1=Triangle( Point(0,0,0),Point(1,0,0),Point(0,1,0) );
   t2=Triangle( Point(-0.1,0.1,0),Point(-0.1,0.2,0),Point(0.5,0.8,0) );
@@ -180,7 +180,7 @@ void test_coplanar_triangles(){
   assert(CGAL::object_cast<Polygon2>(&obj)->size()==4);
   obj=CGAL::intersection(t2,t1);
   assert(CGAL::object_cast<Polygon2>(&obj)!=NULL);
-  assert(CGAL::object_cast<Polygon2>(&obj)->size()==4);  
+  assert(CGAL::object_cast<Polygon2>(&obj)->size()==4);
 //Intersection is empty
   t1=Triangle( Point(0,0,0),Point(0,1,0),Point(1,0,0) );
   t2=Triangle( Point(-0.1,-0.1,0),Point(-0.1,-0.9,0),Point(-1,-0.1,0) );
@@ -194,7 +194,7 @@ void test_non_coplanar_triangles()
 {
   CGAL::Object obj;
   Triangle t1,t2;
-  
+
 //Intersection is a segment
   //normal
   t1=Triangle( Point(0,0,0),Point(0,1,0),Point(1,0,0) );
@@ -209,7 +209,7 @@ void test_non_coplanar_triangles()
   obj=CGAL::intersection(t1,t2);
   assert(CGAL::object_cast<Segment>(&obj)!=NULL);
   obj=CGAL::intersection(t2,t1);
-  assert(CGAL::object_cast<Segment>(&obj)!=NULL);  
+  assert(CGAL::object_cast<Segment>(&obj)!=NULL);
   //inclusion into an edge
   t1=Triangle( Point(0,0,0),Point(1,0,0),Point(0,1,0) );
   t2=Triangle( Point(0.1,0,0),Point(0.9,0,0),Point(0,0,1) );
@@ -252,8 +252,8 @@ void test_non_coplanar_triangles()
   obj=CGAL::intersection(t1,t2);
   assert(CGAL::object_cast<Point>(&obj)!=NULL);
   obj=CGAL::intersection(t2,t1);
-  assert(CGAL::object_cast<Point>(&obj)!=NULL);  
-//Intersection is empty  
+  assert(CGAL::object_cast<Point>(&obj)!=NULL);
+//Intersection is empty
   //triangle in parallel plane
   t1=Triangle( Point(0,0,0),Point(1,0,0),Point(0,1,0) );
   t2=Triangle( Point(0,0,1),Point(1,0,1),Point(0,1,1) );
@@ -267,7 +267,7 @@ void test_non_coplanar_triangles()
   obj=CGAL::intersection(t1,t2);
   assert(obj.empty());
   obj=CGAL::intersection(t2,t1);
-  assert(obj.empty());  
+  assert(obj.empty());
   t1=Triangle( Point( 0, 0, 0 ), Point( 0, 1, 1 ), Point( 0, 1, 0 ) );
   t2=Triangle( Point( -1, -1, 0 ),Point( 0, -1, 0 ),Point( -1, 0, 0 ) );
   obj=CGAL::intersection(t1,t2);
@@ -279,6 +279,6 @@ void test_non_coplanar_triangles()
 int main()
 {
   test_non_coplanar_triangles();
-  test_coplanar_triangles(); 
+  test_coplanar_triangles();
   return 0;
 }

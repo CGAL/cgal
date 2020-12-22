@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -75,8 +75,8 @@ protected:
 public:
   Hyperbola_segment_2() : Hyperbola_2< Gt >() {}
 
-  Hyperbola_segment_2(const Site_2 &f1,	const Site_2 &f2,
-		      const Point_2 &p1, const Point_2 &p2)
+  Hyperbola_segment_2(const Site_2 &f1,        const Site_2 &f2,
+                      const Point_2 &p1, const Point_2 &p2)
     : Hyperbola_2< Gt >(f1, f2)
   {
     this->p1 = p1;

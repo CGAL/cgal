@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -40,7 +40,7 @@ public:
 
   typedef Basic_predicates_C2<K>              Base;
   typedef Voronoi_vertex_C2<K,Method_tag>     Voronoi_vertex_2;
-  
+
   typedef typename Base::Point_2              Point_2;
   typedef typename Base::Segment_2            Segment_2;
   typedef typename Base::Line_2               Line_2;
@@ -56,7 +56,7 @@ public:
 
   typedef typename Base::Homogeneous_point_2  Homogeneous_point_2;
 
-  using Base::opposite_line;  
+  using Base::opposite_line;
   using Base::compute_supporting_line;
   using Base::oriented_side_of_line;
   using Base::compare_squared_distances_to_line;
@@ -85,8 +85,8 @@ private:
 
   Boolean
   is_interior_in_conflict_both(const Site_2& p, const Site_2& q,
-			       const Site_2& r, const Site_2& s,
-			       const Site_2& t, Method_tag tag) const
+                               const Site_2& r, const Site_2& s,
+                               const Site_2& t, Method_tag tag) const
   {
     Boolean   in_conflict(false);
 
@@ -113,8 +113,8 @@ private:
 
   bool
   is_interior_in_conflict_both_pp(const Site_2& sp, const Site_2& sq,
-				  const Site_2& r, const Site_2& s,
-				  const Site_2& t, Method_tag ) const
+                                  const Site_2& r, const Site_2& s,
+                                  const Site_2& t, Method_tag ) const
   {
     CGAL_precondition( sp.is_point() && sq.is_point() );
 
@@ -127,23 +127,23 @@ private:
     Oriented_side op, oq;
 
     if ( same_points(sp, t.source_site()) ||
-	 same_points(sp, t.target_site()) ) {
+         same_points(sp, t.target_site()) ) {
       op = ON_ORIENTED_BOUNDARY;
     } else {
       op = oriented_side_of_line(lt, p);
     }
 
     if ( same_points(sq, t.source_site()) ||
-	 same_points(sq, t.target_site()) ) {
+         same_points(sq, t.target_site()) ) {
       oq = ON_ORIENTED_BOUNDARY;
     } else {
       oq = oriented_side_of_line(lt, q);
     }
-    
+
 
     if ((op == ON_POSITIVE_SIDE && oq == ON_NEGATIVE_SIDE) ||
-	(op == ON_NEGATIVE_SIDE && oq == ON_POSITIVE_SIDE) ||
-	(op == ON_ORIENTED_BOUNDARY || oq == ON_ORIENTED_BOUNDARY)) {
+        (op == ON_NEGATIVE_SIDE && oq == ON_POSITIVE_SIDE) ||
+        (op == ON_ORIENTED_BOUNDARY || oq == ON_ORIENTED_BOUNDARY)) {
       return true;
     }
 
@@ -155,7 +155,7 @@ private:
     Voronoi_vertex_2 vpqr(sp, sq, r);
     Voronoi_vertex_2 vqps(sq, sp, s);
 
-    
+
     Line_2 lperp;
     if ( res == SMALLER ) {
       // p is closer to lt than q
@@ -175,8 +175,8 @@ private:
 
   bool
   is_interior_in_conflict_both_ss(const Site_2& p, const Site_2& q,
-				  const Site_2& , const Site_2& ,
-				  const Site_2& , Method_tag) const
+                                  const Site_2& , const Site_2& ,
+                                  const Site_2& , Method_tag) const
   {
     CGAL_USE(p);
     CGAL_USE(q);
@@ -188,15 +188,15 @@ private:
 
   Boolean
   is_interior_in_conflict_both_ps(const Site_2& p, const Site_2& q,
-				  const Site_2& r, const Site_2& s,
-				  const Site_2& t, Method_tag tag) const
+                                  const Site_2& r, const Site_2& s,
+                                  const Site_2& t, Method_tag tag) const
   {
     CGAL_precondition( p.is_point() && q.is_segment() );
 
     if ( same_points(p, q.source_site()) ||
-	 same_points(p, q.target_site()) ) {
+         same_points(p, q.target_site()) ) {
       return false;
-    }   
+    }
 
     if ( t.is_point() ) {
       return is_interior_in_conflict_both_ps_p(p, q, r, s, t, tag);
@@ -208,8 +208,8 @@ private:
 
   Boolean
   is_interior_in_conflict_both_ps_p(const Site_2& p, const Site_2& q,
-				    const Site_2& r, const Site_2& s,
-				    const Site_2& t, Method_tag ) const
+                                    const Site_2& r, const Site_2& s,
+                                    const Site_2& t, Method_tag ) const
   {
     CGAL_precondition( t.is_point() );
 
@@ -227,7 +227,7 @@ private:
     Voronoi_vertex_2 vqps(q, p, s);
 
     Line_2 lperp = compute_perpendicular(lq, p.point());
-      
+
     Oriented_side opqr = vpqr.oriented_side(lperp);
     Oriented_side oqps = vqps.oriented_side(lperp);
 
@@ -248,8 +248,8 @@ private:
 
   Boolean
   is_interior_in_conflict_both_ps_s(const Site_2& sp, const Site_2& sq,
-				    const Site_2& r, const Site_2& s,
-				    const Site_2& st, Method_tag ) const
+                                    const Site_2& r, const Site_2& s,
+                                    const Site_2& st, Method_tag ) const
   {
     CGAL_precondition( st.is_segment() );
     Point_2 p = sp.point();
@@ -258,11 +258,11 @@ private:
     Line_2 lq = compute_supporting_line(sq.supporting_site());
 
     if ( oriented_side_of_line(lq, p) == ON_NEGATIVE_SIDE ) {
-      lq = opposite_line(lq); 
+      lq = opposite_line(lq);
     }
 
     if ( same_points(sp, st.source_site()) ||
-	 same_points(sp, st.target_site()) ) {
+         same_points(sp, st.target_site()) ) {
 
       Line_2 lqperp = compute_perpendicular(lq, p);
 
@@ -273,8 +273,8 @@ private:
       Oriented_side oqps = vqps.oriented_side(lqperp);
 
       Boolean   on_different_parabola_arcs =
-	 ((opqr == ON_NEGATIVE_SIDE) & (oqps == ON_POSITIVE_SIDE)) |
-	 ((opqr == ON_POSITIVE_SIDE) & (oqps == ON_NEGATIVE_SIDE));
+         ((opqr == ON_NEGATIVE_SIDE) & (oqps == ON_POSITIVE_SIDE)) |
+         ((opqr == ON_POSITIVE_SIDE) & (oqps == ON_NEGATIVE_SIDE));
 
       //if ( !on_different_parabola_arcs ) { return true; }
       if (certainly( !on_different_parabola_arcs ) ) { return true; }
@@ -282,32 +282,32 @@ private:
 
       Site_2 t1;
       if ( same_points(sp, st.source_site()) ) {
-	t1 = st.target_site();
+        t1 = st.target_site();
       } else {
-	t1 = st.source_site();
+        t1 = st.source_site();
       }
 
       Oriented_side o_t1;
 
       if ( same_points(t1, sq.source_site()) ||
-	   same_points(t1, sq.target_site()) ) {
-	o_t1 = ON_ORIENTED_BOUNDARY;
+           same_points(t1, sq.target_site()) ) {
+        o_t1 = ON_ORIENTED_BOUNDARY;
       } else if (  !check_if_exact(t1, ITag()) &&
-		   ( same_segments(t1.supporting_site(0),
-				   sq.supporting_site()) ||
-		     same_segments(t1.supporting_site(1),
-				   sq.supporting_site()) )  ) {
-	o_t1 = ON_ORIENTED_BOUNDARY;
+                   ( same_segments(t1.supporting_site(0),
+                                   sq.supporting_site()) ||
+                     same_segments(t1.supporting_site(1),
+                                   sq.supporting_site()) )  ) {
+        o_t1 = ON_ORIENTED_BOUNDARY;
       } else {
-	o_t1 = oriented_side_of_line(lq, t1.point());
+        o_t1 = oriented_side_of_line(lq, t1.point());
       }
 
       if ( o_t1 == ON_NEGATIVE_SIDE ) {
-	return true;
+        return true;
       }
-	     
+
       Comparison_result res =
-	compare_squared_distances_to_line(lq, p, t1.point());
+        compare_squared_distances_to_line(lq, p, t1.point());
 
       return ( res == LARGER );
     }
@@ -321,18 +321,18 @@ private:
     Comparison_result res =
       CGAL::compare(lt.a() * lq.b(), lt.b() * lq.a());
     bool are_parallel = (res == EQUAL);
-      
+
     if ( are_parallel ) {
       Sign sgn = CGAL::sign(lt.a() * lq.a() + lt.b() * lq.b());
       bool have_opposite_directions = (sgn == NEGATIVE);
       if ( have_opposite_directions ) { lq = opposite_line(lq); }
 
       if ( oriented_side_of_line(lq, p) == oriented_side_of_line(lt, p) ) {
-	return true;
+        return true;
       }
 
       if ( have_opposite_directions ) {
-	lq = opposite_line(lq); 	  
+        lq = opposite_line(lq);
       }
     }
 
@@ -344,11 +344,11 @@ private:
     Oriented_side o_l_pqr = vpqr.oriented_side(l);
     Oriented_side o_l_qps = vqps.oriented_side(l);
     if (certainly( (o_l_pqr == ON_POSITIVE_SIDE) &
-	           (o_l_qps == ON_NEGATIVE_SIDE) ) )
+                   (o_l_qps == ON_NEGATIVE_SIDE) ) )
         return false;
     if (certainly( (o_l_pqr == ON_NEGATIVE_SIDE) &
-	           (o_l_qps == ON_POSITIVE_SIDE) ) )
-	return true;
+                   (o_l_qps == ON_POSITIVE_SIDE) ) )
+        return true;
     if (! is_certain((o_l_pqr == -o_l_qps) & (o_l_pqr != ZERO)))
         return indeterminate<Boolean>();
 
@@ -365,7 +365,7 @@ private:
     // if ( !on_different_parabola_arcs ) { return true; }
     if (certainly( !on_different_parabola_arcs ) ) { return true; }
     if (! is_certain( !on_different_parabola_arcs ) ) { return indeterminate<Boolean>(); }
-      
+
     Homogeneous_point_2 pv = projection_on_line(lq, p);
     Homogeneous_point_2 hp(p);
 
@@ -376,8 +376,8 @@ private:
     CGAL_assertion( o_l_pv != ON_ORIENTED_BOUNDARY );
 
     CGAL_assertion( o_l_pqr != ON_ORIENTED_BOUNDARY ||
-		    o_l_qps != ON_ORIENTED_BOUNDARY );
-    
+                    o_l_qps != ON_ORIENTED_BOUNDARY );
+
     if ( o_l_pqr == ON_ORIENTED_BOUNDARY ) {
       return ( o_l_qps == o_l_pv );
     } else {
@@ -390,8 +390,8 @@ private:
 
   Boolean
   is_interior_in_conflict_both_sp(const Site_2& p, const Site_2& q,
-				  const Site_2& r, const Site_2& s,
-				  const Site_2& t, Method_tag tag) const
+                                  const Site_2& r, const Site_2& s,
+                                  const Site_2& t, Method_tag tag) const
   {
     return is_interior_in_conflict_both_ps(q, p, s, r, t, tag);
   }
@@ -403,10 +403,10 @@ private:
 
   bool
   is_interior_in_conflict_touch(const Site_2& p, const Site_2& q,
-				const Site_2& r, const Site_2& s,
-				const Site_2& t, Method_tag tag) const
+                                const Site_2& r, const Site_2& s,
+                                const Site_2& t, Method_tag tag) const
   {
-    // checks if interior of voronoi edge is in conflict if both extrema 
+    // checks if interior of voronoi edge is in conflict if both extrema
     // of the voronoi edge touch the corresponding circles.
     // return true if interior is in conflict; false otherwise
     if ( t.is_segment() ) { return false; }
@@ -433,16 +433,16 @@ private:
 #else
     // OLD CODE: buggy if the edge is degenerate
     if ( (p.is_point() && q.is_point()) ||
-	 (p.is_segment() && q.is_segment()) ) { 
+         (p.is_segment() && q.is_segment()) ) {
       return true;
     }
 #endif
 
     if ( p.is_point() && q.is_segment() ) {
       Line_2 lq = compute_supporting_line(q.supporting_site());
-    
+
       Comparison_result res =
-	compare_squared_distances_to_line(lq, p.point(), t.point());
+        compare_squared_distances_to_line(lq, p.point(), t.point());
 
       return (res != SMALLER);
     }
@@ -457,8 +457,8 @@ private:
 
   bool
   is_interior_in_conflict_none(const Site_2& p, const Site_2& q,
-			       const Site_2& r, const Site_2& s,
-			       const Site_2& t, Method_tag tag) const
+                               const Site_2& r, const Site_2& s,
+                               const Site_2& t, Method_tag tag) const
   {
     if ( t.is_segment() ) { return false; }
 
@@ -482,8 +482,8 @@ private:
 
   bool
   is_interior_in_conflict_none_pp(const Site_2& p, const Site_2& q,
-				  const Site_2& , const Site_2& ,
-				  const Site_2& t, Method_tag ) const
+                                  const Site_2& , const Site_2& ,
+                                  const Site_2& t, Method_tag ) const
   {
     CGAL_USE(p);
     CGAL_USE(q);
@@ -496,16 +496,16 @@ private:
 
   bool
   is_interior_in_conflict_none_ps(const Site_2& sp, const Site_2& sq,
-				  const Site_2& r, const Site_2& s,
-				  const Site_2& st, Method_tag ) const
+                                  const Site_2& r, const Site_2& s,
+                                  const Site_2& st, Method_tag ) const
   {
     CGAL_precondition( sp.is_point() && sq.is_segment() && st.is_point() );
 
     if ( same_points(sp, sq.source_site()) ||
-	 same_points(sp, sq.target_site()) ) {
+         same_points(sp, sq.target_site()) ) {
       return false;
     }
-   
+
     Line_2 lq = compute_supporting_line(sq.supporting_site());
 
     Voronoi_vertex_2 vpqr(sp, sq, r);
@@ -539,8 +539,8 @@ private:
 
   bool
   is_interior_in_conflict_none_sp(const Site_2& p, const Site_2& q,
-				  const Site_2& r, const Site_2& s,
-				  const Site_2& t, Method_tag tag) const
+                                  const Site_2& r, const Site_2& s,
+                                  const Site_2& t, Method_tag tag) const
   {
     return is_interior_in_conflict_none_ps(q, p, s, r, t, tag);
   }
@@ -549,8 +549,8 @@ private:
 
   bool
   is_interior_in_conflict_none_ss(const Site_2& p, const Site_2& q,
-				  const Site_2& r, const Site_2& s,
-				  const Site_2& t, Method_tag ) const
+                                  const Site_2& r, const Site_2& s,
+                                  const Site_2& t, Method_tag ) const
   {
     CGAL_precondition( p.is_segment() && q.is_segment() && t.is_point() );
 
@@ -565,27 +565,27 @@ private:
       Site_2 tpqr = Site_2::construct_site_2(vpqr.degenerate_point());
 
       if ( same_points(tpqr, p.source_site()) ||
-	   same_points(tpqr, p.target_site()) ) {
-	if ( vqps.oriented_side(lp) != ON_POSITIVE_SIDE ) {
-	  lp = opposite_line(lp);
-	}
+           same_points(tpqr, p.target_site()) ) {
+        if ( vqps.oriented_side(lp) != ON_POSITIVE_SIDE ) {
+          lp = opposite_line(lp);
+        }
       }
     } else {
       if ( vpqr.oriented_side(lp) != ON_POSITIVE_SIDE ) {
-	lp = opposite_line(lp);
+        lp = opposite_line(lp);
       }
     }
 #if 0 // OLD CODE
     if (  ( vpqr.is_degenerate_Voronoi_circle() &&
-	    same_points(vpqr.degenerate_point(), p.source_site()) ) ||
-	  ( vpqr.is_degenerate_Voronoi_circle() &&
-	    same_points(vpqr.degenerate_point(), p.target_site()) )  ) {
+            same_points(vpqr.degenerate_point(), p.source_site()) ) ||
+          ( vpqr.is_degenerate_Voronoi_circle() &&
+            same_points(vpqr.degenerate_point(), p.target_site()) )  ) {
       if ( vqps.oriented_side(lp) != ON_POSITIVE_SIDE ) {
-	lp = opposite_line(lp);
+        lp = opposite_line(lp);
       }
     } else {
       if ( vpqr.oriented_side(lp) != ON_POSITIVE_SIDE ) {
-	lp = opposite_line(lp);
+        lp = opposite_line(lp);
       }
     }
 #endif
@@ -595,27 +595,27 @@ private:
       Site_2 tpqr = Site_2::construct_site_2(vpqr.degenerate_point());
 
       if ( same_points(tpqr, q.source_site()) ||
-	   same_points(tpqr, q.target_site()) ) {
-	if ( vqps.oriented_side(lq) != ON_POSITIVE_SIDE ) {
-	  lq = opposite_line(lq);
-	}
+           same_points(tpqr, q.target_site()) ) {
+        if ( vqps.oriented_side(lq) != ON_POSITIVE_SIDE ) {
+          lq = opposite_line(lq);
+        }
       }
     } else {
       if ( vpqr.oriented_side(lq) != ON_POSITIVE_SIDE ) {
-	lq = opposite_line(lq);
+        lq = opposite_line(lq);
       }
     }
 #if 0 // OLD CODE
     if (  ( vpqr.is_degenerate_Voronoi_circle() &&
-	    same_points(vpqr.degenerate_point(), q.source_site()) ) ||
-	  ( vpqr.is_degenerate_Voronoi_circle() &&
-	    same_points(vpqr.degenerate_point(), q.target_site()) )  ) {
+            same_points(vpqr.degenerate_point(), q.source_site()) ) ||
+          ( vpqr.is_degenerate_Voronoi_circle() &&
+            same_points(vpqr.degenerate_point(), q.target_site()) )  ) {
       if ( vqps.oriented_side(lq) != ON_POSITIVE_SIDE ) {
-	lq = opposite_line(lq);
+        lq = opposite_line(lq);
       }
     } else {
       if ( vpqr.oriented_side(lq) != ON_POSITIVE_SIDE ) {
-	lq = opposite_line(lq);
+        lq = opposite_line(lq);
       }
     }
 #endif
@@ -642,7 +642,7 @@ private:
     }
 
     CGAL_precondition( ot_lp != ON_ORIENTED_BOUNDARY &&
-		       ot_lq != ON_ORIENTED_BOUNDARY );
+                       ot_lq != ON_ORIENTED_BOUNDARY );
 
     // check of lperp separates the two Voronoi vertices
     Oriented_side opqr_perp = vpqr.oriented_side(lperp);
@@ -651,7 +651,7 @@ private:
     bool on_different_side =
       (opqr_perp == ON_POSITIVE_SIDE &&
        oqps_perp == ON_NEGATIVE_SIDE) ||
-      (opqr_perp == ON_NEGATIVE_SIDE && 
+      (opqr_perp == ON_NEGATIVE_SIDE &&
        oqps_perp == ON_POSITIVE_SIDE);
 
     return ( on_different_side );
@@ -666,7 +666,7 @@ public:
   typedef Site_2            argument_type;
 
   Boolean   operator()(const Site_2& p, const Site_2& q, const Site_2& r,
-		       const Site_2& s, const Site_2& t, Sign sgn) const
+                       const Site_2& s, const Site_2& t, Sign sgn) const
   {
     if ( sgn == POSITIVE ) {
       return is_interior_in_conflict_none(p, q, r, s, t, Method_tag());
@@ -679,7 +679,7 @@ public:
 
 
   Boolean   operator()(const Site_2& p, const Site_2& q, const Site_2& ,
-		       const Site_2& t, Sign sgn) const
+                       const Site_2& t, Sign sgn) const
   {
     if ( t.is_point() ) {
       return ( sgn == NEGATIVE );
@@ -702,7 +702,7 @@ public:
   }
 
   Boolean   operator()(const Site_2& p, const Site_2& q, const Site_2& t,
-		       Sign ) const
+                       Sign ) const
   {
     if ( p.is_segment() || q.is_segment()) {
       return false;
@@ -725,7 +725,7 @@ public:
       same_points(p, t.source_site()) || same_points(p, t.target_site());
     bool bq =
       same_points(q, t.source_site()) || same_points(q, t.target_site());
-						       
+
 
     return ( bp && bq );
   }

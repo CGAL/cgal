@@ -424,7 +424,7 @@ template <class PolygonMesh, class FaceIndexMap, class IsIntersectionEdge>
 void extract_patch_simplices(
   std::size_t patch_id,
   PolygonMesh& pm,
-  const FaceIndexMap& fids,
+  const FaceIndexMap fids,
   const std::vector<std::size_t>& patch_ids,
   std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor>& patch_faces,
   std::set<typename boost::graph_traits<PolygonMesh>::vertex_descriptor>& interior_vertices,
@@ -480,13 +480,13 @@ struct Patch_container{
 // external data members
   PolygonMesh& pm;
   const std::vector<std::size_t>& patch_ids;
-  const FaceIndexMap& fids;
+  const FaceIndexMap fids;
   const IsIntersectionEdge& is_intersection_edge;
 // constructor
   Patch_container(
     PolygonMesh& pm,
     const std::vector<std::size_t>& patch_ids,
-    const FaceIndexMap& fids,
+    const FaceIndexMap fids,
     const IsIntersectionEdge& is_intersection_edge,
     std::size_t nb_patches
   ) : patches(nb_patches)
@@ -583,7 +583,8 @@ next_marked_halfedge_around_target_vertex(
 template <class PolygonMesh,
           class EdgeMap,
           class VertexMap,
-          class VertexPointMap,
+          class VertexPointMap1,
+          class VertexPointMap2,
           class VertexPointMapOut,
           class IntersectionEdgeMap>
 void import_polyline(
@@ -598,8 +599,8 @@ void import_polyline(
   VertexMap& pm1_to_output_vertices,
   const IntersectionEdgeMap& intersection_edges1,
   const IntersectionEdgeMap& intersection_edges2,
-  const VertexPointMap& vpm1,
-  const VertexPointMap& /*vpm2*/,
+  const VertexPointMap1& vpm1,
+  const VertexPointMap2& /*vpm2*/,
   const VertexPointMapOut& vpm_out,
   std::vector<typename boost::graph_traits<PolygonMesh>
                 ::edge_descriptor>& output_shared_edges)
@@ -1004,27 +1005,29 @@ void append_patches_to_triangle_mesh(
 
 template < class TriangleMesh,
            class IntersectionEdgeMap,
-           class VertexPointMap,
+           class VertexPointMap1,
+           class VertexPointMap2,
            class VertexPointMapOut,
            class EdgeMarkMap1,
            class EdgeMarkMap2,
            class EdgeMarkMapOut,
            class IntersectionPolylines,
-           class PatchContainer,
+           class PatchContainer1,
+           class PatchContainer2,
            class UserVisitor>
 void fill_new_triangle_mesh(
   TriangleMesh& output,
   const boost::dynamic_bitset<>& patches_of_tm1_to_import,
   const boost::dynamic_bitset<>& patches_of_tm2_to_import,
-  PatchContainer& patches_of_tm1,
-  PatchContainer& patches_of_tm2,
+  PatchContainer1& patches_of_tm1,
+  PatchContainer2& patches_of_tm2,
   bool reverse_orientation_of_patches_from_tm1,
   bool reverse_orientation_of_patches_from_tm2,
   const IntersectionPolylines& polylines,
   const IntersectionEdgeMap& intersection_edges1,
   const IntersectionEdgeMap& intersection_edges2,
-  const VertexPointMap& vpm1,
-  const VertexPointMap& vpm2,
+  const VertexPointMap1& vpm1,
+  const VertexPointMap2& vpm2,
   const VertexPointMapOut& vpm_out,
   const EdgeMarkMap1& edge_mark_map1,
   const EdgeMarkMap2& edge_mark_map2,
@@ -1256,10 +1259,12 @@ void disconnect_patches(
 }
 
 template <class TriangleMesh,
-          class PatchContainer,
+          class PatchContainer1,
+          class PatchContainer2,
           class IntersectionPolylines,
           class EdgeMap,
-          class VertexPointMap,
+          class VertexPointMap1,
+          class VertexPointMap2,
           class EdgeMarkMapIn1,
           class EdgeMarkMapIn2,
           class EdgeMarkMapOut,
@@ -1269,12 +1274,12 @@ void compute_inplace_operation_delay_removal_and_insideout(
   TriangleMesh& tm2,
   const boost::dynamic_bitset<>& patches_of_tm1_to_keep,
   const boost::dynamic_bitset<>& patches_of_tm2_to_import,
-  PatchContainer& patches_of_tm1,
-  PatchContainer& patches_of_tm2,
+  PatchContainer1& patches_of_tm1,
+  PatchContainer2& patches_of_tm2,
   bool reverse_patch_orientation_tm2,
   const IntersectionPolylines& polylines,
-  const VertexPointMap& vpm1,
-  const VertexPointMap& vpm2,
+  const VertexPointMap1& vpm1,
+  const VertexPointMap2& vpm2,
         EdgeMarkMapIn1&,
   const EdgeMarkMapIn2& edge_mark_map2,
   const EdgeMarkMapOut& edge_mark_map_out1,
@@ -1416,8 +1421,10 @@ remove_patches(TriangleMesh& tm,
 }
 
 template <class TriangleMesh,
-          class PatchContainer,
-          class VertexPointMap,
+          class PatchContainer1,
+          class PatchContainer2,
+          class VertexPointMap1,
+          class VertexPointMap2,
           class EdgeMarkMapIn1,
           class EdgeMarkMapIn2,
           class EdgeMarkMapOut1,
@@ -1427,12 +1434,12 @@ void compute_inplace_operation(
   const TriangleMesh& /*tm2*/,
   const boost::dynamic_bitset<>& patches_of_tm1_to_keep,
   const boost::dynamic_bitset<>& patches_of_tm2_to_import,
-  PatchContainer& patches_of_tm1,
-  PatchContainer& patches_of_tm2,
+  PatchContainer1& patches_of_tm1,
+  PatchContainer2& patches_of_tm2,
   bool reverse_patch_orientation_tm1,
   bool reverse_patch_orientation_tm2,
-  const VertexPointMap& vpm1,
-  const VertexPointMap& vpm2,
+  const VertexPointMap1& vpm1,
+  const VertexPointMap2& vpm2,
         EdgeMarkMapIn1& edge_mark_map_in1,
   const EdgeMarkMapIn2& edge_mark_map_in2,
         EdgeMarkMapOut1& edge_mark_map_out1,
@@ -1485,14 +1492,15 @@ void compute_inplace_operation(
 
 template <class TriangleMesh,
           class IntersectionPolylines,
-          class PatchContainer,
+          class PatchContainer1,
+          class PatchContainer2,
           class EdgeMap>
 void compute_border_edge_map(
   const TriangleMesh& tm1,
   const TriangleMesh& tm2,
   const IntersectionPolylines& polylines,
-  PatchContainer& patches_of_tm1,
-  PatchContainer& patches_of_tm2,
+  PatchContainer1& patches_of_tm1,
+  PatchContainer2& patches_of_tm2,
   EdgeMap& tm2_edge_to_tm1_edge)
 {
   typedef boost::graph_traits<TriangleMesh> GT;
@@ -1520,9 +1528,11 @@ void compute_border_edge_map(
 
 
 template <class TriangleMesh,
-          class PatchContainer,
+          class PatchContainer1,
+          class PatchContainer2,
           class IntersectionPolylines,
-          class VertexPointMap,
+          class VertexPointMap1,
+          class VertexPointMap2,
           class EdgeMarkMapIn1,
           class EdgeMarkMapIn2,
           class EdgeMarkMapOut1,
@@ -1532,12 +1542,12 @@ void compute_inplace_operation(
   const TriangleMesh& tm2,
   const boost::dynamic_bitset<>& patches_of_tm1_to_keep,
   const boost::dynamic_bitset<>& patches_of_tm2_to_import,
-  PatchContainer& patches_of_tm1,
-  PatchContainer& patches_of_tm2,
+  PatchContainer1& patches_of_tm1,
+  PatchContainer2& patches_of_tm2,
   bool reverse_patch_orientation_tm1,
   bool reverse_patch_orientation_tm2,
-  const VertexPointMap& vpm1,
-  const VertexPointMap& vpm2,
+  const VertexPointMap1& vpm1,
+  const VertexPointMap2& vpm2,
   const EdgeMarkMapIn1& edge_mark_map_in1,
   const EdgeMarkMapIn2& edge_mark_map_in2,
   const EdgeMarkMapOut1& edge_mark_map_out1,

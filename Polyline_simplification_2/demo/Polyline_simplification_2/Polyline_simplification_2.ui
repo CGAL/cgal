@@ -279,14 +279,6 @@
   <include location="../icons/Triangulation_2.qrc" />
   <include location="../icons/Input.qrc" />
  </resources>
- <connections>
-  <connection>
-   <sender>thresholdSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>setThreshold(int)</slot>
-  </connection>
- </connections>
  <slots>
   <slot>setThreshold(int)</slot>
  </slots>

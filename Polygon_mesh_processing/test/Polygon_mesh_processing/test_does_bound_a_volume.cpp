@@ -15,7 +15,7 @@ int main(int argc, char** argv)
     std::cerr << "Nothing tested\n";
     return 1;
   }
-  
+
   for(int i=0;i<(argc-1)/2; ++i)
   {
     std::cout << "Handling " << argv[2*i+1]

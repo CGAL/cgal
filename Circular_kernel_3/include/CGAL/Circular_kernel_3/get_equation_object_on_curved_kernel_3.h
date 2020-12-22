@@ -7,11 +7,11 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado, 
+// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado,
 //             Julien Hazebrouck, Damien Leroy
 
-// Partially supported by the IST Programme of the EU as a 
-// STREP (FET Open) Project under Contract No  IST-006413 
+// Partially supported by the IST Programme of the EU as a
+// STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_SPHERICAL_KERNEL_GET_EQUATION_OBJECT_3_H
@@ -28,7 +28,7 @@
 
 namespace CGAL {
   namespace SphericalFunctors {
-    
+
   template < class SK >
   class Get_equation //: public LinearFunctors::Get_equation<SK>
   {
@@ -93,7 +93,7 @@ namespace CGAL {
     }
 
   };
-    
+
   } // namespace SphericalFunctors
 } // namespace CGAL
 

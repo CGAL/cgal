@@ -29,7 +29,7 @@ template <typename Kernel_,
           typename Container_ = std::vector<typename Kernel_::Point_2> >
 class Optimal_convex_decomposition_2 :
   public Polygon_decomposition_strategy_adapter<Kernel_, Container_,
-						Tag_optimal_convex_parition>
+            Tag_optimal_convex_parition>
 {
 public:
   typedef Kernel_                                  Kernel;
@@ -46,7 +46,7 @@ template <typename Kernel_,
           typename Container_ = std::vector<typename Kernel_::Point_2> >
 class Hertel_Mehlhorn_convex_decomposition_2 :
   public Polygon_decomposition_strategy_adapter<Kernel_, Container_,
-						Tag_approx_convex_parition>
+            Tag_approx_convex_parition>
 {
 public:
   typedef Kernel_                                  Kernel;
@@ -63,7 +63,7 @@ template <typename Kernel_,
           typename Container_ = std::vector<typename Kernel_::Point_2> >
 class Greene_convex_decomposition_2 :
   public Polygon_decomposition_strategy_adapter<Kernel_, Container_,
-						Tag_Greene_convex_parition>
+            Tag_Greene_convex_parition>
 {
 public:
   typedef Kernel_                                  Kernel;

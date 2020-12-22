@@ -73,7 +73,7 @@ struct Map_3_dart_max_items_3
 
 struct MonInfo
 {
-  MonInfo(int i=0) : mnb(i==0?rand():i), ptr(reinterpret_cast<char*>(this))  
+  MonInfo(int i=0) : mnb(i==0?rand():i), ptr(reinterpret_cast<char*>(this))
   {}
   int mnb;
   std::string s;
@@ -187,7 +187,7 @@ bool test_get_new_mark()
       map.free_mark(mark); // This is never supposed to occur.
       return false;
   }
-  
+
   for (Map1::size_type i=0; i<Map1::NB_MARKS; ++i)
   {
     map.free_mark(marks[i]);
@@ -211,7 +211,7 @@ bool test_face_graph_wrapper()
     return false;
   }
   in1>>m;
-  
+
   CGAL::Face_graph_wrapper<SMesh> fgw1(m);
   std::vector<unsigned int> cells=fgw1.count_all_cells();
   if (cells[0]!=1487 || cells[1]!=4406 || cells[2]!=2921 ||

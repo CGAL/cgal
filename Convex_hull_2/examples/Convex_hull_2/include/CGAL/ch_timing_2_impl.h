@@ -15,7 +15,7 @@ template <class ForwardIterator, class OutputIterator, class Traits>
 void
 ch_timing( ForwardIterator first, ForwardIterator last,
            OutputIterator result,
-           int iterations, 
+           int iterations,
            const Traits& ch_traits)
 {
   using std::cout;

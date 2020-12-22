@@ -226,7 +226,7 @@ struct Lazy_exact_binary : public Lazy_exact_nt_rep<ET>
   mutable Lazy_exact_nt<ET2> op2;
 
   Lazy_exact_binary (const Interval_nt<false> &i,
-		     const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)
+                     const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)
       : Lazy_exact_nt_rep<ET>(i), op1(a), op2(b)
   {
     this->set_depth((std::max)(op1.depth(), op2.depth()) + 1);
@@ -284,7 +284,7 @@ CGAL_LAZY_UNARY_OP(CGAL_NTS sqrt,   Lazy_exact_Sqrt)
 template <typename ET, typename ET1 = ET, typename ET2 = ET>             \
 struct NAME : public Lazy_exact_binary<ET, ET1, ET2>                     \
 {                                                                        \
-  typedef typename Lazy_exact_binary<ET,ET1,ET2>::AT::Protector P;	 \
+  typedef typename Lazy_exact_binary<ET,ET1,ET2>::AT::Protector P;         \
   NAME (const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)        \
     : Lazy_exact_binary<ET, ET1, ET2>((P(), a.approx() OP b.approx()), a, b) {} \
                                                                          \
@@ -312,7 +312,7 @@ struct Lazy_exact_Min : public Lazy_exact_binary<ET>
   void update_exact() const
   {
     this->et = new ET((CGAL::min)(this->op1.exact(), this->op2.exact()));
-    if (!this->approx().is_point()) 
+    if (!this->approx().is_point())
       this->at = CGAL_NTS to_interval(*(this->et));
     this->prune_dag();
   }
@@ -328,7 +328,7 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
   void update_exact() const
   {
     this->et = new ET((CGAL::max)(this->op1.exact(), this->op2.exact()));
-    if (!this->approx().is_point()) 
+    if (!this->approx().is_point())
       this->at = CGAL_NTS to_interval(*(this->et));
     this->prune_dag();
   }
@@ -383,6 +383,9 @@ public :
   typename boost::disable_if<is_implicit_convertible<ET1,ET>,int>::type=0)
     : Base(new Lazy_lazy_exact_Cst<ET, ET1>(x)){}
 
+  friend void swap(Lazy_exact_nt& a, Lazy_exact_nt& b) noexcept
+  { swap(static_cast<Base&>(a), static_cast<Base&>(b)); }
+
   Self operator+ () const
   { return *this; }
 
@@ -433,6 +436,69 @@ public :
   {
     CGAL_precondition(b != 0);
     return *this = new Lazy_exact_Div<ET>(*this, b);
+  }
+
+  // Mixed comparisons with int.
+  friend bool operator<(const Lazy_exact_nt& a, int b)
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Uncertain<bool> res = a.approx() < b;
+    if (is_certain(res))
+      return res;
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    return a.exact() < b;
+  }
+
+  friend bool operator>(const Lazy_exact_nt& a, int b)
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Uncertain<bool> res = b < a.approx();
+    if (is_certain(res))
+      return get_certain(res);
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    return b < a.exact();
+  }
+
+  friend bool operator==(const Lazy_exact_nt& a, int b)
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Uncertain<bool> res = b == a.approx();
+    if (is_certain(res))
+      return get_certain(res);
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    return b == a.exact();
+  }
+
+
+  // Mixed comparisons with double.
+  friend bool operator<(const Lazy_exact_nt& a, double b)
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Uncertain<bool> res = a.approx() < b;
+    if (is_certain(res))
+      return res;
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    return a.exact() < b;
+  }
+
+  friend bool operator>(const Lazy_exact_nt& a, double b)
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Uncertain<bool> res = b < a.approx();
+    if (is_certain(res))
+      return res;
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    return b < a.exact();
+  }
+
+  friend bool operator==(const Lazy_exact_nt& a, double b)
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Uncertain<bool> res = b == a.approx();
+    if (is_certain(res))
+      return res;
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    return b == a.exact();
   }
 
   // % kills filtering
@@ -557,84 +623,6 @@ operator%(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
   CGAL_precondition(b != 0);
   return Lazy_exact_nt<ET>(a) %= b;
 }
-
-
-
-// Mixed operators with int.
-template <typename ET>
-bool
-operator<(const Lazy_exact_nt<ET>& a, int b)
-{
-  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  Uncertain<bool> res = a.approx() < b;
-  if (is_certain(res))
-    return res;
-  CGAL_BRANCH_PROFILER_BRANCH(tmp);
-  return a.exact() < b;
-}
-
-template <typename ET>
-bool
-operator>(const Lazy_exact_nt<ET>& a, int b)
-{
-  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  Uncertain<bool> res = b < a.approx();
-  if (is_certain(res))
-    return get_certain(res);
-  CGAL_BRANCH_PROFILER_BRANCH(tmp);
-  return b < a.exact();
-}
-
-template <typename ET>
-bool
-operator==(const Lazy_exact_nt<ET>& a, int b)
-{
-  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  Uncertain<bool> res = b == a.approx();
-  if (is_certain(res))
-    return get_certain(res);
-  CGAL_BRANCH_PROFILER_BRANCH(tmp);
-  return b == a.exact();
-}
-
-
-// Mixed operators with double.
-template <typename ET>
-bool
-operator<(const Lazy_exact_nt<ET>& a, double b)
-{
-  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  Uncertain<bool> res = a.approx() < b;
-  if (is_certain(res))
-    return res;
-  CGAL_BRANCH_PROFILER_BRANCH(tmp);
-  return a.exact() < b;
-}
-
-template <typename ET>
-bool
-operator>(const Lazy_exact_nt<ET>& a, double b)
-{
-  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  Uncertain<bool> res = b < a.approx();
-  if (is_certain(res))
-    return res;
-  CGAL_BRANCH_PROFILER_BRANCH(tmp);
-  return b < a.exact();
-}
-
-template <typename ET>
-bool
-operator==(const Lazy_exact_nt<ET>& a, double b)
-{
-  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  Uncertain<bool> res = b == a.approx();
-  if (is_certain(res))
-    return res;
-  CGAL_BRANCH_PROFILER_BRANCH(tmp);
-  return b == a.exact();
-}
-
 
 
 template <typename ET1, typename ET2>
@@ -1007,9 +995,9 @@ public:
 
     typedef typename INTERN_LAZY_EXACT_NT::Div_mod_selector
     <Lazy_exact_nt<ET>, typename AST_ET::Div_mod > ::Div_mod Div_mod;
-    
+
     typedef typename INTERN_LAZY_EXACT_NT::Inverse_selector
-    <Lazy_exact_nt<ET>, typename AST_ET::Inverse > ::Inverse Inverse;    
+    <Lazy_exact_nt<ET>, typename AST_ET::Inverse > ::Inverse Inverse;
 };
 
 
@@ -1284,13 +1272,13 @@ struct Max <Lazy_exact_nt<ET> >
     }
 };
 
-template<typename ET> inline 
+template<typename ET> inline
 Lazy_exact_nt<ET> min BOOST_PREVENT_MACRO_SUBSTITUTION(
 const Lazy_exact_nt<ET> & x,
 const Lazy_exact_nt<ET> & y){
   return CGAL::Min<Lazy_exact_nt<ET> > ()(x,y);
 }
-template<typename ET> inline 
+template<typename ET> inline
 Lazy_exact_nt<ET> max BOOST_PREVENT_MACRO_SUBSTITUTION(
 const Lazy_exact_nt<ET> & x,
 const Lazy_exact_nt<ET> & y){
@@ -1383,8 +1371,8 @@ public:
   typedef Lazy_exact_nt<ET> NT;
   typedef ::CGAL::Tag_false Is_modularizable;
   typedef ::CGAL::Null_functor Residue_type;
-  typedef ::CGAL::Null_functor Modular_image;  
-  typedef ::CGAL::Null_functor Modular_image_representative;    
+  typedef ::CGAL::Null_functor Modular_image;
+  typedef ::CGAL::Null_functor Modular_image_representative;
 };
 
 template< typename ET >
@@ -1406,11 +1394,11 @@ public:
       typename MT_ET::Modular_image_representative modular_image_representative;
       return NT(modular_image_representative(x));
     }
-  };    
+  };
 };
 } // namespace INTERN_LAZY_EXACT_NT
 
-template < typename ET > 
+template < typename ET >
 class Modular_traits<Lazy_exact_nt<ET> >
   :public INTERN_LAZY_EXACT_NT::Modular_traits_base
 <ET,typename Modular_traits<ET>::Is_modularizable>{};
