@@ -19,22 +19,31 @@ if(CGAL_FOUND)
   if(Boost_FOUND)
     message(STATUS "Found Boost")
 
-    set(targets
-    # kinetic_2d_example
-    kinetic_precomputed_shapes_example
-    # kinetic_random_shapes_example
-    )
+    # find_package(Eigen3 3.1.0 REQUIRED)
+    # if(Eigen3_FOUND)
+    #   message(STATUS "Found Eigen")
 
-    set(project_linked_libraries)
-    set(project_compilation_definitions)
+    #   include(CGAL_Eigen_support)
 
-    foreach(target ${targets})
-      create_single_source_cgal_program("${target}.cpp")
-      if(TARGET ${target})
-        target_link_libraries(${target} PUBLIC ${project_linked_libraries})
-        target_compile_definitions(${target} PUBLIC ${project_compilation_definitions})
-      endif()
-    endforeach()
+      set(targets
+      # kinetic_2d_example
+      kinetic_precomputed_shapes_example
+      # kinetic_random_shapes_example
+      )
+
+      set(project_linked_libraries)
+      set(project_compilation_definitions)
+
+      foreach(target ${targets})
+        create_single_source_cgal_program("${target}.cpp")
+        if(TARGET ${target})
+          target_link_libraries(${target} PUBLIC ${project_linked_libraries})
+          target_compile_definitions(${target} PUBLIC ${project_compilation_definitions})
+        endif()
+      endforeach()
+    # else()
+    #   message(ERROR "This program requires the Eigen library, and will not be compiled.")
+    # endif()
   else()
     message(ERROR "This program requires the Boost library, and will not be compiled.")
   endif()

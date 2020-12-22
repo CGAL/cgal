@@ -64,17 +64,29 @@ int main(const int argc, const char** argv) {
   std::cout << "* used kernel: "        << kernel_name        << std::endl;
   std::cout << "* number of polygons: " << input_faces.size() << std::endl;
 
+  std::cout << std::endl;
+  std::cout << "--- OPTIONS: " << std::endl;
+
+  const unsigned int k = (argc > 2 ? std::atoi(argv[2]) : 1);
+  std::cout << "* number of intersections k: " << k << std::endl;
+
+  const unsigned int n = 0; // number of subdivisions per bbox side
+  const unsigned int num_blocks = std::pow(n + 1, 3);
+  std::cout << "* number of blocks: " << num_blocks << std::endl;
+
+  const double enlarge_bbox_ratio = 1.1;
+  std::cout << "* enlarge bbox ratio: " << enlarge_bbox_ratio << std::endl;
+
+  const bool reorient = true;
+  std::cout << "* reorient: " << (reorient ? "true" : "false") << std::endl;
+
   // Algorithm.
   const bool debug   = true;
   const bool verbose = true;
   KSR ksr(verbose, debug);
-  const unsigned int k = (argc > 2 ? std::atoi(argv[2]) : 1);
-  std::cout << "* number of intersections k: " << k << std::endl;
-  const unsigned int n = 0;
-  const unsigned int num_blocks = std::pow(n + 1, 3);
-  std::cout << "* number of blocks: " << num_blocks << std::endl;
   const Polygon_map polygon_map(input_vertices);
-  const bool is_success = ksr.partition(input_faces, polygon_map, k, n);
+  const bool is_success = ksr.partition(
+    input_faces, polygon_map, k, n, enlarge_bbox_ratio, reorient);
   assert(is_success);
 
   // Output.

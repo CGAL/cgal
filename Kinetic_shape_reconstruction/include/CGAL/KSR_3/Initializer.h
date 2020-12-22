@@ -23,6 +23,9 @@
 
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
+// CGAL includes.
+// #include <CGAL/optimal_bounding_box.h>
+
 // Internal includes.
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/debug.h>
@@ -48,8 +51,10 @@ private:
   using Data_structure   = KSR_3::Data_structure<Kernel>;
   using Polygon_splitter = KSR_3::Polygon_splitter<Data_structure, Kernel>;
 
-  using Bbox_3  = CGAL::Bbox_3;
   using IVertex = typename Data_structure::IVertex;
+
+  using Bbox_3 = CGAL::Bbox_3;
+  // using OBB_traits = CGAL::Oriented_bounding_box_traits_3<Kernel>;
 
 public:
   Initializer(
@@ -181,7 +186,32 @@ private:
     const PolygonMap polygon_map,
     std::array<Point_3, 8>& bbox) const {
 
-    CGAL_assertion_msg(false, "TODO: IMPLEMENT THE ORIENTED OPTIMAL BBOX!");
+    // Number of input points.
+    std::size_t num_points = 0;
+    for (const auto& item : input_range) {
+      const auto& polygon = get(polygon_map, item);
+      num_points += polygon.size();
+    }
+
+    // Set points.
+    std::vector<Point_3> points;
+    points.reserve(num_points);
+    for (const auto& item : input_range) {
+      const auto& polygon = get(polygon_map, item);
+      for (const auto& p : polygon) {
+        const Point_3 point(p.x(), p.y(), p.z());
+        points.push_back(point);
+      }
+    }
+
+    // Compute optimal bbox.
+    // The order of faces corresponds to the standard order from here:
+    // https://doc.cgal.org/latest/BGL/group__PkgBGLHelperFct.html#gad9df350e98780f0c213046d8a257358e
+    // const OBB_traits obb_traits;
+    // CGAL::oriented_bounding_box(
+    //   points, bbox,
+    //   CGAL::parameters::use_convex_hull(true).
+    //   geom_traits(obb_traits));
   }
 
   template<
