@@ -28,6 +28,7 @@
 #include <CGAL/Ray_3.h>
 #include <CGAL/Triangle_3.h>
 #include <CGAL/Plane_3.h>
+#include <CGAL/Tetrahedron_3.h>
 
 namespace CGAL {
 
@@ -387,6 +388,27 @@ typename K::FT
 squared_distance(const Triangle_3<K> & t,
                  const Point_3<K> & pt) {
   return internal::squared_distance(pt, t, K());
+}
+
+template <class K>
+inline
+typename K::FT
+squared_distance(const Tetrahedron_3<K> & t,
+                 const Point_3<K> & pt) {
+  if (t.has_on_boundary(pt) || t.has_on_bounded_side(pt))
+      return K::FT(0);
+
+  const Triangle_3<K> t0 = {t[0], t[1], t[2]};
+  const Triangle_3<K> t1 = {t[0], t[1], t[3]};
+  const Triangle_3<K> t2 = {t[1], t[2], t[3]};
+  const Triangle_3<K> t3 = {t[0], t[2], t[3]};
+
+  const typename K::FT d0 = CGAL::squared_distance(t0, pt);
+  const typename K::FT d1 = CGAL::squared_distance(t1, pt);
+  const typename K::FT d2 = CGAL::squared_distance(t2, pt);
+  const typename K::FT d3 = CGAL::squared_distance(t3, pt);
+
+  return std::min({d0, d1, d2, d3});
 }
 
 
