@@ -68,10 +68,9 @@ private:
   using Event       = KSR_3::Event<Data_structure>;
   using Event_queue = KSR_3::Event_queue<Data_structure>;
 
-  using Bbox_2         = CGAL::Bbox_2;
-  using EK             = CGAL::Exact_predicates_exact_constructions_kernel;
-  using Initializer    = KSR_3::Initializer<EK>;
-  using Reconstruction = KSR_3::Reconstruction<Kernel>;
+  using Bbox_2      = CGAL::Bbox_2;
+  using EK          = CGAL::Exact_predicates_exact_constructions_kernel;
+  using Initializer = KSR_3::Initializer<EK>;
 
   using Polygon_mesh = CGAL::Surface_mesh<Point_3>;
   using Vertex_index = typename Polygon_mesh::Vertex_index;
@@ -142,7 +141,7 @@ public:
       const unsigned int num_blocks = std::pow(n + 1, 3);
       const std::string is_reorient = (reorient ? "true" : "false");
 
-      std::cout << std::endl << "--- OPTIONS: " << std::endl;
+      std::cout << std::endl << "--- PARTITION OPTIONS: " << std::endl;
       std::cout << "* number of intersections k: "            << k                  << std::endl;
       std::cout << "* number of subdivisions per bbox side: " << n                  << std::endl;
       std::cout << "* number of subdivision blocks: "         << num_blocks         << std::endl;
@@ -201,7 +200,7 @@ public:
       std::cout << "* number of events: " << global_iteration << std::endl;
     }
 
-    if (m_verbose) std::cout << std::endl << "--- FINALIZING KSR:" << std::endl;
+    if (m_verbose) std::cout << std::endl << "--- FINALIZING PARTITION:" << std::endl;
     if (m_debug) dump(m_data, "jiter-final-a-result");
     m_data.finalize();
     if (m_verbose) std::cout << "* checking final mesh integrity ...";
@@ -221,20 +220,36 @@ public:
   typename InputRange,
   typename PointMap,
   typename VectorMap,
-  typename LabelMap,
+  typename SemanticMap,
   typename NamedParameters>
-  void reconstruct(
+  const bool reconstruct(
     const InputRange& input_range,
     const PointMap point_map,
     const VectorMap normal_map,
-    const LabelMap label_map,
+    const SemanticMap semantic_map,
     const NamedParameters& np) {
 
+    using Reconstruction = KSR_3::Reconstruction<
+      InputRange, PointMap, VectorMap, SemanticMap, Kernel>;
+
     Reconstruction reconstruction(
-      input_range, point_map, normal_map, label_map, m_data);
-    reconstruction.detect_planar_shapes(np);
-    reconstruction.partition(np);
-    reconstruction.compute_model(np);
+      input_range, point_map, normal_map, semantic_map, m_data, m_verbose);
+    bool success = reconstruction.detect_planar_shapes(np);
+    if (!success) {
+      CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, DETECTING PLANAR SHAPES FAILED!");
+    }
+
+    success = partition(
+      reconstruction.planar_shapes(), reconstruction.polygon_map(), np);
+    if (!success) {
+      CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, PARTITION FAILED!");
+    }
+
+    success = reconstruction.compute_model(np);
+    if (!success) {
+      CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, COMPUTING MODEL FAILED!");
+    }
+    return success;
   }
 
   /*******************************
@@ -507,10 +522,14 @@ public:
 
   template<typename LCC>
   void output_partition(LCC& lcc) const {
+
     CGAL_assertion_msg(false, "TODO: OUTPUT PARTITION LCC!");
   }
 
-  void output_reconstructed_model() const {
+  template<typename VertexOutputIterator, typename FaceOutputIterator>
+  void output_reconstructed_model(
+    VertexOutputIterator vertices, FaceOutputIterator faces) const {
+
     CGAL_assertion_msg(false, "TODO: OUTPUT RECONSTRUCTED MODEL!");
   }
 

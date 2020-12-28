@@ -195,9 +195,3 @@ CGAL_add_named_parameter(k_intersections_t, k_intersections, k_intersections)
 CGAL_add_named_parameter(n_subdivisions_t, n_subdivisions, n_subdivisions)
 CGAL_add_named_parameter(enlarge_bbox_ratio_t, enlarge_bbox_ratio, enlarge_bbox_ratio)
 CGAL_add_named_parameter(reorient_t, reorient, reorient)
-
-// region growing
-CGAL_add_named_parameter(k_neighbors_t, k_neighbors, k_neighbors)
-CGAL_add_named_parameter(distance_threshold_t, distance_threshold, distance_threshold)
-CGAL_add_named_parameter(angle_threshold_t, angle_threshold, angle_threshold)
-CGAL_add_named_parameter(min_region_size_t, min_region_size, min_region_size)

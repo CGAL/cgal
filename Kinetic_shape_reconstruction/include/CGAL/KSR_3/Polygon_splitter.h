@@ -32,6 +32,7 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 
 // Internal includes.
+#include <CGAL/KSR/enum.h>
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/debug.h>
 
@@ -97,18 +98,18 @@ private:
   using Face_index   = typename Mesh_3::Face_index;
   using Uchar_map    = typename Mesh_3::template Property_map<Face_index, unsigned char>;
 
-  enum struct Merge_type { CONVEX_HULL = 0, RECTANGLE = 1 };
+  using Planar_shape_type = KSR::Planar_shape_type;
 
   Data_structure& m_data;
   TRI m_cdt;
   std::set<PVertex> m_input;
   std::map<CID, IEdge> m_map_intersections;
-  const Merge_type m_merge_type;
+  const Planar_shape_type m_merge_type;
 
 public:
   Polygon_splitter(Data_structure& data) :
   m_data(data),
-  m_merge_type(Merge_type::CONVEX_HULL)
+  m_merge_type(Planar_shape_type::CONVEX_HULL)
   { }
 
   void split_support_plane(const KSR::size_t support_plane_idx) {
@@ -201,11 +202,11 @@ private:
 
     merged.clear();
     switch (m_merge_type) {
-      case Merge_type::CONVEX_HULL: {
+      case Planar_shape_type::CONVEX_HULL: {
         CGAL::convex_hull_2(points.begin(), points.end(), std::back_inserter(merged) );
         break;
       }
-      case Merge_type::RECTANGLE: {
+      case Planar_shape_type::RECTANGLE: {
         CGAL_assertion_msg(false, "TODO: MERGE PFACES INTO A RECTANGLE!");
         break;
       }

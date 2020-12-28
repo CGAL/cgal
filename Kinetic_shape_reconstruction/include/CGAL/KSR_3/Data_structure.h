@@ -1554,7 +1554,7 @@ public:
 
   const std::pair<PVertex, PVertex> propagate_pedge_beyond_iedge(
     const PVertex& pvertex, const PVertex& pother, const IEdge& iedge,
-    const unsigned int /* k */) {
+    const unsigned int k) {
 
     // Here, instead of 1 triangle pface, we should add 1 rectangle pface!
     std::cout.precision(20);
@@ -1562,9 +1562,35 @@ public:
       std::cout << "** propagating pedge [" << str(pvertex) << "-" << str(pother)
       << "] along " << str(iedge) << std::endl;
     }
-    // CGAL_assertion(k >= 1);
-    CGAL_assertion_msg(false, "TODO: PROPAGATE PEDGE BEYOND IEDGE!");
-    return std::make_pair(null_pvertex(), null_pvertex());
+    CGAL_assertion(k >= 1);
+
+    const Point_2 original_point_1 = point_2(pvertex, FT(0));
+    const Point_2 original_point_2 = point_2(pother , FT(0));
+
+    const Vector_2 original_direction_1 = direction(pvertex);
+    const Vector_2 original_direction_2 = direction(pother);
+
+    crop_pedge_along_iedge(pvertex, pother, iedge);
+
+    const PVertex propagated_1 = add_pvertex(pvertex.first, original_point_1);
+    direction(propagated_1) = original_direction_1;
+
+    const PVertex propagated_2 = add_pvertex(pother.first, original_point_2);
+    direction(propagated_2) = original_direction_2;
+
+    std::array<PVertex, 4> pvertices;
+    pvertices[0] = pvertex;
+    pvertices[1] = pother;
+    pvertices[2] = propagated_2;
+    pvertices[3] = propagated_1;
+
+    const PFace new_pface = add_pface(pvertices);
+    if (m_verbose) std::cout << "- new pface: " << lstr(new_pface) << std::endl;
+    CGAL_assertion(k >= 1);
+    this->k(new_pface) = k;
+    CGAL_assertion(new_pface.second != Face_index());
+
+    return std::make_pair(propagated_1, propagated_2);
   }
 
   const bool transfer_pvertex_via_iedge(

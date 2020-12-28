@@ -21,6 +21,8 @@
 #ifndef CGAL_KSR_UTILS_H
 #define CGAL_KSR_UTILS_H
 
+// #include <CGAL/license/Kinetic_shape_reconstruction.h>
+
 // STL includes.
 #include <set>
 #include <cmath>

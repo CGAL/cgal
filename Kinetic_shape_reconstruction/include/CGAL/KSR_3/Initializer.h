@@ -80,7 +80,7 @@ public:
     const bool reorient) {
 
     if (m_verbose) {
-      std::cout << std::endl << "--- INITIALIZING KSR:" << std::endl;
+      std::cout << std::endl << "--- INITIALIZING PARTITION:" << std::endl;
     }
 
     FT time_step;

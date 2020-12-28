@@ -24,65 +24,345 @@
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
 // CGAL includes.
+#include <CGAL/assertions.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/convex_hull_2.h>
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/linear_least_squares_fitting_3.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Shape_detection/Region_growing/Region_growing.h>
+#include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
 
 // Internal includes.
+#include <CGAL/KSR/enum.h>
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/debug.h>
+#include <CGAL/KSR/property_map.h>
 #include <CGAL/KSR_3/Data_structure.h>
 
 namespace CGAL {
 namespace KSR_3 {
 
-template<typename GeomTraits>
+template<
+typename InputRange,
+typename PointMap,
+typename VectorMap,
+typename SemanticMap,
+typename GeomTraits>
 class Reconstruction {
 
 public:
-  using Kernel = GeomTraits;
+  using Input_range  = InputRange;
+  using Point_map    = PointMap;
+  using Vector_map   = VectorMap;
+  using Semantic_map = SemanticMap;
+  using Kernel       = GeomTraits;
 
 private:
   using FT        = typename Kernel::FT;
+  using Point_2   = typename Kernel::Point_2;
   using Point_3   = typename Kernel::Point_3;
+  using Plane_3   = typename Kernel::Plane_3;
   using Segment_3 = typename Kernel::Segment_3;
 
   using Data_structure = KSR_3::Data_structure<Kernel>;
+  using Point_map_3    = KSR::Item_property_map<Input_range, Point_map>;
+  using Vector_map_3   = KSR::Item_property_map<Input_range, Vector_map>;
+
+  using Semantic_label    = KSR::Semantic_label;
+  using Planar_shape_type = KSR::Planar_shape_type;
+
+  using Indices     = std::vector<std::size_t>;
+  using Polygon_3   = std::vector<Point_3>;
+  using Polygon_map = CGAL::Identity_property_map<Polygon_3>;
+
+  using IK       = Exact_predicates_inexact_constructions_kernel;
+  using IPoint_3  = typename IK::Point_3;
+  using IPlane_3  = typename IK::Plane_3;
+  using Converter = CGAL::Cartesian_converter<Kernel, IK>;
+
+  // using Neighbor_query = CGAL::Shape_detection::Point_set::
+  //   Sphere_neighbor_query<Kernel, Indices, Point_map_3>;
+
+  using Neighbor_query = CGAL::Shape_detection::Point_set::
+    K_neighbor_query<Kernel, Indices, Point_map_3>;
+  using Planar_region  = CGAL::Shape_detection::Point_set::
+    Least_squares_plane_fit_region<Kernel, Indices, Point_map_3, Vector_map_3>;
+  using Planar_sorting = CGAL::Shape_detection::Point_set::
+    Least_squares_plane_fit_sorting<Kernel, Indices, Neighbor_query, Point_map_3>;
+  using Region_growing = CGAL::Shape_detection::
+    Region_growing<Indices, Neighbor_query, Planar_region, typename Planar_sorting::Seed_map>;
 
 public:
 
-  template<
-  typename InputRange,
-  typename PointMap,
-  typename VectorMap,
-  typename LabelMap>
   Reconstruction(
-    const InputRange& input_range,
-    const PointMap point_map,
-    const VectorMap normal_map,
-    const LabelMap label_map,
-    Data_structure& data) :
-  m_data(data) {
-    CGAL_assertion_msg(false, "TODO: RECONSTRUCTION, INITIALIZE!");
+    const Input_range& input_range,
+    const Point_map& point_map,
+    const Vector_map& normal_map,
+    const Semantic_map& semantic_map,
+    Data_structure& data,
+    const bool verbose) :
+  m_input_range(input_range),
+  m_semantic_map(semantic_map),
+  m_point_map_3(m_input_range, point_map),
+  m_normal_map_3(m_input_range, normal_map),
+  m_data(data),
+  m_verbose(verbose),
+  m_planar_shape_type(Planar_shape_type::CONVEX_HULL) {
+
+    clear();
+    collect_points(Semantic_label::GROUND           , m_ground_points);
+    collect_points(Semantic_label::BUILDING_BOUNDARY, m_boundary_points);
+    collect_points(Semantic_label::BUILDING_INTERIOR, m_interior_points);
+
+    if (m_verbose) {
+      std::cout << std::endl << "--- RECONSTRUCTION: " << std::endl;
+      std::cout << "* num ground points: "   << m_ground_points.size()   << std::endl;
+      std::cout << "* num boundary points: " << m_boundary_points.size() << std::endl;
+      std::cout << "* num interior points: " << m_interior_points.size() << std::endl;
+    }
   }
 
   template<typename NamedParameters>
-  void detect_planar_shapes(
+  const bool detect_planar_shapes(
     const NamedParameters& np) {
-    CGAL_assertion_msg(false, "TODO: RECONSTRUCTION, DETECT PLANAR SHAPES!");
+
+    if (m_verbose) {
+      std::cout << std::endl << "--- DETECTING PLANAR SHAPES: " << std::endl;
+    }
+    m_polygons.clear();
+    create_ground_plane();
+    CGAL_assertion(m_polygons.size() == 1);
+    create_approximate_walls(np);
+    create_approximate_roofs(np);
+    dump_polygons("detected-planar-shapes");
+    return true;
   }
 
   template<typename NamedParameters>
-  void partition(
+  const bool compute_model(
     const NamedParameters& np) {
-    CGAL_assertion_msg(false, "TODO: RECONSTRUCTION, PARTITION!");
-  }
 
-  template<typename NamedParameters>
-  void compute_model(
-    const NamedParameters& np) {
+    if (m_verbose) {
+      std::cout << std::endl << "--- COMPUTING THE MODEL: " << std::endl;
+    }
+
     CGAL_assertion_msg(false, "TODO: RECONSTRUCTION, COMPUTE MODEL!");
+    return false;
+  }
+
+  const std::vector<Polygon_3>& planar_shapes() const {
+    return m_polygons;
+  }
+
+  const Polygon_map& polygon_map() const {
+    return m_polygon_map;
+  }
+
+  void clear() {
+    m_ground_points.clear();
+    m_boundary_points.clear();
+    m_interior_points.clear();
+    m_polygons.clear();
   }
 
 private:
+  const Input_range& m_input_range;
+  const Semantic_map& m_semantic_map;
+
+  Point_map_3  m_point_map_3;
+  Vector_map_3 m_normal_map_3;
   Data_structure& m_data;
+  const bool m_verbose;
+  const Planar_shape_type m_planar_shape_type;
+  const Converter m_converter;
+
+  std::vector<std::size_t> m_ground_points;
+  std::vector<std::size_t> m_boundary_points;
+  std::vector<std::size_t> m_interior_points;
+
+  std::vector<Polygon_3> m_polygons;
+  Polygon_map m_polygon_map;
+
+  void collect_points(
+    const Semantic_label output_label,
+    std::vector<std::size_t>& indices) const {
+
+    indices.clear();
+    for (std::size_t i = 0; i < m_input_range.size(); ++i) {
+      const Semantic_label label =
+      get(m_semantic_map, *(m_input_range.begin() + i));
+      if (label == output_label)
+        indices.push_back(i);
+    }
+  }
+
+  void create_ground_plane() {
+
+    if (m_verbose) std::cout << "* creating ground plane ... ";
+    const auto plane = fit_plane(m_ground_points);
+    add_planar_shape(m_ground_points, plane);
+    if (m_verbose) std::cout << "done" << std::endl;
+  }
+
+  const Plane_3 fit_plane(const std::vector<std::size_t>& region) const {
+
+    std::vector<IPoint_3> points;
+    points.reserve(region.size());
+    for (const std::size_t idx : region) {
+      CGAL_assertion(idx < m_input_range.size());
+      points.push_back(m_converter(get(m_point_map_3, idx)));
+    }
+    CGAL_assertion(points.size() == region.size());
+
+    IPlane_3 fitted_plane;
+    IPoint_3 fitted_centroid;
+    CGAL::linear_least_squares_fitting_3(
+      points.begin(), points.end(),
+      fitted_plane, fitted_centroid,
+      CGAL::Dimension_tag<0>());
+
+    const Plane_3 plane(
+      static_cast<FT>(fitted_plane.a()),
+      static_cast<FT>(fitted_plane.b()),
+      static_cast<FT>(fitted_plane.c()),
+      static_cast<FT>(fitted_plane.d()));
+    return plane;
+  }
+
+  void add_planar_shape(
+    const std::vector<std::size_t>& region, const Plane_3& plane) {
+
+    switch (m_planar_shape_type) {
+      case Planar_shape_type::CONVEX_HULL: {
+        add_convex_hull_shape(region, plane);
+        break;
+      }
+      case Planar_shape_type::RECTANGLE: {
+        add_rectangle_shape(region, plane);
+        break;
+      }
+      default: {
+        CGAL_assertion_msg(false, "ERROR: ADD PLANAR SHAPE, WRONG TYPE!");
+        break;
+      }
+    }
+  }
+
+  void add_convex_hull_shape(
+    const std::vector<std::size_t>& region, const Plane_3& plane) {
+
+    std::vector<Point_2> points;
+    points.reserve(region.size());
+    for (const std::size_t idx : region) {
+      CGAL_assertion(idx < m_input_range.size());
+      const auto& p = get(m_point_map_3, idx);
+      const auto q = plane.projection(p);
+      const auto point = plane.to_2d(q);
+      points.push_back(point);
+    }
+    CGAL_assertion(points.size() == region.size());
+
+    std::vector<Point_2> ch;
+    CGAL::convex_hull_2(points.begin(), points.end(), std::back_inserter(ch) );
+
+    std::vector<Point_3> polygon;
+    for (const auto& p : ch) {
+      const auto point = plane.to_3d(p);
+      polygon.push_back(point);
+    }
+    m_polygons.push_back(polygon);
+  }
+
+  void add_rectangle_shape(
+    const std::vector<std::size_t>& region, const Plane_3& plane) {
+
+    CGAL_assertion_msg(false, "TODO: ADD RECTANGLE SHAPE!");
+  }
+
+  template<typename NamedParameters>
+  void create_approximate_walls(const NamedParameters& np) {
+
+    std::vector< std::vector<std::size_t> > regions;
+    apply_region_growing(np, m_boundary_points, regions);
+    for (const auto& region : regions) {
+      const auto plane = fit_plane(region);
+      add_planar_shape(region, plane);
+    }
+    if (m_verbose) {
+      std::cout << "* found " << regions.size() << " approximate walls" << std::endl;
+    }
+  }
+
+  template<typename NamedParameters>
+  void create_approximate_roofs(const NamedParameters& np) {
+
+    std::vector< std::vector<std::size_t> > regions;
+    apply_region_growing(np, m_interior_points, regions);
+    for (const auto& region : regions) {
+      const auto plane = fit_plane(region);
+      add_planar_shape(region, plane);
+    }
+    if (m_verbose) {
+      std::cout << "* found " << regions.size() << " approximate roofs" << std::endl;
+    }
+  }
+
+  template<typename NamedParameters>
+  void apply_region_growing(
+    const NamedParameters& np,
+    const std::vector<std::size_t>& input_range,
+    std::vector< std::vector<std::size_t> >& regions) const {
+
+    // const FT radius = parameters::choose_parameter(
+    //   parameters::get_parameter(np, internal_np::neighbor_radius), FT(1));
+
+    // Parameters.
+    const std::size_t k = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::k_neighbors), 12);
+    const FT max_distance_to_plane = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::distance_threshold), FT(1));
+    const FT max_accepted_angle = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::angle_threshold), FT(15));
+    const std::size_t min_region_size = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::min_region_size), 50);
+
+    // Region growing.
+    Neighbor_query neighbor_query(input_range, k, m_point_map_3);
+
+    Planar_region planar_region(input_range,
+      max_distance_to_plane, max_accepted_angle, min_region_size,
+      m_point_map_3, m_normal_map_3);
+
+    Planar_sorting sorting(
+      input_range, neighbor_query, m_point_map_3);
+    sorting.sort();
+
+    std::vector<Indices> result;
+    Region_growing region_growing(
+      input_range, neighbor_query, planar_region, sorting.seed_map());
+    region_growing.detect(std::back_inserter(result));
+
+    // Convert indices.
+    regions.clear();
+    regions.reserve(result.size());
+
+    Indices region;
+    for (const auto& indices : result) {
+      region.clear();
+      for (const std::size_t index : indices) {
+        region.push_back(input_range[index]);
+      }
+      regions.push_back(region);
+    }
+    CGAL_assertion(regions.size() == result.size());
+  }
+
+  void dump_polygons(const std::string file_name) {
+
+    KSR_3::Saver<Kernel> saver;
+    saver.export_polygon_soup_3(m_polygons, file_name);
+  }
 };
 
 } // namespace KSR_3
