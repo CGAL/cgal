@@ -138,6 +138,13 @@ decltype(auto) distance(const Point_d& p, const Point_d& q) {
   return static_cast<FT>(CGAL::sqrt(CGAL::to_double(sq_dist)));
 }
 
+template<typename Point_3>
+typename Kernel_traits<Point_3>::Kernel::Point_2
+point_2_from_point_3(const Point_3& point_3) {
+  return typename Kernel_traits<Point_3>::Kernel::Point_2(
+    point_3.x(), point_3.y());
+}
+
 template<typename FT>
 static FT tolerance() {
   return FT(1) / FT(100000);

@@ -27,6 +27,7 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 
 // Internal includes.
+#include <CGAL/KSR/enum.h>
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/debug.h>
 
@@ -169,12 +170,19 @@ public:
   using IVertex = typename Intersection_graph::Vertex_descriptor;
   using IEdge   = typename Intersection_graph::Edge_descriptor;
 
+  using Visibility_label = KSR::Visibility_label;
+
   struct Volume_cell {
     std::vector<PFace> pfaces;
     std::vector<int> neighbors;
     std::set<PVertex> pvertices;
     std::size_t index = std::size_t(-1);
     Point_3 centroid;
+
+    Visibility_label visibility = Visibility_label::INSIDE;
+    FT inside  = FT(1);
+    FT outside = FT(0);
+    FT weight  = FT(0);
 
     void add_pface(const PFace& pface, const int neighbor) {
       pfaces.push_back(pface);
@@ -186,6 +194,11 @@ public:
     void set_centroid(const Point_3& point) {
       centroid = point;
     }
+  };
+
+  struct Reconstructed_model {
+    std::vector<PFace> pfaces;
+    // finish!
   };
 
 private:
@@ -201,6 +214,7 @@ private:
   std::vector<Volume_cell> m_volumes;
   std::map<int, std::size_t> m_volume_level_map;
   std::map<KSR::size_t, KSR::size_t> m_input_polygon_map;
+  Reconstructed_model m_model;
 
 public:
   Data_structure(const bool verbose) :
@@ -302,9 +316,11 @@ public:
     return support_plane(pvertex).last_event_time(pvertex.second);
   }
 
-  const std::vector<Volume_cell>& volumes() const {
-    return m_volumes;
-  }
+  std::vector<Volume_cell>& volumes() { return m_volumes; }
+  const std::vector<Volume_cell>& volumes() const { return m_volumes; }
+
+  Reconstructed_model& model() { return m_model; }
+  const Reconstructed_model& model() const { return m_model; }
 
   /*******************************
   **      SUPPORT PLANES        **

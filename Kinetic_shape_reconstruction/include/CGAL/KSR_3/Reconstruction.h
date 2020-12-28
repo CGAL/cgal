@@ -39,6 +39,8 @@
 #include <CGAL/KSR/debug.h>
 #include <CGAL/KSR/property_map.h>
 #include <CGAL/KSR_3/Data_structure.h>
+#include <CGAL/KSR_3/Visibility.h>
+#include <CGAL/KSR_3/Graphcut.h>
 
 namespace CGAL {
 namespace KSR_3 {
@@ -69,6 +71,9 @@ private:
   using Point_map_3    = KSR::Item_property_map<Input_range, Point_map>;
   using Vector_map_3   = KSR::Item_property_map<Input_range, Vector_map>;
 
+  using Point_map_3_to_2 = KSR::Point_2_from_point_3_property_map<Point_map, Point_2>;
+  using Point_map_2      = KSR::Item_property_map<Input_range, Point_map_3_to_2>;
+
   using Semantic_label    = KSR::Semantic_label;
   using Planar_shape_type = KSR::Planar_shape_type;
 
@@ -81,17 +86,21 @@ private:
   using IPlane_3  = typename IK::Plane_3;
   using Converter = CGAL::Cartesian_converter<Kernel, IK>;
 
-  // using Neighbor_query = CGAL::Shape_detection::Point_set::
+  // using Neighbor_query_3 = CGAL::Shape_detection::Point_set::
   //   Sphere_neighbor_query<Kernel, Indices, Point_map_3>;
 
-  using Neighbor_query = CGAL::Shape_detection::Point_set::
+  using Neighbor_query_3 = CGAL::Shape_detection::Point_set::
     K_neighbor_query<Kernel, Indices, Point_map_3>;
-  using Planar_region  = CGAL::Shape_detection::Point_set::
+  using Planar_region    = CGAL::Shape_detection::Point_set::
     Least_squares_plane_fit_region<Kernel, Indices, Point_map_3, Vector_map_3>;
-  using Planar_sorting = CGAL::Shape_detection::Point_set::
-    Least_squares_plane_fit_sorting<Kernel, Indices, Neighbor_query, Point_map_3>;
-  using Region_growing = CGAL::Shape_detection::
-    Region_growing<Indices, Neighbor_query, Planar_region, typename Planar_sorting::Seed_map>;
+  using Planar_sorting   = CGAL::Shape_detection::Point_set::
+    Least_squares_plane_fit_sorting<Kernel, Indices, Neighbor_query_3, Point_map_3>;
+  using Region_growing   = CGAL::Shape_detection::
+    Region_growing<Indices, Neighbor_query_3, Planar_region, typename Planar_sorting::Seed_map>;
+
+  using Visibility_label = KSR::Visibility_label;
+  using Visibility       = KSR_3::Visibility<Point_map_3, Kernel>;
+  using Graphcut         = KSR_3::Graphcut<Point_map_3, Kernel>;
 
 public:
 
@@ -106,6 +115,8 @@ public:
   m_semantic_map(semantic_map),
   m_point_map_3(m_input_range, point_map),
   m_normal_map_3(m_input_range, normal_map),
+  m_point_map_3_to_2(point_map),
+  m_point_map_2(input_range, m_point_map_3_to_2),
   m_data(data),
   m_verbose(verbose),
   m_planar_shape_type(Planar_shape_type::CONVEX_HULL) {
@@ -147,6 +158,19 @@ public:
       std::cout << std::endl << "--- COMPUTING THE MODEL: " << std::endl;
     }
 
+    CGAL_assertion(m_data.volumes().size() > 0);
+    Visibility visibility(m_data, m_interior_points, m_point_map_3);
+    visibility.compute(m_data.volumes());
+    dump_volumes("visibility");
+
+    const FT beta = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::graphcut_beta), FT(1) / FT(2));
+
+    Graphcut graphcut(m_data, m_interior_points, m_point_map_3, beta);
+    graphcut.compute(m_data.volumes());
+    dump_volumes("graphcut");
+
+    extract_surface();
     CGAL_assertion_msg(false, "TODO: RECONSTRUCTION, COMPUTE MODEL!");
     return false;
   }
@@ -172,6 +196,10 @@ private:
 
   Point_map_3  m_point_map_3;
   Vector_map_3 m_normal_map_3;
+
+  Point_map_3_to_2 m_point_map_3_to_2;
+  Point_map_2      m_point_map_2;
+
   Data_structure& m_data;
   const bool m_verbose;
   const Planar_shape_type m_planar_shape_type;
@@ -328,7 +356,7 @@ private:
       parameters::get_parameter(np, internal_np::min_region_size), 50);
 
     // Region growing.
-    Neighbor_query neighbor_query(input_range, k, m_point_map_3);
+    Neighbor_query_3 neighbor_query(input_range, k, m_point_map_3);
 
     Planar_region planar_region(input_range,
       max_distance_to_plane, max_accepted_angle, min_region_size,
@@ -358,10 +386,24 @@ private:
     CGAL_assertion(regions.size() == result.size());
   }
 
+  void extract_surface() {
+    CGAL_assertion_msg(false, "TODO: EXTRACT SURFACE FROM THE LABELED VOLUMES!");
+  }
+
   void dump_polygons(const std::string file_name) {
 
     KSR_3::Saver<Kernel> saver;
     saver.export_polygon_soup_3(m_polygons, file_name);
+  }
+
+  void dump_volumes(const std::string file_name) {
+
+    for (const auto& volume : m_data.volumes()) {
+      if (volume.visibility == Visibility_label::INSIDE) {
+        dump_volume(m_data, volume.pfaces,
+        file_name + "-" + std::to_string(volume.index));
+      }
+    }
   }
 };
 

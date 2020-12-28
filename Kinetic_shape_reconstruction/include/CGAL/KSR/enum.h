@@ -54,6 +54,15 @@ namespace KSR {
     RECTANGLE = 1
   };
 
+	enum class Visibility_label {
+
+    /// Outside the object.
+    OUTSIDE = 0,
+
+    /// Inside the object.
+    INSIDE = 1
+	};
+
 } // namespace KSR
 } // namespace CGAL
 
