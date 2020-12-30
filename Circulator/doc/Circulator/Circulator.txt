@@ -12,7 +12,7 @@ namespace CGAL {
 
 Most data structures in \cgal use the concept of `Handle` in their user
 interface to refer to the elements they store. This concept describes what is
-sometimes called a trivial iterator. A `Handle` is akeen to a pointer to
+sometimes called a trivial iterator. A `Handle` is akin to a pointer to
 an object providing the dereference operator `operator*()` and member
 access `operator->()` but no increment or decrement operators like
 iterators. A `Handle` is intended to be used whenever the referenced
