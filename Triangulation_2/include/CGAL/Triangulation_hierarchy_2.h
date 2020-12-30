@@ -40,12 +40,6 @@
 
 namespace CGAL {
 
-// parameterization of the  hierarchy
-//const float Triangulation_hierarchy_2__ratio    = 30.0;
-const int Triangulation_hierarchy_2__ratio      = 30;
-const int   Triangulation_hierarchy_2__minsize  = 20;
-const int   Triangulation_hierarchy_2__maxlevel = 5;
-// maximal number of points is 30^5 = 24 millions !
 
 template <class Tr_>
 class Triangulation_hierarchy_2
@@ -82,8 +76,15 @@ public:
 #endif
 
  private:
+
+  // parameterization of the  hierarchy
+  static const int ratio = 30;
+  static const size_type minsize = 20;
+  static const int maxlevel = 5;
+  // maximal number of points is 30^5 = 24 millions !
+
   // here is the stack of triangulations which form the hierarchy
-  std::array<Tr_Base*,Triangulation_hierarchy_2__maxlevel> hierarchy;
+  std::array<Tr_Base*,maxlevel> hierarchy;
   boost::rand48  random;
 
 public:
@@ -96,7 +97,7 @@ public:
     , random(std::move(other.random))
   {
     hierarchy[0] = this;
-    for(int i=1; i<Triangulation_hierarchy_2__maxlevel; ++i) {
+    for(int i=1; i<maxlevel; ++i) {
       hierarchy[i] = other.hierarchy[i];
       other.hierarchy[i] = nullptr;
     }
@@ -108,7 +109,7 @@ public:
     : Tr_Base(traits)
   {
     hierarchy[0] = this;
-    for(int i=1;i<Triangulation_hierarchy_2__maxlevel;++i)
+    for(int i=1;i<maxlevel;++i)
       hierarchy[i] = new Tr_Base(traits);
 
     insert (first, beyond);
@@ -121,7 +122,7 @@ public:
   {
     static_cast<Tr_Base&>(*this) = std::move(other);
     hierarchy[0] = this;
-    for(int i=1; i<Triangulation_hierarchy_2__maxlevel; ++i) {
+    for(int i=1; i<maxlevel; ++i) {
       hierarchy[i] = other.hierarchy[i];
       other.hierarchy[i] = nullptr;
     }
@@ -166,7 +167,7 @@ public:
       // hints[i] is the face of the previously inserted point in level i.
       // Thanks to spatial sort, they are better hints than what the hierarchy
       // would give us.
-      Face_handle hints[Triangulation_hierarchy_2__maxlevel];
+      Face_handle hints[maxlevel];
       for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
               p != end; ++p)
       {
@@ -263,7 +264,7 @@ private:
                       int& li,
                       Face_handle loc,
                       Face_handle
-                      pos[Triangulation_hierarchy_2__maxlevel]) const;
+                      pos[maxlevel]) const;
 
   int random_level();
 
@@ -295,7 +296,7 @@ Triangulation_hierarchy_2(const Geom_traits& traits)
   : Tr_Base(traits)
 {
   hierarchy[0] = this;
-  for(int i=1;i<Triangulation_hierarchy_2__maxlevel;++i)
+  for(int i=1;i<maxlevel;++i)
     hierarchy[i] = new Tr_Base(traits);
 }
 
@@ -308,7 +309,7 @@ Triangulation_hierarchy_2(const Triangulation_hierarchy_2<Tr_> &tr)
 {
   // create an empty triangulation to be able to delete it !
   hierarchy[0] = this;
-  for(int i=1;i<Triangulation_hierarchy_2__maxlevel;++i)
+  for(int i=1;i<maxlevel;++i)
     hierarchy[i] = new Tr_Base(tr.geom_traits());
   copy_triangulation(tr);
 }
@@ -331,7 +332,7 @@ Triangulation_hierarchy_2<Tr_>::
 copy_triangulation(const Triangulation_hierarchy_2<Tr_> &tr)
 {
   {
-    for(int i=0;i<Triangulation_hierarchy_2__maxlevel;++i)
+    for(int i=0;i<maxlevel;++i)
     hierarchy[i]->copy_triangulation(*tr.hierarchy[i]);
   }
 
@@ -349,7 +350,7 @@ copy_triangulation(const Triangulation_hierarchy_2<Tr_> &tr)
   add_hidden_vertices_into_map(Weighted_tag(), V);
 
   {
-    for(int i=1;i<Triangulation_hierarchy_2__maxlevel;++i) {
+    for(int i=1;i<maxlevel;++i) {
       for( Finite_vertices_iterator it=hierarchy[i]->finite_vertices_begin();
            it != hierarchy[i]->finite_vertices_end(); ++it) {
         // down pointer goes in original instead in copied triangulation
@@ -394,7 +395,7 @@ swap(Triangulation_hierarchy_2<Tr_> &tr)
 {
   Tr_Base* temp;
   Tr_Base::swap(tr);
-  for(int i= 1; i<Triangulation_hierarchy_2__maxlevel; ++i){
+  for(int i= 1; i<maxlevel; ++i){
     temp = hierarchy[i];
     hierarchy[i] = tr.hierarchy[i];
     tr.hierarchy[i]= temp;
@@ -406,7 +407,7 @@ Triangulation_hierarchy_2<Tr_>::
 ~Triangulation_hierarchy_2()
 {
   clear();
-  for(int i= 1; i<Triangulation_hierarchy_2__maxlevel; ++i){
+  for(int i= 1; i<maxlevel; ++i){
     delete hierarchy[i];
   }
 }
@@ -416,7 +417,7 @@ void
 Triangulation_hierarchy_2<Tr_>::
 clear()
 {
-  for(int i=0;i<Triangulation_hierarchy_2__maxlevel;++i)
+  for(int i=0;i<maxlevel;++i)
     if(hierarchy[i]) hierarchy[i]->clear();
 }
 
@@ -430,7 +431,7 @@ is_valid(bool verbose, int level) const
   int i;
   Finite_vertices_iterator it;
   //verify correctness of triangulation at all levels
-  for(i=0;i<Triangulation_hierarchy_2__maxlevel;++i) {
+  for(i=0;i<maxlevel;++i) {
     if(verbose) // pirnt  number of vertices at each level
       std::cout << "number_of_vertices "
                 <<  hierarchy[i]->number_of_vertices() << std::endl;
@@ -441,13 +442,13 @@ is_valid(bool verbose, int level) const
        it != hierarchy[0]->finite_vertices_end(); ++it)
     result = result && ( it->down() ==   Vertex_handle());
   //verify that other levels have down pointer and reciprocal link is fine
-  for(i=1;i<Triangulation_hierarchy_2__maxlevel;++i)
+  for(i=1;i<maxlevel;++i)
     for( it = hierarchy[i]->finite_vertices_begin();
          it != hierarchy[i]->finite_vertices_end(); ++it)
       result = result &&
                ( &*(it->down()->up())  ==  &*(it) );
   //verify that levels have up pointer and reciprocal link is fine
-  for(i=0;i<Triangulation_hierarchy_2__maxlevel-1;++i)
+  for(i=0;i<maxlevel-1;++i)
     for( it = hierarchy[i]->finite_vertices_begin();
          it != hierarchy[i]->finite_vertices_end(); ++it)
       result = result && ( it->up() ==  Vertex_handle() ||
@@ -465,7 +466,7 @@ insert(const Point &p, Face_handle loc)
   Locate_type lt;
   int i;
   // locate using hierarchy
-  Face_handle positions[Triangulation_hierarchy_2__maxlevel];
+  Face_handle positions[maxlevel];
   locate_in_all(p,lt,i,loc,positions);
   Vertex_handle vertex=hierarchy[0]->Tr_Base::insert(p,lt,positions[0],i);
   Vertex_handle previous=vertex;
@@ -500,7 +501,7 @@ insert(const Point& p,
     // locate using hierarchy
     Locate_type ltt;
     int lii;
-    Face_handle positions[Triangulation_hierarchy_2__maxlevel];
+    Face_handle positions[maxlevel];
     locate_in_all(p,ltt,lii,loc,positions);
     //insert in higher levels
     int level  = 1;
@@ -534,7 +535,7 @@ remove(Vertex_handle v )
   while(1){
     hierarchy[l++]->remove(v);
     if (u == Vertex_handle()) break;
-    if (l >= Triangulation_hierarchy_2__maxlevel) break;
+    if (l >= maxlevel) break;
     v=u; u=v->up();
   }
 }
@@ -551,7 +552,7 @@ remove_and_give_new_faces(Vertex_handle v, OutputItFaces fit)
     if(l==0) hierarchy[l++]->remove_and_give_new_faces(v, fit);
     else hierarchy[l++]->remove(v);
     if (u == Vertex_handle()) break;
-    if (l >= Triangulation_hierarchy_2__maxlevel) break;
+    if (l >= maxlevel) break;
     v=u; u=v->up();
   }
 }
@@ -591,7 +592,7 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
     Vertex_handle w = hierarchy[l++]->move_if_no_collision(v, p);
     if(w != v) return w;
     if (u == Vertex_handle()) break;
-    if (l >= Triangulation_hierarchy_2__maxlevel) break;
+    if (l >= maxlevel) break;
     v=u; u=v->up();
   }
   return norm;
@@ -629,7 +630,7 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v, const Point &p,
     if(w != v) return w;
 
     if (u == Vertex_handle()) break;
-    if (l >= Triangulation_hierarchy_2__maxlevel) break;
+    if (l >= maxlevel) break;
     v=u; u=v->up();
   }
   return norm;
@@ -647,7 +648,7 @@ Triangulation_hierarchy_2<Tr_>::insert_and_give_new_faces(const Point  &p,
   Locate_type lt;
   int i;
   // locate using hierarchy
-  Face_handle positions[Triangulation_hierarchy_2__maxlevel];
+  Face_handle positions[maxlevel];
   locate_in_all(p,lt,i,loc,positions);
   Vertex_handle vertex=
     hierarchy[0]->Tr_Base::insert_and_give_new_faces(p,lt,positions[0],i,oif);
@@ -686,7 +687,7 @@ insert_and_give_new_faces(const Point  &p,
     // locate using hierarchy
     Locate_type ltt;
     int lii;
-    Face_handle positions[Triangulation_hierarchy_2__maxlevel];
+    Face_handle positions[maxlevel];
     locate_in_all(p,ltt,lii,loc,positions);
     //insert in higher levels
     int level  = 1;
@@ -706,7 +707,7 @@ typename Triangulation_hierarchy_2<Tr_>::Face_handle
 Triangulation_hierarchy_2<Tr_>::
 locate(const Point& p, Locate_type& lt, int& li, Face_handle loc) const
 {
-  Face_handle positions[Triangulation_hierarchy_2__maxlevel];
+  Face_handle positions[maxlevel];
   locate_in_all(p,lt,li,loc,positions);
   return positions[0];
 }
@@ -728,11 +729,11 @@ locate_in_all(const Point& p,
               Locate_type& lt,
               int& li,
               Face_handle loc,
-              Face_handle pos[Triangulation_hierarchy_2__maxlevel]) const
+              Face_handle pos[maxlevel]) const
 {
   Face_handle position;
   Vertex_handle nearest;
-  int level  = Triangulation_hierarchy_2__maxlevel;
+  int level  = maxlevel;
   typename Geom_traits::Compare_distance_2
     closer = geom_traits().compare_distance_2_object();
 
@@ -741,7 +742,7 @@ locate_in_all(const Point& p,
 
   // find the highest level with enough vertices that is at the same time 2D
   while ( (hierarchy[--level]->number_of_vertices()
-           < static_cast<size_type> (Triangulation_hierarchy_2__minsize ))
+           < minsize )
           || (hierarchy[level]->dimension()<2) ){
     if ( ! level) break;  // do not go below 0
   }
@@ -749,7 +750,7 @@ locate_in_all(const Point& p,
     level--;
   }
 
-  for (int i=level+1; i<Triangulation_hierarchy_2__maxlevel;++i) pos[i]=nullptr;
+  for (int i=level+1; i<maxlevel;++i) pos[i]=nullptr;
   while(level > 0) {
     pos[level]=position=hierarchy[level]->locate(p, position);
     // locate at that level from "position"
@@ -790,10 +791,10 @@ int
 Triangulation_hierarchy_2<Tr_>::
 random_level()
 {
-  boost::geometric_distribution<> proba(1.0/Triangulation_hierarchy_2__ratio);
+  boost::geometric_distribution<> proba(1.0/ratio);
   boost::variate_generator<boost::rand48&, boost::geometric_distribution<> > die(random, proba);
 
-  return (std::min)(die(), Triangulation_hierarchy_2__maxlevel)-1;
+  return (std::min)(die(), maxlevel)-1;
 
 }
 

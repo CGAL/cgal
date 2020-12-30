@@ -60,12 +60,6 @@ template < class Tr >
 class Triangulation_hierarchy_3
   : public Tr
 {
-  // parameterization of the hierarchy
-  // maximal number of points is 30^5 = 24 millions !
-  enum { ratio = 30 };
-  enum { minsize = 20};
-  enum { maxlevel = 5};
-
 public:
   typedef Tr                                   Tr_Base;
   typedef Fast_location                        Location_policy;
@@ -91,6 +85,11 @@ public:
   using Tr_Base::geom_traits;
 
 private:
+  // parameterization of the hierarchy
+  // maximal number of points is 30^5 = 24 millions !
+  static const int ratio = 30;
+  static const size_type minsize = 20;
+  static const int maxlevel = 5;
 
   // here is the stack of triangulations which form the hierarchy
   std::array<Tr_Base*,maxlevel> hierarchy;
@@ -815,7 +814,7 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj,
   int level = maxlevel;
 
   // find the highest level with enough vertices
-  while (hierarchy[--level]->number_of_vertices() < (size_type) minsize) {
+  while (hierarchy[--level]->number_of_vertices() < minsize) {
     if ( ! level)
         break;  // do not go below 0
   }
