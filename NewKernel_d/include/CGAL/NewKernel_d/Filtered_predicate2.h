@@ -39,6 +39,7 @@ namespace CGAL {
 //   not, or we let all this up to the compiler optimizer to figure out ?
 // - Some caching could be done at the Point_2 level.
 
+// FIXME: understand and document what the parameter 'Protection' means exactly
 
 template <class K, class EP, class AP, class C2E, class C2A, bool Protection = true>
 class Filtered_predicate2
