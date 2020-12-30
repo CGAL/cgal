@@ -136,7 +136,7 @@ public:
       vertex_descriptor v = link.back();
       Point pv = get(profile.vertex_point_map(),v);
 
-      for(int i=0; i!= link.size();i++){
+      for(std::size_t i=0; i!= link.size();i++){
         vertex_descriptor w = link[i];
         Point pw = get(profile.vertex_point_map(),w);
 

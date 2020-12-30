@@ -375,14 +375,15 @@ private:
 private:
   Triangle_mesh& m_tm;
   const Geom_traits& m_traits;
-  const Should_ignore& m_should_ignore;
+  const Should_stop& m_should_stop;
   const Vertex_index_map& m_vim;
   const Vertex_point_map& m_vpm;
   const Halfedge_index_map& m_him;
   const Edge_is_constrained_map& m_ecm;
   const Get_cost& m_get_cost;
   const Get_placement& m_get_placement;
-  const Should_stop& m_should_stop;
+  const Should_ignore& m_should_ignore;
+
   Visitor m_visitor;
   bool m_has_border;
 
