@@ -11,8 +11,8 @@
 // Author(s)     : Simon Giraudot
 //
 
-#ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_POINT_SET_LEAST_SQUARES_CIRCLE_FIT_REGION_H
-#define CGAL_SHAPE_DETECTION_REGION_GROWING_POINT_SET_LEAST_SQUARES_CIRCLE_FIT_REGION_H
+#ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_POINT_SET_LEAST_SQUARES_CYLINDER_FIT_REGION_H
+#define CGAL_SHAPE_DETECTION_REGION_GROWING_POINT_SET_LEAST_SQUARES_CYLINDER_FIT_REGION_H
 
 #include <CGAL/license/Shape_detection.h>
 
@@ -32,10 +32,10 @@ namespace Point_set {
 /*!
   \ingroup PkgShapeDetectionRGOnPoints
 
-  \brief Region type based on the quality of the least squares circle
-  fit applied to 2D points.
+  \brief Region type based on the quality of the least squares cylinder
+  fit applied to 3D points.
 
-  This class fits a circle to chunks of points in a 2D point set and
+  This class fits a cylinder to chunks of points in a 3D point set and
   controls the quality of this fit.  If all quality conditions are
   satisfied, the chunk is accepted as a valid region, otherwise
   rejected.
@@ -60,7 +60,7 @@ template<typename GeomTraits,
          typename InputRange,
          typename PointMap,
          typename NormalMap>
-class Least_squares_circle_fit_region
+class Least_squares_cylinder_fit_region
 {
 
 public:
@@ -79,10 +79,11 @@ public:
   typedef typename GeomTraits::FT FT;
 
   /// \cond SKIP_IN_MANUAL
-  using Point_2 = typename Traits::Point_2;
-  using Vector_2 = typename Traits::Vector_2;
+  using Point_3 = typename Traits::Point_3;
+  using Vector_3 = typename Traits::Vector_3;
+  using Line_3 = typename Traits::Line_3;
 
-  using Squared_distance_2 = typename Traits::Compute_squared_distance_2;
+  using Squared_distance_3 = typename Traits::Compute_squared_distance_3;
 
   using Get_sqrt = internal::Get_sqrt<Traits>;
   using Sqrt = typename Get_sqrt::Sqrt;
@@ -98,10 +99,10 @@ private:
   const Point_map m_point_map;
   const Normal_map m_normal_map;
 
-  const Squared_distance_2 m_squared_distance_2;
+  const Squared_distance_3 m_squared_distance_3;
   const Sqrt m_sqrt;
 
-  Point_2 m_center;
+  Line_3 m_axis;
   FT m_radius;
 
 public:
@@ -116,17 +117,17 @@ public:
   /*!
     \brief initializes all internal data structures.
 
-    \param input_range an instance of `InputRange` with 2D points and
-    corresponding 2D normal vectors
+    \param input_range an instance of `InputRange` with 3D points and
+    corresponding 3D normal vectors
 
     \param distance_threshold the maximum distance from a point to a
-    circle. %Default is 1.
+    cylinder. %Default is 1.
 
     \param angle_threshold the maximum accepted angle in degrees
-    between the normal of a point and the radius of a circle. %Default
+    between the normal of a point and the radius of a cylinder. %Default
     is 25 degrees.
 
-    \param min_region_size the minimum number of 2D points a region
+    \param min_region_size the minimum number of 3D points a region
     must have. %Default is 3.
 
     \param point_map an instance of `PointMap` that maps an item from
@@ -142,7 +143,7 @@ public:
     \pre `angle_threshold >= 0 && angle_threshold <= 90`
     \pre `min_region_size > 0`
   */
-  Least_squares_circle_fit_region  (const InputRange& input_range,
+  Least_squares_cylinder_fit_region  (const InputRange& input_range,
                                     const FT distance_threshold = FT(1),
                                     const FT angle_threshold = FT(25),
                                     const std::size_t min_region_size = 3,
@@ -158,8 +159,9 @@ public:
     m_min_region_size(min_region_size),
     m_point_map(point_map),
     m_normal_map(normal_map),
-    m_squared_distance_2(traits.compute_squared_distance_2_object()),
-    m_sqrt(Get_sqrt::sqrt_object(traits))
+    m_squared_distance_3(traits.compute_squared_distance_3_object()),
+    m_sqrt(Get_sqrt::sqrt_object(traits)),
+    m_radius(std::numeric_limits<FT>::quiet_NaN())
   {
     CGAL_precondition(input_range.size() > 0);
     CGAL_precondition(distance_threshold >= FT(0));
@@ -176,8 +178,8 @@ public:
     \brief implements `RegionType::is_part_of_region()`.
 
     This function controls if a point with the index `query_index` is
-    within the `distance_threshold` from the corresponding circle and
-    if the angle between its normal and the circle radius is within
+    within the `distance_threshold` from the corresponding cylinder and
+    if the angle between its normal and the cylinder radius is within
     the `angle_threshold`.  If both conditions are satisfied, it
     returns `true`, otherwise `false`.
 
@@ -197,23 +199,27 @@ public:
     CGAL_precondition(query_index < m_input_range.size());
 
     // First, we need to integrate at least 6 points so that the
-    // computed circle means something
+    // computed cylinder means something
     if (indices.size() < 6)
       return true;
 
+    if (std::isnan(m_radius))
+      return false;
+
     const auto& key = *(m_input_range.begin() + query_index);
-    const Point_2& query_point = get(m_point_map, key);
-    Vector_2 normal = get(m_normal_map, key);
+    const Point_3& query_point = get(m_point_map, key);
+    Vector_3 normal = get(m_normal_map, key);
 
-    FT distance_to_center = m_sqrt(m_squared_distance_2 (query_point, m_center));
-    FT distance_to_circle = CGAL::abs (distance_to_center - m_radius);
+    FT distance_to_center = m_sqrt(m_squared_distance_3 (query_point, m_axis));
+    FT distance_to_cylinder = CGAL::abs (distance_to_center - m_radius);
 
-    if (distance_to_circle > m_distance_threshold)
+    if (distance_to_cylinder > m_distance_threshold)
       return false;
 
     normal = normal / m_sqrt (normal * normal);
 
-    Vector_2 ray (m_center, query_point);
+    Point_3 proj = m_axis.projection(query_point);
+    Vector_3 ray (proj, query_point);
     ray = ray / m_sqrt (ray * ray);
 
     if (CGAL::abs (normal * ray) < m_normal_threshold)
@@ -241,7 +247,7 @@ public:
   /*!
     \brief implements `RegionType::update()`.
 
-    This function fits the least squares circle to all points from the `region`.
+    This function fits the least squares cylinder to all points from the `region`.
 
     \param region
     indices of points included in the region
@@ -252,88 +258,78 @@ public:
   {
     CGAL_precondition(region.size() > 0);
 
-    auto unary_function
-      = [&](const std::size_t& idx) -> const Point_2&
-        {
-          return get (m_point_map, *(m_input_range.begin() + idx));
-        };
+    Vector_3 mean_axis = CGAL::NULL_VECTOR;
+    std::size_t nb = 0;
+    // Shuffle to avoid always picking 2 close points
+    std::vector<std::size_t>& aregion
+      = const_cast<std::vector<std::size_t>&>(region);
+    cpp98::random_shuffle (aregion.begin(), aregion.end());
 
-    // Use bbox to compute diagonalization with smaller coordinates to
-    // avoid loss of precision when inverting large coordinates
-    CGAL::Bbox_2 bbox = CGAL::bbox_2
-      (boost::make_transform_iterator
-       (region.begin(), unary_function),
-       boost::make_transform_iterator
-       (region.end(), unary_function));
-
-    using Diagonalize_traits = Eigen_diagonalize_traits<FT, 4>;
-    using Covariance_matrix = typename Diagonalize_traits::Covariance_matrix;
-    using Vector = typename Diagonalize_traits::Vector;
-    using Matrix = typename Diagonalize_traits::Matrix;
-
-    // Circle least squares fitting,
-    // Circle of center (a,b) and radius R
-    // Ri = sqrt((xi - a)^2 + (yi - b)^2)
-    // Minimize Sum(Ri^2 - R^2)^2
-    // -> Minimize Sum(xi^2 + yi^2 − 2 a*xi − 2 b*yi + a^2 + b^2 − R^2)^2
-    // let B=-2a ; C=-2b; D= a^2 + b^2 - R^2
-    // let ri = x^2 + y^2
-    // -> Minimize Sum(D + B*xi + C*yi + ri)^2
-    // -> Minimize Sum(1 + B/D*xi + C/D*yi + ri/D)^2
-    // -> system of linear equations
-    // -> diagonalize matrix
-    //    NB   x   y   r
-    //        xx  xy  xr
-    //            yy  yr
-    //                rr
-    //
-    // -> center coordinates = -0.5 * eigenvector(1) / eigenvector(3) ; -0.5 * eigenvector(2) / eigenvector(3)
-    Covariance_matrix A
-      = { FT(0), FT(0), FT(0), FT(0), FT(0),
-          FT(0), FT(0), FT(0), FT(0), FT(0) };
-
-    A[0] = region.size();
-    for (const std::size_t& idx : region)
-    {
-      const auto& key = *(m_input_range.begin() + idx);
-      const Point_2& p = get(m_point_map, key);
-      FT x = p.x() - bbox.xmin();
-      FT y = p.y() - bbox.ymin();
-      FT r = x*x + y*y;
-      A[1] += x;
-      A[2] += y;
-      A[3] += r;
-      A[4] += x * x;
-      A[5] += x * y;
-      A[6] += x * r;
-      A[7] += y * y;
-      A[8] += y * r;
-      A[9] += r * r;
-    }
-
-    Vector eigenvalues = { FT(0), FT(0), FT(0), FT(0) };
-    Matrix eigenvectors = { FT(0), FT(0), FT(0), FT(0),
-                            FT(0), FT(0), FT(0), FT(0),
-                            FT(0), FT(0), FT(0), FT(0),
-                            FT(0), FT(0), FT(0), FT(0) };
-
-    Diagonalize_traits::diagonalize_selfadjoint_covariance_matrix
-      (A, eigenvalues, eigenvectors);
-
-    m_center = Point_2 (bbox.xmin() - FT(0.5) * (eigenvectors[1] / eigenvectors[3]),
-                        bbox.ymin() - FT(0.5) * (eigenvectors[2] / eigenvectors[3]));
+    const Point_3& ref = get(m_point_map, *(m_input_range.begin() + region.front()));
 
     m_radius = FT(0);
-    for (const std::size_t& idx : region)
+    Point_3 point_on_axis = CGAL::ORIGIN;
+    for (std::size_t i = 0; i < aregion.size() - 1; ++ i)
     {
-      const auto& key = *(m_input_range.begin() + idx);
-      const Point_2& p = get(m_point_map, key);
-      m_radius += m_sqrt (m_squared_distance_2 (p, m_center));
+      Vector_3 v0 = get(m_normal_map, *(m_input_range.begin() + aregion[i]));
+      v0 = v0 / CGAL::sqrt(v0*v0);
+      Vector_3 v1 = get(m_normal_map, *(m_input_range.begin() + aregion[i+1]));
+      v1 = v1 / CGAL::sqrt(v1*v1);
+      Vector_3 axis = CGAL::cross_product (v0, v1);
+      if (CGAL::sqrt(axis.squared_length()) < (FT)(0.01))
+        continue;
+      axis = axis / CGAL::sqrt(axis * axis);
+
+      const Point_3& p0 = get(m_point_map, *(m_input_range.begin() + aregion[i]));
+      const Point_3& p1 = get(m_point_map, *(m_input_range.begin() + aregion[i+1]));
+
+      Vector_3 xdir = v0 - axis * (v0 * axis);
+      xdir = xdir / CGAL::sqrt (xdir * xdir);
+
+      Vector_3 ydir = CGAL::cross_product (axis, xdir);
+      ydir = ydir / CGAL::sqrt (ydir * ydir);
+
+      FT v1x = v1 * ydir;
+      FT v1y = -v1 * xdir;
+
+      Vector_3 d (p0, p1);
+
+      FT ox = xdir * d;
+      FT oy = ydir * d;
+      FT ldist = v1x * ox + v1y * oy;
+
+      FT radius = ldist / v1x;
+
+      Point_3 point = p0 + xdir * radius;
+      Line_3 line (point, axis);
+      point = line.projection(ref);
+
+      point_on_axis = CGAL::barycenter (point_on_axis, nb, point, 1);
+
+      m_radius += CGAL::abs(radius);
+
+      if (nb != 0 && axis * mean_axis < 0)
+        axis = -axis;
+
+      mean_axis = mean_axis + axis;
+      ++ nb;
     }
 
-    m_radius /= region.size();
-  }
+    if (nb == 0)
+      return;
 
+    mean_axis = mean_axis / CGAL::sqrt(mean_axis * mean_axis);
+    m_axis = Line_3 (point_on_axis, mean_axis);
+    m_radius /= nb;
+
+    m_radius = FT(0);
+    for (std::size_t i = 0; i < aregion.size(); ++ i)
+    {
+      const Point_3& p0 = get(m_point_map, *(m_input_range.begin() + aregion[i]));
+      m_radius += m_sqrt(m_squared_distance_3(p0, m_axis));
+    }
+    m_radius /= aregion.size();
+  }
   /// @}
 
 };
@@ -342,4 +338,4 @@ public:
 } // namespace Shape_detection
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_DETECTION_REGION_GROWING_POINT_SET_LEAST_SQUARES_CIRCLE_FIT_REGION_H
+#endif // CGAL_SHAPE_DETECTION_REGION_GROWING_POINT_SET_LEAST_SQUARES_CYLINDER_FIT_REGION_H
