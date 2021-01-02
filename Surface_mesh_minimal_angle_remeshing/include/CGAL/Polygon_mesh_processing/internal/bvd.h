@@ -1,40 +1,14 @@
-// Copyright (c) 2019  INRIA Sophia-Antipolis (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: GPL-3.0+
-//
-// Author(s)     : Kaimo Hu
-
-#ifndef _BVD_H_
-#define _BVD_H_
+#ifndef CGAL_BVD_H
+#define CGAL_BVD_H
 
 #undef min
 #undef max
 
-// STL
-#include <list>
-#include <vector>
 // CGAL
-#include <CGAL/basic.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/intersections.h>
 #include <CGAL/Polygon_2.h>
 // local
-#include "polygon_kernel.h"
-#include "console_color.h"
+#include "Polygon_kernel.h"
 
 template <class Kernel, class TDS>
 class CBvd : public CGAL::Delaunay_triangulation_2<Kernel, TDS> {
@@ -77,9 +51,9 @@ public:
   typedef typename Color_list::const_iterator Color_const_iter;
 
   using Dt::incident_edges;
-  using Dt::incident_faces;
   using Dt::is_infinite;
   using Dt::dual;
+  using Dt::incident_faces;
   using Dt::circumcenter;
 public:
   //
@@ -125,10 +99,9 @@ public:
     // step 2: compute the voronoi cells and boundaries
     CGAL::Color color;
     for (Finite_vertices_iterator v = Dt::finite_vertices_begin();
-      v != Dt::finite_vertices_end(); ++v) {
+        v != Dt::finite_vertices_end(); ++v) {
       const Point_2 &q = v->point();
       color = point_color_map[q];
-      //::glColor3ub(color.r(), color.g(), color.b());
       compute_bounded_cell_and_boundaries(v, normal, color,
         pos_faces, pos_face_normals, pos_face_colors, pos_boundaries);
     }
@@ -356,7 +329,7 @@ private:
   }
   //
   // Visual elements
-  //
+  // 
   void compute_bounded_cell_and_boundaries(Vertex_handle v,
     const Vector_3 &normal, const CGAL::Color &color,
     std::vector<float> *pos_faces, std::vector<float> *pos_face_normals,
@@ -454,7 +427,7 @@ private:
       std::cerr << red << "polygon with degree < 3" << white << std::endl;
       return;
     }
-    Point_2 p0 = polygon[0]; // pivot
+    Point_2 p0 = polygon[0]; // pivot 
     int nb_triangles = int(polygon.size() - 2);
     for (int i = 0; i < nb_triangles; i++) {
       Point_2 p1 = polygon[(i + 1) % polygon.size()];
@@ -611,127 +584,5 @@ private:
   Aff_transform_3 m_to_3d;
 };
 
-#endif
+#endif // CGAL_BVD_H
 
-/*CGAL::Color get_rgb_color(double h, double s, double v) {
-  // h(1~360), s(0~1), v(0~1)
-  int hi = h / 60;
-  double f = h / 60 - hi;
-  double p = v * (1.0 - s);
-  double q = v * (1.0 - f * s);
-  double t = v * (1.0 - (1 - f) * s);
-  v *= 255;
-  t *= 255;
-  p *= 255;
-  q *= 255;
-  switch (hi) {
-  case 0:
-    return CGAL::Color(v, t, p);
-  case 1:
-    return CGAL::Color(q, v, p);
-  case 2:
-    return CGAL::Color(p, v, t);
-  case 3:
-    return CGAL::Color(p, q, v);
-  case 4:
-    return CGAL::Color(t, p, v);
-  case 5:
-    return CGAL::Color(v, p, q);
-  default:
-    return CGAL::Color(0, 0, 0);
-  }
-}
-
-void draw_voronoi_cells(Point_list &point_list,
-  Color_list &colors) {
-  // step 1: build the map between points and colors
-  std::map<Point_2, CGAL::Color> point_to_color;
-  Point_list_iterator pit;
-  Colot_list_iterator cit;
-  for (pit = point_list.begin(), cit = colors.begin();
-    pit != point_list.end(); ++pit, ++cit) {
-    add_point(*pit);
-    Point_2 q = map_from_3d_to_2d(*pit);
-    point_to_color.insert(std::make_pair(q, *cit));
-  }
-  // step 2: draw the voronoi cells
-  CGAL::Color color;
-  for (Finite_vertices_iterator v = Dt::finite_vertices_begin();
-    v != Dt::finite_vertices_end(); ++v) {
-    const Point_2 &q = v->point();
-    //Point_3 p = map_from_2d_to_3d(q);
-    color = point_to_color[q];
-    ::glColor3ub(color.r(), color.g(), color.b());
-    draw_bounded_cell(v);				// draw the cell
-  }
-}
-
-void draw_voronoi_boundaries(Point_list &point_list) {
-  Point_list_iterator pi;
-  for (pi = point_list.begin(); pi != point_list.end(); pi++)
-    add_point(*pi);
-  for (Finite_vertices_iterator v = Dt::finite_vertices_begin();
-    v != Dt::finite_vertices_end(); v++)
-    draw_bounded_cell_boundary(v);
-}
-
-bool get_cells_areas(std::map<Point_3, FT, Point_Comp> &points_to_areas) {
-  if (Dt::dimension() < 2)
-    return false;
-  FT area = m_triangle_3d.squared_area();
-  for (Finite_vertices_iterator v = Dt::finite_vertices_begin();
-    v != Dt::finite_vertices_end(); ++v) {
-    const Point_2 q = v->point();
-    Point_3 p = map_from_2d_to_3d(q);
-    points_to_areas.insert(std::pair<Point_3, FT>(p, cell_area(v) / area));
-  }
-  return true;
-}
-
-template <class OutputIterator> // value_type = Point_3
-bool get_centroids(std::set<Point_3, Point_Comp> &disturbed_border_points,
-  std::map<Point_2, Point_3> &point_map,
-  OutputIterator out) const {
-  if (Dt::dimension() < 2)
-    return false;
-  // compute centroids
-  for (Finite_vertices_iterator v = Dt::finite_vertices_begin();
-    v != Dt::finite_vertices_end(); v++) {
-    Point_2 q = v->point();
-    // Point_3 p = map_from_2d_to_3d(q);
-    Point_3 p = point_map[q];
-    if (disturbed_border_points.find(p) == disturbed_border_points.end()) {
-      q = center_of_mass(v);
-      p = map_from_2d_to_3d(q);
-    }
-    *out++ = p;
-  }
-  return true;
-}
-
-void run(Point_list &all_points,
-  std::set<Point_3, Point_Comp> &disturbed_border_points) {
-  // relocate samples, all_points contains the inner samples,
-  // disturbed_boundary samples will keep fixed during relocation
-  std::map<Point_2, Point_3> point_map;
-  for (Point_list_iterator pi = all_points.begin();
-    pi != all_points.end(); pi++) {
-    add_point(*pi);
-    point_map[map_from_3d_to_2d(*pi)] = *pi;
-  }
-  all_points.clear();
-  get_centroids(disturbed_border_points, point_map,
-    std::back_inserter(all_points));	// error_proven
-}
-
-void run(Point_list &point_list, std::map<Point_3, FT,
-  Point_Comp> &points_to_areas) {
-  // calculate cell areas
-  Point_iter pi;
-  for (pi = point_list.begin(); pi != point_list.end(); pi++) {
-    add_point(*pi);
-  }
-  points_to_areas.clear();
-  get_cells_areas(points_to_areas);
-}
-*/

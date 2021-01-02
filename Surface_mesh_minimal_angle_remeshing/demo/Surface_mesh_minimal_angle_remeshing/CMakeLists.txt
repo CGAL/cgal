@@ -17,7 +17,7 @@ if(POLICY CMP0071)
 endif()
 
 # Include this package's headers first
-include_directories( BEFORE ./ ./include ../../include )
+include_directories( BEFORE ./ ./include )
 
 # Find CGAL and CGAL Qt5
 find_package(CGAL COMPONENTS Qt5)
