@@ -1,16 +1,13 @@
-#ifndef MAINWINDOW_H_
-#define MAINWINDOW_H_
+#ifndef CGAL_MAINWINDOW_H
+#define CGAL_MAINWINDOW_H
 
 // Qt
-#include <QtOpenGL/qgl.h>
+//#include <QtOpenGL/qgl.h>
 #include <CGAL/Qt/DemosMainWindow.h>
 // local
-#include "scene.h"
+#include "Scene.h"
 
-//class QDragEnterEvent;
-//class QDropEvent;
-//class Scene;
-class Viewer;
+//class Viewer;
 namespace Ui {
   class MainWindow;
 }
@@ -61,35 +58,38 @@ class MainWindow : public CGAL::Qt::DemosMainWindow {
   // edit menu
   void on_actionEdit_copy_snapshot_triggered();
   void on_actionEdit_save_snapshot_triggered();
-  void on_actionEdit_parameter_settings_triggered();
 
-  // input
+  // input menu
   void on_actionInput_eliminate_degenerations_triggered();
   void on_actionInput_split_long_edges_triggered();
   void on_actionInput_properties_triggered();
 
-  // remesh
-  void on_actionRemesh_reset_from_input_triggered();
-  void on_actionRemesh_generate_links_triggered();
-  void on_actionRemesh_properties_triggered();
-
-  //isotropic
+  // isotropic remeshing menu
+  void on_actionIsotropic_split_borders_triggered();
   void on_actionIsotropic_remeshing_triggered();
-  void on_actionIsotropic_initial_mesh_simplification_triggered();
-  void on_actionIsotropic_split_local_longest_edge_triggered();
-  void on_actionIsotropic_increase_minimal_angle_triggered();
-  void on_actionIsotropic_maximize_minimal_angle_triggered();
-  void on_actionIsotropic_final_Vertex_relocation_triggered();
+  void on_actionIsotropic_parameter_settings_triggered();
+
+  //min angle remeshing menu
+  void on_actionMinAngle_remesh_reset_from_input_triggered();
+  void on_actionMinAngle_remesh_generate_links_triggered();
+  void on_actionMinAngle_remeshing_triggered();
+  void on_actionMinAngle_initial_mesh_simplification_triggered();
+  void on_actionMinAngle_split_local_longest_edge_triggered();
+  void on_actionMinAngle_increase_minimal_angle_triggered();
+  void on_actionMinAngle_maximize_minimal_angle_triggered();
+  void on_actionMinAngle_final_Vertex_relocation_triggered();
+  void on_actionMinAngle_parameter_settings_triggered();
+  void on_actionMinAngle_remesh_properties_triggered();
   
   // view menu
   void on_actionView_input_triggered();                           // input
   void on_actionView_remesh_triggered();                          // remesh
   void on_actionView_toggle_input_remesh_triggered();
-  void on_actionView_polyhedron_edges_triggered();                // polyhedron edges
-  void on_actionView_minimal_angle_triggered();                   // polyhedron facet properties
-  void on_actionView_polyhedron_facets_plain_triggered();
-  void on_actionView_polyhedron_facets_ifi_triggered();
-  void on_actionView_polyhedron_facets_errors_triggered();
+  void on_actionView_mesh_edges_triggered();                      // surface mesh edges
+  void on_actionView_minimal_angle_triggered();                   // surface mesh face properties
+  void on_actionView_mesh_faces_plain_triggered();
+  void on_actionView_mesh_faces_ifi_triggered();
+  void on_actionView_mesh_faces_errors_triggered();
   void on_actionView_all_sample_feature_intensities_triggered();  // all samples properties
   void on_actionView_all_sample_capacities_triggered();
   void on_actionView_all_sample_weights_triggered();
@@ -103,25 +103,25 @@ class MainWindow : public CGAL::Qt::DemosMainWindow {
   void on_actionView_edge_feature_intensities_triggered();        
   void on_actionView_edge_capacities_triggered();
   void on_actionView_edge_weights_triggered();
-  void on_actionView_facet_feature_intensities_triggered();       // facet samples properties
-  void on_actionView_facet_capacities_triggered();
-  void on_actionView_facet_weights_triggered();
-  void on_actionView_facet_in_start_points_triggered();   // facet in links
-  void on_actionView_facet_in_end_points_triggered();
-  void on_actionView_facet_in_links_triggered();
-  void on_actionView_facet_out_start_points_triggered();  // facet out links
-  void on_actionView_facet_out_end_points_triggered();
-  void on_actionView_facet_out_links_triggered();
-  void on_actionView_edge_in_start_points_triggered();    // edge in links
+  void on_actionView_face_feature_intensities_triggered();        // face samples properties
+  void on_actionView_face_capacities_triggered();
+  void on_actionView_face_weights_triggered();
+  void on_actionView_face_in_start_points_triggered();            // face in links
+  void on_actionView_face_in_end_points_triggered();
+  void on_actionView_face_in_links_triggered();
+  void on_actionView_face_out_start_points_triggered();           // face out links
+  void on_actionView_face_out_end_points_triggered();
+  void on_actionView_face_out_links_triggered();
+  void on_actionView_edge_in_start_points_triggered();            // edge in links
   void on_actionView_edge_in_end_points_triggered();
   void on_actionView_edge_in_links_triggered();
-  void on_actionView_edge_out_start_points_triggered();   // edge out links
+  void on_actionView_edge_out_start_points_triggered();           // edge out links
   void on_actionView_edge_out_end_points_triggered();
   void on_actionView_edge_out_links_triggered();
-  void on_actionView_vertex_in_start_points_triggered();  // vertex in links
+  void on_actionView_vertex_in_start_points_triggered();          // vertex in links
   void on_actionView_vertex_in_end_points_triggered();
   void on_actionView_vertex_in_links_triggered();
-  void on_actionView_vertex_out_start_points_triggered(); // vertex out links
+  void on_actionView_vertex_out_start_points_triggered();         // vertex out links
   void on_actionView_vertex_out_end_points_triggered();
   void on_actionView_vertex_out_links_triggered();
 
@@ -136,4 +136,4 @@ private:
   Ui::MainWindow *ui;
 };
 
-#endif // MAINWINDOW_H_
+#endif // CGAL_MAINWINDOW_H

@@ -1,11 +1,13 @@
-#include "main_window.h"
+#include "Main_window.h"
 // Qt
-#include <QFileDialog>
-#include <qsettings.h>
+//#include <QFileDialog>
+//#include <qsettings.h>
 // local
-#include "ui_main_window.h"
-#include "ui_parameter_settings.h"
-#include "parameter_settings.h"
+#include "ui_Main_window.h"
+#include "ui_Isotropic_parameters.h"
+#include "Isotropic_parameters.h"
+#include "ui_MinAngle_parameters.h"
+#include "MinAngle_parameters.h"
 
 MainWindow::MainWindow(QWidget *parent)
   : CGAL::Qt::DemosMainWindow(parent) {
@@ -39,7 +41,6 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::updateViewerBBox() {
-  //m_pScene->update_bbox();
   const Bbox &bbox = m_pScene->bbox();
   const double xmin = bbox.xmin();
   const double ymin = bbox.ymin();
@@ -98,13 +99,14 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
 // File menu:
 void MainWindow::on_actionFile_open_triggered() {
   QSettings settings;
-  QString directory = settings.value("OFF open directory",
+  QString directory = settings.value("Open directory",
     QDir::current().dirName()).toString();
   QStringList filenames =
     QFileDialog::getOpenFileNames(this,
-    tr("Load polyhedron surface..."),
+    tr("Load surface mesh..."),
     directory,
     tr("OFF files (*.off)\n"
+    "PLY files (*.ply)\n"
     "All files (*)"));
   if (!filenames.isEmpty()) {
     Q_FOREACH(QString filename, filenames) {
@@ -115,13 +117,14 @@ void MainWindow::on_actionFile_open_triggered() {
 
 void MainWindow::on_actionFile_open_input_triggered() {
   QSettings settings;
-  QString directory = settings.value("OFF open directory",
+  QString directory = settings.value("Open directory",
     QDir::current().dirName()).toString();
   QStringList filenames =
     QFileDialog::getOpenFileNames(this,
-    tr("Load polyhedron surface..."),
+    tr("Load surface mesh..."),
     directory,
     tr("OFF files (*.off)\n"
+    "PLY files (*.ply)\n"
     "All files (*)"));
   if (!filenames.isEmpty()) {
     Q_FOREACH(QString filename, filenames) {
@@ -132,13 +135,14 @@ void MainWindow::on_actionFile_open_input_triggered() {
 
 void MainWindow::on_actionFile_open_remesh_triggered() {
   QSettings settings;
-  QString directory = settings.value("OFF open directory",
+  QString directory = settings.value("Open directory",
     QDir::current().dirName()).toString();
   QStringList filenames =
     QFileDialog::getOpenFileNames(this,
-    tr("Load polyhedron surface..."),
+    tr("Load surface mesh..."),
     directory,
     tr("OFF files (*.off)\n"
+    "PLY files (*.ply)\n"
     "All files (*)"));
   if (!filenames.isEmpty()) {
     Q_FOREACH(QString filename, filenames) {
@@ -149,10 +153,10 @@ void MainWindow::on_actionFile_open_remesh_triggered() {
 
 void MainWindow::on_actionFile_save_remesh_as_triggered() {
   QSettings settings;
-  QString directory = settings.value("OFF open directory",
+  QString directory = settings.value("Open directory",
     QDir::current().dirName()).toString();
 
-  QString filters("Off files (*.off);;Mesh files (*.mesh);;All files (*.*)");
+  QString filters("Off files (*.off);;Ply files (*.ply);;All files (*.*)");
   QString defaultFilter("Off files (*.off)");
 
   QString filename =
@@ -187,168 +191,6 @@ void MainWindow::on_actionEdit_save_snapshot_triggered() {
   QApplication::restoreOverrideCursor();*/
 }
 
-void MainWindow::on_actionEdit_parameter_settings_triggered() {
-  ParameterSettings ps;
-  // general parameters
-  ps.set_max_error_threshold(m_pScene->get_max_error_threshold());        
-  ps.set_min_angle_threshold(m_pScene->get_min_angle_threshold());
-  ps.set_max_mesh_complexity(m_pScene->get_max_mesh_complexity());
-  ps.set_smooth_angle_delta(m_pScene->get_smooth_angle_delta());
-  ps.set_apply_edge_flip(m_pScene->get_apply_edge_flip());
-  EdgeFlipStrategy efs = m_pScene->get_edge_flip_strategy();
-  int current_index = efs == EdgeFlipStrategy::k_improve_valence ? 0 : 1;
-  ps.set_edge_flip_strategy(current_index);
-  ps.set_flip_after_split_and_collapse(
-      m_pScene->get_flip_after_split_and_collapse());
-  ps.set_relocate_after_local_operations(
-      m_pScene->get_relocate_after_local_operations());
-  RelocateStrategy rs = m_pScene->get_relocate_strategy();
-  current_index = rs == RelocateStrategy::k_barycenter ? 0 : 1;
-  ps.set_relocate_strategy(current_index);
-  ps.set_keep_vertex_in_one_ring(m_pScene->get_keep_vertex_in_one_ring());
-  ps.set_use_local_aabb_tree(m_pScene->get_use_local_aabb_tree());
-  ps.set_collapsed_list_size(m_pScene->get_collapsed_list_size());
-  ps.set_decrease_max_errors(m_pScene->get_decrease_max_errors());
-  ps.set_track_information(m_pScene->get_track_information());
-  ps.set_apply_initial_mesh_simplification(
-      m_pScene->get_apply_initial_mesh_simplification());
-  ps.set_apply_final_vertex_relocation(
-      m_pScene->get_apply_final_vertex_relocation());
-  // sample parameters
-  ps.set_samples_per_facet_in(m_pScene->get_samples_per_facet_in());
-  ps.set_samples_per_facet_out(m_pScene->get_samples_per_facet_out());
-  ps.set_max_samples_per_area(m_pScene->get_max_samples_per_area());
-  ps.set_min_samples_per_triangle(m_pScene->get_min_samples_per_triangle());
-  ps.set_bvd_iteration_count(m_pScene->get_bvd_iteration_count());
-  SampleNumberStrategy sns = m_pScene->get_sample_number_strategy();
-  current_index = sns == SampleNumberStrategy::k_fixed ? 0 : 1;
-  ps.set_sample_number_strategy(current_index);
-  SampleStrategy ss = m_pScene->get_sample_strategy();
-  current_index = ss == SampleStrategy::k_uniform ? 0 : 1;
-  ps.set_sample_strategy(current_index);
-  ps.set_use_stratified_sampling(m_pScene->get_use_stratified_sampling());
-  // feature function parameters
-  ps.set_sum_theta(m_pScene->get_sum_theta());
-  ps.set_sum_delta(m_pScene->get_sum_delta());
-  ps.set_dihedral_theta(m_pScene->get_dihedral_theta());
-  ps.set_diheral_delta(m_pScene->get_dihedral_delta());
-  ps.set_feature_difference_delta(m_pScene->get_feature_difference_delta());
-  ps.set_feature_control_delta(m_pScene->get_feature_control_delta());
-  ps.set_inherit_element_types(m_pScene->get_inherit_element_types());
-  ps.set_use_feature_intensity_weights(
-      m_pScene->get_use_feature_intensity_weights());
-  // vertex optimization parameters
-  ps.set_vertex_optimize_count(m_pScene->get_vertex_optimize_count());
-  ps.set_vertex_optimize_ratio(m_pScene->get_vertex_optimize_ratio());
-  ps.set_stencil_ring_size(m_pScene->get_stencil_ring_size());
-  OptimizeStrategy os = m_pScene->get_optimize_strategy();
-  current_index = os == OptimizeStrategy::k_approximation ? 0 : 1;
-  ps.set_optimize_strategy(current_index);
-  OptimizeType ot = m_pScene->get_facet_optimize_type(); 
-  current_index = m_pScene->get_optimize_type_index(ot);
-  ps.set_facet_optimize_type(current_index);
-  ot = m_pScene->get_edge_optimize_type();                
-  current_index = m_pScene->get_optimize_type_index(ot);
-  ps.set_edge_optimize_type(current_index);
-  ot = m_pScene->get_vertex_optimize_type();             
-  current_index = m_pScene->get_optimize_type_index(ot);
-  ps.set_vertex_optimize_type(current_index);
-  ps.set_optimize_after_local_operations(
-      m_pScene->get_optimize_after_local_operations());
-  if (ps.exec() == QDialog::Accepted) {
-    // general parameters
-    m_pScene->set_max_error_threshold(ps.get_max_error_threshold());
-    m_pScene->set_min_angle_threshold(ps.get_min_angle_threshold());
-    m_pScene->set_max_mesh_complexity(ps.get_max_mesh_complexity());
-    m_pScene->set_smooth_angle_delta(ps.get_smooth_angle_delta());
-    m_pScene->set_apply_edge_flip(ps.get_apply_edge_flip());
-    efs = ps.get_edge_flip_strategy() == 0 ? EdgeFlipStrategy::k_improve_valence : 
-                                             EdgeFlipStrategy::k_improve_angle;
-    m_pScene->set_edge_flip_strategy(efs);
-    m_pScene->set_flip_after_split_and_collapse(
-        ps.get_flip_after_split_and_collapse());
-    m_pScene->set_relocate_after_local_operations(
-        ps.get_relocate_after_local_operations());
-    rs = ps.get_relocate_strategy() == 0 ? RelocateStrategy::k_barycenter : 
-                                           RelocateStrategy::k_cvt_barycenter;
-    m_pScene->set_relocate_strategy(rs);
-    m_pScene->set_keep_vertex_in_one_ring(ps.get_keep_vertex_in_one_ring());
-    m_pScene->set_use_local_aabb_tree(ps.get_use_local_aabb_tree());
-    m_pScene->set_collapsed_list_size(ps.get_collapsed_list_size());
-    m_pScene->set_decrease_max_errors(ps.get_decrease_max_errors());
-    m_pScene->set_track_information(ps.get_track_information());
-    m_pScene->set_apply_initial_mesh_simplification(
-        ps.get_apply_initial_mesh_simplification());
-    m_pScene->set_apply_final_vertex_relocation(
-        ps.get_apply_final_vertex_relocation());
-    // sample parameters
-    sns = ps.get_sample_number_strategy() == 0 ? 
-        SampleNumberStrategy::k_fixed : SampleNumberStrategy::k_variable;
-    ss = ps.get_sample_strategy() == 0 ? 
-        SampleStrategy::k_uniform : SampleStrategy::k_adaptive;
-    bool samples_changed =
-      (m_pScene->get_samples_per_facet_in() != ps.get_samples_per_facet_in()) ||
-      (m_pScene->get_samples_per_facet_out() != ps.get_samples_per_facet_out()) ||
-      (m_pScene->get_max_samples_per_area() != ps.get_max_samples_per_area()) ||
-      (m_pScene->get_min_samples_per_triangle() != ps.get_min_samples_per_triangle()) ||
-      (m_pScene->get_bvd_iteration_count() != ps.get_bvd_iteration_count()) ||
-      (m_pScene->get_sample_number_strategy() != sns) ||
-      (m_pScene->get_sample_strategy() != ss) ||
-      (m_pScene->get_use_stratified_sampling() != ps.get_use_stratified_sampling());
-    if (samples_changed) {
-      m_pScene->set_samples_per_facet_in(ps.get_samples_per_facet_in());
-      m_pScene->set_samples_per_facet_out(ps.get_samples_per_facet_out());
-      m_pScene->set_max_samples_per_area(ps.get_max_samples_per_area());
-      m_pScene->set_min_samples_per_triangle(ps.get_min_samples_per_triangle());
-      m_pScene->set_bvd_iteration_count(ps.get_bvd_iteration_count());
-      m_pScene->set_sample_number_strategy(sns);
-      m_pScene->set_sample_strategy(ss);
-      m_pScene->set_use_stratified_sampling(ps.get_use_stratified_sampling());
-    }
-    // feature function parameters
-    bool feature_changed = 
-      (m_pScene->get_sum_theta() != ps.get_sum_theta()) ||
-      (m_pScene->get_sum_delta() != ps.get_sum_delta()) ||
-      (m_pScene->get_dihedral_theta() != ps.get_dihedral_theta()) ||
-      (m_pScene->get_dihedral_delta() != ps.get_dihedral_delta()) ||
-      (m_pScene->get_feature_difference_delta() != ps.get_feature_difference_delta()) ||
-      (m_pScene->get_feature_control_delta() != ps.get_feature_control_delta()) ||
-      (m_pScene->get_inherit_element_types() != ps.get_inherit_element_types()) ||
-      (m_pScene->get_use_feature_intensity_weights() != ps.get_use_feature_intensity_weights());
-    if (feature_changed) {
-      m_pScene->set_sum_theta(ps.get_sum_theta());
-      m_pScene->set_sum_delta(ps.get_sum_delta());
-      m_pScene->set_dihedral_theta(ps.get_dihedral_theta());
-      m_pScene->set_dihedral_delta(ps.get_dihedral_delta());
-      m_pScene->set_feature_difference_delta(ps.get_feature_difference_delta());
-      m_pScene->set_feature_control_delta(ps.get_feature_control_delta());
-      m_pScene->set_inherit_element_types(ps.get_inherit_element_types());
-      m_pScene->set_use_feature_intensity_weights(ps.get_use_feature_intensity_weights());
-    }
-    if (samples_changed || feature_changed) {
-      m_pScene->update_feature_intensities_and_clear_links();
-      m_pScene->toggle_view_polyhedron_facets();
-      m_pViewer->update();
-      update_menu_items();
-    }
-    // vertex optimization parameters
-    m_pScene->set_vertex_optimize_count(ps.get_vertex_optimize_count());
-    m_pScene->set_vertex_optimize_ratio(ps.get_vertex_optimize_ratio());
-    m_pScene->set_stencil_ring_size(ps.get_stencil_ring_size());
-    os = ps.get_optimize_strategy() == 0 ? OptimizeStrategy::k_approximation :
-                                           OptimizeStrategy::k_Interpolation;
-    m_pScene->set_optimize_strategy(os);
-    ot = m_pScene->get_optimize_type(ps.get_facet_optimize_type());
-    m_pScene->set_facet_optimize_type(ot);
-    ot = m_pScene->get_optimize_type(ps.get_edge_optimize_type());
-    m_pScene->set_edge_optimize_type(ot);
-    ot = m_pScene->get_optimize_type(ps.get_vertex_optimize_type());
-    m_pScene->set_vertex_optimize_type(ot);
-    m_pScene->set_optimize_after_local_operations(
-        ps.get_optimize_after_local_operations());
-  }
-}
-
 // Input
 void MainWindow::on_actionInput_eliminate_degenerations_triggered() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -371,8 +213,33 @@ void MainWindow::on_actionInput_properties_triggered() {
   m_pViewer->update();
 }
 
-// remesh
-void MainWindow::on_actionRemesh_reset_from_input_triggered() {
+// isotropic remeshing
+void MainWindow::on_actionIsotropic_split_borders_triggered() {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  m_pScene->split_borders();
+  QApplication::restoreOverrideCursor();
+  m_pViewer->update();
+}
+
+void MainWindow::on_actionIsotropic_remeshing_triggered() {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  m_pScene->isotropic_remeshing();
+  QApplication::restoreOverrideCursor();
+  m_pViewer->update();
+}
+
+void MainWindow::on_actionIsotropic_parameter_settings_triggered() {
+  IsotropicParameters ps;
+  ps.set_target_edge_length(m_pScene->get_target_edge_length());
+  ps.set_smooth_iteration_count(m_pScene->get_smooth_iteration_count());
+  if (ps.exec() == QDialog::Accepted) {
+    m_pScene->set_target_edge_length(ps.get_target_edge_length());
+    m_pScene->set_smooth_iteration_count(ps.get_smooth_iteration_count());
+  }
+}
+
+// Min angle remeshing
+void MainWindow::on_actionMinAngle_remesh_reset_from_input_triggered() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   m_pScene->reset_from_input();
   QApplication::restoreOverrideCursor();
@@ -380,32 +247,23 @@ void MainWindow::on_actionRemesh_reset_from_input_triggered() {
   update_menu_items();
 }
 
-void MainWindow::on_actionRemesh_generate_links_triggered() {
+void MainWindow::on_actionMinAngle_remesh_generate_links_triggered() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  m_pScene->generate_links_and_types();
+  m_pScene->generate_links();
   QApplication::restoreOverrideCursor();
   m_pViewer->update();
   update_menu_items();
 }
 
-void MainWindow::on_actionRemesh_properties_triggered() {
+void MainWindow::on_actionMinAngle_remeshing_triggered() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  m_pScene->remesh_properties();
+  m_pScene->minangle_remeshing();
   QApplication::restoreOverrideCursor();
   m_pViewer->update();
   update_menu_items();
 }
 
-// isotropic
-void MainWindow::on_actionIsotropic_remeshing_triggered() {
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  m_pScene->isotropic_remeshing();
-  QApplication::restoreOverrideCursor();
-  m_pViewer->update();
-  update_menu_items();
-}
-
-void MainWindow::on_actionIsotropic_initial_mesh_simplification_triggered() {
+void MainWindow::on_actionMinAngle_initial_mesh_simplification_triggered() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   m_pScene->initial_mesh_simplification();
   QApplication::restoreOverrideCursor();
@@ -413,7 +271,7 @@ void MainWindow::on_actionIsotropic_initial_mesh_simplification_triggered() {
   update_menu_items();
 }
 
-void MainWindow::on_actionIsotropic_split_local_longest_edge_triggered() {
+void MainWindow::on_actionMinAngle_split_local_longest_edge_triggered() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   m_pScene->split_local_longest_edge();
   QApplication::restoreOverrideCursor();
@@ -421,7 +279,7 @@ void MainWindow::on_actionIsotropic_split_local_longest_edge_triggered() {
   update_menu_items();
 }
 
-void MainWindow::on_actionIsotropic_increase_minimal_angle_triggered() {
+void MainWindow::on_actionMinAngle_increase_minimal_angle_triggered() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   m_pScene->increase_minimal_angle();
   QApplication::restoreOverrideCursor();
@@ -429,7 +287,7 @@ void MainWindow::on_actionIsotropic_increase_minimal_angle_triggered() {
   update_menu_items();
 }
 
-void MainWindow::on_actionIsotropic_maximize_minimal_angle_triggered() {
+void MainWindow::on_actionMinAngle_maximize_minimal_angle_triggered() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   m_pScene->maximize_minimal_angle();
   QApplication::restoreOverrideCursor();
@@ -437,9 +295,179 @@ void MainWindow::on_actionIsotropic_maximize_minimal_angle_triggered() {
   update_menu_items();
 }
 
-void MainWindow::on_actionIsotropic_final_Vertex_relocation_triggered() {
+void MainWindow::on_actionMinAngle_final_Vertex_relocation_triggered() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   m_pScene->final_vertex_relocation();
+  QApplication::restoreOverrideCursor();
+  m_pViewer->update();
+  update_menu_items();
+}
+
+void MainWindow::on_actionMinAngle_parameter_settings_triggered() {
+  MinAngleParameters ps;
+  // general parameters
+  ps.set_max_error_threshold(m_pScene->get_max_error_threshold());
+  ps.set_min_angle_threshold(m_pScene->get_min_angle_threshold());
+  ps.set_max_mesh_complexity(m_pScene->get_max_mesh_complexity());
+  ps.set_smooth_angle_delta(m_pScene->get_smooth_angle_delta());
+  ps.set_apply_edge_flip(m_pScene->get_apply_edge_flip());
+  EdgeFlipStrategy efs = m_pScene->get_edge_flip_strategy();
+  int current_index = efs == EdgeFlipStrategy::k_improve_valence ? 0 : 1;
+  ps.set_edge_flip_strategy(current_index);
+  ps.set_flip_after_split_and_collapse(
+    m_pScene->get_flip_after_split_and_collapse());
+  ps.set_relocate_after_local_operations(
+    m_pScene->get_relocate_after_local_operations());
+  RelocateStrategy rs = m_pScene->get_relocate_strategy();
+  current_index = rs == RelocateStrategy::k_barycenter ? 0 : 1;
+  ps.set_relocate_strategy(current_index);
+  ps.set_keep_vertex_in_one_ring(m_pScene->get_keep_vertex_in_one_ring());
+  ps.set_use_local_aabb_tree(m_pScene->get_use_local_aabb_tree());
+  ps.set_collapsed_list_size(m_pScene->get_collapsed_list_size());
+  ps.set_decrease_max_errors(m_pScene->get_decrease_max_errors());
+  ps.set_verbose_progress(m_pScene->get_verbose_progress());
+  ps.set_apply_initial_mesh_simplification(
+    m_pScene->get_apply_initial_mesh_simplification());
+  ps.set_apply_final_vertex_relocation(
+    m_pScene->get_apply_final_vertex_relocation());
+  // sample parameters
+  ps.set_samples_per_face_in(m_pScene->get_samples_per_face_in());
+  ps.set_samples_per_face_out(m_pScene->get_samples_per_face_out());
+  ps.set_max_samples_per_area(m_pScene->get_max_samples_per_area());
+  ps.set_min_samples_per_triangle(m_pScene->get_min_samples_per_triangle());
+  ps.set_bvd_iteration_count(m_pScene->get_bvd_iteration_count());
+  SampleNumberStrategy sns = m_pScene->get_sample_number_strategy();
+  current_index = sns == SampleNumberStrategy::k_fixed ? 0 : 1;
+  ps.set_sample_number_strategy(current_index);
+  SampleStrategy ss = m_pScene->get_sample_strategy();
+  current_index = ss == SampleStrategy::k_uniform ? 0 : 1;
+  ps.set_sample_strategy(current_index);
+  ps.set_use_stratified_sampling(m_pScene->get_use_stratified_sampling());
+  // feature function parameters
+  ps.set_sum_theta(m_pScene->get_sum_theta());
+  ps.set_sum_delta(m_pScene->get_sum_delta());
+  ps.set_dihedral_theta(m_pScene->get_dihedral_theta());
+  ps.set_diheral_delta(m_pScene->get_dihedral_delta());
+  ps.set_feature_difference_delta(m_pScene->get_feature_difference_delta());
+  ps.set_feature_control_delta(m_pScene->get_feature_control_delta());
+  ps.set_inherit_element_types(m_pScene->get_inherit_element_types());
+  ps.set_use_feature_intensity_weights(
+    m_pScene->get_use_feature_intensity_weights());
+  // vertex optimization parameters
+  ps.set_vertex_optimize_count(m_pScene->get_vertex_optimize_count());
+  ps.set_vertex_optimize_ratio(m_pScene->get_vertex_optimize_ratio());
+  ps.set_stencil_ring_size(m_pScene->get_stencil_ring_size());
+  OptimizeStrategy os = m_pScene->get_optimize_strategy();
+  current_index = os == OptimizeStrategy::k_approximation ? 0 : 1;
+  ps.set_optimize_strategy(current_index);
+  OptimizeType ot = m_pScene->get_face_optimize_type();
+  current_index = m_pScene->get_optimize_type_index(ot);
+  ps.set_face_optimize_type(current_index);
+  ot = m_pScene->get_edge_optimize_type();
+  current_index = m_pScene->get_optimize_type_index(ot);
+  ps.set_edge_optimize_type(current_index);
+  ot = m_pScene->get_vertex_optimize_type();
+  current_index = m_pScene->get_optimize_type_index(ot);
+  ps.set_vertex_optimize_type(current_index);
+  ps.set_optimize_after_local_operations(
+    m_pScene->get_optimize_after_local_operations());
+  if (ps.exec() == QDialog::Accepted) {
+    // general parameters
+    m_pScene->set_max_error_threshold(ps.get_max_error_threshold());
+    m_pScene->set_min_angle_threshold(ps.get_min_angle_threshold());
+    m_pScene->set_max_mesh_complexity(ps.get_max_mesh_complexity());
+    m_pScene->set_smooth_angle_delta(ps.get_smooth_angle_delta());
+    m_pScene->set_apply_edge_flip(ps.get_apply_edge_flip());
+    efs = ps.get_edge_flip_strategy() == 0 ? EdgeFlipStrategy::k_improve_valence :
+      EdgeFlipStrategy::k_improve_angle;
+    m_pScene->set_edge_flip_strategy(efs);
+    m_pScene->set_flip_after_split_and_collapse(
+      ps.get_flip_after_split_and_collapse());
+    m_pScene->set_relocate_after_local_operations(
+      ps.get_relocate_after_local_operations());
+    rs = ps.get_relocate_strategy() == 0 ? RelocateStrategy::k_barycenter :
+      RelocateStrategy::k_cvt_barycenter;
+    m_pScene->set_relocate_strategy(rs);
+    m_pScene->set_keep_vertex_in_one_ring(ps.get_keep_vertex_in_one_ring());
+    m_pScene->set_use_local_aabb_tree(ps.get_use_local_aabb_tree());
+    m_pScene->set_collapsed_list_size(ps.get_collapsed_list_size());
+    m_pScene->set_decrease_max_errors(ps.get_decrease_max_errors());
+    m_pScene->set_verbose_progress(ps.get_verbose_progress());
+    m_pScene->set_apply_initial_mesh_simplification(
+      ps.get_apply_initial_mesh_simplification());
+    m_pScene->set_apply_final_vertex_relocation(
+      ps.get_apply_final_vertex_relocation());
+    // sample parameters
+    sns = ps.get_sample_number_strategy() == 0 ?
+      SampleNumberStrategy::k_fixed : SampleNumberStrategy::k_variable;
+    ss = ps.get_sample_strategy() == 0 ?
+      SampleStrategy::k_uniform : SampleStrategy::k_adaptive;
+    bool samples_changed =
+      (m_pScene->get_samples_per_face_in() != ps.get_samples_per_face_in()) ||
+      (m_pScene->get_samples_per_face_out() != ps.get_samples_per_face_out()) ||
+      (m_pScene->get_max_samples_per_area() != ps.get_max_samples_per_area()) ||
+      (m_pScene->get_min_samples_per_triangle() != ps.get_min_samples_per_triangle()) ||
+      (m_pScene->get_bvd_iteration_count() != ps.get_bvd_iteration_count()) ||
+      (m_pScene->get_sample_number_strategy() != sns) ||
+      (m_pScene->get_sample_strategy() != ss) ||
+      (m_pScene->get_use_stratified_sampling() != ps.get_use_stratified_sampling());
+    if (samples_changed) {
+      m_pScene->set_samples_per_face_in(ps.get_samples_per_face_in());
+      m_pScene->set_samples_per_face_out(ps.get_samples_per_face_out());
+      m_pScene->set_max_samples_per_area(ps.get_max_samples_per_area());
+      m_pScene->set_min_samples_per_triangle(ps.get_min_samples_per_triangle());
+      m_pScene->set_bvd_iteration_count(ps.get_bvd_iteration_count());
+      m_pScene->set_sample_number_strategy(sns);
+      m_pScene->set_sample_strategy(ss);
+      m_pScene->set_use_stratified_sampling(ps.get_use_stratified_sampling());
+    }
+    // feature function parameters
+    bool feature_changed =
+      (m_pScene->get_sum_theta() != ps.get_sum_theta()) ||
+      (m_pScene->get_sum_delta() != ps.get_sum_delta()) ||
+      (m_pScene->get_dihedral_theta() != ps.get_dihedral_theta()) ||
+      (m_pScene->get_dihedral_delta() != ps.get_dihedral_delta()) ||
+      (m_pScene->get_feature_difference_delta() != ps.get_feature_difference_delta()) ||
+      (m_pScene->get_feature_control_delta() != ps.get_feature_control_delta()) ||
+      (m_pScene->get_inherit_element_types() != ps.get_inherit_element_types()) ||
+      (m_pScene->get_use_feature_intensity_weights() != ps.get_use_feature_intensity_weights());
+    if (feature_changed) {
+      m_pScene->set_sum_theta(ps.get_sum_theta());
+      m_pScene->set_sum_delta(ps.get_sum_delta());
+      m_pScene->set_dihedral_theta(ps.get_dihedral_theta());
+      m_pScene->set_dihedral_delta(ps.get_dihedral_delta());
+      m_pScene->set_feature_difference_delta(ps.get_feature_difference_delta());
+      m_pScene->set_feature_control_delta(ps.get_feature_control_delta());
+      m_pScene->set_inherit_element_types(ps.get_inherit_element_types());
+      m_pScene->set_use_feature_intensity_weights(ps.get_use_feature_intensity_weights());
+    }
+    if (samples_changed || feature_changed) {
+      m_pScene->update_feature_intensities();
+      m_pScene->toggle_view_mesh_plain_faces();
+      m_pViewer->update();
+      update_menu_items();
+    }
+    // vertex optimization parameters
+    m_pScene->set_vertex_optimize_count(ps.get_vertex_optimize_count());
+    m_pScene->set_vertex_optimize_ratio(ps.get_vertex_optimize_ratio());
+    m_pScene->set_stencil_ring_size(ps.get_stencil_ring_size());
+    os = ps.get_optimize_strategy() == 0 ? OptimizeStrategy::k_approximation :
+      OptimizeStrategy::k_Interpolation;
+    m_pScene->set_optimize_strategy(os);
+    ot = m_pScene->get_optimize_type(ps.get_face_optimize_type());
+    m_pScene->set_face_optimize_type(ot);
+    ot = m_pScene->get_optimize_type(ps.get_edge_optimize_type());
+    m_pScene->set_edge_optimize_type(ot);
+    ot = m_pScene->get_optimize_type(ps.get_vertex_optimize_type());
+    m_pScene->set_vertex_optimize_type(ot);
+    m_pScene->set_optimize_after_local_operations(
+      ps.get_optimize_after_local_operations());
+  }
+}
+
+void MainWindow::on_actionMinAngle_remesh_properties_triggered() {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  m_pScene->remesh_properties();
   QApplication::restoreOverrideCursor();
   m_pViewer->update();
   update_menu_items();
@@ -461,8 +489,8 @@ void MainWindow::on_actionView_toggle_input_remesh_triggered() {
   m_pViewer->update();
 }
 
-void MainWindow::on_actionView_polyhedron_edges_triggered() {
-  m_pScene->toggle_view_polyhedron_edges();
+void MainWindow::on_actionView_mesh_edges_triggered() {
+  m_pScene->toggle_view_mesh_edges();
   m_pViewer->update();
 }
 
@@ -471,18 +499,18 @@ void MainWindow::on_actionView_minimal_angle_triggered() {
   m_pViewer->update();
 }
 
-void MainWindow::on_actionView_polyhedron_facets_plain_triggered() {
-  m_pScene->toggle_view_polyhedron_facets();
+void MainWindow::on_actionView_mesh_faces_plain_triggered() {
+  m_pScene->toggle_view_mesh_plain_faces();
   m_pViewer->update();
 }
 
-void MainWindow::on_actionView_polyhedron_facets_ifi_triggered() {
+void MainWindow::on_actionView_mesh_faces_ifi_triggered() {
   m_pScene->toggle_view_interpolated_feature_intensities();
   m_pViewer->update();
 }
 
-void MainWindow::on_actionView_polyhedron_facets_errors_triggered() {
-  m_pScene->toggle_view_facet_errors();
+void MainWindow::on_actionView_mesh_faces_errors_triggered() {
+  m_pScene->toggle_view_face_errors();
   m_pViewer->update();
 }
 
@@ -551,47 +579,47 @@ void MainWindow::on_actionView_edge_weights_triggered() {
   m_pViewer->update();
 }
 
-void MainWindow::on_actionView_facet_feature_intensities_triggered() {
-  m_pScene->toggle_view_facet_feature_intensities();
+void MainWindow::on_actionView_face_feature_intensities_triggered() {
+  m_pScene->toggle_view_face_feature_intensities();
   m_pViewer->update();
 }
 
-void MainWindow::on_actionView_facet_capacities_triggered() {
-  m_pScene->toggle_view_facet_capacities();
+void MainWindow::on_actionView_face_capacities_triggered() {
+  m_pScene->toggle_view_face_capacities();
   m_pViewer->update();
 }
 
-void MainWindow::on_actionView_facet_weights_triggered() {
-  m_pScene->toggle_view_facet_weights();
+void MainWindow::on_actionView_face_weights_triggered() {
+  m_pScene->toggle_view_face_weights();
   m_pViewer->update();
 }
 
-void MainWindow::on_actionView_facet_in_start_points_triggered() {
-  m_pScene->toggle_view_facet_in_start_points();
+void MainWindow::on_actionView_face_in_start_points_triggered() {
+  m_pScene->toggle_view_face_in_start_points();
   m_pViewer->update();
 }
 
-void MainWindow::on_actionView_facet_in_end_points_triggered() {
-  m_pScene->toggle_view_facet_in_end_points();
+void MainWindow::on_actionView_face_in_end_points_triggered() {
+  m_pScene->toggle_view_face_in_end_points();
   m_pViewer->update();
 }
 
-void MainWindow::on_actionView_facet_in_links_triggered() {
-  m_pScene->toggle_view_facet_in_links();
+void MainWindow::on_actionView_face_in_links_triggered() {
+  m_pScene->toggle_view_face_in_links();
   m_pViewer->update();
 }
 
-void MainWindow::on_actionView_facet_out_start_points_triggered() {
-  m_pScene->toggle_view_facet_out_start_points();
+void MainWindow::on_actionView_face_out_start_points_triggered() {
+  m_pScene->toggle_view_face_out_start_points();
   m_pViewer->update();
 }
 
-void MainWindow::on_actionView_facet_out_end_points_triggered() {
-  m_pScene->toggle_view_facet_out_end_points();
+void MainWindow::on_actionView_face_out_end_points_triggered() {
+  m_pScene->toggle_view_face_out_end_points();
   m_pViewer->update();
 }
-void MainWindow::on_actionView_facet_out_links_triggered() {
-  m_pScene->toggle_view_facet_out_links();
+void MainWindow::on_actionView_face_out_links_triggered() {
+  m_pScene->toggle_view_face_out_links();
   m_pViewer->update();
 }
 
@@ -675,7 +703,7 @@ void MainWindow::open(QString file_name, OpenType open_type) {
     }
     if (suc) {
       QSettings settings;
-      settings.setValue("OFF open directory",
+      settings.setValue("Open directory",
         file_info.absoluteDir().absolutePath());
       this->addToRecentFiles(file_name);
       updateViewerBBox();
@@ -689,8 +717,8 @@ void MainWindow::open(QString file_name, OpenType open_type) {
 void MainWindow::update_menu_items() {
   bool link_initialized = m_pScene->get_link_initialized();
   if (link_initialized) {
-    // menu of "Polyhedron properties"
-    ui->actionView_polyhedron_facets_errors->setEnabled(true);
+    // menu of "Surface mesh properties"
+    ui->actionView_mesh_faces_errors->setEnabled(true);
     ui->menuView_samples_and_links->setEnabled(true);
     // menu of sample properties
     bool use_stratified_sampling = m_pScene->get_use_stratified_sampling();
@@ -698,24 +726,24 @@ void MainWindow::update_menu_items() {
       ui->menuView_all_sample_properties->setEnabled(false);
       ui->menuView_vertex_sample_properties->setEnabled(true);
       ui->menuView_edge_sample_properties->setEnabled(true);
-      ui->menuView_facet_sample_properties->setEnabled(true);
+      ui->menuView_face_sample_properties->setEnabled(true);
     }
     else {
       ui->menuView_all_sample_properties->setEnabled(true);
       ui->menuView_vertex_sample_properties->setEnabled(false);
       ui->menuView_edge_sample_properties->setEnabled(false);
-      ui->menuView_facet_sample_properties->setEnabled(false);
+      ui->menuView_face_sample_properties->setEnabled(false);
     }
   }
   else {
-    // menu of "Polyhedron properties"
-    ui->actionView_polyhedron_facets_errors->setEnabled(false);
+    // menu of "Surface mesh properties"
+    ui->actionView_mesh_faces_errors->setEnabled(false);
     ui->menuView_samples_and_links->setEnabled(false);
     // menu of sample properties
     ui->menuView_all_sample_properties->setEnabled(false);
     ui->menuView_vertex_sample_properties->setEnabled(false);
     ui->menuView_edge_sample_properties->setEnabled(false);
-    ui->menuView_facet_sample_properties->setEnabled(false);
+    ui->menuView_face_sample_properties->setEnabled(false);
   }
 }
 

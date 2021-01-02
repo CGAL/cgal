@@ -2,13 +2,13 @@
 #include <QMimeData>
 #include <CGAL/Qt/resources.h>
 #include <QLabel>
-#include "main_window.h"
+#include "Main_window.h"
 
 int main(int argc, char **argv) {
   QApplication app(argc, argv);
   app.setOrganizationDomain("cgal.org");
   app.setOrganizationName("CGAL");
-  app.setApplicationName("RobustRemeshing");
+  app.setApplicationName("CGALRemeshing");
   //for windows
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
   app.setAttribute(Qt::AA_UseDesktopOpenGL);
@@ -33,10 +33,11 @@ int main(int argc, char **argv) {
   return app.exec();
 }
 
-#include "scene.cpp"
-#include "scene_moc.cpp"
-#include "viewer.cpp"
-#include "viewer_moc.cpp"
-#include "main_window.cpp"
-#include "main_window_moc.cpp"
-#include "parameter_settings_moc.cpp"
+#include "Scene.cpp"
+#include "Scene_moc.cpp"
+#include "Viewer.cpp"
+#include "Viewer_moc.cpp"
+#include "Main_window.cpp"
+#include "Main_window_moc.cpp"
+#include "Isotropic_parameters_moc.cpp"
+#include "MinAngle_parameters_moc.cpp"

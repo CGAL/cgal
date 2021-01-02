@@ -1,5 +1,6 @@
-#ifndef VIEWER_H_
-#define VIEWER_H_
+#ifndef CGAL_VIEWER_H
+#define CGAL_VIEWER_H
+
 #include <QMap>
 #include <CGAL/Qt/qglviewer.h>
 
@@ -31,4 +32,4 @@ class Viewer : public CGAL::QGLViewer {
   bool m_custom_mouse;
 }; // end class Viewer
 
-#endif // VIEWER_H_
+#endif // CGAL_VIEWER_H

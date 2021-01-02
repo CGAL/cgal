@@ -1,12 +1,12 @@
-#ifndef PARAMETERSETTINGS_H_
-#define PARAMETERSETTINGS_H_
+#ifndef CGAL_MINANGLE_PARAMETERS_H
+#define CGAL_MINANGLE_PARAMETERS_H
 
-#include "ui_parameter_settings.h"
+#include "ui_MinAngle_parameters.h"
 
-class ParameterSettings : public QDialog, private Ui_ParameterSettingsDialog {
+class MinAngleParameters : public QDialog, private Ui_MinAngleParametersDialog {
   Q_OBJECT
  public:
-  explicit ParameterSettings(QWidget *parent = 0) {
+    explicit MinAngleParameters(QWidget *parent = 0) {
     setupUi(this);
     // fill the items in cb_sample_number_strategy
     QStringList sample_number_strategy_types;
@@ -20,7 +20,7 @@ class ParameterSettings : public QDialog, private Ui_ParameterSettingsDialog {
     sample_strategy_types.append("Adaptive");
     cb_sample_strategy->addItems(sample_strategy_types);
     cb_sample_strategy->setCurrentIndex(1);
-    // fill the items in cb_facet_relocate_type, 
+    // fill the items in cb_face_relocate_type, 
     //                   cb_edge_relocate_type,
     //                   cb_vertex_relocate_type
     QStringList optimize_types;
@@ -28,8 +28,8 @@ class ParameterSettings : public QDialog, private Ui_ParameterSettingsDialog {
     optimize_types.append("Input to Remesh");
     optimize_types.append("Remesh to Input");
     optimize_types.append("Both");
-    cb_facet_optimize_type->addItems(optimize_types);
-    cb_facet_optimize_type->setCurrentIndex(3);
+    cb_face_optimize_type->addItems(optimize_types);
+    cb_face_optimize_type->setCurrentIndex(3);
     cb_edge_optimize_type->addItems(optimize_types);
     cb_edge_optimize_type->setCurrentIndex(3);
     cb_vertex_optimize_type->addItems(optimize_types);
@@ -55,10 +55,10 @@ class ParameterSettings : public QDialog, private Ui_ParameterSettingsDialog {
   }
 
   // disable copy/move construction
-  ParameterSettings(const ParameterSettings &) = delete;
-  ParameterSettings(const ParameterSettings &&) = delete;
-  ParameterSettings &operator = (const ParameterSettings &) = delete;
-  ParameterSettings &operator = (const ParameterSettings &&) = delete;
+    MinAngleParameters(const MinAngleParameters &) = delete;
+    MinAngleParameters(const MinAngleParameters &&) = delete;
+    MinAngleParameters &operator = (const MinAngleParameters &) = delete;
+    MinAngleParameters &operator = (const MinAngleParameters &&) = delete;
 
   // access functions
 
@@ -102,8 +102,8 @@ class ParameterSettings : public QDialog, private Ui_ParameterSettingsDialog {
   bool get_decrease_max_errors() const { return cb_decrease_max_errors->isChecked(); }
   void set_decrease_max_errors(bool value) { cb_decrease_max_errors->setChecked(value); }
 
-  bool get_track_information() const { return cb_track_information->isChecked(); }
-  void set_track_information(bool value) { cb_track_information->setChecked(value); }
+  bool get_verbose_progress() const { return cb_verbose_progress->isChecked(); }
+  void set_verbose_progress(bool value) { cb_verbose_progress->setChecked(value); }
 
   bool get_apply_initial_mesh_simplification() const { return cb_apply_initial_mesh_simplification->isChecked(); }
   void set_apply_initial_mesh_simplification(bool value) { cb_apply_initial_mesh_simplification->setChecked(value); }
@@ -112,11 +112,11 @@ class ParameterSettings : public QDialog, private Ui_ParameterSettingsDialog {
   void set_apply_final_vertex_relocation(bool value) { cb_apply_final_vertex_relocation->setChecked(value); }
 
   // 2) sample parameters
-  int get_samples_per_facet_in() const { return sb_samples_per_facet_in->value(); }
-  void set_samples_per_facet_in(int value) { sb_samples_per_facet_in->setValue(value); }
+  int get_samples_per_face_in() const { return sb_samples_per_face_in->value(); }
+  void set_samples_per_face_in(int value) { sb_samples_per_face_in->setValue(value); }
 
-  int get_samples_per_facet_out() const { return sb_samples_per_facet_out->value(); }
-  void set_samples_per_facet_out(int value) { sb_samples_per_facet_out->setValue(value); }
+  int get_samples_per_face_out() const { return sb_samples_per_face_out->value(); }
+  void set_samples_per_face_out(int value) { sb_samples_per_face_out->setValue(value); }
 
   int get_max_samples_per_area() const { return sb_max_samples_per_area->value(); }
   void set_max_samples_per_area(int value) { sb_max_samples_per_area->setValue(value); }
@@ -174,8 +174,8 @@ class ParameterSettings : public QDialog, private Ui_ParameterSettingsDialog {
   int get_optimize_strategy() const { return cb_optimize_strategy->currentIndex(); }
   void set_optimize_strategy(int value) { cb_optimize_strategy->setCurrentIndex(value); }
 
-  int get_facet_optimize_type() const { return cb_facet_optimize_type->currentIndex(); }
-  void set_facet_optimize_type(int value) { cb_facet_optimize_type->setCurrentIndex(value); }
+  int get_face_optimize_type() const { return cb_face_optimize_type->currentIndex(); }
+  void set_face_optimize_type(int value) { cb_face_optimize_type->setCurrentIndex(value); }
 
   int get_edge_optimize_type() const { return cb_edge_optimize_type->currentIndex(); }
   void set_edge_optimize_type(int value) { cb_edge_optimize_type->setCurrentIndex(value); }
@@ -187,4 +187,4 @@ class ParameterSettings : public QDialog, private Ui_ParameterSettingsDialog {
   void set_optimize_after_local_operations(bool value) { cb_optimize_after_local_operations->setChecked(value); }
 };
 
-#endif // PARAMETERSETTINGS_H_
+#endif // CGAL_MINANGLE_PARAMETERS_H
