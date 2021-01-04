@@ -253,7 +253,7 @@ private:
     }
   };
 
-  typedef AABB_primitive<std::size_t, Datum_map<GeomTraits>, Point_map<GeomTraits>, Tag_true /*UseSharedData*/, Tag_false /*CacheDatum*/> Primitive;
+  typedef AABB_primitive<unsigned int, Datum_map<GeomTraits>, Point_map<GeomTraits>, Tag_true /*UseSharedData*/, Tag_false /*CacheDatum*/> Primitive;
   typedef AABB_traits<GeomTraits, Primitive> Tree_traits;
   typedef AABB_tree<Tree_traits> Tree;
 
@@ -538,8 +538,8 @@ private:
     Point_map<GeomTraits> point_map(bounding_boxes);
 
     // constructs AABB tree
-    tree.insert(boost::counting_iterator<std::size_t>(0),
-                boost::counting_iterator<std::size_t>(bounding_boxes.size()),
+    tree.insert(boost::counting_iterator<unsigned int>(0),
+                boost::counting_iterator<unsigned int>((unsigned int)bounding_boxes.size()),
                 datum_map,
                 point_map);
     tree.build();
@@ -934,7 +934,7 @@ private:
   bool
   is_two_facets_neighbouring(const int & pid, const int &i, const int &j)const
   {
-    int facesize = halfspace[pid].size();
+    std::size_t facesize = halfspace[pid].size();
     if (i == j) return false;
     if (i == 0 && j != 1) return true;
     if (i == 1 && j != 0) return true;
@@ -1659,8 +1659,8 @@ private:
     Point_map<GeomTraits> point_map(local_bounding_boxes);
 
     // constructs AABB tree
-    localtree.insert(boost::counting_iterator<std::size_t>(0),
-                     boost::counting_iterator<std::size_t>(local_bounding_boxes.size()),
+    localtree.insert(boost::counting_iterator<unsigned int>(0),
+                     boost::counting_iterator<unsigned int>((unsigned int)local_bounding_boxes.size()),
                      datum_map,
                      point_map);
     localtree.build();
