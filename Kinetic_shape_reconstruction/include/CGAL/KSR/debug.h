@@ -583,7 +583,8 @@ template<typename DS, typename PFace>
 void dump_volume(
   const DS& data,
   const std::vector<PFace>& pfaces,
-  const std::string file_name) {
+  const std::string file_name,
+  const bool use_colors = true) {
 
   using Point_3 = typename DS::Kernel::Point_3;
   std::vector<Point_3> polygon;
@@ -601,7 +602,11 @@ void dump_volume(
     for (const auto pvertex : pvertices) {
       polygon.push_back(data.point_3(pvertex));
     }
-    colors.push_back(color);
+    if (use_colors) {
+      colors.push_back(color);
+    } else {
+      colors.push_back(saver.get_idx_color(0));
+    }
     polygons.push_back(polygon);
   }
   CGAL_assertion(colors.size() == pfaces.size());

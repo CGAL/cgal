@@ -38,17 +38,13 @@
 namespace CGAL {
 namespace KSR_3 {
 
-  template<
-  typename PointMap_3,
-  typename GeomTraits>
+  template<typename GeomTraits>
   class Graphcut {
 
   public:
-    using Point_map_3 = PointMap_3;
-    using Kernel      = GeomTraits;
+    using Kernel = GeomTraits;
 
-    using FT = typename Kernel::FT;
-    using Point_2 = typename Kernel::Point_2;
+    using FT 		  = typename Kernel::FT;
     using Point_3 = typename Kernel::Point_3;
     using Indices = std::vector<std::size_t>;
 
@@ -60,12 +56,8 @@ namespace KSR_3 {
 
     Graphcut(
       const Data_structure& data,
-      const std::vector<std::size_t>& roof_points,
-      const Point_map_3& point_map_3,
       const FT graphcut_beta) :
     m_data(data),
-    m_roof_points(roof_points),
-    m_point_map_3(point_map_3),
     m_beta(graphcut_beta)
     { }
 
@@ -96,8 +88,6 @@ namespace KSR_3 {
 
   private:
     const Data_structure& m_data;
-    const std::vector<std::size_t>& m_roof_points;
-    const Point_map_3& m_point_map_3;
     const FT m_beta;
 
     // template<typename Object>

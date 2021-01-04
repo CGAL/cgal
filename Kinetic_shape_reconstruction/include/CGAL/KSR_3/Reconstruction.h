@@ -28,6 +28,7 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
@@ -61,18 +62,15 @@ public:
   using Kernel       = GeomTraits;
 
 private:
-  using FT        = typename Kernel::FT;
-  using Point_2   = typename Kernel::Point_2;
-  using Point_3   = typename Kernel::Point_3;
-  using Plane_3   = typename Kernel::Plane_3;
-  using Segment_3 = typename Kernel::Segment_3;
+  using FT      = typename Kernel::FT;
+  using Point_2 = typename Kernel::Point_2;
+  using Point_3 = typename Kernel::Point_3;
+  using Plane_3 = typename Kernel::Plane_3;
 
   using Data_structure = KSR_3::Data_structure<Kernel>;
   using Point_map_3    = KSR::Item_property_map<Input_range, Point_map>;
   using Vector_map_3   = KSR::Item_property_map<Input_range, Vector_map>;
-
-  using Point_map_3_to_2 = KSR::Point_2_from_point_3_property_map<Point_map, Point_2>;
-  using Point_map_2      = KSR::Item_property_map<Input_range, Point_map_3_to_2>;
+  using PFace          = typename Data_structure::PFace;
 
   using Semantic_label    = KSR::Semantic_label;
   using Planar_shape_type = KSR::Planar_shape_type;
@@ -84,7 +82,9 @@ private:
   using IK       = Exact_predicates_inexact_constructions_kernel;
   using IPoint_3  = typename IK::Point_3;
   using IPlane_3  = typename IK::Plane_3;
+
   using Converter = CGAL::Cartesian_converter<Kernel, IK>;
+  using Delaunay  = CGAL::Delaunay_triangulation_2<Kernel>;
 
   // using Neighbor_query_3 = CGAL::Shape_detection::Point_set::
   //   Sphere_neighbor_query<Kernel, Indices, Point_map_3>;
@@ -99,8 +99,8 @@ private:
     Region_growing<Indices, Neighbor_query_3, Planar_region, typename Planar_sorting::Seed_map>;
 
   using Visibility_label = KSR::Visibility_label;
-  using Visibility       = KSR_3::Visibility<Point_map_3, Kernel>;
-  using Graphcut         = KSR_3::Graphcut<Point_map_3, Kernel>;
+  using Visibility       = KSR_3::Visibility<Kernel, Point_map_3, Vector_map_3>;
+  using Graphcut         = KSR_3::Graphcut<Kernel>;
 
 public:
 
@@ -115,8 +115,6 @@ public:
   m_semantic_map(semantic_map),
   m_point_map_3(m_input_range, point_map),
   m_normal_map_3(m_input_range, normal_map),
-  m_point_map_3_to_2(point_map),
-  m_point_map_2(input_range, m_point_map_3_to_2),
   m_data(data),
   m_verbose(verbose),
   m_planar_shape_type(Planar_shape_type::CONVEX_HULL) {
@@ -158,15 +156,19 @@ public:
       std::cout << std::endl << "--- COMPUTING THE MODEL: " << std::endl;
     }
 
+    std::map<PFace, Indices> pface_points;
+    assign_points_to_pfaces(pface_points);
+    const Visibility visibility(
+      m_data, pface_points, m_point_map_3, m_normal_map_3);
+
     CGAL_assertion(m_data.volumes().size() > 0);
-    Visibility visibility(m_data, m_interior_points, m_point_map_3);
     visibility.compute(m_data.volumes());
     dump_volumes("visibility");
 
     const FT beta = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::graphcut_beta), FT(1) / FT(2));
 
-    Graphcut graphcut(m_data, m_interior_points, m_point_map_3, beta);
+    Graphcut graphcut(m_data, beta);
     graphcut.compute(m_data.volumes());
     dump_volumes("graphcut");
 
@@ -197,9 +199,6 @@ private:
   Point_map_3  m_point_map_3;
   Vector_map_3 m_normal_map_3;
 
-  Point_map_3_to_2 m_point_map_3_to_2;
-  Point_map_2      m_point_map_2;
-
   Data_structure& m_data;
   const bool m_verbose;
   const Planar_shape_type m_planar_shape_type;
@@ -211,6 +210,8 @@ private:
 
   std::vector<Polygon_3> m_polygons;
   Polygon_map m_polygon_map;
+
+  std::map<std::size_t, Indices> m_region_map;
 
   void collect_points(
     const Semantic_label output_label,
@@ -229,7 +230,9 @@ private:
 
     if (m_verbose) std::cout << "* creating ground plane ... ";
     const auto plane = fit_plane(m_ground_points);
-    add_planar_shape(m_ground_points, plane);
+    const std::size_t shape_idx = add_planar_shape(m_ground_points, plane);
+    CGAL_assertion(shape_idx != std::size_t(-1));
+    m_region_map[shape_idx] = m_ground_points;
     if (m_verbose) std::cout << "done" << std::endl;
   }
 
@@ -258,26 +261,25 @@ private:
     return plane;
   }
 
-  void add_planar_shape(
+  const std::size_t add_planar_shape(
     const std::vector<std::size_t>& region, const Plane_3& plane) {
 
     switch (m_planar_shape_type) {
       case Planar_shape_type::CONVEX_HULL: {
-        add_convex_hull_shape(region, plane);
-        break;
+        return add_convex_hull_shape(region, plane);
       }
       case Planar_shape_type::RECTANGLE: {
-        add_rectangle_shape(region, plane);
-        break;
+        return add_rectangle_shape(region, plane);
       }
       default: {
         CGAL_assertion_msg(false, "ERROR: ADD PLANAR SHAPE, WRONG TYPE!");
-        break;
+        return std::size_t(-1);
       }
     }
+    return std::size_t(-1);
   }
 
-  void add_convex_hull_shape(
+  const std::size_t add_convex_hull_shape(
     const std::vector<std::size_t>& region, const Plane_3& plane) {
 
     std::vector<Point_2> points;
@@ -299,13 +301,17 @@ private:
       const auto point = plane.to_3d(p);
       polygon.push_back(point);
     }
+
+    const std::size_t shape_idx = m_polygons.size();
     m_polygons.push_back(polygon);
+    return shape_idx;
   }
 
-  void add_rectangle_shape(
+  const std::size_t add_rectangle_shape(
     const std::vector<std::size_t>& region, const Plane_3& plane) {
 
     CGAL_assertion_msg(false, "TODO: ADD RECTANGLE SHAPE!");
+    return std::size_t(-1);
   }
 
   template<typename NamedParameters>
@@ -315,7 +321,9 @@ private:
     apply_region_growing(np, m_boundary_points, regions);
     for (const auto& region : regions) {
       const auto plane = fit_plane(region);
-      add_planar_shape(region, plane);
+      const std::size_t shape_idx = add_planar_shape(region, plane);
+      CGAL_assertion(shape_idx != std::size_t(-1));
+      m_region_map[shape_idx] = region;
     }
     if (m_verbose) {
       std::cout << "* found " << regions.size() << " approximate walls" << std::endl;
@@ -329,7 +337,9 @@ private:
     apply_region_growing(np, m_interior_points, regions);
     for (const auto& region : regions) {
       const auto plane = fit_plane(region);
-      add_planar_shape(region, plane);
+      const std::size_t shape_idx = add_planar_shape(region, plane);
+      CGAL_assertion(shape_idx != std::size_t(-1));
+      m_region_map[shape_idx] = region;
     }
     if (m_verbose) {
       std::cout << "* found " << regions.size() << " approximate roofs" << std::endl;
@@ -386,8 +396,74 @@ private:
     CGAL_assertion(regions.size() == result.size());
   }
 
+  void assign_points_to_pfaces(std::map<PFace, Indices>& pface_points) const {
+
+    CGAL_assertion(m_region_map.size() > 0);
+    pface_points.clear();
+
+    for (KSR::size_t i = 0; i < 6; ++i) {
+      const auto pfaces = m_data.pfaces(i);
+      for (const auto pface : pfaces) {
+        pface_points[pface] = Indices();
+      }
+    }
+
+    for (const auto& item : m_region_map) {
+      const std::size_t shape_idx = item.first;
+      const auto& indices = item.second;
+
+      const KSR::size_t support_plane_idx = static_cast<KSR::size_t>(
+        m_data.support_plane_index(shape_idx));
+      CGAL_assertion(support_plane_idx >= 6);
+      // dump_points(indices, "sp-points-" + std::to_string(support_plane_idx));
+
+      const auto pfaces = m_data.pfaces(support_plane_idx);
+      for (const auto pface : pfaces) {
+        pface_points[pface] = Indices();
+        const auto pvertices = m_data.pvertices_of_pface(pface);
+
+        Delaunay tri;
+        for (const auto pvertex : pvertices) {
+          CGAL_assertion(m_data.has_ivertex(pvertex));
+          const auto ivertex = m_data.ivertex(pvertex);
+          const auto& point = m_data.point_2(support_plane_idx, ivertex);
+          tri.insert(point);
+        }
+
+        for (const std::size_t index : indices) {
+          const auto& point = get(m_point_map_3, index);
+          const auto query = m_data.to_2d(support_plane_idx, point);
+          const auto fh = tri.locate(query);
+          if (fh != nullptr && !tri.is_infinite(fh)) {
+            pface_points[pface].push_back(index);
+          }
+        }
+      }
+    }
+
+    // for (const auto& item : pface_points) {
+    //   dump_points(item.second, "pf-points-" + m_data.str(item.first));
+    // }
+  }
+
   void extract_surface() {
     CGAL_assertion_msg(false, "TODO: EXTRACT SURFACE FROM THE LABELED VOLUMES!");
+  }
+
+  void dump_points(
+    const std::vector<std::size_t>& indices,
+    const std::string file_name) const {
+
+    std::vector<Point_3> points;
+    points.reserve(indices.size());
+    for (const std::size_t index : indices) {
+      const auto& point = get(m_point_map_3, index);
+      points.push_back(point);
+    }
+    CGAL_assertion(points.size() == indices.size());
+
+    KSR_3::Saver<Kernel> saver;
+    saver.export_points_3(points, file_name);
   }
 
   void dump_polygons(const std::string file_name) {
@@ -401,7 +477,7 @@ private:
     for (const auto& volume : m_data.volumes()) {
       if (volume.visibility == Visibility_label::INSIDE) {
         dump_volume(m_data, volume.pfaces,
-        file_name + "-" + std::to_string(volume.index));
+        file_name + "-" + std::to_string(volume.index), false);
       }
     }
   }
