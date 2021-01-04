@@ -66,7 +66,6 @@ private:
     typedef typename boost::graph_traits<Triangle_mesh>::vertex_descriptor    vertex_descriptor;
 
     const Triangle_mesh& tm = profile.surface_mesh();
-    const Geom_traits& gt = profile.geom_traits();
 
     m_vertices.reserve(num_vertices(tm));
     m_faces.reserve(num_faces(tm));

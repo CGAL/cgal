@@ -56,8 +56,8 @@ struct My_visitor : SMS::Edge_collapse_visitor_base<Surface>
   // If cost is absent the edge won't be collapsed.
   void OnSelected(const Profile&,
                   boost::optional<double> cost,
-                  std::size_t initial,
-                  std::size_t current)
+                  std::size_t /* initial */,
+                  std::size_t /* current */)
   {
     ++(stats->processed);
     if(!cost)

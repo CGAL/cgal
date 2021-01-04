@@ -932,7 +932,7 @@ private:
 
 
   bool
-  is_two_facets_neighbouring(const int & pid, const int &i, const int &j)const
+  is_two_facets_neighbouring(const unsigned int & pid, const unsigned int &i, const unsigned int &j)const
   {
     std::size_t facesize = halfspace[pid].size();
     if (i == j) return false;
