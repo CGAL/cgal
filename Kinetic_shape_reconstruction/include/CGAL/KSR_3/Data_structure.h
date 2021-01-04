@@ -213,6 +213,7 @@ private:
 
   std::vector<Volume_cell> m_volumes;
   std::map<int, std::size_t> m_volume_level_map;
+  std::map<PFace, std::pair<int, int> > m_map_volumes;
   std::map<KSR::size_t, KSR::size_t> m_input_polygon_map;
   Reconstructed_model m_model;
 
@@ -234,6 +235,10 @@ public:
 
     m_volumes.clear();
     m_volume_level_map.clear();
+  }
+
+  const std::map<PFace, std::pair<int, int> >& pface_neighbors() const {
+    return m_map_volumes;
   }
 
   void set_input_polygon_map(
@@ -3332,11 +3337,11 @@ public:
     // Initialize an empty volume map.
     m_volumes.clear();
     std::map<int, Point_3> centroids;
-    std::map<PFace, std::pair<int, int> > map_volumes;
+    m_map_volumes.clear();
     for (KSR::size_t i = 0; i < number_of_support_planes(); ++i) {
       const auto pfaces = this->pfaces(i);
       for (const auto pface : pfaces)
-        map_volumes[pface] = std::make_pair(-1, -1);
+        m_map_volumes[pface] = std::make_pair(-1, -1);
     }
 
     // First, traverse only boundary volumes.
@@ -3352,9 +3357,9 @@ public:
       for (const auto pface : pfaces) {
         CGAL_assertion(pface.first < 6);
         std::tie(is_found_new_volume, volume_size) = traverse_boundary_volume(
-          pface, volume_index, num_volumes, map_volumes, centroids);
+          pface, volume_index, num_volumes, m_map_volumes, centroids);
         if (is_found_new_volume) {
-          check_volume(volume_index, volume_size, map_volumes);
+          check_volume(volume_index, volume_size, m_map_volumes);
           ++volume_index;
         }
       }
@@ -3393,10 +3398,10 @@ public:
       const int before = volume_index;
       for (const auto& other_pface : other_pfaces) {
         std::tie(is_found_new_volume, volume_size) = traverse_interior_volume(
-          other_pface, volume_index, num_volumes, map_volumes, centroids);
+          other_pface, volume_index, num_volumes, m_map_volumes, centroids);
         if (is_found_new_volume) {
           quit = false;
-          check_volume(volume_index, volume_size, map_volumes);
+          check_volume(volume_index, volume_size, m_map_volumes);
           ++volume_index;
         }
       }
@@ -3414,7 +3419,7 @@ public:
     } while (!quit);
 
     // Now, set final volumes and their neighbors.
-    for (const auto& item : map_volumes) {
+    for (const auto& item : m_map_volumes) {
       const auto& pface = item.first;
       const auto& pair  = item.second;
 

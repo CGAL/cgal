@@ -233,10 +233,15 @@ public:
       InputRange, PointMap, VectorMap, SemanticMap, Kernel>;
 
     Reconstruction reconstruction(
-      input_range, point_map, normal_map, semantic_map, m_data, m_verbose);
+      input_range, point_map, normal_map, semantic_map, m_data, m_verbose, m_debug);
     bool success = reconstruction.detect_planar_shapes(np);
     if (!success) {
       CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, DETECTING PLANAR SHAPES FAILED!");
+    }
+
+    success = reconstruction.regularize_planar_shapes(np);
+    if (!success) {
+      CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, REGULARIZATION FAILED!");
     }
 
     success = partition(

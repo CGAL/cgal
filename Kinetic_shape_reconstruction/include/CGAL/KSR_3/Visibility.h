@@ -98,8 +98,6 @@ namespace KSR_3 {
     const std::map<PFace, Indices>& m_pface_points;
     const Point_map_3& m_point_map_3;
     const Vector_map_3& m_normal_map_3;
-
-    const Converter m_converter;
     const std::size_t m_num_samples;
     Random m_random;
 
@@ -153,12 +151,13 @@ namespace KSR_3 {
       if (true) return;
 
       // If we need more samples, we use Delaunay.
+      const Converter converter;
       const auto& pvertices = volume.pvertices;
       Delaunay_3 delaunay_3;
       for (const auto& pvertex : pvertices) {
         CGAL_assertion(m_data.has_ivertex(pvertex));
         const auto ivertex = m_data.ivertex(pvertex);
-        delaunay_3.insert(m_converter(m_data.point_3(ivertex)));
+        delaunay_3.insert(converter(m_data.point_3(ivertex)));
       }
 
       std::vector<IPoint_3> points;

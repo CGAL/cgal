@@ -110,12 +110,14 @@ public:
     const Vector_map& normal_map,
     const Semantic_map& semantic_map,
     Data_structure& data,
-    const bool verbose) :
+    const bool verbose,
+    const bool debug) :
   m_input_range(input_range),
   m_semantic_map(semantic_map),
   m_point_map_3(m_input_range, point_map),
   m_normal_map_3(m_input_range, normal_map),
   m_data(data),
+  m_debug(debug),
   m_verbose(verbose),
   m_planar_shape_type(Planar_shape_type::CONVEX_HULL) {
 
@@ -144,8 +146,17 @@ public:
     CGAL_assertion(m_polygons.size() == 1);
     create_approximate_walls(np);
     create_approximate_roofs(np);
-    dump_polygons("detected-planar-shapes");
+    if (m_debug) dump_polygons("detected-planar-shapes");
     return true;
+  }
+
+  template<typename NamedParameters>
+  const bool regularize_planar_shapes(
+    const NamedParameters& np) {
+
+    return true;
+    CGAL_assertion_msg(false, "TODO: REGULARIZE PLANAR SHAPES!");
+    return false;
   }
 
   template<typename NamedParameters>
@@ -163,14 +174,14 @@ public:
 
     CGAL_assertion(m_data.volumes().size() > 0);
     visibility.compute(m_data.volumes());
-    dump_volumes("visibility");
+    if (m_debug) dump_volumes("visibility");
 
     const FT beta = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::graphcut_beta), FT(1) / FT(2));
 
     Graphcut graphcut(m_data, beta);
     graphcut.compute(m_data.volumes());
-    dump_volumes("graphcut");
+    if (m_debug) dump_volumes("graphcut");
 
     extract_surface();
     CGAL_assertion_msg(false, "TODO: RECONSTRUCTION, COMPUTE MODEL!");
@@ -200,6 +211,7 @@ private:
   Vector_map_3 m_normal_map_3;
 
   Data_structure& m_data;
+  const bool m_debug;
   const bool m_verbose;
   const Planar_shape_type m_planar_shape_type;
   const Converter m_converter;
