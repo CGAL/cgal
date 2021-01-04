@@ -58,8 +58,13 @@ int main (int argc, char** argv)
   const double max_angle = 10.;
   const std::size_t min_region_size = 20;
 
+  // No constraint on radius
+  const double min_radius = 0.;
+  const double max_radius = std::numeric_limits<double>::infinity();
+
   Neighbor_query neighbor_query(points, k, points.point_map());
   Region_type region_type(points, tolerance, max_angle, min_region_size,
+                          min_radius, max_radius,
                           points.point_map(), points.normal_map());
   Region_growing region_growing(points, neighbor_query, region_type);
 

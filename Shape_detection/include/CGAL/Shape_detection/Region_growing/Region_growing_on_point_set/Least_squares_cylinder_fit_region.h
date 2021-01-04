@@ -95,6 +95,8 @@ private:
   const FT m_distance_threshold;
   const FT m_normal_threshold;
   const std::size_t m_min_region_size;
+  const FT m_min_radius;
+  const FT m_max_radius;
 
   const Point_map m_point_map;
   const Normal_map m_normal_map;
@@ -144,24 +146,28 @@ public:
     \pre `min_region_size > 0`
   */
   Least_squares_cylinder_fit_region  (const InputRange& input_range,
-                                    const FT distance_threshold = FT(1),
-                                    const FT angle_threshold = FT(25),
-                                    const std::size_t min_region_size = 3,
-                                    const PointMap point_map = PointMap(),
-                                    const NormalMap normal_map = NormalMap(),
-                                    const GeomTraits traits = GeomTraits())
-    : m_input_range(input_range)
-    , m_distance_threshold(distance_threshold)
-    , m_normal_threshold(static_cast<FT>(
-                           std::cos(
-                             CGAL::to_double(
-                               (angle_threshold * static_cast<FT>(CGAL_PI)) / FT(180))))),
-    m_min_region_size(min_region_size),
-    m_point_map(point_map),
-    m_normal_map(normal_map),
-    m_squared_distance_3(traits.compute_squared_distance_3_object()),
-    m_sqrt(Get_sqrt::sqrt_object(traits)),
-    m_radius(std::numeric_limits<FT>::quiet_NaN())
+                                      const FT distance_threshold = FT(1),
+                                      const FT angle_threshold = FT(25),
+                                      const std::size_t min_region_size = 3,
+                                      const FT minimum_radius = FT(0),
+                                      const FT maximum_radius = std::numeric_limits<FT>::infinity(),
+                                      const PointMap point_map = PointMap(),
+                                      const NormalMap normal_map = NormalMap(),
+                                      const GeomTraits traits = GeomTraits())
+  : m_input_range(input_range)
+  , m_distance_threshold(distance_threshold)
+  , m_normal_threshold(static_cast<FT>(
+                         std::cos(
+                           CGAL::to_double(
+                             (angle_threshold * static_cast<FT>(CGAL_PI)) / FT(180)))))
+  , m_min_region_size(min_region_size)
+  , m_min_radius (minimum_radius)
+  , m_max_radius (maximum_radius)
+  , m_point_map(point_map)
+  , m_normal_map(normal_map)
+  , m_squared_distance_3(traits.compute_squared_distance_3_object())
+  , m_sqrt(Get_sqrt::sqrt_object(traits))
+  , m_radius(std::numeric_limits<FT>::quiet_NaN())
   {
     CGAL_precondition(input_range.size() > 0);
     CGAL_precondition(distance_threshold >= FT(0));
@@ -206,6 +212,10 @@ public:
     if (std::isnan(m_radius))
       return false;
 
+    // If radius is out of bound, nothing fits, early ending
+    if (m_radius < m_min_radius || m_radius > m_max_radius)
+      return false;
+
     const auto& key = *(m_input_range.begin() + query_index);
     const Point_3& query_point = get(m_point_map, key);
     Vector_3 normal = get(m_normal_map, key);
@@ -241,7 +251,8 @@ public:
   */
   inline bool is_valid_region(const std::vector<std::size_t>& region) const
   {
-    return (region.size() >= m_min_region_size);
+    return ((m_min_radius <= m_radius && m_radius <= m_max_radius)
+            && (region.size() >= m_min_region_size));
   }
 
   /*!
