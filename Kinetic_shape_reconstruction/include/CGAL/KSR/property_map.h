@@ -144,30 +144,6 @@ struct Item_property_map {
   }
 };
 
-  template<
-  typename Point_map_3,
-  typename Point_2>
-  struct Point_2_from_point_3_property_map {
-
-    using key_type   = typename Point_map_3::key_type;
-    using value_type = Point_2;
-    using reference  = const value_type&;
-    using category   = boost::lvalue_property_map_tag;
-
-    const Point_map_3& m_point_map_3;
-    Point_2_from_point_3_property_map(
-      const Point_map_3& point_map_3) :
-    m_point_map_3(point_map_3)
-    { }
-
-    friend reference get(
-      const Point_2_from_point_3_property_map& pmap,
-      const key_type& key) {
-      const auto& point_3 = get(pmap.m_point_map_3, key);
-      return reinterpret_cast<reference>(point_3);
-    }
-  };
-
 } // namespace KSR
 } // namespace CGAL
 

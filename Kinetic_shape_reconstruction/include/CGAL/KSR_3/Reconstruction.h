@@ -33,6 +33,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
+#include <CGAL/Regularization/regularize_planes.h>
 
 // Internal includes.
 #include <CGAL/KSR/enum.h>
@@ -68,9 +69,12 @@ private:
   using Plane_3 = typename Kernel::Plane_3;
 
   using Data_structure = KSR_3::Data_structure<Kernel>;
-  using Point_map_3    = KSR::Item_property_map<Input_range, Point_map>;
-  using Vector_map_3   = KSR::Item_property_map<Input_range, Vector_map>;
   using PFace          = typename Data_structure::PFace;
+
+  using Point_map_3        = KSR::Item_property_map<Input_range, Point_map>;
+  using Vector_map_3       = KSR::Item_property_map<Input_range, Vector_map>;
+  using Plane_map          = CGAL::Identity_property_map<Plane_3>;
+  using Point_to_plane_map = CGAL::Shape_detection::RG::Point_to_shape_index_map;
 
   using Semantic_label    = KSR::Semantic_label;
   using Planar_shape_type = KSR::Planar_shape_type;
@@ -113,9 +117,11 @@ public:
     const bool verbose,
     const bool debug) :
   m_input_range(input_range),
+  m_point_map(point_map),
+  m_normal_map(normal_map),
   m_semantic_map(semantic_map),
-  m_point_map_3(m_input_range, point_map),
-  m_normal_map_3(m_input_range, normal_map),
+  m_point_map_3(m_input_range, m_point_map),
+  m_normal_map_3(m_input_range, m_normal_map),
   m_data(data),
   m_debug(debug),
   m_verbose(verbose),
@@ -125,6 +131,14 @@ public:
     collect_points(Semantic_label::GROUND           , m_ground_points);
     collect_points(Semantic_label::BUILDING_BOUNDARY, m_boundary_points);
     collect_points(Semantic_label::BUILDING_INTERIOR, m_interior_points);
+
+    if (
+      m_ground_points.size()   == 0 ||
+      m_boundary_points.size() == 0 ||
+      m_interior_points.size() == 0) {
+
+      CGAL_assertion_msg(false, "TODO: IMPLEMENT FREE-FORM RECONSTRUCTION!");
+    }
 
     if (m_verbose) {
       std::cout << std::endl << "--- RECONSTRUCTION: " << std::endl;
@@ -154,9 +168,61 @@ public:
   const bool regularize_planar_shapes(
     const NamedParameters& np) {
 
+    const FT regularize = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::regularize), true);
+    if (!regularize) return true;
+
+    // Regularize.
+    const FT max_accepted_angle    = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::angle_threshold), FT(15));
+    const FT max_distance_to_plane = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::distance_threshold), FT(1));
+
+    if (m_verbose) {
+      std::cout << std::endl << "--- REGULARIZING PLANAR SHAPES: " << std::endl;
+    }
+
+    std::vector<Plane_3> planes;
+    std::vector<Indices> regions;
+    create_planes_and_regions(planes, regions);
+
+    CGAL_assertion(planes.size() > 0);
+    CGAL_assertion(planes.size() == regions.size());
+    CGAL_assertion(planes.size() == m_polygons.size());
+
+    Plane_map plane_map;
+    Point_to_plane_map point_to_plane_map(m_input_range, regions);
+    CGAL::regularize_planes(
+      m_input_range,
+      m_point_map,
+      planes,
+      plane_map,
+      point_to_plane_map,
+      true, true, true, false,
+      max_accepted_angle,
+      max_distance_to_plane);
+
+    const std::size_t num_polygons = m_polygons.size();
+
+    m_polygons.clear();
+    m_region_map.clear();
+    for (std::size_t i = 0; i < regions.size(); ++i) {
+      const auto& region = regions[i];
+      const auto& plane  = planes[i];
+
+      const std::size_t shape_idx = add_planar_shape(region, plane);
+      CGAL_assertion(shape_idx != std::size_t(-1));
+      m_region_map[shape_idx] = region;
+    }
+    CGAL_assertion(m_polygons.size() == num_polygons);
+    CGAL_assertion(m_polygons.size() == m_region_map.size());
+
+    if (m_verbose) {
+      std::cout << "* num regularized planes: " << m_polygons.size() << std::endl;
+    }
+
+    if (m_debug) dump_polygons("regularized-planar-shapes");
     return true;
-    CGAL_assertion_msg(false, "TODO: REGULARIZE PLANAR SHAPES!");
-    return false;
   }
 
   template<typename NamedParameters>
@@ -205,6 +271,8 @@ public:
 
 private:
   const Input_range& m_input_range;
+  const Point_map& m_point_map;
+  const Vector_map& m_normal_map;
   const Semantic_map& m_semantic_map;
 
   Point_map_3  m_point_map_3;
@@ -408,18 +476,43 @@ private:
     CGAL_assertion(regions.size() == result.size());
   }
 
+  void create_planes_and_regions(
+    std::vector<Plane_3>& planes,
+    std::vector<Indices>& regions) const {
+
+    planes.clear();
+    planes.reserve(m_region_map.size());
+
+    regions.clear();
+    regions.reserve(m_region_map.size());
+
+    for (const auto& item : m_region_map) {
+      const std::size_t shape_idx = item.first;
+      const auto& polygon = m_polygons[shape_idx];
+      CGAL_assertion(polygon[0] != polygon[1]);
+      CGAL_assertion(polygon[1] != polygon[2]);
+      CGAL_assertion(polygon[2] != polygon[0]);
+      const Plane_3 plane(polygon[0], polygon[1], polygon[2]);
+      planes.push_back(plane);
+
+      const auto& region = item.second;
+      regions.push_back(region);
+    }
+    CGAL_assertion(planes.size()  == m_region_map.size());
+    CGAL_assertion(regions.size() == m_region_map.size());
+  }
+
   void assign_points_to_pfaces(std::map<PFace, Indices>& pface_points) const {
 
-    CGAL_assertion(m_region_map.size() > 0);
     pface_points.clear();
-
-    for (KSR::size_t i = 0; i < 6; ++i) {
+    for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
       const auto pfaces = m_data.pfaces(i);
       for (const auto pface : pfaces) {
         pface_points[pface] = Indices();
       }
     }
 
+    CGAL_assertion(m_region_map.size() > 0);
     for (const auto& item : m_region_map) {
       const std::size_t shape_idx = item.first;
       const auto& indices = item.second;
@@ -431,7 +524,6 @@ private:
 
       const auto pfaces = m_data.pfaces(support_plane_idx);
       for (const auto pface : pfaces) {
-        pface_points[pface] = Indices();
         const auto pvertices = m_data.pvertices_of_pface(pface);
 
         Delaunay tri;
@@ -459,7 +551,19 @@ private:
   }
 
   void extract_surface() {
-    CGAL_assertion_msg(false, "TODO: EXTRACT SURFACE FROM THE LABELED VOLUMES!");
+
+    std::vector<std::size_t> volumes;
+    for (const auto& volume : m_data.volumes()) {
+      if (volume.visibility == Visibility_label::INSIDE) {
+        volumes.push_back(volume.index);
+      }
+    }
+
+    if (volumes.size() == 1) {
+      CGAL_assertion_msg(false, "TODO: TRANSFORM 1 VOLUME CELL INTO A MODEL!");
+    } else {
+      CGAL_assertion_msg(false, "TODO: TRANSFORM MULTIPLE VOLUME CELLS INTO A MODEL!");
+    }
   }
 
   void dump_points(
