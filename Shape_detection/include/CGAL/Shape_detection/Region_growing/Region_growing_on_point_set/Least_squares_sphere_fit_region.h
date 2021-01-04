@@ -136,6 +136,14 @@ public:
     \param min_region_size the minimum number of 3D points a region
     must have. %Default is 3.
 
+    \param minimum_radius is the radius below which an estimated
+    sphere is considered as invalid and discarded. %Default is 0 (no
+    limit).
+
+    \param maximum_radius is the radius above which an estimated
+    sphere is considered as invalid and discarded. %Default is
+    infinity (no limit).
+
     \param point_map an instance of `PointMap` that maps an item from
     `input_range` to `Kernel::Point_3`
 
@@ -244,8 +252,9 @@ public:
   /*!
     \brief implements `RegionType::is_valid_region()`.
 
-    This function controls if the `region` contains at least
-    `min_region_size` points.
+    This function controls if the estimated radius is between
+    `minimum_radius` and `maximum_radius` and if the `region` contains
+    at least `min_region_size` points.
 
     \param region
     indices of points included in the region

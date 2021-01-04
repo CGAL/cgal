@@ -35,10 +35,10 @@ namespace Point_set {
   \brief Region type based on the quality of the least squares cylinder
   fit applied to 3D points.
 
-  This class fits a cylinder to chunks of points in a 3D point set and
-  controls the quality of this fit.  If all quality conditions are
-  satisfied, the chunk is accepted as a valid region, otherwise
-  rejected.
+  This class fits an infinite cylinder to chunks of points in a 3D
+  point set and controls the quality of this fit.  If all quality
+  conditions are satisfied, the chunk is accepted as a valid region,
+  otherwise rejected.
 
   \tparam GeomTraits
   must be a model of `Kernel`.
@@ -131,6 +131,14 @@ public:
 
     \param min_region_size the minimum number of 3D points a region
     must have. %Default is 3.
+
+    \param minimum_radius is the radius below which an estimated
+    cylinder is considered as invalid and discarded. %Default is 0 (no
+    limit).
+
+    \param maximum_radius is the radius above which an estimated
+    cylinder is considered as invalid and discarded. %Default is
+    infinity (no limit).
 
     \param point_map an instance of `PointMap` that maps an item from
     `input_range` to `Kernel::Point_3`
@@ -241,8 +249,9 @@ public:
   /*!
     \brief implements `RegionType::is_valid_region()`.
 
-    This function controls if the `region` contains at least
-    `min_region_size` points.
+    This function controls if the estimated radius is between
+    `minimum_radius` and `maximum_radius` and if the `region` contains
+    at least `min_region_size` points.
 
     \param region
     indices of points included in the region
