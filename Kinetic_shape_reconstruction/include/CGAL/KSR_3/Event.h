@@ -28,7 +28,6 @@
 namespace CGAL {
 namespace KSR_3 {
 
-// TODO: CAN WE AVOID FORWARD DECLARATION?
 template<typename Data_structure>
 class Event_queue;
 
@@ -52,8 +51,7 @@ public:
   friend Queue;
 
   // Event types.
-  // TODO: Can it be that there are other types of events?
-  // TODO: Should I use reference & in the constructors? Is that faster?
+  // TODO: SHOULD I USE REFERENCE & IN THE CONSTRUCTORS? IS THAT FASTER?
 
   // Empty event.
   Event() :

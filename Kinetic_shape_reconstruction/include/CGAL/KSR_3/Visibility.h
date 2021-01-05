@@ -90,7 +90,6 @@ namespace KSR_3 {
       for (auto& volume : volumes) {
         estimate_volume_label(volume);
       }
-      // CGAL_assertion_msg(false, "TODO: FINISH VISIBILITY!");
     }
 
   private:
