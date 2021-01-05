@@ -110,8 +110,8 @@ struct Transform {
 
         Transform<typename OutputPoly_2::NT, typename InputPoly_2::NT, Op> tr;
         return OutputPoly_2(
-            ::boost::make_transform_iterator(p.begin(), boost::bind2nd(tr, op)),
-            ::boost::make_transform_iterator(p.end(), boost::bind2nd(tr, op)));
+            ::boost::make_transform_iterator(p.begin(), [&op, &tr](const auto& v){ return tr(v, op); }),
+            ::boost::make_transform_iterator(p.end(), [&op, &tr](const auto& v){ return tr(v, op); }));
     }
 
     OutputPoly_2 operator()(
