@@ -12,8 +12,6 @@ using CGAL::compose1_2;
 using CGAL::compose2_1;
 using CGAL::compose2_2;
 using CGAL::compare_to_less;
-using boost::binder1st;
-using boost::bind1st;
 using std::accumulate;
 using std::plus;
 using std::multiplies;
@@ -31,8 +29,8 @@ int main()
 {
   plus< int >        pl;
   multiplies< int >  mu;
-  binder1st< plus< int > >       op1 = bind1st(pl, 1);
-  binder1st< multiplies< int > > op2 = bind1st(mu, 2);
+  auto op1 = [](int i){ return i+1; };
+  auto op2 = [](int i){ return i * 2; };
 
   // compose1_2:
   int a[] = {3,5,7,2,4};
