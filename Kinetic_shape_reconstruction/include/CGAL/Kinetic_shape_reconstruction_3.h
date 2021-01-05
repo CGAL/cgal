@@ -527,7 +527,6 @@ public:
 
   template<typename LCC>
   void output_partition(LCC& lcc) const {
-
     CGAL_assertion_msg(false, "TODO: OUTPUT PARTITION LCC!");
   }
 
@@ -535,7 +534,43 @@ public:
   void output_reconstructed_model(
     VertexOutputIterator vertices, FaceOutputIterator faces) const {
 
-    CGAL_assertion_msg(false, "TODO: OUTPUT RECONSTRUCTED MODEL!");
+    const auto& model = m_data.reconstructed_model();
+    CGAL_assertion(model.pfaces.size() > 0);
+
+    std::size_t num_vertices = 0;
+    KSR::Indexer<IVertex> indexer;
+
+    std::vector<std::size_t> face;
+    const auto& pfaces = model.pfaces;
+    for (const auto& pface : pfaces) {
+      face.clear();
+      const auto pvertices = m_data.pvertices_of_pface(pface);
+      for (const auto pvertex : pvertices) {
+
+        CGAL_assertion(m_data.has_ivertex(pvertex));
+        const auto ivertex = m_data.ivertex(pvertex);
+        const std::size_t idx = indexer(ivertex);
+
+        if (idx == num_vertices) {
+          *(vertices++) = m_data.point_3(ivertex);
+          ++num_vertices;
+        }
+        face.push_back(idx);
+      }
+      *(faces++) = face;
+    }
+  }
+
+  void output_reconstructed_model(Polygon_mesh& polygon_mesh) const {
+
+    std::vector<Point_3> vertices;
+    std::vector< std::vector<std::size_t> > faces;
+    output_reconstructed_model(
+      std::back_inserter(vertices), std::back_inserter(faces));
+    CGAL::Polygon_mesh_processing::orient_polygon_soup(vertices, faces);
+    polygon_mesh.clear();
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(
+      vertices, faces, polygon_mesh);
   }
 
   /*******************************

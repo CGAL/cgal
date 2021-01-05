@@ -198,7 +198,9 @@ public:
 
   struct Reconstructed_model {
     std::vector<PFace> pfaces;
-    // finish!
+    void clear() {
+      pfaces.clear();
+    }
   };
 
 private:
@@ -215,7 +217,7 @@ private:
   std::map<int, std::size_t> m_volume_level_map;
   std::map<PFace, std::pair<int, int> > m_map_volumes;
   std::map<KSR::size_t, KSR::size_t> m_input_polygon_map;
-  Reconstructed_model m_model;
+  Reconstructed_model m_reconstructed_model;
 
 public:
   Data_structure(const bool verbose) :
@@ -324,8 +326,8 @@ public:
   std::vector<Volume_cell>& volumes() { return m_volumes; }
   const std::vector<Volume_cell>& volumes() const { return m_volumes; }
 
-  Reconstructed_model& model() { return m_model; }
-  const Reconstructed_model& model() const { return m_model; }
+  Reconstructed_model& reconstructed_model() { return m_reconstructed_model; }
+  const Reconstructed_model& reconstructed_model() const { return m_reconstructed_model; }
 
   /*******************************
   **      SUPPORT PLANES        **

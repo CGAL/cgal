@@ -84,7 +84,7 @@ int main(const int argc, const char** argv) {
     return EXIT_FAILURE;
   }
   output_file_model.close();
-  std::cout << "* model exported successfully" << std::endl;
+  std::cout << "* the reconstructed model exported successfully" << std::endl;
 
   std::cout << std::endl << "3D KINETIC RECONSTRUCTION DONE!" << std::endl << std::endl;
   return EXIT_SUCCESS;

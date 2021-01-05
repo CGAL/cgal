@@ -117,8 +117,8 @@ namespace KSR_3 {
       volume.inside  = stats.first;
       volume.outside = stats.second;
 
-      std::cout << "visibility in/out: " <<
-        volume.inside << "/" << volume.outside << std::endl;
+      // std::cout << "visibility in/out: " <<
+      //   volume.inside << "/" << volume.outside << std::endl;
     }
 
     const std::pair<FT, FT> estimate_in_out_values(

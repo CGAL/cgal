@@ -231,6 +231,7 @@ public:
 
     if (m_verbose) {
       std::cout << std::endl << "--- COMPUTING THE MODEL: " << std::endl;
+      std::cout << "* computing visibility ... ";
     }
 
     std::map<PFace, Indices> pface_points;
@@ -242,6 +243,11 @@ public:
     visibility.compute(m_data.volumes());
     if (m_debug) dump_volumes("visibility");
 
+    if (m_verbose) {
+      std::cout << "done" << std::endl;
+      std::cout << "* applying graphcut ... ";
+    }
+
     const FT beta = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::graphcut_beta), FT(1) / FT(2));
 
@@ -249,9 +255,16 @@ public:
     graphcut.compute(m_data.volumes());
     if (m_debug) dump_volumes("graphcut");
 
+    if (m_verbose) {
+      std::cout << "done" << std::endl;
+      std::cout << "* extracting the model ... ";
+    }
+
     extract_surface();
-    CGAL_assertion_msg(false, "TODO: RECONSTRUCTION, COMPUTE MODEL!");
-    return false;
+    if (m_debug) dump_model("reconstructed-model");
+
+    if (m_verbose) std::cout << "done" << std::endl;
+    return true;
   }
 
   const std::vector<Polygon_3>& planar_shapes() const {
@@ -552,17 +565,60 @@ private:
 
   void extract_surface() {
 
-    std::vector<std::size_t> volumes;
-    for (const auto& volume : m_data.volumes()) {
-      if (volume.visibility == Visibility_label::INSIDE) {
-        volumes.push_back(volume.index);
-      }
-    }
+    auto& model = m_data.reconstructed_model();
+    model.clear();
 
-    if (volumes.size() == 1) {
-      CGAL_assertion_msg(false, "TODO: TRANSFORM 1 VOLUME CELL INTO A MODEL!");
-    } else {
-      CGAL_assertion_msg(false, "TODO: TRANSFORM MULTIPLE VOLUME CELLS INTO A MODEL!");
+    const auto& volumes = m_data.volumes();
+    const auto& items   = m_data.pface_neighbors();
+
+    for (const auto& item : items) {
+      const auto& pface = item.first;
+      const auto& neighbors = item.second;
+
+      const int idx1 = neighbors.first;
+      const int idx2 = neighbors.second;
+
+      // std::cout << "idx1/2: " << idx1 << "/" << idx2 << std::endl;
+
+      CGAL_assertion(idx1 >= 0 || idx2 >= 0);
+      if (idx1 >= 0 && idx2 >= 0) {
+        const auto& volume1 = volumes[idx1];
+        const auto& volume2 = volumes[idx2];
+
+        const auto label1 = volume1.visibility;
+        const auto label2 = volume2.visibility;
+
+        if (
+          label1 == Visibility_label::INSIDE &&
+          label2 == Visibility_label::OUTSIDE) {
+          model.pfaces.push_back(pface);
+        } else if (
+          label1 == Visibility_label::OUTSIDE &&
+          label2 == Visibility_label::INSIDE) {
+          model.pfaces.push_back(pface);
+        }
+        continue;
+      }
+
+      if (idx1 >= 0) {
+        CGAL_assertion(idx2 < 0);
+        const auto& volume1 = volumes[idx1];
+        const auto label1 = volume1.visibility;
+        if (label1 == Visibility_label::INSIDE) {
+          model.pfaces.push_back(pface);
+        }
+        continue;
+      }
+
+      if (idx2 >= 0) {
+        CGAL_assertion(idx1 < 0);
+        const auto& volume2 = volumes[idx2];
+        const auto label2 = volume2.visibility;
+        if (label2 == Visibility_label::INSIDE) {
+          model.pfaces.push_back(pface);
+        }
+        continue;
+      }
     }
   }
 
@@ -596,6 +652,27 @@ private:
         file_name + "-" + std::to_string(volume.index), false);
       }
     }
+  }
+
+  void dump_model(const std::string file_name) {
+
+    std::vector<Point_3> polygon;
+    std::vector< std::vector<Point_3> > polygons;
+    const auto& model = m_data.reconstructed_model();
+
+    KSR_3::Saver<Kernel> saver;
+    for (const auto& pface : model.pfaces) {
+      const auto pvertices = m_data.pvertices_of_pface(pface);
+      polygon.clear();
+      for (const auto pvertex : pvertices) {
+        CGAL_assertion(m_data.has_ivertex(pvertex));
+        const auto ivertex = m_data.ivertex(pvertex);
+        const auto point = m_data.point_3(ivertex);
+        polygon.push_back(point);
+      }
+      polygons.push_back(polygon);
+    }
+    saver.export_polygon_soup_3(polygons, file_name);
   }
 };
 
