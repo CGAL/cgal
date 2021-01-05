@@ -200,7 +200,9 @@ public:
     \param query_index
     index of the query point
 
-    The first and third parameters are not used in this implementation.
+    \param indices indices of the inliers of the region
+
+    The first parameter is not used in this implementation.
 
     \return Boolean `true` or `false`
 
