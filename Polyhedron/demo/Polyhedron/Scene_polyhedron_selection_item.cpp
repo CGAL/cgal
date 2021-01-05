@@ -2260,7 +2260,7 @@ bool Scene_polyhedron_selection_item::printVertexIds() const
 
 bool Scene_polyhedron_selection_item::printEdgeIds() const
 {
-  d->item->polyhedron_item()->printEdgeIds();
+  return d->item->polyhedron_item()->printEdgeIds();
 }
 
 bool Scene_polyhedron_selection_item::printFaceIds() const
