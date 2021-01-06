@@ -465,9 +465,9 @@ using std::max;
 
 //-------------------------------------------------------------------//
 // Is Geomview usable ?
-#if !defined(_MSC_VER) && !defined(__MINGW32__)
-#  define CGAL_USE_GEOMVIEW
-#endif
+//#if !defined(_MSC_VER) && !defined(__MINGW32__)
+//#  define CGAL_USE_GEOMVIEW
+//#endif
 
 
 //-------------------------------------------------------------------//
