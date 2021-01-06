@@ -31,6 +31,17 @@ set(list_of_whitelisted_headers_txt [=[
   CGAL/Three/Viewer_config.h
   CGAL/Three/Viewer_interface.h
   CGAL/Three/Three.h
+  CGAL/boost/graph/properties_OpenMesh.h
+  CGAL/boost/graph/properties_TriMesh_ArrayKernelT.h
+  CGAL/boost/graph/properties_PolyMesh_ArrayKernelT.h
+  CGAL/boost/graph/graph_traits_TriMesh_ArrayKernelT.h
+  CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h
+  CGAL/boost/graph/partition.h
+  CGAL/boost/graph/METIS/partition_dual_graph.h
+  CGAL/boost/graph/METIS/partition_graph.h
+  CGAL/IO/Triangulation_geomview_ostream_3.h
+  CGAL/IO/Triangulation_geomview_ostream_2.h
+  CGAL/IO/Polyhedron_geomview_ostream.h
 
 ]=])
 
