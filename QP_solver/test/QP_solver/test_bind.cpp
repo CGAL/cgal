@@ -20,6 +20,8 @@ struct Quotient_inverter
   }
 };
 
+using namespace std::placeholders;
+
 int main()
 {
   // create composed functor (a,b) -> b/a...
