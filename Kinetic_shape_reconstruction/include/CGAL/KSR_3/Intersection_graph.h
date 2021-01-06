@@ -263,6 +263,10 @@ public:
     return boost::edge(source, target, m_graph).second;
   }
 
+  const Edge_descriptor edge(const Vertex_descriptor& source, const Vertex_descriptor& target) const {
+    return boost::edge(source, target, m_graph).first;
+  }
+
   decltype(auto) incident_edges(const Vertex_descriptor& vertex) const {
     return CGAL::make_range(boost::out_edges(vertex, m_graph));
   }
