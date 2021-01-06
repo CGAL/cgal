@@ -21,8 +21,10 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_MINIMAL_ANGLE_REMESHING_H
 #define CGAL_POLYGON_MESH_PROCESSING_MINIMAL_ANGLE_REMESHING_H
 
-#include <CGAL/Simple_cartesian.h>
-#include "internal/minangle_remesh_impl.h"
+#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+
+#include <CGAL/Polygon_mesh_processing/internal/minangle_remesh_impl.h>
 
 namespace CGAL{
 namespace Polygon_mesh_processing {
@@ -112,11 +114,10 @@ void minimal_angle_remeshing(TriangleMesh& tm, const NamedParameters& np)
 {
   TriangleMesh tm_input(tm);
 
-  // TODO: given the TriangleMesh, how can we deduce its Kernel, so as to Instantiate
-  // internal::Minangle_remesher<Kernel> ?
+  typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
+  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
-  typedef CGAL::Simple_Cartesian<double> Kernel;
-  typedef internal::Minangle_remesher<Kernel> Minangle_remesher;
+  typedef internal::Minangle_remesher<GT> Minangle_remesher;
   Minangle_remesher remesher;
 
   // TODO: set the parameters from np to remesher, for instance,
