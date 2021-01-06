@@ -29,8 +29,8 @@ int main()
 {
   plus< int >        pl;
   multiplies< int >  mu;
-  auto op1 = [](int i){ return i+1; };
-  auto op2 = [](int i){ return i * 2; };
+  std::function<int(int)> op1 = [](int i){ return i+1; };
+  std::function<int(int)> op2 = [](int i){ return i * 2; };
 
   // compose1_2:
   int a[] = {3,5,7,2,4};
