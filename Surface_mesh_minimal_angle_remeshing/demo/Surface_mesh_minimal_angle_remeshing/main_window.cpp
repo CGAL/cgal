@@ -473,6 +473,14 @@ void MainWindow::on_actionMinAngle_remesh_properties_triggered() {
   update_menu_items();
 }
 
+void MainWindow::on_actionTest_triggered() {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  m_pScene->test();
+  QApplication::restoreOverrideCursor();
+  m_pViewer->update();
+  update_menu_items();
+}
+
 // view
 void MainWindow::on_actionView_input_triggered() {
   m_pScene->toggle_view_input();

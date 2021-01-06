@@ -21,9 +21,11 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_MINIMAL_ANGLE_REMESHING_H
 #define CGAL_POLYGON_MESH_PROCESSING_MINIMAL_ANGLE_REMESHING_H
 
+#include <CGAL/Simple_cartesian.h>
+#include "internal/minangle_remesh_impl.h"
+
 namespace CGAL{
 namespace Polygon_mesh_processing {
-
 
 /*!
 * \ingroup PMP_meshing_grp
@@ -107,7 +109,24 @@ namespace Polygon_mesh_processing {
 */
 template <class TriangleMesh, class NamedParameters>
 void minimal_angle_remeshing(TriangleMesh& tm, const NamedParameters& np)
-{};
+{
+  TriangleMesh tm_input(tm);
+
+  // TODO: given the TriangleMesh, how can we deduce its Kernel, so as to Instantiate
+  // internal::Minangle_remesher<Kernel> ?
+
+  typedef CGAL::Simple_Cartesian<double> Kernel;
+  typedef internal::Minangle_remesher<Kernel> Minangle_remesher;
+  Minangle_remesher remesher;
+
+  // TODO: set the parameters from np to remesher, for instance,
+  // remesher.set_max_error_threshold(0.2);
+  // ...
+
+  remesher.set_input(&tm_input, remesher.get_verbose_progress());
+  remesher.set_remesh(&tm, remesher.get_verbose_progress());
+  remesher.maximize_minimal_angle();
+};
 
 template <class TriangleMesh>
 void minimal_angle_remeshing(TriangleMesh& tm)

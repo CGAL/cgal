@@ -52,7 +52,7 @@
      <x>0</x>
      <y>0</y>
      <width>714</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -210,6 +210,8 @@
     <addaction name="separator"/>
     <addaction name="actionMinAngle_parameter_settings"/>
     <addaction name="actionMinAngle_remesh_properties"/>
+    <addaction name="separator"/>
+    <addaction name="actionTest"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -645,6 +647,11 @@
   <action name="actionIsotropic_parameter_settings">
    <property name="text">
     <string>Parameter settings...</string>
+   </property>
+  </action>
+  <action name="actionTest">
+   <property name="text">
+    <string>Test</string>
    </property>
   </action>
  </widget>

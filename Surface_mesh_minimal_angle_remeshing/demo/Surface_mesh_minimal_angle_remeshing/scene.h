@@ -434,6 +434,7 @@ class Scene : public QObject {
   void increase_minimal_angle();
   void maximize_minimal_angle();
   void final_vertex_relocation();
+  void test();                                  // test the minimal_angle_remeshing
 
   // 6) operations (may need update)
   void update_feature_intensities();

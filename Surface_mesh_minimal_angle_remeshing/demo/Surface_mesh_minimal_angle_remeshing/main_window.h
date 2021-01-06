@@ -80,6 +80,7 @@ class MainWindow : public CGAL::Qt::DemosMainWindow {
   void on_actionMinAngle_final_Vertex_relocation_triggered();
   void on_actionMinAngle_parameter_settings_triggered();
   void on_actionMinAngle_remesh_properties_triggered();
+  void on_actionTest_triggered();
   
   // view menu
   void on_actionView_input_triggered();                           // input
