@@ -37,12 +37,17 @@ create_single_source_cgal_program( "edge_aware_upsample_test.cpp" )
 create_single_source_cgal_program( "structuring_test.cpp" )
 
 #Use LAS
-find_package(LASLIB)
-include(CGAL_LASLIB_support)
-if (TARGET CGAL::LASLIB_support)
-  target_link_libraries(test_read_write_point_set PUBLIC ${CGAL_libs} CGAL::LASLIB_support)
+#disable if MSVC 2017
+if(NOT MSVC_VERSION OR (MSVC_VERSION GREATER_EQUAL 1910 AND  MSVC_VERSION LESS 1919))
+  find_package(LASLIB)
+  include(CGAL_LASLIB_support)
+  if (TARGET CGAL::LASLIB_support)
+    target_link_libraries(test_read_write_point_set PUBLIC ${CGAL_libs} CGAL::LASLIB_support)
+  else()
+    message(STATUS "NOTICE : the LAS reader test requires LASlib and will not be compiled.")
+  endif()
 else()
-  message(STATUS "NOTICE : the LAS reader test requires LASlib and will not be compiled.")
+  message(STATUS "NOTICE : the LAS reader does not work with Visual Studio 2017.")
 endif()
 
 # Use Eigen
