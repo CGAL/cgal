@@ -262,7 +262,7 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
   {
     int argc=1;
     const char* argv[2]={"p2t2_viewer","\0"};
-    QApplication app(argc,const_cast<char**>(argv));
+    QApplication app(CGAL::code_to_call_before_creation_of_QCoreApplication(argc),const_cast<char**>(argv));
     DefaultColorFunctorP2T2 fcolor;
     SimplePeriodic2Triangulation2ViewerQt<CGAL_P2T2_TYPE,
                                           DefaultColorFunctorP2T2>

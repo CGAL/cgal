@@ -255,7 +255,7 @@ void draw(const CGAL_NEF3_TYPE &anef,
   {
     int argc = 1;
     const char *argv[2] = {"nef_polyhedron_viewer", "\0"};
-    QApplication app(argc, const_cast<char **>(argv));
+    QApplication app(CGAL::code_to_call_before_creation_of_QCoreApplication(argc), const_cast<char **>(argv));
     DefaultColorFunctorNefPolyhedron fcolor;
     SimpleNefPolyhedronViewerQt<CGAL_NEF3_TYPE,
                                 DefaultColorFunctorNefPolyhedron>

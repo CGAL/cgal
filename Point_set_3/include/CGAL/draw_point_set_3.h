@@ -102,7 +102,7 @@ void draw(const Point_set_3<P, V>& apointset,
   {
     int argc=1;
     const char* argv[2]={"point_set_viewer","\0"};
-    QApplication app(argc,const_cast<char**>(argv));
+    QApplication app(CGAL::code_to_call_before_creation_of_QCoreApplication(argc),const_cast<char**>(argv));
     SimplePointSetViewerQt<Point_set_3<P, V> > mainwindow(app.activeWindow(),
                                                           apointset,
                                                           title);

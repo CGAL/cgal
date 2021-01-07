@@ -210,7 +210,7 @@ void draw(const CGAL_POLY_TYPE& apoly,
   {
     int argc=1;
     const char* argv[2]={"polyhedron_viewer","\0"};
-    QApplication app(argc,const_cast<char**>(argv));
+    QApplication app(CGAL::code_to_call_before_creation_of_QCoreApplication(argc),const_cast<char**>(argv));
     DefaultColorFunctorPolyhedron fcolor;
     SimplePolyhedronViewerQt<CGAL_POLY_TYPE, DefaultColorFunctorPolyhedron>
       mainwindow(app.activeWindow(), apoly, title, nofill, fcolor);

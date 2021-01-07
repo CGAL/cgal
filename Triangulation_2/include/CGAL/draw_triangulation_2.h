@@ -22,31 +22,6 @@
 
 namespace CGAL
 {
-namespace internal_test{
-
-
-int& code_to_call_before_creation_of_QCoreApplication(int& i) {
-  QSurfaceFormat fmt;
-#ifdef Q_OS_MAC
-  fmt.setVersion(4, 1);
-#else
-  fmt.setVersion(4, 3);
-#endif
-  fmt.setRenderableType(QSurfaceFormat::OpenGL);
-  fmt.setProfile(QSurfaceFormat::CoreProfile);
-  fmt.setOption(QSurfaceFormat::DebugContext);
-  QSurfaceFormat::setDefaultFormat(fmt);
-
-  //for windows
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
-  QCoreApplication::setAttribute(::Qt::AA_UseDesktopOpenGL);
-#endif
-
-  //We set the locale to avoid any trouble with VTK
-  setlocale(LC_ALL, "C");
-  return i;
-}
-}
 
 // Default color functor; user can change it to have its own face color
 struct DefaultColorFunctorT2
@@ -171,7 +146,7 @@ void draw(const CGAL_T2_TYPE& at2,
   {
     int argc=1;
     const char* argv[2]={"t2_viewer","\0"};
-    QApplication app(CGAL::internal_test::code_to_call_before_creation_of_QCoreApplication(argc),const_cast<char**>(argv));
+    QApplication app(CGAL::code_to_call_before_creation_of_QCoreApplication(argc),const_cast<char**>(argv));
     DefaultColorFunctorT2 fcolor;
     SimpleTriangulation2ViewerQt<CGAL_T2_TYPE, DefaultColorFunctorT2>
       mainwindow(app.activeWindow(), at2, title, nofill, fcolor);

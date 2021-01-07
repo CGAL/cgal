@@ -411,7 +411,7 @@ void draw(const Mesh& alcc,
   {
     int argc=1;
     const char* argv[2]={"lccviewer","\0"};
-    QApplication app(argc,const_cast<char**>(argv));
+    QApplication app(CGAL::code_to_call_before_creation_of_QCoreApplication(argc),const_cast<char**>(argv));
     Face_graph_with_path_viewer<Mesh, DrawingFunctor> mainwindow(app.activeWindow(),
                                                                  alcc, &paths, amark,
                                                                  title, nofill,

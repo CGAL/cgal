@@ -406,7 +406,7 @@ void draw(const CGAL_LCC_TYPE& alcc,
   {
     int argc=1;
     const char* argv[2]={"lccviewer","\0"};
-    QApplication app(argc,const_cast<char**>(argv));
+    QApplication app(CGAL::code_to_call_before_creation_of_QCoreApplication(argc),const_cast<char**>(argv));
     SimpleLCCViewerQt<CGAL_LCC_TYPE, DrawingFunctorLCC>
       mainwindow(app.activeWindow(), &alcc, title, nofill, drawing_functor);
     mainwindow.show();

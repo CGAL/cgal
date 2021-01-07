@@ -318,7 +318,7 @@ void draw(const CGAL_VORONOI_TYPE &av2,
   if (!cgal_test_suite) {
     int argc = 1;
     const char *argv[2] = {"voronoi_2_viewer", "\0"};
-    QApplication app(argc, const_cast<char **>(argv));
+    QApplication app(CGAL::code_to_call_before_creation_of_QCoreApplication(argc), const_cast<char **>(argv));
     DefaultColorFunctorV2 fcolor;
     SimpleVoronoiDiagram2ViewerQt<CGAL_VORONOI_TYPE, DefaultColorFunctorV2>
         mainwindow(app.activeWindow(), av2, title, nofill,
