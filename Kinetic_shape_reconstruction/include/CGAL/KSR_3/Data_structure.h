@@ -1911,6 +1911,7 @@ public:
       apply_open_case(
         min_time, max_time,
         pvertex, ivertex,
+        front, back,
         prev, next,
         iedges, crossed, new_pvertices);
     }
@@ -1976,7 +1977,9 @@ public:
 
     CGAL_assertion(iedge1 != iedge2);
     bool stub, bbox_reached_1, bbox_reached_2;
+    // std::tie(stub, bbox_reached_1) = this->is_occupied(pvertex, ivertex, iedge1);
     std::tie(stub, bbox_reached_1) = is_occupied(pvertex, iedge1);
+    // std::tie(stub, bbox_reached_2) = this->is_occupied(pvertex, ivertex, iedge2);
     std::tie(stub, bbox_reached_2) = is_occupied(pvertex, iedge2);
 
     // bool is_occupied_1 = false, is_occupied_2 = false;
@@ -1992,7 +1995,7 @@ public:
     // }
 
     if (bbox_reached_1 && bbox_reached_2) {
-      std::cout << str(iedge1) << " : " << str(iedge2) << " -> exterior" << std::endl;
+      std::cout << str(iedge1) << " : " << str(iedge2) << " -> bbox" << std::endl;
       return false;
     }
 
@@ -2031,63 +2034,6 @@ public:
     return true;
   }
 
-  void try_adding_new_pface(
-    const std::pair<IEdge, IEdge>& pair,
-    const PVertex& pv_prev,
-    const PVertex& pv_next,
-    const PVertex& pvertex,
-    const IVertex& ivertex,
-    const bool reverse,
-    std::set<IEdge>& new_crossed,
-    std::vector<PVertex>& new_pvertices) {
-
-    const auto& iedge1 = pair.first;
-    const auto& iedge2 = pair.second;
-
-    bool is_occupied_1, bbox_reached_1;
-    std::tie(is_occupied_1, bbox_reached_1) = is_occupied(pvertex, ivertex, iedge1);
-
-    bool is_occupied_2, bbox_reached_2;
-    std::tie(is_occupied_2, bbox_reached_2) = is_occupied(pvertex, ivertex, iedge2);
-
-    const auto pface = pface_of_pvertex(pvertex);
-    if (bbox_reached_1) {
-
-      CGAL_assertion(!bbox_reached_2);
-      if (is_occupied_2) {
-        if (this->k(pface) == 1) {
-          if (m_verbose) std::cout << "- stop occupied, k = 1" << std::endl;
-          return;
-        } else {
-          CGAL_assertion_msg(false, "TODO: INSERT NEW PFACE! K > 1!");
-        }
-      } else {
-        CGAL_assertion_msg(false, "TODO: INSERT NEW PFACE! FREE ENTRANCE!");
-      }
-
-    } else if (bbox_reached_2) {
-
-      CGAL_assertion(!bbox_reached_1);
-      if (is_occupied_1) {
-        if (this->k(pface) == 1) {
-          if (m_verbose) std::cout << "- stop occupied, k = 1" << std::endl;
-          return;
-        } else {
-          CGAL_assertion_msg(false, "TODO: INSERT NEW PFACE! K > 1!");
-        }
-      } else {
-        if (m_verbose) std::cout << "- continue with new pface" << std::endl;
-        add_new_pface(pvertex, pv_prev, pv_next, pface,
-          iedge1, iedge2, reverse, new_crossed, new_pvertices);
-        return;
-      }
-
-    } else {
-      CGAL_assertion(!bbox_reached_1 && !bbox_reached_2);
-      CGAL_assertion_msg(false, "TODO: INSERT NEW PFACE!");
-    }
-  }
-
   void try_adding_new_pfaces(
     const std::vector< std::pair<IEdge, IEdge> >& potential,
     const PVertex& pv_prev,
@@ -2105,6 +2051,24 @@ public:
     const auto& iedge_b = pair1.first;
     const auto& iedge_e = pair2.second;
 
+    const auto pface = pface_of_pvertex(pvertex);
+    bool is_occupied_1, bbox_reached_1;
+    // std::tie(is_occupied_1, bbox_reached_1) = this->is_occupied(pvertex, ivertex, iedge_b);
+    std::tie(is_occupied_1, bbox_reached_1) = this->is_occupied(pvertex, iedge_b);
+    bool is_occupied_2, bbox_reached_2;
+    // std::tie(is_occupied_2, bbox_reached_2) = this->is_occupied(pvertex, ivertex, iedge_e);
+    std::tie(is_occupied_2, bbox_reached_2) = this->is_occupied(pvertex, iedge_e);
+
+    if (bbox_reached_1 && bbox_reached_2) {
+      std::cout << "- early stop, both bbox" << std::endl;
+      return;
+    }
+
+    if (is_occupied_1 && is_occupied_2 && this->k(pface) == 1) {
+      std::cout << "- early stop, both occupied, k = 1" << std::endl;
+      return;
+    }
+
     std::vector< std::pair<IEdge, bool> > iedges;
     iedges.push_back(std::make_pair(iedge_b, false));
     for (std::size_t i = 1; i < potential.size(); ++i) {
@@ -2113,6 +2077,93 @@ public:
     }
     iedges.push_back(std::make_pair(iedge_e, false));
     CGAL_assertion(iedges.front().first != iedges.back().first);
+
+    if (bbox_reached_1 || bbox_reached_2) {
+
+      CGAL_assertion(potential.size() < 3);
+      // Do nothing, should always work!
+      // CGAL_assertion_msg(false, "TODO: ADD EXTRA CHECKS FOR N PFACES, BBOX!");
+
+    } else if (potential.size() == 1) {
+
+      // Do nothing, should always work!
+      // CGAL_assertion_msg(false, "TODO: ADD EXTRA CHECKS FOR 1 PFACE!");
+
+    } else if (potential.size() == 2) {
+
+      if (!is_occupied_1 && is_occupied_2) {
+
+        const std::size_t num_added_pfaces =
+          count_added_pfaces(pvertex, ivertex, iedges);
+        std::cout << "- num potentially added pfaces: " << num_added_pfaces << std::endl;
+        if (num_added_pfaces > 1) {
+          // CGAL_assertion_msg(false, "TODO: I THINK WE SHOULD RETURN HERE!");
+          return;
+        } else {
+          // Do nothing, should always work!
+          // CGAL_assertion_msg(false, "TODO: TEST THIS CASE!");
+        }
+
+      } else if (!is_occupied_2 && is_occupied_1) {
+
+        auto tmp = iedges;
+        std::reverse(tmp.begin(), tmp.end());
+        const std::size_t num_added_pfaces =
+          count_added_pfaces(pvertex, ivertex, tmp);
+        std::cout << "- num potentially added pfaces: " << num_added_pfaces << std::endl;
+        if (num_added_pfaces > 1) {
+          CGAL_assertion_msg(false, "TODO: I THINK WE SHOULD RETURN HERE!");
+          return;
+        } else {
+          // Do nothing, should always work!
+          CGAL_assertion_msg(false, "TODO: TEST THIS CASE!");
+        }
+
+      } else {
+        // Do nothing, should always work!
+        // CGAL_assertion_msg(false, "TODO: SIMPLE CASE FOR 2 PFACES!");
+      }
+
+      // CGAL_assertion_msg(false, "TODO: ADD EXTRA CHECKS FOR 2 PFACES!");
+    } else if (potential.size() == 3) {
+
+      if (!is_occupied_1 && is_occupied_2) {
+
+        const std::size_t num_added_pfaces =
+          count_added_pfaces(pvertex, ivertex, iedges);
+        std::cout << "- num potentially added pfaces: " << num_added_pfaces << std::endl;
+        if (num_added_pfaces > 1) {
+          // CGAL_assertion_msg(false, "TODO: I THINK WE SHOULD RETURN HERE!");
+          return;
+        } else {
+          // Do nothing, should always work!
+          // CGAL_assertion_msg(false, "TODO: TEST THIS CASE!");
+        }
+
+      } else if (!is_occupied_2 && is_occupied_1) {
+
+        auto tmp = iedges;
+        std::reverse(tmp.begin(), tmp.end());
+        const std::size_t num_added_pfaces =
+          count_added_pfaces(pvertex, ivertex, tmp);
+        std::cout << "- num potentially added pfaces: " << num_added_pfaces << std::endl;
+        if (num_added_pfaces > 1) {
+          CGAL_assertion_msg(false, "TODO: I THINK WE SHOULD RETURN HERE!");
+          return;
+        } else {
+          // Do nothing, should always work!
+          CGAL_assertion_msg(false, "TODO: TEST THIS CASE!");
+        }
+
+      } else {
+        // Do nothing, should always work!
+        CGAL_assertion_msg(false, "TODO: SIMPLE CASE FOR 3 PFACES!");
+      }
+
+      // CGAL_assertion_msg(false, "TODO: ADD EXTRA CHECKS FOR 3 PFACES!");
+    } else if (potential.size() > 3) {
+      CGAL_assertion_msg(false, "TODO: CAN WE HAVE MORE THAN 3 POTENTIAL PFACES?");
+    }
 
     traverse_iedges(
       pv_prev, pv_next, pvertex, ivertex, is_open, reverse,
@@ -2123,6 +2174,23 @@ public:
     traverse_iedges(
       pv_prev, pv_next, pvertex, ivertex, is_open, reverse,
       iedges, new_crossed, new_pvertices);
+  }
+
+  const std::size_t count_added_pfaces(
+    const PVertex& pvertex,
+    const IVertex& ivertex,
+    const std::vector< std::pair<IEdge, bool> >& iedges) const {
+
+    std::size_t num_added_pfaces = 0;
+    for (std::size_t i = 0; i < iedges.size() - 1; ++i) {
+      const auto& iedge = iedges[i].first;
+      bool is_occupied, bbox_reached;
+      // std::tie(is_occupied, bbox_reached) = this->is_occupied(pvertex, ivertex, iedge);
+      std::tie(is_occupied, bbox_reached) = this->is_occupied(pvertex, iedge);
+      if (is_occupied || bbox_reached) break;
+      ++num_added_pfaces;
+    }
+    return num_added_pfaces;
   }
 
   void traverse_iedges(
@@ -2155,7 +2223,8 @@ public:
       const auto& iedge_i = iedges[i].first;
 
       bool is_occupied, bbox_reached;
-      std::tie(is_occupied, bbox_reached) = this->is_occupied(pvertex, ivertex, iedge_i);
+      // std::tie(is_occupied, bbox_reached) = this->is_occupied(pvertex, ivertex, iedge_i);
+      std::tie(is_occupied, bbox_reached) = this->is_occupied(pvertex, iedge_i);
 
       if (bbox_reached) {
         std::cout << "- stop bbox" << std::endl;
@@ -2303,7 +2372,8 @@ public:
     const auto pedges = pedges_around_pvertex(pvertex);
     for (const auto pedge : pedges) {
       if (!has_iedge(pedge)) {
-        // std::cout << "disconnected pedge: " << segment_3(pedge) << std::endl;
+        std::cout << "disconnected pedge: " << segment_3(pedge) << std::endl;
+        CGAL_assertion(has_iedge(pedge)); // TODO: TURN IT ON IF NECESSARY!
 
         const auto pother = this->opposite(pedge, pvertex);
         const auto iv1 = this->ivertex(pvertex);
@@ -2435,7 +2505,7 @@ public:
 
         if (m_verbose) std::cout << "- cropping" << std::endl;
         PVertex cropped;
-        if (prev_iedge != null_iedge() && prev_iedge == crossed[i]) {
+        if (prev_iedge == crossed[i]) {
           if (m_verbose) std::cout << "- prev, parallel case" << std::endl;
 
           // In case, we are parallel, we update the future point and direction.
@@ -2507,21 +2577,21 @@ public:
         if (potential.size() == 1) {
           try_adding_new_pfaces(
             potential, back, prev, pvertex, ivertex, false, true, new_crossed, new_pvertices);
-          CGAL_assertion_msg(false, "TODO: BACK, INSERT 1 NEW PFACE!");
+          // CGAL_assertion_msg(false, "TODO: BACK, INSERT 1 NEW PFACE!");
         } else if (potential.size() == 2) {
           try_adding_new_pfaces(
             potential, back, prev, pvertex, ivertex, false, true, new_crossed, new_pvertices);
-          CGAL_assertion_msg(false, "TODO: BACK, INSERT 2 NEW PFACES!");
+          // CGAL_assertion_msg(false, "TODO: BACK, INSERT 2 NEW PFACES!");
         } else if (potential.size() == 3) {
           try_adding_new_pfaces(
             potential, back, prev, pvertex, ivertex, false, true, new_crossed, new_pvertices);
-          CGAL_assertion_msg(false, "TODO: BACK, INSERT 3 NEW PFACES!");
+          // CGAL_assertion_msg(false, "TODO: BACK, INSERT 3 NEW PFACES!");
         } else {
           CGAL_assertion_msg(false, "TODO: BACK, INSERT > 3 NEW PFACES!");
         }
       }
 
-      CGAL_assertion_msg(false, "TODO: BACK, TEST NEW CODE!");
+      // CGAL_assertion_msg(false, "TODO: BACK, TEST NEW CODE!");
       crossed.clear();
       crossed.reserve(new_crossed.size());
       for (const auto& item : new_crossed) {
@@ -2693,7 +2763,7 @@ public:
         if (m_verbose) std::cout << "- cropping" << std::endl;
 
         PVertex cropped;
-        if (next_iedge != null_iedge() && next_iedge == crossed[i]) {
+        if (next_iedge == crossed[i]) {
           if (m_verbose) std::cout << "- next, parallel case" << std::endl;
 
           // In case, we are parallel, we update the future point and direction.
@@ -2765,21 +2835,21 @@ public:
         if (potential.size() == 1) {
           try_adding_new_pfaces(
             potential, front, next, pvertex, ivertex, false, false, new_crossed, new_pvertices);
-          CGAL_assertion_msg(false, "TODO: FRONT, INSERT 1 NEW PFACE!");
+          // CGAL_assertion_msg(false, "TODO: FRONT, INSERT 1 NEW PFACE!");
         } else if (potential.size() == 2) {
           try_adding_new_pfaces(
             potential, front, next, pvertex, ivertex, false, false, new_crossed, new_pvertices);
-          CGAL_assertion_msg(false, "TODO: FRONT, INSERT 2 NEW PFACES!");
+          // CGAL_assertion_msg(false, "TODO: FRONT, INSERT 2 NEW PFACES!");
         } else if (potential.size() == 3) {
           try_adding_new_pfaces(
             potential, front, next, pvertex, ivertex, false, false, new_crossed, new_pvertices);
-          CGAL_assertion_msg(false, "TODO: FRONT, INSERT 3 NEW PFACES!");
+          // CGAL_assertion_msg(false, "TODO: FRONT, INSERT 3 NEW PFACES!");
         } else {
           CGAL_assertion_msg(false, "TODO: FRONT, INSERT > 3 NEW PFACES!");
         }
       }
 
-      CGAL_assertion_msg(false, "TODO: FRONT, TEST NEW CODE!");
+      // CGAL_assertion_msg(false, "TODO: FRONT, TEST NEW CODE!");
       crossed.clear();
       crossed.reserve(new_crossed.size());
       for (const auto& item : new_crossed) {
@@ -2851,6 +2921,8 @@ public:
     const FT min_time, const FT max_time,
     const PVertex& pvertex,
     const IVertex& ivertex,
+    const PVertex& front,
+    const PVertex& back,
     const PVertex& prev,
     const PVertex& next,
     const std::vector< std::pair<IEdge, Direction_2> >& iedges,
@@ -2952,13 +3024,30 @@ public:
       }
     }
 
+    if (line_idx(crossed.front()) == line_idx(crossed.back())) {
+      CGAL_assertion(crossed.front() != crossed.back());
+      const auto& fd1 = future_directions.front();
+      const auto& fd2 = future_directions.back();
+      if (fd1 * fd2 > FT(0)) {
+        std::cout << "- update future points and directions" << std::endl;
+        std::size_t idx = 0;
+        compute_future_point_and_direction(
+          idx, front, next, crossed.front(), future_points[idx], future_directions[idx]);
+
+        idx = future_points.size() - 1;
+        compute_future_point_and_direction(
+          idx, back, prev, crossed.back(), future_points[idx], future_directions[idx]);
+      }
+      CGAL_assertion_msg(fd1 * fd2 <= FT(0), "ERROR: WRONG FUTURE DIRECTIONS!");
+    }
+
     // Crop the pvertex.
     CGAL_assertion(new_pvertices.size() == 0);
     std::set<IEdge> new_crossed;
 
     { // first crop
       PVertex cropped;
-      if (next_iedge != null_iedge() && next_iedge == crossed.front()) {
+      if (next_iedge == crossed.front()) {
         if (m_verbose) std::cout << "- next, parallel case" << std::endl;
 
         // In case, we are parallel, we update the future point and direction.
@@ -2990,7 +3079,7 @@ public:
 
     { // second crop
       PVertex cropped;
-      if (prev_iedge != null_iedge() && prev_iedge == crossed.back()) {
+      if (prev_iedge == crossed.back()) {
         if (m_verbose) std::cout << "- prev, parallel case" << std::endl;
 
         // In case, we are parallel, we update the future point and direction.
@@ -3038,11 +3127,11 @@ public:
         if (potential.size() == 1) {
           try_adding_new_pfaces(
             potential, prev, next, pvertex, ivertex, true, false, new_crossed, new_pvertices);
-          CGAL_assertion_msg(false, "TODO: OPEN, INSERT 1 NEW PFACE!");
+          // CGAL_assertion_msg(false, "TODO: OPEN, INSERT 1 NEW PFACE!");
         } else if (potential.size() == 2) {
           try_adding_new_pfaces(
             potential, prev, next, pvertex, ivertex, true, false, new_crossed, new_pvertices);
-          CGAL_assertion_msg(false, "TODO: OPEN, INSERT 2 NEW PFACES!");
+          // CGAL_assertion_msg(false, "TODO: OPEN, INSERT 2 NEW PFACES!");
         } else if (potential.size() == 3) {
           try_adding_new_pfaces(
             potential, prev, next, pvertex, ivertex, true, false, new_crossed, new_pvertices);
@@ -3052,7 +3141,8 @@ public:
         }
       }
 
-      CGAL_assertion_msg(false, "TODO: OPEN, TEST NEW CODE!");
+      // CGAL_assertion_msg(false, "TODO: OPEN, TEST NEW CODE!");
+      CGAL_assertion(new_crossed.size() == 2);
       crossed.clear();
       crossed.reserve(new_crossed.size());
       for (const auto& item : new_crossed) {
@@ -3487,6 +3577,7 @@ public:
 
       const PVertex pvertex(pface.first, 0);
       bool is_occupied_edge, bbox_reached;
+      // std::tie(is_occupied_edge, bbox_reached) = is_occupied(pvertex, ivertex, this->iedge(pedge));
       std::tie(is_occupied_edge, bbox_reached) = is_occupied(pvertex, this->iedge(pedge));
       if (is_occupied_edge || bbox_reached) continue;
 
