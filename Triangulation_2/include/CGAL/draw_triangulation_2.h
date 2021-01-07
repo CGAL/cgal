@@ -28,17 +28,12 @@ namespace internal_test{
 int& code_to_call_before_creation_of_QCoreApplication(int& i) {
   QSurfaceFormat fmt;
 #ifdef Q_OS_MAC
-  std::cout<<"Running on mac"<<std::endl;
-  fmt.setDepthBufferSize(24);
-  fmt.setStencilBufferSize(8);
-  fmt.setVersion(2,0);
-  fmt.setRenderableType(QSurfaceFormat::OpenGLES);
-  fmt.setSamples(0);
+  fmt.setVersion(4, 1);
 #else
   fmt.setVersion(4, 3);
+#endif
   fmt.setRenderableType(QSurfaceFormat::OpenGL);
   fmt.setProfile(QSurfaceFormat::CoreProfile);
-#endif
   fmt.setOption(QSurfaceFormat::DebugContext);
   QSurfaceFormat::setDefaultFormat(fmt);
 
