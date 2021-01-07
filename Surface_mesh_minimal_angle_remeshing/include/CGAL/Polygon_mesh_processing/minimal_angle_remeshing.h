@@ -249,8 +249,8 @@ void minimal_angle_remeshing(TriangleMesh& tm, const NamedParameters& np)
   remesher.set_optimize_after_local_operations(optimize_after_local_operations);
 
   // step 3: set the input/output, and perform remeshing
-  TriangleMesh tm_input(tm);
-  remesher.set_input(&tm_input, remesher.get_verbose_progress());
+  TriangleMesh tm_original(tm);
+  remesher.set_input(&tm_original, remesher.get_verbose_progress());
   remesher.set_remesh(&tm, remesher.get_verbose_progress());
   remesher.maximize_minimal_angle();
 };
