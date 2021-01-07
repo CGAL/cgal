@@ -1711,7 +1711,7 @@ compute_intersection(const Gt& gt,
              typename Gt::Point_2& pi)
 {
   typedef typename Gt::Point_2 Point_2;
-  typedef typename Gt::Segment_2 Segment_2;
+
   typename Gt::Intersect_2 compute_intersec = gt.intersect_2_object();
   typename Gt::Construct_segment_2 construct_segment = gt.construct_segment_2_object();
 
@@ -1721,6 +1721,7 @@ compute_intersection(const Gt& gt,
 
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  typedef typename Gt::Segment_2 Segment_2;
   if(result){
     if (const Segment_2* s = boost::get<Segment_2>(&*result)){
       std::cerr << CGAL::internal::cdt_2_indent_level
