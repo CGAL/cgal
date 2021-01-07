@@ -140,7 +140,7 @@ int main(int argc, char * argv[])
     struct A{};
     std::vector< std::pair<Point, A> > points_bis;
     points_bis.reserve(points.size());
-    for (const Point p : points)
+    for (const Point& p : points)
       points_bis.push_back( std::make_pair(p, A()) );
     test_avg_knn_sq_distance(points_bis, nb_neighbors_remove_outliers, removed_percentage,
                              CGAL::First_of_pair_property_map<std::pair<Point,A>>());
