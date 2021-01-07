@@ -1611,6 +1611,8 @@ private:
 
     for (boost::tie(current, end) = vertices(m_graph); current != end; ++current)
     {
+      if (halfedge(*current, m_graph)==Graph_traits::null_halfedge())
+        continue;
       std::size_t vertexIndex = get(m_vertexIndexMap, *current);
       m_vertexIsPseudoSource[vertexIndex] = (is_saddle_vertex(*current) || is_boundary_vertex(*current));
     }

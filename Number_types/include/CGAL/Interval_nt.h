@@ -1159,8 +1159,13 @@ namespace INTERN_INTERVAL_NT {
   Interval_nt<Protected>
   square (const Interval_nt<Protected> & d)
   {
-    //TODO: SSE version, possibly using abs
     typename Interval_nt<Protected>::Internal_protector P;
+#ifdef CGAL_USE_SSE2
+    __m128d a = IA_opacify128(CGAL::abs(d).simd());   // {-i,s} 0<=i<=s
+    __m128d b = _mm_xor_pd(a, _mm_setr_pd(-0., 0.));  // {i,s}
+    __m128d r = _mm_mul_pd(a, b);                     // {-i*i,s*s}
+    return Interval_nt<Protected>(IA_opacify128(r));
+#else
     if (d.inf()>=0.0)
         return Interval_nt<Protected>(-CGAL_IA_MUL(-d.inf(), d.inf()),
                                  CGAL_IA_SQUARE(d.sup()));
@@ -1169,6 +1174,7 @@ namespace INTERN_INTERVAL_NT {
                                CGAL_IA_SQUARE(-d.inf()));
     return Interval_nt<Protected>(0.0, CGAL_IA_SQUARE((std::max)(-d.inf(),
                      d.sup())));
+#endif
   }
 
   template <bool Protected>

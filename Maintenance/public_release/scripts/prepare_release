@@ -47,7 +47,7 @@ if ((${#files[@]} == 0)); then
     printf "ERROR: documentation files are missing\n"
     error_code=1
 else
-    rsync -a "$MANUAL_TESTS_DIR/$INTERNAL_RELEASE"/output2/* "$DEST_DIR/doc_html/"
+    rsync -a --exclude xml "$MANUAL_TESTS_DIR/$INTERNAL_RELEASE"/output2/* "$DEST_DIR/doc_html/"
     pushd "$DEST_DIR/doc_html/Manual/search"
     for i in g n c s i; do sed -i "s/..\/BGL$i/..\/BGL\/$i/g" *; done
     popd

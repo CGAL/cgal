@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
   PMP::surface_intersection(mesh1, mesh2, std::back_inserter(polylines));
 
   //dump polylines
-  std::ofstream output("intersection_polylines.cgal");
+  std::ofstream output("intersection.polylines.txt");
   output.precision(17);
   for(const std::vector<Point>& polyline : polylines)
   {

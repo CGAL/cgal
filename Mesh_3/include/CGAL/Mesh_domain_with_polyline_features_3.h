@@ -568,27 +568,15 @@ public:
 /// of the base class.
 /// @{
 
-  Mesh_domain_with_polyline_features_3()
-    : MeshDomain_3()
+  template <typename ... T>
+  Mesh_domain_with_polyline_features_3(const T& ...o)
+    : MeshDomain_3(o...)
     , current_corner_index_(1)
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
 
-  template <typename T1>
-  Mesh_domain_with_polyline_features_3
-  (const T1& o1, typename boost::disable_if<boost::is_same<T1,Self>,
-                                            CGAL::Tag_false>::type* = 0)
-    : MeshDomain_3(o1)
-    , current_corner_index_(1)
-    , current_curve_index_(1)
-    , curves_aabb_tree_is_built(false) {}
+  Mesh_domain_with_polyline_features_3(const Mesh_domain_with_polyline_features_3&) = default;
 
-  template <typename T1, typename T2, typename ... T>
-  Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2, const T& ...o)
-    : MeshDomain_3(o1, o2, o...)
-    , current_corner_index_(1)
-    , current_curve_index_(1)
-    , curves_aabb_tree_is_built(false) {}
 /// @}
 
 /// \name Operations

@@ -511,13 +511,16 @@ namespace CGAL {
 
       // Minimum number of points has been set?
       m_options.min_points =
-        (m_options.min_points >= m_num_available_points) ?
+        (m_options.min_points == (std::numeric_limits<std::size_t>::max)()) ?
           (std::size_t)((FT)0.01 * m_num_available_points) :
           m_options.min_points;
       m_options.min_points = (m_options.min_points < 10) ? 10 : m_options.min_points;
 
       // Initializing the shape index
       m_shape_index.assign(m_num_available_points, -1);
+
+      if (m_options.min_points > m_num_available_points)
+        return true;
 
       // List of all randomly drawn candidates
       // with the minimum number of points

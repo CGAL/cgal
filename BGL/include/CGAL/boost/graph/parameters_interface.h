@@ -117,10 +117,12 @@ CGAL_add_named_parameter(volume_threshold_t, volume_threshold, volume_threshold)
 CGAL_add_named_parameter(dry_run_t, dry_run, dry_run)
 CGAL_add_named_parameter(do_not_modify_t, do_not_modify, do_not_modify)
 CGAL_add_named_parameter(allow_self_intersections_t, allow_self_intersections, allow_self_intersections)
+CGAL_add_named_parameter(polyhedral_envelope_epsilon_t, polyhedral_envelope_epsilon, polyhedral_envelope_epsilon)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
 CGAL_add_named_parameter(get_placement_policy_t, get_placement_policy, get_placement)
+CGAL_add_named_parameter(filter_t, filter, filter)
 
 //to be documented
 CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)
