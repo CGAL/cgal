@@ -4,7 +4,7 @@
 // CGAL
 #include <CGAL/Simple_cartesian.h>
 // Local
-#include "../../include/CGAL/Polygon_mesh_processing/Minangle_remesh.h"
+#include "Minangle_remesh.h"
 
 typedef CGAL::Color Color;
 typedef CGAL::Simple_cartesian<double> Kernel;

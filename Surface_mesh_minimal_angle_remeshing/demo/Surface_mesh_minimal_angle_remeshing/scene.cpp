@@ -8,6 +8,8 @@
 //#include <CGAL/IO/PLY_reader.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <boost/algorithm/string.hpp>
+// TODO: replace line 13 with line 12 in the future
+// #include <CGAL/Polygon_mesh_processing/minimal_angle_remeshing.h>
 #include "../../include/CGAL/Polygon_mesh_processing/minimal_angle_remeshing.h"
 
 Scene::Scene() 
@@ -2897,7 +2899,7 @@ void Scene::isotropic_remeshing() {
         m_target_edge_length, 
         *m_pRemesh,
         PMP::parameters::number_of_iterations(m_smooth_iteration_count)
-        .protect_constraints(true)//i.e. protect border, here
+        .protect_constraints(true)  //i.e. protect border, here
       );
     m_minangle_remesh.set_remesh(m_pRemesh, false);
     std::cout << "Done (" << timer.time() << " s)" << std::endl;
@@ -2914,7 +2916,8 @@ void Scene::test() {
     CGAL::Timer timer;
     timer.start();
     std::cout << std::endl << "Minimal angle remeshing...";
-    // TODO: How can we use the following function? 
+    /* PMP::minimal_angle_remeshing(*m_pRemesh, 
+      CGAL::parameters::min_angle_threshold(15.0).verbose_progress(false)); */
     PMP::minimal_angle_remeshing(*m_pRemesh);
     m_minangle_remesh.set_remesh(m_pRemesh, false);
     std::cout << "Done (" << timer.time() << " s)" << std::endl;

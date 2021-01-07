@@ -24,7 +24,9 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/minangle_remesh_impl.h>
+// TODO(kaimo Hu): replace line 29 with line 28
+// #include <CGAL/Polygon_mesh_processing/internal/minangle_remesh_impl.h>
+#include "internal/minangle_remesh_impl.h"
 
 namespace CGAL{
 namespace Polygon_mesh_processing {
@@ -112,18 +114,142 @@ namespace Polygon_mesh_processing {
 template <class TriangleMesh, class NamedParameters>
 void minimal_angle_remeshing(TriangleMesh& tm, const NamedParameters& np)
 {
-  TriangleMesh tm_input(tm);
-
-  typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
-  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
-
+  // step 1: construct the internal remesher
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GT;
+  GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
   typedef internal::Minangle_remesher<GT> Minangle_remesher;
   Minangle_remesher remesher;
 
-  // TODO: set the parameters from np to remesher, for instance,
-  // remesher.set_max_error_threshold(0.2);
-  // ...
+  // step 2: setup the parameters
+  // 2.1: general parameters
+  double max_error_threshold = choose_parameter(get_parameter(np, 
+    internal_np::max_error_threshold), 0.2);
+  remesher.set_max_error_threshold(max_error_threshold);
+  double min_angle_threshold = choose_parameter(get_parameter(np,
+    internal_np::min_angle_threshold), 30.0);
+  remesher.set_min_angle_threshold(min_angle_threshold);
+  int max_mesh_complexity = choose_parameter(get_parameter(np,
+    internal_np::max_mesh_complexity), 100000000);
+  remesher.set_max_mesh_complexity(max_mesh_complexity);
+  double smooth_angle_delta = choose_parameter(get_parameter(np,
+    internal_np::smooth_angle_delta), 0.1);
+  remesher.set_smooth_angle_delta(smooth_angle_delta);
+  bool apply_edge_flip = choose_parameter(get_parameter(np,
+    internal_np::apply_edge_flip), true);
+  remesher.set_apply_edge_flip(apply_edge_flip);
+  EdgeFlipStrategy edge_flip_strategy = choose_parameter(get_parameter(np,
+    internal_np::edge_flip_strategy), EdgeFlipStrategy::k_improve_angle);
+  remesher.set_edge_flip_strategy(edge_flip_strategy);
+  bool flip_after_split_and_collapse = choose_parameter(get_parameter(np,
+    internal_np::flip_after_split_and_collapse), true);
+  remesher.set_flip_after_split_and_collapse(flip_after_split_and_collapse);
+  bool relocate_after_local_operations = choose_parameter(get_parameter(np,
+    internal_np::relocate_after_local_operations), true);
+  remesher.set_relocate_after_local_operations(relocate_after_local_operations);
+  RelocateStrategy relocate_strategy = choose_parameter(get_parameter(np,
+    internal_np::relocate_strategy), RelocateStrategy::k_cvt_barycenter);
+  remesher.set_relocate_strategy(relocate_strategy);
+  bool keep_vertex_in_one_ring = choose_parameter(get_parameter(np,
+    internal_np::keep_vertex_in_one_ring), false);
+  remesher.set_keep_vertex_in_one_ring(keep_vertex_in_one_ring);
+  bool use_local_aabb_tree = choose_parameter(get_parameter(np,
+    internal_np::use_local_aabb_tree), true);
+  remesher.set_use_local_aabb_tree(use_local_aabb_tree);
+  int collapsed_list_size = choose_parameter(get_parameter(np,
+    internal_np::collapsed_list_size), 10);
+  remesher.set_collapsed_list_size(collapsed_list_size);
+  bool decrease_max_errors = choose_parameter(get_parameter(np,
+    internal_np::decrease_max_errors), true);
+  remesher.set_decrease_max_errors(decrease_max_errors);
+  bool verbose_progress = choose_parameter(get_parameter(np,
+    internal_np::verbose_progress), true);
+  remesher.set_verbose_progress(verbose_progress);
+  bool apply_initial_mesh_simplification = choose_parameter(get_parameter(np,
+    internal_np::apply_initial_mesh_simplification), true);
+  remesher.set_apply_initial_mesh_simplification(apply_initial_mesh_simplification);
+  bool apply_final_vertex_relocation = choose_parameter(get_parameter(np,
+    internal_np::apply_final_vertex_relocation), true);
+  remesher.set_apply_final_vertex_relocation(apply_final_vertex_relocation);
+  // 2.2: sample parameters
+  int samples_per_face_in = choose_parameter(get_parameter(np,
+    internal_np::samples_per_face_in), 10);
+  remesher.set_samples_per_face_in(samples_per_face_in);
+  int samples_per_face_out = choose_parameter(get_parameter(np,
+    internal_np::samples_per_face_out), 10);
+  remesher.set_samples_per_face_out(samples_per_face_out);
+  int max_samples_per_area = choose_parameter(get_parameter(np,
+    internal_np::max_samples_per_area), 10000);
+  remesher.set_max_samples_per_area(max_samples_per_area);
+  int min_samples_per_triangle = choose_parameter(get_parameter(np,
+    internal_np::min_samples_per_triangle), 1);
+  remesher.set_min_samples_per_triangle(min_samples_per_triangle);
+  int bvd_iteration_count = choose_parameter(get_parameter(np,
+    internal_np::bvd_iteration_count), 1);
+  remesher.set_bvd_iteration_count(bvd_iteration_count);
+  SampleNumberStrategy sample_number_strategy = choose_parameter(get_parameter(np,
+    internal_np::sample_number_strategy), SampleNumberStrategy::k_fixed);
+  remesher.set_sample_number_strategy(sample_number_strategy);
+  SampleStrategy sample_strategy = choose_parameter(get_parameter(np,
+    internal_np::sample_strategy), SampleStrategy::k_adaptive);
+  remesher.set_sample_strategy(sample_strategy);
+  bool use_stratified_sampling = choose_parameter(get_parameter(np,
+    internal_np::use_stratified_sampling), false);
+  remesher.set_use_stratified_sampling(use_stratified_sampling);
+  // 2.3: feature function parameters
+  double sum_theta = choose_parameter(get_parameter(np,
+    internal_np::sum_theta), 1.0);
+  remesher.set_sum_theta(sum_theta);
+  double sum_delta = choose_parameter(get_parameter(np,
+    internal_np::sum_delta), 0.5);
+  remesher.set_sum_delta(sum_delta);
+  double dihedral_theta = choose_parameter(get_parameter(np,
+    internal_np::dihedral_theta), 1.0);
+  remesher.set_dihedral_theta(dihedral_theta);
+  double dihedral_delta = choose_parameter(get_parameter(np,
+    internal_np::dihedral_delta), 0.5);
+  remesher.set_dihedral_delta(dihedral_delta);
+  double feature_difference_delta = choose_parameter(get_parameter(np,
+    internal_np::feature_difference_delta), 0.15);
+  remesher.set_feature_difference_delta(feature_difference_delta);
+  double feature_control_delta = choose_parameter(get_parameter(np,
+    internal_np::feature_control_delta), 0.5);
+  remesher.set_feature_control_delta(feature_control_delta);
+  bool inherit_element_types = choose_parameter(get_parameter(np,
+    internal_np::inherit_element_types), false);
+  remesher.set_inherit_element_types(inherit_element_types);
+  bool use_feature_intensity_weights = choose_parameter(get_parameter(np,
+    internal_np::use_feature_intensity_weights), false);
+  remesher.set_use_feature_intensity_weights(use_feature_intensity_weights);
+  // 2.4 vertex relocate parameters
+  int vertex_optimize_count = choose_parameter(get_parameter(np,
+    internal_np::vertex_optimize_count), 2);
+  remesher.set_vertex_optimize_count(vertex_optimize_count);
+  double vertex_optimize_ratio = choose_parameter(get_parameter(np,
+    internal_np::vertex_optimize_ratio), 0.9);
+  remesher.set_vertex_optimize_ratio(vertex_optimize_ratio);
+  int stencil_ring_size = choose_parameter(get_parameter(np,
+    internal_np::stencil_ring_size), 1);
+  remesher.set_stencil_ring_size(stencil_ring_size);
+  OptimizeStrategy optimize_strategy = choose_parameter(get_parameter(np,
+    internal_np::optimize_strategy), OptimizeStrategy::k_approximation);
+  remesher.set_optimize_strategy(optimize_strategy);
+  OptimizeType face_optimize_type = choose_parameter(get_parameter(np,
+    internal_np::face_optimize_type), OptimizeType::k_both);
+  remesher.set_face_optimize_type(face_optimize_type);
+  OptimizeType edge_optimize_type = choose_parameter(get_parameter(np,
+    internal_np::edge_optimize_type), OptimizeType::k_both);
+  remesher.set_edge_optimize_type(edge_optimize_type);
+  OptimizeType vertex_optimize_type = choose_parameter(get_parameter(np,
+    internal_np::vertex_optimize_type), OptimizeType::k_both);
+  remesher.set_vertex_optimize_type(vertex_optimize_type);
+  bool optimize_after_local_operations = choose_parameter(get_parameter(np,
+    internal_np::optimize_after_local_operations), true);
+  remesher.set_optimize_after_local_operations(optimize_after_local_operations);
 
+  // step 3: set the input/output, and perform remeshing
+  TriangleMesh tm_input(tm);
   remesher.set_input(&tm_input, remesher.get_verbose_progress());
   remesher.set_remesh(&tm, remesher.get_verbose_progress());
   remesher.maximize_minimal_angle();
