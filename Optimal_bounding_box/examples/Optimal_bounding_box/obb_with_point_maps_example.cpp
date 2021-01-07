@@ -34,7 +34,7 @@ int main(int argc, char** argv)
 
   // one can associate positions to the vertices of the mesh without changing the mesh
   std::unordered_map<vertex_descriptor, Point> translated_positions;
-  for(const vertex_descriptor v : vertices(sm))
+  for(const vertex_descriptor& v : vertices(sm))
     translated_positions[v] = sm.point(v) + Vector(1, 2, 3);
 
   CGAL::oriented_bounding_box(sm, obb_points,
@@ -42,7 +42,7 @@ int main(int argc, char** argv)
 
   // using a range of points
   std::vector<Point> points;
-  for(const vertex_descriptor v : vertices(sm))
+  for(const vertex_descriptor& v : vertices(sm))
     points.push_back(sm.point(v));
   CGAL::oriented_bounding_box(points, obb_points);
 
