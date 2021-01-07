@@ -18,7 +18,9 @@
 #include <CGAL/tss.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/gmp.h>
+#ifdef CGAL_USE_MPFR
 #include <mpfr.h>
+#endif
 #include <CGAL/Quotient.h>
 #include <CGAL/GMP/Gmpz_type.h>
 #include <boost/operators.hpp>

@@ -15,7 +15,9 @@
 #define _CORE_GMP_H_
 
 #include <CGAL/CORE/Impl.h>
+#ifdef CGAL_USE_GMP
 #include <gmp.h>
+#endif
 
 namespace CORE {
 

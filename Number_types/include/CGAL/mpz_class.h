@@ -33,8 +33,12 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/double.h>
 #include <boost/type_traits/is_same.hpp>
+#ifdef CGAL_USE_MPFR
 #include <mpfr.h>
+#endif
+#ifdef CGAL_USE_GMPXX
 #include <gmpxx.h>
+#endif
 
 #define CGAL_CHECK_GMP_EXPR                                             \
     CGAL_static_assertion(                                                \

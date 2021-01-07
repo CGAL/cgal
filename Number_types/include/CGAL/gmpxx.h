@@ -31,7 +31,9 @@
 #define CGAL_GMPXX_H
 
 #include <cstring> // needed by GMP 4.1.4 since <gmpxx.h> misses it.
+#ifdef CGAL_USE_GMPXX
 #include <gmpxx.h>
+#endif
 #include <utility>
 
 #include <CGAL/mpz_class.h>

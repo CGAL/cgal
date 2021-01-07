@@ -22,8 +22,12 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/double.h>
 #include <CGAL/IO/io.h>
+#ifdef CGAL_USE_MPFR
 #include <mpfr.h>
+#endif
+#ifdef CGAL_USE_GMPXX
 #include <gmpxx.h>
+#endif
 
 // This file gathers the necessary adaptors so that the following
 // C++ number types that come with GMP can be used by CGAL :

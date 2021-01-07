@@ -13,7 +13,9 @@
 
 #include <CGAL/config.h>
 #include <CGAL/gmp.h>
+#ifdef CGAL_USE_MPFR
 #include <mpfr.h>
+#endif
 #include <CGAL/GMP/Gmpfr_type.h>
 #include <CGAL/GMP/Gmpq_type.h>
 #include <mpfi.h>

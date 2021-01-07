@@ -19,7 +19,9 @@
                                      // warning on - applied on unsigned number
 #endif
 
+#ifdef CGAL_USE_GMP
 #include <gmp.h>
+#endif
 
 
 #if defined(BOOST_MSVC)

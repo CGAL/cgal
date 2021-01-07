@@ -19,8 +19,12 @@ int main() {
 // conversion with loss of data
 // warning on - applied on unsigned number
 
-#include "gmp.h"
+#ifdef CGAL_USE_GMP
+#include <gmp.h>
+#endif
+#ifdef CGAL_USE_MPFR
 #include <mpfr.h>
+#endif
 
 bool get_version_info(const LPCTSTR name,
                       int& major,
