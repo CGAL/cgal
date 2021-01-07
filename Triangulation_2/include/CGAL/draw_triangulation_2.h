@@ -28,6 +28,7 @@ namespace internal_test{
 int& code_to_call_before_creation_of_QCoreApplication(int& i) {
   QSurfaceFormat fmt;
 #ifdef Q_OS_MAC
+  std::cout<<"Running on mac"<<std::endl;
   fmt.setDepthBufferSize(24);
   fmt.setStencilBufferSize(8);
   fmt.setVersion(2,0);
