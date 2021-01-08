@@ -1145,7 +1145,7 @@ private:
 
         } else {
 
-          if (m_debug) std::cout << "- pv po, free, any k, continue" << std::endl;
+          if (m_debug) std::cout << "- free, any k, continue" << std::endl;
           // CGAL_assertion_msg(false, "TODO: FREE, ANY K, CONTINUE!");
         }
 
