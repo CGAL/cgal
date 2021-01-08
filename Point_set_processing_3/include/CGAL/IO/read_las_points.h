@@ -643,8 +643,8 @@ CGAL_DEPRECATED bool read_las_points(std::istream& is,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename CGAL::GetPointMap<Point_set_processing_3::Fake_point_range<OutputIteratorValueType>, CGAL_BGL_NP_CLASS>::type PointMap;
-  PointMap point_map = choose_parameter<typename CGAL::GetPointMap<Point_set_processing_3::Fake_point_range<OutputIteratorValueType>, CGAL_BGL_NP_CLASS>::type>(get_parameter(np, internal_np::point_map));
+  typename CGAL::GetPointMap<Point_set_processing_3::Fake_point_range<OutputIteratorValueType>, CGAL_BGL_NP_CLASS>::type point_map =
+      choose_parameter<typename CGAL::GetPointMap<Point_set_processing_3::Fake_point_range<OutputIteratorValueType>, CGAL_BGL_NP_CLASS>::type>(get_parameter(np, internal_np::point_map));
 
   return read_LAS(is, output, make_las_point_reader(point_map));
 }

@@ -27,9 +27,8 @@
 #ifdef DOXYGEN_RUNNING
 #define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
 #define CGAL_PMP_NP_CLASS NamedParameters
-#endif
-
 #define CGAL_DEPRECATED
+#endif
 
 namespace CGAL {
 

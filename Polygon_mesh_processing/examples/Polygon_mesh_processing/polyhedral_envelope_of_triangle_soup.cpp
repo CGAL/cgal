@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedral_envelope.h>
-#include <CGAL/IO/OFF_reader.h>
+#include <CGAL/IO/OFF.h>
 
 #include <vector>
 #include <fstream>
