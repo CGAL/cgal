@@ -358,6 +358,7 @@ public:
 
   ~Basic_viewer_qt()
   {
+    makeCurrent();
     for (unsigned int i=0; i<NB_VBO_BUFFERS; ++i)
       buffers[i].destroy();
 
