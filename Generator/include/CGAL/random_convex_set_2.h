@@ -101,7 +101,9 @@ random_convex_set_2( std::size_t n,
     points.begin(),
     points.end(),
     points.begin(),
-    [&centroid, &sum, &scale](const Point_2& p) { return sum(p, scale(centroid, FT( -1))); });
+    [&centroid, &new_centroid, &sum, &scale](const Point_2& p)
+    {return sum(p, sum( centroid, scale(new_centroid, FT( -1)))); }
+  );
 
   // compute maximal coordinate:
   FT maxcoord( max_coordinate(
