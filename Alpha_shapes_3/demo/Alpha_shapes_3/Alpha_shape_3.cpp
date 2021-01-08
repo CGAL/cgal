@@ -8,15 +8,27 @@
 
 int main(int argc, char** argv)
 {
- QApplication application(argc,argv);
+  QSurfaceFormat fmt;
+#ifdef Q_OS_MAC
+  fmt.setVersion(4, 1);
+#else
+  fmt.setVersion(4, 3);
+#endif
+  fmt.setRenderableType(QSurfaceFormat::OpenGL);
+  fmt.setProfile(QSurfaceFormat::CoreProfile);
+  fmt.setOption(QSurfaceFormat::DebugContext);
+  QSurfaceFormat::setDefaultFormat(fmt);
+
+  //for Windows
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
+  QApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
+#endif
+
+  QApplication application(argc,argv);
 
   application.setOrganizationDomain("geometryfactory.com");
   application.setOrganizationName("GeometryFactory");
   application.setApplicationName("Alpha Shape Reconstruction");
-  //for Windows
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
-  application.setAttribute(Qt::AA_UseDesktopOpenGL);
-#endif
 
   // Import resources from libCGALQt (Qt5).
   // See https://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE

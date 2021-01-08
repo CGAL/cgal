@@ -4,6 +4,12 @@
 
 int main(int argc, char *argv[])
 {
+  QSurfaceFormat fmt;
+  fmt.setVersion(2, 1);
+  fmt.setRenderableType(QSurfaceFormat::OpenGL);
+  fmt.setProfile(QSurfaceFormat::CoreProfile);
+  fmt.setOption(QSurfaceFormat::DebugContext);
+  QSurfaceFormat::setDefaultFormat(fmt);
   QApplication a(argc, argv);
   MainWindow w;
   //w.ui->setupUi(w);
