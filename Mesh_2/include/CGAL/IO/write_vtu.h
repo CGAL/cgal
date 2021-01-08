@@ -19,6 +19,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/IO/io.h>
+#include <CGAL/IO/VTK/VTK_writer.h>
 
 #include <iostream>
 #include <vector>
@@ -31,18 +32,6 @@ namespace CGAL {
 // writes the appended data into the .vtu file
 namespace IO {
 namespace internal {
-
-template <class FT>
-void
-write_vector(std::ostream& os,
-             const std::vector<FT>& vect)
-{
-  const char* buffer = reinterpret_cast<const char*>(&(vect[0]));
-  std::size_t size = vect.size()*sizeof(FT);
-
-  os.write(reinterpret_cast<const char *>(&size), sizeof(std::size_t)); // number of bytes encoded
-  os.write(buffer, vect.size()*sizeof(FT));                     // encoded data
-}
 
 // writes the cells tags before binary data is appended
 
