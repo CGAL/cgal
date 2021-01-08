@@ -47,8 +47,6 @@ bool vtkPointSet_to_polygon_soup(vtkPointSet* poly_data,
                                  PolygonRange& polygons,
                                  const NamedParameters&)
 {
-  typedef typename boost::range_value<PointRange>::type  Point;
-
   vtkIdType nb_points = poly_data->GetNumberOfPoints();
   vtkIdType nb_cells = poly_data->GetNumberOfCells();
   polygons.reserve(nb_cells);

@@ -276,7 +276,7 @@ void write_polys_tag(std::ostream& os,
     os << ">\n";
     std::size_t polys_offset = 0;
 
-    for(face_descriptor f : faces(g))
+    for(int i = 0; i< faces(g).size(); ++i)
     {
       polys_offset += 3;
       os << polys_offset << " ";
