@@ -149,7 +149,7 @@ int main (const int argc, const char** argv) {
   assert(run_test("data/real-data-test/building-b-15squares-15planes.off" , ks, num_iters, num_tests));
 
   // Edge case tests.
-  assert(run_test("data/edge-case-test/test-20-polygons.off" , ks, num_iters, num_tests)); // 2 overlap and coplanar
+  assert(run_test("data/edge-case-test/test-20-polygons.off", ks, num_iters, num_tests)); // 2 overlap and coplanar
 
   std::cout << std::endl << "--OUTPUT STATS:" << std::endl;
   std::cout << "* number of iterations per test: " << num_iters << std::endl;

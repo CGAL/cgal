@@ -209,6 +209,9 @@ private:
   KSR::vector<Support_plane> m_support_planes;
   Intersection_graph m_intersection_graph;
 
+  using Limit_line = std::vector< std::pair< std::pair<KSR::size_t, KSR::size_t>, bool> >;
+  std::vector<Limit_line> m_limit_lines;
+
   FT m_previous_time;
   FT m_current_time;
   bool m_verbose;
@@ -241,6 +244,89 @@ public:
 
   const std::map<PFace, std::pair<int, int> >& pface_neighbors() const {
     return m_map_volumes;
+  }
+
+  void set_limit_lines() {
+    m_limit_lines.clear();
+    m_limit_lines.resize(nb_intersection_lines());
+
+    std::vector<PEdge> pedges;
+    std::set<PEdge> pedges_set;
+
+    auto pvertex = null_pvertex();
+    std::size_t num_intersected = 0;
+
+    const auto iedges = this->iedges();
+    for (const auto iedge : iedges) {
+      // std::cout << "- segment: "segment_3(iedge) << std::endl;
+
+      const auto line_idx = this->line_idx(iedge);
+      CGAL_assertion(line_idx != KSR::no_element());
+      CGAL_assertion(line_idx < m_limit_lines.size());
+      auto& pairs = m_limit_lines[line_idx];
+      // std::cout << "- pairs size: " << pairs.size() << std::endl;
+
+      if (pairs.size() != 0) {
+        CGAL_assertion(pairs.size() == 2);
+        continue;
+      }
+
+      pedges.clear();
+      pedges_set.clear();
+      get_occupied_pedges(pvertex, iedge, pedges_set);
+      std::copy(pedges_set.begin(), pedges_set.end(), std::back_inserter(pedges));
+
+      KSR::size_t sp_idx_1 = KSR::no_element();
+      KSR::size_t sp_idx_2 = KSR::no_element();
+      bool intersection_is_found = false;
+      if (pedges.size() == 0) {
+        // do nothing
+
+      } else if (pedges.size() == 1) {
+
+        const auto& pedge = pedges[0];
+        sp_idx_1 = pedge.first;
+
+        std::vector<KSR::size_t> potential_sps;
+        const auto intersected_planes = this->intersected_planes(iedge);
+        for (const auto plane_idx : intersected_planes) {
+          if (plane_idx == sp_idx_1) continue; // current plane
+          CGAL_assertion(plane_idx >= 6);
+          potential_sps.push_back(plane_idx);
+        }
+        CGAL_assertion_msg(potential_sps.size() == 1,
+        "TODO: CAN WE HAVE MORE THAN 2 INTERSECTIONS?");
+        sp_idx_2 = potential_sps[0];
+        CGAL_assertion(sp_idx_2 != sp_idx_1);
+        intersection_is_found = true;
+
+      } else if (pedges.size() == 2) {
+
+        const auto& pedge1 = pedges.front();
+        const auto& pedge2 = pedges.back();
+        sp_idx_1 = pedge1.first;
+        sp_idx_2 = pedge2.first;
+        CGAL_assertion(sp_idx_2 != sp_idx_1);
+        intersection_is_found = true;
+
+      } else {
+
+        CGAL_assertion(pedges.size() > 2);
+        CGAL_assertion_msg(false,
+        "TODO: CAN WE HAVE MORE THAN 2 INTERSECTIONS?");
+      }
+
+      if (intersection_is_found) {
+        CGAL_assertion(sp_idx_1 != KSR::no_element());
+        CGAL_assertion(sp_idx_2 != KSR::no_element());
+        CGAL_assertion(pairs.size() == 0);
+        pairs.push_back(std::make_pair(std::make_pair(sp_idx_1, sp_idx_2), false));
+        pairs.push_back(std::make_pair(std::make_pair(sp_idx_2, sp_idx_1), false));
+        ++num_intersected;
+      }
+    }
+    std::cout << "- num intersected: " << num_intersected << std::endl;
+    // CGAL_assertion_msg(false, "TODO: SET LIMIT LINES!");
   }
 
   void set_input_polygon_map(
@@ -1400,7 +1486,7 @@ public:
         }
       }
     }
-    CGAL_assertion(pedges.size() > 0);
+    // CGAL_assertion(pedges.size() > 0);
   }
 
   const std::pair<bool, bool> is_occupied(
@@ -2258,6 +2344,145 @@ public:
     }
   }
 
+  const bool is_limit_line(
+    const PVertex& pvertex,
+    const IEdge& iedge,
+    const bool is_occupied_iedge) {
+
+    // CGAL_assertion_msg(false, "TODO: IS LIMIT LINE!");
+    const KSR::size_t sp_idx_1 = pvertex.first;
+    KSR::size_t sp_idx_2 = KSR::no_element();
+    const auto intersected_planes = this->intersected_planes(iedge);
+    for (const auto plane_idx : intersected_planes) {
+      if (plane_idx == sp_idx_1) continue; // current plane
+      if (plane_idx < 6) {
+        // CGAL_assertion_msg(false, "TODO: BBOX, STOP!");
+        return true;
+      }
+      sp_idx_2 = plane_idx;
+      break;
+    }
+    CGAL_assertion(sp_idx_2 != KSR::no_element());
+    CGAL_assertion(sp_idx_1 >= 6 && sp_idx_2 >= 6);
+
+    const auto pface = pface_of_pvertex(pvertex);
+    CGAL_assertion(m_limit_lines.size() == nb_intersection_lines());
+
+    bool is_limit_line = false;
+    const KSR::size_t line_idx = this->line_idx(iedge);
+    CGAL_assertion(line_idx != KSR::no_element());
+    CGAL_assertion(line_idx < m_limit_lines.size());
+
+    auto& pairs = m_limit_lines[line_idx];
+    CGAL_assertion_msg(pairs.size() <= 2,
+    "TODO: CAN WE HAVE MORE THAN TWO PLANES INTERSECTED ALONG THE SAME LINE?");
+
+    for (const auto& item : pairs) {
+      const auto& pair = item.first;
+
+      const bool is_ok_1 = (pair.first  == sp_idx_1);
+      const bool is_ok_2 = (pair.second == sp_idx_2);
+
+      if (is_ok_1 && is_ok_2) {
+        is_limit_line = item.second;
+        std::cout << "- found intersection " << std::endl;
+        // CGAL_assertion_msg(false, "TODO: FOUND INTERSECTION!");
+        return is_limit_line;
+      }
+    }
+
+    std::cout << "- first time intersection" << std::endl;
+    std::cout << "- adding pair: " << std::to_string(sp_idx_1) << "-" << std::to_string(sp_idx_2);
+    if (is_occupied_iedge) {
+      if (this->k(pface) == 1) {
+        std::cout << ", occupied, TRUE" << std::endl;
+        is_limit_line = true;
+        pairs.push_back(std::make_pair(std::make_pair(sp_idx_1, sp_idx_2), is_limit_line));
+        // CGAL_assertion_msg(false, "TODO: FIRST TIME INTERSECTION, OCCUPIED, K = 1!");
+      } else {
+        std::cout << ", occupied, FALSE" << std::endl;
+        is_limit_line = false;
+        pairs.push_back(std::make_pair(std::make_pair(sp_idx_1, sp_idx_2), is_limit_line));
+        this->k(pface)--;
+        // CGAL_assertion_msg(false, "TODO: FIRST TIME INTERSECTION, OCCUPIED, K > 1!");
+      }
+    } else {
+      std::cout << ", free, FALSE" << std::endl;
+      is_limit_line = false;
+      pairs.push_back(std::make_pair(std::make_pair(sp_idx_1, sp_idx_2), is_limit_line));
+      // CGAL_assertion_msg(false, "TODO: FIRST TIME INTERSECTION, FREE, ANY K!");
+    }
+
+    // CGAL_assertion_msg(false, "TODO: FIRST TIME INTERSECTION!");
+    return is_limit_line;
+  }
+
+  void try_adding_new_pfaces_v2(
+    const std::vector<IEdge>& iedges,
+    const PVertex& pv_prev,
+    const PVertex& pv_next,
+    const PVertex& pvertex,
+    const IVertex& ivertex,
+    const bool is_open,
+    bool reverse,
+    std::set<IEdge>& new_crossed,
+    std::vector<PVertex>& new_pvertices) {
+
+    // CGAL_assertion_msg(false, "TODO: ADDING NEW PFACES!");
+    std::cout << "- traversing iedges: " << std::endl;
+    for (const auto& iedge : iedges) {
+      std::cout << str(iedge) << std::endl;
+    }
+
+    const auto pface = pface_of_pvertex(pvertex);
+    std::cout << "- k intersections befor: " << this->k(pface) << std::endl;
+
+    std::size_t num_added_pfaces = 0;
+    for (std::size_t i = 0; i < iedges.size() - 1; ++i) {
+      const std::size_t ip = i + 1;
+
+      const auto& iedge_i  = iedges[i];
+      const auto& iedge_ip = iedges[ip];
+
+      bool is_occupied_iedge, is_bbox_reached;
+      std::tie(is_occupied_iedge, is_bbox_reached) = this->is_occupied(pvertex, ivertex, iedge_i);
+      // std::tie(is_occupied_iedge, is_bbox_reached) = this->is_occupied(pvertex, iedge_i);
+
+      const bool is_limit_line = this->is_limit_line(pvertex, iedge_i, is_occupied_iedge);
+
+      std::cout << "- bbox: "     << is_bbox_reached   << std::endl;
+      std::cout << "- limit: "    << is_limit_line     << std::endl;
+      std::cout << "- occupied: " << is_occupied_iedge << std::endl;
+
+      if (is_bbox_reached) {
+
+        std::cout << "- bbox, stop" << std::endl;
+        // CGAL_assertion_msg(false, "TODO: BBOX, STOP!");
+        break;
+
+      } else if (is_limit_line) {
+
+        std::cout << "- limit, stop" << std::endl;
+        // CGAL_assertion_msg(false, "TODO: LIMIT, STOP!");
+        break;
+
+      } else {
+
+        std::cout << "- free, any k, continue" << std::endl;
+        CGAL_assertion(this->k(pface) >= 1);
+        add_new_pface(pvertex, pv_prev, pv_next, pface,
+          iedge_i, iedge_ip, is_open, reverse, new_crossed, new_pvertices);
+        ++num_added_pfaces;
+        // CGAL_assertion_msg(false, "TODO: FREE, ANY K, CONTINUE!");
+        continue;
+      }
+    }
+
+    CGAL_assertion(this->k(pface) >= 1);
+    std::cout << "- k intersections after: " << this->k(pface) << std::endl;
+    std::cout << "num added pfaces: " << num_added_pfaces << std::endl;
+  }
+
   void add_new_pface(
     const PVertex& pvertex,
     const PVertex& pv_prev,
@@ -2270,6 +2495,7 @@ public:
     std::set<IEdge>& new_crossed,
     std::vector<PVertex>& new_pvertices) {
 
+    // CGAL_assertion_msg(false, "TODO: ADDING NEW PFACE!");
     std::cout << "- adding new pface: " << std::endl;
     bool created_pv1; PVertex pv1;
     std::tie(created_pv1, pv1) = create_pvertex(
@@ -2373,7 +2599,7 @@ public:
     for (const auto pedge : pedges) {
       if (!has_iedge(pedge)) {
         std::cout << "disconnected pedge: " << segment_3(pedge) << std::endl;
-        CGAL_assertion(has_iedge(pedge)); // TODO: TURN IT ON IF NECESSARY!
+        CGAL_assertion(has_iedge(pedge)); // TODO: TURN IT OFF IF NECESSARY!
 
         const auto pother = this->opposite(pedge, pvertex);
         const auto iv1 = this->ivertex(pvertex);
@@ -2536,7 +2762,7 @@ public:
         if (m_verbose) std::cout << "- cropped: " << point_3(cropped) << std::endl;
 
       } else {
-        if (true) {
+        if (false) {
           if (m_verbose) std::cout << "- propagating" << std::endl;
           CGAL_assertion_msg(i == 1,
           "TODO: BACK, CAN WE HAVE MORE THAN 1 NEW PFACE? IF YES, I SHOULD CHECK K FOR EACH!");
@@ -2563,6 +2789,26 @@ public:
           connect(propagated, crossed[i]);
         }
       }
+    }
+
+    if (true) {
+      if (m_verbose) std::cout << "- new pvertices size: " << new_pvertices.size() << std::endl;
+      CGAL_assertion(new_pvertices.size() == 1);
+      CGAL_assertion(new_crossed.size() == 1);
+
+      if (crossed.size() > 1) {
+        try_adding_new_pfaces_v2(
+          crossed, back, prev, pvertex, ivertex, false, true, new_crossed, new_pvertices);
+      }
+
+      crossed.clear();
+      crossed.reserve(new_crossed.size());
+      for (const auto& item : new_crossed) {
+        crossed.push_back(item);
+      }
+      CGAL_assertion(crossed.size() == new_crossed.size());
+      CGAL_assertion(new_crossed.size() == new_pvertices.size());
+      // CGAL_assertion_msg(false, "TODO: BACK, TEST NEW CODE!");
     }
 
     if (false) {
@@ -2794,7 +3040,7 @@ public:
         if (m_verbose) std::cout << "- cropped: " << point_3(cropped) << std::endl;
 
       } else {
-        if (true) {
+        if (false) {
           if (m_verbose) std::cout << "- propagating" << std::endl;
           CGAL_assertion_msg(i == 1,
           "TODO: FRONT, CAN WE HAVE MORE THAN 1 NEW PFACE? IF YES, I SHOULD CHECK K FOR EACH!");
@@ -2821,6 +3067,26 @@ public:
           connect(propagated, crossed[i]);
         }
       }
+    }
+
+    if (true) {
+      if (m_verbose) std::cout << "- new pvertices size: " << new_pvertices.size() << std::endl;
+      CGAL_assertion(new_pvertices.size() == 1);
+      CGAL_assertion(new_crossed.size() == 1);
+
+      if (crossed.size() > 1) {
+        try_adding_new_pfaces_v2(
+          crossed, front, next, pvertex, ivertex, false, false, new_crossed, new_pvertices);
+      }
+
+      crossed.clear();
+      crossed.reserve(new_crossed.size());
+      for (const auto& item : new_crossed) {
+        crossed.push_back(item);
+      }
+      CGAL_assertion(crossed.size() == new_crossed.size());
+      CGAL_assertion(new_crossed.size() == new_pvertices.size());
+      // CGAL_assertion_msg(false, "TODO: FRONT, TEST NEW CODE!");
     }
 
     if (false) {
@@ -3111,11 +3377,28 @@ public:
 
     if (m_verbose) std::cout << "- new pvertices size: " << new_pvertices.size() << std::endl;
     CGAL_assertion(new_pvertices.size() == 2);
+    CGAL_assertion(new_crossed.size() == 2);
 
-    if (true) {
+    if (false) {
       add_new_open_pfaces(
         pvertex, ivertex, crossed,
         future_points, future_directions, new_pvertices);
+    }
+
+    if (true) {
+      if (crossed.size() > 1) {
+        try_adding_new_pfaces_v2(
+          crossed, prev, next, pvertex, ivertex, true, false, new_crossed, new_pvertices);
+      }
+
+      crossed.clear();
+      crossed.reserve(new_crossed.size());
+      for (const auto& item : new_crossed) {
+        crossed.push_back(item);
+      }
+      CGAL_assertion(crossed.size() == new_crossed.size());
+      CGAL_assertion(new_crossed.size() == new_pvertices.size());
+      // CGAL_assertion_msg(false, "TODO: OPEN, TEST NEW CODE!");
     }
 
     if (false) {
@@ -3142,7 +3425,6 @@ public:
       }
 
       // CGAL_assertion_msg(false, "TODO: OPEN, TEST NEW CODE!");
-      CGAL_assertion(new_crossed.size() == 2);
       crossed.clear();
       crossed.reserve(new_crossed.size());
       for (const auto& item : new_crossed) {

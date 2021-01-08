@@ -152,6 +152,7 @@ public:
     const FT time_step = static_cast<FT>(m_initializer.initialize(
       input_range, polygon_map, k, enlarge_bbox_ratio, reorient));
     m_initializer.convert(m_data);
+    m_data.set_limit_lines();
     m_data.check_integrity();
 
     if (k == 0) {
@@ -1108,59 +1109,77 @@ private:
         CGAL_assertion(nfaces.size() == 1);
         CGAL_assertion(nfaces[0] == pface);
 
-        bool collision, bbox_reached;
-        std::tie(collision, bbox_reached) = m_data.collision_occured(pvertex, iedge);
-        // std::tie(collision, bbox_reached) = m_data.is_occupied(pvertex, iedge);
+        bool is_occupied_iedge_1, is_bbox_reached_1;
+        std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.collision_occured(pvertex, iedge);
+        // std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.is_occupied(pvertex, iedge);
 
-        bool collision_other, bbox_reached_other;
-        std::tie(collision_other, bbox_reached_other) = m_data.collision_occured(pother, iedge);
-        // std::tie(collision_other, bbox_reached_other) = m_data.is_occupied(pother, iedge);
+        bool is_occupied_iedge_2, is_bbox_reached_2;
+        std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.collision_occured(pother, iedge);
+        // std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.is_occupied(pother, iedge);
+
+        const bool is_limit_line_1 = m_data.is_limit_line(pvertex, iedge, is_occupied_iedge_1);
+        const bool is_limit_line_2 = m_data.is_limit_line(pother , iedge, is_occupied_iedge_2);
 
         if (m_debug) {
-          std::cout << "- collision/bbox: " << collision << "/" << bbox_reached << std::endl;
-          std::cout << "- other/bbox: " << collision_other << "/" << bbox_reached_other << std::endl;
+          std::cout << "- bbox1/bbox2: "           << is_bbox_reached_1   << "/" << is_bbox_reached_1   << std::endl;
+          std::cout << "- limit1/limit2: "         << is_limit_line_1     << "/" << is_limit_line_2     << std::endl;
+          std::cout << "- occupied1/occupied1: "   << is_occupied_iedge_1 << "/" << is_occupied_iedge_2 << std::endl;
           std::cout << "- k intersections befor: " << m_data.k(pface) << std::endl;
         }
+        CGAL_assertion(is_occupied_iedge_1 == is_occupied_iedge_2);
+        CGAL_assertion(is_bbox_reached_1 == is_bbox_reached_2);
+        CGAL_assertion(is_limit_line_1 == is_limit_line_2);
 
         bool stop = false;
-        if (bbox_reached) {
+        if (is_bbox_reached_1 || is_bbox_reached_2) {
 
-          CGAL_assertion(bbox_reached_other);
-          if (m_debug) std::cout << "- pv po bbox" << std::endl;
+          if (m_debug) std::cout << "- bbox, stop" << std::endl;
           stop = true;
+          // CGAL_assertion_msg(false, "TODO: BBOX, STOP!");
 
-        } else if (bbox_reached_other) {
+        } else if (is_limit_line_1 || is_limit_line_2) {
 
-          CGAL_assertion(bbox_reached);
-          if (m_debug) std::cout << "- po pv bbox" << std::endl;
+          if (m_debug) std::cout << "- limit, stop" << std::endl;
           stop = true;
-
-        } else if ((collision || collision_other) && m_data.k(pface) == 1) {
-
-          if (m_debug) std::cout << "- pv po k stop" << std::endl;
-          stop = true;
-
-        } else if ((collision || collision_other) && m_data.k(pface) > 1) {
-
-          if (m_debug) std::cout << "- pv po k continue" << std::endl;
-          m_data.k(pface)--;
+          // CGAL_assertion_msg(false, "TODO: LIMIT, STOP!");
 
         } else {
 
-          CGAL_assertion(!collision && !collision_other);
-          if (m_debug) std::cout << "- pv po continue" << std::endl;
-          if (
-            m_data.is_occupied(pvertex, iedge).first ||
-            m_data.is_occupied(pother , iedge).first) {
-
-            CGAL_assertion_msg(false,
-            "ERROR: TWO PVERTICES SNEAK TO THE OTHER SIDE EVEN WHEN WE HAVE A POLYGON!");
-          }
+          if (m_debug) std::cout << "- pv po, free, any k, continue" << std::endl;
+          // CGAL_assertion_msg(false, "TODO: FREE, ANY K, CONTINUE!");
         }
+
+        // else if ((is_occupied_iedge_1 || is_occupied_iedge_2)) {
+
+        //   if (m_data.k(pface) == 1) {
+        //     if (m_debug) std::cout << "- occupied, k = 1, stop" << std::endl;
+        //     stop = true;
+        //     CGAL_assertion_msg(false, "TODO: OCCUPIED, K = 1, STOP!");
+        //   } else {
+        //     if (m_debug) std::cout << "- occupied, k > 1, continue" << std::endl;
+        //     m_data.k(pface)--;
+        //     CGAL_assertion_msg(false, "TODO: OCCUPIED, K > 1, CONTINUE!");
+        //   }
+
+        // } else {
+
+        //   CGAL_assertion(!is_bbox_reached_1   && !is_bbox_reached_2);
+        //   CGAL_assertion(!is_limit_line_1     && !is_limit_line_2);
+        //   CGAL_assertion(!is_occupied_iedge_1 && !is_occupied_iedge_2);
+
+        //   if (m_debug) std::cout << "- pv po, free, any k, continue" << std::endl;
+        //   if (
+        //     m_data.is_occupied(pvertex, iedge).first ||
+        //     m_data.is_occupied(pother , iedge).first) {
+
+        //     CGAL_assertion_msg(false,
+        //     "ERROR: TWO PVERTICES SNEAK TO THE OTHER SIDE EVEN WHEN WE HAVE A POLYGON!");
+        //   }
+        //   CGAL_assertion_msg(false, "TODO: FREE, ANY K, CONTINUE!");
+        // }
 
         CGAL_assertion(m_data.k(pface) >= 1);
         if (m_debug) {
-          // std::cout << "PFACE: " << m_data.centroid_of_pface(pface) << std::endl;
           std::cout << "- k intersections after: " << m_data.k(pface) << std::endl;
         }
 
@@ -1202,38 +1221,57 @@ private:
     CGAL_assertion(nfaces.size() == 1);
     CGAL_assertion(nfaces[0] == pface);
 
-    bool collision, bbox_reached;
-    std::tie(collision, bbox_reached) = m_data.collision_occured(pvertex, iedge);
-    // std::tie(collision, bbox_reached) = m_data.is_occupied(pvertex, iedge);
+    bool is_occupied_iedge, is_bbox_reached;
+    std::tie(is_occupied_iedge, is_bbox_reached) = m_data.collision_occured(pvertex, iedge);
+    // std::tie(is_occupied_iedge, is_bbox_reached) = m_data.is_occupied(pvertex, iedge);
+
+    const bool is_limit_line = m_data.is_limit_line(pvertex, iedge, is_occupied_iedge);
 
     if (m_debug) {
-      std::cout << "- collision/bbox: " << collision << "/" << bbox_reached << std::endl;
+      std::cout << "- bbox: "     << is_bbox_reached   << std::endl;
+      std::cout << "- limit: "    << is_limit_line     << std::endl;
+      std::cout << "- occupied: " << is_occupied_iedge << std::endl;
       std::cout << "- k intersections befor: " << m_data.k(pface) << std::endl;
     }
 
     bool stop = false;
-    if (bbox_reached) {
+    if (is_bbox_reached) {
 
-      if (m_debug) std::cout << "- pv k bbox" << std::endl;
+      if (m_debug) std::cout << "- bbox, stop" << std::endl;
       stop = true;
+      // CGAL_assertion_msg(false, "TODO: BBOX, STOP!");
 
-    } else if (collision && m_data.k(pface) == 1) {
+    } else if (is_limit_line) {
 
-      if (m_debug) std::cout << "- pv k stop" << std::endl;
+      if (m_debug) std::cout << "- limit, stop" << std::endl;
       stop = true;
-
-    } else if (collision && m_data.k(pface) > 1) {
-
-      if (m_debug) std::cout << "- pv k continue" << std::endl;
-      m_data.k(pface)--;
+      // CGAL_assertion_msg(false, "TODO: LIMIT, STOP!");
 
     } else {
-      if (m_debug) std::cout << "- pv continue" << std::endl;
+
+      if (m_debug) std::cout << "- free, any k, continue" << std::endl;
+      // CGAL_assertion_msg(false, "TODO: FREE, ANY K, CONTINUE!");
     }
+
+    // else if (is_occupied_iedge) {
+
+    //   if (m_data.k(pface) == 1) {
+    //     if (m_debug) std::cout << "- occupied, k = 1, stop" << std::endl;
+    //     stop = true;
+    //     CGAL_assertion_msg(false, "TODO: OCCUPIED, K = 1, STOP!");
+    //   } else {
+    //     if (m_debug) std::cout << "- occupied, k > 1, continue" << std::endl;
+    //     m_data.k(pface)--;
+    //     CGAL_assertion_msg(false, "TODO: OCCUPIED, K > 1, CONTINUE!");
+    //   }
+
+    // } else {
+    //   if (m_debug) std::cout << "- free, any k, continue" << std::endl;
+    //   CGAL_assertion_msg(false, "TODO: FREE, ANY K, CONTINUE!");
+    // }
 
     CGAL_assertion(m_data.k(pface) >= 1);
     if (m_debug) {
-      // std::cout << "PFACE: " << m_data.centroid_of_pface(pface) << std::endl;
       std::cout << "- k intersections after: " << m_data.k(pface) << std::endl;
     }
 
