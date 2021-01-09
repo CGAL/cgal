@@ -1110,12 +1110,12 @@ private:
         CGAL_assertion(nfaces[0] == pface);
 
         bool is_occupied_iedge_1, is_bbox_reached_1;
-        // std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.collision_occured(pvertex, iedge);
-        std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.is_occupied(pvertex, iedge);
+        std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.collision_occured(pvertex, iedge);
+        // std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.is_occupied(pvertex, iedge);
 
         bool is_occupied_iedge_2, is_bbox_reached_2;
-        // std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.collision_occured(pother, iedge);
-        std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.is_occupied(pother, iedge);
+        std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.collision_occured(pother, iedge);
+        // std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.is_occupied(pother, iedge);
 
         const bool is_limit_line_1 = m_data.is_limit_line(pvertex, iedge, is_occupied_iedge_1);
         const bool is_limit_line_2 = m_data.is_limit_line(pother , iedge, is_occupied_iedge_2);
@@ -1146,6 +1146,13 @@ private:
         } else {
 
           if (m_debug) std::cout << "- free, any k, continue" << std::endl;
+          if (
+            m_data.is_occupied(pvertex, iedge).first ||
+            m_data.is_occupied(pother , iedge).first) {
+
+            CGAL_assertion_msg(false,
+            "ERROR: TWO PVERTICES SNEAK TO THE OTHER SIDE EVEN WHEN WE HAVE A POLYGON!");
+          }
           // CGAL_assertion_msg(false, "TODO: FREE, ANY K, CONTINUE!");
         }
 
@@ -1222,8 +1229,8 @@ private:
     CGAL_assertion(nfaces[0] == pface);
 
     bool is_occupied_iedge, is_bbox_reached;
-    // std::tie(is_occupied_iedge, is_bbox_reached) = m_data.collision_occured(pvertex, iedge);
-    std::tie(is_occupied_iedge, is_bbox_reached) = m_data.is_occupied(pvertex, iedge);
+    std::tie(is_occupied_iedge, is_bbox_reached) = m_data.collision_occured(pvertex, iedge);
+    // std::tie(is_occupied_iedge, is_bbox_reached) = m_data.is_occupied(pvertex, iedge);
 
     const bool is_limit_line = m_data.is_limit_line(pvertex, iedge, is_occupied_iedge);
 

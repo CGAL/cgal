@@ -128,18 +128,6 @@ int main (const int argc, const char** argv) {
   assert(run_test("data/stress-test-4/test-4-rnd-polygons-4-6.off" , ks, num_iters, num_tests));
   assert(run_test("data/stress-test-4/test-5-rnd-polygons-6-4.off" , ks, num_iters, num_tests));
   assert(run_test("data/stress-test-4/test-6-rnd-polygons-5-6.off" , ks, num_iters, num_tests));
-
-  // Edge case tests.
-  assert(run_test("data/edge-case-test/test-flat-bbox-xy.off", ks, num_iters, num_tests)); // flat bbox / 2 coplanar in XY
-  assert(run_test("data/edge-case-test/test-flat-bbox-xz.off", ks, num_iters, num_tests)); // flat bbox / 2 coplanar in XZ
-  assert(run_test("data/edge-case-test/test-flat-bbox-yz.off", ks, num_iters, num_tests)); // flat bbox / 2 coplanar in YZ
-  assert(run_test("data/edge-case-test/test-2-polygons.off"  , ks, num_iters, num_tests)); // edge touch
-  assert(run_test("data/edge-case-test/test-4-polygons.off"  , ks, num_iters, num_tests)); // edge touch / 2 coplanar
-  assert(run_test("data/edge-case-test/test-5-polygons.off"  , ks, num_iters, num_tests)); // edge touch / vertex touch / 2 coplanar
-
-  // All below: unlikely working data sets!
-
-  // Stress tests 4.
   assert(run_test("data/stress-test-4/test-7-rnd-polygons-7-6.off" , ks, num_iters, num_tests));
   assert(run_test("data/stress-test-4/test-8-rnd-polygons-7-8.off" , ks, num_iters, num_tests));
   assert(run_test("data/stress-test-4/test-9-rnd-polygons-12-4.off", ks, num_iters, num_tests));
@@ -149,7 +137,13 @@ int main (const int argc, const char** argv) {
   assert(run_test("data/real-data-test/building-b-15squares-15planes.off" , ks, num_iters, num_tests));
 
   // Edge case tests.
-  assert(run_test("data/edge-case-test/test-20-polygons.off", ks, num_iters, num_tests)); // 2 overlap and coplanar
+  assert(run_test("data/edge-case-test/test-flat-bbox-xy.off", ks, num_iters, num_tests)); // flat bbox / 2 coplanar in XY
+  assert(run_test("data/edge-case-test/test-flat-bbox-xz.off", ks, num_iters, num_tests)); // flat bbox / 2 coplanar in XZ
+  assert(run_test("data/edge-case-test/test-flat-bbox-yz.off", ks, num_iters, num_tests)); // flat bbox / 2 coplanar in YZ
+  assert(run_test("data/edge-case-test/test-2-polygons.off"  , ks, num_iters, num_tests)); // edge touch
+  assert(run_test("data/edge-case-test/test-4-polygons.off"  , ks, num_iters, num_tests)); // edge touch / 2 coplanar
+  assert(run_test("data/edge-case-test/test-5-polygons.off"  , ks, num_iters, num_tests)); // edge touch / vertex touch / 2 coplanar
+  assert(run_test("data/edge-case-test/test-20-polygons.off" , ks, num_iters, num_tests)); // 2 overlap and coplanar
 
   std::cout << std::endl << "--OUTPUT STATS:" << std::endl;
   std::cout << "* number of iterations per test: " << num_iters << std::endl;

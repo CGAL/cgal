@@ -401,6 +401,11 @@ public:
         CGAL_assertion(sp_idx_2 != KSR::no_element());
 
         pairs.push_back(std::make_pair(std::make_pair(sp_idx_1, sp_idx_2), false));
+
+        // Makes results much better! ??
+        // Probably because it gives more available intersections between planes
+        // that is the same as increasing k. Is it good? No! Is it correct?
+        pairs.push_back(std::make_pair(std::make_pair(sp_idx_2, sp_idx_1), false));
         ++num_1_intersected;
         if (m_verbose) {
           std::cout << "pair 1: " << std::to_string(sp_idx_1) << "/" << std::to_string(sp_idx_2) << std::endl;
@@ -2581,6 +2586,14 @@ public:
         pv_prev, pv_next, pvertex, ivertex, is_open, reverse,
         iedges, new_crossed, new_pvertices);
     }
+
+    // TODO: IDEA:
+    // What about using potental but go pair by pair and check each potential pface
+    // and add pfaces even if they are between two other blocked pfaces in order to
+    // avoid holes? However, in this case, I need to change implementation of the traverse_iedges()!
+    // It should directly accept potential and I also need to convert crossed to potential
+    // in order to be able to use it as well. In this case, I also do not need to traverse
+    // open case from both sides, one side is enough.
   }
 
   void traverse_iedges(
@@ -2623,8 +2636,8 @@ public:
       const auto& iedge_ip = iedges[ip].first;
 
       bool is_occupied_iedge, is_bbox_reached;
-      // std::tie(is_occupied_iedge, is_bbox_reached) = this->is_occupied(pvertex, ivertex, iedge_i);
-      std::tie(is_occupied_iedge, is_bbox_reached) = this->is_occupied(pvertex, iedge_i);
+      std::tie(is_occupied_iedge, is_bbox_reached) = this->is_occupied(pvertex, ivertex, iedge_i);
+      // std::tie(is_occupied_iedge, is_bbox_reached) = this->is_occupied(pvertex, iedge_i);
 
       const bool is_limit_line = this->is_limit_line(pvertex, iedge_i, is_occupied_iedge);
 
@@ -3941,7 +3954,7 @@ public:
       }
     } while (!quit);
 
-    std::size_t stop_value = 1;
+    std::size_t stop_value = 3;
     if (num_removed_pfaces >= stop_value) {
       std::cout << "* number of removed hanging pfaces: " << num_removed_pfaces << std::endl;
     }
