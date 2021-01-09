@@ -130,7 +130,7 @@ struct Lazy_exact_Int_Cst : public Lazy_exact_nt_rep<ET>
       : Lazy_exact_nt_rep<ET>(double(i)) {}
 
   void update_exact() const {
-    ET* pet = new ET((int)this->approx().inf());
+    ET* pet = new typename Lazy_exact_nt_rep<ET>::Indirect((int)this->approx().inf());
     this->keep_at(pet);
     this->set_ptr(pet);
   }
@@ -144,7 +144,7 @@ struct Lazy_exact_Cst : public Lazy_exact_nt_rep<ET>
       : Lazy_exact_nt_rep<ET>(x), cste(x) {}
 
   void update_exact() const {
-    ET* pet = new ET(cste);
+    ET* pet = new typename Lazy_exact_nt_rep<ET>::Indirect(cste);
     this->keep_at(pet);
     this->set_ptr(pet);
   }
@@ -187,7 +187,7 @@ public:
 
   void update_exact() const
   {
-    ET* pet = new ET(l.exact());
+    ET* pet = new typename Lazy_exact_nt_rep<ET>::Indirect(l.exact());
     this->set_at(pet, l.approx());
     this->set_ptr(pet);
     this->prune_dag();
@@ -276,7 +276,7 @@ struct NAME : public Lazy_exact_unary<ET>                                \
                                                                          \
   void update_exact() const                                              \
   {                                                                      \
-    ET* pet = new ET(OP(this->op1.exact()));                             \
+    ET* pet = new typename Lazy_exact_nt_rep<ET>::Indirect(OP(this->op1.exact())); \
     if (!this->is_point())                                               \
       this->set_at(pet);                                                 \
     this->set_ptr(pet);                                                  \
@@ -294,13 +294,13 @@ CGAL_LAZY_UNARY_OP(CGAL_NTS sqrt,   Lazy_exact_Sqrt)
 template <typename ET, typename ET1 = ET, typename ET2 = ET>             \
 struct NAME : public Lazy_exact_binary<ET, ET1, ET2>                     \
 {                                                                        \
-  typedef typename Lazy_exact_binary<ET,ET1,ET2>::AT::Protector P;         \
+  typedef typename Lazy_exact_binary<ET,ET1,ET2>::AT::Protector P;       \
   NAME (const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)        \
     : Lazy_exact_binary<ET, ET1, ET2>((P(), a.approx() OP b.approx()), a, b) {} \
                                                                          \
   void update_exact() const                                              \
   {                                                                      \
-    ET* pet = new ET(this->op1.exact() OP this->op2.exact());            \
+    ET* pet = new typename Lazy_exact_nt_rep<ET>::Indirect(this->op1.exact() OP this->op2.exact()); \
     if (!this->is_point())                                               \
       this->set_at(pet);                                                 \
     this->set_ptr(pet);                                                  \
@@ -323,7 +323,7 @@ struct Lazy_exact_Min : public Lazy_exact_binary<ET>
   void update_exact() const
   {
     // Should we test is_point earlier, and construct ET from double in that case? Constructing from double is not free, but if op1 or op2 is not exact yet, we may be able to skip a whole tree of exact constructions.
-    ET* pet = new ET((CGAL::min)(this->op1.exact(), this->op2.exact()));
+    ET* pet = new typename Lazy_exact_nt_rep<ET>::Indirect((CGAL::min)(this->op1.exact(), this->op2.exact()));
     if (!this->is_point())
       this->set_at(pet);
     this->set_ptr(pet);
@@ -340,7 +340,7 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
 
   void update_exact() const
   {
-    ET* pet = new ET((CGAL::max)(this->op1.exact(), this->op2.exact()));
+    ET* pet = new typename Lazy_exact_nt_rep<ET>::Indirect((CGAL::max)(this->op1.exact(), this->op2.exact()));
     if (!this->is_point())
       this->set_at(pet);
     this->set_ptr(pet);
