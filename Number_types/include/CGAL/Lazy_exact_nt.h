@@ -124,7 +124,7 @@ struct Lazy_exact_nt_rep : public Lazy_exact_nt<ET>::Self_rep
 
 // int constant
 template <typename ET>
-struct Lazy_exact_Int_Cst : public Lazy_exact_nt_rep<ET>
+struct Lazy_exact_Int_Cst final : public Lazy_exact_nt_rep<ET>
 {
   Lazy_exact_Int_Cst (int i)
       : Lazy_exact_nt_rep<ET>(double(i)) {}
@@ -138,7 +138,7 @@ struct Lazy_exact_Int_Cst : public Lazy_exact_nt_rep<ET>
 
 // double constant
 template <typename ET, typename X>
-struct Lazy_exact_Cst : public Lazy_exact_nt_rep<ET>
+struct Lazy_exact_Cst final : public Lazy_exact_nt_rep<ET>
 {
   Lazy_exact_Cst (X x)
       : Lazy_exact_nt_rep<ET>(x), cste(x) {}
@@ -155,7 +155,7 @@ struct Lazy_exact_Cst : public Lazy_exact_nt_rep<ET>
 
 // Exact constant
 template <typename ET>
-struct Lazy_exact_Ex_Cst : public Lazy_exact_nt_rep<ET>
+struct Lazy_exact_Ex_Cst final : public Lazy_exact_nt_rep<ET>
 {
   Lazy_exact_Ex_Cst (const ET & e)
       : Lazy_exact_nt_rep<ET>(CGAL_NTS to_interval(e))
@@ -173,7 +173,7 @@ struct Lazy_exact_Ex_Cst : public Lazy_exact_nt_rep<ET>
 
 // Construction from a Lazy_exact_nt<ET1> (which keeps the lazyness).
 template <typename ET, typename ET1>
-class Lazy_lazy_exact_Cst : public Lazy_exact_nt_rep<ET>
+class Lazy_lazy_exact_Cst final : public Lazy_exact_nt_rep<ET>
 {
   mutable Lazy_exact_nt<ET1> l;
 
@@ -268,7 +268,7 @@ struct Lazy_exact_binary : public Lazy_exact_nt_rep<ET>
 // Macro for unary operations
 #define CGAL_LAZY_UNARY_OP(OP, NAME)                                     \
 template <typename ET>                                                   \
-struct NAME : public Lazy_exact_unary<ET>                                \
+struct NAME final : public Lazy_exact_unary<ET>                          \
 {                                                                        \
   typedef typename Lazy_exact_unary<ET>::AT::Protector P;                \
   NAME (const Lazy_exact_nt<ET> &a)                                      \
@@ -292,7 +292,7 @@ CGAL_LAZY_UNARY_OP(CGAL_NTS sqrt,   Lazy_exact_Sqrt)
 // A macro for +, -, * and /
 #define CGAL_LAZY_BINARY_OP(OP, NAME)                                    \
 template <typename ET, typename ET1 = ET, typename ET2 = ET>             \
-struct NAME : public Lazy_exact_binary<ET, ET1, ET2>                     \
+struct NAME final : public Lazy_exact_binary<ET, ET1, ET2>               \
 {                                                                        \
   typedef typename Lazy_exact_binary<ET,ET1,ET2>::AT::Protector P;       \
   NAME (const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)        \
@@ -315,7 +315,7 @@ CGAL_LAZY_BINARY_OP(/, Lazy_exact_Div)
 
 // Minimum
 template <typename ET>
-struct Lazy_exact_Min : public Lazy_exact_binary<ET>
+struct Lazy_exact_Min final : public Lazy_exact_binary<ET>
 {
   Lazy_exact_Min (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
     : Lazy_exact_binary<ET>((CGAL::min)(a.approx(), b.approx()), a, b) {}
@@ -333,7 +333,7 @@ struct Lazy_exact_Min : public Lazy_exact_binary<ET>
 
 // Maximum
 template <typename ET>
-struct Lazy_exact_Max : public Lazy_exact_binary<ET>
+struct Lazy_exact_Max final : public Lazy_exact_binary<ET>
 {
   Lazy_exact_Max (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
     : Lazy_exact_binary<ET>((CGAL::max)(a.approx(), b.approx()), a, b) {}

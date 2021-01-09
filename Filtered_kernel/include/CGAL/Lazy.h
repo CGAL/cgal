@@ -582,7 +582,7 @@ public:
 
 
 template<typename AT, typename ET, typename AC, typename EC, typename E2A, typename...L>
-class Lazy_rep_n :
+class Lazy_rep_n final :
   public Lazy_rep< AT, ET, E2A >, private EC
 {
   typedef Lazy_rep< AT, ET, E2A > Base;
@@ -634,7 +634,7 @@ class Lazy_rep_n :
 // The rep for the leaf node
 
 template <typename AT, typename ET, typename E2A>
-class Lazy_rep_0 : public Lazy_rep<AT, ET, E2A>
+class Lazy_rep_0 final : public Lazy_rep<AT, ET, E2A>
 {
 
   typedef Lazy_rep<AT, ET, E2A> Base;
@@ -738,7 +738,7 @@ struct Exact_converter
 
 
 template <typename AC, typename EC, typename E2A, typename L1>
-class Lazy_rep_with_vector_1
+class Lazy_rep_with_vector_1 final
   : public Lazy_rep<std::vector<Object>, std::vector<Object>, E2A>
   , private EC
 {
@@ -789,7 +789,7 @@ public:
 
 
 template <typename AC, typename EC, typename E2A, typename L1, typename L2>
-class Lazy_rep_with_vector_2
+class Lazy_rep_with_vector_2 final
   : public Lazy_rep<std::vector<Object>, std::vector<Object>, E2A>
   , private EC
 {
@@ -840,7 +840,7 @@ public:
 
 
 template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename R1>
-class Lazy_rep_2_1
+class Lazy_rep_2_1 final
   : public Lazy_rep<typename R1::AT, typename R1::ET, E2A>
   , private EC
 {
@@ -893,7 +893,7 @@ public:
 // The following rep class stores two non-const reference parameters of type R1 and R2
 
 template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename R1, typename R2>
-class Lazy_rep_2_2
+class Lazy_rep_2_2 final
   : public Lazy_rep<std::pair<typename R1::AT,typename R2::AT>, std::pair<typename R1::ET, typename R2::ET>, E2A>
   , private EC
 {
