@@ -3610,20 +3610,30 @@ collected in two additional abstract layers called
 \cgalFigureRef{aos_fig-side_clusters}.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_fig-identified_clusters,identified_clusters.png} Top
-portion of the refinement hierarchy of the geometry-traits concepts,
-where the vertical sides of the parameter space are identified, for
-curves that either reach the vertical sides of the boundary of the
-parameter space or approach it, and similarly for curves that either
-reach or approach identified horizontal sides.
+\cgalFigureBegin{aos_fig-identified_clusters,identified_clusters.png}
+Top portion of the refinement hierarchy of the geometry-traits
+concepts for curves that reach the identified vertical sides of the
+parameter space and for curves that reach the identified horizntal
+sides of the parameter space.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
-The shared requirements for opposite identified sides are collected in
-too additional abstract layers called
+Individual concepts for curves that reach the identified left side of
+the parameter space and for curves that the identified left side of
+the parameter space do not exists, because if one side is identified
+the opposide side must be identified as well. Similarly, individual
+concepts for curves that reach the identified left side of the
+parameter space and for curves that the identified left side of the
+parameter space do not exists as well. Instead, the shared
+requirements for opposite identified sides are collected in two
+additional abstract concepts called
 `ArrangementIdentifiedVerticalTraits_2` and
-`ArrangementIdentifiedHorizontalTraits_2`; see
-\cgalFigureRef{aos_fig-identified_clusters}.
+`ArrangementIdentifiedHorizontalTraits_2`; see \ref
+aos_fig-identified_clusters. The former lists requirements for
+operations that handle curves that reach identified vertical sides of
+the parameter space, and the latter lists requirements for operations
+that handle curves that reach identified horizontal sides of the
+parameter space.
 
 In the following we list the specific requirements of all the
 aforementioned concepts.
@@ -3728,6 +3738,20 @@ additional predicate:
 
 <DL>
 
+<DT>\link ArrangementVerticalSideTraits_2::Compare_y_on_boundary_2 <B>`Compare_y_on_boundary_2`</B>\endlink:
+
+<DD>Given two points \f$p_1=(x_{p_1},y_{p_1})\f$ and
+\f$p_2=(x_{p_2},y_{p_2})\f$, such that at least one of them lies on a
+vertical boundary side, compare the \f$y\f$-coordinates of the
+points. That is, compare \f$y_{p_1}\f$ and \f$y_{p_2}\f$. If \f$p_1\f$
+(resp. \f$p_2\f$) is on the boundary; that is, \f$x_{p_1} \in \{x_{\rm
+min},x_{\rm max}\}\f$ (resp. \f$x_{p_2} \in \{x_{\rm min},x_{\rm
+max}\}\f$), then the vertical boundary side containing \f$p_1\f$
+(resp. \f$p_2\f$) must be either closed or identified. In other words,
+this overloaded version is required only for the concepts
+`ArrangementClosedLeftTraits_2`, `ArrangementClosedRightTraits_2`, and
+`ArrangementIdentifiedVerticalTraits_2`.
+
 <DT>\link ArrangementVerticalSideTraits_2::Compare_y_near_boundary_2 <B>`Compare_y_near_boundary_2`</B>\endlink:
 
 <DD>
@@ -3819,8 +3843,7 @@ max}\}\f$), then the boundary side containing \f$p_1\f$
 (resp. \f$p_2\f$) must be either closed or identified. In other words,
 this overloaded version is required only for the concepts
 `ArrangementClosedBottomTraits_2`, `ArrangementClosedTopTraits_2`,
-`ArrangementIdentifiedBottomTraits_2`, and
-`ArrangementIdentifiedTopTraits_2`.
+and `ArrangementIdentifiedHorizontalTraits_2`.
 
 <DT>\link ArrangementHorizontalSideTraits_2::Compare_x_near_boundary_2
 <B>`Compare_x_near_boundary_2`</B>\endlink:
@@ -3860,32 +3883,10 @@ boundary-side, \f$p\f$ is located far to the top in a similar manner.
 </DL>
 
 The concept `ArrangementIdentifiedVerticalTraits_2` requires the following
-predicates:
+predicate:
 
 <DL>
 
-<DT>\link ArrangementVerticalSideTraits_2::Compare_y_on_boundary_2 <B>`Compare_y_on_boundary_2`</B>\endlink:
-
-<DD>Given two points \f$p_1=(x_{p_1},y_{p_1})\f$ and
-\f$p_2=(x_{p_2},y_{p_2})\f$, such that at least one of them lies on a
-vertical boundary side, compare the \f$y\f$-coordinates of the
-points. That is, compare \f$y_{p_1}\f$ and \f$y_{p_2}\f$. If \f$p_1\f$
-(resp. \f$p_2\f$) is on the boundary; that is, \f$x_{p_1} \in \{x_{\rm
-min},x_{\rm max}\}\f$ (resp. \f$x_{p_2} \in \{x_{\rm min},x_{\rm
-max}\}\f$), then the vertical boundary side containing \f$p_1\f$
-(resp. \f$p_2\f$) must be either closed or identified. In other words,
-this overloaded version is required only for the concepts
-`ArrangementClosedLeftTraits_2`, `ArrangementClosedRightTraits_2`,
-`ArrangementIdentifiedLeftTraits_2` and
-`ArrangementIdentifiedRightTraits_2` concepts.
-
-</DL>
-
-
-The concept `ArrangementIdentifiedVerticalTraits_2` requires the
-following predicate:
-
-<DL>
 <DT>\link ArrangementIdentifiedVerticalTraits_2::Is_on_y_identification_2 <B>`Is_on_y_identification_2`</B>\endlink:
 
 <DD>This predicate is overloaded with two versions.

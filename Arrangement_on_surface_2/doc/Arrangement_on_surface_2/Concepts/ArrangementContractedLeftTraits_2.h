@@ -15,7 +15,7 @@
  *     `ArrangementContractedTopTraits_2`,
  *     `ArrangementOpenLeftTraits_2`,
  *     `ArrangementClosedLeftTraits_2`, and
- *     `ArrangementIdentifiedLeftTraits_2`
+ *     `ArrangementIdentifiedVerticalTraits_2`
  */
 
 class ArrangementContractedLeftTraits_2 {

@@ -9,8 +9,7 @@
  * right sides and contracted at the top and bottom sides.
  *
  * \cgalRefines `ArrangementBasicTraits_2`
- * \cgalRefines `ArrangementIdentifiedLeftTraits_2`
- * \cgalRefines `ArrangementIdentifiedRightTraits_2`
+ * \cgalRefines `ArrangementIdentifiedVerticalTraits_2`
  * \cgalRefines `ArrangementContractedBottomTraits_2`
  * \cgalRefines `ArrangementContractedTopTraits_2`
  * \cgalRefines
@@ -19,8 +18,7 @@
  *
  * \sa `ArrangementOpenBoundaryTraits_2`
  * \sa `ArrangementBasicTraits_2`
- * \sa `ArrangementIdentifiedLeftTraits_2`
- * \sa `ArrangementIdentifiedRightTraits_2`
+ * \sa `ArrangementIdentifiedVerticalTraits_2`
  * \sa `ArrangementContractedBottomTraits_2`
  * \sa `ArrangementContractedTopTraits_2`
  * \sa `ArrangementHorizontalSideTraits_2`

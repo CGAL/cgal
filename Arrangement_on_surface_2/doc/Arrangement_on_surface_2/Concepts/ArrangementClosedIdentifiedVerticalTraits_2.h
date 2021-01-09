@@ -3,8 +3,8 @@
  *
  * `ArrangementClosedIdentifiedVerticalTraits_2` is an abstract concept. It
  * generalizes the concepts `ArrangementClosedLeftTraits_2`,
- * `ArrangementClosedRightTraits_2`, `ArrangementIdentifiedLeftTraits_2` and
- * `ArrangementIdentifiedRightTraits_2`. (An "abstract" concept is a concept
+ * `ArrangementClosedRightTraits_2`, and
+ * `ArrangementIdentifiedVerticalTraits_2`. (An "abstract" concept is a concept
  * that is useless on its own.) Only a combination of this concept and one or
  * more concepts that handle curves that either reach or approach the remaining
  * boundary sides (that is, borrom and top) are purposeful, and can have models.

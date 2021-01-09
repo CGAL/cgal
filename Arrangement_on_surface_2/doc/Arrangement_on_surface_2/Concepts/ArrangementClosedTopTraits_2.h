@@ -15,7 +15,7 @@
  *     `ArrangementClosedBottomTraits_2`,
  *     `ArrangementOpenTopTraits_2`,
  *     `ArrangementContractedTopTraits_2`, and
- *     `ArrangementIdentifiedTopTraits_2`
+ *     `ArrangementIdentifiedHorizontalTraits_2`
  */
 
 class ArrangementClosedTopTraits_2 {
