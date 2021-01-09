@@ -25,13 +25,14 @@
  * some curves handled by a model of the concept
  * `ArrangementOpenBoundaryTraits_2` are expected to be open on the left, the
  * nested type `Left_side_category` must be convertible to
- * `Arr_open_side_tag`. Similarly, if some curves handled by the concept are
- * expected to be open on the right, open at the bottom, or open at the top, the
- * corresponding nested type must be convertible to `Arr_open_side_tag`. A model
- * of the concept `ArrangementOpenBoundaryTraits_2` must have all the four
- * categories convertible to `Arr_open_side_tag`.\cgalFootnote{We intend to
- * introduce more concepts that require only a subset of the categories to be
- * convertible to `Arr_open_side_tag`.} In this case the <span
+ * `CGAL::Arr_open_side_tag`. Similarly, if some curves handled by the concept
+ * are expected to be open on the right, open at the bottom, or open at the top,
+ * the corresponding nested type must be convertible to
+ * `CGAL::Arr_open_side_tag`. A model of the concept
+ * `ArrangementOpenBoundaryTraits_2` must have all the four categories
+ * convertible to `CGAL::Arr_open_side_tag`.\cgalFootnote{We intend to introduce
+ * more concepts that require only a subset of the categories to be convertible
+ * to `CGAL::Arr_open_side_tag`.} In this case the <span
  * class="textsc">Dcel</span> of the arrangement instantiated with the model is
  * initialized with an implicit bounding rectangle. When the parameter space is
  * bounded, it is the exact geometric embedding of the implicit bounding

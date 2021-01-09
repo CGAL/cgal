@@ -23,7 +23,7 @@
  * boundary of the parameter space, are conveyed through the definition of four
  * additional nested types, namely `Left_side_category`, `Right_side_category`,
  * `Bottom_side_category`, and `Top_side_category`. Each such type must be
- * convertible to the type `Arr_oblivious_side_tag`.
+ * convertible to the type `CGAL::Arr_oblivious_side_tag`.
  *
  * \cgalRefines DefaultConstructible
  * \cgalRefines CopyConstructible
@@ -69,19 +69,19 @@ public:
    */
   typedef unspecified_type Has_left_category;
 
-  /*! Must be convertible to `Arr_oblivious_side_tag`.
+  /*! Must be convertible to `CGAL::Arr_oblivious_side_tag`.
    */
   typedef unspecified_type Left_side_category;
 
-  /*! Must be convertible to `Arr_oblivious_side_tag`.
+  /*! Must be convertible to `CGAL::Arr_oblivious_side_tag`.
    */
   typedef unspecified_type Bottom_side_category;
 
-  /*! Must be convertible to `Arr_oblivious_side_tag`.
+  /*! Must be convertible to `CGAL::Arr_oblivious_side_tag`.
    */
   typedef unspecified_type Top_side_category;
 
-  /*!Must be convertible to `Arr_oblivious_side_tag`.
+  /*!Must be convertible to `CGAL::Arr_oblivious_side_tag`.
    */
   typedef unspecified_type Right_side_category;
 

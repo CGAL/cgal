@@ -6,7 +6,7 @@
  * a sphere or a surface that is topological equivalent to a sphere. The sphere
  * is oriented in such a way that the boundary of the rectangular parameter
  * space, the sphere is the mapping of which, is identified on the left and
- * right sides and contracted at the top and bottom sides. In other words,
+ * right sides and contracted at the top and bottom sides.
  *
  * \cgalRefines `ArrangementBasicTraits_2`
  * \cgalRefines `ArrangementIdentifiedLeftTraits_2`

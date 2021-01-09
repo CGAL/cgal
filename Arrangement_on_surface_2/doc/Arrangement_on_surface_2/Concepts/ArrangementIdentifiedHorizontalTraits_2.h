@@ -11,10 +11,10 @@
  * \sa `ArrangementIdentifiedVerticalTraits_2`,
  *     `ArrangementOpenBottomTraits_2`,
  *     `ArrangementClosedBottomTraits_2`, and
- *     `ArrangementConstractedBottomTraits_2`
+ *     `ArrangementContractedBottomTraits_2`
  *     `ArrangementOpenTopTraits_2`,
  *     `ArrangementClosedTopTraits_2`, and
- *     `ArrangementConstractedTopTraits_2`
+ *     `ArrangementContractedTopTraits_2`
  */
 
 class ArrangementIdentifiedHorizontalTraits_2 {
@@ -22,7 +22,7 @@ public:
   /// \name Categories
   /// @{
 
-  //! Must be convertible to `Arr_identified_side_tag`.
+  //! Must be convertible to `CGAL::Arr_identified_side_tag`.
   typedef unspecified_type Bottom_side_category;
   typedef unspecified_type Top_side_category;
   /// @}
@@ -34,7 +34,7 @@ public:
   /// \name Functor Types
   /// @{
 
-  /// models the concept `ArrTraits::IsOnYIdentification_2`.
+  /// models the concept `ArrTraits::IsOnXIdentification_2`.
   typedef unspecified_type Is_on_x_identification_2;
 
   /// @}

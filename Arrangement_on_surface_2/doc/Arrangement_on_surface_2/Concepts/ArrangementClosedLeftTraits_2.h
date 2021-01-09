@@ -23,7 +23,7 @@ public:
   /// \name Categories
   /// @{
 
-  /*! Must be convertible to `Arr_closed_side_tag`.
+  /*! Must be convertible to `CGAL::Arr_closed_side_tag`.
   */
   typedef unspecified_type Left_side_category;
   /// @}

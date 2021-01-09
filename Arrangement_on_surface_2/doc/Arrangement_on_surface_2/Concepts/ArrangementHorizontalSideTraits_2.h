@@ -3,7 +3,11 @@
  *
  * `ArrangementHorizontalSideTraits_2` is an abstract concept. It generalizes
  * all concepts that handle curves that either reach or approach either the
- * bottom or top sizeds of the boundary of the parameter space.
+ * bottom or top sizeds of the boundary of the parameter space. (An "abstract"
+ * concept is a concept that is useless on its own.) Only a combination of this
+ * concept and one or more concepts that handle curves that either reach or
+ * approach the remaining boundary sides (that is, left and right) are
+ * purposeful, and can have models.
  *
  * \cgalRefines `ArrangementBasicTraits_2`
  *
@@ -29,7 +33,7 @@ public:
   /// \name Functor Types
   /// @{
 
-  /// models the concept `ArrTraits::ParameterSpaceInX_2`.
+  /// models the concept `ArrTraits::ParameterSpaceInY_2`.
   typedef unspecified_type Parameter_space_in_y_2;
 
   /// models the concept `ArrTraits::CompareXOnBoundary_2`.

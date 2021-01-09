@@ -168,6 +168,8 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrTraits::ConstructMinVertex_2`
 - `ArrTraits::ConstructMaxVertex_2`
 - `ArrTraits::IsVertical_2`
+- `ArrTraits::IsOnXIdentification_2`
+- `ArrTraits::IsOnYIdentification_2`
 - `ArrTraits::CompareYAtX_2`
 - `ArrTraits::CompareYAtXLeft_2`
 - `ArrTraits::CompareYAtXRight_2`

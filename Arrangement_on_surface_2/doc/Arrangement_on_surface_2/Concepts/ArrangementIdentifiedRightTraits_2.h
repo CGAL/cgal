@@ -14,7 +14,7 @@
  *     `ArrangementIdentifiedTopTraits_2`,
  *     `ArrangementOpenRightTraits_2`,
  *     `ArrangementClosedRightTraits_2`, and
- *     `ArrangementConstractedRightTraits_2`
+ *     `ArrangementContractedRightTraits_2`
  */
 
 class ArrangementIdentifiedRightTraits_2 {
@@ -22,7 +22,7 @@ public:
   /// \name Categories
   /// @{
 
-  //! Must be convertible to `Arr_identified_side_tag`.
+  //! Must be convertible to `CGAL::Arr_identified_side_tag`.
   typedef unspecified_type Right_side_category;
   /// @}
 

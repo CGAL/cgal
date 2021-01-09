@@ -15,7 +15,7 @@
  *     `ArrangementIdentifiedTopTraits_2`,
  *     `ArrangementOpenLeftTraits_2`,
  *     `ArrangementClosedLeftTraits_2`, and
- *     `ArrangementConstractedLeftTraits_2`
+ *     `ArrangementContractedLeftTraits_2`
  */
 
 class ArrangementIdentifiedLeftTraits_2 {
@@ -23,7 +23,7 @@ public:
   /// \name Categories
   /// @{
 
-  //! Must be convertible to `Arr_identified_side_tag`.
+  //! Must be convertible to `CGAL::Arr_identified_side_tag`.
   typedef unspecified_type Left_side_category;
   /// @}
 

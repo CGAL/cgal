@@ -15,7 +15,7 @@
  *     `ArrangementIdentifiedTopTraits_2`,
  *     `ArrangementOpenBottomTraits_2`,
  *     `ArrangementClosedBottomTraits_2`, and
- *     `ArrangementConstractedBottomTraits_2`
+ *     `ArrangementContractedBottomTraits_2`
  */
 
 class ArrangementIdentifiedBottomTraits_2 {
@@ -23,7 +23,7 @@ public:
   /// \name Categories
   /// @{
 
-  //! Must be convertible to `Arr_identified_side_tag`.
+  //! Must be convertible to `CGAL::Arr_identified_side_tag`.
   typedef unspecified_type Bottom_side_category;
   /// @}
 
