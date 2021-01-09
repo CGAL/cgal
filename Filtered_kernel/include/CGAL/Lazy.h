@@ -246,6 +246,7 @@ struct AT_ET_wrap : AT_wrap<AT> {
 };
 
 // Abstract base class for lazy numbers and lazy objects
+#if 1
 template <typename AT_, typename ET, typename E2A>
 class Lazy_rep : public Rep, public Depth_base
 {
@@ -298,7 +299,7 @@ public:
     ptr_.store(p, std::memory_order_release);
   }
 
-  // I think we should have different code for cases where there is some cleanup to do (say, a sum of 2 Lazy_exact_nt) and for cases where there isn't (a Lazy_exact_nt constructed from a double). Objects can be hidden in a tuple in Lazy_rep_n, so checking if there is something to clean requires some code. It isn't clear if we also need to restrict that to cases where update_exact doesn't touch AT. The special version would be basically: if(et==0){pet=new ET(...);if(!et.exchange(0,pet))delete pet; update at?}
+  // I think we should have different code for cases where there is some cleanup to do (say, a sum of 2 Lazy_exact_nt) and for cases where there isn't (a Lazy_exact_nt constructed from a double), but it may require making exact() virtual. Objects can be hidden in a tuple in Lazy_rep_n, so checking if there is something to clean requires some code. It isn't clear if we also need to restrict that to cases where update_exact doesn't touch AT. The special version would be basically: if(et==0){pet=new ET(...);if(!et.exchange(0,pet))delete pet; update at?}
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void print_at_et(std::ostream& os, int level) const
@@ -343,7 +344,115 @@ public:
 #endif
   }
 };
+#else
+/* How (un)safe is this? The goal is to minimize the overhead compared to a single-thread version by making the fast path almost identical.
+ * For scalars on x86_64, the interval is aligned, so load/store instructions will not slice any double. On recent hardware, they should even be atomic, although without an official guarantee, and we don't need 128-bit atomicity anyway. The main danger is the unpredictable optimizations a compiler could apply (volatile would disable most of them, but it doesn't seem great).
+ * For aggregate-like types (Simple_cartesian::Point_3), it should be ok for the same reason.
+ * This is definitely NOT safe for a std::vector like a Point_d with Dynamic_dimension_tag, so it should only be enabled on a case by case basis, if at all. Storing a Point_3 piecewise with 6 atomic_double would be doable, but painful, and I didn't benchmark to check the performance. */
+template <typename AT_, typename ET, typename E2A>
+class Lazy_rep : public Rep, public Depth_base
+{
+  Lazy_rep (const Lazy_rep&) = delete; // cannot be copied.
+
+public:
+
+  typedef AT_ AT;
+  typedef ET Indirect;
+
+  mutable AT at;
+  mutable std::atomic<ET*> ptr_ { nullptr };
+  mutable std::once_flag once;
+
+  Lazy_rep () {}
+
+  template<class A>
+  Lazy_rep (A&& a)
+      : at(std::forward<A>(a)) {}
+
+  template<class A, class E>
+  Lazy_rep (A&& a, E&& e)
+      : at(std::forward<A>(a)), ptr_(new ET(std::forward<E>(e))) {}
+
+  AT const& approx() const
+  {
+    return at;
+  }
+
+  // FIXME: Uh?
+  bool is_point() const {
+    return at.is_point();
+  }
+
+  template<class A>
+  void set_at(ET*, A&& a) const {
+    at = std::forward<A>(a);
+  }
+
+  void set_at(ET* p) const {
+    set_at(p, E2A()(*p));
+  }
+  void keep_at(ET*) const { }
+
+  const ET & exact() const
+  {
+    // The test is unnecessary, only use it if benchmark says so
+    //if (ptr_.load(std::memory_order_relaxed) == nullptr)
+    std::call_once(once, [this](){this->update_exact();});
+    return *ptr_.load(std::memory_order_relaxed); // call_once already synchronized memory
+  }
+
+  void set_ptr(ET* p) const {
+    ptr_.store(p, std::memory_order_release);
+  }
+
+  // I think we should have different code for cases where there is some cleanup to do (say, a sum of 2 Lazy_exact_nt) and for cases where there isn't (a Lazy_exact_nt constructed from a double). Objects can be hidden in a tuple in Lazy_rep_n, so checking if there is something to clean requires some code. It isn't clear if we also need to restrict that to cases where update_exact doesn't touch AT. The special version would be basically: if(et==0){pet=new ET(...);if(!et.exchange(0,pet))delete pet; update at?}
+
+#ifdef CGAL_LAZY_KERNEL_DEBUG
+  void print_at_et(std::ostream& os, int level) const
+  {
+    for(int i = 0; i < level; i++){
+      os << "    ";
+    }
+    os << "Approximation: ";
+    print_at(os, at);
+    os << std::endl;
+    if(! is_lazy()){
+      for(int i = 0; i < level; i++){
+        os << "    ";
+      }
+      os << "Exact: ";
+      print_at(os, *et);
+      os << std::endl;
+#ifdef CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
+      for(int i = 0; i < level; i++){
+        os << "    ";
+      }
+      os << "  (type: " << typeid(*et).name() << ")" << std::endl;
+#endif // CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
+    }
+  }
+
+  virtual void print_dag(std::ostream& os, int level) const {}
+#endif
+
+  bool is_lazy() const { return ptr_.load(std::memory_order_relaxed) == nullptr; }
+  virtual void update_exact() const = 0;
+  virtual ~Lazy_rep() {
+ #if !defined __SANITIZE_THREAD__ && !__has_feature(thread_sanitizer)
+    auto* p = ptr_.load(std::memory_order_relaxed);
+    if (p != nullptr) {
+      std::atomic_thread_fence(std::memory_order_acquire);
+      delete p;
+    }
+#else
+    auto* p = ptr_.load(std::memory_order_consume);
+    if (p != nullptr) delete p;
+#endif
+  }
+};
+#endif
 // do we need to (forward) declare Interval_nt?
+#if 1
 template <bool b, typename ET, typename E2A>
 class Lazy_rep<Interval_nt<b>, ET, E2A> : public Rep, public Depth_base
 {
@@ -469,6 +578,7 @@ public:
 #endif
   }
 };
+#endif
 
 
 template<typename AT, typename ET, typename AC, typename EC, typename E2A, typename...L>
@@ -581,7 +691,7 @@ struct Approx_converter
   //typedef Converter  Number_type_converter;
 
   template < typename T >
-  const typename T::AT&
+  decltype(auto)
   operator()(const T&t) const
   { return t.approx(); }
 
@@ -606,7 +716,7 @@ struct Exact_converter
   //typedef Converter  Number_type_converter;
 
   template < typename T >
-  const typename T::ET&
+  decltype(auto)
   operator()(const T&t) const
   { return t.exact(); }
 
