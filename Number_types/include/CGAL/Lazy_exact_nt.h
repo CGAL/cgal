@@ -131,6 +131,7 @@ struct Lazy_exact_Int_Cst : public Lazy_exact_nt_rep<ET>
 
   void update_exact() const {
     ET* pet = new ET((int)this->approx().inf());
+    this->keep_at(pet);
     this->set_ptr(pet);
   }
 };
@@ -144,6 +145,7 @@ struct Lazy_exact_Cst : public Lazy_exact_nt_rep<ET>
 
   void update_exact() const {
     ET* pet = new ET(cste);
+    this->keep_at(pet);
     this->set_ptr(pet);
   }
 
@@ -320,6 +322,7 @@ struct Lazy_exact_Min : public Lazy_exact_binary<ET>
 
   void update_exact() const
   {
+    // Should we test is_point earlier, and construct ET from double in that case? Constructing from double is not free, but if op1 or op2 is not exact yet, we may be able to skip a whole tree of exact constructions.
     ET* pet = new ET((CGAL::min)(this->op1.exact(), this->op2.exact()));
     if (!this->is_point())
       this->set_at(pet);

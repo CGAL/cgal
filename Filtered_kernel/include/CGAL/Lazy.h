@@ -354,23 +354,63 @@ public:
   typedef Interval_nt<b> AT;
   typedef ET Indirect;
 
-  mutable std::atomic<double> x, y;
   mutable std::atomic<ET*> ptr_ { nullptr };
   mutable std::once_flag once;
 
   Lazy_rep () {}
+
+#ifdef CGAL_USE_SSE2
+  // How (un)safe is this? The interval is aligned, so load/store instructions will not slice any double. On recent hardware, they should even be atomic, although without an official guarantee, and we don't need 128-bit atomicity anyway. The main danger is the unpredictable optimizations a compiler could apply (volatile would disable most of them, but it doesn't seem great). The goal is to minimize the overhead compared to a single-thread version by making the fast path almost identical.
+  mutable AT i;
+
+  Lazy_rep (AT a)
+      : i(a) {}
+
+  template<class E>
+  Lazy_rep (AT a, E&& e)
+      : ptr_(new ET(std::forward<E>(e))), i(a) {}
+
+  AT approx() const
+  {
+    return i;
+  }
+
+  bool is_point() const {
+    return i.is_point();
+  }
+
+  void set_at(ET*, AT a) const {
+    i = a;
+  }
+#else
+  mutable std::atomic<double> x, y;
 
   Lazy_rep (AT a)
       : x(-a.inf()), y(a.sup()) {}
 
   template<class E>
   Lazy_rep (AT a, E&& e)
-      : x(-a.inf()), y(a.sup()), ptr_(new ET(std::forward<E>(e))) {}
+      : ptr_(new ET(std::forward<E>(e))), x(-a.inf()), y(a.sup()) {}
 
   AT approx() const
   {
     return AT(-x.load(std::memory_order_relaxed), y.load(std::memory_order_relaxed));
   }
+
+  bool is_point() const {
+    return x.load(std::memory_order_relaxed) == y.load(std::memory_order_relaxed);
+  }
+
+  void set_at(ET*, AT a) const {
+    x.store(-a.inf(), std::memory_order_relaxed);
+    y.store(a.sup(), std::memory_order_relaxed);
+  }
+#endif
+
+  void set_at(ET* p) const {
+    set_at(p, E2A()(*p));
+  }
+  void keep_at(ET*) const { }
 
   const ET & exact() const
   {
@@ -380,23 +420,8 @@ public:
     return *ptr_.load(std::memory_order_relaxed); // call_once already synchronized memory
   }
 
-  template<class A>
-  void set_at(ET*, A&& a_) const {
-    AT a = a_;
-    x.store(-a.inf(), std::memory_order_relaxed);
-    y.store(a.sup(), std::memory_order_relaxed);
-  }
-  void set_at(ET* p) const {
-    set_at(p, E2A()(*p));
-  }
-  void keep_at(ET*) const { }
-
   void set_ptr(ET* p) const {
     ptr_.store(p, std::memory_order_release);
-  }
-
-  bool is_point() const {
-    return x.load(std::memory_order_relaxed) == y.load(std::memory_order_relaxed);
   }
 
   // I think we should have different code for cases where there is some cleanup to do (say, a sum of 2 Lazy_exact_nt) and for cases where there isn't (a Lazy_exact_nt constructed from a double). Objects can be hidden in a tuple in Lazy_rep_n, so checking if there is something to clean requires some code. It isn't clear if we also need to restrict that to cases where update_exact doesn't touch AT. The special version would be basically: if(et==0){pet=new ET(...);if(!et.exchange(0,pet))delete pet; update at?}
@@ -620,7 +645,7 @@ public:
   void
   update_exact() const
   {
-    auto* p = new AT_ET_wrap<AT,ET>();
+    auto* p = new typename Base::Indirect();
     // TODO : This looks really unfinished...
     std::vector<Object> vec;
     //this->et->reserve(this->at.size());
@@ -672,7 +697,7 @@ public:
   void
   update_exact() const
   {
-    auto* p = new AT_ET_wrap<AT,ET>();
+    auto* p = new typename Base::Indirect();
     p->et_.reserve(this->at_orig.at().size());
     ec()(CGAL::exact(l1_), CGAL::exact(l2_), std::back_inserter(p->et_));
     this->set_at(p);
@@ -723,7 +748,7 @@ public:
   void
   update_exact() const
   {
-    auto* p = new AT_ET_wrap<AT,ET>();
+    auto* p = new typename Base::Indirect();
     ec()(CGAL::exact(l1_), CGAL::exact(l2_), p->et_);
     this->set_at(p);
     this->set_ptr(p);
@@ -776,7 +801,7 @@ public:
   void
   update_exact() const
   {
-    auto* p = new AT_ET_wrap<AT,ET>();
+    auto* p = new typename Base::Indirect();
     ec()(CGAL::exact(l1_), CGAL::exact(l2_), p->et_.first, p->et_.second );
     this->set_at(p);
     this->set_ptr(p);
