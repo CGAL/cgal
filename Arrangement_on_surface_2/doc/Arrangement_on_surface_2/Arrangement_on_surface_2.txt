@@ -3628,12 +3628,12 @@ parameter space do not exists as well. Instead, the shared
 requirements for opposite identified sides are collected in two
 additional abstract concepts called
 `ArrangementIdentifiedVerticalTraits_2` and
-`ArrangementIdentifiedHorizontalTraits_2`; see \ref
-aos_fig-identified_clusters. The former lists requirements for
-operations that handle curves that reach identified vertical sides of
-the parameter space, and the latter lists requirements for operations
-that handle curves that reach identified horizontal sides of the
-parameter space.
+`ArrangementIdentifiedHorizontalTraits_2`; see
+\cgalFigureRef{aos_fig-identified_clusters}. The former lists
+requirements for operations that handle curves that reach identified
+vertical sides of the parameter space, and the latter lists
+requirements for operations that handle curves that reach identified
+horizontal sides of the parameter space.
 
 In the following we list the specific requirements of all the
 aforementioned concepts.

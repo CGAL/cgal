@@ -173,6 +173,7 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrTraits::ParameterSpaceInX_2`
 - `ArrTraits::ParameterSpaceInY_2`
 - `ArrTraits::CompareXOnBoundary_2`
+- `ArrTraits::CompareYOnBoundary_2`
 - `ArrTraits::CompareXNearBoundary_2`
 - `ArrTraits::CompareYNearBoundary_2`
 - `ArrTraits::Intersect_2`
@@ -224,6 +225,8 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::Arr_vertex_index_map<Arrangement>`
 - `CGAL::Arr_face_index_map<Arrangement>`
 - `CGAL::Arr_point_location_result<Arrangement>`
+- `CGAL::Arr_bounded_planar_topology_traits_2<GeometryTraits_2,Dcel>`
+- `CGAL::Arr_unb_planar_topology_traits_2<GeometryTraits_2,Dcel>`
 - `CGAL::Arr_spherical_topology_traits_2<GeometryTraits_2,Dcel>`
 
 \cgalCRPSection{Macros}

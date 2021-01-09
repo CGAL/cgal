@@ -3,18 +3,18 @@
  *
  * A geometry traits class encapsulates the definitions of the geometric
  * entities and implements the geometric predicates and constructions needed by
- * instances of the `Arrangement_on_surface_2` class template and by the
+ * instances of the `CGAL::Arrangement_on_surface_2` class template and by the
  * peripheral algorithms that operate on objects of such instances. Essentially,
  * it maintains the doubly-connected connected edge list (DCEL) used by the
  * arrangement.
  *
  * The package contains three topology traits, as follows:
  * <UL>
- * <li> `Arr_spherical_topology_traits_2`&mdash;can serve as a topology traits
+ * <li> `CGAL::Arr_spherical_topology_traits_2`&mdash;can serve as a topology traits
  * for an arrangement of planar bounded curves.
- * <li> `Arr_bounded_planar_topology_traits_2`&mdash;can serve as a topology traits
+ * <li> `CGAL::Arr_bounded_planar_topology_traits_2`&mdash;can serve as a topology traits
  * for an arrangement of planar unbounded curves.
- * <li> `Arr_unb_planar_topology_traits_2`&mdash;can serve as a topology traits
+ * <li> `CGAL::Arr_unb_planar_topology_traits_2`&mdash;can serve as a topology traits
  * for an arrangement of arcs of great circles embeded on a sphere.
  * </ul>
  *
@@ -54,8 +54,11 @@ public:
   /// \name Access Functions
   /// @{
 
-  /*! obtains the DCEL. */
+  /*! obtains the (const) DCEL. */
   const Dcel& dcel() const;
+
+  /*! obtains the (non-const) DCEL. */
+  Dcel& dcel();
 
   /// @}
 };
