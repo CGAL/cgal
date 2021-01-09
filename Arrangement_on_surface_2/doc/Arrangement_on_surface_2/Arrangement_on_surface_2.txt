@@ -946,8 +946,9 @@ halfedge directed from \f$v_1\f$ to \f$v_2\f$.
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-edge_insertion,edge_insertion.png}
 The arrangement of the line segments \f$s_1, \ldots, s_5\f$
-constructed in `edge_insertion.cpp`. The arrows mark the direction of
-the halfedges returned from the various insertion functions.
+constructed in \ref Arrangement_on_surface_2/edge_insertion.cpp.
+The arrows mark the direction of the halfedges returned from the
+various insertion functions.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -1032,8 +1033,9 @@ arrangement.
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-isolated_vertices,isolated_vertices.png}
 An arrangement of line segments containing three isolated vertices,
-as constructed in `isolated_vertices.cpp`. The vertices \f$u_2\f$
-and \f$u_3\f$ are eventually removed from the arrangement.
+as constructed in \ref Arrangement_on_surface_2/isolated_vertices.cpp.
+The vertices \f$u_2\f$ and \f$u_3\f$ are eventually removed from the
+arrangement.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -1114,14 +1116,15 @@ should they become isolated.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-edge_manipulation,edge_manipulation.png}
-The three steps of the example program `edge_manipulation.cpp`. In
-Step (a) it constructs an arrangement of four line segments. In Step
-(b) the edges \f$e_1\f$ and \f$e_2\f$ are split, and the split points
-are connected with a new segment \f$s\f$ that is inserted into the
-arrangement. This operation is undone in Step (c), where \f$e\f$ is
-removed from the arrangement, rendering its end vertices \f$u_1\f$ and
-\f$u_2\f$ redundant. We therefore remove these vertices by merging
-their incident edges and go back to the arrangement depicted in (a).
+The three steps of the example program \ref
+Arrangement_on_surface_2/edge_manipulation.cpp. In Step (a) it
+constructs an arrangement of four line segments. In Step (b) the edges
+\f$e_1\f$ and \f$e_2\f$ are split, and the split points are connected
+with a new segment \f$s\f$ that is inserted into the arrangement. This
+operation is undone in Step (c), where \f$e\f$ is removed from the
+arrangement, rendering its end vertices \f$u_1\f$ and \f$u_2\f$
+redundant. We therefore remove these vertices by merging their
+incident edges and go back to the arrangement depicted in (a).
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -1233,9 +1236,9 @@ halfedge around the other vertex.
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-special_edge_insertion,special_edge_insertion.png}
 An arrangement of line segments, as constructed in
-`special_edge_insertion.cpp`. Note that \f$p_0\f$ is initially
-inserted as an isolated point and later on connected to the other four
-vertices.
+\ref Arrangement_on_surface_2/special_edge_insertion.cpp. Note that
+\f$p_0\f$ is initially inserted as an isolated point and later on
+connected to the other four vertices.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -1495,11 +1498,12 @@ selected point-location strategy.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-point_location,point_location.png}
-The arrangement of line segments, as constructed in
-`point_location.cpp`, `vertical_ray_shooting.cpp`, and
-`batched_point_location.cpp`. The arrangement vertices are drawn as
-small rings, while the query points \f$q_1, \ldots, q_6\f$ are drawn
-as crosses.
+The arrangement of line segments, as constructed in \ref
+Arrangement_on_surface_2/point_location.cpp, \ref
+Arrangement_on_surface_2/vertical_ray_shooting.cpp, and \ref
+Arrangement_on_surface_2/batched_point_location.cpp. The arrangement
+vertices are drawn as small rings, while the query points \f$q_1,
+\ldots, q_6\f$ are drawn as crosses.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -1593,8 +1597,8 @@ void shoot_vertical_ray(const RayShoot& vrs,
 The program below uses the function template listed above to
 perform vertical ray-shooting queries on an arrangement. The
 arrangement and the query points are exactly the same as in
-`point_location.cpp`; see \cgalFigureRef{aos_fig-point_location}.
-
+\ref Arrangement_on_surface_2/point_location.cpp; see
+\cgalFigureRef{aos_fig-point_location}.
 \cgalExample{Arrangement_on_surface_2/vertical_ray_shooting.cpp}
 
 <!----------------------------------------------------------------------------->
@@ -1635,8 +1639,8 @@ maintain complex additional data structures.
 
 The program below issues a batched point-location query, which
 is essentially equivalent to the six separate queries performed in
-`point_location.cpp`; see Section \ref arr_ssecpl.
-
+\ref Arrangement_on_surface_2/point_location.cpp; see Section
+\ref arr_ssecpl.
 \cgalExample{Arrangement_on_surface_2/batched_point_location.cpp}
 
 <!--=========================================================================-->
@@ -1874,7 +1878,8 @@ involve the splitting of curves.
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-incremental_insertion,incremental_insertion.png}
 An arrangement of five intersecting line segments, as constructed in
-`incremental_insertion.cpp` and `aggregated_insertion.cpp`. The
+\ref Arrangement_on_surface_2/incremental_insertion.cpp and
+\ref Arrangement_on_surface_2/aggregated_insertion.cpp. The
 segment endpoints are marked by black disks and the arrangement
 vertices that correspond to intersection points are marked by
 circles. The query point \f$q\f$ is marked with a cross and the face
@@ -1996,8 +2001,9 @@ into an arrangement `arr`. The \f$x\f$-monotone curves
 should be pairwise disjoint in their interior and also
 interior-disjoint from all existing curves and points of `arr`.</LI>
 
-<LI>`insert(arr, begin, end)` operates on a range of \f$x\f$-monotone
-  curves that may intersect one another.</LI>
+<LI>\link CGAL::insert<>() `insert(arr, begin, end)`\endlink operates
+  on a range of \f$x\f$-monotone curves that may intersect one
+  another.</LI>
 
 </UL>
 
@@ -2028,11 +2034,11 @@ process. Naturally, this trade-off is absent in the case of aggregated
 insertion.
 
 The example below shows how to construct the same arrangement of five
-line segments built incrementally in `incremental_insertion.cpp`
-depicted in \cgalFigureRef{aos_fig-incremental_insertion} using the
-aggregate insertion function
-\link insert(Arrangement_2<Traits,Dcel>&, InputIterator, InputIterator) `insert()`\endlink.
-Note that no point-location object needs to be defined and attached to the
+line segments built incrementally in \ref
+Arrangement_on_surface_2/incremental_insertion.cpp` depicted in
+\cgalFigureRef{aos_fig-incremental_insertion} using the aggregate
+insertion function \link CGAL::insert<>() `insert()`\endlink.  Note
+that no point-location object needs to be defined and attached to the
 arrangement.
 
 \cgalExample{Arrangement_on_surface_2/aggregated_insertion.cpp}
@@ -2046,11 +2052,12 @@ aggregate insertion procedures.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-global_insertion,global_insertion.png}
-An arrangement of intersecting line segments, as constructed in
-`global_insertion.cpp`. The segments of \f${\mathcal S}_1\f$ are
-drawn in solid lines and the segments of \f${\mathcal S}_2\f$ are
-drawn in dark dashed lines. Note that the segment \f$ s\f$ (light
-dashed line) overlaps one of the segments in \f${\mathcal S}_1\f$.
+An arrangement of intersecting line segments, as constructed in \ref
+Arrangement_on_surface_2/global_insertion.cpp. The segments of
+\f${\mathcal S}_1\f$ are drawn in solid lines and the segments of
+\f${\mathcal S}_2\f$ are drawn in dark dashed lines. Note that the
+segment \f$ s\f$ (light dashed line) overlaps one of the segments in
+\f${\mathcal S}_1\f$.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -2063,11 +2070,12 @@ lines) in an aggregate fashion.  Notice that the line segments of
 \f${\mathcal S}_1\f$ are pairwise interior-disjoint, so
 `insert_non_intersecting_curves()` is safely used. \f${\mathcal
 S}_2\f$ also contains pairwise interior-disjoint segments, but as they
-intersect the existing arrangement,
-\link insert(Arrangement_2<Traits,Dcel>&, InputIterator, InputIterator) `insert()`\endlink
-must be used to insert them. Also note that the single segment \f$s\f$
-inserted incrementally partially overlaps an existing arrangement
-curve; the overlapped portion is drawn as a dash-dotted line.
+intersect the existing arrangement, \link
+insert(Arrangement_2<Traits,Dcel>&, InputIterator, InputIterator)
+`insert()`\endlink must be used to insert them. Also note that the
+single segment \f$s\f$ inserted incrementally partially overlaps an
+existing arrangement curve; the overlapped portion is drawn as a
+dash-dotted line.
 
 \cgalExample{Arrangement_on_surface_2/global_insertion.cpp}
 
@@ -2180,12 +2188,14 @@ vertex and the remaining one is vertical.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-bounded_vd,bounded_vertical_decomposition.png}
+
 An arrangement of four line segments and its vertical decomposition
-into pseudo trapezoids, as constructed in
-`bounded_vertical_decomposition.cpp`.  The segments of \f${\mathcal S}_1\f$
-are drawn in solid lines and the segments of \f${\mathcal S}_2\f$ are
-drawn in dark dashed lines. Note that the segment \f$ s\f$ (light
-dashed line) overlaps one of the segments in \f${\mathcal S}_1\f$.
+into pseudo trapezoids, as constructed in \ref
+Arrangement_on_surface_2/bounded_vertical_decomposition.cpp.  The
+segments of \f${\mathcal S}_1\f$ are drawn in solid lines and the
+segments of \f${\mathcal S}_2\f$ are drawn in dark dashed lines. Note
+that the segment \f$ s\f$ (light dashed line) overlaps one of the
+segments in \f${\mathcal S}_1\f$.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -2199,10 +2209,10 @@ and it may contain only non-vertical edges.  The resulting cells are
 therefore referred to as <em>pseudo trapezoids</em>. The
 \cgalFigureRef{aos_fig-bounded_vd} depicts the vertical decomposition
 of an arrangement induced by four line segments, as constructed in
-`bounded_vertical_decomposition.cpp` and listed below. The
-decomposition consists of 14 pseudo trapezoids, out of which two are
-bounded triangles, two are bounded trapezoids, and 10 are unbounded
-trapezoids.
+\ref Arrangement_on_surface_2/bounded_vertical_decomposition.cpp and
+listed below. The decomposition consists of 14 pseudo trapezoids, out
+of which two are bounded triangles, two are bounded trapezoids, and 10
+are unbounded trapezoids.
 
 The function template `decompose()` accepts an arrangement \f$\cal
 A\f$ and outputs for each vertex \f$v\f$ of \f$\cal A\f$ a pair of
@@ -2605,7 +2615,7 @@ traits class-template; see Paragraph \ref arr_sssectr_linear.
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-unbounded_non_intersecting,unbounded_non_intersecting.png}
 An arrangement of unbounded linear objects, as constructed in
-`unbounded_non_intersecting.cpp`.
+\ref Arrangement_on_surface_2/unbounded_non_intersecting.cpp.
  \cgalFigureEnd
  <!----------------------------------------------------------------------------->
 
@@ -3470,9 +3480,12 @@ parameter-space boundary (the pre-images of their endpoints lie on
 boundary sides) or approach them (the pre-images of their endpoints
 approach boundary sides). These boundary conditions typically occur
 with unbounded curves or with arrangements embedded in curved
-surfaces. The category types `Left_side_category`,
-`Right_side_category`, `Bottom_side_category`, and
-`Top_side_category`, nested in every geometry traits class indicate
+surfaces. The category types
+\link ArrangementBasicTraits_2::Left_side_category `Left_side_category`\endlink,
+\link ArrangementBasicTraits_2::Right_side_category `Right_side_category`\endlink,
+\link ArrangementBasicTraits_2::Bottom_side_category `Bottom_side_category`\endlink, and
+\link ArrangementBasicTraits_2::Top_side_category `Top_side_category`\endlink,
+nested in every geometry traits class indicate
 whether the corresponding boundary side (i.e., left, right, bottom,
 and top) is open, closed, contracted, or identified, and whether this
 information is relevant at all. When all curves inserted into the
@@ -3515,9 +3528,9 @@ contracted side must be adjacent to two identified sides. While this
 narrows down the number of tangible concepts, the total number is
 still high; in practice we have used only two so far (not counting the
 "plain" concept, models of which do not handle boundary conditions at
-all), namely, `ArrangementOpenTraits_2` and
-`ArrangementSphericalTraits_2`; see below for more details. Many of
-the traits class-templates provided by the \ref
+all), namely, `ArrangementOpenBoundaryTraits_2` and
+`ArrangementSphericalBoundaryTraits_2`; see below for more
+details. Many of the traits class-templates provided by the \ref
 PkgArrangementOnSurface2 package do not handle boundary conditions at
 all. Some of them, such as the `Arr_segment_traits_2` traits (see
 Section \ref arr_ssectr_segs) only handle bounded curves. Thus, the
@@ -3561,7 +3574,7 @@ concepts for curves embedded in a spherical-like parameterized surface
 
 A suitable geometry-traits component for arrangements embedded in
 surfaces homeomorphic to a sphere is a model of the combined concept
-`ArrangementSphericalTraits_2` shown in
+`ArrangementSphericalBoundaryTraits_2` shown in
 \cgalFigureRef{aos_fig-spherical_concept_hierarchy}. Here the two
 vertical sides of the parameter space are identified and the two
 horizontal sides are contracted.
@@ -3675,7 +3688,7 @@ determine whether \f$\lim_{t \rightarrow d} y(t)\f$ evaluates to
 \f$y_{\rm min}\f$, \f$y_{\rm max}\f$, or a value in between. If
 \f$c\f$ is not open at its \f$d\f$-end, determine whether \f$y(d)\f$
 is equal to \f$y_{\rm min}\f$, \f$y_{\rm max}\f$, or a value in
-between. Return `CGAL::ARR_LEFT_BOUNDARY`, `CGAL::ARR_RIGHT_BOUNDARY`,
+between. Return `CGAL::ARR_BOTTOM_BOUNDARY`, `CGAL::ARR_TOP_BOUNDARY`,
 or `CGAL::ARR_INTERIOR`, accordingly. If \f$c\f$ is horizontal and
 lies on a horizontal boundary; that is, either \f$\forall p=(x_p, y_p)
 \in c, y_p = y_{\rm min}\f$ or \f$\forall p=(x_p, y_p) \in c, y_p =
@@ -3685,8 +3698,8 @@ open and must not be identified.
 (ii) Given a point \f$p=(x_p, y_p)\f$, determine the location of the
 point along the \f$y\f$-dimension. Formally, determine whether
 \f$y_p\f$ is equal to \f$y_{\rm min}\f$, \f$y_{\rm max}\f$, or a value
-in between. Return `CGAL::ARR_LEFT_BOUNDARY`,
-`CGAL::ARR_RIGHT_BOUNDARY`, or `CGAL::ARR_INTERIOR`, accordingly. If
+in between. Return `CGAL::ARR_BOTTOM_BOUNDARY`,
+`CGAL::ARR_TOP_BOUNDARY`, or `CGAL::ARR_INTERIOR`, accordingly. If
 \f$p\f$ is on a horizontal boundary; that is, \f$y_p \in \{y_{\rm
 min},y_{\rm max}\}\f$, then the boundary side containing \f$p\f$
 cannot be open and must not be identified. In other words, this
@@ -4249,15 +4262,15 @@ data objects with the different segments that compose a polyline.
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-polylines,polylines.png}
 
-An arrangement of three polylines, as constructed in
-`polylines.cpp`. Red disks mark vertices associated with polyline
-endpoints, while rings mark vertices that correspond to intersection
-points. The target endpoint of \f$\pi_3\f$ is also an intersection
-point; it is rendered as a ring. Observe that the polyline \f$\pi_2\f$
-is split into three \f$x\f$-monotone polylines, and that the two
-curves \f$\pi_1\f$ and \f$\pi_3\f$ have two overlapping sections---an
-impossible scenario in arrangements of line segments.
-\cgalFigureEnd
+An arrangement of three polylines, as constructed in \ref
+Arrangement_on_surface_2/polylines.cpp. Red disks mark vertices
+associated with polyline endpoints, while rings mark vertices that
+correspond to intersection points. The target endpoint of \f$\pi_3\f$
+is also an intersection point; it is rendered as a ring. Observe that
+the polyline \f$\pi_2\f$ is split into three \f$x\f$-monotone
+polylines, and that the two curves \f$\pi_1\f$ and \f$\pi_3\f$ have
+two overlapping sections---an impossible scenario in arrangements of
+line segments.  \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
 The following example program constructs an arrangement of three
@@ -4443,13 +4456,12 @@ using the number type `CoordNT`, nested in the traits class-template.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-circles,circles.png}
-
-An arrangement of three circles constructed in `circles.cpp`. Each
-circle is split into two \f$x\f$-monotone circular arcs, whose
-endpoints are drawn as red disks. Rings mark vertices that correspond
-to intersection points. The vertex \f$v_{\rm max}\f$ is a common
-intersection point of all three circles.
-
+An arrangement of three circles constructed in \ref
+Arrangement_on_surface_2/circles.cpp. Each circle is split into two
+\f$x\f$-monotone circular arcs, whose endpoints are drawn as red
+disks. Rings mark vertices that correspond to intersection points. The
+vertex \f$v_{\rm max}\f$ is a common intersection point of all three
+circles.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -4520,11 +4532,10 @@ namely, they are all given as `Kernel::Point_2` objects.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-circular_arcs,circular_arcs.png}
-
 An arrangement of two full circles, two line segments, and three
-circular arcs as constructed in `circular_arcs.cpp`. Endpoints are
-drawn as red disks and intersection points are drawn as rings.
-
+circular arcs as constructed in \ref
+Arrangement_on_surface_2/circular_arcs.cpp. Endpoints are drawn as
+red disks and intersection points are drawn as rings.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -4731,7 +4742,7 @@ typedef CGAL::Arrangement_2<Traits>                   Arrangement;
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-conic_multiplicities,conic_multiplicities.png}
 An arrangement of a circular arc and an hyperbolic arc, as constructed
-in conic_multiplicities.cpp
+in \ref Arrangement_on_surface_2/conic_multiplicities.cpp.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -4881,7 +4892,7 @@ member function that cleans up the cache upon request.
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-rational_functions,rational_functions.png}
 An arrangement of four arcs of rational functions, as constructed in
-rational_functions.cpp.
+\ref Arrangement_on_surface_2/rational_functions.cpp.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -4895,7 +4906,7 @@ for polynomial arcs and for rational arcs.
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-unbounded_rational_functions,unbounded_rational_functions.png}
 An arrangement of six arcs of rational functions, as constructed in
-unbounded_rational_functions.cpp
+\ref Arrangement_on_surface_2/unbounded_rational_functions.cpp.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -5012,7 +5023,7 @@ Boolean set operations; see Package \ref PkgBooleanSetOperations2Ref.
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-bezier_curves,bezier_curves.png}
 An arrangement of ten B&eacute;zier curves of degree \f$5\f$, as
-constructed in `Bezier_curves.cpp`.
+constructed in \ref Arrangement_on_surface_2/Bezier_curves.cpp.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -5097,7 +5108,8 @@ set of options.
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-algebraic_curves,algebraic_curves.png}
 An arrangement of algebraic curves of degrees \f$1\f$, \f$2\f$,
-\f$3\f$, and \f$6\f$, as constructed in `algebraic_curves.cpp`.
+\f$3\f$, and \f$6\f$, as constructed in
+\ref Arrangement_on_surface_2/algebraic_curves.cpp.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -5242,8 +5254,8 @@ $y$-coordinate can be rather expensive.
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-algebraic_segments,algebraic_segments.png}
 An arrangement of algebraic segments (solid lines), as constructed in
-`algebraic_segments.cpp`. The supporting curves are drawn as dashed
-lines.
+\ref Arrangement_on_surface_2/algebraic_segments.cpp. The supporting
+curves are drawn as dashed lines.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -5263,7 +5275,7 @@ pairs of distinct points on the sphere except for antipodal points,
 there is a unique great circle through the two points. There are
 infinitely many great circles through antipodal points. The minor arc
 of a great circle between two points is the shortest spherical-path
-between them. In this sense, the minor arc is analogous to line
+between them. In this sense, minor arcs are analogous to line
 segments in Euclidean geometry.
 
 The `Arr_geodesic_arc_on_sphere_traits_2<Kernel,X,Y>` class template
@@ -5291,20 +5303,24 @@ more details. This parameterization induces two contraction points
 \phi_S(\alpha,\frac{\pi}{2})\f$, for all \f$\alpha\f$, referred to as
 the south and north poles, respectively, and an identification curve
 \f$\{\phi_S(\alpha,\beta)\,|\,-\frac{\pi}{2} \leq \beta \leq
-\frac{\pi}{2}\}\f$, as \f$\phi_S(\alpha,\beta) = \phi_S(2\pi +
-\tau,\beta)\f$ for all \f$\beta\f$. When \f$\tau = -\pi\f$) (the
+\frac{\pi}{2}\}\f$, as \f$\phi_S(\pi,\beta) = \phi_S(2\pi +
+\tau,\beta)\f$ for all \f$\beta\f$. When \f$\tau = -\pi\f$ (the
 default), the identification curve coincides with the opposite Prime
 (Greenwich) Meridian. In other words, the left and right boundary
 sides of the parameter space are identified and the top and bottom
 boundary sides are contracted.  The arguments that substitute the
 template parameters `X` and `Y` when
 `Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>` is instantiated
-must be integral values that define a not-necessarily normalized
-vector \f$(x,y)\f$ in the \f$xy\f$-plane that bisects the
-identification curve. The explicit expression for the surface above is
-not used at all in the implementation of the traits. Indeed, all the
-required geometric operations listed in the traits concept are
-implemented using only rational arithmetic.
+determine the value of \f$\pi\f$. Essentially, overriding their default
+values rotates the identification curve about the vertical axes of the
+image coordinate system (that is, the sphere coordinate system). These
+arguments must be integral values. They define a not-necessarily
+normalized vector \f$(x,y)\f$ in the \f$xy\f$-plane in the image
+coordinate system, that bisects the identification curve. The explicit
+expression for the surface above is not used at all in the
+implementation of the traits. Indeed, all the required geometric
+operations listed in the traits concept are implemented using only
+rational arithmetic.
 
 The following example constructs an arrangement induced by 12 arcs of
 great circles embedded in the sphere. The arrangement is depicted in
@@ -5313,10 +5329,10 @@ great circles embedded in the sphere. The arrangement is depicted in
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{spherical_insert,spherical_insert.png}
 An arrangement induced by 12 arcs of great circles, as constructed in
-`spherical_insert.cpp`. The number of vertices, edges, and faces of
-the arrangement is 7, 13, and 8, respectively. The intersection of the
-curve \f$(-1,0,0),(0,1,0)\f$ with the identification curve induces a
-vertex at
+\ref Arrangement_on_surface_2/spherical_insert.cpp. The number of
+vertices, edges, and faces of the arrangement is 7, 13, and 8,
+respectively. The intersection of the curve \f$(-1,0,0),(0,1,0)\f$
+with the identification curve induces a vertex at
 \f$(\frac{-11}{\sqrt{11^2+7^2}},\frac{7}{\sqrt{11^2+7^2}},0)\f$ drawn
 in green. The north and south poles are drawn as little spheres. The
 identification curve is drawn as a gray tube.
@@ -5441,7 +5457,10 @@ consolidated set \f$S_1 \cup S_2\f$.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-consolidated_curve_data,consolidated_curve_data.png}
-An arrangement of six red and blue segments, as constructed in `consolidated_curve_data.cpp`. Disks correspond to red-blue intersection points, while circles mark the endpoints of red-blue overlaps.
+An arrangement of six red and blue segments, as constructed in \ref
+Arrangement_on_surface_2/consolidated_curve_data.cpp. Disks correspond
+to red-blue intersection points, while circles mark the endpoints of
+red-blue overlaps.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -5462,7 +5481,7 @@ endpoints are also drawn as black discs)
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-generic_curve_data,generic_curve_data.png}
 An arrangement of four polylines, named A-D, as constructed in
-`generic_curve_data.cpp`.
+\ref Arrangement_on_surface_2/generic_curve_data.cpp.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -5479,20 +5498,21 @@ geometrically equivalent curves, but with different data fields.
 
 \cgalExample{Arrangement_on_surface_2/generic_curve_data.cpp}
 
-The third example we give in this section is based on `dual_lines.cpp`
-given in Section \ref arr_ssec-unb_duality. It constructs the
-arrangement of the dual lines for a set of point given in an input
-file (by default we use `coll_points.dat`, which contains \f$50\f$
-points randomly selected on the grid \f$[-100,100]\times[-100,100]\f$;
-the file contains two distinct triplets of collinear points). Here we
-use the generic curve-data decorator to attach the index of the primal
-point to each of the lines.  Doing so, we can go over the incident
-edges of each vertex whose degree is greater than \f$4\f$ and report
-the subsets of collinear points (if we have a vertex of degree
-\f$d\f$, we actually need to go over \f$\frac{d}{2}\f$ edges, as each
-incident line contributes exactly \f$2\f$ edges). Note that in this
-case the dual line cannot overlap, so we use a dummy merge functor to
-instantiate the curve-data traits:
+The third example we give in this section is based on \ref
+Arrangement_on_surface_2/dual_lines.cpp given in Section \ref
+arr_ssec-unb_duality. It constructs the arrangement of the dual lines
+for a set of point given in an input file (by default we use
+`coll_points.dat`, which contains \f$50\f$ points randomly selected on
+the grid \f$[-100,100]\times[-100,100]\f$; the file contains two
+distinct triplets of collinear points). Here we use the generic
+curve-data decorator to attach the index of the primal point to each
+of the lines.  Doing so, we can go over the incident edges of each
+vertex whose degree is greater than \f$4\f$ and report the subsets of
+collinear points (if we have a vertex of degree \f$d\f$, we actually
+need to go over \f$\frac{d}{2}\f$ edges, as each incident line
+contributes exactly \f$2\f$ edges). Note that in this case the dual
+line cannot overlap, so we use a dummy merge functor to instantiate
+the curve-data traits:
 
 \cgalExample{Arrangement_on_surface_2/dual_with_data.cpp}
 
@@ -5507,13 +5527,13 @@ template and by the peripheral modules. Every topology traits class
 must model the basic concept `ArrangementBasicTopologyTraits`. A model
 of this basic concept holds the (\sc{Dcel}) data structure used to
 represent the arrangement cells (i.e., vertices, edges, and facets)
-and the incident * relations between them. At this point we do not
+and the incidence relations between them. At this point we do not
 expose the concepts that refine the basic concept. The package
 contains one topology traits, namely,
 `Arr_spherical_topology_traits_2`. It can serve as a topology traits
 for an arrangement embedded on a sphere. More precisely, for an
-arrangement embedded on a sphere defined over a parameter space the
-left and right boundary sides of which are identified and the top and
+arrangement embedded on a sphere defined over a parameter space, the
+left and right boundary sides of which are identified, and the top and
 bottom boundary sides are contracted.
 
 <!--=========================================================================-->
@@ -5665,10 +5685,10 @@ notification functions, as required by their applications.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-observer,observer.png}
-An arrangement of six line segments, as constructed in `observer.cpp`.
-The halfedge \f$e_v\f$ (dashed) is eventually removed, so that the
-final arrangement consists of four faces (one unbounded and three
-bounded ones).
+An arrangement of six line segments, as constructed in \ref
+Arrangement_on_surface_2/observer.cpp.  The halfedge \f$e_v\f$
+(dashed) is eventually removed, so that the final arrangement consists
+of four faces (one unbounded and three bounded ones).
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -5751,12 +5771,13 @@ whenever a face is modified and sets its data field accordingly.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-dcel_extension,dcel_extension.png}
-
-An arrangement of six line segments, as constructed in
-`face_extension.cpp` and `dcel_extension.cpp` (in `dcel_extension.cpp`
-we treat the segments as directed, so they are drawn as arrows
-directed from the source to the target). The indices associated with
-the halfedges in `face_extension.cpp` are shown in brackets.
+An arrangement of six line segments, as constructed in \ref
+Arrangement_on_surface_2/face_extension.cpp and \ref
+Arrangement_on_surface_2/dcel_extension.cpp (in \ref
+Arrangement_on_surface_2/dcel_extension.cpp we treat the segments as
+directed, so they are drawn as arrows directed from the source to the
+target). The indices associated with the halfedges in
+\ref Arrangement_on_surface_2/face_extension.cpp are shown in brackets.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -5967,11 +5988,12 @@ above, this is less efficient.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_figex_overlay,overlay.png}
-Overlaying two simple arrangements of line segments, as done in
-`overlay.cpp` and `face_extension_overlay.cpp`. In
-`face_extension_overlay.cpp` the two bounded faces are considered as
-<em>marked</em>, and the octagonal face which is the intersection of
-the two marked faces is denoted by \f$f_0\f$.
+Overlaying two simple arrangements of line segments, as done in \ref
+Arrangement_on_surface_2/overlay.cpp and \ref
+Arrangement_on_surface_2/face_extension_overlay.cpp. In \ref
+Arrangement_on_surface_2/face_extension_overlay.cpp the two bounded
+faces are considered as <em>marked</em>, and the octagonal face which
+is the intersection of the two marked faces is denoted by \f$f_0\f$.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -6060,7 +6082,7 @@ arrangement depicted in \cgalFigureRef{aos_figex_overlay}.
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_figex_overlay_unbounded,overlay_unbounded.png}
 Overlaying two arrangements of lines that have unbounded faces, as
-done in `overlay_unbounded.cpp`.
+done in \ref Arrangement_on_surface_2/overlay_unbounded.cpp.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -6410,10 +6432,10 @@ arr_ssecnotif for the details).
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-curve_history,curve_history.png}
-An arrangement with history as constructed in
-`curve_history.cpp`. Note that \f$s_1\f$ and \f$s_3\f$ overlap over
-two edges. The point-location query points \f$q_1\f$, \f$q_2\f$, and
-\f$q_3\f$ are drawn as lightly shaded dots.
+An arrangement with history as constructed in \ref
+Arrangement_on_surface_2/curve_history.cpp. Note that \f$s_1\f$ and
+\f$s_3\f$ overlap over two edges. The point-location query points
+\f$q_1\f$, \f$q_2\f$, and \f$q_3\f$ are drawn as lightly shaded dots.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -6431,12 +6453,12 @@ auxiliary function `locate_point()` defined in the header file
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-edge_manipulation_curve_hostory,edge_manipulation_curve_history.png}
-An arrangement with history of nine circles as constructed in
-`edge_manipulation_curve_history.cpp`. Note the vertical tangency
-points of \f$c_0\f$, marked as dark dots, which subdivide this circle
-into an upper half and a lower half, each consists of 9 edges. The
-large circle \f$c_0\f$ is eventually removed from the arrangement,
-with all 18 edges it induces.
+An arrangement with history of nine circles as constructed in \ref
+Arrangement_on_surface_2/edge_manipulation_curve_history.cpp. Note the
+vertical tangency points of \f$c_0\f$, marked as dark dots, which
+subdivide this circle into an upper half and a lower half, each
+consists of 9 edges. The large circle \f$c_0\f$ is eventually removed
+from the arrangement, with all 18 edges it induces.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -6735,7 +6757,8 @@ template <typename Arrangement> struct Edge_length {
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-bgl_primal_adapter,bgl_primal_adapter.png}
 An arrangement of seven line segments, as constructed by
-`bgl_primal_adapter.cpp` and `bgl_dual_adapter.cpp`.
+\ref Arrangement_on_surface_2/bgl_primal_adapter.cpp and
+\ref Arrangement_on_surface_2/bgl_dual_adapter.cpp.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -6822,16 +6845,17 @@ public:
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-bgl_dual_adapter,bgl_dual_adapter.png}
-An arrangement of seven line segments, as constructed by
-`bgl_dual_adapter.cpp` and its dual face graph, where every
-arrangement face is a vertex of the graph. The index of a dual
-vertex is the discovery time of a breadth-first search applied to
+An arrangement of seven line segments, as constructed by \ref
+Arrangement_on_surface_2/bgl_dual_adapter.cpp and its dual face graph,
+where every arrangement face is a vertex of the graph. The index of a
+dual vertex is the discovery time of a breadth-first search applied to
 the face graph, starting from the unbounded face \f$f_0\f$.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
 The following example constructs the same arrangement constructed by
-the program coded in `ex_bgl_primal_adaptor.cpp`; see
+the program coded in \ref
+Arrangement_on_surface_2/bgl_primal_adapter.cpp; see
 \cgalFigureRef{aos_fig-bgl_primal_adapter}. Then, it performs a
 breadth-first search traversal on the face graph, starting from the
 unbounded face. The \sc{Dcel} faces are extended with an unsigned
