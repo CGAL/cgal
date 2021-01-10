@@ -280,6 +280,10 @@ public:
   {
     // The test is unnecessary, only use it if benchmark says so
     //if (ptr_.load(std::memory_order_relaxed) == &at_orig)
+#if defined(__gnu_linux__) && !defined(_REENTRANT)
+    // That shouldn't be needed, but I was getting a mysterious std::system_error with gcc-10 without it.
+    static_assert(false, "Please pass -pthread to the compiler");
+#endif
     std::call_once(once, [this](){this->update_exact();});
     return static_cast<AT_ET_wrap<AT,ET>*>(ptr_.load(std::memory_order_relaxed))->et(); // call_once already synchronized memory
   }
@@ -332,7 +336,7 @@ public:
   bool is_lazy() const { return ptr_.load(std::memory_order_relaxed) == &at_orig; }
   virtual void update_exact() const = 0;
   virtual ~Lazy_rep() {
- #if !defined __SANITIZE_THREAD__ && !__has_feature(thread_sanitizer)
+#if !defined __SANITIZE_THREAD__ && !__has_feature(thread_sanitizer)
     auto* p = ptr_.load(std::memory_order_relaxed);
     if (p != &at_orig) {
       std::atomic_thread_fence(std::memory_order_acquire);
@@ -438,7 +442,7 @@ public:
   bool is_lazy() const { return ptr_.load(std::memory_order_relaxed) == nullptr; }
   virtual void update_exact() const = 0;
   virtual ~Lazy_rep() {
- #if !defined __SANITIZE_THREAD__ && !__has_feature(thread_sanitizer)
+#if !defined __SANITIZE_THREAD__ && !__has_feature(thread_sanitizer)
     auto* p = ptr_.load(std::memory_order_relaxed);
     if (p != nullptr) {
       std::atomic_thread_fence(std::memory_order_acquire);
@@ -566,7 +570,7 @@ public:
   bool is_lazy() const { return ptr_.load(std::memory_order_relaxed) == nullptr; }
   virtual void update_exact() const = 0;
   virtual ~Lazy_rep() {
- #if !defined __SANITIZE_THREAD__ && !__has_feature(thread_sanitizer)
+#if !defined __SANITIZE_THREAD__ && !__has_feature(thread_sanitizer)
     auto* p = ptr_.load(std::memory_order_relaxed);
     if (p != nullptr) {
       std::atomic_thread_fence(std::memory_order_acquire);
