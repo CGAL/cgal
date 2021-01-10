@@ -95,6 +95,7 @@ class Handle
 
     void incref() const noexcept
     {
+      // TODO: on linux, we could check __libc_single_threaded and in that case do load, +1, store.
       PTR->count.fetch_add(1, std::memory_order_relaxed);
     }
 
