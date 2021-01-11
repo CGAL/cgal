@@ -224,6 +224,19 @@ struct Depth_base {
 #endif
 };
 
+// 0: safe default, AT is behind a pointer that can be atomically changed, and it doesn't disappear during update_exact
+// 1: use plain AT without protection
+// 2: split an interval as 2 atomic_double
+// FIXME: CGAL_USE_SSE2 is clearly not the right condition
+template<class AT>struct Lazy_rep_selector { static constexpr int value = 0; };
+#ifdef CGAL_USE_SSE2
+template<bool b>struct Lazy_rep_selector<Interval_nt<b>> { static constexpr int value = 1; };
+template<bool b, int N>struct Lazy_rep_selector<std::array<Interval_nt<b>,N>> { static constexpr int value = 1; };
+template<bool b>struct Lazy_rep_selector<CGAL::Point_2<CGAL::Simple_cartesian<CGAL::Interval_nt<b>>>> { static constexpr int value = 1; };
+template<bool b>struct Lazy_rep_selector<CGAL::Point_3<CGAL::Simple_cartesian<CGAL::Interval_nt<b>>>> { static constexpr int value = 1; };
+#else
+template<bool b>struct Lazy_rep_selector<Interval_nt<b>> { static constexpr int value = 2; };
+#endif
 
 template<class AT>
 struct AT_wrap {
@@ -246,8 +259,7 @@ struct AT_ET_wrap : AT_wrap<AT> {
 };
 
 // Abstract base class for lazy numbers and lazy objects
-#if 1
-template <typename AT_, typename ET, typename E2A>
+template <typename AT_, typename ET, typename E2A, int=Lazy_rep_selector<AT_>::value /* 0 */>
 class Lazy_rep : public Rep, public Depth_base
 {
   Lazy_rep (const Lazy_rep&) = delete; // cannot be copied.
@@ -274,6 +286,11 @@ public:
   AT const& approx() const
   {
     return ptr_.load(std::memory_order_consume)->at();
+  }
+
+  // FIXME: Uh?
+  bool is_point() const {
+    return approx().is_point();
   }
 
   const ET & exact() const
@@ -348,13 +365,13 @@ public:
 #endif
   }
 };
-#else
+
 /* How (un)safe is this? The goal is to minimize the overhead compared to a single-thread version by making the fast path almost identical.
  * For scalars on x86_64, the interval is aligned, so load/store instructions will not slice any double. On recent hardware, they should even be atomic, although without an official guarantee, and we don't need 128-bit atomicity anyway. The main danger is the unpredictable optimizations a compiler could apply (volatile would disable most of them, but it doesn't seem great).
  * For aggregate-like types (Simple_cartesian::Point_3), it should be ok for the same reason.
  * This is definitely NOT safe for a std::vector like a Point_d with Dynamic_dimension_tag, so it should only be enabled on a case by case basis, if at all. Storing a Point_3 piecewise with 6 atomic_double would be doable, but painful, and I didn't benchmark to check the performance. */
 template <typename AT_, typename ET, typename E2A>
-class Lazy_rep : public Rep, public Depth_base
+class Lazy_rep<AT_, ET, E2A, 1> : public Rep, public Depth_base
 {
   Lazy_rep (const Lazy_rep&) = delete; // cannot be copied.
 
@@ -409,8 +426,6 @@ public:
     ptr_.store(p, std::memory_order_release);
   }
 
-  // I think we should have different code for cases where there is some cleanup to do (say, a sum of 2 Lazy_exact_nt) and for cases where there isn't (a Lazy_exact_nt constructed from a double). Objects can be hidden in a tuple in Lazy_rep_n, so checking if there is something to clean requires some code. It isn't clear if we also need to restrict that to cases where update_exact doesn't touch AT. The special version would be basically: if(et==0){pet=new ET(...);if(!et.exchange(0,pet))delete pet; update at?}
-
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void print_at_et(std::ostream& os, int level) const
   {
@@ -454,11 +469,10 @@ public:
 #endif
   }
 };
-#endif
+
 // do we need to (forward) declare Interval_nt?
-#if 1
 template <bool b, typename ET, typename E2A>
-class Lazy_rep<Interval_nt<b>, ET, E2A> : public Rep, public Depth_base
+class Lazy_rep<Interval_nt<b>, ET, E2A, 2> : public Rep, public Depth_base
 {
   Lazy_rep (const Lazy_rep&) = delete; // cannot be copied.
 
@@ -467,43 +481,18 @@ public:
   typedef Interval_nt<b> AT;
   typedef ET Indirect;
 
+  mutable std::atomic<double> x, y; // -inf, +sup
   mutable std::atomic<ET*> ptr_ { nullptr };
   mutable std::once_flag once;
 
   Lazy_rep () {}
-
-#ifdef CGAL_USE_SSE2
-  // How (un)safe is this? The interval is aligned, so load/store instructions will not slice any double. On recent hardware, they should even be atomic, although without an official guarantee, and we don't need 128-bit atomicity anyway. The main danger is the unpredictable optimizations a compiler could apply (volatile would disable most of them, but it doesn't seem great). The goal is to minimize the overhead compared to a single-thread version by making the fast path almost identical.
-  mutable AT i;
-
-  Lazy_rep (AT a)
-      : i(a) {}
-
-  template<class E>
-  Lazy_rep (AT a, E&& e)
-      : ptr_(new ET(std::forward<E>(e))), i(a) {}
-
-  AT approx() const
-  {
-    return i;
-  }
-
-  bool is_point() const {
-    return i.is_point();
-  }
-
-  void set_at(ET*, AT a) const {
-    i = a;
-  }
-#else
-  mutable std::atomic<double> x, y;
 
   Lazy_rep (AT a)
       : x(-a.inf()), y(a.sup()) {}
 
   template<class E>
   Lazy_rep (AT a, E&& e)
-      : ptr_(new ET(std::forward<E>(e))), x(-a.inf()), y(a.sup()) {}
+      : x(-a.inf()), y(a.sup()), ptr_(new ET(std::forward<E>(e))) {}
 
   AT approx() const
   {
@@ -511,14 +500,13 @@ public:
   }
 
   bool is_point() const {
-    return x.load(std::memory_order_relaxed) == y.load(std::memory_order_relaxed);
+    return -x.load(std::memory_order_relaxed) == y.load(std::memory_order_relaxed);
   }
 
   void set_at(ET*, AT a) const {
     x.store(-a.inf(), std::memory_order_relaxed);
     y.store(a.sup(), std::memory_order_relaxed);
   }
-#endif
 
   void set_at(ET* p) const {
     set_at(p, E2A()(*p));
@@ -582,7 +570,6 @@ public:
 #endif
   }
 };
-#endif
 
 
 template<typename AT, typename ET, typename AC, typename EC, typename E2A, typename...L>
