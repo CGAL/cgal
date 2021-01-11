@@ -55,7 +55,6 @@
 #include <atomic>
 #include <thread>
 #include <mutex>
-#include <optional>
 
 namespace CGAL {
 
