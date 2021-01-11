@@ -99,7 +99,10 @@ public:
       : ptr_(h.ptr_)
     {
         // CGAL_assume (ptr_->count > 0);
-        ptr_->count.fetch_add(1, std::memory_order_relaxed);
+        if (is_currently_single_threaded())
+          ptr_->count.store(ptr_->count.load(std::memory_order_relaxed) + 1, std::memory_order_relaxed);
+        else
+          ptr_->count.fetch_add(1, std::memory_order_relaxed);
     }
 
     Handle_for&
@@ -144,16 +147,26 @@ public:
 
     ~Handle_for()
     {
+      if (is_currently_single_threaded()) {
+        auto c = ptr_->count.load(std::memory_order_relaxed);
+        if (c == 1) {
+          Allocator_traits::destroy(allocator, ptr_);
+          allocator.deallocate(ptr_, 1);
+        } else {
+          ptr_->count.store(c - 1, std::memory_order_relaxed);
+        }
+      } else {
       // TSAN does not support fences :-(
 #if !defined __SANITIZE_THREAD__ && !__has_feature(thread_sanitizer)
-      if (ptr_->count.load(std::memory_order_relaxed) == 1
-          || ptr_->count.fetch_sub(1, std::memory_order_release) == 1) {
-        std::atomic_thread_fence(std::memory_order_acquire);
+        if (ptr_->count.load(std::memory_order_relaxed) == 1
+            || ptr_->count.fetch_sub(1, std::memory_order_release) == 1) {
+          std::atomic_thread_fence(std::memory_order_acquire);
 #else
-      if (ptr_->count.fetch_sub(1, std::memory_order_acq_rel) == 1) {
+        if (ptr_->count.fetch_sub(1, std::memory_order_acq_rel) == 1) {
 #endif
-        Allocator_traits::destroy(allocator, ptr_);
-        allocator.deallocate(ptr_, 1);
+          Allocator_traits::destroy(allocator, ptr_);
+          allocator.deallocate(ptr_, 1);
+        }
       }
     }
 
@@ -190,7 +203,7 @@ public:
     bool
     is_shared() const noexcept
     {
-        return ptr_->count > 1;
+        return ptr_->count.load(std::memory_order_relaxed) > 1;
     }
 
     bool
@@ -202,7 +215,7 @@ public:
     long
     use_count() const noexcept
     {
-        return ptr_->count;
+        return ptr_->count.load(std::memory_order_relaxed);
     }
 
     void

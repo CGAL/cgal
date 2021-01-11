@@ -79,24 +79,36 @@ class Handle
     {
       if (PTR)
       {
+        if (is_currently_single_threaded()) {
+          auto c = PTR->count.load(std::memory_order_relaxed);
+          if (c == 1)
+            delete PTR;
+          else
+            PTR->count.store(c - 1, std::memory_order_relaxed);
+          PTR = 0;
+        } else {
         // TSAN does not support fences :-(
 #if !defined __SANITIZE_THREAD__ && !__has_feature(thread_sanitizer)
-        if (PTR->count.load(std::memory_order_relaxed) == 1
-            || PTR->count.fetch_sub(1, std::memory_order_release) == 1) {
-          std::atomic_thread_fence(std::memory_order_acquire);
+          if (PTR->count.load(std::memory_order_relaxed) == 1
+              || PTR->count.fetch_sub(1, std::memory_order_release) == 1) {
+            std::atomic_thread_fence(std::memory_order_acquire);
 #else
-        if (PTR->count.fetch_sub(1, std::memory_order_acq_rel) == 1) {
+          if (PTR->count.fetch_sub(1, std::memory_order_acq_rel) == 1) {
 #endif
-          delete PTR;
+            delete PTR;
+          }
+          PTR=0;
         }
-        PTR=0;
       }
     }
 
     void incref() const noexcept
     {
-      // TODO: on linux, we could check __libc_single_threaded and in that case do load, +1, store.
-      PTR->count.fetch_add(1, std::memory_order_relaxed);
+      if (is_currently_single_threaded()) {
+        PTR->count.store(PTR->count.load(std::memory_order_relaxed) + 1, std::memory_order_relaxed);
+      } else {
+        PTR->count.fetch_add(1, std::memory_order_relaxed);
+      }
     }
 
     int

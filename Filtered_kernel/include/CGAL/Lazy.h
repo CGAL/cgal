@@ -289,12 +289,12 @@ public:
 
   const ET & exact() const
   {
-    // The test is unnecessary, only use it if benchmark says so
-    //if (ptr_.load(std::memory_order_relaxed) == &at_orig)
 #if defined(__gnu_linux__) && !defined(_REENTRANT)
     // That shouldn't be needed, but I was getting a mysterious std::system_error with gcc-10 without it.
     static_assert(false, "Please pass -pthread to the compiler");
 #endif
+    // The test is unnecessary, only use it if benchmark says so
+    //if (ptr_.load(std::memory_order_relaxed) == &at_orig)
     std::call_once(once, [this](){this->update_exact();});
     return static_cast<AT_ET_wrap<AT,ET>*>(ptr_.load(std::memory_order_relaxed))->et(); // call_once already synchronized memory
   }
