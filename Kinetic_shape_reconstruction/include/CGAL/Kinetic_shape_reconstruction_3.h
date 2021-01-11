@@ -167,6 +167,11 @@ public:
     // return true;
     // exit(EXIT_SUCCESS);
 
+    // Output planes.
+    // for (KSR::size_t i = 6; i < m_data.number_of_support_planes(); ++i) {
+    //   std::cout << m_data.support_plane(i).plane() << std::endl;
+    // }
+
     if (m_verbose) {
       std::cout << std::endl << "--- RUNNING THE QUEUE:" << std::endl;
       std::cout << "* propagation started" << std::endl;
@@ -1109,86 +1114,8 @@ private:
         CGAL_assertion(nfaces.size() == 1);
         CGAL_assertion(nfaces[0] == pface);
 
-        bool is_occupied_iedge_1, is_bbox_reached_1;
-        std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.collision_occured(pvertex, iedge);
-        // std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.is_occupied(pvertex, iedge);
-
-        bool is_occupied_iedge_2, is_bbox_reached_2;
-        std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.collision_occured(pother, iedge);
-        // std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.is_occupied(pother, iedge);
-
-        const bool is_limit_line_1 = m_data.is_limit_line(pvertex, iedge, is_occupied_iedge_1);
-        const bool is_limit_line_2 = m_data.is_limit_line(pother , iedge, is_occupied_iedge_2);
-
-        if (m_debug) {
-          std::cout << "- bbox1/bbox2: "           << is_bbox_reached_1   << "/" << is_bbox_reached_1   << std::endl;
-          std::cout << "- limit1/limit2: "         << is_limit_line_1     << "/" << is_limit_line_2     << std::endl;
-          std::cout << "- occupied1/occupied1: "   << is_occupied_iedge_1 << "/" << is_occupied_iedge_2 << std::endl;
-          std::cout << "- k intersections befor: " << m_data.k(pface) << std::endl;
-        }
-        CGAL_assertion(is_occupied_iedge_1 == is_occupied_iedge_2);
-        CGAL_assertion(is_bbox_reached_1 == is_bbox_reached_2);
-        CGAL_assertion(is_limit_line_1 == is_limit_line_2);
-
-        bool stop = false;
-        if (is_bbox_reached_1 || is_bbox_reached_2) {
-
-          if (m_debug) std::cout << "- bbox, stop" << std::endl;
-          stop = true;
-          // CGAL_assertion_msg(false, "TODO: BBOX, STOP!");
-
-        } else if (is_limit_line_1 || is_limit_line_2) {
-
-          if (m_debug) std::cout << "- limit, stop" << std::endl;
-          stop = true;
-          // CGAL_assertion_msg(false, "TODO: LIMIT, STOP!");
-
-        } else {
-
-          if (m_debug) std::cout << "- free, any k, continue" << std::endl;
-          if (
-            m_data.is_occupied(pvertex, iedge).first ||
-            m_data.is_occupied(pother , iedge).first) {
-
-            CGAL_assertion_msg(false,
-            "ERROR: TWO PVERTICES SNEAK TO THE OTHER SIDE EVEN WHEN WE HAVE A POLYGON!");
-          }
-          // CGAL_assertion_msg(false, "TODO: FREE, ANY K, CONTINUE!");
-        }
-
-        // else if ((is_occupied_iedge_1 || is_occupied_iedge_2)) {
-
-        //   if (m_data.k(pface) == 1) {
-        //     if (m_debug) std::cout << "- occupied, k = 1, stop" << std::endl;
-        //     stop = true;
-        //     CGAL_assertion_msg(false, "TODO: OCCUPIED, K = 1, STOP!");
-        //   } else {
-        //     if (m_debug) std::cout << "- occupied, k > 1, continue" << std::endl;
-        //     m_data.k(pface)--;
-        //     CGAL_assertion_msg(false, "TODO: OCCUPIED, K > 1, CONTINUE!");
-        //   }
-
-        // } else {
-
-        //   CGAL_assertion(!is_bbox_reached_1   && !is_bbox_reached_2);
-        //   CGAL_assertion(!is_limit_line_1     && !is_limit_line_2);
-        //   CGAL_assertion(!is_occupied_iedge_1 && !is_occupied_iedge_2);
-
-        //   if (m_debug) std::cout << "- pv po, free, any k, continue" << std::endl;
-        //   if (
-        //     m_data.is_occupied(pvertex, iedge).first ||
-        //     m_data.is_occupied(pother , iedge).first) {
-
-        //     CGAL_assertion_msg(false,
-        //     "ERROR: TWO PVERTICES SNEAK TO THE OTHER SIDE EVEN WHEN WE HAVE A POLYGON!");
-        //   }
-        //   CGAL_assertion_msg(false, "TODO: FREE, ANY K, CONTINUE!");
-        // }
-
-        CGAL_assertion(m_data.k(pface) >= 1);
-        if (m_debug) {
-          std::cout << "- k intersections after: " << m_data.k(pface) << std::endl;
-        }
+        const bool stop = check_pedge_meets_iedge_local(pvertex, pother, iedge, pface);
+        // const bool stop = check_pedge_meets_iedge_global(pvertex, pother, iedge, pface);
 
         if (stop) { // polygon stops
           m_data.crop_pedge_along_iedge(pvertex, pother, iedge);
@@ -1214,6 +1141,129 @@ private:
     return is_event_happend;
   }
 
+  const bool check_pedge_meets_iedge_local(
+    const PVertex& pvertex, const PVertex& pother,
+    const IEdge& iedge, const PFace& pface) {
+
+    bool is_occupied_iedge_1, is_bbox_reached_1;
+    std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.collision_occured(pvertex, iedge);
+    // std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.is_occupied(pvertex, iedge);
+
+    bool is_occupied_iedge_2, is_bbox_reached_2;
+    std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.collision_occured(pother, iedge);
+    // std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.is_occupied(pother, iedge);
+
+    if (m_debug) {
+      std::cout << "- bbox1/bbox2: "           << is_bbox_reached_1   << "/" << is_bbox_reached_1   << std::endl;
+      std::cout << "- occupied1/occupied1: "   << is_occupied_iedge_1 << "/" << is_occupied_iedge_2 << std::endl;
+      std::cout << "- k intersections befor: " << m_data.k(pface) << std::endl;
+    }
+    CGAL_assertion(is_occupied_iedge_1 == is_occupied_iedge_2);
+    CGAL_assertion(is_bbox_reached_1 == is_bbox_reached_2);
+
+    bool stop = false;
+    if (is_bbox_reached_1 || is_bbox_reached_2) {
+
+      if (m_debug) std::cout << "- bbox, stop" << std::endl;
+      stop = true;
+      // CGAL_assertion_msg(false, "TODO: BBOX, STOP!");
+
+    } else if ((is_occupied_iedge_1 || is_occupied_iedge_2)) {
+
+      if (m_data.k(pface) == 1) {
+        if (m_debug) std::cout << "- occupied, k = 1, stop" << std::endl;
+        stop = true;
+        // CGAL_assertion_msg(false, "TODO: OCCUPIED, K = 1, STOP!");
+      } else {
+        if (m_debug) std::cout << "- occupied, k > 1, continue" << std::endl;
+        m_data.k(pface)--;
+        stop = false;
+        // CGAL_assertion_msg(false, "TODO: OCCUPIED, K > 1, CONTINUE!");
+      }
+
+    } else {
+      CGAL_assertion(!is_bbox_reached_1   && !is_bbox_reached_2);
+      CGAL_assertion(!is_occupied_iedge_1 && !is_occupied_iedge_2);
+
+      if (
+        m_data.is_occupied(pvertex, iedge).first ||
+        m_data.is_occupied(pother , iedge).first) {
+
+        CGAL_assertion_msg(false,
+        "ERROR: TWO PVERTICES SNEAK TO THE OTHER SIDE EVEN WHEN WE HAVE A POLYGON!");
+      }
+
+      if (m_debug) std::cout << "- free, any k, continue" << std::endl;
+      stop = false;
+      // CGAL_assertion_msg(false, "TODO: FREE, ANY K, CONTINUE!");
+    }
+
+    CGAL_assertion(m_data.k(pface) >= 1);
+    if (m_debug) {
+      std::cout << "- k intersections after: " << m_data.k(pface) << std::endl;
+    }
+    return stop;
+  }
+
+  const bool check_pedge_meets_iedge_global(
+    const PVertex& pvertex, const PVertex& pother,
+    const IEdge& iedge, const PFace& pface) {
+
+    bool is_occupied_iedge_1, is_bbox_reached_1;
+    std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.collision_occured(pvertex, iedge);
+    // std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.is_occupied(pvertex, iedge);
+
+    bool is_occupied_iedge_2, is_bbox_reached_2;
+    std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.collision_occured(pother, iedge);
+    // std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.is_occupied(pother, iedge);
+
+    const bool is_limit_line_1 = m_data.is_limit_line(pvertex, iedge, is_occupied_iedge_1, true);
+    const bool is_limit_line_2 = m_data.is_limit_line(pother , iedge, is_occupied_iedge_2, false);
+
+    if (m_debug) {
+      std::cout << "- bbox1/bbox2: "           << is_bbox_reached_1   << "/" << is_bbox_reached_1   << std::endl;
+      std::cout << "- limit1/limit2: "         << is_limit_line_1     << "/" << is_limit_line_2     << std::endl;
+      std::cout << "- occupied1/occupied1: "   << is_occupied_iedge_1 << "/" << is_occupied_iedge_2 << std::endl;
+      std::cout << "- k intersections befor: " << m_data.k(pface) << std::endl;
+    }
+    CGAL_assertion(is_occupied_iedge_1 == is_occupied_iedge_2);
+    CGAL_assertion(is_bbox_reached_1 == is_bbox_reached_2);
+    CGAL_assertion(is_limit_line_1 == is_limit_line_2);
+
+    bool stop = false;
+    if (is_bbox_reached_1 || is_bbox_reached_2) {
+
+      if (m_debug) std::cout << "- bbox, stop" << std::endl;
+      stop = true;
+      // CGAL_assertion_msg(false, "TODO: BBOX, STOP!");
+
+    } else if (is_limit_line_1 || is_limit_line_2) {
+
+      if (m_debug) std::cout << "- limit, stop" << std::endl;
+      stop = true;
+      // CGAL_assertion_msg(false, "TODO: LIMIT, STOP!");
+
+    } else {
+
+      if (m_debug) std::cout << "- free, any k, continue" << std::endl;
+      if (
+        m_data.is_occupied(pvertex, iedge).first ||
+        m_data.is_occupied(pother , iedge).first) {
+
+        CGAL_assertion_msg(false,
+        "ERROR: TWO PVERTICES SNEAK TO THE OTHER SIDE EVEN WHEN WE HAVE A POLYGON!");
+      }
+      stop = false;
+      // CGAL_assertion_msg(false, "TODO: FREE, ANY K, CONTINUE!");
+    }
+
+    CGAL_assertion(m_data.k(pface) >= 1);
+    if (m_debug) {
+      std::cout << "- k intersections after: " << m_data.k(pface) << std::endl;
+    }
+    return stop;
+  }
+
   void apply_event_unconstrained_pvertex_meets_iedge(
     const PVertex& pvertex,
     const IEdge& iedge,
@@ -1227,6 +1277,76 @@ private:
     m_data.non_null_pfaces_around_pvertex(pvertex, nfaces);
     CGAL_assertion(nfaces.size() == 1);
     CGAL_assertion(nfaces[0] == pface);
+
+    const bool stop = check_pvertex_meets_iedge_local(pvertex, iedge, pface);
+    // const bool stop = check_pvertex_meets_iedge_global(pvertex, iedge, pface);
+
+    if (stop) { // polygon stops
+      const PVertex pother =
+        m_data.crop_pvertex_along_iedge(pvertex, iedge);
+      remove_events(iedge, pvertex.first);
+      compute_events_of_pvertices(
+        event.time(), std::array<PVertex, 2>{pvertex, pother});
+    } else { // polygon continues beyond the edge
+      const std::array<PVertex, 3> pvertices =
+        m_data.propagate_pvertex_beyond_iedge(pvertex, iedge, m_data.k(pface));
+      remove_events(iedge, pvertex.first);
+      compute_events_of_pvertices(event.time(), pvertices);
+    }
+    CGAL_assertion(m_data.has_iedge(pvertex));
+  }
+
+  const bool check_pvertex_meets_iedge_local(
+    const PVertex& pvertex, const IEdge& iedge, const PFace& pface) {
+
+    bool is_occupied_iedge, is_bbox_reached;
+    std::tie(is_occupied_iedge, is_bbox_reached) = m_data.collision_occured(pvertex, iedge);
+    // std::tie(is_occupied_iedge, is_bbox_reached) = m_data.is_occupied(pvertex, iedge);
+
+    if (m_debug) {
+      std::cout << "- bbox: "     << is_bbox_reached   << std::endl;
+      std::cout << "- occupied: " << is_occupied_iedge << std::endl;
+      std::cout << "- k intersections befor: " << m_data.k(pface) << std::endl;
+    }
+
+    bool stop = false;
+    if (is_bbox_reached) {
+
+      if (m_debug) std::cout << "- bbox, stop" << std::endl;
+      stop = true;
+      // CGAL_assertion_msg(false, "TODO: BBOX, STOP!");
+
+    } else if (is_occupied_iedge) {
+
+      if (m_data.k(pface) == 1) {
+        if (m_debug) std::cout << "- occupied, k = 1, stop" << std::endl;
+        stop = true;
+        // CGAL_assertion_msg(false, "TODO: OCCUPIED, K = 1, STOP!");
+      } else {
+        if (m_debug) std::cout << "- occupied, k > 1, continue" << std::endl;
+        m_data.k(pface)--;
+        stop = false;
+        // CGAL_assertion_msg(false, "TODO: OCCUPIED, K > 1, CONTINUE!");
+      }
+
+    } else {
+      CGAL_assertion(!is_bbox_reached);
+      CGAL_assertion(!is_occupied_iedge);
+
+      if (m_debug) std::cout << "- free, any k, continue" << std::endl;
+      stop = false;
+      // CGAL_assertion_msg(false, "TODO: FREE, ANY K, CONTINUE!");
+    }
+
+    CGAL_assertion(m_data.k(pface) >= 1);
+    if (m_debug) {
+      std::cout << "- k intersections after: " << m_data.k(pface) << std::endl;
+    }
+    return stop;
+  }
+
+  const bool check_pvertex_meets_iedge_global(
+    const PVertex& pvertex, const IEdge& iedge, const PFace& pface) {
 
     bool is_occupied_iedge, is_bbox_reached;
     std::tie(is_occupied_iedge, is_bbox_reached) = m_data.collision_occured(pvertex, iedge);
@@ -1257,44 +1377,15 @@ private:
     } else {
 
       if (m_debug) std::cout << "- free, any k, continue" << std::endl;
+      stop = false;
       // CGAL_assertion_msg(false, "TODO: FREE, ANY K, CONTINUE!");
     }
-
-    // else if (is_occupied_iedge) {
-
-    //   if (m_data.k(pface) == 1) {
-    //     if (m_debug) std::cout << "- occupied, k = 1, stop" << std::endl;
-    //     stop = true;
-    //     CGAL_assertion_msg(false, "TODO: OCCUPIED, K = 1, STOP!");
-    //   } else {
-    //     if (m_debug) std::cout << "- occupied, k > 1, continue" << std::endl;
-    //     m_data.k(pface)--;
-    //     CGAL_assertion_msg(false, "TODO: OCCUPIED, K > 1, CONTINUE!");
-    //   }
-
-    // } else {
-    //   if (m_debug) std::cout << "- free, any k, continue" << std::endl;
-    //   CGAL_assertion_msg(false, "TODO: FREE, ANY K, CONTINUE!");
-    // }
 
     CGAL_assertion(m_data.k(pface) >= 1);
     if (m_debug) {
       std::cout << "- k intersections after: " << m_data.k(pface) << std::endl;
     }
-
-    if (stop) { // polygon stops
-      const PVertex pother =
-        m_data.crop_pvertex_along_iedge(pvertex, iedge);
-      remove_events(iedge, pvertex.first);
-      compute_events_of_pvertices(
-        event.time(), std::array<PVertex, 2>{pvertex, pother});
-    } else { // polygon continues beyond the edge
-      const std::array<PVertex, 3> pvertices =
-        m_data.propagate_pvertex_beyond_iedge(pvertex, iedge, m_data.k(pface));
-      remove_events(iedge, pvertex.first);
-      compute_events_of_pvertices(event.time(), pvertices);
-    }
-    CGAL_assertion(m_data.has_iedge(pvertex));
+    return stop;
   }
 
   void apply_event_constrained_pvertex_meets_ivertex(
