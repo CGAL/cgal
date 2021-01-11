@@ -227,14 +227,18 @@ struct Depth_base {
 // 1: use plain AT without protection
 // 2: split an interval as 2 atomic_double
 // FIXME: CGAL_USE_SSE2 is clearly not the right condition
+#ifdef CGAL_HAS_THREADS
 template<class AT>struct Lazy_rep_selector { static constexpr int value = 0; };
-#ifdef CGAL_USE_SSE2
+# ifdef CGAL_USE_SSE2
 template<bool b>struct Lazy_rep_selector<Interval_nt<b>> { static constexpr int value = 1; };
 template<bool b, int N>struct Lazy_rep_selector<std::array<Interval_nt<b>,N>> { static constexpr int value = 1; };
 template<bool b>struct Lazy_rep_selector<CGAL::Point_2<CGAL::Simple_cartesian<CGAL::Interval_nt<b>>>> { static constexpr int value = 1; };
 template<bool b>struct Lazy_rep_selector<CGAL::Point_3<CGAL::Simple_cartesian<CGAL::Interval_nt<b>>>> { static constexpr int value = 1; };
-#else
+# else
 template<bool b>struct Lazy_rep_selector<Interval_nt<b>> { static constexpr int value = 2; };
+# endif
+#else
+template<class AT>struct Lazy_rep_selector { static constexpr int value = 1; };
 #endif
 
 template<class AT>
@@ -289,8 +293,10 @@ public:
 
   const ET & exact() const
   {
-#if defined(__gnu_linux__) && !defined(_REENTRANT)
-    // That shouldn't be needed, but I was getting a mysterious std::system_error with gcc-10 without it.
+#if defined(CGAL_HAS_THREADS) && defined(__gnu_linux__) && __GNUC__ < 11 && !defined(_REENTRANT)
+    // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=55394
+    // -pthread or -lpthread is just needed for linking, but I can't test that here...
+    // We could take the lack of _REENTRANT on that platform as forcing CGAL_HAS_NO_THREADS
     static_assert(false, "Please pass -pthread to the compiler");
 #endif
     // The test is unnecessary, only use it if benchmark says so
@@ -376,7 +382,9 @@ public:
 
   mutable AT at;
   mutable std::atomic<ET*> ptr_ { nullptr };
+#ifdef CGAL_HAS_THREADS
   mutable std::once_flag once;
+#endif
 
   Lazy_rep () {}
 
@@ -405,9 +413,14 @@ public:
 
   const ET & exact() const
   {
+#ifdef CGAL_HAS_THREADS
     // The test is unnecessary, only use it if benchmark says so
     //if (ptr_.load(std::memory_order_relaxed) == nullptr)
     std::call_once(once, [this](){this->update_exact();});
+#else
+    if (ptr_.load(std::memory_order_relaxed) == nullptr)
+      this->update_exact();
+#endif
     return *ptr_.load(std::memory_order_relaxed); // call_once already synchronized memory
   }
 
