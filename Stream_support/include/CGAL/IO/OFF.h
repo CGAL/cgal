@@ -24,7 +24,6 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/use.h>
-#include <CGAL/internal/Exact_type_selector.h>
 
 #include <boost/range/value_type.hpp>
 #include <boost/utility/enable_if.hpp>

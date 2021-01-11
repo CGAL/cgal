@@ -1,11 +1,9 @@
 Algebraic_foundations
-Arithmetic_kernel
 BGL
 Cartesian_kernel
 Circulator
 Distance_2
 Distance_3
-Filtered_kernel
 GraphicsView
 HalfedgeDS
 Hash_map
