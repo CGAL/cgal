@@ -279,7 +279,7 @@ struct NAME final : public Lazy_exact_unary<ET>                          \
   void update_exact() const                                              \
   {                                                                      \
     auto* pet = new typename Lazy_exact_nt_rep<ET>::Indirect(OP(this->op1.exact())); \
-    if (!this->is_point())                                               \
+    if (!this->approx().is_point())                                               \
       this->set_at(pet);                                                 \
     this->set_ptr(pet);                                                  \
     this->prune_dag();                                                   \
@@ -303,7 +303,7 @@ struct NAME final : public Lazy_exact_binary<ET, ET1, ET2>               \
   void update_exact() const                                              \
   {                                                                      \
     auto* pet = new typename Lazy_exact_nt_rep<ET>::Indirect(this->op1.exact() OP this->op2.exact()); \
-    if (!this->is_point())                                               \
+    if (!this->approx().is_point())                                               \
       this->set_at(pet);                                                 \
     this->set_ptr(pet);                                                  \
     this->prune_dag();                                                   \
@@ -326,7 +326,7 @@ struct Lazy_exact_Min final : public Lazy_exact_binary<ET>
   {
     // Should we test is_point earlier, and construct ET from double in that case? Constructing from double is not free, but if op1 or op2 is not exact yet, we may be able to skip a whole tree of exact constructions.
     auto* pet = new typename Lazy_exact_nt_rep<ET>::Indirect((CGAL::min)(this->op1.exact(), this->op2.exact()));
-    if (!this->is_point())
+    if (!this->approx().is_point())
       this->set_at(pet);
     this->set_ptr(pet);
     this->prune_dag();
@@ -343,7 +343,7 @@ struct Lazy_exact_Max final : public Lazy_exact_binary<ET>
   void update_exact() const
   {
     auto* pet = new typename Lazy_exact_nt_rep<ET>::Indirect((CGAL::max)(this->op1.exact(), this->op2.exact()));
-    if (!this->is_point())
+    if (!this->approx().is_point())
       this->set_at(pet);
     this->set_ptr(pet);
     this->prune_dag();

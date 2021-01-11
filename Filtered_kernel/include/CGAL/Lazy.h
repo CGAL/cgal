@@ -288,11 +288,6 @@ public:
     return ptr_.load(std::memory_order_consume)->at();
   }
 
-  // FIXME: Uh?
-  bool is_point() const {
-    return approx().is_point();
-  }
-
   const ET & exact() const
   {
     // The test is unnecessary, only use it if benchmark says so
@@ -399,11 +394,6 @@ public:
     return at;
   }
 
-  // FIXME: Uh?
-  bool is_point() const {
-    return at.is_point();
-  }
-
   template<class A>
   void set_at(ET*, A&& a) const {
     at = std::forward<A>(a);
@@ -497,10 +487,6 @@ public:
   AT approx() const
   {
     return AT(-x.load(std::memory_order_relaxed), y.load(std::memory_order_relaxed));
-  }
-
-  bool is_point() const {
-    return -x.load(std::memory_order_relaxed) == y.load(std::memory_order_relaxed);
   }
 
   void set_at(ET*, AT a) const {
