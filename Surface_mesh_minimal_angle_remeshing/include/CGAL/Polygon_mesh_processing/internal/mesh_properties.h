@@ -64,7 +64,7 @@ const double SQUARED_MIN_VALUE = 0.00000001;
 enum SampleNumberStrategy {
   // #samples per face is roughtly fixed (with respect to the sample strategy)
   k_fixed = 0,
-  // #samples per face is variable with respect to size_of_faces()c
+  // #samples per face is variable with respect to size_of_faces()
   k_variable
 };
 
