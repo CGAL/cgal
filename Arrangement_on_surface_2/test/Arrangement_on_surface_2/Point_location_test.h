@@ -262,7 +262,7 @@ private:
   void allocate_pl()
   {
     Strategy* locator = new Strategy();
-    CGAL_assertion(locator);
+    assert(locator);
     m_locators[id].m_variant = locator;
   }
 

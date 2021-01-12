@@ -234,7 +234,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 * @tparam NamedParameters_PM a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param points points of the soup of polygons
-* @param polygons each element in the vector describes a polygon using the indices of the points in `points`
+* @param polygons each element in the range describes a polygon using the indices of the points in `points`
 * @param out the polygon mesh to be built
 * @param np_ps an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
@@ -288,6 +288,17 @@ void polygon_soup_to_polygon_mesh(const PointRange& points,
 
   internal::PS_to_PM_converter<PointRange, PolygonRange, Point_map> converter(points, polygons, pm);
   converter(out, vpm);
+}
+
+template<typename PolygonMesh,
+         typename PointRange, typename PolygonRange,
+         typename NamedParameters_PS>
+void polygon_soup_to_polygon_mesh(const PointRange& points,
+                                  const PolygonRange& polygons,
+                                  PolygonMesh& out,
+                                  const NamedParameters_PS& np_ps)
+{
+  return polygon_soup_to_polygon_mesh(points, polygons, out, np_ps, parameters::all_default());
 }
 
 template<typename PolygonMesh, typename PointRange, typename PolygonRange>

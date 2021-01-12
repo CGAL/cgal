@@ -15,6 +15,10 @@
 #include "ui_Hole_filling_widget.h"
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/refine.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Timer.h>
 #include <CGAL/iterator.h>
 
@@ -23,6 +27,8 @@
 #include <QMainWindow>
 #include <QApplication>
 #include <QDockWidget>
+#include <QInputDialog>
+#include <QMessageBox>
 
 #include <QEvent>
 #include <QKeyEvent>
@@ -33,7 +39,6 @@
 
 #include <CGAL/Qt/qglviewer.h>
 
-#include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include "Kernel_type.h"
 
@@ -46,6 +51,17 @@
 using namespace CGAL::Three;
 
 typedef Scene_surface_mesh_item Scene_face_graph_item;
+
+
+struct Face : public std::array<int,3>
+{
+  Face(int i, int j, int k)
+  {
+    (*this)[0] = i;
+    (*this)[1] = j;
+    (*this)[2] = k;
+  }
+};
 
 void normalize_border(Scene_face_graph_item::Face_graph&)
 {}
@@ -77,6 +93,7 @@ public:
   };
 public: typedef std::list<Polyline_data> Polyline_data_list;
 private:
+
   struct List_iterator_comparator {
     bool operator()(Polyline_data_list::const_iterator it_1, Polyline_data_list::const_iterator it_2) const
     { return (&*it_1) < (&*it_2); }
@@ -328,10 +345,21 @@ class Polyhedron_demo_hole_filling_plugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "hole_filling_plugin.json")
 public:
-  bool applicable(QAction*) const { return qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex())) ||
-        qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex())); }
+  bool applicable(QAction* action) const
+  {
+    if(action == actionHoleFilling)
+    {
+      return qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex())) ||
+          qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));
+    }
+    else
+    {
+      return qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex()));
+    }
+  }
   void print_message(QString message) { CGAL::Three::Three::information(message); }
-  QList<QAction*> actions() const { return QList<QAction*>() << actionHoleFilling; }
+  QList<QAction*> actions() const { return QList<QAction*>() << actionHoleFilling
+                                                             <<actionHoleFillingPolyline; }
 
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m);
@@ -352,6 +380,7 @@ public Q_SLOTS:
   }
   void on_Select_all_holes_button();
   void on_Fill_from_selection_button();
+  void hole_filling_polyline_action();
   void on_Deselect_all_holes_button();
   void on_Visualize_holes_button();
   void on_Fill_selected_holes_button();
@@ -380,9 +409,15 @@ protected:
 private:
   Messages_interface* messages;
   QAction* actionHoleFilling;
+  QAction* actionHoleFillingPolyline;
 
   QDockWidget* dock_widget;
   Ui::HoleFilling ui_widget;
+  struct Nop_functor {
+    template<class T>
+    void operator()(const T & /*t*/) const {}
+  };
+  typedef boost::function_output_iterator<Nop_functor> Nop_out;
 
   //Maintains a reference between all the visualizers and their poly_item
   // to ease the management of the visualizers
@@ -435,6 +470,10 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
                                     ), mw);
   actionHoleFilling->setProperty("subMenuName", "Polygon Mesh Processing");
   connect(actionHoleFilling, SIGNAL(triggered()), this, SLOT(hole_filling_action()));
+  actionHoleFillingPolyline = new QAction(tr("Polyline Hole Filling"), mw);
+  actionHoleFillingPolyline->setProperty("subMenuName", "Polygon Mesh Processing");
+  connect(actionHoleFillingPolyline, SIGNAL(triggered()),
+    this, SLOT(hole_filling_polyline_action()));
 
   dock_widget = new QDockWidget(
           "Hole Filling"
@@ -871,6 +910,75 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
   edge_selection->polyhedron_item()->resetColors();
   edge_selection->polyhedron_item()->invalidateOpenGLBuffers();
   edge_selection->polyhedron_item()->itemChanged();
+}
+
+void Polyhedron_demo_hole_filling_plugin::hole_filling_polyline_action() {
+  Scene_polylines_item* polylines_item = qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex()));
+  if(!polylines_item) {
+    print_message("Error: there is no selected polyline item!");
+    return;
+  }
+
+  bool also_refine;
+  const double density_control_factor =
+    QInputDialog::getDouble(mw, tr("Density Control Factor"),
+    tr("Density Control Factor (Cancel for not Refine): "), 1.41, 0.0, 100.0, 2, &also_refine);
+
+  bool use_DT =
+    QMessageBox::Yes == QMessageBox::question(
+    NULL, "Use Delaunay Triangulation", "Use Delaunay Triangulation ?", QMessageBox::Yes|QMessageBox::No);
+
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  QApplication::processEvents();
+  std::size_t counter = 0;
+  for(Scene_polylines_item::Polylines_container::iterator it = polylines_item->polylines.begin();
+    it != polylines_item->polylines.end(); ++it, ++counter)
+  {
+    if(it->front() != it->back()) { //not closed, skip it
+      print_message("Warning: skipping not closed polyline!");
+      continue;
+    }
+    if(it->size() < 4) { // no triangle, skip it (needs at least 3 + 1 repeat)
+      print_message("Warning: skipping polyline which has less than 4 points!");
+      continue;
+    }
+
+    CGAL::Timer timer; timer.start();
+    std::vector<Face> patch;
+    CGAL::Polygon_mesh_processing::triangulate_hole_polyline(*it,
+      std::back_inserter(patch),
+      PMP::parameters::use_delaunay_triangulation(use_DT));
+    print_message(QString("Triangulated in %1 sec.").arg(timer.time()));
+
+    if(patch.empty()) {
+      if(use_DT){
+        print_message("Warning: generating patch is not successful, please try it without 'Delaunay Triangulation'!");
+        continue;
+      }
+      else{
+        print_message("Warning: generating patch is not successful, skipping.");
+        continue;
+      }
+    }
+    SMesh* poly = new SMesh;
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(*it,
+                                                                patch,
+                                                                *poly);
+
+    if(also_refine) {
+      timer.reset();
+      CGAL::Polygon_mesh_processing::refine(*poly, faces(*poly),
+                                            Nop_out(), Nop_out(),
+                                            CGAL::Polygon_mesh_processing::parameters::density_control_factor(density_control_factor));
+      print_message(QString("Refined in %1 sec.").arg(timer.time()));
+    }
+
+    Scene_surface_mesh_item* poly_item = new Scene_surface_mesh_item(poly);
+    poly_item->setName(tr("%1-filled-%2").arg(polylines_item->name()).arg(counter));
+    poly_item->setRenderingMode(FlatPlusEdges);
+    scene->setSelectedItem(scene->addItem(poly_item));
+  }
+  QApplication::restoreOverrideCursor();
 }
 
 // Q_EXPORT_PLUGIN2(Polyhedron_demo_hole_filling_plugin, Polyhedron_demo_hole_filling_plugin)

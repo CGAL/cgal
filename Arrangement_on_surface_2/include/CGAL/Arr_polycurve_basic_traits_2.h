@@ -63,6 +63,7 @@ public:
 
   typedef typename Subcurve_traits_2::Point_2              Point_2;
   typedef typename Subcurve_traits_2::X_monotone_curve_2   X_monotone_subcurve_2;
+  typedef typename Subcurve_traits_2::Multiplicity         Multiplicity;
 
   //@}
 

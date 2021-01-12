@@ -438,7 +438,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
   Output_iterator out = choose_parameter<Output_iterator>(get_parameter(np, internal_np::output_iterator));
 
   // vector_property_map
-  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fimap);
+  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(static_cast<unsigned>(num_faces(pmesh)), fimap);
   std::size_t num = connected_components(pmesh, face_cc, np);
 
   // Even if we do not want to keep anything we need to first
@@ -594,7 +594,7 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
   Output_iterator out = choose_parameter<Output_iterator>(get_parameter(np, internal_np::output_iterator));
 
   // vector_property_map
-  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
+  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(static_cast<unsigned>(num_faces(pmesh)), fim);
   std::size_t num = connected_components(pmesh, face_cc, np);
   std::vector<Face_size> component_size(num, 0);
 
@@ -655,14 +655,12 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::is_default_parameter;
 
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor   face_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::face_iterator     face_iterator;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_iterator   vertex_iterator;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor   edge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::edge_iterator     edge_iterator;
 
   typedef typename GetInitializedVertexIndexMap<PolygonMesh, NamedParameters>::type VertexIndexMap;
   VertexIndexMap vim = get_initialized_vertex_index_map(pmesh, np);
@@ -671,10 +669,10 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
   for(std::size_t i : components_to_keep)
     cc_to_keep.insert(i);
 
-  boost::vector_property_map<bool, VertexIndexMap> keep_vertex(vim);
-  for(vertex_descriptor v : vertices(pmesh)){
+  boost::vector_property_map<bool, VertexIndexMap> keep_vertex(static_cast<unsigned>(num_vertices(pmesh)), vim);
+  for(vertex_descriptor v : vertices(pmesh))
     keep_vertex[v] = false;
-  }
+
   for(face_descriptor f : faces(pmesh)){
     if (cc_to_keep.find(get(fcm,f)) != cc_to_keep.end())
       put(fcm, f, keep ? 1 : 0);
@@ -691,11 +689,9 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
     }
   }
 
-  edge_iterator eb, ee;
-  for (boost::tie(eb, ee) = edges(pmesh); eb != ee;)
+  std::vector<edge_descriptor> edges_to_remove;
+  for (edge_descriptor e : edges(pmesh))
   {
-    edge_descriptor e = *eb;
-    ++eb;
     vertex_descriptor v = source(e, pmesh);
     vertex_descriptor w = target(e, pmesh);
     halfedge_descriptor h = halfedge(e, pmesh);
@@ -703,7 +699,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
     if (!keep_vertex[v] && !keep_vertex[w]){
       // don't care about connectivity
       // As vertices are not kept the faces and vertices will be removed later
-      remove_edge(e, pmesh);
+      edges_to_remove.push_back(e);
     }
     else if (keep_vertex[v] && keep_vertex[w]){
       face_descriptor fh = face(h, pmesh), ofh = face(oh, pmesh);
@@ -736,7 +732,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
         // shortcut the next pointers as e will be removed
         set_next(prev(h, pmesh), next(oh, pmesh), pmesh);
         set_next(prev(oh, pmesh), next(h, pmesh), pmesh);
-        remove_edge(e, pmesh);
+        edges_to_remove.push_back(e);
       }
     }
     else if (keep_vertex[v]){
@@ -744,7 +740,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
         set_halfedge(v, prev(h, pmesh), pmesh);
       }
       set_next(prev(h, pmesh), next(oh, pmesh), pmesh);
-      remove_edge(e, pmesh);
+      edges_to_remove.push_back(e);
     }
     else {
       CGAL_assertion(keep_vertex[w]);
@@ -752,26 +748,40 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
         set_halfedge(w, prev(oh, pmesh), pmesh);
       }
       set_next(prev(oh, pmesh), next(h, pmesh), pmesh);
-      remove_edge(e, pmesh);
+      edges_to_remove.push_back(e);
     }
   }
+  for (edge_descriptor e : edges_to_remove)
+    remove_edge(e, pmesh);
 
-  face_iterator fb, fe;
   // We now can remove all vertices and faces not marked as kept
-  for (boost::tie(fb, fe) = faces(pmesh); fb != fe;){
-    face_descriptor f = *fb;
-    ++fb;
-    if (get(fcm,f) != 1){
-      remove_face(f, pmesh);
-    }
-  }
-  vertex_iterator b, e;
-  for (boost::tie(b, e) = vertices(pmesh); b != e;){
-    vertex_descriptor v = *b;
-    ++b;
-    if (!keep_vertex[v]){
+  std::vector<face_descriptor> faces_to_remove;
+  for (face_descriptor f : faces(pmesh))
+    if (get(fcm,f) != 1)
+      faces_to_remove.push_back(f);
+  for (face_descriptor f : faces_to_remove)
+    remove_face(f, pmesh);
+
+  std::vector<vertex_descriptor> vertices_to_remove;
+  for(vertex_descriptor v: vertices(pmesh))
+    if (!keep_vertex[v])
+      vertices_to_remove.push_back(v);
+  if ( is_default_parameter(get_parameter(np, internal_np::vertex_is_constrained)) )
+    for (vertex_descriptor v : vertices_to_remove)
       remove_vertex(v, pmesh);
-    }
+  else
+  {
+   typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_is_constrained_t,
+                                                        NamedParameters,
+                                                        Static_boolean_property_map<vertex_descriptor, false> // default (not used)
+                                                         >::type Vertex_map;
+    Vertex_map is_cst = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
+                                         Static_boolean_property_map<vertex_descriptor, false>());
+    for (vertex_descriptor v : vertices_to_remove)
+      if (!get(is_cst, v))
+        remove_vertex(v, pmesh);
+      else
+        set_halfedge(v, boost::graph_traits<PolygonMesh>::null_halfedge(), pmesh);
   }
 }
 
@@ -924,7 +934,7 @@ void remove_connected_components(PolygonMesh& pmesh
   typedef typename CGAL::GetInitializedFaceIndexMap<PolygonMesh, CGAL_PMP_NP_CLASS>::type FaceIndexMap;
   FaceIndexMap fim = CGAL::get_initialized_face_index_map(pmesh, np);
 
-  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
+  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(static_cast<unsigned>(num_faces(pmesh)), fim);
   connected_components(pmesh, face_cc, np);
 
   std::vector<std::size_t> cc_to_remove;
@@ -991,7 +1001,7 @@ void keep_connected_components(PolygonMesh& pmesh
   typedef typename CGAL::GetInitializedFaceIndexMap<PolygonMesh, CGAL_PMP_NP_CLASS>::type FaceIndexMap;
   FaceIndexMap fim = CGAL::get_initialized_face_index_map(pmesh, np);
 
-  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
+  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(static_cast<unsigned>(num_faces(pmesh)), fim);
   connected_components(pmesh, face_cc, np);
 
   std::vector<std::size_t> cc_to_keep;
@@ -1042,13 +1052,6 @@ void keep_connected_components(PolygonMesh& pmesh
 }
 
 namespace internal {
-
-template <typename G>
-struct No_mark
-{
-  friend bool get(No_mark<G>, typename boost::graph_traits<G>::edge_descriptor) { return false; }
-  friend void put(No_mark<G>, typename boost::graph_traits<G>::edge_descriptor, bool) { }
-};
 
 template < class PolygonMesh, class PolygonMeshRange,
            class FIMap, class VIMap,
@@ -1168,17 +1171,19 @@ void split_connected_components(const PolygonMesh& pmesh,
                                 PolygonMeshRange& cc_meshes,
                                 const NamedParameters& np)
 {
+  typedef Static_boolean_property_map<
+    typename boost::graph_traits<PolygonMesh>::edge_descriptor, false> Default_ecm;
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,
     NamedParameters,
-    internal::No_mark<PolygonMesh>//default
+    Default_ecm//default
   > ::type Ecm;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   Ecm ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                             internal::No_mark<PolygonMesh>());
+                             Default_ecm());
 
   internal::split_connected_components_impl(CGAL::get_initialized_face_index_map(pmesh, np),
                                             CGAL::get_initialized_halfedge_index_map(pmesh, np),

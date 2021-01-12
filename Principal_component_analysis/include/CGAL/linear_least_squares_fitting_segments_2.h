@@ -157,7 +157,7 @@ linear_least_squares_fitting_2(InputIterator first,
     points.push_back(s[0]);
     points.push_back(s[1]);
   }
-  return linear_least_squares_fitting_2(points.begin(),points.end(),line,c,k,(Point*)nullptr,tag,
+  return linear_least_squares_fitting_2(points.begin(),points.end(),line,c,(Point*)nullptr,k,tag,
                                         diagonalize_traits);
 
 } // end linear_least_squares_fitting_2 for segment set with 1D tag

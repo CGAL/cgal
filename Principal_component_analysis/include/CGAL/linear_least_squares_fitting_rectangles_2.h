@@ -171,7 +171,8 @@ linear_least_squares_fitting_2(InputIterator first,
     segments.push_back(Segment_2(t[3],t[0]));
   }
 
-  return linear_least_squares_fitting_2(segments.begin(),segments.end(),line,c,K(),tag,
+  return linear_least_squares_fitting_2(segments.begin(),segments.end(),line,c,
+                                        (Segment_2*)nullptr, K(),tag,
                                         diagonalize_traits);
 
 } // end linear_least_squares_fitting_2 for rectangle set with 1D tag
@@ -209,7 +210,8 @@ linear_least_squares_fitting_2(InputIterator first,
     points.push_back(Point_2(t[3]));
   }
 
-  return linear_least_squares_fitting_2(points.begin(),points.end(),line,c,K(),tag,
+  return linear_least_squares_fitting_2(points.begin(),points.end(),line,c,
+                                        (Point_2*)nullptr, K(),tag,
                                         diagonalize_traits);
 
 } // end linear_least_squares_fitting_2 for rectangle set with 0D tag

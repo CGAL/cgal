@@ -59,8 +59,7 @@
 
 #ifndef NDEBUG
 #define CGAL_NEF_TRACEN(t) if((debugthread%CGAL_NEF_DEBUG)==0) \
- std::cerr<< " "<<t<<std::endl; \
- std::cerr.flush()
+ std::cerr<< " "<<t<<std::endl;
 #else
 #define CGAL_NEF_TRACEN(t)
 #endif
