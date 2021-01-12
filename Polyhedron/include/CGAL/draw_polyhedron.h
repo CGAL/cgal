@@ -14,6 +14,7 @@
 
 #include <CGAL/license/Polyhedron.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Qt/Context_initialization.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
@@ -208,9 +209,10 @@ void draw(const CGAL_POLY_TYPE& apoly,
 
   if (!cgal_test_suite)
   {
+    init_ogl_context(4,3);
     int argc=1;
     const char* argv[2]={"polyhedron_viewer","\0"};
-    QApplication app(CGAL::code_to_call_before_creation_of_QCoreApplication(argc),const_cast<char**>(argv));
+    QApplication app(argc,const_cast<char**>(argv));
     DefaultColorFunctorPolyhedron fcolor;
     SimplePolyhedronViewerQt<CGAL_POLY_TYPE, DefaultColorFunctorPolyhedron>
       mainwindow(app.activeWindow(), apoly, title, nofill, fcolor);

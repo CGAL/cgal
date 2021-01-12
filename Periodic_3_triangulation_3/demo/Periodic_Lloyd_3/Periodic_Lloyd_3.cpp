@@ -1,19 +1,13 @@
 #include "MainWindow.h"
 #include <QApplication>
 #include <CGAL/Qt/resources.h>
+#include <CGAL/Qt/Context_initialization.h>
 
 int main(int argc, char** argv)
 {
-  QSurfaceFormat fmt;
-  fmt.setVersion(2, 1);
-  fmt.setRenderableType(QSurfaceFormat::OpenGL);
-  fmt.setProfile(QSurfaceFormat::CoreProfile);
-  fmt.setOption(QSurfaceFormat::DebugContext);
-  QSurfaceFormat::setDefaultFormat(fmt);
-  //for windows
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
-  QApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
-#endif
+
+  CGAL::init_ogl_context(2, 1);
+
   QApplication application(argc,argv);
   application.setOrganizationDomain("inria.fr");
   application.setOrganizationName("INRIA");

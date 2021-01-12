@@ -18,6 +18,7 @@
 #define CGAL_DRAW_POLYGON_2_H
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Qt/Context_initialization.h>
 
 #ifdef DOXYGEN_RUNNING
 namespace CGAL {
@@ -122,9 +123,10 @@ void draw(const CGAL::Polygon_2<T, C>& ap2,
 
   if (!cgal_test_suite)
   {
+    init_ogl_context(4,3);
     int argc=1;
     const char* argv[2]={"t2_viewer","\0"};
-    QApplication app(CGAL::code_to_call_before_creation_of_QCoreApplication(argc),const_cast<char**>(argv));
+    QApplication app(argc,const_cast<char**>(argv));
     SimplePolygon2ViewerQt<CGAL::Polygon_2<T, C> >
       mainwindow(app.activeWindow(), ap2, title);
     mainwindow.show();

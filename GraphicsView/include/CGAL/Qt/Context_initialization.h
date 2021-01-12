@@ -12,14 +12,22 @@
 
 #ifndef CGAL_QT_CONTEXT_INITIALIZATION_H
 #define CGAL_QT_CONTEXT_INITIALIZATION_H
+
 namespace CGAL
 {
-void init_ogl_context(int major, int minor) {
+inline void init_ogl_context(int major, int minor) {
   QSurfaceFormat fmt;
 #ifdef Q_OS_MAC
-  fmt.setVersion(4, 1);
+  if(major == 4)
+  {
+    fmt.setVersion(4, 1);
+  }
+  else
+  {
+     fmt.setVersion(major, minor);
+  }
 #else
-  fmt.setVersion(4, 3);
+  fmt.setVersion(major, minor);
 #endif
   fmt.setRenderableType(QSurfaceFormat::OpenGL);
   fmt.setProfile(QSurfaceFormat::CoreProfile);
@@ -33,7 +41,6 @@ void init_ogl_context(int major, int minor) {
 
   //We set the locale to avoid any trouble with VTK
   setlocale(LC_ALL, "C");
-  return i;
 }
 
 }

@@ -5,27 +5,13 @@
 
 
 #include <CGAL/Qt/resources.h>
+#include <CGAL/Qt/Context_initialization.h>
 
 int main(int argc, char** argv)
 {
-  QSurfaceFormat fmt;
-#ifdef Q_OS_MAC
-  fmt.setVersion(4, 1);
-#else
-  fmt.setVersion(4, 3);
-#endif
-  fmt.setRenderableType(QSurfaceFormat::OpenGL);
-  fmt.setProfile(QSurfaceFormat::CoreProfile);
-  fmt.setOption(QSurfaceFormat::DebugContext);
-  QSurfaceFormat::setDefaultFormat(fmt);
-
-  //for Windows
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
-  QApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
-#endif
+  CGAL::init_ogl_context(4,3);
 
   QApplication application(argc,argv);
-
   application.setOrganizationDomain("geometryfactory.com");
   application.setOrganizationName("GeometryFactory");
   application.setApplicationName("Alpha Shape Reconstruction");

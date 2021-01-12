@@ -14,6 +14,7 @@
 #include <QApplication>
 #include <CGAL/Qt/resources.h>
 #include <CGAL/assertions_behaviour.h>
+#include <CGAL/Qt/Context_initialization.h>
 
 // Global random
 CGAL::Random myrandom;
@@ -23,10 +24,7 @@ int main(int argc, char** argv)
   // std::cout<<"Size of dart: "<<sizeof(LCC::Dart)<<std::endl;
   CGAL::set_error_behaviour(CGAL::ABORT);
 
-  //for windows
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
-  QApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
-#endif
+  CGAL::init_ogl_context(4,3);
   QApplication application(argc,argv);
 
   application.setOrganizationDomain("cgal.org");

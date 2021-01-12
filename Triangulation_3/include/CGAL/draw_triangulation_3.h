@@ -14,6 +14,7 @@
 
 #include <CGAL/license/Triangulation_3.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Qt/Context_initialization.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
@@ -150,9 +151,10 @@ void draw(const CGAL_T3_TYPE& at3,
 
   if (!cgal_test_suite)
   {
+    init_ogl_context(4,3);
     int argc=1;
     const char* argv[2]={"t3_viewer","\0"};
-    QApplication app(CGAL::code_to_call_before_creation_of_QCoreApplication(argc),const_cast<char**>(argv));
+    QApplication app(argc,const_cast<char**>(argv));
     DefaultColorFunctorT3 fcolor;
     SimpleTriangulation3ViewerQt<CGAL_T3_TYPE, DefaultColorFunctorT3>
       mainwindow(app.activeWindow(), at3, title, nofill, fcolor);

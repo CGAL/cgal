@@ -18,6 +18,7 @@
 #include <initializer_list>
 #include <CGAL/draw_linear_cell_complex.h>
 #include <CGAL/Path_on_surface.h>
+#include <CGAL/Qt/Context_initialization.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
@@ -409,9 +410,10 @@ void draw(const Mesh& alcc,
 
   if (!cgal_test_suite)
   {
+    init_ogl_context(4,3);
     int argc=1;
     const char* argv[2]={"lccviewer","\0"};
-    QApplication app(CGAL::code_to_call_before_creation_of_QCoreApplication(argc),const_cast<char**>(argv));
+    QApplication app(argc,const_cast<char**>(argv));
     Face_graph_with_path_viewer<Mesh, DrawingFunctor> mainwindow(app.activeWindow(),
                                                                  alcc, &paths, amark,
                                                                  title, nofill,
