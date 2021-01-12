@@ -170,13 +170,17 @@ public:
     // First draw: vertices; edges, faces; multi-color; inverse normal
     Base(parent, title, true, true, true, false, false),
     lcc(alcc),
-    m_oriented_mark(lcc->get_new_mark()),
+    m_oriented_mark(LCC::INVALID_MARK),
     m_nofaces(anofaces),
     m_random_face_color(false),
     m_drawing_functor(drawing_functor)
   {
-    lcc->orient(m_oriented_mark);
-    compute_elements();
+    if (lcc!=nullptr)
+    {
+      lcc->get_new_mark();
+      lcc->orient(m_oriented_mark);
+      compute_elements();
+    }
   }
 
   ~SimpleLCCViewerQt()
@@ -185,14 +189,20 @@ public:
 protected:
   void set_lcc(const LCC* alcc, bool doredraw=true)
   {
+    if (lcc==alcc)
+    { return; }
+
     if (lcc!=nullptr)
     { lcc->free_mark(m_oriented_mark); }
 
     lcc=alcc;
-    m_oriented_mark=lcc->get_new_mark();
-    lcc->orient(m_oriented_mark);
+    if (lcc!=nullptr)
+    {
+      m_oriented_mark=lcc->get_new_mark();
+      lcc->orient(m_oriented_mark);
+      compute_elements();
+    }
 
-    compute_elements();
     if (doredraw) { redraw(); }
   }
 
