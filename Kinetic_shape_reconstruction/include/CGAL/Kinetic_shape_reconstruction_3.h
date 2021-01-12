@@ -949,9 +949,9 @@ private:
       }
       ++iteration;
 
-      if (iteration == 80) {
-        exit(EXIT_FAILURE);
-      }
+      // if (iteration == 80) {
+      //   exit(EXIT_FAILURE);
+      // }
 
       apply(event, k);
       m_data.check_integrity();
@@ -1114,8 +1114,8 @@ private:
         CGAL_assertion(nfaces.size() == 1);
         CGAL_assertion(nfaces[0] == pface);
 
-        const bool stop = check_pedge_meets_iedge_local(pvertex, pother, iedge, pface);
-        // const bool stop = check_pedge_meets_iedge_global(pvertex, pother, iedge, pface);
+        // const bool stop = check_pedge_meets_iedge_local(pvertex, pother, iedge, pface);
+        const bool stop = check_pedge_meets_iedge_global(pvertex, pother, iedge, pface);
 
         if (stop) { // polygon stops
           m_data.crop_pedge_along_iedge(pvertex, pother, iedge);
@@ -1158,7 +1158,6 @@ private:
       std::cout << "- occupied1/occupied1: "   << is_occupied_iedge_1 << "/" << is_occupied_iedge_2 << std::endl;
       std::cout << "- k intersections befor: " << m_data.k(pface) << std::endl;
     }
-    CGAL_assertion(is_occupied_iedge_1 == is_occupied_iedge_2);
     CGAL_assertion(is_bbox_reached_1 == is_bbox_reached_2);
 
     bool stop = false;
@@ -1226,7 +1225,6 @@ private:
       std::cout << "- occupied1/occupied1: "   << is_occupied_iedge_1 << "/" << is_occupied_iedge_2 << std::endl;
       std::cout << "- k intersections befor: " << m_data.k(pface) << std::endl;
     }
-    CGAL_assertion(is_occupied_iedge_1 == is_occupied_iedge_2);
     CGAL_assertion(is_bbox_reached_1 == is_bbox_reached_2);
     CGAL_assertion(is_limit_line_1 == is_limit_line_2);
 
@@ -1278,8 +1276,8 @@ private:
     CGAL_assertion(nfaces.size() == 1);
     CGAL_assertion(nfaces[0] == pface);
 
-    const bool stop = check_pvertex_meets_iedge_local(pvertex, iedge, pface);
-    // const bool stop = check_pvertex_meets_iedge_global(pvertex, iedge, pface);
+    // const bool stop = check_pvertex_meets_iedge_local(pvertex, iedge, pface);
+    const bool stop = check_pvertex_meets_iedge_global(pvertex, iedge, pface);
 
     if (stop) { // polygon stops
       const PVertex pother =

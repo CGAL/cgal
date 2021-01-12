@@ -2242,6 +2242,7 @@ public:
     const PVertex& pv_next,
     const PVertex& pvertex,
     const IVertex& ivertex,
+    const bool is_back,
     const bool is_open,
     bool reverse,
     std::set<IEdge>& new_crossed,
@@ -2251,7 +2252,9 @@ public:
     std::vector< std::pair<IEdge, bool> > iedges;
 
     // Use potential.
-    if (true) { // does not work with local!
+    bool use_potential = false;
+    if (false) {
+      use_potential = true;
       if (potential.size() == 0) return;
       const auto& pair1 = potential.front();
       const auto& pair2 = potential.back();
@@ -2271,7 +2274,9 @@ public:
     }
 
     // Use crossed.
-    if (false) {
+    bool use_crossed = false;
+    if (true) {
+      use_crossed = true;
       if (crossed.size() <= 1) return;
       iedges.clear();
       iedges.reserve(crossed.size());
@@ -2280,16 +2285,19 @@ public:
       }
       CGAL_assertion(iedges.size() == crossed.size());
     }
+
+    CGAL_assertion(use_potential || use_crossed);
     CGAL_assertion(iedges.front().first != iedges.back().first);
 
-    try_adding_new_pfaces_local(
-      min_time, max_time,
-      pv_prev, pv_next, pvertex, ivertex, is_open, reverse,
-      iedges, new_crossed, new_pvertices);
-    // try_adding_new_pfaces_global(
-    //   min_tine, max_time,
-    //   pv_prev, pv_next, pvertex, ivertex, is_open, reverse,
+    // try_adding_new_pfaces_local(
+    //   min_time, max_time,
+    //   pv_prev, pv_next, pvertex, ivertex, is_back, is_open, reverse,
     //   iedges, new_crossed, new_pvertices);
+
+    try_adding_new_pfaces_global(
+      min_time, max_time,
+      pv_prev, pv_next, pvertex, ivertex, is_back, is_open, reverse,
+      iedges, new_crossed, new_pvertices);
 
     // TODO: IDEA:
     // What about using potental but go pair by pair and check each potential pface
@@ -2306,6 +2314,7 @@ public:
     const PVertex& pv_next,
     const PVertex& pvertex,
     const IVertex& ivertex,
+    const bool is_back,
     const bool is_open,
     bool reverse,
     std::vector< std::pair<IEdge, bool> >& iedges,
@@ -2314,7 +2323,7 @@ public:
 
     traverse_iedges_local(
       min_time, max_time,
-      pv_prev, pv_next, pvertex, ivertex, is_open, reverse,
+      pv_prev, pv_next, pvertex, ivertex, is_back, is_open, reverse,
       iedges, new_crossed, new_pvertices);
 
     if (is_open) {
@@ -2322,7 +2331,7 @@ public:
       reverse = !reverse;
       traverse_iedges_local(
         min_time, max_time,
-        pv_prev, pv_next, pvertex, ivertex, is_open, reverse,
+        pv_prev, pv_next, pvertex, ivertex, is_back, is_open, reverse,
         iedges, new_crossed, new_pvertices);
     }
   }
@@ -2333,6 +2342,7 @@ public:
     const PVertex& pv_next,
     const PVertex& pvertex,
     const IVertex& ivertex,
+    const bool is_back,
     const bool is_open,
     const bool reverse,
     std::vector< std::pair<IEdge, bool> >& iedges,
@@ -2393,7 +2403,7 @@ public:
           this->k(pface)--;
           CGAL_assertion(this->k(pface) >= 1);
           add_new_pface(min_time, max_time, pvertex, pv_prev, pv_next, pface,
-          iedge_i, iedge_ip, is_open, reverse, new_crossed, new_pvertices);
+          iedge_i, iedge_ip, is_back, is_open, reverse, new_crossed, new_pvertices);
           ++num_added_pfaces;
           // CGAL_assertion_msg(false, "TODO: OCCUPIED, K > 1, CONTINUE!");
           continue;
@@ -2404,7 +2414,7 @@ public:
         if (m_verbose) std::cout << "- free, any k, continue" << std::endl;
         CGAL_assertion(this->k(pface) >= 1);
         add_new_pface(min_time, max_time, pvertex, pv_prev, pv_next, pface,
-          iedge_i, iedge_ip, is_open, reverse, new_crossed, new_pvertices);
+          iedge_i, iedge_ip, is_back, is_open, reverse, new_crossed, new_pvertices);
         ++num_added_pfaces;
         // CGAL_assertion_msg(false, "TODO: FREE, ANY K, CONTINUE!");
         continue;
@@ -2428,6 +2438,7 @@ public:
     const PVertex& pv_next,
     const PVertex& pvertex,
     const IVertex& ivertex,
+    const bool is_back,
     const bool is_open,
     bool reverse,
     std::vector< std::pair<IEdge, bool> >& iedges,
@@ -2436,7 +2447,7 @@ public:
 
     traverse_iedges_global(
       min_time, max_time,
-      pv_prev, pv_next, pvertex, ivertex, is_open, reverse,
+      pv_prev, pv_next, pvertex, ivertex, is_back, is_open, reverse,
       iedges, new_crossed, new_pvertices);
 
     if (is_open) {
@@ -2444,7 +2455,7 @@ public:
       reverse = !reverse;
       traverse_iedges_global(
         min_time, max_time,
-        pv_prev, pv_next, pvertex, ivertex, is_open, reverse,
+        pv_prev, pv_next, pvertex, ivertex, is_back, is_open, reverse,
         iedges, new_crossed, new_pvertices);
     }
   }
@@ -2455,6 +2466,7 @@ public:
     const PVertex& pv_next,
     const PVertex& pvertex,
     const IVertex& ivertex,
+    const bool is_back,
     const bool is_open,
     const bool reverse,
     std::vector< std::pair<IEdge, bool> >& iedges,
@@ -2518,7 +2530,7 @@ public:
         if (m_verbose) std::cout << "- free, any k, continue" << std::endl;
         CGAL_assertion(this->k(pface) >= 1);
         add_new_pface(min_time, max_time, pvertex, pv_prev, pv_next, pface,
-          iedge_i, iedge_ip, is_open, reverse, new_crossed, new_pvertices);
+          iedge_i, iedge_ip, is_back, is_open, reverse, new_crossed, new_pvertices);
         ++num_added_pfaces;
         // CGAL_assertion_msg(false, "TODO: FREE, ANY K, CONTINUE!");
         continue;
@@ -2544,6 +2556,7 @@ public:
     const PFace& pface,
     const IEdge& iedge1,
     const IEdge& iedge2,
+    const bool is_back,
     const bool is_open,
     const bool reverse,
     std::set<IEdge>& new_crossed,
@@ -2554,13 +2567,13 @@ public:
     bool created_pv1; PVertex pv1;
     std::tie(created_pv1, pv1) = create_pvertex(
       min_time, max_time,
-      pvertex, pv_prev, pv_next, iedge1, is_open, new_crossed, new_pvertices);
+      pvertex, pv_prev, pv_next, iedge1, is_back, is_open, new_crossed, new_pvertices);
     if (m_verbose) std::cout << "- pv1: " << str(pv1) << std::endl;
 
     bool created_pv2; PVertex pv2;
     std::tie(created_pv2, pv2) = create_pvertex(
       min_time, max_time,
-      pvertex, pv_prev, pv_next, iedge2, is_open, new_crossed, new_pvertices);
+      pvertex, pv_prev, pv_next, iedge2, is_back, is_open, new_crossed, new_pvertices);
     if (m_verbose) std::cout << "- pv2: " << str(pv2) << std::endl;
 
     PFace new_pface;
@@ -2581,6 +2594,7 @@ public:
     const FT min_time, const FT max_time,
     const PVertex& source, const PVertex& pv_prev, const PVertex& pv_next,
     const IEdge& iedge,
+    const bool is_back,
     const bool is_open,
     std::set<IEdge>& new_crossed,
     std::vector<PVertex>& new_pvertices) {
@@ -2601,12 +2615,12 @@ public:
         0, pv_prev, pv_next, iedge, future_point, future_direction);
       CGAL_assertion_msg(!is_parallel, "TODO: BACK/FRONT, ADD PARALLEL CASE!");
       // if (is_parallel) {
-      //   if (is_intersecting_iedge(min_time, max_time, pv_next?, iedge)) {
-      //     // CGAL_assertion_msg(!is_parallel, "TODO: BACK/FRONT, ADD PARALLEL CASE!");
-      //     // const auto pother = ( border_prev_and_next(pv_next) ).first; // .second?
-      //     // compute_future_point_and_direction(
-      //     //   0, pv_next, pother, iedge, future_point, future_direction);
-      //   }
+      //   const auto iv = ivertex(source);
+      //   const auto ov = opposite(iedge, iv);
+      //   future_point  = point_2(source.first, ov);
+      //   const auto pinit = point_2(source);
+      //   future_direction = Vector_2(pinit, future_point);
+      //   future_point = pinit - m_current_time * future_direction;
       // }
     } else {
       is_parallel = compute_future_point_and_direction(
@@ -2665,7 +2679,7 @@ public:
     for (const auto pedge : pedges) {
       if (!has_iedge(pedge)) {
         std::cout << "- disconnected pedge: " << segment_3(pedge) << std::endl;
-        CGAL_assertion(has_iedge(pedge)); // TODO: TURN IT OFF IF NECESSARY!
+        // CGAL_assertion(has_iedge(pedge)); // TODO: TURN IT OFF IF NECESSARY!
 
         const auto pother = this->opposite(pedge, pvertex);
         const auto iv1 = this->ivertex(pvertex);
@@ -2867,7 +2881,7 @@ public:
       try_adding_new_pfaces(
         min_time, max_time,
         potential, crossed, back, prev, pvertex, ivertex,
-        false, true, new_crossed, new_pvertices);
+        true, false, true, new_crossed, new_pvertices);
 
       crossed.clear();
       crossed.reserve(new_crossed.size());
@@ -3112,7 +3126,7 @@ public:
       try_adding_new_pfaces(
         min_time, max_time,
         potential, crossed, front, next, pvertex, ivertex,
-        false, false, new_crossed, new_pvertices);
+        false, false, false, new_crossed, new_pvertices);
 
       crossed.clear();
       crossed.reserve(new_crossed.size());
@@ -3391,7 +3405,7 @@ public:
       try_adding_new_pfaces(
         min_time, max_time,
         potential, crossed, prev, next, pvertex, ivertex,
-        true, false, new_crossed, new_pvertices);
+        false, true, false, new_crossed, new_pvertices);
 
       crossed.clear();
       crossed.reserve(new_crossed.size());
@@ -4840,9 +4854,12 @@ private:
     future_direction_a = Vector_2(pinit, future_point_a);
     future_point_a = pinit - m_current_time * future_direction_a;
 
+    auto tmp_a = future_direction_a;
+    tmp_a = KSR::normalize(tmp_a);
+
     if (m_verbose) {
       std::cout << "- prev future point a: " <<
-      to_3d(pvertex.first, future_point_a + m_current_time * future_direction_a) << std::endl;
+      to_3d(pvertex.first, pinit + m_current_time * tmp_a) << std::endl;
       std::cout << "- prev future direction a: " << future_direction_a << std::endl;
     }
 
@@ -4870,10 +4887,13 @@ private:
     future_direction_b = Vector_2(pinit, future_point_b);
     future_point_b = pinit - m_current_time * future_direction_b;
 
+    auto tmp_b = future_direction_b;
+    tmp_b = KSR::normalize(tmp_b);
+
     if (m_verbose) {
       std::cout << "- next future point b: " <<
-      to_3d(pvertex.first, future_point_b + m_current_time * future_direction_b) << std::endl;
-      std::cout << "- next furure direction b: " << future_direction_b << std::endl;
+      to_3d(pvertex.first, pinit + m_current_time * tmp_b) << std::endl;
+      std::cout << "- next future direction b: " << future_direction_b << std::endl;
     }
   }
 
@@ -4943,10 +4963,13 @@ private:
     future_direction = Vector_2(pinit, future_point);
     future_point = pinit - m_current_time * future_direction;
 
+    auto tmp = future_direction;
+    tmp = KSR::normalize(tmp);
+
     if (m_verbose) {
       std::cout << "- back/front future point: " <<
-      to_3d(pvertex.first, future_point + m_current_time * future_direction) << std::endl;
-      std::cout << "- back/front furure direction: " << future_direction << std::endl;
+      to_3d(pvertex.first, pinit + m_current_time * tmp) << std::endl;
+      std::cout << "- back/front future direction: " << future_direction << std::endl;
     }
     return is_parallel;
   }
@@ -5008,10 +5031,13 @@ private:
     future_direction = Vector_2(pinit, future_point);
     future_point = pinit - m_current_time * future_direction;
 
+    auto tmp = future_direction;
+    tmp = KSR::normalize(tmp);
+
     if (m_verbose) {
       std::cout << "- open future point: " <<
-      to_3d(pvertex.first, future_point + m_current_time * future_direction) << std::endl;
-      std::cout << "- open furure direction: " << future_direction << std::endl;
+      to_3d(pvertex.first, pinit + m_current_time * tmp) << std::endl;
+      std::cout << "- open future direction: " << future_direction << std::endl;
     }
     return is_parallel;
   }
