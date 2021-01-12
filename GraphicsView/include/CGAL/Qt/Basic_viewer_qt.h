@@ -54,27 +54,6 @@
 
 namespace CGAL
 {
-int& code_to_call_before_creation_of_QCoreApplication(int& i) {
-  QSurfaceFormat fmt;
-#ifdef Q_OS_MAC
-  fmt.setVersion(4, 1);
-#else
-  fmt.setVersion(4, 3);
-#endif
-  fmt.setRenderableType(QSurfaceFormat::OpenGL);
-  fmt.setProfile(QSurfaceFormat::CoreProfile);
-  fmt.setOption(QSurfaceFormat::DebugContext);
-  QSurfaceFormat::setDefaultFormat(fmt);
-
-  //for windows
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
-  QCoreApplication::setAttribute(::Qt::AA_UseDesktopOpenGL);
-#endif
-
-  //We set the locale to avoid any trouble with VTK
-  setlocale(LC_ALL, "C");
-  return i;
-}
 //------------------------------------------------------------------------------
 const char vertex_source_color[] =
   {
