@@ -949,9 +949,9 @@ private:
       }
       ++iteration;
 
-      // if (iteration == 275) {
-      //   exit(EXIT_FAILURE);
-      // }
+      if (iteration == 80) {
+        exit(EXIT_FAILURE);
+      }
 
       apply(event, k);
       m_data.check_integrity();
