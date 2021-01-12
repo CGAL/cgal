@@ -13,11 +13,11 @@
 
 #include "MainWindow.h"
 #include <QApplication>
-#include <CGAL/Qt/Context_initialization.h>
+#include <CGAL/Qt/init_ogl_context.h>
 
 int main(int argc, char** argv)
 {
-  CGAL::init_ogl_context(2, 1);
+  CGAL::Qt::init_ogl_context(2, 1);
 
   QApplication app(argc, argv);
 

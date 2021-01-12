@@ -14,7 +14,7 @@
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/license/Voronoi_diagram_2.h>
-#include <CGAL/Qt/Context_initialization.h>
+#include <CGAL/Qt/init_ogl_context.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
@@ -317,7 +317,7 @@ void draw(const CGAL_VORONOI_TYPE &av2,
 #endif
 
   if (!cgal_test_suite) {
-    init_ogl_context(4,3);
+    CGAL::Qt::init_ogl_context(4,3);
     int argc = 1;
     const char *argv[2] = {"voronoi_2_viewer", "\0"};
     QApplication app(argc, const_cast<char **>(argv));

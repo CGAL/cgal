@@ -15,6 +15,8 @@
 
 namespace CGAL
 {
+namespace Qt
+{
 inline void init_ogl_context(int major, int minor) {
   QSurfaceFormat fmt;
 #ifdef Q_OS_MAC
@@ -43,6 +45,6 @@ inline void init_ogl_context(int major, int minor) {
   setlocale(LC_ALL, "C");
 }
 
-}
-
+} //end Qt
+} //end CGAL
 #endif // CGAL_QT_CONTEXT_INITIALIZATION_H

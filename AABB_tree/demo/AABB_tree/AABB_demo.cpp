@@ -19,12 +19,12 @@
 #include <QApplication>
 #include <CGAL/Qt/resources.h>
 #include <QMimeData>
-#include <CGAL/Qt/Context_initialization.h>
+#include <CGAL/Qt/init_ogl_context.h>
 
 int main(int argc, char **argv)
 {
 
-  CGAL::init_ogl_context(4,3);
+  CGAL::Qt::init_ogl_context(4,3);
   QApplication app(argc, argv);
   app.setOrganizationDomain("inria.fr");
   app.setOrganizationName("INRIA");

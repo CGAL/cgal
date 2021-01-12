@@ -13,7 +13,7 @@
 #define CGAL_DRAW_LCC_H
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Qt/Context_initialization.h>
+#include <CGAL/Qt/init_ogl_context.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
@@ -405,7 +405,7 @@ void draw(const CGAL_LCC_TYPE& alcc,
 
   if (!cgal_test_suite)
   {
-    init_ogl_context(4,3);
+    CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
     const char* argv[2]={"lccviewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));

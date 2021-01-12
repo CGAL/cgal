@@ -29,7 +29,7 @@ void draw(const SM& asm);
 
 #include <CGAL/license/Surface_mesh.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Qt/Context_initialization.h>
+#include <CGAL/Qt/init_ogl_context.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
@@ -209,7 +209,7 @@ void draw(const Surface_mesh<K>& amesh,
 
   if (!cgal_test_suite)
   {
-    init_ogl_context(4,3);
+    CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
     const char* argv[2]={"surface_mesh_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));

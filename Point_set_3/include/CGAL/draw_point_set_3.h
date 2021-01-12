@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Point_set_3.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Qt/Context_initialization.h>
+#include <CGAL/Qt/init_ogl_context.h>
 
 #ifdef DOXYGEN_RUNNING
 namespace CGAL {
@@ -101,7 +101,7 @@ void draw(const Point_set_3<P, V>& apointset,
 
   if (!cgal_test_suite)
   {
-    init_ogl_context(4,3);
+    CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
     const char* argv[2]={"point_set_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
