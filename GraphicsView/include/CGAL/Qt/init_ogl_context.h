@@ -13,6 +13,11 @@
 #ifndef CGAL_QT_CONTEXT_INITIALIZATION_H
 #define CGAL_QT_CONTEXT_INITIALIZATION_H
 
+#include <CGAL/license/GraphicsView.h>
+
+
+#include <QSurfaceFormat>
+#include <QCoreApplication>
 namespace CGAL
 {
 namespace Qt
@@ -37,9 +42,7 @@ inline void init_ogl_context(int major, int minor) {
   QSurfaceFormat::setDefaultFormat(fmt);
 
   //for windows
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
   QCoreApplication::setAttribute(::Qt::AA_UseDesktopOpenGL);
-#endif
 
   //We set the locale to avoid any trouble with VTK
   setlocale(LC_ALL, "C");
