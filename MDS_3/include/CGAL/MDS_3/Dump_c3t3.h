@@ -13,12 +13,12 @@
 #ifndef CGAL_MESH_3_DUMP_C3T3_H
 #define CGAL_MESH_3_DUMP_C3T3_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/MDS_3.h>
 
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/io_signature.h>
-#include <CGAL/Mesh_3/Mesh_complex_3_in_triangulation_3_base.h>
+#include <CGAL/MDS_3/Mesh_complex_3_in_triangulation_3_base.h>
 #include <CGAL/IO/File_medit.h>
 
 #include <CGAL/is_streamable.h>

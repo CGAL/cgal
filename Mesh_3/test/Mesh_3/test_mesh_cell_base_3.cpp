@@ -4,7 +4,7 @@
 
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
-#include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
+#include <CGAL/MDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/Mesh_cell_base_3.h>

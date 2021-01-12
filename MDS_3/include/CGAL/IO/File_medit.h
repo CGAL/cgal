@@ -17,7 +17,7 @@
 #include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/Mesh_3/config.h>
-#include <CGAL/Mesh_3/Mesh_complex_3_in_triangulation_3_fwd.h>
+#include <CGAL/MDS_3/Mesh_complex_3_in_triangulation_3_fwd.h>
 
 #include <CGAL/utility.h>
 #include <CGAL/basic.h>

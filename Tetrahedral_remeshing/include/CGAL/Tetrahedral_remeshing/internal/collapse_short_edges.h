@@ -28,7 +28,7 @@
 #include <utility>
 #include <unordered_set>
 
-#include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
+#include <CGAL/MDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/utility.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 

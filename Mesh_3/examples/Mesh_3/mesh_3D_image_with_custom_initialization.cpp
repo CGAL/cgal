@@ -11,7 +11,7 @@
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Image_3.h>
 
-#include <CGAL/Mesh_3/Dump_c3t3.h>
+#include <CGAL/MDS_3/Dump_c3t3.h>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
