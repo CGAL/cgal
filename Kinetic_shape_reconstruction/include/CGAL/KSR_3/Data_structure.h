@@ -1418,7 +1418,7 @@ public:
   const std::pair<bool, bool> collision_occured (
     const PVertex& pvertex, const IEdge& iedge) const {
 
-    // const FT tol = FT(1) / FT(100000);
+    // const FT tol = KSR::tolerance<FT>();
     bool collision = false;
     for (const auto support_plane_idx : intersected_planes(iedge)) {
       if (support_plane_idx < 6) {
@@ -2679,7 +2679,7 @@ public:
     for (const auto pedge : pedges) {
       if (!has_iedge(pedge)) {
         std::cout << "- disconnected pedge: " << segment_3(pedge) << std::endl;
-        // CGAL_assertion(has_iedge(pedge)); // TODO: TURN IT OFF IF NECESSARY!
+        CGAL_assertion(has_iedge(pedge)); // TODO: TURN IT OFF IF NECESSARY!
 
         const auto pother = this->opposite(pedge, pvertex);
         const auto iv1 = this->ivertex(pvertex);
@@ -4809,7 +4809,8 @@ private:
     const auto target_p = point_2(pvertex.first, target(iedge));
     const Vector_2 iedge_vec(source_p, target_p);
 
-    const FT tol = FT(1) / FT(100000); // TODO: CAN WE AVOID THIS VALUE?
+    // TODO: CAN WE AVOID THIS VALUE?
+    const FT tol = KSR::tolerance<FT>();
     FT m1 = FT(100000), m2 = FT(100000), m3 = FT(100000);
 
     const FT prev_d = (curr_p.x() - prev_p.x());
@@ -4920,7 +4921,8 @@ private:
     const auto target_p = point_2(pvertex.first, target(iedge));
     const Vector_2 iedge_vec(source_p, target_p);
 
-    const FT tol = FT(1) / FT(100000); // TODO: CAN WE AVOID THIS VALUE?
+    // TODO: CAN WE AVOID THIS VALUE?
+    const FT tol = KSR::tolerance<FT>();
     FT m2 = FT(100000), m3 = FT(100000);
 
     const FT next_d = (curr_p.x() - next_p.x());
@@ -4996,7 +4998,8 @@ private:
     const auto target_p = point_2(pvertex.first, target(iedge));
     const Vector_2 iedge_vec(source_p, target_p);
 
-    const FT tol = FT(1) / FT(100000); // TODO: CAN WE AVOID THIS VALUE?
+    // TODO: CAN WE AVOID THIS VALUE?
+    const FT tol = KSR::tolerance<FT>();
     FT m2 = FT(100000), m3 = FT(100000);
 
     const FT next_d = (curr_p.x() - next_p.x());
