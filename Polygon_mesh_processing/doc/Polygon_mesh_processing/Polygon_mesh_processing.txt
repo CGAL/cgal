@@ -138,12 +138,12 @@ darts, cusps, corners and tips.
 A triangular mesh can be remeshed using the function 
 `CGAL::Polygon_mesh_processing::minimal_angle_remeshing()`, as illustrated by 
 \cgalFigureRef{minimal_angle_remeshing}. A lot of parameters are provided to make the algorithm 
-more flexible, but only the ‘max_error_threshold’, `min_angle_threshold` and 
-`max mesh complexity` are essential to control the optimization process. In most cases, users are 
-supposed to perform the remeshing using the parameters with default values.
+more flexible, but only the max_error_threshold, min_angle_threshold and max_mesh_complexity 
+are essential to control the optimization process. In most cases, users are supposed to perform 
+the remeshing using the parameters with default values.
 
 \cgalFigureBegin{minimal_angle_remeshing, minimal_angle_remeshing.png}
-Minimal angle remeshing. The input surface mesh (a) has 7.2k vertices. From (b) to (d) are the 
+Minimal angle remeshing. The input surface mesh (a) has 7.2k vertices. From (b) to (e) are the 
 results with different min_angle_threshold. The angle distributions and their corresponding 
 approximation error are show below each result, in blue bars and red curves respectively. The 
 max_error_threshold is set to 0.2\% of the diagonal length of the input surface mesh's bounding
