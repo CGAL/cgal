@@ -199,6 +199,7 @@ struct Polyhedron_cc_marker{
 void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedComponents_triggered()
 {
   // wait cursor
+
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   std::set<Scene_facegraph_item*> to_skip;
@@ -226,6 +227,13 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
 
       if (selection_item)
       {
+        if(selection_item->selected_edges.empty())
+        {
+          QApplication::restoreOverrideCursor();
+          QMessageBox::warning(mw, "Empty Edges", "There are no selected edges. Skipping.");
+          continue;
+          QApplication::setOverrideCursor(Qt::WaitCursor);
+        }
         namespace PMP = CGAL::Polygon_mesh_processing;
         typedef boost::graph_traits<FaceGraph>::face_descriptor   face_descriptor;
 
@@ -237,7 +245,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
           = get(boost::face_index, pmesh);
         boost::vector_property_map<int,
           boost::property_map<FaceGraph, boost::face_index_t>::type>
-          fccmap(fim);
+          fccmap(static_cast<unsigned>(num_faces(pmesh)),fim);
         boost::property_map<FaceGraph, CGAL::face_patch_id_t<int> >::type pid
           = get(CGAL::face_patch_id_t<int>(), pmesh);
 

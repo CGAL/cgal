@@ -42,7 +42,7 @@ int main(int argc, char** argv)
   // For all vertices in the tmesh, compute the points of
   // the shortest path to the source point and write them
   // into a file readable using the CGAL Polyhedron demo
-  std::ofstream output("shortest_paths_with_id.cgal");
+  std::ofstream output("shortest_paths_with_id.polylines.txt");
   vertex_iterator vit, vit_end;
   for ( boost::tie(vit, vit_end) = vertices(tmesh);
         vit != vit_end; ++vit)

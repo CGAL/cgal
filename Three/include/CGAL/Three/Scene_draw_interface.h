@@ -72,7 +72,7 @@ public:
   ///\brief displays all the primitive ids if there are less than max_textItems.
   virtual void printAllIds() = 0;
 
-  //!\brief moves the camera orthogonally to the picked sface.
+  //!\brief moves the camera orthogonally to the picked face.
   //!
   //! \param point the picked point
   //! \param viewer the active viewer

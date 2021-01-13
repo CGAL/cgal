@@ -17,6 +17,7 @@
 #include <QOpenGLDebugLogger>
 #include <QStyleFactory>
 #include <QAction>
+#include <QMultipleInputDialog.h>
 #include <QRegularExpressionMatch>
 #ifdef CGAL_USE_WEBSOCKETS
 #include <QtWebSockets/QWebSocket>
@@ -25,6 +26,7 @@
 #include <CGAL/Three/Three.h>
 
 #include "ui_LightingDialog.h"
+#include "CGAL_double_edit.h"
 
 #if defined(_WIN32)
 #include <QMimeData>
@@ -46,8 +48,10 @@ public:
   bool clipping;
   bool projection_is_ortho;
   bool cam_sharing;
+  bool scene_scaling;
   GLfloat gl_point_size;
   QVector4D clipbox[6];
+  QVector3D scaler;
   QPainter *painter;
 
   // L i g h t i n g
@@ -117,6 +121,7 @@ public:
   {
     return shader_programs;
   }
+
 #ifdef CGAL_USE_WEBSOCKETS
   QWebSocket m_webSocket;
 #endif
@@ -292,6 +297,8 @@ void Viewer::doBindings()
   d->textRenderer = new TextRenderer();
   d->is_2d_selection_mode = false;
   d->is_connected = false;
+  d->scene_scaling = false;
+  d->scaler = QVector3D(1,1,1);
 
   connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
@@ -311,15 +318,14 @@ void Viewer::doBindings()
 
   //modify mouse bindings that have been updated
   setMouseBinding(Qt::Key(0), Qt::NoModifier, Qt::LeftButton, CGAL::qglviewer::RAP_FROM_PIXEL, true, Qt::RightButton);
+  setMouseBinding(Qt::ShiftModifier, Qt::RightButton, CGAL::qglviewer::NO_CLICK_ACTION, false, Qt::NoButton);
   setMouseBindingDescription(Qt::ShiftModifier, Qt::RightButton,
                              tr("Select and pop context menu"));
   setMouseBinding(Qt::Key_R, Qt::NoModifier, Qt::LeftButton, CGAL::qglviewer::RAP_FROM_PIXEL);
+
   //use the new API for these
   setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, CGAL::qglviewer::SELECT);
 
-  setMouseBindingDescription(Qt::Key(0), Qt::ShiftModifier, Qt::LeftButton,
-                             tr("Selects and display context "
-                                "menu of the selected item"));
   setMouseBindingDescription(Qt::Key_I, Qt::NoModifier, Qt::LeftButton,
                              tr("Show/hide the primitive ID of the types selected in the context menu of the picked item."));
   setMouseBindingDescription(Qt::Key_D, Qt::NoModifier, Qt::LeftButton,
@@ -407,7 +413,7 @@ Viewer::~Viewer()
                              .arg(d->back_color.redF())
                              .arg(d->back_color.greenF())
                              .arg(d->back_color.blueF()));
-
+    makeCurrent();
     d->vao.destroy();
     if(d->_recentFunctions)
       delete d->_recentFunctions;
@@ -831,9 +837,23 @@ void Viewer::postSelection(const QPoint& pixel)
     point = camera()->pointUnderPixel(pixel, found) - offset();
   }
   if(found) {
-    Q_EMIT selectedPoint(point.x,
-                         point.y,
-                         point.z);
+    QVector3D transformed_point(point.x,
+                                point.y,
+                                point.z);
+    if(d->scene_scaling)
+    {
+      transformed_point = QVector3D(
+            point.x+offset().x,
+            point.y+offset().y,
+            point.z+offset().z);
+      transformed_point = transformed_point/d->scaler;
+      transformed_point[0] -=offset().x ;
+      transformed_point[1] -=offset().y ;
+      transformed_point[2] -=offset().z ;
+    }
+    Q_EMIT selectedPoint(transformed_point.x(),
+                         transformed_point.y(),
+                         transformed_point.z());
     CGAL::qglviewer::Vec dir;
     CGAL::qglviewer::Vec orig;
     if(d->projection_is_ortho)
@@ -931,6 +951,10 @@ void Viewer::attribBuffers(int program_name) const {
     this->camera()->getModelViewProjectionMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mvp_mat.data()[i] = GLfloat(d_mat[i]);
+    if(d->scene_scaling){
+      mvp_mat.scale(d->scaler);
+      mv_mat.scale(d->scaler);
+    }
 
     QOpenGLShaderProgram* program = getShaderProgram(program_name);
     program->bind();
@@ -1130,7 +1154,7 @@ void Viewer::drawVisualHints()
     {
       d->textRenderer->addText(message_text);
     }
-    d->textRenderer->draw(this);
+    d->textRenderer->draw(this, d->scaler);
 
     if (d->_displayMessage)
       d->textRenderer->removeText(message_text);
@@ -1552,26 +1576,26 @@ void Viewer_impl::showDistance(QPoint pixel)
         rendering_program_dist.setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffer.release();
         vao.release();
-
         distance_is_displayed = true;
-        double dist = std::sqrt((BPoint.x-APoint.x)*(BPoint.x-APoint.x) + (BPoint.y-APoint.y)*(BPoint.y-APoint.y) + (BPoint.z-APoint.z)*(BPoint.z-APoint.z));
+        double dist = std::sqrt((BPoint.x-APoint.x)/scaler.x()*(BPoint.x-APoint.x)/scaler.x() + (BPoint.y-APoint.y)/scaler.y()*(BPoint.y-APoint.y)/scaler.y() + (BPoint.z-APoint.z)/scaler.z()*(BPoint.z-APoint.z)/scaler.z());
         QFont font;
         font.setBold(true);
         TextItem *ACoord = new TextItem(float(APoint.x),
                                         float(APoint.y),
                                         float(APoint.z),
                                         QString("A(%1,%2,%3)")
-                                        .arg(APoint.x-viewer->offset().x, 0, 'g', 10)
-                                        .arg(APoint.y-viewer->offset().y, 0, 'g', 10)
-                                        .arg(APoint.z-viewer->offset().z, 0, 'g', 10), true, font, Qt::red, true);
+                                        .arg(APoint.x/scaler.x()-viewer->offset().x, 0, 'g', 10)
+                                        .arg(APoint.y/scaler.y()-viewer->offset().y, 0, 'g', 10)
+                                        .arg(APoint.z/scaler.z()-viewer->offset().z, 0, 'g', 10), true, font, Qt::red, true);
         distance_text.append(ACoord);
         TextItem *BCoord = new TextItem(float(BPoint.x),
                                         float(BPoint.y),
                                         float(BPoint.z),
                                         QString("B(%1,%2,%3)")
-                                        .arg(BPoint.x-viewer->offset().x, 0, 'g', 10)
-                                        .arg(BPoint.y-viewer->offset().y, 0, 'g', 10)
-                                        .arg(BPoint.z-viewer->offset().z, 0, 'g', 10), true, font, Qt::red, true);
+                                        .arg(BPoint.x/scaler.x()-viewer->offset().x, 0, 'g', 10)
+                                        .arg(BPoint.y/scaler.y()-viewer->offset().y, 0, 'g', 10)
+                                        .arg(BPoint.z/scaler.z()-viewer->offset().z, 0, 'g', 10), true, font, Qt::red, true);
+
         distance_text.append(BCoord);
         CGAL::qglviewer::Vec centerPoint = 0.5*(BPoint+APoint);
         TextItem *centerCoord = new TextItem(float(centerPoint.x),
@@ -1583,12 +1607,12 @@ void Viewer_impl::showDistance(QPoint pixel)
         Q_FOREACH(TextItem* ti, distance_text)
           textRenderer->addText(ti);
         Q_EMIT(viewer->sendMessage(QString("First point : A(%1,%2,%3), second point : B(%4,%5,%6), distance between them : %7")
-                  .arg(APoint.x-viewer->offset().x)
-                  .arg(APoint.y-viewer->offset().y)
-                  .arg(APoint.z-viewer->offset().z)
-                  .arg(BPoint.x-viewer->offset().x)
-                  .arg(BPoint.y-viewer->offset().y)
-                  .arg(BPoint.z-viewer->offset().z)
+                  .arg(APoint.x/scaler.x()-viewer->offset().x)
+                  .arg(APoint.y/scaler.y()-viewer->offset().y)
+                  .arg(APoint.z/scaler.z()-viewer->offset().z)
+                  .arg(BPoint.x/scaler.x()-viewer->offset().x)
+                  .arg(BPoint.y/scaler.y()-viewer->offset().y)
+                  .arg(BPoint.z/scaler.z()-viewer->offset().z)
                   .arg(dist, 0, 'g', 10)));
     }
 
@@ -1958,6 +1982,57 @@ bool Viewer::isClipping() const
 {
   return d->clipping;
 }
+
+void Viewer::scaleScene()
+{
+  CGAL::Bbox_3 bbox = CGAL::Three::Three::scene()->bbox();
+  if(!d->scene_scaling)
+  {
+    QMultipleInputDialog dialog ("Scale Scene", CGAL::Three::Three::mainWindow());
+    DoubleEdit* x_val = dialog.add<DoubleEdit> ("Scale along X");
+    DoubleEdit* y_val = dialog.add<DoubleEdit> ("Scale along Y");
+    DoubleEdit* z_val = dialog.add<DoubleEdit> ("Scale along Z");
+    x_val->setMinimum(0);
+    y_val->setMinimum(0);
+    z_val->setMinimum(0);
+    if(bbox != CGAL::Bbox_3(0,0,0,0,0,0))
+    {
+      QPushButton* norm_button = dialog.add<QPushButton> ("");
+      norm_button->setText("Normalize");
+      norm_button->setToolTip("Automatically fill values to display the scene in a unit cube.");
+
+      connect(norm_button, &QPushButton::clicked, this,
+              [x_val, y_val, z_val, &bbox](){
+        x_val->setValue(1.0/(bbox.xmax()-bbox.xmin()));
+        y_val->setValue(1.0/(bbox.ymax()-bbox.ymin()));
+        z_val->setValue(1.0/(bbox.zmax()-bbox.zmin()));
+      });
+    }
+    if (dialog.exec() != QDialog::Accepted)
+    {
+      parent()->findChild<QAction*>("actionScaleScene")->setChecked(false);
+      return;
+    }
+    d->scaler.setX(x_val->text()==""?1.0:x_val->value());
+    d->scaler.setY(y_val->text()==""?1.0:y_val->value());
+    d->scaler.setZ(z_val->text()==""?1.0:z_val->value());
+
+    if(d->scaler.x() == 0.0 || d->scaler.y() == 0.0 || d->scaler.z()== 0.0)
+    {
+      parent()->findChild<QAction*>("actionScaleScene")->setChecked(false);
+      return;
+    }
+  }
+  else
+    d->scaler = QVector3D(1,1,1);
+
+  CGAL::qglviewer::Vec vmin(((float)bbox.xmin()+offset().x)*d->scaler.x(), ((float)bbox.ymin()+offset().y)*d->scaler.y(), ((float)bbox.zmin()+offset().z)*d->scaler.z()),
+      vmax(((float)bbox.xmax()+offset().x)*d->scaler.x(), ((float)bbox.ymax()+offset().y)*d->scaler.y(), ((float)bbox.zmax()+offset().z)*d->scaler.z());
+  camera()->setPivotPoint((vmin+vmax)*0.5);
+  camera()->setSceneBoundingBox(vmin, vmax);
+  camera()->fitBoundingBox(vmin, vmax);
+  d->scene_scaling = !d->scene_scaling;
+}
 #ifdef CGAL_USE_WEBSOCKETS
 void Viewer::setShareCam(bool b, QString session)
 {
@@ -2041,4 +2116,6 @@ void Viewer::onTextMessageSocketReceived(QString message)
   update();
 }
 #endif
+
+const QVector3D& Viewer::scaler()const { return d->scaler; }
 #include "Viewer.moc"

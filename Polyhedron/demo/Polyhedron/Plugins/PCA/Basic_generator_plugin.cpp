@@ -5,18 +5,36 @@
 #include <QMessageBox>
 #include <QBitmap>
 #include <QTabBar>
+
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+
+#include <CGAL/subdivision_method_3.h>
+#include <CGAL/Kernel_traits.h>
+
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
+
 #include "Scene_surface_mesh_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polylines_item.h"
-#include <CGAL/subdivision_method_3.h>
-#include <CGAL/Kernel_traits.h>
-#include <CGAL/Three/Three.h>
+
 #include "ui_Basic_generator_widget.h"
+
+struct Face : public std::array<int,3>
+{
+  Face(int i, int j, int k)
+  {
+    (*this)[0] = i;
+    (*this)[1] = j;
+    (*this)[2] = k;
+  }
+};
 
 class GeneratorWidget :
     public QDockWidget,
@@ -703,53 +721,85 @@ void Basic_generator_plugin::generateLines()
   }
   Q_FOREACH(QString s, list)
   {
-      if(!s.isEmpty())
+    if(!s.isEmpty())
+    {
+      double res = s.toDouble(&ok);
+      if(!ok)
       {
-          double res = s.toDouble(&ok);
-          if(!ok)
-          {
-              QMessageBox *msgBox = new QMessageBox;
-              msgBox->setWindowTitle("Error");
-              msgBox->setText("ERROR : Coordinates are invalid.");
-              msgBox->exec();
-              break;
-          }
-          else
-          {
-            coord[counter] = res;
-            counter++;
-          }
+        QMessageBox *msgBox = new QMessageBox;
+        msgBox->setWindowTitle("Error");
+        msgBox->setText("ERROR : Coordinates are invalid.");
+        msgBox->exec();
+        break;
       }
-      if(!dock_widget->polygon_checkBox->isChecked() && counter == 3)
+      else
       {
-          Scene_polylines_item::Point_3 p(coord[0], coord[1], coord[2]);
-          polyline.push_back(p);
-          counter =0;
+        coord[counter] = res;
+        counter++;
       }
-      else if(dock_widget->polygon_checkBox->isChecked() && counter == 2)
-      {
-          Scene_polylines_item::Point_3 p(coord[0], coord[1], 0);
-          polyline.push_back(p);
-          counter = 0;
-      }
+    }
+    if(!dock_widget->polygon_checkBox->isChecked() && counter == 3)
+    {
+      Scene_polylines_item::Point_3 p(coord[0], coord[1], coord[2]);
+      polyline.push_back(p);
+      counter =0;
+    }
+    else if(dock_widget->polygon_checkBox->isChecked() && counter == 2)
+    {
+      Scene_polylines_item::Point_3 p(coord[0], coord[1], 0);
+      polyline.push_back(p);
+      counter = 0;
+    }
   }
   if(dock_widget->polygon_checkBox->isChecked())
   {
     polyline.push_back(polyline.front()); //polygon_2 are not closed.
   }
-    if(ok)
+  if(ok)
+  {
+    dock_widget->line_textEdit->clear();
+    if(dock_widget->fill_checkBox->isChecked())
     {
-        dock_widget->line_textEdit->clear();
-        Scene_polylines_item* item = new Scene_polylines_item();
-        item->polylines = polylines;
-        item->invalidateOpenGLBuffers();
-        item->setName(dock_widget->name_lineEdit->text());
-        item->setColor(Qt::black);
-        item->setProperty("polylines metadata", polylines_metadata);
-        item->invalidateOpenGLBuffers();
-        Scene_interface::Item_id id = scene->addItem(item);
-        scene->setSelectedItem(id);
+      CGAL::Three::Three::CursorScopeGuard guard(Qt::WaitCursor);
+      QApplication::processEvents();
+      if(polyline.front() != polyline.back()) {
+        polyline.push_back(polyline.front());
+      }
+      if(polyline.size() < 4) { // no triangle, skip it (needs at least 3 + 1 repeat)
+        QMessageBox::warning(mw, "Warning", "Needs at least 3 points to triangulate. Aborting.");
+        return;
+      }
+      std::vector<Face> patch;
+      CGAL::Polygon_mesh_processing::triangulate_hole_polyline(polyline,
+                                                               std::back_inserter(patch),
+                                                               CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(true));
+
+      if(patch.empty()) {
+          QMessageBox::warning(mw, "Warning", "Triangulation failed.");
+          return;
+      }
+      SMesh* poly = new SMesh;
+      CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(polyline,
+                                                                  patch,
+                                                                  *poly);
+
+      Scene_surface_mesh_item* poly_item = new Scene_surface_mesh_item(poly);
+      poly_item->setName(dock_widget->name_lineEdit->text());
+      poly_item->setRenderingMode(FlatPlusEdges);
+      scene->setSelectedItem(scene->addItem(poly_item));
     }
+    else
+    {
+      Scene_polylines_item* item = new Scene_polylines_item();
+      item->polylines = polylines;
+      item->invalidateOpenGLBuffers();
+      item->setName(dock_widget->name_lineEdit->text());
+      item->setColor(Qt::black);
+      item->setProperty("polylines metadata", polylines_metadata);
+      Scene_interface::Item_id id = scene->addItem(item);
+      scene->setSelectedItem(id);
+    }
+  }
 }
 
 struct Point_generator

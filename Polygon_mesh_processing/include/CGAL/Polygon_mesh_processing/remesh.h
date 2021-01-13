@@ -124,7 +124,7 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNBegin{face_patch_map}
 *     \cgalParamDescription{a property map with the patch id's associated to the faces of `faces`}
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
-*                    as key type and the desired property, model of `CopyConstructible` as value type.}
+*                    as key type and the desired property, model of `CopyConstructible` and `LessThanComparable` as value type.}
 *     \cgalParamDefault{a default property map where each face is associated with the ID of
 *                       the connected component it belongs to. Connected components are
 *                       computed with respect to the constrained edges listed in the property map
@@ -214,18 +214,18 @@ void isotropic_remeshing(const FaceRange& faces
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::edge_is_constrained_t,
       NamedParameters,
-      Constant_property_map<edge_descriptor, bool> // default (no constraint pmap)
+      Static_boolean_property_map<edge_descriptor, false> // default (no constraint pmap)
     > ::type ECMap;
   ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                                 Constant_property_map<edge_descriptor, bool>(false));
+                                 Static_boolean_property_map<edge_descriptor, false>());
 
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
       NamedParameters,
-      Constant_property_map<vertex_descriptor, bool> // default (no constraint pmap)
+      Static_boolean_property_map<vertex_descriptor, false> // default (no constraint pmap)
     > ::type VCMap;
   VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                                 Constant_property_map<vertex_descriptor, bool>(false));
+                                 Static_boolean_property_map<vertex_descriptor, false>());
 
   bool protect = choose_parameter(get_parameter(np, internal_np::protect_constraints), false);
   typedef typename internal_np::Lookup_named_param_def <
@@ -405,18 +405,18 @@ void split_long_edges(const EdgeRange& edges
   typedef typename internal_np::Lookup_named_param_def <
         internal_np::edge_is_constrained_t,
         NamedParameters,
-        Constant_property_map<edge_descriptor, bool> // default (no constraint pmap)
+        Static_boolean_property_map<edge_descriptor, false> // default (no constraint pmap)
       > ::type ECMap;
   ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                                 Constant_property_map<edge_descriptor, bool>(false));
+                                 Static_boolean_property_map<edge_descriptor, false>());
 
   typename internal::Incremental_remesher<PM, VPMap, GT, ECMap,
-    Constant_property_map<vertex_descriptor, bool>, // no constraint pmap
+    Static_boolean_property_map<vertex_descriptor, false>, // no constraint pmap
     internal::Connected_components_pmap<PM, FIMap>,
     FIMap
   >
     remesher(pmesh, vpmap, gt, false/*protect constraints*/, ecmap,
-             Constant_property_map<vertex_descriptor, bool>(false),
+             Static_boolean_property_map<vertex_descriptor, false>(),
              internal::Connected_components_pmap<PM, FIMap>(faces(pmesh), pmesh, ecmap, fimap, false),
              fimap,
              false/*need aabb_tree*/);

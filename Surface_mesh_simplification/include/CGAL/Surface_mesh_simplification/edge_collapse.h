@@ -34,6 +34,7 @@ template<class TM,
          class EdgeIsConstrainedMap,
          class GetCost,
          class GetPlacement,
+         class ShouldIgnore,
          class Visitor>
 int edge_collapse(TM& tmesh,
                   const ShouldStop& should_stop,
@@ -46,13 +47,14 @@ int edge_collapse(TM& tmesh,
                   // optional strategy policies - defaults to LindstomTurk
                   const GetCost& get_cost,
                   const GetPlacement& get_placement,
+                  const ShouldIgnore& should_ignore,
                   Visitor visitor)
 {
   typedef EdgeCollapse<TM, GT, ShouldStop,
                        VertexIndexMap, VertexPointMap, HalfedgeIndexMap, EdgeIsConstrainedMap,
-                       GetCost, GetPlacement, Visitor> Algorithm;
+                       GetCost, GetPlacement, ShouldIgnore, Visitor> Algorithm;
 
-  Algorithm algorithm(tmesh, traits, should_stop, vim, vpm, him, ecm, get_cost, get_placement, visitor);
+  Algorithm algorithm(tmesh, traits, should_stop, vim, vpm, him, ecm, get_cost, get_placement, should_ignore, visitor);
 
   return algorithm.run();
 }
@@ -79,7 +81,7 @@ struct Dummy_visitor
 
 } // namespace internal
 
-template<class TM, class ShouldStop, class NamedParameters>
+template<class TM, class ShouldStop,class NamedParameters>
 int edge_collapse(TM& tmesh,
                   const ShouldStop& should_stop,
                   const NamedParameters& np)
@@ -98,7 +100,9 @@ int edge_collapse(TM& tmesh,
                                  choose_parameter<No_constrained_edge_map<TM> >(get_parameter(np, internal_np::edge_is_constrained)),
                                  choose_parameter<LindstromTurk_cost<TM> >(get_parameter(np, internal_np::get_cost_policy)),
                                  choose_parameter<LindstromTurk_placement<TM> >(get_parameter(np, internal_np::get_placement_policy)),
-                                 choose_parameter<internal::Dummy_visitor>(get_parameter(np, internal_np::graph_visitor)));
+                                 choose_parameter<internal::Dummy_filter>(get_parameter(np, internal_np::filter)),
+                                 choose_parameter<internal::Dummy_visitor>(get_parameter(np, internal_np::visitor)));
+
 }
 
 template<class TM, class ShouldStop>

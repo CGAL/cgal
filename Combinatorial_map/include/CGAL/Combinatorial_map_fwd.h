@@ -13,6 +13,7 @@
 #define COMBINATORIAL_MAP_FWD_H 1
 
 #include <CGAL/memory.h>
+#include <CGAL/tags.h>
 
 namespace CGAL {
 
@@ -23,7 +24,7 @@ struct Combinatorial_map_min_items;
 struct Generic_map_min_items;
 #endif
 
-template<unsigned int d_, class Items_, class Alloc_ >
+template<unsigned int d_, class Items_, class Alloc_, class Concurrent_tag=CGAL::Tag_false >
 class Combinatorial_map_storage_1;
 
 template < unsigned int d_, class Refs_,
@@ -33,7 +34,7 @@ template < unsigned int d_, class Refs_,
            class Items_=Generic_map_min_items,
 #endif
            class Alloc_=CGAL_ALLOCATOR(int),
-           class Storage_= Combinatorial_map_storage_1<d_, Items_, Alloc_> >
+           class Storage_= Combinatorial_map_storage_1<d_, Items_, Alloc_, CGAL::Tag_false> >
 class Combinatorial_map_base;
 
 template < unsigned int d_,
@@ -43,7 +44,7 @@ template < unsigned int d_,
            class Items_=Generic_map_min_items,
 #endif
            class Alloc_=CGAL_ALLOCATOR(int),
-           class Storage_= Combinatorial_map_storage_1<d_, Items_, Alloc_> >
+           class Storage_= Combinatorial_map_storage_1<d_, Items_, Alloc_, CGAL::Tag_false> >
 class Combinatorial_map;
 
 } // CGAL

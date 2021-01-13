@@ -477,6 +477,12 @@ protected:
   /// Insert facet into refinement queue
   void insert_bad_facet(Facet facet, const Quality& quality)
   {
+#if CGAL_MESH_3_VERY_VERBOSE
+    std::stringstream s;
+    s << "insert_bad_facet(" << debug_info_element_impl(facet) << ", ...) by thread "
+      << std::this_thread::get_id() << '\n';
+    std::cerr << s.str();
+#endif
     // Insert the facet and its mirror
     this->add_bad_element(
       this->from_facet_to_refinement_queue_element(facet, mirror_facet(facet)),

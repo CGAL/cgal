@@ -29,11 +29,6 @@
 #define CGAL_PMP_NP_CLASS NamedParameters
 #endif
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_PMP_NP_CLASS NamedParameters
-#endif
-
 namespace CGAL {
 
   namespace Polygon_mesh_processing {
@@ -304,4 +299,3 @@ namespace CGAL {
 }
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_BOUNDING_BOX_H
-

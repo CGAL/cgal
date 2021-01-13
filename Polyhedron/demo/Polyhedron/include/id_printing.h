@@ -569,7 +569,7 @@ int zoomToId(const Mesh& mesh,
                   get(ppmap, vh).y() + offset.y,
                   get(ppmap, vh).z() + offset.z);
         typename boost::graph_traits<Mesh>::halfedge_descriptor hf = halfedge(vh, mesh);
-        if(CGAL::is_border_edge(hf, mesh))
+        if(CGAL::is_border(hf, mesh))
         {
           hf = opposite(hf, mesh);
         }

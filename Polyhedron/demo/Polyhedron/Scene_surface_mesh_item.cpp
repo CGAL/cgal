@@ -49,8 +49,9 @@
 #include <CGAL/Buffer_for_vao.h>
 #include <QMenu>
 #include "id_printing.h"
+#include <unordered_map>
+#include <functional>
 #endif
-
 
 typedef CGAL::Three::Triangle_container Tri;
 typedef CGAL::Three::Edge_container Ed;
@@ -91,6 +92,23 @@ public:
 
 typedef CGAL::AABB_traits<EPICK, Primitive> AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits> Input_facets_AABB_tree;
+
+
+struct KeyHash
+{
+  std::size_t operator()(const std::pair<std::size_t, std::size_t>& k) const
+  {
+    return std::hash<std::size_t>()(k.first) ^ (std::hash<std::size_t>()(k.second) << 1);
+  }
+};
+
+struct KeyEqual {
+  bool operator()(const std::pair<std::size_t, std::size_t>& lhs,
+                  const std::pair<std::size_t, std::size_t>& rhs) const
+  {
+    return lhs.first == rhs.first && lhs.second == rhs.second;
+  }
+};
 
 struct Scene_surface_mesh_item_priv{
 
@@ -171,6 +189,7 @@ struct Scene_surface_mesh_item_priv{
                               << Points;
     item->setProperty("classname", QString("surface_mesh"));\
     ids_need_update = false;
+    flat_vertex_map_ready = false;
   }
 
   ~Scene_surface_mesh_item_priv()
@@ -247,6 +266,8 @@ struct Scene_surface_mesh_item_priv{
   mutable std::vector<cgal_gl_data> smooth_vertices;
   mutable std::vector<cgal_gl_data> smooth_normals;
   mutable std::vector<cgal_gl_data> flat_vertices;
+  mutable std::vector<std::vector<std::size_t> > flat_vertices_map;
+  mutable std::vector<std::size_t> cumul_id;
   mutable std::size_t flat_vertices_size;
   mutable std::vector<cgal_gl_data> flat_normals;
   mutable std::vector<cgal_gl_data> f_colors;
@@ -268,6 +289,7 @@ struct Scene_surface_mesh_item_priv{
   int genus;
   bool self_intersect;
   bool ids_need_update;
+  bool flat_vertex_map_ready;
   mutable QSlider* alphaSlider;
   QList<RenderingMode> supported_rendering_modes;
 };
@@ -504,9 +526,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
     initialize_colors();
   }
 
-
   //compute the Flat data
-
   flat_vertices.clear();
   flat_normals.clear();
   f_colors.clear();
@@ -519,7 +539,8 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
       {
         if(name.testFlag(Scene_item_rendering_helper::GEOMETRY))
         {
-          Point p = positions[source(hd, *smesh_)] + offset;
+          vertex_descriptor vd = source(hd, *smesh_);
+          Point p = positions[vd] + offset;
           CPF::add_point_in_buffer(p, flat_vertices);
         }
         if(name.testFlag(Scene_item_rendering_helper::NORMALS))
@@ -1283,6 +1304,7 @@ void Scene_surface_mesh_item::invalidate(Gl_data_names name)
     delete_aabb_tree(this);
     d->smesh_->collect_garbage();
     d->invalidate_stats();
+    d->flat_vertex_map_ready = false;
   }
   setBuffersFilled(false);
   Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
@@ -1607,7 +1629,7 @@ QString Scene_surface_mesh_item::computeStats(int type)
   {
     boost::vector_property_map<int,
       boost::property_map<SMesh, boost::face_index_t>::type>
-      fccmap(get(boost::face_index, *(d->smesh_)));
+      fccmap(static_cast<unsigned>(num_faces(*(d->smesh_))), get(boost::face_index, *(d->smesh_)));
     return QString::number(CGAL::Polygon_mesh_processing::connected_components(*(d->smesh_), fccmap));
   }
   case NB_BORDER_EDGES:
@@ -2116,13 +2138,15 @@ bool Scene_surface_mesh_item::testDisplayId(double x, double y, double z, CGAL::
                       z - offset.z);
 
   CGAL::qglviewer::Camera* cam = viewer->camera();
-  EPICK::Point_3 dest( cam->position().x - offset.x,
-                       cam->position().y - offset.y,
-                       cam->position().z - offset.z);
+  const QVector3D& scaler = viewer->scaler();
+  EPICK::Point_3 dest( cam->position().x/scaler.x() - offset.x,
+                       cam->position().y/scaler.y() - offset.y,
+                       cam->position().z/scaler.z() - offset.z);
   EPICK::Vector_3 v(src,dest);
   EPICK::Vector_3 dir(cam->viewDirection().x,
                       cam->viewDirection().y,
                       cam->viewDirection().z);
+
   if(-CGAL::scalar_product(v, dir) < cam->zNear()) //if src is behind the near plane, don't display.
     return false;
   v = 0.01*v;
@@ -2338,42 +2362,70 @@ void write_in_vbo(Vbo* vbo, cgal_gl_data* data,
 //only works on indexed data
 void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
 {
+  if(!d->flat_vertex_map_ready)
+    fill_flat_vertex_map();
   const CGAL::qglviewer::Vec offset =
       static_cast<CGAL::Three::Viewer_interface*>(
         CGAL::QGLViewer::QGLViewerPool().first())->offset();
+  std::size_t id = vh;
+  cgal_gl_data new_point[3];
+  Point_3 p = face_graph()->point(vh);
+  for(int i=0; i<3; ++i)
+    new_point[i]=p[i]+offset[i];
+
+  write_in_vbo(getTriangleContainer(0)->getVbo(Tri::Smooth_vertices),
+               new_point,
+               id);
+
+  write_in_vbo(
+        getPointContainer(0)->getVbo(Pt::Vertices),
+        new_point,id);
+
+  write_in_vbo(
+        getEdgeContainer(0)->getVbo(Ed::Vertices),
+        new_point,id);
+
+  for(const auto & v_it : CGAL::vertices_around_target(vh, *face_graph()))
   {
-    std::size_t id = vh;
-    cgal_gl_data new_point[3];
-    Point_3 p = face_graph()->point(vh);
+    EPICK::Vector_3 n = CGAL::Polygon_mesh_processing::compute_vertex_normal(v_it, *face_graph());
+    cgal_gl_data new_n[3];
     for(int i=0; i<3; ++i)
-      new_point[i]=p[i]+offset[i];
-
-    write_in_vbo(getTriangleContainer(0)->getVbo(Tri::Smooth_vertices),
-                 new_point,
-                 id);
-
+      new_n[i]=n[i];
+    id = v_it;
     write_in_vbo(
-          getPointContainer(0)->getVbo(Pt::Vertices),
-          new_point,id);
-
-    write_in_vbo(
-          getEdgeContainer(0)->getVbo(Ed::Vertices),
-          new_point,id);
-
-    for(auto v_it : CGAL::vertices_around_target(vh, *face_graph()))
-    {
-      EPICK::Vector_3 n = CGAL::Polygon_mesh_processing::compute_vertex_normal(v_it, *face_graph());
-      for(int i=0; i<3; ++i)
-        new_point[i]=n[i];
-      id = v_it;
-      write_in_vbo(
-            getTriangleContainer(0)->getVbo(Tri::Smooth_normals),
-            new_point,id);
-    }
-    d->ids_need_update = true;
-    redraw();
+          getTriangleContainer(0)->getVbo(Tri::Smooth_normals),
+          new_n,id);
   }
+  //flat data now
+ for(const auto& id : d->flat_vertices_map[vh])
+ {
+   write_in_vbo(getTriangleContainer(1)->getVbo(Tri::Flat_vertices),
+                new_point,
+                id);
+ }
+
+
+   for(const auto& f_it : CGAL::faces_around_target( halfedge(vh, *face_graph()), *face_graph()))
+   {
+     if (f_it == boost::graph_traits<SMesh>::null_face()) continue;
+
+     EPICK::Vector_3 n = CGAL::Polygon_mesh_processing::compute_face_normal(f_it, *face_graph());
+     cgal_gl_data new_n[3];
+     for(int i=0; i<3; ++i)
+       new_n[i]=n[i];
+
+     for(std::size_t id = d->cumul_id[f_it]; id < d->cumul_id[f_it+1]; ++id)
+     {
+       write_in_vbo(
+             getTriangleContainer(1)->getVbo(Tri::Flat_normals),
+             new_n, id);
+     }
+
+   }
+ d->ids_need_update = true;
+ redraw();
 }
+
 
 void Scene_surface_mesh_item::updateIds(vertex_descriptor vh)
 {
@@ -2397,25 +2449,133 @@ void Scene_surface_mesh_item::updateIds(vertex_descriptor vh)
   }
 }
 
-void Scene_surface_mesh_item::switchToGouraudPlusEdge(bool b)
+
+void Scene_surface_mesh_item::fill_flat_vertex_map()
 {
-  if (!b && !d->supported_rendering_modes.contains(Flat))
+  typedef EPICK::Point_3 Point;
+  typedef CGAL::Surface_mesh<Point> SMesh;
+  typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
+  typedef CGAL::Buffer_for_vao<float, unsigned int> CPF;
+
+  if(d->flat_vertex_map_ready)
+    return;
+
+  SMesh::Property_map<face_descriptor, EPICK::Vector_3 > fnormals =
+      face_graph()->property_map<face_descriptor, EPICK::Vector_3 >("f:normal").first;
+
+  d->flat_vertices_map.clear();
+  d->flat_vertices_map.resize(face_graph()->number_of_vertices());
+  d->cumul_id.clear();
+  std::size_t counter = 0;
+  for(face_descriptor fd : faces(*face_graph()))
   {
-    d->supported_rendering_modes = QList<RenderingMode>() << FlatPlusEdges
-                                                       << Wireframe
-                                                       << Flat
-                                                       << Gouraud
-                                                       << Points;
-    setFlatPlusEdgesMode();
-    invalidateOpenGLBuffers();
-    redraw();
+    d->cumul_id.push_back(counter);
+    if(is_triangle(halfedge(fd,*face_graph()),*face_graph()))
+    {
+      for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, *face_graph()),*face_graph()))
+      {
+        d->flat_vertices_map[source(hd, *face_graph())].push_back(counter++);
+      }
+    }
+    else
+    {
+      std::vector<Point> facet_points;
+      for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, *face_graph()),*face_graph()))
+      {
+        facet_points.push_back(face_graph()->points()[target(hd, *face_graph())]);
+      }
+      bool is_convex = CPF::is_facet_convex(facet_points, fnormals[fd]);
+      if(is_convex && is_quad(halfedge(fd,*face_graph()),*face_graph()) )
+      {
+        //1st half
+        halfedge_descriptor hd = halfedge(fd, *face_graph());
+        d->flat_vertices_map[source(hd, *face_graph())].push_back(counter++);
+
+        hd = next(halfedge(fd, *face_graph()),*face_graph());
+        d->flat_vertices_map[source(hd, *face_graph())].push_back(counter++);
+
+        hd = next(next(halfedge(fd, *face_graph()),*face_graph()), *face_graph());
+        d->flat_vertices_map[source(hd, *face_graph())].push_back(counter++);
+
+        //2nd half
+        hd = halfedge(fd, *face_graph());
+        d->flat_vertices_map[source(hd, *face_graph())].push_back(counter++);
+
+        hd = next(next(halfedge(fd, *face_graph()),*face_graph()), *face_graph());
+        d->flat_vertices_map[source(hd, *face_graph())].push_back(counter++);
+
+        hd = prev(halfedge(fd, *face_graph()), *face_graph());
+        d->flat_vertices_map[source(hd, *face_graph())].push_back(counter++);
+      }
+      else if(is_convex)
+      {
+        SMesh::Halfedge_around_face_circulator he(halfedge(fd, *face_graph()), *face_graph());
+        SMesh::Halfedge_around_face_circulator he_end = he;
+        while(next(*he, *face_graph()) != prev(*he_end, *face_graph()))
+        {
+          ++he;
+          vertex_descriptor v0(target(*he_end, *face_graph())),
+              v1(target(*he, *face_graph())),
+              v2(target(next(*he, *face_graph()), *face_graph()));
+          d->flat_vertices_map[v0].push_back(counter++);
+          d->flat_vertices_map[v1].push_back(counter++);
+          d->flat_vertices_map[v2].push_back(counter++);
+        }
+      }
+      else
+      {
+        //Computes the normal of the facet
+        EPICK::Vector_3 normal = fnormals[fd];
+        if(normal == CGAL::NULL_VECTOR)
+        {
+          boost::graph_traits<SMesh>::halfedge_descriptor start = prev(halfedge(fd, *face_graph()), *face_graph());
+          boost::graph_traits<SMesh>::halfedge_descriptor hd = halfedge(fd, *face_graph());
+          boost::graph_traits<SMesh>::halfedge_descriptor next_=next(hd, *face_graph());
+          do
+          {
+            const Point_3& pa = face_graph()->point(target(hd, *face_graph()));
+            const Point_3& pb = face_graph()->point(target(next_, *face_graph()));
+            const Point_3& pc = face_graph()->point(target(prev(hd, *face_graph()), *face_graph()));
+            if (!CGAL::collinear (pa, pb, pc))
+            {
+              normal = CGAL::cross_product(pb-pa, pc -pa);
+              break;
+            }
+            next_ =next(next_, *face_graph());
+          }while(next_ != start);
+
+          if (normal == CGAL::NULL_VECTOR) // No normal could be computed, return
+          {
+            qDebug()<<"Warning : normal is not valid. Facet not displayed";
+            return;
+          }
+        }
+        //check if normal contains NaN values
+        if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z())
+        {
+          qDebug()<<"Warning : normal is not valid. Facet not displayed";
+          return;
+        }
+
+        typedef FacetTriangulator<SMesh, EPICK, boost::graph_traits<SMesh>::vertex_descriptor> FT;
+        const CGAL::qglviewer::Vec off = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+        EPICK::Vector_3 offset(off.x,off.y,off.z);
+        FT triangulation(fd,normal,face_graph(), offset);
+        //iterates on the internal faces
+        for(FT::CDT::Finite_faces_iterator
+            ffit = triangulation.cdt->finite_faces_begin(),
+            end = triangulation.cdt->finite_faces_end();
+            ffit != end; ++ffit)
+        {
+          if(ffit->info().is_external)
+            continue;
+          d->flat_vertices_map[triangulation.v2v[ffit->vertex(0)]].push_back(counter++);
+          d->flat_vertices_map[triangulation.v2v[ffit->vertex(1)]].push_back(counter++);
+          d->flat_vertices_map[triangulation.v2v[ffit->vertex(2)]].push_back(counter++);
+        }
+      }
+    }
   }
-  else if(b)
-  {
-    d->supported_rendering_modes = QList<RenderingMode>() << GouraudPlusEdges
-                                                       << Wireframe
-                                                       << Gouraud
-                                                       << Points;
-    setGouraudPlusEdgesMode();
-  }
+  d->cumul_id.push_back(counter);
+  d->flat_vertex_map_ready = true;
 }

@@ -251,6 +251,10 @@ public:
   Lazy_rep (A&& a)
       : at(std::forward<A>(a)), et(nullptr){}
 
+  template<class A>
+  Lazy_rep (int count, A&& a)
+    : Rep(count), at(std::forward<A>(a)), et(nullptr){}
+
   template<class A, class E>
   Lazy_rep (A&& a, E&& e)
       : at(std::forward<A>(a)), et(new ET(std::forward<E>(e))) {}
@@ -352,6 +356,68 @@ class Lazy_rep_n :
       expander{0,(CGAL::print_dag(std::get<I>(l), os, level+1),0)...};
     }
   }
+  public:
+  void print_dag(std::ostream& os, int level) const {
+    print_dag_helper(os, level, std::make_index_sequence<sizeof...L>{});
+  }
+#endif
+};
+
+
+template<typename AT, typename ET, typename AC, typename EC, typename E2A, typename...L>
+class Lazy_rep_optional_n :
+  public Lazy_rep< AT, ET, E2A >, private EC
+{
+  // Lazy_rep_0 does not inherit from EC or take a parameter AC. It has different constructors.
+  static_assert(sizeof...(L)>0, "Use Lazy_rep_0 instead");
+  template <class Ei, class Ai, class E2Ai, class Ki> friend class Lazy_kernel_base;
+  mutable std::tuple<L...> l; // L...l; is not yet allowed.
+
+  const EC& ec() const { return *this; }
+
+  template<std::size_t...I>
+  void update_exact_helper(std::index_sequence<I...>) const {
+    this->et = new ET( * ec()( CGAL::exact( std::get<I>(l) ) ... ) );
+    this->at = E2A()(*(this->et));
+    l = std::tuple<L...>{};
+  }
+  public:
+
+  Lazy_rep_optional_n()
+  {}
+
+  void update_exact() const {
+    update_exact_helper(std::make_index_sequence<sizeof...(L)>{});
+  }
+
+  template<class...LL>
+  Lazy_rep_optional_n(const AT& a, const EC& ec, LL&&...ll) :
+    Lazy_rep<AT, ET, E2A>(a), EC(ec), l(std::forward<LL>(ll)...)
+  {
+    this->set_depth((std::max)({ -1, (int)CGAL::depth(ll)...}) + 1);
+  }
+
+  template<class...LL>
+  Lazy_rep_optional_n(int count, const AT& a, const EC& ec, LL&&...ll) :
+    Lazy_rep<AT, ET, E2A>(count, a), EC(ec), l(std::forward<LL>(ll)...)
+  {
+    this->set_depth((std::max)({ -1, (int)CGAL::depth(ll)...}) + 1);
+  }
+#ifdef CGAL_LAZY_KERNEL_DEBUG
+  private:
+  template<std::size_t...I>
+  void print_dag_helper(std::ostream& os, int level, std::index_sequence<I...>) const {
+    this->print_at_et(os, level);
+    if(this->is_lazy()){
+# ifdef CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
+      CGAL::msg(os, level, typeid(AC).name());
+# endif
+      CGAL::msg(os, level, "DAG with " "3" " child nodes:");
+      using expander = int[];
+      expander{0,(CGAL::print_dag(std::get<I>(l), os, level+1),0)...};
+    }
+  }
+
   public:
   void print_dag(std::ostream& os, int level) const {
     print_dag_helper(os, level, std::make_index_sequence<sizeof...L>{});
@@ -803,6 +869,96 @@ struct Lazy_construction_bbox
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       return ec(CGAL::exact(l1));
     }
+  }
+};
+
+
+template <typename LK, typename AC, typename EC>
+struct Lazy_construction_optional
+{
+  static const bool Protection = true;
+  typedef typename LK::Approximate_kernel AK;
+  typedef typename LK::Exact_kernel EK;
+  typedef typename LK::E2A E2A;
+  typedef boost::optional<typename LK::Point_3> result_type;
+
+  CGAL_NO_UNIQUE_ADDRESS AC ac;
+  CGAL_NO_UNIQUE_ADDRESS EC ec;
+
+
+  // for Intersect_point_3 with 3 Plane_3
+  template <typename L1>
+  result_type operator()(const L1& l1, const L1& l2, const L1& l3) const
+  {
+    Protect_FPU_rounding<Protection> P;
+
+    try {
+      boost::optional<typename AK::Point_3> oap = ac(CGAL::approx(l1),CGAL::approx(l2),CGAL::approx(l3));
+      if(oap == boost::none){
+        return boost::none;
+      }
+      // Now we have to construct a rep for a lazy point with the three lazy planes.
+      typedef Lazy_rep_optional_n<typename AK::Point_3, typename EK::Point_3, AC, EC, E2A, L1, L1, L1> LazyPointRep;
+      CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(LazyPointRep, rep);
+
+      const typename AK::Point_3 ap = *oap;
+      rep = LazyPointRep(2,ap, ec, l1, l2, l3);
+      typename LK::Point_3 lp(&rep);
+      return boost::make_optional(lp);
+
+
+    } catch (Uncertain_conversion_exception&) {
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+      boost::optional<typename EK::Point_3> oep = ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3));
+      if(oep == boost::none){
+        return boost::none;
+      }
+      typedef Lazy_rep_0<typename AK::Point_3, typename EK::Point_3, E2A> LazyPointRep;
+      const typename EK::Point_3 ep = *oep;
+      LazyPointRep *rep = new LazyPointRep(ep);
+      typename LK::Point_3 lp(rep);
+      return boost::make_optional(lp);
+    }
+    // AF can we get here??
+    return boost::none;
+  }
+
+  // for Intersect_point_3 with  Plane_3  Line_3
+  template <typename L1, typename L2>
+  result_type operator()(const L1& l1, const L2& l2) const
+  {
+
+    Protect_FPU_rounding<Protection> P;
+
+    try {
+      boost::optional<typename AK::Point_3> oap = ac(CGAL::approx(l1),CGAL::approx(l2));
+      if(oap == boost::none){
+        return boost::none;
+      }
+      // Now we have to construct a rep for a lazy point with the line and the plane.
+      typedef Lazy_rep_optional_n<typename AK::Point_3, typename EK::Point_3, AC, EC, E2A, L1, L2> LazyPointRep;
+
+      CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(LazyPointRep, rep);
+      const typename AK::Point_3 ap = *oap;
+      rep = LazyPointRep(2, ap, ec, l1, l2);
+      typename LK::Point_3 lp(&rep);
+      return boost::make_optional(lp);
+
+
+    } catch (Uncertain_conversion_exception&) {
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+      boost::optional<typename EK::Point_3> oep = ec(CGAL::exact(l1), CGAL::exact(l2));
+      if(oep == boost::none){
+        return boost::none;
+      }
+      typedef Lazy_rep_0<typename AK::Point_3, typename EK::Point_3, E2A> LazyPointRep;
+      const typename EK::Point_3 ep = *oep;
+      LazyPointRep *rep = new LazyPointRep(ep);
+      typename LK::Point_3 lp(rep);
+      return boost::make_optional(lp);
+    }
+    // AF can we get here??
+    return boost::none;
   }
 };
 
