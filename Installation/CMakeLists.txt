@@ -1121,7 +1121,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
         "${CMAKE_SOURCE_DIR}/Documentation/doc"
       WORKING_DIRECTORY "${DOC_DIR}")
     execute_process(
-      COMMAND 
+      COMMAND
         "${CMAKE_COMMAND}" --build . --target "doc"
       WORKING_DIRECTORY "${DOC_DIR}" )
 
