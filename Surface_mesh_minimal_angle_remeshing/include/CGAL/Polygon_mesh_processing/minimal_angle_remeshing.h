@@ -50,7 +50,7 @@ namespace Polygon_mesh_processing {
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param tm the triangle mesh to be remeshed
-* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters 
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" 
 * among the ones listed below
 *
 *
