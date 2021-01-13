@@ -56,13 +56,11 @@ int main (int argc, char** argv)
   if (argc > 2)
     filename_config = argv[2];
 
-  std::ifstream in (filename.c_str(), std::ios::binary);
-
-  std::cerr << "Reading input" << std::endl;
+    std::cerr << "Reading input" << std::endl;
   Point_set pts;
   if(!(CGAL::read_point_set(filename, pts,
                             // the PLY reader expects a binary file by default
-                            CGAL::parameters::use_binary_mode(false))))
+                            CGAL::parameters::use_binary_mode(true))))
   {
     std::cerr << "Error: cannot read " << filename << std::endl;
     return EXIT_FAILURE;
