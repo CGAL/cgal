@@ -46,14 +46,14 @@ private:
   class Node {
   public:
     explicit Node(Vertex_handle vh, bool input = false)
-      : vertex_(vh), id(-1), input(input)
+      : vertex_(vh), /* id(-1),*/ input(input)
     {}
     const Point& point() const { return vertex_->point(); }
     Vertex_handle vertex() const { return vertex_; }
   private:
     Vertex_handle vertex_;
   public:
-    int id;
+    // int id;
     bool input;
   };
 
