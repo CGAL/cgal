@@ -66,6 +66,7 @@ format.
 - `CGAL::jet_estimate_normals()`
 - `CGAL::pca_estimate_normals()`
 - `CGAL::mst_orient_normals()`
+- `CGAL::scanline_orient_normals()`
 - `CGAL::edge_aware_upsample_point_set()`
 - `CGAL::compute_vcm()`
 - `CGAL::vcm_estimate_normals()`
@@ -101,4 +102,3 @@ format.
 - `CGAL::make_las_point_writer()`
 
 */
-

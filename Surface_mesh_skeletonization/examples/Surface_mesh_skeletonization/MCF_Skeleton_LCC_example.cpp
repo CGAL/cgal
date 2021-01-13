@@ -51,7 +51,7 @@ int main()
   std::cout << "Number of edges of the skeleton: " << boost::num_edges(skeleton) << "\n";
 
   // Output all the edges of the skeleton.
-  std::ofstream output("skel-lcc.cgal");
+  std::ofstream output("skel-lcc.polylines.txt");
   for(Skeleton_edge e : CGAL::make_range(edges(skeleton)))
   {
     const Point& s = skeleton[source(e, skeleton)].point;
@@ -61,7 +61,7 @@ int main()
   output.close();
 
   // Output skeleton points and the corresponding surface points
-  output.open("correspondance-lcc.cgal");
+  output.open("correspondance-lcc.polylines.txt");
   for(Skeleton_vertex v : CGAL::make_range(vertices(skeleton)))
     for(vertex_descriptor vd : skeleton[v].vertices)
       output << "2 " << skeleton[v].point << "  " << get(CGAL::vertex_point, lcc, vd)  << "\n";

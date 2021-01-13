@@ -325,6 +325,26 @@ public:
                                &arrays[FLAT_NORMAL_COLORED_FACES],
                                &arrays[SMOOTH_NORMAL_COLORED_FACES])
   {
+    // Define 'Control+Q' as the new exit shortcut (default was 'Escape')
+    setShortcut(qglviewer::EXIT_VIEWER, ::Qt::CTRL+::Qt::Key_Q);
+
+    // Add custom key description (see keyPressEvent).
+    setKeyDescription(::Qt::Key_E, "Toggles edges display");
+    setKeyDescription(::Qt::Key_M, "Toggles mono color");
+    setKeyDescription(::Qt::Key_N, "Inverse direction of normals");
+    setKeyDescription(::Qt::Key_S, "Switch between flat/Gouraud shading display");
+    setKeyDescription(::Qt::Key_T, "Toggles text display");
+    setKeyDescription(::Qt::Key_U, "Move camera direction upside down");
+    setKeyDescription(::Qt::Key_V, "Toggles vertices display");
+    setKeyDescription(::Qt::Key_W, "Toggles faces display");
+    setKeyDescription(::Qt::Key_Plus, "Increase size of edges");
+    setKeyDescription(::Qt::Key_Minus, "Decrease size of edges");
+    setKeyDescription(::Qt::Key_Plus+::Qt::ControlModifier, "Increase size of vertices");
+    setKeyDescription(::Qt::Key_Minus+::Qt::ControlModifier, "Decrease size of vertices");
+    setKeyDescription(::Qt::Key_PageDown, "Increase light (all colors, use shift/alt/ctrl for one rgb component)");
+    setKeyDescription(::Qt::Key_PageUp, "Decrease light (all colors, use shift/alt/ctrl for one rgb component)");
+    setKeyDescription(::Qt::Key_O, "Toggles 2D mode only");
+
     if (title[0]==0)
       setWindowTitle("CGAL Basic Viewer");
     else
@@ -343,6 +363,31 @@ public:
 
     for (unsigned int i=0; i<NB_VAO_BUFFERS; ++i)
       vao[i].destroy();
+  }
+
+  void set_draw_vertices(bool b) {
+    m_draw_vertices = b;
+  }
+  void set_draw_edges(bool b) {
+    m_draw_edges = b;
+  }
+  void set_draw_rays(bool b) {
+    m_draw_rays = b;
+  }
+  void set_draw_lines(bool b) {
+    m_draw_lines = b;
+  }
+  void set_draw_faces(bool b) {
+    m_draw_faces = b;
+  }
+  void set_use_mono_color(bool b) {
+    m_use_mono_color = b;
+  }
+  void set_inverse_normal(bool b) {
+    m_inverse_normal = b;
+  }
+  void set_draw_text(bool b) {
+    m_draw_text = b;
   }
 
   void clear()
@@ -551,6 +596,12 @@ public:
     { m_buffer_for_mono_faces.face_end(); }
     else if (m_buffer_for_colored_faces.is_a_face_started())
     { return m_buffer_for_colored_faces.face_end(); }
+  }
+
+  virtual void redraw()
+  {
+    initialize_buffers();
+    update();
   }
 
 protected:
@@ -1209,37 +1260,11 @@ protected:
     }
   }
 
-  virtual void redraw()
-  {
-    initialize_buffers();
-    update();
-  }
-
   virtual void init()
   {
     // Restore previous viewer state.
     restoreStateFromFile();
     initializeOpenGLFunctions();
-
-    // Define 'Control+Q' as the new exit shortcut (default was 'Escape')
-    setShortcut(qglviewer::EXIT_VIEWER, ::Qt::CTRL+::Qt::Key_Q);
-
-    // Add custom key description (see keyPressEvent).
-    setKeyDescription(::Qt::Key_E, "Toggles edges display");
-    setKeyDescription(::Qt::Key_M, "Toggles mono color");
-    setKeyDescription(::Qt::Key_N, "Inverse direction of normals");
-    setKeyDescription(::Qt::Key_S, "Switch between flat/Gouraud shading display");
-    setKeyDescription(::Qt::Key_T, "Toggles text display");
-    setKeyDescription(::Qt::Key_U, "Move camera direction upside down");
-    setKeyDescription(::Qt::Key_V, "Toggles vertices display");
-    setKeyDescription(::Qt::Key_W, "Toggles faces display");
-    setKeyDescription(::Qt::Key_Plus, "Increase size of edges");
-    setKeyDescription(::Qt::Key_Minus, "Decrease size of edges");
-    setKeyDescription(::Qt::Key_Plus+::Qt::ControlModifier, "Increase size of vertices");
-    setKeyDescription(::Qt::Key_Minus+::Qt::ControlModifier, "Decrease size of vertices");
-    setKeyDescription(::Qt::Key_PageDown, "Increase light (all colors, use shift/alt/ctrl for one rgb component)");
-    setKeyDescription(::Qt::Key_PageUp, "Decrease light (all colors, use shift/alt/ctrl for one rgb component)");
-    setKeyDescription(::Qt::Key_O, "Toggles 2D mode only");
 
     // Light default parameters
     glLineWidth(m_size_edges);

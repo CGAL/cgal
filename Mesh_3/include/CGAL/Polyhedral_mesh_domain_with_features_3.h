@@ -44,6 +44,8 @@
 
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/property_map/property_map.hpp>
+#include <boost/dynamic_bitset.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -228,6 +230,47 @@ public:
 
   void detect_borders(std::vector<Polyhedron>& p);
   void detect_borders() { detect_borders(stored_polyhedra); };
+
+  template <typename InputIterator>
+  void
+  add_features(InputIterator first, InputIterator end)
+  {
+    auto max = 0;
+    auto min = (std::numeric_limits<int>::max)();
+    for(const auto& polyhedron: stored_polyhedra) {
+      auto f_pid = get(face_patch_id_t<Patch_id>(), polyhedron);
+      for(auto fd : faces(polyhedron)) {
+        const auto patch_id = get(f_pid, fd);
+        min = (std::min)(patch_id, min);
+        max = (std::max)(patch_id, max);
+      }
+    }
+    boost::dynamic_bitset<> patch_ids_bitset;
+    patch_ids_bitset.resize(max - min + 1);
+    for(const auto& polyhedron: stored_polyhedra) {
+      auto f_pid = get(face_patch_id_t<Patch_id>(), polyhedron);
+      for(auto fd : faces(polyhedron)) {
+        const auto patch_id = get(f_pid, fd);
+        patch_ids_bitset.set(patch_id - min);
+      }
+    }
+    using Patch_ids_container = std::vector<int>;
+    Patch_ids_container all_patch_ids;
+    all_patch_ids.reserve(patch_ids_bitset.count());
+    for(auto i = patch_ids_bitset.find_first();
+        i != patch_ids_bitset.npos;
+        i = patch_ids_bitset.find_next(i))
+    {
+      all_patch_ids.push_back(static_cast<int>(i + min));
+    }
+    using Polyline = typename std::iterator_traits<InputIterator>::value_type;
+    auto identity_property_map = boost::typed_identity_property_map<Polyline>();
+    auto all_patch_ids_pmap =
+      boost::static_property_map<Patch_ids_container>(all_patch_ids);
+    Base::add_features_and_incidences(first, end,
+                                      identity_property_map,
+                                      all_patch_ids_pmap);
+  }
 
   // non-documented, provided to the FEniCS project
   const std::vector<Polyhedron>& polyhedra()const

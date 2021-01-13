@@ -75,6 +75,15 @@ function(create_single_source_cgal_program firstfile )
       target_link_libraries(${exe_name} PRIVATE ${CGAL_3RD_PARTY_LIBRARIES})
     endif()
 
+    if(POLICY CMP0064)
+      # CMake 3.4 or later
+      if(NOT NO_TESTING)
+        cgal_add_test(${exe_name})
+      else()
+        cgal_add_test(${exe_name} NO_EXECUTION)
+      endif()
+    endif()
+
   else()
     message(AUTHOR_WARNING "The executable ${exe_name} will not be created because the source file ${firstfile} does not exist.")
   endif()

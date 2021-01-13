@@ -2,26 +2,18 @@
 # This is the CMake script for compiling a set of CGAL applications.
 
 cmake_minimum_required(VERSION 3.1...3.15)
-project( BGL_polyhedron_3_Examples )
-
-
+project(BGL_polyhedron_3_Examples)
 
 # CGAL and its components
-find_package( CGAL QUIET COMPONENTS  )
-
-if ( NOT CGAL_FOUND )
-
-  message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()
-
-endif()
+find_package(CGAL REQUIRED)
 
 # Boost and its components
-find_package( Boost REQUIRED )
+find_package(Boost REQUIRED)
 
-if ( NOT Boost_FOUND )
+if(NOT Boost_FOUND)
 
-  message(STATUS "This project requires the Boost library, and will not be compiled.")
+  message(
+    STATUS "This project requires the Boost library, and will not be compiled.")
 
   return()
 
@@ -34,21 +26,21 @@ endif()
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
 
-create_single_source_cgal_program( "distance.cpp" )
+create_single_source_cgal_program("distance.cpp")
 
-create_single_source_cgal_program( "incident_vertices.cpp" )
+create_single_source_cgal_program("incident_vertices.cpp")
 
-create_single_source_cgal_program( "kruskal.cpp" )
+create_single_source_cgal_program("kruskal.cpp")
 
-create_single_source_cgal_program( "kruskal_with_stored_id.cpp" )
+create_single_source_cgal_program("kruskal_with_stored_id.cpp")
 
-create_single_source_cgal_program( "normals.cpp" )
+create_single_source_cgal_program("normals.cpp")
 
-create_single_source_cgal_program( "range.cpp" )
+create_single_source_cgal_program("range.cpp")
 
-create_single_source_cgal_program( "transform_iterator.cpp" )
+create_single_source_cgal_program("transform_iterator.cpp")
 
-create_single_source_cgal_program( "copy_polyhedron.cpp" )
+create_single_source_cgal_program("copy_polyhedron.cpp")
 
 find_package( OpenMesh QUIET )
 
@@ -70,4 +62,3 @@ if( METIS_FOUND )
     message( STATUS "Examples that use the METIS library will not be compiled." )
   endif()
 endif()
-

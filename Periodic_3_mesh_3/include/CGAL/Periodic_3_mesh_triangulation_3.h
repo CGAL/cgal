@@ -444,10 +444,10 @@ public:
     const Bare_point cq = canonicalize_point(q);
     FT min_sq_dist = std::numeric_limits<FT>::infinity();
 
-    for(int i = 0; i < 3; ++i) {
-      for(int j = 0; j < 3; ++j) {
-        for(int k = 0; k < 3; ++k) {
-          const Bare_point tcq = construct_point(std::make_pair(cq, Offset(i-1, j-1, k-1)));
+    for(int i = -1; i < 2; ++i) {
+      for(int j = -1; j < 2; ++j) {
+        for(int k = -1; k < 2; ++k) {
+          const Bare_point tcq = construct_point(std::make_pair(cq, Offset(i, j, k)));
           FT sq_dist = geom_traits().compute_squared_distance_3_object()(p, tcq);
 
           if(sq_dist < min_sq_dist)
@@ -469,6 +469,48 @@ public:
     typename Geom_traits::Construct_weighted_point_3 cwp = geom_traits().construct_weighted_point_3_object();
 
     return cwp(get_closest_point(cp(wp), cp(wq)), cw(wq));
+  }
+
+  Triangle get_closest_triangle(const Bare_point& p, const Triangle& t) const
+  {
+    typename Geom_traits::Construct_vector_3 cv = geom_traits().construct_vector_3_object();
+    typename Geom_traits::Construct_translated_point_3 tr = geom_traits().construct_translated_point_3_object();
+    typename Geom_traits::Compute_squared_distance_3 csd = geom_traits().compute_squared_distance_3_object();
+
+    // It doesn't matter which point we use to canonicalize the triangle as P3M3 is necessarily
+    // in one cover and we have to look at all the neighboring copies anyway since we do not
+    // have control of 'p'.
+    Bare_point canon_p0 = canonicalize_point(t[0]);
+    Vector_3 move_to_canonical = cv(t[0], canon_p0);
+    const std::array<Bare_point, 3> ct = { canon_p0,
+                                           tr(t[1], move_to_canonical),
+                                           tr(t[2], move_to_canonical) };
+
+    FT min_sq_dist = std::numeric_limits<FT>::infinity();
+    Triangle rt;
+    for(int i = -1; i < 2; ++i) {
+      for(int j = -1; j < 2; ++j) {
+        for(int k = -1; k < 2; ++k) {
+
+          const Triangle tt(
+            construct_point(std::make_pair(ct[0], Offset(i, j, k))),
+            construct_point(std::make_pair(ct[1], Offset(i, j, k))),
+            construct_point(std::make_pair(ct[2], Offset(i, j, k))));
+
+          const FT sq_dist = csd(p, tt);
+
+          if(sq_dist == FT(0))
+            return rt;
+
+          if(sq_dist < min_sq_dist) {
+            rt = tt;
+            min_sq_dist = sq_dist;
+          }
+        }
+      }
+    }
+
+    return rt;
   }
 
   // Warning: This is a periodic version that computes the smallest possible
