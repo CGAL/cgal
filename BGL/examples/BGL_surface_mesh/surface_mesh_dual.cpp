@@ -37,12 +37,13 @@ typedef boost::graph_traits<Mesh>::edge_descriptor     edge_descriptor;
 
 int main(int argc, char* argv[])
 {
-  Mesh primal;
   const char* filename = (argc > 1) ? argv[1] : "data/prim.off";
-  std::ifstream in(filename);
-  if(!(in >> primal)) {
-    std::cerr << "Error reading polyhedron from file " << filename << std::endl;
-    return EXIT_FAILURE;
+
+  Mesh primal;
+  if(!CGAL::read_polygon_mesh(filename, primal))
+  {
+    std::cerr << "Invalid input." << std::endl;
+    return 1;
   }
 
   Dual dual(primal);

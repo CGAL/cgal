@@ -2,9 +2,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
-
-#include <CGAL/IO/OFF_reader.h>
-
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Polyhedral_envelope.h>
 #include <CGAL/Polygon_mesh_processing/repair_self_intersections.h>
 

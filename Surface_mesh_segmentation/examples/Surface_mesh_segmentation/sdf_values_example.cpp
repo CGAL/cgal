@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/mesh_segmentation.h>
 
+#include <CGAL/mesh_segmentation.h>
 #include <CGAL/property_map.h>
 
 #include <iostream>
@@ -16,7 +16,8 @@ int main()
   // create and read Polyhedron
   Polyhedron mesh;
   std::ifstream input("data/cactus.off");
-  if ( !input || !(input >> mesh) || mesh.empty() || ( !CGAL::is_triangle_mesh(mesh)) ) {
+  if ( !input || !(input >> mesh) || mesh.empty() || ( !CGAL::is_triangle_mesh(mesh)) )
+  {
     std::cerr << "Input is not a triangle mesh" << std::endl;
     return EXIT_FAILURE;
   }
@@ -28,7 +29,6 @@ int main()
 
   // compute SDF values
   std::pair<double, double> min_max_sdf = CGAL::sdf_values(mesh, sdf_property_map);
-
 
   // It is possible to compute the raw SDF values and post-process them using
   // the following lines:
@@ -43,9 +43,9 @@ int main()
             << " maximum SDF: " << min_max_sdf.second << std::endl;
 
   // print SDF values
-  for(face_descriptor f : faces(mesh)) {
+  for(face_descriptor f : faces(mesh))
       std::cout << sdf_property_map[f] << " ";
-  }
+
   std::cout << std::endl;
   return EXIT_SUCCESS;
 }

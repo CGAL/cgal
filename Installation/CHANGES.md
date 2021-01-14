@@ -1338,7 +1338,7 @@ Release date: September 2017
     robust versions of the kernel functors
     `Construct_weighted_circumcenter_3`, `Compute_squared_radius_3`, and
     `Compute_squared_radius_smallest_orthogonal_sphere_3`. This class
-    can be used as traits class in the the `Mesh_3` package to
+    can be used as traits class in the `Mesh_3` package to
     efficiently yet robustly generate 3D meshes.
 -   Add a new type of polyhedral domain with features,
     `Polyhedral_complex_mesh_domain_3`. The domain is defined by a
