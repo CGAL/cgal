@@ -1136,9 +1136,9 @@ bool write_PLY(std::ostream& os, const Surface_mesh<P>& sm)
 */
 
 template <typename P>
-CGAL_DEPRECATED bool write_ply(std::istream& is, Surface_mesh<P>& sm, std::string& comments)
+CGAL_DEPRECATED bool write_ply(std::ostream& os, const Surface_mesh<P>& sm, const std::string& comments)
 {
-  return write_PLY(is, sm, comments);
+  return write_PLY(os, sm, comments);
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE
