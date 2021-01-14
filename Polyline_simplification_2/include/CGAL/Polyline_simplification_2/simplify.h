@@ -101,7 +101,6 @@ public:
     typedef boost::readable_property_map_tag category;
     typedef std::size_t                      value_type;
     typedef value_type                       reference;
-    // typedef Vertices_in_constraint_iterator  key_type;
     typedef Vertex_handle  key_type;
 
     Vertex_index_map* vertex_index_map;
@@ -112,12 +111,10 @@ public:
 
     reference operator[] ( key_type const& x ) const
     {
-      //  return x.base()->id ;
-        return (*vertex_index_map)[x];
+      return (*vertex_index_map)[x];
     }
   } ;
 
-  //typedef CGAL::Modifiable_priority_queue<Vertices_in_constraint_iterator,Compare_cost,Id_map> MPQ ;
   typedef CGAL::Modifiable_priority_queue<Vertex_handle,Compare_cost,Id_map> MPQ ;
 
   MPQ* mpq;
@@ -189,7 +186,17 @@ public:
           it != pct.vertices_in_constraint_end(cid);
           ++it){
         if((*it)->is_removable()){
-          vertex_to_iterator[*it].push_back(it);
+          typename std::map<Vertex_handle, std::list<Vertices_in_constraint_iterator> >::iterator lit;
+          lit = vertex_to_iterator.find(*it);
+
+          if(lit != vertex_to_iterator.end()){
+            std::list<Vertices_in_constraint_iterator>& ilist = lit->second;
+            if(std::find(ilist.begin(),ilist.end(),it) == ilist.end()){
+              ilist.push_back(it);
+            }
+          }else{
+            vertex_to_iterator[*it].push_back(it);
+          }
         }
       }
     }
@@ -200,26 +207,6 @@ public:
       if(it->is_removable()){
         std::cout << it->point() << " is  removable" << std::endl;
       }
-    }
-    */
-
-    /*
-    // the previous code does mark vertices with more than one constraint on it as unremovable
-    std::set<Vertex_handle> vertices;
-    Constraint_iterator cit = pct.constraints_begin(), e = pct.constraints_end();
-    for(; cit!=e; ++cit){
-      Constraint_id cid = *cit;
-      Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid);
-      (*it)->set_removable(false);
-      for(; it != pct.vertices_in_constraint_end(cid); ++it){
-        if(vertices.find(*it) != vertices.end()){
-          (*it)->set_removable(false);
-        } else {
-          vertices.insert(*it);
-        }
-      }
-      it = boost::prior(it);
-      (*it)->set_removable(false);
     }
     */
   }
@@ -236,7 +223,9 @@ public:
         boost::optional<FT> dist = cost(pct, it);
         if(dist){
           (*it)->set_cost(*dist);
-          (*mpq).push(*it);
+          if(! (*mpq).contains(*it)){
+              (*mpq).push(*it);
+            }
           ++n;
         } else {
           // no need to set the costs as this vertex is not in the priority queue
@@ -342,6 +331,7 @@ operator()()
   if(stop(pct, v, v->cost(), pct_initial_number_of_vertices, pct.number_of_vertices())){
     return false;
   }
+
   Vertices_in_constraint_iterator vit = vertex_to_iterator[v].front();
   if(is_removable(vit)){
     Vertices_in_constraint_iterator u = boost::prior(vit), w = boost::next(vit);
