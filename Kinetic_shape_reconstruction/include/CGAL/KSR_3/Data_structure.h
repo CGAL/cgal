@@ -3611,64 +3611,84 @@ public:
 
   void finalize() {
 
+    std::size_t stop_value = 1;
+    const bool should_be_removed = false;
+    std::size_t num_hanging_pfaces = detect_hanging_pfaces(should_be_removed);
+
+    if (num_hanging_pfaces >= stop_value) {
+      if (m_verbose) {
+        std::cout << "* number of hanging pfaces: " << num_hanging_pfaces << std::endl;
+      }
+      if (should_be_removed) return;
+      const std::size_t num_added_pfaces = fill_holes(should_be_removed);
+      CGAL_assertion(num_added_pfaces > 0);
+      if (m_verbose) {
+        std::cout << "* number of added pfaces: " << num_added_pfaces << std::endl;
+      }
+      num_hanging_pfaces = detect_hanging_pfaces(should_be_removed);
+    }
+    CGAL_assertion_msg(num_hanging_pfaces < stop_value,
+      "ERROR: DO WE STILL HAVE HANGING PFACES?");
+  }
+
+  const std::size_t detect_hanging_pfaces(const bool should_be_removed) {
+
     bool quit = true;
     std::size_t num_removed_pfaces = 0;
     do {
       quit = true;
-      for (const auto iedge : m_intersection_graph.edges()) {
-        const std::size_t num_pfaces = check_edge(iedge);
+      const auto iedges = m_intersection_graph.edges();
+      for (const auto iedge : iedges) {
+        const std::size_t num_pfaces =
+          initialize_pface_removal(iedge, should_be_removed);
         if (num_pfaces != 0) {
           num_removed_pfaces += num_pfaces;
-          // quit = false; break; // comment out if we need to just count!
+          if (should_be_removed) {
+            quit = false; break;
+          }
         }
       }
     } while (!quit);
-
-    std::size_t stop_value = 1;
-    if (num_removed_pfaces >= stop_value) {
-      std::cout << "* number of removed hanging pfaces: " << num_removed_pfaces << std::endl;
-    }
-    CGAL_assertion_msg(num_removed_pfaces < stop_value,
-      "TODO: DO WE STILL HAVE HANGING PFACES?");
-    // CGAL_assertion_msg(false, "TODO: DEBUG THIS FUNCTION!");
-
-    // TODO: Should I also implement here the part that removes all
-    // identical pfaces within the same support plane? If the k intersection
-    // criteria works well, that should not be necessary!
+    return num_removed_pfaces;
   }
 
-  const std::size_t check_edge(const IEdge& iedge) {
+  const std::size_t initialize_pface_removal(
+    const IEdge& iedge, const bool should_be_removed) {
 
     std::vector<PFace> pfaces;
     std::size_t num_removed_pfaces = 0;
     incident_faces(iedge, pfaces);
     if (pfaces.size() == 1) {
-      return remove_pfaces(iedge, pfaces[0], false);
+      return remove_pfaces(iedge, pfaces[0], should_be_removed);
     }
     if (pfaces.size() == 2) {
       const auto& pface0 = pfaces[0];
       const auto& pface1 = pfaces[1];
       if (pface0.first >= 6 && pface1.first >= 6 && pface0.first != pface1.first) {
-        return remove_pfaces(iedge, pface0, false);
+        return remove_pfaces(iedge, pface0, should_be_removed);
       }
     }
     return num_removed_pfaces;
   }
 
   const std::size_t remove_pfaces(
-    const IEdge& init_iedge, const PFace& init_pface, const bool stop) {
+    const IEdge& init_iedge, const PFace& init_pface,
+    const bool should_be_removed) {
+
+    if (!should_be_removed) {
+      // if (m_verbose) dump_pface(*this, init_pface, "hang-" + str(init_pface));
+      return 1; // use this to just count!
+    }
 
     std::set<PFace> unique;
     std::vector< std::pair<Halfedge_index, PFace> > nfaces;
     const Halfedge_index init_he = find_crossing_he(init_iedge, init_pface);
-    add_pfaces(init_he, init_pface, unique, nfaces);
+    collect_connected_pfaces(init_he, init_pface, unique, nfaces);
 
     if (m_verbose) {
-      dump_pface(*this, init_pface, "pface-" + str(init_pface));
+      dump_pface(*this, init_pface, "hang-" + str(init_pface));
       std::cout << "* found faces to remove: " << nfaces.size() << std::endl;
     }
-
-    return 1; // use this to just count!
 
     std::size_t num_removed_pfaces = 0;
     for (const auto& item : nfaces) {
@@ -3678,7 +3698,6 @@ public:
       if (success) ++num_removed_pfaces;
     }
     CGAL_assertion(num_removed_pfaces == nfaces.size());
-    if (stop) CGAL_assertion_msg(false, "TODO: DEBUG THIS FUNCTION!");
     return num_removed_pfaces;
   }
 
@@ -3712,7 +3731,7 @@ public:
     return Halfedge_index();
   }
 
-  void add_pfaces(
+  void collect_connected_pfaces(
     const Halfedge_index crossing_he,
     const PFace& pface,
     std::set<PFace>& unique,
@@ -3750,14 +3769,14 @@ public:
       if (nface1 == pface) {
         if (has_nface2) {
           // std::cout << "adding nface2" << std::endl;
-          add_pfaces(op, nface2, unique, nfaces);
+          collect_connected_pfaces(op, nface2, unique, nfaces);
         }
         continue;
       }
       if (nface2 == pface) {
         if (has_nface1) {
           // std::cout << "adding nface1" << std::endl;
-          add_pfaces(he, nface1, unique, nfaces);
+          collect_connected_pfaces(he, nface1, unique, nfaces);
         }
         continue;
       }
@@ -3776,6 +3795,56 @@ public:
     auto& mesh = this->mesh(pface.first);
     CGAL::Euler::remove_face(he, mesh);
     return true;
+  }
+
+  const std::size_t fill_holes(const bool already_removed) {
+
+    std::size_t num_added_pfaces = 0;
+    CGAL_assertion(!already_removed);
+    if (already_removed) return num_added_pfaces;
+
+    const auto iedges = m_intersection_graph.edges();
+    for (const auto iedge : iedges) {
+      const std::size_t num_pfaces =
+        initialize_pface_insertion(iedge);
+      num_added_pfaces += num_pfaces;
+    }
+    return num_added_pfaces;
+  }
+
+  const std::size_t initialize_pface_insertion(const IEdge& iedge) {
+
+    std::vector<PFace> pfaces;
+    incident_faces(iedge, pfaces);
+    if (pfaces.size() == 1) {
+      if (m_verbose) std::cout << "- hang iedge: " << segment_3(iedge) << std::endl;
+      dump_pface(*this, pfaces[0], "hang-" + str(pfaces[0]));
+      // CGAL_assertion_msg(false, "TODO: IMPLEMENT CASE WITH ONE HANGING PFACE!");
+      return add_pfaces(iedge, pfaces[0]);
+    }
+
+    std::size_t num_added_pfaces = 0;
+    if (pfaces.size() == 2) {
+      const auto& pface0 = pfaces[0];
+      const auto& pface1 = pfaces[1];
+      if (pface0.first >= 6 && pface1.first >= 6 && pface0.first != pface1.first) {
+        dump_pface(*this, pface0, "hang0-" + str(pface0));
+        dump_pface(*this, pface1, "hang1-" + str(pface1));
+        CGAL_assertion_msg(false,
+        "TODO: CAN WE HAVE TWO HANGING PFACES FROM DIFFERENT PLANES?");
+        // num_added_pfaces += add_pfaces(iedge, pface0);
+        // num_added_pfaces += add_pfaces(iedge, pface1);
+      }
+    }
+    return num_added_pfaces;
+  }
+
+  const std::size_t add_pfaces(
+    const IEdge& init_iedge, const PFace& init_pface) {
+
+    std::size_t num_added_pfaces = 0;
+    CGAL_assertion_msg(false, "TODO: ADD MISSING PFACES!");
+    return num_added_pfaces;
   }
 
   /*******************************
