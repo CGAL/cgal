@@ -16,9 +16,6 @@
 #include <CGAL/license/Polyhedron.h>
 
 #include <CGAL/Polyhedron_3_fwd.h>
-#include <CGAL/basic.h>
-#include <algorithm>
-#include <cstddef>
 
 #include <CGAL/HalfedgeDS_iterator.h>
 #include <CGAL/Iterator_project.h>
@@ -33,6 +30,8 @@
 #include <CGAL/Polyhedron_traits_3.h>
 #include <CGAL/iterator.h>
 
+#include <algorithm>
+#include <cstddef>
 
 namespace CGAL {
 

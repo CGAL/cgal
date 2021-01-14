@@ -54,6 +54,7 @@ else()
   message(STATUS "Examples that use OpenMesh will not be compiled.")
 endif()
 
+create_single_source_cgal_program("test_pmp_read_polygon_mesh.cpp")
 create_single_source_cgal_program("connected_component_polyhedron.cpp")
 create_single_source_cgal_program("connected_component_surface_mesh.cpp")
 create_single_source_cgal_program("test_detect_features.cpp")

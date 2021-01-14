@@ -21,7 +21,8 @@ typedef K_neighbor_search::Tree                                         Tree;
 typedef Tree::Splitter                                                  Splitter;
 typedef K_neighbor_search::Distance                                     Distance;
 
-int main() {
+int main()
+{
   const unsigned int K = 5;
   // generator for random data points in the cube ( (-1,-1,-1), (1,1,1) )
   Random_points_iterator rpit( 1.0);
@@ -38,21 +39,22 @@ int main() {
   My_point_property_map ppmap(points);
 
   // Insert number_of_data_points in the tree
-  Tree tree(
-    boost::counting_iterator<std::size_t>(0),
-    boost::counting_iterator<std::size_t>(points.size()),
-    Splitter(),
-    Traits(ppmap)
-  );
+  Tree tree(boost::counting_iterator<std::size_t>(0),
+            boost::counting_iterator<std::size_t>(points.size()),
+            Splitter(),
+            Traits(ppmap));
+
+  // search K nearest neighbours
   Point_3 query(0.0, 0.0, 0.0);
   Distance tr_dist(ppmap);
 
-  // search K nearest neighbours
   K_neighbor_search search(tree, query, K,0,true,tr_dist);
-  for(K_neighbor_search::iterator it = search.begin(); it != search.end(); it++){
+  for(K_neighbor_search::iterator it = search.begin(); it != search.end(); it++)
+  {
     std::cout << " d(q, nearest neighbor)=  "
               << tr_dist.inverse_of_transformed_distance(it->second) << " "
               << points[it->first] << " " << it->first << std::endl;
   }
+
   return 0;
 }
