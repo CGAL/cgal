@@ -156,11 +156,11 @@ void Scene::compile_shaders()
     const char tex_fragment_source[] =
     {
         "#version 150 \n"
-        "uniform sampler2D texture;\n"
+        "uniform sampler2D s_texture;\n"
         "in highp vec2 texc;\n"
         "out highp vec4 out_color; \n"
         "void main(void) { \n"
-        "out_color = texture2D(texture, texc.st);\n"
+        "out_color = vec4(texture(s_texture, texc));\n"
         "} \n"
         "\n"
     };
