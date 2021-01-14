@@ -93,6 +93,7 @@ if ( CGAL_FOUND )
     find_package(libpointmatcher QUIET)
     include(CGAL_pointmatcher_support)
     if (TARGET CGAL::pointmatcher_support)
+      find_package(Boost COMPONENTS thread filesystem system program_options date_time chrono REQUIRED)
       add_executable(registration_with_pointmatcher "registration_with_pointmatcher.cpp")
       target_link_libraries(registration_with_pointmatcher
         ${CGAL_libs} CGAL::pointmatcher_support)
