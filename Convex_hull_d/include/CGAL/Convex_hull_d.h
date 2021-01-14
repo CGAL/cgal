@@ -322,7 +322,7 @@ typedef Hull_vertex_iterator_<Self*,Vertex_handle,Facet_iterator>
 can be used as handles. Note also that all iterator and handle types
 come also in a const flavor, e.g., |Vertex_const_iterator| is the
 constant version of |Vertex_iterator|. Thus use the const version
-whenever the the convex hull object is referenced as constant.}*/
+whenever the convex hull object is referenced as constant.}*/
 
 #define CGAL_USING(t) typedef typename Base::t t
 CGAL_USING(Simplex_const_iterator);CGAL_USING(Vertex_const_iterator);
@@ -396,7 +396,7 @@ protected:
   /*{\Xop adds all unmarked unbounded simplices with $x$-visible base
           facet to |visible_simplices| and marks them. In |location| the
           procedure returns the position of |x| with respect to the
-          current hull: $-1$ for inside, $0$ for on the the boundary,
+          current hull: $-1$ for inside, $0$ for on the boundary,
           and $+1$ for outside; the initial value of |location| for the
           outermost call must be $-1$. If $x$ is contained in the
           boundary of |\Mvar| then a facet incident to $x$ is returned

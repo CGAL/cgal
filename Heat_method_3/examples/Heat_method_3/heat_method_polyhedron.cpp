@@ -2,10 +2,10 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Heat_method_3/Surface_mesh_geodesic_distances_3.h>
 
+#include <boost/unordered_map.hpp>
+
 #include <fstream>
 #include <iostream>
-
-#include <boost/unordered_map.hpp>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point_3;

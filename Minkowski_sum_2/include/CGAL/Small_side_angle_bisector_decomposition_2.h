@@ -731,7 +731,7 @@ private:
   }
 
   /*!
-   * Get the angle ratio created by the the bisection of the angle at the
+   * Get the angle ratio created by the bisection of the angle at the
    * reflex vertex v by the diagonal uv.
    * \param vec A vector defining counterclockwise-oriented polygon.
    * \param v_ind The index of the vertex v.

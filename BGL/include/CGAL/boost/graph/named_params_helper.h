@@ -128,8 +128,6 @@ namespace CGAL {
       > ::type  const_type;
   };
 
-  namespace Polygon_mesh_processing {
-
   template<typename PolygonMesh, typename NamedParameters>
   class GetK
   {
@@ -139,8 +137,6 @@ namespace CGAL {
   public:
     typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
   };
-
-  } // namespace Polygon_mesh_processing
 
   template<typename PolygonMesh,
            typename NamedParametersGT = Named_function_parameters<bool, internal_np::all_default_t>,
@@ -159,7 +155,7 @@ namespace CGAL {
     struct Fake_GT {};//to be used if there is no internal vertex_point_map in PolygonMesh
 
     typedef typename boost::mpl::if_c<Has_internal_pmap::value || !boost::is_same<internal_np::Param_not_found, NP_vpm>::value,
-                                     typename Polygon_mesh_processing::GetK<PolygonMesh, NamedParametersVPM>::Kernel,
+                                     typename GetK<PolygonMesh, NamedParametersVPM>::Kernel,
                                      Fake_GT>::type DefaultKernel;
 
   public:

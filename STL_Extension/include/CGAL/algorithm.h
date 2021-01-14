@@ -111,19 +111,15 @@ are_strictly_ordered(const T & a, const T & b, const T & c, Compare cmp)
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 template <class ForwardIterator>
-inline
-CGAL_DEPRECATED
-ForwardIterator
-successor( ForwardIterator it )
+CGAL_DEPRECATED inline
+ForwardIterator successor( ForwardIterator it )
 {
   return ++it;
 }
 
 template <class BidirectionalIterator>
-inline
-CGAL_DEPRECATED
-BidirectionalIterator
-predecessor( BidirectionalIterator it )
+CGAL_DEPRECATED inline
+BidirectionalIterator predecessor( BidirectionalIterator it )
 {
   return --it;
 }

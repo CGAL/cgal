@@ -157,8 +157,8 @@ private:
 * boundaries of the polygons provided in `polygons`.
 *
 * @tparam PolygonRange a model of the concept `RandomAccessContainer`
-* whose value_type is a model of the concept `RandomAccessContainer`
-* whose value_type is `std::size_t`.
+* whose `value_type` is a model of the concept `RandomAccessContainer`
+* whose `value_type` is `std::size_t`.
 *
 * @param polygons each element in the range describes a polygon
 * using the indices of the vertices.
@@ -290,6 +290,8 @@ void polygon_soup_to_polygon_mesh(const PointRange& points,
   converter(out, vpm);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template<typename PolygonMesh,
          typename PointRange, typename PolygonRange,
          typename NamedParameters_PS>
@@ -308,6 +310,8 @@ void polygon_soup_to_polygon_mesh(const PointRange& points,
 {
   return polygon_soup_to_polygon_mesh(points, polygons, out, parameters::all_default(), parameters::all_default());
 }
+
+/// \endcond
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

@@ -15,20 +15,22 @@
 
 #include <CGAL/license/Point_set_3.h>
 
-
-#include <stack>
-
 #include <CGAL/Surface_mesh/Properties.h>
 
-#include <CGAL/demangle.h>
+#include <CGAL/Point_set_3/IO.h>
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/demangle.h>
 
+#include <algorithm>
+#include <iterator>
+#include <sstream>
+#include <stack>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
-
-
 
 /*!
 
@@ -63,8 +65,8 @@ namespace CGAL {
   parameters if called with a `CGAL::Point_set_3` object as argument.
 
 
-  \tparam Point Point type.
-  \tparam Vector Normal vector type.
+  \tparam Point Point type
+  \tparam Vector Normal vector type
 
   \cgalModels `Range`
  */
@@ -205,7 +207,7 @@ public:
 
 
   /*!
-    \brief Creates an empty point set with no additional property.
+    \brief creates an empty point set with no additional property.
 
     \param with_normal_map `true` if the normal map should be
     added. If `false` (default value), the normal map can still be
@@ -256,7 +258,7 @@ public:
 
   /*!
 
-    \brief Returns `true` if the number of elements not marked as
+    \brief returns `true` if the number of elements not marked as
     removed is 0, `false` otherwise.
 
     \note This does not count the removed elements.
@@ -269,7 +271,7 @@ public:
   bool empty() const { return is_empty(); }
   /// \endcond
   /*!
-    \brief Returns the number of elements (not counting elements marked as removed).
+    \brief returns the number of elements (not counting elements marked as removed).
 
     \note See `number_of_removed_points()` for getting the number of elements marked as removed.
 
@@ -282,7 +284,7 @@ public:
   /// \endcond
 
   /*!
-    \brief Merges `other` in the point set.
+    \brief merges `other` in the point set.
 
     Shifts the indices of points of `other` by `number_of_points() +
     other.number_of_points()`.
@@ -345,7 +347,7 @@ public:
   }
 
   /*!
-    \brief Increases the capacity of internal containers to be able to
+    \brief increases the capacity of internal containers to be able to
     efficiently accommodate at least `s` elements
 
     \param s Expected final number of elements.
@@ -356,9 +358,9 @@ public:
   void reserve (std::size_t s) { m_base.reserve (s); }
 
   /*!
-    \brief Changes size of the point set.
+    \brief changes size of the point set.
 
-    \param s Target size of the point set.
+    \param s Target size of the point set
 
     \note If the given size is larger than the current size, the
     capacity of the internal container is extended. If there are
@@ -396,7 +398,7 @@ public:
   /// @{
 
   /*!
-    \brief Inserts a new element with default property values.
+    \brief inserts a new element with default property values.
 
     \return The iterator on the newly added element.
 
@@ -426,7 +428,7 @@ public:
   }
 
   /*!
-    \brief Inserts new point with default property values.
+    \brief inserts new point with default property values.
 
     \param p Point to insert
 
@@ -514,40 +516,40 @@ public:
   /// @{
 
   /*!
-    \brief Returns the begin iterator.
+    \brief returns the begin iterator.
   */
   iterator begin() { return m_indices.begin(); }
   /*!
-    \brief Returns the past-the-end iterator.
+    \brief returns the past-the-end iterator.
     \note The returned value is the same as `garbage_begin()`.
   */
   iterator end() { return m_indices.end() - m_nb_removed; }
   /*!
-    \brief Returns the begin constant iterator.
+    \brief returns the begin constant iterator.
   */
   const_iterator begin() const { return m_indices.begin(); }
   /*!
-    \brief Returns the past-the-end constant iterator.
+    \brief returns the past-the-end constant iterator.
     \note The returned value is the same as `garbage_begin()`.
   */
   const_iterator end() const { return m_indices.end() - m_nb_removed; }
   /*!
-    \brief Returns a reference to the point corresponding to `index`.
+    \brief returns a reference to the point corresponding to `index`.
   */
   Point& point (const Index& index) { return m_points[index]; }
   /*!
-    \brief Returns a constant reference to the point corresponding to `index`.
+    \brief returns a constant reference to the point corresponding to `index`.
   */
   const Point& point (const Index& index) const { return m_points[index]; }
   /*!
-    \brief Returns a reference to the normal corresponding to `index`.
+    \brief returns a reference to the normal corresponding to `index`.
 
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_map()`).
   */
   Vector& normal (const Index& index) { return m_normals[index]; }
   /*!
-    \brief Returns a constant reference to the normal corresponding to `index`.
+    \brief returns a constant reference to the normal corresponding to `index`.
 
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_map()`).
@@ -560,7 +562,7 @@ public:
   /// @{
 
   /*!
-    \brief Marks all elements between `first` and `last` as removed.
+    \brief marks all elements between `first` and `last` as removed.
 
     \note The elements are just marked as removed and are not erased
     from the memory. `collect_garbage()` should be called if the
@@ -599,7 +601,7 @@ public:
   /// \endcond
 
   /*!
-    \brief Marks element specified by iterator as removed.
+    \brief marks element specified by iterator as removed.
 
     \note The element is just marked as removed and is not erased from
     the memory. `collect_garbage()` should be called if the memory
@@ -616,7 +618,7 @@ public:
   }
 
   /*!
-    \brief Marks element specified by `Index` as removed.
+    \brief marks element specified by `Index` as removed.
 
     \note The element is just marked as removed and is not erased from
     the memory. `collect_garbage()` should be called if the memory
@@ -641,7 +643,7 @@ public:
   /// @{
 
   /*!
-    \brief Returns `true` if the element is marked as removed, `false`
+    \brief returns `true` if the element is marked as removed, `false`
     otherwise.
 
     \note When iterating between `begin()` and `end()`, no element
@@ -653,7 +655,7 @@ public:
   }
 
   /*!
-    \brief Returns `true` if the element is marked as removed, `false`
+    \brief returns `true` if the element is marked as removed, `false`
     otherwise.
 
     \note When iterating between `begin()` and `end()`, no element
@@ -668,12 +670,12 @@ public:
   }
 
   /*!
-    \brief Returns the constant iterator to the first element marked as removed
+    \brief returns the constant iterator to the first element marked as removed
     (equal to `garbage_end()` if no elements are marked as removed.
   */
   const_iterator garbage_begin () const { return m_indices.end() - m_nb_removed; }
   /*!
-    \brief Returns the past-the-end constant iterator of the elements marked as removed.
+    \brief returns the past-the-end constant iterator of the elements marked as removed.
   */
   const_iterator garbage_end () const { return m_indices.end(); }
   /*!
@@ -688,13 +690,13 @@ public:
   std::size_t garbage_size () const { return number_of_removed_points(); }
   /// \endcond
 
-  /*!  \brief Returns `true` if there are elements marked as removed,
+  /*!  \brief returns `true` if there are elements marked as removed,
     `false` otherwise.
   */
   bool has_garbage () const { return (m_nb_removed != 0); }
 
   /*!
-    \brief Erases from memory the elements marked as removed.
+    \brief erases from memory the elements marked as removed.
   */
   void collect_garbage ()
   {
@@ -716,7 +718,7 @@ public:
   }
 
   /*!
-    \brief Restores all removed points.
+    \brief restores all removed points.
 
     After removing one or several points, calling this method restores
     the point set to its initial state: points that were removed (and
@@ -757,7 +759,7 @@ public:
 
 
   /*!
-    \brief Tests whether property `name` of type `T` already exists.
+    \brief tests whether property `name` of type `T` already exists.
 
     \tparam T type of the property.
 
@@ -772,7 +774,7 @@ public:
   }
 
   /*!
-    \brief Adds a new property `name` of type `T` with given default value.
+    \brief adds a new property `name` of type `T` with given default value.
 
     \tparam T type of the property.
 
@@ -795,7 +797,7 @@ public:
   }
 
   /*!
-    \brief Returns the property `name` of type `T`.
+    \brief returns the property `name` of type `T`.
 
     \tparam T type of the property.
 
@@ -816,7 +818,7 @@ public:
   }
 
   /*!
-    \brief Removes the specified property.
+    \brief removes the specified property.
 
     \tparam T type of the property.
 
@@ -859,7 +861,7 @@ public:
     return std::make_pair (m_normals, out);
   }
   /*!
-    \brief Returns the property map of the normal property.
+    \brief returns the property map of the normal property.
 
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_map()`).
@@ -869,7 +871,7 @@ public:
     return m_normals;
   }
   /*!
-    \brief Returns the property map of the normal property (constant version).
+    \brief returns the property map of the normal property (constant version).
 
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_map()`).
@@ -889,7 +891,7 @@ public:
     return m_base.template remove<Vector> (m_normals);
   }
   /*!
-    \brief Returns the property map of the point property.
+    \brief returns the property map of the point property.
   */
   Point_map point_map()
   {
@@ -897,7 +899,7 @@ public:
   }
 
   /*!
-    \brief Returns the property map of the point property (constant version).
+    \brief returns the property map of the point property (constant version).
   */
   const Point_map point_map() const
   {
@@ -920,7 +922,7 @@ public:
 
 
   /*!
-    \brief Returns a vector with all strings that describe properties.
+    \brief returns a vector with all strings that describe properties.
   */
   std::vector<std::string> properties() const
   {
@@ -931,7 +933,7 @@ public:
   }
 
   /*!
-    \brief Returns a vector of pairs that describe properties and associated types.
+    \brief returns a vector of pairs that describe properties and associated types.
   */
   std::vector<std::pair<std::string, std::type_info> > properties_and_types() const
   {
@@ -947,7 +949,7 @@ public:
 
 
   /*!
-    \brief Returns a sequence of \ref bgl_namedparameters "Named Parameters" to be used in Point Set Processing algorithms.
+    \brief returns a sequence of \ref bgl_namedparameters "Named Parameters" to be used in Point Set Processing algorithms.
 
     The following named parameters are used:
     - `point_map`: contains the point property map (see `point_map()`)
@@ -1007,7 +1009,7 @@ public:
 #endif
 
   /*!
-    \brief Returns a property as a range.
+    \brief returns a property as a range.
   */
   template <class T>
   Property_range<T> range (const Property_map<T>& pmap) const
@@ -1016,7 +1018,7 @@ public:
   }
 
   /*!
-    \brief Returns a constant range of points.
+    \brief returns a constant range of points.
   */
   Point_range points () const
   {
@@ -1024,7 +1026,7 @@ public:
   }
 
   /*!
-    \brief Returns a constant range of normals.
+    \brief returns a constant range of normals.
   */
   Vector_range normals () const
   {
@@ -1158,7 +1160,7 @@ public:
   /*!
     \cgalAdvancedFunction
     \cgalAdvancedBegin
-    \brief Returns the push property map of the given property.
+    \brief returns the push property map of the given property.
 
     \tparam T type of the property.
 
@@ -1178,7 +1180,7 @@ public:
   /*!
     \cgalAdvancedFunction
     \cgalAdvancedBegin
-    \brief Returns the push property map of the point property.
+    \brief returns the push property map of the point property.
     \cgalAdvancedEnd
   */
   Point_push_map point_push_map ()
@@ -1188,7 +1190,7 @@ public:
   /*!
     \cgalAdvancedFunction
     \cgalAdvancedBegin
-    \brief Returns the push property map of the normal property.
+    \brief returns the push property map of the normal property.
 
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_map()`).
@@ -1201,7 +1203,7 @@ public:
   /*!
     \cgalAdvancedFunction
     \cgalAdvancedBegin
-    \brief Returns the back inserter on the index property.
+    \brief returns the back inserter on the index property.
     \cgalAdvancedEnd
   */
   Index_back_inserter index_back_inserter ()
@@ -1211,7 +1213,7 @@ public:
   /*!
     \cgalAdvancedFunction
     \cgalAdvancedBegin
-    \brief Returns the back inserter on the point property.
+    \brief returns the back inserter on the point property.
     \cgalAdvancedEnd
   */
   Point_back_inserter point_back_inserter ()

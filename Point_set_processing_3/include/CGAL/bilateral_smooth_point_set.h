@@ -191,7 +191,7 @@ compute_max_spacing(
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
-   \param points input point range.
+   \param points input point range
    \param k size of the neighborhood for the implicit surface patch fitting.
    The larger the value is, the smoother the result will be.
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
