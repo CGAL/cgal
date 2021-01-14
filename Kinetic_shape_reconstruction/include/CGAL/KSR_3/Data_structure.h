@@ -209,20 +209,20 @@ public:
   };
 
   struct Vertex_info {
+    bool tagged;
     PVertex pvertex;
     IVertex ivertex;
     Vertex_info() :
+    tagged(false),
     pvertex(Data_structure::null_pvertex()),
     ivertex(Data_structure::null_ivertex())
     { }
   };
 
   struct Face_info {
-    bool tagged;
     KSR::size_t index;
     KSR::size_t input;
     Face_info() :
-    tagged(false),
     index(KSR::uninitialized()),
     input(KSR::uninitialized())
     { }
@@ -3842,16 +3842,25 @@ public:
     // then, start from the one that has the minimum such pfaces;
     // then, check again, because, after this insertion, other pfaces can be
     // reclassified into normal pfaces and there is no need to handle them.
+    // I should also precompute CDT since I may have separate holes in the same plane.
+
+    bool quit = true;
     std::size_t num_added_pfaces = 0;
     CGAL_assertion(!already_removed);
     if (already_removed) return num_added_pfaces;
 
-    const auto iedges = m_intersection_graph.edges();
-    for (const auto iedge : iedges) {
-      const std::size_t num_pfaces =
-        initialize_pface_insertion(iedge);
-      num_added_pfaces += num_pfaces;
-    }
+    do {
+      quit = true;
+      const auto iedges = m_intersection_graph.edges();
+      for (const auto iedge : iedges) {
+        const std::size_t num_pfaces =
+          initialize_pface_insertion(iedge);
+        if (num_pfaces != 0) {
+          num_added_pfaces += num_pfaces;
+          quit = false; break;
+        }
+      }
+    } while (!quit);
     return num_added_pfaces;
   }
 
@@ -3860,8 +3869,8 @@ public:
     std::vector<PFace> pfaces;
     incident_faces(iedge, pfaces);
     if (pfaces.size() == 1) {
-      if (m_verbose) std::cout << "- hang iedge: " << segment_3(iedge) << std::endl;
-      dump_pface(*this, pfaces[0], "hang-" + str(pfaces[0]));
+      // if (m_verbose) std::cout << "- hang iedge: " << segment_3(iedge) << std::endl;
+      // dump_pface(*this, pfaces[0], "hang-" + str(pfaces[0]));
       // CGAL_assertion_msg(false, "TODO: IMPLEMENT CASE WITH ONE HANGING PFACE!");
       return create_pfaces(iedge, pfaces[0]);
     }
@@ -3890,21 +3899,33 @@ public:
     const KSR::size_t support_plane_idx = init_pface.first;
     initialize_cdt(support_plane_idx, cdt, map_intersections);
     tag_cdt_exterior_faces(cdt, map_intersections);
-    const auto face_index = tag_cdt_interior_faces(cdt);
+    const auto num_original_pfaces = tag_cdt_interior_faces(cdt);
     if (m_verbose) {
-      std::cout << "- num tagged pfaces: " << face_index << std::endl;
+      std::cout << "- num original pfaces: " << num_original_pfaces << std::endl;
     }
 
     const Face_handle init_fh = find_initial_face(cdt, init_iedge);
-    const auto num_created_pfaces = tag_cdt_potential_faces(
-      support_plane_idx, cdt, init_fh, face_index);
+    CGAL_assertion(init_fh != Face_handle());
+    const auto num_detected_pfaces = tag_cdt_potential_faces(
+      support_plane_idx, cdt, init_fh, num_original_pfaces);
 
     if (m_verbose) {
-      dump_cdt(cdt, support_plane_idx,
-        "/Users/monet/Documents/gf/kinetic/logs/volumes/");
+      std::cout << "- num detected pfaces: " << num_detected_pfaces << std::endl;
+      // dump_cdt(cdt, support_plane_idx,
+      //   "/Users/monet/Documents/gf/kinetic/logs/volumes/");
     }
 
-    CGAL_assertion_msg(false, "TODO: CREATE MISSING PFACES!");
+    const auto num_created_pfaces = insert_pfaces(support_plane_idx, cdt);
+    CGAL_assertion(num_created_pfaces == num_detected_pfaces);
+    reconnect_pvertices_to_ivertices(cdt);
+    reconnect_pedges_to_iedges(cdt, map_intersections);
+
+    if (m_verbose) {
+      std::cout << "- num created pfaces: " << num_created_pfaces << std::endl;
+      // dump_2d_surface_mesh(*this, support_plane_idx,
+      //   "iter-10000-surface-mesh-" + std::to_string(support_plane_idx));
+    }
+    // CGAL_assertion_msg(false, "TODO: CREATE MISSING PFACES!");
     return num_created_pfaces;
   }
 
@@ -3936,7 +3957,7 @@ public:
       original_face.push_back(original_face.front());
 
       const auto cid = cdt.insert_constraint(original_face.begin(), original_face.end());
-      map_intersections.insert(std::make_pair(cid, Data_structure::null_iedge()));
+      map_intersections.insert(std::make_pair(cid, null_iedge()));
     }
 
     // Then, add intersection vertices + constraints.
@@ -4003,7 +4024,7 @@ public:
       if (iter == map_intersections.end()) {
         continue;
       }
-      if (iter->second == Data_structure::null_iedge()) {
+      if (iter->second == null_iedge()) {
         return true;
       }
     }
@@ -4049,114 +4070,259 @@ public:
   const Face_handle find_initial_face(
     const CDT& cdt, const IEdge& init_iedge) const {
 
-    return Face_handle();
+    CGAL_assertion(init_iedge != null_iedge());
     for (auto fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
-      if (fit->info().index == KSR::no_element()) continue;
-      if (fit->info().index == KSR::uninitialized()) continue;
+      if (fit->info().index != KSR::no_element()) continue;
 
       for (std::size_t i = 0; i < 3; ++i) {
-        const auto im = (i + 2) % 3;
-        const auto ip = (i + 1) % 3;
-
-        const auto vhm = fit->vertex(im);
-        const auto vhp = fit->vertex(ip);
-
-        const auto iv1 = vhm->info().ivertex;
-        const auto iv2 = vhp->info().ivertex;
-        CGAL_assertion(iv1 != null_ivertex());
-        CGAL_assertion(iv2 != null_ivertex());
-
-        if (m_intersection_graph.is_edge(iv1, iv2)) {
-          const auto iedge = m_intersection_graph.edge(iv1, iv2);
-          if (iedge == init_iedge) return static_cast<Face_handle>(fit);
-        } else if (m_intersection_graph.is_edge(iv2, iv1)) {
-          const auto iedge = m_intersection_graph.edge(iv2, iv1);
-          if (iedge == init_iedge) return static_cast<Face_handle>(fit);
-        } else {
-          CGAL_assertion_msg(false, "ERROR: WRONG IVERTICES!");
+        const auto edge = std::make_pair(fit, i);
+        const auto iedge = find_iedge(edge);
+        if (iedge == null_iedge()) {
+          CGAL_assertion(!cdt.is_constrained(edge));
+          continue;
+        }
+        if (iedge == init_iedge) {
+          return static_cast<Face_handle>(fit);
         }
       }
     }
-
     CGAL_assertion_msg(false, "ERROR: NO INITIAL FACE FOUND!");
     return Face_handle();
+  }
+
+  const IEdge find_iedge(const Edge& edge) const {
+    const auto& fh = edge.first;
+    const auto idx = edge.second;
+
+    const auto im = (idx + 1) % 3;
+    const auto ip = (idx + 2) % 3;
+
+    const auto& vh1 = fh->vertex(im);
+    const auto& vh2 = fh->vertex(ip);
+
+    const auto& iv1 = vh1->info().ivertex;
+    const auto& iv2 = vh2->info().ivertex;
+    CGAL_assertion(iv1 != null_ivertex());
+    CGAL_assertion(iv2 != null_ivertex());
+
+    // std::cout << "iv1: " << point_3(iv1) << std::endl;
+    // std::cout << "iv2: " << point_3(iv2) << std::endl;
+
+    IEdge iedge = null_iedge();
+    if (m_intersection_graph.is_edge(iv1, iv2)) {
+      iedge = m_intersection_graph.edge(iv1, iv2);
+    } else if (m_intersection_graph.is_edge(iv2, iv1)) {
+      iedge = m_intersection_graph.edge(iv2, iv1);
+    }
+    return iedge;
   }
 
   const KSR::size_t tag_cdt_potential_faces(
     const KSR::size_t sp_idx,
     const CDT& cdt,
     const Face_handle& init_fh,
-    const KSR::size_t face_index_init) const {
+    const KSR::size_t num_faces) const {
 
-    return 0;
-
-    KSR::size_t face_index = face_index_init;
-    std::queue<Face_handle> todo;
-    CGAL_assertion(todo.size() == 0);
+    CGAL_assertion(init_fh != Face_handle());
     CGAL_assertion(init_fh->info().index == KSR::no_element());
+    if (init_fh == Face_handle()) return 0;
 
-    todo.push(init_fh);
-    while (!todo.empty()) {
-      const auto fh = todo.front();
-      todo.pop();
-      if (fh->info().index != KSR::no_element()) continue;
-      if (fh->info().input != KSR::uninitialized()) continue;
+    KSR::size_t face_index = num_faces;
+    std::queue<Face_handle> todo_ext, todo_int;
 
-      fh->info().input = face_index;
-      for (std::size_t i = 0; i < 3; ++i) {
-        const auto next = fh->neighbor(i);
-        const auto edge = std::make_pair(fh, i);
-        const bool is_crossing_edge = is_crossing(sp_idx, cdt, edge);
-        if (is_crossing_edge) {
-          todo.push(next);
+    todo_ext.push(init_fh);
+    while (!todo_ext.empty()) {
+      const auto first = todo_ext.front();
+      todo_ext.pop();
+
+      CGAL_assertion(todo_int.size() == 0);
+      todo_int.push(first);
+      while (!todo_int.empty()) {
+        const auto fh = todo_int.front();
+        todo_int.pop();
+        if (fh->info().index != KSR::no_element())    continue;
+        if (fh->info().input != KSR::uninitialized()) continue;
+
+        fh->info().index = face_index;
+        fh->info().input = face_index;
+        for (std::size_t i = 0; i < 3; ++i) {
+          const auto next = fh->neighbor(i);
+          const auto edge = std::make_pair(fh, i);
+          bool is_exterior = false, is_interior = false;
+          std::tie(is_exterior, is_interior) = is_crossing(sp_idx, cdt, edge);
+          if (is_exterior) {
+            CGAL_assertion(!is_interior);
+            todo_ext.push(next);
+          }
+          if (is_interior) {
+            CGAL_assertion(!is_exterior);
+            todo_int.push(next);
+          }
         }
       }
+      ++face_index;
+      CGAL_assertion(todo_int.size() == 0);
     }
-    ++face_index;
-    CGAL_assertion(todo.size() == 0);
-    CGAL_assertion_msg(face_index == 1, "TODO: TAG MULTIPLE PFACES!");
-    return (face_index - face_index_init);
+
+    const auto num_detected_pfaces = face_index - num_faces;
+    CGAL_assertion(num_detected_pfaces > 0);
+    return num_detected_pfaces;
   }
 
-  const bool is_crossing(
+  const std::pair<bool, bool> is_crossing(
     const KSR::size_t sp_idx, const CDT& cdt, const Edge& edge) const {
 
     const auto& init_fh = edge.first;
-    const auto& i = edge.second;
-    const auto fh = init_fh->neighbor(i);
-    if (fh->info().index != KSR::no_element()) return false;
-    if (fh->info().input != KSR::uninitialized()) return false;
-    if (!cdt.is_constrained(edge)) {
-      return true;
+    const auto& init_id = edge.second;
+    const auto fh = init_fh->neighbor(init_id);
+
+    if (fh->info().index != KSR::no_element()) return std::make_pair(false, false);
+    if (fh->info().input != KSR::uninitialized()) return std::make_pair(false, false);
+
+    const auto iedge = find_iedge(edge);
+    if (iedge == null_iedge()) {
+      CGAL_assertion(!cdt.is_constrained(edge));
+      return std::make_pair(false, true);
     }
-
-    const auto im = (i + 2) % 3;
-    const auto ip = (i + 1) % 3;
-
-    const auto vhm = init_fh->vertex(im);
-    const auto vhp = init_fh->vertex(ip);
-
-    const auto iv1 = vhm->info().ivertex;
-    const auto iv2 = vhp->info().ivertex;
-    CGAL_assertion(iv1 != null_ivertex());
-    CGAL_assertion(iv2 != null_ivertex());
 
     auto pvertex = null_pvertex();
     pvertex.first = sp_idx;
     bool is_occupied_edge = false, is_bbox_reached = false;
+    std::tie(is_occupied_edge, is_bbox_reached) = is_occupied(pvertex, iedge);
+    if (is_occupied_edge || is_bbox_reached) return std::make_pair(false, false);
+    return std::make_pair(true, false);
+  }
 
-    if (m_intersection_graph.is_edge(iv1, iv2)) {
-      const auto iedge = m_intersection_graph.edge(iv1, iv2);
-      std::tie(is_occupied_edge, is_bbox_reached) = is_occupied(pvertex, iedge);
-      if (is_occupied_edge || is_bbox_reached) return false;
-    } else if (m_intersection_graph.is_edge(iv2, iv1)) {
-      const auto iedge = m_intersection_graph.edge(iv2, iv1);
-      std::tie(is_occupied_edge, is_bbox_reached) = is_occupied(pvertex, iedge);
-      if (is_occupied_edge || is_bbox_reached) return false;
-    } else {
-      CGAL_assertion_msg(false, "ERROR: WRONG IVERTICES!");
+  const KSR::size_t insert_pfaces(
+    const KSR::size_t support_plane_idx, const CDT& cdt) {
+
+    std::set<KSR::size_t> done;
+    KSR::size_t num_created_pfaces = 0;
+
+    for (auto fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
+      CGAL_assertion(fit->info().index != KSR::uninitialized());
+      if (fit->info().input == KSR::uninitialized()) { // skip all faces with no input
+        continue;
+      }
+
+      // Search for a constrained edge.
+      Edge edge;
+      for (std::size_t i = 0; i < 3; ++i) {
+        edge = std::make_pair(fit, i);
+        if (cdt.is_constrained(edge)) {
+          break;
+        }
+      }
+
+      // Skip pure interior faces.
+      if (!cdt.is_constrained(edge)) {
+        continue;
+      }
+
+      // If face index is already a part of the set, skip.
+      const auto fh = edge.first;
+      if (!done.insert(fh->info().index).second) {
+        continue;
+      }
+
+      // Start from the constrained edge and traverse all constrained edges / boundary
+      // of the triangulation part that is tagged with the same face index.
+      // While traversing, add all missing pvertices.
+      auto curr = edge;
+      std::vector<PVertex> new_pvertices;
+      do {
+        const auto curr_face = curr.first;
+        const int idx = curr.second;
+
+        const auto source = curr_face->vertex(cdt.ccw(idx));
+        const auto target = curr_face->vertex(cdt.cw (idx));
+        if (source->info().pvertex == null_pvertex()) {
+          source->info().pvertex =
+            this->add_pvertex(support_plane_idx, source->point());
+        }
+        source->info().tagged = true;
+        new_pvertices.push_back(source->info().pvertex);
+
+        // Search for the next constrained edge.
+        auto next = std::make_pair(curr_face, cdt.ccw(idx));
+        while (!cdt.is_constrained(next)) {
+
+          const auto next_face = next.first->neighbor(next.second);
+          // Should be the same original polygon.
+          CGAL_assertion(next_face->info().index == edge.first->info().index);
+
+          const int next_idx = cdt.ccw(next_face->index(next.first));
+          next = std::make_pair(next_face, next_idx);
+        }
+        // Check wether next source == previous target.
+        CGAL_assertion(next.first->vertex(cdt.ccw(next.second)) == target);
+        curr = next;
+
+      } while (curr != edge);
+      CGAL_assertion(curr == edge);
+
+      // Add a new pface.
+      const auto pface = this->add_pface(new_pvertices);
+      ++num_created_pfaces;
+      CGAL_assertion(pface != PFace());
     }
-    return true;
+
+    // CGAL_assertion_msg(false, "TODO: INSERT DETECTED PFACES!");
+    return num_created_pfaces;
+  }
+
+  void reconnect_pvertices_to_ivertices(const CDT& cdt) {
+
+    // Reconnect only those, which have already been connected.
+    for (auto vit = cdt.finite_vertices_begin(); vit != cdt.finite_vertices_end(); ++vit) {
+      if (!vit->info().tagged) continue;
+      if (vit->info().pvertex != null_pvertex() &&
+          vit->info().ivertex != null_ivertex()) {
+        this->connect(vit->info().pvertex, vit->info().ivertex);
+      }
+    }
+  }
+
+  void reconnect_pedges_to_iedges(
+    const CDT& cdt,
+    const std::map<CID, IEdge>& map_intersections) {
+
+    // Reconnect only those, which have already been connected.
+    for (const auto& item : map_intersections) {
+      const auto& cid   = item.first;
+      const auto& iedge = item.second;
+
+      if (iedge == null_iedge()) {
+        continue;
+      }
+      CGAL_assertion(iedge != null_iedge());
+
+      auto vit = cdt.vertices_in_constraint_begin(cid);
+      while (true) {
+        auto next = vit; ++next;
+        if (next == cdt.vertices_in_constraint_end(cid)) { break; }
+        const auto a = *vit;
+        const auto b = *next;
+        vit = next;
+
+        if (
+          a->info().pvertex == null_pvertex() ||
+          b->info().pvertex == null_pvertex()) {
+          continue;
+        }
+
+        if (!a->info().tagged || !b->info().tagged) {
+          continue;
+        }
+
+        CGAL_assertion(a->info().pvertex != null_pvertex());
+        CGAL_assertion(b->info().pvertex != null_pvertex());
+        // std::cout << "a: " << point_3(a->info().pvertex) << std::endl;
+        // std::cout << "b: " << point_3(b->info().pvertex) << std::endl;
+        // std::cout << "e: " << segment_3(iedge) << std::endl;
+        this->connect(a->info().pvertex, b->info().pvertex, iedge);
+      }
+    }
   }
 
   void dump_cdt(
