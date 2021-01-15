@@ -14,8 +14,8 @@ endif()
 include( ${CGAL_USE_FILE} )
 
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
-include(CGAL_Eigen_support)
-if (NOT TARGET CGAL::Eigen_support)
+include(CGAL_Eigen3_support)
+if (NOT TARGET CGAL::Eigen3_support)
   message(STATUS "This project requires the Eigen library, and will not be compiled.")
   return()
 endif()
@@ -28,5 +28,5 @@ foreach(target
         obb_example
         obb_with_point_maps_example
         rotated_aabb_tree_example)
-  target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
+  target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
 endforeach()

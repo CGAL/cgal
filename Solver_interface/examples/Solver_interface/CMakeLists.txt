@@ -12,15 +12,15 @@ if ( CGAL_FOUND )
 
   # Use Eigen
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-  include(CGAL_Eigen_support)
+  include(CGAL_Eigen3_support)
 
-  if (TARGET CGAL::Eigen_support)
+  if (TARGET CGAL::Eigen3_support)
     create_single_source_cgal_program( "singular_value_decomposition.cpp" )
-    target_link_libraries(singular_value_decomposition PUBLIC CGAL::Eigen_support)
+    target_link_libraries(singular_value_decomposition PUBLIC CGAL::Eigen3_support)
     create_single_source_cgal_program( "sparse_solvers.cpp" )
-    target_link_libraries(sparse_solvers PUBLIC CGAL::Eigen_support)
+    target_link_libraries(sparse_solvers PUBLIC CGAL::Eigen3_support)
     create_single_source_cgal_program( "diagonalize_matrix.cpp" )
-    target_link_libraries(diagonalize_matrix PUBLIC CGAL::Eigen_support)
+    target_link_libraries(diagonalize_matrix PUBLIC CGAL::Eigen3_support)
   endif()
 
   create_single_source_cgal_program( "mixed_integer_program.cpp" )

@@ -18,7 +18,7 @@ if ( NOT CGAL_FOUND )
 endif()
 
 find_package(Eigen3 3.1.91) #(requires 3.2.0 or greater)
-include(CGAL_Eigen_support)
+include(CGAL_Eigen3_support)
 
 if (MSVC)
     # Turn off VC++ warning
@@ -63,13 +63,13 @@ create_single_source_cgal_program( "weighted_Minkowski_distance.cpp" )
 
 
 
-if (TARGET CGAL::Eigen_support)
+if (TARGET CGAL::Eigen3_support)
 
   create_single_source_cgal_program( "fuzzy_range_query.cpp" )
-  target_link_libraries(fuzzy_range_query PUBLIC CGAL::Eigen_support)
+  target_link_libraries(fuzzy_range_query PUBLIC CGAL::Eigen3_support)
 
   create_single_source_cgal_program( "general_neighbor_searching.cpp" )
-  target_link_libraries(general_neighbor_searching PUBLIC CGAL::Eigen_support)
+  target_link_libraries(general_neighbor_searching PUBLIC CGAL::Eigen3_support)
 
 else()
 

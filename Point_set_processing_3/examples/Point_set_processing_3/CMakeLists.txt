@@ -70,9 +70,9 @@ if ( CGAL_FOUND )
 
   # Use Eigen
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-  include(CGAL_Eigen_support)
-  if (TARGET CGAL::Eigen_support)
-    set(CGAL_libs ${CGAL_libs} CGAL::Eigen_support)
+  include(CGAL_Eigen3_support)
+  if (TARGET CGAL::Eigen3_support)
+    set(CGAL_libs ${CGAL_libs} CGAL::Eigen3_support)
 
     # Executables that require Eigen
     foreach(target

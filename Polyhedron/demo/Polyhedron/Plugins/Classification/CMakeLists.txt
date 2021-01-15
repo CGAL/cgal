@@ -1,6 +1,6 @@
 include( polyhedron_demo_macros )
 
-if(TARGET CGAL::Eigen_support)
+if(TARGET CGAL::Eigen3_support)
 
   set(Classification_dependencies_met TRUE)
 
@@ -39,7 +39,7 @@ if(TARGET CGAL::Eigen_support)
       scene_surface_mesh_item
       scene_selection_item
       scene_color_ramp
-      CGAL::Eigen_support
+      CGAL::Eigen3_support
       CGAL::Boost_serialization_support
       CGAL::Boost_iostreams_support)
 
