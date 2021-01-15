@@ -12,9 +12,7 @@ Release date: June 2021
   - Polygon mesh I/O functions can be found in the package [BGL](https://doc.cgal.org/5.3/Manual/packages.html#PkgBGL).
   - Polygon soup I/O can be found in the package [Stream_support](https://doc.cgal.org/5.3/Manual/packages.html#PkgStreamSupport).
 
-A comprehensive list of the supported file formats is available in the Stream_support package: [link];
-the following page [link] can be used to find out which CGAL data structures can be used
-given a specific file format.
+A comprehensive list of the supported file formats is available in the Stream_support package [here](https://doc.cgal.org/5.3/Stream_support/index.html#IOstreamSupportedFormats); inversely, the following [page](https://doc.cgal.org/5.3/Stream_support/IOStreamSupportedFileFormats.html) can be used to find out which CGAL data structures can be used given a specific file format.
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.3/Manual/packages.html#PkgPolygonMeshProcessing)
 
