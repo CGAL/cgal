@@ -73,6 +73,16 @@ int main (const int argc, const char** argv) {
   }
   ks.push_back(100);
 
+  // Edge case tests.
+  assert(run_test("data/edge-case-test/test-flat-bbox-xy.off"  , ks, num_iters, num_tests)); // flat bbox / 2 coplanar in XY
+  assert(run_test("data/edge-case-test/test-flat-bbox-xz.off"  , ks, num_iters, num_tests)); // flat bbox / 2 coplanar in XZ
+  assert(run_test("data/edge-case-test/test-flat-bbox-yz.off"  , ks, num_iters, num_tests)); // flat bbox / 2 coplanar in YZ
+  assert(run_test("data/edge-case-test/test-2-polygons.off"    , ks, num_iters, num_tests)); // edge touch
+  assert(run_test("data/edge-case-test/test-4-polygons.off"    , ks, num_iters, num_tests)); // edge touch / 2 coplanar
+  assert(run_test("data/edge-case-test/test-5-polygons.off"    , ks, num_iters, num_tests)); // edge touch / vertex touch / 2 coplanar
+  assert(run_test("data/edge-case-test/test-local-global-1.off", ks, num_iters, num_tests)); // no hanging pfaces
+  assert(run_test("data/edge-case-test/test-local-global-2.off", ks, num_iters, num_tests)); // 1 hanging pface
+
   // Stress tests 0.
   assert(run_test("data/stress-test-0/test-1-polygon-a.off"    , ks, num_iters, num_tests));
   assert(run_test("data/stress-test-0/test-1-polygon-b.off"    , ks, num_iters, num_tests));
@@ -139,18 +149,10 @@ int main (const int argc, const char** argv) {
   // Real data tests.
   assert(run_test("data/real-data-test/test-10-polygons.off", ks, num_iters, num_tests));
   assert(run_test("data/real-data-test/test-15-polygons.off", ks, num_iters, num_tests));
-  assert(run_test("data/edge-case-test/test-20-polygons.off", ks, num_iters, num_tests)); // 2 overlap and coplanar
+  assert(run_test("data/real-data-test/test-20-polygons.off", ks, num_iters, num_tests)); // 2 overlap and coplanar
 
-  // Edge case tests.
-  assert(run_test("data/edge-case-test/test-flat-bbox-xy.off"  , ks, num_iters, num_tests)); // flat bbox / 2 coplanar in XY
-  assert(run_test("data/edge-case-test/test-flat-bbox-xz.off"  , ks, num_iters, num_tests)); // flat bbox / 2 coplanar in XZ
-  assert(run_test("data/edge-case-test/test-flat-bbox-yz.off"  , ks, num_iters, num_tests)); // flat bbox / 2 coplanar in YZ
-  assert(run_test("data/edge-case-test/test-2-polygons.off"    , ks, num_iters, num_tests)); // edge touch
-  assert(run_test("data/edge-case-test/test-4-polygons.off"    , ks, num_iters, num_tests)); // edge touch / 2 coplanar
-  assert(run_test("data/edge-case-test/test-5-polygons.off"    , ks, num_iters, num_tests)); // edge touch / vertex touch / 2 coplanar
-  assert(run_test("data/edge-case-test/test-local-global-1.off", ks, num_iters, num_tests)); // no hanging pfaces
-  assert(run_test("data/edge-case-test/test-local-global-2.off", ks, num_iters, num_tests)); // 1 hanging pface
-  // assert(run_test("data/edge-case-test/test-same-time.off"  , ks, num_iters, num_tests)); // all arrive at the same time - does not yet work!
+  // Still to be done!
+  // assert(run_test("data/edge-case-test/test-same-time.off"  , ks, num_iters, num_tests)); // all arrive at the same time
 
   std::cout << std::endl << "--OUTPUT STATS:" << std::endl;
   std::cout << "* number of iterations per test: " << num_iters << std::endl;
