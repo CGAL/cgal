@@ -31,7 +31,7 @@
 #endif
 #include <CGAL/OpenNL/linear_solver.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <boost/unordered_set.hpp>
 
 #include <vector>
