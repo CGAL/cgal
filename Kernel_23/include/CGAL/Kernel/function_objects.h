@@ -3787,6 +3787,7 @@ namespace CommonKernelFunctors {
   class Oriented_side_3
   {
     typedef typename K::Point_3        Point_3;
+    typedef typename K::Vector_3       Vector_3;
     typedef typename K::Tetrahedron_3  Tetrahedron_3;
     typedef typename K::Plane_3        Plane_3;
     typedef typename K::Sphere_3       Sphere_3;
@@ -3800,6 +3801,12 @@ namespace CommonKernelFunctors {
     result_type
     operator()( const Plane_3& pl, const Point_3& p) const
     { return pl.rep().oriented_side(p); }
+
+    result_type
+    operator()( const Point_3& plane_pt, const Vector_3& plane_normal, const Point_3& query) const
+    {
+      return typename K::Construct_plane_3()(plane_pt, plane_normal).rep().oriented_side(query);
+    }
 
     result_type
     operator()( const Tetrahedron_3& t, const Point_3& p) const
