@@ -109,8 +109,8 @@ struct Exact_intersect_xz_2 <R,Homogeneous_tag>
       }
 
       const Segment_2* si = boost::get<Segment_2>(&*obj);
-      p2 = s2.source();
-      q2 = s2.target();
+      p2 = si.source();
+      q2 = si.target();
 
       return boost::make_optional(variant_type(Segment_3(Point_3 (p2.hx(),0,p2.hy(),p2.hw()),
                                                          Point_3 (q2.hx(),0,q2.hy(),q2.hw())) ));
