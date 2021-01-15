@@ -154,6 +154,10 @@ executables should be linked with the CMake imported target
 
 The \sc{libpointmatcher} web site is <A
 HREF="https://github.com/ethz-asl/libpointmatcher">`https://github.com/ethz-asl/libpointmatcher`</A>.
+\attention On Windows, we only test the following setup : PointMatcher 1.3.1 with Eigen 3.3.7. Also, to make it work, you should follow the instructions at
+`https://github.com/ethz-asl/libpointmatcher/blob/master/doc/CompilationWindows.md`, but replace `NABO_INCLUDE_DIR` by `libnabo_INCLUDE_DIRS`
+and `NABO_LIBRARY` by `libnabo_LIBRARIES` when configuring PointMatcher.
+
 
 \subsection thirdpartyLeda LEDA
 <b>Version 6.2 or later</b>
