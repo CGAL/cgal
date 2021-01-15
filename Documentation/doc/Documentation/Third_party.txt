@@ -129,7 +129,7 @@ dependency over \sc{Eigen} is marked on the <a
 href="https://doc.cgal.org/latest/Manual/packages.html">Package
 Overview</a> page. In order to use Eigen in \cgal programs, the
 executables should be linked with the CMake imported target
-`CGAL::Eigen_support` provided in `CGAL_Eigen_support.cmake`.
+`CGAL::Eigen3_support` provided in `CGAL_Eigen3_support.cmake`.
 
 The \sc{Eigen} web site is <A HREF="http://eigen.tuxfamily.org/index.php?title=Main_Page">`http://eigen.tuxfamily.org`</A>.
 
