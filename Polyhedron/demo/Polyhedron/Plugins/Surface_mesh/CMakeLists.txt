@@ -4,7 +4,7 @@ if(POLICY CMP0074)
   cmake_policy(SET CMP0074 NEW)
 endif()
 
-if(TARGET CGAL::Eigen_support)
+if(TARGET CGAL::Eigen3_support)
   find_package(CGAL REQUIRED COMPONENTS Core)
 
   include(${CGAL_USE_FILE})
@@ -14,7 +14,7 @@ if(TARGET CGAL::Eigen_support)
                          ${parameterizationUI_FILES})
   target_link_libraries(
     parameterization_plugin PUBLIC scene_surface_mesh_item scene_textured_item
-                                   scene_selection_item CGAL::Eigen_support)
+                                   scene_selection_item CGAL::Eigen3_support)
 else()
   message(
     STATUS
@@ -37,8 +37,8 @@ polyhedron_demo_plugin(offset_meshing_plugin Offset_meshing_plugin
                        ${remeshingUI_FILES})
 target_link_libraries(offset_meshing_plugin PUBLIC scene_surface_mesh_item
                                                    scene_polygon_soup_item)
-if(TARGET CGAL::Eigen_support)
-  target_link_libraries(offset_meshing_plugin PUBLIC CGAL::Eigen_support)
+if(TARGET CGAL::Eigen3_support)
+  target_link_libraries(offset_meshing_plugin PUBLIC CGAL::Eigen3_support)
 endif()
 if(TARGET CGAL::TBB_support)
   target_link_libraries(offset_meshing_plugin PUBLIC CGAL::TBB_support)
