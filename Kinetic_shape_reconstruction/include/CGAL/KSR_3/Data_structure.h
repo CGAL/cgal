@@ -3843,6 +3843,7 @@ public:
     // then, check again, because, after this insertion, other pfaces can be
     // reclassified into normal pfaces and there is no need to handle them.
     // I should also precompute CDT since I may have separate holes in the same plane.
+    // See real-data-test -> test-15-polygons for k = 1.
 
     bool quit = true;
     std::size_t num_added_pfaces = 0;
@@ -3901,7 +3902,7 @@ public:
     tag_cdt_exterior_faces(cdt, map_intersections);
     const auto num_original_pfaces = tag_cdt_interior_faces(cdt);
     if (m_verbose) {
-      std::cout << "- num original pfaces: " << num_original_pfaces << std::endl;
+      // std::cout << "- num original pfaces: " << num_original_pfaces << std::endl;
     }
 
     const Face_handle init_fh = find_initial_face(cdt, init_iedge);
@@ -3910,7 +3911,7 @@ public:
       support_plane_idx, cdt, init_fh, num_original_pfaces);
 
     if (m_verbose) {
-      std::cout << "- num detected pfaces: " << num_detected_pfaces << std::endl;
+      // std::cout << "- num detected pfaces: " << num_detected_pfaces << std::endl;
       // dump_cdt(cdt, support_plane_idx,
       //   "/Users/monet/Documents/gf/kinetic/logs/volumes/");
     }
@@ -3921,7 +3922,7 @@ public:
     reconnect_pedges_to_iedges(cdt, map_intersections);
 
     if (m_verbose) {
-      std::cout << "- num created pfaces: " << num_created_pfaces << std::endl;
+      // std::cout << "- num created pfaces: " << num_created_pfaces << std::endl;
       // dump_2d_surface_mesh(*this, support_plane_idx,
       //   "iter-10000-surface-mesh-" + std::to_string(support_plane_idx));
     }
