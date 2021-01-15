@@ -42,7 +42,7 @@
 #include <tbb/concurrent_vector.h>
 #endif
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 #include <exception>
 #include <sstream>

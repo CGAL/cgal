@@ -34,7 +34,7 @@
 #include <QtPlugin>
 #include <QMessageBox>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 #include "run_with_qprogressdialog.h"
 

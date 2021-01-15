@@ -38,7 +38,7 @@
 #include "Kernel_type.h"
 
 #include <boost/unordered_set.hpp>
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <QMap>
 #include <QVector>
