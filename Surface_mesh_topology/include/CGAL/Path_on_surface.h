@@ -1300,6 +1300,12 @@ public:
      { std::cout<<" c "; } //<<m_map.darts().index(get_ith_dart(0)); }
   }
 
+  friend std::ostream& operator<<(std::ostream& os, const Self& p)
+  {
+    p.display();
+    return os;
+  }
+
 protected:
   const typename Get_map<Mesh, Mesh>::storage_type m_map; // The underlying map
   std::vector<Dart_const_handle> m_path; /// The sequence of darts
