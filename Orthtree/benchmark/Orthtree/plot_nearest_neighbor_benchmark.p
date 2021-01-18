@@ -14,4 +14,4 @@ set ylabel "Time (us)"
 set key autotitle columnhead
 
 set datafile separator ","
-plot for [col=2:4] 'nearest_neighbor_benchmark.csv' using 1:col
+plot for [col=2:10] 'nearest_neighbor_benchmark.csv' using 1:col

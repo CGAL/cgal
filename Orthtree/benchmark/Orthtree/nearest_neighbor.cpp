@@ -29,6 +29,8 @@ using std::chrono::microseconds;
 
 int main(int argc, char **argv) {
 
+  int num_runs = 100;
+
   size_t k = 10;
 
   // Set output file
@@ -36,72 +38,90 @@ int main(int argc, char **argv) {
   file.open((argc > 1) ? argv[1] : "../nearest_neighbor_benchmark.csv");
 
   // Add header for CSV
-  file << "Number of Points,Octree,kDTree,Naive \n";
+  file << "Number of Points,Octree,kDTree \n";
 
   // Perform tests for various dataset sizes
   for (size_t num_points = 100; num_points < 100000; num_points *= 1.05) {
 
-    // Create a collection of the right number of points
-    auto points = generate<Kernel>(num_points);
+    // We want the average of several runs for each point count, for cleaner results
+    float octreeAverage = 0;
+    float kdtreeAverage = 0;
+    float naiveAverage = 0;
 
-    // Create a search point
-    auto search_point = *(generate<Kernel>().points().end() - 1);
+    // Repeat the tests, generating a new point set for each run
+    for (int i = 0; i < num_runs; ++i) {
 
-    // Build the kd tree from the point set
-    Kdtree kdtree(points.points().begin(), points.points().end());
-    kdtree.build();
+      // Create a collection of the right number of points
+      auto points = generate<Kernel>(num_points);
 
-    // Time how long it takes to find neighbors using the kd tree
-    auto kdtreeTime = bench<microseconds>(
-            [&] {
-              Kd_tree_search search(kdtree, search_point, k);
-            }
-    );
+      // Create a search point
+      auto search_point = *(generate<Kernel>().points().end() - 1);
 
-    // Time how long it takes to find neighbors using a naive approach
-    auto naiveTime = bench<microseconds>(
-            [&] {
+      // Build the kd tree from the point set
+      Kdtree kdtree(points.points().begin(), points.points().end());
+      kdtree.build();
 
-              std::vector<Point> nearest_neighbors;
-
-              // Iterate over every point
-              for (auto &point : points.points()) {
-
-                // Find out how this point ranks in comparison with other points we've saved
-                auto iter = nearest_neighbors.begin();
-                for (; iter < nearest_neighbors.end() &&
-                       CGAL::squared_distance(point, search_point) <
-                       CGAL::squared_distance(*iter, search_point);
-                       iter++) {}
-
-                // Add the point to the list (it'll usually be at the end)
-                nearest_neighbors.insert(iter, point);
-
-                // Never keep more than k neighbors
-                if (nearest_neighbors.size() > k)
-                  nearest_neighbors.resize(k);
-
+      // Time how long it takes to find neighbors using the kd tree
+      auto kdtreeTime = bench<microseconds>(
+              [&] {
+                Kd_tree_search search(kdtree, search_point, k);
               }
+      );
 
-            }
-    );
+      // Time how long it takes to find neighbors using a naive approach
+//    auto naiveTime = bench<microseconds>(
+//            [&] {
+//
+//              std::vector<Point> nearest_neighbors;
+//
+//              // Iterate over every point
+//              for (auto &point : points.points()) {
+//
+//                // Find out how this point ranks in comparison with other points we've saved
+//                auto iter = nearest_neighbors.begin();
+//                for (; iter < nearest_neighbors.end() &&
+//                       CGAL::squared_distance(point, search_point) <
+//                       CGAL::squared_distance(*iter, search_point);
+//                       iter++) {}
+//
+//                // Add the point to the list (it'll usually be at the end)
+//                nearest_neighbors.insert(iter, point);
+//
+//                // Never keep more than k neighbors
+//                if (nearest_neighbors.size() > k)
+//                  nearest_neighbors.resize(k);
+//
+//              }
+//
+//            }
+//    );
 
-    // Build the octree from points (this had to be done second because it rearranges the point set)
-    Octree octree(points, points.point_map());
-    octree.refine();
+      // Build the octree from points (this had to be done second because it rearranges the point set)
+      Octree octree(points, points.point_map());
+      octree.refine();
 
-    // Time how long it takes to find neighbors using the octree
-    auto octreeTime = bench<microseconds>(
-            [&] {
-              std::vector<Point> nearest_neighbors;
-              octree.nearest_neighbors(search_point, k, std::back_inserter(nearest_neighbors));
-            }
-    );
+      // Time how long it takes to find neighbors using the octree
+      auto octreeTime = bench<microseconds>(
+              [&] {
+                std::vector<Point> nearest_neighbors;
+                octree.nearest_neighbors(search_point, k, std::back_inserter(nearest_neighbors));
+              }
+      );
+
+      // Incorporate our results into the average
+      octreeAverage += (float) octreeTime.count() / (float) num_runs;
+      kdtreeAverage += (float) kdtreeTime.count() / (float) num_runs;
+//      naiveAverage += (float) naiveTime.count() / (float) num_runs;
+
+      // A simple progress indication
+      std::cout << ".";
+    }
 
     file << num_points << ",";
-    file << octreeTime.count() << ",";
-    file << kdtreeTime.count() << ",";
-    file << naiveTime.count() << "\n";
+    file << octreeAverage << ",";
+    file << kdtreeAverage << ",";
+//    file << naiveAverage << ",";
+    file << "\n";
 
     std::cout << num_points << std::endl;
 

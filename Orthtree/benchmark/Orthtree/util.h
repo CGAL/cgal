@@ -26,19 +26,20 @@ CGAL::Point_set_3<typename Kernel::Point_3> generate(size_t num_points = 1) {
 }
 
 template<typename Time_unit>
-Time_unit bench(const std::function<void(void)>& f) {
+Time_unit bench(const std::function<void(void)> &f, size_t repetitions = 1) {
 
-    // Start the timer
-    auto start = std::chrono::high_resolution_clock::now();
+  // Start the timer
+  auto start = std::chrono::high_resolution_clock::now();
 
-    // Run the function being benchmarked
+  // Run the function being benchmarked as many times as requested
+  for (int i = 0; i < repetitions; ++i)
     f();
 
-    // End the timer
-    auto end = std::chrono::high_resolution_clock::now();
+  // End the timer
+  auto end = std::chrono::high_resolution_clock::now();
 
-    // Return the elapsed time
-    return std::chrono::duration_cast<Time_unit>(end - start);
+  // Return the elapsed time
+  return std::chrono::duration_cast<Time_unit>(end - start) / repetitions;
 }
 
 #endif //OCTREE_UTIL_H
