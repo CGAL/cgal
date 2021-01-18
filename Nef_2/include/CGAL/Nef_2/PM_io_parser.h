@@ -200,6 +200,11 @@ bool PM_io_parser<PMDEC>::read_vertex(Vertex_handle v)
        !(in >> p) ||
        !check_sep("}") ) return false;
 
+  if(!(f >= 0 && ((iso && f < fn) || (!iso && f < en))))
+  {
+    in.clear(std::ios_base::badbit);
+    return false;
+  }
   if (iso) v->set_face(Face_of[f]);
   else     v->set_halfedge(Halfedge_of[f]);
   mark(v) = m; point(v) = p;
@@ -229,10 +234,14 @@ bool PM_io_parser<PMDEC>::read_hedge(Halfedge_handle e)
        !(in >> f) || !check_sep(",") ||
        !(in >> m) || !check_sep("}") )
     return false;
-  CGAL_assertion_msg
-     (eo >= 0 || (std::size_t) eo < en || epr >= 0 || (std::size_t) epr < en || ene >= 0 || (std::size_t) ene < en ||
-      v >= 0 || (std::size_t) v < vn || f >= 0 || (std::size_t) f < fn ,
-      "wrong index in read_hedge");
+
+  if(!(eo >= 0 && (std::size_t) eo < en && epr >= 0 && (std::size_t) epr < en && ene >= 0 && (std::size_t) ene < en &&
+       v >= 0 && (std::size_t) v < vn && f >= 0 && (std::size_t) f < fn ))
+  {
+    in.clear(std::ios_base::badbit);
+    std::cerr<<"wrong index in read_hedge"<<std::endl;
+    return false;
+  }
 
   // precond: objects exist!
   CGAL_assertion(EI[e->opposite()]);
@@ -267,14 +276,32 @@ bool PM_io_parser<PMDEC>::read_face(Face_handle f)
   int n, ei, vi; Mark m;
   if ( !(in >> n) || !check_sep("{") ) return false;
   if ( !(in >> ei) || !check_sep(",") ) return false;
-  if (ei >= 0) f->set_halfedge(Halfedge_of[ei]);
+  if (ei >= 0 && ei < en)
+  {
+    f->set_halfedge(Halfedge_of[ei]);
+  }
+  else
+  {
+    in.clear(std::ios_base::badbit);
+    return false;
+  }
   while (in >> ei) {
     CGAL_assertion_msg(ei >= 0 && (std::size_t) ei < en, "wrong index in face cycle list.");
+    if (!(ei >= 0 && ei < en))
+    {
+      in.clear(std::ios_base::badbit);
+      return false;
+    }
     f->store_fc(Halfedge_of[ei]);
   } in.clear();
   if (!check_sep(",")) { return false; }
   while (in >> vi) {
     CGAL_assertion_msg(vi >= 0 && (std::size_t) vi < vn, "wrong index in iso vertex list.");
+    if (!(vi >= 0 && vi < vn))
+    {
+      in.clear(std::ios_base::badbit);
+      return false;
+    }
     f->store_iv(Vertex_of[vi]);
   } in.clear();
   if (!check_sep(",") || !(in >> m) || !check_sep("}") )
@@ -313,13 +340,26 @@ template <typename PMDEC>
 void PM_io_parser<PMDEC>::read()
 {
   if ( !check_sep("Plane_map_2") )
-    CGAL_error_msg("PM_io_parser::read: no embedded_PM header.");
+  {
+    std::cerr<<"PM_io_parser::read: no embedded_PM header."<<std::endl;
+    return;
+  }
   if ( !(check_sep("vertices") && (in >> vn)) )
-    CGAL_error_msg("PM_io_parser::read: wrong node line.");
+  {
+    std::cerr<<"PM_io_parser::read: wrong node line."<<std::endl;
+    return;
+  }
+
   if ( !(check_sep("halfedges") && (in >> en) && (en%2==0)) )
-    CGAL_error_msg("PM_io_parser::read: wrong edge line.");
+  {
+    std::cerr<<"PM_io_parser::read: wrong edge line."<<std::endl;
+    return;
+  }
   if ( !(check_sep("faces") && (in >> fn)) )
-    CGAL_error_msg("PM_io_parser::read: wrong face line.");
+  {
+    std::cerr<<"PM_io_parser::read: wrong face line."<<std::endl;
+    return;
+  }
 
   Vertex_of.resize(vn);
   Halfedge_of.resize(en);
@@ -333,16 +373,24 @@ void PM_io_parser<PMDEC>::read()
 
   for(i=0; i<vn; i++) {
     if (!read_vertex(Vertex_of[i]))
-      CGAL_error_msg("PM_io_parser::read: error in node line");
+    {
+      std::cerr<<"PM_io_parser::read: error in node line"<<std::endl;
+      return;
+    }
   }
   for(i=0; i<en; i++) {
     if (!read_hedge(Halfedge_of[i]))
-      CGAL_error_msg("PM_io_parser::read: error in halfedge\
-      line");
+    {
+      std::cerr<<"PM_io_parser::read: error in halfedge line"<<std::endl;
+      return;
+    }
   }
   for(i=0; i<fn; i++) {
     if (!read_face(Face_of[i]))
-      CGAL_error_msg("PM_io_parser::read: error in face line");
+    {
+      std::cerr<<"PM_io_parser::read: error in face line"<<std::endl;
+      return;
+    }
   }
 }
 

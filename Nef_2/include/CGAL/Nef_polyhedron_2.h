@@ -1112,6 +1112,8 @@ std::istream& operator>>
     std::cerr << "Nef_polyhedron_2 input corrupted." << std::endl;
     NP = Nef_polyhedron_2<T,Items,Mark>();
   }
+  if(!is)
+    return is;
   typename Nef_polyhedron_2<T,Items,Mark>::Topological_explorer D(NP.explorer());
   D.check_integrity_and_topological_planarity();
   return is;
