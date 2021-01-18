@@ -7,30 +7,6 @@ CXX_FLAGS="-DCGAL_NDEBUG -ftemplate-backtrace-limit=0"
 function mytime {
   /usr/bin/time -f "Spend time of %C: %E (real)" "$@"
 }
-
-function build_examples {
-  mkdir -p build-travis
-  cd build-travis
-  mytime cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCMAKE_CXX_FLAGS="${CXX_FLAGS}" -DCGAL_BUILD_THREE_DOC=TRUE ..
-  mytime make -j2 VERBOSE=1
-}
-
-function build_tests {
-  build_examples
-}
-
-function build_demo {
-  mkdir -p build-travis
-  cd build-travis
-  EXTRA_CXX_FLAGS=
-  case "$CC" in
-    clang*)
-      EXTRA_CXX_FLAGS="-Werror=inconsistent-missing-override"
-      ;;
-  esac
-  mytime cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}"  ..
-  mytime make -j2 VERBOSE=1
-}
 old_IFS=$IFS
 IFS=$' '
 ROOT="$PWD/.."
@@ -41,6 +17,7 @@ do
     continue
   fi
 cd $ROOT
+
 #install openmesh only if necessary
   if [ "$ARG" = "CHECK" ] || [ "$ARG" = BGL ] || [ "$ARG" = Convex_hull_3 ] ||\
      [ "$ARG" = Polygon_mesh_processing ] || [ "$ARG" = Property_map ] ||\
@@ -92,7 +69,7 @@ cd $ROOT
           exit 1
     fi
     echo "Matrix is up to date."
-    #check if non standard cgal installation works
+     #check if non standard cgal installation works
     cd $ROOT
     mkdir build_test
     cd build_test
@@ -111,12 +88,30 @@ cd $ROOT
     echo '#include "CGAL/remove_outliers.h"' >> main.cpp
     cd build
     mytime cmake -DCMAKE_INSTALL_PREFIX=../../install -DCGAL_BUILD_THREE_DOC=TRUE ..
-    cd ..
     exit 0
   fi
+
+  if [ "$ARG" = "Installation" ]
+  then
+  mkdir build_dir
+  cd build_dir
+  cmake -DWITH_tests=ON -DBUILD_TESTING=ON ..
+  ctest -j2 -L CGAL_cmake_testsuite --output-on-failure
+  cd ..
+  rm -rf ./build_dir
+  #==-- configure all CGAL with -DWITH_examples=ON -DWITH_demos=ON -DWITH_tests=ON, and then launch CTest on a few labels. --==
+  mkdir config_dir
+  cd config_dir
+  cmake -DWITH_examples=ON -DWITH_demos=ON -DWITH_tests=ON -DBUILD_TESTING=ON ..
+  ctest -j2 -L AABB_tree --output-on-failure
+  cd ..
+  rm -rf ./config_dir
+    exit 0
+  fi
+
   IFS=$old_IFS
 
-  if [ -n "$TRAVIS_PULL_REQUEST_BRANCH" ] && [ "$ARG" != Polyhedron_demo ]; then
+  if [ -n "$TRAVIS_PULL_REQUEST_BRANCH" ]; then
     DO_IGNORE=FALSE
     . $ROOT/.travis/test_package.sh "$ROOT" "$ARG"
     echo "DO_IGNORE is $DO_IGNORE"
@@ -125,66 +120,22 @@ cd $ROOT
     fi
   fi
   IFS=$' '
-  EXAMPLES="$ARG/examples/$ARG"
-  TEST="$ARG/test/$ARG"
-  DEMOS=$ROOT/$ARG/demo/*
+  mkdir -p build-travis
+  cd build-travis
+  WITHDEMOS=ON
+  if [ "$ARG" = "Polyhedron" ]; then
+    WITHDEMOS=OFF
+  fi
+  EXTRA_CXX_FLAGS=
+  case "$CC" in
+    clang*)
+      EXTRA_CXX_FLAGS="-Werror=inconsistent-missing-override"
+      ;;
+  esac
 
-  if [ -d "$ROOT/$EXAMPLES" ]
-  then
-    cd $ROOT/$EXAMPLES
-    if [ -f ./CMakeLists.txt ]; then
-      build_examples
-    else
-      for dir in ./*
-      do
-        if [ -f $dir/CMakeLists.txt ]; then
-          cd $ROOT/$EXAMPLES/$dir
-          build_examples
-        fi
-      done
-    fi
-  elif [ "$ARG" != Polyhedron_demo ]; then
-    echo "No example found for $ARG"
-  fi
 
-  if [ -d "$ROOT/$TEST" ]
-  then
-    cd $ROOT/$TEST
-    if [ -f ./CMakeLists.txt ]; then
-      build_tests
-    else
-      for dir in ./*
-      do
-        if [ -f $dir/CMakeLists.txt ]; then
-          cd $ROOT/$TEST/$dir
-          build_tests
-        fi
-      done
-    fi
-  elif [ "$ARG" != Polyhedron_demo ]; then
-    echo "No test found for $ARG"
-  fi
-  #Packages like Periodic_3_triangulation_3 contain multiple demos
-  for DEMO in $DEMOS; do
-    DEMO=${DEMO#"$ROOT"}
-    echo $DEMO
-    #If there is no demo subdir, try in GraphicsView
-    if [ ! -d "$ROOT/$DEMO" ] || [ ! -f "$ROOT/$DEMO/CMakeLists.txt" ]; then
-     DEMO="GraphicsView/demo/$ARG"
-    fi
-    if [ "$ARG" != Polyhedron ] && [ -d "$ROOT/$DEMO" ]
-    then
-      cd $ROOT/$DEMO
-      build_demo
-    elif [ "$ARG" != Polyhedron_demo ]; then
-      echo "No demo found for $ARG"
-    fi
-  done
-  if [ "$ARG" = Polyhedron_demo ]; then
-    DEMO=Polyhedron/demo/Polyhedron
-    cd "$ROOT/$DEMO"
-    build_demo
-  fi
+  mytime cmake -DCMAKE_CXX_FLAGS="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DBUILD_TESTING=ON -DWITH_tests=ON -DWITH_examples=ON -DWITH_demos=$WITHDEMOS ..
+  mytime ctest -j2 -L $ARG'([_][A-Z]|$)'  -E execution___of__ --output-on-failure
 done
 IFS=$old_IFS
 # Local Variables:

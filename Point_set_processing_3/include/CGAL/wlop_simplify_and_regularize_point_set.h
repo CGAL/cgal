@@ -353,7 +353,7 @@ compute_density_weight_for_sample_point(
    \tparam OutputIterator Type of the output iterator.
    It must accept objects of type `geom_traits::Point_3`.
 
-   \param points input point range.
+   \param points input point range
    \param output iterator where output points are put.
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 

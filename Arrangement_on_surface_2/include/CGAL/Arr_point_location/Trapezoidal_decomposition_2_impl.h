@@ -1488,7 +1488,7 @@ Trapezoidal_decomposition_2<Td_traits>::insert(Halfedge_const_handle he)
   // if the edge starts at a vertex, we should not insert it into the DAG.
   // Instead, we should update all the edges incident to the vertex.
   // Otherwise, this is a new vertex, insert a node to the DAG that represents
-  // the new vertex. In this case, the the edge itself is the only incident
+  // the new vertex. In this case, the edge itself is the only incident
   // edge, and so it is a trivial operation.
   Td_map_item p1_item = (lt1 == POINT) ?
     update_vtx_with_new_edge(he, ce1, item1, lt1) :

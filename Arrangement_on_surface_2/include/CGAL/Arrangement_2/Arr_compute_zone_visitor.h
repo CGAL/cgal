@@ -8,27 +8,29 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Ophir Setter      <ophirset@post.tau.ac.il>
+// Author(s) : Ophir Setter      <ophirset@post.tau.ac.il>
+//             Efi Fogel         <efifogel@gmail.com>
 //
 #ifndef CGAL_ARR_COMPUTE_ZONE_VISITOR_H
 #define CGAL_ARR_COMPUTE_ZONE_VISITOR_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
-
 /*! \file
  * Definition of the Arr_compute_zone_visitor class.
  */
 
+#include <boost/variant.hpp>
+
 namespace CGAL {
 
 /*! \class
- * A visitor class for Arrangement_zone_2, which outputs the
- * zone of an x-monotone curve. Meaning, it output the arrangment's
- * vertices, edges and faces that the x-monotone curve intersects.
+ * A visitor class for Arrangement_zone_2 that outputs the zone of an
+ * x-monotone curve. Specifically, it outputs handles to the the arrangment
+ * cells that the x-monotone curve intersects.
  * The class should be templated by an Arrangement_2 class, and by an
- * output iterator of CGAL Objects, where we store all arrangement
- * features the x-monotone curve intersects.
+ * output iterator of a variant of types of handles to the arrangement cells
+ * that appear in the zone, namely, vertex, halfedge, and face handles.
  */
 template <class Arrangement_, class OutputIterator_>
 class Arr_compute_zone_visitor
@@ -53,7 +55,7 @@ private:
   const Vertex_handle        invalid_v;    // Invalid vertex.
 
   OutputIterator&            out_iter;     // for outputing the zone objects.
-                                           // Its value type is CGAL::Object.
+                                           // Its value type is boost::variant.
   bool                       output_left;  // Determines wheter we should
                                            // output the left end point of a
                                            // subcurve (to avoid outputing
@@ -65,8 +67,8 @@ public:
   Arr_compute_zone_visitor (OutputIterator& oi) :
     invalid_he(),
     invalid_v(),
-    out_iter (oi),
-    output_left (true)
+    out_iter(oi),
+    output_left(true)
   {}
 
   /*! Initialize the visitor. */
@@ -90,50 +92,35 @@ public:
    * \return A handle to the halfedge obtained from the insertion of the
    *         subcurve into the arrangement.
    */
-  Result found_subcurve (const X_monotone_curve_2&,
-                         Face_handle face,
-                         Vertex_handle left_v, Halfedge_handle left_he,
-                         Vertex_handle right_v, Halfedge_handle right_he)
+  Result found_subcurve(const X_monotone_curve_2&,
+                        Face_handle face,
+                        Vertex_handle left_v, Halfedge_handle left_he,
+                        Vertex_handle right_v, Halfedge_handle right_he)
   {
-    if (output_left)
-    {
+    typedef boost::variant<Vertex_handle, Halfedge_handle, Face_handle>
+                                                                Zone_result;
+
+    if (output_left) {
       // Only the first subcurve should output the arrangement feature incident
       // to its left endpoint. This way we avoid reporting the same feature
       // twice.
-      if (left_v != invalid_v)
-      {
-        *out_iter = CGAL::make_object (left_v);
-        ++out_iter;
-      }
-      else if (left_he != invalid_he)
-      {
-        *out_iter = CGAL::make_object (left_he);
-        ++out_iter;
-      }
+      if (left_v != invalid_v) *out_iter++ = Zone_result(left_v);
+      else if (left_he != invalid_he) *out_iter++ = Zone_result(left_he);
 
       output_left = false;
     }
 
     // Report the face that contains the interior of the subcurve.
-    *out_iter = CGAL::make_object (face);
-    ++out_iter;
+    *out_iter++ = Zone_result(face);
 
     // If the right endpoint of the subcurve is incident to an arrangement
     // vertex or an arrangement edge, report this feature.
-    if (right_v != invalid_v)
-    {
-      *out_iter = CGAL::make_object(right_v);
-      ++out_iter;
-    }
-    else if (right_he != invalid_he)
-    {
-      *out_iter = CGAL::make_object(right_he);
-      ++out_iter;
-    }
+    if (right_v != invalid_v) *out_iter++ = Zone_result(right_v);
+    else if (right_he != invalid_he) *out_iter++ = Zone_result(right_he);
 
     // We did not modify the arrangement, so we return an invalid handle
     // and a flag indicating that the zone-computation process should continue.
-    return (Result (invalid_he, false));
+    return Result(invalid_he, false);
   }
 
   /*!
@@ -151,35 +138,28 @@ public:
                         Halfedge_handle he,
                         Vertex_handle left_v, Vertex_handle right_v)
   {
-    if (output_left)
-    {
+    typedef boost::variant<Vertex_handle, Halfedge_handle, Face_handle>
+                                                                Zone_result;
+
+    if (output_left) {
       // Only the first subcurve should output the arrangement feature incident
       // to its left endpoint. This way we avoid reporting the same feature
       // twice.
-      if (left_v != invalid_v)
-      {
-        *out_iter = CGAL::make_object (left_v);
-        ++out_iter;
-      }
+      if (left_v != invalid_v) *out_iter++ = Zone_result(left_v);
 
       output_left = false;
     }
 
     // Report the arrangement edge the curve currently overlaps.
-    *out_iter = CGAL::make_object(he);
-    ++out_iter;
+    *out_iter++ = Zone_result(he);
 
     // If the right endpoint of the overlapping subcurve is incident to an
     // arrangement vertex, report this vertex as well.
-    if (right_v != invalid_v)
-    {
-      *out_iter = CGAL::make_object (right_v);
-      ++out_iter;
-    }
+    if (right_v != invalid_v) *out_iter++ = Zone_result(right_v);
 
     // We did not modify the arrangement, so we return an invalid handle
     // and a flag indicating that the zone-computation process should continue.
-    return (Result (invalid_he, false));
+    return Result(invalid_he, false);
   }
 };
 

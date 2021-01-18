@@ -417,12 +417,9 @@ void Polyhedron_demo_affine_transform_plugin::grid()
       Scene_item::Bbox b = item->bbox();
 
 
-      double x_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3((b.min)(0), (b.min)(1), (b.min)(2)),
-                                                   Kernel::Point_3((b.max)(0), (b.min)(1), (b.min)(2))))),
-          y_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3((b.min)(0), (b.min)(1), (b.min)(2)),
-                                                Kernel::Point_3((b.min)(0), (b.max)(1), (b.min)(2))))),
-          z_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3((b.min)(0), (b.min)(1), (b.min)(2)),
-                                                Kernel::Point_3((b.min)(0), (b.min)(1), (b.max)(2)))));
+      double x_t(1.001*((b.max)(0)- (b.min)(0))),
+          y_t(1.001*((b.max)(1)- (b.min)(1))),
+          z_t(1.001*((b.max)(2)- (b.min)(2)));
 
       GridDialog dialog(mw);
       dialog.x_space_doubleSpinBox->setValue(x_t);
@@ -450,7 +447,7 @@ void Polyhedron_demo_affine_transform_plugin::grid()
             Kernel::Aff_transformation_3 trans(CGAL::TRANSLATION, Kernel::Vector_3(i*x_t,j*y_t,k*z_t));
             CGAL::Polygon_mesh_processing::transform(trans, e);
             Facegraph_item* t_item = new Facegraph_item(e);
-            t_item->setName(tr("%1 %2%3%4")
+            t_item->setName(tr("%1 %2,%3,%4")
                             .arg(item->name())
                             .arg(i)
                             .arg(j)

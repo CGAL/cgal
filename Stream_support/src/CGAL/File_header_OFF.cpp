@@ -16,8 +16,8 @@
 
 #ifndef CGAL_HEADER_ONLY
 
-#include <CGAL/IO/File_header_OFF.h>
-#include <CGAL/IO/File_header_OFF_impl.h>
+#include <CGAL/IO/OFF/File_header_OFF.h>
+#include <CGAL/IO/OFF/File_header_OFF_impl.h>
 
 #endif // CGAL_HEADER_ONLY
 

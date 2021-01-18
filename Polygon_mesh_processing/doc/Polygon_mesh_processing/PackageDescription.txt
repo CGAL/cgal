@@ -10,7 +10,6 @@
 ///
 /// \ingroup PkgPolygonMeshProcessingRef
 
-
 /// \defgroup hole_filling_grp Hole Filling
 /// Functions to fill holes given as a range of halfedges or as range of points.
 /// \ingroup PkgPolygonMeshProcessingRef
@@ -39,7 +38,6 @@
 /// Functions to repair polygon soups and polygon meshes.
 /// \ingroup PkgPolygonMeshProcessingRef
 
-
 /// \defgroup PMP_distance_grp Distance Functions
 /// Functions to compute the distance between meshes, between a mesh and a point set and between a point set and a mesh.
 /// \ingroup PkgPolygonMeshProcessingRef
@@ -63,6 +61,10 @@
 /// Note that those functions will be exact as long as the underlying do-intersect predicates used are exact.
 /// In practice, it means that the 3D point type used must come from a \cgal kernel with exact predicates.
 /// \ingroup PkgPolygonMeshProcessingRef
+
+/// \defgroup PMP_IO_grp I/O Functions
+/// \ingroup PkgPolygonMeshProcessingRef
+
 /*!
 \addtogroup PkgPolygonMeshProcessingRef
 
@@ -125,6 +127,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::degenerate_faces()`
 - `CGAL::Polygon_mesh_processing::is_needle_triangle_face()`
 - `CGAL::Polygon_mesh_processing::is_cap_triangle_face()`
+- `CGAL::Polyhedral_envelope`
 
 \cgalCRPSection{Location Functions}
 - \link PMP_locate_grp Point Location \endlink
@@ -222,5 +225,8 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::border_halfedges()`
 - `CGAL::Polygon_mesh_processing::extract_boundary_cycles()`
 - `CGAL::Polygon_mesh_processing::transform()`
+
+\cgalCRPSection{I/O Functions}
+- \link PMP_IO_grp `CGAL::Polygon_mesh_processing::read_polygon_mesh()`\endlink
 
 */

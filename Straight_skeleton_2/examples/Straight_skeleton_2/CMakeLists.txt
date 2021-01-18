@@ -1,26 +1,28 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-
 cmake_minimum_required(VERSION 3.1...3.15)
 project( Straight_skeleton_2_Examples )
 
 
-find_package(CGAL QUIET COMPONENTS Core )
+find_package(CGAL REQUIRED COMPONENTS Core)
 
-if ( CGAL_FOUND )
+find_package(CGAL COMPONENTS Qt5)
 
-  include(${CGAL_USE_FILE})
-
-  # create a target per cppfile
-  file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-  foreach(cppfile ${cppfiles})
-    create_single_source_cgal_program( "${cppfile}" )
-  endforeach()
-
-else()
-
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
-
+if(CGAL_Qt5_FOUND)
+  add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
 endif()
 
+include(${CGAL_USE_FILE})
+
+# create a target per cppfile
+file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+foreach(cppfile ${cppfiles})
+  create_single_source_cgal_program( "${cppfile}" )
+endforeach()
+
+if(CGAL_Qt5_FOUND)
+  target_link_libraries(draw_straight_skeleton_2 PUBLIC CGAL::CGAL_Qt5)
+else()
+  message(STATUS "NOTICE: The example draw_straight_skeleton_2 requires Qt and will not be compiled.")
+endif()

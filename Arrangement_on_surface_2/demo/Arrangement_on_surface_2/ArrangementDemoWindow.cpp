@@ -1,1248 +1,747 @@
-// Copyright (c) 2012  Tel-Aviv University (Israel).
+// Copyright (c) 2012, 2020  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
 //
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+// Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #include "ArrangementDemoWindow.h"
-#include "NewTabDialog.h"
-#include "OverlayDialog.h"
+#include "AlgebraicCurveInputDialog.h"
+#include "RationalCurveInputDialog.h"
 #include "ArrangementDemoPropertiesDialog.h"
 #include "ArrangementDemoTab.h"
-#include "Conic_reader.h"
-
-#include "DeleteCurveMode.h"
-#include "ArrangementGraphicsItem.h"
-
-#include <boost/math/special_functions/fpclassify.hpp>
+#include "NewTabDialog.h"
+#include "OverlayDialog.h"
+#include "GraphicsViewCurveInput.h"
+#include "CurveInputMethods.h"
+#include "ArrangementTypesUtils.h"
+#include "ArrangementIO.h"
+#include "Utils/Utils.h"
 
 #include <QActionGroup>
-#include <QFileDialog>
-#include <QMessageBox>
 #include <QColorDialog>
+#include <QFileDialog>
+#include <QInputDialog>
+#include <QMessageBox>
+#include <QString>
+#include <QGraphicsView>
+#include <QLabel>
 
-#include <CGAL/IO/Arr_with_history_iostream.h>
-#include <CGAL/IO/Arr_text_formatter.h>
-#include <CGAL/IO/Arr_with_history_text_formatter.h>
+#include <CGAL/Qt/GraphicsViewNavigation.h>
+
+#include "ui_ArrangementDemoWindow.h"
+
+using TraitsType = demo_types::TraitsType;
 
 ArrangementDemoWindow::ArrangementDemoWindow(QWidget* parent) :
-  CGAL::Qt::DemosMainWindow( parent ),
-  lastTabIndex(static_cast<unsigned int>(-1)),
-  ui( new Ui::ArrangementDemoWindow )
+    CGAL::Qt::DemosMainWindow(parent), ui(new Ui::ArrangementDemoWindow),
+    tabLabelCounter(1)
 {
-  this->setupUi( );
+  this->setupUi();
 
-  // set up the demo window
-  // ArrangementDemoTabBase* demoTab =
-  this->makeTab( SEGMENT_TRAITS );
-  this->setupStatusBar( );
-  this->setupOptionsMenu( );
-  this->addAboutDemo( ":/help/about.html" );
-  this->addAboutCGAL( );
+  QObject::connect(
+    this->inputTypeGroup, SIGNAL(triggered(QAction*)), this,
+    SLOT(updateInputType(QAction*)));
 
-  // set up callbacks
-  QObject::connect( this->modeGroup, SIGNAL( triggered( QAction* ) ),
-                    this, SLOT( updateMode( QAction* ) ) );
-  QObject::connect( this->envelopeGroup, SIGNAL( triggered( QAction* ) ),
-                    this, SLOT( updateEnvelope( QAction* ) ) );
-  QObject::connect( this->snapGroup, SIGNAL( triggered( QAction* ) ),
-                    this, SLOT( updateSnapping( QAction* ) ) );
+  QObject::connect(
+    this->envelopeGroup, SIGNAL(triggered(QAction*)), this,
+    SLOT(updateEnvelope(QAction*)));
 
-  QObject::connect( this->conicTypeGroup, SIGNAL( triggered( QAction* ) ),
-                    this, SLOT( updateConicType( QAction* ) ) );
+  this->makeTab(TraitsType::SEGMENT_TRAITS);
+
+  // Call inherited functions
+  this->setupStatusBar();
+  // this->setupOptionsMenu();
+  this->addAboutDemo(":/cgal/Arrangement_on_surface_2/about.html");
+  this->addAboutCGAL();
 }
 
-ArrangementDemoWindow::~ArrangementDemoWindow() {}
+ArrangementDemoWindow::~ArrangementDemoWindow() { }
 
-ArrangementDemoTabBase* ArrangementDemoWindow::makeTab( TraitsType tt )
+void ArrangementDemoWindow::setupUi()
 {
-  static int tabLabelCounter = 1;
-  QString tabLabel;
+  this->ui->setupUi(this);
 
-  ArrangementDemoTabBase* demoTab;
-  Seg_arr* seg_arr;
-  Pol_arr* pol_arr;
+  this->modeGroup = new QActionGroup(this);
+  this->modeGroup->addAction(this->ui->actionDrag);
+  this->modeGroup->addAction(this->ui->actionInsert);
+  this->modeGroup->addAction(this->ui->actionDelete);
+  this->modeGroup->addAction(this->ui->actionPointLocation);
+  this->modeGroup->addAction(this->ui->actionRayShootingUp);
+  this->modeGroup->addAction(this->ui->actionRayShootingDown);
+  this->modeGroup->addAction(this->ui->actionMerge);
+  this->modeGroup->addAction(this->ui->actionSplit);
+  this->modeGroup->addAction(this->ui->actionFill);
 
-#ifdef CGAL_USE_CORE
-  Conic_arr* conic_arr;
-#endif
+  this->envelopeGroup = new QActionGroup(this);
+  this->envelopeGroup->addAction(this->ui->actionLowerEnvelope);
+  this->envelopeGroup->addAction(this->ui->actionUpperEnvelope);
+  this->envelopeGroup->setExclusive(false);
 
-  Lin_arr* lin_arr;
-  Arc_arr* arc_arr;
-  // Alg_seg_arr* alg_seg_arr;
-  CGAL::Object arr;
+  this->inputTypeGroup = new QActionGroup(this);
+  this->inputTypeGroup->addAction(this->ui->actionSegment);
+  this->inputTypeGroup->addAction(this->ui->actionPolyline);
+  this->inputTypeGroup->addAction(this->ui->actionCircle);
+  this->inputTypeGroup->addAction(this->ui->actionEllipse);
+  this->inputTypeGroup->addAction(this->ui->actionConicThreePoint);
+  this->inputTypeGroup->addAction(this->ui->actionConicFivePoint);
+  this->inputTypeGroup->addAction(this->ui->actionRay);
+  this->inputTypeGroup->addAction(this->ui->actionLine);
+  this->inputTypeGroup->addAction(this->ui->actionBezier);
+}
 
-  switch ( tt )
-  {
-   default:
-   case SEGMENT_TRAITS:
-    seg_arr = new Seg_arr;
-    demoTab = new ArrangementDemoTab< Seg_arr >( seg_arr, 0 );
-    arr = CGAL::make_object( seg_arr );
-    tabLabel = QString( "%1 - Segment" ).arg( tabLabelCounter++ );
-    break;
-   case POLYLINE_TRAITS:
-    pol_arr = new Pol_arr;
-    demoTab = new ArrangementDemoTab< Pol_arr >( pol_arr, 0 );
-    arr = CGAL::make_object( pol_arr );
-    tabLabel = QString( "%1 - Polyline" ).arg( tabLabelCounter++ );
-    break;
+QString ArrangementDemoWindow::makeTabLabel(TraitsType tt)
+{
+  static const char* typeNames[] = {
+    "Segment", "Polyline", "Linear", "Conic", "Algebraic",
+    "Bezier",  "Rational Functions"
+  };
+  return QString("%1 - %2")
+    .arg(this->tabLabelCounter++)
+    .arg(typeNames[static_cast<int>(tt)]);
+}
 
-#ifdef CGAL_USE_CORE
-   case CONIC_TRAITS:
-    conic_arr = new Conic_arr;
-    demoTab = new ArrangementDemoTab< Conic_arr >( conic_arr, 0 );
-    arr = CGAL::make_object( conic_arr );
-    tabLabel = QString( "%1 - Conic" ).arg( tabLabelCounter++ );
-    break;
-#endif
-
-   case LINEAR_TRAITS:
-    lin_arr = new Lin_arr;
-    demoTab = new ArrangementDemoTab< Lin_arr >( lin_arr, 0 );
-    arr = CGAL::make_object( lin_arr );
-    tabLabel = QString( "%1 - Linear" ).arg( tabLabelCounter++ );
-    break;
-   case CIRCULAR_ARC_TRAITS:
-    arc_arr = new Arc_arr;
-    demoTab = new ArrangementDemoTab< Arc_arr >( arc_arr, 0 );
-    arr = CGAL::make_object( arc_arr );
-    tabLabel = QString( "%1 - Circular Arc" ).arg( tabLabelCounter++ );
-    break;
-   // case ALGEBRAIC_TRAITS:
-   //  alg_seg_arr = new Alg_seg_arr;
-   //  demoTab = new ArrangementDemoTab< Alg_seg_arr >( alg_seg_arr, 0 );
-   //  arr = CGAL::make_object( alg_seg_arr );
-   //  tabLabel = QString( "%1 - Algebraic" ).arg( tabLabelCounter++ );
-   //  break;
-  }
-
-  this->arrangements.push_back( arr );
-  this->tabs.push_back( demoTab );
-
-  QGraphicsView* view = demoTab->getView( );
-  this->addNavigation( view );
-  this->ui->tabWidget->addTab( demoTab, tabLabel );
-  this->lastTabIndex = this->ui->tabWidget->currentIndex( );
-  this->ui->tabWidget->setCurrentWidget( demoTab );
-
-  this->resetCallbackState( this->ui->tabWidget->currentIndex( ) );
-  this->removeCallback( this->ui->tabWidget->currentIndex( ) );
-  this->updateMode( this->modeGroup->checkedAction( ) );
-  this->updateFillColorSwatch( );
-
+ArrangementDemoTab* ArrangementDemoWindow::makeTab(
+  TraitsType tt, QString tabLabel, CGAL::Object arr_obj)
+{
+  ArrangementDemoTab* demoTab = new ArrangementDemoTab(this, tt, arr_obj);
+  if (tabLabel.isNull())
+    tabLabel = makeTabLabel(tt);
+  this->addTab(demoTab, tabLabel);
   return demoTab;
 }
 
-ArrangementDemoTabBase* ArrangementDemoWindow::getTab( unsigned int tabIndex )
-  const
+void ArrangementDemoWindow::addTab(
+  ArrangementDemoTab* demoTab, QString tabLabel)
 {
-  if (tabIndex > this->tabs.size()) return NULL;
+  this->tabs.push_back(demoTab);
+
+  this->ui->tabWidget->addTab(demoTab, tabLabel);
+  this->ui->tabWidget->setCurrentWidget(demoTab);
+
+  // avoid using addNavigation since it will cause memory leaks when there are
+  // multiple tabs (no way to delete the navigation item!)
+  QObject::connect(
+    demoTab->getGraphicsViewNavigation(), SIGNAL(mouseCoordinates(QString)),
+    xycoord, SLOT(setText(QString)));
+}
+
+void ArrangementDemoWindow::resetActionGroups(
+  ArrangementDemoTab* tab, TraitsType tt)
+{
+  this->hideInsertMethods();
+  this->ui->actionInsert->setChecked(false);
+  this->ui->actionDrag->setChecked(false);
+  this->ui->actionLowerEnvelope->setChecked(false);
+  this->ui->actionUpperEnvelope->setChecked(false);
+  this->ui->actionShowGrid->setChecked(tab->isGridVisible());
+  this->ui->actionGridSnapMode->setChecked(tab->isSnapToGridEnabled());
+  this->ui->actionArrangementSnapMode->setChecked(
+    tab->isSnapToArrangementEnabled());
+  this->ui->actionLowerEnvelope->setChecked(tab->isLowerEnvelopeShown());
+  this->ui->actionUpperEnvelope->setChecked(tab->isUpperEnvelopeShown());
+
+  if (
+    tt != TraitsType::SEGMENT_TRAITS && tt != TraitsType::POLYLINE_TRAITS &&
+    tt != TraitsType::LINEAR_TRAITS)
+    this->ui->actionArrangementSnapMode->setVisible(false);
+  else
+    this->ui->actionArrangementSnapMode->setVisible(true);
+
+  // default action group is scrolling
+  this->ui->actionDrag->activate(QAction::Trigger);
+}
+
+void ArrangementDemoWindow::resetCallbackState(ArrangementDemoTab* tab)
+{
+  if (tab)
+  {
+    tab->getView()->setDragMode(QGraphicsView::NoDrag);
+    tab->unhookCallbacks();
+  }
+}
+
+void ArrangementDemoWindow::updateEnvelope(QAction* newMode)
+{
+  auto currentTab = this->getCurrentTab();
+  if (!currentTab) return;
+
+  bool show = newMode->isChecked();
+  if (newMode == this->ui->actionLowerEnvelope)
+    currentTab->showLowerEnvelope(show);
+  else if (newMode == this->ui->actionUpperEnvelope)
+    currentTab->showUpperEnvelope(show);
+}
+
+void ArrangementDemoWindow::hideInsertMethods()
+{
+  this->ui->actionAddAlgebraicCurve->setVisible(false);
+  this->ui->actionAddAlgebraicCurve->setChecked(false);
+  this->ui->actionAddRationalCurve->setVisible(false);
+  this->ui->actionAddRationalCurve->setChecked(false);
+  this->ui->actionSegment->setVisible(false);
+  this->ui->actionSegment->setChecked(false);
+  this->ui->actionCircle->setVisible(false);
+  this->ui->actionCircle->setChecked(false);
+  this->ui->actionEllipse->setVisible(false);
+  this->ui->actionEllipse->setChecked(false);
+  this->ui->actionConicThreePoint->setVisible(false);
+  this->ui->actionConicThreePoint->setChecked(false);
+  this->ui->actionConicFivePoint->setVisible(false);
+  this->ui->actionConicFivePoint->setChecked(false);
+  this->ui->actionRay->setVisible(false);
+  this->ui->actionRay->setChecked(false);
+  this->ui->actionLine->setVisible(false);
+  this->ui->actionLine->setChecked(false);
+  this->ui->actionPolyline->setVisible(false);
+  this->ui->actionPolyline->setChecked(false);
+  this->ui->actionBezier->setVisible(false);
+  this->ui->actionBezier->setChecked(false);
+}
+
+void ArrangementDemoWindow::showInsertMethods(demo_types::TraitsType tabType)
+{
+  switch(tabType)
+  {
+  case TraitsType::NONE:
+    return;
+  case TraitsType::SEGMENT_TRAITS:
+    this->ui->actionSegment->setVisible(true);
+    this->ui->actionSegment->activate(QAction::Trigger);
+    break;
+  case TraitsType::POLYLINE_TRAITS:
+    this->ui->actionPolyline->setVisible(true);
+    this->ui->actionPolyline->activate(QAction::Trigger);
+    break;
+  case TraitsType::LINEAR_TRAITS:
+    this->ui->actionSegment->setVisible(true);
+    this->ui->actionSegment->activate(QAction::Trigger);
+    this->ui->actionRay->setVisible(true);
+    this->ui->actionLine->setVisible(true);
+    break;
+#ifdef CGAL_USE_CORE
+  case TraitsType::CONIC_TRAITS:
+    this->ui->actionSegment->setVisible(true);
+    this->ui->actionCircle->setVisible(true);
+    this->ui->actionEllipse->setVisible(true);
+    this->ui->actionConicThreePoint->setVisible(true);
+    this->ui->actionConicFivePoint->setVisible(true);
+    break;
+  case TraitsType::ALGEBRAIC_TRAITS:
+    this->ui->actionCircle->setVisible(true);
+    this->ui->actionCircle->activate(QAction::Trigger);
+    this->ui->actionEllipse->setVisible(true);
+    this->ui->actionLine->setVisible(true);
+    this->ui->actionAddAlgebraicCurve->setVisible(true);
+    break;
+  case TraitsType::BEZIER_TRAITS:
+    this->ui->actionBezier->setVisible(true);
+    this->ui->actionBezier->activate(QAction::Trigger);
+    break;
+  case TraitsType::RATIONAL_FUNCTION_TRAITS:
+    this->ui->actionAddRationalCurve->setVisible(true);
+    break;
+#endif
+  default:
+    CGAL_error();
+  }
+}
+
+void ArrangementDemoWindow::updateInputType(QAction* a)
+{
+  auto tab = this->getCurrentTab();
+  if (!tab) return;
+
+  using namespace CGAL::Qt;
+  CurveType curveType = CurveType::None;
+
+  if (a == this->ui->actionSegment)
+    curveType = CurveType::Segment;
+  else if (a == this->ui->actionPolyline)
+    curveType = CurveType::Polyline;
+  else if (a == this->ui->actionLine)
+    curveType = CurveType::Line;
+  else if (a == this->ui->actionRay)
+    curveType = CurveType::Ray;
+  else if (a == this->ui->actionCircle)
+    curveType = CurveType::Circle;
+  else if (a == this->ui->actionEllipse)
+    curveType = CurveType::Ellipse;
+  else if (a == this->ui->actionConicThreePoint)
+    curveType = CurveType::ThreePointCircularArc;
+  else if (a == this->ui->actionConicFivePoint)
+    curveType = CurveType::FivePointConicArc;
+  else if (a == this->ui->actionBezier)
+    curveType = CurveType::Bezier;
+
+  tab->activateCurveInputCallback(curveType);
+}
+
+void ArrangementDemoWindow::on_actionAddAlgebraicCurve_triggered()
+{
+#ifdef CGAL_USE_CORE
+  AlgebraicCurveInputDialog newDialog;
+
+  if (newDialog.exec() == QDialog::Accepted)
+  {
+    auto currentTab = this->getCurrentTab();
+
+    std::string expression = newDialog.getLineEditText();
+    bool is_first_curve = false;
+
+    auto cv = algebraicCurveFromExpression(
+      currentTab->getArrangement(), expression,
+      is_first_curve);
+
+    if (!cv)
+    {
+      QMessageBox msgBox;
+      msgBox.setWindowTitle("Invalid Expression");
+      msgBox.setIcon(QMessageBox::Critical);
+      msgBox.setText(QString::fromStdString("Unable to parse expression!"));
+      msgBox.setStandardButtons(QMessageBox::Ok);
+      msgBox.exec();
+      return;
+    }
+
+    // adding curve to the arrangement
+    auto algCurveInputCallback = currentTab->getCurveInputCallback();
+    algCurveInputCallback->generate(cv);
+    if (is_first_curve) currentTab->adjustViewport();
+  }
+#endif
+}
+
+void ArrangementDemoWindow::on_actionAddRationalCurve_triggered()
+{
+#ifdef CGAL_USE_CORE
+  RationalCurveInputDialog newDialog;
+
+  if (newDialog.exec() == QDialog::Accepted)
+  {
+    auto currentTab = this->getCurrentTab();
+
+    std::string num = newDialog.getNumeratorText();
+    std::string den = newDialog.getDenominatorText();
+
+    bool is_first_curve = false;
+
+    auto cv = rationalCurveFromExpression(
+      currentTab->getArrangement(), num, den, is_first_curve);
+
+    if (!cv)
+    {
+      QMessageBox msgBox;
+      msgBox.setWindowTitle("Invalid Expression");
+      msgBox.setIcon(QMessageBox::Critical);
+      msgBox.setText(QString::fromStdString("Unable to parse expression!"));
+      msgBox.setStandardButtons(QMessageBox::Ok);
+      msgBox.exec();
+      return;
+    }
+
+    // adding curve to the arrangement
+    auto algCurveInputCallback = currentTab->getCurveInputCallback();
+    algCurveInputCallback->generate(cv);
+    if (is_first_curve) currentTab->adjustViewport();
+  }
+#endif
+}
+
+void ArrangementDemoWindow::on_actionQuit_triggered() { qApp->exit(); }
+
+void ArrangementDemoWindow::on_actionNewTab_triggered()
+{
+  NewTabDialog newTabDialog;
+  if (newTabDialog.exec() == QDialog::Accepted)
+  {
+    int id = newTabDialog.checkedId();
+    this->makeTab(static_cast<TraitsType>(id));
+  }
+}
+
+void ArrangementDemoWindow::on_tabWidget_currentChanged(int)
+{
+  auto currentTab = this->getCurrentTab();
+  if (currentTab)
+  {
+    auto tt = currentTab->traitsType();
+    this->resetCallbackState(currentTab);
+    this->resetActionGroups(currentTab, tt);
+    this->updateFillColorSwatch(currentTab);
+  }
+}
+
+void ArrangementDemoWindow::on_actionInsert_toggled(bool checked)
+{
+  this->hideInsertMethods();
+
+  auto currentTab = this->getCurrentTab();
+  if (currentTab)
+  {
+    if (checked)
+      this->showInsertMethods(currentTab->traitsType());
+    else
+      this->resetCallbackState(currentTab);
+  }
+}
+
+void ArrangementDemoWindow::on_actionDrag_toggled(bool checked)
+{
+  auto currentTab = this->getCurrentTab();
+  if (currentTab)
+  {
+    // TODO: Move this to DemoTab
+    QGraphicsView* activeView = currentTab->getView();
+    if (!checked)
+      activeView->setDragMode(QGraphicsView::NoDrag);
+    else
+      activeView->setDragMode(QGraphicsView::ScrollHandDrag);
+  }
+}
+
+void ArrangementDemoWindow::on_actionDelete_toggled(bool checked)
+{
+  auto currentTab = this->getCurrentTab();
+  if (currentTab && !checked)
+    this->resetCallbackState(currentTab);
+}
+
+void ArrangementDemoWindow::on_actionDelete_triggered()
+{
+  auto currentTab = this->getCurrentTab();
+  if (currentTab)
+    currentTab->activateDeleteCurveCallback();
+}
+
+void ArrangementDemoWindow::on_actionPointLocation_toggled(bool checked)
+{
+  auto currentTab = this->getCurrentTab();
+  if (currentTab)
+  {
+    if (!checked)
+      this->resetCallbackState(currentTab);
+    else
+      currentTab->activatePointLocationCallback();
+  }
+}
+
+void ArrangementDemoWindow::on_actionRayShootingUp_toggled(bool checked)
+{
+  auto currentTab = this->getCurrentTab();
+  if (currentTab)
+  {
+    if (!checked)
+      this->resetCallbackState(currentTab);
+    else
+      currentTab->activateVerticalRayShootCallback(true);
+  }
+}
+
+void ArrangementDemoWindow::on_actionRayShootingDown_toggled(bool checked)
+{
+  auto currentTab = this->getCurrentTab();
+  if (currentTab)
+  {
+    if (!checked)
+      this->resetCallbackState(currentTab);
+    else
+      currentTab->activateVerticalRayShootCallback(false);
+  }
+}
+
+void ArrangementDemoWindow::on_actionMerge_toggled(bool checked)
+{
+  auto currentTab = this->getCurrentTab();
+  if (currentTab)
+  {
+    if (!checked)
+      this->resetCallbackState(currentTab);
+    else
+      currentTab->activateMergeEdgeCallback();
+  }
+}
+
+void ArrangementDemoWindow::on_actionSplit_toggled(bool checked)
+{
+  auto currentTab = this->getCurrentTab();
+  if (currentTab)
+  {
+    if (!checked)
+      this->resetCallbackState(currentTab);
+    else
+      currentTab->activateSplitEdgeCallback();
+  }
+}
+
+void ArrangementDemoWindow::on_actionFill_toggled(bool checked)
+{
+  auto currentTab = this->getCurrentTab();
+  if (currentTab)
+  {
+    if (!checked)
+      this->resetCallbackState(currentTab);
+    else
+      currentTab->activateFillFaceCallback();
+  }
+}
+
+
+void ArrangementDemoWindow::on_actionShowGrid_toggled(bool checked)
+{
+  auto currentTab = this->getCurrentTab();
+  if (currentTab)
+  {
+    currentTab->showGrid(checked);
+    if (!checked && this->ui->actionGridSnapMode->isChecked())
+      this->ui->actionGridSnapMode->activate(QAction::Trigger);
+  }
+}
+
+void ArrangementDemoWindow::on_actionGridSnapMode_toggled(bool checked)
+{
+  auto currentTab = this->getCurrentTab();
+  if (currentTab)
+  {
+    currentTab->setSnapToGrid(checked);
+    if (checked && !this->ui->actionShowGrid->isChecked())
+      this->ui->actionShowGrid->activate(QAction::Trigger);
+  }
+}
+
+void ArrangementDemoWindow::on_actionArrangementSnapMode_toggled(bool checked)
+{
+  auto currentTab = this->getCurrentTab();
+  if (currentTab)
+  {
+    currentTab->setSnapToArrangement(checked);
+  }
+}
+
+void ArrangementDemoWindow::on_actionCloseTab_triggered()
+{
+  auto currentTab = this->getCurrentTab();
+  if (!currentTab) return;
+
+  // delete the tab
+  auto currentTabIndex = this->ui->tabWidget->currentIndex();
+  this->ui->tabWidget->removeTab(currentTabIndex);
+
+  // release memory
+  delete currentTab;
+
+  // remove the tab
+  this->tabs.erase(this->tabs.begin() + currentTabIndex);
+}
+
+void ArrangementDemoWindow::on_actionZoomIn_triggered()
+{
+  auto currentTab = this->getCurrentTab();
+  if (currentTab)
+  {
+    QGraphicsView* view = currentTab->getView();
+    view->scale(2.0, 2.0);
+  }
+}
+
+void ArrangementDemoWindow::on_actionZoomOut_triggered()
+{
+  auto currentTab = this->getCurrentTab();
+  if (currentTab)
+  {
+    QGraphicsView* view = currentTab->getView();
+    view->scale(0.5, 0.5);
+  }
+}
+
+void ArrangementDemoWindow::on_actionZoomReset_triggered()
+{
+  auto currentTab = this->getCurrentTab();
+  if (currentTab)
+    currentTab->adjustViewport();
+}
+
+void ArrangementDemoWindow::on_actionFillColor_triggered()
+{
+  auto currentTab = this->getCurrentTab();
+  if (!currentTab) return;
+
+  QColor fillColor = currentTab->getFillFaceColor();
+
+  QColor selectedColor = QColorDialog::getColor(fillColor);
+  if (selectedColor.isValid())
+  {
+    currentTab->setFillFaceColor(selectedColor);
+    this->updateFillColorSwatch(currentTab);
+  }
+}
+
+void ArrangementDemoWindow::updateFillColorSwatch(ArrangementDemoTab* tab)
+{
+  if (!tab) return;
+
+  QColor fillColor = tab->getFillFaceColor();
+  if (!fillColor.isValid()) { fillColor = ::Qt::black; }
+
+  QPixmap fillColorPixmap(16, 16);
+  fillColorPixmap.fill(fillColor);
+  QIcon fillColorIcon(fillColorPixmap);
+  this->ui->actionFillColor->setIcon(fillColorIcon);
+}
+
+ArrangementDemoTab* ArrangementDemoWindow::getCurrentTab()
+{
+  int tabIndex = this->ui->tabWidget->currentIndex();
+  if (tabIndex == -1) return nullptr;
+
   return this->tabs[tabIndex];
 }
 
-ArrangementDemoTabBase* ArrangementDemoWindow::getCurrentTab( ) const
+void ArrangementDemoWindow::on_actionOverlay_triggered()
 {
-  int currentIndex = this->ui->tabWidget->currentIndex( );
-  if ( currentIndex == -1 )
-    return NULL;
+  std::vector<OverlayDialog::ArrangementInfo> arr_infos;
+  for (int i = 0; i < this->ui->tabWidget->count(); ++i)
+  {
+    // this assumes that all tabs are of type ArrangementDemoTab
+    ArrangementDemoTab* tab =
+      static_cast<ArrangementDemoTab*>(this->ui->tabWidget->widget(i));
 
-  ArrangementDemoTabBase* res = this->tabs[ currentIndex ];
-  return res;
-}
+    arr_infos.push_back({
+        i, tab->traitsType(), this->ui->tabWidget->tabText(i)});
+  }
 
-std::vector< QString > ArrangementDemoWindow::getTabLabels( ) const
-{
-  std::vector< QString > res;
-  for ( int i = 0; i < this->ui->tabWidget->count( ); ++i )
+  OverlayDialog overlayDialog{this, arr_infos};
+  if (overlayDialog.exec() == QDialog::Accepted)
   {
-    res.push_back( this->ui->tabWidget->tabText( i ) );
-  }
-  return res;
-}
+    std::vector<CGAL::Object> arrs;
+    auto selected_arrs = overlayDialog.selectedArrangements();
+    if (selected_arrs.empty()) return;
 
-std::vector< CGAL::Object > ArrangementDemoWindow::getArrangements( ) const
-{
-  std::vector< CGAL::Object > res;
-  for ( unsigned int i = 0; i < this->arrangements.size( ); ++i )
-  {
-    res.push_back( this->arrangements[ i ] );
-  }
-  return res;
-}
+    demo_types::TraitsType overlay_tt =
+      static_cast<ArrangementDemoTab*>(
+        this->ui->tabWidget->widget(selected_arrs[0]))
+        ->traitsType();
 
-void ArrangementDemoWindow::setupUi( )
-{
-  this->ui->setupUi( this );
+    for (auto idx : selected_arrs)
+    {
+      ArrangementDemoTab* tab =
+        static_cast<ArrangementDemoTab*>(this->ui->tabWidget->widget(idx));
 
-  this->modeGroup = new QActionGroup( this );
-  this->modeGroup->addAction( this->ui->actionDrag );
-  this->modeGroup->addAction( this->ui->actionInsert );
-  this->modeGroup->addAction( this->ui->actionDelete );
-  this->modeGroup->addAction( this->ui->actionPointLocation );
-  this->modeGroup->addAction( this->ui->actionRayShootingUp );
-  this->modeGroup->addAction( this->ui->actionRayShootingDown );
-  this->modeGroup->addAction( this->ui->actionMerge );
-  this->modeGroup->addAction( this->ui->actionSplit );
-  this->modeGroup->addAction( this->ui->actionFill );
-  this->activeModes.push_back( this->ui->actionInsert );
+      arrs.push_back(tab->getArrangement());
+    }
 
-  this->envelopeGroup = new QActionGroup( this );
-  this->envelopeGroup->addAction( this->ui->actionLowerEnvelope );
-  this->envelopeGroup->addAction( this->ui->actionUpperEnvelope );
-  this->envelopeGroup->setExclusive( false );
+    auto arr_obj = makeOverlayArrangement(arrs);
+    if (arr_obj)
+    {
+      QString tab_label = QString("%1 (Overlay)").arg(makeTabLabel(overlay_tt));
+      auto tab = makeTab(overlay_tt, tab_label, arr_obj);
 
-  this->snapGroup = new QActionGroup( this );
-  this->snapGroup->addAction( this->ui->actionSnapMode );
-  this->snapGroup->addAction( this->ui->actionGridSnapMode );
-  this->snapGroup->setExclusive( false );
-  this->ui->actionGridSnapMode->setEnabled( false );
-
-  this->conicTypeGroup = new QActionGroup( this );
-  this->conicTypeGroup->addAction( this->ui->actionConicSegment );
-  this->conicTypeGroup->addAction( this->ui->actionConicCircle );
-  this->conicTypeGroup->addAction( this->ui->actionConicEllipse );
-  this->conicTypeGroup->addAction( this->ui->actionConicThreePoint );
-  this->conicTypeGroup->addAction( this->ui->actionConicFivePoint );
-  this->conicTypeGroup->addAction( this->ui->actionCurveRay );
-  this->conicTypeGroup->addAction( this->ui->actionCurveLine );
-
-  this->updateFillColorSwatch( );
-}
-
-void ArrangementDemoWindow::updateMode( QAction* newMode )
-{
-  // QWidget* widget = this->ui->tabWidget->currentWidget( );
-  // ArrangementDemoTabBase* demoTab =
-  //   static_cast< ArrangementDemoTabBase* >( widget );
-  const unsigned int TabIndex = this->ui->tabWidget->currentIndex( );
-  if (TabIndex == static_cast<unsigned int>(-1)) return;
-  ArrangementDemoTabBase* activeTab = this->tabs[ TabIndex ];
-  QGraphicsScene* activeScene = activeTab->getScene( );
-  QGraphicsView* activeView = activeTab->getView( );
-
-  this->resetCallbackState( TabIndex );
-  this->removeCallback( TabIndex );
-
-  // update the active mode
-  this->activeModes.at( 0 ) = newMode;
-
-  // hook up the new active mode
-  if ( newMode == this->ui->actionInsert )
-  {
-    activeScene->installEventFilter( activeTab->getCurveInputCallback( ) );
-  }
-  else if ( newMode == this->ui->actionDrag )
-  {
-    activeView->setDragMode( QGraphicsView::ScrollHandDrag );
-  }
-  else if ( newMode == this->ui->actionDelete )
-  {
-    activeScene->installEventFilter( activeTab->getDeleteCurveCallback( ) );
-  }
-  else if ( newMode == this->ui->actionPointLocation )
-  {
-    activeScene->installEventFilter( activeTab->getPointLocationCallback( ) );
-  }
-  else if ( newMode == this->ui->actionRayShootingUp )
-  {
-    // -y is up for Qt, so we shoot down
-    activeTab->getVerticalRayShootCallback( )->setShootingUp( true );
-    activeScene->installEventFilter( activeTab->getVerticalRayShootCallback());
-  }
-  else if ( newMode == this->ui->actionRayShootingDown )
-  {
-    // the bottom of the viewport for Qt is +y, so we shoot up
-    activeTab->getVerticalRayShootCallback( )->setShootingUp( false );
-    activeScene->installEventFilter( activeTab->getVerticalRayShootCallback());
-  }
-  else if ( newMode == this->ui->actionMerge )
-  {
-    activeScene->installEventFilter( activeTab->getMergeEdgeCallback( ) );
-  }
-  else if ( newMode == this->ui->actionSplit )
-  {
-    activeScene->installEventFilter( activeTab->getSplitEdgeCallback( ) );
-  }
-  else if ( newMode == this->ui->actionFill )
-  {
-    activeScene->installEventFilter( activeTab->getFillFaceCallback( ) );
-  }
-  this->updateFillColorSwatch( );
-}
-
-void ArrangementDemoWindow::resetCallbackState( unsigned int tabIndex )
-{
-  if (tabIndex == static_cast<unsigned int>(-1)
-      || tabIndex >= this->tabs.size( )) return;
-
-  ArrangementDemoTabBase* activeTab = this->tabs[ tabIndex ];
-
-  QAction* activeMode = this->activeModes.at( 0 );
-
-  // unhook the old active mode
-  if ( activeMode == this->ui->actionInsert )
-  {  }
-  else if ( activeMode == this->ui->actionDrag )
-  {  }
-  else if ( activeMode == this->ui->actionDelete )
-  {
-    activeTab->getDeleteCurveCallback( )->reset( );
-  }
-  else if ( activeMode == this->ui->actionPointLocation )
-  {
-    activeTab->getPointLocationCallback( )->reset( );
-  }
-  else if ( activeMode == this->ui->actionRayShootingUp )
-  {
-    activeTab->getVerticalRayShootCallback( )->reset( );
-  }
-  else if ( activeMode == this->ui->actionRayShootingDown )
-  {
-    activeTab->getVerticalRayShootCallback( )->reset( );
-  }
-  else if ( activeMode == this->ui->actionMerge )
-  {
-    activeTab->getMergeEdgeCallback( )->reset( );
-  }
-  else if ( activeMode == this->ui->actionSplit )
-  {
-    activeTab->getSplitEdgeCallback( )->reset( );
-  }
-  else if ( activeMode == this->ui->actionFill )
-  {
-    activeTab->getFillFaceCallback( )->reset( );
+      tab->adjustViewport();
+    }
   }
 }
 
-void ArrangementDemoWindow::removeCallback( unsigned int tabIndex )
+void ArrangementDemoWindow::on_actionSaveAs_triggered()
 {
-  if (tabIndex == static_cast<unsigned int>(-1)) return;
-
-  ArrangementDemoTabBase* activeTab = this->tabs[ tabIndex ];
-  QGraphicsScene* activeScene = activeTab->getScene( );
-  QGraphicsView* activeView = activeTab->getView( );
-#if 0
-  QAction* activeMode = this->activeModes[ tabIndex ];
-#endif
-
-  activeScene->removeEventFilter( activeTab->getCurveInputCallback( ) );
-  activeView->setDragMode( QGraphicsView::NoDrag );
-  activeScene->removeEventFilter( activeTab->getDeleteCurveCallback( ) );
-  activeScene->removeEventFilter( activeTab->getPointLocationCallback( ) );
-  activeScene->removeEventFilter( activeTab->getVerticalRayShootCallback( ) );
-  activeScene->removeEventFilter( activeTab->getMergeEdgeCallback( ) );
-  activeScene->removeEventFilter( activeTab->getSplitEdgeCallback( ) );
-  activeScene->removeEventFilter( activeTab->getVerticalRayShootCallback( ) );
-  activeScene->removeEventFilter( activeTab->getFillFaceCallback( ) );
-
-  // unhook the old active mode
-#if 0
-  if ( activeMode == this->ui->actionInsert )
+  auto currentTab = this->getCurrentTab();
+  if (!currentTab)
   {
-    activeScene->removeEventFilter( activeTab->getCurveInputCallback( ) );
-  }
-  else if ( activeMode == this->ui->actionDrag )
-  {
-    activeView->setDragMode( QGraphicsView::NoDrag );
-  }
-  else if ( activeMode == this->ui->actionDelete )
-  {
-    activeScene->removeEventFilter( activeTab->getDeleteCurveCallback( ) );
-  }
-  else if ( activeMode == this->ui->actionPointLocation )
-  {
-    activeScene->removeEventFilter( activeTab->getPointLocationCallback( ) );
-  }
-  else if ( activeMode == this->ui->actionRayShootingUp )
-  {
-    activeScene->removeEventFilter( activeTab->getVerticalRayShootCallback( ) );
-  }
-  else if ( activeMode == this->ui->actionRayShootingDown )
-  {
-    activeScene->removeEventFilter( activeTab->getVerticalRayShootCallback( ) );
-  }
-  else if ( activeMode == this->ui->actionMerge )
-  {
-    activeScene->removeEventFilter( activeTab->getMergeEdgeCallback( ) );
-  }
-  else if ( activeMode == this->ui->actionSplit )
-  {
-    activeScene->removeEventFilter( activeTab->getSplitEdgeCallback( ) );
-  }
-#endif
-}
-
-void ArrangementDemoWindow::updateFillColorSwatch( )
-{
-  unsigned int currentTabIndex = this->ui->tabWidget->currentIndex( );
-  if (currentTabIndex == static_cast<unsigned int>(-1)) return;
-  ArrangementDemoTabBase* currentTab = this->tabs[ currentTabIndex ];
-  FillFaceCallbackBase* fillFaceCallback = currentTab->getFillFaceCallback( );
-  QColor fillColor = fillFaceCallback->getColor( );
-  if ( !fillColor.isValid( ) )
-  {
-    fillColor = ::Qt::black;
-  }
-
-  QPixmap fillColorPixmap( 16, 16 );
-  fillColorPixmap.fill( fillColor );
-  QIcon fillColorIcon( fillColorPixmap );
-  this->ui->actionFillColor->setIcon( fillColorIcon );
-}
-
-void ArrangementDemoWindow::openArrFile( QString filename )
-{
-  int index = this->ui->tabWidget->currentIndex( );
-  if ( index == -1 )
-  {
-    QMessageBox::information( this, "Oops", "Create a new tab first" );
-    return;
-  }
-  if ( filename.isNull( ) )
-  {
+    QMessageBox::information(this, "Oops", "Create a new tab first");
     return;
   }
 
-  std::ifstream ifs( filename.toStdString( ).c_str( ) );
-  CGAL::Object arr = this->arrangements[ index ];
-  Seg_arr* seg;
-  Pol_arr* pol;
+  std::pair<CGAL::Object, demo_types::TraitsType> arr_pair = {
+    currentTab->getArrangement(), currentTab->traitsType()
+  };
 
-#ifdef CGAL_USE_CORE
-  Conic_arr* conic;
-#endif
+  QString filename = QFileDialog::getSaveFileName(
+    this, tr("Save file"), "", "Arrangement (*.arr)");
+  if (filename.isNull()) return;
 
-  // Alg_seg_arr* alg;
-  if ( CGAL::assign( seg, arr ) )
-  {
-    typedef CGAL::Arr_text_formatter<Seg_arr>           Seg_text_formatter;
-    typedef CGAL::Arr_with_history_text_formatter<Seg_text_formatter>
-      ArrFormatter;
-    typedef ArrangementDemoTab<Seg_arr>                 TabType;
-
-    ArrFormatter arrFormatter;
-    CGAL::read( *seg, ifs, arrFormatter );
-    this->arrangements[ index ] = CGAL::make_object( seg );
-    TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
-    tab->setArrangement( seg );
-  }
-  else if ( CGAL::assign( pol, arr ) )
-  {
-    typedef CGAL::Arr_text_formatter< Pol_arr >         Pol_text_formatter;
-    typedef CGAL::Arr_with_history_text_formatter<Pol_text_formatter>
-      ArrFormatter;
-    typedef ArrangementDemoTab< Pol_arr >               TabType;
-
-    ArrFormatter arrFormatter;
-    CGAL::read( *pol, ifs, arrFormatter );
-    this->arrangements[ index ] = CGAL::make_object( pol );
-    TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
-    tab->setArrangement( pol );
-  }
-
-#ifdef CGAL_USE_CORE
-  else if (CGAL::assign(conic, arr)) {
-#if 0
-    typedef CGAL::Arr_text_formatter<Conic_arr>         Conic_text_formatter;
-    typedef CGAL::Arr_with_history_text_formatter<Conic_text_formatter>
-      ArrFormatter;
-    ArrFormatter                                        arrFormatter;
-    CGAL::read( *conic, ifs, arrFormatter );
-    this->arrangements[ index ] = CGAL::make_object( conic );
-    tab->setArrangement( conic );
-#endif
-    typedef ArrangementDemoTab< Conic_arr > TabType;
-    Conic_reader< Conic_arr::Geometry_traits_2 > conicReader;
-    std::vector< Conic_arr::Curve_2 > curve_list;
-    CGAL::Bbox_2 bbox;
-    conicReader.read_data( filename.toStdString( ).c_str( ),
-                           std::back_inserter( curve_list ), bbox );
-    this->arrangements[ index ] = CGAL::make_object( conic );
-    TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
-
-    CGAL::insert( *conic, curve_list.begin(), curve_list.end() );
-    tab->setArrangement( conic );
-    //QMessageBox::information( this, "Oops",
-    //  "Reading conic arrangement not supported" );
-  }
-#endif
-
-  // else if ( CGAL::assign( alg, arr ) )
-  // {
-  //   typedef CGAL::Arr_text_formatter< Alg_seg_arr >     Seg_text_formatter;
-  //   typedef CGAL::Arr_with_history_text_formatter<Seg_text_formatter>
-  //     ArrFormatter;
-  //   typedef ArrangementDemoTab< Alg_seg_arr >           TabType;
-
-  //   ArrFormatter arrFormatter;
-  //   CGAL::read( *alg, ifs, arrFormatter );
-  //   this->arrangements[ index ] = CGAL::make_object( alg );
-  //   TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
-  //   tab->setArrangement( alg );
-  // }
-  ifs.close( );
+  QByteArray ba = filename.toLocal8Bit();
+  std::ofstream ofs(ba.data());
+  if (!ArrangementIO{}.write(arr_pair, ofs))
+    QMessageBox::information(this, "Oops", "Error saving file!");
 }
 
-void ArrangementDemoWindow::openDatFile( QString filename )
+void ArrangementDemoWindow::on_actionOpen_triggered()
 {
-  int index = this->ui->tabWidget->currentIndex( );
-  if ( index == -1 )
+  QString filename = QFileDialog::getOpenFileName(
+    this, tr("Open file"), "", "Arrangement files (*.arr)");
+  if (filename.isNull()) return;
+
+  if (filename.endsWith(".arr"))
   {
-    QMessageBox::information( this, "Oops", "Create a new tab first" );
-    return;
-  }
-  if ( filename.isNull( ) )
-  {
-    return;
-  }
-
-  std::ifstream inputFile( filename.toStdString( ).c_str( ) );
-  CGAL::Object arr = this->arrangements[ index ];
-  Seg_arr* seg;
-  Pol_arr* pol;
-
-#ifdef CGAL_USE_CORE
-  Conic_arr* conic;
-#endif
-
-  // Alg_seg_arr* alg;
-
-  // Creates an ofstream object named inputFile
-  if (! inputFile.is_open() ) // Always test file open
-  {
-    std::cerr << "Error opening input file" << std::endl;
-    return;
-  }
-
-  Pol_traits traits;
-  Pol_traits::Construct_curve_2 poly_const =
-    traits.construct_curve_2_object();
-
-
-  if ( CGAL::assign( pol, arr ) )
-  {
-    pol->clear( );
-
-    std::vector<Arr_pol_point_2> points;
-
-    unsigned int num_polylines;
-    inputFile >> num_polylines;
-    std::list<Arr_pol_2> pol_list;
-
-    unsigned int i;
-    for (i = 0; i < num_polylines; i++)
+    auto tab = this->openArrFile(filename);
+    if (tab)
     {
-      unsigned int num_segments;
-      inputFile >> num_segments;
-      points.clear();
-      unsigned int j;
-      for (j = 0; j < num_segments; j++)
-      {
-        int ix, iy;
-        inputFile >> ix >> iy;
-        points.push_back (Arr_pol_point_2(NT(ix),NT(iy)));
-      }
-
-      Arr_pol_2 curve = poly_const(points.begin(), points.end());
-      pol_list.push_back(curve);
+      tab->setParent(this);
+      this->addTab(tab, this->makeTabLabel(tab->traitsType()));
+      tab->adjustViewport();
     }
-    CGAL::insert(*pol, pol_list.begin(), pol_list.end());
-
-    typedef ArrangementDemoTab< Pol_arr > TabType;
-    TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
-    tab->setArrangement( pol );
-  }
-  else if ( CGAL::assign( seg, arr ) )
-  {
-    seg->clear( );
-
-    int count;
-    inputFile >> count;
-    int i;
-    std::list<Arr_seg_2> seg_list;
-    for (i = 0; i < count; i++)
-    {
-      NT x0, y0, x1, y1;
-      inputFile >> x0 >> y0 >> x1 >> y1;
-
-      Arr_seg_point_2 p1(x0, y0);
-      Arr_seg_point_2 p2(x1, y1);
-
-      Arr_seg_2 curve(p1, p2);
-
-      seg_list.push_back(curve);
-    }
-
-    CGAL::insert(*(seg), seg_list.begin(), seg_list.end());
-
-    typedef ArrangementDemoTab< Seg_arr > TabType;
-    TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
-    tab->setArrangement( seg );
-  }
-
-#ifdef CGAL_USE_CORE
-  else if (CGAL::assign( conic, arr)) {
-    conic->clear( );
-    Conic_reader< Conic_arr::Geometry_traits_2 > reader;
-    std::list<Arr_conic_2> curve_list;
-    CGAL::Bbox_2 bbox;
-    reader.read_data( filename.toStdString().c_str(),
-                      std::back_inserter(curve_list), bbox );
-    CGAL::insert (*conic, curve_list.begin(), curve_list.end());
-
-    typedef ArrangementDemoTab< Conic_arr > TabType;
-    TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
-    tab->setArrangement( conic );
-  }
-#endif
-
-  inputFile.close();
-}
-
-void ArrangementDemoWindow::updateEnvelope( QAction* newMode )
-{
-  if ( this->ui->tabWidget->currentIndex( ) == -1 ) return;
-  ArrangementDemoTabBase* activeTab =
-    this->tabs[ this->ui->tabWidget->currentIndex( ) ];
-  // QGraphicsScene* activeScene = activeTab->getScene( );
-  // QGraphicsView* activeView = activeTab->getView( );
-
-  bool show = newMode->isChecked( );
-  if ( newMode == this->ui->actionLowerEnvelope )
-  {
-    activeTab->getEnvelopeCallback( )->showLowerEnvelope( show );
-  }
-  else if ( newMode == this->ui->actionUpperEnvelope )
-  {
-    activeTab->getEnvelopeCallback( )->showUpperEnvelope( show );
-  }
-}
-
-void ArrangementDemoWindow::updateSnapping( QAction* newMode )
-{
-  ArrangementDemoTabBase* activeTab =
-    this->tabs[ this->ui->tabWidget->currentIndex( ) ];
-  QGraphicsScene* activeScene = activeTab->getScene( );
-  ArrangementDemoGraphicsView* activeView = activeTab->getView( );
-
-  bool enabled = newMode->isChecked( );
-  if ( newMode == this->ui->actionSnapMode )
-  {
-    activeTab->getCurveInputCallback( )->setSnappingEnabled( enabled );
-    activeTab->getSplitEdgeCallback( )->setSnappingEnabled( enabled );
-    if ( ! enabled )
-    {
-      this->ui->actionGridSnapMode->setChecked( false );
-      this->ui->actionGridSnapMode->setEnabled( false );
-      activeTab->getCurveInputCallback( )->setSnapToGridEnabled( false );
-      activeTab->getSplitEdgeCallback( )->setSnapToGridEnabled( false );
-    }
-    else
-    {
-      this->ui->actionGridSnapMode->setEnabled( true );
-    }
-  }
-  else if ( newMode == this->ui->actionGridSnapMode )
-  {
-    activeTab->getCurveInputCallback( )->setSnapToGridEnabled( enabled );
-    activeTab->getSplitEdgeCallback( )->setSnapToGridEnabled( enabled );
-    activeView->setShowGrid( enabled );
-  }
-  activeScene->update( );
-}
-
-void ArrangementDemoWindow::updateConicType( QAction* newType )
-{
-  ArrangementDemoTabBase* activeTab =
-    this->tabs[ this->ui->tabWidget->currentIndex( ) ];
-  // QGraphicsScene* activeScene = activeTab->getScene( );
-  // ArrangementDemoGraphicsView* activeView = activeTab->getView( );
-
-#ifdef CGAL_USE_CORE
-  Conic_arr* conic_arr;
-  bool isConicArr =
-    CGAL::assign( conic_arr,
-                  this->arrangements[ this->ui->tabWidget->currentIndex( ) ] );
-#endif
-
-  Lin_arr* lin_arr;
-  bool isLinearArr =
-    CGAL::assign( lin_arr,
-                  this->arrangements[ this->ui->tabWidget->currentIndex( ) ] );
-
-  if ( isLinearArr )
-  {
-    typedef Lin_arr::Geometry_traits_2         Line_geom_traits;
-    typedef CGAL::Qt::GraphicsViewCurveInput<Line_geom_traits>
-      LinearCurveInputCallback;
-    LinearCurveInputCallback* curveInputCallback =
-      ( LinearCurveInputCallback* ) activeTab->getCurveInputCallback( );
-    if ( newType == this->ui->actionConicSegment )
-    {
-      curveInputCallback->setCurveType( LinearCurveInputCallback::SEGMENT );
-    }
-    else if ( newType == this->ui->actionCurveRay )
-  {
-      curveInputCallback->setCurveType( LinearCurveInputCallback::RAY );
-    }
-    else if ( newType == this->ui->actionCurveLine )
-    {
-      curveInputCallback->setCurveType( LinearCurveInputCallback::LINE );
-    }
-    //std::cout << "do nothing" << std::endl;
-  }
-
-#ifdef CGAL_USE_CORE
-  else if (isConicArr) {
-    // std::cout << "do something conic arr related" << std::endl;
-    typedef Conic_arr::Geometry_traits_2       Conic_geom_traits;
-    typedef CGAL::Qt::GraphicsViewCurveInput<Conic_geom_traits>
-      ConicCurveInputCallback;
-    ConicCurveInputCallback* curveInputCallback =
-      ( ConicCurveInputCallback* ) activeTab->getCurveInputCallback( );
-    if ( newType == this->ui->actionConicSegment )
-    {
-      curveInputCallback->setConicType(ConicCurveInputCallback::CONIC_SEGMENT);
-    }
-    else if ( newType == this->ui->actionConicCircle )
-    {
-      curveInputCallback->setConicType(ConicCurveInputCallback::CONIC_CIRCLE);
-    }
-    else if ( newType == this->ui->actionConicEllipse )
-    {
-      curveInputCallback->setConicType(ConicCurveInputCallback::CONIC_ELLIPSE);
-    }
-    else if ( newType == this->ui->actionConicThreePoint )
-    {
-      curveInputCallback->setConicType( ConicCurveInputCallback::
-                                        CONIC_THREE_POINT );
-    }
-    else if ( newType == this->ui->actionConicFivePoint )
-    {
-      curveInputCallback->setConicType( ConicCurveInputCallback::
-                                        CONIC_FIVE_POINT );
-    }
-  }
-#endif
-}
-
-void ArrangementDemoWindow::on_actionSaveAs_triggered( )
-{
-  int index = this->ui->tabWidget->currentIndex( );
-  if ( index == -1 )
-    return;
-  QString filename =
-    QFileDialog::getSaveFileName( this, tr( "Save file" ),
-                                  "", "Arrangement (*.arr)" );
-  if ( filename.isNull( ) )
-    return;
-
-  std::ofstream ofs( filename.toStdString( ).c_str( ) );
-  CGAL::Object arr = this->arrangements[ index ];
-  Seg_arr* seg;
-  Pol_arr* pol;
-
-#ifdef CGAL_USE_CORE
-  Conic_arr* conic;
-#endif
-
-  if ( CGAL::assign( seg, arr ) )
-  {
-    typedef CGAL::Arr_text_formatter<Seg_arr>           Seg_text_formatter;
-    typedef CGAL::Arr_with_history_text_formatter<Seg_text_formatter>
-      ArrFormatter;
-    ArrFormatter                                        arrFormatter;
-    CGAL::write( *seg, ofs, arrFormatter );
-  }
-  else if ( CGAL::assign( pol, arr ) )
-  {
-    typedef CGAL::Arr_text_formatter<Pol_arr>           Pol_text_formatter;
-    typedef CGAL::Arr_with_history_text_formatter<Pol_text_formatter>
-      ArrFormatter;
-    ArrFormatter                                        arrFormatter;
-    CGAL::write( *pol, ofs, arrFormatter );
-  }
-
-#ifdef CGAL_USE_CORE
-  else if (CGAL::assign(conic, arr)) {
-#if 0
-    typedef CGAL::Arr_text_formatter<Conic_arr>         Conic_text_formatter;
-    typedef CGAL::Arr_with_history_text_formatter<Conic_text_formatter>
-      ArrFormatter;
-    ArrFormatter                                        arrFormatter;
-    CGAL::write( *conic, ofs, arrFormatter );
-#endif
-    ofs << conic->number_of_curves( ) << std::endl;
-    for ( Conic_arr::Curve_iterator it = conic->curves_begin( );
-          it != conic->curves_end( ); ++it )
-    {
-      if ( it->is_full_conic( ) )
-      {
-        ofs << "F ";
-        ofs << it->r( ) << " ";
-        ofs << it->s( ) << " ";
-        ofs << it->t( ) << " ";
-        ofs << it->u( ) << " ";
-        ofs << it->v( ) << " ";
-        ofs << it->w( ) << " ";
-        ofs << std::endl;
-      }
-      else if ( it->orientation( ) == CGAL::COLLINEAR )
-      {
-        ofs << "S ";
-        ofs << it->source( ) << " ";
-        ofs << it->target( ) << " ";
-        ofs << std::endl;
-      }
-      else
-      {
-        ofs << "A ";
-        ofs << it->r( ) << " ";
-        ofs << it->s( ) << " ";
-        ofs << it->t( ) << " ";
-        ofs << it->u( ) << " ";
-        ofs << it->v( ) << " ";
-        ofs << it->w( ) << " ";
-        if ( it->orientation( ) == CGAL::COUNTERCLOCKWISE )
-          ofs << "1 ";
-        else if ( it->orientation( ) == CGAL::CLOCKWISE )
-          ofs << "-1 ";
-        else
-          ofs << "0 ";
-        ofs << it->source( ) << " ";
-        ofs << it->target( ) << " ";
-        ofs << std::endl;
-      }
-    }
-  }
-#endif
-
-  ofs.close( );
-}
-
-void ArrangementDemoWindow::on_actionOpen_triggered( )
-{
-  int index = this->ui->tabWidget->currentIndex( );
-  if ( index == -1 )
-  {
-    QMessageBox::information( this, "Oops", "Create a new tab first" );
-    return;
-  }
-  QString filename =
-    QFileDialog::getOpenFileName( this, tr( "Open file" ),
-                                  "", "Arrangement files (*.arr *.dat);;All files (*.*)" );
-  if ( filename.isNull( ) )
-    return;
-
-  if ( filename.endsWith( ".arr" ) )
-  {
-    this->openArrFile( filename );
   }
   else
   {
-    this->openDatFile( filename );
-  }
-
-  ArrangementDemoTabBase* currentTab = this->tabs[ index ];
-  CGAL::Qt::ArrangementGraphicsItemBase* agi =
-    currentTab->getArrangementGraphicsItem( );
-  QRectF bb = agi->boundingRect( );
-  QGraphicsView* view = currentTab->getView( );
-  // std::cout << bb.left( ) << " " << bb.bottom( ) << ", " << bb.right( )
-  //           << " " << bb.top( ) << std::endl;
-  if ( boost::math::isinf(bb.left( )) ||
-       boost::math::isinf(bb.right( )) ||
-       boost::math::isinf(bb.top( )) ||
-       boost::math::isinf(bb.bottom( )) )
-  {
-    // std::cout << "unbounded; using default bb" << std::endl;
-    bb = QRectF( -100, -100, 200, 200 );
-    view->setSceneRect( bb );
-  }
-  else
-  {
-    view->fitInView( bb, ::Qt::KeepAspectRatio );
-    view->setSceneRect( bb );
-  }
-#if 0
-  view->centerOn( bb.center( ) );
-#endif
-}
-
-void ArrangementDemoWindow::on_actionQuit_triggered( )
-{
-  qApp->exit( );
-}
-
-void ArrangementDemoWindow::on_actionNewTab_triggered( )
-{
-  NewTabDialog* newTabDialog = new NewTabDialog;
-  if ( newTabDialog->exec( ) == QDialog::Accepted )
-  {
-    int id = newTabDialog->checkedId( );
-    if ( id == SEGMENT_TRAITS )
-    {
-      this->makeTab( SEGMENT_TRAITS );
-    }
-    else if ( id == POLYLINE_TRAITS )
-    {
-      this->makeTab( POLYLINE_TRAITS );
-    }
-    else if ( id == CONIC_TRAITS )
-    {
-      this->makeTab( CONIC_TRAITS );
-    }
-    else if ( id == LINEAR_TRAITS )
-    {
-      this->makeTab( LINEAR_TRAITS );
-    }
-    else if ( id == CIRCULAR_ARC_TRAITS )
-    {
-      this->makeTab( CIRCULAR_ARC_TRAITS );
-    }
-    // else if ( id == ALGEBRAIC_TRAITS )
-    // {
-    //   this->makeTab( ALGEBRAIC_TRAITS );
-    // }
-    else
-    {
-      std::cout << "Sorry, this trait is not yet supported" << std::endl;
-    }
-  }
-  delete newTabDialog;
-}
-
-void ArrangementDemoWindow::on_tabWidget_currentChanged( )
-{
-  // std::cout << "Tab changed" << std::endl;
-  // disable the callback for the previously active tab
-  this->resetCallbackState( this->lastTabIndex );
-  this->removeCallback( this->lastTabIndex );
-  this->lastTabIndex = this->ui->tabWidget->currentIndex( );
-
-  this->updateMode( this->modeGroup->checkedAction( ) );
-
-  CGAL::Object arr;
-  if ( this->ui->tabWidget->currentIndex( ) != -1 )
-    arr = this->arrangements[ this->ui->tabWidget->currentIndex( ) ];
-
-  // Seg_arr* seg;
-  // Pol_arr* pol;
-  Lin_arr* lin;
-
-#ifdef CGAL_USE_CORE
-  Conic_arr* conic;
-#endif
-
-  if ( CGAL::assign( lin, arr ) )
-  {
-    this->ui->actionConicSegment->setChecked( true );
-
-    this->ui->actionCurveRay->setVisible( true );
-    this->ui->actionCurveLine->setVisible( true );
-
-    this->ui->actionConicCircle->setVisible( false );
-    this->ui->actionConicEllipse->setVisible( false );
-    this->ui->actionConicThreePoint->setVisible( false );
-    this->ui->actionConicFivePoint->setVisible( false );
-
-    this->conicTypeGroup->setEnabled( true );
-  }
-
-#ifdef CGAL_USE_CORE
-  else if (CGAL::assign( conic, arr)) {
-    this->ui->actionConicSegment->setChecked( true );
-
-    this->ui->actionCurveRay->setVisible( false );
-    this->ui->actionCurveLine->setVisible( false );
-
-    this->ui->actionConicCircle->setVisible( true );
-    this->ui->actionConicEllipse->setVisible( true );
-    this->ui->actionConicThreePoint->setVisible( true );
-    this->ui->actionConicFivePoint->setVisible( true );
-
-    this->conicTypeGroup->setEnabled( true );
-  }
-#endif
-
-  else { // segment or polyline
-    this->ui->actionConicSegment->setChecked( true );
-
-    this->ui->actionCurveRay->setVisible( false );
-    this->ui->actionCurveLine->setVisible( false );
-
-    this->ui->actionConicCircle->setVisible( false );
-    this->ui->actionConicEllipse->setVisible( false );
-    this->ui->actionConicThreePoint->setVisible( false );
-    this->ui->actionConicFivePoint->setVisible( false );
-
-    this->conicTypeGroup->setEnabled( true );
+    QMessageBox::information(this, "Oops", "Unsupported file format");
   }
 }
 
-void ArrangementDemoWindow::on_actionOverlay_triggered( )
+ArrangementDemoTab* ArrangementDemoWindow::openArrFile(QString filename)
 {
-  OverlayDialog* overlayDialog = new OverlayDialog( this );
-  if ( overlayDialog->exec( ) == QDialog::Accepted )
-  {
-    std::vector< CGAL::Object > arrs = overlayDialog->selectedArrangements( );
-    if ( arrs.size( ) == 2 )
-    {
-      Seg_arr* seg_arr;
-      Seg_arr* seg_arr2;
-      Pol_arr* pol_arr;
-      Pol_arr* pol_arr2;
+  if (filename.isNull()) return nullptr;
 
-#ifdef CGAL_USE_CORE
-      Conic_arr* conic_arr;
-      Conic_arr* conic_arr2;
-#endif
+  QByteArray filename_ba = filename.toLocal8Bit();
+  std::ifstream ifs(filename_ba.data());
 
-      Lin_arr* lin_arr;
-      Lin_arr* lin_arr2;
-      Arc_arr* arc_arr;
-      Arc_arr* arc_arr2;
-      // Alg_seg_arr* alg_arr;
-      // Alg_seg_arr* alg_arr2;
-      if ( CGAL::assign( seg_arr, arrs[ 0 ] ) &&
-           CGAL::assign( seg_arr2, arrs[ 1 ] ) )
-      {
-        this->makeOverlayTab( seg_arr, seg_arr2 );
-      }
-      if ( CGAL::assign( pol_arr, arrs[ 0 ] ) &&
-           CGAL::assign( pol_arr2, arrs[ 1 ] ) )
-      {
-        this->makeOverlayTab( pol_arr, pol_arr2 );
-      }
+  ArrangementDemoTab* tab = nullptr;
 
-#ifdef CGAL_USE_CORE
-      if (CGAL::assign(conic_arr, arrs[0]) && CGAL::assign(conic_arr2, arrs[1]))
-      {
-        this->makeOverlayTab( conic_arr, conic_arr2 );
-      }
-#endif
+  std::pair<CGAL::Object, demo_types::TraitsType> arr_pair =
+    ArrangementIO{}.read(ifs);
+  if (arr_pair.first)
+    tab =
+      makeTab(arr_pair.second, makeTabLabel(arr_pair.second), arr_pair.first);
 
-      if ( CGAL::assign( lin_arr, arrs[ 0 ] ) &&
-           CGAL::assign( lin_arr2, arrs[ 1 ] ) )
-      {
-        this->makeOverlayTab( lin_arr, lin_arr2 );
-      }
-      if ( CGAL::assign( arc_arr, arrs[ 0 ] ) &&
-           CGAL::assign( arc_arr2, arrs[ 1 ] ) )
-      {
-        this->makeOverlayTab( arc_arr, arc_arr2 );
-      }
-      // if ( CGAL::assign( alg_arr, arrs[ 0 ] ) &&
-      //      CGAL::assign( alg_arr2, arrs[ 1 ] ) )
-      // {
-      //   this->makeOverlayTab( alg_arr, alg_arr2 );
-      // }
-
-#if 0
-      if ( CGAL::assign( conic_arr, arrs[ 0 ] ) ||
-           CGAL::assign( conic_arr, arrs[ 1 ] ) )
-      {
-        this->makeOverlayTab< Conic_arr >( arrs[ 0 ], arrs[ 1 ] );
-      }
-      else if ( CGAL::assign( pol_arr, arrs[ 0 ] ) ||
-                CGAL::assign( pol_arr, arrs[ 1 ] ) )
-      {
-        this->makeOverlayTab< Pol_arr >( arrs[ 0 ], arrs[ 1 ] );
-      }
-      else
-      {
-        this->makeOverlayTab< Seg_arr >( arrs[ 0 ], arrs[ 1 ] );
-      }
-#endif
-    }
-  }
-  delete overlayDialog;
+  return tab;
 }
 
-void ArrangementDemoWindow::on_actionCloseTab_triggered( )
+void ArrangementDemoWindow::on_actionPreferences_triggered()
 {
-  unsigned int currentTabIndex = this->ui->tabWidget->currentIndex( );
-  if (! this->ui->tabWidget->count() ||
-      (currentTabIndex == static_cast<unsigned int>(-1)))
-    return;
+  auto currentTab = this->getCurrentTab();
+  if (!currentTab) return;
 
-  // delete the tab
-  this->ui->tabWidget->removeTab( currentTabIndex );
-  this->tabs.erase( this->tabs.begin( ) + currentTabIndex );
+  ArrangementDemoPropertiesDialog dialog{this};
 
-  // delete the arrangement
-  this->arrangements.erase( this->arrangements.begin( ) + currentTabIndex );
-}
-
-void ArrangementDemoWindow::on_actionPrintConicCurves_triggered( )
-{
-  // int currentTabIndex = this->ui->tabWidget->currentIndex( );
-  // Conic_arr* arr;
-  // if (currentTabIndex == static_cast<unsigned int>(-1)) return;
-  // CGAL::Object o = this->arrangements[ currentTabIndex ];
-  // if ( ! CGAL::assign( arr, o ) )
-  //     return;
-  // typedef typename Conic_arr::Curve_iterator Curve_iterator;
-  // // std::cout << arr->number_of_curves( ) << std::endl;
-  // Curve_iterator it;
-  // for (it = arr->curves_begin(); it != arr->curves_end(); ++it) {
-  //     std::cout << *it << std::endl;
-  //     if ( it->is_full_conic( ) )
-  //     {
-  //         std::cout << "F ";
-  //         std::cout << it->r( ) << " ";
-  //         std::cout << it->s( ) << " ";
-  //         std::cout << it->t( ) << " ";
-  //         std::cout << it->u( ) << " ";
-  //         std::cout << it->v( ) << " ";
-  //         std::cout << it->w( ) << " ";
-  //         std::cout << std::endl;
-  //     }
-  //     else if ( it->orientation( ) == CGAL::COLLINEAR )
-  //     {
-  //         std::cout << "S ";
-  //         std::cout << it->source( ) << " ";
-  //         std::cout << it->target( ) << " ";
-  //         std::cout << std::endl;
-  //     }
-  //     else
-  //     {
-  //         std::cout << "A ";
-  //         std::cout << it->r( ) << " ";
-  //         std::cout << it->s( ) << " ";
-  //         std::cout << it->t( ) << " ";
-  //         std::cout << it->u( ) << " ";
-  //         std::cout << it->v( ) << " ";
-  //         std::cout << it->w( ) << " ";
-  //         if ( it->orientation( ) == CGAL::COUNTERCLOCKWISE )
-  //             std::cout << "1 ";
-  //         else if ( it->orientation( ) == CGAL::CLOCKWISE )
-  //             std::cout << "-1 ";
-  //         else
-  //             std::cout << "0 ";
-  //         std::cout << it->source( ) << " ";
-  //         std::cout << it->target( ) << " ";
-  //         std::cout << std::endl;
-  //     }
-  // }
-}
-
-void ArrangementDemoWindow::on_actionZoomIn_triggered( )
-{
-  unsigned int currentTabIndex = this->ui->tabWidget->currentIndex( );
-  if (currentTabIndex == static_cast<unsigned int>(-1)) return;
-  ArrangementDemoTabBase* currentTab = this->tabs[ currentTabIndex ];
-  QGraphicsView* view = currentTab->getView( );
-  view->scale( 2.0, 2.0 );
-}
-
-void ArrangementDemoWindow::on_actionZoomOut_triggered( )
-{
-  unsigned int currentTabIndex = this->ui->tabWidget->currentIndex( );
-  if (currentTabIndex == static_cast<unsigned int>(-1)) return;
-  ArrangementDemoTabBase* currentTab = this->tabs[ currentTabIndex ];
-  QGraphicsView* view = currentTab->getView( );
-  view->scale( 0.5, 0.5 );
-}
-
-void ArrangementDemoWindow::on_actionPreferences_triggered( )
-{
-  unsigned int currentTabIndex = this->ui->tabWidget->currentIndex( );
-  if (currentTabIndex == static_cast<unsigned int>(-1)) return;
-  ArrangementDemoTabBase* currentTab = this->tabs[ currentTabIndex ];
-  CGAL::Qt::ArrangementGraphicsItemBase* agi =
-    currentTab->getArrangementGraphicsItem( );
-  ArrangementDemoGraphicsView* view = currentTab->getView( );
-  EnvelopeCallbackBase* envelopeCallback = currentTab->getEnvelopeCallback( );
-  VerticalRayShootCallbackBase* verticalRayShootCallback =
-    currentTab->getVerticalRayShootCallback( );
-  SplitEdgeCallbackBase* splitEdgeCallback = currentTab->getSplitEdgeCallback( );
-
-#if 0
-  QPen vertexPen = agi->getVerticesPen( );
-  QPen edgePen = agi->getEdgesPen( );
-  QBrush vertexPenBrush = vertexPen.brush( );
-  QColor vertexColor = vertexPenBrush.color( );
-  QBrush edgePenBrush = edgePen.brush( );
-  QColor edgeColor = edgePenBrush.color( );
-#endif
-
-  ArrangementDemoPropertiesDialog* dialog =
-    new ArrangementDemoPropertiesDialog( this );
-  if ( dialog->exec( ) == QDialog::Accepted )
+  if (dialog.exec() == QDialog::Accepted)
   {
     typedef ArrangementDemoPropertiesDialog Dialog;
+    ArrangementDemoTab::Preferences pref;
 
-    QColor edgeColor =  dialog->property(Dialog::EDGE_COLOR_KEY).value<QColor>();
-
-    unsigned int edgeWidth = dialog->property(Dialog::EDGE_WIDTH_KEY).value<unsigned int>();
-
-    QColor vertexColor = dialog->property(Dialog::VERTEX_COLOR_KEY).value<QColor>();
-
-    unsigned int vertexRadius = dialog->property(Dialog::VERTEX_RADIUS_KEY).value<unsigned int>();
-
-    QColor envelopeEdgeColor = dialog->property(Dialog::ENVELOPE_EDGE_COLOR_KEY).value<QColor>();
-
-    unsigned int envelopeEdgeWidth = dialog->property(Dialog::ENVELOPE_EDGE_WIDTH_KEY).value<unsigned int>();
-
-    QColor envelopeVertexColor = dialog->property(Dialog::ENVELOPE_VERTEX_COLOR_KEY).value<QColor>();
-
-    unsigned int envelopeVertexRadius = dialog->property(Dialog::ENVELOPE_VERTEX_RADIUS_KEY).value<unsigned int>();
-
-    QColor verticalRayEdgeColor = dialog->property(Dialog::VERTICAL_RAY_EDGE_COLOR_KEY).value<QColor>();
-
-    unsigned int verticalRayEdgeWidth = dialog->property(Dialog::VERTICAL_RAY_EDGE_WIDTH_KEY).value<unsigned int>();
-
-    DeleteCurveMode mode = dialog->property(Dialog::DELETE_CURVE_MODE_KEY).value<DeleteCurveMode>();
-
-    unsigned int gridSize = dialog->property(Dialog::GRID_SIZE_KEY).value<unsigned int>();
-
-    QColor gridColor = dialog->property(Dialog::GRID_COLOR_KEY).value<QColor>();
-    //end new for Qt5 version !
-
-
-    QPen edgesPen(QBrush(edgeColor), edgeWidth);
-    QPen verticesPen(QBrush(vertexColor), vertexRadius);
-    agi->setEdgesPen( edgesPen );
-    agi->setVerticesPen( verticesPen );
-    agi->modelChanged( );
-    view->setGridSize( gridSize );
-    view->setGridColor( gridColor );
-    envelopeCallback->setEnvelopeEdgeColor( envelopeEdgeColor );
-    envelopeCallback->setEnvelopeEdgeWidth( envelopeEdgeWidth );
-    envelopeCallback->setEnvelopeVertexColor( envelopeVertexColor );
-    envelopeCallback->setEnvelopeVertexRadius( envelopeVertexRadius );
-    verticalRayShootCallback->setEdgeColor( verticalRayEdgeColor );
-    verticalRayShootCallback->setEdgeWidth( verticalRayEdgeWidth );
-    splitEdgeCallback->setColor( edgeColor );
-
-#if 0
-    std::cout << edgeColor.name( ).toStdString( ) << std::endl;
-    std::cout << edgeWidth << std::endl;
-    std::cout << vertexColor.name( ).toStdString( ) << std::endl;
-    std::cout << vertexRadius << std::endl;
-    std::cout << DeleteCurveMode::ToString( mode ).toStdString( ) << std::endl;
-#endif
-
-  }
-}
-
-void ArrangementDemoWindow::on_actionFillColor_triggered( )
-{
-  unsigned int currentTabIndex = this->ui->tabWidget->currentIndex( );
-  if (currentTabIndex == static_cast<unsigned int>(-1)) return;
-  ArrangementDemoTabBase* currentTab = this->tabs[ currentTabIndex ];
-  FillFaceCallbackBase* fillFaceCallback = currentTab->getFillFaceCallback( );
-  QColor fillColor = fillFaceCallback->getColor( );
-
-  QColor selectedColor = QColorDialog::getColor( fillColor );
-  if ( selectedColor.isValid( ) )
-  {
-    fillFaceCallback->setColor( selectedColor );
-    this->updateFillColorSwatch( );
+    pref.edgeColor = dialog.property(Dialog::EDGE_COLOR_KEY).value<QColor>();
+    pref.edgeWidth =
+      dialog.property(Dialog::EDGE_WIDTH_KEY).value<unsigned int>();
+    pref.vertexColor =
+      dialog.property(Dialog::VERTEX_COLOR_KEY).value<QColor>();
+    pref.vertexRadius =
+      dialog.property(Dialog::VERTEX_RADIUS_KEY).value<unsigned int>();
+    pref.envelopeEdgeColor =
+      dialog.property(Dialog::ENVELOPE_EDGE_COLOR_KEY).value<QColor>();
+    pref.envelopeEdgeWidth =
+      dialog.property(Dialog::ENVELOPE_EDGE_WIDTH_KEY).value<unsigned int>();
+    pref.envelopeVertexColor =
+      dialog.property(Dialog::ENVELOPE_VERTEX_COLOR_KEY).value<QColor>();
+    pref.envelopeVertexRadius =
+      dialog.property(Dialog::ENVELOPE_VERTEX_RADIUS_KEY).value<unsigned int>();
+    pref.verticalRayEdgeColor =
+      dialog.property(Dialog::VERTICAL_RAY_EDGE_COLOR_KEY).value<QColor>();
+    pref.verticalRayEdgeWidth =
+      dialog.property(Dialog::VERTICAL_RAY_EDGE_WIDTH_KEY)
+        .value<unsigned int>();
+    pref.axesColor = dialog.property(Dialog::GRID_COLOR_KEY).value<QColor>();
+    pref.gridColor = pref.axesColor;
+    pref.gridColor.setAlphaF(0.5);
+    currentTab->updatePreferences(pref);
   }
 }

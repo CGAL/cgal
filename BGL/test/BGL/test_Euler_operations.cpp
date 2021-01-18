@@ -3,7 +3,7 @@
 #include <boost/range/distance.hpp>
 #include <CGAL/boost/graph/Euler_operations.h>
 
-#include <CGAL/IO/OFF_reader.h>
+#include <CGAL/IO/OFF.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 
@@ -510,7 +510,7 @@ add_faces()
   {
     std::ifstream in("data/open_cube.off");
     T m;
-    CGAL::read_off(in, m);
+    CGAL::read_OFF(in, m);
     std::vector<vertex_descriptor> verts(vertices(m).begin(), vertices(m).end());
     std::list< std::vector<vertex_descriptor> > new_faces;
     new_faces.push_back({verts[1], verts[7], verts[4]});
@@ -523,7 +523,7 @@ add_faces()
   {
     std::ifstream in("data/open_cube.off");
     T m;
-    CGAL::read_off(in, m);
+    CGAL::read_OFF(in, m);
     std::vector<vertex_descriptor> verts(vertices(m).begin(), vertices(m).end());
     verts.push_back(add_vertex(m));
     put(CGAL::vertex_point, m, verts.back(), Kernel::Point_3(50,0,50));

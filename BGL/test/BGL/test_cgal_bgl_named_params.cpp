@@ -28,7 +28,7 @@ void test(const NamedParameters& np)
 
     // Named parameters that we use in CGAL
   assert(get_parameter(np, CGAL::internal_np::vertex_index).v == 0);
-  assert(get_parameter(np, CGAL::internal_np::graph_visitor).v == 1);
+  assert(get_parameter(np, CGAL::internal_np::visitor).v == 1);
   assert(get_parameter(np, CGAL::internal_np::vertex_point).v == 2);
   assert(get_parameter(np, CGAL::internal_np::halfedge_index).v == 3);
   assert(get_parameter(np, CGAL::internal_np::edge_index).v == 4);
@@ -49,6 +49,11 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::vertex_to_vertex_map).v == 800000007);
   assert(get_parameter(np, CGAL::internal_np::halfedge_to_halfedge_map).v == 800000008);
   assert(get_parameter(np, CGAL::internal_np::face_to_face_map).v == 800000009);
+
+  assert(get_parameter(np, CGAL::internal_np::implementation_tag).v == 800000010);
+  assert(get_parameter(np, CGAL::internal_np::prevent_unselection).v == 800000011);
+
+  assert(get_parameter(np, CGAL::internal_np::stream_precision).v == 800000012);
 
     // Named parameters that we use in the package 'Mesh_3'
   assert(get_parameter(np, CGAL::internal_np::vertex_feature_degree).v == 9);
@@ -97,6 +102,9 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::do_lock_mesh).v == 61);
   assert(get_parameter(np, CGAL::internal_np::halfedges_keeper).v == 62);
   assert(get_parameter(np, CGAL::internal_np::do_simplify_border).v == 64);
+  assert(get_parameter(np, CGAL::internal_np::do_not_modify).v == 65);
+  assert(get_parameter(np, CGAL::internal_np::allow_self_intersections).v == 66);
+  assert(get_parameter(np, CGAL::internal_np::polyhedral_envelope_epsilon).v == 67);
   assert(get_parameter(np, CGAL::internal_np::maximum_number_of_faces).v == 78910);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
@@ -124,7 +132,7 @@ void test(const NamedParameters& np)
 
     // Named parameters that we use in CGAL
   check_same_type<0>(get_parameter(np, CGAL::internal_np::vertex_index));
-  check_same_type<1>(get_parameter(np, CGAL::internal_np::graph_visitor));
+  check_same_type<1>(get_parameter(np, CGAL::internal_np::visitor));
   check_same_type<2>(get_parameter(np, CGAL::internal_np::vertex_point));
   check_same_type<3>(get_parameter(np, CGAL::internal_np::halfedge_index));
   check_same_type<4>(get_parameter(np, CGAL::internal_np::edge_index));
@@ -143,6 +151,9 @@ void test(const NamedParameters& np)
   check_same_type<800000007>(get_parameter(np, CGAL::internal_np::vertex_to_vertex_map));
   check_same_type<800000008>(get_parameter(np, CGAL::internal_np::halfedge_to_halfedge_map));
   check_same_type<800000009>(get_parameter(np, CGAL::internal_np::face_to_face_map));
+  check_same_type<800000010>(get_parameter(np, CGAL::internal_np::implementation_tag));
+  check_same_type<800000011>(get_parameter(np, CGAL::internal_np::prevent_unselection));
+  check_same_type<800000012>(get_parameter(np, CGAL::internal_np::stream_precision));
 
     // Named parameters that we use in the package 'Mesh_3'
   check_same_type<9>(get_parameter(np, CGAL::internal_np::vertex_feature_degree));
@@ -184,6 +195,9 @@ void test(const NamedParameters& np)
   check_same_type<54>(get_parameter(np, CGAL::internal_np::use_area_smoothing));
   check_same_type<55>(get_parameter(np, CGAL::internal_np::use_Delaunay_flips));
   check_same_type<56>(get_parameter(np, CGAL::internal_np::use_safety_constraints));
+  check_same_type<65>(get_parameter(np, CGAL::internal_np::do_not_modify));
+  check_same_type<66>(get_parameter(np, CGAL::internal_np::allow_self_intersections));
+  check_same_type<67>(get_parameter(np, CGAL::internal_np::polyhedral_envelope_epsilon));
 
   check_same_type<12340>(get_parameter(np, CGAL::internal_np::do_self_intersection_tests));
   check_same_type<12341>(get_parameter(np, CGAL::internal_np::do_orientation_tests));
@@ -217,6 +231,7 @@ void test(const NamedParameters& np)
   check_same_type<36>(get_parameter(np, CGAL::internal_np::face_normal));
   check_same_type<37>(get_parameter(np, CGAL::internal_np::random_seed));
   check_same_type<38>(get_parameter(np, CGAL::internal_np::do_project));
+  check_same_type<456>(get_parameter(np, CGAL::internal_np::algorithm));
 
     // Internal named parameters
   check_same_type<39>(get_parameter(np, CGAL::internal_np::weight_calculator));
@@ -263,6 +278,8 @@ void test(const NamedParameters& np)
   check_same_type<9032>(get_parameter(np, CGAL::internal_np::inspector));
   check_same_type<9033>(get_parameter(np, CGAL::internal_np::logger));
   check_same_type<9034>(get_parameter(np, CGAL::internal_np::maximum_normal_deviation));
+  check_same_type<9035>(get_parameter(np, CGAL::internal_np::scan_angle_map));
+  check_same_type<9036>(get_parameter(np, CGAL::internal_np::scanline_id_map));
 }
 
 int main()
@@ -285,6 +302,9 @@ int main()
                          .vertex_to_vertex_map(A<800000007>(800000007))
                          .halfedge_to_halfedge_map(A<800000008>(800000008))
                          .face_to_face_map(A<800000009>(800000009))
+                         .implementation_tag(A<800000010>(800000010))
+                         .prevent_unselection(A<800000011>(800000011))
+                         .stream_precision(A<800000012>(800000012))
                          .vertex_feature_degree_map(A<9>(9))
                          .geom_traits(A<10>(10))
                          .vertex_incident_patches_map(A<11>(11))
@@ -316,6 +336,7 @@ int main()
                          .face_normal_map(A<36>(36))
                          .random_seed(A<37>(37))
                          .do_project(A<38>(38))
+                         .algorithm(A<456>(456))
                          .weight_calculator(A<39>(39))
                          .preserve_genus(A<40>(40))
                          .verbosity_level(A<41>(41))
@@ -353,6 +374,9 @@ int main()
                          .halfedges_keeper(A<62>(62))
                          .use_convex_hull(A<63>(63))
                          .do_simplify_border(A<64>(64))
+                         .do_not_modify(A<65>(65))
+                         .allow_self_intersections(A<66>(66))
+                         .polyhedral_envelope_epsilon(A<67>(67))
                          .point_map(A<9000>(9000))
                          .query_point_map(A<9001>(9001))
                          .normal_map(A<9002>(9002))
@@ -388,6 +412,8 @@ int main()
                          .inspector(A<9032>(9032))
                          .logger(A<9033>(9033))
                          .maximum_normal_deviation(A<9034>(9034))
+                         .scan_angle_map(A<9035>(9035))
+                         .scanline_id_map(A<9036>(9036))
                          .maximum_number_of_faces(A<78910>(78910))
        );
   return EXIT_SUCCESS;

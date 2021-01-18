@@ -429,3 +429,15 @@ bool Scene_spheres_item::save(const std::string& file_name)const
   return true;
 }
 
+bool Scene_spheres_item::eventFilter(QObject *, QEvent *e)
+{
+  if(e->type() == QEvent::ShortcutOverride)
+  {
+    QKeyEvent* k = static_cast<QKeyEvent*>(e);
+    if(k && k->key() == Qt::Key_Delete)
+    {
+      Q_EMIT destroyMe();
+    }
+  }
+  return false;
+}

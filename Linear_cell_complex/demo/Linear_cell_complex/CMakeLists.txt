@@ -3,7 +3,7 @@
 # cmake ../ -DCMAKE_BUILD_TYPE=Debug
 
 cmake_minimum_required(VERSION 3.1...3.15)
-project (Linear_cell_complex_Demo)
+project(Linear_cell_complex_Demo)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
@@ -35,38 +35,46 @@ set(CMAKE_AUTOMOC ON)
 add_definitions(-DCGAL_PROFILE_LCC_DEMO)
 
 ##################
-find_package(CGAL COMPONENTS Qt5)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
 
-if ( NOT (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND ) )
+if(NOT
+   (CGAL_Qt5_FOUND
+    AND Qt5_FOUND))
 
-  MESSAGE(STATUS "NOTICE: This demo requires CGAL, "
-    "and Qt5, and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL, "
+                 "and Qt5, and will not be compiled.")
 
 else()
 
-add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
+  add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
 
-# ui file, created wih Qt Designer
-qt5_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui
-                CreateSierpinskiCarpet.ui CreateSierpinskiTriangle.ui)
+  # ui file, created wih Qt Designer
+  qt5_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui
+              CreateSierpinskiCarpet.ui CreateSierpinskiTriangle.ui)
 
-# qrc files (resources files, that contain icons, at least)
-qt5_add_resources (CGAL_Qt5_RESOURCE_FILES ./Linear_cell_complex_3.qrc)
+  # qrc files (resources files, that contain icons, at least)
+  qt5_add_resources(CGAL_Qt5_RESOURCE_FILES ./Linear_cell_complex_3.qrc)
 
-add_executable(Linear_cell_complex_3_demo
-  Linear_cell_complex_3_demo.cpp MainWindow.cpp
-  Viewer.cpp Linear_cell_complex_3_subdivision.cpp
-  Linear_cell_complex_pqq_subdivision.cpp
-  typedefs.h import_moka.h
-  ${uis} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
+  add_executable(
+    Linear_cell_complex_3_demo
+    Linear_cell_complex_3_demo.cpp
+    MainWindow.cpp
+    Viewer.cpp
+    Linear_cell_complex_3_subdivision.cpp
+    Linear_cell_complex_pqq_subdivision.cpp
+    typedefs.h
+    import_moka.h
+    ${uis}
+    ${CGAL_Qt5_RESOURCE_FILES}
+    ${CGAL_Qt5_MOC_FILES})
 
-add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3_demo)
+  add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3_demo)
 
-target_link_libraries(Linear_cell_complex_3_demo PUBLIC
-  CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui Qt5::OpenGL)
+  target_link_libraries(Linear_cell_complex_3_demo
+                        PUBLIC CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui Qt5::OpenGL)
 
-include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
-cgal_add_compilation_test(Linear_cell_complex_3_demo)
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(Linear_cell_complex_3_demo)
 endif()

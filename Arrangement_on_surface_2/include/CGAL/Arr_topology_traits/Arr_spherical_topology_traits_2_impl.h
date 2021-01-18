@@ -7,8 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
-//                 Ron Wein          <wein@post.tau.ac.il>
+// Author(s): Efi Fogel         <efif@post.tau.ac.il>
+//            Ron Wein          <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_SPHERICAL_TOPOLOGY_TRAITS_2_IMPL_H
 #define CGAL_ARR_SPHERICAL_TOPOLOGY_TRAITS_2_IMPL_H
@@ -423,7 +423,7 @@ compare_y_at_x(const Point_2& p, const Halfedge* he) const
   return m_geom_traits->compare_y_at_x_2_object()(p, he->curve());
 }
 
-/*! \brief determine whether a vertex is associated with a curve end */
+/*! \brief determines whether a vertex is associated with a curve end */
 template <typename GeomTraits, typename Dcel>
 bool Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 are_equal(const Vertex* v,
@@ -514,7 +514,10 @@ let_me_decide_the_outer_ccb(std::pair< CGAL::Sign, CGAL::Sign> signs1,
  * the interior of the curve, find a place for a boundary vertex that will
  * represent the curve end along the face boundary */
 template <typename GeomTraits, typename Dcel>
-CGAL::Object
+boost::optional
+  <boost::variant
+    <typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Vertex*,
+     typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Halfedge*> >
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 place_boundary_vertex(Face* /* f */,
                       const X_monotone_curve_2& xc, Arr_curve_end ind,
@@ -525,15 +528,18 @@ place_boundary_vertex(Face* /* f */,
                       ,
                       Arr_parameter_space ps_y)
 {
+  typedef boost::variant<Vertex*, Halfedge*>    Non_optional_result;
+  typedef boost::optional<Non_optional_result>  Result;
+
   // std::cout << "place_boundary_vertex()" << std::endl;
   if (ps_y == ARR_BOTTOM_BOUNDARY) {
-    if (m_south_pole == nullptr) return Object();
-    return CGAL::make_object(m_south_pole);
+    if (m_south_pole == nullptr) return boost::none;
+    return Result(Non_optional_result(m_south_pole));
   }
 
   if (ps_y == ARR_TOP_BOUNDARY) {
-    if (m_north_pole == nullptr) return Object();
-    return CGAL::make_object(m_north_pole);
+    if (m_north_pole == nullptr) return boost::none;
+    return Result(Non_optional_result(m_north_pole));
   }
 
   CGAL_assertion((ps_x == ARR_LEFT_BOUNDARY) || (ps_x == ARR_RIGHT_BOUNDARY));
@@ -541,15 +547,14 @@ place_boundary_vertex(Face* /* f */,
   const Point_2& key = (ind == ARR_MIN_END) ?
     m_geom_traits->construct_min_vertex_2_object()(xc) :
     m_geom_traits->construct_max_vertex_2_object()(xc);
-  typename Vertex_map::iterator it = m_boundary_vertices.find(key);
-
+  auto it = m_boundary_vertices.find(key);
   if (it != m_boundary_vertices.end()) {
     Vertex* v = it->second;
-    return CGAL::make_object(v);
+    return Result(Non_optional_result(v));
   }
 
   // The vertex hasn't been created yet, return a null object:
-  return Object();
+  return boost::none;
 }
 
 /*! \brief locate the predecessor halfedge for the given curve around a given
@@ -585,7 +590,11 @@ locate_around_boundary_vertex(Vertex* v,
 
 /*! \brief locates a DCEL feature that contains a given curve end. */
 template <typename GeomTraits, typename Dcel>
-CGAL::Object Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
+boost::variant
+<typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Vertex*,
+ typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Halfedge*,
+ typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Face*>
+Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
                  Arr_parameter_space
 #if !defined(CGAL_NO_ASSERTIONS)
@@ -594,13 +603,14 @@ locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
                  ,
                  Arr_parameter_space ps_y)
 {
+  typedef boost::variant<Vertex*, Halfedge*, Face*>     Result;
   // Act according to the boundary conditions.
   if (ps_y == ARR_TOP_BOUNDARY) {
     // In case the curve end coincides with the north pole, return the vertex
     // representing the north pole, if one exists. Otherwise, return the face
     // containing this pole (the spherical face).
-    if (m_north_pole != nullptr) return CGAL::make_object(m_north_pole);
-    return CGAL::make_object(m_spherical_face);
+    if (m_north_pole != nullptr) return Result(m_north_pole);
+    return Result(m_spherical_face);
   }
 
   typename Vertex_map::iterator it;
@@ -610,7 +620,7 @@ locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
     // In case the curve end coincides with the south pole, return the vertex
     // representing the south pole, if one exists. Otherwise, search for the
     // face containing this pole.
-    if (m_south_pole != nullptr) return CGAL::make_object(m_south_pole);
+    if (m_south_pole != nullptr) return Result(m_south_pole);
     it = m_boundary_vertices.begin();
   }
   else {
@@ -625,7 +635,7 @@ locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
     it = m_boundary_vertices.find(key);
     if (it != m_boundary_vertices.end()) {
       v = it->second;
-      return CGAL::make_object(v);
+      return Result(v);
     }
 
     it = m_boundary_vertices.lower_bound(key);
@@ -635,11 +645,10 @@ locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
   // discontinuity that is strictly above the curve end. If there is none,
   // we know the curve end is contained in the spherical face. Otherwise,
   // we return the face that lies below the vertex v.
-  if (it == m_boundary_vertices.end())
-    return CGAL::make_object(m_spherical_face);
+  if (it == m_boundary_vertices.end()) return Result(m_spherical_face);
 
   v = it->second;
-  return CGAL::make_object(_face_below_vertex_on_discontinuity(v));
+  return Result(_face_below_vertex_on_discontinuity(v));
 }
 
 /*! \brief determines whether a given boundary vertex is redundant */
@@ -803,7 +812,7 @@ _locate_around_pole(Vertex* v,
   return nullptr;
 }
 
-/*! \brief Return the face that lies below the given vertex, which lies
+/*! \brief returns the face that lies below the given vertex, which lies
  * on the line of discontinuity.
  */
 template <typename GeomTraits, typename Dcel>
