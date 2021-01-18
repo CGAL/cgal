@@ -1,11 +1,15 @@
 #include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
-
+#include <fstream>
+#include <iostream>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/generators.h>
 
 #include <CGAL/boost/graph/IO/OFF.h>
 #include <CGAL/boost/graph/IO/VTK.h>
+#include <CGAL/boost/graph/IO/WRL.h>
+
+
 typedef CGAL::Simple_cartesian<double>         Kernel;
 typedef Kernel::Point_3                        Point_3;
 typedef CGAL::Surface_mesh<Point_3>            SM;
@@ -45,5 +49,10 @@ int main()
   assert(num_vertices(sm_in) == 3 && num_faces(sm_in) == 1);
   sm_in.clear();
 
+  //wrl
+  os.open("tmp.wrl");
+  ok = CGAL::write_wrl(os, sm_out, CGAL::parameters::all_default());
+  assert(ok);
+  os.close();
   return EXIT_SUCCESS;
 }
