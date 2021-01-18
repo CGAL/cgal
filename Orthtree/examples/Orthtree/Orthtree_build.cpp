@@ -1,4 +1,3 @@
-#include <fstream>
 #include <iostream>
 
 #include <CGAL/Epick_d.h>

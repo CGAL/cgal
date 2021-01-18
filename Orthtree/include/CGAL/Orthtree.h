@@ -111,7 +111,7 @@ public:
   class Node;
 
   /*!
-   * \brief A predicate that determines whether a node needs to be split when refining a tree
+   * \brief A predicate that determines whether a node must be split when refining a tree
    */
   typedef std::function<bool(Node)> Split_predicate;
 
@@ -236,7 +236,7 @@ public:
     \brief recursively subdivides the orthtree until it meets the given criteria.
 
     The split predicate is a `std::function` that takes a Node and
-    returns a boolean value (where `true` implies that a Node needs to
+    returns a Boolean value (where `true` implies that a Node needs to
     be split, `false` that the Node should be a leaf). This function
     function may be called several times with different predicate.
 

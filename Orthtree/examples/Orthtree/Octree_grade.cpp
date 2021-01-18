@@ -1,4 +1,3 @@
-#include <fstream>
 #include <iostream>
 
 #include <CGAL/Simple_cartesian.h>

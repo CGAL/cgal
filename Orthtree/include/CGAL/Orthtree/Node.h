@@ -64,7 +64,7 @@ public:
   /*!
     \brief set of bits representing this node's relationship to its parent.
 
-    Equivalent to an array of booleans, where index[0] is whether x
+    Equivalent to an array of Booleans, where index[0] is whether x
     is greater, index[1] is whether y is greater, index[2] is whether
     z is greater, and so on for higher dimensions if needed.
     Used to represent a node's relationship to the center of its parent.
