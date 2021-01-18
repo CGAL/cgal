@@ -26,6 +26,7 @@ typedef Kd_tree_search::Tree Kdtree;
 using std::chrono::high_resolution_clock;
 using std::chrono::duration_cast;
 using std::chrono::microseconds;
+using std::chrono::milliseconds;
 
 int main(int argc, char **argv) {
 
@@ -43,7 +44,7 @@ int main(int argc, char **argv) {
     auto points = generate<Kernel>(num_points);
 
     auto octreePoints = points;
-    auto octreeTime = bench<microseconds>(
+    auto octreeTime = bench<milliseconds>(
             [&] {
               // Build the tree
               Octree octree(octreePoints, octreePoints.point_map());
@@ -52,7 +53,7 @@ int main(int argc, char **argv) {
     );
 
     auto kdtreePoints = points;
-    auto kdtreeTime = bench<microseconds>(
+    auto kdtreeTime = bench<milliseconds>(
             [&] {
               // Build the tree
               Kdtree kdtree(kdtreePoints.points().begin(), kdtreePoints.points().end());

@@ -10,8 +10,8 @@ set style data lines
 
 set title 'Time to construct a tree from points'
 set xlabel "Number of points"
-set ylabel "Time (us)"
+set ylabel "Time (ms)"
 set key autotitle columnhead
 
 set datafile separator ","
-plot for [col=2:3] 'construction_benchmark.csv' using 1:col
+plot for [col=2:10] 'construction_benchmark.csv' using 1:col
