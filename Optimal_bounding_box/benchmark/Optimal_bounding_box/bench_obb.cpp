@@ -6,10 +6,7 @@
 
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Timer.h>
-
-#include <CGAL/IO/OFF_reader.h>
-#include <CGAL/IO/STL_reader.h>
-#include <CGAL/IO/OBJ_reader.h>
+#include <CGAL/IO/polygon_soup_io.h>
 
 #include <iostream>
 #include <fstream>
@@ -24,51 +21,15 @@ typedef K::Point_3                                                     Point_3;
 typedef CGAL::Surface_mesh<Point_3>                                    Surface_mesh;
 typedef typename boost::graph_traits<Surface_mesh>::vertex_descriptor  vertex_descriptor;
 
-template <typename Point>
-bool read_mesh(const std::string filename,
-               std::vector<Point>& points)
-{
-  std::ifstream in(filename.c_str());
-  if(!in.good())
-  {
-//    std::cerr << "Error: can't read file at " << filename << std::endl;
-    return false;
-  }
-
-  std::vector<std::vector<std::size_t> > unused_faces;
-
-  std::string fn(filename);
-  if(fn.substr(fn.find_last_of(".") + 1) == "stl")
-  {
-    if(!CGAL::read_STL(in, points, unused_faces))
-      return false;
-  }
-  else if(fn.substr(fn.find_last_of(".") + 1) == "obj")
-  {
-    if(!CGAL::read_OBJ(in, points, unused_faces))
-      return false;
-  }
-  else if(fn.substr(fn.find_last_of(".") + 1) == "off")
-  {
-    if(!CGAL::read_OFF(in, points, unused_faces))
-      return false;
-  }
-  else
-  {
-//    std::cerr << "Error: unsupported file format: " << filename << std::endl;
-    return false;
-  }
-
-  return true;
-}
-
 void bench_finding_obb(const std::string filename,
                        const int iter)
 {
   CGAL::Timer timer;
 
   std::vector<Point_3> points;
-  read_mesh(filename, points);
+  std::vector<std::vector<std::size_t> > unused_faces;
+
+  CGAL::read_polygon_soup(filename, points, unused_faces);
 
   std::vector<Point_3> ch_points;
   std::array<Point_3, 8> obb_points1;

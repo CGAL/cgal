@@ -27,7 +27,7 @@
 
 #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-#include <CGAL/IO/OFF_reader.h>
+#include <CGAL/IO/OFF.h>
 #endif
 
 #include <boost/algorithm/minmax_element.hpp>
@@ -423,10 +423,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
     std::cout << edges_to_collapse.size() << " needles and " << edges_to_flip.size() << " caps" << std::endl;
     std::ostringstream oss;
     oss << "degen_cleaning_iter_" << iter++ << ".off";
-    std::ofstream out(oss.str().c_str());
-    out << std::setprecision(17);
-    out << tmesh;
-    out.close();
+    CGAL::write_polygon_mesh(oss.str(), tmesh, CGAL::parameters::stream_precision(17));
 #endif
 
     if(edges_to_collapse.empty() && edges_to_flip.empty())
@@ -1670,9 +1667,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
 #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
   {
     std::cout <<"Done with null edges.\n";
-    std::ofstream output("/tmp/no_null_edges.off");
-    output << std::setprecision(17) << tmesh << "\n";
-    output.close();
+    CGAL::write_polygon_mesh("/tmp/no_null_edges.off", tmesh, CGAL::parameters::stream_precision(17));
   }
 #endif
 

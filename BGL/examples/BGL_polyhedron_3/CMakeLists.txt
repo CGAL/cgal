@@ -43,11 +43,9 @@ create_single_source_cgal_program("transform_iterator.cpp")
 create_single_source_cgal_program("copy_polyhedron.cpp")
 
 find_package( OpenMesh QUIET )
-
-if ( OpenMesh_FOUND )
-  include( UseOpenMesh )
-  target_compile_definitions( copy_polyhedron PRIVATE  -DCGAL_USE_OPENMESH )
+if(OpenMesh_FOUND)
   target_link_libraries( copy_polyhedron PRIVATE ${OPENMESH_LIBRARIES} )
+  target_compile_definitions( copy_polyhedron PRIVATE -DCGAL_USE_OPENMESH )
 else()
   message(STATUS "Examples that use OpenMesh will not be compiled.")
 endif()

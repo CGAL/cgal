@@ -16,7 +16,7 @@
 //         they may be wrong now.
 
 /*! \file NiX/Descartes.h
-  \brief Defines class NiX::Descartes.
+  \brief defines class NiX::Descartes.
 
   Isolate real roots of polynomials.
 

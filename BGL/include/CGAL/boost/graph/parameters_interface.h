@@ -39,6 +39,20 @@ CGAL_add_named_parameter(face_to_face_map_t, face_to_face_map, face_to_face_map)
 CGAL_add_named_parameter(implementation_tag_t, implementation_tag, implementation_tag)
 CGAL_add_named_parameter(prevent_unselection_t, prevent_unselection, prevent_unselection)
 
+CGAL_add_named_parameter(stream_precision_t, stream_precision, stream_precision)
+CGAL_add_named_parameter(verbose_t, verbose, verbose)
+
+// List of named parameters used for IO
+CGAL_add_named_parameter(vertex_normal_output_iterator_t, vertex_normal_output_iterator, vertex_normal_output_iterator)
+CGAL_add_named_parameter(vertex_color_output_iterator_t, vertex_color_output_iterator, vertex_color_output_iterator)
+CGAL_add_named_parameter(vertex_texture_output_iterator_t, vertex_texture_output_iterator, vertex_texture_output_iterator)
+CGAL_add_named_parameter(face_color_output_iterator_t, face_color_output_iterator, face_color_output_iterator)
+CGAL_add_named_parameter(vertex_normal_map_t, vertex_normal_map, vertex_normal_map)
+CGAL_add_named_parameter(vertex_color_map_t, vertex_color_map, vertex_color_map)
+CGAL_add_named_parameter(vertex_texture_map_t, vertex_texture_map, vertex_texture_map)
+CGAL_add_named_parameter(face_color_map_t, face_color_map, face_color_map)
+CGAL_add_named_parameter(repair_polygon_soup_t, repair_polygon_soup, repair_polygon_soup)
+
 // List of named parameters that we use in the package 'Mesh_3'
 CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_feature_degree_map)
 

@@ -45,7 +45,7 @@ I_Binary_write_integer32(std::ostream& out, std::int32_t i) {
 }
 inline void
 I_Binary_write_float32(std::ostream& out, float f) {
-    out.write( (char*)(&f), 4);
+  out.write( (char*)(&f), 4);
 }
 inline void
 I_Binary_write_bool(std::ostream& out, bool b) {
@@ -71,7 +71,7 @@ I_Binary_read_integer32(std::istream& in, std::int32_t& i) {
 }
 inline void
 I_Binary_read_float32(std::istream& in, float& f) {
-    in.read( (char*)(&f), 4);
+  in.read( (char*)(&f), 4);
 }
 inline void
 I_Binary_read_bool(std::istream& in, bool& b) {
@@ -84,7 +84,7 @@ inline void
 I_swap_to_big_endian( std::uint32_t& u) {
     (void) u;
 #ifdef CGAL_LITTLE_ENDIAN
-    u = ((u >> 24) | (u << 24) | ((u >> 8) & 0xff00) | ((u << 8) & 0xff0000));
+  u = ((u >> 24) | (u << 24) | ((u >> 8) & 0xff00) | ((u << 8) & 0xff0000));
 #endif
 }
 
@@ -125,8 +125,8 @@ I_Binary_write_big_endian_integer32(std::ostream& out, std::int32_t i) {
 }
 inline void
 I_Binary_write_big_endian_float32(std::ostream& out, float f) {
-    I_swap_to_big_endian( f);
-    out.write( (char*)(&f), 4);
+  I_swap_to_big_endian( f);
+  out.write( (char*)(&f), 4);
 }
 
 inline void
@@ -136,8 +136,8 @@ I_Binary_read_big_endian_integer32(std::istream& in, std::int32_t& i) {
 }
 inline void
 I_Binary_read_big_endian_float32(std::istream& in, float& f) {
-    in.read( (char*)(&f), 4);
-    I_swap_to_big_endian( f);
+  in.read( (char*)(&f), 4);
+  I_swap_to_big_endian( f);
 }
 
 } //namespace CGAL
