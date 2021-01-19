@@ -7,7 +7,7 @@
 
   \cgalHasModel `CGAL::Orthtree_traits_2<GeomTraits>`
   \cgalHasModel `CGAL::Orthtree_traits_3<GeomTraits>`
-  \cgalHasModel `CGAL::Orthtree_traits<GeomTraits,Dimension>`
+  \cgalHasModel `CGAL::Orthtree_traits_d<GeomTraits,Dimension>`
 */
 class OrthtreeTraits
 {

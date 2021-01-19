@@ -203,7 +203,7 @@ The tree is printed before and after grading, so that the differences are visibl
 Tree construction benchmarks were conducted by randomly generating a collection of points,
 and then timing the process of creating a fully refined tree which contains them.
 
-Because of its simplicity, an octree can be constructed in less time than a kD-tree.
+Because of its simplicity, an octree can be constructed faster than a kD-tree.
 
 \cgalFigureBegin{Orthtree_construction_benchmark_fig, construction_benchmark.png}
 %Plot of the time to construct a tree.
@@ -211,7 +211,7 @@ Because of its simplicity, an octree can be constructed in less time than a kD-t
 
 \subsection Section_Orthtree_Performance_Nearest_Neighbors Nearest Neighbors
 
-Orthtree nodes are uniform, so orthtrees will tend to have deeper hierarchies than equivalent kD-trees.
+%Orthtree nodes are uniform, so orthtrees will tend to have deeper hierarchies than equivalent kD-trees.
 As a result, orthtrees will generally perform worse for nearest neighbor searches.
 Both nearest neighbor algorithms have a theoretical complexity of O(log(n)),
 but the Orthtree can generally be expected to have a higher coefficient.
@@ -228,7 +228,7 @@ which involves comparing every point to the search point.
 %Plot of the time to find nearest neighbors using tree methods and a naive approach.
 \cgalFigureEnd
 
-For nontrivial point counts, the naive approach's calculation time dwarfs that of either the Orthtree or kD-tree.
+For nontrivial point counts, the naive approach's calculation time dwarfs that of either the %orthtree or kD-tree.
 
 \section Section_Orthtree_History History
 
