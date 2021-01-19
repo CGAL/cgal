@@ -29,7 +29,7 @@
 \cgalPkgShortInfoBegin
 \cgalPkgSince{5.3}
 \cgalPkgBib{cgal:cpz-o}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd
