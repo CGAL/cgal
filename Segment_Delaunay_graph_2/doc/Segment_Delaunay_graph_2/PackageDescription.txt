@@ -56,7 +56,9 @@ the class
 - `CGAL::Segment_Delaunay_graph_2<Gt,St,DS>`
 - `CGAL::Segment_Delaunay_graph_site_2<K>`
 - `CGAL::Segment_Delaunay_graph_storage_site_2<Gt>`
+- `CGAL::Segment_Delaunay_graph_storage_site_with_info_2<St,I,B>`
 - `CGAL::Segment_Delaunay_graph_storage_traits_2<Gt>`
+- `CGAL::Segment_Delaunay_graph_storage_traits_with_info_2<Gt,I,C,M>`
 - `CGAL::Segment_Delaunay_graph_vertex_base_2<St,Vb>`
 - `CGAL::Segment_Delaunay_graph_face_base_2<Gt,Fb>`
 - `CGAL::Segment_Delaunay_graph_traits_2<K,MTag>`
@@ -67,4 +69,3 @@ the class
 - `CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<Vbb>`
 
 */
-
