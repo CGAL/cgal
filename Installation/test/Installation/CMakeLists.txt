@@ -29,6 +29,7 @@ macro(create_link_to_program COMPONENT)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS link_to_${COMPONENT})
 
 endmacro()
+
 find_package(CGAL REQUIRED COMPONENTS Core)
 
 include(${CGAL_USE_FILE})

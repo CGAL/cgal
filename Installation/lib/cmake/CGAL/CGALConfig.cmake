@@ -79,18 +79,18 @@ include(${CGAL_MODULES_DIR}/CGAL_TweakFindBoost.cmake)
 
 set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
 
-
-foreach(comp ${CGAL_FIND_COMPONENTS})
-  if(CGAL_${comp}_FOUND)
-    list(APPEND CGAL_LIBRARIES CGAL_${comp})
-  endif()
-endforeach()
-
 foreach(comp ${CGAL_FIND_COMPONENTS})
   if(NOT comp MATCHES "Core|ImageIO|Qt5")
     message(FATAL_ERROR "The requested CGAL component ${comp} does not exist!")
   endif()
-  list(APPEND CGAL_LIBRARIES CGAL_${comp})
+
+  if(CGAL_${comp}_FOUND)
+    if(comp MATCHES "Core" AND CGAL_DISABLE_GMP)
+      message("CGAL_Core needs GMP and won't be used.")
+    else()
+      list(APPEND CGAL_LIBRARIES CGAL_${comp})
+    endif()
+  endif()
 endforeach()
 
 set(CGALConfig_all_targets_are_defined TRUE)
