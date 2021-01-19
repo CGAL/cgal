@@ -40,7 +40,7 @@ subdivide space further. This method uses a split predicate which
 takes a node as input and returns `true` is this node should be
 split, `false` otherwise: this enables users to choose on what
 criterion should the orthtree be refined. Predefined predicates are
-provided such as [Max_depth](@ref CGAL::Orthtrees::Split_predicate::Max_depth) or [Bucket_size](@ref CGAL::Orthtrees::Split_predicate::Bucket_size).
+provided such as [Maximum_depth](@ref CGAL::Orthtrees::Split_predicate::Maximum_depth) or [Maximum_number_of_inliers](@ref CGAL::Orthtrees::Split_predicate::Maximum_number_of_inliers).
 
 \subsection Section_Orthtree_Orthtree_Point_Vector Building an Orthtree
 
@@ -82,7 +82,7 @@ map type and object. This example illustrates how to create an %octree from a `P
 It also shows a more explicit way of setting the split predicate when refining the tree.
 
 An octree is constructed from the point set and its map.
-The tree is refined with a max depth (deepest node allowed) of 10,
+The tree is refined with a maximum depth (deepest node allowed) of 10,
 and a bucket size (maximum number of points contained by a single node) of 20.
 The tree is then printed to the standard output.
 

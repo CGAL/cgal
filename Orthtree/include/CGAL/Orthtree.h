@@ -286,18 +286,19 @@ public:
 
   /*!
 
-    \brief convenience overload that refines an orthtree using a max
-    depth and max number of points in a node as split predicate.
+    \brief convenience overload that refines an orthtree using a
+    maximum depth and maximum number of points in a node as split
+    predicate.
 
     This is equivalent to calling
-    `refine(Split_predicate::Max_depth_or_bucket_size(max_depth,
+    `refine(Split_predicate::Maximum_depth_and_maximum_number_of_inliers(min_depth,
     bucket_size))`
 
     \param max_depth deepest a tree is allowed to be (nodes at this depth will not be split).
     \param bucket_size maximum points a node is allowed to contain.
    */
   void refine(size_t max_depth = 10, size_t bucket_size = 20) {
-    refine(Orthtrees::Split_predicate::Max_depth_or_bucket_size(max_depth, bucket_size));
+    refine(Orthtrees::Split_predicate::Maximum_depth_and_maximum_number_of_inliers(max_depth, bucket_size));
   }
 
   /*!

@@ -24,17 +24,17 @@ namespace Split_predicate {
 
 /*!
   \ingroup PkgOrthtreeSplitPredicates
-  \brief predicate to split nodes of an orthtree when they contain more than a certain number of items
+  \brief bucket size predicate that splits a node if it contains more than a certain number of items.
  */
-class Bucket_size {
+class Maximum_number_of_inliers {
 
   std::size_t m_bucket_size;
 
 public:
   /*!
-    \brief creates a bucket size predicate.
+    \brief creates a predicate based on the number of inliers (bucket size).
    */
-  Bucket_size(std::size_t bucket_size) :
+  Maximum_number_of_inliers(std::size_t bucket_size) :
           m_bucket_size(bucket_size) {}
 
   /*!
@@ -48,18 +48,18 @@ public:
 
 /*!
   \ingroup PkgOrthtreeSplitPredicates
-  \brief predicate to split nodes of an orthtree when they are less than a certain depth.
+  \brief predicate that splits a node if its depth is lower than a certain limit.
  */
-class Max_depth {
+class Maximum_depth {
 
   std::size_t m_max_depth;
 
 public:
 
   /*!
-    \brief creates a max depth predicate.
+    \brief creates a maximum depth predicate.
    */
-  Max_depth(std::size_t max_depth) : m_max_depth(max_depth) {}
+  Maximum_depth(std::size_t max_depth) : m_max_depth(max_depth) {}
 
   /*!
     \brief returns `true` if `n` should be splitted, `false` otherwise.
@@ -72,18 +72,21 @@ public:
 
 /*!
   \ingroup PkgOrthtreeSplitPredicates
-  \brief predicate to split nodes when they are less than a depth and they contain more than a number of items.
+
+  \brief predicate that splits a node if it contains more than a
+  certain number of items and if its depth is lower than a certain
+  limit.
  */
-class Max_depth_or_bucket_size {
+class Maximum_depth_and_maximum_number_of_inliers {
 
   std::size_t m_max_depth, m_bucket_size;
 
 public:
 
   /*!
-    \brief creates a predicate using max depth or bucket size.
+    \brief creates a predicate using minimum depth or bucket size.
    */
-  Max_depth_or_bucket_size(std::size_t max_depth, std::size_t bucket_size) :
+  Maximum_depth_and_maximum_number_of_inliers(std::size_t max_depth, std::size_t bucket_size) :
           m_max_depth(max_depth), m_bucket_size(bucket_size) {}
 
   /*!
