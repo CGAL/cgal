@@ -728,4 +728,50 @@ typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 /// @}
 #include <CGAL/license/lgpl.h>
 
+//----------------------------------------------------------------------//
+//  Function to define data directory
+//----------------------------------------------------------------------//
+#include <cstdlib>
+#include <string>
+#include <fstream>
+#include <iostream>
+
+namespace CGAL {
+
+// Returns filename prefixed by the directory of CGAL containing data.
+// This directory is either defined in the environement variable CGAL_DATA_DIR,
+// otherwise it is taken from the constant CGAL_DATA_DIR (defined in CMake),
+// otherwise it is empty (and thus returns filename unmodified).
+inline std::string get_data_file_path(const char* filename)
+{
+ std::string res;
+
+ const char *cgal_dir=std::getenv("CGAL_DATA_DIR");
+
+ if (cgal_dir!=nullptr)
+ { res=std::string(cgal_dir); }
+#ifdef CGAL_DATA_DIR
+ else
+ { res=std::string(CGAL_DATA_DIR); }
+#endif
+
+ if (!res.empty() && res.back()!='/')
+ { res+=std::string("/"); }
+
+ res+=std::string(filename);
+
+ // Test if the file exists, write a warning otherwise
+ std::ifstream f(res);
+ if (!f)
+ {
+   std::cerr<<"[WARNING] file "<<res<<" does not exist or cannot be read "
+            <<"(CGAL_DATA_DIR='"
+            <<(cgal_dir!=nullptr?cgal_dir:CGAL_DATA_DIR)<<"')."<<std::endl;
+ }
+ 
+ return res;
+}
+
+} // end namespace CGAL
+
 #endif // CGAL_CONFIG_H
