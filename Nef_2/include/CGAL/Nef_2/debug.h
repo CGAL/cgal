@@ -43,35 +43,33 @@
 
 #ifndef NDEBUG
 #define CGAL_NEF_TRACE(t) if((debugthread%CGAL_NEF_DEBUG)==0) \
- std::cerr<<" "<<t; \
- std::cerr.flush()
+    { std::cerr<<" "<<t; }
 #else
 #define CGAL_NEF_TRACE(t)
 #endif
 
 #ifndef NDEBUG
 #define CGAL_NEF_TRACEV(t) if((debugthread%CGAL_NEF_DEBUG)==0) \
- std::cerr<<" "<<#t<<" = "<<(t)<<std::endl; \
- std::cerr.flush()
+    { std::cerr<<" "<<#t<<" = "<<(t)<<std::endl; }
 #else
 #define CGAL_NEF_TRACEV(t)
 #endif
 
 #ifndef NDEBUG
 #define CGAL_NEF_TRACEN(t) if((debugthread%CGAL_NEF_DEBUG)==0) \
- std::cerr<< " "<<t<<std::endl;
+    { std::cerr<< " "<<t<<std::endl; }
 #else
 #define CGAL_NEF_TRACEN(t)
 #endif
 
 #ifndef NDEBUG
-#define CGAL_NEF_CTRACE(b,t) if(b) std::cerr<<" "<<t; else std::cerr<<" 0"
+#define CGAL_NEF_CTRACE(b,t) if(b) {std::cerr<<" "<<t;} else {std::cerr<<" 0"}
 #else
 #define CGAL_NEF_CTRACE(b,t)
 #endif
 
 #ifndef NDEBUG
-#define CGAL_NEF_CTRACEN(b,t) if(b) std::cerr<<" "<<t<<"\n"; else std::cerr<<" 0\n"
+#define CGAL_NEF_CTRACEN(b,t) if(b){ std::cerr<<" "<<t<<"\n";} else {std::cerr<<" 0\n"}
 #else
 #define CGAL_NEF_CTRACEN(b,t)
 #endif
