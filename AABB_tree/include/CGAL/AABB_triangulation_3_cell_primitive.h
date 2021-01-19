@@ -30,13 +30,13 @@ namespace CGAL
       //classical typedefs
       typedef Iterator key_type;
       typedef typename GeomTraits::Point_3 value_type;
-      // typedef decltype(
-      //   std::declval<typename GeomTraits::Construct_vertex_3>()(
-      //     std::declval<typename GeomTraits::Tetrahedron_3>(),
-      //     std::declval<int>())) reference;
       typedef decltype(
-        typename GeomTraits::Construct_vertex_3()(
-          *std::declval<key_type&>(), 0)) reference;
+        std::declval<typename GeomTraits::Construct_vertex_3>()(
+          std::declval<typename GeomTraits::Tetrahedron_3>(),
+          std::declval<int>())) reference;
+      // typedef decltype(
+      //   typename GeomTraits::Construct_vertex_3()(
+      //     *std::declval<key_type&>(), 0)) reference; // fails polyhedron demo!
       typedef boost::readable_property_map_tag category;
       typedef Point_from_cell_iterator_proprety_map<GeomTraits, Iterator> Self;
 
