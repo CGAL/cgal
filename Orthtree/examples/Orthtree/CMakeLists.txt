@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 cmake_minimum_required(VERSION 3.1...3.14)
-project(Octree_Examples)
+project(Orthtree_Examples)
 
 find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core)
 if (CGAL_FOUND)
