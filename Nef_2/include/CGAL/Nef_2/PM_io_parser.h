@@ -341,23 +341,23 @@ void PM_io_parser<PMDEC>::read()
 {
   if ( !check_sep("Plane_map_2") )
   {
-    std::cerr<<"PM_io_parser::read: no embedded_PM header."<<std::endl;
+    CGAL_warning_msg(false, "PM_io_parser::read: no embedded_PM header.");
     return;
   }
   if ( !(check_sep("vertices") && (in >> vn)) )
   {
-    std::cerr<<"PM_io_parser::read: wrong node line."<<std::endl;
+    CGAL_warning_msg(false, "PM_io_parser::read: wrong node line.");
     return;
   }
 
   if ( !(check_sep("halfedges") && (in >> en) && (en%2==0)) )
   {
-    std::cerr<<"PM_io_parser::read: wrong edge line."<<std::endl;
+    CGAL_warning_msg(false, "PM_io_parser::read: wrong edge line.");
     return;
   }
   if ( !(check_sep("faces") && (in >> fn)) )
   {
-    std::cerr<<"PM_io_parser::read: wrong face line."<<std::endl;
+    CGAL_warning_msg(false, "PM_io_parser::read: wrong face line.");
     return;
   }
 
@@ -374,21 +374,21 @@ void PM_io_parser<PMDEC>::read()
   for(i=0; i<vn; i++) {
     if (!read_vertex(Vertex_of[i]))
     {
-      std::cerr<<"PM_io_parser::read: error in node line"<<std::endl;
+      CGAL_warning_msg(false, "PM_io_parser::read: error in node line");
       return;
     }
   }
   for(i=0; i<en; i++) {
     if (!read_hedge(Halfedge_of[i]))
     {
-      std::cerr<<"PM_io_parser::read: error in halfedge line"<<std::endl;
+      CGAL_warning_msg(false, "PM_io_parser::read: error in halfedge line");
       return;
     }
   }
   for(i=0; i<fn; i++) {
     if (!read_face(Face_of[i]))
     {
-      std::cerr<<"PM_io_parser::read: error in face line"<<std::endl;
+      CGAL_warning_msg(false, "PM_io_parser::read: error in face line");
       return;
     }
   }

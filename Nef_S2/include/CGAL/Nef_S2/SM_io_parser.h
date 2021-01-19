@@ -381,32 +381,32 @@ void SM_io_parser<Decorator_>::read()
 {
   if ( !check_sep("Nef_polyhedron_S2") )
   {
-   std::cerr<<"Missing line in header"<<std::endl;
+   CGAL_warning_msg(false, "Missing line in header");
    return;
   }
   if ( !check_sep("Sphere_map_2") )
   {
-   std::cerr<<"SM_io_parser::read: no embedded_PM header."<<std::endl;
+   CGAL_warning_msg(false, "SM_io_parser::read: no embedded_PM header.");
    return;
   }
   if ( !(check_sep("vertices") && (in >> vn)) )
   {
-   std::cerr<<"SM_io_parser::read: wrong vertex line."<<std::endl;
+   CGAL_warning_msg(false, "SM_io_parser::read: wrong vertex line.");
    return;
   }
   if ( !(check_sep("edges") && (in >> en) && (en%2==0)) )
   {
-   std::cerr<<"SM_io_parser::read: wrong edge line."<<std::endl;
+   CGAL_warning_msg(false, "SM_io_parser::read: wrong edge line.");
    return;
   }
   if ( !(check_sep("loops") && (in >> ln)) )
   {
-   std::cerr<<"SM_io_parser::read: wrong loop line."<<std::endl;
+   CGAL_warning_msg(false, "SM_io_parser::read: wrong loop line.");
    return;
   }
   if ( !(check_sep("faces") && (in >> fn)) )
   {
-   std::cerr<<"SM_io_parser::read: wrong face line."<<std::endl;
+   CGAL_warning_msg(false, "SM_io_parser::read: wrong face line.");
    return;
   }
 
@@ -426,14 +426,14 @@ void SM_io_parser<Decorator_>::read()
   for(i=0; i<vn; i++) {
     if (!read_vertex(SVertex_of[i]))
     {
-     std::cerr<<"SM_io_parser::read: error in node line"<<std::endl;
+     CGAL_warning_msg(false, "SM_io_parser::read: error in node line");
      return;
     }
   }
   for(i=0; i<en; i++) {
     if (!read_edge(Edge_of[i]))
     {
-     std::cerr<<"SM_io_parser::read: error in edge line"<<std::endl;
+     CGAL_warning_msg(false, "SM_io_parser::read: error in edge line");
      return;
     }
 
@@ -444,7 +444,7 @@ void SM_io_parser<Decorator_>::read()
   for(i=0; i<fn; i++) {
     if (!read_face(SFace_of[i]))
     {
-     std::cerr<<"SM_io_parser::read: error in face line"<<std::endl;
+     CGAL_warning_msg(false, "SM_io_parser::read: error in face line");
      return;
     }
   }

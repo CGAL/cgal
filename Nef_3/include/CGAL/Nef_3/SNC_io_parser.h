@@ -1400,24 +1400,47 @@ template <typename EW>
 void SNC_io_parser<EW>::read()
 {
   if ( !check_sep("Selective Nef Complex") )
-    CGAL_error_msg("SNC_io_parser::read: no SNC header.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: no SNC header.");
+    returnl
+  }
   std::string kernel_type;
   in >> kernel_type;
   CGAL_assertion(kernel_type == "standard" || kernel_type == "extended");
   if ( !(check_sep("vertices") && (in >> vn)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong vertex line.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: wrong vertex line.");
+    return;
+  }
   if ( !(check_sep("halfedges") && (in >> en) && (en%2==0)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong edge line.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: wrong edge line.");
+    return;
+  }
   if ( !(check_sep("facets") && (in >> fn) && (fn%2==0)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong facet line.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: wrong facet line.");
+  }
   if ( !(check_sep("volumes") && (in >> cn)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong volume line.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: wrong volume line.");
+    return;
+  }
   if ( !(check_sep("shalfedges") && (in >> sen)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong sedge line.");
+  {
+   CGAL_warning_msg(false, "SNC_io_parser::read: wrong sedge line.");
+   return;
+  }
   if ( !(check_sep("shalfloops") && (in >> sln)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong sloop line.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: wrong sloop line.");
+    return;
+  }
   if ( !(check_sep("sfaces") && (in >> sfn)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong sface line.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: wrong sface line.");
+    return;
+  }
 
   addInfiBox = (kernel_type == "standard" && Infi_box::extended_kernel());
 
@@ -1445,7 +1468,7 @@ void SNC_io_parser<EW>::read_items(int plus01) {
   for(vi=Vertex_of.begin(); vi!=Vertex_of.end(); ++vi) {
     if (!read_vertex<K>(*vi))
     {
-      std::cerr<<"SNC_io_parser::read: error in node line"<<std::endl;
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in node line");
       return;
     }
   }
@@ -1454,7 +1477,7 @@ void SNC_io_parser<EW>::read_items(int plus01) {
   for(ei=Edge_of.begin(); ei!=Edge_of.end(); ++ei) {
     if (!read_edge<K>(*ei))
     {
-      std::cerr<<"SNC_io_parser::read: error in edge line"<<std::endl;
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in edge line");
       return;
     }
   }
@@ -1464,7 +1487,7 @@ void SNC_io_parser<EW>::read_items(int plus01) {
   for(fi=Halffacet_of.begin(); fi!=Halffacet_of.end(); ++fi) {
     if (!read_facet<K>(*fi))
     {
-      std::cerr<<"SNC_io_parser::read: error in facet line"<<std::endl;
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in facet line");
       return;
     }
   }
@@ -1472,7 +1495,7 @@ void SNC_io_parser<EW>::read_items(int plus01) {
   for(ci=Volume_of.begin()+plus01; ci!=Volume_of.end(); ++ci) {
     if (!read_volume(*ci))
     {
-      std::cerr<<"SNC_io_parser::read: error in volume line"<<std::endl;
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in volume line");
       return;
     }
   }
@@ -1480,7 +1503,7 @@ void SNC_io_parser<EW>::read_items(int plus01) {
   for(sei=SEdge_of.begin(); sei!=SEdge_of.end(); ++sei) {
     if (!read_sedge<K>(*sei))
     {
-      std::cerr<<"SNC_io_parser::read: error in sedge line"<<std::endl;
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in sedge line");
       return;
     }
   }
@@ -1488,7 +1511,7 @@ void SNC_io_parser<EW>::read_items(int plus01) {
   for(sli=SLoop_of.begin(); sli!=SLoop_of.end(); ++sli) {
     if (!read_sloop<K>(*sli))
     {
-      std::cerr<<"SNC_io_parser::read: error in sloop line"<<std::endl;
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in sloop line");
       return;
     }
   }
@@ -1496,7 +1519,7 @@ void SNC_io_parser<EW>::read_items(int plus01) {
   for(sfi=SFace_of.begin(); sfi!=SFace_of.end(); ++sfi) {
     if (!read_sface(*sfi))
     {
-      std::cerr<<"SNC_io_parser::read: error in sface line"<<std::endl;
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in sface line");
       return;
     }
   }
