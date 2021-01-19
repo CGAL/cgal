@@ -15,8 +15,8 @@
 #include <CGAL/license/Orthtree.h>
 
 #include <CGAL/Orthtree/Cartesian_ranges.h>
-#include <CGAL/Orthtree/Split_predicate.h>
-#include <CGAL/Orthtree/Traversal.h>
+#include <CGAL/Orthtree/Split_predicates.h>
+#include <CGAL/Orthtree/Traversals.h>
 #include <CGAL/Orthtree/Traversal_iterator.h>
 #include <CGAL/Orthtree/IO.h>
 

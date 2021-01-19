@@ -9,8 +9,8 @@
 //
 // Author(s)     : Jackson Campolattaro, Cédric Portaneri, Tong Zhao
 
-#ifndef CGAL_ORTHTREE_SPLIT_PREDICATE_H
-#define CGAL_ORTHTREE_SPLIT_PREDICATE_H
+#ifndef CGAL_ORTHTREE_SPLIT_PREDICATES_H
+#define CGAL_ORTHTREE_SPLIT_PREDICATES_H
 
 #include <CGAL/license/Orthtree.h>
 
@@ -104,4 +104,4 @@ public:
 } // Orthtrees
 } // CGAL
 
-#endif //CGAL_ORTHTREE_SPLIT_PREDICATE_H
+#endif //CGAL_ORTHTREE_SPLIT_PREDICATES_H

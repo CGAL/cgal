@@ -9,8 +9,8 @@
 //
 // Author(s)     : Jackson Campolattaro, Cédric Portaneri, Tong Zhao
 
-#ifndef CGAL_ORTHTREE_TRAVERSAL_CRITERION_H
-#define CGAL_ORTHTREE_TRAVERSAL_CRITERION_H
+#ifndef CGAL_ORTHTREE_TRAVERSALS_H
+#define CGAL_ORTHTREE_TRAVERSALS_H
 
 #include <CGAL/license/Orthtree.h>
 
@@ -191,4 +191,4 @@ struct Leaves {
 } // Orthtree
 } // CGAL
 
-#endif //CGAL_ORTHTREE_TRAVERSAL_CRITERION_H
+#endif //CGAL_ORTHTREE_TRAVERSALS_H

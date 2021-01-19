@@ -1,7 +1,7 @@
 #define CGAL_TRACE_STREAM std::cerr
 
 #include <CGAL/Octree.h>
-#include <CGAL/Orthtree/Traversal.h>
+#include <CGAL/Orthtree/Traversals.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>

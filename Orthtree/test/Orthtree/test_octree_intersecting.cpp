@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <CGAL/Octree.h>
-#include <CGAL/Orthtree/Traversal.h>
+#include <CGAL/Orthtree/Traversals.h>
 #include <CGAL/Simple_cartesian.h>
 
 #include <cassert>
