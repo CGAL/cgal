@@ -46,7 +46,9 @@ namespace CGAL {
 /*!
   \ingroup PkgOrthtreeClasses
 
-  \brief a data structure for efficient computations in dD space.
+  \brief a data structure using an axis aligned hybercubic
+  decomposition of dD space for efficient point access and
+  computations.
 
   \details It builds a hierarchy of nodes which subdivide the space
   based on a collection of points.  Each node represents an axis
