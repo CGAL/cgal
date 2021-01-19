@@ -7297,18 +7297,22 @@ operator==(const Triangulation_3<GT, Tds1, Lds>& t1,
               boost::bind<Comparison_result>(
                 cmp1,
                 boost::bind<
-                typename boost::result_of<const Construct_point_3(const Point&)>::type>(cp, _1),
+                typename boost::result_of<const Construct_point_3(const Point&)>::type>
+                (cp, boost::placeholders::_1),
                 boost::bind<
-                typename boost::result_of<const Construct_point_3(const Point&)>::type>(cp, _2))
+                typename boost::result_of<const Construct_point_3(const Point&)>::type>
+                (cp, boost::placeholders::_2))
               == SMALLER);
 
     std::sort(V2.begin(), V2.end(),
               boost::bind<Comparison_result>(
                 cmp2,
                 boost::bind<
-                typename boost::result_of<const Construct_point_3(const Point&)>::type>(cp, _1),
+                typename boost::result_of<const Construct_point_3(const Point&)>::type>
+                (cp, boost::placeholders::_1),
                 boost::bind<
-                typename boost::result_of<const Construct_point_3(const Point&)>::type>(cp, _2))
+                typename boost::result_of<const Construct_point_3(const Point&)>::type>
+                (cp, boost::placeholders::_2))
               == SMALLER);
 
     return V1 == V2;
