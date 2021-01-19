@@ -3,11 +3,11 @@
   \cgalConcept
 
   The concept `OrthtreeTraits` defines the requirements for the
-  template parameter of the `Orthtree` class;
+  template parameter of the `CGAL::Orthtree` class.
 
   \cgalHasModel `CGAL::Orthtree_traits_2<GeomTraits>`
   \cgalHasModel `CGAL::Orthtree_traits_3<GeomTraits>`
-  \cgalHasModel `CGAL::Orthtree_traits_<GeomTraits,Dimension>`
+  \cgalHasModel `CGAL::Orthtree_traits<GeomTraits,Dimension>`
 */
 class OrthtreeTraits
 {
@@ -39,7 +39,7 @@ public:
   /*!
     Functor with an operator to construct a `Bbox_d` from two `Point_d` object (minimum and maximum points).
   */
-  typedef unspecified_type Construct_bbox_d
+  typedef unspecified_type Construct_bbox_d;
 
   /// @}
 
