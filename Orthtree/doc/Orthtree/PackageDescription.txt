@@ -39,7 +39,7 @@
 
 \cgalCRPSection{Concepts}
 - `OrthtreeTraits`
-- `Traversal`
+- `OrthtreeTraversal`
 
 \cgalCRPSection{Classes}
 - `CGAL::Quadtree<GeomTraits, PointRange, PointMap>`
