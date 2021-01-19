@@ -110,8 +110,8 @@ public:
       parameters::get_parameter(np, internal_np::k_intersections), 1);
     unsigned int n = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::n_subdivisions), 0);
-    double enlarge_bbox_ratio = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::enlarge_bbox_ratio), 1.1);
+    FT enlarge_bbox_ratio = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::enlarge_bbox_ratio), FT(11) / FT(10));
     const bool reorient = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::reorient), false);
 
@@ -131,10 +131,10 @@ public:
       }
     }
 
-    if (enlarge_bbox_ratio < 1.0) {
-      CGAL_warning_msg(enlarge_bbox_ratio >= 1.0,
+    if (enlarge_bbox_ratio < FT(1)) {
+      CGAL_warning_msg(enlarge_bbox_ratio >= FT(1),
       "WARNING: YOU SET ENLARGE_BBOX_RATIO < 1.0! THE VALID RANGE IS [1.0, +INF). SETTING TO 1.0!");
-      enlarge_bbox_ratio = 1.0;
+      enlarge_bbox_ratio = FT(1);
     }
 
     if (m_verbose) {
@@ -150,7 +150,7 @@ public:
     }
 
     const FT time_step = static_cast<FT>(m_initializer.initialize(
-      input_range, polygon_map, k, enlarge_bbox_ratio, reorient));
+      input_range, polygon_map, k, CGAL::to_double(enlarge_bbox_ratio), reorient));
     m_initializer.convert(m_data);
     m_data.set_limit_lines();
     m_data.check_integrity();
@@ -244,17 +244,20 @@ public:
     if (!success) {
       CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, DETECTING PLANAR SHAPES FAILED!");
     }
+    // exit(EXIT_SUCCESS);
 
     success = reconstruction.regularize_planar_shapes(np);
     if (!success) {
       CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, REGULARIZATION FAILED!");
     }
+    // exit(EXIT_SUCCESS);
 
     success = partition(
       reconstruction.planar_shapes(), reconstruction.polygon_map(), np);
     if (!success) {
       CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, PARTITION FAILED!");
     }
+    // exit(EXIT_SUCCESS);
 
     success = reconstruction.compute_model(np);
     if (!success) {
@@ -388,7 +391,9 @@ public:
 
   template<typename FaceOutputIterator>
   FaceOutputIterator output_partition_faces(
-    FaceOutputIterator faces, const int support_plane_idx = -1) const {
+    FaceOutputIterator faces,
+    const int support_plane_idx = -1,
+    const int begin = 0) const {
 
     KSR::Indexer<IVertex> indexer;
     CGAL_assertion(support_plane_idx < number_of_support_planes());
@@ -396,7 +401,7 @@ public:
     if (support_plane_idx < 0) {
       const auto all_ivertices = m_data.ivertices();
       for (const auto ivertex : all_ivertices) indexer(ivertex);
-      for (int i = 0; i < number_of_support_planes(); ++i) {
+      for (int i = begin; i < number_of_support_planes(); ++i) {
         const KSR::size_t sp_idx = static_cast<KSR::size_t>(i);
         output_partition_faces(faces, indexer, sp_idx);
       }

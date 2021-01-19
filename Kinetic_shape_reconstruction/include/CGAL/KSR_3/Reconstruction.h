@@ -123,7 +123,7 @@ public:
   m_point_map_3(m_input_range, m_point_map),
   m_normal_map_3(m_input_range, m_normal_map),
   m_data(data),
-  m_debug(debug),
+  m_debug(true),
   m_verbose(verbose),
   m_planar_shape_type(Planar_shape_type::CONVEX_HULL) {
 
@@ -169,7 +169,7 @@ public:
     const NamedParameters& np) {
 
     const FT regularize = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::regularize), true);
+      parameters::get_parameter(np, internal_np::regularize), false);
     if (!regularize) return true;
 
     // Regularize.
