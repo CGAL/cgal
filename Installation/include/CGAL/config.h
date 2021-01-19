@@ -766,7 +766,13 @@ inline std::string get_data_file_path(const char* filename)
  {
    std::cerr<<"[WARNING] file "<<res<<" does not exist or cannot be read "
             <<"(CGAL_DATA_DIR='"
-            <<(cgal_dir!=nullptr?cgal_dir:CGAL_DATA_DIR)<<"')."<<std::endl;
+            <<(cgal_dir!=nullptr?cgal_dir:
+#ifdef CGAL_DATA_DIR
+               CGAL_DATA_DIR
+#else
+               ""
+#endif
+               )<<"')."<<std::endl;
  }
 
  return res;
