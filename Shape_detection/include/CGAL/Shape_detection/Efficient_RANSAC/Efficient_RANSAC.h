@@ -759,8 +759,7 @@ public:
           num_invalid++;
 
           for (std::size_t j = 0; j < m_num_subsets; j++) {
-            // TODO: With the new octree, all trees have roots (even before refining)
-            if (m_direct_octrees[j]/* && m_direct_octrees[j]->root()*/) {
+            if (m_direct_octrees[j]) {
               std::size_t offset = m_direct_octrees[j]->offset();
 
               if (offset <= indices_points_best_candidate.at(i) &&
@@ -1031,7 +1030,6 @@ private:
                                    / (FT(num_pts) * (octree_depth+1) * (1 << (m_required_samples - 1))), (int) num_candidates), (FT) 1);
   }
 
-  // TODO: Make these work outside the octree!
   template<class Octree>
   std::size_t score(const Octree *octree,
                     Shape *candidate,
@@ -1149,7 +1147,6 @@ private:
     do {
       std::size_t p = CGAL::get_default_random().
               uniform_int<std::size_t>(0, cur.size() - 1);
-      // TODO: I'm not sure if dereferencing this is working correctly
       std::size_t j = octree->index(cur, p);
 
       if (shapeIndex[j] == -1)

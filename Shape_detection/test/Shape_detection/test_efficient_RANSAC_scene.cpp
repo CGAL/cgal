@@ -12,9 +12,6 @@
 template <class K>
 bool test_scene(int argc, char** argv) {
 
-  // TODO: Remove this after testing
-  CGAL::get_default_random() = CGAL::Random(4);
-
   typedef typename K::FT                                      FT;
   typedef CGAL::Point_with_normal_3<K>                        Pwn;
   typedef std::vector<Pwn>                                    Pwn_vector;
