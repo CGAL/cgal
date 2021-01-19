@@ -12,6 +12,8 @@
 #ifndef CGAL_ORTHTREE_TRAITS_D_H
 #define CGAL_ORTHTREE_TRAITS_D_H
 
+#include <CGAL/license/Orthtree.h>
+
 namespace CGAL
 {
 

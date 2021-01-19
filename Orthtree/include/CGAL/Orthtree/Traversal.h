@@ -20,6 +20,12 @@
 
 namespace CGAL {
 
+/// \cond SKIP_IN_MANUAL
+// Forward declaration
+template<typename T, typename PR, typename PM>
+class Orthtree;
+/// \endcond
+
 namespace Orthtrees {
 
 /// \cond SKIP_IN_MANUAL
@@ -86,16 +92,22 @@ namespace Traversal {
 /*!
   \ingroup PkgOrthtreeTraversal
   \brief preorder traversal, starting from the root towards the leaves.
+
+  Template parameters are the template parameters of the `Orthtree`,
+  please refer to the documentation of this class for more
+  information.
+
   \cgalModels Traversal
  */
+template <typename T, typename PR, typename PM>
 struct Preorder {
 
-  template <typename Node>
+  using Node = typename Orthtree<T,PR,PM>::Node;
+
   Node first(Node root) const {
     return root;
   }
 
-  template <typename Node>
   Node next(Node n) const {
 
     if (n.is_leaf()) {
@@ -116,17 +128,23 @@ struct Preorder {
 /*!
   \ingroup PkgOrthtreeTraversal
   \brief preorder traversal, starting from the leaves towards the root.
+
+  Template parameters are the template parameters of the `Orthtree`,
+  please refer to the documentation of this class for more
+  information.
+
   \cgalModels Traversal
  */
+template <typename T, typename PR, typename PM>
 struct Postorder {
 
-  template <typename Node>
+  using Node = typename Orthtree<T,PR,PM>::Node;
+
   Node first(Node root) const {
 
     return deepest_first_child(root);
   }
 
-  template <typename Node>
   Node next(Node n) const {
 
     Node next = deepest_first_child(next_sibling(n));
@@ -141,17 +159,23 @@ struct Postorder {
 /*!
   \ingroup PkgOrthtreeTraversal
   \brief leaves traversal, ignoring all non-leave nodes.
+
+  Template parameters are the template parameters of the `Orthtree`,
+  please refer to the documentation of this class for more
+  information.
+
   \cgalModels Traversal
  */
+template <typename T, typename PR, typename PM>
 struct Leaves {
 
-  template <typename Node>
+  using Node = typename Orthtree<T,PR,PM>::Node;
+
   Node first(Node root) const {
 
     return deepest_first_child(root);
   }
 
-  template <typename Node>
   Node next(Node n) const {
 
     Node next = deepest_first_child(next_sibling(n));
