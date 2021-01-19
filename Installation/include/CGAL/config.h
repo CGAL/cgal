@@ -768,7 +768,7 @@ inline std::string get_data_file_path(const char* filename)
             <<"(CGAL_DATA_DIR='"
             <<(cgal_dir!=nullptr?cgal_dir:CGAL_DATA_DIR)<<"')."<<std::endl;
  }
- 
+
  return res;
 }
 
