@@ -18,7 +18,7 @@
   \cgalHasModel `CGAL::Orthtrees::Traversal::Leaves`
  */
 template<typename T, typename PR, typename PM>
-class Traversal {
+class OrthtreeTraversal {
 public:
 
   using Node = typename CGAL::Orthtree<T,PR,PM>::Node; ///< The node type

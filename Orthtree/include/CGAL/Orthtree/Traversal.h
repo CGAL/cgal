@@ -97,7 +97,7 @@ namespace Traversal {
   please refer to the documentation of this class for more
   information.
 
-  \cgalModels Traversal
+  \cgalModels OrthtreeTraversal
  */
 template <typename T, typename PR, typename PM>
 struct Preorder {
@@ -133,7 +133,7 @@ struct Preorder {
   please refer to the documentation of this class for more
   information.
 
-  \cgalModels Traversal
+  \cgalModels OrthtreeTraversal
  */
 template <typename T, typename PR, typename PM>
 struct Postorder {
@@ -164,7 +164,7 @@ struct Postorder {
   please refer to the documentation of this class for more
   information.
 
-  \cgalModels Traversal
+  \cgalModels OrthtreeTraversal
  */
 template <typename T, typename PR, typename PM>
 struct Leaves {
