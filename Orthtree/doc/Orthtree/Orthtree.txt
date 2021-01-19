@@ -42,26 +42,22 @@ split, `false` otherwise: this enables users to choose on what
 criterion should the orthtree be refined. Predefined predicates are
 provided such as [Maximum_depth](@ref CGAL::Orthtrees::Split_predicate::Maximum_depth) or [Maximum_number_of_inliers](@ref CGAL::Orthtrees::Split_predicate::Maximum_number_of_inliers).
 
-\subsection Section_Orthtree_Orthtree_Point_Vector Building an Orthtree
-
 The simplest way to create an %orthtree is using a vector of points.
 The constructor generally expects a separate point range and map,
 but the point map defaults to `Identity_property_map` if none is provided.
 
-The following example shows how to build an %orthtree in dimension 4.
-An `std::vector<Point_d>` is manually filled with points.
-The vector is used as the point set,
-a `CGAL::Identity_property_map` is automatically set as the %orthtree's map type, so a map does not need to be provided.
-
-\cgalExample{Orthtree/Orthtree_build.cpp}
+The split predicate is a user-defined functor that determine whether a
+node needs to be split. Custom predicates can easily be defined if the
+existing ones do not match users' needs.
 
 \subsection Section_Orthtree_Quadtree Building a Quadtree
 
 The `Orthtree` class may be templated with `Orthtree_traits_2` and thus
 behave as a %quadtree. For convenience, the alias `Quadtree` is provided.
 
-The following example shows how to create a %quadtree from a vector of
-`Point_2` objects:
+The following example shows how to create a %quadtree object from a
+vector of `Point_2` objects and refine it (which means constructing
+the tree's space subdivision itself):
 
 \cgalExample{Orthtree/Quadtree_build_from_Point_vector.cpp}
 
@@ -92,10 +88,6 @@ The split predicate is manually constructed and passed to the refine method.
 
 \subsection Section_Orthtree_Custom_Split_Precicate Building an Octree with a Custom Split Predicate
 
-The split predicate is a user-defined functor that determine whether a
-node needs to be split. Custom predicates can easily be defined if the
-existing ones do not match users' needs.
-
 The following example illustrates how to refine an %octree using a
 split predicate that isn't provided by default. This particular
 predicate sets a node's bucket size as a ratio of its depth. For
@@ -103,6 +95,15 @@ example, for a ratio of 2, a node at depth 2 can hold 4 points, a node
 at depth 7 can hold 14.
 
 \cgalExample{Orthtree/Octree_build_with_custom_split.cpp}
+
+\subsection Section_Orthtree_Orthtree_Point_Vector Building an Orthtree
+
+The following example shows how to build an generalized %orthtree in dimension 4.
+An `std::vector<Point_d>` is manually filled with points.
+The vector is used as the point set,
+a `CGAL::Identity_property_map` is automatically set as the %orthtree's map type, so a map does not need to be provided.
+
+\cgalExample{Orthtree/Orthtree_build.cpp}
 
 \section Section_Orthtree_Traversal Traversal
 
