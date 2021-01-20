@@ -25,15 +25,38 @@
 
 namespace CGAL {
 
+/// \cond SKIP_IN_MANUAL
+namespace Orthtrees
+{
+
+// Non-documented, or testing purpose only
+struct Node_access
+{
+  template <typename Node, typename LC>
+  static Node create_node (Node parent, LC local_coordinates)
+  {
+    return Node(parent, local_coordinates);
+  }
+
+  template <typename Node>
+  static typename Node::Point_range& points(Node node) { return node.points(); }
+
+  template <typename Node>
+  static void split(Node node) { return node.split(); }
+};
+
+} // namespace Orthtrees
+/// \endcond
+
 /*!
 
   \brief represents a single node of the tree. Alternatively referred
   to as a cell, orthant, or subtree.
 
   A `Node` is a lightweight object and thus generally passed by
-  copy. It is also a `Range` whose value type is `Traits::Point_d`.
+  copy. It is also a `ConstRange` whose value type is `Traits::Point_d`.
 
-  \cgalModels Range
+  \cgalModels ConstRange
  */
 template<typename Traits, typename PointRange, typename PointMap>
 class Orthtree<Traits, PointRange, PointMap>::Node
@@ -81,15 +104,7 @@ public:
   typedef std::array<std::uint32_t, Dimension::value> Global_coordinates;
 
 
-  typedef typename PointRange::iterator iterator; ///< iterator type.
   typedef typename PointRange::const_iterator const_iterator; ///< constant iterator type.
-
-  /// \cond SKIP_IN_MANUAL
-  /*!
-    \brief point range type.
-   */
-  typedef boost::iterator_range<iterator> Point_range;
-  /// \endcond
 
   /*!
     \brief easy access to adjacency directions.
@@ -99,6 +114,14 @@ public:
   /// @}
 
 private:
+
+  /// \cond SKIP_IN_MANUAL
+  /*!
+    \brief point range type.
+   */
+  typedef typename PointRange::iterator iterator; ///< constant iterator type.
+  typedef boost::iterator_range<iterator> Point_range;
+  /// \endcond
 
   // make Node trivially copiabled
   struct Data
@@ -115,15 +138,25 @@ private:
 
   std::shared_ptr<Data> m_data;
 
-public:
 
   /// \cond SKIP_IN_MANUAL
 
+  // Only the Orthtree class has access to the non-default
+  // constructor, mutators, etc.
+  friend Enclosing;
+
+  // Hidden class to access methods for testing purposes
+  friend Orthtrees::Node_access;
+
+  /*!
+   * \brief access to the content held by this node
+   * \return a reference to the collection of point indices
+   */
+  Point_range &points() { return m_data->points; }
+  const Point_range &points() const { return m_data->points; }
+
   /// \name Construction
   /// @{
-
-  // Default creates null node
-  Node() { }
 
   /*!
     \brief creates a new node, optionally as the child of a parent
@@ -193,6 +226,14 @@ public:
 
   /// @}
 
+  /// \endcond
+
+
+public:
+
+  /// \cond SKIP_IN_MANUAL
+  // Default creates null node
+  Node() { }
   /// \endcond
 
   /// \name Type & Location
@@ -450,20 +491,6 @@ public:
   /// \name Point Range
   /// @{
 
-  /// \cond SKIP_IN_MANUAL
-  /*!
-   * \brief access to the content held by this node
-   * \return a reference to the collection of point indices
-   */
-  Point_range &points() { return m_data->points; }
-  /*!
-   * \brief read-only access to the content held by this node
-   * \return a read-only reference to the collection of point indices
-   */
-  const Point_range &points() const { return m_data->points; }
-
-  /// \endcond
-
   /*!
     \brief returns the number of points of this node.
    */
@@ -477,18 +504,6 @@ public:
   std::size_t size() const {
     return std::distance(m_data->points.begin(), m_data->points.end());
   }
-
-  /*!
-    \brief returns the iterator at the start of the collection of
-    points held by this node.
-   */
-  iterator begin() { return m_data->points.begin(); }
-
-  /*!
-    \brief returns the iterator at the end of the collection of
-    points held by this node.
-   */
-  iterator end() { return m_data->points.end(); }
 
   /*!
     \brief returns the iterator at the start of the collection of
