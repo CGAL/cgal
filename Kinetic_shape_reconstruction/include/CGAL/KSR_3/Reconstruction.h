@@ -177,10 +177,10 @@ public:
     if (!regularize) return true;
 
     // Regularize.
-    const FT max_accepted_angle    = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::angle_threshold), FT(15));
-    const FT max_distance_to_plane = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::distance_threshold), FT(1));
+    const FT max_accepted_angle    = FT(10); // parameters::choose_parameter(
+      // parameters::get_parameter(np, internal_np::angle_threshold), FT(15));
+    const FT max_distance_to_plane = FT(1) / FT(5); // parameters::choose_parameter(
+      // parameters::get_parameter(np, internal_np::distance_threshold), FT(1));
     const Vector_3 symmetry_axis(FT(0), FT(0), FT(1));
 
     if (m_verbose) {
@@ -248,7 +248,7 @@ public:
 
     CGAL_assertion(m_data.volumes().size() > 0);
     visibility.compute(m_data.volumes());
-    if (m_debug) dump_volumes("visibility/visibility");
+    // if (m_debug) dump_volumes("visibility/visibility");
 
     if (m_verbose) {
       std::cout << "done" << std::endl;
@@ -260,7 +260,7 @@ public:
 
     Graphcut graphcut(m_data, beta);
     graphcut.compute(m_data.volumes());
-    if (m_debug) dump_volumes("graphcut/graphcut");
+    // if (m_debug) dump_volumes("graphcut/graphcut");
 
     if (m_verbose) {
       std::cout << "done" << std::endl;
