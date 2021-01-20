@@ -202,7 +202,7 @@ bool PM_io_parser<PMDEC>::read_vertex(Vertex_handle v)
 
   if(!(f >= 0 && ((iso && f < fn) || (!iso && f < en))))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   if (iso) v->set_face(Face_of[f]);
@@ -238,7 +238,7 @@ bool PM_io_parser<PMDEC>::read_hedge(Halfedge_handle e)
   if(!(eo >= 0 && (std::size_t) eo < en && epr >= 0 && (std::size_t) epr < en && ene >= 0 && (std::size_t) ene < en &&
        v >= 0 && (std::size_t) v < vn && f >= 0 && (std::size_t) f < fn ))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     std::cerr<<"wrong index in read_hedge"<<std::endl;
     return false;
   }
@@ -282,14 +282,14 @@ bool PM_io_parser<PMDEC>::read_face(Face_handle f)
   }
   else
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   while (in >> ei) {
     CGAL_assertion_msg(ei >= 0 && (std::size_t) ei < en, "wrong index in face cycle list.");
     if (!(ei >= 0 && ei < en))
     {
-      in.clear(std::ios_base::badbit);
+      in.setstate(std::ios_base::badbit);
       return false;
     }
     f->store_fc(Halfedge_of[ei]);
@@ -299,7 +299,7 @@ bool PM_io_parser<PMDEC>::read_face(Face_handle f)
     CGAL_assertion_msg(vi >= 0 && (std::size_t) vi < vn, "wrong index in iso vertex list.");
     if (!(vi >= 0 && vi < vn))
     {
-      in.clear(std::ios_base::badbit);
+      in.setstate(std::ios_base::badbit);
       return false;
     }
     f->store_iv(Vertex_of[vi]);

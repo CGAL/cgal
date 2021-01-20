@@ -1402,7 +1402,7 @@ void SNC_io_parser<EW>::read()
   if ( !check_sep("Selective Nef Complex") )
   {
     CGAL_warning_msg(false, "SNC_io_parser::read: no SNC header.");
-    returnl
+    return;
   }
   std::string kernel_type;
   in >> kernel_type;
@@ -1581,14 +1581,14 @@ read_vertex(Vertex_handle vh) {
   in >> index;
   if(index >= int(en))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   vh->svertices_begin() = (index >= 0 ? Edge_of[index] : this->svertices_end());
   in >> index;
   if(index >= int(en))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   vh->svertices_last()  = index >= 0 ? Edge_of[index] : this->svertices_end();
@@ -1596,14 +1596,14 @@ read_vertex(Vertex_handle vh) {
   in >> index;
   if(index >= int(sen))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   vh->shalfedges_begin() = index >= 0 ? SEdge_of[index] : this->shalfedges_end();
   in >> index;
   if(index >= int(sen))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   vh->shalfedges_last()  = index >= 0 ? SEdge_of[index] : this->shalfedges_end();
@@ -1611,14 +1611,14 @@ read_vertex(Vertex_handle vh) {
   in >> index;
   if(index >= int(sfn))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   vh->sfaces_begin() = index >= 0 ? SFace_of[index] : this->sfaces_end();
   in >> index;
   if(index >= int(sfn))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   vh->sfaces_last()  = index >= 0 ? SFace_of[index] : this->sfaces_end();
@@ -1626,7 +1626,7 @@ read_vertex(Vertex_handle vh) {
   in >> index;
   if(index >= int(sln))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   vh->shalfloop() = index >= 0 ? SLoop_of[index] : this->shalfloops_end();
@@ -1685,7 +1685,7 @@ read_edge(Halfedge_handle eh) {
   in >> index;
   if(index < 0 || index >= int(en))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   eh->twin() = Edge_of[index];
@@ -1693,7 +1693,7 @@ read_edge(Halfedge_handle eh) {
   in >> index;
   if(index < 0 || index >= int(vn))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   eh->center_vertex() = Vertex_of[index];
@@ -1703,7 +1703,7 @@ read_edge(Halfedge_handle eh) {
     in >> index;
     if(index < 0 || index >= int(sen))
     {
-      in.clear(std::ios_base::badbit);
+      in.setstate(std::ios_base::badbit);
       return false;
     }
     eh->out_sedge() = SEdge_of[index];
@@ -1711,7 +1711,7 @@ read_edge(Halfedge_handle eh) {
     in >> index;
     if(index < 0 || index >= int(sfn))
     {
-      in.clear(std::ios_base::badbit);
+      in.setstate(std::ios_base::badbit);
       return false;
     }
     eh->incident_sface() = SFace_of[index];
@@ -1770,7 +1770,7 @@ read_facet(Halffacet_handle fh) {
   in >> index;
   if(index < 0 || index >= int(fn))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   fh->twin() = Halffacet_of[index];
@@ -1782,7 +1782,7 @@ read_facet(Halffacet_handle fh) {
     in >> index;
     if(index < 0 || index >= int(sen))
     {
-      in.clear(std::ios_base::badbit);
+      in.setstate(std::ios_base::badbit);
       return false;
     }
     fh->boundary_entry_objects().push_back(make_object(SEdge_of[index]));
@@ -1795,7 +1795,7 @@ read_facet(Halffacet_handle fh) {
     in >> index;
     if(index < 0 || index >= int(sln))
     {
-      in.clear(std::ios_base::badbit);
+      in.setstate(std::ios_base::badbit);
       return false;
     }
     fh->boundary_entry_objects().push_back(make_object(SLoop_of[index]));
@@ -1805,7 +1805,7 @@ read_facet(Halffacet_handle fh) {
   in >> index;
   if(index < 0  || index >= int(vn))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   fh->incident_volume() = Volume_of[index+addInfiBox];
@@ -1852,7 +1852,7 @@ read_volume(Volume_handle ch) {
     in >> index;
     if(index < 0 || index >= int(sfn))
     {
-      in.clear(std::ios_base::badbit);
+      in.setstate(std::ios_base::badbit);
       return false;
     }
     ch->shell_entry_objects().push_back(make_object(SFace_of[index]));
@@ -1907,7 +1907,7 @@ read_sedge(SHalfedge_handle seh) {
   in >> index;
   if(index < 0 || index >= int(sen))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   seh->twin() = SEdge_of[index];
@@ -1915,7 +1915,7 @@ read_sedge(SHalfedge_handle seh) {
   in >> index;
   if(index < 0 || index >= int(sen))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   seh->sprev() = SEdge_of[index];
@@ -1923,7 +1923,7 @@ read_sedge(SHalfedge_handle seh) {
   in >> index;
   if(index < 0 || index >= int(sen))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   seh->snext() = SEdge_of[index];
@@ -1931,7 +1931,7 @@ read_sedge(SHalfedge_handle seh) {
   in >> index;
   if(index < 0 || index >= int(en))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   seh->source() = Edge_of[index];
@@ -1939,7 +1939,7 @@ read_sedge(SHalfedge_handle seh) {
   in >> index;
   if(index < 0 || index >= int(sfn))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   seh->incident_sface() = SFace_of[index];
@@ -1947,7 +1947,7 @@ read_sedge(SHalfedge_handle seh) {
   in >> index;
   if(index < 0 || index >= int(sen))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   seh->prev() = SEdge_of[index];
@@ -1955,7 +1955,7 @@ read_sedge(SHalfedge_handle seh) {
   in >> index;
   if(index < 0 || index >= int(sen))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   seh->next() = SEdge_of[index];
@@ -1963,7 +1963,7 @@ read_sedge(SHalfedge_handle seh) {
   in >> index;
   if(index < 0 || index >= int(fn))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   seh->facet() = Halffacet_of[index];
@@ -2018,7 +2018,7 @@ read_sloop(SHalfloop_handle slh) {
   in >> index;
   if(index < 0 || index >= sln)
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   slh->twin() = SLoop_of[index];
@@ -2026,7 +2026,7 @@ read_sloop(SHalfloop_handle slh) {
   in >> index;
   if(index < 0 || index >= sfn)
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   slh->incident_sface() = SFace_of[index];
@@ -2034,7 +2034,7 @@ read_sloop(SHalfloop_handle slh) {
   in >> index;
   if(index < 0 || index >= fn)
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   slh->facet() = Halffacet_of[index];
@@ -2085,7 +2085,7 @@ read_sface(SFace_handle sfh) {
   in >> index;
   if(index < 0 || index >= vn)
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   sfh->center_vertex() = Vertex_of[index];
@@ -2099,7 +2099,7 @@ read_sface(SFace_handle sfh) {
     SM_decorator SD(&*sfh->center_vertex());
     if(index < 0 || index >= sen)
     {
-      in.clear(std::ios_base::badbit);
+      in.setstate(std::ios_base::badbit);
       return false;
     }
     SD.link_as_face_cycle(SEdge_of[index],sfh);
@@ -2112,7 +2112,7 @@ read_sface(SFace_handle sfh) {
     in >> index;
     if(index < 0 || index >= en)
     {
-      in.clear(std::ios_base::badbit);
+      in.setstate(std::ios_base::badbit);
       return false;
     }
     sfh->boundary_entry_objects().push_back(make_object(Edge_of[index]));
@@ -2126,7 +2126,7 @@ read_sface(SFace_handle sfh) {
     in >> index;
     if(index < 0 || index >= sln)
     {
-      in.clear(std::ios_base::badbit);
+      in.setstate(std::ios_base::badbit);
       return false;
     }
     sfh->boundary_entry_objects().push_back(make_object(SLoop_of[index]));
@@ -2137,7 +2137,7 @@ read_sface(SFace_handle sfh) {
   in >> index;
   if(index < 0 || index >= vn)
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
   sfh->volume() = Volume_of[index+addInfiBox];

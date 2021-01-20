@@ -205,7 +205,7 @@ bool SM_io_parser<Decorator_>::read_vertex(SVertex_handle v)
 
   if(f<0 || (iso && f > fn) || (!iso && f > en))
   {
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
 
@@ -246,7 +246,7 @@ bool SM_io_parser<Decorator_>::read_edge(SHalfedge_handle e)
       v >= 0 && v < vn && f >= 0 && f < fn ))
   {
     std::cerr<<"wrong index in read_edge"<<std::endl;
-    in.clear(std::ios_base::badbit);
+    in.setstate(std::ios_base::badbit);
     return false;
   }
 
@@ -316,7 +316,7 @@ bool SM_io_parser<Decorator_>::read_face(SFace_handle f)
     if(!(ei >= 0 && ei < en))
     {
       std::cerr<<"wrong index in face cycle list."<<std::endl;
-      in.clear(std::ios_base::badbit);
+      in.setstate(std::ios_base::badbit);
       return false;
     }
     this->store_sm_boundary_object(Edge_of[ei],f);
@@ -326,7 +326,7 @@ bool SM_io_parser<Decorator_>::read_face(SFace_handle f)
     if(!(vi >= 0 && vi < vn))
     {
       std::cerr<<"wrong index in iso vertex list."<<std::endl;
-      in.clear(std::ios_base::badbit);
+      in.setstate(std::ios_base::badbit);
       return false;
     }
     this->store_sm_boundary_object(SVertex_of[vi],f);
@@ -336,7 +336,7 @@ bool SM_io_parser<Decorator_>::read_face(SFace_handle f)
     if(!(li >= 0 && li < 2))
     {
       std::cerr<<"wrong index in iso vertex list."<<std::endl;
-      in.clear(std::ios_base::badbit);
+      in.setstate(std::ios_base::badbit);
       return false;
     }
     this->store_sm_boundary_object(Loop_of[li],f);
