@@ -63,8 +63,8 @@ struct Exact_intersect_yz_2 <R,Cartesian_tag>
       }
 
       const Segment_2* si = boost::get<Segment_2>(&*obj);
-      p2 = s2.source();
-      q2 = s2.target();
+      p2 = si->source();
+      q2 = si->target();
 
       return boost::make_optional(variant_type(Segment_3(Point_3(0,p2.x(),p2.y()),
                                                          Point_3(0,q2.x(),q2.y()) ) ));
