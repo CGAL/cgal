@@ -181,9 +181,9 @@ public:
     \param traits the traits object.
   */
   Orthtree(PointRange& point_range,
-         PointMap point_map = PointMap(),
-         const FT enlarge_ratio = 1.2,
-         Traits traits = Traits())
+           PointMap point_map = PointMap(),
+           const FT enlarge_ratio = 1.2,
+           Traits traits = Traits())
     : m_traits (traits)
     , m_range (point_range)
     , m_point_map (point_map)
@@ -233,6 +233,41 @@ public:
   }
 
   /// @}
+
+  /// \cond SKIP_IN_MANUAL
+
+  // copy constructor
+  Orthtree (const Orthtree& other)
+    : m_traits (other.m_traits)
+    , m_range (other.m_range)
+    , m_point_map (other.m_point_map)
+    , m_root (other.m_root.deep_copy())
+    , m_bbox_min (other.m_bbox_min)
+    , m_side_per_depth(other.m_side_per_depth)
+  { }
+
+  // move constructor
+  Orthtree (Orthtree&& other)
+    : m_traits (other.m_traits)
+    , m_range (other.m_range)
+    , m_point_map (other.m_point_map)
+    , m_root (other.m_root)
+    , m_bbox_min (other.m_bbox_min)
+    , m_side_per_depth(other.m_side_per_depth)
+  {
+    other.m_root = Node(Node(), 0);
+  }
+
+  // Non-necessary but just to be clear on the rule of 5:
+
+  // assignement operators deleted (PointRange is a ref)
+  Orthtree& operator= (const Orthtree& other) = delete;
+  Orthtree& operator= (Orthtree&& other) = delete;
+  // Destructor
+  ~Orthtree() { }
+
+  // move constructor
+  /// \endcond
 
   /// \name Tree Building
   /// @{

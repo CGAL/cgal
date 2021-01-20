@@ -187,6 +187,28 @@ private:
         m_data->global_coordinates[i] = 0;
   }
 
+  Node deep_copy(Self parent = Node(), Local_coordinates local_coordinates = 0) const
+  {
+    if (is_null())
+      return Node();
+
+    Node out;
+    out.m_data = std::make_shared<Data>(parent);
+
+    out.m_data->points = m_data->points;
+    out.m_data->depth = m_data->depth;
+    out.m_data->global_coordinates = m_data->global_coordinates;
+    Global_coordinates global_coordinates;
+    std::unique_ptr<Children> children;
+    if (!is_leaf())
+    {
+      out.m_data->children = std::make_unique<Children>();
+      for (int index = 0; index < Degree::value; index++)
+        (*out.m_data->children)[index] = (*this)[index].deep_copy(out, {Local_coordinates(index)});
+    }
+    return out;
+  }
+
   /// @}
 
   /// \name Mutators
