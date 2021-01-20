@@ -306,6 +306,7 @@ public:
 
     Here's a diagram demonstrating the concept for a Quadtree:
 
+    ```
     +---------------+---------------+
     |               |               |
     |               |               |
@@ -323,6 +324,7 @@ public:
     +---+---+   A   |       |       |
     |   |   |       |       |       |
     +---+---+-------+-------+-------+
+    ```
 
     - (S) : Seek node
     - A  : Adjacent node
