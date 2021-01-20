@@ -22,7 +22,7 @@ namespace CGAL {
 /*!
  * \ingroup PkgOrthtreeClasses
  *
- * \brief alias that specialized the `Orthtree` class to a 3D Quadtree.
+ * \brief Alias that specialized the `Orthtree` class to a 2D Quadtree.
  *
  * These two types are exactly equivalent:
  * - `Quadtree<GeomTraits, PointRange, PointMap>`

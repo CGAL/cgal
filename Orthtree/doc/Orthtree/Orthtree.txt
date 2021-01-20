@@ -17,7 +17,7 @@ exactly 8 children.
 
 We call the generalization of such data structure "orthtrees", as
 orthants are generalizations of a quadrants and octants. The term
-_Hyperoctree_ can also be found in litterature to name such data
+_hyperoctree_ can also be found in litterature to name such data
 structures in dimensions 4 and higher.
 
 This package provides a general data structure `Orthtree` along with
@@ -99,7 +99,7 @@ at depth 7 can hold 14.
 \subsection Section_Orthtree_Orthtree_Point_Vector Building an Orthtree
 
 The following example shows how to build an generalized %orthtree in dimension 4.
-An `std::vector<Point_d>` is manually filled with points.
+A `std::vector<Point_d>` is manually filled with points.
 The vector is used as the point set,
 a `CGAL::Identity_property_map` is automatically set as the %orthtree's map type, so a map does not need to be provided.
 
@@ -124,7 +124,7 @@ The `Node` class provides functions that enables the user to access each of its 
 
 The following example demonstrates ways of accessing different nodes of a tree, given a reference to one.
 
-From the root node, children can be accessed using [the subscript operator (`[]`)](@ref CGAL::Orthtree::Node::operator[]).
+From the root node, children can be accessed using [the subscript operator []](@ref CGAL::Orthtree::Node::operator[]).
 For an %octree, values from 0-7 provide access to the different children.
 
 For non-root nodes, it's possible to access parent nodes using the [parent()](@ref CGAL::Orthtree::Node::parent) accessor.
@@ -232,10 +232,12 @@ For nontrivial point counts, the naive approach's calculation time dwarfs that o
 
 \section Section_Orthtree_History History
 
-This package was developed by Jackson Campolatarro as part of the Google Summer of Code 2020,
-based on a prototype code by Tong Zhao and Cédric Portaneri,
-under the supervision of Simon Giraudot
-and with the kind help and advice of Pierre Alliez.
+A prototype code was provided by Tong Zhao and Cédric Portaneri. From
+this prototype code, the package was developed by Jackson Campolatarro
+as part of the Google Summer of Code 2020. Simon Giraudot, supervisor
+of the GSoC internship, completed and finalized the package for
+integration in CGAL 5.3. Pierre Alliez provided kind help and advice
+all the way through.
 
 */
 

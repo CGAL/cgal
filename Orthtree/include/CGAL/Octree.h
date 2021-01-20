@@ -22,7 +22,7 @@ namespace CGAL {
 /*!
  * \ingroup PkgOrthtreeClasses
  *
- * \brief alias that specialized the `Orthtree` class to a 3D Octree.
+ * \brief Alias that specialized the `Orthtree` class to a 3D Octree.
  *
  * These two types are exactly equivalent:
  * - `Octree<GeomTraits, PointRange, PointMap>`

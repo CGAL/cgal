@@ -46,7 +46,7 @@ namespace CGAL {
 /*!
   \ingroup PkgOrthtreeClasses
 
-  \brief a data structure using an axis aligned hybercubic
+  \brief A data structure using an axis aligned hybercubic
   decomposition of dD space for efficient point access and
   computations.
 
@@ -59,9 +59,9 @@ namespace CGAL {
   \sa Quadtree
   \sa Octree
 
-  \tparam Traits is a model of `OrthtreeTraits`
-  \tparam PointRange is a model of range whose value type is the key type of `PointMap`
-  \tparam PointMap is a model of `ReadablePropertyMap` whose value type is `Traits::Point_d`
+  \tparam Traits_ is a model of `OrthtreeTraits`
+  \tparam PointRange_ is a model of range whose value type is the key type of `PointMap`
+  \tparam PointMap_ is a model of `ReadablePropertyMap` whose value type is `Traits::Point_d`
  */
 template<typename Traits_, typename PointRange_,
          typename PointMap_ = Identity_property_map<typename Traits_::Point_d> >
