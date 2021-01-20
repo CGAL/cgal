@@ -80,6 +80,7 @@ points[2] = std::make_pair(Point_3(0,0,1), Color{0,0,255,255});
 std::ofstream os;
 std::ifstream is;
 bool ok;
+//LAS
 #ifdef CGAL_LINKED_WITH_LASLIB
 os.open("tmp.las", std::ios::binary);
 ok = CGAL::write_las_points_with_properties(os, points,
@@ -105,8 +106,24 @@ is.close();
 assert(ok);
 assert(points.size() == 3);
 assert(points[1].second[1] == 255);
-#endif
 
+std::vector<Point_3> ps;
+ps.push_back(Point_3(1,0,0));
+ps.push_back(Point_3(0,1,0));
+ps.push_back(Point_3(0,0,1));
+
+os.open("tmp.las", std::ios_base::binary);
+CGAL::write_las_points(os, ps, CGAL::parameters::all_default());
+os.close();
+assert(ok);
+ps.clear();
+is.open("tmp.las", std::ios::binary);
+ok = CGAL::read_las_points(is, std::back_inserter (ps),CGAL::parameters::all_default());
+is.close();
+assert(ok);
+assert(ps.size() == 3);
+#endif
+//PLY
 os.open("tmp.ply");
 ok = CGAL::write_ply_points_with_properties(os, points,
                                             CGAL::make_ply_point_writer (CGAL::First_of_pair_property_map<PointWithColor>()),
@@ -128,8 +145,49 @@ ok = CGAL::read_ply_points_with_properties(is, std::back_inserter (points),
                                                     CGAL::PLY_property<unsigned short>("green"),
                                                     CGAL::PLY_property<unsigned short>("blue"),
                                                     CGAL::PLY_property<unsigned short>("alpha")));
+is.close();
 assert(ok);
 assert(points.size() == 3);
 assert(points[1].second[1] == 255);
 
+os.open("tmp.ply");
+ok = CGAL::write_ply_points(os, ps, CGAL::parameters::all_default());
+os.close();
+assert(ok);
+
+is.open("tmp.ply");
+ps.clear();
+ok = CGAL::read_ply_points(is, std::back_inserter (ps),
+                           CGAL::parameters::all_default());
+is.close();
+assert(ok);
+assert(ps.size() == 3);
+
+//OFF
+os.open("tmp.off");
+ok = CGAL::write_off_points(os, ps, CGAL::parameters::all_default());
+os.close();
+assert(ok);
+
+is.open("tmp.off");
+ps.clear();
+ok = CGAL::read_off_points(is, std::back_inserter (ps),
+                           CGAL::parameters::all_default());
+is.close();
+assert(ok);
+assert(ps.size() == 3);
+
+//XYZ
+os.open("tmp.xyz");
+ok = CGAL::write_xyz_points(os, ps, CGAL::parameters::all_default());
+os.close();
+assert(ok);
+
+is.open("tmp.xyz");
+ps.clear();
+ok = CGAL::read_xyz_points(is, std::back_inserter (ps),
+                           CGAL::parameters::all_default());
+is.close();
+assert(ok);
+assert(ps.size() == 3);
 }
