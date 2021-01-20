@@ -284,9 +284,9 @@ bool read_OFF(const std::string& fname, Graph& g,
  \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_OFF()` should be used instead.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool read_off(std::ostream& os, Graph& g, const CGAL_BGL_NP_CLASS& np)
+CGAL_DEPRECATED bool read_off(std::istream& is, Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
-  return read_OFF(os, g, np);
+  return read_OFF(is, g, np);
 }
 
 /*!
