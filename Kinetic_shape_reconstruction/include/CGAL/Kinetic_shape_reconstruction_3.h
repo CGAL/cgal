@@ -217,8 +217,11 @@ public:
     // std::cout << std::endl << "CLEANING SUCCESS!" << std::endl << std::endl;
     // exit(EXIT_SUCCESS);
 
-    if (m_verbose) std::cout << "* getting volumes:" << std::endl;
+    if (m_verbose) std::cout << "* getting volumes ..." << std::endl;
     m_data.create_polyhedra();
+    if (m_verbose) {
+      std::cout << "* found " << m_data.number_of_volumes(-1) << " volumes" << std::endl;
+    }
     return true;
   }
 

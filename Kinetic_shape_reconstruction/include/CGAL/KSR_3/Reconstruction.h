@@ -63,10 +63,11 @@ public:
   using Kernel       = GeomTraits;
 
 private:
-  using FT      = typename Kernel::FT;
-  using Point_2 = typename Kernel::Point_2;
-  using Point_3 = typename Kernel::Point_3;
-  using Plane_3 = typename Kernel::Plane_3;
+  using FT       = typename Kernel::FT;
+  using Point_2  = typename Kernel::Point_2;
+  using Point_3  = typename Kernel::Point_3;
+  using Plane_3  = typename Kernel::Plane_3;
+  using Vector_3 = typename Kernel::Vector_3;
 
   using Data_structure = KSR_3::Data_structure<Kernel>;
   using PFace          = typename Data_structure::PFace;
@@ -155,11 +156,14 @@ public:
     if (m_verbose) {
       std::cout << std::endl << "--- DETECTING PLANAR SHAPES: " << std::endl;
     }
+    m_planes.clear();
     m_polygons.clear();
+    m_region_map.clear();
     create_ground_plane();
-    CGAL_assertion(m_polygons.size() == 1);
     create_approximate_walls(np);
     create_approximate_roofs(np);
+    CGAL_assertion(m_planes.size() == m_polygons.size());
+    CGAL_assertion(m_polygons.size() == m_region_map.size());
     if (m_debug) dump_polygons("detected-planar-shapes");
     return true;
   }
@@ -177,6 +181,7 @@ public:
       parameters::get_parameter(np, internal_np::angle_threshold), FT(15));
     const FT max_distance_to_plane = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::distance_threshold), FT(1));
+    const Vector_3 symmetry_axis(FT(0), FT(0), FT(1));
 
     if (m_verbose) {
       std::cout << std::endl << "--- REGULARIZING PLANAR SHAPES: " << std::endl;
@@ -188,7 +193,6 @@ public:
 
     CGAL_assertion(planes.size() > 0);
     CGAL_assertion(planes.size() == regions.size());
-    CGAL_assertion(planes.size() == m_polygons.size());
 
     Plane_map plane_map;
     Point_to_plane_map point_to_plane_map(m_input_range, regions);
@@ -200,25 +204,28 @@ public:
       point_to_plane_map,
       true, true, true, false,
       max_accepted_angle,
-      max_distance_to_plane);
+      max_distance_to_plane,
+      symmetry_axis);
 
     const std::size_t num_polygons = m_polygons.size();
 
+    m_planes.clear();
     m_polygons.clear();
     m_region_map.clear();
     for (std::size_t i = 0; i < regions.size(); ++i) {
-      const auto& region = regions[i];
       const auto& plane  = planes[i];
+      const auto& region = regions[i];
 
       const std::size_t shape_idx = add_planar_shape(region, plane);
       CGAL_assertion(shape_idx != std::size_t(-1));
       m_region_map[shape_idx] = region;
     }
     CGAL_assertion(m_polygons.size() == num_polygons);
+    CGAL_assertion(m_polygons.size() == m_planes.size());
     CGAL_assertion(m_polygons.size() == m_region_map.size());
 
     if (m_verbose) {
-      std::cout << "* num regularized planes: " << m_polygons.size() << std::endl;
+      std::cout << "* num regularized planes: " << m_planes.size() << std::endl;
     }
 
     if (m_debug) dump_polygons("regularized-planar-shapes");
@@ -241,7 +248,7 @@ public:
 
     CGAL_assertion(m_data.volumes().size() > 0);
     visibility.compute(m_data.volumes());
-    if (m_debug) dump_volumes("visibility");
+    if (m_debug) dump_volumes("visibility/visibility");
 
     if (m_verbose) {
       std::cout << "done" << std::endl;
@@ -253,14 +260,14 @@ public:
 
     Graphcut graphcut(m_data, beta);
     graphcut.compute(m_data.volumes());
-    if (m_debug) dump_volumes("graphcut");
+    if (m_debug) dump_volumes("graphcut/graphcut");
 
     if (m_verbose) {
       std::cout << "done" << std::endl;
       std::cout << "* extracting the model ... ";
     }
 
-    extract_surface();
+    extract_surface_model();
     if (m_debug) dump_model("reconstructed-model");
 
     if (m_verbose) std::cout << "done" << std::endl;
@@ -280,6 +287,7 @@ public:
     m_boundary_points.clear();
     m_interior_points.clear();
     m_polygons.clear();
+    m_planes.clear();
   }
 
 private:
@@ -302,6 +310,7 @@ private:
   std::vector<std::size_t> m_interior_points;
 
   std::vector<Polygon_3> m_polygons;
+  std::vector<Plane_3> m_planes;
   Polygon_map m_polygon_map;
 
   std::map<std::size_t, Indices> m_region_map;
@@ -397,6 +406,7 @@ private:
 
     const std::size_t shape_idx = m_polygons.size();
     m_polygons.push_back(polygon);
+    m_planes.push_back(plane);
     return shape_idx;
   }
 
@@ -499,16 +509,16 @@ private:
     regions.clear();
     regions.reserve(m_region_map.size());
 
+    CGAL_assertion(m_planes.size() == m_region_map.size());
     for (const auto& item : m_region_map) {
       const std::size_t shape_idx = item.first;
-      const auto& polygon = m_polygons[shape_idx];
-      CGAL_assertion(polygon[0] != polygon[1]);
-      CGAL_assertion(polygon[1] != polygon[2]);
-      CGAL_assertion(polygon[2] != polygon[0]);
-      const Plane_3 plane(polygon[0], polygon[1], polygon[2]);
+
+      const auto& plane = m_planes[shape_idx];
+      CGAL_assertion(plane != Plane_3());
       planes.push_back(plane);
 
       const auto& region = item.second;
+      CGAL_assertion(region.size() > 0);
       regions.push_back(region);
     }
     CGAL_assertion(planes.size()  == m_region_map.size());
@@ -563,8 +573,12 @@ private:
     // }
   }
 
-  void extract_surface() {
+  void extract_surface_model() {
+    create_surface_model();
+    orient_surface_model();
+  }
 
+  void create_surface_model() {
     auto& model = m_data.reconstructed_model();
     model.clear();
 
@@ -622,6 +636,11 @@ private:
     }
   }
 
+  void orient_surface_model() {
+    return;
+    CGAL_assertion_msg(false, "TODO: ORIENT SURFACE MODEL!");
+  }
+
   void dump_points(
     const std::vector<std::size_t>& indices,
     const std::string file_name) const {
@@ -659,7 +678,9 @@ private:
     std::vector<Point_3> polygon;
     std::vector< std::vector<Point_3> > polygons;
     const auto& model = m_data.reconstructed_model();
+    std::vector<CGAL::Color> colors;
 
+    std::size_t polygon_id = 0;
     KSR_3::Saver<Kernel> saver;
     for (const auto& pface : model.pfaces) {
       const auto pvertices = m_data.pvertices_of_pface(pface);
@@ -671,8 +692,10 @@ private:
         polygon.push_back(point);
       }
       polygons.push_back(polygon);
+      colors.push_back(saver.get_idx_color(pface.first));
+      ++polygon_id;
     }
-    saver.export_polygon_soup_3(polygons, file_name);
+    saver.export_polygon_soup_3(polygons, colors, file_name);
   }
 };
 
