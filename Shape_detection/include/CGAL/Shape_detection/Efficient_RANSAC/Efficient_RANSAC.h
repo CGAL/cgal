@@ -1132,7 +1132,7 @@ private:
 
     // Count point indices that map to -1 in the shape index
     std::size_t enough = 0;
-    for (auto j : cur.points()) {
+    for (auto j : cur) {
 
       if (shapeIndex[j] == -1)
         enough++;

@@ -102,7 +102,7 @@ public:
 
   std::size_t index (Node node, std::size_t i) const
   {
-    return m_offset + *(node.points().begin() + i);
+    return m_offset + *(node.begin() + i);
   }
 
   std::size_t size() const {
