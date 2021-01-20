@@ -281,6 +281,50 @@ public:
     \pre `!is_leaf()`
     \pre `0 <= index && index < Degree::value`
 
+    The orthtree subdivides the space in 2 on each dimension
+    available, so a child node can be accessed by selecting a Boolean
+    value for each dimension. The `index` parameter is thus
+    interpreted as a bitmap, where each bit matches a dimension
+    (starting by the least significant bit for coordinate X).
+
+    For example, it the case of an octree (dimension 3):
+
+    - index 0 (000 in binary) is the children on the "minimum corner" (xmin, ymin, zmin)
+    - index 1 (001 in binary) is on (xmax, ymin, zmin)
+    - index 2 (010 in binary) is on (xmin, ymax, zmin)
+    - index 6 (101 in binary) is on (xmax, ymin, zmax)
+
+    Diagram of a quadtree:
+
+    ```
+    Children of the current node:
+
+    Y axis
+    A
+    |  +-------------------+-------------------+
+    |  | Coord:  Ymax Xmin | Coord:  Ymax Xmax |
+    |  | Bitmap:    1    0 | Bitmap:    1    1 |
+    |  |                   |                   |
+    |  | -> index = 2      | -> index = 3      |
+    |  |                   |                   |
+    |  |                   |                   |
+    |  |                   |                   |
+    |  |                   |                   |
+    |  +-------------------+-------------------+
+    |  | Coord:  Ymin Xmin | Coord:  Ymin Xmax |
+    |  | Bitmap:    0    0 | Bitmap:    0    1 |
+    |  |                   |                   |
+    |  | -> index = 0      | -> index = 1      |
+    |  |                   |                   |
+    |  |                   |                   |
+    |  |                   |                   |
+    |  |                   |                   |
+    |  +-------------------+-------------------+
+    |
+    +--------------------------------------------> X axis
+    0
+    ```
+
     The operator can be chained. For example, `n[5][2][3]` returns the
     third child of the second child of the fifth child of a node `n`.
   */

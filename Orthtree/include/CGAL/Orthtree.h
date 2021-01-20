@@ -296,7 +296,7 @@ public:
     predicate.
 
     This is equivalent to calling
-    `refine(Orthtree::Maximum_depth_and_maximum_number_of_inliers(min_depth,
+    `refine(Orthtrees::Maximum_depth_and_maximum_number_of_inliers(min_depth,
     bucket_size))`
 
     \param max_depth deepest a tree is allowed to be (nodes at this depth will not be split).
@@ -380,6 +380,8 @@ public:
     node by their indices.
 
     `my_tree[5]` is equivalent to `my_tree.root()[5]`.
+
+    \sa `Node::operator[]()`
 
     \param index the index of the child node.
     \return a reference to the node.
