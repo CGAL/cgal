@@ -140,8 +140,8 @@ public:
   typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
   typedef internal::Cartesian_ranges<Traits> Cartesian_ranges;
 
-  typedef Orthtrees::Traversal::Leaves<Traits, PointRange, PointMap> Leaves_traversal;
-  typedef Orthtrees::Traversal::Preorder<Traits, PointRange, PointMap> Preorder_traversal;
+  typedef Orthtrees::Leaves_traversal<Traits, PointRange, PointMap> Leaves_traversal;
+  typedef Orthtrees::Preorder_traversal<Traits, PointRange, PointMap> Preorder_traversal;
   /// \endcond
 
   /// @}
@@ -296,14 +296,14 @@ public:
     predicate.
 
     This is equivalent to calling
-    `refine(Split_predicate::Maximum_depth_and_maximum_number_of_inliers(min_depth,
+    `refine(Orthtree::Maximum_depth_and_maximum_number_of_inliers(min_depth,
     bucket_size))`
 
     \param max_depth deepest a tree is allowed to be (nodes at this depth will not be split).
     \param bucket_size maximum points a node is allowed to contain.
    */
   void refine(size_t max_depth = 10, size_t bucket_size = 20) {
-    refine(Orthtrees::Split_predicate::Maximum_depth_and_maximum_number_of_inliers(max_depth, bucket_size));
+    refine(Orthtrees::Maximum_depth_and_maximum_number_of_inliers(max_depth, bucket_size));
   }
 
   /*!
@@ -812,7 +812,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   void dump_to_polylines (std::ostream& os) const
   {
-    for (const Node& n : traverse<Orthtrees::Traversal::Preorder>())
+    for (const Node& n : traverse<Preorder_traversal>())
       if (n.is_leaf())
       {
         Bbox box = bbox(n);

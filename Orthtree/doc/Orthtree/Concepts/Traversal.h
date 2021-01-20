@@ -13,9 +13,9 @@
   please refer to the documentation of this class for more
   information.
 
-  \cgalHasModel `CGAL::Orthtrees::Traversal::Preorder`
-  \cgalHasModel `CGAL::Orthtrees::Traversal::Postorder`
-  \cgalHasModel `CGAL::Orthtrees::Traversal::Leaves`
+  \cgalHasModel `CGAL::Orthtrees::Preorder_traversal`
+  \cgalHasModel `CGAL::Orthtrees::Postorder_traversal`
+  \cgalHasModel `CGAL::Orthtrees::Leaves_traversal`
  */
 template<typename T, typename PR, typename PM>
 class OrthtreeTraversal {

@@ -301,7 +301,7 @@ public:
 
     Adjacent nodes are found according to several properties:
     - adjacent nodes may be larger than the seek node, but never smaller
-    - a node has at most `2*Dimension::value` different adjacent nodes (in 3D: left, right, up, down, front, back)
+    - a node has at most `2 * Dimension::value` different adjacent nodes (in 3D: left, right, up, down, front, back)
     - adjacent nodes are not required to be leaf nodes
 
     Here's a diagram demonstrating the concept for a Quadtree:

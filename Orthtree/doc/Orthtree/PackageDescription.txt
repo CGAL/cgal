@@ -52,13 +52,13 @@
 - `CGAL::Orthtree_traits_d<GeomTraits, Dimension>`
 
 \cgalCRPSection{Split Predicates}
-- `CGAL::Orthtrees::Split_predicate::Maximum_number_of_inliers`
-- `CGAL::Orthtrees::Split_predicate::Maximum_depth`
-- `CGAL::Orthtrees::Split_predicate::Maximum_depth_and_maximum_number_of_inliers`
+- `CGAL::Orthtrees::Maximum_number_of_inliers`
+- `CGAL::Orthtrees::Maximum_depth`
+- `CGAL::Orthtrees::Maximum_depth_and_maximum_number_of_inliers`
 
 \cgalCRPSection{%Traversal}
-- `CGAL::Orthtrees::Traversal::Preorder<Traits, PointRange, PointMap>`
-- `CGAL::Orthtrees::Traversal::Postorder<Traits, PointRange, PointMap>`
-- `CGAL::Orthtrees::Traversal::Leaves<Traits, PointRange, PointMap>`
+- `CGAL::Orthtrees::Preorder_traversal<Traits, PointRange, PointMap>`
+- `CGAL::Orthtrees::Postorder_traversal<Traits, PointRange, PointMap>`
+- `CGAL::Orthtrees::Leaves_traversal<Traits, PointRange, PointMap>`
 
 */

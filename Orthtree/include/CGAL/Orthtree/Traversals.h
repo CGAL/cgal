@@ -87,8 +87,6 @@ Node deepest_first_child(Node n) {
 
 /// \endcond
 
-namespace Traversal {
-
 /*!
   \ingroup PkgOrthtreeTraversal
   \brief preorder traversal, starting from the root towards the leaves.
@@ -100,7 +98,7 @@ namespace Traversal {
   \cgalModels OrthtreeTraversal
  */
 template <typename T, typename PR, typename PM>
-struct Preorder {
+struct Preorder_traversal {
 
   using Node = typename Orthtree<T,PR,PM>::Node;
 
@@ -136,7 +134,7 @@ struct Preorder {
   \cgalModels OrthtreeTraversal
  */
 template <typename T, typename PR, typename PM>
-struct Postorder {
+struct Postorder_traversal {
 
   using Node = typename Orthtree<T,PR,PM>::Node;
 
@@ -167,7 +165,7 @@ struct Postorder {
   \cgalModels OrthtreeTraversal
  */
 template <typename T, typename PR, typename PM>
-struct Leaves {
+struct Leaves_traversal {
 
   using Node = typename Orthtree<T,PR,PM>::Node;
 
@@ -187,7 +185,6 @@ struct Leaves {
   }
 };
 
-} // Traversal
 } // Orthtree
 } // CGAL
 

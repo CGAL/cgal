@@ -40,7 +40,7 @@ subdivide space further. This method uses a split predicate which
 takes a node as input and returns `true` is this node should be
 split, `false` otherwise: this enables users to choose on what
 criterion should the orthtree be refined. Predefined predicates are
-provided such as [Maximum_depth](@ref CGAL::Orthtrees::Split_predicate::Maximum_depth) or [Maximum_number_of_inliers](@ref CGAL::Orthtrees::Split_predicate::Maximum_number_of_inliers).
+provided such as [Maximum_depth](@ref CGAL::Orthtrees::Maximum_depth) or [Maximum_number_of_inliers](@ref CGAL::Orthtrees::Maximum_number_of_inliers).
 
 The simplest way to create an %orthtree is using a vector of points.
 The constructor generally expects a separate point range and map,
@@ -137,7 +137,7 @@ These accessors and operators can be chained to access any node in the tree in a
 
 It's often useful to be able to iterate over the nodes of the tree in a particular order.
 For example, the stream operator `<<` uses a traversal to print out each node.
-A few traversals are provided, among them [Preorder](@ref CGAL::Orthtrees::Traversal::Preorder) and [Postorder](@ref CGAL::Orthtrees::Traversal::Postorder).
+A few traversals are provided, among them [Preorder_traversal](@ref CGAL::Orthtrees::Preorder_traversal) and [Postorder_traversal](@ref CGAL::Orthtrees::Postorder_traversal).
 To traverse a tree in preorder is to visit each parent immediately followed by its children,
 where in posterder traversal the children are visited first.
 

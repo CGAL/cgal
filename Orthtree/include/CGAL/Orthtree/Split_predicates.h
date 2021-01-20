@@ -20,8 +20,6 @@ namespace CGAL {
 
 namespace Orthtrees {
 
-namespace Split_predicate {
-
 /*!
   \ingroup PkgOrthtreeSplitPredicates
   \brief bucket size predicate that splits a node if it contains more than a certain number of items.
@@ -100,7 +98,6 @@ public:
   }
 };
 
-} // Split_predicate
 } // Orthtrees
 } // CGAL
 
