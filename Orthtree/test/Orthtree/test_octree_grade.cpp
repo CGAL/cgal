@@ -15,7 +15,7 @@ typedef Kernel::Point_3 Point;
 typedef Kernel::FT FT;
 typedef CGAL::Point_set_3<Point> Point_set;
 typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map> Octree;
-typedef CGAL::Orthtrees::Leaves_traversal<typename Octree::Traits, Point_set, typename Point_set::Point_map> Leaves_traversal;
+typedef CGAL::Orthtrees::Leaves_traversal Leaves_traversal;
 
 std::size_t count_jumps(Octree &octree) {
 

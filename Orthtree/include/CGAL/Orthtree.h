@@ -139,9 +139,6 @@ public:
   typedef typename PointRange::iterator Range_iterator;
   typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
   typedef internal::Cartesian_ranges<Traits> Cartesian_ranges;
-
-  typedef Orthtrees::Leaves_traversal<Traits, PointRange, PointMap> Leaves_traversal;
-  typedef Orthtrees::Preorder_traversal<Traits, PointRange, PointMap> Preorder_traversal;
   /// \endcond
 
   /// @}
@@ -349,7 +346,7 @@ public:
 
     // Collect all the leaf nodes
     std::queue<Node> leaf_nodes;
-    for (Node leaf : traverse(Leaves_traversal())) {
+    for (Node leaf : traverse(Orthtrees::Leaves_traversal())) {
       // TODO: I'd like to find a better (safer) way of doing this
       leaf_nodes.push(leaf);
     }
@@ -443,7 +440,8 @@ public:
 
     Node first = traversal.first(m_root);
 
-    Node_traversal_method_const next = std::bind(&Traversal::next, traversal, _1);
+    Node_traversal_method_const next
+      = [&](const Node& n) -> Node { return traversal.next(n); };
 
     return boost::make_iterator_range(Traversal_iterator<Node>(first, next),
                                       Traversal_iterator<Node>());
@@ -849,7 +847,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   void dump_to_polylines (std::ostream& os) const
   {
-    for (const Node& n : traverse<Preorder_traversal>())
+    for (const Node& n : traverse<Orthtrees::Preorder_traversal>())
       if (n.is_leaf())
       {
         Bbox box = bbox(n);
@@ -903,7 +901,7 @@ public:
   friend std::ostream& operator<< (std::ostream& os, const Self& orthtree)
   {
     // Create a range of nodes
-    auto nodes = orthtree.traverse(Preorder_traversal());
+    auto nodes = orthtree.traverse(Orthtrees::Preorder_traversal());
     // Iterate over the range
     for (auto &n : nodes) {
       // Show the depth

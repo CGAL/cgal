@@ -13,7 +13,7 @@ typedef CGAL::Point_set_3<Point> Point_set;
 typedef Point_set::Point_map Point_map;
 
 typedef CGAL::Octree<Kernel, Point_set, Point_map> Octree;
-typedef CGAL::Orthtrees::Preorder_traversal<typename Octree::Traits, Point_set, Point_map> Preorder_traversal;
+typedef CGAL::Orthtrees::Preorder_traversal Preorder_traversal;
 
 int main(int argc, char **argv) {
 

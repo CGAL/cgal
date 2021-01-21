@@ -9,19 +9,15 @@
   A traversal is used to iterate on a tree with a user-selected order
   (e.g. Preorder, Postorder).
 
-  Template parameters are the template parameters of the `CGAL::Orthtree`,
-  please refer to the documentation of this class for more
-  information.
-
   \cgalHasModel `CGAL::Orthtrees::Preorder_traversal`
   \cgalHasModel `CGAL::Orthtrees::Postorder_traversal`
   \cgalHasModel `CGAL::Orthtrees::Leaves_traversal`
  */
-template<typename T, typename PR, typename PM>
 class OrthtreeTraversal {
+
 public:
 
-  using Node = typename CGAL::Orthtree<T,PR,PM>::Node; ///< The node type
+  using Node = unspecified_type; ///< An instance of `CGAL::Orthtree<Traits,PointRange,PointMap>::Node`
 
   /*!
     \brief returns the first node to iterate to, given the root of the Orthtree.

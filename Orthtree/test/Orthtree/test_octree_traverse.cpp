@@ -12,7 +12,7 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 typedef CGAL::Point_set_3<Point> Point_set;
 typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map> Octree;
-typedef CGAL::Orthtrees::Preorder_traversal<typename Octree::Traits, Point_set, typename Point_set::Point_map> Preorder_traversal;
+typedef CGAL::Orthtrees::Preorder_traversal Preorder_traversal;
 
 bool test_preorder_1_node() {
 
