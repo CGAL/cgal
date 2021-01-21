@@ -24,7 +24,7 @@
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>

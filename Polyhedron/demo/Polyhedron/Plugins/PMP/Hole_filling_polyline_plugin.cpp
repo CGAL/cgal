@@ -23,7 +23,7 @@
 #include <vector>
 #include <algorithm>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <CGAL/Three/Three.h>
 
