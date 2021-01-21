@@ -55,7 +55,6 @@
 #  include <tbb/scalable_allocator.h>
 #endif
 
-#include <boost/type_traits/is_convertible.hpp>
 #include <type_traits>
 
 namespace CGAL {
@@ -123,9 +122,9 @@ public:
   // Cells
   // N.B.: Concurrent_compact_container requires TBB
 #ifdef CGAL_LINKED_WITH_TBB
-  typedef typename boost::mpl::if_c
+  typedef typename std::conditional
   <
-    boost::is_convertible<Concurrency_tag, Parallel_tag>::value,
+    std::is_convertible<Concurrency_tag, Parallel_tag>::value,
     Concurrent_compact_container<Cell, tbb::scalable_allocator<Cell> >,
     Compact_container<Cell>
   >::type                                                Cell_range;
@@ -141,9 +140,9 @@ public:
   // Vertices
   // N.B.: Concurrent_compact_container requires TBB
 #ifdef CGAL_LINKED_WITH_TBB
-  typedef typename boost::mpl::if_c
+  typedef typename std::conditional
   <
-    boost::is_convertible<Concurrency_tag, Parallel_tag>::value,
+    std::is_convertible<Concurrency_tag, Parallel_tag>::value,
     Concurrent_compact_container<Vertex, tbb::scalable_allocator<Vertex> >,
     Compact_container<Vertex>
   >::type                                                Vertex_range;
