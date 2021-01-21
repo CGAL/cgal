@@ -93,7 +93,7 @@ set_package_properties(
   PURPOSE
     "Requiered for the Polyhedron Edit, Parameterization, Jet fitting, Classification plugin, Surface reconstruction, Normal estimation, Smoothing, Average spacing, Feature detection, Hole Filling and Fairing plugins ."
 )
-include(CGAL_Eigen_support)
+include(CGAL_Eigen3_support)
 
 find_package(METIS)
 set_package_properties(
@@ -330,19 +330,19 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   add_item(scene_movable_sm_item Plugins/AABB_tree/Scene_movable_sm_item.cpp)
 
-  if(TARGET CGAL::Eigen_support)
+  if(TARGET CGAL::Eigen3_support)
     add_item(scene_textured_item Scene_textured_surface_mesh_item.cpp
              texture.cpp)
-    target_link_libraries(scene_textured_item PUBLIC CGAL::Eigen_support)
+    target_link_libraries(scene_textured_item PUBLIC CGAL::Eigen3_support)
     qt5_wrap_ui(editionUI_FILES Plugins/Surface_mesh_deformation/Deform_mesh.ui)
     add_item(scene_edit_item
              Plugins/Surface_mesh_deformation/Scene_edit_polyhedron_item.cpp
              ${editionUI_FILES})
     target_link_libraries(
-      scene_edit_item PUBLIC CGAL::Eigen_support scene_surface_mesh_item
+      scene_edit_item PUBLIC CGAL::Eigen3_support scene_surface_mesh_item
                              scene_k_ring_selection scene_basic_objects)
     add_item(scene_mcf_item Plugins/PMP/Scene_mcf_item.cpp)
-    target_link_libraries(scene_mcf_item PUBLIC CGAL::Eigen_support)
+    target_link_libraries(scene_mcf_item PUBLIC CGAL::Eigen3_support)
   endif()
 
   add_item(scene_implicit_function_item Scene_implicit_function_item.cpp)
@@ -356,9 +356,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
                         PUBLIC scene_surface_mesh_item)
 
   add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
-  if(TARGET CGAL::Eigen_support)
+  if(TARGET CGAL::Eigen3_support)
     target_link_libraries(scene_points_with_normal_item
-                          PUBLIC CGAL::Eigen_support)
+                          PUBLIC CGAL::Eigen3_support)
   endif()
 
   find_package(LASLIB)

@@ -23,8 +23,8 @@ find_package(CGAL REQUIRED COMPONENTS Core)
 include(${CGAL_USE_FILE})
 
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-include(CGAL_Eigen_support)
-if(NOT TARGET CGAL::Eigen_support)
+include(CGAL_Eigen3_support)
+if(NOT TARGET CGAL::Eigen3_support)
   message(
     STATUS
       "NOTICE: This project requires the Eigen library, and will not be compiled."
@@ -147,7 +147,7 @@ if(IPE_FOUND AND IPE_VERSION)
   foreach(IPELET ${CGAL_IPELETS})
     add_library(CGAL_${IPELET} MODULE ${IPELET}.cpp)
     add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_${IPELET})
-    target_link_libraries(CGAL_${IPELET} PRIVATE CGAL::CGAL CGAL::Eigen_support
+    target_link_libraries(CGAL_${IPELET} PRIVATE CGAL::CGAL CGAL::Eigen3_support
                                                  ${IPE_LIBRARIES})
     if(IPELET_INSTALL_DIR)
       install(TARGETS CGAL_${IPELET} DESTINATION ${IPELET_INSTALL_DIR})
@@ -160,12 +160,12 @@ if(IPE_FOUND AND IPE_VERSION)
   endforeach(IPELET)
   if(CGAL_Core_FOUND)
     target_link_libraries(CGAL_cone_spanners PRIVATE CGAL::CGAL_Core
-                                                     CGAL::Eigen_support)
+                                                     CGAL::Eigen3_support)
   endif()
   #example in doc not installed
   add_library(simple_triangulation MODULE simple_triangulation.cpp)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS simple_triangulation)
-  target_link_libraries(simple_triangulation CGAL::Eigen_support
+  target_link_libraries(simple_triangulation CGAL::Eigen3_support
                         ${IPE_LIBRARIES})
   cgal_add_compilation_test(simple_triangulation)
 

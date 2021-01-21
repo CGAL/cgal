@@ -20,8 +20,8 @@ endif()
 
 # Use Eigen (for PCA)
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
-include(CGAL_Eigen_support)
-if(NOT TARGET CGAL::Eigen_support)
+include(CGAL_Eigen3_support)
+if(NOT TARGET CGAL::Eigen3_support)
   message(
     STATUS "This project requires the Eigen library, and will not be compiled.")
   return()
@@ -33,20 +33,20 @@ endif()
 include(CGAL_CreateSingleSourceCGALProgram)
 
 create_single_source_cgal_program("vsa_approximation_2_example.cpp")
-target_link_libraries(vsa_approximation_2_example PUBLIC CGAL::Eigen_support)
+target_link_libraries(vsa_approximation_2_example PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program("vsa_approximation_example.cpp")
-target_link_libraries(vsa_approximation_example PUBLIC CGAL::Eigen_support)
+target_link_libraries(vsa_approximation_example PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program("vsa_class_interface_example.cpp")
-target_link_libraries(vsa_class_interface_example PUBLIC CGAL::Eigen_support)
+target_link_libraries(vsa_class_interface_example PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program("vsa_isotropic_metric_example.cpp")
-target_link_libraries(vsa_isotropic_metric_example PUBLIC CGAL::Eigen_support)
+target_link_libraries(vsa_isotropic_metric_example PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program("vsa_segmentation_example.cpp")
-target_link_libraries(vsa_segmentation_example PUBLIC CGAL::Eigen_support)
+target_link_libraries(vsa_segmentation_example PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program("vsa_simple_approximation_example.cpp")
 target_link_libraries(vsa_simple_approximation_example
-                      PUBLIC CGAL::Eigen_support)
+                      PUBLIC CGAL::Eigen3_support)
