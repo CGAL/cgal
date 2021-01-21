@@ -28,7 +28,7 @@ int main(int argc, const char** argv)
   const char* fname2 = (argc>2)?argv[2]:"data/hippo2.ply";
 
   std::vector<Pwn> pwns1, pwns2;
-  std::ifstream input(fname1);
+  std::ifstream input(fname1, std::ios::binary);
   if (!input ||
       !CGAL::read_ply_points(input, std::back_inserter(pwns1),
             CGAL::parameters::point_map (CGAL::First_of_pair_property_map<Pwn>()).
@@ -39,7 +39,7 @@ int main(int argc, const char** argv)
   }
   input.close();
 
-  input.open(fname2);
+  input.open(fname2, std::ios::binary);
   if (!input ||
       !CGAL::read_ply_points(input, std::back_inserter(pwns2),
             CGAL::parameters::point_map (Point_map()).
