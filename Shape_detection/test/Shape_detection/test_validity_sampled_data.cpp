@@ -18,7 +18,7 @@
 
 #include <CGAL/Real_timer.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 namespace SD = CGAL::Shape_detection;
 
