@@ -49,8 +49,8 @@ if (NOT TARGET CGAL::TensorFlow_support)
 endif()
 
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
-include(CGAL_Eigen_support)
-if (NOT TARGET CGAL::Eigen_support)
+include(CGAL_Eigen3_support)
+if (NOT TARGET CGAL::Eigen3_support)
   message(STATUS "This project requires the Eigen library, and will not be compiled.")
   set(Classification_dependencies_met FALSE)
 endif()
@@ -92,7 +92,7 @@ foreach(target
     gis_tutorial_example)
   if(TARGET ${target})
     target_link_libraries(${target} PUBLIC
-      CGAL::Eigen_support
+      CGAL::Eigen3_support
       CGAL::Boost_iostreams_support
       CGAL::Boost_serialization_support)
     if(TARGET CGAL::TBB_support)

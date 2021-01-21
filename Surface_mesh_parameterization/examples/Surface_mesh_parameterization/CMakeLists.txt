@@ -12,8 +12,8 @@ find_package(CGAL QUIET)
 if ( CGAL_FOUND )
 
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-  include(CGAL_Eigen_support)
-  if (TARGET CGAL::Eigen_support)
+  include(CGAL_Eigen3_support)
+  if (TARGET CGAL::Eigen3_support)
     # Executables that require Eigen 3.1
 
 # ------------------------------------------------------------------
@@ -52,17 +52,17 @@ if ( CGAL_FOUND )
 # ------------------------------------------------------------------
 
     create_single_source_cgal_program( "discrete_authalic.cpp" )
-    target_link_libraries(discrete_authalic PUBLIC CGAL::Eigen_support)
+    target_link_libraries(discrete_authalic PUBLIC CGAL::Eigen3_support)
     create_single_source_cgal_program( "lscm.cpp" )
-    target_link_libraries(lscm PUBLIC CGAL::Eigen_support)
+    target_link_libraries(lscm PUBLIC CGAL::Eigen3_support)
     create_single_source_cgal_program( "orbifold.cpp" )
-    target_link_libraries(orbifold PUBLIC CGAL::Eigen_support)
+    target_link_libraries(orbifold PUBLIC CGAL::Eigen3_support)
     create_single_source_cgal_program( "seam_Polyhedron_3.cpp" )
-    target_link_libraries(seam_Polyhedron_3 PUBLIC CGAL::Eigen_support)
+    target_link_libraries(seam_Polyhedron_3 PUBLIC CGAL::Eigen3_support)
     create_single_source_cgal_program( "simple_parameterization.cpp" )
-    target_link_libraries(simple_parameterization PUBLIC CGAL::Eigen_support)
+    target_link_libraries(simple_parameterization PUBLIC CGAL::Eigen3_support)
     create_single_source_cgal_program( "square_border_parameterizer.cpp" )
-    target_link_libraries(square_border_parameterizer PUBLIC CGAL::Eigen_support)
+    target_link_libraries(square_border_parameterizer PUBLIC CGAL::Eigen3_support)
 
     if(SuiteSparse_FOUND)
       target_link_libraries(orbifold PRIVATE ${SuiteSparse_LIBRARIES})

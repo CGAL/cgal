@@ -14,8 +14,8 @@ if(CGAL_FOUND)
 
   # Use Eigen.
   find_package(Eigen3 3.1.0 QUIET) # (3.1.0 or greater)
-  include(CGAL_Eigen_support)
-  if(TARGET CGAL::Eigen_support)
+  include(CGAL_Eigen3_support)
+  if(TARGET CGAL::Eigen3_support)
     create_single_source_cgal_program(
       "efficient_RANSAC_basic.cpp")
     create_single_source_cgal_program(
@@ -44,7 +44,7 @@ if(CGAL_FOUND)
         region_growing_on_polygon_mesh
         region_growing_with_custom_classes
         shape_detection_basic_deprecated)
-      target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
+      target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
     endforeach()
 
   endif()

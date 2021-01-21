@@ -41,26 +41,26 @@ if ( CGAL_FOUND )
 
   # Use Eigen
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-  include(CGAL_Eigen_support)
+  include(CGAL_Eigen3_support)
   if (EIGEN3_FOUND)
     # Executables that require Eigen
     create_single_source_cgal_program( "normal_estimation_test.cpp" )
-    target_link_libraries(normal_estimation_test PUBLIC CGAL::Eigen_support)
+    target_link_libraries(normal_estimation_test PUBLIC CGAL::Eigen3_support)
 
     create_single_source_cgal_program( "hierarchy_simplification_test.cpp" )
-    target_link_libraries(hierarchy_simplification_test PUBLIC CGAL::Eigen_support)
+    target_link_libraries(hierarchy_simplification_test PUBLIC CGAL::Eigen3_support)
 
     create_single_source_cgal_program( "smoothing_test.cpp" )
-    target_link_libraries(smoothing_test PUBLIC CGAL::Eigen_support)
+    target_link_libraries(smoothing_test PUBLIC CGAL::Eigen3_support)
 
     create_single_source_cgal_program( "vcm_plane_test.cpp" )
-    target_link_libraries(vcm_plane_test PUBLIC CGAL::Eigen_support)
+    target_link_libraries(vcm_plane_test PUBLIC CGAL::Eigen3_support)
 
     create_single_source_cgal_program( "vcm_all_test.cpp" )
-    target_link_libraries(vcm_all_test PUBLIC CGAL::Eigen_support)
+    target_link_libraries(vcm_all_test PUBLIC CGAL::Eigen3_support)
 
     create_single_source_cgal_program( "jet_pointer_as_property_map.cpp" )
-    target_link_libraries(jet_pointer_as_property_map PUBLIC CGAL::Eigen_support)
+    target_link_libraries(jet_pointer_as_property_map PUBLIC CGAL::Eigen3_support)
   else()
     message(STATUS "NOTICE: This program requires Eigen 3.1 (or greater) and will not be compiled.")
   endif()

@@ -84,9 +84,9 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( "eigen.cpp" )
   find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
-  include(CGAL_Eigen_support)
-  if (TARGET CGAL::Eigen_support)
-    target_link_libraries(eigen PUBLIC CGAL::Eigen_support)
+  include(CGAL_Eigen3_support)
+  if (TARGET CGAL::Eigen3_support)
+    target_link_libraries(eigen PUBLIC CGAL::Eigen3_support)
   endif()
 
 else( CGAL_FOUND )
