@@ -105,7 +105,7 @@ int main(int narg, char** argv)
   std::string filename;
   if ( narg==1 )
   {
-    filename=CGAL::get_data_file_path("points_2/points_2");
+    filename=CGAL::data_file_path("points_2/points_2");
     std::cout<<"No filename given: use "<<filename<<" by default."<<std::endl;
   }
   else { filename=std::string(argv[1]); }

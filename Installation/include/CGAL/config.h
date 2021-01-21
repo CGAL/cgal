@@ -742,7 +742,7 @@ namespace CGAL {
 // This directory is either defined in the environement variable CGAL_DATA_DIR,
 // otherwise it is taken from the constant CGAL_DATA_DIR (defined in CMake),
 // otherwise it is empty (and thus returns filename unmodified).
-inline std::string get_data_file_path(const char* filename)
+inline std::string data_file_path(const char* filename)
 {
  const char *cgal_dir=std::getenv("CGAL_DATA_DIR");
 #ifdef CGAL_DATA_DIR
