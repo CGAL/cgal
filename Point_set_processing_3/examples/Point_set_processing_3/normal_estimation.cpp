@@ -203,7 +203,7 @@ int main(int argc, char * argv[])
     if (argc==1)
     {
       nb_neighbors_jet_fitting_normals = 10;
-      nb_neighbors_mst = 10
+      nb_neighbors_mst = 10;
     }
 
     for (int i=3; i+1<argc ; ++i)
