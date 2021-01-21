@@ -89,7 +89,9 @@ Node deepest_first_child(Node n) {
 
 /*!
   \ingroup PkgOrthtreeTraversal
-  \brief preorder traversal, starting from the root towards the leaves.
+  \brief A class used to traverse an orthtree in a preorder way.
+
+  A preorder traversal starts from the root towards the leaves.
 
   \cgalModels OrthtreeTraversal
  */
@@ -120,7 +122,9 @@ struct Preorder_traversal {
 
 /*!
   \ingroup PkgOrthtreeTraversal
-  \brief preorder traversal, starting from the leaves towards the root.
+  \brief A class used to traverse an orthtree in a postorder way.
+
+  A postorder traversal starts from the leaves towards the root.
 
   \cgalModels OrthtreeTraversal
  */
@@ -146,7 +150,9 @@ struct Postorder_traversal {
 
 /*!
   \ingroup PkgOrthtreeTraversal
-  \brief leaves traversal, ignoring all non-leave nodes.
+  \brief A class used to traverse the leaves of an orthtree.
+
+  All non-leave nodes are ignored.
 
   \cgalModels OrthtreeTraversal
  */

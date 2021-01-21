@@ -431,7 +431,8 @@ public:
     This method allows to iterate on the nodes of the tree with a
     user-selected order (preorder, postorder, leaves only, etc.).
 
-    \tparam Traversal model of `Traversal`
+    \tparam Traversal model of `OrthtreeTraversal` that provides functions
+    compatible with the type of the orthree
     \param traversal
     \return a forward input iterator over the nodes of the tree
    */

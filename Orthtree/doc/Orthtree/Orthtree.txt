@@ -152,7 +152,7 @@ In this case, we print out the nodes of the tree without indentation instead.
 \subsection Section_Orthtree_Custom_Traversal Custom Traversal
 
 Users can define their own traversal methods by creating models of the
-`Traversal` concept. The following example shows how to define a
+`OrthtreeTraversal` concept. The following example shows how to define a
 custom traversal that only traverses the first branch of the %octree:
 
 \cgalExample{Orthtree/octree_traversal_custom.cpp}

@@ -22,7 +22,9 @@ namespace Orthtrees {
 
 /*!
   \ingroup PkgOrthtreeSplitPredicates
-  \brief bucket size predicate that splits a node if it contains more than a certain number of items.
+  \brief A class used to choose when a node should be split depending on the number of inliers.
+
+  This is bucket size predicate that splits a node if it contains more than a certain number of items.
  */
 class Maximum_number_of_inliers {
 
@@ -38,7 +40,7 @@ public:
   /*!
     \brief returns `true` if `n` should be splitted, `false` otherwise.
    */
-  template<class Node>
+  template<typename Node>
   bool operator()(const Node &n) const {
     return (n.size() > m_bucket_size);
   }
@@ -46,7 +48,9 @@ public:
 
 /*!
   \ingroup PkgOrthtreeSplitPredicates
-  \brief predicate that splits a node if its depth is lower than a certain limit.
+  \brief A class used to choose when a node should be split depending on the depth.
+
+  This predicate makes a node splitted if its depth is lower than a certain limit.
  */
 class Maximum_depth {
 
@@ -62,7 +66,7 @@ public:
   /*!
     \brief returns `true` if `n` should be splitted, `false` otherwise.
    */
-  template<class Node>
+  template<typename Node>
   bool operator()(const Node &n) const {
     return n.depth() < m_max_depth;
   }
@@ -70,8 +74,9 @@ public:
 
 /*!
   \ingroup PkgOrthtreeSplitPredicates
+  \brief A class used to choose when a node should be split depending on the depth and the number of inliers.
 
-  \brief predicate that splits a node if it contains more than a
+  This predicate makes a note splitted if it contains more than a
   certain number of items and if its depth is lower than a certain
   limit.
  */
@@ -90,7 +95,7 @@ public:
   /*!
     \brief returns `true` if `n` should be splitted, `false` otherwise.
    */
-  template<class Node>
+  template<template Node>
   bool operator()(const Node &n) const {
     size_t num_points = n.size();
     size_t depth = n.depth();

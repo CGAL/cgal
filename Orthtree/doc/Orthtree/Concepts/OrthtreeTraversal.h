@@ -17,7 +17,7 @@ class OrthtreeTraversal {
 
 public:
 
-  using Node = unspecified_type; ///< An instance of `CGAL::Orthtree<Traits,PointRange,PointMap>::Node`
+  using Node = unspecified_type; ///< An instance of [CGAL::Orthtree<Traits,PointRange,PointMap>::Node](@ref CGAL::Orthtree::Node)
 
   /*!
     \brief returns the first node to iterate to, given the root of the Orthtree.
