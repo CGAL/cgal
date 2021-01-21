@@ -25,7 +25,7 @@
 #include <CGAL/property_map.h>
 #include <boost/unordered_map.hpp>
 #include <boost/utility/enable_if.hpp>
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 namespace CGAL {
 
