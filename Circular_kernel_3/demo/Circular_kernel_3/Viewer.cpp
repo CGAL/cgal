@@ -11,6 +11,14 @@ Viewer::Viewer(QWidget* parent )
 {
     extension_is_found = false;
 }
+Viewer::~Viewer()
+{
+  makeCurrent();
+  for(int i=0; i<3; ++i)
+    vao[i].destroy();
+  for(int i=0; i<9; ++i)
+    buffers[i].destroy();
+}
 
 void Viewer::compile_shaders()
 {
