@@ -60,8 +60,8 @@ namespace CGAL {
   \sa Octree
 
   \tparam Traits_ is a model of `OrthtreeTraits`
-  \tparam PointRange_ is a model of range whose value type is the key type of `PointMap`
-  \tparam PointMap_ is a model of `ReadablePropertyMap` whose value type is `Traits::Point_d`
+  \tparam PointRange_ is a model of range whose value type is the key type of `PointMap_`
+  \tparam PointMap_ is a model of `ReadablePropertyMap` whose value type is `Traits_::Point_d`
  */
 template<typename Traits_, typename PointRange_,
          typename PointMap_ = Identity_property_map<typename Traits_::Point_d> >
