@@ -106,7 +106,7 @@ int main()
 
   std::vector<std::string> files;
   files.push_back("data/dino.off");
-  files.push_back("data/bear.off");
+  files.push_back("data/bear_bis.off");
   files.push_back("data/refined_elephant.off");
 
   std::vector<std::vector<double> > timings_simple;
