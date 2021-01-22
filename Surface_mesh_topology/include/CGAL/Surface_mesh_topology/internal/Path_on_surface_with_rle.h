@@ -81,6 +81,8 @@ public:
 
   Light_MQ(const Local_map& m): m_map(m)
   {}
+  Light_MQ(const Light_MQ& lmq): m_map(lmq.m_map)
+  {}
 
   const Local_map& get_local_map() const
   { return m_map; }
@@ -139,6 +141,17 @@ public:
   #ifdef CGAL_PWRLE_TURN_V2
     , m_darts_ids(darts_ids)
   #endif //CGAL_PWRLE_TURN_V2
+  {}
+
+  Path_on_surface_with_rle(const Self& apath): m_MQ(apath.m_MQ),
+                                               m_path(apath.m_path),
+                                               m_is_closed(apath.m_is_closed),
+                                               m_length(apath.m_length),
+                                               m_use_only_positive(apath.m_use_only_positive),
+                                               m_use_only_negative(apath.m_use_only_negative)
+#ifdef CGAL_PWRLE_TURN_V2
+                                             , m_darts_ids(apath.m_darts_ids)
+#endif //CGAL_PWRLE_TURN_V2
   {}
 
   /// Creates a Path_on_surface_with_rle from a Path_on_surface.
