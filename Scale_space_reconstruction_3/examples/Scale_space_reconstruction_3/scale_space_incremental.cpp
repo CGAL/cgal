@@ -33,8 +33,6 @@ void dump_reconstruction(const Reconstruction& reconstruct, std::string name)
 int main(int argc, char* argv[])
 {
     // Read the data.
-    std::vector<Point> points;
-
     std::string fname = argc==1?"data/kitten.off":argv[1];
     std::cout << "Reading " << std::flush;
     std::vector<Point> points;

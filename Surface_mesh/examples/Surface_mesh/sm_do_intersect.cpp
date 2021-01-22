@@ -104,7 +104,6 @@ unsigned int intersect(const Mesh& P, const Mesh& Q) {
 
 int main(int argc, char* argv[])
 {
-  Mesh P, Q;
   std::string P_name = argc==1?"data/knot1.off" : argv[1];
   std::string Q_name = argc<3 ?"data/elephant.off" : argv[2];
   if(argc < 3) {

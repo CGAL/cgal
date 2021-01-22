@@ -33,8 +33,6 @@ int main(int argc,char** argv)
 
   if ( !input || !(input >> mesh) || mesh.empty() ) {
     std::cerr<< off_name << " is not a valid off file" << std::endl;
-    data/cactus.off data/cactus.sel data/cactus.def
-
     return 1;
   }
   input.close();

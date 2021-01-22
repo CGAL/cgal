@@ -21,8 +21,7 @@ typedef Mesher::Facet_const_iterator                            Mesher_iterator;
 typedef CGAL::Timer Timer;
 
 int main(int argc, char* argv[]) {
-  // Read the data.
-  std::vector<Point> points;
+  // Read the dat
   std::string fname = argc==1?"data/kitten.off":argv[1];
 
   std::cerr << "Reading " << std::flush;

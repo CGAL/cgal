@@ -17,8 +17,7 @@ typedef Reconstruction::Facet_const_iterator                    Facet_iterator;
 int main(int argc, char** argv)
 {
   // Read the data.
-  std::vector<Point> points;
-  std::std::string fname = argc==1?"data/kitten.off":argv[1];
+  std::string fname = argc==1?"data/kitten.off":argv[1];
 
   std::cerr << "Reading " << std::flush;
   std::vector<Point> points;
