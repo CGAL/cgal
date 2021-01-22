@@ -861,7 +861,6 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
         }
       }
       return false;
-      break;
     }
       //Split vertex
     case 1:
@@ -1075,7 +1074,6 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
     case -1:
     {
       return treat_classic_selection(selection);
-      break;
     }
       //Join vertex
     case 0:
@@ -1331,7 +1329,6 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_face_des
     case -1:
     {
       return treat_classic_selection(selection);
-      break;
     }
     //Split vertex
     case 1:
@@ -2255,35 +2252,35 @@ void Scene_polyhedron_selection_item::printPrimitiveId(QPoint p, CGAL::Three::Vi
 {
   d->item->polyhedron_item()->printPrimitiveId(p, viewer);
 }
+
 bool Scene_polyhedron_selection_item::printVertexIds() const
 {
   return d->item->polyhedron_item()->printVertexIds();
-  return false;
 }
+
 bool Scene_polyhedron_selection_item::printEdgeIds() const
 {
-  d->item->polyhedron_item()->printEdgeIds();
-  return false;
+  return d->item->polyhedron_item()->printEdgeIds();
 }
+
 bool Scene_polyhedron_selection_item::printFaceIds() const
 {
   return d->item->polyhedron_item()->printFaceIds();
-  return false;
 }
+
 void Scene_polyhedron_selection_item::printAllIds()
 {
   d->item->polyhedron_item()->printAllIds();
 }
+
 bool Scene_polyhedron_selection_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)const
 {
   return d->item->polyhedron_item()->testDisplayId(x, y, z, viewer);
-  return false;
 }
 
 bool Scene_polyhedron_selection_item::shouldDisplayIds(CGAL::Three::Scene_item *current_item) const
 {
   return d->item->polyhedron_item() == current_item;
-  return false;
 }
 
 void Scene_polyhedron_selection_item::select_boundary()
@@ -2310,12 +2307,12 @@ Scene_polyhedron_selection_item::toolTip() const
                      "<p>Number of vertices: %2<br />"
                      "Number of edges: %3<br />"
                      "Number of faces: %4</p>")
-    .arg(this->name())
-    .arg(selected_vertices.size())
-    .arg(selected_edges.size())
-    .arg(selected_facets.size())
-    .arg(this->renderingModeName())
-    .arg(this->color().name());
+      .arg(this->name())
+      .arg(selected_vertices.size())
+      .arg(selected_edges.size())
+      .arg(selected_facets.size())
+      .arg(this->renderingModeName())
+      .arg(this->color().name());
 }
 
 void Scene_polyhedron_selection_item::initializeBuffers(Viewer_interface *v) const
