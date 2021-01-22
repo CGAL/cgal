@@ -57,6 +57,12 @@ function(create_single_source_cgal_program firstfile )
       set(NO_TESTING TRUE)
     endif()
 
+    if(NOT NO_TESTING)
+      cgal_add_test(${exe_name})
+    else()
+      cgal_add_test(${exe_name} NO_EXECUTION)
+    endif()
+
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${exe_name} )
 
     target_link_libraries(${exe_name} PRIVATE CGAL::CGAL)

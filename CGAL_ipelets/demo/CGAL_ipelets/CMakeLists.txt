@@ -35,67 +35,36 @@ endif()
 find_package(IPE 6)
 
 if(IPE_FOUND)
-  include_directories(BEFORE ${IPE_INCLUDE_DIR})
-
-  if(${IPE_VERSION} EQUAL "7")
+  if (${IPE_VERSION} EQUAL "7")
     set(WITH_IPE_7 ON)
   elseif(${IPE_VERSION} EQUAL "6")
     set(WITH_IPE_7 OFF)
   else()
-    message(
-      "-- Error: ${IPE_VERSION} is not a supported version of IPE (only 6 and 7 are)."
-    )
+    message("-- Error: ${IPE_VERSION} is not a supported version of IPE (only 6 and 7 are).")
     set(IPE_FOUND FALSE)
-  endif()
-  # starting ipe 7.2.1, a compiler with c++11 must be used to compile ipelets
-  if(${IPE_VERSION} EQUAL "7"
-     AND ${IPE_MINOR_VERSION_1} GREATER "1"
-     AND ${IPE_MINOR_VERSION_2} GREATER "0")
-    message(
-      STATUS
-        "Starting from Ipe 7.2.1 a compiler with c++11 support must be used")
-
-    list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_generalized_initializers has_cpp11)
-    if(has_cpp11 LESS 0)
-      message(
-        STATUS
-          "NOTICE: This demo requires a C++11 compiler and will not be compiled."
-      )
-      return()
-    endif()
-
-    # Use C++11 for this directory and its sub-directories.
-    set(CMAKE_CXX_STANDARD 11)
-    set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-
   endif()
 endif()
 
-if(IPE_FOUND AND IPE_VERSION)
-  if(WITH_IPE_7)
-    add_definitions(-DCGAL_USE_IPE_7)
-  endif()
 
+if(IPE_FOUND AND IPE_VERSION)
   message("-- Using IPE version ${IPE_VERSION} compatibility.")
 
   #setting installation directory
   get_filename_component(IPE_LIBRARY_DIR ${IPE_LIBRARIES} PATH)
-  if(IPE_FOUND AND NOT IPELET_INSTALL_DIR)
-    if(WITH_IPE_7)
+  if (IPE_FOUND AND NOT IPELET_INSTALL_DIR)
+    if (WITH_IPE_7)
       remove_leading_zero(IPE_MINOR_VERSION_1)
       remove_leading_zero(IPE_MINOR_VERSION_2)
-      set(INSTALL_PATHS
-          "${IPE_LIBRARY_DIR}/ipe/7.${IPE_MINOR_VERSION_1}.${IPE_MINOR_VERSION_2}/ipelets/"
-      )
-      find_path(
-        IPELET_INSTALL_DIR
-        NAMES libgoodies.lua goodies.lua
-        PATHS ${INSTALL_PATHS}
-        DOC "The folder where ipelets will be installed" ENV IPELETPATH)
+      set(INSTALL_PATHS "${IPE_LIBRARY_DIR}/ipe/7.${IPE_MINOR_VERSION_1}.${IPE_MINOR_VERSION_2}/ipelets/")
+      find_path(IPELET_INSTALL_DIR
+                    NAMES libgoodies.lua goodies.lua
+                    PATHS ${INSTALL_PATHS}
+                    DOC "The folder where ipelets will be installed"
+                    ENV IPELETPATH
+                   )
     else()
-      foreach(VER RANGE 28 40)
-        string(REPLACE XX ${VER} PATHC
-                       "${IPE_LIBRARY_DIR}/ipe/6.0preXX/ipelets/")
+      foreach (VER RANGE 28 40)
+        string(REPLACE XX ${VER} PATHC "${IPE_LIBRARY_DIR}/ipe/6.0preXX/ipelets/" )
         set(INSTALL_PATHS ${INSTALL_PATHS} ${PATHC})
       endforeach()
       set(INSTALL_PATHS ${INSTALL_PATHS} ${PATHC})
@@ -146,16 +115,20 @@ if(IPE_FOUND AND IPE_VERSION)
 
   foreach(IPELET ${CGAL_IPELETS})
     add_library(CGAL_${IPELET} MODULE ${IPELET}.cpp)
+    target_include_directories(CGAL_${IPELET} BEFORE PRIVATE ${IPE_INCLUDE_DIR})
+    if (WITH_IPE_7)
+      target_compile_definitions(CGAL_${IPELET} PRIVATE CGAL_USE_IPE_7)
+    endif()
+
     add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_${IPELET})
     target_link_libraries(CGAL_${IPELET} PRIVATE CGAL::CGAL CGAL::Eigen3_support
                                                  ${IPE_LIBRARIES})
     if(IPELET_INSTALL_DIR)
       install(TARGETS CGAL_${IPELET} DESTINATION ${IPELET_INSTALL_DIR})
-      if(WITH_IPE_7)
-        install(FILES ./lua/libCGAL_${IPELET}.lua
-                DESTINATION ${IPELET_INSTALL_DIR}) #only for ipe 7
+      if (WITH_IPE_7)
+        install(FILES ./lua/libCGAL_${IPELET}.lua DESTINATION ${IPELET_INSTALL_DIR}) #only for ipe 7
       endif()
-    endif()
+    endif ()
     cgal_add_compilation_test(CGAL_${IPELET})
   endforeach(IPELET)
   if(CGAL_Core_FOUND)
@@ -170,8 +143,5 @@ if(IPE_FOUND AND IPE_VERSION)
   cgal_add_compilation_test(simple_triangulation)
 
 else()
-  message(
-    STATUS
-      "NOTICE: This program requires the Ipe include files and library, and will not be compiled."
-  )
+  message(STATUS "NOTICE: This program requires the Ipe include files and library, and will not be compiled.")
 endif()
