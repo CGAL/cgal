@@ -19,7 +19,7 @@ typedef CGAL::Simple_cartesian<CGAL::MP_Float> EK;
 
 int main()
 {
-  std::ifstream ifs_traits("./data/traits.dat");
+  std::ifstream ifs_traits("data/traits.dat");
   assert( ifs_traits );
 
   std::cout << "testing the filtered traits class..." << std::flush;

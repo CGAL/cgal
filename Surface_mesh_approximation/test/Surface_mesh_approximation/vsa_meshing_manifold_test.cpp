@@ -80,13 +80,13 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-2))
 int main()
 {
   std::cout << "Meshing manifold test." << std::endl;
-  if (!test_manifold("./data/cube.off"))
+  if (!test_manifold("data/cube.off"))
     return EXIT_FAILURE;
 
-  if (!test_manifold("./data/cube-ouvert.off"))
+  if (!test_manifold("data/cube-ouvert.off"))
     return EXIT_FAILURE;
 
-  if (!test_manifold("./data/sphere.off"))
+  if (!test_manifold("data/sphere.off"))
     return EXIT_FAILURE;
 
   return EXIT_SUCCESS;

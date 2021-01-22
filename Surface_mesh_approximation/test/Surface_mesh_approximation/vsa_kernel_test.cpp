@@ -21,7 +21,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 template <typename TM>
 int load_and_remesh_sm(TM &mesh) {
-  std::ifstream input("./data/cube.off");
+  std::ifstream input("data/cube.off");
   if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
@@ -45,7 +45,7 @@ int load_and_remesh_sm(TM &mesh) {
 
 template <typename TM>
 int load_and_remesh_poly(TM &mesh) {
-  std::ifstream input("./data/cube.off");
+  std::ifstream input("data/cube.off");
   if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;

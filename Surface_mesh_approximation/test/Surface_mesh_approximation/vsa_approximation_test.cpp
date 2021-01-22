@@ -20,7 +20,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 int main()
 {
   Mesh mesh;
-  std::ifstream input("./data/cube.off");
+  std::ifstream input("data/cube.off");
   if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
