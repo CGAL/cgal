@@ -1056,9 +1056,6 @@ because OpenCV_FOUND is false")
       message(STATUS "Skip header \"CGAL/CGAL_ipelet_base.h\" \
 because IPE_FOUND is false.")
     endif()
-    if("${IPE_VERSION}" EQUAL "7")
-      set(compile_options "${compile_options} -DCGAL_USE_IPE_7")
-    endif()
 
     if(CGAL_ENABLE_CHECK_HEADERS)
       set(flag "-fsyntax-only")

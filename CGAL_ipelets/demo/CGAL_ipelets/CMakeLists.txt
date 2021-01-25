@@ -32,15 +32,11 @@ if(NOT TARGET CGAL::Eigen3_support)
   return()
 endif()
 
-find_package(IPE 6)
+find_package(IPE 7)
 
 if(IPE_FOUND)
-  if (${IPE_VERSION} EQUAL "7")
-    set(WITH_IPE_7 ON)
-  elseif(${IPE_VERSION} EQUAL "6")
-    set(WITH_IPE_7 OFF)
-  else()
-    message("-- Error: ${IPE_VERSION} is not a supported version of IPE (only 6 and 7 are).")
+  if ( NOT ${IPE_VERSION} EQUAL "7")
+    message("-- Error: ${IPE_VERSION} is not a supported version of IPE (only 7 is).")
     set(IPE_FOUND FALSE)
   endif()
 endif()
@@ -52,7 +48,6 @@ if(IPE_FOUND AND IPE_VERSION)
   #setting installation directory
   get_filename_component(IPE_LIBRARY_DIR ${IPE_LIBRARIES} PATH)
   if (IPE_FOUND AND NOT IPELET_INSTALL_DIR)
-    if (WITH_IPE_7)
       remove_leading_zero(IPE_MINOR_VERSION_1)
       remove_leading_zero(IPE_MINOR_VERSION_2)
       set(INSTALL_PATHS "${IPE_LIBRARY_DIR}/ipe/7.${IPE_MINOR_VERSION_1}.${IPE_MINOR_VERSION_2}/ipelets/")
@@ -62,24 +57,6 @@ if(IPE_FOUND AND IPE_VERSION)
                     DOC "The folder where ipelets will be installed"
                     ENV IPELETPATH
                    )
-    else()
-      foreach (VER RANGE 28 40)
-        string(REPLACE XX ${VER} PATHC "${IPE_LIBRARY_DIR}/ipe/6.0preXX/ipelets/" )
-        set(INSTALL_PATHS ${INSTALL_PATHS} ${PATHC})
-      endforeach()
-      set(INSTALL_PATHS ${INSTALL_PATHS} ${PATHC})
-      set(INSTALL_PATHS ${INSTALL_PATHS} /usr/lib64/ipe/6.0/ipelets)
-      set(INSTALL_PATHS ${INSTALL_PATHS} /usr/lib/ipe/6.0/ipelets)
-
-      find_library(
-        IPELET_INSTALL_DIR_FILES
-        NAMES align
-        PATHS ${INSTALL_PATHS} ENV IPELETPATH)
-      if(IPELET_INSTALL_DIR_FILES)
-        get_filename_component(IPELET_INSTALL_DIR ${IPELET_INSTALL_DIR_FILES}
-                               PATH)
-      endif()
-    endif()
   endif()
 
   set(CGAL_IPELETS ${CGAL_IPELETS})
@@ -116,18 +93,13 @@ if(IPE_FOUND AND IPE_VERSION)
   foreach(IPELET ${CGAL_IPELETS})
     add_library(CGAL_${IPELET} MODULE ${IPELET}.cpp)
     target_include_directories(CGAL_${IPELET} BEFORE PRIVATE ${IPE_INCLUDE_DIR})
-    if (WITH_IPE_7)
-      target_compile_definitions(CGAL_${IPELET} PRIVATE CGAL_USE_IPE_7)
-    endif()
 
     add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_${IPELET})
     target_link_libraries(CGAL_${IPELET} PRIVATE CGAL::CGAL CGAL::Eigen3_support
                                                  ${IPE_LIBRARIES})
     if(IPELET_INSTALL_DIR)
       install(TARGETS CGAL_${IPELET} DESTINATION ${IPELET_INSTALL_DIR})
-      if (WITH_IPE_7)
-        install(FILES ./lua/libCGAL_${IPELET}.lua DESTINATION ${IPELET_INSTALL_DIR}) #only for ipe 7
-      endif()
+      install(FILES ./lua/libCGAL_${IPELET}.lua DESTINATION ${IPELET_INSTALL_DIR}) #only for ipe 7
     endif ()
     cgal_add_compilation_test(CGAL_${IPELET})
   endforeach(IPELET)
