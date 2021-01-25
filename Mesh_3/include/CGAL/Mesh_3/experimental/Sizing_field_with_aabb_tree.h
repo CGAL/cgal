@@ -67,7 +67,8 @@ struct Sizing_field_with_aabb_tree
     >::type Get_curve_index;
   typedef typename CGAL::Default::Get<
     Get_facet_patch_id_,
-    CGAL::Mesh_3::Get_facet_patch_id<typename Input_facets_AABB_tree::Primitive>
+    CGAL::Mesh_3::Facet_patch_id_map<MeshDomain,
+                                     typename Input_facets_AABB_tree::Primitive>
     >::type Get_facet_patch_id;
 
   Sizing_field_with_aabb_tree

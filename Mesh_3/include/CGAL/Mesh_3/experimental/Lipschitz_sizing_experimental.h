@@ -78,7 +78,7 @@ public:
 
   typedef typename CGAL::Default::Get<
     Get_facet_patch_id_,
-    CGAL::Mesh_3::Get_facet_patch_id<typename Tree::Primitive>
+    CGAL::Mesh_3::Facet_patch_id_map<MeshDomain, typename Tree::Primitive>
   >::type                                               Get_facet_patch_id;
 
   typedef CGAL::Mesh_3::Filtered_projection_traits<
