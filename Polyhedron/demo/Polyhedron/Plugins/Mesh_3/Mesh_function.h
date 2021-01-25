@@ -35,7 +35,6 @@
 #include <CGAL/use.h>
 
 #include <boost/any.hpp>
-#include <CGAL/Mesh_3/experimental/Get_facet_patch_id.h>
 
 namespace CGAL {
   class Image_3;
