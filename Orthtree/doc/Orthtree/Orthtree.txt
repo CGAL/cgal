@@ -56,8 +56,9 @@ The `Orthtree` class may be templated with `Orthtree_traits_2` and thus
 behave as a %quadtree. For convenience, the alias `Quadtree` is provided.
 
 The following example shows how to create a %quadtree object from a
-vector of `Point_2` objects and refine it (which means constructing
-the tree's space subdivision itself):
+vector of `Point_2` objects and refine it, which means constructing
+the tree's space subdivision itself, using a maximum depth of 10 and a
+maximum number of inliers per node (bucket size) of 5:
 
 \cgalExample{Orthtree/quadtree_build_from_point_vector.cpp}
 
@@ -80,7 +81,7 @@ It also shows a more explicit way of setting the split predicate when refining t
 An octree is constructed from the point set and its map.
 The tree is refined with a maximum depth (deepest node allowed) of 10,
 and a bucket size (maximum number of points contained by a single node) of 20.
-The tree is then printed to the standard output.
+The tree is then written to the standard output.
 
 The split predicate is manually constructed and passed to the refine method.
 
