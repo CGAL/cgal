@@ -26,7 +26,7 @@ else()
 
   if(IPE_INCLUDE_DIR)
     file(READ "${IPE_INCLUDE_DIR}/ipebase.h" IPEBASE_H)
-    string(REGEX MATCH "IPELIB_VERSION[ ]*=[ ]*([7])([0-9][0-9])([0-9][0-9]);" FOUND_IPE_VERSION "${IPEBASE_H}")
+    string(REGEX MATCH "IPELIB_VERSION[ ]*=[ ]*([6789])([0-9][0-9])([0-9][0-9]);" FOUND_IPE_VERSION "${IPEBASE_H}")
     if (FOUND_IPE_VERSION)
       set(IPE_VERSION ${CMAKE_MATCH_1} CACHE INTERNAL "Ipe version major number")
       set(IPE_MINOR_VERSION_1 ${CMAKE_MATCH_2} CACHE INTERNAL "Ipe version minor number")
