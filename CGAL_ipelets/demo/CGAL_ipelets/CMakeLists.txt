@@ -140,6 +140,10 @@ if(IPE_FOUND AND IPE_VERSION)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS simple_triangulation)
   target_link_libraries(simple_triangulation CGAL::Eigen3_support
                         ${IPE_LIBRARIES})
+  target_include_directories(simple_triangulation BEFORE PRIVATE ${IPE_INCLUDE_DIR})
+  if (WITH_IPE_7)
+      target_compile_definitions(simple_triangulation PRIVATE CGAL_USE_IPE_7)
+    endif()
   cgal_add_compilation_test(simple_triangulation)
 
 else()
