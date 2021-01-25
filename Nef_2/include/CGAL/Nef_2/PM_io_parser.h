@@ -280,11 +280,7 @@ bool PM_io_parser<PMDEC>::read_face(Face_handle f)
   {
     f->set_halfedge(Halfedge_of[ei]);
   }
-  else
-  {
-    in.setstate(std::ios_base::badbit);
-    return false;
-  }
+
   while (in >> ei) {
     CGAL_assertion_msg(ei >= 0 && (std::size_t) ei < en, "wrong index in face cycle list.");
     if (!(ei >= 0 && ei < en))
