@@ -1146,6 +1146,7 @@ private:
         break;
       }
     }
+    // CGAL_assertion_msg(false, "TODO: PEDGE MEETS IEDGE!");
     return is_event_happend;
   }
 
@@ -1300,6 +1301,7 @@ private:
       compute_events_of_pvertices(event.time(), pvertices);
     }
     CGAL_assertion(m_data.has_iedge(pvertex));
+    // CGAL_assertion_msg(false, "TODO: PVERTEX MEETS IEDGE!");
   }
 
   const bool check_pvertex_meets_iedge_local(

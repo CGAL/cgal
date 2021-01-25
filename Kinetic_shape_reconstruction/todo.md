@@ -26,3 +26,35 @@ ANSWERS:
 
 5. When two polygons intersect at the very beginning, does it count as an intersection? Can we squeeze through the whole or not?
 - Both are ok.
+
+TODO:
+1. better future directions, compute them exactly and identify if the lines are parallel using the segment coordinates, unify them for all types of events, the function should take two points with the directions and two fixed points and return the future point and the future direction along the edge, one direction must be the limit direction and one direction must be the cropped direction
+2. precompute occupied iedges while inserting new events
+3. better graphcut by inserting information, which faces are originated by the roof and facade points
+4. adaptive time step, e.g. doubled in case we had three steps and did not meet any event
+5. precompute as mush as possible stuff, e.g. next events
+6. fix initialization using the same trick I use for adding missing faces
+7. put adding missing faces and remove faces in two separate files, they can be reused when working on the subdivision
+8. add the finalizer class
+9. make the initializer work with the inexact kernel
+10. better polygon regularizer using the global approach
+11. graph cut using normals and graphcut using the LOD
+12. add timing tests, accelerate the code as much as possible
+13. try to merge thin volumes in case we are beyond the tolerance value when traversing the volumes
+14. add interface to insert custom planes for subdivision instead of uniform sibdivision, in this case, we can avoid artifacts in the important parts of the model but still be much faster
+15. try using non-uniform speed for different polygons
+16. try to avoid initialization and computing the full intersection graph
+17. try to avoid randomization
+18. add unconstrained pvertex to ivertex event
+19. better region growing maybe using the global optimization
+20. add 3D global regularization
+21. try to have as few as possible events
+22. add free-form reconstruction
+23. add a way to quickly change the k-intersection criteria
+24. make the code work both with exact and inexact kernels
+25. add clustering for input clouds
+26. add automatic learning input parameters
+27. make the code work with all edge cases
+28. add missing walls (exterior and interior), add missing roofs, add missing ground
+29. create LCC
+30. improve output such that I could return faces iteratively

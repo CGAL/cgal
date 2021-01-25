@@ -11,9 +11,12 @@ using SCD   = CGAL::Simple_cartesian<double>;
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 
-using Kernel    = EPICK;
-using Point_3   = typename Kernel::Point_3;
-using Segment_3 = typename Kernel::Segment_3;
+using Kernel     = EPICK;
+using FT         = typename Kernel::FT;
+using Point_2    = typename Kernel::Point_2;
+using Point_3    = typename Kernel::Point_3;
+using Segment_3  = typename Kernel::Segment_3;
+using Triangle_2 = typename Kernel::Triangle_2;
 
 using Surface_mesh = CGAL::Surface_mesh<Point_3>;
 using KSR = CGAL::Kinetic_shape_reconstruction_3<Kernel>;
@@ -45,6 +48,29 @@ struct Polygon_map {
 };
 
 int main(const int argc, const char** argv) {
+
+  const FT x1 = 4.771745262374, y1 = 4.395963608911; // point J
+  const FT x2 = 13.82144413465, y2 = 3.186692216531; // point N
+  const FT xx = 7.423291494505, yy = 4.774755927786; // point Q
+  const FT x3 = 6.166717106737, y3 = 5.086645983861; // point V
+  const FT x4 = 4.074202521868, y4 = 5.606021913821; // point M
+  const FT x5 = 2.000000000000, y5 = 4.000000000000; // point A
+  const FT x6 = 9.000000000000, y6 = 5.000000000000; // point B
+
+  const Point_2 J(x1, y1);
+  const Point_2 N(x2, y2);
+  const Point_2 Q(xx, yy);
+  const Point_2 V(x3, y3);
+  const Point_2 M(x4, y4);
+  const Point_2 A(x5, y5);
+  const Point_2 B(x6, y6);
+
+  std::cout.precision(20);
+
+  // std::cout << xx << " =? " << x << std::endl;
+  // std::cout << yy << " =? " << y << std::endl;
+
+  exit(EXIT_SUCCESS);
 
   // Input.
   const auto kernel_name = boost::typeindex::type_id<Kernel>().pretty_name();
