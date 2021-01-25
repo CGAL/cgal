@@ -49,26 +49,72 @@ struct Polygon_map {
 
 int main(const int argc, const char** argv) {
 
-  const FT x1 = 4.771745262374, y1 = 4.395963608911; // point J
-  const FT x2 = 13.82144413465, y2 = 3.186692216531; // point N
-  const FT xx = 7.423291494505, yy = 4.774755927786; // point Q
-  const FT x3 = 6.166717106737, y3 = 5.086645983861; // point V
-  const FT x4 = 4.074202521868, y4 = 5.606021913821; // point M
-  const FT x5 = 2.000000000000, y5 = 4.000000000000; // point A
+  const FT x5 = 4.771745262374, y5 = 4.395963608911; // point J
   const FT x6 = 9.000000000000, y6 = 5.000000000000; // point B
+  const FT xx = 7.423291494505, yy = 4.774755927786; // point Q
+  const FT x2 = 4.074202521868, y2 = 5.606021913821; // point M
+  const FT x3 = 13.82144413465, y3 = 3.186692216531; // point N
 
-  const Point_2 J(x1, y1);
-  const Point_2 N(x2, y2);
-  const Point_2 Q(xx, yy);
-  const Point_2 V(x3, y3);
-  const Point_2 M(x4, y4);
-  const Point_2 A(x5, y5);
+  const Point_2 J(x5, y5);
   const Point_2 B(x6, y6);
+  const Point_2 Q(xx, yy);
+  const Point_2 M(x2, y2);
+  const Point_2 N(x3, y3);
+
+  const FT a1 = x5-x6;
+  const FT b1 = y5-y6;
+  const FT c1 = x6*x6-x6*x5-y6*y5+y6*y6;
+
+  const FT d1 = (x6-x5)*(x6-x5)+(y6-y5)*(y6-y5);
+
+  const FT a2 = a1/d1;
+  const FT b2 = b1/d1;
+  const FT c2 = c1/d1;
+
+  const FT l1 = a2*xx+b2*yy+c2;
+  const FT l2 = FT(1)-l1;
+
+  const FT a3 = x2-x3;
+  const FT b3 = y2-y3;
+  const FT c3 = x3*x3-x3*x2-y3*y2+y3*y3;
+
+  const FT d2 = (x3-x2)*(x3-x2)+(y3-y2)*(y3-y2);
+
+  const FT a4 = a3/d2;
+  const FT b4 = b3/d2;
+  const FT c4 = c3/d2;
+
+  const FT m1 = a4*xx+b4*yy+c4;
+  const FT m2 = FT(1)-m1;
+
+  const FT a5 = x5*a2-x6*a2-x2*a4+x3*a4;
+  const FT b5 = x5*b2-x6*b2-x2*b4+x3*b4;
+  const FT c5 = x5*c2+x6-x6*c2-x2*c4-x3+x3*c4;
+
+  const FT a6 = y5*a2-y6*a2-y2*a4+y3*a4;
+  const FT b6 = y5*b2-y6*b2-y2*b4+y3*b4;
+  const FT c6 = y5*c2+y6-y6*c2-y2*c4-y3+y3*c4;
+
+  const FT x = (c5*b6-b5*c6)/(b5*a6-a5*b6);
+  const FT y = (-c5-a5*x)/(b5);
+
+  const FT lambda1 = a2*x+b2*y+c2;
+  const FT lambda2 = FT(1)-lambda1;
 
   std::cout.precision(20);
+  std::cout << "--debug--" << std::endl;
+  std::cout << xx << " =? " << l1*x5+l2*x6 << std::endl;
+  std::cout << yy << " =? " << l1*y5+l2*y6 << std::endl;
+  std::cout << xx << " =? " << m1*x2+m2*x3 << std::endl;
+  std::cout << yy << " =? " << m1*y2+m2*y3 << std::endl;
+  std::cout << a5*xx+b5*yy+c5 << " =? " << 0 << std::endl;
+  std::cout << a6*xx+b6*yy+c6 << " =? " << 0 << std::endl;
 
-  // std::cout << xx << " =? " << x << std::endl;
-  // std::cout << yy << " =? " << y << std::endl;
+  std::cout << "--result--" << std::endl;
+  std::cout << xx << " =? " << x << std::endl;
+  std::cout << yy << " =? " << y << std::endl;
+  std::cout << "lambda1 = " << lambda1 << std::endl;
+  std::cout << "lambda2 = " << lambda2 << std::endl;
 
   exit(EXIT_SUCCESS);
 
