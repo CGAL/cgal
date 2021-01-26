@@ -177,17 +177,17 @@ public:
   /*!
   returns the arc of great circle with endpoints the circumcenters of the faces incident to the edge `e`.
   */
-  Arc_segment arc_dual(const Edge& e) const;
+  Arc_on_sphere_2 arc_dual(const Edge& e) const;
 
   /*!
   returns the arc of great circle with endpoints the circumcenters of the faces incident to the edge `*ec`.
   */
-  Arc_segment arc_dual(const Edge_circulator ec) const;
+  Arc_on_sphere_2 arc_dual(const Edge_circulator ec) const;
 
   /*!
   returns the arc of great circle with endpoints the circumcenters of the faces incident to the edge `*ei`.
   */
-  Arc_segment arc_dual(const All_edges_iterator ei) const;
+  Arc_on_sphere_2 arc_dual(const All_edges_iterator ei) const;
 
   /// @}
 
