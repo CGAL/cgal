@@ -8,7 +8,7 @@
 #include <iostream>
 #include <string>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Classification.h>
@@ -56,11 +56,15 @@ int main (int argc, char** argv)
   if (argc > 2)
     filename_config = argv[2];
 
-  std::ifstream in (filename.c_str(), std::ios::binary);
-  Point_set pts;
-
   std::cerr << "Reading input" << std::endl;
-  in >> pts;
+  Point_set pts;
+  if(!(CGAL::read_point_set(filename, pts,
+                            // the PLY reader expects a binary file by default
+                            CGAL::parameters::use_binary_mode(true))))
+  {
+    std::cerr << "Error: cannot read " << filename << std::endl;
+    return EXIT_FAILURE;
+  }
 
   std::cerr << "Estimating normals" << std::endl;
   CGAL::Real_timer t;

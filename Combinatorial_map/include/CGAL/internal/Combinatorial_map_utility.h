@@ -14,6 +14,7 @@
 
 #include <CGAL/tuple.h>
 #include <CGAL/Compact_container.h>
+#include <CGAL/Concurrent_compact_container.h>
 #include <iostream>
 
 #include <boost/type_traits/is_same.hpp>
@@ -591,6 +592,18 @@ namespace CGAL
         static void run(Ts& ... t)
         { Foreach_static_restricted_except<Functor, j, Attributes>::run(t...); }
       };
+  };
+
+  // Helper class to define container type depending on the Concurrent_tag
+  template<typename Concurrent_tag, class T, class Alloc_>
+  struct Container_type
+  {
+    typedef CGAL::Compact_container<T, Alloc_> type;
+  };
+  template<class T, class Alloc_>
+  struct Container_type<CGAL::Tag_true, T, Alloc_>
+  {
+    typedef CGAL::Concurrent_compact_container<T, Alloc_> type;
   };
 
 } //namespace internal

@@ -43,7 +43,7 @@ namespace Classification {
 /*!
   \ingroup PkgClassificationMesh
 
-  \brief Generates a set of generic features for surface mesh
+  \brief generates a set of generic features for surface mesh
   classification.
 
   This class takes care of computing and storing all necessary data

@@ -466,9 +466,9 @@ using std::max;
 
 //-------------------------------------------------------------------//
 // Is Geomview usable ?
-#if !defined(_MSC_VER) && !defined(__MINGW32__)
-#  define CGAL_USE_GEOMVIEW
-#endif
+//#if !defined(_MSC_VER) && !defined(__MINGW32__)
+//#  define CGAL_USE_GEOMVIEW
+//#endif
 
 
 //-------------------------------------------------------------------//
@@ -517,8 +517,10 @@ using std::max;
 #endif
 
 // Macro to specify a 'unused' attribute.
-#if defined(__GNUG__) || __has_attribute(__unused__)
-#  define CGAL_UNUSED  __attribute__ ((__unused__))
+#if __has_cpp_attribute(maybe_unused)
+#  define CGAL_UNUSED [[maybe_unused]]
+#elif defined(__GNUG__) || __has_attribute(__unused__) // [[maybe_unused]] is C++17
+#  define CGAL_UNUSED __attribute__ ((__unused__))
 #else
 #  define CGAL_UNUSED
 #endif
@@ -526,37 +528,12 @@ using std::max;
 // Macro to trigger deprecation warnings
 #ifdef CGAL_NO_DEPRECATION_WARNINGS
 #  define CGAL_DEPRECATED
+#  define CGAL_DEPRECATED_MSG(msg)
 #  define CGAL_DEPRECATED_UNUSED CGAL_UNUSED
-#elif defined(__GNUC__) || __has_attribute(__deprecated__)
-#  define CGAL_DEPRECATED __attribute__((__deprecated__))
-#if __has_attribute(__unused__)
-#  define CGAL_DEPRECATED_UNUSED __attribute__((__deprecated__, __unused__))
 #else
-#  define CGAL_DEPRECATED_UNUSED __attribute__((__deprecated__))
-#endif
-#elif defined (_MSC_VER) && (_MSC_VER > 1300)
-#  define CGAL_DEPRECATED __declspec(deprecated)
-#  define CGAL_DEPRECATED_UNUSED __declspec(deprecated)
-#else
-#  define CGAL_DEPRECATED
-#  define CGAL_DEPRECATED_UNUSED
-#endif
-
-// Macro to trigger deprecation warnings with a custom message
-#ifdef CGAL_NO_DEPRECATION_WARNINGS
-#  define CGAL_DEPRECATED_MSG(msg)
-#elif defined(__GNUC__) || __has_attribute(__deprecated__)
-#  if BOOST_GCC >= 40500 || __has_attribute(__deprecated__)
-#    define CGAL_DEPRECATED_MSG(msg) __attribute__ ((deprecated(msg)))
-#  else
-#    define CGAL_DEPRECATED_MSG(msg) __attribute__ ((deprecated))
-#  endif
-#elif defined (_MSC_VER) && (_MSC_VER > 1300)
-#  define CGAL_DEPRECATED_MSG(msg) __declspec(deprecated(msg))
-#elif defined(__clang__)
-#  define CGAL_DEPRECATED_MSG(msg) __attribute__ ((deprecated(msg)))
-#else
-#  define CGAL_DEPRECATED_MSG(msg)
+#  define CGAL_DEPRECATED [[deprecated]]
+#  define CGAL_DEPRECATED_MSG(msg) [[deprecated(msg)]]
+#  define CGAL_DEPRECATED_UNUSED [[deprecated]] CGAL_UNUSED
 #endif
 
 // Macro to specify a 'noreturn' attribute.

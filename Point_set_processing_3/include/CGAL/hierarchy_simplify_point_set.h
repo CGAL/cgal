@@ -122,7 +122,7 @@ namespace CGAL {
      \tparam PointRange is a model of `Range`. The value type of
      its iterator is the key type of the named parameter `point_map`.
 
-     \param points input point range.
+     \param points input point range
      \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
      \cgalNamedParamsBegin

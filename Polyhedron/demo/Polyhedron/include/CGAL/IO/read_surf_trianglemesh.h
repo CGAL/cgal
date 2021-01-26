@@ -72,8 +72,10 @@ bool line_starts_with(const std::string& line, const char* cstr)
     return (line.compare(fnws, strlen(cstr), cstr) == 0);
   return false;
 }
+
 namespace IO{
 namespace internal{
+
 bool treat_surf_materials(std::istream& input,
                           std::vector<material>& materials,
                           int& material_id)

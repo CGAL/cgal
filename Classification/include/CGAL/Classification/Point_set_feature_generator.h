@@ -44,7 +44,7 @@ namespace Classification {
 /*!
   \ingroup PkgClassificationPointSet
 
-  \brief Generates a set of generic features for point set
+  \brief generates a set of generic features for point set
   classification.
 
   This class takes care of computing and storing all necessary data

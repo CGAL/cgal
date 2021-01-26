@@ -24,7 +24,7 @@ being models of `DelaunayMeshVertexBase_2` and `DelaunayMeshFaceBase_2`, respect
 The argument `cdt`, passed by reference, provides the initial mesh
 and is modified by the algorithm to represent the final optimized mesh.
 
-\tparam PointIterator must be an iterator with value type `Kernel::Point_2`.
+\tparam PointIterator must be an iterator with value type `Kernel::Point_2`
 
 The function has several optional parameters which are named parameters
 (we use the Boost.Parameter library).

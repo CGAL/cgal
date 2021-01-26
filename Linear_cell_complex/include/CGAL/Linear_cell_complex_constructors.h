@@ -12,9 +12,7 @@
 #ifndef CGAL_LINEAR_CELL_COMPLEX_CONSTRUCTORS_H
 #define CGAL_LINEAR_CELL_COMPLEX_CONSTRUCTORS_H 1
 
-#include <CGAL/IO/File_header_OFF.h>
-#include <CGAL/IO/File_scanner_OFF.h>
-#include <CGAL/IO/File_writer_OFF.h>
+#include <CGAL/IO/OFF.h>
 #include <CGAL/Linear_cell_complex_incremental_builder.h>
 
 #include <iostream>
@@ -199,7 +197,7 @@ namespace CGAL {
     for (i=0; i<scanner.size_of_facets(); i++)
     {
       B.begin_facet();
-      std::size_t no;
+      std::size_t no=0;
       scanner.scan_facet(no, i);
       /* TODO manage errors
          if( ! in || B.error() || no < 3) {
@@ -216,7 +214,7 @@ namespace CGAL {
       for (std::size_t j=0; j<no; j++)
       {
         std::size_t index;
-        scanner.scan_facet_vertex_index(index, i);
+        scanner.scan_facet_vertex_index(index, j+1, i);
         B.add_vertex_to_facet(index);
       }
       B.end_facet();
@@ -280,7 +278,7 @@ namespace CGAL {
     writer.write_header(out,
                         alcc.number_of_vertex_attributes(),
                         alcc.number_of_halfedges(),
-                        alcc.template one_dart_per_cell<2>().size() );
+                        alcc.template one_dart_per_cell<2>().size());
 
     typedef typename LCC::Vertex_attribute_range::iterator VCI;
     VCI vit, vend = alcc.vertex_attributes().end();

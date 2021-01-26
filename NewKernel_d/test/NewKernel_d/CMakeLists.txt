@@ -16,10 +16,10 @@ endif()
 find_package(CGAL REQUIRED)
 
 find_package(Eigen3)
-include(CGAL_Eigen_support)
-if(TARGET CGAL::Eigen_support)
+include(CGAL_Eigen3_support)
+if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("Epick_d.cpp")
-  target_link_libraries(Epick_d PUBLIC CGAL::Eigen_support)
+  target_link_libraries(Epick_d PUBLIC CGAL::Eigen3_support)
 else()
 
   message(

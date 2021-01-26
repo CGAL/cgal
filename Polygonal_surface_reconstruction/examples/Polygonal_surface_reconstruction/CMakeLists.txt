@@ -31,8 +31,8 @@ endif()
 include(CGAL_CreateSingleSourceCGALProgram)
 
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-include(CGAL_Eigen_support)
-if(NOT TARGET CGAL::Eigen_support)
+include(CGAL_Eigen3_support)
+if(NOT TARGET CGAL::Eigen3_support)
   message(
     STATUS
       "NOTICE: This project requires Eigen 3.1 (or greater) and will not be compiled."
@@ -63,7 +63,7 @@ foreach(
   target
   polyfit_example_without_input_planes polyfit_example_user_provided_planes
   polyfit_example_model_complexty_control polyfit_example_with_region_growing)
-  target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
+  target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
   if(TARGET CGAL::SCIP_support)
     target_link_libraries(${target} PUBLIC CGAL::SCIP_support)
   else()

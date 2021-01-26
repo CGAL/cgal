@@ -63,15 +63,15 @@ foreach(
   structuring_example
   read_ply_points_with_colors_example
   write_ply_points_example)
-  add_executable(${target} "${target}.cpp")
-  target_link_libraries(${target} ${CGAL_libs})
+  create_single_source_cgal_program("${target}.cpp")
+  target_link_libraries(${target} PRIVATE ${CGAL_libs})
 endforeach()
 
 find_package(LASLIB)
 include(CGAL_LASLIB_support)
 if(TARGET CGAL::LASLIB_support)
-  add_executable(read_las_example "read_las_example.cpp")
-  target_link_libraries(read_las_example ${CGAL_libs} CGAL::LASLIB_support)
+  create_single_source_cgal_program("read_las_example.cpp")
+  target_link_libraries(read_las_example PRIVATE ${CGAL_libs} CGAL::LASLIB_support)
 else()
   message(
     STATUS
@@ -80,9 +80,9 @@ endif()
 
 # Use Eigen
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-include(CGAL_Eigen_support)
-if(TARGET CGAL::Eigen_support)
-  set(CGAL_libs ${CGAL_libs} CGAL::Eigen_support)
+include(CGAL_Eigen3_support)
+if(TARGET CGAL::Eigen3_support)
+  set(CGAL_libs ${CGAL_libs} CGAL::Eigen3_support)
 
   # Executables that require Eigen
   foreach(
@@ -96,21 +96,20 @@ if(TARGET CGAL::Eigen_support)
     scale_estimation_2d_example
     hierarchy_simplification_example
     normals_example)
-    add_executable(${target} "${target}.cpp")
-    target_link_libraries(${target} ${CGAL_libs})
+    create_single_source_cgal_program("${target}.cpp")
+    target_link_libraries(${target} PRIVATE ${CGAL_libs})
   endforeach()
-  if (TARGET CGAL::Eigen_support AND TARGET CGAL::LASLIB_support)
-    add_executable( orient_scanlines_example "orient_scanlines_example.cpp" )
-    target_link_libraries(orient_scanlines_example ${CGAL_libs}
-      CGAL::Eigen_support CGAL::LASLIB_support)
+  if (TARGET CGAL::Eigen3_support AND TARGET CGAL::LASLIB_support)
+    create_single_source_cgal_program( "orient_scanlines_example.cpp" )
+    target_link_libraries(orient_scanlines_example PRIVATE ${CGAL_libs}
+      CGAL::Eigen3_support CGAL::LASLIB_support)
   endif()
   # Executables that require libpointmatcher
   find_package(libpointmatcher QUIET)
   include(CGAL_pointmatcher_support)
   if(TARGET CGAL::pointmatcher_support)
-    add_executable(registration_with_pointmatcher
-                   "registration_with_pointmatcher.cpp")
-    target_link_libraries(registration_with_pointmatcher ${CGAL_libs}
+    create_single_source_cgal_program("registration_with_pointmatcher.cpp")
+    target_link_libraries(registration_with_pointmatcher PRIVATE ${CGAL_libs}
                           CGAL::pointmatcher_support)
   else()
     message(
@@ -122,8 +121,8 @@ if(TARGET CGAL::Eigen_support)
   find_package(OpenGR QUIET)
   include(CGAL_OpenGR_support)
   if(TARGET CGAL::OpenGR_support)
-    add_executable(registration_with_OpenGR "registration_with_OpenGR.cpp")
-    target_link_libraries(registration_with_OpenGR ${CGAL_libs}
+    create_single_source_cgal_program("registration_with_OpenGR.cpp")
+    target_link_libraries(registration_with_OpenGR PRIVATE ${CGAL_libs}
                           CGAL::OpenGR_support)
   else()
     message(
@@ -135,10 +134,9 @@ if(TARGET CGAL::Eigen_support)
   # Executables that require both libpointmatcher and OpenGR
   if (TARGET CGAL::pointmatcher_support AND
       TARGET CGAL::OpenGR_support)
-    add_executable(registration_with_opengr_pointmatcher_pipeline
-                   "registration_with_opengr_pointmatcher_pipeline.cpp")
+    create_single_source_cgal_program("registration_with_opengr_pointmatcher_pipeline.cpp")
     target_link_libraries(
-      registration_with_opengr_pointmatcher_pipeline ${CGAL_libs}
+      registration_with_opengr_pointmatcher_pipeline PRIVATE ${CGAL_libs}
       CGAL::pointmatcher_support CGAL::OpenGR_support)
   else()
     message(
