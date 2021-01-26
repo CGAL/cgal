@@ -131,6 +131,12 @@ CGAL_DEPRECATED bool write_wrl(std::ostream& os, const Graph& g, const CGAL_BGL_
   return write_WRL(os, g, np);
 }
 
+template <typename Graph>
+CGAL_DEPRECATED bool write_wrl(std::ostream& os, const Graph& g)
+{
+  return write_wrl(os, g, parameters::all_default());
+}
+
 #endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace CGAL

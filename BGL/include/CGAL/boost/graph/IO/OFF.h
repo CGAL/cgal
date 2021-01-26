@@ -300,6 +300,19 @@ CGAL_DEPRECATED bool read_off(const char* fname, Graph& g, const CGAL_BGL_NP_CLA
  return read_OFF(fname, g, np);
 }
 
+
+template <typename Graph>
+CGAL_DEPRECATED bool read_off(std::istream& is, Graph& g)
+{
+  return read_off(is, g, parameters::all_default());
+}
+
+template <typename Graph>
+CGAL_DEPRECATED bool read_off(const char* fname, Graph& g)
+{
+ return read_off(fname, g, parameters::all_default());
+}
+
 #endif // CGAL_NO_DEPRECATED_CODE
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -510,6 +523,11 @@ CGAL_DEPRECATED bool write_off(std::ostream& os, const Graph& g, const CGAL_BGL_
   return write_OFF(os, g, np);
 }
 
+template <typename Graph>
+CGAL_DEPRECATED bool write_off(std::ostream& os, const Graph& g)
+{
+  return write_off(os, g, CGAL::parameters::all_default());
+}
 /*!
 \ingroup PkgBGLIOFctDeprecated
 
@@ -521,6 +539,11 @@ CGAL_DEPRECATED bool write_off(const char* fname, const Graph& g, const CGAL_BGL
  return write_OFF(fname, g, np);
 }
 
+template <typename Graph>
+CGAL_DEPRECATED bool write_off(const char* fname, const Graph& g)
+{
+  return write_off(fname, g, parameters::all_default());
+}
 #endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace CGAL
