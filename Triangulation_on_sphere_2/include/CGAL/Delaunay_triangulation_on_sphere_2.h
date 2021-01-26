@@ -52,6 +52,7 @@ public:
   typedef typename Geom_traits::Point_3           Point_3;
   typedef typename Geom_traits::Point_on_sphere_2 Point;
   typedef typename Geom_traits::Segment_3         Segment_3;
+  typedef typename Geom_traits::Arc_on_sphere_2   Arc_on_sphere_2;
 
   typedef typename Base::Vertex                   Vertex;
   typedef typename Base::Vertex_handle            Vertex_handle;
@@ -257,9 +258,12 @@ public:
   Point_3 circumcenter(const Point& p0, const Point& p1, const Point& p2) const;
   Point_3 circumcenter(const Face_handle f) const;
   Point_3 dual(const Face_handle f) const;
-  Object dual(const Edge& e) const ;
-  Object dual(const Edge_circulator ec) const { return dual(*ec); }
-  Object dual(const All_edges_iterator ei) const { return dual(*ei); }
+  Segment_3 dual(const Edge& e) const;
+  Segment_3 dual(const Edge_circulator ec) const { return dual(*ec); }
+  Segment_3 dual(const All_edges_iterator ei) const { return dual(*ei); }
+  Arc_on_sphere_2 arc_dual(const Edge& e) const;
+  Arc_on_sphere_2 arc_dual(const Edge_circulator ec) const { return arc_dual(*ec); }
+  Arc_on_sphere_2 arc_dual(const All_edges_iterator ei) const { return arc_dual(*ei); }
 
   // Validity
   void check_neighboring_faces() const;
@@ -1023,16 +1027,28 @@ dual(const Face_handle f) const
 }
 
 template <typename Gt, typename Tds>
-Object
+typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Segment_3
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 dual(const Edge& e) const
 {
   CGAL_precondition(tds().is_edge(e.first, e.second));
   CGAL_precondition(dimension() == 2);
-  Segment_3 s = geom_traits().construct_segment_3_object()(dual(e.first),
-                                                           dual(e.first->neighbor(e.second)));
 
-  return make_object(s);
+  return geom_traits().construct_segment_3_object()(dual(e.first),
+                                                    dual(e.first->neighbor(e.second)));
+}
+
+template <typename Gt, typename Tds>
+typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Arc_on_sphere_2
+Delaunay_triangulation_on_sphere_2<Gt, Tds>::
+arc_dual(const Edge& e) const
+{
+  CGAL_precondition(tds().is_edge(e.first, e.second));
+  CGAL_precondition(dimension() == 2);
+
+  // @fixme ensure in arc_dual and arc_segment that 'cp' and 'cq' are in the correct order
+  return geom_traits().construct_arc_on_sphere_2_object()(dual(e.first),
+                                                          dual(e.first->neighbor(e.second)));
 }
 
 //-------------------------------------------CHECK------------------------------------------------//
