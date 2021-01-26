@@ -27,11 +27,11 @@ int main()
     return EXIT_FAILURE;
   }
   is.close();
-
+  bool ok = false;
 #ifdef CGAL_LINKED_WITH_LASLIB
   //LAS
   os.open("tmp.las", std::ios::binary);
-  bool ok = CGAL::write_las_point_set(os, ps);
+  ok = CGAL::write_las_point_set(os, ps);
   os.close();
   assert (ok);
 

@@ -28,9 +28,9 @@ template <class Traits,
 VRML_2_ostream& operator<<(VRML_2_ostream& out,
                            const Polyhedron_3<Traits, Items, HDS, Alloc>& P)
 {
-  IO::internal::Generic_facegraph_printer<VRML_2_ostream,
+  IO::internal::Generic_facegraph_printer<std::ostream,
                                           Polyhedron_3<Traits, Items, HDS, Alloc>,
-                                          File_writer_VRML_2> printer(out);
+                                          File_writer_VRML_2> printer(out.os());
   printer(P);
 
   return out;

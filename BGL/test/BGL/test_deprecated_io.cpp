@@ -37,7 +37,7 @@ int main()
   assert(num_vertices(sm_in) == 3 && num_faces(sm_in) == 1);
   is.close();
   sm_in.clear();
-
+#ifdef CGAL_USE_VTK
   //vtk
   os.open("tmp.vtp");
   ok = CGAL::write_vtp(os, sm_out, CGAL::parameters::all_default());
@@ -48,7 +48,7 @@ int main()
   assert(ok);
   assert(num_vertices(sm_in) == 3 && num_faces(sm_in) == 1);
   sm_in.clear();
-
+#endif
   //wrl
   os.open("tmp.wrl");
   ok = CGAL::write_wrl(os, sm_out, CGAL::parameters::all_default());

@@ -80,6 +80,10 @@ points[2] = std::make_pair(Point_3(0,0,1), Color{0,0,255,255});
 std::ofstream os;
 std::ifstream is;
 bool ok;
+std::vector<Point_3> ps;
+ps.push_back(Point_3(1,0,0));
+ps.push_back(Point_3(0,1,0));
+ps.push_back(Point_3(0,0,1));
 //LAS
 #ifdef CGAL_LINKED_WITH_LASLIB
 os.open("tmp.las", std::ios::binary);
@@ -106,11 +110,6 @@ is.close();
 assert(ok);
 assert(points.size() == 3);
 assert(points[1].second[1] == 255);
-
-std::vector<Point_3> ps;
-ps.push_back(Point_3(1,0,0));
-ps.push_back(Point_3(0,1,0));
-ps.push_back(Point_3(0,0,1));
 
 os.open("tmp.las", std::ios_base::binary);
 CGAL::write_las_points(os, ps, CGAL::parameters::all_default());
