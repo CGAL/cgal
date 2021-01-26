@@ -13,9 +13,9 @@
 #define CGAL_DRAW_LCC_H
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Qt/init_ogl_context.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
+#include <CGAL/Qt/init_ogl_context.h>
 
 #include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Random.h>

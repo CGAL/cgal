@@ -14,10 +14,9 @@
 
 #include <CGAL/license/Polyhedron.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Qt/init_ogl_context.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
-
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Random.h>
 

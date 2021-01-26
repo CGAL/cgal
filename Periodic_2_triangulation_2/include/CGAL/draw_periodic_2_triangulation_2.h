@@ -14,10 +14,10 @@
 
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Qt/init_ogl_context.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Random.h>
 

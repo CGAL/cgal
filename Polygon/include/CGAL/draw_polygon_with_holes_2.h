@@ -18,7 +18,6 @@
 #define CGAL_DRAW_POLYGON_WITH_HOLES_2_H
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Qt/init_ogl_context.h>
 
 #ifdef DOXYGEN_RUNNING
 namespace CGAL {
@@ -38,7 +37,7 @@ void draw(const PH& aph);
 #endif
 
 #ifdef CGAL_USE_BASIC_VIEWER
-
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Random.h>
 

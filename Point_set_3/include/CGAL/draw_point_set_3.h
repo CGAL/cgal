@@ -15,7 +15,6 @@
 
 #include <CGAL/license/Point_set_3.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Qt/init_ogl_context.h>
 
 #ifdef DOXYGEN_RUNNING
 namespace CGAL {
@@ -36,6 +35,7 @@ void draw(const PS& aps);
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Random.h>
 

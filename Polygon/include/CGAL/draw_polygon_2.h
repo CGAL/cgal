@@ -18,7 +18,6 @@
 #define CGAL_DRAW_POLYGON_2_H
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Qt/init_ogl_context.h>
 
 #ifdef DOXYGEN_RUNNING
 namespace CGAL {
@@ -39,7 +38,7 @@ void draw(const P& ap);
 #endif
 
 #ifdef CGAL_USE_BASIC_VIEWER
-
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Random.h>
 

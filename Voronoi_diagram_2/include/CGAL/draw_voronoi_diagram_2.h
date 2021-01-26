@@ -14,10 +14,10 @@
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/license/Voronoi_diagram_2.h>
-#include <CGAL/Qt/init_ogl_context.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Random.h>
 #include <CGAL/Triangulation_utils_2.h>
 #include <CGAL/Voronoi_diagram_2/Face.h>
