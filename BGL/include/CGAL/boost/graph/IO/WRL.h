@@ -70,7 +70,8 @@ bool write_WRL(std::ostream& os,
                const Graph& g,
                const CGAL_BGL_NP_CLASS& np)
 {
-  IO::internal::Generic_facegraph_printer<std::ostream, Graph, CGAL::File_writer_VRML_2> printer(os);
+  CGAL::VRML_2_ostream vos(os);
+  IO::internal::Generic_facegraph_printer<CGAL::VRML_2_ostream, Graph, CGAL::File_writer_VRML_2> printer(vos);
   return printer(g, np);
 }
 
@@ -108,8 +109,8 @@ bool write_WRL(std::ostream& os,
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_WRL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
-  std::ifstream is(fname);
-  return write_WRL(is, g, np);
+  std::ofstream os(fname);
+  return write_WRL(os, g, np);
 }
 
 template <typename Graph>
