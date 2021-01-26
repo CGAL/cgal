@@ -167,8 +167,8 @@ namespace Polygon_mesh_processing {
       max_squared_distance = default_squared_distance;
       if (threshold_distance >= typename GeomTraits::FT(0))
         max_squared_distance = threshold_distance * threshold_distance;
+      CGAL_assertion(max_squared_distance >= typename GeomTraits::FT(0));
     }
-    CGAL_assertion(max_squared_distance >= typename GeomTraits::FT(0));
 
     return internal::triangulate_hole_polygon_mesh(
       pmesh,

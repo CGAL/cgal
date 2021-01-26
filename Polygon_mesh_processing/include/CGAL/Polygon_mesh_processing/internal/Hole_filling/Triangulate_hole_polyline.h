@@ -1263,6 +1263,7 @@ bool is_planar_2(
   }
 
   // Here, avg_squared_distance is a little bit more tolerant than avg_distance^2.
+  CGAL_assertion(avg_normal != Vector_3());
   const Plane_3 plane = Plane_3(centroid, avg_normal);
   FT avg_squared_distance = FT(0);
   for (std::size_t i = 0; i < n; ++i) {
@@ -1273,6 +1274,7 @@ bool is_planar_2(
   avg_squared_distance /= static_cast<FT>(n);
   // std::cout << "avg squared distance: " << avg_squared_distance << std::endl;
 
+  CGAL_assertion(max_squared_distance >= FT(0));
   if (avg_squared_distance > max_squared_distance) {
     return false; // the user distance criteria are not satisfied!
   }
