@@ -1221,6 +1221,7 @@ bool is_planar_2(
   typedef typename Traits::FT FT;
   typedef typename Traits::Point_3 Point_3;
   typedef typename Traits::Plane_3 Plane_3;
+  typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::Construct_projected_point_3 Projection_3;
   typedef typename Traits::Compute_squared_distance_3 Squared_distance_3;
 
