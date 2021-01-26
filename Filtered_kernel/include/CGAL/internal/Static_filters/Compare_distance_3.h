@@ -135,26 +135,6 @@ public:
   }
 
 
-  result_type operator()(const Vector_3 &p, const Vector_3& q) const
-  {
-    CGAL_BRANCH_PROFILER(std::string("semi-static attempts/calls to   : ") +
-                         std::string(CGAL_PRETTY_FUNCTION), tmp);
-
-    Get_approx<Vector_3> get_approx; // Identity functor for all points
-                                     // but lazy points
-    double px, py, pz, qx, qy, qz;
-
-    if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
-        fit_in_double(get_approx(p).z(), pz) &&
-        fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
-        fit_in_double(get_approx(q).z(), qz) )
-    {
-      CGAL_BRANCH_PROFILER_BRANCH(tmp);
-      return px == qx && py == qy && pz == qz;
-    }
-    return Base::operator()(p, q);
-  }
-
 }; // end class Compare_distance_3
 
 } // end namespace Static_filters_predicates
