@@ -106,16 +106,22 @@ public:
   template<typename IG>
   void convert(IG& ig) {
 
-    using Converter = CGAL::Cartesian_converter<Kernel, typename IG::Kernel>;
+    using CFT      = typename IG::Kernel::FT;
+    using CPoint_3 = typename IG::Kernel::Point_3;
 
-    Converter converter;
+    // using Converter = CGAL::Cartesian_converter<Kernel, typename IG::Kernel>;
+    // Converter converter;
+
     ig.set_nb_lines(m_nb_lines);
-
     const auto vpair = boost::vertices(m_graph);
     const auto vertex_range = CGAL::make_range(vpair);
     for (const auto vertex : vertex_range) {
       const auto vd = boost::add_vertex(ig.graph());
-      ig.graph()[vd].point  = converter(m_graph[vertex].point);
+      // ig.graph()[vd].point = converter(m_graph[vertex].point);
+      ig.graph()[vd].point = CPoint_3(
+        static_cast<CFT>(CGAL::to_double(m_graph[vertex].point.x())),
+        static_cast<CFT>(CGAL::to_double(m_graph[vertex].point.y())),
+        static_cast<CFT>(CGAL::to_double(m_graph[vertex].point.z())));
       ig.graph()[vd].active = m_graph[vertex].active;
       CGAL_assertion(m_graph[vertex].active);
       m_vmap[vertex] = vd;

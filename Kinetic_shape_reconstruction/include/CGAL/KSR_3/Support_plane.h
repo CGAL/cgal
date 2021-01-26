@@ -162,9 +162,13 @@ public:
   template<typename IG, typename SP>
   void convert(const IG& ig, SP& sp) {
 
+    using CFT       = typename SP::Kernel::FT;
     using CPoint_2  = typename SP::Kernel::Point_2;
-    using Converter = CGAL::Cartesian_converter<Kernel, typename SP::Kernel>;
-    Converter converter;
+    using CPlane_3  = typename SP::Kernel::Plane_3;
+    using CVector_2 = typename SP::Kernel::Vector_2;
+
+    // using Converter = CGAL::Cartesian_converter<Kernel, typename SP::Kernel>;
+    // Converter converter;
 
     const auto& vmap = ig.vmap();
     const auto& emap = ig.emap();
@@ -172,9 +176,17 @@ public:
     std::set<CPoint_2> pts;
     std::map<Vertex_index, Vertex_index> map_vi;
     sp.data().k = m_data->k;
-    sp.data().plane = converter(m_data->plane);
+    // sp.data().plane = converter(m_data->plane);
+    sp.data().plane = CPlane_3(
+      static_cast<CFT>(CGAL::to_double(m_data->plane.a())),
+      static_cast<CFT>(CGAL::to_double(m_data->plane.b())),
+      static_cast<CFT>(CGAL::to_double(m_data->plane.c())),
+      static_cast<CFT>(CGAL::to_double(m_data->plane.d())));
     for (const auto& vertex : m_data->mesh.vertices()) {
-      const auto converted   = converter(m_data->mesh.point(vertex));
+      // const auto converted = converter(m_data->mesh.point(vertex));
+      const CPoint_2 converted = CPoint_2(
+        static_cast<CFT>(CGAL::to_double(m_data->mesh.point(vertex).x())),
+        static_cast<CFT>(CGAL::to_double(m_data->mesh.point(vertex).y())));
       const bool is_inserted = pts.insert(converted).second;
       const auto vi = sp.data().mesh.add_vertex();
       map_vi[vertex] = vi;
@@ -233,7 +245,10 @@ public:
 
     for (const auto& vertex : m_data->mesh.vertices()) {
       const auto vi = map_vi.at(vertex);
-      sp.data().direction[vi] = converter(m_data->direction[vertex]);
+      // sp.data().direction[vi] = converter(m_data->direction[vertex]);
+      sp.data().direction[vi] = CVector_2(
+        static_cast<CFT>(CGAL::to_double(m_data->direction[vertex].x())),
+        static_cast<CFT>(CGAL::to_double(m_data->direction[vertex].y())));
 
       const auto ivertex = m_data->v_ivertex_map[vertex];
       if (ivertex != IG::null_ivertex()) {
@@ -251,7 +266,9 @@ public:
 
       sp.data().v_active_map[vi]   = m_data->v_active_map[vertex];
       sp.data().v_original_map[vi] = m_data->v_original_map[vertex];
-      sp.data().v_time_map[vi]     = converter(m_data->v_time_map[vertex]);
+
+      // sp.data().v_time_map[vi] = converter(m_data->v_time_map[vertex]);
+      sp.data().v_time_map[vi] = static_cast<CFT>(CGAL::to_double(m_data->v_time_map[vertex]));
     }
 
     for (const auto& edge : m_data->mesh.edges()) {

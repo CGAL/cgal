@@ -5,6 +5,7 @@
 #include <CGAL/IO/OFF_reader.h>
 #include <CGAL/IO/PLY_writer.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Real_timer.h>
 
 using SCF   = CGAL::Simple_cartesian<float>;
 using SCD   = CGAL::Simple_cartesian<double>;
@@ -19,7 +20,8 @@ using Segment_3  = typename Kernel::Segment_3;
 using Triangle_2 = typename Kernel::Triangle_2;
 
 using Surface_mesh = CGAL::Surface_mesh<Point_3>;
-using KSR = CGAL::Kinetic_shape_reconstruction_3<Kernel>;
+using KSR          = CGAL::Kinetic_shape_reconstruction_3<Kernel>;
+using Timer        = CGAL::Real_timer;
 
 struct Polygon_map {
 
@@ -49,76 +51,78 @@ struct Polygon_map {
 
 int main(const int argc, const char** argv) {
 
-  const FT x5 = 4.771745262374, y5 = 4.395963608911; // point J
-  const FT x6 = 9.000000000000, y6 = 5.000000000000; // point B
-  const FT xx = 7.423291494505, yy = 4.774755927786; // point Q
-  const FT x2 = 4.074202521868, y2 = 5.606021913821; // point M
-  const FT x3 = 13.82144413465, y3 = 3.186692216531; // point N
+  // const FT x5 = 4.771745262374, y5 = 4.395963608911; // point J
+  // const FT x6 = 9.000000000000, y6 = 5.000000000000; // point B
+  // const FT xx = 7.423291494505, yy = 4.774755927786; // point Q
+  // const FT x2 = 4.074202521868, y2 = 5.606021913821; // point M
+  // const FT x3 = 13.82144413465, y3 = 3.186692216531; // point N
 
-  const Point_2 J(x5, y5);
-  const Point_2 B(x6, y6);
-  const Point_2 Q(xx, yy);
-  const Point_2 M(x2, y2);
-  const Point_2 N(x3, y3);
+  // const Point_2 J(x5, y5);
+  // const Point_2 B(x6, y6);
+  // const Point_2 Q(xx, yy);
+  // const Point_2 M(x2, y2);
+  // const Point_2 N(x3, y3);
 
-  const FT a1 = x5-x6;
-  const FT b1 = y5-y6;
-  const FT c1 = x6*x6-x6*x5-y6*y5+y6*y6;
+  // const FT a1 = x5-x6;
+  // const FT b1 = y5-y6;
+  // const FT c1 = x6*x6-x6*x5-y6*y5+y6*y6;
 
-  const FT d1 = (x6-x5)*(x6-x5)+(y6-y5)*(y6-y5);
+  // const FT d1 = (x6-x5)*(x6-x5)+(y6-y5)*(y6-y5);
 
-  const FT a2 = a1/d1;
-  const FT b2 = b1/d1;
-  const FT c2 = c1/d1;
+  // const FT a2 = a1/d1;
+  // const FT b2 = b1/d1;
+  // const FT c2 = c1/d1;
 
-  const FT l1 = a2*xx+b2*yy+c2;
-  const FT l2 = FT(1)-l1;
+  // const FT l1 = a2*xx+b2*yy+c2;
+  // const FT l2 = FT(1)-l1;
 
-  const FT a3 = x2-x3;
-  const FT b3 = y2-y3;
-  const FT c3 = x3*x3-x3*x2-y3*y2+y3*y3;
+  // const FT a3 = x2-x3;
+  // const FT b3 = y2-y3;
+  // const FT c3 = x3*x3-x3*x2-y3*y2+y3*y3;
 
-  const FT d2 = (x3-x2)*(x3-x2)+(y3-y2)*(y3-y2);
+  // const FT d2 = (x3-x2)*(x3-x2)+(y3-y2)*(y3-y2);
 
-  const FT a4 = a3/d2;
-  const FT b4 = b3/d2;
-  const FT c4 = c3/d2;
+  // const FT a4 = a3/d2;
+  // const FT b4 = b3/d2;
+  // const FT c4 = c3/d2;
 
-  const FT m1 = a4*xx+b4*yy+c4;
-  const FT m2 = FT(1)-m1;
+  // const FT m1 = a4*xx+b4*yy+c4;
+  // const FT m2 = FT(1)-m1;
 
-  const FT a5 = x5*a2-x6*a2-x2*a4+x3*a4;
-  const FT b5 = x5*b2-x6*b2-x2*b4+x3*b4;
-  const FT c5 = x5*c2+x6-x6*c2-x2*c4-x3+x3*c4;
+  // const FT a5 = x5*a2-x6*a2-x2*a4+x3*a4;
+  // const FT b5 = x5*b2-x6*b2-x2*b4+x3*b4;
+  // const FT c5 = x5*c2+x6-x6*c2-x2*c4-x3+x3*c4;
 
-  const FT a6 = y5*a2-y6*a2-y2*a4+y3*a4;
-  const FT b6 = y5*b2-y6*b2-y2*b4+y3*b4;
-  const FT c6 = y5*c2+y6-y6*c2-y2*c4-y3+y3*c4;
+  // const FT a6 = y5*a2-y6*a2-y2*a4+y3*a4;
+  // const FT b6 = y5*b2-y6*b2-y2*b4+y3*b4;
+  // const FT c6 = y5*c2+y6-y6*c2-y2*c4-y3+y3*c4;
 
-  const FT x = (c5*b6-b5*c6)/(b5*a6-a5*b6);
-  const FT y = (-c5-a5*x)/(b5);
+  // const FT x = (c5*b6-b5*c6)/(b5*a6-a5*b6);
+  // const FT y = (-c5-a5*x)/(b5);
 
-  const FT lambda1 = a2*x+b2*y+c2;
-  const FT lambda2 = FT(1)-lambda1;
+  // const FT lambda1 = a2*x+b2*y+c2;
+  // const FT lambda2 = FT(1)-lambda1;
 
-  std::cout.precision(20);
-  std::cout << "--debug--" << std::endl;
-  std::cout << xx << " =? " << l1*x5+l2*x6 << std::endl;
-  std::cout << yy << " =? " << l1*y5+l2*y6 << std::endl;
-  std::cout << xx << " =? " << m1*x2+m2*x3 << std::endl;
-  std::cout << yy << " =? " << m1*y2+m2*y3 << std::endl;
-  std::cout << a5*xx+b5*yy+c5 << " =? " << 0 << std::endl;
-  std::cout << a6*xx+b6*yy+c6 << " =? " << 0 << std::endl;
+  // std::cout << "--debug--" << std::endl;
+  // std::cout.precision(20);
+  // std::cout << xx << " =? " << l1*x5+l2*x6 << std::endl;
+  // std::cout << yy << " =? " << l1*y5+l2*y6 << std::endl;
+  // std::cout << xx << " =? " << m1*x2+m2*x3 << std::endl;
+  // std::cout << yy << " =? " << m1*y2+m2*y3 << std::endl;
+  // std::cout << a5*xx+b5*yy+c5 << " =? " << 0 << std::endl;
+  // std::cout << a6*xx+b6*yy+c6 << " =? " << 0 << std::endl;
 
-  std::cout << "--result--" << std::endl;
-  std::cout << xx << " =? " << x << std::endl;
-  std::cout << yy << " =? " << y << std::endl;
-  std::cout << "lambda1 = " << lambda1 << std::endl;
-  std::cout << "lambda2 = " << lambda2 << std::endl;
+  // std::cout << "--result--" << std::endl;
+  // std::cout.precision(20);
+  // std::cout << xx << " =? " << x << std::endl;
+  // std::cout << yy << " =? " << y << std::endl;
+  // std::cout << "lambda1 = " << lambda1 << std::endl;
+  // std::cout << "lambda2 = " << lambda2 << std::endl;
 
-  exit(EXIT_SUCCESS);
+  // exit(EXIT_SUCCESS);
 
   // Input.
+  std::cout.precision(20);
   const auto kernel_name = boost::typeindex::type_id<Kernel>().pretty_name();
   std::string input_filename = (argc > 1 ? argv[1] : "data/stress-test-0/test-1-polygon-a.off");
   std::ifstream input_file(input_filename);
@@ -147,19 +151,25 @@ int main(const int argc, const char** argv) {
   // Algorithm.
   KSR ksr(verbose, debug);
   const Polygon_map polygon_map(input_vertices);
-  const bool is_success = ksr.partition(
+
+  Timer timer;
+  timer.start();
+  const bool is_ksr_success = ksr.partition(
     input_faces, polygon_map, CGAL::parameters::
     k_intersections(k).
     n_subdivisions(subdiv).
     enlarge_bbox_ratio(eratio).
     reorient(orient));
-  assert(is_success);
+  assert(is_ksr_success);
+  const std::string success = is_ksr_success ? "SUCCESS" : "FAILED";
+  timer.stop();
+  const FT time = static_cast<FT>(timer.time());
 
   // Output.
   const int support_plane_idx = -1;
   const int num_support_planes = ksr.number_of_support_planes();
-  CGAL_assertion(num_support_planes > 6);
-  CGAL_assertion(ksr.support_plane_index(0) == 6);
+  assert(num_support_planes > 6);
+  assert(ksr.support_plane_index(0) == 6);
 
   // Vertices.
   const std::size_t num_vertices = ksr.number_of_vertices(support_plane_idx);
@@ -184,7 +194,7 @@ int main(const int argc, const char** argv) {
 
   int volume_level = -1;
   const int num_volume_levels = ksr.number_of_volume_levels();
-  CGAL_assertion(num_volume_levels > 0);
+  assert(num_volume_levels > 0);
 
   // Volumes.
   const std::size_t num_volumes = ksr.number_of_volumes(volume_level);
@@ -199,12 +209,12 @@ int main(const int argc, const char** argv) {
   for (int i = 0; i < num_support_planes; ++i) {
     Surface_mesh sp_mesh;
     ksr.output_support_plane(sp_mesh, i);
-    CGAL_assertion(sp_mesh.number_of_vertices() == ksr.number_of_vertices(i));
-    CGAL_assertion(sp_mesh.number_of_edges()    == ksr.number_of_edges(i));
-    CGAL_assertion(sp_mesh.number_of_faces()    == ksr.number_of_faces(i));
+    assert(sp_mesh.number_of_vertices() == ksr.number_of_vertices(i));
+    assert(sp_mesh.number_of_edges()    == ksr.number_of_edges(i));
+    assert(sp_mesh.number_of_faces()    == ksr.number_of_faces(i));
     support_planes.push_back(sp_mesh);
   }
-  CGAL_assertion(support_planes.size() == num_support_planes);
+  assert(support_planes.size() == num_support_planes);
 
   std::cout << std::endl;
   std::cout << "--- OUTPUT STATS: " << std::endl;
@@ -213,6 +223,7 @@ int main(const int argc, const char** argv) {
   std::cout << "* number of faces: "          << num_faces          << std::endl;
   std::cout << "* number of volumes: "        << num_volumes        << std::endl;
   std::cout << "* number of support planes: " << num_support_planes << std::endl;
+  std::cout << "* number of volume levels: "  << num_volume_levels  << std::endl;
 
   // Export.
   std::cout << std::endl;
@@ -271,6 +282,7 @@ int main(const int argc, const char** argv) {
   // }
   // std::cout << "* partition support planes exported successfully" << std::endl;
 
-  std::cout << std::endl << "3D KINETIC DONE!" << std::endl << std::endl;
+  std::cout << std::endl << "3D KINETIC " << success <<
+  " in " << time << " seconds!" << std::endl << std::endl;
   return EXIT_SUCCESS;
 }

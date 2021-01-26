@@ -172,7 +172,7 @@ public:
   const bool regularize_planar_shapes(
     const NamedParameters& np) {
 
-    const FT regularize = parameters::choose_parameter(
+    const bool regularize = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::regularize), false);
     if (!regularize) return true;
 

@@ -5,6 +5,7 @@
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 #include <CGAL/IO/PLY_writer.h>
+#include <CGAL/Real_timer.h>
 
 #include "include/Parameters.h"
 #include "include/Terminal_parser.h"
@@ -29,6 +30,7 @@ using KSR = CGAL::Kinetic_shape_reconstruction_3<Kernel>;
 
 using Parameters      = CGAL::KSR::Parameters<FT>;
 using Terminal_parser = CGAL::KSR::Terminal_parser<FT>;
+using Timer           = CGAL::Real_timer;
 
 void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
   // Set all parameters that can be loaded from the terminal.
@@ -74,6 +76,7 @@ void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
 int main(const int argc, const char** argv) {
 
   // Parameters.
+  std::cout.precision(20);
   std::cout << std::endl;
   std::cout << "--- PARSING INPUT: " << std::endl;
   const auto kernel_name = boost::typeindex::type_id<Kernel>().pretty_name();
@@ -106,7 +109,10 @@ int main(const int argc, const char** argv) {
 
   // Algorithm.
   KSR ksr(parameters.verbose, parameters.debug);
-  ksr.reconstruct(
+
+  Timer timer;
+  timer.start();
+  const bool is_ksr_success = ksr.reconstruct(
     point_set,
     point_set.point_map(),
     point_set.normal_map(),
@@ -119,6 +125,10 @@ int main(const int argc, const char** argv) {
     regularize(parameters.regularize).
     k_intersections(parameters.k_intersections).
     graphcut_beta(parameters.graphcut_beta));
+  assert(is_ksr_success);
+  const std::string success = is_ksr_success ? "SUCCESS" : "FAILED";
+  timer.stop();
+  const FT time = static_cast<FT>(timer.time());
 
   // Output.
 
@@ -186,6 +196,7 @@ int main(const int argc, const char** argv) {
   output_file_model.close();
   std::cout << "* the reconstructed model exported successfully" << std::endl;
 
-  std::cout << std::endl << "3D KINETIC RECONSTRUCTION DONE!" << std::endl << std::endl;
+  std::cout << std::endl << "3D KINETIC RECONSTRUCTION " << success <<
+  " in " << time << " seconds!" << std::endl << std::endl;
   return EXIT_SUCCESS;
 }

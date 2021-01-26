@@ -407,10 +407,11 @@ int main(const int argc, const char** argv) {
   const IPolygon_3_map polygon_map;
   const unsigned int k = (argc > 3 ? std::atoi(argv[3]) : 1);
   std::cout << "* input k: " << k << std::endl;
-  const bool is_success = ksr.partition(
+  const bool is_ksr_success = ksr.partition(
     input_polygons, polygon_map, CGAL::parameters::k_intersections(k));
-  assert(is_success);
+  assert(is_ksr_success);
+  const std::string success = is_ksr_success ? "SUCCESS" : "FAILED";
 
-  std::cout << std::endl << "3D KINETIC DONE!" << std::endl << std::endl;
+  std::cout << std::endl << "3D KINETIC " << success << "!" << std::endl << std::endl;
   return EXIT_SUCCESS;
 }
