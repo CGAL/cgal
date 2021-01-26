@@ -1579,7 +1579,7 @@ read_vertex(Vertex_handle vh) {
   vh->sncp() = this->sncp();
 
   in >> index;
-  if(index >= int(en))
+  if(index >= (int)en)
   {
     in.setstate(std::ios_base::badbit);
     return false;
@@ -2016,7 +2016,7 @@ read_sloop(SHalfloop_handle slh) {
   OK = OK && test_string("{");
 
   in >> index;
-  if(index < 0 || index >= sln)
+  if(index < 0 || index >= (int)(sln))
   {
     in.setstate(std::ios_base::badbit);
     return false;
@@ -2024,7 +2024,7 @@ read_sloop(SHalfloop_handle slh) {
   slh->twin() = SLoop_of[index];
   OK = OK && test_string(",");
   in >> index;
-  if(index < 0 || index >= sfn)
+  if(index < 0 || index >= (int)(sfn))
   {
     in.setstate(std::ios_base::badbit);
     return false;
@@ -2032,7 +2032,7 @@ read_sloop(SHalfloop_handle slh) {
   slh->incident_sface() = SFace_of[index];
   OK = OK && test_string(",");
   in >> index;
-  if(index < 0 || index >= fn)
+  if(index < 0 || index >= (int)(fn))
   {
     in.setstate(std::ios_base::badbit);
     return false;
@@ -2083,7 +2083,7 @@ read_sface(SFace_handle sfh) {
   OK = OK && test_string("{");
 
   in >> index;
-  if(index < 0 || index >= vn)
+  if(index < 0 || index >= (int)(sln))
   {
     in.setstate(std::ios_base::badbit);
     return false;
@@ -2097,7 +2097,7 @@ read_sface(SFace_handle sfh) {
     in >> index;
     //    sfh->boundary_entry_objects().push_back(SEdge_of[index]);
     SM_decorator SD(&*sfh->center_vertex());
-    if(index < 0 || index >= sen)
+    if(index < 0 || index >= (int)(sln))
     {
       in.setstate(std::ios_base::badbit);
       return false;
@@ -2110,7 +2110,7 @@ read_sface(SFace_handle sfh) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
-    if(index < 0 || index >= en)
+    if(index < 0 || index >= (int)(sln))
     {
       in.setstate(std::ios_base::badbit);
       return false;
@@ -2124,7 +2124,7 @@ read_sface(SFace_handle sfh) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
-    if(index < 0 || index >= sln)
+    if(index < 0 || index >= (int)(sln))
     {
       in.setstate(std::ios_base::badbit);
       return false;
@@ -2135,7 +2135,7 @@ read_sface(SFace_handle sfh) {
   }
 
   in >> index;
-  if(index < 0 || index >= vn)
+  if(index < 0 || index >= (int)(sln))
   {
     in.setstate(std::ios_base::badbit);
     return false;
