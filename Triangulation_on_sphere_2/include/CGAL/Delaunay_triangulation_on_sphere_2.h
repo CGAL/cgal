@@ -23,6 +23,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/Origin.h>
 #include <CGAL/utility.h>
+#include <CGAL/spatial_sort_on_sphere.h>
 
 #include <algorithm>
 #include <iostream>
@@ -210,12 +211,36 @@ private:
   }
 
 public:
-  Vertex_handle insert(const Point& p, Locate_type lt, Face_handle loc, int li);
   Vertex_handle insert(const Point& p, Face_handle f = Face_handle());
+  Vertex_handle insert(const Point& p, Locate_type lt, Face_handle loc, int li);
   Vertex_handle insert_first(const Point& p);
   Vertex_handle insert_second(const Point& p);
   Vertex_handle insert_outside_affine_hull_regular(const Point& p);
   Vertex_handle insert_cocircular(const Point& p, Locate_type lt, Face_handle loc);
+
+  template <typename InputIterator>
+  int insert(InputIterator first, InputIterator beyond);
+
+  // just for convenience when P3 != PoS2
+  template <typename P>
+  Vertex_handle insert(const P& p,
+                       Face_handle f = Face_handle(),
+                       typename std::enable_if<!std::is_same<P, Point>::value>::type* = nullptr)
+  {
+    return insert(geom_traits().construct_point_on_sphere_2_object()(p), f);
+  }
+
+  template <typename InputIterator>
+  int insert(InputIterator first, InputIterator beyond,
+             typename std::enable_if<
+                        !std::is_same<typename std::iterator_traits<InputIterator>::type,
+                                      Point>::value>::type* = nullptr)
+  {
+    typename Geom_traits::Construct_point_on_sphere_2 cst = geom_traits().construct_point_on_sphere_2_object();
+
+    return insert(boost::make_transform_iterator(first, cst),
+                  boost::make_transform_iterator(beyond, cst));
+  }
 
   bool update_ghost_faces(Vertex_handle v = Vertex_handle(), bool first = false);
 
@@ -337,29 +362,6 @@ public:
     }
 
     return out;
-  }
-
-  // Insert points in a given range using spacial sorting
-  template <typename InputIterator>
-  int insert(InputIterator first, InputIterator last)
-  {
-    int n = number_of_vertices();
-
-    std::vector<Point> points(first, last);
-    std::random_shuffle(points.begin(), points.end());
-
-    spatial_sort(points.begin(), points.end(), geom_traits());
-
-    Face_handle hint;
-    Vertex_handle v;
-    for(typename std::vector<Point>::const_iterator p=points.begin(), end=points.end(); p!=end; ++p)
-    {
-      v = insert(*p, hint);
-      if(v != Vertex_handle())//could happen if the point is not on the sphere
-        hint = v->face();
-    }
-
-    return number_of_vertices() - n;
   }
 };
 
@@ -700,6 +702,33 @@ update_ghost_faces(Vertex_handle v, bool first)
   }
 
   return ghost_found;
+}
+
+template <typename Gt, typename Tds>
+template <typename InputIterator>
+int
+Delaunay_triangulation_on_sphere_2<Gt, Tds>::
+insert(InputIterator first, InputIterator beyond)
+{
+  int n = number_of_vertices();
+
+  std::vector<Point> points(first, beyond);
+  CGAL::cpp98::random_shuffle(points.begin(), points.end());
+
+  // @todo bench this
+  spatial_sort_on_sphere(points.begin(), points.end(),
+                         geom_traits(), square(geom_traits().radius()), geom_traits().center());
+
+  Face_handle hint;
+  Vertex_handle v;
+  for(typename std::vector<Point>::const_iterator p=points.begin(), end=points.end(); p!=end; ++p)
+  {
+    v = insert(*p, hint);
+    if(v != Vertex_handle())//could happen if the point is not on the sphere
+      hint = v->face();
+  }
+
+  return number_of_vertices() - n;
 }
 
 //-------------------------------------REMOVAL----------------------------------------------------//
