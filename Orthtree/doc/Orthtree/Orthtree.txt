@@ -32,8 +32,11 @@ Building an %orthtree in 3D (%octree) from a point cloud.
 
 \section Section_Orthtree_Building Building
 
-An %orthtree is created using a set of points. The constructor returns
-a tree with a single (root) node that contains all the points.
+An %orthtree is created using a set of points. The points are not
+copied: the provided point range is used directly and is rearranged by
+the orthtree. Altering the point range after creating the orthtree
+might leave it in an invalid state. The constructor returns a tree
+with a single (root) node that contains all the points.
 
 The method [refine()](@ref CGAL::Orthtree::refine) must be called to
 subdivide space further. This method uses a split predicate which
