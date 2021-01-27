@@ -13,6 +13,8 @@
 #ifndef CGAL_BASIC_SHADERS_H
 #define CGAL_BASIC_SHADERS_H
 
+#include <CGAL/license/GraphicsView.h>
+
 namespace CGAL
 {
 
