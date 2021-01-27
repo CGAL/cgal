@@ -1803,7 +1803,7 @@ read_facet(Halffacet_handle fh) {
   }
 
   in >> index;
-  if(index < 0  || index >= int(vn))
+  if(index < 0  || index >= int(cn))
   {
     in.setstate(std::ios_base::badbit);
     return false;
@@ -2083,7 +2083,7 @@ read_sface(SFace_handle sfh) {
   OK = OK && test_string("{");
 
   in >> index;
-  if(index < 0 || index >= (int)(sln))
+  if(index < 0 || index >= (int)(vn))
   {
     in.setstate(std::ios_base::badbit);
     return false;
@@ -2097,7 +2097,7 @@ read_sface(SFace_handle sfh) {
     in >> index;
     //    sfh->boundary_entry_objects().push_back(SEdge_of[index]);
     SM_decorator SD(&*sfh->center_vertex());
-    if(index < 0 || index >= (int)(sln))
+    if(index < 0 || index >= (int)(sen))
     {
       in.setstate(std::ios_base::badbit);
       return false;
@@ -2110,7 +2110,7 @@ read_sface(SFace_handle sfh) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
-    if(index < 0 || index >= (int)(sln))
+    if(index < 0 || index >= (int)(en))
     {
       in.setstate(std::ios_base::badbit);
       return false;
@@ -2135,7 +2135,7 @@ read_sface(SFace_handle sfh) {
   }
 
   in >> index;
-  if(index < 0 || index >= (int)(sln))
+  if(index < 0 || index >= (int)(cn))
   {
     in.setstate(std::ios_base::badbit);
     return false;
