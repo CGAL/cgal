@@ -437,8 +437,7 @@ void Polyhedron_demo_offset_meshing_plugin::inflate_mesh()
   double X=(box.max)(0)-(box.min)(0),
       Y = (box.max)(1)-(box.min)(1),
       Z = (box.max)(2)-(box.min)(2);
-  double diag = 0;
-  diag = CGAL::sqrt(X*X+Y*Y+Z*Z);
+  double diag = sm_item->diagonalBbox();
   double offset_value = QInputDialog::getDouble(mw,
                                                 QString("Choose Inflate Value"),
                                                 QString("Offset Value (use negative number for deflate)"),
@@ -446,12 +445,11 @@ void Polyhedron_demo_offset_meshing_plugin::inflate_mesh()
                                                 -(std::numeric_limits<double>::max)(),
                                                 (std::numeric_limits<double>::max)(), 10);
   SMesh* smesh = sm_item->face_graph();
+  auto vpm = get(CGAL::vertex_point,*smesh);
+  auto vnm =
+      smesh->property_map<vertex_descriptor, EPICK::Vector_3 >("v:normal").first;
   for(const auto& v : vertices(*smesh))
   {
-    auto vpm = get(CGAL::vertex_point,*smesh);
-    SMesh::Property_map<vertex_descriptor, EPICK::Vector_3 > vnm =
-        smesh->property_map<vertex_descriptor, EPICK::Vector_3 >("v:normal").first;
-
     Point_3 p = get(vpm, v);
     EPICK::Vector_3 n = get(vnm, v);
     n/=(CGAL::sqrt(n.squared_length()));
