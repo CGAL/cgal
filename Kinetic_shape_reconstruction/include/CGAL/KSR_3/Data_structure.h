@@ -4555,6 +4555,7 @@ public:
 
       // Very slow!
       if (check_equal_faces) {
+        CGAL_assertion_msg(false, "TODO: DOES NOT WORK!");
         const FT tol = KSR::tolerance<FT>();
         for (const auto oface : pfaces) {
           if (oface == pface) continue;

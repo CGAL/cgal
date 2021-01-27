@@ -803,6 +803,7 @@ private:
       const FT time = distance / m_data.speed(pvertex);
 
       // Constrained pvertex to another pvertex event.
+      CGAL_assertion(time < m_max_time - m_min_time);
       event = Event(true, pvertex, pother, m_min_time + time);
       is_event_found = true;
 
@@ -898,12 +899,13 @@ private:
 
       // Try to add unconstrained pvertex to ivertex event.
       is_event_found = try_pvertex_to_ivertex_unconstrained_event(
-        pvertex, iedge, inter);
+        pvertex, iedge, inter, pv_segment.source());
 
       // Otherwise we add unconstrained pvertex to iedge event.
       if (!is_event_found) {
         const FT distance = KSR::distance(pv_segment.source(), inter);
         const FT time = distance / m_data.speed(pvertex);
+        CGAL_assertion(time < m_max_time - m_min_time);
         m_queue.push(Event(false, pvertex, iedge, m_min_time + time));
         is_event_found = true;
       }
@@ -915,16 +917,41 @@ private:
   }
 
   const bool try_pvertex_to_ivertex_unconstrained_event(
-    const PVertex& pvertex,
-    const IEdge& iedge,
-    const Point_2& inter) {
+    const PVertex& pvertex, const IEdge& iedge,
+    const Point_2& inter, const Point_2& pinit) {
 
-    const bool is_event_found = false;
+    bool is_event_found = false;
+    const auto isource = m_data.source(iedge);
+    const auto itarget = m_data.target(iedge);
 
+    const auto source = m_data.point_2(pvertex.first, isource);
+    const auto target = m_data.point_2(pvertex.first, itarget);
 
+    const FT tol = KSR::tolerance<FT>();
+    const FT sq_tol = tol * tol;
+    const FT sq_dist1 = CGAL::squared_distance(inter, source);
+    const FT sq_dist2 = CGAL::squared_distance(inter, target);
 
-    CGAL_assertion_msg(false,
-    "TODO: ADD PVERTEX TO IVERTEX UNCONSTRAINED EVENT!");
+    Point_2 ipoint;
+    IVertex ivertex = m_data.null_ivertex();
+    if (sq_dist1 < sq_tol) {
+      CGAL_assertion(sq_dist2 >= sq_tol);
+      ipoint = source; ivertex = isource;
+    } else if (sq_dist2 < sq_tol) {
+      CGAL_assertion(sq_dist1 >= sq_tol);
+      ipoint = target; ivertex = itarget;
+    }
+
+    if (ivertex != m_data.null_ivertex()) {
+      const FT distance = KSR::distance(pinit, ipoint);
+      const FT time = distance / m_data.speed(pvertex);
+      CGAL_assertion(time < m_max_time - m_min_time);
+      m_queue.push(Event(false, pvertex, ivertex, m_min_time + time));
+      is_event_found = true;
+    }
+
+    // CGAL_assertion_msg(false,
+    // "TODO: ADD PVERTEX TO IVERTEX UNCONSTRAINED EVENT!");
     return is_event_found;
   }
 
@@ -1050,7 +1077,7 @@ private:
 
   // VALID EVENTS!
   void apply_event_unconstrained_pvertex_meets_ivertex(
-    const PVertex& /* pvertex */, const IVertex& /* ivertex */, const Event& /* event */) {
+    const PVertex& pvertex, const IVertex& ivertex, const Event& event) {
 
     CGAL_assertion_msg(false,
     "TODO: UNCONSTRAINED PVERTEX MEETS IVERTEX!");

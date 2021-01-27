@@ -112,11 +112,8 @@ public:
   m_ivertex(ivertex),
   m_iedge(Data_structure::null_iedge()),
   m_time(time),
-  m_support_plane_idx(m_pvertex.first) {
-
-    CGAL_assertion_msg(is_constrained,
-    "TODO: CAN THIS EVENT EVER HAPPEN IN THE UNCONSTRAINED SETTING?");
-  }
+  m_support_plane_idx(m_pvertex.first)
+  { }
 
   // An event that occurs between two polygon vertices and an intersection graph vertex.
   Event(
