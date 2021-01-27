@@ -114,7 +114,7 @@ public:
       // KSR_3::dump_segmented_edges(m_data, "intersected");
     }
 
-    // for (KSR::size_t i = 6; i < m_data.number_of_support_planes(); ++i) {
+    // for (std::size_t i = 6; i < m_data.number_of_support_planes(); ++i) {
     //   const auto& sp = m_data.support_plane(i);
     //   std::cout << "plane index: " << i << std::endl;
     //   std::cout << "plane: " <<
@@ -439,7 +439,7 @@ private:
     const InputRange& input_range,
     const PolygonMap polygon_map) {
 
-    KSR::size_t input_index = 0;
+    std::size_t input_index = 0;
     for (const auto& item : input_range) {
       const auto& polygon = get(polygon_map, item);
       m_data.add_input_polygon(polygon, input_index);
@@ -454,7 +454,7 @@ private:
   void make_polygons_intersection_free() {
 
     // First, create all transverse intersection lines.
-    using Map_p2vv = std::map<KSR::Idx_set, std::pair<IVertex, IVertex> >;
+    using Map_p2vv = std::map<std::set<std::size_t>, std::pair<IVertex, IVertex> >;
     Map_p2vv map_p2vv;
 
     for (const auto ivertex : m_data.ivertices()) {
@@ -472,24 +472,24 @@ private:
     }
 
     // Then, intersect these lines to find internal intersection vertices.
-    using Pair_pv = std::pair< KSR::Idx_set, KSR::vector<IVertex> >;
-    KSR::vector<Pair_pv> todo;
+    using Pair_pv = std::pair< std::set<std::size_t>, std::vector<IVertex> >;
+    std::vector<Pair_pv> todo;
     for (auto it_a = map_p2vv.begin(); it_a != map_p2vv.end(); ++it_a) {
       const auto& set_a = it_a->first;
 
-      todo.push_back(std::make_pair(set_a, KSR::vector<IVertex>()));
+      todo.push_back(std::make_pair(set_a, std::vector<IVertex>()));
       auto& crossed_vertices = todo.back().second;
       crossed_vertices.push_back(it_a->second.first);
 
-      std::set<KSR::Idx_set> done;
+      std::set<std::set<std::size_t>> done;
       for (auto it_b = map_p2vv.begin(); it_b != map_p2vv.end(); ++it_b) {
         const auto& set_b = it_b->first;
 
-        KSR::size_t common_plane_idx = KSR::no_element();
+        std::size_t common_plane_idx = KSR::no_element();
         std::set_intersection(
           set_a.begin(), set_a.end(), set_b.begin(), set_b.end(),
           boost::make_function_output_iterator(
-            [&](const KSR::size_t idx) -> void {
+            [&](const std::size_t idx) -> void {
               common_plane_idx = idx;
             }
           )
@@ -525,7 +525,7 @@ private:
     }
 
     // Refine polygons.
-    for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
+    for (std::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
       Polygon_splitter splitter(m_data);
       splitter.split_support_plane(i);
       // if (i >= 6 && m_debug) {
@@ -536,7 +536,7 @@ private:
 
   void set_k_intersections(const unsigned int k) {
 
-    for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
+    for (std::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
       for (const auto pface : m_data.pfaces(i)) {
         m_data.k(pface) = k;
       }

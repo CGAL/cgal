@@ -168,7 +168,7 @@ public:
     // exit(EXIT_SUCCESS);
 
     // Output planes.
-    // for (KSR::size_t i = 6; i < m_data.number_of_support_planes(); ++i) {
+    // for (std::size_t i = 6; i < m_data.number_of_support_planes(); ++i) {
     //   std::cout << m_data.support_plane(i).plane() << std::endl;
     // }
 
@@ -286,7 +286,7 @@ public:
     }
 
     CGAL_assertion(support_plane_idx >= 0);
-    const KSR::size_t sp_idx = static_cast<KSR::size_t>(support_plane_idx);
+    const std::size_t sp_idx = static_cast<std::size_t>(support_plane_idx);
     return static_cast<std::size_t>(m_data.mesh(sp_idx).number_of_vertices());
   }
 
@@ -299,7 +299,7 @@ public:
     }
 
     CGAL_assertion(support_plane_idx >= 0);
-    const KSR::size_t sp_idx = static_cast<KSR::size_t>(support_plane_idx);
+    const std::size_t sp_idx = static_cast<std::size_t>(support_plane_idx);
     return static_cast<std::size_t>(m_data.mesh(sp_idx).number_of_edges());
   }
 
@@ -311,14 +311,14 @@ public:
       std::size_t num_all_faces = 0;
       for (int i = 0; i < number_of_support_planes(); ++i) {
         const std::size_t num_faces = static_cast<std::size_t>(
-          m_data.mesh(static_cast<KSR::size_t>(i)).number_of_faces());
+          m_data.mesh(static_cast<std::size_t>(i)).number_of_faces());
         num_all_faces += num_faces;
       }
       return num_all_faces;
     }
 
     CGAL_assertion(support_plane_idx >= 0);
-    const KSR::size_t sp_idx = static_cast<KSR::size_t>(support_plane_idx);
+    const std::size_t sp_idx = static_cast<std::size_t>(support_plane_idx);
     const std::size_t num_faces = static_cast<std::size_t>(
       m_data.mesh(sp_idx).number_of_faces());
     return num_faces;
@@ -357,7 +357,7 @@ public:
     }
 
     CGAL_assertion(support_plane_idx >= 0);
-    const KSR::size_t sp_idx = static_cast<KSR::size_t>(support_plane_idx);
+    const std::size_t sp_idx = static_cast<std::size_t>(support_plane_idx);
     const auto all_pvertices = m_data.pvertices(sp_idx);
     for (const auto pvertex : all_pvertices) {
       CGAL_assertion(m_data.has_ivertex(pvertex));
@@ -382,7 +382,7 @@ public:
     }
 
     CGAL_assertion(support_plane_idx >= 0);
-    const KSR::size_t sp_idx = static_cast<KSR::size_t>(support_plane_idx);
+    const std::size_t sp_idx = static_cast<std::size_t>(support_plane_idx);
     const auto all_pedges = m_data.pedges(sp_idx);
     for (const auto pedge : all_pedges) {
       CGAL_assertion(m_data.has_iedge(pedge));
@@ -405,14 +405,14 @@ public:
       const auto all_ivertices = m_data.ivertices();
       for (const auto ivertex : all_ivertices) indexer(ivertex);
       for (int i = begin; i < number_of_support_planes(); ++i) {
-        const KSR::size_t sp_idx = static_cast<KSR::size_t>(i);
+        const std::size_t sp_idx = static_cast<std::size_t>(i);
         output_partition_faces(faces, indexer, sp_idx);
       }
       return faces;
     }
 
     CGAL_assertion(support_plane_idx >= 0);
-    const KSR::size_t sp_idx = static_cast<KSR::size_t>(support_plane_idx);
+    const std::size_t sp_idx = static_cast<std::size_t>(support_plane_idx);
     const auto all_pvertices = m_data.pvertices(sp_idx);
     for (const auto pvertex : all_pvertices) {
       CGAL_assertion(m_data.has_ivertex(pvertex));
@@ -430,7 +430,7 @@ public:
     if (support_plane_idx < 0) return;
     CGAL_assertion(support_plane_idx < number_of_support_planes());
     if (support_plane_idx >= number_of_support_planes()) return;
-    const KSR::size_t sp_idx = static_cast<KSR::size_t>(support_plane_idx);
+    const std::size_t sp_idx = static_cast<std::size_t>(support_plane_idx);
 
     std::vector<Vertex_index> vertices;
     std::vector<Vertex_index> map_vertices;
@@ -604,7 +604,7 @@ private:
   template<typename FaceOutputIterator>
   FaceOutputIterator output_partition_faces(
     FaceOutputIterator faces, KSR::Indexer<IVertex>& indexer,
-    const KSR::size_t sp_idx) const {
+    const std::size_t sp_idx) const {
 
     std::vector<std::size_t> face;
     const auto all_pfaces = m_data.pfaces(sp_idx);
@@ -632,10 +632,10 @@ private:
     m_data.update_positions(m_max_time);
     bool still_running = false;
 
-    KSR::vector<IEdge> iedges;
-    KSR::vector<Segment_2> segments;
-    KSR::vector<Bbox_2> bboxes;
-    for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
+    std::vector<IEdge> iedges;
+    std::vector<Segment_2> segments;
+    std::vector<Bbox_2> bboxes;
+    for (std::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
       initialize_search_structures(i, iedges, segments, bboxes);
       for (const auto pvertex : m_data.pvertices(i)) {
         if (compute_events_of_pvertex(pvertex, iedges, segments, bboxes)) {
@@ -648,10 +648,10 @@ private:
   }
 
   void initialize_search_structures(
-    const KSR::size_t i,
-    KSR::vector<IEdge>& iedges,
-    KSR::vector<Segment_2>& segments,
-    KSR::vector<Bbox_2>& bboxes) {
+    const std::size_t i,
+    std::vector<IEdge>& iedges,
+    std::vector<Segment_2>& segments,
+    std::vector<Bbox_2>& bboxes) {
 
     iedges.clear();
     segments.clear();
@@ -679,9 +679,9 @@ private:
     m_min_time = m_data.current_time();
     m_data.update_positions(m_max_time);
 
-    KSR::vector<IEdge> iedges;
-    KSR::vector<Segment_2> segments;
-    KSR::vector<Bbox_2> bboxes;
+    std::vector<IEdge> iedges;
+    std::vector<Segment_2> segments;
+    std::vector<Bbox_2> bboxes;
     initialize_search_structures(
       pvertices.front().first, iedges, segments, bboxes);
 
@@ -703,9 +703,9 @@ private:
 
   const bool compute_events_of_pvertex(
     const PVertex& pvertex,
-    const KSR::vector<IEdge>& iedges,
-    const KSR::vector<Segment_2>& segments,
-    const KSR::vector<Bbox_2>& bboxes) {
+    const std::vector<IEdge>& iedges,
+    const std::vector<Segment_2>& segments,
+    const std::vector<Bbox_2>& bboxes) {
 
     std::cout.precision(20);
     if (m_data.is_frozen(pvertex)) {
@@ -855,9 +855,9 @@ private:
     const PVertex& pvertex,
     const Segment_2& pv_segment,
     const Bbox_2& pv_bbox,
-    const KSR::vector<IEdge>& iedges,
-    const KSR::vector<Segment_2>& segments,
-    const KSR::vector<Bbox_2>& bboxes) {
+    const std::vector<IEdge>& iedges,
+    const std::vector<Segment_2>& segments,
+    const std::vector<Bbox_2>& bboxes) {
 
     try_pvertex_to_iedge_unconstrained_event(
       pvertex, pv_segment, pv_bbox, iedges, segments, bboxes);
@@ -868,9 +868,9 @@ private:
     const PVertex& pvertex,
     const Segment_2& pv_segment,
     const Bbox_2& pv_bbox,
-    const KSR::vector<IEdge>& iedges,
-    const KSR::vector<Segment_2>& segments,
-    const KSR::vector<Bbox_2>& bboxes) {
+    const std::vector<IEdge>& iedges,
+    const std::vector<Segment_2>& segments,
+    const std::vector<Bbox_2>& bboxes) {
 
     bool is_event_found = false;
     const auto prev = m_data.prev(pvertex);
@@ -946,7 +946,7 @@ private:
           dump(m_data, "iter-" + std::to_string(iteration));
           dump_event(m_data, event, "iter-" + std::to_string(iteration));
         }
-        // const KSR::size_t sp_debug_idx = 23;
+        // const std::size_t sp_debug_idx = 23;
         // dump_2d_surface_mesh(m_data, sp_debug_idx, "iter-" + std::to_string(iteration) +
         // "-surface-mesh-" + std::to_string(sp_debug_idx));
       }
@@ -1444,7 +1444,7 @@ private:
     "TODO: IMPLEMENT UNCONSTRAINED PVERTEX MEETS IVERTEX EVENT!");
   }
 
-  void remove_events(const IEdge& iedge, const KSR::size_t support_plane_idx) {
+  void remove_events(const IEdge& iedge, const std::size_t support_plane_idx) {
     m_queue.erase_vertex_events(iedge, support_plane_idx);
     // std::cout << "erasing events for iedge: " << m_data.str(iedge) << std::endl;
     // std::cout << "iedge: " << m_data.segment_3(iedge) << std::endl;

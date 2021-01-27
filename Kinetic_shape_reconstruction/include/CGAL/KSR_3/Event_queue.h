@@ -69,7 +69,7 @@ public:
     boost::multi_index::ordered_non_unique<
     boost::multi_index::composite_key<Event,
       boost::multi_index::member<Event, IEdge, &Event::m_iedge>,
-      boost::multi_index::member<Event, KSR::size_t, &Event::m_support_plane_idx> > >
+      boost::multi_index::member<Event, std::size_t, &Event::m_support_plane_idx> > >
     > >;
 
   using Queue_by_time        = typename Queue::template nth_index<0>::type;
@@ -119,7 +119,7 @@ public:
   // Erase all events of the iedge.
   void erase_vertex_events(
     const IEdge iedge,
-    const KSR::size_t support_plane_idx) {
+    const std::size_t support_plane_idx) {
 
     // Erase by iedge.
     const auto pe = queue_by_iedge_idx().equal_range(

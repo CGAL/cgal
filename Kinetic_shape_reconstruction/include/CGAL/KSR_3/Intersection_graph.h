@@ -59,8 +59,8 @@ public:
   };
 
   struct Edge_property {
-    KSR::size_t line;
-    KSR::Idx_set planes;
+    std::size_t line;
+    std::set<std::size_t> planes;
     bool active;
     Edge_property() :
     line(KSR::no_element()),
@@ -77,9 +77,9 @@ public:
 
 private:
   Graph m_graph;
-  KSR::size_t m_nb_lines;
+  std::size_t m_nb_lines;
   std::map<Point_3, Vertex_descriptor> m_map_points;
-  std::map<KSR::Idx_vector, Vertex_descriptor> m_map_vertices;
+  std::map<std::vector<std::size_t>, Vertex_descriptor> m_map_vertices;
   std::map<Vertex_descriptor, Vertex_descriptor> m_vmap;
   std::map<Edge_descriptor, Edge_descriptor> m_emap;
 
@@ -171,9 +171,9 @@ public:
     return Edge_descriptor(null_ivertex(), null_ivertex(), nullptr);
   }
 
-  const KSR::size_t add_line() { return ( m_nb_lines++ ); }
-  const KSR::size_t nb_lines() const { return m_nb_lines; }
-  void set_nb_lines(const KSR::size_t value) { m_nb_lines = value; }
+  const std::size_t add_line() { return ( m_nb_lines++ ); }
+  const std::size_t nb_lines() const { return m_nb_lines; }
+  void set_nb_lines(const std::size_t value) { m_nb_lines = value; }
   Graph& graph() { return m_graph; }
 
   const std::pair<Vertex_descriptor, bool> add_vertex(const Point_3& point) {
@@ -188,7 +188,7 @@ public:
   }
 
   const std::pair<Vertex_descriptor, bool> add_vertex(
-    const Point_3& point, const KSR::Idx_vector& intersected_planes) {
+    const Point_3& point, const std::vector<std::size_t>& intersected_planes) {
 
     const auto pair = m_map_vertices.insert(std::make_pair(intersected_planes, Vertex_descriptor()));
     const auto is_inserted = pair.second;
@@ -201,7 +201,7 @@ public:
 
   const std::pair<Edge_descriptor, bool> add_edge(
     const Vertex_descriptor& source, const Vertex_descriptor& target,
-    const KSR::size_t support_plane_idx) {
+    const std::size_t support_plane_idx) {
 
     const auto out = boost::add_edge(source, target, m_graph);
     m_graph[out.first].planes.insert(support_plane_idx);
@@ -225,11 +225,11 @@ public:
     return add_edge(add_vertex(source).first, add_vertex(target).first);
   }
 
-  void set_line(const Edge_descriptor& edge, const KSR::size_t line_idx) {
+  void set_line(const Edge_descriptor& edge, const std::size_t line_idx) {
     m_graph[edge].line = line_idx;
   }
 
-  const KSR::size_t line(const Edge_descriptor& edge) const { return m_graph[edge].line; }
+  const std::size_t line(const Edge_descriptor& edge) const { return m_graph[edge].line; }
 
   const std::pair<Edge_descriptor, Edge_descriptor>
   split_edge(const Edge_descriptor& edge, const Vertex_descriptor& vertex) {
@@ -277,8 +277,8 @@ public:
     return CGAL::make_range(boost::out_edges(vertex, m_graph));
   }
 
-  const KSR::Idx_set& intersected_planes(const Edge_descriptor& edge) const { return m_graph[edge].planes; }
-  KSR::Idx_set& intersected_planes(const Edge_descriptor& edge) { return m_graph[edge].planes; }
+  const std::set<std::size_t>& intersected_planes(const Edge_descriptor& edge) const { return m_graph[edge].planes; }
+  std::set<std::size_t>& intersected_planes(const Edge_descriptor& edge) { return m_graph[edge].planes; }
 
   const Point_3& point_3(const Vertex_descriptor& vertex) const {
     return m_graph[vertex].point;

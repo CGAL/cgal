@@ -143,7 +143,7 @@ public:
   const IVertex& ivertex() const { return m_ivertex; }
   const IEdge& iedge() const { return m_iedge; }
   const FT time() const { return m_time; }
-  const KSR::size_t support_plane() const { return m_support_plane_idx; }
+  const std::size_t support_plane() const { return m_support_plane_idx; }
 
   // Predicates.
   const bool is_constrained() const { return m_is_constrained; }
@@ -192,7 +192,7 @@ private:
   IVertex m_ivertex;
   IEdge   m_iedge;
   FT m_time;
-  KSR::size_t m_support_plane_idx;
+  std::size_t m_support_plane_idx;
 };
 
 } // namespace KSR_3

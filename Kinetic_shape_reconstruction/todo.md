@@ -59,3 +59,4 @@ TODO:
 29. Create LCC.
 30. Improve output such that I could return faces iteratively.
 31. Make regularization work with exact kernel.
+32. Improve time to compile. Split big files into smaller files.

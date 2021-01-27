@@ -71,8 +71,8 @@ private:
 
   struct Face_info {
     bool tagged;
-    KSR::size_t index;
-    KSR::size_t input;
+    std::size_t index;
+    std::size_t input;
     Face_info() :
     tagged(false),
     index(KSR::uninitialized()),
@@ -112,7 +112,7 @@ public:
   m_merge_type(Planar_shape_type::CONVEX_HULL)
   { }
 
-  void split_support_plane(const KSR::size_t support_plane_idx) {
+  void split_support_plane(const std::size_t support_plane_idx) {
 
     // Preprocessing.
     const auto all_pfaces = m_data.pfaces(support_plane_idx);
@@ -122,7 +122,7 @@ public:
 
     // Create cdt.
     std::cout.precision(20);
-    std::vector< std::vector<KSR::size_t> > original_input;
+    std::vector< std::vector<std::size_t> > original_input;
     std::vector< std::vector<Point_2> > original_faces;
     initialize_cdt(support_plane_idx, original_input, original_faces);
     CGAL_assertion(original_faces.size() >= 1);
@@ -148,7 +148,7 @@ public:
 private:
 
   void merge_coplanar_pfaces(
-    const KSR::size_t support_plane_idx) {
+    const std::size_t support_plane_idx) {
 
     const bool is_debug = false;
     CGAL_assertion(support_plane_idx >= 6);
@@ -176,7 +176,7 @@ private:
   }
 
   void collect_pface_points(
-    const KSR::size_t support_plane_idx,
+    const std::size_t support_plane_idx,
     std::vector<Point_2>& points) const {
 
     points.clear();
@@ -196,7 +196,7 @@ private:
   }
 
   void create_merged_pface(
-    const KSR::size_t support_plane_idx,
+    const std::size_t support_plane_idx,
     const std::vector<Point_2>& points,
     std::vector<Point_2>& merged) const {
 
@@ -221,7 +221,7 @@ private:
 
   // Check if the newly created pface goes beyond the bbox.
   const bool check_merged_pface(
-    const KSR::size_t support_plane_idx,
+    const std::size_t support_plane_idx,
     const std::vector<Point_2>& merged) const {
 
     std::vector<Point_2> bbox;
@@ -248,11 +248,11 @@ private:
   }
 
   void add_merged_pface(
-    const KSR::size_t support_plane_idx,
+    const std::size_t support_plane_idx,
     std::vector<Point_2>& merged) {
 
     const auto all_pfaces = m_data.pfaces(support_plane_idx);
-    std::vector<KSR::size_t> input_indices;
+    std::vector<std::size_t> input_indices;
     input_indices.reserve(all_pfaces.size());
 
     for (const auto pface : all_pfaces) {
@@ -267,8 +267,8 @@ private:
   }
 
   void initialize_cdt(
-    const KSR::size_t support_plane_idx,
-    std::vector< std::vector<KSR::size_t> >& original_input,
+    const std::size_t support_plane_idx,
+    std::vector< std::vector<std::size_t> >& original_input,
     std::vector< std::vector<Point_2> >& original_faces) {
 
     // Insert pvertices.
@@ -388,7 +388,7 @@ private:
   // All enterior faces are tagged by face_index.
   void tag_cdt_interior_faces() {
 
-    KSR::size_t face_index = 0;
+    std::size_t face_index = 0;
     std::queue<Face_handle> todo;
     for (auto fit = m_cdt.finite_faces_begin(); fit != m_cdt.finite_faces_end(); ++fit) {
       CGAL_assertion(todo.size() == 0);
@@ -397,7 +397,7 @@ private:
       }
 
       todo.push(fit);
-      KSR::size_t num_faces = 0;
+      std::size_t num_faces = 0;
       while (!todo.empty()) {
         const auto fh = todo.front();
         todo.pop();
@@ -422,11 +422,11 @@ private:
   }
 
   void initialize_new_pfaces(
-    const KSR::size_t support_plane_idx,
-    const std::vector< std::vector<KSR::size_t> >& original_input,
+    const std::size_t support_plane_idx,
+    const std::vector< std::vector<std::size_t> >& original_input,
     const std::vector< std::vector<Point_2> >& original_faces) {
 
-    std::set<KSR::size_t> done;
+    std::set<std::size_t> done;
     for (auto fit = m_cdt.finite_faces_begin(); fit != m_cdt.finite_faces_end(); ++fit) {
       CGAL_assertion(fit->info().index != KSR::uninitialized());
       if (fit->info().index == KSR::no_element()) { // skip exterior faces
@@ -547,7 +547,7 @@ private:
   }
 
   void set_new_adjacencies(
-    const KSR::size_t support_plane_idx) {
+    const std::size_t support_plane_idx) {
 
     // std::cout << std::endl << "support plane idx: " << support_plane_idx << std::endl;
     const auto all_pvertices = m_data.pvertices(support_plane_idx);
@@ -662,7 +662,7 @@ private:
   }
 
   void create_bbox(
-    const KSR::size_t support_plane_idx,
+    const std::size_t support_plane_idx,
     std::vector<Point_2>& bbox) const {
 
     CGAL_assertion(support_plane_idx >= 6);
@@ -696,7 +696,7 @@ private:
   void dump(
     const bool dump_data,
     const std::size_t type, // 0 - index, 1 - input
-    const KSR::size_t support_plane_idx,
+    const std::size_t support_plane_idx,
     std::string file_name = "") {
     if (!dump_data) return;
 
@@ -746,7 +746,7 @@ private:
   }
 
   void dump_original_faces(
-    const KSR::size_t support_plane_idx,
+    const std::size_t support_plane_idx,
     const std::vector< std::vector<Point_2> >& original_faces,
     const std::string file_name) {
 

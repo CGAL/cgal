@@ -45,7 +45,7 @@ namespace CGAL {
 namespace KSR_3 {
 
 const std::tuple<unsigned char, unsigned char, unsigned char>
-get_idx_color(const KSR::size_t idx) {
+get_idx_color(const std::size_t idx) {
 
   CGAL::Random rand(idx);
   return std::make_tuple(
@@ -71,7 +71,7 @@ template<typename DS>
 void dump_segmented_edges(const DS& data, const std::string tag = std::string()) {
 
   std::vector<std::ofstream*> out;
-  for (KSR::size_t i = 0; i < data.nb_intersection_lines(); ++i) {
+  for (std::size_t i = 0; i < data.nb_intersection_lines(); ++i) {
     const std::string filename = (tag != std::string() ? tag + "-" : "") + "intersection-line-" + std::to_string(i) + ".polylines.txt";
     out.push_back(new std::ofstream(filename));
     out.back()->precision(20);
@@ -94,7 +94,7 @@ void dump_constrained_edges(const DS& data, const std::string tag = std::string(
   std::ofstream out(filename);
   out.precision(20);
 
-  for (KSR::size_t i = 0; i < data.number_of_support_planes(); ++i) {
+  for (std::size_t i = 0; i < data.number_of_support_planes(); ++i) {
     for (const auto pedge : data.pedges(i)) {
       if (data.has_iedge(pedge)) {
         out << "2 " << data.segment_3(pedge) << std::endl;
@@ -107,7 +107,7 @@ void dump_constrained_edges(const DS& data, const std::string tag = std::string(
 template<typename DS>
 void dump_2d_surface_mesh(
   const DS& data,
-  const KSR::size_t support_plane_idx,
+  const std::size_t support_plane_idx,
   const std::string tag = std::string()) {
 
   using Point_3      = typename DS::Kernel::Point_3;
@@ -121,8 +121,8 @@ void dump_2d_surface_mesh(
   Uchar_map green = mesh.template add_property_map<Face_index, unsigned char>("green", 0).first;
   Uchar_map blue  = mesh.template add_property_map<Face_index, unsigned char>("blue", 0).first;
 
-  KSR::vector<Vertex_index> vertices;
-  KSR::vector<Vertex_index> map_vertices;
+  std::vector<Vertex_index> vertices;
+  std::vector<Vertex_index> map_vertices;
 
   map_vertices.clear();
   for (const auto pvertex : data.pvertices(support_plane_idx)) {
@@ -168,10 +168,10 @@ void dump_polygons(const DS& data, const std::string tag = std::string()) {
   Uchar_map bbox_green = bbox_mesh.template add_property_map<Face_index, unsigned char>("green", 0).first;
   Uchar_map bbox_blue  = bbox_mesh.template add_property_map<Face_index, unsigned char>("blue", 0).first;
 
-  KSR::vector<Vertex_index> vertices;
-  KSR::vector<Vertex_index> map_vertices;
+  std::vector<Vertex_index> vertices;
+  std::vector<Vertex_index> map_vertices;
 
-  for (KSR::size_t i = 0; i < data.number_of_support_planes(); ++i) {
+  for (std::size_t i = 0; i < data.number_of_support_planes(); ++i) {
     if (data.is_bbox_support_plane(i)) {
 
       map_vertices.clear();
@@ -238,7 +238,7 @@ void dump_polygon_borders(const DS& data, const std::string tag = std::string())
   const std::string filename = (tag != std::string() ? tag + "-" : "") + "polygon-borders.polylines.txt";
   std::ofstream out(filename);
   out.precision(20);
-  for (KSR::size_t i = 6; i < data.number_of_support_planes(); ++i) {
+  for (std::size_t i = 6; i < data.number_of_support_planes(); ++i) {
     for (const auto pedge : data.pedges(i)) {
       out << "2 " << data.segment_3(pedge) << std::endl;
     }

@@ -54,7 +54,7 @@ private:
      boost::multi_index::ordered_non_unique
      <boost::multi_index::member<Event, FT, &Event::m_time> >,
      boost::multi_index::ordered_non_unique
-     <boost::multi_index::member<Event, KSR::size_t, &Event::m_vertex_idx> >
+     <boost::multi_index::member<Event, std::size_t, &Event::m_vertex_idx> >
      >
    > Queue;
 
@@ -97,7 +97,7 @@ public:
       std::cerr << e << std::endl;
   }
 
-  void erase_vertex_events (KSR::size_t vertex_idx, KSR::vector<Event>& events)
+  void erase_vertex_events (std::size_t vertex_idx, std::vector<Event>& events)
   {
     std::pair<Queue_by_event_idx_iterator, Queue_by_event_idx_iterator>
       range = queue_by_event_idx().equal_range(vertex_idx);

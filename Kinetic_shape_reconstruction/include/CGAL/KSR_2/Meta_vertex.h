@@ -38,9 +38,9 @@ class Meta_vertex
 private:
 
   Point_2 m_point;
-  std::set<KSR::size_t> m_support_lines_idx;
+  std::set<std::size_t> m_support_lines_idx;
 
-  std::set<KSR::size_t> m_deadends;
+  std::set<std::size_t> m_deadends;
 
 public:
 
@@ -50,16 +50,16 @@ public:
 
   const Point_2& point() const { return m_point; }
 
-  const std::set<KSR::size_t>& support_lines_idx() const { return m_support_lines_idx; }
-  std::set<KSR::size_t>& support_lines_idx() { return m_support_lines_idx; }
+  const std::set<std::size_t>& support_lines_idx() const { return m_support_lines_idx; }
+  std::set<std::size_t>& support_lines_idx() { return m_support_lines_idx; }
 
-  void make_deadend_of (KSR::size_t support_line_idx)
+  void make_deadend_of (std::size_t support_line_idx)
   { m_deadends.insert (support_line_idx); }
 
-  bool is_deadend_of (KSR::size_t support_line_idx) const
+  bool is_deadend_of (std::size_t support_line_idx) const
   { return m_deadends.find(support_line_idx) != m_deadends.end(); }
 
-  void make_no_longer_deadend_of (KSR::size_t support_line_idx)
+  void make_no_longer_deadend_of (std::size_t support_line_idx)
   { m_deadends.erase (support_line_idx); }
 
 

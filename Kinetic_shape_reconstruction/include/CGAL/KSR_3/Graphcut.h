@@ -113,7 +113,7 @@ namespace KSR_3 {
 			const auto& pface_neighbors = m_data.pface_neighbors();
 
 			wrappers.clear();
-			for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
+			for (std::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
 				const auto pfaces = m_data.pfaces(i);
 				for (const auto pface : pfaces) {
 					wrapper.pface = pface;

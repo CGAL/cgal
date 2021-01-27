@@ -66,7 +66,7 @@ public:
   using V_iedge_map    = typename Mesh::template Property_map<Vertex_index, IEdge>;
   using V_bool_map     = typename Mesh::template Property_map<Vertex_index, bool>;
   using E_iedge_map    = typename Mesh::template Property_map<Edge_index, IEdge>;
-  using F_index_map    = typename Mesh::template Property_map<Face_index, std::vector<KSR::size_t> >;
+  using F_index_map    = typename Mesh::template Property_map<Face_index, std::vector<std::size_t> >;
   using F_uint_map     = typename Mesh::template Property_map<Face_index, unsigned int>;
   using V_original_map = typename Mesh::template Property_map<Vertex_index, bool>;
   using V_time_map     = typename Mesh::template Property_map<Vertex_index, FT>;
@@ -146,8 +146,8 @@ public:
     m_data->e_iedge_map    = m_data->mesh.template add_property_map<Edge_index, IEdge>(
       "e:iedge", Intersection_graph::null_iedge()).first;
 
-    m_data->input_map      = m_data->mesh.template add_property_map<Face_index, std::vector<KSR::size_t> >(
-      "f:input", std::vector<KSR::size_t>()).first;
+    m_data->input_map      = m_data->mesh.template add_property_map<Face_index, std::vector<std::size_t> >(
+      "f:input", std::vector<std::size_t>()).first;
 
     m_data->k_map          = m_data->mesh.template add_property_map<Face_index, unsigned int>(
       "f:k", 0).first;
@@ -328,10 +328,10 @@ public:
     return vertices;
   }
 
-  const KSR::size_t add_input_polygon(
+  const std::size_t add_input_polygon(
     const std::vector<Point_2>& points,
     const Point_2& centroid,
-    const std::vector<KSR::size_t>& input_indices) {
+    const std::vector<std::size_t>& input_indices) {
 
     std::vector<Vertex_index> vertices;
     const std::size_t n = points.size();
@@ -363,10 +363,10 @@ public:
     CGAL_assertion(fi != Mesh::null_face());
     auto& input_vec = m_data->input_map[fi];
     CGAL_assertion(input_vec.empty());
-    for (const KSR::size_t input_index : input_indices) {
+    for (const std::size_t input_index : input_indices) {
       input_vec.push_back(input_index);
     }
-    return static_cast<KSR::size_t>(fi);
+    return static_cast<std::size_t>(fi);
   }
 
   const Plane_3& plane() const { return m_data->plane; }
@@ -501,8 +501,8 @@ public:
       CGAL::to_double(CGAL::abs(m_data->direction[vi].squared_length()))));
   }
 
-  const std::vector<KSR::size_t>& input(const Face_index& fi) const { return m_data->input_map[fi]; }
-  std::vector<KSR::size_t>& input(const Face_index& fi) { return m_data->input_map[fi]; }
+  const std::vector<std::size_t>& input(const Face_index& fi) const { return m_data->input_map[fi]; }
+  std::vector<std::size_t>& input(const Face_index& fi) { return m_data->input_map[fi]; }
 
   const bool is_original(const Vertex_index& vi) const { return m_data->v_original_map[vi]; }
 

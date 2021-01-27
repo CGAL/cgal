@@ -74,17 +74,17 @@ private:
   using Polygon_2 = CGAL::Polygon_2<Kernel>;
 
 public:
-  using PVertex = std::pair<KSR::size_t, Vertex_index>;
-  using PFace   = std::pair<KSR::size_t, Face_index>;
-  using PEdge   = std::pair<KSR::size_t, Edge_index>;
+  using PVertex = std::pair<std::size_t, Vertex_index>;
+  using PFace   = std::pair<std::size_t, Face_index>;
+  using PEdge   = std::pair<std::size_t, Edge_index>;
 
   template<typename PSimplex>
   struct Make_PSimplex {
     using argument_type = typename PSimplex::second_type;
     using result_type   = PSimplex;
 
-    const KSR::size_t support_plane_idx;
-    Make_PSimplex(const KSR::size_t sp_idx) :
+    const std::size_t support_plane_idx;
+    Make_PSimplex(const std::size_t sp_idx) :
     support_plane_idx(sp_idx)
     { }
 
@@ -109,10 +109,10 @@ public:
     using argument_type = Halfedge_index;
     using result_type   = PVertex;
 
-    const KSR::size_t support_plane_idx;
+    const std::size_t support_plane_idx;
     const Mesh& mesh;
 
-    Halfedge_to_pvertex(const KSR::size_t sp_idx, const Mesh& m) :
+    Halfedge_to_pvertex(const std::size_t sp_idx, const Mesh& m) :
     support_plane_idx(sp_idx),
     mesh(m)
     { }
@@ -130,10 +130,10 @@ public:
     using argument_type = Halfedge_index;
     using result_type = PEdge;
 
-    const KSR::size_t support_plane_idx;
+    const std::size_t support_plane_idx;
     const Mesh& mesh;
 
-    Halfedge_to_pedge(const KSR::size_t sp_idx, const Mesh& m) :
+    Halfedge_to_pedge(const std::size_t sp_idx, const Mesh& m) :
     support_plane_idx(sp_idx),
     mesh(m)
     { }
@@ -147,10 +147,10 @@ public:
     using argument_type = Halfedge_index;
     using result_type = PFace;
 
-    const KSR::size_t support_plane_idx;
+    const std::size_t support_plane_idx;
     const Mesh& mesh;
 
-    Halfedge_to_pface(const KSR::size_t sp_idx, const Mesh& m) :
+    Halfedge_to_pface(const std::size_t sp_idx, const Mesh& m) :
     support_plane_idx(sp_idx),
     mesh(m)
     { }
@@ -220,8 +220,8 @@ public:
   };
 
   struct Face_info {
-    KSR::size_t index;
-    KSR::size_t input;
+    std::size_t index;
+    std::size_t input;
     Face_info() :
     index(KSR::uninitialized()),
     input(KSR::uninitialized())
@@ -242,12 +242,12 @@ public:
   using Edge          = typename CDT::Edge;
 
 private:
-  std::map< std::pair<KSR::size_t, IEdge>, Point_2>  m_points;
-  std::map< std::pair<KSR::size_t, IEdge>, Vector_2> m_directions;
-  KSR::vector<Support_plane> m_support_planes;
+  std::map< std::pair<std::size_t, IEdge>, Point_2>  m_points;
+  std::map< std::pair<std::size_t, IEdge>, Vector_2> m_directions;
+  std::vector<Support_plane> m_support_planes;
   Intersection_graph m_intersection_graph;
 
-  using Limit_line = std::vector< std::pair< std::pair<KSR::size_t, KSR::size_t>, bool> >;
+  using Limit_line = std::vector< std::pair< std::pair<std::size_t, std::size_t>, bool> >;
   std::vector<Limit_line> m_limit_lines;
 
   FT m_previous_time;
@@ -257,7 +257,7 @@ private:
   std::vector<Volume_cell> m_volumes;
   std::map<int, std::size_t> m_volume_level_map;
   std::map<PFace, std::pair<int, int> > m_map_volumes;
-  std::map<KSR::size_t, KSR::size_t> m_input_polygon_map;
+  std::map<std::size_t, std::size_t> m_input_polygon_map;
   Reconstructed_model m_reconstructed_model;
 
 public:
@@ -289,8 +289,8 @@ public:
     m_limit_lines.clear();
     m_limit_lines.resize(nb_intersection_lines());
 
-    std::vector<KSR::size_t> sps;
-    std::set<KSR::size_t> unique_sps;
+    std::vector<std::size_t> sps;
+    std::set<std::size_t> unique_sps;
     std::set<PEdge> unique_pedges;
 
     auto pvertex = null_pvertex();
@@ -298,7 +298,7 @@ public:
     std::size_t num_2_intersected = 0;
 
     std::vector<IEdge> iedges;
-    for (KSR::size_t i = 0; i < m_limit_lines.size(); ++i) {
+    for (std::size_t i = 0; i < m_limit_lines.size(); ++i) {
 
       iedges.clear();
       for (const auto iedge : this->iedges()) {
@@ -340,7 +340,7 @@ public:
       } else if (sps.size() == 1) {
 
         const auto sp_idx_1 = sps[0];
-        std::vector<KSR::size_t> potential_sps;
+        std::vector<std::size_t> potential_sps;
         const auto intersected_planes = this->intersected_planes(iedges[0]);
         for (const auto plane_idx : intersected_planes) {
           if (plane_idx == sp_idx_1) continue;
@@ -402,15 +402,15 @@ public:
   }
 
   void set_input_polygon_map(
-    const std::map<KSR::size_t, KSR::size_t>& input_polygon_map) {
+    const std::map<std::size_t, std::size_t>& input_polygon_map) {
     m_input_polygon_map = input_polygon_map;
   }
 
   const int support_plane_index(const std::size_t polygon_index) const {
 
-    const KSR::size_t polygon_idx = static_cast<KSR::size_t>(polygon_index);
+    const std::size_t polygon_idx = static_cast<std::size_t>(polygon_index);
     CGAL_assertion(m_input_polygon_map.find(polygon_idx) != m_input_polygon_map.end());
-    const KSR::size_t sp_idx = m_input_polygon_map.at(polygon_idx);
+    const std::size_t sp_idx = m_input_polygon_map.at(polygon_idx);
     return static_cast<int>(sp_idx);
   }
 
@@ -439,7 +439,7 @@ public:
     CGAL_assertion(ds.number_of_support_planes() == number_of_support_planes());
 
     m_intersection_graph.convert(ds.igraph());
-    for (KSR::size_t i = 0; i < number_of_support_planes(); ++i) {
+    for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
       m_support_planes[i].convert(m_intersection_graph, ds.support_planes()[i]);
     }
     ds.set_input_polygon_map(m_input_polygon_map);
@@ -449,20 +449,20 @@ public:
   **          GENERAL           **
   ********************************/
 
-  const KSR::vector<Support_plane>& support_planes() const { return m_support_planes; }
-  KSR::vector<Support_plane>& support_planes() { return m_support_planes; }
+  const std::vector<Support_plane>& support_planes() const { return m_support_planes; }
+  std::vector<Support_plane>& support_planes() { return m_support_planes; }
 
   const Intersection_graph& igraph() const { return m_intersection_graph; }
   Intersection_graph& igraph() { return m_intersection_graph; }
 
-  void resize(const KSR::size_t number_of_items) {
+  void resize(const std::size_t number_of_items) {
     m_support_planes.resize(number_of_items);
   }
 
   // TODO: It looks like here we lose precision during the conversion because
-  // KSR::size_t is usually smaller than std::size_t!
+  // std::size_t is usually smaller than std::size_t!
   void reserve(const std::size_t number_of_polygons) {
-    m_support_planes.reserve(static_cast<KSR::size_t>(number_of_polygons) + 6);
+    m_support_planes.reserve(static_cast<std::size_t>(number_of_polygons) + 6);
   }
 
   const FT current_time() const { return m_current_time; }
@@ -493,35 +493,35 @@ public:
 
   template<typename PSimplex>
   const Support_plane& support_plane(const PSimplex& psimplex) const { return support_plane(psimplex.first); }
-  const Support_plane& support_plane(const KSR::size_t idx) const { return m_support_planes[idx]; }
+  const Support_plane& support_plane(const std::size_t idx) const { return m_support_planes[idx]; }
 
   template<typename PSimplex>
   Support_plane& support_plane(const PSimplex& psimplex) { return support_plane(psimplex.first); }
-  Support_plane& support_plane(const KSR::size_t idx) { return m_support_planes[idx]; }
+  Support_plane& support_plane(const std::size_t idx) { return m_support_planes[idx]; }
 
   template<typename PSimplex>
   const Mesh& mesh(const PSimplex& psimplex) const { return mesh(psimplex.first); }
-  const Mesh& mesh(const KSR::size_t support_plane_idx) const { return support_plane(support_plane_idx).mesh(); }
+  const Mesh& mesh(const std::size_t support_plane_idx) const { return support_plane(support_plane_idx).mesh(); }
 
   template<typename PSimplex>
   Mesh& mesh(const PSimplex& psimplex) { return mesh(psimplex.first); }
-  Mesh& mesh(const KSR::size_t support_plane_idx) { return support_plane(support_plane_idx).mesh(); }
+  Mesh& mesh(const std::size_t support_plane_idx) { return support_plane(support_plane_idx).mesh(); }
 
-  const KSR::size_t number_of_support_planes() const {
+  const std::size_t number_of_support_planes() const {
     return m_support_planes.size();
   }
 
-  const bool is_bbox_support_plane(const KSR::size_t support_plane_idx) const {
+  const bool is_bbox_support_plane(const std::size_t support_plane_idx) const {
     return (support_plane_idx < 6);
   }
 
   template<typename PointRange>
-  const KSR::size_t add_support_plane(const PointRange& polygon) {
+  const std::size_t add_support_plane(const PointRange& polygon) {
 
     const Support_plane new_support_plane(polygon);
-    KSR::size_t support_plane_idx = KSR::no_element();
+    std::size_t support_plane_idx = KSR::no_element();
     bool found_coplanar_polygons = false;
-    for (KSR::size_t i = 0; i < number_of_support_planes(); ++i) {
+    for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
       if (new_support_plane == support_plane(i)) {
         found_coplanar_polygons = true;
         support_plane_idx = i;
@@ -540,7 +540,7 @@ public:
     return support_plane_idx;
   }
 
-  void intersect_with_bbox(const KSR::size_t support_plane_idx) {
+  void intersect_with_bbox(const std::size_t support_plane_idx) {
     if (support_plane_idx < 6) return;
 
     Point_3 point;
@@ -568,9 +568,9 @@ public:
       return ( Direction_2(sega) < Direction_2(segb) );
     });
 
-    KSR::vector<KSR::size_t> common_planes_idx;
-    std::map<KSR::size_t, KSR::size_t> map_lines_idx;
-    KSR::vector<IVertex> vertices;
+    std::vector<std::size_t> common_planes_idx;
+    std::map<std::size_t, std::size_t> map_lines_idx;
+    std::vector<IVertex> vertices;
 
     const std::size_t n = intersections.size();
     vertices.reserve(n);
@@ -579,14 +579,14 @@ public:
       const auto& iedge0 = intersections[i].first;
       const auto& iedge1 = intersections[(i + 1) % n].first;
 
-      KSR::size_t common_plane_idx = KSR::no_element();
+      std::size_t common_plane_idx = KSR::no_element();
       std::set_intersection(
         m_intersection_graph.intersected_planes(iedge0).begin(),
         m_intersection_graph.intersected_planes(iedge0).end(),
         m_intersection_graph.intersected_planes(iedge1).begin(),
         m_intersection_graph.intersected_planes(iedge1).end(),
         boost::make_function_output_iterator(
-          [&](const KSR::size_t& idx) -> void {
+          [&](const std::size_t& idx) -> void {
             if (idx < 6) {
               CGAL_assertion(common_plane_idx == KSR::no_element());
               common_plane_idx = idx;
@@ -597,7 +597,7 @@ public:
       CGAL_assertion(common_plane_idx != KSR::no_element());
       common_planes_idx.push_back(common_plane_idx);
 
-      typename std::map<KSR::size_t, KSR::size_t>::iterator iter;
+      typename std::map<std::size_t, std::size_t>::iterator iter;
       const auto pair = map_lines_idx.insert(std::make_pair(common_plane_idx, KSR::no_element()));
       const bool is_inserted = pair.second;
       if (is_inserted) {
@@ -610,19 +610,19 @@ public:
 
     for (std::size_t i = 0; i < n; ++i) {
       const auto& iplanes = m_intersection_graph.intersected_planes(intersections[i].first);
-      for (const KSR::size_t sp_idx : iplanes) {
+      for (const std::size_t sp_idx : iplanes) {
         support_plane(sp_idx).iedges().erase(intersections[i].first);
       }
       const auto edges = m_intersection_graph.split_edge(
         intersections[i].first, vertices[i]);
 
       const auto& iplanes_1 = m_intersection_graph.intersected_planes(edges.first);
-      for (const KSR::size_t sp_idx : iplanes_1) {
+      for (const std::size_t sp_idx : iplanes_1) {
         support_plane(sp_idx).iedges().insert(edges.first);
       }
 
       const auto& iplanes_2 = m_intersection_graph.intersected_planes(edges.second);
-      for (const KSR::size_t sp_idx : iplanes_2) {
+      for (const std::size_t sp_idx : iplanes_2) {
         support_plane(sp_idx).iedges().insert(edges.second);
       }
 
@@ -639,7 +639,7 @@ public:
   template<typename PointRange>
   void add_bbox_polygon(const PointRange& polygon) {
 
-    const KSR::size_t support_plane_idx = add_support_plane(polygon);
+    const std::size_t support_plane_idx = add_support_plane(polygon);
 
     std::array<IVertex, 4> ivertices;
     std::array<Point_2, 4> points;
@@ -666,9 +666,9 @@ public:
 
   template<typename PointRange>
   void add_input_polygon(
-    const PointRange& polygon, const KSR::size_t input_index) {
+    const PointRange& polygon, const std::size_t input_index) {
 
-    const KSR::size_t support_plane_idx = add_support_plane(polygon);
+    const std::size_t support_plane_idx = add_support_plane(polygon);
     std::vector<Point_2> points;
     points.reserve(polygon.size());
     for (const auto& point : polygon) {
@@ -679,7 +679,7 @@ public:
       points.push_back(support_plane(support_plane_idx).to_2d(converted));
     }
     const auto centroid = sort_points_by_direction(points);
-    std::vector<KSR::size_t> input_indices;
+    std::vector<std::size_t> input_indices;
     input_indices.push_back(input_index);
     support_plane(support_plane_idx).
       add_input_polygon(points, centroid, input_indices);
@@ -713,14 +713,14 @@ public:
   }
 
   void add_input_polygon(
-    const KSR::size_t support_plane_idx,
-    const std::vector<KSR::size_t>& input_indices,
+    const std::size_t support_plane_idx,
+    const std::vector<std::size_t>& input_indices,
     std::vector<Point_2>& points) {
 
     const auto centroid = sort_points_by_direction(points);
     support_plane(support_plane_idx).
       add_input_polygon(points, centroid, input_indices);
-    for (const KSR::size_t input_index : input_indices) {
+    for (const std::size_t input_index : input_indices) {
       m_input_polygon_map[input_index] = support_plane_idx;
     }
   }
@@ -733,7 +733,7 @@ public:
   static PEdge   null_pedge()   { return   PEdge(KSR::no_element(),   Edge_index()); }
   static PFace   null_pface()   { return   PFace(KSR::no_element(),   Face_index()); }
 
-  const PVertices pvertices(const KSR::size_t support_plane_idx) const {
+  const PVertices pvertices(const std::size_t support_plane_idx) const {
     return PVertices(
       boost::make_transform_iterator(
         mesh(support_plane_idx).vertices().begin(),
@@ -743,7 +743,7 @@ public:
         Make_PSimplex<PVertex>(support_plane_idx)));
   }
 
-  const PEdges pedges(const KSR::size_t support_plane_idx) const {
+  const PEdges pedges(const std::size_t support_plane_idx) const {
     return PEdges(
       boost::make_transform_iterator(
         mesh(support_plane_idx).edges().begin(),
@@ -753,7 +753,7 @@ public:
         Make_PSimplex<PEdge>(support_plane_idx)));
   }
 
-  const PFaces pfaces(const KSR::size_t support_plane_idx) const {
+  const PFaces pfaces(const std::size_t support_plane_idx) const {
     return PFaces(
       boost::make_transform_iterator(
         mesh(support_plane_idx).faces().begin(),
@@ -833,7 +833,7 @@ public:
       PVertex(pvertex.first, mesh(pvertex).target(mesh(pvertex).next(he))));
   }
 
-  const PVertex add_pvertex(const KSR::size_t support_plane_idx, const Point_2& point) {
+  const PVertex add_pvertex(const std::size_t support_plane_idx, const Point_2& point) {
 
     CGAL_assertion(support_plane_idx != KSR::uninitialized());
     CGAL_assertion(support_plane_idx != KSR::no_element());
@@ -862,7 +862,7 @@ public:
     return PFace(support_plane_idx, fi);
   }
 
-  void clear_polygon_faces(const KSR::size_t support_plane_idx) {
+  void clear_polygon_faces(const std::size_t support_plane_idx) {
     Mesh& m = mesh(support_plane_idx);
     for (const auto& fi : m.faces()) {
       m.remove_face(fi);
@@ -1020,8 +1020,8 @@ public:
     }
   }
 
-  const std::vector<KSR::size_t>& input(const PFace& pface) const{ return support_plane(pface).input(pface.second); }
-  std::vector<KSR::size_t>& input(const PFace& pface) { return support_plane(pface).input(pface.second); }
+  const std::vector<std::size_t>& input(const PFace& pface) const{ return support_plane(pface).input(pface.second); }
+  std::vector<std::size_t>& input(const PFace& pface) { return support_plane(pface).input(pface.second); }
 
   const unsigned int& k(const PFace& pface) const { return support_plane(pface).k(pface.second); }
   unsigned int& k(const PFace& pface) { return support_plane(pface).k(pface.second); }
@@ -1070,13 +1070,13 @@ public:
   decltype(auto) ivertices() const { return m_intersection_graph.vertices(); }
   decltype(auto) iedges() const { return m_intersection_graph.edges(); }
 
-  const KSR::size_t nb_intersection_lines() const { return m_intersection_graph.nb_lines(); }
-  const KSR::size_t line_idx(const IEdge& iedge) const { return m_intersection_graph.line(iedge); }
-  const KSR::size_t line_idx(const PVertex& pvertex) const { return line_idx(iedge(pvertex)); }
+  const std::size_t nb_intersection_lines() const { return m_intersection_graph.nb_lines(); }
+  const std::size_t line_idx(const IEdge& iedge) const { return m_intersection_graph.line(iedge); }
+  const std::size_t line_idx(const PVertex& pvertex) const { return line_idx(iedge(pvertex)); }
 
-  const IVertex add_ivertex(const Point_3& point, const KSR::Idx_set& support_planes_idx) {
+  const IVertex add_ivertex(const Point_3& point, const std::set<std::size_t>& support_planes_idx) {
 
-    KSR::Idx_vector vec_planes;
+    std::vector<std::size_t> vec_planes;
     std::copy(
       support_planes_idx.begin(),
       support_planes_idx.end(),
@@ -1086,7 +1086,7 @@ public:
     return ivertex;
   }
 
-  void add_iedge(const KSR::Idx_set& support_planes_idx, KSR::vector<IVertex>& vertices) {
+  void add_iedge(const std::set<std::size_t>& support_planes_idx, std::vector<IVertex>& vertices) {
 
     const auto source = m_intersection_graph.point_3(vertices.front());
     std::sort(vertices.begin(), vertices.end(),
@@ -1099,8 +1099,8 @@ public:
       }
     );
 
-    KSR::size_t line_idx = m_intersection_graph.add_line();
-    for (KSR::size_t i = 0; i < vertices.size() - 1; ++i) {
+    std::size_t line_idx = m_intersection_graph.add_line();
+    for (std::size_t i = 0; i < vertices.size() - 1; ++i) {
 
       const auto pair = m_intersection_graph.add_edge(
         vertices[i], vertices[i + 1], support_planes_idx);
@@ -1131,18 +1131,18 @@ public:
     return m_intersection_graph.incident_edges(ivertex);
   }
 
-  const std::set<IEdge>& iedges(const KSR::size_t support_plane_idx) const {
+  const std::set<IEdge>& iedges(const std::size_t support_plane_idx) const {
     return support_plane(support_plane_idx).iedges();
   }
 
-  const KSR::Idx_set& intersected_planes(const IEdge& iedge) const {
+  const std::set<std::size_t>& intersected_planes(const IEdge& iedge) const {
     return m_intersection_graph.intersected_planes(iedge);
   }
 
-  const KSR::Idx_set intersected_planes(
+  const std::set<std::size_t> intersected_planes(
     const IVertex& ivertex, const bool keep_bbox = true) const {
 
-    KSR::Idx_set out;
+    std::set<std::size_t> out;
     for (const auto incident_iedge : incident_iedges(ivertex)) {
       for (const auto support_plane_idx : intersected_planes(incident_iedge)) {
         if (!keep_bbox && support_plane_idx < 6) {
@@ -1400,13 +1400,13 @@ public:
   **        CONVERSIONS         **
   ********************************/
 
-  const Point_2 to_2d(const KSR::size_t support_plane_idx, const IVertex& ivertex) const {
+  const Point_2 to_2d(const std::size_t support_plane_idx, const IVertex& ivertex) const {
     return support_plane(support_plane_idx).to_2d(point_3(ivertex));
   }
-  const Segment_2 to_2d(const KSR::size_t support_plane_idx, const Segment_3& segment_3) const {
+  const Segment_2 to_2d(const std::size_t support_plane_idx, const Segment_3& segment_3) const {
     return support_plane(support_plane_idx).to_2d(segment_3);
   }
-  const Point_2 to_2d(const KSR::size_t support_plane_idx, const Point_3& point_3) const {
+  const Point_2 to_2d(const std::size_t support_plane_idx, const Point_3& point_3) const {
     return support_plane(support_plane_idx).to_2d(point_3);
   }
 
@@ -1416,15 +1416,15 @@ public:
   const Point_2 point_2(const PVertex& pvertex) const {
     return point_2(pvertex, m_current_time);
   }
-  const Point_2 point_2(const KSR::size_t support_plane_idx, const IVertex& ivertex) const {
+  const Point_2 point_2(const std::size_t support_plane_idx, const IVertex& ivertex) const {
     return support_plane(support_plane_idx).to_2d(point_3(ivertex));
   }
 
-  const Segment_2 segment_2(const KSR::size_t support_plane_idx, const IEdge& iedge) const {
+  const Segment_2 segment_2(const std::size_t support_plane_idx, const IEdge& iedge) const {
     return support_plane(support_plane_idx).to_2d(segment_3(iedge));
   }
 
-  const Point_3 to_3d(const KSR::size_t support_plane_idx, const Point_2& point_2) const {
+  const Point_3 to_3d(const std::size_t support_plane_idx, const Point_2& point_2) const {
     return support_plane(support_plane_idx).to_3d(point_2);
   }
 
@@ -1567,7 +1567,7 @@ public:
 
     CGAL_assertion(query_iedge != null_iedge());
     // std::cout << str(query_iedge) << " " << segment_3(query_iedge) << std::endl;
-    KSR::size_t num_adjacent_faces = 0;
+    std::size_t num_adjacent_faces = 0;
     for (const auto plane_idx : intersected_planes(query_iedge)) {
       if (plane_idx == pvertex.first) continue; // current plane
       if (plane_idx < 6) return std::make_pair(true, true); // bbox plane
@@ -1919,7 +1919,7 @@ public:
     // std::cout << "ivertex: " << point_3(ivertex) << std::endl;
 
     CGAL_assertion(pvertices.size() >= 3);
-    const KSR::size_t support_plane_idx = pvertices.front().first;
+    const std::size_t support_plane_idx = pvertices.front().first;
     const PVertex prev = pvertices.front();
     const PVertex next = pvertices.back();
     const PVertex pvertex = pvertices[1];
@@ -2200,8 +2200,8 @@ public:
     const bool change_k = true) {
 
     // CGAL_assertion_msg(false, "TODO: IS LIMIT LINE!");
-    const KSR::size_t sp_idx_1 = pvertex.first;
-    KSR::size_t sp_idx_2 = KSR::no_element();
+    const std::size_t sp_idx_1 = pvertex.first;
+    std::size_t sp_idx_2 = KSR::no_element();
     const auto intersected_planes = this->intersected_planes(iedge);
     for (const auto plane_idx : intersected_planes) {
       if (plane_idx == sp_idx_1) continue; // current plane
@@ -2219,7 +2219,7 @@ public:
     CGAL_assertion(m_limit_lines.size() == nb_intersection_lines());
 
     bool is_limit_line = false;
-    const KSR::size_t line_idx = this->line_idx(iedge);
+    const std::size_t line_idx = this->line_idx(iedge);
     CGAL_assertion(line_idx != KSR::no_element());
     CGAL_assertion(line_idx < m_limit_lines.size());
 
@@ -2763,7 +2763,7 @@ public:
 
     // We use this modification in order to avoid collinear directions.
     CGAL_assertion(has_iedge(pvertex));
-    const KSR::size_t other_side_limit = line_idx(pvertex);
+    const std::size_t other_side_limit = line_idx(pvertex);
     const FT prev_time = last_event_time(prev);
     CGAL_assertion(prev_time < m_current_time);
     CGAL_assertion(prev_time >= FT(0));
@@ -3008,7 +3008,7 @@ public:
 
     // We use this modification in order to avoid collinear directions.
     CGAL_assertion(has_iedge(pvertex));
-    const KSR::size_t other_side_limit = line_idx(pvertex);
+    const std::size_t other_side_limit = line_idx(pvertex);
     const FT next_time = last_event_time(next);
     CGAL_assertion(next_time < m_current_time);
     CGAL_assertion(next_time >= FT(0));
@@ -3584,7 +3584,7 @@ public:
     const IEdge& iedge) const {
 
     std::set<PEdge> pedges;
-    const KSR::size_t support_plane_idx = pvertex.first;
+    const std::size_t support_plane_idx = pvertex.first;
     // std::cout << "query: " << segment_3(iedge) << " : " << str(iedge) << std::endl;
     for (const auto pedge : this->pedges(support_plane_idx)) {
       if (!has_iedge(pedge)) continue;
@@ -3904,7 +3904,7 @@ public:
 
     CDT cdt;
     std::map<CID, IEdge> map_intersections;
-    const KSR::size_t support_plane_idx = init_pface.first;
+    const std::size_t support_plane_idx = init_pface.first;
     initialize_cdt(support_plane_idx, cdt, map_intersections);
 
     if (debug) {
@@ -3962,7 +3962,7 @@ public:
   }
 
   void initialize_cdt(
-    const KSR::size_t sp_idx, CDT& cdt,
+    const std::size_t sp_idx, CDT& cdt,
     std::map<CID, IEdge>& map_intersections) const {
 
     // Create unique ivertices.
@@ -4008,7 +4008,7 @@ public:
   }
 
   void tag_cdt_exterior_faces(
-    const KSR::size_t sp_idx, const CDT& cdt,
+    const std::size_t sp_idx, const CDT& cdt,
     const std::map<CID, IEdge>& map_intersections) const {
 
     std::queue<Face_handle> todo;
@@ -4035,7 +4035,7 @@ public:
   }
 
   const bool is_border(
-    const KSR::size_t sp_idx, const CDT& cdt, const Edge& edge,
+    const std::size_t sp_idx, const CDT& cdt, const Edge& edge,
     const std::map<CID, IEdge>& map_intersections) const {
 
     if (!cdt.is_constrained(edge))
@@ -4063,7 +4063,7 @@ public:
   }
 
   const bool has_pedge(
-    const KSR::size_t sp_idx, const IEdge& iedge) const {
+    const std::size_t sp_idx, const IEdge& iedge) const {
 
     for (const auto pedge : this->pedges(sp_idx)) {
       if (this->iedge(pedge) == iedge) {
@@ -4073,9 +4073,9 @@ public:
     return false;
   }
 
-  const KSR::size_t tag_cdt_interior_faces(const CDT& cdt) const {
+  const std::size_t tag_cdt_interior_faces(const CDT& cdt) const {
 
-    KSR::size_t face_index = 0;
+    std::size_t face_index = 0;
     std::queue<Face_handle> todo;
     for (auto fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
       CGAL_assertion(todo.size() == 0);
@@ -4084,7 +4084,7 @@ public:
       }
 
       todo.push(fit);
-      KSR::size_t num_faces = 0;
+      std::size_t num_faces = 0;
       while (!todo.empty()) {
         const auto fh = todo.front();
         todo.pop();
@@ -4160,17 +4160,17 @@ public:
     return iedge;
   }
 
-  const KSR::size_t tag_cdt_potential_faces(
-    const KSR::size_t sp_idx,
+  const std::size_t tag_cdt_potential_faces(
+    const std::size_t sp_idx,
     const CDT& cdt,
     const Face_handle& init_fh,
-    const KSR::size_t num_faces) const {
+    const std::size_t num_faces) const {
 
     CGAL_assertion(init_fh != Face_handle());
     CGAL_assertion(init_fh->info().index == KSR::no_element());
     if (init_fh == Face_handle()) return 0;
 
-    KSR::size_t face_index = num_faces;
+    std::size_t face_index = num_faces;
     std::queue<Face_handle> todo_ext, todo_int;
 
     todo_ext.push(init_fh);
@@ -4215,7 +4215,7 @@ public:
   }
 
   const std::pair<bool, bool> is_crossing(
-    const KSR::size_t sp_idx, const CDT& cdt, const Edge& edge) const {
+    const std::size_t sp_idx, const CDT& cdt, const Edge& edge) const {
 
     const auto& init_fh = edge.first;
     const auto& init_id = edge.second;
@@ -4238,11 +4238,11 @@ public:
     return std::make_pair(true, false);
   }
 
-  const KSR::size_t insert_pfaces(
-    const KSR::size_t sp_idx, const CDT& cdt) {
+  const std::size_t insert_pfaces(
+    const std::size_t sp_idx, const CDT& cdt) {
 
-    std::set<KSR::size_t> done;
-    KSR::size_t num_created_pfaces = 0;
+    std::set<std::size_t> done;
+    std::size_t num_created_pfaces = 0;
 
     for (auto fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
       CGAL_assertion(fit->info().index != KSR::uninitialized());
@@ -4370,7 +4370,7 @@ public:
   }
 
   void dump_cdt(
-    const KSR::size_t sp_idx, const CDT& cdt, std::string file_name) {
+    const std::size_t sp_idx, const CDT& cdt, std::string file_name) {
 
     using Mesh_3 = CGAL::Surface_mesh<Point_3>;
     using VIdx   = typename Mesh_3::Vertex_index;
@@ -4416,7 +4416,7 @@ public:
 
   void check_bbox() {
 
-    for (KSR::size_t i = 0; i < 6; ++i) {
+    for (std::size_t i = 0; i < 6; ++i) {
       const auto pfaces = this->pfaces(i);
       for (const auto pface : pfaces) {
         for (const auto pedge : pedges_of_pface(pface)) {
@@ -4431,7 +4431,7 @@ public:
 
   void check_interior() {
 
-    for (KSR::size_t i = 6; i < number_of_support_planes(); ++i) {
+    for (std::size_t i = 6; i < number_of_support_planes(); ++i) {
       const auto pfaces = this->pfaces(i);
       for (const auto pface : pfaces) {
         for (const auto pedge : pedges_of_pface(pface)) {
@@ -4474,7 +4474,7 @@ public:
 
   void check_faces() {
 
-    for (KSR::size_t i = 0; i < number_of_support_planes(); ++i) {
+    for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
       const auto pfaces = this->pfaces(i);
       for (const auto pface : pfaces) {
         const auto nvolumes = incident_volumes(pface);
@@ -4490,7 +4490,7 @@ public:
     const bool check_simplicity,
     const bool check_convexity,
     const bool check_equal_faces,
-    const KSR::size_t support_plane_idx) const {
+    const std::size_t support_plane_idx) const {
 
     const bool is_valid = mesh(support_plane_idx).is_valid();
     if (!is_valid) {
@@ -4607,7 +4607,7 @@ public:
     const bool check_convexity   = false,
     const bool check_equal_faces = false) const {
 
-    for (KSR::size_t i = 0; i < number_of_support_planes(); ++i) {
+    for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
       if (!is_mesh_valid(check_simplicity, check_convexity, check_equal_faces, i)) {
         const std::string msg = "ERROR: MESH " + std::to_string(i) + " IS NOT VALID!";
         CGAL_assertion_msg(false, msg.c_str());
@@ -4711,7 +4711,7 @@ public:
   void create_polyhedra() {
 
     std::cout.precision(20);
-    // for (KSR::size_t i = 0; i < number_of_support_planes(); ++i)
+    // for (std::size_t i = 0; i < number_of_support_planes(); ++i)
     //   std::cout << "num pfaces sp " << i << ": " << pfaces(i).size() << std::endl;
 
     check_bbox();
@@ -4728,7 +4728,7 @@ public:
     m_volumes.clear();
     std::map<int, Point_3> centroids;
     m_map_volumes.clear();
-    for (KSR::size_t i = 0; i < number_of_support_planes(); ++i) {
+    for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
       const auto pfaces = this->pfaces(i);
       for (const auto pface : pfaces)
         m_map_volumes[pface] = std::make_pair(-1, -1);
@@ -4764,7 +4764,7 @@ public:
 
     // Then traverse all other volumes if any.
     std::vector<PFace> other_pfaces;
-    for (KSR::size_t i = 6; i < number_of_support_planes(); ++i) {
+    for (std::size_t i = 6; i < number_of_support_planes(); ++i) {
       const auto pfaces = this->pfaces(i);
       for (const auto pface : pfaces) {
         CGAL_assertion(pface.first >= 6);

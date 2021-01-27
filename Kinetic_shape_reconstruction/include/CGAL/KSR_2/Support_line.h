@@ -47,11 +47,11 @@ private:
 
   Point_2 m_origin;
   Vector_2 m_vector;
-  KSR::vector<KSR::size_t> m_segments_idx;
-  KSR::vector<KSR::size_t> m_meta_vertices_idx;
+  std::vector<std::size_t> m_segments_idx;
+  std::vector<std::size_t> m_meta_vertices_idx;
   FT m_minimum;
   FT m_maximum;
-  KSR::size_t m_connected_components;
+  std::size_t m_connected_components;
 
 public:
 
@@ -76,8 +76,8 @@ public:
   const FT& maximum() const { return m_maximum; }
   FT& maximum() { return m_maximum; }
 
-  const KSR::size_t& connected_components() const { return m_connected_components; }
-  KSR::size_t& connected_components() { return m_connected_components; }
+  const std::size_t& connected_components() const { return m_connected_components; }
+  std::size_t& connected_components() { return m_connected_components; }
 
   CGAL::Bbox_2 bbox() const
   {
@@ -91,11 +91,11 @@ public:
     return Segment_2 (to_2d (m_minimum), to_2d (m_maximum));
   }
 
-  const KSR::vector<KSR::size_t>& segments_idx() const { return m_segments_idx; }
-  KSR::vector<KSR::size_t>& segments_idx() { return m_segments_idx; }
+  const std::vector<std::size_t>& segments_idx() const { return m_segments_idx; }
+  std::vector<std::size_t>& segments_idx() { return m_segments_idx; }
 
-  const KSR::vector<KSR::size_t>& meta_vertices_idx() const { return m_meta_vertices_idx; }
-  KSR::vector<KSR::size_t>& meta_vertices_idx() { return m_meta_vertices_idx; }
+  const std::vector<std::size_t>& meta_vertices_idx() const { return m_meta_vertices_idx; }
+  std::vector<std::size_t>& meta_vertices_idx() { return m_meta_vertices_idx; }
 
   FT to_1d (const Point_2& point) const
   {
@@ -112,10 +112,10 @@ bool operator== (const Support_line<Kernel>& a, const Support_line<Kernel>& b)
   const typename Kernel::Vector_2& va = a.vector();
   const typename Kernel::Vector_2& vb = b.vector();
 
-  if (CGAL::abs(va * vb) < CGAL_KSR_SAME_VECTOR_TOLERANCE)
+  if (CGAL::abs(va * vb) < 0.99999)
     return false;
 
-  return (CGAL::approximate_sqrt(CGAL::squared_distance (b.origin(), a.line())) < CGAL_KSR_SAME_POINT_TOLERANCE);
+  return (CGAL::approximate_sqrt(CGAL::squared_distance (b.origin(), a.line())) < 1e-10);
 }
 
 

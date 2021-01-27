@@ -528,7 +528,7 @@ private:
   void assign_points_to_pfaces(std::map<PFace, Indices>& pface_points) const {
 
     pface_points.clear();
-    for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
+    for (std::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
       const auto pfaces = m_data.pfaces(i);
       for (const auto pface : pfaces) {
         pface_points[pface] = Indices();
@@ -540,7 +540,7 @@ private:
       const std::size_t shape_idx = item.first;
       const auto& indices = item.second;
 
-      const KSR::size_t support_plane_idx = static_cast<KSR::size_t>(
+      const std::size_t support_plane_idx = static_cast<std::size_t>(
         m_data.support_plane_index(shape_idx));
       CGAL_assertion(support_plane_idx >= 6);
       // dump_points(indices, "sp-points-" + std::to_string(support_plane_idx));

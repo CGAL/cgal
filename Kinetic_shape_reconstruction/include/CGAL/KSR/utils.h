@@ -1,4 +1,4 @@
-// Copyright (c) 2019 GeometryFactory SARL (France).
+// Copyright (c) 2020 GeometryFactory SARL (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -16,7 +16,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Simon Giraudot
+// Author(s)     : Dmitry Anisimov, Simon Giraudot
 
 #ifndef CGAL_KSR_UTILS_H
 #define CGAL_KSR_UTILS_H
@@ -29,6 +29,7 @@
 #include <array>
 #include <string>
 #include <sstream>
+#include <fstream>
 #include <vector>
 #include <deque>
 #include <queue>
@@ -43,85 +44,16 @@
 // Boost includes.
 #include <boost/function_output_iterator.hpp>
 
-// Line discretization.
-#define CGAL_KSR_SAME_VECTOR_TOLERANCE 0.99999
-#define CGAL_KSR_SAME_POINT_TOLERANCE 1e-10
-
 namespace CGAL {
 namespace KSR {
 
-// Size type.
-#ifdef CGAL_KSR_USE_STD_SIZE_T_AS_SIZE_TYPE
-using size_t = std::size_t;
-using std::vector;
-#else
-
-using size_t = boost::uint32_t;
-template<typename ValueType>
-class vector {
-
-public:
-  using value_type     = ValueType;
-  using Base           = std::vector<ValueType>;
-  using const_iterator = typename Base::const_iterator;
-  using iterator       = typename Base::iterator;
-
-private:
-  std::vector<ValueType> m_data;
-
-public:
-  vector(const KSR::size_t size = 0) :
-  m_data(size)
-  { }
-  vector(const KSR::size_t size, const ValueType& value) :
-  m_data(size, value)
-  { }
-
-  const_iterator begin() const { return m_data.begin(); }
-  const_iterator end() const { return m_data.end(); }
-  iterator begin() { return m_data.begin(); }
-  iterator end() { return m_data.end(); }
-
-  const KSR::size_t size() const { return static_cast<KSR::size_t>(m_data.size()); }
-  const bool empty() const { return m_data.empty(); }
-  void clear() { m_data.clear(); }
-
-  void reserve(const KSR::size_t size) { m_data.reserve(std::size_t(size)); }
-  void resize(const KSR::size_t size) { m_data.resize(std::size_t(size)); }
-
-  const ValueType& operator[](const KSR::size_t idx) const { return m_data[std::size_t(idx)]; }
-  ValueType& operator[](const KSR::size_t idx) { return m_data[std::size_t(idx)]; }
-
-  void erase(const iterator it) { m_data.erase(it); }
-  void insert(const iterator it, const ValueType& value) { m_data.insert(it, value); }
-
-  const ValueType& front() const { return m_data.front(); }
-  ValueType& front() { return m_data.front(); }
-  const ValueType& back() const { return m_data.back(); }
-  ValueType& back() { return m_data.back(); }
-
-  void push_back(const ValueType& value) { m_data.push_back(value); }
-  void swap(vector& other) { m_data.swap(other.m_data); }
-
-  const bool operator<(const vector& other) const {
-    return (this->m_data < other.m_data);
-  }
-};
-
-#endif
-
-using Idx_vector = vector<KSR::size_t>;
-using Idx_vector_iterator = typename Idx_vector::iterator;
-
-using Idx_set = std::set<KSR::size_t>;
-using Idx_set_iterator = typename Idx_set::iterator;
-
 // Use -1 as no element identifier.
-inline const KSR::size_t no_element() { return KSR::size_t(-1); }
+inline const std::size_t no_element() { return std::size_t(-1); }
 
 // Use -2 as special uninitialized identifier.
-inline const KSR::size_t uninitialized() { return KSR::size_t(-2); }
+inline const std::size_t uninitialized() { return std::size_t(-2); }
 
+// Convert point to string.
 template<typename Point_d>
 const std::string to_string(const Point_d& p) {
   std::ostringstream oss;
@@ -130,6 +62,7 @@ const std::string to_string(const Point_d& p) {
   return oss.str();
 }
 
+// Distance between two points.
 template<typename Point_d>
 decltype(auto) distance(const Point_d& p, const Point_d& q) {
   using Traits = typename Kernel_traits<Point_d>::Kernel;
@@ -138,6 +71,7 @@ decltype(auto) distance(const Point_d& p, const Point_d& q) {
   return static_cast<FT>(CGAL::sqrt(CGAL::to_double(sq_dist)));
 }
 
+// Project 3D point onto 2D plane.
 template<typename Point_3>
 typename Kernel_traits<Point_3>::Kernel::Point_2
 point_2_from_point_3(const Point_3& point_3) {
@@ -145,6 +79,7 @@ point_2_from_point_3(const Point_3& point_3) {
     point_3.x(), point_3.y());
 }
 
+// Tolerance.
 template<typename FT>
 static FT tolerance() {
   return FT(1) / FT(100000);
@@ -160,6 +95,7 @@ static FT vector_tolerance() {
   return FT(99999) / FT(100000);
 }
 
+// Normalize vector.
 template<typename Vector_d>
 inline const Vector_d normalize(const Vector_d& v) {
   using Traits = typename Kernel_traits<Vector_d>::Kernel;
@@ -169,6 +105,7 @@ inline const Vector_d normalize(const Vector_d& v) {
   return v / static_cast<FT>(CGAL::sqrt(CGAL::to_double(dot_product)));
 }
 
+// Intersections.
 template<typename Type1, typename Type2, typename ResultType>
 inline const bool intersection(
   const Type1& t1, const Type2& t2, ResultType& result) {
@@ -187,10 +124,11 @@ inline const ResultType intersection(const Type1& t1, const Type2& t2) {
 
   ResultType out;
   const bool is_intersection_found = intersection(t1, t2, out);
-  CGAL_assertion_msg(is_intersection_found, "ERROR: INTERSECTION IS NOT FOUND!");
+  CGAL_assertion(is_intersection_found);
   return out;
 }
 
+// Predicates.
 template<typename Segment_2>
 const bool are_parallel(
   const Segment_2& seg1, const Segment_2& seg2) {
@@ -204,19 +142,23 @@ const bool are_parallel(
   const FT d1 = (seg1.target().x() - seg1.source().x());
   const FT d2 = (seg2.target().x() - seg2.source().x());
 
-  if (CGAL::abs(d1) > tol)
+  if (CGAL::abs(d1) > tol) {
+    CGAL_assertion(d1 != FT(0));
     m1 = (seg1.target().y() - seg1.source().y()) / d1;
-  if (CGAL::abs(d2) > tol)
+  }
+  if (CGAL::abs(d2) > tol) {
+    CGAL_assertion(d2 != FT(0));
     m2 = (seg2.target().y() - seg2.source().y()) / d2;
+  }
 
   // return CGAL::parallel(seg1, seg2); // exact version
-
   if (CGAL::abs(m1 - m2) < tol) { // approximate version
     return true;
   }
   return false;
 }
 
+// Helpers.
 template<typename IVertex>
 class Indexer {
 public:
