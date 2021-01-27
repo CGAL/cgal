@@ -455,11 +455,7 @@ void Polyhedron_demo_offset_meshing_plugin::inflate_mesh()
     Point_3 p = get(vpm, v);
     EPICK::Vector_3 n = get(vnm, v);
     n/=(CGAL::sqrt(n.squared_length()));
-    put(vpm, v, Point_3(
-          p.x()+offset_value*n.x(),
-          p.y()+offset_value*n.y(),
-          p.z()+offset_value*n.z())
-        );
+    put(vpm, v, p + offset_value*n);
   }
   sm_item->invalidateOpenGLBuffers();
 }
