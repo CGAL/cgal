@@ -215,7 +215,7 @@ Because of its simplicity, an octree can be constructed faster than a kD-tree.
 %Orthtree nodes are uniform, so orthtrees will tend to have deeper hierarchies than equivalent kD-trees.
 As a result, orthtrees will generally perform worse for nearest neighbor searches.
 Both nearest neighbor algorithms have a theoretical complexity of O(log(n)),
-but the Orthtree can generally be expected to have a higher coefficient.
+but the orthtree can generally be expected to have a higher coefficient.
 
 \cgalFigureBegin{Orthtree_nearest_neighbor_benchmark_fig, nearest_neighbor_benchmark.png}
 %Plot of the time to find the 10 nearest neighbors of a random point using a pre-constructed tree.
@@ -224,6 +224,11 @@ but the Orthtree can generally be expected to have a higher coefficient.
 The performance difference between the two trees is large,
 but both algorithms compare very favorably to the linear complexity of the naive approach,
 which involves comparing every point to the search point.
+
+Using the orthtree for nearest neighbor computations instead of the
+kD-tree can be justified either when few queries are needed (as the
+construction is faster) or when the orthtree is also needed for other
+purposes.
 
 \cgalFigureBegin{Orthtree_nearest_neighbor_benchmark_with_naive_fig, nearest_neighbor_benchmark_with_naive.png}
 %Plot of the time to find nearest neighbors using tree methods and a naive approach.
