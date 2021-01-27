@@ -1505,10 +1505,9 @@ bool
 Scene_surface_mesh_item::save(std::ostream& out) const
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  out.precision(17);
-    out << *(d->smesh_);
-    QApplication::restoreOverrideCursor();
-    return (bool) out;
+  CGAL::write_OFF(out, *(d->smesh_), CGAL::parameters::stream_precision(17));
+  QApplication::restoreOverrideCursor();
+  return (bool) out;
 }
 
 bool
