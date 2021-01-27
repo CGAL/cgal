@@ -390,26 +390,79 @@ public:
       connect(actionOffsetMeshing, SIGNAL(triggered()),
               this, SLOT(offset_meshing()));
     }
+
+    actionInflateMesh= new QAction(tr("Inflate Mesh"), mw);
+    actionInflateMesh->setProperty("subMenuName", "Operations on Polyhedra");
+    if(actionInflateMesh) {
+      connect(actionInflateMesh, SIGNAL(triggered()),
+              this, SLOT(inflate_mesh()));
+    }
   }
 
-  bool applicable(QAction*) const {
+  bool applicable(QAction* a) const {
     Scene_item* item = scene->item(scene->mainSelectionIndex());
+
     return
-      qobject_cast<Scene_surface_mesh_item*>(item) ||
-      qobject_cast<Scene_polygon_soup_item*>(item);
+        qobject_cast<Scene_surface_mesh_item*>(item) ||
+        (a == actionOffsetMeshing && qobject_cast<Scene_polygon_soup_item*>(item));
   }
 
   QList<QAction*> actions() const {
-    return QList<QAction*>() << actionOffsetMeshing;
+    return QList<QAction*>() << actionOffsetMeshing
+                             << actionInflateMesh;
   }
 public Q_SLOTS:
   void offset_meshing();
+  void inflate_mesh();
 
 private:
   QAction* actionOffsetMeshing;
+  QAction* actionInflateMesh;
   Scene_interface *scene;
   QMainWindow *mw;
 }; // end class Polyhedron_demo_offset_meshing_plugin
+
+void Polyhedron_demo_offset_meshing_plugin::inflate_mesh()
+{
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_item* item = scene->item(index);
+  Scene_surface_mesh_item* sm_item =
+      qobject_cast<Scene_surface_mesh_item*>(item);
+
+  SMesh* sMesh = sm_item->face_graph();
+  if(!sMesh)
+    return;
+  Scene_item::Bbox box = bbox(sMesh);
+
+  double X=(box.max)(0)-(box.min)(0),
+      Y = (box.max)(1)-(box.min)(1),
+      Z = (box.max)(2)-(box.min)(2);
+  double diag = 0;
+  diag = CGAL::sqrt(X*X+Y*Y+Z*Z);
+  double offset_value = QInputDialog::getDouble(mw,
+                                                QString("Choose Inflate Value"),
+                                                QString("Offset Value (use negative number for deflate)"),
+                                                0.1*diag,
+                                                -(std::numeric_limits<double>::max)(),
+                                                (std::numeric_limits<double>::max)(), 10);
+  SMesh* smesh = sm_item->face_graph();
+  for(const auto& v : vertices(*smesh))
+  {
+    auto vpm = get(CGAL::vertex_point,*smesh);
+    SMesh::Property_map<vertex_descriptor, EPICK::Vector_3 > vnm =
+        smesh->property_map<vertex_descriptor, EPICK::Vector_3 >("v:normal").first;
+
+    Point_3 p = get(vpm, v);
+    EPICK::Vector_3 n = get(vnm, v);
+    n/=(CGAL::sqrt(n.squared_length()));
+    put(vpm, v, Point_3(
+          p.x()+offset_value*n.x(),
+          p.y()+offset_value*n.y(),
+          p.z()+offset_value*n.z())
+        );
+  }
+  sm_item->invalidateOpenGLBuffers();
+}
 
 void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
 {
