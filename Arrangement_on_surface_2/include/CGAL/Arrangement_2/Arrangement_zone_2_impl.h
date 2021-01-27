@@ -1513,7 +1513,7 @@ bool Arrangement_zone_2<Arrangement, ZoneVisitor>::_zone_in_overlap()
     // In this case m_overlap_cv has a finite right endpoint. In this case,
     // if the right vertex of m_intersect_he is associated with a finite point,
     // we check whether it is equal to cv_right_pt. Otherwise, we know that
-    // m_intersect_he extends to the the right of m_overlap_cv, and there is no
+    // m_intersect_he extends to the right of m_overlap_cv, and there is no
     // vertex currently associated with m_overlap_cv's right endpoint.
     if (! he_right_v->is_at_open_boundary() &&
         equal(cv_right_pt, he_right_v->point()))

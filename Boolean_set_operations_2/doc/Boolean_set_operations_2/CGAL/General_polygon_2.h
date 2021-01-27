@@ -84,8 +84,7 @@ Orientation orientation();
 /*!
 This operator imports a general polygon from the input stream `in`.
 
-An ASCII and a binary format exist. The stream detects the format
-automatically and can read both.
+Both ASCII and binary formats are supported, and the format is automatically detected.
 
 The format consists of the number of points of the outer boundary followed
 by the points themselves in counterclockwise order, followed by the number of holes,

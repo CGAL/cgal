@@ -137,11 +137,13 @@ public:
 
   Self_ptr child_l() const { return mChildL ; }
   Self_ptr child_r() const { return mChildR ; }
+  Self_ptr child_t() const { return mChildT ; }
 
   void set_child_l( Self_ptr const& aChild ) { mChildL = aChild ; }
   void set_child_r( Self_ptr const& aChild ) { mChildR = aChild ; }
+  void set_child_t( Self_ptr const& aChild ) { mChildT = aChild ; }
 
-  enum SEED_ID { LEFT, RIGHT, UNKNOWN } ;
+  enum SEED_ID { LEFT, RIGHT, THIRD } ;
 
   // Indicates which of the seeds is collinear for a normal collinearity case.
   // PRECONDITION: The collinearity is normal.
@@ -149,7 +151,7 @@ public:
   {
     Trisegment_collinearity c = collinearity();
 
-    return c == TRISEGMENT_COLLINEARITY_01 ? LEFT : c == TRISEGMENT_COLLINEARITY_12 ? RIGHT : UNKNOWN  ;
+    return c == TRISEGMENT_COLLINEARITY_01 ? LEFT : c == TRISEGMENT_COLLINEARITY_12 ? RIGHT : THIRD  ;
   }
 
   friend std::ostream& operator << ( std::ostream& os, Self const& aTrisegment )
@@ -198,6 +200,11 @@ private :
 
   Self_ptr mChildL ;
   Self_ptr mChildR ;
+
+  // this is the potential child of e2-e0, if it exists. It is used only in the configuration
+  // of e0 and e2 collinear as the common child gives where the bisector starts (as it is not
+  // necessarily the middle of the gap between e2 and e0).
+  Self_ptr mChildT ;
 } ;
 
 } // end namespace CGAL

@@ -899,6 +899,35 @@ private :
                                     : LARGER  ;
   }
 
+  Comparison_result CompareEvents( Vertex_handle aLNode, Vertex_handle aRNode ) const
+  {
+    if ( aLNode->is_skeleton() )
+    {
+      if ( aRNode->is_skeleton() )
+      {
+        if ( aLNode->has_infinite_time() && aRNode->has_infinite_time() )
+          return EQUAL ;
+        else if ( aLNode->has_infinite_time() )
+          return LARGER ;
+        else if ( aRNode->has_infinite_time() )
+          return SMALLER ;
+        else
+          return CompareEvents ( GetTrisegment(aLNode), GetTrisegment(aRNode) ) ;
+      }
+      else // left skeleton, right not skeleton
+      {
+        return LARGER ;
+      }
+    }
+    else // left not skeleton
+    {
+      if ( aRNode->is_skeleton() )
+        return SMALLER ;
+      else // both not skeleton
+        return EQUAL ;
+    }
+  }
+
   bool AreEventsSimultaneous( Trisegment_2_ptr const& x, Trisegment_2_ptr const& y ) const
   {
     return Are_ss_events_simultaneous_2(mTraits)(x,y) ;
@@ -1061,6 +1090,12 @@ private :
   void CreateContourBisectors();
   void HarmonizeSpeeds(boost::mpl::bool_<false>) { }
   void HarmonizeSpeeds(boost::mpl::bool_<true>);
+
+  // @fixme This function can create an inconsistency between the skeleton and the offset
+  // when caching is used: this function will harmonize values in the cache used by the skeleton
+  // builder, but not the values in the cache used in the offset builder (actually, no_cache is used
+  // for the offset builder, at the moment). It is difficult to harmonize between caches as one might
+  // wish to build the skeleton and the offset in completely different moments and independent functions...
   void HarmonizeSpeeds() {
     // Harmonize speed only if we have a segment type with id and a not exact square root
     return HarmonizeSpeeds(

@@ -44,13 +44,16 @@ template <class TriangleMesh,
 class Intersection_nodes<TriangleMesh, VertexPointMap1, VertexPointMap2, false, false>
 {
 //typedefs
+public:
+  typedef CGAL::Exact_predicates_exact_constructions_kernel        Exact_kernel;
+private:
+//typedefs
   typedef typename boost::property_traits<VertexPointMap1>::value_type  Point_3;
   CGAL_static_assertion((std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
                                       typename boost::property_traits<VertexPointMap2>::value_type>::value));
 
   typedef typename Kernel_traits<Point_3>::Kernel                  Input_kernel;
   typedef std::vector <Point_3>                                    Nodes_vector;
-  typedef CGAL::Exact_predicates_exact_constructions_kernel        Exact_kernel;
   typedef CGAL::Cartesian_converter<Exact_kernel,Input_kernel>  Exact_to_double;
   typedef boost::graph_traits<TriangleMesh>                                  GT;
   typedef typename GT::halfedge_descriptor                  halfedge_descriptor;

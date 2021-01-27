@@ -9,7 +9,7 @@ find_package(CGAL REQUIRED COMPONENTS Core)
 include(${CGAL_USE_FILE})
 
 find_package(Eigen3 3.1.91) #(requires 3.2.0 or greater)
-include(CGAL_Eigen_support)
+include(CGAL_Eigen3_support)
 
 include_directories(BEFORE "include")
 
@@ -44,5 +44,5 @@ foreach(
   nn3nanoflan
   sizeof
   deque)
-  target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
+  target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
 endforeach()
