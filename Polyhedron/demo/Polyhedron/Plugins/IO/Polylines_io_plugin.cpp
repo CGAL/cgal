@@ -169,7 +169,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
     std::string line_remainder;
     std::getline(ifs, line_remainder);
     QString metadata(line_remainder.c_str());
-    if(metadata[0].isSpace()) {
+    if(!metadata.isEmpty() && metadata[0].isSpace()) {
       metadata.remove(0, 1);
     }
     polylines_metadata << metadata;
