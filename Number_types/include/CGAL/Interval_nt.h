@@ -1594,6 +1594,16 @@ namespace Eigen {
     };
   };
 
+  template<class A, class B, class C>struct ScalarBinaryOpTraits;
+  template<bool b, typename BinaryOp>
+    struct ScalarBinaryOpTraits<CGAL::Interval_nt<b>, double, BinaryOp> {
+      typedef CGAL::Interval_nt<b> ReturnType;
+    };
+  template<bool b, typename BinaryOp>
+    struct ScalarBinaryOpTraits<double, CGAL::Interval_nt<b>, BinaryOp> {
+      typedef CGAL::Interval_nt<b> ReturnType;
+    };
+
   namespace internal {
     template<class> struct significant_decimals_impl;
     template<bool b>
