@@ -231,7 +231,7 @@ bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, pa
     \cgalParamNBegin{stream_precision}
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
        \cgalParamType{int}
-       \cgalParamDefault{`6`}
+       \cgalParamDefault{`the precision of the given stream`}
        \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
     \cgalParamNEnd
   \cgalNamedParamsEnd
@@ -262,8 +262,12 @@ bool write_STL(std::ostream& os,
   if(!os.good())
     return false;
 
-  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-  os.precision(precision);
+  if(!parameters::is_default_parameter(
+       parameters::get_parameter(np, internal_np::stream_precision)))
+  {
+    const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
+    os.precision(precision);
+  }
 
   if(get_mode(os) == IO::BINARY)
   {
@@ -372,6 +376,9 @@ bool write_STL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS
   {
     std::ofstream os(fname);
     CGAL::set_mode(os, CGAL::IO::ASCII);
+    if(parameters::is_default_parameter(
+         parameters::get_parameter(np, internal_np::stream_precision)))
+      os.precision(6);
     return write_STL(os, g, np);
   }
 }

@@ -420,7 +420,7 @@ void write_polys_points(std::ostream& os,
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
- *     \cgalParamDefault{`6`}
+ *     \cgalParamDefault{`the precision of the given stream`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -439,8 +439,12 @@ bool write_VTP(std::ostream& os,
   if(!os.good())
     return false;
 
-  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-  os.precision(precision);
+  if(!parameters::is_default_parameter(
+       parameters::get_parameter(np, internal_np::stream_precision)))
+  {
+    const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
+    os.precision(precision);
+  }
 
   os << "<?xml version=\"1.0\"?>\n"
      << "<VTKFile type=\"PolyData\" version=\"0.1\"";
@@ -537,8 +541,12 @@ bool write_VTP(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS
     os.open(fname, std::ios::binary);
     CGAL::set_mode(os, CGAL::IO::BINARY);
   }
-  else
+  else{
+    if(parameters::is_default_parameter(
+         parameters::get_parameter(np, internal_np::stream_precision)))
+      os.precision(6);
     os.open(fname);
+  }
   return write_VTP(os, g, np);
 }
 

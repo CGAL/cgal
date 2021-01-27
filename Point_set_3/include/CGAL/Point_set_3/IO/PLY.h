@@ -456,7 +456,7 @@ CGAL_DEPRECATED bool read_ply_point_set(std::istream& is, ///< input stream.
    \cgalParamNBegin{stream_precision}
      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
      \cgalParamType{int}
-     \cgalParamDefault{`6`}
+     \cgalParamDefault{`the precision of the given stream`}
      \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
    \cgalParamNEnd
   \cgalNamedParamsEnd
@@ -493,8 +493,12 @@ bool write_PLY(std::ostream& os,
     return false;
   }
 
-  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-  os.precision(precision);
+  if(!parameters::is_default_parameter(
+       parameters::get_parameter(np, internal_np::stream_precision)))
+  {
+    const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
+    os.precision(precision);
+  }
 
   os << "ply" << std::endl
      << ((get_mode(os) == IO::BINARY) ? "format binary_little_endian 1.0" : "format ascii 1.0") << std::endl
@@ -756,6 +760,9 @@ bool write_PLY(const std::string& fname,
   {
     std::ofstream os(fname);
     CGAL::set_mode(os, CGAL::IO::ASCII);
+    if(parameters::is_default_parameter(
+         parameters::get_parameter(np, internal_np::stream_precision)))
+      os.precision(6);
     return write_PLY(os, point_set, comments, np);
   }
 }

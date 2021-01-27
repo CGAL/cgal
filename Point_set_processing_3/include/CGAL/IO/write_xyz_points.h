@@ -67,8 +67,12 @@ bool write_XYZ_PSP(std::ostream& os,
     return false;
   }
 
-  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-  os.precision(precision);
+  if(!parameters::is_default_parameter(
+       parameters::get_parameter(np, internal_np::stream_precision)))
+  {
+    const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
+    os.precision(precision);
+  }
 
   // Write positions + normals
   for(typename PointRange::const_iterator it = points.begin(); it != points.end(); it++)
@@ -122,7 +126,7 @@ bool write_XYZ_PSP(std::ostream& os,
      \cgalParamNBegin{stream_precision}
        \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
        \cgalParamType{int}
-       \cgalParamDefault{`6`}
+       \cgalParamDefault{`the precision of the given stream`}
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
@@ -202,6 +206,10 @@ bool write_XYZ(const std::string& filename,
                )
 {
   std::ofstream os(filename);
+  if(parameters::is_default_parameter(
+       parameters::get_parameter(np, internal_np::stream_precision)))
+    os.precision(6);
+
   return write_XYZ(os, points, np);
 }
 
