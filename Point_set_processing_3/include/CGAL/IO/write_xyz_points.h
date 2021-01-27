@@ -206,9 +206,6 @@ bool write_XYZ(const std::string& filename,
                )
 {
   std::ofstream os(filename);
-  if(parameters::is_default_parameter(
-       parameters::get_parameter(np, internal_np::stream_precision)))
-    os.precision(6);
 
   return write_XYZ(os, points, np);
 }

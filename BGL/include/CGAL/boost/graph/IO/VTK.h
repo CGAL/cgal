@@ -541,12 +541,9 @@ bool write_VTP(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS
     os.open(fname, std::ios::binary);
     CGAL::set_mode(os, CGAL::IO::BINARY);
   }
-  else{
-    if(parameters::is_default_parameter(
-         parameters::get_parameter(np, internal_np::stream_precision)))
-      os.precision(6);
+  else
     os.open(fname);
-  }
+
   return write_VTP(os, g, np);
 }
 

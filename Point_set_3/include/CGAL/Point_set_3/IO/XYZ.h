@@ -190,9 +190,6 @@ template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMET
 bool write_XYZ(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
 {
   std::ofstream os(fname);
-  if(parameters::is_default_parameter(
-       parameters::get_parameter(np, internal_np::stream_precision)))
-    os.precision(6);
   return write_XYZ(os, point_set, np);
 }
 

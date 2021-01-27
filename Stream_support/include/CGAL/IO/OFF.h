@@ -367,9 +367,6 @@ bool write_OFF(const std::string& fname,
                )
 {
   std::ofstream os(fname);
-  if(parameters::is_default_parameter(
-       parameters::get_parameter(np, internal_np::stream_precision)))
-    os.precision(6);
 
   Generic_writer<std::ostream, File_writer_OFF> writer(os);
   return writer(points, polygons, np);

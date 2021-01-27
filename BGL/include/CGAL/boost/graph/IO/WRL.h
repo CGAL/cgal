@@ -110,9 +110,6 @@ template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_WRL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
   std::ofstream os(fname);
-  if(parameters::is_default_parameter(
-       parameters::get_parameter(np, internal_np::stream_precision)))
-    os.precision(6);
   return write_WRL(os, g, np);
 }
 

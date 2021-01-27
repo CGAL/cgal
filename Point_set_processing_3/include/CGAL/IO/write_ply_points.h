@@ -308,9 +308,6 @@ bool write_PLY(const std::string& filename,
   {
     std::ofstream os(filename);
     CGAL::set_mode(os, CGAL::IO::ASCII);
-    if(parameters::is_default_parameter(
-         parameters::get_parameter(np, internal_np::stream_precision)))
-      os.precision(6);
     return write_PLY(os, points, np);
   }
 }

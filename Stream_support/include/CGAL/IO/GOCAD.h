@@ -434,9 +434,6 @@ bool write_GOCAD(const std::string& fname,
 {
   std::ofstream os(fname);
   CGAL::set_mode(os, CGAL::IO::ASCII);
-  if(parameters::is_default_parameter(
-       parameters::get_parameter(np, internal_np::stream_precision)))
-    os.precision(6);
   return IO::internal::write_GOCAD(os, fname.c_str(), points, polygons, np);
 }
 
