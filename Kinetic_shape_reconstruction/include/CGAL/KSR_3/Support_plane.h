@@ -506,6 +506,9 @@ public:
 
   const bool is_original(const Vertex_index& vi) const { return m_data->v_original_map[vi]; }
 
+  const unsigned int& k() const { return m_data->k; }
+  unsigned int& k() { return m_data->k; }
+
   const unsigned int& k(const Face_index& fi) const {
     return m_data->k;
     // return m_data->k_map[fi];

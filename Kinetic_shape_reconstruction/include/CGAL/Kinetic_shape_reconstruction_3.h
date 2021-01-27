@@ -920,9 +920,12 @@ private:
     const Point_2& inter) {
 
     const bool is_event_found = false;
-    return is_event_found;
+
+
+
     CGAL_assertion_msg(false,
     "TODO: ADD PVERTEX TO IVERTEX UNCONSTRAINED EVENT!");
+    return is_event_found;
   }
 
   const std::size_t run(
@@ -1017,15 +1020,7 @@ private:
     }
   }
 
-  void apply_event_two_constrained_pvertices_meet(
-    const PVertex& /* pvertex */,
-    const PVertex& /* pother  */,
-    const Event&   /* event   */) {
-
-    CGAL_assertion_msg(false,
-    "TODO: IMPLEMENT TWO CONSTRAINED PVERTICES MEET EVENT!");
-  }
-
+  // INVALID EVENTS!
   void apply_event_two_unconstrained_pvertices_meet(
     const PVertex& /* pvertex */,
     const PVertex& /* pother  */,
@@ -1035,55 +1030,55 @@ private:
     "ERROR: TWO UNCONSTRAINED PVERTICES MEET! DO WE HAVE A CONCAVE POLYGON?");
   }
 
-  void apply_event_constrained_pvertex_meets_free_pvertex(
-    const PVertex& pvertex,
-    const PVertex& pother,
-    const Event& event) {
+  void apply_event_two_constrained_pvertices_meet(
+    const PVertex& /* pvertex */,
+    const PVertex& /* pother  */,
+    const Event&   /* event   */) {
 
-    CGAL_assertion(m_data.has_iedge(pvertex));
-    if (m_data.transfer_pvertex_via_iedge(pvertex, pother)) {
-
-      if (m_data.has_iedge(pvertex)) {
-        remove_events(m_data.iedge(pvertex), pvertex.first);
-      }
-      if (m_data.has_iedge(pother)) {
-        remove_events(m_data.iedge(pother) , pother.first);
-      }
-      compute_events_of_pvertices(
-        event.time(), std::array<PVertex, 2>{pvertex, pother});
-
-      PVertex prev, next;
-      std::tie(prev, next) = m_data.border_prev_and_next(pvertex);
-      PVertex pthird = prev;
-      if (pthird == pother) {
-        pthird = next;
-      } else {
-        CGAL_assertion(next == pother);
-      }
-
-      if (m_data.has_iedge(pthird)) {
-        remove_events(m_data.iedge(pthird), pthird.first);
-      }
-      compute_events_of_pvertices(
-        event.time(), std::array<PVertex, 1>{pthird});
-
-    } else {
-
-      if (m_data.has_iedge(pvertex)) {
-        remove_events(m_data.iedge(pvertex), pvertex.first);
-      }
-      compute_events_of_pvertices(
-        event.time(), std::array<PVertex, 1>{pvertex});
-    }
+    CGAL_assertion_msg(false,
+    "ERROR: TWO CONSTRAINED PVERTICES MEET! CAN IT HAPPEN?");
   }
 
   void apply_event_constrained_pvertex_meets_iedge(
     const PVertex& /* pvertex */,
-    const IEdge& /* iedge */,
-    const Event& /* event */) {
+    const IEdge&   /* iedge   */,
+    const Event&   /* event   */) {
 
     CGAL_assertion_msg(false,
     "ERROR: CONSTRAINED PVERTEX MEETS IEDGE! WHAT IS WRONG?");
+  }
+
+  // VALID EVENTS!
+  void apply_event_unconstrained_pvertex_meets_ivertex(
+    const PVertex& /* pvertex */, const IVertex& /* ivertex */, const Event& /* event */) {
+
+    CGAL_assertion_msg(false,
+    "TODO: UNCONSTRAINED PVERTEX MEETS IVERTEX!");
+  }
+
+  void apply_event_unconstrained_pvertex_meets_iedge(
+    const PVertex& pvertex, const IEdge& iedge, const Event& event) {
+
+    CGAL_assertion(!m_data.has_iedge(pvertex));
+    CGAL_assertion( m_data.has_one_pface(pvertex));
+
+    remove_events(pvertex);
+    const bool stop = check_stop_condition(pvertex, iedge);
+
+    if (stop) { // polygon stops
+      const PVertex pother =
+        m_data.crop_pvertex_along_iedge(pvertex, iedge);
+      const std::array<PVertex, 2> pvertices = {pvertex, pother};
+      remove_events(iedge, pvertex.first);
+      compute_events_of_pvertices(event.time(), pvertices);
+    } else { // polygon continues beyond the iedge
+      const std::array<PVertex, 3> pvertices =
+        m_data.propagate_pvertex_beyond_iedge(pvertex, iedge);
+      remove_events(iedge, pvertex.first);
+      compute_events_of_pvertices(event.time(), pvertices);
+    }
+    CGAL_assertion(m_data.has_iedge(pvertex));
+    CGAL_assertion_msg(false, "TODO: UNCONSTRAINED PVERTEX MEETS IEDGE!");
   }
 
   const bool apply_event_unconstrained_pedge_meets_iedge(
@@ -1143,11 +1138,231 @@ private:
         CGAL_assertion(m_data.has_iedge(pother));
         CGAL_assertion(m_data.iedge(pvertex) == m_data.iedge(pother));
         is_event_happend = true;
+        CGAL_assertion_msg(false, "TODO: PEDGE MEETS IEDGE!");
         break;
       }
     }
-    // CGAL_assertion_msg(false, "TODO: PEDGE MEETS IEDGE!");
     return is_event_happend;
+  }
+
+  void apply_event_constrained_pvertex_meets_ivertex(
+    const PVertex& pvertex,
+    const IVertex& ivertex,
+    const Event& event) {
+
+    // First, let's gather all pvertices that will get merged.
+    const std::vector<PVertex> crossed_pvertices =
+      m_data.pvertices_around_ivertex(pvertex, ivertex);
+
+    if (m_debug) {
+      std::cout << "- found " << crossed_pvertices.size() <<
+      " pvertices ready to be merged: " << std::endl;
+      for (const auto& crossed_pvertex : crossed_pvertices) {
+        std::cout << m_data.point_3(crossed_pvertex) << std::endl;
+      }
+    }
+
+    // Remove associated events.
+    for (std::size_t i = 1; i < crossed_pvertices.size() - 1; ++i) {
+      remove_events(crossed_pvertices[i]);
+    }
+
+    // Merge them and get the newly created pvertices.
+    CGAL_assertion(!m_data.has_ivertex(pvertex));
+    std::vector<IEdge> crossed_iedges;
+    const std::vector<PVertex> new_pvertices =
+      m_data.merge_pvertices_on_ivertex(
+        m_min_time, m_max_time, pvertex, ivertex, crossed_pvertices, crossed_iedges);
+
+    // Remove all events of the crossed iedges.
+    for (const auto& crossed_iedge : crossed_iedges) {
+      remove_events(crossed_iedge, pvertex.first);
+    }
+
+    // And compute new events.
+    CGAL_assertion(new_pvertices.size() > 0);
+    compute_events_of_pvertices(event.time(), new_pvertices);
+    CGAL_assertion_msg(false, "TODO: CONSTRAINED PVERTEX MEETS IVERTEX!");
+  }
+
+  void apply_event_constrained_pvertex_meets_free_pvertex(
+    const PVertex& pvertex,
+    const PVertex& pother,
+    const Event& event) {
+
+    CGAL_assertion(m_data.has_iedge(pvertex));
+    if (m_data.transfer_pvertex_via_iedge(pvertex, pother)) {
+
+      if (m_data.has_iedge(pvertex)) {
+        remove_events(m_data.iedge(pvertex), pvertex.first);
+      }
+      if (m_data.has_iedge(pother)) {
+        remove_events(m_data.iedge(pother) , pother.first);
+      }
+      compute_events_of_pvertices(
+        event.time(), std::array<PVertex, 2>{pvertex, pother});
+
+      PVertex prev, next;
+      std::tie(prev, next) = m_data.border_prev_and_next(pvertex);
+      PVertex pthird = prev;
+      if (pthird == pother) {
+        pthird = next;
+      } else {
+        CGAL_assertion(next == pother);
+      }
+
+      if (m_data.has_iedge(pthird)) {
+        remove_events(m_data.iedge(pthird), pthird.first);
+      }
+      compute_events_of_pvertices(
+        event.time(), std::array<PVertex, 1>{pthird});
+
+    } else {
+
+      if (m_data.has_iedge(pvertex)) {
+        remove_events(m_data.iedge(pvertex), pvertex.first);
+      }
+      compute_events_of_pvertices(
+        event.time(), std::array<PVertex, 1>{pvertex});
+    }
+    CGAL_assertion_msg(false, "TODO: CONSTRAINED PVERTEX MEETS FREE PVERTEX!");
+  }
+
+  // STOP CONDITIONS!
+  const bool check_stop_condition(
+    const PVertex& pvertex, const IEdge& iedge) {
+    return check_pvertex_meets_iedge_global(pvertex, iedge);
+  }
+
+  // GLOBAL STOP CONDITIONS!
+  const bool check_pvertex_meets_iedge_global(
+    const PVertex& pvertex, const IEdge& iedge) {
+
+    bool is_occupied_iedge, is_bbox_reached;
+    std::tie(is_occupied_iedge, is_bbox_reached) = m_data.collision_occured(pvertex, iedge);
+    const bool is_limit_line = m_data.is_limit_line(pvertex, iedge, is_occupied_iedge);
+
+    if (m_debug) {
+      std::cout << "- bbox: " << is_bbox_reached  << "; " <<
+      " limit: "    << is_limit_line << "; " <<
+      " occupied: " << is_occupied_iedge << std::endl;
+      std::cout << "- k intersections before: " << m_data.k(pvertex.first) << std::endl;
+    }
+
+    bool stop = false;
+    if (is_bbox_reached) {
+      if (m_debug) std::cout << "- bbox, stop" << std::endl;
+      stop = true;
+    } else if (is_limit_line) {
+      if (m_debug) std::cout << "- limit, stop" << std::endl;
+      stop = true;
+    } else {
+      if (m_debug) std::cout << "- free, any k, continue" << std::endl;
+      stop = false;
+    }
+    CGAL_assertion(m_data.k(pvertex.first) >= 1);
+    if (m_debug) {
+      std::cout << "- k intersections after: " << m_data.k(pvertex.first) << std::endl;
+    }
+    return stop;
+  }
+
+  const bool check_pedge_meets_iedge_global(
+    const PVertex& pvertex, const PVertex& pother,
+    const IEdge& iedge, const PFace& pface) {
+
+    bool is_occupied_iedge_1, is_bbox_reached_1;
+    std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.collision_occured(pvertex, iedge);
+    // std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.is_occupied(pvertex, iedge);
+
+    bool is_occupied_iedge_2, is_bbox_reached_2;
+    std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.collision_occured(pother, iedge);
+    // std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.is_occupied(pother, iedge);
+
+    const bool is_limit_line_1 = m_data.is_limit_line(pvertex, iedge, is_occupied_iedge_1, true);
+    const bool is_limit_line_2 = m_data.is_limit_line(pother , iedge, is_occupied_iedge_2, false);
+
+    if (m_debug) {
+      std::cout << "- bbox1/bbox2: "           << is_bbox_reached_1   << "/" << is_bbox_reached_1   << std::endl;
+      std::cout << "- limit1/limit2: "         << is_limit_line_1     << "/" << is_limit_line_2     << std::endl;
+      std::cout << "- occupied1/occupied1: "   << is_occupied_iedge_1 << "/" << is_occupied_iedge_2 << std::endl;
+      std::cout << "- k intersections befor: " << m_data.k(pface) << std::endl;
+    }
+    CGAL_assertion(is_bbox_reached_1 == is_bbox_reached_2);
+    CGAL_assertion(is_limit_line_1 == is_limit_line_2);
+
+    bool stop = false;
+    if (is_bbox_reached_1 || is_bbox_reached_2) {
+
+      if (m_debug) std::cout << "- bbox, stop" << std::endl;
+      stop = true;
+      // CGAL_assertion_msg(false, "TODO: BBOX, STOP!");
+
+    } else if (is_limit_line_1 || is_limit_line_2) {
+
+      if (m_debug) std::cout << "- limit, stop" << std::endl;
+      stop = true;
+      // CGAL_assertion_msg(false, "TODO: LIMIT, STOP!");
+
+    } else {
+
+      if (m_debug) std::cout << "- free, any k, continue" << std::endl;
+      if (
+        m_data.is_occupied(pvertex, iedge).first ||
+        m_data.is_occupied(pother , iedge).first) {
+
+        CGAL_assertion_msg(false,
+        "ERROR: TWO PVERTICES SNEAK TO THE OTHER SIDE EVEN WHEN WE HAVE A POLYGON!");
+      }
+      stop = false;
+      // CGAL_assertion_msg(false, "TODO: FREE, ANY K, CONTINUE!");
+    }
+
+    CGAL_assertion(m_data.k(pface) >= 1);
+    if (m_debug) {
+      std::cout << "- k intersections after: " << m_data.k(pface) << std::endl;
+    }
+    return stop;
+  }
+
+  // LOCAL STOP CONDITIONS!
+  const bool check_pvertex_meets_iedge_local(
+    const PVertex& pvertex, const IEdge& iedge) {
+
+    bool is_occupied_iedge, is_bbox_reached;
+    std::tie(is_occupied_iedge, is_bbox_reached) = m_data.collision_occured(pvertex, iedge);
+
+    if (m_debug) {
+      std::cout << "- bbox: "     << is_bbox_reached   << std::endl;
+      std::cout << "- occupied: " << is_occupied_iedge << std::endl;
+      std::cout << "- k intersections before: " << m_data.k(pvertex.first) << std::endl;
+    }
+
+    bool stop = false;
+    if (is_bbox_reached) {
+      if (m_debug) std::cout << "- bbox, stop" << std::endl;
+      stop = true;
+    } else if (is_occupied_iedge) {
+      if (m_data.k(pvertex.first) == 1) {
+        if (m_debug) std::cout << "- occupied, k = 1, stop" << std::endl;
+        stop = true;
+      } else {
+        if (m_debug) std::cout << "- occupied, k > 1, continue" << std::endl;
+        m_data.k(pvertex.first)--;
+        stop = false;
+      }
+    } else {
+      CGAL_assertion(!is_bbox_reached);
+      CGAL_assertion(!is_occupied_iedge);
+      if (m_debug) std::cout << "- free, any k, continue" << std::endl;
+      stop = false;
+    }
+
+    CGAL_assertion(m_data.k(pvertex.first) >= 1);
+    if (m_debug) {
+      std::cout << "- k intersections after: " << m_data.k(pvertex.first) << std::endl;
+    }
+    return stop;
   }
 
   const bool check_pedge_meets_iedge_local(
@@ -1213,243 +1428,15 @@ private:
     return stop;
   }
 
-  const bool check_pedge_meets_iedge_global(
-    const PVertex& pvertex, const PVertex& pother,
-    const IEdge& iedge, const PFace& pface) {
-
-    bool is_occupied_iedge_1, is_bbox_reached_1;
-    std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.collision_occured(pvertex, iedge);
-    // std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.is_occupied(pvertex, iedge);
-
-    bool is_occupied_iedge_2, is_bbox_reached_2;
-    std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.collision_occured(pother, iedge);
-    // std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.is_occupied(pother, iedge);
-
-    const bool is_limit_line_1 = m_data.is_limit_line(pvertex, iedge, is_occupied_iedge_1, true);
-    const bool is_limit_line_2 = m_data.is_limit_line(pother , iedge, is_occupied_iedge_2, false);
-
-    if (m_debug) {
-      std::cout << "- bbox1/bbox2: "           << is_bbox_reached_1   << "/" << is_bbox_reached_1   << std::endl;
-      std::cout << "- limit1/limit2: "         << is_limit_line_1     << "/" << is_limit_line_2     << std::endl;
-      std::cout << "- occupied1/occupied1: "   << is_occupied_iedge_1 << "/" << is_occupied_iedge_2 << std::endl;
-      std::cout << "- k intersections befor: " << m_data.k(pface) << std::endl;
-    }
-    CGAL_assertion(is_bbox_reached_1 == is_bbox_reached_2);
-    CGAL_assertion(is_limit_line_1 == is_limit_line_2);
-
-    bool stop = false;
-    if (is_bbox_reached_1 || is_bbox_reached_2) {
-
-      if (m_debug) std::cout << "- bbox, stop" << std::endl;
-      stop = true;
-      // CGAL_assertion_msg(false, "TODO: BBOX, STOP!");
-
-    } else if (is_limit_line_1 || is_limit_line_2) {
-
-      if (m_debug) std::cout << "- limit, stop" << std::endl;
-      stop = true;
-      // CGAL_assertion_msg(false, "TODO: LIMIT, STOP!");
-
-    } else {
-
-      if (m_debug) std::cout << "- free, any k, continue" << std::endl;
-      if (
-        m_data.is_occupied(pvertex, iedge).first ||
-        m_data.is_occupied(pother , iedge).first) {
-
-        CGAL_assertion_msg(false,
-        "ERROR: TWO PVERTICES SNEAK TO THE OTHER SIDE EVEN WHEN WE HAVE A POLYGON!");
-      }
-      stop = false;
-      // CGAL_assertion_msg(false, "TODO: FREE, ANY K, CONTINUE!");
-    }
-
-    CGAL_assertion(m_data.k(pface) >= 1);
-    if (m_debug) {
-      std::cout << "- k intersections after: " << m_data.k(pface) << std::endl;
-    }
-    return stop;
-  }
-
-  void apply_event_unconstrained_pvertex_meets_iedge(
-    const PVertex& pvertex,
-    const IEdge& iedge,
-    const Event& event) {
-
-    CGAL_assertion(!m_data.has_iedge(pvertex));
-    const auto pface = m_data.pface_of_pvertex(pvertex);
-    remove_events(pvertex);
-
-    std::vector<PFace> nfaces;
-    m_data.non_null_pfaces_around_pvertex(pvertex, nfaces);
-    CGAL_assertion(nfaces.size() == 1);
-    CGAL_assertion(nfaces[0] == pface);
-
-    // const bool stop = check_pvertex_meets_iedge_local(pvertex, iedge, pface);
-    const bool stop = check_pvertex_meets_iedge_global(pvertex, iedge, pface);
-
-    if (stop) { // polygon stops
-      const PVertex pother =
-        m_data.crop_pvertex_along_iedge(pvertex, iedge);
-      remove_events(iedge, pvertex.first);
-      compute_events_of_pvertices(
-        event.time(), std::array<PVertex, 2>{pvertex, pother});
-    } else { // polygon continues beyond the edge
-      const std::array<PVertex, 3> pvertices =
-        m_data.propagate_pvertex_beyond_iedge(pvertex, iedge, m_data.k(pface));
-      remove_events(iedge, pvertex.first);
-      compute_events_of_pvertices(event.time(), pvertices);
-    }
-    CGAL_assertion(m_data.has_iedge(pvertex));
-    // CGAL_assertion_msg(false, "TODO: PVERTEX MEETS IEDGE!");
-  }
-
-  const bool check_pvertex_meets_iedge_local(
-    const PVertex& pvertex, const IEdge& iedge, const PFace& pface) {
-
-    bool is_occupied_iedge, is_bbox_reached;
-    std::tie(is_occupied_iedge, is_bbox_reached) = m_data.collision_occured(pvertex, iedge);
-    // std::tie(is_occupied_iedge, is_bbox_reached) = m_data.is_occupied(pvertex, iedge);
-
-    if (m_debug) {
-      std::cout << "- bbox: "     << is_bbox_reached   << std::endl;
-      std::cout << "- occupied: " << is_occupied_iedge << std::endl;
-      std::cout << "- k intersections befor: " << m_data.k(pface) << std::endl;
-    }
-
-    bool stop = false;
-    if (is_bbox_reached) {
-
-      if (m_debug) std::cout << "- bbox, stop" << std::endl;
-      stop = true;
-      // CGAL_assertion_msg(false, "TODO: BBOX, STOP!");
-
-    } else if (is_occupied_iedge) {
-
-      if (m_data.k(pface) == 1) {
-        if (m_debug) std::cout << "- occupied, k = 1, stop" << std::endl;
-        stop = true;
-        // CGAL_assertion_msg(false, "TODO: OCCUPIED, K = 1, STOP!");
-      } else {
-        if (m_debug) std::cout << "- occupied, k > 1, continue" << std::endl;
-        m_data.k(pface)--;
-        stop = false;
-        // CGAL_assertion_msg(false, "TODO: OCCUPIED, K > 1, CONTINUE!");
-      }
-
-    } else {
-      CGAL_assertion(!is_bbox_reached);
-      CGAL_assertion(!is_occupied_iedge);
-
-      if (m_debug) std::cout << "- free, any k, continue" << std::endl;
-      stop = false;
-      // CGAL_assertion_msg(false, "TODO: FREE, ANY K, CONTINUE!");
-    }
-
-    CGAL_assertion(m_data.k(pface) >= 1);
-    if (m_debug) {
-      std::cout << "- k intersections after: " << m_data.k(pface) << std::endl;
-    }
-    return stop;
-  }
-
-  const bool check_pvertex_meets_iedge_global(
-    const PVertex& pvertex, const IEdge& iedge, const PFace& pface) {
-
-    bool is_occupied_iedge, is_bbox_reached;
-    std::tie(is_occupied_iedge, is_bbox_reached) = m_data.collision_occured(pvertex, iedge);
-    // std::tie(is_occupied_iedge, is_bbox_reached) = m_data.is_occupied(pvertex, iedge);
-
-    const bool is_limit_line = m_data.is_limit_line(pvertex, iedge, is_occupied_iedge);
-
-    if (m_debug) {
-      std::cout << "- bbox: "     << is_bbox_reached   << std::endl;
-      std::cout << "- limit: "    << is_limit_line     << std::endl;
-      std::cout << "- occupied: " << is_occupied_iedge << std::endl;
-      std::cout << "- k intersections befor: " << m_data.k(pface) << std::endl;
-    }
-
-    bool stop = false;
-    if (is_bbox_reached) {
-
-      if (m_debug) std::cout << "- bbox, stop" << std::endl;
-      stop = true;
-      // CGAL_assertion_msg(false, "TODO: BBOX, STOP!");
-
-    } else if (is_limit_line) {
-
-      if (m_debug) std::cout << "- limit, stop" << std::endl;
-      stop = true;
-      // CGAL_assertion_msg(false, "TODO: LIMIT, STOP!");
-
-    } else {
-
-      if (m_debug) std::cout << "- free, any k, continue" << std::endl;
-      stop = false;
-      // CGAL_assertion_msg(false, "TODO: FREE, ANY K, CONTINUE!");
-    }
-
-    CGAL_assertion(m_data.k(pface) >= 1);
-    if (m_debug) {
-      std::cout << "- k intersections after: " << m_data.k(pface) << std::endl;
-    }
-    return stop;
-  }
-
-  void apply_event_constrained_pvertex_meets_ivertex(
-    const PVertex& pvertex,
-    const IVertex& ivertex,
-    const Event& event) {
-
-    // First, let's gather all pvertices that will get merged.
-    const std::vector<PVertex> crossed_pvertices =
-      m_data.pvertices_around_ivertex(pvertex, ivertex);
-
-    if (m_debug) {
-      std::cout << "- found " << crossed_pvertices.size() <<
-      " pvertices ready to be merged: " << std::endl;
-      for (const auto& crossed_pvertex : crossed_pvertices) {
-        std::cout << m_data.point_3(crossed_pvertex) << std::endl;
-      }
-    }
-
-    // Remove associated events.
-    for (std::size_t i = 1; i < crossed_pvertices.size() - 1; ++i) {
-      remove_events(crossed_pvertices[i]);
-    }
-
-    // Merge them and get the newly created pvertices.
-    CGAL_assertion(!m_data.has_ivertex(pvertex));
-    std::vector<IEdge> crossed_iedges;
-    const std::vector<PVertex> new_pvertices =
-      m_data.merge_pvertices_on_ivertex(
-        m_min_time, m_max_time, pvertex, ivertex, crossed_pvertices, crossed_iedges);
-
-    // Remove all events of the crossed iedges.
-    for (const auto& crossed_iedge : crossed_iedges) {
-      remove_events(crossed_iedge, pvertex.first);
-    }
-
-    // And compute new events.
-    CGAL_assertion(new_pvertices.size() > 0);
-    compute_events_of_pvertices(event.time(), new_pvertices);
-  }
-
-  void apply_event_unconstrained_pvertex_meets_ivertex(
-    const PVertex& /* pvertex */,
-    const IVertex& /* ivertex */,
-    const Event&   /* event   */) {
-
-    CGAL_assertion_msg(false,
-    "TODO: IMPLEMENT UNCONSTRAINED PVERTEX MEETS IVERTEX EVENT!");
-  }
-
+  // REMOVE EVENTS!
+  // Remove events associated with the given iedge.
   void remove_events(const IEdge& iedge, const std::size_t support_plane_idx) {
     m_queue.erase_vertex_events(iedge, support_plane_idx);
     // std::cout << "erasing events for iedge: " << m_data.str(iedge) << std::endl;
     // std::cout << "iedge: " << m_data.segment_3(iedge) << std::endl;
   }
 
+  // Remove events associated with the given pvertex.
   void remove_events(const PVertex& pvertex) {
     m_queue.erase_vertex_events(pvertex);
     // std::cout << "erasing events for pvertex: " << m_data.str(pvertex) << std::endl;
