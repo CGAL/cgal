@@ -103,6 +103,8 @@ are described in Chapter \ref PkgTDS2Ref "2D Triangulation Data Structure".
 
 - `CGAL::Triangulation_cw_ccw_2`
 
+- `CGAL::Triangulation_2_projection_traits_3<Kernel>`
+
 \cgalCRPSection{Enum}
 - \link CGAL::Triangulation_2::Locate_type `CGAL::Triangulation_2<Traits,Tds>::Locate_type` \endlink
 
