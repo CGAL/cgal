@@ -42,7 +42,6 @@ ch_bykat(InputIterator first, InputIterator last,
   typedef typename Traits::Equal_2                         Equal_2;
 
   Left_turn_2 left_turn    = ch_traits.left_turn_2_object();
-  Less_dist   less_dist    = ch_traits.less_signed_distance_to_line_2_object();
   Equal_2     equal_points = ch_traits.equal_2_object();
 
   if (first == last) return result;
@@ -81,6 +80,8 @@ ch_bykat(InputIterator first, InputIterator last,
 
   for (;;)
   {
+    //  This functor must be in the for loop so that the Convex_hull_constructive traits_2 works correctly
+    Less_dist less_dist = ch_traits.less_signed_distance_to_line_2_object();
       if ( l != r)
       {
         Point_2 c = *std::min_element( l, r, [&less_dist,&a,&b](const Point_2&p1, const Point_2& p2)
