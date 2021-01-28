@@ -672,35 +672,6 @@ private:
     }
   }
 
-  template<typename PVertexRange>
-  void compute_events_of_pvertices(
-    const FT last_event_time, const PVertexRange& pvertices) {
-
-    m_min_time = m_data.current_time();
-    m_data.update_positions(m_max_time);
-
-    std::vector<IEdge> iedges;
-    std::vector<Segment_2> segments;
-    std::vector<Bbox_2> bboxes;
-    initialize_search_structures(
-      pvertices.front().first, iedges, segments, bboxes);
-
-    for (const auto& pvertex : pvertices) {
-      m_data.deactivate(pvertex);
-    }
-
-    for (const auto& pvertex : pvertices) {
-      m_data.set_last_event_time(pvertex, last_event_time);
-      compute_events_of_pvertex(pvertex, iedges, segments, bboxes);
-    }
-
-    for (const auto& pvertex : pvertices) {
-      m_data.activate(pvertex);
-    }
-
-    m_data.update_positions(m_min_time);
-  }
-
   const bool compute_events_of_pvertex(
     const PVertex& pvertex,
     const std::vector<IEdge>& iedges,
@@ -1076,11 +1047,45 @@ private:
   }
 
   // VALID EVENTS!
+  void apply_event_pvertex_meets_ivertex(
+    const PVertex& pvertex, const IVertex& ivertex, const Event& event) {
+
+    // First, let's gather all pvertices that will get merged.
+    const std::vector<PVertex> crossed_pvertices =
+      m_data.pvertices_around_ivertex(pvertex, ivertex);
+
+    // Remove associated events.
+    CGAL_assertion(crossed_pvertices.size() >= 3);
+    for (std::size_t i = 1; i < crossed_pvertices.size() - 1; ++i) {
+      remove_events(crossed_pvertices[i]);
+    }
+
+    // Merge them and get the newly created pvertices.
+    CGAL_assertion(!m_data.has_ivertex(pvertex));
+    std::vector<IEdge> crossed_iedges;
+    const std::vector<PVertex> pvertices =
+      m_data.merge_pvertices_on_ivertex(
+        m_min_time, m_max_time, ivertex, crossed_pvertices, crossed_iedges);
+
+    // Remove all events of the crossed iedges.
+    CGAL_assertion(crossed_iedges.size() >= 1);
+    for (const auto& crossed_iedge : crossed_iedges) {
+      remove_events(crossed_iedge, pvertex.first);
+    }
+
+    // And compute new events.
+    CGAL_assertion(pvertices.size() > 0);
+    compute_events_of_pvertices(event.time(), pvertices);
+    // CGAL_assertion_msg(false, "TODO: PVERTEX MEETS IVERTEX!");
+  }
+
   void apply_event_unconstrained_pvertex_meets_ivertex(
     const PVertex& pvertex, const IVertex& ivertex, const Event& event) {
 
-    CGAL_assertion_msg(false,
-    "TODO: UNCONSTRAINED PVERTEX MEETS IVERTEX!");
+    CGAL_assertion(!m_data.has_iedge(pvertex));
+    CGAL_assertion( m_data.has_one_pface(pvertex));
+    apply_event_pvertex_meets_ivertex(pvertex, ivertex, event);
+    // CGAL_assertion_msg(false, "TODO: UNCONSTRAINED PVERTEX MEETS IVERTEX!");
   }
 
   void apply_event_unconstrained_pvertex_meets_iedge(
@@ -1105,13 +1110,11 @@ private:
       compute_events_of_pvertices(event.time(), pvertices);
     }
     CGAL_assertion(m_data.has_iedge(pvertex));
-    CGAL_assertion_msg(false, "TODO: UNCONSTRAINED PVERTEX MEETS IEDGE!");
+    // CGAL_assertion_msg(false, "TODO: UNCONSTRAINED PVERTEX MEETS IEDGE!");
   }
 
   const bool apply_event_unconstrained_pedge_meets_iedge(
-    const PVertex& pvertex,
-    const IEdge& iedge,
-    const Event& event) {
+    const PVertex& pvertex, const IEdge& iedge, const Event& event) {
 
     bool is_event_happend = false;
     const auto pface = m_data.pface_of_pvertex(pvertex);
@@ -1173,49 +1176,15 @@ private:
   }
 
   void apply_event_constrained_pvertex_meets_ivertex(
-    const PVertex& pvertex,
-    const IVertex& ivertex,
-    const Event& event) {
+    const PVertex& pvertex, const IVertex& ivertex, const Event& event) {
 
-    // First, let's gather all pvertices that will get merged.
-    const std::vector<PVertex> crossed_pvertices =
-      m_data.pvertices_around_ivertex(pvertex, ivertex);
-
-    if (m_debug) {
-      std::cout << "- found " << crossed_pvertices.size() <<
-      " pvertices ready to be merged: " << std::endl;
-      for (const auto& crossed_pvertex : crossed_pvertices) {
-        std::cout << m_data.point_3(crossed_pvertex) << std::endl;
-      }
-    }
-
-    // Remove associated events.
-    for (std::size_t i = 1; i < crossed_pvertices.size() - 1; ++i) {
-      remove_events(crossed_pvertices[i]);
-    }
-
-    // Merge them and get the newly created pvertices.
-    CGAL_assertion(!m_data.has_ivertex(pvertex));
-    std::vector<IEdge> crossed_iedges;
-    const std::vector<PVertex> new_pvertices =
-      m_data.merge_pvertices_on_ivertex(
-        m_min_time, m_max_time, pvertex, ivertex, crossed_pvertices, crossed_iedges);
-
-    // Remove all events of the crossed iedges.
-    for (const auto& crossed_iedge : crossed_iedges) {
-      remove_events(crossed_iedge, pvertex.first);
-    }
-
-    // And compute new events.
-    CGAL_assertion(new_pvertices.size() > 0);
-    compute_events_of_pvertices(event.time(), new_pvertices);
-    CGAL_assertion_msg(false, "TODO: CONSTRAINED PVERTEX MEETS IVERTEX!");
+    CGAL_assertion(m_data.has_iedge(pvertex));
+    apply_event_pvertex_meets_ivertex(pvertex, ivertex, event);
+    // CGAL_assertion_msg(false, "TODO: CONSTRAINED PVERTEX MEETS IVERTEX!");
   }
 
   void apply_event_constrained_pvertex_meets_free_pvertex(
-    const PVertex& pvertex,
-    const PVertex& pother,
-    const Event& event) {
+    const PVertex& pvertex, const PVertex& pother, const Event& event) {
 
     CGAL_assertion(m_data.has_iedge(pvertex));
     if (m_data.transfer_pvertex_via_iedge(pvertex, pother)) {
@@ -1453,6 +1422,33 @@ private:
       std::cout << "- k intersections after: " << m_data.k(pface) << std::endl;
     }
     return stop;
+  }
+
+  // RECOMPUTE EVENTS!
+  template<typename PVertexRange>
+  void compute_events_of_pvertices(
+    const FT last_event_time, const PVertexRange& pvertices) {
+
+    m_min_time = m_data.current_time();
+    m_data.update_positions(m_max_time);
+
+    std::vector<IEdge>     iedges;
+    std::vector<Segment_2> segments;
+    std::vector<Bbox_2>    bboxes;
+    initialize_search_structures(
+      pvertices.front().first, iedges, segments, bboxes);
+
+    for (const auto& pvertex : pvertices) {
+      m_data.deactivate(pvertex);
+    }
+    for (const auto& pvertex : pvertices) {
+      m_data.set_last_event_time(pvertex, last_event_time);
+      compute_events_of_pvertex(pvertex, iedges, segments, bboxes);
+    }
+    for (const auto& pvertex : pvertices) {
+      m_data.activate(pvertex);
+    }
+    m_data.update_positions(m_min_time);
   }
 
   // REMOVE EVENTS!
