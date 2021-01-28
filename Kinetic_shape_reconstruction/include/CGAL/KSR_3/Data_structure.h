@@ -1661,11 +1661,12 @@ public:
       std::cout << "- next: " << point_3(next) << std::endl;
     }
 
-    const Vector_2 future_direction = compute_future_direction(
+    const Vector_2 current_direction = compute_future_direction(
       source_p, target_p, pvertex, next);
-    const FT dot_product = future_direction * iedge_direction;
+    const FT dot_product = current_direction * iedge_direction;
     if (dot_product < FT(0)) {
       std::swap(source_p, target_p);
+      if (m_verbose) std::cout << "- swap source and target" << std::endl;
       // CGAL_assertion_msg(false, "TODO: REVERSE DIRECTION!");
     }
 
@@ -1832,75 +1833,89 @@ public:
   const bool transfer_pvertex_via_iedge(
     const PVertex& pvertex, const PVertex& pother) {
 
-    std::cout.precision(20);
     if (m_verbose) {
-
-      std::cout << "** transfering " <<
-      str(pother) << " through " << str(pvertex) << " via "
-      << str(this->iedge(pvertex)) << std::endl;
+      std::cout.precision(20);
+      CGAL_assertion(has_iedge(pvertex));
+      std::cout << "** transfering " << str(pother) << " through " << str(pvertex) << " via "
+        << str(this->iedge(pvertex)) << std::endl;
+      std::cout << "- pvertex: " << point_3(pvertex) << std::endl;
+      std::cout << "- pother: "  << point_3(pother)  << std::endl;
     }
 
-    // If pvertex is adjacent to one or two.
+    // If pvertex is adjacent to one or two pfaces.
     PFace source_pface, target_pface;
     std::tie(source_pface, target_pface) = pfaces_of_pvertex(pvertex);
     const PFace common_pface = pface_of_pvertex(pother);
-
     if (common_pface == target_pface) {
+      if (m_verbose) std::cout << "- swap pfaces" << std::endl;
       std::swap(source_pface, target_pface);
     }
     CGAL_assertion(common_pface == source_pface);
 
     if (m_verbose) {
-      std::cout << "- initial pfaces: " <<
-      lstr(source_pface) << " and " << lstr(target_pface) << std::endl;
+      std::cout << "- initial pfaces: " << std::endl;
+      if (source_pface != null_pface()) {
+        std::cout << "source " << str(source_pface) << ": " << centroid_of_pface(source_pface) << std::endl;
+      }
+      if (target_pface != null_pface()) {
+        std::cout << "target " << str(target_pface) << ": " << centroid_of_pface(target_pface) << std::endl;
+      }
     }
-
-    // std::cout << "pvertex: " << point_3(pvertex) << std::endl;
-    // std::cout << "pother: "  << point_3(pother) << std::endl;
-
-    // if (source_pface != null_pface()) {
-    //   std::cout << "source pface center: " << centroid_of_pface(source_pface) << std::endl;
-    // }
-    // if (target_pface != null_pface()) {
-    //   std::cout << "target pface center: " << centroid_of_pface(target_pface) << std::endl;
-    // }
 
     PVertex pthird = next(pother);
     if (pthird == pvertex) {
       pthird = prev(pother);
     }
+    if (m_verbose) std::cout << "- pthird: " << point_3(pthird) << std::endl;
 
     CGAL_assertion(has_iedge(pvertex));
-    if (target_pface == null_pface()) {
+    if (target_pface == null_pface()) { // in case we have 1 pface
 
-      const Line_2 iedge_line = segment_2(pother.first, this->iedge(pvertex)).supporting_line();
-      const Point_2 pinit = iedge_line.projection(point_2(pother, m_current_time));
+      const auto iedge = this->iedge(pvertex);
+      auto source_p = point_2(pvertex.first, source(iedge));
+      auto target_p = point_2(pvertex.first, target(iedge));
+      const Vector_2 iedge_direction(source_p, target_p);
 
-      const Line_2 future_line(
-        point_2(pother, m_current_time + FT(1)),
-        point_2(pthird, m_current_time + FT(1)));
-      CGAL_assertion_msg(!CGAL::parallel(future_line, iedge_line),
-      "TODO: TRANSFER PVERTEX, HANDLE CASE WITH PARALLEL LINES!");
-      Point_2 future_point = KSR::intersection<Point_2>(future_line, iedge_line);
+      if (m_verbose) {
+        std::cout << "- source: " << to_3d(pvertex.first, source_p) << std::endl;
+        std::cout << "- target: " << to_3d(pvertex.first, target_p) << std::endl;
+      }
 
-      const Vector_2 future_direction(pinit, future_point);
-      direction(pvertex) = future_direction;
-      future_point = pinit - future_direction * m_current_time;
+      CGAL_assertion_msg(source_p != target_p,
+      "TODO: TRANSFER PVERTEX, HANDLE ZERO LENGTH IEDGE!");
+
+      auto pother_p = point_2(pother);
+      const Line_2 iedge_line(source_p, target_p);
+      pother_p = iedge_line.projection(pother_p);
+
+      const Vector_2 current_direction = compute_future_direction(
+        pother_p, target_p, pother, pthird);
+      const FT dot_product = current_direction * iedge_direction;
+      if (dot_product < FT(0)) {
+        std::swap(source_p, target_p);
+        if (m_verbose) std::cout << "- swap source and target" << std::endl;
+        // CGAL_assertion_msg(false, "TODO: REVERSE DIRECTION!");
+      }
+
+      Point_2 future_point;
+      Vector_2 future_direction;
+      compute_future_point_and_direction(
+        pother_p, target_p, pother, pthird, future_point, future_direction);
+
       support_plane(pvertex).set_point(pvertex.second, future_point);
-
+      direction(pvertex) = future_direction;
       const auto he = mesh(pvertex).halfedge(pother.second, pvertex.second);
       CGAL::Euler::join_vertex(he, mesh(pvertex));
 
+      CGAL_assertion_msg(false, "TODO: TRANSFER 1, ADD NEW FUTURE POINTS AND DIRECTIONS!");
+
     } else {
 
-      // std::cout << "disconnecting " <<
-      // str(pvertex) << " from " << str(this->iedge(pvertex)) << std::endl;
       const IEdge iedge = disconnect_iedge(pvertex);
       PEdge pedge = null_pedge();
       for (const auto edge : pedges_around_pvertex(pvertex)) {
         if (this->iedge(edge) == iedge) {
-          pedge = edge;
-          break;
+          pedge = edge; break;
         }
       }
       CGAL_assertion(pedge != null_pedge());
@@ -1912,13 +1927,15 @@ public:
       CGAL_assertion(mesh(pedge).face(he) == common_pface.second);
 
       if (mesh(pedge).target(he) == pvertex.second) {
-        // std::cout << "shifting target" << std::endl;
+        // if (m_verbose) std::cout << "- shifting target" << std::endl;
         CGAL::Euler::shift_target(he, mesh(pedge));
       } else {
         CGAL_assertion(mesh(pedge).source(he) == pvertex.second);
-        // std::cout << "shifting source" << std::endl;
+        // if (m_verbose) std::cout << "- shifting source" << std::endl;
         CGAL::Euler::shift_source(he, mesh(pedge));
       }
+
+      CGAL_assertion_msg(false, "TODO: TRANSFER 2, ADD NEW FUTURE POINTS AND DIRECTIONS!");
 
       const Line_2 iedge_line = segment_2(pother.first, iedge).supporting_line();
       const Point_2 pinit = iedge_line.projection(point_2(pother, m_current_time));
@@ -1944,9 +1961,15 @@ public:
     }
 
     if (m_verbose) {
-      std::cout << "- new pfaces: " <<
-      lstr(source_pface) << " and " << lstr(target_pface) << std::endl;
+      std::cout << "- new pfaces: " << std::endl;
+      if (source_pface != null_pface()) {
+        std::cout << "source " << str(source_pface) << ": " << centroid_of_pface(source_pface) << std::endl;
+      }
+      if (target_pface != null_pface()) {
+        std::cout << "target " << str(target_pface) << ": " << centroid_of_pface(target_pface) << std::endl;
+      }
     }
+
     CGAL_assertion_msg(false, "TODO: TRANSFER PVERTEX VIA IEDGE!");
     return (target_pface != null_pface());
   }
@@ -3209,9 +3232,11 @@ public:
     std::vector<Point_2> future_points(crossed_iedges.size());
     std::vector<Vector_2> future_directions(crossed_iedges.size());
     auto opoint = point_2(pvertex.first, opposite(crossed_iedges.front(), ivertex));
+    CGAL_assertion_msg(ipoint != opoint, "TODO: OPEN, HANDLE ZERO LENGTH IEDGE!");
     compute_future_point_and_direction(
       ipoint, opoint, front, next, future_points.front(), future_directions.front());
     opoint = point_2(pvertex.first, opposite(crossed_iedges.back(), ivertex));
+    CGAL_assertion_msg(ipoint != opoint, "TODO: OPEN, HANDLE ZERO LENGTH IEDGE!");
     compute_future_point_and_direction(
       ipoint, opoint, back, prev, future_points.back(), future_directions.back());
 

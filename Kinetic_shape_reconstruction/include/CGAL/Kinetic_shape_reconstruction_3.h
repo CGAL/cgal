@@ -1189,37 +1189,37 @@ private:
     CGAL_assertion(m_data.has_iedge(pvertex));
     if (m_data.transfer_pvertex_via_iedge(pvertex, pother)) {
 
+      // Check the first two pvertices.
       if (m_data.has_iedge(pvertex)) {
         remove_events(m_data.iedge(pvertex), pvertex.first);
       }
       if (m_data.has_iedge(pother)) {
         remove_events(m_data.iedge(pother) , pother.first);
       }
-      compute_events_of_pvertices(
-        event.time(), std::array<PVertex, 2>{pvertex, pother});
+      const auto pvertices1 = std::array<PVertex, 2>{pvertex, pother};
+      compute_events_of_pvertices(event.time(), pvertices1);
 
+      // Check the last pvertex.
       PVertex prev, next;
       std::tie(prev, next) = m_data.border_prev_and_next(pvertex);
       PVertex pthird = prev;
       if (pthird == pother) {
         pthird = next;
-      } else {
-        CGAL_assertion(next == pother);
-      }
+      } else { CGAL_assertion(pother == next); }
 
       if (m_data.has_iedge(pthird)) {
         remove_events(m_data.iedge(pthird), pthird.first);
       }
-      compute_events_of_pvertices(
-        event.time(), std::array<PVertex, 1>{pthird});
+      const auto pvertices2 = std::array<PVertex, 1>{pthird};
+      compute_events_of_pvertices(event.time(), pvertices2);
 
     } else {
 
       if (m_data.has_iedge(pvertex)) {
         remove_events(m_data.iedge(pvertex), pvertex.first);
       }
-      compute_events_of_pvertices(
-        event.time(), std::array<PVertex, 1>{pvertex});
+      const auto pvertices = std::array<PVertex, 1>{pvertex};
+      compute_events_of_pvertices(event.time(), pvertices);
     }
     CGAL_assertion_msg(false, "TODO: CONSTRAINED PVERTEX MEETS FREE PVERTEX!");
   }
