@@ -720,29 +720,31 @@ bool
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 test_dim_down(Vertex_handle v)
 {
-  CGAL_precondition(dimension() == 2);
+  CGAL_precondition(dimension() == 2 && number_of_vertices() >= 4);
+
   bool will_decrease = true;
   if(number_of_vertices() == 4)
     return will_decrease;
 
-  // @todo looks too painful to copy all vertices just to exit very quickly usually.
-  // Check how it is done in newer triangulations
-  std::vector<Point> points;
-  points.reserve(number_of_vertices());
+  All_vertices_iterator it = (vertices_begin() != v) ? vertices_begin() : std::next(vertices_begin());
+  All_vertices_iterator it2 = std::next(it, (std::next(it) != v) ? 1 : 2);
+  All_vertices_iterator it3 = std::next(it2, (std::next(it2) != v) ? 1 : 2);
+  All_vertices_iterator it4 = std::next(it3, (std::next(it3) != v) ? 1 : 2);
 
-  All_vertices_iterator it = vertices_begin();
-  for(; it!=vertices_end(); ++it)
+  for(;;)
   {
-    if(it != v)
-      points.push_back(point(it));
-  }
+    if(it4 == vertices_end())
+      break;
 
-  for(std::size_t i=0; i<points.size()-4; ++i)
-  {
-    Orientation s = side_of_oriented_circle(points[i], points[i+1], points[i+2], points[i+3]);
-    will_decrease = will_decrease && s == ON_ORIENTED_BOUNDARY;
-    if(!will_decrease)
-      return will_decrease;
+    CGAL_assertion(it != v && it2 != v && it3 != v && it4 != v);
+
+    if(side_of_oriented_circle(it->point(), it2->point(), it3->point(), it4->point()) != ON_ORIENTED_BOUNDARY)
+      return false;
+
+    std::advance(it, (std::next(it) != v) ? 1 : 2);
+    std::advance(it2, (std::next(it2) != v) ? 1 : 2);
+    std::advance(it3, (std::next(it3) != v) ? 1 : 2);
+    std::advance(it4, (std::next(it4) != v) ? 1 : 2);
   }
 
   return true;
