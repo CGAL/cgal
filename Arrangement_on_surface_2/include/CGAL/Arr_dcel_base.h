@@ -892,8 +892,7 @@ public:
  * The arrangement DCEL class.
  */
 template <class V, class H, class F,
-//          class Allocator = boost::fast_pool_allocator<int> >
-          class Allocator = CGAL_ALLOCATOR(int)>
+          class Allocator = boost::fast_pool_allocator<int> >
 class Arr_dcel_base {
 public:
   // Define the vertex, halfedge and face types.
