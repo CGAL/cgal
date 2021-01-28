@@ -181,7 +181,7 @@ public:
 // CREATION
 // --------
 
-    _HalfedgeDS_facet_circ() : It(0) {}
+    _HalfedgeDS_facet_circ() : It(nullptr) {}
     //_HalfedgeDS_facet_circ( pointer p) : It(p) {}
     _HalfedgeDS_facet_circ( It i) : It(i) {}
 
@@ -241,7 +241,7 @@ public:
 // CREATION
 // --------
 
-    _HalfedgeDS_facet_const_circ() : It(0) {}
+    _HalfedgeDS_facet_const_circ() : It(nullptr) {}
     _HalfedgeDS_facet_const_circ( pointer p) : It(p) {}
     _HalfedgeDS_facet_const_circ( It i) : It(i) {}
 
@@ -306,7 +306,7 @@ public:
 // CREATION
 // --------
 
-    _HalfedgeDS_vertex_circ() : It(0) {}
+    _HalfedgeDS_vertex_circ() : It(nullptr) {}
     //_HalfedgeDS_vertex_circ( pointer p) : It(p) {}
     _HalfedgeDS_vertex_circ( It i) : It(i) {}
 
@@ -366,7 +366,7 @@ public:
 // CREATION
 // --------
 
-    _HalfedgeDS_vertex_const_circ() : It(0) {}
+    _HalfedgeDS_vertex_const_circ() : It(nullptr) {}
     _HalfedgeDS_vertex_const_circ( pointer p) : It(p) {}
     _HalfedgeDS_vertex_const_circ( It i) : It(i) {}
 
