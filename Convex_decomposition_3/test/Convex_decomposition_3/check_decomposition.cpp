@@ -48,7 +48,5 @@ int main()
 {
   Nef_polyhedron_3 N;
   std::cin >> N;
-  if(!is)
-    return EXIT_FAILURE;
   check_decomposition(N);
 }
