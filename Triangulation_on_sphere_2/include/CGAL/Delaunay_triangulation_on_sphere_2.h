@@ -19,6 +19,7 @@
 #include <CGAL/Triangulation_on_sphere_2.h>
 #include <CGAL/Triangulation_on_sphere_face_base_2.h>
 #include <CGAL/Triangulation_on_sphere_vertex_base_2.h>
+#include <CGAL/Triangulation_on_sphere_2/IO/OFF.h>
 
 #include <CGAL/enum.h>
 #include <CGAL/Origin.h>
