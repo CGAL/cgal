@@ -183,9 +183,9 @@ You should place the generated file in the proper directory (and possibly
 rename it).  Then you can use the checks in the following fashion.
 
 \code{.cpp}
- #include <CGAL/optimisation\_assertions.h>
+ #include <CGAL/Optimisation/assertions.h>
 
- void optimisation\_foo( int i)
+ void optimisation_foo( int i)
  {
    CGAL_optimisation_precondition_msg( i == 42, "Only 42 allowed!");
    // ...

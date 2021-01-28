@@ -217,8 +217,7 @@ std::ostream
 /*!
 This operator imports a General_polygon_with_holes_2 from the input stream `in`.
 
-An ASCII and a binary format exist. The stream detects the format
-automatically and can read both.
+Both ASCII and binary formats are supported, and the format is automatically detected.
 
 The format consists of the number of curves of the outer boundary
 followed by the curves themselves, followed

@@ -17,27 +17,21 @@
 
 #include <CGAL/license/Mesh_2.h>
 
+#include <CGAL/assertions.h>
+#include <CGAL/IO/io.h>
+#include <CGAL/IO/VTK/VTK_writer.h>
+
 #include <iostream>
 #include <vector>
 #include <string>
 #include <map>
-#include <CGAL/assertions.h>
-#include <CGAL/IO/io.h>
 
 //todo try to factorize with functors
-namespace CGAL{
-// writes the appended data into the .vtu file
-template <class FT>
-void
-write_vector(std::ostream& os,
-             const std::vector<FT>& vect)
-{
-  const char* buffer = reinterpret_cast<const char*>(&(vect[0]));
-  std::size_t size = vect.size()*sizeof(FT);
+namespace CGAL {
 
-  os.write(reinterpret_cast<const char *>(&size), sizeof(std::size_t)); // number of bytes encoded
-  os.write(buffer, vect.size()*sizeof(FT));                     // encoded data
-}
+// writes the appended data into the .vtu file
+namespace IO {
+namespace internal {
 
 // writes the cells tags before binary data is appended
 
@@ -189,6 +183,7 @@ write_cells_2(std::ostream& os,
         connectivity_table.push_back(V[cei->first->vertex(i)]);
     }
   }
+
   write_vector<std::size_t>(os,connectivity_table);
   write_vector<std::size_t>(os,offsets);
   write_vector<unsigned char>(os,cell_type);
@@ -264,6 +259,7 @@ write_cdt_points(std::ostream& os,
       coordinates.push_back(vit->point()[1]);
       coordinates.push_back(dim == 3 ? vit->point()[2] : 0.0);
     }
+
   write_vector<FT>(os,coordinates);
 }
 
@@ -364,6 +360,8 @@ void write_vtu_with_attributes(std::ostream& os,
   os << "</VTKFile>\n";
 }
 
+} // namespace internal
+} // namespace CGAL
 
 template <class CDT>
 void write_vtu(std::ostream& os,
@@ -371,7 +369,7 @@ void write_vtu(std::ostream& os,
                IO::Mode mode = IO::BINARY)
 {
   std::vector<std::pair<const char*, const std::vector<double>*> > dummy_atts;
-  write_vtu_with_attributes(os, tr, dummy_atts, mode);
+  IO::internal::write_vtu_with_attributes(os, tr, dummy_atts, mode);
 }
 
 } //end CGAL

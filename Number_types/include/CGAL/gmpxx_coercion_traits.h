@@ -13,7 +13,7 @@
 
 
 /*! \file NiX/Gmp/Coercion_traits.h
- *  \brief Provides specializations of Coercion_traits for the Gmp types.
+ *  \brief provides specializations of Coercion_traits for the Gmp types.
  */
 
 #ifndef CGAL_GMPXX_COERCION_TRAITS_H

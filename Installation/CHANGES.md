@@ -1,6 +1,30 @@
 Release History
 ===============
 
+[Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
+-----------
+
+Release date: June 2021
+
+### General
+- Point set, polygon soup, and polygon mesh file I/O functions have been harmonized and documented:
+  - Point set I/O functions can be found in the packages [Point_set_processing_3](https://doc.cgal.org/5.3/Manual/packages.html#PkgPolygonMeshProcessing), and [Point_set_3](https://doc.cgal.org/5.3/Manual/packages.html#PkgPointSet3).
+  - Polygon mesh I/O functions can be found in the package [BGL](https://doc.cgal.org/5.3/Manual/packages.html#PkgBGL).
+  - Polygon soup I/O can be found in the package [Stream_support](https://doc.cgal.org/5.3/Manual/packages.html#PkgStreamSupport).
+
+A comprehensive list of the supported file formats is available in the Stream_support package [here](https://doc.cgal.org/5.3/Stream_support/index.html#IOstreamSupportedFormats); inversely, the following [page](https://doc.cgal.org/5.3/Stream_support/IOStreamSupportedFileFormats.html) can be used to find out which CGAL data structures can be used given a specific file format.
+
+### [Polygon Mesh Processing](https://doc.cgal.org/5.3/Manual/packages.html#PkgPolygonMeshProcessing)
+
+-   Added the class `CGAL::Polyhedral_envelope` providing a way to quickly check if a primitive (point, segment, or triangle)
+    is within a polyhedral envelope around a set of triangles. It is based on the work of
+    Bolun Wang, Teseo Schneider, Yixin Hu, Marco Attene, and Daniele Panozzo.
+    "Exact and efficient polyhedral envelope containment check." (ACM Trans. Graph., 39-4, July 2020).
+
+### [Surface Mesh Simplification](https://doc.cgal.org/5.3/Manual/packages.html#PkgSurfaceMeshSimplification)
+-   Added a filtering mechanism so that costly tests get only applied to the next candidate for the edge collapse.
+-   Added the class `Polyhedral_envelope_filter` that enables to perform mesh simplification inside a polyhedral envelope of the input mesh.
+
 [Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
 -----------
 
@@ -1322,7 +1346,7 @@ Release date: September 2017
     robust versions of the kernel functors
     `Construct_weighted_circumcenter_3`, `Compute_squared_radius_3`, and
     `Compute_squared_radius_smallest_orthogonal_sphere_3`. This class
-    can be used as traits class in the the `Mesh_3` package to
+    can be used as traits class in the `Mesh_3` package to
     efficiently yet robustly generate 3D meshes.
 -   Add a new type of polyhedral domain with features,
     `Polyhedral_complex_mesh_domain_3`. The domain is defined by a

@@ -3,18 +3,24 @@
 #include "Scene_textured_surface_mesh_item.h"
 #include "Scene_points_with_normal_item.h"
 
+#include <CGAL/IO/PLY.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Surface_mesh/IO/PLY.h>
 #include <CGAL/Three/Three.h>
+
 #include <QInputDialog>
 #include <QApplication>
-#include <fstream>
-
-#include <CGAL/IO/PLY_reader.h>
-#include <CGAL/IO/PLY_writer.h>
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <QMessageBox>
+
+#include <fstream>
+#include <iostream>
+#include <limits>
+#include <sstream>
+#include <string>
+#include <vector>
+
 using namespace CGAL::Three;
+
 class Polyhedron_demo_ply_plugin :
   public QObject,
   public CGAL::Three::Polyhedron_demo_io_plugin_interface
@@ -96,7 +102,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     // First try mesh
     std::string comments;
     Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item();
-    if (CGAL::read_ply(in, *sm_item->face_graph(), comments))
+    if (CGAL::read_PLY(in, *sm_item->face_graph(), comments))
     {
       if(sm_item->face_graph()->property_map<face_descriptor, int >("f:patch_id").second)
       {
@@ -233,7 +239,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   if (sm_item)
   {
     bool res =
-        CGAL::write_ply (out, *(sm_item->polyhedron()), sm_item->comments());
+        CGAL::write_PLY(out, *(sm_item->polyhedron()), sm_item->comments());
     if(res)
       items.pop_front();
     return res;
@@ -245,7 +251,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   if (stm_item)
   {
     bool res =
-        CGAL::write_ply (out, *(stm_item->textured_face_graph()));
+        CGAL::write_PLY(out, *(stm_item->textured_face_graph()));
     if(res)
       items.pop_front();
     return res;

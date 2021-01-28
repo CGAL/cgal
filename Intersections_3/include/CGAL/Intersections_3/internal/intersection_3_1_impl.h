@@ -80,6 +80,33 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
+boost::optional<typename K::Point_3>
+intersection_point(const typename K::Plane_3 &plane,
+                   const typename K::Line_3 &line,
+                   const K& /*k*/)
+{
+  typedef typename K::Point_3 Point_3;
+  typedef typename K::Direction_3 Direction_3;
+  typedef typename K::RT RT;
+
+  const Point_3 &line_pt = line.point();
+  const Direction_3 &line_dir = line.direction();
+
+  RT num = plane.a()*line_pt.hx() + plane.b()*line_pt.hy()
+    + plane.c()*line_pt.hz() + wmult_hw((K*)0, plane.d(), line_pt);
+  RT den = plane.a()*line_dir.dx() + plane.b()*line_dir.dy()
+    + plane.c()*line_dir.dz();
+  if (den == 0) {
+    return boost::none;
+  }
+  return boost::make_optional(Point_3(den*line_pt.hx()-num*line_dir.dx(),
+                                      den*line_pt.hy()-num*line_dir.dy(),
+                                      den*line_pt.hz()-num*line_dir.dz(),
+                                      wmult_hw((K*)0, den, line_pt)));
+}
+
+
+template <class K>
 typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>::result_type
 intersection(const typename K::Plane_3  &plane,
              const typename K::Line_3 &line,
@@ -181,6 +208,55 @@ intersection(const typename K::Plane_3 &plane1,
     }
     return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Plane_3>(plane1);
 }
+
+
+  //  triple plane intersection
+template <class K>
+boost::optional<typename K::Point_3>
+intersection_point(const typename K::Plane_3 &plane1,
+                   const typename K::Plane_3 &plane2,
+                   const typename K::Plane_3 &plane3,
+                   const K&)
+{
+  typedef typename K::FT FT;
+  const FT &m00 = plane1.a();
+  const FT &m01 = plane1.b();
+  const FT &m02 = plane1.c();
+  const FT &b0  = - plane1.d();
+  const FT &m10 = plane2.a();
+  const FT &m11 = plane2.b();
+  const FT &m12 = plane2.c();
+  const FT &b1  = - plane2.d();
+  const FT &m20 = plane3.a();
+  const FT &m21 = plane3.b();
+  const FT &m22 = plane3.c();
+  const FT &b2  = - plane3.d();
+
+  // Minors common to two determinants
+  const FT minor_0 = m00*m11 - m10*m01;
+  const FT minor_1 = m00*m21 - m20*m01;
+  const FT minor_2 = m10*m21 - m20*m11;
+
+  const FT den = minor_0*m22 - minor_1*m12 + minor_2*m02; // determinant of M
+
+  if(den == FT(0)){
+    return boost::none;
+  }
+
+  const FT num3 = minor_0*b2 - minor_1*b1 + minor_2*b0;  // determinant of M with M[x:2] swapped with [b0,b1,b2]
+
+  // Minors common to two determinants
+  const FT minor_3 = b0*m12 - b1*m02;
+  const FT minor_4 = b0*m22 - b2*m02;
+  const FT minor_5 = b1*m22 - b2*m12;
+
+  // num1 has opposite signs because b0 and M[:1] have been swapped
+  const FT num1 = - minor_3*m21 + minor_4*m11 - minor_5*m01;  // determinant of M with M[x:0] swapped with [b0,b1,b2]
+  const FT num2 = minor_3*m20 - minor_4*m10 + minor_5*m00;  // determinant of M with M[x:1] swapped with [b0,b1,b2]
+
+  return boost::make_optional(typename K::Point_3(num1/den, num2/den, num3/den));
+}
+
 
 template <class K>
 boost::optional< boost::variant<typename K::Point_3,

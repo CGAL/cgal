@@ -281,7 +281,9 @@ struct Mpzf {
       if(data()[-1] >= mini) return; // TODO: when mini==2, no need to check
       delete[] (data() - (pool::extra+1)); // too small, useless
     }
+#ifndef CGAL_MPZF_USE_CACHE
     if(mini<2) mini=2;
+#endif
     data() = (new mp_limb_t[mini+(pool::extra+1)]) + (pool::extra+1);
     data()[-1] = mini;
   }

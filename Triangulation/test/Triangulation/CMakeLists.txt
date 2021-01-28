@@ -15,8 +15,8 @@ endif()
 find_package(CGAL REQUIRED)
 
 find_package(Eigen3 3.1.0)
-include(CGAL_Eigen_support)
-if(TARGET CGAL::Eigen_support)
+include(CGAL_Eigen3_support)
+if(TARGET CGAL::Eigen3_support)
   include_directories(BEFORE "include")
 
   create_single_source_cgal_program("test_triangulation.cpp")
@@ -27,7 +27,7 @@ if(TARGET CGAL::Eigen_support)
   create_single_source_cgal_program("test_insert_if_in_star.cpp")
   foreach(target test_triangulation test_delaunay test_regular test_tds
                  test_torture test_insert_if_in_star)
-    target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
+    target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
   endforeach()
 
 else()

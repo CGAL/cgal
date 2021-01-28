@@ -3567,6 +3567,30 @@ namespace CommonKernelFunctors {
     { return Intersections::internal::intersection(pl1, pl2, pl3, K() ); }
   };
 
+
+  template <typename K>
+  class Intersect_point_3
+  {
+  public:
+    typedef typename K::Point_3     Point_3;
+    typedef typename K::Line_3      Line_3;
+    typedef typename K::Plane_3     Plane_3;
+    typedef typename boost::optional<Point_3> result_type;
+
+    result_type
+    operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3) const
+    {
+      return Intersections::internal::intersection_point(pl1, pl2, pl3, K() );
+    }
+
+    result_type
+    operator()(const Plane_3& plane, const Line_3& line) const
+    {
+      return Intersections::internal::intersection_point(plane, line, K() );
+    }
+  };
+
+
   template <typename K>
   class Is_degenerate_2
   {
