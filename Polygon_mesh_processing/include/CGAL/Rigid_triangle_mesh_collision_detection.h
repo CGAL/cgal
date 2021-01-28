@@ -176,6 +176,25 @@ public:
     : m_free_id(0)
   {}
 
+  /**
+    * Constructor moving an instance of Rigid_triangle_mesh_collision_detection to a new memory
+    * location with minimal memory copy.
+    * @param other The instance to be moved
+    */
+  Rigid_triangle_mesh_collision_detection(Rigid_triangle_mesh_collision_detection&& other)
+    :
+      m_own_aabb_trees {std::move(other.m_own_aabb_trees)}
+    ,m_aabb_trees {std::move(other.m_aabb_trees)}
+    ,m_is_closed {std::move(other.m_is_closed)}
+    ,m_points_per_cc {std::move(other.m_points_per_cc)}
+    ,m_traversal_traits {std::move(other.m_traversal_traits)}
+    ,m_free_id {std::move(other.m_free_id)}
+    ,m_id_pool {std::move(other.m_id_pool)}
+  {
+    for(std::size_t i = 0; i< other.m_own_aabb_trees.size(); ++i)
+      other.m_own_aabb_trees[i]= false;
+  }
+
   ~Rigid_triangle_mesh_collision_detection()
   {
     for (std::size_t k=0; k<m_free_id; ++k)
@@ -183,6 +202,28 @@ public:
       std::size_t id = m_id_pool[k];
       if (m_own_aabb_trees[id]) delete m_aabb_trees[id];
     }
+  }
+
+  /**
+    * Assign operator moving an instance of Rigid_triangle_mesh_collision_detection to this
+    * location with minimal memory copy.
+    * @param other The instance to be moved
+    * @return A reference to this
+    */
+  Rigid_triangle_mesh_collision_detection& operator=(Rigid_triangle_mesh_collision_detection&& other)
+  {
+    m_own_aabb_trees = std::move(other.m_own_aabb_trees);
+    m_aabb_trees = std::move(other.m_aabb_trees);
+    m_is_closed = std::move(other.m_is_closed);
+    m_points_per_cc = std::move(other.m_points_per_cc);
+    m_traversal_traits = std::move(other.m_traversal_traits);
+    m_free_id = std::move(other.m_free_id);
+    m_id_pool = std::move(other.m_id_pool);
+
+    for(std::size_t i = 0; i< other.m_own_aabb_trees.size(); ++i)
+      other.m_own_aabb_trees[i]= false;
+
+    return *this;
   }
 
  /*!
