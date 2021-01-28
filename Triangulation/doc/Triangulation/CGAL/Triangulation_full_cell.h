@@ -12,7 +12,7 @@ A `Triangulation_full_cell` stores handles to the vertices of the cell as well a
 to its adjacent cells.
 
 
-\tparam `TriangulationTraits_` must be a model of the concept `TriangulationTraits`. It
+\tparam TriangulationTraits_ must be a model of the concept `TriangulationTraits`. It
 provides geometric types and predicates for use in the
 `Triangulation<TriangulationTraits_, TriangulationDataStructure_>` class.
 

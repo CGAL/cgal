@@ -2,17 +2,15 @@
 \page license License
 \cgalAutoToc
 
-\cgal is distributed under a dual license scheme, that is under the
-GNU GPL/LGPL open source license, as well as under commercial licenses.
-
-\cgal consists of different parts covered by different open source licenses.
-In this section we explain the essence of the different licenses, as well as
-the rationale why we have chosen them.
-
-The fact that \cgal is Open Source software does not mean that users are free
+The fact that \cgal is open source software does not mean that users are free
 to do whatever they want with the software. Using the software means to accept
 the license, which has the status of a contract between the user and the owner
 of the \cgal software.
+
+\cgal is distributed under a dual license scheme, that is under the
+GNU GPL/LGPL open source licenses, as well as under commercial licenses.
+We explain on this page the essence of the different licenses, as well as
+the rationale behind their choice.
 
 \section licensesGPL GNU GPL
 
@@ -27,7 +25,7 @@ web site: http://www.gnu.org/copyleft/gpl.html.
 
 The GNU LGPL is an Open Source license that obliges you to distribute
 modifications you make on \cgal software accessible to the users.
-In contrast to the GPL, there is no obligation to make the source
+In contrast to the GPL, there is no obligation to distribute the source
 code of software you build on top of LGPLed \cgal data structures.
 
 The exact license terms can be found at the Free Software Foundation web site:
@@ -69,36 +67,16 @@ To enable checking, users have to define one of the following macros:
 The license checking is not a mean to control users as no information
 is collected or transmitted.
 
-\section seccgal_version Identifying the Version of CGAL
+\section licensesWhere Determining the license of a CGAL file
 
-Every release of \cgal defines the following preprocessor macros:
+It is specified in each file of the \cgal library which license applies to it.
 
-<DL>
-<DT>`CGAL_VERSION_STR`</DT>
-<DD>a textual description of the current release (e.g., or 3.3 or 3.2.1 or 3.2.1-I-15) as a string literal</DD>
-<DT>`CGAL_VERSION_NR`</DT>
-<DD>a numerical description of the current release such that more recent
-releases have higher number.
+The \cgal documentation is distributed under the Creative Commons
+<a href="https://creativecommons.org/licenses/by-nc-nd/2.0/">CC BY-NC-ND 2.0</a> License.
 
-More precisely, it is defined as `1MMmmbiiii`, where `MM` is
-the major release number (e.g. 03), `mm` is the minor release
-number (e.g. 02), `b` is the bug-fix release number (e.g. 0),
-and `iiii` is the internal release number (e.g. 0001). For
-public releases, the latter is defined as 1000.  Examples: for the
-public release 3.2.4 this number is 1030241000; for internal release
-3.2-I-1, it is 1030200001.  Note that this scheme was modified around
-3.2-I-30.
-</DD>
-<DT>`CGAL_VERSION_NUMBER(M,m,b)`</DT>
-<DD>
-a function macro computing the version number macro from the
-M.m.b release version. Note that the internal release number is
-dropped here. Example: `CGAL_VERSION_NUMBER(3,2,4)` is equal to
-1030241000.
-</DD>
-</DL>
-
-The macro `CGAL_VERSION` is deprecated. It is the same as
-`CGAL_VERSION_STR`, but not as a string literal.
+All files that do not have an explicit copyright or license notice (e.g., all
+examples, some demos, data files without a license, ...)
+are distributed under the Creative Commons
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CCO 1.0</a> License.
 
 */

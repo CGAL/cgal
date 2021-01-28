@@ -2,7 +2,7 @@
 
 cmake_minimum_required(VERSION 3.1...3.15)
 
-include( polyhedron_demo_macros )
+include(polyhedron_demo_macros)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
@@ -17,18 +17,17 @@ endif()
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 # Include directory of demo includes
-include_directories( BEFORE ${Mesh_3_implicit_functions_BINARY_DIR} ../include )
+include_directories(BEFORE ${Mesh_3_implicit_functions_BINARY_DIR} ../include)
 
 # Find CGAL and CGAL Qt5
-find_package(CGAL COMPONENTS Qt5)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
 # Find Qt5 itself
-set( QT_USE_QTXML    TRUE )
-set( QT_USE_QTMAIN   TRUE )
-set( QT_USE_QTSCRIPT  TRUE )
-set( QT_USE_QTOPENGL  TRUE )
-find_package(Qt5 QUIET COMPONENTS Script OpenGL ScriptTools )
-
+set(QT_USE_QTXML TRUE)
+set(QT_USE_QTMAIN TRUE)
+set(QT_USE_QTSCRIPT TRUE)
+set(QT_USE_QTOPENGL TRUE)
+find_package(Qt5 QUIET COMPONENTS Script OpenGL ScriptTools)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   # put plugins (which are shared libraries) at the same location as
@@ -41,11 +40,14 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(AddFileDependencies)
   remove_definitions(-DQT_STATICPLUGIN)
 
-  polyhedron_demo_plugin(p_sphere_function_plugin Sphere_implicit_function KEYWORDS Mesh_3)
-  polyhedron_demo_plugin(p_tanglecube_function_plugin Tanglecube_implicit_function KEYWORDS Mesh_3)
-  polyhedron_demo_plugin(p_klein_function_plugin Klein_implicit_function KEYWORDS Mesh_3)
+  polyhedron_demo_plugin(p_sphere_function_plugin Sphere_implicit_function
+                         KEYWORDS Mesh_3)
+  polyhedron_demo_plugin(p_tanglecube_function_plugin
+                         Tanglecube_implicit_function KEYWORDS Mesh_3)
+  polyhedron_demo_plugin(p_klein_function_plugin Klein_implicit_function
+                         KEYWORDS Mesh_3)
 
-else (CGAL_Qt5_FOUND AND Qt5_FOUND)
+else(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   set(MESH_3_MISSING_DEPS "")
 
@@ -57,6 +59,9 @@ else (CGAL_Qt5_FOUND AND Qt5_FOUND)
     set(MESH_3_MISSING_DEPS "Qt5, ${MESH_3_MISSING_DEPS}")
   endif()
 
-  message(STATUS "NOTICE: This demo requires ${MESH_3_MISSING_DEPS}and will not be compiled.")
+  message(
+    STATUS
+      "NOTICE: This demo requires ${MESH_3_MISSING_DEPS}and will not be compiled."
+  )
 
-endif (CGAL_Qt5_FOUND AND Qt5_FOUND)
+endif(CGAL_Qt5_FOUND AND Qt5_FOUND)

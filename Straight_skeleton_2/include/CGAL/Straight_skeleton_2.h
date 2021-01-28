@@ -13,8 +13,6 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-#include <CGAL/disable_warnings.h>
-
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 #include <CGAL/Straight_skeleton_items_2.h>
 #include <CGAL/HalfedgeDS_default.h>
@@ -62,8 +60,6 @@ public :
 private :
 
     Vertex_handle   vertices_push_back( const Vertex& v)                   { return Base::vertices_push_back(v); }
-    Halfedge_handle edges_push_back( const Halfedge& h, const Halfedge& g) { return Base::edges_push_back(h,g); }
-    Halfedge_handle edges_push_back( const Halfedge& h)                    { return Base::edges_push_back(h); }
     Face_handle     faces_push_back( const Face& f)                        { return Base::faces_push_back(f); }
 
     void vertices_pop_front()                                          { Base::vertifces_pop_front(); }
@@ -112,7 +108,9 @@ public :
       return h != null ? 0 : -1 ;
     }
 
-    bool is_valid() const
+    // Partial skeletons are used when constructing offsets, to avoid building larger-than-needed skeletons.
+    // In that case, fictitious vertices can exist, and we need to ignore them.
+    bool is_valid(const bool is_partial_skeleton = false) const
     {
       //
       // This is a copy of the validity code in Halfedge_const_decorator with a different reporting mechanism
@@ -160,6 +158,13 @@ public :
                                       );
             break;
           }
+          // Non degeneracy.
+          valid = valid && ( begin->vertex() != begin->opposite()->vertex() );
+          if ( ! valid)
+          {
+            CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"] has same source/target: v[" << id(begin->vertex()) << "]" );
+            break;
+          }
           // previous integrity.
           valid = valid && begin->next()->prev() == begin;
           if ( ! valid)
@@ -176,7 +181,7 @@ public :
               CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"]->vertex() == nullptr!");
               break;
           }
-          if ( ! begin->vertex()->has_infinite_time() )
+          if ( !is_partial_skeleton || ! begin->vertex()->has_infinite_time() )
           {
             valid = valid && ( begin->vertex() == begin->next()->opposite()->vertex());
             if ( ! valid)
@@ -225,7 +230,6 @@ public :
 
       size_type v = 0;
       n = 0;
-      bool is_partial_skeleton = false ;
 
       for( ; valid && (vbegin != vend); ++vbegin)
       {
@@ -237,8 +241,19 @@ public :
             break;
           }
 
+          // Time check
+          if( ! is_partial_skeleton )
+          {
+            valid = valid && !vbegin->has_infinite_time();
+            if ( ! valid)
+            {
+              CGAL_STSKEL_VALIDITY_TRACE("ERROR: v["<< id(vbegin) << "] has infinite time in a full skeleton");
+              break;
+            }
+          }
+
           // cycle-around-vertex test.
-          if ( !vbegin->has_infinite_time() )
+          if ( !is_partial_skeleton || !vbegin->has_infinite_time() )
           {
             valid = valid && vbegin->halfedge()->vertex() == vbegin;
             if ( ! valid)
@@ -269,8 +284,6 @@ public :
               } while ( valid && (h != g));
             }
           }
-          else is_partial_skeleton = true ;
-
           ++v;
       }
 
@@ -352,7 +365,7 @@ public :
 
       valid = valid && fvalid && fnvalid ;
 
-      CGAL_STSKEL_VALIDITY_TRACE ("end of Straight_skeleton_2>::is_valid(): " << ( valid ? "valid." : "NOT VALID.") );
+      CGAL_STSKEL_VALIDITY_TRACE ("end of Straight_skeleton_2::is_valid(): " << ( valid ? "valid." : "NOT VALID.") );
 
       return valid;
     }
@@ -360,8 +373,6 @@ public :
 
 
 } // end namespace CGAL
-
-#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_STRAIGHT_SKELETON_2_H //
 // EOF //

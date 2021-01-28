@@ -103,7 +103,7 @@ compute_avg_knn_sq_distance_3(
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
-   \param points input point range.
+   \param points input point range
    \param k number of neighbors
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
@@ -256,7 +256,11 @@ remove_outliers(
   {
     std::nth_element (f2r,
                       sorted_points.begin() + first_index_to_remove,
-                      sorted_points.end());
+                      sorted_points.end(),
+                      [](const std::pair<FT, value_type>& v1, const std::pair<FT, value_type>& v2)
+                      {
+                        return v1.first<v2.first;
+                      });
     f2r = sorted_points.begin() + first_index_to_remove;
   }
 

@@ -29,7 +29,7 @@
 #include <CGAL/Qt/manipulatedFrame.h>
 #include <CGAL/Qt/qglviewer.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>

@@ -1630,7 +1630,7 @@ private:
 
   /*!
    * @brief runs the pseudo Constrained Delaunay Triangulation at each proxy region,
-   * and stores the extracted indexed triangles in @a tris.
+   * and stores the extracted indexed triangles in `tris`.
    * @pre all anchors are found, i.e. all boundary cycles have been visited
    * and attached with at least 3 anchors.
    */
@@ -1829,11 +1829,11 @@ private:
   }
 
   /*!
-   * @brief subdivides a chord recursively in range `[@a chord_begin, @a chord_end).`
+   * @brief subdivides a chord recursively in range `[chord_begin, chord_end)`.
    * @param chord_begin begin iterator of the chord
    * @param chord_end end iterator of the chord
    * @param subdivision_ratio the chord recursive split error threshold
-   * @param relative_to_chord set `true` if the subdivision_ratio is relative to the the chord length (relative sense),
+   * @param relative_to_chord set `true` if the subdivision_ratio is relative to the chord length (relative sense),
    * otherwise it's relative to the average edge length (absolute sense).
    * @param with_dihedral_angle if set to `true` add dihedral angle weight to the distance.
    * @return the number of anchors of the chord apart from the first one

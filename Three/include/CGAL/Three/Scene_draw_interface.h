@@ -36,7 +36,7 @@ public:
    */
   virtual void initializeGL(CGAL::Three::Viewer_interface*) = 0;
 
-  //! \brief Draws the items.
+  //! \brief draws the items.
   //! It is called by Viewer::draw().
   virtual void draw(CGAL::Three::Viewer_interface*) = 0;
   //!\brief draws the scene in a hidden frame to perform picking.
@@ -44,7 +44,7 @@ public:
   virtual void drawWithNames(CGAL::Three::Viewer_interface*) = 0;
   //!Pick the point `e` on the screen.
   virtual void setPickedPixel(const QPoint &e) = 0;
-  //! \brief Manages the key events.
+  //! \brief manages the key events.
   //! Override this function to perform actions when keys are pressed.
   //! @returns true if the keyEvent executed well.
   //!
@@ -72,7 +72,7 @@ public:
   ///\brief displays all the primitive ids if there are less than max_textItems.
   virtual void printAllIds() = 0;
 
-  //!\brief moves the camera orthogonally to the picked sface.
+  //!\brief moves the camera orthogonally to the picked face.
   //!
   //! \param point the picked point
   //! \param viewer the active viewer

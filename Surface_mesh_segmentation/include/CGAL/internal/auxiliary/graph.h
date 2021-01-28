@@ -242,7 +242,7 @@ void main()
 #  endif // CGAL_LICENSE_WARNING
 
 #  ifdef CGAL_LICENSE_ERROR
-#    error "You use the the MaxFlow package of Vladimir Kolmogorov under the terms of the GPLv2+.\
+#    error "You use the MaxFlow package of Vladimir Kolmogorov under the terms of the GPLv2+.\
 You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
 

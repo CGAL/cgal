@@ -46,17 +46,12 @@ int main (int argc, char** argv)
 
   Imap label_map;
   bool lm_found = false;
-  boost::tie (label_map, lm_found) = pts.property_map<int> ("label");
+  std::tie (label_map, lm_found) = pts.property_map<int> ("label");
   if (!lm_found)
   {
     std::cerr << "Error: \"label\" property not found in input file." << std::endl;
     return EXIT_FAILURE;
   }
-
-  std::vector<int> ground_truth;
-  ground_truth.reserve (pts.size());
-  std::copy (pts.range(label_map).begin(), pts.range(label_map).end(),
-             std::back_inserter (ground_truth));
 
   std::cerr << "Generating features" << std::endl;
   CGAL::Real_timer t;
@@ -70,15 +65,9 @@ int main (int argc, char** argv)
   std::size_t number_of_scales = 5;
   Feature_generator generator (pts, pts.point_map(), number_of_scales);
 
-#ifdef CGAL_LINKED_WITH_TBB
   features.begin_parallel_additions();
-#endif
-
   generator.generate_point_based_features (features);
-
-#ifdef CGAL_LINKED_WITH_TBB
   features.end_parallel_additions();
-#endif
 
   //! [Generator]
   ///////////////////////////////////////////////////////////////////
@@ -86,25 +75,21 @@ int main (int argc, char** argv)
   t.stop();
   std::cerr << features.size() << " feature(s) generated in " << t.time() << " second(s)" << std::endl;
 
-  // Add types
-  Label_set labels;
-  Label_handle ground = labels.add ("ground");
-  Label_handle vegetation = labels.add ("vegetation");
-  Label_handle roof = labels.add ("roof");
+  Label_set labels = { "ground", "vegetation", "roof" };
 
   Classifier classifier (labels, features);
 
   std::cerr << "Training" << std::endl;
   t.reset();
   t.start();
-  classifier.train<CGAL::Sequential_tag> (ground_truth, 800);
+  classifier.train<CGAL::Parallel_if_available_tag> (pts.range(label_map), 800);
   t.stop();
   std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
 
   t.reset();
   t.start();
   std::vector<int> label_indices(pts.size(), -1);
-  Classification::classify_with_graphcut<CGAL::Sequential_tag>
+  Classification::classify_with_graphcut<CGAL::Parallel_if_available_tag>
     (pts, pts.point_map(), labels, classifier,
      generator.neighborhood().k_neighbor_query(12),
      0.2f, 10, label_indices);
@@ -112,15 +97,15 @@ int main (int argc, char** argv)
   std::cerr << "Classification with graphcut done in " << t.time() << " second(s)" << std::endl;
 
   std::cerr << "Precision, recall, F1 scores and IoU:" << std::endl;
-  Classification::Evaluation evaluation (labels, ground_truth, label_indices);
+  Classification::Evaluation evaluation (labels, pts.range(label_map), label_indices);
 
-  for (std::size_t i = 0; i < labels.size(); ++ i)
+  for (Label_handle l : labels)
   {
-    std::cerr << " * " << labels[i]->name() << ": "
-              << evaluation.precision(labels[i]) << " ; "
-              << evaluation.recall(labels[i]) << " ; "
-              << evaluation.f1_score(labels[i]) << " ; "
-              << evaluation.intersection_over_union(labels[i]) << std::endl;
+    std::cerr << " * " << l->name() << ": "
+              << evaluation.precision(l) << " ; "
+              << evaluation.recall(l) << " ; "
+              << evaluation.f1_score(l) << " ; "
+              << evaluation.intersection_over_union(l) << std::endl;
   }
 
   std::cerr << "Accuracy = " << evaluation.accuracy() << std::endl

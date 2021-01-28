@@ -50,18 +50,7 @@ public:
 
   typedef typename Base::result_type  result_type;
 
-
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else // CGAL_CFG_MATCHING_BUG_6
-  template <typename T1, typename T2>
-  result_type
-  operator()(const T1& t1, const T2& t2) const
-  {
-    return Base()(t1,t2);
-  }
-#endif // CGAL_CFG_MATCHING_BUG_6
-
 
   Sign sign_with_error(const double x, const double error) const {
     if(x > error) return POSITIVE;

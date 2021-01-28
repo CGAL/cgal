@@ -21,7 +21,7 @@
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 #include <cfloat>
 #include <climits>
@@ -56,16 +56,22 @@ class Two_vertices_parameterizer_3
 {
 // Public types
 public:
+  /// Triangle mesh type
+  typedef TriangleMesh_                                            Triangle_mesh;
+
   typedef TriangleMesh_                                            TriangleMesh;
 
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+  /// Mesh vertex type
+  typedef typename boost::graph_traits<Triangle_mesh>::vertex_descriptor vertex_descriptor;
+
+  /// Mesh halfedge type
+  typedef typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor halfedge_descriptor;
 
 // Private types
 private:
   // Traits subtypes:
-  typedef typename internal::Kernel_traits<TriangleMesh>::PPM       PPM;
-  typedef typename internal::Kernel_traits<TriangleMesh>::Kernel    Kernel;
+  typedef typename internal::Kernel_traits<Triangle_mesh>::PPM      PPM;
+  typedef typename internal::Kernel_traits<Triangle_mesh>::Kernel   Kernel;
   typedef typename Kernel::FT                                       NT;
   typedef typename Kernel::Point_2                                  Point_2;
   typedef typename Kernel::Point_3                                  Point_3;
@@ -92,7 +98,7 @@ public:
             typename VertexUVmap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
-  Error_code parameterize(const TriangleMesh& mesh,
+  Error_code parameterize(const Triangle_mesh& mesh,
                           const VertexContainer& vertices,
                           VertexUVmap uvmap,
                           VertexIndexMap /* vimap */,
@@ -267,17 +273,17 @@ public:
     return OK;
   }
 
-  /// Map two extreme vertices of the 3D mesh and mark them as <i>parameterized</i>.
+  /// maps two extreme vertices of the 3D mesh and mark them as <i>parameterized</i>.
   ///
   /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
-  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
-  ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
+  ///         %Point_2 (type deduced from `Triangle_mesh` using `Kernel_traits`)
   ///         as value type.
   /// \tparam VertexIndexMap must be a model of `ReadablePropertyMap` with
-  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
   ///         a unique integer as value type.
   /// \tparam VertexParameterizedMap must be a model of `ReadWritePropertyMap` with
-  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
   ///         a Boolean as value type.
   ///
   /// \param mesh a triangulated surface.
@@ -292,7 +298,7 @@ public:
   template <typename VertexUVmap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
-  Error_code parameterize(const TriangleMesh& mesh,
+  Error_code parameterize(const Triangle_mesh& mesh,
                           halfedge_descriptor bhd,
                           VertexUVmap uvmap,
                           VertexIndexMap vimap,
@@ -300,7 +306,7 @@ public:
   {
     // Fill containers
     boost::unordered_set<vertex_descriptor> vertices;
-    internal::Containers_filler<TriangleMesh> fc(mesh, vertices);
+    internal::Containers_filler<Triangle_mesh> fc(mesh, vertices);
     Polygon_mesh_processing::connected_component(
                                       face(opposite(bhd, mesh), mesh),
                                       mesh,
@@ -309,7 +315,7 @@ public:
     return parameterize(mesh, vertices, uvmap, vimap, vpmap);
   }
 
-  /// Indicate if the border's shape is convex.
+  /// indicates if the border's shape is convex.
   /// Meaningless for free border parameterization algorithms.
   bool is_border_convex() const { return false; }
 };
