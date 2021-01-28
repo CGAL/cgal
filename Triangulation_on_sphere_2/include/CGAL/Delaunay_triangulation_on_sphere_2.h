@@ -600,7 +600,6 @@ update_ghost_faces(Vertex_handle v, bool first)
         {
           fi->set_ghost(true);
           ghost_found = true;
-          this->_ghost = fi;
         }
         else
         {
@@ -618,7 +617,6 @@ update_ghost_faces(Vertex_handle v, bool first)
         {
           fc->set_ghost(true);
           ghost_found = true;
-          this->_ghost = fc;
         }
         else
         {
@@ -803,10 +801,8 @@ fill_hole_regular(std::list<Edge>& first_hole)
       }
 
       if(orientation_on_sphere(newf) != POSITIVE)
-      {
-        this->_ghost = newf;
         newf->set_ghost(true);
-      }
+
       continue;
     }
 
@@ -869,10 +865,7 @@ fill_hole_regular(std::list<Edge>& first_hole)
     newf->set_neighbor(2, ff);
     ff->set_neighbor(ii, newf);
     if(orientation_on_sphere(newf) != POSITIVE)
-    {
-      this->_ghost = newf;
       newf->set_ghost(true);
-    }
 
     //update the hole and push back in the Hole_List stack
     // if v2 belongs to the neighbor following or preceding *f

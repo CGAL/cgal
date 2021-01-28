@@ -151,7 +151,6 @@ public:
 protected:
   Gt _gt;
   Tds _tds;
-  Face_handle _ghost; // stores an arbitary ghost-face
 
 public:
   //-----------------------Creation-----------------------------------------------------------------
@@ -325,7 +324,7 @@ template <typename Gt, typename Tds>
 Triangulation_on_sphere_2<Gt, Tds>::
 Triangulation_on_sphere_2(const Triangulation_on_sphere_2& tr)
   : _gt(tr.geom_traits()), _tds(tr.tds())
-{ } // @fixme _ghost is wrong
+{ }
 
 template <typename Gt, typename Tds>
 void
@@ -343,7 +342,6 @@ swap(Triangulation_on_sphere_2& tr)
 {
   _tds.swap(tr._tds);
   std::swap(tr.geom_traits(), geom_traits());
-  std::swap(tr._ghost, _ghost); // @fixme doesn't look very safe
 }
 
 template <typename Gt, typename Tds>
