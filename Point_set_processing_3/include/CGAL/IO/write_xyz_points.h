@@ -67,12 +67,7 @@ bool write_XYZ_PSP(std::ostream& os,
     return false;
   }
 
-  if(!parameters::is_default_parameter(
-       parameters::get_parameter(np, internal_np::stream_precision)))
-  {
-    const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-    os.precision(precision);
-  }
+  set_default_stream_precision(os, np);
 
   // Write positions + normals
   for(typename PointRange::const_iterator it = points.begin(); it != points.end(); it++)

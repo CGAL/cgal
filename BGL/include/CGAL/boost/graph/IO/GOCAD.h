@@ -18,7 +18,7 @@
 #include <CGAL/boost/graph/IO/Generic_facegraph_builder.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
-
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <boost/container/flat_map.hpp>
 
 #include <fstream>
@@ -303,12 +303,7 @@ bool write_GOCAD(std::ostream& os,
   if(!os.good())
     return false;
 
-  if(!parameters::is_default_parameter(
-       parameters::get_parameter(np, internal_np::stream_precision)))
-  {
-    const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-    os.precision(precision);
-  }
+  set_default_stream_precision(os, np);
 
   os << "GOCAD TSurf 1\n"
         "HEADER {\n"

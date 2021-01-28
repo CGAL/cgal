@@ -17,6 +17,7 @@
 #include <CGAL/IO/helpers.h>
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/property_map.h>
 #include <CGAL/iterator.h>
 
@@ -467,12 +468,7 @@ bool write_PLY(std::ostream& out,
   if(!out.good())
     return false;
 
-  if(!parameters::is_default_parameter(
-       parameters::get_parameter(np, internal_np::stream_precision)))
-  {
-    const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-    out.precision(precision);
-  }
+  set_default_stream_precision(out, np);
 
   // Write header
   out << "ply" << std::endl

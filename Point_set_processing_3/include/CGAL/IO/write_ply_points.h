@@ -212,12 +212,7 @@ bool write_PLY(std::ostream& os,
     return false;
   }
 
-  if(!parameters::is_default_parameter(
-       parameters::get_parameter(np, internal_np::stream_precision)))
-  {
-    const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-    os.precision(precision);
-  }
+  set_default_stream_precision(os, np);
 
   if (has_normals)
     return write_PLY_with_properties(os, points,
