@@ -176,11 +176,7 @@ public:
     : m_free_id(0)
   {}
 
-  /**
-    * Constructor moving an instance of Rigid_triangle_mesh_collision_detection to a new memory
-    * location with minimal memory copy.
-    * @param other The instance to be moved
-    */
+  //! move constructor
   Rigid_triangle_mesh_collision_detection(Rigid_triangle_mesh_collision_detection&& other)
     :
       m_own_aabb_trees {std::move(other.m_own_aabb_trees)}
@@ -204,12 +200,7 @@ public:
     }
   }
 
-  /**
-    * Assign operator moving an instance of Rigid_triangle_mesh_collision_detection to this
-    * location with minimal memory copy.
-    * @param other The instance to be moved
-    * @return A reference to this
-    */
+  //! move assignment operator
   Rigid_triangle_mesh_collision_detection& operator=(Rigid_triangle_mesh_collision_detection&& other)
   {
     m_own_aabb_trees = std::move(other.m_own_aabb_trees);
