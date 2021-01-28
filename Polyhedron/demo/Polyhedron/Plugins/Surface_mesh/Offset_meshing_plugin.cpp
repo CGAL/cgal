@@ -439,8 +439,8 @@ void Polyhedron_demo_offset_meshing_plugin::inflate_mesh()
       Z = (box.max)(2)-(box.min)(2);
   double diag = sm_item->diagonalBbox();
   double offset_value = QInputDialog::getDouble(mw,
-                                                QString("Choose Inflate Value"),
-                                                QString("Offset Value (use negative number for deflate)"),
+                                                QString("Choose Inflate Distance"),
+                                                QString("Inflate Distance (use negative number for deflate)"),
                                                 0.1*diag,
                                                 -(std::numeric_limits<double>::max)(),
                                                 (std::numeric_limits<double>::max)(), 10);
