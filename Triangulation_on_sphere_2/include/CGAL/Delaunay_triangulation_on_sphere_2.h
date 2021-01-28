@@ -220,6 +220,7 @@ public:
 
 public:
   Vertex_handle insert(const Point& p, Face_handle f = Face_handle());
+  Vertex_handle push_back(const Point& p, Face_handle f = Face_handle()) { return insert(p, f); }
   Vertex_handle insert(const Point& p, Locate_type lt, Face_handle loc, int li);
   Vertex_handle insert_first(const Point& p);
   Vertex_handle insert_second(const Point& p);
