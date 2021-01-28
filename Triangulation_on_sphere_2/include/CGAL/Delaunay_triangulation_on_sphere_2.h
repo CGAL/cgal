@@ -223,6 +223,7 @@ public:
   Vertex_handle insert(const Point& p, Locate_type lt, Face_handle loc, int li);
   Vertex_handle insert_first(const Point& p);
   Vertex_handle insert_second(const Point& p);
+  Vertex_handle insert_third(const Point& p);
   Vertex_handle insert_outside_affine_hull_regular(const Point& p);
   Vertex_handle insert_cocircular(const Point& p, Locate_type lt, Face_handle loc);
 
@@ -427,6 +428,81 @@ insert_second(const Point& p)
   return v;
 }
 
+template <typename Gt, typename Tds>
+typename Triangulation_on_sphere_2<Gt, Tds>::Vertex_handle
+Delaunay_triangulation_on_sphere_2<Gt, Tds>::
+insert_third(const Point& p)
+{
+  std::cout << "insert_third" << std::endl;
+  CGAL_assertion(number_of_vertices() == 2);
+
+  Vertex_handle v = vertices_begin();
+  Vertex_handle u = v->face()->neighbor(0)->vertex(0);
+  Vertex_handle nv;
+
+  // orientation is given by the first 2 points
+  if(collinear_between(point(v), point(u), p) ||
+     orientation_on_sphere(point(u), point(v), p) == LEFT_TURN)
+  {
+    nv = Base::tds().insert_dim_up(v, false);
+  }
+  else
+  {
+    nv = Base::tds().insert_dim_up(v, true);
+  }
+
+  nv->set_point(p);
+
+  std::cout << "actual #faces " << tds().faces().size() << std::endl;
+
+  Face_handle f = all_edges_begin()->first;
+  CGAL_assertion(orientation_on_sphere(point(f, 0),
+                                       point(f, 1),
+                                       point(f->neighbor(0), 1)) != RIGHT_TURN);
+
+  update_ghost_faces(nv);
+  return nv;
+}
+
+//inserts a new point which lies outside the affine hull of the other points
+template <typename Gt, typename Tds>
+typename Triangulation_on_sphere_2<Gt, Tds>::Vertex_handle
+Delaunay_triangulation_on_sphere_2<Gt, Tds>::
+insert_outside_affine_hull_regular(const Point& p)
+{
+  std::cout << "insert_outside_affine_hull_regular" << std::endl;
+  CGAL_precondition(dimension() == 1 && number_of_vertices() >= 3);
+
+  bool conform = false;
+  Face_handle f = (all_edges_begin())->first;
+  Face_handle fn = f->neighbor(0);
+  const Point& p0 = point(f, 0);
+  const Point& p1 = point(f, 1);
+  const Point& p2 = point(fn, 1);
+
+  CGAL_assertion(orientation_on_sphere(p0, p1, p2) != NEGATIVE);
+  Orientation orient2 = side_of_oriented_circle(p0, p1, p2, p);
+
+  if(orient2 == POSITIVE)
+    conform = true;
+
+  // find smallest vertex this step garanties a unique triangulation
+  Vertex_handle w = vertices_begin();
+  All_vertices_iterator vi;
+  for(vi=vertices_begin(); vi!=vertices_end(); ++vi)
+  {
+    if(compare(point(vi), point(w)) == SMALLER)
+      w = vi;
+  }
+
+  Vertex_handle v = tds().insert_dim_up(w, conform);
+  v->set_point(p);
+
+  update_ghost_faces(v, true /*dimension is increasing to 2*/);
+
+  return v;
+}
+
 // inserts a point which location is known. Calls the corresponding insert-function
 // e.g. insert_first
 template <typename Gt, typename Tds>
@@ -441,11 +517,11 @@ insert(const Point& p, Locate_type lt, Face_handle loc, int /*li*/)
       return insert_first(p);
     case -1:
       return insert_second(p);
-    case 0:
-      return insert_outside_affine_hull_regular(p);
+    case 0: // 2 vertices
+      return insert_third(p);
     case 1:
     {
-      if(test_dim_up(p)) // @fixme isn't that already contained by 'loc' returning outside of AFFINE HULL?
+      if(test_dim_up(p))
         return insert_outside_affine_hull_regular(p);
       else
         return insert_cocircular(p, lt, loc);
@@ -475,73 +551,6 @@ insert(const Point& p, Locate_type lt, Face_handle loc, int /*li*/)
 
   CGAL_assertion(false);
   return v;
-}
-
-//inserts a new point which lies outside the affine hull of the other points
-template <typename Gt, typename Tds>
-typename Triangulation_on_sphere_2<Gt, Tds>::Vertex_handle
-Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-insert_outside_affine_hull_regular(const Point& p)
-{
-  CGAL_precondition(dimension() == 0 || dimension() == 1);
-
-  if(number_of_vertices() == 2) // 'p' is the third point being inserted
-  {
-    Vertex_handle v = vertices_begin();
-    Vertex_handle u = v->face()->neighbor(0)->vertex(0);
-    Vertex_handle nv;
-
-    //orientation is given by the 2 first points
-    if(collinear_between(point(v), point(u), p) ||
-       orientation_on_sphere(point(u), point(v), p) == LEFT_TURN)
-    {
-      nv = Base::tds().insert_dim_up(v, false);
-    }
-    else
-    {
-      nv = Base::tds().insert_dim_up(v, true);
-    }
-
-    nv->set_point(p);
-
-    Face_handle f = all_edges_begin()->first;
-    CGAL_assertion(orientation_on_sphere(point(f, 0), point(f, 1), point(f->neighbor(0), 1)) != RIGHT_TURN);
-
-    update_ghost_faces(nv);
-    return nv;
-  }
-  else // the triangulation already has 3+ cocircular vertices
-  {
-    bool conform = false;
-    Face_handle f = (all_edges_begin())->first;
-    Face_handle fn = f->neighbor(0);
-    const Point& p0 = point(f, 0);
-    const Point& p1 = point(f, 1);
-    const Point& p2 = point(fn, 1);
-
-    CGAL_assertion(orientation_on_sphere(p0, p1, p2) != NEGATIVE);
-    Orientation orient2 = side_of_oriented_circle(p0, p1, p2, p);
-
-    if(orient2 == POSITIVE)
-      conform = true;
-
-    // find smallest vertex this step garanties a unique triangulation
-    Vertex_handle w = vertices_begin();
-    All_vertices_iterator vi;
-    for(vi=vertices_begin(); vi!=vertices_end(); ++vi)
-    {
-      if(compare_xyz(point(vi), point(w)) == SMALLER)
-        w = vi;
-    }
-
-    Vertex_handle v = tds().insert_dim_up(w, conform);
-    v->set_point(p);
-
-    this->_ghost = all_faces_begin(); // @fixme seems better to leave it uninitialized...
-    update_ghost_faces(v, true);
-
-    return v;
-  }
 }
 
 /*
