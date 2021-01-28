@@ -233,7 +233,12 @@ public:
   /// @{
 
   /*!
-  returns the dimension of the convex hull (on the sphere) of the vertices.
+  returns:
+  - `-2` if the triangulation is empty
+  - `-1` if the triangulation contains a single vertex
+  - `0` if the triangulation contains exactly two vertices
+  - `1` if the triangulation contains three (or more) coplanar vertices
+  - `2` if the triangulation contains at least four non-coplanar vertices
   */
   int dimension() const;
 
