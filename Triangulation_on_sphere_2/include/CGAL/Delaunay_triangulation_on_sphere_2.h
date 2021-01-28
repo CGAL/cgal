@@ -115,33 +115,20 @@ public:
     : Base(center, radius)
   { }
 
+  template <typename InputIterator>
+  Delaunay_triangulation_on_sphere_2(InputIterator first, InputIterator beyond,
+                                     const Geom_traits& gt = Geom_traits())
+    : Delaunay_triangulation_on_sphere_2(gt)
+  {
+    insert(first, beyond);
+  }
+
   // Predicates & Constructions
   Oriented_side side_of_oriented_circle(const Point& p, const Point& q, const Point& r, const Point& s, bool perturb = false) const;
   Oriented_side side_of_oriented_circle(const Face_handle f, const Point& p, bool perturb = false) const;
   bool test_conflict(const Point& p, Face_handle fh) const;
 
   //INSERTION
-  template <typename OutputItFaces, typename OutputItBoundaryEdges>
-  std::pair<OutputItFaces,OutputItBoundaryEdges>
-  get_conflicts_and_boundary(const Point& p,
-                             OutputItFaces fit,
-                             OutputItBoundaryEdges eit,
-                             Face_handle fh) const
-  {
-    CGAL_precondition(dimension() == 2);
-    CGAL_precondition(test_conflict(p, fh));
-
-    *fit++ = fh; //put fh in OutputItFaces
-    fh->in_conflict() = true;
-
-    std::pair<OutputItFaces, OutputItBoundaryEdges> pit = std::make_pair(fit, eit);
-    pit = propagate_conflicts(p, fh, 0, pit);
-    pit = propagate_conflicts(p, fh, 1, pit);
-    pit = propagate_conflicts(p, fh, 2, pit);
-
-    return std::make_pair(fit, eit);
-  }
-
 private:
   template <class OutputItFaces, class OutputItBoundaryEdges>
   std::pair<OutputItFaces, OutputItBoundaryEdges>
@@ -190,7 +177,7 @@ private:
       return non_recursive_propagate_conflicts(p, fh, i, pit);
 
     Face_handle fn = fh->neighbor(i);
-    if(fn->in_conflict())
+    if(fn->tds_data().is_in_conflict())
       return pit;
 
     if(!test_conflict(p, fn))
@@ -200,16 +187,35 @@ private:
     else
     {
       *(pit.first)++ = fn;
-      // @fixme, change it to tds_data() like T3.h also update the code in HT2 because
-      // it doesn't need to have tds_data() in HT_face_base_2
-      // @fixme when is that reset ?
-      fn->in_conflict() = true;
+      fn->tds_data().mark_in_conflict();
       int j = fn->index(fh);
       pit = propagate_conflicts(p, fn, ccw(j), pit, depth + 1);
       pit = propagate_conflicts(p, fn, cw(j), pit, depth + 1);
     }
 
     return pit;
+  }
+
+public:
+  template <typename OutputItFaces, typename OutputItBoundaryEdges>
+  std::pair<OutputItFaces,OutputItBoundaryEdges>
+  get_conflicts_and_boundary(const Point& p,
+                             OutputItFaces fit,
+                             OutputItBoundaryEdges eit,
+                             Face_handle fh) const
+  {
+    CGAL_precondition(dimension() == 2);
+    CGAL_precondition(test_conflict(p, fh));
+
+    *fit++ = fh; //put fh in OutputItFaces
+    fh->tds_data().mark_in_conflict();
+
+    std::pair<OutputItFaces, OutputItBoundaryEdges> pit = std::make_pair(fit, eit);
+    pit = propagate_conflicts(p, fh, 0, pit);
+    pit = propagate_conflicts(p, fh, 1, pit);
+    pit = propagate_conflicts(p, fh, 2, pit);
+
+    return std::make_pair(fit, eit);
   }
 
 public:
@@ -548,6 +554,10 @@ insert(const Point& p, Locate_type lt, Face_handle loc, int /*li*/)
       edges.reserve(32);
 
       get_conflicts_and_boundary(p, std::back_inserter(faces), std::back_inserter(edges), loc);
+
+      for(Face_handle fh : faces)
+        fh->tds_data().clear();
+
       v = tds().star_hole(edges.begin(), edges.end());
       v->set_point(p);
       delete_faces(faces.begin(), faces.end());
