@@ -114,6 +114,7 @@ public:
     , random(std::move(other.random))
   {
     hierarchy[0] = this;
+    other.hierarchy[0] = nullptr;
     for(int i=1; i<maxlevel; ++i) {
       hierarchy[i] = other.hierarchy[i];
       other.hierarchy[i] = nullptr;
@@ -503,7 +504,8 @@ void
 Triangulation_hierarchy_3<Tr>::
 clear()
 {
-  for(int i=0;i<maxlevel;++i)
+  if(hierarchy[0] == nullptr) return; // moved-from object
+  for(int i=1;i<maxlevel;++i)
     hierarchy[i]->clear();
 }
 
