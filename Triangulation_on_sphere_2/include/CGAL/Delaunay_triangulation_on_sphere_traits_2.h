@@ -153,13 +153,13 @@ protected:
 template <typename LK_,
           typename SK_ = CGAL::Spherical_kernel_3<
                           LK_, CGAL::Algebraic_kernel_for_spheres_2_3<typename LK_::FT> > >
-class Delaunay_triangulation_sphere_traits_2
+class Delaunay_triangulation_on_sphere_traits_2
 //  : public LK_, // @tmp disabled to see what is really needed
 //    public SK_
 {
   typedef LK_                                                        LK;
   typedef SK_                                                        SK;
-  typedef Delaunay_triangulation_sphere_traits_2<LK>                 Self;
+  typedef Delaunay_triangulation_on_sphere_traits_2<LK>              Self;
 
 public:
   typedef typename LK::FT                                            FT;
@@ -198,10 +198,10 @@ public:
 
   typedef typename LK::Construct_circumcenter_3                      Construct_circumcenter_3;
 
-  Delaunay_triangulation_sphere_traits_2(const Point_3& center = CGAL::ORIGIN,
-                                         const FT radius = 1,
-                                         const LK& k = LK(),
-                                         const SK& sk = SK())
+  Delaunay_triangulation_on_sphere_traits_2(const Point_3& center = CGAL::ORIGIN,
+                                            const FT radius = 1,
+                                            const LK& k = LK(),
+                                            const SK& sk = SK())
     : /*LK(k), SK(sk),*/ _center(center), _radius(radius)
   {
     initialize_bounds();

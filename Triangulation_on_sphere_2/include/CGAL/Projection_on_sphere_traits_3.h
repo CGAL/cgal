@@ -14,7 +14,7 @@
 
 #include <CGAL/license/Triangulation_on_sphere_2.h>
 
-#include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
+#include <CGAL/Delaunay_triangulation_on_sphere_traits_2.h>
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/number_utils_classes.h>
@@ -99,12 +99,12 @@ private:
 } // namespace internal
 
 template <typename LK>
-class Projection_sphere_traits_3
-  : public Delaunay_triangulation_sphere_traits_2<LK>
+class Projection_on_sphere_traits_3
+  : public Delaunay_triangulation_on_sphere_traits_2<LK>
 {
 protected:
-  typedef Delaunay_triangulation_sphere_traits_2<LK>                           Base;
-  typedef Projection_sphere_traits_3<LK>                                       Self;
+  typedef Delaunay_triangulation_on_sphere_traits_2<LK>                        Base;
+  typedef Projection_on_sphere_traits_3<LK>                                    Self;
 
 public:
   typedef typename LK::FT                                                      FT;
@@ -128,9 +128,9 @@ public:
   typedef internal::Functor_projection_adaptor<LK, typename Base::Construct_circumcenter_on_sphere_2> Construct_circumcenter_on_sphere_2;
 
 public:
-  Projection_sphere_traits_3(const Point_3& sphere = CGAL::ORIGIN,
-                             const FT radius = 1,
-                             const LK& lk = LK())
+  Projection_on_sphere_traits_3(const Point_3& sphere = CGAL::ORIGIN,
+                                const FT radius = 1,
+                                const LK& lk = LK())
     : Base(sphere, radius, lk)
   { }
 
@@ -177,6 +177,10 @@ public:
   construct_circumcenter_on_sphere_2_object() const
   { return Construct_circumcenter_on_sphere_2(Base::construct_circumcenter_on_sphere_2_object(),
                                               Base::center(), Base::radius()); }
+
+  Construct_point_3
+  construct_point_3_object() const
+  { return Construct_point_3(Base::construct_point_3_object(), Base::center(), Base::radius()); }
 
 public:
   bool is_on_sphere(const Point_on_sphere_2& /*p*/) const

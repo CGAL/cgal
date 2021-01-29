@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
+#include <CGAL/Delaunay_triangulation_on_sphere_traits_2.h>
 
 #include <CGAL/enum.h>
 
@@ -9,7 +9,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef K::Point_3                                                  Point;
 
-typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>             Gt;
+typedef CGAL::Delaunay_triangulation_on_sphere_traits_2<K>          Gt;
 
 typedef Gt::Orientation_on_sphere_2                                 Orientation_on_sphere_2;
 typedef Gt::Side_of_oriented_circle_on_sphere_2                     Side_of_oriented_circle_on_sphere_2;

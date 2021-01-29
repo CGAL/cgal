@@ -10,8 +10,8 @@ parameter of the class `CGAL::Delaunay_triangulation_on_sphere_2<Traits, Tds>`.
 This concept provides the types of the geometric primitives used in the
 triangulation and some function object types for the required predicates on those primitives.
 
-\cgalHasModel `CGAL::Delaunay_triangulation_sphere_traits_2`
-\cgalHasModel `CGAL::Projection_sphere_traits_3`
+\cgalHasModel `CGAL::Delaunay_triangulation_on_sphere_traits_2`
+\cgalHasModel `CGAL::Projection_on_sphere_traits_3`
 \cgalHasModel `CGAL::Geographical_coordinates_traits_2`
 */
 class DelaunayTriangulationOnSphereTraits_2

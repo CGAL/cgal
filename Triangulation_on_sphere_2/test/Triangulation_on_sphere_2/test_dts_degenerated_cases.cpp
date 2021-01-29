@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
-#include <CGAL/Projection_sphere_traits_3.h>
+#include <CGAL/Delaunay_triangulation_on_sphere_traits_2.h>
+#include <CGAL/Projection_on_sphere_traits_3.h>
 #include <CGAL/Triangulation_on_sphere_2.h>
 #include <CGAL/Delaunay_triangulation_on_sphere_2.h>
 
@@ -12,10 +12,10 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef K::Point_3                                                  Point_3;
 
-typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>             Gt;
+typedef CGAL::Delaunay_triangulation_on_sphere_traits_2<K>          Gt;
 typedef CGAL::Delaunay_triangulation_on_sphere_2<Gt>                DTOS;
 
-typedef CGAL::Projection_sphere_traits_3<K>                         PGt;
+typedef CGAL::Projection_on_sphere_traits_3<K>                      PGt;
 typedef CGAL::Delaunay_triangulation_on_sphere_2<PGt>               PDTOS;
 
 template <class Vertex_handle, class Face_handle>
@@ -192,7 +192,7 @@ int main(int, char**)
   test<DTOS>(radius, coplanar_points_on_circle);
 
   // -----------------------------------------------------------------------------------------------
-  std::cout << "Testing with Projection_sphere_traits:  " << std::endl;
+  std::cout << "Testing with projection:  " << std::endl;
   PGt traits(CGAL::ORIGIN, radius);
   PGt::Construct_point_on_sphere_2 to_s2 = traits.construct_point_on_sphere_2_object();
 

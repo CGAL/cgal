@@ -1,11 +1,11 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Delaunay_triangulation_on_sphere_2.h>
-#include <CGAL/Delaunay_triangulation_sphere_traits_2.h> // @todo '_on_' ?
+#include <CGAL/Delaunay_triangulation_on_sphere_traits_2.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
-typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>     Traits;
+typedef CGAL::Delaunay_triangulation_on_sphere_traits_2<K>  Traits;
 typedef CGAL::Delaunay_triangulation_on_sphere_2<Traits>    DToS2;
 
 typedef Traits::Point_3                                     Point;

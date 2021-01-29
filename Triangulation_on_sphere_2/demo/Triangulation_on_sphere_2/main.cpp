@@ -3,8 +3,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_spherical_kernel_3.h>
 
-#include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
-#include <CGAL/Projection_sphere_traits_3.h>
+#include <CGAL/Delaunay_triangulation_on_sphere_traits_2.h>
+#include <CGAL/Projection_on_sphere_traits_3.h>
 #include <CGAL/Delaunay_triangulation_on_sphere_2.h>
 
 #include <CGAL/utility.h>
@@ -26,7 +26,7 @@ typedef Kernel::Point_3                                              Point_3;
 #include "simpleViewer.h"
 #include "ui_Mainwindow.h"
 
-typedef CGAL::Projection_sphere_traits_3<Kernel>                     Projection_traits;
+typedef CGAL::Projection_on_sphere_traits_3<Kernel>                  Projection_traits;
 typedef CGAL::Delaunay_triangulation_on_sphere_2<Projection_traits>  Projected_DToS2;
 
 struct Cell_info

@@ -1,7 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
-#include <CGAL/Projection_sphere_traits_3.h>
+#include <CGAL/Projection_on_sphere_traits_3.h>
 
 #include <CGAL/enum.h>
 
@@ -9,7 +8,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel      K;
 
-typedef CGAL::Projection_sphere_traits_3<K>                      Gt;
+typedef CGAL::Projection_on_sphere_traits_3<K>                   Gt;
 
 typedef Gt::Point_3                                              Point_3;
 typedef Gt::Point_on_sphere_2                                    Point_on_sphere_2;

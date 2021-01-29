@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulationOnSphere2TriangulationClasses
 
-The class `Projection_sphere_traits_3` is a model of the concept `DelaunayTriangulationOnSphereTraits_2`.
+The class `Projection_on_sphere_traits_3` is a model of the concept `DelaunayTriangulationOnSphereTraits_2`.
 
 It implements the `Point_on_sphere_2` type as a custom point type which represents the projection
 of a point living in the 3D Euclidean space onto the sphere along the segment between said point
@@ -14,13 +14,13 @@ and the center of the sphere.
 
 \cgalModels `DelaunayTriangulationOnSphereTraits_2`
 
-\sa `CGAL::Delaunay_triangulation_sphere_traits_2`
+\sa `CGAL::Delaunay_triangulation_on_sphere_traits_2`
 \sa `CGAL::Geographical_coordinates_traits_2`
 */
 template <typename LK,
           typename SK = CGAL::Spherical_kernel_3<
                           LK, CGAL::Algebraic_kernel_for_spheres_2_3<typename LK::FT> > >
-class Projection_sphere_traits_3
+class Projection_on_sphere_traits_3
 {
 public:
   /// The field number type.
@@ -97,7 +97,7 @@ public:
 
   /// returns `false` if `LK` can represent algebraic coordinates, or whether the distance
   /// between `p` and `q` is lower than \f$ 2 \sqrt{R\delta} \f$ otherwise (see the traits class
-  /// `CGAL::Delaunay_triangulation_sphere_traits_2`).
+  /// `CGAL::Delaunay_triangulation_on_sphere_traits_2`).
   bool are_points_too_close(const Point_on_sphere_2& p, const Point_on_sphere_2& q) const;
 
   /// @}

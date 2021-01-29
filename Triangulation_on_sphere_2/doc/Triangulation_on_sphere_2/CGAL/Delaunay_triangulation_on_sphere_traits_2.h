@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulationOnSphere2TriangulationClasses
 
-The class `Delaunay_triangulation_sphere_traits_2` is a model
+The class `Delaunay_triangulation_on_sphere_traits_2` is a model
 of the concept `DelaunayTriangulationOnSphereTraits_2`.
 
 The `Point_on_sphere_2` type is implemented as a kernel's `Point_3` type.
@@ -30,12 +30,12 @@ and thus not inserted, or guaranteed to not be hidden upon insertion.
 \cgalModels `DelaunayTriangulationOnSphereTraits_2`
 
 \sa `CGAL::Geographical_coordinates_traits_2`
-\sa `CGAL::Projection_sphere_traits_3`
+\sa `CGAL::Projection_on_sphere_traits_3`
 */
 template <typename LK,
           typename SK = CGAL::Spherical_kernel_3<
                           LK, CGAL::Algebraic_kernel_for_spheres_2_3<typename LK::FT> > >
-class Delaunay_triangulation_sphere_traits_2
+class Delaunay_triangulation_on_sphere_traits_2
 {
 public:
   /// The field number type

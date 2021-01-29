@@ -12,8 +12,8 @@ as a pair of coordinates representing the latitude and the longitude of the poin
 
 \cgalModels `DelaunayTriangulationOnSphereTraits_2`
 
-\sa `CGAL::Delaunay_triangulation_sphere_traits_2`
-\sa `CGAL::Projection_sphere_traits_3`
+\sa `CGAL::Delaunay_triangulation_on_sphere_traits_2`
+\sa `CGAL::Projection_on_sphere_traits_3`
 */
 template <typename LK,
           typename SK = CGAL::Spherical_kernel_3<
