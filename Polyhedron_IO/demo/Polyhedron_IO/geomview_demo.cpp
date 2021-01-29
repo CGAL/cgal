@@ -12,12 +12,12 @@
 
 #include <CGAL/basic.h>
 
-#ifdef  _MSC_VER
+#if defined  _MSC_VER || not defined CGAL_USE_GEOMVIEW
 
 #include <iostream>
 
 int main() {
-  std::cout << "Geomview doesn't work on Windows, so no demo." << std::endl;
+  std::cout << "We don't support Geomview anymore, so no demo." << std::endl;
   return 0;
 }
 #else // can have Geomeview

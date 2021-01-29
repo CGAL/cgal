@@ -50,7 +50,7 @@
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #ifndef CGAL_NO_ASSERTIONS
 #  include <boost/math/special_functions/next.hpp> // for float_prior
 #endif

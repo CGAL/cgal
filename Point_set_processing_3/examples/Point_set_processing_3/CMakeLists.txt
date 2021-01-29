@@ -80,9 +80,9 @@ endif()
 
 # Use Eigen
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-include(CGAL_Eigen_support)
-if(TARGET CGAL::Eigen_support)
-  set(CGAL_libs ${CGAL_libs} CGAL::Eigen_support)
+include(CGAL_Eigen3_support)
+if(TARGET CGAL::Eigen3_support)
+  set(CGAL_libs ${CGAL_libs} CGAL::Eigen3_support)
 
   # Executables that require Eigen
   foreach(
@@ -99,10 +99,10 @@ if(TARGET CGAL::Eigen_support)
     add_executable(${target} "${target}.cpp")
     target_link_libraries(${target} ${CGAL_libs})
   endforeach()
-  if (TARGET CGAL::Eigen_support AND TARGET CGAL::LASLIB_support)
+  if (TARGET CGAL::Eigen3_support AND TARGET CGAL::LASLIB_support)
     add_executable( orient_scanlines_example "orient_scanlines_example.cpp" )
     target_link_libraries(orient_scanlines_example ${CGAL_libs}
-      CGAL::Eigen_support CGAL::LASLIB_support)
+      CGAL::Eigen3_support CGAL::LASLIB_support)
   endif()
   # Executables that require libpointmatcher
   find_package(libpointmatcher QUIET)
