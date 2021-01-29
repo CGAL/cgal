@@ -376,7 +376,6 @@ protected:
   Op2 op2;
   Op3 op3;
 public:
- 
 
   Binary_compose_1(const Op1& x, const Op2& y, const Op3& z)
   : op1(x), op2(y), op3(z) {}
