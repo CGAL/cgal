@@ -452,7 +452,7 @@ Orientation
 Triangulation_on_sphere_2<Gt, Tds>::
 orientation(const Point&p, const Point& q, const Point& r, const Point& s) const
 {
-  return geom_traits().side_of_oriented_circle_2_object()(p, q, r, s);
+  return geom_traits().side_of_oriented_circle_on_sphere_2_object()(p, q, r, s);
 }
 
 template <typename Gt, typename Tds>

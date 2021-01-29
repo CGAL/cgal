@@ -17,6 +17,7 @@
 #include <CGAL/license/Triangulation_on_sphere_2.h>
 
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
+#include <CGAL/Has_conversion.h>
 #include <CGAL/Spherical_kernel_3.h>
 
 #include <CGAL/enum.h>
@@ -24,75 +25,128 @@
 namespace CGAL {
 namespace internal {
 
-template <typename Traits>
+template <typename LK>
 class Orientation_on_sphere_2
 {
 public:
-  typedef typename Traits::Point_3                  Point_3;
+  typedef typename LK::Point_3                      Point_3;
+  typedef typename LK::Point_3                      Point_on_sphere_2;
   typedef Comparison_result                         result_type;
 
-  Orientation_on_sphere_2(const Point_3& center, const Traits& traits)
-    : _center(center), _traits(traits)
+  Orientation_on_sphere_2(const Point_3& center, const LK& lk)
+    : _center(center), _lk(lk)
   { }
 
-  Comparison_result operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
-  { return _traits.orientation_3_object()(_center, p, q, r); }
+  Comparison_result operator()(const Point_on_sphere_2& p, const Point_on_sphere_2& q, const Point_on_sphere_2& r) const
+  { return _lk.orientation_3_object()(_center, p, q, r); }
 
 protected:
   const Point_3& _center;
-  const Traits& _traits;
+  const LK& _lk;
 };
 
-template <typename Traits>
+template <typename LK>
 class Equal_on_sphere_2
 {
 public:
-  typedef typename Traits::Point_3                  Point_3;
+  typedef typename LK::Point_3                      Point_3;
+  typedef typename LK::Point_3                      Point_on_sphere_2;
   typedef bool                                      result_type;
 
-  Equal_on_sphere_2(const Point_3& center, const Traits& traits)
-    : _center(center), _traits(traits)
+  Equal_on_sphere_2(const Point_3& center, const LK& lk)
+    : _center(center), _lk(lk)
   { }
 
-  bool operator()(const Point_3& p, const Point_3 q) const
+  bool operator()(const Point_on_sphere_2& p, const Point_on_sphere_2& q) const
   {
-    return _traits.collinear_3_object()(_center, p, q) &&
-            !_traits.collinear_are_ordered_along_line_3_object()(p, _center, q); // @fixme correct? strictly?
+    return _lk.collinear_3_object()(_center, p, q) &&
+            !_lk.collinear_are_strictly_ordered_along_line_3_object()(p, _center, q);
   }
 
 protected:
   const Point_3& _center;
-  const Traits& _traits;
+  const LK& _lk;
 };
 
-template <typename Traits>
+template <typename LK>
 class Inside_cone_2
 {
 public:
-  typedef typename Traits::Point_3                  Point_3;
+  typedef typename LK::Point_3                      Point_3;
+  typedef typename LK::Point_3                      Point_on_sphere_2;
   typedef bool                                      result_type;
 
-  Inside_cone_2(const Point_3& center, const Traits& traits)
-    : _center(center), _traits(traits)
+  Inside_cone_2(const Point_3& center, const LK& lk)
+    : _center(center), _lk(lk)
   { }
 
-  bool operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+  bool operator()(const Point_on_sphere_2& p, const Point_on_sphere_2& q, const Point_on_sphere_2& r) const
   {
-    if(collinear(_center, p, r) || collinear(_center, q, r) || orientation(_center, p, q, r) != COLLINEAR)
+    // @todo first two checks might be unnecessary because we should always have r != p|q (using equal_on_sphere)
+    if(collinear(_center, p, r) || // @todo use LK
+       collinear(_center, q, r) ||
+       orientation(_center, p, q, r) != COLLINEAR)
+    {
       return false;
+    }
 
     if(collinear(_center, p, q))
       return true;
 
-    // @fixme (?) what's going on here?
-    return _traits.coplanar_orientation_3_object()(_center, p, q, r) ==
-             (POSITIVE == _traits.coplanar_orientation_3_object()(_center, q, p, r));
+    const Orientation op = _lk.coplanar_orientation_3_object()(_center, p, q, r);
+    const Orientation oq = _lk.coplanar_orientation_3_object()(_center, q, p, r); // @todo add an early exit
+    CGAL_assertion(op != COLLINEAR && oq != COLLINEAR);
+
+    return (op == POSITIVE) && (oq == POSITIVE);
   }
 
 protected:
   const Point_3& _center;
-  const Traits& _traits;
+  const LK& _lk;
 };
+
+template <typename LK, typename SK>
+class Construct_arc_on_sphere_2
+{
+public:
+  typedef typename LK::FT                       FT;
+  typedef typename LK::Point_3                  Point_3;
+  typedef typename LK::Point_3                  Point_on_sphere_2;
+  typedef typename SK::Circular_arc_3           result_type;
+
+  Construct_arc_on_sphere_2(const Point_3& center, const FT radius, const LK& lk, const SK& sk)
+    : _center(center), _radius(radius), _lk(lk), _sk(sk)
+  { }
+
+  result_type operator()(const Point_on_sphere_2& p, const Point_on_sphere_2& q) const
+  {
+    // the orientation of the plane (and thus of the circle) does not really matter
+    // since the construction of the circular arc uses the positive normal of the circle's
+    // supporting plane...
+    typedef typename CGAL::internal::Converter_selector<LK, SK>::type Converter;
+    Converter cv;
+
+    typename SK::Point_3 sc = cv(_center); // @tmp cache that, I guess
+    typename SK::Point_3 sp = cv(p);
+    typename SK::Point_3 sq = cv(q);
+
+    typename SK::Plane_3 pl = _sk.construct_plane_3_object()(sp, sc, sq);
+    typename SK::Circle_3 c = _sk.construct_circle_3_object()(sc, square(_radius), pl);
+
+    typename SK::Circular_arc_point_3 cp = _sk.construct_circular_arc_point_3_object()(sp);
+    typename SK::Circular_arc_point_3 cq = _sk.construct_circular_arc_point_3_object()(sq);
+
+    // @fixme ensure in arc_dual and arc_segment that 'cp' and 'cq' are in the correct order
+    return _sk.construct_circular_arc_3_object()(c, cp, cq);
+  }
+
+protected:
+  const Point_3& _center;
+  const FT _radius;
+  const LK& _lk;
+  const SK& _sk;
+};
+
 
 } // namespace internal
 
@@ -112,6 +166,7 @@ public:
   typedef typename LK::Point_3                                       Point_on_sphere_2;
   typedef typename LK::Point_3                                       Point_3;
   typedef typename LK::Segment_3                                     Segment_3;
+  typedef typename LK::Triangle_3                                    Triangle_3;
 
   typedef typename SK::Circular_arc_3                                Arc_on_sphere_2;
 
@@ -120,18 +175,28 @@ public:
   typedef typename LK::Compare_xyz_3                                 Compare_on_sphere_2;
   typedef internal::Equal_on_sphere_2<LK>                            Equal_on_sphere_2;
   typedef internal::Orientation_on_sphere_2<LK>                      Orientation_on_sphere_2;
-  typedef typename LK::Orientation_3                                 Side_of_oriented_circle_2; // @todo 'on_sphere'?
+  typedef typename LK::Orientation_3                                 Side_of_oriented_circle_on_sphere_2;
 
   // constructions
+  typedef typename LK::Construct_point_3                             Construct_point_on_sphere_2;
   typedef typename LK::Construct_point_3                             Construct_point_3;
   typedef typename LK::Construct_segment_3                           Construct_segment_3;
   typedef typename LK::Construct_triangle_3                          Construct_triangle_3;
 
-  typedef typename SK::Construct_circular_arc_3                      Construct_arc_on_sphere_2;
-  // @fixme should project on the sphere
-  typedef typename LK::Construct_circumcenter_3                      Construct_circumcenter_on_sphere_2;
+  // For the hilbert sort, not actually needed when the traits derives from LK @todo
+  typedef typename LK::Compute_x_3                                   Compute_x_3;
+  typedef typename LK::Compute_y_3                                   Compute_y_3;
+  typedef typename LK::Compute_z_3                                   Compute_z_3;
+  Compute_x_3 compute_x_3_object() const { return Compute_x_3(); }
+  Compute_y_3 compute_y_3_object() const { return Compute_y_3(); }
+  Compute_z_3 compute_z_3_object() const { return Compute_z_3(); }
 
-  typedef typename LK::Compute_squared_distance_3                    Compute_squared_distance_3;
+  typedef internal::Construct_arc_on_sphere_2<LK, SK>                Construct_arc_on_sphere_2;
+
+  // @todo needs to offer dual_on_sphere that projects on the sphere
+  typedef void Construct_circumcenter_on_sphere_2;
+
+  typedef typename LK::Construct_circumcenter_3                      Construct_circumcenter_3;
 
   Delaunay_triangulation_sphere_traits_2(const Point_3& center = CGAL::ORIGIN,
                                          const FT radius = 1,
@@ -145,9 +210,15 @@ public:
 private:
   void initialize_bounds()
   {
-    const FT minDist = _radius * std::pow(2, -23); // @fixme
+    // @fixme
+    // - check the correctness of the implementation
+    // - if LK can represent algebraic coordinates, there is no need for that
+    const FT minDist = _radius * std::pow(2, -23);
     const FT minRadius = _radius * (1 - std::pow(2, -50));
     const FT maxRadius = _radius * (1 + std::pow(2, -50));
+    std::cout << "minDist = " << minDist << std::endl;
+    std::cout << "minRadius = " << minRadius << std::endl;
+    std::cout << "maxRadius = " << maxRadius << std::endl;
     _minDistSquared = CGAL::square(minDist);
     _minRadiusSquared = CGAL::square(minRadius);
     _maxRadiusSquared = CGAL::square(maxRadius);
@@ -170,11 +241,15 @@ public:
   orientation_on_sphere_2_object() const
   { return Orientation_on_sphere_2(_center, LK()); }
 
-  Side_of_oriented_circle_2
-  side_of_oriented_circle_2_object() const
+  Side_of_oriented_circle_on_sphere_2
+  side_of_oriented_circle_on_sphere_2_object() const
   { return typename LK::Orientation_3(); } // @tmp
 
 public:
+  Construct_point_on_sphere_2
+  construct_point_on_sphere_2_object() const
+  { return Construct_point_on_sphere_2(); } // @tmp
+
   Construct_point_3
   construct_point_3_object() const
   { return typename LK::Construct_point_3(); } // @tmp
@@ -189,15 +264,15 @@ public:
 
   Construct_arc_on_sphere_2
   construct_arc_on_sphere_2_object() const
-  { return typename SK::Construct_circular_arc_3(); } // @tmp
+  { return Construct_arc_on_sphere_2(_center, _radius, LK(), SK()); } // @tmp
 
   Construct_circumcenter_on_sphere_2
   construct_circumcenter_on_sphere_2_object() const
   { return typename LK::Construct_circumcenter_3(); } // @tmp
 
-  Compute_squared_distance_3
-  compute_squared_distance_3_object() const
-  { return typename LK::Compute_squared_distance_3(); } // @tmp
+  Construct_circumcenter_3
+  construct_circumcenter_3_object() const
+  { return typename LK::Construct_circumcenter_3();  } // @tmp
 
 public:
   void set_center(const Point_3& center) { _center = center; }
@@ -206,15 +281,16 @@ public:
   FT radius() const { return _radius; }
 
 public:
-  bool is_on_sphere(const Point_3& p) const
+  bool is_on_sphere(const Point_on_sphere_2& p) const
   {
-    const FT sq_dist = compute_squared_distance_3_object()(p, _center);
-    return (_minRadiusSquared < sq_dist && sq_dist < _maxRadiusSquared);
+    const FT sq_dist = CGAL::squared_distance(p, _center); // @todo use LK
+    std::cout << _minRadiusSquared << " " << sq_dist << " " << _maxRadiusSquared << std::endl;
+    return (_minRadiusSquared <= sq_dist && sq_dist < _maxRadiusSquared);
   }
 
-  bool are_points_too_close(const Point_3& p, const Point_3& q) const
+  bool are_points_too_close(const Point_on_sphere_2& p, const Point_on_sphere_2& q) const
   {
-    return (compute_squared_distance_3_object()(p, q) <= _minDistSquared);
+    return (CGAL::squared_distance(p, q) <= _minDistSquared);
   }
 
 protected:
