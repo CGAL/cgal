@@ -210,7 +210,7 @@ public:
   void set_center(Point_3 center);
 
   /// returns the center of the sphere.
-  Point_3 center();
+  Point_3 center() const;
 
   /// sets the radius of the sphere.
   ///
@@ -220,7 +220,7 @@ public:
   void set_radius(FT radius);
 
   /// returns the radius of the sphere.
-  FT radius();
+  FT radius() const;
 
   /// @}
 
