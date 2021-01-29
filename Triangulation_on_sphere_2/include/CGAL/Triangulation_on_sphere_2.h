@@ -38,12 +38,14 @@
 
 namespace CGAL {
 
-// @todo clean all that stuff
-template < class Gt, class Tds > class Triangulation_on_sphere_2;
-template < class Gt, class Tds > std::istream& operator>>
-(std::istream& is, Triangulation_on_sphere_2<Gt, Tds>& tr);
-template < class Gt, class Tds >  std::ostream& operator<<
-(std::ostream& os, const Triangulation_on_sphere_2<Gt, Tds>& tr);
+template < class Gt, class Tds >
+class Triangulation_on_sphere_2;
+
+template < class Gt, class Tds >
+std::istream& operator>>(std::istream& is, Triangulation_on_sphere_2<Gt, Tds>& tr);
+
+template < class Gt, class Tds >
+std::ostream& operator<<(std::ostream& os, const Triangulation_on_sphere_2<Gt, Tds>& tr);
 
 // This class just provides some basic methods and cannot be used independently.
 // No insertion or removal is implemented.
@@ -54,7 +56,7 @@ template <class Gt,
 class Triangulation_on_sphere_2
   : public Triangulation_cw_ccw_2
 {
-  friend std::istream& operator>> <>(std::istream& is, Triangulation_on_sphere_2& tr);
+  friend std::istream& operator>>(std::istream& is, Triangulation_on_sphere_2& tr);
 
   typedef Triangulation_on_sphere_2<Gt, Tds>      Self;
 
@@ -65,6 +67,9 @@ public:
   typedef typename Geom_traits::FT                FT;
   typedef typename Geom_traits::Point_3           Point_3;
   typedef typename Geom_traits::Point_on_sphere_2 Point;
+  typedef typename Geom_traits::Segment_3         Segment_3;
+  typedef typename Geom_traits::Triangle_3        Triangle_3;
+  typedef typename Geom_traits::Arc_on_sphere_2   Arc_on_sphere_2;
 
   typedef typename Tds::size_type                 size_type;
   typedef typename Tds::difference_type           difference_type;
@@ -104,6 +109,7 @@ public:
     }
   };
 
+  // @todo check contour shenanigans correctness
   class Contour_tester
   {
     const Triangulation_on_sphere_2 *t;
@@ -193,8 +199,9 @@ public:
   int dimension() const { return _tds.dimension(); }
 
   size_type number_of_vertices() const { return _tds.number_of_vertices(); }
-  size_type number_of_ghost_faces() const;
+  size_type number_of_edges() const { return _tds.number_of_edges(); }
   size_type number_of_faces() const { return _tds.number_of_faces(); } // total number of faces (solid + ghost)
+  size_type number_of_ghost_faces() const;
 
   // TDS predicates
   bool is_edge(Vertex_handle va, Vertex_handle vb) const;
@@ -224,8 +231,8 @@ public:
   bool are_points_too_close(const Point& p, const Point& q, Locate_type& lt) const;
 
   //-----------------------LOCATION-----------------------------------------------------------------
-  Face_handle march_locate_2D(Face_handle f, const Point& t, Locate_type& lt, int& li) const;
   Face_handle march_locate_1D(const Point& t, Locate_type& lt, int& li) const ;
+  Face_handle march_locate_2D(Face_handle f, const Point& t, Locate_type& lt, int& li) const;
   Face_handle locate(const Point& p, Locate_type& lt, int& li, Face_handle start) const;
   Face_handle locate(const Point& p, const Face_handle start) const;
   Face_handle locate_edge(const Point& p, Locate_type& lt, int& li, bool on_diametral_plane) const;
@@ -368,6 +375,7 @@ is_valid(bool verbose,
   if(dimension() == 1)
   {
     All_vertices_iterator vit = vertices_begin();
+    // @todo
   }
   else // dimension() == 2
   {
@@ -388,8 +396,6 @@ is_valid(bool verbose,
 
   return result;
 }
-
-// TESTS
 
 template <typename Gt, typename Tds>
 inline bool
@@ -481,7 +487,7 @@ are_equal(const Point& p, const Point& q) const
   return geom_traits().equal_on_sphere_2_object()(p, q);
 }
 
-// return true if r strictly lies inside the cone defined by the center of the sphere, p and q
+// return true if `r` strictly lies inside the cone defined by the center of the sphere, `p` and `q`
 template <typename Gt, typename Tds>
 bool
 Triangulation_on_sphere_2<Gt, Tds>::
@@ -512,7 +518,7 @@ are_points_too_close(const Point& p, const Point& q, Locate_type& lt) const
 }
 
 /*
- * Location for degenerated cases: locates the conflicting edge in a 1 dimensional triangulation.
+ * Location for degenerated cases: locates the conflicting edge in a 1-dimensional triangulation.
  * This method is used when the new point is coplanar with the existing vertices.
  * The Boolean 'on_diametral_plane' indicates whether the points are also coplanar with the
  * center of the sphere (true) or not (false).
@@ -530,7 +536,7 @@ locate_edge(const Point& p,
   if(on_diametral_plane)
   {
     All_edges_iterator eit;
-    for(eit=all_edges_begin(); eit!=all_edges_end(); ++eit)
+    for(eit=all_edges_begin(); eit!=all_edges_end(); ++eit) // @todo O(n)
     {
       if(!eit->first->is_ghost())
       {
@@ -561,7 +567,7 @@ locate_edge(const Point& p,
     {
       f = eit->first;
       Vertex_handle v1 = f->vertex(0);
-      Vertex_handle v2 = f -> vertex(1);
+      Vertex_handle v2 = f->vertex(1);
       if(orientation_on_sphere(point(v1), point(v2), p) == RIGHT_TURN)
       {
         lt = EDGE;
@@ -570,8 +576,6 @@ locate_edge(const Point& p,
         return eit->first;
       }
     }
-
-    // @fixme 'loc' is not set
 
     test_distance(p, loc, lt, li);
     return loc;
@@ -669,11 +673,11 @@ march_locate_1D(const Point& p, Locate_type& lt, int& li) const
     return f;
   }
 
-  // from then on, 'p' is coplanar with all the triangulation's points
+  // from then on, p is coplanar with all the triangulation's points
 
-  // check if 'p' is coradial with one existing point
+  // check if p is coradial with one existing point
   All_vertices_iterator vi;
-  for(vi=vertices_begin(); vi!=vertices_end(); ++vi)
+  for(vi=vertices_begin(); vi!=vertices_end(); ++vi) // @todo turns insertion into O(n)
   {
     if(are_equal(point(vi), p))
     {
@@ -729,7 +733,8 @@ march_locate_2D(Face_handle f,
           {
             lt = CONTOUR;
             li = 4;
-            test_distance(t, next, lt, li); // @fixme should be done later once the whole conflit zone is known?
+            // @fixme same issue as the test_distance on the face in conflict in the generic case
+            test_distance(t, next, lt, li);
             return next;
           }
         }
@@ -938,7 +943,7 @@ march_locate_2D(Face_handle f,
   }
 }
 
-// @fixme implement new walks
+// @todo implement new walks
 template <typename Gt, typename Tds>
 typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
 Triangulation_on_sphere_2<Gt, Tds>::
@@ -1008,6 +1013,8 @@ locate(const Point& p,
       return march_locate_1D(p, lt, li);
     }
   }
+
+  // below is dimension() == 2
 
   if(start == Face_handle())
     start = all_faces_begin();

@@ -89,13 +89,18 @@ public:
   using Base::vertices_end;
   using Base::collinear_between;
   using Base::orientation_on_sphere;
-  using Base::show_face; // @todo rename this
+  using Base::show_face;
+  using Base::show_vertex;
   using Base::delete_faces;
   using Base::compare;
+  using Base::VERTEX;
+  using Base::EDGE;
+  using Base::FACE;
+  using Base::CONTOUR;
+  using Base::OUTSIDE_CONVEX_HULL;
+  using Base::OUTSIDE_AFFINE_HULL;
   using Base::NOT_ON_SPHERE;
   using Base::TOO_CLOSE;
-  using Base::VERTEX;
-  using Base::FACE;
 #endif
 
   // class to sort points lexicographically.
@@ -126,6 +131,8 @@ public:
   {
     insert(first, beyond);
   }
+
+  // @todo complete copy operators
 
   // Predicates & Constructions
   Oriented_side side_of_oriented_circle(const Point& p, const Point& q, const Point& r, const Point& s, bool perturb = false) const;
@@ -235,7 +242,7 @@ public:
   template <typename InputIterator>
   int insert(InputIterator first, InputIterator beyond);
 
-  // just for convenience when P3 != PoS2
+  // For convenience when P3 != PoS2
   template <typename P>
   Vertex_handle insert(const P& p,
                        Face_handle f = Face_handle(),
@@ -313,7 +320,7 @@ side_of_oriented_circle(const Point& p0, const Point& p1, const Point& p2, const
   const Point* points[4] = { &p0, &p1, &p2, &p };
   std::sort(points, points + 4, Perturbation_order(this));
 
-  // @fixme revert to former?
+  // @fixme revert to the former approach?
   for(int i=3; i>0; --i)
   {
     if(points[i] == &p)
@@ -375,7 +382,7 @@ insert(const Point& p, Face_handle start)
       if(number_of_vertices() == 1)
         return vertices_begin();
 
-      return (loc->vertex(li)); // @fixme is that correct for dim() < 1 ?
+      return (loc->vertex(li));
     }
     default: // the point can be inserted
       return insert(p, lt, loc, li);
@@ -522,9 +529,9 @@ insert(const Point& p, Locate_type lt, Face_handle loc, int /*li*/)
   Vertex_handle v;
   switch(dimension())
   {
-    case -2:
+    case -2: // empty
       return insert_first(p);
-    case -1:
+    case -1: // 1 vertex
       return insert_second(p);
     case 0: // 2 vertices
       return insert_third(p);
@@ -578,7 +585,7 @@ update_ghost_faces(Vertex_handle v, bool first)
   CGAL_assertion(dimension() >= 1);
 
   bool ghost_found = false;
-  if(dimension() == 1) // @fixme what's the point of marking faces as ghost here...
+  if(dimension() == 1)
   {
     All_edges_iterator eit = all_edges_begin();
     for(; eit!=all_edges_end(); ++eit)
@@ -590,7 +597,6 @@ update_ghost_faces(Vertex_handle v, bool first)
       {
         f->set_ghost(true);
         ghost_found = true;
-        // @fixme not setting _ghost here?
       }
       else
       {
@@ -618,6 +624,7 @@ update_ghost_faces(Vertex_handle v, bool first)
     }
     else // not first
     {
+      CGAL_assertion(v != Vertex_handle());
       Face_circulator fc = this->incident_faces(v, v->face());
       Face_circulator done(fc);
       do
@@ -671,7 +678,7 @@ insert(InputIterator first, InputIterator beyond)
   for(typename std::vector<Point>::const_iterator p=points.begin(), end=points.end(); p!=end; ++p)
   {
     v = insert(*p, hint);
-    if(v != Vertex_handle())//could happen if the point is not on the sphere
+    if(v != Vertex_handle()) // could happen if the point is not on the sphere
       hint = v->face();
   }
 
@@ -684,6 +691,8 @@ void
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 remove_degree_3(Vertex_handle v, Face_handle f)
 {
+  CGAL_precondition(v != Vertex_handle());
+
   if(f == Face_handle())
     f = v->face();
 
@@ -710,6 +719,8 @@ void
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 remove_1D(Vertex_handle v)
 {
+  CGAL_precondition(v != Vertex_handle());
+
   tds().remove_1D(v);
   update_ghost_faces();
 }
@@ -776,7 +787,7 @@ bool
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 test_dim_up(const Point& p) const
 {
-  CGAL_precondition(dimension()!=2);
+  CGAL_precondition(dimension() == 1);
 
   Face_handle f = all_edges_begin()->first;
   Vertex_handle v1 = f->vertex(0);
@@ -829,10 +840,8 @@ fill_hole_regular(std::list<Edge>& first_hole)
       continue;
     }
 
-    // else find an edge with two finite vertices
-    // on the hole boundary
-    // and the new triangle adjacent to that edge
-    //  cut the hole and push it back
+    // else find an edge with two vertices on the hole boundary and the new triangle adjacent to that edge
+    // cut the hole and push it back
 
     // take the first neighboring face and pop it;
     ff = hole.front().first;
@@ -1103,12 +1112,12 @@ is_valid(bool verbose, int level) const
 
   switch(dimension())
   {
-    case 0 :
+    case 0:
       break;
-    case 1 :
+    case 1:
       CGAL_assertion(this->is_plane());
       break;
-    case 2 :
+    case 2:
       for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); ++it)
       {
         Orientation s = orientation_on_sphere(point(it, 0), point(it, 1), point(it, 2));
@@ -1141,8 +1150,8 @@ is_valid_vertex(Vertex_handle vh, bool verbose, int /*level*/) const
     {
       std::cerr << " from is_valid_vertex " << std::endl;
       std::cerr << "normal vertex " << &(*vh) << std::endl;
-      std::cerr << point(vh) << " " << std::endl;
-      std::cerr << "vh_>face " << &*(vh->face()) << " " << std::endl;
+      show_vertex(vh);
+      std::cerr << "\nvh_>face " << &*(vh->face()) << " " << std::endl;
 
       show_face(vh->face());
     }
