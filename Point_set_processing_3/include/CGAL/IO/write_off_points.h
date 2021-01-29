@@ -207,8 +207,7 @@ bool write_OFF(const std::string& filename,
                )
 {
   std::ofstream os(filename);
-  if(parameters::is_default_parameter(
-       parameters::get_parameter(np, internal_np::stream_precision)))
+  set_default_stream_precision(os, np);
   return write_OFF(os, points, np);
 }
 
