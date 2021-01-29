@@ -212,9 +212,15 @@ public:
   // Validity
   bool is_valid(bool verbose = false, int level = 0) const;
 
-  //-----------------------POINT--------------------------------------------------------------------
+  //-----------------------GEOMETRY-----------------------------------------------------------------
   const Point& point(const Vertex_handle v) const { return v->point(); }
   const Point& point(const Face_handle f, const int i) const { return point(f->vertex(i)); }
+
+  Segment_3 segment(const Edge& e) const;
+  Segment_3 segment(const Face_handle f, int i) const;
+  Arc_on_sphere_2 arc_segment(const Edge& e) const;
+  Arc_on_sphere_2 arc_segment(const Face_handle f, int i) const;
+  Triangle_3 triangle(const Face_handle f) const;
 
   //-----------------------PREDICATES---------------------------------------------------------------
   Orientation orientation(const Point& p, const Point& q, const Point& r, const Point& s) const;
