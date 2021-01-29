@@ -28,7 +28,6 @@ struct Myf {
 int main()
 {
   plus< int >        pl;
-  multiplies< int >  mu;
   std::function<int(int)> op1 = [](int i){ return i+1; };
   std::function<int(int)> op2 = [](int i){ return i * 2; };
 
@@ -48,7 +47,7 @@ int main()
 
   // compose2_1:
   transform(b, b + 5, a, compose2_1(pl, op2, op2));
-  transform(b, b + 5, b, bind1st(mu, 4));
+  transform(b, b + 5, b, [](int i) { return 4 * i;} );
   assert(equal(a, a + 5, b));
 
   // compare_to_less
