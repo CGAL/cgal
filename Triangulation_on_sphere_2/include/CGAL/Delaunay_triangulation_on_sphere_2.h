@@ -263,14 +263,18 @@ public:
   void remove_1D(Vertex_handle v);
   void remove_2D(Vertex_handle v);
   void remove(Vertex_handle v);
+
   bool test_dim_down(Vertex_handle v);
   bool test_dim_up(const Point& p) const;
   void fill_hole_regular(std::list<Edge>& hole);
 
   // Dual
-  Point_3 circumcenter(const Point& p0, const Point& p1, const Point& p2) const;
+  Point_3 circumcenter(const Point_3& p0, const Point_3& p1, const Point_3& p2) const;
   Point_3 circumcenter(const Face_handle f) const;
   Point_3 dual(const Face_handle f) const;
+  Point circumcenter_on_sphere(const Point& p0, const Point& p1, const Point& p2) const;
+  Point circumcenter_on_sphere(const Face_handle f) const;
+  Point dual_on_sphere(const Face_handle f) const;
   Segment_3 dual(const Edge& e) const;
   Segment_3 dual(const Edge_circulator ec) const { return dual(*ec); }
   Segment_3 dual(const All_edges_iterator ei) const { return dual(*ei); }
@@ -937,9 +941,9 @@ template<class Gt, class Tds>
 inline
 typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Point_3
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-circumcenter(const Point& p0, const Point& p1, const Point& p2) const
+circumcenter(const Point_3& p0, const Point_3& p1, const Point_3& p2) const
 {
-  return geom_traits().construct_circumcenter_on_sphere_2_object()(p0, p1, p2);
+  return geom_traits().construct_circumcenter_3_object()(p0, p1, p2);
 }
 
 template <typename Gt, typename Tds>
@@ -947,10 +951,36 @@ typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Point_3
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 circumcenter(const Face_handle f) const
 {
+  typename Geom_traits::Construct_point_3 cp3 = geom_traits().construct_point_3_object();
+  return circumcenter(cp3(point(f, 0)), cp3(point(f, 1)), cp3(point(f, 2)));
+}
+
+template<class Gt, class Tds>
+inline
+typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Point
+Delaunay_triangulation_on_sphere_2<Gt, Tds>::
+circumcenter_on_sphere(const Point& p0, const Point& p1, const Point& p2) const
+{
+  return geom_traits().construct_circumcenter_on_sphere_2_object()(p0, p1, p2);
+}
+
+template <typename Gt, typename Tds>
+typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Point
+Delaunay_triangulation_on_sphere_2<Gt, Tds>::
+circumcenter_on_sphere(const Face_handle f) const
+{
   return circumcenter(point(f, 0), point(f, 1), point(f, 2));
 }
 
-//Following methods are used to compute the Voronoi-Diagram
+template <typename Gt, typename Tds>
+typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Point
+Delaunay_triangulation_on_sphere_2<Gt, Tds>::
+dual_on_sphere(const Face_handle f) const
+{
+  return circumcenter_on_sphere(f);
+}
+
+// Following methods are used to compute the Voronoi-Diagram
 template <typename Gt, typename Tds>
 inline
 typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Point_3
