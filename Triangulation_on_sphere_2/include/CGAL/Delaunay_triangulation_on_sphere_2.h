@@ -313,7 +313,7 @@ side_of_oriented_circle(const Point& p0, const Point& p1, const Point& p2, const
                         bool perturb) const
 {
   // Specificity of the ToS_2: the in-circle is a call to orientation_3
-  Oriented_side os = orientation(p0, p1, p2, p);
+  Oriented_side os = Base::orientation(p0, p1, p2, p);
   if(os != ON_ORIENTED_BOUNDARY || !perturb)
     return os;
 
