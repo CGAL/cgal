@@ -25,6 +25,10 @@
 #include <CGAL/Origin.h>
 #include <CGAL/utility.h>
 #include <CGAL/spatial_sort_on_sphere.h>
+#include <CGAL/Spatial_sort_traits_adapter_3.h>
+
+#include <boost/iterator/transform_iterator.hpp>
+#include <boost/property_map/function_property_map.hpp>
 
 #include <algorithm>
 #include <iostream>
@@ -642,9 +646,21 @@ insert(InputIterator first, InputIterator beyond)
   std::vector<Point> points(first, beyond);
   CGAL::cpp98::random_shuffle(points.begin(), points.end());
 
-  // @todo bench this
+  typename Geom_traits::Construct_point_3 cp3 = geom_traits().construct_point_3_object();
+
+  typedef typename Geom_traits::Construct_point_3 Construct_point_3;
+  typedef typename boost::result_of<const Construct_point_3(const Point&)>::type Ret;
+  typedef boost::function_property_map<Construct_point_3,Point, Ret> fpmap;
+  typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
+
+  // @todo:
+  // - bench this
+  // - should points not on the sphere already be filtered because it might mess up the sort?
   spatial_sort_on_sphere(points.begin(), points.end(),
-                         geom_traits(), square(geom_traits().radius()), geom_traits().center());
+                         Search_traits_3(
+                           boost::make_function_property_map<Point, Ret, Construct_point_3>(
+                             geom_traits().construct_point_3_object()), geom_traits()),
+                         square(geom_traits().radius()), geom_traits().center());
 
   Face_handle hint;
   Vertex_handle v;
