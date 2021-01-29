@@ -1269,11 +1269,9 @@ private:
 
     bool is_occupied_iedge_1, is_bbox_reached_1;
     std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.collision_occured(pvertex, iedge);
-    // std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.is_occupied(pvertex, iedge);
 
     bool is_occupied_iedge_2, is_bbox_reached_2;
     std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.collision_occured(pother, iedge);
-    // std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.is_occupied(pother, iedge);
 
     const bool is_limit_line_1 = m_data.is_limit_line(pvertex, iedge, is_occupied_iedge_1, true);
     const bool is_limit_line_2 = m_data.is_limit_line(pother , iedge, is_occupied_iedge_2, false);
@@ -1367,11 +1365,9 @@ private:
 
     bool is_occupied_iedge_1, is_bbox_reached_1;
     std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.collision_occured(pvertex, iedge);
-    // std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.is_occupied(pvertex, iedge);
 
     bool is_occupied_iedge_2, is_bbox_reached_2;
     std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.collision_occured(pother, iedge);
-    // std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.is_occupied(pother, iedge);
 
     if (m_debug) {
       std::cout << "- bbox1/bbox2: "           << is_bbox_reached_1   << "/" << is_bbox_reached_1   << std::endl;
