@@ -4,13 +4,6 @@
 #include <CGAL/Delaunay_triangulation_on_sphere_2.h>
 #include <CGAL/Projection_sphere_traits_3.h>
 
-#include <CGAL/point_generators_3.h>
-#include <CGAL/point_generators_2.h>
-#include <CGAL/squared_distance_3.h>
-#include <CGAL/Timer.h>
-
-#include <boost/iterator/transform_iterator.hpp>
-
 #include <cmath>
 #include <fstream>
 
@@ -19,8 +12,8 @@ typedef K::Point_3                                                Point;
 
 typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>           Gt;
 typedef CGAL::Projection_sphere_traits_3<K>                       Gt2;
-typedef CGAL::Delaunay_triangulation_on_sphere_2<Gt>                 DTOS;
-typedef CGAL::Delaunay_triangulation_on_sphere_2<Gt2>                DTOS2;
+typedef CGAL::Delaunay_triangulation_on_sphere_2<Gt>              DTOS;
+typedef CGAL::Delaunay_triangulation_on_sphere_2<Gt2>             DTOS2;
 
 void test1()
 {
@@ -70,15 +63,16 @@ void test2()
   Point e(-10/sqrt(3),  10/sqrt(3), 10/sqrt(3));
   Point f(          0,           0,        -10);
 
-  DTOS2::Vertex_handle v1 = dtos.insert(a);
-  DTOS2::Vertex_handle v2 = dtos.insert(b);
-  DTOS2::Vertex_handle v3 = dtos.insert(c);
-  DTOS2::Vertex_handle v4 = dtos.insert(d);
-  DTOS2::Vertex_handle v5 = dtos.insert(e);
+  /*DTOS2::Vertex_handle v1 = */dtos.insert(a);
+  /*DTOS2::Vertex_handle v2 = */dtos.insert(b);
+  /*DTOS2::Vertex_handle v3 = */dtos.insert(c);
+  /*DTOS2::Vertex_handle v4 = */dtos.insert(d);
+  /*DTOS2::Vertex_handle v5 = */dtos.insert(e);
   DTOS2::Vertex_handle v6 = dtos.insert(f);
 
   assert(dtos.number_of_ghost_faces() == 0);
   dtos.remove(v6);
+
   assert(dtos.number_of_ghost_faces() == 2);
   assert(dtos.dimension() == 2);
 }
@@ -89,6 +83,8 @@ int main(int, char**)
 
   test1();
   test2();
+
+  std::cout << "Done" << std::endl;
 
   return EXIT_SUCCESS;
 }

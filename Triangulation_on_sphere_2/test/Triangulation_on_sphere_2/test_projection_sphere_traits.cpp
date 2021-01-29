@@ -8,122 +8,117 @@
 #include <iostream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel      K;
-typedef K::Point_3                                               Point;
 
 typedef CGAL::Projection_sphere_traits_3<K>                      Gt;
-typedef Gt::Point_2                                              Point_2;
-typedef Gt::Compare_xyz_3                                        Compare_xyz_3;
-typedef Gt::Compute_squared_distance_2                           Compute_squared_distance_2;
-typedef Gt::Construct_projected_point_3                          Construct_projected_point_3;
-typedef Gt::Coradial_sphere_2                                    Coradial_sphere_2;
-typedef Gt::Inside_cone_2                                        Inside_cone_2;
-typedef Gt::Orientation_2                                        Orientation_2;
-typedef Gt::Power_test_2                                         Power_test_2;
+
+typedef Gt::Point_3                                              Point_3;
+typedef Gt::Point_on_sphere_2                                    Point_on_sphere_2;
+typedef Gt::Construct_point_on_sphere_2                          Construct_point_on_sphere_2;
+
+typedef Gt::Compare_on_sphere_2                                  Compare_on_sphere_2;
+typedef Gt::Equal_on_sphere_2                                    Equal_on_sphere_2;
+typedef Gt::Collinear_are_strictly_ordered_on_great_circle_2     Collinear_are_strictly_ordered_on_great_circle_2;
+typedef Gt::Orientation_on_sphere_2                              Orientation_on_sphere_2;
+typedef Gt::Side_of_oriented_circle_on_sphere_2                  Side_of_oriented_circle_on_sphere_2;
+
+typedef Gt::Compare_on_sphere_2                                  Compare_on_sphere_2;
 
 int main(int, char**)
 {
-  Gt traits(Point(0, 0, 0), 10);
-  traits.set_radius(1);
+  Point_3 c(0, 0, 0);
 
-  Construct_projected_point_3 cst = traits.construct_projected_point_3_object();
-  Coradial_sphere_2 coradial = traits.coradial_sphere_2_object();
-  Compute_squared_distance_2 squared_distance= traits.compute_squared_distance_2_object();
-  Compare_xyz_3 compare_xyz = traits.compare_xyz_3_object();
-  Inside_cone_2 inside_cone = traits.inside_cone_2_object();
-  Orientation_2 orientation = traits.orientation_2_object();
-  Power_test_2 power_test = traits.power_test_2_object();
+  Gt traits(c, 10);
 
-  Point c(0, 0, 0);
+  Equal_on_sphere_2 equal_on_sphere = traits.equal_on_sphere_2_object();
+  Compare_on_sphere_2 compare_on_sphere = traits.compare_on_sphere_2_object();
+  Collinear_are_strictly_ordered_on_great_circle_2 inside_cone = traits.collinear_are_strictly_ordered_on_great_circle_2_object();
+  Orientation_on_sphere_2 orientation = traits.orientation_on_sphere_2_object();
+  Side_of_oriented_circle_on_sphere_2 side_of_oriented_circle = traits.side_of_oriented_circle_on_sphere_2_object();
+
+  Construct_point_on_sphere_2 cst = traits.construct_point_on_sphere_2_object();
 
   // Testing with Points projected on unit sphere
-  Point p11(1.5,  1.5, 1.5);
-  Point p12( -1,    1,   1);
-  Point p13(  0,  0.7,   0);
-  Point p14(  0,   -2,   0);
+  Point_3 p11(1.5,  1.5, 1.5);
+  Point_3 p12( -1,    1,   1);
+  Point_3 p13(  0,  0.7,   0);
+  Point_3 p14(  0,   -2,   0);
 
-  Point p21(   2, 0,   -1);
-  Point p22(-1.8, 0, -0.7);
-  Point p23(   0, 0,  2.6);
+  Point_3 p21(   2, 0,   -1);
+  Point_3 p22(-1.8, 0, -0.7);
+  Point_3 p23(   0, 0,  2.6);
 
   // Points with same coordinates
-  Point p31(0.6, 0.3, -1);
-  Point p32(0.6, 0.3, -1);
-  Point p33(0.6, 0.3,  1);
+  Point_3 p31(0.6, 0.3, -1);
+  Point_3 p32(0.6, 0.3, -1);
+  Point_3 p33(0.6, 0.3,  1);
 
-  // Coradial points
-  Point p41(  1,   1,    1);
-  Point p42(0.7, 0.7,  0.7);
-  Point p43(0.3, 0.6, -2.4);
-  Point p44(0.6, 1.2, -4.8);
+  // Equal points
+  Point_3 p41(  1,   1,    1);
+  Point_3 p42(0.7, 0.7,  0.7);
+  Point_3 p43(0.3, 0.6, -2.4);
+  Point_3 p44(0.6, 1.2, -4.8);
 
   // Inside Cone
-  Point p51(  1,   1,   1);
-  Point p52( -1,   1,   1);
-  Point p53(  1,   3,   3); // inside
-  Point p54(0.8, 0.8, 0.8); // boundary
-  Point p55(  0,  -2,  -2); // outside
+  Point_3 p51(  1,   1,   1);
+  Point_3 p52( -1,   1,   1);
+  Point_3 p53(  1,   3,   3); // inside
+  Point_3 p54(0.8, 0.8, 0.8); // boundary
+  Point_3 p55(  0,  -2,  -2); // outside
 
   //distance
-  Point p61(  1,   1,   0);
-  Point p62( -1,   1,   0);
+  Point_3 p61(  1,   1,   0);
+  Point_3 p62( -1,   1,   0);
 
   // transform to projected points
-  Point_2 pp11(p11, c);
-  Point_2 pp12(p12, c);
-  Point_2 pp13(p13, c);
-  Point_2 pp14(p14, c);
-  Point_2 pp21(p21, c);
-  Point_2 pp22(p22, c);
-  Point_2 pp23(p23, c);
-  Point_2 pp31(p31, c);
-  Point_2 pp32(p32, c);
-  Point_2 pp33(p33, c);
-  Point_2 pp41(p41, c);
-  Point_2 pp42(p42, c);
-  Point_2 pp43(p43, c);
-  Point_2 pp44(p44, c);
-  Point_2 pp51(p51, c);
-  Point_2 pp52(p52, c);
-  Point_2 pp53(p53, c);
-  Point_2 pp54(p54, c);
-  Point_2 pp55(p55, c);
-  Point_2 pp61(p61, c);
-  Point_2 pp62(p62, c);
+  Point_on_sphere_2 pp11 = cst(p11);
+  Point_on_sphere_2 pp12 = cst(p12);
+  Point_on_sphere_2 pp13 = cst(p13);
+  Point_on_sphere_2 pp14 = cst(p14);
+  Point_on_sphere_2 pp21 = cst(p21);
+  Point_on_sphere_2 pp22 = cst(p22);
+  Point_on_sphere_2 pp23 = cst(p23);
+  Point_on_sphere_2 pp31 = cst(p31);
+  Point_on_sphere_2 pp32 = cst(p32);
+  Point_on_sphere_2 pp33 = cst(p33);
+  Point_on_sphere_2 pp41 = cst(p41);
+  Point_on_sphere_2 pp42 = cst(p42);
+  Point_on_sphere_2 pp43 = cst(p43);
+  Point_on_sphere_2 pp44 = cst(p44);
+  Point_on_sphere_2 pp51 = cst(p51);
+  Point_on_sphere_2 pp52 = cst(p52);
+  Point_on_sphere_2 pp53 = cst(p53);
+  Point_on_sphere_2 pp54 = cst(p54);
+  Point_on_sphere_2 pp55 = cst(p55);
+  Point_on_sphere_2 pp61 = cst(p61);
+  Point_on_sphere_2 pp62 = cst(p62);
 
   std::cout << "Test Orientation" << std::endl;
   assert(orientation(pp11, pp12, pp13) == CGAL::NEGATIVE);
   assert(orientation(pp13, pp12, pp11) == CGAL::POSITIVE);
   assert(orientation(pp21, pp22, pp23) == CGAL::ON_ORIENTED_BOUNDARY);
-  assert(orientation(pp11, pp12, pp13, pp14) == CGAL::POSITIVE);
 
-  std::cout << "Test Power_Test_2" << std::endl;
-  assert(power_test(pp11, pp12, pp13, pp14) == CGAL::POSITIVE);
-  assert(power_test(pp14, pp11, pp12, pp13) == CGAL::NEGATIVE);
-  assert(power_test(pp21, pp22, pp23, pp11) == CGAL::POSITIVE);
+  std::cout << "Test Side_of_oriented_circle_on_sphere_2" << std::endl;
+  assert(side_of_oriented_circle(pp11, pp12, pp13, pp14) == CGAL::POSITIVE);
+  assert(side_of_oriented_circle(pp14, pp11, pp12, pp13) == CGAL::NEGATIVE);
+  assert(side_of_oriented_circle(pp21, pp22, pp23, pp11) == CGAL::POSITIVE);
 
-  std::cout << "Test Coradial_sphere_2" << std::endl;
-  assert(coradial(pp41, pp41));
-  assert(coradial(pp41, pp42));
-  assert(coradial(pp43, pp44));
+  std::cout << "Test Equal_on_sphere_2" << std::endl;
+  assert(equal_on_sphere(pp41, pp41));
+  assert(equal_on_sphere(pp41, pp42));
+  assert(equal_on_sphere(pp43, pp44));
 
-  std::cout << "Test Inside_Cone_sphere_2" << std::endl;
+  std::cout << "Test Inside_cone_sphere_2" << std::endl;
   assert(inside_cone(pp51, pp52, pp53));
   assert(!inside_cone(pp51, pp52, pp54));
   assert(!inside_cone(pp51, pp52, pp55));
 
-  std::cout << "Test Squared_Distance_sphere_2" << std::endl;
-  double dist1 = squared_distance(pp41, pp42);
-  assert(dist1 == 0);
+  std::cout << "Test compare_on_sphere_2" << std::endl;
+  assert(compare_on_sphere(pp31, pp31) == CGAL::EQUAL);
+  assert(compare_on_sphere(pp31, pp32) == CGAL::EQUAL);
+  assert(compare_on_sphere(pp31, pp33) == CGAL::SMALLER);
+  assert(compare_on_sphere(pp33, pp31) == CGAL::LARGER);
 
-  // double dist2 = squared_distance(p61, p62);
-  // assert( dist2 == 2);
-
-  std::cout << "Test compare_xyz_3" << std::endl;
-
-  assert(compare_xyz(pp31, pp31) == CGAL::EQUAL);
-  assert(compare_xyz(pp31, pp32) == CGAL::EQUAL);
-  assert(compare_xyz(pp31, pp33) == CGAL::SMALLER);
-  assert(compare_xyz(pp33, pp31) == CGAL::LARGER);
+  std::cout << "Done" << std::endl;
 
   return EXIT_SUCCESS;
 }

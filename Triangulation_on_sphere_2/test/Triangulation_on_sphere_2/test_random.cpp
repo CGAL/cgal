@@ -9,7 +9,6 @@
 
 #include <CGAL/algorithm.h>
 #include <CGAL/convex_hull_3.h>
-#include <CGAL/convex_hull_3_to_face_graph.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/point_generators_3.h>
@@ -31,8 +30,8 @@ typedef CGAL::Delaunay_triangulation_3<K>                      Delaunay;
 
 typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>        Gt;
 typedef CGAL::Projection_sphere_traits_3<K>                    Gt2;
-typedef CGAL::Delaunay_triangulation_on_sphere_2<Gt>              DTOS;
-typedef CGAL::Delaunay_triangulation_on_sphere_2<Gt2>             DTOS2;
+typedef CGAL::Delaunay_triangulation_on_sphere_2<Gt>           DTOS;
+typedef CGAL::Delaunay_triangulation_on_sphere_2<Gt2>          DTOS2;
 typedef K::Point_3                                             Point;
 
 typedef CGAL::Delaunay_triangulation_3<K, CGAL::Fast_location> Delaunay_fast;
@@ -69,7 +68,7 @@ int main(int, char**)
   //Triangulation with points on the sphere (projection_traits)
   Gt2 traits(K::Point_3(0, 0, 0), radius);
   DTOS2 dtos2(traits);
-  Gt2::Construct_projected_point_3 cst = traits.construct_projected_point_3_object();
+  Gt2::Construct_point_on_sphere_2 cst = traits.construct_point_on_sphere_2_object();
 
   time.reset();
   time.start();

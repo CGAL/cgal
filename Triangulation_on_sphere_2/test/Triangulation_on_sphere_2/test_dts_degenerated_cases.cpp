@@ -10,13 +10,13 @@
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
+typedef K::Point_3                                                  Point_3;
+
 typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>             Gt;
+typedef CGAL::Delaunay_triangulation_on_sphere_2<Gt>                DTOS;
 
-typedef CGAL::Delaunay_triangulation_on_sphere_2<Gt>                   DTOS;
-typedef DTOS::Point                                                 Point;
-
-typedef CGAL::Projection_sphere_traits_3<K>                         Projection_traits;
-typedef CGAL::Delaunay_triangulation_on_sphere_2<Projection_traits>    PDTOS;
+typedef CGAL::Projection_sphere_traits_3<K>                         PGt;
+typedef CGAL::Delaunay_triangulation_on_sphere_2<PGt>               PDTOS;
 
 template <class Vertex_handle, class Face_handle>
 bool has_face(const Face_handle fh,
@@ -59,7 +59,6 @@ bool has_face(const Face_handle fh,
   return true;
 }
 
-// @fixme just use operator=...
 template <class Triangul>
 bool are_equal(const Triangul& triA, const Triangul& triB)
 {
@@ -67,8 +66,18 @@ bool are_equal(const Triangul& triA, const Triangul& triB)
   typedef typename Triangul::Face_handle                    Face_handle;
   typedef typename Triangul::All_faces_iterator             Face_iterator;
 
-  bool test = false;
-  bool found = false;
+  std::cout << "First triangulation:" << std::endl;
+  std::cout << "dimension: " << triA.dimension() << std::endl;
+  std::cout << triA.number_of_vertices() << " nv" << std::endl;
+  std::cout << triA.number_of_faces() << " nf" << std::endl;
+  std::cout << triA.number_of_ghost_faces() << " gf" << std::endl;
+
+  std::cout << "Second triangulation:" << std::endl;
+  std::cout << "dimension: " << triB.dimension() << std::endl;
+  std::cout << triB.number_of_vertices() << " nv" << std::endl;
+  std::cout << triB.number_of_faces() << " nf" << std::endl;
+  std::cout << triB.number_of_ghost_faces() << " gf" << std::endl;
+
   if (triA.number_of_vertices()!= triB.number_of_vertices())
     return false;
   if (triA.number_of_faces()!= triB.number_of_faces())
@@ -76,52 +85,67 @@ bool are_equal(const Triangul& triA, const Triangul& triB)
   if(triA.number_of_ghost_faces()!=triB.number_of_ghost_faces())
     return false;
 
-  Face_iterator fiA;
-  Face_iterator fiB;
-  fiA = triA.all_faces_begin();
-
-  for(; fiA != triA.all_faces_end(); ++fiA)
+  bool found = true;
+  for(Face_iterator fiA = triA.all_faces_begin(); fiA != triA.all_faces_end(); ++fiA)
   {
     found = false;
-    for(fiB=triB.all_faces_begin(); fiB!=triB.all_faces_end(); ++fiB)
+    for(Face_iterator fiB=triB.all_faces_begin(); fiB!=triB.all_faces_end(); ++fiB)
     {
       Face_handle fb = Face_handle(fiB);
       Face_handle fa = Face_handle(fiA);
       Vertex_handle v0 = fa->vertex(0);
       Vertex_handle v1 = fa->vertex(1);
       Vertex_handle v2 = fa->vertex(2);
-      test = has_face(fb, v0, v1, v2);
-      if(test)
+      if(has_face(fb, v0, v1, v2))
       {
         found = true;
         break;
       }
     }
+
     assert(found);
   }
 
   return found;
 }
 
-//tests whether it is possible to insert points in degenerated positions
+// tests whether it is possible to insert points in degenerated positions
 // and whether the result is uniquely defined after this.
 
 template <typename DTOS, typename PointContainer>
 void test(const double radius,
-          PointContainer& coplanar_points)
+          PointContainer coplanar_points)
 {
   DTOS dtos(CGAL::ORIGIN, radius);
+  for(const auto& p : coplanar_points) // to avoid Hilbert sorts
+  {
+    std::cout << "------------> IIIIIIIIIIIIIIIIIIINSERT " << p << std::endl;
+    dtos.insert(p);
+  }
 
-  dtos.insert(coplanar_points.begin(), coplanar_points.end());
   assert(dtos.is_valid());
+
+  std::cout << "Triangulation:" << std::endl;
+  std::cout << "dimension: " << dtos.dimension() << std::endl;
+  std::cout << dtos.number_of_vertices() << " nv" << std::endl;
+  std::cout << dtos.number_of_edges() << " ne" << std::endl;
+  std::cout << dtos.number_of_faces() << " nf" << std::endl;
+  std::cout << dtos.number_of_ghost_faces() << " gf" << std::endl;
+
+  return; // @tmp
 
   for(int i=0; i<10; ++i)
   {
-    std::random_shuffle(coplanar_points.begin(), coplanar_points.end());
+    CGAL::cpp98::random_shuffle(coplanar_points.begin(), coplanar_points.end());
 
     DTOS dtos2(CGAL::ORIGIN, radius);
-    dtos2.insert(coplanar_points.begin(), coplanar_points.end());
+    for(const auto& p : coplanar_points) // to avoid Hilbert sorts
+      dtos2.insert(p);
+
+    assert(dtos2.is_valid());
     assert(are_equal(dtos, dtos2));
+
+    std::cout << dtos2.number_of_vertices() << " nv and " << dtos2.number_of_faces() << " nf" << std::endl;
   }
 }
 
@@ -132,41 +156,60 @@ int main(int, char**)
   const double radius = 100;
   const double radius2 = CGAL::square(radius);
 
+  std::vector<Point_3> coplanar_low_dim { Point_3(0,0,radius),  Point_3(radius,0,0),  Point_3(0,radius,0)
+                                    //  , Point_3(0,0,-radius)
+                                        };
+
   // Points are coplanar and coplanar with the center of the sphere
-  std::vector<Point> coplanar_points { Point(  radius/sqrt(2),   radius/sqrt(2),      0),
-                                       Point(- radius/sqrt(2),   radius/sqrt(2),      0),
-                                       Point(- radius/sqrt(2), - radius/sqrt(2),      0),
-                                       Point(  radius/sqrt(2), - radius/sqrt(2),      0),
-                                       Point(          radius,                0,      0),
-                                       Point(               0,                0, radius) };
+  std::vector<Point_3> coplanar_points { Point_3(  radius/sqrt(2),   radius/sqrt(2),      0),
+                                         Point_3(- radius/sqrt(2),   radius/sqrt(2),      0),
+                                         Point_3(- radius/sqrt(2), - radius/sqrt(2),      0),
+                                         Point_3(  radius/sqrt(2), - radius/sqrt(2),      0),
+                                         Point_3(          radius,                0,      0),
+                                         Point_3(               0,                0, radius) };
 
-  std::vector<Point> coplanar_points_on_great_circle { Point(         0,          0,            radius),
-                                                       Point( 1/sqrt(2),  1/sqrt(2), sqrt(radius2 - 1)),
-                                                       Point(-1/sqrt(2), -1/sqrt(2), sqrt(radius2 - 1)),
-                                                       Point(         0,          1, sqrt(radius2 - 1)),
-                                                       Point(         1,          0, sqrt(radius2 - 1)),
-                                                       Point(-1/sqrt(2),  1/sqrt(2), sqrt(radius2 - 1)),
-                                                       Point( 1/sqrt(2), -1/sqrt(2), sqrt(radius2 - 1)),
-                                                       Point(    radius,         0 ,               0) };
+  std::vector<Point_3> coplanar_points_on_great_circle { Point_3(         0,          0,            radius),
+                                                         Point_3( 1/sqrt(2),  1/sqrt(2), sqrt(radius2 - 1)),
+                                                         Point_3(-1/sqrt(2), -1/sqrt(2), sqrt(radius2 - 1)),
+                                                         Point_3(         0,          1, sqrt(radius2 - 1)),
+                                                         Point_3(         1,          0, sqrt(radius2 - 1)),
+                                                         Point_3(-1/sqrt(2),  1/sqrt(2), sqrt(radius2 - 1)),
+                                                         Point_3( 1/sqrt(2), -1/sqrt(2), sqrt(radius2 - 1)),
+                                                         Point_3(    radius,         0 ,               0) };
 
+  std::vector<Point_3> coplanar_points_on_circle { Point_3( 1/sqrt(2),  1/sqrt(2), sqrt(radius2 - 1)),
+                                                   Point_3(-1/sqrt(2), -1/sqrt(2), sqrt(radius2 - 1)),
+                                                   Point_3(         0,          1, sqrt(radius2 - 1)),
+                                                   Point_3(         1,          0, sqrt(radius2 - 1))/*,
+                                                   Point_3(-1/sqrt(2),  1/sqrt(2), sqrt(radius2 - 1)),
+                                                   Point_3( 1/sqrt(2), -1/sqrt(2), sqrt(radius2 - 1))*/ };
+
+  // -----------------------------------------------------------------------------------------------
   std::cout << "Testing with Delaunay_triangulation_sphere_traits:" << std::endl;
+  test<DTOS>(radius, coplanar_low_dim);
   test<DTOS>(radius, coplanar_points);
   test<DTOS>(radius, coplanar_points_on_great_circle);
+  test<DTOS>(radius, coplanar_points_on_circle);
 
   // -----------------------------------------------------------------------------------------------
   std::cout << "Testing with Projection_sphere_traits:  " << std::endl;
-  Projection_traits traits(CGAL::ORIGIN);
-  Projection_traits::Construct_projected_point_3 cpp3 = traits.construct_projected_point_3_object();
+  PGt traits(CGAL::ORIGIN, radius);
+  PGt::Construct_point_on_sphere_2 to_s2 = traits.construct_point_on_sphere_2_object();
 
-  std::vector<Projection_traits::Point_2> coplanar_ppoints;
-  std::vector<Projection_traits::Point_2> coplanar_ppoints_on_great_circle;
+  std::vector<PGt::Point_on_sphere_2> coplanar_ppoints;
+  std::vector<PGt::Point_on_sphere_2> coplanar_ppoints_on_great_circle;
 
-  std::transform(coplanar_points.begin(), coplanar_points.end(), coplanar_ppoints.begin(), cpp3);
-  std::transform(coplanar_points_on_great_circle.begin(), coplanar_points_on_great_circle.end(),
-                 coplanar_ppoints_on_great_circle.begin(), cpp3);
+  std::transform(coplanar_points.begin(), coplanar_points.end(), std::back_inserter(coplanar_ppoints), to_s2);
 
   test<PDTOS>(radius, coplanar_ppoints);
-  test<PDTOS>(radius, coplanar_ppoints_on_great_circle);
+
+  // tests the convenience API (passing P3)
+  test<PDTOS>(radius, coplanar_low_dim);
+  test<PDTOS>(radius, coplanar_points_on_circle);
+  test<PDTOS>(radius, coplanar_points_on_great_circle);
+  test<PDTOS>(radius, coplanar_points_on_circle);
+
+  std::cout << "Done" << std::endl;
 
   return EXIT_SUCCESS;
 }
