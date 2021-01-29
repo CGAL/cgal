@@ -233,7 +233,7 @@ public:
   bool are_equal(const Point& p, const Point& q) const;
   bool collinear_between(const Point& p, const Point& q, const Point& r) const;
 
-  void test_distance(const Point& p, const Face_handle f, Locate_type& lt, int& li) const;
+  void test_distance(const Point& p, Face_handle& f, Locate_type& lt, int& li) const;
   bool are_points_too_close(const Point& p, const Point& q, Locate_type& lt) const;
 
   //-----------------------LOCATION-----------------------------------------------------------------
@@ -509,12 +509,9 @@ bool
 Triangulation_on_sphere_2<Gt, Tds>::
 are_points_too_close(const Point& p, const Point& q, Locate_type& lt) const
 {
-  if(p == q)
-  {
-    lt = VERTEX;
-    return true;
-  }
-  else if(geom_traits().are_points_too_close(p, q))
+  std::cout << "Are " << p << " and " << q << " too close?" << std::endl;
+
+  if(geom_traits().are_points_too_close(p, q))
   {
     lt = TOO_CLOSE;
     return true;
@@ -548,8 +545,9 @@ locate_edge(const Point& p,
       {
         if(collinear_between(point(eit->first, 0), point(eit->first, 1), p))
         {
-          test_distance(p, eit->first, lt, li);
-          return eit->first;
+          Face_handle loc = eit->first;
+          test_distance(p, loc, lt, li);
+          return loc;
         }
       }
       else
@@ -591,13 +589,14 @@ locate_edge(const Point& p,
 /*
  calls are_points_too_close() for possible conflicts.
  If the point p is too close to an existing vertex, this vertex is returned.
+
  @todo should be replaced by a nearest neighbor search.
  */
 template <typename Gt, typename Tds>
 void
 Triangulation_on_sphere_2<Gt, Tds>::
 test_distance(const Point& p,
-              const Face_handle f,
+              Face_handle& f,
               Locate_type& lt,
               int& li) const
 {
@@ -605,24 +604,18 @@ test_distance(const Point& p,
 
   switch(dimension())
   {
-    case -1:
+    case -1: // 1 vertex
+      CGAL_FALLTHROUGH;
+    case 0: // 2 vertices
+      CGAL_FALLTHROUGH;
+    case 1: // 3+ coplanar vertices
     {
-      if(are_points_too_close(p, point(vertices_begin()), lt))
-      {
-        li = 0;
-        return;
-      }
-      break;
-    }
-    case 0:
-    case 1:
-    {
-      All_vertices_iterator vi = vertices_begin();
-      for(; vi!=vertices_end(); ++vi)
+      for(All_vertices_iterator vi=vertices_begin(); vi!=vertices_end(); ++vi)
       {
         if(are_points_too_close(point(vi), p, lt))
         {
-          li = 1;
+          f = vi->face();
+          li = f->index(vi);
           return;
         }
       }
@@ -964,55 +957,40 @@ locate(const Point& p,
     return Face_handle();
   }
 
+  std::cout << "Locate " << p << ", dimension " << dimension() << std::endl;
+
   switch(dimension())
   {
     case -2: // empty triangulation
     {
       lt = OUTSIDE_AFFINE_HULL;
       li = 4; // li should not be used in this case
-      return start;
+
+      return Face_handle();
     }
     case -1: // 1 vertex
-    {
-      const Point& q = point(vertices_begin());
-      if(are_equal(q, p))
-      {
-        lt = VERTEX;
-        li = 0;
-      }
-      else
-      {
-        lt = OUTSIDE_AFFINE_HULL;
-        li = 4;
-        test_distance(p, all_faces_begin(), lt, li);
-      }
-
-      return Face_handle();
-    }
+      CGAL_FALLTHROUGH;
     case 0: // 2 vertices
     {
-      Vertex_handle v = vertices_begin();
-      Face_handle f = v->face();
-      if(are_equal(p, point(v)))
+      for(All_vertices_iterator vi=vertices_begin(); vi!=vertices_end(); ++vi)
       {
-        lt = VERTEX;
-        li = 0;
-        return f;
-      }
-      else if(are_equal(p, point(f->neighbor(0), 0)))
-      {
-        lt = VERTEX;
-        li = 0;
-        return f->neighbor(0);
-      }
-      else
-      {
-        lt = OUTSIDE_AFFINE_HULL;
-        li = 4;
+        if(are_equal(p, point(vi)))
+        {
+          lt = VERTEX;
+          Face_handle f = vi->face();
+          li = f->index(vi);
+
+          return f;
+        }
       }
 
+      lt = OUTSIDE_AFFINE_HULL;
+      li = 4;
+
+      Face_handle f;
       test_distance(p, f, lt, li);
-      return Face_handle();
+
+      return f;
     }
     case 1:
     {
