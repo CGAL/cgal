@@ -240,7 +240,10 @@ public:
   Vertex_handle insert_cocircular(const Point& p, Locate_type lt, Face_handle loc);
 
   template <typename InputIterator>
-  int insert(InputIterator first, InputIterator beyond);
+  int insert(InputIterator first, InputIterator beyond,
+             typename std::enable_if<
+                        std::is_same<typename std::iterator_traits<InputIterator>::value_type,
+                                     Point>::value>::type* = nullptr);
 
   // For convenience when P3 != PoS2
   template <typename P>
@@ -254,7 +257,7 @@ public:
   template <typename InputIterator>
   int insert(InputIterator first, InputIterator beyond,
              typename std::enable_if<
-                        !std::is_same<typename std::iterator_traits<InputIterator>::type,
+                        !std::is_same<typename std::iterator_traits<InputIterator>::value_type,
                                       Point>::value>::type* = nullptr)
   {
     typename Geom_traits::Construct_point_on_sphere_2 cst = geom_traits().construct_point_on_sphere_2_object();
@@ -650,7 +653,9 @@ template <typename Gt, typename Tds>
 template <typename InputIterator>
 int
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-insert(InputIterator first, InputIterator beyond)
+insert(InputIterator first, InputIterator beyond,
+       typename std::enable_if<
+                  std::is_same<typename std::iterator_traits<InputIterator>::value_type, Point>::value>::type*)
 {
   int n = number_of_vertices();
 
