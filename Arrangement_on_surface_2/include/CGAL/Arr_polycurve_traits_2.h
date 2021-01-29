@@ -716,13 +716,18 @@ public:
       Comparison_result dir1 = cmp_seg_endpts(cv1[0]);
       Comparison_result dir2 = cmp_seg_endpts(cv2[0]);
 
+      std::vector<X_monotone_subcurve_2> ocv; // Used to represent overlaps.
+      const bool invert_ocv = ((dir1 == LARGER) && (dir2 == LARGER));
+      const bool consistent = (dir1 == dir2);
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+      CGAL_assertion(consistent);
+#endif
+
       const std::size_t n1 = cv1.number_of_subcurves();
       const std::size_t n2 = cv2.number_of_subcurves();
 
       std::size_t i1 = (dir1 == SMALLER) ? 0 : n1-1;
       std::size_t i2 = (dir2 == SMALLER) ? 0 : n2-1;
-
-      X_monotone_curve_2 ocv;           // Used to represent overlaps.
 
       auto compare_xy = m_poly_traits.compare_xy_2_object();
       Comparison_result left_res =
@@ -776,7 +781,7 @@ public:
         }
       }
 
-      // Check if the the left endpoint lies on the other polycurve.
+      // Check if the left endpoint lies on the other polycurve.
       bool left_coincides = (left_res == EQUAL);
       bool left_overlap = false;
 
@@ -825,8 +830,7 @@ public:
               boost::get<X_monotone_subcurve_2>(&xection);
             if (subcv_p != nullptr) {
               ocv.push_back(*subcv_p);
-              *oi++ = Intersection_result(ocv);
-              ocv.clear();
+              oi = output_ocv (ocv, invert_ocv, oi);
               continue;
             }
 
@@ -848,10 +852,16 @@ public:
               boost::get<X_monotone_subcurve_2>(&item);
             if (x_seg != nullptr) {
               X_monotone_subcurve_2 seg = *x_seg;
-
-              // If for some reason the subcurve intersection
-              // results in left oriented curve.
-              if (cmp_seg_endpts(seg) == LARGER) seg = construct_opposite(seg);
+              // We maintain the variant that if the input curves have opposite
+              // directions (! consistent), the overalpping curves are directed
+              // left=>right. This, however, is not guaranteed for the
+              // subcurves. Therefore, we need to enforce it. That is, we make
+              // sure the subcurves are also directed left=>right in this case.
+              if (! consistent && (cmp_seg_endpts(seg) == LARGER))
+                seg = construct_opposite(seg);
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+              CGAL_assertion(cmp_seg_endpts(seg) == SMALLER);
+#endif
               ocv.push_back(seg);
             }
 
@@ -876,9 +886,8 @@ public:
           if (left_overlap) {
             // An overlap occurred at the previous iteration:
             // Output the overlapping polycurve.
-            CGAL_assertion(ocv.number_of_subcurves() > 0);
-            *oi++ = Intersection_result(ocv);
-            ocv.clear();
+            CGAL_assertion(ocv.size() > 0);
+            oi = output_ocv (ocv, invert_ocv, oi);
           }
           else {
             // The left point of the current subcurve of one
@@ -923,8 +932,8 @@ public:
       } // END of while loop
 
         // Output the remaining overlapping polycurve, if necessary.
-      if (ocv.number_of_subcurves() > 0) {
-        *oi++ = Intersection_result(ocv);
+      if (ocv.size() > 0) {
+        oi = output_ocv (ocv, invert_ocv, oi);
       }
       else if (right_coincides) {
         typedef std::pair<Point_2,Multiplicity> return_point;
@@ -973,6 +982,27 @@ public:
           *oi++ = Intersection_result(ip);
         }
       }
+
+      return oi;
+    }
+
+  private:
+
+    template <typename OutputIterator>
+    inline OutputIterator output_ocv
+    (std::vector<X_monotone_subcurve_2>& ocv, bool invert_ocv, OutputIterator oi) const
+    {
+      typedef std::pair<Point_2, Multiplicity>        Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                      Intersection_result;
+      X_monotone_curve_2 curve;
+      if (invert_ocv)
+        std::reverse (ocv.begin(), ocv.end());
+      for (X_monotone_subcurve_2& sc : ocv)
+        curve.push_back (sc);
+      *(oi ++) = Intersection_result(curve);
+
+      ocv.clear();
 
       return oi;
     }

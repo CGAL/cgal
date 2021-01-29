@@ -142,7 +142,7 @@ namespace Shape_detection {
           continue;
 
         CGAL_precondition(
-          seed_index >= 0 && seed_index < m_input_range.size());
+          seed_index < m_input_range.size());
 
         // Try to grow a new region from the index of the seed item.
         if (!m_visited[seed_index]) {
@@ -187,7 +187,7 @@ namespace Shape_detection {
           continue;
 
         CGAL_precondition(
-          seed_index >= 0 && seed_index < m_input_range.size());
+          seed_index < m_input_range.size());
 
         if (!m_visited[seed_index])
           *(output++) = seed_index;
@@ -251,7 +251,7 @@ namespace Shape_detection {
             continue;
 
           CGAL_precondition(
-            neighbor_index >= 0 && neighbor_index < m_input_range.size());
+            neighbor_index < m_input_range.size());
 
           if (!m_visited[neighbor_index] &&
             m_region_type.is_part_of_region(item_index, neighbor_index, region)) {

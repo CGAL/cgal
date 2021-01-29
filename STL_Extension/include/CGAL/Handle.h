@@ -25,13 +25,17 @@ namespace CGAL {
 
 class Rep
 {
-    friend class Handle;
-  protected:
-             Rep() { count = 1; }
-    virtual ~Rep() {}
+  friend class Handle;
+protected:
+  Rep() { count = 1; }
+  Rep(int count)
+    : count(count)
+  {}
+  virtual ~Rep() {}
 
-    int      count;
+  int count;
 };
+
 
 class Handle
 {

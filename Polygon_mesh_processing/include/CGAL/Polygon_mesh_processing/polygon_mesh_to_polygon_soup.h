@@ -17,6 +17,7 @@
 
 #include <CGAL/algorithm.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Container_helper.h>
 #include <CGAL/Dynamic_property_map.h>
@@ -116,6 +117,8 @@ void polygon_mesh_to_polygon_soup(const PolygonMesh& mesh,
   }
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template<typename PolygonMesh, typename PointRange, typename PolygonRange>
 void polygon_mesh_to_polygon_soup(const PolygonMesh& mesh,
                                   PointRange& points,
@@ -123,6 +126,8 @@ void polygon_mesh_to_polygon_soup(const PolygonMesh& mesh,
 {
   return polygon_mesh_to_polygon_soup(mesh, points, polygons, CGAL::parameters::all_default());
 }
+
+/// \endcond
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

@@ -449,7 +449,7 @@ public:
    \tparam OutputIterator is used to store the computed scales. It accepts
    values of type `std::size_t`.
 
-   \param points input point range.
+   \param points input point range
    \param queries range of locations where scale must be estimated
    \param output iterator to store the computed scales
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -546,7 +546,7 @@ estimate_local_k_neighbor_scales(
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
-   \param points input point range.
+   \param points input point range
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
@@ -617,7 +617,7 @@ estimate_global_k_neighbor_scale(const PointRange& points)
    \tparam OutputIterator is used to store the computed scales. It accepts
    values of type `geom_traits::FT`.
 
-   \param points input point range.
+   \param points input point range
    \param queries range of locations where scale must be estimated
    \param output iterator to store the computed scales
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -714,7 +714,7 @@ estimate_local_range_scales(
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
-   \param points input point range.
+   \param points input point range
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin

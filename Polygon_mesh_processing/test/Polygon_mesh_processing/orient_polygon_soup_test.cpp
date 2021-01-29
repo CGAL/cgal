@@ -4,12 +4,12 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 
+#include <CGAL/algorithm.h>
+#include <CGAL/IO/OFF.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup_extension.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-
-#include <CGAL/algorithm.h>
 #include <CGAL/Timer.h>
 
 #include <fstream>
@@ -45,8 +45,8 @@ std::istream& read_soup(
     polygons[i].resize(no);
 
     for(std::size_t j = 0; j < no; ++j) {
-      std::size_t id;
-      scanner.scan_facet_vertex_index(id, i);
+      std::size_t id = 0;
+      scanner.scan_facet_vertex_index(id, j+1, i);
       if(id < scanner.size_of_vertices())
       {
         polygons[i][j] = id;

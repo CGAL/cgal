@@ -35,6 +35,21 @@
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
+namespace internal {
+
+  struct Dummy_filter {
+  template <typename Profile>
+  inline
+  const boost::optional<typename Profile::Point>
+  operator()(const Profile&, const boost::optional<typename Profile::Point>& op) const
+  {
+    return op;
+  }
+
+};
+
+} // namesapce internal
+
 template<class Handle>
 inline bool handle_assigned(Handle h) { Handle null; return h != null; }
 

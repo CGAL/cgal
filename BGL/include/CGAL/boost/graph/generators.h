@@ -124,7 +124,7 @@ random_face_in_mesh(const Graph& g, CGAL::Random& rnd = get_default_random())
 /**
  * \ingroup PkgBGLHelperFct
  *
- * \brief Creates an isolated triangle
+ * \brief creates an isolated triangle
  * with its vertices initialized to `p0`, `p1` and `p2`, and adds it to the graph `g`.
  *
  * \returns the non-border halfedge that has the target vertex associated with `p0`.
@@ -249,7 +249,7 @@ struct Default_grid_maker
 /**
  * \ingroup PkgBGLHelperFct
  *
- * \brief Creates an isolated quad with
+ * \brief creates an isolated quad with
  * its vertices initialized to `p0`, `p1`, `p2`, and `p3`, and adds it to the graph `g`.
  *
  * \returns the non-border halfedge that has the target vertex associated with `p0`.
@@ -279,7 +279,7 @@ make_quad(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
 
 /**
  * \ingroup PkgBGLHelperFct
- * \brief Creates an isolated hexahedron
+ * \brief creates an isolated hexahedron
  * with its vertices initialized to `p0`, `p1`, ...\ , and `p7`, and adds it to the graph `g`.
  * \image html hexahedron.png
  * \image latex hexahedron.png
@@ -341,7 +341,7 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
 
 /**
  * \ingroup PkgBGLHelperFct
- * \brief Creates an isolated tetrahedron
+ * \brief creates an isolated tetrahedron
  * with its vertices initialized to `p0`, `p1`, `p2`, and `p3`, and adds it to the graph `g`.
  * \image html tetrahedron.png
  * \image latex tetrahedron.png
@@ -440,7 +440,7 @@ make_tetrahedron(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
 /**
  * \ingroup PkgBGLHelperFct
  *
- * \brief Creates a triangulated regular prism, outward oriented,
+ * \brief creates a triangulated regular prism, outward oriented,
  * having `nb_vertices` vertices in each of its bases and adds it to the graph `g`.
  * If `center` is (0, 0, 0), then the first point of the prism is (`radius`, `height`, 0)
  *
@@ -483,15 +483,15 @@ make_regular_prism(typename boost::graph_traits<Graph>::vertices_size_type nb_ve
   for(typename boost::graph_traits<Graph>::vertices_size_type i=0; i < nb_vertices; ++i)
   {
     put(vpmap, vertices[i],
-        P(0.5*diameter * cos(i*precision*to_rad) + base_center.x(),
+        P(0.5*diameter * cos(to_double(FT(i)*precision*to_rad)) + base_center.x(),
           height+base_center.y(),
-          -0.5*diameter * sin(i*precision*to_rad) + base_center.z()));
+          -0.5*diameter * sin(to_double(FT(i)*precision*to_rad)) + base_center.z()));
 
     put(vpmap,
         vertices[i+nb_vertices],
-        P(0.5*diameter * cos(i*precision*to_rad) + base_center.x(),
+        P(0.5*diameter * cos(to_double(FT(i)*precision*to_rad)) + base_center.x(),
           base_center.y(),
-          -0.5*diameter * sin(i*precision*to_rad) + base_center.z()));
+          -0.5*diameter * sin(to_double(FT(i)*precision*to_rad)) + base_center.z()));
   }
 
   //fill faces
@@ -539,7 +539,7 @@ make_regular_prism(typename boost::graph_traits<Graph>::vertices_size_type nb_ve
 
 /**
  * \ingroup PkgBGLHelperFct
- * \brief Creates a pyramid, outward oriented, having `nb_vertices` vertices in its base and adds it to the graph `g`.
+ * \brief creates a pyramid, outward oriented, having `nb_vertices` vertices in its base and adds it to the graph `g`.
  *
  * If `center` is `(0, 0, 0)`, then the first point of the base is `(radius, 0, 0)`
  *
@@ -589,9 +589,9 @@ make_pyramid(typename boost::graph_traits<Graph>::vertices_size_type nb_vertices
   for(typename boost::graph_traits<Graph>::vertices_size_type i=0; i<nb_vertices; ++i)
   {
     put(vpmap, vertices[i],
-        P(0.5*diameter*cos(i*precision*to_rad)+base_center.x(),
+        P(0.5*diameter*cos(to_double(FT(i)*precision*to_rad))+base_center.x(),
           base_center.y(),
-          -0.5*diameter*sin(i*precision*to_rad)+base_center.z()));
+          -0.5*diameter*sin(to_double(FT(i)*precision*to_rad))+base_center.z()));
   }
 
   //fill faces
@@ -628,7 +628,7 @@ make_pyramid(typename boost::graph_traits<Graph>::vertices_size_type nb_vertices
 /**
  * \ingroup PkgBGLHelperFct
  *
- * \brief Creates an icosahedron, outward oriented, centered in `center` and adds it to the graph `g`.
+ * \brief creates an icosahedron, outward oriented, centered in `center` and adds it to the graph `g`.
  *
  * \param g the graph in which the icosahedron will be created.
  * \param center the center of the sphere in which the icosahedron is inscribed.
@@ -721,7 +721,7 @@ make_icosahedron(Graph& g,
 /*!
  * \ingroup PkgBGLHelperFct
  *
- * \brief Creates a row major ordered grid with `i` cells along the width and `j` cells
+ * \brief creates a row major ordered grid with `i` cells along the width and `j` cells
  * along the height and adds it to the graph `g`.
  * An internal property map for `CGAL::vertex_point_t` must be available in `Graph`.
  *

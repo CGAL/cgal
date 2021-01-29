@@ -2,7 +2,7 @@ namespace CGAL {
 
 /// \ingroup PkgPeriodic3Mesh3IOFunctions
 ///
-/// \brief Outputs a periodic mesh to the medit (`.mesh`) file format.
+/// \brief outputs a periodic mesh to the medit (`.mesh`) file format.
 ///        See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
 ///
 /// \param os the output stream
