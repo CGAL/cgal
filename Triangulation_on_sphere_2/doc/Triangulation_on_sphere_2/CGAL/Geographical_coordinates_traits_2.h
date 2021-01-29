@@ -7,8 +7,8 @@ The class `Geographical_coordinates_traits_2` is a model
 of the concept `DelaunayTriangulationOnSphereTraits_2`. It implements the `Point_on_sphere_2` type
 as a pair of coordinates representing the latitude and the longitude of the point on the sphere.
 
-\tparam K a linear kernel type; must be a model of `Kernel`
-\tparam SK a spherical kernel type; must be a model of `SphericalKernel`
+\tparam LK a linear kernel type; must be a model of `Kernel`.
+\tparam SK a spherical kernel type; must be a model of `SphericalKernel`.
 
 \cgalModels `DelaunayTriangulationOnSphereTraits_2`
 
@@ -53,7 +53,7 @@ public:
   typedef unspecified_type                          Collinear_are_strictly_ordered_on_great_circle_2;
 
   ///
-  typedef unspecified_type                          Side_of_oriented_circle_2;
+  typedef unspecified_type                          Side_of_oriented_circle_on_sphere_2;
 
   ///
   typedef unspecified_type                          Orientation_on_sphere_2;
@@ -69,6 +69,9 @@ public:
 
   ///
   typedef typename unspecified_type                 Construct_circumcenter_on_sphere_2;
+
+  ///
+  typedef typename unspecified_type                 Construct_circumcenter_3;
 
   /// converts points from the latitude/longitude system to the 3D Euclidean system
   typedef unspecified_type                          Construct_point_3;
@@ -112,7 +115,7 @@ class Geographical_coordinates
 {
 public:
   /// The field number type
-  typedef typename LK::FT                           FT;
+  typedef typename K::FT                            FT;
 
   ///
   typedef FT                                        Latitude;

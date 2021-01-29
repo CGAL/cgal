@@ -17,8 +17,10 @@ can be reduced to a single 3D orientation test \cgalCite{cgal:ccplr-redtp-10}.
 
 \tparam Traits is the geometric traits; it must be a model of `DelaunayTriangulationTraits_2`.
 
-\tparam TDS is the triangulation data structure, which must be a model of `TriangulationDataStructure_2`.
-        \cgal provides a default instantiation for this parameter, which is the class
+\tparam TDS is the triangulation data structure, which must be a model of `TriangulationDataStructure_2`
+        whose vertex base must be a model of `TriangulationOnSphereVertexBase_2` and whose face base
+        must be a model of `TriangulationOnSphereFaceBase_2`. \cgal provides a default instantiation
+        for this parameter, which is the class
         `CGAL::Triangulation_data_structure_2 < CGAL::Triangulation_on_sphere_vertex_base_2<Traits>,
                                                 CGAL::Triangulation_on_sphere_face_base_2<Traits> >`.
 
@@ -29,18 +31,48 @@ class Delaunay_triangulation_on_sphere_2
   : public Triangulation_on_sphere_2<Traits, TDS>
 {
 public:
-  /// \name Creation
+  /// \name Types
   /// @{
 
   /*!
-  introduces an empty triangulation.
+  The traits class.
   */
-  Delaunay_triangulation_on_sphere_2(const Traits& gt = Traits());
+  typedef Traits Geom_traits;
+
+  /*!
+  The point type representing a point on the sphere.
+  */
+  typedef Traits::Point_on_sphere_2 Point;
+
+  /// @}
+
+  /// \name Creation
+  /// @{
 
   /*!
   introduces an empty triangulation and sets the center and radius of the sphere to `c` and `r` respectively.
   */
   Delaunay_triangulation_on_sphere_2(const Point_3& c, const FT r);
+
+  /*!
+  introduces an empty triangulation and sets the center and radius of the sphere according
+  to values within the traits.
+
+  \sa `TriangulationOnSphereTraits_2`
+  */
+  Delaunay_triangulation_on_sphere_2(const Geom_traits& gt = Geom_traits());
+
+  /*!
+  introduces an empty triangulation whose center and radius are set according to values within the traits
+  and inserts the point range `[first;beyond[`.
+
+  \tparam PointOnSphereIterator must be a model of `InputIterator` with value type `Point_on_sphere_2`.
+
+  \sa `TriangulationOnSphereTraits_2`
+  */
+  template <typename PointOnSphereIterator>
+  Delaunay_triangulation_on_sphere_2(PointOnSphereIterator first, PointOnSphereIterator beyond,
+                                     const Geom_traits& gt = Geom_traits());
 
   /*!
   Copy constructor. All the vertices and faces are duplicated.
@@ -49,10 +81,11 @@ public:
 
   /*!
   Equivalent to constructing an empty triangulation with the optional traits class argument
-  and calling insert(first, last).
+  and calling insert(first, beyond).
   */
   template <class InputIterator>
-  Delaunay_triangulation_on_sphere_2(InputIterator first, InputIterator last, const Traits& gt = Traits());
+  Delaunay_triangulation_on_sphere_2(InputIterator first, InputIterator beyond,
+                                     const Geom_traits& gt = Geom_traits());
 
   /// @}
 
@@ -88,6 +121,7 @@ public:
 
   /*!
   inserts the point `p` at the location given by `(lt, loc, li)`.
+
   \sa `Triangulation_on_sphere_2::locate()`
   */
   Vertex_handle insert(const Point& p, Locate_type& lt, Face_handle loc, int li );
@@ -98,11 +132,12 @@ public:
   Vertex_handle push_back(const Point& p);
 
   /*!
-  inserts the points in the range `[first, last)` and returns the number of inserted points.
-  \tparam PointInputIterator must be an input iterator with the value type `Point`.
+  inserts the points in the range `[first, beyond)` and returns the number of inserted points.
+
+  \tparam PointOnSphereIterator must be a model of `InputIterator` with value type `Point`.
   */
-  template <class PointInputIterator>
-  std::ptrdiff_t insert(PointInputIterator first, PointInputIterator last);
+  template <class PointOnSphereIterator>
+  std::ptrdiff_t insert(PointOnSphereIterator first, PointOnSphereIterator beyond);
 
   /*!
   removes the vertex `v` from the triangulation.
@@ -126,7 +161,10 @@ public:
   \tparam OutItFaces is an output iterator with `Face_handle` as value type.
   \tparam OutItBoundaryEdges is an output iterator with `Edge` as value type.
 
-  \pre `dimension()==2`.
+  \warning This function makes uses of the member `tds_data` (see the concept `TriangulationDSFaceBase_2`)
+           of the face to mark faces in conflict. It is the responsability of the user to make sure the flags are cleared.
+
+  \pre `dimension() == 2`.
   */
   template <typename OutputItFaces, typename OutputItBoundaryEdges>
   std::pair<OutputItFaces, OutputItBoundaryEdges>

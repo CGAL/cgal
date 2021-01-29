@@ -21,12 +21,18 @@ public:
   ///
   /// @{
 
-  /// Construction object type. Must provide the operators:
+  /// Construction object type. Must provide the operator:
   ///
   /// `Point_on_sphere_2 operator()(Point_on_sphere_2 p, Point_on_sphere_2 q, Point_on_sphere_2 r)`
   ///
   /// which returns the intersection of the dual of the face defined by the three points `p`, `q`, and `r`,
   /// and the sphere.
+  ///
+  /// \note This type is only required for the computation of dual objects (Voronoi vertices and edges)
+  /// and a dummy type can be used otherwise.
+  typedef unspecified_type Construct_circumcenter_on_sphere_2;
+
+  /// Construction object type. Must provide the operator:
   ///
   /// `Point_3 operator()(Point_3 p, Point_3 q, Point_3 r)`
   ///
@@ -34,7 +40,7 @@ public:
   ///
   /// \note This type is only required for the computation of dual objects (Voronoi vertices and edges)
   /// and a dummy type can be used otherwise.
-  typedef unspecified_type Construct_circumcenter_on_sphere_2;
+  typedef unspecified_type Construct_circumcenter_3;
 
   /// @}
 
@@ -47,6 +53,9 @@ public:
 
   ///
   Construct_circumcenter_on_sphere_2 construct_circumcenter_on_sphere_2_object();
+
+  ///
+  Construct_circumcenter_3 construct_circumcenter_3_object();
 
   /// @}
 };

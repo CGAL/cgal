@@ -36,7 +36,7 @@ public:
   typedef unspecified_type Point_on_sphere_2;
 
   /*!
-  An arc of a great circle, used to represent a curved segment (Voronoi or Delaunay edge).
+  An arc of a great circle, used to represent a curved segment (a Voronoi or a Delaunay edge).
   */
   typedef unspecified_type Arc_on_sphere_2;
 
@@ -63,9 +63,17 @@ public:
 
   /// Predicate object type. Must provide the operator:
   ///
+  /// `bool operator()(Point_on_sphere_2 p, Point_on_sphere_2 q, Point_on_sphere_2 r)`
+  ///
+  /// which returns `true` if `r` strictly lies between `p` and `q` on the great circle passing
+  /// through `p` and `q`.
+  typedef unspecified_type Collinear_are_strictly_ordered_on_great_circle_2;
+
+  /// Predicate object type. Must provide the operator:
+  ///
   /// `bool operator()(Point_on_sphere_2 p, Point_on_sphere_2 q)`
   ///
-  /// which returns `true` or `false` based on some (arbitrary) strict total order of points.
+  /// which returns `true` or `false` based on a consistent, user-defined strict total order of points.
   typedef unspecified_type Compare_on_sphere_2;
 
   /// Predicate object type. Must provide the operator:
@@ -79,9 +87,12 @@ public:
   ///
   /// `Orientation operator()(Point_on_sphere_2 p, Point_on_sphere_2 q, Point_on_sphere_2 r)`
   ///
-  /// which returns `CGAL::POSITIVE`, if `r` lies on the positive side of the oriented plane `h`
-  /// defined by the center of the sphere, `p`, and `q`; returns `CGAL::NEGATIVE` if `r`
-  /// lies on the negative side of `h`; and returns `CGAL::COPLANAR` if `r` lies on `h`.
+  /// which returns `CGAL::POSITIVE`, if `r` lies on the left hemisphere while walking
+  /// the shortest path between `p` and `q` on the great circle defined by `p` and `q`;
+  /// returns `CGAL::NEGATIVE` if `r` lies on the right hemisphere; and returns `CGAL::COPLANAR`
+  /// if `r` lies on the great circle.
+  ///
+  /// If `p` and `q` are diametrically opposed, `CGAL::COPLANAR` is returned.
   typedef unspecified_type Orientation_on_sphere_2;
 
   /// Predicate object type. Must provide the operator:
@@ -91,15 +102,7 @@ public:
   /// which returns `CGAL::POSITIVE`, if `s` lies on the positive side of the oriented plane `h`
   /// defined by `p`, `q`, and `r`; returns `CGAL::NEGATIVE` if `s` lies on the negative side of `h`;
   /// and returns `CGAL::COPLANAR` if `s` lies on `h`.
-  typedef unspecified_type Side_of_oriented_circle_2;
-
-  /// Predicate object type. Must provide the operator:
-  ///
-  /// `bool operator()(Point_on_sphere_2 p, Point_on_sphere_2 q, Point_on_sphere_2 r)`
-  ///
-  /// which returns `true` if `r` strictly lies between `p` and `q` on the great circle passing
-  /// through `p` and `q`.
-  typedef unspecified_type Collinear_are_strictly_ordered_on_great_circle_2;
+  typedef unspecified_type Side_of_oriented_circle_on_sphere_2;
 
   /// @}
 
@@ -112,7 +115,24 @@ public:
   /// `Arc_on_sphere_2 operator()(Point_on_sphere_2 p, Point_on_sphere_2 q)`
   ///
   /// which introduces an arc of great circle, with source `p` and target `q`.
+  ///
+  /// The circular arc constructed from a source, and a target, is defined as the set of points
+  /// of the great circle that lie between the source `p` and the target `q`,
+  /// when traversing the great circle counterclockwise seen from the side of the plane
+  /// of the great circle pointed by its <I>positive</I> normal vectors.
+  ///
+  /// In this definition, we say that a normal vector \f$ (a,b,c)\f$  is <I>positive</I> if
+  /// \f$ (a,b,c)>(0,0,0)\f$ (i.e.\ \f$ (a>0) || (a==0) \&\& (b>0) || (a==0)\&\&(b==0)\&\&(c>0)\f$).
+  ///
   typedef unspecified_type Construct_arc_on_sphere_2;
+
+  /// Construction object. Must provide the operator:
+  ///
+  /// `Point_on_sphere_2 operator()(Point_3 p)`,
+  ///
+  /// which expresses the point `p`, a 3D point living on the sphere,
+  /// using the (user-defined) point-on-sphere representation.
+  typedef unspecified_type Construct_point_on_sphere_2;
 
   /// Construction object. Must provide the operator:
   ///
@@ -156,7 +176,7 @@ public:
   Orientation_on_sphere_2 orientation_on_sphere_2_object();
 
   ///
-  Side_of_oriented_circle_2 side_of_oriented_circle_2_object();
+  Side_of_oriented_circle_on_sphere_2 side_of_oriented_circle_on_sphere_2_object();
 
   ///
   Collinear_are_strictly_ordered_on_great_circle_2 collinear_are_strictly_ordered_on_great_circle_2_object();
@@ -187,7 +207,7 @@ public:
   /// \note This function is meant to be used only by the triangulation class as modifying the domain
   ///       requires clearing the triangulation. Users can change the domain using
   ///       `CGAL::Triangulation_on_sphere_2::set_center_and_radius()`.
-  void set_center(Point_3);
+  void set_center(Point_3 center);
 
   /// returns the center of the sphere.
   Point_3 center();

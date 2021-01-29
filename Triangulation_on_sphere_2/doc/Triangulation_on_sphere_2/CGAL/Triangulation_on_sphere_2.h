@@ -4,10 +4,10 @@ namespace CGAL {
 \ingroup PkgTriangulationOnSphere2TriangulationClasses
 
 The class `Triangulation_on_sphere_2` is the basic class designed to represent triangulations
-^of set of points \f$ \mathcal{S}\f$ on the sphere: it has vertices at the points of \f$ \mathcal{S}\f$
+of set of points \f$ \mathcal{S}\f$ on the sphere: it has vertices at the points of \f$ \mathcal{S}\f$
 and its domain covers the convex hull of \f$ \mathcal{S}\f$.
 
-\warning This triangulatiosn supports neither the insertion nor the removal of vertices,
+\warning This triangulation supports neither the insertion nor the removal of vertices,
 see `CGAL::Delaunay_triangulation_on_sphere_2` for such purposes.
 
 This triangulation class is very similar to `CGAL::Triangulation_2` as both classes represent
@@ -69,7 +69,7 @@ public:
   /*!
   An arc of a great circle, used to represent a curved segment (Voronoi or Delaunay edge).
   */
-  typedef Traits::Arc_on_sphere_2 Arc_segment;
+  typedef Traits::Arc_on_sphere_2 Arc_on_sphere_2;
 
   /*!
   The 3D point type.
@@ -239,6 +239,10 @@ public:
   - `0` if the triangulation contains exactly two vertices
   - `1` if the triangulation contains three (or more) coplanar vertices
   - `2` if the triangulation contains at least four non-coplanar vertices
+
+  Note that a triangulation of dimension `1` is just a polygon drawn on a circle. The polygon is
+  not triangulated itself. Thus the triangulation of dimension one consists of one polygon and
+  has no “real” faces.
   */
   int dimension() const;
 
@@ -283,8 +287,8 @@ public:
   const Point& point(const Face_handle f, const int i);
 
   /*!
-  returns the 3D line segment formed by the vertices of `e`.
-  \pre `t.dimension()` \f$ \geq1\f$ and `e` is finite.
+  returns the 3D line segment formed by the vertices of the edge `e`.
+  \pre `t.dimension()` \f$ \geq1\f$.
   */
   Segment_3 segment(const Edge& e) const;
 
@@ -292,22 +296,22 @@ public:
   returns the 3D line segment formed by the vertices of the edge `(f, i)`.
   \pre `t.dimension()` \f$ \geq1\f$.
   */
-  Segment_3 segment(Face_handle f, int i) const;
+  Segment_3 segment(const Face_handle f, int i) const;
 
   /*!
   returns the great circle arc formed by the vertices of the edge `e`.
-  \pre `t.dimension()` \f$ \geq1\f$ and `e` is finite.
+  \pre `t.dimension()` \f$ \geq1\f$.
   */
-  Arc_segment arc_segment(const Edge& e) const;
+  Arc_on_sphere_2 arc_segment(const Edge& e) const;
 
   /*!
   returns the great circle arc formed by the vertices of the edge `(f, i)`.
   \pre `t.dimension()` \f$ \geq1\f$.
   */
-  Arc_segment arc_segment(Face_handle f, int i) const;
+  Arc_on_sphere_2 arc_segment(const Face_handle f, int i) const;
 
   /*!
-  returns the 3D triangle formed by the three vertices of face `f`.
+  returns the 3D triangle formed by the three vertices of the face `f`.
   \pre `t.dimension()` \f$ \geq2\f$.
   */
   Triangle_3 triangle(const Face_handle f) const;
@@ -388,35 +392,35 @@ public:
   /// @{
 
   /*!
-  Starts at an arbitrary vertex adjacent to `v`.
+  Starts at an arbitrary vertex adjacent to the vertex `v`.
   */
   Vertex_circulator adjacent_vertices(Vertex_handle v) const;
 
   /*!
   Starts at the first vertex of `f` adjacent to `v` in counterclockwise order around `v`.
-  \pre Face `f` is incident to vertex `v`.
+  \pre The face `f` is incident to the vertex `v`.
   */
   Vertex_circulator adjacent_vertices(Vertex_handle v, Face_handle f);
 
   /*!
-  Starts at an arbitrary edge incident to `v`.
+  Starts at an arbitrary edge incident to the vertex `v`.
   */
   Edge_circulator incident_edges(Vertex_handle v) const;
 
   /*!
   Starts at the first edge of `f` incident to `v`, in counterclockwise order around `v`.
-  \pre Face `f` is incident to vertex `v`.
+  \pre The face `f` is incident to the vertex `v`.
   */
   Edge_circulator incident_edges(Vertex_handle v, Face_handle f) const;
 
   /*!
-  Starts at an arbitrary face incident to `v`.
+  Starts at an arbitrary face incident to the vertex `v`.
   */
   Face_circulator incident_faces(Vertex_handle v) const;
 
   /*!
   Starts at face `f`.
-  \pre Face `f` is incident to vertex `v`.
+  \pre The face `f` is incident to the vertex `v`.
   */
   Face_circulator incident_faces(Vertex_handle v, Face_handle f) const;
 
@@ -495,7 +499,7 @@ public:
   If `lt==VERTEX`, the variable `li` is set to the index of the vertex,
   and if `lt==EDGE` `li` is set to the index of the vertex opposite to the edge.
   Be careful that `li` has no meaning when the query type is `FACE`, `OUTSIDE_CONVEX_HULL`,
-  or `OUTSIDE_AFFINE_HULL` or when the triangulation is \f$ 0\f$-dimensional.
+  or `OUTSIDE_AFFINE_HULL`.
   */
   Face_handle locate(const Point& query, Locate_type& lt, int& li, Face_handle h = Face_handle()) const;
 
