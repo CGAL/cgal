@@ -17,6 +17,7 @@ int main()
   points.push_back(K::Point_3(-8,  1, 1));
   points.push_back(K::Point_3( 1,  2, 1));
   points.push_back(K::Point_3( 1, -2, 1));
+  points.push_back(K::Point_3( 1, 1, 10));
 
   Projection_traits traits(K::Point_3(1,1,1));
   Projected_DToS2 dtos(traits);
@@ -26,7 +27,7 @@ int main()
 
   for(const auto& pt : points)
   {
-    std::cout << "Inserting: " << pt
+    std::cout << "----- Inserting: " << pt
               << " at distance: " << CGAL::squared_distance(pt, traits.center())
               << " from center" << std::endl;
     dtos.insert(cst(pt));
@@ -34,6 +35,6 @@ int main()
     std::cout << "dimension: " << dtos.dimension() << std::endl;
     std::cout << dtos.number_of_vertices() << " nv" << std::endl;
     std::cout << dtos.number_of_faces() << " nf" << std::endl;
-    std::cout << dtos.number_of_ghost_faces() << " ng" << std::endl;
+    std::cout << dtos.number_of_ghost_faces() << " gf" << std::endl;
   }
 }

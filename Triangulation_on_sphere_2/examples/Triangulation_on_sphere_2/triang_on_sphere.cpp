@@ -20,7 +20,6 @@ int main()
   points.emplace_back( 0, 1, 1);
   points.emplace_back( 1, 0, 1);
   points.emplace_back( 1, 1, 2);
-  points.emplace_back( 1, 1, 0);
 
   Traits traits(Point(1, 1, 1));
   DToS2 dtos(traits);
@@ -35,6 +34,6 @@ int main()
     std::cout << "dimension: " << dtos.dimension() << std::endl;
     std::cout << dtos.number_of_vertices() << " nv" << std::endl;
     std::cout << dtos.number_of_faces() << " nf" << std::endl;
-    std::cout << dtos.number_of_ghost_faces() << " ng" << std::endl;
+    std::cout << dtos.number_of_ghost_faces() << " gf" << std::endl;
   }
 }
