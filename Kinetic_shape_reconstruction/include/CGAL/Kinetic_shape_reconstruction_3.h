@@ -1221,7 +1221,7 @@ private:
       const auto pvertices = std::array<PVertex, 1>{pvertex};
       compute_events_of_pvertices(event.time(), pvertices);
     }
-    CGAL_assertion_msg(false, "TODO: CONSTRAINED PVERTEX MEETS FREE PVERTEX!");
+    // CGAL_assertion_msg(false, "TODO: CONSTRAINED PVERTEX MEETS FREE PVERTEX!");
   }
 
   // STOP CONDITIONS!
