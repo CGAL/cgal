@@ -698,8 +698,6 @@ set(CGAL_INSTALL_MAN_DIR
 
 message("== Generating build files ==")
 
-set(CGAL_LIBRARIES_DIR ${CMAKE_BINARY_DIR}/lib)
-
 set(CGAL_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/include)
 
 foreach(package ${CGAL_CONFIGURED_PACKAGES})
