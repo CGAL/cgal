@@ -432,11 +432,7 @@ void Polyhedron_demo_offset_meshing_plugin::inflate_mesh()
   SMesh* sMesh = sm_item->face_graph();
   if(!sMesh)
     return;
-  Scene_item::Bbox box = bbox(sMesh);
 
-  double X=(box.max)(0)-(box.min)(0),
-      Y = (box.max)(1)-(box.min)(1),
-      Z = (box.max)(2)-(box.min)(2);
   double diag = sm_item->diagonalBbox();
   double offset_value = QInputDialog::getDouble(mw,
                                                 QString("Choose Inflate Distance"),
