@@ -1247,6 +1247,21 @@ public:
     return (nfaces.size() == 1 && nfaces[0] == pface);
   }
 
+  const bool is_sneaking_pedge(
+    const PVertex& pvertex, const PVertex& pother, const IEdge& iedge) const {
+
+    // Here, pvertex and pother must cross the same iedge.
+    // Otherwise, this check does not make any sense!
+    if (
+      is_occupied(pvertex, iedge).first ||
+      is_occupied(pother , iedge).first) {
+      CGAL_assertion_msg(false,
+      "ERROR: TWO PVERTICES SNEAK TO THE OTHER SIDE EVEN WHEN WE HAVE A POLYGON!");
+      return true;
+    }
+    return false;
+  }
+
   const bool has_ivertex(const PVertex& pvertex) const { return support_plane(pvertex).has_ivertex(pvertex.second); }
   const IVertex ivertex(const PVertex& pvertex) const { return support_plane(pvertex).ivertex(pvertex.second); }
 
@@ -1770,7 +1785,8 @@ public:
       std::cout << "** propagating " << str(pvertex) << " beyond " << str(iedge) << std::endl;
     }
 
-    const Point_2 original_point = point_2(pvertex, FT(0));
+    // Before, we had point_2(pvertex, FT(0)). Does it make sense?
+    const Point_2 original_point = point_2(pvertex);
     const Vector_2 original_direction = direction(pvertex);
     const PVertex pother = crop_pvertex_along_iedge(pvertex, iedge);
 
@@ -1783,8 +1799,12 @@ public:
     pvertices[2] = propagated;
 
     const PFace new_pface = add_pface(pvertices);
-    if (m_verbose) std::cout << "- new pface: " << lstr(new_pface) << std::endl;
+    CGAL_assertion(new_pface != null_pface());
     CGAL_assertion(new_pface.second != Face_index());
+    if (m_verbose) {
+      std::cout << "- new pface " << str(new_pface) << ": " << centroid_of_pface(new_pface) << std::endl;
+    }
+
     CGAL_assertion_msg(false, "TODO: PROPAGATE PVERTEX BEYOND IEDGE!");
     return pvertices;
   }
@@ -1792,8 +1812,8 @@ public:
   void crop_pedge_along_iedge(
     const PVertex& pvertex, const PVertex& pother, const IEdge& iedge) {
 
-    std::cout.precision(20);
     if (m_verbose) {
+      std::cout.precision(20);
       std::cout << "** cropping pedge [" << str(pvertex) << "-" << str(pother)
       << "] along " << str(iedge) << std::endl;
     }
@@ -1851,19 +1871,17 @@ public:
   }
 
   const std::pair<PVertex, PVertex> propagate_pedge_beyond_iedge(
-    const PVertex& pvertex, const PVertex& pother, const IEdge& iedge,
-    const unsigned int k) {
+    const PVertex& pvertex, const PVertex& pother, const IEdge& iedge) {
 
-    // Here, instead of 1 triangle pface, we should add 1 rectangle pface!
-    std::cout.precision(20);
     if (m_verbose) {
+      std::cout.precision(20);
       std::cout << "** propagating pedge [" << str(pvertex) << "-" << str(pother)
-      << "] along " << str(iedge) << std::endl;
+      << "] beyond " << str(iedge) << std::endl;
     }
-    CGAL_assertion(k >= 1);
 
-    const Point_2 original_point_1 = point_2(pvertex, FT(0));
-    const Point_2 original_point_2 = point_2(pother , FT(0));
+    // Before, we had point_2(pvertex, FT(0)) and point_2(pother, FT(0)). Does it make sense?
+    const Point_2 original_point_1 = point_2(pvertex);
+    const Point_2 original_point_2 = point_2(pother);
 
     const Vector_2 original_direction_1 = direction(pvertex);
     const Vector_2 original_direction_2 = direction(pother);
@@ -1883,13 +1901,14 @@ public:
     pvertices[3] = propagated_1;
 
     const PFace new_pface = add_pface(pvertices);
-    if (m_verbose) std::cout << "- new pface: " << lstr(new_pface) << std::endl;
-    CGAL_assertion(k >= 1);
-    this->k(new_pface) = k;
+    CGAL_assertion(new_pface != null_pface());
     CGAL_assertion(new_pface.second != Face_index());
+    if (m_verbose) {
+      std::cout << "- new pface " << str(new_pface) << ": " << centroid_of_pface(new_pface) << std::endl;
+    }
 
     CGAL_assertion_msg(false, "TODO: PROPAGATE PEDGE BEYOND IEDGE!");
-    return std::make_pair(propagated_1, propagated_2);
+    return std::make_pair(propagated_2, propagated_1);
   }
 
   const bool transfer_pvertex_via_iedge(
