@@ -1599,7 +1599,7 @@ ratio_test_1__q_x_S( Tag_false)
                     q_x_S.begin(),
                     [this](const ET& n1, const RT& n2)
                     {
-                      return n1 - this->d *  NT_converter<RT,ET>() (n2);
+                      return std::minus<ET>()(n1,this->d * NT_converter<RT,ET>() (n2));
                     });
   }
 
@@ -1940,13 +1940,13 @@ compute__x_B_S( Tag_false /*has_equalities_only_and_full_rank*/,
                   x_B_S.begin(),
                   x_B_S.begin(),
                   [this](const ET& n1, const ET& n2)
-                  { return this->d * n1 - n2; });
+                  { return std::minus<ET>()(this->d * n1, n2); });
 
   // b_S_B - ( A_S_BxB_O * x_B_O) - r_S_B
   std::transform(x_B_S.begin(), x_B_S.begin()+S_B.size(),
                  r_S_B.begin(), x_B_S.begin(),
                  [this](const ET& n1, const ET& n2)
-                 { return n1 - this->d * n2; });
+                 { return std::minus<ET>()(n1, this->d * n2); });
 
   // x_B_S = +- ( b_S_B - A_S_BxB_O * x_B_O)
   Value_iterator  x_it = x_B_S.begin();
