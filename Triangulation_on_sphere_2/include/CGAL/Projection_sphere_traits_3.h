@@ -168,21 +168,6 @@ public:
   construct_point_on_sphere_2_object() const
   { return Construct_point_on_sphere_2(); }
 
-  Construct_point_3
-  construct_point_3_object() const
-  { return Construct_point_3(Base::construct_point_3_object(),
-                             Base::center(), Base::radius()); }
-
-  Construct_segment_3
-  construct_segment_3_object() const
-  { return Construct_segment_3(Base::construct_segment_3_object(),
-                               Base::center(), Base::radius()); }
-
-  Construct_triangle_3
-  construct_triangle_3_object() const
-  { return Construct_triangle_3(Base::construct_triangle_3_object(),
-                                Base::center(), Base::radius()); }
-
   Construct_arc_on_sphere_2
   construct_arc_on_sphere_2_object() const
   { return Construct_arc_on_sphere_2(Base::construct_arc_on_sphere_2_object(),
