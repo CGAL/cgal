@@ -9,9 +9,9 @@ The class `Triangulation_on_sphere_face_base_2` is a model for the concept
 `TriangulationOnSphereFaceBase_2`. It is the default face base class
 for Delaunay triangulations on the sphere.
 
-`Triangulation_on_sphere_vertex_base_2` can be simply plugged in the triangulation data
+`Triangulation_on_sphere_face_base_2` can be simply plugged in the triangulation data
 structure of a triangulation, or used as a base class to derive
-other base vertex classes tuned for specific applications.
+other base face classes tuned for specific applications.
 
 \tparam Traits must be a geometric traits class.
 It is strongly recommended to instantiate this traits class with the model used
