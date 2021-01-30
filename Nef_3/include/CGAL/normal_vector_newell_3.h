@@ -38,7 +38,7 @@ void newell_single_step_3( const Handle& p, const Handle& q, Vector& n, const Ho
   const RT& phw = p.hw();
   const RT& qhw = q.hw();
   const RT& nhw = n.hw();
-  const RT& sq = phw * phw * qhw * qhw;
+  const RT& sq = square(phw) * square(qhw);
   const RT& phyqhw = p.hy() * qhw;
   const RT& qhyphw = q.hy() * phw;
   const RT& phxqhw = p.hx() * qhw;
@@ -72,23 +72,23 @@ CGAL_MEDIUM_INLINE
 void newell_single_step_3( const Handle& p, const Handle& q, Vector& n, const Cartesian_tag&)
 {
   typedef typename Kernel_traits<Vector>::Kernel::FT FT;
-  const FT& phy = p.hy();
-  const FT& qhy = q.hy();
-  const FT& phx = p.hx();
-  const FT& qhx = q.hx();
-  const FT& phz = p.hz();
-  const FT& qhz = q.hz();
+  const FT& py = p.y();
+  const FT& qy = q.y();
+  const FT& px = p.x();
+  const FT& qx = q.x();
+  const FT& pz = p.z();
+  const FT& qz = q.z();
 
   n = Vector(
-    n.hx()
-        + ( phy - qhy )
-        * ( phz + qhz ),
-    n.hy()
-        + ( phz - qhz )
-        * ( phx + qhx ),
-    n.hz()
-        + ( phx - qhx )
-        * ( phy + qhy )
+    n.x()
+        + ( py - qy )
+        * ( pz + qz ),
+    n.y()
+        + ( pz - qz )
+        * ( px + qx ),
+    n.z()
+        + ( px - qx )
+        * ( py + qy )
     );
 }
 
