@@ -329,6 +329,7 @@ public:
 
       LR * lr = dynamic_cast<LR*>(p.ptr());
       if(lr && (! lr->et)){
+        // FIXME: this is not thread-safe at all, some other thread could update_exact and clear l between the 2 lines. Same for the following functors.
         return std::get<2>(lr->l);
       }
       return BaseClass().compute_weight_2_object()(p);
