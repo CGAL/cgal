@@ -23,6 +23,13 @@
 #include <fstream>
 #include <iostream>
 
+// Note: this is currently undocumented because it uses a conversion to
+//       the Cartesian domain R^3 to perform predicates and constructions,
+//       losing the benefit of the exact representation on the way.
+//       It can be useful on its own (especially since it contains code
+//       to handle generic convex domains), but hidden points are possible
+//       and are not handled properly.
+
 namespace CGAL {
 
 template <typename LK>
@@ -34,16 +41,6 @@ struct Geographical_coordinates
 
   Geographical_coordinates() : _la(360), _lo(360) { }
   Geographical_coordinates(const FT la, const FT lo) : _la(la), _lo(lo) { }
-
-//  Geographical_coordinates() = default;
-//  Geographical_coordinates(const Geographical_coordinates&) = default;
-//  Geographical_coordinates& operator=(const Geographical_coordinates& l) = default;
-
-//  void swap(Geographical_coordinates& l)
-//  {
-//    std::swap(_la, l.latitude());
-//    std::swap(_lo, l.longitude());
-//  }
 
   Latitude latitude() const { return _la; }
   Longitude longitude() const { return _lo; }
@@ -120,9 +117,6 @@ struct Construct_Cartesian_coordinates
     const FT equ_radius = 6378.1370;
     const FT pol_radius = 6356.7523;
     FT radius_ratio = equ_radius / pol_radius;
-
-    // @tmp just to have a laugh
-    radius_ratio = 1.5;
 
     const FT a2 = square(_radius * radius_ratio);
     const FT b2 = square(_radius);
