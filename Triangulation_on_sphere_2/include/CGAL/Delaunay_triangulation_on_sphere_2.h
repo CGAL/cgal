@@ -126,6 +126,14 @@ public:
 
   template <typename InputIterator>
   Delaunay_triangulation_on_sphere_2(InputIterator first, InputIterator beyond,
+                                     const Point_3& center, const FT radius)
+    : Base(center, radius)
+  {
+    insert(first, beyond);
+  }
+
+  template <typename InputIterator>
+  Delaunay_triangulation_on_sphere_2(InputIterator first, InputIterator beyond,
                                      const Geom_traits& gt = Geom_traits())
     : Delaunay_triangulation_on_sphere_2(gt)
   {

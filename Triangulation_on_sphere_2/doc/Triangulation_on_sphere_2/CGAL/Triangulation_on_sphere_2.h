@@ -218,6 +218,9 @@ public:
 
   /*!
   constructs an empty triangulation.
+
+  \note The values for the center and radius must be either already set in the traits
+  (if `gt` is passed) or must be set after the construction, using the function `set_center_and_radius()`.
   */
   Triangulation_on_sphere_2(const Traits& gt = Traits());
 
@@ -253,7 +256,9 @@ public:
 public:
   /// \name Modifying the domain
   ///
-  /// The following functions can be used to modify the sphere; the triangulation is cleared in the process.
+  /// The following functions can be used to modify the spherical domain's geometry.
+  ///
+  /// \warning The triangulation is cleared in the process.
   ///
   /// @{
 

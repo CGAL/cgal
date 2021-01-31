@@ -55,20 +55,30 @@ public:
   Delaunay_triangulation_on_sphere_2(const Point_3& c, const FT r);
 
   /*!
-  introduces an empty triangulation and sets the center and radius of the sphere according
-  to values within the traits.
+  introduces an empty triangulation.
 
-  \sa `TriangulationOnSphereTraits_2`
+  \note The values for the center and radius must be either already set in the traits
+  (if `gt` is provided) or must be set after the construction, using the function `set_center_and_radius()`.
   */
   Delaunay_triangulation_on_sphere_2(const Geom_traits& gt = Geom_traits());
+
+  /*!
+  introduces an empty triangulation, sets the center and radius of the sphere to `c` and `r` respectively,
+  and inserts the point range `[first; beyond[`.
+
+  \tparam PointOnSphereIterator must be a model of `InputIterator` with value type `Point_on_sphere_2`.
+  */
+  template <typename PointOnSphereIterator>
+  Delaunay_triangulation_on_sphere_2(PointOnSphereIterator first, PointOnSphereIterator beyond,
+                                     const Point_3& center, const FT radius);
 
   /*!
   introduces an empty triangulation whose center and radius are set according to values within the traits
   and inserts the point range `[first;beyond[`.
 
-  \tparam PointOnSphereIterator must be a model of `InputIterator` with value type `Point_on_sphere_2`.
+  \warning It is the user's responsability to ensure that the center and radius are set as intended in `gt`.
 
-  \sa `TriangulationOnSphereTraits_2`
+  \tparam PointOnSphereIterator must be a model of `InputIterator` with value type `Point_on_sphere_2`.
   */
   template <typename PointOnSphereIterator>
   Delaunay_triangulation_on_sphere_2(PointOnSphereIterator first, PointOnSphereIterator beyond,
@@ -78,14 +88,6 @@ public:
   Copy constructor. All the vertices and faces are duplicated.
   */
   Delaunay_triangulation_on_sphere_2(const Delaunay_triangulation_on_sphere_2<Traits,TDS> &tr);
-
-  /*!
-  Equivalent to constructing an empty triangulation with the optional traits class argument
-  and calling insert(first, beyond).
-  */
-  template <class InputIterator>
-  Delaunay_triangulation_on_sphere_2(InputIterator first, InputIterator beyond,
-                                     const Geom_traits& gt = Geom_traits());
 
   /// @}
 
