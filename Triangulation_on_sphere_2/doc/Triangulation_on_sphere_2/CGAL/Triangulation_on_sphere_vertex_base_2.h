@@ -6,7 +6,8 @@ namespace CGAL {
 \cgalModels `TriangulationOnSphereVertexBase_2`
 
 The class `Triangulation_on_sphere_vertex_base_2` is the default model
-for the concept `TriangulationOnSphereVertexBase_2`.
+for the concept `TriangulationOnSphereVertexBase_2` and
+the default vertex base class for triangulations on the sphere.
 
 `Triangulation_on_sphere_vertex_base_2` can be simply plugged in the triangulation data
 structure of a triangulation, or used as a base class to derive
@@ -18,7 +19,7 @@ for the triangulation traits class. This ensures that the point type defined by
 `Triangulation_on_sphere_vertex_base_2` is the same as the point type defined by
 the triangulation.
 
-\tparam Vb must be a model of the concept `TriangulationDSVertexBase_2`
+\tparam Vb must be a model of the concept `TriangulationDSVertexBase_2`.
 By default this parameter is instantiated by `Triangulation_ds_vertex_base_2<>`.
 
 \sa `CGAL::Triangulation_ds_vertex_base_2<Tds>`

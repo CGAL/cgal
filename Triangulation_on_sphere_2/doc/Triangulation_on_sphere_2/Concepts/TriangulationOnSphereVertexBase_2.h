@@ -5,7 +5,7 @@
 \cgalRefines `TriangulationDSVertexBase_2`
 
 The concept `TriangulationOnSphereVertexBase_2` describes the requirements for the vertex base class
-of a triangulation data structure to be plugged in a Delaunay triangulation on the sphere.
+of a triangulation data structure to be plugged in a triangulation on the sphere.
 It refines the concept `TriangulationDSVertexBase_2`, adding geometric information:
 the vertex base of a triangulation stores a point.
 

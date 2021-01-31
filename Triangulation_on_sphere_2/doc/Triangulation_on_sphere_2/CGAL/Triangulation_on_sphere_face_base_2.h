@@ -7,7 +7,7 @@ namespace CGAL {
 
 The class `Triangulation_on_sphere_face_base_2` is a model for the concept
 `TriangulationOnSphereFaceBase_2`. It is the default face base class
-for Delaunay triangulations on the sphere.
+for triangulations on the sphere.
 
 `Triangulation_on_sphere_face_base_2` can be simply plugged in the triangulation data
 structure of a triangulation, or used as a base class to derive
@@ -18,7 +18,7 @@ It is strongly recommended to instantiate this traits class with the model used
 for the triangulation traits class.
 
 \tparam Fb has to be a model of the concept `TriangulationDSFaceBase_2`
-and will serve as a base class for `Triangulation_on_sphere_face_base_2` .
+and will serve as a base class for `Triangulation_on_sphere_face_base_2`.
 By default this parameter is instantiated by `Triangulation_ds_face_base_2<>`.
 
 \sa `CGAL::Triangulation_ds_face_base_2<Tds>`

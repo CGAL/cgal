@@ -5,8 +5,7 @@
 \cgalRefines `TriangulationDSFaceBase_2`
 
 The concept `TriangulationOnSphereFaceBase_2` describes the requirements for a face class
-of a triangulation data structure that is itself plugged into a Delaunay triangulation
-on the sphere.
+of a triangulation data structure that is itself plugged into a triangulation on the sphere.
 
 The data structure concept `TriangulationDataStructure_2` was primarily designed
 to serve as a data structure for the 2D triangulation classes of \cgal, which are triangulations

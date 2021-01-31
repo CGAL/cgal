@@ -8,7 +8,7 @@ The concept `TriangulationOnSphereTraits_2` describes the set of requirements
 to be fulfilled by any class used to instantiate the first template
 parameter of the class `CGAL::Triangulation_on_sphere_2<Traits, Tds>`.
 This concept provides the types of the geometric primitives used in the
-triangulation and some function object types for the required predicates on those primitives.
+triangulation and the function object types for the required predicates on those primitives.
 
 In particular, the traits class is expected to contain information about the sphere (center and radius)
 on which the points of the triangulation lie, as well as to provide means to change this information.
@@ -65,8 +65,10 @@ public:
   ///
   /// `bool operator()(Point_on_sphere_2 p, Point_on_sphere_2 q, Point_on_sphere_2 r)`
   ///
-  /// which returns `true` if `r` strictly lies between `p` and `q` on the great circle passing
-  /// through `p` and `q`.
+  /// which returns `true` if `r` strictly lies on the shortest path between `p` and `q`
+  /// on the great circle passing through `p` and `q`.
+  ///
+  /// If `p` and `q` are diametrically opposed, `true` is returned.
   typedef unspecified_type Collinear_are_strictly_ordered_on_great_circle_2;
 
   /// Predicate object type. Must provide the operator:
@@ -187,6 +189,9 @@ public:
   Construct_arc_on_sphere_2 construct_arc_on_sphere_2_object();
 
   ///
+  Construct_point_on_sphere_2 construct_point_on_sphere_2_object();
+
+  ///
   Construct_point_3 construct_point_3_object();
 
   ///
@@ -229,7 +234,7 @@ public:
   ///
   /// When a kernel does not offer arbitrary precision - or at least an exact representation of
   /// algebraic coordinates, which is usually the case for the sake of computational speed,
-  /// then most points that are theoretically on the sphere are not in practice exactly in the sphere.
+  /// then most points that are theoretically on the sphere are not in practice exactly on the sphere.
   /// When this is the case, it cannot be guaranteed that all points are in a convex position,
   /// which can then result in points being hidden upon insertion, see \cgalCite{cgal:ccplr-redtp-10}.
   /// To ensure that no point is hidden, a trick is to enforce a gap between points (\cgalCite{cgal:ccplr-redtp-10},

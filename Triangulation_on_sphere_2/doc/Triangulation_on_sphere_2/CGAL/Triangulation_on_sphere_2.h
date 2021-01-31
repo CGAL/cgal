@@ -108,7 +108,7 @@ public:
   /// The vertices and faces of the triangulation are accessed through
   /// handles, iterators and circulators. The handles are models
   /// of the concept `Handle` which basically offers the two dereference
-  /// operators `.` and `->`. The handles are also model of the concepts
+  /// operators `*` and `->`. The handles are also model of the concepts
   ///  `LessThanComparable` and `Hashable`, that is they can be used as keys
   /// in containers such as `std::map` and `std::unordered_map`.
   /// The iterators and circulators are all bidirectional and non-mutable.
@@ -228,14 +228,15 @@ public:
 
   /*!
   Copy constructor. All the vertices and faces are duplicated.
-  After the copy, `*this` and `tr` refer to different triangulations: if `tr` is modified, `*this` is not.
+  After the copy, `*this` and `tr` refer to different triangulations:
+  if `tr` is modified, `*this` is not.
   */
   Triangulation_on_sphere_2(const Triangulation_on_sphere_2& tr);
 
   /*!
   Assignment operator. This performs a deep copy of the triangulation, duplicating vertices and faces.
   */
-  Triangulation_on_sphere_2 operator=(const Triangulation_on_sphere_2<Traits,TDS>& tr);
+  Triangulation_on_sphere_2& operator=(Triangulation_on_sphere_2<Traits,TDS> tr);
 
   /*!
   The triangulations `tr` and `*this` are swapped.

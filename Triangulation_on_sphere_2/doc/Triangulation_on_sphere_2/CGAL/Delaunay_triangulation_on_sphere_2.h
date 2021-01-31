@@ -15,7 +15,7 @@ the Delaunay triangulation is unique, and defined as the dual of the Voronoi dia
 The setting of 3D points on the 2-sphere is particular in that the empty circle property
 can be reduced to a single 3D orientation test \cgalCite{cgal:ccplr-redtp-10}.
 
-\tparam Traits is the geometric traits; it must be a model of `DelaunayTriangulationTraits_2`.
+\tparam Traits is the geometric traits; it must be a model of `DelaunayTriangulationOnSphereTraits_2`.
 
 \tparam TDS is the triangulation data structure, which must be a model of `TriangulationDataStructure_2`
         whose vertex base must be a model of `TriangulationOnSphereVertexBase_2` and whose face base
@@ -234,7 +234,7 @@ public:
   /// @{
 
   /*!
-  Tests the validity of the triangulation as a `Triangulation_on_sphere_2`
+  tests the validity of the triangulation as a `Triangulation_on_sphere_2`
   and additionally tests the Delaunay property. This method is mainly useful
   for debugging Delaunay triangulation algorithms designed by the user.
   */
