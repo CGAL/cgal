@@ -287,7 +287,7 @@ public:
 
   Note that a triangulation of dimension `1` is just a polygon drawn on a circle. The polygon is
   not triangulated itself. Thus the triangulation of dimension one consists of one polygon and
-  has no “real” faces.
+  has no faces.
   */
   int dimension() const;
 
@@ -456,7 +456,7 @@ public:
   /*!
   returns a range of iterators over all solid edges.
   */
-  All_edges all_edges() const;
+  Solid_edges solid_edges() const;
 
   /*!
   returns a range of iterators over all the points of the triangulations.

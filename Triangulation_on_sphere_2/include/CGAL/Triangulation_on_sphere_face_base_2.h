@@ -7,7 +7,9 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Mariette Yvinec, Claudia Werner
+// Author(s)     : Mariette Yvinec,
+//                 Claudia Werner
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_TRIANGULATION_ON_SPHERE_FACE_BASE_2_H
 #define CGAL_TRIANGULATION_ON_SPHERE_FACE_BASE_2_H

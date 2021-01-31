@@ -14,8 +14,6 @@ typedef CGAL::Delaunay_triangulation_on_sphere_traits_2<K>          Gt;
 typedef Gt::Orientation_on_sphere_2                                 Orientation_on_sphere_2;
 typedef Gt::Side_of_oriented_circle_on_sphere_2                     Side_of_oriented_circle_on_sphere_2;
 
-// @fixme rename this file; 'regular' has a special meaning
-// also rename 'test_random.cpp' / 'test_remove.cpp', too vague
 int main(int, char**)
 {
   Point P0 (   0,    0,    0);
