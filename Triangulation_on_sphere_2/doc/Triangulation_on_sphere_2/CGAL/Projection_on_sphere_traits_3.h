@@ -45,44 +45,8 @@ public:
   ///
   /// @{
 
-  ///
-  typedef unspecified_type                          Collinear_are_strictly_ordered_on_great_circle_2;
-
-  ///
-  typedef unspecified_type                          Compare_on_sphere_2;
-
   /// Points are equal if they have the same projection onto the sphere.
   typedef unspecified_type                          Equal_on_sphere_2;
-
-  ///
-  typedef unspecified_type                          Orientation_on_sphere_2;
-
-  ///
-  typedef unspecified_type                          Side_of_oriented_circle_on_sphere_2;
-
-  /// @}
-
-  /// \name Constructions
-  ///
-  /// @{
-
-  ///
-  typedef unspecified_type                          Construct_arc_on_sphere_2;
-
-  ///
-  typedef unspecified_type                          Construct_circumcenter_on_sphere_2;
-
-  ///
-  typedef unspecified_type                          Construct_circumcenter_3;
-
-  ///
-  typedef unspecified_type                          Construct_point_3;
-
-  ///
-  typedef unspecified_type                          Construct_segment_3;
-
-  ///
-  typedef unspecified_type                          Construct_triangle_3;
 
   /// @}
 

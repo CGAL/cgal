@@ -72,8 +72,6 @@ are described in Chapter \ref PkgTDS2Ref "2D Triangulation Data Structure".
 - `TriangulationOnSphereVertexBase_2`
 
 \cgalCRPSection{Traits Classes}
-- `CGAL::Geographical_coordinates<K>`
-- `CGAL::Geographical_coordinates_traits_2<LK, SK>`
 - `CGAL::Delaunay_triangulation_on_sphere_traits_2<LK, SK>`
 - `CGAL::Projection_on_sphere_traits_3<LK, SK>`
 

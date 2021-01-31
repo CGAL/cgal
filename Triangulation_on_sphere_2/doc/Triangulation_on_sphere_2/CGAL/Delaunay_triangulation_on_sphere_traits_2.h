@@ -88,9 +88,6 @@ public:
   typedef typename unspecified_type                 Construct_arc_on_sphere_2;
 
   ///
-  typedef typename unspecified_type                 Construct_circumcenter_on_sphere_2;
-
-  ///
   typedef typename LK::Construct_circumcenter_3     Construct_circumcenter_3;
 
   ///
