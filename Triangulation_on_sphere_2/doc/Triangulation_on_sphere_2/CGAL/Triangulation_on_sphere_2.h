@@ -558,8 +558,8 @@ public:
   enum Locate_type { VERTEX=0, /*!< when the point coincides with a vertex of the triangulation */
                      EDGE, /*!< when the point is in the relative interior of an edge */
                      FACE, /*!< when the point is in the interior of a face */
-                     OUTSIDE_CONVEX_HULL, /*!< when the point is outside the convex hull but in the affine hull of the current triangulation */
-                     OUTSIDE_AFFINE_HULL, /*!< when the point is outside the affine hull of the current triangulation. */
+                     OUTSIDE_CONVEX_HULL, /*!< when the point is on the same 3D plane as the existing vertices, but not on an existing edge */
+                     OUTSIDE_AFFINE_HULL, /*!< when the insertion of the point would increase the dimension of the triangulation. */
                      NOT_ON_SPHERE, /*!< when the point is not on the sphere */
                      TOO_CLOSE /*!< when the point is too close to a vertex of the triangulation (see `TriangulationOnSphereTraits_2` for more details) */
                    };
