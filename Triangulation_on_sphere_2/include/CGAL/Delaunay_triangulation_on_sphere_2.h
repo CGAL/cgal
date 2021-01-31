@@ -68,7 +68,7 @@ public:
 
   typedef typename Base::Edge_circulator          Edge_circulator;
   typedef typename Base::Face_circulator          Face_circulator;
-  typedef typename Base::All_vertices_iterator    All_vertices_iterator;
+  typedef typename Base::Vertices_iterator        Vertices_iterator;
   typedef typename Base::All_edges_iterator       All_edges_iterator;
   typedef typename Base::All_faces_iterator       All_faces_iterator;
 
@@ -507,7 +507,7 @@ insert_outside_affine_hull_regular(const Point& p)
 
   // find smallest vertex this step garanties a unique triangulation
   Vertex_handle w = vertices_begin();
-  All_vertices_iterator vi;
+  Vertices_iterator vi;
   for(vi=vertices_begin(); vi!=vertices_end(); ++vi)
   {
     if(compare(point(vi), point(w)) == SMALLER)
@@ -762,10 +762,10 @@ test_dim_down(Vertex_handle v)
   if(number_of_vertices() == 4)
     return will_decrease;
 
-  All_vertices_iterator it = (vertices_begin() != v) ? vertices_begin() : std::next(vertices_begin());
-  All_vertices_iterator it2 = std::next(it, (std::next(it) != v) ? 1 : 2);
-  All_vertices_iterator it3 = std::next(it2, (std::next(it2) != v) ? 1 : 2);
-  All_vertices_iterator it4 = std::next(it3, (std::next(it3) != v) ? 1 : 2);
+  Vertices_iterator it = (vertices_begin() != v) ? vertices_begin() : std::next(vertices_begin());
+  Vertices_iterator it2 = std::next(it, (std::next(it) != v) ? 1 : 2);
+  Vertices_iterator it3 = std::next(it2, (std::next(it2) != v) ? 1 : 2);
+  Vertices_iterator it4 = std::next(it3, (std::next(it3) != v) ? 1 : 2);
 
   for(;;)
   {
@@ -1071,7 +1071,7 @@ is_plane() const
 
   bool plane = true;
 
-  All_vertices_iterator it1 = vertices_begin(), it2(it1), it3(it1), it4(it1);
+  Vertices_iterator it1 = vertices_begin(), it2(it1), it3(it1), it4(it1);
   std::advance(it2, 1);
   std::advance(it3, 2);
   std::advance(it4, 3);
@@ -1112,7 +1112,7 @@ is_valid(bool verbose, int level) const
   for(All_faces_iterator fit=all_faces_begin(); fit!=all_faces_end(); ++fit)
     is_valid_face(fit, verbose, level);
 
-  for(All_vertices_iterator vit=vertices_begin(); vit!=vertices_end(); ++vit)
+  for(Vertices_iterator vit=vertices_begin(); vit!=vertices_end(); ++vit)
     is_valid_vertex(vit, verbose, level);
 
   switch(dimension())

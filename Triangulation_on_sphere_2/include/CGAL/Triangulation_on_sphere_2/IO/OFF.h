@@ -71,7 +71,7 @@ bool write_OFF(std::ostream& os,
 {
   typedef Delaunay_triangulation_on_sphere_2<Gt,Tds>    Tr;
   typedef typename Tr::Vertex_handle                    Vertex_handle;
-  typedef typename Tr::All_vertices_iterator            Vertex_iterator;
+  typedef typename Tr::Vertices_iterator                Vertex_iterator;
   typedef typename Tr::All_faces_iterator               Face_iterator;
 
   typename Gt::Construct_point_3 cp3 = dt.geom_traits().construct_point_3_object();

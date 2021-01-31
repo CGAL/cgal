@@ -134,7 +134,13 @@ public:
   /*!
   Iterator over all vertices.
   */
-  typedef TDS::Vertex_iterator All_vertices_iterator;
+  typedef TDS::Vertex_iterator Vertices_iterator;
+
+  /*!
+  range type for iterating over all vertices, with a nested
+  type `iterator` that has as value type `Vertex_handle`.
+  */
+  typedef Iterator_range<unspecified_type> Vertex_handles;
 
   /*!
   Iterator over all edges.
@@ -142,9 +148,20 @@ public:
   typedef TDS::Edge_iterator All_edges_iterator;
 
   /*!
+  range type for iterating over all edges (including non-solid ones).
+  */
+  typedef Iterator_range<All_edges_iterator> All_edges;
+
+  /*!
   Iterator over all faces.
   */
   typedef TDS::Face_iterator All_faces_iterator;
+
+  /*!
+  range type for iterating over all faces (including ghost faces),  with a nested
+  type `iterator` that has as value type `Face_handle`.
+  */
+  typedef Iterator_range<All_faces_iterator> All_face_handles;
 
   /*!
   Iterator over all solid edges.
@@ -152,9 +169,20 @@ public:
   typedef unspecified_type Solid_edges_iterator;
 
   /*!
+  range type for iterating over all solid edges.
+  */
+  typedef Iterator_range<Solid_edges_iterator> Solid_edges;
+
+  /*!
   Iterator over all solid faces.
   */
   typedef unspecified_type Solid_faces_iterator;
+
+  /*!
+  range type for iterating over solid faces, with a nested
+  type `iterator` that has as value type `Face_handle`.
+  */
+  typedef Iterator_range<unspecified_type> Solid_face_handles;
 
   /*!
   Circulator over all vertices incident to a given vertex.
@@ -170,6 +198,17 @@ public:
   Circulator over all faces incident to a given vertex.
   */
   typedef unspecified_type Face_circulator;
+
+  /*!
+  Iterator over the points corresponding the vertices of the triangulation.
+  */
+  typedef unspecified_type Point_iterator;
+
+  /*!
+  Range type for iterating over the points of the finite vertices.
+  */
+  typedef Iterator_range<Point_iterator> Points;
+
 
   /// @}
 
@@ -271,6 +310,11 @@ public:
   */
   size_type number_of_ghost_faces() const;
 
+  /*!
+  returns the number of solid faces.
+  */
+  size_type number_of_solid_faces() const;
+
   /// @}
 
   /// \name Geometric Access Functions
@@ -330,12 +374,19 @@ public:
   /*!
   Starts at an arbitrary vertex.
   */
-  All_vertices_iterator all_vertices_begin() const;
+  Vertices_iterator vertices_begin() const;
 
   /*!
   Past-the-end iterator
   */
-  All_vertices_iterator all_vertices_end() const;
+  Vertices_iterator vertices_end() const;
+
+  /*!
+  returns a range of iterators over all vertices.
+  \note While the value type of `Vertices_iterator` is `Vertex`, the value type of
+        `Vertex_handles::iterator` is `Vertex_handle`.
+  */
+  Vertex_handles vertex_handles() const;
 
   /*!
   Starts at an arbitrary edge.
@@ -348,6 +399,11 @@ public:
   All_edges_iterator all_edges_end() const;
 
   /*!
+  returns a range of iterators over all edges.
+  */
+  All_edges all_edges() const;
+
+  /*!
   Starts at an arbitrary face.
   */
   All_faces_iterator all_faces_begin() const;
@@ -356,6 +412,13 @@ public:
   Past-the-end iterator
   */
   All_faces_iterator all_faces_end() const;
+
+  /*!
+  returns a range of iterators over all faces.
+  \note While the value type of `All_faces_iterator` is `Face`, the value type of
+        `All_face_handles::iterator` is `Face_handle`.
+  */
+  All_face_handles all_face_handles() const;
 
   /*!
   Starts at an arbitrary face.
@@ -368,6 +431,13 @@ public:
   Solid_faces_iterator solid_faces_end() const;
 
   /*!
+  returns a range of iterators over all solid faces.
+  \note While the value type of `Solid_faces_iterator` is `Face`, the value type of
+        `Solid_face_handles::iterator` is `Face_handle`.
+  */
+  Solid_face_handles solid_face_handles() const;
+
+  /*!
   Starts at an arbitrary face.
   */
   Solid_edges_iterator solid_edges_begin() const;
@@ -376,6 +446,16 @@ public:
   Past-the-end iterator
   */
   Solid_edges_iterator solid_edges_end() const;
+
+  /*!
+  returns a range of iterators over all solid edges.
+  */
+  All_edges all_edges() const;
+
+  /*!
+  returns a range of iterators over all the points of the triangulations.
+  */
+  Points points() const;
 
   /// @}
 

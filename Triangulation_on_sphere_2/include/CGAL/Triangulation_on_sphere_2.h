@@ -25,6 +25,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/function_objects.h>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
@@ -83,7 +84,7 @@ public:
   typedef typename Tds::Edge_circulator           Edge_circulator;
   typedef typename Tds::Face_circulator           Face_circulator;
 
-  typedef typename Tds::Vertex_iterator           All_vertices_iterator;
+  typedef typename Tds::Vertex_iterator           Vertices_iterator;
   typedef typename Tds::Edge_iterator             All_edges_iterator;
   typedef typename Tds::Face_iterator             All_faces_iterator;
 
@@ -143,8 +144,22 @@ public:
     operator const Face_handle() const { return Base::base(); }
   };
 
-  typedef Filter_iterator<All_edges_iterator, Ghost_tester>   Solid_edges_iterator; // solid edges : both adjacent faces are solid
-  typedef Filter_iterator<All_edges_iterator, Contour_tester> Contour_edges_iterator; // one solid and one ghost face adjacent to this face
+  // solid edges : both adjacent faces are solid
+  typedef Filter_iterator<All_edges_iterator, Ghost_tester>          Solid_edges_iterator;
+
+  // one solid and one ghost face adjacent to this face
+  typedef Filter_iterator<All_edges_iterator, Contour_tester>        Contour_edges_iterator;
+
+  typedef Iterator_range<Prevent_deref<Vertices_iterator> >          Vertex_handles;
+  typedef Iterator_range<All_edges_iterator>                         All_edges;
+  typedef Iterator_range<Prevent_deref<All_faces_iterator> >         All_face_handles;
+
+  typedef Iterator_range<Solid_edges_iterator>                       Solid_edges;
+  typedef Iterator_range<Prevent_deref<Solid_faces_iterator> >       Solid_face_handles;
+
+  typedef Project_point<Vertex>                                      Pt_proj;
+  typedef boost::transform_iterator<Pt_proj, Vertices_iterator>      Point_iterator;
+  typedef Iterator_range<Point_iterator>                             Points;
 
   enum Locate_type {VERTEX = 0,
                     EDGE, // 1
@@ -202,6 +217,7 @@ public:
   size_type number_of_edges() const { return _tds.number_of_edges(); }
   size_type number_of_faces() const { return _tds.number_of_faces(); } // total number of faces (solid + ghost)
   size_type number_of_ghost_faces() const;
+  size_type number_of_solid_faces() const { return number_of_faces() - number_of_ghost_faces(); }
 
   // TDS predicates
   bool is_edge(Vertex_handle va, Vertex_handle vb) const;
@@ -256,6 +272,11 @@ public:
   All_faces_iterator all_faces_begin() const { return _tds.faces_begin(); }
   All_faces_iterator all_faces_end() const { return _tds.faces_end(); }
 
+  All_face_handles all_face_handles() const
+  {
+    return make_prevent_deref_range(all_faces_begin(), all_faces_end());
+  }
+
   Solid_faces_iterator solid_faces_begin() const
   {
     if(dimension() < 2)
@@ -267,6 +288,11 @@ public:
   Solid_faces_iterator solid_faces_end() const
   {
     return CGAL::filter_iterator(all_faces_end(), Ghost_tester(*this));
+  }
+
+  Solid_face_handles solid_faces() const
+  {
+    return make_prevent_deref_range(solid_faces_begin(), solid_faces_end());
   }
 
   Solid_edges_iterator solid_edges_begin() const
@@ -282,6 +308,11 @@ public:
     return CGAL::filter_iterator(all_edges_end(), Ghost_tester(*this));
   }
 
+  Solid_edges solid_edges() const
+  {
+    return CGAL::make_range(solid_edges_begin(), solid_edges_end());
+  }
+
   Contour_edges_iterator contour_edges_begin() const
   {
     if(dimension() < 1)
@@ -295,10 +326,31 @@ public:
     return CGAL::filter_iterator(all_edges_end(), Contour_tester(this));
   }
 
-  All_vertices_iterator vertices_begin() const { return _tds.vertices_begin(); }
-  All_vertices_iterator vertices_end() const { return _tds.vertices_end(); }
   All_edges_iterator all_edges_begin() const { return _tds.edges_begin(); }
   All_edges_iterator all_edges_end() const { return _tds.edges_end(); }
+  All_edges all_edges() const { return _tds.edges(); }
+
+  Vertices_iterator vertices_begin() const { return _tds.vertices_begin(); }
+  Vertices_iterator vertices_end() const { return _tds.vertices_end(); }
+  Vertex_handles vertex_handles() const
+  {
+    return make_prevent_deref_range(vertices_begin(), vertices_end());
+  }
+
+  Point_iterator points_begin() const
+  {
+    return Point_iterator(vertices_begin());
+  }
+
+  Point_iterator points_end() const
+  {
+    return Point_iterator(vertices_end());
+  }
+
+  Points points() const
+  {
+    return Points(points_begin(), points_end());
+  }
 
   Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f = Face_handle()) const
   {
@@ -380,7 +432,7 @@ is_valid(bool verbose,
 
   if(dimension() == 1)
   {
-    All_vertices_iterator vit = vertices_begin();
+    Vertices_iterator vit = vertices_begin();
     // @todo
   }
   else // dimension() == 2
@@ -610,7 +662,7 @@ test_distance(const Point& p,
       CGAL_FALLTHROUGH;
     case 1: // 3+ coplanar vertices
     {
-      for(All_vertices_iterator vi=vertices_begin(); vi!=vertices_end(); ++vi)
+      for(Vertices_iterator vi=vertices_begin(); vi!=vertices_end(); ++vi)
       {
         if(are_points_too_close(point(vi), p, lt))
         {
@@ -675,7 +727,7 @@ march_locate_1D(const Point& p, Locate_type& lt, int& li) const
   // from then on, p is coplanar with all the triangulation's points
 
   // check if p is coradial with one existing point
-  All_vertices_iterator vi;
+  Vertices_iterator vi;
   for(vi=vertices_begin(); vi!=vertices_end(); ++vi) // @todo turns insertion into O(n)
   {
     if(are_equal(point(vi), p))
@@ -972,7 +1024,7 @@ locate(const Point& p,
       CGAL_FALLTHROUGH;
     case 0: // 2 vertices
     {
-      for(All_vertices_iterator vi=vertices_begin(); vi!=vertices_end(); ++vi)
+      for(Vertices_iterator vi=vertices_begin(); vi!=vertices_end(); ++vi)
       {
         if(are_equal(p, point(vi)))
         {
@@ -1096,7 +1148,7 @@ show_all() const
   if(number_of_vertices() > 1)
   {
     std::cerr << "print triangulation vertices:" << std::endl;
-    All_vertices_iterator vi;
+    Vertices_iterator vi;
     for(vi=vertices_begin(); vi!=vertices_end(); ++vi)
     {
       show_vertex(vi);
