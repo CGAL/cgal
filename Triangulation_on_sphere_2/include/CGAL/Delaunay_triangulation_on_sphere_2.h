@@ -383,10 +383,8 @@ insert(const Point& p, Face_handle start)
       return Vertex_handle();
     case TOO_CLOSE:
     {
-      if(dimension() == 2)
-        return loc->vertex(li);
-
-      return Vertex_handle(); // @fixme why is nothing returned if the dimension is e.g. 1 ?
+      CGAL_assertion(loc != Face_handle());
+      return loc->vertex(li); // @todo test this for dim < 2
     }
     case VERTEX:
     {
