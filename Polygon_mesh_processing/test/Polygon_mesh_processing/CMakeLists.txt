@@ -25,25 +25,25 @@ endif()
 
 # include for local package
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
-include(CGAL_Eigen_support)
+include(CGAL_Eigen3_support)
 
 find_package(TBB)
 include(CGAL_TBB_support)
 
-if(TARGET CGAL::Eigen_support)
+if(TARGET CGAL::Eigen3_support)
   # Creating entries for all .cpp/.C files with "main" routine
   # ##########################################################
   create_single_source_cgal_program("fairing_test.cpp")
-  target_link_libraries(fairing_test PUBLIC CGAL::Eigen_support)
+  target_link_libraries(fairing_test PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program(
     "triangulate_hole_Polyhedron_3_no_delaunay_test.cpp")
   target_link_libraries(triangulate_hole_Polyhedron_3_no_delaunay_test
-                        PUBLIC CGAL::Eigen_support)
+                        PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("triangulate_hole_Polyhedron_3_test.cpp")
   target_link_libraries(triangulate_hole_Polyhedron_3_test
-                        PUBLIC CGAL::Eigen_support)
+                        PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("test_shape_smoothing.cpp")
-  target_link_libraries(test_shape_smoothing PUBLIC CGAL::Eigen_support)
+  target_link_libraries(test_shape_smoothing PUBLIC CGAL::Eigen3_support)
 
 endif()
 
@@ -54,6 +54,7 @@ else()
   message(STATUS "Examples that use OpenMesh will not be compiled.")
 endif()
 
+create_single_source_cgal_program("test_pmp_read_polygon_mesh.cpp")
 create_single_source_cgal_program("connected_component_polyhedron.cpp")
 create_single_source_cgal_program("connected_component_surface_mesh.cpp")
 create_single_source_cgal_program("test_detect_features.cpp")
@@ -102,6 +103,8 @@ create_single_source_cgal_program("test_pmp_manifoldness.cpp")
 create_single_source_cgal_program("test_mesh_smoothing.cpp")
 create_single_source_cgal_program("test_remove_caps_needles.cpp")
 create_single_source_cgal_program("test_simplify_polylines_pmp.cpp")
+create_single_source_cgal_program("test_pmp_polyhedral_envelope.cpp")
+
 #  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
 
 if(TARGET CGAL::TBB_support)
@@ -123,13 +126,13 @@ endif()
 
 find_package(Ceres QUIET)
 
-if(TARGET ceres AND TARGET CGAL::Eigen_support)
+if(TARGET ceres AND TARGET CGAL::Eigen3_support)
   target_compile_definitions( test_mesh_smoothing PRIVATE CGAL_PMP_USE_CERES_SOLVER )
-  target_link_libraries( test_mesh_smoothing PUBLIC CGAL::Eigen_support PRIVATE ceres )
+  target_link_libraries( test_mesh_smoothing PUBLIC CGAL::Eigen3_support PRIVATE ceres )
 
 #  target_compile_definitions( test_pmp_repair_self_intersections PRIVATE CGAL_PMP_USE_CERES_SOLVER )
 #  target_link_libraries( test_pmp_repair_self_intersections PRIVATE ceres )
-endif(TARGET ceres AND TARGET CGAL::Eigen_support)
+endif(TARGET ceres AND TARGET CGAL::Eigen3_support)
 
 if(BUILD_TESTING)
   set_tests_properties(

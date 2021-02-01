@@ -6,10 +6,10 @@ find_package(CGAL REQUIRED COMPONENTS Core)
 include(${CGAL_USE_FILE})
 
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-include(CGAL_Eigen_support)
-if(TARGET CGAL::Eigen_support)
+include(CGAL_Eigen3_support)
+if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("benchmark_for_concept_models.cpp")
-  target_link_libraries(benchmark_for_concept_models PUBLIC CGAL::Eigen_support)
+  target_link_libraries(benchmark_for_concept_models PUBLIC CGAL::Eigen3_support)
 else()
   message(
     STATUS

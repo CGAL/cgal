@@ -6,10 +6,6 @@
 #include <CGAL/Regular_triangulation.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
-#include <CGAL/Regular_triangulation_filtered_traits_2.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-#include <CGAL/Regular_triangulation_filtered_traits_3.h>
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_3.h>
@@ -135,14 +131,14 @@ void go(const int N)
   {
     std::array<double, D> pt;
     for (int j = 0; j < D; ++j)
-      pt[j] = CGAL::default_random.get_double(-1., 1.);
+      pt[j] = CGAL::get_default_random().get_double(-1., 1.);
     coords.push_back(pt);
   }
   // Generate weights
   std::vector<double> weights;
   weights.reserve(N);
   for (int i = 0; i < N; ++i)
-    weights.push_back(CGAL::default_random.get_double(-10., 10.));
+    weights.push_back(CGAL::get_default_random().get_double(-10., 10.));
 
   // DTd
   typedef CGAL::Epick_d<Dim_tag> Kd;
@@ -156,15 +152,15 @@ void go(const int N)
 
   // RTd
   typedef CGAL::Regular_triangulation<Kd> RT_d;
-  typedef typename RT_d::Bare_point Bare_point_d;
-  typedef typename RT_d::Point WPoint_d;
+  //typedef typename RT_d::Point Bare_point_d; // because of Regular_traits_adapter Point is actually a Weighted_point
+  typedef typename RT_d::Weighted_point WPoint_d;
 
   std::vector<WPoint_d> wpoints_d;
   wpoints_d.reserve(N);
   for (int i = 0; i < N; ++i)
   {
     wpoints_d.push_back(WPoint_d(
-      Bare_point_d(D, coords[i].begin(), coords[i].end()),
+      Point_d(D, coords[i].begin(), coords[i].end()),
       weights[i]));
   }
 
@@ -186,8 +182,7 @@ void go(const int N)
     test<DT_d, DT_2>(D, N, points_d, points, "static");
 
     // Regular
-    typedef CGAL::Regular_triangulation_filtered_traits_2<K23> Traits_2;
-    typedef CGAL::Regular_triangulation_2<Traits_2> RT_2;
+    typedef CGAL::Regular_triangulation_2<K23> RT_2;
     typedef typename RT_2::Bare_point Bare_point;
     typedef typename RT_2::Point WPoint;
 
@@ -219,8 +214,7 @@ void go(const int N)
     test<DT_d, DT_3>(D, N, points_d, points, "static");
 
     // Regular
-    typedef CGAL::Regular_triangulation_filtered_traits_3<K23> Traits_3;
-    typedef CGAL::Regular_triangulation_3<Traits_3> RT_3;
+    typedef CGAL::Regular_triangulation_3<K23> RT_3;
     typedef typename RT_3::Bare_point Bare_point;
     typedef typename RT_3::Point WPoint;
 

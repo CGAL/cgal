@@ -13,12 +13,10 @@ create_single_source_cgal_program("surface_mesh_dual.cpp")
 create_single_source_cgal_program("connected_components.cpp")
 
 find_package(METIS)
-
-if(METIS_FOUND)
-  include_directories(${METIS_INCLUDE_DIRS})
-
-  create_single_source_cgal_program("surface_mesh_partition.cpp")
-  target_link_libraries(surface_mesh_partition PRIVATE ${METIS_LIBRARIES})
+if( METIS_FOUND )
+  create_single_source_cgal_program( "surface_mesh_partition.cpp" )
+  target_include_directories( surface_mesh_partition PRIVATE ${METIS_INCLUDE_DIRS} )
+  target_link_libraries( surface_mesh_partition PRIVATE ${METIS_LIBRARIES} )
 else()
   message(STATUS "Examples that use the METIS library will not be compiled.")
 endif()

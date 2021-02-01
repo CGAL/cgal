@@ -27,13 +27,13 @@ namespace CGAL {
    \brief An enum of the choice of cones in cone spanners.
    */
   enum Cones_selected {
-    /*! \brief Select even cones.
+    /*! \brief selects even cones.
      */
     EVEN_CONES = 0,
-    /*! \brief Select odd cones.
+    /*! \brief selects odd cones.
      */
     ODD_CONES = 1,
-    /*! \brief Select all cones.
+    /*! \brief selects all cones.
      */
     ALL_CONES = 2 };
 

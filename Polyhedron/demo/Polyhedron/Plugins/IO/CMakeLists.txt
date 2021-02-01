@@ -55,7 +55,7 @@ if(VTK_FOUND)
       polyhedron_demo_plugin(vtk_plugin VTK_io_plugin KEYWORDS Viewer Mesh_3)
       target_link_libraries(vtk_plugin PUBLIC scene_surface_mesh_item scene_polylines_item scene_c3t3_item scene_points_with_normal_item
                                        ${VTK_LIBRARIES})
-
+      target_compile_definitions(vtk_plugin  PRIVATE -DCGAL_USE_VTK)
     else()
       message(
         STATUS
@@ -120,6 +120,7 @@ if(3MF_LIBRARIES
   include_directories(${3MF_INCLUDE_DIR})
   polyhedron_demo_plugin(3mf_io_plugin 3mf_io_plugin KEYWORDS Viewer PMP)
   target_link_libraries(3mf_io_plugin PRIVATE scene_surface_mesh_item scene_points_with_normal_item scene_polylines_item ${3MF_LIBRARIES})
+  target_compile_definitions(3mf_io_plugin PRIVATE -DCGAL_LINKED_WITH_3MF)
 else()
   message(
     STATUS

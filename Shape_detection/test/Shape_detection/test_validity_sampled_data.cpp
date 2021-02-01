@@ -18,7 +18,7 @@
 
 #include <CGAL/Real_timer.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 namespace SD = CGAL::Shape_detection;
 
@@ -48,7 +48,7 @@ int main (int argc, char** argv)
   std::ifstream ifile(ifilename);
 
   if (!ifile ||
-      !CGAL::read_xyz_points(
+      !CGAL::read_XYZ(
       ifile,
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).

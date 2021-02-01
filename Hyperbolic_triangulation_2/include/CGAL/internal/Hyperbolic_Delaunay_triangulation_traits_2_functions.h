@@ -10,8 +10,10 @@
 // Author(s)     : Mikhail Bogdanov
 //                 Monique Teillaud <Monique.Teillaud@inria.fr>
 
-#ifndef CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_FUNCTIONS
-#define CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_FUNCTIONS
+#ifndef CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_FUNCTIONS_H
+#define CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_FUNCTIONS_H
+
+#include <CGAL/license/Hyperbolic_triangulation_2.h>
 
 #include <CGAL/Origin.h>
 #include <CGAL/enum.h>
@@ -295,4 +297,4 @@ private:
 } // end namespace CGAL
 
 
-#endif // CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_FUNCTIONS
+#endif // CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_FUNCTIONS_H

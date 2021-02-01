@@ -23,6 +23,8 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_compile_definitions(QT_NO_KEYWORDS)
   include_directories( BEFORE ./ )
 
+  # Arrangement package includes
+  add_definitions(-DQT_NO_KEYWORDS)
   option(COMPILE_UTILS_INCREMENTALLY
     "Compile files in Utils directory incrementally, or compile them all as a unit. \
     Incremental compilation will be better for development and consume less \

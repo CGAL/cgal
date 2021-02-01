@@ -432,8 +432,6 @@ void oriented_bounding_box(const PolygonMesh& pmesh,
 #endif
                            )
 {
-  namespace PMP = CGAL::Polygon_mesh_processing;
-
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
 

@@ -22,8 +22,8 @@ if ( CGAL_FOUND )
 
   # Use Eigen
   find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
-  include(CGAL_Eigen_support)
-  if (NOT TARGET CGAL::Eigen_support)
+  include(CGAL_Eigen3_support)
+  if (NOT TARGET CGAL::Eigen3_support)
     message(STATUS "This project requires the Eigen library, and will not be compiled.")
     return()
   endif()
@@ -97,7 +97,7 @@ if ( CGAL_FOUND )
       test_mesh_cell_base_3
       test_meshing_with_one_step.cpp)
     if(TARGET ${target})
-      target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
+      target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
     endif()
   endforeach()
 

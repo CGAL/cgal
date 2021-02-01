@@ -467,6 +467,41 @@ the requirement for traversal of all faces in a graph.
 /// \defgroup PkgBGLIOFct I/O Functions
 /// \ingroup PkgBGLRef
 
+/// \defgroup PkgBGLIoFuncsSTL STL I/O Functions
+/// I/O Functions for the \ref IOStreamSTL
+/// \ingroup PkgBGLIOFct
+
+/// \defgroup PkgBGLIoFuncsPLY PLY I/O Functions
+/// I/O Functions for the \ref IOStreamPLY
+/// \ingroup PkgBGLIOFct
+
+/// \defgroup PkgBGLIoFuncsOBJ OBJ I/O Functions
+/// I/O Functions for the \ref IOStreamOBJ
+/// \ingroup PkgBGLIOFct
+
+/// \defgroup PkgBGLIoFuncsOFF OFF I/O Functions
+/// I/O Functions for the \ref IOStreamOFF
+/// \ingroup PkgBGLIOFct
+
+/// \defgroup PkgBGLIoFuncsVTP VTP I/O Functions
+/// I/O Functions for the \ref IOStreamVTK
+/// \ingroup PkgBGLIOFct
+
+/// \defgroup PkgBGLIoFuncsGOCAD GOCAD I/O Functions
+/// I/O Functions for the \ref IOStreamGocad
+/// \ingroup PkgBGLIOFct
+
+/// \defgroup PkgBGLIoFuncsWRL WRL I/O Functions
+/// I/O Functions for the \ref IOStreamWRL
+/// \ingroup PkgBGLIOFct
+
+/// \defgroup PkgBGLIoFuncs3MF 3MF I/O Functions
+/// I/O Functions for the \ref IOStream3MF
+/// \ingroup PkgBGLIOFct
+
+/// \defgroup PkgBGLIOFctDeprecated I/O Functions (Deprecated)
+/// \ingroup PkgBGLIOFct
+
 /*!
 \addtogroup PkgBGLPropertiesDynamic
 The dynamic property tags enable to associate information to simplices of a `FaceGraph` on the fly.
@@ -592,9 +627,9 @@ model, the properties they support, and any possible caveats that a
 user might encounter.
 
 - \link BGLSMGT `boost::graph_traits<CGAL::Surface_mesh<P> >` \endlink
-- \link BGLPolyGT `boost::graph_traits<CGAL::Polyhedron_3<T> >` \endlink
+- \link BGLPolyGT  `boost::graph_traits< CGAL::Polyhedron_3<K> >` \endlink
 - \link BGLLCCGT `boost::graph_traits<CGAL::Linear_cell_complex_for_combinatorial_map<...> >` \endlink
-- \link BGLSeam_meshGT `boost::graph_traits<CGAL::Seam_mesh<T> >` \endlink
+- \link BGLSeam_meshGT `boost::graph_traits< CGAL::Seam_mesh<G> >` \endlink
 - \link BGLT2GT `boost::graph_traits<CGAL::Triangulation_2<GT, TDS> >` \endlink and other 2D triangulations
 - \link BGLArgtGT `boost::graph_traits<CGAL::Arrangement_2<T, DC> >` \endlink
 - \link BGLOMPAK `boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >` \endlink
@@ -721,19 +756,21 @@ user might encounter.
 - `CGAL::alpha_expansion_graphcut()`
 
 \cgalCRPSection{I/O Functions}
-- \link PkgBGLIOFct `CGAL::read_off()` \endlink
-- \link PkgBGLIOFct `CGAL::write_off()` \endlink
-- \link PkgBGLIOFct `CGAL::write_wrl()` \endlink
-- `CGAL::write_vtp()`
-
+- `CGAL::read_polygon_mesh()`
+- `CGAL::write_polygon_mesh()`
+- \link PkgBGLIoFuncsSTL I/O for STL files \endlink
+- \link PkgBGLIoFuncsPLY I/O for PLY files \endlink
+- \link PkgBGLIoFuncsOBJ I/O for OBJ files \endlink
+- \link PkgBGLIoFuncsOFF I/O for OFF files \endlink
+- \link PkgBGLIoFuncsGOCAD I/O for GOCAD files \endlink
+- \link PkgBGLIoFuncsVTP I/O for VTP files \endlink
+- \link PkgBGLIoFuncs3MF I/O for 3MF files \endlink
+- \link PkgBGLIoFuncsWRL I/O for WRL files \endlink
 */
 
 /*!
 \addtogroup PkgBGLEulerOperations
 
-We call high level operations that maintain the validity of a halfedge graph <em>%Euler Operations</em>.
-
+We call high-level operations that maintain the validity of a halfedge graph <em>%Euler Operations</em>.
 
 */
-
-
