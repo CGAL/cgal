@@ -157,8 +157,7 @@ public:
     noexcept( noexcept(Triangulation_hierarchy_3(std::move(other))) )
   {
     static_cast<Tr_Base&>(*this) = std::move(other);
-    hierarchy_triangulations = std::move(hierarchy_triangulations);
-    init_hierarchy();
+    hierarchy_triangulations = std::move(other.hierarchy_triangulations);
     return *this;
   }
 
