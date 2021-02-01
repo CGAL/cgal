@@ -22,8 +22,8 @@ int main()
   Projection_traits traits(K::Point_3(1,1,1));
   Projected_DToS2 dtos(traits);
 
-  Projection_traits::Construct_projected_point_3 cst =
-    traits.construct_projected_point_3_object();
+  Projection_traits::Construct_point_on_sphere_2 cst =
+    traits.construct_point_on_sphere_2_object();
 
   for(const auto& pt : points)
   {
