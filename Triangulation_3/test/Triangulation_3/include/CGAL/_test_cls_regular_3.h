@@ -214,7 +214,6 @@ _test_cls_regular_3(const Triangulation &)
     Triangulation T_move_constructed(std::move(T_copy));
     assert(T_move_constructed == T);
     assert(T_copy.dimension() == -2);
-    assert(T_copy.number_of_vertices() == -1);
-    assert(T_copy.is_valid());
+    assert(T_copy.number_of_vertices() + 1 == 0);
   }
 }

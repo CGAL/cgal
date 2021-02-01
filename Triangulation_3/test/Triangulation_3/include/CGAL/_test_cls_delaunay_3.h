@@ -432,8 +432,7 @@ _test_cls_delaunay_3(const Triangulation &)
     assert(T_move_constructed.number_of_vertices() == 4);
     assert(T_move_constructed.is_valid());
     assert(T_copy.dimension() == -2);
-    assert(T_copy.number_of_vertices() == -1);
-    assert(T_copy.is_valid());
+    assert(T_copy.number_of_vertices() + 1 == 0);
   }
 
    // Affectation :
