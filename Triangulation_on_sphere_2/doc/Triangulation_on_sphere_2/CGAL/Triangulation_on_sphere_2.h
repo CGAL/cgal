@@ -4,8 +4,7 @@ namespace CGAL {
 \ingroup PkgTriangulationOnSphere2TriangulationClasses
 
 The class `Triangulation_on_sphere_2` is the basic class designed to represent triangulations
-of set of points \f$ \mathcal{S}\f$ on the sphere: it has vertices at the points of \f$ \mathcal{S}\f$
-and its domain covers the convex hull of \f$ \mathcal{S}\f$.
+of set of points \f$ \mathcal{S}\f$ on the sphere: it has vertices at the points of \f$ \mathcal{S}\f$.
 
 \warning This triangulation supports neither the insertion nor the removal of vertices,
 see `CGAL::Delaunay_triangulation_on_sphere_2` for such purposes.
