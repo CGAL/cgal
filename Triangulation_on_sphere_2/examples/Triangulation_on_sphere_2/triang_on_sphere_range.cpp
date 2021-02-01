@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 {
   std::cout.precision(17);
 
-  const char* filename = (argc > 1) ? argv[1] : "poste_france.data";
+  const char* filename = (argc > 1) ? argv[1] : "data/radar.xyz";
 
   int n;
   std::vector<Point> points;
@@ -32,6 +32,10 @@ int main(int argc, char** argv)
 
   Traits traits(Point(0, 0, 0), 100);
   DToS2 dtos(points.begin(), points.end(), traits);
+
+  std::cout << dtos.number_of_vertices() << " nv" << std::endl;
+  std::cout << dtos.number_of_faces() << " nf" << std::endl;
+  std::cout << dtos.number_of_ghost_faces() << " gf" << std::endl;
 
   std::ofstream out("result.off");
   out.precision(17);

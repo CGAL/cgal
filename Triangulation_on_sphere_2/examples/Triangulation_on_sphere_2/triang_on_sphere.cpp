@@ -14,10 +14,10 @@ int main()
 {
   std::vector<Point> points;
   points.emplace_back( 2, 1, 1);
-  points.emplace_back(-2, 1, 1);
+  points.emplace_back(-2, 1, 1); // not on the sphere
   points.emplace_back( 0, 1, 1);
   points.emplace_back( 1, 2, 1);
-  points.emplace_back( 0, 1, 1);
+  points.emplace_back( 0, 1, 1); // duplicate
   points.emplace_back( 1, 0, 1);
   points.emplace_back( 1, 1, 2);
 
@@ -36,4 +36,8 @@ int main()
     std::cout << dtos.number_of_faces() << " nf" << std::endl;
     std::cout << dtos.number_of_ghost_faces() << " gf" << std::endl;
   }
+
+  std::ofstream out("result.off");
+  out.precision(17);
+  CGAL::write_OFF(out, dtos);
 }

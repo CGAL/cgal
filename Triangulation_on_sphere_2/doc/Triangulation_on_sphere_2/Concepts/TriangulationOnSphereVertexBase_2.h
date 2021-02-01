@@ -71,13 +71,13 @@ public:
   inputs the non-combinatorial information given by the vertex:
   the point and other possible information.
   */
-  istream& operator>>(istream& is, TriangulationOnSphereVertexBase_2& v);
+  std::istream& operator>>(std::istream& is, TriangulationOnSphereVertexBase_2& v);
 
   /*!
   outputs the non combinatorial operation given by the vertex: the
   point and other possible information.
   */
-  ostream& operator<<(ostream& os, const TriangulationOnSphereVertexBase_2& v);
+  std::ostream& operator<<(std::ostream& os, const TriangulationOnSphereVertexBase_2& v);
 
   /// @}
 };
