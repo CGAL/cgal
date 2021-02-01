@@ -421,7 +421,20 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T1.number_of_vertices() == 0);
   assert(T1.is_valid());
 
-
+  // move constructor
+  {
+    Cls T_copy(T0);
+    assert(T_copy.dimension() == 3);
+    assert(T_copy.number_of_vertices() == 4);
+    assert(T_copy.is_valid());
+    Cls T_move_constructed(std::move(T_copy));
+    assert(T_move_constructed.dimension() == 3);
+    assert(T_move_constructed.number_of_vertices() == 4);
+    assert(T_move_constructed.is_valid());
+    assert(T_copy.dimension() == -2);
+    assert(T_copy.number_of_vertices() == -1);
+    assert(T_copy.is_valid());
+  }
 
    // Affectation :
   T1=T0;

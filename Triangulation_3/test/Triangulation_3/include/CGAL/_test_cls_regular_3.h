@@ -205,6 +205,16 @@ _test_cls_regular_3(const Triangulation &)
             << T.number_of_vertices() << std::endl;
   assert(T.is_valid());
   assert(T.dimension()==3);
+
+  // move constructor
+  {
+    Triangulation T_copy(T);
+    assert(T_copy == T);
+    assert(T_copy == T);
+    Triangulation T_move_constructed(std::move(T_copy));
+    assert(T_move_constructed == T);
+    assert(T_copy.dimension() == -2);
+    assert(T_copy.number_of_vertices() == -1);
+    assert(T_copy.is_valid());
+  }
 }
-
-
