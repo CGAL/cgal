@@ -15,7 +15,6 @@ and the center of the sphere.
 \cgalModels `DelaunayTriangulationOnSphereTraits_2`
 
 \sa `CGAL::Delaunay_triangulation_on_sphere_traits_2`
-\sa `CGAL::Geographical_coordinates_traits_2`
 */
 template <typename LK,
           typename SK = CGAL::Spherical_kernel_3<

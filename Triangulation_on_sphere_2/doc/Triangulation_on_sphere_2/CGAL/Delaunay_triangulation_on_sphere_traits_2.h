@@ -29,7 +29,6 @@ and thus not inserted, or guaranteed to not be hidden upon insertion.
 
 \cgalModels `DelaunayTriangulationOnSphereTraits_2`
 
-\sa `CGAL::Geographical_coordinates_traits_2`
 \sa `CGAL::Projection_on_sphere_traits_3`
 */
 template <typename LK,

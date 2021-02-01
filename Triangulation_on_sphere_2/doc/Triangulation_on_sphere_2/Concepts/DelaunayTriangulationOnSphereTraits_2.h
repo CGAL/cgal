@@ -12,7 +12,6 @@ triangulation and the function object types for the required predicates on those
 
 \cgalHasModel `CGAL::Delaunay_triangulation_on_sphere_traits_2`
 \cgalHasModel `CGAL::Projection_on_sphere_traits_3`
-\cgalHasModel `CGAL::Geographical_coordinates_traits_2`
 */
 class DelaunayTriangulationOnSphereTraits_2
 {

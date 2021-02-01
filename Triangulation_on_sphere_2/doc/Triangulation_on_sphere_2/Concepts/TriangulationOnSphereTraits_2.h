@@ -15,7 +15,6 @@ on which the points of the triangulation lie, as well as to provide means to cha
 
 \cgalHasModel `CGAL::Delaunay_triangulation_on_sphere_traits_2`
 \cgalHasModel `CGAL::Projection_on_sphere_traits_3`
-\cgalHasModel `CGAL::Geographical_coordinates_traits_2`
 
 \sa `DelaunayTriangulationOnSphereTraits_2`
 */
@@ -246,8 +245,7 @@ public:
   /// if for a model-defined \f$ \delta \f$ the distance to the sphere is smaller
   /// than \f$ \delta \f$ and if the distance between two points is greater than \f$ 2 \sqrt{R\delta} \f$.
   /// It is also of course possible to construct traits classes with arbitrary precision or
-  /// with a representation that ensures that points are exactly on the sphere (such
-  /// as `CGAL::Geographical_coordinates_traits_2`) and in this case,
+  /// with a representation that ensures that points are exactly on the sphere and in this case,
   /// \f$ \delta = 0 \f$ can be chosen and the predicates below are trivial.
   ///
   /// \sa `CGAL::Delaunay_triangulation_on_sphere_traits_2`
