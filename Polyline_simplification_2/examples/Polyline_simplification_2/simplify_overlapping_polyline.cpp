@@ -27,7 +27,7 @@ int main()
 {
   CT ct;
 
-  std::vector<Point> P = { Point(0,1), Point(1,1), Point(2,2), Point(3,1), Point(4,1), Point(5,1) };
+  std::vector<Point> P = { Point(0,1), Point(1,1), Point(2,2), Point(3,1), Point(4,1),   Point(4,2), Point(4,1), Point(5,1) };
   std::vector<Point> Q = { Point(5,0), Point(4,1), Point(3,1), Point(2,2), Point(1,1), Point(0,0) };
   std::vector<Point> R = { Point(3,1), Point(4,1) };
 

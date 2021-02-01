@@ -155,9 +155,15 @@ public:
     Constraint_iterator cit = pct.constraints_begin(), e = pct.constraints_end();
     for(; cit!=e; ++cit){
       Constraint_id cid = *cit;
-      Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid);
+      Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid),
+                                      ite = pct.vertices_in_constraint_end(cid);
       (*it)->set_removable(false);
-      it = pct.vertices_in_constraint_end(cid);
+      ++it;
+      for(; it != ite; ++it){
+        if((boost::next(it) != ite) && (boost::prior(it)== boost::next(it))){
+          (*it)->set_removable(false);
+        }
+      }
       it = boost::prior(it);
       (*it)->set_removable(false);
     }
