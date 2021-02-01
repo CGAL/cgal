@@ -1262,6 +1262,18 @@ public:
     return false;
   }
 
+  const bool must_be_swapped(
+    const Point_2& source_p, const Point_2& target_p,
+    const PVertex& pvertex, const PVertex& pother) const {
+
+    const Vector_2 current_direction = compute_future_direction(
+      source_p, target_p, pvertex, pother);
+    const Vector_2 iedge_direction(source_p, target_p);
+    const FT dot_product = current_direction * iedge_direction;
+    CGAL_assertion(dot_product < FT(0));
+    return (dot_product < FT(0));
+  }
+
   const bool has_ivertex(const PVertex& pvertex) const { return support_plane(pvertex).has_ivertex(pvertex.second); }
   const IVertex ivertex(const PVertex& pvertex) const { return support_plane(pvertex).ivertex(pvertex.second); }
 
@@ -1711,6 +1723,8 @@ public:
     if (m_verbose) {
       std::cout.precision(20);
       std::cout << "** cropping " << str(pvertex) << " along " << str(iedge) << std::endl;
+      // std::cout << "- pvertex: " << point_3(pvertex) << std::endl;
+      // std::cout << "- iedge: "   << segment_3(iedge) << std::endl;
     }
 
     const PVertex prev(pvertex.first, support_plane(pvertex).prev(pvertex.second));
@@ -1742,7 +1756,6 @@ public:
     if (dot_product < FT(0)) {
       std::swap(source_p, target_p);
       if (m_verbose) std::cout << "- swap source and target" << std::endl;
-      // CGAL_assertion_msg(false, "TODO: REVERSE DIRECTION!");
     }
 
     Point_2 future_point_a, future_point_b;
@@ -1783,6 +1796,8 @@ public:
     if (m_verbose) {
       std::cout.precision(20);
       std::cout << "** propagating " << str(pvertex) << " beyond " << str(iedge) << std::endl;
+      std::cout << "- pvertex: " << point_3(pvertex) << std::endl;
+      std::cout << "- iedge: "   << segment_3(iedge) << std::endl;
     }
 
     // Before, we had point_2(pvertex, FT(0)). Does it make sense?
@@ -1816,26 +1831,65 @@ public:
       std::cout.precision(20);
       std::cout << "** cropping pedge [" << str(pvertex) << "-" << str(pother)
       << "] along " << str(iedge) << std::endl;
+      // std::cout << "- pvertex: " << point_3(pvertex) << std::endl;
+      // std::cout << "- pother: "  << point_3(pother)  << std::endl;
+      // std::cout << "- iedge: "   << segment_3(iedge) << std::endl;
     }
-
-    // std::cout << "pvertex: " << point_3(pvertex) << std::endl;
-    // std::cout << "pother: "  << point_3(pother) << std::endl;
-
-    Point_2 future_point;
-    Vector_2 future_direction;
     CGAL_assertion(pvertex.first == pother.first);
 
-    // Crop first pvertex.
-    {
+    auto source_p = point_2(pvertex.first, source(iedge));
+    auto target_p = point_2(pvertex.first, target(iedge));
+
+    CGAL_assertion_msg(source_p != target_p,
+    "TODO: PEDGE -> IEDGE, HANDLE ZERO LENGTH IEDGE!");
+    const Line_2 iedge_line(source_p, target_p);
+
+    auto pvertex_p = point_2(pvertex);
+    pvertex_p = iedge_line.projection(pvertex_p);
+
+    auto pother_p = point_2(pother);
+    pother_p = iedge_line.projection(pother_p);
+
+    if (m_verbose) {
+      std::cout << "- source: " << to_3d(pvertex.first, source_p) << std::endl;
+      std::cout << "- target: " << to_3d(pvertex.first, target_p) << std::endl;
+
+      std::cout << "- curr pv: " << point_3(pvertex) << std::endl;
+      std::cout << "- curr po: " << point_3(pother)  << std::endl;
+    }
+    Point_2 future_point; Vector_2 future_direction;
+
+    { // cropping pvertex ...
       const PVertex prev(pvertex.first, support_plane(pvertex).prev(pvertex.second));
       const PVertex next(pvertex.first, support_plane(pvertex).next(pvertex.second));
 
-      if (prev == pother) {
-        compute_future_point_and_direction(0, pvertex, next, iedge, future_point, future_direction);
-      } else {
-        CGAL_assertion(next == pother);
-        compute_future_point_and_direction(0, pvertex, prev, iedge, future_point, future_direction);
+      if (m_verbose) {
+        std::cout << "- prev pv: " << point_3(prev) << std::endl;
+        std::cout << "- next pv: " << point_3(next) << std::endl;
       }
+
+      PVertex pthird = null_pvertex();
+      if (pother == prev) {
+        pthird = next;
+      } else {
+        CGAL_assertion(pother == next);
+        pthird = prev;
+      }
+      CGAL_assertion(pthird != null_pvertex());
+
+      const Vector_2 current_direction = compute_future_direction(
+        source_p, target_p, pvertex, pthird);
+      const Vector_2 iedge_direction(source_p, target_p);
+
+      const FT dot_product = current_direction * iedge_direction;
+      if (dot_product < FT(0)) {
+        std::swap(source_p, target_p);
+        if (m_verbose) std::cout << "- swap source and target" << std::endl;
+      }
+
+      compute_future_point_and_direction(
+        pvertex_p, target_p, pvertex, pthird, future_point, future_direction);
+      CGAL_assertion(future_direction != Vector_2());
 
       direction(pvertex) = future_direction;
       if (m_verbose) {
@@ -1845,17 +1899,31 @@ public:
       connect(pvertex, iedge);
     }
 
-    // Crop second pvertex.
-    {
+    { // cropping pother ...
       const PVertex prev(pother.first, support_plane(pother).prev(pother.second));
       const PVertex next(pother.first, support_plane(pother).next(pother.second));
 
-      if (prev == pvertex) {
-        compute_future_point_and_direction(0, pother, next, iedge, future_point, future_direction);
-      } else {
-        CGAL_assertion(next == pvertex);
-        compute_future_point_and_direction(0, pother, prev, iedge, future_point, future_direction);
+      if (m_verbose) {
+        std::cout << "- prev po: " << point_3(prev) << std::endl;
+        std::cout << "- next po: " << point_3(next) << std::endl;
       }
+
+      PVertex pthird = null_pvertex();
+      if (pvertex == prev) {
+        pthird = next;
+      } else {
+        CGAL_assertion(pvertex == next);
+        pthird = prev;
+      }
+      CGAL_assertion(pthird != null_pvertex());
+
+      CGAL_assertion(must_be_swapped(source_p, target_p, pother, pthird));
+      std::swap(source_p, target_p);
+      if (m_verbose) std::cout << "- swap source and target" << std::endl;
+
+      compute_future_point_and_direction(
+        pother_p, target_p, pother, pthird, future_point, future_direction);
+      CGAL_assertion(future_direction != Vector_2());
 
       direction(pother) = future_direction;
       if (m_verbose) {
@@ -1877,6 +1945,9 @@ public:
       std::cout.precision(20);
       std::cout << "** propagating pedge [" << str(pvertex) << "-" << str(pother)
       << "] beyond " << str(iedge) << std::endl;
+      std::cout << "- pvertex: " << point_3(pvertex) << std::endl;
+      std::cout << "- pother: "  << point_3(pother)  << std::endl;
+      std::cout << "- iedge: "   << segment_3(iedge) << std::endl;
     }
 
     // Before, we had point_2(pvertex, FT(0)) and point_2(pother, FT(0)). Does it make sense?
@@ -1973,7 +2044,6 @@ public:
     if (dot_product < FT(0)) {
       std::swap(source_p, target_p);
       if (m_verbose) std::cout << "- swap source and target" << std::endl;
-      // CGAL_assertion_msg(false, "TODO: REVERSE DIRECTION!");
     }
 
     Point_2 future_point;
