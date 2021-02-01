@@ -9,9 +9,6 @@
 /// \defgroup PkgTriangulationOnSphere2VertexFaceClasses Vertex and Face Classes
 /// \ingroup PkgTriangulationOnSphere2Ref
 
-/// \defgroup PkgTriangulationOnSphere2Miscellaneous Miscellaneous
-/// \ingroup PkgTriangulationOnSphere2Ref
-
 /*!
 \addtogroup PkgTriangulationOnSphere2Ref
 
