@@ -17,6 +17,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <list>
+#include <unordered_map>
 
 #include <CGAL/Polyline_simplification_2/Vertex_base_2.h>
 #include <CGAL/Polyline_simplification_2/Squared_distance_cost.h>
@@ -75,9 +76,9 @@ public:
   StopFunction stop;
   std::size_t pct_initial_number_of_vertices, number_of_unremovable_vertices;
 
-  std::map<Vertex_handle, std::list<Vertices_in_constraint_iterator> > vertex_to_iterator;
+  std::unordered_map<Vertex_handle, std::list<Vertices_in_constraint_iterator> > vertex_to_iterator;
 
-  typedef std::map<Vertex_handle,std::size_t> Vertex_index_map;
+  typedef std::unordered_map<Vertex_handle,std::size_t> Vertex_index_map;
 
   Vertex_index_map vertex_index_map;
 
@@ -149,7 +150,7 @@ public:
   }
 
   // endpoints of constraints are unremovable
-  // vertices which are not endpoint and have != 2 incident constained edges are unremovable
+  // vertices which are not endpoint and have != 2 incident constrained edges are unremovable
   void initialize_unremovable()
   {
     Constraint_iterator cit = pct.constraints_begin(), e = pct.constraints_end();
@@ -168,7 +169,7 @@ public:
       (*it)->set_removable(false);
     }
 
-    std::map<Vertex_handle, int> degrees;
+    std::unordered_map<Vertex_handle, int> degrees;
     for (Constrained_edges_iterator it = pct.constrained_edges_begin(); it != pct.constrained_edges_end(); ++it) {
       Edge e = *it;
       Face_handle fh = e.first;
@@ -192,7 +193,7 @@ public:
           it != pct.vertices_in_constraint_end(cid);
           ++it){
         if((*it)->is_removable()){
-          typename std::map<Vertex_handle, std::list<Vertices_in_constraint_iterator> >::iterator lit;
+          typename std::unordered_map<Vertex_handle, std::list<Vertices_in_constraint_iterator> >::iterator lit;
           lit = vertex_to_iterator.find(*it);
 
           if(lit != vertex_to_iterator.end()){
