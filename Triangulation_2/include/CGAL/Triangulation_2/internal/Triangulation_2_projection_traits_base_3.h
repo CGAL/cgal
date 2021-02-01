@@ -227,11 +227,12 @@ public:
       }
       else
       {
-        // Let the plane passing through s1.source() and with normal the traits' normal.
-        // The segment intersection point computed as the intersection
-        // of the *l and that plane. Note that if segments are not coplanar the positive
-        // of the intersection point is somehow arbitrary.
-        return intersection(*line, Plane_3(s1.source(), normal));
+        // Let the plane passing through s1.source() and with normal
+        // the cross product of s1.to_vector() and s2.to_vector(). That
+        // plane should intersect *l, now.
+        return intersection(*line, Plane_3(s1.source(),
+                                           cross_product(s1.to_vector(),
+                                                         s2.to_vector())));
       }
     }
     if(object_cast<Plane_3>(&planes_intersection))
