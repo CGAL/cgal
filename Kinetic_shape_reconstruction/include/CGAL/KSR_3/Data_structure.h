@@ -1785,7 +1785,9 @@ public:
     direction(pvertex) = future_direction_a;
     direction(pother) = future_direction_b;
 
-    if (m_verbose) std::cout << "- new pvertices: " << str(pother) << std::endl;
+    if (m_verbose) std::cout << "- new pvertices: " <<
+    str(pother) << ": " << point_3(pother) << std::endl;
+
     // CGAL_assertion_msg(false, "TODO: CROP PVERTEX ALONG IEDGE!");
     return pother;
   }
@@ -1800,13 +1802,16 @@ public:
       std::cout << "- iedge: "   << segment_3(iedge) << std::endl;
     }
 
-    // Before, we had point_2(pvertex, FT(0)). Does it make sense?
-    const Point_2 original_point = point_2(pvertex);
+    const Point_2 original_point = point_2(pvertex, FT(0));
     const Vector_2 original_direction = direction(pvertex);
     const PVertex pother = crop_pvertex_along_iedge(pvertex, iedge);
 
     const PVertex propagated = add_pvertex(pvertex.first, original_point);
     direction(propagated) = original_direction;
+
+    if (m_verbose) {
+      std::cout << "- propagated: " << str(propagated) << ": " << point_3(propagated) << std::endl;
+    }
 
     std::array<PVertex, 3> pvertices;
     pvertices[0] = pvertex;
@@ -1820,7 +1825,7 @@ public:
       std::cout << "- new pface " << str(new_pface) << ": " << centroid_of_pface(new_pface) << std::endl;
     }
 
-    CGAL_assertion_msg(false, "TODO: PROPAGATE PVERTEX BEYOND IEDGE!");
+    // CGAL_assertion_msg(false, "TODO: PROPAGATE PVERTEX BEYOND IEDGE!");
     return pvertices;
   }
 
@@ -1935,6 +1940,7 @@ public:
 
     const PEdge pedge(pvertex.first, support_plane(pvertex).edge(pvertex.second, pother.second));
     connect(pedge, iedge);
+
     CGAL_assertion_msg(false, "TODO: CROP PEDGE ALONG IEDGE!");
   }
 
@@ -1950,9 +1956,8 @@ public:
       std::cout << "- iedge: "   << segment_3(iedge) << std::endl;
     }
 
-    // Before, we had point_2(pvertex, FT(0)) and point_2(pother, FT(0)). Does it make sense?
-    const Point_2 original_point_1 = point_2(pvertex);
-    const Point_2 original_point_2 = point_2(pother);
+    const Point_2 original_point_1 = point_2(pvertex, FT(0));
+    const Point_2 original_point_2 = point_2(pother, FT(0));
 
     const Vector_2 original_direction_1 = direction(pvertex);
     const Vector_2 original_direction_2 = direction(pother);
@@ -1964,6 +1969,11 @@ public:
 
     const PVertex propagated_2 = add_pvertex(pother.first, original_point_2);
     direction(propagated_2) = original_direction_2;
+
+    if (m_verbose) {
+      std::cout << "- propagated 1: " << str(propagated_1) << ": " << point_3(propagated_1) << std::endl;
+      std::cout << "- propagated 2: " << str(propagated_2) << ": " << point_3(propagated_2) << std::endl;
+    }
 
     std::array<PVertex, 4> pvertices;
     pvertices[0] = pvertex;
@@ -2299,8 +2309,8 @@ public:
       std::cout.precision(20);
       std::cout << "*** CLOSING CASE" << std::endl;
     }
-
     CGAL_assertion(has_complete_graph(pvertex));
+
     // CGAL_assertion_msg(false, "TODO: CLOSING CASE!");
   }
 
@@ -2415,6 +2425,7 @@ public:
     add_new_pfaces(
       pvertex, ivertex, back, false, true,
       crossed_iedges, new_pvertices);
+
     // CGAL_assertion_msg(false, "TODO: BACK BORDER CASE!");
   }
 
@@ -2529,6 +2540,7 @@ public:
     add_new_pfaces(
       pvertex, ivertex, front, false, false,
       crossed_iedges, new_pvertices);
+
     // CGAL_assertion_msg(false, "TODO: FRONT BORDER CASE!");
   }
 
@@ -2676,6 +2688,7 @@ public:
     add_new_pfaces(
       pvertex, ivertex, front, true, false,
       crossed_iedges, new_pvertices);
+
     // CGAL_assertion_msg(false, "TODO: OPEN CASE!");
   }
 
@@ -2694,7 +2707,7 @@ public:
       pvertex, ivertex, pother, is_open, reverse,
       crossed_iedges, new_pvertices);
 
-    CGAL_assertion_msg(false, "TODO: ADD NEW PFACES!");
+    // CGAL_assertion_msg(false, "TODO: ADD NEW PFACES!");
   }
 
   void add_new_pfaces_global(
@@ -2721,7 +2734,7 @@ public:
       std::reverse(crossed_iedges.begin(), crossed_iedges.end());
     }
 
-    CGAL_assertion_msg(false, "TODO: ADD NEW PFACES GLOBAL!");
+    // CGAL_assertion_msg(false, "TODO: ADD NEW PFACES GLOBAL!");
   }
 
   void traverse_iedges_global(
@@ -2789,7 +2802,8 @@ public:
       std::cout << "- num added pfaces: " << num_added_pfaces << std::endl;
       std::cout << "- k intersections after: " << this->k(pvertex.first) << std::endl;
     }
-    CGAL_assertion_msg(false, "TODO: TRAVERSE IEDGES GLOBAL!");
+
+    // CGAL_assertion_msg(false, "TODO: TRAVERSE IEDGES GLOBAL!");
   }
 
   void add_new_pface(
@@ -2813,7 +2827,7 @@ public:
     if (pv2_exists) {
       pv2 = pvertices[idx + 1];
       std::cout << "- pv2 " << str(pv2) << ": " << point_3(pv2) << std::endl;
-      CGAL_assertion_msg(false, "TODO: THAT SHOULD BE THE LAST PVERTEX!");
+      CGAL_assertion_msg(false, "ERROR: THAT SHOULD BE THE LAST PVERTEX!");
     } else {
       create_new_pvertex(
         pvertex, ivertex, pother, pv1, idx + 1, iedge, pvertices);
@@ -2828,7 +2842,7 @@ public:
     else add_pface(std::array<PVertex, 3>{pvertex, pv1, pv2});
     if (!pv2_exists) connect_pedge(pvertex, pv2, iedge);
 
-    CGAL_assertion_msg(false, "TODO: ADD NEW PFACE!");
+    // CGAL_assertion_msg(false, "TODO: ADD NEW PFACE!");
   }
 
   void create_new_pvertex(
@@ -2855,7 +2869,7 @@ public:
     CGAL_assertion(pvertices[idx] == null_pvertex());
     pvertices[idx] = propagated;
 
-    CGAL_assertion_msg(false, "TODO: CREATE NEW PVERTEX!");
+    // CGAL_assertion_msg(false, "TODO: CREATE NEW PVERTEX!");
   }
 
   void connect_pedge(
