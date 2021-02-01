@@ -103,9 +103,9 @@ public:
       // KSR_3::dump_segmented_edges(m_data, "init");
     }
 
-    m_data.check_integrity();
+    CGAL_assertion(m_data.check_integrity());
     make_polygons_intersection_free();
-    m_data.check_integrity();
+    CGAL_assertion(m_data.check_integrity());
     set_k_intersections(k);
 
     if (m_verbose) std::cout << "done" << std::endl;
@@ -124,7 +124,7 @@ public:
     //   sp.plane().d() << std::endl;
     // }
 
-    m_data.check_bbox();
+    CGAL_assertion(m_data.check_bbox());
     return CGAL::to_double(time_step);
   }
 
@@ -135,8 +135,8 @@ public:
     m_data.convert(ds);
     m_data.clear();
 
-    ds.check_integrity();
-    ds.check_bbox();
+    CGAL_assertion(ds.check_integrity());
+    CGAL_assertion(ds.check_bbox());
   }
 
   void clear() {

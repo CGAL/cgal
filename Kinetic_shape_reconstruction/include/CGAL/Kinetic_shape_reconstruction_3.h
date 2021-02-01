@@ -153,7 +153,7 @@ public:
       input_range, polygon_map, k, CGAL::to_double(enlarge_bbox_ratio), reorient));
     m_initializer.convert(m_data);
     m_data.set_limit_lines();
-    m_data.check_integrity();
+    CGAL_assertion(m_data.check_integrity());
 
     if (k == 0) {
       CGAL_warning_msg(k > 0,
@@ -176,6 +176,7 @@ public:
       std::cout << std::endl << "--- RUNNING THE QUEUE:" << std::endl;
       std::cout << "* propagation started" << std::endl;
     }
+
     std::size_t num_iterations = 0;
     m_min_time = FT(0);
     m_max_time = time_step;
@@ -186,7 +187,7 @@ public:
       global_iteration = run(k, global_iteration);
       m_min_time = m_max_time;
       m_max_time += time_step;
-      m_data.check_integrity();
+      CGAL_assertion(m_data.check_integrity());
       ++num_iterations;
 
       if (m_verbose && !m_debug) {
@@ -197,9 +198,11 @@ public:
       }
 
       if (num_iterations > 100000000) {
-        CGAL_assertion_msg(false, "DEBUG WARNING: WHY SO MANY ITERATIONS?");
+        CGAL_assertion_msg(false, "DEBUG ERROR: WHY SO MANY ITERATIONS?");
+        return false;
       }
     }
+
     if (m_verbose) {
       if (m_verbose && !m_debug) std::cout << std::endl;
       std::cout << "* propagation finished" << std::endl;
@@ -210,7 +213,7 @@ public:
     if (m_debug) dump(m_data, "jiter-final-a-result");
     m_data.finalize();
     if (m_verbose) std::cout << "* checking final mesh integrity ...";
-    m_data.check_integrity();
+    CGAL_assertion(m_data.check_integrity());
     if (m_verbose) std::cout << " done" << std::endl;
     if (m_debug) dump(m_data, "jiter-final-b-result");
 
@@ -246,12 +249,14 @@ public:
     bool success = reconstruction.detect_planar_shapes(np);
     if (!success) {
       CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, DETECTING PLANAR SHAPES FAILED!");
+      return false;
     }
     // exit(EXIT_SUCCESS);
 
     success = reconstruction.regularize_planar_shapes(np);
     if (!success) {
       CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, REGULARIZATION FAILED!");
+      return false;
     }
     // exit(EXIT_SUCCESS);
 
@@ -259,12 +264,14 @@ public:
       reconstruction.planar_shapes(), reconstruction.polygon_map(), np);
     if (!success) {
       CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, PARTITION FAILED!");
+      return false;
     }
     // exit(EXIT_SUCCESS);
 
     success = reconstruction.compute_model(np);
     if (!success) {
       CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, COMPUTING MODEL FAILED!");
+      return false;
     }
     return success;
   }
@@ -963,7 +970,7 @@ private:
       // }
 
       apply(event, k);
-      m_data.check_integrity();
+      CGAL_assertion(m_data.check_integrity());
     }
     return iteration;
   }

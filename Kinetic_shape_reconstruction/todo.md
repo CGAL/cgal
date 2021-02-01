@@ -61,3 +61,4 @@ TODO:
 31. Make regularization work with exact kernel.
 32. Improve time to compile. Split big files into smaller files.
 33. KSR 3 -> data_structure (inc. support planes + intersection graph) -> subdivision -> partitioning -> initializer (inc. polygon_splitter) + propagation (inc. event + event_queue) + finalizer (inc. volume extraction); data_structure -> reconstruction -> (shape detection + shape regularization) + visibility + graphcut + model extraction; data_structure -> k_intersection_stop_condition.
+34. Compare the timing of our code with the original code.

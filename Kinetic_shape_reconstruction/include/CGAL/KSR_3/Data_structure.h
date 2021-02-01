@@ -3638,76 +3638,98 @@ public:
   **    CHECKING PROPERTIES     **
   ********************************/
 
-  void check_bbox() {
+  const bool check_bbox() const {
 
     for (std::size_t i = 0; i < 6; ++i) {
       const auto pfaces = this->pfaces(i);
       for (const auto pface : pfaces) {
         for (const auto pedge : pedges_of_pface(pface)) {
-          CGAL_assertion_msg(has_iedge(pedge), "ERROR: BBOX EDGE IS MISSING AN IEDGE!");
+          if (!has_iedge(pedge)) {
+            std::cout << "debug pedge: " << segment_3(pedge) << std::endl;
+            CGAL_assertion_msg(has_iedge(pedge), "ERROR: BBOX EDGE IS MISSING AN IEDGE!");
+            return false;
+          }
         }
         for (const auto pvertex : pvertices_of_pface(pface)) {
-          CGAL_assertion_msg(has_ivertex(pvertex), "ERROR: BBOX VERTEX IS MISSING AN IVERTEX!");
+          if (!has_ivertex(pvertex)) {
+            std::cout << "debug pvertex: " << point_3(pvertex) << std::endl;
+            CGAL_assertion_msg(has_ivertex(pvertex), "ERROR: BBOX VERTEX IS MISSING AN IVERTEX!");
+            return false;
+          }
         }
       }
     }
+    return true;
   }
 
-  void check_interior() {
+  const bool check_interior() const {
 
     for (std::size_t i = 6; i < number_of_support_planes(); ++i) {
       const auto pfaces = this->pfaces(i);
       for (const auto pface : pfaces) {
         for (const auto pedge : pedges_of_pface(pface)) {
           if (!has_iedge(pedge)) {
-            dump_pedge(*this, pedge, "debug-pedge");
+            std::cout << "debug pedge: " << segment_3(pedge) << std::endl;
+            CGAL_assertion_msg(has_iedge(pedge), "ERROR: INTERIOR EDGE IS MISSING AN IEDGE!");
+            return false;
           }
-          CGAL_assertion_msg(has_iedge(pedge), "ERROR: INTERIOR EDGE IS MISSING AN IEDGE!");
         }
         for (const auto pvertex : pvertices_of_pface(pface)) {
-          CGAL_assertion_msg(has_ivertex(pvertex), "ERROR: INTERIOR VERTEX IS MISSING AN IVERTEX!");
+          if (!has_ivertex(pvertex)) {
+            std::cout << "debug pvertex: " << point_3(pvertex) << std::endl;
+            CGAL_assertion_msg(has_ivertex(pvertex), "ERROR: INTERIOR VERTEX IS MISSING AN IVERTEX!");
+            return false;
+          }
         }
       }
     }
+    return true;
   }
 
-  void check_vertices() {
+  const bool check_vertices() const {
 
     for (const auto vertex : m_intersection_graph.vertices()) {
       const auto nedges = m_intersection_graph.incident_edges(vertex);
-      if (nedges.size() <= 2)
+      if (nedges.size() <= 2) {
         std::cerr << "ERROR: CURRENT NUMBER OF EDGES = " << nedges.size() << std::endl;
-      CGAL_assertion_msg(nedges.size() > 2,
-      "ERROR: VERTEX MUST HAVE AT LEAST 3 NEIGHBORS!");
+        CGAL_assertion_msg(nedges.size() > 2,
+        "ERROR: VERTEX MUST HAVE AT LEAST 3 NEIGHBORS!");
+        return false;
+      }
     }
+    return true;
   }
 
-  void check_edges() {
+  const bool check_edges() const {
 
     std::vector<PFace> nfaces;
     for (const auto edge : m_intersection_graph.edges()) {
       incident_faces(edge, nfaces);
       if (nfaces.size() == 1) {
-        std::cerr << segment_3(edge) << std::endl;
         std::cerr << "ERROR: CURRENT NUMBER OF FACES = " << nfaces.size() << std::endl;
+        CGAL_assertion_msg(nfaces.size() != 1,
+        "ERROR: EDGE MUST HAVE 0 OR AT LEAST 2 NEIGHBORS!");
+        return false;
       }
-      CGAL_assertion_msg(nfaces.size() != 1,
-      "ERROR: EDGE MUST HAVE 0 OR AT LEAST 2 NEIGHBORS!");
     }
+    return true;
   }
 
-  void check_faces() {
+  const bool check_faces() const {
 
     for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
       const auto pfaces = this->pfaces(i);
       for (const auto pface : pfaces) {
         const auto nvolumes = incident_volumes(pface);
-        if (nvolumes.size() == 0 || nvolumes.size() > 2)
+        if (nvolumes.size() == 0 || nvolumes.size() > 2) {
           std::cout << "ERROR: CURRENT NUMBER OF VOLUMES = " << nvolumes.size() << std::endl;
-        CGAL_assertion_msg(nvolumes.size() == 1 || nvolumes.size() == 2,
-        "ERROR: FACE MUST HAVE 1 OR 2 NEIGHBORS!");
+          CGAL_assertion_msg(nvolumes.size() == 1 || nvolumes.size() == 2,
+          "ERROR: FACE MUST HAVE 1 OR 2 NEIGHBORS!");
+          return false;
+        }
       }
     }
+    return true;
   }
 
   const bool is_mesh_valid(
@@ -3773,7 +3795,7 @@ public:
     return true;
   }
 
-  void check_integrity(
+  const bool check_integrity(
     const bool check_simplicity = false,
     const bool check_convexity  = false) const {
 
@@ -3781,6 +3803,7 @@ public:
       if (!is_mesh_valid(check_simplicity, check_convexity, i)) {
         const std::string msg = "ERROR: MESH " + std::to_string(i) + " IS NOT VALID!";
         CGAL_assertion_msg(false, msg.c_str());
+        return false;
       }
 
       for (const auto& iedge : this->iedges(i)) {
@@ -3791,6 +3814,7 @@ public:
           " IS INTERSECTED BY " + str(iedge) +
           " BUT IT CLAIMS IT DOES NOT INTERSECT IT!";
           CGAL_assertion_msg(false, msg.c_str());
+          return false;
         }
       }
     }
@@ -3806,12 +3830,14 @@ public:
           " INTERSECTS SUPPORT PLANE " + std::to_string(support_plane_idx) +
           " BUT IT CLAIMS IT IS NOT INTERSECTED BY IT!";
           CGAL_assertion_msg(false, msg.c_str());
+          return false;
         }
       }
     }
+    return true;
   }
 
-  void check_volume(
+  const bool check_volume(
     const int volume_index,
     const std::size_t volume_size,
     const std::map<PFace, std::pair<int, int> >& map_volumes) const {
@@ -3830,7 +3856,10 @@ public:
       dump_volume(*this, pfaces, "volumes/degenerate");
     }
     CGAL_assertion(!is_broken_volume);
+    if (is_broken_volume) return false;
     CGAL_assertion(pfaces.size() == volume_size);
+    if (pfaces.size() != volume_size) return false;
+    return true;
   }
 
   const bool is_volume_degenerate(
@@ -3848,7 +3877,7 @@ public:
         if (num_found == 1) ++count;
       }
       if (count != n) {
-        std::cout << "current num neighbors " << count << " != " << n << std::endl;
+        std::cout << "- current number of neighbors " << count << " != " << n << std::endl;
         dump_info(*this, pface, *pedges.begin(), pfaces);
         return true;
       }
@@ -3884,12 +3913,12 @@ public:
     // for (std::size_t i = 0; i < number_of_support_planes(); ++i)
     //   std::cout << "num pfaces sp " << i << ": " << pfaces(i).size() << std::endl;
 
-    check_bbox();
-    check_interior();
-    check_vertices();
-    check_edges();
+    CGAL_assertion(check_bbox());
+    CGAL_assertion(check_interior());
+    CGAL_assertion(check_vertices());
+    CGAL_assertion(check_edges());
     create_volumes();
-    check_faces();
+    CGAL_assertion(check_faces());
   }
 
   void create_volumes() {
@@ -3919,7 +3948,7 @@ public:
         std::tie(is_found_new_volume, volume_size) = traverse_boundary_volume(
           pface, volume_index, num_volumes, m_map_volumes, centroids);
         if (is_found_new_volume) {
-          check_volume(volume_index, volume_size, m_map_volumes);
+          CGAL_assertion(check_volume(volume_index, volume_size, m_map_volumes));
           ++volume_index;
         }
       }
@@ -3961,7 +3990,7 @@ public:
           other_pface, volume_index, num_volumes, m_map_volumes, centroids);
         if (is_found_new_volume) {
           quit = false;
-          check_volume(volume_index, volume_size, m_map_volumes);
+          CGAL_assertion(check_volume(volume_index, volume_size, m_map_volumes));
           ++volume_index;
         }
       }
@@ -4689,84 +4718,6 @@ private:
       std::cout << "- future direction: " << future_direction << std::endl;
     }
     // CGAL_assertion_msg(false, "TODO: COMPUTE FUTURE POINT AND DIRECTION!");
-  }
-
-  const bool compute_future_point_and_direction(
-    const std::size_t idx,
-    const PVertex& pvertex, const PVertex& next, // back prev // front next
-    const IEdge& iedge,
-    Point_2& future_point, Vector_2& future_direction) const {
-
-    bool is_parallel = false;
-    const Line_2 iedge_line = segment_2(pvertex.first, iedge).supporting_line();
-    const Point_2 pinit = iedge_line.projection(point_2(pvertex));
-
-    const auto& curr = pvertex;
-    const auto next_p = point_2(next);
-    const auto curr_p = point_2(curr);
-
-    const Line_2 future_line_next(
-      point_2(next, m_current_time + FT(1)),
-      point_2(curr, m_current_time + FT(1)));
-    const Vector_2 current_vec_next(next_p, curr_p);
-
-    const auto source_p = point_2(pvertex.first, source(iedge));
-    const auto target_p = point_2(pvertex.first, target(iedge));
-    const Vector_2 iedge_vec(source_p, target_p);
-
-    // TODO: CAN WE AVOID THIS VALUE?
-    const FT tol = KSR::tolerance<FT>();
-    FT m2 = FT(100000), m3 = FT(100000);
-
-    const FT next_d = (curr_p.x() - next_p.x());
-    const FT edge_d = (target_p.x() - source_p.x());
-
-    if (CGAL::abs(next_d) > tol)
-      m2 = (curr_p.y() - next_p.y()) / next_d;
-    if (CGAL::abs(edge_d) > tol)
-      m3 = (target_p.y() - source_p.y()) / edge_d;
-
-    // std::cout << "m2: " << m2 << std::endl;
-    // std::cout << "m3: " << m3 << std::endl;
-
-    // std::cout << "tol: " << tol << std::endl;
-    // std::cout << "m2 - m3: " << CGAL::abs(m2 - m3) << std::endl;
-
-    if (CGAL::abs(m2 - m3) < tol) {
-      if (m_verbose) std::cout << "- back/front parallel lines" << std::endl;
-
-      is_parallel = true;
-      const FT next_dot = current_vec_next * iedge_vec;
-      if (next_dot < FT(0)) {
-        if (m_verbose) std::cout << "- back/front moves backwards" << std::endl;
-        future_point = target_p;
-        // std::cout << point_3(target(iedge)) << std::endl;
-      } else {
-        if (m_verbose) std::cout << "- back/front moves forwards" << std::endl;
-        future_point = source_p;
-        // std::cout << point_3(source(iedge)) << std::endl;
-      }
-
-    } else {
-      if (m_verbose) std::cout << "- back/front intersected lines" << std::endl;
-      future_point = KSR::intersection<Point_2>(future_line_next, iedge_line);
-    }
-
-    // std::cout << "prev: " << point_3(next, m_current_time + FT(1)) << std::endl;
-    // std::cout << "back: " << point_3(curr, m_current_time + FT(1)) << std::endl;
-
-    future_direction = Vector_2(pinit, future_point);
-    future_point = pinit - m_current_time * future_direction;
-
-    auto tmp = future_direction;
-    tmp = KSR::normalize(tmp);
-
-    if (m_verbose) {
-      std::cout << "- back/front future point: " <<
-      to_3d(pvertex.first, pinit + m_current_time * tmp) << std::endl;
-      std::cout << "- back/front future direction: " << future_direction << std::endl;
-    }
-    return is_parallel;
   }
 };
 
