@@ -438,6 +438,11 @@ _test_cls_delaunay_3(const Triangulation &)
     Cls T_move_constructed2(std::move(T_copy2));
     T_copy2.clear();
     assert(T_copy2 == Cls());
+
+    Cls T_copy3(T0);
+    Cls T_move_constructed3(std::move(T_copy3));
+    T_copy3 = T0;
+    assert(T_copy3 == T0);
   }
 
    // Affectation :
