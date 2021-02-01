@@ -444,6 +444,18 @@ _test_cls_delaunay_3(const Triangulation &)
     T_copy3 = T0;
     assert(T_copy3 == T0);
   }
+  // move-assignment
+  {
+    Cls T_copy4(T0);
+    Cls T_move_assigned;
+    T_move_assigned = std::move(T_copy4);
+    assert(T_copy4.dimension() == -2);
+    assert(T_copy4.number_of_vertices() + 1 == 0);
+    assert(T_move_assigned.dimension() == 3);
+    assert(T_move_assigned.number_of_vertices() == 4);
+    assert(T_move_assigned.is_valid());
+    assert(T_move_assigned == T0);
+  }
 
    // Affectation :
   T1=T0;

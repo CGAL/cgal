@@ -226,4 +226,15 @@ _test_cls_regular_3(const Triangulation &)
     T_copy3 = T;
     assert(T_copy3 == T);
   }
+  // move-assignment
+  {
+    Cls T_copy4(T);
+    Cls T_move_assigned;
+    T_move_assigned = std::move(T_copy4);
+    assert(T_copy4.dimension() == -2);
+    assert(T_copy4.number_of_vertices() + 1 == 0);
+    assert(T_move_assigned.dimension() == 3);
+    assert(T_move_assigned.is_valid());
+    assert(T_move_assigned == T);
+  }
 }
