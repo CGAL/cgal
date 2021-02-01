@@ -210,18 +210,23 @@ public:
 private:
   void initialize_bounds()
   {
-    // @fixme
-    // - check the correctness of the implementation
-    // - if LK can represent algebraic coordinates, there is no need for that
-    const FT minDist = _radius * std::pow(2, -23);
-    const FT minRadius = _radius * (1 - std::pow(2, -50));
-    const FT maxRadius = _radius * (1 + std::pow(2, -50));
-    std::cout << "minDist = " << minDist << std::endl;
-    std::cout << "minRadius = " << minRadius << std::endl;
-    std::cout << "maxRadius = " << maxRadius << std::endl;
-    _minDistSquared = CGAL::square(minDist);
-    _minRadiusSquared = CGAL::square(minRadius);
-    _maxRadiusSquared = CGAL::square(maxRadius);
+    if(_has_exact_rep)
+    {
+      _minDistSquared = 0;
+      _minRadiusSquared = _maxRadiusSquared = square(_radius);
+    }
+    else
+    {
+      // @fixme
+      // - check the correctness of the implementation (not all FT have double precision)
+      // - if LK can represent algebraic coordinates, there is no need for that
+      const FT minDist = _radius * std::pow(2, -23);
+      const FT minRadius = _radius * (1 - std::pow(2, -50));
+      const FT maxRadius = _radius * (1 + std::pow(2, -50));
+      _minDistSquared = CGAL::square(minDist);
+      _minRadiusSquared = CGAL::square(minRadius);
+      _maxRadiusSquared = CGAL::square(maxRadius);
+    }
   }
 
 public:
@@ -284,13 +289,19 @@ public:
   bool is_on_sphere(const Point_on_sphere_2& p) const
   {
     const FT sq_dist = CGAL::squared_distance(p, _center); // @todo use LK
-    std::cout << _minRadiusSquared << " " << sq_dist << " " << _maxRadiusSquared << std::endl;
-    return (_minRadiusSquared <= sq_dist && sq_dist < _maxRadiusSquared);
+
+    if(_has_exact_rep)
+      return (sq_dist == _minRadiusSquared);
+    else
+      return (_minRadiusSquared <= sq_dist && sq_dist < _maxRadiusSquared);
   }
 
   bool are_points_too_close(const Point_on_sphere_2& p, const Point_on_sphere_2& q) const
   {
-    return (CGAL::squared_distance(p, q) <= _minDistSquared);
+    if(_has_exact_rep)
+      return false;
+    else
+      return (CGAL::squared_distance(p, q) <= _minDistSquared);
   }
 
 protected:
@@ -300,6 +311,11 @@ protected:
   FT _minDistSquared; // minimal distance of two points to each other
   FT _minRadiusSquared; // minimal distance of a point from center of the sphere
   FT _maxRadiusSquared; // maximal distance of a point from center of the sphere
+
+  static constexpr bool _has_exact_rep =
+    is_same_or_derived<Field_with_sqrt_tag,
+                       typename Algebraic_structure_traits<FT>::Algebraic_category>::value &&
+    !std::is_floating_point<FT>::value;
 };
 
 } // namespace CGAL
