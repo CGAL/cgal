@@ -6,7 +6,7 @@ namespace CGAL {
 The class `Delaunay_triangulation_on_sphere_2` is designed to represent
 the Delaunay triangulation of a set of points on the 2-sphere.
 
-A Delaunay triangulation of a set of points is a triangulation of the sets of points that fulfills
+A Delaunay triangulation of a set of points is a triangulation of the set of points that fulfills
 the following <I>empty circle property</I> (also called <I>Delaunay property</I>): the circumscribing
 sphere of any simplex of the triangulation contains no point of the set in its interior.
 For a point set with no case of co-circularity of more than three points,
