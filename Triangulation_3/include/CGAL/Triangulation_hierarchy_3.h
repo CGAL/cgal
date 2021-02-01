@@ -167,8 +167,8 @@ public:
   void swap(Triangulation_hierarchy_3 &tr)
   {
     Tr_Base::swap(tr);
-    for(int i=1; i<maxlevel; ++i)
-      std::swap(hierarchy[i], tr.hierarchy[i]);
+    using std::swap;
+    swap(hierarchy_triangulations, tr.hierarchy_triangulations);
   };
 
   void clear();
