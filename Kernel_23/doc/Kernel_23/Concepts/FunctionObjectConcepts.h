@@ -3848,10 +3848,6 @@ public:
     If `l1` and `l2` are parallel, then the bisector is defined as the line
     which has the same direction as `l1`, and which is at the same distance
     from `l1` and `l2`.
-    If `Kernel::FT` is not a model of `FieldWithSqrt`
-    an approximation of the square root will be used in this function,
-    impacting the exactness of the result even with an (exact) multiprecision
-    number type.
   */
   Kernel::Line_2 operator()(const Kernel::Line_2&l1,
                             const Kernel::Line_2&l2);
@@ -3893,10 +3889,6 @@ public:
     If `h1` and `h2` are parallel, then the bisector is defined as the
     plane which has the same oriented normal vector as `h1`, and which is at
     the same distance from `h1` and `h2`.
-    If `Kernel::FT` is not a model of `FieldWithSqrt`
-    an approximation of the square root will be used in this function,
-    impacting the exactness of the result even with an (exact) multiprecision
-    number type.
   */
   Kernel::Plane_3 operator()(const Kernel::Plane_3&h1,
                              const Kernel::Plane_3&h2);
