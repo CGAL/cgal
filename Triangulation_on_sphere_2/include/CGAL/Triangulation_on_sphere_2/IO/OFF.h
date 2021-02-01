@@ -56,7 +56,7 @@ class Delaunay_triangulation_on_sphere_2;
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{stream_precision}
-      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamDescription{a parameter used to set the precision (i.e., how many digits are generated) of the output stream}
       \cgalParamType{int}
       \cgalParamDefault{the precision of the stream `os`}
     \cgalParamNEnd
@@ -142,7 +142,7 @@ bool write_OFF(std::ostream& os, const CGAL::Delaunay_triangulation_on_sphere_2<
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{stream_precision}
-      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamDescription{a parameter used to set the precision (i.e., how many digits are generated) of the output stream}
       \cgalParamType{int}
       \cgalParamDefault{`6`}
     \cgalParamNEnd

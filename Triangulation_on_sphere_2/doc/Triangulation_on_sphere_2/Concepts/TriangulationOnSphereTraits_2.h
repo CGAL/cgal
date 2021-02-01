@@ -241,7 +241,7 @@ public:
   /// and the theoretical sphere. The gap must then be at least \f$ 2 \sqrt{R\delta} \f$, where \f$ R \f$
   /// is the radius of the sphere.
   ///
-  /// The following two predicates serve to check if the point is on the sphere, i.e.
+  /// The following two predicates serve to check if the point is on the sphere, that is
   /// if for a model-defined \f$ \delta \f$ the distance to the sphere is smaller
   /// than \f$ \delta \f$ and if the distance between two points is greater than \f$ 2 \sqrt{R\delta} \f$.
   /// It is also of course possible to construct traits classes with arbitrary precision or

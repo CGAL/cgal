@@ -9,7 +9,7 @@ of the concept `DelaunayTriangulationOnSphereTraits_2`.
 The `Point_on_sphere_2` type is implemented as a kernel's `Point_3` type.
 
 If the kernel template parameter `LK` does not enable exact representation of points on sphere
-(i.e. at least a mean to represent algebraic coordinates), then it cannot be guaranteed
+(i.e., at least a mean to represent algebraic coordinates), then it cannot be guaranteed
 that all points on the sphere are in a convex position and thus some points might be hidden upon insertion.
 It is possible to ensure that no point can be hidden by enforcing a tiny gap between points \cgalCite{cgal:ccplr-redtp-10}.
 In Lemma 4.1 of this publication, it is in particular proven that if points lie within a distance

@@ -1,4 +1,4 @@
-/// \defgroup PkgTriangulationOnSphere2Ref 2D Triangulation Reference
+/// \defgroup PkgTriangulationOnSphere2Ref 2D Triangulation on Sphere Reference
 
 /// \defgroup PkgTriangulationOnSphere2Concepts Concepts
 /// \ingroup PkgTriangulationOnSphere2Ref

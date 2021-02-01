@@ -4,7 +4,7 @@ namespace CGAL {
 \ingroup PkgTriangulationOnSphere2TriangulationClasses
 
 The class `Triangulation_on_sphere_2` is the basic class designed to represent triangulations
-of set of points \f$ \mathcal{P}\f$ on the sphere: it has vertices at the points of \f$ \mathcal{P}\f$.
+of set of points on the sphere: it has vertices at the points of the set.
 
 \warning This triangulation supports neither the insertion nor the removal of vertices,
 see `CGAL::Delaunay_triangulation_on_sphere_2` for such purposes.
@@ -17,7 +17,7 @@ data structure can represent. This is not necessary for triangulations on the sp
 which are already perfectly adapted to the triangulation data structure.
 
 There is an exception to the previous statement: in the degenerate configuration
-where all points of \f$ \mathcal{P}\f$ lie on the same hemisphere, the triangulation has a border.
+where all points lie on the same hemisphere, the triangulation has a border.
 Internally, the triangulation data structure must however remain a 2-manifold at all time,
 and to ensure this property, fictitious faces called <i>ghost faces</i> are added. We call faces that
 are not ghost faces <em>solid faces</em>, and edges of such faces <em>solid edges</em>.
@@ -596,7 +596,7 @@ public:
 
   /*!
   tests the validity of the triangulation as a `Triangulation_on_sphere_2`
-  This method is mainly useful for debugging Delaunay triangulation algorithms designed by the user.
+  This method is mainly useful for debugging Delaunay triangulation algorithms.
   */
   bool is_valid(bool verbose = false, int level = 0) const;
 
