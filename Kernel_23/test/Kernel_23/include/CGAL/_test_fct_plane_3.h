@@ -53,7 +53,6 @@ _test_fct_plane_3(const R& )
  std::cout << "Testing functions Plane_3" ;
 
  typedef typename  R::RT       RT;
- typedef typename  R::FT       FT;
  typedef typename  R::Point_3  Point_3;
  typedef typename  R::Plane_3  Plane_3;
 
