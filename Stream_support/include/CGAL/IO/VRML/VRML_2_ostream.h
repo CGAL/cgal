@@ -21,6 +21,7 @@
 
 #include <CGAL/basic.h>
 #include <iostream>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL {
 
