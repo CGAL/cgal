@@ -14,14 +14,18 @@ if(TARGET CGAL::Eigen3_support)
   find_package(Boost QUIET COMPONENTS program_options)
 
   create_single_source_cgal_program("Mesh_estimation.cpp")
-  target_link_libraries(Mesh_estimation PUBLIC CGAL::Eigen3_support)
   if(Boost_PROGRAM_OPTIONS_FOUND)
-    target_compile_definitions(Mesh_estimation PRIVATE "CGAL_USE_BOOST_PROGRAM_OPTIONS")
+    target_link_libraries(Mesh_estimation PUBLIC CGAL::Eigen3_support)
     if(TARGET Boost::filesystem)
       target_link_libraries(Mesh_estimation PRIVATE Boost::program_options)
     else()
       target_link_libraries(Mesh_estimation PRIVATE ${Boost_PROGRAM_OPTIONS_LIBRARY})
     endif()
+  else()
+    message(
+      STATUS
+        "NOTICE: This program requires Boost Program Options and will not be compiled."
+    )
   endif()
 
   create_single_source_cgal_program("Single_estimation.cpp")
