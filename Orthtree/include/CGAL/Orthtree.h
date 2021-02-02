@@ -640,7 +640,7 @@ public:
     std::size_t i = 0;
     for (const FT& f : cartesian_range(m_bbox_min))
     {
-      bary[i] = node.global_coordinates()[i] * size + (size / 2.0) + f;
+      bary[i] = FT(node.global_coordinates()[i]) * size + size / 2.0 + f;
       ++ i;
     }
 

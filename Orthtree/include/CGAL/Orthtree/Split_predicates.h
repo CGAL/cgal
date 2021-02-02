@@ -102,7 +102,7 @@ public:
   /*!
     \brief returns `true` if `n` should be split, `false` otherwise.
    */
-  template<template Node>
+  template<typename Node>
   bool operator()(const Node &n) const {
     size_t num_points = n.size();
     size_t depth = n.depth();
