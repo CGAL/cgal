@@ -95,9 +95,7 @@ void newell_single_step_3( const Handle& p, const Handle& q, Vector& n, const Ca
 template <class IC>
 bool is_triangle_3( const IC& first )
 {
-    IC last(first);
-    ++last; ++last; ++last;
-    return first==last;
+    return std::next(first,3) == first;
 }
 
 }
