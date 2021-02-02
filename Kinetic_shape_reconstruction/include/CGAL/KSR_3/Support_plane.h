@@ -52,6 +52,7 @@ public:
 
   using Mesh = CGAL::Surface_mesh<Point_2>;
   using Intersection_graph = KSR_3::Intersection_graph<Kernel>;
+  using Bbox_2 = CGAL::Bbox_2;
 
   using IVertex = typename Intersection_graph::Vertex_descriptor;
   using IEdge   = typename Intersection_graph::Edge_descriptor;
@@ -84,7 +85,10 @@ private:
     F_uint_map k_map;
     V_original_map v_original_map;
     V_time_map v_time_map;
-    std::set<IEdge> iedges;
+    std::set<IEdge> unique_iedges;
+    std::vector<IEdge> iedges;
+    std::vector<Segment_2> isegments;
+    std::vector<Bbox_2> ibboxes;
     unsigned int k;
   };
 
@@ -294,10 +298,10 @@ public:
       sp.data().k_map[fi]     = m_data->k_map[face];
     }
 
-    sp.data().iedges.clear();
-    for (const auto& iedge : m_data->iedges) {
+    sp.data().unique_iedges.clear();
+    for (const auto& iedge : m_data->unique_iedges) {
       CGAL_assertion(iedge != IG::null_iedge());
-      sp.data().iedges.insert(emap.at(iedge));
+      sp.data().unique_iedges.insert(emap.at(iedge));
     }
   }
 
@@ -525,8 +529,17 @@ public:
     return (m_data->direction[vi] == CGAL::NULL_VECTOR);
   }
 
-  const std::set<IEdge>& iedges() const { return m_data->iedges; }
-  std::set<IEdge>& iedges() { return m_data->iedges; }
+  const std::set<IEdge>& unique_iedges() const { return m_data->unique_iedges; }
+  std::set<IEdge>& unique_iedges() { return m_data->unique_iedges; }
+
+  const std::vector<IEdge>& iedges() const { return m_data->iedges; }
+  std::vector<IEdge>& iedges() { return m_data->iedges; }
+
+  const std::vector<Segment_2>& isegments() const { return m_data->isegments; }
+  std::vector<Segment_2>& isegments() { return m_data->isegments; }
+
+  const std::vector<Bbox_2>& ibboxes() const { return m_data->ibboxes; }
+  std::vector<Bbox_2>& ibboxes() { return m_data->ibboxes; }
 
   const Point_2 to_2d(const Point_3& point) const {
     return m_data->plane.to_2d(point);

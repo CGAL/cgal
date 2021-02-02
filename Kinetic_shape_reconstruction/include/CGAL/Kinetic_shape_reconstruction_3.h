@@ -32,6 +32,7 @@
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
+#include <CGAL/Real_timer.h>
 
 // Internal includes.
 #include <CGAL/KSR/utils.h>
@@ -74,6 +75,7 @@ private:
 
   using Polygon_mesh = CGAL::Surface_mesh<Point_3>;
   using Vertex_index = typename Polygon_mesh::Vertex_index;
+  using Timer        = CGAL::Real_timer;
 
 private:
   const bool m_debug;
@@ -106,6 +108,7 @@ public:
     const PolygonMap polygon_map,
     const NamedParameters& np) {
 
+    Timer timer;
     const unsigned int k = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::k_intersections), 1);
     unsigned int n = parameters::choose_parameter(
@@ -149,11 +152,16 @@ public:
       std::cout << "* reorient: "                             << is_reorient        << std::endl;
     }
 
+    timer.reset();
+    timer.start();
     const FT time_step = static_cast<FT>(m_initializer.initialize(
       input_range, polygon_map, k, CGAL::to_double(enlarge_bbox_ratio), reorient));
     m_initializer.convert(m_data);
     m_data.set_limit_lines();
-    CGAL_assertion(m_data.check_integrity());
+    m_data.precompute_iedge_data();
+    CGAL_assertion(m_data.check_integrity(true, true, true));
+    timer.stop();
+    const double time_to_initialize = timer.time();
 
     if (k == 0) {
       CGAL_warning_msg(k > 0,
@@ -177,6 +185,8 @@ public:
       std::cout << "* propagation started" << std::endl;
     }
 
+    timer.reset();
+    timer.start();
     std::size_t num_iterations = 0;
     m_min_time = FT(0);
     m_max_time = time_step;
@@ -202,6 +212,8 @@ public:
         return false;
       }
     }
+    timer.stop();
+    const double time_to_partition = timer.time();
 
     if (m_verbose) {
       if (m_verbose && !m_debug) std::cout << std::endl;
@@ -209,21 +221,33 @@ public:
       std::cout << "* number of events: " << global_iteration << std::endl;
     }
 
+    timer.reset();
+    timer.start();
     if (m_verbose) std::cout << std::endl << "--- FINALIZING PARTITION:" << std::endl;
     if (m_debug) dump(m_data, "jiter-final-a-result");
     m_data.finalize();
     if (m_verbose) std::cout << "* checking final mesh integrity ...";
-    CGAL_assertion(m_data.check_integrity());
+    CGAL_assertion(m_data.check_integrity(true, true, true));
     if (m_verbose) std::cout << " done" << std::endl;
     if (m_debug) dump(m_data, "jiter-final-b-result");
-
     // std::cout << std::endl << "CLEANING SUCCESS!" << std::endl << std::endl;
     // exit(EXIT_SUCCESS);
-
     if (m_verbose) std::cout << "* getting volumes ..." << std::endl;
     m_data.create_polyhedra();
+    timer.stop();
+    const double time_to_finalize = timer.time();
     if (m_verbose) {
       std::cout << "* found " << m_data.number_of_volumes(-1) << " volumes" << std::endl;
+    }
+
+    if (m_verbose) std::cout << std::endl << "--- TIMING (sec.):" << std::endl;
+    const double total_time =
+      time_to_initialize + time_to_partition + time_to_finalize;
+    if (m_verbose) {
+      std::cout << "* initialization: " << time_to_initialize << std::endl;
+      std::cout << "* partition: "      << time_to_partition  << std::endl;
+      std::cout << "* finalization: "   << time_to_finalize   << std::endl;
+      std::cout << "* total time: "     << total_time         << std::endl;
     }
     return true;
   }
@@ -638,12 +662,10 @@ private:
 
     m_data.update_positions(m_max_time);
     bool still_running = false;
-
-    std::vector<IEdge> iedges;
-    std::vector<Segment_2> segments;
-    std::vector<Bbox_2> bboxes;
     for (std::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
-      initialize_search_structures(i, iedges, segments, bboxes);
+      const auto& iedges   = m_data.iedges(i);
+      const auto& segments = m_data.isegments(i);
+      const auto& bboxes   = m_data.ibboxes(i);
       for (const auto pvertex : m_data.pvertices(i)) {
         if (compute_events_of_pvertex(pvertex, iedges, segments, bboxes)) {
           still_running = true;
@@ -654,36 +676,15 @@ private:
     return still_running;
   }
 
-  void initialize_search_structures(
-    const std::size_t i,
-    std::vector<IEdge>& iedges,
-    std::vector<Segment_2>& segments,
-    std::vector<Bbox_2>& bboxes) {
-
-    iedges.clear();
-    segments.clear();
-    bboxes.clear();
-
-    // To get random access, copy in vector (suboptimal to do this
-    // all the time, maybe this should be done once and for all and
-    // replace the set).
-    iedges.reserve(m_data.iedges(i).size());
-    std::copy(m_data.iedges(i).begin(), m_data.iedges(i).end(), std::back_inserter(iedges));
-
-    // Precompute segments and bboxes.
-    segments.reserve(iedges.size());
-    bboxes.reserve(iedges.size());
-    for (const auto& iedge : iedges) {
-      segments.push_back(m_data.segment_2(i, iedge));
-      bboxes.push_back(segments.back().bbox());
-    }
-  }
-
   const bool compute_events_of_pvertex(
     const PVertex& pvertex,
     const std::vector<IEdge>& iedges,
     const std::vector<Segment_2>& segments,
     const std::vector<Bbox_2>& bboxes) {
+
+    CGAL_assertion(iedges.size() > 0);
+    CGAL_assertion(iedges.size() == segments.size());
+    CGAL_assertion(iedges.size() == bboxes.size());
 
     std::cout.precision(20);
     if (m_data.is_frozen(pvertex)) {
@@ -1099,6 +1100,15 @@ private:
     "ERROR: CONSTRAINED PVERTEX MEETS IEDGE! WHAT IS WRONG?");
   }
 
+  void apply_event_pvertices_meet_ivertex(
+    const PVertex& pvertex, const PVertex& pother, const IVertex& ivertex, const Event& event) {
+
+    CGAL_assertion( m_data.has_iedge(pvertex));
+    CGAL_assertion(!m_data.has_iedge(pother));
+    CGAL_assertion_msg(false,
+    "ERROR: PVERTICES MEET IVERTEX! IT SHOULD NOT EVER HAPPEN!");
+  }
+
   // VALID EVENTS!
   void apply_event_pvertex_meets_ivertex(
     const PVertex& pvertex, const IVertex& ivertex, const Event& event) {
@@ -1135,14 +1145,6 @@ private:
     CGAL_assertion(pvertices.size() > 0);
     compute_events_of_pvertices(event.time(), pvertices);
     // CGAL_assertion_msg(false, "TODO: PVERTEX MEETS IVERTEX!");
-  }
-
-  void apply_event_pvertices_meet_ivertex(
-    const PVertex& pvertex, const PVertex& pother, const IVertex& ivertex, const Event& event) {
-
-    CGAL_assertion( m_data.has_iedge(pvertex));
-    CGAL_assertion(!m_data.has_iedge(pother));
-    CGAL_assertion_msg(false, "TODO: PVERTICES MEET IVERTEX!");
   }
 
   void apply_event_unconstrained_pvertex_meets_ivertex(
@@ -1295,7 +1297,7 @@ private:
   const bool check_pvertex_meets_iedge_global_k(
     const PVertex& pvertex, const IEdge& iedge) {
 
-    if (m_verbose) {
+    if (m_debug) {
       std::cout << "- k intersections before: " << m_data.k(pvertex.first) << std::endl;
     }
 
@@ -1336,7 +1338,7 @@ private:
   const bool check_pedge_meets_iedge_global_k(
     const PVertex& pvertex, const PVertex& pother, const IEdge& iedge) {
 
-    if (m_verbose) {
+    if (m_debug) {
       std::cout << "- k intersections before: " << m_data.k(pvertex.first) << std::endl;
     }
 
@@ -1388,13 +1390,11 @@ private:
     m_min_time = m_data.current_time();
     m_data.update_positions(m_max_time);
 
-    std::vector<IEdge>     iedges;
-    std::vector<Segment_2> segments;
-    std::vector<Bbox_2>    bboxes;
-
     const auto& pfront = pvertices.front();
     CGAL_assertion(pfront != Data_structure::null_pvertex());
-    initialize_search_structures(pfront.first, iedges, segments, bboxes);
+    const auto& iedges   = m_data.iedges(pfront.first);
+    const auto& segments = m_data.isegments(pfront.first);
+    const auto& bboxes   = m_data.ibboxes(pfront.first);
 
     for (const auto& pvertex : pvertices) {
       if (pvertex == Data_structure::null_pvertex()) continue;

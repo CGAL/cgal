@@ -284,6 +284,34 @@ public:
     return m_map_volumes;
   }
 
+  void precompute_iedge_data() {
+
+    for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
+      auto& unique_iedges = support_plane(i).unique_iedges();
+      CGAL_assertion(unique_iedges.size() > 0);
+
+      auto& iedges    = this->iedges(i);
+      auto& ibboxes   = this->ibboxes(i);
+      auto& isegments = this->isegments(i);
+
+      iedges.clear();
+      iedges.reserve(unique_iedges.size());
+      std::copy(unique_iedges.begin(), unique_iedges.end(), std::back_inserter(iedges));
+      unique_iedges.clear();
+
+      ibboxes.clear();
+      isegments.clear();
+
+      ibboxes.reserve(iedges.size());
+      isegments.reserve(iedges.size());
+
+      for (const auto& iedge : iedges) {
+        isegments.push_back(segment_2(i, iedge));
+        ibboxes.push_back(isegments.back().bbox());
+      }
+    }
+  }
+
   void set_limit_lines() {
 
     m_limit_lines.clear();
@@ -611,19 +639,19 @@ public:
     for (std::size_t i = 0; i < n; ++i) {
       const auto& iplanes = m_intersection_graph.intersected_planes(intersections[i].first);
       for (const std::size_t sp_idx : iplanes) {
-        support_plane(sp_idx).iedges().erase(intersections[i].first);
+        support_plane(sp_idx).unique_iedges().erase(intersections[i].first);
       }
       const auto edges = m_intersection_graph.split_edge(
         intersections[i].first, vertices[i]);
 
       const auto& iplanes_1 = m_intersection_graph.intersected_planes(edges.first);
       for (const std::size_t sp_idx : iplanes_1) {
-        support_plane(sp_idx).iedges().insert(edges.first);
+        support_plane(sp_idx).unique_iedges().insert(edges.first);
       }
 
       const auto& iplanes_2 = m_intersection_graph.intersected_planes(edges.second);
       for (const std::size_t sp_idx : iplanes_2) {
-        support_plane(sp_idx).iedges().insert(edges.second);
+        support_plane(sp_idx).unique_iedges().insert(edges.second);
       }
 
       const auto new_edge = m_intersection_graph.add_edge(
@@ -631,8 +659,8 @@ public:
       m_intersection_graph.intersected_planes(new_edge).insert(common_planes_idx[i]);
       m_intersection_graph.set_line(new_edge, map_lines_idx[common_planes_idx[i]]);
 
-      support_plane(support_plane_idx).iedges().insert(new_edge);
-      support_plane(common_planes_idx[i]).iedges().insert(new_edge);
+      support_plane(support_plane_idx).unique_iedges().insert(new_edge);
+      support_plane(common_planes_idx[i]).unique_iedges().insert(new_edge);
     }
   }
 
@@ -660,7 +688,7 @@ public:
       }
 
       support_plane(support_plane_idx).set_iedge(vertices[i], vertices[(i + 1) % 4], iedge);
-      support_plane(support_plane_idx).iedges().insert(iedge);
+      support_plane(support_plane_idx).unique_iedges().insert(iedge);
     }
   }
 
@@ -1113,7 +1141,7 @@ public:
       m_intersection_graph.set_line(iedge, line_idx);
 
       for (const auto support_plane_idx : support_planes_idx) {
-        support_plane(support_plane_idx).iedges().insert(iedge);
+        support_plane(support_plane_idx).unique_iedges().insert(iedge);
       }
     }
   }
@@ -1134,8 +1162,25 @@ public:
     return m_intersection_graph.incident_edges(ivertex);
   }
 
-  const std::set<IEdge>& iedges(const std::size_t support_plane_idx) const {
+  const std::vector<IEdge>& iedges(const std::size_t support_plane_idx) const {
     return support_plane(support_plane_idx).iedges();
+  }
+  std::vector<IEdge>& iedges(const std::size_t support_plane_idx) {
+    return support_plane(support_plane_idx).iedges();
+  }
+
+  const std::vector<Segment_2>& isegments(const std::size_t support_plane_idx) const {
+    return support_plane(support_plane_idx).isegments();
+  }
+  std::vector<Segment_2>& isegments(const std::size_t support_plane_idx) {
+    return support_plane(support_plane_idx).isegments();
+  }
+
+  const std::vector<Bbox_2>& ibboxes(const std::size_t support_plane_idx) const {
+    return support_plane(support_plane_idx).ibboxes();
+  }
+  std::vector<Bbox_2>& ibboxes(const std::size_t support_plane_idx) {
+    return support_plane(support_plane_idx).ibboxes();
   }
 
   const std::set<std::size_t>& intersected_planes(const IEdge& iedge) const {
@@ -1761,9 +1806,9 @@ public:
     Point_2 future_point_a, future_point_b;
     Vector_2 future_direction_a, future_direction_b;
     compute_future_point_and_direction(
-      pvertex_p, source_p, pvertex, prev, future_point_a, future_direction_a);
+      target_p, pvertex_p, source_p, pvertex, prev, future_point_a, future_direction_a);
     compute_future_point_and_direction(
-      pvertex_p, target_p, pvertex, next, future_point_b, future_direction_b);
+      source_p, pvertex_p, target_p, pvertex, next, future_point_b, future_direction_b);
     CGAL_assertion(future_direction_a * future_direction_b < FT(0));
     CGAL_assertion(future_direction_a != Vector_2());
     CGAL_assertion(future_direction_b != Vector_2());
@@ -1893,7 +1938,7 @@ public:
       }
 
       compute_future_point_and_direction(
-        pvertex_p, target_p, pvertex, pthird, future_point, future_direction);
+        source_p, pvertex_p, target_p, pvertex, pthird, future_point, future_direction);
       CGAL_assertion(future_direction != Vector_2());
 
       direction(pvertex) = future_direction;
@@ -1927,7 +1972,7 @@ public:
       if (m_verbose) std::cout << "- swap source and target" << std::endl;
 
       compute_future_point_and_direction(
-        pother_p, target_p, pother, pthird, future_point, future_direction);
+        source_p, pother_p, target_p, pother, pthird, future_point, future_direction);
       CGAL_assertion(future_direction != Vector_2());
 
       direction(pother) = future_direction;
@@ -2059,7 +2104,7 @@ public:
     Point_2 future_point;
     Vector_2 future_direction;
     compute_future_point_and_direction(
-      pother_p, target_p, pother, pthird, future_point, future_direction);
+      source_p, pother_p, target_p, pother, pthird, future_point, future_direction);
     CGAL_assertion(future_direction != Vector_2());
 
     if (target_pface == null_pface()) { // in case we have 1 pface
@@ -2104,7 +2149,7 @@ public:
       support_plane(pother).set_point(pother.second, future_point);
       connect(pother, iedge);
 
-      CGAL_assertion_msg(false, "TODO: TRANSFER 2, ADD NEW FUTURE POINTS AND DIRECTIONS!");
+      // CGAL_assertion_msg(false, "TODO: TRANSFER 2, ADD NEW FUTURE POINTS AND DIRECTIONS!");
     }
 
     if (m_verbose) {
@@ -2400,7 +2445,7 @@ public:
     // std::cout << "- opoint: " << to_3d(pvertex.first, opoint) << std::endl;
     CGAL_assertion_msg(ipoint != opoint, "TODO: BACK, HANDLE ZERO LENGTH IEDGE!");
     compute_future_point_and_direction(
-      ipoint, opoint, back, prev, future_point, future_direction);
+      ipoint, ipoint, opoint, back, prev, future_point, future_direction);
     CGAL_assertion(future_direction != Vector_2());
 
     // Crop the pvertex.
@@ -2515,7 +2560,7 @@ public:
     // std::cout << "- opoint: " << to_3d(pvertex.first, opoint) << std::endl;
     CGAL_assertion_msg(ipoint != opoint, "TODO: FRONT, HANDLE ZERO LENGTH IEDGE!");
     compute_future_point_and_direction(
-      ipoint, opoint, front, next, future_point, future_direction);
+      ipoint, ipoint, opoint, front, next, future_point, future_direction);
     CGAL_assertion(future_direction != Vector_2());
 
     // Crop the pvertex.
@@ -2642,14 +2687,14 @@ public:
     // std::cout << "- opoint1: " << to_3d(pvertex.first, opoint) << std::endl;
     CGAL_assertion_msg(ipoint != opoint, "TODO: OPEN, HANDLE ZERO LENGTH IEDGE!");
     compute_future_point_and_direction(
-      ipoint, opoint, front, next, future_point_a, future_direction_a);
+      ipoint, ipoint, opoint, front, next, future_point_a, future_direction_a);
     CGAL_assertion(future_direction_a != Vector_2());
 
     opoint = point_2(pvertex.first, opposite(crossed_iedges.back().first, ivertex));
     // std::cout << "- opoint2: " << to_3d(pvertex.first, opoint) << std::endl;
     CGAL_assertion_msg(ipoint != opoint, "TODO: OPEN, HANDLE ZERO LENGTH IEDGE!");
     compute_future_point_and_direction(
-      ipoint, opoint, back, prev, future_point_b, future_direction_b);
+      ipoint, ipoint, opoint, back, prev, future_point_b, future_direction_b);
     CGAL_assertion(future_direction_b != Vector_2());
 
     // Crop the pvertex.
@@ -2816,6 +2861,13 @@ public:
       std::cout << "- adding new pface: " << std::endl;
     }
 
+    std::cout << "idx: " << idx << std::endl;
+    for (const auto& pvertex : pvertices) {
+      if (pvertex != null_pvertex()) {
+        std::cout << "pv: " << point_3(pvertex) << std::endl;
+      }
+    }
+
     const auto& pv1 = pvertices[idx];
     CGAL_assertion(pv1 != null_pvertex());
     if (m_verbose) {
@@ -2858,7 +2910,7 @@ public:
     std::cout << "- opoint: " << to_3d(pvertex.first, opoint) << std::endl;
     CGAL_assertion_msg(ipoint != opoint, "TODO: CREATE PVERTEX, HANDLE ZERO LENGTH IEDGE!");
     compute_future_point_and_direction(
-      ipoint, opoint, pother, pthird, future_point, future_direction);
+      ipoint, ipoint, opoint, pother, pthird, future_point, future_direction);
     CGAL_assertion(future_direction != Vector_2());
 
     const auto propagated = add_pvertex(pvertex.first, future_point);
@@ -3810,6 +3862,7 @@ public:
   }
 
   const bool check_integrity(
+    const bool is_initialized   = true,
     const bool check_simplicity = false,
     const bool check_convexity  = false) const {
 
@@ -3820,15 +3873,33 @@ public:
         return false;
       }
 
-      for (const auto& iedge : this->iedges(i)) {
-        const auto& iplanes = this->intersected_planes(iedge);
-        if (iplanes.find(i) == iplanes.end()) {
+      if (is_initialized) {
+        const auto& iedges = this->iedges(i);
+        CGAL_assertion(iedges.size() > 0);
+        for (const auto& iedge : iedges) {
+          const auto& iplanes = this->intersected_planes(iedge);
+          if (iplanes.find(i) == iplanes.end()) {
 
-          const std::string msg = "ERROR: SUPPORT PLANE " + std::to_string(i) +
-          " IS INTERSECTED BY " + str(iedge) +
-          " BUT IT CLAIMS IT DOES NOT INTERSECT IT!";
-          CGAL_assertion_msg(false, msg.c_str());
-          return false;
+            const std::string msg = "ERROR: SUPPORT PLANE " + std::to_string(i) +
+            " IS INTERSECTED BY " + str(iedge) +
+            " BUT IT CLAIMS IT DOES NOT INTERSECT IT!";
+            CGAL_assertion_msg(false, msg.c_str());
+            return false;
+          }
+        }
+      } else {
+        const auto& iedges = support_plane(i).unique_iedges();
+        CGAL_assertion(iedges.size() > 0);
+        for (const auto& iedge : iedges) {
+          const auto& iplanes = this->intersected_planes(iedge);
+          if (iplanes.find(i) == iplanes.end()) {
+
+            const std::string msg = "ERROR: SUPPORT PLANE " + std::to_string(i) +
+            " IS INTERSECTED BY " + str(iedge) +
+            " BUT IT CLAIMS IT DOES NOT INTERSECT IT!";
+            CGAL_assertion_msg(false, msg.c_str());
+            return false;
+          }
         }
       }
     }
@@ -3837,14 +3908,28 @@ public:
       const auto& iplanes = this->intersected_planes(iedge);
       for (const auto support_plane_idx : iplanes) {
 
-        const auto& sp_iedges = this->iedges(support_plane_idx);
-        if (sp_iedges.find(iedge) == sp_iedges.end()) {
+        if (is_initialized) {
+          const auto& sp_iedges = this->iedges(support_plane_idx);
+          CGAL_assertion(sp_iedges.size() > 0);
+          if (std::find(sp_iedges.begin(), sp_iedges.end(), iedge) == sp_iedges.end()) {
 
-          const std::string msg = "ERROR: IEDGE " + str(iedge) +
-          " INTERSECTS SUPPORT PLANE " + std::to_string(support_plane_idx) +
-          " BUT IT CLAIMS IT IS NOT INTERSECTED BY IT!";
-          CGAL_assertion_msg(false, msg.c_str());
-          return false;
+            const std::string msg = "ERROR: IEDGE " + str(iedge) +
+            " INTERSECTS SUPPORT PLANE " + std::to_string(support_plane_idx) +
+            " BUT IT CLAIMS IT IS NOT INTERSECTED BY IT!";
+            CGAL_assertion_msg(false, msg.c_str());
+            return false;
+          }
+        } else {
+          const auto& sp_iedges = support_plane(support_plane_idx).unique_iedges();
+          CGAL_assertion(sp_iedges.size() > 0);
+          if (sp_iedges.find(iedge) == sp_iedges.end()) {
+
+            const std::string msg = "ERROR: IEDGE " + str(iedge) +
+            " INTERSECTS SUPPORT PLANE " + std::to_string(support_plane_idx) +
+            " BUT IT CLAIMS IT IS NOT INTERSECTED BY IT!";
+            CGAL_assertion_msg(false, msg.c_str());
+            return false;
+          }
         }
       }
     }
@@ -3948,8 +4033,6 @@ public:
     }
 
     // First, traverse only boundary volumes.
-    // TODO: SORT HERE BY PFACE AREA!
-    // Actually, we should sort by both number of edges and area!
     bool is_found_new_volume = false;
     std::size_t volume_size = 0;
     int num_volumes  = 0;
@@ -3985,8 +4068,6 @@ public:
       }
     }
 
-    // TODO: SORT HERE BY PFACE AREA!
-    // Actually, we should sort by both number of edges and area!
     std::sort(other_pfaces.begin(), other_pfaces.end(),
       [&](const PFace& pface1, const PFace& pface2) -> bool {
         const auto pedges1 = pedges_of_pface(pface1);
@@ -4610,10 +4691,22 @@ private:
   *************************************/
 
   const std::pair<Point_2, std::pair<FT, FT> > compute_future_point(
-    const Point_2&  q0, const Point_2&  q1,
+    const Point_2& source, const Point_2& query, const Point_2& target,
     const PVertex& pv0, const PVertex& pv1) const {
 
+    auto q0 = query;
+    const auto& q1 = target;
+
     const FT tol = KSR::tolerance<FT>();
+    const FT sq_dist = CGAL::squared_distance(query, target);
+    if (sq_dist < tol) {
+      if (m_verbose) {
+        std::cout << "- warning: query is almost equal to target" << std::endl;
+        std::cout << "- replacing query with source" << std::endl;
+      }
+      q0 = source;
+    }
+
     const auto q2 = point_2(pv0, m_current_time + FT(1));
     const auto q3 = point_2(pv1, m_current_time + FT(1));
 
@@ -4636,7 +4729,7 @@ private:
 
     const FT sq_d1 = (x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0);
     CGAL_assertion(sq_d1 >= FT(0));
-    if (m_verbose) std::cout << "sq d1: " << sq_d1 << std::endl;
+    // if (m_verbose) std::cout << "sq d1: " << sq_d1 << std::endl;
     CGAL_assertion_msg(sq_d1 >= tol,
     "TODO: FUTURE POINT, HANDLE ZERO CURRENT EDGE!");
     const FT a2 = a1 / sq_d1, b2 = b1 / sq_d1, c2 = c1 / sq_d1;
@@ -4683,23 +4776,22 @@ private:
   }
 
   const Vector_2 compute_future_direction(
-    const Point_2&  q0, const Point_2&  q1,
+    const Point_2& source, const Point_2& target,
     const PVertex& pv0, const PVertex& pv1) const {
 
     auto pinit = point_2(pv0);
-    const Line_2 iedge_line(q0, q1);
+    const Line_2 iedge_line(source, target);
     pinit = iedge_line.projection(pinit);
 
-    const auto res = compute_future_point(q0, q1, pv0, pv1);
+    const auto res = compute_future_point(source, source, target, pv0, pv1);
     const auto& future_point = res.first;
-    CGAL_assertion_msg(future_point != pinit,
-    "TODO: ZERO LENGTH FUTURE DIRECTION!");
+    CGAL_assertion_msg(future_point != pinit, "ERROR: ZERO LENGTH FUTURE DIRECTION!");
 
     const Vector_2 future_direction(pinit, future_point);
     if (m_verbose) {
       std::cout.precision(20);
-      // std::cout << "- future point: " << to_3d(pv0.first, future_point) << std::endl;
-      // std::cout << "- future direction: " << future_direction << std::endl;
+      // std::cout << "- future point: "     << to_3d(pv0.first, future_point) << std::endl;
+      // std::cout << "- future direction: " << future_direction               << std::endl;
     }
 
     // CGAL_assertion_msg(false, "TODO: COMPUTE FUTURE DIRECTION!");
@@ -4707,24 +4799,24 @@ private:
   }
 
   void compute_future_point_and_direction(
-    const Point_2&  q0, const Point_2&  q1,
+    const Point_2& source, const Point_2& query, const Point_2& target,
     const PVertex& pv0, const PVertex& pv1,
     Point_2& future_point, Vector_2& future_direction) const {
 
-    const auto& pinit = q0;
-    const auto res = compute_future_point(q0, q1, pv0, pv1);
+    const auto& pinit = query;
+    const auto res = compute_future_point(source, query, target, pv0, pv1);
     future_point = res.first;
 
     if (m_verbose) {
-      std::cout <<
-      "- w1: " << res.second.first  << ";" <<
-      " w2: "  << res.second.second << std::endl;
+      std::cout << "-" <<
+      " w1: " << res.second.first  << ";" <<
+      " w2: " << res.second.second << std::endl;
       std::cout << "- future point: " << to_3d(pv0.first, future_point) << std::endl;
     }
-    CGAL_assertion_msg(future_point != pinit,
-    "TODO: ZERO LENGTH FUTURE DIRECTION!");
-    CGAL_assertion_msg(res.second.first  <= FT(1), "TODO: W1, WRONG ORIENTATION!");
-    CGAL_assertion_msg(res.second.second >= FT(0), "TODO: W2, WRONG ORIENTATION!");
+
+    CGAL_assertion_msg(future_point != pinit, "ERROR: ZERO LENGTH FUTURE DIRECTION!");
+    CGAL_assertion_msg(res.second.first  <= FT(1), "ERROR: W1, WRONG ORIENTATION!");
+    CGAL_assertion_msg(res.second.second >= FT(0), "ERROR: W2, WRONG ORIENTATION!");
 
     future_direction = Vector_2(pinit, future_point);
     future_point = pinit - m_current_time * future_direction;

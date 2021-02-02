@@ -312,7 +312,7 @@ private:
     }
 
     // Then, add intersection vertices + constraints.
-    const auto& iedges = m_data.iedges(support_plane_idx);
+    const auto& iedges = m_data.support_plane(support_plane_idx).unique_iedges();
     for (const auto& iedge : iedges) {
       const auto source = m_data.source(iedge);
       const auto target = m_data.target(iedge);
@@ -666,7 +666,7 @@ private:
     std::vector<Point_2>& bbox) const {
 
     CGAL_assertion(support_plane_idx >= 6);
-    const auto& iedges = m_data.iedges(support_plane_idx);
+    const auto& iedges = m_data.support_plane(support_plane_idx).unique_iedges();
 
     std::vector<Point_2> points;
     points.reserve(iedges.size() * 2);
