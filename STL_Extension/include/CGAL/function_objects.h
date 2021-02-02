@@ -358,7 +358,7 @@ public:
   Unary_compose_1(const Op1& x, const Op2& y) : op1(x), op2(y) {}
 
   template <typename argument_type>
-  decltype(auto)
+  auto
   operator()(const argument_type& x) const
   { return op1(op2(x)); }
 };
@@ -381,7 +381,7 @@ public:
   : op1(x), op2(y), op3(z) {}
 
   template <typename argument_type>
-  decltype(auto)
+  auto
   operator()(const argument_type& x) const
   { return op1(op2(x), op3(x)); }
 };
@@ -402,7 +402,7 @@ public:
   Unary_compose_2(const Op1& x, const Op2& y) : op1(x), op2(y) {}
 
   template <typename first_argument_type, typename second_argument_type>
-  decltype(auto)
+  auto
   operator()(const first_argument_type& x,
              const second_argument_type& y) const
   { return op1(op2(x, y)); }
@@ -440,7 +440,7 @@ public:
   }
 
   template <typename first_argument_type, typename second_argument_type>
-  decltype(auto)
+  auto
   operator()(const first_argument_type& x,
              const second_argument_type& y) const
   { return op1(op2(x), op3(y)); }

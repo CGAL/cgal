@@ -291,8 +291,7 @@ bounding_box_2(ForwardIterator f, ForwardIterator l, const Traits& t)
 } // bounding_box_2(f, l, t)
 template < class ForwardIterator >
 inline
-//typename std::iterator_traits< ForwardIterator >::value_type::R::Iso_rectangle_2
-decltype(auto)
+auto
 bounding_box_2(ForwardIterator f, ForwardIterator l)
 // PRE: f != l.
 {
