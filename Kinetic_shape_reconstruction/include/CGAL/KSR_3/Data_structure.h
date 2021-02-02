@@ -4634,23 +4634,23 @@ private:
     const FT b1 = y0 - y1;
     const FT c1 = x1 * x1 - x1 * x0 - y1 * y0 + y1 * y1;
 
-    const FT d1 = (x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0);
-    CGAL_assertion(d1 >= FT(0));
-    // if (m_verbose) std::cout << "d1: " << d1 << std::endl;
-    CGAL_assertion_msg(d1 >= tol,
+    const FT sq_d1 = (x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0);
+    CGAL_assertion(sq_d1 >= FT(0));
+    if (m_verbose) std::cout << "sq d1: " << sq_d1 << std::endl;
+    CGAL_assertion_msg(sq_d1 >= tol,
     "TODO: FUTURE POINT, HANDLE ZERO CURRENT EDGE!");
-    const FT a2 = a1 / d1, b2 = b1 / d1, c2 = c1 / d1;
+    const FT a2 = a1 / sq_d1, b2 = b1 / sq_d1, c2 = c1 / sq_d1;
 
     const FT a3 = x2 - x3;
     const FT b3 = y2 - y3;
     const FT c3 = x3 * x3 - x3 * x2 - y3 * y2 + y3 * y3;
 
-    const FT d2 = (x3 - x2) * (x3 - x2) + (y3 - y2) * (y3 - y2);
-    CGAL_assertion(d2 >= FT(0));
-    // if (m_verbose) std::cout << "d2: " << d2 << std::endl;
-    CGAL_assertion_msg(d2 >= tol,
+    const FT sq_d2 = (x3 - x2) * (x3 - x2) + (y3 - y2) * (y3 - y2);
+    CGAL_assertion(sq_d2 >= FT(0));
+    // if (m_verbose) std::cout << "sq d2: " << sq_d2 << std::endl;
+    CGAL_assertion_msg(sq_d2 >= tol,
     "TODO: FUTURE POINT, HANDLE ZERO FUTURE EDGE!");
-    const FT a4 = a3 / d2, b4 = b3 / d2, c4 = c3 / d2;
+    const FT a4 = a3 / sq_d2, b4 = b3 / sq_d2, c4 = c3 / sq_d2;
 
     const FT a5 = x0 * a2 - x1 * a2 - x2 * a4 + x3 * a4;
     const FT b5 = x0 * b2 - x1 * b2 - x2 * b4 + x3 * b4;

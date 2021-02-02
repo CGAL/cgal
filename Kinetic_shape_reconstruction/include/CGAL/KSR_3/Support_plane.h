@@ -604,27 +604,23 @@ public:
 
 template<typename Kernel>
 bool operator==(
-  const Support_plane<Kernel>& a,
-  const Support_plane<Kernel>& b) {
+  const Support_plane<Kernel>& a, const Support_plane<Kernel>& b) {
 
   using FT = typename Kernel::FT;
-
   const auto& planea = a.plane();
   const auto& planeb = b.plane();
 
+  // Are the planes parallel?
+  const FT vtol = KSR::vector_tolerance<FT>();
   const auto va = planea.orthogonal_vector();
   const auto vb = planeb.orthogonal_vector();
-
-  const FT sq_dist_to_plane = CGAL::squared_distance(planea.point(), planeb);
-
-  const FT ptol = KSR::point_tolerance<FT>();
-  const FT vtol = KSR::vector_tolerance<FT>();
-  const FT sq_ptol = ptol * ptol;
-
-  // Are the planes parallel?
   if (CGAL::abs(va * vb) < vtol) return false;
+
   // Are the planes coplanar?
-  return (sq_dist_to_plane < sq_ptol);
+  const FT ptol = KSR::point_tolerance<FT>();
+  const auto pa = planea.point();
+  const auto pb = planeb.projection(pa);
+  return (KSR::distance(pa, pb) < ptol);
 }
 
 } // namespace KSR_3

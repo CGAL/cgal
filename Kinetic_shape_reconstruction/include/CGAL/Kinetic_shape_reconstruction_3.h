@@ -706,52 +706,18 @@ private:
   }
 
   void compute_events_of_constrained_pvertex(
-    const PVertex& pvertex,
-    const Segment_2& pv_segment,
-    const Bbox_2& pv_bbox) {
+    const PVertex& pvertex, const Segment_2& pv_segment, const Bbox_2& pv_bbox) {
 
-    Event event1, event2;
-    bool is_pvertex_to_pvertex_event, is_pvertex_to_ivertex_event;
-    std::tie(is_pvertex_to_pvertex_event, event1) =
-      try_pvertex_to_pvertex_constrained_event(pvertex, pv_segment, pv_bbox);
-    std::tie(is_pvertex_to_ivertex_event, event2) =
-      try_pvertex_to_ivertex_constrained_event(pvertex, pv_segment, pv_bbox);
+    // const bool is_event_found =
+    // try_pvertices_to_ivertex_event(pvertex, pv_segment, pv_bbox);
+    // if (!is_event_found) return;
 
-    if (is_pvertex_to_pvertex_event) {
-      m_queue.push(event1);
-    }
-    if (is_pvertex_to_ivertex_event) {
-      m_queue.push(event2);
-    }
-
-    // Is this version better? Does it work?
-    // if (is_pvertex_to_pvertex_event && is_pvertex_to_ivertex_event) {
-    //   if (event1.time() < event2.time()) {
-    //     m_queue.push(event1);
-    //   } else if (event2.time() < event1.time()) {
-    //     m_queue.push(event2);
-    //   } else {
-    //     CGAL_assertion_msg(false, "TODO: WHAT SHOULD WE DO FOR EQUAL EVENTS?");
-    //   } return;
-    // }
-    // if (is_pvertex_to_pvertex_event) {
-    //   CGAL_assertion(!is_pvertex_to_ivertex_event);
-    //   m_queue.push(event1); return;
-    // }
-    // if (is_pvertex_to_ivertex_event) {
-    //   CGAL_assertion(!is_pvertex_to_pvertex_event);
-    //   m_queue.push(event2); return;
-    // }
-    // CGAL_assertion(!is_pvertex_to_pvertex_event && !is_pvertex_to_ivertex_event);
+    try_pvertex_to_pvertex_constrained_event(pvertex, pv_segment, pv_bbox);
+    try_pvertex_to_ivertex_constrained_event(pvertex, pv_segment, pv_bbox);
   }
 
-  // Test left and right vertices of the mesh face.
-  const std::pair<bool, Event> try_pvertex_to_pvertex_constrained_event(
-    const PVertex& pvertex,
-    const Segment_2& pv_segment,
-    const Bbox_2& pv_bbox) {
-
-    Event event;
+  const bool try_pvertices_to_ivertex_event(
+    const PVertex& pvertex, const Segment_2& pv_segment, const Bbox_2& pv_bbox) {
     bool is_event_found = false;
 
     PVertex prev, next;
@@ -777,27 +743,93 @@ private:
         continue;
       }
 
-      const FT distance = KSR::distance(pv_segment.source(), inter);
+      CGAL_assertion(m_data.has_iedge(pvertex));
+      const auto iedge = m_data.iedge(pvertex);
+
+      const auto isource = m_data.source(iedge);
+      const auto itarget = m_data.target(iedge);
+
+      const auto source = m_data.point_2(pvertex.first, isource);
+      const auto target = m_data.point_2(pvertex.first, itarget);
+
+      const FT tol = KSR::tolerance<FT>();
+      const FT sq_dist1 = CGAL::squared_distance(inter, source);
+      const FT sq_dist2 = CGAL::squared_distance(inter, target);
+
+      // std::cout << "tol: " << tol << std::endl;
+      // std::cout << "sq dist 1: " << sq_dist1 << std::endl;
+      // std::cout << "sq dist 2: " << sq_dist2 << std::endl;
+
+      Point_2 ipoint;
+      IVertex ivertex = m_data.null_ivertex();
+      if (sq_dist1 < tol) {
+        CGAL_assertion(sq_dist2 >= tol);
+        ipoint = source; ivertex = isource;
+      } else if (sq_dist2 < tol) {
+        CGAL_assertion(sq_dist1 >= tol);
+        ipoint = target; ivertex = itarget;
+      }
+
+      if (ivertex != m_data.null_ivertex()) {
+        CGAL_assertion(ipoint != Point_2());
+
+        const auto& pinit = pv_segment.source();
+        const FT distance = KSR::distance(pinit, ipoint);
+        const FT time = distance / m_data.speed(pvertex);
+
+        is_event_found = true;
+        CGAL_assertion(time < m_max_time - m_min_time);
+        m_queue.push(Event(true, pvertex, pother, ivertex, m_min_time + time));
+        CGAL_assertion_msg(false, "TODO: TRY PVERTICES TO IVERTEX EVENT!");
+      }
+    }
+    return is_event_found;
+  }
+
+  const bool try_pvertex_to_pvertex_constrained_event(
+    const PVertex& pvertex, const Segment_2& pv_segment, const Bbox_2& pv_bbox) {
+    bool is_event_found = false;
+
+    PVertex prev, next;
+    std::tie(prev, next) = m_data.prev_and_next(pvertex);
+    for (const auto& pother : { prev, next }) {
+      if (pother == Data_structure::null_pvertex()
+          || !m_data.is_active(pother)
+          ||  m_data.has_iedge(pother)) {
+        continue;
+      }
+
+      const Segment_2 po_segment(
+        m_data.point_2(pother, m_min_time),
+        m_data.point_2(pother, m_max_time));
+      const auto po_bbox = po_segment.bbox();
+
+      if (!do_overlap(pv_bbox, po_bbox)) {
+        continue;
+      }
+
+      Point_2 inter;
+      if (!KSR::intersection(pv_segment, po_segment, inter)) {
+        continue;
+      }
+
+      const auto& pinit = pv_segment.source();
+      const FT distance = KSR::distance(pinit, inter);
       const FT time = distance / m_data.speed(pvertex);
 
       // Constrained pvertex to another pvertex event.
       CGAL_assertion(time < m_max_time - m_min_time);
-      event = Event(true, pvertex, pother, m_min_time + time);
+      m_queue.push(Event(true, pvertex, pother, m_min_time + time));
       is_event_found = true;
 
       // std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
       // std::cout << "pother: "  << m_data.point_3(pother)  << std::endl;
     }
-    return std::make_pair(is_event_found, event);
+    return is_event_found;
   }
 
-  // Test end vertices of the intersection edge.
-  const std::pair<bool, Event> try_pvertex_to_ivertex_constrained_event(
-    const PVertex& pvertex,
-    const Segment_2& pv_segment,
-    const Bbox_2& pv_bbox) {
-
-    Event event;
+  const bool try_pvertex_to_ivertex_constrained_event(
+    const PVertex& pvertex, const Segment_2& pv_segment, const Bbox_2& pv_bbox) {
     bool is_event_found = false;
 
     CGAL_assertion(m_data.has_iedge(pvertex));
@@ -809,25 +841,28 @@ private:
 
       const Point_2 ipoint = m_data.to_2d(pvertex.first, ivertex);
       const auto vec1 = pv_segment.to_vector();
-      const Vector_2 vec2(pv_segment.source(), ipoint);
+      const auto& pinit = pv_segment.source();
+      const Vector_2 vec2(pinit, ipoint);
       const FT dot_product = vec1 * vec2;
       if (dot_product < FT(0)) { // opposite directions
         continue;
       }
 
-      const FT distance = KSR::distance(pv_segment.source(), ipoint);
+      const FT distance = KSR::distance(pinit, ipoint);
       const FT time = distance / m_data.speed(pvertex);
 
       // Constrained pvertex to ivertex event.
       if (time < m_max_time - m_min_time) {
-        event = Event(true, pvertex, ivertex, m_min_time + time);
+
+        CGAL_assertion(time < m_max_time - m_min_time);
+        m_queue.push(Event(true, pvertex, ivertex, m_min_time + time));
         is_event_found = true;
 
         // std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
         // std::cout << "ivertex: " << m_data.point_3(ivertex) << std::endl;
       }
     }
-    return std::make_pair(is_event_found, event);
+    return is_event_found;
   }
 
   void compute_events_of_unconstrained_pvertex(
@@ -842,7 +877,6 @@ private:
       pvertex, pv_segment, pv_bbox, iedges, segments, bboxes);
   }
 
-  // Test all intersection edges.
   const bool try_pvertex_to_iedge_unconstrained_event(
     const PVertex& pvertex,
     const Segment_2& pv_segment,
@@ -876,17 +910,20 @@ private:
       }
 
       // Try to add unconstrained pvertex to ivertex event.
-      is_event_found = try_pvertex_to_ivertex_unconstrained_event(
-        pvertex, iedge, inter, pv_segment.source());
+      const auto& pinit = pv_segment.source();
+      // is_event_found = try_pvertex_to_ivertex_unconstrained_event(
+      //   pvertex, iedge, inter, pinit);
 
       // Otherwise we add unconstrained pvertex to iedge event.
-      if (!is_event_found) {
-        const FT distance = KSR::distance(pv_segment.source(), inter);
-        const FT time = distance / m_data.speed(pvertex);
-        CGAL_assertion(time < m_max_time - m_min_time);
-        m_queue.push(Event(false, pvertex, iedge, m_min_time + time));
-        is_event_found = true;
-      }
+      // if (!is_event_found) {
+
+      const FT distance = KSR::distance(pinit, inter);
+      const FT time = distance / m_data.speed(pvertex);
+      CGAL_assertion(time < m_max_time - m_min_time);
+      m_queue.push(Event(false, pvertex, iedge, m_min_time + time));
+      is_event_found = true;
+
+      // }
 
       // std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
       // std::cout << "iedge: "   << m_data.segment_3(iedge) << std::endl;
@@ -906,21 +943,25 @@ private:
     const auto target = m_data.point_2(pvertex.first, itarget);
 
     const FT tol = KSR::tolerance<FT>();
-    const FT sq_tol = tol * tol;
     const FT sq_dist1 = CGAL::squared_distance(inter, source);
     const FT sq_dist2 = CGAL::squared_distance(inter, target);
 
+    // std::cout << "tol: " << tol << std::endl;
+    // std::cout << "sq dist 1: " << sq_dist1 << std::endl;
+    // std::cout << "sq dist 2: " << sq_dist2 << std::endl;
+
     Point_2 ipoint;
     IVertex ivertex = m_data.null_ivertex();
-    if (sq_dist1 < sq_tol) {
-      CGAL_assertion(sq_dist2 >= sq_tol);
+    if (sq_dist1 < tol) {
+      CGAL_assertion(sq_dist2 >= tol);
       ipoint = source; ivertex = isource;
-    } else if (sq_dist2 < sq_tol) {
-      CGAL_assertion(sq_dist1 >= sq_tol);
+    } else if (sq_dist2 < tol) {
+      CGAL_assertion(sq_dist1 >= tol);
       ipoint = target; ivertex = itarget;
     }
 
     if (ivertex != m_data.null_ivertex()) {
+      CGAL_assertion(ipoint != Point_2());
       const FT distance = KSR::distance(pinit, ipoint);
       const FT time = distance / m_data.speed(pvertex);
       CGAL_assertion(time < m_max_time - m_min_time);
@@ -928,8 +969,7 @@ private:
       is_event_found = true;
     }
 
-    // CGAL_assertion_msg(false,
-    // "TODO: ADD PVERTEX TO IVERTEX UNCONSTRAINED EVENT!");
+    // CGAL_assertion_msg(false, "TODO: ADD PVERTEX TO IVERTEX UNCONSTRAINED EVENT!");
     return is_event_found;
   }
 
@@ -978,7 +1018,13 @@ private:
   void apply(const Event& event, const unsigned int k) {
 
     const auto pvertex = event.pvertex();
-    if (event.is_pvertex_to_pvertex()) {
+    if (event.is_pvertices_to_ivertex()) {
+
+      const auto pother  = event.pother();
+      const auto ivertex = event.ivertex();
+      apply_event_pvertices_meet_ivertex(pvertex, pother, ivertex, event);
+
+    } else if (event.is_pvertex_to_pvertex()) {
       const auto pother = event.pother();
 
       remove_events(pvertex);
@@ -1091,6 +1137,14 @@ private:
     // CGAL_assertion_msg(false, "TODO: PVERTEX MEETS IVERTEX!");
   }
 
+  void apply_event_pvertices_meet_ivertex(
+    const PVertex& pvertex, const PVertex& pother, const IVertex& ivertex, const Event& event) {
+
+    CGAL_assertion( m_data.has_iedge(pvertex));
+    CGAL_assertion(!m_data.has_iedge(pother));
+    CGAL_assertion_msg(false, "TODO: PVERTICES MEET IVERTEX!");
+  }
+
   void apply_event_unconstrained_pvertex_meets_ivertex(
     const PVertex& pvertex, const IVertex& ivertex, const Event& event) {
 
@@ -1191,7 +1245,9 @@ private:
   void apply_event_constrained_pvertex_meets_free_pvertex(
     const PVertex& pvertex, const PVertex& pother, const Event& event) {
 
-    CGAL_assertion(m_data.has_iedge(pvertex));
+    CGAL_assertion( m_data.has_iedge(pvertex));
+    CGAL_assertion(!m_data.has_iedge(pother));
+
     if (m_data.transfer_pvertex_via_iedge(pvertex, pother)) {
 
       // Check the first two pvertices.

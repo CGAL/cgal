@@ -159,7 +159,12 @@ public:
   friend std::ostream& operator<<(std::ostream& os, const Event& event) {
 
     const std::string constr_type = ( event.m_is_constrained ? "constrained " : "unconstrained " );
-    if (event.is_pvertex_to_pvertex()) {
+    if (event.is_pvertices_to_ivertex()) {
+      os << constr_type << "event at t = " << event.m_time << " between PVertex("
+         << event.m_pvertex.first << ":" << event.m_pvertex.second
+         << "), PVertex(" << event.m_pother.first << ":" << event.m_pother.second
+         << "), and IVertex(" << event.m_ivertex << ")";
+    } else if (event.is_pvertex_to_pvertex()) {
       os << constr_type << "event at t = " << event.m_time << " between PVertex("
          << event.m_pvertex.first << ":" << event.m_pvertex.second
          << ") and PVertex(" << event.m_pother.first << ":" << event.m_pother.second << ")";
@@ -171,11 +176,6 @@ public:
       os << constr_type << "event at t = " << event.m_time << " between PVertex("
          << event.m_pvertex.first << ":" << event.m_pvertex.second
          << ") and IVertex(" << event.m_ivertex << ")";
-    } else if (event.is_pvertices_to_ivertex()) {
-      os << constr_type << "event at t = " << event.m_time << " between PVertex("
-         << event.m_pvertex.first << ":" << event.m_pvertex.second
-         << "), PVertex(" << event.m_pother.first << ":" << event.m_pother.second
-         << " and IVertex(" << event.m_ivertex << ")";
     } else {
       os << "ERROR: INVALID EVENT at t = " << event.m_time;
     }
