@@ -27,13 +27,11 @@ in highp vec3 color;
 
 uniform highp mat4 mvp_matrix;
 uniform highp mat4 mv_matrix;
+uniform highp float point_size;
 
 out highp vec4 fP;
 out highp vec3 fN;
 out highp vec4 fColor;
-
-uniform highp float point_size;
-
 out highp vec4 m_vertex;
 
 void main(void)
@@ -51,12 +49,10 @@ void main(void)
 
 const char fragment_source_color[]=R"DELIM(
 #version 150
-out highp vec4 fP;
-out highp vec3 fN;
-out highp vec4 fColor;
-
-out highp vec4 m_vertex;
-out highp vec4 out_color;
+in highp vec4 fP;
+in highp vec3 fN;
+in highp vec4 fColor;
+in highp vec4 m_vertex;
 
 uniform highp vec4 light_pos;
 uniform highp vec4 light_diff;
@@ -67,6 +63,8 @@ uniform highp float spec_power;
 uniform highp vec4 clipPlane;
 uniform highp float rendering_mode;
 uniform highp float rendering_transparency;
+
+out highp vec4 out_color;
 
 void main(void)
 {
@@ -107,11 +105,11 @@ in highp vec4 vertex;
 in highp vec3 color;
 
 uniform highp mat4 mvp_matrix;
-out highp vec4 fColor;
+uniform highp float point_size;
 
+out highp vec4 fColor;
 out highp vec4 m_vertex;
 
-uniform highp float point_size;
 void main(void)
 {
   gl_PointSize = point_size;
@@ -123,11 +121,13 @@ void main(void)
 
 const char fragment_source_p_l[]=R"DELIM(
 #version 150
-out highp vec4 fColor;
-out highp vec4 m_vertex;
-out highp vec4 out_color;
+in highp vec4 fColor;
+in highp vec4 m_vertex;
+
 uniform highp vec4 clipPlane;
 uniform highp float rendering_mode;
+
+out highp vec4 out_color;
 
 void main(void)
 {
@@ -180,12 +180,11 @@ in highp vec3 color;
 
 uniform highp mat4 mvp_matrix;
 uniform highp mat4 mv_matrix;
+uniform highp float point_size;
 
 out highp vec4 fP;
 out highp vec3 fN;
 out highp vec4 fColor;
-
-uniform highp float point_size;
 
 void main(void)
 {
@@ -203,16 +202,17 @@ void main(void)
 )DELIM";
 
 const char fragment_source_color_comp[]=R"DELIM(
-out highp vec4 fP;
-out highp vec3 fN;
-out highp vec4 fColor;
-out highp vec4 out_color;
+in highp vec4 fP;
+in highp vec3 fN;
+in highp vec4 fColor;
 
 uniform highp vec4 light_pos;
 uniform highp vec4 light_diff;
 uniform highp vec4 light_spec;
 uniform highp vec4 light_amb;
 uniform highp float spec_power ;
+
+out highp vec4 out_color;
 
 void main(void)
 {
@@ -236,9 +236,9 @@ in highp vec4 vertex;
 in highp vec3 color;
 
 uniform highp mat4 mvp_matrix;
-varying highp vec4 fColor;
-
 uniform highp float point_size;
+
+out highp vec4 fColor;
 
 void main(void)
 {
@@ -249,7 +249,7 @@ void main(void)
 )DELIM";
 
 const char fragment_source_p_l_comp[]=R"DELIM(
-varying highp vec4 fColor;
+in highp vec4 fColor;
 out highp vec4 out_color;
 void main(void)
 {
