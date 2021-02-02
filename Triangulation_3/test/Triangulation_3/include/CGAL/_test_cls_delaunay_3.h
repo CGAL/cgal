@@ -1228,6 +1228,18 @@ _test_cls_delaunay_3(const Triangulation &)
                 _test_remove_cluster<Triangulation>();
   }
 
+  // Test from issue https://github.com/CGAL/cgal/issues/5396
+  {
+    auto Triangulate = []() -> Triangulation
+    {
+      Triangulation tri;
+      for (int i=0; i<10; i++)
+        tri.insert(Point(i+1, i+2, i+3));
+
+      return std::move(tri); // the move prevents the NRVO
+    };
+    Triangulation t = Triangulate();
+  }
 }
 
 #endif // CGAL_TEST_CLS_DELAUNAY_C
