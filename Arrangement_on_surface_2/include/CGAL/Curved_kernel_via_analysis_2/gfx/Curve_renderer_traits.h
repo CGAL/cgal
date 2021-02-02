@@ -109,9 +109,10 @@ struct Transform {
         typedef typename InputPoly_2::NT NT_in;
         typedef typename OutputPoly_2::NT NT_out;
         Transform<NT_out, NT_in, Op> tr;
+        auto fn = [&op, &tr](const NT_in& v){ return tr(v, op); };
         return OutputPoly_2(
-            ::boost::make_transform_iterator(p.begin(), std::function<NT_out(const NT_in&)>([&op, &tr](const NT_in& v){ return tr(v, op); })),
-            ::boost::make_transform_iterator(p.end(), std::function<NT_out(const NT_in&)>([&op, &tr](const NT_in& v){ return tr(v, op); })));
+            ::boost::make_transform_iterator(p.begin(), fn),
+            ::boost::make_transform_iterator(p.end(), fn));
     }
 
     OutputPoly_2 operator()(

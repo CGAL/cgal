@@ -906,10 +906,9 @@ void get_precached_poly(int var, const NT& key, int /* level */, Poly_1& poly)
 //     }
 
     if(not_cached||not_found) {
-        poly = Poly_1(::boost::make_transform_iterator(coeffs->begin(),
-                          std::function<NT(const Poly_1&)>([&key1](const Poly_1& poly){ return evaluate(poly, key1); })),
-                      ::boost::make_transform_iterator(coeffs->end(),
-                          std::function<NT(const Poly_1&)>([&key1](const Poly_1& poly){ return evaluate(poly, key1); })));
+        auto fn = [&key1](const Poly_1& poly){ return evaluate(poly, key1); };
+        poly = Poly_1(::boost::make_transform_iterator(coeffs->begin(), fn),
+                      ::boost::make_transform_iterator(coeffs->end(), fn));
         if(not_cached)
             return;
     // all available space consumed: drop the least recently used entry
