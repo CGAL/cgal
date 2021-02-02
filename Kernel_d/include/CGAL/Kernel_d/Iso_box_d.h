@@ -32,6 +32,39 @@ namespace CGAL {
     struct Begin {};
     struct End {};
     struct Cartesian_end {};
+
+    template <typename T>
+    struct equal_to {
+      typedef bool result_type;
+
+      bool operator()(const T &lhs, const T &rhs) const
+      {
+        return lhs == rhs;
+      }
+
+    };
+
+    template <typename T>
+    struct minus {
+      typedef bool result_type;
+
+      T operator()(const T &lhs, const T &rhs) const
+      {
+        return lhs - rhs;
+      }
+
+    };
+
+    template <typename T>
+    struct multiplies {
+      typedef bool result_type;
+
+      T operator()(const T &lhs, const T &rhs) const
+      {
+        return lhs * rhs;
+      }
+
+    };
   } // namespace Kernel_d
 
   template < typename Point_, typename Functor_ >
@@ -277,11 +310,11 @@ namespace CGAL {
 
     RT volume_nominator() const
     {
-      typedef typename CIRT::template Iterator<Point_d,std::minus<RT> >::type
+      typedef typename CIRT::template Iterator<Point_d,Kernel_d::minus<RT> >::type
               Iter;
       Iter b(ptr()->upper, ptr()->lower, Begin());
       Iter e(ptr()->upper, ptr()->lower, Cartesian_end());
-      return std::accumulate(b, e, RT(1), std::multiplies<RT>());
+      return std::accumulate(b, e, RT(1), Kernel_d::multiplies<RT>());
     }
 
     RT volume_denominator() const
@@ -373,7 +406,7 @@ public:
     bool is_degenerate() const
     {
       typedef typename CIRT::
-              template Iterator<Point_d,std::equal_to<RT> >::type Iter;
+              template Iterator<Point_d,Kernel_d::equal_to<RT> >::type Iter;
       // omit homogenizing coordinates
       Iter e(ptr()->lower, ptr()->upper, Cartesian_end());
       return
