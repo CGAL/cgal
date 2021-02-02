@@ -20,7 +20,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>
 #include <iterator>
-#include <boost/function.hpp>
+#include <functional>
 
 #ifdef CGAL_OPTIMISATION_EXPENSIVE_PRECONDITION_TAG
 #include <CGAL/Polygon_2_algorithms.h>
