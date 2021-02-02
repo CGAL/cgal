@@ -684,11 +684,11 @@ private:
       vv = Point_2(is_r_horizontal ?
                      (pp.x() + qq.x()) :
                      (comp == LARGER) ?
-                       RT(2)*coordr + CGAL::sign(signrdist)*pqdist :
+                   RT(2)*coordr + int(CGAL::sign(signrdist))*pqdist :
                        coordr + pp.x(),
                    is_r_horizontal ?
                      (comp == LARGER) ?
-                       RT(2)*coordr + CGAL::sign(signrdist)*pqdist :
+                   RT(2)*coordr + int(CGAL::sign(signrdist))*pqdist :
                        coordr + pp.y() :
                      (pp.y() + qq.y()),
                    RT(2));
