@@ -38,7 +38,7 @@ public:
           m_bucket_size(bucket_size) {}
 
   /*!
-    \brief returns `true` if `n` should be splitted, `false` otherwise.
+    \brief returns `true` if `n` should be split, `false` otherwise.
    */
   template<typename Node>
   bool operator()(const Node &n) const {
@@ -50,7 +50,7 @@ public:
   \ingroup PkgOrthtreeSplitPredicates
   \brief A class used to choose when a node should be split depending on the depth.
 
-  This predicate makes a node splitted if its depth is lower than a certain limit.
+  This predicate makes a node split if its depth is lower than a certain limit.
  */
 class Maximum_depth {
 
@@ -64,7 +64,7 @@ public:
   Maximum_depth(std::size_t max_depth) : m_max_depth(max_depth) {}
 
   /*!
-    \brief returns `true` if `n` should be splitted, `false` otherwise.
+    \brief returns `true` if `n` should be split, `false` otherwise.
    */
   template<typename Node>
   bool operator()(const Node &n) const {
@@ -76,9 +76,16 @@ public:
   \ingroup PkgOrthtreeSplitPredicates
   \brief A class used to choose when a node should be split depending on the depth and the number of inliers.
 
-  This predicate makes a note splitted if it contains more than a
+  This predicate makes a note split if it contains more than a
   certain number of items and if its depth is lower than a certain
   limit.
+
+  The refinement is stopped as soon as one of the condition is
+  violated: if a node has more inliers than `bucket_size` but is
+  already at `max_depth`, it is not split. Similarly, a node that is
+  at a depth smaller than `max_depth` but already has fewer inliers
+  than `bucket_size`, it is not split.
+
  */
 class Maximum_depth_and_maximum_number_of_inliers {
 
@@ -93,7 +100,7 @@ public:
           m_max_depth(max_depth), m_bucket_size(bucket_size) {}
 
   /*!
-    \brief returns `true` if `n` should be splitted, `false` otherwise.
+    \brief returns `true` if `n` should be split, `false` otherwise.
    */
   template<template Node>
   bool operator()(const Node &n) const {

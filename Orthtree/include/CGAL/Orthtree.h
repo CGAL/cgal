@@ -168,7 +168,15 @@ public:
     The constructed orthtree has a root node, with no children, that
     contains the points passed. That root node has a bounding box that
     encloses all of the points passed, with padding according to the
-    `enlarge_ratio`. This single-node orthtree is valid and compatible
+    `enlarge_ratio`.
+
+    That root node is built as a `n`-cube (square in 2D, cube in 3D,
+    etc.) whose edge size is the longest bounding box edge multiplied
+    by `enlarge_ratio`. Using an `enlarge_ratio>1.0` prevents some
+    points from being exactly on the border of some cells, which can
+    lead to over-refinement.
+
+    This single-node orthtree is valid and compatible
     with all Orthtree functionality, but any performance benefits are
     unlikely to be realized until `refine()` is called.
 
@@ -278,8 +286,12 @@ public:
 
     The split predicate is a `std::function` that takes a Node and
     returns a Boolean value (where `true` implies that a Node needs to
-    be split, `false` that the Node should be a leaf). This function
-    function may be called several times with different predicate.
+    be split, `false` that the Node should be a leaf).
+
+    This function function may be called several times with different
+    predicates: in that case, nodes already split are left unaltered,
+    while nodes that were not split and for which `split_predicate`
+    returns `true` are split.
 
     \param split_predicate determines whether or not a node needs to
     be subdivided.
@@ -333,7 +345,13 @@ public:
 
     This is equivalent to calling
     `refine(Orthtrees::Maximum_depth_and_maximum_number_of_inliers(min_depth,
-    bucket_size))`
+    bucket_size))`.
+
+    The refinement is stopped as soon as one of the condition is
+    violated: if a node has more inliers than `bucket_size` but is
+    already at `max_depth`, it is not split. Similarly, a node that is
+    at a depth smaller than `max_depth` but already has fewer inliers
+    than `bucket_size`, it is not split.
 
     \param max_depth deepest a tree is allowed to be (nodes at this depth will not be split).
     \param bucket_size maximum points a node is allowed to contain.
@@ -420,7 +438,7 @@ public:
     \sa `Node::operator[]()`
 
     \param index the index of the child node.
-    \return a reference to the node.
+    \return the accessed node.
    */
   Node operator[](std::size_t index) const { return m_root[index]; }
 

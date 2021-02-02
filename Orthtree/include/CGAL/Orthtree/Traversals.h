@@ -89,7 +89,7 @@ Node deepest_first_child(Node n) {
 
 /*!
   \ingroup PkgOrthtreeTraversal
-  \brief A class used to traverse an orthtree in a preorder way.
+  \brief A class used for performing a preorder traversal.
 
   A preorder traversal starts from the root towards the leaves.
 
@@ -122,7 +122,7 @@ struct Preorder_traversal {
 
 /*!
   \ingroup PkgOrthtreeTraversal
-  \brief A class used to traverse an orthtree in a postorder way.
+  \brief A class used for performing a postorder traversal.
 
   A postorder traversal starts from the leaves towards the root.
 
@@ -150,7 +150,7 @@ struct Postorder_traversal {
 
 /*!
   \ingroup PkgOrthtreeTraversal
-  \brief A class used to traverse the leaves of an orthtree.
+  \brief A class used for performing a traversal on leaves only.
 
   All non-leave nodes are ignored.
 

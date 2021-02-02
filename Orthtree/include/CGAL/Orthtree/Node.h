@@ -161,15 +161,17 @@ private:
   /*!
     \brief creates a new node, optionally as the child of a parent
 
-    If no parent is provided, the node created is assumed to be the root of a tree.
-    This means that the parent reference is a nullptr, and the depth is zero.
-    If a parent is provided, the node becomes the child of that parent.
-    In that case, an index should be passed, telling this node its relationship to its parent.
-    Depth and global coordinates are automatically determined in the constructor,
-    and should generally be considered immutable after construction.
+    If no parent is provided, the node created is assumed to be the
+    root of a tree.  This means that `parent.is_null()` returns
+    `true`, and the depth is zero.  If a parent is provided, the node
+    becomes the child of that parent.  In that case, an index should
+    be passed, telling this node its relationship to its parent.
+    Depth and global coordinates are automatically determined in the
+    constructor, and should generally be considered immutable after
+    construction.
 
-    \param parent A reference to the node containing this one
-    \param index This node's relationship to its parent
+    \param parent the node containing this one
+    \param index this node's relationship to its parent
   */
   explicit Node(Self parent, Local_coordinates local_coordinates)
     : m_data (new Data(parent)) {

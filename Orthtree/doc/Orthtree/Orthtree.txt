@@ -61,9 +61,15 @@ behave as a %quadtree. For convenience, the alias `Quadtree` is provided.
 The following example shows how to create a %quadtree object from a
 vector of `Point_2` objects and refine it, which means constructing
 the tree's space subdivision itself, using a maximum depth of 10 and a
-maximum number of inliers per node (bucket size) of 5:
+maximum number of inliers per node (bucket size) of 5. The refinement
+is stopped as soon as one of the condition is violated: if a node has
+more inliers than `bucket_size` but is already at `max_depth`, it is
+not split. Similarly, a node that is at a depth smaller than
+`max_depth` but already has fewer inliers than `bucket_size` is not
+split.
 
-\cgalExample{Orthtree/quadtree_build_from_point_vector.cpp}
+
+\CGALEXAMPLE{Orthtree/quadtree_build_from_point_vector.cpp}
 
 \subsection Section_Orthtree_Point_Vector Building an Octree
 
