@@ -20,21 +20,21 @@ namespace CGAL
 
 //------------------------------------------------------------------------------
 const char vertex_source_color[]=R"DELIM(
-#version 120
-attribute highp vec4 vertex;
-attribute highp vec3 normal;
-attribute highp vec3 color;
+#version 150
+in highp vec4 vertex;
+in highp vec3 normal;
+in highp vec3 color;
 
 uniform highp mat4 mvp_matrix;
 uniform highp mat4 mv_matrix;
 
-varying highp vec4 fP;
-varying highp vec3 fN;
-varying highp vec4 fColor;
+out highp vec4 fP;
+out highp vec3 fN;
+out highp vec4 fColor;
 
 uniform highp float point_size;
 
-varying highp vec4 m_vertex;
+out highp vec4 m_vertex;
 
 void main(void)
 {
@@ -50,12 +50,13 @@ void main(void)
 )DELIM";
 
 const char fragment_source_color[]=R"DELIM(
-#version 120
-varying highp vec4 fP;
-varying highp vec3 fN;
-varying highp vec4 fColor;
+#version 150
+out highp vec4 fP;
+out highp vec3 fN;
+out highp vec4 fColor;
 
-varying highp vec4 m_vertex;
+out highp vec4 m_vertex;
+out highp vec4 out_color;
 
 uniform highp vec4 light_pos;
 uniform highp vec4 light_diff;
@@ -95,20 +96,20 @@ void main(void)
   }
 
   // draw corresponding part
-  gl_FragColor = rendering_mode < 1 ? (diffuse + ambient) :
+  out_color = rendering_mode < 1 ? (diffuse + ambient) :
                       vec4(diffuse.rgb + ambient.rgb, rendering_transparency);
 }
 )DELIM";
 
 const char vertex_source_p_l[]=R"DELIM(
-#version 120
-attribute highp vec4 vertex;
-attribute highp vec3 color;
+#version 150
+in highp vec4 vertex;
+in highp vec3 color;
 
 uniform highp mat4 mvp_matrix;
-varying highp vec4 fColor;
+out highp vec4 fColor;
 
-varying highp vec4 m_vertex;
+out highp vec4 m_vertex;
 
 uniform highp float point_size;
 void main(void)
@@ -121,9 +122,10 @@ void main(void)
 )DELIM";
 
 const char fragment_source_p_l[]=R"DELIM(
-#version 120
-varying highp vec4 fColor;
-varying highp vec4 m_vertex;
+#version 150
+out highp vec4 fColor;
+out highp vec4 m_vertex;
+out highp vec4 out_color;
 uniform highp vec4 clipPlane;
 uniform highp float rendering_mode;
 
@@ -142,13 +144,13 @@ void main(void)
     discard;
   }
 
-  gl_FragColor = fColor;
+  out_color = fColor;
 }
 )DELIM";
 
 const char vertex_source_clipping_plane[]=R"DELIM(
-#version 120
-attribute highp vec4 vertex;
+#version 150
+in highp vec4 vertex;
 
 uniform highp mat4 vp_matrix;
 uniform highp mat4 m_matrix;
@@ -160,10 +162,11 @@ void main(void)
 )DELIM";
 
 const char fragment_source_clipping_plane[]=R"DELIM(
-#version 120
+#version 150
+out highp vec4 out_color;
 void main(void)
 {
-  gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+  out_color = vec4(0.0, 0.0, 0.0, 1.0);
 }
 )DELIM";
 
@@ -171,16 +174,16 @@ void main(void)
 //  compatibility shaders
 
 const char vertex_source_color_comp[]=R"DELIM(
-attribute highp vec4 vertex;
-attribute highp vec3 normal;
-attribute highp vec3 color;
+in highp vec4 vertex;
+in highp vec3 normal;
+in highp vec3 color;
 
 uniform highp mat4 mvp_matrix;
 uniform highp mat4 mv_matrix;
 
-varying highp vec4 fP;
-varying highp vec3 fN;
-varying highp vec4 fColor;
+out highp vec4 fP;
+out highp vec3 fN;
+out highp vec4 fColor;
 
 uniform highp float point_size;
 
@@ -200,9 +203,10 @@ void main(void)
 )DELIM";
 
 const char fragment_source_color_comp[]=R"DELIM(
-varying highp vec4 fP;
-varying highp vec3 fN;
-varying highp vec4 fColor;
+out highp vec4 fP;
+out highp vec3 fN;
+out highp vec4 fColor;
+out highp vec4 out_color;
 
 uniform highp vec4 light_pos;
 uniform highp vec4 light_diff;
@@ -223,13 +227,13 @@ void main(void)
   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * fColor;
   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec;
 
-  gl_FragColor = light_amb*fColor + diffuse;
+  out_color = light_amb*fColor + diffuse;
 }
 )DELIM";
 
 const char vertex_source_p_l_comp[]=R"DELIM(
-attribute highp vec4 vertex;
-attribute highp vec3 color;
+in highp vec4 vertex;
+in highp vec3 color;
 
 uniform highp mat4 mvp_matrix;
 varying highp vec4 fColor;
@@ -246,9 +250,10 @@ void main(void)
 
 const char fragment_source_p_l_comp[]=R"DELIM(
 varying highp vec4 fColor;
+out highp vec4 out_color;
 void main(void)
 {
-  gl_FragColor = fColor;
+  out_color = fColor;
 }
 )DELIM";
 
@@ -265,9 +270,10 @@ void main(void)
 )DELIM";
 
 const char fragment_source_clipping_plane_comp[]=R"DELIM(
+out highp vec4 out_color;
 void main(void)
 {
-  gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+  out_color = vec4(0.0, 0.0, 0.0, 1.0);
 }
 )DELIM";
 */
