@@ -32,8 +32,9 @@
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/functional.hpp>
 #include <CGAL/NT_converter.h>
+
+#include <functional>
 
 // here is how it works. We have d+2 variables:
 // R (big radius), r (small radius), c (center). The problem is

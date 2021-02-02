@@ -49,7 +49,6 @@ rectangular_2_center_2(
     P_below_right;
   typedef typename Traits::Construct_point_2_below_left_implicit_point_2
     P_below_left;
-  typedef std::function<FT(const Point&)>              Gamma;
 
   // fetch function objects from traits class
   CVertex       v      = t.construct_vertex_2_object();
@@ -68,9 +67,9 @@ rectangular_2_center_2(
 
   // two cases: top-left & bottom-right or top-right & bottom-left
   Min< FT > minft;
-  Gamma gamma1 =
+  auto gamma1 =
     [&minft, &bb, &dist, &v](const Point& p){ return minft(dist( v(bb, 0), p), dist(v(bb, 2),p));};
-  Gamma gamma2 =
+  auto gamma2 =
     [&minft, &bb, &dist, &v](const Point& p){ return minft(dist( v(bb, 1), p), dist(v(bb, 3),p));};
 
   pair< ForwardIterator, ForwardIterator > cand =
@@ -117,7 +116,6 @@ rectangular_3_center_2_type1(
     P_below_right;
   typedef typename Traits::Construct_point_2_below_left_implicit_point_2
     P_below_left;
-  typedef std::function<FT(const Point&)>                 Gamma;
 
   // fetch function objects from traits class
   Rect          rect   = t.construct_iso_rectangle_2_object();
@@ -151,7 +149,7 @@ rectangular_3_center_2_type1(
     RandomAccessIterator e = l;
     bool b_empty = true;
     Min< FT > minft;
-    Gamma gamma = [&minft, &dist, &v, &r, i](const Point& p)
+    auto gamma = [&minft, &dist, &v, &r, i](const Point& p)
                   { return minft(dist(v(r, i), p), dist(v(r, 2 + i), p)); };
 
     while (e - s > 1) {
@@ -895,7 +893,7 @@ rectangular_3_center_2_type2(
       op.place_y_square(op.place_y_square(Q_r_empty, Q_r, *pos.second, r),
                         r,
                         rad);
-    std::function<bool(const FT&)> le_rad = [&rad](const FT& v){return rad >= v;};
+    auto le_rad = [&rad](const FT& v){return rad >= v;};
     RandomAccessIterator b1 =
       partition(m, l, [&le_rad, &op, q_t](const Point& p){ return le_rad(op.distance()(q_t, p)); });
     RandomAccessIterator b2 =
@@ -924,8 +922,7 @@ rectangular_3_center_2_type2(
     Point q_r = op.place_y_square(q_r_afap, r, op.delta()(*m));
 
     // check for covering
-    std::function<bool(const FT&)>
-      le_delta_m = [&op, m](const FT& v){ return op.delta()(*m) >= v; };
+    auto le_delta_m = [&op, m](const FT& v){ return op.delta()(*m) >= v; };
     RandomAccessIterator b1 =
       partition(m + 1, e, [&le_delta_m, &op, & q_t](const Point& p){ return le_delta_m(op.distance()(q_t, p)); });
     RandomAccessIterator b2 =
@@ -995,8 +992,7 @@ rectangular_3_center_2_type2(
     // partition the range [m+1, e) into ranges
     // [m+1, b1), [b1, b2),   [b2, b3) and [b3, e)
     //     R      G cap q_t  G cap q_r      none
-    std::function<bool(const FT&)>
-      le_delta_m = [&op, m](const FT& v){ return op.delta()(*m) >= v; };
+    auto le_delta_m = [&op, m](const FT& v){ return op.delta()(*m) >= v; };
     RandomAccessIterator b2 =
       partition(m + 1, e,
                 [&le_delta_m, &op, &q_t](const Point& p) { return le_delta_m(op.distance()(q_t, p)); });
@@ -1126,8 +1122,7 @@ CGAL_3CENTER_REPEAT_CHECK:
     // partition the range [s_b+1, e) into ranges
     // [s_b+1, b1), [b1, b2),   [b2, b3) and [b3, e)
     //     R      G cap q_t  G cap q_r      none
-    std::function<bool(const FT&)>
-      le_delta_sb = [&op, s_b](const FT& v){ return op.delta()(*s_b) >= v;} ;
+    auto le_delta_sb = [&op, s_b](const FT& v){ return op.delta()(*s_b) >= v;} ;
 
     b2 = partition(s_b + 1, e,
                    [&le_delta_sb, &op, &q_t](const Point& p)
@@ -1231,8 +1226,7 @@ CGAL_3CENTER_REPEAT_CHECK:
     q_r = op.place_y_square(q_r_afap, r, op.delta()(*next));
 
     // again check for covering
-    std::function<bool(const FT&)>
-      le_delta_next = [&op, next](const FT& v){ return op.delta()(*next) >= v; };
+    auto le_delta_next = [&op, next](const FT& v){ return op.delta()(*next) >= v; };
     b2 = partition(s_b, e,
                    [&op, &le_delta_next, &q_t](const Point& p){ return le_delta_next( op.distance()(q_t,p) ); });
     b1 = partition(s_b, b2,
@@ -1335,8 +1329,7 @@ CGAL_3CENTER_REPEAT_CHECK:
       q_r = op.place_y_square(q_r_afap, r, try_rho);
 
       // check for covering
-      std::function<bool(const FT&)>
-        greater_rho_max = [&try_rho](const FT& v){ return try_rho < v; };
+      auto greater_rho_max = [&try_rho](const FT& v){ return try_rho < v; };
       if ((!Q_t_empty && op.compute_x_distance(q_t, Q_t) > try_rho) ||
           (!Q_r_empty && op.compute_y_distance(q_r, Q_r) > try_rho) ||
           e != find_if(
@@ -1381,10 +1374,9 @@ CGAL_3CENTER_REPEAT_CHECK:
   CGAL_optimisation_assertion(rho_min >= 0);
   FT rad_2 = q_t_q_r_cover_at_rho_min;
   if (s_at_rho_min != e_at_rho_min) {
-    std::function<FT(const Point&)>
-      mydist = [&q_t_at_rho_min, &q_r_at_rho_min, &op](const Point& p)
-               { return Min<FT>()( op.distance()(q_t_at_rho_min, p),
-                                   op.distance()(q_r_at_rho_min, p)); };
+    auto mydist = [&q_t_at_rho_min, &q_r_at_rho_min, &op](const Point& p)
+                  { return Min<FT>()( op.distance()(q_t_at_rho_min, p),
+                                      op.distance()(q_r_at_rho_min, p)); };
     rad_2 =
       max BOOST_PREVENT_MACRO_SUBSTITUTION (
         rad_2,
