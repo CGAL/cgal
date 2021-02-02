@@ -46,7 +46,7 @@ namespace CGAL {
 
     template <typename T>
     struct minus {
-      typedef bool result_type;
+      typedef T result_type;
 
       T operator()(const T &lhs, const T &rhs) const
       {
@@ -57,7 +57,7 @@ namespace CGAL {
 
     template <typename T>
     struct multiplies {
-      typedef bool result_type;
+      typedef T result_type;
 
       T operator()(const T &lhs, const T &rhs) const
       {
