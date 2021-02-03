@@ -18,6 +18,8 @@
 #include <boost/range/iterator_range.hpp>
 #include <CGAL/Orthtree/Traversal_iterator.h>
 
+#include <stack>
+
 namespace CGAL {
 
 /// \cond SKIP_IN_MANUAL
@@ -85,6 +87,34 @@ Node deepest_first_child(Node n) {
   return first;
 }
 
+template <typename Node>
+Node first_child_at_depth(Node n, std::size_t depth) {
+
+  if (n.is_null())
+    return Node();
+
+  std::stack<Node> todo;
+  todo.push(n);
+
+  if (n.depth() == depth)
+    return n;
+
+  while (!todo.empty())
+  {
+    Node node = todo.top();
+    todo.pop();
+
+    if (node.depth() == depth)
+      return node;
+
+    if (!node.is_leaf())
+      for (std::size_t i = 0; i < Node::Degree::value; ++ i)
+        todo.push(node[Node::Degree::value - 1 - i]);
+  }
+
+  return Node();
+}
+
 /// \endcond
 
 /*!
@@ -141,7 +171,7 @@ struct Postorder_traversal {
 
     Node next = deepest_first_child(next_sibling(n));
 
-    if (!next)
+    if (next.is_null())
       next = n.parent();
 
     return next;
@@ -171,6 +201,55 @@ struct Leaves_traversal {
 
     if (next.is_null())
       next = deepest_first_child(next_sibling_up(n));
+
+    return next;
+  }
+};
+
+/*!
+  \ingroup PkgOrthtreeTraversal
+  \brief A class used for performing a traversal of a specific depth level.
+
+  All trees at another depth are ignored. If the selected depth is
+  higher than the maximum depth of the orthtree, no node will be traversed.
+
+  \cgalModels OrthtreeTraversal
+ */
+struct Level_traversal {
+
+private:
+
+  const std::size_t depth;
+
+public:
+
+  /*!
+    constructs a `depth`-level traversal.
+  */
+  Level_traversal (std::size_t depth) : depth(depth) { }
+
+  template <typename Node>
+  Node first(Node root) const {
+    return first_child_at_depth(root, depth);
+  }
+
+  template <typename Node>
+  Node next(Node n) const {
+    std::cerr << depth << " ";
+    Node next = next_sibling(n);
+
+    if (next.is_null())
+    {
+      Node up = n;
+      do
+      {
+        up = next_sibling_up(up);
+        if (up.is_null())
+          return Node();
+        next = first_child_at_depth(up, depth);
+      }
+      while (next.is_null());
+    }
 
     return next;
   }

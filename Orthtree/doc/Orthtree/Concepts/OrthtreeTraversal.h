@@ -12,6 +12,7 @@
   \cgalHasModel `CGAL::Orthtrees::Preorder_traversal`
   \cgalHasModel `CGAL::Orthtrees::Postorder_traversal`
   \cgalHasModel `CGAL::Orthtrees::Leaves_traversal`
+  \cgalHasModel `CGAL::Orthtrees::Level_traversal`
  */
 class OrthtreeTraversal {
 
