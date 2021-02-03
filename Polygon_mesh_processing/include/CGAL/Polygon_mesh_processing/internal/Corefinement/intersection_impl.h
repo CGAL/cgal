@@ -325,7 +325,7 @@ class Intersection_of_triangle_meshes
       case ON_EDGE  :
       {
         h1=opposite(ipt.info_1,tm1);
-        if (h1>ipt.info_1) h1=ipt.info_1;
+        if (ipt.info_1 < h1) h1=ipt.info_1;
       }
       break;
       case ON_FACE :
@@ -340,7 +340,7 @@ class Intersection_of_triangle_meshes
       case ON_EDGE  :
       {
         h2=opposite(ipt.info_2,tm2);
-        if (h2>ipt.info_2) h2=ipt.info_2;
+        if (ipt.info_2 < h2) h2=ipt.info_2;
       }
       break;
       case ON_FACE :
@@ -350,7 +350,7 @@ class Intersection_of_triangle_meshes
     }
 
     Key key(ipt.type_1, ipt.type_2, h1, h2);
-    if (&tm1==&tm2 && h1>h2)
+    if (&tm1==&tm2 && h2<h1)
       key=Key(ipt.type_2, ipt.type_1, h2, h1);
 
     std::pair<typename std::map<Key,Node_id>::iterator,bool> res=
