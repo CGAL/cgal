@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <numeric>
 #include <cstddef>
+#include <iterator>
 
 namespace CGAL {
 
@@ -32,29 +33,6 @@ namespace CGAL {
     struct Begin {};
     struct End {};
     struct Cartesian_end {};
-
-    template <typename T>
-    struct equal_to {
-      typedef bool result_type;
-
-      result_type operator()(const T &lhs, const T &rhs) const
-      {
-        return lhs == rhs;
-      }
-
-    };
-
-    template <typename T>
-    struct minus {
-      typedef T result_type;
-
-      result_type operator()(const T &lhs, const T &rhs) const
-      {
-        return lhs - rhs;
-      }
-
-    };
-
   } // namespace Kernel_d
 
   template < typename Point_, typename Functor_ >
@@ -64,7 +42,13 @@ namespace CGAL {
     typedef typename Point::Cartesian_const_iterator  Iterator;
     typedef Cartesian_iterator<Point,Functor>         Self;
 
-    typedef typename Functor::result_type  value_type;
+
+    typedef typename std::iterator_traits<Iterator>::value_type
+                                                      Coordinate_type;
+
+    typedef decltype(
+        std::declval<Functor>()(std::declval<Coordinate_type>(),
+                                std::declval<Coordinate_type>())) value_type;
     typedef value_type&                    reference;
     typedef value_type*                    pointer;
     typedef std::ptrdiff_t                 difference_type;
@@ -300,7 +284,7 @@ namespace CGAL {
 
     RT volume_nominator() const
     {
-      typedef typename CIRT::template Iterator<Point_d,Kernel_d::minus<RT> >::type
+      typedef typename CIRT::template Iterator<Point_d, std::minus<RT> >::type
               Iter;
       Iter b(ptr()->upper, ptr()->lower, Begin());
       Iter e(ptr()->upper, ptr()->lower, Cartesian_end());
@@ -396,7 +380,7 @@ public:
     bool is_degenerate() const
     {
       typedef typename CIRT::
-              template Iterator<Point_d,Kernel_d::equal_to<RT> >::type Iter;
+              template Iterator<Point_d,std::equal_to<RT> >::type Iter;
       // omit homogenizing coordinates
       Iter e(ptr()->lower, ptr()->upper, Cartesian_end());
       return
