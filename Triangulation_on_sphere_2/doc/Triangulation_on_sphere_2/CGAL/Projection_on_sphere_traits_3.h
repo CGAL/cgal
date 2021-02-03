@@ -25,7 +25,7 @@ public:
   /// The field number type
   typedef typename LK::FT                           FT;
 
-  /// An internal point type representing the projected point
+  /// The point on the sphere type
   typedef unspecified_type                          Point_on_sphere_2;
 
   ///
