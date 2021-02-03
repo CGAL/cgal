@@ -4706,14 +4706,18 @@ private:
     }
 
     CGAL_assertion(pv0.first == pv1.first);
+    CGAL_assertion_msg(!is_frozen(pv0), "ERROR: THIS PVERTEX CANNOT BE FROZEN!");
+    CGAL_assertion_msg(!is_frozen(pv1), "ERROR: THIS PVERTEX CANNOT BE FROZEN!");
     const auto q2 = point_2(pv0, m_current_time + FT(1));
     const auto q3 = point_2(pv1, m_current_time + FT(1));
 
     // if (m_verbose) {
-    //   std::cout << "- seg0: " <<
+    //   std::cout << "- seg0 time 0: " <<
     //   to_3d(pv0.first, q0) << " " << to_3d(pv0.first, q1) << std::endl;
-    //   std::cout << "- seg1: " <<
+    //   std::cout << "- seg1 time 1: " <<
     //   to_3d(pv0.first, q2) << " " << to_3d(pv0.first, q3) << std::endl;
+    //   std::cout << "- seg1 time 0: " <<
+    //   point_3(pv0) << " " << point_3(pv1) << std::endl;
     // }
 
     const FT x0 = q0.x(), y0 = q0.y();
@@ -4737,8 +4741,17 @@ private:
     const FT num = (x0 - x2) * (y2 - y3) - (y0 - y2) * (x2 - x3);
     const FT den = (x0 - x1) * (y2 - y3) - (y0 - y1) * (x2 - x3);
     // if (m_verbose) std::cout << "den: " << den << std::endl;
-    CGAL_assertion_msg(CGAL::abs(den) >= tol,
-    "TODO: FUTURE POINT, IMPLEMENT PARALLEL CASE!");
+
+    if (CGAL::abs(den) < tol) {
+      if (m_verbose) {
+        std::cout << "- warning: parallel case" << std::endl;
+        std::cout << "- q0: " << to_3d(pv0.first, q0) << std::endl;
+        std::cout << "- q1: " << to_3d(pv0.first, q1) << std::endl;
+        std::cout << "- pv0 " << str(pv0) << ": " << point_3(pv0) << std::endl;
+        std::cout << "- pv1 " << str(pv1) << ": " << point_3(pv1) << std::endl;
+      }
+      CGAL_assertion_msg(false, "TODO: FUTURE POINT, IMPLEMENT PARALLEL CASE!");
+    }
 
     const FT w0 = num / den;
     const FT w1 = FT(1) - w0;
