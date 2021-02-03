@@ -54,7 +54,7 @@ struct GetBlueMap{
 };
 unsigned short get(const GetBlueMap&, const PointWithColor& p)
 {
-  return p.second[3];
+  return p.second[2];
 }
 
 struct GetAlphaMap{
@@ -65,7 +65,7 @@ struct GetAlphaMap{
 };
 unsigned short get(const GetAlphaMap&, const PointWithColor& p)
 {
-  return p.second[4];
+  return p.second[3];
 }
 
 int main()
