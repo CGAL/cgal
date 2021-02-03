@@ -159,9 +159,9 @@ bool read_OBJ(std::istream& is,
   }
 
   if(norm_found && verbose)
-    std::cout<<"WARNING: normals were found in this file, but were discarded."<<std::endl;
+    std::cout<<"NOTE: normals were found in this file, but were discarded."<<std::endl;
   if(tex_found && verbose)
-    std::cout<<"WARNING: textures were found in this file, but were discarded."<<std::endl;
+    std::cout<<"NOTE: textures were found in this file, but were discarded."<<std::endl;
 
   if(points.empty() || polygons.empty())
   {
