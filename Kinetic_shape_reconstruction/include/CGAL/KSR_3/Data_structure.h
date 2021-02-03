@@ -1927,6 +1927,10 @@ public:
       }
       CGAL_assertion(pthird != null_pvertex());
 
+      if (m_verbose) {
+        std::cout << "- pthird pv: " << point_3(pthird) << std::endl;
+      }
+
       const Vector_2 current_direction = compute_future_direction(
         source_p, target_p, pvertex, pthird);
       const Vector_2 iedge_direction(source_p, target_p);
@@ -1942,9 +1946,6 @@ public:
       CGAL_assertion(future_direction != Vector_2());
 
       direction(pvertex) = future_direction;
-      if (m_verbose) {
-        std::cout << "- pvertex direction: " << direction(pvertex) << std::endl;
-      }
       support_plane(pvertex).set_point(pvertex.second, future_point);
       connect(pvertex, iedge);
     }
@@ -1967,6 +1968,10 @@ public:
       }
       CGAL_assertion(pthird != null_pvertex());
 
+      if (m_verbose) {
+        std::cout << "- pthird po: " << point_3(pthird) << std::endl;
+      }
+
       CGAL_assertion(must_be_swapped(source_p, target_p, pother, pthird));
       std::swap(source_p, target_p);
       if (m_verbose) std::cout << "- swap source and target" << std::endl;
@@ -1976,9 +1981,6 @@ public:
       CGAL_assertion(future_direction != Vector_2());
 
       direction(pother) = future_direction;
-      if (m_verbose) {
-        std::cout << "- pother direction: " << direction(pother) << std::endl;
-      }
       support_plane(pother).set_point(pother.second, future_point);
       connect(pother, iedge);
     }
@@ -1986,7 +1988,7 @@ public:
     const PEdge pedge(pvertex.first, support_plane(pvertex).edge(pvertex.second, pother.second));
     connect(pedge, iedge);
 
-    CGAL_assertion_msg(false, "TODO: CROP PEDGE ALONG IEDGE!");
+    // CGAL_assertion_msg(false, "TODO: CROP PEDGE ALONG IEDGE!");
   }
 
   const std::pair<PVertex, PVertex> propagate_pedge_beyond_iedge(
@@ -4696,97 +4698,86 @@ private:
     const FT sq_dist = CGAL::squared_distance(query, target);
     if (sq_dist < tol) {
       if (m_verbose) {
+        std::cout.precision(20);
         std::cout << "- warning: query is almost equal to target" << std::endl;
         std::cout << "- replacing query with source" << std::endl;
       }
       q0 = source;
     }
 
+    CGAL_assertion(pv0.first == pv1.first);
     const auto q2 = point_2(pv0, m_current_time + FT(1));
     const auto q3 = point_2(pv1, m_current_time + FT(1));
 
-    if (m_verbose) {
-      std::cout.precision(20);
-      // std::cout << "- seg0: " <<
-      // to_3d(pv0.first, q0) << " " << to_3d(pv0.first, q1) << std::endl;
-      // std::cout << "- seg1: " <<
-      // to_3d(pv0.first, q2) << " " << to_3d(pv0.first, q3) << std::endl;
-    }
+    // if (m_verbose) {
+    //   std::cout << "- seg0: " <<
+    //   to_3d(pv0.first, q0) << " " << to_3d(pv0.first, q1) << std::endl;
+    //   std::cout << "- seg1: " <<
+    //   to_3d(pv0.first, q2) << " " << to_3d(pv0.first, q3) << std::endl;
+    // }
 
     const FT x0 = q0.x(), y0 = q0.y();
     const FT x1 = q1.x(), y1 = q1.y();
     const FT x2 = q2.x(), y2 = q2.y();
     const FT x3 = q3.x(), y3 = q3.y();
 
-    const FT a1 = x0 - x1;
-    const FT b1 = y0 - y1;
-    const FT c1 = x1 * x1 - x1 * x0 - y1 * y0 + y1 * y1;
-
     const FT sq_d1 = (x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0);
     CGAL_assertion(sq_d1 >= FT(0));
     // if (m_verbose) std::cout << "sq d1: " << sq_d1 << std::endl;
     CGAL_assertion_msg(sq_d1 >= tol,
     "TODO: FUTURE POINT, HANDLE ZERO CURRENT EDGE!");
-    const FT a2 = a1 / sq_d1, b2 = b1 / sq_d1, c2 = c1 / sq_d1;
-
-    const FT a3 = x2 - x3;
-    const FT b3 = y2 - y3;
-    const FT c3 = x3 * x3 - x3 * x2 - y3 * y2 + y3 * y3;
 
     const FT sq_d2 = (x3 - x2) * (x3 - x2) + (y3 - y2) * (y3 - y2);
     CGAL_assertion(sq_d2 >= FT(0));
     // if (m_verbose) std::cout << "sq d2: " << sq_d2 << std::endl;
     CGAL_assertion_msg(sq_d2 >= tol,
     "TODO: FUTURE POINT, HANDLE ZERO FUTURE EDGE!");
-    const FT a4 = a3 / sq_d2, b4 = b3 / sq_d2, c4 = c3 / sq_d2;
-
-    const FT a5 = x0 * a2 - x1 * a2 - x2 * a4 + x3 * a4;
-    const FT b5 = x0 * b2 - x1 * b2 - x2 * b4 + x3 * b4;
-    const FT c5 = x0 * c2 + x1 - x1 * c2 - x2 * c4 - x3 + x3 * c4;
-
-    const FT a6 = y0 * a2 - y1 * a2 - y2 * a4 + y3 * a4;
-    const FT b6 = y0 * b2 - y1 * b2 - y2 * b4 + y3 * b4;
-    const FT c6 = y0 * c2 + y1 - y1 * c2 - y2 * c4 - y3 + y3 * c4;
-
-    const FT numx = c5 * b6 - b5 * c6;
-    const FT denx = b5 * a6 - a5 * b6;
-    CGAL_assertion_msg(CGAL::abs(denx) >= tol,
-    "TODO: FUTURE POINT, X PARALLEL CASE!");
-    const FT x = numx / denx;
-
-    const FT numy = -c5 - a5 * x;
-    const FT deny = b5;
-    CGAL_assertion_msg(CGAL::abs(deny) >= tol,
-    "TODO: FUTURE POINT, Y PARALLEL CASE!");
-    const FT y = numy / deny;
 
     // Barycentric coordinates.
-    const FT w1 = a2 * x + b2 * y + c2;
-    const FT w2 = FT(1) - w1;
+    const FT num = (x0 - x2) * (y2 - y3) - (y0 - y2) * (x2 - x3);
+    const FT den = (x0 - x1) * (y2 - y3) - (y0 - y1) * (x2 - x3);
+    // if (m_verbose) std::cout << "den: " << den << std::endl;
+    CGAL_assertion_msg(CGAL::abs(den) >= tol,
+    "TODO: FUTURE POINT, IMPLEMENT PARALLEL CASE!");
+
+    const FT w0 = num / den;
+    const FT w1 = FT(1) - w0;
 
     // Future point.
+    const FT x = w0 * x1 + w1 * x0;
+    const FT y = w0 * y1 + w1 * y0;
     const Point_2 future_point(x, y);
+
+    // if (m_verbose) {
+    //   std::cout << "- future point: " << to_3d(pv0.first, future_point) << std::endl;
+    // }
+
     // CGAL_assertion_msg(false, "TODO: COMPUTE FUTURE POINT!");
-    return std::make_pair(future_point, std::make_pair(w1, w2));
+    return std::make_pair(future_point, std::make_pair(w0, w1));
   }
 
   const Vector_2 compute_future_direction(
     const Point_2& source, const Point_2& target,
     const PVertex& pv0, const PVertex& pv1) const {
 
+    // Project.
     auto pinit = point_2(pv0);
     const Line_2 iedge_line(source, target);
     pinit = iedge_line.projection(pinit);
 
+    // Future point.
     const auto res = compute_future_point(source, source, target, pv0, pv1);
     const auto& future_point = res.first;
-    CGAL_assertion_msg(future_point != pinit, "ERROR: ZERO LENGTH FUTURE DIRECTION!");
-
-    const Vector_2 future_direction(pinit, future_point);
     if (m_verbose) {
       std::cout.precision(20);
-      // std::cout << "- future point: "     << to_3d(pv0.first, future_point) << std::endl;
-      // std::cout << "- future direction: " << future_direction               << std::endl;
+      // std::cout << "- future point: " << to_3d(pv0.first, future_point) << std::endl;
+    }
+
+    // Future direction.
+    CGAL_assertion_msg(future_point != pinit, "ERROR: ZERO LENGTH FUTURE DIRECTION!");
+    const Vector_2 future_direction(pinit, future_point);
+    if (m_verbose) {
+      // std::cout << "- future direction: " << future_direction << std::endl;
     }
 
     // CGAL_assertion_msg(false, "TODO: COMPUTE FUTURE DIRECTION!");
@@ -4800,24 +4791,32 @@ private:
 
     const auto& pinit = query;
     const auto res = compute_future_point(source, query, target, pv0, pv1);
-    future_point = res.first;
 
+    // Orientation.
+    const FT w0 = res.second.first;
+    const FT w1 = res.second.second;
     if (m_verbose) {
-      std::cout << "-" <<
-      " w1: " << res.second.first  << ";" <<
-      " w2: " << res.second.second << std::endl;
+      std::cout.precision(20);
+      std::cout << "-" << " w0: " << w0 << ";" << " w1: " << w1 << std::endl;
+    }
+    CGAL_assertion_msg(w0 >= FT(0), "ERROR: W0, WRONG ORIENTATION!");
+    CGAL_assertion_msg(w1 <= FT(1), "ERROR: W1, WRONG ORIENTATION!");
+
+    // Future point.
+    future_point = res.first;
+    if (m_verbose) {
       std::cout << "- future point: " << to_3d(pv0.first, future_point) << std::endl;
     }
 
+    // Future direction.
     CGAL_assertion_msg(future_point != pinit, "ERROR: ZERO LENGTH FUTURE DIRECTION!");
-    CGAL_assertion_msg(res.second.first  <= FT(1), "ERROR: W1, WRONG ORIENTATION!");
-    CGAL_assertion_msg(res.second.second >= FT(0), "ERROR: W2, WRONG ORIENTATION!");
-
     future_direction = Vector_2(pinit, future_point);
-    future_point = pinit - m_current_time * future_direction;
     if (m_verbose) {
       std::cout << "- future direction: " << future_direction << std::endl;
     }
+
+    // Update future point.
+    future_point = pinit - m_current_time * future_direction;
     // CGAL_assertion_msg(false, "TODO: COMPUTE FUTURE POINT AND DIRECTION!");
   }
 };

@@ -1101,12 +1101,24 @@ private:
   }
 
   void apply_event_pvertices_meet_ivertex(
-    const PVertex& pvertex, const PVertex& pother, const IVertex& ivertex, const Event& event) {
+    const PVertex& pvertex, const PVertex& pother,
+    const IVertex& /* ivertex */, const Event& /* event */) {
 
     CGAL_assertion( m_data.has_iedge(pvertex));
     CGAL_assertion(!m_data.has_iedge(pother));
     CGAL_assertion_msg(false,
     "ERROR: PVERTICES MEET IVERTEX! IT SHOULD NOT EVER HAPPEN!");
+  }
+
+  void apply_event_unconstrained_pvertex_meets_ivertex(
+    const PVertex& pvertex, const IVertex& ivertex, const Event& event) {
+
+    CGAL_assertion(!m_data.has_iedge(pvertex));
+    CGAL_assertion( m_data.has_one_pface(pvertex));
+
+    CGAL_assertion_msg(false,
+    "ERROR: UNCONSTRAINED PVERTEX MEETS IVERTEX! IT SHOULD NOT EVER HAPPEN!");
+    apply_event_pvertex_meets_ivertex(pvertex, ivertex, event);
   }
 
   // VALID EVENTS!
@@ -1145,15 +1157,6 @@ private:
     CGAL_assertion(pvertices.size() > 0);
     compute_events_of_pvertices(event.time(), pvertices);
     // CGAL_assertion_msg(false, "TODO: PVERTEX MEETS IVERTEX!");
-  }
-
-  void apply_event_unconstrained_pvertex_meets_ivertex(
-    const PVertex& pvertex, const IVertex& ivertex, const Event& event) {
-
-    CGAL_assertion(!m_data.has_iedge(pvertex));
-    CGAL_assertion( m_data.has_one_pface(pvertex));
-    apply_event_pvertex_meets_ivertex(pvertex, ivertex, event);
-    // CGAL_assertion_msg(false, "TODO: UNCONSTRAINED PVERTEX MEETS IVERTEX!");
   }
 
   void apply_event_unconstrained_pvertex_meets_iedge(
@@ -1229,7 +1232,7 @@ private:
         CGAL_assertion(m_data.has_iedge(pvertex));
         CGAL_assertion(m_data.iedge(pvertex) == m_data.iedge(pother));
         is_event_happend = true;
-        CGAL_assertion_msg(false, "TODO: PEDGE MEETS IEDGE!");
+        // CGAL_assertion_msg(false, "TODO: UNCONSTRAINED PEDGE MEETS IEDGE!");
         break;
       }
     }
@@ -1378,7 +1381,7 @@ private:
     if (m_debug) {
       std::cout << "- k intersections after: " << m_data.k(pvertex.first) << std::endl;
     }
-    CGAL_assertion_msg(false, "TODO: CHECK PEDGE MEETS IEDGE GLOBAL!");
+    // CGAL_assertion_msg(false, "TODO: CHECK PEDGE MEETS IEDGE GLOBAL!");
     return stop;
   }
 
