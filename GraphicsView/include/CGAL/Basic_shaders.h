@@ -61,6 +61,7 @@ uniform highp vec4 light_amb;
 uniform highp float spec_power;
 
 uniform highp vec4 clipPlane;
+uniform highp vec4 pointPlane;
 uniform highp float rendering_mode;
 uniform highp float rendering_transparency;
 
@@ -83,7 +84,7 @@ void main(void)
   // onPlane == 1: inside clipping plane, should be solid;
   // onPlane == -1: outside clipping plane, should be transparent;
   // onPlane == 0: on clipping plane, whatever;
-  float onPlane = sign(dot(m_vertex.xyz, clipPlane.xyz) - clipPlane.w);
+  float onPlane = sign(dot((m_vertex.xyz-pointPlane.xyz), clipPlane.xyz));
 
   // rendering_mode == -1: draw all solid;
   // rendering_mode == 0: draw solid only;
@@ -125,6 +126,7 @@ in highp vec4 fColor;
 in highp vec4 m_vertex;
 
 uniform highp vec4 clipPlane;
+uniform highp vec4 pointPlane;
 uniform highp float rendering_mode;
 
 out highp vec4 out_color;
@@ -134,7 +136,7 @@ void main(void)
   // onPlane == 1: inside clipping plane, should be solid;
   // onPlane == -1: outside clipping plane, should be transparent;
   // onPlane == 0: on clipping plane, whatever;
-  float onPlane = sign(dot(m_vertex.xyz, clipPlane.xyz) - clipPlane.w);
+  float onPlane = sign(dot((m_vertex.xyz-pointPlane.xyz), clipPlane.xyz));
 
   // rendering_mode == -1: draw both inside and outside;
   // rendering_mode == 0: draw inside only;

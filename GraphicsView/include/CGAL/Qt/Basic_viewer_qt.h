@@ -186,14 +186,15 @@ public:
     setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::RightButton, "Translate the clipping plane when enabled");
     setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::MidButton, "Control the clipping plane transparency when enabled");
 
-    /*
-      TODO
+    setMouseBinding(::Qt::ControlModifier, ::Qt::LeftButton, qglviewer::FRAME, qglviewer::NO_MOUSE_ACTION);
+    setMouseBinding(::Qt::ControlModifier, ::Qt::RightButton, qglviewer::FRAME, qglviewer::NO_MOUSE_ACTION);
+    setMouseBinding(::Qt::ControlModifier, ::Qt::MidButton, qglviewer::FRAME, qglviewer::NO_MOUSE_ACTION);
+    setWheelBinding(::Qt::ControlModifier, qglviewer::FRAME, qglviewer::NO_MOUSE_ACTION);
 
-      setMouseBinding(::Qt::NoModifier, ::Qt::LeftButton, qglviewer::FRAME, qglviewer::ROTATE);
-      setMouseBinding(::Qt::NoModifier, ::Qt::RightButton, qglviewer::FRAME, qglviewer::TRANSLATE);
-      setMouseBinding(::Qt::NoModifier, ::Qt::MidButton, qglviewer::FRAME, qglviewer::ZOOM);
-      setWheelBinding(::Qt::NoModifier, qglviewer::FRAME, qglviewer::ZOOM);
-    */
+    setMouseBinding(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::LeftButton, qglviewer::FRAME, qglviewer::ROTATE);
+    setMouseBinding(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::RightButton, qglviewer::FRAME, qglviewer::TRANSLATE);
+    setMouseBinding(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::MidButton, qglviewer::FRAME, qglviewer::ZOOM);
+    setWheelBinding(::Qt::Key_C, ::Qt::ControlModifier, qglviewer::FRAME, qglviewer::ZOOM);
 
     if (title[0]==0)
       setWindowTitle("CGAL Basic Viewer");
@@ -473,7 +474,7 @@ protected:
   {
     rendering_program_face.removeAllShaders();
     rendering_program_p_l.removeAllShaders();
-    rendering_program_clipping_plane.removeAllShaders(); // TODO remove this shader: replace by QGLViewer::drawGrid
+    rendering_program_clipping_plane.removeAllShaders();
 
     // Create the buffers
     for (unsigned int i=0; i<NB_VBO_BUFFERS; ++i)
@@ -540,7 +541,7 @@ protected:
 
     // clipping plane shader
 
-    // TODO REMOVE
+
     if (isOpenGL_4_3())
     {
       source_ = vertex_source_clipping_plane;
@@ -862,7 +863,7 @@ protected:
 
     rendering_program_face.release();
 
-    // TODO remove
+
     // 6) clipping plane shader
     if (isOpenGL_4_3())
     {
@@ -949,13 +950,16 @@ protected:
     rendering_program_p_l.setUniformValue(mvpLocation2, mvpMatrix);
     rendering_program_p_l.release();
 
-    // TODO remove
+
     if (isOpenGL_4_3())
     {
       QMatrix4x4 clipping_mMatrix;
       clipping_mMatrix.setToIdentity();
-      clipping_mMatrix.rotate(clipping_plane_rotation);
-      clipping_mMatrix.translate(0.0, 0.0, clipping_plane_translation_z);
+      if(m_frame_plane)
+      {
+        for(int i=0; i< 16 ; i++)
+          clipping_mMatrix.data()[i] =  m_frame_plane->matrix()[i];
+      }
 
       rendering_program_clipping_plane.bind();
       int vpLocation = rendering_program_clipping_plane.uniformLocation("vp_matrix");
@@ -976,12 +980,15 @@ protected:
   {
     glEnable(GL_DEPTH_TEST);
 
-    // get clipping plane model matrix
     QMatrix4x4 clipping_mMatrix;
     clipping_mMatrix.setToIdentity();
-    clipping_mMatrix.rotate(clipping_plane_rotation);
-    QVector4D clipPlane = clipping_mMatrix * QVector4D(0.0, 0.0, 1.0, clipping_plane_translation_z);
-
+    if(m_frame_plane)
+    {
+      for(int i=0; i< 16 ; i++)
+        clipping_mMatrix.data()[i] =  m_frame_plane->matrix()[i];
+    }
+    QVector4D clipPlane = clipping_mMatrix * QVector4D(0.0, 0.0, 1.0, 0.0);
+    QVector4D plane_point = clipping_mMatrix * QVector4D(0,0,0,1);
     if(!m_are_buffers_initialized)
     { initialize_buffers(); }
 
@@ -1017,7 +1024,7 @@ protected:
       // rendering_mode == -1: draw all
       // rendering_mode == 0: draw inside clipping plane
       // rendering_mode == 1: draw outside clipping plane
-      auto renderer = [this, &color, &clipPlane](float rendering_mode) {
+      auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
         vao[VAO_MONO_POINTS].bind();
         color.setRgbF((double)m_vertices_mono_color.red()/(double)255,
                       (double)m_vertices_mono_color.green()/(double)255,
@@ -1025,6 +1032,7 @@ protected:
         rendering_program_p_l.setAttributeValue("color",color);
         rendering_program_p_l.setUniformValue("point_size", GLfloat(m_size_points));
         rendering_program_p_l.setUniformValue("clipPlane", clipPlane);
+        rendering_program_p_l.setUniformValue("pointPlane", plane_point);
         rendering_program_p_l.setUniformValue("rendering_mode", rendering_mode);
         glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(arrays[POS_MONO_POINTS].size()/3));
         vao[VAO_MONO_POINTS].release();
@@ -1044,6 +1052,7 @@ protected:
         }
         rendering_program_p_l.setUniformValue("point_size", GLfloat(m_size_points));
         rendering_program_p_l.setUniformValue("clipPlane", clipPlane);
+        rendering_program_p_l.setUniformValue("pointPlane", plane_point);
         rendering_program_p_l.setUniformValue("rendering_mode", rendering_mode);
         glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(arrays[POS_COLORED_POINTS].size()/3));
         vao[VAO_COLORED_POINTS].release();
@@ -1074,13 +1083,14 @@ protected:
       // rendering_mode == -1: draw all
       // rendering_mode == 0: draw inside clipping plane
       // rendering_mode == 1: draw outside clipping plane
-      auto renderer = [this, &color, &clipPlane](float rendering_mode) {
+      auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
         vao[VAO_MONO_SEGMENTS].bind();
         color.setRgbF((double)m_edges_mono_color.red()/(double)255,
                       (double)m_edges_mono_color.green()/(double)255,
                       (double)m_edges_mono_color.blue()/(double)255);
         rendering_program_p_l.setAttributeValue("color",color);
         rendering_program_p_l.setUniformValue("clipPlane", clipPlane);
+        rendering_program_p_l.setUniformValue("pointPlane", plane_point);
         rendering_program_p_l.setUniformValue("rendering_mode", rendering_mode);
         glLineWidth(m_size_edges);
         glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(arrays[POS_MONO_SEGMENTS].size()/3));
@@ -1100,6 +1110,7 @@ protected:
           rendering_program_p_l.enableAttributeArray("color");
         }
         rendering_program_p_l.setUniformValue("clipPlane", clipPlane);
+        rendering_program_p_l.setUniformValue("pointPlane", plane_point);
         rendering_program_p_l.setUniformValue("rendering_mode", rendering_mode);
         glLineWidth(m_size_edges);
         glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(arrays[POS_COLORED_SEGMENTS].size()/3));
@@ -1209,7 +1220,7 @@ protected:
       // rendering_mode == -1: draw all as solid;
       // rendering_mode == 0: draw solid only;
       // rendering_mode == 1: draw transparent only;
-      auto renderer = [this, &color, &clipPlane](float rendering_mode) {
+      auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
 
       vao[VAO_MONO_FACES].bind();
       color.setRgbF((double)m_faces_mono_color.red()/(double)255,
@@ -1219,6 +1230,7 @@ protected:
       rendering_program_face.setUniformValue("rendering_mode", rendering_mode);
       rendering_program_face.setUniformValue("rendering_transparency", clipping_plane_rendering_transparency);
       rendering_program_face.setUniformValue("clipPlane", clipPlane);
+      rendering_program_face.setUniformValue("pointPlane", plane_point);
       glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(arrays[POS_MONO_FACES].size()/3));
       vao[VAO_MONO_FACES].release();
 
@@ -1238,6 +1250,7 @@ protected:
         rendering_program_face.setUniformValue("rendering_mode", rendering_mode);
         rendering_program_face.setUniformValue("rendering_transparency", clipping_plane_rendering_transparency);
         rendering_program_face.setUniformValue("clipPlane", clipPlane);
+        rendering_program_face.setUniformValue("pointPlane", plane_point);
         glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(arrays[POS_COLORED_FACES].size()/3));
         vao[VAO_COLORED_FACES].release();
       };
@@ -1366,7 +1379,6 @@ protected:
                                                        bb.zmax()));
 
     // init clipping plane array
-    // TODO REMOVE
     auto generate_clipping_plane = [this](qreal size, int nbSubdivisions)
     {
       for (int i = 0; i <= nbSubdivisions; i++)
@@ -1412,12 +1424,11 @@ protected:
       {
         // toggle clipping plane
         m_use_clipping_plane = (m_use_clipping_plane + 1) % CLIPPING_PLANE_END_INDEX;
-        // TODO verify
-        if (m_use_clipping_plane==CLIPPING_PLANE_OFF)
+        if (m_use_clipping_plane==CLIPPING_PLANE_OFF && m_frame_plane)
         {
+          setManipulatedFrame(nullptr);
           delete m_frame_plane;
           m_frame_plane=nullptr;
-          setManipulatedFrame(nullptr);
         }
         else if (m_frame_plane==nullptr)
         {
@@ -1436,16 +1447,7 @@ protected:
         update();
       }
     }
-    else if ((e->key()==::Qt::Key_C) && (modifiers==::Qt::ControlModifier))
-    {
-      if (!isOpenGL_4_3()) return;
-      if (m_use_clipping_plane!=CLIPPING_PLANE_OFF)
-      {
-        // enable clipping operation i.e. rotation, translation, and transparency adjustment
-        clipping_plane_operation = true;
-        update();
-      }
-    }
+
     else if ((e->key()==::Qt::Key_C) && (modifiers==::Qt::AltModifier))
     {
       if (!isOpenGL_4_3()) return;
@@ -1638,77 +1640,6 @@ protected:
       CGAL::QGLViewer::keyPressEvent(e);
   }
 
-  // TODO maybe remove
- virtual void keyReleaseEvent(QKeyEvent *e)
-  {
-    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-    if ((e->key()==::Qt::Key_C))
-    {
-      clipping_plane_operation = false;
-    }
-  }
-
-  // TODO maybe remove
-  virtual void mousePressEvent(QMouseEvent *e) {
-    if (clipping_plane_operation && e->modifiers() == ::Qt::ControlModifier && e->buttons() == ::Qt::LeftButton) {
-      // rotation starting point
-      clipping_plane_rotation_tracker = QVector2D(e->localPos());
-    }
-    else if (clipping_plane_operation && e->modifiers() == ::Qt::ControlModifier && e->buttons() == ::Qt::RightButton)
-    {
-      // translation starting point
-      clipping_plane_translation_tracker = QVector2D(e->localPos());
-    }
-    else
-    {
-      CGAL::QGLViewer::mousePressEvent(e);
-    }
-  }
-
-  // TODO maybe remove
-  virtual void mouseMoveEvent(QMouseEvent *e) {
-    if (clipping_plane_operation && e->modifiers() == ::Qt::ControlModifier && e->buttons() == ::Qt::LeftButton)
-    {
-      // rotation ending point
-      QVector2D diff = QVector2D(e->localPos()) - clipping_plane_rotation_tracker;
-      clipping_plane_rotation_tracker = QVector2D(e->localPos());
-
-      QVector3D axis = QVector3D(diff.y(), diff.x(), 0.0);
-      float angle = diff.length();
-      clipping_plane_rotation = QQuaternion::fromAxisAndAngle(axis, angle) * clipping_plane_rotation;
-
-      update();
-    }
-    else if (clipping_plane_operation && e->modifiers() == ::Qt::ControlModifier && e->buttons() == ::Qt::RightButton)
-    {
-      // translation ending point
-      QVector2D diff = QVector2D(e->localPos()) - clipping_plane_translation_tracker;
-      clipping_plane_translation_tracker = QVector2D(e->localPos());
-
-      clipping_plane_translation_z += clipping_plane_rendering_size / 500 * (diff.y() > 0 ? -1.0 : diff.y() < 0 ? 1.0 : 0.0) * diff.length();
-
-      update();
-    }
-    else
-    {
-      CGAL::QGLViewer::mouseMoveEvent(e);
-    }
-  }
-
-  // TODO maybe remove
-  virtual void wheelEvent(QWheelEvent *e)
-  {
-    if (clipping_plane_operation && e->modifiers() == ::Qt::ControlModifier) {
-      clipping_plane_rendering_transparency += (e->delta() / 120.0) / 50.0;
-      // clip to 0-1
-      clipping_plane_rendering_transparency = clipping_plane_rendering_transparency > 1.0 ? 1.0 : clipping_plane_rendering_transparency < 0.0 ? 0.0 : clipping_plane_rendering_transparency;
-    }
-    else
-    {
-      CGAL::QGLViewer::wheelEvent(e);
-    }
-  }
-
   virtual QString helpString() const
   { return helpString("CGAL Basic Viewer"); }
 
@@ -1857,11 +1788,6 @@ protected:
   QOpenGLShaderProgram rendering_program_clipping_plane;
 
   // variables for clipping plane
-  bool clipping_plane_operation = false; // will be enabled/diabled when ctrl+c is pressed/released, which is used for clipping plane translation and rotation;
-  QVector2D clipping_plane_rotation_tracker; // will be enabled when ctrl+c+left is pressed, which is used to record rotation;
-  QQuaternion clipping_plane_rotation; // real rotation;
-  QVector2D clipping_plane_translation_tracker; // will be enabled when ctrl+c+right is pressed, which is used to record translation;
-  float clipping_plane_translation_z = 0.0f; // real translation;
   bool clipping_plane_rendering = true; // will be toggled when alt+c is pressed, which is used for indicating whether or not to render the clipping plane ;
   float clipping_plane_rendering_transparency = 0.5f; // to what extent the transparent part should be rendered;
   float clipping_plane_rendering_size; // to what extent the size of clipping plane should be rendered;
