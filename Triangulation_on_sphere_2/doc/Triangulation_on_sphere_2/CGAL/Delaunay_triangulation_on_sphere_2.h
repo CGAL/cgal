@@ -180,7 +180,7 @@ public:
   /// \name Voronoi Diagram
   ///
   /// The following member functions provide the elements of the dual Voronoi diagram.
-  /// Two different embeddings are possible: a "straight" embedding, using line segment living
+  /// Two different embeddings are possible: a "straight" embedding, using line segments living
   /// in Euclidean 3D sphere, and a "curved" embedding, using arc segments on the sphere.
   ///
   /// @{
@@ -217,17 +217,17 @@ public:
   /*!
   returns the arc of great circle with endpoints the circumcenters of the faces incident to the edge `e`.
   */
-  Arc_on_sphere_2 arc_dual(const Edge& e) const;
+  Arc_on_sphere_2 dual_on_sphere(const Edge& e) const;
 
   /*!
   returns the arc of great circle with endpoints the circumcenters of the faces incident to the edge `*ec`.
   */
-  Arc_on_sphere_2 arc_dual(const Edge_circulator ec) const;
+  Arc_on_sphere_2 dual_on_sphere(const Edge_circulator ec) const;
 
   /*!
   returns the arc of great circle with endpoints the circumcenters of the faces incident to the edge `*ei`.
   */
-  Arc_on_sphere_2 arc_dual(const All_edges_iterator ei) const;
+  Arc_on_sphere_2 dual_on_sphere(const All_edges_iterator ei) const;
 
   /// @}
 

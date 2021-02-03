@@ -6,7 +6,7 @@ namespace CGAL {
 The class `Delaunay_triangulation_on_sphere_traits_2` is a model
 of the concept `DelaunayTriangulationOnSphereTraits_2`.
 
-The `Point_on_sphere_2` type is implemented as a kernel's `Point_3` type.
+The `Point_on_sphere_2` type is implemented as a kernel `Point_3` type.
 
 If the kernel template parameter `LK` does not enable exact representation of points on sphere
 (i.e., at least a mean to represent algebraic coordinates), then it cannot be guaranteed
@@ -66,9 +66,9 @@ public:
   typedef typename LK::Compare_xyz_3                Compare_on_sphere_2;
 
   /// If the kernel cannot represent algebraic coordinates exactly, there is a tolerance
-  /// around the sphere, and thus different points can actually be the same point.
-  /// This particular equality functor checks if both query points are on the sphere and
-  /// are aligned (and on the same side) with the center of the sphere.
+  /// around the sphere, and thus different points of \f$ \mathbb{R}^3\f$ can actually
+  /// correspond to the same point on the sphere.
+  /// This functor checks if two points project onto the same point on the sphere.
   typedef unspecified_type                          Equal_on_sphere_2;
 
   ///

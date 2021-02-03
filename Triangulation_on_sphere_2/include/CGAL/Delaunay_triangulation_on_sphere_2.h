@@ -289,16 +289,16 @@ public:
   // Dual
   Point_3 circumcenter(const Point_3& p0, const Point_3& p1, const Point_3& p2) const;
   Point_3 circumcenter(const Face_handle f) const;
-  Point_3 dual(const Face_handle f) const;
   Point circumcenter_on_sphere(const Point& p0, const Point& p1, const Point& p2) const;
   Point circumcenter_on_sphere(const Face_handle f) const;
-  Point dual_on_sphere(const Face_handle f) const;
+  Point_3 dual(const Face_handle f) const;
   Segment_3 dual(const Edge& e) const;
   Segment_3 dual(const Edge_circulator ec) const { return dual(*ec); }
   Segment_3 dual(const All_edges_iterator ei) const { return dual(*ei); }
-  Arc_on_sphere_2 arc_dual(const Edge& e) const;
-  Arc_on_sphere_2 arc_dual(const Edge_circulator ec) const { return arc_dual(*ec); }
-  Arc_on_sphere_2 arc_dual(const All_edges_iterator ei) const { return arc_dual(*ei); }
+  Point dual_on_sphere(const Face_handle f) const;
+  Arc_on_sphere_2 dual_on_sphere(const Edge& e) const;
+  Arc_on_sphere_2 dual_on_sphere(const Edge_circulator ec) const { return dual_on_sphere(*ec); }
+  Arc_on_sphere_2 dual_on_sphere(const All_edges_iterator ei) const { return dual_on_sphere(*ei); }
 
   // Validity
   void check_neighboring_faces() const;
@@ -1027,7 +1027,7 @@ dual(const Edge& e) const
 template <typename Gt, typename Tds>
 typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Arc_on_sphere_2
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-arc_dual(const Edge& e) const
+dual_on_sphere(const Edge& e) const
 {
   CGAL_precondition(tds().is_edge(e.first, e.second));
   CGAL_precondition(dimension() == 2);

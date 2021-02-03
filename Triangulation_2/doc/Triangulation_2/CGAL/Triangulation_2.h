@@ -297,7 +297,7 @@ iterator over finite vertices.
 typedef unspecified_type Finite_vertices_iterator;
 
 /*!
-iterator over the points corresponding the
+iterator over the points corresponding to the
 finite vertices of the triangulation.
 */
 typedef unspecified_type Point_iterator;

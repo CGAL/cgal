@@ -3,14 +3,14 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulationOnSphere2TriangulationClasses
 
-The class `Triangulation_on_sphere_2` is the basic class designed to represent triangulations
-of set of points on the sphere: it has vertices at the points of the set.
+The class `Triangulation_on_sphere_2` is the basic class designed to represent a triangulation
+of a point set on a sphere: its vertices coincide with the points of the set.
 
 \warning This triangulation supports neither the insertion nor the removal of vertices,
 see `CGAL::Delaunay_triangulation_on_sphere_2` for such purposes.
 
 This triangulation class is very similar to `CGAL::Triangulation_2` as both classes represent
-triangulations of 2-manifold domain without boundary. A significant difference is that
+triangulations of a 2-manifold domain without boundary. A significant difference is that
 in the case of Euclidean 2D triangulation, it is necessary to introduce so-called <i>infinite
 faces</i> to complete the convex hull into an actual 2-manifold without boundary that the triangulation
 data structure can represent. This is not necessary for triangulations on the sphere,
@@ -136,7 +136,7 @@ public:
   typedef TDS::Vertex_iterator Vertices_iterator;
 
   /*!
-  range type for iterating over all vertices, with a nested
+  Range type for iterating over all vertices, with a nested
   type `iterator` that has as value type `Vertex_handle`.
   */
   typedef Iterator_range<unspecified_type> Vertex_handles;
@@ -147,7 +147,7 @@ public:
   typedef TDS::Edge_iterator All_edges_iterator;
 
   /*!
-  range type for iterating over all edges (including non-solid ones).
+  Range type for iterating over all edges (including non-solid ones).
   */
   typedef Iterator_range<All_edges_iterator> All_edges;
 
@@ -157,7 +157,7 @@ public:
   typedef TDS::Face_iterator All_faces_iterator;
 
   /*!
-  range type for iterating over all faces (including ghost faces),  with a nested
+  Range type for iterating over all faces (including ghost faces),  with a nested
   type `iterator` that has as value type `Face_handle`.
   */
   typedef Iterator_range<All_faces_iterator> All_face_handles;
@@ -168,7 +168,7 @@ public:
   typedef unspecified_type Solid_edges_iterator;
 
   /*!
-  range type for iterating over all solid edges.
+  Range type for iterating over all solid edges.
   */
   typedef Iterator_range<Solid_edges_iterator> Solid_edges;
 
@@ -178,7 +178,7 @@ public:
   typedef unspecified_type Solid_faces_iterator;
 
   /*!
-  range type for iterating over solid faces, with a nested
+  Range type for iterating over solid faces, with a nested
   type `iterator` that has as value type `Face_handle`.
   */
   typedef Iterator_range<unspecified_type> Solid_face_handles;
@@ -236,7 +236,7 @@ public:
   Triangulation_on_sphere_2(const Triangulation_on_sphere_2& tr);
 
   /*!
-  Assignment operator. This performs a deep copy of the triangulation, duplicating vertices and faces.
+  Assignment operator. This performs a deep copy of the triangulation, duplicating both vertices and faces.
   */
   Triangulation_on_sphere_2& operator=(Triangulation_on_sphere_2<Traits,TDS> tr);
 
@@ -253,9 +253,26 @@ public:
   /// @}
 
 public:
+  /// \name Ghost Predicates
+  /// @{
+
+  /*!
+  returns `true` if `f` is a ghost face, and `false` otherwise.
+  */
+  bool is_ghost(const Face_handle f) const;
+
+  /*!
+  returns `true` if `e` is a ghost edge, that is if both its incident faces are ghost faces,
+  and `false` otherwise.
+  */
+  bool is_ghost(const Edge& e) const;
+
+ /// @}
+
+public:
   /// \name Modifying the domain
   ///
-  /// The following functions can be used to modify the spherical domain's geometry.
+  /// The following functions can be used to modify the geometry of the spherical domain.
   ///
   /// \warning The triangulation is cleared in the process.
   ///
@@ -351,13 +368,13 @@ public:
   returns the great circle arc formed by the vertices of the edge `e`.
   \pre `t.dimension()` \f$ \geq1\f$.
   */
-  Arc_on_sphere_2 arc_segment(const Edge& e) const;
+  Arc_on_sphere_2 segment_on_sphere(const Edge& e) const;
 
   /*!
   returns the great circle arc formed by the vertices of the edge `(f, i)`.
   \pre `t.dimension()` \f$ \geq1\f$.
   */
-  Arc_on_sphere_2 arc_segment(const Face_handle f, int i) const;
+  Arc_on_sphere_2 segment_on_sphere(const Face_handle f, int i) const;
 
   /*!
   returns the 3D triangle formed by the three vertices of the face `f`.
@@ -519,25 +536,25 @@ public:
   /// @{
 
   /*!
-  returns `true` if there exists an edge having `va` and `vb` as vertices.
+  returns `true` if there exists an edge (ghost or solid) having `va` and `vb` as vertices.
   */
   bool is_edge(Vertex_handle va, Vertex_handle vb);
 
   /*!
-  returns `true` if there exists an edge having `va` and `vb` as vertices.
+  returns `true` if there exists an edge (ghost or solid) having `va` and `vb` as vertices.
   If `true` is returned, the edge with vertices `va` and `vb` is the edge `e=(fr,i)`
   where `fr` is a handle to the face incident to `e` and on the right side of `e` oriented from `va` to `vb`.
   */
   bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, int & i);
 
   /*!
-  returns `true` if there exists a face having `v1`, `v2` and `v3` as vertices.
+  returns `true` if there exists a face (ghost or solid) having `v1`, `v2` and `v3` as vertices.
   */
   bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3);
 
   /*!
-  returns `true` if there exists a face having `v1`, `v2` and `v3` as vertices.
-  If `true` is returned, fr is a handle to the face with `v1`, `v2` and `v3` as vertices.
+  returns `true` if there exists a face (ghost or solid) having `v1`, `v2` and `v3` as vertices.
+  If `true` is returned, `fr` is a handle to the face with `v1`, `v2` and `v3` as vertices.
   */
   bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3, Face_handle &fr);
 
@@ -552,7 +569,7 @@ public:
   /// @{
 
   /*!
-  specifies which case occurs when locating a point in the triangulation.
+  specifies which case occurs when locating a query point in the triangulation.
   */
   enum Locate_type { VERTEX=0, /*!< when the point coincides with a vertex of the triangulation */
                      EDGE, /*!< when the point is in the relative interior of an edge */
@@ -564,7 +581,7 @@ public:
                    };
 
   /*!
-  locates the point in the triangulation, and returns information on this location.
+  locates the point `query` in the triangulation, and returns information on this location.
 
   If the point is (according to the traits) not on the sphere or is too close to an existing vertex,
   or if the dimension of the triangulation is not 2, or if the point is outside the affine hull,
@@ -583,7 +600,7 @@ public:
   The variable `lt` is set to the locate type of the query.
   If `lt==VERTEX`, the variable `li` is set to the index of the vertex,
   and if `lt==EDGE` `li` is set to the index of the vertex opposite to the edge.
-  Be careful that `li` has no meaning when the query type is `FACE`, `OUTSIDE_CONVEX_HULL`,
+  Note that `li` has no meaning when the query type is `FACE`, `OUTSIDE_CONVEX_HULL`,
   or `OUTSIDE_AFFINE_HULL`.
   */
   Face_handle locate(const Point& query, Locate_type& lt, int& li, Face_handle h = Face_handle()) const;
@@ -595,7 +612,12 @@ public:
   /// @{
 
   /*!
-  tests the validity of the triangulation as a `Triangulation_on_sphere_2`
+  tests the validity of the triangulation as a `Triangulation_on_sphere_2`.
+
+  This function tests the validity of the underlying data structure (using the function
+  `TriangulationDataStructure_2::is_valid()`), and the validity of the triangulation itself
+  (consistency between the dimension and the number of simplices, face orientation checks, etc.).
+
   This method is mainly useful for debugging Delaunay triangulation algorithms.
   */
   bool is_valid(bool verbose = false, int level = 0) const;

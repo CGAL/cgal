@@ -9,7 +9,7 @@ The class `Triangulation_on_sphere_vertex_base_2` is the default model
 for the concept `TriangulationOnSphereVertexBase_2` and
 the default vertex base class for triangulations on the sphere.
 
-`Triangulation_on_sphere_vertex_base_2` can be simply plugged in the triangulation data
+`Triangulation_on_sphere_vertex_base_2` can be simply plugged into the triangulation data
 structure of a triangulation, or used as a base class to derive
 other base vertex classes tuned for specific applications.
 
