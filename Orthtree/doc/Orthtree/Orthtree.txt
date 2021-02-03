@@ -69,7 +69,7 @@ not split. Similarly, a node that is at a depth smaller than
 split.
 
 
-\CGALEXAMPLE{Orthtree/quadtree_build_from_point_vector.cpp}
+\cgalExample{Orthtree/quadtree_build_from_point_vector.cpp}
 
 \subsection Section_Orthtree_Point_Vector Building an Octree
 
@@ -166,6 +166,17 @@ Users can define their own traversal methods by creating models of the
 custom traversal that only traverses the first branch of the %octree:
 
 \cgalExample{Orthtree/octree_traversal_custom.cpp}
+
+\subsection Comparison of Traversals
+
+Figure \cgalFigureRef{Orthtree_traversal_fig} shows in which order
+nodes are visited depending on the traversal method used.
+
+\cgalFigureBegin{Orthtree_traversal_fig, quadtree_traversal.png}
+%Quadtree visualized as a graph. Each node is labelled according to the
+order in which it is visited by the traversal. When using leaves and
+level traversals, the quadtree is only partially traversed.
+\cgalFigureEnd
 
 \section Section_Orthtree_Acceleration Acceleration of Common Tasks
 

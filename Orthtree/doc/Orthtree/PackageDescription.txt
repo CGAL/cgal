@@ -57,8 +57,9 @@
 - `CGAL::Orthtrees::Maximum_depth_and_maximum_number_of_inliers`
 
 \cgalCRPSection{%Traversal}
-- `CGAL::Orthtrees::Preorder_traversal<Traits, PointRange, PointMap>`
-- `CGAL::Orthtrees::Postorder_traversal<Traits, PointRange, PointMap>`
-- `CGAL::Orthtrees::Leaves_traversal<Traits, PointRange, PointMap>`
+- `CGAL::Orthtrees::Preorder_traversal`
+- `CGAL::Orthtrees::Postorder_traversal`
+- `CGAL::Orthtrees::Leaves_traversal`
+- `CGAL::Orthtrees::Level_traversal`
 
 */
